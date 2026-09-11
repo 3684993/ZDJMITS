@@ -21,3 +21,26 @@
 - 已从 `D:\MITS\docs\plans\ZDJ-MITS-V3.9.2-Candidate-Supply-And-Exit-Final-Plan.md` 同步唯一检查点：A/B/C 已通过，D/E/F/P1/P2 在隔离验证中已实现但在提交前 Astra 审计发现十项需修正缺陷。
 - 本轮只按该审计的 D → E → F → P1 → P2 顺序修复：retention/epoch/freshness，cohort bootstrap/backoff/rotation，Preflight，真实 TechnicalCard readiness，reconciliation/TP guard/loss handoff。不得启动真实 Engine 或写入真实交易所。
 - 本文件仅作隔离工作区的同一计划镜像；不覆盖既有 A→P2 源码和根工作区用户未提交内容。
+
+## GitHub 静态修复检查点（2026-09-12）
+
+分支：`fix/v392-astra-final-fixes`。基线 WIP：`9532101eb09269fa28083bdd588f1f9e879505d1`。
+
+已经从源码静态收敛的 Astra 缺口：
+
+- Cohort 首次 bootstrap 不再依赖 executableCandidateCount；资本/容量/全局风险阻断与供应不足分离；消费成员退休、低频 stale rotation、no-new-result/partial hydrate backoff 已进入同一库存控制器。
+- Cheap discovery 与 WS retention 已拆分；Provider 的 discovery 不再隐式启动或扩大订阅，`setLiveSymbols()` 成为 retained WS 集合的唯一入口。
+- snapshot flight 以 `symbol + ownership epoch` 隔离；evict/rejoin 后旧生命周期请求不能作为新 lifecycle flight 复用。
+- retained symbols 的 slow fields 使用独立刷新链；1h/4h/1d/1w、derivatives 与规则 freshness 已有单独事实路径，未恢复固定周期 full hydrate。
+- stale derivatives 在 selection 与 Primary EIP 前降级/清空，不再作为当前有效衍生事实使用。
+- reconciliation 已保留/恢复 `profitTakePlan`、`profitTakePlanSource` 与 `lossHandoff`，并绑定实际 system entry/position cycle。
+- TP 选择链保持 `AI -> STRUCTURE_15M -> FIXED_PROFITABLE`；AI/结构目标不通过“抬价追成盈利”修补，合法 WORKING TP 不追价。
+- loss handoff 只消费唯一连续 closed 15m bar；重复、倒序、缺口和开仓前 bar 不推算持续亏损。
+- P1 readiness 已改用真实 TechnicalCard 的闭合 15m 字段，仅影响公平队列内排序，不新增 PLACE gate。
+
+仍需本地 Codex 完成/验证：
+
+1. `PreflightFeasibility` 仍需按当前余额、有效 reservations、risk headroom、capitalVersion/current fact consistency 做最终源码复核；不得削弱 AI 后 allocation/reservation 和 submit/retry guard。
+2. 在 `D:\MITS-v392-isolated` 拉取本分支后执行 targeted tests、workspace tests、`npm run typecheck`、`npm run verify`；GitHub 静态修改不得写成测试 PASS。
+3. 恢复/保留根工作区完整 canonical 计划正文后再形成最终交付 commit；本分支当前文档只是接续镜像，不能用它覆盖根工作区完整方案。
+4. Production public 实网研究、真实历史 replay、真实 WS/REST retention 观察和 Testnet 自然验收继续 PENDING，必须单独授权且不得由本静态修复补证据。

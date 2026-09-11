@@ -24,3 +24,12 @@ it('refreshes only the fields whose own cadence crossed a boundary',async()=>{
   const state:any={snapshots:new Map([['SOLUSDT',snapshot]])},hub=new MarketDataHub(provider,state,{publish:vi.fn()} as any);hub.setRetentionSymbols(['SOLUSDT']);(hub as any).rulesUpdatedAt.set('SOLUSDT',now);
   expect(await hub.refreshSlowFields(['SOLUSDT'])).toBe(1);expect(provider.getDerivatives).toHaveBeenCalledOnce();expect(provider.getQuote).not.toHaveBeenCalled();expect(provider.getCandles).toHaveBeenCalledTimes(1);expect(provider.getCandles).toHaveBeenCalledWith('SOLUSDT','1h',80);expect(state.snapshots.get('SOLUSDT').technical['1h'].barCloseTime).toBe(closedAt(now,periods['1h']));
 });
+
+it('refreshes contract-rule facts on their own cadence without rebuilding technical cards',async()=>{
+  vi.useFakeTimers();vi.setSystemTime(new Date('2026-09-11T15:30:00Z'));const now=Date.now();
+  const snapshot:any={symbol:'SOLUSDT',quote:{ts:now,tickSize:.01,stepSize:.1,minQty:.1,minNotional:5},orderBook:{ts:now},derivatives:{ts:now},technical:{'1h':card('1h',now),'4h':card('4h',now),'1d':card('1d',now),'1w':card('1w',now)}};
+  const freshQuote={...snapshot.quote,tickSize:.001,ts:now};
+  const provider:any={getDerivatives:vi.fn(),getQuote:vi.fn(async()=>freshQuote),getCandles:vi.fn()};
+  const state:any={snapshots:new Map([['SOLUSDT',snapshot]])},hub=new MarketDataHub(provider,state,{publish:vi.fn()} as any);hub.setRetentionSymbols(['SOLUSDT']);(hub as any).rulesUpdatedAt.set('SOLUSDT',now-901_000);
+  expect(await hub.refreshSlowFields(['SOLUSDT'])).toBe(1);expect(provider.getQuote).toHaveBeenCalledOnce();expect(provider.getDerivatives).not.toHaveBeenCalled();expect(provider.getCandles).not.toHaveBeenCalled();expect(state.snapshots.get('SOLUSDT').quote.tickSize).toBe(.001);expect((hub.fieldFreshness('SOLUSDT',now) as any).fields.contractRules.fresh).toBe(true);
+});

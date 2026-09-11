@@ -47,10 +47,12 @@ export class MarketCohort {
   private globalBlockReason(){
     const mode=String(this.state.runtimeControl?.mode??'');
     const reason=String(this.state.runtimeControl?.reasonCode??'');
+    const capacity=this.state.entryCapacity?.();
     if(this.state.executionGovernance?.mode==='AUTO_PAUSED_RISK')return 'GLOBAL_RISK_PAUSE';
     if(mode==='PAUSED_MANUAL')return 'MANUAL_PAUSE';
     if(mode==='PAUSED_NO_CAPITAL'||/NO_CAPITAL/.test(reason))return 'NO_CAPITAL';
     if(mode==='PAUSED_DAILY_RISK_LIMIT'||/DAILY_RISK|GLOBAL_RISK/.test(reason))return 'GLOBAL_RISK_PAUSE';
+    if(capacity&&capacity.used>=capacity.max)return 'POSITION_CAPACITY_FULL';
     if(/POSITION_CAPACITY_FULL|CAPACITY_FULL/.test(reason))return 'POSITION_CAPACITY_FULL';
     if(/SYSTEMIC_MARKET/.test(reason))return 'SYSTEMIC_MARKET_FAILURE';
     // PAUSED_NO_EXECUTABLE_CONTRACT / MIN_EXECUTABLE_CANDIDATES_NOT_MET are supply signals,

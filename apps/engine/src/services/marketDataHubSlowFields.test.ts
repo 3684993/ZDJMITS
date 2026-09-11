@@ -1,0 +1,26 @@
+import { afterEach, expect, it, vi } from 'vitest';
+import { MarketDataHub } from './marketDataHub.js';
+
+const periods={"1h":3_600_000,"4h":14_400_000,"1d":86_400_000,"1w":604_800_000} as const;
+const closedAt=(now:number,period:number)=>(now-Math.floor(now/period)*period<=10_000?Math.floor(now/period)*period-period:Math.floor(now/period)*period)-1;
+const card=(tf:keyof typeof periods,now:number)=>({timeframe:tf,asOf:closedAt(now,periods[tf]),barCloseTime:closedAt(now,periods[tf]),isClosed:true});
+const candles=(now:number,period:number,count=80)=>{const end=closedAt(now,period);return Array.from({length:count},(_,i)=>{const closeTime=end-(count-1-i)*period,openTime=closeTime-period+1;return{openTime,closeTime,receivedAt:now,isClosed:true,source:'MOCK',open:100,high:102,low:99,close:101,volume:10,quoteVolume:1000,trades:10};});};
+
+afterEach(()=>vi.useRealTimers());
+
+it('does zero slow REST work while derivatives, rules and long cards are still current',async()=>{
+  vi.useFakeTimers();vi.setSystemTime(new Date('2026-09-11T15:30:00Z'));const now=Date.now();
+  const snapshot:any={symbol:'SOLUSDT',quote:{ts:now},orderBook:{ts:now},derivatives:{ts:now},technical:{'1h':card('1h',now),'4h':card('4h',now),'1d':card('1d',now),'1w':card('1w',now)}};
+  const state:any={snapshots:new Map([['SOLUSDT',snapshot]])};
+  const provider:any={getDerivatives:vi.fn(),getQuote:vi.fn(),getCandles:vi.fn()};
+  const hub=new MarketDataHub(provider,state,{publish:vi.fn()} as any);hub.setRetentionSymbols(['SOLUSDT']);(hub as any).rulesUpdatedAt.set('SOLUSDT',now);
+  expect(await hub.refreshSlowFields(['SOLUSDT'])).toBe(0);expect(provider.getDerivatives).not.toHaveBeenCalled();expect(provider.getQuote).not.toHaveBeenCalled();expect(provider.getCandles).not.toHaveBeenCalled();
+});
+
+it('refreshes only the fields whose own cadence crossed a boundary',async()=>{
+  vi.useFakeTimers();vi.setSystemTime(new Date('2026-09-11T15:30:00Z'));const now=Date.now(),old1h={...card('1h',now),asOf:closedAt(now,periods['1h'])-periods['1h'],barCloseTime:closedAt(now,periods['1h'])-periods['1h']};
+  const snapshot:any={symbol:'SOLUSDT',quote:{ts:now},orderBook:{ts:now},derivatives:{ts:now-301_000},technical:{'1h':old1h,'4h':card('4h',now),'1d':card('1d',now),'1w':card('1w',now)}};
+  const provider:any={getDerivatives:vi.fn(async()=>({ts:now})),getQuote:vi.fn(),getCandles:vi.fn(async(_symbol:string,tf:string)=>candles(now,periods[tf as keyof typeof periods]))};
+  const state:any={snapshots:new Map([['SOLUSDT',snapshot]])},hub=new MarketDataHub(provider,state,{publish:vi.fn()} as any);hub.setRetentionSymbols(['SOLUSDT']);(hub as any).rulesUpdatedAt.set('SOLUSDT',now);
+  expect(await hub.refreshSlowFields(['SOLUSDT'])).toBe(1);expect(provider.getDerivatives).toHaveBeenCalledOnce();expect(provider.getQuote).not.toHaveBeenCalled();expect(provider.getCandles).toHaveBeenCalledTimes(1);expect(provider.getCandles).toHaveBeenCalledWith('SOLUSDT','1h',80);expect(state.snapshots.get('SOLUSDT').technical['1h'].barCloseTime).toBe(closedAt(now,periods['1h']));
+});

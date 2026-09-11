@@ -25,6 +25,24 @@ export class MarketCohort {
   symbols(){return new Set(this.members);}
   private retain(){this.market.setRetentionSymbols(new Set([...this.members,...this.protectedSymbols()]));}
 
+  /**
+   * Runtime bootstrap may already have loaded a bounded market set before the cohort controller
+   * takes ownership. Reuse those cards instead of deleting them and immediately issuing the same
+   * REST bootstrap again. Protected owners remain outside reusable inventory.
+   */
+  private adoptBootstrapInventory(now:number,cfg:any){
+    if(this.members.size)return;
+    const protectedSymbols=this.protectedSymbols(),underlyings=new Set([...protectedSymbols].map(resolveUnderlying));
+    let adopted=0;
+    for(const symbol of this.market.retentionSymbols()){
+      const canonical=String(symbol).toUpperCase(),underlying=resolveUnderlying(canonical);
+      if(adopted>=Math.max(1,Number(cfg.size??100)))break;
+      if(protectedSymbols.has(canonical)||underlyings.has(underlying)||!this.market.snapshot(canonical))continue;
+      this.members.add(canonical);this.joinedAt.set(canonical,now);underlyings.add(underlying);adopted++;
+    }
+    if(adopted)this.events.publish('MARKET_COHORT_BOOTSTRAP_ADOPTED',{adopted,members:this.members.size,retention:this.market.retentionSymbols().size});
+  }
+
   /** Only global non-supply blockers suppress inventory churn. Empty/supply-starved cohorts must still be able to bootstrap/refill. */
   private globalBlockReason(){
     const mode=String(this.state.runtimeControl?.mode??'');
@@ -43,6 +61,7 @@ export class MarketCohort {
   async tick(reason='PERIODIC'){
     if(this.flight)return this.flight;
     const now=this.now(),cfg:any=this.state.settings.selection.cohort??{size:100,hydrateBatchSize:20,readyLowWatermark:6,refillBackoffSeconds:60,discoveryRefreshSeconds:900,staleMemberRotationMinutes:120,protectedRatio:.75};
+    this.adoptBootstrapInventory(now,cfg);
     this.retireConsumed();
     this.rotateStale(now,cfg);
     this.retain();

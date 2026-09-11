@@ -7,6 +7,8 @@ import type { MarketDataHub } from './marketDataHub.js';
 export class MarketCohort {
   private members=new Set<string>();
   private joinedAt=new Map<string,number>();
+  /** Retention owner for candidates between discovery and the hydration outcome. */
+  private hydrating=new Set<string>();
   private flight:Promise<number>|null=null;
   private retryAt=0;
   private noResultKey='';
@@ -23,7 +25,7 @@ export class MarketCohort {
     ]);
   }
   symbols(){return new Set(this.members);}
-  private retain(){this.market.setRetentionSymbols(new Set([...this.members,...this.protectedSymbols()]));}
+  private retain(){this.market.setRetentionSymbols(new Set([...this.members,...this.hydrating,...this.protectedSymbols()]));}
 
   /**
    * Runtime bootstrap may already have loaded a bounded market set before the cohort controller
@@ -96,9 +98,10 @@ export class MarketCohort {
   private async refill(batch:number,key:string,reason:string){
     if(batch<=0)return 0;
     const cfg:any=this.state.settings.selection.cohort,priority=[...(this.state.settings.selection.assetDirectory?.approvedLiquid??[]),...this.protectedSymbols()];
+    let candidates:string[]=[];
     try{
       const discovered=await this.market.discover(Math.max(cfg.size,batch),priority),seen=new Set(this.members),underlyings=new Set([...this.members,...this.protectedSymbols()].map(resolveUnderlying));
-      const candidates=discovered.filter(symbol=>!seen.has(symbol)&&!underlyings.has(resolveUnderlying(symbol))).slice(0,batch);
+      candidates=discovered.filter(symbol=>!seen.has(symbol)&&!underlyings.has(resolveUnderlying(symbol))).slice(0,batch);
       if(!candidates.length){
         this.noResultKey=key;
         const discoveryRetryMs=Math.max(Math.max(1,cfg.refillBackoffSeconds)*1000,Number(cfg.discoveryRefreshSeconds??900)*1000);
@@ -106,10 +109,13 @@ export class MarketCohort {
         this.events.publish('MARKET_COHORT_NO_NEW_RESULT',{reason,key,retryAt:this.retryAt,members:this.members.size});
         return 0;
       }
-      // Temporary ownership exists only for the in-flight hydration. Failed cards never become members.
-      this.market.setRetentionSymbols(new Set([...this.market.retentionSymbols(),...candidates]));
+      // This is a first-class retention owner: a normal 15-second retention sync must not
+      // evict an in-flight card before hydrate can turn it into a member.
+      for(const symbol of candidates)this.hydrating.add(symbol);
+      this.retain();
       const loaded=await this.market.hydrateSymbols(candidates),ready=candidates.filter(symbol=>this.market.snapshot(symbol));
       for(const symbol of ready){this.members.add(symbol);this.joinedAt.set(symbol,this.now());}
+      for(const symbol of candidates)this.hydrating.delete(symbol);
       this.retain();
       const partial=ready.length<candidates.length;
       this.noResultKey=partial?key:'';
@@ -119,6 +125,7 @@ export class MarketCohort {
     }catch(error){
       const delay=Math.max(1,cfg.refillBackoffSeconds)*1000;
       this.noResultKey=key;this.retryAt=this.now()+delay;
+      for(const symbol of candidates)this.hydrating.delete(symbol);
       this.retain();
       this.events.publish('MARKET_COHORT_FAILED',{reason,message:error instanceof Error?error.message:String(error),retryAt:this.retryAt});
       return 0;

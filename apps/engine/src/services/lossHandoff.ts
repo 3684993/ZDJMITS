@@ -27,7 +27,11 @@ export class LossHandoffService {
       if(closedAt!==expected){
         // A bar that opened before the position, or any missing/late gap, is UNKNOWN.
         // Never infer skipped loss duration from wall-clock time or the current mark.
-        this.state.positions.set(position.id,{...position,lossHandoff:{...prior,status:'UNKNOWN'}});
+        // A forward factual bar is nevertheless a safe new anchor. Reset, rather than
+        // carrying inferred losses across the gap, so subsequent contiguous closed bars
+        // can resume the deterministic handoff sequence.
+        if(closedAt>expected)this.state.positions.set(position.id,{...position,lossHandoff:{...prior,lastClosedBarAt:closedAt,consecutiveLossBars:0,status:'ACTIVE'}});
+        else this.state.positions.set(position.id,{...position,lossHandoff:{...prior,status:'UNKNOWN'}});
         continue;
       }
       const loss=position.side==='LONG'?closedPrice<position.entryPrice:closedPrice>position.entryPrice,count=loss?prior.consecutiveLossBars+1:0,next={...prior,lastClosedBarAt:closedAt,consecutiveLossBars:count,status:'ACTIVE' as const};

@@ -103,8 +103,12 @@ export class MarketDataHub {
           ...dueFrames.map(([tf,n])=>this.provider.getCandles(symbol,tf,n)),
         ]);
         if(!this.canWrite(symbol,epoch))return;
-        const technical={...current.technical};for(let i=0;i<dueFrames.length;i++){const [tf]=dueFrames[i]!,rows=candles[i]!;if(rows.length)technical[tf]=buildTechnicalCard(tf,rows);}
-        this.state.snapshots.set(symbol,{...current,quote,derivatives,technical});if(rulesDue)this.rulesUpdatedAt.set(symbol,now);updated++;
+        // A live tick can replace quote/book while slow REST is in flight. Re-read after
+        // await and merge only the slow facts; never restore the pre-await snapshot.
+        const latest=this.state.snapshots.get(symbol);if(!latest)return;
+        const technical={...latest.technical};for(let i=0;i<dueFrames.length;i++){const [tf]=dueFrames[i]!,rows=candles[i]!;if(rows.length)technical[tf]=buildTechnicalCard(tf,rows);}
+        const contractQuote=rulesDue?{...latest.quote,tickSize:quote.tickSize,stepSize:quote.stepSize,minQty:quote.minQty,minNotional:quote.minNotional}:latest.quote;
+        this.state.snapshots.set(symbol,{...latest,quote:contractQuote,derivatives,technical});if(rulesDue)this.rulesUpdatedAt.set(symbol,now);updated++;
       }catch(error){this.events.publish('MARKET_SYMBOL_ERROR',{scope:'SLOW_FIELDS',message:error instanceof Error?error.message:String(error)},symbol);}
     });
     this.events.publish('MARKET_SLOW_FIELDS_REFRESHED',{requested:unique.length,updated});return updated;

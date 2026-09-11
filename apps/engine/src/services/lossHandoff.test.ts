@@ -32,10 +32,20 @@ it('rejects the bar that was already open when the position opened',()=>{
   expect(h.events).toHaveLength(0);
 });
 
-it('marks a missing first eligible closed bar UNKNOWN instead of inferring loss duration',()=>{
+it('resets and anchors a missing first eligible closed bar instead of inferring loss duration',()=>{
   const h=fixture(),late=2_699_999;
   h.state.snapshots.set('BTCUSDT',{technical:{'15m':{isClosed:true,barCloseTime:late,lastClosedBar:{closeTime:late,close:99}}},quote:{mark:99}} as any);
   h.service.tick();
-  expect(h.state.positions.get('p')).toMatchObject({managementStatus:'AUTO_MANAGED',lossHandoff:{status:'UNKNOWN',consecutiveLossBars:0,lastClosedBarAt:null}});
+  expect(h.state.positions.get('p')).toMatchObject({managementStatus:'AUTO_MANAGED',lossHandoff:{status:'ACTIVE',consecutiveLossBars:0,lastClosedBarAt:late}});
   expect(h.events).toHaveLength(0);
+});
+
+it('resets on a factual closed-bar gap, anchors it, and resumes only later contiguous losses',()=>{
+  const h=fixture(),first=1_799_999;
+  h.state.snapshots.set('BTCUSDT',{technical:{'15m':{isClosed:true,barCloseTime:first,lastClosedBar:{closeTime:first,close:99}}}} as any);
+  h.service.tick();
+  const card:any=h.state.snapshots.get('BTCUSDT')!.technical['15m'];card.barCloseTime+=1_800_000;card.lastClosedBar.closeTime+=1_800_000;vi.setSystemTime(3_700_000);
+  h.service.tick();expect(h.state.positions.get('p')).toMatchObject({managementStatus:'AUTO_MANAGED',lossHandoff:{lastClosedBarAt:3_599_999,consecutiveLossBars:0,status:'ACTIVE'}});
+  card.barCloseTime+=900_000;card.lastClosedBar.closeTime+=900_000;vi.setSystemTime(4_600_000);h.service.tick();expect((h.state.positions.get('p') as any).lossHandoff.consecutiveLossBars).toBe(1);
+  card.barCloseTime+=900_000;card.lastClosedBar.closeTime+=900_000;vi.setSystemTime(5_500_000);h.service.tick();expect(h.state.positions.get('p')).toMatchObject({managementStatus:'HUMAN_MANAGED',lossHandoff:{status:'HUMAN_HANDOFF',consecutiveLossBars:2}});
 });

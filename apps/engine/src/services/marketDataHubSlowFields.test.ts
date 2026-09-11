@@ -33,3 +33,12 @@ it('refreshes contract-rule facts on their own cadence without rebuilding techni
   const state:any={snapshots:new Map([['SOLUSDT',snapshot]])},hub=new MarketDataHub(provider,state,{publish:vi.fn()} as any);hub.setRetentionSymbols(['SOLUSDT']);(hub as any).rulesUpdatedAt.set('SOLUSDT',now-901_000);
   expect(await hub.refreshSlowFields(['SOLUSDT'])).toBe(1);expect(provider.getQuote).toHaveBeenCalledOnce();expect(provider.getDerivatives).not.toHaveBeenCalled();expect(provider.getCandles).not.toHaveBeenCalled();expect(state.snapshots.get('SOLUSDT').quote.tickSize).toBe(.001);expect((hub.fieldFreshness('SOLUSDT',now) as any).fields.contractRules.fresh).toBe(true);
 });
+
+it('merges completed slow facts into the latest tick snapshot instead of restoring old quote/book facts',async()=>{
+  vi.useFakeTimers();vi.setSystemTime(new Date('2026-09-11T15:30:00Z'));const now=Date.now();let release!:(value:any)=>void;
+  const derivatives=new Promise<any>(resolve=>release=resolve),snapshot:any={symbol:'SOLUSDT',quote:{symbol:'SOLUSDT',last:100,mark:100,bid:99.9,ask:100.1,tickSize:.01,stepSize:.1,minQty:.1,minNotional:5,ts:now},orderBook:{symbol:'SOLUSDT',bids:[[99.9,1]],asks:[[100.1,1]],ts:now},derivatives:{ts:now-301_000},technical:{'1h':card('1h',now),'4h':card('4h',now),'1d':card('1d',now),'1w':card('1w',now)}};
+  const state:any={snapshots:new Map([['SOLUSDT',snapshot]])},provider:any={getDerivatives:vi.fn(()=>derivatives),getQuote:vi.fn(),getCandles:vi.fn(),hydrateLiveMarket:vi.fn((current:any)=>({...current,quote:{...current.quote,last:202,mark:202,bid:201.9,ask:202.1,ts:now+1},orderBook:{...current.orderBook,bids:[[201.9,2]],asks:[[202.1,2]],ts:now+1}}))};
+  const hub=new MarketDataHub(provider,state,{publish:vi.fn()} as any);hub.setRetentionSymbols(['SOLUSDT']);(hub as any).rulesUpdatedAt.set('SOLUSDT',now);
+  const slow=hub.refreshSlowFields(['SOLUSDT']);await Promise.resolve();await hub.tick();release({ts:now,openInterest:77});await slow;
+  expect(state.snapshots.get('SOLUSDT')).toMatchObject({quote:{last:202,mark:202},orderBook:{bids:[[201.9,2]]},derivatives:{openInterest:77}});
+});

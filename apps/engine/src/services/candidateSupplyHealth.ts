@@ -2,6 +2,16 @@ import type { RuntimeState } from '../state/runtimeState.js';
 
 const activeOrderStatuses=new Set(['NEW','SUBMITTING','UNKNOWN','WORKING','PARTIALLY_FILLED']);
 const runnableLifecycle=new Set(['READY','SHORTLIST','SCOUT_QUEUED','SCOUT_RUNNING','SCOUT_DONE','PRIMARY_QUEUED','PRIMARY_RUNNING','PLACE_READY']);
+const blockerCategory=(reason:string):'SUPPLY'|'CAPITAL'|'CAPACITY'|'RISK'|'MARKET'|'GOVERNANCE'|'AI'=>{
+  const r=reason.toUpperCase();
+  if(r.includes('AI_')||r.includes('PRIMARY_'))return'AI';
+  if(r.includes('RISK')||r.includes('DRAWDOWN')||r.includes('CIRCUIT'))return'RISK';
+  if(r.includes('POSITION_CAPACITY')||r.includes('MAX_POSITION')||r.includes('RESERVATION')||r.includes('OCCUP'))return'CAPACITY';
+  if(r.includes('CAPITAL')||r.includes('MARGIN')||r.includes('BALANCE')||r.includes('DIRECTION_CAPACITY')||r.includes('NOT_ROUTED'))return'CAPITAL';
+  if(r.includes('STALE')||r.includes('TECHNICAL')||r.includes('QUOTE')||r.includes('ORDER_BOOK')||r.includes('MARKET')||r.includes('DATA_'))return'MARKET';
+  if(r.includes('ASSET_')||r.includes('GOVERNANCE')||r.includes('BLACKLIST')||r.includes('EXCLUDED')||r.includes('QUALITY_'))return'GOVERNANCE';
+  return'SUPPLY';
+};
 
 export function candidateSupplyHealth(state:RuntimeState){
   const pool=state.pool.list(),universe=state.universe,capital=state.runtimeControl.capital;
@@ -26,21 +36,10 @@ export function candidateSupplyHealth(state:RuntimeState){
     const route=routeBySymbol.get(candidate.symbol);if(!route)add('CAPITAL_NOT_ROUTED');else if(!route.longExecutable&&!route.shortExecutable)add('DIRECTION_CAPACITY_UNAVAILABLE');
   }
   for(const [reason,count] of Object.entries(capital.reasonCounts??{}))if(count>0)add(`CAPITAL_${reason}`,count);
-  const topBlockers=[...blockers.entries()].map(([reason,count])=>({reason,count})).sort((a,b)=>b.count-a.count||a.reason.localeCompare(b.reason)).slice(0,12);
+  const topBlockers=[...blockers.entries()].map(([reason,count])=>({reason,count,category:blockerCategory(reason)})).sort((a,b)=>b.count-a.count||a.reason.localeCompare(b.reason)).slice(0,12);
+  const blockerCategories={SUPPLY:0,CAPITAL:0,CAPACITY:0,RISK:0,MARKET:0,GOVERNANCE:0,AI:0};for(const [reason,count] of blockers)blockerCategories[blockerCategory(reason)]+=count;
+  const readyZeroReason=executionReady.length===0?[...Object.entries(blockerCategories)].sort((a,b)=>b[1]-a[1])[0]?.[0]??'SUPPLY':null;
   return {
-    semanticVersion:'PHASE_A_V1',
-    activeCohortCount:state.snapshots.size,
-    activeCohortSemantic:'CURRENT_ONLINE_SNAPSHOT_SET',
-    residentCount:resident.length,
-    pipelineReadyCount:pipelineReady.length,
-    executionReadyCount:executionReady.length,
-    capitalExecutableCount:capital.executableCandidateCount,
-    poolResidentCount:pool.length,
-    poolReadyCount:pool.filter(item=>item.state==='READY').length,
-    poolWaitingCount:pool.filter(item=>item.state==='WAITING').length,
-    consumedCount:consumed.size,
-    zombieSnapshotCount:zombieSnapshots.length,
-    zombieSnapshots:zombieSnapshots.slice(0,20),
-    topBlockers,
+    semanticVersion:'PHASE_A_V1',activeCohortCount:state.snapshots.size,activeCohortSemantic:'CURRENT_ONLINE_SNAPSHOT_SET',residentCount:resident.length,pipelineReadyCount:pipelineReady.length,executionReadyCount:executionReady.length,capitalExecutableCount:capital.executableCandidateCount,poolResidentCount:pool.length,poolReadyCount:pool.filter(item=>item.state==='READY').length,poolWaitingCount:pool.filter(item=>item.state==='WAITING').length,consumedCount:consumed.size,zombieSnapshotCount:zombieSnapshots.length,zombieSnapshots:zombieSnapshots.slice(0,20),readyZeroReason,blockerCategories,topBlockers,
   };
 }

@@ -25,6 +25,7 @@ import { DirectionPolicyService } from './directionPolicyService.js';
 import { reconcileCandidateLifecycles } from './candidateLifecycleDeriver.js';
 import type { MarketDataHub } from './marketDataHub.js';
 import { decisionContextKey, decisionContextPermissions, decisionSettingsContext, nextClosedFiveMinute } from './decisionContext.js';
+import { evaluatePreflightFeasibility } from './preflightFeasibility.js';
 
 export class EntryCoordinator {
   private active = new Set<string>();
@@ -101,9 +102,6 @@ export class EntryCoordinator {
     }
     const primaryCapacity = this.state.aiResources.filter((r:any) => r.role === "PRIMARY_BRAIN").reduce((n:number,r:any) => n + r.maxConcurrency, 0);
     if(this.active.size>=Math.max(1,primaryCapacity)) {this.ai.setIdleContext('AI_RESOURCE_BUSY',ready.length,'等待 Primary 完成本次决策');return;}
-    // A due circuit is probed by one bounded read-only health request before a
-    // single half-open Primary is allowed.  This never starts or recovers the
-    // model service, and OPEN never sends chat/completions.
     await this.ai.probePrimaryIfDue(now);
     if(!this.ai.hasCapacity('PRIMARY_BRAIN')) {
       this.ai.setIdleContext('AI_PRIMARY_CIRCUIT_OPEN',ready.length,'Primary 请求连续失败，等待退避窗口后再尝试');
@@ -114,7 +112,6 @@ export class EntryCoordinator {
       this.ai.setIdleContext(reason, 0, !routes.size?'当前无可执行容量；继续供给与订单维护':'等待新的候选事实，避免重复推理');
       return;
     }
-    // One Primary per candidate; no mandatory Scout or speculative prefetch.
     this.ai.setIdleContext(
       "WAITING_PRIMARY",
       ready.length - 1,
@@ -125,15 +122,10 @@ export class EntryCoordinator {
     this.transition(symbol,"PRIMARY_QUEUED","SCHEDULER_DISPATCH");
     void this.analyze(symbol);
   }
-  // Kept as an observable compatibility hook for diagnostics/tests. The scheduler no longer
-  // blocks the流水线 on a fixed global cadence; single-flight and candidate cooldown are the guards.
-  cadenceReady(_now = Date.now()) {
-    return true;
-  }
-  /** Ranking only: closed facts are used to break fair waiting ties, never as a Place gate. */
+  cadenceReady(_now = Date.now()) { return true; }
   private primaryReadinessScore(symbol:string,fallback:number){const candidate:any=this.state.universe.find((x:any)=>x.symbol===symbol),card:any=this.state.snapshots.get(symbol)?.technical?.['15m'],now=Date.now();if(card?.isClosed!==true||!Number.isFinite(card?.barCloseTime)||card.barCloseTime>now)return Number(candidate?.schedulerPriority??fallback);const trend=Number(card.trendStrength??0),momentum=Math.abs(Number(card.macdHistogramSlope??0)),volume=Math.max(0,Number(card.volumeZScore??0));return Number(candidate?.schedulerPriority??fallback)+Math.min(1,Math.max(0,trend*.6+Math.min(.25,momentum)+Math.min(.15,volume*.05)));}
-  /** Read-only feasibility before Primary.  Post-AI allocation/reservation/final guards remain authoritative. */
-  private preflight(symbol:string){const now=Date.now(),route=this.state.runtimeControl.capital.routedCandidates.find((row:any)=>row.symbol===symbol),market=this.state.snapshots.get(symbol),candidate:any=this.state.universe.find((row:any)=>row.symbol===symbol),directions:("LONG"|"SHORT")[]=[];if(route?.longExecutable)directions.push('LONG');if(route?.shortExecutable)directions.push('SHORT');const capacity=this.state.entryCapacity(),reservationValid=[...this.state.entryReservations.values()].every((r:any)=>!['RESERVED','WORKING'].includes(r.status)||r.expiresAt>now),marketReason=this.market?.primaryReadyReasons(symbol,now)[0]??entryDataError(market),governance=Boolean(candidate?.eligible&&candidate?.pipelineEligible!==false),privateReady=privateAccountFresh(this.state.account),capitalVersion=this.state.runtimeControl.capital.capitalVersion;let reason='PASS';if(!market)reason='MARKET_DATA_MISSING';else if(marketReason)reason=`MARKET_${marketReason}`;else if(!governance)reason='GOVERNANCE_OR_PIPELINE_BLOCKED';else if(!privateReady)reason='PRIVATE_NOT_READY';else if(capacity.used>=capacity.max)reason='POSITION_CAPACITY_FULL';else if(!reservationValid)reason='STALE_RESERVATION_FACT';else if(!capitalVersion)reason='CAPITAL_VERSION_MISSING';else if(!directions.length)reason='NO_FEASIBLE_DIRECTION';return{symbol,allowedDirections:directions,feasibleNotionalUsd:{LONG:route?.longFeasibleNotionalUsd??route?.longRecommendedNotionalUsd??0,SHORT:route?.shortFeasibleNotionalUsd??route?.shortRecommendedNotionalUsd??0},capitalVersion,marketGeneration:this.state.marketGeneration,capacity,privateReady,governance,reservationValid,createdAt:now,pass:reason==='PASS',reason};}
+  /** Read-only feasibility before Primary. Post-AI allocation/reservation/final guards remain authoritative. */
+  private preflight(symbol:string){return evaluatePreflightFeasibility(this.state,symbol,this.market?.primaryReadyReasons(symbol,Date.now())??[]);}
   private primaryOccupancyBlock(symbol:string){
     const now=Date.now(),underlying=resolveUnderlying(symbol),sameUnderlying=(value:string)=>resolveUnderlying(value)===underlying;
     if([...this.state.positions.values()].some(row=>sameUnderlying(row.symbol)))return'UNDERLYING_POSITION_EXISTS';
@@ -167,7 +159,6 @@ export class EntryCoordinator {
     if(this.market?.primaryReadyReasons(symbol,now).length)return'MARKET_DATA_STALE';
     if([...this.state.positions.values()].some(p=>String(p.symbol).replace(/(USDT|USDC|BUSD)$/,'')===underlying))return'UNDERLYING_POSITION_EXISTS';
     if([...this.state.entryOrders.values()].some(x=>x.id!==order?.id&&['NEW','SUBMITTING','UNKNOWN','WORKING','PARTIALLY_FILLED'].includes(x.status)&&String(x.symbol).replace(/(USDT|USDC|BUSD)$/,'')===underlying))return'UNDERLYING_ENTRY_EXISTS';
-    const otherWorking=[...this.state.entryOrders.values()].filter(x=>x.id!==order?.id&&['NEW','SUBMITTING','UNKNOWN','WORKING','PARTIALLY_FILLED'].includes(x.status)).length,otherCapacityReservations=[...this.state.entryReservations.values()].filter((row:any)=>row.id!==reservation.id&&['RESERVED','WORKING'].includes(row.status)&&row.expiresAt>now&&!([...this.state.entryOrders.values()].some(orderRow=>orderRow.reservationId===row.id&&['NEW','SUBMITTING','UNKNOWN','WORKING','PARTIALLY_FILLED'].includes(orderRow.status)))).length;
     if(this.state.entryCapacity(order?.id,reservation.id).used>=this.state.settings.portfolio.maxPositions)return'RISK_MAX_POSITIONS';
     if(order){const q=snapshot.quote,tickUnits=order.price/q.tickSize,stepUnits=order.quantity/q.stepSize,rangeEpsilon=Math.max(Number.EPSILON*Math.max(1,Math.abs(intent.acceptablePriceRange.min),Math.abs(intent.acceptablePriceRange.max))*8,q.tickSize*1e-9);if(order.price+rangeEpsilon<intent.acceptablePriceRange.min||order.price-rangeEpsilon>intent.acceptablePriceRange.max)return'ORDER_PRICE_OUTSIDE_AUTHORIZATION';if(order.quantity+1e-12<q.minQty||order.quantity*order.price+1e-9<q.minNotional)return'EXCHANGE_MINIMUM_NOT_MET';if(!Number.isFinite(tickUnits)||Math.abs(tickUnits-Math.round(tickUnits))>1e-7||!Number.isFinite(stepUnits)||Math.abs(stepUnits-Math.round(stepUnits))>1e-7)return'EXCHANGE_PRECISION_INVALID';}
     const risk=buildRiskEnvelope({settings:this.state.settings,equity:Math.max(1,Number(this.state.account.equityUsd??0)),positions:[...this.state.positions.values()],symbol,side:intent.side,plannedNotional:Number(plan?.notionalUsd??0),reservedIntents:[...this.state.entryReservations.values()].filter(x=>x.status==='RESERVED'&&x.id!==reservation.id).length,workingOrders:[...this.state.entryOrders.values()].filter(x=>x.id!==order?.id&&['NEW','SUBMITTING','UNKNOWN','WORKING','PARTIALLY_FILLED'].includes(x.status)).length,dailyDrawdownPct:Number(this.state.account.riskBaseline?.riskDrawdownPct??0),expectedAdverseMovePct:Math.max(.001,snapshot.technical['15m'].atrPercent/100),quoteMarginUsage:plan?.quoteAsset==='USDT'?Number(plan?.exposureBefore?.usdtMarginUsd??0):Number(plan?.exposureBefore?.usdcMarginUsd??0)});
@@ -248,50 +239,14 @@ export class EntryCoordinator {
           this.state.settings.riskGovernance.requiredEvidenceCompleteness &&
         this.state.settings.riskGovernance.failClosedOnMissingEvidence
       ) {
-        this.events.publish(
-          "ENTRY_DECISION_BLOCKED",
-          {
-            stage: "EIP",
-            reason: "EVIDENCE_INCOMPLETE_FAIL_CLOSED",
-            evidenceCompleteness: packet.evidenceCompleteness,
-            required:
-              this.state.settings.riskGovernance.requiredEvidenceCompleteness,
-          },
-          symbol,
-        );
+        this.events.publish("ENTRY_DECISION_BLOCKED",{stage:"EIP",reason:"EVIDENCE_INCOMPLETE_FAIL_CLOSED",evidenceCompleteness:packet.evidenceCompleteness,required:this.state.settings.riskGovernance.requiredEvidenceCompleteness},symbol);
         this.reject(symbol, "EVIDENCE_INCOMPLETE_FAIL_CLOSED");
         return;
       }
-      if (
-        packet.evidenceCompleteness <
-        this.state.settings.ai.minEvidenceCompleteness
-      )
-        this.events.publish(
-          "EIP_CONTEXTUAL_EVIDENCE_INCOMPLETE",
-          {
-            evidenceCompleteness: packet.evidenceCompleteness,
-            policy: "FAIL_CLOSED_FOR_ENTRY",
-          },
-          symbol,
-        );
-      if (
-        this.state.executionGovernance?.mode !== "AUTO_RUNNING" ||
-        this.state.runtimeControl.mode !== "RUNNING" ||
-        !this.state.settings.riskGovernance.entrySafetyMode ||
-        this.state.settings.riskGovernance.entrySafetyMode !== "AUTO"
-      ) {
-        this.events.publish(
-          "ENTRY_ANALYSIS_PAUSED",
-          {
-            stage: "BEFORE_PRIMARY",
-            reason:
-              this.state.executionGovernance?.reason ??
-              this.state.runtimeControl.reasonText,
-            safetyMode: this.state.settings.riskGovernance.entrySafetyMode,
-            executionMode: this.state.executionGovernance?.mode,
-          },
-          symbol,
-        );
+      if (packet.evidenceCompleteness < this.state.settings.ai.minEvidenceCompleteness)
+        this.events.publish("EIP_CONTEXTUAL_EVIDENCE_INCOMPLETE",{evidenceCompleteness:packet.evidenceCompleteness,policy:"FAIL_CLOSED_FOR_ENTRY"},symbol);
+      if (this.state.executionGovernance?.mode !== "AUTO_RUNNING" || this.state.runtimeControl.mode !== "RUNNING" || !this.state.settings.riskGovernance.entrySafetyMode || this.state.settings.riskGovernance.entrySafetyMode !== "AUTO") {
+        this.events.publish("ENTRY_ANALYSIS_PAUSED",{stage:"BEFORE_PRIMARY",reason:this.state.executionGovernance?.reason ?? this.state.runtimeControl.reasonText,safetyMode:this.state.settings.riskGovernance.entrySafetyMode,executionMode:this.state.executionGovernance?.mode},symbol);
         return;
       }
       this.transition(symbol,"PRIMARY_QUEUED","WAITING_PRIMARY_SLOT");
@@ -312,459 +267,62 @@ export class EntryCoordinator {
       terminalRunId=result.runId;
       const d = result.decision;
       if (d.decision === 'REJECT_CANDIDATE' || !d.decision) { this.reject(symbol,d.reason,result.runId,d.direction); return; }
-      if(d.decision==='WAIT_FOR_PRICE') {
-        const market=this.state.snapshots.get(symbol),error=entryDataError(market);
-        if(error)throw new Error(error);
-        const wait=waitingContext(d,result.runId,market!);
-        this.transition(symbol,'WAIT_FOR_PRICE',d.reason,{waitContext:wait,nextEligibleAt:null});
-        this.state.pool.remove(symbol);this.state.pool.replenish(this.state.universe);
-        this.events.publish('ENTRY_WAIT_SAVED',{runId:result.runId,wait,entryIntentCreated:false},symbol);return;
-      }
-      if(d.decision!=='PLACE_LONG'&&d.decision!=='PLACE_SHORT') {
-        this.events.publish('PRIMARY_NO_ENTRY',{runId:result.runId,decision:d.decision,reason:d.reason,entryIntentCreated:false},symbol);
-        this.cooldown(symbol,d.reason,this.aiFailureCooldownSeconds(),d.decision==='DATA_ERROR'||d.decision==='AI_OUTPUT_INVALID'?'AI_FAILURE_COOLDOWN':'REJECT_COOLDOWN');return;
-      }
+      if(d.decision==='WAIT_FOR_PRICE') {const market=this.state.snapshots.get(symbol),error=entryDataError(market);if(error)throw new Error(error);const wait=waitingContext(d,result.runId,market!);this.transition(symbol,'WAIT_FOR_PRICE',d.reason,{waitContext:wait,nextEligibleAt:null});this.state.pool.remove(symbol);this.state.pool.replenish(this.state.universe);this.events.publish('ENTRY_WAIT_SAVED',{runId:result.runId,wait,entryIntentCreated:false},symbol);return;}
+      if(d.decision!=='PLACE_LONG'&&d.decision!=='PLACE_SHORT') {this.events.publish('PRIMARY_NO_ENTRY',{runId:result.runId,decision:d.decision,reason:d.reason,entryIntentCreated:false},symbol);this.cooldown(symbol,d.reason,this.aiFailureCooldownSeconds(),d.decision==='DATA_ERROR'||d.decision==='AI_OUTPUT_INVALID'?'AI_FAILURE_COOLDOWN':'REJECT_COOLDOWN');return;}
       const marketForPolicy=this.state.snapshots.get(symbol)!;
       const dataError=entryDataError(marketForPolicy);if(dataError){this.events.publish('ENTRY_DATA_ERROR',{runId:result.runId,reason:dataError},symbol);this.reject(symbol,dataError,result.runId,d.direction);return;}
-      const directionPolicy=this.directionPolicy.evaluate(symbol,marketForPolicy);
-      const allowed=this.directionPolicy.allows(directionPolicy,d);
+      const directionPolicy=this.directionPolicy.evaluate(symbol,marketForPolicy),allowed=this.directionPolicy.allows(directionPolicy,d);
       if(!allowed.ok){this.events.publish('ENTRY_DIRECTION_POLICY_BLOCKED',{runId:result.runId,policy:directionPolicy,reason:allowed.reason,decision:d},symbol);this.reject(symbol,allowed.reason!,result.runId,d.direction);return;}
       const fingerprint=JSON.stringify({bar15:(marketForPolicy.technical['15m'] as any).updatedAt??(marketForPolicy.technical['15m'] as any).close??marketForPolicy.quote.last,priceAtr:Math.round(marketForPolicy.quote.last/Math.max(.000001,marketForPolicy.technical['15m'].atr14)),regime:(packet as any).globalRegime?.regime,trend4h:marketForPolicy.technical['4h'].trend,spread:Math.round((marketForPolicy.quote.ask-marketForPolicy.quote.bid)/marketForPolicy.quote.last*10000)});
       const previous=this.state.directionDecisionStates.get(symbol),nextDecision=d.decision;
       if(previous?.fingerprint===fingerprint&&((previous.decision==='REJECT_CANDIDATE'&&nextDecision==='PLACE_LONG')||(previous.direction==='SHORT'&&d.direction==='LONG')))this.events.publish('DIRECTION_STABILITY_SHADOW',{runId:result.runId,previous,next:{decision:nextDecision,direction:d.direction},wouldBlock:true,orderAuthorization:false},symbol);
       this.state.directionDecisionStates.set(symbol,{fingerprint,decision:nextDecision,direction:d.direction,updatedAt:Date.now(),materialDecisionChange:previous?.fingerprint!==fingerprint});
       this.events.publish('MATERIAL_DECISION_CHANGE',{fingerprint,materialDecisionChange:previous?.fingerprint!==fingerprint,policy:directionPolicy,decision:nextDecision,direction:d.direction},symbol);
-      if (
-        !d.acceptablePriceRange ||
-        d.idealPrice == null ||
-        d.horizonMinutes == null
-      ) {
-        this.reject(symbol, "Brain returned incomplete entry intent");
-        return;
-      }
-      const range = d.acceptablePriceRange,
-        deterministicInvalid =
-          range.min > range.max ||
-          d.idealPrice < range.min ||
-          d.idealPrice > range.max ||
-          (d.decision === "PLACE_LONG" && d.direction !== "LONG") ||
-          (d.decision === "PLACE_SHORT" && d.direction !== "SHORT");
-      if (deterministicInvalid) {
-        this.events.publish(
-          "ENTRY_DECISION_BLOCKED",
-          {
-            stage: "POST_AI_VERIFY",
-            reason: "DETERMINISTIC_POST_AI_VERIFY_FAILED",
-            idealPrice: d.idealPrice,
-            acceptablePriceRange: range,
-            direction: d.direction,
-            decision: d.decision,
-          },
-          symbol,
-        );
-        this.reject(
-          symbol,
-          "DETERMINISTIC_POST_AI_VERIFY_FAILED",
-          result.runId,
-          d.direction,
-        );
-        return;
-      }
-      if (
-        this.state.settings.riskGovernance.protectionMode === "REQUIRED" &&
-        (d.missingEvidence.length > 0 || d.contradictions.length > 3)
-      ) {
-        this.events.publish(
-          "ENTRY_DECISION_BLOCKED",
-          {
-            stage: "ENTRY_PROTECTION",
-            reason: "ENTRY_PROTECTION_REQUIRED",
-            missingEvidence: d.missingEvidence.length,
-            contradictions: d.contradictions.length,
-          },
-          symbol,
-        );
-        this.reject(
-          symbol,
-          "ENTRY_PROTECTION_REQUIRED",
-          result.runId,
-          d.direction,
-        );
-        return;
-      }
-      if (this.state.settings.riskGovernance.protectionMode === "SHADOW")
-        this.events.publish(
-          "ENTRY_PROTECTION_SHADOW",
-          {
-            decision: d.decision,
-            confidence: d.confidence,
-            missingEvidence: d.missingEvidence.length,
-            contradictions: d.contradictions.length,
-          },
-          symbol,
-        );
+      if (!d.acceptablePriceRange || d.idealPrice == null || d.horizonMinutes == null) {this.reject(symbol, "Brain returned incomplete entry intent");return;}
+      const range = d.acceptablePriceRange,deterministicInvalid = range.min > range.max || d.idealPrice < range.min || d.idealPrice > range.max || (d.decision === "PLACE_LONG" && d.direction !== "LONG") || (d.decision === "PLACE_SHORT" && d.direction !== "SHORT");
+      if (deterministicInvalid) {this.events.publish("ENTRY_DECISION_BLOCKED",{stage:"POST_AI_VERIFY",reason:"DETERMINISTIC_POST_AI_VERIFY_FAILED",idealPrice:d.idealPrice,acceptablePriceRange:range,direction:d.direction,decision:d.decision},symbol);this.reject(symbol,"DETERMINISTIC_POST_AI_VERIFY_FAILED",result.runId,d.direction);return;}
+      if (this.state.settings.riskGovernance.protectionMode === "REQUIRED" && (d.missingEvidence.length > 0 || d.contradictions.length > 3)) {this.events.publish("ENTRY_DECISION_BLOCKED",{stage:"ENTRY_PROTECTION",reason:"ENTRY_PROTECTION_REQUIRED",missingEvidence:d.missingEvidence.length,contradictions:d.contradictions.length},symbol);this.reject(symbol,"ENTRY_PROTECTION_REQUIRED",result.runId,d.direction);return;}
+      if (this.state.settings.riskGovernance.protectionMode === "SHADOW")this.events.publish("ENTRY_PROTECTION_SHADOW",{decision:d.decision,confidence:d.confidence,missingEvidence:d.missingEvidence.length,contradictions:d.contradictions.length},symbol);
       this.transition(symbol,"PLACE_READY","PRIMARY_PLACE_READY",{runId:result.runId});
-      const side = d.decision === "PLACE_LONG" ? "LONG" : "SHORT",
-        market = this.state.snapshots.get(symbol)!,
-        candidate = this.state.universe.find((x) => x.symbol === symbol);
-      if (!candidate) {
-        this.reject(
-          symbol,
-          "PORTFOLIO_CANDIDATE_MISSING",
-          result.runId,
-          d.direction,
-        );
-        return;
-      }
-      if (
-        this.state.executionGovernance?.mode !== "AUTO_RUNNING" ||
-        this.state.runtimeControl.mode !== "RUNNING" ||
-        !this.state.runtimeControl.entrySafetyMode ||
-        this.state.runtimeControl.entrySafetyMode !== "AUTO"
-      ) {
-        this.events.publish(
-          "ENTRY_ANALYSIS_PAUSED",
-          {
-            stage: "AFTER_PRIMARY",
-            reason:
-              this.state.executionGovernance?.reason ??
-              this.state.runtimeControl.reasonText,
-            runId: result.runId,
-            executionMode: this.state.executionGovernance?.mode,
-          },
-          symbol,
-        );
-        return;
-      }
-      const positions = [...this.state.positions.values()].map((p) => ({
-        symbol: String(p.symbol),
-        side: p.side as "LONG" | "SHORT",
-        quantity: Number(p.quantity),
-        markPrice: Number(p.markPrice),
-        leverage: Number(p.leverage),
-      }));
+      const side = d.decision === "PLACE_LONG" ? "LONG" : "SHORT",market = this.state.snapshots.get(symbol)!,candidate = this.state.universe.find((x) => x.symbol === symbol);
+      if (!candidate) {this.reject(symbol,"PORTFOLIO_CANDIDATE_MISSING",result.runId,d.direction);return;}
+      if (this.state.executionGovernance?.mode !== "AUTO_RUNNING" || this.state.runtimeControl.mode !== "RUNNING" || !this.state.runtimeControl.entrySafetyMode || this.state.runtimeControl.entrySafetyMode !== "AUTO") {this.events.publish("ENTRY_ANALYSIS_PAUSED",{stage:"AFTER_PRIMARY",reason:this.state.executionGovernance?.reason ?? this.state.runtimeControl.reasonText,runId: result.runId,executionMode:this.state.executionGovernance?.mode},symbol);return;}
+      const positions = [...this.state.positions.values()].map((p) => ({symbol:String(p.symbol),side:p.side as "LONG" | "SHORT",quantity:Number(p.quantity),markPrice:Number(p.markPrice),leverage:Number(p.leverage)}));
       const runtimeRoute=this.state.runtimeControl.capital.routedCandidates.find(route=>route.symbol===symbol),directionExecutable=side==='LONG'?runtimeRoute?.longExecutable:runtimeRoute?.shortExecutable,notionalCapUsd=(side==='LONG'?runtimeRoute?.longFeasibleNotionalUsd??runtimeRoute?.longRecommendedNotionalUsd:runtimeRoute?.shortFeasibleNotionalUsd??runtimeRoute?.shortRecommendedNotionalUsd)??(runtimeRoute?runtimeRoute.marginUsd*runtimeRoute.leverage:null);
       if(!runtimeRoute||!directionExecutable||!Number.isFinite(notionalCapUsd)||Number(notionalCapUsd)<Number(runtimeRoute.minExecutableNotionalUsd??0)){this.events.publish('ENTRY_DECISION_BLOCKED',{stage:'POST_PRIMARY_DIRECTION_CAPACITY',reason:'DIRECTION_CAPACITY_UNAVAILABLE',brainRunId:result.runId,direction:side,actual:notionalCapUsd??0,limit:runtimeRoute?.minExecutableNotionalUsd??null},symbol);this.reject(symbol,'DIRECTION_CAPACITY_UNAVAILABLE',result.runId,d.direction);return;}
-      const plan = buildAllocationPlan({
-        candidate,
-        snapshot: market,
-        direction: side,
-        confidence: d.confidence,
-        settings: this.state.settings,
-        positions,
-        assets: this.state.account.assets,
-        notionalCapUsd:Number(notionalCapUsd),
-        admissionContext: {
-          reservedIntents: [...this.state.entryReservations.values()].filter(
-            (x) => x.status === "RESERVED",
-          ).length,
-          workingEntryOrders: [...this.state.entryOrders.values()].filter((x) =>
-            ["NEW", "SUBMITTING", "UNKNOWN", "WORKING", "PARTIALLY_FILLED"].includes(x.status),
-          ).length,
-        },
-      });
+      const plan = buildAllocationPlan({candidate,snapshot:market,direction:side,confidence:d.confidence,settings:this.state.settings,positions,assets:this.state.account.assets,notionalCapUsd:Number(notionalCapUsd),admissionContext:{reservedIntents:[...this.state.entryReservations.values()].filter((x) => x.status === "RESERVED").length,workingEntryOrders:[...this.state.entryOrders.values()].filter((x) => ["NEW", "SUBMITTING", "UNKNOWN", "WORKING", "PARTIALLY_FILLED"].includes(x.status)).length}});
       this.state.allocationPlans.set(plan.planId, plan);
-      if (plan.admission.startsWith("REJECT_")) {
-        this.events.publish(
-          "PORTFOLIO_ADMISSION_REJECTED",
-          { plan, brainRunId: result.runId },
-          symbol,
-        );
-        this.reject(
-          symbol,
-          `PORTFOLIO_${plan.admission}: ${plan.reasons.join(",")}`,
-          result.runId,
-          d.direction,
-        );
-        return;
-      }
-      const reservation = this.state.reserveEntry({
-        underlying: plan.underlying,
-        quoteAsset: plan.quoteAsset,
-        marginUsd: plan.marginUsd,
-        notionalUsd: plan.notionalUsd,
-        planId: plan.planId,
-        maxPositions: this.state.settings.portfolio.maxPositions,
-        ttlSeconds: this.state.settings.riskGovernance.reservationTtlSeconds,
-        leaseSeconds: this.state.settings.riskGovernance.lockLeaseSeconds,
-        maxConcurrentReservations:
-          this.state.settings.riskGovernance.maxConcurrentReservations,
-      });
-      if (!reservation.ok) {
-        this.events.publish(
-          "ENTRY_DECISION_BLOCKED",
-          {
-            stage: "RESERVATION",
-            reason: reservation.reason,
-            allocationPlanId: plan.planId,
-          },
-          symbol,
-        );
-        this.reject(
-          symbol,
-          `RESERVATION_${reservation.reason}`,
-          result.runId,
-          d.direction,
-        );
-        return;
-      }
-      const reservationId = reservation.reservationId;
-      const leverage = plan.leverage,
-        now = Date.now();
-      const intent: EntryIntent = {
-        id: uid("intent"),
-        symbol,
-        side,
-        confidence: d.confidence,
-        idealPrice: d.idealPrice,
-        acceptablePriceRange: d.acceptablePriceRange,
-        horizonMinutes: d.horizonMinutes,
-        leverage,
-        createdAt: now,
-        aiAuthorizationExpiresAt:now+d.horizonMinutes*60_000,
-        configuredOrderTtlExpiresAt:now+(this.state.settings.entry.nearMarket?.enabled?this.state.settings.entry.nearMarket.ttlSeconds*1000:this.state.settings.entry.absoluteTtlMinutes*60_000),
-        absoluteExpiresAt:Math.min(now+d.horizonMinutes*60_000,now+(this.state.settings.entry.nearMarket?.enabled?this.state.settings.entry.nearMarket.ttlSeconds*1000:this.state.settings.entry.absoluteTtlMinutes*60_000)),
-        packetId: packet.packetId,
-        brainRunId: result.runId,
-        allocationPlan: plan,
-        reservationId,
-        protectionMode: this.state.settings.riskGovernance.protectionMode,
-        profitTakePlan:d.profitTakePlan,
-      };
-      const riskEnvelope = buildRiskEnvelope({
-        settings: this.state.settings,
-        equity: Math.max(1, Number(this.state.account.equityUsd ?? 0)),
-        positions: [...this.state.positions.values()],
-        symbol,
-        side,
-        plannedNotional: plan.notionalUsd,
-        reservedIntents: [...this.state.entryReservations.values()].filter(
-          (x) => x.status === "RESERVED",
-        ).length,
-        workingOrders: [...this.state.entryOrders.values()].filter((x) =>
-          ["NEW", "SUBMITTING", "UNKNOWN", "WORKING", "PARTIALLY_FILLED"].includes(x.status),
-        ).length,
-        dailyDrawdownPct: Number(
-          this.state.account.riskBaseline?.riskDrawdownPct ?? 0,
-        ),
-        expectedAdverseMovePct: Math.max(
-          0.001,
-          market.technical["15m"].atrPercent / 100,
-        ),
-        quoteMarginUsage:
-          plan.quoteAsset === "USDT"
-            ? plan.exposureBefore.usdtMarginUsd
-            : plan.exposureBefore.usdcMarginUsd,
-      });
-      this.events.publish(
-        "LIVE_RISK_ENVELOPE_EVALUATED",
-        {
-          brainRunId: result.runId,
-          allocationPlanId: plan.planId,
-          riskEnvelope,
-        },
-        symbol,
-      );
-      if (riskEnvelope.status !== "PASS") {
-        this.state.releaseEntryReservation(reservationId);
-        this.events.publish(
-          "ENTRY_DECISION_BLOCKED",
-          {
-            stage: "LIVE_RISK_ENVELOPE",
-            reason: riskEnvelope.status,
-            reasons: riskEnvelope.reasons,
-            brainRunId: result.runId,
-            allocationPlanId: plan.planId,
-          },
-          symbol,
-        );
-        this.reject(
-          symbol,
-          `RISK_${riskEnvelope.status}:${riskEnvelope.reasons.join(",")}`,
-          result.runId,
-          d.direction,
-        );
-        return;
-      }
-      const maker = nearMarketPrice(intent,market,this.state.settings.entry),
-        capitalDriven =
-          this.state.executionGovernance?.reason ===
-          "TESTNET_CAPITAL_AVAILABLE_AUTO";
-      if (
-        !maker.reachable
-      ) {
-        const reason = !maker.reachable
-          ? `UNREACHABLE_MAKER: ${maker.reason}`
-          : `LOW_REACHABILITY: ${maker.reachability.toFixed(4)} < ${this.state.settings.entry.minReachability}`;
-        this.state.entryIntents.set(intent.id,intent);this.state.attachReservationToIntent(reservationId,intent.id);
-        this.transition(symbol,'WAIT_EXECUTION_RANGE','PLACE_AUTHORIZED_WAITING_REACHABILITY',{runId:result.runId,executionWait:{intentId:intent.id,reservationId,reason,startedAt:Date.now(),expiresAt:intent.aiAuthorizationExpiresAt,acceptablePriceRange:intent.acceptablePriceRange}});
-        this.events.publish('ENTRY_INTENT_CREATED',{intent,normalizedDecision:d.decision,decisionChainId:result.runId},symbol);
-        this.events.publish('ENTRY_EXECUTION_WAITING',{brainRunId:result.runId,intentId:intent.id,reason,allocationPlanId:plan.planId,actual:{bid:market.quote.bid,ask:market.quote.ask,mark:market.quote.mark,makerPrice:maker.price,reachability:maker.reachability},limit:{acceptablePriceRange:intent.acceptablePriceRange,authorizationExpiresAt:intent.aiAuthorizationExpiresAt},acceptablePriceRange:intent.acceptablePriceRange,expiresAt:intent.aiAuthorizationExpiresAt},symbol);
-        return;
-      }
-      for (const [id, old] of this.state.entryIntents)
-        if (
-          old.symbol === symbol &&
-          ![...this.state.entryOrders.values()].some(
-            (order) => order.intentId === id,
-          )
-        )
-          this.state.entryIntents.delete(id);
-      this.state.entryIntents.set(intent.id, intent);
-      this.state.attachReservationToIntent(reservationId, intent.id);
-      this.events.publish(
-        "ENTRY_INTENT_CREATED",
-        {
-          intent,
-          normalizedDecision: d.decision,
-          decisionChainId: result.runId,
-        },
-        symbol,
-      );
-      if (
-        this.state.settings.connections.executionMode !== "TESTNET_ENABLED" ||
-        !privateAccountFresh(this.state.account)
-      ) {
-        const reason =
-          this.state.settings.connections.executionMode !== "TESTNET_ENABLED"
-            ? "EXECUTION_MODE_READ_ONLY"
-            : this.state.account.status==='READY'?'PRIVATE_DATA_STALE':`PRIVATE_DATA_${this.state.account.status}`;
-        this.state.releaseEntryReservation(reservationId);
-        this.events.publish(
-          "ENTRY_ORDER_BLOCKED",
-          { intentId: intent.id, reason },
-          symbol,
-        );
-        this.cooldown(symbol, reason, 60_000);
-        return;
-      }
-      const quantity = sizeEntryQuantity(
-        plan.notionalUsd,
-        maker.price,
-        market.quote.stepSize,
-        market.quote.minQty,
-        market.quote.minNotional,
-      );
-      if(quantity*maker.price>plan.notionalUsd+1e-8) {
-        this.state.releaseEntryReservation(reservationId);this.events.publish('ENTRY_ORDER_BLOCKED',{intentId:intent.id,brainRunId:result.runId,reason:'MINIMUM_SIZE_EXCEEDS_ALLOCATION'},symbol);this.cooldown(symbol,'MINIMUM_SIZE_EXCEEDS_ALLOCATION',60_000);return;
-      }
-      try {
-        await this.exchange.setLeverage(symbol, leverage);
-      } catch (error) {
-        const reason = error instanceof Error ? error.message : String(error);
-        this.state.releaseEntryReservation(reservationId);
-        this.events.publish(
-          "ENTRY_ORDER_BLOCKED",
-          {
-            intentId: intent.id,
-            brainRunId: result.runId,
-            reason,
-            stage: "SET_LEVERAGE",
-          },
-          symbol,
-        );
-        this.cooldown(symbol, reason, 60_000);
-        return;
-      }
-      const order: EntryOrder = {
-        id: `entry_${intent.id}`,
-        clientOrderId: binanceClientOrderIdFactory.stable("ML", intent.id),
-        exchangeOrderId: null,
-        symbol,
-        side: intent.side,
-        quantity,
-        price: maker.price,
-        filledQuantity: 0,
-        leverage,
-        status: "NEW",
-        createdAt: now,
-        updatedAt: now,
-        absoluteExpiresAt: intent.absoluteExpiresAt,
-        repriceCount: 0,
-        intentId: intent.id,
-        reachability: maker.reachability,
-        reservationId,
-      };
+      if (plan.admission.startsWith("REJECT_")) {this.events.publish("PORTFOLIO_ADMISSION_REJECTED",{ plan, brainRunId: result.runId },symbol);this.reject(symbol,`PORTFOLIO_${plan.admission}: ${plan.reasons.join(",")}`,result.runId,d.direction);return;}
+      const reservation = this.state.reserveEntry({underlying:plan.underlying,quoteAsset:plan.quoteAsset,marginUsd:plan.marginUsd,notionalUsd:plan.notionalUsd,planId:plan.planId,maxPositions:this.state.settings.portfolio.maxPositions,ttlSeconds:this.state.settings.riskGovernance.reservationTtlSeconds,leaseSeconds:this.state.settings.riskGovernance.lockLeaseSeconds,maxConcurrentReservations:this.state.settings.riskGovernance.maxConcurrentReservations});
+      if (!reservation.ok) {this.events.publish("ENTRY_DECISION_BLOCKED",{stage:"RESERVATION",reason:reservation.reason,allocationPlanId:plan.planId},symbol);this.reject(symbol,`RESERVATION_${reservation.reason}`,result.runId,d.direction);return;}
+      const reservationId = reservation.reservationId,leverage = plan.leverage,now = Date.now();
+      const intent: EntryIntent = {id:uid("intent"),symbol,side,confidence:d.confidence,idealPrice:d.idealPrice,acceptablePriceRange:d.acceptablePriceRange,horizonMinutes:d.horizonMinutes,leverage,createdAt:now,aiAuthorizationExpiresAt:now+d.horizonMinutes*60_000,configuredOrderTtlExpiresAt:now+(this.state.settings.entry.nearMarket?.enabled?this.state.settings.entry.nearMarket.ttlSeconds*1000:this.state.settings.entry.absoluteTtlMinutes*60_000),absoluteExpiresAt:Math.min(now+d.horizonMinutes*60_000,now+(this.state.settings.entry.nearMarket?.enabled?this.state.settings.entry.nearMarket.ttlSeconds*1000:this.state.settings.entry.absoluteTtlMinutes*60_000)),packetId:packet.packetId,brainRunId:result.runId,allocationPlan:plan,reservationId,protectionMode:this.state.settings.riskGovernance.protectionMode,profitTakePlan:d.profitTakePlan};
+      const riskEnvelope = buildRiskEnvelope({settings:this.state.settings,equity:Math.max(1, Number(this.state.account.equityUsd ?? 0)),positions:[...this.state.positions.values()],symbol,side,plannedNotional:plan.notionalUsd,reservedIntents:[...this.state.entryReservations.values()].filter((x) => x.status === "RESERVED").length,workingOrders:[...this.state.entryOrders.values()].filter((x) => ["NEW", "SUBMITTING", "UNKNOWN", "WORKING", "PARTIALLY_FILLED"].includes(x.status)).length,dailyDrawdownPct:Number(this.state.account.riskBaseline?.riskDrawdownPct ?? 0),expectedAdverseMovePct:Math.max(0.001,market.technical["15m"].atrPercent / 100),quoteMarginUsage:plan.quoteAsset === "USDT" ? plan.exposureBefore.usdtMarginUsd : plan.exposureBefore.usdcMarginUsd});
+      this.events.publish("LIVE_RISK_ENVELOPE_EVALUATED",{brainRunId:result.runId,allocationPlanId:plan.planId,riskEnvelope},symbol);
+      if (riskEnvelope.status !== "PASS") {this.state.releaseEntryReservation(reservationId);this.events.publish("ENTRY_DECISION_BLOCKED",{stage:"LIVE_RISK_ENVELOPE",reason:riskEnvelope.status,reasons:riskEnvelope.reasons,brainRunId:result.runId,allocationPlanId:plan.planId},symbol);this.reject(symbol,`RISK_${riskEnvelope.status}:${riskEnvelope.reasons.join(",")}`,result.runId,d.direction);return;}
+      const maker = nearMarketPrice(intent,market,this.state.settings.entry);
+      if (!maker.reachable) {const reason=`UNREACHABLE_MAKER: ${maker.reason}`;this.state.entryIntents.set(intent.id,intent);this.state.attachReservationToIntent(reservationId,intent.id);this.transition(symbol,'WAIT_EXECUTION_RANGE','PLACE_AUTHORIZED_WAITING_REACHABILITY',{runId:result.runId,executionWait:{intentId:intent.id,reservationId,reason,startedAt:Date.now(),expiresAt:intent.aiAuthorizationExpiresAt,acceptablePriceRange:intent.acceptablePriceRange}});this.events.publish('ENTRY_INTENT_CREATED',{intent,normalizedDecision:d.decision,decisionChainId:result.runId},symbol);this.events.publish('ENTRY_EXECUTION_WAITING',{brainRunId:result.runId,intentId:intent.id,reason,allocationPlanId:plan.planId,actual:{bid:market.quote.bid,ask:market.quote.ask,mark:market.quote.mark,makerPrice:maker.price,reachability:maker.reachability},limit:{acceptablePriceRange:intent.acceptablePriceRange,authorizationExpiresAt:intent.aiAuthorizationExpiresAt},acceptablePriceRange:intent.acceptablePriceRange,expiresAt:intent.aiAuthorizationExpiresAt},symbol);return;}
+      for (const [id, old] of this.state.entryIntents)if (old.symbol === symbol && ![...this.state.entryOrders.values()].some((order) => order.intentId === id))this.state.entryIntents.delete(id);
+      this.state.entryIntents.set(intent.id, intent);this.state.attachReservationToIntent(reservationId, intent.id);this.events.publish("ENTRY_INTENT_CREATED",{intent,normalizedDecision:d.decision,decisionChainId:result.runId},symbol);
+      if (this.state.settings.connections.executionMode !== "TESTNET_ENABLED" || !privateAccountFresh(this.state.account)) {const reason=this.state.settings.connections.executionMode !== "TESTNET_ENABLED"?"EXECUTION_MODE_READ_ONLY":this.state.account.status==='READY'?'PRIVATE_DATA_STALE':`PRIVATE_DATA_${this.state.account.status}`;this.state.releaseEntryReservation(reservationId);this.events.publish("ENTRY_ORDER_BLOCKED",{ intentId: intent.id, reason },symbol);this.cooldown(symbol, reason, 60_000);return;}
+      const quantity = sizeEntryQuantity(plan.notionalUsd,maker.price,market.quote.stepSize,market.quote.minQty,market.quote.minNotional);
+      if(quantity*maker.price>plan.notionalUsd+1e-8) {this.state.releaseEntryReservation(reservationId);this.events.publish('ENTRY_ORDER_BLOCKED',{intentId:intent.id,brainRunId:result.runId,reason:'MINIMUM_SIZE_EXCEEDS_ALLOCATION'},symbol);this.cooldown(symbol,'MINIMUM_SIZE_EXCEEDS_ALLOCATION',60_000);return;}
+      try {await this.exchange.setLeverage(symbol, leverage);} catch (error) {const reason=error instanceof Error?error.message:String(error);this.state.releaseEntryReservation(reservationId);this.events.publish("ENTRY_ORDER_BLOCKED",{intentId:intent.id,brainRunId:result.runId,reason,stage:"SET_LEVERAGE"},symbol);this.cooldown(symbol, reason, 60_000);return;}
+      const order: EntryOrder = {id:`entry_${intent.id}`,clientOrderId:binanceClientOrderIdFactory.stable("ML", intent.id),exchangeOrderId:null,symbol,side:intent.side,quantity,price:maker.price,filledQuantity:0,leverage,status:"NEW",createdAt:now,updatedAt:now,absoluteExpiresAt:intent.absoluteExpiresAt,repriceCount:0,intentId:intent.id,reachability:maker.reachability,reservationId};
       this.state.entryOrders.set(order.id,order);
       try {
-        const latest=this.state.snapshots.get(symbol);
-        const dataError=entryDataError(latest);
-        if(dataError||Date.now()>=intent.absoluteExpiresAt)throw new Error(dataError??'AI_AUTHORIZATION_EXPIRED');
-        if(this.state.runtimeControl.mode!=='RUNNING'||this.state.executionGovernance.mode!=='AUTO_RUNNING'||this.state.settings.connections.executionMode!=='TESTNET_ENABLED')throw new Error('EXECUTION_PERMISSION_CHANGED');
+        const latest=this.state.snapshots.get(symbol),dataError=entryDataError(latest);if(dataError||Date.now()>=intent.absoluteExpiresAt)throw new Error(dataError??'AI_AUTHORIZATION_EXPIRED');if(this.state.runtimeControl.mode!=='RUNNING'||this.state.executionGovernance.mode!=='AUTO_RUNNING'||this.state.settings.connections.executionMode!=='TESTNET_ENABLED')throw new Error('EXECUTION_PERMISSION_CHANGED');
         let placed:EntryOrder;
-        try{placed=await this.submitExactlyOnce(intent,order);}catch(error){
-          // Binance rejects a crossing GTX quote with -5022 before creating an order.
-          // Retry exactly once only while the original AI authorization and range remain valid.
-          const reason=error instanceof Error?error.message:String(error),beforeTs=latest?.quote.ts??0;
-          if(!reason.includes('-5022'))throw error;
-          await new Promise(resolve=>setTimeout(resolve,150));
-          const refreshed=this.state.snapshots.get(symbol),retryDataError=entryDataError(refreshed),retryMaker=refreshed?nearMarketPrice(intent,refreshed,this.state.settings.entry):null;
-          if(retryDataError||!refreshed||refreshed.quote.ts<=beforeTs||Date.now()>=intent.aiAuthorizationExpiresAt||!retryMaker?.reachable||retryMaker.price<intent.acceptablePriceRange.min||retryMaker.price>intent.acceptablePriceRange.max)throw new Error(`POST_ONLY_RETRY_BLOCKED:${retryDataError??'QUOTE_NOT_REFRESHED_OR_OUTSIDE_AUTHORIZATION'}`);
-          this.events.publish('ENTRY_POST_ONLY_RETRY',{brainRunId:result.runId,intentId:intent.id,orderId:order.id,reason:'BINANCE_-5022',from:order.price,to:retryMaker.price,attempt:1},symbol);
-          const retryOrder={...order,price:retryMaker.price,status:'NEW' as const,updatedAt:Date.now()};this.state.entryOrders.set(order.id,retryOrder);
-          placed=await this.submitExactlyOnce(intent,retryOrder,'POST_ONLY_REPRICE');
-        }
-        this.state.entryReservations.get(reservationId) &&
-          this.state.entryReservations.set(reservationId, {
-            ...this.state.entryReservations.get(reservationId)!,
-            status: "WORKING",
-          });
-        this.state.entryOrders.set(placed.id, placed);
-        const candidate = this.state.universe.find((x) => x.symbol === symbol);
-        if (candidate) {
-          candidate.eligible = false;
-          candidate.rank = 0;
-          if (!candidate.exclusionReasons.includes("ACTIVE_ENTRY_ORDER"))
-            candidate.exclusionReasons.push("ACTIVE_ENTRY_ORDER");
-        }
-        this.transition(symbol,"ENTRY_WORKING","ENTRY_SUBMITTED",{runId:result.runId});
-        this.state.pool.remove(symbol);
-        this.state.pool.replenish(this.state.universe);
-        this.events.publish(
-          "ENTRY_ORDER_CREATED",
-          {
-            order: placed,
-            intent,
-            brainRunId: result.runId,
-            decisionChainId: result.runId,
-          },
-          symbol,
-        );
-      } catch (error) {
-        const reason = error instanceof Error ? error.message : String(error);
-        if(reason.startsWith('ENTRY_SUBMISSION_UNKNOWN')){this.events.publish('ENTRY_ORDER_SUBMISSION_UNKNOWN',{intentId:intent.id,brainRunId:result.runId,orderId:order.id,clientOrderId:order.clientOrderId,reason},symbol);this.transition(symbol,'WAIT_EXECUTION_RANGE','SUBMISSION_UNKNOWN_RECONCILIATION',{runId:result.runId,executionWait:{intentId:intent.id,reservationId,reason,startedAt:Date.now(),expiresAt:intent.aiAuthorizationExpiresAt,acceptablePriceRange:intent.acceptablePriceRange}});return;}
-        const unsent=this.state.entryOrders.get(order.id);if(unsent?.status==='NEW')this.state.entryOrders.set(order.id,{...unsent,status:'REJECTED',factSource:'LOCAL_NOT_SUBMITTED',updatedAt:Date.now()});
-        this.state.releaseEntryReservation(reservationId);
-        this.events.publish(
-          "ENTRY_ORDER_BLOCKED",
-          {
-            intentId: intent.id,
-            brainRunId: result.runId,
-            reason,
-            stage: "BINANCE_SUBMIT",
-          },
-          symbol,
-        );
-        this.cooldown(symbol, reason, 60_000);
-      }
+        try{placed=await this.submitExactlyOnce(intent,order);}catch(error){const reason=error instanceof Error?error.message:String(error),beforeTs=latest?.quote.ts??0;if(!reason.includes('-5022'))throw error;await new Promise(resolve=>setTimeout(resolve,150));const refreshed=this.state.snapshots.get(symbol),retryDataError=entryDataError(refreshed),retryMaker=refreshed?nearMarketPrice(intent,refreshed,this.state.settings.entry):null;if(retryDataError||!refreshed||refreshed.quote.ts<=beforeTs||Date.now()>=intent.aiAuthorizationExpiresAt||!retryMaker?.reachable||retryMaker.price<intent.acceptablePriceRange.min||retryMaker.price>intent.acceptablePriceRange.max)throw new Error(`POST_ONLY_RETRY_BLOCKED:${retryDataError??'QUOTE_NOT_REFRESHED_OR_OUTSIDE_AUTHORIZATION'}`);this.events.publish('ENTRY_POST_ONLY_RETRY',{brainRunId:result.runId,intentId:intent.id,orderId:order.id,reason:'BINANCE_-5022',from:order.price,to:retryMaker.price,attempt:1},symbol);const retryOrder={...order,price:retryMaker.price,status:'NEW' as const,updatedAt:Date.now()};this.state.entryOrders.set(order.id,retryOrder);placed=await this.submitExactlyOnce(intent,retryOrder,'POST_ONLY_REPRICE');}
+        this.state.entryReservations.get(reservationId) && this.state.entryReservations.set(reservationId,{...this.state.entryReservations.get(reservationId)!,status:"WORKING"});this.state.entryOrders.set(placed.id, placed);const candidate = this.state.universe.find((x) => x.symbol === symbol);if (candidate) {candidate.eligible = false;candidate.rank = 0;if (!candidate.exclusionReasons.includes("ACTIVE_ENTRY_ORDER"))candidate.exclusionReasons.push("ACTIVE_ENTRY_ORDER");}this.transition(symbol,"ENTRY_WORKING","ENTRY_SUBMITTED",{runId:result.runId});this.state.pool.remove(symbol);this.state.pool.replenish(this.state.universe);this.events.publish("ENTRY_ORDER_CREATED",{order:placed,intent,brainRunId:result.runId,decisionChainId:result.runId},symbol);
+      } catch (error) {const reason=error instanceof Error?error.message:String(error);if(reason.startsWith('ENTRY_SUBMISSION_UNKNOWN')){this.events.publish('ENTRY_ORDER_SUBMISSION_UNKNOWN',{intentId:intent.id,brainRunId:result.runId,orderId:order.id,clientOrderId:order.clientOrderId,reason},symbol);this.transition(symbol,'WAIT_EXECUTION_RANGE','SUBMISSION_UNKNOWN_RECONCILIATION',{runId:result.runId,executionWait:{intentId:intent.id,reservationId,reason,startedAt:Date.now(),expiresAt:intent.aiAuthorizationExpiresAt,acceptablePriceRange:intent.acceptablePriceRange}});return;}const unsent=this.state.entryOrders.get(order.id);if(unsent?.status==='NEW')this.state.entryOrders.set(order.id,{...unsent,status:'REJECTED',factSource:'LOCAL_NOT_SUBMITTED',updatedAt:Date.now()});this.state.releaseEntryReservation(reservationId);this.events.publish("ENTRY_ORDER_BLOCKED",{intentId:intent.id,brainRunId:result.runId,reason,stage:"BINANCE_SUBMIT"},symbol);this.cooldown(symbol, reason, 60_000);}
     } catch (error) {
       const reason = error instanceof Error ? error.message : String(error);
-      if(reason.startsWith('EIP_EVIDENCE_STALE')){
-        this.events.publish('PRIMARY_DATA_ERROR',{stage:'EIP_STALE',reason,entryIntentCreated:false},symbol);
-        this.cooldown(symbol,'EIP_STALE',this.aiFailureCooldownSeconds(),'TECHNICAL_COOLDOWN');
-        return;
-      }
-      this.events.publish(
-        "ENTRY_ANALYSIS_FAILED",
-        { runId:terminalRunId??(error as any)?.runId,message: reason, intentCreated:terminalRunId?[...this.state.entryIntents.values()].some(x=>x.brainRunId===terminalRunId):false, policy: 'FAIL_CLOSED' },
-        symbol,
-      );
-      this.cooldown(symbol, reason, this.aiFailureCooldownSeconds(), "AI_FAILURE_COOLDOWN");
+      if(reason.startsWith('EIP_EVIDENCE_STALE')){this.events.publish('PRIMARY_DATA_ERROR',{stage:'EIP_STALE',reason,entryIntentCreated:false},symbol);this.cooldown(symbol,'EIP_STALE',this.aiFailureCooldownSeconds(),'TECHNICAL_COOLDOWN');return;}
+      this.events.publish("ENTRY_ANALYSIS_FAILED",{ runId:terminalRunId??(error as any)?.runId,message: reason, intentCreated:terminalRunId?[...this.state.entryIntents.values()].some(x=>x.brainRunId===terminalRunId):false, policy: 'FAIL_CLOSED' },symbol);this.cooldown(symbol, reason, this.aiFailureCooldownSeconds(), "AI_FAILURE_COOLDOWN");
     } finally {
       this.active.delete(symbol);
-      if(['PRIMARY_QUEUED','PRIMARY_RUNNING','PRIMARY_COMPLETED'].includes(this.state.candidateLifecycle.get(symbol)?.status)) {
-        this.transition(symbol,'READY','ANALYSIS_LEASE_RELEASED');this.state.pool.markReady(symbol);
-      }
+      if(['PRIMARY_QUEUED','PRIMARY_RUNNING','PRIMARY_COMPLETED'].includes(this.state.candidateLifecycle.get(symbol)?.status)) {this.transition(symbol,'READY','ANALYSIS_LEASE_RELEASED');this.state.pool.markReady(symbol);}
     }
   }
   private lifecycleRunnable(symbol:string){
@@ -779,106 +337,15 @@ export class EntryCoordinator {
     if(prior.longExecutable!==next.longExecutable||prior.shortExecutable!==next.shortExecutable)return true;
     return !row.nextReviewAt||Date.now()>=row.nextReviewAt;
   }
-  private currentDecisionContext(symbol:string,confirmation?:unknown){
-    const market=this.state.snapshots.get(symbol);if(!market)return'MARKET_MISSING';
-    return decisionContextKey({market,settingsContext:decisionSettingsContext(this.state.settings),confirmation});
-  }
-  private transition(symbol:string,status:string,reason:string,extra:Record<string,unknown>={}){
-    const now=Date.now(),previous=this.state.candidateLifecycle.get(symbol),primaryLease=['PRIMARY_QUEUED','PRIMARY_RUNNING'].includes(status),runReset=primaryLease&&!Object.prototype.hasOwnProperty.call(extra,'runId')?{previousRunId:previous?.runId??previous?.previousRunId??null,runId:null}:{},next={...previous,...runReset,...extra,symbol,status,reason,updatedAt:now,from:previous?.status??null};
-    this.state.candidateLifecycle.set(symbol,next);
-    const candidate=this.state.universe.find((x:any)=>x.symbol===symbol);
-    if(candidate){candidate.lifecycle=status;candidate.lifecycleReason=reason;candidate.nextEligibleAt=next.nextEligibleAt??null;candidate.pipelineEligible=status==='READY'||status==='SCOUT_QUEUED'||status==='SCOUT_RUNNING'||status==='SCOUT_DONE'||status==='PRIMARY_QUEUED'||status==='PRIMARY_RUNNING'||status==='PLACE_READY';}
-    this.events.publish('CANDIDATE_LIFECYCLE_CHANGED',next,symbol);
-    return next;
-  }
+  private currentDecisionContext(symbol:string,confirmation?:unknown){const market=this.state.snapshots.get(symbol);if(!market)return'MARKET_MISSING';return decisionContextKey({market,settingsContext:decisionSettingsContext(this.state.settings),confirmation});}
+  private transition(symbol:string,status:string,reason:string,extra:Record<string,unknown>={}){const now=Date.now(),previous=this.state.candidateLifecycle.get(symbol),primaryLease=['PRIMARY_QUEUED','PRIMARY_RUNNING'].includes(status),runReset=primaryLease&&!Object.prototype.hasOwnProperty.call(extra,'runId')?{previousRunId:previous?.runId??previous?.previousRunId??null,runId:null}:{},next={...previous,...runReset,...extra,symbol,status,reason,updatedAt:now,from:previous?.status??null};this.state.candidateLifecycle.set(symbol,next);const candidate=this.state.universe.find((x:any)=>x.symbol===symbol);if(candidate){candidate.lifecycle=status;candidate.lifecycleReason=reason;candidate.nextEligibleAt=next.nextEligibleAt??null;candidate.pipelineEligible=status==='READY'||status==='SCOUT_QUEUED'||status==='SCOUT_RUNNING'||status==='SCOUT_DONE'||status==='PRIMARY_QUEUED'||status==='PRIMARY_RUNNING'||status==='PLACE_READY';}this.events.publish('CANDIDATE_LIFECYCLE_CHANGED',next,symbol);return next;}
   private aiFailureCooldownSeconds(){return (this.state.settings.ai.highFrequency?.retryCooldownSeconds??25)*1000;}
-  private async waitForPrimary(symbol:string){
-    this.primaryWaiters.add(symbol);
-    try{while(!this.ai.hasCapacity('PRIMARY_BRAIN')){if(this.ai.isCircuitOpen('PRIMARY_BRAIN'))throw new Error('AI_PRIMARY_CIRCUIT_OPEN');await new Promise(resolve=>setTimeout(resolve,100));}}
-    finally{this.primaryWaiters.delete(symbol);}
-  }
-  private cooldown(symbol: string, reason: string, duration: number, lifecycle:string="TECHNICAL_COOLDOWN") {
-    const candidate = this.state.universe.find((x) => x.symbol === symbol),
-      now = Date.now(),
-      until = now + duration;
-    const previous=this.state.candidateLifecycle.get(symbol),failureCount=lifecycle==='AI_FAILURE_COOLDOWN'?(Number(previous?.failureCount??0)+1):0;
-    const quarantineAfter=this.state.settings.ai.highFrequency?.quarantineAfterFailures??3;
-    const status=lifecycle==='AI_FAILURE_COOLDOWN'&&failureCount>=quarantineAfter?'QUARANTINED':lifecycle;
-    const finalDuration=status==='QUARANTINED'?(this.state.settings.ai.highFrequency?.quarantineSeconds??300)*1000:duration;
-    this.state.rejectionCooldown.set(symbol, {
-      until:now+finalDuration,
-      reason,
-      rank: candidate?.rank ?? 9999,
-      at: now,
-    });
-    const snapshot=this.state.snapshots.get(symbol),fingerprint=JSON.stringify({trend:snapshot?.technical?.['15m']?.trend,atr:Math.round((snapshot?.quote?.last??0)/Math.max(.0000001,snapshot?.technical?.['15m']?.atr14??1)),spread:Math.round(candidate?.spreadBps??0)});
-    this.transition(symbol,status,reason,{nextEligibleAt:now+finalDuration,failureCount,fingerprint});
-    this.state.pool.remove(symbol, "REJECTED");
-    this.state.pool.replenish(this.state.universe);
-  }
-  private reject(
-    symbol: string,
-    reason: string,
-    brainRunId?: string,
-    direction?: "LONG" | "SHORT",
-  ) {
-    const now = Date.now(), until = now + (this.state.settings.ai.highFrequency?.retryCooldownSeconds??25)*1000;
-    this.cooldown(symbol, reason, until - now, "REJECT_COOLDOWN");
-    this.events.publish(
-      "CANDIDATE_REJECTED",
-      {
-        reason,
-        cooldownUntil: until,
-        brainRunId,
-        direction,
-        decision: "REJECT_CANDIDATE",
-        entryIntentCreated: false,
-      },
-      symbol,
-    );
-  }
+  private async waitForPrimary(symbol:string){this.primaryWaiters.add(symbol);try{while(!this.ai.hasCapacity('PRIMARY_BRAIN')){if(this.ai.isCircuitOpen('PRIMARY_BRAIN'))throw new Error('AI_PRIMARY_CIRCUIT_OPEN');await new Promise(resolve=>setTimeout(resolve,100));}}finally{this.primaryWaiters.delete(symbol);}}
+  private cooldown(symbol: string, reason: string, duration: number, lifecycle:string="TECHNICAL_COOLDOWN") {const candidate = this.state.universe.find((x) => x.symbol === symbol),now = Date.now();const previous=this.state.candidateLifecycle.get(symbol),failureCount=lifecycle==='AI_FAILURE_COOLDOWN'?(Number(previous?.failureCount??0)+1):0,quarantineAfter=this.state.settings.ai.highFrequency?.quarantineAfterFailures??3,status=lifecycle==='AI_FAILURE_COOLDOWN'&&failureCount>=quarantineAfter?'QUARANTINED':lifecycle,finalDuration=status==='QUARANTINED'?(this.state.settings.ai.highFrequency?.quarantineSeconds??300)*1000:duration;this.state.rejectionCooldown.set(symbol,{until:now+finalDuration,reason,rank:candidate?.rank??9999,at:now});const snapshot=this.state.snapshots.get(symbol),fingerprint=JSON.stringify({trend:snapshot?.technical?.['15m']?.trend,atr:Math.round((snapshot?.quote?.last??0)/Math.max(.0000001,snapshot?.technical?.['15m']?.atr14??1)),spread:Math.round(candidate?.spreadBps??0)});this.transition(symbol,status,reason,{nextEligibleAt:now+finalDuration,failureCount,fingerprint});this.state.pool.remove(symbol,"REJECTED");this.state.pool.replenish(this.state.universe);}
+  private reject(symbol:string,reason:string,brainRunId?:string,direction?:"LONG"|"SHORT") {const now=Date.now(),until=now+(this.state.settings.ai.highFrequency?.retryCooldownSeconds??25)*1000;this.cooldown(symbol,reason,until-now,"REJECT_COOLDOWN");this.events.publish("CANDIDATE_REJECTED",{reason,cooldownUntil:until,brainRunId,direction,decision:"REJECT_CANDIDATE",entryIntentCreated:false},symbol);}
   private reviewBusy=false;
   async reviewPending() {
-    const now=Date.now(),policy=this.state.settings.entry.nearMarket;
-    const interval=(policy?.enabled?policy.reviewSeconds:this.state.settings.entry.reviewIntervalSeconds)*1000;
-    if(this.reviewBusy||now-this.lastReview<interval)return;
-    this.reviewBusy=true;this.lastReview=now;
-    try{for(const [id,initial] of this.state.entryOrders){
-      if(!activeOrderStatus(initial.status))continue;
-      let order=initial;
-      try{
-        if(['UNKNOWN','NEW','SUBMITTING'].includes(order.status)){
-          const verified=await this.exchange.findEntryByClientOrderId(order);
-          if(!verified){this.state.entryOrders.set(id,{...order,status:'UNKNOWN'});continue;}
-          order={...order,...verified,id:order.id,intentId:order.intentId,createdAt:order.createdAt,absoluteExpiresAt:order.absoluteExpiresAt};
-          this.state.entryOrders.set(id,order);
-          if(terminalOrderStatus(order.status)){if(order.reservationId)this.state.releaseEntryReservation(order.reservationId);reconcileCandidateLifecycles(this.state,this.events,'EXACT_ORDER_TERMINAL');continue;}
-        }
-        const deadline=policy?.enabled?Math.min(order.absoluteExpiresAt,order.createdAt+Math.min(120,policy.ttlSeconds)*1000):order.absoluteExpiresAt;
-        if(now>=deadline){
-          const canceled=await this.exchange.cancelEntry(order);
-          const confirmed=terminalOrderStatus(canceled.status);
-          this.state.entryOrders.set(id,{...order,...canceled,status:confirmed?canceled.status:'UNKNOWN',createdAt:order.createdAt,absoluteExpiresAt:order.absoluteExpiresAt});
-          if(confirmed&&order.reservationId)this.state.releaseEntryReservation(order.reservationId);
-          if(confirmed)reconcileCandidateLifecycles(this.state,this.events,'ENTRY_TTL_TERMINAL_CONFIRMED');
-          this.events.publish(confirmed?'ENTRY_ORDER_TTL_CLOSED':'ENTRY_CANCEL_UNVERIFIED',{orderId:id,status:canceled.status,filledQuantity:canceled.filledQuantity,occupancyReleased:confirmed,reason:'ABSOLUTE_TTL'},order.symbol);
-          continue;
-        }
-        const intent=this.state.entryIntents.get(order.intentId),market=this.state.snapshots.get(order.symbol);
-        if(!intent||!market||entryDataError(market))continue;
-        const max=policy?.enabled?policy.maxReprices:this.state.settings.entry.maxReprices;
-        if(order.repriceCount>=max||now-order.updatedAt<(policy?.repriceIntervalSeconds??5)*1000)continue;
-        const next=nearMarketPrice(intent,market,this.state.settings.entry,now);
-        if(!next.reachable)continue;
-        if(Math.abs(next.price-order.price)>=market.quote.tickSize*2){
-          const replaced=await this.exchange.replaceEntry(order,next.price);
-          this.state.entryOrders.set(id,{...replaced,id:order.id,intentId:order.intentId,reservationId:order.reservationId,createdAt:order.createdAt,absoluteExpiresAt:order.absoluteExpiresAt,repriceCount:Math.max(order.repriceCount+1,replaced.repriceCount),reachability:next.reachability});
-          this.events.publish('ENTRY_ORDER_REPRICED',{orderId:id,from:order.price,to:next.price,reason:next.reason},order.symbol);
-        }
-      }catch(error){
-        this.state.entryOrders.set(id,{...order,status:'UNKNOWN',updatedAt:Date.now()});
-        this.events.publish('ENTRY_ORDER_MANAGEMENT_UNVERIFIED',{orderId:id,reason:String(error),occupancyReleased:false},order.symbol);
-      }
-    }}finally{this.reviewBusy=false;}
+    const now=Date.now(),policy=this.state.settings.entry.nearMarket,interval=(policy?.enabled?policy.reviewSeconds:this.state.settings.entry.reviewIntervalSeconds)*1000;if(this.reviewBusy||now-this.lastReview<interval)return;this.reviewBusy=true;this.lastReview=now;
+    try{for(const [id,initial] of this.state.entryOrders){if(!activeOrderStatus(initial.status))continue;let order=initial;try{if(['UNKNOWN','NEW','SUBMITTING'].includes(order.status)){const verified=await this.exchange.findEntryByClientOrderId(order);if(!verified){this.state.entryOrders.set(id,{...order,status:'UNKNOWN'});continue;}order={...order,...verified,id:order.id,intentId:order.intentId,createdAt:order.createdAt,absoluteExpiresAt:order.absoluteExpiresAt};this.state.entryOrders.set(id,order);if(terminalOrderStatus(order.status)){if(order.reservationId)this.state.releaseEntryReservation(order.reservationId);reconcileCandidateLifecycles(this.state,this.events,'EXACT_ORDER_TERMINAL');continue;}}const deadline=policy?.enabled?Math.min(order.absoluteExpiresAt,order.createdAt+Math.min(120,policy.ttlSeconds)*1000):order.absoluteExpiresAt;if(now>=deadline){const canceled=await this.exchange.cancelEntry(order),confirmed=terminalOrderStatus(canceled.status);this.state.entryOrders.set(id,{...order,...canceled,status:confirmed?canceled.status:'UNKNOWN',createdAt:order.createdAt,absoluteExpiresAt:order.absoluteExpiresAt});if(confirmed&&order.reservationId)this.state.releaseEntryReservation(order.reservationId);if(confirmed)reconcileCandidateLifecycles(this.state,this.events,'ENTRY_TTL_TERMINAL_CONFIRMED');this.events.publish(confirmed?'ENTRY_ORDER_TTL_CLOSED':'ENTRY_CANCEL_UNVERIFIED',{orderId:id,status:canceled.status,filledQuantity:canceled.filledQuantity,occupancyReleased:confirmed,reason:'ABSOLUTE_TTL'},order.symbol);continue;}const intent=this.state.entryIntents.get(order.intentId),market=this.state.snapshots.get(order.symbol);if(!intent||!market||entryDataError(market))continue;const max=policy?.enabled?policy.maxReprices:this.state.settings.entry.maxReprices;if(order.repriceCount>=max||now-order.updatedAt<(policy?.repriceIntervalSeconds??5)*1000)continue;const next=nearMarketPrice(intent,market,this.state.settings.entry,now);if(!next.reachable)continue;if(Math.abs(next.price-order.price)>=market.quote.tickSize*2){const replaced=await this.exchange.replaceEntry(order,next.price);this.state.entryOrders.set(id,{...replaced,id:order.id,intentId:order.intentId,reservationId:order.reservationId,createdAt:order.createdAt,absoluteExpiresAt:order.absoluteExpiresAt,repriceCount:Math.max(order.repriceCount+1,replaced.repriceCount),reachability:next.reachability});this.events.publish('ENTRY_ORDER_REPRICED',{orderId:id,from:order.price,to:next.price,reason:next.reason},order.symbol);}}catch(error){this.state.entryOrders.set(id,{...order,status:'UNKNOWN',updatedAt:Date.now()});this.events.publish('ENTRY_ORDER_MANAGEMENT_UNVERIFIED',{orderId:id,reason:String(error),occupancyReleased:false},order.symbol);}}}finally{this.reviewBusy=false;}
   }
 }

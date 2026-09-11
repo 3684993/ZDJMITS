@@ -2,7 +2,8 @@ import type { RuntimeState } from '../state/runtimeState.js';
 import type { EventBus } from '../events/eventBus.js';
 
 const PERIOD_15M=900_000;
-const firstClosedAfter=(openedAt:number)=>Math.floor((openedAt+1)/PERIOD_15M)*PERIOD_15M+PERIOD_15M-1;
+/** First 15m bar whose OPEN is not before the position cycle. */
+const firstClosedAfter=(openedAt:number)=>Math.ceil(openedAt/PERIOD_15M)*PERIOD_15M+PERIOD_15M-1;
 
 /** Deterministic closed-bar observer. It never calls AI, closes a position, or alters its TP. */
 export class LossHandoffService {
@@ -24,7 +25,8 @@ export class LossHandoffService {
       }
       const expected=prior.lastClosedBarAt===null?firstClosedAfter(position.openedAt):prior.lastClosedBarAt+PERIOD_15M;
       if(closedAt!==expected){
-        // Missing/late historical gaps are UNKNOWN. Never infer the skipped bars from wall-clock time.
+        // A bar that opened before the position, or any missing/late gap, is UNKNOWN.
+        // Never infer skipped loss duration from wall-clock time or the current mark.
         this.state.positions.set(position.id,{...position,lossHandoff:{...prior,status:'UNKNOWN'}});
         continue;
       }

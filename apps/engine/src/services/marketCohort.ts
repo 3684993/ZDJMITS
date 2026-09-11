@@ -42,16 +42,23 @@ export class MarketCohort {
 
   async tick(reason='PERIODIC'){
     if(this.flight)return this.flight;
-    const now=this.now(),cfg:any=this.state.settings.selection.cohort??{size:100,hydrateBatchSize:20,readyLowWatermark:6,refillBackoffSeconds:60,staleMemberRotationMinutes:120,protectedRatio:.75};
+    const now=this.now(),cfg:any=this.state.settings.selection.cohort??{size:100,hydrateBatchSize:20,readyLowWatermark:6,refillBackoffSeconds:60,discoveryRefreshSeconds:900,staleMemberRotationMinutes:120,protectedRatio:.75};
     this.retireConsumed();
     this.rotateStale(now,cfg);
     this.retain();
+    const key=`${this.state.settings.selection.assetDirectory?.version??''}:${this.state.settings.settingsVersion}`;
+    // A changed governance/settings generation can expose genuinely new supply. Do not let a
+    // no-result/backoff from the previous generation suppress that new fact.
+    if(this.noResultKey&&this.noResultKey!==key){
+      this.noResultKey='';
+      this.retryAt=0;
+      this.events.publish('MARKET_COHORT_BACKOFF_INVALIDATED',{reason,key,size:this.members.size});
+    }
     const blocker=this.globalBlockReason();
     if(now<this.retryAt||(blocker&&this.members.size>0)){
       this.events.publish('MARKET_COHORT_DEFERRED',{reason,blocker,retryAt:this.retryAt,size:this.members.size,supplyBootstrap:this.members.size===0});
       return 0;
     }
-    const key=`${this.state.settings.selection.assetDirectory?.version??''}:${this.state.settings.settingsVersion}`;
     const readyCount=this.state.pool.readyList().filter(item=>this.members.has(item.symbol)).length;
     const gap=Math.max(0,cfg.size-this.members.size),low=readyCount<cfg.readyLowWatermark;
     if(!gap&&!low)return 0;

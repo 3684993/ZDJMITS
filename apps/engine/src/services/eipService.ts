@@ -1,0 +1,38 @@
+import { buildEip } from '@zdj/core';
+import { directionPermissions, directionPolicy, directionPreference, locationScore, resolveQuoteAsset, resolveUnderlying, riskTier } from '@zdj/core';
+import type { BrainDecision, EntryIntelligencePacket } from '@zdj/contracts';
+import type { RuntimeState } from '../state/runtimeState.js';
+import type { ExperienceService } from './experienceService.js';
+import type {ExternalIntelligenceService} from './externalIntelligenceService.js';
+
+export class EipService {
+  constructor(private state:RuntimeState,private experience:ExperienceService,private external?:ExternalIntelligenceService){}
+  build(symbol:string):EntryIntelligencePacket{
+    // EIP is also a read-only audit surface. A held/resident contract must
+    // remain inspectable even though it is intentionally ineligible for a new
+    // entry. Execution still enforces occupancy and pipeline gates elsewhere.
+    const held=([...this.state.positions.values()] as any[]).some(position=>position.symbol===symbol),candidate=this.state.universe.find(x=>x.symbol===symbol&&(x.eligible||x.residentEligible||held)); const snapshot=this.state.snapshots.get(symbol); const btc=this.state.snapshots.get('BTCUSDT'),eth=this.state.snapshots.get('ETHUSDT');
+    if(!candidate||!snapshot||!btc||!eth)throw new Error(`Cannot build EIP for ${symbol}: evidence missing`);
+    const routeGeneration=Number(this.state.runtimeControl.capital.generation??candidate.selectionGeneration);if(routeGeneration>0&&candidate.selectionGeneration!==routeGeneration)throw new Error(`MARKET_GENERATION_MISMATCH: candidate=${candidate.selectionGeneration} route=${routeGeneration}`);
+    this.assertFresh(snapshot);this.assertFresh(btc,true);this.assertFresh(eth,true);
+    const provisionalRegime=(btc.technical['15m'].trend==='UP'&&eth.technical['15m'].trend==='UP')?'RISK_ON':(btc.technical['15m'].trend==='DOWN'&&eth.technical['15m'].trend==='DOWN')?'RISK_OFF':'MIXED';
+    const packet=buildEip({candidate,snapshot,btc,eth,positions:[...this.state.positions.values()],pendingEntries:[...this.state.entryOrders.values()],experience:this.experience.summarize(symbol,provisionalRegime),settings:this.state.settings});const tier=(candidate.riskTier as any)??riskTier(snapshot,this.state.settings.portfolioIntelligence),policy=(candidate.directionPolicy as any)??directionPolicy(symbol,tier,this.state.settings.portfolioIntelligence),preference=directionPreference(symbol,tier,this.state.settings.portfolioIntelligence),direction=snapshot.technical['15m'].trend==='DOWN'?'SHORT':'LONG',quoteAsset=candidate.quoteAsset??resolveQuoteAsset(symbol),recommendedMargin=candidate.recommendedMargin??this.state.settings.portfolioIntelligence.baseMarginUsd,recommendedLeverage=candidate.recommendedLeverage??this.state.settings.portfolioIntelligence.globalMaxLeverage,exchangeMinNotional=Math.max(snapshot.quote.minNotional,snapshot.quote.minQty*snapshot.quote.mark),minExecutableMargin=Math.max(this.state.settings.portfolioIntelligence.minMarginUsd,exchangeMinNotional/Math.max(1,recommendedLeverage)*1.1),routed=this.state.runtimeControl.capital.routedCandidates.find((x:any)=>x.symbol===symbol),allowedDirections=directionPermissions(symbol,tier,this.state.settings.portfolioIntelligence).allowedDirections,externalContext=this.external?.context(symbol,packet.createdAt)??[];const requiredTimeframes=['1m','5m','15m','4h','1d','1w'];const technicalSixTimeframes=requiredTimeframes.every((tf)=>Object.prototype.hasOwnProperty.call(snapshot.technical,tf));const enriched:any={...packet,...(externalContext.length?{externalContext}:{}),evidenceDomains:{required:{quote:'PRESENT',orderBook:snapshot.orderBook.bids.length&&snapshot.orderBook.asks.length?'PRESENT':'MISSING',technicalSixTimeframes:technicalSixTimeframes?'PRESENT':'MISSING',btcEthRegime:'PRESENT',portfolio:'PRESENT'},optional:{derivatives:snapshot.derivatives.openInterest==null?'UNAVAILABLE_BY_EXCHANGE':'PRESENT',experience:packet.experience.sampleSize?'PRESENT':'NO_SAMPLES',temporalIntelligence:'ADVISORY',externalIntelligence:externalContext.length?'PRESENT':'NOT_IN_PRIMARY'}},capitalEnvelope:{quoteAsset,exchangeMinNotional,minExecutableMargin,riskRecommendedMargin:recommendedMargin,recommendedLeverage,maxExecutableMargin:routed?.marginUsd??0,executable:Boolean(routed),longExecutable:Boolean((routed as any)?.longExecutable),shortExecutable:Boolean((routed as any)?.shortExecutable),longAvailableNotionalUsd:this.state.runtimeControl.capital.directionBudget.longAvailableNotionalUsd,shortAvailableNotionalUsd:this.state.runtimeControl.capital.directionBudget.shortAvailableNotionalUsd,capitalGeneration:this.state.runtimeControl.capital.generation,reasonCodes:routed?[]:['NOT_IN_CURRENT_CAPITAL_ROUTE']},portfolioIntelligence:{underlying:candidate.underlyingAsset??resolveUnderlying(symbol),quoteAsset,riskTier:tier,directionPolicy:policy,directionPreference:preference,allowedDirections,preferredDirection:preference==='BALANCED'?null:'SHORT',longExceptionRequired:preference==='STRICT_SHORT_BIAS',altLongQuality:null,marginFactor:this.state.settings.portfolioIntelligence.altLongMarginFactors[tier]??1,leverageCap:this.state.settings.portfolioIntelligence.altLongLeverageCaps[tier]??recommendedLeverage,locationScore:candidate.locationScore??locationScore(snapshot,direction),recommendedMargin,recommendedLeverage,marginMode:this.state.settings.portfolioIntelligence.marginMode,existingUnderlyingExposure:candidate.existingUnderlyingExposure??0,allocationAdmission:'PENDING_PRIMARY',reasons:[`DIRECTION_PREFERENCE_${preference}`]}};this.state.eips.set(symbol,enriched); return enriched;
+  }
+  private assertFresh(snapshot:import('@zdj/contracts').MarketSymbolSnapshot,regimeOnly=false){const now=Date.now();const stale=(label:string,ts:number,maxAge:number)=>{if(!Number.isFinite(ts)||now-ts>maxAge)throw new Error(`EIP_EVIDENCE_STALE: ${snapshot.symbol} ${label} age=${now-ts}ms`);};stale('quote',snapshot.quote.ts,15_000);if(!regimeOnly){stale('orderBook',snapshot.orderBook.ts,15_000);if(snapshot.dataCompleteness+1e-9<this.state.settings.selection.minDataCompleteness)throw new Error(`EIP_EVIDENCE_INCOMPLETE: ${snapshot.symbol} completeness=${snapshot.dataCompleteness}`);/* Derivatives freshness is contextual evidence only. It must never veto the mandatory 15m entry path. */}
+    const limits:Record<string,number>={'1m':125_000,'5m':605_000,'15m':1_805_000,'4h':28_805_000,'1d':172_805_000,'1w':1_209_605_000};for(const [tf,maxAge] of Object.entries(limits)){if(regimeOnly&&!['15m','4h','1d','1w'].includes(tf))continue;stale(`technical.${tf}`,snapshot.technical[tf as keyof typeof snapshot.technical].asOf,maxAge);}}
+  async resolveTools(requests:BrainDecision['evidenceRequests'],symbol:string):Promise<Record<string,unknown>>{
+    const packet=this.state.eips.get(symbol)??this.build(symbol); const out:Record<string,unknown>={};
+    for(const req of requests.slice(0,this.state.settings.ai.maxEvidenceToolsPerRound)){
+      switch(req.tool){
+        case 'GET_MULTITIMEFRAME': out[req.tool]=packet.market.technical; break;
+        case 'GET_DERIVATIVES': out[req.tool]=packet.market.derivatives; break;
+        case 'GET_ORDERBOOK': out[req.tool]=packet.market.orderBook; break;
+        case 'GET_GLOBAL_REGIME': out[req.tool]=packet.globalRegime; break;
+        case 'GET_PORTFOLIO_CONTEXT': out[req.tool]=packet.portfolio; break;
+        case 'GET_EXPERIENCE': out[req.tool]=packet.experience; break;
+        case 'GET_REACHABLE_BAND': out[req.tool]=packet.microstructure; break;
+      }
+    }
+    return out;
+  }
+}

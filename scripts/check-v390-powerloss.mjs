@@ -1,0 +1,10 @@
+import {spawn} from 'node:child_process';import {mkdtemp,writeFile,readFile} from 'node:fs/promises';import os from 'node:os';import path from 'node:path';import {fileURLToPath} from 'node:url';import {SettingsStore} from '../apps/engine/dist/config/settingsStore.js';
+if(process.argv[2]==='child'){
+ const store=new SettingsStore(path.resolve('config'),process.argv[3]);await store.load();store.persistRuntime({positions:[['p',{id:'p',quantity:1}]],generation:1});
+ store.recordRuntimeEvent({id:'powerloss-critical',type:'ENTRY_SUBMIT_ATTEMPTED',ts:Date.now(),payload:{clientOrderId:'isolated-powerloss',exchangeWrites:0}});
+ store.db.exec('BEGIN IMMEDIATE');store.persistRuntime({positions:[['p',{id:'p',quantity:2}]],generation:2});process.stdout.write('UNCOMMITTED_READY\n');setInterval(()=>{},1000);
+}else{
+ const dir=await mkdtemp(path.join(os.tmpdir(),'mits-powerloss-'));await new Promise((resolve,reject)=>{const child=spawn(process.execPath,[fileURLToPath(import.meta.url),'child',dir],{cwd:process.cwd(),windowsHide:true,stdio:['ignore','pipe','pipe']});let ready=false;const timeout=setTimeout(()=>{child.kill();reject(new Error('CHILD_TIMEOUT'));},15000);child.on('error',reject);child.stdout.on('data',chunk=>{if(String(chunk).includes('UNCOMMITTED_READY')){ready=true;child.kill('SIGKILL');}});child.on('exit',()=>{clearTimeout(timeout);ready?resolve():reject(new Error('CHILD_NOT_READY'));});});
+ const store=new SettingsStore(path.resolve('config'),dir);await store.load();const runtime=store.loadRuntime(),audit=store.db.prepare("SELECT payload FROM runtime_events WHERE id='powerloss-critical'").get(),integrity=store.integrityCheck();store.close();const passed=runtime.generation===1&&runtime.positions[0][1].quantity===1&&JSON.parse(audit.payload).clientOrderId==='isolated-powerloss'&&integrity;
+ await writeFile('docs/reports/v390-powerloss.json',JSON.stringify({status:passed?'PASS':'FAIL',isolatedDataDir:dir,rolledBackUncommittedEntity:runtime.positions[0][1].quantity===1,committedAuditRetained:Boolean(audit),integrity,exchangeCalls:0},null,2));if(!passed)throw new Error('POWERLOSS_CHECK_FAILED');
+}

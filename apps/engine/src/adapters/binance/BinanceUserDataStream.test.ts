@@ -1,0 +1,7 @@
+import { describe,expect,it,vi } from 'vitest';import {EventEmitter} from 'node:events';
+const sockets=vi.hoisted(()=>[] as any[]);vi.mock('ws',()=>({default:class extends EventEmitter{ping=vi.fn(()=>this.emit('pong'));terminate=vi.fn();close=vi.fn();constructor(){super();sockets.push(this);}}}));
+import { BinanceUserDataStream } from './BinanceUserDataStream.js';
+describe('Binance User Data WS',()=>{
+it('forwards only private account/order facts and ignores malformed frames',()=>{const sink=vi.fn(),stream=new BinanceUserDataStream({} as never,'key',sink);(stream as any).onMessage('{bad');(stream as any).onMessage(JSON.stringify({e:'markPriceUpdate'}));(stream as any).onMessage(JSON.stringify({e:'ORDER_TRADE_UPDATE',o:{s:'BTCUSDT'}}));(stream as any).onMessage(JSON.stringify({e:'ACCOUNT_UPDATE'}));expect(sink).toHaveBeenCalledTimes(2);});
+it('keeps an idle pong-responsive socket alive and terminates a silent one',async()=>{vi.useFakeTimers();const stream=new BinanceUserDataStream({json:async()=>({listenKey:'test'}),effectiveWsUrl:()=>'',websocketOptions:()=>({})} as never,'test',vi.fn());try{stream.start();await vi.advanceTimersByTimeAsync(0);const socket=sockets.at(-1);socket.emit('open');await vi.advanceTimersByTimeAsync(120000);expect(socket.terminate).not.toHaveBeenCalled();socket.ping.mockImplementation(()=>{});await vi.advanceTimersByTimeAsync(60000);expect(socket.terminate).toHaveBeenCalled();}finally{stream.stop();vi.useRealTimers();}});
+});

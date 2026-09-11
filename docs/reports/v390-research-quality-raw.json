@@ -1,0 +1,5285 @@
+{
+  "generatedAt": "2026-09-08T09:54:05.674Z",
+  "source": "SYNTHETIC_BOUNDARY_FIXTURES_NOT_MARKET_PROFITABILITY",
+  "model": "qwen3.5:9b",
+  "exchangeWrites": 0,
+  "summary": {
+    "cases": 60,
+    "modelCalls": 52,
+    "passed": 60,
+    "failed": 0
+  },
+  "cases": [
+    {
+      "category": "UP",
+      "source": {
+        "id": "isolated-0",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-0",
+        "url": "local://isolated-fixture/0",
+        "eventAt": 1788861073304,
+        "publishedAt": 1788861073304,
+        "receivedAt": 1788861073304,
+        "availableAt": 1788861073304,
+        "expiresAt": 1788861433304,
+        "closedBar": true,
+        "facts": {
+          "return15m": 0.015,
+          "close": 50000
+        },
+        "sourceConflicts": [],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "0",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "status": "MODEL_COMPLETED",
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"sourceId\": \"isolated-quality-0\",\n  \"entities\": [],\n  \"facts\": [\n    {\n      \"field\": \"return15m\",\n      \"value\": 0.015\n    },\n    {\n      \"field\": \"close\",\n      \"value\": 50000\n    }\n  ],\n  \"conflicts\": []\n}"
+            }
+          }
+        ],
+        "created": 1788861135,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 92,
+          "prompt_tokens": 283,
+          "total_tokens": 375,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-7IISPkpDcR4i8wILb2BtmhoRQ8vdLyFo",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 283,
+          "prompt_ms": 432.869,
+          "prompt_per_token_ms": 1.5295724381625442,
+          "prompt_per_second": 653.7774707821535,
+          "predicted_n": 92,
+          "predicted_ms": 1958.324,
+          "predicted_per_token_ms": 21.28613043478261,
+          "predicted_per_second": 46.978947303919064
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "isolated-quality-0",
+          "entities": [],
+          "facts": [
+            {
+              "field": "return15m",
+              "value": 0.015
+            },
+            {
+              "field": "close",
+              "value": 50000
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "accepted": {
+        "sourceId": "isolated-quality-0",
+        "entities": [],
+        "facts": [
+          {
+            "field": "return15m",
+            "value": 0.015,
+            "unit": "ratio",
+            "observedAt": 1788861073304,
+            "evidenceLocation": "facts.return15m",
+            "conflict": null
+          },
+          {
+            "field": "close",
+            "value": 50000,
+            "unit": "USD",
+            "observedAt": 1788861073304,
+            "evidenceLocation": "facts.close",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "latencyMs": 2423,
+      "passed": true
+    },
+    {
+      "category": "DOWN",
+      "source": {
+        "id": "isolated-1",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-1",
+        "url": "local://isolated-fixture/1",
+        "eventAt": 1788861074727,
+        "publishedAt": 1788861074727,
+        "receivedAt": 1788861074727,
+        "availableAt": 1788861074727,
+        "expiresAt": 1788861435727,
+        "closedBar": true,
+        "facts": {
+          "return15m": -0.012,
+          "close": 50001
+        },
+        "sourceConflicts": [],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "1",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000001"
+      },
+      "status": "MODEL_COMPLETED",
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"sourceId\": \"isolated-quality-1\",\n  \"entities\": [],\n  \"facts\": [\n    {\n      \"field\": \"return15m\",\n      \"value\": -0.012\n    },\n    {\n      \"field\": \"close\",\n      \"value\": 50001\n    }\n  ],\n  \"conflicts\": []\n}"
+            }
+          }
+        ],
+        "created": 1788861138,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 92,
+          "prompt_tokens": 283,
+          "total_tokens": 375,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-eqxssDIbFVateA1Ho1rdnHanRE2aJEUy",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 283,
+          "prompt_ms": 419.001,
+          "prompt_per_token_ms": 1.4805689045936394,
+          "prompt_per_second": 675.4160491263744,
+          "predicted_n": 92,
+          "predicted_ms": 1947.282,
+          "predicted_per_token_ms": 21.166108695652174,
+          "predicted_per_second": 47.2453399148146
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "isolated-quality-1",
+          "entities": [],
+          "facts": [
+            {
+              "field": "return15m",
+              "value": -0.012
+            },
+            {
+              "field": "close",
+              "value": 50001
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "accepted": {
+        "sourceId": "isolated-quality-1",
+        "entities": [],
+        "facts": [
+          {
+            "field": "return15m",
+            "value": -0.012,
+            "unit": "ratio",
+            "observedAt": 1788861074727,
+            "evidenceLocation": "facts.return15m",
+            "conflict": null
+          },
+          {
+            "field": "close",
+            "value": 50001,
+            "unit": "USD",
+            "observedAt": 1788861074727,
+            "evidenceLocation": "facts.close",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "latencyMs": 2386,
+      "passed": true
+    },
+    {
+      "category": "RANGE",
+      "source": {
+        "id": "isolated-2",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-2",
+        "url": "local://isolated-fixture/2",
+        "eventAt": 1788861076113,
+        "publishedAt": 1788861076113,
+        "receivedAt": 1788861076113,
+        "availableAt": 1788861076113,
+        "expiresAt": 1788861438113,
+        "closedBar": true,
+        "facts": {
+          "return15m": 0,
+          "close": 50002
+        },
+        "sourceConflicts": [],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "2",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000002"
+      },
+      "status": "MODEL_COMPLETED",
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"sourceId\": \"isolated-quality-2\",\n  \"entities\": [],\n  \"facts\": [\n    {\n      \"field\": \"return15m\",\n      \"value\": 0\n    },\n    {\n      \"field\": \"close\",\n      \"value\": 50002\n    }\n  ],\n  \"conflicts\": []\n}"
+            }
+          }
+        ],
+        "created": 1788861140,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 88,
+          "prompt_tokens": 279,
+          "total_tokens": 367,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-eqdWBHX0SJxdUV75SoNGIQ0TIPck15KL",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 279,
+          "prompt_ms": 428.372,
+          "prompt_per_token_ms": 1.535383512544803,
+          "prompt_per_second": 651.3030730299834,
+          "predicted_n": 88,
+          "predicted_ms": 1815.288,
+          "predicted_per_token_ms": 20.628272727272726,
+          "predicted_per_second": 48.47715624187457
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "isolated-quality-2",
+          "entities": [],
+          "facts": [
+            {
+              "field": "return15m",
+              "value": 0
+            },
+            {
+              "field": "close",
+              "value": 50002
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "accepted": {
+        "sourceId": "isolated-quality-2",
+        "entities": [],
+        "facts": [
+          {
+            "field": "return15m",
+            "value": 0,
+            "unit": "ratio",
+            "observedAt": 1788861076113,
+            "evidenceLocation": "facts.return15m",
+            "conflict": null
+          },
+          {
+            "field": "close",
+            "value": 50002,
+            "unit": "USD",
+            "observedAt": 1788861076113,
+            "evidenceLocation": "facts.close",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "latencyMs": 2251,
+      "passed": true
+    },
+    {
+      "category": "NEGATION",
+      "source": {
+        "id": "isolated-3",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-3",
+        "url": "local://isolated-fixture/3",
+        "eventAt": 1788861077364,
+        "publishedAt": 1788861077364,
+        "receivedAt": 1788861077364,
+        "availableAt": 1788861077364,
+        "expiresAt": 1788861440364,
+        "closedBar": true,
+        "facts": {
+          "notice": "The source does not confirm approval; no policy change was announced."
+        },
+        "sourceConflicts": [],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "3",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000003"
+      },
+      "status": "MODEL_COMPLETED",
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"sourceId\": \"isolated-quality-3\",\n  \"entities\": [],\n  \"facts\": [\n    {\n      \"field\": \"notice\",\n      \"value\": \"The source does not confirm approval; no policy change was announced.\"\n    }\n  ],\n  \"conflicts\": []\n}"
+            }
+          }
+        ],
+        "created": 1788861142,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 72,
+          "prompt_tokens": 280,
+          "total_tokens": 352,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-ulSvP8aQ8SQrRsOD2iF9prjtjI6uRymy",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 280,
+          "prompt_ms": 414.007,
+          "prompt_per_token_ms": 1.4785964285714286,
+          "prompt_per_second": 676.3170671027301,
+          "predicted_n": 72,
+          "predicted_ms": 1522.682,
+          "predicted_per_token_ms": 21.14836111111111,
+          "predicted_per_second": 47.28498793576072
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "isolated-quality-3",
+          "entities": [],
+          "facts": [
+            {
+              "field": "notice",
+              "value": "The source does not confirm approval; no policy change was announced."
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "accepted": {
+        "sourceId": "isolated-quality-3",
+        "entities": [],
+        "facts": [
+          {
+            "field": "notice",
+            "value": "The source does not confirm approval; no policy change was announced.",
+            "unit": null,
+            "observedAt": 1788861077364,
+            "evidenceLocation": "facts.notice",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "latencyMs": 1943,
+      "passed": true
+    },
+    {
+      "category": "CONFLICT",
+      "source": {
+        "id": "isolated-4",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-4",
+        "url": "local://isolated-fixture/4",
+        "eventAt": 1788861078307,
+        "publishedAt": 1788861078307,
+        "receivedAt": 1788861078307,
+        "availableAt": 1788861078307,
+        "expiresAt": 1788861442307,
+        "closedBar": true,
+        "facts": {
+          "sourceA": "reported increase",
+          "sourceB": "reported no change"
+        },
+        "sourceConflicts": [
+          "sourceA and sourceB disagree"
+        ],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "4",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000004"
+      },
+      "status": "MODEL_COMPLETED",
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"sourceId\": \"isolated-quality-4\",\n  \"entities\": [],\n  \"facts\": [\n    {\n      \"field\": \"sourceA\",\n      \"value\": \"reported increase\"\n    },\n    {\n      \"field\": \"sourceB\",\n      \"value\": \"reported no change\"\n    }\n  ],\n  \"conflicts\": [\n    \"sourceA and sourceB disagree\"\n  ]\n}"
+            }
+          }
+        ],
+        "created": 1788861144,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 101,
+          "prompt_tokens": 283,
+          "total_tokens": 384,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-WIUz9Oy7yokERJCtV5qaF9pl2M4njMIL",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 283,
+          "prompt_ms": 422.676,
+          "prompt_per_token_ms": 1.4935547703180212,
+          "prompt_per_second": 669.5435747475608,
+          "predicted_n": 101,
+          "predicted_ms": 2141.559,
+          "predicted_per_token_ms": 21.203554455445545,
+          "predicted_per_second": 47.161904014785485
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "isolated-quality-4",
+          "entities": [],
+          "facts": [
+            {
+              "field": "sourceA",
+              "value": "reported increase"
+            },
+            {
+              "field": "sourceB",
+              "value": "reported no change"
+            }
+          ],
+          "conflicts": [
+            "sourceA and sourceB disagree"
+          ]
+        }
+      },
+      "accepted": {
+        "sourceId": "isolated-quality-4",
+        "entities": [],
+        "facts": [
+          {
+            "field": "sourceA",
+            "value": "reported increase",
+            "unit": null,
+            "observedAt": 1788861078307,
+            "evidenceLocation": "facts.sourceA",
+            "conflict": null
+          },
+          {
+            "field": "sourceB",
+            "value": "reported no change",
+            "unit": null,
+            "observedAt": 1788861078307,
+            "evidenceLocation": "facts.sourceB",
+            "conflict": null
+          }
+        ],
+        "conflicts": [
+          "sourceA and sourceB disagree"
+        ]
+      },
+      "issues": [],
+      "latencyMs": 2571,
+      "passed": true
+    },
+    {
+      "category": "EMPTY",
+      "source": {
+        "id": "isolated-5",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-5",
+        "url": "local://isolated-fixture/5",
+        "eventAt": 1788861079878,
+        "publishedAt": 1788861079878,
+        "receivedAt": 1788861079878,
+        "availableAt": 1788861079878,
+        "expiresAt": 1788861444878,
+        "closedBar": true,
+        "facts": {},
+        "sourceConflicts": [],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "5",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000005"
+      },
+      "status": "MODEL_COMPLETED",
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"sourceId\": \"isolated-quality-5\",\n  \"entities\": [],\n  \"facts\": [],\n  \"conflicts\": []\n}"
+            }
+          }
+        ],
+        "created": 1788861146,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 36,
+          "prompt_tokens": 266,
+          "total_tokens": 302,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-m6eFMHlDmVOXABVTgrTMrTnXqxcPFLO0",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 266,
+          "prompt_ms": 443.069,
+          "prompt_per_token_ms": 1.665672932330827,
+          "prompt_per_second": 600.3579577898702,
+          "predicted_n": 36,
+          "predicted_ms": 758.199,
+          "predicted_per_token_ms": 21.061083333333332,
+          "predicted_per_second": 47.48093838161222
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "isolated-quality-5",
+          "entities": [],
+          "facts": [],
+          "conflicts": []
+        }
+      },
+      "accepted": {
+        "sourceId": "isolated-quality-5",
+        "entities": [],
+        "facts": [],
+        "conflicts": []
+      },
+      "issues": [],
+      "latencyMs": 1209,
+      "passed": true
+    },
+    {
+      "category": "STALE",
+      "source": {
+        "id": "isolated-6",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-6",
+        "url": "local://isolated-fixture/6",
+        "eventAt": 1788861080087,
+        "publishedAt": 1788861080087,
+        "receivedAt": 1788861080087,
+        "availableAt": 1788861080087,
+        "expiresAt": 1788861146086,
+        "closedBar": true,
+        "facts": {
+          "return15m": 0,
+          "close": 50006
+        },
+        "sourceConflicts": [],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "6",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000006"
+      },
+      "status": "GATED_BEFORE_MODEL",
+      "passed": true
+    },
+    {
+      "category": "UP",
+      "source": {
+        "id": "isolated-7",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-7",
+        "url": "local://isolated-fixture/7",
+        "eventAt": 1788861079087,
+        "publishedAt": 1788861079087,
+        "receivedAt": 1788861079087,
+        "availableAt": 1788861079087,
+        "expiresAt": 1788861446087,
+        "closedBar": true,
+        "facts": {
+          "return15m": 0.015,
+          "close": 50007
+        },
+        "sourceConflicts": [],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "7",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000007"
+      },
+      "status": "MODEL_COMPLETED",
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"sourceId\": \"isolated-quality-7\",\n  \"entities\": [],\n  \"facts\": [\n    {\n      \"field\": \"return15m\",\n      \"value\": 0.015\n    },\n    {\n      \"field\": \"close\",\n      \"value\": 50007\n    }\n  ],\n  \"conflicts\": []\n}"
+            }
+          }
+        ],
+        "created": 1788861148,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 92,
+          "prompt_tokens": 283,
+          "total_tokens": 375,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-0h2p1G3OHHwwPigvuqxJADIH3iX8bMK7",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 283,
+          "prompt_ms": 436.18,
+          "prompt_per_token_ms": 1.5412720848056538,
+          "prompt_per_second": 648.8147095235912,
+          "predicted_n": 92,
+          "predicted_ms": 1953.861,
+          "predicted_per_token_ms": 21.237619565217393,
+          "predicted_per_second": 47.08625639183135
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "isolated-quality-7",
+          "entities": [],
+          "facts": [
+            {
+              "field": "return15m",
+              "value": 0.015
+            },
+            {
+              "field": "close",
+              "value": 50007
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "accepted": {
+        "sourceId": "isolated-quality-7",
+        "entities": [],
+        "facts": [
+          {
+            "field": "return15m",
+            "value": 0.015,
+            "unit": "ratio",
+            "observedAt": 1788861079087,
+            "evidenceLocation": "facts.return15m",
+            "conflict": null
+          },
+          {
+            "field": "close",
+            "value": 50007,
+            "unit": "USD",
+            "observedAt": 1788861079087,
+            "evidenceLocation": "facts.close",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "latencyMs": 2401,
+      "passed": true
+    },
+    {
+      "category": "DOWN",
+      "source": {
+        "id": "isolated-8",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-8",
+        "url": "local://isolated-fixture/8",
+        "eventAt": 1788861080488,
+        "publishedAt": 1788861080488,
+        "receivedAt": 1788861080488,
+        "availableAt": 1788861080488,
+        "expiresAt": 1788861448488,
+        "closedBar": true,
+        "facts": {
+          "return15m": -0.012,
+          "close": 50008
+        },
+        "sourceConflicts": [],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "8",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000008"
+      },
+      "status": "MODEL_COMPLETED",
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"sourceId\": \"isolated-quality-8\",\n  \"entities\": [],\n  \"facts\": [\n    {\n      \"field\": \"return15m\",\n      \"value\": -0.012\n    },\n    {\n      \"field\": \"close\",\n      \"value\": 50008\n    }\n  ],\n  \"conflicts\": []\n}"
+            }
+          }
+        ],
+        "created": 1788861150,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 92,
+          "prompt_tokens": 283,
+          "total_tokens": 375,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-22vXU8KzHGWKNa6ReX5Mu6dhweEf5D4M",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 283,
+          "prompt_ms": 426.612,
+          "prompt_per_token_ms": 1.5074628975265019,
+          "prompt_per_second": 663.3662437999868,
+          "predicted_n": 92,
+          "predicted_ms": 1951.173,
+          "predicted_per_token_ms": 21.208402173913043,
+          "predicted_per_second": 47.15112396491751
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "isolated-quality-8",
+          "entities": [],
+          "facts": [
+            {
+              "field": "return15m",
+              "value": -0.012
+            },
+            {
+              "field": "close",
+              "value": 50008
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "accepted": {
+        "sourceId": "isolated-quality-8",
+        "entities": [],
+        "facts": [
+          {
+            "field": "return15m",
+            "value": -0.012,
+            "unit": "ratio",
+            "observedAt": 1788861080488,
+            "evidenceLocation": "facts.return15m",
+            "conflict": null
+          },
+          {
+            "field": "close",
+            "value": 50008,
+            "unit": "USD",
+            "observedAt": 1788861080488,
+            "evidenceLocation": "facts.close",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "latencyMs": 2391,
+      "passed": true
+    },
+    {
+      "category": "RANGE",
+      "source": {
+        "id": "isolated-9",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-9",
+        "url": "local://isolated-fixture/9",
+        "eventAt": 1788861081879,
+        "publishedAt": 1788861081879,
+        "receivedAt": 1788861081879,
+        "availableAt": 1788861081879,
+        "expiresAt": 1788861450879,
+        "closedBar": true,
+        "facts": {
+          "return15m": 0,
+          "close": 50009
+        },
+        "sourceConflicts": [],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "9",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000009"
+      },
+      "status": "MODEL_COMPLETED",
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"sourceId\": \"isolated-quality-9\",\n  \"entities\": [],\n  \"facts\": [\n    {\n      \"field\": \"return15m\",\n      \"value\": 0\n    },\n    {\n      \"field\": \"close\",\n      \"value\": 50009\n    }\n  ],\n  \"conflicts\": []\n}"
+            }
+          }
+        ],
+        "created": 1788861153,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 88,
+          "prompt_tokens": 279,
+          "total_tokens": 367,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-3L4KojfUbJQxCHvVilX5w3Q2GRLTBHRY",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 279,
+          "prompt_ms": 427.425,
+          "prompt_per_token_ms": 1.531989247311828,
+          "prompt_per_second": 652.7460958062818,
+          "predicted_n": 88,
+          "predicted_ms": 1831.118,
+          "predicted_per_token_ms": 20.80815909090909,
+          "predicted_per_second": 48.058071626186845
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "isolated-quality-9",
+          "entities": [],
+          "facts": [
+            {
+              "field": "return15m",
+              "value": 0
+            },
+            {
+              "field": "close",
+              "value": 50009
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "accepted": {
+        "sourceId": "isolated-quality-9",
+        "entities": [],
+        "facts": [
+          {
+            "field": "return15m",
+            "value": 0,
+            "unit": "ratio",
+            "observedAt": 1788861081879,
+            "evidenceLocation": "facts.return15m",
+            "conflict": null
+          },
+          {
+            "field": "close",
+            "value": 50009,
+            "unit": "USD",
+            "observedAt": 1788861081879,
+            "evidenceLocation": "facts.close",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "latencyMs": 2271,
+      "passed": true
+    },
+    {
+      "category": "NEGATION",
+      "source": {
+        "id": "isolated-10",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-10",
+        "url": "local://isolated-fixture/10",
+        "eventAt": 1788861083150,
+        "publishedAt": 1788861083150,
+        "receivedAt": 1788861083150,
+        "availableAt": 1788861083150,
+        "expiresAt": 1788861453150,
+        "closedBar": true,
+        "facts": {
+          "notice": "The source does not confirm approval; no policy change was announced."
+        },
+        "sourceConflicts": [],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "10",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000010"
+      },
+      "status": "MODEL_COMPLETED",
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"sourceId\": \"isolated-quality-10\",\n  \"entities\": [],\n  \"facts\": [\n    {\n      \"field\": \"notice\",\n      \"value\": \"The source does not confirm approval; no policy change was announced.\"\n    }\n  ],\n  \"conflicts\": []\n}"
+            }
+          }
+        ],
+        "created": 1788861155,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 73,
+          "prompt_tokens": 281,
+          "total_tokens": 354,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-kvIzJ7RDPBZ2gU4BPNQiWdAxYz20LcVF",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 281,
+          "prompt_ms": 427.002,
+          "prompt_per_token_ms": 1.5195800711743772,
+          "prompt_per_second": 658.0765429670118,
+          "predicted_n": 73,
+          "predicted_ms": 1533.48,
+          "predicted_per_token_ms": 21.006575342465755,
+          "predicted_per_second": 47.60414221248402
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "isolated-quality-10",
+          "entities": [],
+          "facts": [
+            {
+              "field": "notice",
+              "value": "The source does not confirm approval; no policy change was announced."
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "accepted": {
+        "sourceId": "isolated-quality-10",
+        "entities": [],
+        "facts": [
+          {
+            "field": "notice",
+            "value": "The source does not confirm approval; no policy change was announced.",
+            "unit": null,
+            "observedAt": 1788861083150,
+            "evidenceLocation": "facts.notice",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "latencyMs": 1966,
+      "passed": true
+    },
+    {
+      "category": "CONFLICT",
+      "source": {
+        "id": "isolated-11",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-11",
+        "url": "local://isolated-fixture/11",
+        "eventAt": 1788861084116,
+        "publishedAt": 1788861084116,
+        "receivedAt": 1788861084116,
+        "availableAt": 1788861084116,
+        "expiresAt": 1788861455116,
+        "closedBar": true,
+        "facts": {
+          "sourceA": "reported increase",
+          "sourceB": "reported no change"
+        },
+        "sourceConflicts": [
+          "sourceA and sourceB disagree"
+        ],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "11",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000011"
+      },
+      "status": "MODEL_COMPLETED",
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"sourceId\": \"isolated-quality-11\",\n  \"entities\": [],\n  \"facts\": [\n    {\n      \"field\": \"sourceA\",\n      \"value\": \"reported increase\"\n    },\n    {\n      \"field\": \"sourceB\",\n      \"value\": \"reported no change\"\n    }\n  ],\n  \"conflicts\": [\n    \"sourceA and sourceB disagree\"\n  ]\n}"
+            }
+          }
+        ],
+        "created": 1788861157,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 102,
+          "prompt_tokens": 284,
+          "total_tokens": 386,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-MevRvQE7MCbW0DTLCrLyeSTWCKqwl4hJ",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 284,
+          "prompt_ms": 424.813,
+          "prompt_per_token_ms": 1.4958204225352112,
+          "prompt_per_second": 668.5294470743597,
+          "predicted_n": 102,
+          "predicted_ms": 2163.586,
+          "predicted_per_token_ms": 21.21162745098039,
+          "predicted_per_second": 47.14395452734489
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "isolated-quality-11",
+          "entities": [],
+          "facts": [
+            {
+              "field": "sourceA",
+              "value": "reported increase"
+            },
+            {
+              "field": "sourceB",
+              "value": "reported no change"
+            }
+          ],
+          "conflicts": [
+            "sourceA and sourceB disagree"
+          ]
+        }
+      },
+      "accepted": {
+        "sourceId": "isolated-quality-11",
+        "entities": [],
+        "facts": [
+          {
+            "field": "sourceA",
+            "value": "reported increase",
+            "unit": null,
+            "observedAt": 1788861084116,
+            "evidenceLocation": "facts.sourceA",
+            "conflict": null
+          },
+          {
+            "field": "sourceB",
+            "value": "reported no change",
+            "unit": null,
+            "observedAt": 1788861084116,
+            "evidenceLocation": "facts.sourceB",
+            "conflict": null
+          }
+        ],
+        "conflicts": [
+          "sourceA and sourceB disagree"
+        ]
+      },
+      "issues": [],
+      "latencyMs": 2599,
+      "passed": true
+    },
+    {
+      "category": "EMPTY",
+      "source": {
+        "id": "isolated-12",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-12",
+        "url": "local://isolated-fixture/12",
+        "eventAt": 1788861085715,
+        "publishedAt": 1788861085715,
+        "receivedAt": 1788861085715,
+        "availableAt": 1788861085715,
+        "expiresAt": 1788861457715,
+        "closedBar": true,
+        "facts": {},
+        "sourceConflicts": [],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "12",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000012"
+      },
+      "status": "MODEL_COMPLETED",
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"sourceId\": \"isolated-quality-12\",\n  \"entities\": [],\n  \"facts\": [],\n  \"conflicts\": []\n}"
+            }
+          }
+        ],
+        "created": 1788861158,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 37,
+          "prompt_tokens": 267,
+          "total_tokens": 304,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-f74zEcReDorH99oJtloyf6Ke1xRY9UUf",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 267,
+          "prompt_ms": 439.509,
+          "prompt_per_token_ms": 1.6461011235955056,
+          "prompt_per_second": 607.4960922301932,
+          "predicted_n": 37,
+          "predicted_ms": 776.343,
+          "predicted_per_token_ms": 20.982243243243243,
+          "predicted_per_second": 47.65934644867024
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "isolated-quality-12",
+          "entities": [],
+          "facts": [],
+          "conflicts": []
+        }
+      },
+      "accepted": {
+        "sourceId": "isolated-quality-12",
+        "entities": [],
+        "facts": [],
+        "conflicts": []
+      },
+      "issues": [],
+      "latencyMs": 1224,
+      "passed": true
+    },
+    {
+      "category": "STALE",
+      "source": {
+        "id": "isolated-13",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-13",
+        "url": "local://isolated-fixture/13",
+        "eventAt": 1788861085939,
+        "publishedAt": 1788861085939,
+        "receivedAt": 1788861085939,
+        "availableAt": 1788861085939,
+        "expiresAt": 1788861158938,
+        "closedBar": true,
+        "facts": {
+          "return15m": 0,
+          "close": 50013
+        },
+        "sourceConflicts": [],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "13",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000013"
+      },
+      "status": "GATED_BEFORE_MODEL",
+      "passed": true
+    },
+    {
+      "category": "UP",
+      "source": {
+        "id": "isolated-14",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-14",
+        "url": "local://isolated-fixture/14",
+        "eventAt": 1788861084939,
+        "publishedAt": 1788861084939,
+        "receivedAt": 1788861084939,
+        "availableAt": 1788861084939,
+        "expiresAt": 1788861458939,
+        "closedBar": true,
+        "facts": {
+          "return15m": 0.015,
+          "close": 50014
+        },
+        "sourceConflicts": [],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "14",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000014"
+      },
+      "status": "MODEL_COMPLETED",
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"sourceId\": \"isolated-quality-14\",\n  \"entities\": [],\n  \"facts\": [\n    {\n      \"field\": \"return15m\",\n      \"value\": 0.015\n    },\n    {\n      \"field\": \"close\",\n      \"value\": 50014\n    }\n  ],\n  \"conflicts\": []\n}"
+            }
+          }
+        ],
+        "created": 1788861161,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 93,
+          "prompt_tokens": 284,
+          "total_tokens": 377,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-hGrpLBDluxl4NI3cBPfeyF5AFpoILWMp",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 284,
+          "prompt_ms": 421.671,
+          "prompt_per_token_ms": 1.484757042253521,
+          "prompt_per_second": 673.5108651057341,
+          "predicted_n": 93,
+          "predicted_ms": 2000.23,
+          "predicted_per_token_ms": 21.50784946236559,
+          "predicted_per_second": 46.49465311489179
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "isolated-quality-14",
+          "entities": [],
+          "facts": [
+            {
+              "field": "return15m",
+              "value": 0.015
+            },
+            {
+              "field": "close",
+              "value": 50014
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "accepted": {
+        "sourceId": "isolated-quality-14",
+        "entities": [],
+        "facts": [
+          {
+            "field": "return15m",
+            "value": 0.015,
+            "unit": "ratio",
+            "observedAt": 1788861084939,
+            "evidenceLocation": "facts.return15m",
+            "conflict": null
+          },
+          {
+            "field": "close",
+            "value": 50014,
+            "unit": "USD",
+            "observedAt": 1788861084939,
+            "evidenceLocation": "facts.close",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "latencyMs": 2440,
+      "passed": true
+    },
+    {
+      "category": "DOWN",
+      "source": {
+        "id": "isolated-15",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-15",
+        "url": "local://isolated-fixture/15",
+        "eventAt": 1788861086379,
+        "publishedAt": 1788861086379,
+        "receivedAt": 1788861086379,
+        "availableAt": 1788861086379,
+        "expiresAt": 1788861461379,
+        "closedBar": true,
+        "facts": {
+          "return15m": -0.012,
+          "close": 50015
+        },
+        "sourceConflicts": [],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "15",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000015"
+      },
+      "status": "MODEL_COMPLETED",
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"sourceId\": \"isolated-quality-15\",\n  \"entities\": [],\n  \"facts\": [\n    {\n      \"field\": \"return15m\",\n      \"value\": -0.012\n    },\n    {\n      \"field\": \"close\",\n      \"value\": 50015\n    }\n  ],\n  \"conflicts\": []\n}"
+            }
+          }
+        ],
+        "created": 1788861163,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 93,
+          "prompt_tokens": 284,
+          "total_tokens": 377,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-LvZVazaWOnHHHLOCcUy3VuofsHM68YqO",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 284,
+          "prompt_ms": 412.147,
+          "prompt_per_token_ms": 1.4512218309859155,
+          "prompt_per_second": 689.0745292335016,
+          "predicted_n": 93,
+          "predicted_ms": 1963.213,
+          "predicted_per_token_ms": 21.109817204301073,
+          "predicted_per_second": 47.37132445638858
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "isolated-quality-15",
+          "entities": [],
+          "facts": [
+            {
+              "field": "return15m",
+              "value": -0.012
+            },
+            {
+              "field": "close",
+              "value": 50015
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "accepted": {
+        "sourceId": "isolated-quality-15",
+        "entities": [],
+        "facts": [
+          {
+            "field": "return15m",
+            "value": -0.012,
+            "unit": "ratio",
+            "observedAt": 1788861086379,
+            "evidenceLocation": "facts.return15m",
+            "conflict": null
+          },
+          {
+            "field": "close",
+            "value": 50015,
+            "unit": "USD",
+            "observedAt": 1788861086379,
+            "evidenceLocation": "facts.close",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "latencyMs": 2390,
+      "passed": true
+    },
+    {
+      "category": "RANGE",
+      "source": {
+        "id": "isolated-16",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-16",
+        "url": "local://isolated-fixture/16",
+        "eventAt": 1788861087769,
+        "publishedAt": 1788861087769,
+        "receivedAt": 1788861087769,
+        "availableAt": 1788861087769,
+        "expiresAt": 1788861463769,
+        "closedBar": true,
+        "facts": {
+          "return15m": 0,
+          "close": 50016
+        },
+        "sourceConflicts": [],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "16",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000016"
+      },
+      "status": "MODEL_COMPLETED",
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"sourceId\": \"isolated-quality-16\",\n  \"entities\": [],\n  \"facts\": [\n    {\n      \"field\": \"return15m\",\n      \"value\": 0\n    },\n    {\n      \"field\": \"close\",\n      \"value\": 50016\n    }\n  ],\n  \"conflicts\": []\n}"
+            }
+          }
+        ],
+        "created": 1788861166,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 89,
+          "prompt_tokens": 280,
+          "total_tokens": 369,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-TnamK4wKseCn7Has1iLAqAVLL6wVetPa",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 280,
+          "prompt_ms": 408.589,
+          "prompt_per_token_ms": 1.4592464285714286,
+          "prompt_per_second": 685.2852132583108,
+          "predicted_n": 89,
+          "predicted_ms": 1859.943,
+          "predicted_per_token_ms": 20.89823595505618,
+          "predicted_per_second": 47.850928765021294
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "isolated-quality-16",
+          "entities": [],
+          "facts": [
+            {
+              "field": "return15m",
+              "value": 0
+            },
+            {
+              "field": "close",
+              "value": 50016
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "accepted": {
+        "sourceId": "isolated-quality-16",
+        "entities": [],
+        "facts": [
+          {
+            "field": "return15m",
+            "value": 0,
+            "unit": "ratio",
+            "observedAt": 1788861087769,
+            "evidenceLocation": "facts.return15m",
+            "conflict": null
+          },
+          {
+            "field": "close",
+            "value": 50016,
+            "unit": "USD",
+            "observedAt": 1788861087769,
+            "evidenceLocation": "facts.close",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "latencyMs": 2289,
+      "passed": true
+    },
+    {
+      "category": "NEGATION",
+      "source": {
+        "id": "isolated-17",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-17",
+        "url": "local://isolated-fixture/17",
+        "eventAt": 1788861089058,
+        "publishedAt": 1788861089058,
+        "receivedAt": 1788861089058,
+        "availableAt": 1788861089058,
+        "expiresAt": 1788861466058,
+        "closedBar": true,
+        "facts": {
+          "notice": "The source does not confirm approval; no policy change was announced."
+        },
+        "sourceConflicts": [],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "17",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000017"
+      },
+      "status": "MODEL_COMPLETED",
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"sourceId\": \"isolated-quality-17\",\n  \"entities\": [],\n  \"facts\": [\n    {\n      \"field\": \"notice\",\n      \"value\": \"The source does not confirm approval; no policy change was announced.\"\n    }\n  ],\n  \"conflicts\": []\n}"
+            }
+          }
+        ],
+        "created": 1788861168,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 73,
+          "prompt_tokens": 281,
+          "total_tokens": 354,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-K7hqCaJjZVUbMSZTsfs7KYJNlFcc8aus",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 281,
+          "prompt_ms": 428.526,
+          "prompt_per_token_ms": 1.5250035587188613,
+          "prompt_per_second": 655.7361747011851,
+          "predicted_n": 73,
+          "predicted_ms": 1533.349,
+          "predicted_per_token_ms": 21.00478082191781,
+          "predicted_per_second": 47.60820922047101
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "isolated-quality-17",
+          "entities": [],
+          "facts": [
+            {
+              "field": "notice",
+              "value": "The source does not confirm approval; no policy change was announced."
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "accepted": {
+        "sourceId": "isolated-quality-17",
+        "entities": [],
+        "facts": [
+          {
+            "field": "notice",
+            "value": "The source does not confirm approval; no policy change was announced.",
+            "unit": null,
+            "observedAt": 1788861089058,
+            "evidenceLocation": "facts.notice",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "latencyMs": 1972,
+      "passed": true
+    },
+    {
+      "category": "CONFLICT",
+      "source": {
+        "id": "isolated-18",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-18",
+        "url": "local://isolated-fixture/18",
+        "eventAt": 1788861090030,
+        "publishedAt": 1788861090030,
+        "receivedAt": 1788861090030,
+        "availableAt": 1788861090030,
+        "expiresAt": 1788861468030,
+        "closedBar": true,
+        "facts": {
+          "sourceA": "reported increase",
+          "sourceB": "reported no change"
+        },
+        "sourceConflicts": [
+          "sourceA and sourceB disagree"
+        ],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "18",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000018"
+      },
+      "status": "MODEL_COMPLETED",
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"sourceId\": \"isolated-quality-18\",\n  \"entities\": [],\n  \"facts\": [\n    {\n      \"field\": \"sourceA\",\n      \"value\": \"reported increase\"\n    },\n    {\n      \"field\": \"sourceB\",\n      \"value\": \"reported no change\"\n    }\n  ],\n  \"conflicts\": [\n    \"sourceA and sourceB disagree\"\n  ]\n}"
+            }
+          }
+        ],
+        "created": 1788861170,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 102,
+          "prompt_tokens": 284,
+          "total_tokens": 386,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-J1OdJF3E8wZ8uAOBTg5oXqkjXRFiYcN4",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 284,
+          "prompt_ms": 411.51,
+          "prompt_per_token_ms": 1.4489788732394366,
+          "prompt_per_second": 690.1411873344512,
+          "predicted_n": 102,
+          "predicted_ms": 2167.984,
+          "predicted_per_token_ms": 21.254745098039216,
+          "predicted_per_second": 47.048317699761625
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "isolated-quality-18",
+          "entities": [],
+          "facts": [
+            {
+              "field": "sourceA",
+              "value": "reported increase"
+            },
+            {
+              "field": "sourceB",
+              "value": "reported no change"
+            }
+          ],
+          "conflicts": [
+            "sourceA and sourceB disagree"
+          ]
+        }
+      },
+      "accepted": {
+        "sourceId": "isolated-quality-18",
+        "entities": [],
+        "facts": [
+          {
+            "field": "sourceA",
+            "value": "reported increase",
+            "unit": null,
+            "observedAt": 1788861090030,
+            "evidenceLocation": "facts.sourceA",
+            "conflict": null
+          },
+          {
+            "field": "sourceB",
+            "value": "reported no change",
+            "unit": null,
+            "observedAt": 1788861090030,
+            "evidenceLocation": "facts.sourceB",
+            "conflict": null
+          }
+        ],
+        "conflicts": [
+          "sourceA and sourceB disagree"
+        ]
+      },
+      "issues": [],
+      "latencyMs": 2590,
+      "passed": true
+    },
+    {
+      "category": "EMPTY",
+      "source": {
+        "id": "isolated-19",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-19",
+        "url": "local://isolated-fixture/19",
+        "eventAt": 1788861091620,
+        "publishedAt": 1788861091620,
+        "receivedAt": 1788861091620,
+        "availableAt": 1788861091620,
+        "expiresAt": 1788861470620,
+        "closedBar": true,
+        "facts": {},
+        "sourceConflicts": [],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "19",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000019"
+      },
+      "status": "MODEL_COMPLETED",
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"sourceId\": \"isolated-quality-19\",\n  \"entities\": [],\n  \"facts\": [],\n  \"conflicts\": []\n}"
+            }
+          }
+        ],
+        "created": 1788861171,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 37,
+          "prompt_tokens": 267,
+          "total_tokens": 304,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-pecTMQYOhC6C3djX2wFhwE5CrbwimMtO",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 267,
+          "prompt_ms": 436.237,
+          "prompt_per_token_ms": 1.6338464419475656,
+          "prompt_per_second": 612.0526227715668,
+          "predicted_n": 37,
+          "predicted_ms": 775.932,
+          "predicted_per_token_ms": 20.971135135135135,
+          "predicted_per_second": 47.68459091776083
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "isolated-quality-19",
+          "entities": [],
+          "facts": [],
+          "conflicts": []
+        }
+      },
+      "accepted": {
+        "sourceId": "isolated-quality-19",
+        "entities": [],
+        "facts": [],
+        "conflicts": []
+      },
+      "issues": [],
+      "latencyMs": 1219,
+      "passed": true
+    },
+    {
+      "category": "STALE",
+      "source": {
+        "id": "isolated-20",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-20",
+        "url": "local://isolated-fixture/20",
+        "eventAt": 1788861091839,
+        "publishedAt": 1788861091839,
+        "receivedAt": 1788861091839,
+        "availableAt": 1788861091839,
+        "expiresAt": 1788861171838,
+        "closedBar": true,
+        "facts": {
+          "return15m": 0,
+          "close": 50020
+        },
+        "sourceConflicts": [],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "20",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000020"
+      },
+      "status": "GATED_BEFORE_MODEL",
+      "passed": true
+    },
+    {
+      "category": "UP",
+      "source": {
+        "id": "isolated-21",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-21",
+        "url": "local://isolated-fixture/21",
+        "eventAt": 1788861090839,
+        "publishedAt": 1788861090839,
+        "receivedAt": 1788861090839,
+        "availableAt": 1788861090839,
+        "expiresAt": 1788861471839,
+        "closedBar": true,
+        "facts": {
+          "return15m": 0.015,
+          "close": 50021
+        },
+        "sourceConflicts": [],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "21",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000021"
+      },
+      "status": "MODEL_COMPLETED",
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"sourceId\": \"isolated-quality-21\",\n  \"entities\": [],\n  \"facts\": [\n    {\n      \"field\": \"return15m\",\n      \"value\": 0.015\n    },\n    {\n      \"field\": \"close\",\n      \"value\": 50021\n    }\n  ],\n  \"conflicts\": []\n}"
+            }
+          }
+        ],
+        "created": 1788861174,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 93,
+          "prompt_tokens": 284,
+          "total_tokens": 377,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-cmt4IMTAX60pQilGO4MqwI5c61PA0vxY",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 284,
+          "prompt_ms": 418.021,
+          "prompt_per_token_ms": 1.4719049295774649,
+          "prompt_per_second": 679.3917052014133,
+          "predicted_n": 93,
+          "predicted_ms": 2028.228,
+          "predicted_per_token_ms": 21.808903225806453,
+          "predicted_per_second": 45.85283311343695
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "isolated-quality-21",
+          "entities": [],
+          "facts": [
+            {
+              "field": "return15m",
+              "value": 0.015
+            },
+            {
+              "field": "close",
+              "value": 50021
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "accepted": {
+        "sourceId": "isolated-quality-21",
+        "entities": [],
+        "facts": [
+          {
+            "field": "return15m",
+            "value": 0.015,
+            "unit": "ratio",
+            "observedAt": 1788861090839,
+            "evidenceLocation": "facts.return15m",
+            "conflict": null
+          },
+          {
+            "field": "close",
+            "value": 50021,
+            "unit": "USD",
+            "observedAt": 1788861090839,
+            "evidenceLocation": "facts.close",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "latencyMs": 2456,
+      "passed": true
+    },
+    {
+      "category": "DOWN",
+      "source": {
+        "id": "isolated-22",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-22",
+        "url": "local://isolated-fixture/22",
+        "eventAt": 1788861092295,
+        "publishedAt": 1788861092295,
+        "receivedAt": 1788861092295,
+        "availableAt": 1788861092295,
+        "expiresAt": 1788861474295,
+        "closedBar": true,
+        "facts": {
+          "return15m": -0.012,
+          "close": 50022
+        },
+        "sourceConflicts": [],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "22",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000022"
+      },
+      "status": "MODEL_COMPLETED",
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"sourceId\": \"isolated-quality-22\",\n  \"entities\": [],\n  \"facts\": [\n    {\n      \"field\": \"return15m\",\n      \"value\": -0.012\n    },\n    {\n      \"field\": \"close\",\n      \"value\": 50022\n    }\n  ],\n  \"conflicts\": []\n}"
+            }
+          }
+        ],
+        "created": 1788861176,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 93,
+          "prompt_tokens": 284,
+          "total_tokens": 377,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-5zAJCtyFscpMGdLZE4LkbHAIlgMAmnee",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 284,
+          "prompt_ms": 423.298,
+          "prompt_per_token_ms": 1.4904859154929577,
+          "prompt_per_second": 670.9221399581382,
+          "predicted_n": 93,
+          "predicted_ms": 1975.129,
+          "predicted_per_token_ms": 21.23794623655914,
+          "predicted_per_second": 47.085532134863094
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "isolated-quality-22",
+          "entities": [],
+          "facts": [
+            {
+              "field": "return15m",
+              "value": -0.012
+            },
+            {
+              "field": "close",
+              "value": 50022
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "accepted": {
+        "sourceId": "isolated-quality-22",
+        "entities": [],
+        "facts": [
+          {
+            "field": "return15m",
+            "value": -0.012,
+            "unit": "ratio",
+            "observedAt": 1788861092295,
+            "evidenceLocation": "facts.return15m",
+            "conflict": null
+          },
+          {
+            "field": "close",
+            "value": 50022,
+            "unit": "USD",
+            "observedAt": 1788861092295,
+            "evidenceLocation": "facts.close",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "latencyMs": 2411,
+      "passed": true
+    },
+    {
+      "category": "RANGE",
+      "source": {
+        "id": "isolated-23",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-23",
+        "url": "local://isolated-fixture/23",
+        "eventAt": 1788861093706,
+        "publishedAt": 1788861093706,
+        "receivedAt": 1788861093706,
+        "availableAt": 1788861093706,
+        "expiresAt": 1788861476706,
+        "closedBar": true,
+        "facts": {
+          "return15m": 0,
+          "close": 50023
+        },
+        "sourceConflicts": [],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "23",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000023"
+      },
+      "status": "MODEL_COMPLETED",
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"sourceId\": \"isolated-quality-23\",\n  \"entities\": [],\n  \"facts\": [\n    {\n      \"field\": \"return15m\",\n      \"value\": 0\n    },\n    {\n      \"field\": \"close\",\n      \"value\": 50023\n    }\n  ],\n  \"conflicts\": []\n}"
+            }
+          }
+        ],
+        "created": 1788861178,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 89,
+          "prompt_tokens": 280,
+          "total_tokens": 369,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-0iAcBQ1acY8CaxWhRZtDzRKy388iznXA",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 280,
+          "prompt_ms": 410.57,
+          "prompt_per_token_ms": 1.4663214285714286,
+          "prompt_per_second": 681.9787125216162,
+          "predicted_n": 89,
+          "predicted_ms": 1844.542,
+          "predicted_per_token_ms": 20.725191011235953,
+          "predicted_per_second": 48.25046000579005
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "isolated-quality-23",
+          "entities": [],
+          "facts": [
+            {
+              "field": "return15m",
+              "value": 0
+            },
+            {
+              "field": "close",
+              "value": 50023
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "accepted": {
+        "sourceId": "isolated-quality-23",
+        "entities": [],
+        "facts": [
+          {
+            "field": "return15m",
+            "value": 0,
+            "unit": "ratio",
+            "observedAt": 1788861093706,
+            "evidenceLocation": "facts.return15m",
+            "conflict": null
+          },
+          {
+            "field": "close",
+            "value": 50023,
+            "unit": "USD",
+            "observedAt": 1788861093706,
+            "evidenceLocation": "facts.close",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "latencyMs": 2262,
+      "passed": true
+    },
+    {
+      "category": "NEGATION",
+      "source": {
+        "id": "isolated-24",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-24",
+        "url": "local://isolated-fixture/24",
+        "eventAt": 1788861094968,
+        "publishedAt": 1788861094968,
+        "receivedAt": 1788861094968,
+        "availableAt": 1788861094968,
+        "expiresAt": 1788861478968,
+        "closedBar": true,
+        "facts": {
+          "notice": "The source does not confirm approval; no policy change was announced."
+        },
+        "sourceConflicts": [],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "24",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000024"
+      },
+      "status": "MODEL_COMPLETED",
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"sourceId\": \"isolated-quality-24\",\n  \"entities\": [],\n  \"facts\": [\n    {\n      \"field\": \"notice\",\n      \"value\": \"The source does not confirm approval; no policy change was announced.\"\n    }\n  ],\n  \"conflicts\": []\n}"
+            }
+          }
+        ],
+        "created": 1788861180,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 73,
+          "prompt_tokens": 281,
+          "total_tokens": 354,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-KCtpq08nQX1yFWbNZ49QyhpOKlKRccbD",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 281,
+          "prompt_ms": 415.364,
+          "prompt_per_token_ms": 1.4781637010676156,
+          "prompt_per_second": 676.515056673183,
+          "predicted_n": 73,
+          "predicted_ms": 1544.156,
+          "predicted_per_token_ms": 21.152821917808218,
+          "predicted_per_second": 47.275016254834355
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "isolated-quality-24",
+          "entities": [],
+          "facts": [
+            {
+              "field": "notice",
+              "value": "The source does not confirm approval; no policy change was announced."
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "accepted": {
+        "sourceId": "isolated-quality-24",
+        "entities": [],
+        "facts": [
+          {
+            "field": "notice",
+            "value": "The source does not confirm approval; no policy change was announced.",
+            "unit": null,
+            "observedAt": 1788861094968,
+            "evidenceLocation": "facts.notice",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "latencyMs": 1976,
+      "passed": true
+    },
+    {
+      "category": "CONFLICT",
+      "source": {
+        "id": "isolated-25",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-25",
+        "url": "local://isolated-fixture/25",
+        "eventAt": 1788861095944,
+        "publishedAt": 1788861095944,
+        "receivedAt": 1788861095944,
+        "availableAt": 1788861095944,
+        "expiresAt": 1788861480944,
+        "closedBar": true,
+        "facts": {
+          "sourceA": "reported increase",
+          "sourceB": "reported no change"
+        },
+        "sourceConflicts": [
+          "sourceA and sourceB disagree"
+        ],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "25",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000025"
+      },
+      "status": "MODEL_COMPLETED",
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"sourceId\": \"isolated-quality-25\",\n  \"entities\": [],\n  \"facts\": [\n    {\n      \"field\": \"sourceA\",\n      \"value\": \"reported increase\"\n    },\n    {\n      \"field\": \"sourceB\",\n      \"value\": \"reported no change\"\n    }\n  ],\n  \"conflicts\": [\n    \"sourceA and sourceB disagree\"\n  ]\n}"
+            }
+          }
+        ],
+        "created": 1788861183,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 102,
+          "prompt_tokens": 284,
+          "total_tokens": 386,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-yGgo87nQNWHv3KTmsLaJ4Njw62Mxv8Fa",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 284,
+          "prompt_ms": 417.514,
+          "prompt_per_token_ms": 1.470119718309859,
+          "prompt_per_second": 680.2167112959087,
+          "predicted_n": 102,
+          "predicted_ms": 2148.476,
+          "predicted_per_token_ms": 21.063490196078433,
+          "predicted_per_second": 47.47551287517291
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "isolated-quality-25",
+          "entities": [],
+          "facts": [
+            {
+              "field": "sourceA",
+              "value": "reported increase"
+            },
+            {
+              "field": "sourceB",
+              "value": "reported no change"
+            }
+          ],
+          "conflicts": [
+            "sourceA and sourceB disagree"
+          ]
+        }
+      },
+      "accepted": {
+        "sourceId": "isolated-quality-25",
+        "entities": [],
+        "facts": [
+          {
+            "field": "sourceA",
+            "value": "reported increase",
+            "unit": null,
+            "observedAt": 1788861095944,
+            "evidenceLocation": "facts.sourceA",
+            "conflict": null
+          },
+          {
+            "field": "sourceB",
+            "value": "reported no change",
+            "unit": null,
+            "observedAt": 1788861095944,
+            "evidenceLocation": "facts.sourceB",
+            "conflict": null
+          }
+        ],
+        "conflicts": [
+          "sourceA and sourceB disagree"
+        ]
+      },
+      "issues": [],
+      "latencyMs": 2580,
+      "passed": true
+    },
+    {
+      "category": "EMPTY",
+      "source": {
+        "id": "isolated-26",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-26",
+        "url": "local://isolated-fixture/26",
+        "eventAt": 1788861097524,
+        "publishedAt": 1788861097524,
+        "receivedAt": 1788861097524,
+        "availableAt": 1788861097524,
+        "expiresAt": 1788861483524,
+        "closedBar": true,
+        "facts": {},
+        "sourceConflicts": [],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "26",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000026"
+      },
+      "status": "MODEL_COMPLETED",
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"sourceId\": \"isolated-quality-26\",\n  \"entities\": [],\n  \"facts\": [],\n  \"conflicts\": []\n}"
+            }
+          }
+        ],
+        "created": 1788861184,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 37,
+          "prompt_tokens": 267,
+          "total_tokens": 304,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-DtzrlaMxBZtElWSdRhDF5sNEXojl1FMr",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 267,
+          "prompt_ms": 449.173,
+          "prompt_per_token_ms": 1.6822958801498127,
+          "prompt_per_second": 594.4257557778405,
+          "predicted_n": 37,
+          "predicted_ms": 775.881,
+          "predicted_per_token_ms": 20.969756756756755,
+          "predicted_per_second": 47.687725308391364
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "isolated-quality-26",
+          "entities": [],
+          "facts": [],
+          "conflicts": []
+        }
+      },
+      "accepted": {
+        "sourceId": "isolated-quality-26",
+        "entities": [],
+        "facts": [],
+        "conflicts": []
+      },
+      "issues": [],
+      "latencyMs": 1230,
+      "passed": true
+    },
+    {
+      "category": "STALE",
+      "source": {
+        "id": "isolated-27",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-27",
+        "url": "local://isolated-fixture/27",
+        "eventAt": 1788861097754,
+        "publishedAt": 1788861097754,
+        "receivedAt": 1788861097754,
+        "availableAt": 1788861097754,
+        "expiresAt": 1788861184753,
+        "closedBar": true,
+        "facts": {
+          "return15m": 0,
+          "close": 50027
+        },
+        "sourceConflicts": [],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "27",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000027"
+      },
+      "status": "GATED_BEFORE_MODEL",
+      "passed": true
+    },
+    {
+      "category": "UP",
+      "source": {
+        "id": "isolated-28",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-28",
+        "url": "local://isolated-fixture/28",
+        "eventAt": 1788861096754,
+        "publishedAt": 1788861096754,
+        "receivedAt": 1788861096754,
+        "availableAt": 1788861096754,
+        "expiresAt": 1788861484754,
+        "closedBar": true,
+        "facts": {
+          "return15m": 0.015,
+          "close": 50028
+        },
+        "sourceConflicts": [],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "28",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000028"
+      },
+      "status": "MODEL_COMPLETED",
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"sourceId\": \"isolated-quality-28\",\n  \"entities\": [],\n  \"facts\": [\n    {\n      \"field\": \"return15m\",\n      \"value\": 0.015\n    },\n    {\n      \"field\": \"close\",\n      \"value\": 50028\n    }\n  ],\n  \"conflicts\": []\n}"
+            }
+          }
+        ],
+        "created": 1788861187,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 93,
+          "prompt_tokens": 284,
+          "total_tokens": 377,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-FEgQFp7SRhUfuv4NayxEQTXUGsrb28hw",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 284,
+          "prompt_ms": 428.716,
+          "prompt_per_token_ms": 1.5095633802816901,
+          "prompt_per_second": 662.4432024930258,
+          "predicted_n": 93,
+          "predicted_ms": 2018.209,
+          "predicted_per_token_ms": 21.701172043010754,
+          "predicted_per_second": 46.08046044785252
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "isolated-quality-28",
+          "entities": [],
+          "facts": [
+            {
+              "field": "return15m",
+              "value": 0.015
+            },
+            {
+              "field": "close",
+              "value": 50028
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "accepted": {
+        "sourceId": "isolated-quality-28",
+        "entities": [],
+        "facts": [
+          {
+            "field": "return15m",
+            "value": 0.015,
+            "unit": "ratio",
+            "observedAt": 1788861096754,
+            "evidenceLocation": "facts.return15m",
+            "conflict": null
+          },
+          {
+            "field": "close",
+            "value": 50028,
+            "unit": "USD",
+            "observedAt": 1788861096754,
+            "evidenceLocation": "facts.close",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "latencyMs": 2466,
+      "passed": true
+    },
+    {
+      "category": "DOWN",
+      "source": {
+        "id": "isolated-29",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-29",
+        "url": "local://isolated-fixture/29",
+        "eventAt": 1788861098220,
+        "publishedAt": 1788861098220,
+        "receivedAt": 1788861098220,
+        "availableAt": 1788861098220,
+        "expiresAt": 1788861487220,
+        "closedBar": true,
+        "facts": {
+          "return15m": -0.012,
+          "close": 50029
+        },
+        "sourceConflicts": [],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "29",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000029"
+      },
+      "status": "MODEL_COMPLETED",
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"sourceId\": \"isolated-quality-29\",\n  \"entities\": [],\n  \"facts\": [\n    {\n      \"field\": \"return15m\",\n      \"value\": -0.012\n    },\n    {\n      \"field\": \"close\",\n      \"value\": 50029\n    }\n  ],\n  \"conflicts\": []\n}"
+            }
+          }
+        ],
+        "created": 1788861189,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 93,
+          "prompt_tokens": 284,
+          "total_tokens": 377,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-7JntEKrUdC5SoiX6PFSW9t0pWTKsNVy4",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 284,
+          "prompt_ms": 418.344,
+          "prompt_per_token_ms": 1.4730422535211267,
+          "prompt_per_second": 678.8671523913334,
+          "predicted_n": 93,
+          "predicted_ms": 1969.11,
+          "predicted_per_token_ms": 21.17322580645161,
+          "predicted_per_second": 47.22945899416488
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "isolated-quality-29",
+          "entities": [],
+          "facts": [
+            {
+              "field": "return15m",
+              "value": -0.012
+            },
+            {
+              "field": "close",
+              "value": 50029
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "accepted": {
+        "sourceId": "isolated-quality-29",
+        "entities": [],
+        "facts": [
+          {
+            "field": "return15m",
+            "value": -0.012,
+            "unit": "ratio",
+            "observedAt": 1788861098220,
+            "evidenceLocation": "facts.return15m",
+            "conflict": null
+          },
+          {
+            "field": "close",
+            "value": 50029,
+            "unit": "USD",
+            "observedAt": 1788861098220,
+            "evidenceLocation": "facts.close",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "latencyMs": 2402,
+      "passed": true
+    },
+    {
+      "category": "RANGE",
+      "source": {
+        "id": "isolated-30",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-30",
+        "url": "local://isolated-fixture/30",
+        "eventAt": 1788861099622,
+        "publishedAt": 1788861099622,
+        "receivedAt": 1788861099622,
+        "availableAt": 1788861099622,
+        "expiresAt": 1788861489622,
+        "closedBar": true,
+        "facts": {
+          "return15m": 0,
+          "close": 50030
+        },
+        "sourceConflicts": [],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "30",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000030"
+      },
+      "status": "MODEL_COMPLETED",
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"sourceId\": \"isolated-quality-30\",\n  \"entities\": [],\n  \"facts\": [\n    {\n      \"field\": \"return15m\",\n      \"value\": 0\n    },\n    {\n      \"field\": \"close\",\n      \"value\": 50030\n    }\n  ],\n  \"conflicts\": []\n}"
+            }
+          }
+        ],
+        "created": 1788861191,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 89,
+          "prompt_tokens": 280,
+          "total_tokens": 369,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-wgmPKr4VUlqiMLfW4X0ByRgOBzcs6IBv",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 280,
+          "prompt_ms": 406.141,
+          "prompt_per_token_ms": 1.4505035714285714,
+          "prompt_per_second": 689.4157447782912,
+          "predicted_n": 89,
+          "predicted_ms": 1858.594,
+          "predicted_per_token_ms": 20.883078651685395,
+          "predicted_per_second": 47.885659805207595
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "isolated-quality-30",
+          "entities": [],
+          "facts": [
+            {
+              "field": "return15m",
+              "value": 0
+            },
+            {
+              "field": "close",
+              "value": 50030
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "accepted": {
+        "sourceId": "isolated-quality-30",
+        "entities": [],
+        "facts": [
+          {
+            "field": "return15m",
+            "value": 0,
+            "unit": "ratio",
+            "observedAt": 1788861099622,
+            "evidenceLocation": "facts.return15m",
+            "conflict": null
+          },
+          {
+            "field": "close",
+            "value": 50030,
+            "unit": "USD",
+            "observedAt": 1788861099622,
+            "evidenceLocation": "facts.close",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "latencyMs": 2284,
+      "passed": true
+    },
+    {
+      "category": "NEGATION",
+      "source": {
+        "id": "isolated-31",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-31",
+        "url": "local://isolated-fixture/31",
+        "eventAt": 1788861100906,
+        "publishedAt": 1788861100906,
+        "receivedAt": 1788861100906,
+        "availableAt": 1788861100906,
+        "expiresAt": 1788861491906,
+        "closedBar": true,
+        "facts": {
+          "notice": "The source does not confirm approval; no policy change was announced."
+        },
+        "sourceConflicts": [],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "31",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000031"
+      },
+      "status": "MODEL_COMPLETED",
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"sourceId\": \"isolated-quality-31\",\n  \"entities\": [],\n  \"facts\": [\n    {\n      \"field\": \"notice\",\n      \"value\": \"The source does not confirm approval; no policy change was announced.\"\n    }\n  ],\n  \"conflicts\": []\n}"
+            }
+          }
+        ],
+        "created": 1788861193,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 73,
+          "prompt_tokens": 281,
+          "total_tokens": 354,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-F5WHYkSKyJeD4B100CBe3IfhfUJ5SWoL",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 281,
+          "prompt_ms": 417.004,
+          "prompt_per_token_ms": 1.484,
+          "prompt_per_second": 673.8544474393531,
+          "predicted_n": 73,
+          "predicted_ms": 1549.296,
+          "predicted_per_token_ms": 21.22323287671233,
+          "predicted_per_second": 47.1181749646291
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "isolated-quality-31",
+          "entities": [],
+          "facts": [
+            {
+              "field": "notice",
+              "value": "The source does not confirm approval; no policy change was announced."
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "accepted": {
+        "sourceId": "isolated-quality-31",
+        "entities": [],
+        "facts": [
+          {
+            "field": "notice",
+            "value": "The source does not confirm approval; no policy change was announced.",
+            "unit": null,
+            "observedAt": 1788861100906,
+            "evidenceLocation": "facts.notice",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "latencyMs": 1979,
+      "passed": true
+    },
+    {
+      "category": "CONFLICT",
+      "source": {
+        "id": "isolated-32",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-32",
+        "url": "local://isolated-fixture/32",
+        "eventAt": 1788861101885,
+        "publishedAt": 1788861101885,
+        "receivedAt": 1788861101885,
+        "availableAt": 1788861101885,
+        "expiresAt": 1788861493885,
+        "closedBar": true,
+        "facts": {
+          "sourceA": "reported increase",
+          "sourceB": "reported no change"
+        },
+        "sourceConflicts": [
+          "sourceA and sourceB disagree"
+        ],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "32",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000032"
+      },
+      "status": "MODEL_COMPLETED",
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"sourceId\": \"isolated-quality-32\",\n  \"entities\": [],\n  \"facts\": [\n    {\n      \"field\": \"sourceA\",\n      \"value\": \"reported increase\"\n    },\n    {\n      \"field\": \"sourceB\",\n      \"value\": \"reported no change\"\n    }\n  ],\n  \"conflicts\": [\n    \"sourceA and sourceB disagree\"\n  ]\n}"
+            }
+          }
+        ],
+        "created": 1788861196,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 102,
+          "prompt_tokens": 284,
+          "total_tokens": 386,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-8jYScO76bTRusLHuaQ7idmwDOFwGCuTh",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 284,
+          "prompt_ms": 411.416,
+          "prompt_per_token_ms": 1.4486478873239437,
+          "prompt_per_second": 690.2988702432574,
+          "predicted_n": 102,
+          "predicted_ms": 2164.395,
+          "predicted_per_token_ms": 21.21955882352941,
+          "predicted_per_second": 47.12633322475796
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "isolated-quality-32",
+          "entities": [],
+          "facts": [
+            {
+              "field": "sourceA",
+              "value": "reported increase"
+            },
+            {
+              "field": "sourceB",
+              "value": "reported no change"
+            }
+          ],
+          "conflicts": [
+            "sourceA and sourceB disagree"
+          ]
+        }
+      },
+      "accepted": {
+        "sourceId": "isolated-quality-32",
+        "entities": [],
+        "facts": [
+          {
+            "field": "sourceA",
+            "value": "reported increase",
+            "unit": null,
+            "observedAt": 1788861101885,
+            "evidenceLocation": "facts.sourceA",
+            "conflict": null
+          },
+          {
+            "field": "sourceB",
+            "value": "reported no change",
+            "unit": null,
+            "observedAt": 1788861101885,
+            "evidenceLocation": "facts.sourceB",
+            "conflict": null
+          }
+        ],
+        "conflicts": [
+          "sourceA and sourceB disagree"
+        ]
+      },
+      "issues": [],
+      "latencyMs": 2584,
+      "passed": true
+    },
+    {
+      "category": "EMPTY",
+      "source": {
+        "id": "isolated-33",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-33",
+        "url": "local://isolated-fixture/33",
+        "eventAt": 1788861103469,
+        "publishedAt": 1788861103469,
+        "receivedAt": 1788861103469,
+        "availableAt": 1788861103469,
+        "expiresAt": 1788861496469,
+        "closedBar": true,
+        "facts": {},
+        "sourceConflicts": [],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "33",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000033"
+      },
+      "status": "MODEL_COMPLETED",
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"sourceId\": \"isolated-quality-33\",\n  \"entities\": [],\n  \"facts\": [],\n  \"conflicts\": []\n}"
+            }
+          }
+        ],
+        "created": 1788861197,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 37,
+          "prompt_tokens": 267,
+          "total_tokens": 304,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-9Qfoe8BF7mDvEo8qQQYUOWWxYStvFNJ1",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 267,
+          "prompt_ms": 441.005,
+          "prompt_per_token_ms": 1.6517041198501872,
+          "prompt_per_second": 605.4353125248014,
+          "predicted_n": 37,
+          "predicted_ms": 769.868,
+          "predicted_per_token_ms": 20.807243243243246,
+          "predicted_per_second": 48.06018694113796
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "isolated-quality-33",
+          "entities": [],
+          "facts": [],
+          "conflicts": []
+        }
+      },
+      "accepted": {
+        "sourceId": "isolated-quality-33",
+        "entities": [],
+        "facts": [],
+        "conflicts": []
+      },
+      "issues": [],
+      "latencyMs": 1218,
+      "passed": true
+    },
+    {
+      "category": "STALE",
+      "source": {
+        "id": "isolated-34",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-34",
+        "url": "local://isolated-fixture/34",
+        "eventAt": 1788861103687,
+        "publishedAt": 1788861103687,
+        "receivedAt": 1788861103687,
+        "availableAt": 1788861103687,
+        "expiresAt": 1788861197686,
+        "closedBar": true,
+        "facts": {
+          "return15m": 0,
+          "close": 50034
+        },
+        "sourceConflicts": [],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "34",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000034"
+      },
+      "status": "GATED_BEFORE_MODEL",
+      "passed": true
+    },
+    {
+      "category": "UP",
+      "source": {
+        "id": "isolated-35",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-35",
+        "url": "local://isolated-fixture/35",
+        "eventAt": 1788861102687,
+        "publishedAt": 1788861102687,
+        "receivedAt": 1788861102687,
+        "availableAt": 1788861102687,
+        "expiresAt": 1788861497687,
+        "closedBar": true,
+        "facts": {
+          "return15m": 0.015,
+          "close": 50035
+        },
+        "sourceConflicts": [],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "35",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000035"
+      },
+      "status": "MODEL_COMPLETED",
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"sourceId\": \"isolated-quality-35\",\n  \"entities\": [],\n  \"facts\": [\n    {\n      \"field\": \"return15m\",\n      \"value\": 0.015\n    },\n    {\n      \"field\": \"close\",\n      \"value\": 50035\n    }\n  ],\n  \"conflicts\": []\n}"
+            }
+          }
+        ],
+        "created": 1788861200,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 93,
+          "prompt_tokens": 284,
+          "total_tokens": 377,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-LNRczrXZ4txja7kAEGJvuyPSiYT0Y1TI",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 284,
+          "prompt_ms": 411.733,
+          "prompt_per_token_ms": 1.4497640845070423,
+          "prompt_per_second": 689.7673978039167,
+          "predicted_n": 93,
+          "predicted_ms": 1962.322,
+          "predicted_per_token_ms": 21.100236559139784,
+          "predicted_per_second": 47.39283359204045
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "isolated-quality-35",
+          "entities": [],
+          "facts": [
+            {
+              "field": "return15m",
+              "value": 0.015
+            },
+            {
+              "field": "close",
+              "value": 50035
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "accepted": {
+        "sourceId": "isolated-quality-35",
+        "entities": [],
+        "facts": [
+          {
+            "field": "return15m",
+            "value": 0.015,
+            "unit": "ratio",
+            "observedAt": 1788861102687,
+            "evidenceLocation": "facts.return15m",
+            "conflict": null
+          },
+          {
+            "field": "close",
+            "value": 50035,
+            "unit": "USD",
+            "observedAt": 1788861102687,
+            "evidenceLocation": "facts.close",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "latencyMs": 2379,
+      "passed": true
+    },
+    {
+      "category": "DOWN",
+      "source": {
+        "id": "isolated-36",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-36",
+        "url": "local://isolated-fixture/36",
+        "eventAt": 1788861104066,
+        "publishedAt": 1788861104066,
+        "receivedAt": 1788861104066,
+        "availableAt": 1788861104066,
+        "expiresAt": 1788861500066,
+        "closedBar": true,
+        "facts": {
+          "return15m": -0.012,
+          "close": 50036
+        },
+        "sourceConflicts": [],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "36",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000036"
+      },
+      "status": "MODEL_COMPLETED",
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"sourceId\": \"isolated-quality-36\",\n  \"entities\": [],\n  \"facts\": [\n    {\n      \"field\": \"return15m\",\n      \"value\": -0.012\n    },\n    {\n      \"field\": \"close\",\n      \"value\": 50036\n    }\n  ],\n  \"conflicts\": []\n}"
+            }
+          }
+        ],
+        "created": 1788861202,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 93,
+          "prompt_tokens": 284,
+          "total_tokens": 377,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-b7WvRvoyH1StyCBF7yryn0M9y0AdqlB4",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 284,
+          "prompt_ms": 430.942,
+          "prompt_per_token_ms": 1.5174014084507041,
+          "prompt_per_second": 659.0213996315049,
+          "predicted_n": 93,
+          "predicted_ms": 1944.666,
+          "predicted_per_token_ms": 20.910387096774194,
+          "predicted_per_second": 47.82312232537619
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "isolated-quality-36",
+          "entities": [],
+          "facts": [
+            {
+              "field": "return15m",
+              "value": -0.012
+            },
+            {
+              "field": "close",
+              "value": 50036
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "accepted": {
+        "sourceId": "isolated-quality-36",
+        "entities": [],
+        "facts": [
+          {
+            "field": "return15m",
+            "value": -0.012,
+            "unit": "ratio",
+            "observedAt": 1788861104066,
+            "evidenceLocation": "facts.return15m",
+            "conflict": null
+          },
+          {
+            "field": "close",
+            "value": 50036,
+            "unit": "USD",
+            "observedAt": 1788861104066,
+            "evidenceLocation": "facts.close",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "latencyMs": 2395,
+      "passed": true
+    },
+    {
+      "category": "RANGE",
+      "source": {
+        "id": "isolated-37",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-37",
+        "url": "local://isolated-fixture/37",
+        "eventAt": 1788861105461,
+        "publishedAt": 1788861105461,
+        "receivedAt": 1788861105461,
+        "availableAt": 1788861105461,
+        "expiresAt": 1788861502461,
+        "closedBar": true,
+        "facts": {
+          "return15m": 0,
+          "close": 50037
+        },
+        "sourceConflicts": [],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "37",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000037"
+      },
+      "status": "MODEL_COMPLETED",
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"sourceId\": \"isolated-quality-37\",\n  \"entities\": [],\n  \"facts\": [\n    {\n      \"field\": \"return15m\",\n      \"value\": 0\n    },\n    {\n      \"field\": \"close\",\n      \"value\": 50037\n    }\n  ],\n  \"conflicts\": []\n}"
+            }
+          }
+        ],
+        "created": 1788861204,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 89,
+          "prompt_tokens": 280,
+          "total_tokens": 369,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-4QpFYuvAZNYC9Pp0Ez8wxWb5DbqpWBBc",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 280,
+          "prompt_ms": 408.767,
+          "prompt_per_token_ms": 1.459882142857143,
+          "prompt_per_second": 684.9868017721587,
+          "predicted_n": 89,
+          "predicted_ms": 1859.418,
+          "predicted_per_token_ms": 20.892337078651686,
+          "predicted_per_second": 47.864439303050744
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "isolated-quality-37",
+          "entities": [],
+          "facts": [
+            {
+              "field": "return15m",
+              "value": 0
+            },
+            {
+              "field": "close",
+              "value": 50037
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "accepted": {
+        "sourceId": "isolated-quality-37",
+        "entities": [],
+        "facts": [
+          {
+            "field": "return15m",
+            "value": 0,
+            "unit": "ratio",
+            "observedAt": 1788861105461,
+            "evidenceLocation": "facts.return15m",
+            "conflict": null
+          },
+          {
+            "field": "close",
+            "value": 50037,
+            "unit": "USD",
+            "observedAt": 1788861105461,
+            "evidenceLocation": "facts.close",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "latencyMs": 2275,
+      "passed": true
+    },
+    {
+      "category": "NEGATION",
+      "source": {
+        "id": "isolated-38",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-38",
+        "url": "local://isolated-fixture/38",
+        "eventAt": 1788861106736,
+        "publishedAt": 1788861106736,
+        "receivedAt": 1788861106736,
+        "availableAt": 1788861106736,
+        "expiresAt": 1788861504736,
+        "closedBar": true,
+        "facts": {
+          "notice": "The source does not confirm approval; no policy change was announced."
+        },
+        "sourceConflicts": [],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "38",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000038"
+      },
+      "status": "MODEL_COMPLETED",
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"sourceId\": \"isolated-quality-38\",\n  \"entities\": [],\n  \"facts\": [\n    {\n      \"field\": \"notice\",\n      \"value\": \"The source does not confirm approval; no policy change was announced.\"\n    }\n  ],\n  \"conflicts\": []\n}"
+            }
+          }
+        ],
+        "created": 1788861206,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 73,
+          "prompt_tokens": 281,
+          "total_tokens": 354,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-M4e1fLgYFxBkJ3XYCemh1YwpcGqmHa7I",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 281,
+          "prompt_ms": 421.973,
+          "prompt_per_token_ms": 1.5016832740213524,
+          "prompt_per_second": 665.9193834676627,
+          "predicted_n": 73,
+          "predicted_ms": 1538.57,
+          "predicted_per_token_ms": 21.076301369863014,
+          "predicted_per_second": 47.446655010821736
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "isolated-quality-38",
+          "entities": [],
+          "facts": [
+            {
+              "field": "notice",
+              "value": "The source does not confirm approval; no policy change was announced."
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "accepted": {
+        "sourceId": "isolated-quality-38",
+        "entities": [],
+        "facts": [
+          {
+            "field": "notice",
+            "value": "The source does not confirm approval; no policy change was announced.",
+            "unit": null,
+            "observedAt": 1788861106736,
+            "evidenceLocation": "facts.notice",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "latencyMs": 1977,
+      "passed": true
+    },
+    {
+      "category": "CONFLICT",
+      "source": {
+        "id": "isolated-39",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-39",
+        "url": "local://isolated-fixture/39",
+        "eventAt": 1788861107713,
+        "publishedAt": 1788861107713,
+        "receivedAt": 1788861107713,
+        "availableAt": 1788861107713,
+        "expiresAt": 1788861506713,
+        "closedBar": true,
+        "facts": {
+          "sourceA": "reported increase",
+          "sourceB": "reported no change"
+        },
+        "sourceConflicts": [
+          "sourceA and sourceB disagree"
+        ],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "39",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000039"
+      },
+      "status": "MODEL_COMPLETED",
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"sourceId\": \"isolated-quality-39\",\n  \"entities\": [],\n  \"facts\": [\n    {\n      \"field\": \"sourceA\",\n      \"value\": \"reported increase\"\n    },\n    {\n      \"field\": \"sourceB\",\n      \"value\": \"reported no change\"\n    }\n  ],\n  \"conflicts\": [\n    \"sourceA and sourceB disagree\"\n  ]\n}"
+            }
+          }
+        ],
+        "created": 1788861209,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 102,
+          "prompt_tokens": 284,
+          "total_tokens": 386,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-QPfU3ANZ2nlZA0fqD2c01XAeMMkjLwkU",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 284,
+          "prompt_ms": 423.731,
+          "prompt_per_token_ms": 1.4920105633802816,
+          "prompt_per_second": 670.2365415794455,
+          "predicted_n": 102,
+          "predicted_ms": 2192.688,
+          "predicted_per_token_ms": 21.49694117647059,
+          "predicted_per_second": 46.518246097940064
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "isolated-quality-39",
+          "entities": [],
+          "facts": [
+            {
+              "field": "sourceA",
+              "value": "reported increase"
+            },
+            {
+              "field": "sourceB",
+              "value": "reported no change"
+            }
+          ],
+          "conflicts": [
+            "sourceA and sourceB disagree"
+          ]
+        }
+      },
+      "accepted": {
+        "sourceId": "isolated-quality-39",
+        "entities": [],
+        "facts": [
+          {
+            "field": "sourceA",
+            "value": "reported increase",
+            "unit": null,
+            "observedAt": 1788861107713,
+            "evidenceLocation": "facts.sourceA",
+            "conflict": null
+          },
+          {
+            "field": "sourceB",
+            "value": "reported no change",
+            "unit": null,
+            "observedAt": 1788861107713,
+            "evidenceLocation": "facts.sourceB",
+            "conflict": null
+          }
+        ],
+        "conflicts": [
+          "sourceA and sourceB disagree"
+        ]
+      },
+      "issues": [],
+      "latencyMs": 2631,
+      "passed": true
+    },
+    {
+      "category": "EMPTY",
+      "source": {
+        "id": "isolated-40",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-40",
+        "url": "local://isolated-fixture/40",
+        "eventAt": 1788861109344,
+        "publishedAt": 1788861109344,
+        "receivedAt": 1788861109344,
+        "availableAt": 1788861109344,
+        "expiresAt": 1788861509344,
+        "closedBar": true,
+        "facts": {},
+        "sourceConflicts": [],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "40",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000040"
+      },
+      "status": "MODEL_COMPLETED",
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"sourceId\": \"isolated-quality-40\",\n  \"entities\": [],\n  \"facts\": [],\n  \"conflicts\": []\n}"
+            }
+          }
+        ],
+        "created": 1788861210,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 37,
+          "prompt_tokens": 267,
+          "total_tokens": 304,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-vKdxiPGabSU0xgymErwieuuaFQ3s4Kjg",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 267,
+          "prompt_ms": 434.902,
+          "prompt_per_token_ms": 1.6288464419475654,
+          "prompt_per_second": 613.9314144335965,
+          "predicted_n": 37,
+          "predicted_ms": 767.563,
+          "predicted_per_token_ms": 20.744945945945947,
+          "predicted_per_second": 48.204512202907125
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "isolated-quality-40",
+          "entities": [],
+          "facts": [],
+          "conflicts": []
+        }
+      },
+      "accepted": {
+        "sourceId": "isolated-quality-40",
+        "entities": [],
+        "facts": [],
+        "conflicts": []
+      },
+      "issues": [],
+      "latencyMs": 1208,
+      "passed": true
+    },
+    {
+      "category": "STALE",
+      "source": {
+        "id": "isolated-41",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-41",
+        "url": "local://isolated-fixture/41",
+        "eventAt": 1788861109552,
+        "publishedAt": 1788861109552,
+        "receivedAt": 1788861109552,
+        "availableAt": 1788861109552,
+        "expiresAt": 1788861210551,
+        "closedBar": true,
+        "facts": {
+          "return15m": 0,
+          "close": 50041
+        },
+        "sourceConflicts": [],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "41",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000041"
+      },
+      "status": "GATED_BEFORE_MODEL",
+      "passed": true
+    },
+    {
+      "category": "UP",
+      "source": {
+        "id": "isolated-42",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-42",
+        "url": "local://isolated-fixture/42",
+        "eventAt": 1788861108552,
+        "publishedAt": 1788861108552,
+        "receivedAt": 1788861108552,
+        "availableAt": 1788861108552,
+        "expiresAt": 1788861510552,
+        "closedBar": true,
+        "facts": {
+          "return15m": 0.015,
+          "close": 50042
+        },
+        "sourceConflicts": [],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "42",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000042"
+      },
+      "status": "MODEL_COMPLETED",
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"sourceId\": \"isolated-quality-42\",\n  \"entities\": [],\n  \"facts\": [\n    {\n      \"field\": \"return15m\",\n      \"value\": 0.015\n    },\n    {\n      \"field\": \"close\",\n      \"value\": 50042\n    }\n  ],\n  \"conflicts\": []\n}"
+            }
+          }
+        ],
+        "created": 1788861212,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 93,
+          "prompt_tokens": 284,
+          "total_tokens": 377,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-VXTUFRRVfWtndfjW5PxNHceVCuRcUjDk",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 284,
+          "prompt_ms": 410.541,
+          "prompt_per_token_ms": 1.4455669014084507,
+          "prompt_per_second": 691.7701277095344,
+          "predicted_n": 93,
+          "predicted_ms": 1973.699,
+          "predicted_per_token_ms": 21.222569892473118,
+          "predicted_per_second": 47.119646916779104
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "isolated-quality-42",
+          "entities": [],
+          "facts": [
+            {
+              "field": "return15m",
+              "value": 0.015
+            },
+            {
+              "field": "close",
+              "value": 50042
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "accepted": {
+        "sourceId": "isolated-quality-42",
+        "entities": [],
+        "facts": [
+          {
+            "field": "return15m",
+            "value": 0.015,
+            "unit": "ratio",
+            "observedAt": 1788861108552,
+            "evidenceLocation": "facts.return15m",
+            "conflict": null
+          },
+          {
+            "field": "close",
+            "value": 50042,
+            "unit": "USD",
+            "observedAt": 1788861108552,
+            "evidenceLocation": "facts.close",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "latencyMs": 2402,
+      "passed": true
+    },
+    {
+      "category": "DOWN",
+      "source": {
+        "id": "isolated-43",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-43",
+        "url": "local://isolated-fixture/43",
+        "eventAt": 1788861109954,
+        "publishedAt": 1788861109954,
+        "receivedAt": 1788861109954,
+        "availableAt": 1788861109954,
+        "expiresAt": 1788861512954,
+        "closedBar": true,
+        "facts": {
+          "return15m": -0.012,
+          "close": 50043
+        },
+        "sourceConflicts": [],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "43",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000043"
+      },
+      "status": "MODEL_COMPLETED",
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"sourceId\": \"isolated-quality-43\",\n  \"entities\": [],\n  \"facts\": [\n    {\n      \"field\": \"return15m\",\n      \"value\": -0.012\n    },\n    {\n      \"field\": \"close\",\n      \"value\": 50043\n    }\n  ],\n  \"conflicts\": []\n}"
+            }
+          }
+        ],
+        "created": 1788861215,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 93,
+          "prompt_tokens": 284,
+          "total_tokens": 377,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-0nsqdu3zANExOS9C2Zc1GvkGifiBJPGO",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 284,
+          "prompt_ms": 408.271,
+          "prompt_per_token_ms": 1.4375739436619719,
+          "prompt_per_second": 695.6163920533176,
+          "predicted_n": 93,
+          "predicted_ms": 1930.851,
+          "predicted_per_token_ms": 20.76183870967742,
+          "predicted_per_second": 48.16529084843937
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "isolated-quality-43",
+          "entities": [],
+          "facts": [
+            {
+              "field": "return15m",
+              "value": -0.012
+            },
+            {
+              "field": "close",
+              "value": 50043
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "accepted": {
+        "sourceId": "isolated-quality-43",
+        "entities": [],
+        "facts": [
+          {
+            "field": "return15m",
+            "value": -0.012,
+            "unit": "ratio",
+            "observedAt": 1788861109954,
+            "evidenceLocation": "facts.return15m",
+            "conflict": null
+          },
+          {
+            "field": "close",
+            "value": 50043,
+            "unit": "USD",
+            "observedAt": 1788861109954,
+            "evidenceLocation": "facts.close",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "latencyMs": 2354,
+      "passed": true
+    },
+    {
+      "category": "RANGE",
+      "source": {
+        "id": "isolated-44",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-44",
+        "url": "local://isolated-fixture/44",
+        "eventAt": 1788861111308,
+        "publishedAt": 1788861111308,
+        "receivedAt": 1788861111308,
+        "availableAt": 1788861111308,
+        "expiresAt": 1788861515308,
+        "closedBar": true,
+        "facts": {
+          "return15m": 0,
+          "close": 50044
+        },
+        "sourceConflicts": [],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "44",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000044"
+      },
+      "status": "MODEL_COMPLETED",
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"sourceId\": \"isolated-quality-44\",\n  \"entities\": [],\n  \"facts\": [\n    {\n      \"field\": \"return15m\",\n      \"value\": 0\n    },\n    {\n      \"field\": \"close\",\n      \"value\": 50044\n    }\n  ],\n  \"conflicts\": []\n}"
+            }
+          }
+        ],
+        "created": 1788861217,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 89,
+          "prompt_tokens": 280,
+          "total_tokens": 369,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-uBdjvd6gWANpaixENA5XEQHXzLgadQIJ",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 280,
+          "prompt_ms": 407.51,
+          "prompt_per_token_ms": 1.4553928571428572,
+          "prompt_per_second": 687.0997030747712,
+          "predicted_n": 89,
+          "predicted_ms": 1878.66,
+          "predicted_per_token_ms": 21.1085393258427,
+          "predicted_per_second": 47.374192243407535
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "isolated-quality-44",
+          "entities": [],
+          "facts": [
+            {
+              "field": "return15m",
+              "value": 0
+            },
+            {
+              "field": "close",
+              "value": 50044
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "accepted": {
+        "sourceId": "isolated-quality-44",
+        "entities": [],
+        "facts": [
+          {
+            "field": "return15m",
+            "value": 0,
+            "unit": "ratio",
+            "observedAt": 1788861111308,
+            "evidenceLocation": "facts.return15m",
+            "conflict": null
+          },
+          {
+            "field": "close",
+            "value": 50044,
+            "unit": "USD",
+            "observedAt": 1788861111308,
+            "evidenceLocation": "facts.close",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "latencyMs": 2298,
+      "passed": true
+    },
+    {
+      "category": "NEGATION",
+      "source": {
+        "id": "isolated-45",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-45",
+        "url": "local://isolated-fixture/45",
+        "eventAt": 1788861112606,
+        "publishedAt": 1788861112606,
+        "receivedAt": 1788861112606,
+        "availableAt": 1788861112606,
+        "expiresAt": 1788861517606,
+        "closedBar": true,
+        "facts": {
+          "notice": "The source does not confirm approval; no policy change was announced."
+        },
+        "sourceConflicts": [],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "45",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000045"
+      },
+      "status": "MODEL_COMPLETED",
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"sourceId\": \"isolated-quality-45\",\n  \"entities\": [],\n  \"facts\": [\n    {\n      \"field\": \"notice\",\n      \"value\": \"The source does not confirm approval; no policy change was announced.\"\n    }\n  ],\n  \"conflicts\": []\n}"
+            }
+          }
+        ],
+        "created": 1788861219,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 73,
+          "prompt_tokens": 281,
+          "total_tokens": 354,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-UBOqCxhxzchC2uTvxYv0P5D2eaes5jko",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 281,
+          "prompt_ms": 415.494,
+          "prompt_per_token_ms": 1.4786263345195731,
+          "prompt_per_second": 676.3033882559074,
+          "predicted_n": 73,
+          "predicted_ms": 1536.657,
+          "predicted_per_token_ms": 21.050095890410958,
+          "predicted_per_second": 47.50572183642804
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "isolated-quality-45",
+          "entities": [],
+          "facts": [
+            {
+              "field": "notice",
+              "value": "The source does not confirm approval; no policy change was announced."
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "accepted": {
+        "sourceId": "isolated-quality-45",
+        "entities": [],
+        "facts": [
+          {
+            "field": "notice",
+            "value": "The source does not confirm approval; no policy change was announced.",
+            "unit": null,
+            "observedAt": 1788861112606,
+            "evidenceLocation": "facts.notice",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "latencyMs": 1965,
+      "passed": true
+    },
+    {
+      "category": "CONFLICT",
+      "source": {
+        "id": "isolated-46",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-46",
+        "url": "local://isolated-fixture/46",
+        "eventAt": 1788861113571,
+        "publishedAt": 1788861113571,
+        "receivedAt": 1788861113571,
+        "availableAt": 1788861113571,
+        "expiresAt": 1788861519571,
+        "closedBar": true,
+        "facts": {
+          "sourceA": "reported increase",
+          "sourceB": "reported no change"
+        },
+        "sourceConflicts": [
+          "sourceA and sourceB disagree"
+        ],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "46",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000046"
+      },
+      "status": "MODEL_COMPLETED",
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"sourceId\": \"isolated-quality-46\",\n  \"entities\": [],\n  \"facts\": [\n    {\n      \"field\": \"sourceA\",\n      \"value\": \"reported increase\"\n    },\n    {\n      \"field\": \"sourceB\",\n      \"value\": \"reported no change\"\n    }\n  ],\n  \"conflicts\": [\n    \"sourceA and sourceB disagree\"\n  ]\n}"
+            }
+          }
+        ],
+        "created": 1788861222,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 102,
+          "prompt_tokens": 284,
+          "total_tokens": 386,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-H4jnTrIZ2TcrvTWzCnKLia1wLjkszJYM",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 284,
+          "prompt_ms": 412.003,
+          "prompt_per_token_ms": 1.4507147887323943,
+          "prompt_per_second": 689.3153690628467,
+          "predicted_n": 102,
+          "predicted_ms": 2198.774,
+          "predicted_per_token_ms": 21.556607843137254,
+          "predicted_per_second": 46.38948796010868
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "isolated-quality-46",
+          "entities": [],
+          "facts": [
+            {
+              "field": "sourceA",
+              "value": "reported increase"
+            },
+            {
+              "field": "sourceB",
+              "value": "reported no change"
+            }
+          ],
+          "conflicts": [
+            "sourceA and sourceB disagree"
+          ]
+        }
+      },
+      "accepted": {
+        "sourceId": "isolated-quality-46",
+        "entities": [],
+        "facts": [
+          {
+            "field": "sourceA",
+            "value": "reported increase",
+            "unit": null,
+            "observedAt": 1788861113571,
+            "evidenceLocation": "facts.sourceA",
+            "conflict": null
+          },
+          {
+            "field": "sourceB",
+            "value": "reported no change",
+            "unit": null,
+            "observedAt": 1788861113571,
+            "evidenceLocation": "facts.sourceB",
+            "conflict": null
+          }
+        ],
+        "conflicts": [
+          "sourceA and sourceB disagree"
+        ]
+      },
+      "issues": [],
+      "latencyMs": 2629,
+      "passed": true
+    },
+    {
+      "category": "EMPTY",
+      "source": {
+        "id": "isolated-47",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-47",
+        "url": "local://isolated-fixture/47",
+        "eventAt": 1788861115200,
+        "publishedAt": 1788861115200,
+        "receivedAt": 1788861115200,
+        "availableAt": 1788861115200,
+        "expiresAt": 1788861522200,
+        "closedBar": true,
+        "facts": {},
+        "sourceConflicts": [],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "47",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000047"
+      },
+      "status": "MODEL_COMPLETED",
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"sourceId\": \"isolated-quality-47\",\n  \"entities\": [],\n  \"facts\": [],\n  \"conflicts\": []\n}"
+            }
+          }
+        ],
+        "created": 1788861223,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 37,
+          "prompt_tokens": 267,
+          "total_tokens": 304,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-J5dQUclXscaUUTvrjN5pBwaDFFF6AFMf",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 267,
+          "prompt_ms": 437.952,
+          "prompt_per_token_ms": 1.6402696629213482,
+          "prompt_per_second": 609.6558526961859,
+          "predicted_n": 37,
+          "predicted_ms": 773.526,
+          "predicted_per_token_ms": 20.906108108108107,
+          "predicted_per_second": 47.8329105938262
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "isolated-quality-47",
+          "entities": [],
+          "facts": [],
+          "conflicts": []
+        }
+      },
+      "accepted": {
+        "sourceId": "isolated-quality-47",
+        "entities": [],
+        "facts": [],
+        "conflicts": []
+      },
+      "issues": [],
+      "latencyMs": 1222,
+      "passed": true
+    },
+    {
+      "category": "STALE",
+      "source": {
+        "id": "isolated-48",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-48",
+        "url": "local://isolated-fixture/48",
+        "eventAt": 1788861115422,
+        "publishedAt": 1788861115422,
+        "receivedAt": 1788861115422,
+        "availableAt": 1788861115422,
+        "expiresAt": 1788861223421,
+        "closedBar": true,
+        "facts": {
+          "return15m": 0,
+          "close": 50048
+        },
+        "sourceConflicts": [],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "48",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000048"
+      },
+      "status": "GATED_BEFORE_MODEL",
+      "passed": true
+    },
+    {
+      "category": "UP",
+      "source": {
+        "id": "isolated-49",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-49",
+        "url": "local://isolated-fixture/49",
+        "eventAt": 1788861114422,
+        "publishedAt": 1788861114422,
+        "receivedAt": 1788861114422,
+        "availableAt": 1788861114422,
+        "expiresAt": 1788861523422,
+        "closedBar": true,
+        "facts": {
+          "return15m": 0.015,
+          "close": 50049
+        },
+        "sourceConflicts": [],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "49",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000049"
+      },
+      "status": "MODEL_COMPLETED",
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"sourceId\": \"isolated-quality-49\",\n  \"entities\": [],\n  \"facts\": [\n    {\n      \"field\": \"return15m\",\n      \"value\": 0.015\n    },\n    {\n      \"field\": \"close\",\n      \"value\": 50049\n    }\n  ],\n  \"conflicts\": []\n}"
+            }
+          }
+        ],
+        "created": 1788861225,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 93,
+          "prompt_tokens": 284,
+          "total_tokens": 377,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-5bKyS7gPZA1r04nlNnNsjwrZO2uqzkS2",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 284,
+          "prompt_ms": 424.422,
+          "prompt_per_token_ms": 1.494443661971831,
+          "prompt_per_second": 669.1453317688528,
+          "predicted_n": 93,
+          "predicted_ms": 1990.26,
+          "predicted_per_token_ms": 21.400645161290324,
+          "predicted_per_second": 46.72756323294444
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "isolated-quality-49",
+          "entities": [],
+          "facts": [
+            {
+              "field": "return15m",
+              "value": 0.015
+            },
+            {
+              "field": "close",
+              "value": 50049
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "accepted": {
+        "sourceId": "isolated-quality-49",
+        "entities": [],
+        "facts": [
+          {
+            "field": "return15m",
+            "value": 0.015,
+            "unit": "ratio",
+            "observedAt": 1788861114422,
+            "evidenceLocation": "facts.return15m",
+            "conflict": null
+          },
+          {
+            "field": "close",
+            "value": 50049,
+            "unit": "USD",
+            "observedAt": 1788861114422,
+            "evidenceLocation": "facts.close",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "latencyMs": 2428,
+      "passed": true
+    },
+    {
+      "category": "DOWN",
+      "source": {
+        "id": "isolated-50",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-50",
+        "url": "local://isolated-fixture/50",
+        "eventAt": 1788861115850,
+        "publishedAt": 1788861115850,
+        "receivedAt": 1788861115850,
+        "availableAt": 1788861115850,
+        "expiresAt": 1788861525850,
+        "closedBar": true,
+        "facts": {
+          "return15m": -0.012,
+          "close": 50050
+        },
+        "sourceConflicts": [],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "50",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000050"
+      },
+      "status": "MODEL_COMPLETED",
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"sourceId\": \"isolated-quality-50\",\n  \"entities\": [],\n  \"facts\": [\n    {\n      \"field\": \"return15m\",\n      \"value\": -0.012\n    },\n    {\n      \"field\": \"close\",\n      \"value\": 50050\n    }\n  ],\n  \"conflicts\": []\n}"
+            }
+          }
+        ],
+        "created": 1788861228,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 93,
+          "prompt_tokens": 284,
+          "total_tokens": 377,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-R35FCVyNStBeMkaYPYVvFlwD8ExYue90",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 284,
+          "prompt_ms": 402.576,
+          "prompt_per_token_ms": 1.4175211267605634,
+          "prompt_per_second": 705.456857835539,
+          "predicted_n": 93,
+          "predicted_ms": 1932.07,
+          "predicted_per_token_ms": 20.77494623655914,
+          "predicted_per_second": 48.13490194454653
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "isolated-quality-50",
+          "entities": [],
+          "facts": [
+            {
+              "field": "return15m",
+              "value": -0.012
+            },
+            {
+              "field": "close",
+              "value": 50050
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "accepted": {
+        "sourceId": "isolated-quality-50",
+        "entities": [],
+        "facts": [
+          {
+            "field": "return15m",
+            "value": -0.012,
+            "unit": "ratio",
+            "observedAt": 1788861115850,
+            "evidenceLocation": "facts.return15m",
+            "conflict": null
+          },
+          {
+            "field": "close",
+            "value": 50050,
+            "unit": "USD",
+            "observedAt": 1788861115850,
+            "evidenceLocation": "facts.close",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "latencyMs": 2340,
+      "passed": true
+    },
+    {
+      "category": "RANGE",
+      "source": {
+        "id": "isolated-51",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-51",
+        "url": "local://isolated-fixture/51",
+        "eventAt": 1788861117190,
+        "publishedAt": 1788861117190,
+        "receivedAt": 1788861117190,
+        "availableAt": 1788861117190,
+        "expiresAt": 1788861528190,
+        "closedBar": true,
+        "facts": {
+          "return15m": 0,
+          "close": 50051
+        },
+        "sourceConflicts": [],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "51",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000051"
+      },
+      "status": "MODEL_COMPLETED",
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"sourceId\": \"isolated-quality-51\",\n  \"entities\": [],\n  \"facts\": [\n    {\n      \"field\": \"return15m\",\n      \"value\": 0\n    },\n    {\n      \"field\": \"close\",\n      \"value\": 50051\n    }\n  ],\n  \"conflicts\": []\n}"
+            }
+          }
+        ],
+        "created": 1788861230,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 89,
+          "prompt_tokens": 280,
+          "total_tokens": 369,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-FsjTmghvSwtmJU2l6CouS2tE3OVKlkIU",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 280,
+          "prompt_ms": 424.419,
+          "prompt_per_token_ms": 1.5157821428571427,
+          "prompt_per_second": 659.7254128585196,
+          "predicted_n": 89,
+          "predicted_ms": 1925.015,
+          "predicted_per_token_ms": 21.629382022471912,
+          "predicted_per_second": 46.233405973459945
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "isolated-quality-51",
+          "entities": [],
+          "facts": [
+            {
+              "field": "return15m",
+              "value": 0
+            },
+            {
+              "field": "close",
+              "value": 50051
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "accepted": {
+        "sourceId": "isolated-quality-51",
+        "entities": [],
+        "facts": [
+          {
+            "field": "return15m",
+            "value": 0,
+            "unit": "ratio",
+            "observedAt": 1788861117190,
+            "evidenceLocation": "facts.return15m",
+            "conflict": null
+          },
+          {
+            "field": "close",
+            "value": 50051,
+            "unit": "USD",
+            "observedAt": 1788861117190,
+            "evidenceLocation": "facts.close",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "latencyMs": 2364,
+      "passed": true
+    },
+    {
+      "category": "NEGATION",
+      "source": {
+        "id": "isolated-52",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-52",
+        "url": "local://isolated-fixture/52",
+        "eventAt": 1788861118554,
+        "publishedAt": 1788861118554,
+        "receivedAt": 1788861118554,
+        "availableAt": 1788861118554,
+        "expiresAt": 1788861530554,
+        "closedBar": true,
+        "facts": {
+          "notice": "The source does not confirm approval; no policy change was announced."
+        },
+        "sourceConflicts": [],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "52",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000052"
+      },
+      "status": "MODEL_COMPLETED",
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"sourceId\": \"isolated-quality-52\",\n  \"entities\": [],\n  \"facts\": [\n    {\n      \"field\": \"notice\",\n      \"value\": \"The source does not confirm approval; no policy change was announced.\"\n    }\n  ],\n  \"conflicts\": []\n}"
+            }
+          }
+        ],
+        "created": 1788861232,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 73,
+          "prompt_tokens": 281,
+          "total_tokens": 354,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-mpx1J6bvOORnwSKt7hpmyA2eBaMU3so6",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 281,
+          "prompt_ms": 443.563,
+          "prompt_per_token_ms": 1.5785160142348753,
+          "prompt_per_second": 633.5064015709156,
+          "predicted_n": 73,
+          "predicted_ms": 1566.406,
+          "predicted_per_token_ms": 21.457616438356165,
+          "predicted_per_second": 46.603498709785335
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "isolated-quality-52",
+          "entities": [],
+          "facts": [
+            {
+              "field": "notice",
+              "value": "The source does not confirm approval; no policy change was announced."
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "accepted": {
+        "sourceId": "isolated-quality-52",
+        "entities": [],
+        "facts": [
+          {
+            "field": "notice",
+            "value": "The source does not confirm approval; no policy change was announced.",
+            "unit": null,
+            "observedAt": 1788861118554,
+            "evidenceLocation": "facts.notice",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "latencyMs": 2017,
+      "passed": true
+    },
+    {
+      "category": "CONFLICT",
+      "source": {
+        "id": "isolated-53",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-53",
+        "url": "local://isolated-fixture/53",
+        "eventAt": 1788861119571,
+        "publishedAt": 1788861119571,
+        "receivedAt": 1788861119571,
+        "availableAt": 1788861119571,
+        "expiresAt": 1788861532571,
+        "closedBar": true,
+        "facts": {
+          "sourceA": "reported increase",
+          "sourceB": "reported no change"
+        },
+        "sourceConflicts": [
+          "sourceA and sourceB disagree"
+        ],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "53",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000053"
+      },
+      "status": "MODEL_COMPLETED",
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"sourceId\": \"isolated-quality-53\",\n  \"entities\": [],\n  \"facts\": [\n    {\n      \"field\": \"sourceA\",\n      \"value\": \"reported increase\"\n    },\n    {\n      \"field\": \"sourceB\",\n      \"value\": \"reported no change\"\n    }\n  ],\n  \"conflicts\": [\n    \"sourceA and sourceB disagree\"\n  ]\n}"
+            }
+          }
+        ],
+        "created": 1788861235,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 102,
+          "prompt_tokens": 284,
+          "total_tokens": 386,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-HGoCJH2vCMIbpNH8mtuPk3xjfKy75ldV",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 284,
+          "prompt_ms": 422.426,
+          "prompt_per_token_ms": 1.4874154929577463,
+          "prompt_per_second": 672.3071023090436,
+          "predicted_n": 102,
+          "predicted_ms": 2199.808,
+          "predicted_per_token_ms": 21.566745098039217,
+          "predicted_per_second": 46.3676829977889
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "isolated-quality-53",
+          "entities": [],
+          "facts": [
+            {
+              "field": "sourceA",
+              "value": "reported increase"
+            },
+            {
+              "field": "sourceB",
+              "value": "reported no change"
+            }
+          ],
+          "conflicts": [
+            "sourceA and sourceB disagree"
+          ]
+        }
+      },
+      "accepted": {
+        "sourceId": "isolated-quality-53",
+        "entities": [],
+        "facts": [
+          {
+            "field": "sourceA",
+            "value": "reported increase",
+            "unit": null,
+            "observedAt": 1788861119571,
+            "evidenceLocation": "facts.sourceA",
+            "conflict": null
+          },
+          {
+            "field": "sourceB",
+            "value": "reported no change",
+            "unit": null,
+            "observedAt": 1788861119571,
+            "evidenceLocation": "facts.sourceB",
+            "conflict": null
+          }
+        ],
+        "conflicts": [
+          "sourceA and sourceB disagree"
+        ]
+      },
+      "issues": [],
+      "latencyMs": 2638,
+      "passed": true
+    },
+    {
+      "category": "EMPTY",
+      "source": {
+        "id": "isolated-54",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-54",
+        "url": "local://isolated-fixture/54",
+        "eventAt": 1788861121209,
+        "publishedAt": 1788861121209,
+        "receivedAt": 1788861121209,
+        "availableAt": 1788861121209,
+        "expiresAt": 1788861535209,
+        "closedBar": true,
+        "facts": {},
+        "sourceConflicts": [],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "54",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000054"
+      },
+      "status": "MODEL_COMPLETED",
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"sourceId\": \"isolated-quality-54\",\n  \"entities\": [],\n  \"facts\": [],\n  \"conflicts\": []\n}"
+            }
+          }
+        ],
+        "created": 1788861236,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 37,
+          "prompt_tokens": 267,
+          "total_tokens": 304,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-VLWa72YRUeFsnV1fQssDpkpfsXqDql3H",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 267,
+          "prompt_ms": 443.331,
+          "prompt_per_token_ms": 1.6604157303370788,
+          "prompt_per_second": 602.258808880949,
+          "predicted_n": 37,
+          "predicted_ms": 783.55,
+          "predicted_per_token_ms": 21.177027027027027,
+          "predicted_per_second": 47.22098143066812
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "isolated-quality-54",
+          "entities": [],
+          "facts": [],
+          "conflicts": []
+        }
+      },
+      "accepted": {
+        "sourceId": "isolated-quality-54",
+        "entities": [],
+        "facts": [],
+        "conflicts": []
+      },
+      "issues": [],
+      "latencyMs": 1247,
+      "passed": true
+    },
+    {
+      "category": "STALE",
+      "source": {
+        "id": "isolated-55",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-55",
+        "url": "local://isolated-fixture/55",
+        "eventAt": 1788861121456,
+        "publishedAt": 1788861121456,
+        "receivedAt": 1788861121456,
+        "availableAt": 1788861121456,
+        "expiresAt": 1788861236455,
+        "closedBar": true,
+        "facts": {
+          "return15m": 0,
+          "close": 50055
+        },
+        "sourceConflicts": [],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "55",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000055"
+      },
+      "status": "GATED_BEFORE_MODEL",
+      "passed": true
+    },
+    {
+      "category": "UP",
+      "source": {
+        "id": "isolated-56",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-56",
+        "url": "local://isolated-fixture/56",
+        "eventAt": 1788861120456,
+        "publishedAt": 1788861120456,
+        "receivedAt": 1788861120456,
+        "availableAt": 1788861120456,
+        "expiresAt": 1788861536456,
+        "closedBar": true,
+        "facts": {
+          "return15m": 0.015,
+          "close": 50056
+        },
+        "sourceConflicts": [],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "56",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000056"
+      },
+      "status": "MODEL_COMPLETED",
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"sourceId\": \"isolated-quality-56\",\n  \"entities\": [],\n  \"facts\": [\n    {\n      \"field\": \"return15m\",\n      \"value\": 0.015\n    },\n    {\n      \"field\": \"close\",\n      \"value\": 50056\n    }\n  ],\n  \"conflicts\": []\n}"
+            }
+          }
+        ],
+        "created": 1788861238,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 93,
+          "prompt_tokens": 284,
+          "total_tokens": 377,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-DI8iI45bL8LGfzl7t2h70JcqLQbqeuaB",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 284,
+          "prompt_ms": 427.112,
+          "prompt_per_token_ms": 1.5039154929577465,
+          "prompt_per_second": 664.9309782914083,
+          "predicted_n": 93,
+          "predicted_ms": 1994.12,
+          "predicted_per_token_ms": 21.442150537634408,
+          "predicted_per_second": 46.6371131125509
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "isolated-quality-56",
+          "entities": [],
+          "facts": [
+            {
+              "field": "return15m",
+              "value": 0.015
+            },
+            {
+              "field": "close",
+              "value": 50056
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "accepted": {
+        "sourceId": "isolated-quality-56",
+        "entities": [],
+        "facts": [
+          {
+            "field": "return15m",
+            "value": 0.015,
+            "unit": "ratio",
+            "observedAt": 1788861120456,
+            "evidenceLocation": "facts.return15m",
+            "conflict": null
+          },
+          {
+            "field": "close",
+            "value": 50056,
+            "unit": "USD",
+            "observedAt": 1788861120456,
+            "evidenceLocation": "facts.close",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "latencyMs": 2439,
+      "passed": true
+    },
+    {
+      "category": "DOWN",
+      "source": {
+        "id": "isolated-57",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-57",
+        "url": "local://isolated-fixture/57",
+        "eventAt": 1788861121895,
+        "publishedAt": 1788861121895,
+        "receivedAt": 1788861121895,
+        "availableAt": 1788861121895,
+        "expiresAt": 1788861538895,
+        "closedBar": true,
+        "facts": {
+          "return15m": -0.012,
+          "close": 50057
+        },
+        "sourceConflicts": [],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "57",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000057"
+      },
+      "status": "MODEL_COMPLETED",
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"sourceId\": \"isolated-quality-57\",\n  \"entities\": [],\n  \"facts\": [\n    {\n      \"field\": \"return15m\",\n      \"value\": -0.012\n    },\n    {\n      \"field\": \"close\",\n      \"value\": 50057\n    }\n  ],\n  \"conflicts\": []\n}"
+            }
+          }
+        ],
+        "created": 1788861241,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 93,
+          "prompt_tokens": 284,
+          "total_tokens": 377,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-MXztoFD6nO8HCgtSj3j0XM30NBHlUvsz",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 284,
+          "prompt_ms": 411.36,
+          "prompt_per_token_ms": 1.4484507042253523,
+          "prompt_per_second": 690.3928432516531,
+          "predicted_n": 93,
+          "predicted_ms": 1990.129,
+          "predicted_per_token_ms": 21.399236559139784,
+          "predicted_per_second": 46.73063906912567
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "isolated-quality-57",
+          "entities": [],
+          "facts": [
+            {
+              "field": "return15m",
+              "value": -0.012
+            },
+            {
+              "field": "close",
+              "value": 50057
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "accepted": {
+        "sourceId": "isolated-quality-57",
+        "entities": [],
+        "facts": [
+          {
+            "field": "return15m",
+            "value": -0.012,
+            "unit": "ratio",
+            "observedAt": 1788861121895,
+            "evidenceLocation": "facts.return15m",
+            "conflict": null
+          },
+          {
+            "field": "close",
+            "value": 50057,
+            "unit": "USD",
+            "observedAt": 1788861121895,
+            "evidenceLocation": "facts.close",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "latencyMs": 2420,
+      "passed": true
+    },
+    {
+      "category": "RANGE",
+      "source": {
+        "id": "isolated-58",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-58",
+        "url": "local://isolated-fixture/58",
+        "eventAt": 1788861123315,
+        "publishedAt": 1788861123315,
+        "receivedAt": 1788861123315,
+        "availableAt": 1788861123315,
+        "expiresAt": 1788861541315,
+        "closedBar": true,
+        "facts": {
+          "return15m": 0,
+          "close": 50058
+        },
+        "sourceConflicts": [],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "58",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000058"
+      },
+      "status": "MODEL_COMPLETED",
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"sourceId\": \"isolated-quality-58\",\n  \"entities\": [],\n  \"facts\": [\n    {\n      \"field\": \"return15m\",\n      \"value\": 0\n    },\n    {\n      \"field\": \"close\",\n      \"value\": 50058\n    }\n  ],\n  \"conflicts\": []\n}"
+            }
+          }
+        ],
+        "created": 1788861243,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 89,
+          "prompt_tokens": 280,
+          "total_tokens": 369,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-cOWJ5LPCXgVBWRuZco93EPwObCcRqng9",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 280,
+          "prompt_ms": 425.201,
+          "prompt_per_token_ms": 1.518575,
+          "prompt_per_second": 658.5120919282881,
+          "predicted_n": 89,
+          "predicted_ms": 1907.713,
+          "predicted_per_token_ms": 21.434977528089888,
+          "predicted_per_second": 46.6527197749347
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "isolated-quality-58",
+          "entities": [],
+          "facts": [
+            {
+              "field": "return15m",
+              "value": 0
+            },
+            {
+              "field": "close",
+              "value": 50058
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "accepted": {
+        "sourceId": "isolated-quality-58",
+        "entities": [],
+        "facts": [
+          {
+            "field": "return15m",
+            "value": 0,
+            "unit": "ratio",
+            "observedAt": 1788861123315,
+            "evidenceLocation": "facts.return15m",
+            "conflict": null
+          },
+          {
+            "field": "close",
+            "value": 50058,
+            "unit": "USD",
+            "observedAt": 1788861123315,
+            "evidenceLocation": "facts.close",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "latencyMs": 2345,
+      "passed": true
+    },
+    {
+      "category": "NEGATION",
+      "source": {
+        "id": "isolated-59",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ISOLATED_FIXTURE",
+        "sourceId": "isolated-quality-59",
+        "url": "local://isolated-fixture/59",
+        "eventAt": 1788861124660,
+        "publishedAt": 1788861124660,
+        "receivedAt": 1788861124660,
+        "availableAt": 1788861124660,
+        "expiresAt": 1788861543660,
+        "closedBar": true,
+        "facts": {
+          "notice": "The source does not confirm approval; no policy change was announced."
+        },
+        "sourceConflicts": [],
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "59",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000059"
+      },
+      "status": "MODEL_COMPLETED",
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"sourceId\": \"isolated-quality-59\",\n  \"entities\": [],\n  \"facts\": [\n    {\n      \"field\": \"notice\",\n      \"value\": \"The source does not confirm approval; no policy change was announced.\"\n    }\n  ],\n  \"conflicts\": []\n}"
+            }
+          }
+        ],
+        "created": 1788861245,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 73,
+          "prompt_tokens": 281,
+          "total_tokens": 354,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-h7cTZ8aGhg9Cdr82PLKPnPXYZhlUXSgx",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 281,
+          "prompt_ms": 426.207,
+          "prompt_per_token_ms": 1.5167508896797153,
+          "prompt_per_second": 659.3040470944869,
+          "predicted_n": 73,
+          "predicted_ms": 1574.25,
+          "predicted_per_token_ms": 21.565068493150687,
+          "predicted_per_second": 46.3712879148801
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "isolated-quality-59",
+          "entities": [],
+          "facts": [
+            {
+              "field": "notice",
+              "value": "The source does not confirm approval; no policy change was announced."
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "accepted": {
+        "sourceId": "isolated-quality-59",
+        "entities": [],
+        "facts": [
+          {
+            "field": "notice",
+            "value": "The source does not confirm approval; no policy change was announced.",
+            "unit": null,
+            "observedAt": 1788861124660,
+            "evidenceLocation": "facts.notice",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "latencyMs": 2013,
+      "passed": true
+    }
+  ]
+}

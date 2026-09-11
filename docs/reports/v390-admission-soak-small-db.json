@@ -1,0 +1,28 @@
+{
+  "status": "RUNNING",
+  "startedAt": 1788914879557,
+  "durationMs": 7200000,
+  "elapsedMs": 2035553,
+  "isolatedDataDir": "C:\\Users\\5700x\\AppData\\Local\\Temp\\mits-admission-soak-BDvcex",
+  "productionWrites": 0,
+  "exchangeCalls": 0,
+  "events": 76800,
+  "critical": 1920,
+  "failures": 0,
+  "checkpoint": {
+    "entityWrites": 0,
+    "checkpointBytes": 435917,
+    "durationMs": 52
+  },
+  "checkpointP99": 64.6691999998875,
+  "auditP99": 2.63329999987036,
+  "eventLoopP99": 65.961983,
+  "logger": {
+    "status": "READY",
+    "queuedBytes": 0,
+    "droppedOperational": 0,
+    "writeFailures": 0,
+    "lastError": null,
+    "currentFile": "C:\\Users\\5700x\\AppData\\Local\\Temp\\mits-admission-soak-BDvcex\\logs\\engine-2026-09-09-soak-0.jsonl"
+  }
+}

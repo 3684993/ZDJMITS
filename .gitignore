@@ -1,0 +1,266 @@
+# ============================================================
+# ZDJ-MITS .gitignore
+# Node.js / TypeScript quantitative trading system
+# Keep source code, docs, scripts and safe configuration in Git.
+# Exclude dependencies, runtime data, databases, logs, caches,
+# generated build output, temporary files and local secrets.
+# ============================================================
+
+# ------------------------------------------------------------
+# 1. Dependencies
+# ------------------------------------------------------------
+node_modules/
+bower_components/
+
+# ------------------------------------------------------------
+# 2. Build / compiled output
+# ------------------------------------------------------------
+dist/
+build/
+out/
+lib/
+coverage/
+.nyc_output/
+*.tsbuildinfo
+
+# Framework / bundler caches
+.next/
+.nuxt/
+.svelte-kit/
+.vite/
+.parcel-cache/
+.turbo/
+.cache/
+.eslintcache
+.stylelintcache
+.rollup.cache/
+
+# Generated source maps
+*.js.map
+*.css.map
+*.d.ts.map
+
+# ------------------------------------------------------------
+# 3. Runtime trading data
+# Root-level MITS runtime/test/backup directories
+# ------------------------------------------------------------
+/data/
+/data-test/
+/data-test-*/
+/data-backups/
+/data-backup/
+/backups/
+/backup/
+
+# Runtime state / snapshots / archives
+/runtime/
+/state/
+/snapshots/
+/market-snapshots/
+/trade-snapshots/
+/trade-archive/
+/trade-sync-archive/
+
+# ------------------------------------------------------------
+# 4. Databases and persistent runtime stores
+# ------------------------------------------------------------
+*.sqlite
+*.sqlite3
+*.sqlite-shm
+*.sqlite-wal
+*.db
+*.db-shm
+*.db-wal
+*.leveldb
+
+# ------------------------------------------------------------
+# 5. Logs / diagnostics / reports generated at runtime
+# ------------------------------------------------------------
+*.log
+*.log.*
+logs/
+log/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Crash / process files
+*.pid
+*.pid.lock
+*.seed
+*.stackdump
+core
+core.*
+
+# ------------------------------------------------------------
+# 6. Temporary files
+# ------------------------------------------------------------
+/temp/
+/tmp/
+tmp/
+temp/
+*.tmp
+*.temp
+*.swp
+*.swo
+*.orig
+*.rej
+*~
+
+# ------------------------------------------------------------
+# 7. Environment variables / secrets
+# ------------------------------------------------------------
+.env
+.env.*
+!.env.example
+!.env.sample
+!.env.template
+
+# Common local secret/config files
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.cer
+*.jks
+*.keystore
+
+# Local credentials (keep templates/examples explicitly if needed)
+credentials.json
+secrets.json
+secret.json
+auth.json
+
+# ------------------------------------------------------------
+# 8. Backup / archive packages
+# ------------------------------------------------------------
+*.bak
+*.backup
+*.old
+*.copy
+*.zip
+*.7z
+*.rar
+*.tar
+*.tar.gz
+*.tgz
+*.gz
+
+# ------------------------------------------------------------
+# 9. Package-manager caches
+# ------------------------------------------------------------
+.npm/
+.pnpm-store/
+.yarn/
+.yarn-cache/
+.yarn-integrity
+
+# Do NOT ignore lock files:
+# package-lock.json
+# pnpm-lock.yaml
+# yarn.lock
+
+# ------------------------------------------------------------
+# 10. Test / coverage generated artifacts
+# ------------------------------------------------------------
+coverage/
+.nyc_output/
+test-results/
+playwright-report/
+playwright/.cache/
+blob-report/
+junit.xml
+
+# ------------------------------------------------------------
+# 11. IDE / editor files
+# ------------------------------------------------------------
+.vscode/
+.idea/
+*.code-workspace
+*.sublime-project
+*.sublime-workspace
+
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# ------------------------------------------------------------
+# 12. OS generated files
+# ------------------------------------------------------------
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+.Spotlight-V100
+.Trashes
+
+Thumbs.db
+Thumbs.db:encryptable
+Desktop.ini
+$RECYCLE.BIN/
+
+# ------------------------------------------------------------
+# 13. Windows / PowerShell local artifacts
+# ------------------------------------------------------------
+*.lnk
+*.etl
+*.evtx
+
+# ------------------------------------------------------------
+# 14. Python helper-tool artifacts (if scripts use Python)
+# ------------------------------------------------------------
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# ------------------------------------------------------------
+# 15. Local AI / model artifacts
+# Never commit model weights into the application repository.
+# ------------------------------------------------------------
+*.gguf
+*.safetensors
+*.onnx
+*.bin
+*.pt
+*.pth
+models/
+.model-cache/
+
+# ------------------------------------------------------------
+# 16. Misc generated artifacts
+# ------------------------------------------------------------
+*.lcov
+*.prof
+*.trace
+*.dump
+
+# ============================================================
+# IMPORTANT — intentionally NOT ignored
+# ============================================================
+# apps/
+# config/
+# docs/
+# packages/
+# scripts/
+# AGENTS.md
+# MANIFEST.md
+# README.md
+# SOURCE_MANIFEST.json
+# package.json
+# package-lock.json
+# tsconfig*.json
+#
+# If config/ contains real API keys/passwords, move those values
+# to .env and commit only a safe example/template.
+# ============================================================

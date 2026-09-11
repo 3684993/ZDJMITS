@@ -1,0 +1,2 @@
+import { describe,expect,it,vi } from 'vitest';import { EventBus } from './eventBus.js';import { redactAudit } from '../api/projections.js';
+describe('EventBus audit subscribers',()=>{it('handles a shutdown event with no payload',()=>{const bus=new EventBus(),audit=vi.fn(event=>redactAudit(event.payload));bus.on('event',audit);expect(()=>bus.publish('RUNTIME_STOPPED')).not.toThrow();expect(audit).toHaveBeenCalledOnce();expect(audit.mock.results[0]?.value).toBe('undefined');});});

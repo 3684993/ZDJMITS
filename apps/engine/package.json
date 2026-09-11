@@ -1,0 +1,29 @@
+{
+  "name": "@zdj/engine",
+  "version": "3.9.2",
+  "private": true,
+  "type": "module",
+  "main": "dist/main.js",
+  "scripts": {
+    "dev": "tsx watch src/main.ts",
+    "start": "node dist/main.js",
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@zdj/contracts": "3.9.2",
+    "@zdj/core": "3.9.2",
+    "express": "^5.1.0",
+    "socks-proxy-agent": "^10.1.0",
+    "ws": "^8.18.2",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.3",
+    "@types/node": "^22.15.32",
+    "@types/ws": "^8.18.1",
+    "tsx": "^4.20.3",
+    "vitest": "^3.2.4"
+  }
+}

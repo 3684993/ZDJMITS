@@ -1,0 +1,1 @@
+{"generatedAt":null,"mode":"ISOLATED_RESEARCH","status":"OFFLINE_ONLY","runtime":{"activeResearchJobs":0,"backgroundQueue":0,"workerCount":0,"httpHotPath":false,"eventLoopLagMs":{"p50":20.824,"p95":27.41,"max":2166.358},"workerKind":"worker_threads","workerErrors":0,"longestResearchJobMs":0},"reason":"Use an isolated database copy for Temporal/Regime/Analog jobs"}

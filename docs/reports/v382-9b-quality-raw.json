@@ -1,0 +1,2316 @@
+{
+  "version": "3.8.2",
+  "generatedAt": "2026-09-08T01:53:08.546Z",
+  "resource": {
+    "id": "scout-b580",
+    "model": "qwen3.5:9b",
+    "baseUrl": "http://127.0.0.1:8081/v1"
+  },
+  "isolated": true,
+  "exchangeWrites": false,
+  "summary": {
+    "total": 20,
+    "completed": 20,
+    "failed": 0,
+    "acceptedFacts": 20,
+    "rejectedFacts": 0,
+    "numericErrors": 0,
+    "unitErrors": 0,
+    "timeErrors": 0,
+    "evidenceErrors": 0,
+    "tradingPermissionErrors": 0
+  },
+  "passed": true,
+  "cases": [
+    {
+      "source": {
+        "id": "quality-0",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ALPACA_CRYPTO_SPOT",
+        "sourceId": "v382-quality-0",
+        "url": "https://quality.invalid/0",
+        "eventAt": 1788220800000,
+        "publishedAt": 1788220800000,
+        "receivedAt": 1788220801000,
+        "availableAt": 1788220801000,
+        "expiresAt": 1788224400000,
+        "closedBar": true,
+        "facts": {
+          "open": 60000,
+          "close": 60010,
+          "return15m": 0.000166
+        },
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "quality-r0",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"sourceId\":\"v382-quality-0\",\"entities\":[\"BTC/USD\"],\"facts\":[{\"field\":\"open\",\"value\":60000,\"unit\":\"USD\",\"observedAt\":1788220800000,\"evidenceLocation\":\"facts.open\",\"conflict\":null}],\"conflicts\":[]}"
+            }
+          }
+        ],
+        "created": 1788832341,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 75,
+          "prompt_tokens": 377,
+          "total_tokens": 452,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-iz28M1pI8Y0h8ymnpebdFmm0rN4YMlbJ",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 377,
+          "prompt_ms": 322.491,
+          "prompt_per_token_ms": 0.8554137931034482,
+          "prompt_per_second": 1169.0248720119323,
+          "predicted_n": 75,
+          "predicted_ms": 2157.721,
+          "predicted_per_token_ms": 28.769613333333332,
+          "predicted_per_second": 34.758896075998706
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "v382-quality-0",
+          "entities": [
+            "BTC/USD"
+          ],
+          "facts": [
+            {
+              "field": "open",
+              "value": 60000,
+              "unit": "USD",
+              "observedAt": 1788220800000,
+              "evidenceLocation": "facts.open",
+              "conflict": null
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "parsed": {
+        "sourceId": "v382-quality-0",
+        "entities": [
+          "BTC/USD"
+        ],
+        "facts": [
+          {
+            "field": "open",
+            "value": 60000,
+            "unit": "USD",
+            "observedAt": 1788220800000,
+            "evidenceLocation": "facts.open",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "accepted": {
+        "sourceId": "v382-quality-0",
+        "entities": [
+          "BTC/USD"
+        ],
+        "facts": [
+          {
+            "field": "open",
+            "value": 60000,
+            "unit": "USD",
+            "observedAt": 1788220800000,
+            "evidenceLocation": "facts.open",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "rejectedFactCount": 0,
+      "latencyMs": 2564,
+      "status": "COMPLETED"
+    },
+    {
+      "source": {
+        "id": "quality-1",
+        "provider": "FEDERAL_RESERVE",
+        "instrument": "USD_MACRO",
+        "venue": "FEDERAL_RESERVE_OFFICIAL_RSS",
+        "sourceId": "v382-quality-1",
+        "url": "https://quality.invalid/1",
+        "eventAt": 1788220860000,
+        "publishedAt": 1788220860000,
+        "receivedAt": 1788220861000,
+        "availableAt": 1788220861000,
+        "expiresAt": 1788224460000,
+        "closedBar": null,
+        "facts": {
+          "title": "Federal Reserve release 1",
+          "summary": "Official statement 1: the target range is unchanged."
+        },
+        "quality": "OFFICIAL",
+        "revision": "quality-r1",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000001"
+      },
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"sourceId\":\"v382-quality-1\",\"entities\":[\"Federal Reserve release 1\"],\"facts\":[{\"field\":\"summary\",\"value\":\"Official statement 1: the target range is unchanged.\",\"unit\":null,\"observedAt\":1788220860000,\"evidenceLocation\":\"facts.summary\",\"conflict\":null}],\"conflicts\":[]}"
+            }
+          }
+        ],
+        "created": 1788832344,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 80,
+          "prompt_tokens": 369,
+          "total_tokens": 449,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-7aHpRUlLyoBbiQkKIJri1XC93mvakX1Q",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 369,
+          "prompt_ms": 319.186,
+          "prompt_per_token_ms": 0.8650027100271002,
+          "prompt_per_second": 1156.0657422318022,
+          "predicted_n": 80,
+          "predicted_ms": 2044.312,
+          "predicted_per_token_ms": 25.5539,
+          "predicted_per_second": 39.132969918486026
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "v382-quality-1",
+          "entities": [
+            "Federal Reserve release 1"
+          ],
+          "facts": [
+            {
+              "field": "summary",
+              "value": "Official statement 1: the target range is unchanged.",
+              "unit": null,
+              "observedAt": 1788220860000,
+              "evidenceLocation": "facts.summary",
+              "conflict": null
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "parsed": {
+        "sourceId": "v382-quality-1",
+        "entities": [
+          "Federal Reserve release 1"
+        ],
+        "facts": [
+          {
+            "field": "summary",
+            "value": "Official statement 1: the target range is unchanged.",
+            "unit": null,
+            "observedAt": 1788220860000,
+            "evidenceLocation": "facts.summary",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "accepted": {
+        "sourceId": "v382-quality-1",
+        "entities": [
+          "Federal Reserve release 1"
+        ],
+        "facts": [
+          {
+            "field": "summary",
+            "value": "Official statement 1: the target range is unchanged.",
+            "unit": null,
+            "observedAt": 1788220860000,
+            "evidenceLocation": "facts.summary",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "rejectedFactCount": 0,
+      "latencyMs": 2410,
+      "status": "COMPLETED"
+    },
+    {
+      "source": {
+        "id": "quality-2",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ALPACA_CRYPTO_SPOT",
+        "sourceId": "v382-quality-2",
+        "url": "https://quality.invalid/2",
+        "eventAt": 1788220920000,
+        "publishedAt": 1788220920000,
+        "receivedAt": 1788220921000,
+        "availableAt": 1788220921000,
+        "expiresAt": 1788224520000,
+        "closedBar": true,
+        "facts": {
+          "open": 60002,
+          "close": 60012,
+          "return15m": 0.000166
+        },
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "quality-r2",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000002"
+      },
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"sourceId\":\"v382-quality-2\",\"entities\":[\"BTC/USD\"],\"facts\":[{\"field\":\"open\",\"value\":60002,\"unit\":\"USD\",\"observedAt\":1788220920000,\"evidenceLocation\":\"facts.open\",\"conflict\":null}],\"conflicts\":[]}"
+            }
+          }
+        ],
+        "created": 1788832346,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 74,
+          "prompt_tokens": 377,
+          "total_tokens": 451,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-ObemOPUzydkpxLokLUatO8UIc9PxralP",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 377,
+          "prompt_ms": 315.188,
+          "prompt_per_token_ms": 0.8360424403183023,
+          "prompt_per_second": 1196.1115270885948,
+          "predicted_n": 74,
+          "predicted_ms": 1878.682,
+          "predicted_per_token_ms": 25.387594594594596,
+          "predicted_per_second": 39.389316552774766
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "v382-quality-2",
+          "entities": [
+            "BTC/USD"
+          ],
+          "facts": [
+            {
+              "field": "open",
+              "value": 60002,
+              "unit": "USD",
+              "observedAt": 1788220920000,
+              "evidenceLocation": "facts.open",
+              "conflict": null
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "parsed": {
+        "sourceId": "v382-quality-2",
+        "entities": [
+          "BTC/USD"
+        ],
+        "facts": [
+          {
+            "field": "open",
+            "value": 60002,
+            "unit": "USD",
+            "observedAt": 1788220920000,
+            "evidenceLocation": "facts.open",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "accepted": {
+        "sourceId": "v382-quality-2",
+        "entities": [
+          "BTC/USD"
+        ],
+        "facts": [
+          {
+            "field": "open",
+            "value": 60002,
+            "unit": "USD",
+            "observedAt": 1788220920000,
+            "evidenceLocation": "facts.open",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "rejectedFactCount": 0,
+      "latencyMs": 2233,
+      "status": "COMPLETED"
+    },
+    {
+      "source": {
+        "id": "quality-3",
+        "provider": "FEDERAL_RESERVE",
+        "instrument": "USD_MACRO",
+        "venue": "FEDERAL_RESERVE_OFFICIAL_RSS",
+        "sourceId": "v382-quality-3",
+        "url": "https://quality.invalid/3",
+        "eventAt": 1788220980000,
+        "publishedAt": 1788220980000,
+        "receivedAt": 1788220981000,
+        "availableAt": 1788220981000,
+        "expiresAt": 1788224580000,
+        "closedBar": null,
+        "facts": {
+          "title": "Federal Reserve release 3",
+          "summary": "Official statement 3: the target range is unchanged."
+        },
+        "quality": "OFFICIAL",
+        "revision": "quality-r3",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000003"
+      },
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"sourceId\":\"v382-quality-3\",\"entities\":[\"Federal Reserve release 3\"],\"facts\":[{\"field\":\"summary\",\"value\":\"Official statement 3: the target range is unchanged.\",\"unit\":null,\"observedAt\":1788220980000,\"evidenceLocation\":\"facts.summary\",\"conflict\":null}],\"conflicts\":[]}"
+            }
+          }
+        ],
+        "created": 1788832348,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 81,
+          "prompt_tokens": 369,
+          "total_tokens": 450,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-ax61PQN5MnxaT5EYbuhDpg6mx0rL5eCT",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 369,
+          "prompt_ms": 316.945,
+          "prompt_per_token_ms": 0.858929539295393,
+          "prompt_per_second": 1164.2398523403115,
+          "predicted_n": 81,
+          "predicted_ms": 2141.36,
+          "predicted_per_token_ms": 26.436543209876543,
+          "predicted_per_second": 37.826428064407665
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "v382-quality-3",
+          "entities": [
+            "Federal Reserve release 3"
+          ],
+          "facts": [
+            {
+              "field": "summary",
+              "value": "Official statement 3: the target range is unchanged.",
+              "unit": null,
+              "observedAt": 1788220980000,
+              "evidenceLocation": "facts.summary",
+              "conflict": null
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "parsed": {
+        "sourceId": "v382-quality-3",
+        "entities": [
+          "Federal Reserve release 3"
+        ],
+        "facts": [
+          {
+            "field": "summary",
+            "value": "Official statement 3: the target range is unchanged.",
+            "unit": null,
+            "observedAt": 1788220980000,
+            "evidenceLocation": "facts.summary",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "accepted": {
+        "sourceId": "v382-quality-3",
+        "entities": [
+          "Federal Reserve release 3"
+        ],
+        "facts": [
+          {
+            "field": "summary",
+            "value": "Official statement 3: the target range is unchanged.",
+            "unit": null,
+            "observedAt": 1788220980000,
+            "evidenceLocation": "facts.summary",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "rejectedFactCount": 0,
+      "latencyMs": 2507,
+      "status": "COMPLETED"
+    },
+    {
+      "source": {
+        "id": "quality-4",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ALPACA_CRYPTO_SPOT",
+        "sourceId": "v382-quality-4",
+        "url": "https://quality.invalid/4",
+        "eventAt": 1788221040000,
+        "publishedAt": 1788221040000,
+        "receivedAt": 1788221041000,
+        "availableAt": 1788221041000,
+        "expiresAt": 1788224640000,
+        "closedBar": true,
+        "facts": {
+          "open": 60004,
+          "close": 60014,
+          "return15m": 0.000166
+        },
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "quality-r4",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000004"
+      },
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"sourceId\":\"v382-quality-4\",\"entities\":[\"BTC/USD\"],\"facts\":[{\"field\":\"open\",\"value\":60004,\"unit\":\"USD\",\"observedAt\":1788221040000,\"evidenceLocation\":\"facts.open\",\"conflict\":null}],\"conflicts\":[]}"
+            }
+          }
+        ],
+        "created": 1788832351,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 73,
+          "prompt_tokens": 377,
+          "total_tokens": 450,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-t99YbvzMK5oC8wfBi8I5pSelyRTUWBQj",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 377,
+          "prompt_ms": 326.064,
+          "prompt_per_token_ms": 0.8648912466843501,
+          "prompt_per_second": 1156.2147308503852,
+          "predicted_n": 73,
+          "predicted_ms": 2084.207,
+          "predicted_per_token_ms": 28.550780821917808,
+          "predicted_per_second": 35.02531178524974
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "v382-quality-4",
+          "entities": [
+            "BTC/USD"
+          ],
+          "facts": [
+            {
+              "field": "open",
+              "value": 60004,
+              "unit": "USD",
+              "observedAt": 1788221040000,
+              "evidenceLocation": "facts.open",
+              "conflict": null
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "parsed": {
+        "sourceId": "v382-quality-4",
+        "entities": [
+          "BTC/USD"
+        ],
+        "facts": [
+          {
+            "field": "open",
+            "value": 60004,
+            "unit": "USD",
+            "observedAt": 1788221040000,
+            "evidenceLocation": "facts.open",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "accepted": {
+        "sourceId": "v382-quality-4",
+        "entities": [
+          "BTC/USD"
+        ],
+        "facts": [
+          {
+            "field": "open",
+            "value": 60004,
+            "unit": "USD",
+            "observedAt": 1788221040000,
+            "evidenceLocation": "facts.open",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "rejectedFactCount": 0,
+      "latencyMs": 2455,
+      "status": "COMPLETED"
+    },
+    {
+      "source": {
+        "id": "quality-5",
+        "provider": "FEDERAL_RESERVE",
+        "instrument": "USD_MACRO",
+        "venue": "FEDERAL_RESERVE_OFFICIAL_RSS",
+        "sourceId": "v382-quality-5",
+        "url": "https://quality.invalid/5",
+        "eventAt": 1788221100000,
+        "publishedAt": 1788221100000,
+        "receivedAt": 1788221101000,
+        "availableAt": 1788221101000,
+        "expiresAt": 1788224700000,
+        "closedBar": null,
+        "facts": {
+          "title": "Federal Reserve release 5",
+          "summary": "Official statement 5: the target range is unchanged."
+        },
+        "quality": "OFFICIAL",
+        "revision": "quality-r5",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000005"
+      },
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"sourceId\":\"v382-quality-5\",\"entities\":[\"FEDERAL_RESERVE\"],\"facts\":[{\"field\":\"summary\",\"value\":\"Official statement 5: the target range is unchanged.\",\"unit\":null,\"observedAt\":1788221100000,\"evidenceLocation\":\"facts.summary\",\"conflict\":null}],\"conflicts\":[]}"
+            }
+          }
+        ],
+        "created": 1788832353,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 81,
+          "prompt_tokens": 369,
+          "total_tokens": 450,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-1KFu8AhKeMrtkLxj2TnFerPyatsRWI8w",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 369,
+          "prompt_ms": 320.807,
+          "prompt_per_token_ms": 0.8693956639566396,
+          "prompt_per_second": 1150.224278148544,
+          "predicted_n": 81,
+          "predicted_ms": 2130.915,
+          "predicted_per_token_ms": 26.30759259259259,
+          "predicted_per_second": 38.011839984232125
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "v382-quality-5",
+          "entities": [
+            "FEDERAL_RESERVE"
+          ],
+          "facts": [
+            {
+              "field": "summary",
+              "value": "Official statement 5: the target range is unchanged.",
+              "unit": null,
+              "observedAt": 1788221100000,
+              "evidenceLocation": "facts.summary",
+              "conflict": null
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "parsed": {
+        "sourceId": "v382-quality-5",
+        "entities": [
+          "FEDERAL_RESERVE"
+        ],
+        "facts": [
+          {
+            "field": "summary",
+            "value": "Official statement 5: the target range is unchanged.",
+            "unit": null,
+            "observedAt": 1788221100000,
+            "evidenceLocation": "facts.summary",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "accepted": {
+        "sourceId": "v382-quality-5",
+        "entities": [
+          "FEDERAL_RESERVE"
+        ],
+        "facts": [
+          {
+            "field": "summary",
+            "value": "Official statement 5: the target range is unchanged.",
+            "unit": null,
+            "observedAt": 1788221100000,
+            "evidenceLocation": "facts.summary",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "rejectedFactCount": 0,
+      "latencyMs": 2505,
+      "status": "COMPLETED"
+    },
+    {
+      "source": {
+        "id": "quality-6",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ALPACA_CRYPTO_SPOT",
+        "sourceId": "v382-quality-6",
+        "url": "https://quality.invalid/6",
+        "eventAt": 1788221160000,
+        "publishedAt": 1788221160000,
+        "receivedAt": 1788221161000,
+        "availableAt": 1788221161000,
+        "expiresAt": 1788224760000,
+        "closedBar": true,
+        "facts": {
+          "open": 60006,
+          "close": 60016,
+          "return15m": 0.000166
+        },
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "quality-r6",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000006"
+      },
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"sourceId\":\"v382-quality-6\",\"entities\":[\"BTC/USD\"],\"facts\":[{\"field\":\"open\",\"value\":60006,\"unit\":\"USD\",\"observedAt\":1788221160000,\"evidenceLocation\":\"facts.open\",\"conflict\":null}],\"conflicts\":[]}"
+            }
+          }
+        ],
+        "created": 1788832356,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 74,
+          "prompt_tokens": 377,
+          "total_tokens": 451,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-Zf88gKkghqFPakuEc1kQdrsvThpekOc3",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 377,
+          "prompt_ms": 325.336,
+          "prompt_per_token_ms": 0.8629602122015916,
+          "prompt_per_second": 1158.8019770329752,
+          "predicted_n": 74,
+          "predicted_ms": 1984.398,
+          "predicted_per_token_ms": 26.81618918918919,
+          "predicted_per_second": 37.290906360518406
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "v382-quality-6",
+          "entities": [
+            "BTC/USD"
+          ],
+          "facts": [
+            {
+              "field": "open",
+              "value": 60006,
+              "unit": "USD",
+              "observedAt": 1788221160000,
+              "evidenceLocation": "facts.open",
+              "conflict": null
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "parsed": {
+        "sourceId": "v382-quality-6",
+        "entities": [
+          "BTC/USD"
+        ],
+        "facts": [
+          {
+            "field": "open",
+            "value": 60006,
+            "unit": "USD",
+            "observedAt": 1788221160000,
+            "evidenceLocation": "facts.open",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "accepted": {
+        "sourceId": "v382-quality-6",
+        "entities": [
+          "BTC/USD"
+        ],
+        "facts": [
+          {
+            "field": "open",
+            "value": 60006,
+            "unit": "USD",
+            "observedAt": 1788221160000,
+            "evidenceLocation": "facts.open",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "rejectedFactCount": 0,
+      "latencyMs": 2351,
+      "status": "COMPLETED"
+    },
+    {
+      "source": {
+        "id": "quality-7",
+        "provider": "FEDERAL_RESERVE",
+        "instrument": "USD_MACRO",
+        "venue": "FEDERAL_RESERVE_OFFICIAL_RSS",
+        "sourceId": "v382-quality-7",
+        "url": "https://quality.invalid/7",
+        "eventAt": 1788221220000,
+        "publishedAt": 1788221220000,
+        "receivedAt": 1788221221000,
+        "availableAt": 1788221221000,
+        "expiresAt": 1788224820000,
+        "closedBar": null,
+        "facts": {
+          "title": "Federal Reserve release 7",
+          "summary": "Official statement 7: the target range is unchanged."
+        },
+        "quality": "OFFICIAL",
+        "revision": "quality-r7",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000007"
+      },
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"sourceId\":\"v382-quality-7\",\"entities\":[\"FEDERAL_RESERVE\"],\"facts\":[{\"field\":\"summary\",\"value\":\"Official statement 7: the target range is unchanged.\",\"unit\":null,\"observedAt\":1788221220000,\"evidenceLocation\":\"facts.summary\",\"conflict\":null}],\"conflicts\":[]}"
+            }
+          }
+        ],
+        "created": 1788832358,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 81,
+          "prompt_tokens": 369,
+          "total_tokens": 450,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-jg8wrGmNiWnxpoSIOXrqio42R0cPv6tC",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 369,
+          "prompt_ms": 329.077,
+          "prompt_per_token_ms": 0.8918075880758808,
+          "prompt_per_second": 1121.3181109588334,
+          "predicted_n": 81,
+          "predicted_ms": 2108.056,
+          "predicted_per_token_ms": 26.025382716049382,
+          "predicted_per_second": 38.42402668619809
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "v382-quality-7",
+          "entities": [
+            "FEDERAL_RESERVE"
+          ],
+          "facts": [
+            {
+              "field": "summary",
+              "value": "Official statement 7: the target range is unchanged.",
+              "unit": null,
+              "observedAt": 1788221220000,
+              "evidenceLocation": "facts.summary",
+              "conflict": null
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "parsed": {
+        "sourceId": "v382-quality-7",
+        "entities": [
+          "FEDERAL_RESERVE"
+        ],
+        "facts": [
+          {
+            "field": "summary",
+            "value": "Official statement 7: the target range is unchanged.",
+            "unit": null,
+            "observedAt": 1788221220000,
+            "evidenceLocation": "facts.summary",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "accepted": {
+        "sourceId": "v382-quality-7",
+        "entities": [
+          "FEDERAL_RESERVE"
+        ],
+        "facts": [
+          {
+            "field": "summary",
+            "value": "Official statement 7: the target range is unchanged.",
+            "unit": null,
+            "observedAt": 1788221220000,
+            "evidenceLocation": "facts.summary",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "rejectedFactCount": 0,
+      "latencyMs": 2496,
+      "status": "COMPLETED"
+    },
+    {
+      "source": {
+        "id": "quality-8",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ALPACA_CRYPTO_SPOT",
+        "sourceId": "v382-quality-8",
+        "url": "https://quality.invalid/8",
+        "eventAt": 1788221280000,
+        "publishedAt": 1788221280000,
+        "receivedAt": 1788221281000,
+        "availableAt": 1788221281000,
+        "expiresAt": 1788224880000,
+        "closedBar": true,
+        "facts": {
+          "open": 60008,
+          "close": 60018,
+          "return15m": 0.000166
+        },
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "quality-r8",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000008"
+      },
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"sourceId\":\"v382-quality-8\",\"entities\":[\"BTC/USD\"],\"facts\":[{\"field\":\"open\",\"value\":60008,\"unit\":\"USD\",\"observedAt\":1788221280000,\"evidenceLocation\":\"facts.open\",\"conflict\":null}],\"conflicts\":[]}"
+            }
+          }
+        ],
+        "created": 1788832360,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 74,
+          "prompt_tokens": 377,
+          "total_tokens": 451,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-QKYdmBHt7Bhd0FHjCm4RIh0edATbGMQZ",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 377,
+          "prompt_ms": 318.661,
+          "prompt_per_token_ms": 0.8452546419098144,
+          "prompt_per_second": 1183.075431257669,
+          "predicted_n": 74,
+          "predicted_ms": 1939.327,
+          "predicted_per_token_ms": 26.20712162162162,
+          "predicted_per_second": 38.1575670322746
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "v382-quality-8",
+          "entities": [
+            "BTC/USD"
+          ],
+          "facts": [
+            {
+              "field": "open",
+              "value": 60008,
+              "unit": "USD",
+              "observedAt": 1788221280000,
+              "evidenceLocation": "facts.open",
+              "conflict": null
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "parsed": {
+        "sourceId": "v382-quality-8",
+        "entities": [
+          "BTC/USD"
+        ],
+        "facts": [
+          {
+            "field": "open",
+            "value": 60008,
+            "unit": "USD",
+            "observedAt": 1788221280000,
+            "evidenceLocation": "facts.open",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "accepted": {
+        "sourceId": "v382-quality-8",
+        "entities": [
+          "BTC/USD"
+        ],
+        "facts": [
+          {
+            "field": "open",
+            "value": 60008,
+            "unit": "USD",
+            "observedAt": 1788221280000,
+            "evidenceLocation": "facts.open",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "rejectedFactCount": 0,
+      "latencyMs": 2319,
+      "status": "COMPLETED"
+    },
+    {
+      "source": {
+        "id": "quality-9",
+        "provider": "FEDERAL_RESERVE",
+        "instrument": "USD_MACRO",
+        "venue": "FEDERAL_RESERVE_OFFICIAL_RSS",
+        "sourceId": "v382-quality-9",
+        "url": "https://quality.invalid/9",
+        "eventAt": 1788221340000,
+        "publishedAt": 1788221340000,
+        "receivedAt": 1788221341000,
+        "availableAt": 1788221341000,
+        "expiresAt": 1788224940000,
+        "closedBar": null,
+        "facts": {
+          "title": "Federal Reserve release 9",
+          "summary": "Official statement 9: the target range is unchanged."
+        },
+        "quality": "OFFICIAL",
+        "revision": "quality-r9",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000009"
+      },
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"sourceId\":\"v382-quality-9\",\"entities\":[\"Federal Reserve release 9\"],\"facts\":[{\"field\":\"summary\",\"value\":\"Official statement 9: the target range is unchanged.\",\"unit\":null,\"observedAt\":1788221340000,\"evidenceLocation\":\"facts.summary\",\"conflict\":null}],\"conflicts\":[]}"
+            }
+          }
+        ],
+        "created": 1788832363,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 83,
+          "prompt_tokens": 369,
+          "total_tokens": 452,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-116wereYEQy500GSHDj1DXZ0wAGDezJO",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 369,
+          "prompt_ms": 322.504,
+          "prompt_per_token_ms": 0.8739945799457995,
+          "prompt_per_second": 1144.1718552328032,
+          "predicted_n": 83,
+          "predicted_ms": 2321.277,
+          "predicted_per_token_ms": 27.96719277108434,
+          "predicted_per_second": 35.75618075740206
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "v382-quality-9",
+          "entities": [
+            "Federal Reserve release 9"
+          ],
+          "facts": [
+            {
+              "field": "summary",
+              "value": "Official statement 9: the target range is unchanged.",
+              "unit": null,
+              "observedAt": 1788221340000,
+              "evidenceLocation": "facts.summary",
+              "conflict": null
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "parsed": {
+        "sourceId": "v382-quality-9",
+        "entities": [
+          "Federal Reserve release 9"
+        ],
+        "facts": [
+          {
+            "field": "summary",
+            "value": "Official statement 9: the target range is unchanged.",
+            "unit": null,
+            "observedAt": 1788221340000,
+            "evidenceLocation": "facts.summary",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "accepted": {
+        "sourceId": "v382-quality-9",
+        "entities": [
+          "Federal Reserve release 9"
+        ],
+        "facts": [
+          {
+            "field": "summary",
+            "value": "Official statement 9: the target range is unchanged.",
+            "unit": null,
+            "observedAt": 1788221340000,
+            "evidenceLocation": "facts.summary",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "rejectedFactCount": 0,
+      "latencyMs": 2699,
+      "status": "COMPLETED"
+    },
+    {
+      "source": {
+        "id": "quality-10",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ALPACA_CRYPTO_SPOT",
+        "sourceId": "v382-quality-10",
+        "url": "https://quality.invalid/10",
+        "eventAt": 1788221400000,
+        "publishedAt": 1788221400000,
+        "receivedAt": 1788221401000,
+        "availableAt": 1788221401000,
+        "expiresAt": 1788225000000,
+        "closedBar": true,
+        "facts": {
+          "open": 60010,
+          "close": 60020,
+          "return15m": 0.000166
+        },
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "quality-r10",
+        "contentHash": "000000000000000000000000000000000000000000000000000000000000000a"
+      },
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"sourceId\":\"v382-quality-10\",\"entities\":[\"BTC/USD\"],\"facts\":[{\"field\":\"open\",\"value\":60010,\"unit\":\"USD\",\"observedAt\":1788221400000,\"evidenceLocation\":\"facts.open\",\"conflict\":null}],\"conflicts\":[]}"
+            }
+          }
+        ],
+        "created": 1788832366,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 74,
+          "prompt_tokens": 381,
+          "total_tokens": 455,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-eM2N3SbvY4X9ZD2QJlAk9bWVIRTSTFjY",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 381,
+          "prompt_ms": 319.079,
+          "prompt_per_token_ms": 0.8374776902887139,
+          "prompt_per_second": 1194.061658711479,
+          "predicted_n": 74,
+          "predicted_ms": 1918.201,
+          "predicted_per_token_ms": 25.921635135135137,
+          "predicted_per_second": 38.57781327399996
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "v382-quality-10",
+          "entities": [
+            "BTC/USD"
+          ],
+          "facts": [
+            {
+              "field": "open",
+              "value": 60010,
+              "unit": "USD",
+              "observedAt": 1788221400000,
+              "evidenceLocation": "facts.open",
+              "conflict": null
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "parsed": {
+        "sourceId": "v382-quality-10",
+        "entities": [
+          "BTC/USD"
+        ],
+        "facts": [
+          {
+            "field": "open",
+            "value": 60010,
+            "unit": "USD",
+            "observedAt": 1788221400000,
+            "evidenceLocation": "facts.open",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "accepted": {
+        "sourceId": "v382-quality-10",
+        "entities": [
+          "BTC/USD"
+        ],
+        "facts": [
+          {
+            "field": "open",
+            "value": 60010,
+            "unit": "USD",
+            "observedAt": 1788221400000,
+            "evidenceLocation": "facts.open",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "rejectedFactCount": 0,
+      "latencyMs": 2313,
+      "status": "COMPLETED"
+    },
+    {
+      "source": {
+        "id": "quality-11",
+        "provider": "FEDERAL_RESERVE",
+        "instrument": "USD_MACRO",
+        "venue": "FEDERAL_RESERVE_OFFICIAL_RSS",
+        "sourceId": "v382-quality-11",
+        "url": "https://quality.invalid/11",
+        "eventAt": 1788221460000,
+        "publishedAt": 1788221460000,
+        "receivedAt": 1788221461000,
+        "availableAt": 1788221461000,
+        "expiresAt": 1788225060000,
+        "closedBar": null,
+        "facts": {
+          "title": "Federal Reserve release 11",
+          "summary": "Official statement 11: the target range is unchanged."
+        },
+        "quality": "OFFICIAL",
+        "revision": "quality-r11",
+        "contentHash": "000000000000000000000000000000000000000000000000000000000000000b"
+      },
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"sourceId\":\"v382-quality-11\",\"entities\":[\"Federal Reserve\"],\"facts\":[{\"field\":\"summary\",\"value\":\"Official statement 11: the target range is unchanged.\",\"unit\":null,\"observedAt\":1788221460000,\"evidenceLocation\":\"facts.summary\",\"conflict\":null}],\"conflicts\":[]}"
+            }
+          }
+        ],
+        "created": 1788832368,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 80,
+          "prompt_tokens": 375,
+          "total_tokens": 455,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-gCBVfzsWCtJ89iqci7dDM6tkdMT8aAMY",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 375,
+          "prompt_ms": 346.618,
+          "prompt_per_token_ms": 0.9243146666666666,
+          "prompt_per_second": 1081.8826489103278,
+          "predicted_n": 80,
+          "predicted_ms": 2201.672,
+          "predicted_per_token_ms": 27.5209,
+          "predicted_per_second": 36.33602098768572
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "v382-quality-11",
+          "entities": [
+            "Federal Reserve"
+          ],
+          "facts": [
+            {
+              "field": "summary",
+              "value": "Official statement 11: the target range is unchanged.",
+              "unit": null,
+              "observedAt": 1788221460000,
+              "evidenceLocation": "facts.summary",
+              "conflict": null
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "parsed": {
+        "sourceId": "v382-quality-11",
+        "entities": [
+          "Federal Reserve"
+        ],
+        "facts": [
+          {
+            "field": "summary",
+            "value": "Official statement 11: the target range is unchanged.",
+            "unit": null,
+            "observedAt": 1788221460000,
+            "evidenceLocation": "facts.summary",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "accepted": {
+        "sourceId": "v382-quality-11",
+        "entities": [
+          "Federal Reserve"
+        ],
+        "facts": [
+          {
+            "field": "summary",
+            "value": "Official statement 11: the target range is unchanged.",
+            "unit": null,
+            "observedAt": 1788221460000,
+            "evidenceLocation": "facts.summary",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "rejectedFactCount": 0,
+      "latencyMs": 2600,
+      "status": "COMPLETED"
+    },
+    {
+      "source": {
+        "id": "quality-12",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ALPACA_CRYPTO_SPOT",
+        "sourceId": "v382-quality-12",
+        "url": "https://quality.invalid/12",
+        "eventAt": 1788221520000,
+        "publishedAt": 1788221520000,
+        "receivedAt": 1788221521000,
+        "availableAt": 1788221521000,
+        "expiresAt": 1788225120000,
+        "closedBar": true,
+        "facts": {
+          "open": 60012,
+          "close": 60022,
+          "return15m": 0.000166
+        },
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "quality-r12",
+        "contentHash": "000000000000000000000000000000000000000000000000000000000000000c"
+      },
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"sourceId\":\"v382-quality-12\",\"entities\":[\"BTC/USD\"],\"facts\":[{\"field\":\"open\",\"value\":60012,\"unit\":\"USD\",\"observedAt\":1788221520000,\"evidenceLocation\":\"facts.open\",\"conflict\":null}],\"conflicts\":[]}"
+            }
+          }
+        ],
+        "created": 1788832370,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 74,
+          "prompt_tokens": 381,
+          "total_tokens": 455,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-irdhZRiDxn9MI72mbMkLGPyG4s2kwkVS",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 381,
+          "prompt_ms": 318.103,
+          "prompt_per_token_ms": 0.8349160104986877,
+          "prompt_per_second": 1197.7252650870944,
+          "predicted_n": 74,
+          "predicted_ms": 1968.948,
+          "predicted_per_token_ms": 26.607405405405405,
+          "predicted_per_second": 37.58352175882756
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "v382-quality-12",
+          "entities": [
+            "BTC/USD"
+          ],
+          "facts": [
+            {
+              "field": "open",
+              "value": 60012,
+              "unit": "USD",
+              "observedAt": 1788221520000,
+              "evidenceLocation": "facts.open",
+              "conflict": null
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "parsed": {
+        "sourceId": "v382-quality-12",
+        "entities": [
+          "BTC/USD"
+        ],
+        "facts": [
+          {
+            "field": "open",
+            "value": 60012,
+            "unit": "USD",
+            "observedAt": 1788221520000,
+            "evidenceLocation": "facts.open",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "accepted": {
+        "sourceId": "v382-quality-12",
+        "entities": [
+          "BTC/USD"
+        ],
+        "facts": [
+          {
+            "field": "open",
+            "value": 60012,
+            "unit": "USD",
+            "observedAt": 1788221520000,
+            "evidenceLocation": "facts.open",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "rejectedFactCount": 0,
+      "latencyMs": 2341,
+      "status": "COMPLETED"
+    },
+    {
+      "source": {
+        "id": "quality-13",
+        "provider": "FEDERAL_RESERVE",
+        "instrument": "USD_MACRO",
+        "venue": "FEDERAL_RESERVE_OFFICIAL_RSS",
+        "sourceId": "v382-quality-13",
+        "url": "https://quality.invalid/13",
+        "eventAt": 1788221580000,
+        "publishedAt": 1788221580000,
+        "receivedAt": 1788221581000,
+        "availableAt": 1788221581000,
+        "expiresAt": 1788225180000,
+        "closedBar": null,
+        "facts": {
+          "title": "Federal Reserve release 13",
+          "summary": "Official statement 13: the target range is unchanged."
+        },
+        "quality": "OFFICIAL",
+        "revision": "quality-r13",
+        "contentHash": "000000000000000000000000000000000000000000000000000000000000000d"
+      },
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"sourceId\":\"v382-quality-13\",\"entities\":[\"FEDERAL_RESERVE\"],\"facts\":[{\"field\":\"summary\",\"value\":\"Official statement 13: the target range is unchanged.\",\"unit\":null,\"observedAt\":1788221580000,\"evidenceLocation\":\"facts.summary\",\"conflict\":null}],\"conflicts\":[]}"
+            }
+          }
+        ],
+        "created": 1788832373,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 83,
+          "prompt_tokens": 375,
+          "total_tokens": 458,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-ZcwPP73H9hPDBmzj8gxpHwaoG2SUsDrh",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 375,
+          "prompt_ms": 328.809,
+          "prompt_per_token_ms": 0.876824,
+          "prompt_per_second": 1140.4797313942136,
+          "predicted_n": 83,
+          "predicted_ms": 2186.301,
+          "predicted_per_token_ms": 26.340975903614456,
+          "predicted_per_second": 37.9636655702943
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "v382-quality-13",
+          "entities": [
+            "FEDERAL_RESERVE"
+          ],
+          "facts": [
+            {
+              "field": "summary",
+              "value": "Official statement 13: the target range is unchanged.",
+              "unit": null,
+              "observedAt": 1788221580000,
+              "evidenceLocation": "facts.summary",
+              "conflict": null
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "parsed": {
+        "sourceId": "v382-quality-13",
+        "entities": [
+          "FEDERAL_RESERVE"
+        ],
+        "facts": [
+          {
+            "field": "summary",
+            "value": "Official statement 13: the target range is unchanged.",
+            "unit": null,
+            "observedAt": 1788221580000,
+            "evidenceLocation": "facts.summary",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "accepted": {
+        "sourceId": "v382-quality-13",
+        "entities": [
+          "FEDERAL_RESERVE"
+        ],
+        "facts": [
+          {
+            "field": "summary",
+            "value": "Official statement 13: the target range is unchanged.",
+            "unit": null,
+            "observedAt": 1788221580000,
+            "evidenceLocation": "facts.summary",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "rejectedFactCount": 0,
+      "latencyMs": 2563,
+      "status": "COMPLETED"
+    },
+    {
+      "source": {
+        "id": "quality-14",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ALPACA_CRYPTO_SPOT",
+        "sourceId": "v382-quality-14",
+        "url": "https://quality.invalid/14",
+        "eventAt": 1788221640000,
+        "publishedAt": 1788221640000,
+        "receivedAt": 1788221641000,
+        "availableAt": 1788221641000,
+        "expiresAt": 1788225240000,
+        "closedBar": true,
+        "facts": {
+          "open": 60014,
+          "close": 60024,
+          "return15m": 0.000166
+        },
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "quality-r14",
+        "contentHash": "000000000000000000000000000000000000000000000000000000000000000e"
+      },
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"sourceId\":\"v382-quality-14\",\"entities\":[\"BTC/USD\"],\"facts\":[{\"field\":\"open\",\"value\":60014,\"unit\":\"USD\",\"observedAt\":1788221640000,\"evidenceLocation\":\"facts.open\",\"conflict\":null}],\"conflicts\":[]}"
+            }
+          }
+        ],
+        "created": 1788832375,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 75,
+          "prompt_tokens": 381,
+          "total_tokens": 456,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-08saiY5zJdt5vVNakw0Vdooh88YHrgV5",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 381,
+          "prompt_ms": 333.474,
+          "prompt_per_token_ms": 0.875259842519685,
+          "prompt_per_second": 1142.5178574641502,
+          "predicted_n": 75,
+          "predicted_ms": 2045.649,
+          "predicted_per_token_ms": 27.275319999999997,
+          "predicted_per_second": 36.66318122023866
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "v382-quality-14",
+          "entities": [
+            "BTC/USD"
+          ],
+          "facts": [
+            {
+              "field": "open",
+              "value": 60014,
+              "unit": "USD",
+              "observedAt": 1788221640000,
+              "evidenceLocation": "facts.open",
+              "conflict": null
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "parsed": {
+        "sourceId": "v382-quality-14",
+        "entities": [
+          "BTC/USD"
+        ],
+        "facts": [
+          {
+            "field": "open",
+            "value": 60014,
+            "unit": "USD",
+            "observedAt": 1788221640000,
+            "evidenceLocation": "facts.open",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "accepted": {
+        "sourceId": "v382-quality-14",
+        "entities": [
+          "BTC/USD"
+        ],
+        "facts": [
+          {
+            "field": "open",
+            "value": 60014,
+            "unit": "USD",
+            "observedAt": 1788221640000,
+            "evidenceLocation": "facts.open",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "rejectedFactCount": 0,
+      "latencyMs": 2431,
+      "status": "COMPLETED"
+    },
+    {
+      "source": {
+        "id": "quality-15",
+        "provider": "FEDERAL_RESERVE",
+        "instrument": "USD_MACRO",
+        "venue": "FEDERAL_RESERVE_OFFICIAL_RSS",
+        "sourceId": "v382-quality-15",
+        "url": "https://quality.invalid/15",
+        "eventAt": 1788221700000,
+        "publishedAt": 1788221700000,
+        "receivedAt": 1788221701000,
+        "availableAt": 1788221701000,
+        "expiresAt": 1788225300000,
+        "closedBar": null,
+        "facts": {
+          "title": "Federal Reserve release 15",
+          "summary": "Official statement 15: the target range is unchanged."
+        },
+        "quality": "OFFICIAL",
+        "revision": "quality-r15",
+        "contentHash": "000000000000000000000000000000000000000000000000000000000000000f"
+      },
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"sourceId\":\"v382-quality-15\",\"entities\":[\"Federal Reserve release 15\"],\"facts\":[{\"field\":\"summary\",\"value\":\"Official statement 15: the target range is unchanged.\",\"unit\":null,\"observedAt\":1788221700000,\"evidenceLocation\":\"facts.summary\",\"conflict\":null}],\"conflicts\":[]}"
+            }
+          }
+        ],
+        "created": 1788832378,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 85,
+          "prompt_tokens": 375,
+          "total_tokens": 460,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-mWsS8lM2siQyOAoLnps1Fc5uVWv6mzv3",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 375,
+          "prompt_ms": 335.323,
+          "prompt_per_token_ms": 0.8941946666666666,
+          "prompt_per_second": 1118.3247197478252,
+          "predicted_n": 85,
+          "predicted_ms": 2359.652,
+          "predicted_per_token_ms": 27.76061176470588,
+          "predicted_per_second": 36.02226090965956
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "v382-quality-15",
+          "entities": [
+            "Federal Reserve release 15"
+          ],
+          "facts": [
+            {
+              "field": "summary",
+              "value": "Official statement 15: the target range is unchanged.",
+              "unit": null,
+              "observedAt": 1788221700000,
+              "evidenceLocation": "facts.summary",
+              "conflict": null
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "parsed": {
+        "sourceId": "v382-quality-15",
+        "entities": [
+          "Federal Reserve release 15"
+        ],
+        "facts": [
+          {
+            "field": "summary",
+            "value": "Official statement 15: the target range is unchanged.",
+            "unit": null,
+            "observedAt": 1788221700000,
+            "evidenceLocation": "facts.summary",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "accepted": {
+        "sourceId": "v382-quality-15",
+        "entities": [
+          "Federal Reserve release 15"
+        ],
+        "facts": [
+          {
+            "field": "summary",
+            "value": "Official statement 15: the target range is unchanged.",
+            "unit": null,
+            "observedAt": 1788221700000,
+            "evidenceLocation": "facts.summary",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "rejectedFactCount": 0,
+      "latencyMs": 2739,
+      "status": "COMPLETED"
+    },
+    {
+      "source": {
+        "id": "quality-16",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ALPACA_CRYPTO_SPOT",
+        "sourceId": "v382-quality-16",
+        "url": "https://quality.invalid/16",
+        "eventAt": 1788221760000,
+        "publishedAt": 1788221760000,
+        "receivedAt": 1788221761000,
+        "availableAt": 1788221761000,
+        "expiresAt": 1788225360000,
+        "closedBar": true,
+        "facts": {
+          "open": 60016,
+          "close": 60026,
+          "return15m": 0.000166
+        },
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "quality-r16",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000010"
+      },
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"sourceId\":\"v382-quality-16\",\"entities\":[\"BTC/USD\"],\"facts\":[{\"field\":\"open\",\"value\":60016,\"unit\":\"USD\",\"observedAt\":1788221760000,\"evidenceLocation\":\"facts.open\",\"conflict\":null}],\"conflicts\":[]}"
+            }
+          }
+        ],
+        "created": 1788832381,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 74,
+          "prompt_tokens": 381,
+          "total_tokens": 455,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-ChmKY17p3EooUPlLrVwrS0O6CvWyVPrN",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 381,
+          "prompt_ms": 319.303,
+          "prompt_per_token_ms": 0.8380656167979003,
+          "prompt_per_second": 1193.2239910054088,
+          "predicted_n": 74,
+          "predicted_ms": 2142.929,
+          "predicted_per_token_ms": 28.9585,
+          "predicted_per_second": 34.53217535438645
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "v382-quality-16",
+          "entities": [
+            "BTC/USD"
+          ],
+          "facts": [
+            {
+              "field": "open",
+              "value": 60016,
+              "unit": "USD",
+              "observedAt": 1788221760000,
+              "evidenceLocation": "facts.open",
+              "conflict": null
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "parsed": {
+        "sourceId": "v382-quality-16",
+        "entities": [
+          "BTC/USD"
+        ],
+        "facts": [
+          {
+            "field": "open",
+            "value": 60016,
+            "unit": "USD",
+            "observedAt": 1788221760000,
+            "evidenceLocation": "facts.open",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "accepted": {
+        "sourceId": "v382-quality-16",
+        "entities": [
+          "BTC/USD"
+        ],
+        "facts": [
+          {
+            "field": "open",
+            "value": 60016,
+            "unit": "USD",
+            "observedAt": 1788221760000,
+            "evidenceLocation": "facts.open",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "rejectedFactCount": 0,
+      "latencyMs": 2511,
+      "status": "COMPLETED"
+    },
+    {
+      "source": {
+        "id": "quality-17",
+        "provider": "FEDERAL_RESERVE",
+        "instrument": "USD_MACRO",
+        "venue": "FEDERAL_RESERVE_OFFICIAL_RSS",
+        "sourceId": "v382-quality-17",
+        "url": "https://quality.invalid/17",
+        "eventAt": 1788221820000,
+        "publishedAt": 1788221820000,
+        "receivedAt": 1788221821000,
+        "availableAt": 1788221821000,
+        "expiresAt": 1788225420000,
+        "closedBar": null,
+        "facts": {
+          "title": "Federal Reserve release 17",
+          "summary": "Official statement 17: the target range is unchanged."
+        },
+        "quality": "OFFICIAL",
+        "revision": "quality-r17",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000011"
+      },
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"sourceId\":\"v382-quality-17\",\"entities\":[\"Federal Reserve release 17\"],\"facts\":[{\"field\":\"summary\",\"value\":\"Official statement 17: the target range is unchanged.\",\"unit\":null,\"observedAt\":1788221820000,\"evidenceLocation\":\"facts.summary\",\"conflict\":null}],\"conflicts\":[]}"
+            }
+          }
+        ],
+        "created": 1788832383,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 86,
+          "prompt_tokens": 375,
+          "total_tokens": 461,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-YtiFIgNxx8X3dF32eDqO7hjl7mMwHOf0",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 375,
+          "prompt_ms": 324.928,
+          "prompt_per_token_ms": 0.8664746666666666,
+          "prompt_per_second": 1154.1018317904275,
+          "predicted_n": 86,
+          "predicted_ms": 2261.758,
+          "predicted_per_token_ms": 26.299511627906973,
+          "predicted_per_second": 38.02351975763985
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "v382-quality-17",
+          "entities": [
+            "Federal Reserve release 17"
+          ],
+          "facts": [
+            {
+              "field": "summary",
+              "value": "Official statement 17: the target range is unchanged.",
+              "unit": null,
+              "observedAt": 1788221820000,
+              "evidenceLocation": "facts.summary",
+              "conflict": null
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "parsed": {
+        "sourceId": "v382-quality-17",
+        "entities": [
+          "Federal Reserve release 17"
+        ],
+        "facts": [
+          {
+            "field": "summary",
+            "value": "Official statement 17: the target range is unchanged.",
+            "unit": null,
+            "observedAt": 1788221820000,
+            "evidenceLocation": "facts.summary",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "accepted": {
+        "sourceId": "v382-quality-17",
+        "entities": [
+          "Federal Reserve release 17"
+        ],
+        "facts": [
+          {
+            "field": "summary",
+            "value": "Official statement 17: the target range is unchanged.",
+            "unit": null,
+            "observedAt": 1788221820000,
+            "evidenceLocation": "facts.summary",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "rejectedFactCount": 0,
+      "latencyMs": 2645,
+      "status": "COMPLETED"
+    },
+    {
+      "source": {
+        "id": "quality-18",
+        "provider": "ALPACA",
+        "instrument": "BTC/USD",
+        "venue": "ALPACA_CRYPTO_SPOT",
+        "sourceId": "v382-quality-18",
+        "url": "https://quality.invalid/18",
+        "eventAt": 1788221880000,
+        "publishedAt": 1788221880000,
+        "receivedAt": 1788221881000,
+        "availableAt": 1788221881000,
+        "expiresAt": 1788225480000,
+        "closedBar": true,
+        "facts": {
+          "open": 60018,
+          "close": 60028,
+          "return15m": 0.000166
+        },
+        "quality": "AUTHENTICATED_MARKET_DATA",
+        "revision": "quality-r18",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000012"
+      },
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"sourceId\":\"v382-quality-18\",\"entities\":[\"BTC/USD\"],\"facts\":[{\"field\":\"open\",\"value\":60018,\"unit\":\"USD\",\"observedAt\":1788221880000,\"evidenceLocation\":\"facts.open\",\"conflict\":null}],\"conflicts\":[]}"
+            }
+          }
+        ],
+        "created": 1788832386,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 75,
+          "prompt_tokens": 381,
+          "total_tokens": 456,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-dtAt8KPyGWQDW4eyBYQjtdfmqRONGmPb",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 381,
+          "prompt_ms": 320.355,
+          "prompt_per_token_ms": 0.8408267716535434,
+          "prompt_per_second": 1189.305614084375,
+          "predicted_n": 75,
+          "predicted_ms": 1942.836,
+          "predicted_per_token_ms": 25.90448,
+          "predicted_per_second": 38.603361271872664
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "v382-quality-18",
+          "entities": [
+            "BTC/USD"
+          ],
+          "facts": [
+            {
+              "field": "open",
+              "value": 60018,
+              "unit": "USD",
+              "observedAt": 1788221880000,
+              "evidenceLocation": "facts.open",
+              "conflict": null
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "parsed": {
+        "sourceId": "v382-quality-18",
+        "entities": [
+          "BTC/USD"
+        ],
+        "facts": [
+          {
+            "field": "open",
+            "value": 60018,
+            "unit": "USD",
+            "observedAt": 1788221880000,
+            "evidenceLocation": "facts.open",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "accepted": {
+        "sourceId": "v382-quality-18",
+        "entities": [
+          "BTC/USD"
+        ],
+        "facts": [
+          {
+            "field": "open",
+            "value": 60018,
+            "unit": "USD",
+            "observedAt": 1788221880000,
+            "evidenceLocation": "facts.open",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "rejectedFactCount": 0,
+      "latencyMs": 2317,
+      "status": "COMPLETED"
+    },
+    {
+      "source": {
+        "id": "quality-19",
+        "provider": "FEDERAL_RESERVE",
+        "instrument": "USD_MACRO",
+        "venue": "FEDERAL_RESERVE_OFFICIAL_RSS",
+        "sourceId": "v382-quality-19",
+        "url": "https://quality.invalid/19",
+        "eventAt": 1788221940000,
+        "publishedAt": 1788221940000,
+        "receivedAt": 1788221941000,
+        "availableAt": 1788221941000,
+        "expiresAt": 1788225540000,
+        "closedBar": null,
+        "facts": {
+          "title": "Federal Reserve release 19",
+          "summary": "Official statement 19: the target range is unchanged."
+        },
+        "quality": "OFFICIAL",
+        "revision": "quality-r19",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000013"
+      },
+      "raw": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"sourceId\":\"v382-quality-19\",\"entities\":[\"FEDERAL_RESERVE\"],\"facts\":[{\"field\":\"summary\",\"value\":\"Official statement 19: the target range is unchanged.\",\"unit\":null,\"observedAt\":1788221940000,\"evidenceLocation\":\"facts.summary\",\"conflict\":null}],\"conflicts\":[]}"
+            }
+          }
+        ],
+        "created": 1788832388,
+        "model": "qwen3.5:9b",
+        "system_fingerprint": "b10276-6ea215d17",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 82,
+          "prompt_tokens": 375,
+          "total_tokens": 457,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-kxiV7D1tEmLcD3XA6ReowJ3i9efjA2zD",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 375,
+          "prompt_ms": 339.873,
+          "prompt_per_token_ms": 0.906328,
+          "prompt_per_second": 1103.353311383958,
+          "predicted_n": 82,
+          "predicted_ms": 1998.594,
+          "predicted_per_token_ms": 24.37309756097561,
+          "predicted_per_second": 41.02884327682361
+        },
+        "__zdjParsedDecision": {
+          "sourceId": "v382-quality-19",
+          "entities": [
+            "FEDERAL_RESERVE"
+          ],
+          "facts": [
+            {
+              "field": "summary",
+              "value": "Official statement 19: the target range is unchanged.",
+              "unit": null,
+              "observedAt": 1788221940000,
+              "evidenceLocation": "facts.summary",
+              "conflict": null
+            }
+          ],
+          "conflicts": []
+        }
+      },
+      "parsed": {
+        "sourceId": "v382-quality-19",
+        "entities": [
+          "FEDERAL_RESERVE"
+        ],
+        "facts": [
+          {
+            "field": "summary",
+            "value": "Official statement 19: the target range is unchanged.",
+            "unit": null,
+            "observedAt": 1788221940000,
+            "evidenceLocation": "facts.summary",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "accepted": {
+        "sourceId": "v382-quality-19",
+        "entities": [
+          "FEDERAL_RESERVE"
+        ],
+        "facts": [
+          {
+            "field": "summary",
+            "value": "Official statement 19: the target range is unchanged.",
+            "unit": null,
+            "observedAt": 1788221940000,
+            "evidenceLocation": "facts.summary",
+            "conflict": null
+          }
+        ],
+        "conflicts": []
+      },
+      "issues": [],
+      "rejectedFactCount": 0,
+      "latencyMs": 2394,
+      "status": "COMPLETED"
+    }
+  ]
+}

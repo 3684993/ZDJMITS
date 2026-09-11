@@ -1,0 +1,15 @@
+{
+  "version": "3.9.2",
+  "date": "2026-09-10",
+  "scope": ["P0-A", "P0-B", "deployment", "natural-acceptance-baseline"],
+  "status": {"P0-A": "PASS", "P0-B": "PASS", "deployment": "PASS", "naturalAcceptance": "PENDING", "naturalFillQuality": "PENDING", "final": "DEPLOYMENT-READY / NATURAL-ACCEPTANCE-PENDING"},
+  "verification": {"command": "npm run verify", "result": "PASS", "coreTests": 39, "dashboardTests": 15, "engineTests": 288, "engineTestFiles": 60, "buildReused": true},
+  "safety": {"engineLifecycleAction": "MANUAL_TESTNET_STOP_START_AUTHORIZED", "productionWrites": 0, "firewallChanges": 0, "riskGateChange": false, "makerRangeExpansion": false, "databaseRebuilt": false},
+  "deployment": {"startCommand": "scripts/start-zdj-lan.ps1 -StartReason MANUAL_START -SkipFirewall", "environment": "TESTNET", "executionMode": "TESTNET_ENABLED", "pid": 16776, "instanceId": "b6ee5cb2-bdf4-430a-aabe-e8d4bb6cd47e", "buildId": "3.9.2-84d58ba7d91508e3fa7b", "sourceHash": "2d4ec930c75fc42a9fa6c7a9b14d27d05d8d8ef15727257bff1df0b204a9c118", "artifactHash": "84d58ba7d91508e3fa7b109e266121947ddb84b21f39dcda3baf4216b06bf389", "health": "READY", "scheduler": "RUNNING", "private": "READY", "ws": "LIVE", "marketSnapshots": 157, "reconciliationDrift": 0, "reconciliationUnresolved": 0, "positions": 4, "protectedTp": 4, "activeEntryOrders": 0},
+  "decisionCounts": {"PLACE_LONG": 2, "PLACE_SHORT": 1, "WAIT_FOR_PRICE": 2, "RESELECT_SYMBOL": 0, "NO_DIRECTION_EDGE": 193, "DATA_TECHNICAL_BLOCK": 0, "AI_PROTOCOL_FAILURE": 1, "RUNNING": 1, "completed": 199, "source": "/api/v3/observability/entry", "denominator": "completed only; RUNNING excluded"},
+  "backups": ["data-backups/v392-before-deploy-20260910-1836", "data-backups/v392-before-deploy-stopped-20260910-1837"],
+  "quality": {"entryFillQuality": "PENDING", "maeMfe": "UNKNOWN", "completeExit": "PENDING", "missingFacts": "UNKNOWN", "markNotUsedAsExecutablePrice": true},
+  "observation": {"status": "RUNNING", "collectorPid": 19076, "intervalSeconds": 60, "durationMinutes": 120, "evidenceRoot": "data/reports/v392-natural-acceptance-*", "initialSample": {"hotSymbols": 20, "quoteFreshRate": 1.0, "bookFreshRate": 1.0, "closedFreshRate": {"1m": 0.35, "5m": 0.4, "15m": 0.45}, "decisionCounts": {"PLACE_LONG": 2, "PLACE_SHORT": 2, "WAIT_FOR_PRICE": 3, "RESELECT_SYMBOL": 0, "NO_DIRECTION_EDGE": 191, "DATA_TECHNICAL_BLOCK": 0, "AI_PROTOCOL_FAILURE": 1, "RUNNING": 1, "completed": 199}, "chain": {"intents": 3, "orders": 2, "firstFills": 1, "completeFills": 1, "unknownOrExternal": 197}}, "p1Decision": "PENDING_2H_EVIDENCE"},
+  "delivery": {"local": "PASS", "googleDrive": "PENDING_USAGE_LIMIT", "targetFolderId": "1n5Mh3CuuVBQ2IwBpp5cHNEz-tdesEu7J"},
+  "hashes": {"runtimeArtifact": "84d58ba7d91508e3fa7b109e266121947ddb84b21f39dcda3baf4216b06bf389", "runtimeSource": "2d4ec930c75fc42a9fa6c7a9b14d27d05d8d8ef15727257bff1df0b204a9c118"}
+}

@@ -1,0 +1,23 @@
+import {readFile,writeFile,mkdir} from 'node:fs/promises';
+import {DatabaseSync} from 'node:sqlite';
+import {contentTreeHash} from '../../../apps/engine/dist/runtime/runtimeIdentity.js';
+const dir='docs/reports/final-closure-audit-20260910';
+await mkdir(dir,{recursive:true});
+const identity=JSON.parse(await readFile('data/runtime/engine-instance.json','utf8'));
+const evidence={asOf:new Date().toISOString(),identity,hashes:{artifact:await contentTreeHash(process.cwd(),['apps/engine/dist','packages/core/dist','packages/contracts/dist','apps/dashboard/dist']),source:await contentTreeHash(process.cwd(),['apps/engine/src','packages/core/src','packages/contracts/src','apps/dashboard/src'])},api:{}};
+for(const p of ['/health','/api/v3/diagnostics/closeout','/api/v3/brain/diagnostics','/api/v3/brain/resources','/api/v3/diagnostics/p0-entry-integrity']){try{const t=performance.now(),r=await fetch('http://127.0.0.1:8080'+p,{signal:AbortSignal.timeout(5000)});evidence.api[p]={http:r.status,latencyMs:performance.now()-t,body:await r.json()};}catch(e){evidence.api[p]={error:e.message};}}
+const db=new DatabaseSync('data/zdj-settings.sqlite',{readOnly:true});db.exec('PRAGMA query_only=ON; PRAGMA busy_timeout=1000');
+const setting=db.prepare('SELECT version,payload,updated_at FROM settings WHERE id=1').get(),s=JSON.parse(setting.payload);
+evidence.settings={version:setting.version,updatedAt:setting.updated_at,selection:s.selection,entry:s.entry,ai:s.ai,portfolio:s.portfolio,executionMode:s.connections?.executionMode,environment:s.connections?.exchange?.environment};
+const group=(rows,fn)=>Object.fromEntries([...Map.groupBy(rows,fn)].map(([k,v])=>[k,v.length]));
+const all=db.prepare('SELECT payload FROM ai_runs_archive WHERE started_at>=? ORDER BY started_at').all(identity.startedAt).map(x=>JSON.parse(x.payload));
+const primary=all.filter(x=>x.role==='PRIMARY_BRAIN');
+evidence.ai={total:all.length,roles:group(all,x=>x.role),primary:primary.length,status:group(primary,x=>x.status),decisions:group(primary,x=>x.decision),errors:group(primary.filter(x=>x.error),x=>x.error),uniqueSymbols:new Set(primary.map(x=>x.symbol)).size,latencies:primary.map(x=>x.latencyMs).filter(Number.isFinite).sort((a,b)=>a-b),runs:primary.map(({id,symbol,startedAt,completedAt,status,decision,direction,error,latencyMs,outputPreview})=>({id,symbol,startedAt,completedAt,status,decision,direction,error,latencyMs,outputPreview}))};
+await writeFile(dir+'/primary-detail.json',JSON.stringify(primary,null,2));
+evidence.eventCounts=db.prepare('SELECT type,count(*) n FROM runtime_events WHERE ts>=? GROUP BY type ORDER BY n DESC').all(identity.startedAt);
+evidence.entityKinds=db.prepare('SELECT kind,count(*) n FROM runtime_entities GROUP BY kind').all();
+evidence.tables=db.prepare("SELECT name FROM sqlite_master WHERE type='table'").all();
+db.close();
+await writeFile(dir+'/evidence.json',JSON.stringify(evidence,null,2));
+const c=evidence.api['/api/v3/diagnostics/closeout'].body;
+console.log(JSON.stringify({asOf:evidence.asOf,identity,hashes:evidence.hashes,settings:{version:evidence.settings.version,environment:evidence.settings.environment,entry:s.entry,portfolio:s.portfolio,selection:s.selection},health:evidence.api['/health'],pipeline:c?.pipeline,hotSummary:{n:c?.hot?.length,ready:c?.hot?.filter(x=>x.status==='READY').length,reasons:c?.hot?.flatMap(x=>x.reasons)},ai:{...evidence.ai,runs:undefined,latencies:{min:evidence.ai.latencies[0],median:evidence.ai.latencies[Math.floor(evidence.ai.latencies.length/2)],max:evidence.ai.latencies.at(-1)}},events:evidence.eventCounts,entities:evidence.entityKinds},null,2));

@@ -1,0 +1,2 @@
+import {it,expect} from 'vitest';import {privateAccountFresh} from './privateAccountReadiness.js';
+it('requires timely real private facts for new exposure',()=>{const now=Date.now();expect(privateAccountFresh({status:'READY',asOf:now},now)).toBe(true);for(const asOf of [null,NaN,now-60001,now+5001])expect(privateAccountFresh({status:'READY',asOf},now)).toBe(false);expect(privateAccountFresh({status:'UNAVAILABLE',asOf:now},now)).toBe(false);});

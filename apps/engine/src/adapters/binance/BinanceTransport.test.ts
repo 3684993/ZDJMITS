@@ -1,0 +1,31 @@
+import {binanceRequestBudget} from './requestBudget.js';
+import { describe, expect, it, vi } from 'vitest';
+import { BinanceTransport } from './BinanceTransport.js';
+
+const settings=(forceBinanceWs:boolean)=>({
+  executionMode:'TESTNET_ENABLED',
+  exchange:{environment:'TESTNET',testnetBaseUrl:'https://testnet.binancefuture.com',productionBaseUrl:'https://fapi.binance.com'},
+  proxy:{enabled:true,url:'socks5h://127.0.0.1:20081',forceBinanceRest:true,forceBinanceWs,proxyDns:true,failClosed:true},
+});
+
+describe('BinanceTransport WebSocket route',()=>{
+  it('uses the configured Binance Testnet stream hostname with direct TLS when WS proxy routing is disabled',()=>{
+    const transport=new BinanceTransport(settings(false) as never);
+    expect(transport.websocketRoute()).toMatchObject({url:'wss://stream.binancefuture.com/ws',throughProxy:false,proxyUrl:null,tlsServername:'stream.binancefuture.com'});
+    expect(transport.websocketOptions()).toEqual({agent:undefined});
+  });
+  it('keeps the SOCKS route only when forceBinanceWs is explicitly enabled',()=>{
+    const transport=new BinanceTransport(settings(true) as never);
+    expect(transport.websocketRoute()).toMatchObject({throughProxy:true,proxyUrl:'socks5h://127.0.0.1:20081',tlsServername:'stream.binancefuture.com'});
+    expect(transport.websocketOptions().agent).toBeDefined();
+  });
+});
+it('supports explicit REST direct independently of WS and rejects contradictory forced-proxy configuration',()=>{
+ const cfg={...settings(true),proxy:{...settings(true).proxy,binanceRestRoute:'DIRECT',forceBinanceRest:false}};
+ const transport=new BinanceTransport(cfg as never);expect(transport.restRoute()).toMatchObject({mode:'DIRECT',throughProxy:false});expect((transport as any).restAgent()).toBeUndefined();expect(transport.websocketRoute().throughProxy).toBe(true);
+ const conflict=new BinanceTransport({...cfg,proxy:{...cfg.proxy,forceBinanceRest:true}} as never);expect(()=>(conflict as any).restAgent()).toThrow('REST_ROUTE_CONFLICT');
+});
+it('reserves private request capacity for listen-key maintenance without a signature',async()=>{
+ const run=vi.spyOn(binanceRequestBudget,'run').mockResolvedValue({} as never);
+ try{await new BinanceTransport(settings(true) as never).json('/fapi/v1/listenKey',{method:'PUT',headers:{'X-MBX-APIKEY':'isolated-test'}});expect(run.mock.calls[0]![0]).toBe(0);}finally{run.mockRestore();}
+});

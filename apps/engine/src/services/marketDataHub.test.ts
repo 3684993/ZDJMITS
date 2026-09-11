@@ -1,0 +1,49 @@
+import {it,expect,vi} from 'vitest';import {MarketDataHub} from './marketDataHub.js';
+it('recovers missing held/core/pool snapshots before unrelated stale assets with at most two simultaneous calls',async()=>{
+ let active=0,max=0;const calls:string[]=[];const state:any={positionSymbols:()=>['HELDUSDT'],activeEntrySymbols:()=>['ORDERUSDT'],pool:{list:()=>[{symbol:'POOLUSDT'}]},snapshots:new Map(),settings:{}};
+ const provider:any={getSnapshot:async(symbol:string)=>{calls.push(symbol);active++;max=Math.max(max,active);await Promise.resolve();active--;return{symbol};}};
+ const hub=new MarketDataHub(provider,state,{publish:vi.fn()} as any);vi.spyOn(hub,'freshness').mockReturnValue({stale:['OTHERUSDT']} as any);
+ expect(await hub.recoverStale()).toBe(4);expect(calls).toEqual(['HELDUSDT','ORDERUSDT','BTCUSDT','ETHUSDT']);expect(max).toBeLessThanOrEqual(2);expect(state.snapshots.has('HELDUSDT')).toBe(true);
+});
+
+it('isolates a live candle-gap failure to one symbol',async()=>{
+ const first={symbol:'BADUSDT'},second={symbol:'GOODUSDT'},state:any={snapshots:new Map([['BADUSDT',first],['GOODUSDT',second]])};
+ const publish=vi.fn(),provider:any={tick:vi.fn(),hydrateLive:(snapshot:any)=>{if(snapshot.symbol==='BADUSDT')throw new Error('1m closed candle gap');return{...snapshot,hydrated:true};}};
+ const hub=new MarketDataHub(provider,state,{publish} as any);
+ await expect(hub.tick()).resolves.toBeUndefined();
+ expect(state.snapshots.get('GOODUSDT').hydrated).toBe(true);
+ expect(publish).toHaveBeenCalledWith('MARKET_SYMBOL_ERROR',{message:'1m closed candle gap',scope:'LIVE_HYDRATE'},'BADUSDT');
+});
+
+it('keeps quote/book management facts and emits one technical error per unchanged bad sequence',async()=>{
+ const snapshot:any={symbol:'BADUSDT',quote:{last:1},orderBook:{ts:1},technical:{'1m':{barCloseTime:60_000}}};
+ const state:any={snapshots:new Map([['BADUSDT',snapshot]])},publish=vi.fn();
+ const provider:any={tick:vi.fn(),hydrateLiveMarket:(s:any)=>({...s,quote:{...s.quote,last:2},orderBook:{ts:2}}),hydrateLiveTechnical:()=>{throw new Error('1m closed candle gap');}};
+ const hub=new MarketDataHub(provider,state,{publish} as any);
+ await hub.tick();await hub.tick();
+ expect(state.snapshots.get('BADUSDT')).toMatchObject({quote:{last:2},orderBook:{ts:2}});
+ expect(publish).toHaveBeenCalledTimes(1);
+ expect(publish).toHaveBeenCalledWith('MARKET_SYMBOL_ERROR',{message:'1m closed candle gap',scope:'LIVE_HYDRATE_TECHNICAL',timeframe:'1m',sequence:'60000'},'BADUSDT');
+});
+
+it('reports a recovered or changed bad candle sequence once again',async()=>{
+ const state:any={snapshots:new Map([['BADUSDT',{symbol:'BADUSDT',technical:{'1m':{barCloseTime:1}}}]])},publish=vi.fn();let sequence='v1';
+ const provider:any={hydrateLiveMarket:(s:any)=>s,hydrateLiveTechnical:()=>{const error:any=new Error('1m closed candle gap');error.technicalTimeframe='1m';error.technicalSequence=sequence;throw error;}};
+ const hub=new MarketDataHub(provider,state,{publish} as any);
+ await hub.tick();await hub.tick();sequence='v2';await hub.tick();
+ expect(publish).toHaveBeenCalledTimes(2);
+});
+
+it('does not let one technical failure delay another symbol',async()=>{
+ const state:any={snapshots:new Map([['BADUSDT',{symbol:'BADUSDT',technical:{'1m':{barCloseTime:1}}}],['GOODUSDT',{symbol:'GOODUSDT',technical:{'1m':{barCloseTime:1}}}]])};
+ const provider:any={hydrateLiveMarket:(s:any)=>({...s,quoteUpdated:true}),hydrateLiveTechnical:(s:any)=>s.symbol==='BADUSDT'?(()=>{throw new Error('gap');})():({...s,technicalUpdated:true})};
+ const hub=new MarketDataHub(provider,state,{publish:vi.fn()} as any);
+ await hub.tick();
+ expect(state.snapshots.get('GOODUSDT')).toMatchObject({quoteUpdated:true,technicalUpdated:true});
+});
+
+it('blocks Primary on a failed sequence until a verified technical revision succeeds',async()=>{
+ const now=Date.now(),snapshot:any={symbol:'BADUSDT',quote:{ts:now},orderBook:{ts:now},technical:{'1m':{asOf:now,barCloseTime:now-1,isClosed:true},'5m':{asOf:now,barCloseTime:now-1,isClosed:true},'15m':{asOf:now,barCloseTime:now-1,isClosed:true,sampleSize:240}}};let recover=false;
+ const state:any={snapshots:new Map([['BADUSDT',snapshot]])};const provider:any={hydrateLiveMarket:(s:any)=>({...s,quote:{ts:now},orderBook:{ts:now}}),hydrateLiveTechnical:(s:any)=>{if(!recover){const e:any=new Error('1m closed candle gap');e.technicalTimeframe='1m';e.technicalSequence='bad';throw e;}return {...s,technical:{...s.technical,'1m':{...s.technical['1m'],barCloseTime:now-1}}};}};
+ const hub=new MarketDataHub(provider,state,{publish:vi.fn()} as any);await hub.tick();expect(hub.primaryReadyReasons('BADUSDT',now)).toContain('TECHNICAL_1m_SEQUENCE_INVALID');recover=true;await hub.tick();expect(hub.primaryReadyReasons('BADUSDT',now)).not.toContain('TECHNICAL_1m_SEQUENCE_INVALID');
+});

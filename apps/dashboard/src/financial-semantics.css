@@ -1,0 +1,3 @@
+:root{--financial-profit:#0f9f6e;--financial-loss:#cf3444;--financial-neutral:#758196}
+.financial-profit{color:var(--financial-profit);font-weight:650}.financial-loss{color:var(--financial-loss);font-weight:650}.financial-neutral{color:var(--financial-neutral);font-weight:650}
+.data-table td.financial-profit{color:var(--financial-profit)}.data-table td.financial-loss{color:var(--financial-loss)}.data-table td.financial-neutral{color:var(--financial-neutral)}

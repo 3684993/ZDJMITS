@@ -1,0 +1,113 @@
+{
+  "reportVersion": "V3.9.2",
+  "generatedAt": "2026-09-10T16:04:23+08:00",
+  "status": {
+    "engineering": "DONE",
+    "runtime_cutover": "BLOCKED_PENDING",
+    "testnet_online": "NO-GO_PENDING",
+    "testnet_time_dependent": "PENDING",
+    "production_read_only": "BLOCKED",
+    "production_write": "LOCKED",
+    "canary": "NO-GO"
+  },
+  "lifecyclePolicy": {
+    "engineLifecycleAction": "AUTHORIZED_ONCE_ATTEMPTED_NO_NEW_RUNTIME",
+    "settingsChanged": false,
+    "sqlitePositionsOrdersTpChanged": false,
+    "riskLimitsExpanded": false,
+    "productionWriteEnabled": false
+  },
+  "implemented": [
+    "AI 8084 body-deadline circuit AVAILABLE/OPEN/PROBING/HALF_OPEN with bounded probe and backoff",
+    "release version source fixed to 3.9.2 and 1m/5m/15m provider requests 81/81/241 bars for closed-bar headroom",
+    "strict closed-candle, boundary, duplicate/gap and 240-bar 15m readiness",
+    "V3.9.2 facts/prompt/output with separate trend direction and momentum semantics",
+    "explicit opportunity/location/invalidation/evidence contract and no mechanical direction rewrite",
+    "ideal-first legal Maker candidate selection with WAIT/duplicate protections",
+    "entry quality anchors plus MAE/MFE fields and preserved Production read-only boundary"
+  ],
+  "verification": {
+    "typecheck": "PASS",
+    "test": { "status": "PASS", "tests": 334, "core": "39/39", "dashboard": "15/15", "engine": "280/280" },
+    "build": "PASS",
+    "verify": "PASS",
+    "targetedOnlineP0Regression": "PASS"
+  },
+  "runtimeFact": {
+    "oldRuntime": {
+      "pid": 21908,
+      "version": "3.9.2",
+      "artifactHash": "9e5cbb74ffd4abba15767e84b73932ffd6c4d5451e701995fcebce6b58ca517f",
+      "sourceHash": "48bb0e74ee4a409609b117973eb4e6ecec3874ac28367069b74524fd08b84b52"
+    },
+    "latestDiskBuild": {
+      "artifactHash": "335742dc68e97d804bf44c9030a5bb04f03553de34c874a6d6eabc1387bd8c91",
+      "sourceHash": "a35e1a390c0f230c45d02d3289dd4d9f84337ba2817dec7829720e6c2f773e95"
+    },
+    "newRuntime": null,
+    "latestArtifactLoaded": false,
+    "observedVersion": "3.9.2",
+    "observedBuild": "3.9.2-9e5cbb74ffd4abba1576",
+    "observedArtifactHash": "9e5cbb74ffd4abba15767e84b73932ffd6c4d5451e701995fcebce6b58ca517f",
+    "observedSourceHash": "48bb0e74ee4a409609b117973eb4e6ecec3874ac28367069b74524fd08b84b52",
+    "pid": 21908,
+    "health": "READY",
+    "diskAfterP0ArtifactHash": "335742dc68e97d804bf44c9030a5bb04f03553de34c874a6d6eabc1387bd8c91",
+    "diskAfterP0SourceHash": "a35e1a390c0f230c45d02d3289dd4d9f84337ba2817dec7829720e6c2f773e95",
+    "diskAfterP0Loaded": false,
+    "modelListeners": { "8084": true, "8081": true },
+    "modelProbes": { "8084": { "health": 200, "model": "qwen/qwen3.8-27b", "completion": "OK", "elapsedMs": 434 }, "8081": { "health": 200, "model": "qwen3.5:9b", "completion": "OK", "elapsedMs": 580 } },
+    "latestArtifactLoaded": false,
+    "cutoverBlocker": "start-zdj-lan.ps1 returned Access denied at LAN firewall-rule step; elevated retry was rejected by execution quota"
+  },
+  "entryQuality": {
+    "before": { "exactLinkedOrders": 172, "long": 92, "short": 80, "invalidTimestamp": 63 },
+    "after": { "naturalV392Cohort": 0, "long": 0, "short": 0, "status": "PENDING", "claim": "No uplift claimed before natural evidence." }
+  },
+  "canaryHardGates": [
+    { "gate": "V3.9.2 manual launch/hash proof", "status": "BLOCKED_PENDING", "pid": 21908, "build": "3.9.2-9e5cbb74ffd4abba1576", "latestArtifactLoaded": false },
+    { "gate": "2h 8084 recovery/SLO observation", "status": "PENDING" },
+    { "gate": "100 natural entries, LONG>=30 and SHORT>=30", "status": "PENDING" },
+    { "gate": "24h and 100 lifecycle evidence", "status": "PENDING" },
+    { "gate": "fixed-sample Testnet OOS", "status": "PENDING" },
+    { "gate": "independent Production read-only credentials and limits", "status": "BLOCKED" },
+    { "gate": "Production write Canary", "status": "LOCKED" },
+    { "gate": "Testnet online readiness (model listeners and 20 ready residents)", "status": "NO-GO_PENDING", "poolResidents": 11, "poolQualified": 11, "poolReady": 0, "freshMarkets": 0, "marketDataReason": "MARKET_QUOTES_STALE", "listener8084": true, "listener8081": true, "primaryRuns": 3, "scoutRuns": 121 }
+  ],
+  "changedFiles": [
+    "apps/engine/src/adapters/ai/OpenAiCompatibleClient.ts",
+    "apps/engine/src/services/aiFabric.ts",
+    "apps/engine/src/services/entryCoordinator.ts",
+    "apps/engine/src/adapters/market/BinancePublicMarketDataProvider.ts",
+    "apps/engine/src/adapters/market/MockMarketDataProvider.ts",
+    "apps/engine/src/services/marketDataHub.ts",
+    "apps/engine/src/services/nearMarketPrice.ts",
+    "apps/engine/src/services/v370Decision.test.ts",
+    "apps/engine/src/services/aiFabric.test.ts",
+    "packages/core/src/indicators.ts",
+    "packages/core/src/compactEntry.ts",
+    "packages/core/src/selection.test.ts",
+    "packages/contracts/src/ai.ts",
+    "packages/contracts/src/version.ts",
+    "package.json",
+    "package-lock.json",
+    "apps/engine/package.json",
+    "apps/dashboard/package.json",
+    "packages/contracts/package.json",
+    "packages/core/package.json",
+    "apps/engine/src/services/temporalAlgorithms.test.ts",
+    "apps/engine/src/services/marketDataHub.test.ts"
+  ],
+  "driveUpload": {
+    "target": "My Drive/codex/zdj",
+    "status": "NOT_USED_BY_USER_INSTRUCTION",
+    "report": "LOCAL_ONLY",
+    "json": "LOCAL_ONLY",
+    "reason": "User instructed final delivery to use local storage and not Google Drive.",
+    "localArtifacts": [
+      "D:\\MITS\\docs\\reports\\final-entry-audit-20260910\\final-implementation-report-20260910.md",
+      "D:\\MITS\\docs\\reports\\final-entry-audit-20260910\\final-implementation-report-20260910.json",
+      "D:\\MITS\\docs\\reports\\final-entry-audit-20260910\\online-canary-evidence-20260910.json"
+    ]
+  }
+}

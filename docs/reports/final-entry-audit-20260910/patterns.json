@@ -1,0 +1,220 @@
+{
+  "groups": [
+    {
+      "side": "LONG",
+      "label": "all",
+      "n": 80,
+      "mae15": 71.29561426123259,
+      "gross15": -33.02561781012236
+    },
+    {
+      "side": "LONG",
+      "label": "extended_gt1ATR",
+      "n": 53,
+      "mae15": 66.07167844318077,
+      "gross15": -28.305069024273614
+    },
+    {
+      "side": "LONG",
+      "label": "not_extended",
+      "n": 27,
+      "mae15": 81.55000679296394,
+      "gross15": -42.291880241603245
+    },
+    {
+      "side": "LONG",
+      "label": "counter_1m",
+      "n": 26,
+      "mae15": 90.74125593178243,
+      "gross15": -61.44113276819537
+    },
+    {
+      "side": "LONG",
+      "label": "momentum_against",
+      "n": 16,
+      "mae15": 87.42961226958313,
+      "gross15": -44.08450452735614
+    },
+    {
+      "side": "SHORT",
+      "label": "all",
+      "n": 25,
+      "mae15": 57.45370582549984,
+      "gross15": -24.072192505782564
+    },
+    {
+      "side": "SHORT",
+      "label": "extended_gt1ATR",
+      "n": 14,
+      "mae15": 62.32669999535375,
+      "gross15": -28.09742589381722
+    },
+    {
+      "side": "SHORT",
+      "label": "not_extended",
+      "n": 11,
+      "mae15": 51.251713245685785,
+      "gross15": -18.94916819373845
+    },
+    {
+      "side": "SHORT",
+      "label": "counter_1m",
+      "n": 8,
+      "mae15": 70.84413181115579,
+      "gross15": -36.78672667104755
+    },
+    {
+      "side": "SHORT",
+      "label": "momentum_against",
+      "n": 6,
+      "mae15": 15.011300771511733,
+      "gross15": 18.5239050388288
+    }
+  ],
+  "canonicalization": {
+    "rawRows": 6765,
+    "uniqueTrades": 5032,
+    "duplicateRepresentations": 1733,
+    "conflicts": [],
+    "quantityMismatches": [],
+    "multipleOrderIds": [
+      {
+        "id": "entry_intent_mtqxqdq4_fj8ruedr",
+        "client": "ml_413a3f85928d9ed1ba7fbad0fe03",
+        "exchangeOrders": [
+          "143047968",
+          "143048158"
+        ]
+      },
+      {
+        "id": "entry_intent_mtqxrmrc_itxl8y3l",
+        "client": "ml_7e356f469b0c27cf5438f5c626cb",
+        "exchangeOrders": [
+          "526610568",
+          "526609146",
+          "526609848",
+          "526610170",
+          "526610297"
+        ]
+      },
+      {
+        "id": "entry_intent_mtr4z490_ss1q8uiy",
+        "client": "ml_ff7466538446e3721bedb7aa97c1",
+        "exchangeOrders": [
+          "1580343845",
+          "1580338806"
+        ]
+      },
+      {
+        "id": "entry_intent_mtr791km_59o9tuw7",
+        "client": "ml_84e71f3c70adc17190a23ab99bee",
+        "exchangeOrders": [
+          "224071852",
+          "224072878",
+          "224072219"
+        ]
+      },
+      {
+        "id": "entry_intent_mtr7u1pf_jxwwrfk1",
+        "client": "ml_db7f9459b4fac48532bdb70bb949",
+        "exchangeOrders": [
+          "2338035456",
+          "2337975260",
+          "2338035280"
+        ]
+      },
+      {
+        "id": "entry_intent_mtr8a42n_9oy34ia5",
+        "client": "ml_40620a4ac89ddc163c9c34c15fb2",
+        "exchangeOrders": [
+          "147486705",
+          "147493770",
+          "147486917",
+          "147492803",
+          "147493544",
+          "147493645"
+        ]
+      },
+      {
+        "id": "entry_intent_mtr8s55s_2kdh6zaa",
+        "client": "ml_f717ade79297af121bed741bfae4",
+        "exchangeOrders": [
+          "405846757",
+          "405847330"
+        ]
+      },
+      {
+        "id": "entry_intent_mtr8ysr9_uq60m6fa",
+        "client": "ml_909dbeefebdf3726fa6778d73b6f",
+        "exchangeOrders": [
+          "325612709",
+          "325611379",
+          "325611574",
+          "325612060",
+          "325612337"
+        ]
+      },
+      {
+        "id": "entry_intent_mtr9cuv3_tbwwd2xh",
+        "client": "ml_80322785e74b40d2b734506bc296",
+        "exchangeOrders": [
+          "325614859",
+          "325629198"
+        ]
+      },
+      {
+        "id": "entry_intent_mtra0mnm_5su6nn8r",
+        "client": "ml_6822ffcadd847c90f11ef0a4d39b",
+        "exchangeOrders": [
+          "401684805",
+          "401684903",
+          "401684348",
+          "401684780"
+        ]
+      },
+      {
+        "id": "entry_intent_mts1thnu_ytp33hqv",
+        "client": "ml_7475bc08b0f22fc3a0df6d4f1a10",
+        "exchangeOrders": [
+          "158186942",
+          "158187132",
+          "158186460"
+        ]
+      },
+      {
+        "id": "entry_intent_mtsaf5yl_ckexwm9y",
+        "client": "ml_00404d322f075dd5cd6439e33a28",
+        "exchangeOrders": [
+          "325936552",
+          "325936549"
+        ]
+      },
+      {
+        "id": "entry_intent_mtsafwur_h2wnddjr",
+        "client": "ml_66b126656898c7cd9a1f0c054487",
+        "exchangeOrders": [
+          "348725450",
+          "348725487"
+        ]
+      },
+      {
+        "id": "entry_intent_mtsdw6qb_od5vs2k7",
+        "client": "ml_c4b6ee83cd75fc7286fb03da529e",
+        "exchangeOrders": [
+          "243130982",
+          "243131967",
+          "243131525",
+          "243131753"
+        ]
+      },
+      {
+        "id": "entry_mtp0jld2_ou0auhkc",
+        "client": "ml_mtp0jld2_0012a1a",
+        "exchangeOrders": [
+          "1301728268",
+          "1301728243"
+        ]
+      }
+    ]
+  }
+}

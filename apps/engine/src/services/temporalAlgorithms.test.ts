@@ -1,0 +1,20 @@
+import { describe,expect,it } from 'vitest';
+import { BUILD_VERSION,RELEASE_VERSION } from '@zdj/contracts';
+import { analogDistance,breadth,classifyRegime,compactFeature,similarityDistribution,stateFingerprint,transitionCandidates,validateCutoff } from './temporalAlgorithms.js';
+import { RESEARCH_BRAIN_POLICY,validateResearchProposal } from './researchBrainPolicy.js';
+import { classifyProcess,mayStopProcess } from '../runtime/processOwnership.js';
+
+const feature=(overrides:any={})=>({trend15m:'UP',trend4h:'UP',trend1d:'UP',emaDistanceAtr:1,atrPercent:2,bbPercentile:.7,macdAcceleration:.1,locationScore:70,spreadBps:2,volume24h:200_000_000,riskTier:'T2',liquidityClass:'HIGH',btcEthAlignment:'UP',multiTfConflict:0,mark:100,bar15m:100,evidenceCompleteness:.95,...overrides});
+describe('V3.8 temporal intelligence safety',()=>{
+  it('uses the release single source',()=>{expect(RELEASE_VERSION).toBe('3.9.2');expect(BUILD_VERSION.releaseVersion).toBe(RELEASE_VERSION);});
+  it('excludes invalid symbols from breadth denominator',()=>{expect(breadth([feature(),feature({trend15m:'DOWN'}),feature({trend15m:null})])).toMatchObject({eligibleCount:2,bullish:.5,bearish:.5});});
+  it('persists age as a feature rather than forcing reversal',()=>{expect(classifyRegime({bullish:.8,bearish:.1,slope:0,ageBars:30,transition:10})).toBe('MATURE_UPTREND');});
+  it('enforces analog cutoff and tier/liquidity constraints',()=>{expect(validateCutoff(200,100,150)).toBe(true);expect(validateCutoff(200,100,250)).toBe(false);expect(analogDistance(feature(),feature({riskTier:'T3'}))).toBe(Infinity);expect(analogDistance(feature(),feature({liquidityClass:'LOW'}))).toBe(Infinity);});
+  it('reports similarity distribution in ascending min/median/max order',()=>{expect(similarityDistribution([0,.5,2])).toEqual({min:1/3,median:2/3,max:1});expect(similarityDistribution([])).toEqual({min:null,median:null,max:null});});
+  it('evaluates three transition candidates without an age-only reversal',()=>{const young=transitionCandidates({dominant:.8,slope:0,acceleration:0,ageBars:1,alignmentConflict:0,extension:0,outcomeDecay:0,multiTfConflict:0}),old=transitionCandidates({dominant:.8,slope:0,acceleration:0,ageBars:30,alignmentConflict:0,extension:0,outcomeDecay:0,multiTfConflict:0});expect(Object.keys(old)).toEqual(['v1','v2','v3']);expect(old.v1).toBe(young.v1);expect(old.v2).toBeGreaterThan(young.v2);expect(old.v2).toBeLessThan(65);});
+  it('keeps a stable fingerprint until material state changes',()=>{const a=stateFingerprint('BTCUSDT',feature(),'MATURE_UPTREND',20),b=stateFingerprint('BTCUSDT',feature(),'MATURE_UPTREND',20),c=stateFingerprint('BTCUSDT',feature({bar15m:101}),'MATURE_UPTREND',20);expect(a).toBe(b);expect(c).not.toBe(a);});
+  it('extracts compact facts without future outcomes',()=>{const f=compactFeature({createdAt:900000,selection:{riskTier:'T2',score:72},quote:{mark:105,quoteVolumeUsd24h:2e8},technical:{'15m':{trend:'UP',ema21:100,atr14:5}}});expect(f.emaDistanceAtr).toBe(1);expect(f).not.toHaveProperty('return4h');});
+  it('never grants Research Brain an order path',()=>{expect(RESEARCH_BRAIN_POLICY.entryIntentPermission).toBe(false);expect(()=>validateResearchProposal({type:'HYPOTHESIS',text:'PLACE_LONG now'})).toThrow('RESEARCH_TRADING_ACTION_FORBIDDEN');});
+  it('keeps Research Brain idle-only, bounded, and behind manual review',()=>{expect(RESEARCH_BRAIN_POLICY).toMatchObject({priority:'LOW',idleOnly:true,maxRunsPerHour:1,queueLimit:1,orderPermission:false});expect(RESEARCH_BRAIN_POLICY.workflow.at(-1)).toBe('HUMAN_REVIEW');});
+  it('does not stop unknown or Codex node_repl processes',()=>{const c=classifyProcess({pid:1,ppid:2,name:'node_repl.exe',executablePath:'C:\\Users\\x\\OpenAI\\Codex\\runtimes\\cua_node\\node_repl.exe',parentName:'codex.exe'});expect(c).toBe('EXTERNAL_TOOL_PROCESS');expect(mayStopProcess(c)).toBe(false);expect(mayStopProcess('UNKNOWN_DO_NOT_KILL')).toBe(false);});
+});

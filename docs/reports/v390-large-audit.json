@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "payloadBytes": 131227,
+  "truncated": false,
+  "identityLost": false,
+  "secretLeaked": false,
+  "exchangeWrites": 0
+}

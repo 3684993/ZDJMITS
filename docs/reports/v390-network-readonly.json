@@ -1,0 +1,35 @@
+{
+  "asOf": 1788917612753,
+  "method": "PUBLIC_GET_TIME_ONLY",
+  "exchangeWrites": 0,
+  "outcomes": [
+    {
+      "host": "testnet.binancefuture.com",
+      "route": "configured",
+      "error": "ECONNRESET",
+      "durationMs": 3603
+    },
+    {
+      "host": "testnet.binancefuture.com",
+      "route": "direct",
+      "httpStatus": 200,
+      "validServerTime": true,
+      "durationMs": 794,
+      "tlsVerified": true
+    },
+    {
+      "host": "demo-fapi.binance.com",
+      "route": "configured",
+      "httpStatus": 200,
+      "validServerTime": true,
+      "durationMs": 644,
+      "tlsVerified": true
+    },
+    {
+      "host": "demo-fapi.binance.com",
+      "route": "direct",
+      "error": "ABORT_ERR",
+      "durationMs": 7002
+    }
+  ]
+}

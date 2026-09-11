@@ -1,0 +1,60 @@
+{
+  "capturedAt": "2026-09-10T16:04:23+08:00",
+  "runtime": {
+    "pid": 21908,
+    "instanceId": "7b2f643e-e5fa-4fd9-a63c-8d8a4b702489",
+    "version": "3.9.2",
+    "buildId": "3.9.2-9e5cbb74ffd4abba1576",
+    "artifactHash": "9e5cbb74ffd4abba15767e84b73932ffd6c4d5451e701995fcebce6b58ca517f",
+    "sourceHash": "48bb0e74ee4a409609b117973eb4e6ecec3874ac28367069b74524fd08b84b52",
+    "startReason": "MANUAL_START",
+    "listener": "0.0.0.0:8080",
+    "health": "READY",
+    "loadedArtifactIsCurrentDiskBuild": false,
+    "currentDiskArtifactHash": "335742dc68e97d804bf44c9030a5bb04f03553de34c874a6d6eabc1387bd8c91",
+    "currentDiskSourceHash": "a35e1a390c0f230c45d02d3289dd4d9f84337ba2817dec7829720e6c2f773e95",
+    "cutoverBlocker": "start-zdj-lan.ps1 returned Access denied at LAN firewall-rule step; elevated retry was rejected by execution quota"
+  },
+  "settings": {
+    "settingsVersion": 104,
+    "environment": "TESTNET",
+    "executionMode": "TESTNET_ENABLED",
+    "poolTarget": 20,
+    "primary": "http://127.0.0.1:8084/v1 qwen/qwen3.8-27b",
+    "scout": "http://127.0.0.1:8081/v1 qwen3.5:9b"
+  },
+  "online": {
+    "pipelineState": "PAUSED_MARKET_DATA_UNAVAILABLE",
+    "marketSnapshots": 154,
+    "poolResidents": 11,
+    "poolQualified": 11,
+    "poolReady": 0,
+    "marketDataReason": "MARKET_QUOTES_STALE",
+    "freshMarkets": 0,
+    "quoteFreshRatio": 0.14935064935064934,
+    "klineFreshRatio": 0.21428571428571427,
+    "primaryStatus": "DEGRADED",
+    "primaryRuns": 3,
+    "primaryHistoricalRuns": 200,
+    "scoutRuns": 121,
+    "aiConsecutiveFailures": 0,
+    "privateSync": "READY",
+    "reconciliation": { "status": "READY", "drift": 0, "unresolvedDrift": 0, "verifiedOrderFactMismatch": 0 },
+    "takeProfit": { "required": 3, "protected": 3, "missing": 0, "repairFailed": 0, "wrongSide": 0 },
+    "p0EntryIntegrity": { "passed": true, "crossSymbolMismatch": 0, "activeRemoteWithNewPrimary": 0, "unverifiedTerminalRelease": 0, "brainRunMisattribution": 0 },
+    "postCutover": { "primaryRuns": 0, "entryIntents": 0, "entryOrders": 0, "fills": 0, "naturalLong": 0, "naturalShort": 0 },
+    "runtimeTaskFailures": 29,
+    "runtimeTaskFailureReason": "1m closed candle gap (old loaded artifact)",
+    "marketRefreshes": "targeted refreshes loaded successfully; strict readiness still blocked"
+  },
+  "modelServices": { "8084": { "health": 200, "model": "qwen/qwen3.8-27b", "completion": "OK", "elapsedMs": 434 }, "8081": { "health": 200, "model": "qwen3.5:9b", "completion": "OK", "elapsedMs": 580 } },
+  "decision": {
+    "engineering": "PASS",
+    "testnetOnline": "NO-GO_PENDING",
+    "entryQualityOos": "PENDING",
+    "lifecycle24h100": "PENDING",
+    "productionReadOnly": "BLOCKED",
+    "canary": "NO-GO",
+    "productionWrite": "LOCKED"
+  }
+}

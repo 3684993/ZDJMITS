@@ -1,0 +1,17 @@
+{
+  "asOf": 1788933079668,
+  "before": {
+    "route": "CONFIGURED",
+    "forceBinanceRest": true,
+    "forceBinanceWs": false,
+    "settingsVersion": 89
+  },
+  "after": {
+    "route": "DIRECT",
+    "forceBinanceRest": false,
+    "forceBinanceWs": false,
+    "settingsVersion": 90
+  },
+  "engineLifecycleActions": 0,
+  "exchangeWrites": 0
+}

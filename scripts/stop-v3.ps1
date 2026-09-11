@@ -1,0 +1,1 @@
+$ErrorActionPreference='Stop';$matches=Get-CimInstance Win32_Process -Filter "Name='node.exe'"|Where-Object {$_.CommandLine -match 'apps[/\\]engine[/\\]dist[/\\]main\.js'};if(-not $matches){Write-Output 'ZDJ-MITS is not running';exit 0};foreach($p in $matches){Stop-Process -Id $p.ProcessId -Force;Write-Output "Stopped ZDJ-MITS PID $($p.ProcessId)"}

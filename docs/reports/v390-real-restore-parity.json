@@ -1,0 +1,18 @@
+{
+  "status": "PASS",
+  "asOf": 1788935797390,
+  "sourceUpdatedAt": 1788932477753,
+  "baselineHash": "6abb3894dd2cd36b8bb81de1b715f3bd456d28e31592415a64e3ef7e77978168",
+  "restoredHash": "6abb3894dd2cd36b8bb81de1b715f3bd456d28e31592415a64e3ef7e77978168",
+  "collectionsChecked": 26,
+  "differingCollections": [],
+  "integrity": true,
+  "metrics": {
+    "entityWrites": 12166,
+    "checkpointBytes": 436641,
+    "durationMs": 198
+  },
+  "isolatedDataDir": "C:\\Users\\5700x\\AppData\\Local\\Temp\\mits-real-parity-1jzjpx",
+  "method": "SINGLE_READ_TRANSACTION_BASELINE_TO_NEW_INCREMENTAL_DATABASE_AND_REOPEN",
+  "exchangeWrites": 0
+}

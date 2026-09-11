@@ -1,0 +1,53 @@
+{
+  "asOf": 1788933790055,
+  "version": "3.9.0",
+  "buildId": "3.9.0-52d421251d01018fde75",
+  "artifactHash": "52d421251d01018fde7591ba4884b1034dfa2468e362df5dde59abfece99724e",
+  "sourceHash": "373156787d5e2caec8d129d5363d9772ccc7e1ed486c64d96585c9a8e597f8fd",
+  "sourceStatus": "IMPLEMENTED",
+  "verify": "PASS",
+  "tests": {
+    "engine": 268,
+    "core": 38,
+    "dashboard": 12,
+    "total": 318
+  },
+  "engineLifecycleActions": 0,
+  "exchangeWrites": 0,
+  "onlineAcceptance": "PENDING_MANUAL_START",
+  "soak": "RUNNING",
+  "productionAdmission": "NOT_APPROVED",
+  "powerloss": {
+    "status": "PASS",
+    "isolatedDataDir": "C:\\Users\\5700x\\AppData\\Local\\Temp\\mits-powerloss-Ij9Tqn",
+    "rolledBackUncommittedEntity": true,
+    "committedAuditRetained": true,
+    "integrity": true,
+    "exchangeCalls": 0
+  },
+  "route": {
+    "asOf": 1788933079668,
+    "before": {
+      "route": "CONFIGURED",
+      "forceBinanceRest": true,
+      "forceBinanceWs": false,
+      "settingsVersion": 89
+    },
+    "after": {
+      "route": "DIRECT",
+      "forceBinanceRest": false,
+      "forceBinanceWs": false,
+      "settingsVersion": 90
+    },
+    "engineLifecycleActions": 0,
+    "exchangeWrites": 0
+  },
+  "largeAudit": {
+    "status": "PASS",
+    "payloadBytes": 131227,
+    "truncated": false,
+    "identityLost": false,
+    "secretLeaked": false,
+    "exchangeWrites": 0
+  }
+}

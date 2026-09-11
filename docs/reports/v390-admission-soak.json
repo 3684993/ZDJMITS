@@ -1,0 +1,29 @@
+{
+  "status": "COMPLETE",
+  "startedAt": 1788932998253,
+  "durationMs": 7200000,
+  "elapsedMs": 7200986.8303000005,
+  "databaseScale": "FULL_9GB_SQLITE_BACKUP",
+  "isolatedDataDir": "C:\\Users\\5700x\\AppData\\Local\\Temp\\mits-admission-soak-5aZ7gh",
+  "productionWrites": 0,
+  "exchangeCalls": 0,
+  "events": 270160,
+  "critical": 6754,
+  "failures": 0,
+  "checkpoint": {
+    "entityWrites": 0,
+    "checkpointBytes": 435917,
+    "durationMs": 54
+  },
+  "checkpointP99": 103.54380000010133,
+  "auditP99": 9.352500000037253,
+  "eventLoopP99": 68.812799,
+  "logger": {
+    "status": "READY",
+    "queuedBytes": 0,
+    "droppedOperational": 0,
+    "writeFailures": 0,
+    "lastError": null,
+    "currentFile": "C:\\Users\\5700x\\AppData\\Local\\Temp\\mits-admission-soak-5aZ7gh\\logs\\engine-2026-09-09-soak-1788932998253-0.jsonl"
+  }
+}

@@ -1,0 +1,119 @@
+{
+  "asOf": "2026-09-09T08:48:53.056363",
+  "source": "PERSISTED_RUNTIME_NOT_LIVE",
+  "maxPositions": 12,
+  "positions": [
+    {
+      "symbol": "BCHUSDT",
+      "side": "SHORT",
+      "openedAt": 1788613243818,
+      "firstObservedAt": 1788613243818,
+      "entryTimeSource": "SYSTEM_FILL",
+      "managementStatus": "HUMAN_MANAGED"
+    },
+    {
+      "symbol": "CHILLGUYUSDT",
+      "side": "SHORT",
+      "openedAt": 1788653503540,
+      "firstObservedAt": 1788653503540,
+      "entryTimeSource": "SYSTEM_FILL",
+      "managementStatus": "HUMAN_MANAGED"
+    },
+    {
+      "symbol": "JUPUSDT",
+      "side": "LONG",
+      "openedAt": 1788785586539,
+      "firstObservedAt": 1788785586539,
+      "entryTimeSource": "SYSTEM_FILL",
+      "managementStatus": "HUMAN_MANAGED"
+    },
+    {
+      "symbol": "LDOUSDT",
+      "side": "LONG",
+      "openedAt": 1788785709972,
+      "firstObservedAt": 1788785709972,
+      "entryTimeSource": "SYSTEM_FILL",
+      "managementStatus": "HUMAN_MANAGED"
+    },
+    {
+      "symbol": "FARTCOINUSDT",
+      "side": "LONG",
+      "openedAt": 1788787759078,
+      "firstObservedAt": 1788787759078,
+      "entryTimeSource": "SYSTEM_FILL",
+      "managementStatus": "HUMAN_MANAGED"
+    },
+    {
+      "symbol": "LTCUSDT",
+      "side": "LONG",
+      "openedAt": 1788793936854,
+      "firstObservedAt": 1788793936854,
+      "entryTimeSource": "SYSTEM_FILL",
+      "managementStatus": "HUMAN_MANAGED"
+    },
+    {
+      "symbol": "ETHUSDC",
+      "side": "SHORT",
+      "openedAt": 1788856702419,
+      "firstObservedAt": 1788856702419,
+      "entryTimeSource": "SYSTEM_FILL",
+      "managementStatus": "AUTO_MANAGED"
+    },
+    {
+      "symbol": "BTCUSDC",
+      "side": "SHORT",
+      "openedAt": 1788879195446,
+      "firstObservedAt": 1788879195446,
+      "entryTimeSource": "SYSTEM_FILL",
+      "managementStatus": "AUTO_MANAGED"
+    },
+    {
+      "symbol": "WLDUSDT",
+      "side": "LONG",
+      "openedAt": 1788887686514,
+      "firstObservedAt": 1788887686514,
+      "entryTimeSource": "SYSTEM_FILL",
+      "managementStatus": "AUTO_MANAGED"
+    },
+    {
+      "symbol": "ADAUSDT",
+      "side": "LONG",
+      "openedAt": 1788894301492,
+      "firstObservedAt": 1788894301492,
+      "entryTimeSource": "SYSTEM_FILL",
+      "managementStatus": "AUTO_MANAGED"
+    },
+    {
+      "symbol": "XANUSDT",
+      "side": "LONG",
+      "openedAt": 1788905401436,
+      "firstObservedAt": 1788905401436,
+      "entryTimeSource": "IMPORTED_AT_STARTUP",
+      "managementStatus": "AUTO_MANAGED"
+    },
+    {
+      "symbol": "FORMUSDT",
+      "side": "SHORT",
+      "openedAt": 1788905402380,
+      "firstObservedAt": 1788905402380,
+      "entryTimeSource": "IMPORTED_AT_STARTUP",
+      "managementStatus": "AUTO_MANAGED"
+    },
+    {
+      "symbol": "BULLAUSDT",
+      "side": "SHORT",
+      "openedAt": 1788822295612,
+      "firstObservedAt": 1788822295612,
+      "entryTimeSource": "SYSTEM_FILL",
+      "managementStatus": "HUMAN_MANAGED"
+    },
+    {
+      "symbol": "NAORISUSDT",
+      "side": "SHORT",
+      "openedAt": 1788905469285,
+      "firstObservedAt": 1788905469285,
+      "entryTimeSource": "SYSTEM_FILL",
+      "managementStatus": "AUTO_MANAGED"
+    }
+  ]
+}

@@ -1,0 +1,157 @@
+{
+  "asOf": "2026-09-10T09:08:10.740Z",
+  "current": {
+    "directions": {
+      "LONG": 72
+    },
+    "regimes": {
+      "RANGE": 72
+    },
+    "trends": {
+      "DOWN": 64,
+      "RANGE": 7,
+      "UP": 1
+    },
+    "repeatedContextGroups": [],
+    "errors": [
+      {
+        "scope": "LIVE_HYDRATE",
+        "message": "1m closed candle gap",
+        "n": 17099
+      },
+      {
+        "scope": null,
+        "message": "1d WARMING requires >=20 closed candles",
+        "n": 2
+      },
+      {
+        "scope": null,
+        "message": "1w WARMING requires >=20 closed candles",
+        "n": 2
+      }
+    ]
+  },
+  "historicalMixedBuilds": {
+    "since": 1788825600000,
+    "until": 1789031290740,
+    "attempts": 8187,
+    "status": {
+      "COMPLETED": 3113,
+      "FAILED": 5066,
+      "RUNNING": 8
+    },
+    "decisions": {
+      "PLACE_LONG": 1175,
+      "PLACE_SHORT": 1723,
+      "null": 5074,
+      "NO_DIRECTION_EDGE": 202,
+      "WAIT_FOR_PRICE": 10,
+      "RESELECT_SYMBOL": 3
+    },
+    "place": 2898,
+    "withIntent": 128,
+    "withOrder": 118,
+    "withExchangeId": 110,
+    "withFill": 80,
+    "blocks": [
+      {
+        "type": "ENTRY_DECISION_BLOCKED",
+        "reason": "REJECT_CORRELATED_CLUSTER",
+        "n": 1956
+      },
+      {
+        "type": "ENTRY_DECISION_BLOCKED",
+        "reason": "DIRECTION_CAPACITY_UNAVAILABLE",
+        "n": 293
+      },
+      {
+        "type": "PORTFOLIO_ADMISSION_REJECTED",
+        "reason": null,
+        "n": 212
+      },
+      {
+        "type": "ENTRY_DIRECTION_POLICY_BLOCKED",
+        "reason": "DIRECTION_NOT_ALLOWED",
+        "n": 154
+      },
+      {
+        "type": "ENTRY_DECISION_BLOCKED",
+        "reason": "REJECT_DIRECTION_EXPOSURE",
+        "n": 107
+      },
+      {
+        "type": "ENTRY_DECISION_BLOCKED",
+        "reason": "REJECT_GROSS_EXPOSURE",
+        "n": 18
+      },
+      {
+        "type": "ENTRY_DIRECTION_POLICY_BLOCKED",
+        "reason": "SPECULATIVE_LONG_EXCEPTION_EVIDENCE_REQUIRED",
+        "n": 7
+      },
+      {
+        "type": "ENTRY_DECISION_BLOCKED",
+        "reason": "REJECT_DAILY_DRAWDOWN",
+        "n": 4
+      }
+    ]
+  },
+  "entitySampleKeys": {
+    "intent": [
+      "id",
+      "symbol",
+      "side",
+      "confidence",
+      "idealPrice",
+      "acceptablePriceRange",
+      "horizonMinutes",
+      "leverage",
+      "createdAt",
+      "absoluteExpiresAt",
+      "packetId",
+      "brainRunId"
+    ],
+    "order": [
+      "id",
+      "clientOrderId",
+      "exchangeOrderId",
+      "symbol",
+      "side",
+      "quantity",
+      "price",
+      "filledQuantity",
+      "leverage",
+      "status",
+      "createdAt",
+      "updatedAt",
+      "absoluteExpiresAt",
+      "repriceCount",
+      "intentId",
+      "reachability",
+      "reservationId",
+      "fillState"
+    ],
+    "fill": [
+      "fillId",
+      "symbol",
+      "direction",
+      "side",
+      "positionSide",
+      "orderId",
+      "clientOrderId",
+      "tradeId",
+      "executionTime",
+      "qty",
+      "price",
+      "realizedPnl",
+      "commission",
+      "commissionAsset",
+      "commissionUsd",
+      "maker",
+      "source",
+      "attributionStatus",
+      "decisionChainId",
+      "allocationPlanId"
+    ]
+  }
+}

@@ -1,0 +1,2 @@
+param([int]$Port=8080)
+$listener=Get-NetTCPConnection -State Listen -LocalPort $Port -ErrorAction SilentlyContinue|Select-Object -First 1;if(-not $listener){Write-Output 'ZDJ-MITS: OFFLINE';exit 1};$health=Invoke-RestMethod "http://127.0.0.1:$Port/health" -TimeoutSec 5;[pscustomobject]@{Url="http://127.0.0.1:$Port";Pid=$listener.OwningProcess;Readiness=$health.status;Ready=$health.ready}|Format-List

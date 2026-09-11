@@ -1,0 +1,262 @@
+{
+  "asOf": "2026-09-10T03:31:48.149Z",
+  "ai_runs_archive": {
+    "count": {
+      "n": 34443
+    },
+    "sample": {
+      "run_id": "airun_mtc2j6zp_8zl86fhx",
+      "symbol": "BTRUSDT",
+      "started_at": 1787868146725,
+      "status": "COMPLETED",
+      "payload": "{\"id\":\"airun_mtc2j6zp_8zl86fhx\",\"symbol\":\"BTRUSDT\",\"resourceId\":\"scout-b580\",\"model\":\"qwen3.5:9b\",\"role\":\"SCOUT\",\"startedAt\":1787868146725,\"completedAt\":1787868159889,\"latencyMs\":13164,\"inputTokens\":2902,\"outputTokens\":277,\"status\":\"COMPLETED\",\"direction\":null,\"decision\":null,\"packetId\":\"eip_mtc2j6zp_fz3htdjy\",\"error\":null,\"inputPreview\":\"{\\\"prompt\\\":\\\"You are the SCOUT model in a multi-symbol trading system. You have no order permission.\\\\nRead only this compact evidence extract. Never decide direction or an order; do not repeat full technical analysis.\\\\nFocus only on attention, missing facts, contradictions, unusual capital activity, and immediate 1m/5m/15m entry concerns.\\\\nReturn strict JSON: {symbol,summary,keyEvidence[],contradictions[],missingEvidence[],attentionScore}. attentionScore MUST be a finite decimal from 0 through 1 inclusive.\\\\nEVIDENCE:\\\\n{\\\\\\\"symbol\\\\\\\":\\\\\\\"BTRUSDT\\\\\\\",\\\\\\\"selection\\\\\\\":{\\\\\\\"rank\\\\\\\":1,\\\\\\\"score\\\\\\\":82.68749999999999,\\\\\\\"components\\\\\\\":{\\\\\\\"liquidity\\\\\\\":81.25,\\\\\\\"tradingActivity\\\\\\\":90.97222222222221,\\\\\\\"capitalActivity\\\\\\\":78.47222222222221,\\\\\\\"technicalOpportunity\\\\\\\":97.91666666666666,\\\\\\\"executionReachability\\\\\\\":69.44444444444444,\\\\\\\"dataQuality\\\\\\\":50},\\\\\\\"selectionMode\\\\\\\":\\\\\\\"COMPREHENSIVE_MAINSTREAM\\\\\\\"},\\\\\\\"quote\\\\\\\":{\\\\\\\"symbol\\\\\\\":\\\\\\\"BTRUSDT\\\\\\\",\\\\\\\"last\\\\\\\":0.16772,\\\\\\\"mark\\\\\\\":0.16746113,\\\\\\\"bid\\\\\\\":0.16771,\\\\\\\"ask\\\\\\\":0.16772,\\\\\\\"tickSize\\\\\\\":0.00001,\\\\\\\"stepSize\\\\\\\":1,\\\\\\\"minQty\\\\\\\":1,\\\\\\\"minNotional\\\\\\\":5,\\\\\\\"quoteVolumeUsd24h\\\\\\\":7369506444.12106,\\\\\\\"priceChangePercent24h\\\\\\\":27.321,\\\\\\\"tradeCount24h\\\\\\\":362911,\\\\\\\"ts\\\\\\\":1787868134321},\\\\\\\"technical\\\\\\\":{\\\\\\\"1m\\\\\\\":{\\\\\\\"timeframe\\\\\\\":\\\\\\\"1m\\\\\\\",\\\\\\\"asOf\\\\\\\":1787868179999,\\\\\\\"sampleSize\\\\\\\":83,\\\\\\\"lastPrice\\\\\\\":0.16772,\\\\\\\"trend\\\\\\\":\\\\\\\"UP\\\\\\\",\\\\\\\"trendStrength\\\\\\\":1,\\\\\\\"ema8\\\\\\\":0.1661277776720212,\\\\\\\"ema21\\\\\\\":0.1646525548968683,\\\\\\\"ema55\\\\\\\":0.16293984596105823,\\\\\\\"emaSlope21\\\\\\\":0.006044724972354996,\\\\\\\"macdLine\\\\\\\":0.0012793458483849884,\\\\\\\"macdSignal\\\\\\\":0.0009756567703295366,\\\\\\\"macdHistogram\\\\\\\":0.00030368907805545186,\\\\\\\"macdHistogramSlope\\\\\\\":0.00004183001047441818,\\\\\\\"macdCrossDirection\\\\\\\":\\\\\\\"BULLISH\\\\\\\",\\\\\\\"macdCrossAgeBars\\\\\\\":5,\\\\\\\"bbUpper\\\\\\\":0.1675717381162788,\\\\\\\"bbMiddle\\\\\\\":0.1643925,\\\\\\\"bbLower\\\\\\\":0.1612132618837212,\\\\\\\"bbPosition\\\\\\\":1.0233172034145643,\\\\\\\"bbBandwidth\\\\\\\":0.03867862726436782,\\\\\\\"atr14\\\\\\\":0.0009734408916325988,\\\\\\\"atrPercent\\\\\\\":0.580396429544836,\\\\\\\"volumeZScore\\\\\\\":-0.5904919785038293,\\\\\\\"recentSwingHigh\\\\\\\":0.16648,\\\\\\\"recentSwingLow\\\\\\\":0.16351,\\\\\\\"higherHighs\\\\\\\":9,\\\\\\\"higherLows\\\\\\\":5,\\\\\\\"lowerHighs\\\\\\\":2,\\\\\\\"lowerLows\\\\\\\":2,\\\\\\\"freshnessMs\\\\\\\":0},\\\\\\\"5m\\\\\\\":{\\\\\\\"timeframe\\\\\\\":\\\\\\\"5m\\\\\\\",\\\\\\\"asOf\\\\\\\":1787867999999,\\\\\\\"sampleSize\\\\\\\":80,\\\\\\\"lastPrice\\\\\\\":0.16593,\\\\\\\"trend\\\\\\\":\\\\\\\"UP\\\\\\\",\\\\\\\"trendStrength\\\\\\\":1,\\\\\\\"ema8\\\\\\\":0.1631556247546953,\\\\\\\"ema21\\\\\\\":0.16156752783495593,\\\\\\\"ema55\\\\\\\":0.16023191780016394,\\\\\\\"emaSlope21\\\\\\\":0.007166295014746702,\\\\\\\"macdLine\\\\\\\":0.0012352502460050707,\\\\\\\"macdSignal\\\\\\\":0.0007593089161367637,\\\\\\\"macdHistogram\\\\\\\":0.00047594132986830706,\\\\\\\"macdHistogramSlope\\\\\\\":0.0001337039315644148,\\\\\\\"macdCrossDirection\\\\\\\":\\\\\\\"BULLISH\\\\\\\",\\\\\\\"macdCrossAgeBars\\\\\\\":10,\\\\\\\"bbUpper\\\\\\\":0.16462960957888542,\\\\\\\"bbMiddle\\\\\\\":0.16117200000000004,\\\\\\\"bbLower\\\\\\\":0.15771439042111465,\\\\\\\"bbPosition\\\\\\\":1.188047607956618,\\\\\\\"bbBandwidth\\\\\\\":0.04290583449836676,\\\\\\\"atr14\\\\\\\":0.0017611556618435228,\\\\\\\"atrPercent\\\\\\\":1.061384717557719,\\\\\\\"volumeZScore\\\\\\\":0.5294259206704193,\\\\\\\"recentSwingHigh\\\\\\\":0.16421,\\\\\\\"recentSwingLow\\\\\\\":0.15822,\\\\\\\"higherHighs\\\\\\\":4,\\\\\\\"higherLows\\\\\\\":4,\\\\\\\"lowerHighs\\\\\\\":5,\\\\\\\"lowerLows\\\\\\\":5,\\\\\\\"freshnessMs\\\\\\\":0},\\\\\\\"15m\\\\\\\":{\\\\\\\"timeframe\\\\\\\":\\\\\\\"15m\\\\\\\",\\\\\\\"asOf\\\\\\\":1787867999999,\\\\\\\"sampleSize\\\\\\\":80,\\\\\\\"lastPrice\\\\\\\":0.16593,\\\\\\\"trend\\\\\\\":\\\\\\\"UP\\\\\\\",\\\\\\\"trendStrength\\\\\\\":1,\\\\\\\"ema8\\\\\\\":0.16173844667491682,\\\\\\\"ema21\\\\\\\":0.16052806648226173,\\\\\\\"ema55\\\\\\\":0.15878463206002655,\\\\\\\"emaSlope21\\\\\\\":0.005924590764673927,\\\\\\\"macdLine\\\\\\\":0.0007931811248409748,\\\\\\\"macdSignal\\\\\\\":0.0002389084670135463,\\\\\\\"macdHistogram\\\\\\\":0.0005542726578274286,\\\\\\\"macdHistogramSlope\\\\\\\":0.00028779855787579235,\\\\\\\"macdCrossDirection\\\\\\\":\\\\\\\"BULLISH\\\\\\\",\\\\\\\"macdCrossAgeBars\\\\\\\":5,\\\\\\\"bbUpper\\\\\\\":0.163967542319127,\\\\\\\"bbMiddle\\\\\\\":0.16000950000000003,\\\\\\\"bbLower\\\\\\\":0.15605145768087306,\\\\\\\"bbPosition\\\\\\\":1.2479076172821038,\\\\\\\"bbBandwidth\\\\\\\":0.0494725915539636,\\\\\\\"atr14\\\\\\\":0.003278228576393722,\\\\\\\"atrPercent\\\\\\\":1.9756696054925103,\\\\\\\"volumeZScore\\\\\\\":0.0641954334704312,\\\\\\\"recentSwingHigh\\\\\\\":0.16421,\\\\\\\"recentSwingLow\\\\\\\":0.15822,\\\\\\\"higherHighs\\\\\\\":7,\\\\\\\"higherLows\\\\\\\":6,\\\\\\\"lowerHighs\\\\\\\":5,\\\\\\\"lowerLows\\\\\\\":2,\\\\\\\"freshnessMs\\\\\\\":0}},\\\\\\\"derivatives\\\\\\\":{\\\\\\\"symbol\\\\\\\":\\\\\\\"BTRUSDT\\\\\\\",\\\\\\\"openInterest\\\\\\\":7197261624445,\\\\\\\"openInterestChange5m\\\\\\\":null,\\\\\\\"openInterestChange15m\\\\\\\":null,\\\\\\\"fundingRate\\\\\\\":0.00056858,\\\\\\\"takerBuySellRatio5m\\\\\\\":null,\\\\\\\"globalLongShortRatio\\\\\\\":null,\\\\\\\"topTraderPositionRatio\\\\\\\":null,\\\\\\\"ts\\\\\\\":1787867925377},\\\\\\\"orderBook\\\\\\\":{\\\\\\\"symbol\\\\\\\":\\\\\\\"BTRUSDT\\\\\\\",\\\\\\\"bids\\\\\\\":[[0.16771,217332],[0.1677,440430],[0.16769,217272],[0.16767,221309],[0.16761,438878],[0.16757,221184],[0.16755,441988],[0.16754,217553],[0.16753,438269],[0.16751,435782],[0.1675,220628],[0.16748,219931],[0.16742,220759],[0.16735,798],[0.16734,293195],[0.16732,297782],[0.16731,188375],[0.16722,219970],[0.1672,516374],[0.16714,52038]],\\\\\\\"asks\\\\\\\":[[0.16772,172050],[0.16774,194601],[0.16775,103],[0.16776,37],[0.16777,34],[0.16778,1493431],[0.16779,37],[0.16781,596132],[0.16782,596052],[0.16783,389993],[0.16784,70],[0.16785,1002073],[0.16786,3326350],[0.16787,389993],[0.16788,780228],[0.16789,3326279],[0.1679,978762],[0.16791,1368936],[0.16793,1170117],[0.16794,64]],\\\\\\\"ts\\\\\\\":1787868134725},\\\\\\\"contradictions\\\\\\\":[],\\\\\\\"evidenceCompleteness\\\\\\\":0.8623999999999998,\\\\\\\"microstructure\\\\\\\":{\\\\\\\"spreadBps\\\\\\\":0.5962495900790031,\\\\\\\"bidDepthUsd5\\\\\\\":257410.42401000002,\\\\\\\"askDepthUsd5\\\\\\\":61527.78729,\\\\\\\"microPrice\\\\\\\":0.16771558145985177,\\\\\\\"imbalance\\\\\\\":0.614171114591687,\\\\\\\"reachableBand1m\\\\\\\":[0.16694124728669393,0.16849875271330608],\\\\\\\"reachableBand5m\\\\\\\":[0.16569467098887997,0.16974532901112005],\\\\\\\"reachabilityScore\\\\\\\":1}}\\\",\\\"packet\\\":{\\\"version\\\":\\\"3.0\\\",\\\"packetId\\\":\\\"eip_mtc2j6zp_fz3htdjy\\\",\\\"symbol\\\":\\\"BTRUSDT\\\",\\\"createdAt\\\":1787868146724,\\\"expiresAt\\\":1787868236724,\\\"selection\\\":{\\\"rank\\\":1,\\\"score\\\":82.68749999999999,\\\"components\\\":{\\\"liquidity\\\":81.25,\\\"tradingActivity\\\":90.97222222222221,\\\"capitalActivity\\\":78.47222222222221,\\\"technicalOpportunity\\\":97.91666666666666,\\\"executionReachability\\\":69.44444444444444,\\\"dataQuality\\\":50},\\\"selectionMode\\\":\\\"COMPREHENSIVE_MAINSTREAM\\\"},\\\"market\\\":{\\\"quote\\\":{\\\"symbol\\\":\\\"BTRUSDT\\\",\\\"last\\\":0.16772,\\\"mark\\\":0.16746113,\\\"bid\\\":0.16771,\\\"ask\\\":0.16772,\\\"tickSize\\\":0.00001,\\\"stepSize\\\":1,\\\"minQty\\\":1,\\\"minNotional\\\":5,\\\"quoteVolumeUsd24h\\\":7369506444.12106,\\\"priceChangePercent24h\\\":27.321,\\\"tradeCount24h\\\":362911,\\\"ts\\\":1787868134321},\\\"technical\\\":{\\\"1m\\\":{\\\"timeframe\\\":\\\"1m\\\",\\\"asOf\\\":1787868179999,\\\"sampleSize\\\":83,\\\"lastPrice\\\":0.16772,\\\"trend\\\":\\\"UP\\\",\\\"trendStrength\\\":1,\\\"ema8\\\":0.1661277776720212,\\\"ema21\\\":0.1646525548968683,\\\"ema55\\\":0.16293984596105823,\\\"emaSlope21\\\":0.006044724972354996,\\\"macdLine\\\":0.0012793458483849884,\\\"macdSignal\\\":0.0009756567703295366,\\\"macdHistogram\\\":0.00030368907805545186,\\\"macdHistogramSlope\\\":0.00004183001047441818,\\\"macdCrossDirection\\\":\\\"BULLISH\\\",\\\"macdCrossAgeBars\\\":5,\\\"bbUpper\\\":0.1675717381162788,\\\"bbMiddle\\\":0.1643925,\\\"bbLower\\\":0.1612132618837212,\\\"bbPosition\\\":1.0233172034145643,\\\"bbBandwidth\\\":0.03867862726436782,\\\"atr14\\\":0.0009734408916325988,\\\"atrPercent\\\":0.580396429544836,\\\"volumeZScore\\\":-0.5904919785038293,\\\"recentSwingHigh\\\":0.16648,\\\"recentSwingLow\\\":0.16351,\\\"higherHighs\\\":9,\\\"higherLows\\\":5,\\\"lowerHighs\\\":2,\\\"lowerLows\\\":2,\\\"freshnessMs\\\":0},\\\"5m\\\":{\\\"timeframe\\\":\\\"5m\\\",\\\"asOf\\\":1787867999999,\\\"sampleSize\\\":80,\\\"lastPrice\\\":0.16593,\\\"trend\\\":\\\"UP\\\",\\\"trendStrength\\\":1,\\\"ema8\\\":0.1631556247546953,\\\"ema21\\\":0.16156752783495593,\\\"ema55\\\":0.16023191780016394,\\\"emaSlope21\\\":0.007166295014746702,\\\"macdLine\\\":0.0012352502460050707,\\\"macdSignal\\\":0.0007593089161367637,\\\"macdHistogram\\\":0.00047594132986830706,\\\"macdHistogramSlope\\\":0.0001337039315644148,\\\"macdCrossDirection\\\":\\\"BULLISH\\\",\\\"macdCrossAgeBars\\\":10,\\\"bbUpper\\\":0.16462960957888542,\\\"bbMiddle\\\":0.16117200000000004,\\\"bbLower\\\":0.15771439042111465,\\\"bbPosition\\\":1.188047607956618,\\\"bbBandwidth\\\":0.04290583449836676,\\\"atr14\\\":0.0017611556618435228,\\\"atrPercent\\\":1.061384717557719,\\\"volumeZScore\\\":0.5294259206704193,\\\"recentSwingHigh\\\":0.16421,\\\"recentSwingLow\\\":0.15822,\\\"higherHighs\\\":4,\\\"higherLows\\\":4,\\\"lowerHighs\\\":5,\\\"lowerLows\\\":5,\\\"freshnessMs\\\":0},\\\"15m\\\":{\\\"timeframe\\\":\\\"15m\\\",\\\"asOf\\\":1787867999999,\\\"sampleSize\\\":80,\\\"lastPrice\\\":0.16593,\\\"trend\\\":\\\"UP\\\",\\\"trendStrength\\\":1,\\\"ema8\\\":0.16173844667491682,\\\"ema21\\\":0.16052806648226173,\\\"ema55\\\":0.15878463206002655,\\\"emaSlope21\\\":0.005924590764673927,\\\"macdLine\\\":0.0007931811248409748,\\\"macdSignal\\\":0.0002389084670135463,\\\"macdHistogram\\\":0.0005542726578274286,\\\"macdHistogramSlope\\\":0.00028779855787579235,\\\"macdCrossDirection\\\":\\\"BULLISH\\\",\\\"macdCrossAgeBars\\\":5,\\\"bbUpper\\\":0.163967542319127,\\\"bbMiddle\\\":0.16000950000000003,\\\"bbLower\\\":0.15605145768087306,\\\"bbPosition\\\":1.2479076172821038,\\\"bbBandwidth\\\":0.0494725915539636,\\\"atr14\\\":0.003278228576393722,\\\"atrPercent\\\":1.9756696054925103,\\\"volumeZScore\\\":0.0641954334704312,\\\"recentSwingHigh\\\":0.16421,\\\"recentSwingLow\\\":0.15822,\\\"higherHighs\\\":7,\\\"higherLows\\\":6,\\\"lowerHighs\\\":5,\\\"lowerLows\\\":2,\\\"freshnessMs\\\":0},\\\"4h\\\":{\\\"timeframe\\\":\\\"4h\\\",\\\"asOf\\\":1787875199999,\\\"sampleSize\\\":80,\\\"lastPrice\\\":0.16593,\\\"trend\\\":\\\"UP\\\",\\\"trendStrength\\\":1,\\\"ema8\\\":0.14913662346212403,\\\"ema21\\\":0.10892265251054312,\\\"ema55\\\":0.06911588071700428,\\\"emaSlope21\\\":0.15008569860698448,\\\"macdLine\\\":0.03568246395178648,\\\"macdSignal\\\":0.028625565324688296,\\\"macdHistogram\\\":0.007056898627098185,\\\"macdHistogramSlope\\\":-0.0014295016563754676,\\\"macdCrossDirection\\\":\\\"BULLISH\\\",\\\"macdCrossAgeBars\\\":26,\\\"bbUpper\\\":0.21137527864771774,\\\"bbMiddle\\\":0.09447349999999999,\\\"bbLower\\\":-0.022428278647717764,\\\"bbPosition\\\":0.8056262309546778,\\\"bbBandwidth\\\":2.4748057105477783,\\\"atr14\\\":0.021567715328591103,\\\"atrPercent\\\":12.998080713910145,\\\"volumeZScore\\\":-1.7638449200660782,\\\"recentSwingHigh\\\":0.185,\\\"recentSwingLow\\\":0.02921,\\\"higherHighs\\\":6,\\\"higherLows\\\":7,\\\"lowerHighs\\\":6,\\\"lowerLows\\\":3,\\\"freshnessMs\\\":0},\\\"1d\\\":{\\\"timeframe\\\":\\\"1d\\\",\\\"asOf\\\":1787875199999,\\\"sampleSize\\\":80,\\\"lastPrice\\\":0.16593,\\\"trend\\\":\\\"UP\\\",\\\"trendStrength\\\":1,\\\"ema8\\\":0.07832898209788333,\\\"ema21\\\":0.04909577672558299,\\\"ema55\\\":0.032763648050130614,\\\"emaSlope21\\\":0.13411681444980975,\\\"macdLine\\\":0.019557042951591067,\\\"macdSignal\\\":0.007302879130440413,\\\"macdHistogram\\\":0.012254163821150653,\\\"macdHistogramSlope\\\":0.005740425305411516,\\\"macdCrossDirection\\\":\\\"BULLISH\\\",\\\"macdCrossAgeBars\\\":2,\\\"bbUpper\\\":0.11453174328542745,\\\"bbMiddle\\\":0.040993,\\\"bbLower\\\":-0.03254574328542745,\\\"bbPosition\\\":1.3494637956694433,\\\"bbBandwidth\\\":3.587868332906957,\\\"atr14\\\":0.025515506217373703,\\\"atrPercent\\\":15.377271269435125,\\\"volumeZScore\\\":-0.3922316884297791,\\\"recentSwingHigh\\\":0.03193,\\\"recentSwingLow\\\":0.02403,\\\"higherHighs\\\":6,\\\"higherLows\\\":3,\\\"lowerHighs\\\":4,\\\"lowerLows\\\":7,\\\"freshnessMs\\\":0},\\\"1w\\\":{\\\"timeframe\\\":\\\"1w\\\",\\\"asOf\\\":1788134399999,\\\"sampleSize\\\":53,\\\"lastPrice\\\":0.16593,\\\"trend\\\":\\\"UP\\\",\\\"trendStrength\\\":0.5,\\\"ema8\\\":0.05607628918389253,\\\"ema21\\\":0.046433477732566175,\\\"ema55\\\":0.05631720356233209,\\\"emaSlope21\\\":0.05880893138260731,\\\"macdLine\\\":-0.00014863695636897767,\\\"macdSignal\\\":-0.01157873202858108,\\\"macdHistogram\\\":0.011430095072212102,\\\"macdHistogramSlope\\\":0.00917147712829904,\\\"macdCrossDirection\\\":\\\"BULLISH\\\",\\\"macdCrossAgeBars\\\":3,\\\"bbUpper\\\":0.0945157589119246,\\\"bbMiddle\\\":0.031626,\\\"bbLower\\\":-0.031263758911924594,\\\"bbPosition\\\":1.5677732139829723,\\\"bbBandwidth\\\":3.977092197048289,\\\"atr14\\\":0.029481703504630155,\\\"atrPercent\\\":17.767554694527906,\\\"volumeZScore\\\":1.190431522422981,\\\"recentSwingHigh\\\":0.0285,\\\"recentSwingLow\\\":0.01588,\\\"higherHighs\\\":0,\\\"higherLows\\\":2,\\\"lowerHighs\\\":3,\\\"lowerLows\\\":4,\\\"freshnessMs\\\":0}},\\\"derivatives\\\":{\\\"symbol\\\":\\\"BTRUSDT\\\",\\\"openInterest\\\":7197261624445,\\\"openInterestChange5m\\\":null,\\\"openInterestChange15m\\\":null,\\\"fundingRate\\\":0.00056858,\\\"takerBuySellRatio5m\\\":null,\\\"globalLongShortRatio\\\":null,\\\"topTraderPositionRatio\\\":null,\\\"ts\\\":1787867925377},\\\"orderBook\\\":{\\\"symbol\\\":\\\"BTRUSDT\\\",\\\"bids\\\":[[0.16771,217332],[0.1677,440430],[0.16769,217272],[0.16767,221309],[0.16761,438878],[0.16757,221184],[0.16755,441988],[0.16754,217553],[0.16753,438269],[0.16751,435782],[0.1675,220628],[0.16748,219931],[0.16742,220759],[0.16735,798],[0.16734,293195],[0.16732,297782],[0.16731,188375],[0.16722,219970],[0.1672,516374],[0.16714,52038]],\\\"asks\\\":[[0.16772,172050],[0.16774,194601],[0.16775,103],[0.16776,37],[0.16777,34],[0.16778,1493431],[0.16779,37],[0.16781,596132],[0.16782,596052],[0.16783,389993],[0.16784,70],[0.16785,1002073],[0.16786,3326350],[0.16787,389993],[0.16788,780228],[0.16789,3326279],[0.1679,978762],[0.16791,1368936],[0.16793,1170117],[0.16794,64]],\\\"ts\\\":1787868134725}},\\\"microstructure\\\":{\\\"spreadBps\\\":0.5962495900790031,\\\"bidDepthUsd5\\\":257410.42401000002,\\\"askDepthUsd5\\\":61527.78729,\\\"microPrice\\\":0.16771558145985177,\\\"imbalance\\\":0.614171114591687,\\\"reachableBand1m\\\":[0.16694124728669393,0.16849875271330608],\\\"reachableBand5m\\\":[0.16569467098887997,0.16974532901112005],\\\"reachabilityScore\\\":1},\\\"globalRegime\\\":{\\\"btc\\\":{\\\"symbol\\\":\\\"BTCUSDT\\\",\\\"trend15m\\\":\\\"RANGE\\\",\\\"trend4h\\\":\\\"UP\\\",\\\"trend1d\\\":\\\"UP\\\",\\\"trend1w\\\":\\\"RANGE\\\",\\\"change24hPercent\\\":1.832},\\\"eth\\\":{\\\"symbol\\\":\\\"ETHUSDT\\\",\\\"trend15m\\\":\\\"DOWN\\\",\\\"trend4h\\\":\\\"UP\\\",\\\"trend1d\\\":\\\"UP\\\",\\\"trend1w\\\":\\\"UP\\\",\\\"change24hPercent\\\":0.327},\\\"regime\\\":\\\"LOW_VOLATILITY\\\"},\\\"portfolio\\\":{\\\"activePositions\\\":20,\\\"pendingEntries\\\":0,\\\"longPositions\\\":13,\\\"shortPositions\\\":7,\\\"longProfitableRatio\\\":0,\\\"shortProfitableRatio\\\":0,\\\"longNotionalUsd\\\":48551.19881886,\\\"shortNotionalUsd\\\":6356.0890705799},\\\"experience\\\":{\\\"sampleSize\\\":0,\\\"sameSymbolWinRate\\\":null,\\\"sameRegimeWinRate\\\":null,\\\"averageFillMinutes\\\":null,\\\"recentLessons\\\":[]},\\\"directionPolicy\\\":{\\\"reference\\\":\\\"DEFAULT\\\",\\\"weights\\\":{\\\"1m\\\":0.1,\\\"5m\\\":0.2,\\\"15m\\\":1,\\\"4h\\\":0.35,\\\"1d\\\":0.2,\\\"1w\\\":0.1},\\\"hardConstraints\\\":[\\\"No timeframe is a hard direction veto.\\\",\\\"15m remains the default primary direction evidence.\\\",\\\"1m/5m are primarily entry timing and reachability evidence.\\\"]},\\\"evidenceCompleteness\\\":0.8623999999999998,\\\"contradictions\\\":[],\\\"evidence\\\":[{\\\"id\\\":\\\"price.last\\\",\\\"category\\\":\\\"PRICE\\\",\\\"label\\\":\\\"Last price\\\",\\\"value\\\":\\\"0.16772\\\",\\\"ts\\\":1787868134321},{\\\"id\\\":\\\"price.mark\\\",\\\"category\\\":\\\"PRICE\\\",\\\"label\\\":\\\"Mark price\\\",\\\"value\\\":\\\"0.16746113\\\",\\\"ts\\\":1787868134321},{\\\"id\\\":\\\"price.spread\\\",\\\"category\\\":\\\"MICROSTRUCTURE\\\",\\\"label\\\":\\\"Spread bps\\\",\\\"value\\\":\\\"0.5962495900790031\\\",\\\"ts\\\":1787868134321},{\\\"id\\\":\\\"tech.1m.trend\\\",\\\"category\\\":\\\"TECHNICAL\\\",\\\"label\\\":\\\"1m trend\\\",\\\"value\\\":\\\"UP/1.00\\\",\\\"ts\\\":1787868179999},{\\\"id\\\":\\\"tech.1m.macd\\\",\\\"category\\\":\\\"TECHNICAL\\\",\\\"label\\\":\\\"1m MACD\\\",\\\"value\\\":\\\"0.0012793/0.00097566/0.00030369\\\",\\\"ts\\\":1787868179999},{\\\"id\\\":\\\"tech.1m.bb\\\",\\\"category\\\":\\\"TECHNICAL\\\",\\\"label\\\":\\\"1m BB position\\\",\\\"value\\\":\\\"1.023\\\",\\\"ts\\\":1787868179999},{\\\"id\\\":\\\"tech.5m.trend\\\",\\\"category\\\":\\\"TECHNICAL\\\",\\\"label\\\":\\\"5m trend\\\",\\\"value\\\":\\\"UP/1.00\\\",\\\"ts\\\":1787867999999},{\\\"id\\\":\\\"tech.5m.macd\\\",\\\"category\\\":\\\"TECHNICAL\\\",\\\"label\\\":\\\"5m MACD\\\",\\\"value\\\":\\\"0.0012353/0.00075931/0.00047594\\\",\\\"ts\\\":1787867999999},{\\\"id\\\":\\\"tech.5m.bb\\\",\\\"category\\\":\\\"TECHNICAL\\\",\\\"label\\\":\\\"5m BB position\\\",\\\"value\\\":\\\"1.188\\\",\\\"ts\\\":1787867999999},{\\\"id\\\":\\\"tech.15m.trend\\\",\\\"category\\\":\\\"TECHNICAL\\\",\\\"label\\\":\\\"15m trend\\\",\\\"value\\\":\\\"UP/1.00\\\",\\\"ts\\\":1787867999999},{\\\"id\\\":\\\"tech.15m.macd\\\",\\\"category\\\":\\\"TECHNICAL\\\",\\\"label\\\":\\\"15m MACD\\\",\\\"value\\\":\\\"0.00079318/0.00023891/0.00055427\\\",\\\"ts\\\":1787867999999},{\\\"id\\\":\\\"tech.15m.bb\\\",\\\"category\\\":\\\"TECHNICAL\\\",\\\"label\\\":\\\"15m BB position\\\",\\\"value\\\":\\\"1.248\\\",\\\"ts\\\":1787867999999},{\\\"id\\\":\\\"tech.4h.trend\\\",\\\"category\\\":\\\"TECHNICAL\\\",\\\"label\\\":\\\"4h trend\\\",\\\"value\\\":\\\"UP/1.00\\\",\\\"ts\\\":1787875199999},{\\\"id\\\":\\\"tech.4h.macd\\\",\\\"category\\\":\\\"TECHNICAL\\\",\\\"label\\\":\\\"4h MACD\\\",\\\"value\\\":\\\"0.035682/0.028626/0.0070569\\\",\\\"ts\\\":1787875199999},{\\\"id\\\":\\\"tech.4h.bb\\\",\\\"category\\\":\\\"TECHNICAL\\\",\\\"label\\\":\\\"4h BB position\\\",\\\"value\\\":\\\"0.806\\\",\\\"ts\\\":1787875199999},{\\\"id\\\":\\\"tech.1d.trend\\\",\\\"category\\\":\\\"TECHNICAL\\\",\\\"label\\\":\\\"1d trend\\\",\\\"value\\\":\\\"UP/1.00\\\",\\\"ts\\\":1787875199999},{\\\"id\\\":\\\"tech.1d.macd\\\",\\\"category\\\":\\\"TECHNICAL\\\",\\\"label\\\":\\\"1d MACD\\\",\\\"value\\\":\\\"0.019557/0.0073029/0.012254\\\",\\\"ts\\\":1787875199999},{\\\"id\\\":\\\"tech.1d.bb\\\",\\\"category\\\":\\\"TECHNICAL\\\",\\\"label\\\":\\\"1d BB position\\\",\\\"value\\\":\\\"1.349\\\",\\\"ts\\\":1787875199999},{\\\"id\\\":\\\"tech.1w.trend\\\",\\\"category\\\":\\\"TECHNICAL\\\",\\\"label\\\":\\\"1w trend\\\",\\\"value\\\":\\\"UP/0.50\\\",\\\"ts\\\":1788134399999},{\\\"id\\\":\\\"tech.1w.macd\\\",\\\"category\\\":\\\"TECHNICAL\\\",\\\"label\\\":\\\"1w MACD\\\",\\\"value\\\":\\\"-0.00014864/-0.011579/0.011430\\\",\\\"ts\\\":1788134399999},{\\\"id\\\":\\\"tech.1w.bb\\\",\\\"category\\\":\\\"TECHNICAL\\\",\\\"label\\\":\\\"1w BB position\\\",\\\"value\\\":\\\"1.568\\\",\\\"ts\\\":1788134399999},{\\\"id\\\":\\\"derivatives.oi15\\\",\\\"category\\\":\\\"DERIVATIVES\\\",\\\"label\\\":\\\"OI change 15m\\\",\\\"value\\\":\\\"missing\\\",\\\"ts\\\":1787867925377},{\\\"id\\\":\\\"derivatives.taker\\\",\\\"category\\\":\\\"DERIVATIVES\\\",\\\"label\\\":\\\"Taker buy/sell 5m\\\",\\\"value\\\":\\\"missing\\\",\\\"ts\\\":1787867925377}],\\\"portfolioIntelligence\\\":{\\\"underlying\\\":\\\"BTR\\\",\\\"quoteAsset\\\":\\\"USDT\\\",\\\"riskTier\\\":\\\"LIQUID_ALT\\\",\\\"directionPolicy\\\":\\\"BOTH\\\",\\\"locationScore\\\":24,\\\"recommendedMargin\\\":16.200143273749344,\\\"recommendedLeverage\\\":12,\\\"marginMode\\\":\\\"AUTO\\\",\\\"existingUnderlyingExposure\\\":0,\\\"allocationAdmission\\\":\\\"PENDING_PRIMARY\\\",\\\"reasons\\\":[]}}}\",\"timing\":{\"queueMs\":0,\"promptBuildMs\":0,\"requestMs\":13159,\"parseMs\":0,\"retryMs\":0,\"totalMs\":13164},\"failure\":null,\"outputPreview\":\"{\\\"choices\\\":[{\\\"finish_reason\\\":\\\"stop\\\",\\\"index\\\":0,\\\"message\\\":{\\\"role\\\":\\\"assistant\\\",\\\"content\\\":\\\"{\\\\n  \\\\\\\"symbol\\\\\\\": \\\\\\\"BTRUSDT\\\\\\\",\\\\n  \\\\\\\"summary\\\\\\\": \\\\\\\"Strong bullish momentum across 1m/5m/15m timeframes with price above all EMAs and MACD showing recent bullish crossovers. Order book shows significant ask depth at current levels, suggesting potential resistance or accumulation. Volume Z-scores indicate elevated activity relative to recent norms.\\\\\\\",\\\\n  \\\\\\\"keyEvidence\\\\\\\": [\\\\n    \\\\\\\"Price trend UP on 1m/5m/15m with trendStrength=1\\\\\\\",\\\\n    \\\\\\\"MACD crossDirection BULLISH on all timeframes (ages: 5, 10, 5 bars)\\\\\\\",\\\\n    \\\\\\\"BB position > 1.0 indicating price above middle band\\\\\\\",\\\\n    \\\\\\\"Ask depth significantly higher than bid depth at immediate levels\\\\\\\",\\\\n    \\\\\\\"24h price change +27.32% showing strong upward move\\\\\\\"\\\\n  ],\\\\n  \\\\\\\"contradictions\\\\\\\": [],\\\\n  \\\\\\\"missingEvidence\\\\\\\": [\\\\n    \\\\\\\"Open interest change data for 5m/15m is null\\\\\\\",\\\\n    \\\\\\\"Taker buy/sell ratio for 5m is null\\\\\\\",\\\\n    \\\\\\\"Global long/short ratio not available\\\\\\\",\\\\n    \\\\\\\"Top trader position ratio missing\\\\\\\"\\\\n  ],\\\\n  \\\\\\\"attentionScore\\\\\\\": 0.8624\\\\n}\\\"}}],\\\"created\\\":1787868157,\\\"model\\\":\\\"qwen3.5:9b\\\",\\\"system_fingerprint\\\":\\\"b10276-6ea215d17\\\",\\\"object\\\":\\\"chat.completion\\\",\\\"usage\\\":{\\\"completion_tokens\\\":277,\\\"prompt_tokens\\\":2902,\\\"total_tokens\\\":3179,\\\"prompt_tokens_details\\\":{\\\"cached_tokens\\\":0}},\\\"id\\\":\\\"chatcmpl-fHgSzRZdXXOcxKnU6sVxduIdre62DsBX\\\",\\\"timings\\\":{\\\"cache_n\\\":0,\\\"prompt_n\\\":2902,\\\"prompt_ms\\\":2237.164,\\\"prompt_per_token_ms\\\":0.7709042039972434,\\\"prompt_per_second\\\":1297.1780343327532,\\\"predicted_n\\\":277,\\\"predicted_ms\\\":5543.142,\\\"predicted_per_token_ms\\\":20.011342960288808,\\\"predicted_per_second\\\":49.97165867300531}}\",\"normalizedPreview\":\"{\\\"symbol\\\":\\\"BTRUSDT\\\",\\\"summary\\\":\\\"Strong bullish momentum across 1m/5m/15m timeframes with price above all EMAs and MACD showing recent bullish crossovers. Order book shows significant ask depth at current levels, suggesting potential resistance or accumulation. Volume Z-scores indicate elevated activity relative to recent norms.\\\",\\\"keyEvidence\\\":[\\\"Price trend UP on 1m/5m/15m with trendStrength=1\\\",\\\"MACD crossDirection BULLISH on all timeframes (ages: 5, 10, 5 bars)\\\",\\\"BB position > 1.0 indicating price above middle band\\\",\\\"Ask depth significantly higher than bid depth at immediate levels\\\",\\\"24h price change +27.32% showing strong upward move\\\"],\\\"contradictions\\\":[],\\\"missingEvidence\\\":[\\\"Open interest change data for 5m/15m is null\\\",\\\"Taker buy/sell ratio for 5m is null\\\",\\\"Global long/short ratio not available\\\",\\\"Top trader position ratio missing\\\"],\\\"attentionScore\\\":0.8624}\"}",
+      "updated_at": 1787868159894,
+      "role": "SCOUT",
+      "model": "qwen3.5:9b",
+      "decision": null,
+      "direction": null,
+      "completed_at": 1787868159889,
+      "latency_ms": 13164,
+      "input_tokens": 2902,
+      "output_tokens": 277,
+      "short_reason": null
+    }
+  },
+  "trade_records": {
+    "count": {
+      "n": 158
+    },
+    "sample": {
+      "trade_id": "trade_exchange_PNUTUSDT_LONG",
+      "status": "CLOSED",
+      "symbol": "PNUTUSDT",
+      "payload": "{\"tradeId\":\"trade_exchange_PNUTUSDT_LONG\",\"symbol\":\"PNUTUSDT\",\"direction\":\"LONG\",\"openedAt\":1787581076675,\"closedAt\":1787838484012,\"durationMs\":257407337,\"entryQty\":339,\"entryAveragePrice\":0.07384958702064896,\"exitAveragePrice\":null,\"entryFee\":null,\"exitFee\":null,\"totalFee\":null,\"funding\":null,\"entryGrossNotional\":25.03501,\"exitGrossNotional\":0,\"marginUsed\":1.2517505,\"netRoiOnMargin\":null,\"netReturnOnNotional\":null,\"entryFillCount\":0,\"exitFillCount\":0,\"feeBreakdown\":[],\"grossRealizedPnl\":null,\"netPnl\":null,\"closeReason\":\"RECONCILIATION\",\"status\":\"CLOSED\",\"entryRunId\":null,\"entryIntentId\":null,\"entryOrderIds\":[],\"exitOrderIds\":[],\"source\":\"IMPORTED_AT_STARTUP\",\"regime\":null,\"feeCompleteness\":\"PARTIAL\",\"recordCompleteness\":\"PARTIAL\",\"classification\":\"IMPORTED\",\"canonical\":true,\"duplicateOf\":null,\"cycleId\":null,\"repairSource\":\"RECONCILIATION\",\"linkedFillIds\":[],\"missingFacts\":[\"EXIT_FACT\",\"FEE_FACT\",\"EXCHANGE_FILL_CONSERVATION\"],\"integrityFlags\":[\"CLOSED_NO_EXIT_FACT\",\"FILL_CONSERVATION_FAILED\"],\"createdAt\":1787581076675,\"updatedAt\":1787838484012,\"firstObservedAt\":1787581076675}",
+      "updated_at": 1789005619274
+    }
+  },
+  "decision_snapshots": {
+    "count": {
+      "n": 493888
+    },
+    "sample": {
+      "snapshot_id": "snapshot_mtaq3wt4_fl737581",
+      "candidate_id": null,
+      "symbol": "PNUTUSDT",
+      "created_at": 1787786812121,
+      "payload": "{\"snapshotId\":\"snapshot_mtaq3wt4_fl737581\",\"symbol\":\"PNUTUSDT\",\"candidateId\":null,\"marketSnapshotId\":\"market_PNUTUSDT_1787786797957\",\"portfolioSnapshotId\":\"portfolio_1787786812121\",\"settingsVersion\":15,\"capitalSnapshotId\":\"capital_1787786794287\",\"exposureSnapshotId\":\"risk_mtaq3wt5_jvivwzw7\",\"createdAt\":1787786812121,\"dataQuality\":{\"id\":\"dq_mtaq3wt4_rsgqdp5v\",\"status\":\"DEGRADED\",\"reasons\":[\"DERIVATIVE_FIELD_MISSING\"],\"checkedAt\":1787786812120,\"snapshotId\":\"market_PNUTUSDT_1787786797957\"},\"riskEnvelope\":{\"id\":\"risk_mtaq3wt5_jvivwzw7\",\"status\":\"REJECT_GROSS_EXPOSURE\",\"equity\":9501.2554665332,\"grossNotional\":67044.1729969937,\"grossNotionalPct\":7.056348840755531,\"longNotional\":59273.600863918,\"longExposurePct\":6.238501961419803,\"shortNotional\":7770.5721330757,\"shortExposurePct\":0.8178468793357274,\"cluster\":\"OTHER\",\"clusterExposurePct\":4.1087103337637,\"quoteAssetMarginUsage\":0,\"maxPositions\":12,\"reservedIntents\":0,\"workingOrders\":0,\"liquidationBufferEstimate\":0,\"perTradeRiskUsd\":95.012554665332,\"perTradeRiskPctEquity\":0.01,\"dailyDrawdownPct\":0,\"expectedAdverseMovePct\":0.007020331540129977,\"riskLimitedNotional\":13533.912767825337,\"finalNotional\":0,\"reasons\":[\"GROSS_EXPOSURE_LIMIT\"],\"createdAt\":1787786812121},\"structuredInvalidation\":{\"id\":\"inv_mtaq3wt4_cj1evwks\",\"type\":\"PRICE_LEVEL\",\"triggerPrice\":0.05037266252322952,\"referencePrice\":0.05109,\"timeframe\":\"15m\",\"expiryAt\":1787801212120,\"maxLossUsd\":95.012554665332,\"maxLossPctEquity\":0.01,\"atrDistance\":2,\"reasonCode\":\"STRUCTURE_ATR_SHADOW\",\"evidenceRefs\":[\"snapshot_mtaq3wt4_fl737581\",\"riskQty:132451.68103176067\"],\"generatedAt\":1787786812120,\"snapshotId\":\"snapshot_mtaq3wt4_fl737581\"},\"evidence\":{\"score\":0.7906976744186046,\"coveredWeight\":0.86,\"missing\":[\"globalRegime\",\"experience\"]}}"
+    }
+  },
+  "shadow_mark_series": {
+    "count": {
+      "n": 430873
+    },
+    "sample": {
+      "id": "mark_snapshot_mtc28226_41y91xu3",
+      "ts": 1787867627118,
+      "symbol": "ZECUSDT",
+      "mark": 807.46651637,
+      "bid": 807.38,
+      "ask": 808.62,
+      "snapshot_id": "snapshot_mtc28226_41y91xu3"
+    }
+  },
+  "decision_episodes": {
+    "count": {
+      "n": 16414
+    },
+    "sample": {
+      "episode_id": "episode_airun_mtci6sl0_8y82zs66",
+      "run_id": "airun_mtci6sl0_8y82zs66",
+      "packet_id": "eip_mtci6kou_wzz6uhpv",
+      "scout_run_id": null,
+      "symbol": "TACUSDT",
+      "underlying": "TAC",
+      "quote_asset": "USDT",
+      "decided_at": 1787894442036,
+      "direction": null,
+      "decision": null,
+      "completeness": "PARTIAL",
+      "outcome_status": "UNKNOWN",
+      "snapshot_id": null,
+      "risk_tier": "LIQUID_ALT",
+      "liquidity_class": "MEGA",
+      "regime_state": "RANGE",
+      "regime_age_ms": 1800000,
+      "transition_score": 21.174329852465206,
+      "fingerprint": "30fdc6e19f0edb04727dc605",
+      "would_reuse": 1,
+      "return_15m": null,
+      "return_1h": null,
+      "return_4h": null,
+      "return_24h": null,
+      "return_3d": null,
+      "return_7d": null,
+      "mfe": null,
+      "mae": null,
+      "feature_json": "{\"trend15m\":\"DOWN\",\"trend4h\":\"RANGE\",\"trend1d\":\"RANGE\",\"emaDistanceAtr\":-1.5389949112232701,\"atrPercent\":2.9564511671378324,\"bbPercentile\":0.19133775958334076,\"macdAcceleration\":-0.000007833125733833397,\"locationScore\":66,\"spreadBps\":3.4620045006063105,\"volume24h\":7053744813.590865,\"riskTier\":\"LIQUID_ALT\",\"liquidityClass\":\"MEGA\",\"btcEthAlignment\":\"LOW_VOLATILITY\",\"multiTfConflict\":0.6666666666666666,\"mark\":0.00288696,\"bar15m\":1986549,\"evidenceCompleteness\":0.8623999999999998}",
+      "decision_json": "{\"status\":\"RUNNING\",\"direction\":null,\"decision\":null,\"confidence\":null,\"reason\":null,\"inputTokens\":null,\"outputTokens\":null,\"shadowOnly\":true,\"groundTruth\":false}",
+      "outcome_json": "{\"factVersion\":\"V3.8.0\",\"status\":\"UNKNOWN\",\"labelStatus\":\"INVALID_LABEL\",\"supersedes\":\"V3.7.0_MIXED_COMPLETED_AT_AND_EIP_PRICE\",\"horizons\":{},\"mfe\":null,\"mae\":null}",
+      "updated_at": 1788776010581
+    }
+  },
+  "runtime_entities": {
+    "count": {
+      "n": 23654
+    },
+    "sample": {
+      "kind": "positions",
+      "entity_id": "exchange_BCHUSDT_SHORT",
+      "payload": "{\"id\":\"exchange_BCHUSDT_SHORT\",\"symbol\":\"BCHUSDT\",\"side\":\"SHORT\",\"quantity\":3.827,\"entryPrice\":249.23000000000002,\"markPrice\":251.349998,\"leverage\":12,\"unrealizedPnl\":-8.113232345999927,\"unrealizedPnlPercent\":-10.20742928218905,\"openedAt\":1788613243818,\"firstObservedAt\":1788613243818,\"entryTimeSource\":\"SYSTEM_FILL\",\"managementStatus\":\"HUMAN_MANAGED\",\"humanManagedAt\":1788699651103,\"tpStatus\":\"PROTECTED\",\"tpOrderId\":\"tp_mtoe7dsk_002fc3b\",\"tpLastVerifiedAt\":1789011102913,\"tpCoverageSource\":\"BINANCE_OPEN_ORDER\",\"tpEconomics\":{\"currentTpPrice\":248.1,\"expectedGrossProfit\":4.324510000000092,\"expectedFees\":0.8374440404000001,\"expectedNetProfit\":3.4870659596000917,\"requiredNetProfit\":0.11922540125000002,\"breakEvenPrice\":249.01077405941385,\"minProfitableExitPrice\":248.97963401103516,\"status\":\"TP_OK\"}}"
+    }
+  },
+  "entityKinds": [
+    {
+      "kind": "aiRuns",
+      "n": 4810
+    },
+    {
+      "kind": "allocationPlans",
+      "n": 2962
+    },
+    {
+      "kind": "entryIntents",
+      "n": 407
+    },
+    {
+      "kind": "entryOrders",
+      "n": 384
+    },
+    {
+      "kind": "entryReservations",
+      "n": 2514
+    },
+    {
+      "kind": "executionFills",
+      "n": 6765
+    },
+    {
+      "kind": "experienceSamples",
+      "n": 20
+    },
+    {
+      "kind": "manualIntents",
+      "n": 48
+    },
+    {
+      "kind": "manualOrders",
+      "n": 11
+    },
+    {
+      "kind": "positions",
+      "n": 46
+    },
+    {
+      "kind": "tpOrders",
+      "n": 5529
+    },
+    {
+      "kind": "tradeRecords",
+      "n": 158
+    }
+  ],
+  "ai": [
+    {
+      "role": "PRIMARY_BRAIN",
+      "model": "qwen/qwen3.8-27b",
+      "status": "COMPLETED",
+      "n": 17833,
+      "first": 1787868159901,
+      "last": 1789002787354
+    },
+    {
+      "role": "PRIMARY_BRAIN",
+      "model": "qwen/qwen3.8-27b",
+      "status": "FAILED",
+      "n": 3171,
+      "first": 1787870334817,
+      "last": 1789011105981
+    },
+    {
+      "role": "PRIMARY_BRAIN",
+      "model": "qwen/qwen3.8-27b",
+      "status": "RUNNING",
+      "n": 37,
+      "first": 1787894442036,
+      "last": 1788997238758
+    },
+    {
+      "role": "SCOUT",
+      "model": "qwen3.5:9b",
+      "status": "COMPLETED",
+      "n": 13093,
+      "first": 1787868146725,
+      "last": 1788611660812
+    },
+    {
+      "role": "SCOUT",
+      "model": "qwen3.5:9b",
+      "status": "FAILED",
+      "n": 293,
+      "first": 1787871610774,
+      "last": 1788610987857
+    },
+    {
+      "role": "SCOUT",
+      "model": "qwen3.5:9b",
+      "status": "RUNNING",
+      "n": 16,
+      "first": 1787873732161,
+      "last": 1788611675530
+    }
+  ],
+  "recentAi": [
+    {
+      "run_id": "airun_mtuz0rzx_ow00w5sn",
+      "started_at": 1789011105981,
+      "status": "FAILED",
+      "short_reason": "fetch failed",
+      "decision": null,
+      "model": "qwen/qwen3.8-27b"
+    },
+    {
+      "run_id": "airun_mtuz0q22_19b2p3cn",
+      "started_at": 1789011103466,
+      "status": "FAILED",
+      "short_reason": "fetch failed",
+      "decision": null,
+      "model": "qwen/qwen3.8-27b"
+    },
+    {
+      "run_id": "airun_mtuz0o4l_co2otfim",
+      "started_at": 1789011100965,
+      "status": "FAILED",
+      "short_reason": "fetch failed",
+      "decision": null,
+      "model": "qwen/qwen3.8-27b"
+    },
+    {
+      "run_id": "airun_mtuz0m7h_z9ysluoo",
+      "started_at": 1789011098477,
+      "status": "FAILED",
+      "short_reason": "fetch failed",
+      "decision": null,
+      "model": "qwen/qwen3.8-27b"
+    },
+    {
+      "run_id": "airun_mtuz0k9j_w5cpi2n9",
+      "started_at": 1789011095959,
+      "status": "FAILED",
+      "short_reason": "fetch failed",
+      "decision": null,
+      "model": "qwen/qwen3.8-27b"
+    },
+    {
+      "run_id": "airun_mtuz0ic3_swvxipdd",
+      "started_at": 1789011093459,
+      "status": "FAILED",
+      "short_reason": "fetch failed",
+      "decision": null,
+      "model": "qwen/qwen3.8-27b"
+    }
+  ]
+}

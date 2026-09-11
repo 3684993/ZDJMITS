@@ -1,0 +1,16 @@
+{
+  "asOf": 1788933981311,
+  "status": "HEALTHY",
+  "latencyMs": 201,
+  "serverTime": {
+    "serverTime": 1788933981928
+  },
+  "effectiveBaseUrl": "https://testnet.binancefuture.com",
+  "throughProxy": false,
+  "route": {
+    "mode": "DIRECT",
+    "throughProxy": false,
+    "host": "testnet.binancefuture.com"
+  },
+  "exchangeWrites": 0
+}

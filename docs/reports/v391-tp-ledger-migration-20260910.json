@@ -1,0 +1,126 @@
+{
+  "at": 1788991694185,
+  "changes": [
+    {
+      "before": {
+        "id": "tp_mtu4e94x_o2kz8hyx",
+        "clientOrderId": "tp_mtu4e94x_00ca888",
+        "exchangeOrderId": null,
+        "positionId": "exchange_INJUSDT_LONG",
+        "symbol": "INJUSDT",
+        "side": "SELL",
+        "quantity": 21.8,
+        "price": 6.297,
+        "status": "UNKNOWN",
+        "createdAt": 1788959666625,
+        "updatedAt": 1788959666625
+      },
+      "after": {
+        "id": "tp_mtu4e94x_o2kz8hyx",
+        "clientOrderId": "tp_mtu4e94x_00ca888",
+        "exchangeOrderId": null,
+        "positionId": "exchange_INJUSDT_LONG",
+        "symbol": "INJUSDT",
+        "side": "SELL",
+        "quantity": 21.8,
+        "price": 6.297,
+        "status": "REJECTED",
+        "createdAt": 1788959666625,
+        "updatedAt": 1788991694169
+      },
+      "evidence": {
+        "orderId": "tp_mtu4e94x_o2kz8hyx",
+        "clientOrderId": "tp_mtu4e94x_00ca888",
+        "previousStatus": "UNKNOWN",
+        "status": "REJECTED",
+        "exchangeCode": -2022,
+        "preparedEventId": "evt_1788959666625_13136",
+        "failureEventId": "evt_1788959667504_13142",
+        "exactLookupAt": 1788991430158,
+        "exactLookupCode": -2013,
+        "exchangeWrites": 0
+      }
+    },
+    {
+      "before": {
+        "id": "tp_mtukvuiu_ogtorml6",
+        "clientOrderId": "tp_mtukvuiu_01f5043",
+        "exchangeOrderId": null,
+        "positionId": "exchange_ETHUSDC_SHORT",
+        "symbol": "ETHUSDC",
+        "side": "BUY",
+        "quantity": 0.716,
+        "price": 2454.1,
+        "status": "UNKNOWN",
+        "createdAt": 1788987361350,
+        "updatedAt": 1788987361350
+      },
+      "after": {
+        "id": "tp_mtukvuiu_ogtorml6",
+        "clientOrderId": "tp_mtukvuiu_01f5043",
+        "exchangeOrderId": null,
+        "positionId": "exchange_ETHUSDC_SHORT",
+        "symbol": "ETHUSDC",
+        "side": "BUY",
+        "quantity": 0.716,
+        "price": 2454.1,
+        "status": "REJECTED",
+        "createdAt": 1788987361350,
+        "updatedAt": 1788991694170
+      },
+      "evidence": {
+        "orderId": "tp_mtukvuiu_ogtorml6",
+        "clientOrderId": "tp_mtukvuiu_01f5043",
+        "previousStatus": "UNKNOWN",
+        "status": "REJECTED",
+        "exchangeCode": -2022,
+        "preparedEventId": "evt_1788987361350_148213",
+        "failureEventId": "evt_1788987361967_148215",
+        "exactLookupAt": 1788991430158,
+        "exactLookupCode": -2013,
+        "exchangeWrites": 0
+      }
+    },
+    {
+      "before": {
+        "id": "tp_mtul2q4o_5j63utii",
+        "clientOrderId": "tp_mtul2q4o_01i114b",
+        "exchangeOrderId": null,
+        "positionId": "exchange_ORCAUSDT_LONG",
+        "symbol": "ORCAUSDT",
+        "side": "SELL",
+        "quantity": 97.1,
+        "price": 1.485,
+        "status": "UNKNOWN",
+        "createdAt": 1788987682248,
+        "updatedAt": 1788987682248
+      },
+      "after": {
+        "id": "tp_mtul2q4o_5j63utii",
+        "clientOrderId": "tp_mtul2q4o_01i114b",
+        "exchangeOrderId": null,
+        "positionId": "exchange_ORCAUSDT_LONG",
+        "symbol": "ORCAUSDT",
+        "side": "SELL",
+        "quantity": 97.1,
+        "price": 1.485,
+        "status": "REJECTED",
+        "createdAt": 1788987682248,
+        "updatedAt": 1788991694170
+      },
+      "evidence": {
+        "orderId": "tp_mtul2q4o_5j63utii",
+        "clientOrderId": "tp_mtul2q4o_01i114b",
+        "previousStatus": "UNKNOWN",
+        "status": "REJECTED",
+        "exchangeCode": -2022,
+        "preparedEventId": "evt_1788987682248_150202",
+        "failureEventId": "evt_1788987682635_150203",
+        "exactLookupAt": 1788991430158,
+        "exactLookupCode": -2013,
+        "exchangeWrites": 0
+      }
+    }
+  ],
+  "exchangeWrites": 0
+}

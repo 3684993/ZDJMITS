@@ -1,0 +1,8 @@
+param([int]$Port=8080)
+$ErrorActionPreference='Stop';$root=(Resolve-Path (Join-Path $PSScriptRoot '..')).Path
+foreach($p in 20081,8081,8084){if(-not(Test-NetConnection 127.0.0.1 -Port $p -InformationLevel Quiet -WarningAction SilentlyContinue)){throw "Required local dependency 127.0.0.1:$p is unavailable"}}
+$listener=Get-NetTCPConnection -State Listen -LocalPort $Port -ErrorAction SilentlyContinue|Select-Object -First 1
+if($listener){$owner=Get-CimInstance Win32_Process -Filter "ProcessId=$($listener.OwningProcess)";if($owner.CommandLine -notmatch 'apps[/\\]engine[/\\]dist[/\\]main\.js'){throw "Port $Port is occupied by PID $($listener.OwningProcess), not ZDJ-MITS"};Write-Output "ZDJ-MITS already listening: http://127.0.0.1:$Port";exit 0}
+if(-not(Test-Path (Join-Path $root 'apps\dashboard\dist\index.html'))){Push-Location $root;try{npm run build}finally{Pop-Location}}
+$logDir=Join-Path $root 'data\logs';New-Item -ItemType Directory -Force -Path $logDir|Out-Null;$stamp=Get-Date -Format 'yyyyMMdd-HHmmss';$env:ZDJ_HOST='127.0.0.1';$env:ZDJ_PORT="$Port";$p=Start-Process node -ArgumentList @('apps/engine/dist/main.js') -WorkingDirectory $root -RedirectStandardOutput (Join-Path $logDir "v3-$stamp.out.log") -RedirectStandardError (Join-Path $logDir "v3-$stamp.err.log") -WindowStyle Hidden -PassThru
+for($i=0;$i -lt 30;$i++){try{$h=Invoke-RestMethod "http://127.0.0.1:$Port/health" -TimeoutSec 3;if($h.ready){Write-Output "Dashboard: http://127.0.0.1:$Port  PID: $($p.Id)  Readiness: $($h.status)";exit 0}}catch{};Start-Sleep 1};throw "Engine PID $($p.Id) did not become ready; inspect $logDir"

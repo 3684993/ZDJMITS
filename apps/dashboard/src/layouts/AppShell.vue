@@ -1,0 +1,28 @@
+<script setup lang="ts">
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
+import { RouterLink, RouterView, useRoute } from 'vue-router';
+import { LayoutDashboard, Orbit, BrainCircuit, BriefcaseBusiness, ReceiptText, Database, Activity, Settings, ChartNoAxesCombined, Wifi, WifiOff, RefreshCw, BookOpen, MoreHorizontal, X } from 'lucide-vue-next';
+import { useSystemStore } from '../stores/system';
+import { isPrimaryMobileRoute, mobileMoreRouteNames, mobilePrimaryRouteNames, routePath } from '../navigation';
+import { RELEASE_LABEL, RELEASE_NAME } from '@zdj/contracts';
+const store=useSystemStore(),route=useRoute();
+const nav=[['overview','驾驶舱',LayoutDashboard],['universe','智能选币',Orbit],['temporal','市场周期',ChartNoAxesCombined],['intelligence','市场智能',ChartNoAxesCombined],['brain','AI 大脑',BrainCircuit],['positions','持仓',BriefcaseBusiness],['orders','订单',ReceiptText],['trade-records','交易记录',BookOpen],['memory','交易记忆',Database],['operations','运行中心',Activity],['settings','系统设置',Settings]] as const;
+const primaryNames=mobilePrimaryRouteNames,moreNames=mobileMoreRouteNames,moreOpen=ref(false);
+const primaryNav=computed(()=>nav.filter(([name])=>isPrimaryMobileRoute(name)));
+const moreNav=computed(()=>nav.filter(([name])=>moreNames.includes(name as typeof moreNames[number])));
+const title=computed(()=>nav.find(x=>x[0]===route.name)?.[1]??'智多金');
+let timer:number|undefined;
+onMounted(async()=>{await store.refresh();store.startRealtime();timer=window.setInterval(()=>{if(document.visibilityState==='visible')void store.refresh(['SNAPSHOT']);},15000)});
+onUnmounted(()=>{store.stopRealtime();if(timer)clearInterval(timer);document.body.classList.remove('drawer-open')});
+watch(moreOpen,value=>document.body.classList.toggle('drawer-open',value));watch(()=>route.name,()=>{moreOpen.value=false});
+const linkTo=routePath;
+const releaseLabel=RELEASE_LABEL,releaseName=RELEASE_NAME;
+</script>
+<template>
+  <div class="shell">
+    <aside class="sidebar"><div class="brand"><div class="brand-mark">智</div><div><strong>智多金</strong><span>{{releaseName}}</span></div></div><nav aria-label="主导航"><RouterLink v-for="[name,label,Icon] in nav" :key="name" :to="linkTo(name)" :class="{active:route.name===name}" :aria-current="route.name===name?'page':undefined"><component :is="Icon" :size="18"/><span>{{label}}</span></RouterLink></nav><div class="sidebar-foot"><div class="connection"><component :is="store.connected?Wifi:WifiOff" :size="15"/><span>{{store.connected?'实时通道在线':'实时通道重连中'}}</span></div><small>{{releaseLabel}} · MANUAL CONSOLE</small></div></aside>
+    <main class="workspace"><header class="topbar desktop-topbar"><div><p class="eyebrow">{{releaseLabel}} · MANUAL CONSOLE</p><h1>{{title}}</h1></div><div class="top-actions"><span class="mode-pill">{{store.snapshot?.settings.connections.exchange.environment??'—'}} · {{store.snapshot?.settings.connections.executionMode??'—'}}</span><button class="icon-button" aria-label="刷新" @click="store.refresh()"><RefreshCw :size="17"/></button></div></header><header class="mobile-appbar" aria-label="移动端应用栏"><button class="mobile-brand" aria-label="返回驾驶舱" @click="$router.push('/')"><span class="brand-mark">智</span><span><strong>{{title}}</strong><small>{{releaseLabel}} · {{store.connected?'实时在线':'重连中'}}</small></span></button><div class="mobile-appbar-actions"><span class="mode-pill">{{store.snapshot?.settings.connections.exchange.environment??'—'}}</span><button class="icon-button" aria-label="刷新" @click="store.refresh()"><RefreshCw :size="17"/></button></div></header><div v-if="store.error" class="error-banner">{{store.error}}</div><section class="content"><RouterView/></section></main>
+    <nav class="mobile-bottom-nav" aria-label="移动端主导航"><RouterLink v-for="[name,label,Icon] in primaryNav" :key="name" :to="linkTo(name)" :class="{active:route.name===name}" :aria-current="route.name===name?'page':undefined"><component :is="Icon" :size="19"/><span>{{label}}</span></RouterLink><button :class="{active:moreOpen||moreNav.some(([name])=>route.name===name)}" aria-label="更多页面" :aria-expanded="moreOpen" @click="moreOpen=!moreOpen"><MoreHorizontal :size="19"/><span>更多</span></button></nav>
+    <Transition name="drawer"><div v-if="moreOpen" class="mobile-drawer-backdrop" @click.self="moreOpen=false"><aside class="mobile-more-drawer" role="dialog" aria-modal="true" aria-label="更多页面"><div class="drawer-head"><div><span class="eyebrow">MORE</span><h2>更多页面</h2></div><button class="icon-button" aria-label="关闭更多菜单" @click="moreOpen=false"><X :size="18"/></button></div><nav class="drawer-links"><RouterLink v-for="[name,label,Icon] in moreNav" :key="name" :to="linkTo(name)" :class="{active:route.name===name}" :aria-current="route.name===name?'page':undefined"><component :is="Icon" :size="19"/><span>{{label}}</span></RouterLink></nav><div class="drawer-status"><component :is="store.connected?Wifi:WifiOff" :size="16"/><span>{{store.connected?'实时通道在线':'实时通道重连中'}}</span></div></aside></div></Transition>
+  </div>
+</template>

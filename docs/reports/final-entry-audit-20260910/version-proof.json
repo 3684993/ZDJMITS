@@ -1,0 +1,21 @@
+{
+  "asOf": "2026-09-10T03:39:00.266Z",
+  "artifactHash": "c4149408d3bbcd80480d1aac1cf00955211ab555985e0ccc662d5bce1b9d8437",
+  "sourceHash": "f95565073940beec45e72770eb1aa76f9752e483d89a87d91fd728f7dbb3b47d",
+  "running": {
+    "instanceId": "60854c50-3687-47a7-8207-f670e0513613",
+    "pid": 10836,
+    "startedAt": 1789004560219,
+    "host": "0.0.0.0",
+    "port": 8080,
+    "version": "3.9.0",
+    "buildId": "3.9.0-66582830ffebca300180",
+    "artifactHash": "66582830ffebca300180431e899369605a37a9f77ff7b909d03f48575e04cc5e",
+    "sourceHash": "04ba77a37e77459229d09630764ee7231250abadf3b56e9396b37b33b8ebf6db",
+    "startReason": "MANUAL_START",
+    "lanIps": [
+      "192.168.1.50"
+    ],
+    "restartCount": 97
+  }
+}

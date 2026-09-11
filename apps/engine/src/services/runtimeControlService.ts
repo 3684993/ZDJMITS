@@ -73,8 +73,12 @@ export class RuntimeControlService {
     this.admissionDetails=admission.decisions.map(row=>({symbol:row.symbol,underlying:row.underlying,executable:row.executable,reason:row.reason,reasonText:row.reasonText,long:row.longPlan,short:row.shortPlan}));
     const nextAt=now+settings.capitalCheckIntervalSeconds*1000,capitalEquity=Math.max(Number(this.state.account.equityUsd??0),this.state.account.assets.reduce((sum,row)=>sum+Number(row.usdValue??0),0),1),budget=directionBudget(this.state.settings,capitalEquity,[...this.state.positions.values()],now);
     const routed=admission.summary.routedCandidates.map(route=>{const quoteAvailable=this.state.account.assets.find(asset=>asset.asset===route.quoteAsset)?.availableBalance??0,quoteCapacity=Math.max(0,quoteAvailable*route.leverage*.995),recommendedLong=route.longRecommendedNotionalUsd??(route.longExecutable?route.marginUsd*route.leverage:0),recommendedShort=route.shortRecommendedNotionalUsd??(route.shortExecutable?route.marginUsd*route.leverage:0),longFeasible=Math.max(0,Math.min(recommendedLong,budget.longAvailableNotionalUsd,budget.grossAvailableNotionalUsd,quoteCapacity)),shortFeasible=Math.max(0,Math.min(recommendedShort,budget.shortAvailableNotionalUsd,budget.grossAvailableNotionalUsd,quoteCapacity)),minimum=route.minExecutableNotionalUsd??0;return{...route,longFeasibleNotionalUsd:longFeasible,shortFeasibleNotionalUsd:shortFeasible,longExecutable:route.longExecutable&&longFeasible+1e-8>=minimum,shortExecutable:route.shortExecutable&&shortFeasible+1e-8>=minimum};});
-    const routeGeneration=candidates.length?Math.max(...candidates.map((candidate:any)=>candidate.selectionGeneration??0)):this.state.marketGeneration,summary={...admission.summary,routedCandidates:routed,executableCandidateCount:routed.filter(x=>x.longExecutable||x.shortExecutable).length,directionBudget:budget,generation:routeGeneration,nextRecheckAt:nextAt};
+    // Capital version is independent from selection generation. Every completed
+    // admission evaluation advances it so dispatch never mistakes a market-rank
+    // generation for proof that balance/position/reservation/risk facts are unchanged.
+    const capitalVersion=Math.max(0,Number(current.capital?.generation??0))+1,summary={...admission.summary,routedCandidates:routed,executableCandidateCount:routed.filter(x=>x.longExecutable||x.shortExecutable).length,directionBudget:budget,generation:capitalVersion,nextRecheckAt:nextAt};
     this.state.runtimeControl={...current,capital:summary,nextCapitalCheckAt:nextAt};
+    this.events.publish('CAPITAL_ROUTE_EVALUATED',{capitalVersion,selectionGeneration:candidates.length?Math.max(...candidates.map((candidate:any)=>candidate.selectionGeneration??0)):this.state.marketGeneration,executableCandidateCount:summary.executableCandidateCount,evaluatedAt:summary.evaluatedAt});
     const governance=this.state.settings.riskGovernance,risk=this.state.account.riskBaseline,loss=Math.max(0,-Number(risk?.calendarDayRealizedPnlUsd??risk?.capitalEpochRealizedPnlUsd??0)),equity=Math.max(1,this.state.account.equityUsd??0),drawdownPct=Number(risk?.riskDrawdownPct??0),dailyLimitHit=governance.circuitBreakerEnabled&&((governance.maxDailyLossUsd>0&&loss>=governance.maxDailyLossUsd)||(governance.maxDailyLossPct>0&&loss/equity>=governance.maxDailyLossPct)||drawdownPct>governance.maxDailyDrawdownPct);
     const manualOverride=this.manualRiskOverrideActive(now);
     this.entryRiskBlocked=dailyLimitHit&&!manualOverride;
@@ -108,4 +112,3 @@ export class RuntimeControlService {
     return this.state.runtimeControl;
   }
 }
-

@@ -2,7 +2,7 @@ import type { RuntimeState } from '../state/runtimeState.js';
 import type { EventBus } from '../events/eventBus.js';
 
 const PERIOD_15M=900_000;
-const firstClosedAfter=(openedAt:number)=>Math.floor(openedAt/PERIOD_15M)*PERIOD_15M+PERIOD_15M-1;
+const firstClosedAfter=(openedAt:number)=>Math.floor((openedAt+1)/PERIOD_15M)*PERIOD_15M+PERIOD_15M-1;
 
 /** Deterministic closed-bar observer. It never calls AI, closes a position, or alters its TP. */
 export class LossHandoffService {

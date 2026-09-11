@@ -91,8 +91,8 @@ lerna-debug.log*
 *.pid.lock
 *.seed
 *.stackdump
-core
-core.*
+/core
+/core.*
 
 # ------------------------------------------------------------
 # 6. Temporary files

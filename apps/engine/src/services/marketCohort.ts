@@ -3,42 +3,118 @@ import type { RuntimeState } from '../state/runtimeState.js';
 import type { EventBus } from '../events/eventBus.js';
 import type { MarketDataHub } from './marketDataHub.js';
 
-/** Owns only inventory membership.  It neither authorizes Entry nor changes reservations. */
+/** Owns only inventory membership. It neither authorizes Entry nor changes reservations. */
 export class MarketCohort {
-  private members=new Set<string>(); private joinedAt=new Map<string,number>(); private flight:Promise<number>|null=null; private retryAt=0; private lastDiscoveryKey=''; private noResultKey='';
+  private members=new Set<string>();
+  private joinedAt=new Map<string,number>();
+  private flight:Promise<number>|null=null;
+  private retryAt=0;
+  private noResultKey='';
   constructor(private state:RuntimeState,private market:MarketDataHub,private events:EventBus,private now=()=>Date.now()){}
-  protectedSymbols(){return new Set([...this.state.positionSymbols(),...this.state.activeEntrySymbols(),...[...this.state.candidateLifecycle].filter(([,row]:any)=>['SCOUT_QUEUED','SCOUT_RUNNING','PRIMARY_QUEUED','PRIMARY_RUNNING','WAIT_FOR_PRICE','WAIT_EXECUTION_RANGE'].includes(row?.status)).map(([symbol])=>String(symbol).toUpperCase()),'BTCUSDT','ETHUSDT']);}
+
+  protectedSymbols(){
+    return new Set([
+      ...this.state.positionSymbols(),
+      ...this.state.activeEntrySymbols(),
+      ...[...this.state.candidateLifecycle]
+        .filter(([,row]:any)=>['SCOUT_QUEUED','SCOUT_RUNNING','PRIMARY_QUEUED','PRIMARY_RUNNING','WAIT_FOR_PRICE','WAIT_EXECUTION_RANGE'].includes(row?.status))
+        .map(([symbol])=>String(symbol).toUpperCase()),
+      'BTCUSDT','ETHUSDT',
+    ]);
+  }
   symbols(){return new Set(this.members);}
   private retain(){this.market.setRetentionSymbols(new Set([...this.members,...this.protectedSymbols()]));}
-  private blocked(){const c:any=this.state.runtimeControl?.capital,reason=String(this.state.runtimeControl?.reasonCode??'');return this.state.runtimeControl?.mode!=='RUNNING'||this.state.executionGovernance?.mode==='AUTO_PAUSED_RISK'||/CAPITAL|CAPACITY|RISK|SYSTEMIC/.test(reason)||Boolean(c&&c.executableCandidateCount===0);}
+
+  /** Only global non-supply blockers suppress inventory churn. Empty/supply-starved cohorts must still be able to bootstrap/refill. */
+  private globalBlockReason(){
+    const mode=String(this.state.runtimeControl?.mode??'');
+    const reason=String(this.state.runtimeControl?.reasonCode??'');
+    if(this.state.executionGovernance?.mode==='AUTO_PAUSED_RISK')return 'GLOBAL_RISK_PAUSE';
+    if(mode==='PAUSED_MANUAL')return 'MANUAL_PAUSE';
+    if(mode==='PAUSED_NO_CAPITAL'||/NO_CAPITAL/.test(reason))return 'NO_CAPITAL';
+    if(mode==='PAUSED_DAILY_RISK_LIMIT'||/DAILY_RISK|GLOBAL_RISK/.test(reason))return 'GLOBAL_RISK_PAUSE';
+    if(/POSITION_CAPACITY_FULL|CAPACITY_FULL/.test(reason))return 'POSITION_CAPACITY_FULL';
+    if(/SYSTEMIC_MARKET/.test(reason))return 'SYSTEMIC_MARKET_FAILURE';
+    // PAUSED_NO_EXECUTABLE_CONTRACT / MIN_EXECUTABLE_CANDIDATES_NOT_MET are supply signals,
+    // not reasons to prevent the component that can restore supply.
+    return null;
+  }
+
   async tick(reason='PERIODIC'){
     if(this.flight)return this.flight;
-    const now=this.now(),cfg:any=this.state.settings.selection.cohort??{size:100,hydrateBatchSize:20,refillBackoffSeconds:60};
-    this.retain();
-    if(now<this.retryAt||(this.blocked()&&this.members.size>0)){this.events.publish('MARKET_COHORT_DEFERRED',{reason,blocked:this.blocked(),retryAt:this.retryAt,size:this.members.size,supplyBootstrap:this.members.size===0});return 0;}
-    const key=`${this.state.settings.selection.assetDirectory?.version??''}:${this.state.generation}`;
+    const now=this.now(),cfg:any=this.state.settings.selection.cohort??{size:100,hydrateBatchSize:20,readyLowWatermark:6,refillBackoffSeconds:60,staleMemberRotationMinutes:120,protectedRatio:.75};
+    this.retireConsumed();
     this.rotateStale(now,cfg);
-    const ready=[...this.members].filter(symbol=>Boolean(this.market.snapshot(symbol))).length,gap=Math.max(0,cfg.size-this.members.size),low=ready<cfg.readyLowWatermark;
-    if((!gap&&!low)||this.noResultKey===key)return 0;
-    this.flight=this.refill(Math.min(gap,cfg.hydrateBatchSize),key,reason).finally(()=>this.flight=null);
+    this.retain();
+    const blocker=this.globalBlockReason();
+    if(now<this.retryAt||(blocker&&this.members.size>0)){
+      this.events.publish('MARKET_COHORT_DEFERRED',{reason,blocker,retryAt:this.retryAt,size:this.members.size,supplyBootstrap:this.members.size===0});
+      return 0;
+    }
+    const key=`${this.state.settings.selection.assetDirectory?.version??''}:${this.state.settings.settingsVersion}`;
+    const readyCount=this.state.pool.readyList().filter(item=>this.members.has(item.symbol)).length;
+    const gap=Math.max(0,cfg.size-this.members.size),low=readyCount<cfg.readyLowWatermark;
+    if(!gap&&!low)return 0;
+    // A full cohort with low execution-ready supply is rotated only through bounded stale retirement;
+    // do not evict fresh members merely to satisfy a low-watermark signal.
+    if(!gap)return 0;
+    const batch=Math.min(gap,cfg.hydrateBatchSize);
+    this.flight=this.refill(batch,key,reason).finally(()=>{this.flight=null;});
     return this.flight;
   }
+
   private async refill(batch:number,key:string,reason:string){
-    if(batch<=0){this.lastDiscoveryKey=key;return 0;}
+    if(batch<=0)return 0;
     const cfg:any=this.state.settings.selection.cohort,priority=[...(this.state.settings.selection.assetDirectory?.approvedLiquid??[]),...this.protectedSymbols()];
     try{
-      const discovered=await this.market.discover(Math.max(cfg.size,batch),priority), seen=new Set(this.members),underlyings=new Set([...this.members].map(resolveUnderlying));
+      const discovered=await this.market.discover(Math.max(cfg.size,batch),priority),seen=new Set(this.members),underlyings=new Set([...this.members,...this.protectedSymbols()].map(resolveUnderlying));
       const candidates=discovered.filter(symbol=>!seen.has(symbol)&&!underlyings.has(resolveUnderlying(symbol))).slice(0,batch);
-      if(!candidates.length){this.noResultKey=key;this.retryAt=this.now()+Math.max(1,cfg.refillBackoffSeconds)*1000;this.events.publish('MARKET_COHORT_NO_NEW_RESULT',{reason,key,retryAt:this.retryAt,members:this.members.size});return 0;}
-      // Retain candidates before I/O; failed cards never become members.
+      if(!candidates.length){
+        this.noResultKey=key;
+        const discoveryRetryMs=Math.max(Math.max(1,cfg.refillBackoffSeconds)*1000,Number(cfg.discoveryRefreshSeconds??900)*1000);
+        this.retryAt=this.now()+discoveryRetryMs;
+        this.events.publish('MARKET_COHORT_NO_NEW_RESULT',{reason,key,retryAt:this.retryAt,members:this.members.size});
+        return 0;
+      }
+      // Temporary ownership exists only for the in-flight hydration. Failed cards never become members.
       this.market.setRetentionSymbols(new Set([...this.market.retentionSymbols(),...candidates]));
       const loaded=await this.market.hydrateSymbols(candidates),ready=candidates.filter(symbol=>this.market.snapshot(symbol));
       for(const symbol of ready){this.members.add(symbol);this.joinedAt.set(symbol,this.now());}
-      this.retain(); this.lastDiscoveryKey=key; this.noResultKey=ready.length?'':key; this.retryAt=ready.length?0:this.now()+Math.max(1,cfg.refillBackoffSeconds)*1000;
-      this.events.publish('MARKET_COHORT_REFILLED',{reason,requested:candidates.length,loaded,members:this.members.size,retention:this.market.retentionSymbols().size});
-      return loaded;
-    }catch(error){const delay=Math.max(1,cfg.refillBackoffSeconds)*1000;this.noResultKey=key;this.retryAt=this.now()+delay;this.events.publish('MARKET_COHORT_FAILED',{reason,message:error instanceof Error?error.message:String(error),retryAt:this.retryAt});return 0;}
+      this.retain();
+      const partial=ready.length<candidates.length;
+      this.noResultKey=partial?key:'';
+      this.retryAt=partial?this.now()+Math.max(1,cfg.refillBackoffSeconds)*1000:0;
+      this.events.publish('MARKET_COHORT_REFILLED',{reason,requested:candidates.length,loaded,accepted:ready.length,partial,retryAt:this.retryAt,members:this.members.size,retention:this.market.retentionSymbols().size});
+      return ready.length;
+    }catch(error){
+      const delay=Math.max(1,cfg.refillBackoffSeconds)*1000;
+      this.noResultKey=key;this.retryAt=this.now()+delay;
+      this.retain();
+      this.events.publish('MARKET_COHORT_FAILED',{reason,message:error instanceof Error?error.message:String(error),retryAt:this.retryAt});
+      return 0;
+    }
   }
-  private rotateStale(now:number,cfg:any){const protectedSymbols=this.protectedSymbols(),maxAge=Math.max(1,cfg.staleMemberRotationMinutes??cfg.rotationMinutes??120)*60_000;for(const symbol of [...this.members])if(!protectedSymbols.has(symbol)&&now-(this.joinedAt.get(symbol)??now)>=maxAge){this.members.delete(symbol);this.joinedAt.delete(symbol);this.events.publish('MARKET_COHORT_RETIRED',{symbol,reason:'STALE_ROTATION'});}}
+
+  /** Positions and working/unknown entries are protected owners but no longer consume reusable cohort inventory. */
+  private retireConsumed(){
+    const consumed=new Set([...this.state.positionSymbols(),...this.state.activeEntrySymbols()].map(symbol=>String(symbol).toUpperCase()));
+    for(const symbol of [...this.members])if(consumed.has(symbol)){
+      this.members.delete(symbol);this.joinedAt.delete(symbol);
+      this.events.publish('MARKET_COHORT_RETIRED',{symbol,reason:'CONSUMED_PROTECTED_OWNER'});
+    }
+  }
+
+  private rotateStale(now:number,cfg:any){
+    const protectedSymbols=this.protectedSymbols(),maxAge=Math.max(1,cfg.staleMemberRotationMinutes??cfg.rotationMinutes??120)*60_000;
+    const maxRotate=Math.max(1,Math.floor(Math.max(1,cfg.size)*Math.max(0,1-Number(cfg.protectedRatio??.75))));
+    let rotated=0;
+    for(const symbol of [...this.members]){
+      if(rotated>=maxRotate)break;
+      if(!protectedSymbols.has(symbol)&&now-(this.joinedAt.get(symbol)??now)>=maxAge){
+        this.members.delete(symbol);this.joinedAt.delete(symbol);rotated++;
+        this.events.publish('MARKET_COHORT_RETIRED',{symbol,reason:'STALE_ROTATION'});
+      }
+    }
+  }
   remove(symbol:string){this.members.delete(symbol.toUpperCase());this.joinedAt.delete(symbol.toUpperCase());this.retain();}
 }

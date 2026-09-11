@@ -12,6 +12,11 @@ export const ServiceHealthSchema = z.object({
 });
 export type ServiceHealth = z.infer<typeof ServiceHealthSchema>;
 
+export const CandidateSupplyHealthSchema=z.object({
+  semanticVersion:z.string(),activeCohortCount:z.number().int().nonnegative(),activeCohortSemantic:z.string(),residentCount:z.number().int().nonnegative(),pipelineReadyCount:z.number().int().nonnegative(),executionReadyCount:z.number().int().nonnegative(),capitalExecutableCount:z.number().int().nonnegative(),poolResidentCount:z.number().int().nonnegative(),poolReadyCount:z.number().int().nonnegative(),poolWaitingCount:z.number().int().nonnegative(),consumedCount:z.number().int().nonnegative(),zombieSnapshotCount:z.number().int().nonnegative(),zombieSnapshots:z.array(z.string()),topBlockers:z.array(z.object({reason:z.string(),count:z.number().int().nonnegative()})),
+});
+export type CandidateSupplyHealth=z.infer<typeof CandidateSupplyHealthSchema>;
+
 export const DashboardSnapshotSchema = z.object({
   ts: z.number().int(),
   snapshotVersion: z.number().int().nonnegative().optional(),
@@ -24,6 +29,7 @@ export const DashboardSnapshotSchema = z.object({
     activePositions: z.number().int(), pendingEntries: z.number().int(), activeEntryOrders:z.number().int().optional(), activeTpOrders:z.number().int().optional(),
   }),
   universe: z.object({ total: z.number().int(), eligible: z.number().int(), topN: z.number().int(), generation:z.number().int().nonnegative().optional() }),
+  candidateSupply:CandidateSupplyHealthSchema.optional(),
   pool: z.array(PoolItemSchema),
   positions: z.array(PositionSchema),
   entryOrders: z.array(EntryOrderSchema),

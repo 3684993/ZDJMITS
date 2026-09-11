@@ -6,6 +6,7 @@ import type { EngineRuntime } from "../runtime/appRuntime.js";
 import { exposure, resolveUnderlying } from "@zdj/core";
 import { createHash } from 'node:crypto';
 import { byOpenedAtDesc } from './chronologicalSort.js';
+import { candidateSupplyHealth } from '../services/candidateSupplyHealth.js';
 function auditJson(value: unknown): string {
   if (value === undefined) return "undefined";
   if (value === null) return "null";
@@ -167,6 +168,7 @@ export function dashboardProjection(runtime: EngineRuntime): DashboardSnapshot {
       topN: s.settings.selection.universeTopN,
       generation: s.generation,
     },
+    candidateSupply:candidateSupplyHealth(s),
     pool: s.pool.list(),
     positions: [...s.positions.values()],
     entryOrders: activeEntries.sort((a, b) => b.updatedAt - a.updatedAt),

@@ -2,6 +2,8 @@ import type { BrainDecision, Candle, DerivativesSnapshot, EntryOrder, ManualOrde
 
 export interface MarketDataProvider {
   listSymbols(limit:number, prioritySymbols?:string[]):Promise<string[]>;
+  /** Lightweight discovery must not mutate WS subscriptions. Providers that support bounded retention should implement this. */
+  discoverSymbols?(limit:number, prioritySymbols?:string[]):Promise<string[]>;
   getSnapshot(symbol:string):Promise<MarketSymbolSnapshot>;
   getCandles(symbol:string,timeframe:Timeframe,limit:number):Promise<Candle[]>;
   getQuote(symbol:string):Promise<Quote>;
@@ -12,6 +14,7 @@ export interface MarketDataProvider {
   hydrateLiveTechnical?(snapshot:MarketSymbolSnapshot):MarketSymbolSnapshot;
   hydrateLive?(snapshot:MarketSymbolSnapshot):MarketSymbolSnapshot;
   streamMetrics?():unknown;
+  /** Authoritative online WS set when supplied by the runtime retention owner. */
   setLiveSymbols?(symbols:string[]):void;
   collectionCoverage?():Array<{requested:string;symbol:string|null;status:'COLLECTED'|'UNAVAILABLE';reason:string|null}>;
   stop?():void;

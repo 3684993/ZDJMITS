@@ -4,6 +4,7 @@ export const EntryDispositionSchema=z.enum(['PLACE_LONG','PLACE_SHORT','WAIT_FOR
 export const WaitConditionSchema=z.object({operator:z.enum(['LTE','GTE']),price:z.number().finite().positive(),validForMinutes:z.number().int().min(1).max(5)}).strict();
 export const OpportunityTypeSchema=z.enum(['TREND_PULLBACK','TREND_RESUMPTION','BREAKOUT_CONFIRMATION','RANGE_BOUNDARY_REVERSAL','NONE']);
 export const MarketRegimeSchema=z.enum(['TREND','RANGE','TRANSITION','EXTREME','UNKNOWN']);
+export const ProfitTakePlanSchema=z.object({targetPrice:z.number().finite().positive(),acceptableTargetRange:z.object({min:z.number().finite().positive(),max:z.number().finite().positive()}).strict(),targetHorizonMinutes:z.number().int().min(1).max(1440),targetReason:z.string().min(1).max(240),evidenceRefs:z.array(z.string().max(120)).max(4).default([])}).strict().superRefine((p,c)=>{if(p.acceptableTargetRange.min>p.acceptableTargetRange.max||p.targetPrice<p.acceptableTargetRange.min||p.targetPrice>p.acceptableTargetRange.max)c.addIssue({code:'custom',path:['acceptableTargetRange'],message:'target must be inside range'});});
 export const EntryDecisionV370Schema=z.object({
   action:z.literal('FINAL'),schemaVersion:z.literal('V3.9.2').default('V3.9.2'),decision:EntryDispositionSchema,direction:z.enum(['LONG','SHORT']),
   opportunityType:OpportunityTypeSchema.default('NONE'),marketRegime:MarketRegimeSchema.default('UNKNOWN'),
@@ -13,6 +14,7 @@ export const EntryDecisionV370Schema=z.object({
   horizonMinutes:z.number().int().min(1).max(5).nullable(),waitCondition:WaitConditionSchema.nullable(),
   directionReason:z.string().min(1).max(160),timingReason:z.string().min(1).max(160),entryLocationReason:z.string().min(1).max(160).default('Legacy location reason unavailable'),reason:z.string().min(1).max(160),entryInvalidation:z.string().min(1).max(400),
   longException:z.boolean().default(false),longExceptionReason:z.string().max(400).nullable().default(null),altLongQuality:z.number().min(0).max(100).nullable().default(null),supportingEvidenceRefs:z.array(z.string().max(120)).max(4).default([]),
+  profitTakePlan:ProfitTakePlanSchema.nullable().default(null),
 }).strict().superRefine((d,c)=>{
   const place=d.decision==='PLACE_LONG'||d.decision==='PLACE_SHORT';
   if(place&&(!d.acceptablePriceRange||d.idealPrice===null||d.horizonMinutes===null))c.addIssue({code:'custom',path:['idealPrice'],message:'PLACE requires explicit price/range/horizon'});
@@ -27,8 +29,8 @@ export const EntryDecisionV370Schema=z.object({
  * conditional if/then branches are not reliably reflected in its grammar. */
 const entryRangeSchema={type:'object',additionalProperties:false,required:['min','max'],properties:{min:{type:'number',exclusiveMinimum:0},max:{type:'number',exclusiveMinimum:0}}};
 const entryWaitSchema={type:'object',additionalProperties:false,required:['operator','price','validForMinutes'],properties:{operator:{enum:['LTE','GTE']},price:{type:'number',exclusiveMinimum:0},validForMinutes:{type:'integer',minimum:1,maximum:5}}};
-const entrySharedProperties={action:{const:'FINAL'},schemaVersion:{const:'V3.9.2'},opportunityType:{enum:['TREND_PULLBACK','TREND_RESUMPTION','BREAKOUT_CONFIRMATION','RANGE_BOUNDARY_REVERSAL','NONE']},marketRegime:{enum:['TREND','RANGE','TRANSITION','EXTREME','UNKNOWN']},confidence:{type:'number',minimum:0,maximum:1},directionReason:{type:'string',minLength:1,maxLength:160},timingReason:{type:'string',minLength:1,maxLength:160},entryLocationReason:{type:'string',minLength:1,maxLength:160},reason:{type:'string',minLength:1,maxLength:160},entryInvalidation:{type:'string',minLength:1,maxLength:400},longException:{type:'boolean'},longExceptionReason:{type:['string','null'],maxLength:400},altLongQuality:{type:['number','null'],minimum:0,maximum:100},supportingEvidenceRefs:{type:'array',maxItems:4,items:{type:'string',maxLength:120}}};
-const entryRequired=['action','schemaVersion','decision','direction','opportunityType','marketRegime','confidence','idealPrice','acceptablePriceRange','horizonMinutes','waitCondition','directionReason','timingReason','entryLocationReason','reason','entryInvalidation','longException','longExceptionReason','altLongQuality','supportingEvidenceRefs'];
+const entrySharedProperties={action:{const:'FINAL'},schemaVersion:{const:'V3.9.2'},opportunityType:{enum:['TREND_PULLBACK','TREND_RESUMPTION','BREAKOUT_CONFIRMATION','RANGE_BOUNDARY_REVERSAL','NONE']},marketRegime:{enum:['TREND','RANGE','TRANSITION','EXTREME','UNKNOWN']},confidence:{type:'number',minimum:0,maximum:1},directionReason:{type:'string',minLength:1,maxLength:160},timingReason:{type:'string',minLength:1,maxLength:160},entryLocationReason:{type:'string',minLength:1,maxLength:160},reason:{type:'string',minLength:1,maxLength:160},entryInvalidation:{type:'string',minLength:1,maxLength:400},longException:{type:'boolean'},longExceptionReason:{type:['string','null'],maxLength:400},altLongQuality:{type:['number','null'],minimum:0,maximum:100},supportingEvidenceRefs:{type:'array',maxItems:4,items:{type:'string',maxLength:120}},profitTakePlan:{type:['object','null'],additionalProperties:false,required:['targetPrice','acceptableTargetRange','targetHorizonMinutes','targetReason','evidenceRefs'],properties:{targetPrice:{type:'number',exclusiveMinimum:0},acceptableTargetRange:entryRangeSchema,targetHorizonMinutes:{type:'integer',minimum:1,maximum:1440},targetReason:{type:'string',minLength:1,maxLength:240},evidenceRefs:{type:'array',maxItems:4,items:{type:'string',maxLength:120}}}}};
+const entryRequired=['action','schemaVersion','decision','direction','opportunityType','marketRegime','confidence','idealPrice','acceptablePriceRange','horizonMinutes','waitCondition','directionReason','timingReason','entryLocationReason','reason','entryInvalidation','longException','longExceptionReason','altLongQuality','supportingEvidenceRefs','profitTakePlan'];
 const entryVariant=(properties:Record<string,unknown>)=>({type:'object',additionalProperties:false,required:entryRequired,properties:{...entrySharedProperties,...properties}});
 export const EntryDecisionJsonSchema={oneOf:[
   entryVariant({decision:{const:'PLACE_LONG'},direction:{const:'LONG'},idealPrice:{type:'number',exclusiveMinimum:0},acceptablePriceRange:entryRangeSchema,horizonMinutes:{type:'integer',minimum:1,maximum:5},waitCondition:{type:'null'}}),
@@ -108,6 +110,7 @@ export const BrainDecisionSchema = z.object({
   opportunityType:OpportunityTypeSchema.optional(),
   marketRegime:MarketRegimeSchema.optional(),
   entryLocationReason:z.string().optional(),
+  profitTakePlan:ProfitTakePlanSchema.nullable().default(null),
 }).superRefine((value, ctx) => {
   if (value.action === 'FINAL') {
     if (!value.decision) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['decision'], message: 'FINAL requires decision' });

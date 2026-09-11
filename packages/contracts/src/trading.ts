@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { ProfitTakePlanSchema } from './ai.js';
 
 export const SideSchema = z.enum(['LONG','SHORT']);
 export type Side = z.infer<typeof SideSchema>;
@@ -24,6 +25,7 @@ export const EntryIntentSchema = z.object({
   protectionMode: z.enum(['OFF','SHADOW','REQUIRED']).optional(),
   snapshotId: z.string().nullable().optional(),
   structuredInvalidationId: z.string().nullable().optional(),
+  profitTakePlan: ProfitTakePlanSchema.nullable().optional(),
 });
 export type EntryIntent = z.infer<typeof EntryIntentSchema>;
 
@@ -80,6 +82,9 @@ export const PositionSchema = z.object({
     requiredNetProfit:z.number().nonnegative(), breakEvenPrice:z.number().positive().nullable(), minProfitableExitPrice:z.number().positive().nullable(),
     status:z.enum(['TP_OK','TP_LOW_NET','TP_NET_NEGATIVE','TP_DATA_INCOMPLETE','TP_TARGET_BELOW_NET_FLOOR','TP_TARGET_UNREALISTIC'])
   }).nullable().optional(),
+  profitTakePlan: ProfitTakePlanSchema.nullable().optional(),
+  profitTakePlanSource:z.enum(['AI','STRUCTURE_15M','FIXED_PROFITABLE']).nullable().optional(),
+  lossHandoff:z.object({cycleId:z.string(),lastClosedBarAt:z.number().int().nullable(),consecutiveLossBars:z.number().int().nonnegative(),status:z.enum(['ACTIVE','UNKNOWN','HUMAN_HANDOFF'])}).nullable().optional(),
 });
 export type Position = z.infer<typeof PositionSchema>;
 

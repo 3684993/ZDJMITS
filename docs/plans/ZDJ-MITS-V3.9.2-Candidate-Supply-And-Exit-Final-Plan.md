@@ -18,5 +18,6 @@
 
 ## 当前进度
 
-- PLAN_WRITTEN。首次源码证据：UniverseView固定显示“Top N”配置；appRuntime每60秒在snapshots少于marketSymbolLimit时再次market.refresh全量，另有15分钟全量和10秒recoverStale。实际损耗待API/代码进一步确认。
-- 下一步：universeCoordinator、Market Quality/Ranking/Pool实现与实时分层数量；TradeRecord及exit关联调查。
+- 已从 `D:\MITS\docs\plans\ZDJ-MITS-V3.9.2-Candidate-Supply-And-Exit-Final-Plan.md` 同步唯一检查点：A/B/C 已通过，D/E/F/P1/P2 在隔离验证中已实现但在提交前 Astra 审计发现十项需修正缺陷。
+- 本轮只按该审计的 D → E → F → P1 → P2 顺序修复：retention/epoch/freshness，cohort bootstrap/backoff/rotation，Preflight，真实 TechnicalCard readiness，reconciliation/TP guard/loss handoff。不得启动真实 Engine 或写入真实交易所。
+- 本文件仅作隔离工作区的同一计划镜像；不覆盖既有 A→P2 源码和根工作区用户未提交内容。

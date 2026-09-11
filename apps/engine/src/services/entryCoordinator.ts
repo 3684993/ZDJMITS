@@ -74,9 +74,10 @@ export class EntryCoordinator {
         }
       }
     const pending = this.state.activeEntrySymbols().size,
-      routes = new Map(this.state.runtimeControl.capital.routedCandidates.map(item=>[item.symbol,item])),
-      ready = this.state.pool
-        .list()
+      routes = new Map(this.state.runtimeControl.capital.routedCandidates.map(item=>[item.symbol,item]));
+    this.state.pool.refreshReadyView(new Set(this.state.universe.filter((candidate:any)=>{const route=routes.get(candidate.symbol),trend=this.state.snapshots.get(candidate.symbol)?.technical?.['15m']?.trend;return candidate.eligible&&candidate.pipelineEligible!==false&&Boolean(route)&&(trend==='UP'?route.longExecutable:trend==='DOWN'?route.shortExecutable:route.longExecutable||route.shortExecutable);}).map((candidate:any)=>candidate.symbol)));
+    const ready = this.state.pool
+        .readyList()
         .filter(
           (x) => {
             const route=routes.get(x.symbol),trend=this.state.snapshots.get(x.symbol)?.technical?.['15m']?.trend;
@@ -89,7 +90,7 @@ export class EntryCoordinator {
             !this.state.rejectionCooldown.has(x.symbol) &&
             this.lifecycleRunnable(x.symbol);
           },
-        ).sort((a,b)=>(this.lastDispatched.get(a.symbol)??0)-(this.lastDispatched.get(b.symbol)??0)||(this.state.universe.find((x:any)=>x.symbol===b.symbol)?.schedulerPriority??b.score)-(this.state.universe.find((x:any)=>x.symbol===a.symbol)?.schedulerPriority??a.score));
+        ).sort((a,b)=>(this.lastDispatched.get(a.symbol)??0)-(this.lastDispatched.get(b.symbol)??0)||this.primaryReadinessScore(b.symbol,b.score)-this.primaryReadinessScore(a.symbol,a.score)||a.symbol.localeCompare(b.symbol));
     if (pending >= this.state.settings.portfolio.maxPendingEntries) {
       this.ai.setIdleContext(
         "ENTRY_BACKPRESSURE",
@@ -109,7 +110,7 @@ export class EntryCoordinator {
       return;
     }
     if (!ready.length) {
-      const reason = !routes.size?'WAITING_EXECUTION_CAPACITY':this.state.pool.list().length?'WAITING_NEW_FACTS':'WAITING_CANDIDATE';
+      const reason = !routes.size?'WAITING_EXECUTION_CAPACITY':this.state.pool.readyList().length?'WAITING_NEW_FACTS':'WAITING_CANDIDATE';
       this.ai.setIdleContext(reason, 0, !routes.size?'当前无可执行容量；继续供给与订单维护':'等待新的候选事实，避免重复推理');
       return;
     }
@@ -129,6 +130,10 @@ export class EntryCoordinator {
   cadenceReady(_now = Date.now()) {
     return true;
   }
+  /** Ranking only: closed facts are used to break fair waiting ties, never as a Place gate. */
+  private primaryReadinessScore(symbol:string,fallback:number){const candidate:any=this.state.universe.find((x:any)=>x.symbol===symbol),card:any=this.state.snapshots.get(symbol)?.technical?.['15m'],now=Date.now();if(card?.isClosed!==true||!Number.isFinite(card?.barCloseTime)||card.barCloseTime>now)return Number(candidate?.schedulerPriority??fallback);const trend=Number(card.trendStrength??0),momentum=Math.abs(Number(card.macdHistogramSlope??0)),volume=Math.max(0,Number(card.volumeZScore??0));return Number(candidate?.schedulerPriority??fallback)+Math.min(1,Math.max(0,trend*.6+Math.min(.25,momentum)+Math.min(.15,volume*.05)));}
+  /** Read-only feasibility before Primary.  Post-AI allocation/reservation/final guards remain authoritative. */
+  private preflight(symbol:string){const now=Date.now(),route=this.state.runtimeControl.capital.routedCandidates.find((row:any)=>row.symbol===symbol),market=this.state.snapshots.get(symbol),candidate:any=this.state.universe.find((row:any)=>row.symbol===symbol),directions:("LONG"|"SHORT")[]=[];if(route?.longExecutable)directions.push('LONG');if(route?.shortExecutable)directions.push('SHORT');const capacity=this.state.entryCapacity(),reservationValid=[...this.state.entryReservations.values()].every((r:any)=>!['RESERVED','WORKING'].includes(r.status)||r.expiresAt>now),marketReason=this.market?.primaryReadyReasons(symbol,now)[0]??entryDataError(market),governance=Boolean(candidate?.eligible&&candidate?.pipelineEligible!==false),privateReady=privateAccountFresh(this.state.account),capitalVersion=this.state.runtimeControl.capital.capitalVersion;let reason='PASS';if(!market)reason='MARKET_DATA_MISSING';else if(marketReason)reason=`MARKET_${marketReason}`;else if(!governance)reason='GOVERNANCE_OR_PIPELINE_BLOCKED';else if(!privateReady)reason='PRIVATE_NOT_READY';else if(capacity.used>=capacity.max)reason='POSITION_CAPACITY_FULL';else if(!reservationValid)reason='STALE_RESERVATION_FACT';else if(!capitalVersion)reason='CAPITAL_VERSION_MISSING';else if(!directions.length)reason='NO_FEASIBLE_DIRECTION';return{symbol,allowedDirections:directions,feasibleNotionalUsd:{LONG:route?.longFeasibleNotionalUsd??route?.longRecommendedNotionalUsd??0,SHORT:route?.shortFeasibleNotionalUsd??route?.shortRecommendedNotionalUsd??0},capitalVersion,marketGeneration:this.state.marketGeneration,capacity,privateReady,governance,reservationValid,createdAt:now,pass:reason==='PASS',reason};}
   private primaryOccupancyBlock(symbol:string){
     const now=Date.now(),underlying=resolveUnderlying(symbol),sameUnderlying=(value:string)=>resolveUnderlying(value)===underlying;
     if([...this.state.positions.values()].some(row=>sameUnderlying(row.symbol)))return'UNDERLYING_POSITION_EXISTS';
@@ -297,6 +302,9 @@ export class EntryCoordinator {
       if(this.market?.primaryReadyReasons(symbol).length){await this.market.refreshSymbols([symbol]);const remaining=this.market.primaryReadyReasons(symbol);if(remaining.length)throw new Error(`MARKET_DATA_STALE: ${remaining.join(',')}`);}
       if(this.stopPrimaryForOccupancy(symbol,'AFTER_MARKET_REFRESH'))return;
       packet=this.eip.build(symbol);
+      const preflight=this.preflight(symbol);
+      this.events.publish('ENTRY_PREFLIGHT_EVALUATED',preflight,symbol);
+      if(!preflight.pass){this.events.publish('ENTRY_PREFLIGHT_BLOCKED',preflight,symbol);this.reject(symbol,`PREFLIGHT_${preflight.reason}`);return;}
       const confirmation=this.state.candidateLifecycle.get(symbol)?.confirmation;
       const contextKey=this.currentDecisionContext(symbol,confirmation);
       const result = await this.ai.decide(packet, null, Date.now()-primaryQueuedAt, confirmation);
@@ -521,6 +529,7 @@ export class EntryCoordinator {
         allocationPlan: plan,
         reservationId,
         protectionMode: this.state.settings.riskGovernance.protectionMode,
+        profitTakePlan:d.profitTakePlan,
       };
       const riskEnvelope = buildRiskEnvelope({
         settings: this.state.settings,
@@ -772,8 +781,7 @@ export class EntryCoordinator {
   }
   private currentDecisionContext(symbol:string,confirmation?:unknown){
     const market=this.state.snapshots.get(symbol);if(!market)return'MARKET_MISSING';
-    const route=this.state.runtimeControl.capital.routedCandidates.find((x:any)=>x.symbol===symbol);
-    return decisionContextKey({market,settingsContext:decisionSettingsContext(this.state.settings),longExecutable:route?.longExecutable,shortExecutable:route?.shortExecutable,confirmation});
+    return decisionContextKey({market,settingsContext:decisionSettingsContext(this.state.settings),confirmation});
   }
   private transition(symbol:string,status:string,reason:string,extra:Record<string,unknown>={}){
     const now=Date.now(),previous=this.state.candidateLifecycle.get(symbol),primaryLease=['PRIMARY_QUEUED','PRIMARY_RUNNING'].includes(status),runReset=primaryLease&&!Object.prototype.hasOwnProperty.call(extra,'runId')?{previousRunId:previous?.runId??previous?.previousRunId??null,runId:null}:{},next={...previous,...runReset,...extra,symbol,status,reason,updatedAt:now,from:previous?.status??null};

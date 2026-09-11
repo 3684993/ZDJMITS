@@ -55,6 +55,14 @@
     "poolTarget": 20,
     "poolMax": 24,
     "replacementDelta": 4,
+    "cohort": {
+      "size": 100,
+      "hydrateBatchSize": 20,
+      "readyLowWatermark": 6,
+      "staleMemberRotationMinutes": 120,
+      "protectedRatio": 0.75,
+      "refillBackoffSeconds": 60
+    },
     "customSymbols": [],
     "excludeSymbols": [],
     "minQuoteVolumeUsd24h": 20000000,
@@ -225,7 +233,8 @@
     "takerFeeRate": 0.0004
   },
   "positionManagement": {
-    "humanHandoffAfterMinutes": 1440
+    "humanHandoffAfterMinutes": 1440,
+    "lossHandoffBars": 4
   },
   "releasePolicy": {
     "lifecycleVersion": 390

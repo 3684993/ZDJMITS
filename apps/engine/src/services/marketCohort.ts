@@ -43,7 +43,7 @@ export class MarketCohort {
     if(adopted)this.events.publish('MARKET_COHORT_BOOTSTRAP_ADOPTED',{adopted,members:this.members.size,retention:this.market.retentionSymbols().size});
   }
 
-  /** Only global non-supply blockers suppress inventory churn. Empty/supply-starved cohorts must still be able to bootstrap/refill. */
+  /** Only global non-supply blockers suppress inventory churn. Empty/supply-starved cohorts must still be able to bootstrap/refill when no such blocker exists. */
   private globalBlockReason(){
     const mode=String(this.state.runtimeControl?.mode??'');
     const reason=String(this.state.runtimeControl?.reasonCode??'');
@@ -63,7 +63,10 @@ export class MarketCohort {
     const now=this.now(),cfg:any=this.state.settings.selection.cohort??{size:100,hydrateBatchSize:20,readyLowWatermark:6,refillBackoffSeconds:60,discoveryRefreshSeconds:900,staleMemberRotationMinutes:120,protectedRatio:.75};
     this.adoptBootstrapInventory(now,cfg);
     this.retireConsumed();
-    this.rotateStale(now,cfg);
+    const blocker=this.globalBlockReason();
+    // Global capital/capacity/risk/systemic blockers must not churn or refill inventory.
+    // Supply-specific zero-executable states are intentionally not classified here.
+    if(!blocker)this.rotateStale(now,cfg);
     this.retain();
     const key=`${this.state.settings.selection.assetDirectory?.version??''}:${this.state.settings.settingsVersion}`;
     // A changed governance/settings generation can expose genuinely new supply. Do not let a
@@ -73,8 +76,7 @@ export class MarketCohort {
       this.retryAt=0;
       this.events.publish('MARKET_COHORT_BACKOFF_INVALIDATED',{reason,key,size:this.members.size});
     }
-    const blocker=this.globalBlockReason();
-    if(now<this.retryAt||(blocker&&this.members.size>0)){
+    if(now<this.retryAt||blocker){
       this.events.publish('MARKET_COHORT_DEFERRED',{reason,blocker,retryAt:this.retryAt,size:this.members.size,supplyBootstrap:this.members.size===0});
       return 0;
     }

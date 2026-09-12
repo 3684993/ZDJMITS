@@ -346,7 +346,7 @@ Refill 触发必须 reason-aware：如果 ready 低的根因是 `NO_CAPITAL / PO
 
 ## 9. 实施检查点（中断后从这里恢复）
 
-当前状态：**PLAN ASTRA-REVIEWED / SOURCE IMPLEMENTATION NOT STARTED BY THIS PLAN**。
+当前状态：**PLAN ASTRA-REVIEWED / SOURCE IMPLEMENTATION CLOSED / CODE_VERIFIED**；未决的自然验收与参数校准以第 14 节为准。
 
 最终固定顺序：
 
@@ -394,13 +394,13 @@ Refill 触发必须 reason-aware：如果 ready 低的根因是 `NO_CAPITAL / PO
 - 本文件是唯一接续实施文件；第 1–10 节取自远端提交 `fb49e10a194d00332efa55e9f3b2d25859a42144`（页首状态统一为当前状态），本地追加第 11–15 节把已批准范围细化为执行步骤。
 - 原始来源：https://github.com/3684993/ZDJMITS/blob/fb49e10a194d00332efa55e9f3b2d25859a42144/docs/plans/ZDJ-MITS-V3.9.2-Candidate-Supply-And-Exit-Final-Plan.md
 - P2 权威来源为同一提交下的 `docs/plans/ZDJ-MITS-V3.9.2-P2-PROFIT-TAKE-POLICY-DECISION-2026-09-11.md`；其必要执行规则已收入下文。原审计报告的持续 Position AI / Dynamic Exit 建议不再是实施任务。
-- 当前整理动作只写本文档，不代表源码已实施或任何测试通过。不要沿用旧报告的 PASS 作为新实现证据。
+- 当前整理动作本身不构成源码实施或测试通过的授权；当前源码实施与隔离验证完成状态以第 14 节为准。不要沿用旧报告的 PASS 作为新实现证据。
 - 整理时本地 HEAD 为 `4f4a83fd4b2eba9c538a8a0075742f103c46bea6`，早于远端方案提交。执行者必须先确认真实源码基线，不能直接假设本地已同步。
 - 本地计划包含远端之后的执行细则；准备工作区时保留此文件，不用 checkout/reset 覆盖它。不要另建竞争性方案文件。
 
 ### 11.2 授权与运行边界
 
-1. 只有收到用户“按本文件实施”的新指令后才开始源码实施。整理本文件本身不授予 Engine 生命周期操作权限。
+1. 源码实施已完成；本文档整理本身仍不授予任何 Engine 生命周期操作权限。
 2. 遵守工作区 AGENTS.md。禁止启动、停止、重启、热加载真实 Engine；禁止安装 autostart、服务、重启守护；禁止对 live data 执行 dev/watch。
 3. 现有持仓、订单、TP、生产配置及凭证保持原有管理链。不得为验证方案修改 live settings、迁移 live SQLite、发送交易写请求。
 4. 构建、数据库迁移验证、回放在独立 checkout/worktree、独立测试数据目录执行。测试实例仅可使用独立端口和模拟 exchange adapter，不能产生真实交易所写入。

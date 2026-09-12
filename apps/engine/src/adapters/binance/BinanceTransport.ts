@@ -24,7 +24,7 @@ export function binanceRequestWeight(url:URL,method='GET'){
 
 export class BinanceTransport {
   private readonly agent: SocksProxyAgent | null;
-  private readonly budget;
+  private readonly budget:ReturnType<typeof getBinanceRequestBudget>;
   constructor(private readonly settings: ConnectionSettings) {
     if (settings.proxy.enabled) this.agent = new SocksProxyAgent(settings.proxy.url);
     else this.agent = null;

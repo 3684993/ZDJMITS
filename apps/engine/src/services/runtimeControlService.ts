@@ -5,6 +5,7 @@ import { evaluateCapitalAdmission } from '@zdj/core';
 import type { RuntimeState } from '../state/runtimeState.js';
 import type { EventBus } from '../events/eventBus.js';
 import { directionBudget } from './riskReadiness.js';
+import {storageCapacityHealth,storageEntryBlockReason} from './storageCapacityGuard.js';
 
 const reasonText=(code:RuntimeReasonCode)=>({
   NONE:'运行中',MANUAL_PAUSE:'已手动暂停新建仓流水',MANUAL_RESUME:'已恢复新建仓流水',NO_CAPITAL:'没有满足最低保证金的可执行资金',NO_EXECUTABLE_CONTRACT:'当前候选没有可执行合约',PRIVATE_NOT_READY:'交易所私有数据未就绪',MARKET_NOT_READY:'行情数据未就绪',MIN_EXECUTABLE_CANDIDATES_NOT_MET:'可执行候选数低于阈值',AUTO_RESUMED:'资金/合约恢复后自动恢复',DAILY_RISK_LIMIT:'已触发日内风险限额，等待人工复核',MANUAL_RISK_OVERRIDE:'日内风险告警已人工复核；当前风险周期内允许 Testnet AUTO',DEGRADED:'运行控制处于降级状态',
@@ -24,10 +25,10 @@ export const capitalFactVersion=(state:RuntimeState)=>JSON.stringify({
 export class RuntimeControlService {
   private entryRiskBlocked=false;
   private admissionDetails:unknown[]=[];
-  capacityDiagnostics(){return{slots:this.state.entryCapacity(),newRiskBlocked:this.entryRiskBlocked,candidates:this.admissionDetails,capital:this.state.runtimeControl.capital};}
+  capacityDiagnostics(){return{slots:this.state.entryCapacity(),newRiskBlocked:this.entryRiskBlocked,storage:storageCapacityHealth(),candidates:this.admissionDetails,capital:this.state.runtimeControl.capital};}
   constructor(private state:RuntimeState,private events:EventBus){}
 
-  canDispatch(){return privateAccountFresh(this.state.account)&&!this.entryRiskBlocked&&this.state.executionGovernance?.mode==='AUTO_RUNNING'&&this.state.runtimeControl.mode==='RUNNING'&&(this.state.settings.riskGovernance?.entrySafetyMode??'AUTO')==='AUTO';}
+  canDispatch(){return !storageEntryBlockReason()&&privateAccountFresh(this.state.account)&&!this.entryRiskBlocked&&this.state.executionGovernance?.mode==='AUTO_RUNNING'&&this.state.runtimeControl.mode==='RUNNING'&&(this.state.settings.riskGovernance?.entrySafetyMode??'AUTO')==='AUTO';}
   isPaused(){return !this.canDispatch();}
 
   manualRiskOverrideActive(at=Date.now()){

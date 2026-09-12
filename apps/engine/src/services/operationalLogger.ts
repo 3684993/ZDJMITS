@@ -5,7 +5,11 @@ import { createGzip } from 'node:zlib';
 import { pipeline } from 'node:stream/promises';
 import { redactAudit } from '../api/projections.js';
 
-export const telemetryTypes=new Set(['CANDIDATE_RANKING_SHADOW','SHADOW_SAMPLE_RECORDED','POOL_UPDATED','POOL_SUPPLY_HEALTH','ASSET_ADMISSION_EVALUATED','UNIVERSE_UPDATED','MARKET_FRESHNESS_RECOVERED','MARKET_FRESHNESS_RECOVERY']);
+/** High-rate operational facts are counters/heartbeats, not lossless trading audit records. */
+export const telemetryTypes=new Set([
+  'CANDIDATE_RANKING_SHADOW','SHADOW_SAMPLE_RECORDED','POOL_UPDATED','POOL_SUPPLY_HEALTH','ASSET_ADMISSION_EVALUATED','UNIVERSE_UPDATED','MARKET_FRESHNESS_RECOVERED','MARKET_FRESHNESS_RECOVERY',
+  'AI_RUN_STARTED','AI_RUN_COMPLETED','CAPITAL_ROUTE_EVALUATED','PRIVATE_SYNC_STARTED','PRIVATE_SYNC_COMPLETED','RECONCILIATION_COMPLETED','MARKET_TARGETED_REFRESHED','MARKET_SLOW_FIELDS_REFRESHED'
+]);
 export const isTelemetry=(type:string)=>telemetryTypes.has(type);
 type Event={id?:string;type:string;ts:number;symbol?:string;payload?:any};
 type Options={maxFileBytes:number;maxTotalBytes:number;retentionDays:number;heartbeatMs:number;maxQueueBytes:number};
@@ -40,19 +44,11 @@ export class OperationalLogger {
     await mkdir(this.dir,{recursive:true});
     while(this.rows.length){
       const day=new Date().toISOString().slice(0,10),line=this.rows[0]!,bytes=Buffer.byteLength(line);
-      if(!this.file||this.day!==day||this.fileBytes+bytes>this.options.maxFileBytes){
-        const previous=this.file;this.day=day;this.file=path.join(this.dir,`engine-${day}-${this.identity.instanceId}-${this.sequence++}.jsonl`);this.fileBytes=0;
-        if(previous){await pipeline(createReadStream(previous),createGzip(),createWriteStream(previous+'.gz'));await unlink(previous);}
-        await this.prune();
-      }
-      // Bounded batch keeps FS calls out of the event handler and memory bounded.
+      if(!this.file||this.day!==day||this.fileBytes+bytes>this.options.maxFileBytes){const previous=this.file;this.day=day;this.file=path.join(this.dir,`engine-${day}-${this.identity.instanceId}-${this.sequence++}.jsonl`);this.fileBytes=0;if(previous){await pipeline(createReadStream(previous),createGzip(),createWriteStream(previous+'.gz'));await unlink(previous);}await this.prune();}
       let count=1,size=bytes;while(count<this.rows.length&&size<64*1024&&this.fileBytes+size+Buffer.byteLength(this.rows[count]!)<=this.options.maxFileBytes){size+=Buffer.byteLength(this.rows[count]!);count++;}
       await appendFile(this.file,this.rows.slice(0,count).join(''),'utf8');this.rows.splice(0,count);this.queuedBytes-=size;this.fileBytes+=size;
     }
   }
-  private async prune(){
-    const rows=await Promise.all((await readdir(this.dir)).filter(name=>/^engine-\d{4}-\d{2}-\d{2}-[\w-]+-\d+\.jsonl(?:\.gz)?$/.test(name)).map(async name=>({file:path.join(this.dir,name),...(await stat(path.join(this.dir,name)))})));
-    let total=rows.reduce((n,r)=>n+r.size,0);for(const row of rows.sort((a,b)=>a.mtimeMs-b.mtimeMs)){if(row.file===this.file)continue;if(Date.now()-row.mtimeMs>this.options.retentionDays*86400_000||total>this.options.maxTotalBytes){await unlink(row.file);total-=row.size;}}
-  }
+  private async prune(){const rows=await Promise.all((await readdir(this.dir)).filter(name=>/^engine-\d{4}-\d{2}-\d{2}-[\w-]+-\d+\.jsonl(?:\.gz)?$/.test(name)).map(async name=>({file:path.join(this.dir,name),...(await stat(path.join(this.dir,name)))})));let total=rows.reduce((n,r)=>n+r.size,0);for(const row of rows.sort((a,b)=>a.mtimeMs-b.mtimeMs)){if(row.file===this.file)continue;if(Date.now()-row.mtimeMs>this.options.retentionDays*86400_000||total>this.options.maxTotalBytes){await unlink(row.file);total-=row.size;}}}
   async close(){clearInterval(this.timer);this.heartbeat(true);for(const [key,value] of this.errors)if(value.suppressed)this.enqueue({type:'ERROR_AGGREGATE',ts:Date.now(),payload:{key,count:value.suppressed}});this.closed=true;await this.flush();}
 }

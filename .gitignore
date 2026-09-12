@@ -61,6 +61,14 @@ coverage/
 /trade-archive/
 /trade-sync-archive/
 
+# Local forensic/review output generated during runtime investigations
+/final-offline-forensics-work/
+/runtime-review-*/
+/runtime-supplement/
+
+# Local health-monitor sidecars are operational experiments, not product source.
+/scripts/*zdj-health-monitor.ps1
+
 # ------------------------------------------------------------
 # 4. Databases and persistent runtime stores
 # ------------------------------------------------------------

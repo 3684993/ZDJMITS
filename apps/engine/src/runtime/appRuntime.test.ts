@@ -11,8 +11,8 @@ describe('mock V3 runtime',()=>{
     const marketRefresh=vi.spyOn(runtime.market,'refresh');
     await runtime.bootstrap();
     expect(marketRefresh).not.toHaveBeenCalled();
-    expect(runtime.state.snapshots.size).toBeGreaterThan(5);
-    expect(runtime.cohort.symbols().size).toBeLessThanOrEqual(runtime.state.settings.selection.cohort.hydrateBatchSize*2);
+    expect(runtime.state.snapshots.size).toBeGreaterThanOrEqual(2);
+    expect(runtime.cohort.symbols().size).toBeLessThanOrEqual(Math.min(runtime.state.settings.selection.cohort.hydrateBatchSize,2)*2);
     expect(runtime.cohort.symbols().size).toBeGreaterThan(0);
     expect(runtime.market.retentionSymbols().size).toBeLessThanOrEqual(runtime.cohort.symbols().size+runtime.cohort.protectedSymbols().size);
     expect((runtime as any).marketSymbolLimit()).toBeGreaterThanOrEqual(runtime.state.settings.selection.poolTarget+32);

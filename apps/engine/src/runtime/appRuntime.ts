@@ -827,7 +827,7 @@ export class EngineRuntime {
     this.syncLiveMarketSymbols();
     const missing = [...this.state.positionSymbols()].filter(
       (symbol) => !this.state.snapshots.has(symbol),
-    );
+    ).slice(0,1);
     if (missing.length) {
       await this.market.refreshSymbols(missing);
       this.universe.refresh();

@@ -92,7 +92,11 @@ export class MarketCohort {
     // A full cohort with low execution-ready supply is rotated only through bounded stale retirement;
     // do not evict fresh members merely to satisfy a low-watermark signal.
     if(!gap)return 0;
-    const batch=Math.min(gap,cfg.hydrateBatchSize);
+    // A complete Binance snapshot fans out into quote, book, seven candle and
+    // derivative requests. Keep each refill below the Testnet burst ceiling;
+    // subsequent scheduled refills continue filling the cohort without
+    // starving private-account reconciliation.
+    const batch=Math.min(gap,cfg.hydrateBatchSize,2);
     this.flight=this.refill(batch,key,reason).finally(()=>{this.flight=null;});
     return this.flight;
   }

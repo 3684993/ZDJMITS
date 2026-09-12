@@ -27,7 +27,9 @@ function fileHash(file){const hash=createHash('sha256'),fd=openSync(file,'r'),bu
 function integrity(db){const rows=db.prepare('PRAGMA integrity_check').all();if(rows.length!==1||rows[0].integrity_check!=='ok')throw new Error('SQLITE_INTEGRITY_FAILED');if(db.prepare('PRAGMA foreign_key_check').all().length)throw new Error('SQLITE_FOREIGN_KEY_CHECK_FAILED');}
 function quote(name){return `"${name.replaceAll('"','""')}"`;}
 const telemetry=['SHADOW_SAMPLE_RECORDED','CANDIDATE_RANKING_SHADOW','POOL_UPDATED','POOL_SUPPLY_HEALTH','ASSET_ADMISSION_EVALUATED','UNIVERSE_UPDATED','MARKET_FRESHNESS_RECOVERED','MARKET_FRESHNESS_RECOVERY','AI_RUN_STARTED','AI_RUN_COMPLETED','CAPITAL_ROUTE_EVALUATED','PRIVATE_SYNC_STARTED','PRIVATE_SYNC_COMPLETED','RECONCILIATION_COMPLETED','MARKET_TARGETED_REFRESHED','MARKET_SLOW_FIELDS_REFRESHED'];
-const telemetrySql=`COALESCE((type IN (${telemetry.map(t=>`'${t}'`).join(',')}) OR (type='POSITION_LIFECYCLE_TRANSITION' AND json_valid(payload) AND json_extract(payload,'$.transition')='UNCHANGED')),0)`;
+// CASE is intentionally used here: SQLite AND/OR expressions are not a safe guard for json_extract()
+// against malformed legacy rows. Invalid JSON is treated as protected audit data, never telemetry.
+const telemetrySql=`CASE WHEN type IN (${telemetry.map(t=>`'${t}'`).join(',')}) THEN 1 WHEN type='POSITION_LIFECYCLE_TRANSITION' THEN CASE WHEN json_valid(payload) THEN COALESCE(json_extract(payload,'$.transition')='UNCHANGED',0) ELSE 0 END ELSE 0 END`;
 assertOffline();
 const originalBytes=statSync(dbPath).size,walBytes=existsSync(dbPath+'-wal')?statSync(dbPath+'-wal').size:0,space=statfsSync(path.dirname(compactPath)),requiredBytes=(originalBytes+walBytes)*(apply?3:2)+256*1024**2;
 if(Number(space.bavail)*Number(space.bsize)<requiredBytes)throw new Error(`INSUFFICIENT_DISK_SPACE:need=${requiredBytes}`);
@@ -41,9 +43,10 @@ try{
   assertOffline();if(fileHash(workPath)!==sourceHash||(sourceWalHash!==null&&fileHash(workPath+'-wal')!==sourceWalHash)||!sourceUnchanged())throw new Error('SOURCE_CHANGED_DURING_COPY');
   db=new DatabaseSync(workPath);db.exec('PRAGMA wal_checkpoint(TRUNCATE); PRAGMA journal_mode=DELETE; PRAGMA synchronous=FULL; PRAGMA foreign_keys=ON;');integrity(db);
   const tables=db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'").all().map(r=>String(r.name));
+  const safeChainWithoutExecution=`CASE WHEN json_valid(payload) THEN NOT EXISTS (SELECT 1 FROM json_each(payload,'$.events') e WHERE json_extract(e.value,'$.type') GLOB '*ORDER*' OR json_extract(e.value,'$.type') GLOB '*FILL*' OR json_extract(e.value,'$.type') GLOB '*TP_*' OR json_extract(e.value,'$.type') GLOB '*MANUAL*') ELSE 0 END`;
   const policies=[
     ['decision_snapshots','created_at',7,'1'],
-    ['decision_chains','updated_at',14,"status IN ('OPEN','WAITING_PRICE','CLOSED') AND NOT EXISTS (SELECT 1 FROM json_each(decision_chains.payload,'$.events') e WHERE json_extract(e.value,'$.type') GLOB '*ORDER*' OR json_extract(e.value,'$.type') GLOB '*FILL*' OR json_extract(e.value,'$.type') GLOB '*TP_*' OR json_extract(e.value,'$.type') GLOB '*MANUAL*')"],
+    ['decision_chains','updated_at',14,`status IN ('OPEN','WAITING_PRICE','CLOSED') AND (${safeChainWithoutExecution})`],
     ['ai_runs_archive','started_at',90,"status IN ('COMPLETED','FAILED','CANCELED')"],
     ['external_research_tasks','updated_at',7,"status IN ('COMPLETED','FAILED','EXPIRED')"],
     ['external_intelligence_snapshots','expires_at',7,'1'],
@@ -52,8 +55,8 @@ try{
   ].filter(([table])=>tables.includes(table)).map(([table,column,days,extra])=>({table,where:`${column}<${now-days*day} AND (${extra})`}));
   const mutable=new Set(policies.map(p=>p.table));
   const hashRows=(table,where='1')=>{let count=0;const hash=createHash('sha256'),columns=db.prepare(`PRAGMA table_info(${quote(table)})`).all().filter(r=>r.pk).sort((a,b)=>a.pk-b.pk).map(r=>quote(String(r.name)));if(!columns.length)columns.push('rowid');for(const row of db.prepare(`SELECT * FROM ${quote(table)} WHERE ${where} ORDER BY ${columns.join(',')}`).iterate()){hash.update(JSON.stringify(row,(_k,v)=>typeof v==='bigint'?String(v):v));hash.update('\n');count++;}return{count,sha256:hash.digest('hex')};};
-  // Unknown tables are protected by default. Detect cascades, triggers and state changes, not only row counts.
-  const protectedFacts=()=>Object.fromEntries(tables.filter(t=>!mutable.has(t)&&t!=='storage_retention_state').map(t=>[t,hashRows(t)]).concat(tables.includes('runtime_events')?[['critical_runtime_events',hashRows('runtime_events',`NOT ${telemetrySql}`)]]:[]));
+  // Unknown tables and malformed legacy JSON are protected by default. Detect cascades, triggers and state changes, not only row counts.
+  const protectedFacts=()=>Object.fromEntries(tables.filter(t=>!mutable.has(t)&&t!=='storage_retention_state').map(t=>[t,hashRows(t)]).concat(tables.includes('runtime_events')?[['critical_runtime_events',hashRows('runtime_events',`NOT (${telemetrySql})`)]]:[]));
   const before=protectedFacts();
   const plan=policies.map(p=>({...p,rows:Number(db.prepare(`SELECT COUNT(*) n FROM ${quote(p.table)} WHERE ${p.where}`).get().n)}));
   console.log(JSON.stringify({mode:apply?'BUILD_REPLACEMENT':'DRY_RUN',dbPath,sourceHash,sourceWalHash,originalBytes,compactPath,requiredBytes,policies:plan,protectedFacts:before},null,2));

@@ -15,7 +15,7 @@ export function storageCapacityHealth(force=false):StorageCapacityHealth{
  const status:StorageCapacityStatus=totalBytes>=STORAGE_LIMITS.hardReserveBytes?'HARD_RESERVE':totalBytes>=STORAGE_LIMITS.entryBlockBytes?'ENTRY_BLOCKED':totalBytes>=STORAGE_LIMITS.shedBytes?'SHEDDING':totalBytes>=STORAGE_LIMITS.pressureBytes?'PRESSURED':totalBytes>=STORAGE_LIMITS.warningBytes?'WARNING':'AVAILABLE';
  return cache={status,dbPath,dbBytes,walBytes,totalBytes,limits:STORAGE_LIMITS,checkedAt:now};
 }
-export function storageEntryBlockReason(){const h=storageCapacityHealth();return h.totalBytes>=STORAGE_LIMITS.entryBlockBytes?`SQLITE_CAPACITY_${h.status}:${h.totalBytes}`:null;}
+export function storageEntryBlockReason(){maintainStorageBounds();const h=storageCapacityHealth(true);return h.totalBytes>=STORAGE_LIMITS.entryBlockBytes?`SQLITE_CAPACITY_${h.status}:${h.totalBytes}`:null;}
 export function storageShouldShedNonCritical(){return storageCapacityHealth().totalBytes>=STORAGE_LIMITS.shedBytes;}
 const protectedEvent=`(type GLOB '*ORDER*' OR type GLOB '*FILL*' OR type GLOB 'TP_*' OR type GLOB 'MANUAL*' OR type GLOB 'TRADE_RECORD*' OR type IN ('ENTRY_SUBMIT_ATTEMPTED','ENTRY_INTENT_CREATED','ENTRY_FILLED'))`;
 const analysisChain=`json_valid(payload) AND NOT EXISTS (SELECT 1 FROM json_each(payload,'$.events') e WHERE json_extract(e.value,'$.type') GLOB '*ORDER*' OR json_extract(e.value,'$.type') GLOB '*FILL*' OR json_extract(e.value,'$.type') GLOB 'TP_*' OR json_extract(e.value,'$.type') GLOB 'MANUAL*')`;

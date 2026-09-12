@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - fix/v392-astra-final-fixes
+      - gpt56-closeout-20260912
   workflow_dispatch:
 
 permissions:

@@ -826,7 +826,7 @@ export class EngineRuntime {
     ];
   }
   private syncLiveMarketSymbols() {
-    if(this.cohort){this.market.setRetentionSymbols(new Set([...this.cohort.symbols(),...this.cohort.protectedSymbols()]));return;}
+    if(this.cohort){this.market.setRetentionSymbols(this.cohort.runtimeRetentionSymbols());return;}
     this.market.setLiveSymbols(this.liveMarketSymbols());
   }
   private async refreshPositionMarkets() {

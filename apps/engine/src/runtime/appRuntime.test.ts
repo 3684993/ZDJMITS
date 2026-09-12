@@ -25,6 +25,22 @@ describe('mock V3 runtime',()=>{
     runtime.stop();
   },30_000);
 
+  it('retains an in-flight cohort hydrate through the real runtime sync, then admits its snapshot',async()=>{
+    const {mkdtemp,rm}=await import('node:fs/promises'),{tmpdir}=await import('node:os'),dir=await mkdtemp(path.join(tmpdir(),'zdj-cohort-retention-')),root=path.resolve(process.cwd(),'../..');
+    const runtime=await EngineRuntime.createTestHarness({configDir:path.join(root,'config'),dataDir:dir});let release:()=>void=()=>{};
+    runtime.state.settings.selection.cohort={...runtime.state.settings.selection.cohort,size:1,hydrateBatchSize:1,readyLowWatermark:1};
+    const original=runtime.market.hydrateSymbols.bind(runtime.market),pending=new Promise<void>(resolve=>release=resolve);
+    vi.spyOn(runtime.market,'discover').mockResolvedValue(['SOLUSDT']);vi.spyOn(runtime.market,'hydrateSymbols').mockImplementation(async symbols=>{await pending;return original(symbols);});
+    try{
+      const refill=runtime.cohort.tick('RETENTION_RACE');await Promise.resolve();
+      expect(runtime.market.retentionSymbols()).toContain('SOLUSDT');
+      await (runtime as any).refreshPositionMarkets();
+      expect(runtime.market.retentionSymbols()).toContain('SOLUSDT');
+      release();expect(await refill).toBe(1);
+      expect(runtime.cohort.symbols()).toContain('SOLUSDT');expect(runtime.market.snapshot('SOLUSDT')).toBeDefined();expect(runtime.market.retentionSymbols()).toContain('SOLUSDT');
+    }finally{release();runtime.stop();await rm(dir,{recursive:true,force:true});}
+  },30_000);
+
   it('starts critical runtime loops without awaiting risk baseline I/O',async()=>{
     const root=path.resolve(process.cwd(),'../..');
     const runtime=await EngineRuntime.createTestHarness({configDir:path.join(root,'config'),dataDir:path.join(root,'data-test')});

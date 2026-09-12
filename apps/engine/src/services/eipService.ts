@@ -17,7 +17,7 @@ export class EipService {
     if(!candidate||!snapshot||!btc||!eth)throw new Error(`Cannot build EIP for ${symbol}: evidence missing`);
     const routeGeneration=Number(this.state.runtimeControl.capital.generation??candidate.selectionGeneration);if(routeGeneration>0&&candidate.selectionGeneration!==routeGeneration)throw new Error(`MARKET_GENERATION_MISMATCH: candidate=${candidate.selectionGeneration} route=${routeGeneration}`);
     this.assertFresh(snapshot);this.assertFresh(btc,true);this.assertFresh(eth,true);
-    const now=Date.now(),derivativesAge=now-Number(snapshot.derivatives?.ts),derivativesStatus=snapshot.derivatives.openInterest==null?'UNAVAILABLE_BY_EXCHANGE':!Number.isFinite(derivativesAge)||derivativesAge>DERIVATIVES_MAX_AGE_MS?'STALE':'PRESENT';
+    const now=Date.now(),derivativesAge=now-Number(snapshot.derivatives?.ts),derivativesStatus=!Number.isFinite(derivativesAge)||derivativesAge>DERIVATIVES_MAX_AGE_MS?'STALE':snapshot.derivatives.openInterest==null?'UNAVAILABLE_BY_EXCHANGE':'PRESENT';
     // Derivatives are contextual rather than a hard 15m Entry gate. When stale,
     // retain the original timestamp as provenance but remove stale numeric facts
     // before they can influence Primary or risk-tier/context calculations.

@@ -25,7 +25,9 @@ export class MarketCohort {
     ]);
   }
   symbols(){return new Set(this.members);}
-  private retain(){this.market.setRetentionSymbols(new Set([...this.members,...this.hydrating,...this.protectedSymbols()]));}
+  /** Complete runtime ownership, including candidates whose hydrate has not settled yet. */
+  runtimeRetentionSymbols(){return new Set([...this.members,...this.hydrating,...this.protectedSymbols()]);}
+  private retain(){this.market.setRetentionSymbols(this.runtimeRetentionSymbols());}
 
   /**
    * Runtime bootstrap may already have loaded a bounded market set before the cohort controller

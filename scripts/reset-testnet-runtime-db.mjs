@@ -7,7 +7,6 @@ import {DatabaseSync} from 'node:sqlite';
 const args=process.argv.slice(2),option=(name,fallback)=>args.find(x=>x.startsWith(`--${name}=`))?.slice(name.length+3)??fallback;
 const source=path.resolve(option('source','data/zdj-settings.sqlite.compact'));
 const output=path.resolve(option('output','data/zdj-settings.sqlite.fresh'));
-const hardMaxMiB=Math.max(512,Math.min(8192,Number(option('hard-max-mib','2048'))||2048));
 if(!existsSync(source))throw new Error(`SOURCE_NOT_FOUND:${source}`);
 if(existsSync(output))throw new Error(`OUTPUT_ALREADY_EXISTS:${output}`);
 if(source.toLowerCase()===output.toLowerCase())throw new Error('SOURCE_OUTPUT_ALIAS');
@@ -31,16 +30,14 @@ try{
  if(schemaHash()!==beforeSchema)throw new Error('SCHEMA_CHANGED_DURING_RESET');
  const afterPreserved=Object.fromEntries([...preserved].sort().map(t=>[t,hashRows(t)]));if(JSON.stringify(beforePreserved)!==JSON.stringify(afterPreserved))throw new Error('STATIC_CONFIGURATION_CHANGED');
  const nonStaticCounts=Object.fromEntries(tables.filter(t=>!preserved.has(t)).map(t=>[t,Number(db.prepare(`SELECT COUNT(*) n FROM ${qi(t)}`).get().n)]));if(Object.values(nonStaticCounts).some(Number))throw new Error('RUNTIME_ROWS_REMAIN');
- // A fresh runtime DB must be able to return free pages during bounded retention;
- // otherwise DELETEs only create a growing freelist and the file never shrinks.
+ // Incremental auto-vacuum is persisted by VACUUM and lets bounded retention return pages to the file.
  db.exec('PRAGMA auto_vacuum=INCREMENTAL');
  db.exec(`VACUUM INTO '${vacuumed.replaceAll("'","''")}'`);db.close();db=undefined;
  db=new DatabaseSync(vacuumed);db.exec('PRAGMA journal_mode=DELETE; PRAGMA synchronous=FULL; PRAGMA foreign_keys=ON;');integrity();
  const autoVacuum=Number(db.prepare('PRAGMA auto_vacuum').get().auto_vacuum);if(autoVacuum!==2)throw new Error(`INCREMENTAL_VACUUM_NOT_APPLIED:${autoVacuum}`);
- const pageSize=Number(db.prepare('PRAGMA page_size').get().page_size),hardMaxPages=Math.floor(hardMaxMiB*1024*1024/pageSize),actualMaxPages=Number(db.prepare(`PRAGMA max_page_count=${hardMaxPages}`).get().max_page_count);if(actualMaxPages!==hardMaxPages)throw new Error(`MAX_PAGE_COUNT_NOT_APPLIED:${actualMaxPages}`);
  if(schemaHash()!==beforeSchema)throw new Error('OUTPUT_SCHEMA_CHANGED');
  const outputPreserved=Object.fromEntries([...preserved].sort().map(t=>[t,hashRows(t)]));if(JSON.stringify(beforePreserved)!==JSON.stringify(outputPreserved))throw new Error('OUTPUT_STATIC_CONFIGURATION_CHANGED');integrity();db.close();db=undefined;
  renameSync(vacuumed,output);
- const report={status:'FRESH_TESTNET_DB_READY_NOT_INSTALLED',source,sourceHash,sourceBytes:statSync(source).size,output,outputHash:hashFile(output),outputBytes:statSync(output).size,integrity:'ok',autoVacuum:'INCREMENTAL',preservedTables:[...preserved].sort(),preservedFacts:beforePreserved,clearedTables:tables.filter(t=>!preserved.has(t)),nonStaticCounts,hardMaxMiB,hardMaxPages,originalPreserved:hashFile(source)===sourceHash};
+ const report={status:'FRESH_TESTNET_DB_READY_NOT_INSTALLED',source,sourceHash,sourceBytes:statSync(source).size,output,outputHash:hashFile(output),outputBytes:statSync(output).size,integrity:'ok',autoVacuum:'INCREMENTAL',preservedTables:[...preserved].sort(),preservedFacts:beforePreserved,clearedTables:tables.filter(t=>!preserved.has(t)),nonStaticCounts,capacityPolicy:{warningMiB:512,pressureMiB:768,shedMiB:1024,entryBlockMiB:1280,hardReserveMiB:1792},originalPreserved:hashFile(source)===sourceHash};
  writeFileSync(`${output}.verification.json`,JSON.stringify(report,null,2),{flag:'wx'});console.log(JSON.stringify(report,null,2));
 }finally{db?.close();rmSync(workDir,{recursive:true,force:true});}

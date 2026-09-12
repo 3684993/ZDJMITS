@@ -74,9 +74,10 @@ export class EntryCoordinator {
         }
       }
     const pending = this.state.activeEntrySymbols().size,
-      routes = new Map(this.state.runtimeControl.capital.routedCandidates.map(item=>[item.symbol,item])),
-      ready = this.state.pool
-        .list()
+      routes = new Map(this.state.runtimeControl.capital.routedCandidates.map(item=>[item.symbol,item]));
+    this.state.pool.refreshReadyView(new Set(this.state.universe.filter((candidate:any)=>{const route=routes.get(candidate.symbol),trend=this.state.snapshots.get(candidate.symbol)?.technical?.['15m']?.trend;return candidate.eligible&&candidate.pipelineEligible!==false&&Boolean(route)&&(trend==='UP'?route.longExecutable:trend==='DOWN'?route.shortExecutable:route.longExecutable||route.shortExecutable);}).map((candidate:any)=>candidate.symbol)));
+    const ready = this.state.pool
+        .readyList()
         .filter(
           (x) => {
             const route=routes.get(x.symbol),trend=this.state.snapshots.get(x.symbol)?.technical?.['15m']?.trend;
@@ -109,7 +110,7 @@ export class EntryCoordinator {
       return;
     }
     if (!ready.length) {
-      const reason = !routes.size?'WAITING_EXECUTION_CAPACITY':this.state.pool.list().length?'WAITING_NEW_FACTS':'WAITING_CANDIDATE';
+      const reason = !routes.size?'WAITING_EXECUTION_CAPACITY':this.state.pool.readyList().length?'WAITING_NEW_FACTS':'WAITING_CANDIDATE';
       this.ai.setIdleContext(reason, 0, !routes.size?'当前无可执行容量；继续供给与订单维护':'等待新的候选事实，避免重复推理');
       return;
     }
@@ -772,8 +773,7 @@ export class EntryCoordinator {
   }
   private currentDecisionContext(symbol:string,confirmation?:unknown){
     const market=this.state.snapshots.get(symbol);if(!market)return'MARKET_MISSING';
-    const route=this.state.runtimeControl.capital.routedCandidates.find((x:any)=>x.symbol===symbol);
-    return decisionContextKey({market,settingsContext:decisionSettingsContext(this.state.settings),longExecutable:route?.longExecutable,shortExecutable:route?.shortExecutable,confirmation});
+    return decisionContextKey({market,settingsContext:decisionSettingsContext(this.state.settings),confirmation});
   }
   private transition(symbol:string,status:string,reason:string,extra:Record<string,unknown>={}){
     const now=Date.now(),previous=this.state.candidateLifecycle.get(symbol),primaryLease=['PRIMARY_QUEUED','PRIMARY_RUNNING'].includes(status),runReset=primaryLease&&!Object.prototype.hasOwnProperty.call(extra,'runId')?{previousRunId:previous?.runId??previous?.previousRunId??null,runId:null}:{},next={...previous,...runReset,...extra,symbol,status,reason,updatedAt:now,from:previous?.status??null};

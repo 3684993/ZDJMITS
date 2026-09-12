@@ -24,6 +24,7 @@ export const DashboardSnapshotSchema = z.object({
     activePositions: z.number().int(), pendingEntries: z.number().int(), activeEntryOrders:z.number().int().optional(), activeTpOrders:z.number().int().optional(),
   }),
   universe: z.object({ total: z.number().int(), eligible: z.number().int(), topN: z.number().int(), generation:z.number().int().nonnegative().optional() }),
+  supply: z.object({cohort:z.object({status:z.literal('NOT_ESTABLISHED'),memberCount:z.number().int().nonnegative().nullable()}),retention:z.object({status:z.literal('NOT_INVENTORIED'),zombieSnapshotCount:z.number().int().nonnegative().nullable()}),counts:z.record(z.string(),z.number().int().nonnegative().nullable()),target:z.number().int().nonnegative(),lowWatermark:z.number().int().nonnegative(),rootBlocker:z.enum(['SUPPLY','CAPITAL','CAPACITY','RISK','MARKET','GOVERNANCE','AI']).nullable(),reasonCounts:z.record(z.string(),z.number().int().nonnegative()),poolCount:z.number().int().nonnegative(),readyCount:z.number().int().nonnegative(),qualifiedSupply:z.number().int().nonnegative(),readySupply:z.number().int().nonnegative(),targetGap:z.number().int().nonnegative(),supplyShortage:z.boolean(),refillFailure:z.boolean(),belowLowWatermark:z.boolean()}).optional(),
   pool: z.array(PoolItemSchema),
   positions: z.array(PositionSchema),
   entryOrders: z.array(EntryOrderSchema),

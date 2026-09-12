@@ -13,6 +13,7 @@ import { BinancePublicMarketDataProvider } from "../adapters/market/BinancePubli
 import { ExternalTradeAdapter } from "../adapters/exchange/ExternalTradeAdapter.js";
 import { MarketDataHub } from "../services/marketDataHub.js";
 import { UniverseCoordinator } from "../services/universeCoordinator.js";
+import { buildSupplyHealth } from '../services/supplyHealth.js';
 import { ExperienceService } from "../services/experienceService.js";
 import { EipService } from "../services/eipService.js";
 import { AiFabric } from "../services/aiFabric.js";
@@ -36,6 +37,8 @@ import { TemporalIntelligenceService } from "../services/temporalIntelligenceSer
 import { LiveValidationService } from "../services/liveValidationService.js";
 import {ExternalIntelligenceService} from "../services/externalIntelligenceService.js";
 import {ExternalResearchService} from "../services/externalResearchService.js";
+import { AssetGovernanceCoordinator } from '../services/assetGovernanceCoordinator.js';
+import { ProductionAssetResearchService } from '../services/productionAssetResearch.js';
 
 export class EngineRuntime {
   readonly writes=new RuntimeWriteBuffer();
@@ -61,6 +64,7 @@ export class EngineRuntime {
   liveValidation!: LiveValidationService;
   externalIntelligence!: ExternalIntelligenceService;
   externalResearch!: ExternalResearchService;
+  assetGovernance!: AssetGovernanceCoordinator;
   private timers: NodeJS.Timeout[] = [];
   private stopped = false;
   private ready = false;
@@ -273,6 +277,15 @@ export class EngineRuntime {
     );
     runtime.externalIntelligence=externalIntelligence;
     runtime.externalResearch=new ExternalResearchService(state,store,ai,events);
+    runtime.assetGovernance = new AssetGovernanceCoordinator({
+      getSettings: () => runtime.state.settings,
+      review: (settings) => ProductionAssetResearchService.fromSettings(
+        settings.connections,
+        settings.selection.assetDirectory.approvedLiquid,
+      ).review(),
+      publish: (settings, expectedVersion) => runtime.updateSettingsIfVersion(settings, expectedVersion),
+      emit: (type, payload) => events.publish(type, payload),
+    });
     externalIntelligence.setResearchSink(snapshot=>runtime.externalResearch.enqueue(snapshot));
     runtime.cleanup = new TestnetLowLossCleanupService(
       state,
@@ -374,10 +387,14 @@ export class EngineRuntime {
     }
     return runtime;
   }
-  private every(ms: number, fn: () => Promise<void> | void) {
+  private every(ms: number, fn: () => Promise<void> | void, options: { allowOverlap?: boolean } = {}) {
     let running = false;
     const t = setInterval(async () => {
-      if (this.stopped || running) return;
+      if (this.stopped || (!options.allowOverlap && running)) return;
+      if (options.allowOverlap) {
+        try { await fn(); } catch (error) { this.events.publish("RUNTIME_TASK_FAILED", { message: error instanceof Error ? error.message : String(error) }); }
+        return;
+      }
       running = true;
       try {
         await fn();
@@ -518,6 +535,9 @@ export class EngineRuntime {
     this.every(2_000,async()=>this.externalResearch.tick());
     this.every(30_000,()=>{this.externalResearch.enqueueMarketChanges();});
     this.every(1_000,()=>{this.settingsStore.backfillAiRunSummaries(25,8);});
+    // Do not await long research in the scheduler: coordinator single-flight owns
+    // publication while every tick still observes expiry during a hung request.
+    this.every(1_000, () => this.assetGovernance.tick(), { allowOverlap: true });
     // Private account reconciliation must keep running even if the non-critical
     // validation/reporting work is delayed by storage or source inspection.
     this.every(15_000, async () => {
@@ -1021,6 +1041,10 @@ export class EngineRuntime {
       reconciliation: this.reconciliation.health(),
     };
   }
+  supplyHealth(poolItems=this.state.pool.list()) {
+    return buildSupplyHealth({universe:this.state.universe,pool:poolItems,snapshots:this.state.snapshots,positions:this.state.positionSymbols(),activeEntries:this.state.activeEntrySymbols(),capacity:this.state.entryCapacity(),runtimeControl:this.state.runtimeControl,aiResources:this.ai.resourceMetrics(),target:Math.min(this.state.settings.selection.poolMax,this.state.settings.selection.poolTarget),lowWatermark:4});
+  }
+  async updateSettingsIfVersion(input:unknown,expectedVersion:number){const next=await this.settingsStore.saveIfVersion(input,expectedVersion);this.state.setSettings(next);this.state.pool=new (await import('@zdj/core')).DynamicPool(next);this.events.publish('SETTINGS_UPDATED',{generation:this.state.generation});this.universe.refresh();this.runtimeControl.evaluate(true);return next;}
   pipelineStatus() {
     const now = Date.now(),
       eligible = this.state.universe.filter(
@@ -1055,7 +1079,7 @@ export class EngineRuntime {
           ? "MARKET_QUOTES_STALE"
           : null,
       pipelineState = marketDataReason ? "PAUSED_MARKET_DATA_UNAVAILABLE" : "RUNNING";
-    const qualifiedSupply=this.state.universe.filter(x=>(x.residentEligible??x.eligible)&&x.rank>0).length,readySupply=this.state.universe.filter(x=>x.eligible&&x.pipelineEligible!==false&&x.rank>0).length,target=Math.min(this.state.settings.selection.poolMax,this.state.settings.selection.poolTarget),targetGap=Math.max(0,target-poolItems.length),supplyShortage=qualifiedSupply<target,refillFailure=!supplyShortage&&targetGap>0;
+    const supply=this.supplyHealth(poolItems),{qualifiedSupply,readySupply,target,targetGap,supplyShortage,refillFailure}=supply;
     let poolStatus = supplyShortage ? "POOL_SUPPLY_SHORTAGE" : refillFailure ? "POOL_REFILL_FAILURE" : "POOL_READY";
     if (!poolItems.length&&!supplyShortage&&!refillFailure) {
       if (marketInsufficient) poolStatus = "POOL_EMPTY_MARKET_DEGRADED";
@@ -1202,7 +1226,7 @@ export class EngineRuntime {
         klineFreshRatio: freshness.klineFreshRatio,
       },
       pool: {
-        target,qualifiedSupply,readySupply,ready:poolItems.filter(x=>x.state==='READY').length,display:poolItems.length,targetGap,supplyShortage,refillFailure,
+        target,qualifiedSupply,readySupply,ready:supply.readyCount,display:poolItems.length,targetGap,supplyShortage,refillFailure,health:supply,
         status: poolStatus,
         current: poolItems.length,
       },

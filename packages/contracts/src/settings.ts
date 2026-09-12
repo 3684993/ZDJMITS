@@ -95,7 +95,9 @@ export const SystemSettingsSchema = z.object({
       sourceDomain:z.literal('PRODUCTION_PUBLIC_RESEARCH').default('PRODUCTION_PUBLIC_RESEARCH'),
       methodVersion:z.string().default('V3.8.0-LIQUIDITY-30D-V4'),
       evidenceHash:z.string().nullable().default(null),
-      approvals:z.record(z.string(),z.object({symbol:z.string(),reason:z.string(),reviewedAt:z.number().int(),quoteVolumeUsd24h:z.number().nonnegative(),medianDailyQuoteVolumeUsd30d:z.number().nonnegative(),tradeCount24h:z.number().int().nonnegative(),openInterestUsd:z.number().nonnegative(),listingAgeDays:z.number().nonnegative(),liquidityComposite:z.number().min(0).max(1).default(0)})).default({}),
+      approvals:z.record(z.string(),z.object({symbol:z.string(),reason:z.string(),reviewedAt:z.number().int(),quoteVolumeUsd24h:z.number().nonnegative(),medianDailyQuoteVolumeUsd30d:z.number().nonnegative(),tradeCount24h:z.number().int().nonnegative(),openInterestUsd:z.number().nonnegative(),listingAgeDays:z.number().nonnegative(),liquidityComposite:z.number().min(0).max(1).default(0),validUntil:z.number().int().optional(),graceUntil:z.number().int().optional(),lkgSourceFailed:z.boolean().optional()})).default({}),
+      /** Assets retained from prior evidence because this review reported SOURCE_FAILED. */
+      lkgAssets:z.array(z.string()).default([]),
     }).default({}),
   }).superRefine((v, ctx) => {
     if (v.poolMax < v.poolTarget) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['poolMax'], message: 'poolMax must be >= poolTarget' });

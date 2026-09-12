@@ -23,6 +23,7 @@ export type CapitalRouteSample=z.infer<typeof CapitalRouteSampleSchema>;
 
 export const CapitalAdmissionSummarySchema=z.object({
   generation:z.number().int().nonnegative().default(0),
+  capitalVersion:z.string().default('0'),
   directionBudget:z.object({longAvailableNotionalUsd:z.number().nonnegative(),shortAvailableNotionalUsd:z.number().nonnegative(),grossAvailableNotionalUsd:z.number().nonnegative(),evaluatedAt:z.number().int()}).default({longAvailableNotionalUsd:0,shortAvailableNotionalUsd:0,grossAvailableNotionalUsd:0,evaluatedAt:0}),
   evaluatedAt:z.number().int(),
   executableCandidateCount:z.number().int().nonnegative(),

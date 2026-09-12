@@ -167,6 +167,7 @@ export function dashboardProjection(runtime: EngineRuntime): DashboardSnapshot {
       topN: s.settings.selection.universeTopN,
       generation: s.generation,
     },
+    supply: runtime.supplyHealth(),
     pool: s.pool.list(),
     positions: [...s.positions.values()],
     entryOrders: activeEntries.sort((a, b) => b.updatedAt - a.updatedAt),

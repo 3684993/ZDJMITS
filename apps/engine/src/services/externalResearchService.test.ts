@@ -1,30 +1,15 @@
 import {afterEach,describe,expect,it,vi} from 'vitest';
 import {mkdtemp,rm} from 'node:fs/promises';
-import path from 'node:path';
-import os from 'node:os';
-import {SettingsStore} from '../config/settingsStore.js';
-import {ExternalResearchService} from './externalResearchService.js';
-import {parseExternalResearch} from './aiFabric.js';
-
-const paths:string[]=[];
-afterEach(async()=>Promise.all(paths.splice(0).map(x=>rm(x,{recursive:true,force:true}))));
-
+import path from 'node:path';import os from 'node:os';import {SettingsStore} from '../config/settingsStore.js';import {ExternalResearchService} from './externalResearchService.js';import {parseExternalResearch} from './aiFabric.js';
+const paths:string[]=[];afterEach(async()=>Promise.all(paths.splice(0).map(x=>rm(x,{recursive:true,force:true}))));
 describe('ExternalResearchService',()=>{
-  it('is separately gated, fact-change deduplicated, single-item and cannot emit execution permissions',async()=>{
-    const dataDir=await mkdtemp(path.join(os.tmpdir(),'zdj-research-worker-'));paths.push(dataDir);
-    const store=new SettingsStore(path.resolve(process.cwd(),'../../config'),dataDir),settings=await store.load(),now=Date.now(),market={quote:{ts:now},technical:{'15m':{asOf:now,barCloseTime:now-1,trend:'UP'},'5m':{trend:'UP'}}};
-    const state={settings:{...settings,externalIntelligence:{...settings.externalIntelligence,researchEnabled:true,feedToPrimary:false}},pool:{list:()=>[{symbol:'BTCUSDT'}]},snapshots:new Map([['BTCUSDT',market]])} as any;
-    const ai={researchExternal:vi.fn(async(snapshot:any)=>({sourceId:snapshot.sourceId,entities:['USD'],facts:[],conflicts:[]})),setResearchQueue:vi.fn()} as any,events={publish:vi.fn()} as any,service=new ExternalResearchService(state,store,ai,events),snapshot={contentHash:'h1',sourceId:'s1',availableAt:now,expiresAt:now+60_000};
-    expect(service.enqueue(snapshot as any)).toBe(true);expect(service.enqueue(snapshot as any)).toBe(false);
-    expect(service.enqueueMarketChanges(now)).toBe(true);expect(service.enqueueMarketChanges(now+300_000)).toBe(false);
-    await service.tick();await service.tick();
-    expect(ai.researchExternal).toHaveBeenCalledTimes(2);
-    expect(service.metrics()).toMatchObject({enabled:true,feedToPrimary:false,maxConcurrency:1,completed:2});
-    expect(events.publish.mock.calls.flat().join(' ')).not.toMatch(/PLACE_LONG|PLACE_SHORT/);
-    store.close();
+  it('does not spend 9B on duplicate local-market facts when Primary cannot consume them',async()=>{
+    const dataDir=await mkdtemp(path.join(os.tmpdir(),'zdj-research-worker-'));paths.push(dataDir);const store=new SettingsStore(path.resolve(process.cwd(),'../../config'),dataDir),settings=await store.load(),now=Date.now(),market={quote:{ts:now},technical:{'15m':{asOf:now,barCloseTime:now-1,trend:'UP'},'5m':{trend:'UP'}}};
+    const state={settings:{...settings,externalIntelligence:{...settings.externalIntelligence,researchEnabled:true,feedToPrimary:false}},pool:{list:()=>[{symbol:'BTCUSDT'}]},snapshots:new Map([['BTCUSDT',market]])} as any,ai={researchExternal:vi.fn(async(snapshot:any)=>({sourceId:snapshot.sourceId,entities:['USD'],facts:[],conflicts:[]})),setResearchQueue:vi.fn()} as any,events={publish:vi.fn()} as any,service=new ExternalResearchService(state,store,ai,events),snapshot={contentHash:'h1',sourceId:'s1',availableAt:now,expiresAt:now+60_000};
+    expect(service.enqueue(snapshot as any)).toBe(true);expect(service.enqueue(snapshot as any)).toBe(false);expect(service.enqueueMarketChanges(now)).toBe(false);await service.tick();expect(ai.researchExternal).toHaveBeenCalledTimes(1);expect(service.metrics()).toMatchObject({enabled:true,feedToPrimary:false,localMarketResearchActive:false,maxConcurrency:1,completed:1});expect(events.publish.mock.calls.flat().join(' ')).not.toMatch(/PLACE_LONG|PLACE_SHORT/);store.close();
+  });
+  it('allows local-market research only when its context is configured for Primary consumption',async()=>{
+    const dataDir=await mkdtemp(path.join(os.tmpdir(),'zdj-research-feed-'));paths.push(dataDir);const store=new SettingsStore(path.resolve(process.cwd(),'../../config'),dataDir),settings=await store.load(),now=Date.now(),market={quote:{ts:now},technical:{'15m':{asOf:now,barCloseTime:now-1,trend:'UP'},'5m':{trend:'UP'}}};const state={settings:{...settings,externalIntelligence:{...settings.externalIntelligence,researchEnabled:true,feedToPrimary:true}},pool:{list:()=>[{symbol:'BTCUSDT'}]},snapshots:new Map([['BTCUSDT',market]])} as any,service=new ExternalResearchService(state,store,{researchExternal:vi.fn(),setResearchQueue:vi.fn()} as any,{publish:vi.fn()} as any);expect(service.enqueueMarketChanges(now)).toBe(true);expect(service.metrics().localMarketResearchActive).toBe(true);store.close();
   });
 });
-
-describe('ExternalResearch output contract',()=>{
-  it('accepts the bounded 9B fact shape and rejects identity mismatch',()=>{const value={sourceId:'s1',entities:['FEDERAL_RESERVE'],facts:[{field:'target range',value:'4.25 to 4.50',unit:'percent',observedAt:1,evidenceLocation:'Test notice',conflict:null}],conflicts:[]};expect(parseExternalResearch(value,'s1').facts).toHaveLength(1);expect(()=>parseExternalResearch(value,'s2')).toThrow('RESEARCH_OUTPUT_INVALID');});
-});
+describe('ExternalResearch output contract',()=>{it('accepts the bounded 9B fact shape and rejects identity mismatch',()=>{const value={sourceId:'s1',entities:['FEDERAL_RESERVE'],facts:[{field:'target range',value:'4.25 to 4.50',unit:'percent',observedAt:1,evidenceLocation:'Test notice',conflict:null}],conflicts:[]};expect(parseExternalResearch(value,'s1').facts).toHaveLength(1);expect(()=>parseExternalResearch(value,'s2')).toThrow('RESEARCH_OUTPUT_INVALID');});});

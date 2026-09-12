@@ -19,3 +19,17 @@ it('bounds queue waits and reserves weight for private work',async()=>{
  await vi.advanceTimersByTimeAsync(61000);await budget.run(2,publicFn);expect(publicFn).toHaveBeenCalledOnce();
  }finally{vi.useRealTimers();}
 });
+it('precharges endpoint weight and keeps public hydration below its soft ceiling',async()=>{
+ vi.useFakeTimers();vi.setSystemTime(1800000000000);try{const budget=new RequestBudget(3,2,100,{softPublicWeight:10,softBackgroundWeight:15,hardWeight:20});budget.observe(200,'9',undefined);
+ const publicFn=vi.fn(),pending=budget.run(2,2,publicFn),rejected=expect(pending).rejects.toThrow('QUEUE_TIMEOUT');
+ const privateFn=vi.fn(async()=>{});await budget.run(0,2,privateFn);expect(privateFn).toHaveBeenCalledOnce();await vi.advanceTimersByTimeAsync(5100);await rejected;expect(publicFn).not.toHaveBeenCalled();
+ }finally{vi.useRealTimers();}
+});
+it('recovers from a ban sequentially instead of releasing every waiting subsystem at once',async()=>{
+ vi.useFakeTimers();vi.setSystemTime(1800000000000);try{const budget=new RequestBudget(3,3,100);budget.observe(418,'1200','1');await vi.advanceTimersByTimeAsync(6001);
+ let active=0,maxActive=0;const probe=()=>budget.run(0,1,async()=>{active++;maxActive=Math.max(maxActive,active);budget.observe(200,'10',undefined);active--;});
+ const first=probe(),second=probe();await first;expect(maxActive).toBe(1);expect(budget.health().status).toBe('RECOVERING');expect(budget.health().recoverySuccesses).toBe(1);
+ await vi.advanceTimersByTimeAsync(1600);await second;expect(maxActive).toBe(1);expect(budget.health().recoverySuccesses).toBe(2);
+ await vi.advanceTimersByTimeAsync(1600);await probe();expect(budget.health().status).toBe('AVAILABLE');expect(budget.health().recoverySuccesses).toBe(3);
+ }finally{vi.useRealTimers();}
+});

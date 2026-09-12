@@ -23,8 +23,8 @@ export class ReconciliationService {
   async run(){
     const requestedAt=Date.now();if(this.running)return;this.running=true;
     try{
-      const fullOrderScan=this.fullOrderScanDue(requestedAt),positionsPromise=this.adapter.fetchPositions(),orders=fullOrderScan?await this.adapter.fetchOpenOrders():this.cachedOpenOrders.filter(row=>this.cachedOrderUsable(row));
-      if(fullOrderScan){this.cachedOpenOrders=orders.map(row=>({...row}));this.lastFullOrderScanAt=Date.now();}
+      const fullOrderScan=this.fullOrderScanDue(requestedAt),positionsPromise=this.adapter.fetchPositions(),orders:Array<EntryOrder|TakeProfitOrder>=fullOrderScan?await this.adapter.fetchOpenOrders():this.cachedOpenOrders.filter(row=>this.cachedOrderUsable(row));
+      if(fullOrderScan){this.cachedOpenOrders=orders.slice();this.lastFullOrderScanAt=Date.now();}
       const positions=await positionsPromise;let drift=0;
       const ordersByChain=new Map<string,EntryOrder>();for(const order of this.state.entryOrders.values())if(nonEmpty(order.decisionChainId))ordersByChain.set(order.decisionChainId,order);
       this.state.executionFills=this.state.executionFills.map((fill:any)=>{const attributed=nonEmpty(fill.decisionChainId)?ordersByChain.get(fill.decisionChainId):undefined;if(!attributed||attributed.symbol===fill.symbol)return fill;drift++;this.events.publish('EXCHANGE_FILL_ATTRIBUTION_REVISED',{fillId:fill.fillId,tradeId:fill.tradeId,orderId:fill.orderId,fillSymbol:fill.symbol,previousDecisionChainId:fill.decisionChainId,previousOrderSymbol:attributed.symbol,attributionStatus:'EXTERNAL_OR_UNLINKED',reason:'CROSS_SYMBOL_ATTRIBUTION_INVALID'},fill.symbol);return{...fill,decisionChainId:null,allocationPlanId:null,attributionStatus:'EXTERNAL_OR_UNLINKED'};});

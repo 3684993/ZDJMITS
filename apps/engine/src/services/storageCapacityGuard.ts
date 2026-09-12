@@ -3,7 +3,7 @@ import path from 'node:path';
 import {DatabaseSync} from 'node:sqlite';
 
 const MiB=1024*1024;
-export const STORAGE_LIMITS={warningBytes:512*MiB,pressureBytes:768*MiB,shedBytes:1024*MiB,entryBlockBytes:1280*MiB,hardReserveBytes:1792*MiB,physicalMaxBytes:2048*MiB} as const;
+export const STORAGE_LIMITS={warningBytes:512*MiB,pressureBytes:768*MiB,shedBytes:1024*MiB,entryBlockBytes:1280*MiB,hardReserveBytes:1792*MiB} as const;
 export const STORAGE_ROW_CAPS={decisionSnapshots:5000,analysisChains:5000,aiRawRuns:1000,aiArchiveRows:20000,nonCriticalRuntimeEvents:20000,shadowMarks:20000,externalResearchTasks:5000} as const;
 export type StorageCapacityStatus='AVAILABLE'|'WARNING'|'PRESSURED'|'SHEDDING'|'ENTRY_BLOCKED'|'HARD_RESERVE';
 export type StorageCapacityHealth={status:StorageCapacityStatus;dbPath:string;dbBytes:number;walBytes:number;totalBytes:number;limits:typeof STORAGE_LIMITS;checkedAt:number};

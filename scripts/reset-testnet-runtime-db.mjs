@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import {existsSync,mkdtempSync,rmSync,statSync,openSync,readSync,closeSync,writeFileSync,renameSync} from 'node:fs';
+import {existsSync,mkdtempSync,rmSync,statSync,openSync,readSync,closeSync,readFileSync,writeFileSync,renameSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import path from 'node:path';
 import {DatabaseSync} from 'node:sqlite';
@@ -22,7 +22,7 @@ const hashRows=(db,table)=>{const h=createHash('sha256'),pk=db.prepare(`PRAGMA t
 const integrity=db=>{const rows=db.prepare('PRAGMA integrity_check').all();if(rows.length!==1||rows[0].integrity_check!=='ok')throw new Error('SQLITE_INTEGRITY_FAILED');const foreign=db.prepare('PRAGMA foreign_key_check').all();if(foreign.length)throw new Error(`SQLITE_FOREIGN_KEY_CHECK_FAILED:${foreign.length}`);};
 const sourceStat=statSync(source),sourceHash=hashFile(source),verificationPath=`${source}.verification.json`;
 if(existsSync(verificationPath)){
- const verification=JSON.parse(String(await import('node:fs').then(({readFileSync})=>readFileSync(verificationPath,'utf8'))));
+ const verification=JSON.parse(readFileSync(verificationPath,'utf8'));
  if(verification.status!=='COMPACT_READY_NOT_REPLACED')throw new Error(`SOURCE_VERIFICATION_STATUS_INVALID:${verification.status}`);
  if(verification.compactHash&&verification.compactHash!==sourceHash)throw new Error('SOURCE_VERIFICATION_HASH_MISMATCH');
 }

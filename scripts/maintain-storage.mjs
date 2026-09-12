@@ -1,0 +1,40 @@
+#!/usr/bin/env node
+import {existsSync,rmSync,statSync} from 'node:fs';
+import path from 'node:path';
+import {DatabaseSync} from 'node:sqlite';
+
+const args=new Set(process.argv.slice(2)),apply=args.has('--apply'),dbArg=process.argv.find(x=>x.startsWith('--db='))?.slice(5),dbPath=path.resolve(dbArg??'data/zdj-settings.sqlite'),now=Date.now(),day=86_400_000;
+const compactArg=process.argv.find(x=>x.startsWith('--compact='))?.slice(10),compactPath=path.resolve(compactArg??`${dbPath}.compact`);
+if(!existsSync(dbPath))throw new Error(`DB_NOT_FOUND:${dbPath}`);
+if(apply&&!args.has('--engine-stopped'))throw new Error('REFUSING_APPLY_WITHOUT_ENGINE_STOPPED_CONFIRMATION');
+const db=new DatabaseSync(dbPath,{readOnly:!apply});
+const tables=new Set(db.prepare("SELECT name FROM sqlite_master WHERE type='table'").all().map(r=>String(r.name)));
+const has=t=>tables.has(t),scalar=(sql,...p)=>Number(db.prepare(sql).get(...p)?.n??0),integrity=()=>String(db.prepare('PRAGMA integrity_check').get()?.integrity_check??'UNKNOWN');
+const policies=[
+ {table:'decision_snapshots',column:'created_at',before:now-7*day,reason:'full decision snapshots >7d'},
+ {table:'decision_chains',column:'updated_at',before:now-14*day,reason:'full decision chains >14d'},
+ {table:'ai_runs_archive',column:'started_at',before:now-14*day,reason:'raw AI archive >14d'},
+ {table:'external_research_tasks',column:'updated_at',before:now-7*day,reason:'completed/failed research tasks >7d',extra:"status IN ('COMPLETED','FAILED','EXPIRED')"},
+ {table:'shadow_mark_series',column:'ts',before:now-30*day,reason:'shadow marks >30d'},
+ {table:'regime_samples',column:'sample_at',before:now-90*day,reason:'regime samples >90d'}
+];
+const critical=["ENTRY_SUBMIT_ATTEMPTED","ENTRY_ORDER_CREATED","ENTRY_FILLED","ENTRY_ORDER_TERMINAL_RECONCILED","TP_SUBMISSION_PREPARED","TP_ORDER_CREATED","TP_ORDER_REJECTED","MANUAL_SUBMISSION_PREPARED","MANUAL_ORDER_CREATED","EXCHANGE_FILL_ATTRIBUTED","EXCHANGE_FILL_UNATTRIBUTED","RUNTIME_STOPPING","RUNTIME_STOPPED"];
+const telemetry=['SHADOW_SAMPLE_RECORDED','CANDIDATE_RANKING_SHADOW','POOL_UPDATED','POOL_SUPPLY_HEALTH','ASSET_ADMISSION_EVALUATED','UNIVERSE_UPDATED','MARKET_FRESHNESS_RECOVERED','MARKET_FRESHNESS_RECOVERY','AI_RUN_STARTED','AI_RUN_COMPLETED','CAPITAL_ROUTE_EVALUATED','PRIVATE_SYNC_STARTED','PRIVATE_SYNC_COMPLETED','RECONCILIATION_COMPLETED','MARKET_TARGETED_REFRESHED','MARKET_SLOW_FIELDS_REFRESHED'];
+const plan=[];
+for(const p of policies){if(!has(p.table))continue;const where=`${p.column}<?${p.extra?` AND ${p.extra}`:''}`,count=scalar(`SELECT COUNT(*) n FROM ${p.table} WHERE ${where}`,p.before);plan.push({...p,count,where});}
+if(has('runtime_events')){
+ const marks=telemetry.map(()=>'?').join(','),criticalMarks=critical.map(()=>'?').join(',');
+ plan.push({table:'runtime_events',reason:'high-rate telemetry >1d',count:scalar(`SELECT COUNT(*) n FROM runtime_events WHERE ts<? AND type IN (${marks})`,now-day,...telemetry),where:`ts<? AND type IN (${marks})`,params:[now-day,...telemetry]});
+ plan.push({table:'runtime_events',reason:'ordinary runtime events >7d',count:scalar(`SELECT COUNT(*) n FROM runtime_events WHERE ts<? AND type NOT IN (${criticalMarks}) AND type NOT IN (${marks})`,now-7*day,...critical,...telemetry),where:`ts<? AND type NOT IN (${criticalMarks}) AND type NOT IN (${marks})`,params:[now-7*day,...critical,...telemetry]});
+ plan.push({table:'runtime_events',reason:'critical trading audit events >90d',count:scalar(`SELECT COUNT(*) n FROM runtime_events WHERE ts<? AND type IN (${criticalMarks})`,now-90*day,...critical),where:`ts<? AND type IN (${criticalMarks})`,params:[now-90*day,...critical]});
+}
+const beforeBytes=statSync(dbPath).size,report={mode:apply?'APPLY':'DRY_RUN',dbPath,integrityBefore:integrity(),beforeBytes,policies:plan.map(({where,params,...x})=>x),deleteRows:plan.reduce((n,x)=>n+x.count,0),compactPath};
+console.log(JSON.stringify(report,null,2));
+if(!apply){db.close();process.exit(0);}
+if(report.integrityBefore!=='ok')throw new Error(`DB_INTEGRITY_FAILED:${report.integrityBefore}`);
+const batch=10_000;
+for(const p of plan){let remaining=p.count;while(remaining>0){db.exec('BEGIN IMMEDIATE');try{const params=p.params??[p.before],ids=db.prepare(`SELECT rowid id FROM ${p.table} WHERE ${p.where} LIMIT ${batch}`).all(...params).map(r=>Number(r.id));if(!ids.length){db.exec('COMMIT');break;}const placeholders=ids.map(()=>'?').join(',');db.prepare(`DELETE FROM ${p.table} WHERE rowid IN (${placeholders})`).run(...ids);db.exec('COMMIT');remaining-=ids.length;}catch(e){db.exec('ROLLBACK');throw e;}}}
+const integrityAfterDelete=integrity();if(integrityAfterDelete!=='ok')throw new Error(`DB_INTEGRITY_AFTER_DELETE_FAILED:${integrityAfterDelete}`);
+if(existsSync(compactPath))rmSync(compactPath,{force:true});const escaped=compactPath.replaceAll("'","''");db.exec(`VACUUM INTO '${escaped}'`);db.close();
+const compact=new DatabaseSync(compactPath,{readOnly:true}),compactIntegrity=String(compact.prepare('PRAGMA integrity_check').get()?.integrity_check??'UNKNOWN');compact.close();if(compactIntegrity!=='ok')throw new Error(`COMPACT_DB_INTEGRITY_FAILED:${compactIntegrity}`);
+console.log(JSON.stringify({status:'COMPACT_READY_NOT_REPLACED',compactPath,compactBytes:statSync(compactPath).size,integrity:compactIntegrity,originalPreserved:true},null,2));

@@ -6,6 +6,7 @@ export interface MarketDataProvider {
   discoverSymbols?(limit:number, prioritySymbols?:string[]):Promise<string[]>;
   getSnapshot(symbol:string):Promise<MarketSymbolSnapshot>;
   getCandles(symbol:string,timeframe:Timeframe,limit:number):Promise<Candle[]>;
+  cachedCandles?(symbol:string,timeframe:Timeframe,limit:number):Candle[];
   getQuote(symbol:string):Promise<Quote>;
   getOrderBook(symbol:string):Promise<OrderBook>;
   getDerivatives(symbol:string):Promise<DerivativesSnapshot>;

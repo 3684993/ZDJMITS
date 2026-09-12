@@ -41,3 +41,28 @@ it('records capacity before/after and preserves memory when settings persistence
  (store as any).db.exec("CREATE TRIGGER reject_settings BEFORE UPDATE ON settings BEGIN SELECT RAISE(FAIL,'TEST_REJECT'); END");await expect(store.save({...initial,portfolio:{...initial.portfolio,maxPositions:20}})).rejects.toThrow('TEST_REJECT');expect((store as any).current.portfolio.maxPositions).toBe(15);
  }finally{store.close();}
 });
+
+it('archives AI telemetry without journaling it and retains changed position transitions',async()=>{
+ const dir=await mkdtemp(path.join(os.tmpdir(),'zdj-telemetry-'));paths.push(dir);const store=new SettingsStore(path.resolve('../../config'),dir);await store.load();
+ try{store.recordRuntimeEvent({id:'run-event',type:'AI_RUN_COMPLETED',ts:Date.now(),payload:{id:'run',status:'COMPLETED',symbol:'BTCUSDT',startedAt:Date.now(),decision:'WAIT_FOR_PRICE'}});
+ expect(store.getAiRun('run').decision).toBe('WAIT_FOR_PRICE');expect(store.runtimeEvents(0,['AI_RUN_COMPLETED'])).toHaveLength(0);
+ for(const transition of ['UNCHANGED','OPEN','REDUCE','CLOSE'])store.recordRuntimeEvent({id:transition,type:'POSITION_LIFECYCLE_TRANSITION',ts:Date.now(),payload:{transition}});
+ expect(store.runtimeEvents(0,['POSITION_LIFECYCLE_TRANSITION'])).toHaveLength(3);
+ }finally{store.close();}
+});
+it('runs bounded retention, keeps raw running AI and all critical events, and evicts only orphan AI entities',async()=>{
+ const dir=await mkdtemp(path.join(os.tmpdir(),'zdj-retention-'));paths.push(dir);const store=new SettingsStore(path.resolve('../../config'),dir);await store.load();const db=(store as any).db,now=Date.now(),old=now-120*86400000;
+ try{for(let i=0;i<150;i++)db.prepare('INSERT INTO decision_snapshots VALUES(?,?,?,?,?)').run('s'+i,null,'BTCUSDT',old,'{}');
+ for(const status of ['RUNNING','COMPLETED'])store.upsertAiRun({id:status,startedAt:old,status,inputPreview:'raw'});
+ store.recordRuntimeEvent({id:'critical',type:'TP_REPAIR_FAILED',ts:old,payload:{order:'working'}});
+ store.persistRuntime({aiRuns:[{id:'old-ai'}],positions:[['p',{quantity:1}]]});store.persistRuntime({aiRuns:[],positions:[]});
+ expect(db.prepare("SELECT count(*) n FROM runtime_entities WHERE kind='aiRuns'").get().n).toBe(0);expect(db.prepare("SELECT count(*) n FROM runtime_entities WHERE kind='positions'").get().n).toBe(1);
+ store.maintainRetention(now);expect(db.prepare('SELECT count(*) n FROM decision_snapshots').get().n).toBe(50);
+ for(let i=0;i<22;i++)store.maintainRetention(now);
+ expect(store.getAiRun('RUNNING').inputPreview).toBe('raw');expect(store.getAiRun('COMPLETED')).toBeNull();expect(store.runtimeEvents(0,['TP_REPAIR_FAILED'])).toHaveLength(1);
+ }finally{store.close();}
+});
+it('reuses a single trade sync baseline across concurrent sync requests',async()=>{
+ const dir=await mkdtemp(path.join(os.tmpdir(),'zdj-baseline-'));paths.push(dir);const store=new SettingsStore(path.resolve('../../config'),dir);await store.load();
+ try{const results=await Promise.all([store.tradeSyncBaseline(dir),store.tradeSyncBaseline(dir)]);expect(results[0]).toBe(results[1]);const first=await stat(results[0]!);store.persistRuntime({newFact:true});expect(await store.tradeSyncBaseline(dir)).toBe(results[0]);expect((await stat(results[0]!)).mtimeMs).toBe(first.mtimeMs);}finally{store.close();}
+});

@@ -1,4 +1,4 @@
-import { mkdir, readFile } from "node:fs/promises";
+import { mkdir, readFile, stat, link, unlink } from "node:fs/promises";
 import path from "node:path";
 import { DatabaseSync, backup as sqliteBackup } from "node:sqlite";
 import { Worker } from "node:worker_threads";
@@ -6,6 +6,7 @@ import { SystemSettingsSchema, type SystemSettings } from "@zdj/contracts";
 import { WindowsCredentialManagerSecretStore } from "./windowsCredentialManagerSecretStore.js";
 import { WindowsDpapiSecretStore } from "./windowsDpapiSecretStore.js";
 import { redactAudit } from "../api/projections.js";
+import { isTelemetry } from '../services/operationalLogger.js';
 import { activeOrderStatus, type ManualExecutionRecord, type EntryExecutionRecord } from '../services/executionLifecycle.js';
 
 function record(value: unknown): value is Record<string, unknown> {
@@ -87,6 +88,8 @@ export class SettingsStore {
   private db!: DatabaseSync;
   private runtimeEntityCache:Map<string,string>|null=null;
   private runtimeCheckpointStats={entityWrites:0,checkpointBytes:0,durationMs:0};
+  private retentionCursor=0;
+  private baselineFlights=new Map<string,Promise<string>>();
   checkpointMetrics(){return this.runtimeCheckpointStats;}
   private transactionActive = false;
   private operationalWorker:Worker|null=null;
@@ -118,6 +121,8 @@ export class SettingsStore {
       `CREATE TABLE IF NOT EXISTS settings (id INTEGER PRIMARY KEY CHECK(id=1), version INTEGER NOT NULL, payload TEXT NOT NULL, updated_at INTEGER NOT NULL); CREATE TABLE IF NOT EXISTS settings_audit (id INTEGER PRIMARY KEY AUTOINCREMENT, changed_at INTEGER NOT NULL, source TEXT NOT NULL, old_version INTEGER, new_version INTEGER NOT NULL, summary TEXT NOT NULL); CREATE TABLE IF NOT EXISTS secrets (ref TEXT PRIMARY KEY, ciphertext TEXT NOT NULL, last4 TEXT NOT NULL, updated_at INTEGER NOT NULL); CREATE TABLE IF NOT EXISTS connection_profiles (id TEXT PRIMARY KEY, profile TEXT NOT NULL, updated_at INTEGER NOT NULL); CREATE TABLE IF NOT EXISTS runtime_state (id INTEGER PRIMARY KEY CHECK(id=1), payload TEXT NOT NULL, updated_at INTEGER NOT NULL); CREATE TABLE IF NOT EXISTS runtime_events (id TEXT PRIMARY KEY, type TEXT NOT NULL, ts INTEGER NOT NULL, symbol TEXT, payload TEXT NOT NULL); CREATE INDEX IF NOT EXISTS runtime_events_ts ON runtime_events(ts); CREATE TABLE IF NOT EXISTS schema_migrations (version INTEGER PRIMARY KEY, applied_at INTEGER NOT NULL);`,
     );
     this.db.exec('CREATE TABLE IF NOT EXISTS runtime_entities(kind TEXT NOT NULL,entity_id TEXT NOT NULL,payload TEXT NOT NULL,PRIMARY KEY(kind,entity_id));');
+    // Legacy hourly trigger deleted audit facts and ran unbounded work inside an event INSERT.
+    this.db.exec('DROP TRIGGER IF EXISTS zdj_hourly_storage_retention');
     const migration = this.db
       .prepare("SELECT version FROM schema_migrations WHERE version=1")
       .get() as { version: number } | undefined;
@@ -338,6 +343,9 @@ export class SettingsStore {
     this.db.exec(`CREATE INDEX IF NOT EXISTS ai_runs_summary_symbol_decision_nocase ON ai_runs_archive(symbol COLLATE NOCASE,decision COLLATE NOCASE,started_at DESC,run_id DESC);
       CREATE INDEX IF NOT EXISTS ai_runs_summary_role_status_nocase ON ai_runs_archive(role COLLATE NOCASE,status COLLATE NOCASE,started_at DESC,run_id DESC);
       CREATE INDEX IF NOT EXISTS ai_runs_summary_decision_nocase ON ai_runs_archive(decision COLLATE NOCASE,started_at DESC,run_id DESC);`);
+    this.db.exec(`CREATE INDEX IF NOT EXISTS external_research_retention ON external_research_tasks(updated_at);
+      CREATE INDEX IF NOT EXISTS temporal_jobs_retention ON temporal_jobs(completed_at);
+      CREATE INDEX IF NOT EXISTS ai_raw_retention ON ai_runs_archive(started_at) WHERE payload<>'{}' AND status IN ('COMPLETED','FAILED','CANCELED');`);
     const secretColumns = new Set(
       (
         this.db.prepare("PRAGMA table_info(secrets)").all() as Array<{
@@ -668,9 +676,34 @@ export class SettingsStore {
     this.db.exec('SAVEPOINT runtime_checkpoint');try{
       const upsert=this.db.prepare('INSERT INTO runtime_entities(kind,entity_id,payload) VALUES(?,?,?) ON CONFLICT(kind,entity_id) DO UPDATE SET payload=excluded.payload');for(const update of updates)upsert.run(...update);
       this.db.prepare('INSERT INTO runtime_state(id,payload,updated_at) VALUES(1,?,?) ON CONFLICT(id) DO UPDATE SET payload=excluded.payload,updated_at=excluded.updated_at').run(payload,Date.now());
+      if(lists.aiRuns){
+        const live=new Set(lists.aiRuns.ids),remove=this.db.prepare("DELETE FROM runtime_entities WHERE kind='aiRuns' AND entity_id=?");
+        for(const key of this.runtimeEntityCache!.keys())if(key.startsWith('aiRuns:')&&!live.has(key.slice(7))){remove.run(key.slice(7));this.runtimeEntityCache!.delete(key);}
+      }
       this.db.exec('RELEASE runtime_checkpoint');if(outer)this.runtimeEntityCache=null;else for(const [kind,id,raw] of updates)this.runtimeEntityCache!.set(`${kind}:${id}`,raw);
       this.runtimeCheckpointStats={entityWrites:updates.length,checkpointBytes:Buffer.byteLength(payload),durationMs:Date.now()-startedAt};
     }catch(error){this.db.exec('ROLLBACK TO runtime_checkpoint; RELEASE runtime_checkpoint');this.runtimeEntityCache=null;throw error;}
+  }
+  /** One indexed, bounded batch per scheduler tick. Never run from a UI read or audit INSERT. */
+  maintainRetention(now=Date.now()) {
+    if(this.transactionActive)return {skipped:true};
+    const day=86_400_000,policies:[string,string,number,string][]=[
+      ['decision_snapshots','created_at',7,'1'],
+      ['decision_chains','updated_at',14,"status IN ('OPEN','WAITING_PRICE','CLOSED') AND NOT EXISTS (SELECT 1 FROM json_each(decision_chains.payload,'$.events') e WHERE json_extract(e.value,'$.type') GLOB '*ORDER*' OR json_extract(e.value,'$.type') GLOB '*FILL*' OR json_extract(e.value,'$.type') GLOB '*TP_*' OR json_extract(e.value,'$.type') GLOB '*MANUAL*')"],
+      ['ai_runs_archive','started_at',90,"status IN ('COMPLETED','FAILED','CANCELED')"],
+      ['external_research_tasks','updated_at',7,"status IN ('COMPLETED','FAILED','EXPIRED')"],
+      ['external_intelligence_snapshots','expires_at',7,'1'],
+      ['shadow_mark_series','ts',30,'1'],['regime_samples','sample_at',90,'1'],
+      ['state_change_observations','observed_at',90,'1'],
+      ['regime_episodes','started_at',90,'ended_at IS NOT NULL'],
+      ['temporal_jobs','completed_at',7,"status IN ('COMPLETED','FAILED')"],
+    ];
+    const index=this.retentionCursor++%(policies.length+1);
+    if(index===policies.length){
+      return {table:'ai_runs_archive',compacted:Number(this.db.prepare("UPDATE ai_runs_archive SET payload='{}' WHERE rowid IN (SELECT rowid FROM ai_runs_archive WHERE started_at<? AND payload<>'{}' AND status IN ('COMPLETED','FAILED','CANCELED') LIMIT 100)").run(now-14*day).changes)};
+    }
+    const [table,column,days,extra]=policies[index]!;
+    return {table,deleted:Number(this.db.prepare(`DELETE FROM ${table} WHERE rowid IN (SELECT rowid FROM ${table} WHERE ${column}<? AND (${extra}) LIMIT 100)`).run(now-days*day).changes)};
   }
   upsertCapitalEpoch(value: any) {
     this.db.prepare("INSERT INTO capital_epochs(capital_epoch_id,started_at,reason,status,payload,created_at) VALUES(?,?,?,?,?,?) ON CONFLICT(capital_epoch_id) DO UPDATE SET status=excluded.status,payload=excluded.payload")
@@ -906,6 +939,11 @@ export class SettingsStore {
     payload?: unknown;
   }) {
     const source=event.payload as any;
+    // Filtering the journal must not skip AI archival or runtime execution hooks.
+    if(isTelemetry(event.type,event.payload)){
+      if(event.type.startsWith('AI_RUN_')&&source?.id){this.upsertAiRun(source);if(event.type==='AI_RUN_COMPLETED')this.appendDecisionChain(source.id,{...event,payload:{artifactRef:{table:'ai_runs_archive',runId:source.id},status:source.status,decision:source.decision}});}
+      return;
+    }
     const eventPayload=event.type.startsWith('AI_RUN_')&&source?.id ? {
       ...source,inputPreview:undefined,outputPreview:undefined,normalizedPreview:undefined,
       failure:source.failure?{...source.failure,rawOutput:undefined}:source.failure,
@@ -977,6 +1015,11 @@ export class SettingsStore {
     }
     return {scanned:rows.length,updated,elapsedMs:Date.now()-started};
   }
+  aiRunHealthSummary(since:number){
+    const rows=this.db.prepare("SELECT status FROM ai_runs_archive WHERE started_at>=? AND status IN ('COMPLETED','FAILED') ORDER BY started_at DESC,run_id DESC LIMIT 5000").all(since) as Array<{status:string}>;
+    let consecutiveFailures=0;for(const row of rows){if(row.status==='COMPLETED')break;consecutiveFailures++;}
+    return {completed:rows.filter(row=>row.status==='COMPLETED').length,consecutiveFailures};
+  }
   listAiRuns(since = Date.now() - 90 * 24 * 60 * 60_000, limit = 10000) {
     return (
       this.db
@@ -1019,8 +1062,9 @@ export class SettingsStore {
     current.events.push({
       type: event.type,
       ts: event.ts,
-      payload: JSON.parse(redactAudit(event.payload, Infinity)),
+      payload: JSON.parse(redactAudit(event.payload, 16384)),
     });
+    if(current.events.length>256){current.archivedEventCount=Number(current.archivedEventCount??0)+current.events.length-256;current.events=current.events.slice(-256);current.archiveTable='runtime_events';}
     if(event.type==='ENTRY_EXECUTION_WAITING')current.status='WAITING_PRICE';
     if(['ENTRY_SUBMIT_ATTEMPTED','ENTRY_ORDER_CREATED'].includes(event.type))current.status='WORKING';
     if(event.type==='ENTRY_ORDER_SUBMISSION_UNKNOWN')current.status='UNKNOWN_RECONCILIATION';
@@ -1280,6 +1324,20 @@ export class SettingsStore {
     worker.on('message',(value:any)=>{this.operationalCache={at:Date.now(),value:{integrity:value.integrity===true?true:value.integrity===false?false:null,status:value.integrity===true?'HEALTHY':value.integrity===false?'OFFLINE':'UNKNOWN',auditEvents:Number(value.auditEvents??0),runtimePersistedAt:Number.isFinite(value.runtimePersistedAt)?Number(value.runtimePersistedAt):null,checkedAt:Number.isFinite(value.checkedAt)?Number(value.checkedAt):null,error:value.error?String(value.error):null}};});
     worker.on('error',(error)=>{this.operationalCache={at:Date.now(),value:{integrity:null,status:'UNKNOWN',auditEvents:this.operationalCache?.value.auditEvents??0,runtimePersistedAt:this.operationalCache?.value.runtimePersistedAt??null,checkedAt:Date.now(),error:error.message}};});
     this.operationalWorker=worker;
+  }
+  /** A single verified baseline, shared by both manual sync paths, never one whole DB per sync. */
+  tradeSyncBaseline(directory:string):Promise<string>{
+    const destination=path.resolve(directory,'trade-sync-baseline.sqlite'),existing=this.baselineFlights.get(destination);
+    if(existing)return existing;
+    const flight=(async()=>{
+      await mkdir(directory,{recursive:true});
+      const verify=(file:string)=>{const db=new DatabaseSync(file,{readOnly:true});try{const rows=db.prepare('PRAGMA integrity_check').all();if(rows.length!==1||rows[0]?.integrity_check!=='ok')throw new Error('TRADE_SYNC_BASELINE_INVALID');}finally{db.close();}};
+      try{await stat(destination);verify(destination);return destination;}catch(error){if((error as NodeJS.ErrnoException).code!=='ENOENT')throw error;}
+      const size=Number((this.db.prepare('PRAGMA page_count').get() as any).page_count)*Number((this.db.prepare('PRAGMA page_size').get() as any).page_size);
+      if(size>512*1024**2)throw new Error('TRADE_SYNC_BASELINE_TOO_LARGE: offline storage cleanup required');
+      const temporary=destination+`.${process.pid}.${Date.now()}.tmp`;
+      try{await sqliteBackup(this.db,temporary);verify(temporary);await link(temporary,destination);return destination;}finally{await unlink(temporary).catch(()=>{});}
+    })();this.baselineFlights.set(destination,flight);void flight.catch(()=>this.baselineFlights.delete(destination));return flight;
   }
   async backup(destination: string) {
     await this.open();

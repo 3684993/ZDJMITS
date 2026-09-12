@@ -30,7 +30,7 @@ it('recovers from a ban sequentially instead of releasing every waiting subsyste
  let active=0,maxActive=0;const probe=()=>budget.run(0,1,async()=>{active++;maxActive=Math.max(maxActive,active);budget.observe(200,'10',undefined);active--;});
  const first=probe(),second=probe();await first;expect(maxActive).toBe(1);expect(budget.health().status).toBe('RECOVERING');expect(budget.health().recoverySuccesses).toBe(1);
  await vi.advanceTimersByTimeAsync(1600);await second;expect(maxActive).toBe(1);expect(budget.health().recoverySuccesses).toBe(2);
- await vi.advanceTimersByTimeAsync(1600);await probe();expect(budget.health().status).toBe('AVAILABLE');expect(budget.health().recoverySuccesses).toBe(3);
+ await vi.advanceTimersByTimeAsync(1600);await probe();expect(budget.health().status).toBe('PRESSURED');expect(budget.health().recoverySuccesses).toBe(3);
  }finally{vi.useRealTimers();}
 });
 it('attributes endpoint weight and reports pressure instead of falsely AVAILABLE',async()=>{
@@ -42,4 +42,13 @@ it('attributes endpoint weight and reports pressure instead of falsely AVAILABLE
 it('retains the Binance-observed banned IP for route diagnostics',()=>{
  const budget=new RequestBudget(1,1,100);budget.observe(418,'2300','60',{source:'RECONCILIATION',endpoint:'/fapi/v2/positionRisk'},'15.158.242.74');
  expect(budget.health().lastObservedBanIp).toBe('15.158.242.74');expect(budget.health().status).toBe('RATE_LIMITED');
+});
+
+it('precharges concurrent work on top of observed weight',async()=>{
+ vi.useFakeTimers();vi.setSystemTime(1800000000000);try{const budget=new RequestBudget(3,3,100,{softPublicWeight:10,softBackgroundWeight:15,hardWeight:20});budget.observe(200,'17',undefined);
+ let release!:()=>void;const first=budget.run(0,2,()=>new Promise<void>(r=>release=r));await Promise.resolve();const fn=vi.fn(),second=budget.run(0,2,fn),rejected=expect(second).rejects.toThrow('QUEUE_TIMEOUT');
+ await vi.advanceTimersByTimeAsync(5100);await rejected;expect(fn).not.toHaveBeenCalled();release();await first;}finally{vi.useRealTimers();}
+});
+it('honors HTTP-date Retry-After and body ban deadline',()=>{
+ const budget=new RequestBudget();const until=Date.now()+3600000;budget.observe(418,undefined,new Date(Date.now()+120000).toUTCString(),{},null,until);expect(budget.health().blockedUntil).toBeGreaterThanOrEqual(until);
 });

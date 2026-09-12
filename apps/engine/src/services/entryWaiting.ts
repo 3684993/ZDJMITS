@@ -10,10 +10,10 @@ export function waitingContext(d:BrainDecision,runId:string,m:MarketSymbolSnapsh
     expiresAt:now+d.waitCondition.validForMinutes*60_000,fingerprint:waitFingerprint(m),orderAuthorization:false};
 }
 export function waitTrigger(w:ReturnType<typeof waitingContext>,m:MarketSymbolSnapshot,now=Date.now()):string|null {
-  if(now>=w.expiresAt)return 'WAIT_EXPIRED';
+  // Expiry invalidates the old price condition; time alone must not spend another Primary call.
   if(now-m.quote.ts>15_000)return null;
   const price=w.direction==='LONG'?m.quote.bid:m.quote.ask;
-  if(w.condition.operator==='LTE'?price<=w.condition.price:price>=w.condition.price)return 'PRICE_TRIGGERED';
+  if(now<w.expiresAt&&(w.condition.operator==='LTE'?price<=w.condition.price:price>=w.condition.price))return 'PRICE_TRIGGERED';
   // Preserve the public lifecycle reason while narrowing what qualifies as material.
   if(waitFingerprint(m)!==w.fingerprint)return 'MATERIAL_STATE_CHANGE';
   return null;

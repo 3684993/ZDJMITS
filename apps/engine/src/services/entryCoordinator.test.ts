@@ -1,3 +1,4 @@
+import {getBinanceRequestBudget} from '../adapters/binance/requestBudget.js';
 import { describe,expect,it,vi } from 'vitest';
 import { RuntimeState } from '../state/runtimeState.js';import { EventBus } from '../events/eventBus.js';import { EntryCoordinator } from './entryCoordinator.js';import { PositionService } from './positionService.js';import type { EntryIntent,EntryOrder,SystemSettings } from '@zdj/contracts';
 const settings={entry:{reviewIntervalSeconds:5,maxReprices:12,minReachability:.1,makerOffsetTicks:0},portfolio:{maxPendingEntries:6,maxPositions:12}} as unknown as SystemSettings;
@@ -15,3 +16,9 @@ describe('Entry Manager chain',()=>{
 });
 
 it('terminates an unsent prepared order when capacity changes before the wire call',async()=>{const state=new RuntimeState(settings),placeEntry=vi.fn(),entry=new EntryCoordinator(state,{} as never,{} as never,{placeEntry} as never,new EventBus());(entry as any).executionHardBlock=()=> 'RISK_MAX_POSITIONS';const prepared=(entry as any).preparedOrder(intent,1,100,1);await expect((entry as any).submitExactlyOnce(intent,prepared)).rejects.toThrow('RISK_MAX_POSITIONS');expect(state.entryOrders.get(prepared.id)).toMatchObject({status:'REJECTED',factSource:'LOCAL_NOT_SUBMITTED'});expect(placeEntry).not.toHaveBeenCalled();});
+
+it('fails the final Entry guard under Binance pressure before checking allocation facts',()=>{
+ vi.useFakeTimers();vi.setSystemTime(1800000000000);try{const budget=getBinanceRequestBudget('TESTNET','entry-guard-test');budget.observe(200,'2300',undefined);
+ const state=new RuntimeState(settings),entry=new EntryCoordinator(state,{} as never,{} as never,{} as never,new EventBus());expect((entry as any).executionHardBlock(intent)).toBe('BINANCE_BUDGET_SATURATED');
+ }finally{vi.useRealTimers();}
+});

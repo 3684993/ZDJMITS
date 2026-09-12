@@ -122,6 +122,7 @@ export class MarketDataHub {
   snapshot(symbol:string):MarketSymbolSnapshot|undefined{return this.state.snapshots.get(symbol);}
   async freshQuote(symbol:string):Promise<Quote>{return this.provider.getQuote(symbol);}
   candles(symbol:string,timeframe:Timeframe,limit=120):Promise<Candle[]>{return this.provider.getCandles(symbol,timeframe,limit);}
+  cachedCandles(symbol:string,timeframe:Timeframe,limit=120):Candle[]{return this.provider.cachedCandles?.(symbol,timeframe,limit)??[];}
   quotes(){return new Map([...this.state.snapshots].map(([s,v])=>[s,v.quote]));}
   metrics(){const stream=this.provider.streamMetrics?.()??{state:'REST_ONLY'};return{...(stream as object),recoveryQueue:[...this.recovery.values()].filter(x=>x.nextRetryAt>Date.now()).length};}
   primaryReadyReasons(symbol:string,now=Date.now()){

@@ -1,3 +1,4 @@
+import {binanceEntryBlockReason} from '../adapters/binance/requestBudget.js';
 import {privateAccountFresh} from './privateAccountReadiness.js';
 import { nearMarketPrice } from './nearMarketPrice.js';
 import { activeOrderStatus, terminalOrderStatus, executionScope, type EntryExecutionJournal } from './executionLifecycle.js';
@@ -43,6 +44,7 @@ export class EntryCoordinator {
     private journal?:EntryExecutionJournal,
   ) { this.directionPolicy=new DirectionPolicyService(state); }
   async processPool() {
+    if(binanceEntryBlockReason(this.state.settings.connections?.exchange?.environment))return;
     if (
       this.state.executionGovernance?.mode !== "AUTO_RUNNING" ||
       this.state.runtimeControl.mode !== "RUNNING"
@@ -140,6 +142,7 @@ export class EntryCoordinator {
     return true;
   }
   private executionHardBlock(intent:EntryIntent, order?:EntryOrder){
+    const budgetBlock=binanceEntryBlockReason(this.state.settings.connections?.exchange?.environment);if(budgetBlock)return budgetBlock;
     if([...this.state.manualExitGoals.values()].some(g=>resolveUnderlying(g.symbol)===resolveUnderlying(intent.symbol)))return 'HUMAN_EXIT_GOAL_ACTIVE';
     const now=Date.now(),symbol=intent.symbol,reservation=intent.reservationId?this.state.entryReservations.get(intent.reservationId):null,candidate=this.state.universe.find((x:any)=>x.symbol===symbol),snapshot=this.state.snapshots.get(symbol),plan=intent.allocationPlan;
     if(now>=Number(intent.aiAuthorizationExpiresAt??intent.absoluteExpiresAt)||now>=intent.absoluteExpiresAt)return'AI_AUTHORIZATION_EXPIRED';

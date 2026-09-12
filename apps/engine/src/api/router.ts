@@ -1,4 +1,4 @@
-import { binanceRequestBudget } from '../adapters/binance/requestBudget.js';
+import { binanceRequestBudgetsHealth } from '../adapters/binance/requestBudget.js';
 import { Router } from "express";
 import { mkdir } from "node:fs/promises";
 import path from "node:path";
@@ -263,7 +263,7 @@ export function createApiRouter(runtime: EngineRuntime) {
     res.json({...runtime.temporal.snapshot(),liveStructure:runtime.state.pool.list().map(row=>{const s=runtime.state.snapshots.get(row.symbol);return{symbol:row.symbol,asOf:s?.technical?.['15m']?.asOf??null,trend15m:s?.technical?.['15m']?.trend??'UNKNOWN',trend5m:s?.technical?.['5m']?.trend??'UNKNOWN',trend1m:s?.technical?.['1m']?.trend??'UNKNOWN',reasons:runtime.market.primaryReadyReasons(row.symbol)};})}),
   );
   r.get('/market-intelligence/external-research',(_q,res)=>res.json({providers:runtime.externalIntelligence.status(),research:runtime.externalResearch.metrics()}));
-  r.get('/diagnostics/private-sync',(_q,res)=>res.json({sync:runtime.privateSyncHealth(),requests:binanceRequestBudget.health()}));
+  r.get('/diagnostics/private-sync',(_q,res)=>res.json({sync:runtime.privateSyncHealth(),requests:binanceRequestBudgetsHealth()}));
   r.get('/diagnostics/logging',(_q,res)=>res.json((runtime as any).operationalLogHealth?.()??{status:'NOT_ATTACHED'}));
   r.get('/diagnostics/supply',(_q,res)=>res.json({health:runtime.supplyHealth(),residentTarget:runtime.state.settings.selection.poolTarget,residents:runtime.state.pool.list(),capacity:runtime.runtimeControl.capacityDiagnostics(),reserve:runtime.state.universe.filter(c=>(c.residentEligible??c.eligible)&&!runtime.state.pool.has(c.symbol)).slice(0,40).map(c=>({symbol:c.symbol,rank:c.rank,components:c.components,assetAdmission:c.assetAdmission,pipelineEligible:c.pipelineEligible}))}));
   r.post("/market-intelligence/rebuild", (_q, res) =>
@@ -367,14 +367,7 @@ export function createApiRouter(runtime: EngineRuntime) {
         ? runtime.state.tpOrders.get(position.tpOrderId)
         : null;
       const timeframes = ["1m", "5m", "15m", "4h"] as const;
-      const candles = Object.fromEntries(
-        await Promise.all(
-          timeframes.map(async (tf) => [
-            tf,
-            await runtime.market.candles(position.symbol, tf, 120),
-          ]),
-        ),
-      );
+      const candles = Object.fromEntries(timeframes.map(tf=>[tf,runtime.market.cachedCandles(position.symbol,tf,120)]));
       const snapshot = runtime.market.snapshot(position.symbol);
       const types = [
         "MANUAL_INTENT_CREATED",
@@ -423,12 +416,7 @@ export function createApiRouter(runtime: EngineRuntime) {
   });
   r.get("/positions/:id/manual-preview", async (req, res, next) => {
     try {
-      const preview = await runtime.manual.preview(req.params.id);
-      runtime.events.publish(
-        "MANUAL_PREVIEW_CREATED",
-        { preview, actor: "HUMAN" },
-        preview.symbol,
-      );
+      const preview = await runtime.manual.preview(req.params.id, true);
       res.json(preview);
     } catch (e) {
       next(e);
@@ -625,7 +613,7 @@ export function createApiRouter(runtime: EngineRuntime) {
       next(error);
     }
   });
-  r.get("/pipeline", (_q, res) => res.json({...runtime.pipelineStatus(),restBudget:binanceRequestBudget.health()}));
+  r.get("/pipeline", (_q, res) => res.json({...runtime.pipelineStatus(),restBudget:binanceRequestBudgetsHealth()}));
   r.get("/runtime/trading-control", (_q, res) =>
     res.json(runtime.runtimeControlStatus()),
   );
@@ -929,9 +917,7 @@ export function createApiRouter(runtime: EngineRuntime) {
             "trade-sync-backups",
           );
       await mkdir(backupDir, { recursive: true });
-      const backupPath = await runtime.settingsStore.backup(
-          path.join(backupDir, `trade-record-sync-${syncId}.sqlite`),
-        ),
+      const backupPath = await runtime.settingsStore.tradeSyncBaseline(backupDir),
         service = new TradeRecordSyncService(runtime.state, runtime.positions);
       let result!: ReturnType<TradeRecordSyncService["apply"]>;
       await runtime.settingsStore.transaction(() => {
@@ -1024,7 +1010,7 @@ export function createApiRouter(runtime: EngineRuntime) {
       };
       const backupDir = process.env.ZDJ_TRADE_SYNC_BACKUP_DIR ?? path.join(process.env.LOCALAPPDATA ?? process.cwd(), "ZDJ-MITS", "trade-sync-backups");
       await mkdir(backupDir, { recursive: true });
-      const backupPath = await runtime.settingsStore.backup(path.join(backupDir, `trade-record-sync-${syncId}.sqlite`)),
+      const backupPath = await runtime.settingsStore.tradeSyncBaseline(backupDir),
         service = new TradeRecordSyncService(runtime.state, runtime.positions);
       let result!: ReturnType<TradeRecordSyncService["apply"]>;
       await runtime.settingsStore.transaction(() => {

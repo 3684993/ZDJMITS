@@ -6,3 +6,8 @@ describe('WAIT event gate',()=>{
  it('wakes on explicit price trigger',()=>{const first=market(),w:any={direction:'LONG',condition:{operator:'LTE',price:100},expiresAt:2_000_000,fingerprint:waitFingerprint(first)};expect(waitTrigger(w,first,1_000_100)).toBe('PRICE_TRIGGERED');});
  it('wakes on a new closed 15m bar without changing the lifecycle reason contract',()=>{const first=market(),w:any={direction:'LONG',condition:{operator:'LTE',price:90},expiresAt:2_000_000,fingerprint:waitFingerprint(first)},next=market();next.technical['15m'].barCloseTime=1_799_999;next.technical['15m'].asOf=1_799_999;expect(waitTrigger(w,next,1_000_100)).toBe('MATERIAL_STATE_CHANGE');});
 });
+
+it('does not re-run Primary on WAIT expiry but permits a subsequent material bar change',()=>{
+ const first=market(),w:any={direction:'LONG',condition:{operator:'LTE',price:1000},expiresAt:1_000_000,fingerprint:waitFingerprint(first)};
+ expect(waitTrigger(w,first,1_000_100)).toBeNull();const next=market();next.technical['15m'].barCloseTime=1_799_999;expect(waitTrigger(w,next,1_000_100)).toBe('MATERIAL_STATE_CHANGE');
+});

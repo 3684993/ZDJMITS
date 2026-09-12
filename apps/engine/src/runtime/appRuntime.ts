@@ -1,5 +1,4 @@
 import { privateAccountFresh } from '../services/privateAccountReadiness.js';
-import { isTelemetry } from '../services/operationalLogger.js';
 import { PrivateAccountSync } from '../services/privateAccountSync.js';
 import { recoverUnsubmittedEntry } from '../services/unsubmittedEntryRecovery.js';
 import {RuntimeWriteBuffer} from '../services/runtimeWriteBuffer.js';
@@ -305,7 +304,6 @@ export class EngineRuntime {
     if (trade instanceof ExternalTradeAdapter) runtime.trade = trade;
     events.on("event", (event) => {
       if(runtime.persistenceClosed)return;
-      if(isTelemetry(event.type))return;
       const requiredBeforeWrite=['ENTRY_SUBMIT_ATTEMPTED','MANUAL_SUBMISSION_PREPARED','TP_SUBMISSION_PREPARED'];
       if(requiredBeforeWrite.includes(event.type))store.recordRuntimeEvent(event);else runtime.writes.apply(`event:${event.id}`,()=>store.recordRuntimeEvent(event));
       if(event.type==='RECONCILIATION_COMPLETED'||event.type==='ENTRY_ORDER_TTL_CLOSED'||event.type==='ENTRY_ORDER_REPRICED'){
@@ -535,6 +533,7 @@ export class EngineRuntime {
     this.every(2_000,async()=>this.externalResearch.tick());
     this.every(30_000,()=>{this.externalResearch.enqueueMarketChanges();});
     this.every(1_000,()=>{this.settingsStore.backfillAiRunSummaries(25,8);});
+    this.every(5_000,()=>{this.writes.apply('storage-retention',()=>{this.settingsStore.maintainRetention();});});
     // Do not await long research in the scheduler: coordinator single-flight owns
     // publication while every tick still observes expiry during a hung request.
     this.every(1_000, () => this.assetGovernance.tick(), { allowOverlap: true });
@@ -1177,9 +1176,10 @@ export class EngineRuntime {
       lifecycleCounts=lifecycleRows.reduce((counts:any,row:any)=>{counts[row.status]=(counts[row.status]??0)+1;return counts;},{}),
       aiEvents=this.settingsStore.runtimeEvents(since,["AI_RUN_COMPLETED","AI_RUN_FAILED","AI_PROTOCOL_NORMALIZED","CANDIDATE_LIFECYCLE_CHANGED"],5000),
       aiFailures=aiEvents.filter(event=>event.type==="AI_RUN_FAILED"),
-      consecutiveAiFailures=(()=>{let count=0;for(const event of [...aiEvents].reverse()){if(event.type==="AI_RUN_COMPLETED")break;if(event.type==="AI_RUN_FAILED")count++;}return count;})(),
+      recentAiHealth=this.settingsStore.aiRunHealthSummary(since),
+      consecutiveAiFailures=recentAiHealth.consecutiveFailures,
       aiHealth={
-        completed:aiEvents.filter(event=>event.type==="AI_RUN_COMPLETED").length,
+        completed:recentAiHealth.completed,
         failed:aiFailures.length,
         dataError:aiEvents.filter((event:any)=>!event.payload||event.payload?.dataError||event.payload?.auditTruncated).length,
         rawPlaceFailed:aiFailures.filter((event:any)=>['PLACE_LONG','PLACE_SHORT'].includes(event.payload?.rawDecision)).length,

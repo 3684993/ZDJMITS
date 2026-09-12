@@ -14,7 +14,7 @@
     "test": "npm run test -ws --if-present",
     "build": "npm run build -ws --if-present",
     "verify:deps": "npm run build -w @zdj/contracts && npm run build -w @zdj/core",
-    "verify:scripts": "node --check scripts/maintain-storage.mjs && node --check scripts/prune-zdj-backups.mjs && node --check scripts/install-storage-retention.mjs && node --check scripts/audit-ai-entry-quality.mjs",
+    "verify:scripts": "node --check scripts/maintain-storage.mjs && node --check scripts/prune-zdj-backups.mjs && node --check scripts/install-storage-retention.mjs && node --check scripts/audit-ai-entry-quality.mjs && node --test scripts/maintain-storage.test.mjs",
     "verify": "npm run verify:deps && npm run verify:scripts && npm run typecheck && npm run build && npm run test",
     "acceptance": "powershell -ExecutionPolicy Bypass -File scripts/run-acceptance.ps1",
     "verify:isolated": "npm run build -w @zdj/contracts && npm run build -w @zdj/core && npm run typecheck && npm run build -w @zdj/engine && npm run build -w @zdj/dashboard -- --outDir ../../data-test/v390-build/dashboard && npm test",

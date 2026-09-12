@@ -165,6 +165,14 @@ export class BinancePublicMarketDataProvider implements MarketDataProvider {
 
   private candleFlights=new Map<string,Promise<Candle[]>>();
   private candleCache=new Map<string,{rows:Candle[];until:number}>();
+  /** Display-only access: missing or stale cache never falls back to REST. */
+  cachedCandles(symbol:string,timeframe:Timeframe,limit:number):Candle[]{
+    const period=timeframe==='1m'?60000:timeframe==='5m'?300000:900000;
+    const live=['1m','5m','15m'].includes(timeframe)?this.stream.candleSeries(symbol,period*2,timeframe):null;
+    if(live?.length)return live.slice(-limit);
+    const rows=[...this.candleCache.entries()].filter(([key])=>key.startsWith(`${symbol}:${timeframe}:`)).map(([,value])=>value.rows).sort((a,b)=>(b.at(-1)?.closeTime??0)-(a.at(-1)?.closeTime??0));
+    return rows[0]?.slice(-limit)??[];
+  }
   async getCandles(symbol:string,timeframe:Timeframe,limit:number):Promise<Candle[]>{
     const period=timeframe==='1m'?60000:timeframe==='5m'?300000:900000;
     if(['1m','5m','15m'].includes(timeframe)){

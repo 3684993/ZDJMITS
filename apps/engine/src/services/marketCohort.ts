@@ -5,159 +5,28 @@ import type { MarketDataHub } from './marketDataHub.js';
 
 /** Owns only inventory membership. It neither authorizes Entry nor changes reservations. */
 export class MarketCohort {
-  private members=new Set<string>();
-  private joinedAt=new Map<string,number>();
-  /** Retention owner for candidates between discovery and the hydration outcome. */
-  private hydrating=new Set<string>();
-  private flight:Promise<number>|null=null;
-  private retryAt=0;
-  private noResultKey='';
+  private members=new Set<string>();private joinedAt=new Map<string,number>();private hydrating=new Set<string>();private flight:Promise<number>|null=null;private retryAt=0;private noResultKey='';
   constructor(private state:RuntimeState,private market:MarketDataHub,private events:EventBus,private now=()=>Date.now()){}
-
-  protectedSymbols(){
-    return new Set([
-      ...this.state.positionSymbols(),
-      ...this.state.activeEntrySymbols(),
-      ...[...this.state.candidateLifecycle]
-        .filter(([,row]:any)=>['SCOUT_QUEUED','SCOUT_RUNNING','PRIMARY_QUEUED','PRIMARY_RUNNING','WAIT_FOR_PRICE','WAIT_EXECUTION_RANGE'].includes(row?.status))
-        .map(([symbol])=>String(symbol).toUpperCase()),
-      'BTCUSDT','ETHUSDT',
-    ]);
-  }
+  protectedSymbols(){return new Set([...this.state.positionSymbols(),...this.state.activeEntrySymbols(),...[...this.state.candidateLifecycle].filter(([,row]:any)=>['SCOUT_QUEUED','SCOUT_RUNNING','PRIMARY_QUEUED','PRIMARY_RUNNING','WAIT_FOR_PRICE','WAIT_EXECUTION_RANGE'].includes(row?.status)).map(([symbol])=>String(symbol).toUpperCase()),'BTCUSDT','ETHUSDT']);}
   symbols(){return new Set(this.members);}
-  /** Complete runtime ownership, including candidates whose hydrate has not settled yet. */
   runtimeRetentionSymbols(){return new Set([...this.members,...this.hydrating,...this.protectedSymbols()]);}
+  retentionOwners(){const out:Record<string,string[]>={};const add=(symbol:string,owner:string)=>{const key=String(symbol).toUpperCase();(out[key]??=[]).push(owner);};for(const s of this.members)add(s,'COHORT');for(const s of this.hydrating)add(s,'HYDRATING');for(const s of this.state.positionSymbols())add(s,'POSITION');for(const s of this.state.activeEntrySymbols())add(s,'ACTIVE_ENTRY');for(const [s,row] of this.state.candidateLifecycle)if(['SCOUT_QUEUED','SCOUT_RUNNING','PRIMARY_QUEUED','PRIMARY_RUNNING','WAIT_FOR_PRICE','WAIT_EXECUTION_RANGE'].includes((row as any)?.status))add(s,(row as any).status);add('BTCUSDT','GLOBAL_CONTEXT');add('ETHUSDT','GLOBAL_CONTEXT');return out;}
   private retain(){this.market.setRetentionSymbols(this.runtimeRetentionSymbols());}
-
-  /**
-   * Runtime bootstrap may already have loaded a bounded market set before the cohort controller
-   * takes ownership. Reuse those cards instead of deleting them and immediately issuing the same
-   * REST bootstrap again. Protected owners remain outside reusable inventory.
-   */
-  private adoptBootstrapInventory(now:number,cfg:any){
-    if(this.members.size)return;
-    const protectedSymbols=this.protectedSymbols(),underlyings=new Set([...protectedSymbols].map(resolveUnderlying));
-    let adopted=0;
-    for(const symbol of this.market.retentionSymbols()){
-      const canonical=String(symbol).toUpperCase(),underlying=resolveUnderlying(canonical);
-      if(adopted>=Math.max(1,Number(cfg.size??100)))break;
-      if(protectedSymbols.has(canonical)||underlyings.has(underlying)||!this.market.snapshot(canonical))continue;
-      this.members.add(canonical);this.joinedAt.set(canonical,now);underlyings.add(underlying);adopted++;
-    }
-    if(adopted)this.events.publish('MARKET_COHORT_BOOTSTRAP_ADOPTED',{adopted,members:this.members.size,retention:this.market.retentionSymbols().size});
-  }
-
-  /** Only global non-supply blockers suppress inventory churn. Empty/supply-starved cohorts must still be able to bootstrap/refill when no such blocker exists. */
-  private globalBlockReason(){
-    const mode=String(this.state.runtimeControl?.mode??'');
-    const reason=String(this.state.runtimeControl?.reasonCode??'');
-    const capacity=this.state.entryCapacity?.();
-    if(this.state.executionGovernance?.mode==='AUTO_PAUSED_RISK')return 'GLOBAL_RISK_PAUSE';
-    if(mode==='PAUSED_MANUAL')return 'MANUAL_PAUSE';
-    if(mode==='PAUSED_NO_CAPITAL'||/NO_CAPITAL/.test(reason))return 'NO_CAPITAL';
-    if(mode==='PAUSED_DAILY_RISK_LIMIT'||/DAILY_RISK|GLOBAL_RISK/.test(reason))return 'GLOBAL_RISK_PAUSE';
-    if(capacity&&capacity.used>=capacity.max)return 'POSITION_CAPACITY_FULL';
-    if(/POSITION_CAPACITY_FULL|CAPACITY_FULL/.test(reason))return 'POSITION_CAPACITY_FULL';
-    if(/SYSTEMIC_MARKET/.test(reason))return 'SYSTEMIC_MARKET_FAILURE';
-    // PAUSED_NO_EXECUTABLE_CONTRACT / MIN_EXECUTABLE_CANDIDATES_NOT_MET are supply signals,
-    // not reasons to prevent the component that can restore supply.
-    return null;
-  }
-
+  private adoptBootstrapInventory(now:number,cfg:any){if(this.members.size)return;const protectedSymbols=this.protectedSymbols(),underlyings=new Set([...protectedSymbols].map(resolveUnderlying));let adopted=0;for(const symbol of this.market.retentionSymbols()){const canonical=String(symbol).toUpperCase(),underlying=resolveUnderlying(canonical);if(adopted>=Math.max(1,Number(cfg.size??100)))break;if(protectedSymbols.has(canonical)||underlyings.has(underlying)||!this.market.snapshot(canonical))continue;this.members.add(canonical);this.joinedAt.set(canonical,now);underlyings.add(underlying);adopted++;}if(adopted)this.events.publish('MARKET_COHORT_BOOTSTRAP_ADOPTED',{adopted,members:this.members.size,retention:this.market.retentionSymbols().size});}
+  private globalBlockReason(){const mode=String(this.state.runtimeControl?.mode??''),reason=String(this.state.runtimeControl?.reasonCode??''),capacity=this.state.entryCapacity?.();if(this.state.executionGovernance?.mode==='AUTO_PAUSED_RISK')return'GLOBAL_RISK_PAUSE';if(mode==='PAUSED_MANUAL')return'MANUAL_PAUSE';if(mode==='PAUSED_NO_CAPITAL'||/NO_CAPITAL/.test(reason))return'NO_CAPITAL';if(mode==='PAUSED_DAILY_RISK_LIMIT'||/DAILY_RISK|GLOBAL_RISK/.test(reason))return'GLOBAL_RISK_PAUSE';if(capacity&&capacity.used>=capacity.max)return'POSITION_CAPACITY_FULL';if(/POSITION_CAPACITY_FULL|CAPACITY_FULL/.test(reason))return'POSITION_CAPACITY_FULL';if(/SYSTEMIC_MARKET/.test(reason))return'SYSTEMIC_MARKET_FAILURE';return null;}
   async tick(reason='PERIODIC'){
-    if(this.flight)return this.flight;
-    const now=this.now(),cfg:any=this.state.settings.selection.cohort??{size:100,hydrateBatchSize:20,readyLowWatermark:6,refillBackoffSeconds:60,discoveryRefreshSeconds:900,staleMemberRotationMinutes:120,protectedRatio:.75};
-    this.adoptBootstrapInventory(now,cfg);
-    this.retireConsumed();
-    const blocker=this.globalBlockReason();
-    // Global capital/capacity/risk/systemic blockers must not churn or refill inventory.
-    // Supply-specific zero-executable states are intentionally not classified here.
-    if(!blocker)this.rotateStale(now,cfg);
-    this.retain();
-    const key=`${this.state.settings.selection.assetDirectory?.version??''}:${this.state.settings.settingsVersion}`;
-    // A changed governance/settings generation can expose genuinely new supply. Do not let a
-    // no-result/backoff from the previous generation suppress that new fact.
-    if(this.noResultKey&&this.noResultKey!==key){
-      this.noResultKey='';
-      this.retryAt=0;
-      this.events.publish('MARKET_COHORT_BACKOFF_INVALIDATED',{reason,key,size:this.members.size});
-    }
-    if(now<this.retryAt||blocker){
-      this.events.publish('MARKET_COHORT_DEFERRED',{reason,blocker,retryAt:this.retryAt,size:this.members.size,supplyBootstrap:this.members.size===0});
-      return 0;
-    }
-    const readyCount=this.state.pool.readyList().filter(item=>this.members.has(item.symbol)).length;
-    const gap=Math.max(0,cfg.size-this.members.size),low=readyCount<cfg.readyLowWatermark;
-    if(!gap&&!low)return 0;
-    // A full cohort with low execution-ready supply is rotated only through bounded stale retirement;
-    // do not evict fresh members merely to satisfy a low-watermark signal.
-    if(!gap)return 0;
-    // A complete Binance snapshot fans out into quote, book, seven candle and
-    // derivative requests. Keep each refill below the Testnet burst ceiling;
-    // subsequent scheduled refills continue filling the cohort without
-    // starving private-account reconciliation.
-    const batch=Math.min(gap,cfg.hydrateBatchSize,2);
-    this.flight=this.refill(batch,key,reason).finally(()=>{this.flight=null;});
-    return this.flight;
+    if(this.flight)return this.flight;const now=this.now(),cfg:any=this.state.settings.selection.cohort??{size:100,hydrateBatchSize:20,readyLowWatermark:6,refillBackoffSeconds:60,discoveryRefreshSeconds:900,staleMemberRotationMinutes:120,protectedRatio:.75};
+    this.adoptBootstrapInventory(now,cfg);this.retireConsumed();const blocker=this.globalBlockReason();if(!blocker)this.rotateStale(now,cfg);this.retain();const key=`${this.state.settings.selection.assetDirectory?.version??''}:${this.state.settings.settingsVersion}`;
+    if(this.noResultKey&&this.noResultKey!==key){this.noResultKey='';this.retryAt=0;this.events.publish('MARKET_COHORT_BACKOFF_INVALIDATED',{reason,key,size:this.members.size});}
+    if(now<this.retryAt||blocker){this.events.publish('MARKET_COHORT_DEFERRED',{reason,blocker,retryAt:this.retryAt,size:this.members.size,supplyBootstrap:this.members.size===0});return 0;}
+    const readyCount=this.state.pool.readyList().filter(item=>this.members.has(item.symbol)).length,low=readyCount<cfg.readyLowWatermark;
+    // Executable supply, not an aesthetic target size, is the reason to spend REST/WS resources.
+    if(!low)return 0;
+    const gap=Math.max(0,cfg.size-this.members.size);if(!gap)return 0;
+    const batch=Math.min(gap,cfg.hydrateBatchSize,2);this.flight=this.refill(batch,key,reason).finally(()=>{this.flight=null;});return this.flight;
   }
-
-  private async refill(batch:number,key:string,reason:string){
-    if(batch<=0)return 0;
-    const cfg:any=this.state.settings.selection.cohort,priority=[...(this.state.settings.selection.assetDirectory?.approvedLiquid??[]),...this.protectedSymbols()];
-    let candidates:string[]=[];
-    try{
-      const discovered=await this.market.discover(Math.max(cfg.size,batch),priority),seen=new Set(this.members),underlyings=new Set([...this.members,...this.protectedSymbols()].map(resolveUnderlying));
-      candidates=discovered.filter(symbol=>!seen.has(symbol)&&!underlyings.has(resolveUnderlying(symbol))).slice(0,batch);
-      if(!candidates.length){
-        this.noResultKey=key;
-        const discoveryRetryMs=Math.max(Math.max(1,cfg.refillBackoffSeconds)*1000,Number(cfg.discoveryRefreshSeconds??900)*1000);
-        this.retryAt=this.now()+discoveryRetryMs;
-        this.events.publish('MARKET_COHORT_NO_NEW_RESULT',{reason,key,retryAt:this.retryAt,members:this.members.size});
-        return 0;
-      }
-      // This is a first-class retention owner: a normal 15-second retention sync must not
-      // evict an in-flight card before hydrate can turn it into a member.
-      for(const symbol of candidates)this.hydrating.add(symbol);
-      this.retain();
-      const loaded=await this.market.hydrateSymbols(candidates),ready=candidates.filter(symbol=>this.market.snapshot(symbol));
-      for(const symbol of ready){this.members.add(symbol);this.joinedAt.set(symbol,this.now());}
-      for(const symbol of candidates)this.hydrating.delete(symbol);
-      this.retain();
-      const partial=ready.length<candidates.length;
-      this.noResultKey=partial?key:'';
-      this.retryAt=partial?this.now()+Math.max(1,cfg.refillBackoffSeconds)*1000:0;
-      this.events.publish('MARKET_COHORT_REFILLED',{reason,requested:candidates.length,loaded,accepted:ready.length,partial,retryAt:this.retryAt,members:this.members.size,retention:this.market.retentionSymbols().size});
-      return ready.length;
-    }catch(error){
-      const delay=Math.max(1,cfg.refillBackoffSeconds)*1000;
-      this.noResultKey=key;this.retryAt=this.now()+delay;
-      for(const symbol of candidates)this.hydrating.delete(symbol);
-      this.retain();
-      this.events.publish('MARKET_COHORT_FAILED',{reason,message:error instanceof Error?error.message:String(error),retryAt:this.retryAt});
-      return 0;
-    }
-  }
-
-  /** Positions and working/unknown entries are protected owners but no longer consume reusable cohort inventory. */
-  private retireConsumed(){
-    const consumed=new Set([...this.state.positionSymbols(),...this.state.activeEntrySymbols()].map(symbol=>String(symbol).toUpperCase()));
-    for(const symbol of [...this.members])if(consumed.has(symbol)){
-      this.members.delete(symbol);this.joinedAt.delete(symbol);
-      this.events.publish('MARKET_COHORT_RETIRED',{symbol,reason:'CONSUMED_PROTECTED_OWNER'});
-    }
-  }
-
-  private rotateStale(now:number,cfg:any){
-    const protectedSymbols=this.protectedSymbols(),maxAge=Math.max(1,cfg.staleMemberRotationMinutes??cfg.rotationMinutes??120)*60_000;
-    const maxRotate=Math.max(1,Math.floor(Math.max(1,cfg.size)*Math.max(0,1-Number(cfg.protectedRatio??.75))));
-    let rotated=0;
-    for(const symbol of [...this.members]){
-      if(rotated>=maxRotate)break;
-      if(!protectedSymbols.has(symbol)&&now-(this.joinedAt.get(symbol)??now)>=maxAge){
-        this.members.delete(symbol);this.joinedAt.delete(symbol);rotated++;
-        this.events.publish('MARKET_COHORT_RETIRED',{symbol,reason:'STALE_ROTATION'});
-      }
-    }
-  }
+  private async refill(batch:number,key:string,reason:string){if(batch<=0)return 0;const cfg:any=this.state.settings.selection.cohort,priority=[...(this.state.settings.selection.assetDirectory?.approvedLiquid??[]),...this.protectedSymbols()];let candidates:string[]=[];try{const discovered=await this.market.discover(Math.max(cfg.size,batch),priority),seen=new Set(this.members),underlyings=new Set([...this.members,...this.protectedSymbols()].map(resolveUnderlying));candidates=discovered.filter(symbol=>!seen.has(symbol)&&!underlyings.has(resolveUnderlying(symbol))).slice(0,batch);if(!candidates.length){this.noResultKey=key;const discoveryRetryMs=Math.max(Math.max(1,cfg.refillBackoffSeconds)*1000,Number(cfg.discoveryRefreshSeconds??900)*1000);this.retryAt=this.now()+discoveryRetryMs;this.events.publish('MARKET_COHORT_NO_NEW_RESULT',{reason,key,retryAt:this.retryAt,members:this.members.size});return 0;}for(const symbol of candidates)this.hydrating.add(symbol);this.retain();const loaded=await this.market.hydrateSymbols(candidates),ready=candidates.filter(symbol=>this.market.snapshot(symbol));for(const symbol of ready){this.members.add(symbol);this.joinedAt.set(symbol,this.now());}for(const symbol of candidates)this.hydrating.delete(symbol);this.retain();const partial=ready.length<candidates.length;this.noResultKey=partial?key:'';this.retryAt=partial?this.now()+Math.max(1,cfg.refillBackoffSeconds)*1000:0;this.events.publish('MARKET_COHORT_REFILLED',{reason,requested:candidates.length,loaded,accepted:ready.length,partial,retryAt:this.retryAt,members:this.members.size,retention:this.market.retentionSymbols().size});return ready.length;}catch(error){const delay=Math.max(1,cfg.refillBackoffSeconds)*1000;this.noResultKey=key;this.retryAt=this.now()+delay;for(const symbol of candidates)this.hydrating.delete(symbol);this.retain();this.events.publish('MARKET_COHORT_FAILED',{reason,message:error instanceof Error?error.message:String(error),retryAt:this.retryAt});return 0;}}
+  private retireConsumed(){const consumed=new Set([...this.state.positionSymbols(),...this.state.activeEntrySymbols()].map(symbol=>String(symbol).toUpperCase()));for(const symbol of [...this.members])if(consumed.has(symbol)){this.members.delete(symbol);this.joinedAt.delete(symbol);this.events.publish('MARKET_COHORT_RETIRED',{symbol,reason:'CONSUMED_PROTECTED_OWNER'});}}
+  private rotateStale(now:number,cfg:any){const protectedSymbols=this.protectedSymbols(),maxAge=Math.max(1,cfg.staleMemberRotationMinutes??cfg.rotationMinutes??120)*60_000,maxRotate=Math.max(1,Math.floor(Math.max(1,cfg.size)*Math.max(0,1-Number(cfg.protectedRatio??.75))));let rotated=0;for(const symbol of [...this.members]){if(rotated>=maxRotate)break;if(!protectedSymbols.has(symbol)&&now-(this.joinedAt.get(symbol)??now)>=maxAge){this.members.delete(symbol);this.joinedAt.delete(symbol);rotated++;this.events.publish('MARKET_COHORT_RETIRED',{symbol,reason:'STALE_ROTATION'});}}}
   remove(symbol:string){this.members.delete(symbol.toUpperCase());this.joinedAt.delete(symbol.toUpperCase());this.retain();}
 }

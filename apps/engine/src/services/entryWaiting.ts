@@ -14,6 +14,7 @@ export function waitTrigger(w:ReturnType<typeof waitingContext>,m:MarketSymbolSn
   if(now-m.quote.ts>15_000)return null;
   const price=w.direction==='LONG'?m.quote.bid:m.quote.ask;
   if(w.condition.operator==='LTE'?price<=w.condition.price:price>=w.condition.price)return 'PRICE_TRIGGERED';
-  if(waitFingerprint(m)!==w.fingerprint)return 'MATERIAL_15M_STATE_CHANGE';
+  // Preserve the public lifecycle reason while narrowing what qualifies as material.
+  if(waitFingerprint(m)!==w.fingerprint)return 'MATERIAL_STATE_CHANGE';
   return null;
 }

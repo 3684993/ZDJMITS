@@ -1,4 +1,4 @@
-import {it,expect,vi} from 'vitest';import {RequestBudget} from './requestBudget.js';
+import {it,expect,vi} from 'vitest';import {RequestBudget} from './requestBudget.js';import {mkdtempSync,rmSync} from 'node:fs';import os from 'node:os';import path from 'node:path';
 it('reserves capacity for private work while public requests are saturated',async()=>{
  const budget=new RequestBudget(3,1,100);const release:Array<()=>void>=[];let publicStarted=0,privateStarted=0;
  const publicWork=Array.from({length:3},()=>budget.run(2,()=>new Promise<void>(resolve=>{publicStarted++;release.push(resolve);})));await new Promise(r=>setImmediate(r));
@@ -51,4 +51,9 @@ it('precharges concurrent work on top of observed weight',async()=>{
 });
 it('honors HTTP-date Retry-After and body ban deadline',()=>{
  const budget=new RequestBudget();const until=Date.now()+3600000;budget.observe(418,undefined,new Date(Date.now()+120000).toUTCString(),{},null,until);expect(budget.health().blockedUntil).toBeGreaterThanOrEqual(until);
+});
+it('persists unexplained observed weight pressure across a process restart window',()=>{
+ vi.useFakeTimers();vi.setSystemTime(1800000000000);const dir=mkdtempSync(path.join(os.tmpdir(),'zdj-budget-pressure-')),prior=process.env.ZDJ_DATA_DIR;process.env.ZDJ_DATA_DIR=dir;
+ try{const first=new RequestBudget(2,1,100,{persistKey:'route-a'});first.observe(200,'17',undefined,{source:'RECONCILIATION',endpoint:'/fapi/v1/openOrders'});expect(first.health()).toMatchObject({status:'PRESSURED',observedWeightAnomaly:true,usedWeight1m:17});const restored=new RequestBudget(2,1,100,{persistKey:'route-a'});expect(restored.health()).toMatchObject({status:'PRESSURED',observedWeightAnomaly:true,usedWeight1m:17});}
+ finally{if(prior===undefined)delete process.env.ZDJ_DATA_DIR;else process.env.ZDJ_DATA_DIR=prior;rmSync(dir,{recursive:true,force:true});vi.useRealTimers();}
 });

@@ -1,6 +1,6 @@
-import {binanceRequestBudget} from './requestBudget.js';
+import {binanceRequestBudget,getBinanceRequestBudget} from './requestBudget.js';
 import { describe, expect, it, vi } from 'vitest';
-import { BinanceTransport } from './BinanceTransport.js';
+import { BinanceTransport,binanceRequestWeight } from './BinanceTransport.js';
 
 const settings=(forceBinanceWs:boolean)=>({
   executionMode:'TESTNET_ENABLED',
@@ -27,5 +27,16 @@ it('supports explicit REST direct independently of WS and rejects contradictory 
 });
 it('reserves private request capacity for listen-key maintenance without a signature',async()=>{
  const run=vi.spyOn(binanceRequestBudget,'run').mockResolvedValue({} as never);
- try{await new BinanceTransport(settings(true) as never).json('/fapi/v1/listenKey',{method:'PUT',headers:{'X-MBX-APIKEY':'isolated-test'}});expect(run.mock.calls[0]![0]).toBe(0);}finally{run.mockRestore();}
+ try{await new BinanceTransport(settings(true) as never).json('/fapi/v1/listenKey',{method:'PUT',headers:{'X-MBX-APIKEY':'isolated-test'}});expect(run.mock.calls[0]![0]).toBe(0);expect(run.mock.calls[0]![1]).toBe(1);}finally{run.mockRestore();}
+});
+it('accounts for heavy USD-M endpoints instead of counting every HTTP call as one',()=>{
+ expect(binanceRequestWeight(new URL('https://fapi.binance.com/fapi/v1/openOrders?timestamp=1&signature=x'))).toBe(40);
+ expect(binanceRequestWeight(new URL('https://fapi.binance.com/fapi/v1/openOrders?symbol=BTCUSDT&timestamp=1&signature=x'))).toBe(1);
+ expect(binanceRequestWeight(new URL('https://fapi.binance.com/fapi/v1/income?limit=1000&timestamp=1&signature=x'))).toBe(30);
+ expect(binanceRequestWeight(new URL('https://fapi.binance.com/fapi/v1/depth?symbol=BTCUSDT&limit=500'))).toBe(10);
+ expect(binanceRequestWeight(new URL('https://fapi.binance.com/fapi/v1/klines?symbol=BTCUSDT&interval=15m&limit=240'))).toBe(2);
+});
+it('isolates production research from testnet execution budget state',()=>{
+ expect(getBinanceRequestBudget('TESTNET')).not.toBe(getBinanceRequestBudget('PRODUCTION'));
+ expect(getBinanceRequestBudget('TESTNET')).toBe(binanceRequestBudget);
 });

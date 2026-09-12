@@ -44,6 +44,6 @@ test('schema-only reset preserves schema/static configuration and never copies r
   assert.equal(fresh.prepare('SELECT payload FROM settings WHERE id=1').get().payload,'{"mode":"TESTNET"}');assert.equal(fresh.prepare('SELECT ciphertext FROM secrets').get().ciphertext,'encrypted');
   for(const table of ['settings_audit','runtime_state','runtime_events','trade_records'])assert.equal(Number(fresh.prepare(`SELECT COUNT(*) n FROM ${table}`).get().n),0);
   assert.equal(Number(fresh.prepare('PRAGMA auto_vacuum').get().auto_vacuum),2);
-  const objects=fresh.prepare("SELECT type,name FROM sqlite_master WHERE name IN ('idx_runtime_events_ts','recent_runtime_events','runtime_events_no_empty') ORDER BY name").all().map(row=>`${row.type}:${row.name}`);assert.deepEqual(objects,['index:idx_runtime_events_ts','view:recent_runtime_events','trigger:runtime_events_no_empty'].sort());
+  const objects=fresh.prepare("SELECT type,name FROM sqlite_master WHERE name IN ('idx_runtime_events_ts','recent_runtime_events','runtime_events_no_empty') ORDER BY name").all().map(row=>`${row.type}:${row.name}`);assert.deepEqual(objects,['index:idx_runtime_events_ts','view:recent_runtime_events','trigger:runtime_events_no_empty']);
  }finally{fresh?.close();rmSync(dir,{recursive:true,force:true});}
 });

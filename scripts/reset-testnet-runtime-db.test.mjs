@@ -33,13 +33,13 @@ test('reset-testnet-runtime-db preserves static configuration and clears runtime
    INSERT INTO runtime_events VALUES('event','{"old":true}');
    INSERT INTO trade_records VALUES('trade','{"old":true}');
   `);db.close();
-  const before=statSync(source).size,result=spawnSync(process.execPath,[path.resolve('scripts/reset-testnet-runtime-db.mjs'),`--source=${source}`,`--output=${output}`,'--hard-max-mib=512'],{encoding:'utf8'});
+  const before=statSync(source).size,result=spawnSync(process.execPath,[path.resolve('scripts/reset-testnet-runtime-db.mjs'),`--source=${source}`,`--output=${output}`],{encoding:'utf8'});
   assert.equal(result.status,0,result.stderr||result.stdout);assert.equal(existsSync(output),true);assert.equal(statSync(source).size,before);
-  const report=JSON.parse(readFileSync(`${output}.verification.json`,'utf8'));assert.equal(report.status,'FRESH_TESTNET_DB_READY_NOT_INSTALLED');assert.equal(report.originalPreserved,true);assert.equal(report.hardMaxMiB,512);assert.equal(report.autoVacuum,'INCREMENTAL');
+  const report=JSON.parse(readFileSync(`${output}.verification.json`,'utf8'));assert.equal(report.status,'FRESH_TESTNET_DB_READY_NOT_INSTALLED');assert.equal(report.originalPreserved,true);assert.equal(report.autoVacuum,'INCREMENTAL');assert.equal(report.capacityPolicy.entryBlockMiB,1280);
   fresh=new DatabaseSync(output,{readOnly:true});
   assert.equal(fresh.prepare('PRAGMA integrity_check').get().integrity_check,'ok');
   assert.equal(fresh.prepare('SELECT payload FROM settings WHERE id=1').get().payload,'{"mode":"TESTNET"}');assert.equal(fresh.prepare('SELECT ciphertext FROM secrets').get().ciphertext,'encrypted');
   for(const table of ['settings_audit','runtime_state','runtime_events','trade_records'])assert.equal(Number(fresh.prepare(`SELECT COUNT(*) n FROM ${table}`).get().n),0);
-  assert.equal(Number(fresh.prepare('PRAGMA auto_vacuum').get().auto_vacuum),2);assert.equal(Number(fresh.prepare('PRAGMA max_page_count').get().max_page_count),131072);
+  assert.equal(Number(fresh.prepare('PRAGMA auto_vacuum').get().auto_vacuum),2);
  }finally{fresh?.close();rmSync(dir,{recursive:true,force:true});}
 });

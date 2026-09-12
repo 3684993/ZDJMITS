@@ -18,9 +18,10 @@
     "typecheck": "npm run typecheck -ws --if-present",
     "test": "npm run test -ws --if-present",
     "build": "npm run build -ws --if-present",
-    "verify": "npm run typecheck && npm run build && npm run test",
+    "verify:deps": "npm run build -w @zdj/contracts && npm run build -w @zdj/core",
+    "verify": "npm run verify:deps && npm run typecheck && npm run build && npm run test",
     "acceptance": "powershell -ExecutionPolicy Bypass -File scripts/run-acceptance.ps1",
-    "verify:isolated": "npm run typecheck && npm run build -w @zdj/contracts && npm run build -w @zdj/core && npm run build -w @zdj/engine && npm run build -w @zdj/dashboard -- --outDir ../../data-test/v390-build/dashboard && npm test"
+    "verify:isolated": "npm run build -w @zdj/contracts && npm run build -w @zdj/core && npm run typecheck && npm run build -w @zdj/engine && npm run build -w @zdj/dashboard -- --outDir ../../data-test/v390-build/dashboard && npm test"
   },
   "devDependencies": {
     "typescript": "^5.8.3"

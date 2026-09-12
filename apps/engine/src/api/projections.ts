@@ -46,6 +46,7 @@ export function redactAudit(value: unknown, limit = 8000) {
   const bounded=JSON.stringify(envelope);
   return bounded.length<=limit?bounded:JSON.stringify({...envelope,summary:'See archived artifact by hash'});
 }
+const directionalDecision=(decision:unknown)=>['PLACE_LONG','PLACE_SHORT','WAIT_FOR_PRICE'].includes(String(decision??''));
 export function dashboardProjection(runtime: EngineRuntime): DashboardSnapshot {
   const s = runtime.state,
     now = Date.now(),
@@ -117,6 +118,11 @@ export function dashboardProjection(runtime: EngineRuntime): DashboardSnapshot {
       policyDistribution[c.directionPolicy] =
         (policyDistribution[c.directionPolicy] ?? 0) + 1;
   }
+  const aiResources=runtime.ai.resourceMetrics().map((resource:any)=>directionalDecision(resource.lastDecision)?resource:{...resource,lastDirection:null});
+  const recentAiRuns=s.aiRuns.slice(0,30).map(({inputPreview:_input,outputPreview:_output,normalizedPreview:_normalized,failure,...run})=>({
+    ...run,direction:directionalDecision(run.decision)?run.direction:null,
+    failure:failure?{...failure,rawOutput:null}:failure,
+  })).sort(byOpenedAtDesc);
   return DashboardSnapshotSchema.parse({
     ts: now,
     account: {
@@ -176,11 +182,8 @@ export function dashboardProjection(runtime: EngineRuntime): DashboardSnapshot {
     positions: [...s.positions.values()],
     entryOrders: activeEntries.sort((a, b) => b.updatedAt - a.updatedAt),
     tpOrders: activeTps.sort((a, b) => b.updatedAt - a.updatedAt),
-    aiResources: runtime.ai.resourceMetrics(),
-    recentAiRuns: s.aiRuns.slice(0, 30).map(({inputPreview: _input,outputPreview: _output,normalizedPreview: _normalized,failure,...run})=>({
-      ...run,
-      failure:failure?{...failure,rawOutput:null}:failure,
-    })).sort(byOpenedAtDesc),
+    aiResources,
+    recentAiRuns,
     health: runtime.health(),
     readiness: runtime.readinessProjection(),
     settings: s.settings,

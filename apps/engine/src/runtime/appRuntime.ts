@@ -438,11 +438,14 @@ export class EngineRuntime {
     )
       this.state.rejectionCooldown.clear();
     try {
-      await this.market.refresh(this.marketSymbolLimit());
+      // Discovery must remain discovery-only.  The cohort is the sole owner
+      // of retained symbols, so bootstrap hydrates its bounded batch instead
+      // of turning the whole discovery set into REST and WS work.
+      await this.cohort.tick("BOOTSTRAP");
     } catch (error) {
       this.events.publish("MARKET_BOOTSTRAP_FAILED", {
         message: error instanceof Error ? error.message : String(error),
-        retry: "PERIODIC_MARKET_REFRESH",
+        retry: "COHORT_BOOTSTRAP",
       });
     }
     this.universe.refresh();
@@ -451,19 +454,10 @@ export class EngineRuntime {
       await this.refreshPositionMarkets();
       await this.reconciliation.run();
     }
-    const expanded = this.marketSymbolLimit();
-    if (expanded > this.state.snapshots.size) {
-      try {
-        await this.market.refresh(expanded);
-      } catch (error) {
-        this.events.publish("MARKET_BOOTSTRAP_FAILED", {
-          message: error instanceof Error ? error.message : String(error),
-          retry: "PERIODIC_MARKET_REFRESH",
-          scope: "EXPANDED",
-        });
-      }
-      this.universe.refresh();
-    }
+    // Reconcile may expose protected owners after the first cohort pass.
+    // Refresh membership without expanding it to the discovery universe.
+    await this.cohort.tick("POST_RECONCILIATION_BOOTSTRAP");
+    this.universe.refresh();
     this.ready = true;
     this.runtimeControl.evaluate(true);
     if (

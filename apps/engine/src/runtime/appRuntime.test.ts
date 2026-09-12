@@ -4,14 +4,17 @@ import { EngineRuntime } from './appRuntime.js';
 import { AssetGovernanceCoordinator } from '../services/assetGovernanceCoordinator.js';
 
 describe('mock V3 runtime',()=>{
-  it('bootstraps universe, pool and snapshots',async()=>{
+  it('bootstraps bounded cohort snapshots without a full-universe refresh',async()=>{
     process.env.ZDJ_DATA_MODE='mock';process.env.ZDJ_AI_MODE='mock';process.env.ZDJ_TRADING_ADAPTER='mock';
     const root=path.resolve(process.cwd(),'../..');
     const runtime=await EngineRuntime.createTestHarness({configDir:path.join(root,'config'),dataDir:path.join(root,'data-test')});
+    const marketRefresh=vi.spyOn(runtime.market,'refresh');
     await runtime.bootstrap();
+    expect(marketRefresh).not.toHaveBeenCalled();
     expect(runtime.state.snapshots.size).toBeGreaterThan(5);
-    expect(runtime.state.universe.filter(x=>x.rank>0).map(x=>x.symbol).sort()).toEqual(['BTCUSDT','ETHUSDT']);
-    expect(runtime.state.pool.list().length).toBeGreaterThan(0);
+    expect(runtime.cohort.symbols().size).toBeLessThanOrEqual(runtime.state.settings.selection.cohort.hydrateBatchSize*2);
+    expect(runtime.cohort.symbols().size).toBeGreaterThan(0);
+    expect(runtime.market.retentionSymbols().size).toBeLessThanOrEqual(runtime.cohort.symbols().size+runtime.cohort.protectedSymbols().size);
     expect((runtime as any).marketSymbolLimit()).toBeGreaterThanOrEqual(runtime.state.settings.selection.poolTarget+32);
 
     let release!:()=>void;
@@ -54,18 +57,18 @@ describe('mock V3 runtime',()=>{
     runtime.stop();
   },30_000);
 
-  it('starts degraded runtime loops when the initial public market refresh fails',async()=>{
+  it('starts degraded runtime loops when the initial cohort bootstrap fails',async()=>{
     const root=path.resolve(process.cwd(),'../..');
     const runtime=await EngineRuntime.createTestHarness({configDir:path.join(root,'config'),dataDir:path.join(root,'data-test')});
     const failures:any[]=[];
     runtime.events.on('event',event=>{if(event.type==='MARKET_BOOTSTRAP_FAILED')failures.push(event);});
-    runtime.market.refresh=vi.fn(async()=>{throw new Error('TRANSIENT_MARKET_TIMEOUT');});
+    vi.spyOn(runtime.cohort,'tick').mockRejectedValueOnce(new Error('TRANSIENT_MARKET_TIMEOUT')).mockResolvedValueOnce(0);
     runtime.externalIntelligence.tick=vi.fn(async()=>{});
 
     await runtime.start();
 
-    expect(failures).toHaveLength(2);
-    expect(failures.every(event=>event.payload.retry==='PERIODIC_MARKET_REFRESH')).toBe(true);
+    expect(failures).toHaveLength(1);
+    expect(failures[0].payload.retry).toBe('COHORT_BOOTSTRAP');
     runtime.stop();
   },30_000);
 });
@@ -76,9 +79,9 @@ it('does not publish into the closed database from queued UI snapshots',async()=
  try{createApiRouter(runtime);runtime.events.publish('POOL_UPDATED',{});runtime.stop();await new Promise(r=>setTimeout(r,350));expect((runtime as any).persistenceClosed).toBe(true);}
  finally{await rm(dir,{recursive:true,force:true});}
 });
-it('starts private synchronization before a delayed full-universe bootstrap',async()=>{
+it('starts private synchronization before a delayed bounded cohort bootstrap',async()=>{
  const {mkdtemp,rm}=await import('node:fs/promises'),{tmpdir}=await import('node:os');const dir=await mkdtemp(path.join(tmpdir(),'zdj-bootstrap-order-')),root=path.resolve(process.cwd(),'../..'),runtime=await EngineRuntime.createTestHarness({configDir:path.join(root,'config'),dataDir:dir});
- let release!:(n:number)=>void;const privateRead=vi.spyOn(runtime,'syncPrivate').mockResolvedValue();vi.spyOn(runtime.market,'refresh').mockReturnValueOnce(new Promise(r=>release=r)).mockResolvedValue(0);
+ let release!:(n:number)=>void;const privateRead=vi.spyOn(runtime,'syncPrivate').mockResolvedValue();vi.spyOn(runtime.cohort,'tick').mockReturnValueOnce(new Promise(r=>release=r)).mockResolvedValue(0);
  try{const boot=runtime.bootstrap();await Promise.resolve();expect(privateRead).toHaveBeenCalledOnce();release(0);await boot;}finally{runtime.stop();await rm(dir,{recursive:true,force:true});}
 });
 it('uses the runtime scheduler to observe normal approval expiry while governance research hangs',async()=>{

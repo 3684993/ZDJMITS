@@ -1,4 +1,5 @@
-import { getBinanceRequestBudget } from './requestBudget.js';
+import { createHash, randomUUID } from 'node:crypto';
+import { getBinanceRequestBudget, type RequestBudgetMeta } from './requestBudget.js';
 import https from 'node:https';
 import { SocksProxyAgent } from 'socks-proxy-agent';
 import type { ConnectionSettings } from '@zdj/contracts';
@@ -21,19 +22,22 @@ export function binanceRequestWeight(url:URL,method='GET'){
   if(p.endsWith('/positionSide/dual')||p.endsWith('/leverageBracket'))return 30;
   return signed?5:2;
 }
+function inferredSource(url:URL,method:string){const p=url.pathname;if(method!=='GET'&&p.endsWith('/order'))return'EXECUTION_CRITICAL';if(p.endsWith('/order')||p.endsWith('/userTrades'))return'ORDER_VERIFICATION';if(p.endsWith('/account')||p.endsWith('/balance')||p.endsWith('/positionRisk'))return'PRIVATE_STATE';if(p.endsWith('/openOrders')||p.endsWith('/income')||p.endsWith('/allOrders'))return'RECONCILIATION';if(p.endsWith('/listenKey'))return'USER_DATA_STREAM';if(p.endsWith('/klines')||p.endsWith('/depth')||p.endsWith('/ticker/24hr')||p.endsWith('/premiumIndex')||p.endsWith('/openInterest')||p.endsWith('/fundingRate')||p.endsWith('/exchangeInfo'))return'MARKET_DATA';if(p.endsWith('/time'))return'CLOCK';return'UNKNOWN';}
+function extractObservedIp(body:string){const patterns=[/\bIP\s*[:=]?\s*([0-9a-f:.]+)/i,/\bfrom\s+IP\s+([0-9a-f:.]+)/i,/\b(?:banned|blocked)\s+IP\s+([0-9a-f:.]+)/i];for(const pattern of patterns){const m=body.match(pattern);if(m?.[1])return m[1];}return null;}
 
 export class BinanceTransport {
   private readonly agent: SocksProxyAgent | null;
   private readonly budget:ReturnType<typeof getBinanceRequestBudget>;
+  private readonly routeIdentity:string;
   constructor(private readonly settings: ConnectionSettings) {
-    if (settings.proxy.enabled) this.agent = new SocksProxyAgent(settings.proxy.url);
-    else this.agent = null;
-    this.budget=getBinanceRequestBudget(settings.exchange.environment);
+    if (settings.proxy.enabled) this.agent = new SocksProxyAgent(settings.proxy.url); else this.agent = null;
+    const route=settings.proxy.binanceRestRoute==='DIRECT'?'direct':settings.proxy.enabled?'proxy':'unproxied',proxyHash=settings.proxy.enabled?createHash('sha256').update(settings.proxy.url).digest('hex').slice(0,12):'none';
+    this.routeIdentity=`${route}-${proxyHash}`;this.budget=getBinanceRequestBudget(settings.exchange.environment,this.routeIdentity);
   }
   effectiveBaseUrl() { return this.settings.exchange.environment === 'TESTNET' ? this.settings.exchange.testnetBaseUrl : this.settings.exchange.productionBaseUrl; }
   environment(){return this.settings.exchange.environment;}
-  requestBudgetHealth(){return this.budget.health();}
-  restRoute(){const direct=this.settings.proxy.binanceRestRoute==='DIRECT';return{mode:direct?'DIRECT':'CONFIGURED',throughProxy:!direct&&Boolean(this.agent),host:new URL(this.effectiveBaseUrl()).hostname};}
+  requestBudgetHealth(){return{...this.budget.health(),routeIdentity:this.routeIdentity,route:this.restRoute()};}
+  restRoute(){const direct=this.settings.proxy.binanceRestRoute==='DIRECT';return{mode:direct?'DIRECT':'CONFIGURED',throughProxy:!direct&&Boolean(this.agent),host:new URL(this.effectiveBaseUrl()).hostname,routeIdentity:this.routeIdentity};}
   private restAgent(){if(this.settings.proxy.binanceRestRoute==='DIRECT'){if(this.settings.proxy.forceBinanceRest)throw new Error('REST_ROUTE_CONFLICT: direct route cannot force proxy');return undefined;}return this.agent??undefined;}
   executionMode(){return this.settings.executionMode;}
   assertTestnetExchangeWrite(){const url=new URL(this.effectiveBaseUrl());if(this.settings.exchange.environment!=='TESTNET'||this.settings.executionMode!=='TESTNET_ENABLED'||url.hostname!=='testnet.binancefuture.com')throw new Error('TESTNET_ONLY_WRITE_LOCK: production/private exchange write disabled');}
@@ -41,20 +45,21 @@ export class BinanceTransport {
   websocketOptions() { if (this.settings.proxy.forceBinanceWs && !this.agent) throw new Error('PROXY_UNAVAILABLE: Binance WS is configured fail-closed'); return { agent: this.settings.proxy.forceBinanceWs ? this.agent ?? undefined : undefined }; }
   websocketRoute(){return{url:this.effectiveWsUrl(),throughProxy:Boolean(this.settings.proxy.forceBinanceWs&&this.agent),proxyUrl:this.settings.proxy.forceBinanceWs?this.settings.proxy.url:null,tlsServername:new URL(this.effectiveWsUrl()).hostname};}
   private assertBinance(url: URL) { if (!(url.hostname==='binance.com'||url.hostname.endsWith('.binance.com')) && !(url.hostname==='binancefuture.com'||url.hostname.endsWith('.binancefuture.com'))) throw new Error(`Refusing non-Binance transport host: ${url.hostname}`); if (this.settings.proxy.forceBinanceRest && !this.agent) throw new Error('PROXY_UNAVAILABLE: Binance REST is configured fail-closed'); }
-  async json<T>(pathOrUrl: string, init: { method?: string; headers?: Record<string, string>; body?: string; timeoutMs?: number } = {}): Promise<T> {
+  async json<T>(pathOrUrl: string, init: { method?: string; headers?: Record<string, string>; body?: string; timeoutMs?: number; source?:string; purpose?:string } = {}): Promise<T> {
     const url = new URL(pathOrUrl, this.effectiveBaseUrl()); this.assertBinance(url);
-    const method=init.method??'GET',priority=url.pathname==='/fapi/v1/time'?0:(url.searchParams.has('signature')||Boolean(init.headers?.['X-MBX-APIKEY']))?(url.pathname.includes('/income')?1:0):2,weight=binanceRequestWeight(url,method);
+    const method=(init.method??'GET').toUpperCase(),priority=url.pathname==='/fapi/v1/time'?0:(url.searchParams.has('signature')||Boolean(init.headers?.['X-MBX-APIKEY']))?(url.pathname.includes('/income')?1:0):2,weight=binanceRequestWeight(url,method),meta:RequestBudgetMeta={requestId:randomUUID(),source:init.source??inferredSource(url,method),purpose:init.purpose??'BINANCE_HTTP',endpoint:url.pathname,method};
     return this.budget.run(priority,weight,()=>new Promise<T>((resolve, reject) => {
       const timeoutMs=init.timeoutMs??15_000;
       const request = https.request(url, { method, headers: { 'user-agent': 'zdj-mits-v3/3.9', ...init.headers }, agent: this.restAgent(), timeout: timeoutMs, signal: AbortSignal.timeout(timeoutMs) }, response => {
-        this.budget.observe(response.statusCode??500,response.headers['x-mbx-used-weight-1m'] as string|undefined,response.headers['retry-after'] as string|undefined);
         let body = ''; response.setEncoding('utf8'); response.on('data', chunk => { body += chunk; }); response.on('end', () => {
-          if ((response.statusCode ?? 500) >= 400) return reject(new Error(`Binance HTTP ${response.statusCode}: ${body.slice(0, 512)}`));
+          const status=response.statusCode??500,observedIp=(status===418||status===429)?extractObservedIp(body):null;
+          this.budget.observe(status,response.headers['x-mbx-used-weight-1m'] as string|undefined,response.headers['retry-after'] as string|undefined,meta,observedIp);
+          if (status >= 400) return reject(new Error(`Binance HTTP ${status}: ${body.slice(0, 512)}`));
           try { resolve(JSON.parse(body) as T); } catch { reject(new Error('Binance returned invalid JSON')); }
         });
       });
       request.once('timeout', () => request.destroy(new Error('Binance request timed out'))); request.once('error', error => reject(new Error(`BINANCE_TRANSPORT_BLOCKED: ${error.name==='AbortError'?'Binance request timed out':error.message}`))); request.end(init.body);
-    }));
+    }),meta);
   }
-  async health() { const startedAt = Date.now(); const serverTime = await this.json<{ serverTime: number }>('/fapi/v1/time'); return { status: 'HEALTHY' as const, latencyMs: Date.now() - startedAt, serverTime, effectiveBaseUrl: this.effectiveBaseUrl(), throughProxy: this.restRoute().throughProxy,route:this.restRoute(),requestBudget:this.budget.health() }; }
+  async health() { const startedAt = Date.now(); const serverTime = await this.json<{ serverTime: number }>('/fapi/v1/time',{source:'HEALTH_PROBE',purpose:'SERVER_TIME'}); return { status: 'HEALTHY' as const, latencyMs: Date.now() - startedAt, serverTime, effectiveBaseUrl: this.effectiveBaseUrl(), throughProxy: this.restRoute().throughProxy,route:this.restRoute(),requestBudget:this.requestBudgetHealth() }; }
 }

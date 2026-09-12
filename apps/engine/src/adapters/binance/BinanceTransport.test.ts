@@ -1,6 +1,6 @@
 import {binanceRequestBudget,getBinanceRequestBudget} from './requestBudget.js';
 import { describe, expect, it, vi } from 'vitest';
-import {mkdtempSync,rmSync,truncateSync} from 'node:fs';import os from 'node:os';import path from 'node:path';
+import {mkdtempSync,rmSync,truncateSync,writeFileSync} from 'node:fs';import os from 'node:os';import path from 'node:path';
 import {resetStorageCapacityGuardForTest} from '../../services/storageCapacityGuard.js';
 import { BinanceTransport,binanceRequestWeight,extractObservedIp } from './BinanceTransport.js';
 const settings=(forceBinanceWs:boolean)=>({executionMode:'TESTNET_ENABLED',exchange:{environment:'TESTNET',testnetBaseUrl:'https://testnet.binancefuture.com',productionBaseUrl:'https://fapi.binance.com'},proxy:{enabled:true,url:'socks5h://127.0.0.1:20081',forceBinanceRest:true,forceBinanceWs,proxyDns:true,failClosed:true}});
@@ -29,7 +29,7 @@ it('checks Entry pressure after budget admission and before opening a socket',as
 });
 
 it('checks SQLite capacity after budget admission and blocks only NEW_ENTRY before a socket opens',async()=>{
- const dir=mkdtempSync(path.join(os.tmpdir(),'zdj-transport-storage-')),prior=process.env.ZDJ_DATA_DIR;process.env.ZDJ_DATA_DIR=dir;truncateSync(path.join(dir,'zdj-settings.sqlite'),1300*1024*1024);resetStorageCapacityGuardForTest();
+ const dir=mkdtempSync(path.join(os.tmpdir(),'zdj-transport-storage-')),prior=process.env.ZDJ_DATA_DIR,file=path.join(dir,'zdj-settings.sqlite');process.env.ZDJ_DATA_DIR=dir;writeFileSync(file,'');truncateSync(file,1300*1024*1024);resetStorageCapacityGuardForTest();
  const transport=new BinanceTransport(settings(false) as never),budget=(transport as any).budget,run=vi.spyOn(budget,'run').mockImplementation(async(...args:any[])=>args[2]());
  try{await expect(transport.json('/fapi/v1/order',{method:'POST',purpose:'NEW_ENTRY'})).rejects.toThrow('STORAGE_ENTRY_BLOCKED:SQLITE_CAPACITY_ENTRY_BLOCKED');}
  finally{run.mockRestore();if(prior===undefined)delete process.env.ZDJ_DATA_DIR;else process.env.ZDJ_DATA_DIR=prior;resetStorageCapacityGuardForTest();rmSync(dir,{recursive:true,force:true});}

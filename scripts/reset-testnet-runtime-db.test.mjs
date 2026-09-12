@@ -7,7 +7,7 @@ import {spawnSync} from 'node:child_process';
 import {DatabaseSync} from 'node:sqlite';
 
 test('reset-testnet-runtime-db preserves static configuration and clears runtime facts',()=>{
- const dir=mkdtempSync(path.join(os.tmpdir(),'zdj-reset-testnet-')),source=path.join(dir,'source.sqlite'),output=path.join(dir,'fresh.sqlite');
+ const dir=mkdtempSync(path.join(os.tmpdir(),'zdj-reset-testnet-')),source=path.join(dir,'source.sqlite'),output=path.join(dir,'fresh.sqlite');let fresh;
  try{
   const db=new DatabaseSync(source);db.exec(`
    CREATE TABLE settings(id INTEGER PRIMARY KEY,payload TEXT NOT NULL);
@@ -36,10 +36,10 @@ test('reset-testnet-runtime-db preserves static configuration and clears runtime
   const before=statSync(source).size,result=spawnSync(process.execPath,[path.resolve('scripts/reset-testnet-runtime-db.mjs'),`--source=${source}`,`--output=${output}`,'--hard-max-mib=512'],{encoding:'utf8'});
   assert.equal(result.status,0,result.stderr||result.stdout);assert.equal(existsSync(output),true);assert.equal(statSync(source).size,before);
   const report=JSON.parse(readFileSync(`${output}.verification.json`,'utf8'));assert.equal(report.status,'FRESH_TESTNET_DB_READY_NOT_INSTALLED');assert.equal(report.originalPreserved,true);assert.equal(report.hardMaxMiB,512);
-  const fresh=new DatabaseSync(output,{readOnly:true});
+  fresh=new DatabaseSync(output,{readOnly:true});
   assert.equal(fresh.prepare('PRAGMA integrity_check').get().integrity_check,'ok');
   assert.equal(fresh.prepare('SELECT payload FROM settings WHERE id=1').get().payload,'{"mode":"TESTNET"}');assert.equal(fresh.prepare('SELECT ciphertext FROM secrets').get().ciphertext,'encrypted');
   for(const table of ['settings_audit','runtime_state','runtime_events','trade_records'])assert.equal(Number(fresh.prepare(`SELECT COUNT(*) n FROM ${table}`).get().n),0);
-  assert.equal(Number(fresh.prepare('PRAGMA max_page_count').get().max_page_count),131072);fresh.close();
- }finally{rmSync(dir,{recursive:true,force:true});}
+  assert.equal(Number(fresh.prepare('PRAGMA max_page_count').get().max_page_count),131072);
+ }finally{fresh?.close();rmSync(dir,{recursive:true,force:true});}
 });

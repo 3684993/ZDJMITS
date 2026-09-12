@@ -31,7 +31,7 @@ export function maintainStorageBounds(now=Date.now()){
    trim('decision_snapshots',STORAGE_ROW_CAPS.decisionSnapshots,'created_at ASC,rowid ASC');
    trim('decision_chains',STORAGE_ROW_CAPS.analysisChains,'updated_at ASC,rowid ASC',analysisChain);
    if(tables.has('ai_runs_archive')){
-    db.prepare(`UPDATE ai_runs_archive SET payload='{}' WHERE rowid IN (SELECT rowid FROM ai_runs_archive WHERE status IN ('COMPLETED','FAILED','CANCELED') AND payload<>'{}' ORDER BY started_at DESC LIMIT -1 OFFSET ${STORAGE_ROW_CAPS.aiRawRuns}) LIMIT ${batch}`).run();
+    db.prepare(`UPDATE ai_runs_archive SET payload='{}' WHERE rowid IN (SELECT rowid FROM ai_runs_archive WHERE status IN ('COMPLETED','FAILED','CANCELED') AND payload<>'{}' AND rowid NOT IN (SELECT rowid FROM ai_runs_archive WHERE status IN ('COMPLETED','FAILED','CANCELED') ORDER BY started_at DESC LIMIT ${STORAGE_ROW_CAPS.aiRawRuns}) ORDER BY started_at ASC LIMIT ${batch})`).run();
     trim('ai_runs_archive',STORAGE_ROW_CAPS.aiArchiveRows,'started_at ASC,rowid ASC',"status IN ('COMPLETED','FAILED','CANCELED') AND payload='{}'");
    }
    trim('runtime_events',STORAGE_ROW_CAPS.nonCriticalRuntimeEvents,'ts ASC,rowid ASC',`NOT ${protectedEvent}`);

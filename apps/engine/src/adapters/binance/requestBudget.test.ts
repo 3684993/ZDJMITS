@@ -33,3 +33,13 @@ it('recovers from a ban sequentially instead of releasing every waiting subsyste
  await vi.advanceTimersByTimeAsync(1600);await probe();expect(budget.health().status).toBe('AVAILABLE');expect(budget.health().recoverySuccesses).toBe(3);
  }finally{vi.useRealTimers();}
 });
+it('attributes endpoint weight and reports pressure instead of falsely AVAILABLE',async()=>{
+ const budget=new RequestBudget(2,1,100,{softPublicWeight:10,softBackgroundWeight:15,hardWeight:20});
+ await budget.run(0,5,async()=>{}, {source:'PRIVATE_STATE',endpoint:'/fapi/v2/account',purpose:'SYNC',method:'GET'});
+ budget.observe(200,'16',undefined,{source:'PRIVATE_STATE',endpoint:'/fapi/v2/account'});
+ const health=budget.health();expect(health.status).toBe('PRESSURED');expect(health.attribution[0]?.source).toBe('PRIVATE_STATE');expect(health.attribution[0]?.estimatedWeight).toBe(5);
+});
+it('retains the Binance-observed banned IP for route diagnostics',()=>{
+ const budget=new RequestBudget(1,1,100);budget.observe(418,'2300','60',{source:'RECONCILIATION',endpoint:'/fapi/v2/positionRisk'},'15.158.242.74');
+ expect(budget.health().lastObservedBanIp).toBe('15.158.242.74');expect(budget.health().status).toBe('RATE_LIMITED');
+});

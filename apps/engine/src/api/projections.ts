@@ -168,7 +168,10 @@ export function dashboardProjection(runtime: EngineRuntime): DashboardSnapshot {
       topN: s.settings.selection.universeTopN,
       generation: s.generation,
     },
-    candidateSupply:candidateSupplyHealth(s),
+    // `supply` is the canonical source-closure projection.  Keep the Phase A
+    // candidate diagnostic as a backwards-compatible, read-only detail view.
+    supply: runtime.supplyHealth(),
+    candidateSupply: candidateSupplyHealth(s),
     pool: s.pool.list(),
     positions: [...s.positions.values()],
     entryOrders: activeEntries.sort((a, b) => b.updatedAt - a.updatedAt),

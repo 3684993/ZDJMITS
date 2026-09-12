@@ -13,13 +13,14 @@ it('advances all three closed frames during a REST outage without crossing frame
 });
 
 describe("BinancePublicMarketDataProvider live symbols", () => {
-  it('collects approved underlyings ahead of the volume slice and reports unavailable assets',async()=>{
+  it('collects approved underlyings ahead of the volume slice and reports unavailable assets without starting WS',async()=>{
     const transport={json:vi.fn(async(path:string)=>path==='/fapi/v1/ticker/24hr'?[{symbol:'BTCUSDT',quoteVolume:'100'},{symbol:'SOLUSDT',quoteVolume:'1'}]:path==='/fapi/v1/exchangeInfo'?{symbols:[{symbol:'BTCUSDT',status:'TRADING',contractType:'PERPETUAL'},{symbol:'SOLUSDT',status:'TRADING',contractType:'PERPETUAL'}]}:[])} as any;
-    const provider=new BinancePublicMarketDataProvider(transport);vi.spyOn((provider as any).stream,'start').mockImplementation(()=>{});
+    const provider=new BinancePublicMarketDataProvider(transport),start=vi.spyOn((provider as any).stream,'start').mockImplementation(()=>{});
     expect(await provider.listSymbols(1,['SOL','MISSING'])).toEqual(['BTCUSDT','ETHUSDT','SOLUSDT']);
     expect(provider.collectionCoverage()).toEqual([{requested:'SOL',symbol:'SOLUSDT',status:'COLLECTED',reason:null},{requested:'MISSING',symbol:null,status:'UNAVAILABLE',reason:'NO_EXECUTION_MARKET_DATA'}]);
+    expect(start).not.toHaveBeenCalled();
   });
-  it('collects both available quote contracts for an approved underlying before routing',async()=>{const transport={json:vi.fn(async(path:string)=>path==='/fapi/v1/ticker/24hr'?[{symbol:'BTCUSDT',quoteVolume:'100'},{symbol:'SOLUSDT',quoteVolume:'2'},{symbol:'SOLUSDC',quoteVolume:'1'}]:path==='/fapi/v1/exchangeInfo'?{symbols:[{symbol:'BTCUSDT',status:'TRADING',contractType:'PERPETUAL'},{symbol:'SOLUSDT',status:'TRADING',contractType:'PERPETUAL'},{symbol:'SOLUSDC',status:'TRADING',contractType:'PERPETUAL'}]}:[])} as any;const provider=new BinancePublicMarketDataProvider(transport);vi.spyOn((provider as any).stream,'start').mockImplementation(()=>{});const symbols=await provider.listSymbols(1,['SOL']);expect(symbols).toContain('SOLUSDT');expect(symbols).toContain('SOLUSDC');});
+  it('collects both available quote contracts for an approved underlying before routing',async()=>{const transport={json:vi.fn(async(path:string)=>path==='/fapi/v1/ticker/24hr'?[{symbol:'BTCUSDT',quoteVolume:'100'},{symbol:'SOLUSDT',quoteVolume:'2'},{symbol:'SOLUSDC',quoteVolume:'1'}]:path==='/fapi/v1/exchangeInfo'?{symbols:[{symbol:'BTCUSDT',status:'TRADING',contractType:'PERPETUAL'},{symbol:'SOLUSDT',status:'TRADING',contractType:'PERPETUAL'},{symbol:'SOLUSDC',status:'TRADING',contractType:'PERPETUAL'}]}:[])} as any;const provider=new BinancePublicMarketDataProvider(transport);const symbols=await provider.listSymbols(1,['SOL']);expect(symbols).toContain('SOLUSDT');expect(symbols).toContain('SOLUSDC');});
   it('does not return an expired WebSocket quote when an independent REST quote is required', async () => {
     const transport={json:vi.fn(async(path:string)=>{
       if(path==='/fapi/v1/exchangeInfo')return{symbols:[{symbol:'BTCUSDT',filters:[{filterType:'PRICE_FILTER',tickSize:'0.1'},{filterType:'LOT_SIZE',minQty:'0.001',stepSize:'0.001'},{filterType:'MIN_NOTIONAL',notional:'5'}]}]};
@@ -35,7 +36,7 @@ describe("BinancePublicMarketDataProvider live symbols", () => {
     expect(transport.json).toHaveBeenCalledWith('/fapi/v1/ticker/24hr?symbol=BTCUSDT');
   });
   it('rejects missing exchange filters instead of inventing executable rules',async()=>{const transport={json:vi.fn(async(path:string)=>path==='/fapi/v1/exchangeInfo'?{symbols:[{symbol:'BTCUSDT',filters:[{filterType:'PRICE_FILTER',tickSize:'0.1'}]}]}:{lastPrice:'100',markPrice:'100',bidPrice:'99',askPrice:'101'})} as any;const provider=new BinancePublicMarketDataProvider(transport);await expect(provider.getQuote('BTCUSDT')).rejects.toThrow('BINANCE_REQUIRED_FILTER_INVALID');});
-  it("keeps current extra symbols across base refreshes and replaces stale extras", async () => {
+  it("keeps discovery side-effect free and makes retention the authoritative WS set", async () => {
     const transport = {
       json: vi.fn(async (path: string) =>
         path === "/fapi/v1/ticker/24hr"
@@ -44,41 +45,31 @@ describe("BinancePublicMarketDataProvider live symbols", () => {
               { symbol: "ETHUSDT", quoteVolume: "10" },
               { symbol: "ETHUSDC", quoteVolume: "5" },
             ]
-          : [],
+          : path === "/fapi/v1/exchangeInfo"
+            ? {symbols:[
+                {symbol:'BTCUSDT',status:'TRADING',contractType:'PERPETUAL'},
+                {symbol:'ETHUSDT',status:'TRADING',contractType:'PERPETUAL'},
+                {symbol:'ETHUSDC',status:'TRADING',contractType:'PERPETUAL'},
+              ]}
+            : [],
       ),
     } as any;
     const provider = new BinancePublicMarketDataProvider(transport);
     const stream = (provider as any).stream;
     const start = vi.spyOn(stream, "start").mockImplementation(() => {});
-    const update = vi
-      .spyOn(stream, "updateSymbols")
-      .mockImplementation(() => {});
 
     provider.setLiveSymbols(["ethusdc", "PNUTUSDT"]);
+    expect(start).toHaveBeenLastCalledWith(["ETHUSDC", "PNUTUSDT"]);
+
     await provider.listSymbols(1);
-    expect(start).toHaveBeenLastCalledWith([
-      "BTCUSDT",
-      "ETHUSDT",
-      "ETHUSDC",
-      "PNUTUSDT",
-    ]);
+    expect(start).toHaveBeenCalledTimes(1);
 
     provider.setLiveSymbols(["ADAUSDC"]);
-    expect(update).toHaveBeenLastCalledWith([
-      "BTCUSDT",
-      "ETHUSDT",
-      "ETHUSDC",
-      "ADAUSDC",
-    ]);
-    expect(update.mock.calls.at(-1)?.[0]).not.toContain("PNUTUSDT");
+    expect(start).toHaveBeenLastCalledWith(["ADAUSDC"]);
+    expect(start.mock.calls.at(-1)?.[0]).not.toContain("PNUTUSDT");
 
-    await provider.listSymbols(3);
-    expect(start).toHaveBeenLastCalledWith([
-      "BTCUSDT",
-      "ETHUSDT",
-      "ETHUSDC",
-      "ADAUSDC",
-    ]);
+    await provider.discoverSymbols(3);
+    expect(start).toHaveBeenCalledTimes(2);
   });
 });
 it('deduplicates concurrent candles and reloads when an open candle closes',async()=>{

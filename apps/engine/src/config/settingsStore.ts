@@ -489,6 +489,16 @@ export class SettingsStore {
     this.current = updated;
     return this.current;
   }
+  async saveIfVersion(next:unknown,expectedVersion:number):Promise<SystemSettings>{
+    await this.open();
+    // No await occurs after the comparison: parse, transaction and publication
+    // are one synchronous critical section in this store instance.
+    if(this.current.settingsVersion!==expectedVersion)throw new Error('SETTINGS_VERSION_CONFLICT');
+    const parsed=SystemSettingsSchema.parse(next),updated={...parsed,settingsVersion:expectedVersion+1};
+    this.persist(updated,'cas',expectedVersion);
+    this.current=updated;
+    return updated;
+  }
   private target(ref: string) {
     return `ZDJ-MITS/V3.1/${this.current.connections.exchange.environment}/${ref}`;
   }

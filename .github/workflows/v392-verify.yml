@@ -1,0 +1,27 @@
+name: V3.9.2 Final Verify
+
+on:
+  push:
+    branches:
+      - fix/v392-astra-final-fixes
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install exact dependencies
+        run: npm ci
+      - name: Final verify
+        run: npm run verify

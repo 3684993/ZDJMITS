@@ -15,8 +15,17 @@ export class BinanceMarketStream {
   private symbols=new Set<string>(); private subscribed=new Set<string>(); private quotes=new Map<string,QuotePatch>(); private books=new Map<string,OrderBook>(); private candles=new Map<string,Candle[]>(); private lastDepthUpdate=new Map<string,number>(); private backfillInFlight=new Set<string>(); private recoveryCooldown=new Map<string,number>();
   private readonly metricsValue:StreamMetrics={state:'STOPPED',connectedAt:null,lastMessageAt:null,lastTickerMessageAt:null,lastBookTickerMessageAt:null,lastPongAt:null,reconnects:0,gaps:0,gapsByType:{websocketConnection:0,quote:0,bookTicker:0,depthSequence:0,kline:0,eventTimestamp:0,subscription:0},backfills:0,subscriptions:0,cumulativeSubscriptions:0,recoverySuccess:0,recoveryFailure:0,lastError:null};
   constructor(private readonly transport:BinanceTransport,private readonly backfill:(symbol:string)=>Promise<{book:OrderBook;candles:Candle[]}>){}
-  start(symbols:string[]){this.symbols=new Set(symbols.map(x=>x.toUpperCase()));if(!this.stopped){this.subscribeSymbols();return;}this.stopped=false;this.connect();}
-  updateSymbols(symbols:string[]){this.symbols=new Set(symbols.map(x=>x.toUpperCase()));this.tradedPrices.retain(this.symbols);this.subscribeSymbols();}
+  private retainSymbols(symbols:string[]){
+    this.symbols=new Set(symbols.map(x=>x.toUpperCase()));
+    this.tradedPrices.retain(this.symbols);
+    for(const symbol of [...this.quotes.keys()])if(!this.symbols.has(symbol))this.quotes.delete(symbol);
+    for(const symbol of [...this.books.keys()])if(!this.symbols.has(symbol))this.books.delete(symbol);
+    for(const key of [...this.candles.keys()])if(!this.symbols.has(key.split(':')[0]!))this.candles.delete(key);
+    for(const symbol of [...this.lastDepthUpdate.keys()])if(!this.symbols.has(symbol))this.lastDepthUpdate.delete(symbol);
+    for(const symbol of [...this.recoveryCooldown.keys()])if(!this.symbols.has(symbol))this.recoveryCooldown.delete(symbol);
+  }
+  start(symbols:string[]){this.retainSymbols(symbols);if(!this.stopped){this.subscribeSymbols();return;}this.stopped=false;this.connect();}
+  updateSymbols(symbols:string[]){this.retainSymbols(symbols);this.subscribeSymbols();}
   stop(){this.stopped=true;this.clearControls();if(this.retry)clearTimeout(this.retry);if(this.heartbeat)clearInterval(this.heartbeat);this.retry=this.heartbeat=null;this.socket?.close();this.socket=null;this.metricsValue.state='STOPPED';}
   metrics(){return{...this.metricsValue,gapsByType:{...this.metricsValue.gapsByType}};}
   quote(symbol:string,maxAgeMs=5_000){const q=this.quotes.get(symbol);return q&&fresh(q.ts,maxAgeMs)?q:undefined;}
@@ -49,5 +58,5 @@ export class BinanceMarketStream {
     else if(d.e==='kline'){const s=String(d.s);if(!this.symbols.has(s))return;const k=d.k,tf=String(k.i??'1m');if(!['1m','5m','15m'].includes(tf))return;const key=tf==='1m'?s:`${s}:${tf}`,receivedAt=Number(d.E)||Date.now();const candle:Candle={openTime:Number(k.t),closeTime:Number(k.T),receivedAt,isClosed:Boolean(k.x),source:'BINANCE_WS',open:Number(k.o),high:Number(k.h),low:Number(k.l),close:Number(k.c),volume:Number(k.v),quoteVolume:Number(k.q),trades:Number(k.n)};const rows=this.candles.get(key)??[];const at=rows.findIndex(x=>x.openTime===candle.openTime);if(at>=0){const prior=rows[at]!;if(prior.isClosed&&!candle.isClosed||(prior.receivedAt??0)>receivedAt)return;rows[at]=candle;}else rows.push(candle);this.candles.set(key,rows.sort((a,b)=>a.openTime-b.openTime).slice(-300));}
   }
   private mergeQuote(symbol:string,patch:QuotePatch){this.quotes.set(symbol,{...this.quotes.get(symbol),...patch});}
-  private async recover(symbol:string){const now=Date.now();if(this.backfillInFlight.has(symbol)||(this.recoveryCooldown.get(symbol)??0)>now)return;this.recoveryCooldown.set(symbol,now+60_000);this.backfillInFlight.add(symbol);try{const value=await this.backfill(symbol);this.books.set(symbol,value.book);this.seedCandles(symbol,'1m',value.candles);this.lastDepthUpdate.delete(symbol);this.metricsValue.backfills++;this.metricsValue.recoverySuccess++;}catch(error){this.metricsValue.recoveryFailure++;this.metricsValue.lastError=error instanceof Error?error.message:String(error);}finally{this.backfillInFlight.delete(symbol);}}
+  private async recover(symbol:string){const now=Date.now();if(this.backfillInFlight.has(symbol)||(this.recoveryCooldown.get(symbol)??0)>now)return;this.recoveryCooldown.set(symbol,now+60_000);this.backfillInFlight.add(symbol);try{const value=await this.backfill(symbol);if(!this.symbols.has(symbol))return;this.books.set(symbol,value.book);this.seedCandles(symbol,'1m',value.candles);this.lastDepthUpdate.delete(symbol);this.metricsValue.backfills++;this.metricsValue.recoverySuccess++;}catch(error){this.metricsValue.recoveryFailure++;this.metricsValue.lastError=error instanceof Error?error.message:String(error);}finally{this.backfillInFlight.delete(symbol);}}
 }

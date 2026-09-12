@@ -64,6 +64,8 @@ export const SystemSettingsSchema = z.object({
     poolTarget: z.number().int().min(1).max(30),
     poolMax: z.number().int().min(1).max(50),
     replacementDelta: z.number().min(0).max(30),
+    /** Bounded market-data inventory; pool limits remain execution scheduling limits. */
+    cohort:z.object({size:z.number().int().min(20).max(150).default(100),hydrateBatchSize:z.number().int().min(1).max(30).default(20),readyLowWatermark:z.number().int().min(1).max(30).default(6),staleMemberRotationMinutes:z.number().int().min(5).max(1440).default(120),protectedRatio:z.number().min(.1).max(1).default(.75),refillBackoffSeconds:z.number().int().min(10).max(900).default(60)}).default({}),
     customSymbols: z.array(z.string()).default([]),
     excludeSymbols: z.array(z.string()).default([]),
     minQuoteVolumeUsd24h: z.number().nonnegative(),
@@ -95,10 +97,13 @@ export const SystemSettingsSchema = z.object({
       sourceDomain:z.literal('PRODUCTION_PUBLIC_RESEARCH').default('PRODUCTION_PUBLIC_RESEARCH'),
       methodVersion:z.string().default('V3.8.0-LIQUIDITY-30D-V4'),
       evidenceHash:z.string().nullable().default(null),
-      approvals:z.record(z.string(),z.object({symbol:z.string(),reason:z.string(),reviewedAt:z.number().int(),quoteVolumeUsd24h:z.number().nonnegative(),medianDailyQuoteVolumeUsd30d:z.number().nonnegative(),tradeCount24h:z.number().int().nonnegative(),openInterestUsd:z.number().nonnegative(),listingAgeDays:z.number().nonnegative(),liquidityComposite:z.number().min(0).max(1).default(0)})).default({}),
+      approvals:z.record(z.string(),z.object({symbol:z.string(),reason:z.string(),reviewedAt:z.number().int(),quoteVolumeUsd24h:z.number().nonnegative(),medianDailyQuoteVolumeUsd30d:z.number().nonnegative(),tradeCount24h:z.number().int().nonnegative(),openInterestUsd:z.number().nonnegative(),listingAgeDays:z.number().nonnegative(),liquidityComposite:z.number().min(0).max(1).default(0),validUntil:z.number().int().optional(),graceUntil:z.number().int().optional(),lkgSourceFailed:z.boolean().optional()})).default({}),
+      /** Assets retained from prior evidence because this review reported SOURCE_FAILED. */
+      lkgAssets:z.array(z.string()).default([]),
     }).default({}),
   }).superRefine((v, ctx) => {
     if (v.poolMax < v.poolTarget) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['poolMax'], message: 'poolMax must be >= poolTarget' });
+    if(v.cohort.hydrateBatchSize>v.cohort.size)ctx.addIssue({code:z.ZodIssueCode.custom,path:['cohort','hydrateBatchSize'],message:'hydrateBatchSize must be <= cohort size'});
   }),
   entryProfile: EntryProfileSchema,
   directionReference: DirectionReferenceSchema,
@@ -160,6 +165,7 @@ export const SystemSettingsSchema = z.object({
   }),
   positionManagement: z.object({
     humanHandoffAfterMinutes: z.number().int().min(1).max(525600).default(1440),
+    lossHandoffBars:z.number().int().min(1).max(96).default(4),
   }).default({}),
 });
 export type SystemSettings = z.infer<typeof SystemSettingsSchema>;

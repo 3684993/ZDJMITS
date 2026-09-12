@@ -1,6 +1,7 @@
 import { describe,it,expect,vi } from 'vitest';
 import path from 'node:path';
 import { EngineRuntime } from './appRuntime.js';
+import { AssetGovernanceCoordinator } from '../services/assetGovernanceCoordinator.js';
 
 describe('mock V3 runtime',()=>{
   it('bootstraps universe, pool and snapshots',async()=>{
@@ -22,6 +23,22 @@ describe('mock V3 runtime',()=>{
     release();await refresh;
     expect(runtime.state.account.status).toBe('READY');
     runtime.stop();
+  },30_000);
+
+  it('retains an in-flight cohort hydrate through the real runtime sync, then admits its snapshot',async()=>{
+    const {mkdtemp,rm}=await import('node:fs/promises'),{tmpdir}=await import('node:os'),dir=await mkdtemp(path.join(tmpdir(),'zdj-cohort-retention-')),root=path.resolve(process.cwd(),'../..');
+    const runtime=await EngineRuntime.createTestHarness({configDir:path.join(root,'config'),dataDir:dir});let release:()=>void=()=>{};
+    runtime.state.settings.selection.cohort={...runtime.state.settings.selection.cohort,size:1,hydrateBatchSize:1,readyLowWatermark:1};
+    const original=runtime.market.hydrateSymbols.bind(runtime.market),pending=new Promise<void>(resolve=>release=resolve);
+    vi.spyOn(runtime.market,'discover').mockResolvedValue(['SOLUSDT']);vi.spyOn(runtime.market,'hydrateSymbols').mockImplementation(async symbols=>{await pending;return original(symbols);});
+    try{
+      const refill=runtime.cohort.tick('RETENTION_RACE');await Promise.resolve();
+      expect(runtime.market.retentionSymbols()).toContain('SOLUSDT');
+      await (runtime as any).refreshPositionMarkets();
+      expect(runtime.market.retentionSymbols()).toContain('SOLUSDT');
+      release();expect(await refill).toBe(1);
+      expect(runtime.cohort.symbols()).toContain('SOLUSDT');expect(runtime.market.snapshot('SOLUSDT')).toBeDefined();expect(runtime.market.retentionSymbols()).toContain('SOLUSDT');
+    }finally{release();runtime.stop();await rm(dir,{recursive:true,force:true});}
   },30_000);
 
   it('starts critical runtime loops without awaiting risk baseline I/O',async()=>{
@@ -63,4 +80,12 @@ it('starts private synchronization before a delayed full-universe bootstrap',asy
  const {mkdtemp,rm}=await import('node:fs/promises'),{tmpdir}=await import('node:os');const dir=await mkdtemp(path.join(tmpdir(),'zdj-bootstrap-order-')),root=path.resolve(process.cwd(),'../..'),runtime=await EngineRuntime.createTestHarness({configDir:path.join(root,'config'),dataDir:dir});
  let release!:(n:number)=>void;const privateRead=vi.spyOn(runtime,'syncPrivate').mockResolvedValue();vi.spyOn(runtime.market,'refresh').mockReturnValueOnce(new Promise(r=>release=r)).mockResolvedValue(0);
  try{const boot=runtime.bootstrap();await Promise.resolve();expect(privateRead).toHaveBeenCalledOnce();release(0);await boot;}finally{runtime.stop();await rm(dir,{recursive:true,force:true});}
+});
+it('uses the runtime scheduler to observe normal approval expiry while governance research hangs',async()=>{
+ vi.useFakeTimers();vi.setSystemTime(0);
+ let release!:()=>void;const pending=new Promise<void>(resolve=>release=resolve),events:any[]=[];
+ const current:any={settingsVersion:1,selection:{assetDirectory:{approvedLiquid:['SOL'],excluded:[],nextReviewAt:0,approvals:{SOL:{symbol:'SOLUSDT',validUntil:1500,quoteVolumeUsd24h:30_000_000,medianDailyQuoteVolumeUsd30d:30_000_000,tradeCount24h:30_000,openInterestUsd:6_000_000,listingAgeDays:200,liquidityComposite:.5}}}}};
+ const coordinator=new AssetGovernanceCoordinator({getSettings:()=>current,review:async()=>{await pending;return{version:'r',reviewedAt:0,nextReviewAt:9999,sourceDomain:'PRODUCTION_PUBLIC_RESEARCH',methodVersion:'V4',evidenceHash:'x',approvedLiquid:[],approvals:{},thresholds:{},evidence:[]};},publish:async value=>value,emit:(type,payload)=>events.push([type,payload])});
+ const runtime:any=Object.create(EngineRuntime.prototype);runtime.stopped=false;runtime.timers=[];runtime.events={publish:vi.fn()};
+ try{runtime.every(1_000,()=>coordinator.tick(),{allowOverlap:true});vi.advanceTimersByTime(1_000);await Promise.resolve();vi.advanceTimersByTime(1_000);await Promise.resolve();expect(events.filter(([type])=>type==='ASSET_DIRECTORY_EXPIRED')).toHaveLength(1);expect(events.find(([type])=>type==='ASSET_DIRECTORY_EXPIRED')?.[1]).toMatchObject({expiredApprovals:['SOL'],expiredLkg:[]});}finally{for(const timer of runtime.timers)clearInterval(timer);release();vi.useRealTimers();}
 });

@@ -25,8 +25,25 @@ describe('BinanceMarketStream cache and gap recovery',()=>{
     for(let i=0;i<50;i++)(stream as any).onEvent({e:'depthUpdate',s:'BTCUSDT',U:20+i,u:20+i,pu:9,b:[[100,1]],a:[[101,1]],E:Date.now()});
     expect(stream.metrics()).toMatchObject({gaps:1,gapsByType:{depthSequence:1}});expect(backfill).toHaveBeenCalledOnce();release();await vi.waitFor(()=>expect(stream.metrics().backfills).toBe(1));
   });
+  it('drops caches on retention release and ignores a late backfill from the old ownership set',async()=>{
+    let release!:(value:{book:any;candles:any[]})=>void;const pending=new Promise<{book:any;candles:any[]}>(resolve=>{release=resolve;});
+    const stream=new BinanceMarketStream({} as never,vi.fn(()=>pending));
+    stream.updateSymbols(['BTCUSDT']);
+    const now=Date.now();
+    (stream as any).onEvent({e:'24hrTicker',s:'BTCUSDT',c:'100',q:'5000',P:'2',n:10,E:now});
+    (stream as any).onEvent({e:'depthUpdate',s:'BTCUSDT',U:1,u:10,pu:0,b:[[100,1]],a:[[101,1]],E:now});
+    (stream as any).onEvent({e:'depthUpdate',s:'BTCUSDT',U:20,u:20,pu:9,b:[[100,1]],a:[[101,1]],E:now});
+    await Promise.resolve();
+    stream.updateSymbols([]);
+    expect(stream.quote('BTCUSDT')).toBeUndefined();
+    expect(stream.book('BTCUSDT')).toBeUndefined();
+    release({book:book(),candles:[candle]});
+    await vi.waitFor(()=>expect((stream as any).backfillInFlight.size).toBe(0));
+    expect(stream.book('BTCUSDT')).toBeUndefined();
+    expect(stream.candleSeries('BTCUSDT',60_000)).toBeUndefined();
+    expect(stream.metrics().backfills).toBe(0);
+  });
 });
-
 
 it('paces more than 500 stream subscriptions below the observed five-message limit',async()=>{
  vi.useFakeTimers();const stream=new BinanceMarketStream({} as never,vi.fn()),sent:number[]=[];

@@ -1,16 +1,38 @@
-import { binanceRequestBudget } from './requestBudget.js';
+import { getBinanceRequestBudget } from './requestBudget.js';
 import https from 'node:https';
 import { SocksProxyAgent } from 'socks-proxy-agent';
 import type { ConnectionSettings } from '@zdj/contracts';
 
+function klineWeight(limit:number){return limit<100?1:limit<500?2:limit<=1000?5:10;}
+function depthWeight(limit:number){return limit<=50?2:limit<=100?5:limit<=500?10:20;}
+/** Conservative USD-M IP REQUEST_WEIGHT estimate. Unknown signed reads are intentionally overestimated. */
+export function binanceRequestWeight(url:URL,method='GET'){
+  const p=url.pathname,hasSymbol=url.searchParams.has('symbol'),limit=Math.max(1,Number(url.searchParams.get('limit')??0)||500),signed=url.searchParams.has('signature');
+  if(p.endsWith('/time')||p.endsWith('/exchangeInfo')||p.endsWith('/openInterest')||p.endsWith('/fundingRate')||p.endsWith('/listenKey'))return 1;
+  if(p.endsWith('/klines')||p.endsWith('/markPriceKlines')||p.endsWith('/indexPriceKlines')||p.endsWith('/continuousKlines'))return klineWeight(limit);
+  if(p.endsWith('/depth'))return depthWeight(limit);
+  if(p.endsWith('/ticker/24hr'))return hasSymbol?1:40;
+  if(p.endsWith('/premiumIndex'))return hasSymbol?1:10;
+  if(p.endsWith('/income'))return 30;
+  if(p.endsWith('/openOrders'))return hasSymbol?1:40;
+  if(p.endsWith('/account')||p.endsWith('/balance')||p.endsWith('/positionRisk'))return 5;
+  if(p.endsWith('/userTrades')||p.endsWith('/allOrders'))return 5;
+  if(p.endsWith('/order'))return method==='POST'?0:1;
+  if(p.endsWith('/positionSide/dual')||p.endsWith('/leverageBracket'))return 30;
+  return signed?5:2;
+}
+
 export class BinanceTransport {
   private readonly agent: SocksProxyAgent | null;
+  private readonly budget;
   constructor(private readonly settings: ConnectionSettings) {
     if (settings.proxy.enabled) this.agent = new SocksProxyAgent(settings.proxy.url);
     else this.agent = null;
+    this.budget=getBinanceRequestBudget(settings.exchange.environment);
   }
   effectiveBaseUrl() { return this.settings.exchange.environment === 'TESTNET' ? this.settings.exchange.testnetBaseUrl : this.settings.exchange.productionBaseUrl; }
   environment(){return this.settings.exchange.environment;}
+  requestBudgetHealth(){return this.budget.health();}
   restRoute(){const direct=this.settings.proxy.binanceRestRoute==='DIRECT';return{mode:direct?'DIRECT':'CONFIGURED',throughProxy:!direct&&Boolean(this.agent),host:new URL(this.effectiveBaseUrl()).hostname};}
   private restAgent(){if(this.settings.proxy.binanceRestRoute==='DIRECT'){if(this.settings.proxy.forceBinanceRest)throw new Error('REST_ROUTE_CONFLICT: direct route cannot force proxy');return undefined;}return this.agent??undefined;}
   executionMode(){return this.settings.executionMode;}
@@ -21,11 +43,11 @@ export class BinanceTransport {
   private assertBinance(url: URL) { if (!(url.hostname==='binance.com'||url.hostname.endsWith('.binance.com')) && !(url.hostname==='binancefuture.com'||url.hostname.endsWith('.binancefuture.com'))) throw new Error(`Refusing non-Binance transport host: ${url.hostname}`); if (this.settings.proxy.forceBinanceRest && !this.agent) throw new Error('PROXY_UNAVAILABLE: Binance REST is configured fail-closed'); }
   async json<T>(pathOrUrl: string, init: { method?: string; headers?: Record<string, string>; body?: string; timeoutMs?: number } = {}): Promise<T> {
     const url = new URL(pathOrUrl, this.effectiveBaseUrl()); this.assertBinance(url);
-    const priority=url.pathname==='/fapi/v1/time'?0:(url.searchParams.has('signature')||Boolean(init.headers?.['X-MBX-APIKEY']))?(url.pathname.includes('/income')?1:0):2;
-    return binanceRequestBudget.run(priority,()=>new Promise<T>((resolve, reject) => {
+    const method=init.method??'GET',priority=url.pathname==='/fapi/v1/time'?0:(url.searchParams.has('signature')||Boolean(init.headers?.['X-MBX-APIKEY']))?(url.pathname.includes('/income')?1:0):2,weight=binanceRequestWeight(url,method);
+    return this.budget.run(priority,weight,()=>new Promise<T>((resolve, reject) => {
       const timeoutMs=init.timeoutMs??15_000;
-      const request = https.request(url, { method: init.method ?? 'GET', headers: { 'user-agent': 'zdj-mits-v3/3.9', ...init.headers }, agent: this.restAgent(), timeout: timeoutMs, signal: AbortSignal.timeout(timeoutMs) }, response => {
-        binanceRequestBudget.observe(response.statusCode??500,response.headers['x-mbx-used-weight-1m'] as string|undefined,response.headers['retry-after'] as string|undefined);
+      const request = https.request(url, { method, headers: { 'user-agent': 'zdj-mits-v3/3.9', ...init.headers }, agent: this.restAgent(), timeout: timeoutMs, signal: AbortSignal.timeout(timeoutMs) }, response => {
+        this.budget.observe(response.statusCode??500,response.headers['x-mbx-used-weight-1m'] as string|undefined,response.headers['retry-after'] as string|undefined);
         let body = ''; response.setEncoding('utf8'); response.on('data', chunk => { body += chunk; }); response.on('end', () => {
           if ((response.statusCode ?? 500) >= 400) return reject(new Error(`Binance HTTP ${response.statusCode}: ${body.slice(0, 512)}`));
           try { resolve(JSON.parse(body) as T); } catch { reject(new Error('Binance returned invalid JSON')); }
@@ -34,5 +56,5 @@ export class BinanceTransport {
       request.once('timeout', () => request.destroy(new Error('Binance request timed out'))); request.once('error', error => reject(new Error(`BINANCE_TRANSPORT_BLOCKED: ${error.name==='AbortError'?'Binance request timed out':error.message}`))); request.end(init.body);
     }));
   }
-  async health() { const startedAt = Date.now(); const serverTime = await this.json<{ serverTime: number }>('/fapi/v1/time'); return { status: 'HEALTHY' as const, latencyMs: Date.now() - startedAt, serverTime, effectiveBaseUrl: this.effectiveBaseUrl(), throughProxy: this.restRoute().throughProxy,route:this.restRoute() }; }
+  async health() { const startedAt = Date.now(); const serverTime = await this.json<{ serverTime: number }>('/fapi/v1/time'); return { status: 'HEALTHY' as const, latencyMs: Date.now() - startedAt, serverTime, effectiveBaseUrl: this.effectiveBaseUrl(), throughProxy: this.restRoute().throughProxy,route:this.restRoute(),requestBudget:this.budget.health() }; }
 }

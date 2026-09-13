@@ -1,5 +1,5 @@
 import type { Position, Side, SystemSettings } from '@zdj/contracts';
-import type { PendingEntryRiskExposure } from './entryRiskOccupancy.js';
+import type { PendingEntryRiskExposureList } from './entryRiskOccupancy.js';
 
 // OTHER describes missing classification, not a shared correlation factor.
 export function riskUnderlying(symbol:string){return symbol.toUpperCase().replace(/(USDT|USDC|BUSD|FDUSD)$/,'').replace(/^1000(?=[A-Z])/,'');}
@@ -9,7 +9,7 @@ export function clusterFor(symbol:string){
   return Object.keys(groups).find(key=>groups[key].includes(asset))??'OTHER';
 }
 export function riskClusterKey(symbol:string){const cluster=clusterFor(symbol);return cluster==='OTHER'?`OTHER:${riskUnderlying(symbol)}`:cluster;}
-export type HeadroomInput={settings:SystemSettings;equity:number;positions:Pick<Position,'symbol'|'side'|'quantity'|'markPrice'>[];pendingRiskExposures?:PendingEntryRiskExposure[];symbol:string;side:Side;plannedNotional:number;expectedAdverseMovePct:number;dailyDrawdownPct:number;quoteNotionalCapacity?:number;minimumNotional?:number};
+export type HeadroomInput={settings:SystemSettings;equity:number;positions:Pick<Position,'symbol'|'side'|'quantity'|'markPrice'>[];pendingRiskExposures?:PendingEntryRiskExposureList;symbol:string;side:Side;plannedNotional:number;expectedAdverseMovePct:number;dailyDrawdownPct:number;quoteNotionalCapacity?:number;minimumNotional?:number};
 
 /** Pure capacity calculation shared by routing, pre-Primary JIT and final risk validation. */
 export function computeExecutableRiskHeadroom(input:HeadroomInput){
@@ -29,6 +29,10 @@ export function computeExecutableRiskHeadroom(input:HeadroomInput){
   if(!valid)blockers.push('RISK_FACTS_INVALID');
   if(input.dailyDrawdownPct>g.maxDailyDrawdownPct)blockers.push('REJECT_DAILY_DRAWDOWN');
   for(const [key,reason] of checks)if(remaining[key]+1e-8<minimum)blockers.push(reason);
+  // Routing/preflight are capacity calculations and may clamp an oversized
+  // recommendation. Final-order JIT snapshots are strict: the already
+  // authorized actual/planned notional must fit every remaining limit now.
+  if(pending.strictPlannedNotional&&valid)for(const [key,reason] of checks)if(input.plannedNotional>remaining[key]+1e-8&&!blockers.includes(reason))blockers.push(reason);
   const finalNotional=valid?Math.max(0,Math.min(input.plannedNotional,...Object.values(remaining))):0;
   if(finalNotional+1e-8<minimum&&!blockers.length)blockers.push('BELOW_MINIMUM_NOTIONAL');
   const factVersion=JSON.stringify({equity,side:input.side,symbol:input.symbol,exposures:exposures.map(p=>[p.id,p.symbol,p.side,Number(p.notionalUsd.toFixed(8))]).sort((a,b)=>String(a[0]).localeCompare(String(b[0]))),limits,dailyDrawdownPct:input.dailyDrawdownPct,expectedAdverseMovePct:move});

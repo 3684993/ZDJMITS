@@ -5,6 +5,7 @@ import { evaluateCapitalAdmission } from '@zdj/core';
 import type { RuntimeState } from '../state/runtimeState.js';
 import type { EventBus } from '../events/eventBus.js';
 import { computeExecutableRiskHeadroom, directionBudget } from './riskReadiness.js';
+import { collectPendingEntryRiskExposures, entryOrderOccupiesRisk } from './entryRiskOccupancy.js';
 import {storageCapacityHealth,storageEntryBlockReason} from './storageCapacityGuard.js';
 
 const reasonText=(code:RuntimeReasonCode)=>({
@@ -16,7 +17,7 @@ export const capitalFactVersion=(state:RuntimeState)=>JSON.stringify({
   assets:[...(state.account.assets??[])].map((asset:any)=>[asset.asset,asset.availableBalance,asset.walletBalance,asset.usdValue]).sort((a,b)=>String(a[0]).localeCompare(String(b[0]))),
   positions:[...state.positions.values()].map((position:any)=>[position.symbol,position.side,position.quantity,position.markPrice,position.leverage]).sort((a,b)=>String(a[0]).localeCompare(String(b[0]))),
   reservations:[...state.entryReservations.values()].filter((reservation:any)=>['RESERVED','WORKING'].includes(reservation.status)&&reservation.expiresAt>Date.now()).map((reservation:any)=>[reservation.id,reservation.underlying,reservation.quoteAsset,reservation.marginUsd,reservation.notionalUsd,reservation.status,reservation.expiresAt]).sort((a,b)=>String(a[0]).localeCompare(String(b[0]))),
-  orders:[...state.entryOrders.values()].filter((order:any)=>['NEW','SUBMITTING','UNKNOWN','WORKING','PARTIALLY_FILLED'].includes(order.status)).map((order:any)=>[order.symbol,order.status,order.quantity,order.filledQuantity]).sort((a,b)=>String(a[0]).localeCompare(String(b[0]))),
+  orders:[...state.entryOrders.values()].filter((order:any)=>entryOrderOccupiesRisk(order)).map((order:any)=>[order.symbol,order.status,order.quantity,order.filledQuantity,order.activeRiskExposure??null,order.activeRiskEvidence?.validUntil??null]).sort((a,b)=>String(a[0]).localeCompare(String(b[0]))),
   equity:state.account.equityUsd??null,
   risk:state.account.riskBaseline??null,
   limits:{portfolio:state.settings.portfolio,portfolioIntelligence:state.settings.portfolioIntelligence,riskGovernance:state.settings.riskGovernance},
@@ -74,7 +75,7 @@ export class RuntimeControlService {
     const settings=this.state.settings.runtimeControl,now=Date.now(),current=this.state.runtimeControl;
     if(!force&&current.nextCapitalCheckAt&&now<current.nextCapitalCheckAt)return current;
     const candidates=this.state.universe.filter(candidate=>candidate.eligible&&candidate.rank>0);
-    const positions=[...this.state.positions.values()].map(position=>({symbol:String(position.symbol),side:position.side as 'LONG'|'SHORT',quantity:Number(position.quantity),markPrice:Number(position.markPrice),leverage:Number(position.leverage)}));
+    const positions=[...this.state.positions.values()].map(position=>({symbol:String(position.symbol),side:position.side as 'LONG'|'SHORT',quantity:Number(position.quantity),markPrice:Number(position.markPrice),leverage:Number(position.leverage)})),pendingRiskExposures=collectPendingEntryRiskExposures(this.state,{now});
     // Admission must scan the ranked Universe, not the current Pool.  Feeding a
     // partially depleted pool back into routing creates a self-locking two-item
     // loop and prevents high-frequency replacement of locally cooled symbols.
@@ -87,7 +88,7 @@ export class RuntimeControlService {
         reservedMargin=[...this.state.entryReservations.values()].filter(r=>['RESERVED','WORKING'].includes(r.status)&&r.expiresAt>now&&r.quoteAsset===route.quoteAsset).reduce((n,r)=>n+Math.max(0,r.marginUsd),0),
         quoteCapacity=Math.max(0,(quoteAvailable-reservedMargin)*route.leverage*.995),
         market=this.state.snapshots.get(route.symbol),minimum=Math.max(route.minExecutableNotionalUsd??0,market?.quote?.minNotional??0),
-        calculate=(side:'LONG'|'SHORT')=>computeExecutableRiskHeadroom({settings:this.state.settings,equity:capitalEquity,positions,symbol:route.symbol,side,
+        calculate=(side:'LONG'|'SHORT')=>computeExecutableRiskHeadroom({settings:this.state.settings,equity:capitalEquity,positions,pendingRiskExposures,symbol:route.symbol,side,
           plannedNotional:side==='LONG'?(route.longRecommendedNotionalUsd??(route.longExecutable?route.marginUsd*route.leverage:0)):(route.shortRecommendedNotionalUsd??(route.shortExecutable?route.marginUsd*route.leverage:0)),
           expectedAdverseMovePct:Math.max(.001,Number(market?.technical?.['15m']?.atrPercent)/100),dailyDrawdownPct:Number(this.state.account.riskBaseline?.riskDrawdownPct??0),quoteNotionalCapacity:quoteCapacity,minimumNotional:minimum}),
         long=calculate('LONG'),short=calculate('SHORT');
@@ -96,7 +97,7 @@ export class RuntimeControlService {
     this.admissionDetails=this.admissionDetails.map(row=>{const route=routed.find(r=>r.symbol===row.symbol);return route?{...row,executable:route.longExecutable||route.shortExecutable,reason:route.reason,reasonText:route.reason,riskHeadroom:route.riskHeadroom}:row;});
     const routeGeneration=candidates.length?Math.max(...candidates.map((candidate:any)=>candidate.selectionGeneration??0)):this.state.marketGeneration,summary={...admission.summary,routedCandidates:routed,executableCandidateCount:routed.filter(x=>x.longExecutable||x.shortExecutable).length,directionBudget:budget,generation:routeGeneration,capitalVersion:capitalFactVersion(this.state),nextRecheckAt:nextAt};
     this.state.runtimeControl={...current,capital:summary,nextCapitalCheckAt:nextAt};
-    this.events.publish('CAPITAL_ROUTE_EVALUATED',{capitalVersion:summary.capitalVersion,selectionGeneration:routeGeneration,executableCandidateCount:summary.executableCandidateCount,evaluatedAt:summary.evaluatedAt});
+    this.events.publish('CAPITAL_ROUTE_EVALUATED',{capitalVersion:summary.capitalVersion,selectionGeneration:routeGeneration,executableCandidateCount:summary.executableCandidateCount,evaluatedAt:summary.evaluatedAt,pendingRiskExposureCount:pendingRiskExposures.length,pendingRiskNotionalUsd:pendingRiskExposures.reduce((sum,row)=>sum+row.notionalUsd,0)});
     const governance=this.state.settings.riskGovernance,risk=this.state.account.riskBaseline,loss=Math.max(0,-Number(risk?.calendarDayRealizedPnlUsd??risk?.capitalEpochRealizedPnlUsd??0)),equity=Math.max(1,this.state.account.equityUsd??0),drawdownPct=Number(risk?.riskDrawdownPct??0),dailyLimitHit=governance.circuitBreakerEnabled&&((governance.maxDailyLossUsd>0&&loss>=governance.maxDailyLossUsd)||(governance.maxDailyLossPct>0&&loss/equity>=governance.maxDailyLossPct)||drawdownPct>governance.maxDailyDrawdownPct);
     const manualOverride=this.manualRiskOverrideActive(now);
     this.entryRiskBlocked=dailyLimitHit&&!manualOverride;

@@ -3,176 +3,27 @@ import { PortfolioIntelligenceSettingsSchema } from './portfolio.js';
 import { RuntimeControlSettingsSchema } from './runtimeControl.js';
 import { RiskGovernanceSettingsSchema } from './riskGovernance.js';
 
-export const SelectionModeSchema = z.enum([
-  'COMPREHENSIVE_MAINSTREAM',
-  'EXCHANGE_RANK',
-  'TRADING_ACTIVITY',
-  'CAPITAL_ACTIVITY',
-  'CUSTOM_SYMBOLS',
-]);
+export const SelectionModeSchema = z.enum(['COMPREHENSIVE_MAINSTREAM','EXCHANGE_RANK','TRADING_ACTIVITY','CAPITAL_ACTIVITY','CUSTOM_SYMBOLS']);
 export type SelectionMode = z.infer<typeof SelectionModeSchema>;
-
-export const EntryProfileSchema = z.enum(['BALANCED', 'FREQUENCY_FIRST', 'QUALITY_FIRST', 'HIGH_FREQUENCY', 'CUSTOM']);
+export const EntryProfileSchema = z.enum(['BALANCED','FREQUENCY_FIRST','QUALITY_FIRST','HIGH_FREQUENCY','CUSTOM']);
 export type EntryProfile = z.infer<typeof EntryProfileSchema>;
-
-export const DirectionReferenceSchema = z.enum(['DEFAULT', 'TREND_15M', 'TREND_4H', 'TREND_1D', 'TREND_1W', 'CUSTOM']);
+export const DirectionReferenceSchema = z.enum(['DEFAULT','TREND_15M','TREND_4H','TREND_1D','TREND_1W','CUSTOM']);
 export type DirectionReference = z.infer<typeof DirectionReferenceSchema>;
-
-export const LeverageSettingSchema = z.object({
-  mode: z.enum(['DEFAULT', '10X', '20X', 'CUSTOM']),
-  defaultValue: z.number().int().min(1).max(125).default(20),
-  customValue: z.number().int().min(1).max(125).default(20),
+export const LeverageSettingSchema=z.object({mode:z.enum(['DEFAULT','10X','20X','CUSTOM']),defaultValue:z.number().int().min(1).max(125).default(20),customValue:z.number().int().min(1).max(125).default(20)});export type LeverageSetting=z.infer<typeof LeverageSettingSchema>;
+export const ConnectionSettingsSchema=z.object({proxy:z.object({enabled:z.boolean().default(true),protocol:z.literal('SOCKS5H').default('SOCKS5H'),url:z.string().url(),forceBinanceRest:z.boolean().default(true),forceBinanceWs:z.boolean().default(true),proxyDns:z.boolean().default(true),binanceRestRoute:z.enum(['CONFIGURED','DIRECT']).optional(),bypassLocalhost:z.boolean().default(true),failClosed:z.boolean().default(true)}),exchange:z.object({provider:z.literal('BINANCE_USDM').default('BINANCE_USDM'),environment:z.enum(['TESTNET','PRODUCTION']).default('TESTNET'),productionBaseUrl:z.string().url(),testnetBaseUrl:z.string().url(),credentialRef:z.string().min(1).default('binance-primary'),recvWindowMs:z.number().int().min(1000).max(60000).default(5000),autoTimeSync:z.boolean().default(true)}),marketDataMode:z.literal('BINANCE').default('BINANCE'),executionMode:z.enum(['READ_ONLY','TESTNET_ENABLED']).default('READ_ONLY'),aiMode:z.literal('OPENAI_COMPATIBLE').default('OPENAI_COMPATIBLE')});export type ConnectionSettings=z.infer<typeof ConnectionSettingsSchema>;
+export const ConfiguredAiResourceSchema=z.object({id:z.string().min(1),role:z.enum(['SCOUT','PRIMARY_BRAIN']),enabled:z.boolean().default(true),baseUrl:z.string().url(),model:z.string().min(1),maxConcurrency:z.number().int().positive(),gpu:z.string().min(1)});export type ConfiguredAiResource=z.infer<typeof ConfiguredAiResourceSchema>;
+export const SystemSettingsSchema=z.object({
+ settingsVersion:z.number().int().positive().default(1),connections:ConnectionSettingsSchema,aiResources:z.array(ConfiguredAiResourceSchema).min(1),
+ appearance:z.object({theme:z.enum(['BINANCE_NOIR','INSTITUTIONAL_BLUE','DARK_TRUFFLE','BULLION_GOLD','DUNHUANG_FINANCE','AUTUMN_MAILLARD','MORANDI_QUANT','LONDON_GRAPHITE','QUIET_MORNING','BURGUNDY_EDITORIAL']).default('BURGUNDY_EDITORIAL'),density:z.enum(['COMFORTABLE','COMPACT']).default('COMFORTABLE'),numberFont:z.enum(['SYSTEM','TABULAR']).default('TABULAR')}).default({}),
+ selection:z.object({mode:SelectionModeSchema,universeTopN:z.number().int().min(1).max(300),poolTarget:z.number().int().min(1).max(30),poolMax:z.number().int().min(1).max(50),replacementDelta:z.number().min(0).max(30),cohort:z.object({size:z.number().int().min(20).max(150).default(100),hydrateBatchSize:z.number().int().min(1).max(30).default(20),readyLowWatermark:z.number().int().min(1).max(30).default(6),staleMemberRotationMinutes:z.number().int().min(5).max(1440).default(120),protectedRatio:z.number().min(.1).max(1).default(.75),refillBackoffSeconds:z.number().int().min(10).max(900).default(60)}).default({}),customSymbols:z.array(z.string()).default([]),excludeSymbols:z.array(z.string()).default([]),minQuoteVolumeUsd24h:z.number().nonnegative(),maxSpreadBps:z.number().positive(),minDataCompleteness:z.number().min(0).max(1),marketQuality:z.object({enabled:z.boolean().default(true),minQuoteVolumeUsd24h:z.number().nonnegative().default(0),minTradeCount24h:z.number().int().nonnegative().default(0),maxSpreadBps:z.number().nonnegative().default(0),minDepthUsd:z.number().nonnegative().default(0),minOpenInterestUsd:z.number().nonnegative().default(0),minListingAgeDays:z.number().nonnegative().default(0),allowedGrades:z.array(z.enum(['A','B','C','D'])).min(1).default(['A','B']),allowSpeculative:z.boolean().default(true),allowNewListings:z.boolean().default(false),liquidityTopN:z.number().int().nonnegative().max(300).default(0),symbolBlacklist:z.array(z.string()).default([]),underlyingBlacklist:z.array(z.string()).default([])}).default({}),assetDirectory:z.object({version:z.string().min(1).default('V3.8.0'),approvedLiquid:z.array(z.string()).default([]),excluded:z.array(z.string()).default([]),reviewedAt:z.number().int().nullable().default(null),nextReviewAt:z.number().int().nullable().default(null),sourceDomain:z.literal('PRODUCTION_PUBLIC_RESEARCH').default('PRODUCTION_PUBLIC_RESEARCH'),methodVersion:z.string().default('V3.8.0-LIQUIDITY-30D-V4'),evidenceHash:z.string().nullable().default(null),approvals:z.record(z.string(),z.object({symbol:z.string(),reason:z.string(),reviewedAt:z.number().int(),quoteVolumeUsd24h:z.number().nonnegative(),medianDailyQuoteVolumeUsd30d:z.number().nonnegative(),tradeCount24h:z.number().int().nonnegative(),openInterestUsd:z.number().nonnegative(),listingAgeDays:z.number().nonnegative(),liquidityComposite:z.number().min(0).max(1).default(0),validUntil:z.number().int().optional(),graceUntil:z.number().int().optional(),lkgSourceFailed:z.boolean().optional()})).default({}),lkgAssets:z.array(z.string()).default([])}).default({})}).superRefine((v,ctx)=>{if(v.poolMax<v.poolTarget)ctx.addIssue({code:z.ZodIssueCode.custom,path:['poolMax'],message:'poolMax must be >= poolTarget'});if(v.cohort.hydrateBatchSize>v.cohort.size)ctx.addIssue({code:z.ZodIssueCode.custom,path:['cohort','hydrateBatchSize'],message:'hydrateBatchSize must be <= cohort size'});}),
+ entryProfile:EntryProfileSchema,directionReference:DirectionReferenceSchema,leverage:LeverageSettingSchema,
+ portfolio:z.object({maxPositions:z.number().int().min(1).max(100),maxPendingEntries:z.number().int().min(1).max(100),entryMarginUsd:z.number().positive().max(1000000)}),portfolioIntelligence:PortfolioIntelligenceSettingsSchema.default({}),runtimeControl:RuntimeControlSettingsSchema.default({}),riskGovernance:RiskGovernanceSettingsSchema.default({}),
+ ai:z.object({scoutEnabled:z.boolean(),secondBrainReview:z.enum(['OFF','SELECTIVE','ALWAYS']),maxEvidenceToolRounds:z.number().int().min(0).max(2),maxEvidenceToolsPerRound:z.number().int().min(0).max(3),minEvidenceCompleteness:z.number().min(0).max(1),decisionTimeoutMs:z.number().int().min(1000).max(180000),highFrequency:z.object({mode:z.enum(['CONSERVATIVE','NORMAL','HIGH_FREQUENCY','CUSTOM']).default('NORMAL'),scoutPrefetch:z.number().int().min(1).max(8).default(2),retryCooldownSeconds:z.number().int().min(5).max(300).default(25),quarantineAfterFailures:z.number().int().min(2).max(10).default(3),quarantineSeconds:z.number().int().min(30).max(3600).default(300)}).default({})}),
+ externalIntelligence:z.object({enabled:z.boolean().default(false),researchEnabled:z.boolean().default(false),feedToPrimary:z.boolean().default(false),refreshSeconds:z.number().int().min(60).max(86400).default(900),timeoutMs:z.number().int().min(1000).max(30000).default(10000),maxContextItems:z.number().int().min(1).max(3).default(3),maxContextTokens:z.number().int().min(50).max(300).default(300),alpaca:z.object({enabled:z.boolean().default(false),credentialRef:z.string().min(1).default('alpaca-market-data'),feed:z.enum(['us','global']).default('us'),ttlSeconds:z.number().int().min(60).max(86400).default(1800)}).default({}),federalReserve:z.object({enabled:z.boolean().default(false),rssUrl:z.string().url().default('https://www.federalreserve.gov/feeds/press_monetary.xml'),ttlSeconds:z.number().int().min(300).max(604800).default(86400)}).default({})}).default({}),
+ releasePolicy:z.object({lifecycleVersion:z.number().int().default(390)}).default({}),
+ entry:z.object({absoluteTtlMinutes:z.number().int().min(1).max(240),reviewIntervalSeconds:z.number().int().min(5).max(300),maxReprices:z.number().int().min(0).max(100),minReachability:z.number().min(0).max(1),makerOffsetTicks:z.number().int().min(0).max(20),nearMarket:z.object({enabled:z.boolean().default(true),maxDistanceBps:z.number().positive().max(20).default(5),maxOffsetTicks:z.number().int().min(0).max(2).default(2),ttlSeconds:z.number().int().min(30).max(120).default(90),reviewSeconds:z.number().int().min(1).max(5).default(2),repriceIntervalSeconds:z.number().int().min(5).max(30).default(5),maxReprices:z.number().int().min(0).max(6).default(6)}).default({})}),
+ takeProfit:z.object({enabled:z.boolean(),mode:z.enum(['PRICE_MOVE_PERCENT','STRUCTURE_15M']),structureBufferPercent:z.number().min(0).max(1).default(.05),structureMinMovePercent:z.number().positive().max(20).default(.45),structureMaxMovePercent:z.number().positive().max(20).default(3),targetPriceMovePercent:z.number().positive().max(20),quantityPercent:z.number().positive().max(100),tpEconomicsEnabled:z.boolean().default(true),minNetProfitUsd:z.number().nonnegative().default(.01),minNetProfitRoiPct:z.number().nonnegative().max(100).default(.15),feeSafetyBufferPct:z.number().nonnegative().max(100).default(10),exitFeeAssumption:z.enum(['MAKER','TAKER']).default('TAKER'),slippageBufferPct:z.number().nonnegative().max(100).default(0),entryFeeRate:z.number().nonnegative().max(1).default(.0004),makerFeeRate:z.number().nonnegative().max(1).default(.0002),takerFeeRate:z.number().nonnegative().max(1).default(.0004)}),
+ positionManagement:z.object({humanHandoffAfterMinutes:z.number().int().min(1).max(525600).default(1440),lossHandoffBars:z.number().int().min(1).max(96).default(4)}).default({})
 });
-export type LeverageSetting = z.infer<typeof LeverageSettingSchema>;
-
-export const ConnectionSettingsSchema = z.object({
-  proxy: z.object({
-    enabled: z.boolean().default(true), protocol: z.literal('SOCKS5H').default('SOCKS5H'), url: z.string().url(),
-    forceBinanceRest: z.boolean().default(true), forceBinanceWs: z.boolean().default(true), proxyDns: z.boolean().default(true),
-    binanceRestRoute: z.enum(['CONFIGURED', 'DIRECT']).optional(),
-    bypassLocalhost: z.boolean().default(true), failClosed: z.boolean().default(true),
-  }),
-  exchange: z.object({
-    provider: z.literal('BINANCE_USDM').default('BINANCE_USDM'), environment: z.enum(['TESTNET', 'PRODUCTION']).default('TESTNET'),
-    productionBaseUrl: z.string().url(), testnetBaseUrl: z.string().url(), credentialRef: z.string().min(1).default('binance-primary'),
-    recvWindowMs: z.number().int().min(1000).max(60000).default(5000), autoTimeSync: z.boolean().default(true),
-  }),
-  marketDataMode: z.literal('BINANCE').default('BINANCE'),
-  executionMode: z.enum(['READ_ONLY', 'TESTNET_ENABLED']).default('READ_ONLY'),
-  aiMode: z.literal('OPENAI_COMPATIBLE').default('OPENAI_COMPATIBLE'),
-});
-export type ConnectionSettings = z.infer<typeof ConnectionSettingsSchema>;
-
-export const ConfiguredAiResourceSchema = z.object({
-  id: z.string().min(1), role: z.enum(['SCOUT', 'PRIMARY_BRAIN']), enabled: z.boolean().default(true), baseUrl: z.string().url(),
-  model: z.string().min(1), maxConcurrency: z.number().int().positive(), gpu: z.string().min(1),
-});
-export type ConfiguredAiResource = z.infer<typeof ConfiguredAiResourceSchema>;
-
-export const SystemSettingsSchema = z.object({
-  settingsVersion: z.number().int().positive().default(1),
-  connections: ConnectionSettingsSchema,
-  aiResources: z.array(ConfiguredAiResourceSchema).min(1),
-  appearance: z.object({
-    theme: z.enum(['BINANCE_NOIR','INSTITUTIONAL_BLUE','DARK_TRUFFLE','BULLION_GOLD','DUNHUANG_FINANCE','AUTUMN_MAILLARD','MORANDI_QUANT','LONDON_GRAPHITE','QUIET_MORNING','BURGUNDY_EDITORIAL']).default('BINANCE_NOIR'),
-    density: z.enum(['COMFORTABLE','COMPACT']).default('COMFORTABLE'),
-    numberFont: z.enum(['SYSTEM','TABULAR']).default('TABULAR'),
-  }).default({}),
-  selection: z.object({
-    mode: SelectionModeSchema,
-    universeTopN: z.number().int().min(1).max(300),
-    poolTarget: z.number().int().min(1).max(30),
-    poolMax: z.number().int().min(1).max(50),
-    replacementDelta: z.number().min(0).max(30),
-    /** Bounded market-data inventory; pool limits remain execution scheduling limits. */
-    cohort:z.object({size:z.number().int().min(20).max(150).default(100),hydrateBatchSize:z.number().int().min(1).max(30).default(20),readyLowWatermark:z.number().int().min(1).max(30).default(6),staleMemberRotationMinutes:z.number().int().min(5).max(1440).default(120),protectedRatio:z.number().min(.1).max(1).default(.75),refillBackoffSeconds:z.number().int().min(10).max(900).default(60)}).default({}),
-    customSymbols: z.array(z.string()).default([]),
-    excludeSymbols: z.array(z.string()).default([]),
-    minQuoteVolumeUsd24h: z.number().nonnegative(),
-    maxSpreadBps: z.number().positive(),
-    minDataCompleteness: z.number().min(0).max(1),
-    marketQuality: z.object({
-      enabled: z.boolean().default(true),
-      /** Zero means use the current Universe calibration percentile. */
-      minQuoteVolumeUsd24h: z.number().nonnegative().default(0),
-      minTradeCount24h: z.number().int().nonnegative().default(0),
-      maxSpreadBps: z.number().nonnegative().default(0),
-      minDepthUsd: z.number().nonnegative().default(0),
-      minOpenInterestUsd: z.number().nonnegative().default(0),
-      minListingAgeDays: z.number().nonnegative().default(0),
-      allowedGrades: z.array(z.enum(['A','B','C','D'])).min(1).default(['A','B']),
-      allowSpeculative: z.boolean().default(true),
-      allowNewListings: z.boolean().default(false),
-      /** Zero disables the extra liquidity-rank cap. */
-      liquidityTopN: z.number().int().nonnegative().max(300).default(0),
-      symbolBlacklist: z.array(z.string()).default([]),
-      underlyingBlacklist: z.array(z.string()).default([]),
-    }).default({}),
-    assetDirectory: z.object({
-      version:z.string().min(1).default('V3.8.0'),
-      approvedLiquid:z.array(z.string()).default([]),
-      excluded:z.array(z.string()).default([]),
-      reviewedAt:z.number().int().nullable().default(null),
-      nextReviewAt:z.number().int().nullable().default(null),
-      sourceDomain:z.literal('PRODUCTION_PUBLIC_RESEARCH').default('PRODUCTION_PUBLIC_RESEARCH'),
-      methodVersion:z.string().default('V3.8.0-LIQUIDITY-30D-V4'),
-      evidenceHash:z.string().nullable().default(null),
-      approvals:z.record(z.string(),z.object({symbol:z.string(),reason:z.string(),reviewedAt:z.number().int(),quoteVolumeUsd24h:z.number().nonnegative(),medianDailyQuoteVolumeUsd30d:z.number().nonnegative(),tradeCount24h:z.number().int().nonnegative(),openInterestUsd:z.number().nonnegative(),listingAgeDays:z.number().nonnegative(),liquidityComposite:z.number().min(0).max(1).default(0),validUntil:z.number().int().optional(),graceUntil:z.number().int().optional(),lkgSourceFailed:z.boolean().optional()})).default({}),
-      /** Assets retained from prior evidence because this review reported SOURCE_FAILED. */
-      lkgAssets:z.array(z.string()).default([]),
-    }).default({}),
-  }).superRefine((v, ctx) => {
-    if (v.poolMax < v.poolTarget) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['poolMax'], message: 'poolMax must be >= poolTarget' });
-    if(v.cohort.hydrateBatchSize>v.cohort.size)ctx.addIssue({code:z.ZodIssueCode.custom,path:['cohort','hydrateBatchSize'],message:'hydrateBatchSize must be <= cohort size'});
-  }),
-  entryProfile: EntryProfileSchema,
-  directionReference: DirectionReferenceSchema,
-  leverage: LeverageSettingSchema,
-  portfolio: z.object({
-    maxPositions: z.number().int().min(1).max(100),
-    maxPendingEntries: z.number().int().min(1).max(100),
-    entryMarginUsd: z.number().positive().max(1000000),
-  }),
-  portfolioIntelligence: PortfolioIntelligenceSettingsSchema.default({}),
-  runtimeControl: RuntimeControlSettingsSchema.default({}),
-  riskGovernance: RiskGovernanceSettingsSchema.default({}),
-  ai: z.object({
-    scoutEnabled: z.boolean(),
-    secondBrainReview: z.enum(['OFF', 'SELECTIVE', 'ALWAYS']),
-    maxEvidenceToolRounds: z.number().int().min(0).max(2),
-    maxEvidenceToolsPerRound: z.number().int().min(0).max(3),
-    minEvidenceCompleteness: z.number().min(0).max(1),
-    decisionTimeoutMs: z.number().int().min(1000).max(180000),
-    highFrequency: z.object({
-      mode: z.enum(['CONSERVATIVE','NORMAL','HIGH_FREQUENCY','CUSTOM']).default('NORMAL'),
-      scoutPrefetch: z.number().int().min(1).max(8).default(2),
-      retryCooldownSeconds: z.number().int().min(5).max(300).default(25),
-      quarantineAfterFailures: z.number().int().min(2).max(10).default(3),
-      quarantineSeconds: z.number().int().min(30).max(3600).default(300),
-    }).default({}),
-  }),
-  externalIntelligence:z.object({
-    enabled:z.boolean().default(false),researchEnabled:z.boolean().default(false),feedToPrimary:z.boolean().default(false),refreshSeconds:z.number().int().min(60).max(86400).default(900),timeoutMs:z.number().int().min(1000).max(30000).default(10000),maxContextItems:z.number().int().min(1).max(3).default(3),maxContextTokens:z.number().int().min(50).max(300).default(300),
-    alpaca:z.object({enabled:z.boolean().default(false),credentialRef:z.string().min(1).default('alpaca-market-data'),feed:z.enum(['us','global']).default('us'),ttlSeconds:z.number().int().min(60).max(86400).default(1800)}).default({}),
-    federalReserve:z.object({enabled:z.boolean().default(false),rssUrl:z.string().url().default('https://www.federalreserve.gov/feeds/press_monetary.xml'),ttlSeconds:z.number().int().min(300).max(604800).default(86400)}).default({}),
-  }).default({}),
-  releasePolicy:z.object({lifecycleVersion:z.number().int().default(390)}).default({}),
-  entry: z.object({
-    absoluteTtlMinutes: z.number().int().min(1).max(240),
-    reviewIntervalSeconds: z.number().int().min(5).max(300),
-    maxReprices: z.number().int().min(0).max(100),
-    minReachability: z.number().min(0).max(1),
-    makerOffsetTicks: z.number().int().min(0).max(20),
-    nearMarket: z.object({enabled:z.boolean().default(true),maxDistanceBps:z.number().positive().max(20).default(5),maxOffsetTicks:z.number().int().min(0).max(2).default(2),ttlSeconds:z.number().int().min(30).max(120).default(90),reviewSeconds:z.number().int().min(1).max(5).default(2),repriceIntervalSeconds:z.number().int().min(5).max(30).default(5),maxReprices:z.number().int().min(0).max(6).default(6)}).default({}),
-  }),
-  takeProfit: z.object({
-    enabled: z.boolean(),
-    mode: z.enum(['PRICE_MOVE_PERCENT','STRUCTURE_15M']),
-    structureBufferPercent: z.number().min(0).max(1).default(0.05),
-    structureMinMovePercent: z.number().positive().max(20).default(0.45),
-    structureMaxMovePercent: z.number().positive().max(20).default(3),
-    targetPriceMovePercent: z.number().positive().max(20),
-    quantityPercent: z.number().positive().max(100),
-    tpEconomicsEnabled: z.boolean().default(true),
-    minNetProfitUsd: z.number().nonnegative().default(.01),
-    minNetProfitRoiPct: z.number().nonnegative().max(100).default(.15),
-    feeSafetyBufferPct: z.number().nonnegative().max(100).default(10),
-    exitFeeAssumption: z.enum(['MAKER','TAKER']).default('TAKER'),
-    slippageBufferPct: z.number().nonnegative().max(100).default(0),
-    entryFeeRate: z.number().nonnegative().max(1).default(0.0004),
-    makerFeeRate: z.number().nonnegative().max(1).default(0.0002),
-    takerFeeRate: z.number().nonnegative().max(1).default(0.0004),
-  }),
-  positionManagement: z.object({
-    humanHandoffAfterMinutes: z.number().int().min(1).max(525600).default(1440),
-    lossHandoffBars:z.number().int().min(1).max(96).default(4),
-  }).default({}),
-});
-export type SystemSettings = z.infer<typeof SystemSettingsSchema>;
-
-export function resolveLeverage(settings: SystemSettings): number {
-  if (settings.leverage.mode === '10X') return 10;
-  if (settings.leverage.mode === '20X') return 20;
-  if (settings.leverage.mode === 'CUSTOM') return settings.leverage.customValue;
-  return settings.leverage.defaultValue;
-}
+export type SystemSettings=z.infer<typeof SystemSettingsSchema>;
+export function resolveLeverage(settings:SystemSettings):number{if(settings.leverage.mode==='10X')return 10;if(settings.leverage.mode==='20X')return 20;if(settings.leverage.mode==='CUSTOM')return settings.leverage.customValue;return settings.leverage.defaultValue;}

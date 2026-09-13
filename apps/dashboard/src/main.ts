@@ -3,6 +3,7 @@ document.documentElement.dataset.theme=localStorage.getItem('zdj-theme')??'BURGU
 import './theme-tokens.css';
 import './position-console.css';
 import './financial-semantics.css';
+import './settings-closeout.css';
 import { RELEASE_LABEL } from '@zdj/contracts';
 document.title=RELEASE_LABEL;
 createApp(App).use(createPinia()).use(router).mount('#app');

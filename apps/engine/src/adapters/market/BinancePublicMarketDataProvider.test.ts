@@ -40,3 +40,22 @@ it('never calls unsupported futures analytics routes on TESTNET and caches deriv
   const [a,b]=await Promise.all([provider.getDerivatives('BTCUSDT'),provider.getDerivatives('BTCUSDT')]);expect(a.openInterest).toBe(123);expect(b.fundingRate).toBe(.001);expect(json).toHaveBeenCalledTimes(2);expect(json.mock.calls.map(call=>String(call[0])).some(path=>path.startsWith('/futures/data/'))).toBe(false);
   await provider.getDerivatives('BTCUSDT');expect(json).toHaveBeenCalledTimes(2);vi.advanceTimersByTime(300_001);await provider.getDerivatives('BTCUSDT');expect(json).toHaveBeenCalledTimes(4);vi.useRealTimers();
 });
+
+it('hydrates a cold snapshot in bounded REST phases with 15m candles first',async()=>{
+  let inFlight=0,maxInFlight=0;const calls:string[]=[];
+  const json=vi.fn(async(path:string)=>{calls.push(path);inFlight++;maxInFlight=Math.max(maxInFlight,inFlight);await new Promise(resolve=>setTimeout(resolve,1));inFlight--;
+    if(path==='/fapi/v1/exchangeInfo')return{symbols:[{symbol:'BTCUSDT',onboardDate:Date.now()-86_400_000,filters:[{filterType:'PRICE_FILTER',tickSize:'0.1'},{filterType:'LOT_SIZE',minQty:'0.001',stepSize:'0.001'},{filterType:'MIN_NOTIONAL',notional:'5'}]}]};
+    if(path.includes('/ticker/24hr?'))return{lastPrice:'100',quoteVolume:'100000',priceChangePercent:'1',count:1000};
+    if(path.includes('/premiumIndex?'))return{markPrice:'100',lastFundingRate:'0.001'};
+    if(path.includes('/ticker/bookTicker?'))return{bidPrice:'99.9',askPrice:'100.1'};
+    if(path.includes('/depth?'))return{bids:[['99.9','10']],asks:[['100.1','10']]};
+    if(path.includes('/openInterest?'))return{openInterest:'123'};
+    if(path.includes('/klines?')){const limit=Number(new URLSearchParams(path.split('?')[1]).get('limit')??80),now=Date.now();return Array.from({length:limit},(_,i)=>[now-(limit-i)*60_000,'100','101','99','100','10',now-(limit-i-1)*60_000-1,'1000',10]);}
+    return[];
+  });
+  const provider=new BinancePublicMarketDataProvider({json,environment:()=> 'TESTNET',streamUrl:()=>'',proxyAgent:()=>undefined,restRoute:()=>({routeIdentity:'test'})} as any),stream=(provider as any).stream;
+  vi.spyOn(stream,'quote').mockReturnValue(null);vi.spyOn(stream,'book').mockReturnValue(null);vi.spyOn(stream,'candleSeries').mockReturnValue(null);vi.spyOn(stream,'seedCandles').mockImplementation(()=>{});vi.spyOn(stream,'seed').mockImplementation(()=>{});
+  const snapshot=await provider.getSnapshot('BTCUSDT');
+  expect(snapshot.technical['15m']).toBeDefined();expect(maxInFlight).toBe(1);
+  const klines=calls.filter(path=>path.includes('/klines?'));expect(klines[0]).toContain('interval=15m');
+});

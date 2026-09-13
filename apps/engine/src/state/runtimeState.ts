@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { DynamicPool, resolveUnderlying } from '@zdj/core';
+import { entryOrderOccupiesRisk } from '../services/entryRiskOccupancy.js';
 export type PositionLifecycleState = any;
 export type AccountState = any;
 export class RuntimeState {
@@ -43,19 +44,19 @@ export class RuntimeState {
         this.pool = new DynamicPool(settings);
     }
     setSettings(settings) { this.settings = settings; this.pool.updateSettings(settings); this.generation++; }
-    activeEntrySymbols() { return new Set([...this.entryOrders.values()].filter(o => ['NEW', 'SUBMITTING', 'UNKNOWN', 'WORKING', 'PARTIALLY_FILLED'].includes(o.status)).map(o => o.symbol.toUpperCase())); }
+    activeEntrySymbols() { const now=Date.now();return new Set([...this.entryOrders.values()].filter(o => entryOrderOccupiesRisk(o,now)).map(o => o.symbol.toUpperCase())); }
     positionSymbols() { return new Set([...this.positions.values()].map(p => p.symbol.toUpperCase())); }
     addAiRun(run) { this.aiRuns.unshift(run); if (this.aiRuns.length > 200)
         this.aiRuns.length = 200; }
     cleanupReservations(now = Date.now()) { for (const [id, reservation] of this.entryReservations) {
-        const activeOrder=[...this.entryOrders.values()].some(order=>order.reservationId===id&&['NEW','SUBMITTING','UNKNOWN','WORKING','PARTIALLY_FILLED'].includes(order.status));
+        const activeOrder=[...this.entryOrders.values()].some(order=>order.reservationId===id&&entryOrderOccupiesRisk(order,now));
         if (reservation.expiresAt <= now && (reservation.status === 'RESERVED' || (reservation.status === 'WORKING'&&!activeOrder)))
             this.releaseEntryReservation(id); } for (const [key, lock] of this.underlyingLocks)
         if (lock.leaseUntil <= now)
             this.underlyingLocks.delete(key); }
     entryCapacity(ignoreOrderId=null,ignoreReservationId=null) {
-        const held=new Set([...this.positions.values()].map(p=>resolveUnderlying(p.symbol))),orders=[...this.entryOrders.values()].filter(o=>o.id!==ignoreOrderId&&['NEW','SUBMITTING','UNKNOWN','WORKING','PARTIALLY_FILLED'].includes(o.status));
-        const inFlight=new Set(orders.map(o=>resolveUnderlying(o.symbol)).filter(u=>!held.has(u))),reservations=[...this.entryReservations.values()].filter(r=>r.id!==ignoreReservationId&&['RESERVED','WORKING'].includes(r.status)&&r.expiresAt>Date.now()&&!held.has(r.underlying)&&!inFlight.has(r.underlying));
+        const now=Date.now(),held=new Set([...this.positions.values()].map(p=>resolveUnderlying(p.symbol))),orders=[...this.entryOrders.values()].filter(o=>o.id!==ignoreOrderId&&entryOrderOccupiesRisk(o,now));
+        const inFlight=new Set(orders.map(o=>resolveUnderlying(o.symbol)).filter(u=>!held.has(u))),reservations=[...this.entryReservations.values()].filter(r=>r.id!==ignoreReservationId&&['RESERVED','WORKING'].includes(r.status)&&r.expiresAt>now&&!held.has(r.underlying)&&!inFlight.has(r.underlying));
         const reserved=new Set(reservations.map(r=>r.underlying));return {positions:this.positions.size,inFlight:inFlight.size,reserved:reserved.size,used:this.positions.size+inFlight.size+reserved.size,max:this.settings.portfolio.maxPositions};
     }
     reserveEntry(input) { this.cleanupReservations(); const underlying = input.underlying.toUpperCase(), lock = this.underlyingLocks.get(underlying); if (lock && lock.leaseUntil > Date.now())
@@ -95,4 +96,3 @@ export class RuntimeState {
         this.activity = { ...this.activity, ...value.activity }; if (value.account && typeof value.account.status === 'string')
         this.account = value.account; }
 }
-

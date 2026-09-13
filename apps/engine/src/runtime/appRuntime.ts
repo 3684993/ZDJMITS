@@ -448,7 +448,6 @@ export class EngineRuntime {
     }
     this.universe.refresh();
     if (this.state.account.status === "READY") {
-      await this.reconciliation.run();
       await this.refreshPositionMarkets();
       await this.reconciliation.run();
     }
@@ -743,7 +742,7 @@ export class EngineRuntime {
       this.state.settings.connections.executionMode !== "TESTNET_ENABLED" ||
       !write?.lockedToTestnet
     )
-      throw new Error("TESTNET_ONLY_WRITE_LOCK_REQUIRED");
+      throw new Error('TESTNET_ONLY_WRITE_LOCK_REQUIRED');
     if (this.state.account.status !== "READY")
       throw new Error(`PRIVATE_DATA_${this.state.account.status}`);
     this.runtimeControl.evaluate(true);

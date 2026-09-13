@@ -1,15 +1,15 @@
 import { resolveUnderlying } from '@zdj/core';
 import type { RuntimeState } from '../state/runtimeState.js';
 import type { EventBus } from '../events/eventBus.js';
+import { entryOrderOccupiesRisk } from './entryRiskOccupancy.js';
 
-const ACTIVE_ORDER=new Set(['NEW','SUBMITTING','UNKNOWN','WORKING','PARTIALLY_FILLED']);
 const ACTIVE_AI=new Set(['SCOUT_QUEUED','SCOUT_RUNNING','SCOUT_DONE','PRIMARY_QUEUED','PRIMARY_RUNNING','PLACE_READY']);
 const COOLDOWN=new Set(['REJECT_COOLDOWN','AI_FAILURE_COOLDOWN','TECHNICAL_COOLDOWN','QUARANTINED','COOLDOWN']);
 
 /** Rebuilds occupancy states from live facts. Historical lifecycle rows are never an occupancy source. */
 export function reconcileCandidateLifecycles(state:RuntimeState,events?:EventBus,reason='FACT_RECONCILIATION',now=Date.now()){
   state.cleanupReservations(now);
-  const positionSymbols=state.positionSymbols(),activeOrders=[...state.entryOrders.values()].filter((row:any)=>ACTIVE_ORDER.has(row.status)),activeOrderSymbols=new Set(activeOrders.map((row:any)=>String(row.symbol).toUpperCase()));
+  const positionSymbols=state.positionSymbols(),activeOrders=[...state.entryOrders.values()].filter((row:any)=>entryOrderOccupiesRisk(row,now)),activeOrderSymbols=new Set(activeOrders.map((row:any)=>String(row.symbol).toUpperCase()));
   const activeReservations=[...state.entryReservations.values()].filter((row:any)=>['RESERVED','WORKING'].includes(row.status)&&row.expiresAt>now),activeIntentIds=new Set(activeReservations.map((row:any)=>row.intentId).filter(Boolean));
   const activeAiSymbols=new Set(state.aiRuns.filter((row:any)=>row.status==='RUNNING').map((row:any)=>String(row.symbol).toUpperCase()));
   const reservedSymbols=new Set([...state.entryIntents.values()].filter((row:any)=>activeIntentIds.has(row.id)).map((row:any)=>String(row.symbol).toUpperCase()));

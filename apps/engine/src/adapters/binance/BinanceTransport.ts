@@ -11,16 +11,21 @@ function inferredSource(url:URL,method:string){const p=url.pathname;if(method!==
 function priorityFor(source:string):0|1|2{return['EXECUTION_CRITICAL','ORDER_VERIFICATION','PRIVATE_STATE','USER_DATA_STREAM','CLOCK'].includes(source)?0:['RECONCILIATION','CLOCK','HEALTH_PROBE'].includes(source)?1:2;}
 export function extractObservedIp(body:string){for(const match of body.matchAll(/\bIP\s*[(=:]?\s*([0-9a-f:.]+)/ig)){if(isIP(match[1]!))return match[1]!;}return null;}
 
+const liveTransports=new Set<WeakRef<BinanceTransport>>();
+export function reconfigureBinanceTransports(settings:ConnectionSettings){for(const ref of [...liveTransports]){const transport=ref.deref();if(transport)transport.reconfigure(settings);else liveTransports.delete(ref);}}
+
 /**
  * Single Binance network boundary.
  * Every REST, public-market, private-account, execution, listen-key and WS path
- * reaches Binance through this transport.  Exchange traffic is proxy-only:
- * DIRECT is retained in the persisted schema solely for backward compatibility
- * but is never honored.  Missing/disabled proxy means fail-closed, never fallback.
+ * reaches Binance through this transport. Exchange traffic is proxy-only:
+ * DIRECT remains schema-compatible only and is never honored. Missing/disabled
+ * proxy means fail-closed, never fallback.
  */
 export class BinanceTransport {
- private readonly agent:SocksProxyAgent|null;private readonly budget:ReturnType<typeof getBinanceRequestBudget>;private readonly routeIdentity:string;
- constructor(private readonly settings:ConnectionSettings){if(settings.proxy.enabled&&settings.proxy.url)this.agent=new SocksProxyAgent(settings.proxy.url);else this.agent=null;const proxyHash=this.agent?createHash('sha256').update(settings.proxy.url).digest('hex').slice(0,12):'unavailable';this.routeIdentity=`proxy-${proxyHash}`;this.budget=getBinanceRequestBudget(settings.exchange.environment,this.routeIdentity);}
+ private agent:SocksProxyAgent|null=null;private budget!:ReturnType<typeof getBinanceRequestBudget>;private routeIdentity='proxy-unavailable';private settings:ConnectionSettings;
+ constructor(settings:ConnectionSettings){this.settings=settings;this.applyRoute();liveTransports.add(new WeakRef(this));}
+ private applyRoute(){if(this.settings.proxy.enabled&&this.settings.proxy.url)this.agent=new SocksProxyAgent(this.settings.proxy.url);else this.agent=null;const proxyHash=this.agent?createHash('sha256').update(this.settings.proxy.url).digest('hex').slice(0,12):'unavailable';this.routeIdentity=`proxy-${proxyHash}`;this.budget=getBinanceRequestBudget(this.settings.exchange.environment,this.routeIdentity);}
+ reconfigure(settings:ConnectionSettings){this.settings=settings;this.applyRoute();}
  effectiveBaseUrl(){return this.settings.exchange.environment==='TESTNET'?this.settings.exchange.testnetBaseUrl:this.settings.exchange.productionBaseUrl;}environment(){return this.settings.exchange.environment;}executionMode(){return this.settings.executionMode;}
  private assertProxy(){if(!this.settings.proxy.enabled||!this.agent)throw new Error('PROXY_REQUIRED: Binance exchange traffic is proxy-only and configured fail-closed');}
  requestBudgetHealth(){return{...this.budget.health(),routeIdentity:this.routeIdentity,route:this.restRoute()};}

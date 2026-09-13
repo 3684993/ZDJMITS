@@ -53,7 +53,9 @@ export class BinancePublicMarketDataProvider implements MarketDataProvider {
   async getQuote(symbol:string):Promise<Quote>{
     const cached=this.stream.quote(symbol),rules=await this.rules(symbol);
     if(cached?.last&&cached.mark&&cached.bid&&cached.ask&&Date.now()-(cached.ts??0)<=15_000)return{symbol,last:cached.last,mark:cached.mark,bid:cached.bid,ask:cached.ask,...rules,quoteVolumeUsd24h:cached.quoteVolumeUsd24h??0,priceChangePercent24h:cached.priceChangePercent24h??0,tradeCount24h:cached.tradeCount24h??0,ts:cached.ts??Date.now()};
-    const[t,p,book]=await Promise.all([this.json<any>(`/fapi/v1/ticker/24hr?symbol=${symbol}`),this.json<any>(`/fapi/v1/premiumIndex?symbol=${symbol}`),this.json<any>(`/fapi/v1/ticker/bookTicker?symbol=${symbol}`)]);
+    const t=await this.json<any>(`/fapi/v1/ticker/24hr?symbol=${symbol}`);
+    const p=await this.json<any>(`/fapi/v1/premiumIndex?symbol=${symbol}`);
+    const book=await this.json<any>(`/fapi/v1/ticker/bookTicker?symbol=${symbol}`);
     return{symbol,last:Number(t.lastPrice),mark:Number(p.markPrice),bid:Number(book.bidPrice),ask:Number(book.askPrice),...rules,quoteVolumeUsd24h:Number(t.quoteVolume),priceChangePercent24h:Number(t.priceChangePercent),tradeCount24h:Number(t.count??0),ts:Date.now()};
   }
 
@@ -75,14 +77,15 @@ export class BinancePublicMarketDataProvider implements MarketDataProvider {
     const pending=this.derivativesFlights.get(key);if(pending)return pending;
     const flight=(async()=>{
       const testnet=this.transport.environment()==='TESTNET';
-      const [oi,premium,oiHist,taker,globalRatio,topPos]=await Promise.all([
-        this.optional<any>(`/fapi/v1/openInterest?symbol=${key}`,null),
-        this.optional<any>(`/fapi/v1/premiumIndex?symbol=${key}`,null),
-        testnet?Promise.resolve([]):this.optional<any[]>(`/futures/data/openInterestHist?symbol=${key}&period=5m&limit=4`,[]),
-        testnet?Promise.resolve([]):this.optional<any[]>(`/futures/data/takerlongshortRatio?symbol=${key}&period=5m&limit=3`,[]),
-        testnet?Promise.resolve([]):this.optional<any[]>(`/futures/data/globalLongShortAccountRatio?symbol=${key}&period=5m&limit=2`,[]),
-        testnet?Promise.resolve([]):this.optional<any[]>(`/futures/data/topLongShortPositionRatio?symbol=${key}&period=5m&limit=2`,[]),
-      ]);
+      const oi=await this.optional<any>(`/fapi/v1/openInterest?symbol=${key}`,null);
+      const premium=await this.optional<any>(`/fapi/v1/premiumIndex?symbol=${key}`,null);
+      let oiHist:any[]=[],taker:any[]=[],globalRatio:any[]=[],topPos:any[]=[];
+      if(!testnet){
+        oiHist=await this.optional<any[]>(`/futures/data/openInterestHist?symbol=${key}&period=5m&limit=4`,[]);
+        taker=await this.optional<any[]>(`/futures/data/takerlongshortRatio?symbol=${key}&period=5m&limit=3`,[]);
+        globalRatio=await this.optional<any[]>(`/futures/data/globalLongShortAccountRatio?symbol=${key}&period=5m&limit=2`,[]);
+        topPos=await this.optional<any[]>(`/futures/data/topLongShortPositionRatio?symbol=${key}&period=5m&limit=2`,[]);
+      }
       const pct=(arr:any[],span:number)=>arr.length>span&&Number(arr.at(-1)?.sumOpenInterestValue??arr.at(-1)?.sumOpenInterest)>0?Number(arr.at(-1)?.sumOpenInterestValue??arr.at(-1)?.sumOpenInterest)/Number(arr.at(-1-span)?.sumOpenInterestValue??arr.at(-1-span)?.sumOpenInterest)-1:null;
       const value:DerivativesSnapshot={symbol:key,openInterest:oi?Number(oi.openInterest):null,openInterestChange5m:pct(oiHist,1),openInterestChange15m:pct(oiHist,3),fundingRate:premium?Number(premium.lastFundingRate):null,takerBuySellRatio5m:taker.length?Number(taker.at(-1)?.buySellRatio):null,globalLongShortRatio:globalRatio.length?Number(globalRatio.at(-1)?.longShortRatio):null,topTraderPositionRatio:topPos.length?Number(topPos.at(-1)?.longShortRatio):null,ts:Date.now()};
       this.derivativesCache.set(key,{until:Date.now()+DERIVATIVES_TTL_MS,value});return value;
@@ -91,8 +94,15 @@ export class BinancePublicMarketDataProvider implements MarketDataProvider {
   }
 
   async getSnapshot(symbol:string):Promise<MarketSymbolSnapshot>{
-    const frames=["1m","5m","15m","1h","4h","1d","1w"] as Timeframe[];
-    const [quote,orderBook,derivatives,...candles]=await Promise.all([this.getQuote(symbol),this.getOrderBook(symbol),this.getDerivatives(symbol),...frames.map(tf=>tf==='1m'?this.getCandles(symbol,tf,81):tf==='5m'?this.getCandles(symbol,tf,81):tf==='15m'?this.getCandles(symbol,tf,241):tf==='1h'?this.hourlyCandles(symbol):this.getCandles(symbol,tf,80))]);
+    const frames=["1m","5m","15m","1h","4h","1d","1w"] as Timeframe[],hydrateOrder=["15m","1m","5m","1h","4h","1d","1w"] as Timeframe[];
+    const quote=await this.getQuote(symbol);
+    const orderBook=await this.getOrderBook(symbol);
+    const byFrame=new Map<Timeframe,Candle[]>();
+    for(const tf of hydrateOrder){
+      const rows=tf==='1m'?await this.getCandles(symbol,tf,81):tf==='5m'?await this.getCandles(symbol,tf,81):tf==='15m'?await this.getCandles(symbol,tf,241):tf==='1h'?await this.hourlyCandles(symbol):await this.getCandles(symbol,tf,80);
+      byFrame.set(tf,rows);
+    }
+    const derivatives=await this.getDerivatives(symbol),candles=frames.map(tf=>byFrame.get(tf)??[]);
     const technical=Object.fromEntries(frames.flatMap((tf,i)=>candles[i]!.length?[[tf,buildTechnicalCard(tf,candles[i]!)]]:[])) as Record<Timeframe,TechnicalCard>;
     this.stream.seed(symbol,orderBook,candles[0]!);let completeness=.72;if(orderBook.bids.length&&orderBook.asks.length)completeness+=.12;if(derivatives.openInterest!=null)completeness+=.08;if(derivatives.takerBuySellRatio5m!=null)completeness+=.08;
     const contract=(await this.info()).symbols.find((row:any)=>row.symbol===symbol),onboard=Number(contract?.onboardDate??0),listingAgeDays=onboard>0?Math.max(0,(Date.now()-onboard)/86_400_000):null;

@@ -6,7 +6,7 @@ export function waitFingerprint(m:MarketSymbolSnapshot) {
 }
 export function waitingContext(d:BrainDecision,runId:string,m:MarketSymbolSnapshot,now=Date.now()) {
   if(d.decision!=='WAIT_FOR_PRICE'||!d.waitCondition)throw new Error('AI_OUTPUT_INVALID: WAIT condition missing');
-  return {runId,direction:d.direction,condition:d.waitCondition,reason:d.reason,createdAt:now,
+  return {runId,direction:d.structureDirection,condition:d.waitCondition,reason:d.reason,createdAt:now,
     expiresAt:now+d.waitCondition.validForMinutes*60_000,fingerprint:waitFingerprint(m),orderAuthorization:false};
 }
 export function waitTrigger(w:ReturnType<typeof waitingContext>,m:MarketSymbolSnapshot,now=Date.now()):string|null {

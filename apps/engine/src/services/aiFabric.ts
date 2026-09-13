@@ -36,20 +36,27 @@ export function fifteenMinuteDirection(packet:EntryIntelligencePacket):'LONG'|'S
 
 export function entryDecisionParse(value:unknown,packet:EntryIntelligencePacket):BrainDecision {
   const normalized=normalizeAiProtocol(value,['confidence']);
-  const d=EntryDecisionV370Schema.parse(normalized.value);
-  const place=d.decision.startsWith('PLACE_');
+  const raw:any={...(normalized.value as any)}, legacyDirection=raw.direction, inferred=fifteenMinuteDirection(packet), place=String(raw.decision??'').startsWith('PLACE_');
+  // Compatibility is input-only: persisted normalized protocol never uses a
+  // fabricated side for NO_EDGE/WAIT/RESELECT.
+  raw.structureDirection=raw.structureDirection??inferred;
+  raw.tradeSide=raw.tradeSide??(place?(legacyDirection??String(raw.decision).replace('PLACE_','')):null);
+  raw.profitTakePlan=place?(raw.profitTakePlan??null):null;
+  raw.rejectLayer=raw.rejectLayer??(raw.decision==='WAIT_FOR_PRICE'?'TIMING':raw.decision==='NO_DIRECTION_EDGE'?'TIMING':'NONE');
+  raw.blockingCondition=raw.blockingCondition??(place?'':String(raw.reason??''));raw.releaseCondition=raw.releaseCondition??'';raw.timingEvent=raw.timingEvent??null;
+  raw.direction=place?raw.tradeSide:null; const d=EntryDecisionV370Schema.parse(raw);
   // Trend facts constrain explanation, not a mechanical side rewrite. The
   // Primary may honestly return NO_DIRECTION_EDGE in a mixed/range context.
   const permissions=packet.portfolioIntelligence?.allowedDirections??[];
-  if(place&&!permissions.includes(d.direction))throw new Error('AI_OUTPUT_INVALID: direction permission violation');
+  if(place&&!permissions.includes(d.tradeSide!))throw new Error('AI_OUTPUT_INVALID: direction permission violation');
   const primaryDirection=fifteenMinuteDirection(packet);
-  if(place&&primaryDirection&&d.direction!==primaryDirection)throw new Error('AI_OUTPUT_INVALID: 15m direction/timing role violation');
+  if(place&&primaryDirection&&d.tradeSide!==primaryDirection)throw new Error('AI_OUTPUT_INVALID: 15m direction/timing role violation');
   const validIds=new Set(compactFactIds(packet));
   if(d.supportingEvidenceRefs.some(id=>!validIds.has(id)))throw new Error('AI_OUTPUT_INVALID: unknown supportingEvidenceRefs');
   const prose=`${d.directionReason} ${d.timingReason} ${(d as any).entryLocationReason??''} ${d.reason}`;
   if(packet.microstructure.imbalance<-.05&&/bid (?:dominance|imbalance)|buyer(?:s)? dominant/i.test(prose))throw new Error('AI_OUTPUT_INVALID: order-book imbalance sign misread');
   if(packet.microstructure.imbalance>.05&&/ask (?:dominance|imbalance)|seller(?:s)? dominant/i.test(prose))throw new Error('AI_OUTPUT_INVALID: order-book imbalance sign misread');
-  const result=BrainDecisionSchema.parse({...d,protocolVersion:'V3.9.2',reachability:0,
+  const result=BrainDecisionSchema.parse({...d,direction:place?d.tradeSide:null,protocolVersion:'V3.9.2',reachability:0,
     directionAnalysis:{trend1m:d.timingReason,trend5m:'See timingReason',trend15m:d.directionReason,trend4h:'CONTEXT_ONLY',trend1d:'CONTEXT_ONLY',trend1w:'CONTEXT_ONLY',weightedConclusion:d.directionReason},
     supportingEvidence:[],contradictions:[],missingEvidence:[],evidenceRefs:d.supportingEvidenceRefs,evidenceRequests:[]});
   (result as any).__protocolNormalization=normalized.normalization;
@@ -74,6 +81,13 @@ export function brainParse(value:unknown,packet?:EntryIntelligencePacket):BrainD
     v.entryInvalidation=typeof v.entryInvalidation==='string'?v.entryInvalidation:'Candidate rejected by Primary Brain';
     v.reason=typeof v.reason==='string'?v.reason:'PRIMARY_BRAIN rejected candidate';
   }
+  const isPlace=v.decision==='PLACE_LONG'||v.decision==='PLACE_SHORT';
+  v.structureDirection=v.structureDirection??(packet?fifteenMinuteDirection(packet):null);
+  v.tradeSide=v.tradeSide??(isPlace?(v.direction??String(v.decision).replace('PLACE_','')):null);
+  v.direction=isPlace?v.tradeSide:null;
+  if(!isPlace){v.profitTakePlan=null;v.idealPrice=null;v.acceptablePriceRange=null;v.horizonMinutes=null;}
+  v.rejectLayer=v.rejectLayer??(v.decision==='WAIT_FOR_PRICE'?'TIMING':v.decision==='NO_DIRECTION_EDGE'||v.decision==='REJECT_CANDIDATE'?'TIMING':'NONE');
+  v.blockingCondition=v.blockingCondition??String(v.reason??'');v.releaseCondition=v.releaseCondition??'';v.timingEvent=v.timingEvent??null;
   if(v.action==='FINAL'&&(v.decision==='PLACE_LONG'||v.decision==='PLACE_SHORT')){
     // A price/range is executable intent supplied by the model.  Do not infer it
     // from book data: incomplete or ambiguous output must fail closed.

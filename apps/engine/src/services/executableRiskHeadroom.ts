@@ -32,7 +32,7 @@ export function computeExecutableRiskHeadroom(input:HeadroomInput){
   // Routing/preflight are capacity calculations and may clamp an oversized
   // recommendation. Final-order JIT snapshots are strict: the already
   // authorized actual/planned notional must fit every remaining limit now.
-  if(pending.strictPlannedNotional&&valid)for(const [key,reason] of checks)if(input.plannedNotional>remaining[key]+1e-8&&!blockers.includes(reason))blockers.push(reason);
+  if((pending as PendingEntryRiskExposureList).strictPlannedNotional&&valid)for(const [key,reason] of checks)if(input.plannedNotional>remaining[key]+1e-8&&!blockers.includes(reason))blockers.push(reason);
   const finalNotional=valid?Math.max(0,Math.min(input.plannedNotional,...Object.values(remaining))):0;
   if(finalNotional+1e-8<minimum&&!blockers.length)blockers.push('BELOW_MINIMUM_NOTIONAL');
   const factVersion=JSON.stringify({equity,side:input.side,symbol:input.symbol,exposures:exposures.map(p=>[p.id,p.symbol,p.side,Number(p.notionalUsd.toFixed(8))]).sort((a,b)=>String(a[0]).localeCompare(String(b[0]))),limits,dailyDrawdownPct:input.dailyDrawdownPct,expectedAdverseMovePct:move});

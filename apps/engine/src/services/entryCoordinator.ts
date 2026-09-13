@@ -88,6 +88,7 @@ export class EntryCoordinator {
             if(route&&!directionExecutable)this.events.publish('PRIMARY_SKIPPED_DIRECTION_BUDGET',{trend,reason:'CONFIRMED_DIRECTION_NOT_EXECUTABLE',longAvailableNotionalUsd:this.state.runtimeControl.capital.directionBudget.longAvailableNotionalUsd,shortAvailableNotionalUsd:this.state.runtimeControl.capital.directionBudget.shortAvailableNotionalUsd,generation:this.state.runtimeControl.capital.generation,primaryRequested:false},x.symbol);
             return x.state === "READY" &&
             directionExecutable &&
+            this.eipDependenciesPresent(x.symbol) &&
             !this.primaryOccupancyBlock(x.symbol) &&
             !this.active.has(x.symbol) &&
             !this.state.rejectionCooldown.has(x.symbol) &&
@@ -126,6 +127,8 @@ export class EntryCoordinator {
   }
   cadenceReady(_now = Date.now()) { return true; }
   private primaryReadinessScore(symbol:string,fallback:number){const candidate:any=this.state.universe.find((x:any)=>x.symbol===symbol),card:any=this.state.snapshots.get(symbol)?.technical?.['15m'],now=Date.now();if(card?.isClosed!==true||!Number.isFinite(card?.barCloseTime)||card.barCloseTime>now)return Number(candidate?.schedulerPriority??fallback);const trend=Number(card.trendStrength??0),momentum=Math.abs(Number(card.macdHistogramSlope??0)),volume=Math.max(0,Number(card.volumeZScore??0));return Number(candidate?.schedulerPriority??fallback)+Math.min(1,Math.max(0,trend*.6+Math.min(.25,momentum)+Math.min(.15,volume*.05)));}
+  /** EIP consumes the candidate plus BTC/ETH regime facts; do not spend a Primary lease before all three exist. */
+  private eipDependenciesPresent(symbol:string){return [symbol,'BTCUSDT','ETHUSDT'].every(required=>this.state.snapshots.has(required));}
   /** Read-only feasibility before Primary. Post-AI allocation/reservation/final guards remain authoritative. */
   private preflight(symbol:string){return evaluatePreflightFeasibility(this.state,symbol,this.market?.primaryReadyReasons(symbol,Date.now())??[]);}
   private primaryOccupancyBlock(symbol:string){

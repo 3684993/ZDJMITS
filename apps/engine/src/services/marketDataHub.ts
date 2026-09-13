@@ -9,6 +9,7 @@ async function mapLimit<T,R>(items:T[],limit:number,fn:(item:T)=>Promise<R>):Pro
   async function worker(){while(true){const i=cursor++;if(i>=items.length)return;out[i]=await fn(items[i]!);}}
   await Promise.all(Array.from({length:Math.min(limit,items.length)},()=>worker())); return out;
 }
+const budgetDeferred=(error:unknown)=>String(error instanceof Error?error.message:error).startsWith('BINANCE_REQUEST_BUDGET_DEFERRED:');
 export class MarketDataHub {
   private snapshotFlights=new Map<string,Promise<MarketSymbolSnapshot>>();
   private rulesUpdatedAt=new Map<string,number>();
@@ -17,6 +18,7 @@ export class MarketDataHub {
   private retentionManaged=false;
   private liveTechnicalFailures=new Set<string>();
   private technicalBlocked=new Map<string,{timeframe:string;sequence:string;at:number}>();
+  private targetedRefreshDeferredUntil=0;
   private rememberFailure(key:string,symbol:string,timeframe:string,sequence:string){this.liveTechnicalFailures.add(key);this.technicalBlocked.set(`${symbol}:${timeframe}`,{timeframe,sequence,at:Date.now()});while(this.liveTechnicalFailures.size>512)this.liveTechnicalFailures.delete(this.liveTechnicalFailures.values().next().value!);while(this.technicalBlocked.size>128)this.technicalBlocked.delete(this.technicalBlocked.keys().next().value!);}
   private loadSnapshot(symbol:string,epoch=this.epoch(symbol)){const key=`${symbol}:${epoch}`,existing=this.snapshotFlights.get(key);if(existing)return existing;const flight=this.provider.getSnapshot(symbol).finally(()=>this.snapshotFlights.delete(key));this.snapshotFlights.set(key,flight);return flight;}
   private recovery=new Map<string,{attempt:number;nextRetryAt:number;lastSuccessAt:number|null;reason:string|null}>();
@@ -86,7 +88,7 @@ export class MarketDataHub {
     this.events.publish('APPROVED_ASSET_COLLECTION_COVERAGE',{directoryVersion:directory.version,total:approvedCoverage.length,collected:approvedCoverage.filter(x=>x.status==='COLLECTED').length,unavailable:approvedCoverage.filter(x=>x.status==='UNAVAILABLE').length,coverage:approvedCoverage,occupiedCoverage:coverage.filter(row=>!approvedCoverage.includes(row))});
     this.events.publish('MARKET_REFRESHED',{requested:symbols.length,loaded,generation}); return loaded;
   }
-  async refreshSymbols(symbols:string[]){const unique=[...new Set(symbols.map(x=>x.toUpperCase()))];const snapshots=await mapLimit(unique,2,async symbol=>{const epoch=this.epoch(symbol);try{return{symbol,epoch,snapshot:await this.loadSnapshot(symbol,epoch)};}catch(error){this.events.publish('MARKET_SYMBOL_ERROR',{message:error instanceof Error?error.message:String(error),scope:'TARGETED_REFRESH'},symbol);return null;}});let loaded=0;for(const result of snapshots)if(result&&this.canWrite(result.symbol,result.epoch)){this.state.snapshots.set(result.symbol,result.snapshot);this.rulesUpdatedAt.set(result.symbol,Date.now());loaded++;}this.events.publish('MARKET_TARGETED_REFRESHED',{requested:unique.length,loaded});return loaded;}
+  async refreshSymbols(symbols:string[]){const unique=[...new Set(symbols.map(x=>x.toUpperCase()))],now=Date.now();if(now<this.targetedRefreshDeferredUntil)return 0;let deferred:string|null=null;const snapshots=await mapLimit(unique,2,async symbol=>{if(deferred)return null;const epoch=this.epoch(symbol);try{return{symbol,epoch,snapshot:await this.loadSnapshot(symbol,epoch)};}catch(error){const message=error instanceof Error?error.message:String(error);if(budgetDeferred(error)){if(!deferred){deferred=message;this.targetedRefreshDeferredUntil=Date.now()+60_000;this.events.publish('MARKET_REFRESH_DEFERRED',{scope:'TARGETED_REFRESH',message,requested:unique.length,symbol,retryAt:this.targetedRefreshDeferredUntil});}return null;}this.events.publish('MARKET_SYMBOL_ERROR',{message,scope:'TARGETED_REFRESH'},symbol);return null;}});let loaded=0;for(const result of snapshots)if(result&&this.canWrite(result.symbol,result.epoch)){this.state.snapshots.set(result.symbol,result.snapshot);this.rulesUpdatedAt.set(result.symbol,Date.now());loaded++;}if(loaded)this.targetedRefreshDeferredUntil=0;this.events.publish('MARKET_TARGETED_REFRESHED',{requested:unique.length,loaded,deferred:deferred!==null});return loaded;}
   /** Slow cards, derivatives and contract rules refresh independently when their own facts are due. */
   async refreshSlowFields(symbols:Iterable<string>){
     const unique=[...new Set([...symbols].map(s=>s.toUpperCase()))],frames:[Timeframe,number,number][]=[['1h',80,3_600_000],['4h',80,14_400_000],['1d',80,86_400_000],['1w',80,604_800_000]];let updated=0;

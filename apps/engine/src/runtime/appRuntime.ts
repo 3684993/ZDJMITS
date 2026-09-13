@@ -805,7 +805,12 @@ export class EngineRuntime {
         transactionTime: raw.T ?? raw.E,
         symbol: raw.o?.s,
       });
-      void this.syncPrivate('USER_DATA');
+      void this.syncPrivate('USER_DATA').catch((error) =>
+        this.events.publish('PRIVATE_SYNC_CALLBACK_FAILED', {
+          message: error instanceof Error ? error.message : String(error),
+          trigger: 'USER_DATA',
+        }),
+      );
     });
   }
   private liveMarketSymbols() {

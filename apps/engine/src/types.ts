@@ -29,7 +29,8 @@ export interface ExchangeTradeAdapter {
   placeTakeProfit(order:TakeProfitOrder):Promise<TakeProfitOrder>;
   findTakeProfitByClientOrderId?(order:TakeProfitOrder):Promise<TakeProfitOrder|null>;
   cancelTakeProfit(order:TakeProfitOrder):Promise<TakeProfitOrder>;
-  fetchOpenOrders():Promise<Array<EntryOrder|TakeProfitOrder>>;
+  /** A symbol-scoped query is weight 1; the unscoped exchange-wide safety scan is weight 40. */
+  fetchOpenOrders(symbol?:string):Promise<Array<EntryOrder|TakeProfitOrder>>;
   fetchPositions():Promise<Position[]>;
   setLeverage(symbol:string,leverage:number):Promise<void>;
   placeManualOrder(request:{clientOrderId:string;internalOrderId?:string;symbol:string;side:'BUY'|'SELL';positionSide?:'LONG'|'SHORT';type:'LIMIT'|'MARKET';quantity:number;price?:number;reduceOnly:boolean;postOnly:boolean}):Promise<ManualOrder>;

@@ -10,18 +10,18 @@ it('keeps reconciliation available during observed-weight anomaly while public h
       softBackgroundWeight: 1800,
       hardWeight: 2200,
     });
-    budget.observe(200, '1200', undefined, {
+    budget.observe(200, '2159', undefined, {
       source: 'PRIVATE_STATE',
       endpoint: '/fapi/v2/account',
     });
     expect(budget.health()).toMatchObject({
       status: 'PRESSURED',
       observedWeightAnomaly: true,
-      usedWeight1m: 1200,
+      usedWeight1m: 2159,
     });
 
     const reconciliation = vi.fn(async () => {});
-    await budget.run(1, 5, reconciliation, {
+    await budget.run(1, 40, reconciliation, {
       source: 'RECONCILIATION',
       endpoint: '/fapi/v1/openOrders',
       purpose: 'BOOTSTRAP_RECONCILIATION',

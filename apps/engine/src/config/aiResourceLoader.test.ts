@@ -4,18 +4,19 @@ import defaults from '../../../../config/settings.default.json' with {type:'json
 import {loadAiResources} from './aiResourceLoader.js';
 
 describe('AI resource loader',()=>{
-  it('omits enabled Scout resources when Scout is retired while keeping Primary Brain',()=>{
+  it('always omits legacy enabled Scout resources while keeping the enabled Primary Brain',()=>{
     const settings=SystemSettingsSchema.parse({
       ...defaults,
-      ai:{...defaults.ai,scoutEnabled:false},
-      aiResources:defaults.aiResources.map(resource=>resource.role==='SCOUT'?{...resource,enabled:true}:resource),
+      ai:{...defaults.ai,scoutEnabled:true},
+      aiResources:defaults.aiResources.map(resource=>resource.role==='SCOUT'?{...resource,enabled:true}:{...resource,enabled:true}),
     });
 
+    expect(settings.aiResources.find(resource=>resource.role==='SCOUT')?.enabled).toBe(true);
+    expect(settings.aiResources.find(resource=>resource.role==='PRIMARY_BRAIN')?.enabled).toBe(true);
     const resources=loadAiResources(settings);
 
-    expect(resources.some(resource=>resource.role==='SCOUT')).toBe(false);
-    expect(resources).toEqual(expect.arrayContaining([
-      expect.objectContaining({role:'PRIMARY_BRAIN',model:'qwen/qwen3.8-27b'}),
-    ]));
+    expect(resources.filter(resource=>resource.role==='SCOUT')).toHaveLength(0);
+    expect(resources.filter(resource=>resource.role==='PRIMARY_BRAIN')).toHaveLength(1);
+    expect(resources[0]).toMatchObject({role:'PRIMARY_BRAIN',model:'qwen/qwen3.8-27b'});
   });
 });

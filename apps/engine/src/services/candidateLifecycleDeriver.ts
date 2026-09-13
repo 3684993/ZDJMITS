@@ -23,16 +23,16 @@ export function reconcileCandidateLifecycles(state:RuntimeState,events?:EventBus
     let status:string|undefined,derivedReason:string|undefined;
     if(positionSymbols.has(symbol)){status='POSITION_HELD';derivedReason='ACTIVE_POSITION_FACT';}
     else if(activeOrderSymbols.has(symbol)){status='ENTRY_WORKING';derivedReason='ACTIVE_ENTRY_ORDER_FACT';}
-    else if(oldStatus==='WAIT_EXECUTION_RANGE'&&previous?.executionWait){status='WAIT_EXECUTION_RANGE';derivedReason=previous.reason;}
+    else if(oldStatus==='WAIT_EXECUTION_RANGE'&&previous?.executionWait&&activeIntentIds.has(previous.executionWait.intentId)){status='WAIT_EXECUTION_RANGE';derivedReason=previous.reason;}
     else if(reservedSymbols.has(symbol)){status='ENTRY_WORKING';derivedReason='ACTIVE_RESERVATION_FACT';}
     else if(oldStatus==='WAIT_FOR_PRICE'&&previous?.waitContext&&(!previous.waitContext.expiresAt||previous.waitContext.expiresAt>now)){status='WAIT_FOR_PRICE';derivedReason=previous.reason;}
     else if(cooldown&&cooldown.until>now){status=COOLDOWN.has(oldStatus??'')?oldStatus:'COOLDOWN';derivedReason=cooldown.reason;}
     else if(ACTIVE_AI.has(oldStatus??'')&&activeAiSymbols.has(symbol)){status=oldStatus;derivedReason=previous.reason;}
     else if(occupiedUnderlyings.has(underlying)){status='EXCLUDED_UNDERLYING';derivedReason='UNDERLYING_OCCUPIED_BY_FACT';}
-    else if(['ENTRY_WORKING','HELD','POSITION_HELD','PENDING_ENTRY','POSITION','EXCLUDED_UNDERLYING','PRIMARY_COMPLETED',...ACTIVE_AI].includes(oldStatus??'')){status='READY';derivedReason='OCCUPANCY_RELEASED';}
+    else if(['ENTRY_WORKING','WAIT_EXECUTION_RANGE','HELD','POSITION_HELD','PENDING_ENTRY','POSITION','EXCLUDED_UNDERLYING','PRIMARY_COMPLETED',...ACTIVE_AI].includes(oldStatus??'')){status='READY';derivedReason='OCCUPANCY_RELEASED';}
     else continue;
     if(status===oldStatus)continue;
-    const next={...previous,symbol,status,reason:derivedReason,from:oldStatus??null,updatedAt:now,...(status==='READY'?{nextEligibleAt:null}:{}),derivedFromFacts:true};
+    const next={...previous,symbol,status,reason:derivedReason,from:oldStatus??null,updatedAt:now,...(status==='READY'?{nextEligibleAt:null,executionWait:null}:{}),derivedFromFacts:true};
     state.candidateLifecycle.set(symbol,next);migrated++;
     events?.publish('CANDIDATE_LIFECYCLE_REDERIVED',{symbol,previousState:oldStatus??null,nextState:status,reason:derivedReason,trigger:reason,occupancy:{position:positionSymbols.has(symbol),activeEntryOrder:activeOrderSymbols.has(symbol),reservation:reservedSymbols.has(symbol),underlyingOccupied:occupiedUnderlyings.has(underlying)}},symbol);
   }

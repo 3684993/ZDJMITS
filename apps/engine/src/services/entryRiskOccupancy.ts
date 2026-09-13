@@ -4,15 +4,25 @@ export type PendingEntryRiskExposure={id:string;symbol:string;side:Side|'BOTH';n
 export type PendingEntryRiskExposureList=PendingEntryRiskExposure[]&{strictPlannedNotional?:boolean};
 
 const ACTIVE_ORDER=new Set(['NEW','SUBMITTING','UNKNOWN','WORKING','PARTIALLY_FILLED']);
+const TERMINAL_ORDER=new Set(['FILLED','CANCELED','EXPIRED','REJECTED']);
 const ACTIVE_RESERVATION=new Set(['RESERVED','WORKING']);
 
 export function hasVerifiedNoActiveRisk(order:EntryOrder,now=Date.now()){
   const evidence=(order as any).activeRiskEvidence;
-  return order.status==='UNKNOWN'&&(order as any).activeRiskExposure===false&&evidence?.status==='VERIFIED_NO_ACTIVE_RISK'&&Number(evidence.validUntil)>now&&typeof evidence.identityTombstone==='string'&&evidence.identityTombstone.length>0;
+  return (order as any).activeRiskExposure===false&&evidence?.status==='VERIFIED_NO_ACTIVE_RISK'&&Number.isFinite(Number(evidence.checkedAt))&&Number(evidence.validUntil)>now&&evidence.identityTombstone===entryIdentityTombstone(order);
+}
+
+export function entryHasUnresolvedExchangeTerminalRisk(order:EntryOrder,now=Date.now()){
+  return TERMINAL_ORDER.has(order.status)&&(order as any).exchangeTerminalStatus==='UNKNOWN'&&!hasVerifiedNoActiveRisk(order,now);
+}
+
+export function isHistoricalUnknownEntryOrder(order:EntryOrder){
+  return order.status==='UNKNOWN'||(TERMINAL_ORDER.has(order.status)&&(order as any).exchangeTerminalStatus==='UNKNOWN');
 }
 
 export function entryOrderOccupiesRisk(order:EntryOrder,now=Date.now()){
-  return ACTIVE_ORDER.has(order.status)&&!hasVerifiedNoActiveRisk(order,now);
+  if(ACTIVE_ORDER.has(order.status))return order.status==='UNKNOWN'?!hasVerifiedNoActiveRisk(order,now):true;
+  return entryHasUnresolvedExchangeTerminalRisk(order,now);
 }
 
 export function entryIdentityTombstone(order:EntryOrder){

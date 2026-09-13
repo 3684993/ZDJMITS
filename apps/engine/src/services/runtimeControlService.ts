@@ -4,7 +4,7 @@ import type { RuntimeMode, RuntimeReasonCode } from '@zdj/contracts';
 import { evaluateCapitalAdmission } from '@zdj/core';
 import type { RuntimeState } from '../state/runtimeState.js';
 import type { EventBus } from '../events/eventBus.js';
-import { directionBudget } from './riskReadiness.js';
+import { computeExecutableRiskHeadroom, directionBudget } from './riskReadiness.js';
 import {storageCapacityHealth,storageEntryBlockReason} from './storageCapacityGuard.js';
 
 const reasonText=(code:RuntimeReasonCode)=>({
@@ -81,8 +81,19 @@ export class RuntimeControlService {
     const admission=evaluateCapitalAdmission({candidates,snapshots:[...this.state.snapshots.values()],settings:this.state.settings,positions,assets:this.state.account.assets});
     const slots=this.state.entryCapacity();if(slots.used>=slots.max){admission.summary.executableCandidateCount=0;admission.summary.routedCandidates=[];admission.summary.reasonCounts={POSITION_CAPACITY_FULL:admission.decisions.length};for(const row of admission.decisions){row.executable=false;row.reason='POSITION_CAPACITY_FULL';row.reasonText=`仓位容量 ${slots.used}/${slots.max}（持仓${slots.positions}、在途${slots.inFlight}、预留${slots.reserved}）`;}}
     this.admissionDetails=admission.decisions.map(row=>({symbol:row.symbol,underlying:row.underlying,executable:row.executable,reason:row.reason,reasonText:row.reasonText,long:row.longPlan,short:row.shortPlan}));
-    const nextAt=now+settings.capitalCheckIntervalSeconds*1000,capitalEquity=Math.max(Number(this.state.account.equityUsd??0),this.state.account.assets.reduce((sum,row)=>sum+Number(row.usdValue??0),0),1),budget=directionBudget(this.state.settings,capitalEquity,[...this.state.positions.values()],now);
-    const routed=admission.summary.routedCandidates.map(route=>{const quoteAvailable=this.state.account.assets.find(asset=>asset.asset===route.quoteAsset)?.availableBalance??0,quoteCapacity=Math.max(0,quoteAvailable*route.leverage*.995),recommendedLong=route.longRecommendedNotionalUsd??(route.longExecutable?route.marginUsd*route.leverage:0),recommendedShort=route.shortRecommendedNotionalUsd??(route.shortExecutable?route.marginUsd*route.leverage:0),longFeasible=Math.max(0,Math.min(recommendedLong,budget.longAvailableNotionalUsd,budget.grossAvailableNotionalUsd,quoteCapacity)),shortFeasible=Math.max(0,Math.min(recommendedShort,budget.shortAvailableNotionalUsd,budget.grossAvailableNotionalUsd,quoteCapacity)),minimum=route.minExecutableNotionalUsd??0;return{...route,longFeasibleNotionalUsd:longFeasible,shortFeasibleNotionalUsd:shortFeasible,longExecutable:route.longExecutable&&longFeasible+1e-8>=minimum,shortExecutable:route.shortExecutable&&shortFeasible+1e-8>=minimum};});
+    const nextAt=now+settings.capitalCheckIntervalSeconds*1000,capitalEquity=Number(this.state.account.equityUsd??0),budget=directionBudget(this.state.settings,capitalEquity,[...this.state.positions.values()],now);
+    const routed=admission.summary.routedCandidates.map(route=>{
+      const quoteAvailable=this.state.account.assets.find(asset=>asset.asset===route.quoteAsset)?.availableBalance??0,
+        reservedMargin=[...this.state.entryReservations.values()].filter(r=>['RESERVED','WORKING'].includes(r.status)&&r.expiresAt>now&&r.quoteAsset===route.quoteAsset).reduce((n,r)=>n+Math.max(0,r.marginUsd),0),
+        quoteCapacity=Math.max(0,(quoteAvailable-reservedMargin)*route.leverage*.995),
+        market=this.state.snapshots.get(route.symbol),minimum=Math.max(route.minExecutableNotionalUsd??0,market?.quote?.minNotional??0),
+        calculate=(side:'LONG'|'SHORT')=>computeExecutableRiskHeadroom({settings:this.state.settings,equity:capitalEquity,positions,symbol:route.symbol,side,
+          plannedNotional:side==='LONG'?(route.longRecommendedNotionalUsd??(route.longExecutable?route.marginUsd*route.leverage:0)):(route.shortRecommendedNotionalUsd??(route.shortExecutable?route.marginUsd*route.leverage:0)),
+          expectedAdverseMovePct:Math.max(.001,Number(market?.technical?.['15m']?.atrPercent)/100),dailyDrawdownPct:Number(this.state.account.riskBaseline?.riskDrawdownPct??0),quoteNotionalCapacity:quoteCapacity,minimumNotional:minimum}),
+        long=calculate('LONG'),short=calculate('SHORT');
+      return{...route,reason:(route.longExecutable&&long.executable)||(route.shortExecutable&&short.executable)?route.reason:[...new Set([...(route.longExecutable?long.blockers:[]),...(route.shortExecutable?short.blockers:[])])].join('|')||route.reason,longFeasibleNotionalUsd:long.finalNotional,shortFeasibleNotionalUsd:short.finalNotional,longExecutable:route.longExecutable&&long.executable,shortExecutable:route.shortExecutable&&short.executable,riskHeadroom:{LONG:long,SHORT:short},physicalCapacity:{LONG:route.longExecutable&&long.blockers.every(reason=>reason==='REJECT_DAILY_DRAWDOWN'),SHORT:route.shortExecutable&&short.blockers.every(reason=>reason==='REJECT_DAILY_DRAWDOWN')}};
+    });
+    this.admissionDetails=this.admissionDetails.map(row=>{const route=routed.find(r=>r.symbol===row.symbol);return route?{...row,executable:route.longExecutable||route.shortExecutable,reason:route.reason,reasonText:route.reason,riskHeadroom:route.riskHeadroom}:row;});
     const routeGeneration=candidates.length?Math.max(...candidates.map((candidate:any)=>candidate.selectionGeneration??0)):this.state.marketGeneration,summary={...admission.summary,routedCandidates:routed,executableCandidateCount:routed.filter(x=>x.longExecutable||x.shortExecutable).length,directionBudget:budget,generation:routeGeneration,capitalVersion:capitalFactVersion(this.state),nextRecheckAt:nextAt};
     this.state.runtimeControl={...current,capital:summary,nextCapitalCheckAt:nextAt};
     this.events.publish('CAPITAL_ROUTE_EVALUATED',{capitalVersion:summary.capitalVersion,selectionGeneration:routeGeneration,executableCandidateCount:summary.executableCandidateCount,evaluatedAt:summary.evaluatedAt});

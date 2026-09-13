@@ -20,3 +20,15 @@ describe('V3.8.0 compact one-shot and WAIT safety',()=>{
   it('unchanged or expired WAIT consumes no AI call; material triggers require confirmation and survive serialization',()=>{const m=MarketSymbolSnapshotSchema.parse({...packet.market,symbol:packet.symbol,dataCompleteness:1});m.quote.ts=Date.now();const d=entryDecisionParse(decision,packet),w=waitingContext(d,'run',m),restored=JSON.parse(JSON.stringify(w));expect(waitTrigger(restored,m)).toBeNull();m.quote.bid=w.condition.price;expect(waitTrigger(restored,m)).toBe('PRICE_TRIGGERED');expect(restored.orderAuthorization).toBe(false);expect(waitTrigger(restored,m,w.expiresAt)).toBeNull();m.quote.bid=packet.market.quote.bid;m.technical['15m'].trend='DOWN';expect(waitTrigger(restored,m)).toBe('MATERIAL_STATE_CHANGE');});
   it('captures token usage on schema failure',async()=>{vi.stubGlobal('fetch',vi.fn(async()=>new Response(JSON.stringify({choices:[{message:{content:'{"decision":"PLACE_LONG"}'}}],usage:{prompt_tokens:123,completion_tokens:20}}),{status:200})));try{const client=new OpenAiCompatibleClient();await expect(client.runJson({baseUrl:'http://isolated.invalid/v1',model:'test',prompt:'fixture',schemaName:'V370',timeoutMs:1000,parse:()=>{throw new Error('missing price');}})).rejects.toMatchObject({stage:'PARSE',usage:{inputTokens:123,outputTokens:20},rawOutput:'{"decision":"PLACE_LONG"}'});}finally{vi.unstubAllGlobals();}});
 });
+
+
+describe('V392 final canary protocol regression',()=>{
+  it('accepts the supplied economics fact through the real parser while rejecting invented references',()=>{
+    const q=packet.market.quote,place={...decision,decision:'PLACE_LONG',waitCondition:null,idealPrice:q.bid,acceptablePriceRange:{min:q.bid,max:q.ask},horizonMinutes:3,supportingEvidenceRefs:['economics.entry']};
+    expect(compactEntryFacts(packet).validFactIds).toContain('economics.entry');
+    expect(entryDecisionParse(place,packet).decision).toBe('PLACE_LONG');
+    expect(()=>entryDecisionParse({...place,supportingEvidenceRefs:['economics.invented']},packet)).toThrow(/unknown supportingEvidenceRefs/);
+    const tp={targetPrice:0.2032,acceptableTargetRange:{min:0.2035,max:0.2032},targetHorizonMinutes:15,targetReason:'frozen canary reversed bounds',evidenceRefs:['technical.15m.confirmed']};
+    expect(()=>entryDecisionParse({...place,profitTakePlan:tp},packet)).toThrow();
+  });
+});

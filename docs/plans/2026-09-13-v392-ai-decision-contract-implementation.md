@@ -30,3 +30,19 @@
 3. 已提交：`fix(ai): enforce no-edge decision contract`。可在用户明确的手动 Engine 启动后进行 Testnet 对比观察；本会话未启动、停止或重启 Engine。
 
 下一条命令：`powershell -ExecutionPolicy Bypass -File scripts/start-zdj-lan.ps1`（仅在用户明确要求手动启动时）。
+
+## 本轮最终 Canary 证据与最小修复（2026-09-13 18:04）
+
+证据包：`V392-ai-contract-canary-20260913-174648.zip`。15.02055 分钟，20 Primary（79.89055/h），11 PLACE、8 FAILED、1 窗口末 RUNNING；无 NO_EDGE。正式稳定样本 0，不能作为稳定基线验收。
+
+- P0：7 次失败引用真实 `economics.entry`，该事实已提供却漏入 `compactFactIds`。只补齐已提供事实白名单；继续拒绝未知引用。
+- 另一次 TP min/max 颠倒：保留严格拒绝，不自动交换范围、不改变 TP 策略。对应负向回归测试。
+- P1：所有 28 个调度 PRIMARY_START 均无 triggerReason（其中 8 个在 preflight 阻断，实际模型调用20）。补齐 READY/WAIT/首次/恢复的触发来源，并随真实 AI_RUN_STARTED 持久化；不把调度事件当模型调用。
+- P1：失败run未写 decision_episodes。补记失败证据，明确记录类型为 PRIMARY_INFERENCE_RUN，marketOpportunityEpisodeId 未建立时为 null；本轮无拒绝生命周期证据，不凭空分组或声称机会数。
+- NO_EDGE TTL、timing event、细粒度空间变化风险保留待证：本轮没有 NO_EDGE，不据此修改门控，更不能声称已验收。
+
+顺序：最小修改 → targeted机制回归 → 一次 verify。新构建的在线验证需要用户另行明确手动Engine生命周期指令；不能在已有Engine上假称新代码生效。
+
+AI Contract阶段结果：targeted 46 tests PASS；原始8条失败离线重放7条经济引用恢复、1条非法TP范围继续拒绝。最终收敛轮唯一一次完整 `npm run verify` exit 1；后续兼容性修复的 targeted tests、typecheck、build 通过，未重跑完整 verify。不得将最终收敛轮写成完整 verify PASS。最终验收记录见同目录 final-acceptance.md。
+
+2026-09-13 18:38：完成用户授权的一次停止旧PID3420/启动新PID40156，复用原数据。修复后两段5分钟Canary共20个READY/TP READY样本，但37次RISK_HEADROOM_EXHAUSTED preflight阻断、实际Primary=0。结果INCONCLUSIVE，非PASS；不commit/push、不触发新CI，不再重启。完整结果见final-acceptance.md最新章节。

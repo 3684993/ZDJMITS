@@ -66,3 +66,18 @@ it('reuses a single trade sync baseline across concurrent sync requests',async()
  const dir=await mkdtemp(path.join(os.tmpdir(),'zdj-baseline-'));paths.push(dir);const store=new SettingsStore(path.resolve('../../config'),dir);await store.load();
  try{const results=await Promise.all([store.tradeSyncBaseline(dir),store.tradeSyncBaseline(dir)]);expect(results[0]).toBe(results[1]);const first=await stat(results[0]!);store.persistRuntime({newFact:true});expect(await store.tradeSyncBaseline(dir)).toBe(results[0]);expect((await stat(results[0]!)).mtimeMs).toBe(first.mtimeMs);}finally{store.close();}
 });
+
+
+describe('Live inference evidence',()=>{
+  it('persists failed Primary runs as inference evidence without inventing an opportunity',async()=>{
+    const dir=await mkdtemp(path.join(os.tmpdir(),'zdj-inference-'));paths.push(dir);
+    const store=new SettingsStore(path.resolve(process.cwd(),'../../config'),dir);await store.load();
+    try {
+      const run={id:'failed-primary',symbol:'BTCUSDT',role:'PRIMARY_BRAIN',startedAt:100,completedAt:200,status:'FAILED',triggerReason:'PERMISSION_CHANGED',failure:{errorCode:'AI_SCHEMA_INVALID'},inputPreview:'{}'};
+      store.recordRuntimeEvent({id:'failure',type:'AI_RUN_FAILED',ts:200,symbol:'BTCUSDT',payload:run});
+      const row=store.getDecisionEpisodeByRun(run.id);expect(row).not.toBeNull();
+      expect(JSON.stringify(row)).toContain('PRIMARY_INFERENCE_RUN');expect(JSON.stringify(row)).toContain('PERMISSION_CHANGED');expect(JSON.stringify(row)).toContain('AI_SCHEMA_INVALID');
+      expect(JSON.stringify(row)).toContain('marketOpportunityEpisodeId');
+    } finally {store.close();}
+  });
+});

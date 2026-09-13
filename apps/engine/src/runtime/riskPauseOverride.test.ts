@@ -24,6 +24,10 @@ describe('Testnet risk-pause override',()=>{
       runtime.state.settings.releasePolicy={lifecycleVersion:382};runtime.state.executionGovernance={...runtime.state.executionGovernance,mode:'AUTO_RUNNING'};
       runtime.runtimeControl.evaluate(true);
       expect(runtime.state.runtimeControl.mode).toBe('PAUSED_DAILY_RISK_LIMIT');
+      expect(runtime.state.runtimeControl.capital.executableCandidateCount).toBe(0);
+      const blockedRoute:any=runtime.state.runtimeControl.capital.routedCandidates[0];
+      expect(blockedRoute.riskHeadroom.LONG.blockers).toEqual(['REJECT_DAILY_DRAWDOWN']);
+      expect(blockedRoute.physicalCapacity.LONG).toBe(true);
       const result=runtime.manualRiskPauseOverride('验收：人工复核后继续 Testnet AUTO');
       expect(result.status).toBe('AUTO_RUNNING');
       expect(runtime.runtimeControl.canDispatch()).toBe(true);

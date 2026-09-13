@@ -1,12 +1,14 @@
 import type { MarketSymbolSnapshot, Position, Side, SystemSettings } from '@zdj/contracts';
 import { uid } from '@zdj/core';
+import { computeExecutableRiskHeadroom } from './executableRiskHeadroom.js';
+export { clusterFor, computeExecutableRiskHeadroom } from './executableRiskHeadroom.js';
 
 export type DataQualityStatus='GOOD'|'DEGRADED'|'UNTRUSTED';
 export type InvalidationType='PRICE_LEVEL'|'ATR_BREAK'|'STRUCTURE_BREAK'|'TIME_EXPIRY'|'DATA_INVALIDATED'|'NONE';
 export interface EntryInvalidationSpec { id:string; type:InvalidationType; triggerPrice:number|null; referencePrice:number; timeframe:string; expiryAt:number|null; maxLossUsd:number|null; maxLossPctEquity:number|null; atrDistance:number|null; reasonCode:string; evidenceRefs:string[]; generatedAt:number; snapshotId:string; }
 export interface ProtectionShadowResult { status:'ARMED'|'WOULD_TRIGGER'|'EXPIRED'|'INVALID_DATA'|'NOT_APPLICABLE'; wouldTriggerAt:number|null; theoreticalExitPrice:number|null; theoreticalGrossPnl:number|null; estimatedFees:number|null; theoreticalNetPnl:number|null; mfe:number|null; mae:number|null; }
 export interface MarketQualityResult { id:string; status:DataQualityStatus; reasons:string[]; checkedAt:number; snapshotId:string; }
-export interface RiskEnvelope { id:string; status:'PASS'|'REJECT_GROSS_EXPOSURE'|'REJECT_DIRECTION_EXPOSURE'|'REJECT_CORRELATED_CLUSTER'|'REJECT_LIQUIDATION_BUFFER'|'REJECT_DAILY_DRAWDOWN'|'REJECT_RISK_PER_TRADE'; equity:number; grossNotional:number; grossNotionalPct:number; longNotional:number; shortNotional:number; longExposurePct:number; shortExposurePct:number; cluster:string; clusterExposurePct:number; quoteAssetMarginUsage:number; maxPositions:number; reservedIntents:number; workingOrders:number; liquidationBufferEstimate:number; perTradeRiskUsd:number; perTradeRiskPctEquity:number; dailyDrawdownPct:number; expectedAdverseMovePct:number; riskLimitedNotional:number; finalNotional:number; reasons:string[]; createdAt:number; }
+export interface RiskEnvelope { id:string; status:'PASS'|'REJECT_GROSS_EXPOSURE'|'REJECT_DIRECTION_EXPOSURE'|'REJECT_CORRELATED_CLUSTER'|'REJECT_CLUSTER_DIRECTION_EXPOSURE'|'RISK_FACTS_INVALID'|'REJECT_LIQUIDATION_BUFFER'|'REJECT_DAILY_DRAWDOWN'|'REJECT_RISK_PER_TRADE'; equity:number; grossNotional:number; grossNotionalPct:number; longNotional:number; shortNotional:number; longExposurePct:number; shortExposurePct:number; cluster:string; clusterExposurePct:number; quoteAssetMarginUsage:number; maxPositions:number; reservedIntents:number; workingOrders:number; liquidationBufferEstimate:number; perTradeRiskUsd:number; perTradeRiskPctEquity:number; dailyDrawdownPct:number; expectedAdverseMovePct:number; riskLimitedNotional:number; finalNotional:number; reasons:string[]; createdAt:number; }
 
 export function marketDataQuality(snapshot:MarketSymbolSnapshot, now=Date.now()):MarketQualityResult {
   const q=snapshot.quote, reasons:string[]=[];
@@ -45,7 +47,6 @@ export function evaluateProtectionShadow(position:Pick<Position,'side'|'entryPri
   return {status:hit?'WOULD_TRIGGER':'ARMED',wouldTriggerAt:hit?now:null,theoreticalExitPrice:spec.triggerPrice,theoreticalGrossPnl:gross,estimatedFees:fees,theoreticalNetPnl:gross-fees,mfe:Math.max(0,position.side==='LONG'?position.markPrice-position.entryPrice:position.entryPrice-position.markPrice)*position.quantity,mae:Math.min(0,position.side==='LONG'?position.markPrice-position.entryPrice:position.entryPrice-position.markPrice)*position.quantity};
 }
 
-export function clusterFor(symbol:string){const s=symbol.toUpperCase();if(s.startsWith('BTC'))return'BTC';if(s.startsWith('ETH'))return'ETH_L1';if(/DOGE|SHIB|PEPE|BONK|BOME|FLOKI|MEME/.test(s))return'MEME';if(/FET|RNDR|TAO|WLD|AI/.test(s))return'AI';if(/UNI|AAVE|MKR|CRV|LDO/.test(s))return'DEFI';if(/BNB|OKB|LEO|KCS/.test(s))return'EXCHANGE';return'OTHER';}
 
 export function directionBudget(settings:SystemSettings,equityInput:number,positions:Position[],evaluatedAt=Date.now()){
   const equity=Math.max(1,equityInput),gross=positions.reduce((n,p)=>n+Math.abs(p.quantity*p.markPrice),0),long=positions.filter(p=>p.side==='LONG').reduce((n,p)=>n+p.quantity*p.markPrice,0),short=positions.filter(p=>p.side==='SHORT').reduce((n,p)=>n+p.quantity*p.markPrice,0),grossAvailable=Math.max(0,equity*settings.riskGovernance.maxGrossExposurePct-gross),directionLimit=equity*settings.riskGovernance.maxDirectionExposurePct;
@@ -53,7 +54,19 @@ export function directionBudget(settings:SystemSettings,equityInput:number,posit
 }
 
 export function buildRiskEnvelope(input:{settings:SystemSettings;equity:number;positions:Position[];symbol:string;side:Side;plannedNotional:number;reservedIntents:number;workingOrders:number;dailyDrawdownPct:number;expectedAdverseMovePct:number;quoteMarginUsage:number;now?:number}):RiskEnvelope {
-  const now=input.now??Date.now(), equity=Math.max(1,input.equity), current=input.positions.reduce((n,p)=>n+Math.abs(p.quantity*p.markPrice),0), long=input.positions.filter(p=>p.side==='LONG').reduce((n,p)=>n+p.quantity*p.markPrice,0), short=input.positions.filter(p=>p.side==='SHORT').reduce((n,p)=>n+p.quantity*p.markPrice,0), budget=directionBudget(input.settings,equity,input.positions,now), gross=current+input.plannedNotional, plannedSide=input.side==='LONG'?long+input.plannedNotional:short+input.plannedNotional, cluster=clusterFor(input.symbol), clusterNow=input.positions.filter(p=>clusterFor(p.symbol)===cluster).reduce((n,p)=>n+Math.abs(p.quantity*p.markPrice),0), clusterPct=(clusterNow+input.plannedNotional)/equity, perTradeRiskUsd=equity*(input.settings.riskGovernance.perTradeRiskPctEquity??.01), move=Math.max(.0001,input.expectedAdverseMovePct), riskLimitedNotional=perTradeRiskUsd/move, finalNotional=Math.min(input.plannedNotional,riskLimitedNotional), reasons:string[]=[];
-  let status:RiskEnvelope['status']='PASS';const g=input.settings.riskGovernance;if(input.plannedNotional>budget.grossAvailableNotionalUsd+1e-8){status='REJECT_GROSS_EXPOSURE';reasons.push('GROSS_EXPOSURE_LIMIT');}else if(input.plannedNotional>(input.side==='LONG'?budget.longAvailableNotionalUsd:budget.shortAvailableNotionalUsd)+1e-8){status='REJECT_DIRECTION_EXPOSURE';reasons.push('DIRECTION_EXPOSURE_LIMIT');}else if(clusterPct>g.maxClusterExposurePct){status='REJECT_CORRELATED_CLUSTER';reasons.push('CLUSTER_EXPOSURE_LIMIT');}else if(input.dailyDrawdownPct>g.maxDailyDrawdownPct){status='REJECT_DAILY_DRAWDOWN';reasons.push('DAILY_DRAWDOWN_LIMIT');}else if(input.plannedNotional>riskLimitedNotional){reasons.push('RISK_SIZING_CLAMP');}if(input.plannedNotional>0&&finalNotional<1){status='REJECT_RISK_PER_TRADE';reasons.push('RISK_NOT_EXECUTABLE');}
+  const now=input.now??Date.now(), h=computeExecutableRiskHeadroom(input), equity=input.equity,
+    current=h.gross,long=h.long,short=h.short,gross=current+input.plannedNotional,
+    cluster=h.cluster,clusterPct=(h.clusterNow+input.plannedNotional)/equity,
+    perTradeRiskUsd=h.perTradeRiskUsd,move=h.expectedAdverseMovePct,riskLimitedNotional=h.remaining.riskSizing,
+    finalNotional=Math.min(input.plannedNotional,riskLimitedNotional),reasons:string[]=[],g=input.settings.riskGovernance;
+  let status:RiskEnvelope['status']='PASS';
+  if(h.reason==='RISK_FACTS_INVALID'){status='RISK_FACTS_INVALID';reasons.push(status);}
+  else if(input.plannedNotional>h.remaining.gross+1e-8){status='REJECT_GROSS_EXPOSURE';reasons.push('GROSS_EXPOSURE_LIMIT');}
+  else if(input.plannedNotional>h.remaining.direction+1e-8){status='REJECT_DIRECTION_EXPOSURE';reasons.push('DIRECTION_EXPOSURE_LIMIT');}
+  else if(input.plannedNotional>h.remaining.cluster+1e-8){status='REJECT_CORRELATED_CLUSTER';reasons.push('CLUSTER_EXPOSURE_LIMIT');}
+  else if(input.plannedNotional>h.remaining.clusterDirection+1e-8){status='REJECT_CLUSTER_DIRECTION_EXPOSURE';reasons.push('CLUSTER_DIRECTION_EXPOSURE_LIMIT');}
+  else if(input.dailyDrawdownPct>g.maxDailyDrawdownPct){status='REJECT_DAILY_DRAWDOWN';reasons.push('DAILY_DRAWDOWN_LIMIT');}
+  else if(input.plannedNotional>riskLimitedNotional){reasons.push('RISK_SIZING_CLAMP');}
+  if(input.plannedNotional>0&&finalNotional<1){status='REJECT_RISK_PER_TRADE';reasons.push('RISK_NOT_EXECUTABLE');}
   return {id:uid('risk'),status,equity,grossNotional:gross,grossNotionalPct:gross/equity,longNotional:long,longExposurePct:(input.side==='LONG'?long+input.plannedNotional:long)/equity,shortNotional:short,shortExposurePct:(input.side==='SHORT'?short+input.plannedNotional:short)/equity,cluster,clusterExposurePct:clusterPct,quoteAssetMarginUsage:input.quoteMarginUsage,maxPositions:input.settings.portfolio.maxPositions,reservedIntents:input.reservedIntents,workingOrders:input.workingOrders,liquidationBufferEstimate:Math.max(0,1-gross/equity),perTradeRiskUsd,perTradeRiskPctEquity:perTradeRiskUsd/equity,dailyDrawdownPct:input.dailyDrawdownPct,expectedAdverseMovePct:move,riskLimitedNotional,finalNotional,reasons,createdAt:now};
 }

@@ -23,3 +23,15 @@ it('fails the final Entry guard under Binance pressure before checking allocatio
  const state=new RuntimeState(settings),entry=new EntryCoordinator(state,{} as never,{} as never,{} as never,new EventBus());expect((entry as any).executionHardBlock(intent)).toBe('BINANCE_BUDGET_SATURATED');
  }finally{vi.useRealTimers();}
 });
+
+
+describe('Primary trigger provenance',()=>{
+  it('retains the release cause through queue/start and replaces it at the next READY',()=>{
+    const state=new RuntimeState(settings),entry=new EntryCoordinator(state,{} as never,{} as never,{} as never,new EventBus()),move=(status:string,reason:string)=>(entry as any).transition('BTCUSDT',status,reason);
+    expect(move('PRIMARY_QUEUED','SCHEDULER_DISPATCH').triggerReason).toBe('FIRST_REVIEW');
+    move('READY','PERMISSION_CHANGED');move('PRIMARY_QUEUED','SCHEDULER_DISPATCH');
+    expect(move('PRIMARY_RUNNING','PRIMARY_START').triggerReason).toBe('PERMISSION_CHANGED');
+    move('READY','DECISION_CONTEXT_CHANGED');move('PRIMARY_QUEUED','WAITING_PRIMARY_SLOT');
+    expect(move('PRIMARY_RUNNING','PRIMARY_START').triggerReason).toBe('DECISION_CONTEXT_CHANGED');
+  });
+});

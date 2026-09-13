@@ -3,7 +3,7 @@ import type {EntryIntelligencePacket} from '@zdj/contracts';
 const primaryFrames=['1m','5m','15m'] as const;
 
 export function compactFactIds(p:EntryIntelligencePacket):string[]{
-  const ids=['quote.top','microstructure.book5','permissions.direction','context.market','execution.recentTrades'];
+  const ids=['quote.top','microstructure.book5','permissions.direction','context.market','execution.recentTrades','economics.entry'];
   for(const tf of primaryFrames)ids.push(`technical.${tf}.confirmed`);
   if(p.market.technical['4h'])ids.push('technical.4h.context');
   if(p.market.technical['1h'])ids.push('technical.1h.context');

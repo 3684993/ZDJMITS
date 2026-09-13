@@ -1,6 +1,7 @@
 import type { EntryOrder, Side } from '@zdj/contracts';
 
 export type PendingEntryRiskExposure={id:string;symbol:string;side:Side|'BOTH';notionalUsd:number;reservationId:string|null;orderId:string|null;source:'ORDER'|'RESERVATION'};
+export type PendingEntryRiskExposureList=PendingEntryRiskExposure[]&{strictPlannedNotional?:boolean};
 
 const ACTIVE_ORDER=new Set(['NEW','SUBMITTING','UNKNOWN','WORKING','PARTIALLY_FILLED']);
 const ACTIVE_RESERVATION=new Set(['RESERVED','WORKING']);
@@ -23,9 +24,14 @@ export function entryIdentityTombstone(order:EntryOrder){
  * risk exposure per reservation. Orders win over their reservation so a
  * partial fill only reserves the remaining order quantity. Unreserved active
  * orders are still counted fail-closed.
+ *
+ * Supplying priorityReservationId means the snapshot is for the final JIT
+ * validation of that reservation. In that mode the exact planned/actual
+ * notional must fit the remaining headroom; routing/preflight snapshots remain
+ * capacity-only and may safely clamp recommendations down to finalNotional.
  */
-export function collectPendingEntryRiskExposures(state:any,options:{now?:number;excludeReservationId?:string|null;excludeOrderId?:string|null;priorityReservationId?:string|null}={}){
-  const now=options.now??Date.now(),out:PendingEntryRiskExposure[]=[],seenReservations=new Set<string>(),seenOrders=new Set<string>();
+export function collectPendingEntryRiskExposures(state:any,options:{now?:number;excludeReservationId?:string|null;excludeOrderId?:string|null;priorityReservationId?:string|null}={}):PendingEntryRiskExposureList{
+  const now=options.now??Date.now(),out:PendingEntryRiskExposure[]=[] ,seenReservations=new Set<string>(),seenOrders=new Set<string>();
   const reservations=[...state.entryReservations.values()].filter((row:any)=>ACTIVE_RESERVATION.has(String(row.status))&&Number(row.expiresAt)>now);
   const current=options.priorityReservationId?state.entryReservations.get(options.priorityReservationId):null;
   const beforeCurrent=(row:any)=>!current||Number(row.createdAt??0)<Number(current.createdAt??0)||(Number(row.createdAt??0)===Number(current.createdAt??0)&&String(row.id)<String(current.id));
@@ -49,5 +55,7 @@ export function collectPendingEntryRiskExposures(state:any,options:{now?:number;
     const remainingQty=Math.max(0,Number(order.quantity)-Number(order.filledQuantity??0)),notionalUsd=remainingQty*Number(order.price);
     if(Number.isFinite(notionalUsd)&&notionalUsd>0)out.push({id:`order:${order.id}`,symbol:order.symbol,side:order.side,notionalUsd,reservationId:order.reservationId??null,orderId:order.id,source:'ORDER'});
   }
-  return out.sort((a,b)=>a.id.localeCompare(b.id));
+  const result=out.sort((a,b)=>a.id.localeCompare(b.id)) as PendingEntryRiskExposureList;
+  if(options.priorityReservationId)Object.defineProperty(result,'strictPlannedNotional',{value:true,enumerable:false});
+  return result;
 }

@@ -50,7 +50,7 @@ it('hydrates a cold snapshot in bounded REST phases with 15m candles first',asyn
     if(path.includes('/ticker/bookTicker?'))return{bidPrice:'99.9',askPrice:'100.1'};
     if(path.includes('/depth?'))return{bids:[['99.9','10']],asks:[['100.1','10']]};
     if(path.includes('/openInterest?'))return{openInterest:'123'};
-    if(path.includes('/klines?')){const limit=Number(new URLSearchParams(path.split('?')[1]).get('limit')??80),now=Date.now();return Array.from({length:limit},(_,i)=>[now-(limit-i)*60_000,'100','101','99','100','10',now-(limit-i-1)*60_000-1,'1000',10]);}
+    if(path.includes('/klines?')){const params=new URLSearchParams(path.split('?')[1]),limit=Number(params.get('limit')??80),interval=params.get('interval')??'1m',period=({"1m":60_000,"5m":300_000,"15m":900_000,"1h":3_600_000,"4h":14_400_000,"1d":86_400_000,"1w":604_800_000} as Record<string,number>)[interval]!,end=Math.floor(Date.now()/period)*period;return Array.from({length:limit},(_,i)=>[end-(limit-i)*period,'100','101','99','100','10',end-(limit-i-1)*period-1,'1000',10]);}
     return[];
   });
   const provider=new BinancePublicMarketDataProvider({json,environment:()=> 'TESTNET',streamUrl:()=>'',proxyAgent:()=>undefined,restRoute:()=>({routeIdentity:'test'})} as any),stream=(provider as any).stream;

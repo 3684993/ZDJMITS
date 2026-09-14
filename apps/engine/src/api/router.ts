@@ -1039,7 +1039,7 @@ export function createApiRouter(runtime: EngineRuntime) {
     const q = req.query as Record<string, string | undefined>,
       page = Math.max(1, Number(q.page ?? 1)),
       limit = Math.min(100, Math.max(1, Number(q.limit ?? 20))),
-      integrity = normalizeRecords();
+      integrity = new TradeRecordIntegrityService(runtime.state).summary();
     let rows = [...runtime.state.tradeRecords.values()].sort(byClosedAtDesc);
     const category = q.category ?? "COMPLETE";
     if (category === "ISSUES")
@@ -1068,7 +1068,7 @@ export function createApiRouter(runtime: EngineRuntime) {
           row.classification === "COMPLETE" &&
           row.status === "CLOSED" &&
           row.recordCompleteness === "COMPLETE" &&
-          row.feeCompleteness === "COMPLETE",
+          row.feeCompleteness === "COMPLETE" && row.fundingAttributionStatus === "EXACT" && row.netPnl != null,
       ),
       total = rows.length;
     res.json({
@@ -1077,6 +1077,12 @@ export function createApiRouter(runtime: EngineRuntime) {
       total,
       items: rows.slice((page - 1) * limit, page * limit),
       summary: {
+        observedClosed: [...runtime.state.tradeRecords.values()].filter(row=>row.closedAt!=null||row.observedClosedAt!=null).length,
+        awaitingReconciliation: [...runtime.state.tradeRecords.values()].filter(row=>(row.closedAt!=null||row.observedClosedAt!=null)&&!canonical.includes(row)).length,
+        completeClosed: [...runtime.state.tradeRecords.values()].filter(row=>row.status==='CLOSED'&&row.classification==='COMPLETE').length,
+        partiallyClosed: [...runtime.state.tradeRecords.values()].filter(row=>row.status==='PARTIALLY_CLOSED').length,
+        unknownCount: [...runtime.state.tradeRecords.values()].filter(row=>row.classification!=='COMPLETE'||row.fundingAttributionStatus!=='EXACT').length,
+        tradingNetExFunding: [...runtime.state.tradeRecords.values()].filter(row=>row.canonical&&row.status==='CLOSED'&&row.classification==='COMPLETE'&&row.tradingNetPnlExFunding!=null).reduce((sum,row)=>sum+row.tradingNetPnlExFunding!,0),
         netPnl: canonical.reduce((sum, row) => sum + (row.netPnl ?? 0), 0),
         grossIncome: canonical.reduce(
           (sum, row) => sum + Math.max(0, row.grossRealizedPnl ?? 0),
@@ -1107,7 +1113,6 @@ export function createApiRouter(runtime: EngineRuntime) {
     });
   });
   r.get("/trade-records/:id", (req, res) => {
-    normalizeRecords();
     const record = runtime.state.tradeRecords.get(req.params.id);
     if (!record)
       return res
@@ -1148,14 +1153,13 @@ export function createApiRouter(runtime: EngineRuntime) {
     });
   });
   r.get("/experience", (_q, res) => {
-    normalizeRecords();
     const records = [...runtime.state.tradeRecords.values()].filter(
         (record) =>
           record.canonical &&
           record.classification === "COMPLETE" &&
           record.status === "CLOSED" &&
           record.recordCompleteness === "COMPLETE" &&
-          record.feeCompleteness === "COMPLETE",
+          record.feeCompleteness === "COMPLETE" && record.fundingAttributionStatus === "EXACT" && record.netPnl != null,
       ),
       ids = new Set(records.map((record) => record.tradeId)),
       samples = [...runtime.state.experienceSamples.values()]

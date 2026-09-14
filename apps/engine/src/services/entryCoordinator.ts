@@ -182,7 +182,7 @@ export class EntryCoordinator {
     const existing=[...this.state.entryOrders.values()].find(x=>x.intentId===intent.id&&['NEW','SUBMITTING','UNKNOWN','WORKING','PARTIALLY_FILLED'].includes(x.status));
     if(existing)return existing;
     const id=`entry_${intent.id}`;
-    const order:EntryOrder={id,clientOrderId:binanceClientOrderIdFactory.stable('ML',intent.id),exchangeOrderId:null,symbol:intent.symbol,side:intent.side,quantity,price,filledQuantity:0,leverage:intent.leverage,status:'NEW',createdAt:now,updatedAt:now,absoluteExpiresAt:intent.absoluteExpiresAt,repriceCount:0,intentId:intent.id,reachability,reservationId:intent.reservationId,decisionChainId:intent.decisionChainId??intent.brainRunId};
+    const order:EntryOrder={id,cycleId:`cycle_${id}`,clientOrderId:binanceClientOrderIdFactory.stable('ML',intent.id),exchangeOrderId:null,symbol:intent.symbol,side:intent.side,quantity,price,filledQuantity:0,leverage:intent.leverage,status:'NEW',createdAt:now,updatedAt:now,absoluteExpiresAt:intent.absoluteExpiresAt,repriceCount:0,intentId:intent.id,reachability,reservationId:intent.reservationId,decisionChainId:intent.decisionChainId??intent.brainRunId};
     this.state.entryOrders.set(id,order);return order;
   }
   private async submitExactlyOnce(intent:EntryIntent,order:EntryOrder,resumedFrom?:string){
@@ -341,7 +341,7 @@ export class EntryCoordinator {
       const quantity = sizeEntryQuantity(plan.notionalUsd,maker.price,market.quote.stepSize,market.quote.minQty,market.quote.minNotional);
       if(quantity<=0||quantity*maker.price>plan.notionalUsd+1e-8) {this.state.releaseEntryReservation(reservationId);this.events.publish('ENTRY_ORDER_BLOCKED',{intentId:intent.id,brainRunId:result.runId,reason:'MINIMUM_SIZE_EXCEEDS_ALLOCATION'},symbol);this.cooldown(symbol,'MINIMUM_SIZE_EXCEEDS_ALLOCATION',60_000);return;}
       try {await this.exchange.setLeverage(symbol, leverage);} catch (error) {const reason=error instanceof Error?error.message:String(error);this.state.releaseEntryReservation(reservationId);this.events.publish("ENTRY_ORDER_BLOCKED",{intentId:intent.id,brainRunId:result.runId,reason,stage:"SET_LEVERAGE"},symbol);this.cooldown(symbol, reason, 60_000);return;}
-      const order: EntryOrder = {id:`entry_${intent.id}`,clientOrderId:binanceClientOrderIdFactory.stable("ML", intent.id),exchangeOrderId:null,symbol,side:intent.side,quantity,price:maker.price,filledQuantity:0,leverage,status:"NEW",createdAt:now,updatedAt:now,absoluteExpiresAt:intent.absoluteExpiresAt,repriceCount:0,intentId:intent.id,reachability:maker.reachability,reservationId};
+      const order: EntryOrder = {cycleId:`cycle_entry_${intent.id}`,id:`entry_${intent.id}`,clientOrderId:binanceClientOrderIdFactory.stable("ML", intent.id),exchangeOrderId:null,symbol,side:intent.side,quantity,price:maker.price,filledQuantity:0,leverage,status:"NEW",createdAt:now,updatedAt:now,absoluteExpiresAt:intent.absoluteExpiresAt,repriceCount:0,intentId:intent.id,reachability:maker.reachability,reservationId};
       this.state.entryOrders.set(order.id,order);
       try {
         const latest=this.state.snapshots.get(symbol),dataError=entryDataError(latest);if(dataError||Date.now()>=intent.absoluteExpiresAt)throw new Error(dataError??'AI_AUTHORIZATION_EXPIRED');if(this.state.runtimeControl.mode!=='RUNNING'||this.state.executionGovernance.mode!=='AUTO_RUNNING'||this.state.settings.connections.executionMode!=='TESTNET_ENABLED')throw new Error('EXECUTION_PERMISSION_CHANGED');

@@ -32,6 +32,7 @@ export const EntryIntentSchema = z.object({
 export type EntryIntent = z.infer<typeof EntryIntentSchema>;
 
 export const EntryOrderSchema = z.object({
+  cycleId:z.string().nullable().optional(),
   id: z.string(),
   exchangeOrderId: z.string().nullable(),
   symbol: z.string(),
@@ -61,6 +62,7 @@ export const EntryOrderSchema = z.object({
 export type EntryOrder = z.infer<typeof EntryOrderSchema>;
 
 export const PositionSchema = z.object({
+  cycleId:z.string().nullable().optional(),
   id: z.string(),
   symbol: z.string(),
   side: SideSchema,
@@ -91,6 +93,7 @@ export const PositionSchema = z.object({
 export type Position = z.infer<typeof PositionSchema>;
 
 export const TakeProfitOrderSchema = z.object({
+  cycleId:z.string().nullable().optional(),
   id: z.string(),
   exchangeOrderId: z.string().nullable(),
   positionId: z.string(),
@@ -109,6 +112,12 @@ export const TradeRecordClassificationSchema = z.enum(['COMPLETE','PARTIAL','IMP
 export type TradeRecordClassification = z.infer<typeof TradeRecordClassificationSchema>;
 
 export const TradeRecordSchema = z.object({
+  positionId:z.string().nullable().optional(),
+  exitQty:z.number().nonnegative().optional(), remainingQty:z.number().nullable().optional(),
+  observedClosedAt:z.number().int().nullable().optional(),
+  tradingNetPnlExFunding:z.number().nullable().optional(),
+  fundingAttributionStatus:z.enum(['EXACT','UNKNOWN']).optional(),
+  pnlBasis:z.enum(['TRADING_NET_EX_FUNDING','CANONICAL_NET_WITH_FUNDING_UNKNOWN','CANONICAL_NET_WITH_FUNDING']).optional(),
   tradeId: z.string(), symbol: z.string(), direction: SideSchema,
   openedAt: z.number().int().nullable(), closedAt: z.number().int().nullable(), durationMs: z.number().int().nonnegative().nullable(),
   entryQty: z.number().nonnegative(), entryAveragePrice: z.number().positive().nullable(), exitAveragePrice: z.number().positive().nullable(),
@@ -136,6 +145,7 @@ export const ExperienceSampleSchema = z.object({
 export type ExperienceSample = z.infer<typeof ExperienceSampleSchema>;
 
 export const ExecutionFillSchema = z.object({
+  cycleId:z.string().nullable().optional(),
   fillId:z.string(),symbol:z.string(),direction:SideSchema,side:z.enum(['BUY','SELL']),positionSide:z.enum(['LONG','SHORT','BOTH']),orderId:z.string(),clientOrderId:z.string(),tradeId:z.string(),
   executionTime:z.number().int(),qty:z.number().positive(),price:z.number().positive(),realizedPnl:z.number(),commission:z.number().nonnegative(),commissionAsset:z.string(),commissionUsd:z.number().nullable(),maker:z.boolean(),source:z.enum(['USER_DATA_WS','EXCHANGE_AUDIT','SIMULATION']),attributionStatus:z.enum(['SYSTEM_ATTRIBUTED','EXTERNAL_OR_UNLINKED','PENDING']).default('PENDING'),decisionChainId:z.string().nullable().optional(),allocationPlanId:z.string().nullable().optional()
 });
@@ -154,6 +164,7 @@ export const ManualIntentSchema = z.object({
 export type ManualIntent = z.infer<typeof ManualIntentSchema>;
 
 export const ManualOrderSchema = z.object({
+  cycleId:z.string().nullable().optional(),
   id: z.string(), intentId: z.string(), exchangeOrderId: z.string().nullable(), positionId: z.string(), symbol: z.string(),
   side: z.enum(['BUY','SELL']), positionSide: z.enum(['LONG','SHORT','BOTH']).nullable(), type: z.enum(['LIMIT','MARKET']),
   quantity: z.number().positive(), price: z.number().positive().nullable(), reduceOnly: z.boolean(), postOnly: z.boolean(),

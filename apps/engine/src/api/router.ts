@@ -18,6 +18,7 @@ import { entryObservation } from '../services/entryObservation.js';
 
 export function createApiRouter(runtime: EngineRuntime) {
   const r = Router();
+  r.get('/observability/trading-quality',(_req,res)=>res.json({health:runtime.tradingQuality?.health()??{status:'UNAVAILABLE'},policy:runtime.state.settings.tradingQuality??{mode:'OFF'},report:runtime.tradingQuality?.report()??null}));
   r.get('/observability/entry',(req,res)=>{const identity=runtime.runtimeStatus(),start=Number(identity.lastRestartAt??Date.now()),requested=Number(req.query.since??start),since=Number.isFinite(requested)?Math.max(start,requested):start,untilValue=Number(req.query.until??Date.now()),until=Number.isFinite(untilValue)?Math.min(Date.now(),Math.max(since,untilValue)):Date.now(),archived=runtime.settingsStore.listEntryObservationRuns(since,until,10001),runs=[...new Map([...archived,...runtime.state.aiRuns].filter(r=>r.startedAt>=since&&r.startedAt<=until&&r.role==='PRIMARY_BRAIN').map(r=>[r.id,r])).values()].map(r=>r.completedAt&&r.completedAt>until?{...r,status:'RUNNING',decision:null}:r);res.json({...entryObservation({runs,intents:[...runtime.state.entryIntents.values()],orders:[...runtime.state.entryOrders.values()],fills:runtime.state.executionFills.filter(f=>f.executionTime<=until),runtime:identity}),window:{since,until,truncated:archived.length>=10001,source:'DURABLE_PRIMARY_ARCHIVE'}});});
   let snapshotVersion=0,publishTimer:NodeJS.Timeout|null=null,stopping=false;
   r.use((_q,res,next)=>stopping?res.status(503).json({error:{message:"ENGINE_STOPPING"}}):next());

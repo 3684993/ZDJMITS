@@ -6,6 +6,7 @@ on:
       - fix/v392-astra-final-fixes
       - gpt56-closeout-20260912
       - gpt56-optimize-v392-20260912
+      - trading-quality-stage1-3-20260914
   workflow_dispatch:
 
 permissions:

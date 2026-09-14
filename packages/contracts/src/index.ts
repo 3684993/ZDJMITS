@@ -10,3 +10,5 @@ export * from './runtimeControl.js';
 export * from './riskGovernance.js';
 export * from './version.js';
 export * from './liveValidation.js';
+
+export * from './opportunity.js';

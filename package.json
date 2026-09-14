@@ -14,7 +14,7 @@
     "test": "npm run test -ws --if-present",
     "build": "npm run build -ws --if-present",
     "verify:deps": "npm run build -w @zdj/contracts && npm run build -w @zdj/core",
-    "verify:scripts": "node --check scripts/maintain-storage.mjs && node --check scripts/reset-testnet-runtime-db.mjs && node --check scripts/prune-zdj-backups.mjs && node --check scripts/install-storage-retention.mjs && node --check scripts/audit-ai-entry-quality.mjs && node --check scripts/inspect-sqlite-capacity.mjs && node --test scripts/maintain-storage.test.mjs scripts/reset-testnet-runtime-db.test.mjs",
+    "verify:scripts": "node --check scripts/maintain-storage.mjs && node --check scripts/reset-testnet-runtime-db.mjs && node --check scripts/prune-zdj-backups.mjs && node --check scripts/install-storage-retention.mjs && node --check scripts/audit-ai-entry-quality.mjs && node --check scripts/audit-trading-quality-baseline.mjs && node --check scripts/inspect-sqlite-capacity.mjs && node --test scripts/maintain-storage.test.mjs scripts/reset-testnet-runtime-db.test.mjs",
     "verify": "npm run verify:deps && npm run verify:scripts && npm run typecheck && npm run build && npm run test",
     "acceptance": "powershell -ExecutionPolicy Bypass -File scripts/run-acceptance.ps1",
     "verify:isolated": "npm run build -w @zdj/contracts && npm run build -w @zdj/core && npm run typecheck && npm run build -w @zdj/engine && npm run build -w @zdj/dashboard -- --outDir ../../data-test/v390-build/dashboard && npm test",
@@ -23,7 +23,8 @@
     "storage:retention": "node scripts/install-storage-retention.mjs",
     "storage:inspect": "node scripts/inspect-sqlite-capacity.mjs",
     "storage:reset-testnet": "node scripts/reset-testnet-runtime-db.mjs",
-    "audit:ai-quality": "node scripts/audit-ai-entry-quality.mjs"
+    "audit:ai-quality": "node scripts/audit-ai-entry-quality.mjs",
+    "audit:trading-quality": "node scripts/audit-trading-quality-baseline.mjs"
   },
   "devDependencies": {"typescript": "^5.8.3"}
 }

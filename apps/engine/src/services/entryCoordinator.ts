@@ -202,7 +202,13 @@ export class EntryCoordinator {
         throw new Error('ENTRY_SUBMISSION_UNKNOWN_DURABLE_TASK_EXISTS');
       }
     }
-    this.events.publish('ENTRY_SUBMIT_ATTEMPTED',{brainRunId:intent.brainRunId,intentId:intent.id,orderId:order.id,clientOrderId:order.clientOrderId,environment:'TESTNET',resumedFrom:resumedFrom??null},intent.symbol);
+    try{this.events.publish('ENTRY_SUBMIT_ATTEMPTED',{brainRunId:intent.brainRunId,intentId:intent.id,orderId:order.id,clientOrderId:order.clientOrderId,environment:'TESTNET',resumedFrom:resumedFrom??null},intent.symbol);}catch(error){
+      // No exchange call has occurred yet. Retire the durable claim as locally unsent instead of
+      // leaving SUBMITTING to be mistaken for an exchange-UNKNOWN outcome.
+      const rejected={...order,status:'REJECTED' as const,factSource:'LOCAL_NOT_SUBMITTED',updatedAt:Date.now()};
+      this.state.entryOrders.set(order.id,rejected);this.journal?.save({intent,order:rejected});
+      throw new Error(`ENTRY_SUBMISSION_ABORTED_BEFORE_EXCHANGE:${error instanceof Error?error.message:String(error)}`);
+    }
     try{const placed=await this.exchange.placeEntry(submitting);this.journal?.save({intent,order:placed});return placed;}catch(error){
       try{const found=await this.exchange.findEntryByClientOrderId(submitting);if(found){this.journal?.save({intent,order:found});this.events.publish('ENTRY_SUBMIT_RESPONSE_RECOVERED',{intentId:intent.id,orderId:order.id,clientOrderId:order.clientOrderId},intent.symbol);return found;}}catch(queryError){this.events.publish('ENTRY_SUBMIT_QUERY_FAILED',{intentId:intent.id,message:queryError instanceof Error?queryError.message:String(queryError)},intent.symbol);}
       const reason=error instanceof Error?error.message:String(error);

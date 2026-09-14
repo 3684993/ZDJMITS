@@ -130,6 +130,81 @@ describe('real EntryCoordinator opportunity authorization',()=>{
 });
 
 describe('prospective runtime evidence collection',()=>{
+  it('does not leave an UNKNOWN durable claim when evidence storage fails before exchange submission',async()=>{
+    const dir=mkdtempSync(path.join(tmpdir(),'tq-atomic-submit-')),h=ready(),collector=new TradingQualityCollector(path.join(dir,'evidence.sqlite'),h.state,h.bus),durable:{current:any}={current:null};
+    try{
+      (h.coordinator as any).executionHardBlock=()=>null;
+      (h.coordinator as any).journal={claim:(_scope:string,value:any)=>{durable.current=structuredClone(value);return{acquired:true,record:value};},save:(value:any)=>{durable.current=structuredClone(value);}};
+      const intent:any={id:'atomic-intent',symbol:h.packet.symbol,side:'LONG',brainRunId:'atomic-run'},order:any={id:'entry_atomic',clientOrderId:'atomic-client',exchangeOrderId:null,symbol:intent.symbol,side:'LONG',quantity:1,price:100,filledQuantity:0,leverage:10,status:'NEW',createdAt:h.now,updatedAt:h.now,absoluteExpiresAt:h.now+60_000,repriceCount:0,intentId:intent.id,reachability:1};
+      (collector as any).db.exec('DROP TABLE tq_facts');
+      await expect((h.coordinator as any).submitExactlyOnce(intent,order)).rejects.toThrow('ENTRY_SUBMISSION_ABORTED_BEFORE_EXCHANGE');
+      expect(h.exchange.placeEntry).not.toHaveBeenCalled();
+      expect(h.state.entryOrders.get(order.id)).toMatchObject({status:'REJECTED',factSource:'LOCAL_NOT_SUBMITTED'});
+      expect(durable.current).toMatchObject({order:{status:'REJECTED',factSource:'LOCAL_NOT_SUBMITTED'}});
+      expect(durable.current.order.status).not.toBe('UNKNOWN');
+    }finally{collector.close();rmSync(dir,{recursive:true,force:true});}
+  });
+
+  it('100 idle symbols produce no path-mark writes',()=>{
+    const dir=mkdtempSync(path.join(tmpdir(),'tq-idle-marks-')),h=ready(),collector=new TradingQualityCollector(path.join(dir,'evidence.sqlite'),h.state,h.bus);
+    try{
+      for(let i=0;i<100;i++)h.state.snapshots.set(`IDLE${i}USDT`,{...structuredClone(h.m),symbol:`IDLE${i}USDT`} as any);
+      collector.tick(h.now);
+      expect((collector as any).db.prepare('SELECT COUNT(*) AS n FROM tq_marks').get().n).toBe(0);
+    }finally{collector.close();rmSync(dir,{recursive:true,force:true});}
+  });
+
+  it('samples an exactly attributed filled Entry and ignores idle-symbol quotes',async()=>{
+    const dir=mkdtempSync(path.join(tmpdir(),'tq-filled-path-')),h=ready(),file=path.join(dir,'evidence.sqlite'),collector=new TradingQualityCollector(file,h.state,h.bus);
+    h.state.settings.tradingQuality!.positionObservationHorizonMs=60_000;
+    try{
+      h.exchange.placeEntry.mockImplementation(async(o:any)=>({...o,status:'WORKING',exchangeOrderId:'exact-entry'}));await h.run();
+      const order=[...h.state.entryOrders.values()][0],positions=new PositionService(h.state,h.bus);
+      for(let i=0;i<100;i++)h.state.snapshots.set(`IDLE${i}USDT`,{...structuredClone(h.m),symbol:`IDLE${i}USDT`} as any);
+      const fill={fillId:'exact-fill',symbol:order.symbol,side:'BUY' as const,positionSide:'LONG' as const,orderId:'exact-entry',clientOrderId:order.clientOrderId!,tradeId:'exact-trade',executionTime:h.now,qty:order.quantity,price:100,realizedPnl:0,commission:.01,commissionAsset:'USDT',maker:true};
+      positions.recordExchangeFill(fill);
+      for(let dt=0;dt<=30_000;dt+=1000){h.m.quote.ts=h.now+dt;h.m.quote.mark=dt<10_000?99:101;collector.tick(h.now+dt);}
+      const ep=collector.report().episodes.find((row:any)=>row.intentId===order.intentId);
+      expect(ep?.fillIds).toContain('exact-fill');expect(ep?.path[0]).toMatchObject({coverage:'COMPLETE',sampleCount:31});
+      expect((collector as any).db.prepare('SELECT COUNT(*) AS n FROM tq_marks').get().n).toBe(31);
+      expect((collector as any).db.prepare("SELECT COUNT(*) AS n FROM tq_marks WHERE symbol LIKE 'IDLE%'").get().n).toBe(0);
+    }finally{collector.close();rmSync(dir,{recursive:true,force:true});}
+  });
+
+  it('restarts an unfinished exact observation window without changing its identity',async()=>{
+    const dir=mkdtempSync(path.join(tmpdir(),'tq-resume-path-')),h=ready(),file=path.join(dir,'evidence.sqlite');
+    h.state.settings.tradingQuality!.positionObservationHorizonMs=60_000;
+    let collector=new TradingQualityCollector(file,h.state,h.bus);
+    try{
+      h.exchange.placeEntry.mockImplementation(async(o:any)=>({...o,status:'WORKING',exchangeOrderId:'resume-entry'}));await h.run();
+      const order=[...h.state.entryOrders.values()][0],positions=new PositionService(h.state,h.bus),fill={fillId:'resume-fill',symbol:order.symbol,side:'BUY' as const,positionSide:'LONG' as const,orderId:'resume-entry',clientOrderId:order.clientOrderId!,tradeId:'resume-trade',executionTime:h.now,qty:order.quantity,price:100,realizedPnl:0,commission:.01,commissionAsset:'USDT',maker:true};
+      positions.recordExchangeFill(fill);
+      for(let dt=0;dt<=10_000;dt+=1000){h.m.quote.ts=h.now+dt;collector.tick(h.now+dt);}
+      const before=collector.report().episodes.find((row:any)=>row.intentId===order.intentId);collector.close();
+      collector=new TradingQualityCollector(file,h.state,h.bus);
+      for(let dt=11_000;dt<=30_000;dt+=1000){h.m.quote.ts=h.now+dt;collector.tick(h.now+dt);}
+      const after=collector.report().episodes.find((row:any)=>row.intentId===order.intentId);
+      expect(after?.opportunityId).toBe(before?.opportunityId);expect(after?.opportunityVersion).toBe(before?.opportunityVersion);
+      expect(after?.fillIds).toEqual(['resume-fill']);expect(after?.path[0].sampleCount).toBeGreaterThan(before?.path[0].sampleCount??0);
+    }finally{collector.close();rmSync(dir,{recursive:true,force:true});}
+  });
+
+  it('stops raw path writes and episode recomputation after the observation horizon matures',async()=>{
+    const dir=mkdtempSync(path.join(tmpdir(),'tq-mature-path-')),h=ready(),collector=new TradingQualityCollector(path.join(dir,'evidence.sqlite'),h.state,h.bus);
+    h.state.settings.tradingQuality!.positionObservationHorizonMs=60_000;
+    try{
+      h.exchange.placeEntry.mockImplementation(async(o:any)=>({...o,status:'WORKING',exchangeOrderId:'mature-entry'}));await h.run();
+      const order=[...h.state.entryOrders.values()][0],positions=new PositionService(h.state,h.bus),fill={fillId:'mature-fill',symbol:order.symbol,side:'BUY' as const,positionSide:'LONG' as const,orderId:'mature-entry',clientOrderId:order.clientOrderId!,tradeId:'mature-trade',executionTime:h.now,qty:order.quantity,price:100,realizedPnl:0,commission:.01,commissionAsset:'USDT',maker:true};
+      positions.recordExchangeFill(fill);
+      for(let dt=0;dt<60_000;dt+=1000){h.m.quote.ts=h.now+dt;collector.tick(h.now+dt);}
+      h.m.quote.ts=h.now+60_000;collector.tick(h.now+60_000);
+      const marks=(collector as any).db.prepare('SELECT COUNT(*) AS n FROM tq_marks').get().n,episode=(collector as any).db.prepare('SELECT updated_at FROM tq_episodes WHERE intent_id=?').get(order.intentId).updated_at;
+      for(let dt=61_000;dt<=65_000;dt+=1000){h.m.quote.ts=h.now+dt;collector.tick(h.now+dt);}
+      expect((collector as any).db.prepare('SELECT COUNT(*) AS n FROM tq_marks').get().n).toBe(marks);
+      expect((collector as any).db.prepare('SELECT updated_at FROM tq_episodes WHERE intent_id=?').get(order.intentId).updated_at).toBe(episode);
+    }finally{collector.close();rmSync(dir,{recursive:true,force:true});}
+  });
+
   it('same symbol reopened in the same millisecond keeps separate position cycles and exact fills',()=>{
     const h=ready(),service=new PositionService(h.state,h.bus),symbol=h.packet.symbol;
     const p:any={id:'remote-stable-id',symbol,side:'LONG',quantity:1,entryPrice:100,markPrice:100,leverage:10,openedAt:h.now,firstObservedAt:h.now};

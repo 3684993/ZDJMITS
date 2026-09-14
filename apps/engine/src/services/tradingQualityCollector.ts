@@ -208,6 +208,7 @@ export class TradingQualityCollector {
       const input={run:{id:intent.brainRunId,symbol:intent.symbol},intent,orders,fills,tradeRecords:trades,now,
         adverseBoundaryBps:p.adverseBoundaryBps,favorableBoundaryBps:p.favorableBoundaryBps};
       const first=buildEpisodeEvidence(input);
+      if(first.completeFillAt!==null){const fullUntil=first.completeFillAt+p.positionObservationHorizonMs;if(fullUntil>Number(work.observation_until??0)){work.observation_until=fullUntil;this.db.prepare('UPDATE tq_episode_work SET observation_until=?,matured=? WHERE scope=? AND intent_id=?').run(fullUntil,now>=fullUntil?1:0,scope,intent.id);}}
       const until=Number(work.observation_until??(first.firstFillAt===null?0:first.firstFillAt+p.positionObservationHorizonMs));
       const marks=first.firstFillAt===null?[]:this.db.prepare('SELECT ts,mark,bid,ask FROM tq_marks WHERE scope=? AND symbol=? AND ts>=? AND ts<=? ORDER BY ts').all(scope,intent.symbol,first.firstFillAt,Math.min(now,until)) as any[];
       const ep=buildEpisodeEvidence({...input,marks});

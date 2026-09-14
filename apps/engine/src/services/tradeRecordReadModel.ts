@@ -1,16 +1,16 @@
 import type {TradeRecord,TradingQualityEnrollmentEvidence,TradingQualityExperimentManifest,TradingQualityFundingEvidence} from '@zdj/contracts';
 import {canonicalPnlEligible,ledgerClosedComplete,legacyEconomicInconsistency,prospectiveCohortMember} from './tradingQualityEligibility.js';
 
-export type TradeRecordReadModelInput={records:TradeRecord[];fundingEvidenceByCycle?:Record<string,TradingQualityFundingEvidence|undefined>;experimentManifest?:TradingQualityExperimentManifest;enrollmentByCycle?:Record<string,TradingQualityEnrollmentEvidence|undefined>;asOf?:number;};
+export type TradeRecordReadModelInput={records:TradeRecord[];accountScope?:string;fundingEvidenceByCycle?:Record<string,TradingQualityFundingEvidence|undefined>;experimentManifest?:TradingQualityExperimentManifest;enrollmentByCycle?:Record<string,TradingQualityEnrollmentEvidence|undefined>;asOf?:number;};
 
 export function projectTradeRecordRow(record:TradeRecord,input:Omit<TradeRecordReadModelInput,'records'>={}){
   const fundingEvidence=record.cycleId?input.fundingEvidenceByCycle?.[record.cycleId]:undefined;
-  const ledger=ledgerClosedComplete(record),canonical=canonicalPnlEligible(record,{fundingEvidence});
+  const ledger=ledgerClosedComplete(record),canonical=canonicalPnlEligible(record,{fundingEvidence,accountScope:input.accountScope});
   const cohort=record.cycleId?prospectiveCohortMember(input.experimentManifest,input.enrollmentByCycle?.[record.cycleId]):{eligible:false,reasons:['CYCLE_ID_MISSING']};
   const legacyEconomicInconsistent=legacyEconomicInconsistency(record),rawNetPnl=record.netPnl;
   return {...record,rawNetPnl,
     // Compatibility `netPnl` is the formal display value. Raw source remains available as rawNetPnl/rawRecord without mutating state.
-    netPnl:canonical.eligible?rawNetPnl:null,
+    netPnl:canonical.eligible?rawNetPnl:null,netRoiOnMargin:canonical.eligible?record.netRoiOnMargin:null,netReturnOnNotional:canonical.eligible?record.netReturnOnNotional:null,
     economicEligibility:{ledgerClosedComplete:ledger.eligible,canonicalPnlEligible:canonical.eligible,prospectiveCohortMember:cohort.eligible,ledgerReasons:ledger.reasons,canonicalReasons:canonical.reasons,cohortReasons:cohort.reasons,legacyEconomicInconsistent},
     formalNetPnl:canonical.eligible?rawNetPnl:null,
     formalOutcome:canonical.eligible&&rawNetPnl!=null?(rawNetPnl>0?'WIN':rawNetPnl<0?'LOSS':'FLAT'):null,

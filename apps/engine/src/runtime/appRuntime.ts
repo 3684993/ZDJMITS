@@ -1,3 +1,4 @@
+import type {TradingQualityRuntimeObserver} from '../services/tradingQualityRuntimeObserver.js';
 import { TradingQualityCollector } from '../services/tradingQualityCollector.js';
 import { privateAccountFresh } from '../services/privateAccountReadiness.js';
 import { PrivateAccountSync } from '../services/privateAccountSync.js';
@@ -73,6 +74,7 @@ export class EngineRuntime {
   private timers: NodeJS.Timeout[] = [];
   private stopped = false;
   private ready = false;
+  public qualityObserver:TradingQualityRuntimeObserver|null=null;
   public tradingQuality: TradingQualityCollector | null = null;
   private persistTimer: NodeJS.Timeout | null = null;
   private trade: ExternalTradeAdapter | null = null;
@@ -541,6 +543,7 @@ export class EngineRuntime {
     this.every(2_000,async()=>{if(this.state.settings.connections.executionMode==='TESTNET_ENABLED')await this.manual.resumeExitGoals();});
     this.every(1_000,()=>this.writes.flush());
     this.every(1_000,()=>this.tradingQuality?.tick());
+    this.every(5_000,()=>this.qualityObserver?.tick());
     this.every(5_000, async () => this.tp.sweep());
     this.every(15_000, async () => {
       if (this.state.account.status === "READY") {
@@ -588,7 +591,7 @@ export class EngineRuntime {
     this.persistTimer = null;
     this.market.stop();
     try{this.settingsStore.persistRuntime(this.state.serialize());this.events.publish("RUNTIME_STOPPED");this.settingsStore.checkpoint();}
-    finally{this.persistenceClosed=true;this.tradingQuality?.close();this.settingsStore.close();}
+    finally{this.persistenceClosed=true;this.qualityObserver?.close();this.tradingQuality?.close();this.settingsStore.close();}
   }
   async updateSettings(input: unknown) {
     const next = await this.settingsStore.save(input);

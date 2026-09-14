@@ -14,12 +14,19 @@ export function p0EntryIntegrity(input:{entryOrders:any[];entryIntents:any[];fil
     const owner=order.decisionChainId??intents.get(order.intentId)?.brainRunId??null,underlying=resolveUnderlying(order.symbol),anchor=Math.max(input.since,Number(order.createdAt??0));
     return count+input.primaryRuns.filter(run=>run.role==='PRIMARY_BRAIN'&&run.id!==owner&&run.startedAt>=anchor&&resolveUnderlying(run.symbol)===underlying).length;
   },0);
-  const unverifiedRemoteTerminalReleasedOccupancyCount=input.events.filter(event=>event.type==='ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED'&&event.payload?.occupancyReleased!==false).length;
+  const verifiedRiskRelease=(event:any)=>{
+    const p=event.payload,e=p?.evidence,at=Number(event.ts),symbol=p?.symbol??event.symbol,identity=p?.clientOrderId??p?.exchangeOrderId??p?.orderId;
+    const required=['BINANCE_EXACT_ORDER_NOT_FOUND','BINANCE_OPEN_ORDERS_IDENTITY_ABSENT','BINANCE_USER_TRADES_IDENTITY_ABSENT','BINANCE_ALL_ORDERS_IDENTITY_ABSENT','BINANCE_LONG_SHORT_POSITION_ZERO'];
+    return p?.occupancyReleased===true&&p.activeRiskExposure===false&&e?.status==='VERIFIED_NO_ACTIVE_RISK'&&Number.isFinite(at)&&Number.isFinite(e.checkedAt)&&e.checkedAt<=at&&e.validUntil>at&&symbol&&identity&&e.identityTombstone===`ENTRY:${String(symbol).toUpperCase()}:${identity}`&&required.every(source=>e.sources?.includes(source));
+  };
+  const releaseEvents=input.events.filter(event=>event.type==='ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED'&&event.payload?.occupancyReleased!==false);
+  const verifiedNoActiveRiskReleaseCount=releaseEvents.filter(verifiedRiskRelease).length;
+  const unverifiedRemoteTerminalReleasedOccupancyCount=releaseEvents.length-verifiedNoActiveRiskReleaseCount;
   const BrainRunMisattributionCount=input.events.filter(event=>{
     if(event.type==='CANDIDATE_LIFECYCLE_CHANGED'&&['PRIMARY_QUEUED','PRIMARY_RUNNING'].includes(event.payload?.status))return Boolean(value(event.payload?.runId));
     const brain=value(event.payload?.brainRunId),chain=value(event.payload?.decisionChainId);
     return Boolean(brain&&chain&&brain!==chain);
   }).length;
   const verifiedOrderFactMismatchCount=Number(input.verifiedOrderFactMismatchCount??0);
-  return{crossSymbolOrderMismatchCount,activeRemoteEntryWithNewPrimaryCount,unverifiedRemoteTerminalReleasedOccupancyCount,BrainRunMisattributionCount,verifiedOrderFactMismatchCount,passed:[crossSymbolOrderMismatchCount,activeRemoteEntryWithNewPrimaryCount,unverifiedRemoteTerminalReleasedOccupancyCount,BrainRunMisattributionCount,verifiedOrderFactMismatchCount].every(count=>count===0)};
+  return{verifiedNoActiveRiskReleaseCount,crossSymbolOrderMismatchCount,activeRemoteEntryWithNewPrimaryCount,unverifiedRemoteTerminalReleasedOccupancyCount,BrainRunMisattributionCount,verifiedOrderFactMismatchCount,passed:[crossSymbolOrderMismatchCount,activeRemoteEntryWithNewPrimaryCount,unverifiedRemoteTerminalReleasedOccupancyCount,BrainRunMisattributionCount,verifiedOrderFactMismatchCount].every(count=>count===0)};
 }

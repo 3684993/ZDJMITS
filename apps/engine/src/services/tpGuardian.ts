@@ -21,7 +21,7 @@ export class TpGuardian {
     let existing=current.tpOrderId?this.state.tpOrders.get(current.tpOrderId):undefined;
     existing=[...this.state.tpOrders.values()].find(o=>o.positionId===current.id&&o.symbol===current.symbol&&o.status==='WORKING'&&o.side===(current.side==='LONG'?'SELL':'BUY')&&Math.abs(o.quantity-current.quantity)<=Math.max(1e-10,current.quantity*1e-6))??existing;
     existing??=[...this.state.tpOrders.values()].find(o=>o.positionId===current.id&&o.status==='UNKNOWN');
-    if(existing?.status==='UNKNOWN'){try{const verified=await this.exchange.findTakeProfitByClientOrderId?.(existing);if(!verified||verified.status==='UNKNOWN')return;this.state.tpOrders.set(existing.id,verified);existing=verified;if(verified.status==='FILLED')return;}catch{return;}}
+    if(existing?.status==='UNKNOWN'){try{const verified=await this.exchange.findTakeProfitByClientOrderId?.(existing);if(!verified||verified.status==='UNKNOWN')return;const retained={...verified,id:existing.id,cycleId:existing.cycleId,positionId:existing.positionId};this.state.tpOrders.set(existing.id,retained);existing=retained;if(verified.status==='FILLED')return;}catch{return;}}
     // A legal working TP is deliberately not chased just because the market or plan moved.
     if(existing?.status==='WORKING'&&Math.abs(existing.quantity-current.quantity)<=Math.max(1e-10,current.quantity*1e-6)&&existing.side===(current.side==='LONG'?'SELL':'BUY')){this.state.positions.set(current.id,{...current,tpStatus:'PROTECTED',tpOrderId:existing.id,tpLastVerifiedAt:Date.now()});return;}
     const retry=this.retry.get(current.id);if(!force&&retry&&retry.nextAt>Date.now())return;

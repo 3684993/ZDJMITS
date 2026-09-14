@@ -1,3 +1,4 @@
+import {TradingQualityRuntimeObserver} from './services/tradingQualityRuntimeObserver.js';
 import { OperationalLogger } from './services/operationalLogger.js';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -11,6 +12,7 @@ const host=process.env.ZDJ_HOST??'0.0.0.0',port=Number(process.env.ZDJ_PORT??808
 const identityRecord=await createRuntimeIdentity(dataDir,host,port,RELEASE_VERSION);
 const runtime=await EngineRuntime.create({configDir,dataDir});
 runtime.setRuntimeIdentity(identityRecord.identity);
+try{runtime.qualityObserver=new TradingQualityRuntimeObserver(dataDir,runtime.state);}catch(error){runtime.events.publish('V393_OBSERVER_UNAVAILABLE',{reason:String(error)});}
 const logger=new OperationalLogger(path.join(dataDir,'runtime-logs'),{...identityRecord.identity,environment:runtime.state.settings.connections.exchange.environment},{maxFileBytes:Number(process.env.ZDJ_LOG_MAX_FILE_BYTES??104857600),maxTotalBytes:Number(process.env.ZDJ_LOG_MAX_TOTAL_BYTES??2147483648),retentionDays:Number(process.env.ZDJ_LOG_RETENTION_DAYS??7)});
 (runtime as any).operationalLogHealth=()=>logger.health();
 runtime.events.on('event',event=>logger.record(event));

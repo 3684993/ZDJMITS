@@ -1,3 +1,4 @@
+import {TradingQualityExperimentManifestSchema,TradingQualityEnrollmentEvidenceSchema,TradingQualityFundingEvidenceSchema} from '@zdj/contracts';
 import type {
   TradeRecord,
   TradingQualityEnrollmentEvidence,
@@ -23,6 +24,9 @@ export function ledgerClosedComplete(record:TradeRecord):EligibilityResult {
   if(record.integrityFlags.includes('CONFLICT')||record.integrityFlags.includes('FILL_CONSERVATION_FAILED'))reasons.push('IDENTITY_OR_QUANTITY_CONFLICT');
   if(record.entryFillCount<=0||record.exitFillCount<=0)reasons.push('FILL_FACTS_MISSING');
   if(!finite(record.entryAveragePrice)||!finite(record.exitAveragePrice))reasons.push('AVERAGE_PRICE_MISSING');
+  if(!finite(record.entryQty)||record.entryQty<=0||!finite(record.openedAt)||!finite(record.closedAt)||record.closedAt<record.openedAt)reasons.push('LEDGER_RANGE_INVALID');
+  if(!finite(record.entryFee)||!finite(record.exitFee)||!finite(record.totalFee)||!approx(record.entryFee+record.exitFee,record.totalFee))reasons.push('FEE_SUM_INCONSISTENT');
+  if(!finite(record.grossRealizedPnl)||!finite(record.tradingNetPnlExFunding)||!finite(record.totalFee)||!approx(record.grossRealizedPnl-record.totalFee,record.tradingNetPnlExFunding))reasons.push('TRADING_NET_INCONSISTENT');
   if(!finite(record.totalFee))reasons.push('FEE_VALUE_MISSING');
   const exitQty=record.exitQty;
   if(!finite(exitQty)||!finite(record.remainingQty)||!approx(exitQty,record.entryQty)||!approx(record.remainingQty,0))reasons.push('QUANTITY_NOT_CONSERVED');
@@ -33,16 +37,17 @@ export function legacyEconomicInconsistency(record:TradeRecord):boolean {
   return finite(record.netPnl)&&(record.fundingAttributionStatus!=='EXACT'||record.pnlBasis!=='CANONICAL_NET_WITH_FUNDING');
 }
 
-function fundingEvidenceValid(record:TradeRecord,evidence?:TradingQualityFundingEvidence|null):boolean{
+function fundingEvidenceValid(record:TradeRecord,evidence?:TradingQualityFundingEvidence|null,accountScope?:string):boolean{
   if(record.fundingAttributionStatus!=='EXACT'||record.pnlBasis!=='CANONICAL_NET_WITH_FUNDING'||!finite(record.funding))return false;
-  if(!evidence)return false;
+  if(!TradingQualityFundingEvidenceSchema.safeParse(evidence).success||!evidence||!accountScope)return false;
+  if(evidence.accountScope!==accountScope||record.openedAt==null||record.closedAt==null||evidence.coverageStartAt>record.openedAt||evidence.coverageEndAt<record.closedAt||evidence.verifiedAt<evidence.coverageEndAt)return false;
   return evidence.attributionStatus==='EXACT'&&evidence.cycleId===record.cycleId&&evidence.factIds.length>0&&evidence.coverageEndAt>=evidence.coverageStartAt;
 }
 
 /** Formal net-PnL eligibility. The stored authoritative net is consumed, never manufactured here. */
-export function canonicalPnlEligible(record:TradeRecord,input?:{fundingEvidence?:TradingQualityFundingEvidence|null}):EligibilityResult{
+export function canonicalPnlEligible(record:TradeRecord,input?:{fundingEvidence?:TradingQualityFundingEvidence|null;accountScope?:string}):EligibilityResult{
   const ledger=ledgerClosedComplete(record),reasons=[...ledger.reasons];
-  if(!fundingEvidenceValid(record,input?.fundingEvidence))reasons.push('FUNDING_EVIDENCE_NOT_EXACT');
+  if(!fundingEvidenceValid(record,input?.fundingEvidence,input?.accountScope))reasons.push('FUNDING_EVIDENCE_NOT_EXACT');
   if(!finite(record.tradingNetPnlExFunding))reasons.push('TRADING_NET_EX_FUNDING_MISSING');
   if(!finite(record.netPnl))reasons.push('AUTHORITATIVE_NET_PNL_MISSING');
   if(finite(record.tradingNetPnlExFunding)&&finite(record.funding)&&finite(record.netPnl)&&!approx(record.tradingNetPnlExFunding+record.funding,record.netPnl))reasons.push('AUTHORITATIVE_NET_PNL_INCONSISTENT');
@@ -54,6 +59,8 @@ export function prospectiveCohortMember(manifest:TradingQualityExperimentManifes
   const reasons:string[]=[];
   if(!manifest){reasons.push('MANIFEST_MISSING');return ok(reasons);}
   if(!evidence){reasons.push('ENROLLMENT_EVIDENCE_MISSING');return ok(reasons);}
+  if(!TradingQualityExperimentManifestSchema.safeParse(manifest).success||!TradingQualityEnrollmentEvidenceSchema.safeParse(evidence).success)return ok(['INVALID_MANIFEST_OR_ENROLLMENT']);
+  if(evidence.intentCreatedAt>=manifest.entryEnrollmentEndAt||evidence.cycleCreatedAt>=manifest.entryEnrollmentEndAt)reasons.push('ENTRY_OUTSIDE_ENROLLMENT_WINDOW');
   if(evidence.source!=='NEW_DECISION')reasons.push(evidence.source==='TRANSITIONAL_EXISTING_ORDER'?'TRANSITIONAL_PREEXISTING_ORDER':'NON_PROSPECTIVE_SOURCE');
   if(evidence.decisionAt<manifest.decisionStartAt||evidence.decisionAt>=manifest.entryEnrollmentEndAt)reasons.push('DECISION_OUTSIDE_ENROLLMENT_WINDOW');
   if(evidence.intentCreatedAt<evidence.decisionAt||evidence.cycleCreatedAt<evidence.intentCreatedAt)reasons.push('ENROLLMENT_IDENTITY_PREEXISTS_DECISION');

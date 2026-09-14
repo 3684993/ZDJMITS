@@ -66,7 +66,20 @@ export function dashboardProjection(runtime: EngineRuntime): DashboardSnapshot {
         record.recordCompleteness === "COMPLETE" &&
         record.feeCompleteness === "COMPLETE" && record.fundingAttributionStatus === "EXACT" && record.netPnl != null,
     ),
+    closedExFunding = [...s.tradeRecords.values()].filter(
+      (record) =>
+        record.canonical &&
+        record.classification === "COMPLETE" &&
+        record.status === "CLOSED" &&
+        record.recordCompleteness === "COMPLETE" &&
+        record.feeCompleteness === "COMPLETE" &&
+        record.tradingNetPnlExFunding != null,
+    ),
     net = closed.reduce((sum, record) => sum + (record.netPnl ?? 0), 0),
+    tradingNetExFunding = closedExFunding.reduce(
+      (sum, record) => sum + (record.tradingNetPnlExFunding ?? 0),
+      0,
+    ),
     fills = s.executionFills.filter((fill: any) => fill.executionTime >= since),
     systemOrderKeys = new Set(
       [...s.entryOrders.values(), ...s.tpOrders.values(), ...s.manualOrders.values()]
@@ -137,6 +150,11 @@ export function dashboardProjection(runtime: EngineRuntime): DashboardSnapshot {
     },
     tradeNetPnl: closed.length ? net : 0,
     tradeCompletedCount: closed.length,
+    tradeTradingNetExFunding: tradingNetExFunding,
+    tradeCompletedExFundingCount: closedExFunding.length,
+    tradeFundingUnknownCount: closedExFunding.filter(
+      (record) => record.fundingAttributionStatus !== "EXACT",
+    ).length,
     tradeActivity: s.activity,
     exchangeFillFacts: {
       entryFillsLast1h: entryFills.length,

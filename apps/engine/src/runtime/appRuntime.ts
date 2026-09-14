@@ -5,6 +5,7 @@ import { recoverUnsubmittedEntry } from '../services/unsubmittedEntryRecovery.js
 import {RuntimeWriteBuffer} from '../services/runtimeWriteBuffer.js';
 import path from "node:path";
 import { readFileSync } from "node:fs";
+import { mkdir } from "node:fs/promises";
 import { RuntimeState } from "../state/runtimeState.js";
 import { EventBus } from "../events/eventBus.js";
 import { SettingsStore } from "../config/settingsStore.js";
@@ -23,7 +24,7 @@ import { TpGuardian } from "../services/tpGuardian.js";
 import { ExchangeLoop } from "../services/exchangeLoop.js";
 import { ReconciliationService } from "../services/reconciliationService.js";
 import { BinanceTransport } from "../adapters/binance/BinanceTransport.js";
-import type { ExchangeTradeAdapter } from "../types.js";
+import type { ExchangeTradeAdapter, TradeAuditSnapshot } from "../types.js";
 import { ManualPositionService } from "../services/manualPositionService.js";
 import { TradeRecordIntegrityService } from "../services/tradeRecordIntegrityService.js";
 import { TradeRecordSyncService } from "../services/tradeRecordSyncService.js";
@@ -75,6 +76,20 @@ export class EngineRuntime {
   public tradingQuality: TradingQualityCollector | null = null;
   private persistTimer: NodeJS.Timeout | null = null;
   private trade: ExternalTradeAdapter | null = null;
+  private tradeRecordAutoSyncStartedAt: number | null = null;
+  private tradeRecordAutoSyncLastEndAt: number | null = null;
+  private tradeRecordAutoSyncFlight: Promise<void> | null = null;
+  private tradeRecordAutoSync = {
+    status: "NOT_STARTED" as "NOT_STARTED" | "WAITING_FOR_PRIVATE_DATA" | "RUNNING" | "ACTIVE" | "COMPLETE" | "ERROR",
+    startedAt: null as number | null,
+    windowStart: null as number | null,
+    windowEnd: null as number | null,
+    lastAttemptAt: null as number | null,
+    lastSuccessAt: null as number | null,
+    lastWindow: null as { startTime: number; endTime: number } | null,
+    lastResult: null as Record<string, number> | null,
+    lastError: null as string | null,
+  };
   private runtimeIdentity: RuntimeIdentity | null = null;
   private constructor(
     public readonly events: EventBus,
@@ -474,10 +489,12 @@ export class EngineRuntime {
   }
   async start() {
     this.stopped = false;
+    const tradeRecordAutoSyncStartedAt = Date.now();
     this.every(15_000, async () => this.syncPrivate());
     await this.ai.probeResources();
     this.every(15_000, async () => this.ai.probeResources());
     await this.bootstrap();
+    this.startTradeRecordAutoSync(tradeRecordAutoSyncStartedAt);
     if (this.state.runtimeControl.entrySafetyMode === "SAFETY_REVIEW_PAUSED")
       this.state.runtimeControl.entrySafetyMode = "SHADOW_READY";
     this.shadow.start();
@@ -875,6 +892,204 @@ export class EngineRuntime {
   async syncPrivate(trigger='POLL') {
     this.privateAccountSync??=new PrivateAccountSync({configured:()=>Boolean(this.trade?.hasCredentials()),generation:()=>this.state.settings.settingsVersion,read:()=>this.trade!.fetchAccountSnapshot(),get:()=>this.state.account,set:value=>{this.state.account=value;},emit:(type,payload)=>this.events.publish(type,payload)});
     await this.privateAccountSync.sync(trigger);
+  }
+  private startTradeRecordAutoSync(startedAt: number) {
+    const day = 24 * 60 * 60_000;
+    this.tradeRecordAutoSyncStartedAt = startedAt;
+    this.tradeRecordAutoSyncLastEndAt = null;
+    this.tradeRecordAutoSync = {
+      status: "WAITING_FOR_PRIVATE_DATA",
+      startedAt,
+      windowStart: startedAt - day,
+      windowEnd: startedAt + day,
+      lastAttemptAt: null,
+      lastSuccessAt: null,
+      lastWindow: null,
+      lastResult: null,
+      lastError: null,
+    };
+    // The initial read covers the full 24 hours before startup, including the
+    // previous calendar day. Later reads overlap briefly to catch delayed facts.
+    void this.runTradeRecordAutoSync();
+    this.every(5 * 60_000, () => this.runTradeRecordAutoSync());
+  }
+  tradeRecordAutoSyncStatus() {
+    return structuredClone(this.tradeRecordAutoSync);
+  }
+  private runTradeRecordAutoSync(): Promise<void> {
+    if (this.tradeRecordAutoSyncFlight) return this.tradeRecordAutoSyncFlight;
+    const flight = this.performTradeRecordAutoSync().finally(() => {
+      if (this.tradeRecordAutoSyncFlight === flight)
+        this.tradeRecordAutoSyncFlight = null;
+    });
+    this.tradeRecordAutoSyncFlight = flight;
+    return flight;
+  }
+  private async performTradeRecordAutoSync() {
+    const startedAt = this.tradeRecordAutoSyncStartedAt,
+      day = 24 * 60 * 60_000;
+    if (startedAt == null || this.stopped) return;
+    const windowStart = startedAt - day,
+      windowEnd = startedAt + day,
+      now = Date.now();
+    if (
+      now >= windowEnd &&
+      this.tradeRecordAutoSyncLastEndAt != null &&
+      this.tradeRecordAutoSyncLastEndAt >= windowEnd
+    ) {
+      this.tradeRecordAutoSync.status = "COMPLETE";
+      return;
+    }
+    const trade = this.trade as (ExternalTradeAdapter & { hasCredentials?: () => boolean }) | null;
+    if (
+      this.state.settings.connections.exchange.environment !== "TESTNET" ||
+      !trade?.hasCredentials?.()
+    ) {
+      this.tradeRecordAutoSync.status = "WAITING_FOR_PRIVATE_DATA";
+      return;
+    }
+    const finalAudit = now >= windowEnd,
+      endTime = finalAudit ? windowEnd : now,
+      fullAudit = finalAudit || this.tradeRecordAutoSyncLastEndAt == null,
+      startTime = fullAudit
+        ? windowStart
+        : Math.max(windowStart, this.tradeRecordAutoSyncLastEndAt! - 5 * 60_000);
+    if (endTime <= startTime) return;
+    const maxFills = 1000,
+      options = {
+        includeExternal: false,
+        repairPartial: true,
+        fillFees: true,
+        recalcNet: true,
+      };
+    this.tradeRecordAutoSync.status = "RUNNING";
+    this.tradeRecordAutoSync.lastAttemptAt = now;
+    this.tradeRecordAutoSync.lastError = null;
+    try {
+      const audit = await this.auditTradeRecordWindow(startTime, endTime, maxFills),
+        syncFillLimit = maxFills * Math.max(1, Math.ceil((endTime - startTime) / day)),
+        backupDir =
+          process.env.ZDJ_TRADE_SYNC_BACKUP_DIR ??
+          path.join(
+            process.env.LOCALAPPDATA ?? process.cwd(),
+            "ZDJ-MITS",
+            "trade-sync-backups",
+          );
+      await mkdir(backupDir, { recursive: true });
+      const backupPath = await this.settingsStore.tradeSyncBaseline(backupDir),
+        service = new TradeRecordSyncService(this.state, this.positions),
+        beforeRecords = new Map(this.state.tradeRecords),
+        beforeSamples = new Map(this.state.experienceSamples),
+        beforeFills = [...this.state.executionFills],
+        beforeGeneration = this.state.generation,
+        syncId = `auto_trade_sync_${startedAt}_${startTime}_${endTime}`;
+      let result!: ReturnType<TradeRecordSyncService["apply"]>;
+      try {
+        await this.settingsStore.transaction(() => {
+          result = service.apply(audit, syncFillLimit, options);
+          for (const record of this.state.tradeRecords.values()) {
+            if (JSON.stringify(beforeRecords.get(record.tradeId)) === JSON.stringify(record))
+              continue;
+            this.settingsStore.upsertTradeRecord(record);
+            if (record.classification !== "COMPLETE")
+              this.settingsStore.deleteExperienceSample(`sample_${record.tradeId}`);
+          }
+          for (const sample of result.samples)
+            if (this.state.experienceSamples.has(sample.sampleId))
+              this.settingsStore.upsertExperienceSample(sample);
+          this.settingsStore.recordTradeSyncHistory({
+            syncId,
+            status: "APPLIED",
+            source: "RUNTIME_AUTO",
+            createdAt: Date.now(),
+            options: { ...options, maxFills: syncFillLimit, window: audit.window, fullAudit },
+            preview: result.preview,
+            result: {
+              created: result.created,
+              repaired: result.repaired,
+              skipped: result.skipped,
+              newComplete: result.newComplete,
+              newPartial: result.newPartial,
+              experienceCreated: result.experienceCreated,
+            },
+            backupPath,
+          });
+        }, { timeoutMs: 5_000, label: "TRADE_RECORD_AUTO_SYNC" });
+      } catch (error) {
+        this.state.tradeRecords = beforeRecords;
+        this.state.experienceSamples = beforeSamples;
+        this.state.executionFills = beforeFills;
+        this.state.generation = beforeGeneration;
+        throw error;
+      }
+      this.tradeRecordAutoSyncLastEndAt = Math.max(
+        this.tradeRecordAutoSyncLastEndAt ?? 0,
+        endTime,
+      );
+      this.tradeRecordAutoSync.status = finalAudit ? "COMPLETE" : "ACTIVE";
+      this.tradeRecordAutoSync.lastSuccessAt = Date.now();
+      this.tradeRecordAutoSync.lastWindow = { startTime, endTime };
+      this.tradeRecordAutoSync.lastResult = {
+        systemFills: result.preview.systemFills,
+        cyclesDetected: result.preview.cyclesDetected,
+        created: result.created,
+        repaired: result.repaired,
+        complete: result.newComplete,
+        partial: result.newPartial,
+        unclosable: result.preview.unclosable,
+      };
+      this.events.publish(
+        "TRADE_SYNC_AUTO_COMPLETED",
+        {
+          syncId,
+          window: audit.window,
+          fullAudit,
+          ...this.tradeRecordAutoSync.lastResult,
+        },
+        "TRADE_RECORD",
+      );
+    } catch (error) {
+      this.tradeRecordAutoSync.status = "ERROR";
+      this.tradeRecordAutoSync.lastError = String(error).slice(0, 240);
+      this.events.publish(
+        "TRADE_SYNC_AUTO_FAILED",
+        {
+          message: this.tradeRecordAutoSync.lastError,
+          window: { startTime, endTime },
+        },
+        "TRADE_RECORD",
+      );
+    }
+  }
+  private async auditTradeRecordWindow(startTime: number, endTime: number, maxFills: number) {
+    const day = 24 * 60 * 60_000,
+      chunks: Array<{ startTime: number; endTime: number }> = [];
+    for (let cursor = startTime; cursor < endTime; ) {
+      const chunkEnd = Math.min(endTime, cursor + day);
+      chunks.push({ startTime: cursor, endTime: chunkEnd });
+      cursor = chunkEnd;
+    }
+    const audits = [];
+    for (const window of chunks)
+      audits.push(await this.auditRecentTrades(24, maxFills, window.startTime, window.endTime));
+    const fillMap = new Map<string, TradeAuditSnapshot["fills"][number]>(),
+      orderMap = new Map<string, TradeAuditSnapshot["orders"][number]>(),
+      incomeMap = new Map<string, TradeAuditSnapshot["income"][number]>();
+    for (const audit of audits) {
+      for (const fill of audit.fills) fillMap.set(`${fill.symbol}:${fill.tradeId}`, fill);
+      for (const order of audit.orders) orderMap.set(`${order.symbol}:${order.orderId}`, order);
+      for (const income of audit.income)
+        incomeMap.set(`${income.symbol}:${income.tradeId}:${income.transactionId}:${income.time}`, income);
+    }
+    const latest = audits.at(-1);
+    if (!latest) throw new Error("TRADE_AUDIT_WINDOW_EMPTY");
+    return {
+      ...latest,
+      window: { startTime, endTime },
+      fills: [...fillMap.values()].sort((a, b) => a.executionTime - b.executionTime),
+      orders: [...orderMap.values()],
+      income: [...incomeMap.values()],
+    };
   }
   async auditRecentTrades(
     hours = 5,

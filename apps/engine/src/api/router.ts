@@ -1076,6 +1076,7 @@ export function createApiRouter(runtime: EngineRuntime) {
       limit,
       total,
       items: rows.slice((page - 1) * limit, page * limit),
+      autoSync: runtime.tradeRecordAutoSyncStatus(),
       summary: {
         observedClosed: [...runtime.state.tradeRecords.values()].filter(row=>row.closedAt!=null||row.observedClosedAt!=null).length,
         awaitingReconciliation: [...runtime.state.tradeRecords.values()].filter(row=>(row.closedAt!=null||row.observedClosedAt!=null)&&!canonical.includes(row)).length,

@@ -50,11 +50,20 @@ describe('automatic TradeRecord sync window', () => {
     (runtime as any).startTradeRecordAutoSync(startAt);
     await (runtime as any).tradeRecordAutoSyncFlight;
 
-    expect(windows[0]?.startTime).toBe(startAt - 24 * 60 * 60_000);
-    expect(windows[0]?.endTime).toBeGreaterThanOrEqual(startAt);
+    // The first audit always covers the complete 24 hours before startup. If
+    // Date.now() advances after startAt, auditTradeRecordWindow may legitimately
+    // add a tiny trailing chunk from startAt to the later clock value. Do not
+    // let that real-time millisecond boundary leak into the independent final
+    // window scenario below.
+    expect(windows[0]).toEqual({
+      startTime: startAt - 24 * 60 * 60_000,
+      endTime: startAt,
+    });
+    expect(windows.at(-1)?.endTime).toBeGreaterThanOrEqual(startAt);
     expect(runtime.tradeRecordAutoSyncStatus()).toMatchObject({ status: 'ACTIVE', windowStart: startAt - 24 * 60 * 60_000 });
     expect(runtime.settingsStore.listTradeSyncHistory(1)[0]).toMatchObject({ source: 'RUNTIME_AUTO', status: 'APPLIED' });
 
+    windows.length = 0;
     const finalStartAt = Date.now() - 24 * 60 * 60_000 - 1_000;
     (runtime as any).tradeRecordAutoSyncStartedAt = finalStartAt;
     (runtime as any).tradeRecordAutoSyncLastEndAt = null;
@@ -64,14 +73,16 @@ describe('automatic TradeRecord sync window', () => {
       windowEnd: finalStartAt + 24 * 60 * 60_000,
     });
     await (runtime as any).performTradeRecordAutoSync();
-    expect(windows[1]).toEqual({
-      startTime: finalStartAt - 24 * 60 * 60_000,
-      endTime: finalStartAt,
-    });
-    expect(windows[2]).toEqual({
-      startTime: finalStartAt,
-      endTime: finalStartAt + 24 * 60 * 60_000,
-    });
+    expect(windows).toEqual([
+      {
+        startTime: finalStartAt - 24 * 60 * 60_000,
+        endTime: finalStartAt,
+      },
+      {
+        startTime: finalStartAt,
+        endTime: finalStartAt + 24 * 60 * 60_000,
+      },
+    ]);
     expect(runtime.tradeRecordAutoSyncStatus()).toMatchObject({ status: 'COMPLETE', windowEnd: finalStartAt + 24 * 60 * 60_000 });
   });
 });

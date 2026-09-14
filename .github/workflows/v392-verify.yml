@@ -1,4 +1,4 @@
-name: V3.9.2 Final Verify
+name: V3.9.x Verify
 
 on:
   push:
@@ -7,6 +7,7 @@ on:
       - gpt56-closeout-20260912
       - gpt56-optimize-v392-20260912
       - trading-quality-stage1-3-20260914
+      - v393-offline-implementation-20260914
   workflow_dispatch:
 
 permissions:

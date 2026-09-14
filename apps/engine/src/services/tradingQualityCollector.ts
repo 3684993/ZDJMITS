@@ -31,6 +31,7 @@ export class TradingQualityCollector {
       CREATE TABLE IF NOT EXISTS tq_marks(scope TEXT NOT NULL,symbol TEXT NOT NULL,ts INTEGER NOT NULL,mark REAL NOT NULL,bid REAL,ask REAL,received_at INTEGER NOT NULL,PRIMARY KEY(scope,symbol,ts));
       CREATE TABLE IF NOT EXISTS tq_episodes(scope TEXT NOT NULL,intent_id TEXT NOT NULL,updated_at INTEGER NOT NULL,payload TEXT NOT NULL,PRIMARY KEY(scope,intent_id));
       CREATE TABLE IF NOT EXISTS tq_episode_work(scope TEXT NOT NULL,intent_id TEXT NOT NULL,symbol TEXT NOT NULL,dirty INTEGER NOT NULL DEFAULT 1,first_fill_at INTEGER,observation_until INTEGER,matured INTEGER NOT NULL DEFAULT 0,updated_at INTEGER NOT NULL,PRIMARY KEY(scope,intent_id));
+      CREATE TABLE IF NOT EXISTS tq_candidate_state(scope TEXT NOT NULL,candidate_id TEXT NOT NULL,fingerprint TEXT NOT NULL,revision INTEGER NOT NULL,updated_at INTEGER NOT NULL,PRIMARY KEY(scope,candidate_id));
       INSERT OR IGNORE INTO tq_migrations VALUES(1,${Date.now()});`);
     (this.state as any).tradingQualityEvidenceReady=true;
     this.listener=e=>{try{this.onEvent(e);}catch(error){this.error=String(error);(this.state as any).tradingQualityEvidenceReady=false;if(qualityPolicy(this.state.settings).mode==='ENFORCE'&&['TRADING_QUALITY_OPPORTUNITY','TRADING_QUALITY_PRIMARY_LINK','ENTRY_SUBMIT_ATTEMPTED'].includes(e.type))throw error;}};
@@ -91,6 +92,43 @@ export class TradingQualityCollector {
       this.captureState();
     }
   }
+  private persistCandidateShadow(candidateId:string,candidate:any,lifecycle:any,opportunity:any,now:number){
+    const scope=this.scope();
+    const material={
+      candidate:{symbol:candidate.symbol,selectionGeneration:candidate.selectionGeneration,rank:candidate.rank,score:candidate.score,
+        lifecycle:candidate.lifecycle,eligible:candidate.eligible,exclusionReasons:candidate.exclusionReasons},
+      lifecycle:lifecycle?{status:lifecycle.status??null,reason:lifecycle.reason??null,eligible:lifecycle.eligible??null,
+        exclusionReasons:lifecycle.exclusionReasons??null}:null,
+      opportunity:opportunity?{opportunityId:opportunity.opportunityId,version:opportunity.version,
+        disposition:opportunity.disposition,blockers:opportunity.blockers}:null,
+    };
+    const fingerprint=hash(material);
+    const current=()=>this.db.prepare('SELECT fingerprint,revision FROM tq_candidate_state WHERE scope=? AND candidate_id=?').get(scope,candidateId) as any;
+    if(current()?.fingerprint===fingerprint)return;
+    this.db.exec('BEGIN IMMEDIATE');
+    try{
+      const previous=current();
+      if(previous?.fingerprint===fingerprint){this.db.exec('COMMIT');return;}
+      const revision=Number(previous?.revision??0)+1;
+      const observation={candidateId,candidate,lifecycle,opportunity,stage:'CANDIDATE_SHADOW',revision,materialFingerprint:fingerprint,observedAt:now};
+      const observationId=`CANDIDATE_SHADOW:${candidateId}:${revision}`;
+      this.db.prepare('INSERT INTO tq_facts VALUES(?,?,?,?,?)').run(scope,'opportunityObservations',observationId,now,JSON.stringify(observation));
+      this.db.prepare(`INSERT INTO tq_facts VALUES(?,?,?,?,?) ON CONFLICT(scope,kind,id) DO UPDATE SET ts=excluded.ts,payload=excluded.payload`)
+        .run(scope,'candidates',candidateId,now,JSON.stringify({candidateId,candidate,lifecycle,opportunity,observedAt:now}));
+      if(opportunity){
+        const value={opportunity,candidateId,stage:'CANDIDATE_SHADOW'};
+        this.db.prepare('INSERT OR IGNORE INTO tq_facts VALUES(?,?,?,?,?)').run(scope,'opportunities',`${opportunity.opportunityId}:${opportunity.version}`,now,JSON.stringify(value));
+      }
+      this.db.prepare(`INSERT INTO tq_candidate_state VALUES(?,?,?,?,?) ON CONFLICT(scope,candidate_id) DO UPDATE SET
+        fingerprint=excluded.fingerprint,revision=excluded.revision,updated_at=excluded.updated_at`)
+        .run(scope,candidateId,fingerprint,revision,now);
+      this.db.exec('COMMIT');
+      this.cache.delete(`${scope}:candidates:${candidateId}`);
+    }catch(error){
+      try{this.db.exec('ROLLBACK');}catch{}
+      throw error;
+    }
+  }
   private captureState(){
     for(const i of this.state.entryIntents.values())this.put('intents',i.id,i,i.createdAt);
     for(const o of this.state.entryOrders.values())this.put('orders',`${o.id}:${o.exchangeOrderId??'UNSUBMITTED'}`,o,o.updatedAt);
@@ -121,9 +159,8 @@ export class TradingQualityCollector {
         this.lastSample=now;
         for(const c of this.state.universe){
           const m=this.state.snapshots.get(c.symbol),opportunity=m&&p.mode!=='OFF'?buildOpportunityEvidence(m,this.state.settings,now):null;
-          const candidateId=`${c.symbol}:${c.selectionGeneration}`,row={candidateId,candidate:c,lifecycle:this.state.candidateLifecycle.get(c.symbol)??null,opportunity,observedAt:now};
-          this.put('candidates',candidateId,row,now);
-          if(opportunity){this.put('opportunities',`${opportunity.opportunityId}:${opportunity.version}`,{opportunity,candidateId,stage:'CANDIDATE_SHADOW'},now);this.put('opportunityObservations',`${opportunity.opportunityId}:${now}`,{opportunity,candidateId,stage:'CANDIDATE_SHADOW'},now);}
+          const candidateId=`${c.symbol}:${c.selectionGeneration}`,lifecycle=this.state.candidateLifecycle.get(c.symbol)??null;
+          this.persistCandidateShadow(candidateId,c,lifecycle,opportunity,now);
         }
         this.materialize(now);
       }

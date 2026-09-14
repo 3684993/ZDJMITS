@@ -154,6 +154,67 @@ describe('prospective runtime evidence collection',()=>{
     }finally{collector.close();rmSync(dir,{recursive:true,force:true});}
   });
 
+  it('100 unchanged SHADOW candidates do not create poll-time observation rows',()=>{
+    const dir=mkdtempSync(path.join(tmpdir(),'tq-shadow-candidates-')),h=ready(),collector=new TradingQualityCollector(path.join(dir,'evidence.sqlite'),h.state,h.bus);
+    h.state.settings.tradingQuality!.mode='SHADOW';
+    try{
+      const base=h.state.universe[0],markets:any[]=[];
+      h.state.universe=Array.from({length:100},(_,index)=>{
+        const symbol=`SHADOW${index}USDT`,candidate={...structuredClone(base),symbol,rank:index+1};
+        const market={...structuredClone(h.m),symbol};markets.push(market);h.state.snapshots.set(symbol,market);
+        return candidate;
+      });
+      collector.tick(h.now);
+      for(let dt=5000;dt<=55_000;dt+=5000){
+        for(const market of markets){market.quote.ts=h.now+dt;market.orderBook.ts=h.now+dt;}
+        collector.tick(h.now+dt);
+      }
+      expect(Number((collector as any).db.prepare("SELECT COUNT(*) AS n FROM tq_facts WHERE kind='opportunityObservations' AND json_extract(payload,'$.stage')='CANDIDATE_SHADOW'").get().n)).toBe(100);
+      expect(Number((collector as any).db.prepare("SELECT COUNT(*) AS n FROM tq_facts WHERE kind='candidates'").get().n)).toBe(100);
+    }finally{collector.close();rmSync(dir,{recursive:true,force:true});}
+  });
+
+  it('persists a new candidate observation when a material opportunity version changes',()=>{
+    const dir=mkdtempSync(path.join(tmpdir(),'tq-shadow-version-')),h=ready(),collector=new TradingQualityCollector(path.join(dir,'evidence.sqlite'),h.state,h.bus);
+    h.state.settings.tradingQuality!.mode='SHADOW';
+    try{
+      collector.tick(h.now);
+      const rows=()=>((collector as any).db.prepare("SELECT payload FROM tq_facts WHERE kind='opportunityObservations' AND json_extract(payload,'$.stage')='CANDIDATE_SHADOW' ORDER BY id").all() as any[]).map(row=>JSON.parse(row.payload));
+      const before=rows();expect(before).toHaveLength(1);
+      h.m.technical['15m'].atr14=2.1;h.m.quote.ts=h.now+5000;h.m.orderBook.ts=h.now+5000;
+      collector.tick(h.now+5000);
+      const after=rows();expect(after).toHaveLength(2);
+      expect(after[1].opportunity.opportunityId).toBe(before[0].opportunity.opportunityId);
+      expect(after[1].opportunity.version).not.toBe(before[0].opportunity.version);
+    }finally{collector.close();rmSync(dir,{recursive:true,force:true});}
+  });
+
+  it('keeps the exact Primary-linked opportunity observation alongside candidate coalescing',()=>{
+    const dir=mkdtempSync(path.join(tmpdir(),'tq-primary-opportunity-')),h=ready(),collector=new TradingQualityCollector(path.join(dir,'evidence.sqlite'),h.state,h.bus);
+    h.state.settings.tradingQuality!.mode='SHADOW';
+    try{
+      const opportunity=buildOpportunityEvidence(h.m,h.state.settings,h.now),packetId='primary-linked-packet';
+      h.bus.publish('TRADING_QUALITY_OPPORTUNITY',{opportunity,packetId,stage:'BEFORE_PRIMARY'},opportunity.symbol);
+      collector.tick(h.now);
+      const exact=(collector as any).db.prepare("SELECT payload FROM tq_facts WHERE kind='opportunityObservations' AND id=?").get(`${opportunity.opportunityId}:${packetId}`) as any;
+      expect(exact).toBeDefined();expect(JSON.parse(exact.payload)).toMatchObject({packetId,stage:'BEFORE_PRIMARY',opportunity:{opportunityId:opportunity.opportunityId,version:opportunity.version}});
+      expect(Number((collector as any).db.prepare("SELECT COUNT(*) AS n FROM tq_facts WHERE kind='opportunityObservations'").get().n)).toBe(2);
+    }finally{collector.close();rmSync(dir,{recursive:true,force:true});}
+  });
+
+  it('does not replay unchanged candidate observations after collector restart',()=>{
+    const dir=mkdtempSync(path.join(tmpdir(),'tq-shadow-restart-')),h=ready(),file=path.join(dir,'evidence.sqlite');
+    h.state.settings.tradingQuality!.mode='SHADOW';
+    let collector=new TradingQualityCollector(file,h.state,h.bus);
+    try{
+      collector.tick(h.now);collector.close();
+      collector=new TradingQualityCollector(file,h.state,h.bus);
+      for(let dt=5000;dt<=50_000;dt+=5000){h.m.quote.ts=h.now+dt;h.m.orderBook.ts=h.now+dt;collector.tick(h.now+dt);}
+      expect(Number((collector as any).db.prepare("SELECT COUNT(*) AS n FROM tq_facts WHERE kind='opportunityObservations' AND json_extract(payload,'$.stage')='CANDIDATE_SHADOW'").get().n)).toBe(1);
+      expect(Number((collector as any).db.prepare('SELECT revision FROM tq_candidate_state WHERE candidate_id=?').get(`${h.packet.symbol}:1`).revision)).toBe(1);
+    }finally{collector.close();rmSync(dir,{recursive:true,force:true});}
+  });
+
   it('samples an exactly attributed filled Entry and ignores idle-symbol quotes',async()=>{
     const dir=mkdtempSync(path.join(tmpdir(),'tq-filled-path-')),h=ready(),file=path.join(dir,'evidence.sqlite'),collector=new TradingQualityCollector(file,h.state,h.bus);
     h.state.settings.tradingQuality!.positionObservationHorizonMs=60_000;

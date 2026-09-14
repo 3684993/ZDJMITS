@@ -1,9 +1,20 @@
 import {afterEach,describe,expect,it,vi} from 'vitest';
 import express from 'express';
+import {TradeRecordSchema} from '@zdj/contracts';
 import {mkdtemp,rm} from 'node:fs/promises';import path from 'node:path';import os from 'node:os';
 import {EngineRuntime} from '../runtime/appRuntime.js';
 import {createApiRouter} from './router.js';
 let runtime:EngineRuntime|null=null,server:any=null,dataDir:string|null=null;
+it('TradeRecord GET list/detail and Experience perform zero SQLite writes and zero state mutation',async()=>{
+ dataDir=await mkdtemp(path.join(os.tmpdir(),'zdj-trade-get-'));runtime=await EngineRuntime.createTestHarness({configDir:'../../config',dataDir});
+ const record=TradeRecordSchema.parse({tradeId:'get-fixture',symbol:'BTCUSDT',direction:'LONG',openedAt:1,closedAt:2,durationMs:1,entryQty:1,entryAveragePrice:100,exitAveragePrice:null,funding:null,grossRealizedPnl:null,netPnl:null,closeReason:'RECONCILIATION',status:'OPEN',entryRunId:null,entryIntentId:null,entryOrderIds:[],exitOrderIds:[],source:'SYSTEM',regime:null,createdAt:1,updatedAt:2,firstObservedAt:1});
+ runtime.state.tradeRecords.set(record.tradeId,record);runtime.settingsStore.upsertTradeRecord(record);
+ const db=(runtime.settingsStore as any).db;
+ const app=express();app.use('/api/v3',createApiRouter(runtime));server=app.listen(0,'127.0.0.1');await new Promise(resolve=>server.once('listening',resolve));
+ const before=JSON.stringify([...runtime.state.tradeRecords]),changes=db.prepare('SELECT total_changes() n').get().n;
+ for(const route of ['/trade-records','/trade-records?category=PARTIAL','/trade-records/get-fixture','/trade-records/missing','/experience'])await fetch(`http://127.0.0.1:${server.address().port}/api/v3${route}`);
+ expect(db.prepare('SELECT total_changes() n').get().n).toBe(changes);expect(JSON.stringify([...runtime.state.tradeRecords])).toBe(before);
+});
 afterEach(async()=>{if(server)await new Promise<void>(resolve=>server.close(()=>resolve()));runtime?.stop();if(dataDir)await rm(dataDir,{recursive:true,force:true});server=null;runtime=null;dataDir=null;});
 describe('published dashboard snapshot',()=>{
   it('serves a bounded immutable summary without reconciliation waits or SQLite writes',async()=>{dataDir=await mkdtemp(path.join(os.tmpdir(),'zdj-snapshot-'));runtime=await EngineRuntime.createTestHarness({configDir:'../../config',dataDir});const wait=vi.spyOn(runtime.reconciliation,'whenSettled'),write=vi.spyOn(runtime.settingsStore,'upsertTradeRecord');const app=express();app.use('/api/v3',createApiRouter(runtime));server=app.listen(0,'127.0.0.1');await new Promise(resolve=>server.once('listening',resolve));const port=server.address().port,response=await fetch(`http://127.0.0.1:${port}/api/v3/snapshot`),body=await response.text();expect(response.status).toBe(200);expect(Buffer.byteLength(body)).toBeLessThan(150_000);expect(wait).not.toHaveBeenCalled();expect(write).not.toHaveBeenCalled();expect(JSON.parse(body)).toMatchObject({snapshotVersion:1});});

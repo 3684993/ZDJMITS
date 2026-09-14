@@ -64,7 +64,7 @@ export function dashboardProjection(runtime: EngineRuntime): DashboardSnapshot {
         record.classification === "COMPLETE" &&
         record.status === "CLOSED" &&
         record.recordCompleteness === "COMPLETE" &&
-        record.feeCompleteness === "COMPLETE",
+        record.feeCompleteness === "COMPLETE" && record.fundingAttributionStatus === "EXACT" && record.netPnl != null,
     ),
     net = closed.reduce((sum, record) => sum + (record.netPnl ?? 0), 0),
     fills = s.executionFills.filter((fill: any) => fill.executionTime >= since),

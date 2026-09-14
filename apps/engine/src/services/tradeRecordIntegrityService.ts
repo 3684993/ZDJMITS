@@ -16,7 +16,7 @@ export class TradeRecordIntegrityService {
   /** COMPLETE is only allowed when the stored record reconciles to the retained
    * exchange/user-trade fills.  Booked averages or position size are not a fill fact. */
   private conserved(record:TradeRecord){
-    const matched=this.state.executionFills.filter((fill:any)=>record.linkedFillIds.includes(fill.fillId)||record.entryOrderIds.includes(fill.orderId)||record.exitOrderIds.includes(fill.orderId)),related=[...new Map(matched.map((fill:any)=>[`${fill.symbol}:${fill.tradeId}`,fill])).values()] as any[];
+    const matched=this.state.executionFills.filter((fill:any)=>fill.symbol===record.symbol&&(record.linkedFillIds.includes(fill.fillId)||record.entryOrderIds.includes(fill.orderId)||record.exitOrderIds.includes(fill.orderId))),related=[...new Map(matched.map((fill:any)=>[`${fill.symbol}:${fill.tradeId}`,fill])).values()] as any[];
     const entry=related.filter((fill:any)=>fill.side===(record.direction==='LONG'?'BUY':'SELL')),
       exit=related.filter((fill:any)=>!entry.includes(fill));
     const entryQty=entry.reduce((n:number,fill:any)=>n+Number(fill.qty),0),exitQty=exit.reduce((n:number,fill:any)=>n+Number(fill.qty),0),eps=1e-8;
@@ -50,7 +50,7 @@ export class TradeRecordIntegrityService {
       if(!hasEntry){missing.add('ENTRY_FACT');}else missing.delete('ENTRY_FACT');
       if(!conservation.ok){missing.add('EXCHANGE_FILL_CONSERVATION');flags.add('FILL_CONSERVATION_FAILED');}else{missing.delete('EXCHANGE_FILL_CONSERVATION');flags.delete('FILL_CONSERVATION_FAILED');}
       if(raw.status==='CLOSED'&&!hasExit){missing.add('EXIT_FACT');summary.invalidClosed++;summary.missingExit++;}else if(hasExit){missing.delete('EXIT_FACT');flags.delete('CLOSED_NO_EXIT_FACT');}
-      if(raw.feeCompleteness!=='COMPLETE'){missing.add('FEE_FACT');summary.missingFee++;record={...record,entryFee:null,exitFee:null,totalFee:null,netPnl:null,netRoiOnMargin:null};}
+      if(raw.feeCompleteness!=='COMPLETE'){missing.add('FEE_FACT');summary.missingFee++;record={...record,entryFee:raw.feeCompleteness==='UNKNOWN'?null:raw.entryFee,exitFee:raw.feeCompleteness==='UNKNOWN'?null:raw.exitFee,totalFee:null,netPnl:null,netRoiOnMargin:null};}
       else missing.delete('FEE_FACT');
       if(raw.netRoiOnMargin!=null&&(!validNumber(raw.netRoiOnMargin)||Math.abs(raw.netRoiOnMargin)>=1000)){flags.add('INVALID_ROI_SENTINEL');record={...record,netRoiOnMargin:null};summary.invalidRoi++;}
       // Margin is needed for ROI-on-margin, but not for fill/PnL conservation.
@@ -63,7 +63,7 @@ export class TradeRecordIntegrityService {
       else if(raw.source==='EXTERNAL'){classification='EXTERNAL';summary.external++;}
       else if(flags.has('CONFLICT')){classification='CONFLICT';summary.conflict++;}
       else if(flags.has('INVALID_ROI_SENTINEL')||raw.entryQty<0||raw.entryGrossNotional<0||raw.updatedAt<raw.createdAt){classification='INVALID';summary.invalid++;}
-      else if(raw.status==='CLOSED'&&raw.recordCompleteness==='COMPLETE'&&raw.feeCompleteness==='COMPLETE'&&hasEntry&&hasExit&&conservation.ok&&record.netPnl!=null&&missing.size===0){classification='COMPLETE';summary.complete++;}
+      else if(raw.status==='CLOSED'&&raw.recordCompleteness==='COMPLETE'&&raw.feeCompleteness==='COMPLETE'&&hasEntry&&hasExit&&conservation.ok&&(record.tradingNetPnlExFunding??record.netPnl)!=null&&missing.size===0){classification='COMPLETE';summary.complete++;}
       else{classification='PARTIAL';summary.partial++;}
       if(classification==='COMPLETE')record.missingFacts=[];
       record={...record,classification,missingFacts:[...missing],integrityFlags:[...flags],repairSource:raw.repairSource??(raw.source==='LOCAL_LIFECYCLE_REPAIR_FROM_EXCHANGE_FACT'?raw.source:null)};
@@ -74,5 +74,9 @@ export class TradeRecordIntegrityService {
   }
 
   private score(record:TradeRecord){return(record.recordCompleteness==='COMPLETE'?100000:0)+(record.feeCompleteness==='COMPLETE'?10000:0)+(record.entryFillCount+record.exitFillCount)*10+(record.linkedFillIds.length)+(record.createdAt?1:0);}
-  canonicalRecords(){this.classifyAll();return [...this.state.tradeRecords.values()].filter(record=>record.canonical&&record.classification==='COMPLETE'&&record.status==='CLOSED'&&record.recordCompleteness==='COMPLETE'&&record.feeCompleteness==='COMPLETE');}
+  summary(){
+    const copy=Object.create(Object.getPrototypeOf(this.state));Object.assign(copy,this.state,{tradeRecords:new Map(this.state.tradeRecords),experienceSamples:new Map(this.state.experienceSamples)});
+    return new TradeRecordIntegrityService(copy).classifyAll();
+  }
+  canonicalRecords(){return [...this.state.tradeRecords.values()].filter(record=>record.canonical&&record.classification==='COMPLETE'&&record.status==='CLOSED'&&record.recordCompleteness==='COMPLETE'&&record.feeCompleteness==='COMPLETE');}
 }

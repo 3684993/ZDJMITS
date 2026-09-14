@@ -269,7 +269,7 @@ describe('prospective runtime evidence collection',()=>{
   it('same symbol reopened in the same millisecond keeps separate position cycles and exact fills',()=>{
     const h=ready(),service=new PositionService(h.state,h.bus),symbol=h.packet.symbol;
     const p:any={id:'remote-stable-id',symbol,side:'LONG',quantity:1,entryPrice:100,markPrice:100,leverage:10,openedAt:h.now,firstObservedAt:h.now};
-    const fill=(n:number,exit=false)=>({fillId:`f${n}`,symbol,side:exit?'SELL' as const:'BUY' as const,positionSide:'LONG' as const,orderId:`order${n}`,clientOrderId:exit?`tp_${n}`:`ml_${n}`,tradeId:`t${n}`,executionTime:h.now,qty:1,price:exit?102:100,realizedPnl:exit?2:0,commission:.01,commissionAsset:'USDT',maker:true});
+    const fill=(n:number,exit=false)=>({cycleId:p.cycleId,fillId:`f${n}`,symbol,side:exit?'SELL' as const:'BUY' as const,positionSide:'LONG' as const,orderId:`order${n}`,clientOrderId:exit?`tp_${n}`:`ml_${n}`,tradeId:`t${n}`,executionTime:h.now,qty:1,price:exit?102:100,realizedPnl:exit?2:0,commission:.01,commissionAsset:'USDT',maker:true});
     h.state.positions.set(p.id,p);service.observeRemotePosition(p);service.recordExchangeFill(fill(1));service.recordExchangeFill(fill(2,true));service.onReconciledClose(p,'TP');
     const first=[...h.state.tradeRecords.values()][0];expect(first.entryQty).toBe(1);
     service.observeRemotePosition(p);service.recordExchangeFill(fill(3));service.recordExchangeFill(fill(4,true));service.onReconciledClose(p,'TP');

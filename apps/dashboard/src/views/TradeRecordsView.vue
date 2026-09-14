@@ -25,7 +25,16 @@ onMounted(load);
 </script>
 <template>
   <div class="page-stack">
-    <div class="kpi-grid five"><div class="kpi"><span>累计净收益</span><strong :class="financialClass(data.summary.netPnl)">{{money(data.summary.netPnl??0)}}</strong><small>仅 canonical CLOSED + COMPLETE</small></div><div class="kpi"><span>毛收益</span><strong class="financial-profit">{{money(data.summary.grossIncome??0)}}</strong></div><div class="kpi"><span>总手续费</span><strong class="financial-loss">{{money(data.summary.totalFees??0)}}</strong></div><div class="kpi"><span>当前浮动盈亏</span><strong :class="financialClass(data.summary.floatingPnl)">{{money(data.summary.floatingPnl??0)}}</strong></div><div class="kpi"><span>已完成记录数</span><strong>{{data.summary.completed??0}}</strong></div></div>
+    <p role="status">有 {{data.summary.awaitingReconciliation??0}} 笔已平仓待对账，未计入正式净收益。</p>
+    <div class="kpi-grid five">
+      <div class="kpi"><span>Exchange / SYSTEM observed closed</span><strong>{{data.summary.observedClosed??0}}</strong></div>
+      <div class="kpi"><span>CLOSED awaiting reconciliation</span><strong>{{data.summary.awaitingReconciliation??0}}</strong></div>
+      <div class="kpi"><span>COMPLETE CLOSED</span><strong>{{data.summary.completeClosed??0}}</strong></div>
+      <div class="kpi"><span>PARTIALLY CLOSED</span><strong>{{data.summary.partiallyClosed??0}}</strong></div>
+      <div class="kpi"><span>UNKNOWN / unreconciled</span><strong>{{data.summary.unknownCount??0}}</strong></div>
+      <div class="kpi"><span>Trading net ex-funding</span><strong>{{money(data.summary.tradingNetExFunding??0)}}</strong><small>不含未知 funding，不等于正式净收益</small></div>
+    </div>
+    <div class="kpi-grid five"><div class="kpi"><span>Canonical realized net PnL</span><strong :class="financialClass(data.summary.netPnl)">{{money(data.summary.netPnl??0)}}</strong><small>仅 COMPLETE CLOSED 且 funding 精确</small></div><div class="kpi"><span>毛收益</span><strong class="financial-profit">{{money(data.summary.grossIncome??0)}}</strong></div><div class="kpi"><span>总手续费</span><strong class="financial-loss">{{money(data.summary.totalFees??0)}}</strong></div><div class="kpi"><span>当前浮动盈亏</span><strong :class="financialClass(data.summary.floatingPnl)">{{money(data.summary.floatingPnl??0)}}</strong></div><div class="kpi"><span>已完成记录数</span><strong>{{data.summary.completed??0}}</strong></div></div>
     <Panel title="TradeRecord 数据可信度控制台" subtitle="先预览事实窗口，再确认写入；未知手续费显示为 —，不会进入主收益和交易记忆。">
       <div class="toolbar"><div class="toolbar"><button v-for="item in categories" :key="item[0]" class="button" :class="category===item[0]?'primary':'secondary'" @click="category=item[0];page=1;load()">{{item[1]}} <span class="mono">{{item[0]==='ISSUES'?count('invalid')+count('duplicate')+count('conflict'):count(item[0].toLowerCase())}}</span></button></div><button class="button primary" @click="openSync">手动同步 / 清洗</button></div>
       <div class="toolbar"><div class="toolbar"><input v-model="symbol" class="input" placeholder="Symbol"/><select v-model="direction" class="select"><option value="">全部方向</option><option value="LONG">LONG</option><option value="SHORT">SHORT</option></select><select v-model="outcome" class="select"><option value="">全部净收益</option><option value="WIN">盈利</option><option value="LOSS">亏损</option></select><button class="button primary" @click="page=1;load()">查询</button><button class="button secondary" @click="reset">重置</button></div><span>{{data.total??0}} 条</span></div>

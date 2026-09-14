@@ -1,3 +1,4 @@
+import {randomUUID} from 'node:crypto';
 import type { ExecutionFill } from '@zdj/contracts';
 import type { PositionLifecycleState, RuntimeState } from '../state/runtimeState.js';
 
@@ -8,7 +9,7 @@ export class PositionLifecycleTracker {
   observe(input:{symbol:string;side:'LONG'|'SHORT';quantity:number;openedAt?:number;firstObservedAt?:number;source:PositionLifecycleState['source']}):{transition:LifecycleTransition;lifecycle:PositionLifecycleState}{
     const key=this.key(input.symbol,input.side),now=Date.now(),previous=this.state.lifecycles.get(key);
     if(!previous||previous.status==='CLOSED'){
-      const lifecycle:PositionLifecycleState={cycleId:`cycle_${input.symbol}_${input.side}_${now}`,key,symbol:input.symbol,side:input.side,previousQty:0,currentQty:input.quantity,openedAt:input.openedAt??now,firstObservedAt:input.firstObservedAt??now,entryOrderIds:[],entryTradeIds:[],exitOrderIds:[],exitTradeIds:[],source:input.source,lastReconciledAt:now,status:'OPEN'};
+      const lifecycle:PositionLifecycleState={cycleId:`cycle_${input.symbol}_${input.side}_${randomUUID()}`,key,symbol:input.symbol,side:input.side,previousQty:0,currentQty:input.quantity,openedAt:input.openedAt??now,firstObservedAt:input.firstObservedAt??now,entryOrderIds:[],entryTradeIds:[],exitOrderIds:[],exitTradeIds:[],source:input.source,lastReconciledAt:now,status:'OPEN'};
       this.state.lifecycles.set(key,lifecycle);return{transition:'OPEN',lifecycle};
     }
     const delta=input.quantity-previous.currentQty,transition=Math.abs(delta)<1e-10?'UNCHANGED':delta>0?'INCREASE':'REDUCE';

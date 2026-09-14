@@ -1,3 +1,4 @@
+import { OpportunityEvidenceSchema, TradingQualityPolicySchema } from './opportunity.js';
 import { z } from 'zod';
 import { ProfitTakePlanSchema } from './ai.js';
 
@@ -5,6 +6,7 @@ export const SideSchema = z.enum(['LONG','SHORT']);
 export type Side = z.infer<typeof SideSchema>;
 
 export const EntryIntentSchema = z.object({
+  opportunityEvidence:OpportunityEvidenceSchema.optional(),
   id: z.string(),
   symbol: z.string(),
   side: SideSchema,

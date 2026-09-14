@@ -1,3 +1,4 @@
+import { TradingQualityCollector } from '../services/tradingQualityCollector.js';
 import { privateAccountFresh } from '../services/privateAccountReadiness.js';
 import { PrivateAccountSync } from '../services/privateAccountSync.js';
 import { recoverUnsubmittedEntry } from '../services/unsubmittedEntryRecovery.js';
@@ -71,6 +72,7 @@ export class EngineRuntime {
   private timers: NodeJS.Timeout[] = [];
   private stopped = false;
   private ready = false;
+  public tradingQuality: TradingQualityCollector | null = null;
   private persistTimer: NodeJS.Timeout | null = null;
   private trade: ExternalTradeAdapter | null = null;
   private runtimeIdentity: RuntimeIdentity | null = null;
@@ -302,6 +304,8 @@ export class EngineRuntime {
       store,
     );
     if (trade instanceof ExternalTradeAdapter) runtime.trade = trade;
+    (state as any).tradingQualityEvidenceReady=false;
+    try{runtime.tradingQuality = new TradingQualityCollector(path.join(opts.dataDir,"trading-quality.sqlite"),state,events);}catch(error){events.publish('TRADING_QUALITY_STORAGE_UNAVAILABLE',{reason:String(error)});}
     events.on("event", (event) => {
       if(runtime.persistenceClosed)return;
       const requiredBeforeWrite=['ENTRY_SUBMIT_ATTEMPTED','MANUAL_SUBMISSION_PREPARED','TP_SUBMISSION_PREPARED'];
@@ -519,6 +523,7 @@ export class EngineRuntime {
     });
     this.every(2_000,async()=>{if(this.state.settings.connections.executionMode==='TESTNET_ENABLED')await this.manual.resumeExitGoals();});
     this.every(1_000,()=>this.writes.flush());
+    this.every(1_000,()=>this.tradingQuality?.tick());
     this.every(5_000, async () => this.tp.sweep());
     this.every(15_000, async () => {
       if (this.state.account.status === "READY") {
@@ -566,7 +571,7 @@ export class EngineRuntime {
     this.persistTimer = null;
     this.market.stop();
     try{this.settingsStore.persistRuntime(this.state.serialize());this.events.publish("RUNTIME_STOPPED");this.settingsStore.checkpoint();}
-    finally{this.persistenceClosed=true;this.settingsStore.close();}
+    finally{this.persistenceClosed=true;this.tradingQuality?.close();this.settingsStore.close();}
   }
   async updateSettings(input: unknown) {
     const next = await this.settingsStore.save(input);
@@ -966,6 +971,7 @@ export class EngineRuntime {
   }
   applyUserData(raw: any) {
     if (raw?.e === "ACCOUNT_UPDATE") {
+      if(raw.a?.m==='FUNDING_FEE')this.events.publish('TRADING_QUALITY_FUNDING_FACT',{transactionTime:raw.T??raw.E,balances:raw.a.B??[],positions:raw.a.P??[],attribution:'ACCOUNT_FACT_NOT_EPISODE_ALLOCATION'});
 
       // ACCOUNT_UPDATE is a delta, not a complete available-margin snapshot.
       const at=Number(raw.T??raw.E);

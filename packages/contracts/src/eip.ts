@@ -1,3 +1,4 @@
+import { OpportunityEvidenceSchema, TradingQualityPolicySchema } from './opportunity.js';
 import { z } from 'zod';
 import { DerivativesSnapshotSchema, OrderBookSchema, QuoteSchema, TechnicalCardSchema, TimeframeSchema } from './market.js';
 import { OpportunityComponentsSchema } from './universe.js';
@@ -12,6 +13,7 @@ export const EvidenceRefSchema = z.object({
 export type EvidenceRef = z.infer<typeof EvidenceRefSchema>;
 
 export const EntryIntelligencePacketSchema = z.object({
+  opportunityEvidence:OpportunityEvidenceSchema.optional(),
   version: z.literal('3.0'),
   packetId: z.string(),
   symbol: z.string(),

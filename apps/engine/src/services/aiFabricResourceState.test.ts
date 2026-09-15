@@ -18,22 +18,22 @@ async function harness(){
   return{state,ai};
 }
 
-describe('retired Scout runtime state',()=>{
-  it('probes only Primary when persisted settings still enable legacy Scout',async()=>{
-    const {ai,state}=await harness();const primary=state.aiResources.find(r=>r.role==='PRIMARY_BRAIN')!;
-    const probe=vi.spyOn((ai as any).openAi,'probe').mockImplementation(async(...args:any[])=>({ok:args[0]===primary.baseUrl,reason:args[0]===primary.baseUrl?null:'connection refused'}));
-    await ai.probeResources();expect(ai.hasCapacity('PRIMARY_BRAIN')).toBe(true);expect(ai.hasCapacity('SCOUT')).toBe(false);
-    expect(state.aiResources.filter(r=>r.role==='SCOUT')).toHaveLength(0);
-    expect(ai.resourceMetrics().filter(r=>r.role==='SCOUT')).toHaveLength(0);
-    expect(probe.mock.calls.map(([url]:any[])=>url)).toEqual([primary.baseUrl]);
+describe('dual-model runtime state',()=>{
+  it('probes enabled Scout and Primary resources',async()=>{
+    const {ai,state}=await harness();const primary=state.aiResources.find(r=>r.role==='PRIMARY_BRAIN')!;const scout=state.aiResources.find(r=>r.role==='SCOUT')!;
+    const probe=vi.spyOn((ai as any).openAi,'probe').mockImplementation(async(..._args:any[])=>({ok:true,reason:null}));
+    await ai.probeResources();expect(ai.hasCapacity('PRIMARY_BRAIN')).toBe(true);expect(ai.hasCapacity('SCOUT')).toBe(true);
+    expect(state.aiResources.filter(r=>r.role==='SCOUT')).toHaveLength(1);
+    expect(ai.resourceMetrics().filter(r=>r.role==='SCOUT')).toHaveLength(1);
+    expect(probe.mock.calls.map(([url]:any[])=>url)).toEqual([scout.baseUrl,primary.baseUrl]);
     probe.mockResolvedValue({ok:false,reason:'offline'});await ai.probeResources();expect(ai.hasCapacity('PRIMARY_BRAIN')).toBe(false);
     expect(ai.resourceMetrics().find(r=>r.role==='PRIMARY_BRAIN')).toMatchObject({idleReason:'PRIMARY_MODEL_OFFLINE'});
     probe.mockResolvedValue({ok:true,reason:null});await ai.probeResources();expect(ai.hasCapacity('PRIMARY_BRAIN')).toBe(true);
   });
-  it('does not surface legacy Scout even when historical research duties are enabled',async()=>{
+  it('surfaces Scout when shared research duties are enabled',async()=>{
     const {state,ai}=await harness();state.settings.externalIntelligence.researchEnabled=true;
     ai.setResearchQueue(3);
-    expect(state.aiResources.filter(r=>r.role==='SCOUT')).toHaveLength(0);
-    expect(ai.resourceMetrics().filter(r=>r.role==='SCOUT')).toHaveLength(0);
+    expect(state.aiResources.filter(r=>r.role==='SCOUT')).toHaveLength(1);
+    expect(ai.resourceMetrics().filter(r=>r.role==='SCOUT')).toHaveLength(1);
   });
 });

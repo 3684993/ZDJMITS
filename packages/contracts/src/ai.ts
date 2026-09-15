@@ -71,14 +71,15 @@ export const AiResourceSchema = z.object({
 export type AiResource = z.infer<typeof AiResourceSchema>;
 
 export const ScoutAnnotationSchema = z.object({
-  symbol: z.string(),
-  summary: z.string(),
-  keyEvidence: z.array(z.string()).max(10),
-  contradictions: z.array(z.string()).max(8),
-  missingEvidence: z.array(z.string()).max(8),
+  symbol: z.string().min(1).max(32),
+  summary: z.string().max(240),
+  keyEvidence: z.array(z.string().max(160)).max(6),
+  contradictions: z.array(z.string().max(160)).max(4),
+  missingEvidence: z.array(z.string().max(160)).max(4),
   attentionScore: z.number().min(0).max(1),
-});
+}).strict();
 export type ScoutAnnotation = z.infer<typeof ScoutAnnotationSchema>;
+export const ScoutAnnotationJsonSchema={type:'object',additionalProperties:false,required:['symbol','summary','keyEvidence','contradictions','missingEvidence','attentionScore'],properties:{symbol:{type:'string',minLength:1,maxLength:32},summary:{type:'string',maxLength:240},keyEvidence:{type:'array',maxItems:6,items:{type:'string',maxLength:160}},contradictions:{type:'array',maxItems:4,items:{type:'string',maxLength:160}},missingEvidence:{type:'array',maxItems:4,items:{type:'string',maxLength:160}},attentionScore:{type:'number',minimum:0,maximum:1}}} as const;
 
 export const EvidenceRequestSchema = z.object({
   tool: z.enum(['GET_MULTITIMEFRAME','GET_DERIVATIVES','GET_ORDERBOOK','GET_GLOBAL_REGIME','GET_PORTFOLIO_CONTEXT','GET_EXPERIENCE','GET_REACHABLE_BAND']),

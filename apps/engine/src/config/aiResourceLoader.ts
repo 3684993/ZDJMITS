@@ -2,6 +2,6 @@ import { AiResourceSchema, type AiResource, type SystemSettings } from '@zdj/con
 
 export function loadAiResources(settings: SystemSettings): AiResource[] {
   return settings.aiResources
-    .filter(resource => resource.enabled && resource.role !== 'SCOUT')
+    .filter(resource => resource.enabled)
     .map(resource => AiResourceSchema.parse(resource));
 }

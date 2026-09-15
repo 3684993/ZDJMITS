@@ -4,7 +4,7 @@ import defaults from '../../../../config/settings.default.json' with {type:'json
 import {loadAiResources} from './aiResourceLoader.js';
 
 describe('AI resource loader',()=>{
-  it('always omits legacy enabled Scout resources while keeping the enabled Primary Brain',()=>{
+  it('keeps enabled Scout and Primary Brain resources available to the runtime',()=>{
     const settings=SystemSettingsSchema.parse({
       ...defaults,
       ai:{...defaults.ai,scoutEnabled:true},
@@ -15,8 +15,9 @@ describe('AI resource loader',()=>{
     expect(settings.aiResources.find(resource=>resource.role==='PRIMARY_BRAIN')?.enabled).toBe(true);
     const resources=loadAiResources(settings);
 
-    expect(resources.filter(resource=>resource.role==='SCOUT')).toHaveLength(0);
+    expect(resources.filter(resource=>resource.role==='SCOUT')).toHaveLength(1);
     expect(resources.filter(resource=>resource.role==='PRIMARY_BRAIN')).toHaveLength(1);
-    expect(resources[0]).toMatchObject({role:'PRIMARY_BRAIN',model:'qwen/qwen3.8-27b'});
+    expect(resources.find(resource=>resource.role==='PRIMARY_BRAIN')).toMatchObject({role:'PRIMARY_BRAIN',model:'qwen/qwen3.8-27b'});
+    expect(resources.find(resource=>resource.role==='SCOUT')).toMatchObject({role:'SCOUT',model:'qwen3.5:9b'});
   });
 });

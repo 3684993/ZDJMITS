@@ -30,11 +30,15 @@ try{
   Write-HostLifecycle 'HOST_STARTED' @{workingDirectory=$WorkingDirectory;enginePath=$EnginePath}
   $dq=[char]34
   $child=Start-Process -FilePath $NodePath -ArgumentList @(($dq+$EnginePath+$dq)) -WorkingDirectory $WorkingDirectory -RedirectStandardOutput $StdoutPath -RedirectStandardError $StderrPath -WindowStyle Hidden -PassThru
+  # Windows PowerShell can otherwise lose ExitCode for PassThru processes when
+  # standard streams are redirected. Materialize the native handle while the
+  # process is alive, then wait on this same Process instance.
+  $retainedHandle=$child.Handle
   Write-Receipt $child.Id
-  Write-HostLifecycle 'CHILD_STARTED' @{pid=$child.Id}
+  Write-HostLifecycle 'CHILD_STARTED' @{pid=$child.Id;handleCaptured=($retainedHandle -ne [IntPtr]::Zero)}
   $child.WaitForExit()
-  $child.Refresh()
-  Write-HostLifecycle 'CHILD_EXITED' @{pid=$child.Id;exitCode=$child.ExitCode;exitedAt=[DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds()}
+  $exitCode=$child.ExitCode
+  Write-HostLifecycle 'CHILD_EXITED' @{pid=$child.Id;exitCode=$exitCode;exitedAt=[DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds()}
   exit 0
 }catch{
   Write-HostLifecycle 'HOST_FAILED' @{message=$_.Exception.Message;type=$_.Exception.GetType().FullName}

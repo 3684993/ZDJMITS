@@ -1,3 +1,5 @@
+import {canonicalPnlEligible,ledgerClosedComplete} from '../services/tradingQualityEligibility.js';
+import {projectTradeRecordSummary} from '../services/tradeRecordReadModel.js';
 import {
   DashboardSnapshotSchema,
   type DashboardSnapshot,
@@ -46,7 +48,8 @@ export function redactAudit(value: unknown, limit = 8000) {
   const bounded=JSON.stringify(envelope);
   return bounded.length<=limit?bounded:JSON.stringify({...envelope,summary:'See archived artifact by hash'});
 }
-export function dashboardProjection(runtime: EngineRuntime): DashboardSnapshot {
+const directionalDecision=(decision:unknown)=>['PLACE_LONG','PLACE_SHORT','WAIT_FOR_PRICE'].includes(String(decision??''));
+function baseDashboardProjection(runtime: EngineRuntime): DashboardSnapshot {
   const s = runtime.state,
     now = Date.now(),
     since = now - 3600000,
@@ -57,15 +60,13 @@ export function dashboardProjection(runtime: EngineRuntime): DashboardSnapshot {
     activeTps = [...s.tpOrders.values()].filter(
       (order) => order.status === "WORKING",
     ),
-    closed = [...s.tradeRecords.values()].filter(
-      (record) =>
-        record.canonical &&
-        record.classification === "COMPLETE" &&
-        record.status === "CLOSED" &&
-        record.recordCompleteness === "COMPLETE" &&
-        record.feeCompleteness === "COMPLETE",
-    ),
+    closed = [...s.tradeRecords.values()].filter(record=>canonicalPnlEligible(record,runtime.qualityObserver?.readContext()).eligible),
+    closedExFunding = [...s.tradeRecords.values()].filter(record=>ledgerClosedComplete(record).eligible),
     net = closed.reduce((sum, record) => sum + (record.netPnl ?? 0), 0),
+    tradingNetExFunding = closedExFunding.reduce(
+      (sum, record) => sum + (record.tradingNetPnlExFunding ?? 0),
+      0,
+    ),
     fills = s.executionFills.filter((fill: any) => fill.executionTime >= since),
     systemOrderKeys = new Set(
       [...s.entryOrders.values(), ...s.tpOrders.values(), ...s.manualOrders.values()]
@@ -117,6 +118,11 @@ export function dashboardProjection(runtime: EngineRuntime): DashboardSnapshot {
       policyDistribution[c.directionPolicy] =
         (policyDistribution[c.directionPolicy] ?? 0) + 1;
   }
+  const aiResources=runtime.ai.resourceMetrics().map((resource:any)=>directionalDecision(resource.lastDecision)?resource:{...resource,lastDirection:null});
+  const recentAiRuns=s.aiRuns.slice(0,30).map(({inputPreview:_input,outputPreview:_output,normalizedPreview:_normalized,failure,...run})=>({
+    ...run,direction:directionalDecision(run.decision)?run.direction:null,
+    failure:failure?{...failure,rawOutput:null}:failure,
+  })).sort(byOpenedAtDesc);
   return DashboardSnapshotSchema.parse({
     ts: now,
     account: {
@@ -131,6 +137,11 @@ export function dashboardProjection(runtime: EngineRuntime): DashboardSnapshot {
     },
     tradeNetPnl: closed.length ? net : 0,
     tradeCompletedCount: closed.length,
+    tradeTradingNetExFunding: tradingNetExFunding,
+    tradeCompletedExFundingCount: closedExFunding.length,
+    tradeFundingUnknownCount: closedExFunding.filter(
+      (record) => record.fundingAttributionStatus !== "EXACT",
+    ).length,
     tradeActivity: s.activity,
     exchangeFillFacts: {
       entryFillsLast1h: entryFills.length,
@@ -176,13 +187,23 @@ export function dashboardProjection(runtime: EngineRuntime): DashboardSnapshot {
     positions: [...s.positions.values()],
     entryOrders: activeEntries.sort((a, b) => b.updatedAt - a.updatedAt),
     tpOrders: activeTps.sort((a, b) => b.updatedAt - a.updatedAt),
-    aiResources: runtime.ai.resourceMetrics(),
-    recentAiRuns: s.aiRuns.slice(0, 30).map(({inputPreview: _input,outputPreview: _output,normalizedPreview: _normalized,failure,...run})=>({
-      ...run,
-      failure:failure?{...failure,rawOutput:null}:failure,
-    })).sort(byOpenedAtDesc),
+    aiResources,
+    recentAiRuns,
     health: runtime.health(),
     readiness: runtime.readinessProjection(),
     settings: s.settings,
   });
+}
+
+/** V3.9.3 economics overlay; no mutation/backfill/reconciliation is allowed here. */
+export function dashboardProjection(runtime:EngineRuntime):DashboardSnapshot{
+  const base=baseDashboardProjection(runtime),economics=projectTradeRecordSummary({records:[...runtime.state.tradeRecords.values()],asOf:Date.now(),...runtime.qualityObserver?.readContext()});
+  return {...base,
+    tradeNetPnl:economics.canonicalNetPnl??0,
+    tradeCompletedCount:economics.canonicalPnlEligibleCount,
+    tradeTradingNetExFunding:economics.tradingNetExFunding,
+    tradeCompletedExFundingCount:economics.tradingNetExFundingEligibleCount,
+    tradeFundingUnknownCount:economics.fundingUnknownCount,
+    tradeQualityEconomics:economics,
+  } as DashboardSnapshot;
 }

@@ -12,7 +12,7 @@ export class MockExchangeAdapter implements ExchangeTradeAdapter {
   async cancelManualOrder(order:ManualOrder){const next={...order,status:'CANCELED' as const,updatedAt:Date.now()};this.manualOrders.set(order.id,next);return next;}
   async findTakeProfitByClientOrderId(order:TakeProfitOrder){return this.tps.get(order.id)??null;}
   async cancelTakeProfit(order:TakeProfitOrder){const next={...order,status:'CANCELED' as const,updatedAt:Date.now()};this.tps.set(next.id,next);return next;}
-  async fetchOpenOrders(){return[...this.entries.values(),...this.tps.values()].filter(o=>o.status==='WORKING'||('status'in o&&o.status==='PARTIALLY_FILLED'));}
+  async fetchOpenOrders(symbol?:string){return[...this.entries.values(),...this.tps.values()].filter(o=>(!symbol||o.symbol===symbol)&&(o.status==='WORKING'||('status'in o&&o.status==='PARTIALLY_FILLED')));}
   async fetchPositions(){return[...this.positions.values()];}
   async setLeverage(_symbol:string,_leverage:number){return;}
   async tick(quotes:Map<string,Quote>){

@@ -16,19 +16,20 @@ export class ExternalResearchService{
     this.ai.setResearchQueue(this.metrics().queued);return inserted;
   }
   enqueueMarketChanges(now=Date.now()) {
-    if(!this.state.settings.externalIntelligence.researchEnabled)return false;
+    // Local market facts already exist in EIP. Re-running them through 9B has no consumer while
+    // feedToPrimary=false, so do not spend GPU/CPU/SQLite on a duplicate representation.
+    if(!this.state.settings.externalIntelligence.researchEnabled||!this.state.settings.externalIntelligence.feedToPrimary)return false;
     const facts:Record<string,string|number|boolean|null>={};
     for(const candidate of this.state.pool.list()){
       const market=this.state.snapshots.get(candidate.symbol);if(!market||now-market.quote.ts>15000)continue;
       const trend=market.technical['15m'];if(!trend||now-trend.asOf>1805000)continue;
-      facts[`${candidate.symbol}.trend15m`]=trend.trend;
-      facts[`${candidate.symbol}.trend5m`]=market.technical['5m']?.trend??null;
+      facts[`${candidate.symbol}.trend15m`]=trend.trend;facts[`${candidate.symbol}.trend5m`]=market.technical['5m']?.trend??null;
     }
     if(!Object.keys(facts).length)return false;
     const contentHash=createHash('sha256').update(JSON.stringify(facts)).digest('hex'),eventAt=Math.max(...this.state.pool.list().map(candidate=>Number(this.state.snapshots.get(candidate.symbol)?.technical?.['15m']?.barCloseTime??0)));
     return this.enqueue({id:`market_${contentHash}`,provider:'LOCAL_MARKET',instrument:'QUALIFIED_POOL',venue:this.state.settings.connections.exchange.environment,sourceId:`market-changes:${contentHash}`,url:'local://qualified-market-facts',eventAt,publishedAt:now,receivedAt:now,availableAt:now,expiresAt:now+30*60_000,closedBar:eventAt>0?true:null,facts,quality:'LOCAL_MARKET_FACTS',revision:contentHash,contentHash});
   }
-  metrics(){return{enabled:this.state.settings.externalIntelligence.researchEnabled,feedToPrimary:this.state.settings.externalIntelligence.feedToPrimary,maxConcurrency:1,...this.store.externalResearchMetrics()};}
+  metrics(){return{enabled:this.state.settings.externalIntelligence.researchEnabled,feedToPrimary:this.state.settings.externalIntelligence.feedToPrimary,localMarketResearchActive:this.state.settings.externalIntelligence.researchEnabled&&this.state.settings.externalIntelligence.feedToPrimary,maxConcurrency:1,...this.store.externalResearchMetrics()};}
   async tick(){
     if(this.running||!this.state.settings.externalIntelligence.researchEnabled)return;
     const task=this.store.nextExternalResearch();if(!task){this.ai.setResearchQueue(0);return;}

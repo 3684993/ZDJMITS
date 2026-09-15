@@ -2,7 +2,7 @@ import { classifyAsset, decorateUniverse, isOnlineAsset, resolveUnderlying, sele
 import type { RuntimeState } from '../state/runtimeState.js';
 import type { EventBus } from '../events/eventBus.js';
 import { reconcileCandidateLifecycles } from './candidateLifecycleDeriver.js';
-import { decisionContextKey, decisionSettingsContext } from './decisionContext.js';
+import { decisionContextKey, decisionSettingsContext, noEdgeReleaseReason, noEdgeReviewFacts } from './decisionContext.js';
 import { buildSupplyHealth } from './supplyHealth.js';
 import { candidateSupplyHealth } from './candidateSupplyHealth.js';
 
@@ -23,12 +23,14 @@ export class UniverseCoordinator {
     if(quality.liquidityTopN>0){const allowed=this.state.universe.filter(x=>x.eligible).sort((a,b)=>b.quoteVolumeUsd24h-a.quoteVolumeUsd24h).slice(0,quality.liquidityTopN).map(x=>x.symbol),top=new Set(allowed);for(const candidate of this.state.universe)if(candidate.eligible&&!top.has(candidate.symbol)){candidate.eligible=false;candidate.pipelineEligible=false;candidate.exclusionReasons=[...candidate.exclusionReasons,'MARKET_QUALITY_LIQUIDITY_TOP_N'];}}
     for(const candidate of this.state.universe){
       let row=this.state.candidateLifecycle.get(candidate.symbol);const cooldown=this.state.rejectionCooldown.get(candidate.symbol);
-      const snapshot=this.state.snapshots.get(candidate.symbol),contextKey=snapshot?decisionContextKey({market:snapshot,settingsContext:decisionSettingsContext(this.state.settings),confirmation:row?.confirmation}):null,fingerprint=JSON.stringify({trend:snapshot?.technical?.['15m']?.trend,atr:Math.round((snapshot?.quote?.last??0)/Math.max(.0000001,snapshot?.technical?.['15m']?.atr14??1)),spread:Math.round(candidate.spreadBps)});
+      const snapshot=this.state.snapshots.get(candidate.symbol),route=this.state.runtimeControl.capital.routedCandidates.find((x:any)=>x.symbol===candidate.symbol),caps={longExecutable:Boolean(route?.longExecutable),shortExecutable:Boolean(route?.shortExecutable)},contextKey=snapshot?decisionContextKey({market:snapshot,settingsContext:decisionSettingsContext(this.state.settings),confirmation:row?.confirmation,...caps}):null,fingerprint=JSON.stringify({trend:snapshot?.technical?.['15m']?.trend,atr:Math.round((snapshot?.quote?.last??0)/Math.max(.0000001,snapshot?.technical?.['15m']?.atr14??1)),spread:Math.round(candidate.spreadBps)});
       // Migrate the retired lifecycle state without feeding a capital route back
       // into Universe eligibility or its cooldown decision context.
       if(row?.status==='WAITING_CAPITAL_ROUTE'){row={...row,status:'READY',reason:'LEGACY_CAPITAL_ROUTE_GATE_REMOVED',nextEligibleAt:null,updatedAt:now};this.state.candidateLifecycle.set(candidate.symbol,row);}
-      if(row?.nextEligibleAt&&row.nextEligibleAt<=now&&(!row.decisionContextKey||row.decisionContextKey!==contextKey)){this.state.candidateLifecycle.set(candidate.symbol,{...row,status:'READY',reason:'DECISION_CONTEXT_CHANGED',nextEligibleAt:null,updatedAt:now});this.state.rejectionCooldown.delete(candidate.symbol);}
-      else if(row?.decisionContextKey&&contextKey&&row.decisionContextKey!==contextKey&&['REJECT_COOLDOWN','TECHNICAL_COOLDOWN'].includes(row.status)){this.state.candidateLifecycle.set(candidate.symbol,{...row,status:'READY',reason:'MATERIAL_STATE_CHANGE',nextEligibleAt:null,updatedAt:now,fingerprint});this.state.rejectionCooldown.delete(candidate.symbol);}
+      const noEdgeRelease=row?.noEdgeReview&&snapshot?noEdgeReleaseReason(row.noEdgeReview,noEdgeReviewFacts({market:snapshot,...caps}),now):null;
+      if(noEdgeRelease){this.state.candidateLifecycle.set(candidate.symbol,{...row,status:'READY',reason:noEdgeRelease,triggerReason:noEdgeRelease,nextEligibleAt:null,updatedAt:now});this.state.rejectionCooldown.delete(candidate.symbol);}
+      else if(!row?.noEdgeReview&&row?.nextEligibleAt&&row.nextEligibleAt<=now&&(!row.decisionContextKey||row.decisionContextKey!==contextKey)){this.state.candidateLifecycle.set(candidate.symbol,{...row,status:'READY',reason:'DECISION_CONTEXT_CHANGED',nextEligibleAt:null,updatedAt:now});this.state.rejectionCooldown.delete(candidate.symbol);}
+      else if(!row?.noEdgeReview&&row?.decisionContextKey&&contextKey&&row.decisionContextKey!==contextKey&&['REJECT_COOLDOWN','TECHNICAL_COOLDOWN'].includes(row.status)){this.state.candidateLifecycle.set(candidate.symbol,{...row,status:'READY',reason:'MATERIAL_STATE_CHANGE',nextEligibleAt:null,updatedAt:now,fingerprint});this.state.rejectionCooldown.delete(candidate.symbol);}
       const current=this.state.candidateLifecycle.get(candidate.symbol);
       // Capital routing is a dispatch fact, not a Universe membership gate.
       const blocked=current?.status==='POSITION_HELD'?'POSITION_HELD':current?.status==='EXCLUDED_UNDERLYING'?'EXCLUDED_UNDERLYING':this.state.activeEntrySymbols().has(candidate.symbol)?'ENTRY_WORKING':current?.status;

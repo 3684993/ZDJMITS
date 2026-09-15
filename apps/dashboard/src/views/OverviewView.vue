@@ -112,11 +112,12 @@ onUnmounted(() => {
         ><strong>{{ account()?.activePositions ?? "—" }}</strong>
       </div>
       <div class="kpi">
-        <span>交易记录净收益</span
+        <span>已实现交易收益（不含资金费）</span
         ><strong
-          :class="(s.snapshot?.tradeNetPnl ?? 0) >= 0 ? 'positive' : 'negative'"
-          >{{ money(s.snapshot?.tradeNetPnl ?? 0) }}</strong
+          :class="(s.snapshot?.tradeTradingNetExFunding ?? 0) >= 0 ? 'positive' : 'negative'"
+          >{{ money(s.snapshot?.tradeTradingNetExFunding ?? 0) }}</strong
         >
+        <small>正式净收益 {{ money(s.snapshot?.tradeNetPnl ?? 0) }} · {{ s.snapshot?.tradeCompletedExFundingCount ?? 0 }} 个完整周期<span v-if="(s.snapshot?.tradeFundingUnknownCount ?? 0) > 0"> · {{ s.snapshot?.tradeFundingUnknownCount }} 笔资金费未确认</span></small>
       </div>
       <div class="kpi">
         <span>活动委托</span

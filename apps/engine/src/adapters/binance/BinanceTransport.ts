@@ -1,38 +1,42 @@
-import { binanceRequestBudget } from './requestBudget.js';
+import {isIP} from 'node:net';
+import { createHash, randomUUID } from 'node:crypto';
+import { getBinanceRequestBudget, type RequestBudgetMeta } from './requestBudget.js';
+import {storageEntryBlockReason} from '../../services/storageCapacityGuard.js';
 import https from 'node:https';
 import { SocksProxyAgent } from 'socks-proxy-agent';
 import type { ConnectionSettings } from '@zdj/contracts';
+function klineWeight(limit:number){return limit<100?1:limit<500?2:limit<=1000?5:10;}function depthWeight(limit:number){return limit<=50?2:limit<=100?5:limit<=500?10:20;}
+export function binanceRequestWeight(url:URL,method='GET'){const p=url.pathname,hasSymbol=url.searchParams.has('symbol'),limit=Math.max(1,Number(url.searchParams.get('limit')??0)||500),signed=url.searchParams.has('signature');if(p.endsWith('/time')||p.endsWith('/exchangeInfo')||p.endsWith('/openInterest')||p.endsWith('/fundingRate')||p.endsWith('/listenKey'))return 1;if(p.endsWith('/klines')||p.endsWith('/markPriceKlines')||p.endsWith('/indexPriceKlines')||p.endsWith('/continuousKlines'))return klineWeight(limit);if(p.endsWith('/depth'))return depthWeight(limit);if(p.endsWith('/ticker/24hr'))return hasSymbol?1:40;if(p.endsWith('/premiumIndex'))return hasSymbol?1:10;if(p.endsWith('/income'))return 30;if(p.endsWith('/openOrders'))return hasSymbol?1:40;if(p.endsWith('/account')||p.endsWith('/balance')||p.endsWith('/positionRisk'))return 5;if(p.endsWith('/userTrades')||p.endsWith('/allOrders'))return 5;if(p.endsWith('/order'))return method==='POST'?0:1;if(p.endsWith('/positionSide/dual')||p.endsWith('/leverageBracket'))return 30;return signed?5:2;}
+function inferredSource(url:URL,method:string){const p=url.pathname;if(method!=='GET'&&p.endsWith('/order'))return'EXECUTION_CRITICAL';if(p.endsWith('/order')||p.endsWith('/userTrades'))return'ORDER_VERIFICATION';if(p.endsWith('/account')||p.endsWith('/balance')||p.endsWith('/positionRisk'))return'PRIVATE_STATE';if(p.endsWith('/openOrders')||p.endsWith('/income')||p.endsWith('/allOrders'))return'RECONCILIATION';if(p.endsWith('/listenKey'))return'USER_DATA_STREAM';if(p.endsWith('/klines')||p.endsWith('/depth')||p.endsWith('/ticker/24hr')||p.endsWith('/ticker/bookTicker')||p.endsWith('/premiumIndex')||p.endsWith('/openInterest')||p.endsWith('/fundingRate')||p.endsWith('/exchangeInfo'))return'MARKET_DATA';if(p.endsWith('/time'))return'CLOCK';return'UNKNOWN';}
+function priorityFor(source:string):0|1|2{return['EXECUTION_CRITICAL','ORDER_VERIFICATION','PRIVATE_STATE','USER_DATA_STREAM','CLOCK'].includes(source)?0:['RECONCILIATION','CLOCK','HEALTH_PROBE'].includes(source)?1:2;}
+export function extractObservedIp(body:string){for(const match of body.matchAll(/\bIP\s*[(=:]?\s*([0-9a-f:.]+)/ig)){if(isIP(match[1]!))return match[1]!;}return null;}
+export function binanceBudgetFailureMessage(message:string,meta:RequestBudgetMeta){return `${message}|requestId=${String(meta.requestId??'UNKNOWN')}|endpoint=${String(meta.endpoint??'UNKNOWN')}|method=${String(meta.method??'GET')}|source=${String(meta.source??'UNKNOWN')}|purpose=${String(meta.purpose??'UNSPECIFIED')}|routeIdentity=${String(meta.routeIdentity??'UNKNOWN')}`;}
 
+const liveTransports=new Set<WeakRef<BinanceTransport>>();
+export function reconfigureBinanceTransports(settings:ConnectionSettings){for(const ref of [...liveTransports]){const transport=ref.deref();if(transport)transport.reconfigure(settings);else liveTransports.delete(ref);}}
+
+/**
+ * Single Binance network boundary.
+ * Every REST, public-market, private-account, execution, listen-key and WS path
+ * reaches Binance through this transport. Exchange traffic is proxy-only:
+ * DIRECT remains schema-compatible only and is never honored. Missing/disabled
+ * proxy means fail-closed, never fallback.
+ */
 export class BinanceTransport {
-  private readonly agent: SocksProxyAgent | null;
-  constructor(private readonly settings: ConnectionSettings) {
-    if (settings.proxy.enabled) this.agent = new SocksProxyAgent(settings.proxy.url);
-    else this.agent = null;
-  }
-  effectiveBaseUrl() { return this.settings.exchange.environment === 'TESTNET' ? this.settings.exchange.testnetBaseUrl : this.settings.exchange.productionBaseUrl; }
-  environment(){return this.settings.exchange.environment;}
-  restRoute(){const direct=this.settings.proxy.binanceRestRoute==='DIRECT';return{mode:direct?'DIRECT':'CONFIGURED',throughProxy:!direct&&Boolean(this.agent),host:new URL(this.effectiveBaseUrl()).hostname};}
-  private restAgent(){if(this.settings.proxy.binanceRestRoute==='DIRECT'){if(this.settings.proxy.forceBinanceRest)throw new Error('REST_ROUTE_CONFLICT: direct route cannot force proxy');return undefined;}return this.agent??undefined;}
-  executionMode(){return this.settings.executionMode;}
-  assertTestnetExchangeWrite(){const url=new URL(this.effectiveBaseUrl());if(this.settings.exchange.environment!=='TESTNET'||this.settings.executionMode!=='TESTNET_ENABLED'||url.hostname!=='testnet.binancefuture.com')throw new Error('TESTNET_ONLY_WRITE_LOCK: production/private exchange write disabled');}
-  effectiveWsUrl() { return this.settings.exchange.environment === 'TESTNET' ? 'wss://stream.binancefuture.com/ws' : 'wss://fstream.binance.com/ws'; }
-  websocketOptions() { if (this.settings.proxy.forceBinanceWs && !this.agent) throw new Error('PROXY_UNAVAILABLE: Binance WS is configured fail-closed'); return { agent: this.settings.proxy.forceBinanceWs ? this.agent ?? undefined : undefined }; }
-  websocketRoute(){return{url:this.effectiveWsUrl(),throughProxy:Boolean(this.settings.proxy.forceBinanceWs&&this.agent),proxyUrl:this.settings.proxy.forceBinanceWs?this.settings.proxy.url:null,tlsServername:new URL(this.effectiveWsUrl()).hostname};}
-  private assertBinance(url: URL) { if (!(url.hostname==='binance.com'||url.hostname.endsWith('.binance.com')) && !(url.hostname==='binancefuture.com'||url.hostname.endsWith('.binancefuture.com'))) throw new Error(`Refusing non-Binance transport host: ${url.hostname}`); if (this.settings.proxy.forceBinanceRest && !this.agent) throw new Error('PROXY_UNAVAILABLE: Binance REST is configured fail-closed'); }
-  async json<T>(pathOrUrl: string, init: { method?: string; headers?: Record<string, string>; body?: string; timeoutMs?: number } = {}): Promise<T> {
-    const url = new URL(pathOrUrl, this.effectiveBaseUrl()); this.assertBinance(url);
-    const priority=url.pathname==='/fapi/v1/time'?0:(url.searchParams.has('signature')||Boolean(init.headers?.['X-MBX-APIKEY']))?(url.pathname.includes('/income')?1:0):2;
-    return binanceRequestBudget.run(priority,()=>new Promise<T>((resolve, reject) => {
-      const timeoutMs=init.timeoutMs??15_000;
-      const request = https.request(url, { method: init.method ?? 'GET', headers: { 'user-agent': 'zdj-mits-v3/3.9', ...init.headers }, agent: this.restAgent(), timeout: timeoutMs, signal: AbortSignal.timeout(timeoutMs) }, response => {
-        binanceRequestBudget.observe(response.statusCode??500,response.headers['x-mbx-used-weight-1m'] as string|undefined,response.headers['retry-after'] as string|undefined);
-        let body = ''; response.setEncoding('utf8'); response.on('data', chunk => { body += chunk; }); response.on('end', () => {
-          if ((response.statusCode ?? 500) >= 400) return reject(new Error(`Binance HTTP ${response.statusCode}: ${body.slice(0, 512)}`));
-          try { resolve(JSON.parse(body) as T); } catch { reject(new Error('Binance returned invalid JSON')); }
-        });
-      });
-      request.once('timeout', () => request.destroy(new Error('Binance request timed out'))); request.once('error', error => reject(new Error(`BINANCE_TRANSPORT_BLOCKED: ${error.name==='AbortError'?'Binance request timed out':error.message}`))); request.end(init.body);
-    }));
-  }
-  async health() { const startedAt = Date.now(); const serverTime = await this.json<{ serverTime: number }>('/fapi/v1/time'); return { status: 'HEALTHY' as const, latencyMs: Date.now() - startedAt, serverTime, effectiveBaseUrl: this.effectiveBaseUrl(), throughProxy: this.restRoute().throughProxy,route:this.restRoute() }; }
+ private agent:SocksProxyAgent|null=null;private budget!:ReturnType<typeof getBinanceRequestBudget>;private routeIdentity='proxy-unavailable';private settings:ConnectionSettings;
+ constructor(settings:ConnectionSettings){this.settings=settings;this.applyRoute();liveTransports.add(new WeakRef(this));}
+ private applyRoute(){if(this.settings.proxy.enabled&&this.settings.proxy.url)this.agent=new SocksProxyAgent(this.settings.proxy.url);else this.agent=null;const proxyHash=this.agent?createHash('sha256').update(this.settings.proxy.url).digest('hex').slice(0,12):'unavailable';this.routeIdentity=`proxy-${proxyHash}`;this.budget=getBinanceRequestBudget(this.settings.exchange.environment,this.routeIdentity);}
+ reconfigure(settings:ConnectionSettings){this.settings=settings;this.applyRoute();}
+ effectiveBaseUrl(){return this.settings.exchange.environment==='TESTNET'?this.settings.exchange.testnetBaseUrl:this.settings.exchange.productionBaseUrl;}environment(){return this.settings.exchange.environment;}executionMode(){return this.settings.executionMode;}
+ private assertProxy(){if(!this.settings.proxy.enabled||!this.agent)throw new Error('PROXY_REQUIRED: Binance exchange traffic is proxy-only and configured fail-closed');}
+ requestBudgetHealth(){return{...this.budget.health(),routeIdentity:this.routeIdentity,route:this.restRoute()};}
+ restRoute(){return{mode:'CONFIGURED' as const,throughProxy:Boolean(this.agent),host:new URL(this.effectiveBaseUrl()).hostname,routeIdentity:this.routeIdentity,proxyUrl:this.agent?this.settings.proxy.url:null,failClosed:true};}
+ private restAgent(){this.assertProxy();return this.agent!;}
+ assertTestnetExchangeWrite(){const url=new URL(this.effectiveBaseUrl());if(this.settings.exchange.environment!=='TESTNET'||this.settings.executionMode!=='TESTNET_ENABLED'||url.hostname!=='testnet.binancefuture.com')throw new Error('TESTNET_ONLY_WRITE_LOCK: production/private exchange write disabled');this.assertProxy();}
+ effectiveWsUrl(){return this.settings.exchange.environment==='TESTNET'?'wss://stream.binancefuture.com/ws':'wss://fstream.binance.com/ws';}
+ websocketOptions(){this.assertProxy();return{agent:this.agent!};}
+ websocketRoute(){return{url:this.effectiveWsUrl(),throughProxy:Boolean(this.agent),proxyUrl:this.agent?this.settings.proxy.url:null,tlsServername:new URL(this.effectiveWsUrl()).hostname,routeIdentity:this.routeIdentity,failClosed:true};}
+ private assertBinance(url:URL){if(!(url.hostname==='binance.com'||url.hostname.endsWith('.binance.com'))&&!(url.hostname==='binancefuture.com'||url.hostname.endsWith('.binancefuture.com')))throw new Error(`Refusing non-Binance transport host: ${url.hostname}`);this.assertProxy();}
+ async json<T>(pathOrUrl:string,init:{method?:string;headers?:Record<string,string>;body?:string;timeoutMs?:number;source?:string;purpose?:string}={}):Promise<T>{const url=new URL(pathOrUrl,this.effectiveBaseUrl());this.assertBinance(url);if(url.origin!==new URL(this.effectiveBaseUrl()).origin)throw new Error('BINANCE_ENVIRONMENT_ORIGIN_MISMATCH');const method=(init.method??'GET').toUpperCase(),source=init.source??inferredSource(url,method),priority=priorityFor(source),weight=binanceRequestWeight(url,method),meta:RequestBudgetMeta={requestId:randomUUID(),source,purpose:init.purpose??'BINANCE_HTTP',endpoint:url.pathname,method,routeIdentity:this.routeIdentity},budgetHealth=this.budget.health();if((budgetHealth.status==='SATURATED'&&source!=='EXECUTION_CRITICAL')||(source==='MARKET_DATA'&&budgetHealth.admissionObservedWeight1m!==null&&budgetHealth.admissionObservedWeight1m+weight>budgetHealth.softPublicWeight))throw new Error(binanceBudgetFailureMessage(`BINANCE_REQUEST_BUDGET_DEFERRED:${budgetHealth.status}`,meta));try{return await this.budget.run(priority,weight,()=>{if(init.purpose==='NEW_ENTRY'){const storageBlock=storageEntryBlockReason();if(storageBlock)throw new Error(`STORAGE_ENTRY_BLOCKED:${storageBlock}`);if(this.budget.health().status!=='AVAILABLE')throw new Error('BINANCE_ENTRY_BUDGET_BLOCKED');}return new Promise<T>((resolve,reject)=>{const timeoutMs=init.timeoutMs??15_000,request=https.request(url,{method,headers:{'user-agent':'zdj-mits-v3/3.9',...init.headers},agent:this.restAgent(),timeout:timeoutMs,signal:AbortSignal.timeout(timeoutMs)},response=>{let body='';response.setEncoding('utf8');response.on('data',chunk=>{body+=chunk;});response.on('end',()=>{const status=response.statusCode??500,observedIp=(status===418||status===429)?extractObservedIp(body):null;this.budget.observe(status,response.headers['x-mbx-used-weight-1m'] as string|undefined,response.headers['retry-after'] as string|undefined,meta,observedIp,Number(body.match(/banned until (\d+)/i)?.[1]??0));if(status>=400)return reject(new Error(`Binance HTTP ${status}: ${body.slice(0,512)}`));try{resolve(JSON.parse(body) as T);}catch{reject(new Error('Binance returned invalid JSON'));}});});request.once('timeout',()=>request.destroy(new Error('Binance request timed out')));request.once('error',error=>reject(new Error(`BINANCE_TRANSPORT_BLOCKED: ${error.name==='AbortError'?'Binance request timed out':error.message}`)));request.end(init.body);});},meta);}catch(error){const message=error instanceof Error?error.message:String(error);if(message.startsWith('BINANCE_REQUEST_QUEUE_TIMEOUT')||message.startsWith('BINANCE_REQUEST_QUEUE_FULL')||message.startsWith('BINANCE_RATE_LIMIT_UNTIL:')||message.startsWith('BINANCE_REQUEST_BUDGET_DEFERRED:'))throw new Error(binanceBudgetFailureMessage(message,meta));throw error;}}
+ async health(){this.assertProxy();const startedAt=Date.now(),serverTime=await this.json<{serverTime:number}>('/fapi/v1/time',{source:'HEALTH_PROBE',purpose:'SERVER_TIME'});return{status:'HEALTHY' as const,latencyMs:Date.now()-startedAt,serverTime,effectiveBaseUrl:this.effectiveBaseUrl(),throughProxy:true,route:this.restRoute(),requestBudget:this.requestBudgetHealth()};}
 }

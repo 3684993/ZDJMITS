@@ -1,10 +1,12 @@
+import type {TradingQualityRuntimeObserver} from '../services/tradingQualityRuntimeObserver.js';
+import { TradingQualityCollector } from '../services/tradingQualityCollector.js';
 import { privateAccountFresh } from '../services/privateAccountReadiness.js';
-import { isTelemetry } from '../services/operationalLogger.js';
 import { PrivateAccountSync } from '../services/privateAccountSync.js';
 import { recoverUnsubmittedEntry } from '../services/unsubmittedEntryRecovery.js';
 import {RuntimeWriteBuffer} from '../services/runtimeWriteBuffer.js';
 import path from "node:path";
 import { readFileSync } from "node:fs";
+import { mkdir } from "node:fs/promises";
 import { RuntimeState } from "../state/runtimeState.js";
 import { EventBus } from "../events/eventBus.js";
 import { SettingsStore } from "../config/settingsStore.js";
@@ -23,7 +25,7 @@ import { TpGuardian } from "../services/tpGuardian.js";
 import { ExchangeLoop } from "../services/exchangeLoop.js";
 import { ReconciliationService } from "../services/reconciliationService.js";
 import { BinanceTransport } from "../adapters/binance/BinanceTransport.js";
-import type { ExchangeTradeAdapter } from "../types.js";
+import type { ExchangeTradeAdapter, TradeAuditSnapshot } from "../types.js";
 import { ManualPositionService } from "../services/manualPositionService.js";
 import { TradeRecordIntegrityService } from "../services/tradeRecordIntegrityService.js";
 import { TradeRecordSyncService } from "../services/tradeRecordSyncService.js";
@@ -72,8 +74,24 @@ export class EngineRuntime {
   private timers: NodeJS.Timeout[] = [];
   private stopped = false;
   private ready = false;
+  public qualityObserver:TradingQualityRuntimeObserver|null=null;
+  public tradingQuality: TradingQualityCollector | null = null;
   private persistTimer: NodeJS.Timeout | null = null;
   private trade: ExternalTradeAdapter | null = null;
+  private tradeRecordAutoSyncStartedAt: number | null = null;
+  private tradeRecordAutoSyncLastEndAt: number | null = null;
+  private tradeRecordAutoSyncFlight: Promise<void> | null = null;
+  private tradeRecordAutoSync = {
+    status: "NOT_STARTED" as "NOT_STARTED" | "WAITING_FOR_PRIVATE_DATA" | "RUNNING" | "ACTIVE" | "COMPLETE" | "ERROR",
+    startedAt: null as number | null,
+    windowStart: null as number | null,
+    windowEnd: null as number | null,
+    lastAttemptAt: null as number | null,
+    lastSuccessAt: null as number | null,
+    lastWindow: null as { startTime: number; endTime: number } | null,
+    lastResult: null as Record<string, number> | null,
+    lastError: null as string | null,
+  };
   private runtimeIdentity: RuntimeIdentity | null = null;
   private constructor(
     public readonly events: EventBus,
@@ -303,9 +321,10 @@ export class EngineRuntime {
       store,
     );
     if (trade instanceof ExternalTradeAdapter) runtime.trade = trade;
+    (state as any).tradingQualityEvidenceReady=false;
+    try{runtime.tradingQuality = new TradingQualityCollector(path.join(opts.dataDir,"trading-quality.sqlite"),state,events);}catch(error){events.publish('TRADING_QUALITY_STORAGE_UNAVAILABLE',{reason:String(error)});}
     events.on("event", (event) => {
       if(runtime.persistenceClosed)return;
-      if(isTelemetry(event.type))return;
       const requiredBeforeWrite=['ENTRY_SUBMIT_ATTEMPTED','MANUAL_SUBMISSION_PREPARED','TP_SUBMISSION_PREPARED'];
       if(requiredBeforeWrite.includes(event.type))store.recordRuntimeEvent(event);else runtime.writes.apply(`event:${event.id}`,()=>store.recordRuntimeEvent(event));
       if(event.type==='RECONCILIATION_COMPLETED'||event.type==='ENTRY_ORDER_TTL_CLOSED'||event.type==='ENTRY_ORDER_REPRICED'){
@@ -450,7 +469,6 @@ export class EngineRuntime {
     }
     this.universe.refresh();
     if (this.state.account.status === "READY") {
-      await this.reconciliation.run();
       await this.refreshPositionMarkets();
       await this.reconciliation.run();
     }
@@ -473,10 +491,12 @@ export class EngineRuntime {
   }
   async start() {
     this.stopped = false;
+    const tradeRecordAutoSyncStartedAt = Date.now();
     this.every(15_000, async () => this.syncPrivate());
     await this.ai.probeResources();
     this.every(15_000, async () => this.ai.probeResources());
     await this.bootstrap();
+    this.startTradeRecordAutoSync(tradeRecordAutoSyncStartedAt);
     if (this.state.runtimeControl.entrySafetyMode === "SAFETY_REVIEW_PAUSED")
       this.state.runtimeControl.entrySafetyMode = "SHADOW_READY";
     this.shadow.start();
@@ -522,6 +542,8 @@ export class EngineRuntime {
     });
     this.every(2_000,async()=>{if(this.state.settings.connections.executionMode==='TESTNET_ENABLED')await this.manual.resumeExitGoals();});
     this.every(1_000,()=>this.writes.flush());
+    this.every(1_000,()=>this.tradingQuality?.tick());
+    this.every(5_000,()=>this.qualityObserver?.tick());
     this.every(5_000, async () => this.tp.sweep());
     this.every(15_000, async () => {
       if (this.state.account.status === "READY") {
@@ -535,6 +557,7 @@ export class EngineRuntime {
     this.every(2_000,async()=>this.externalResearch.tick());
     this.every(30_000,()=>{this.externalResearch.enqueueMarketChanges();});
     this.every(1_000,()=>{this.settingsStore.backfillAiRunSummaries(25,8);});
+    this.every(5_000,()=>{this.writes.apply('storage-retention',()=>{this.settingsStore.maintainRetention();});});
     // Do not await long research in the scheduler: coordinator single-flight owns
     // publication while every tick still observes expiry during a hung request.
     this.every(1_000, () => this.assetGovernance.tick(), { allowOverlap: true });
@@ -568,7 +591,7 @@ export class EngineRuntime {
     this.persistTimer = null;
     this.market.stop();
     try{this.settingsStore.persistRuntime(this.state.serialize());this.events.publish("RUNTIME_STOPPED");this.settingsStore.checkpoint();}
-    finally{this.persistenceClosed=true;this.settingsStore.close();}
+    finally{this.persistenceClosed=true;this.qualityObserver?.close();this.tradingQuality?.close();this.settingsStore.close();}
   }
   async updateSettings(input: unknown) {
     const next = await this.settingsStore.save(input);
@@ -593,7 +616,9 @@ export class EngineRuntime {
       testnet:this.state.settings.connections.exchange.environment==='TESTNET'&&this.state.settings.connections.executionMode==='TESTNET_ENABLED',
       privateReady:this.state.account.status==='READY',marketReady:this.state.snapshots.size>0,
       entrySafetyAuto:control.entrySafetyMode==='AUTO',
-      executableCandidates:control.capital.executableCandidateCount>=this.state.settings.runtimeControl.minExecutableCandidates,
+      // Physical capacity excludes only the daily gate being explicitly reviewed.
+      // Route dispatch and Preflight retain that gate; other blockers never qualify.
+      executableCandidates:control.capital.routedCandidates.filter((route:any)=>route.longExecutable||route.shortExecutable||route.physicalCapacity?.LONG||route.physicalCapacity?.SHORT).length>=this.state.settings.runtimeControl.minExecutableCandidates,
     },reasons=Object.entries(physical).filter(([,pass])=>!pass).map(([name])=>name),workingOrders=[...this.state.entryOrders.values()].filter((order:any)=>['NEW','SUBMITTING','UNKNOWN','WORKING','PARTIALLY_FILLED'].includes(order.status));
     return {canOverride:control.mode==='PAUSED_DAILY_RISK_LIMIT'&&this.state.executionGovernance.mode==='AUTO_PAUSED_RISK'&&physical.testnet,physical:{...physical,ready:reasons.length===0,reasons},pauseReason:control.reasonText,runtimeMode:control.mode,executionMode:this.state.executionGovernance.mode,riskMetrics:{capitalEpochRealizedPnlUsd:Number(risk.capitalEpochRealizedPnlUsd??0),calendarDayRealizedPnlUsd:Number(risk.calendarDayRealizedPnlUsd??0),riskDrawdownPct:Number(risk.riskDrawdownPct??0),equityUsd:Number(this.state.account.equityUsd??0)},availableCapital:{usdt:control.capital.usdtAvailable,usdc:control.capital.usdcAvailable},executableCandidates:control.capital.executableCandidateCount,currentPositions:[...this.state.positions.values()].map((position:any)=>({symbol:position.symbol,side:position.side,quantity:position.quantity,markPrice:position.markPrice})),workingOrders:workingOrders.map((order:any)=>({id:order.id,symbol:order.symbol,side:order.side,status:order.status,quantity:order.quantity})),override:this.runtimeControl.manualRiskOverrideStatus(),writeBoundary:write};
   }
@@ -744,7 +769,7 @@ export class EngineRuntime {
       this.state.settings.connections.executionMode !== "TESTNET_ENABLED" ||
       !write?.lockedToTestnet
     )
-      throw new Error("TESTNET_ONLY_WRITE_LOCK_REQUIRED");
+      throw new Error('TESTNET_ONLY_WRITE_LOCK_REQUIRED');
     if (this.state.account.status !== "READY")
       throw new Error(`PRIVATE_DATA_${this.state.account.status}`);
     this.runtimeControl.evaluate(true);
@@ -807,7 +832,12 @@ export class EngineRuntime {
         transactionTime: raw.T ?? raw.E,
         symbol: raw.o?.s,
       });
-      void this.syncPrivate('USER_DATA');
+      void this.syncPrivate('USER_DATA').catch((error) =>
+        this.events.publish('PRIVATE_SYNC_CALLBACK_FAILED', {
+          message: error instanceof Error ? error.message : String(error),
+          trigger: 'USER_DATA',
+        }),
+      );
     });
   }
   private liveMarketSymbols() {
@@ -865,6 +895,204 @@ export class EngineRuntime {
   async syncPrivate(trigger='POLL') {
     this.privateAccountSync??=new PrivateAccountSync({configured:()=>Boolean(this.trade?.hasCredentials()),generation:()=>this.state.settings.settingsVersion,read:()=>this.trade!.fetchAccountSnapshot(),get:()=>this.state.account,set:value=>{this.state.account=value;},emit:(type,payload)=>this.events.publish(type,payload)});
     await this.privateAccountSync.sync(trigger);
+  }
+  private startTradeRecordAutoSync(startedAt: number) {
+    const day = 24 * 60 * 60_000;
+    this.tradeRecordAutoSyncStartedAt = startedAt;
+    this.tradeRecordAutoSyncLastEndAt = null;
+    this.tradeRecordAutoSync = {
+      status: "WAITING_FOR_PRIVATE_DATA",
+      startedAt,
+      windowStart: startedAt - day,
+      windowEnd: startedAt + day,
+      lastAttemptAt: null,
+      lastSuccessAt: null,
+      lastWindow: null,
+      lastResult: null,
+      lastError: null,
+    };
+    // The initial read covers the full 24 hours before startup, including the
+    // previous calendar day. Later reads overlap briefly to catch delayed facts.
+    void this.runTradeRecordAutoSync();
+    this.every(5 * 60_000, () => this.runTradeRecordAutoSync());
+  }
+  tradeRecordAutoSyncStatus() {
+    return structuredClone(this.tradeRecordAutoSync);
+  }
+  private runTradeRecordAutoSync(): Promise<void> {
+    if (this.tradeRecordAutoSyncFlight) return this.tradeRecordAutoSyncFlight;
+    const flight = this.performTradeRecordAutoSync().finally(() => {
+      if (this.tradeRecordAutoSyncFlight === flight)
+        this.tradeRecordAutoSyncFlight = null;
+    });
+    this.tradeRecordAutoSyncFlight = flight;
+    return flight;
+  }
+  private async performTradeRecordAutoSync() {
+    const startedAt = this.tradeRecordAutoSyncStartedAt,
+      day = 24 * 60 * 60_000;
+    if (startedAt == null || this.stopped) return;
+    const windowStart = startedAt - day,
+      windowEnd = startedAt + day,
+      now = Date.now();
+    if (
+      now >= windowEnd &&
+      this.tradeRecordAutoSyncLastEndAt != null &&
+      this.tradeRecordAutoSyncLastEndAt >= windowEnd
+    ) {
+      this.tradeRecordAutoSync.status = "COMPLETE";
+      return;
+    }
+    const trade = this.trade as (ExternalTradeAdapter & { hasCredentials?: () => boolean }) | null;
+    if (
+      this.state.settings.connections.exchange.environment !== "TESTNET" ||
+      !trade?.hasCredentials?.()
+    ) {
+      this.tradeRecordAutoSync.status = "WAITING_FOR_PRIVATE_DATA";
+      return;
+    }
+    const finalAudit = now >= windowEnd,
+      endTime = finalAudit ? windowEnd : now,
+      fullAudit = finalAudit || this.tradeRecordAutoSyncLastEndAt == null,
+      startTime = fullAudit
+        ? windowStart
+        : Math.max(windowStart, this.tradeRecordAutoSyncLastEndAt! - 5 * 60_000);
+    if (endTime <= startTime) return;
+    const maxFills = 1000,
+      options = {
+        includeExternal: false,
+        repairPartial: true,
+        fillFees: true,
+        recalcNet: true,
+      };
+    this.tradeRecordAutoSync.status = "RUNNING";
+    this.tradeRecordAutoSync.lastAttemptAt = now;
+    this.tradeRecordAutoSync.lastError = null;
+    try {
+      const audit = await this.auditTradeRecordWindow(startTime, endTime, maxFills),
+        syncFillLimit = maxFills * Math.max(1, Math.ceil((endTime - startTime) / day)),
+        backupDir =
+          process.env.ZDJ_TRADE_SYNC_BACKUP_DIR ??
+          path.join(
+            process.env.LOCALAPPDATA ?? process.cwd(),
+            "ZDJ-MITS",
+            "trade-sync-backups",
+          );
+      await mkdir(backupDir, { recursive: true });
+      const backupPath = await this.settingsStore.tradeSyncBaseline(backupDir),
+        service = new TradeRecordSyncService(this.state, this.positions),
+        beforeRecords = new Map(this.state.tradeRecords),
+        beforeSamples = new Map(this.state.experienceSamples),
+        beforeFills = [...this.state.executionFills],
+        beforeGeneration = this.state.generation,
+        syncId = `auto_trade_sync_${startedAt}_${startTime}_${endTime}`;
+      let result!: ReturnType<TradeRecordSyncService["apply"]>;
+      try {
+        await this.settingsStore.transaction(() => {
+          result = service.apply(audit, syncFillLimit, options);
+          for (const record of this.state.tradeRecords.values()) {
+            if (JSON.stringify(beforeRecords.get(record.tradeId)) === JSON.stringify(record))
+              continue;
+            this.settingsStore.upsertTradeRecord(record);
+            if (record.classification !== "COMPLETE")
+              this.settingsStore.deleteExperienceSample(`sample_${record.tradeId}`);
+          }
+          for (const sample of result.samples)
+            if (this.state.experienceSamples.has(sample.sampleId))
+              this.settingsStore.upsertExperienceSample(sample);
+          this.settingsStore.recordTradeSyncHistory({
+            syncId,
+            status: "APPLIED",
+            source: "RUNTIME_AUTO",
+            createdAt: Date.now(),
+            options: { ...options, maxFills: syncFillLimit, window: audit.window, fullAudit },
+            preview: result.preview,
+            result: {
+              created: result.created,
+              repaired: result.repaired,
+              skipped: result.skipped,
+              newComplete: result.newComplete,
+              newPartial: result.newPartial,
+              experienceCreated: result.experienceCreated,
+            },
+            backupPath,
+          });
+        }, { timeoutMs: 5_000, label: "TRADE_RECORD_AUTO_SYNC" });
+      } catch (error) {
+        this.state.tradeRecords = beforeRecords;
+        this.state.experienceSamples = beforeSamples;
+        this.state.executionFills = beforeFills;
+        this.state.generation = beforeGeneration;
+        throw error;
+      }
+      this.tradeRecordAutoSyncLastEndAt = Math.max(
+        this.tradeRecordAutoSyncLastEndAt ?? 0,
+        endTime,
+      );
+      this.tradeRecordAutoSync.status = finalAudit ? "COMPLETE" : "ACTIVE";
+      this.tradeRecordAutoSync.lastSuccessAt = Date.now();
+      this.tradeRecordAutoSync.lastWindow = { startTime, endTime };
+      this.tradeRecordAutoSync.lastResult = {
+        systemFills: result.preview.systemFills,
+        cyclesDetected: result.preview.cyclesDetected,
+        created: result.created,
+        repaired: result.repaired,
+        complete: result.newComplete,
+        partial: result.newPartial,
+        unclosable: result.preview.unclosable,
+      };
+      this.events.publish(
+        "TRADE_SYNC_AUTO_COMPLETED",
+        {
+          syncId,
+          window: audit.window,
+          fullAudit,
+          ...this.tradeRecordAutoSync.lastResult,
+        },
+        "TRADE_RECORD",
+      );
+    } catch (error) {
+      this.tradeRecordAutoSync.status = "ERROR";
+      this.tradeRecordAutoSync.lastError = String(error).slice(0, 240);
+      this.events.publish(
+        "TRADE_SYNC_AUTO_FAILED",
+        {
+          message: this.tradeRecordAutoSync.lastError,
+          window: { startTime, endTime },
+        },
+        "TRADE_RECORD",
+      );
+    }
+  }
+  private async auditTradeRecordWindow(startTime: number, endTime: number, maxFills: number) {
+    const day = 24 * 60 * 60_000,
+      chunks: Array<{ startTime: number; endTime: number }> = [];
+    for (let cursor = startTime; cursor < endTime; ) {
+      const chunkEnd = Math.min(endTime, cursor + day);
+      chunks.push({ startTime: cursor, endTime: chunkEnd });
+      cursor = chunkEnd;
+    }
+    const audits = [];
+    for (const window of chunks)
+      audits.push(await this.auditRecentTrades(24, maxFills, window.startTime, window.endTime));
+    const fillMap = new Map<string, TradeAuditSnapshot["fills"][number]>(),
+      orderMap = new Map<string, TradeAuditSnapshot["orders"][number]>(),
+      incomeMap = new Map<string, TradeAuditSnapshot["income"][number]>();
+    for (const audit of audits) {
+      for (const fill of audit.fills) fillMap.set(`${fill.symbol}:${fill.tradeId}`, fill);
+      for (const order of audit.orders) orderMap.set(`${order.symbol}:${order.orderId}`, order);
+      for (const income of audit.income)
+        incomeMap.set(`${income.symbol}:${income.tradeId}:${income.transactionId}:${income.time}`, income);
+    }
+    const latest = audits.at(-1);
+    if (!latest) throw new Error("TRADE_AUDIT_WINDOW_EMPTY");
+    return {
+      ...latest,
+      window: { startTime, endTime },
+      fills: [...fillMap.values()].sort((a, b) => a.executionTime - b.executionTime),
+      orders: [...orderMap.values()],
+      income: [...incomeMap.values()],
+    };
   }
   async auditRecentTrades(
     hours = 5,
@@ -961,6 +1189,7 @@ export class EngineRuntime {
   }
   applyUserData(raw: any) {
     if (raw?.e === "ACCOUNT_UPDATE") {
+      if(raw.a?.m==='FUNDING_FEE')this.events.publish('TRADING_QUALITY_FUNDING_FACT',{transactionTime:raw.T??raw.E,balances:raw.a.B??[],positions:raw.a.P??[],attribution:'ACCOUNT_FACT_NOT_EPISODE_ALLOCATION'});
 
       // ACCOUNT_UPDATE is a delta, not a complete available-margin snapshot.
       const at=Number(raw.T??raw.E);
@@ -1177,9 +1406,10 @@ export class EngineRuntime {
       lifecycleCounts=lifecycleRows.reduce((counts:any,row:any)=>{counts[row.status]=(counts[row.status]??0)+1;return counts;},{}),
       aiEvents=this.settingsStore.runtimeEvents(since,["AI_RUN_COMPLETED","AI_RUN_FAILED","AI_PROTOCOL_NORMALIZED","CANDIDATE_LIFECYCLE_CHANGED"],5000),
       aiFailures=aiEvents.filter(event=>event.type==="AI_RUN_FAILED"),
-      consecutiveAiFailures=(()=>{let count=0;for(const event of [...aiEvents].reverse()){if(event.type==="AI_RUN_COMPLETED")break;if(event.type==="AI_RUN_FAILED")count++;}return count;})(),
+      recentAiHealth=this.settingsStore.aiRunHealthSummary(since),
+      consecutiveAiFailures=recentAiHealth.consecutiveFailures,
       aiHealth={
-        completed:aiEvents.filter(event=>event.type==="AI_RUN_COMPLETED").length,
+        completed:recentAiHealth.completed,
         failed:aiFailures.length,
         dataError:aiEvents.filter((event:any)=>!event.payload||event.payload?.dataError||event.payload?.auditTruncated).length,
         rawPlaceFailed:aiFailures.filter((event:any)=>['PLACE_LONG','PLACE_SHORT'].includes(event.payload?.rawDecision)).length,

@@ -1,3 +1,4 @@
+import { OpportunityEvidenceSchema, TradingQualityPolicySchema } from './opportunity.js';
 import { z } from 'zod';
 import { DerivativesSnapshotSchema, OrderBookSchema, QuoteSchema, TechnicalCardSchema, TimeframeSchema } from './market.js';
 import { OpportunityComponentsSchema } from './universe.js';
@@ -12,6 +13,7 @@ export const EvidenceRefSchema = z.object({
 export type EvidenceRef = z.infer<typeof EvidenceRefSchema>;
 
 export const EntryIntelligencePacketSchema = z.object({
+  opportunityEvidence:OpportunityEvidenceSchema.optional(),
   version: z.literal('3.0'),
   packetId: z.string(),
   symbol: z.string(),
@@ -40,6 +42,11 @@ export const EntryIntelligencePacketSchema = z.object({
     reachableBand5m: z.tuple([z.number().positive(), z.number().positive()]),
     reachabilityScore: z.number().min(0).max(1),
   }),
+  economic: z.object({
+    makerFeeBps:z.number().nonnegative(), takerFeeBps:z.number().nonnegative(), roundTripCostBps:z.number().nonnegative(), safetyMarginBps:z.number().nonnegative(),
+    configuredTargetMoveBps:z.number().positive(), minimumEconomicEdgeBps:z.number().positive(),
+    longSpaceToResistanceBps:z.number().nullable(), shortSpaceToSupportBps:z.number().nullable(), provenance:z.string(),
+  }).default({makerFeeBps:0,takerFeeBps:0,roundTripCostBps:0,safetyMarginBps:0,configuredTargetMoveBps:1,minimumEconomicEdgeBps:1,longSpaceToResistanceBps:null,shortSpaceToSupportBps:null,provenance:'LEGACY_PACKET_NO_ECONOMIC_FACTS'}),
   globalRegime: z.object({
     btc: z.object({ symbol: z.string(), trend15m: z.string(), trend4h: z.string(), trend1d: z.string(), trend1w: z.string(), change24hPercent: z.number() }),
     eth: z.object({ symbol: z.string(), trend15m: z.string(), trend4h: z.string(), trend1d: z.string(), trend1w: z.string(), change24hPercent: z.number() }),

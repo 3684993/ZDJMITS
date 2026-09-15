@@ -1,9 +1,16 @@
-name: V3.9.2 Final Verify
+name: V3.9.x Verify
 
 on:
   push:
     branches:
       - fix/v392-astra-final-fixes
+      - gpt56-closeout-20260912
+      - gpt56-optimize-v392-20260912
+      - trading-quality-stage1-3-20260914
+      - v393-offline-implementation-20260914
+      - codex/v393-final-audit-20260915
+      - v393-p0-runtime-recovery-20260915
+      - v393-p0-tp-risk-recovery-20260915
   workflow_dispatch:
 
 permissions:

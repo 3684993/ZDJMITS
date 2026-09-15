@@ -1,0 +1,14 @@
+/* V3.9.2 closeout: Binance network routing is not a user-selectable DIRECT/fallback mode. */
+.settings-page label:has(> select option[value="DIRECT"]) > select { display: none; }
+.settings-page label:has(> select option[value="DIRECT"])::after {
+  content: "CONFIGURED · 强制代理 / fail-closed";
+  display: flex;
+  align-items: center;
+  min-height: 38px;
+  padding: 0 12px;
+  border: 1px solid var(--line-soft);
+  border-radius: 10px;
+  color: var(--text-secondary);
+  background: var(--surface-muted);
+}
+.settings-page label.switch-row:has(+ label > select option[value="DIRECT"]) > input[type="checkbox"] { display: none; }

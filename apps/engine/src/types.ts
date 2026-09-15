@@ -6,6 +6,7 @@ export interface MarketDataProvider {
   discoverSymbols?(limit:number, prioritySymbols?:string[]):Promise<string[]>;
   getSnapshot(symbol:string):Promise<MarketSymbolSnapshot>;
   getCandles(symbol:string,timeframe:Timeframe,limit:number):Promise<Candle[]>;
+  cachedCandles?(symbol:string,timeframe:Timeframe,limit:number):Candle[];
   getQuote(symbol:string):Promise<Quote>;
   getOrderBook(symbol:string):Promise<OrderBook>;
   getDerivatives(symbol:string):Promise<DerivativesSnapshot>;
@@ -28,7 +29,8 @@ export interface ExchangeTradeAdapter {
   placeTakeProfit(order:TakeProfitOrder):Promise<TakeProfitOrder>;
   findTakeProfitByClientOrderId?(order:TakeProfitOrder):Promise<TakeProfitOrder|null>;
   cancelTakeProfit(order:TakeProfitOrder):Promise<TakeProfitOrder>;
-  fetchOpenOrders():Promise<Array<EntryOrder|TakeProfitOrder>>;
+  /** A symbol-scoped query is weight 1; the unscoped exchange-wide safety scan is weight 40. */
+  fetchOpenOrders(symbol?:string):Promise<Array<EntryOrder|TakeProfitOrder>>;
   fetchPositions():Promise<Position[]>;
   setLeverage(symbol:string,leverage:number):Promise<void>;
   placeManualOrder(request:{clientOrderId:string;internalOrderId?:string;symbol:string;side:'BUY'|'SELL';positionSide?:'LONG'|'SHORT';type:'LIMIT'|'MARKET';quantity:number;price?:number;reduceOnly:boolean;postOnly:boolean}):Promise<ManualOrder>;

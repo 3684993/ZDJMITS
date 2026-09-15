@@ -1,4 +1,6 @@
-import { binanceRequestBudget } from '../adapters/binance/requestBudget.js';
+import { filterFormalOutcome, projectTradeRecordRow, projectTradeRecordSummary } from '../services/tradeRecordReadModel.js';
+const closedAt=(row:any)=>Number.isFinite(row.closedAt)?Number(row.closedAt):Number.isFinite(row.observedClosedAt)?Number(row.observedClosedAt):-Infinity;
+import { binanceRequestBudgetsHealth } from '../adapters/binance/requestBudget.js';
 import { Router } from "express";
 import { mkdir } from "node:fs/promises";
 import path from "node:path";
@@ -18,6 +20,7 @@ import { entryObservation } from '../services/entryObservation.js';
 
 export function createApiRouter(runtime: EngineRuntime) {
   const r = Router();
+  r.get('/observability/trading-quality',(_req,res)=>res.json({health:runtime.tradingQuality?.health()??{status:'UNAVAILABLE'},policy:runtime.state.settings.tradingQuality??{mode:'OFF'},report:runtime.tradingQuality?.report()??null,v393:runtime.qualityObserver?.report()??{status:'UNAVAILABLE'}}));
   r.get('/observability/entry',(req,res)=>{const identity=runtime.runtimeStatus(),start=Number(identity.lastRestartAt??Date.now()),requested=Number(req.query.since??start),since=Number.isFinite(requested)?Math.max(start,requested):start,untilValue=Number(req.query.until??Date.now()),until=Number.isFinite(untilValue)?Math.min(Date.now(),Math.max(since,untilValue)):Date.now(),archived=runtime.settingsStore.listEntryObservationRuns(since,until,10001),runs=[...new Map([...archived,...runtime.state.aiRuns].filter(r=>r.startedAt>=since&&r.startedAt<=until&&r.role==='PRIMARY_BRAIN').map(r=>[r.id,r])).values()].map(r=>r.completedAt&&r.completedAt>until?{...r,status:'RUNNING',decision:null}:r);res.json({...entryObservation({runs,intents:[...runtime.state.entryIntents.values()],orders:[...runtime.state.entryOrders.values()],fills:runtime.state.executionFills.filter(f=>f.executionTime<=until),runtime:identity}),window:{since,until,truncated:archived.length>=10001,source:'DURABLE_PRIMARY_ARCHIVE'}});});
   let snapshotVersion=0,publishTimer:NodeJS.Timeout|null=null,stopping=false;
   r.use((_q,res,next)=>stopping?res.status(503).json({error:{message:"ENGINE_STOPPING"}}):next());
@@ -263,7 +266,7 @@ export function createApiRouter(runtime: EngineRuntime) {
     res.json({...runtime.temporal.snapshot(),liveStructure:runtime.state.pool.list().map(row=>{const s=runtime.state.snapshots.get(row.symbol);return{symbol:row.symbol,asOf:s?.technical?.['15m']?.asOf??null,trend15m:s?.technical?.['15m']?.trend??'UNKNOWN',trend5m:s?.technical?.['5m']?.trend??'UNKNOWN',trend1m:s?.technical?.['1m']?.trend??'UNKNOWN',reasons:runtime.market.primaryReadyReasons(row.symbol)};})}),
   );
   r.get('/market-intelligence/external-research',(_q,res)=>res.json({providers:runtime.externalIntelligence.status(),research:runtime.externalResearch.metrics()}));
-  r.get('/diagnostics/private-sync',(_q,res)=>res.json({sync:runtime.privateSyncHealth(),requests:binanceRequestBudget.health()}));
+  r.get('/diagnostics/private-sync',(_q,res)=>res.json({sync:runtime.privateSyncHealth(),requests:binanceRequestBudgetsHealth()}));
   r.get('/diagnostics/logging',(_q,res)=>res.json((runtime as any).operationalLogHealth?.()??{status:'NOT_ATTACHED'}));
   r.get('/diagnostics/supply',(_q,res)=>res.json({health:runtime.supplyHealth(),residentTarget:runtime.state.settings.selection.poolTarget,residents:runtime.state.pool.list(),capacity:runtime.runtimeControl.capacityDiagnostics(),reserve:runtime.state.universe.filter(c=>(c.residentEligible??c.eligible)&&!runtime.state.pool.has(c.symbol)).slice(0,40).map(c=>({symbol:c.symbol,rank:c.rank,components:c.components,assetAdmission:c.assetAdmission,pipelineEligible:c.pipelineEligible}))}));
   r.post("/market-intelligence/rebuild", (_q, res) =>
@@ -367,14 +370,7 @@ export function createApiRouter(runtime: EngineRuntime) {
         ? runtime.state.tpOrders.get(position.tpOrderId)
         : null;
       const timeframes = ["1m", "5m", "15m", "4h"] as const;
-      const candles = Object.fromEntries(
-        await Promise.all(
-          timeframes.map(async (tf) => [
-            tf,
-            await runtime.market.candles(position.symbol, tf, 120),
-          ]),
-        ),
-      );
+      const candles = Object.fromEntries(timeframes.map(tf=>[tf,runtime.market.cachedCandles(position.symbol,tf,120)]));
       const snapshot = runtime.market.snapshot(position.symbol);
       const types = [
         "MANUAL_INTENT_CREATED",
@@ -423,12 +419,7 @@ export function createApiRouter(runtime: EngineRuntime) {
   });
   r.get("/positions/:id/manual-preview", async (req, res, next) => {
     try {
-      const preview = await runtime.manual.preview(req.params.id);
-      runtime.events.publish(
-        "MANUAL_PREVIEW_CREATED",
-        { preview, actor: "HUMAN" },
-        preview.symbol,
-      );
+      const preview = await runtime.manual.preview(req.params.id, true);
       res.json(preview);
     } catch (e) {
       next(e);
@@ -625,7 +616,7 @@ export function createApiRouter(runtime: EngineRuntime) {
       next(error);
     }
   });
-  r.get("/pipeline", (_q, res) => res.json({...runtime.pipelineStatus(),restBudget:binanceRequestBudget.health()}));
+  r.get("/pipeline", (_q, res) => res.json({...runtime.pipelineStatus(),restBudget:binanceRequestBudgetsHealth()}));
   r.get("/runtime/trading-control", (_q, res) =>
     res.json(runtime.runtimeControlStatus()),
   );
@@ -929,9 +920,7 @@ export function createApiRouter(runtime: EngineRuntime) {
             "trade-sync-backups",
           );
       await mkdir(backupDir, { recursive: true });
-      const backupPath = await runtime.settingsStore.backup(
-          path.join(backupDir, `trade-record-sync-${syncId}.sqlite`),
-        ),
+      const backupPath = await runtime.settingsStore.tradeSyncBaseline(backupDir),
         service = new TradeRecordSyncService(runtime.state, runtime.positions);
       let result!: ReturnType<TradeRecordSyncService["apply"]>;
       await runtime.settingsStore.transaction(() => {
@@ -1024,7 +1013,7 @@ export function createApiRouter(runtime: EngineRuntime) {
       };
       const backupDir = process.env.ZDJ_TRADE_SYNC_BACKUP_DIR ?? path.join(process.env.LOCALAPPDATA ?? process.cwd(), "ZDJ-MITS", "trade-sync-backups");
       await mkdir(backupDir, { recursive: true });
-      const backupPath = await runtime.settingsStore.backup(path.join(backupDir, `trade-record-sync-${syncId}.sqlite`)),
+      const backupPath = await runtime.settingsStore.tradeSyncBaseline(backupDir),
         service = new TradeRecordSyncService(runtime.state, runtime.positions);
       let result!: ReturnType<TradeRecordSyncService["apply"]>;
       await runtime.settingsStore.transaction(() => {
@@ -1048,158 +1037,38 @@ export function createApiRouter(runtime: EngineRuntime) {
       ),
     }),
   );
-  r.get("/trade-records", (req, res) => {
-    const q = req.query as Record<string, string | undefined>,
-      page = Math.max(1, Number(q.page ?? 1)),
-      limit = Math.min(100, Math.max(1, Number(q.limit ?? 20))),
-      integrity = normalizeRecords();
-    let rows = [...runtime.state.tradeRecords.values()].sort(byClosedAtDesc);
-    const category = q.category ?? "COMPLETE";
-    if (category === "ISSUES")
-      rows = rows.filter((row) =>
-        ["DUPLICATE", "CONFLICT", "INVALID"].includes(row.classification),
-      );
-    else rows = rows.filter((row) => row.classification === category);
-    if (q.symbol)
-      rows = rows.filter((row) =>
-        row.symbol.toUpperCase().includes(q.symbol!.toUpperCase()),
-      );
-    if (q.direction) rows = rows.filter((row) => row.direction === q.direction);
-    if (q.status) rows = rows.filter((row) => row.status === q.status);
-    if (q.closeReason)
-      rows = rows.filter((row) => row.closeReason === q.closeReason);
-    if (q.outcome === "WIN") rows = rows.filter((row) => (row.netPnl ?? 0) > 0);
-    if (q.outcome === "LOSS")
-      rows = rows.filter((row) => (row.netPnl ?? 0) < 0);
-    if (q.search)
-      rows = rows.filter((row) =>
-        JSON.stringify(row).toLowerCase().includes(q.search!.toLowerCase()),
-      );
-    const canonical = [...runtime.state.tradeRecords.values()].filter(
-        (row) =>
-          row.canonical &&
-          row.classification === "COMPLETE" &&
-          row.status === "CLOSED" &&
-          row.recordCompleteness === "COMPLETE" &&
-          row.feeCompleteness === "COMPLETE",
-      ),
-      total = rows.length;
-    res.json({
-      page,
-      limit,
-      total,
-      items: rows.slice((page - 1) * limit, page * limit),
-      summary: {
-        netPnl: canonical.reduce((sum, row) => sum + (row.netPnl ?? 0), 0),
-        grossIncome: canonical.reduce(
-          (sum, row) => sum + Math.max(0, row.grossRealizedPnl ?? 0),
-          0,
-        ),
-        lossExpense: canonical.reduce(
-          (sum, row) => sum + Math.min(0, row.grossRealizedPnl ?? 0),
-          0,
-        ),
-        totalFees: canonical.reduce((sum, row) => sum + (row.totalFee ?? 0), 0),
-        floatingPnl: runtime.state.account.unrealizedPnlUsd ?? 0,
-        completed: canonical.length,
-        counts: {
-          total: integrity.total,
-          complete: integrity.complete,
-          partial: integrity.partial,
-          imported: integrity.imported,
-          external: integrity.external,
-          duplicate: integrity.duplicate,
-          conflict: integrity.conflict,
-          invalid: integrity.invalid,
-          invalidClosed: integrity.invalidClosed,
-          missingExit: integrity.missingExit,
-          missingFee: integrity.missingFee,
-          missingMargin: integrity.missingMargin,
-        },
-      },
-    });
+  r.get('/trade-records',(req,res)=>{
+    const q=req.query as Record<string,string|undefined>,page=Math.max(1,Number(q.page??1)),limit=Math.min(100,Math.max(1,Number(q.limit??20)));
+    const records=[...runtime.state.tradeRecords.values()],summary=projectTradeRecordSummary({records,...runtime.qualityObserver?.readContext()}),integrity=new TradeRecordIntegrityService(runtime.state).summary();
+    let rows=records.map(record=>projectTradeRecordRow(record,runtime.qualityObserver?.readContext())).sort((a,b)=>closedAt(b)-closedAt(a)||a.tradeId.localeCompare(b.tradeId));
+    const category=q.category??'COMPLETE';
+    rows=category==='ISSUES'?rows.filter(row=>['DUPLICATE','CONFLICT','INVALID'].includes(row.classification)):rows.filter(row=>row.classification===category);
+    if(q.symbol)rows=rows.filter(row=>row.symbol.toUpperCase().includes(q.symbol!.toUpperCase()));
+    if(q.direction)rows=rows.filter(row=>row.direction===q.direction);
+    if(q.status)rows=rows.filter(row=>row.status===q.status);
+    if(q.closeReason)rows=rows.filter(row=>row.closeReason===q.closeReason);
+    rows=filterFormalOutcome(rows,q.outcome);
+    if(q.search)rows=rows.filter(row=>JSON.stringify(row).toLowerCase().includes(q.search!.toLowerCase()));
+    const total=rows.length;
+    res.json({page,limit,total,items:rows.slice((page-1)*limit,page*limit),autoSync:runtime.tradeRecordAutoSyncStatus(),summary:{...summary,
+      partiallyClosed:records.filter(row=>row.status==='PARTIALLY_CLOSED').length,
+      unknownCount:records.filter(row=>row.classification!=='COMPLETE'||row.fundingAttributionStatus!=='EXACT').length,
+      grossIncome:null,lossExpense:null,totalFees:null,floatingPnl:runtime.state.account.unrealizedPnlUsd??0,
+      counts:{total:integrity.total,complete:integrity.complete,partial:integrity.partial,imported:integrity.imported,external:integrity.external,duplicate:integrity.duplicate,conflict:integrity.conflict,invalid:integrity.invalid,invalidClosed:integrity.invalidClosed,missingExit:integrity.missingExit,missingFee:integrity.missingFee,missingMargin:integrity.missingMargin},
+    }});
   });
-  r.get("/trade-records/:id", (req, res) => {
-    normalizeRecords();
-    const record = runtime.state.tradeRecords.get(req.params.id);
-    if (!record)
-      return res
-        .status(404)
-        .json({ error: { message: "trade record not found" } });
-    const entryRuns = record.entryRunId
-      ? runtime.state.aiRuns.filter((run) => run.id === record.entryRunId)
-      : [];
-    res.json({
-      record,
-      experience:
-        [...runtime.state.experienceSamples.values()].find(
-          (sample) => sample.tradeId === record.tradeId,
-        ) ?? null,
-      linkedFills: runtime.state.executionFills.filter(
-        (fill) =>
-          record.linkedFillIds.includes(fill.fillId) ||
-          record.entryOrderIds.includes(fill.orderId) ||
-          record.exitOrderIds.includes(fill.orderId),
-      ),
-      entryRuns,
-      entryOrders: record.entryOrderIds
-        .map((id) => runtime.state.entryOrders.get(id))
-        .filter(Boolean),
-      exitOrders: record.exitOrderIds
-        .map((id) => runtime.state.tpOrders.get(id))
-        .filter(Boolean),
-      rawAudit: runtime.settingsStore.runtimeEvents(
-        record.createdAt,
-        [
-          "TRADE_RECORD_OPENED",
-          "TRADE_RECORD_CLOSED",
-          "TRADE_RECORD_REPAIRED",
-          "EXPERIENCE_SAMPLE_CREATED",
-        ],
-        500,
-      ),
-    });
+  r.get('/trade-records/:id',(req,res)=>{
+    const raw=runtime.state.tradeRecords.get(req.params.id);if(!raw)return res.status(404).json({error:{message:'trade record not found'}});
+    const record=projectTradeRecordRow(raw,runtime.qualityObserver?.readContext()),entryRuns=raw.entryRunId?runtime.state.aiRuns.filter(run=>run.id===raw.entryRunId):[];
+    res.json({record,rawRecord:raw,experience:record.economicEligibility.canonicalPnlEligible?([...runtime.state.experienceSamples.values()].find(sample=>sample.tradeId===raw.tradeId)??null):null,
+      linkedFills:runtime.state.executionFills.filter(fill=>fill.symbol===raw.symbol&&(raw.linkedFillIds.includes(fill.fillId)||raw.entryOrderIds.includes(fill.orderId)||raw.exitOrderIds.includes(fill.orderId))),entryRuns,
+      entryOrders:raw.entryOrderIds.map(id=>runtime.state.entryOrders.get(id)).filter(Boolean),exitOrders:raw.exitOrderIds.map(id=>runtime.state.tpOrders.get(id)).filter(Boolean),
+      rawAudit:runtime.settingsStore.runtimeEvents(raw.createdAt,['TRADE_RECORD_OPENED','TRADE_RECORD_CLOSED','TRADE_RECORD_REPAIRED','EXPERIENCE_SAMPLE_CREATED'],500)});
   });
-  r.get("/experience", (_q, res) => {
-    normalizeRecords();
-    const records = [...runtime.state.tradeRecords.values()].filter(
-        (record) =>
-          record.canonical &&
-          record.classification === "COMPLETE" &&
-          record.status === "CLOSED" &&
-          record.recordCompleteness === "COMPLETE" &&
-          record.feeCompleteness === "COMPLETE",
-      ),
-      ids = new Set(records.map((record) => record.tradeId)),
-      samples = [...runtime.state.experienceSamples.values()]
-        .filter((sample) => ids.has(sample.tradeId))
-        .sort((a, b) => b.createdAt - a.createdAt),
-      wins = samples.filter((x) => x.winLoss === "WIN").length,
-      losses = samples.filter((x) => x.winLoss === "LOSS").length,
-      avgNet = records.length
-        ? records.reduce((sum, row) => sum + (row.netPnl ?? 0), 0) /
-          records.length
-        : 0,
-      avgHold = records.length
-        ? records.reduce((sum, row) => sum + (row.durationMs ?? 0), 0) /
-          records.length
-        : 0;
-    res.json({
-      samples,
-      records,
-      summary: {
-        completed: samples.length,
-        wins,
-        losses,
-        winRate: samples.length ? wins / samples.length : null,
-        avgNetPnl: avgNet,
-        avgHoldingDurationMs: avgHold,
-        avgFillDelayMs: samples.length
-          ? samples.reduce((sum, row) => sum + (row.fillDelayMs ?? 0), 0) /
-            samples.length
-          : null,
-      },
-    });
+  r.get('/experience',(_req,res)=>{
+    const projected=[...runtime.state.tradeRecords.values()].map(record=>projectTradeRecordRow(record,runtime.qualityObserver?.readContext())).filter(row=>row.economicEligibility.canonicalPnlEligible),ids=new Set(projected.map(row=>row.tradeId));
+    const samples=[...runtime.state.experienceSamples.values()].filter(sample=>ids.has(sample.tradeId)).sort((a,b)=>b.createdAt-a.createdAt),wins=samples.filter(x=>x.winLoss==='WIN').length,losses=samples.filter(x=>x.winLoss==='LOSS').length;
+    res.json({samples,records:projected,summary:{completed:samples.length,wins,losses,winRate:samples.length?wins/samples.length:null,avgNetPnl:projected.length?projected.reduce((n,row)=>n+(row.formalNetPnl??0),0)/projected.length:null,avgHoldingDurationMs:projected.length?projected.reduce((n,row)=>n+(row.durationMs??0),0)/projected.length:null,avgFillDelayMs:samples.length?samples.reduce((n,row)=>n+(row.fillDelayMs??0),0)/samples.length:null,status:projected.length?'ELIGIBLE':'NO_ELIGIBLE_SAMPLES'}});
   });
   r.get("/settings/resources/:kind", (req, res) => {
     if (!["exchange", "proxy", "ai"].includes(req.params.kind))

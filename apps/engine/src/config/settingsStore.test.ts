@@ -8,6 +8,22 @@ vi.mock('@zdj/core', async () => import(new URL('../../../../packages/core/src/i
 import { classifyAsset } from '@zdj/core';
 
 const paths: string[] = [];
+
+it('repairs a stale checkpoint cache after another connection evicts an entity',async()=>{
+ const dir=await mkdtemp(path.join(os.tmpdir(),'zdj-checkpoint-cache-'));paths.push(dir);const store=new SettingsStore(path.resolve('../../config'),dir);await store.load();
+ try{const db=(store as any).db,value={executionFills:[{fillId:'f1',qty:1}]};store.persistRuntime(value);db.prepare("DELETE FROM runtime_entities WHERE kind='executionFills'").run();store.persistRuntime(value);expect(store.loadRuntime()).toMatchObject(value);}finally{store.close();}
+});
+
+it('replays only exact archived fills without writes and fails closed on conflicting evidence',async()=>{
+ const dir=await mkdtemp(path.join(os.tmpdir(),'zdj-checkpoint-replay-'));paths.push(dir);const store=new SettingsStore(path.resolve('../../config'),dir);await store.load();
+ try{const db=(store as any).db,fill={fillId:'exchange_BTCUSDT_1',symbol:'BTCUSDT',direction:'LONG',side:'BUY',positionSide:'LONG',orderId:'order1',clientOrderId:'client1',tradeId:'1',executionTime:100,qty:1,price:100,realizedPnl:0,commission:1,commissionAsset:'USDT',commissionUsd:1,maker:true,source:'USER_DATA_WS',attributionStatus:'SYSTEM_ATTRIBUTED'};store.persistRuntime({executionFills:[fill]});db.prepare("DELETE FROM runtime_entities WHERE kind='executionFills'").run();
+ expect(()=>store.loadRuntime()).toThrow('RUNTIME_ENTITY_MISSING');
+ store.recordRuntimeEvent({id:'fact1',type:'EXCHANGE_FILL_ATTRIBUTED',ts:101,payload:{fill}});
+ const before=db.prepare('SELECT total_changes() n').get().n;
+ expect(store.loadRuntime()).toMatchObject({executionFills:[fill]});expect(db.prepare('SELECT total_changes() n').get().n).toBe(before);expect(store.runtimeLoadRecoveries.at(-1)?.sourceEventIds).toEqual(['fact1']);
+ store.recordRuntimeEvent({id:'fact2',type:'EXCHANGE_FILL_ATTRIBUTED',ts:102,payload:{fill:{...fill,qty:2}}});expect(()=>store.loadRuntime()).toThrow('RUNTIME_FILL_REPLAY_CONFLICT');
+ }finally{store.close();}
+});
 afterEach(async () => { await Promise.all(paths.splice(0).map(value => rm(value, { recursive: true, force: true }))); });
 
 describe('SettingsStore', () => {
@@ -40,4 +56,44 @@ it('records capacity before/after and preserves memory when settings persistence
  try{await store.save({...initial,portfolio:{...initial.portfolio,maxPositions:15}});const row=(store as any).db.prepare('SELECT summary FROM settings_audit ORDER BY id DESC LIMIT 1').get();expect(JSON.parse(row.summary).maxPositions).toEqual({before:initial.portfolio.maxPositions,after:15});
  (store as any).db.exec("CREATE TRIGGER reject_settings BEFORE UPDATE ON settings BEGIN SELECT RAISE(FAIL,'TEST_REJECT'); END");await expect(store.save({...initial,portfolio:{...initial.portfolio,maxPositions:20}})).rejects.toThrow('TEST_REJECT');expect((store as any).current.portfolio.maxPositions).toBe(15);
  }finally{store.close();}
+});
+
+it('archives AI telemetry without journaling it and retains changed position transitions',async()=>{
+ const dir=await mkdtemp(path.join(os.tmpdir(),'zdj-telemetry-'));paths.push(dir);const store=new SettingsStore(path.resolve('../../config'),dir);await store.load();
+ try{store.recordRuntimeEvent({id:'run-event',type:'AI_RUN_COMPLETED',ts:Date.now(),payload:{id:'run',status:'COMPLETED',symbol:'BTCUSDT',startedAt:Date.now(),decision:'WAIT_FOR_PRICE'}});
+ expect(store.getAiRun('run').decision).toBe('WAIT_FOR_PRICE');expect(store.runtimeEvents(0,['AI_RUN_COMPLETED'])).toHaveLength(0);
+ for(const transition of ['UNCHANGED','OPEN','REDUCE','CLOSE'])store.recordRuntimeEvent({id:transition,type:'POSITION_LIFECYCLE_TRANSITION',ts:Date.now(),payload:{transition}});
+ expect(store.runtimeEvents(0,['POSITION_LIFECYCLE_TRANSITION'])).toHaveLength(3);
+ }finally{store.close();}
+});
+it('runs bounded retention, keeps raw running AI and all critical events, and evicts only orphan AI entities',async()=>{
+ const dir=await mkdtemp(path.join(os.tmpdir(),'zdj-retention-'));paths.push(dir);const store=new SettingsStore(path.resolve('../../config'),dir);await store.load();const db=(store as any).db,now=Date.now(),old=now-120*86400000;
+ try{for(let i=0;i<150;i++)db.prepare('INSERT INTO decision_snapshots VALUES(?,?,?,?,?)').run('s'+i,null,'BTCUSDT',old,'{}');
+ for(const status of ['RUNNING','COMPLETED'])store.upsertAiRun({id:status,startedAt:old,status,inputPreview:'raw'});
+ store.recordRuntimeEvent({id:'critical',type:'TP_REPAIR_FAILED',ts:old,payload:{order:'working'}});
+ store.persistRuntime({aiRuns:[{id:'old-ai'}],positions:[['p',{quantity:1}]]});store.persistRuntime({aiRuns:[],positions:[]});
+ expect(db.prepare("SELECT count(*) n FROM runtime_entities WHERE kind='aiRuns'").get().n).toBe(0);expect(db.prepare("SELECT count(*) n FROM runtime_entities WHERE kind='positions'").get().n).toBe(1);
+ store.maintainRetention(now);expect(db.prepare('SELECT count(*) n FROM decision_snapshots').get().n).toBe(50);
+ for(let i=0;i<22;i++)store.maintainRetention(now);
+ expect(store.getAiRun('RUNNING').inputPreview).toBe('raw');expect(store.getAiRun('COMPLETED')).toBeNull();expect(store.runtimeEvents(0,['TP_REPAIR_FAILED'])).toHaveLength(1);
+ }finally{store.close();}
+});
+it('reuses a single trade sync baseline across concurrent sync requests',async()=>{
+ const dir=await mkdtemp(path.join(os.tmpdir(),'zdj-baseline-'));paths.push(dir);const store=new SettingsStore(path.resolve('../../config'),dir);await store.load();
+ try{const results=await Promise.all([store.tradeSyncBaseline(dir),store.tradeSyncBaseline(dir)]);expect(results[0]).toBe(results[1]);const first=await stat(results[0]!);store.persistRuntime({newFact:true});expect(await store.tradeSyncBaseline(dir)).toBe(results[0]);expect((await stat(results[0]!)).mtimeMs).toBe(first.mtimeMs);}finally{store.close();}
+});
+
+
+describe('Live inference evidence',()=>{
+  it('persists failed Primary runs as inference evidence without inventing an opportunity',async()=>{
+    const dir=await mkdtemp(path.join(os.tmpdir(),'zdj-inference-'));paths.push(dir);
+    const store=new SettingsStore(path.resolve(process.cwd(),'../../config'),dir);await store.load();
+    try {
+      const run={id:'failed-primary',symbol:'BTCUSDT',role:'PRIMARY_BRAIN',startedAt:100,completedAt:200,status:'FAILED',triggerReason:'PERMISSION_CHANGED',failure:{errorCode:'AI_SCHEMA_INVALID'},inputPreview:'{}'};
+      store.recordRuntimeEvent({id:'failure',type:'AI_RUN_FAILED',ts:200,symbol:'BTCUSDT',payload:run});
+      const row=store.getDecisionEpisodeByRun(run.id);expect(row).not.toBeNull();
+      expect(JSON.stringify(row)).toContain('PRIMARY_INFERENCE_RUN');expect(JSON.stringify(row)).toContain('PERMISSION_CHANGED');expect(JSON.stringify(row)).toContain('AI_SCHEMA_INVALID');
+      expect(JSON.stringify(row)).toContain('marketOpportunityEpisodeId');
+    } finally {store.close();}
+  });
 });

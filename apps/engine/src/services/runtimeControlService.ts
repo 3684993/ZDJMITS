@@ -4,7 +4,9 @@ import type { RuntimeMode, RuntimeReasonCode } from '@zdj/contracts';
 import { evaluateCapitalAdmission } from '@zdj/core';
 import type { RuntimeState } from '../state/runtimeState.js';
 import type { EventBus } from '../events/eventBus.js';
-import { directionBudget } from './riskReadiness.js';
+import { computeExecutableRiskHeadroom, directionBudget } from './riskReadiness.js';
+import { collectPendingEntryRiskExposures, entryOrderOccupiesRisk } from './entryRiskOccupancy.js';
+import {storageCapacityHealth,storageEntryBlockReason} from './storageCapacityGuard.js';
 
 const reasonText=(code:RuntimeReasonCode)=>({
   NONE:'运行中',MANUAL_PAUSE:'已手动暂停新建仓流水',MANUAL_RESUME:'已恢复新建仓流水',NO_CAPITAL:'没有满足最低保证金的可执行资金',NO_EXECUTABLE_CONTRACT:'当前候选没有可执行合约',PRIVATE_NOT_READY:'交易所私有数据未就绪',MARKET_NOT_READY:'行情数据未就绪',MIN_EXECUTABLE_CANDIDATES_NOT_MET:'可执行候选数低于阈值',AUTO_RESUMED:'资金/合约恢复后自动恢复',DAILY_RISK_LIMIT:'已触发日内风险限额，等待人工复核',MANUAL_RISK_OVERRIDE:'日内风险告警已人工复核；当前风险周期内允许 Testnet AUTO',DEGRADED:'运行控制处于降级状态',
@@ -15,7 +17,7 @@ export const capitalFactVersion=(state:RuntimeState)=>JSON.stringify({
   assets:[...(state.account.assets??[])].map((asset:any)=>[asset.asset,asset.availableBalance,asset.walletBalance,asset.usdValue]).sort((a,b)=>String(a[0]).localeCompare(String(b[0]))),
   positions:[...state.positions.values()].map((position:any)=>[position.symbol,position.side,position.quantity,position.markPrice,position.leverage]).sort((a,b)=>String(a[0]).localeCompare(String(b[0]))),
   reservations:[...state.entryReservations.values()].filter((reservation:any)=>['RESERVED','WORKING'].includes(reservation.status)&&reservation.expiresAt>Date.now()).map((reservation:any)=>[reservation.id,reservation.underlying,reservation.quoteAsset,reservation.marginUsd,reservation.notionalUsd,reservation.status,reservation.expiresAt]).sort((a,b)=>String(a[0]).localeCompare(String(b[0]))),
-  orders:[...state.entryOrders.values()].filter((order:any)=>['NEW','SUBMITTING','UNKNOWN','WORKING','PARTIALLY_FILLED'].includes(order.status)).map((order:any)=>[order.symbol,order.status,order.quantity,order.filledQuantity]).sort((a,b)=>String(a[0]).localeCompare(String(b[0]))),
+  orders:[...state.entryOrders.values()].filter((order:any)=>entryOrderOccupiesRisk(order)).map((order:any)=>[order.symbol,order.status,order.quantity,order.filledQuantity,order.activeRiskExposure??null,order.activeRiskEvidence?.validUntil??null]).sort((a,b)=>String(a[0]).localeCompare(String(b[0]))),
   equity:state.account.equityUsd??null,
   risk:state.account.riskBaseline??null,
   limits:{portfolio:state.settings.portfolio,portfolioIntelligence:state.settings.portfolioIntelligence,riskGovernance:state.settings.riskGovernance},
@@ -24,10 +26,10 @@ export const capitalFactVersion=(state:RuntimeState)=>JSON.stringify({
 export class RuntimeControlService {
   private entryRiskBlocked=false;
   private admissionDetails:unknown[]=[];
-  capacityDiagnostics(){return{slots:this.state.entryCapacity(),newRiskBlocked:this.entryRiskBlocked,candidates:this.admissionDetails,capital:this.state.runtimeControl.capital};}
+  capacityDiagnostics(){return{slots:this.state.entryCapacity(),newRiskBlocked:this.entryRiskBlocked,storage:storageCapacityHealth(),candidates:this.admissionDetails,capital:this.state.runtimeControl.capital};}
   constructor(private state:RuntimeState,private events:EventBus){}
 
-  canDispatch(){return privateAccountFresh(this.state.account)&&!this.entryRiskBlocked&&this.state.executionGovernance?.mode==='AUTO_RUNNING'&&this.state.runtimeControl.mode==='RUNNING'&&(this.state.settings.riskGovernance?.entrySafetyMode??'AUTO')==='AUTO';}
+  canDispatch(){return !storageEntryBlockReason()&&privateAccountFresh(this.state.account)&&!this.entryRiskBlocked&&this.state.executionGovernance?.mode==='AUTO_RUNNING'&&this.state.runtimeControl.mode==='RUNNING'&&(this.state.settings.riskGovernance?.entrySafetyMode??'AUTO')==='AUTO';}
   isPaused(){return !this.canDispatch();}
 
   manualRiskOverrideActive(at=Date.now()){
@@ -73,18 +75,29 @@ export class RuntimeControlService {
     const settings=this.state.settings.runtimeControl,now=Date.now(),current=this.state.runtimeControl;
     if(!force&&current.nextCapitalCheckAt&&now<current.nextCapitalCheckAt)return current;
     const candidates=this.state.universe.filter(candidate=>candidate.eligible&&candidate.rank>0);
-    const positions=[...this.state.positions.values()].map(position=>({symbol:String(position.symbol),side:position.side as 'LONG'|'SHORT',quantity:Number(position.quantity),markPrice:Number(position.markPrice),leverage:Number(position.leverage)}));
+    const positions=[...this.state.positions.values()].map(position=>({symbol:String(position.symbol),side:position.side as 'LONG'|'SHORT',quantity:Number(position.quantity),markPrice:Number(position.markPrice),leverage:Number(position.leverage)})),pendingRiskExposures=collectPendingEntryRiskExposures(this.state,{now});
     // Admission must scan the ranked Universe, not the current Pool.  Feeding a
     // partially depleted pool back into routing creates a self-locking two-item
     // loop and prevents high-frequency replacement of locally cooled symbols.
     const admission=evaluateCapitalAdmission({candidates,snapshots:[...this.state.snapshots.values()],settings:this.state.settings,positions,assets:this.state.account.assets});
     const slots=this.state.entryCapacity();if(slots.used>=slots.max){admission.summary.executableCandidateCount=0;admission.summary.routedCandidates=[];admission.summary.reasonCounts={POSITION_CAPACITY_FULL:admission.decisions.length};for(const row of admission.decisions){row.executable=false;row.reason='POSITION_CAPACITY_FULL';row.reasonText=`仓位容量 ${slots.used}/${slots.max}（持仓${slots.positions}、在途${slots.inFlight}、预留${slots.reserved}）`;}}
     this.admissionDetails=admission.decisions.map(row=>({symbol:row.symbol,underlying:row.underlying,executable:row.executable,reason:row.reason,reasonText:row.reasonText,long:row.longPlan,short:row.shortPlan}));
-    const nextAt=now+settings.capitalCheckIntervalSeconds*1000,capitalEquity=Math.max(Number(this.state.account.equityUsd??0),this.state.account.assets.reduce((sum,row)=>sum+Number(row.usdValue??0),0),1),budget=directionBudget(this.state.settings,capitalEquity,[...this.state.positions.values()],now);
-    const routed=admission.summary.routedCandidates.map(route=>{const quoteAvailable=this.state.account.assets.find(asset=>asset.asset===route.quoteAsset)?.availableBalance??0,quoteCapacity=Math.max(0,quoteAvailable*route.leverage*.995),recommendedLong=route.longRecommendedNotionalUsd??(route.longExecutable?route.marginUsd*route.leverage:0),recommendedShort=route.shortRecommendedNotionalUsd??(route.shortExecutable?route.marginUsd*route.leverage:0),longFeasible=Math.max(0,Math.min(recommendedLong,budget.longAvailableNotionalUsd,budget.grossAvailableNotionalUsd,quoteCapacity)),shortFeasible=Math.max(0,Math.min(recommendedShort,budget.shortAvailableNotionalUsd,budget.grossAvailableNotionalUsd,quoteCapacity)),minimum=route.minExecutableNotionalUsd??0;return{...route,longFeasibleNotionalUsd:longFeasible,shortFeasibleNotionalUsd:shortFeasible,longExecutable:route.longExecutable&&longFeasible+1e-8>=minimum,shortExecutable:route.shortExecutable&&shortFeasible+1e-8>=minimum};});
+    const nextAt=now+settings.capitalCheckIntervalSeconds*1000,capitalEquity=Number(this.state.account.equityUsd??0),budget=directionBudget(this.state.settings,capitalEquity,[...this.state.positions.values()],now);
+    const routed=admission.summary.routedCandidates.map(route=>{
+      const quoteAvailable=this.state.account.assets.find(asset=>asset.asset===route.quoteAsset)?.availableBalance??0,
+        reservedMargin=[...this.state.entryReservations.values()].filter(r=>['RESERVED','WORKING'].includes(r.status)&&r.expiresAt>now&&r.quoteAsset===route.quoteAsset).reduce((n,r)=>n+Math.max(0,r.marginUsd),0),
+        quoteCapacity=Math.max(0,(quoteAvailable-reservedMargin)*route.leverage*.995),
+        market=this.state.snapshots.get(route.symbol),minimum=Math.max(route.minExecutableNotionalUsd??0,market?.quote?.minNotional??0),
+        calculate=(side:'LONG'|'SHORT')=>computeExecutableRiskHeadroom({settings:this.state.settings,equity:capitalEquity,positions,pendingRiskExposures,symbol:route.symbol,side,
+          plannedNotional:side==='LONG'?(route.longRecommendedNotionalUsd??(route.longExecutable?route.marginUsd*route.leverage:0)):(route.shortRecommendedNotionalUsd??(route.shortExecutable?route.marginUsd*route.leverage:0)),
+          expectedAdverseMovePct:Math.max(.001,Number(market?.technical?.['15m']?.atrPercent)/100),dailyDrawdownPct:Number(this.state.account.riskBaseline?.riskDrawdownPct??0),quoteNotionalCapacity:quoteCapacity,minimumNotional:minimum}),
+        long=calculate('LONG'),short=calculate('SHORT');
+      return{...route,reason:(route.longExecutable&&long.executable)||(route.shortExecutable&&short.executable)?route.reason:[...new Set([...(route.longExecutable?long.blockers:[]),...(route.shortExecutable?short.blockers:[])])].join('|')||route.reason,longFeasibleNotionalUsd:long.finalNotional,shortFeasibleNotionalUsd:short.finalNotional,longExecutable:route.longExecutable&&long.executable,shortExecutable:route.shortExecutable&&short.executable,riskHeadroom:{LONG:long,SHORT:short},physicalCapacity:{LONG:route.longExecutable&&long.blockers.every(reason=>reason==='REJECT_DAILY_DRAWDOWN'),SHORT:route.shortExecutable&&short.blockers.every(reason=>reason==='REJECT_DAILY_DRAWDOWN')}};
+    });
+    this.admissionDetails=this.admissionDetails.map(row=>{const route=routed.find(r=>r.symbol===row.symbol);return route?{...row,executable:route.longExecutable||route.shortExecutable,reason:route.reason,reasonText:route.reason,riskHeadroom:route.riskHeadroom}:row;});
     const routeGeneration=candidates.length?Math.max(...candidates.map((candidate:any)=>candidate.selectionGeneration??0)):this.state.marketGeneration,summary={...admission.summary,routedCandidates:routed,executableCandidateCount:routed.filter(x=>x.longExecutable||x.shortExecutable).length,directionBudget:budget,generation:routeGeneration,capitalVersion:capitalFactVersion(this.state),nextRecheckAt:nextAt};
     this.state.runtimeControl={...current,capital:summary,nextCapitalCheckAt:nextAt};
-    this.events.publish('CAPITAL_ROUTE_EVALUATED',{capitalVersion:summary.capitalVersion,selectionGeneration:routeGeneration,executableCandidateCount:summary.executableCandidateCount,evaluatedAt:summary.evaluatedAt});
+    this.events.publish('CAPITAL_ROUTE_EVALUATED',{capitalVersion:summary.capitalVersion,selectionGeneration:routeGeneration,executableCandidateCount:summary.executableCandidateCount,evaluatedAt:summary.evaluatedAt,pendingRiskExposureCount:pendingRiskExposures.length,pendingRiskNotionalUsd:pendingRiskExposures.reduce((sum,row)=>sum+row.notionalUsd,0)});
     const governance=this.state.settings.riskGovernance,risk=this.state.account.riskBaseline,loss=Math.max(0,-Number(risk?.calendarDayRealizedPnlUsd??risk?.capitalEpochRealizedPnlUsd??0)),equity=Math.max(1,this.state.account.equityUsd??0),drawdownPct=Number(risk?.riskDrawdownPct??0),dailyLimitHit=governance.circuitBreakerEnabled&&((governance.maxDailyLossUsd>0&&loss>=governance.maxDailyLossUsd)||(governance.maxDailyLossPct>0&&loss/equity>=governance.maxDailyLossPct)||drawdownPct>governance.maxDailyDrawdownPct);
     const manualOverride=this.manualRiskOverrideActive(now);
     this.entryRiskBlocked=dailyLimitHit&&!manualOverride;

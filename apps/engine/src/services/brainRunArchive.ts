@@ -14,6 +14,7 @@ const reasonEventTypes=new Set([
 const text=(value:unknown)=>typeof value==='string'&&value.trim()?value.trim():null;
 const eventIntentId=(event:any)=>text(event?.payload?.intentId)??text(event?.payload?.intent?.id);
 const eventOrderId=(event:any)=>text(event?.payload?.orderId)??text(event?.payload?.order?.id);
+const semanticDirection=(decision:unknown,direction:unknown)=>['PLACE_LONG','PLACE_SHORT','WAIT_FOR_PRICE'].includes(String(decision??''))?direction??null:null;
 
 export function projectBrainRun(run:any,chain:any,entryOrders:any[]=[],fills:any[]=[],now=Date.now()){
   const events=[...(chain?.events??[])].sort((a:any,b:any)=>Number(a.ts??0)-Number(b.ts??0));
@@ -32,5 +33,5 @@ export function projectBrainRun(run:any,chain:any,entryOrders:any[]=[],fills:any
   const reason=active?null:text(reasonEvent?.payload?.reason)??text(reasonEvent?.payload?.error)??text(reasonEvent?.payload?.message)??(!submitted?'UNKNOWN':null);
   const remaining=order?Math.max(0,Number(order.quantity)-Number(order.filledQuantity??0)):null;
   const orderFact=order?{status:order.status,internalOrderId:order.id,clientOrderId:order.clientOrderId??null,exchangeOrderId:order.exchangeOrderId??null,symbol:order.symbol,side:order.side,quantity:order.quantity,limitPrice:order.price,filledQuantity:order.filledQuantity,remainingQuantity:remaining,ageMs:Math.max(0,now-Number(order.createdAt)),absoluteExpiresAt:order.absoluteExpiresAt??null,ttlRemainingMs:order.absoluteExpiresAt?Math.max(0,order.absoluteExpiresAt-now):null,repriceCount:order.repriceCount??0,executionState:order.status==='UNKNOWN'?'WAITING_EXACT_EXCHANGE_RESULT':active?'WAITING_LIMIT_MATCH':'TERMINAL',orderType:order.orderType??'LIMIT',timeInForce:order.timeInForce??'UNKNOWN',maker:order.maker??order.timeInForce==='GTX',factSource:order.factSource??'LOCAL_STATE',verifiedAt:order.verifiedAt??order.updatedAt??null}:null;
-  return{timeline,orderFact,summary:{direction:run.direction,decision:run.decision,status:run.status,error:run.failure?.errorMessage??run.error,finalStage:terminalStage,reason,actual:reasonEvent?.payload?.actual??null,limit:reasonEvent?.payload?.limit??reasonEvent?.payload?.acceptablePriceRange??null,submitted,orderStatus:order?.status??null}};
+  return{timeline,orderFact,summary:{direction:semanticDirection(run.decision,run.direction),decision:run.decision,status:run.status,error:run.failure?.errorMessage??run.error,finalStage:terminalStage,reason,actual:reasonEvent?.payload?.actual??null,limit:reasonEvent?.payload?.limit??reasonEvent?.payload?.acceptablePriceRange??null,submitted,orderStatus:order?.status??null}};
 }

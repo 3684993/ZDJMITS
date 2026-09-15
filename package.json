@@ -1,15 +1,10 @@
 {
   "name": "zdj-mits-v3",
-  "version": "3.9.2",
+  "version": "3.9.3",
   "private": true,
   "type": "module",
-  "workspaces": [
-    "packages/*",
-    "apps/*"
-  ],
-  "engines": {
-    "node": ">=22.12.0"
-  },
+  "workspaces": ["packages/*", "apps/*"],
+  "engines": {"node": ">=22.12.0"},
   "scripts": {
     "dev": "node scripts/dev.mjs",
     "dev:engine": "npm run dev -w @zdj/engine",
@@ -18,11 +13,18 @@
     "typecheck": "npm run typecheck -ws --if-present",
     "test": "npm run test -ws --if-present",
     "build": "npm run build -ws --if-present",
-    "verify": "npm run typecheck && npm run build && npm run test",
+    "verify:deps": "npm run build -w @zdj/contracts && npm run build -w @zdj/core",
+    "verify:scripts": "node --check scripts/maintain-storage.mjs && node --check scripts/reset-testnet-runtime-db.mjs && node --check scripts/prune-zdj-backups.mjs && node --check scripts/install-storage-retention.mjs && node --check scripts/audit-ai-entry-quality.mjs && node --check scripts/audit-trading-quality-baseline.mjs && node --check scripts/inspect-sqlite-capacity.mjs && node --test scripts/maintain-storage.test.mjs scripts/reset-testnet-runtime-db.test.mjs && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/start-zdj-engine-host.test.ps1",
+    "verify": "npm run verify:deps && npm run verify:scripts && npm run typecheck && npm run build && npm run test",
     "acceptance": "powershell -ExecutionPolicy Bypass -File scripts/run-acceptance.ps1",
-    "verify:isolated": "npm run typecheck && npm run build -w @zdj/contracts && npm run build -w @zdj/core && npm run build -w @zdj/engine && npm run build -w @zdj/dashboard -- --outDir ../../data-test/v390-build/dashboard && npm test"
+    "verify:isolated": "npm run build -w @zdj/contracts && npm run build -w @zdj/core && npm run typecheck && npm run build -w @zdj/engine && npm run build -w @zdj/dashboard -- --outDir ../../data-test/v390-build/dashboard && npm test",
+    "storage:plan": "node scripts/maintain-storage.mjs",
+    "storage:backups": "node scripts/prune-zdj-backups.mjs",
+    "storage:retention": "node scripts/install-storage-retention.mjs",
+    "storage:inspect": "node scripts/inspect-sqlite-capacity.mjs",
+    "storage:reset-testnet": "node scripts/reset-testnet-runtime-db.mjs",
+    "audit:ai-quality": "node scripts/audit-ai-entry-quality.mjs",
+    "audit:trading-quality": "node scripts/audit-trading-quality-baseline.mjs"
   },
-  "devDependencies": {
-    "typescript": "^5.8.3"
-  }
+  "devDependencies": {"typescript": "^5.8.3"}
 }

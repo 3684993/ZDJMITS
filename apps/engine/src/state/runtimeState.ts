@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { DynamicPool, resolveUnderlying } from '@zdj/core';
+import { entryOrderOccupiesRisk } from '../services/entryRiskOccupancy.js';
 export type PositionLifecycleState = any;
 export type AccountState = any;
 export class RuntimeState {
@@ -43,19 +44,19 @@ export class RuntimeState {
         this.pool = new DynamicPool(settings);
     }
     setSettings(settings) { this.settings = settings; this.pool.updateSettings(settings); this.generation++; }
-    activeEntrySymbols() { return new Set([...this.entryOrders.values()].filter(o => ['NEW', 'SUBMITTING', 'UNKNOWN', 'WORKING', 'PARTIALLY_FILLED'].includes(o.status)).map(o => o.symbol.toUpperCase())); }
+    activeEntrySymbols() { const now=Date.now();return new Set([...this.entryOrders.values()].filter(o => entryOrderOccupiesRisk(o,now)).map(o => o.symbol.toUpperCase())); }
     positionSymbols() { return new Set([...this.positions.values()].map(p => p.symbol.toUpperCase())); }
     addAiRun(run) { this.aiRuns.unshift(run); if (this.aiRuns.length > 200)
         this.aiRuns.length = 200; }
     cleanupReservations(now = Date.now()) { for (const [id, reservation] of this.entryReservations) {
-        const activeOrder=[...this.entryOrders.values()].some(order=>order.reservationId===id&&['NEW','SUBMITTING','UNKNOWN','WORKING','PARTIALLY_FILLED'].includes(order.status));
+        const activeOrder=[...this.entryOrders.values()].some(order=>order.reservationId===id&&entryOrderOccupiesRisk(order,now));
         if (reservation.expiresAt <= now && (reservation.status === 'RESERVED' || (reservation.status === 'WORKING'&&!activeOrder)))
             this.releaseEntryReservation(id); } for (const [key, lock] of this.underlyingLocks)
         if (lock.leaseUntil <= now)
             this.underlyingLocks.delete(key); }
     entryCapacity(ignoreOrderId=null,ignoreReservationId=null) {
-        const held=new Set([...this.positions.values()].map(p=>resolveUnderlying(p.symbol))),orders=[...this.entryOrders.values()].filter(o=>o.id!==ignoreOrderId&&['NEW','SUBMITTING','UNKNOWN','WORKING','PARTIALLY_FILLED'].includes(o.status));
-        const inFlight=new Set(orders.map(o=>resolveUnderlying(o.symbol)).filter(u=>!held.has(u))),reservations=[...this.entryReservations.values()].filter(r=>r.id!==ignoreReservationId&&['RESERVED','WORKING'].includes(r.status)&&r.expiresAt>Date.now()&&!held.has(r.underlying)&&!inFlight.has(r.underlying));
+        const now=Date.now(),held=new Set([...this.positions.values()].map(p=>resolveUnderlying(p.symbol))),orders=[...this.entryOrders.values()].filter(o=>o.id!==ignoreOrderId&&entryOrderOccupiesRisk(o,now));
+        const inFlight=new Set(orders.map(o=>resolveUnderlying(o.symbol)).filter(u=>!held.has(u))),reservations=[...this.entryReservations.values()].filter(r=>r.id!==ignoreReservationId&&['RESERVED','WORKING'].includes(r.status)&&r.expiresAt>now&&!held.has(r.underlying)&&!inFlight.has(r.underlying));
         const reserved=new Set(reservations.map(r=>r.underlying));return {positions:this.positions.size,inFlight:inFlight.size,reserved:reserved.size,used:this.positions.size+inFlight.size+reserved.size,max:this.settings.portfolio.maxPositions};
     }
     reserveEntry(input) { this.cleanupReservations(); const underlying = input.underlying.toUpperCase(), lock = this.underlyingLocks.get(underlying); if (lock && lock.leaseUntil > Date.now())
@@ -87,7 +88,7 @@ export class RuntimeState {
             } for(const [symbol,row] of this.candidateLifecycle){if(['SCOUT_QUEUED','SCOUT_RUNNING','SCOUT_DONE','PRIMARY_QUEUED','PRIMARY_RUNNING','PRIMARY_COMPLETED','PLACE_READY'].includes(row?.status)){this.candidateLifecycle.set(symbol,{...row,status:'READY',reason:'ENGINE_RESTART_RECOVERY',nextEligibleAt:null,updatedAt:Date.now()});}} if (value.runtimeControl && typeof value.runtimeControl.mode === 'string')
         if (Array.isArray(value.directionDecisionStates)) for (const [id,row] of value.directionDecisionStates) this.directionDecisionStates.set(id,row); this.runtimeControl = { ...this.runtimeControl, ...value.runtimeControl, entrySafetyMode: value.runtimeControl.entrySafetyMode ?? this.runtimeControl.entrySafetyMode, manualRiskOverride: value.runtimeControl.manualRiskOverride ?? null, capital: { ...this.runtimeControl.capital, ...value.runtimeControl.capital } }; if (value.executionGovernance && typeof value.executionGovernance.mode === 'string') this.executionGovernance = value.executionGovernance; if (value.shadowRunner && typeof value.shadowRunner === 'object')
         this.shadowRunner = { ...this.shadowRunner, ...value.shadowRunner }; this.cleanupReservations(); if (Array.isArray(value.executionFills))
-        this.executionFills = value.executionFills.slice(0, 5000); if (Array.isArray(value.aiRuns)) {
+        this.executionFills = value.executionFills; if (Array.isArray(value.aiRuns)) {
         const recoveredAt = Date.now();
         this.aiRuns = value.aiRuns.slice(0, 200).map((run) => run.status === 'RUNNING' ? { ...run, status: 'FAILED', completedAt: recoveredAt, latencyMs: Math.max(0, recoveredAt - run.startedAt), error: 'ENGINE_RESTART_INTERRUPTED', failure: { failureStage: 'RUNTIME_RECOVERY', errorCode: 'ENGINE_RESTART_INTERRUPTED', errorMessage: 'AI run was interrupted by engine restart', httpStatus: null, timeout: false, schemaValidation: false, retryCount: 0, rawOutput: null } } : run);
     } if (Array.isArray(value.tradeOutcomes))
@@ -95,4 +96,3 @@ export class RuntimeState {
         this.activity = { ...this.activity, ...value.activity }; if (value.account && typeof value.account.status === 'string')
         this.account = value.account; }
 }
-

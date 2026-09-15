@@ -28,7 +28,8 @@ function Write-Receipt([int]$ChildPid){
 }
 try{
   Write-HostLifecycle 'HOST_STARTED' @{workingDirectory=$WorkingDirectory;enginePath=$EnginePath}
-  $child=Start-Process -FilePath $NodePath -ArgumentList @(('"'+$EnginePath+'"')) -WorkingDirectory $WorkingDirectory -RedirectStandardOutput $StdoutPath -RedirectStandardError $StderrPath -WindowStyle Hidden -PassThru
+  $dq=[char]34
+  $child=Start-Process -FilePath $NodePath -ArgumentList @(($dq+$EnginePath+$dq)) -WorkingDirectory $WorkingDirectory -RedirectStandardOutput $StdoutPath -RedirectStandardError $StderrPath -WindowStyle Hidden -PassThru
   Write-Receipt $child.Id
   Write-HostLifecycle 'CHILD_STARTED' @{pid=$child.Id}
   $child.WaitForExit()

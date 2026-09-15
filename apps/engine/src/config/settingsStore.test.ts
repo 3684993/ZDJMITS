@@ -8,6 +8,22 @@ vi.mock('@zdj/core', async () => import(new URL('../../../../packages/core/src/i
 import { classifyAsset } from '@zdj/core';
 
 const paths: string[] = [];
+
+it('repairs a stale checkpoint cache after another connection evicts an entity',async()=>{
+ const dir=await mkdtemp(path.join(os.tmpdir(),'zdj-checkpoint-cache-'));paths.push(dir);const store=new SettingsStore(path.resolve('../../config'),dir);await store.load();
+ try{const db=(store as any).db,value={executionFills:[{fillId:'f1',qty:1}]};store.persistRuntime(value);db.prepare("DELETE FROM runtime_entities WHERE kind='executionFills'").run();store.persistRuntime(value);expect(store.loadRuntime()).toMatchObject(value);}finally{store.close();}
+});
+
+it('replays only exact archived fills without writes and fails closed on conflicting evidence',async()=>{
+ const dir=await mkdtemp(path.join(os.tmpdir(),'zdj-checkpoint-replay-'));paths.push(dir);const store=new SettingsStore(path.resolve('../../config'),dir);await store.load();
+ try{const db=(store as any).db,fill={fillId:'exchange_BTCUSDT_1',symbol:'BTCUSDT',direction:'LONG',side:'BUY',positionSide:'LONG',orderId:'order1',clientOrderId:'client1',tradeId:'1',executionTime:100,qty:1,price:100,realizedPnl:0,commission:1,commissionAsset:'USDT',commissionUsd:1,maker:true,source:'USER_DATA_WS',attributionStatus:'SYSTEM_ATTRIBUTED'};store.persistRuntime({executionFills:[fill]});db.prepare("DELETE FROM runtime_entities WHERE kind='executionFills'").run();
+ expect(()=>store.loadRuntime()).toThrow('RUNTIME_ENTITY_MISSING');
+ store.recordRuntimeEvent({id:'fact1',type:'EXCHANGE_FILL_ATTRIBUTED',ts:101,payload:{fill}});
+ const before=db.prepare('SELECT total_changes() n').get().n;
+ expect(store.loadRuntime()).toMatchObject({executionFills:[fill]});expect(db.prepare('SELECT total_changes() n').get().n).toBe(before);expect(store.runtimeLoadRecoveries.at(-1)?.sourceEventIds).toEqual(['fact1']);
+ store.recordRuntimeEvent({id:'fact2',type:'EXCHANGE_FILL_ATTRIBUTED',ts:102,payload:{fill:{...fill,qty:2}}});expect(()=>store.loadRuntime()).toThrow('RUNTIME_FILL_REPLAY_CONFLICT');
+ }finally{store.close();}
+});
 afterEach(async () => { await Promise.all(paths.splice(0).map(value => rm(value, { recursive: true, force: true }))); });
 
 describe('SettingsStore', () => {

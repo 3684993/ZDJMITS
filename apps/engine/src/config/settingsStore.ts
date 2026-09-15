@@ -2,7 +2,7 @@ import { mkdir, readFile, stat, link, unlink } from "node:fs/promises";
 import path from "node:path";
 import { DatabaseSync, backup as sqliteBackup } from "node:sqlite";
 import { Worker } from "node:worker_threads";
-import { SystemSettingsSchema, type SystemSettings } from "@zdj/contracts";
+import { ExecutionFillSchema, SystemSettingsSchema, type SystemSettings } from "@zdj/contracts";
 import { WindowsCredentialManagerSecretStore } from "./windowsCredentialManagerSecretStore.js";
 import { WindowsDpapiSecretStore } from "./windowsDpapiSecretStore.js";
 import { redactAudit } from "../api/projections.js";
@@ -657,11 +657,21 @@ export class SettingsStore {
   checkpoint() {
     this.db.exec("PRAGMA wal_checkpoint(TRUNCATE)");
   }
+  readonly runtimeLoadRecoveries:Array<{kind:string;entityId:string;sourceEventIds:string[]}>=[];
+  private replayMissingFill(id:string){
+    const rows=this.db.prepare("SELECT id,payload FROM runtime_events WHERE type='EXCHANGE_FILL_ATTRIBUTED' AND json_valid(payload) AND json_extract(payload,'$.fill.fillId')=? LIMIT 101").all(id) as Array<{id:string;payload:string}>;
+    if(!rows.length||rows.length>100)throw new Error(`RUNTIME_ENTITY_MISSING:executionFills:${id}`);
+    const fills=rows.map(row=>{const raw=JSON.parse(row.payload).fill;ExecutionFillSchema.parse(raw);if(raw.fillId!==id||id!==`exchange_${raw.symbol}_${raw.tradeId}`||!raw.orderId||!raw.clientOrderId||raw.source==='SIMULATION')throw new Error(`RUNTIME_FILL_REPLAY_IDENTITY_INVALID:${id}`);return raw;});
+    if(new Set(fills.map(fill=>JSON.stringify(fill))).size!==1)throw new Error(`RUNTIME_FILL_REPLAY_CONFLICT:${id}`);
+    this.runtimeLoadRecoveries.push({kind:'executionFills',entityId:id,sourceEventIds:rows.map(row=>row.id)});
+    // Read-only replay. Do not modify archived events, TradeRecords, funding or missing facts.
+    return fills[0];
+  }
   loadRuntime<T>() {
     const row=this.db.prepare('SELECT payload FROM runtime_state WHERE id=1').get() as {payload:string}|undefined;if(!row)return null;
     const value=JSON.parse(row.payload);
     if(value._entityLists){const entities=this.db.prepare('SELECT kind,entity_id,payload FROM runtime_entities').all() as Array<{kind:string;entity_id:string;payload:string}>;this.runtimeEntityCache=new Map(entities.map(r=>[`${r.kind}:${r.entity_id}`,r.payload]));
-      for(const [kind,info] of Object.entries(value._entityLists) as Array<[string,{ids:string[];tuple:boolean}]>){value[kind]=info.ids.map(id=>{const raw=this.runtimeEntityCache!.get(`${kind}:${id}`);if(raw===undefined)throw new Error(`RUNTIME_ENTITY_MISSING:${kind}:${id}`);const entity=JSON.parse(raw);return info.tuple?[id,entity]:entity;});}delete value._entityLists;
+      for(const [kind,info] of Object.entries(value._entityLists) as Array<[string,{ids:string[];tuple:boolean}]>){value[kind]=info.ids.map(id=>{const raw=this.runtimeEntityCache!.get(`${kind}:${id}`);if(raw===undefined){if(kind==='executionFills'&&!info.tuple)return this.replayMissingFill(id);throw new Error(`RUNTIME_ENTITY_MISSING:${kind}:${id}`);}const entity=JSON.parse(raw);return info.tuple?[id,entity]:entity;});}delete value._entityLists;
     }
     return value as T;
   }
@@ -674,6 +684,9 @@ export class SettingsStore {
     }
     core._entityLists=lists;const payload=JSON.stringify(core),outer=this.transactionActive;
     this.db.exec('SAVEPOINT runtime_checkpoint');try{
+      // Retention uses another connection. A cached payload does not prove its row still exists.
+      const durable=this.db.prepare('SELECT 1 FROM runtime_entities WHERE kind=? AND entity_id=?'),pending=new Set(updates.map(([kind,id])=>`${kind}:${id}`));
+      for(const [kind,info] of Object.entries(lists))for(const id of info.ids){const key=`${kind}:${id}`;if(!pending.has(key)&&!durable.get(kind,id)){const raw=this.runtimeEntityCache!.get(key);if(raw===undefined)throw new Error(`CHECKPOINT_ENTITY_UNAVAILABLE:${key}`);updates.push([kind,id,raw]);}}
       const upsert=this.db.prepare('INSERT INTO runtime_entities(kind,entity_id,payload) VALUES(?,?,?) ON CONFLICT(kind,entity_id) DO UPDATE SET payload=excluded.payload');for(const update of updates)upsert.run(...update);
       this.db.prepare('INSERT INTO runtime_state(id,payload,updated_at) VALUES(1,?,?) ON CONFLICT(id) DO UPDATE SET payload=excluded.payload,updated_at=excluded.updated_at').run(payload,Date.now());
       if(lists.aiRuns){

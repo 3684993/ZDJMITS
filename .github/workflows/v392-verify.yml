@@ -9,6 +9,7 @@ on:
       - trading-quality-stage1-3-20260914
       - v393-offline-implementation-20260914
       - codex/v393-final-audit-20260915
+      - v393-p0-runtime-recovery-20260915
   workflow_dispatch:
 
 permissions:

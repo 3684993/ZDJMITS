@@ -71,8 +71,8 @@ if (-not (Test-Path -LiteralPath $enginePath)) { throw 'ENGINE_BUILD_MISSING: bu
 if (-not (Test-Path -LiteralPath $hostScript)) { throw 'ENGINE_HOST_SCRIPT_MISSING' }
 $launchId=[guid]::NewGuid().ToString('N')
 $hostExe=(Get-Process -Id $PID -ErrorAction Stop).Path
-$quote={param($v) '"'+([string]$v).Replace('"','\"')+'"'}
-$hostArgs=@('-NoProfile','-ExecutionPolicy','Bypass','-File',(& $quote $hostScript),'-NodePath',(& $quote $nodePath),'-EnginePath',(& $quote $enginePath),'-WorkingDirectory',(& $quote (Get-Location).Path),'-StdoutPath',(& $quote $stdout),'-StderrPath',(& $quote $stderr),'-LifecyclePath',(& $quote $launcherLifecycle),'-ReceiptPath',(& $quote $receiptPath),'-LaunchId',$launchId)
+$dq=[char]34
+$hostArgs=@('-NoProfile','-ExecutionPolicy','Bypass','-File',($dq+$hostScript+$dq),'-NodePath',($dq+$nodePath+$dq),'-EnginePath',($dq+$enginePath+$dq),'-WorkingDirectory',($dq+(Get-Location).Path+$dq),'-StdoutPath',($dq+$stdout+$dq),'-StderrPath',($dq+$stderr+$dq),'-LifecyclePath',($dq+$launcherLifecycle+$dq),'-ReceiptPath',($dq+$receiptPath+$dq),'-LaunchId',$launchId)
 $hostProcess=Start-Process -FilePath $hostExe -ArgumentList $hostArgs -WorkingDirectory (Get-Location) -WindowStyle Hidden -PassThru
 $receipt=$null
 for($attempt=0;$attempt -lt 50;$attempt++){

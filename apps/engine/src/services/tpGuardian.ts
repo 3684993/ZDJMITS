@@ -8,6 +8,7 @@ import { confirmedTpSubmissionRejection } from './tpSubmissionOutcome.js';
 
 export class TpGuardian {
   private retry=new Map<string,{attempt:number;nextAt:number;lastError:string}>();private repairing=new Set<string>();private suspendedPositions=new Set<string>();
+  private unknownAbsenceProof=new Map<string,{firstAt:number;lastAt:number;observations:number}>();
   suspend(positionId:string){this.suspendedPositions.add(positionId);}
   resume(positionId:string){this.suspendedPositions.delete(positionId);}
   async cancel(order:TakeProfitOrder){return this.exchange.cancelTakeProfit(order);}
@@ -21,7 +22,23 @@ export class TpGuardian {
     let existing=current.tpOrderId?this.state.tpOrders.get(current.tpOrderId):undefined;
     existing=[...this.state.tpOrders.values()].find(o=>o.positionId===current.id&&o.symbol===current.symbol&&o.status==='WORKING'&&o.side===(current.side==='LONG'?'SELL':'BUY')&&Math.abs(o.quantity-current.quantity)<=Math.max(1e-10,current.quantity*1e-6))??existing;
     existing??=[...this.state.tpOrders.values()].find(o=>o.positionId===current.id&&o.status==='UNKNOWN');
-    if(existing?.status==='UNKNOWN'){try{const verified=await this.exchange.findTakeProfitByClientOrderId?.(existing);if(!verified||verified.status==='UNKNOWN')return;const retained={...verified,id:existing.id,cycleId:existing.cycleId,positionId:existing.positionId};this.state.tpOrders.set(existing.id,retained);existing=retained;if(verified.status==='FILLED')return;}catch{return;}}
+    if(existing?.status==='UNKNOWN'){
+      const proof=this.unknownAbsenceProof.get(existing.id),now=Date.now();
+      if(proof&&now-proof.lastAt<15_000)return;
+      try{
+        const verified=await this.exchange.findTakeProfitByClientOrderId?.(existing);
+        if(verified?.status==='UNKNOWN')return;
+        if(!verified){
+          const next={firstAt:proof?.firstAt??now,lastAt:now,observations:(proof?.observations??0)+1};this.unknownAbsenceProof.set(existing.id,next);
+          this.events.publish('TP_UNKNOWN_ABSENCE_OBSERVED',{positionId:current.id,orderId:existing.id,clientOrderId:existing.clientOrderId??null,observations:next.observations,firstAt:next.firstAt,checkedAt:now,source:'BINANCE_EXACT_ORDER_NOT_FOUND',repairReleased:false},current.symbol);
+          if(next.observations<2||now-next.firstAt<15_000)return;
+          const terminal={...existing,status:'REJECTED' as const,updatedAt:now};this.state.tpOrders.set(existing.id,terminal);this.unknownAbsenceProof.delete(existing.id);existing=terminal;
+          this.events.publish('TP_UNKNOWN_CONFIRMED_ABSENT',{positionId:current.id,orderId:terminal.id,clientOrderId:terminal.clientOrderId??null,compatibilityTerminalStatus:'REJECTED',evidence:['BINANCE_EXACT_ORDER_NOT_FOUND_TWICE'],firstObservedAt:next.firstAt,confirmedAt:now,repairReleased:true},current.symbol);
+        }else{
+          this.unknownAbsenceProof.delete(existing.id);const retained={...verified,id:existing.id,cycleId:existing.cycleId,positionId:existing.positionId};this.state.tpOrders.set(existing.id,retained);existing=retained;if(verified.status==='FILLED')return;
+        }
+      }catch(error){this.events.publish('TP_UNKNOWN_VERIFY_FAILED',{positionId:current.id,orderId:existing.id,clientOrderId:existing.clientOrderId??null,message:error instanceof Error?error.message:String(error),repairReleased:false,failClosed:true},current.symbol);return;}
+    }
     // A legal working TP is deliberately not chased just because the market or plan moved.
     if(existing?.status==='WORKING'&&Math.abs(existing.quantity-current.quantity)<=Math.max(1e-10,current.quantity*1e-6)&&existing.side===(current.side==='LONG'?'SELL':'BUY')){this.state.positions.set(current.id,{...current,tpStatus:'PROTECTED',tpOrderId:existing.id,tpLastVerifiedAt:Date.now()});return;}
     const retry=this.retry.get(current.id);if(!force&&retry&&retry.nextAt>Date.now())return;

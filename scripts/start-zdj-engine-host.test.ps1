@@ -20,7 +20,11 @@ try{
   $r=Get-Content -LiteralPath $receipt -Raw|ConvertFrom-Json
   if($r.launchId -ne $launchId -or [int]$r.pid -le 0){throw 'HOST_RECEIPT_INVALID'}
   $rows=@(Get-Content -LiteralPath $life|ForEach-Object {$_|ConvertFrom-Json})
-  $exit=@($rows|Where-Object event -eq 'CHILD_EXITED')[-1]
-  if(-not $exit -or [int]$exit.payload.pid -ne [int]$r.pid -or [int]$exit.payload.exitCode -ne 23){throw 'CHILD_EXIT_EVIDENCE_INVALID'}
+  $exits=@($rows|Where-Object {$_.event -eq 'CHILD_EXITED'});$childExit=$exits|Select-Object -Last 1
+  $actualPid=if($childExit){$childExit.payload.pid}else{$null};$actualCode=if($childExit){$childExit.payload.exitCode}else{$null}
+  if(-not $childExit -or [int]$actualPid -ne [int]$r.pid -or [int]$actualCode -ne 23){
+    $safe=[ordered]@{hostExitCode=$p.ExitCode;receiptPid=$r.pid;exitEventPid=$actualPid;exitEventCode=$actualCode;events=@($rows|ForEach-Object {$_.event});stdout=if(Test-Path $stdout){(Get-Content $stdout -Raw)}else{$null};stderr=if(Test-Path $stderr){(Get-Content $stderr -Raw)}else{$null}}
+    throw ('CHILD_EXIT_EVIDENCE_INVALID:'+($safe|ConvertTo-Json -Compress -Depth 4))
+  }
   Write-Output 'start-zdj-engine-host.test.ps1 PASS'
 }finally{Remove-Item -LiteralPath $temp -Recurse -Force -ErrorAction SilentlyContinue}

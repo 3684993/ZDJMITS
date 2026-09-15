@@ -1,7 +1,7 @@
 import {Worker} from 'node:worker_threads';
 import {createHash} from 'node:crypto';
 import {execFileSync} from 'node:child_process';
-import {existsSync,readFileSync,writeFileSync} from 'node:fs';
+import {copyFileSync,existsSync,mkdirSync,readFileSync,renameSync,writeFileSync} from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {TradingQualityExperimentManifestSchema,type TradingQualityExperimentManifest} from '@zdj/contracts';
@@ -14,26 +14,38 @@ export class TradingQualityRuntimeObserver {
   private busy=false;
   private lastSent=0;
   private result:any={status:'STARTING',authorization:'NONE'};
-  readonly manifest:TradingQualityExperimentManifest;
+  manifest:TradingQualityExperimentManifest;
   private readonly configHash:string;
   private readonly accountScope:string;
-  constructor(dataDir:string,private state:RuntimeState){
+  private readonly codeHead:string;
+  private readonly manifestFile:string;
+  constructor(private dataDir:string,private state:RuntimeState){
     const now=Date.now(),exchange=state.settings.connections.exchange;
     this.configHash=qualityDigest(state.settings);
     this.accountScope=qualityDigest({environment:exchange.environment,credentialRef:exchange.credentialRef});
     const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../../../..');
-    const codeHead=execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8',windowsHide:true}).trim();
-    const file=path.join(dataDir,'v393-experiment-manifest.json');
-    if(existsSync(file))this.manifest=TradingQualityExperimentManifestSchema.parse(JSON.parse(readFileSync(file,'utf8')));
-    else {
-      this.manifest=TradingQualityExperimentManifestSchema.parse({experimentId:`v393-shadow-${now}`,environment:exchange.environment,accountScope:this.accountScope,codeHead,configHash:this.configHash,policyVersion:'V393-SHADOW-1',metricVersion:'V393-MARK-OBSERVED-1',ruleHash:qualityDigest({mode:'SHADOW',selection:'UNCHANGED',entry:'UNCHANGED'}),analysisPlanHash:qualityDigest({purpose:'MEASUREMENT_ONLY',horizons:[30000,60000,180000,300000,900000],maxGapMs:5000,scope:'NO_ECONOMIC_ACCEPTANCE',candidateSampling:'DETERMINISTIC_TOP_8',safety:'INCONCLUSIVE_UNTIL_AUDITED'}),decisionStartAt:now,entryEnrollmentEndAt:now+24*3600000,followupEndAt:now+48*3600000,authoritativeClock:'SYSTEM_UTC',enrollmentRuleVersion:'V393-ENROLL-1',transitionalRule:'BASELINE_PREEXISTING_ORDER_IS_TRANSITIONAL',exclusionReasons:[],runtimeSessions:[],createdAt:now});
-      writeFileSync(file,JSON.stringify(this.manifest,null,2),{flag:'wx'});
-    }
-    if(this.manifest.codeHead!==codeHead||this.manifest.configHash!==this.configHash||this.manifest.accountScope!==this.accountScope)throw new Error('V393_MANIFEST_SCOPE_OR_VERSION_MISMATCH');
-    this.worker=new Worker(new URL('../workers/tradingQualityObserverWorker.js',import.meta.url),{workerData:{file:path.join(dataDir,'v393-evidence.sqlite'),manifest:this.manifest},resourceLimits:{maxOldGenerationSizeMb:192}});
-    this.worker.on('message',message=>{this.busy=false;this.result=message;});
-    this.worker.on('error',error=>{this.busy=false;this.result={status:'EVIDENCE_DEGRADED',error:String(error),authorization:'NONE'};this.worker=null;});
-    this.worker.on('exit',code=>{if(this.worker){this.worker=null;this.result={...this.result,status:'EVIDENCE_DEGRADED',exitCode:code};}});
+    this.codeHead=execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8',windowsHide:true}).trim();
+    this.manifestFile=path.join(dataDir,'v393-experiment-manifest.json');
+    let existing:TradingQualityExperimentManifest|null=null;
+    try{if(existsSync(this.manifestFile))existing=TradingQualityExperimentManifestSchema.parse(JSON.parse(readFileSync(this.manifestFile,'utf8')));}catch{}
+    const compatible=existing&&existing.codeHead===this.codeHead&&existing.configHash===this.configHash&&existing.accountScope===this.accountScope&&existing.followupEndAt>now;
+    this.manifest=compatible?existing!:this.createManifest(now);
+    if(!compatible)this.persistManifest(this.manifest,existing);
+    this.startWorker();
+  }
+  private createManifest(now:number){const exchange=this.state.settings.connections.exchange;return TradingQualityExperimentManifestSchema.parse({experimentId:`v393-shadow-${now}`,environment:exchange.environment,accountScope:this.accountScope,codeHead:this.codeHead,configHash:this.configHash,policyVersion:'V393-SHADOW-1',metricVersion:'V393-MARK-OBSERVED-1',ruleHash:qualityDigest({mode:'SHADOW',selection:'UNCHANGED',entry:'UNCHANGED'}),analysisPlanHash:qualityDigest({purpose:'MEASUREMENT_ONLY',horizons:[30000,60000,180000,300000,900000],maxGapMs:5000,scope:'NO_ECONOMIC_ACCEPTANCE',candidateSampling:'DETERMINISTIC_TOP_8',safety:'INCONCLUSIVE_UNTIL_AUDITED'}),decisionStartAt:now,entryEnrollmentEndAt:now+24*3600000,followupEndAt:now+48*3600000,authoritativeClock:'SYSTEM_UTC',enrollmentRuleVersion:'V393-ENROLL-1',transitionalRule:'BASELINE_PREEXISTING_ORDER_IS_TRANSITIONAL',exclusionReasons:[],runtimeSessions:[],createdAt:now});}
+  private persistManifest(next:TradingQualityExperimentManifest,previous:TradingQualityExperimentManifest|null=this.manifest){
+    if(previous&&existsSync(this.manifestFile)){const archive=path.join(this.dataDir,'v393-manifests');mkdirSync(archive,{recursive:true});const target=path.join(archive,`${previous.experimentId}.json`);if(!existsSync(target))copyFileSync(this.manifestFile,target);}
+    const tmp=`${this.manifestFile}.${next.experimentId}.tmp`;writeFileSync(tmp,JSON.stringify(next,null,2));renameSync(tmp,this.manifestFile);
+  }
+  private startWorker(){
+    const worker=new Worker(new URL('../workers/tradingQualityObserverWorker.js',import.meta.url),{workerData:{file:path.join(this.dataDir,'v393-evidence.sqlite'),manifest:this.manifest},resourceLimits:{maxOldGenerationSizeMb:192}});this.worker=worker;this.busy=false;this.lastSent=0;this.result={status:'STARTING',authorization:'NONE'};
+    worker.on('message',message=>{if(this.worker===worker){this.busy=false;this.result=message;}});
+    worker.on('error',error=>{if(this.worker===worker){this.busy=false;this.result={status:'EVIDENCE_DEGRADED',error:String(error),authorization:'NONE'};this.worker=null;}});
+    worker.on('exit',code=>{if(this.worker===worker){this.worker=null;this.result={...this.result,status:'EVIDENCE_DEGRADED',exitCode:code};}});
+  }
+  beginProspectiveCohort(resumeAt=Date.now()){
+    const previous=this.manifest,next=this.createManifest(resumeAt),worker=this.worker;this.worker=null;this.busy=false;if(worker)void worker.terminate();this.persistManifest(next,previous);this.manifest=next;this.startWorker();return{status:'STARTING',experimentId:next.experimentId,decisionStartAt:next.decisionStartAt,previousExperimentId:previous.experimentId,authorization:'NONE' as const};
   }
   tick(now=Date.now()){
     if(this.busy&&now-this.lastSent>30000)this.result={...this.result,status:'EVIDENCE_DEGRADED',error:'WORKER_TIMEOUT_NO_RESTART'};

@@ -7,14 +7,16 @@ param(
   [Parameter(Mandatory=$true)][string]$StderrPath,
   [Parameter(Mandatory=$true)][string]$LifecyclePath,
   [Parameter(Mandatory=$true)][string]$ReceiptPath,
-  [Parameter(Mandatory=$true)][string]$LaunchId
+  [Parameter(Mandatory=$true)][string]$LaunchId,
+  [string]$LaunchAuthority='DIRECT_PROCESS_TREE'
 )
 $ErrorActionPreference='Stop'
 function Write-HostLifecycle([string]$EventName,[hashtable]$Payload){
   try{
     $parent=Split-Path -Parent $LifecyclePath
     if($parent){[IO.Directory]::CreateDirectory($parent)|Out-Null}
-    $row=[ordered]@{ts=[DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds();event=$EventName;launchId=$LaunchId;hostPid=$PID;payload=$Payload}
+    $parentPid=(Get-CimInstance Win32_Process -Filter "ProcessId=$PID" -ErrorAction SilentlyContinue).ParentProcessId
+    $row=[ordered]@{ts=[DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds();event=$EventName;launchId=$LaunchId;launchAuthority=$LaunchAuthority;hostPid=$PID;hostParentPid=$parentPid;payload=$Payload}
     [IO.File]::AppendAllText($LifecyclePath,(($row|ConvertTo-Json -Compress -Depth 8)+[Environment]::NewLine),[Text.UTF8Encoding]::new($false))
   }catch{}
 }
@@ -22,7 +24,8 @@ function Write-Receipt([int]$ChildPid){
   $parent=Split-Path -Parent $ReceiptPath
   if($parent){[IO.Directory]::CreateDirectory($parent)|Out-Null}
   $tmp=$ReceiptPath+'.'+$LaunchId+'.tmp'
-  $row=[ordered]@{launchId=$LaunchId;pid=$ChildPid;hostPid=$PID;startedAt=[DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds();enginePath=$EnginePath}
+  $parentPid=(Get-CimInstance Win32_Process -Filter "ProcessId=$PID" -ErrorAction SilentlyContinue).ParentProcessId
+  $row=[ordered]@{launchId=$LaunchId;pid=$ChildPid;hostPid=$PID;hostParentPid=$parentPid;startedAt=[DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds();enginePath=$EnginePath;launchAuthority=$LaunchAuthority}
   [IO.File]::WriteAllText($tmp,($row|ConvertTo-Json -Compress),[Text.UTF8Encoding]::new($false))
   Move-Item -LiteralPath $tmp -Destination $ReceiptPath -Force
 }

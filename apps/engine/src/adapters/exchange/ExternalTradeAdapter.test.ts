@@ -27,3 +27,8 @@ it('returns fresh account facts even while income and valuation requests never c
 it('coalesces public clock requests needed by concurrent private reads',async()=>{
  const h=harness(false);await Promise.all(Array.from({length:20},()=>h.adapter.fetchRealizedPnlSince(1).catch(()=>0)));expect(h.calls.filter(c=>c.url==='/fapi/v1/time')).toHaveLength(1);
 });
+it('coalesces leverageBracket reads per symbol while retaining exact leverage writes',async()=>{
+ const h=harness(false);(h.adapter as any).transport.json.mockImplementation(async(url:string,init:any)=>{h.calls.push({url,method:init?.method});if(url==='/fapi/v1/time')return{serverTime:Date.now()};if(url.startsWith('/fapi/v1/leverageBracket')){await new Promise(resolve=>setTimeout(resolve,5));return[{brackets:[{initialLeverage:25}]}];}return{};});
+ await Promise.all(Array.from({length:12},()=>h.adapter.setLeverage('BTCUSDT',20)));
+ expect(h.calls.filter(c=>c.url.startsWith('/fapi/v1/leverageBracket'))).toHaveLength(1);expect(h.calls.filter(c=>c.url.startsWith('/fapi/v1/leverage?'))).toHaveLength(12);
+});

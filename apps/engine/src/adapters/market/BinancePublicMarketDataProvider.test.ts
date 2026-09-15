@@ -11,6 +11,13 @@ it('advances all three closed frames during a REST outage without crossing frame
 });
 
 describe("BinancePublicMarketDataProvider live symbols", () => {
+  it('coalesces exchangeInfo and retains a safe stale contract snapshot when refresh fails',async()=>{
+    vi.useFakeTimers();vi.setSystemTime(1_000_000);let resolve!:(value:any)=>void;
+    const json=vi.fn((path:string)=>path==='/fapi/v1/exchangeInfo'?new Promise(r=>resolve=r):Promise.resolve([{symbol:'BTCUSDT',quoteVolume:'1'}])),provider=new BinancePublicMarketDataProvider({json} as any);
+    const reads=Array.from({length:20},()=> (provider as any).info());resolve({symbols:[{symbol:'BTCUSDT'}]});await Promise.all(reads);expect(json.mock.calls.filter(c=>c[0]==='/fapi/v1/exchangeInfo')).toHaveLength(1);
+    vi.advanceTimersByTime(6*60*60_000+1);json.mockRejectedValueOnce(new Error('QUEUE_TIMEOUT'));expect(await (provider as any).info()).toMatchObject({symbols:[{symbol:'BTCUSDT'}]});
+    vi.useRealTimers();
+  });
   it('collects approved underlyings ahead of the volume slice and reports unavailable assets without starting WS',async()=>{
     const transport={json:vi.fn(async(path:string)=>path==='/fapi/v1/ticker/24hr'?[{symbol:'BTCUSDT',quoteVolume:'100'},{symbol:'SOLUSDT',quoteVolume:'1'}]:path==='/fapi/v1/exchangeInfo'?{symbols:[{symbol:'BTCUSDT',status:'TRADING',contractType:'PERPETUAL'},{symbol:'SOLUSDT',status:'TRADING',contractType:'PERPETUAL'}]}:[])} as any;
     const provider=new BinancePublicMarketDataProvider(transport),start=vi.spyOn((provider as any).stream,'start').mockImplementation(()=>{});

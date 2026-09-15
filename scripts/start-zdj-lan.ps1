@@ -1,7 +1,8 @@
 [CmdletBinding()]
 param(
   [string]$StartReason = 'MANUAL_START',
-  [switch]$SkipFirewall
+  [switch]$SkipFirewall,
+  [string]$TaskName='ZDJ-MITS Manual Engine'
 )
 $ErrorActionPreference = 'Stop'
 if ($StartReason -ne 'MANUAL_START') { throw 'MANUAL_START_ONLY: automatic start/restart is disabled.' }
@@ -53,9 +54,8 @@ for ($attempt = 0; $attempt -lt 20; $attempt++) {
   Start-Sleep -Milliseconds 250
 }
 
-# Run Node below a detached, non-restarting host. The host exists only to retain
-# the Process object long enough to record the real child exit code/time. It is
-# deliberately not a supervisor and never starts a replacement child.
+# Cross the native Windows Task Scheduler boundary. The registered task has no
+# triggers and no restart policy; this script performs one explicit manual run.
 $logDir = Join-Path (Get-Location) 'data\runtime-logs'
 $runtimeDir = Join-Path (Get-Location) 'data\runtime'
 New-Item -ItemType Directory -Path $logDir,$runtimeDir -Force | Out-Null
@@ -63,26 +63,24 @@ $stdout = Join-Path $logDir 'engine.stdout.log'
 $stderr = Join-Path $logDir 'engine.stderr.log'
 $launcherLifecycle = Join-Path $logDir 'engine-launch-lifecycle.jsonl'
 $receiptPath = Join-Path $runtimeDir 'engine-launch-receipt.json'
-$env:ZDJ_START_REASON = $StartReason
-$nodePath = (Get-Command node.exe -ErrorAction Stop).Source
-$enginePath = Join-Path (Get-Location) 'apps\engine\dist\main.js'
-$hostScript = Join-Path $PSScriptRoot 'start-zdj-engine-host.ps1'
-if (-not (Test-Path -LiteralPath $enginePath)) { throw 'ENGINE_BUILD_MISSING: build explicitly before starting.' }
-if (-not (Test-Path -LiteralPath $hostScript)) { throw 'ENGINE_HOST_SCRIPT_MISSING' }
-$launchId=[guid]::NewGuid().ToString('N')
-$hostExe=(Get-Process -Id $PID -ErrorAction Stop).Path
-$dq=[char]34
-$hostArgs=@('-NoProfile','-ExecutionPolicy','Bypass','-File',($dq+$hostScript+$dq),'-NodePath',($dq+$nodePath+$dq),'-EnginePath',($dq+$enginePath+$dq),'-WorkingDirectory',($dq+(Get-Location).Path+$dq),'-StdoutPath',($dq+$stdout+$dq),'-StderrPath',($dq+$stderr+$dq),'-LifecyclePath',($dq+$launcherLifecycle+$dq),'-ReceiptPath',($dq+$receiptPath+$dq),'-LaunchId',$launchId)
-$hostProcess=Start-Process -FilePath $hostExe -ArgumentList $hostArgs -WorkingDirectory (Get-Location) -WindowStyle Hidden -PassThru
+$task=Get-ScheduledTask -TaskName $TaskName -ErrorAction Stop
+if(@($task.Triggers|Where-Object {$_}).Count-ne 0){throw 'MANUAL_TASK_HAS_TRIGGER'}
+if([int]$task.Settings.RestartCount-ne 0){throw 'MANUAL_TASK_AUTO_RESTART_ENABLED'}
+if([string]$task.State -eq 'Running'){throw 'MANUAL_TASK_ALREADY_RUNNING_WITHOUT_LISTENER_REVIEW_REQUIRED'}
+$requestedAt=[DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds()
+Start-ScheduledTask -TaskName $TaskName
 $receipt=$null
-for($attempt=0;$attempt -lt 50;$attempt++){
+for($attempt=0;$attempt -lt 100;$attempt++){
   if(Test-Path -LiteralPath $receiptPath){
-    try{$candidate=Get-Content -LiteralPath $receiptPath -Raw|ConvertFrom-Json;if($candidate.launchId -eq $launchId){$receipt=$candidate;break}}catch{}
+    try{$candidate=Get-Content -LiteralPath $receiptPath -Raw|ConvertFrom-Json;if([long]$candidate.startedAt -ge $requestedAt -and $candidate.launchAuthority -eq 'WINDOWS_TASK_SCHEDULER_MANUAL'){$receipt=$candidate;break}}catch{}
   }
-  $hostProcess.Refresh();if($hostProcess.HasExited){break};Start-Sleep -Milliseconds 100
+  $info=Get-ScheduledTaskInfo -TaskName $TaskName
+  if((Get-ScheduledTask -TaskName $TaskName).State -ne 'Running' -and $info.LastRunTime -gt [datetime]::MinValue){break}
+  Start-Sleep -Milliseconds 100
 }
-if(-not $receipt){$hostProcess.Refresh();if($hostProcess.HasExited){throw "ENGINE_HOST_FAILED exit=$($hostProcess.ExitCode). See $launcherLifecycle"};throw "ENGINE_HOST_RECEIPT_TIMEOUT hostPid=$($hostProcess.Id). Manual review required; no automatic retry."}
-Write-Output ('ZDJ-MITS started in background. PID=' + $receipt.pid + ' HOST_PID=' + $hostProcess.Id + ' LAUNCH_ID=' + $launchId)
+if(-not $receipt){$info=Get-ScheduledTaskInfo -TaskName $TaskName;throw "ENGINE_TASK_RECEIPT_TIMEOUT taskResult=$($info.LastTaskResult). Manual review required; no automatic retry."}
+Write-Output ('ZDJ-MITS started via manual Task Scheduler boundary. PID=' + $receipt.pid + ' HOST_PID=' + $receipt.hostPid + ' LAUNCH_ID=' + $receipt.launchId)
+Write-Output ('Launch authority: ' + $receipt.launchAuthority + ' / Task=' + $TaskName)
 Write-Output ('LAN URL(s): ' + ((Get-NetIPAddress -AddressFamily IPv4 -Type Unicast -ErrorAction SilentlyContinue | Where-Object {$_.IPAddress -notlike '127.*' -and $_.IPAddress -notlike '169.254.*' -and $_.AddressState -eq 'Preferred'} | ForEach-Object { 'http://' + $_.IPAddress + ':8080' }) -join ', '))
 Write-Output ('Logs: ' + $stdout + ' / ' + $stderr)
 Write-Output ('Process lifecycle: ' + (Join-Path $logDir 'engine-process-lifecycle.jsonl') + ' / ' + $launcherLifecycle)

@@ -28,7 +28,7 @@ parentPort!.on('message',(s:any)=>{
     const input={run,intent,orders:s.orders,fills:s.fills,tradeRecords:[record],now:s.now},first=buildEpisodeEvidence(input);
     const start=first.firstFillAt;if(start==null)continue;
     const end=Math.max(start,first.completeFillAt??start)+900000;
-    const marks=pathFor(record.cycleId,record.symbol,start,end),ep=buildEpisodeEvidence({...input,marks});episodes.push(ep);
+    const marks=pathFor(record.cycleId,record.symbol,start,end),observed=buildEpisodeEvidence({...input,marks}),attribution=observed.immediateNegativeAttribution,costBps=attribution?.attributionComplete?Math.max(0,Number(attribution.entryFeeBps))+Math.max(0,-Number(attribution.markToExecutableBps)):null,ep={...buildEpisodeEvidence({...input,marks,costBps}),costEvidence:{basis:'ENTRY_FEE_PLUS_EXECUTABLE_CROSSING',entryFeeBps:attribution?.entryFeeBps??null,markToExecutableBps:attribution?.markToExecutableBps??null,totalObservedCostBps:costBps,complete:costBps!==null}};episodes.push(ep);
     append('ENTRY',record.cycleId,[intent.id,...ep.fillIds],{...entryQualityView({episodeId:intent.id,path:ep.path,timeToPositive:ep.timeToPositive}),episode:ep},s.now>=end?'MATURE':'OPEN');
     if(record.status==='CLOSED'&&record.closedAt!=null){
       const exitMarks=pathFor(`exit:${record.cycleId}`,record.symbol,record.closedAt,record.closedAt+900000);

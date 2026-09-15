@@ -44,6 +44,12 @@ import { ProductionAssetResearchService } from '../services/productionAssetResea
 import { MarketCohort } from '../services/marketCohort.js';
 import { LossHandoffService } from '../services/lossHandoff.js';
 
+export function applyStartupSafetyLatch(state:RuntimeState,now=Date.now()){
+  const previous={mode:state.runtimeControl.mode,reasonCode:state.runtimeControl.reasonCode,autoResume:state.runtimeControl.autoResume,executionGovernance:state.executionGovernance.mode};
+  state.runtimeControl={...state.runtimeControl,mode:'PAUSED_MANUAL',reasonCode:'STARTUP_RECOVERY_REQUIRED',reasonText:'启动安全锁：恢复、对账与风险检查完成后需人工 Resume',pausedAt:now,pauseSource:'AUTO',autoResume:false,lastTransitionAt:now};
+  return{previous,current:{mode:state.runtimeControl.mode,reasonCode:state.runtimeControl.reasonCode,autoResume:state.runtimeControl.autoResume},latchedAt:now,entryWritesAuthorized:false};
+}
+
 export class EngineRuntime {
   readonly writes=new RuntimeWriteBuffer();
   readonly state!: RuntimeState;
@@ -165,8 +171,9 @@ export class EngineRuntime {
     }
     const unverifiedUnsent=[...state.entryOrders.values()].filter(o=>o.status==='UNKNOWN'&&!o.exchangeOrderId&&o.filledQuantity===0&&!durableEntries.some(d=>d.intent.id===o.intentId));
     if(unverifiedUnsent.length){const evidence=store.runtimeEvents(Math.min(...unverifiedUnsent.map(o=>o.createdAt)),['ENTRY_ORDER_BLOCKED','ENTRY_SUBMIT_ATTEMPTED'],5000),durableIds=new Set(durableEntries.map(d=>d.intent.id));for(const order of unverifiedUnsent){const recovered=recoverUnsubmittedEntry(order,durableIds,evidence);if(recovered){state.entryOrders.set(order.id,recovered);if(order.reservationId)state.releaseEntryReservation(order.reservationId);}}}
-    // Testnet entry safety is AUTO, while persisted operator/risk pauses remain
-    // authoritative across restart. Only the obsolete no-candidate pause migrates.
+    // Keep the configured Testnet write boundary, but never inherit execution
+    // authority from a previous process. The startup latch is persisted before
+    // adapters are constructed, so no Entry write path can race bootstrap.
     if (
       !testHarness &&
       settings.connections.exchange.environment === "TESTNET" &&
@@ -176,11 +183,10 @@ export class EngineRuntime {
       next.riskGovernance.entrySafetyMode = "AUTO";
       const saved = await store.save(next);
       state.setSettings(saved);
-      const obsoleteNoCandidatePause=state.runtimeControl.mode==='PAUSED_NO_EXECUTABLE_CONTRACT';
-      state.runtimeControl = {...state.runtimeControl,...(obsoleteNoCandidatePause?{mode:"RUNNING" as const,reasonCode:"NO_EXECUTABLE_CONTRACT" as const,reasonText:"持续扫描中：当前没有合格可执行机会",pausedAt:null,pauseSource:"NONE" as const,autoResume:true}:{}),entrySafetyMode:"AUTO"};
-      if(!['AUTO_PAUSED_USER','AUTO_PAUSED_RISK'].includes(state.executionGovernance.mode))state.executionGovernance = {mode:"AUTO_RUNNING",changedAt:Date.now(),reason:"TESTNET_CAPITAL_AVAILABLE_AUTO",capitalEpochId:state.executionGovernance?.capitalEpochId??null,validationId:null};
-      store.persistRuntime(state.serialize());
+      state.runtimeControl = {...state.runtimeControl,entrySafetyMode:"AUTO"};
     }
+    const startupLatch=testHarness?null:applyStartupSafetyLatch(state);
+    if(startupLatch)store.persistRuntime(state.serialize());
     for (const record of store.listTradeRecords())
       if (record?.tradeId) state.tradeRecords.set(record.tradeId, record);
     for (const sample of store.listExperienceSamples())
@@ -203,6 +209,7 @@ export class EngineRuntime {
     }
     state.aiResources = loadAiResources(settings);
     const events = new EventBus();
+    if(startupLatch)events.publish('STARTUP_ENTRY_SAFETY_LATCHED',startupLatch);
     const transport = new BinanceTransport(settings.connections),
       ref = settings.connections.exchange.credentialRef;
     let apiKey: string | null = null,
@@ -543,7 +550,7 @@ export class EngineRuntime {
     this.every(2_000,async()=>{if(this.state.settings.connections.executionMode==='TESTNET_ENABLED')await this.manual.resumeExitGoals();});
     this.every(1_000,()=>this.writes.flush());
     this.every(1_000,()=>this.tradingQuality?.tick());
-    this.every(5_000,()=>this.qualityObserver?.tick());
+    this.every(2_000,()=>this.qualityObserver?.tick());
     this.every(5_000, async () => this.tp.sweep());
     this.every(15_000, async () => {
       if (this.state.account.status === "READY") {
@@ -608,7 +615,11 @@ export class EngineRuntime {
     return this.runtimeControl.pauseManual(reason);
   }
   resumeNewEntries() {
-    return this.runtimeControl.resumeManual();
+    const beginsFreshCohort=this.state.runtimeControl.reasonCode==='STARTUP_RECOVERY_REQUIRED';
+    const resumed=this.runtimeControl.resumeManual();
+    this.settingsStore.persistRuntime(this.state.serialize());
+    if(beginsFreshCohort)this.qualityObserver?.beginProspectiveCohort(resumed.lastTransitionAt);
+    return resumed;
   }
   manualRiskPausePreview() {
     this.runtimeControl.evaluate(true);
@@ -710,8 +721,9 @@ export class EngineRuntime {
         validObservationRequiredUntil:
           this.state.shadowRunner.validObservationRequiredUntil ?? null,
       },
-      autoResume: this.state.executionGovernance.mode === "AUTO_RUNNING",
-      autoFrozen: this.state.executionGovernance.mode !== "AUTO_RUNNING",
+      launchAuthority: identity?.launchAuthority ?? "UNKNOWN",
+      autoResume: this.state.executionGovernance.mode === "AUTO_RUNNING" && this.state.runtimeControl.mode === "RUNNING" && this.state.runtimeControl.autoResume,
+      autoFrozen: this.state.executionGovernance.mode !== "AUTO_RUNNING" || this.state.runtimeControl.mode !== "RUNNING",
     };
   }
   async prepareAutoReady() {

@@ -9,7 +9,7 @@ import { collectPendingEntryRiskExposures, entryOrderOccupiesRisk } from './entr
 import {storageCapacityHealth,storageEntryBlockReason} from './storageCapacityGuard.js';
 
 const reasonText=(code:RuntimeReasonCode)=>({
-  NONE:'运行中',MANUAL_PAUSE:'已手动暂停新建仓流水',MANUAL_RESUME:'已恢复新建仓流水',NO_CAPITAL:'没有满足最低保证金的可执行资金',NO_EXECUTABLE_CONTRACT:'当前候选没有可执行合约',PRIVATE_NOT_READY:'交易所私有数据未就绪',MARKET_NOT_READY:'行情数据未就绪',MIN_EXECUTABLE_CANDIDATES_NOT_MET:'可执行候选数低于阈值',AUTO_RESUMED:'资金/合约恢复后自动恢复',DAILY_RISK_LIMIT:'已触发日内风险限额，等待人工复核',MANUAL_RISK_OVERRIDE:'日内风险告警已人工复核；当前风险周期内允许 Testnet AUTO',DEGRADED:'运行控制处于降级状态',
+  NONE:'运行中',MANUAL_PAUSE:'已手动暂停新建仓流水',MANUAL_RESUME:'已恢复新建仓流水',NO_CAPITAL:'没有满足最低保证金的可执行资金',NO_EXECUTABLE_CONTRACT:'当前候选没有可执行合约',PRIVATE_NOT_READY:'交易所私有数据未就绪',MARKET_NOT_READY:'行情数据未就绪',MIN_EXECUTABLE_CANDIDATES_NOT_MET:'可执行候选数低于阈值',AUTO_RESUMED:'资金/合约恢复后自动恢复',DAILY_RISK_LIMIT:'已触发日内风险限额，等待人工复核',MANUAL_RISK_OVERRIDE:'日内风险告警已人工复核；当前风险周期内允许 Testnet AUTO',STARTUP_RECOVERY_REQUIRED:'启动安全锁：恢复、对账与风险检查完成后需人工 Resume',DEGRADED:'运行控制处于降级状态',
 }[code]);
 const riskCycleKey=(at=Date.now())=>new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Shanghai',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(at));
 const nextRiskCycleAt=(at=Date.now())=>{const parts=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Shanghai',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date(at)),part=(type:string)=>Number(parts.find(x=>x.type===type)?.value);return Date.UTC(part('year'),part('month')-1,part('day')+1)-8*60*60_000;};

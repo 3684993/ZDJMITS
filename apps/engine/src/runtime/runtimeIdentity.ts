@@ -16,6 +16,7 @@ export type RuntimeIdentity = {
   sourceHash?:string;
   artifactHash?:string;
   startReason:string;
+  launchAuthority:string;
   lanIps:string[];
   restartCount:number;
 };
@@ -30,7 +31,7 @@ export async function createRuntimeIdentity(dataDir:string,host:string,port:numb
   const runtimeDir=path.join(dataDir,'runtime');await mkdir(runtimeDir,{recursive:true});
   const identityPath=path.join(runtimeDir,'engine-instance.json');let previous:any=null;try{previous=JSON.parse(await readFile(identityPath,'utf8'));}catch{}
   const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../../../..'),artifactHash=await contentTreeHash(root,['apps/engine/dist','packages/core/dist','packages/contracts/dist','apps/dashboard/dist']),sourceHash=await contentTreeHash(root,['apps/engine/src','packages/core/src','packages/contracts/src','apps/dashboard/src']);
-  const identity:RuntimeIdentity={instanceId:randomUUID(),pid:process.pid,startedAt:Date.now(),host,port,version,buildId:`${version}-${artifactHash.slice(0,20)}`,artifactHash,sourceHash,startReason:process.env.ZDJ_START_REASON??'UNKNOWN',lanIps:currentLanIps(),restartCount:Number(previous?.restartCount??0)+1};
+  const identity:RuntimeIdentity={instanceId:randomUUID(),pid:process.pid,startedAt:Date.now(),host,port,version,buildId:`${version}-${artifactHash.slice(0,20)}`,artifactHash,sourceHash:sourceHash,startReason:process.env.ZDJ_START_REASON??'UNKNOWN',launchAuthority:process.env.ZDJ_LAUNCH_AUTHORITY??'UNKNOWN',lanIps:currentLanIps(),restartCount:Number(previous?.restartCount??0)+1};
   await writeFile(identityPath,JSON.stringify(identity,null,2),'utf8');
   return{identity,identityPath,previous};
 }

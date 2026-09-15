@@ -622,6 +622,12 @@ export function createApiRouter(runtime: EngineRuntime) {
   );
   r.get("/ops/runtime", (_q, res) => res.json(runtime.runtimeStatus()));
   r.get("/ops/lan", (_q, res) => res.json(runtime.runtimeStatus()));
+  r.post('/ops/shutdown',(req,res)=>{
+    if(!['127.0.0.1','::1','::ffff:127.0.0.1'].includes(req.socket.remoteAddress??''))return res.status(403).json({error:{message:'SHUTDOWN_ENDPOINT_LOCAL_ONLY'}});
+    const identity=runtime.runtimeStatus();if(!req.body?.instanceId||req.body.instanceId!==identity.instanceId)return res.status(409).json({error:{message:'RUNTIME_IDENTITY_MISMATCH'}});
+    res.json({accepted:true,instanceId:identity.instanceId,pid:identity.pid,automaticRestart:false});
+    setImmediate(()=>runtime.events.publish('MANUAL_SHUTDOWN_REQUESTED',{instanceId:identity.instanceId,pid:identity.pid},'LOCAL_OPERATOR'));
+  });
   r.post("/ops/lan/event", (req, res) => {
     const allowed = [
       "LAN_AVAILABLE",

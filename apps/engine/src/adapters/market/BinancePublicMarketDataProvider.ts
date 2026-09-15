@@ -16,9 +16,12 @@ const INTERVAL: Record<Timeframe, string> = {
   "1m": "1m", "5m": "5m", "15m": "15m", "1h": "1h", "4h": "4h", "1d": "1d", "1w": "1w",
 };
 const DERIVATIVES_TTL_MS=5*60_000;
+const EXCHANGE_INFO_TTL_MS=6*60*60_000;
+const EXCHANGE_INFO_STALE_SAFE_MS=24*60*60_000;
 
 export class BinancePublicMarketDataProvider implements MarketDataProvider {
   private exchangeInfo: {value:any;fetchedAt:number} | null = null;
+  private exchangeInfoFlight:Promise<any>|null=null;
   private hourlyCache=new Map<string,{until:number;rows:Candle[]}>();
   private liveTechnicalFingerprint=new Map<string,string>();
   private derivativesCache=new Map<string,{until:number;value:DerivativesSnapshot}>();
@@ -31,11 +34,15 @@ export class BinancePublicMarketDataProvider implements MarketDataProvider {
   }
 
   private async hourlyCandles(symbol:string){const cached=this.hourlyCache.get(symbol),now=Date.now();if(cached&&now<cached.until)return cached.rows;try{const rows=await this.getCandles(symbol,'1h',80);this.hourlyCache.set(symbol,{rows,until:(Math.floor(now/3600000)+1)*3600000+1000});return rows;}catch{return cached?.rows??[];}}
-  private async json<T>(path: string) {return this.transport.json<T>(path);}
-  private async info(){if(!this.exchangeInfo||Date.now()-this.exchangeInfo.fetchedAt>=15*60_000)this.exchangeInfo={value:await this.json<any>("/fapi/v1/exchangeInfo"),fetchedAt:Date.now()};return this.exchangeInfo.value;}
+  private async json<T>(path: string,purpose?:string) {return purpose?this.transport.json<T>(path,{source:'MARKET_DATA',purpose}):this.transport.json<T>(path);}
+  private async info(){
+    const now=Date.now(),cached=this.exchangeInfo;if(cached&&now-cached.fetchedAt<EXCHANGE_INFO_TTL_MS)return cached.value;
+    if(!this.exchangeInfoFlight)this.exchangeInfoFlight=this.json<any>("/fapi/v1/exchangeInfo",'CONTRACT_RULES').then(value=>(this.exchangeInfo={value,fetchedAt:Date.now()},value)).catch(error=>{if(cached&&now-cached.fetchedAt<EXCHANGE_INFO_STALE_SAFE_MS)return cached.value;throw error;}).finally(()=>{this.exchangeInfoFlight=null;});
+    return this.exchangeInfoFlight;
+  }
 
   async discoverSymbols(limit:number,prioritySymbols:string[]=[]){
-    const rows=(await this.json<any[]>("/fapi/v1/ticker/24hr")).filter(x=>/USD[TC]$/.test(String(x.symbol))).sort((a,b)=>Number(b.quoteVolume)-Number(a.quoteVolume));
+    const rows=(await this.json<any[]>("/fapi/v1/ticker/24hr",'UNIVERSE_DISCOVERY')).filter(x=>/USD[TC]$/.test(String(x.symbol))).sort((a,b)=>Number(b.quoteVolume)-Number(a.quoteVolume));
     const contracts=new Set(((await this.info()).symbols??[]).filter((x:any)=>x.status==='TRADING'&&x.contractType==='PERPETUAL'&&/USD[TC]$/.test(String(x.symbol))).map((x:any)=>String(x.symbol).toUpperCase()));
     const tickerSymbols=new Set(rows.map(x=>String(x.symbol).toUpperCase()));
     const resolvePriority=(requested:string)=>{const value=String(requested).trim().toUpperCase().replace(/[\s/_-]+/g,''),exact=/USD[TC]$/.test(value)?value:null,options=exact?[exact]:[`${value}USDT`,`${value}USDC`];return options.find(symbol=>contracts.has(symbol)&&tickerSymbols.has(symbol))??null;};
@@ -62,7 +69,7 @@ export class BinancePublicMarketDataProvider implements MarketDataProvider {
   private candleFlights=new Map<string,Promise<Candle[]>>();private candleCache=new Map<string,{rows:Candle[];until:number}>();
   cachedCandles(symbol:string,timeframe:Timeframe,limit:number):Candle[]{const period=timeframe==='1m'?60000:timeframe==='5m'?300000:900000,live=['1m','5m','15m'].includes(timeframe)?this.stream.candleSeries(symbol,period*2,timeframe):null;if(live?.length)return live.slice(-limit);const rows=[...this.candleCache.entries()].filter(([key])=>key.startsWith(`${symbol}:${timeframe}:`)).map(([,value])=>value.rows).sort((a,b)=>(b.at(-1)?.closeTime??0)-(a.at(-1)?.closeTime??0));return rows[0]?.slice(-limit)??[];}
   async getCandles(symbol:string,timeframe:Timeframe,limit:number):Promise<Candle[]>{const period=timeframe==='1m'?60000:timeframe==='5m'?300000:900000;if(['1m','5m','15m'].includes(timeframe)){const live=this.stream.candleSeries(symbol,period*2,timeframe),closed=live?.filter(c=>c.isClosed===true&&c.closeTime<Date.now());if(live&&live.length>=limit&&closed?.at(-1)?.closeTime===(Math.floor(Date.now()/period)*period-1))return live.slice(-limit);}const key=`${symbol}:${timeframe}:${limit}`,cached=this.candleCache.get(key);if(cached&&cached.until>Date.now())return cached.rows;const pending=this.candleFlights.get(key);if(pending)return pending;const flight=this.loadCandles(symbol,timeframe,limit).then(rows=>{const last=rows.at(-1),now=Date.now(),period=Math.max(1000,(last?.closeTime??now)-(last?.openTime??now)+1),until=last&&last.closeTime>=now?last.closeTime+1000:now+Math.min(period,30_000);if(this.candleCache.size>=2000)this.candleCache.delete(this.candleCache.keys().next().value!);this.candleCache.set(key,{rows,until});return rows;}).finally(()=>this.candleFlights.delete(key));this.candleFlights.set(key,flight);return flight;}
-  private async loadCandles(symbol:string,timeframe:Timeframe,limit:number):Promise<Candle[]>{const receivedAt=Date.now(),rows=await this.json<any[]>(`/fapi/v1/klines?symbol=${symbol}&interval=${INTERVAL[timeframe]}&limit=${limit}`),candles=rows.map(r=>({openTime:Number(r[0]),open:Number(r[1]),high:Number(r[2]),low:Number(r[3]),close:Number(r[4]),volume:Number(r[5]),closeTime:Number(r[6]),receivedAt,isClosed:Number(r[6])<=receivedAt,source:'BINANCE_REST' as const,quoteVolume:Number(r[7]),trades:Number(r[8])}));if(['1m','5m','15m'].includes(timeframe))this.stream.seedCandles(symbol,timeframe,candles);return candles;}
+  private async loadCandles(symbol:string,timeframe:Timeframe,limit:number):Promise<Candle[]>{const receivedAt=Date.now(),rows=await this.json<any[]>(`/fapi/v1/klines?symbol=${symbol}&interval=${INTERVAL[timeframe]}&limit=${limit}`,'TECHNICAL_HYDRATION'),candles=rows.map(r=>({openTime:Number(r[0]),open:Number(r[1]),high:Number(r[2]),low:Number(r[3]),close:Number(r[4]),volume:Number(r[5]),closeTime:Number(r[6]),receivedAt,isClosed:Number(r[6])<=receivedAt,source:'BINANCE_REST' as const,quoteVolume:Number(r[7]),trades:Number(r[8])}));if(['1m','5m','15m'].includes(timeframe))this.stream.seedCandles(symbol,timeframe,candles);return candles;}
   private async restOrderBook(symbol:string):Promise<OrderBook>{const d=await this.json<any>(`/fapi/v1/depth?symbol=${symbol}&limit=20`);return{symbol,bids:d.bids.map((x:any)=>[Number(x[0]),Number(x[1])] as [number,number]),asks:d.asks.map((x:any)=>[Number(x[0]),Number(x[1])] as [number,number]),ts:Date.now()};}
   async getOrderBook(symbol:string):Promise<OrderBook>{return this.stream.book(symbol)??this.restOrderBook(symbol);}
 

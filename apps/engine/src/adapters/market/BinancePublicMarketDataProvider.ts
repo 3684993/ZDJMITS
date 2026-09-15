@@ -19,6 +19,8 @@ const DERIVATIVES_TTL_MS=5*60_000;
 
 export class BinancePublicMarketDataProvider implements MarketDataProvider {
   private exchangeInfo: {value:any;fetchedAt:number} | null = null;
+  private discoveryTicker: {value:any[];fetchedAt:number} | null = null;
+  private discoveryTickerFlight: Promise<any[]> | null = null;
   private hourlyCache=new Map<string,{until:number;rows:Candle[]}>();
   private liveTechnicalFingerprint=new Map<string,string>();
   private derivativesCache=new Map<string,{until:number;value:DerivativesSnapshot}>();
@@ -33,9 +35,10 @@ export class BinancePublicMarketDataProvider implements MarketDataProvider {
   private async hourlyCandles(symbol:string){const cached=this.hourlyCache.get(symbol),now=Date.now();if(cached&&now<cached.until)return cached.rows;try{const rows=await this.getCandles(symbol,'1h',80);this.hourlyCache.set(symbol,{rows,until:(Math.floor(now/3600000)+1)*3600000+1000});return rows;}catch{return cached?.rows??[];}}
   private async json<T>(path: string) {return this.transport.json<T>(path);}
   private async info(){if(!this.exchangeInfo||Date.now()-this.exchangeInfo.fetchedAt>=15*60_000)this.exchangeInfo={value:await this.json<any>("/fapi/v1/exchangeInfo"),fetchedAt:Date.now()};return this.exchangeInfo.value;}
+  private async ticker24hForDiscovery(){const now=Date.now();if(this.discoveryTicker&&now-this.discoveryTicker.fetchedAt<60_000)return this.discoveryTicker.value;if(this.discoveryTickerFlight)return this.discoveryTickerFlight;const flight=this.json<any[]>("/fapi/v1/ticker/24hr").then(value=>{this.discoveryTicker={value,fetchedAt:Date.now()};return value;}).finally(()=>{this.discoveryTickerFlight=null;});this.discoveryTickerFlight=flight;return flight;}
 
   async discoverSymbols(limit:number,prioritySymbols:string[]=[]){
-    const rows=(await this.json<any[]>("/fapi/v1/ticker/24hr")).filter(x=>/USD[TC]$/.test(String(x.symbol))).sort((a,b)=>Number(b.quoteVolume)-Number(a.quoteVolume));
+    const rows=(await this.ticker24hForDiscovery()).filter(x=>/USD[TC]$/.test(String(x.symbol))).sort((a,b)=>Number(b.quoteVolume)-Number(a.quoteVolume));
     const contracts=new Set(((await this.info()).symbols??[]).filter((x:any)=>x.status==='TRADING'&&x.contractType==='PERPETUAL'&&/USD[TC]$/.test(String(x.symbol))).map((x:any)=>String(x.symbol).toUpperCase()));
     const tickerSymbols=new Set(rows.map(x=>String(x.symbol).toUpperCase()));
     const resolvePriority=(requested:string)=>{const value=String(requested).trim().toUpperCase().replace(/[\s/_-]+/g,''),exact=/USD[TC]$/.test(value)?value:null,options=exact?[exact]:[`${value}USDT`,`${value}USDC`];return options.find(symbol=>contracts.has(symbol)&&tickerSymbols.has(symbol))??null;};

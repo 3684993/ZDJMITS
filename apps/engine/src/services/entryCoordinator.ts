@@ -291,7 +291,8 @@ export class EntryCoordinator {
         this.events.publish('TRADING_QUALITY_OPPORTUNITY',{opportunity,packetId:packet.packetId,stage:'BEFORE_PRIMARY',candidate:this.state.universe.find(x=>x.symbol===symbol)},symbol);
         if(quality.mode==='ENFORCE')packet={...packet,opportunityEvidence:opportunity};
       }
-      const result = await this.ai.decide(packet, null, Date.now()-primaryQueuedAt, confirmation);
+      const scout = this.state.settings.ai.scoutEnabled ? await this.ai.scout(packet) : null;
+      const result = await this.ai.decide(packet, scout, Date.now()-primaryQueuedAt, confirmation);
       if(opportunity)this.events.publish('TRADING_QUALITY_PRIMARY_LINK',{runId:result.runId,packetId:packet.packetId,opportunity,decision:result.decision},symbol);
       if(quality.mode==='ENFORCE'&&opportunity){const invalid=validateOpportunityDecision(result.decision,opportunity);if(invalid)throw new Error(invalid);}
 

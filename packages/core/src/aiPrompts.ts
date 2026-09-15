@@ -10,5 +10,5 @@ export function buildScoutPrompt(packet:EntryIntelligencePacket):string {
 export { buildCompactBrainPrompt } from './compactEntry.js';
 import { buildCompactBrainPrompt } from './compactEntry.js';
 export function buildBrainPrompt(packet:EntryIntelligencePacket,_scout:ScoutAnnotation|null,_extra:Record<string,unknown>={}):string {
-  return buildCompactBrainPrompt(packet);
+  return buildCompactBrainPrompt(packet,_extra.confirmation,_extra.externalContext,_scout);
 }

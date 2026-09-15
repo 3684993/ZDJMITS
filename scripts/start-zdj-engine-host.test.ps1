@@ -13,9 +13,8 @@ New-Item -ItemType Directory -Path $temp -Force|Out-Null
 try{
   $fake=Join-Path $temp 'fake-engine.js';[IO.File]::WriteAllText($fake,'setTimeout(()=>process.exit(23),25);',[Text.UTF8Encoding]::new($false))
   $stdout=Join-Path $temp 'stdout.log';$stderr=Join-Path $temp 'stderr.log';$life=Join-Path $temp 'lifecycle.jsonl';$receipt=Join-Path $temp 'receipt.json';$launchId=[guid]::NewGuid().ToString('N')
-  $shell=(Get-Process -Id $PID).Path;$node=(Get-Command node.exe -ErrorAction Stop).Source
-  $q={param($v) '"'+[string]$v+'"'}
-  $args=@('-NoProfile','-ExecutionPolicy','Bypass','-File',(& $q $hostScript),'-NodePath',(& $q $node),'-EnginePath',(& $q $fake),'-WorkingDirectory',(& $q $root),'-StdoutPath',(& $q $stdout),'-StderrPath',(& $q $stderr),'-LifecyclePath',(& $q $life),'-ReceiptPath',(& $q $receipt),'-LaunchId',$launchId)
+  $shell=(Get-Process -Id $PID).Path;$node=(Get-Command node.exe -ErrorAction Stop).Source;$dq=[char]34
+  $args=@('-NoProfile','-ExecutionPolicy','Bypass','-File',($dq+$hostScript+$dq),'-NodePath',($dq+$node+$dq),'-EnginePath',($dq+$fake+$dq),'-WorkingDirectory',($dq+$root+$dq),'-StdoutPath',($dq+$stdout+$dq),'-StderrPath',($dq+$stderr+$dq),'-LifecyclePath',($dq+$life+$dq),'-ReceiptPath',($dq+$receipt+$dq),'-LaunchId',$launchId)
   $p=Start-Process -FilePath $shell -ArgumentList $args -PassThru -Wait
   if($p.ExitCode -ne 0){throw "HOST_TEST_PROCESS_FAILED:$($p.ExitCode)"}
   $r=Get-Content -LiteralPath $receipt -Raw|ConvertFrom-Json

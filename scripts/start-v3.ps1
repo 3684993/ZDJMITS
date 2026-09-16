@@ -1,4 +1,7 @@
 param(
+  [Parameter(Position=0)]
+  [ValidateSet('start','init')]
+  [string]$Mode='start',
   [int]$Port=8080,
   [string]$BindHost='0.0.0.0',
   [int]$ReadyTimeoutSeconds=180
@@ -8,13 +11,10 @@ $root=(Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 $probeHost='127.0.0.1'
 $healthUrl="http://${probeHost}:$Port/health"
 $liveUrl="http://${probeHost}:$Port/live"
-foreach($depPort in 20081,8081,8084){
-  if(-not(Test-NetConnection 127.0.0.1 -Port $depPort -InformationLevel Quiet -WarningAction SilentlyContinue)){
-    throw "Required local dependency 127.0.0.1:$depPort is unavailable"
-  }
-}
+
 $listener=Get-NetTCPConnection -State Listen -LocalPort $Port -ErrorAction SilentlyContinue|Select-Object -First 1
 if($listener){
+  if($Mode -eq 'init'){throw "INIT_REQUIRES_ENGINE_STOPPED: port $Port is still listening (PID $($listener.OwningProcess)). Stop V3 before local initialization."}
   $owner=Get-CimInstance Win32_Process -Filter "ProcessId=$($listener.OwningProcess)"
   if($owner.CommandLine -notmatch 'apps[/\\]engine[/\\]dist[/\\]main\.js'){
     throw "Port $Port is occupied by PID $($listener.OwningProcess), not ZDJ-MITS"
@@ -26,6 +26,22 @@ if($listener){
     Write-Output "ZDJ-MITS already listening but not READY: http://${probeHost}:$Port  PID: $($listener.OwningProcess)  Bind: $($listener.LocalAddress)"
   }
   exit 0
+}
+
+if($Mode -eq 'init'){
+  Write-Output 'V3.9.3 init: resetting LOCAL runtime/history only. No Binance cancel/close/order write will be issued by the init step.'
+  Push-Location $root
+  try{
+    & node '.\scripts\init-local-runtime.mjs'
+    if($LASTEXITCODE -ne 0){throw "Local init failed with exit code $LASTEXITCODE"}
+  }finally{Pop-Location}
+  Write-Output 'V3.9.3 init complete. Static settings/secrets/resources preserved; exchange truth will be re-synchronized during bootstrap.'
+}
+
+foreach($depPort in 20081,8081,8084){
+  if(-not(Test-NetConnection 127.0.0.1 -Port $depPort -InformationLevel Quiet -WarningAction SilentlyContinue)){
+    throw "Required local dependency 127.0.0.1:$depPort is unavailable"
+  }
 }
 if(-not(Test-Path (Join-Path $root 'apps\dashboard\dist\index.html'))){
   Push-Location $root

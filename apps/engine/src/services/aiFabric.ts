@@ -30,28 +30,24 @@ export function parseExternalResearch(value:unknown,sourceId:string):ExternalRes
   return{sourceId,entities:textList(v.entities).slice(0,12),facts,conflicts:textList(v.conflicts).slice(0,5)};
 }
 
-/** Compatibility diagnostic only; it is no longer an execution-side rewrite. */
+/** Diagnostic display only. Never used to choose or reject Primary tradeSide. */
 export function fifteenMinuteDirection(packet:EntryIntelligencePacket):'LONG'|'SHORT'|null{
   const trend=packet.market.technical['15m'].trend;return trend==='UP'?'LONG':trend==='DOWN'?'SHORT':null;
 }
 
 export function entryDecisionParse(value:unknown,packet:EntryIntelligencePacket):BrainDecision {
   const normalized=normalizeAiProtocol(value,['confidence']);
-  const raw:any={...(normalized.value as any)}, legacyDirection=raw.direction, inferred=fifteenMinuteDirection(packet), place=String(raw.decision??'').startsWith('PLACE_');
-  // Compatibility is input-only: persisted normalized protocol never uses a
-  // fabricated side for NO_EDGE/WAIT/RESELECT.
-  raw.structureDirection=raw.structureDirection??inferred;
+  const raw:any={...(normalized.value as any)}, legacyDirection=raw.direction, place=String(raw.decision??'').startsWith('PLACE_');
   raw.tradeSide=raw.tradeSide??(place?(legacyDirection??String(raw.decision).replace('PLACE_','')):null);
+  // structureDirection is model-owned compatibility metadata. Never inject 15m as an answer key.
+  raw.structureDirection=raw.structureDirection??(place?raw.tradeSide:null);
   raw.profitTakePlan=place?(raw.profitTakePlan??null):null;
   raw.rejectLayer=raw.rejectLayer??(raw.decision==='WAIT_FOR_PRICE'?'TIMING':raw.decision==='NO_DIRECTION_EDGE'?'TIMING':'NONE');
   raw.blockingCondition=raw.blockingCondition??(place?'':String(raw.reason??''));raw.releaseCondition=raw.releaseCondition??'';raw.timingEvent=raw.timingEvent??null;
   raw.direction=place?raw.tradeSide:null; const d=EntryDecisionV370Schema.parse(raw);
-  // Trend facts constrain explanation, not a mechanical side rewrite. The
-  // Primary may honestly return NO_DIRECTION_EDGE in a mixed/range context.
-  const permissions=packet.portfolioIntelligence?.allowedDirections??[];
-  if(place&&!permissions.includes(d.tradeSide!))throw new Error('AI_OUTPUT_INVALID: direction permission violation');
-  const primaryDirection=fifteenMinuteDirection(packet);
-  if(place&&primaryDirection&&d.tradeSide!==primaryDirection)throw new Error('AI_OUTPUT_INVALID: 15m direction/timing role violation');
+  // Parser validates protocol/factual integrity only. Direction permissions and
+  // deterministic opportunity side are execution concerns; they must never
+  // rewrite or invalidate the model's directional conclusion.
   if(packet.opportunityEvidence){const invalid=validateOpportunityDecision(d,packet.opportunityEvidence);if(invalid)throw new Error('AI_OUTPUT_INVALID: '+invalid);}
   const validIds=new Set(compactFactIds(packet));
   if(d.supportingEvidenceRefs.some(id=>!validIds.has(id)))throw new Error('AI_OUTPUT_INVALID: unknown supportingEvidenceRefs');
@@ -59,7 +55,7 @@ export function entryDecisionParse(value:unknown,packet:EntryIntelligencePacket)
   if(packet.microstructure.imbalance<-.05&&/bid (?:dominance|imbalance)|buyer(?:s)? dominant/i.test(prose))throw new Error('AI_OUTPUT_INVALID: order-book imbalance sign misread');
   if(packet.microstructure.imbalance>.05&&/ask (?:dominance|imbalance)|seller(?:s)? dominant/i.test(prose))throw new Error('AI_OUTPUT_INVALID: order-book imbalance sign misread');
   const result=BrainDecisionSchema.parse({...d,direction:place?d.tradeSide:null,protocolVersion:'V3.9.2',reachability:0,
-    directionAnalysis:{trend1m:d.timingReason,trend5m:'See timingReason',trend15m:d.directionReason,trend4h:'CONTEXT_ONLY',trend1d:'CONTEXT_ONLY',trend1w:'CONTEXT_ONLY',weightedConclusion:d.directionReason},
+    directionAnalysis:{trend1m:d.timingReason,trend5m:d.timingReason,trend15m:d.directionReason,trend4h:d.directionReason,trend1d:d.directionReason,trend1w:d.directionReason,weightedConclusion:d.directionReason},
     supportingEvidence:[],contradictions:[],missingEvidence:[],evidenceRefs:d.supportingEvidenceRefs,evidenceRequests:[]});
   (result as any).__protocolNormalization=normalized.normalization;
   return result;
@@ -76,7 +72,7 @@ export function brainParse(value:unknown,packet?:EntryIntelligencePacket):BrainD
   if(!Array.isArray(v.evidenceRequests))v.evidenceRequests=[];
   if(v.action==='FINAL')v.evidenceRequests=[];
   const analysis=v.directionAnalysis,required=['trend1m','trend5m','trend15m','trend4h','trend1d','trend1w','weightedConclusion'];
-  if(packet&&(!analysis||typeof analysis!=='object'||required.some(key=>typeof analysis[key]!=='string'))){const rawAnalysis=typeof analysis==='string'?analysis:analysis?JSON.stringify(analysis):'';v.directionAnalysis={trend1m:`${packet.market.technical['1m'].trend}; timing context`,trend5m:`${packet.market.technical['5m'].trend}; timing context`,trend15m:`${packet.market.technical['15m'].trend}; direction authority`,trend4h:`${packet.market.technical['4h'].trend}; confidence context`,trend1d:`${packet.market.technical['1d'].trend}; confidence context`,trend1w:`${packet.market.technical['1w'].trend}; confidence context`,weightedConclusion:rawAnalysis||`15m resolves direction as ${v.direction??'UNPARSED'}`};}
+  if(packet&&(!analysis||typeof analysis!=='object'||required.some(key=>typeof analysis[key]!=='string'))){const rawAnalysis=typeof analysis==='string'?analysis:analysis?JSON.stringify(analysis):'';v.directionAnalysis={trend1m:`${packet.market.technical['1m'].trend}; evidence only`,trend5m:`${packet.market.technical['5m'].trend}; evidence only`,trend15m:`${packet.market.technical['15m'].trend}; evidence only`,trend4h:`${packet.market.technical['4h'].trend}; evidence only`,trend1d:`${packet.market.technical['1d'].trend}; evidence only`,trend1w:`${packet.market.technical['1w'].trend}; evidence only`,weightedConclusion:rawAnalysis||String(v.reason??'MODEL_DIRECTION_UNMODIFIED')};}
   if(Array.isArray(v.acceptablePriceRange)&&v.acceptablePriceRange.length>=2){const a=Number(v.acceptablePriceRange[0]),b=Number(v.acceptablePriceRange[1]);if(Number.isFinite(a)&&Number.isFinite(b))v.acceptablePriceRange={min:Math.min(a,b),max:Math.max(a,b)};}
   if(v.action==='FINAL'&&v.decision==='REJECT_CANDIDATE'){
     v.confidence=finite(v.confidence,0);v.idealPrice=null;v.acceptablePriceRange=null;v.horizonMinutes=null;v.reachability=finite(v.reachability,0);
@@ -84,15 +80,14 @@ export function brainParse(value:unknown,packet?:EntryIntelligencePacket):BrainD
     v.reason=typeof v.reason==='string'?v.reason:'PRIMARY_BRAIN rejected candidate';
   }
   const isPlace=v.decision==='PLACE_LONG'||v.decision==='PLACE_SHORT';
-  v.structureDirection=v.structureDirection??(packet?fifteenMinuteDirection(packet):null);
   v.tradeSide=v.tradeSide??(isPlace?(v.direction??String(v.decision).replace('PLACE_','')):null);
+  v.structureDirection=v.structureDirection??(isPlace?v.tradeSide:null);
   v.direction=isPlace?v.tradeSide:null;
   if(!isPlace){v.profitTakePlan=null;v.idealPrice=null;v.acceptablePriceRange=null;v.horizonMinutes=null;}
   v.rejectLayer=v.rejectLayer??(v.decision==='WAIT_FOR_PRICE'?'TIMING':v.decision==='NO_DIRECTION_EDGE'||v.decision==='REJECT_CANDIDATE'?'TIMING':'NONE');
   v.blockingCondition=v.blockingCondition??String(v.reason??'');v.releaseCondition=v.releaseCondition??'';v.timingEvent=v.timingEvent??null;
   if(v.action==='FINAL'&&(v.decision==='PLACE_LONG'||v.decision==='PLACE_SHORT')){
-    // A price/range is executable intent supplied by the model.  Do not infer it
-    // from book data: incomplete or ambiguous output must fail closed.
+    // A price/range is executable intent supplied by the model. Do not infer it.
     v.confidence=finite(v.confidence,NaN);v.reachability=finite(v.reachability,NaN);
   }
   const decision=BrainDecisionSchema.parse(v);
@@ -177,7 +172,7 @@ export class AiFabric {
   }
   private async run<T>(args:{resource:AiResource;symbol:string;packet:EntryIntelligencePacket;role:'SCOUT'|'PRIMARY_BRAIN'|'REVIEW_BRAIN';prompt:string;schemaName:string;parse:(v:unknown)=>T;queueMs?:number}):Promise<{value:T;run:AiRun}>{
     const startedAt=Date.now(),runId=uid('airun'),load=this.load.get(args.resource.id)!;load.active++;load.currentSymbol=args.symbol;load.currentRunId=runId;load.currentStartedAt=startedAt;args.resource.status='BUSY';
-    let run:AiRun=AiRunSchema.parse({id:runId,symbol:args.symbol,resourceId:args.resource.id,model:args.resource.model,role:args.role,startedAt,completedAt:null,latencyMs:null,inputTokens:null,outputTokens:null,finishReason:null,status:'RUNNING',direction:null,decision:null,packetId:args.packet.packetId,error:null,inputPreview:redactAudit({prompt:args.prompt,packet:args.packet},Infinity),requestSource:'ENTRY',inputContractHash:createHash('sha256').update(JSON.stringify(args.packet)).digest('hex'),promptHash:createHash('sha256').update(args.prompt).digest('hex'),outputContractVersion:'V3.9.2',timing:{queueMs:args.queueMs??0,promptBuildMs:0,requestMs:0,retryMs:0,parseMs:0,totalMs:0},failure:null});const lifecycle=this.state.candidateLifecycle.get(args.symbol);Object.assign(run,{triggerReason:lifecycle?.confirmation?.trigger??lifecycle?.triggerReason??'FIRST_REVIEW',previousRunId:lifecycle?.previousRunId??null,runKind:args.role==='SCOUT'?'SCOUT_ENTRY_INFERENCE':'PRIMARY_INFERENCE_RUN',recordKind:'PRIMARY_INFERENCE_RUN',marketOpportunityEpisodeId:args.packet.opportunityEvidence?.opportunityId??null,opportunityVersion:args.packet.opportunityEvidence?.version??null});this.state.addAiRun(run);this.events.publish('AI_RUN_STARTED',run,args.symbol);
+    let run:AiRun=AiRunSchema.parse({id:runId,symbol:args.symbol,resourceId:args.resource.id,model:args.resource.model,role:args.role,startedAt,completedAt:null,latencyMs:null,inputTokens:null,outputTokens:null,finishReason:null,status:'RUNNING',direction:null,decision:null,packetId:args.packet.packetId,error:null,inputPreview:redactAudit({prompt:args.prompt,packet:args.packet},Infinity),requestSource:'ENTRY',inputContractHash:createHash('sha256').update(JSON.stringify(args.packet)).digest('hex'),promptHash:createHash('sha256').update(args.prompt).digest('hex'),outputContractVersion:'V3.9.3',timing:{queueMs:args.queueMs??0,promptBuildMs:0,requestMs:0,retryMs:0,parseMs:0,totalMs:0},failure:null});const lifecycle=this.state.candidateLifecycle.get(args.symbol);Object.assign(run,{triggerReason:lifecycle?.confirmation?.trigger??lifecycle?.triggerReason??'FIRST_REVIEW',previousRunId:lifecycle?.previousRunId??null,runKind:args.role==='SCOUT'?'SCOUT_ENTRY_INFERENCE':'PRIMARY_INFERENCE_RUN',recordKind:'PRIMARY_INFERENCE_RUN',marketOpportunityEpisodeId:args.packet.opportunityEvidence?.opportunityId??null,opportunityVersion:args.packet.opportunityEvidence?.version??null});this.state.addAiRun(run);this.events.publish('AI_RUN_STARTED',run,args.symbol);
     try{
     const isEntry=args.schemaName==='EntryDecisionV392';
       const result=await this.openAi.runJson({baseUrl:args.resource.baseUrl,model:args.resource.model,prompt:args.prompt,schemaName:args.schemaName,timeoutMs:this.state.settings.ai.decisionTimeoutMs,jsonSchema:isEntry?EntryDecisionJsonSchema as unknown as Record<string,unknown>:args.role==='SCOUT'?ScoutAnnotationJsonSchema as unknown as Record<string,unknown>:undefined,maxOutputTokens:isEntry?900:600,parse:args.parse});const completedAt=Date.now();
@@ -214,9 +209,6 @@ export class AiFabric {
     Object.assign(result.run,{direction:decision.direction,decision:decision.decision,rawDirection,rawDecision,normalizedPreview:redactAudit(decision,50000),parserRepaired});if(stored)Object.assign(stored,result.run);
     const load=this.load.get(resource.id)!;load.lastDirection=decision.direction;load.lastDecision=decision.decision;load.nextStep=decision.decision==='REJECT_CANDIDATE'?'候选进入单币冷却，继续下一候选':'等待 Entry Manager 校验';
     this.events.publish('PRIMARY_DECISION_NORMALIZED',{runId:result.run.id,rawDirection,rawDecision,normalizedDirection:decision.direction,normalizedDecision:decision.decision,parserRepaired,reason:decision.reason},packet.symbol);
-    // Persist the post-parse terminal facts. AI_RUN_COMPLETED is emitted before
-    // raw/normalized intent extraction, so this terminal event is the canonical
-    // archive upsert for conversion metrics and DecisionEpisode.
     this.events.publish('AI_RUN_TERMINAL',result.run,packet.symbol);
     return{decision,run:result.run,resource};
   }

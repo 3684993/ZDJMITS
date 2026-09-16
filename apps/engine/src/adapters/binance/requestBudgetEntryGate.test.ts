@@ -1,4 +1,4 @@
-import {expect,it} from 'vitest';
+import {expect,it,vi} from 'vitest';
 import {binanceHealthBlocksEntry,getBinanceRequestBudget,binanceEntryBlockReason} from './requestBudget.js';
 
 it('allows entries under soft pressure and blocks only the hard/private-truth states',()=>{
@@ -11,11 +11,15 @@ it('allows entries under soft pressure and blocks only the hard/private-truth st
 });
 
 it('route-scoped entry gate ignores a stale saturated proxy route',()=>{
-  const oldRoute=getBinanceRequestBudget('TESTNET','proxy-old-entry-gate-test'),currentRoute=getBinanceRequestBudget('TESTNET','proxy-current-entry-gate-test');
-  oldRoute.configureRequestWeightLimit(6000);currentRoute.configureRequestWeightLimit(6000);
-  oldRoute.observe(200,'5800',undefined,{source:'MARKET_DATA',endpoint:'/fapi/v1/ticker/24hr',routeIdentity:'proxy-old-entry-gate-test'});
-  currentRoute.observe(200,'100',undefined,{source:'PRIVATE_STATE',endpoint:'/fapi/v2/account',routeIdentity:'proxy-current-entry-gate-test'});
-  expect(binanceEntryBlockReason('TESTNET','proxy-old-entry-gate-test')).toBe('BINANCE_BUDGET_SATURATED');
-  expect(binanceEntryBlockReason('TESTNET','proxy-current-entry-gate-test')).toBeNull();
-  expect(binanceEntryBlockReason('TESTNET')).toBeNull();
+  vi.useFakeTimers();vi.setSystemTime(1_800_000_000_000);
+  try{
+    const oldRoute=getBinanceRequestBudget('TESTNET','proxy-old-entry-gate-test'),currentRoute=getBinanceRequestBudget('TESTNET','proxy-current-entry-gate-test');
+    oldRoute.configureRequestWeightLimit(6000);currentRoute.configureRequestWeightLimit(6000);
+    oldRoute.observe(200,'5800',undefined,{source:'MARKET_DATA',endpoint:'/fapi/v1/ticker/24hr',routeIdentity:'proxy-old-entry-gate-test'});
+    vi.advanceTimersByTime(1);
+    currentRoute.observe(200,'100',undefined,{source:'PRIVATE_STATE',endpoint:'/fapi/v2/account',routeIdentity:'proxy-current-entry-gate-test'});
+    expect(binanceEntryBlockReason('TESTNET','proxy-old-entry-gate-test')).toBe('BINANCE_BUDGET_SATURATED');
+    expect(binanceEntryBlockReason('TESTNET','proxy-current-entry-gate-test')).toBeNull();
+    expect(binanceEntryBlockReason('TESTNET')).toBeNull();
+  }finally{vi.useRealTimers();}
 });

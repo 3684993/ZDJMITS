@@ -39,10 +39,24 @@ export class TpGuardian {
         }
       }catch(error){this.events.publish('TP_UNKNOWN_VERIFY_FAILED',{positionId:current.id,orderId:existing.id,clientOrderId:existing.clientOrderId??null,message:error instanceof Error?error.message:String(error),repairReleased:false,failClosed:true},current.symbol);return;}
     }
-    // A legal working TP is deliberately not chased just because the market or plan moved.
-    if(existing?.status==='WORKING'&&Math.abs(existing.quantity-current.quantity)<=Math.max(1e-10,current.quantity*1e-6)&&existing.side===(current.side==='LONG'?'SELL':'BUY')){this.state.positions.set(current.id,{...current,tpStatus:'PROTECTED',tpOrderId:existing.id,tpLastVerifiedAt:Date.now()});return;}
+    const market=this.state.snapshots.get(current.symbol);
+    // Do not manufacture a fresh verification timestamp from a local WORKING row.
+    // If executable-side market prices have crossed the TP while the position is
+    // still present, exact Binance truth is required before the UI may stay green.
+    if(existing?.status==='WORKING'&&Math.abs(existing.quantity-current.quantity)<=Math.max(1e-10,current.quantity*1e-6)&&existing.side===(current.side==='LONG'?'SELL':'BUY')){
+      const crossed=Boolean(market&&(current.side==='LONG'?market.quote.bid>=existing.price:market.quote.ask<=existing.price));
+      if(crossed&&this.exchange.findTakeProfitByClientOrderId){
+        try{
+          const verified=await this.exchange.findTakeProfitByClientOrderId(existing),checkedAt=Date.now();
+          this.events.publish('TP_CROSSED_BUT_POSITION_STILL_OPEN',{positionId:current.id,orderId:existing.id,clientOrderId:existing.clientOrderId??null,tpPrice:existing.price,bid:market!.quote.bid,ask:market!.quote.ask,verifiedStatus:verified?.status??'NOT_FOUND',checkedAt},current.symbol);
+          if(!verified){this.state.tpOrders.set(existing.id,{...existing,status:'UNKNOWN',updatedAt:checkedAt});this.state.positions.set(current.id,{...current,tpStatus:'PENDING',tpOrderId:existing.id,tpLastVerifiedAt:null});return;}
+          const retained={...verified,id:existing.id,cycleId:existing.cycleId,positionId:existing.positionId};this.state.tpOrders.set(existing.id,retained);this.state.positions.set(current.id,{...current,tpStatus:verified.status==='WORKING'?'PENDING':'PENDING',tpOrderId:existing.id,tpLastVerifiedAt:checkedAt});return;
+        }catch(error){this.state.positions.set(current.id,{...current,tpStatus:'PENDING',tpOrderId:existing.id});this.events.publish('TP_CROSSED_VERIFY_FAILED',{positionId:current.id,orderId:existing.id,clientOrderId:existing.clientOrderId??null,tpPrice:existing.price,bid:market!.quote.bid,ask:market!.quote.ask,message:error instanceof Error?error.message:String(error),failClosed:true},current.symbol);return;}
+      }
+      this.state.positions.set(current.id,{...current,tpStatus:'PROTECTED',tpOrderId:existing.id});return;
+    }
     const retry=this.retry.get(current.id);if(!force&&retry&&retry.nextAt>Date.now())return;
-    const market=this.state.snapshots.get(current.symbol);if(!market){this.state.positions.set(current.id,{...current,tpStatus:'MISSING',tpCoverageSource:'NONE'});return;}
+    if(!market){this.state.positions.set(current.id,{...current,tpStatus:'MISSING',tpCoverageSource:'NONE'});return;}
     this.repairing.add(current.id);this.state.positions.set(current.id,{...current,tpStatus:'REPAIRING'});const attempt=(retry?.attempt??0)+1;this.events.publish('TP_REPAIR_STARTED',{positionId:current.id,attempt,source:'DETERMINISTIC_POSITION_FACTS'},current.symbol);
     const decimals=Math.max(0,(String(market.quote.stepSize).split('.')[1]??'').length);
     // Pending exits (especially UNKNOWN) are not fills. Protect actual remaining quantity.

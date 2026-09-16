@@ -39,6 +39,8 @@ export interface ExchangeTradeAdapter {
   tick?(quotes:Map<string,Quote>):Promise<{filledEntries:EntryOrder[];filledTakeProfits:TakeProfitOrder[]}>;
   fetchRecentTradeAudit?(startTime:number,endTime:number,maxFills?:number):Promise<TradeAuditSnapshot>;
   fetchSymbolTradeFacts?(symbol:string,startTime:number,endTime:number):Promise<{fills:ExchangeTradeFill[];income:ExchangeIncomeFact[];orders:ExchangeOrderFact[]}>;
+  /** Lean UNKNOWN-risk proof: identity and fill truth only; never pays the heavy income endpoint cost. */
+  fetchSymbolRiskFacts?(symbol:string,startTime:number,endTime:number):Promise<{fills:ExchangeTradeFill[];orders:ExchangeOrderFact[]}>;
 }
 
 export interface ExchangeTradeFill {

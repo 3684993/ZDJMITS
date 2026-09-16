@@ -8,7 +8,7 @@ import { confirmedTpSubmissionRejection } from './tpSubmissionOutcome.js';
 
 export class TpGuardian {
   private retry=new Map<string,{attempt:number;nextAt:number;lastError:string}>();private repairing=new Set<string>();private suspendedPositions=new Set<string>();
-  private unknownAbsenceProof=new Map<string,{firstAt:number;lastAt:number;observations:number}>();
+  private unknownAbsenceProof=new Map<string,{firstAt:number;lastAt:number;observations:number}>();private crossedVerificationAt=new Map<string,number>();
   suspend(positionId:string){this.suspendedPositions.add(positionId);}
   resume(positionId:string){this.suspendedPositions.delete(positionId);}
   async cancel(order:TakeProfitOrder){return this.exchange.cancelTakeProfit(order);}
@@ -40,17 +40,15 @@ export class TpGuardian {
       }catch(error){this.events.publish('TP_UNKNOWN_VERIFY_FAILED',{positionId:current.id,orderId:existing.id,clientOrderId:existing.clientOrderId??null,message:error instanceof Error?error.message:String(error),repairReleased:false,failClosed:true},current.symbol);return;}
     }
     const market=this.state.snapshots.get(current.symbol);
-    // Do not manufacture a fresh verification timestamp from a local WORKING row.
-    // If executable-side market prices have crossed the TP while the position is
-    // still present, exact Binance truth is required before the UI may stay green.
     if(existing?.status==='WORKING'&&Math.abs(existing.quantity-current.quantity)<=Math.max(1e-10,current.quantity*1e-6)&&existing.side===(current.side==='LONG'?'SELL':'BUY')){
       const crossed=Boolean(market&&(current.side==='LONG'?market.quote.bid>=existing.price:market.quote.ask<=existing.price));
       if(crossed&&this.exchange.findTakeProfitByClientOrderId){
+        const now=Date.now(),last=this.crossedVerificationAt.get(existing.id)??0;if(now-last<30_000){this.state.positions.set(current.id,{...current,tpStatus:'PENDING',tpOrderId:existing.id});return;}this.crossedVerificationAt.set(existing.id,now);
         try{
           const verified=await this.exchange.findTakeProfitByClientOrderId(existing),checkedAt=Date.now();
           this.events.publish('TP_CROSSED_BUT_POSITION_STILL_OPEN',{positionId:current.id,orderId:existing.id,clientOrderId:existing.clientOrderId??null,tpPrice:existing.price,bid:market!.quote.bid,ask:market!.quote.ask,verifiedStatus:verified?.status??'NOT_FOUND',checkedAt},current.symbol);
           if(!verified){this.state.tpOrders.set(existing.id,{...existing,status:'UNKNOWN',updatedAt:checkedAt});this.state.positions.set(current.id,{...current,tpStatus:'PENDING',tpOrderId:existing.id,tpLastVerifiedAt:null});return;}
-          const retained={...verified,id:existing.id,cycleId:existing.cycleId,positionId:existing.positionId};this.state.tpOrders.set(existing.id,retained);this.state.positions.set(current.id,{...current,tpStatus:verified.status==='WORKING'?'PENDING':'PENDING',tpOrderId:existing.id,tpLastVerifiedAt:checkedAt});return;
+          const retained={...verified,id:existing.id,cycleId:existing.cycleId,positionId:existing.positionId};this.state.tpOrders.set(existing.id,retained);this.state.positions.set(current.id,{...current,tpStatus:'PENDING',tpOrderId:existing.id,tpLastVerifiedAt:checkedAt});return;
         }catch(error){this.state.positions.set(current.id,{...current,tpStatus:'PENDING',tpOrderId:existing.id});this.events.publish('TP_CROSSED_VERIFY_FAILED',{positionId:current.id,orderId:existing.id,clientOrderId:existing.clientOrderId??null,tpPrice:existing.price,bid:market!.quote.bid,ask:market!.quote.ask,message:error instanceof Error?error.message:String(error),failClosed:true},current.symbol);return;}
       }
       this.state.positions.set(current.id,{...current,tpStatus:'PROTECTED',tpOrderId:existing.id});return;
@@ -59,35 +57,32 @@ export class TpGuardian {
     if(!market){this.state.positions.set(current.id,{...current,tpStatus:'MISSING',tpCoverageSource:'NONE'});return;}
     this.repairing.add(current.id);this.state.positions.set(current.id,{...current,tpStatus:'REPAIRING'});const attempt=(retry?.attempt??0)+1;this.events.publish('TP_REPAIR_STARTED',{positionId:current.id,attempt,source:'DETERMINISTIC_POSITION_FACTS'},current.symbol);
     const decimals=Math.max(0,(String(market.quote.stepSize).split('.')[1]??'').length);
-    // Pending exits (especially UNKNOWN) are not fills. Protect actual remaining quantity.
     const rawQty=current.quantity*this.state.settings.takeProfit.quantityPercent/100;
     const qty=Number((Math.floor((rawQty+1e-12)/market.quote.stepSize)*market.quote.stepSize).toFixed(decimals));
     if(qty<market.quote.minQty){this.state.positions.set(current.id,{...current,tpStatus:'MANUAL_REVIEW_REQUIRED',tpOrderId:null,tpCoverageSource:'NONE'});this.repairing.delete(current.id);this.events.publish('TP_UNPROTECTED_DUST',{positionId:current.id,quantity:current.quantity,minQty:market.quote.minQty},current.symbol);return;}
 
     const now=Date.now(),tick=market.quote.tickSize,liveMark=market.quote.mark,sideReachable=(price:number)=>current.side==='LONG'?price>Math.max(liveMark,market.quote.ask):price<Math.min(liveMark,market.quote.bid),economic=(price:number)=>{try{return this.economicsFor(current,price);}catch{return null;}},economicallyValid=(price:number)=>{const e=economic(price);return Boolean(e&&e.expectedNetProfit>=e.requiredNetProfit);};
-    const ai=current.profitTakePlan,card:any=market.technical?.['15m'],roundedAi=ai?roundToTick(ai.targetPrice,tick,current.side==='LONG'?'ceil':'floor'):null;
+    const ai=current.profitTakePlan,card:any=market.technical?.['15m'],roundedAi=ai?roundToTick(ai.targetPrice,tick,current.side==='LONG'?'ceil':'floor'):null,fullPosition=current.quantity>0&&qty/current.quantity>=.999,canaryMinMovePct=fullPosition?1.2:0,movePct=(price:number)=>Math.abs(price-current.entryPrice)/Math.max(current.entryPrice,1e-12)*100;
     const aiHorizonValid=Boolean(ai&&current.openedAt>0&&now<=current.openedAt+ai.targetHorizonMinutes*60_000);
-    const aiEvidenceValid=Boolean(ai&&Array.isArray(ai.evidenceRefs)&&ai.evidenceRefs.length>0&&card?.isClosed===true&&Number.isFinite(card?.barCloseTime)&&card?.lastClosedBar?.closeTime===card?.barCloseTime&&now-card.barCloseTime<=1_805_000);
-    const aiDistanceValid=Boolean(ai&&roundedAi&&Number.isFinite(card?.atrPercent)&&Math.abs(roundedAi-current.entryPrice)/Math.max(current.entryPrice,1)*100<=Math.max(this.state.settings.takeProfit.structureMaxMovePercent,card.atrPercent*6));
+    const aiEvidenceValid=Boolean(ai&&Array.isArray(ai.evidenceRefs)&&ai.evidenceRefs.some(ref=>/15m/i.test(String(ref)))&&card?.isClosed===true&&Number.isFinite(card?.barCloseTime)&&card?.lastClosedBar?.closeTime===card?.barCloseTime&&now-card.barCloseTime<=1_805_000);
+    const aiDistanceValid=Boolean(ai&&roundedAi&&Number.isFinite(card?.atrPercent)&&movePct(roundedAi)>=canaryMinMovePct&&movePct(roundedAi)<=Math.max(this.state.settings.takeProfit.structureMaxMovePercent,card.atrPercent*6));
     const aiRangeValid=Boolean(ai&&roundedAi&&roundedAi>=ai.acceptableTargetRange.min&&roundedAi<=ai.acceptableTargetRange.max);
     const aiShapeValid=Boolean(ai&&roundedAi&&Number.isFinite(roundedAi)&&roundedAi>0&&aiHorizonValid&&aiEvidenceValid&&aiDistanceValid&&aiRangeValid&&sideReachable(roundedAi)&&(current.side==='LONG'?roundedAi>current.entryPrice:roundedAi<current.entryPrice));
     const aiValid=Boolean(aiShapeValid&&economicallyValid(roundedAi!));
 
     const structureRaw=takeProfitTarget(current,tick,{...this.state.settings,takeProfit:{...this.state.settings.takeProfit,mode:'STRUCTURE_15M'}} as any,market,now),structurePrice=structureRaw.source==='STRUCTURE_15M'?structureRaw.price:null;
-    const structureValid=Boolean(structurePrice&&Number.isFinite(structurePrice)&&structurePrice>0&&sideReachable(structurePrice)&&economicallyValid(structurePrice));
+    const structureValid=Boolean(structurePrice&&Number.isFinite(structurePrice)&&structurePrice>0&&movePct(structurePrice)>=canaryMinMovePct&&sideReachable(structurePrice)&&economicallyValid(structurePrice));
 
-    // Fixed is the terminal deterministic fallback and may be moved only once to the fee-adjusted
-    // profitable side of the market. AI/structure targets are never nudged or chased into validity.
-    const fixedRaw=takeProfitTarget(current,tick,{...this.state.settings,takeProfit:{...this.state.settings.takeProfit,mode:'PRICE_MOVE_PERCENT'}} as any,market,now).price,fixedBaseEconomics=economic(fixedRaw);
+    const fixedMovePercent=Math.max(this.state.settings.takeProfit.targetPriceMovePercent,canaryMinMovePct),fixedRaw=takeProfitTarget(current,tick,{...this.state.settings,takeProfit:{...this.state.settings.takeProfit,mode:'PRICE_MOVE_PERCENT',targetPriceMovePercent:fixedMovePercent}} as any,market,now).price,fixedBaseEconomics=economic(fixedRaw);
     let fixedPrice=fixedRaw;
     if(fixedBaseEconomics){const floor=roundToTick(fixedBaseEconomics.minProfitableExitPrice,tick,current.side==='LONG'?'ceil':'floor');fixedPrice=current.side==='LONG'?Math.max(fixedRaw,floor,market.quote.ask+tick,liveMark+tick):Math.min(fixedRaw,floor,market.quote.bid-tick,liveMark-tick);fixedPrice=roundToTick(fixedPrice,tick,current.side==='LONG'?'ceil':'floor');}
-    const fixedEconomics=economic(fixedPrice),fixedValid=Boolean(Number.isFinite(fixedPrice)&&fixedPrice>0&&sideReachable(fixedPrice)&&fixedEconomics&&fixedEconomics.expectedNetProfit>=fixedEconomics.requiredNetProfit);
+    const fixedEconomics=economic(fixedPrice),fixedValid=Boolean(Number.isFinite(fixedPrice)&&fixedPrice>0&&movePct(fixedPrice)>=canaryMinMovePct&&sideReachable(fixedPrice)&&fixedEconomics&&fixedEconomics.expectedNetProfit>=fixedEconomics.requiredNetProfit);
 
     const target=aiValid?{price:roundedAi!,source:'AI' as const,reason:ai!.targetReason}:structureValid?{price:structurePrice!,source:'STRUCTURE_15M' as const,reason:structureRaw.reason}:{price:fixedPrice,source:'FIXED_PROFITABLE' as const,reason:structurePrice?'STRUCTURE_BELOW_NET_OR_MARKET_FLOOR':structureRaw.reason};
-    this.events.publish('TP_TARGET_SELECTED',{positionId:current.id,...target,aiPlanPresent:Boolean(ai),aiPlanValid:aiValid,aiHorizonValid,aiEvidenceValid,aiRangeValid,structureValid,fixedValid},current.symbol);
+    this.events.publish('TP_TARGET_SELECTED',{positionId:current.id,...target,aiPlanPresent:Boolean(ai),aiPlanValid:aiValid,aiHorizonValid,aiEvidenceValid,aiRangeValid,structureValid,fixedValid,fullPositionCanaryMinMovePct:canaryMinMovePct},current.symbol);
     let price=target.price,economics=economic(price),status:'TP_OK'|'TP_TARGET_BELOW_NET_FLOOR'|'TP_TARGET_UNREALISTIC'='TP_OK';
     const finalAiRangeValid=target.source!=='AI'||Boolean(ai&&price>=ai.acceptableTargetRange.min&&price<=ai.acceptableTargetRange.max);
-    const finalValid=Boolean(fixedValid||target.source!=='FIXED_PROFITABLE')&&Number.isFinite(price)&&price>0&&sideReachable(price)&&finalAiRangeValid&&economics&&economics.expectedNetProfit>=economics.requiredNetProfit;
+    const finalValid=Boolean(fixedValid||target.source!=='FIXED_PROFITABLE')&&Number.isFinite(price)&&price>0&&movePct(price)>=canaryMinMovePct&&sideReachable(price)&&finalAiRangeValid&&economics&&economics.expectedNetProfit>=economics.requiredNetProfit;
     if(!finalValid||!economics){status=economics&&economics.expectedNetProfit<economics.requiredNetProfit?'TP_TARGET_BELOW_NET_FLOOR':'TP_TARGET_UNREALISTIC';const exhausted=attempt>=5,delay=Math.min(15*60_000,60_000*2**Math.min(attempt-1,4)),nextAt=Date.now()+delay,fallbackEconomics=economics??fixedEconomics;if(!fallbackEconomics){this.state.positions.set(current.id,{...current,tpStatus:'MANUAL_REVIEW_REQUIRED',tpOrderId:null,tpLastVerifiedAt:Date.now(),tpCoverageSource:'NONE'});this.retry.set(current.id,{attempt,nextAt:Date.now()+15*60_000,lastError:'TP_ECONOMICS_UNAVAILABLE'});this.events.publish('TP_MANUAL_REVIEW_REQUIRED',{positionId:current.id,attempt,price,markPrice:liveMark,reason:'TP_ECONOMICS_UNAVAILABLE'},current.symbol);this.repairing.delete(current.id);return;}const blocked={...current,tpStatus:exhausted?'MANUAL_REVIEW_REQUIRED' as const:'REPAIR_FAILED' as const,tpOrderId:null,tpLastVerifiedAt:Date.now(),tpCoverageSource:'NONE' as const,tpEconomics:{currentTpPrice:Number.isFinite(price)&&price>0?price:null,expectedGrossProfit:fallbackEconomics.expectedGrossProfit,expectedFees:fallbackEconomics.estimatedTotalFee+fallbackEconomics.slippageBuffer+fallbackEconomics.feeSafetyBuffer,expectedNetProfit:fallbackEconomics.expectedNetProfit,requiredNetProfit:fallbackEconomics.requiredNetProfit,breakEvenPrice:fallbackEconomics.breakEvenPrice,minProfitableExitPrice:fallbackEconomics.minProfitableExitPrice,status}};this.state.positions.set(current.id,blocked);this.retry.set(current.id,{attempt,nextAt:exhausted?Date.now()+15*60_000:nextAt,lastError:status});this.events.publish(exhausted?'TP_MANUAL_REVIEW_REQUIRED':'TP_TARGET_UNREALISTIC',{positionId:current.id,attempt,price,markPrice:liveMark,reason:status,source:target.source,requiredNetProfit:fallbackEconomics.requiredNetProfit,expectedNetProfit:fallbackEconomics.expectedNetProfit,nextRetryAt:exhausted?Date.now()+15*60_000:nextAt},current.symbol);this.repairing.delete(current.id);return;}
 
     const tpEconomics={currentTpPrice:price,expectedGrossProfit:economics.expectedGrossProfit,expectedFees:economics.estimatedTotalFee+economics.slippageBuffer+economics.feeSafetyBuffer,expectedNetProfit:economics.expectedNetProfit,requiredNetProfit:economics.requiredNetProfit,breakEvenPrice:economics.breakEvenPrice,minProfitableExitPrice:economics.minProfitableExitPrice,status:'TP_OK' as const};this.state.positions.set(current.id,{...current,tpEconomics,profitTakePlanSource:target.source});const order:TakeProfitOrder={id:uid('tp'),clientOrderId:binanceClientOrderIdFactory.create('TP',current.id),exchangeOrderId:null,cycleId:current.cycleId,positionId:current.id,symbol:current.symbol,side:current.side==='LONG'?'SELL':'BUY',quantity:Math.max(market.quote.minQty,qty),price,status:'WORKING',createdAt:now,updatedAt:now};

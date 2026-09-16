@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import {DatabaseSync} from 'node:sqlite';
-import {existsSync,mkdirSync,renameSync,rmSync,readFileSync,writeFileSync} from 'node:fs';
+import {existsSync,mkdirSync,renameSync,rmSync,readFileSync,writeFileSync,statSync} from 'node:fs';
 import {execFileSync} from 'node:child_process';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
@@ -19,8 +19,17 @@ try{
   db=new DatabaseSync(live);
   const integrity=db.prepare('PRAGMA integrity_check').get()?.integrity_check;
   if(integrity!=='ok')throw new Error(`INIT_LIVE_DB_INTEGRITY_FAILED:${integrity}`);
-  db.exec('PRAGMA wal_checkpoint(TRUNCATE)');
+  const checkpoint=db.prepare('PRAGMA wal_checkpoint(TRUNCATE)').get();
+  if(Number(checkpoint?.busy??0)!==0)throw new Error(`INIT_WAL_CHECKPOINT_BUSY:${JSON.stringify(checkpoint)}`);
 }finally{db?.close();}
+// WAL is authoritative until a successful TRUNCATE checkpoint. SHM is ephemeral once every
+// SQLite connection is closed. Never discard a non-empty WAL.
+const wal=`${live}-wal`,shm=`${live}-shm`;
+if(existsSync(wal)){
+  if(statSync(wal).size>0)throw new Error(`INIT_WAL_NOT_EMPTY_AFTER_CHECKPOINT:${wal}`);
+  rmSync(wal,{force:true});
+}
+if(existsSync(shm))rmSync(shm,{force:true});
 
 const stamp=new Date().toISOString().replace(/[:.]/g,'-');
 const archive=path.join(dataDir,'init-archive',stamp);
@@ -45,8 +54,6 @@ try{
     // Main runtime database: static settings/secrets/resources were copied into `fresh` by
     // reset-testnet-runtime-db.mjs; all other tables are schema-only/empty.
     move(live,'zdj-settings.sqlite.before-init');
-    move(`${live}-wal`,'zdj-settings.sqlite-wal.before-init');
-    move(`${live}-shm`,'zdj-settings.sqlite-shm.before-init');
     renameSync(fresh,live);
 
     // Independent evidence/history stores must start a new experiment as well.

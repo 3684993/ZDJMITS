@@ -14,19 +14,18 @@ function closed(card:any,now:number,period:number){
     (!card.receivedAt||card.receivedAt<=now));
 }
 
+/** Deterministic opportunity evidence is execution/timing evidence, never an AI direction answer. */
 export function buildOpportunityEvidence(m:MarketSymbolSnapshot,settings:SystemSettings,now=Date.now()):OpportunityEvidence {
   const p=qualityPolicy(settings),t=m.technical['15m'],direction=t?.trend==='UP'?'LONG':t?.trend==='DOWN'?'SHORT':null;
   const sign=direction==='LONG'?1:-1,blockers:string[]=[],freshStructure=closed(t,now,900000);
-  if(!direction)blockers.push('NO_15M_DIRECTION');
+  if(!direction)blockers.push('NO_15M_STRUCTURE_HINT');
   if(!freshStructure||!positive(t?.atr14))blockers.push('STRUCTURE_UNVERIFIED');
-  const structureAnchor=freshStructure&&positive(t?.atr14)?{barCloseTime:t.barCloseTime!,price:t.ema21,target:direction==='LONG'?t.recentSwingHigh:t.recentSwingLow}:null;
+  const structureAnchor=freshStructure&&positive(t?.atr14)&&direction?{barCloseTime:t.barCloseTime!,price:t.ema21,target:direction==='LONG'?t.recentSwingHigh:t.recentSwingLow}:null;
   let timingEvent:OpportunityEvidence['timingEvent']={id:'NONE',status:'NONE',time:null,anchorPrice:null,timeframe:null,provenance:'CLOSED_BAR_RECLAIM_V1'};
   let setupType:OpportunityEvidence['setupType']='NONE';
   for(const [tf,period] of [['1m',60000],['5m',300000]] as const){
     const card=m.technical[tf],bar=card?.lastClosedBar;
     if(!direction||!closed(card,now,period)||!bar||!positive(card.ema8))continue;
-    // A directional close after touching/reclaiming a supplied EMA anchor.
-    // A persistent trend or a model sentence is never completion evidence.
     const completed=direction==='LONG'?bar.low<=card.ema8&&bar.close>card.ema8&&bar.close>bar.open:
       bar.high>=card.ema8&&bar.close<card.ema8&&bar.close<bar.open;
     if(completed&&now-bar.closeTime<p.eventTtlMs){
@@ -40,7 +39,7 @@ export function buildOpportunityEvidence(m:MarketSymbolSnapshot,settings:SystemS
   const costs={entryFeeBps:settings.takeProfit.makerFeeRate*10000,exitFeeBps:settings.takeProfit.takerFeeRate*10000,
     bufferBps:settings.takeProfit.slippageBufferPct*100+(settings.takeProfit.makerFeeRate+settings.takeProfit.takerFeeRate)*10000*settings.takeProfit.feeSafetyBufferPct/100};
   const executablePriceBand=anchor&&atr?{min:Math.max(m.quote.tickSize,anchor-atr*p.maxLocationAtr),max:anchor+atr*p.maxLocationAtr}:null;
-  const payoffSpaceBps=target&&positive(px)?sign*(target/px-1)*10000:null;
+  const payoffSpaceBps=direction&&target&&positive(px)?sign*(target/px-1)*10000:null;
   if(!target||payoffSpaceBps===null||payoffSpaceBps<=costs.entryFeeBps+costs.exitFeeBps+costs.bufferBps+p.minNetSpaceBps)blockers.push('PAYOFF_INSUFFICIENT');
   if(!executablePriceBand||px<executablePriceBand.min||px>executablePriceBand.max)blockers.push('LOCATION_OUTSIDE_BAND');
   if(!positive(px)||m.quote.bid>m.quote.ask||now-m.quote.ts>15000||m.quote.ts>now||now-m.orderBook.ts>15000||m.orderBook.ts>now)blockers.push('EXECUTION_DATA_STALE');
@@ -76,9 +75,11 @@ export function revalidateOpportunity(e:OpportunityEvidence|undefined,m:MarketSy
   return null;
 }
 
+/** A deterministic side mismatch is execution-evidence absence, not an invalid AI decision. */
 export function validateOpportunityDecision(d:any,e:OpportunityEvidence):string|null{
   if(!String(d.decision).startsWith('PLACE_'))return null;
-  if(e.disposition!=='ALLOW'||d.tradeSide!==e.direction||d.opportunityType!==e.setupType)return'PRIMARY_OPPORTUNITY_MISMATCH';
+  if(d.tradeSide!==e.direction)return null;
+  if(e.disposition!=='ALLOW'||d.opportunityType!==e.setupType)return'PRIMARY_OPPORTUNITY_MISMATCH';
   if(JSON.stringify(d.timingEvent)!==JSON.stringify(e.timingEvent)){
     if(!d.timingEvent||Object.entries(e.timingEvent).some(([k,v])=>d.timingEvent[k]!==v))return'PRIMARY_EVENT_NOT_VERIFIED';
   }

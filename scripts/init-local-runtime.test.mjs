@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {mkdtempSync,rmSync,writeFileSync,existsSync,readdirSync} from 'node:fs';
+import {mkdtempSync,rmSync,writeFileSync,existsSync,readdirSync,readFileSync} from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import {spawnSync} from 'node:child_process';
@@ -47,7 +47,7 @@ test('V3.9.3 init preserves static configuration and removes active local tradin
   for(const table of ['runtime_state','runtime_events','trade_records','experience_samples','manual_executions','entry_executions'])assert.equal(Number(fresh.prepare(`SELECT COUNT(*) n FROM ${table}`).get().n),0,table);
   for(const name of ['trading-quality.sqlite','v393-evidence.sqlite','v393-experiment-manifest.json'])assert.equal(existsSync(path.join(data,name)),false,name);
   const archives=readdirSync(path.join(data,'init-archive'));assert.equal(archives.length,1);
-  const report=JSON.parse((await import('node:fs')).readFileSync(path.join(data,'init-archive',archives[0],'init-report.json'),'utf8'));
+  const report=JSON.parse(readFileSync(path.join(data,'init-archive',archives[0],'init-report.json'),'utf8'));
   assert.equal(report.status,'V393_LOCAL_INIT_COMPLETE');assert.equal(report.exchangeWrites,false);assert.equal(report.exchangeOrdersCanceled,false);assert.equal(report.exchangePositionsClosed,false);
  }finally{fresh?.close();rmSync(data,{recursive:true,force:true});}
 });

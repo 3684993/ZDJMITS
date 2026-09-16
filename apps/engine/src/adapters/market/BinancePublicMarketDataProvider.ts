@@ -19,6 +19,7 @@ const DERIVATIVES_TTL_MS=5*60_000;
 
 export class BinancePublicMarketDataProvider implements MarketDataProvider {
   private exchangeInfo: {value:any;fetchedAt:number} | null = null;
+  private exchangeInfoFlight: Promise<any> | null = null;
   private discoveryTicker: {value:any[];fetchedAt:number} | null = null;
   private discoveryTickerFlight: Promise<any[]> | null = null;
   private hourlyCache=new Map<string,{until:number;rows:Candle[]}>();
@@ -34,7 +35,7 @@ export class BinancePublicMarketDataProvider implements MarketDataProvider {
 
   private async hourlyCandles(symbol:string){const cached=this.hourlyCache.get(symbol),now=Date.now();if(cached&&now<cached.until)return cached.rows;try{const rows=await this.getCandles(symbol,'1h',80);this.hourlyCache.set(symbol,{rows,until:(Math.floor(now/3600000)+1)*3600000+1000});return rows;}catch{return cached?.rows??[];}}
   private async json<T>(path: string) {return this.transport.json<T>(path);}
-  private async info(){if(!this.exchangeInfo||Date.now()-this.exchangeInfo.fetchedAt>=15*60_000)this.exchangeInfo={value:await this.json<any>("/fapi/v1/exchangeInfo"),fetchedAt:Date.now()};return this.exchangeInfo.value;}
+  private async info(){const now=Date.now();if(this.exchangeInfo&&now-this.exchangeInfo.fetchedAt<15*60_000)return this.exchangeInfo.value;if(this.exchangeInfoFlight)return this.exchangeInfoFlight;const flight=this.json<any>("/fapi/v1/exchangeInfo").then(value=>{this.exchangeInfo={value,fetchedAt:Date.now()};return value;}).finally(()=>{this.exchangeInfoFlight=null;});this.exchangeInfoFlight=flight;return flight;}
   private async ticker24hForDiscovery(){const now=Date.now();if(this.discoveryTicker&&now-this.discoveryTicker.fetchedAt<60_000)return this.discoveryTicker.value;if(this.discoveryTickerFlight)return this.discoveryTickerFlight;const flight=this.json<any[]>("/fapi/v1/ticker/24hr").then(value=>{this.discoveryTicker={value,fetchedAt:Date.now()};return value;}).finally(()=>{this.discoveryTickerFlight=null;});this.discoveryTickerFlight=flight;return flight;}
 
   async discoverSymbols(limit:number,prioritySymbols:string[]=[]){

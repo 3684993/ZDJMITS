@@ -15,6 +15,6 @@ function fixture(crossed:boolean){
   return{state,position,tp,exact,guardian:new TpGuardian(state,exchange,new EventBus())};
 }
 
-it('marks a crossed still-open TP pending until exact exchange truth is reconciled',async()=>{const x=fixture(true),previous=x.position.tpLastVerifiedAt;await x.guardian.ensure(x.position);expect(x.exact).toHaveBeenCalledOnce();expect(x.state.positions.get('p1')).toMatchObject({tpStatus:'PENDING',tpOrderId:'tp1'});expect(x.state.positions.get('p1')!.tpLastVerifiedAt).toBeGreaterThan(previous);});
+it('marks a crossed still-open TP pending and bounds exact verification to one request per 30s',async()=>{const x=fixture(true),previous=x.position.tpLastVerifiedAt;await x.guardian.ensure(x.position);await x.guardian.ensure(x.state.positions.get('p1')!);expect(x.exact).toHaveBeenCalledOnce();expect(x.state.positions.get('p1')).toMatchObject({tpStatus:'PENDING',tpOrderId:'tp1'});expect(x.state.positions.get('p1')!.tpLastVerifiedAt).toBeGreaterThan(previous);});
 
 it('does not manufacture a new verification timestamp from an untouched local WORKING TP',async()=>{const x=fixture(false),previous=x.position.tpLastVerifiedAt;await x.guardian.ensure(x.position);expect(x.exact).not.toHaveBeenCalled();expect(x.state.positions.get('p1')).toMatchObject({tpStatus:'PROTECTED',tpOrderId:'tp1',tpLastVerifiedAt:previous});});

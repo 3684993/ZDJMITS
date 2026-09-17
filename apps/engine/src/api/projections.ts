@@ -9,6 +9,7 @@ import { exposure, resolveUnderlying } from "@zdj/core";
 import { createHash } from 'node:crypto';
 import { byOpenedAtDesc } from './chronologicalSort.js';
 import { candidateSupplyHealth } from '../services/candidateSupplyHealth.js';
+import { entryOrderOccupiesRisk } from '../services/entryRiskOccupancy.js';
 function auditJson(value: unknown): string {
   if (value === undefined) return "undefined";
   if (value === null) return "null";
@@ -48,15 +49,16 @@ export function redactAudit(value: unknown, limit = 8000) {
   const bounded=JSON.stringify(envelope);
   return bounded.length<=limit?bounded:JSON.stringify({...envelope,summary:'See archived artifact by hash'});
 }
+export function activeEntryOrdersForProjection(orders:Iterable<any>,now=Date.now()){
+  return [...orders].filter(order=>entryOrderOccupiesRisk(order,now));
+}
 const directionalDecision=(decision:unknown)=>['PLACE_LONG','PLACE_SHORT','WAIT_FOR_PRICE'].includes(String(decision??''));
 function baseDashboardProjection(runtime: EngineRuntime): DashboardSnapshot {
   const s = runtime.state,
     now = Date.now(),
     since = now - 3600000,
     unreal = s.account.unrealizedPnlUsd ?? null,
-    activeEntries = [...s.entryOrders.values()].filter((order) =>
-      ["NEW", "SUBMITTING", "UNKNOWN", "WORKING", "PARTIALLY_FILLED"].includes(order.status),
-    ),
+    activeEntries = activeEntryOrdersForProjection(s.entryOrders.values(), now),
     activeTps = [...s.tpOrders.values()].filter(
       (order) => order.status === "WORKING",
     ),

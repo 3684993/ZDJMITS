@@ -32,10 +32,14 @@ jobs:
       - name: Install exact dependencies
         run: npm ci
       - name: Apply V3.9.3 autonomous Entry migration
+        shell: pwsh
         run: |
           node scripts/v393-apply-autonomous-entry-patch.mjs
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           node scripts/v393-fix-entry-wiring.mjs
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           node scripts/v393-contract-cleanup.mjs
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Persist migration patch
         shell: pwsh
         run: |
@@ -46,11 +50,15 @@ jobs:
           if ($LASTEXITCODE -ne 0) {
             git commit -m "fix(v393): complete autonomous Entry execution wiring"
             git push origin HEAD:${{ github.ref_name }}
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           }
       - name: Build workspace type prerequisites
+        shell: pwsh
         run: |
           npm run build --workspace @zdj/contracts
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           npm run build --workspace @zdj/core
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Typecheck
         run: npm run typecheck
       - name: Test

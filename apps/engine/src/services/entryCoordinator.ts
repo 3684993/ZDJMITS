@@ -1,4 +1,4 @@
-import { buildOpportunityEvidence, qualityPolicy, revalidateOpportunity, validateOpportunityDecision } from './opportunityEvidence.js';
+import { buildOpportunityEvidence, qualityPolicy } from './opportunityEvidence.js';
 import {binanceEntryBlockReason} from '../adapters/binance/requestBudget.js';
 import {privateAccountFresh} from './privateAccountReadiness.js';
 import { nearMarketPrice } from './nearMarketPrice.js';
@@ -7,13 +7,11 @@ import { waitingContext, waitTrigger } from './entryWaiting.js';
 import { entryDataError } from './entryFacts.js';
 import type { EntryIntent, EntryOrder } from "@zdj/contracts";
 import {
-  buildAllocationPlan,
   classifyAsset,
   chooseMakerPrice,
   isOnlineAsset,
   priceReachability,
   resolveUnderlying,
-  sizeEntryQuantity,
   uid,
 } from "@zdj/core";
 import type { RuntimeState } from "../state/runtimeState.js";
@@ -24,18 +22,19 @@ import type { AiFabric } from "./aiFabric.js";
 import { binanceClientOrderIdFactory } from "./binanceClientOrderIdFactory.js";
 import { computeExecutableRiskHeadroom } from "./riskReadiness.js";
 import { collectPendingEntryRiskExposures, entryOrderOccupiesRisk } from './entryRiskOccupancy.js';
-import { DirectionPolicyService } from './directionPolicyService.js';
 import { reconcileCandidateLifecycles } from './candidateLifecycleDeriver.js';
 import type { MarketDataHub } from './marketDataHub.js';
 import { decisionContextKey, decisionContextPermissions, decisionSettingsContext, nextClosedFiveMinute, noEdgeReleaseReason, noEdgeReviewFacts } from './decisionContext.js';
 import { evaluatePreflightFeasibility } from './preflightFeasibility.js';
+import { buildPreAiExecutionEnvelope } from './preAiExecutionEnvelope.js';
+import { acquireExecutionLease, releaseExecutionLease, validateExecutionLease } from './executionLease.js';
+import { materializeAiQuantityAllocation } from './aiQuantityAllocation.js';
 
 export class EntryCoordinator {
   private active = new Set<string>();
   private primaryWaiters = new Set<string>();
   private lastReview = 0;
   private lastDispatched=new Map<string,number>();
-  private readonly directionPolicy:DirectionPolicyService;
   constructor(
     private state: RuntimeState,
     private eip: EipService,
@@ -86,9 +85,8 @@ export class EntryCoordinator {
         .readyList()
         .filter(
           (x) => {
-            const route=routes.get(x.symbol),trend=this.state.snapshots.get(x.symbol)?.technical?.['15m']?.trend;
-            const directionExecutable=Boolean(route)&&(trend==='UP'?Boolean(route!.longExecutable):trend==='DOWN'?Boolean(route!.shortExecutable):Boolean(route!.longExecutable||route!.shortExecutable));
-            if(route&&!directionExecutable)this.events.publish('PRIMARY_SKIPPED_DIRECTION_BUDGET',{trend,reason:'CONFIRMED_DIRECTION_NOT_EXECUTABLE',longAvailableNotionalUsd:this.state.runtimeControl.capital.directionBudget.longAvailableNotionalUsd,shortAvailableNotionalUsd:this.state.runtimeControl.capital.directionBudget.shortAvailableNotionalUsd,generation:this.state.runtimeControl.capital.generation,primaryRequested:false},x.symbol);
+            const directionExecutable=this.objectiveCapacity(x.symbol);
+            if(!directionExecutable)this.events.publish('PRIMARY_SKIPPED_EXECUTION_CAPACITY',{reason:'NO_OBJECTIVE_EXECUTION_CAPACITY',primaryRequested:false},x.symbol);
             return x.state === "READY" &&
             directionExecutable &&
             this.eipDependenciesPresent(x.symbol) &&
@@ -134,6 +132,7 @@ export class EntryCoordinator {
   private eipDependenciesPresent(symbol:string){return [symbol,'BTCUSDT','ETHUSDT'].every(required=>this.state.snapshots.has(required));}
   /** Read-only feasibility before Primary. Post-AI allocation/reservation/final guards remain authoritative. */
   private preflight(symbol:string){return evaluatePreflightFeasibility(this.state,symbol,this.market?.primaryReadyReasons(symbol,Date.now())??[]);}
+  private objectiveCapacity(symbol:string){try{const envelope=buildPreAiExecutionEnvelope(this.state,symbol);return envelope.LONG.executable||envelope.SHORT.executable;}catch{return false;}}
   private primaryOccupancyBlock(symbol:string){
     const now=Date.now(),underlying=resolveUnderlying(symbol),sameUnderlying=(value:string)=>resolveUnderlying(value)===underlying;
     if([...this.state.positions.values()].some(row=>sameUnderlying(row.symbol)))return'UNDERLYING_POSITION_EXISTS';
@@ -150,7 +149,6 @@ export class EntryCoordinator {
   private executionHardBlock(intent:EntryIntent, order?:EntryOrder){
     const qp=qualityPolicy(this.state.settings),qm=this.state.snapshots.get(intent.symbol);
     if(qp.mode==='ENFORCE'&&(this.state as any).tradingQualityEvidenceReady===false)return'TRADING_QUALITY_STORAGE_UNAVAILABLE';
-    if(intent.opportunityEvidence){const qb=qm?revalidateOpportunity(intent.opportunityEvidence,qm,this.state.settings,order?.price??intent.idealPrice,Date.now(),order?.quantity):'OPPORTUNITY_MARKET_MISSING';if(qb)return qb;}
     const budgetBlock=binanceEntryBlockReason(this.state.settings.connections?.exchange?.environment);if(budgetBlock)return budgetBlock;
     if([...this.state.manualExitGoals.values()].some(g=>resolveUnderlying(g.symbol)===resolveUnderlying(intent.symbol)))return 'HUMAN_EXIT_GOAL_ACTIVE';
     const now=Date.now(),symbol=intent.symbol,reservation=intent.reservationId?this.state.entryReservations.get(intent.reservationId):null,candidate=this.state.universe.find((x:any)=>x.symbol===symbol),snapshot=this.state.snapshots.get(symbol),plan=intent.allocationPlan;
@@ -278,10 +276,13 @@ export class EntryCoordinator {
       this.transition(symbol,"PRIMARY_RUNNING","PRIMARY_START");
       if(this.market?.primaryReadyReasons(symbol).length){await this.market.refreshSymbols([symbol]);const remaining=this.market.primaryReadyReasons(symbol);if(remaining.length)throw new Error(`MARKET_DATA_STALE: ${remaining.join(',')}`);}
       if(this.stopPrimaryForOccupancy(symbol,'AFTER_MARKET_REFRESH'))return;
-      packet=this.eip.build(symbol);
-      const preflight=this.preflight(symbol);
-      this.events.publish('ENTRY_PREFLIGHT_EVALUATED',preflight,symbol);
-      if(!preflight.pass){this.events.publish('ENTRY_PREFLIGHT_BLOCKED',preflight,symbol);this.reject(symbol,`PREFLIGHT_${preflight.reason}`);return;}
+      executionEnvelope=buildPreAiExecutionEnvelope(this.state,symbol);
+      this.events.publish('PRE_AI_EXECUTION_ENVELOPE_CREATED',{executionEnvelope},symbol);
+      if(!executionEnvelope.LONG.executable&&!executionEnvelope.SHORT.executable){this.reject(symbol,'PRE_AI_NO_EXECUTABLE_CAPACITY');return;}
+      const lease=acquireExecutionLease(this.state,{symbol,quoteAsset:executionEnvelope.quoteAsset,reservedMarginUsd:executionEnvelope.leaseRequiredMarginUsd,ttlMs:executionEnvelope.expiresAt-Date.now()});
+      if(!lease.ok){this.events.publish('ENTRY_DECISION_BLOCKED',{stage:'EXECUTION_LEASE',reason:lease.reason},symbol);this.reject(symbol,lease.reason);return;}
+      executionLeaseId=lease.lease.id;
+      packet=this.eip.build(symbol,{...executionEnvelope,leaseId:lease.lease.id,leaseExpiresAt:lease.lease.expiresAt});
       const confirmation=this.state.candidateLifecycle.get(symbol)?.confirmation;
       const contextKey=this.currentDecisionContext(symbol,confirmation);
       const quality=qualityPolicy(this.state.settings);
@@ -294,7 +295,6 @@ export class EntryCoordinator {
       const scout = this.state.settings.ai.scoutEnabled ? await this.ai.scout(packet) : null;
       const result = await this.ai.decide(packet, scout, Date.now()-primaryQueuedAt, confirmation);
       if(opportunity)this.events.publish('TRADING_QUALITY_PRIMARY_LINK',{runId:result.runId,packetId:packet.packetId,opportunity,decision:result.decision},symbol);
-      if(quality.mode==='ENFORCE'&&opportunity){const invalid=validateOpportunityDecision(result.decision,opportunity);if(invalid)throw new Error(invalid);}
 
       this.transition(symbol,'PRIMARY_COMPLETED','PRIMARY_TERMINAL',{confirmation:null,runId:result.runId,decisionContextKey:contextKey,lastDecision:result.decision.decision,nextReviewAt:nextClosedFiveMinute()});
       terminalRunId=result.runId;
@@ -305,8 +305,6 @@ export class EntryCoordinator {
       const decisionSide=(d.tradeSide??d.direction??(d.decision==='PLACE_LONG'?'LONG':'SHORT')) as 'LONG'|'SHORT';
       const marketForPolicy=this.state.snapshots.get(symbol)!;
       const dataError=entryDataError(marketForPolicy);if(dataError){this.events.publish('ENTRY_DATA_ERROR',{runId:result.runId,reason:dataError},symbol);this.reject(symbol,dataError,result.runId,d.tradeSide??undefined);return;}
-      const directionPolicy=this.directionPolicy.evaluate(symbol,marketForPolicy),allowed=this.directionPolicy.allows(directionPolicy,{...d,direction:decisionSide} as any);
-      if(!allowed.ok){this.events.publish('ENTRY_DIRECTION_POLICY_BLOCKED',{runId:result.runId,policy:directionPolicy,reason:allowed.reason,decision:d},symbol);this.reject(symbol,allowed.reason!,result.runId,d.tradeSide??undefined);return;}
       const fingerprint=JSON.stringify({bar15:(marketForPolicy.technical['15m'] as any).updatedAt??(marketForPolicy.technical['15m'] as any).close??marketForPolicy.quote.last,priceAtr:Math.round(marketForPolicy.quote.last/Math.max(.000001,marketForPolicy.technical['15m'].atr14)),regime:(packet as any).globalRegime?.regime,trend4h:marketForPolicy.technical['4h'].trend,spread:Math.round((marketForPolicy.quote.ask-marketForPolicy.quote.bid)/marketForPolicy.quote.last*10000)});
       const previous=this.state.directionDecisionStates.get(symbol),nextDecision=d.decision;
       if(previous?.fingerprint===fingerprint&&((previous.decision==='REJECT_CANDIDATE'&&nextDecision==='PLACE_LONG')||(previous.direction==='SHORT'&&d.tradeSide==='LONG')))this.events.publish('DIRECTION_STABILITY_SHADOW',{runId:result.runId,previous,next:{decision:nextDecision,direction:d.tradeSide},wouldBlock:true,orderAuthorization:false},symbol);
@@ -315,8 +313,7 @@ export class EntryCoordinator {
       if (!d.acceptablePriceRange || d.idealPrice == null || d.horizonMinutes == null) {this.reject(symbol, "Brain returned incomplete entry intent");return;}
       const range = d.acceptablePriceRange,deterministicInvalid = range.min > range.max || d.idealPrice < range.min || d.idealPrice > range.max || (d.decision === "PLACE_LONG" && decisionSide !== "LONG") || (d.decision === "PLACE_SHORT" && decisionSide !== "SHORT");
       if (deterministicInvalid) {this.events.publish("ENTRY_DECISION_BLOCKED",{stage:"POST_AI_VERIFY",reason:"DETERMINISTIC_POST_AI_VERIFY_FAILED",idealPrice:d.idealPrice,acceptablePriceRange:range,direction:d.tradeSide,decision:d.decision},symbol);this.reject(symbol,"DETERMINISTIC_POST_AI_VERIFY_FAILED",result.runId,d.tradeSide??undefined);return;}
-      if (this.state.settings.riskGovernance.protectionMode === "REQUIRED" && (d.missingEvidence.length > 0 || d.contradictions.length > 3)) {this.events.publish("ENTRY_DECISION_BLOCKED",{stage:"ENTRY_PROTECTION",reason:"ENTRY_PROTECTION_REQUIRED",missingEvidence:d.missingEvidence.length,contradictions:d.contradictions.length},symbol);this.reject(symbol,"ENTRY_PROTECTION_REQUIRED",result.runId,d.tradeSide??undefined);return;}
-      if (this.state.settings.riskGovernance.protectionMode === "SHADOW")this.events.publish("ENTRY_PROTECTION_SHADOW",{decision:d.decision,confidence:d.confidence,missingEvidence:d.missingEvidence.length,contradictions:d.contradictions.length},symbol);
+      if (d.missingEvidence.length > 0 || d.contradictions.length > 3)this.events.publish("ENTRY_PROTECTION_SHADOW",{decision:d.decision,confidence:d.confidence,missingEvidence:d.missingEvidence.length,contradictions:d.contradictions.length,postAiVeto:false},symbol);
       this.transition(symbol,"PLACE_READY","PRIMARY_PLACE_READY",{runId:result.runId});
       const side = decisionSide,market = this.state.snapshots.get(symbol)!,candidate = this.state.universe.find((x) => x.symbol === symbol);
       if (!candidate) {this.reject(symbol,"PORTFOLIO_CANDIDATE_MISSING",result.runId,d.tradeSide??undefined);return;}
@@ -333,7 +330,7 @@ export class EntryCoordinator {
       const reservation = this.state.reserveEntry({underlying:plan.underlying,quoteAsset:plan.quoteAsset,marginUsd:plan.marginUsd,notionalUsd:plan.notionalUsd,planId:plan.planId,maxPositions:this.state.settings.portfolio.maxPositions,ttlSeconds:this.state.settings.riskGovernance.reservationTtlSeconds,leaseSeconds:this.state.settings.riskGovernance.lockLeaseSeconds,maxConcurrentReservations:this.state.settings.riskGovernance.maxConcurrentReservations});
       if (!reservation.ok) {this.events.publish("ENTRY_DECISION_BLOCKED",{stage:"RESERVATION",reason:reservation.reason,allocationPlanId:plan.planId},symbol);this.reject(symbol,`RESERVATION_${reservation.reason}`,result.runId,d.direction);return;}
       const reservationId = reservation.reservationId,leverage = plan.leverage,now = Date.now();releaseExecutionLease(this.state,executionLeaseId);executionLeaseId=undefined;
-      const intent: EntryIntent = {id:uid("intent"),symbol,side,confidence:d.confidence,idealPrice:d.idealPrice,acceptablePriceRange:d.acceptablePriceRange,horizonMinutes:d.horizonMinutes,leverage,createdAt:now,aiAuthorizationExpiresAt:now+d.horizonMinutes*60_000,configuredOrderTtlExpiresAt:now+(this.state.settings.entry.nearMarket?.enabled?this.state.settings.entry.nearMarket.ttlSeconds*1000:this.state.settings.entry.absoluteTtlMinutes*60_000),absoluteExpiresAt:Math.min(now+d.horizonMinutes*60_000,now+(this.state.settings.entry.nearMarket?.enabled?this.state.settings.entry.nearMarket.ttlSeconds*1000:this.state.settings.entry.absoluteTtlMinutes*60_000)),packetId:packet.packetId,brainRunId:result.runId,decisionChainId:result.runId,allocationPlan:plan,reservationId,protectionMode:this.state.settings.riskGovernance.protectionMode,profitTakePlan:d.profitTakePlan,...(quality.mode==='ENFORCE'&&opportunity&&opportunity.direction===side?{opportunityEvidence:opportunity}:{} )};
+      const intent: EntryIntent = {id:uid("intent"),symbol,side,confidence:d.confidence,idealPrice:d.idealPrice,acceptablePriceRange:d.acceptablePriceRange,horizonMinutes:d.horizonMinutes,leverage,createdAt:now,aiAuthorizationExpiresAt:now+d.horizonMinutes*60_000,configuredOrderTtlExpiresAt:now+(this.state.settings.entry.nearMarket?.enabled?this.state.settings.entry.nearMarket.ttlSeconds*1000:this.state.settings.entry.absoluteTtlMinutes*60_000),absoluteExpiresAt:Math.min(now+d.horizonMinutes*60_000,now+(this.state.settings.entry.nearMarket?.enabled?this.state.settings.entry.nearMarket.ttlSeconds*1000:this.state.settings.entry.absoluteTtlMinutes*60_000)),packetId:packet.packetId,brainRunId:result.runId,decisionChainId:result.runId,allocationPlan:plan,reservationId,protectionMode:this.state.settings.riskGovernance.protectionMode,profitTakePlan:d.profitTakePlan,};
       (intent as any).quantityUnits=Number(d.quantityUnits);(intent as any).executionEnvelope=executionEnvelope;
       const reservationRisk=computeExecutableRiskHeadroom({settings:this.state.settings,equity:Number(this.state.account.equityUsd??0),positions:[...this.state.positions.values()],pendingRiskExposures:collectPendingEntryRiskExposures(this.state,{now,excludeReservationId:reservationId,priorityReservationId:reservationId}),symbol,side,plannedNotional:plan.notionalUsd,expectedAdverseMovePct:Math.max(.001,market.technical['15m'].atrPercent/100),dailyDrawdownPct:Number(this.state.account.riskBaseline?.riskDrawdownPct??0),quoteNotionalCapacity:Math.max(0,Number(this.state.account.assets.find((asset:any)=>asset.asset===plan.quoteAsset)?.availableBalance??0)*leverage*.995),minimumNotional:Math.max(1,market.quote.minNotional)});
       this.events.publish("LIVE_RISK_ENVELOPE_EVALUATED",{brainRunId:result.runId,allocationPlanId:plan.planId,riskEnvelope:{...reservationRisk,status:reservationRisk.executable&&plan.notionalUsd<=reservationRisk.finalNotional+1e-8?'PASS':reservationRisk.reason,reasons:reservationRisk.blockers}},symbol);
@@ -359,6 +356,7 @@ export class EntryCoordinator {
       if(reason.startsWith('EIP_EVIDENCE_STALE')){this.events.publish('PRIMARY_DATA_ERROR',{stage:'EIP_STALE',reason,entryIntentCreated:false},symbol);this.cooldown(symbol,'EIP_STALE',this.aiFailureCooldownSeconds(),'TECHNICAL_COOLDOWN');return;}
       this.events.publish("ENTRY_ANALYSIS_FAILED",{ runId:terminalRunId??(error as any)?.runId,message: reason, intentCreated:terminalRunId?[...this.state.entryIntents.values()].some(x=>x.brainRunId===terminalRunId):false, policy: 'FAIL_CLOSED' },symbol);this.cooldown(symbol, reason, this.aiFailureCooldownSeconds(), "AI_FAILURE_COOLDOWN");
     } finally {
+      releaseExecutionLease(this.state,executionLeaseId);
       this.active.delete(symbol);
       if(['PRIMARY_QUEUED','PRIMARY_RUNNING','PRIMARY_COMPLETED'].includes(this.state.candidateLifecycle.get(symbol)?.status)) {this.transition(symbol,'READY','ANALYSIS_LEASE_RELEASED');this.state.pool.markReady(symbol);}
     }

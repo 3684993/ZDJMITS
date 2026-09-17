@@ -1,4 +1,3 @@
-import { validateOpportunityDecision } from './opportunityEvidence.js';
 import { createHash } from 'node:crypto';
 import { AiRunSchema, EntryDecisionV370Schema, EntryDecisionJsonSchema, ScoutAnnotationJsonSchema, BrainDecisionSchema, ScoutAnnotationSchema, type AiResource, type AiRun, type BrainDecision, type EntryIntelligencePacket, type ScoutAnnotation } from '@zdj/contracts';
 import { buildCompactBrainPrompt, buildScoutPrompt, compactFactIds, clamp, uid } from '@zdj/core';
@@ -48,7 +47,6 @@ export function entryDecisionParse(value:unknown,packet:EntryIntelligencePacket)
   // Parser validates protocol/factual integrity only. Direction permissions and
   // deterministic opportunity side are execution concerns; they must never
   // rewrite or invalidate the model's directional conclusion.
-  if(packet.opportunityEvidence){const invalid=validateOpportunityDecision(d,packet.opportunityEvidence);if(invalid)throw new Error('AI_OUTPUT_INVALID: '+invalid);}
   const validIds=new Set(compactFactIds(packet));
   if(d.supportingEvidenceRefs.some(id=>!validIds.has(id)))throw new Error('AI_OUTPUT_INVALID: unknown supportingEvidenceRefs');
   const prose=`${d.directionReason} ${d.timingReason} ${(d as any).entryLocationReason??''} ${d.reason}`;

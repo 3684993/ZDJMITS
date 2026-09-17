@@ -33,15 +33,7 @@ jobs:
         run: npm ci
       - name: Apply V3.9.3 autonomous Entry migration
         run: node scripts/v393-apply-autonomous-entry-patch.mjs
-      - name: Typecheck
-        run: npm run typecheck
-      - name: Test
-        run: npm test
-      - name: Build
-        run: npm run build
-      - name: Verify
-        run: npm run verify
-      - name: Commit verified migration
+      - name: Persist migration patch
         shell: pwsh
         run: |
           git config user.name "github-actions[bot]"
@@ -52,3 +44,11 @@ jobs:
             git commit -m "feat(v393): wire pre-AI envelope lease and frozen AI quantity"
             git push origin HEAD:${{ github.ref_name }}
           }
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Test
+        run: npm test
+      - name: Build
+        run: npm run build
+      - name: Verify
+        run: npm run verify

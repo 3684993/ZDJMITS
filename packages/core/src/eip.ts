@@ -24,6 +24,7 @@ function globalRegime(btc:MarketSymbolSnapshot,eth:MarketSymbolSnapshot){
 }
 function profitableRatio(pos:Position[], side:'LONG'|'SHORT'){ const x=pos.filter(p=>p.side===side); return x.length?x.filter(p=>p.unrealizedPnl>0).length/x.length:0; }
 function notional(pos:Position[], side:'LONG'|'SHORT'){return pos.filter(p=>p.side===side).reduce((s,p)=>s+p.quantity*p.markPrice,0);}
+const referenceMarket=(s:MarketSymbolSnapshot)=>({symbol:s.symbol,quote:s.quote,technical:s.technical,derivatives:s.derivatives,orderBook:s.orderBook,recentTradedPrices:s.recentTradedPrices});
 export function buildEip(ctx:EipContext):EntryIntelligencePacket {
   const now=ctx.now??Date.now(), s=ctx.snapshot, t1=s.technical['1m'],t5=s.technical['5m']; const mid=(s.quote.bid+s.quote.ask)/2; const spreadBps=safeDiv(s.quote.ask-s.quote.bid,mid,0)*10000;
   const atr1=t1.atr14, atr5=t5.atr14; const band1:[number,number]=[Math.max(s.quote.tickSize,s.quote.last-atr1*0.8),s.quote.last+atr1*0.8]; const band5:[number,number]=[Math.max(s.quote.tickSize,s.quote.last-atr5*1.15),s.quote.last+atr5*1.15];
@@ -31,7 +32,7 @@ export function buildEip(ctx:EipContext):EntryIntelligencePacket {
   const evidence=[] as EntryIntelligencePacket['evidence'];
   const add=(id:string,category:any,label:string,value:unknown,ts=now)=>evidence.push({id,category,label,value:String(value),ts});
   add('price.last','PRICE','Last price',s.quote.last,s.quote.ts); add('price.mark','PRICE','Mark price',s.quote.mark,s.quote.ts); add('price.spread','MICROSTRUCTURE','Spread bps',spreadBps,s.quote.ts);
-  for(const tf of ['1m','5m','15m','4h','1d','1w'] as Timeframe[]){ const t=s.technical[tf]; add(`tech.${tf}.trend`,'TECHNICAL',`${tf} trend`,`${t.trend}/${t.trendStrength.toFixed(2)}`,t.asOf); add(`tech.${tf}.macd`,'TECHNICAL',`${tf} MACD`,`${t.macdLine.toPrecision(5)}/${t.macdSignal.toPrecision(5)}/${t.macdHistogram.toPrecision(5)}`,t.asOf); add(`tech.${tf}.bb`,'TECHNICAL',`${tf} BB position`,t.bbPosition.toFixed(3),t.asOf); }
+  for(const tf of ['1m','5m','15m','1h','4h','1d','1w'] as Timeframe[]){ const t=s.technical[tf]; add(`tech.${tf}.trend`,'TECHNICAL',`${tf} trend`,`${t.trend}/${t.trendStrength.toFixed(2)}`,t.asOf); add(`tech.${tf}.macd`,'TECHNICAL',`${tf} MACD`,`${t.macdLine.toPrecision(5)}/${t.macdSignal.toPrecision(5)}/${t.macdHistogram.toPrecision(5)}`,t.asOf); add(`tech.${tf}.bb`,'TECHNICAL',`${tf} BB position`,t.bbPosition.toFixed(3),t.asOf); }
   add('derivatives.oi15','DERIVATIVES','OI change 15m',s.derivatives.openInterestChange15m??'missing',s.derivatives.ts); add('derivatives.taker','DERIVATIVES','Taker buy/sell 5m',s.derivatives.takerBuySellRatio5m??'missing',s.derivatives.ts);
   const contradictions:string[]=[]; const t15=s.technical['15m']; const higher=[s.technical['4h'],s.technical['1d'],s.technical['1w']]; if(higher.some(t=>t.trend!==t15.trend&&t.trend!=='RANGE')) contradictions.push('Higher-timeframe trend conflicts with 15m direction.'); if(t15.trend==='UP'&&imbalance<-0.25) contradictions.push('Order-book imbalance opposes 15m bullish structure.'); if(t15.trend==='DOWN'&&imbalance>0.25) contradictions.push('Order-book imbalance opposes 15m bearish structure.');
   const weights=directionWeights(ctx.settings.directionReference);
@@ -42,16 +43,13 @@ export function buildEip(ctx:EipContext):EntryIntelligencePacket {
     version:'3.0',packetId:uid('eip'),symbol:s.symbol,createdAt:now,expiresAt:now+90_000,
     selection:{rank:ctx.candidate.rank,score:ctx.candidate.score,components:ctx.candidate.components,selectionMode:ctx.settings.selection.mode},
     market:{quote:s.quote,technical:s.technical,derivatives:s.derivatives,orderBook:s.orderBook,recentTradedPrices:s.recentTradedPrices},
+    referenceMarkets:{btc:referenceMarket(ctx.btc),eth:referenceMarket(ctx.eth)},
     microstructure:{spreadBps,bidDepthUsd5:bidDepth,askDepthUsd5:askDepth,microPrice:microPrice(s),imbalance,reachableBand1m:band1,reachableBand5m:band5,reachabilityScore:reach},
     economic:{makerFeeBps,takerFeeBps,roundTripCostBps,safetyMarginBps,configuredTargetMoveBps,minimumEconomicEdgeBps:configuredTargetMoveBps+roundTripCostBps+safetyMarginBps,longSpaceToResistanceBps:longSpace,shortSpaceToSupportBps:shortSpace,provenance:'SYSTEM_SETTINGS+CONFIRMED_15M_SWINGS'},
     globalRegime:{btc:{symbol:ctx.btc.symbol,trend15m:ctx.btc.technical['15m'].trend,trend4h:ctx.btc.technical['4h'].trend,trend1d:ctx.btc.technical['1d'].trend,trend1w:ctx.btc.technical['1w'].trend,change24hPercent:ctx.btc.quote.priceChangePercent24h},eth:{symbol:ctx.eth.symbol,trend15m:ctx.eth.technical['15m'].trend,trend4h:ctx.eth.technical['4h'].trend,trend1d:ctx.eth.technical['1d'].trend,trend1w:ctx.eth.technical['1w'].trend,change24hPercent:ctx.eth.quote.priceChangePercent24h},regime:globalRegime(ctx.btc,ctx.eth)},
     portfolio:{activePositions:ctx.positions.length,pendingEntries:ctx.pendingEntries.filter(o=>['NEW','SUBMITTING','UNKNOWN','WORKING','PARTIALLY_FILLED'].includes(o.status)).length,longPositions:ctx.positions.filter(p=>p.side==='LONG').length,shortPositions:ctx.positions.filter(p=>p.side==='SHORT').length,longProfitableRatio:profitableRatio(ctx.positions,'LONG'),shortProfitableRatio:profitableRatio(ctx.positions,'SHORT'),longNotionalUsd:notional(ctx.positions,'LONG'),shortNotionalUsd:notional(ctx.positions,'SHORT')},
     experience:ctx.experience,
-    directionPolicy:{reference:ctx.settings.directionReference,weights,hardConstraints:['No timeframe is a hard direction veto.','15m remains the default primary direction evidence.','1m/5m are primarily entry timing and reachability evidence.']},
-    // Live-entry completeness covers required price/kline/book domains only.
-    // Testnet may not expose taker/OI history for every listed contract; those
-    // derivative fields stay visible as optional context and cannot create a
-    // permanent false fail-closed condition.
+    directionPolicy:{reference:ctx.settings.directionReference,weights,hardConstraints:['No timeframe is a hard direction veto.','15m remains tactical market evidence, never a side permission.','1m/5m are primarily entry timing and reachability evidence.']},
     evidenceCompleteness:clamp(s.dataCompleteness*.84+(s.orderBook.bids.length&&s.orderBook.asks.length ? .16 : 0),0,1),contradictions,evidence,
   };
 }

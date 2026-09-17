@@ -54,7 +54,7 @@ export function entryDecisionParse(value:unknown,packet:EntryIntelligencePacket)
   const prose=`${d.directionReason} ${d.timingReason} ${(d as any).entryLocationReason??''} ${d.reason}`;
   if(packet.microstructure.imbalance<-.05&&/bid (?:dominance|imbalance)|buyer(?:s)? dominant/i.test(prose))throw new Error('AI_OUTPUT_INVALID: order-book imbalance sign misread');
   if(packet.microstructure.imbalance>.05&&/ask (?:dominance|imbalance)|seller(?:s)? dominant/i.test(prose))throw new Error('AI_OUTPUT_INVALID: order-book imbalance sign misread');
-  const result=BrainDecisionSchema.parse({...d,direction:place?d.tradeSide:null,protocolVersion:'V3.9.2',reachability:0,
+  const result=BrainDecisionSchema.parse({...d,direction:place?d.tradeSide:null,protocolVersion:'V3.9.3',reachability:0,
     directionAnalysis:{trend1m:d.timingReason,trend5m:d.timingReason,trend15m:d.directionReason,trend4h:d.directionReason,trend1d:d.directionReason,trend1w:d.directionReason,weightedConclusion:d.directionReason},
     supportingEvidence:[],contradictions:[],missingEvidence:[],evidenceRefs:d.supportingEvidenceRefs,evidenceRequests:[]});
   (result as any).__protocolNormalization=normalized.normalization;

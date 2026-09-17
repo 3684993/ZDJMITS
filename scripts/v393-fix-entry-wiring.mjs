@@ -16,7 +16,7 @@ const oldReady=`            const route=routes.get(x.symbol),trend=this.state.sn
             if(route&&!directionExecutable)this.events.publish('PRIMARY_SKIPPED_DIRECTION_BUDGET',{trend,reason:'CONFIRMED_DIRECTION_NOT_EXECUTABLE',longAvailableNotionalUsd:this.state.runtimeControl.capital.directionBudget.longAvailableNotionalUsd,shortAvailableNotionalUsd:this.state.runtimeControl.capital.directionBudget.shortAvailableNotionalUsd,generation:this.state.runtimeControl.capital.generation,primaryRequested:false},x.symbol);`;
 const newReady=`            const directionExecutable=this.objectiveCapacity(x.symbol);
             if(!directionExecutable)this.events.publish('PRIMARY_SKIPPED_EXECUTION_CAPACITY',{reason:'NO_OBJECTIVE_EXECUTION_CAPACITY',primaryRequested:false},x.symbol);`;
-replaceOnce(oldReady,newReady,'ready direction filter');
+if(!s.includes(newReady))replaceOnce(oldReady,newReady,'ready direction filter');
 
 const oldPacket=`      packet=this.eip.build(symbol);
       const preflight=this.preflight(symbol);
@@ -31,7 +31,7 @@ const newPacket=`      executionEnvelope=buildPreAiExecutionEnvelope(this.state,
       executionLeaseId=lease.lease.id;
       packet=this.eip.build(symbol,{...executionEnvelope,leaseId:lease.lease.id,leaseExpiresAt:lease.lease.expiresAt});
       const confirmation=this.state.candidateLifecycle.get(symbol)?.confirmation;`;
-replaceOnce(oldPacket,newPacket,'pre-primary envelope');
+if(!s.includes('executionEnvelope=buildPreAiExecutionEnvelope(this.state,symbol);'))replaceOnce(oldPacket,newPacket,'pre-primary envelope');
 s=s.replace("      if(!lease.ok){this.events.publish('ENTRY_DECISION_BLOCKED',{stage:'EXECUTION_LEASE',reason:lease.reason},symbol);this.reject(symbol,lease.reason);return;}","      if(lease.ok===false){this.events.publish('ENTRY_DECISION_BLOCKED',{stage:'EXECUTION_LEASE',reason:lease.reason},symbol);this.reject(symbol,lease.reason);return;}");
 
 const policy=`      const directionPolicy=this.directionPolicy.evaluate(symbol,marketForPolicy),allowed=this.directionPolicy.allows(directionPolicy,{...d,direction:decisionSide} as any);

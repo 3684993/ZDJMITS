@@ -1,5 +1,7 @@
 import fs from 'node:fs';
 
+const coordinatorPath='apps/engine/src/services/entryCoordinator.ts';
+if(fs.readFileSync(coordinatorPath,'utf8').includes("materializeAiQuantityAllocation")){console.log('V3.9.3 autonomous Entry patch already applied');process.exit(0);}
 const patch=(file,fn)=>{const before=fs.readFileSync(file,'utf8'),after=fn(before);if(after===before)throw new Error(`NO_PATCH_APPLIED:${file}`);fs.writeFileSync(file,after);};
 const once=(s,from,to,label)=>{const n=s.split(from).length-1;if(n!==1)throw new Error(`${label}: expected 1 match, got ${n}`);return s.replace(from,to);};
 
@@ -10,7 +12,7 @@ patch('apps/engine/src/services/preAiExecutionEnvelope.ts',s=>{
   return s;
 });
 
-patch('apps/engine/src/services/entryCoordinator.ts',s=>{
+patch(coordinatorPath,s=>{
   s=s.replace('  sizeEntryQuantity,\n','');
   s=s.replace("import { DirectionPolicyService } from './directionPolicyService.js';\n",'');
   s=s.replace("import { evaluatePreflightFeasibility } from './preflightFeasibility.js';\n", "import { evaluatePreflightFeasibility } from './preflightFeasibility.js';\nimport { buildPreAiExecutionEnvelope } from './preAiExecutionEnvelope.js';\nimport { acquireExecutionLease, releaseExecutionLease, validateExecutionLease } from './executionLease.js';\nimport { materializeAiQuantityAllocation } from './aiQuantityAllocation.js';\n");
@@ -54,5 +56,4 @@ patch('apps/engine/src/services/entryCoordinator.ts',s=>{
 });
 
 patch('apps/engine/src/services/aiFabric.ts',s=>s.replace("protocolVersion:'V3.9.2'","protocolVersion:'V3.9.3'"));
-
 console.log('V3.9.3 autonomous Entry patch applied');

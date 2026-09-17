@@ -11,10 +11,11 @@ on:
       - codex/v393-final-audit-20260915
       - v393-p0-runtime-recovery-20260915
       - v393-p0-tp-risk-recovery-20260915
+      - v393-private-truth-tp-canary-20260916
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   verify:
@@ -30,5 +31,24 @@ jobs:
           cache: npm
       - name: Install exact dependencies
         run: npm ci
-      - name: Final verify
+      - name: Apply V3.9.3 autonomous Entry migration
+        run: node scripts/v393-apply-autonomous-entry-patch.mjs
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Test
+        run: npm test
+      - name: Build
+        run: npm run build
+      - name: Verify
         run: npm run verify
+      - name: Commit verified migration
+        shell: pwsh
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/engine/src/services/entryCoordinator.ts apps/engine/src/services/preAiExecutionEnvelope.ts apps/engine/src/services/aiFabric.ts
+          git diff --cached --quiet
+          if ($LASTEXITCODE -ne 0) {
+            git commit -m "feat(v393): wire pre-AI envelope lease and frozen AI quantity"
+            git push origin HEAD:${{ github.ref_name }}
+          }

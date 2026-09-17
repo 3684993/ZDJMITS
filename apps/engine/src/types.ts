@@ -8,6 +8,8 @@ export interface MarketDataProvider {
   getCandles(symbol:string,timeframe:Timeframe,limit:number):Promise<Candle[]>;
   cachedCandles?(symbol:string,timeframe:Timeframe,limit:number):Candle[];
   getQuote(symbol:string):Promise<Quote>;
+  /** Zero-I/O quote assembled only from already-cached live market facts and contract metadata. */
+  cachedQuote?(symbol:string):Quote|undefined;
   getOrderBook(symbol:string):Promise<OrderBook>;
   getDerivatives(symbol:string):Promise<DerivativesSnapshot>;
   tick?():Promise<void>|void;

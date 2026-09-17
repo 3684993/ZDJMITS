@@ -122,6 +122,13 @@ export class MarketDataHub {
   }
   setLiveSymbols(symbols:string[]){this.provider.setLiveSymbols?.(symbols);}
   snapshot(symbol:string):MarketSymbolSnapshot|undefined{return this.state.snapshots.get(symbol);}
+  /** Zero-I/O execution quote. Never falls through to provider REST. */
+  cachedQuote(symbol:string):Quote|undefined{
+    const snapshot=this.state.snapshots.get(symbol)?.quote,live=this.provider.cachedQuote?.(symbol);
+    if(!snapshot)return live;
+    if(!live)return snapshot;
+    return Number(live.ts)>=Number(snapshot.ts)?live:snapshot;
+  }
   async freshQuote(symbol:string):Promise<Quote>{return this.provider.getQuote(symbol);}
   candles(symbol:string,timeframe:Timeframe,limit=120):Promise<Candle[]>{return this.provider.getCandles(symbol,timeframe,limit);}
   cachedCandles(symbol:string,timeframe:Timeframe,limit=120):Candle[]{return this.provider.cachedCandles?.(symbol,timeframe,limit)??[];}

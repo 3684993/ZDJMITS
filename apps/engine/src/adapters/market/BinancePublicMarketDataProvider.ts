@@ -50,7 +50,17 @@ export class BinancePublicMarketDataProvider implements MarketDataProvider {
   }
   async listSymbols(limit:number,prioritySymbols:string[]=[]){return this.discoverSymbols(limit,prioritySymbols);}
   collectionCoverage(){return this.coverage.map(row=>({...row}));}
-  setLiveSymbols(symbols:string[]){this.stream.start([...new Set(symbols.map(x=>x.toUpperCase()))]);}
+  setLiveSymbols(symbols:string[]){this.stream.start([...new Set(symbols.map(x=>x.toUpperCase()))]);void this.info().catch(()=>{});}
+  /** Never performs I/O. Manual/dashboard reads may use this without spending REST budget. */
+  cachedQuote(symbol:string):Quote|undefined{
+    const q=this.stream.quote(symbol),info=this.exchangeInfo?.value,s=info?.symbols?.find((row:any)=>row.symbol===symbol);
+    if(!q||!s)return undefined;
+    const pf=s.filters?.find((x:any)=>x.filterType==='PRICE_FILTER'),lf=s.filters?.find((x:any)=>x.filterType==='LOT_SIZE'),nf=s.filters?.find((x:any)=>x.filterType==='MIN_NOTIONAL');
+    const rules={tickSize:Number(pf?.tickSize),stepSize:Number(lf?.stepSize),minQty:Number(lf?.minQty),minNotional:Number(nf?.notional)};
+    const required=[q.last,q.mark,q.bid,q.ask,q.ts,...Object.values(rules)];
+    if(!pf||!lf||!nf||required.some(value=>!Number.isFinite(Number(value))||Number(value)<=0))return undefined;
+    return{symbol,last:Number(q.last),mark:Number(q.mark),bid:Number(q.bid),ask:Number(q.ask),...rules,quoteVolumeUsd24h:Number(q.quoteVolumeUsd24h??0),priceChangePercent24h:Number(q.priceChangePercent24h??0),tradeCount24h:Number(q.tradeCount24h??0),ts:Number(q.ts)};
+  }
 
   private async rules(symbol:string){const info=await this.info(),s=info.symbols.find((x:any)=>x.symbol===symbol);if(!s)throw new Error(`Unknown Binance symbol ${symbol}`);const pf=s.filters.find((x:any)=>x.filterType==='PRICE_FILTER'),lf=s.filters.find((x:any)=>x.filterType==='LOT_SIZE'),nf=s.filters.find((x:any)=>x.filterType==='MIN_NOTIONAL'),values={tickSize:Number(pf?.tickSize),stepSize:Number(lf?.stepSize),minQty:Number(lf?.minQty),minNotional:Number(nf?.notional)};if(!pf||!lf||!nf||Object.values(values).some(value=>!Number.isFinite(value)||value<=0))throw new Error(`BINANCE_REQUIRED_FILTER_INVALID:${symbol}`);return values;}
 

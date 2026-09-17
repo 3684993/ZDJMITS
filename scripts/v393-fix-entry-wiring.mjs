@@ -27,11 +27,12 @@ const newPacket=`      executionEnvelope=buildPreAiExecutionEnvelope(this.state,
       this.events.publish('PRE_AI_EXECUTION_ENVELOPE_CREATED',{executionEnvelope},symbol);
       if(!executionEnvelope.LONG.executable&&!executionEnvelope.SHORT.executable){this.reject(symbol,'PRE_AI_NO_EXECUTABLE_CAPACITY');return;}
       const lease=acquireExecutionLease(this.state,{symbol,quoteAsset:executionEnvelope.quoteAsset,reservedMarginUsd:executionEnvelope.leaseRequiredMarginUsd,ttlMs:executionEnvelope.expiresAt-Date.now()});
-      if(!lease.ok){this.events.publish('ENTRY_DECISION_BLOCKED',{stage:'EXECUTION_LEASE',reason:lease.reason},symbol);this.reject(symbol,lease.reason);return;}
+      if(lease.ok===false){this.events.publish('ENTRY_DECISION_BLOCKED',{stage:'EXECUTION_LEASE',reason:lease.reason},symbol);this.reject(symbol,lease.reason);return;}
       executionLeaseId=lease.lease.id;
       packet=this.eip.build(symbol,{...executionEnvelope,leaseId:lease.lease.id,leaseExpiresAt:lease.lease.expiresAt});
       const confirmation=this.state.candidateLifecycle.get(symbol)?.confirmation;`;
 replaceOnce(oldPacket,newPacket,'pre-primary envelope');
+s=s.replace("      if(!lease.ok){this.events.publish('ENTRY_DECISION_BLOCKED',{stage:'EXECUTION_LEASE',reason:lease.reason},symbol);this.reject(symbol,lease.reason);return;}","      if(lease.ok===false){this.events.publish('ENTRY_DECISION_BLOCKED',{stage:'EXECUTION_LEASE',reason:lease.reason},symbol);this.reject(symbol,lease.reason);return;}");
 
 const policy=`      const directionPolicy=this.directionPolicy.evaluate(symbol,marketForPolicy),allowed=this.directionPolicy.allows(directionPolicy,{...d,direction:decisionSide} as any);
       if(!allowed.ok){this.events.publish('ENTRY_DIRECTION_POLICY_BLOCKED',{runId:result.runId,policy:directionPolicy,reason:allowed.reason,decision:d},symbol);this.reject(symbol,allowed.reason!,result.runId,d.tradeSide??undefined);return;}
@@ -41,10 +42,13 @@ s=s.replace("      if(quality.mode==='ENFORCE'&&opportunity){const invalid=valid
 s=s.replace("      if (this.state.settings.riskGovernance.protectionMode === \"REQUIRED\" && (d.missingEvidence.length > 0 || d.contradictions.length > 3)) {this.events.publish(\"ENTRY_DECISION_BLOCKED\",{stage:\"ENTRY_PROTECTION\",reason:\"ENTRY_PROTECTION_REQUIRED\",missingEvidence:d.missingEvidence.length,contradictions:d.contradictions.length},symbol);this.reject(symbol,\"ENTRY_PROTECTION_REQUIRED\",result.runId,d.tradeSide??undefined);return;}\n",'');
 s=s.replace("      if (this.state.settings.riskGovernance.protectionMode === \"SHADOW\")this.events.publish(\"ENTRY_PROTECTION_SHADOW\",{decision:d.decision,confidence:d.confidence,missingEvidence:d.missingEvidence.length,contradictions:d.contradictions.length},symbol);","      if (d.missingEvidence.length > 0 || d.contradictions.length > 3)this.events.publish(\"ENTRY_PROTECTION_SHADOW\",{decision:d.decision,confidence:d.confidence,missingEvidence:d.missingEvidence.length,contradictions:d.contradictions.length,postAiVeto:false},symbol);");
 s=s.replace("...(quality.mode==='ENFORCE'&&opportunity&&opportunity.direction===side?{opportunityEvidence:opportunity}:{} )",'');
+s=s.replace("      if(quality.mode==='ENFORCE')packet={...packet,opportunityEvidence:opportunity};\n",'');
 s=s.replace("    if(intent.opportunityEvidence){const qb=qm?revalidateOpportunity(intent.opportunityEvidence,qm,this.state.settings,order?.price??intent.idealPrice,Date.now(),order?.quantity):'OPPORTUNITY_MARKET_MISSING';if(qb)return qb;}\n",'');
+// Pending maker management must not introduce a second deterministic market-direction veto after the AI authorization.
+s=s.replace(/if\(qualityPolicy\(this\.state\.settings\)\.mode==='ENFORCE'\|\|intent\.opportunityEvidence\)\{\n const invalid=market\?revalidateOpportunity\([\s\S]*?TRADING_QUALITY_PENDING_INVALIDATED',[\s\S]*?continue;\}\}\n (?=if\(!market\|\|entryDataError\(market\)\)continue;)/,'');
 if(!s.includes('releaseExecutionLease(this.state,executionLeaseId);\n      this.active.delete(symbol);'))replaceOnce("    } finally {\n      this.active.delete(symbol);","    } finally {\n      releaseExecutionLease(this.state,executionLeaseId);\n      this.active.delete(symbol);",'lease finally');
 
-for(const forbidden of ['DirectionPolicyService','this.directionPolicy.evaluate(','PRIMARY_SKIPPED_DIRECTION_BUDGET','CONFIRMED_DIRECTION_NOT_EXECUTABLE','validateOpportunityDecision(','sizeEntryQuantity(','buildAllocationPlan,'])if(s.includes(forbidden))throw new Error(`V393_FORBIDDEN_REMAINS:${forbidden}`);
+for(const forbidden of ['DirectionPolicyService','this.directionPolicy.evaluate(','PRIMARY_SKIPPED_DIRECTION_BUDGET','CONFIRMED_DIRECTION_NOT_EXECUTABLE','validateOpportunityDecision(','revalidateOpportunity(','sizeEntryQuantity(','buildAllocationPlan,'])if(s.includes(forbidden))throw new Error(`V393_FORBIDDEN_REMAINS:${forbidden}`);
 for(const required of ['private objectiveCapacity(symbol:string)','buildPreAiExecutionEnvelope','PRE_AI_EXECUTION_ENVELOPE_CREATED','acquireExecutionLease(','validateExecutionLease(','materializeAiQuantityAllocation(','AI_DIRECTION_NOT_EXECUTABLE','AI_QUANTITY_EXCEEDS_ENVELOPE','WAIT_EXECUTION_RANGE'])if(!s.includes(required))throw new Error(`V393_REQUIRED_MISSING:${required}`);
 fs.writeFileSync(file,s);
 console.log('V3.9.3 Entry wiring fixed');

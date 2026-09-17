@@ -5,6 +5,41 @@ import { ProfitTakePlanSchema } from './ai.js';
 export const SideSchema = z.enum(['LONG','SHORT']);
 export type Side = z.infer<typeof SideSchema>;
 
+const EntryRiskHeadroomSchema=z.object({
+  factVersion:z.string(),
+  remaining:z.record(z.number()),
+  blockers:z.array(z.string()),
+  reason:z.string(),
+}).strict();
+const EntryExecutionCapacitySchema=z.object({
+  executable:z.boolean(),
+  maxMarginUsd:z.number().nonnegative(),
+  maxNotionalUsd:z.number().nonnegative(),
+  maxQuantityUnits:z.number().int().nonnegative(),
+  riskHeadroom:EntryRiskHeadroomSchema,
+}).strict();
+/** Frozen pre-AI execution facts carried with an EntryIntent for restart-safe authorization. */
+export const EntryExecutionEnvelopeSchema=z.object({
+  version:z.literal('V3.9.3_PRE_AI_EXECUTION_ENVELOPE'),
+  symbol:z.string(),
+  underlying:z.string(),
+  quoteAsset:z.string(),
+  createdAt:z.number().int(),
+  expiresAt:z.number().int(),
+  notice:z.literal('EXECUTION FACTS ARE NOT MARKET SIGNALS.'),
+  account:z.object({status:z.string(),equityUsd:z.number(),availableMarginUsd:z.number(),reservedMarginUsd:z.number(),executionLeaseMarginUsd:z.number(),freeMarginUsd:z.number()}).strict(),
+  positionCapacity:z.object({used:z.number().int().nonnegative(),max:z.number().int().nonnegative(),slotAvailable:z.boolean(),sameUnderlyingOccupied:z.boolean()}).strict(),
+  leverage:z.number().int().positive(),
+  exchange:z.object({tickSize:z.number().positive(),stepSize:z.number().positive(),minQty:z.number().positive(),minNotional:z.number().nonnegative()}).strict(),
+  makerReachableBand:z.object({min:z.number().positive(),max:z.number().positive()}).strict(),
+  recentTradedPrices:z.array(z.object({price:z.number().positive(),lastSeenAt:z.number().int()}).strict()),
+  fees:z.object({makerFeeBps:z.number(),takerFeeBps:z.number(),roundTripCostBps:z.number(),safetyMarginBps:z.number()}).strict(),
+  LONG:EntryExecutionCapacitySchema,
+  SHORT:EntryExecutionCapacitySchema,
+  leaseRequiredMarginUsd:z.number().nonnegative(),
+}).strict();
+export type EntryExecutionEnvelope = z.infer<typeof EntryExecutionEnvelopeSchema>;
+
 export const EntryIntentSchema = z.object({
   opportunityEvidence:OpportunityEvidenceSchema.optional(),
   id: z.string(),
@@ -22,6 +57,8 @@ export const EntryIntentSchema = z.object({
   packetId: z.string(),
   brainRunId: z.string(),
   allocationPlan: z.any().optional(),
+  quantityUnits:z.number().int().positive().optional(),
+  executionEnvelope:EntryExecutionEnvelopeSchema.optional(),
   reservationId: z.string().nullable().optional(),
   decisionChainId: z.string().nullable().optional(),
   protectionMode: z.enum(['OFF','SHADOW','REQUIRED']).optional(),

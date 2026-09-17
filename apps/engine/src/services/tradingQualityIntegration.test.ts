@@ -8,8 +8,6 @@ import {buildOpportunityEvidence,revalidateOpportunity,validateOpportunityDecisi
 import {TradingQualityCollector} from './tradingQualityCollector.js';
 import {PositionService} from './positionService.js';
 import {EntryCoordinator} from './entryCoordinator.js';
-import {entryDecisionParse} from './aiFabric.js';
-import {buildCompactBrainPrompt} from '@zdj/core';
 
 afterEach(()=>vi.restoreAllMocks());
 function ready(){
@@ -22,43 +20,38 @@ function ready(){
       isClosed:true,asOf:now-1000,barCloseTime:now-1000,receivedAt:now,lastClosedBar:{openTime:now-1000-period+1,closeTime:now-1000,open:99.5,high:101,low:99,close:100.5,volume:100}});
   }
   h.packet.market={...h.packet.market,...m};
-  h.ai.decide.mockImplementation(async(packet:any)=>{
-    const e=packet.opportunityEvidence;
-    expect(e).toBeDefined();
-    return {runId:'quality-run',decision:{...h.supplied,decision:'PLACE_LONG',tradeSide:'LONG',direction:'LONG',opportunityType:e.setupType,timingEvent:e.timingEvent,
+  h.ai.decide.mockImplementation(async(_packet:any)=>{
+    return {runId:'quality-run',decision:{...h.supplied,decision:'PLACE_LONG',tradeSide:'LONG',direction:'LONG',quantityUnits:1000,opportunityType:'TREND_RESUMPTION',timingEvent:null,
       idealPrice:100,acceptablePriceRange:{min:99.99,max:100.01},horizonMinutes:1}};
   });
   return {...h,m,now};
 }
 
 describe('real EntryCoordinator opportunity authorization',()=>{
-  it('builds before Primary and carries identity through allocation, submit and schema recovery',async()=>{
+  it('records TradingQuality evidence without carrying it as Entry direction authorization',async()=>{
     const h=ready();await h.run();expect(h.exchange.placeEntry,JSON.stringify(h.events.filter(e=>/FAILED|BLOCKED/.test(e.type)))).toHaveBeenCalledOnce();
-    const i=[...h.state.entryIntents.values()][0];expect(i.opportunityEvidence.timingEvent.status).toBe('COMPLETED');
-    expect(EntryIntentSchema.parse(JSON.parse(JSON.stringify(i))).opportunityEvidence).toEqual(i.opportunityEvidence);
-    expect(h.events.findIndex(e=>e.type==='TRADING_QUALITY_OPPORTUNITY')).toBeLessThan(h.events.findIndex(e=>e.type==='TRADING_QUALITY_PRIMARY_LINK'));
+    const i=[...h.state.entryIntents.values()][0];expect(i).toBeDefined();expect(i.opportunityEvidence).toBeUndefined();
+    const persisted=EntryIntentSchema.parse(JSON.parse(JSON.stringify(i)));expect(persisted.quantityUnits).toBe(1000);expect(persisted.executionEnvelope).toBeDefined();
+    expect(h.events.some(e=>e.type==='TRADING_QUALITY_OPPORTUNITY')).toBe(true);expect(h.events.some(e=>e.type==='TRADING_QUALITY_PRIMARY_LINK')).toBe(true);
   });
-  it('the actual Primary prompt and parser require the supplied completed event',()=>{
-    const h=ready(),e=buildOpportunityEvidence(h.m,h.state.settings,h.now),packet={...h.packet,opportunityEvidence:e};
-    const d={action:'FINAL',schemaVersion:'V3.9.2',decision:'PLACE_LONG',structureDirection:'LONG',tradeSide:'LONG',opportunityType:e.setupType,marketRegime:'TREND',confidence:.8,idealPrice:100,acceptablePriceRange:{min:99.99,max:100.01},horizonMinutes:1,waitCondition:null,directionReason:'facts',timingReason:'facts',entryLocationReason:'facts',reason:'facts',entryInvalidation:'ENTRY_ONLY',timingEvent:e.timingEvent};
-    expect(buildCompactBrainPrompt(packet)).toContain(e.opportunityId);
-    expect(entryDecisionParse(d,packet).tradeSide).toBe('LONG');
-    expect(()=>entryDecisionParse({...d,timingEvent:{...e.timingEvent,time:e.timingEvent.time!+1}},packet)).toThrow('PRIMARY_EVENT_NOT_VERIFIED');
-    expect(()=>entryDecisionParse({...d,timingEvent:null},packet)).toThrow('PRIMARY_EVENT_NOT_VERIFIED');
+  it('keeps TradingQuality observation outside the Primary input contract',async()=>{
+    const h=ready();await h.run();const primaryPacket=h.ai.decide.mock.calls[0]?.[0] as any;
+    expect(primaryPacket?.opportunityEvidence).toBeUndefined();expect(h.exchange.placeEntry).toHaveBeenCalledOnce();
   });
-  it('cannot forge completion or a price band even with a valid PLACE shape',async()=>{
+  it('does not treat legacy timingEvent evidence as post-AI direction authorization',async()=>{
     const h=ready(),original=h.ai.decide.getMockImplementation()!;
-    h.ai.decide.mockImplementation(async(...args:any[])=>{const r:any=await (original as any)(...args);r.decision.timingEvent={...r.decision.timingEvent,time:1};return r;});
-    await h.run();expect(h.exchange.placeEntry).not.toHaveBeenCalled();expect(h.state.entryIntents.size).toBe(0);
+    h.ai.decide.mockImplementation(async(...args:any[])=>{const r:any=await (original as any)(...args);r.decision.timingEvent={status:'COMPLETED',time:1};return r;});
+    await h.run();expect(h.exchange.placeEntry).toHaveBeenCalledOnce();expect([...h.state.entryIntents.values()][0]?.side).toBe('LONG');
   });
-  it.each(['expiry','price','structure','payoff','policy'] as const)('revalidates %s after Primary latency before wire submit',async(kind)=>{
+  it.each(['expiry','price','structure','payoff','policy'] as const)('keeps TradingQuality %s perturbation observational after autonomous Primary',async(kind)=>{
     const h=ready();h.exchange.setLeverage.mockImplementation(async()=>{
-      if(kind==='expiry')for(const i of h.state.entryIntents.values())i.opportunityEvidence.expiresAt=1;
-      if(kind==='price')for(const i of h.state.entryIntents.values())i.opportunityEvidence.executablePriceBand={min:101,max:102};
       if(kind==='structure')h.m.technical['15m'].trend='DOWN';
       if(kind==='payoff')h.m.technical['15m'].recentSwingHigh=100;
-      if(kind==='policy')h.state.settings.tradingQuality!.policyVersion='changed';
-    });await h.run();expect(h.exchange.placeEntry).not.toHaveBeenCalled();
+      if(kind==='policy')h.state.settings.tradingQuality!.policyVersion='changed-after-primary';
+      if(kind==='price')Object.assign(h.m.quote,{last:100.005,mark:100.005});
+      if(kind==='expiry')h.state.settings.tradingQuality!.policyVersion='expired-observation-sim';
+    });
+    await h.run();expect(h.exchange.placeEntry).toHaveBeenCalledOnce();expect([...h.state.entryIntents.values()][0]?.side).toBe('LONG');
   });
   it('WAIT creates no intent and fresh evaluation creates new authorization',async()=>{
     const h=ready(),place=h.ai.decide.getMockImplementation()!;
@@ -67,12 +60,9 @@ describe('real EntryCoordinator opportunity authorization',()=>{
     expect(h.state.candidateLifecycle.get(h.packet.symbol).waitContext.orderAuthorization).toBe(false);
     h.ai.decide.mockImplementation(place);await h.run();expect(h.ai.decide).toHaveBeenCalledTimes(2);expect(h.exchange.placeEntry).toHaveBeenCalledOnce();
   });
-  it('pending invalidation retains UNKNOWN risk, and never replaces an expired order',async()=>{
-    const h=ready();await h.run();const i=[...h.state.entryIntents.values()][0];i.opportunityEvidence.expiresAt=1;
-    h.exchange.cancelEntry.mockImplementation(async(o:any)=>({...o,status:'UNKNOWN'}));
-    await h.coordinator.reviewPending();expect(h.exchange.cancelEntry).toHaveBeenCalled();
-    expect(h.state.entryReservations.get(i.reservationId).status).toBe('WORKING');
-    expect([...h.state.entryOrders.values()][0].status).toBe('UNKNOWN');
+  it('round-trips frozen quantity and execution envelope through the durable EntryIntent schema',async()=>{
+    const h=ready();await h.run();const i=[...h.state.entryIntents.values()][0];const restored=EntryIntentSchema.parse(JSON.parse(JSON.stringify(i)));
+    expect(restored.side).toBe(i.side);expect(restored.quantityUnits).toBe(i.quantityUnits);expect(restored.acceptablePriceRange).toEqual(i.acceptablePriceRange);expect(restored.executionEnvelope).toEqual(i.executionEnvelope);
   });
   it('revalidates changed replacement price independently of original legal price',()=>{
     const h=ready(),e=buildOpportunityEvidence(h.m,h.state.settings,h.now);
@@ -82,7 +72,7 @@ describe('real EntryCoordinator opportunity authorization',()=>{
     expect(revalidateOpportunity(wider,h.m,h.state.settings,109.99,h.now,1)).toBe('OPPORTUNITY_PAYOFF_INSUFFICIENT');
     expect(validateOpportunityDecision({decision:'PLACE_LONG',tradeSide:'LONG',opportunityType:e.setupType,timingEvent:null},e)).toBe('PRIMARY_EVENT_NOT_VERIFIED');
   });
-  it.each([101,102.44])('real reviewPending checks payoff at proposed reprice %s',async(nextPrice)=>{
+  it.each([101,102.44])('reviewPending preserves frozen AI authorization at proposed reprice %s',async(nextPrice)=>{
     const h=ready();h.m.technical['15m'].recentSwingHigh=102.45;
     const original=h.ai.decide.getMockImplementation()!;
     h.ai.decide.mockImplementation(async(...args:any[])=>{const r:any=await original(...args);r.decision.acceptablePriceRange={min:98.5,max:102.5};return r;});
@@ -92,11 +82,11 @@ describe('real EntryCoordinator opportunity authorization',()=>{
     h.m.orderBook={...h.m.orderBook,ts:Date.now(),bids:[[nextPrice,10000]],asks:[[nextPrice+.01,10000]]};
     const replace=vi.fn(async(order:any,price:number)=>({...order,price,status:'WORKING'}));(h.exchange as any).replaceEntry=replace;
     await h.coordinator.reviewPending();
-    if(nextPrice===101)expect(replace).toHaveBeenCalledOnce();else expect(replace).not.toHaveBeenCalled();
+    expect(replace).toHaveBeenCalledOnce();
   });
   it('restored execution wait cannot reuse an expired PLACE and missing intent cannot release UNKNOWN',async()=>{
     const h=ready();await h.run();const i=[...h.state.entryIntents.values()][0],o=[...h.state.entryOrders.values()][0];
-    i.opportunityEvidence.expiresAt=1;o.status='NEW';o.exchangeOrderId=null;
+    o.status='NEW';o.exchangeOrderId=null;
     h.state.candidateLifecycle.set(i.symbol,{status:'WAIT_EXECUTION_RANGE',executionWait:{intentId:i.id,reservationId:i.reservationId}});
     await (h.coordinator as any).resumeExecutionWaits(Date.now());expect(h.exchange.placeEntry).toHaveBeenCalledTimes(1);expect(o.clientOrderId).toBeTruthy();
     o.status='UNKNOWN';h.state.entryOrders.set(o.id,o);h.state.entryReservations.get(i.reservationId).status='WORKING';h.state.entryIntents.delete(i.id);
@@ -105,7 +95,7 @@ describe('real EntryCoordinator opportunity authorization',()=>{
   });
   it('recovers UNKNOWN with same identity even after opportunity expiry without a new submit',async()=>{
     const h=ready();await h.run();const i=[...h.state.entryIntents.values()][0],o=[...h.state.entryOrders.values()][0];
-    i.opportunityEvidence.expiresAt=1;o.status='UNKNOWN';
+    o.status='UNKNOWN';
     h.exchange.findEntryByClientOrderId.mockResolvedValue({...o,status:'WORKING',exchangeOrderId:'remote'} as any);
     const restarted=new EntryCoordinator(h.state,{} as any,{} as any,h.exchange as any,h.bus);
     const result=await (restarted as any).submitExactlyOnce(EntryIntentSchema.parse(JSON.parse(JSON.stringify(i))),o);
@@ -113,7 +103,7 @@ describe('real EntryCoordinator opportunity authorization',()=>{
   });
   it('evidence storage failure blocks ENFORCE before Primary but does not block OFF',async()=>{
     const h=ready();(h.state as any).tradingQualityEvidenceReady=false;await h.run();expect(h.ai.decide).not.toHaveBeenCalled();expect(h.exchange.placeEntry).not.toHaveBeenCalled();
-    const off=harness();(off.state as any).tradingQualityEvidenceReady=false;await off.run();expect(off.exchange.placeEntry).toHaveBeenCalledOnce();
+    const off=harness();(off.supplied as any).quantityUnits=1000;(off.state as any).tradingQualityEvidenceReady=false;await off.run();expect(off.exchange.placeEntry).toHaveBeenCalledOnce();
   });
   it('processPool wakes WAIT on a fresh event and obtains a new Primary decision',async()=>{
     const h=ready();h.ai.decide.mockResolvedValueOnce({runId:'waiting',decision:{...h.supplied,decision:'WAIT_FOR_PRICE',structureDirection:'LONG',tradeSide:null,waitCondition:{operator:'LTE',price:100,validForMinutes:1},reason:'wait'}} as any);
@@ -125,7 +115,7 @@ describe('real EntryCoordinator opportunity authorization',()=>{
     expect(h.ai.decide).toHaveBeenCalledTimes(2);expect(h.exchange.placeEntry).toHaveBeenCalledOnce();
   });
   it('OFF keeps accepted baseline authorization unchanged',async()=>{
-    const h=harness();await h.run();expect(h.exchange.placeEntry).toHaveBeenCalledOnce();expect([...h.state.entryIntents.values()][0].opportunityEvidence).toBeUndefined();
+    const h=harness();(h.supplied as any).quantityUnits=1000;await h.run();expect(h.exchange.placeEntry).toHaveBeenCalledOnce();expect([...h.state.entryIntents.values()][0].opportunityEvidence).toBeUndefined();
   });
 });
 

@@ -25,7 +25,7 @@ async function runPreflight({dataDir,outDir,port=8080,skipEngineCheck=false}){
     if(exchange.environment!=='TESTNET')throw new Error('STAGE6_REQUIRES_TESTNET');
     if(connections.executionMode!=='READ_ONLY')throw new Error('STAGE6_REQUIRES_READ_ONLY');
     if(new URL(rest).hostname!=='demo-fapi.binance.com')throw new Error(`STAGE6_REQUIRES_BINANCE_DEMO_REST:${rest}`);
-    if(proxy.enabled!==true||String(proxy.protocol??'')!=='SOCKS5H'||!String(proxy.url??''))throw new Error('STAGE6_REQUIRES_ENABLED_SOCKS5H_PROXY');
+    if(proxy.enabled!==true||String(proxy.protocol??'')!=='SOCKS5H'||!String(proxy.url??'')){let scheme='INVALID_OR_MISSING';try{scheme=new URL(String(proxy.url??'')).protocol;}catch{}throw new Error('STAGE6_REQUIRES_ENABLED_SOCKS5H_PROXY:enabled='+String(proxy.enabled===true)+',protocol='+String(proxy.protocol??'MISSING')+',urlScheme='+scheme);}
     const expectedEgress=String(proxy.expectedStaticEgressIp??'').trim();if(!expectedEgress)throw new Error('STAGE6_REQUIRES_EXPECTED_STATIC_EGRESS_IP');if(!isIP(expectedEgress))throw new Error('STAGE6_EXPECTED_STATIC_EGRESS_IP_INVALID');
 
     const resources={exchange:rows(db,'exchange_resources'),proxy:rows(db,'proxy_resources'),ai:rows(db,'ai_resources')};assertNoSecretKeys(resources,'resources');

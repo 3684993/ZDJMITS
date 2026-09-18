@@ -53,8 +53,8 @@ it('reserves ORDERS headroom independently from REQUEST_WEIGHT',async()=>{
   budget.configureRateLimits([{rateLimitType:'ORDERS',interval:'SECOND',intervalNum:10,limit:50}]);
   budget.observeResponse(200,{'x-mbx-order-count-10s':'47'},undefined,{source:'EXECUTION_CRITICAL',endpoint:'/fapi/v1/order'});
   const fn=vi.fn(),pending=budget.run(0,0,fn,{source:'EXECUTION_CRITICAL',endpoint:'/fapi/v1/order',method:'POST',orderCount:1});
-  const rejected=expect(pending).rejects.toThrow('QUEUE_TIMEOUT');
-  await vi.advanceTimersByTimeAsync(15_100);await rejected;expect(fn).not.toHaveBeenCalled();
+  await vi.advanceTimersByTimeAsync(9_999);expect(fn).not.toHaveBeenCalled();
+  await vi.advanceTimersByTimeAsync(2);await expect(pending).resolves.toBeUndefined();expect(fn).toHaveBeenCalledOnce();
  }finally{vi.useRealTimers();}
 });
 

@@ -1104,65 +1104,23 @@ export class EngineRuntime {
       throw new Error("PRIVATE_TRADE_AUDIT_UNAVAILABLE");
     const safeHours = Math.min(24, Math.max(1, Number(hours) || 5)),
       end = endTime ?? Date.now(),
-      start = startTime ?? end - safeHours * 60 * 60_000;
-    const audit = await this.trade.fetchRecentTradeAudit(
+      start = startTime ?? end - safeHours * 60 * 60_000,
+      provenanceSymbols = [
+        ...new Set(
+          [...this.state.entryOrders.values()]
+            .filter((order) => order.createdAt <= end && order.updatedAt >= start)
+            .map((order) => String(order.symbol).toUpperCase())
+            .filter((symbol) => /^[A-Z0-9]{3,20}(USDT|USDC|BUSD)$/.test(symbol)),
+        ),
+      ];
+    // V3.9.4: the adapter owns the complete union and reads income globally plus
+    // userTrades/allOrders once per symbol. Do not run a second per-symbol pass.
+    return this.trade.fetchRecentTradeAudit(
       start,
       end,
       Math.min(1000, Math.max(100, Number(maxFills) || 500)),
+      provenanceSymbols,
     );
-    // Binance income/open-order discovery omits fully closed, commission-free
-    // symbols.  Local provenance supplies those symbols so the fact audit is
-    // complete for the requested window.
-    if (this.trade.fetchSymbolTradeFacts) {
-      const symbols = [
-        ...new Set(
-          [
-            ...audit.fills.map((x) => x.symbol),
-            ...audit.orders.map((x) => x.symbol),
-            ...[...this.state.entryOrders.values()].filter(
-              (order) => order.createdAt <= end && order.updatedAt >= start,
-            ),
-          ]
-            .map((x: any) => String(x.symbol).toUpperCase())
-            .filter((symbol) =>
-              /^[A-Z0-9]{3,20}(USDT|USDC|BUSD)$/.test(symbol),
-            ),
-        ),
-      ];
-      for (const symbol of symbols) {
-        const facts = await this.trade.fetchSymbolTradeFacts(
-          symbol,
-          start,
-          end,
-        );
-        const existingFill = new Set(
-            audit.fills.map((x) => `${x.symbol}:${x.tradeId}`),
-          ),
-          existingOrder = new Set(
-            audit.orders.map((x) => `${x.symbol}:${x.orderId}`),
-          ),
-          existingIncome = new Set(
-            audit.income.map(
-              (x) => `${x.symbol}:${x.tradeId}:${x.transactionId}:${x.time}`,
-            ),
-          );
-        for (const fill of facts.fills)
-          if (!existingFill.has(`${fill.symbol}:${fill.tradeId}`))
-            audit.fills.push(fill);
-        for (const order of facts.orders)
-          if (!existingOrder.has(`${order.symbol}:${order.orderId}`))
-            audit.orders.push(order);
-        for (const income of facts.income)
-          if (
-            !existingIncome.has(
-              `${income.symbol}:${income.tradeId}:${income.transactionId}:${income.time}`,
-            )
-          )
-            audit.income.push(income);
-      }
-      audit.fills.sort((a, b) => a.executionTime - b.executionTime);
-    }
-    return audit;
   }
   async repairRecentSystemTradeRecords(hours = 5) {
     const audit = await this.auditRecentTrades(hours, 500),

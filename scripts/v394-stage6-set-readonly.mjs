@@ -99,7 +99,7 @@ async function selfTest(){
 if(process.argv.includes('--self-test'))await selfTest();
 else{
   const dataDir=path.resolve(arg('--data-dir',path.join(root,'data'))),backupDir=path.resolve(arg('--backup-dir',path.join(root,'data','backups','v394-stage6'))),port=Number(arg('--port','8080'));
-  const authorizeEnableProxy=process.argv.includes('--authorize-enable-proxy');
-  const result=await forceReadOnly({dataDir,backupDir,port,authorizeEnableProxy});
+  const authorizeEnableProxy=process.argv.includes('--authorize-enable-proxy'),expectedStaticEgressIp=arg('--expected-static-egress-ip',null);
+  const result=await forceReadOnly({dataDir,backupDir,port,authorizeEnableProxy,expectedStaticEgressIp});
   console.log('V394_STAGE6_READONLY_READY=TRUE');console.log(JSON.stringify(result,null,2));
 }

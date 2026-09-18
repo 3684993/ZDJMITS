@@ -718,18 +718,6 @@ export function createApiRouter(runtime: EngineRuntime) {
       next(e);
     }
   });
-  r.put("/settings/connections", async (req, res, next) => {
-    try {
-      const nextSettings = {
-        ...runtime.state.settings,
-        connections: req.body.connections,
-        aiResources: req.body.aiResources,
-      };
-      res.json(await runtime.updateSettings(nextSettings));
-    } catch (e) {
-      next(e);
-    }
-  });
   r.post("/settings/exchange/private/test", async (req, res, next) => {
     try {
       const { apiKey, apiSecret } = req.body as {

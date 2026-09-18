@@ -24,6 +24,8 @@ foreach($required in @(
   'ACCEPTANCE_WINDOW_SHORT',
   'ACCEPTANCE_FAILED',
   'PENDING_NO_NATURAL_ENTRY',
+  '@childArgs',
+  '"-$flag"',
   'continuityBreaks',
   'continuity-break-',
   'positionsProjection',

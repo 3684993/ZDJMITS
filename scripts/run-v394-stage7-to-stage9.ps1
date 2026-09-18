@@ -198,7 +198,10 @@ function Invoke-StagePhase([string]$Name,[object]$ckpt){
   New-Item -ItemType Directory -Force -Path $evidenceDir|Out-Null
   $log=Join-Path $evidenceDir "$Name.log"
   Set-Phase $ckpt $Name @{status='RUNNING';at=(Get-Date).ToString('o');evidenceDir=$evidenceDir}|Out-Null
-  & powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot 'run-v394-local-rollout.ps1') -Phase $Name -Port $Port -CanaryMarginUsd $CanaryMarginUsd 2>&1|Tee-Object -FilePath $log|Write-Host
+  # The authorization flag must reach the child process; computing it only for the error message
+  # makes every stage abort on its own safety gate.
+  $childArgs=@('-Phase',$Name,'-Port',[string]$Port,'-CanaryMarginUsd',[string]$CanaryMarginUsd,"-$flag")
+  & powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot 'run-v394-local-rollout.ps1') @childArgs 2>&1|Tee-Object -FilePath $log|Write-Host
   $code=$LASTEXITCODE
   if($code -eq 3){
     # The rollout exits 3 when no natural AI entry appeared in its window. That is an observation to

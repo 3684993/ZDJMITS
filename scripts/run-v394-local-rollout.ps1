@@ -88,8 +88,9 @@ function AssertGovernance(){
   if($route.rest.host -ne 'demo-fapi.binance.com'){throw "REST_HOST_VIOLATION:$($route.rest.host)"}
   if($route.egress.status -ne 'VERIFIED'){throw "STATIC_EGRESS_NOT_VERIFIED:$($route.egress.status)"}
   if($route.egress.verifiedEgressIp -and $route.egress.expectedEgressIp -and $route.egress.verifiedEgressIp -ne $route.egress.expectedEgressIp){throw 'STATIC_EGRESS_IP_MISMATCH'}
-  if([int]$route.requestBudget.http429 -gt 0){throw "HTTP_429_ALREADY_OBSERVED:$($route.requestBudget.http429)"}
-  if([int]$route.requestBudget.http418 -gt 0){throw "HTTP_418_ALREADY_OBSERVED:$($route.requestBudget.http418)"}
+  $blockedBudgetStatuses=@('PRIVATE_ONLY','SATURATED','RATE_LIMITED','RECOVERING','PERSISTENCE_FAILED')
+  if($blockedBudgetStatuses -contains [string]$route.requestBudget.status){throw "BINANCE_REQUEST_BUDGET_NOT_HEALTHY:$($route.requestBudget.status)"}
+  if([string]$route.requestBudget.observationTrust -eq 'RATE_LIMITED'){throw "BINANCE_REQUEST_BUDGET_TRUST_RATE_LIMITED"}
   return $route
 }
 function AssertPrivateReady(){
@@ -140,8 +141,9 @@ if($Phase -eq 'Stage6'){
   if($settings.connections.executionMode -ne 'READ_ONLY'){throw "STAGE6_REQUIRES_READ_ONLY:$($settings.connections.executionMode)"}
   AssertPrivateReady
   VerifyStage6ProxyEgress|Out-Null
-  AssertGovernance|Out-Null
-  & powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot 'run-v394-readonly-canary.ps1') -DurationMinutes $Stage6Minutes -IntervalSeconds 30 -Port $Port
+  $stage6Baseline=AssertGovernance
+  Write-Output "STAGE6_RATE_LIMIT_BASELINE=http429:$([int]$stage6Baseline.requestBudget.http429),http418:$([int]$stage6Baseline.requestBudget.http418)"
+  & powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot 'run-v394-readonly-canary.ps1') -DurationMinutes $Stage6Minutes -IntervalSeconds 30 -Port $Port -BaselineHttp429 ([int]$stage6Baseline.requestBudget.http429) -BaselineHttp418 ([int]$stage6Baseline.requestBudget.http418)
   if($LASTEXITCODE -ne 0){throw "STAGE6_READONLY_CANARY_FAILED:$LASTEXITCODE"}
   Write-Output 'STAGE6_PASS_ENGINE_REMAINS_READ_ONLY=TRUE'
   exit 0

@@ -12,6 +12,7 @@ $ErrorActionPreference='Stop'
 $root=Split-Path -Parent $PSScriptRoot
 $base="http://127.0.0.1:$Port"
 $ckptPath=Join-Path $root (Join-Path $StateRoot 'checkpoint.json')
+$baselinePath=Join-Path $root (Join-Path $StateRoot 'settings-baseline.json')
 $stamp=Get-Date -Format 'yyyyMMdd-HHmmss'
 $evidenceDir=Join-Path $root (Join-Path $StateRoot "evidence-$stamp")
 
@@ -190,6 +191,29 @@ function Invoke-CleanupPhase([object]$ckpt){
   Write-Host 'EXPOSURE_CLEANUP_PASS=TRUE'
 }
 
+function Test-CanaryShaped([object]$s){
+  return ([int]$s.portfolio.maxPositions -le 1 -and [double]$s.portfolio.entryMarginUsd -le $CanaryMarginUsd)
+}
+function Ensure-NormalTestnetBaseline{
+  # Stage7 mutates portfolio limits, and Stage8 restores whatever Stage7 recorded as "before". If an
+  # earlier attempt was interrupted, that snapshot is already canary-shaped, so restoring it is a
+  # silent no-op and the 12H window then observes a capacity-full engine instead of real trading.
+  $s=ApiGet '/api/v3/settings'
+  if(-not (Test-Path $baselinePath)){
+    if(Test-CanaryShaped $s){throw "BASELINE_UNRECORDED_ENGINE_ALREADY_CANARY_SHAPED: record a pre-canary settings capture at $baselinePath first"}
+    Save-Json $baselinePath $s
+    return
+  }
+  if(Test-CanaryShaped $s){
+    $restore=(Get-Content -LiteralPath $baselinePath -Raw|ConvertFrom-Json)|ConvertTo-Json -Depth 50|ConvertFrom-Json
+    $restore.settingsVersion=$s.settingsVersion
+    $restore.connections.executionMode=$s.connections.executionMode
+    ApiPut '/api/v3/settings' $restore|Out-Null
+    $after=ApiGet '/api/v3/settings'
+    if(Test-CanaryShaped $after){throw "NORMAL_TESTNET_BASELINE_RESTORE_FAILED: maxPositions=$($after.portfolio.maxPositions) entryMarginUsd=$($after.portfolio.entryMarginUsd)"}
+    Write-Host "TESTNET_BASELINE_RESTORED maxPositions=$($after.portfolio.maxPositions) entryMarginUsd=$($after.portfolio.entryMarginUsd) dynamicMargin=$($after.portfolioIntelligence.dynamicMarginEnabled)"
+  }
+}
 function Ensure-ReadOnlyArmingState{
   # A previous interrupted attempt can leave the engine in TESTNET_ENABLED, which Stage7's own arming
   # gate refuses. Restore the state its gate expects instead of bypassing the gate.
@@ -208,17 +232,17 @@ function Invoke-StagePhase([string]$Name,[object]$ckpt){
   $flag=if($Name -eq 'Stage7'){'AuthorizeTestnetWrite'}else{'AuthorizeAutoTrading'}
   if(-not $auth){throw "$($Name.ToUpper())_REQUIRES_-$flag"}
   New-Item -ItemType Directory -Force -Path $evidenceDir|Out-Null
-  if($Name -eq 'Stage7'){Ensure-ReadOnlyArmingState}
+  if($Name -eq 'Stage7'){Ensure-NormalTestnetBaseline;Ensure-ReadOnlyArmingState}
   $log=Join-Path $evidenceDir "$Name.log"
-  $errLog=Join-Path $evidenceDir "$Name.err.log"
   Set-Phase $ckpt $Name @{status='RUNNING';at=(Get-Date).ToString('o');evidenceDir=$evidenceDir}|Out-Null
-  $childArgs=@('-NoProfile','-ExecutionPolicy','Bypass','-File',(Join-Path $PSScriptRoot 'run-v394-local-rollout.ps1'),'-Phase',$Name,'-Port',[string]$Port,'-CanaryMarginUsd',[string]$CanaryMarginUsd,"-$flag")
-  # This stage spawns a long-lived Engine. Piping the child through this process would hand that
-  # Engine the pipe write handle and the parent would never see EOF; -Wait additionally drains the
-  # redirected streams, which the Engine also holds open. Wait on the process handle only.
-  $proc=Start-Process -FilePath 'powershell' -ArgumentList $childArgs -PassThru -WindowStyle Hidden `
-    -RedirectStandardOutput $log -RedirectStandardError $errLog
-  $proc.WaitForExit()
+  $rollout=Join-Path $PSScriptRoot 'run-v394-local-rollout.ps1'
+  $childArgs=@('-Phase',$Name,'-Port',[string]$Port,'-CanaryMarginUsd',[string]$CanaryMarginUsd,"-$flag")
+  # Start-Process -PassThru without -Wait cannot report ExitCode, and -Wait with our own stream
+  # redirection never returns because the Engine this stage spawns inherits the redirected handles.
+  # Let cmd own the redirection instead: PowerShell then waits purely on cmd's process exit.
+  $quoted=($childArgs|ForEach-Object{if($_ -match '\s'){('"'+$_+'"')}else{$_}}) -join ' '
+  $cmd="/c powershell -NoProfile -ExecutionPolicy Bypass -File `"$rollout`" $quoted > `"$log`" 2>&1"
+  $proc=Start-Process -FilePath 'cmd.exe' -ArgumentList $cmd -PassThru -Wait -WindowStyle Hidden
   $code=$proc.ExitCode
   if($null -eq $code){throw "$($Name.ToUpper())_EXIT_CODE_UNOBSERVED evidence=$evidenceDir"}
   if($code -eq 3){
@@ -227,7 +251,10 @@ function Invoke-StagePhase([string]$Name,[object]$ckpt){
     Set-Phase $ckpt $Name @{status='PENDING_NO_NATURAL_ENTRY';pendingAt=(Get-Date).ToString('o');log=$log;exitCode=3}|Out-Null
     throw "$($Name.ToUpper())_PENDING_NO_NATURAL_ENTRY evidence=$evidenceDir"
   }
-  if($code -ne 0){throw "$($Name.ToUpper())_FAILED_EXIT_$code evidence=$evidenceDir stdout=$log stderr=$errLog"}
+  if($code -ne 0){throw "$($Name.ToUpper())_FAILED_EXIT_$code evidence=$evidenceDir log=$log"}
+  # Stage8 restores Stage7's own snapshot, which may itself be canary-shaped; verify against the
+  # recorded pre-canary baseline so the acceptance window observes real trading capacity.
+  if($Name -eq 'Stage8'){Ensure-NormalTestnetBaseline}
   Set-Phase $ckpt $Name @{status='PASS';passedAt=(Get-Date).ToString('o');log=$log}|Out-Null
 }
 

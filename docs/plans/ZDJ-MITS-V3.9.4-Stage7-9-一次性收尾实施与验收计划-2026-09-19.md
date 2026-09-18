@@ -369,3 +369,17 @@ V3.9.4 最终验收完成后再处理，当前不得借机重构：
 ### 12.3 收尾执行器
 
 `scripts/run-v394-stage7-to-stage9.ps1` + 契约测试已接入 `verify:scripts`：Cleanup / Stage7 / Stage8 / Accept12H / Accept24H 分阶段 checkpoint 与 resume，已 PASS 阶段跳过，仓位关闭按 position id 绑定固定 `idempotencyKey` 可安全重放，`positionsApi` 与 `pipeline.existingPositions.count` 交叉校验，Engine `instanceId` 变化或采样断裂即判窗口不连续（不得以中断时长冒充连续 PASS），并对 `demo-fapi` 主机名、egress VERIFIED、Account READY、WS LIVE、Reconciliation SETTLED、429/418 窗口增量、TP 完整性做硬门禁；Production 侧只读校验、永不写。
+
+### 12.4 收敛执行中暴露并修复的真实缺陷
+
+1. **Stage7 在引擎重启后不可能通过（生产脚本缺陷，已最小修复）**。`BinanceTransport` 的出口真相存放在**进程内** `egressTruthByRoute` Map，按 `routeIdentity` 取键；新进程启动即为 `UNVERIFIED`，只有 `verifyEgressIp()`（由 transport `health()` 或 `/settings/resources/proxy/binance-proxy/test` 触发）才会转为 `VERIFIED`。而 `entryBlockReason()` 与 `assertTestnetExchangeWrite()` 在配置了 `expectedStaticEgressIp` 时对非 VERIFIED **fail-closed**。Stage7 的 `StopEngine → StartEngine` 之后立刻 `AssertGovernance`，因此在任何机器上都必然报 `STATIC_EGRESS_NOT_VERIFIED:UNVERIFIED`。修复方式是把 Stage6 已有的代理探针纳入 Stage7（带 3 次重试容忍瞬时抖动），**不放宽判据**：仍要求 `VERIFIED` 且 `expectedEgressIp == lastVerifiedEgressIp`。
+2. **长同步写调用的客户端超时不等于业务失败**（已修）。首轮 `POST /testnet/cleanup/run` 120s 客户端超时杀死了 runner，但引擎继续把 CRVUSDC、DOTUSDT 平到 `remainingQty=0`。现改为记录中断并轮询真实 flat。
+3. **编排器把子进程 stdout 管道化会死锁**（已修）。Stage 子脚本会拉起常驻 Engine，Engine 继承管道写句柄后父进程永不见 EOF，导致"已完成"的阶段挂死且输出不落盘。改为 `Start-Process -Wait` + 每阶段独立 stdout/stderr 文件，才第一次真正拿到了 `STATIC_EGRESS_NOT_VERIFIED` 这条根因。
+4. **授权标志未传给子进程**（已修，且被自家安全门正确拦下）。
+5. **CI 既有 flake**：`snapshotReadOnly` / `riskPauseOverride` / `eipService` 三处 `Test timed out in 5000ms`（实测 8.1s/7.0s/6.1s），共同依赖 `EngineRuntime.createTestHarness` 内部 `market.refresh(120)`。本轮按仓库既有做法用 `rerun-failed-jobs` 取得 attempt 2 全绿，未改测试未降标准；建议 V3.9.5 为该类用例显式设置超时或复用单例 harness。
+
+### 12.5 已达成结果
+
+- 6 笔真实 Testnet 空头全部经正式链路收敛至 `positions=0`，`orphanTp/duplicateTp/wrongSide/qtyMismatch/unverifiedTp` 均为 0，`takeProfit.status` 由 DEGRADED 回到 READY，实现净亏合计 **-512.136** USDT（Testnet），六笔台账 `remainingQty=0` 且 `integrityFlags=[]`。
+- **整个治理过程 429/418 计数与 Stage6 基线完全相同（17/3，增量 0）**，固定出口 `172.104.186.174` 与路由身份全程无违例。
+- 10 笔历史 `UNKNOWN` 未发送任何 cancel、未改写状态、未触碰 SQLite。

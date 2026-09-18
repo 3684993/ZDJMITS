@@ -21,6 +21,7 @@ const tabs = [
 const tab = ref("strategy"),
   draft = ref<SystemSettings | null>(null),
   resources = ref<any>({ exchange: [], proxy: [], ai: [] }),
+  resourceSettingsVersion = ref<number | null>(null),
   saving = ref(false),
   notice = ref(""),
   error = ref(""),
@@ -68,6 +69,7 @@ async function load() {
       proxy: loaded[1].items ?? [],
       ai: loaded[2].items ?? [],
     };
+    resourceSettingsVersion.value = Number(loaded[0].settingsVersion ?? settings.settingsVersion);
     applyTheme();
   } catch (e) {
     error.value = String(e);
@@ -78,6 +80,7 @@ async function save() {
   saving.value = true;
   try {
     draft.value = structuredClone(await api.saveSettings(draft.value));
+    resourceSettingsVersion.value = draft.value.settingsVersion;
     notice.value = "设置已保存";
     applyTheme();
   } catch (e) {
@@ -88,11 +91,19 @@ async function save() {
 }
 async function saveResource(kind: string, item: any) {
   try {
-    resources.value[kind] = [
-      ...resources.value[kind].filter((x: any) => x.id !== item.id),
-      await api.saveResource(kind, item),
-    ];
-    notice.value = "资源已保存";
+    const expected=resourceSettingsVersion.value ?? draft.value?.settingsVersion;
+    if(!expected)throw new Error("资源版本尚未加载，请刷新设置");
+    const saved=await api.saveResource(kind,item,expected);
+    resourceSettingsVersion.value=Number(saved.settingsVersion);
+    if(kind==="ai")resources.value.ai=[...resources.value.ai.filter((x:any)=>x.id!==item.id&&x.id!==saved.id),saved];
+    else resources.value[kind]=[saved];
+    if(draft.value){
+      draft.value.settingsVersion=Number(saved.settingsVersion);
+      if(kind==="ai")draft.value.aiResources=resources.value.ai.map((x:any)=>({id:x.id,role:x.role,enabled:x.enabled!==false,baseUrl:x.baseUrl,model:x.model,maxConcurrency:Number(x.maxConcurrency??1),gpu:x.gpu??"未指定"}));
+      if(kind==="proxy")draft.value.connections.proxy={...draft.value.connections.proxy,url:saved.url,enabled:saved.enabled!==false,protocol:"SOCKS5H",forceBinanceRest:true,forceBinanceWs:true,proxyDns:true,binanceRestRoute:"CONFIGURED",bypassLocalhost:true,failClosed:true};
+      if(kind==="exchange"){const x:any=draft.value.connections.exchange;if(saved.environment==="TESTNET"){x.environment="TESTNET";x.testnetBaseUrl=saved.restBaseUrl;x.testnetRestBaseUrl=saved.restBaseUrl;x.testnetWsBaseUrl=saved.wsBaseUrl;}else{x.environment="PRODUCTION";x.productionBaseUrl=saved.restBaseUrl;x.productionRestBaseUrl=saved.restBaseUrl;x.productionWsBaseUrl=saved.wsBaseUrl;}x.credentialRef=saved.credentialRef??x.credentialRef;}
+    }
+    notice.value = "资源已保存并已回读";
   } catch (e) {
     error.value = String(e);
   }
@@ -133,8 +144,13 @@ async function addResource(kind: "exchange" | "proxy" | "ai") {
   await saveResource(kind, item);
 }
 async function removeResource(kind: string, id: string) {
-  await api.deleteResource(kind, id);
-  resources.value[kind] = resources.value[kind].filter((x: any) => x.id !== id);
+  try{
+    const expected=resourceSettingsVersion.value ?? draft.value?.settingsVersion;if(!expected)throw new Error("资源版本尚未加载，请刷新设置");
+    await api.deleteResource(kind,id,expected);resourceSettingsVersion.value=expected+1;
+    resources.value[kind] = resources.value[kind].filter((x: any) => x.id !== id);
+    if(draft.value){draft.value.settingsVersion=expected+1;if(kind==="ai")draft.value.aiResources=draft.value.aiResources.filter(x=>x.id!==id);if(kind==="proxy")draft.value.connections.proxy.enabled=false;}
+    notice.value="资源已删除并已回读";
+  }catch(e){error.value=String(e);}
 }
 async function saveCredentials() {
   try {

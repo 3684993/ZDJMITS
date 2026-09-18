@@ -2,7 +2,7 @@ import { Router, type NextFunction, type Request, type Response } from 'express'
 import { isIP } from 'node:net';
 import type { SystemSettings } from '@zdj/contracts';
 import { loadAiResources } from '../config/aiResourceLoader.js';
-import { reconfigureBinanceTransports } from '../adapters/binance/BinanceTransport.js';
+import { BinanceTransport, reconfigureBinanceTransports } from '../adapters/binance/BinanceTransport.js';
 import type { EngineRuntime } from '../runtime/appRuntime.js';
 
 type RuntimeResourceKind='exchange'|'proxy'|'ai';

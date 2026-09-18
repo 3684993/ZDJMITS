@@ -9,7 +9,7 @@ const aiLoadDefault=()=>({active:0,totalRuns:0,failures:0,lastLatencyMs:null,cur
 
 function canonicalProxy(settings:SystemSettings,item?:any):SystemSettings{
   const next=structuredClone(settings),current=next.connections.proxy;
-  next.connections.proxy={...current,...(item?{enabled:item.enabled!==false,protocol:'SOCKS5H' as const,url:String(item.url??current.url)}:{}),forceBinanceRest:true,forceBinanceWs:true,proxyDns:true,binanceRestRoute:'CONFIGURED',bypassLocalhost:true,failClosed:true};
+  next.connections.proxy={...current,...(item?{enabled:item.enabled!==false,protocol:'SOCKS5H' as const,url:String(item.url??current.url),expectedStaticEgressIp:String(item.expectedStaticEgressIp??current.expectedStaticEgressIp??'').trim()||undefined}:{}),forceBinanceRest:true,forceBinanceWs:true,proxyDns:true,binanceRestRoute:'CONFIGURED',bypassLocalhost:true,failClosed:true};
   return next;
 }
 function canonicalExchange(settings:SystemSettings,item:any):SystemSettings{
@@ -31,7 +31,7 @@ function aiResource(item:any){
 function rejectSecretFields(item:any){if(item&&['apiKey','apiSecret','secret','password','token'].some(key=>Object.prototype.hasOwnProperty.call(item,key)))throw new Error('RESOURCE_SECRET_FIELD_FORBIDDEN');}
 function resourceView(settings:SystemSettings,kind:RuntimeResourceKind){
   if(kind==='exchange'){const x=settings.connections.exchange as any;return[{id:'binance-usdm',name:'Binance USD-M',type:'BINANCE_USDM',environment:x.environment,restBaseUrl:x.environment==='TESTNET'?(x.testnetRestBaseUrl??x.testnetBaseUrl):(x.productionRestBaseUrl??x.productionBaseUrl),wsBaseUrl:x.environment==='TESTNET'?(x.testnetWsBaseUrl??'wss://stream.binancefuture.com/ws'):(x.productionWsBaseUrl??'wss://fstream.binance.com/ws'),credentialRef:x.credentialRef,enabled:true,active:true,status:'READY'}];}
-  if(kind==='proxy')return[{id:'binance-proxy',name:'SOCKS5H',type:'SOCKS5H',url:settings.connections.proxy.url,enabled:settings.connections.proxy.enabled,active:true,status:settings.connections.proxy.enabled?'READY':'DISABLED'}];
+  if(kind==='proxy')return[{id:'binance-proxy',name:'SOCKS5H',type:'SOCKS5H',url:settings.connections.proxy.url,expectedStaticEgressIp:(settings.connections.proxy as any).expectedStaticEgressIp??'',enabled:settings.connections.proxy.enabled,active:true,status:settings.connections.proxy.enabled?'READY':'DISABLED'}];
   return settings.aiResources.map(item=>({...item,active:item.enabled,status:item.enabled?'READY':'DISABLED'}));
 }
 function syncAiRuntime(runtime:EngineRuntime,settings:SystemSettings){
@@ -69,7 +69,7 @@ export function createRuntimeSettingsResourcesRouter(runtime:EngineRuntime){
     const id=kind==='proxy'?'binance-proxy':kind==='exchange'?'binance-usdm':String(req.params.id??req.body?.id??'');
     if(!id)throw new Error('RESOURCE_ID_REQUIRED');
     let nextSettings:SystemSettings,item:any;
-    if(kind==='proxy'){item={id,name:req.body?.name??'SOCKS5H',type:'SOCKS5H',url:String(req.body?.url??before.connections.proxy.url),enabled:req.body?.enabled!==false};nextSettings=canonicalProxy(before,item);}
+    if(kind==='proxy'){const expected=String(req.body?.expectedStaticEgressIp??'').trim();if(expected&&!(await import('node:net')).isIP(expected))throw new Error('PROXY_EXPECTED_EGRESS_IP_INVALID');item={id,name:req.body?.name??'SOCKS5H',type:'SOCKS5H',url:String(req.body?.url??before.connections.proxy.url),expectedStaticEgressIp:expected||undefined,enabled:req.body?.enabled!==false};nextSettings=canonicalProxy(before,item);}
     else if(kind==='exchange'){item={id,name:req.body?.name??'Binance USD-M',type:'BINANCE_USDM',environment:req.body?.environment??before.connections.exchange.environment,restBaseUrl:req.body?.restBaseUrl,wsBaseUrl:req.body?.wsBaseUrl,credentialRef:req.body?.credentialRef??before.connections.exchange.credentialRef,enabled:true};nextSettings=canonicalExchange(before,item);}
     else{item=aiResource({...req.body,id});nextSettings=structuredClone(before);nextSettings.aiResources=[...nextSettings.aiResources.filter(existing=>existing.id!==item.id),item];}
     const saved=await runtime.updateResourceSettings(nextSettings,expected,{kind,operation:'SAVE',id,value:item});hotApply(runtime,before,saved);

@@ -8,6 +8,7 @@ param(
   [ValidateRange(1,100)][decimal]$CanaryMarginUsd=5,
   [ValidateRange(5,240)][int]$EntryWaitMinutes=120,
   [ValidateRange(5,240)][int]$LifecycleWaitMinutes=120,
+  [switch]$AuthorizeStage6ProxyEnable,
   [switch]$AuthorizeTestnetWrite,
   [switch]$AuthorizeAutoTrading
 )
@@ -102,8 +103,7 @@ if($Phase -eq 'Stage6'){
   AssertEngineOff
   Push-Location $root
   try{
-    & node '.\\scripts\\v394-stage6-set-readonly.mjs' --port $Port
-    if($LASTEXITCODE -ne 0){throw "STAGE6_READONLY_DOWNGRADE_FAILED:$LASTEXITCODE"}
+    $normalizeArgs=@('.\\scripts\\v394-stage6-set-readonly.mjs','--port',[string]$Port)\n    if($AuthorizeStage6ProxyEnable){$normalizeArgs+='--authorize-enable-proxy'}\n    & node @normalizeArgs\n    if($LASTEXITCODE -ne 0){throw "STAGE6_READONLY_DOWNGRADE_FAILED:$LASTEXITCODE"}
     & npm run v394:stage6:preflight
     if($LASTEXITCODE -ne 0){throw "STAGE6_PREFLIGHT_FAILED:$LASTEXITCODE"}
   }finally{Pop-Location}

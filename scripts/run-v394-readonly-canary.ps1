@@ -48,10 +48,10 @@ while((Get-Date) -lt $deadline){
     verifiedEgressIp=$route.egress.lastVerifiedEgressIp
     observationTrust=$budget.observationTrust
     budgetStatus=$budget.status
-    http429=if($null -ne $budget.http429){[int]$budget.http429}else{0}
-    http418=if($null -ne $budget.http418){[int]$budget.http418}else{0}
-    backgroundTimeout=if($null -ne $budget.laneStats.BACKGROUND.timeout){[int]$budget.laneStats.BACKGROUND.timeout}else{0}
-    privateTruthTimeout=if($null -ne $budget.laneStats.PRIVATE_TRUTH.timeout){[int]$budget.laneStats.PRIVATE_TRUTH.timeout}else{0}
+    http429=[int]$budget.http429
+    http418=[int]$budget.http418
+    backgroundTimeout=[int]$budget.laneStats.BACKGROUND.timeout
+    privateTruthTimeout=[int]$budget.laneStats.PRIVATE_TRUTH.timeout
     rateLimits=@($budget.rateLimits)
   }
   $list.Add([pscustomobject]$sample)

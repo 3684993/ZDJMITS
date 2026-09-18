@@ -28,3 +28,9 @@ it('allows Demo REST writes but rejects the deprecated Testnet REST hostname',()
 it('fails closed for an unregistered Binance endpoint weight',()=>{
  expect(()=>binanceRequestWeight(new URL('https://demo-fapi.binance.com/fapi/v1/unknown?signature=x'),'GET')).toThrow('BINANCE_ENDPOINT_WEIGHT_UNREGISTERED');
 });
+
+it('tracks configured static egress expectation separately from Binance rate-limit truth',()=>{
+ const cfg={...settings(),proxy:{...settings().proxy,expectedStaticEgressIp:'203.0.113.10'}},transport=new BinanceTransport(cfg as never);
+ expect(transport.restRoute()).toMatchObject({expectedStaticEgressIp:'203.0.113.10'});
+ expect(transport.egressStatus()).toMatchObject({expectedEgressIp:'203.0.113.10',lastVerifiedEgressIp:null,status:'UNVERIFIED'});
+});

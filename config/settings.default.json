@@ -16,7 +16,11 @@
       "provider": "BINANCE_USDM",
       "environment": "TESTNET",
       "productionBaseUrl": "https://fapi.binance.com",
-      "testnetBaseUrl": "https://testnet.binancefuture.com",
+      "testnetBaseUrl": "https://demo-fapi.binance.com",
+      "productionRestBaseUrl": "https://fapi.binance.com",
+      "testnetRestBaseUrl": "https://demo-fapi.binance.com",
+      "productionWsBaseUrl": "wss://fstream.binance.com/ws",
+      "testnetWsBaseUrl": "wss://stream.binancefuture.com/ws",
       "credentialRef": "binance-primary",
       "recvWindowMs": 5000,
       "autoTimeSync": true

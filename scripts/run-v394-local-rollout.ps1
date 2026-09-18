@@ -102,6 +102,8 @@ if($Phase -eq 'Stage6'){
   AssertEngineOff
   Push-Location $root
   try{
+    & node '.\\scripts\\v394-stage6-set-readonly.mjs' --port $Port
+    if($LASTEXITCODE -ne 0){throw "STAGE6_READONLY_DOWNGRADE_FAILED:$LASTEXITCODE"}
     & npm run v394:stage6:preflight
     if($LASTEXITCODE -ne 0){throw "STAGE6_PREFLIGHT_FAILED:$LASTEXITCODE"}
   }finally{Pop-Location}

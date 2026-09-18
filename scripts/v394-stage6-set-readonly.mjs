@@ -1,5 +1,5 @@
 import { DatabaseSync, backup as sqliteBackup } from 'node:sqlite';
-import { createConnection, createServer } from 'node:net';
+import { createConnection, createServer, isIP } from 'node:net';
 import { mkdir, mkdtemp, rm } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
@@ -11,7 +11,7 @@ function listeningAt(host,port){return new Promise(resolve=>{const s=createConne
 function one(db,sql){return db.prepare(sql).get();}
 function restHost(settings){const x=settings?.connections?.exchange??{},rest=String(x.testnetRestBaseUrl??x.testnetBaseUrl??'');return rest?new URL(rest).hostname:'';}
 
-async function forceReadOnly({dataDir,backupDir,port=8080,skipEngineCheck=false,authorizeEnableProxy=false}){
+async function forceReadOnly({dataDir,backupDir,port=8080,skipEngineCheck=false,authorizeEnableProxy=false,expectedStaticEgressIp=null}){
   if(!skipEngineCheck&&await listening(port))throw new Error('ENGINE_MUST_BE_OFF: port '+port+' is listening');
   const dbPath=path.join(dataDir,'zdj-settings.sqlite');
   await mkdir(backupDir,{recursive:true});
@@ -36,7 +36,7 @@ async function forceReadOnly({dataDir,backupDir,port=8080,skipEngineCheck=false,
     let proxyScheme='';try{proxyScheme=new URL(proxyUrl).protocol.toLowerCase();}catch{}
     const needsProxyProtocol=!proxy.protocol&&proxyScheme==='socks5h:';
     if(!proxy.protocol&&proxyScheme!=='socks5h:')throw new Error('LEGACY_PROXY_PROTOCOL_AMBIGUOUS:'+String(proxyUrl||'MISSING_URL'));
-    const needsProxyEnable=proxy.enabled!==true;
+    const suppliedExpectedIp=String(expectedStaticEgressIp??'').trim();\n    if(suppliedExpectedIp&&!isIP(suppliedExpectedIp))throw new Error('STAGE6_EXPECTED_STATIC_EGRESS_IP_INVALID:'+suppliedExpectedIp);\n    const needsExpectedIpUpdate=Boolean(suppliedExpectedIp)&&String(proxy.expectedStaticEgressIp??'').trim()!==suppliedExpectedIp;\n    const needsProxyEnable=proxy.enabled!==true;
     if(needsProxyEnable&&!authorizeEnableProxy)throw new Error('STAGE6_PROXY_DISABLED_REQUIRES_EXPLICIT_AUTHORIZATION');
     if(needsProxyEnable){
       const parsedProxy=new URL(proxyUrl),proxyHost=parsedProxy.hostname.replace(/^\\[|\\]$/g,''),proxyPort=Number(parsedProxy.port||0);
@@ -45,23 +45,22 @@ async function forceReadOnly({dataDir,backupDir,port=8080,skipEngineCheck=false,
     }
     const needsRestMigration=beforeRestHost==='testnet.binancefuture.com';
     const needsModeDowngrade=before.connections.executionMode==='TESTNET_ENABLED';
-    if(!needsRestMigration&&!needsModeDowngrade&&!needsProxyProtocol&&!needsProxyEnable)return{changed:false,oldVersion,newVersion:oldVersion,executionMode:'READ_ONLY',restHost:beforeRestHost,proxyEnabled:true,proxyProtocol:proxy.protocol??null,backupPath};
+    if(!needsRestMigration&&!needsModeDowngrade&&!needsProxyProtocol&&!needsProxyEnable&&!needsExpectedIpUpdate)return{changed:false,oldVersion,newVersion:oldVersion,executionMode:'READ_ONLY',restHost:beforeRestHost,proxyEnabled:true,proxyProtocol:proxy.protocol??null,backupPath};
     const now=Date.now(),newVersion=oldVersion+1,after=structuredClone(before);
     after.settingsVersion=newVersion;
     if(needsRestMigration){after.connections.exchange.testnetBaseUrl='https://demo-fapi.binance.com';after.connections.exchange.testnetRestBaseUrl='https://demo-fapi.binance.com';after.connections.exchange.testnetWsBaseUrl=after.connections.exchange.testnetWsBaseUrl??'wss://stream.binancefuture.com/ws';}
     if(needsProxyProtocol)after.connections.proxy.protocol='SOCKS5H';
-    if(needsProxyEnable)after.connections.proxy.enabled=true;
-    after.connections.executionMode='READ_ONLY';
+    if(needsProxyEnable)after.connections.proxy.enabled=true;\n    if(needsExpectedIpUpdate)after.connections.proxy.expectedStaticEgressIp=suppliedExpectedIp;\n    after.connections.executionMode='READ_ONLY';
     db.exec('BEGIN IMMEDIATE');
     try{
       db.prepare('UPDATE settings SET version=?,payload=?,updated_at=? WHERE id=1').run(newVersion,JSON.stringify(after),now);
-      db.prepare('INSERT INTO settings_audit(changed_at,source,old_version,new_version,summary) VALUES(?,?,?,?,?)').run(now,'v394-stage6-offline-migration',oldVersion,newVersion,JSON.stringify({message:'Stage6 offline safety normalization',executionMode:{before:before.connections.executionMode,after:'READ_ONLY'},testnetRestHost:{before:beforeRestHost,after:'demo-fapi.binance.com'},proxyProtocol:{before:proxy.protocol??null,after:after.connections.proxy?.protocol??null},proxyEnabled:{before:proxy.enabled===true,after:after.connections.proxy?.enabled===true}}));
+      db.prepare('INSERT INTO settings_audit(changed_at,source,old_version,new_version,summary) VALUES(?,?,?,?,?)').run(now,'v394-stage6-offline-migration',oldVersion,newVersion,JSON.stringify({message:'Stage6 offline safety normalization',executionMode:{before:before.connections.executionMode,after:'READ_ONLY'},testnetRestHost:{before:beforeRestHost,after:'demo-fapi.binance.com'},proxyProtocol:{before:proxy.protocol??null,after:after.connections.proxy?.protocol??null},proxyEnabled:{before:proxy.enabled===true,after:after.connections.proxy?.enabled===true},expectedStaticEgressIp:{before:proxy.expectedStaticEgressIp??null,after:after.connections.proxy?.expectedStaticEgressIp??null}}));
       db.prepare("INSERT INTO connection_profiles(id,profile,updated_at) VALUES(?,?,?) ON CONFLICT(id) DO UPDATE SET profile=excluded.profile,updated_at=excluded.updated_at").run('active',JSON.stringify({connections:after.connections,aiResources:after.aiResources}),now);
       db.exec('COMMIT');
     }catch(error){db.exec('ROLLBACK');throw error;}
     const readback=one(db,'SELECT version,payload FROM settings WHERE id=1'),saved=JSON.parse(String(readback.payload));
-    if(Number(readback.version)!==newVersion||saved.settingsVersion!==newVersion||saved.connections.executionMode!=='READ_ONLY'||restHost(saved)!=='demo-fapi.binance.com'||saved.connections.proxy?.protocol!=='SOCKS5H'||saved.connections.proxy?.enabled!==true)throw new Error('STAGE6_OFFLINE_NORMALIZATION_READBACK_FAILED');
-    return{changed:true,oldVersion,newVersion,executionMode:saved.connections.executionMode,restHost:restHost(saved),migratedLegacyRest:needsRestMigration,normalizedProxyProtocol:needsProxyProtocol,enabledProxy:needsProxyEnable,proxyEnabled:saved.connections.proxy?.enabled===true,proxyProtocol:saved.connections.proxy?.protocol??null,backupPath};
+    if(Number(readback.version)!==newVersion||saved.settingsVersion!==newVersion||saved.connections.executionMode!=='READ_ONLY'||restHost(saved)!=='demo-fapi.binance.com'||saved.connections.proxy?.protocol!=='SOCKS5H'||saved.connections.proxy?.enabled!==true||(suppliedExpectedIp&&saved.connections.proxy?.expectedStaticEgressIp!==suppliedExpectedIp))throw new Error('STAGE6_OFFLINE_NORMALIZATION_READBACK_FAILED');
+    return{changed:true,oldVersion,newVersion,executionMode:saved.connections.executionMode,restHost:restHost(saved),migratedLegacyRest:needsRestMigration,normalizedProxyProtocol:needsProxyProtocol,enabledProxy:needsProxyEnable,updatedExpectedStaticEgressIp:needsExpectedIpUpdate,proxyEnabled:saved.connections.proxy?.enabled===true,proxyProtocol:saved.connections.proxy?.protocol??null,expectedStaticEgressIp:saved.connections.proxy?.expectedStaticEgressIp??null,backupPath};
   }finally{db.close();}
 }
 async function selfTest(){
@@ -74,11 +73,11 @@ async function selfTest(){
     db.prepare('INSERT INTO settings VALUES(1,?,?,?)').run(41,JSON.stringify(settings),Date.now());
   }finally{db.close();}
   try{
-    let refused=false;try{await forceReadOnly({dataDir,backupDir,skipEngineCheck:true});}catch(error){refused=String(error).includes('STAGE6_PROXY_DISABLED_REQUIRES_EXPLICIT_AUTHORIZATION');}\n    if(!refused)throw new Error('SELF_TEST_PROXY_ENABLE_AUTHORIZATION_NOT_ENFORCED');\n    const listener=await new Promise((resolve,reject)=>{const server=createServer();server.once('error',reject);server.listen(0,'127.0.0.1',()=>resolve(server));});\n    const address=listener.address(),proxyPort=typeof address==='object'&&address?address.port:0;\n    const dbPatch=new DatabaseSync(path.join(dataDir,'zdj-settings.sqlite'));try{const row=one(dbPatch,'SELECT payload FROM settings WHERE id=1'),value=JSON.parse(String(row.payload));value.connections.proxy.url='socks5h://127.0.0.1:'+proxyPort;dbPatch.prepare('UPDATE settings SET payload=? WHERE id=1').run(JSON.stringify(value));}finally{dbPatch.close();}\n    let result;try{result=await forceReadOnly({dataDir,backupDir,skipEngineCheck:true,authorizeEnableProxy:true});}finally{listener.close();}
+    let refused=false;try{await forceReadOnly({dataDir,backupDir,skipEngineCheck:true});}catch(error){refused=String(error).includes('STAGE6_PROXY_DISABLED_REQUIRES_EXPLICIT_AUTHORIZATION');}\n    if(!refused)throw new Error('SELF_TEST_PROXY_ENABLE_AUTHORIZATION_NOT_ENFORCED');\n    const listener=await new Promise((resolve,reject)=>{const server=createServer();server.once('error',reject);server.listen(0,'127.0.0.1',()=>resolve(server));});\n    const address=listener.address(),proxyPort=typeof address==='object'&&address?address.port:0;\n    const dbPatch=new DatabaseSync(path.join(dataDir,'zdj-settings.sqlite'));try{const row=one(dbPatch,'SELECT payload FROM settings WHERE id=1'),value=JSON.parse(String(row.payload));value.connections.proxy.url='socks5h://127.0.0.1:'+proxyPort;dbPatch.prepare('UPDATE settings SET payload=? WHERE id=1').run(JSON.stringify(value));}finally{dbPatch.close();}\n    let result;try{result=await forceReadOnly({dataDir,backupDir,skipEngineCheck:true,authorizeEnableProxy:true,expectedStaticEgressIp:'203.0.113.10'});}finally{listener.close();}
     const verify=new DatabaseSync(path.join(dataDir,'zdj-settings.sqlite'),{readOnly:true});
     try{
       const row=one(verify,'SELECT version,payload FROM settings WHERE id=1'),saved=JSON.parse(String(row.payload)),audit=one(verify,"SELECT source FROM settings_audit ORDER BY id DESC LIMIT 1");
-      if(result.changed!==true||Number(row.version)!==42||saved.settingsVersion!==42||saved.connections.executionMode!=='READ_ONLY'||saved.sentinel!=='PRESERVE_ME'||audit?.source!=='v394-stage6-offline-migration'||restHost(saved)!=='demo-fapi.binance.com'||saved.connections.proxy.protocol!=='SOCKS5H')throw new Error('SELF_TEST_READBACK_FAILED');
+      if(result.changed!==true||Number(row.version)!==42||saved.settingsVersion!==42||saved.connections.executionMode!=='READ_ONLY'||saved.sentinel!=='PRESERVE_ME'||audit?.source!=='v394-stage6-offline-migration'||restHost(saved)!=='demo-fapi.binance.com'||saved.connections.proxy.protocol!=='SOCKS5H'||saved.connections.proxy.expectedStaticEgressIp!=='203.0.113.10')throw new Error('SELF_TEST_READBACK_FAILED');
     }finally{verify.close();}
     const backup=new DatabaseSync(result.backupPath,{readOnly:true});
     try{const original=JSON.parse(String(one(backup,'SELECT payload FROM settings WHERE id=1').payload));if(original.connections.executionMode!=='TESTNET_ENABLED'||restHost(original)!=='testnet.binancefuture.com')throw new Error('SELF_TEST_BACKUP_NOT_ORIGINAL');}

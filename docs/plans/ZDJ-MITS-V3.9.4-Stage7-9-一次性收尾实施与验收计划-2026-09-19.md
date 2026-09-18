@@ -346,4 +346,3 @@ V3.9.4 最终验收完成后再处理，当前不得借机重构：
 - 文档统一：把工程扫描中的 AI 权限、AI disposition、Scout/Primary、TP fallback 等历史描述修正到当前代码事实。
 
 这些事项除非在 Stage7-9 产生直接生产影响证据，否则不得回灌为 V3.9.4 scope。
-

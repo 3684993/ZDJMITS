@@ -146,6 +146,7 @@ if($Phase -eq 'Stage7'){
   $saved=ApiPut '/api/v3/settings' $candidate
   SaveJson (Join-Path $outDir 'settings-canary.json') $saved
   if($saved.connections.executionMode -ne 'TESTNET_ENABLED'){throw 'STAGE7_WRITE_MODE_DID_NOT_PERSIST'}
+  Start-Sleep -Seconds 2
 
   StopEngine
   StartEngine
@@ -241,7 +242,7 @@ if($Phase -eq 'Stage8'){
   AssertGovernance|Out-Null
   ResumeEntries
   $control=ApiGet '/api/v3/runtime/trading-control'
-  if($control.mode -ne 'RUNNING' -and $control.executionGovernance.mode -ne 'AUTO_RUNNING'){
+  if($control.mode -ne 'RUNNING' -or $control.executionGovernance.mode -ne 'AUTO_RUNNING'){
     throw "AUTO_TRADING_NOT_RUNNING: runtime=$($control.mode) governance=$($control.executionGovernance.mode)"
   }
   $stamp=Get-Date -Format 'yyyyMMdd-HHmmss'

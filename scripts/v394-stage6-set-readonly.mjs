@@ -1,5 +1,5 @@
 import { DatabaseSync, backup as sqliteBackup } from 'node:sqlite';
-import { createConnection } from 'node:net';
+import { createConnection, createServer } from 'node:net';
 import { mkdir, mkdtemp, rm } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
@@ -74,7 +74,7 @@ async function selfTest(){
     db.prepare('INSERT INTO settings VALUES(1,?,?,?)').run(41,JSON.stringify(settings),Date.now());
   }finally{db.close();}
   try{
-    let refused=false;try{await forceReadOnly({dataDir,backupDir,skipEngineCheck:true});}catch(error){refused=String(error).includes('STAGE6_PROXY_DISABLED_REQUIRES_EXPLICIT_AUTHORIZATION');}\n    if(!refused)throw new Error('SELF_TEST_PROXY_ENABLE_AUTHORIZATION_NOT_ENFORCED');\n    const listener=await new Promise((resolve,reject)=>{const server=(await import('node:net')).createServer();server.once('error',reject);server.listen(0,'127.0.0.1',()=>resolve(server));});\n    const address=listener.address(),proxyPort=typeof address==='object'&&address?address.port:0;\n    const dbPatch=new DatabaseSync(path.join(dataDir,'zdj-settings.sqlite'));try{const row=one(dbPatch,'SELECT payload FROM settings WHERE id=1'),value=JSON.parse(String(row.payload));value.connections.proxy.url='socks5h://127.0.0.1:'+proxyPort;dbPatch.prepare('UPDATE settings SET payload=? WHERE id=1').run(JSON.stringify(value));}finally{dbPatch.close();}\n    let result;try{result=await forceReadOnly({dataDir,backupDir,skipEngineCheck:true,authorizeEnableProxy:true});}finally{listener.close();}
+    let refused=false;try{await forceReadOnly({dataDir,backupDir,skipEngineCheck:true});}catch(error){refused=String(error).includes('STAGE6_PROXY_DISABLED_REQUIRES_EXPLICIT_AUTHORIZATION');}\n    if(!refused)throw new Error('SELF_TEST_PROXY_ENABLE_AUTHORIZATION_NOT_ENFORCED');\n    const listener=await new Promise((resolve,reject)=>{const server=createServer();server.once('error',reject);server.listen(0,'127.0.0.1',()=>resolve(server));});\n    const address=listener.address(),proxyPort=typeof address==='object'&&address?address.port:0;\n    const dbPatch=new DatabaseSync(path.join(dataDir,'zdj-settings.sqlite'));try{const row=one(dbPatch,'SELECT payload FROM settings WHERE id=1'),value=JSON.parse(String(row.payload));value.connections.proxy.url='socks5h://127.0.0.1:'+proxyPort;dbPatch.prepare('UPDATE settings SET payload=? WHERE id=1').run(JSON.stringify(value));}finally{dbPatch.close();}\n    let result;try{result=await forceReadOnly({dataDir,backupDir,skipEngineCheck:true,authorizeEnableProxy:true});}finally{listener.close();}
     const verify=new DatabaseSync(path.join(dataDir,'zdj-settings.sqlite'),{readOnly:true});
     try{
       const row=one(verify,'SELECT version,payload FROM settings WHERE id=1'),saved=JSON.parse(String(row.payload)),audit=one(verify,"SELECT source FROM settings_audit ORDER BY id DESC LIMIT 1");

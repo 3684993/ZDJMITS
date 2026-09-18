@@ -103,7 +103,10 @@ if($Phase -eq 'Stage6'){
   AssertEngineOff
   Push-Location $root
   try{
-    $normalizeArgs=@('.\\scripts\\v394-stage6-set-readonly.mjs','--port',[string]$Port)\n    if($AuthorizeStage6ProxyEnable){$normalizeArgs+='--authorize-enable-proxy'}\n    & node @normalizeArgs\n    if($LASTEXITCODE -ne 0){throw "STAGE6_READONLY_DOWNGRADE_FAILED:$LASTEXITCODE"}
+    $normalizeArgs=@('.\\scripts\\v394-stage6-set-readonly.mjs','--port',[string]$Port)
+    if($AuthorizeStage6ProxyEnable){$normalizeArgs+='--authorize-enable-proxy'}
+    & node @normalizeArgs
+    if($LASTEXITCODE -ne 0){throw "STAGE6_READONLY_DOWNGRADE_FAILED:$LASTEXITCODE"}
     & npm run v394:stage6:preflight
     if($LASTEXITCODE -ne 0){throw "STAGE6_PREFLIGHT_FAILED:$LASTEXITCODE"}
   }finally{Pop-Location}

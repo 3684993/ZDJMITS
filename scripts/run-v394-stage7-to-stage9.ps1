@@ -190,26 +190,42 @@ function Invoke-CleanupPhase([object]$ckpt){
   Write-Host 'EXPOSURE_CLEANUP_PASS=TRUE'
 }
 
+function Ensure-ReadOnlyArmingState{
+  # A previous interrupted attempt can leave the engine in TESTNET_ENABLED, which Stage7's own arming
+  # gate refuses. Restore the state its gate expects instead of bypassing the gate.
+  $s=ApiGet '/api/v3/settings'
+  if($s.connections.executionMode -eq 'READ_ONLY'){return}
+  $candidate=$s|ConvertTo-Json -Depth 50|ConvertFrom-Json
+  $candidate.connections.executionMode='READ_ONLY'
+  ApiPut '/api/v3/settings' $candidate|Out-Null
+  ApiPost '/api/v3/runtime/trading-control/pause' @{reason='V3.9.4 restoring READ_ONLY arming state for Stage7'}|Out-Null
+  $check=ApiGet '/api/v3/settings'
+  if($check.connections.executionMode -ne 'READ_ONLY'){throw 'ARMING_STATE_RESTORE_FAILED'}
+}
 function Invoke-StagePhase([string]$Name,[object]$ckpt){
   if(Test-PhasePassed $ckpt $Name){Write-Host "$($Name.ToUpper())_ALREADY_PASS_SKIPPING";return}
   $auth=if($Name -eq 'Stage7'){$AuthorizeStage7Write}else{$AuthorizeStage8AutoTrading}
   $flag=if($Name -eq 'Stage7'){'AuthorizeTestnetWrite'}else{'AuthorizeStage8AutoTrading'}
   if(-not $auth){throw "$($Name.ToUpper())_REQUIRES_-$flag"}
   New-Item -ItemType Directory -Force -Path $evidenceDir|Out-Null
+  if($Name -eq 'Stage7'){Ensure-ReadOnlyArmingState}
   $log=Join-Path $evidenceDir "$Name.log"
+  $errLog=Join-Path $evidenceDir "$Name.err.log"
   Set-Phase $ckpt $Name @{status='RUNNING';at=(Get-Date).ToString('o');evidenceDir=$evidenceDir}|Out-Null
-  # The authorization flag must reach the child process; computing it only for the error message
-  # makes every stage abort on its own safety gate.
-  $childArgs=@('-Phase',$Name,'-Port',[string]$Port,'-CanaryMarginUsd',[string]$CanaryMarginUsd,"-$flag")
-  & powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot 'run-v394-local-rollout.ps1') @childArgs 2>&1|Tee-Object -FilePath $log|Write-Host
-  $code=$LASTEXITCODE
+  $childArgs=@('-NoProfile','-ExecutionPolicy','Bypass','-File',(Join-Path $PSScriptRoot 'run-v394-local-rollout.ps1'),'-Phase',$Name,'-Port',[string]$Port,'-CanaryMarginUsd',[string]$CanaryMarginUsd,"-$flag")
+  # The stage script starts a long-lived Engine. Piping its stdout through this process would hand the
+  # pipe write handle to that Engine, so the parent would never see EOF; Start-Process -Wait with its
+  # own redirect files avoids the deadlock and keeps the child out of this process' job.
+  $proc=Start-Process -FilePath 'powershell' -ArgumentList $childArgs -PassThru -Wait -WindowStyle Hidden `
+    -RedirectStandardOutput $log -RedirectStandardError $errLog
+  $code=$proc.ExitCode
   if($code -eq 3){
     # The rollout exits 3 when no natural AI entry appeared in its window. That is an observation to
     # investigate (pool, eligibility, AI invocation, gates, cooldown), not a PASS and not a defect.
-    Set-Phase $ckpt $Name @{status='PENDING_NO_NATURAL_ENTRY';pendingAt=(Get-Date).ToString('o');log=$log}|Out-Null
+    Set-Phase $ckpt $Name @{status='PENDING_NO_NATURAL_ENTRY';pendingAt=(Get-Date).ToString('o');log=$log;exitCode=3}|Out-Null
     throw "$($Name.ToUpper())_PENDING_NO_NATURAL_ENTRY evidence=$evidenceDir"
   }
-  if($code -ne 0){throw "$($Name.ToUpper())_FAILED_EXIT_$code evidence=$evidenceDir"}
+  if($code -ne 0){throw "$($Name.ToUpper())_FAILED_EXIT_$code evidence=$evidenceDir stdout=$log stderr=$errLog"}
   Set-Phase $ckpt $Name @{status='PASS';passedAt=(Get-Date).ToString('o');log=$log}|Out-Null
 }
 

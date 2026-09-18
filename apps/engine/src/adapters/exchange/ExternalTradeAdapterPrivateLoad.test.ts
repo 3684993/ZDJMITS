@@ -65,3 +65,12 @@ it('paginates 1000-row audit pages instead of silently truncating the evidence w
   expect(calls.filter(url=>url.startsWith('/fapi/v1/allOrders'))).toHaveLength(2);
   expect(calls.filter(url=>url.startsWith('/fapi/v1/income'))).toHaveLength(2);
 });
+
+
+it.each([20,100])('keeps trade-audit endpoint calls linear for %i unique symbols',async(count)=>{
+  const h=adapterHarness(),symbols=Array.from({length:count},(_,i)=>`T${String(i).padStart(3,'0')}USDT`);
+  await h.adapter.fetchRecentTradeAudit(1,2,500,[...symbols,symbols[0]!,symbols.at(-1)!]);
+  expect(h.calls.filter(url=>url.startsWith('/fapi/v1/income'))).toHaveLength(1);
+  expect(h.calls.filter(url=>url.startsWith('/fapi/v1/userTrades'))).toHaveLength(count);
+  expect(h.calls.filter(url=>url.startsWith('/fapi/v1/allOrders'))).toHaveLength(count);
+});

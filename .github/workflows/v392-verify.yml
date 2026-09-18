@@ -53,6 +53,11 @@ jobs:
             git push origin HEAD:${{ github.ref_name }}
             if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           }
+      - name: Diff check from V3.9.3 frozen baseline
+        shell: pwsh
+        run: |
+          git diff --check 08487ca9f0e9e389cc9de783c2b914630b6e54b9..HEAD
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Build workspace type prerequisites
         shell: pwsh
         run: |

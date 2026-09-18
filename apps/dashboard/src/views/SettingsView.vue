@@ -98,16 +98,17 @@ async function saveResource(kind: string, item: any) {
     const expected=resourceSettingsVersion.value ?? draft.value?.settingsVersion;
     if(!expected)throw new Error("资源版本尚未加载，请刷新设置");
     const saved=await api.saveResource(kind,item,expected);
-    resourceSettingsVersion.value=Number(saved.settingsVersion);
-    if(kind==="ai")resources.value.ai=[...resources.value.ai.filter((x:any)=>x.id!==item.id&&x.id!==saved.id),saved];
-    else resources.value[kind]=[saved];
+    const readback=await api.resources(kind),confirmed=(readback.items??[]).find((x:any)=>x.id===saved.id);
+    if(!confirmed)throw new Error("RESOURCE_SERVER_READBACK_MISSING");
+    resourceSettingsVersion.value=Number(readback.settingsVersion??saved.settingsVersion);
+    resources.value[kind]=readback.items??[];
     if(draft.value){
-      draft.value.settingsVersion=Number(saved.settingsVersion);
+      draft.value.settingsVersion=Number(resourceSettingsVersion.value);
       if(kind==="ai")draft.value.aiResources=resources.value.ai.map((x:any)=>({id:x.id,role:x.role,enabled:x.enabled!==false,baseUrl:x.baseUrl,model:x.model,maxConcurrency:Number(x.maxConcurrency??1),gpu:x.gpu??"未指定"}));
-      if(kind==="proxy")draft.value.connections.proxy={...draft.value.connections.proxy,url:saved.url,enabled:saved.enabled!==false,protocol:"SOCKS5H",forceBinanceRest:true,forceBinanceWs:true,proxyDns:true,binanceRestRoute:"CONFIGURED",bypassLocalhost:true,failClosed:true};
-      if(kind==="exchange"){const x:any=draft.value.connections.exchange;if(saved.environment==="TESTNET"){x.environment="TESTNET";x.testnetBaseUrl=saved.restBaseUrl;x.testnetRestBaseUrl=saved.restBaseUrl;x.testnetWsBaseUrl=saved.wsBaseUrl;}else{x.environment="PRODUCTION";x.productionBaseUrl=saved.restBaseUrl;x.productionRestBaseUrl=saved.restBaseUrl;x.productionWsBaseUrl=saved.wsBaseUrl;}x.credentialRef=saved.credentialRef??x.credentialRef;}
+      if(kind==="proxy")draft.value.connections.proxy={...draft.value.connections.proxy,url:confirmed.url,enabled:confirmed.enabled!==false,protocol:"SOCKS5H",forceBinanceRest:true,forceBinanceWs:true,proxyDns:true,binanceRestRoute:"CONFIGURED",bypassLocalhost:true,failClosed:true};
+      if(kind==="exchange"){const x:any=draft.value.connections.exchange;if(confirmed.environment==="TESTNET"){x.environment="TESTNET";x.testnetBaseUrl=confirmed.restBaseUrl;x.testnetRestBaseUrl=confirmed.restBaseUrl;x.testnetWsBaseUrl=confirmed.wsBaseUrl;}else{x.environment="PRODUCTION";x.productionBaseUrl=confirmed.restBaseUrl;x.productionRestBaseUrl=confirmed.restBaseUrl;x.productionWsBaseUrl=confirmed.wsBaseUrl;}x.credentialRef=confirmed.credentialRef??x.credentialRef;}
     }
-    resourceBaseline.value[kind]=Object.fromEntries(resources.value[kind].map((x:any)=>[x.id,JSON.stringify(x)]));selectedResourceId.value[kind]=saved.id;
+    resourceBaseline.value[kind]=Object.fromEntries(resources.value[kind].map((x:any)=>[x.id,JSON.stringify(x)]));selectedResourceId.value[kind]=confirmed.id;
     notice.value = "资源已保存并已回读";
   } catch (e) {
     error.value = String(e);

@@ -73,6 +73,14 @@ function AssertCoreRuntime([object]$settings){
   if(-not $settings.connections.proxy.enabled){throw 'PROXY_REQUIRED'}
   if([string]::IsNullOrWhiteSpace([string]$settings.connections.proxy.expectedStaticEgressIp)){throw 'EXPECTED_STATIC_EGRESS_REQUIRED'}
 }
+function VerifyStage6ProxyEgress(){
+  $probe=ApiPost '/api/v3/settings/resources/proxy/binance-proxy/test'
+  if($probe.status -ne 'HEALTHY'){throw "STAGE6_PROXY_HEALTH_NOT_HEALTHY:$($probe.status):$($probe.egress.status):$($probe.egress.lastError)"}
+  if($probe.egress.status -ne 'VERIFIED'){throw "STAGE6_PROXY_EGRESS_NOT_VERIFIED:$($probe.egress.status):$($probe.egress.lastError)"}
+  if($probe.egress.expectedEgressIp -ne $probe.egress.lastVerifiedEgressIp){throw "STAGE6_PROXY_EGRESS_IP_MISMATCH:expected=$($probe.egress.expectedEgressIp):observed=$($probe.egress.lastVerifiedEgressIp)"}
+  Write-Output "STAGE6_PROXY_EGRESS_VERIFIED=$($probe.egress.lastVerifiedEgressIp)"
+  return $probe
+}
 function AssertGovernance(){
   $gov=ApiGet '/api/v3/diagnostics/binance-governance'
   $route=@($gov.routes|Where-Object {$_.environment -eq 'TESTNET'}|Select-Object -First 1)[0]
@@ -131,6 +139,7 @@ if($Phase -eq 'Stage6'){
   AssertCoreRuntime $settings
   if($settings.connections.executionMode -ne 'READ_ONLY'){throw "STAGE6_REQUIRES_READ_ONLY:$($settings.connections.executionMode)"}
   AssertPrivateReady
+  VerifyStage6ProxyEgress|Out-Null
   AssertGovernance|Out-Null
   & powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot 'run-v394-readonly-canary.ps1') -DurationMinutes $Stage6Minutes -IntervalSeconds 30 -Port $Port
   if($LASTEXITCODE -ne 0){throw "STAGE6_READONLY_CANARY_FAILED:$LASTEXITCODE"}

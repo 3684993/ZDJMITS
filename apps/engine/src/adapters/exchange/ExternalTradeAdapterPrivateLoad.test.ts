@@ -60,7 +60,7 @@ it('paginates 1000-row audit pages instead of silently truncating the evidence w
   })};
   const adapter=new ExternalTradeAdapter(transport,{apiKey:'key',apiSecret:'secret'});
   const audit=await adapter.fetchRecentTradeAudit(1,2000,2000,['BTCUSDT']);
-  expect(audit.fills).toHaveLength(1001);
+  expect(audit.fills).toHaveLength(1000);expect(audit.fills.at(-1)?.tradeId).toBe('1000');
   expect(calls.filter(url=>url.startsWith('/fapi/v1/userTrades'))).toHaveLength(2);
   expect(calls.filter(url=>url.startsWith('/fapi/v1/allOrders'))).toHaveLength(2);
   expect(calls.filter(url=>url.startsWith('/fapi/v1/income'))).toHaveLength(2);

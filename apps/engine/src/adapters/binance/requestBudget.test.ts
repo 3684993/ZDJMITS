@@ -69,3 +69,27 @@ it('enforces exchangeInfo REQUEST_WEIGHT intervals even before a response header
   await vi.advanceTimersByTimeAsync(5_100);await rejected;expect(blocked).not.toHaveBeenCalled();
  }finally{vi.useRealTimers();}
 });
+
+
+it('backs off on HTTP 429 with Retry-After and records the request-limit event',async()=>{
+ vi.useFakeTimers();vi.setSystemTime(1_800_000_000_000);
+ try{
+  const budget=new RequestBudget(2,1,100);
+  budget.observeResponse(429,{'x-mbx-used-weight-1m':'1200'},'2',{requestId:'rate-429',source:'MARKET_DATA',endpoint:'/fapi/v1/klines'});
+  expect(budget.health()).toMatchObject({status:'RATE_LIMITED',http429:1});
+  expect(budget.health().blockedUntil).toBeGreaterThanOrEqual(1_800_000_003_000);
+  await expect(budget.run(1,1,async()=>{}, {source:'PRIVATE_STATE',endpoint:'/fapi/v2/account'})).rejects.toThrow('BINANCE_RATE_LIMIT_UNTIL');
+ }finally{vi.useRealTimers();}
+});
+
+it('defers BACKGROUND before PRIVATE_TRUTH under exchange pressure',async()=>{
+ vi.useFakeTimers();vi.setSystemTime(1_800_000_000_000);
+ try{
+  const budget=new RequestBudget(3,2,100);budget.configureRequestWeightLimit(6000);
+  budget.observe(200,'3100',undefined,{source:'PRIVATE_STATE',endpoint:'/fapi/v2/account'});
+  const background=vi.fn(async()=>{}),pending=budget.run(4,5,background,{source:'BACKGROUND_AUDIT',endpoint:'/fapi/v1/userTrades'}),rejected=expect(pending).rejects.toThrow('BINANCE_REQUEST_QUEUE_TIMEOUT');
+  const privateTruth=vi.fn(async()=>{});await budget.run(1,5,privateTruth,{source:'RECONCILIATION',endpoint:'/fapi/v1/openOrders'});
+  expect(privateTruth).toHaveBeenCalledOnce();expect(background).not.toHaveBeenCalled();
+  await vi.advanceTimersByTimeAsync(5_100);await rejected;
+ }finally{vi.useRealTimers();}
+});

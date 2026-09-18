@@ -77,6 +77,19 @@ export function createRuntimeSettingsResourcesRouter(runtime:EngineRuntime){
     res.json({...resourceView(saved,kind).find(row=>row.id===id)??item,settingsVersion:saved.settingsVersion});
   }catch(error){if(conflict(res,error,runtime.state.settings.settingsVersion))return;next(error);}};
   router.post('/settings/resources/:kind',save);router.put('/settings/resources/:kind/:id',save);
+  router.post('/settings/resources/:kind/:id/test',async(req,res,next)=>{try{
+    const kind=kindOf(req),id=String(req.params.id);
+    if(kind==='ai'){
+      const resource=runtime.state.settings.aiResources.find(item=>item.id===id);if(!resource)return res.status(404).json({error:{message:'AI_RESOURCE_NOT_FOUND'}});
+      const startedAt=Date.now(),response=await fetch(`${resource.baseUrl.replace(/\/$/,'')}/models`,{signal:AbortSignal.timeout(10_000)});if(!response.ok)throw new Error(`AI_HTTP_${response.status}`);
+      const body=await response.json() as any,models=[...(body.data??[]).map((item:any)=>item.id),...(body.models??[]).map((item:any)=>item.model)].filter(Boolean);
+      return res.json({id,status:'HEALTHY',latencyMs:Date.now()-startedAt,modelConfigured:models.includes(resource.model),models});
+    }
+    const transport=new BinanceTransport(runtime.state.settings.connections),health=await transport.health();
+    if(kind==='proxy')return res.json({id,status:health.status,transport:health,egress:health.egress});
+    const ref=runtime.state.settings.connections.exchange.credentialRef,[key,secret]=await Promise.all([runtime.settingsStore.secretStatus(`${ref}:apiKey`),runtime.settingsStore.secretStatus(`${ref}:apiSecret`)]);
+    return res.json({id,status:health.status,transport:health,credentials:{configured:key.configured&&secret.configured,status:key.configured&&secret.configured?'READY':key.status},writeEnabled:runtime.state.settings.connections.executionMode==='TESTNET_ENABLED'&&runtime.state.settings.connections.exchange.environment==='TESTNET'&&key.configured&&secret.configured});
+  }catch(error){next(error);}});
   router.delete('/settings/resources/:kind/:id',async(req,res,next)=>{try{
     const kind=kindOf(req),expected=expectedVersion(req),before=runtime.state.settings,id=String(req.params.id);
     if(kind==='exchange')return res.status(409).json({error:{message:'ACTIVE_EXCHANGE_DELETE_REQUIRES_REPLACEMENT'},currentSettingsVersion:before.settingsVersion});

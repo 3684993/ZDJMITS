@@ -52,6 +52,6 @@ async function selfTest(){
 
 if(process.argv.includes('--self-test'))await selfTest();
 else{
-  const dataDir=path.resolve(arg('--data-dir',path.join(root,'data'))),stamp=new Date().toISOString().replace(/[:.]/g,'-'),outDir=path.resolve(arg('--out-dir',path.join(root,'data','reports',`v394-stage6-preflight-${stamp}`)),port=Number(arg('--port','8080'));
+  const dataDir=path.resolve(arg('--data-dir',path.join(root,'data'))),stamp=new Date().toISOString().replace(/[:.]/g,'-'),outDir=path.resolve(arg('--out-dir',path.join(root,'data','reports',`v394-stage6-preflight-${stamp}`))),port=Number(arg('--port','8080'));
   const manifest=await runPreflight({dataDir,outDir,port});console.log(`STAGE6_PREFLIGHT_PASS=${outDir}`);console.log(JSON.stringify(manifest,null,2));
 }

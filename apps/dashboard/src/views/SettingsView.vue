@@ -139,7 +139,7 @@ async function removeResource(kind: string, id: string) {
 function isResourceDirty(kind:string,item:any){return resourceBaseline.value[kind]?.[item.id]!==JSON.stringify(item);}
 function selectedResources(kind:string){const id=selectedResourceId.value[kind];return id?resources.value[kind].filter((x:any)=>x.id===id):resources.value[kind].slice(0,1);}
 async function cancelResourceEdits(kind:string){try{const selected=selectedResourceId.value[kind],loaded=await api.resources(kind);resources.value[kind]=loaded.items??[];resourceSettingsVersion.value=Number(loaded.settingsVersion);resourceBaseline.value[kind]=Object.fromEntries(resources.value[kind].map((x:any)=>[x.id,JSON.stringify(x)]));selectedResourceId.value[kind]=resources.value[kind].some((x:any)=>x.id===selected)?selected:(resources.value[kind][0]?.id??"");notice.value="未保存修改已取消";}catch(e){error.value=String(e);}}
-async function testResource(kind:"exchange"|"proxy"|"ai",item:any){try{if(isResourceDirty(kind,item))throw new Error("请先保存当前资源修改，再执行真实连接测试");const result=kind==="exchange"?await api.testExchange():kind==="proxy"?await api.testProxy():await api.testAi(item.id);notice.value=`连接测试：${result.status??result.state??"PASS"}`;}catch(e){error.value=String(e);}}
+async function testResource(kind:"exchange"|"proxy"|"ai",item:any){try{if(isResourceDirty(kind,item))throw new Error("请先保存当前资源修改，再执行真实连接测试");const result=await api.testResource(kind,item.id);notice.value=`连接测试：${result.status??result.state??"PASS"}`;}catch(e){error.value=String(e);}}
 async function saveCredentials() {
   try {
     const result = await saveExchangeCredentials(apiKey.value, apiSecret.value);

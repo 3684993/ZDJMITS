@@ -16,8 +16,8 @@ $stamp=Get-Date -Format 'yyyyMMdd-HHmmss'
 $evidenceDir=Join-Path $root (Join-Path $StateRoot "evidence-$stamp")
 
 function ApiGet([string]$path){Invoke-RestMethod -Uri ($base+$path) -TimeoutSec 20}
-function ApiPost([string]$path,[object]$body=$null){
-  $p=@{Uri=($base+$path);Method='POST';ContentType='application/json';TimeoutSec=120}
+function ApiPost([string]$path,[object]$body=$null,[int]$TimeoutSecValue=120){
+  $p=@{Uri=($base+$path);Method='POST';ContentType='application/json';TimeoutSec=$TimeoutSecValue}
   if($null -ne $body){$p.Body=($body|ConvertTo-Json -Depth 30 -Compress)}
   Invoke-RestMethod @p
 }
@@ -146,26 +146,35 @@ function Invoke-CleanupPhase([object]$ckpt){
   Save-Json (Join-Path $evidenceDir 'cleanup-preview.json') $preview
   Write-Host ("low-loss eligible=$(@($preview.eligible|ForEach-Object{$_.symbol})) excluded=$(@($preview.excluded|ForEach-Object{"$($_.symbol):$($_.reason)"}))")
   if((Get-ItemCount $preview.eligible) -gt 0){
-    Save-Json (Join-Path $evidenceDir 'cleanup-run.json') (ApiPost '/api/v3/testnet/cleanup/run' @{confirm=$true})
+    # The low-loss cleanup is a synchronous, multi-phase close that can outlast any HTTP timeout. A
+    # client-side abort does not stop the engine, so a timeout is recorded and then polled for; it is
+    # never read as "the close failed".
+    try{ Save-Json (Join-Path $evidenceDir 'cleanup-run.json') (ApiPost '/api/v3/testnet/cleanup/run' @{confirm=$true} 1800) }
+    catch{ Save-Json (Join-Path $evidenceDir 'cleanup-run-interrupted.json') @{message=$_.Exception.Message;note='engine keeps working; polling for flat instead of assuming failure'} }
   }
   # Anything still open sits outside the low-loss band and goes through the explicit human close chain,
   # which is reduce-only, re-reads exchange truth first, and replays on the same idempotency key.
   $closeKeys=Flatten $ckpt.phases.cleanup.closeKeys
-  for($pass=1;$pass -le 3;$pass++){
+  for($pass=1;$pass -le 4;$pass++){
     $positions=@(ApiGet '/api/v3/positions'|ForEach-Object {$_})
     if($positions.Count -eq 0){break}
     foreach($p in $positions){
       if(-not $closeKeys[$p.id]){$closeKeys[$p.id]="v394-cleanup-$($p.id)-$stamp"}
       Save-Json (Join-Path $evidenceDir "close-$($p.id)-pass$pass-request.json") @{id=$p.id;symbol=$p.symbol;side=$p.side;qty=$p.quantity;idempotencyKey=$closeKeys[$p.id]}
       try{
-        $res=ApiPost "/api/v3/positions/$($p.id)/manual" @{action='EMERGENCY_CLOSE';confirm=$true;idempotencyKey=$closeKeys[$p.id];reason='V3.9.4 Stage7 pre-requisite Testnet exposure cleanup'}
+        $res=ApiPost "/api/v3/positions/$($p.id)/manual" @{action='EMERGENCY_CLOSE';confirm=$true;idempotencyKey=$closeKeys[$p.id];reason='V3.9.4 Stage7 pre-requisite Testnet exposure cleanup'} 600
         Save-Json (Join-Path $evidenceDir "close-$($p.id)-pass$pass-result.json") $res
       }catch{
-        Save-Json (Join-Path $evidenceDir "close-$($p.id)-pass$pass-error.json") @{message=$_.Exception.Message}
+        Save-Json (Join-Path $evidenceDir "close-$($p.id)-pass$pass-error.json") @{message=$_.Exception.Message;note='close may still be completing inside the engine; next pass re-reads exchange truth'}
       }
     }
     Set-Phase $ckpt 'cleanup' @{closeKeys=$closeKeys;lastPass=$pass}|Out-Null
-    Start-Sleep -Seconds 25
+    # Poll rather than sleep: the durable position task, not this loop, owns the close.
+    $settle=Get-Date
+    while(((Get-Date)-$settle).TotalSeconds -lt 180){
+      if((Get-ItemCount (ApiGet '/api/v3/positions')) -eq 0){break}
+      Start-Sleep -Seconds 10
+    }
   }
   $final=Get-Sample
   Save-Json (Join-Path $evidenceDir 'after.json') @{sample=$final;positions=(Get-PositionRows)}

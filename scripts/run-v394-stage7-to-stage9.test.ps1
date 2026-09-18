@@ -18,6 +18,7 @@ foreach($required in @(
   'idempotencyKey',
   '/api/v3/testnet/cleanup/preview',
   '/api/v3/testnet/cleanup/run',
+  'cleanup-run-interrupted',
   'EXPOSURE_CLEANUP_PASS=TRUE',
   'ALREADY_PASS_SKIPPING',
   'ACCEPTANCE_WINDOW_SHORT',

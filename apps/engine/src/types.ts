@@ -34,6 +34,7 @@ export interface ExchangeTradeAdapter {
   /** A symbol-scoped query is weight 1; the unscoped exchange-wide safety scan is weight 40. */
   fetchOpenOrders(symbol?:string):Promise<Array<EntryOrder|TakeProfitOrder>>;
   fetchPositions():Promise<Position[]>;
+  invalidateOrderFact?(symbol:string,exchangeOrderId?:string|null,clientOrderId?:string|null):void;
   setLeverage(symbol:string,leverage:number):Promise<void>;
   placeManualOrder(request:{clientOrderId:string;internalOrderId?:string;symbol:string;side:'BUY'|'SELL';positionSide?:'LONG'|'SHORT';type:'LIMIT'|'MARKET';quantity:number;price?:number;reduceOnly:boolean;postOnly:boolean}):Promise<ManualOrder>;
   findManualByClientOrderId?(request:{symbol:string;clientOrderId:string;internalOrderId:string;positionId:string;side:'BUY'|'SELL';positionSide:'LONG'|'SHORT';quantity:number;price:number;reduceOnly:boolean;postOnly:boolean}):Promise<ManualOrder|null>;

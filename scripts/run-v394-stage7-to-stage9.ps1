@@ -205,7 +205,7 @@ function Ensure-ReadOnlyArmingState{
 function Invoke-StagePhase([string]$Name,[object]$ckpt){
   if(Test-PhasePassed $ckpt $Name){Write-Host "$($Name.ToUpper())_ALREADY_PASS_SKIPPING";return}
   $auth=if($Name -eq 'Stage7'){$AuthorizeStage7Write}else{$AuthorizeStage8AutoTrading}
-  $flag=if($Name -eq 'Stage7'){'AuthorizeTestnetWrite'}else{'AuthorizeStage8AutoTrading'}
+  $flag=if($Name -eq 'Stage7'){'AuthorizeTestnetWrite'}else{'AuthorizeAutoTrading'}
   if(-not $auth){throw "$($Name.ToUpper())_REQUIRES_-$flag"}
   New-Item -ItemType Directory -Force -Path $evidenceDir|Out-Null
   if($Name -eq 'Stage7'){Ensure-ReadOnlyArmingState}

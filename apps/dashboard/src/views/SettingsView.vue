@@ -105,7 +105,7 @@ async function saveResource(kind: string, item: any) {
       if(kind==="proxy")draft.value.connections.proxy={...draft.value.connections.proxy,url:saved.url,enabled:saved.enabled!==false,protocol:"SOCKS5H",forceBinanceRest:true,forceBinanceWs:true,proxyDns:true,binanceRestRoute:"CONFIGURED",bypassLocalhost:true,failClosed:true};
       if(kind==="exchange"){const x:any=draft.value.connections.exchange;if(saved.environment==="TESTNET"){x.environment="TESTNET";x.testnetBaseUrl=saved.restBaseUrl;x.testnetRestBaseUrl=saved.restBaseUrl;x.testnetWsBaseUrl=saved.wsBaseUrl;}else{x.environment="PRODUCTION";x.productionBaseUrl=saved.restBaseUrl;x.productionRestBaseUrl=saved.restBaseUrl;x.productionWsBaseUrl=saved.wsBaseUrl;}x.credentialRef=saved.credentialRef??x.credentialRef;}
     }
-    resourceBaseline.value[kind]={[...resources.value[kind]].reduce((acc:any,x:any)=>(acc[x.id]=JSON.stringify(x),acc),{}) as any}[0] ?? Object.fromEntries(resources.value[kind].map((x:any)=>[x.id,JSON.stringify(x)]));
+    resourceBaseline.value[kind]=Object.fromEntries(resources.value[kind].map((x:any)=>[x.id,JSON.stringify(x)]));
     notice.value = "资源已保存并已回读";
   } catch (e) {
     error.value = String(e);

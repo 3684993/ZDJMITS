@@ -697,13 +697,6 @@ export function createApiRouter(runtime: EngineRuntime) {
       "BURGUNDY_EDITORIAL",
     ]),
   );
-  r.put("/settings", async (req, res, next) => {
-    try {
-      res.json(await runtime.updateSettings(req.body));
-    } catch (e) {
-      next(e);
-    }
-  });
   r.get("/settings/connections", async (_q, res, next) => {
     try {
       const ref = runtime.state.settings.connections.exchange.credentialRef;

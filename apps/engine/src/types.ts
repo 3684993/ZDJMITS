@@ -39,7 +39,7 @@ export interface ExchangeTradeAdapter {
   findManualByClientOrderId?(request:{symbol:string;clientOrderId:string;internalOrderId:string;positionId:string;side:'BUY'|'SELL';positionSide:'LONG'|'SHORT';quantity:number;price:number;reduceOnly:boolean;postOnly:boolean}):Promise<ManualOrder|null>;
   cancelManualOrder?(order:ManualOrder):Promise<ManualOrder>;
   tick?(quotes:Map<string,Quote>):Promise<{filledEntries:EntryOrder[];filledTakeProfits:TakeProfitOrder[]}>;
-  fetchRecentTradeAudit?(startTime:number,endTime:number,maxFills?:number):Promise<TradeAuditSnapshot>;
+  fetchRecentTradeAudit?(startTime:number,endTime:number,maxFills?:number,additionalSymbols?:string[]):Promise<TradeAuditSnapshot>;
   fetchSymbolTradeFacts?(symbol:string,startTime:number,endTime:number):Promise<{fills:ExchangeTradeFill[];income:ExchangeIncomeFact[];orders:ExchangeOrderFact[]}>;
   /** Lean UNKNOWN-risk proof: identity and fill truth only; never pays the heavy income endpoint cost. */
   fetchSymbolRiskFacts?(symbol:string,startTime:number,endTime:number):Promise<{fills:ExchangeTradeFill[];orders:ExchangeOrderFact[]}>;
@@ -52,7 +52,7 @@ export interface ExchangeTradeFill {
 export interface ExchangeIncomeFact {symbol:string; incomeType:string; income:number; asset:string; time:number; info:string|null; tradeId:string|null; transactionId:string|null;}
 export interface ExchangeOrderFact {symbol:string; orderId:string; clientOrderId:string; side:string; positionSide:string; status:string; type:string; origQty:number; executedQty:number; avgPrice:number; updateTime:number;}
 export interface TradeAuditSnapshot {
-  window:{startTime:number;endTime:number}; source:'BINANCE_TESTNET_PRIVATE'; fetchedAt:number;
+  window:{startTime:number;endTime:number}; source:'BINANCE_TESTNET_PRIVATE'|'BINANCE_DEMO_PRIVATE'; fetchedAt:number;
   fills:ExchangeTradeFill[]; income:ExchangeIncomeFact[]; orders:ExchangeOrderFact[]; positions:Position[]; openOrders:Array<EntryOrder|TakeProfitOrder>;
 }
 

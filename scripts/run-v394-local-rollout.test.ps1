@@ -37,6 +37,20 @@ foreach($required in @(
   if(-not $text.Contains($required)){throw "Missing rollout safety contract: $required"}
 }
 if($text -match "environment\s*=\s*'PRODUCTION'"){throw 'Rollout must never switch exchange environment to PRODUCTION'}
+if($text -match '\$positions=@\(ApiGet'){throw 'Exposure gate must not size engine arrays with @(ApiGet ...), which counts 1 for any non-empty array'}
+foreach($observed in @('activeRiskUnresolvedCount','unresolvedDriftCount','rawStatusActive')){
+  if(-not $text.Contains($observed)){throw "Exposure gate must consult the engine risk read model: $observed"}
+}
+# Execute the shipped helper itself, so the coercion is proven on real payloads rather than asserted as text.
+$helperAst=[System.Management.Automation.Language.Parser]::ParseInput($text,[ref]$tokens,[ref]$errors)
+$helper=$helperAst.FindAll({param($node)$node -is [System.Management.Automation.Language.FunctionDefinitionAst] -and $node.Name -eq 'Get-ResponseItemCount'},$true)|Select-Object -First 1
+if(-not $helper){throw 'Exposure gate helper Get-ResponseItemCount is missing from the rollout script'}
+. ([ScriptBlock]::Create($helper.Extent.Text))
+if((Get-ResponseItemCount (,(@(1,2,3,4,5,6)))) -ne 6){throw 'Get-ResponseItemCount must count 6 positions when Invoke-RestMethod returns one wrapped Object[]'}
+if((Get-ResponseItemCount (,([object[]]@()))) -ne 0){throw 'Get-ResponseItemCount must count 0 for an empty engine array'}
+if((Get-ResponseItemCount $null) -ne 0){throw 'Get-ResponseItemCount must count 0 when the engine returns no array'}
+if((Get-ResponseItemCount ([pscustomobject]@{symbol='BTCUSDT'})) -ne 1){throw 'Get-ResponseItemCount must count exactly 1 for a single position, otherwise one open position slips past the gate'}
+if((Get-ResponseItemCount (,@([pscustomobject]@{symbol='BTCUSDT'}))) -ne 1){throw 'Get-ResponseItemCount must count exactly 1 for one wrapped position row'}
 Write-Output 'V3.9.4 local rollout script contract PASS'
 
 if($text.Contains('HTTP_429_ALREADY_OBSERVED') -or $text.Contains('HTTP_418_ALREADY_OBSERVED')){throw 'Historical cumulative 429/418 totals must not permanently block V3.9.4 rollout'}

@@ -104,11 +104,23 @@ function AssertPrivateReady(){
 }
 function PauseEntries([string]$reason){ApiPost '/api/v3/runtime/trading-control/pause' @{reason=$reason}|Out-Null}
 function ResumeEntries(){ApiPost '/api/v3/runtime/trading-control/resume'|Out-Null}
+function Get-ResponseItemCount([object]$response){
+  # Invoke-RestMethod hands a top-level JSON array back from a function as one Object[] instance,
+  # so @(ApiGet ...).Count reports 1 for any non-empty payload. Enumerate before counting and
+  # return an integer, so no caller depends on PowerShell array-unrolling semantics.
+  if($null -eq $response){return 0}
+  $items=@($response|ForEach-Object {$_})
+  if($items.Count -eq 1 -and $null -eq $items[0]){return 0}
+  return $items.Count
+}
 function AssertNoExistingExposure(){
-  $positions=@(ApiGet '/api/v3/positions')
+  $positionCount=Get-ResponseItemCount (ApiGet '/api/v3/positions')
   $orders=ApiGet '/api/v3/orders'
-  $active=@($orders.entry|Where-Object {$activeStatuses -contains $_.status})
-  if($positions.Count -gt 0 -or $active.Count -gt 0){throw "STAGE7_REQUIRES_NO_EXISTING_EXPOSURE: positions=$($positions.Count) activeEntry=$($active.Count)"}
+  $rawActive=@($orders.entry|Where-Object {$activeStatuses -contains $_.status})
+  $recon=(ApiGet '/api/v3/pipeline').reconciliation
+  $riskBearing=[int]$recon.activeRiskUnresolvedCount
+  $drift=[int]$recon.unresolvedDriftCount
+  if($positionCount -gt 0 -or $riskBearing -gt 0 -or $drift -gt 0){throw "STAGE7_REQUIRES_NO_EXISTING_EXPOSURE: positions=$positionCount riskBearingEntry=$riskBearing unresolvedDrift=$drift rawStatusActive=$($rawActive.Count)"}
 }
 function SaveJson([string]$path,[object]$value){$value|ConvertTo-Json -Depth 50|Set-Content -LiteralPath $path -Encoding utf8}
 function QualifiedPriorStage6Evidence(){

@@ -346,3 +346,26 @@ V3.9.4 最终验收完成后再处理，当前不得借机重构：
 - 文档统一：把工程扫描中的 AI 权限、AI disposition、Scout/Primary、TP fallback 等历史描述修正到当前代码事实。
 
 这些事项除非在 Stage7-9 产生直接生产影响证据，否则不得回灌为 V3.9.4 scope。
+
+## 12. Stage7 前置机器裁决结果（2026-09-19，exact HEAD `192dfa3`，CI run 312 SUCCESS）
+
+### 12.1 暴露真相与门禁缺陷
+
+- `/api/v3/positions` 返回顶层 JSON 数组、6 个真实 SHORT 仓位（DOT/AAVE/CRV/XLM/TIA/FET，合计名义约 5,925 USDT）。旧门禁写 `@(ApiGet '/api/v3/positions')`，PowerShell 对函数返回的 `Object[]` 单实例会把 `Count` 算成 1，因此 `positions=1` 与真实值 6 并不矛盾，而是**同一缺陷下的恒定误报**。
+- 10 个 `UNKNOWN` entry 全部 `exchangeOrderId=null`，且 `activeRiskUnresolvedCount=0`、`unresolvedDriftCount=0`、`activeRemoteEntryWithNewPrimaryCount=0`、`verifiedNoActiveRiskUnknownCount=10`（`entryOrderOccupiesRisk()` 以 5 分钟 TTL 的交易所证据判定不占风险）。门禁原先用 `scripts/run-v394-local-rollout.ps1` 的 `$activeStatuses` 把 `UNKNOWN` 无条件计为 active，而 `UNKNOWN` 按设计不会改写为终态，构成**永不放行的死锁门禁**。
+- 处置：`AssertNoExistingExposure` 改为整数计数 + 消费引擎风险读模型（`positions==0 && activeRiskUnresolvedCount==0 && unresolvedDriftCount==0`），原始状态口径以 `rawStatusActive=` 保留为观测值。未向交易所发送任何针对 UNKNOWN 的 cancel，未改动 SQLite 与状态字段。
+
+### 12.2 side-neutral 判定
+
+`apps/engine/src/services/sideNeutralEntryAuthorization.test.ts` 走真实 `EntryCoordinator.analyze()`（仅 AI fabric 打桩），在 `NEW_LISTING` + tier/symbol 双重 `SHORT_ONLY` + `preferredDirection=SHORT` 的 hostile 配置下，Primary 返回合法 `PLACE_LONG`：
+
+- compact Primary prompt 不含 `preferredDirection` / `directionPreference` / `allowedDirections` / `longExceptionRequired` / `SHORT_ONLY` / `INTELLIGENT_SHORT_BIAS`；
+- LONG 直达 `placeEntry`，`quantityUnits` 未被 clamp、`acceptablePriceRange` 未被改写、Maker 价落在 AI 授权区间内；
+- 无 `DIRECTION_NOT_ALLOWED` / `ENTRY_DIRECTION_POLICY_BLOCKED`；
+- 超 envelope 数量仍是 reject（`AI_SIZING_ERROR` + `AI_QUANTITY_EXCEEDS_ENVELOPE`）且不生成 intent。
+
+**裁决：§0.1 / §0.2 / §0.3 所述 legacy 风险在当前生产链路不成立，全部延后 V3.9.5，本轮未修改任何冻结核心文件。** 补充事实：`DirectionPolicyService` 在 `tradingQualityTestHarness.ts` 中是未被实例化的死 import；历史 `ENTRY_DIRECTION_POLICY_BLOCKED` 后置否决已由 `f6c6941`（2026-09-17 11:53 +0800）从 `entryCoordinator`/`aiFabric` 移除，09-16 的 13 次否决证据属修复前历史。
+
+### 12.3 收尾执行器
+
+`scripts/run-v394-stage7-to-stage9.ps1` + 契约测试已接入 `verify:scripts`：Cleanup / Stage7 / Stage8 / Accept12H / Accept24H 分阶段 checkpoint 与 resume，已 PASS 阶段跳过，仓位关闭按 position id 绑定固定 `idempotencyKey` 可安全重放，`positionsApi` 与 `pipeline.existingPositions.count` 交叉校验，Engine `instanceId` 变化或采样断裂即判窗口不连续（不得以中断时长冒充连续 PASS），并对 `demo-fapi` 主机名、egress VERIFIED、Account READY、WS LIVE、Reconciliation SETTLED、429/418 窗口增量、TP 完整性做硬门禁；Production 侧只读校验、永不写。

@@ -73,12 +73,12 @@ function AssertCoreRuntime([object]$settings){
   if(-not $settings.connections.proxy.enabled){throw 'PROXY_REQUIRED'}
   if([string]::IsNullOrWhiteSpace([string]$settings.connections.proxy.expectedStaticEgressIp)){throw 'EXPECTED_STATIC_EGRESS_REQUIRED'}
 }
-function VerifyStage6ProxyEgress(){
+function VerifyStage6ProxyEgress([string]$StageLabel='STAGE6'){
   $probe=ApiPost '/api/v3/settings/resources/proxy/binance-proxy/test'
-  if($probe.status -ne 'HEALTHY'){throw "STAGE6_PROXY_HEALTH_NOT_HEALTHY:$($probe.status):$($probe.egress.status):$($probe.egress.lastError)"}
-  if($probe.egress.status -ne 'VERIFIED'){throw "STAGE6_PROXY_EGRESS_NOT_VERIFIED:$($probe.egress.status):$($probe.egress.lastError)"}
-  if($probe.egress.expectedEgressIp -ne $probe.egress.lastVerifiedEgressIp){throw "STAGE6_PROXY_EGRESS_IP_MISMATCH:expected=$($probe.egress.expectedEgressIp):observed=$($probe.egress.lastVerifiedEgressIp)"}
-  Write-Output "STAGE6_PROXY_EGRESS_VERIFIED=$($probe.egress.lastVerifiedEgressIp)"
+  if($probe.status -ne 'HEALTHY'){throw "${StageLabel}_PROXY_HEALTH_NOT_HEALTHY:$($probe.status):$($probe.egress.status):$($probe.egress.lastError)"}
+  if($probe.egress.status -ne 'VERIFIED'){throw "${StageLabel}_PROXY_EGRESS_NOT_VERIFIED:$($probe.egress.status):$($probe.egress.lastError)"}
+  if($probe.egress.expectedEgressIp -ne $probe.egress.lastVerifiedEgressIp){throw "${StageLabel}_PROXY_EGRESS_IP_MISMATCH:expected=$($probe.egress.expectedEgressIp):observed=$($probe.egress.lastVerifiedEgressIp)"}
+  Write-Output "${StageLabel}_PROXY_EGRESS_VERIFIED=$($probe.egress.lastVerifiedEgressIp)"
   return $probe
 }
 function AssertGovernance(){
@@ -214,6 +214,14 @@ if($Phase -eq 'Stage7'){
   StopEngine
   StartEngine
   PauseEntries 'V3.9.4 Stage7 armed; waiting for explicit canary release'
+  # Egress truth lives in a per-process map, so a restarted Engine starts UNVERIFIED and stays that
+  # way until something probes it. Entries and Testnet writes are fail-closed on UNVERIFIED, so
+  # arming must re-establish it through the same proxy probe Stage6 uses before asserting governance.
+  # Retrying only tolerates a transient probe failure; every attempt still requires VERIFIED.
+  for($egressAttempt=1;$egressAttempt -le 3;$egressAttempt++){
+    try{VerifyStage6ProxyEgress 'STAGE7';break}
+    catch{if($egressAttempt -eq 3){throw};Write-Output "STAGE7_EGRESS_PROBE_RETRY_$egressAttempt`: $($_.Exception.Message)";Start-Sleep -Seconds 10}
+  }
   $armed=ApiGet '/api/v3/settings'
   AssertCoreRuntime $armed
   if($armed.connections.executionMode -ne 'TESTNET_ENABLED'){throw 'STAGE7_RESTART_NOT_TESTNET_ENABLED'}

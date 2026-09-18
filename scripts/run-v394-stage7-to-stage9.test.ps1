@@ -22,6 +22,7 @@ foreach($required in @(
   'ALREADY_PASS_SKIPPING',
   'ACCEPTANCE_WINDOW_SHORT',
   'ACCEPTANCE_FAILED',
+  'PENDING_NO_NATURAL_ENTRY',
   'continuityBreaks',
   'continuity-break-',
   'positionsProjection',

@@ -191,6 +191,12 @@ function Invoke-StagePhase([string]$Name,[object]$ckpt){
   Set-Phase $ckpt $Name @{status='RUNNING';at=(Get-Date).ToString('o');evidenceDir=$evidenceDir}|Out-Null
   & powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot 'run-v394-local-rollout.ps1') -Phase $Name -Port $Port -CanaryMarginUsd $CanaryMarginUsd 2>&1|Tee-Object -FilePath $log|Write-Host
   $code=$LASTEXITCODE
+  if($code -eq 3){
+    # The rollout exits 3 when no natural AI entry appeared in its window. That is an observation to
+    # investigate (pool, eligibility, AI invocation, gates, cooldown), not a PASS and not a defect.
+    Set-Phase $ckpt $Name @{status='PENDING_NO_NATURAL_ENTRY';pendingAt=(Get-Date).ToString('o');log=$log}|Out-Null
+    throw "$($Name.ToUpper())_PENDING_NO_NATURAL_ENTRY evidence=$evidenceDir"
+  }
   if($code -ne 0){throw "$($Name.ToUpper())_FAILED_EXIT_$code evidence=$evidenceDir"}
   Set-Phase $ckpt $Name @{status='PASS';passedAt=(Get-Date).ToString('o');log=$log}|Out-Null
 }

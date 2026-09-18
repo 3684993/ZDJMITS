@@ -593,17 +593,17 @@ export class EngineRuntime {
     try{this.settingsStore.persistRuntime(this.state.serialize());this.events.publish("RUNTIME_STOPPED");this.settingsStore.checkpoint();}
     finally{this.persistenceClosed=true;this.qualityObserver?.close();this.tradingQuality?.close();this.settingsStore.close();}
   }
-  async updateSettings(input: unknown) {
-    const next = await this.settingsStore.save(input);
+  private async applySavedSettings(next:any) {
     this.state.setSettings(next);
     this.state.pool = new (await import("@zdj/core")).DynamicPool(next);
-    this.events.publish("SETTINGS_UPDATED", {
-      generation: this.state.generation,
-    });
+    this.events.publish("SETTINGS_UPDATED", {generation:this.state.generation,settingsVersion:next.settingsVersion});
     this.universe.refresh();
     this.runtimeControl.evaluate(true);
     return next;
   }
+  async updateSettings(input: unknown) {return this.applySavedSettings(await this.settingsStore.save(input));}
+  async updateSettingsIfVersion(input:unknown,expectedVersion:number){return this.applySavedSettings(await this.settingsStore.saveIfVersion(input,expectedVersion));}
+  async updateResourceSettings(input:unknown,expectedVersion:number,mutation:{kind:"exchange"|"proxy"|"ai";operation:"SAVE"|"DELETE";id:string;value?:unknown}){return this.applySavedSettings(await this.settingsStore.saveResourceIfVersion(input,expectedVersion,mutation));}
   pauseNewEntries(reason?: string) {
     return this.runtimeControl.pauseManual(reason);
   }

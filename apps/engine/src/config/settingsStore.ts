@@ -28,6 +28,19 @@ function migrate(value: unknown): unknown {
     c.aiMode = "OPENAI_COMPATIBLE";
     if (c.executionMode === "MOCK" || c.executionMode === "EXTERNAL")
       c.executionMode = "READ_ONLY";
+    if (record(c.exchange)) {
+      const exchange = c.exchange as Record<string, unknown>;
+      const legacyTestnetRest = String(exchange.testnetRestBaseUrl ?? exchange.testnetBaseUrl ?? "");
+      if (!legacyTestnetRest || legacyTestnetRest.includes("testnet.binancefuture.com")) {
+        exchange.testnetBaseUrl = "https://demo-fapi.binance.com";
+        exchange.testnetRestBaseUrl = "https://demo-fapi.binance.com";
+      } else {
+        exchange.testnetRestBaseUrl = legacyTestnetRest;
+      }
+      exchange.productionRestBaseUrl = exchange.productionRestBaseUrl ?? exchange.productionBaseUrl ?? "https://fapi.binance.com";
+      exchange.testnetWsBaseUrl = exchange.testnetWsBaseUrl ?? "wss://stream.binancefuture.com/ws";
+      exchange.productionWsBaseUrl = exchange.productionWsBaseUrl ?? "wss://fstream.binance.com/ws";
+    }
   }
   if (!record(next.appearance))
     next.appearance = {

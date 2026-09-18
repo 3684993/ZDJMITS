@@ -9,6 +9,7 @@ param(
   [ValidateRange(5,240)][int]$EntryWaitMinutes=120,
   [ValidateRange(5,240)][int]$LifecycleWaitMinutes=120,
   [switch]$AuthorizeStage6ProxyEnable,
+  [string]$ExpectedStaticEgressIp,
   [switch]$AuthorizeTestnetWrite,
   [switch]$AuthorizeAutoTrading
 )
@@ -105,6 +106,7 @@ if($Phase -eq 'Stage6'){
   try{
     $normalizeArgs=@('.\\scripts\\v394-stage6-set-readonly.mjs','--port',[string]$Port)
     if($AuthorizeStage6ProxyEnable){$normalizeArgs+='--authorize-enable-proxy'}
+    if(-not [string]::IsNullOrWhiteSpace($ExpectedStaticEgressIp)){$normalizeArgs+=@('--expected-static-egress-ip',$ExpectedStaticEgressIp)}
     & node @normalizeArgs
     if($LASTEXITCODE -ne 0){throw "STAGE6_READONLY_DOWNGRADE_FAILED:$LASTEXITCODE"}
     & npm run v394:stage6:preflight

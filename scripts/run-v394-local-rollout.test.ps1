@@ -16,6 +16,9 @@ foreach($required in @(
   "VerifyStage6ProxyEgress",
   "/api/v3/settings/resources/proxy/binance-proxy/test",
   "STAGE6_PROXY_EGRESS_VERIFIED",
+  "STAGE6_RATE_LIMIT_BASELINE",
+  "BaselineHttp429",
+  "BINANCE_REQUEST_BUDGET_NOT_HEALTHY",
   "STAGE7_REQUIRES_-AuthorizeTestnetWrite",
   "STAGE8_REQUIRES_-AuthorizeAutoTrading",
   "demo-fapi.binance.com",
@@ -32,3 +35,5 @@ foreach($required in @(
 }
 if($text -match "environment\s*=\s*'PRODUCTION'"){throw 'Rollout must never switch exchange environment to PRODUCTION'}
 Write-Output 'V3.9.4 local rollout script contract PASS'
+
+if($text.Contains('HTTP_429_ALREADY_OBSERVED') -or $text.Contains('HTTP_418_ALREADY_OBSERVED')){throw 'Historical cumulative 429/418 totals must not permanently block V3.9.4 rollout'}

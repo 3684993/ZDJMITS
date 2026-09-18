@@ -5,7 +5,7 @@ import { Router } from "express";
 import { mkdir } from "node:fs/promises";
 import path from "node:path";
 import type { EngineRuntime } from "../runtime/appRuntime.js";
-import { BinanceTransport } from "../adapters/binance/BinanceTransport.js";
+import { BinanceTransport, binanceTransportGovernance } from "../adapters/binance/BinanceTransport.js";
 import { dashboardProjection } from "./projections.js";
 import { TradeRecordIntegrityService } from "../services/tradeRecordIntegrityService.js";
 import { TradeRecordSyncService } from "../services/tradeRecordSyncService.js";
@@ -267,6 +267,7 @@ export function createApiRouter(runtime: EngineRuntime) {
   );
   r.get('/market-intelligence/external-research',(_q,res)=>res.json({providers:runtime.externalIntelligence.status(),research:runtime.externalResearch.metrics()}));
   r.get('/diagnostics/private-sync',(_q,res)=>res.json({sync:runtime.privateSyncHealth(),requests:binanceRequestBudgetsHealth()}));
+  r.get('/diagnostics/binance-governance',(_q,res)=>res.json({asOf:Date.now(),routes:binanceTransportGovernance(),budgets:binanceRequestBudgetsHealth()}));
   r.get('/diagnostics/logging',(_q,res)=>res.json((runtime as any).operationalLogHealth?.()??{status:'NOT_ATTACHED'}));
   r.get('/diagnostics/supply',(_q,res)=>res.json({health:runtime.supplyHealth(),residentTarget:runtime.state.settings.selection.poolTarget,residents:runtime.state.pool.list(),capacity:runtime.runtimeControl.capacityDiagnostics(),reserve:runtime.state.universe.filter(c=>(c.residentEligible??c.eligible)&&!runtime.state.pool.has(c.symbol)).slice(0,40).map(c=>({symbol:c.symbol,rank:c.rank,components:c.components,assetAdmission:c.assetAdmission,pipelineEligible:c.pipelineEligible}))}));
   r.post("/market-intelligence/rebuild", (_q, res) =>

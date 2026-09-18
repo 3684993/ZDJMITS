@@ -17,7 +17,8 @@ function Get-Api([string]$path){Invoke-RestMethod -Uri ($base+$path) -TimeoutSec
 $settings=Get-Api '/api/v3/settings'
 if($settings.connections.executionMode -ne 'READ_ONLY'){throw "STAGE6_REQUIRES_READ_ONLY: $($settings.connections.executionMode)"}
 if($settings.connections.exchange.environment -ne 'TESTNET'){throw "STAGE6_REQUIRES_TESTNET"}
-$rest=[string]($settings.connections.exchange.testnetRestBaseUrl ?? $settings.connections.exchange.testnetBaseUrl)
+$rest=[string]$settings.connections.exchange.testnetRestBaseUrl
+if([string]::IsNullOrWhiteSpace($rest)){$rest=[string]$settings.connections.exchange.testnetBaseUrl}
 if(([uri]$rest).Host -ne 'demo-fapi.binance.com'){throw "STAGE6_REQUIRES_BINANCE_DEMO_REST: $rest"}
 $expected=[string]$settings.connections.proxy.expectedStaticEgressIp
 if([string]::IsNullOrWhiteSpace($expected)){throw "STAGE6_REQUIRES_EXPECTED_STATIC_EGRESS_IP"}
@@ -47,10 +48,10 @@ while((Get-Date) -lt $deadline){
     verifiedEgressIp=$route.egress.lastVerifiedEgressIp
     observationTrust=$budget.observationTrust
     budgetStatus=$budget.status
-    http429=[int]($budget.http429 ?? 0)
-    http418=[int]($budget.http418 ?? 0)
-    backgroundTimeout=[int]($budget.laneStats.BACKGROUND.timeout ?? 0)
-    privateTruthTimeout=[int]($budget.laneStats.PRIVATE_TRUTH.timeout ?? 0)
+    http429=if($null -ne $budget.http429){[int]$budget.http429}else{0}
+    http418=if($null -ne $budget.http418){[int]$budget.http418}else{0}
+    backgroundTimeout=if($null -ne $budget.laneStats.BACKGROUND.timeout){[int]$budget.laneStats.BACKGROUND.timeout}else{0}
+    privateTruthTimeout=if($null -ne $budget.laneStats.PRIVATE_TRUTH.timeout){[int]$budget.laneStats.PRIVATE_TRUTH.timeout}else{0}
     rateLimits=@($budget.rateLimits)
   }
   $list.Add([pscustomobject]$sample)

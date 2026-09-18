@@ -1,7 +1,7 @@
 import {expect,it} from 'vitest';
 import {inferredBinanceSource,shouldDeferAtTransport} from './BinanceTransport.js';
 
-const health=(status:string,used=6106)=>({status,admissionObservedWeight1m:used,softPublicWeight:3000});
+const health=(status:string,used=6106)=>({status,admissionObservedWeight1m:used,softPublicWeight:3000,softBackgroundWeight:4320});
 
 it('classifies private truth and exchange rate-limit control separately from background/public REST',()=>{
   expect(inferredBinanceSource(new URL('https://testnet.binancefuture.com/fapi/v1/time'),'GET')).toBe('CLOCK');
@@ -25,7 +25,7 @@ it('never pre-deadlocks clock, private truth or execution just because local hea
 });
 
 it('sheds public/background REST before it consumes the private reserve',()=>{
-  expect(shouldDeferAtTransport('MARKET_DATA',health('AVAILABLE',3000),1)).toBe(true);
+  expect(shouldDeferAtTransport('MARKET_DATA',health('AVAILABLE',4320),1)).toBe(true);
   expect(shouldDeferAtTransport('BACKGROUND_AUDIT',health('AVAILABLE',2980),30)).toBe(true);
   expect(shouldDeferAtTransport('MARKET_DATA',health('AVAILABLE',2500),1)).toBe(false);
 });

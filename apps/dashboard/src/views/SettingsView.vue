@@ -22,6 +22,7 @@ const tab = ref("strategy"),
   draft = ref<SystemSettings | null>(null),
   resources = ref<any>({ exchange: [], proxy: [], ai: [] }),
   resourceSettingsVersion = ref<number | null>(null),
+  resourceBaseline = ref<Record<string, Record<string, string>>>({ exchange: {}, proxy: {}, ai: {} }),
   saving = ref(false),
   notice = ref(""),
   error = ref(""),
@@ -70,6 +71,7 @@ async function load() {
       ai: loaded[2].items ?? [],
     };
     resourceSettingsVersion.value = Number(loaded[0].settingsVersion ?? settings.settingsVersion);
+    resourceBaseline.value={exchange:Object.fromEntries(resources.value.exchange.map((x:any)=>[x.id,JSON.stringify(x)])),proxy:Object.fromEntries(resources.value.proxy.map((x:any)=>[x.id,JSON.stringify(x)])),ai:Object.fromEntries(resources.value.ai.map((x:any)=>[x.id,JSON.stringify(x)]))};
     applyTheme();
   } catch (e) {
     error.value = String(e);
@@ -103,6 +105,7 @@ async function saveResource(kind: string, item: any) {
       if(kind==="proxy")draft.value.connections.proxy={...draft.value.connections.proxy,url:saved.url,enabled:saved.enabled!==false,protocol:"SOCKS5H",forceBinanceRest:true,forceBinanceWs:true,proxyDns:true,binanceRestRoute:"CONFIGURED",bypassLocalhost:true,failClosed:true};
       if(kind==="exchange"){const x:any=draft.value.connections.exchange;if(saved.environment==="TESTNET"){x.environment="TESTNET";x.testnetBaseUrl=saved.restBaseUrl;x.testnetRestBaseUrl=saved.restBaseUrl;x.testnetWsBaseUrl=saved.wsBaseUrl;}else{x.environment="PRODUCTION";x.productionBaseUrl=saved.restBaseUrl;x.productionRestBaseUrl=saved.restBaseUrl;x.productionWsBaseUrl=saved.wsBaseUrl;}x.credentialRef=saved.credentialRef??x.credentialRef;}
     }
+    resourceBaseline.value[kind]={[...resources.value[kind]].reduce((acc:any,x:any)=>(acc[x.id]=JSON.stringify(x),acc),{}) as any}[0] ?? Object.fromEntries(resources.value[kind].map((x:any)=>[x.id,JSON.stringify(x)]));
     notice.value = "资源已保存并已回读";
   } catch (e) {
     error.value = String(e);
@@ -151,7 +154,10 @@ async function removeResource(kind: string, id: string) {
     if(draft.value){draft.value.settingsVersion=expected+1;if(kind==="ai")draft.value.aiResources=draft.value.aiResources.filter(x=>x.id!==id);if(kind==="proxy")draft.value.connections.proxy.enabled=false;}
     notice.value="资源已删除并已回读";
   }catch(e){error.value=String(e);}
-}
+} 
+function isResourceDirty(kind:string,item:any){return resourceBaseline.value[kind]?.[item.id]!==JSON.stringify(item);}
+async function cancelResourceEdits(kind:string){try{const loaded=await api.resources(kind);resources.value[kind]=loaded.items??[];resourceSettingsVersion.value=Number(loaded.settingsVersion);resourceBaseline.value[kind]=Object.fromEntries(resources.value[kind].map((x:any)=>[x.id,JSON.stringify(x)]));notice.value="未保存修改已取消";}catch(e){error.value=String(e);}}
+async function testResource(kind:"exchange"|"proxy"|"ai",item:any){try{if(isResourceDirty(kind,item))throw new Error("请先保存当前资源修改，再执行真实连接测试");const result=kind==="exchange"?await api.testExchange():kind==="proxy"?await api.testProxy():await api.testAi(item.id);notice.value=`连接测试：${result.status??result.state??"PASS"}`;}catch(e){error.value=String(e);}}
 async function saveCredentials() {
   try {
     const result = await saveExchangeCredentials(apiKey.value, apiSecret.value);
@@ -616,150 +622,33 @@ onMounted(load);
         <p v-else class="muted">没有 Symbol Override；添加后优先级高于 Tier 与全局设置。</p>
       </Panel>
       <Panel v-else-if="tab === 'exchange'" title="交易所资源">
-        <div class="toolbar">
-          <span>没有 Adapter 的模板必须保持禁用</span
-          ><button class="button primary" @click="addResource('exchange')">
-            新增
-          </button>
-        </div>
-        <div
-          v-for="item in resources.exchange"
-          :key="item.id"
-          class="resource-row"
-        >
-          <div>
-            <strong>{{ item.name ?? item.id }}</strong
-            ><span
-              >{{ item.type }} · {{ item.environment }} ·
-              {{ item.enabled ? "已启用" : "已禁用" }}</span
-            >
+        <div class="toolbar"><span>活动 Testnet REST 仅允许 Binance Demo；REST / WS 独立配置</span><button class="button primary" @click="addResource('exchange')">新增/重置</button></div>
+        <div v-for="item in resources.exchange" :key="item.id" class="resource-row">
+          <div class="form-grid two">
+            <label><span>环境</span><select v-model="item.environment"><option>TESTNET</option><option>PRODUCTION</option></select></label>
+            <label><span>REST Base URL</span><input v-model="item.restBaseUrl" /></label>
+            <label><span>WS Base URL</span><input v-model="item.wsBaseUrl" /></label>
+            <label><span>Credential Ref</span><input v-model="item.credentialRef" /></label>
           </div>
-          <div>
-            <button
-              class="button tiny secondary"
-              @click="
-                item.enabled = !item.enabled;
-                saveResource('exchange', item);
-              "
-            >
-              {{ item.enabled ? "禁用" : "启用" }}</button
-            ><button
-              class="button tiny secondary"
-              @click="removeResource('exchange', item.id)"
-            >
-              删除
-            </button>
-          </div>
+          <div><span v-if="isResourceDirty('exchange',item)" class="muted">未保存</span><button class="button tiny primary" :disabled="!isResourceDirty('exchange',item)" @click="saveResource('exchange',item)">保存</button><button class="button tiny secondary" :disabled="!isResourceDirty('exchange',item)" @click="cancelResourceEdits('exchange')">取消</button><button class="button tiny secondary" @click="testResource('exchange',item)">测试</button></div>
         </div>
-        <div class="form-grid two">
-          <label
-            ><span>运行环境</span
-            ><select v-model="draft.connections.exchange.environment">
-              <option>TESTNET</option>
-              <option>PRODUCTION</option>
-            </select></label
-          ><label
-            ><span>执行模式</span
-            ><select v-model="draft.connections.executionMode">
-              <option>READ_ONLY</option>
-              <option>TESTNET_ENABLED</option>
-            </select></label
-          ><label
-            ><span>Testnet Base URL</span
-            ><input
-              v-model="draft.connections.exchange.testnetBaseUrl" /></label
-          ><label
-            ><span>凭证状态</span
-            ><input
-              :value="credentialStatus?.configured ? 'READY' : 'NOT_CONFIGURED'"
-              disabled /></label
-          ><label
-            ><span>API Key</span
-            ><input v-model="apiKey" type="password" /></label
-          ><label
-            ><span>API Secret</span><input v-model="apiSecret" type="password"
-          /></label>
-        </div>
-        <div>
-          <button class="button secondary" @click="testCredentials">
-            仅验证
-          </button>
-          <button class="button primary" @click="saveCredentials">
-            验证并保存凭证
-          </button>
+        <div class="form-grid two"><label><span>执行模式</span><select v-model="draft.connections.executionMode"><option>READ_ONLY</option><option>TESTNET_ENABLED</option></select></label><label><span>凭证状态</span><input :value="credentialStatus?.configured ? 'READY' : 'NOT_CONFIGURED'" disabled /></label><label><span>API Key</span><input v-model="apiKey" type="password" /></label><label><span>API Secret</span><input v-model="apiSecret" type="password" /></label></div>
+        <div><button class="button secondary" @click="testCredentials">仅验证凭证</button><button class="button primary" @click="saveCredentials">验证并保存凭证</button></div>
+      </Panel>
+      <Panel v-else-if="tab === 'proxy'" title="网络代理资源">
+        <div class="toolbar"><span>Binance REST / WS 统一经 SOCKS5H；变更立即 hot-apply</span><button class="button primary" @click="addResource('proxy')">新增/重置</button></div>
+        <div v-for="item in resources.proxy" :key="item.id" class="resource-row">
+          <div class="form-grid two"><label><span>Proxy URL</span><input v-model="item.url" /></label><label class="switch-row"><span>启用</span><input v-model="item.enabled" type="checkbox" /></label></div>
+          <div><span v-if="isResourceDirty('proxy',item)" class="muted">未保存</span><button class="button tiny primary" :disabled="!isResourceDirty('proxy',item)" @click="saveResource('proxy',item)">保存</button><button class="button tiny secondary" :disabled="!isResourceDirty('proxy',item)" @click="cancelResourceEdits('proxy')">取消</button><button class="button tiny secondary" @click="testResource('proxy',item)">测试</button><button class="button tiny secondary" @click="removeResource('proxy',item.id)">删除</button></div>
         </div>
       </Panel>
-      <Panel v-else-if="tab === 'proxy'" title="网络代理资源"
-        ><div class="toolbar">
-          <span>Binance REST / WS 统一通过 SOCKS5H，失败时 fail-closed</span
-          ><button class="button primary" @click="addResource('proxy')">
-            新增
-          </button>
-        </div>
-        <div
-          v-for="item in resources.proxy"
-          :key="item.id"
-          class="resource-row"
-        >
-          <div>
-            <strong>{{ item.name ?? item.id }}</strong
-            ><span>{{ item.type }} · {{ item.url }}</span>
-          </div>
-          <div>
-            <button
-              class="button tiny secondary"
-              @click="removeResource('proxy', item.id)"
-            >
-              删除
-            </button>
-          </div>
-        </div>
-        <div class="form-grid two">
-          <label
-            ><span>当前 Proxy URL</span
-            ><input v-model="draft.connections.proxy.url" /></label
-          ><label class="switch-row"
-            ><span>强制 Binance REST 代理</span
-            ><input
-              v-model="draft.connections.proxy.forceBinanceRest"
-              type="checkbox"
-          /></label><label><span>Binance REST 路由</span><select :value="draft.connections.proxy.binanceRestRoute ?? 'CONFIGURED'" @change="draft.connections.proxy.binanceRestRoute=($event.target as HTMLSelectElement).value as 'DIRECT'|'CONFIGURED'; if(draft.connections.proxy.binanceRestRoute==='DIRECT') draft.connections.proxy.forceBinanceRest=false"><option value="CONFIGURED">使用当前代理配置</option><option value="DIRECT">直连（保留 TLS 校验）</option></select></label></div
-      ></Panel>
-      <Panel v-else-if="tab === 'ai'" title="AI 模型资源"
-        ><div class="toolbar">
-          <span
-            >角色模板：SCOUT / PRIMARY_BRAIN / REVIEW_BRAIN；不假定 GPU
-            数量</span
-          ><button class="button primary" @click="addResource('ai')">
-            新增
-          </button>
-        </div>
+      <Panel v-else-if="tab === 'ai'" title="AI 模型资源">
+        <div class="toolbar"><span>角色：SCOUT / PRIMARY_BRAIN；资源修改采用版本冲突保护</span><button class="button primary" @click="addResource('ai')">新增</button></div>
         <div v-for="item in resources.ai" :key="item.id" class="resource-row">
-          <div>
-            <strong>{{ item.role }} · {{ item.model }}</strong
-            ><span
-              >{{ item.id }} · {{ item.baseUrl }} ·
-              {{ item.gpu ?? "未指定" }}</span
-            >
-          </div>
-          <div>
-            <button
-              class="button tiny secondary"
-              @click="
-                item.enabled = !item.enabled;
-                saveResource('ai', item);
-              "
-            >
-              {{ item.enabled ? "禁用" : "启用" }}</button
-            ><button
-              class="button tiny secondary"
-              @click="removeResource('ai', item.id)"
-            >
-              删除
-            </button>
-          </div>
-        </div></Panel
-      >
+          <div class="form-grid two"><label><span>角色</span><select v-model="item.role"><option>SCOUT</option><option>PRIMARY_BRAIN</option></select></label><label><span>Model</span><input v-model="item.model" /></label><label><span>Base URL</span><input v-model="item.baseUrl" /></label><label><span>GPU</span><input v-model="item.gpu" /></label><label><span>并发</span><input v-model.number="item.maxConcurrency" type="number" min="1" max="16" /></label><label class="switch-row"><span>启用</span><input v-model="item.enabled" type="checkbox" /></label></div>
+          <div><span v-if="isResourceDirty('ai',item)" class="muted">未保存</span><button class="button tiny primary" :disabled="!isResourceDirty('ai',item)" @click="saveResource('ai',item)">保存</button><button class="button tiny secondary" :disabled="!isResourceDirty('ai',item)" @click="cancelResourceEdits('ai')">取消</button><button class="button tiny secondary" @click="testResource('ai',item)">测试</button><button class="button tiny secondary" @click="removeResource('ai',item.id)">删除</button></div>
+        </div>
+      </Panel>
       <Panel v-else title="外观主题"
         ><div class="form-grid two">
           <label

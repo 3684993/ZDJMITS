@@ -6,6 +6,8 @@ if($errors.Count){throw ("PowerShell parse failed: "+(($errors|ForEach-Object {$
 $text=Get-Content -LiteralPath $scriptPath -Raw
 foreach($required in @(
   "ValidateSet('Stage6','Stage7','Stage8','Status')",
+  "AuthorizeStage6ProxyEnable",
+  "--authorize-enable-proxy",
   "STAGE7_REQUIRES_-AuthorizeTestnetWrite",
   "STAGE8_REQUIRES_-AuthorizeAutoTrading",
   "demo-fapi.binance.com",

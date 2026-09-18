@@ -5,7 +5,7 @@ import { Router } from "express";
 import { mkdir } from "node:fs/promises";
 import path from "node:path";
 import type { EngineRuntime } from "../runtime/appRuntime.js";
-import { BinanceTransport, binanceTransportGovernance } from "../adapters/binance/BinanceTransport.js";
+import { binanceTransportGovernance } from "../adapters/binance/BinanceTransport.js";
 import { dashboardProjection } from "./projections.js";
 import { TradeRecordIntegrityService } from "../services/tradeRecordIntegrityService.js";
 import { TradeRecordSyncService } from "../services/tradeRecordSyncService.js";
@@ -778,73 +778,6 @@ export function createApiRouter(runtime: EngineRuntime) {
       next(e);
     }
   });
-  r.post("/settings/proxy/test", async (_q, res, next) => {
-    try {
-      res.json(
-        await new BinanceTransport(runtime.state.settings.connections).health(),
-      );
-    } catch (e) {
-      next(e);
-    }
-  });
-  r.post("/settings/exchange/test", async (_q, res, next) => {
-    try {
-      const ref = runtime.state.settings.connections.exchange.credentialRef;
-      const credentials = await runtime.settingsStore.secretStatus(
-        `${ref}:apiKey`,
-      );
-      const transport = await new BinanceTransport(
-        runtime.state.settings.connections,
-      ).health();
-      res.json({
-        transport,
-        credentials,
-        writeEnabled:
-          runtime.state.settings.connections.executionMode ===
-            "TESTNET_ENABLED" &&
-          runtime.state.settings.connections.exchange.environment ===
-            "TESTNET" &&
-          credentials.configured,
-      });
-    } catch (e) {
-      next(e);
-    }
-  });
-  r.post("/ai/resources/:id/test", async (req, res, next) => {
-    try {
-      const resource = runtime.state.settings.aiResources.find(
-        (item) => item.id === req.params.id,
-      );
-      if (!resource)
-        return res
-          .status(404)
-          .json({ error: { message: "AI resource not found" } });
-      const startedAt = Date.now();
-      const response = await fetch(
-        `${resource.baseUrl.replace(/\/$/, "")}/models`,
-        { signal: AbortSignal.timeout(10_000) },
-      );
-      if (!response.ok) throw new Error(`AI HTTP ${response.status}`);
-      const body = (await response.json()) as {
-        data?: Array<{ id?: string }>;
-        models?: Array<{ model?: string }>;
-      };
-      const models = [
-        ...(body.data ?? []).map((item) => item.id),
-        ...(body.models ?? []).map((item) => item.model),
-      ].filter(Boolean);
-      res.json({
-        id: resource.id,
-        status: "HEALTHY",
-        latencyMs: Date.now() - startedAt,
-        modelConfigured: models.includes(resource.model),
-        models,
-      });
-    } catch (e) {
-      next(e);
-    }
-  });
-
   r.post("/trade-records/sync/preview", async (req, res, next) => {
     try {
       const options = syncInput(req.body),

@@ -57,3 +57,15 @@ it('reserves ORDERS headroom independently from REQUEST_WEIGHT',async()=>{
   await vi.advanceTimersByTimeAsync(15_100);await rejected;expect(fn).not.toHaveBeenCalled();
  }finally{vi.useRealTimers();}
 });
+
+
+it('enforces exchangeInfo REQUEST_WEIGHT intervals even before a response header is observed',async()=>{
+ vi.useFakeTimers();vi.setSystemTime(1_800_000_000_000);
+ try{
+  const budget=new RequestBudget(2,2,100);
+  budget.configureRateLimits([{rateLimitType:'REQUEST_WEIGHT',interval:'SECOND',intervalNum:10,limit:10}]);
+  await budget.run(3,7,async()=>1,{source:'MARKET_DATA',endpoint:'/fapi/v1/ticker/24hr'});
+  const blocked=vi.fn(async()=>2),pending=budget.run(3,1,blocked,{source:'MARKET_DATA',endpoint:'/fapi/v1/klines'}),rejected=expect(pending).rejects.toThrow('QUEUE_TIMEOUT');
+  await vi.advanceTimersByTimeAsync(5_100);await rejected;expect(blocked).not.toHaveBeenCalled();
+ }finally{vi.useRealTimers();}
+});

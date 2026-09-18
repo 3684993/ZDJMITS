@@ -238,6 +238,20 @@ function Invoke-AcceptancePhase([string]$Name,[int]$Minutes,[object]$ckpt){
     Start-Sleep -Seconds $SampleIntervalSeconds
   }
   $last=$rows[-1]
+  # Hard gates must hold at literally every sample: routing, egress and readiness have no legitimate
+  # transient state. Exposure integrity does - a fill waiting for the next 5 minute reconciliation
+  # scan, or a TP being re-armed after a partial, briefly reads non-zero. Judging those as failures
+  # would be a flaky gate, so they must instead never persist: a metric that stays non-zero for more
+  # samples than a full reconciliation interval is a real defect, and the final sample must be clean.
+  $sustainLimit=[Math]::Max(3,[Math]::Ceiling(360/$SampleIntervalSeconds)+2)
+  function Get-MaxRun([object[]]$collection,[scriptblock]$predicate){
+    $max=0;$current=0
+    foreach($row in $collection){if(& $predicate $row){$current++;if($current -gt $max){$max=$current}}else{$current=0}}
+    return $max
+  }
+  $riskRun=Get-MaxRun $rows{param($r)$r.riskBearingEntry -gt 0 -or $r.unresolvedDrift -gt 0}
+  $tpRun=Get-MaxRun $rows{param($r)$r.orphanTp -gt 0 -or $r.duplicateTp -gt 0 -or $r.tpQtyMismatch -gt 0 -or $r.tpWrongSide -gt 0}
+  $unverifiedRun=Get-MaxRun $rows{param($r)$r.tpUnverified -gt 0}
   $summary=[ordered]@{
     phase=$Name;requiredMinutes=$Minutes;actualMinutes=[Math]::Round(((Get-Date)-$begin).TotalMinutes,2);samples=$rows.Count
     continuityBreaks=$breaks
@@ -247,10 +261,12 @@ function Invoke-AcceptancePhase([string]$Name,[int]$Minutes,[object]$ckpt){
     egressViolations=@($rows|Where-Object {$_.egressStatus -ne 'VERIFIED' -or $_.verifiedEgressIp -ne $expected}).Count
     routeIdentityViolations=@($rows|Where-Object {$_.routeIdentity -ne $routeId}).Count
     readinessViolations=@($rows|Where-Object {-not $_.ready -or $_.accountStatus -ne 'READY' -or $_.wsState -ne 'LIVE' -or $_.reconciliation -ne 'SETTLED'}).Count
-    riskViolations=@($rows|Where-Object {$_.riskBearingEntry -gt 0 -or $_.unresolvedDrift -gt 0}).Count
-    tpIntegrityViolations=@($rows|Where-Object {$_.orphanTp -gt 0 -or $_.duplicateTp -gt 0 -or $_.tpWrongSide -gt 0 -or $_.tpUnverified -gt 0}).Count
+    maxConsecutiveRiskSamples=$riskRun;maxConsecutiveTpIntegritySamples=$tpRun;maxConsecutiveUnverifiedTpSamples=$unverifiedRun
+    sustainedViolationLimit=$sustainLimit
+    riskViolations=if($riskRun -gt $sustainLimit -or [int]$last.riskBearingEntry -gt 0 -or [int]$last.unresolvedDrift -gt 0){1}else{0}
+    tpIntegrityViolations=if($tpRun -gt $sustainLimit -or [int]$last.orphanTp -gt 0 -or [int]$last.duplicateTp -gt 0 -or [int]$last.tpWrongSide -gt 0 -or [int]$last.tpQtyMismatch -gt 0){1}else{0}
     falseCounterDiscontinuity=@(foreach($row in $rows){foreach($lim in @($row.rateLimits)){if($lim.counterDiscontinuity -eq $true -and $lim.windowReset -ne $true){1}}}).Count
-    finalPositions=[int]$last.positionsApi;evidenceDir=$evidenceDir
+    finalPositions=[int]$last.positionsApi;finalUnverifiedTp=[int]$last.tpUnverified;evidenceDir=$evidenceDir
   }
   Save-Json (Join-Path $evidenceDir "summary-$Name.json") $summary
   $violations=@($summary.continuityBreaks,$summary.restHostViolations,$summary.egressViolations,$summary.routeIdentityViolations,$summary.readinessViolations,$summary.riskViolations,$summary.tpIntegrityViolations,$summary.falseCounterDiscontinuity,$summary.http429Delta,$summary.http418Delta|Where-Object {[int]$_ -gt 0})

@@ -26,6 +26,8 @@ foreach($required in @(
   'continuityBreaks',
   'continuity-break-',
   'positionsProjection',
+  'maxConsecutiveRiskSamples',
+  'sustainedViolationLimit',
   'http429Delta',
   'http418Delta',
   'falseCounterDiscontinuity',
@@ -41,7 +43,7 @@ if($text -match 'Remove-Item.*(sqlite|\.db)'){throw 'Stage7-to-stage9 runner mus
 # Execute the shipped array coercion so the exposure count is proven on real payloads, not asserted.
 $t2=$null;$e2=$null
 $ast=[System.Management.Automation.Language.Parser]::ParseInput($text,[ref]$t2,[ref]$e2)
-foreach($name in @('Get-ItemCount')){
+foreach($name in @('Get-ItemCount','Get-MaxRun')){
   $def=$ast.FindAll({param($node)$node -is [System.Management.Automation.Language.FunctionDefinitionAst] -and $node.Name -eq $name},$true)|Select-Object -First 1
   if(-not $def){throw "helper $name is missing from the stage7-to-stage9 runner"}
   . ([ScriptBlock]::Create($def.Extent.Text))
@@ -51,4 +53,9 @@ if((Get-ItemCount (,([object[]]@()))) -ne 0){throw 'Get-ItemCount must count 0 f
 if((Get-ItemCount $null) -ne 0){throw 'Get-ItemCount must count 0 when the engine returns nothing'}
 if((Get-ItemCount ([pscustomobject]@{symbol='BTCUSDT'})) -ne 1){throw 'Get-ItemCount must count exactly 1, otherwise one open position slips past the flat gate'}
 if((Get-ItemCount (,@([pscustomobject]@{symbol='BTCUSDT'}))) -ne 1){throw 'Get-ItemCount must count exactly 1 for one wrapped position row'}
+# The acceptance window must separate a transient reconciliation state from a sustained defect.
+$runRows=@([ordered]@{v=0},[ordered]@{v=1},[ordered]@{v=0},[ordered]@{v=1},[ordered]@{v=1},[ordered]@{v=0})
+if((Get-MaxRun $runRows {param($r)$r.v -gt 0}) -ne 2){throw 'Get-MaxRun must report the longest consecutive non-zero run, not the total count'}
+if((Get-MaxRun @() {param($r)$r.v -gt 0}) -ne 0){throw 'Get-MaxRun must return 0 for an empty sample set'}
+if((Get-MaxRun @([ordered]@{v=1}) {param($r)$r.v -gt 0}) -ne 1){throw 'Get-MaxRun must count a single transient sample as a run of 1'}
 Write-Output 'V3.9.4 stage7-to-stage9 runner contract PASS'

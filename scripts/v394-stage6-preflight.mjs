@@ -1,5 +1,5 @@
 import { DatabaseSync, backup as sqliteBackup } from 'node:sqlite';
-import { createConnection } from 'node:net';
+import { createConnection, isIP } from 'node:net';
 import { mkdtemp, mkdir, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
@@ -26,7 +26,7 @@ async function runPreflight({dataDir,outDir,port=8080,skipEngineCheck=false}){
     if(connections.executionMode!=='READ_ONLY')throw new Error('STAGE6_REQUIRES_READ_ONLY');
     if(new URL(rest).hostname!=='demo-fapi.binance.com')throw new Error(`STAGE6_REQUIRES_BINANCE_DEMO_REST:${rest}`);
     if(proxy.enabled!==true||String(proxy.protocol??'')!=='SOCKS5H'||!String(proxy.url??''))throw new Error('STAGE6_REQUIRES_ENABLED_SOCKS5H_PROXY');
-    const expectedEgress=String(proxy.expectedStaticEgressIp??'').trim();if(!expectedEgress)throw new Error('STAGE6_REQUIRES_EXPECTED_STATIC_EGRESS_IP');
+    const expectedEgress=String(proxy.expectedStaticEgressIp??'').trim();if(!expectedEgress)throw new Error('STAGE6_REQUIRES_EXPECTED_STATIC_EGRESS_IP');if(!isIP(expectedEgress))throw new Error('STAGE6_EXPECTED_STATIC_EGRESS_IP_INVALID');
 
     const resources={exchange:rows(db,'exchange_resources'),proxy:rows(db,'proxy_resources'),ai:rows(db,'ai_resources')};assertNoSecretKeys(resources,'resources');
     let profile=null;try{const row=one(db,"SELECT profile,updated_at FROM connection_profiles WHERE id='active'");if(row)profile={updatedAt:Number(row.updated_at),profile:JSON.parse(String(row.profile))};}catch{}if(profile)assertNoSecretKeys(profile,'connectionProfile');

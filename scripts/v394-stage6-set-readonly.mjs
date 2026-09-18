@@ -43,7 +43,7 @@ async function forceReadOnly({dataDir,backupDir,port=8080,skipEngineCheck=false,
     const needsProxyEnable=proxy.enabled!==true;
     if(needsProxyEnable&&!authorizeEnableProxy)throw new Error('STAGE6_PROXY_DISABLED_REQUIRES_EXPLICIT_AUTHORIZATION');
     if(needsProxyEnable){
-      const parsedProxy=new URL(proxyUrl),proxyHost=parsedProxy.hostname.replace(/^\\[|\\]$/g,''),proxyPort=Number(parsedProxy.port||0);
+      const parsedProxy=new URL(proxyUrl),rawProxyHost=parsedProxy.hostname,proxyHost=rawProxyHost.startsWith('[')&&rawProxyHost.endsWith(']')?rawProxyHost.slice(1,-1):rawProxyHost,proxyPort=Number(parsedProxy.port||0);
       if(proxyScheme!=='socks5h:'||!proxyHost||!proxyPort)throw new Error('STAGE6_PROXY_ENABLE_REQUIRES_VALID_SOCKS5H_URL');
       if(!await listeningAt(proxyHost,proxyPort))throw new Error('STAGE6_PROXY_ENDPOINT_NOT_LISTENING:'+proxyHost+':'+proxyPort);
     }

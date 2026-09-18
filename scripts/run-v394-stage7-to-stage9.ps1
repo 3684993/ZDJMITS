@@ -213,12 +213,14 @@ function Invoke-StagePhase([string]$Name,[object]$ckpt){
   $errLog=Join-Path $evidenceDir "$Name.err.log"
   Set-Phase $ckpt $Name @{status='RUNNING';at=(Get-Date).ToString('o');evidenceDir=$evidenceDir}|Out-Null
   $childArgs=@('-NoProfile','-ExecutionPolicy','Bypass','-File',(Join-Path $PSScriptRoot 'run-v394-local-rollout.ps1'),'-Phase',$Name,'-Port',[string]$Port,'-CanaryMarginUsd',[string]$CanaryMarginUsd,"-$flag")
-  # The stage script starts a long-lived Engine. Piping its stdout through this process would hand the
-  # pipe write handle to that Engine, so the parent would never see EOF; Start-Process -Wait with its
-  # own redirect files avoids the deadlock and keeps the child out of this process' job.
-  $proc=Start-Process -FilePath 'powershell' -ArgumentList $childArgs -PassThru -Wait -WindowStyle Hidden `
+  # This stage spawns a long-lived Engine. Piping the child through this process would hand that
+  # Engine the pipe write handle and the parent would never see EOF; -Wait additionally drains the
+  # redirected streams, which the Engine also holds open. Wait on the process handle only.
+  $proc=Start-Process -FilePath 'powershell' -ArgumentList $childArgs -PassThru -WindowStyle Hidden `
     -RedirectStandardOutput $log -RedirectStandardError $errLog
+  $proc.WaitForExit()
   $code=$proc.ExitCode
+  if($null -eq $code){throw "$($Name.ToUpper())_EXIT_CODE_UNOBSERVED evidence=$evidenceDir"}
   if($code -eq 3){
     # The rollout exits 3 when no natural AI entry appeared in its window. That is an observation to
     # investigate (pool, eligibility, AI invocation, gates, cooldown), not a PASS and not a defect.

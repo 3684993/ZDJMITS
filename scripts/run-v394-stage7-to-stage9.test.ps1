@@ -27,7 +27,7 @@ foreach($required in @(
   '"-$flag"',
   'Ensure-ReadOnlyArmingState',
   'Start-Process',
-  '-Wait',
+  'WaitForExit',
   '-RedirectStandardError',
   'continuityBreaks',
   'continuity-break-',

@@ -9,6 +9,7 @@ import { age } from '../format';
 const s=useSystemStore(), details=ref<any>(null), shadow=ref<any>(null), cleanup=ref<any>(null), runtime=ref<any>(null), governance=ref<any>(null), cleanupBusy=ref(false);
 const statusMap:Record<string,string>={HEALTHY:'正常',READY:'就绪',RUNNING:'运行中',DEGRADED:'降级',RECOVERING:'恢复中',FAILED:'故障',BLOCKED:'已阻断',OFFLINE:'离线'};
 function open(h:any){details.value=h;}
+function hostname(url:unknown){try{return new globalThis.URL(String(url)).hostname;}catch{return '—';}}
 async function loadShadow(){try{const [nextShadow,nextCleanup,nextRuntime,nextGovernance]=await Promise.all([api.shadowReadiness(),api.cleanupPreview(),api.runtimeStatus(),api.binanceGovernance()]);shadow.value=nextShadow;cleanup.value=nextCleanup;runtime.value=nextRuntime;governance.value=nextGovernance;}catch{}}
 async function runCleanup(){if(cleanupBusy.value)return;cleanupBusy.value=true;try{cleanup.value=await api.cleanupRun();}finally{cleanupBusy.value=false;}}
 onMounted(loadShadow);
@@ -27,7 +28,7 @@ onMounted(loadShadow);
         <div v-for="route in governance.routes" :key="route.rest?.routeIdentity" class="page-stack">
           <dl class="facts wide">
             <div><dt>Environment / REST</dt><dd>{{route.environment}} / {{route.rest?.host??'—'}}</dd></div>
-            <div><dt>WS Host</dt><dd>{{route.ws?.url?new URL(route.ws.url).hostname:'—'}}</dd></div>
+            <div><dt>WS Host</dt><dd>{{hostname(route.ws?.url)}}</dd></div>
             <div><dt>Route Identity</dt><dd>{{route.rest?.routeIdentity??'—'}}</dd></div>
             <div><dt>Proxy</dt><dd>{{route.rest?.throughProxy?'ACTIVE':'BLOCKED'}} · {{route.rest?.proxyUrl??'—'}}</dd></div>
             <div><dt>Expected Egress</dt><dd>{{route.egress?.expectedEgressIp??'未配置'}}</dd></div>

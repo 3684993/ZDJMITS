@@ -73,6 +73,8 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           npm run build --workspace @zdj/core
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Verify scripts
+        run: npm run verify:scripts
       - name: Typecheck
         run: npm run typecheck
       - name: Test

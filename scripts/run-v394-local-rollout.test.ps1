@@ -40,6 +40,7 @@ foreach($required in @(
   if(-not $text.Contains($required)){throw "Missing rollout safety contract: $required"}
 }
 if($text -match "environment\s*=\s*'PRODUCTION'"){throw 'Rollout must never switch exchange environment to PRODUCTION'}
+if($text -match "PauseEntries 'V3.9.4 Stage7 first canary"){throw 'Stage7 must not pause on first observation of an in-flight canary entry, because the Engine then fails closed on that same order before it reaches the exchange'}
 if($text -match '\$positions=@\(ApiGet'){throw 'Exposure gate must not size engine arrays with @(ApiGet ...), which counts 1 for any non-empty array'}
 foreach($observed in @('activeRiskUnresolvedCount','unresolvedDriftCount','rawStatusActive')){
   if(-not $text.Contains($observed)){throw "Exposure gate must consult the engine risk read model: $observed"}

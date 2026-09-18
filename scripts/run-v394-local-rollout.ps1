@@ -243,7 +243,9 @@ if($Phase -eq 'Stage7'){
     $orders=ApiGet '/api/v3/orders'
     $entry=@($orders.entry|Where-Object {$baselineIds -notcontains [string]$_.id}|Sort-Object updatedAt -Descending|Select-Object -First 1)[0]
     if($entry){
-      PauseEntries 'V3.9.4 Stage7 first canary entry observed; lock new entries'
+      # Do NOT pause here. The canary's single-entry bound is already enforced structurally by
+      # maxPositions=1 and maxPendingEntries=1; pausing the moment an in-flight entry is observed
+      # makes the Engine fail closed on that same entry before it can reach the exchange.
       SaveJson (Join-Path $outDir 'entry-first-observed.json') $entry
       break
     }

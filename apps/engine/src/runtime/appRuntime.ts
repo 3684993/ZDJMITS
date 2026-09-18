@@ -1169,7 +1169,9 @@ export class EngineRuntime {
     }
 
     if (raw?.e === "ORDER_TRADE_UPDATE" && raw.o) {
-      const o = raw.o,
+      const o = raw.o;
+      this.trade?.invalidateOrderFact?.(String(o.s??""),o.i==null?null:String(o.i),o.c==null?null:String(o.c));
+      const
         qty = Number(o.l ?? 0);
       if (qty > 0) {
         const positionSide = ["LONG", "SHORT"].includes(String(o.ps))

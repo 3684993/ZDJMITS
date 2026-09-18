@@ -921,6 +921,23 @@ export class SettingsStore {
         .all() as Array<{ payload: string }>
     ).map((row) => JSON.parse(row.payload));
   }
+  async saveResourceIfVersion(next:unknown,expectedVersion:number,mutation:{kind:"exchange"|"proxy"|"ai";operation:"SAVE"|"DELETE";id:string;value?:unknown}) {
+    await this.open();
+    if(this.current.settingsVersion!==expectedVersion)throw new Error("SETTINGS_VERSION_CONFLICT");
+    const parsed=SystemSettingsSchema.parse(next),updated={...parsed,settingsVersion:expectedVersion+1},now=Date.now();
+    const table=mutation.kind==="exchange"?"exchange_resources":mutation.kind==="proxy"?"proxy_resources":"ai_resources";
+    this.db.exec("BEGIN IMMEDIATE");
+    try{
+      const old=this.db.prepare("SELECT payload FROM settings WHERE id=1").get() as {payload:string}|undefined;
+      const previousCapacity=old?JSON.parse(old.payload).portfolio?.maxPositions??null:null;
+      this.db.prepare("INSERT INTO settings(id,version,payload,updated_at) VALUES(1,?,?,?) ON CONFLICT(id) DO UPDATE SET version=excluded.version,payload=excluded.payload,updated_at=excluded.updated_at").run(updated.settingsVersion,JSON.stringify(updated),now);
+      this.db.prepare("INSERT INTO settings_audit(changed_at,source,old_version,new_version,summary) VALUES(?,?,?,?,?)").run(now,`resource-${mutation.kind.toLowerCase()}`,expectedVersion,updated.settingsVersion,JSON.stringify({message:"resource and active settings updated atomically",operation:mutation.operation,resourceId:mutation.id,maxPositions:{before:previousCapacity,after:updated.portfolio.maxPositions}}));
+      this.db.prepare("INSERT INTO connection_profiles(id,profile,updated_at) VALUES(?,?,?) ON CONFLICT(id) DO UPDATE SET profile=excluded.profile,updated_at=excluded.updated_at").run("active",JSON.stringify({connections:updated.connections,aiResources:updated.aiResources}),now);
+      if(mutation.operation==="DELETE")this.db.prepare(`DELETE FROM ${table} WHERE id=?`).run(mutation.id);
+      else this.db.prepare(`INSERT INTO ${table}(id,payload,updated_at) VALUES(?,?,?) ON CONFLICT(id) DO UPDATE SET payload=excluded.payload,updated_at=excluded.updated_at`).run(mutation.id,JSON.stringify(mutation.value??{}),now);
+      this.db.exec("COMMIT");this.current=updated;return updated;
+    }catch(error){this.db.exec("ROLLBACK");throw error;}
+  }
   resourceList(kind: "exchange" | "proxy" | "ai") {
     const table =
       kind === "exchange"

@@ -30,6 +30,16 @@ function ApiPut([string]$path,[object]$body){
 function EngineListener(){Get-NetTCPConnection -State Listen -LocalPort $Port -ErrorAction SilentlyContinue|Select-Object -First 1}
 function AssertEngineOff(){if(EngineListener){throw "ENGINE_MUST_BE_OFF: port $Port is listening"}}
 function AssertEngineOn(){if(-not(EngineListener)){throw "ENGINE_NOT_RUNNING: port $Port is not listening"}}
+function PrepareStage6EngineOff(){
+  $listener=EngineListener
+  if(-not $listener){return}
+  $p=Get-CimInstance Win32_Process -Filter "ProcessId=$($listener.OwningProcess)"
+  if($p.CommandLine -notmatch 'apps[/\\]engine[/\\]dist[/\\]main\.js'){throw "ENGINE_MUST_BE_OFF: port $Port is occupied by non-ZDJ PID $($listener.OwningProcess)"}
+  try{$current=ApiGet '/api/v3/settings'}catch{throw "STAGE6_RETRY_REFUSES_UNREADABLE_ENGINE: PID=$($listener.OwningProcess)"}
+  if($current.connections.exchange.environment -ne 'TESTNET' -or $current.connections.executionMode -ne 'READ_ONLY'){throw "STAGE6_RETRY_REFUSES_NON_READ_ONLY_ENGINE: environment=$($current.connections.exchange.environment) executionMode=$($current.connections.executionMode)"}
+  StopEngine
+  Write-Output 'STAGE6_RETRY_STOPPED_READ_ONLY_ENGINE=TRUE'
+}
 function StartEngine(){
   & powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot 'start-v3.ps1') start -Port $Port
   if($LASTEXITCODE -ne 0){throw "ENGINE_START_FAILED:$LASTEXITCODE"}
@@ -101,6 +111,7 @@ if($Phase -eq 'Status'){
 }
 
 if($Phase -eq 'Stage6'){
+  PrepareStage6EngineOff
   AssertEngineOff
   Push-Location $root
   try{
@@ -111,6 +122,9 @@ if($Phase -eq 'Stage6'){
     if($LASTEXITCODE -ne 0){throw "STAGE6_READONLY_DOWNGRADE_FAILED:$LASTEXITCODE"}
     & npm run v394:stage6:preflight
     if($LASTEXITCODE -ne 0){throw "STAGE6_PREFLIGHT_FAILED:$LASTEXITCODE"}
+    & npm run build
+    if($LASTEXITCODE -ne 0){throw "STAGE6_BUILD_FAILED:$LASTEXITCODE"}
+    Write-Output 'STAGE6_CURRENT_HEAD_DIST_BUILD_PASS=TRUE'
   }finally{Pop-Location}
   StartEngine
   $settings=ApiGet '/api/v3/settings'

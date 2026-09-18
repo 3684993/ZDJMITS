@@ -4,7 +4,7 @@ param(
   [ValidateSet('Stage6','Stage7','Stage8','Status')]
   [string]$Phase,
   [int]$Port=8080,
-  [ValidateRange(30,120)][int]$Stage6Minutes=60,
+  [ValidateRange(5,120)][int]$Stage6Minutes=60,
   [ValidateRange(1,100)][decimal]$CanaryMarginUsd=5,
   [ValidateRange(5,240)][int]$EntryWaitMinutes=120,
   [ValidateRange(5,240)][int]$LifecycleWaitMinutes=120,
@@ -111,6 +111,17 @@ function AssertNoExistingExposure(){
   if($positions.Count -gt 0 -or $active.Count -gt 0){throw "STAGE7_REQUIRES_NO_EXISTING_EXPOSURE: positions=$($positions.Count) activeEntry=$($active.Count)"}
 }
 function SaveJson([string]$path,[object]$value){$value|ConvertTo-Json -Depth 50|Set-Content -LiteralPath $path -Encoding utf8}
+function QualifiedPriorStage6Evidence(){
+  $dirs=Get-ChildItem (Join-Path $root 'data\reports') -Directory -Filter 'v394-stage6-readonly-*' -ErrorAction SilentlyContinue|Sort-Object LastWriteTime -Descending
+  foreach($dir in $dirs){
+    $summaryPath=Join-Path $dir.FullName 'summary.json'
+    if(-not(Test-Path $summaryPath)){continue}
+    try{$prior=Get-Content $summaryPath -Raw|ConvertFrom-Json}catch{continue}
+    $qualified=([int]$prior.requestedDurationMinutes -ge 30 -and [int]$prior.routeViolationSamples -eq 0 -and [int]$prior.egressViolationSamples -eq 0 -and [int]$prior.http429Delta -eq 0 -and [int]$prior.http418Delta -eq 0 -and [int]$prior.privateTruthTimeoutDelta -eq 0 -and [double]$prior.readyRate -eq 1 -and [double]$prior.accountReadyRate -eq 1 -and [double]$prior.wsLiveRate -eq 1 -and [double]$prior.reconciliationSettledRate -eq 1 -and [int]$prior.falseCounterDiscontinuity -gt 0)
+    if($qualified){return $dir.FullName}
+  }
+  return $null
+}
 
 if($Phase -eq 'Status'){
   AssertEngineOn
@@ -120,6 +131,12 @@ if($Phase -eq 'Status'){
 }
 
 if($Phase -eq 'Stage6'){
+  $priorStage6Evidence=$null
+  if($Stage6Minutes -lt 30){
+    $priorStage6Evidence=QualifiedPriorStage6Evidence
+    if([string]::IsNullOrWhiteSpace([string]$priorStage6Evidence)){throw 'STAGE6_SHORT_RECHECK_REQUIRES_QUALIFIED_PRIOR_30M_EVIDENCE'}
+    Write-Output "STAGE6_SHORT_RECHECK_USING_PRIOR_EVIDENCE=$priorStage6Evidence"
+  }
   PrepareStage6EngineOff
   AssertEngineOff
   Push-Location $root
@@ -143,7 +160,9 @@ if($Phase -eq 'Stage6'){
   VerifyStage6ProxyEgress|Out-Null
   $stage6Baseline=AssertGovernance
   Write-Output "STAGE6_RATE_LIMIT_BASELINE=http429:$([int]$stage6Baseline.requestBudget.http429),http418:$([int]$stage6Baseline.requestBudget.http418)"
-  & powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot 'run-v394-readonly-canary.ps1') -DurationMinutes $Stage6Minutes -IntervalSeconds 30 -Port $Port -BaselineHttp429 ([int]$stage6Baseline.requestBudget.http429) -BaselineHttp418 ([int]$stage6Baseline.requestBudget.http418)
+  $canaryArgs=@('-NoProfile','-ExecutionPolicy','Bypass','-File',(Join-Path $PSScriptRoot 'run-v394-readonly-canary.ps1'),'-DurationMinutes',[string]$Stage6Minutes,'-IntervalSeconds','30','-Port',[string]$Port,'-BaselineHttp429',[string]([int]$stage6Baseline.requestBudget.http429),'-BaselineHttp418',[string]([int]$stage6Baseline.requestBudget.http418))
+  if($Stage6Minutes -lt 30){$canaryArgs+=@('-PriorEvidenceDir',[string]$priorStage6Evidence)}
+  & powershell @canaryArgs
   if($LASTEXITCODE -ne 0){throw "STAGE6_READONLY_CANARY_FAILED:$LASTEXITCODE"}
   Write-Output 'STAGE6_PASS_ENGINE_REMAINS_READ_ONLY=TRUE'
   exit 0

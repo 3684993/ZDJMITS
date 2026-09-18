@@ -105,7 +105,7 @@ async function saveResource(kind: string, item: any) {
     if(draft.value){
       draft.value.settingsVersion=Number(resourceSettingsVersion.value);
       if(kind==="ai")draft.value.aiResources=resources.value.ai.map((x:any)=>({id:x.id,role:x.role,enabled:x.enabled!==false,baseUrl:x.baseUrl,model:x.model,maxConcurrency:Number(x.maxConcurrency??1),gpu:x.gpu??"未指定"}));
-      if(kind==="proxy")draft.value.connections.proxy={...draft.value.connections.proxy,url:confirmed.url,enabled:confirmed.enabled!==false,protocol:"SOCKS5H",forceBinanceRest:true,forceBinanceWs:true,proxyDns:true,binanceRestRoute:"CONFIGURED",bypassLocalhost:true,failClosed:true};
+      if(kind==="proxy")draft.value.connections.proxy={...draft.value.connections.proxy,url:confirmed.url,expectedStaticEgressIp:confirmed.expectedStaticEgressIp||undefined,enabled:confirmed.enabled!==false,protocol:"SOCKS5H",forceBinanceRest:true,forceBinanceWs:true,proxyDns:true,binanceRestRoute:"CONFIGURED",bypassLocalhost:true,failClosed:true};
       if(kind==="exchange"){const x:any=draft.value.connections.exchange;if(confirmed.environment==="TESTNET"){x.environment="TESTNET";x.testnetBaseUrl=confirmed.restBaseUrl;x.testnetRestBaseUrl=confirmed.restBaseUrl;x.testnetWsBaseUrl=confirmed.wsBaseUrl;}else{x.environment="PRODUCTION";x.productionBaseUrl=confirmed.restBaseUrl;x.productionRestBaseUrl=confirmed.restBaseUrl;x.productionWsBaseUrl=confirmed.wsBaseUrl;}x.credentialRef=confirmed.credentialRef??x.credentialRef;}
     }
     resourceBaseline.value[kind]=Object.fromEntries(resources.value[kind].map((x:any)=>[x.id,JSON.stringify(x)]));selectedResourceId.value[kind]=confirmed.id;
@@ -121,7 +121,7 @@ async function addResource(kind: "exchange" | "proxy" | "ai") {
     resourceBaseline.value.exchange={};selectedResourceId.value.exchange="binance-usdm";return;
   }
   if(kind==="proxy"){
-    resources.value.proxy=[{id:"binance-proxy",name:"SOCKS5H",type:"SOCKS5H",url:"socks5h://127.0.0.1:20081",enabled:true,status:"READY"}];
+    resources.value.proxy=[{id:"binance-proxy",name:"SOCKS5H",type:"SOCKS5H",url:"socks5h://127.0.0.1:20081",expectedStaticEgressIp:"",enabled:true,status:"READY"}];
     resourceBaseline.value.proxy={};selectedResourceId.value.proxy="binance-proxy";return;
   }
   const item={id:`ai_${Date.now()}`,role:"SCOUT",baseUrl:"http://127.0.0.1:8081/v1",model:"qwen3.5:9b",maxConcurrency:1,gpu:"未指定",enabled:true,status:"READY"};
@@ -620,7 +620,7 @@ onMounted(load);
       <Panel v-else-if="tab === 'proxy'" title="网络代理资源">
         <div class="toolbar"><span>Binance REST / WS 统一经 SOCKS5H；变更立即 hot-apply</span><button class="button primary" @click="addResource('proxy')">新增/重置</button></div>
         <div class="toolbar"><button v-for="choice in resources.proxy" :key="choice.id" class="button tiny secondary" @click="selectedResourceId.proxy=choice.id">{{ choice.name ?? choice.model ?? choice.id }}<span v-if="isResourceDirty('proxy',choice)"> *</span></button></div><div v-for="item in selectedResources('proxy')" :key="item.id" class="resource-row">
-          <div class="form-grid two"><label><span>Proxy URL</span><input v-model="item.url" /></label><label class="switch-row"><span>启用</span><input v-model="item.enabled" type="checkbox" /></label></div>
+          <div class="form-grid two"><label><span>Proxy URL</span><input v-model="item.url" /></label><label><span>期望固定出口 IP</span><input v-model="item.expectedStaticEgressIp" placeholder="例如 203.0.113.10" /></label><label class="switch-row"><span>启用</span><input v-model="item.enabled" type="checkbox" /></label></div>
           <div><span v-if="isResourceDirty('proxy',item)" class="muted">未保存</span><button class="button tiny primary" :disabled="!isResourceDirty('proxy',item)" @click="saveResource('proxy',item)">保存</button><button class="button tiny secondary" :disabled="!isResourceDirty('proxy',item)" @click="cancelResourceEdits('proxy')">取消</button><button class="button tiny secondary" @click="testResource('proxy',item)">测试</button><button class="button tiny secondary" @click="removeResource('proxy',item.id)">删除</button></div>
         </div>
       </Panel>

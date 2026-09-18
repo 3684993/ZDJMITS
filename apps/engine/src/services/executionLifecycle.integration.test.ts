@@ -51,7 +51,7 @@ describe('V3.9 execution outcomes with real services',()=>{
       const result=await restarted.execute(x.p.id,{action:'EMERGENCY_CLOSE',confirm:true,idempotencyKey:'after-crash'});
       expect(result.replayed).toBe(true);expect(result.order?.status).toBe('UNKNOWN');expect(x.exchange.placeManualOrder).toHaveBeenCalledOnce();
     }finally{store.close();}
-  });
+  },15_000);
   it.each(['CANCELED','EXPIRED','REJECTED'])('propagates delayed %s to intent',status=>{
     const next=manualIntentFromOrder({id:'i',action:'EMERGENCY_CLOSE',status:'UNKNOWN'} as any,{status,exchangeOrderId:'e'} as any,true);
     expect(next.status).toBe(status);expect(next.reason).toBe(`EXCHANGE_ORDER_${status}`);

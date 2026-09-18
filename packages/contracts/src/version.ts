@@ -1,6 +1,6 @@
 export const RELEASE_VERSION = "3.9.4" as const;
 export const RELEASE_NAME =
-  "Binance API Governance + Settings Resource Manager" as const;
+  "Trading Quality SHADOW" as const;
 export const PRODUCT_NAME = "ZDJ-MITS" as const;
 export const RELEASE_LABEL = `${PRODUCT_NAME} V${RELEASE_VERSION}` as const;
 export const PROMPT_SCHEMA_VERSION = "V3.9.2" as const;

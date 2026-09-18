@@ -93,3 +93,25 @@ it('defers BACKGROUND before PRIVATE_TRUTH under exchange pressure',async()=>{
   await vi.advanceTimersByTimeAsync(5_100);await rejected;
  }finally{vi.useRealTimers();}
 });
+
+it('does not mistake an older concurrent response for a same-window Binance counter discontinuity',async()=>{
+ vi.useFakeTimers();vi.setSystemTime(1_800_000_010_000);
+ try{
+  const budget=new RequestBudget(2,2,100);
+  let releaseA!:()=>void,releaseB!:()=>void;
+  const aMeta={requestId:'concurrent-a',source:'PRIVATE_STATE',endpoint:'/fapi/v2/account'};
+  const bMeta={requestId:'concurrent-b',source:'RECONCILIATION',endpoint:'/fapi/v1/openOrders'};
+  const a=budget.run(1,1,()=>new Promise<void>(resolve=>releaseA=resolve),aMeta);
+  const b=budget.run(1,1,()=>new Promise<void>(resolve=>releaseB=resolve),bMeta);
+  await Promise.resolve();
+  vi.advanceTimersByTime(100);
+  budget.observeResponse(200,{'x-mbx-used-weight-1m':'200'},undefined,bMeta);
+  releaseB();await b;
+  vi.advanceTimersByTime(100);
+  budget.observeResponse(200,{'x-mbx-used-weight-1m':'190'},undefined,aMeta);
+  releaseA();await a;
+  expect(budget.health().observationTrust).toBe('TRUSTED');
+  expect(budget.health().rateLimits).toEqual(expect.arrayContaining([expect.objectContaining({rateLimitType:'REQUEST_WEIGHT',observedCount:200,counterDiscontinuity:false})]));
+  expect(budget.health().weightObservations.at(-1)).toMatchObject({usedWeight1m:190,counterDiscontinuity:false,staleOutOfOrder:true});
+ }finally{vi.useRealTimers();}
+});

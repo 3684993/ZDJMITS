@@ -112,46 +112,24 @@ async function saveResource(kind: string, item: any) {
   }
 }
 async function addResource(kind: "exchange" | "proxy" | "ai") {
-  const item =
-    kind === "exchange"
-      ? {
-          id: `exchange_${Date.now()}`,
-          name: "Binance USD-M",
-          type: "BINANCE_USDM",
-          environment: "TESTNET",
-          enabled: false,
-          status: "READY",
-        }
-      : kind === "proxy"
-        ? {
-            id: `proxy_${Date.now()}`,
-            name: "SOCKS5H",
-            type: "SOCKS5H",
-            url: "socks5h://127.0.0.1:20081",
-            enabled: true,
-            status: "READY",
-          }
-        : {
-            id: `ai_${Date.now()}`,
-            role: "SCOUT",
-            baseUrl: "http://127.0.0.1:8081/v1",
-            model: "qwen3.5:9b",
-            maxConcurrency: 1,
-            timeout: 45000,
-            healthPath: "/models",
-            gpu: "未指定",
-            priority: 10,
-            enabled: true,
-            status: "READY",
-          };
-  await saveResource(kind, item);
+  if(kind==="exchange"){
+    const x:any=draft.value?.connections?.exchange??{};
+    resources.value.exchange=[{id:"binance-usdm",name:"Binance USD-M",type:"BINANCE_USDM",environment:x.environment??"TESTNET",restBaseUrl:(x.environment??"TESTNET")==="TESTNET"?(x.testnetRestBaseUrl??x.testnetBaseUrl??"https://demo-fapi.binance.com"):(x.productionRestBaseUrl??x.productionBaseUrl??"https://fapi.binance.com"),wsBaseUrl:(x.environment??"TESTNET")==="TESTNET"?(x.testnetWsBaseUrl??"wss://stream.binancefuture.com/ws"):(x.productionWsBaseUrl??"wss://fstream.binance.com/ws"),credentialRef:x.credentialRef??"binance-primary",enabled:true,status:"READY"}];
+    resourceBaseline.value.exchange={};return;
+  }
+  if(kind==="proxy"){
+    resources.value.proxy=[{id:"binance-proxy",name:"SOCKS5H",type:"SOCKS5H",url:"socks5h://127.0.0.1:20081",enabled:true,status:"READY"}];
+    resourceBaseline.value.proxy={};return;
+  }
+  const item={id:`ai_${Date.now()}`,role:"SCOUT",baseUrl:"http://127.0.0.1:8081/v1",model:"qwen3.5:9b",maxConcurrency:1,gpu:"未指定",enabled:true,status:"READY"};
+  resources.value.ai=[...resources.value.ai,item];
 }
 async function removeResource(kind: string, id: string) {
   try{
     const expected=resourceSettingsVersion.value ?? draft.value?.settingsVersion;if(!expected)throw new Error("资源版本尚未加载，请刷新设置");
-    await api.deleteResource(kind,id,expected);resourceSettingsVersion.value=expected+1;
-    resources.value[kind] = resources.value[kind].filter((x: any) => x.id !== id);
-    if(draft.value){draft.value.settingsVersion=expected+1;if(kind==="ai")draft.value.aiResources=draft.value.aiResources.filter(x=>x.id!==id);if(kind==="proxy")draft.value.connections.proxy.enabled=false;}
+    await api.deleteResource(kind,id,expected);
+    const loaded=await api.resources(kind);resources.value[kind]=loaded.items??[];resourceSettingsVersion.value=Number(loaded.settingsVersion??expected+1);resourceBaseline.value[kind]=Object.fromEntries(resources.value[kind].map((x:any)=>[x.id,JSON.stringify(x)]));
+    if(draft.value){draft.value.settingsVersion=resourceSettingsVersion.value;if(kind==="ai")draft.value.aiResources=resources.value.ai.map((x:any)=>({id:x.id,role:x.role,enabled:x.enabled!==false,baseUrl:x.baseUrl,model:x.model,maxConcurrency:Number(x.maxConcurrency??1),gpu:x.gpu??"未指定"}));if(kind==="proxy")draft.value.connections.proxy.enabled=Boolean(resources.value.proxy[0]?.enabled);}
     notice.value="资源已删除并已回读";
   }catch(e){error.value=String(e);}
 } 

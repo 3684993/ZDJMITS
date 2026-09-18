@@ -23,6 +23,7 @@ const tab = ref("strategy"),
   resources = ref<any>({ exchange: [], proxy: [], ai: [] }),
   resourceSettingsVersion = ref<number | null>(null),
   resourceBaseline = ref<Record<string, Record<string, string>>>({ exchange: {}, proxy: {}, ai: {} }),
+  selectedResourceId = ref<Record<string,string>>({exchange:"",proxy:"",ai:""}),
   saving = ref(false),
   notice = ref(""),
   error = ref(""),
@@ -72,6 +73,7 @@ async function load() {
     };
     resourceSettingsVersion.value = Number(loaded[0].settingsVersion ?? settings.settingsVersion);
     resourceBaseline.value={exchange:Object.fromEntries(resources.value.exchange.map((x:any)=>[x.id,JSON.stringify(x)])),proxy:Object.fromEntries(resources.value.proxy.map((x:any)=>[x.id,JSON.stringify(x)])),ai:Object.fromEntries(resources.value.ai.map((x:any)=>[x.id,JSON.stringify(x)]))};
+    for(const kind of ['exchange','proxy','ai'])if(!resources.value[kind].some((x:any)=>x.id===selectedResourceId.value[kind]))selectedResourceId.value[kind]=resources.value[kind][0]?.id??'';
     applyTheme();
   } catch (e) {
     error.value = String(e);
@@ -105,7 +107,7 @@ async function saveResource(kind: string, item: any) {
       if(kind==="proxy")draft.value.connections.proxy={...draft.value.connections.proxy,url:saved.url,enabled:saved.enabled!==false,protocol:"SOCKS5H",forceBinanceRest:true,forceBinanceWs:true,proxyDns:true,binanceRestRoute:"CONFIGURED",bypassLocalhost:true,failClosed:true};
       if(kind==="exchange"){const x:any=draft.value.connections.exchange;if(saved.environment==="TESTNET"){x.environment="TESTNET";x.testnetBaseUrl=saved.restBaseUrl;x.testnetRestBaseUrl=saved.restBaseUrl;x.testnetWsBaseUrl=saved.wsBaseUrl;}else{x.environment="PRODUCTION";x.productionBaseUrl=saved.restBaseUrl;x.productionRestBaseUrl=saved.restBaseUrl;x.productionWsBaseUrl=saved.wsBaseUrl;}x.credentialRef=saved.credentialRef??x.credentialRef;}
     }
-    resourceBaseline.value[kind]=Object.fromEntries(resources.value[kind].map((x:any)=>[x.id,JSON.stringify(x)]));
+    resourceBaseline.value[kind]=Object.fromEntries(resources.value[kind].map((x:any)=>[x.id,JSON.stringify(x)]));selectedResourceId.value[kind]=saved.id;
     notice.value = "资源已保存并已回读";
   } catch (e) {
     error.value = String(e);
@@ -115,26 +117,27 @@ async function addResource(kind: "exchange" | "proxy" | "ai") {
   if(kind==="exchange"){
     const x:any=draft.value?.connections?.exchange??{};
     resources.value.exchange=[{id:"binance-usdm",name:"Binance USD-M",type:"BINANCE_USDM",environment:x.environment??"TESTNET",restBaseUrl:(x.environment??"TESTNET")==="TESTNET"?(x.testnetRestBaseUrl??x.testnetBaseUrl??"https://demo-fapi.binance.com"):(x.productionRestBaseUrl??x.productionBaseUrl??"https://fapi.binance.com"),wsBaseUrl:(x.environment??"TESTNET")==="TESTNET"?(x.testnetWsBaseUrl??"wss://stream.binancefuture.com/ws"):(x.productionWsBaseUrl??"wss://fstream.binance.com/ws"),credentialRef:x.credentialRef??"binance-primary",enabled:true,status:"READY"}];
-    resourceBaseline.value.exchange={};return;
+    resourceBaseline.value.exchange={};selectedResourceId.value.exchange="binance-usdm";return;
   }
   if(kind==="proxy"){
     resources.value.proxy=[{id:"binance-proxy",name:"SOCKS5H",type:"SOCKS5H",url:"socks5h://127.0.0.1:20081",enabled:true,status:"READY"}];
-    resourceBaseline.value.proxy={};return;
+    resourceBaseline.value.proxy={};selectedResourceId.value.proxy="binance-proxy";return;
   }
   const item={id:`ai_${Date.now()}`,role:"SCOUT",baseUrl:"http://127.0.0.1:8081/v1",model:"qwen3.5:9b",maxConcurrency:1,gpu:"未指定",enabled:true,status:"READY"};
-  resources.value.ai=[...resources.value.ai,item];
+  resources.value.ai=[...resources.value.ai,item];selectedResourceId.value.ai=item.id;
 }
 async function removeResource(kind: string, id: string) {
   try{
     const expected=resourceSettingsVersion.value ?? draft.value?.settingsVersion;if(!expected)throw new Error("资源版本尚未加载，请刷新设置");
     await api.deleteResource(kind,id,expected);
-    const loaded=await api.resources(kind);resources.value[kind]=loaded.items??[];resourceSettingsVersion.value=Number(loaded.settingsVersion??expected+1);resourceBaseline.value[kind]=Object.fromEntries(resources.value[kind].map((x:any)=>[x.id,JSON.stringify(x)]));
+    const loaded=await api.resources(kind);resources.value[kind]=loaded.items??[];resourceSettingsVersion.value=Number(loaded.settingsVersion??expected+1);resourceBaseline.value[kind]=Object.fromEntries(resources.value[kind].map((x:any)=>[x.id,JSON.stringify(x)]));selectedResourceId.value[kind]=resources.value[kind][0]?.id??"";
     if(draft.value){draft.value.settingsVersion=resourceSettingsVersion.value;if(kind==="ai")draft.value.aiResources=resources.value.ai.map((x:any)=>({id:x.id,role:x.role,enabled:x.enabled!==false,baseUrl:x.baseUrl,model:x.model,maxConcurrency:Number(x.maxConcurrency??1),gpu:x.gpu??"未指定"}));if(kind==="proxy")draft.value.connections.proxy.enabled=Boolean(resources.value.proxy[0]?.enabled);}
     notice.value="资源已删除并已回读";
   }catch(e){error.value=String(e);}
 } 
 function isResourceDirty(kind:string,item:any){return resourceBaseline.value[kind]?.[item.id]!==JSON.stringify(item);}
-async function cancelResourceEdits(kind:string){try{const loaded=await api.resources(kind);resources.value[kind]=loaded.items??[];resourceSettingsVersion.value=Number(loaded.settingsVersion);resourceBaseline.value[kind]=Object.fromEntries(resources.value[kind].map((x:any)=>[x.id,JSON.stringify(x)]));notice.value="未保存修改已取消";}catch(e){error.value=String(e);}}
+function selectedResources(kind:string){const id=selectedResourceId.value[kind];return id?resources.value[kind].filter((x:any)=>x.id===id):resources.value[kind].slice(0,1);}
+async function cancelResourceEdits(kind:string){try{const selected=selectedResourceId.value[kind],loaded=await api.resources(kind);resources.value[kind]=loaded.items??[];resourceSettingsVersion.value=Number(loaded.settingsVersion);resourceBaseline.value[kind]=Object.fromEntries(resources.value[kind].map((x:any)=>[x.id,JSON.stringify(x)]));selectedResourceId.value[kind]=resources.value[kind].some((x:any)=>x.id===selected)?selected:(resources.value[kind][0]?.id??"");notice.value="未保存修改已取消";}catch(e){error.value=String(e);}}
 async function testResource(kind:"exchange"|"proxy"|"ai",item:any){try{if(isResourceDirty(kind,item))throw new Error("请先保存当前资源修改，再执行真实连接测试");const result=kind==="exchange"?await api.testExchange():kind==="proxy"?await api.testProxy():await api.testAi(item.id);notice.value=`连接测试：${result.status??result.state??"PASS"}`;}catch(e){error.value=String(e);}}
 async function saveCredentials() {
   try {
@@ -601,7 +604,7 @@ onMounted(load);
       </Panel>
       <Panel v-else-if="tab === 'exchange'" title="交易所资源">
         <div class="toolbar"><span>活动 Testnet REST 仅允许 Binance Demo；REST / WS 独立配置</span><button class="button primary" @click="addResource('exchange')">新增/重置</button></div>
-        <div v-for="item in resources.exchange" :key="item.id" class="resource-row">
+        <div class="toolbar"><button v-for="choice in resources.exchange" :key="choice.id" class="button tiny secondary" @click="selectedResourceId.exchange=choice.id">{{ choice.name ?? choice.model ?? choice.id }}<span v-if="isResourceDirty('exchange',choice)"> *</span></button></div><div v-for="item in selectedResources('exchange')" :key="item.id" class="resource-row">
           <div class="form-grid two">
             <label><span>环境</span><select v-model="item.environment"><option>TESTNET</option><option>PRODUCTION</option></select></label>
             <label><span>REST Base URL</span><input v-model="item.restBaseUrl" /></label>
@@ -615,14 +618,14 @@ onMounted(load);
       </Panel>
       <Panel v-else-if="tab === 'proxy'" title="网络代理资源">
         <div class="toolbar"><span>Binance REST / WS 统一经 SOCKS5H；变更立即 hot-apply</span><button class="button primary" @click="addResource('proxy')">新增/重置</button></div>
-        <div v-for="item in resources.proxy" :key="item.id" class="resource-row">
+        <div class="toolbar"><button v-for="choice in resources.proxy" :key="choice.id" class="button tiny secondary" @click="selectedResourceId.proxy=choice.id">{{ choice.name ?? choice.model ?? choice.id }}<span v-if="isResourceDirty('proxy',choice)"> *</span></button></div><div v-for="item in selectedResources('proxy')" :key="item.id" class="resource-row">
           <div class="form-grid two"><label><span>Proxy URL</span><input v-model="item.url" /></label><label class="switch-row"><span>启用</span><input v-model="item.enabled" type="checkbox" /></label></div>
           <div><span v-if="isResourceDirty('proxy',item)" class="muted">未保存</span><button class="button tiny primary" :disabled="!isResourceDirty('proxy',item)" @click="saveResource('proxy',item)">保存</button><button class="button tiny secondary" :disabled="!isResourceDirty('proxy',item)" @click="cancelResourceEdits('proxy')">取消</button><button class="button tiny secondary" @click="testResource('proxy',item)">测试</button><button class="button tiny secondary" @click="removeResource('proxy',item.id)">删除</button></div>
         </div>
       </Panel>
       <Panel v-else-if="tab === 'ai'" title="AI 模型资源">
         <div class="toolbar"><span>角色：SCOUT / PRIMARY_BRAIN；资源修改采用版本冲突保护</span><button class="button primary" @click="addResource('ai')">新增</button></div>
-        <div v-for="item in resources.ai" :key="item.id" class="resource-row">
+        <div class="toolbar"><button v-for="choice in resources.ai" :key="choice.id" class="button tiny secondary" @click="selectedResourceId.ai=choice.id">{{ choice.name ?? choice.model ?? choice.id }}<span v-if="isResourceDirty('ai',choice)"> *</span></button></div><div v-for="item in selectedResources('ai')" :key="item.id" class="resource-row">
           <div class="form-grid two"><label><span>角色</span><select v-model="item.role"><option>SCOUT</option><option>PRIMARY_BRAIN</option></select></label><label><span>Model</span><input v-model="item.model" /></label><label><span>Base URL</span><input v-model="item.baseUrl" /></label><label><span>GPU</span><input v-model="item.gpu" /></label><label><span>并发</span><input v-model.number="item.maxConcurrency" type="number" min="1" max="16" /></label><label class="switch-row"><span>启用</span><input v-model="item.enabled" type="checkbox" /></label></div>
           <div><span v-if="isResourceDirty('ai',item)" class="muted">未保存</span><button class="button tiny primary" :disabled="!isResourceDirty('ai',item)" @click="saveResource('ai',item)">保存</button><button class="button tiny secondary" :disabled="!isResourceDirty('ai',item)" @click="cancelResourceEdits('ai')">取消</button><button class="button tiny secondary" @click="testResource('ai',item)">测试</button><button class="button tiny secondary" @click="removeResource('ai',item.id)">删除</button></div>
         </div>

@@ -47,7 +47,9 @@ function hotApply(runtime:EngineRuntime,before:SystemSettings,after:SystemSettin
   syncAiRuntime(runtime,after);
 }
 export async function saveRuntimeSettings(runtime:EngineRuntime,input:unknown){
-  const before=runtime.state.settings,saved=await runtime.updateSettings(input);hotApply(runtime,before,saved);return saved;
+  const before=runtime.state.settings,expected=Number((input as any)?.settingsVersion);
+  if(!Number.isInteger(expected)||expected<1)throw new Error('SETTINGS_VERSION_REQUIRED');
+  const saved=await runtime.updateSettingsIfVersion(input,expected);hotApply(runtime,before,saved);return saved;
 }
 function expectedVersion(req:Request){const raw=req.body?.expectedSettingsVersion??req.header('if-match')??req.query.expectedSettingsVersion,n=Number(raw);if(!Number.isInteger(n)||n<1)throw new Error('SETTINGS_VERSION_REQUIRED');return n;}
 function conflict(res:Response,error:unknown,currentVersion:number){if(String(error).includes('SETTINGS_VERSION_CONFLICT')){res.status(409).json({error:{message:'SETTINGS_VERSION_CONFLICT'},currentSettingsVersion:currentVersion});return true;}return false;}
@@ -56,7 +58,11 @@ export function createRuntimeSettingsResourcesRouter(runtime:EngineRuntime){
   const router=Router(),kindOf=(req:Request):RuntimeResourceKind=>{const kind=String(req.params.kind??'');if(!['exchange','proxy','ai'].includes(kind))throw new Error('RESOURCE_KIND_UNSUPPORTED');return kind as RuntimeResourceKind;};
   const legacy=canonicalProxy(runtime.state.settings),current=runtime.state.settings.connections.proxy,canonical=legacy.connections.proxy;
   if(current.forceBinanceRest!==canonical.forceBinanceRest||current.forceBinanceWs!==canonical.forceBinanceWs||current.proxyDns!==canonical.proxyDns||current.binanceRestRoute!==canonical.binanceRestRoute||current.failClosed!==canonical.failClosed)void saveRuntimeSettings(runtime,legacy).catch(error=>runtime.events.publish('SETTINGS_PROXY_MIGRATION_FAILED',{message:error instanceof Error?error.message:String(error)}));
-  router.put('/settings',async(req,res,next)=>{try{res.json(await saveRuntimeSettings(runtime,canonicalProxy(req.body as SystemSettings)));}catch(error){next(error);}});
+  router.put('/settings',async(req,res,next)=>{try{
+    const requested=req.body as SystemSettings,current=runtime.state.settings;
+    const candidate=canonicalProxy({...requested,connections:{...requested.connections,exchange:current.connections.exchange,proxy:current.connections.proxy},aiResources:current.aiResources});
+    res.json(await saveRuntimeSettings(runtime,candidate));
+  }catch(error){if(conflict(res,error,runtime.state.settings.settingsVersion))return;next(error);}});
   router.get('/settings/resources/:kind',(req,res,next)=>{try{const kind=kindOf(req);res.json({settingsVersion:runtime.state.settings.settingsVersion,items:resourceView(runtime.state.settings,kind)});}catch(error){next(error);}});
   const save=async(req:Request,res:Response,next:NextFunction)=>{try{
     const kind=kindOf(req),expected=expectedVersion(req),before=runtime.state.settings;rejectSecretFields(req.body);

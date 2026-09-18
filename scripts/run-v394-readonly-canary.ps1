@@ -1,10 +1,11 @@
 [CmdletBinding()]
 param(
-  [ValidateRange(30,120)][int]$DurationMinutes=60,
+  [ValidateRange(5,120)][int]$DurationMinutes=60,
   [ValidateRange(10,300)][int]$IntervalSeconds=30,
   [int]$Port=8080,
   [int]$BaselineHttp429=-1,
-  [int]$BaselineHttp418=-1
+  [int]$BaselineHttp418=-1,
+  [string]$PriorEvidenceDir
 )
 $ErrorActionPreference='Stop'
 $root=(Resolve-Path (Join-Path $PSScriptRoot '..')).Path
@@ -14,6 +15,14 @@ $outDir=Join-Path $root "data\reports\v394-stage6-readonly-$stamp"
 New-Item -ItemType Directory -Force -Path $outDir|Out-Null
 $samples=Join-Path $outDir 'samples.jsonl'
 $summary=Join-Path $outDir 'summary.json'
+if($DurationMinutes -lt 30){
+  if([string]::IsNullOrWhiteSpace($PriorEvidenceDir)){throw 'STAGE6_SHORT_RECHECK_REQUIRES_PRIOR_30M_EVIDENCE'}
+  $priorSummaryPath=Join-Path $PriorEvidenceDir 'summary.json'
+  if(-not(Test-Path $priorSummaryPath)){throw "STAGE6_SHORT_RECHECK_PRIOR_SUMMARY_MISSING:$priorSummaryPath"}
+  $prior=Get-Content $priorSummaryPath -Raw|ConvertFrom-Json
+  $qualified=([int]$prior.requestedDurationMinutes -ge 30 -and [int]$prior.routeViolationSamples -eq 0 -and [int]$prior.egressViolationSamples -eq 0 -and [int]$prior.http429Delta -eq 0 -and [int]$prior.http418Delta -eq 0 -and [int]$prior.privateTruthTimeoutDelta -eq 0 -and [double]$prior.readyRate -eq 1 -and [double]$prior.accountReadyRate -eq 1 -and [double]$prior.wsLiveRate -eq 1 -and [double]$prior.reconciliationSettledRate -eq 1 -and [int]$prior.falseCounterDiscontinuity -gt 0)
+  if(-not $qualified){throw 'STAGE6_SHORT_RECHECK_PRIOR_EVIDENCE_NOT_QUALIFIED'}
+}
 
 function Get-Api([string]$path){Invoke-RestMethod -Uri ($base+$path) -TimeoutSec 15}
 $settings=Get-Api '/api/v3/settings'
@@ -74,6 +83,8 @@ $result=[ordered]@{
   startedAt=$first.at
   completedAt=$last.at
   requestedDurationMinutes=$DurationMinutes
+  qualificationMode=if($DurationMinutes -lt 30){'PRIOR_30M_PLUS_TARGETED_RECHECK'}else{'FULL_CANARY'}
+  priorEvidenceDir=if($DurationMinutes -lt 30){$PriorEvidenceDir}else{$null}
   sampleCount=$list.Count
   executionMode='READ_ONLY'
   restHost='demo-fapi.binance.com'

@@ -1,4 +1,5 @@
 import { Router, type NextFunction, type Request, type Response } from 'express';
+import { isIP } from 'node:net';
 import type { SystemSettings } from '@zdj/contracts';
 import { loadAiResources } from '../config/aiResourceLoader.js';
 import { reconfigureBinanceTransports } from '../adapters/binance/BinanceTransport.js';
@@ -69,7 +70,7 @@ export function createRuntimeSettingsResourcesRouter(runtime:EngineRuntime){
     const id=kind==='proxy'?'binance-proxy':kind==='exchange'?'binance-usdm':String(req.params.id??req.body?.id??'');
     if(!id)throw new Error('RESOURCE_ID_REQUIRED');
     let nextSettings:SystemSettings,item:any;
-    if(kind==='proxy'){const expected=String(req.body?.expectedStaticEgressIp??'').trim();if(expected&&!(await import('node:net')).isIP(expected))throw new Error('PROXY_EXPECTED_EGRESS_IP_INVALID');item={id,name:req.body?.name??'SOCKS5H',type:'SOCKS5H',url:String(req.body?.url??before.connections.proxy.url),expectedStaticEgressIp:expected||undefined,enabled:req.body?.enabled!==false};nextSettings=canonicalProxy(before,item);}
+    if(kind==='proxy'){const expected=String(req.body?.expectedStaticEgressIp??'').trim();if(expected&&!isIP(expected))throw new Error('PROXY_EXPECTED_EGRESS_IP_INVALID');item={id,name:req.body?.name??'SOCKS5H',type:'SOCKS5H',url:String(req.body?.url??before.connections.proxy.url),expectedStaticEgressIp:expected||undefined,enabled:req.body?.enabled!==false};nextSettings=canonicalProxy(before,item);}
     else if(kind==='exchange'){item={id,name:req.body?.name??'Binance USD-M',type:'BINANCE_USDM',environment:req.body?.environment??before.connections.exchange.environment,restBaseUrl:req.body?.restBaseUrl,wsBaseUrl:req.body?.wsBaseUrl,credentialRef:req.body?.credentialRef??before.connections.exchange.credentialRef,enabled:true};nextSettings=canonicalExchange(before,item);}
     else{item=aiResource({...req.body,id});nextSettings=structuredClone(before);nextSettings.aiResources=[...nextSettings.aiResources.filter(existing=>existing.id!==item.id),item];}
     const saved=await runtime.updateResourceSettings(nextSettings,expected,{kind,operation:'SAVE',id,value:item});hotApply(runtime,before,saved);

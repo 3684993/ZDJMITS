@@ -7,7 +7,8 @@ import { fileURLToPath } from 'node:url';
 
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 function arg(name,fallback){const i=process.argv.indexOf(name);return i>=0?process.argv[i+1]:fallback;}
-function listeningAt(host,port){return new Promise(resolve=>{const s=createConnection({host,port});const done=v=>{s.destroy();resolve(v)};s.setTimeout(800);s.once('connect',()=>done(true));s.once('timeout',()=>done(false));s.once('error',()=>done(false));});}\nfunction listening(port){return listeningAt('127.0.0.1',port);}
+function listeningAt(host,port){return new Promise(resolve=>{const s=createConnection({host,port});const done=v=>{s.destroy();resolve(v)};s.setTimeout(800);s.once('connect',()=>done(true));s.once('timeout',()=>done(false));s.once('error',()=>done(false));});}
+function listening(port){return listeningAt('127.0.0.1',port);}
 function one(db,sql){return db.prepare(sql).get();}
 function restHost(settings){const x=settings?.connections?.exchange??{},rest=String(x.testnetRestBaseUrl??x.testnetBaseUrl??'');return rest?new URL(rest).hostname:'';}
 
@@ -36,7 +37,10 @@ async function forceReadOnly({dataDir,backupDir,port=8080,skipEngineCheck=false,
     let proxyScheme='';try{proxyScheme=new URL(proxyUrl).protocol.toLowerCase();}catch{}
     const needsProxyProtocol=!proxy.protocol&&proxyScheme==='socks5h:';
     if(!proxy.protocol&&proxyScheme!=='socks5h:')throw new Error('LEGACY_PROXY_PROTOCOL_AMBIGUOUS:'+String(proxyUrl||'MISSING_URL'));
-    const suppliedExpectedIp=String(expectedStaticEgressIp??'').trim();\n    if(suppliedExpectedIp&&!isIP(suppliedExpectedIp))throw new Error('STAGE6_EXPECTED_STATIC_EGRESS_IP_INVALID:'+suppliedExpectedIp);\n    const needsExpectedIpUpdate=Boolean(suppliedExpectedIp)&&String(proxy.expectedStaticEgressIp??'').trim()!==suppliedExpectedIp;\n    const needsProxyEnable=proxy.enabled!==true;
+    const suppliedExpectedIp=String(expectedStaticEgressIp??'').trim();
+    if(suppliedExpectedIp&&!isIP(suppliedExpectedIp))throw new Error('STAGE6_EXPECTED_STATIC_EGRESS_IP_INVALID:'+suppliedExpectedIp);
+    const needsExpectedIpUpdate=Boolean(suppliedExpectedIp)&&String(proxy.expectedStaticEgressIp??'').trim()!==suppliedExpectedIp;
+    const needsProxyEnable=proxy.enabled!==true;
     if(needsProxyEnable&&!authorizeEnableProxy)throw new Error('STAGE6_PROXY_DISABLED_REQUIRES_EXPLICIT_AUTHORIZATION');
     if(needsProxyEnable){
       const parsedProxy=new URL(proxyUrl),proxyHost=parsedProxy.hostname.replace(/^\\[|\\]$/g,''),proxyPort=Number(parsedProxy.port||0);
@@ -50,7 +54,9 @@ async function forceReadOnly({dataDir,backupDir,port=8080,skipEngineCheck=false,
     after.settingsVersion=newVersion;
     if(needsRestMigration){after.connections.exchange.testnetBaseUrl='https://demo-fapi.binance.com';after.connections.exchange.testnetRestBaseUrl='https://demo-fapi.binance.com';after.connections.exchange.testnetWsBaseUrl=after.connections.exchange.testnetWsBaseUrl??'wss://stream.binancefuture.com/ws';}
     if(needsProxyProtocol)after.connections.proxy.protocol='SOCKS5H';
-    if(needsProxyEnable)after.connections.proxy.enabled=true;\n    if(needsExpectedIpUpdate)after.connections.proxy.expectedStaticEgressIp=suppliedExpectedIp;\n    after.connections.executionMode='READ_ONLY';
+    if(needsProxyEnable)after.connections.proxy.enabled=true;
+    if(needsExpectedIpUpdate)after.connections.proxy.expectedStaticEgressIp=suppliedExpectedIp;
+    after.connections.executionMode='READ_ONLY';
     db.exec('BEGIN IMMEDIATE');
     try{
       db.prepare('UPDATE settings SET version=?,payload=?,updated_at=? WHERE id=1').run(newVersion,JSON.stringify(after),now);
@@ -73,7 +79,12 @@ async function selfTest(){
     db.prepare('INSERT INTO settings VALUES(1,?,?,?)').run(41,JSON.stringify(settings),Date.now());
   }finally{db.close();}
   try{
-    let refused=false;try{await forceReadOnly({dataDir,backupDir,skipEngineCheck:true});}catch(error){refused=String(error).includes('STAGE6_PROXY_DISABLED_REQUIRES_EXPLICIT_AUTHORIZATION');}\n    if(!refused)throw new Error('SELF_TEST_PROXY_ENABLE_AUTHORIZATION_NOT_ENFORCED');\n    const listener=await new Promise((resolve,reject)=>{const server=createServer();server.once('error',reject);server.listen(0,'127.0.0.1',()=>resolve(server));});\n    const address=listener.address(),proxyPort=typeof address==='object'&&address?address.port:0;\n    const dbPatch=new DatabaseSync(path.join(dataDir,'zdj-settings.sqlite'));try{const row=one(dbPatch,'SELECT payload FROM settings WHERE id=1'),value=JSON.parse(String(row.payload));value.connections.proxy.url='socks5h://127.0.0.1:'+proxyPort;dbPatch.prepare('UPDATE settings SET payload=? WHERE id=1').run(JSON.stringify(value));}finally{dbPatch.close();}\n    let result;try{result=await forceReadOnly({dataDir,backupDir,skipEngineCheck:true,authorizeEnableProxy:true,expectedStaticEgressIp:'203.0.113.10'});}finally{listener.close();}
+    let refused=false;try{await forceReadOnly({dataDir,backupDir,skipEngineCheck:true});}catch(error){refused=String(error).includes('STAGE6_PROXY_DISABLED_REQUIRES_EXPLICIT_AUTHORIZATION');}
+    if(!refused)throw new Error('SELF_TEST_PROXY_ENABLE_AUTHORIZATION_NOT_ENFORCED');
+    const listener=await new Promise((resolve,reject)=>{const server=createServer();server.once('error',reject);server.listen(0,'127.0.0.1',()=>resolve(server));});
+    const address=listener.address(),proxyPort=typeof address==='object'&&address?address.port:0;
+    const dbPatch=new DatabaseSync(path.join(dataDir,'zdj-settings.sqlite'));try{const row=one(dbPatch,'SELECT payload FROM settings WHERE id=1'),value=JSON.parse(String(row.payload));value.connections.proxy.url='socks5h://127.0.0.1:'+proxyPort;dbPatch.prepare('UPDATE settings SET payload=? WHERE id=1').run(JSON.stringify(value));}finally{dbPatch.close();}
+    let result;try{result=await forceReadOnly({dataDir,backupDir,skipEngineCheck:true,authorizeEnableProxy:true,expectedStaticEgressIp:'203.0.113.10'});}finally{listener.close();}
     const verify=new DatabaseSync(path.join(dataDir,'zdj-settings.sqlite'),{readOnly:true});
     try{
       const row=one(verify,'SELECT version,payload FROM settings WHERE id=1'),saved=JSON.parse(String(row.payload)),audit=one(verify,"SELECT source FROM settings_audit ORDER BY id DESC LIMIT 1");
@@ -88,6 +99,7 @@ async function selfTest(){
 if(process.argv.includes('--self-test'))await selfTest();
 else{
   const dataDir=path.resolve(arg('--data-dir',path.join(root,'data'))),backupDir=path.resolve(arg('--backup-dir',path.join(root,'data','backups','v394-stage6'))),port=Number(arg('--port','8080'));
-  const authorizeEnableProxy=process.argv.includes('--authorize-enable-proxy');\n  const result=await forceReadOnly({dataDir,backupDir,port,authorizeEnableProxy});
+  const authorizeEnableProxy=process.argv.includes('--authorize-enable-proxy');
+  const result=await forceReadOnly({dataDir,backupDir,port,authorizeEnableProxy});
   console.log('V394_STAGE6_READONLY_READY=TRUE');console.log(JSON.stringify(result,null,2));
 }

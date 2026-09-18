@@ -3,7 +3,7 @@ import {ExternalTradeAdapter} from './ExternalTradeAdapter.js';
 
 function adapterHarness(){
   const calls:string[]=[];
-  const transport:any={effectiveBaseUrl:()=> 'https://demo-fapi.binance.com',environment:()=> 'TESTNET',executionMode:()=> 'TESTNET_ENABLED',assertTestnetExchangeWrite:()=>{},json:vi.fn(async(url:string)=>{calls.push(url);if(url==='/fapi/v1/time')return{serverTime:Date.now()};if(url.startsWith('/fapi/v1/userTrades'))return[];if(url.startsWith('/fapi/v1/allOrders'))return[];if(url.startsWith('/fapi/v1/income'))return[];return[];})};
+  const transport:any={effectiveBaseUrl:()=> 'https://demo-fapi.binance.com',environment:()=> 'TESTNET',executionMode:()=> 'TESTNET_ENABLED',assertTestnetExchangeWrite:()=>{},json:vi.fn(async(url:string)=>{calls.push(url);if(url==='/fapi/v1/time')return{serverTime:Date.now()};if(url.startsWith('/fapi/v1/userTrades'))return[];if(url.startsWith('/fapi/v1/allOrders'))return[];if(url.startsWith('/fapi/v1/order'))return{symbol:'BTCUSDT',orderId:7,clientOrderId:'ML_TEST',executedQty:'0',origQty:'1',price:'100',status:'NEW',type:'LIMIT',timeInForce:'GTX',updateTime:Date.now()};if(url.startsWith('/fapi/v1/income'))return[];return[];})};
   return{adapter:new ExternalTradeAdapter(transport,{apiKey:'key',apiSecret:'secret'}),calls};
 }
 
@@ -34,4 +34,14 @@ it('collects each audit symbol once without a second income/userTrades/allOrders
   expect(h.calls.filter(url=>url.startsWith('/fapi/v1/allOrders'))).toHaveLength(2);
   expect(h.calls.filter(url=>url.startsWith('/fapi/v1/openOrders'))).toHaveLength(1);
   expect(h.calls.filter(url=>url.startsWith('/fapi/v2/positionRisk'))).toHaveLength(1);
+});
+
+
+it('single-flights three concurrent exact-order readers and reuses the short cache',async()=>{
+ const h=adapterHarness(),order:any={id:'entry_1',clientOrderId:'ML_TEST',exchangeOrderId:'7',symbol:'BTCUSDT',side:'LONG',quantity:1,price:100,filledQuantity:0,leverage:20,status:'WORKING',createdAt:1,updatedAt:1,absoluteExpiresAt:9999999999999,repriceCount:0,intentId:'intent_1',reachability:1};
+ const [a,b,d]=await Promise.all([h.adapter.findEntryByClientOrderId(order),h.adapter.findEntryByClientOrderId(order),h.adapter.findEntryByClientOrderId(order)]);
+ expect(a?.exchangeOrderId).toBe('7');expect(b?.exchangeOrderId).toBe('7');expect(d?.exchangeOrderId).toBe('7');
+ expect(h.calls.filter(url=>url.startsWith('/fapi/v1/order?'))).toHaveLength(1);
+ await h.adapter.findEntryByClientOrderId(order);
+ expect(h.calls.filter(url=>url.startsWith('/fapi/v1/order?'))).toHaveLength(1);
 });

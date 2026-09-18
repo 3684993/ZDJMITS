@@ -2,7 +2,9 @@
 param(
   [ValidateRange(30,120)][int]$DurationMinutes=60,
   [ValidateRange(10,300)][int]$IntervalSeconds=30,
-  [int]$Port=8080
+  [int]$Port=8080,
+  [int]$BaselineHttp429=-1,
+  [int]$BaselineHttp418=-1
 )
 $ErrorActionPreference='Stop'
 $root=(Resolve-Path (Join-Path $PSScriptRoot '..')).Path
@@ -60,6 +62,8 @@ while((Get-Date) -lt $deadline){
 }
 if(-not $list.Count){throw 'STAGE6_NO_SAMPLES'}
 $first=$list[0];$last=$list[$list.Count-1]
+$http429Start=if($BaselineHttp429 -ge 0){$BaselineHttp429}else{[int]$first.http429}
+$http418Start=if($BaselineHttp418 -ge 0){$BaselineHttp418}else{[int]$first.http418}
 $all=@($list)
 $badRoute=@($all|Where-Object {$_.restHost -ne 'demo-fapi.binance.com'}).Count
 $badEgress=@($all|Where-Object {$_.egressStatus -ne 'VERIFIED' -or $_.verifiedEgressIp -ne $expected}).Count
@@ -76,8 +80,12 @@ $result=[ordered]@{
   expectedStaticEgressIp=$expected
   routeViolationSamples=$badRoute
   egressViolationSamples=$badEgress
-  http429Delta=([int]$last.http429-[int]$first.http429)
-  http418Delta=([int]$last.http418-[int]$first.http418)
+  http429Baseline=$http429Start
+  http418Baseline=$http418Start
+  http429Final=[int]$last.http429
+  http418Final=[int]$last.http418
+  http429Delta=([int]$last.http429-$http429Start)
+  http418Delta=([int]$last.http418-$http418Start)
   falseCounterDiscontinuity=$falseDiscontinuity
   privateTruthTimeoutDelta=([int]$last.privateTruthTimeout-[int]$first.privateTruthTimeout)
   backgroundTimeoutDelta=([int]$last.backgroundTimeout-[int]$first.backgroundTimeout)

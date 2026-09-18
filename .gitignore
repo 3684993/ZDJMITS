@@ -141,6 +141,10 @@ credentials.json
 secrets.json
 secret.json
 auth.json
+# Google Drive OAuth artifacts (scripts/upload_to_gdrive.py keeps these in ~/.config/zdj-gdrive)
+client_secret.json
+client_secret*.json
+token.json
 
 # ------------------------------------------------------------
 # 8. Backup / archive packages

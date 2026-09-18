@@ -1234,7 +1234,6 @@ export class EngineRuntime {
   supplyHealth(poolItems=this.state.pool.list()) {
     return buildSupplyHealth({universe:this.state.universe,pool:poolItems,snapshots:this.state.snapshots,positions:this.state.positionSymbols(),activeEntries:this.state.activeEntrySymbols(),capacity:this.state.entryCapacity(),runtimeControl:this.state.runtimeControl,aiResources:this.ai.resourceMetrics(),target:Math.min(this.state.settings.selection.poolMax,this.state.settings.selection.poolTarget),lowWatermark:4});
   }
-  async updateSettingsIfVersion(input:unknown,expectedVersion:number){const next=await this.settingsStore.saveIfVersion(input,expectedVersion);this.state.setSettings(next);this.state.pool=new (await import('@zdj/core')).DynamicPool(next);this.events.publish('SETTINGS_UPDATED',{generation:this.state.generation});this.universe.refresh();this.runtimeControl.evaluate(true);return next;}
   pipelineStatus() {
     const now = Date.now(),
       eligible = this.state.universe.filter(

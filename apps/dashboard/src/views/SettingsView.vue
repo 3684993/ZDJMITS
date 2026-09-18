@@ -135,7 +135,7 @@ async function removeResource(kind: string, id: string) {
     if(draft.value){draft.value.settingsVersion=resourceSettingsVersion.value;if(kind==="ai")draft.value.aiResources=resources.value.ai.map((x:any)=>({id:x.id,role:x.role,enabled:x.enabled!==false,baseUrl:x.baseUrl,model:x.model,maxConcurrency:Number(x.maxConcurrency??1),gpu:x.gpu??"未指定"}));if(kind==="proxy")draft.value.connections.proxy.enabled=Boolean(resources.value.proxy[0]?.enabled);}
     notice.value="资源已删除并已回读";
   }catch(e){error.value=String(e);}
-} 
+}
 function isResourceDirty(kind:string,item:any){return resourceBaseline.value[kind]?.[item.id]!==JSON.stringify(item);}
 function selectedResources(kind:string){const id=selectedResourceId.value[kind];return id?resources.value[kind].filter((x:any)=>x.id===id):resources.value[kind].slice(0,1);}
 async function cancelResourceEdits(kind:string){try{const selected=selectedResourceId.value[kind],loaded=await api.resources(kind);resources.value[kind]=loaded.items??[];resourceSettingsVersion.value=Number(loaded.settingsVersion);resourceBaseline.value[kind]=Object.fromEntries(resources.value[kind].map((x:any)=>[x.id,JSON.stringify(x)]));selectedResourceId.value[kind]=resources.value[kind].some((x:any)=>x.id===selected)?selected:(resources.value[kind][0]?.id??"");notice.value="未保存修改已取消";}catch(e){error.value=String(e);}}

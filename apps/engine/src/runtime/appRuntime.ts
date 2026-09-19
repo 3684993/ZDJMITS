@@ -42,6 +42,7 @@ import {ExternalResearchService} from "../services/externalResearchService.js";
 import { AssetGovernanceCoordinator } from '../services/assetGovernanceCoordinator.js';
 import { ProductionAssetResearchService } from '../services/productionAssetResearch.js';
 import { MarketCohort } from '../services/marketCohort.js';
+import { marketDataStaleReason } from '../services/marketDataStaleness.js';
 import { LossHandoffService } from '../services/lossHandoff.js';
 
 export class EngineRuntime {
@@ -1262,13 +1263,12 @@ export class EngineRuntime {
           x.exclusionReasons.includes("ACTIVE_POSITION") ||
           x.exclusionReasons.includes("ACTIVE_ENTRY_ORDER"),
       ).length;
-    const marketDataReason = stream.state === "BACKOFF" && /certificate|altnames|hostname/i.test(String(stream.lastError ?? ""))
-      ? "MARKET_WS_TLS_CERT_MISMATCH"
-      : stream.state === "BACKOFF"
-        ? "MARKET_WS_BACKOFF"
-        : marketInsufficient
-          ? "MARKET_QUOTES_STALE"
-          : null,
+    const marketDataReason = marketDataStaleReason({
+      freshness,
+      marketInsufficient,
+      streamState: stream.state,
+      streamError: stream.lastError,
+    }),
       pipelineState = marketDataReason ? "PAUSED_MARKET_DATA_UNAVAILABLE" : "RUNNING";
     const supply=this.supplyHealth(poolItems),{qualifiedSupply,readySupply,target,targetGap,supplyShortage,refillFailure}=supply;
     let poolStatus = supplyShortage ? "POOL_SUPPLY_SHORTAGE" : refillFailure ? "POOL_REFILL_FAILURE" : "POOL_READY";

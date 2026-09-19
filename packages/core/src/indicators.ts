@@ -25,23 +25,61 @@ function swingCounts(c:Candle[]){
   for(let i=1;i<lows.length;i++) lows[i]!>lows[i-1]!?hl++:ll++;
   return {hh,hl,lh,ll, swingHigh: highs.at(-1)??Math.max(...c.slice(-12).map(x=>x.high)), swingLow:lows.at(-1)??Math.min(...c.slice(-12).map(x=>x.low))};
 }
+export const CANDLE_PERIOD_MS: Record<string, number> = {"1m":60_000,"5m":300_000,"15m":900_000,"1h":3_600_000,"4h":14_400_000,"1d":86_400_000,"1w":604_800_000};
+
+/** Closed bars only: a provider `isClosed` flag is never sufficient on its own. */
+export function closedCandles(candles:Candle[], now=Date.now()):Candle[] {
+  return candles
+    .filter(c=>(c.isClosed===true||(c.isClosed===undefined&&c.closeTime<=now))&&Number.isFinite(c.closeTime)&&c.closeTime<=now)
+    .sort((a,b)=>a.openTime-b.openTime);
+}
+
+export type CandleContinuity={ok:boolean;closedCount:number;missing:number;firstMissingOpenTime:number|null;duplicates:number;boundaryInvalid:boolean;latestClosedOpenTime:number|null;latestClosedAtBoundary:boolean};
+
+/**
+ * Single source of truth for "this closed series may be trusted".
+ * `closed` must already be filtered by closedCandles(); count and a current latest
+ * bar say nothing about a hole in the middle, which is what a short WebSocket
+ * disconnect leaves behind.
+ */
+export function continuityOfClosed(closed:Candle[], timeframe:string, now=Date.now()):CandleContinuity {
+  const period=CANDLE_PERIOD_MS[timeframe]??0,seen=new Set<number>();
+  let duplicates=0,boundaryInvalid=false;
+  for(const candle of closed){
+    if(seen.has(candle.openTime)) duplicates++;
+    else seen.add(candle.openTime);
+    if(period&&candle.closeTime-candle.openTime+1<period) boundaryInvalid=true;
+  }
+  const ordered=[...seen].sort((a,b)=>a-b);
+  let missing=0,firstMissingOpenTime:number|null=null;
+  for(let i=1;i<ordered.length;i++){
+    const step=ordered[i]!-ordered[i-1]!;
+    if(period&&step>period){ missing+=Math.round(step/period)-1; firstMissingOpenTime??=ordered[i-1]!+period; }
+  }
+  const latestClosedOpenTime=ordered.length?ordered[ordered.length-1]! : null;
+  const latestClosedAtBoundary=period>0&&latestClosedOpenTime!==null&&latestClosedOpenTime===Math.floor(now/period)*period-period;
+  return {ok:duplicates===0&&!boundaryInvalid&&missing===0,closedCount:closed.length,missing,firstMissingOpenTime,duplicates,boundaryInvalid,latestClosedOpenTime,latestClosedAtBoundary};
+}
+
+/** Continuity facts for a raw provider series, applying the closed-bar filter first. */
+export function closedCandleGap(candles:Candle[], timeframe:string, now=Date.now()):CandleContinuity {
+  return continuityOfClosed(closedCandles(candles, now), timeframe, now);
+}
+
 export function buildTechnicalCard(timeframe:Timeframe, candles:Candle[], now=Date.now()):TechnicalCard {
   // A closed flag from a provider is not sufficient: future bars, duplicate
   // boundaries, and gaps must never become Primary facts.  15m EMA55 uses a
   // fixed 240-bar warmup; other display frames retain the existing 20-bar
   // minimum so management data can remain observable while warming.
-  const closed=candles.filter(c=>(c.isClosed===true||(c.isClosed===undefined&&c.closeTime<=now))&&Number.isFinite(c.closeTime)&&c.closeTime<=now)
-    .sort((a,b)=>a.openTime-b.openTime);
-  const periodMs:Record<string,number>={"1m":60_000,"5m":300_000,"15m":900_000,"1h":3_600_000,"4h":14_400_000,"1d":86_400_000,"1w":604_800_000};
-  const seen=new Set<number>();
-  for(const candle of closed){if(seen.has(candle.openTime))throw new Error(`${timeframe} duplicate closed candle`);seen.add(candle.openTime);if(candle.closeTime-candle.openTime+1<periodMs[timeframe])throw new Error(`${timeframe} invalid closed boundary`);}
+  const closed=closedCandles(candles, now), continuity=continuityOfClosed(closed, timeframe, now);
+  if(continuity.duplicates>0) throw new Error(`${timeframe} duplicate closed candle`);
+  if(continuity.boundaryInvalid) throw new Error(`${timeframe} invalid closed boundary`);
   // Warmup is enforced by the Entry readiness contract (where a 15m card can
   // actually authorize Primary). Keeping the calculator usable at 20 bars
   // preserves read-only management and deterministic unit fixtures.
   const required=20;
   if(closed.length<required) throw new Error(`${timeframe} WARMING requires >=${required} closed candles`);
-  const expected=periodMs[timeframe];
-  for(let i=1;i<closed.length;i++)if(closed[i]!.openTime-closed[i-1]!.openTime!==expected)throw new Error(`${timeframe} closed candle gap`);
+  if(continuity.missing>0) throw new Error(`${timeframe} closed candle gap`);
   const current=[...candles].reverse().find(c=>!closed.includes(c))??null;
   const closes=closed.map(x=>x.close), vols=closed.map(x=>x.volume);
   const e8=ema(closes,8), e21=ema(closes,21), e55=ema(closes,55);

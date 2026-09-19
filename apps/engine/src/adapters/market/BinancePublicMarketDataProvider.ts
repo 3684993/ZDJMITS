@@ -7,7 +7,8 @@ import type {
   TechnicalCard,
   Timeframe,
 } from "@zdj/contracts";
-import { buildTechnicalCard, clamp } from "@zdj/core";
+import { buildTechnicalCard, clamp, CANDLE_PERIOD_MS, closedCandleGap } from "@zdj/core";
+import type { CandleContinuity } from "@zdj/core";
 import type { MarketDataProvider } from "../../types.js";
 import { BinanceTransport } from "../binance/BinanceTransport.js";
 import { BinanceMarketStream } from "./BinanceMarketStream.js";
@@ -75,8 +76,24 @@ export class BinancePublicMarketDataProvider implements MarketDataProvider {
 
   private candleFlights=new Map<string,Promise<Candle[]>>();private candleCache=new Map<string,{rows:Candle[];until:number}>();
   cachedCandles(symbol:string,timeframe:Timeframe,limit:number):Candle[]{const period=timeframe==='1m'?60000:timeframe==='5m'?300000:900000,live=['1m','5m','15m'].includes(timeframe)?this.stream.candleSeries(symbol,period*2,timeframe):null;if(live?.length)return live.slice(-limit);const rows=[...this.candleCache.entries()].filter(([key])=>key.startsWith(`${symbol}:${timeframe}:`)).map(([,value])=>value.rows).sort((a,b)=>(b.at(-1)?.closeTime??0)-(a.at(-1)?.closeTime??0));return rows[0]?.slice(-limit)??[];}
-  async getCandles(symbol:string,timeframe:Timeframe,limit:number):Promise<Candle[]>{const period=timeframe==='1m'?60000:timeframe==='5m'?300000:900000;if(['1m','5m','15m'].includes(timeframe)){const live=this.stream.candleSeries(symbol,period*2,timeframe),closed=live?.filter(c=>c.isClosed===true&&c.closeTime<Date.now());if(live&&live.length>=limit&&closed?.at(-1)?.closeTime===(Math.floor(Date.now()/period)*period-1))return live.slice(-limit);}const key=`${symbol}:${timeframe}:${limit}`,cached=this.candleCache.get(key);if(cached&&cached.until>Date.now())return cached.rows;const pending=this.candleFlights.get(key);if(pending)return pending;const flight=this.loadCandles(symbol,timeframe,limit).then(rows=>{const last=rows.at(-1),now=Date.now(),period=Math.max(1000,(last?.closeTime??now)-(last?.openTime??now)+1),until=last&&last.closeTime>=now?last.closeTime+1000:now+Math.min(period,30_000);if(this.candleCache.size>=2000)this.candleCache.delete(this.candleCache.keys().next().value!);this.candleCache.set(key,{rows,until});return rows;}).finally(()=>this.candleFlights.delete(key));this.candleFlights.set(key,flight);return flight;}
-  private async loadCandles(symbol:string,timeframe:Timeframe,limit:number):Promise<Candle[]>{const receivedAt=Date.now(),rows=await this.json<any[]>(`/fapi/v1/klines?symbol=${symbol}&interval=${INTERVAL[timeframe]}&limit=${limit}`),candles=rows.map(r=>({openTime:Number(r[0]),open:Number(r[1]),high:Number(r[2]),low:Number(r[3]),close:Number(r[4]),volume:Number(r[5]),closeTime:Number(r[6]),receivedAt,isClosed:Number(r[6])<=receivedAt,source:'BINANCE_REST' as const,quoteVolume:Number(r[7]),trades:Number(r[8])}));if(['1m','5m','15m'].includes(timeframe))this.stream.seedCandles(symbol,timeframe,candles);return candles;}
+  async getCandles(symbol:string,timeframe:Timeframe,limit:number):Promise<Candle[]>{const period=timeframe==='1m'?60000:timeframe==='5m'?300000:900000;if(['1m','5m','15m'].includes(timeframe)){const live=this.stream.candleSeries(symbol,period*2,timeframe);if(live&&live.length>=limit){const continuity=closedCandleGap(live,timeframe);if(continuity.ok&&continuity.closedCount>=limit&&continuity.latestClosedAtBoundary)return live.slice(-limit);}}const key=`${symbol}:${timeframe}:${limit}`,cached=this.candleCache.get(key);if(cached&&cached.until>Date.now())return cached.rows;const pending=this.candleFlights.get(key);if(pending)return pending;const flight=this.loadCandles(symbol,timeframe,limit).then(rows=>{const last=rows.at(-1),now=Date.now(),period=Math.max(1000,(last?.closeTime??now)-(last?.openTime??now)+1),until=last&&last.closeTime>=now?last.closeTime+1000:now+Math.min(period,30_000);if(this.candleCache.size>=2000)this.candleCache.delete(this.candleCache.keys().next().value!);this.candleCache.set(key,{rows,until});return rows;}).finally(()=>this.candleFlights.delete(key));this.candleFlights.set(key,flight);return flight;}
+  private async loadCandles(symbol:string,timeframe:Timeframe,limit:number):Promise<Candle[]>{const receivedAt=Date.now(),rows=await this.json<any[]>(`/fapi/v1/klines?symbol=${symbol}&interval=${INTERVAL[timeframe]}&limit=${limit}`),candles=rows.map(r=>({openTime:Number(r[0]),open:Number(r[1]),high:Number(r[2]),low:Number(r[3]),close:Number(r[4]),volume:Number(r[5]),closeTime:Number(r[6]),receivedAt,isClosed:Number(r[6])<=receivedAt,source:'BINANCE_REST' as const,quoteVolume:Number(r[7]),trades:Number(r[8])}));if(!['1m','5m','15m'].includes(timeframe))return candles;this.stream.seedCandles(symbol,timeframe,candles);const merged=this.stream.candleSeries(symbol,CANDLE_PERIOD_MS[timeframe]*2,timeframe),continuity=merged?closedCandleGap(merged,timeframe):null;return continuity?.ok&&continuity.closedCount>=limit&&continuity.latestClosedAtBoundary?merged!.slice(-limit):candles;}
+  /**
+   * Targeted closed-candle repair for one symbol/timeframe. Always goes to REST
+   * (the shared live cache is the thing under suspicion), merges through the existing
+   * seedCandles path and reports whether continuity is back. It never assembles a
+   * snapshot, so a WebSocket candle hole costs one klines request instead of a full
+   * quote/book/seven-frame/derivatives refresh.
+   */
+  private repairFlights=new Map<string,Promise<CandleContinuity>>();
+  repairCandles(symbol:string,timeframe:Timeframe):Promise<CandleContinuity>{
+    if(!['1m','5m','15m'].includes(timeframe))return Promise.reject(new Error(`CANDLE_REPAIR_UNSUPPORTED_TIMEFRAME:${timeframe}`));
+    const key=`${symbol}:${timeframe}`,pending=this.repairFlights.get(key);if(pending)return pending;
+    const limit=timeframe==='15m'?241:120;
+    const flight=this.loadCandles(symbol,timeframe,limit).then(()=>closedCandleGap(this.stream.candleSeries(symbol,CANDLE_PERIOD_MS[timeframe]*2,timeframe)??[],timeframe)).finally(()=>this.repairFlights.delete(key));
+    this.repairFlights.set(key,flight);return flight;
+  }
+
   private async restOrderBook(symbol:string):Promise<OrderBook>{const d=await this.json<any>(`/fapi/v1/depth?symbol=${symbol}&limit=20`);return{symbol,bids:d.bids.map((x:any)=>[Number(x[0]),Number(x[1])] as [number,number]),asks:d.asks.map((x:any)=>[Number(x[0]),Number(x[1])] as [number,number]),ts:Date.now()};}
   async getOrderBook(symbol:string):Promise<OrderBook>{return this.stream.book(symbol)??this.restOrderBook(symbol);}
 

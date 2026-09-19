@@ -22,6 +22,54 @@ export class MarketDataHub {
   private rememberFailure(key:string,symbol:string,timeframe:string,sequence:string){this.liveTechnicalFailures.add(key);this.technicalBlocked.set(`${symbol}:${timeframe}`,{timeframe,sequence,at:Date.now()});while(this.liveTechnicalFailures.size>512)this.liveTechnicalFailures.delete(this.liveTechnicalFailures.values().next().value!);while(this.technicalBlocked.size>128)this.technicalBlocked.delete(this.technicalBlocked.keys().next().value!);}
   private loadSnapshot(symbol:string,epoch=this.epoch(symbol)){const key=`${symbol}:${epoch}`,existing=this.snapshotFlights.get(key);if(existing)return existing;const flight=this.provider.getSnapshot(symbol).finally(()=>this.snapshotFlights.delete(key));this.snapshotFlights.set(key,flight);return flight;}
   private recovery=new Map<string,{attempt:number;nextRetryAt:number;lastSuccessAt:number|null;reason:string|null}>();
+  private klineRepairAt=new Map<string,number>();
+  /**
+   * Frames that a candle-only reload can fix. A stale technical card is the expected
+   * *consequence* of a WebSocket hole, so it must not disqualify the targeted path - that
+   * is exactly when a whole-symbol snapshot reload per symbol would become a request storm.
+   * A missing snapshot or a stale quote/book still needs the normal full reload.
+   */
+  private repairableSequenceFrames(symbol:string,now=Date.now()):Timeframe[]{
+    const frames=[...new Set([...this.technicalBlocked.keys()].filter(key=>key.startsWith(`${symbol}:`)).map(key=>key.slice(symbol.length+1) as Timeframe))];
+    if(!frames.length)return [];
+    const snapshot=this.state.snapshots.get(symbol);
+    if(!snapshot)return [];
+    if(now-Number(snapshot.quote?.ts??0)>15_000||now-Number(snapshot.orderBook?.ts??0)>15_000)return [];
+    return frames;
+  }
+  /** A frame is only released when a rebuilt card has actually been written for it. */
+  private writeTechnical(symbol:string,epoch:number,technical:MarketSymbolSnapshot|undefined|false,live:MarketSymbolSnapshot){
+    if(!technical||!this.canWrite(symbol,epoch))return false;
+    this.state.snapshots.set(symbol,technical);
+    if(technical===live)return false;
+    for(const tf of ['1m','5m','15m'] as const)if(technical.technical?.[tf]!==live.technical?.[tf])this.technicalBlocked.delete(`${symbol}:${tf}`);
+    return true;
+  }
+  /** One klines request per symbol/timeframe, cooldown-gated, sequential within a symbol. */
+  private async repairSequence(symbol:string,frames:Timeframe[]){
+    const outcome:Array<{timeframe:Timeframe;ok:boolean;missing:number;reason:string|null}>=[];
+    for(const timeframe of frames){
+      const key=`${symbol}:${timeframe}`,now=Date.now(),last=this.klineRepairAt.get(key);
+      if(last&&now-last<60_000){outcome.push({timeframe,ok:false,missing:0,reason:'REPAIR_COOLDOWN'});continue;}
+      this.klineRepairAt.set(key,now);
+      try{
+        const facts=await this.provider.repairCandles?.(symbol,timeframe),ok=Boolean(facts?.ok&&facts.latestClosedAtBoundary);
+        outcome.push({timeframe,ok,missing:facts?.missing??0,reason:ok?null:'STILL_DISCONTINUOUS'});
+      }catch(error){
+        const message=error instanceof Error?error.message:String(error);
+        outcome.push({timeframe,ok:false,missing:0,reason:message});
+        if(budgetDeferred(error))this.klineRepairAt.set(key,now+120_000);
+        break;
+      }
+    }
+    const repaired=outcome.filter(row=>row.ok).map(row=>row.timeframe);
+    if(repaired.length){
+      const snapshot=this.state.snapshots.get(symbol),epoch=this.epoch(symbol);
+      if(snapshot){try{this.writeTechnical(symbol,epoch,this.provider.hydrateLiveTechnical?.(snapshot),snapshot);}catch{/* still blocked; the next tick reports it again */}}
+      this.events.publish('MARKET_KLINE_SEQUENCE_REPAIRED',{symbol,frames:frames.map(String),repaired,outcome},symbol);
+    }else this.events.publish('MARKET_KLINE_SEQUENCE_REPAIR_FAILED',{symbol,frames:frames.map(String),outcome},symbol);
+    return repaired.length>0;
+  }
   constructor(private provider:MarketDataProvider,private state:RuntimeState,private events:EventBus){}
   /** Membership ownership is explicit; stale async responses may only write their captured epoch. */
   setRetentionSymbols(symbols:Iterable<string>){
@@ -59,7 +107,7 @@ export class MarketDataHub {
       if(!this.provider.hydrateLiveTechnical)continue;
       try{
         const technical=this.provider.hydrateLiveTechnical(live);
-        if(technical&&this.canWrite(symbol,epoch)){this.state.snapshots.set(symbol,technical);if(technical!==live)for(const tf of ['1m','5m','15m'] as const)if(technical.technical?.[tf]!==live.technical?.[tf])this.technicalBlocked.delete(`${symbol}:${tf}`);}
+        this.writeTechnical(symbol,epoch,technical,live);
       }catch(error){
         // Keep the new quote/book; the bad closed sequence remains unusable
         // for Entry and is reported once per symbol/timeframe/sequence.
@@ -156,7 +204,7 @@ export class MarketDataHub {
     const periods={"1m":60_000,"5m":300_000,"15m":900_000} as const,graceMs=10_000;
     return this.state.pool.list().map(item=>{const s=this.state.snapshots.get(item.symbol);if(!s)return{symbol:item.symbol,state:item.state,status:'MISSING',reasons:['SNAPSHOT_MISSING']};const frames=Object.fromEntries(Object.entries(periods).map(([tf,period])=>{const boundary=Math.floor(now/period)*period,expectedClose=now-boundary<=graceMs?boundary-period-1:boundary-1,card=s.technical?.[tf as keyof typeof s.technical],actualClose=Number(card?.barCloseTime??card?.asOf),finite=Number.isFinite(actualClose),gapCount=finite?Math.max(0,Math.floor((expectedClose-actualClose)/period)):null;return[tf,{expectedClose,actualClose:finite?actualClose:null,isClosed:card?.isClosed===true,receivedAt:Number.isFinite(card?.receivedAt)?card!.receivedAt:null,gapCount,followingBoundary:finite&&card?.isClosed===true&&actualClose>=expectedClose}];}));const reasons=this.primaryReadyReasons(item.symbol,now);return{symbol:item.symbol,state:item.state,status:reasons.length?'DEGRADED':'READY',quoteAgeMs:Number.isFinite(s.quote.ts)?now-s.quote.ts:null,bookAgeMs:Number.isFinite(s.orderBook.ts)?now-s.orderBook.ts:null,frames,reasons};});
   }
-  freshness(){const now=Date.now();let quoteFresh=0,orderBookFresh=0,klineFresh=0;const stale:string[]=[];const poolSymbols=new Set(this.state.pool.list().map(x=>x.symbol));let poolBooks=0;for(const s of this.state.snapshots.values()){const q=now-s.quote.ts<=15_000,b=now-s.orderBook.ts<=15_000,k=now-s.technical['1m'].asOf<=125_000&&now-s.technical['5m'].asOf<=605_000&&now-s.technical['15m'].asOf<=1_805_000;if(q)quoteFresh++;if(b)orderBookFresh++;if(k)klineFresh++;if(poolSymbols.has(s.symbol)&&b)poolBooks++;if(this.primaryReadyReasons(s.symbol,now).length)stale.push(s.symbol);}const total=this.state.snapshots.size;return{fresh:total-stale.length,total,quoteFresh,orderBookFresh,klineFresh,quoteFreshRatio:total?quoteFresh/total:0,klineFreshRatio:total?klineFresh/total:0,poolBookFreshRatio:poolSymbols.size?poolBooks/poolSymbols.size:1,stale};}
-  async recoverStale(){const now=Date.now();const priority=new Set([...this.state.positionSymbols(),...this.state.activeEntrySymbols(),...[...this.state.candidateLifecycle??[]].filter(([,row]:any)=>['SCOUT_QUEUED','SCOUT_RUNNING','PRIMARY_QUEUED','PRIMARY_RUNNING','WAIT_FOR_PRICE','WAIT_EXECUTION_RANGE'].includes(row?.status)).map(([symbol])=>String(symbol).toUpperCase()),'BTCUSDT','ETHUSDT',...this.state.pool.list().map(x=>x.symbol)]);const stale=[...new Set([...this.freshness().stale,...[...priority].filter(symbol=>!this.state.snapshots.has(symbol))])].filter(symbol=>(this.recovery.get(symbol)?.nextRetryAt??0)<=now).sort((a,b)=>Number(priority.has(b))-Number(priority.has(a))||(this.recovery.get(a)?.lastSuccessAt??0)-(this.recovery.get(b)?.lastSuccessAt??0)).slice(0,4);if(!stale.length)return 0;const snapshots=await mapLimit(stale,2,async symbol=>{const epoch=this.epoch(symbol),prior=this.recovery.get(symbol)??{attempt:0,nextRetryAt:0,lastSuccessAt:null,reason:null};try{const snapshot=await this.loadSnapshot(symbol,epoch);this.recovery.set(symbol,{attempt:0,nextRetryAt:now+60_000,lastSuccessAt:Date.now(),reason:null});return {symbol,epoch,snapshot};}catch(error){const message=error instanceof Error?error.message:String(error),attempt=prior.attempt+1;const banned=Number(message.match(/banned until (\d+)/i)?.[1]??0);const delay=banned>Date.now()?banned-Date.now()+5_000:Math.min(priority.has(symbol)?30_000:15*60_000,5_000*2**Math.min(attempt-1,8));const nextRetryAt=Date.now()+delay;this.recovery.set(symbol,{attempt,nextRetryAt,lastSuccessAt:prior.lastSuccessAt,reason:message});this.events.publish('MARKET_RECOVERY_FAILED',{dataType:'QUOTE_KLINE',reason:message,httpStatus:Number(message.match(/HTTP (\d+)/)?.[1]??0)||null,attempt,lastSuccessAt:prior.lastSuccessAt,nextRetryAt},symbol);return null;}});let recovered=0;for(const result of snapshots)if(result&&this.canWrite(result.symbol,result.epoch)){this.state.snapshots.set(result.symbol,result.snapshot);this.rulesUpdatedAt.set(result.symbol,Date.now());recovered++;}this.events.publish('MARKET_FRESHNESS_RECOVERED',{requested:stale.length,recovered,pending:[...this.recovery.values()].filter(x=>x.nextRetryAt>Date.now()).length});return recovered;}
+  freshness(){const now=Date.now();let quoteFresh=0,orderBookFresh=0,klineFresh=0,sequenceInvalid=0;const stale:string[]=[];const poolSymbols=new Set(this.state.pool.list().map(x=>x.symbol));let poolBooks=0;for(const s of this.state.snapshots.values()){const q=now-s.quote.ts<=15_000,b=now-s.orderBook.ts<=15_000,k=now-s.technical['1m'].asOf<=125_000&&now-s.technical['5m'].asOf<=605_000&&now-s.technical['15m'].asOf<=1_805_000;if(q)quoteFresh++;if(b)orderBookFresh++;if(k)klineFresh++;if(poolSymbols.has(s.symbol)&&b)poolBooks++;const reasons=this.primaryReadyReasons(s.symbol,now);if(reasons.some(reason=>reason.endsWith('_SEQUENCE_INVALID')))sequenceInvalid++;if(reasons.length)stale.push(s.symbol);}const total=this.state.snapshots.size;return{fresh:total-stale.length,total,quoteFresh,orderBookFresh,klineFresh,sequenceInvalid,quoteFreshRatio:total?quoteFresh/total:0,klineFreshRatio:total?klineFresh/total:0,poolBookFreshRatio:poolSymbols.size?poolBooks/poolSymbols.size:1,stale};}
+  async recoverStale(){const now=Date.now();const priority=new Set([...this.state.positionSymbols(),...this.state.activeEntrySymbols(),...[...this.state.candidateLifecycle??[]].filter(([,row]:any)=>['SCOUT_QUEUED','SCOUT_RUNNING','PRIMARY_QUEUED','PRIMARY_RUNNING','WAIT_FOR_PRICE','WAIT_EXECUTION_RANGE'].includes(row?.status)).map(([symbol])=>String(symbol).toUpperCase()),'BTCUSDT','ETHUSDT',...this.state.pool.list().map(x=>x.symbol)]);const stale=[...new Set([...this.freshness().stale,...[...priority].filter(symbol=>!this.state.snapshots.has(symbol))])].filter(symbol=>(this.recovery.get(symbol)?.nextRetryAt??0)<=now).sort((a,b)=>Number(priority.has(b))-Number(priority.has(a))||(this.recovery.get(a)?.lastSuccessAt??0)-(this.recovery.get(b)?.lastSuccessAt??0)).slice(0,4);if(!stale.length)return 0;const snapshots=await mapLimit(stale,2,async symbol=>{const epoch=this.epoch(symbol),prior=this.recovery.get(symbol)??{attempt:0,nextRetryAt:0,lastSuccessAt:null,reason:null};const frames=this.provider.repairCandles?this.repairableSequenceFrames(symbol,now):[];if(frames.length){const repaired=await this.repairSequence(symbol,frames);this.recovery.set(symbol,{attempt:repaired?0:prior.attempt+1,nextRetryAt:now+(repaired?15_000:60_000),lastSuccessAt:repaired?Date.now():prior.lastSuccessAt,reason:repaired?null:prior.reason});return null;}try{const snapshot=await this.loadSnapshot(symbol,epoch);this.recovery.set(symbol,{attempt:0,nextRetryAt:now+60_000,lastSuccessAt:Date.now(),reason:null});return {symbol,epoch,snapshot};}catch(error){const message=error instanceof Error?error.message:String(error),attempt=prior.attempt+1;const banned=Number(message.match(/banned until (\d+)/i)?.[1]??0);const delay=banned>Date.now()?banned-Date.now()+5_000:Math.min(priority.has(symbol)?30_000:15*60_000,5_000*2**Math.min(attempt-1,8));const nextRetryAt=Date.now()+delay;this.recovery.set(symbol,{attempt,nextRetryAt,lastSuccessAt:prior.lastSuccessAt,reason:message});this.events.publish('MARKET_RECOVERY_FAILED',{dataType:'QUOTE_KLINE',reason:message,httpStatus:Number(message.match(/HTTP (\d+)/)?.[1]??0)||null,attempt,lastSuccessAt:prior.lastSuccessAt,nextRetryAt},symbol);return null;}});let recovered=0;for(const result of snapshots)if(result&&this.canWrite(result.symbol,result.epoch)){this.state.snapshots.set(result.symbol,result.snapshot);this.rulesUpdatedAt.set(result.symbol,Date.now());recovered++;}this.events.publish('MARKET_FRESHNESS_RECOVERED',{requested:stale.length,recovered,pending:[...this.recovery.values()].filter(x=>x.nextRetryAt>Date.now()).length});return recovered;}
   stop(){this.provider.stop?.();}
 }

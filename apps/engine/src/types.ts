@@ -6,6 +6,8 @@ export interface MarketDataProvider {
   discoverSymbols?(limit:number, prioritySymbols?:string[]):Promise<string[]>;
   getSnapshot(symbol:string):Promise<MarketSymbolSnapshot>;
   getCandles(symbol:string,timeframe:Timeframe,limit:number):Promise<Candle[]>;
+  /** Targeted closed-candle reload for one frame, used to heal a WebSocket sequence gap. */
+  repairCandles?(symbol:string,timeframe:Timeframe):Promise<{ok:boolean;missing:number;duplicates:number;closedCount:number;latestClosedAtBoundary:boolean}>;
   cachedCandles?(symbol:string,timeframe:Timeframe,limit:number):Candle[];
   getQuote(symbol:string):Promise<Quote>;
   /** Zero-I/O quote assembled only from already-cached live market facts and contract metadata. */

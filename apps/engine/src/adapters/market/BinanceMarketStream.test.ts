@@ -57,3 +57,32 @@ it('isolates closed 5m/15m bars and rejects a late open-bar downgrade',()=>{
  expect(stream.candleSeries('BTCUSDT')).toBeUndefined();expect(stream.candleSeries('BTCUSDT',1800000,'5m')?.[0]?.isClosed).toBe(true);expect(stream.candleSeries('BTCUSDT',1800000,'15m')).toHaveLength(1);
  stream.seedCandles('BTCUSDT','15m',[{...candle,openTime:now-900000,closeTime:now-1,isClosed:false,receivedAt:now-10}]);expect(stream.candleSeries('BTCUSDT',1800000,'15m')?.[0]?.isClosed).toBe(true);
 });
+describe('V3.9.5 closed-kline continuity accounting',()=>{
+  const kline=(s:string,tf:string,openTime:number,closed:boolean,eventTime:number)=>({e:'kline',s,k:{i:tf,t:openTime,T:openTime+(tf==='1m'?60_000:300_000)-1,x:closed,o:'1',h:'2',l:'1',c:'1.5',v:'10',q:'100',n:5,E:eventTime}});
+  it('counts a skipped closed minute as a kline gap and records the expected boundary',()=>{
+    const stream=new BinanceMarketStream({} as never,vi.fn());(stream as any).symbols=new Set(['BTCUSDT']);
+    const base=Date.now()-600_000;
+    (stream as any).onEvent(kline('BTCUSDT','1m',base,true,base+60_000));
+    (stream as any).onEvent(kline('BTCUSDT','1m',base+120_000,true,base+180_000));
+    const metrics=stream.metrics() as any;
+    expect(metrics.gapsByType.kline).toBe(1);
+    expect(metrics.gaps).toBe(1);
+    expect(metrics.lastKlineGap).toMatchObject({symbol:'BTCUSDT',timeframe:'1m',expectedOpenTime:base+60_000,actualOpenTime:base+120_000,missingBars:1});
+  });
+  it('does not report a gap for an uninterrupted series or for a still-open bar',()=>{
+    const stream=new BinanceMarketStream({} as never,vi.fn());(stream as any).symbols=new Set(['BTCUSDT']);
+    const base=Date.now()-600_000;
+    for(const offset of [0,60_000,120_000])(stream as any).onEvent(kline('BTCUSDT','1m',base+offset,true,base+offset+60_000));
+    (stream as any).onEvent(kline('BTCUSDT','1m',base+180_000,false,base+200_000));
+    const metrics=stream.metrics() as any;
+    expect(metrics.gapsByType.kline).toBe(0);
+    expect(metrics.lastKlineGap).toBeNull();
+  });
+  it('counts a 5m hole against the 5m period',()=>{
+    const stream=new BinanceMarketStream({} as never,vi.fn());(stream as any).symbols=new Set(['BTCUSDT']);
+    const base=Date.now()-3_600_000;
+    (stream as any).onEvent(kline('BTCUSDT','5m',base,true,base+300_000));
+    (stream as any).onEvent(kline('BTCUSDT','5m',base+600_000,true,base+900_000));
+    expect((stream.metrics() as any).lastKlineGap).toMatchObject({timeframe:'5m',expectedOpenTime:base+300_000,missingBars:1});
+  });
+});

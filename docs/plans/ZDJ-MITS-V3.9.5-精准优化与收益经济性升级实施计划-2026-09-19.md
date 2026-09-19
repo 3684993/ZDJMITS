@@ -1,9 +1,9 @@
 # ZDJ-MITS V3.9.5 精准优化与收益经济性升级实施计划
 
-**日期：2026-09-19**  
-**项目：3684993/ZDJMITS**  
-**基线分支：`v394-binance-governance-settings-20260918`**  
-**核验基线 HEAD：`d013d334f67e6cc32fa6276b3af838e948d73dc9`**  
+**日期：2026-09-19**
+**项目：3684993/ZDJMITS**
+**基线分支：`v394-binance-governance-settings-20260918`**
+**核验基线 HEAD：`d013d334f67e6cc32fa6276b3af838e948d73dc9`**
 **状态：调查完成 / 仅实施计划 / 未修改 V3.9.4 正在验收的运行代码与参数**
 
 ---
@@ -903,25 +903,25 @@ Dashboard 可独立回滚，不影响交易事实。
 
 # 14. 风险
 
-1. **利润门槛诱导放大名义仓位**  
+1. **利润门槛诱导放大名义仓位**
    通过 AI 原量校验 + envelope 上限 + Human Managed exposure cap 解决，禁止执行层自动扩容。
 
-2. **历史最大值被误当作高概率目标**  
+2. **历史最大值被误当作高概率目标**
    同时提供 hard max 与 empirical reachProbability；最大值只用于“从未达到”硬边界。
 
-3. **TP validator 前移后拒单率升高**  
+3. **TP validator 前移后拒单率升高**
    这是经济约束的真实结果，不得通过降低标准伪造通过；先 Shadow 统计 feasible-set。
 
-4. **TP Guardian 去除 1.2% 后 TP 过近**  
+4. **TP Guardian 去除 1.2% 后 TP 过近**
    由 canonical net-profit floor + reachability + minNetProfitRoiPct 控制，而不是再引入另一固定距离常数。
 
-5. **无止损条件下尾部敞口累积**  
+5. **无止损条件下尾部敞口累积**
    Human Managed cap 只阻止新增风险，不自动平老仓。
 
-6. **双重经济真相**  
+6. **双重经济真相**
    所有成本计算复用 `estimateTradingCost()`，禁止另写独立 fee 公式成为第二真相源。
 
-7. **V3.9.5 干扰 V3.9.4 acceptance**  
+7. **V3.9.5 干扰 V3.9.4 acceptance**
    Phase0 强制等待 V3.9.4 24H 完成；当前只交付计划，不部署。
 
 ---

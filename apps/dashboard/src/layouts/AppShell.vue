@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { RouterLink, RouterView, useRoute } from 'vue-router';
-import { LayoutDashboard, Orbit, BrainCircuit, BriefcaseBusiness, ReceiptText, Database, Activity, Settings, ChartNoAxesCombined, Wifi, WifiOff, RefreshCw, BookOpen, MoreHorizontal, X } from 'lucide-vue-next';
+import { LayoutDashboard, Orbit, BrainCircuit, BriefcaseBusiness, ReceiptText, Database, Activity, Settings, ChartNoAxesCombined, Wifi, WifiOff, RefreshCw, BookOpen, MoreHorizontal, X, ShieldAlert } from 'lucide-vue-next';
 import { useSystemStore } from '../stores/system';
 import { isPrimaryMobileRoute, mobileMoreRouteNames, mobilePrimaryRouteNames, routePath } from '../navigation';
 import { RELEASE_LABEL, RELEASE_NAME } from '@zdj/contracts';
 const store=useSystemStore(),route=useRoute();
-const nav=[['overview','驾驶舱',LayoutDashboard],['universe','智能选币',Orbit],['temporal','市场周期',ChartNoAxesCombined],['intelligence','市场智能',ChartNoAxesCombined],['brain','AI 大脑',BrainCircuit],['positions','持仓',BriefcaseBusiness],['orders','订单',ReceiptText],['trade-records','交易记录',BookOpen],['memory','交易记忆',Database],['operations','运行中心',Activity],['settings','系统设置',Settings]] as const;
+const nav=[['overview','驾驶舱',LayoutDashboard],['universe','智能选币',Orbit],['temporal','市场周期',ChartNoAxesCombined],['intelligence','市场智能',ChartNoAxesCombined],['brain','AI 大脑',BrainCircuit],['positions','持仓',BriefcaseBusiness],['human-managed','待人工处置',ShieldAlert],['orders','订单',ReceiptText],['trade-records','交易记录',BookOpen],['memory','交易记忆',Database],['operations','运行中心',Activity],['settings','系统设置',Settings]] as const;
 const primaryNames=mobilePrimaryRouteNames,moreNames=mobileMoreRouteNames,moreOpen=ref(false);
 const primaryNav=computed(()=>nav.filter(([name])=>isPrimaryMobileRoute(name)));
 const moreNav=computed(()=>nav.filter(([name])=>moreNames.includes(name as typeof moreNames[number])));

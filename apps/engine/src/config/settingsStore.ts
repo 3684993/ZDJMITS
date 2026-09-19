@@ -88,25 +88,22 @@ function migrate(value: unknown): unknown {
     pi.altLongLeverageCaps=pi.altLongLeverageCaps??{CORE:20,LIQUID_ALT:8,SPECULATIVE:3,NEW_LISTING:1};
     next.settingsVersion=18;
   }
-  // V3.9.5 economic entry governance: the user-facing minimum net-profit floor is now
-  // a real 1-20 USDT trading parameter. Existing V3.9.4 values below 1 are migrated
-  // before schema parsing so upgrades fail safely without creating a second settings truth.
-  if (Number(next.settingsVersion ?? 0) <= 19) {
-    const tp=(next.takeProfit??={}) as Record<string,unknown>;
-    tp.minNetProfitUsd=Math.min(20,Math.max(1,Number(tp.minNetProfitUsd??1)));
-    const economics=(next.tradeEconomics??={}) as Record<string,unknown>;
-    economics.parameterProfile=economics.parameterProfile??'CUSTOM';
-    economics.admissionMode=economics.admissionMode??'SHADOW';
-    economics.historicalTpReachabilityEnabled=economics.historicalTpReachabilityEnabled??true;
-    economics.minHistoricalReachProbability=economics.minHistoricalReachProbability??.5;
-    economics.reachabilityLookbackBars=economics.reachabilityLookbackBars??120;
-    economics.reachabilityMinSamples=economics.reachabilityMinSamples??30;
-    const management=(next.positionManagement??={}) as Record<string,unknown>;
-    management.humanManagedAdmissionCapsEnabled=management.humanManagedAdmissionCapsEnabled??true;
-    management.maxHumanManagedPositions=management.maxHumanManagedPositions??4;
-    management.maxHumanManagedNotionalPctEquity=management.maxHumanManagedNotionalPctEquity??.2;
-    next.settingsVersion=20;
-  }
+  // V3.9.5 economic entry governance migrates by field facts, not by settingsVersion.
+  // settingsVersion is also the optimistic-concurrency revision and can already be 100+ on
+  // a healthy V3.9.4 runtime, so treating it as a schema-version gate would break upgrades.
+  const tp=(next.takeProfit??={}) as Record<string,unknown>;
+  tp.minNetProfitUsd=Math.min(20,Math.max(1,Number(tp.minNetProfitUsd??1)));
+  const economics=(next.tradeEconomics??={}) as Record<string,unknown>;
+  economics.parameterProfile=economics.parameterProfile??'CUSTOM';
+  economics.admissionMode=economics.admissionMode??'SHADOW';
+  economics.historicalTpReachabilityEnabled=economics.historicalTpReachabilityEnabled??true;
+  economics.minHistoricalReachProbability=economics.minHistoricalReachProbability??.5;
+  economics.reachabilityLookbackBars=economics.reachabilityLookbackBars??120;
+  economics.reachabilityMinSamples=economics.reachabilityMinSamples??30;
+  const management=(next.positionManagement??={}) as Record<string,unknown>;
+  management.humanManagedAdmissionCapsEnabled=management.humanManagedAdmissionCapsEnabled??true;
+  management.maxHumanManagedPositions=management.maxHumanManagedPositions??4;
+  management.maxHumanManagedNotionalPctEquity=management.maxHumanManagedNotionalPctEquity??.2;
   if(!record(next.releasePolicy)||Number(next.releasePolicy.lifecycleVersion??0)<390){
     next.releasePolicy={...(record(next.releasePolicy)?next.releasePolicy:{}),lifecycleVersion:390};
     const external=(next.externalIntelligence??={}) as Record<string,unknown>;

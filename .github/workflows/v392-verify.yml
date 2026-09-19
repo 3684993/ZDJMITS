@@ -13,6 +13,7 @@ on:
       - v393-p0-tp-risk-recovery-20260915
       - v393-private-truth-tp-canary-20260916
       - v394-binance-governance-settings-20260918
+      - v395-economics-human-managed-20260919
   workflow_dispatch:
 
 concurrency:

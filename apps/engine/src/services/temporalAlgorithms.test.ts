@@ -1,12 +1,12 @@
 import { describe,expect,it } from 'vitest';
-import { BUILD_VERSION,RELEASE_VERSION } from '@zdj/contracts';
+import { API_VERSION,BUILD_VERSION,RELEASE_VERSION } from '@zdj/contracts';
 import { analogDistance,breadth,classifyRegime,compactFeature,similarityDistribution,stateFingerprint,transitionCandidates,validateCutoff } from './temporalAlgorithms.js';
 import { RESEARCH_BRAIN_POLICY,validateResearchProposal } from './researchBrainPolicy.js';
 import { classifyProcess,mayStopProcess } from '../runtime/processOwnership.js';
 
 const feature=(overrides:any={})=>({trend15m:'UP',trend4h:'UP',trend1d:'UP',emaDistanceAtr:1,atrPercent:2,bbPercentile:.7,macdAcceleration:.1,locationScore:70,spreadBps:2,volume24h:200_000_000,riskTier:'T2',liquidityClass:'HIGH',btcEthAlignment:'UP',multiTfConflict:0,mark:100,bar15m:100,evidenceCompleteness:.95,...overrides});
 describe('V3.8 temporal intelligence safety',()=>{
-  it('uses the release single source',()=>{expect(RELEASE_VERSION).toBe('3.9.4');expect(BUILD_VERSION.releaseVersion).toBe(RELEASE_VERSION);});
+  it('uses the release single source',()=>{expect(API_VERSION).toBe(`V${RELEASE_VERSION}`);expect(BUILD_VERSION.releaseVersion).toBe(RELEASE_VERSION);expect(BUILD_VERSION.apiVersion).toBe(API_VERSION);});
   it('excludes invalid symbols from breadth denominator',()=>{expect(breadth([feature(),feature({trend15m:'DOWN'}),feature({trend15m:null})])).toMatchObject({eligibleCount:2,bullish:.5,bearish:.5});});
   it('persists age as a feature rather than forcing reversal',()=>{expect(classifyRegime({bullish:.8,bearish:.1,slope:0,ageBars:30,transition:10})).toBe('MATURE_UPTREND');});
   it('enforces analog cutoff and tier/liquidity constraints',()=>{expect(validateCutoff(200,100,150)).toBe(true);expect(validateCutoff(200,100,250)).toBe(false);expect(analogDistance(feature(),feature({riskTier:'T3'}))).toBe(Infinity);expect(analogDistance(feature(),feature({liquidityClass:'LOW'}))).toBe(Infinity);});

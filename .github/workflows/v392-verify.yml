@@ -13,7 +13,9 @@ on:
       - v393-p0-tp-risk-recovery-20260915
       - v393-private-truth-tp-canary-20260916
       - v394-binance-governance-settings-20260918
-      - v395-economics-human-managed-20260919
+      # V3.9.5 work continues across dated branches; the glob keeps CI honest without
+      # hand-editing this list per branch, and it still cannot match anything outside v395-*.
+      - v395-*
   workflow_dispatch:
 
 concurrency:

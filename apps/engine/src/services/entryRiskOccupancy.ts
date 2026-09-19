@@ -25,6 +25,17 @@ export function entryOrderOccupiesRisk(order:EntryOrder,now=Date.now()){
   return entryHasUnresolvedExchangeTerminalRisk(order,now);
 }
 
+/** True when a submitted-but-unverified entry has been positively proven to hold no exchange order,
+ *  no fill and no position. The UNKNOWN row itself is never rewritten. */
+export function entryClaimReleasedByExchangeFacts(order:EntryOrder,now=Date.now()){
+  return order.status==='UNKNOWN'&&!order.exchangeOrderId&&Number(order.filledQuantity??0)===0&&hasVerifiedNoActiveRisk(order,now);
+}
+
+/** Durable entry scope is owned only while the submission can still become real risk. */
+export function durableEntryClaimActive(order:EntryOrder,now=Date.now()){
+  return ACTIVE_ORDER.has(order.status)&&!entryClaimReleasedByExchangeFacts(order,now);
+}
+
 export function entryIdentityTombstone(order:EntryOrder){
   return `ENTRY:${String(order.symbol).toUpperCase()}:${String(order.clientOrderId??order.exchangeOrderId??order.id)}`;
 }

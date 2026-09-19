@@ -8,6 +8,7 @@ import { WindowsDpapiSecretStore } from "./windowsDpapiSecretStore.js";
 import { redactAudit } from "../api/projections.js";
 import { isTelemetry } from '../services/operationalLogger.js';
 import { activeOrderStatus, type ManualExecutionRecord, type EntryExecutionRecord } from '../services/executionLifecycle.js';
+import { durableEntryClaimActive, entryClaimReleasedByExchangeFacts } from '../services/entryRiskOccupancy.js';
 
 function record(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -368,8 +369,10 @@ export class SettingsStore {
     this.db.exec(`CREATE TABLE IF NOT EXISTS execution_tasks (
       intent_id TEXT PRIMARY KEY, scope TEXT NOT NULL, active INTEGER NOT NULL, payload TEXT NOT NULL, updated_at INTEGER NOT NULL
     ); CREATE UNIQUE INDEX IF NOT EXISTS execution_tasks_active_scope ON execution_tasks(scope) WHERE active=1;`);
-    this.db.exec(`CREATE TABLE IF NOT EXISTS entry_execution_tasks(intent_id TEXT PRIMARY KEY,scope TEXT NOT NULL,active INTEGER NOT NULL,payload TEXT NOT NULL,updated_at INTEGER NOT NULL);
+    this.db.exec(`CREATE TABLE IF NOT EXISTS entry_execution_tasks(intent_id TEXT PRIMARY KEY,scope TEXT NOT NULL,active INTEGER NOT NULL,payload TEXT NOT NULL,updated_at INTEGER NOT NULL,released_at INTEGER NOT NULL DEFAULT 0);
       CREATE UNIQUE INDEX IF NOT EXISTS entry_execution_scope ON entry_execution_tasks(scope) WHERE active=1;`);
+    const entryTaskColumns=new Set((this.db.prepare('PRAGMA table_info(entry_execution_tasks)').all() as Array<{name:string}>).map(row=>row.name));
+    if(!entryTaskColumns.has('released_at'))try{this.db.exec('ALTER TABLE entry_execution_tasks ADD COLUMN released_at INTEGER NOT NULL DEFAULT 0');}catch(error){if(!String(error).includes('duplicate column name'))throw error;}
     this.db.exec(`CREATE INDEX IF NOT EXISTS ai_runs_summary_symbol_decision_nocase ON ai_runs_archive(symbol COLLATE NOCASE,decision COLLATE NOCASE,started_at DESC,run_id DESC);
       CREATE INDEX IF NOT EXISTS ai_runs_summary_role_status_nocase ON ai_runs_archive(role COLLATE NOCASE,status COLLATE NOCASE,started_at DESC,run_id DESC);
       CREATE INDEX IF NOT EXISTS ai_runs_summary_decision_nocase ON ai_runs_archive(decision COLLATE NOCASE,started_at DESC,run_id DESC);`);
@@ -864,13 +867,41 @@ export class SettingsStore {
   }
   claimEntryExecution(scope:string,value:EntryExecutionRecord,retryRejected=false){
     let result=this.db.prepare('INSERT OR IGNORE INTO entry_execution_tasks(intent_id,scope,active,payload,updated_at) VALUES(?,?,1,?,?)').run(value.intent.id,scope,JSON.stringify(value),Date.now());
-    if(!result.changes&&retryRejected)result=this.db.prepare('UPDATE OR IGNORE entry_execution_tasks SET active=1,payload=?,updated_at=? WHERE intent_id=? AND active=0').run(JSON.stringify(value),Date.now(),value.intent.id);
+    if(!result.changes&&retryRejected)result=this.db.prepare('UPDATE OR IGNORE entry_execution_tasks SET active=1,payload=?,updated_at=? WHERE intent_id=? AND active=0 AND released_at=0').run(JSON.stringify(value),Date.now(),value.intent.id);
     const row=this.db.prepare('SELECT payload FROM entry_execution_tasks WHERE scope=? AND active=1').get(scope) as {payload:string}|undefined;
-    if(!row)throw new Error('ENTRY_SUBMISSION_UNKNOWN_JOURNAL_CONFLICT');
+    if(!row){
+      // A proof-released submission is never re-armed, so a retry of that same intent must report a
+      // collision instead of reaching the exchange, rather than throwing on an empty incumbent.
+      const released=this.db.prepare('SELECT payload FROM entry_execution_tasks WHERE intent_id=? AND released_at>0').get(value.intent.id) as {payload:string}|undefined;
+      if(released)return{acquired:false,record:JSON.parse(released.payload) as EntryExecutionRecord};
+      throw new Error('ENTRY_SUBMISSION_UNKNOWN_JOURNAL_CONFLICT');
+    }
     return{acquired:result.changes>0,record:JSON.parse(row.payload) as EntryExecutionRecord};
   }
-  saveEntryExecution(value:EntryExecutionRecord){this.db.prepare('UPDATE entry_execution_tasks SET active=?,payload=?,updated_at=? WHERE intent_id=?').run(activeOrderStatus(value.order.status)?1:0,JSON.stringify(value),Date.now(),value.intent.id);}
+  saveEntryExecution(value:EntryExecutionRecord){
+    const now=Date.now(),order=value.order as any;
+    const stored=this.db.prepare('SELECT active,released_at FROM entry_execution_tasks WHERE intent_id=?').get(value.intent.id) as {active:number;released_at:number}|undefined;
+    let active=durableEntryClaimActive(order,now)?1:0;
+    // A claim released by proven exchange facts stays released while that submission is still the same
+    // unsubmitted UNKNOWN, so an evidence TTL that lapses between two re-checks cannot silently
+    // re-occupy the underlying. Real risk (an exchange order id, a fill, or a live status) re-arms it.
+    if(stored&&stored.released_at>0&&order.status==='UNKNOWN'&&!order.exchangeOrderId&&!Number(order.filledQuantity??0))active=0;
+    // Only a proof-driven release is latched; an order that simply reached a terminal exchange status
+    // keeps the pre-existing re-arm behaviour (for example a post-only reprice retry).
+    const releasedByProof=active===0&&order.status==='UNKNOWN'&&(entryClaimReleasedByExchangeFacts(order,now)||(stored?.released_at??0)>0);
+    this.db.prepare('UPDATE entry_execution_tasks SET active=?,payload=?,updated_at=?,released_at=? WHERE intent_id=?')
+      .run(active,JSON.stringify(value),now,releasedByProof?Math.max(stored?.released_at??0,now):(stored?.released_at??0),value.intent.id);
+  }
   loadEntryExecutions():EntryExecutionRecord[]{return(this.db.prepare('SELECT payload FROM entry_execution_tasks').all() as Array<{payload:string}>).map(row=>JSON.parse(row.payload));}
+  /** Historical UNKNOWN orders and live scope occupancy are different facts; keep both countable. */
+  entryExecutionClaimStats(){
+    const rows=this.db.prepare('SELECT active,released_at,payload FROM entry_execution_tasks').all() as Array<{active:number;released_at:number;payload:string}>;
+    const statusOf=(payload:string)=>{try{return String(JSON.parse(payload)?.order?.status??'');}catch{return '';}};
+    return{durableTasks:rows.length,activeClaims:rows.filter(row=>row.active===1).length,
+      activeUnknownClaims:rows.filter(row=>row.active===1&&statusOf(row.payload)==='UNKNOWN').length,
+      releasedClaims:rows.filter(row=>row.released_at>0).length,
+      releasedUnknownClaims:rows.filter(row=>row.released_at>0&&statusOf(row.payload)==='UNKNOWN').length};
+  }
   recordTradeSyncHistory(value: unknown) {
     const row = value as any;
     this.db

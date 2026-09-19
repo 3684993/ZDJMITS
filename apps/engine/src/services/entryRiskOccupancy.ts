@@ -36,6 +36,69 @@ export function durableEntryClaimActive(order:EntryOrder,now=Date.now()){
   return ACTIVE_ORDER.has(order.status)&&!entryClaimReleasedByExchangeFacts(order,now);
 }
 
+/**
+ * Tier 0 deliberately equals the historical 5-minute evidence TTL, so a fresh or merely
+ * once-proven UNKNOWN keeps exactly the cadence it had before tiering existed. Only an order
+ * that has been re-proven identical several times in a row may wait longer, and any new
+ * exchange fact resets it immediately.
+ */
+export const UNKNOWN_RISK_EVIDENCE_TIER_MS=[5*60_000,15*60_000,30*60_000] as const;
+export const UNKNOWN_RISK_AUDIT_PROMOTE_AFTER=3;
+export const UNKNOWN_RISK_AUDIT_SUMMARY_INTERVAL_MS=60*60_000;
+
+export type RemoteRiskAudit={tier:number;consecutive:number;nextAuditAt:number;factHash:string|null;verifiedCount:number;lastAuditAt:number;lastEventAt:number;lastEmittedReason:string|null};
+
+export function remoteRiskAudit(order:EntryOrder):RemoteRiskAudit|null{
+  const row=(order as any).remoteAudit;
+  if(!row||typeof row!=='object')return null;
+  const tier=Math.max(0,Math.min(UNKNOWN_RISK_EVIDENCE_TIER_MS.length-1,Number(row.tier)||0));
+  return{tier,consecutive:Number(row.consecutive)||0,nextAuditAt:Number(row.nextAuditAt)||0,factHash:typeof row.factHash==='string'?row.factHash:null,
+    verifiedCount:Number(row.verifiedCount)||0,lastAuditAt:Number(row.lastAuditAt)||0,lastEventAt:Number(row.lastEventAt)||0,
+    lastEmittedReason:typeof row.lastEmittedReason==='string'?row.lastEmittedReason:null};
+}
+
+const NO_RISK_ABSENCE_SOURCES=['BINANCE_EXACT_ORDER_NOT_FOUND','BINANCE_OPEN_ORDERS_IDENTITY_ABSENT','BINANCE_USER_TRADES_IDENTITY_ABSENT','BINANCE_ALL_ORDERS_IDENTITY_ABSENT'];
+
+/** Category B: a historical UNKNOWN whose absence of risk has been proven by every remote source. */
+export function historicalNoRiskEligible(order:EntryOrder,now=Date.now()){
+  if(order.status!=='UNKNOWN'||!entryClaimReleasedByExchangeFacts(order,now))return false;
+  const evidence=(order as any).activeRiskEvidence;
+  if(!NO_RISK_ABSENCE_SOURCES.every(source=>(evidence?.sources??[]).includes(source)))return false;
+  return (evidence?.sources??[]).includes('BINANCE_LONG_SHORT_POSITION_ZERO')||(evidence?.sources??[]).includes('POSITION_PRESENT_PROVEN_OTHER_CYCLE');
+}
+
+/** True when the next active remote audit of a promoted historical UNKNOWN is not yet due. */
+export function remoteRiskAuditDeferred(order:EntryOrder,now=Date.now()){
+  const audit=remoteRiskAudit(order);
+  if(!audit||audit.tier<=0)return false;
+  return historicalNoRiskEligible(order,now)&&Number(audit.nextAuditAt)>now;
+}
+
+export function riskFactHash(evidence:{sources?:string[];reason?:string|null}){
+  return `${[...(evidence?.sources??[])].sort().join(',')}|${evidence?.reason??''}`;
+}
+
+export function advanceRemoteRiskAudit(previous:RemoteRiskAudit|null,evidence:{sources?:string[];reason?:string|null},now=Date.now()):RemoteRiskAudit{
+  const factHash=riskFactHash(evidence);
+  const identical=Boolean(previous&&previous.factHash===factHash);
+  const consecutive=identical?Math.max(1,previous!.consecutive)+1:1;
+  const tier=Math.max(0,Math.min(UNKNOWN_RISK_EVIDENCE_TIER_MS.length-1,consecutive-UNKNOWN_RISK_AUDIT_PROMOTE_AFTER));
+  return{tier,consecutive,nextAuditAt:now+UNKNOWN_RISK_EVIDENCE_TIER_MS[tier],factHash,
+    verifiedCount:(previous?.verifiedCount??0)+1,lastAuditAt:now,lastEventAt:previous?.lastEventAt??0,lastEmittedReason:previous?.lastEmittedReason??null};
+}
+
+/** Any conflicting or incomplete fact returns the order to the fresh, high-frequency tier. */
+export function resetRemoteRiskAudit(now=Date.now()):RemoteRiskAudit{
+  return{tier:0,consecutive:0,nextAuditAt:now,factHash:null,verifiedCount:0,lastAuditAt:now,lastEventAt:0,lastEmittedReason:null};
+}
+
+/** Emit only when something is actually new; identical proofs become a summary instead of spam. */
+export function shouldEmitNoRiskEvent(order:EntryOrder,audit:RemoteRiskAudit,reason:string,now=Date.now()){
+  const previous=remoteRiskAudit(order);
+  if(!previous||!previous.lastEventAt)return true;
+  return previous.lastEmittedReason!==reason||(previous.factHash&&audit.factHash!==previous.factHash)||audit.tier!==previous.tier||now-audit.lastEventAt>=UNKNOWN_RISK_AUDIT_SUMMARY_INTERVAL_MS;
+}
+
 export function entryIdentityTombstone(order:EntryOrder){
   return `ENTRY:${String(order.symbol).toUpperCase()}:${String(order.clientOrderId??order.exchangeOrderId??order.id)}`;
 }

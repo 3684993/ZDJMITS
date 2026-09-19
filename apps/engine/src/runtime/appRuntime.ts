@@ -1416,6 +1416,7 @@ export class EngineRuntime {
         stale: freshness.stale,
         quoteFreshRatio: freshness.quoteFreshRatio,
         klineFreshRatio: freshness.klineFreshRatio,
+        sequenceInvalid: freshness.sequenceInvalid,
       },
       pool: {
         target,qualifiedSupply,readySupply,ready:supply.readyCount,display:poolItems.length,targetGap,supplyShortage,refillFailure,health:supply,

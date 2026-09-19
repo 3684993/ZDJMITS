@@ -21,6 +21,44 @@ describe('TP economics enforcement',()=>{
 });
 
 
+describe('V3.9.5 legacy position isolation',()=>{
+  const shadowSettings={...settings,takeProfit:{...settings.takeProfit,mode:'PRICE_MOVE_PERCENT',structureMinMovePercent:.45,structureMaxMovePercent:3,minNetProfitUsd:1,minNetProfitRoiPct:0},tradeEconomics:{parameterProfile:'CUSTOM',admissionMode:'SHADOW',historicalTpReachabilityEnabled:true,minHistoricalReachProbability:.5,reachabilityLookbackBars:120,reachabilityMinSamples:30}} as any;
+  const protectedLegacy=(id:string,managementStatus:'AUTO_MANAGED'|'HUMAN_MANAGED',tpPrice:number)=>({id,symbol:'BTCUSDT',side:'LONG' as const,quantity:10,entryPrice:100,markPrice:100.1,leverage:8,unrealizedPnl:0,unrealizedPnlPercent:0,openedAt:Date.now()-3_600_000,firstObservedAt:Date.now()-3_600_000,entryTimeSource:'SYSTEM_FILL' as const,managementStatus,humanManagedAt:managementStatus==='HUMAN_MANAGED'?Date.now()-1_000:null,tpStatus:'PROTECTED' as const,tpOrderId:'tp-legacy-'+id,tpLastVerifiedAt:Date.now(),tpCoverageSource:'BINANCE_OPEN_ORDER' as const,profitTakePlan:{targetPrice:tpPrice,acceptableTargetRange:{min:tpPrice-1,max:tpPrice+1},targetHorizonMinutes:60,targetReason:'legacy target',evidenceRefs:[]}});
+  const snapshotAt=(now:number)=>({quote:{symbol:'BTCUSDT',last:100,mark:100,bid:99.99,ask:100.01,tickSize:.01,stepSize:.01,minQty:.001,minNotional:5,quoteVolumeUsd24h:1,priceChangePercent24h:0,tradeCount24h:1,ts:now},technical:{'15m':{isClosed:true,barCloseTime:now-1,lastClosedBar:{closeTime:now-1,close:100},atrPercent:.5,recentSwingHigh:101,recentSwingLow:99}}}) as any;
+  it('never cancels, moves or rebuilds a legacy protected TP whose net profit is below the $1 floor',async()=>{
+    const state=new RuntimeState(shadowSettings),exchange=new MockExchangeAdapter(),now=Date.now();
+    const place=vi.spyOn(exchange,'placeTakeProfit'),cancel=vi.spyOn(exchange,'cancelTakeProfit');
+    for(const managementStatus of ['AUTO_MANAGED','HUMAN_MANAGED'] as const){
+      const pos:any=protectedLegacy('below-floor-'+managementStatus,managementStatus,100.05);
+      state.positions.set(pos.id,pos);state.tpOrders.set(pos.tpOrderId,{id:pos.tpOrderId,positionId:pos.id,symbol:pos.symbol,side:'SELL',quantity:pos.quantity,price:100.05,status:'WORKING',createdAt:now,updatedAt:now} as any);
+      state.snapshots.set(pos.symbol,snapshotAt(now));
+    }
+    const probe=new TpGuardian(state,new MockExchangeAdapter(),new EventBus());
+    expect(probe.economicsFor(state.positions.get('below-floor-AUTO_MANAGED')!,100.05).expectedNetProfit).toBeLessThan(1);
+    await new TpGuardian(state,exchange,new EventBus()).sweep();
+    expect(place).not.toHaveBeenCalled();expect(cancel).not.toHaveBeenCalled();
+    for(const id of ['below-floor-AUTO_MANAGED','below-floor-HUMAN_MANAGED']){
+      const row=state.positions.get(id)!;
+      expect(row.tpStatus).toBe('PROTECTED');expect(row.tpOrderId).toBe('tp-legacy-'+id);
+      expect(state.tpOrders.get('tp-legacy-'+id)!.status).toBe('WORKING');expect(state.tpOrders.get('tp-legacy-'+id)!.price).toBe(100.05);
+    }
+    expect(state.positions.get('below-floor-HUMAN_MANAGED')!.managementStatus).toBe('HUMAN_MANAGED');
+    expect(guardianMetricsUnchanged(state)).toBe(true);
+  });
+  it('keeps the legacy 1.2% distance floor for a position without V3.9.5 ENFORCE admission evidence',async()=>{
+    const state=new RuntimeState(shadowSettings),exchange=new MockExchangeAdapter(),now=Date.now();
+    const pos:any={...protectedLegacy('no-evidence','AUTO_MANAGED',100.8),tpStatus:'MISSING' as const,tpOrderId:null};
+    state.positions.set(pos.id,pos);state.snapshots.set(pos.symbol,snapshotAt(now));
+    await new TpGuardian(state,exchange,new EventBus()).ensure(pos);
+    const next=state.positions.get(pos.id)!;
+    expect(next.profitTakePlanSource).not.toBe('AI');expect(next.tpStatus).toBe('PROTECTED');
+    expect(next.tpOrderId).not.toBe('tp-legacy-no-evidence');
+    expect(state.tpOrders.get(next.tpOrderId!)!.price).toBeGreaterThanOrEqual(101.2);
+    expect(state.tpOrders.get(next.tpOrderId!)!.price).toBeGreaterThan(100.8);
+  });
+  const guardianMetricsUnchanged=(state:RuntimeState)=>{const active=[...state.tpOrders.values()].filter(o=>o.status==='WORKING');return active.length===state.positions.size;};
+});
+
 describe('V3.9 unknown TP submission',()=>{
   it('persists an uncertain identity and never retries it as a fresh TP after service recreation',async()=>{
     const state=new RuntimeState(settings),exchange=new MockExchangeAdapter(),events=new EventBus(),pos=position('unknown',100);

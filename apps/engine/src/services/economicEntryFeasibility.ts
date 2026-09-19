@@ -29,7 +29,7 @@ export function humanManagedExposure(state:RuntimeState){
 
 export function evaluateEconomicEntryFeasibility(input:{
   state:RuntimeState;
-  market:MarketDataHub;
+  market?:MarketDataHub;
   symbol:string;
   side:Side;
   quantityUnits:number;
@@ -64,7 +64,8 @@ export function evaluateEconomicEntryFeasibility(input:{
   const targetMovePercent=Number.isFinite(entryPrice)&&entryPrice>0?Math.abs(target/entryPrice-1)*100:0;
   let reachProbability:number|null=null,historicalHardMaxMovePercent:number|null=null;
   if(settings.tradeEconomics.historicalTpReachabilityEnabled&&directionValid){
-    const tf=reachabilityTimeframe(input.profitTakePlan.targetHorizonMinutes),rows=input.market.cachedCandles(input.symbol,tf,300),
+    if(!input.market){blockers.push('TP_REACHABILITY_DATA_MISSING');}
+    else {const tf=reachabilityTimeframe(input.profitTakePlan.targetHorizonMinutes),rows=input.market.cachedCandles(input.symbol,tf,300),
       r=evaluateTargetReachability({rows,side:input.side,horizonMinutes:input.profitTakePlan.targetHorizonMinutes,targetMovePercent,lookbackBars:settings.tradeEconomics.reachabilityLookbackBars,minSamples:settings.tradeEconomics.reachabilityMinSamples,now});
     reachProbability=r.reachProbability;historicalHardMaxMovePercent=r.hardMaxMovePercent;
     if(r.status==='STALE')blockers.push('TP_REACHABILITY_DATA_STALE');
@@ -72,7 +73,7 @@ export function evaluateEconomicEntryFeasibility(input:{
     else{
       if(r.hardMaxMovePercent!==null&&targetMovePercent>r.hardMaxMovePercent+1e-9)blockers.push('TP_HISTORICAL_REACHABILITY_UNMET');
       if(r.reachProbability!==null&&r.reachProbability+1e-12<settings.tradeEconomics.minHistoricalReachProbability)blockers.push('TP_REACH_PROBABILITY_UNMET');
-    }
+    }}
   }
   const human=humanManagedExposure(state);
   if(settings.positionManagement.humanManagedAdmissionCapsEnabled&&!human.withinLimits)blockers.push('HUMAN_MANAGED_EXPOSURE_LIMIT');

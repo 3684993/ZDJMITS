@@ -72,6 +72,7 @@ function applySelectedTradingProfile(){
   notice.value=selected==="CUSTOM"?"已切换为自定义参数":`已载入${tradingParameterProfiles[selected as keyof typeof tradingParameterProfiles].label}交易参数；保存设置后生效`;
 }
 function markTradingProfileCustom(){if(draft.value&&draft.value.tradeEconomics.parameterProfile!=="CUSTOM")draft.value.tradeEconomics.parameterProfile="CUSTOM";}
+const tierLabel=(tier:string)=>({CORE:'核心资产',LIQUID_ALT:'高流动山寨',SPECULATIVE:'投机资产',NEW_LISTING:'新上市资产'} as Record<string,string>)[tier]??tier;
 function applyTheme() {
   if (draft.value) {
     document.documentElement.dataset.theme = draft.value.appearance.theme;

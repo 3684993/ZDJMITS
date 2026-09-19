@@ -8,6 +8,7 @@ import {
 } from "../api/client";
 import { normalizeBlacklistInput } from "../blacklistInput";
 import Panel from "../components/Panel.vue";
+import { applyTradingParameterProfile, tradingParameterProfiles, type TradingParameterProfile } from "../tradingParameterProfiles";
 
 const tabs = [
   ["strategy", "策略与执行"],
@@ -49,6 +50,28 @@ const themes = [
 const themeDescription = computed(
   () => themes.find((x) => x[0] === draft.value?.appearance.theme)?.[1] ?? "",
 );
+const tradingProfileOptions=[
+  ["CONSERVATIVE","保守"],["DEFAULT","默认"],["AGGRESSIVE","激进"],["CUSTOM","自定义"],
+] as const;
+const perTradeRiskPercent=computed({
+  get:()=>Number(draft.value?.riskGovernance.perTradeRiskPctEquity??0)*100,
+  set:(value:number)=>{if(draft.value){draft.value.riskGovernance.perTradeRiskPctEquity=Number(value)/100;markTradingProfileCustom();}},
+});
+const reachabilityPercent=computed({
+  get:()=>Number(draft.value?.tradeEconomics.minHistoricalReachProbability??0)*100,
+  set:(value:number)=>{if(draft.value){draft.value.tradeEconomics.minHistoricalReachProbability=Number(value)/100;markTradingProfileCustom();}},
+});
+const humanManagedNotionalPercent=computed({
+  get:()=>Number(draft.value?.positionManagement.maxHumanManagedNotionalPctEquity??0)*100,
+  set:(value:number)=>{if(draft.value){draft.value.positionManagement.maxHumanManagedNotionalPctEquity=Number(value)/100;markTradingProfileCustom();}},
+});
+function applySelectedTradingProfile(){
+  if(!draft.value)return;
+  applyTradingParameterProfile(draft.value,draft.value.tradeEconomics.parameterProfile as TradingParameterProfile);
+  const selected=draft.value.tradeEconomics.parameterProfile;
+  notice.value=selected==="CUSTOM"?"已切换为自定义参数":`已载入${tradingParameterProfiles[selected as keyof typeof tradingParameterProfiles].label}交易参数；保存设置后生效`;
+}
+function markTradingProfileCustom(){if(draft.value&&draft.value.tradeEconomics.parameterProfile!=="CUSTOM")draft.value.tradeEconomics.parameterProfile="CUSTOM";}
 function applyTheme() {
   if (draft.value) {
     document.documentElement.dataset.theme = draft.value.appearance.theme;
@@ -203,7 +226,22 @@ onMounted(load);
     </div>
     <template v-if="draft">
       <Panel v-if="tab === 'strategy'" title="策略与执行">
+        <div class="policy-callout">
+          <strong>交易参数档位</strong>
+          <select v-model="draft.tradeEconomics.parameterProfile" @change="applySelectedTradingProfile">
+            <option v-for="[id,label] in tradingProfileOptions" :key="id" :value="id">{{ label }}</option>
+          </select>
+          <span>保守 / 默认 / 激进会一次性写入对应参数；单项修改后自动标记为“自定义”。档位选择不会暗中切换经济性准入模式。</span>
+        </div>
         <div class="form-grid four">
+          <label><span>经济性准入模式</span><select v-model="draft.tradeEconomics.admissionMode"><option value="OFF">关闭</option><option value="SHADOW">影子观察（只记录不拦截）</option><option value="ENFORCE">强制执行（不满足则拒绝建仓）</option></select></label>
+          <label><span>历史止盈可达性检查</span><select v-model="draft.tradeEconomics.historicalTpReachabilityEnabled"><option :value="true">启用</option><option :value="false">关闭</option></select></label>
+          <label><span>历史最低可达概率 %</span><input v-model.number="reachabilityPercent" type="number" min="0" max="100" step="1" /></label>
+          <label><span>历史回看 K 线数量</span><input v-model.number="draft.tradeEconomics.reachabilityLookbackBars" type="number" min="30" max="300" /></label>
+          <label><span>历史最少有效样本</span><input v-model.number="draft.tradeEconomics.reachabilityMinSamples" type="number" min="10" max="250" /></label>
+          <label><span>单笔风险占权益 %</span><input v-model.number="perTradeRiskPercent" type="number" min="0" max="100" step="0.05" /></label>
+          <label><span>待人工处置最大持仓数</span><input v-model.number="draft.positionManagement.maxHumanManagedPositions" @input="markTradingProfileCustom" type="number" min="1" max="100" /></label>
+          <label><span>待人工处置最大名义 / 权益 %</span><input v-model.number="humanManagedNotionalPercent" type="number" min="1" max="500" step="1" /></label>
           <label
             ><span>Universe Top N</span
             ><input v-model.number="draft.selection.universeTopN" type="number"
@@ -212,10 +250,10 @@ onMounted(load);
             ><span>交易池目标</span
             ><input v-model.number="draft.selection.poolTarget" type="number"
           /></label>
-          <label><span>Entry cadence</span><select v-model="draft.ai.highFrequency.mode"><option>CONSERVATIVE</option><option>NORMAL</option><option>HIGH_FREQUENCY</option><option>CUSTOM</option></select></label>
-          <label><span>Scout Prefetch</span><input v-model.number="draft.ai.highFrequency.scoutPrefetch" type="number" min="1" max="8" /></label>
-          <label><span>单币 Retry / Cooldown 秒</span><input v-model.number="draft.ai.highFrequency.retryCooldownSeconds" type="number" min="5" max="300" /></label>
-          <label><span>Quarantine failures / 秒</span><input v-model.number="draft.ai.highFrequency.quarantineAfterFailures" type="number" min="2" max="10" /><input v-model.number="draft.ai.highFrequency.quarantineSeconds" type="number" min="30" max="3600" /></label>
+          <label><span>入场节奏</span><select v-model="draft.ai.highFrequency.mode"><option value="CONSERVATIVE">保守</option><option value="NORMAL">正常</option><option value="HIGH_FREQUENCY">高频</option><option value="CUSTOM">自定义</option></select></label>
+          <label><span>Scout 预取数量</span><input v-model.number="draft.ai.highFrequency.scoutPrefetch" type="number" min="1" max="8" /></label>
+          <label><span>单币重试 / 冷却（秒）</span><input v-model.number="draft.ai.highFrequency.retryCooldownSeconds" type="number" min="5" max="300" /></label>
+          <label><span>连续失败隔离阈值 / 隔离时长（秒）</span><input v-model.number="draft.ai.highFrequency.quarantineAfterFailures" type="number" min="2" max="10" /><input v-model.number="draft.ai.highFrequency.quarantineSeconds" type="number" min="30" max="3600" /></label>
           <label
             ><span>建仓保证金 USD</span
             ><input
@@ -226,6 +264,7 @@ onMounted(load);
             ><span>最大持仓数量</span
             ><input
               v-model.number="draft.portfolio.maxPositions"
+              @input="markTradingProfileCustom"
               type="number"
               min="1"
               max="100"
@@ -257,11 +296,9 @@ onMounted(load);
           /></label>
           <label
             ><span>最低净收益 USD</span
-            ><input
-              v-model.number="draft.takeProfit.minNetProfitUsd"
-              type="number"
-              step="0.1"
-          /></label>
+            ><select v-model.number="draft.takeProfit.minNetProfitUsd" @change="markTradingProfileCustom">
+              <option v-for="value in 20" :key="value" :value="value">{{ value }} USDT</option>
+            </select></label>
           <label
             ><span>最低净收益 ROI %</span
             ><input
@@ -344,6 +381,7 @@ onMounted(load);
             ><span>Dynamic Base Margin USD</span
             ><input
               v-model.number="draft.portfolioIntelligence.baseMarginUsd"
+              @input="markTradingProfileCustom"
               type="number"
           /></label>
           <label
@@ -354,12 +392,14 @@ onMounted(load);
               v-model.number="
                 draft.portfolioIntelligence.maxMarginPerPositionUsd
               "
+              @input="markTradingProfileCustom"
               type="number"
           /></label>
           <label
             ><span>Global Max Leverage</span
             ><input
               v-model.number="draft.portfolioIntelligence.globalMaxLeverage"
+              @input="markTradingProfileCustom"
               type="number"
           /></label>
           <label
@@ -493,7 +533,7 @@ onMounted(load);
         <div class="policy-callout">
           <strong>安全边界</strong
           ><span
-            >15m 决定方向；AI 不直接下单；AI_FAILED 与 REJECT
+            >15m 是战术重点而不是方向命令；27B 自主决定 side / quantityUnits / acceptablePriceRange；AI 不直接下单；AI_FAILED 与 REJECT
             fail-closed；无自动止损；正式链禁止 Mock fallback。{{
               RELEASE_LABEL
             }}

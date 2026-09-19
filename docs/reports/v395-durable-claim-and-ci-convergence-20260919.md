@@ -103,13 +103,13 @@ run **#374**（id `35422533611`，head `4770a21`，branch `v395-economics-human-
 
 ## N. 新 Entry 是否仍被"已终结旧 UNKNOWN"错误阻塞 —— **否**
 
-自 12:59:52 启动至今：`DURABLE_TASK_EXISTS` 提及 **0 次**（对照：修复前同一台机器同一账户在 09:46–10:50 的 50 分钟内有 **16 次** intent 因此被拒）。期间 `ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED` 正常发生 58 次（复核环在跑），`ENTRY_ECONOMIC_ADMISSION_EVALUATED` 1 次、`TP_PROTECTED` 1 次、自然成交 1 笔（DOTUSDT，正属修复前被 stale claim 占住的 15 个 underlying 之一），`activeRiskUnresolvedCount=0`。真正 unresolved 的新 UNKNOWN 仍会 fail-closed（K 表里那 1 个 active claim 就是它）。
+自 12:59:52 启动至今（13:20 复核）：`DURABLE_TASK_EXISTS` 提及 **0 次**，`ENTRY_SUBMISSION_UNKNOWN` **0 次**，而 **3 个自然 intent → 3 次 submit → 3 个订单建成**、`TP_PROTECTED` 4 次、`ENTRY_ECONOMIC_ADMISSION_EVALUATED` 5 次、`durableTasks` 由 221 增至 224（**只增不减，无删除**）、`activeClaims=0`、`activeRiskUnresolvedCount=0`、`p0.passed=true`。对照：修复前同一台机器同一账户在 09:46–10:50 的 50 分钟内有 **16 次** intent 因该原因被拒。DOTUSDT（正属修复前被 stale claim 占住的 15 个 underlying 之一）在启动后完成开仓并在 8 秒内重新挂上 TP。真正 unresolved 的新 UNKNOWN 仍会 fail-closed（K 表部署后一度出现的 1 个 active claim 就是它）。
 
 ## O. 旧仓 / TP 是否无损 —— **无损**
 
 - 部署前 11 仓逐仓与部署后比对：`symbol/side/quantity/tpStatus/tpOrderId/managementStatus` **全部相同，0 处变化**，无 lost。
-- 当前 12 仓 **12/12 `PROTECTED`**，`takeProfit READY`，`missing=0 / unverifiedTp=0 / orphanTp=0 / duplicateTp=0 / qtyMismatch=0 / wrongSide=0`。
-- HUMAN_MANAGED 8 / AUTO_MANAGED 4，无自动亏损退出；`POSITION_HUMAN_HANDOFF` 保持 `tpRetained=true` 语义。
+- 当前 15 仓 **15/15 `PROTECTED`**，`takeProfit READY`，`missing=0 / unverifiedTp=0 / orphanTp=0 / duplicateTp=0 / qtyMismatch=0 / wrongSide=0`（13:20 复核；部署时点为 12 仓 12/12）。
+- HUMAN_MANAGED / AUTO_MANAGED 比例随自然开仓变化，无自动亏损退出；`POSITION_HUMAN_HANDOFF` 保持 `tpRetained=true` 语义。
 - 过程中一次可见抖动：DOTUSDT SHORT 因**自然加仓**（qty 0.1→10，成交归因 `EXCHANGE_FILL_RECONCILED`/`ORDER_FILL_RECONCILED`，非迁移）导致旧 TP 按数量失配被 `CANCELED` 并进入重建，`13:05:06 TP_REPAIR_STARTED → TP_TARGET_SELECTED → 13:05:14 TP_PROTECTED`（8 秒闭环）。该事件同时留下两条重要事实：`fullPositionCanaryMinMovePct=1.2, aiMinMovePct=1.2` ⇒ **SHADOW 期 legacy 1.2% 距离门槛在 live 上确实仍然生效**；`aiPlanValid=false → source=FIXED_PROFITABLE` ⇒ AI 计划不达标时回落到确定性保护，不追价。
 - 说明一处方法学瑕疵以免误读：上一版比对脚本用错键名（读 `orderId` 而非 `id`）打印出 `orderId: None` 的假差异；按 `tpOrderId` 字段的严格比对结论是"零变化"，价格逐项亦相同。
 

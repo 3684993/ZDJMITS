@@ -73,6 +73,7 @@ function applySelectedTradingProfile(){
 }
 function markTradingProfileCustom(){if(draft.value&&draft.value.tradeEconomics.parameterProfile!=="CUSTOM")draft.value.tradeEconomics.parameterProfile="CUSTOM";}
 const tierLabel=(tier:string)=>({CORE:'核心资产',LIQUID_ALT:'高流动山寨',SPECULATIVE:'投机资产',NEW_LISTING:'新上市资产'} as Record<string,string>)[tier]??tier;
+const directionPreferenceLabel=(value:string)=>({BALANCED:'均衡',INTELLIGENT_SHORT_BIAS:'智能偏空（兼容字段）',STRICT_SHORT_BIAS:'严格偏空（兼容字段）',SHORT_ONLY:'仅空（兼容字段）',CUSTOM:'自定义'} as Record<string,string>)[value]??value;
 function applyTheme() {
   if (draft.value) {
     document.documentElement.dataset.theme = draft.value.appearance.theme;
@@ -252,13 +253,14 @@ onMounted(load);
             ><input v-model.number="draft.selection.poolTarget" type="number"
           /></label>
           <label><span>入场节奏</span><select v-model="draft.ai.highFrequency.mode"><option value="CONSERVATIVE">保守</option><option value="NORMAL">正常</option><option value="HIGH_FREQUENCY">高频</option><option value="CUSTOM">自定义</option></select></label>
-          <label><span>Scout 预取数量</span><input v-model.number="draft.ai.highFrequency.scoutPrefetch" type="number" min="1" max="8" /></label>
+          <label><span>侦察模型预取数量</span><input v-model.number="draft.ai.highFrequency.scoutPrefetch" type="number" min="1" max="8" /></label>
           <label><span>单币重试 / 冷却（秒）</span><input v-model.number="draft.ai.highFrequency.retryCooldownSeconds" type="number" min="5" max="300" /></label>
           <label><span>连续失败隔离阈值 / 隔离时长（秒）</span><input v-model.number="draft.ai.highFrequency.quarantineAfterFailures" type="number" min="2" max="10" /><input v-model.number="draft.ai.highFrequency.quarantineSeconds" type="number" min="30" max="3600" /></label>
           <label
             ><span>建仓保证金 USD</span
             ><input
               v-model.number="draft.portfolio.entryMarginUsd"
+              @input="markTradingProfileCustom"
               type="number"
           /></label>
           <label
@@ -317,8 +319,8 @@ onMounted(load);
           <label
             ><span>Exit fee assumption</span
             ><select v-model="draft.takeProfit.exitFeeAssumption">
-              <option>MAKER</option>
-              <option>TAKER</option>
+              <option value="MAKER">Maker（挂单）</option>
+              <option value="TAKER">Taker（吃单）</option>
             </select></label
           >
           <label
@@ -342,9 +344,9 @@ onMounted(load);
           <label
             ><span>Quote Asset</span
             ><select v-model="draft.portfolioIntelligence.quoteAssetPolicy">
-              <option>AUTO</option>
-              <option>USDT_ONLY</option>
-              <option>USDC_ONLY</option>
+              <option value="AUTO">自动选择</option>
+              <option value="USDT_ONLY">仅 USDT</option>
+              <option value="USDC_ONLY">仅 USDC</option>
             </select></label
           >
           <label
@@ -352,9 +354,9 @@ onMounted(load);
             ><select
               v-model="draft.portfolioIntelligence.underlyingExposurePolicy"
             >
-              <option>BLOCK_ALL</option>
-              <option>BLOCK_SAME_DIRECTION</option>
-              <option>ALLOW_HEDGE</option>
+              <option value="BLOCK_ALL">同底层资产全部阻止</option>
+              <option value="BLOCK_SAME_DIRECTION">阻止同向重复</option>
+              <option value="ALLOW_HEDGE">允许对冲</option>
             </select></label
           >
           <label
@@ -362,20 +364,20 @@ onMounted(load);
             ><select
               v-model="draft.portfolioIntelligence.globalDirectionPolicy"
             >
-              <option>BOTH</option>
-              <option>LONG_BIASED</option>
-              <option>SHORT_BIASED</option>
-              <option>LONG_ONLY</option>
+              <option value="BOTH">双向（兼容字段）</option>
+              <option value="LONG_BIASED">偏多（兼容字段）</option>
+              <option value="SHORT_BIASED">偏空（兼容字段）</option>
+              <option value="LONG_ONLY">仅多（兼容字段）</option>
               <option value="SHORT_ONLY">仅空（兼容字段）</option>
-              <option>DISABLED</option>
+              <option value="DISABLED">禁用</option>
             </select></label
           >
           <label
             ><span>Margin Mode</span
             ><select v-model="draft.portfolioIntelligence.marginMode">
-              <option>AUTO</option>
-              <option>ISOLATED</option>
-              <option>CROSS</option>
+              <option value="AUTO">自动</option>
+              <option value="ISOLATED">逐仓</option>
+              <option value="CROSS">全仓</option>
             </select></label
           >
           <label
@@ -481,16 +483,16 @@ onMounted(load);
           <label
             ><span>建仓安全模式</span
             ><select v-model="draft.riskGovernance.entrySafetyMode">
-              <option>SHADOW</option>
-              <option>AUTO</option>
+              <option value="SHADOW">影子观察</option>
+              <option value="AUTO">自动运行</option>
             </select></label
           >
           <label
             ><span>入场保护策略</span
             ><select v-model="draft.riskGovernance.protectionMode">
-              <option>OFF</option>
-              <option>SHADOW</option>
-              <option>REQUIRED</option>
+              <option value="OFF">关闭</option>
+              <option value="SHADOW">影子验证</option>
+              <option value="REQUIRED">强制验证</option>
             </select></label
           >
           <label
@@ -640,7 +642,7 @@ onMounted(load);
           <label><span>写入覆盖</span><button class="button secondary" @click="saveSymbolDirectionOverride">添加 / 更新</button></label>
         </div>
         <div v-if="Object.keys(draft.portfolioIntelligence.symbolDirectionPreferences).length" class="list">
-          <div v-for="(preference,symbol) in draft.portfolioIntelligence.symbolDirectionPreferences" :key="symbol" class="list-row"><span>{{ symbol }} → {{ preference }}</span><button class="button secondary" @click="removeSymbolDirectionOverride(symbol)">移除</button></div>
+          <div v-for="(preference,symbol) in draft.portfolioIntelligence.symbolDirectionPreferences" :key="symbol" class="list-row"><span>{{ symbol }} → {{ directionPreferenceLabel(String(preference)) }}</span><button class="button secondary" @click="removeSymbolDirectionOverride(symbol)">移除</button></div>
         </div>
         <p v-else class="muted">没有交易对覆盖配置。</p>
       </Panel>

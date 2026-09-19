@@ -37,6 +37,46 @@ describe('SettingsStore', () => {
     try{const migrated=await reopened.load();expect(migrated.settingsVersion).toBe(177);expect(migrated.takeProfit.minNetProfitUsd).toBe(1);expect(migrated.tradeEconomics.admissionMode).toBe('SHADOW');expect(migrated.positionManagement.maxHumanManagedPositions).toBe(4);}
     finally{reopened.close();}
   });
+  it('rejects a migrated minNetProfitUsd below the floor instead of rewriting it on boot',async()=>{
+    const dir=await mkdtemp(path.join(os.tmpdir(),'zdj-v395-clamp-low-'));paths.push(dir);const configDir=path.resolve(process.cwd(),'../../config');
+    const boot=new SettingsStore(configDir,dir);const base:any=await boot.load();base.settingsVersion=177;
+    (boot as any).db.prepare('UPDATE settings SET version=?,payload=? WHERE id=1').run(177,JSON.stringify({...base,takeProfit:{...base.takeProfit,minNetProfitUsd:.5}}));boot.close();
+    const probe=new SettingsStore(configDir,dir);
+    await expect(probe.load()).rejects.toThrow();
+    const row=(probe as any).db.prepare('SELECT version,payload FROM settings WHERE id=1').get();probe.close();
+    expect(JSON.parse(row.payload).takeProfit.minNetProfitUsd).toBe(.5);expect(row.version).toBe(177);
+  });
+  it('rejects a migrated minNetProfitUsd above the ceiling instead of clamping it to 20',async()=>{
+    const dir=await mkdtemp(path.join(os.tmpdir(),'zdj-v395-clamp-high-'));paths.push(dir);const configDir=path.resolve(process.cwd(),'../../config');
+    const boot=new SettingsStore(configDir,dir);const base:any=await boot.load();base.settingsVersion=177;
+    (boot as any).db.prepare('UPDATE settings SET version=?,payload=? WHERE id=1').run(177,JSON.stringify({...base,takeProfit:{...base.takeProfit,minNetProfitUsd:25}}));boot.close();
+    const probe=new SettingsStore(configDir,dir);
+    await expect(probe.load()).rejects.toThrow();
+    const row=(probe as any).db.prepare('SELECT version,payload FROM settings WHERE id=1').get();probe.close();
+    expect(JSON.parse(row.payload).takeProfit.minNetProfitUsd).toBe(25);expect(row.version).toBe(177);
+  });
+  it('keeps in-range migrated floors untouched and migrates a legacy document exactly once',async()=>{
+    const configDir=path.resolve(process.cwd(),'../../config');
+    for(const value of [1,2,20]){
+      const dir=await mkdtemp(path.join(os.tmpdir(),'zdj-v395-keep-'));paths.push(dir);
+      const boot=new SettingsStore(configDir,dir);const base:any=await boot.load();base.settingsVersion=177;
+      (boot as any).db.prepare('UPDATE settings SET version=?,payload=? WHERE id=1').run(177,JSON.stringify({...base,takeProfit:{...base.takeProfit,minNetProfitUsd:value}}));boot.close();
+      const first=new SettingsStore(configDir,dir);const kept=await first.load();first.close();
+      expect(kept.takeProfit.minNetProfitUsd).toBe(value);expect(kept.settingsVersion).toBe(177);
+    }
+    const dir=await mkdtemp(path.join(os.tmpdir(),'zdj-v395-once-'));paths.push(dir);
+    const boot=new SettingsStore(configDir,dir);const base:any=await boot.load();
+    const legacy:any=structuredClone(base);legacy.settingsVersion=177;legacy.takeProfit.minNetProfitUsd=.01;delete legacy.tradeEconomics;
+    delete legacy.positionManagement.humanManagedAdmissionCapsEnabled;delete legacy.positionManagement.maxHumanManagedPositions;delete legacy.positionManagement.maxHumanManagedNotionalPctEquity;
+    (boot as any).db.prepare('UPDATE settings SET version=?,payload=? WHERE id=1').run(177,JSON.stringify(legacy));boot.close();
+    const migratedStore=new SettingsStore(configDir,dir);const migrated=await migratedStore.load();migratedStore.close();
+    expect(migrated.takeProfit.minNetProfitUsd).toBe(1);expect(migrated.tradeEconomics.admissionMode).toBe('SHADOW');expect(migrated.tradeEconomics.parameterProfile).toBe('CUSTOM');expect(migrated.positionManagement.maxHumanManagedPositions).toBe(4);
+    const stored=JSON.stringify(migrated);
+    const againStore=new SettingsStore(configDir,dir);const again=await againStore.load();againStore.close();
+    const thirdStore=new SettingsStore(configDir,dir);const third=await thirdStore.load();thirdStore.close();
+    expect(JSON.stringify(again)).toBe(stored);expect(JSON.stringify(third)).toBe(stored);
+    expect(again.settingsVersion).toBe(177);expect(third.takeProfit.minNetProfitUsd).toBe(1);
+  });
   it('persists versioned settings in SQLite and creates an integrity-checked backup', async () => {
     const dataDir = await mkdtemp(path.join(os.tmpdir(), 'zdj-settings-')); paths.push(dataDir);
     const configDir = path.resolve(process.cwd(), '../../config'); const store = new SettingsStore(configDir, dataDir);

@@ -88,11 +88,12 @@ function migrate(value: unknown): unknown {
     pi.altLongLeverageCaps=pi.altLongLeverageCaps??{CORE:20,LIQUID_ALT:8,SPECULATIVE:3,NEW_LISTING:1};
     next.settingsVersion=18;
   }
-  // V3.9.5 economic entry governance migrates by field facts, not by settingsVersion.
-  // settingsVersion is also the optimistic-concurrency revision and can already be 100+ on
-  // a healthy V3.9.4 runtime, so treating it as a schema-version gate would break upgrades.
+  // V3.9.5 migrates by field facts, because settingsVersion is a revision counter that is already
+  // 100+ on a healthy V3.9.4 runtime. Only a pre-V3.9.5 document gets its sub-$1 floor raised once;
+  // after that the stored value is authoritative and an out-of-range one fails closed in the schema.
+  const legacyEconomicsDocument = !record(next.tradeEconomics);
   const tp=(next.takeProfit??={}) as Record<string,unknown>;
-  tp.minNetProfitUsd=Math.min(20,Math.max(1,Number(tp.minNetProfitUsd??1)));
+  if(legacyEconomicsDocument)tp.minNetProfitUsd=Math.min(20,Math.max(1,Number(tp.minNetProfitUsd??1)));
   const economics=(next.tradeEconomics??={}) as Record<string,unknown>;
   economics.parameterProfile=economics.parameterProfile??'CUSTOM';
   economics.admissionMode=economics.admissionMode??'SHADOW';

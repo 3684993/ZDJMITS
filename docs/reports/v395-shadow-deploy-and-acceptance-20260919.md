@@ -247,3 +247,28 @@ buildId/源码绑定 ✓ 成功（`3.9.5-f9367614…` 与预测逐字符一致�
 ### 证据清单
 
 `D:\MITS-WORKTREES\`：`v395/`、`v394-rollback/`、`backup-live-dist/20260919-094000/`、`v395-verify.log`、`v394-build.log`、`dryrun/{migration-dry-run.json, tp-dry-run.json, pre-restart-snapshot.json, post-restart-snapshot.json, live-*.json, *.mjs, *.py, install-dist.ps1, backup-live-dist.ps1}`。上一轮 V3.9.4 终止证据仍在 `D:\MITS\data\rollout\v394-stage7-9\`。
+
+---
+
+## 补充 L. t+12.6 min 的 SHADOW 观察增量（报告主体写完后继续积累的真实样本）
+
+稳态复核（09:59，实例 f38e3dec，运行 12.6 分钟）：`ready=true`、`buildId 3.9.5-f93676140a441bc0199c`、WS `LIVE` 且 `reconnects=0 gaps=0`、DB `HEALTHY`、11 持仓全部 `PROTECTED`、TP `READY 11/11`、`unresolvedDriftCount=0`、`activeRiskUnresolvedCount=0`、`historicalUnknownCount=15`（未增）、`429=17 / 418=3`（未增）、`egress VERIFIED 172.104.186.174`、`settingsVersion=178`、`admissionMode=SHADOW`。
+
+**5 条真实 SHADOW 经济门禁评估（全部自然产生）：**
+
+| # | expectedNetProfit | requiredNetProfit | blockers |
+|---|---:|---:|---|
+| 1 | 1.7544 | 1 | TP_REACH_PROBABILITY_UNMET, HUMAN_MANAGED_EXPOSURE_LIMIT |
+| 2 | 2.0226 | 1 | TP_REACH_PROBABILITY_UNMET, HUMAN_MANAGED_EXPOSURE_LIMIT |
+| 3 | 1.8910 | 1 | HUMAN_MANAGED_EXPOSURE_LIMIT |
+| 4 | 1.9501 | 1 | TP_REACH_PROBABILITY_UNMET, HUMAN_MANAGED_EXPOSURE_LIMIT |
+| 5 | 1.8696 | 1 | TP_HISTORICAL_REACHABILITY_UNMET, TP_REACH_PROBABILITY_UNMET, HUMAN_MANAGED_EXPOSURE_LIMIT |
+
+`passed=false / wouldBlock=true` 5/5，但：
+
+1. **`$1` 净利率下限不是阻断项**：5 条的 `expectedNetProfit` 全在 1.75–2.02，均 ≥ 1；阻断项 100% 是 **`HUMAN_MANAGED_EXPOSURE_LIMIT`（5/5）** 与 **可达性类 blocker（4/5 概率未达、1/5 历史可达未达）**。
+2. **wouldBlock 之后建仓继续发生**：紧随其后有 4 个 `ENTRY_INTENT_CREATED`（BTCUSDT / SOLUSDT / ZECUSDT / BNBUSDT），`side=LONG`、`idealPrice`、`acceptablePriceRange` 均由 Primary 自主给出（例：BNBUSDT 763.5，区间 763.2–763.8）→ G 段"SHADOW 只观察不阻断"从 1 例升级为 5 评估 + 4 入场的连续证据。
+3. 期间 3 次拦截全部来自**既有非经济门禁**：`MARKET_QUALITY_NOT_ADMITTED`(ZECUSDT)、`REJECT_DIRECTION_EXPOSURE`(XRPUSDC ×2)；事件中**没有任何**一条以 economics 或 human-managed 为由拒绝下单。
+
+**对 J 的直接含义（加强版）**：以当前账本，ENFORCE 一旦打开会拒掉 **5/5** 的候选入场（阻断因子首位是 HUMAN_MANAGED 上限，与 economics 无关），并且其中 4/5 还会因可达性不达标被拒。因此 ENFORCE Canary 在人工处置 HUMAN_MANAGED 账本、或明确调整 `maxHumanManagedPositions/maxHumanManagedNotionalPctEquity` 之前启动，几乎必然得到"零入场"的空转结果。
+

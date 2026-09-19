@@ -17,6 +17,7 @@ import { archivedPacket, projectBrainRun } from '../services/brainRunArchive.js'
 import { p0EntryIntegrity } from '../services/p0EntryIntegrity.js';
 import { byClosedAtDesc, byOpenedAtDesc } from './chronologicalSort.js';
 import { entryObservation } from '../services/entryObservation.js';
+import { projectHumanManaged } from '../services/humanManagedProjection.js';
 
 export function createApiRouter(runtime: EngineRuntime) {
   const r = Router();
@@ -357,6 +358,16 @@ export function createApiRouter(runtime: EngineRuntime) {
     });
   });
   r.get('/diagnostics/p0-entry-integrity',(_q,res)=>{const since=Number(runtime.runtimeStatus().lastRestartAt??Date.now()),events=runtime.settingsStore.runtimeEvents(since,['ENTRY_ORDER_ACTIVE_RESTORED','ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED','CANDIDATE_LIFECYCLE_CHANGED','ENTRY_SUBMIT_ATTEMPTED','ENTRY_ORDER_CREATED'],100000),primaryRuns=runtime.settingsStore.listAiRuns(since,100000).filter((run:any)=>run.role==='PRIMARY_BRAIN');res.json({since,...p0EntryIntegrity({since,entryOrders:[...runtime.state.entryOrders.values()],entryIntents:[...runtime.state.entryIntents.values()],fills:runtime.state.executionFills,primaryRuns,events,verifiedOrderFactMismatchCount:runtime.reconciliation.health().verifiedOrderFactMismatchCount})});});
+  r.get("/human-managed", (_q, res) => res.json(projectHumanManaged(runtime.state)));
+  r.post("/positions/:id/human-managed/acknowledge", (req, res) => {
+    const position=runtime.state.positions.get(req.params.id);
+    if(!position)return res.status(404).json({error:{message:"position not found"}});
+    if(position.managementStatus!=="HUMAN_MANAGED")return res.status(409).json({error:{message:"POSITION_NOT_HUMAN_MANAGED"}});
+    const note=typeof req.body?.note==="string"?req.body.note.trim().slice(0,240):"";
+    const acknowledgedAt=Date.now();
+    runtime.events.publish("HUMAN_MANAGED_ACKNOWLEDGED",{positionId:position.id,acknowledgedAt,note,exchangeWrite:false,tpChanged:false,managementStatus:"HUMAN_MANAGED"},position.symbol);
+    res.json({positionId:position.id,status:"ACKNOWLEDGED",acknowledgedAt,note,exchangeWrite:false,tpChanged:false});
+  });
   r.get("/positions", (_q, res) =>
     res.json([...runtime.state.positions.values()].sort(byOpenedAtDesc)),
   );

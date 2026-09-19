@@ -34,6 +34,8 @@ export const EntryExecutionEnvelopeSchema=z.object({
   makerReachableBand:z.object({min:z.number().positive(),max:z.number().positive()}).strict(),
   recentTradedPrices:z.array(z.object({price:z.number().positive(),lastSeenAt:z.number().int()}).strict()),
   fees:z.object({makerFeeBps:z.number(),takerFeeBps:z.number(),roundTripCostBps:z.number(),safetyMarginBps:z.number()}).strict(),
+  economics:z.object({version:z.literal('V3.9.5'),minNetProfitUsd:z.number().min(1).max(20),minNetProfitRoiPct:z.number().nonnegative(),admissionMode:z.enum(['OFF','SHADOW','ENFORCE']),historicalTpReachabilityEnabled:z.boolean(),minHistoricalReachProbability:z.number().min(0).max(1),reachabilityLookbackBars:z.number().int().positive(),reachabilityMinSamples:z.number().int().positive(),humanManagedExposure:z.object({positions:z.number().int().nonnegative(),notionalUsd:z.number().nonnegative(),maxPositions:z.number().int().positive(),maxNotionalUsd:z.number().nonnegative(),withinLimits:z.boolean()}).strict()}).strict().optional(),
+  reachability:z.object({version:z.literal('V3.9.5'),source:z.literal('CLOSED_CANDLE_CACHE'),generatedAt:z.number().int(),horizons:z.array(z.object({horizonMinutes:z.number().int().positive(),timeframe:z.enum(['1m','5m','15m']),sampleCount:z.number().int().nonnegative(),status:z.enum(['READY','INSUFFICIENT_DATA','STALE']),LONG:z.object({hardMaxMovePercent:z.number().nonnegative(),p50:z.number().nonnegative(),p75:z.number().nonnegative(),p90:z.number().nonnegative()}).strict(),SHORT:z.object({hardMaxMovePercent:z.number().nonnegative(),p50:z.number().nonnegative(),p75:z.number().nonnegative(),p90:z.number().nonnegative()}).strict()}).strict())}).strict().optional(),
   LONG:EntryExecutionCapacitySchema,
   SHORT:EntryExecutionCapacitySchema,
   leaseRequiredMarginUsd:z.number().nonnegative(),
@@ -65,6 +67,7 @@ export const EntryIntentSchema = z.object({
   snapshotId: z.string().nullable().optional(),
   structuredInvalidationId: z.string().nullable().optional(),
   profitTakePlan: ProfitTakePlanSchema.nullable().optional(),
+  economicAdmission:z.object({version:z.literal('V3.9.5'),mode:z.enum(['SHADOW','ENFORCE']),passed:z.boolean(),validatedAt:z.number().int(),expectedNetProfit:z.number(),requiredNetProfit:z.number().nonnegative(),reachProbability:z.number().min(0).max(1).nullable(),historicalHardMaxMovePercent:z.number().nonnegative().nullable(),blockers:z.array(z.string())}).strict().nullable().optional(),
 });
 export type EntryIntent = z.infer<typeof EntryIntentSchema>;
 
@@ -126,6 +129,7 @@ export const PositionSchema = z.object({
   profitTakePlan: ProfitTakePlanSchema.nullable().optional(),
   profitTakePlanSource:z.enum(['AI','STRUCTURE_15M','FIXED_PROFITABLE']).nullable().optional(),
   lossHandoff:z.object({cycleId:z.string(),lastClosedBarAt:z.number().int().nullable(),consecutiveLossBars:z.number().int().nonnegative(),status:z.enum(['ACTIVE','UNKNOWN','HUMAN_HANDOFF'])}).nullable().optional(),
+  economicAdmission:z.object({version:z.literal('V3.9.5'),mode:z.enum(['SHADOW','ENFORCE']),passed:z.boolean(),validatedAt:z.number().int(),expectedNetProfit:z.number(),requiredNetProfit:z.number().nonnegative(),reachProbability:z.number().min(0).max(1).nullable(),historicalHardMaxMovePercent:z.number().nonnegative().nullable(),blockers:z.array(z.string())}).strict().nullable().optional(),
 });
 export type Position = z.infer<typeof PositionSchema>;
 

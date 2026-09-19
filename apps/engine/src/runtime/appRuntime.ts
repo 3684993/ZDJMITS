@@ -24,7 +24,7 @@ import { PositionService } from "../services/positionService.js";
 import { TpGuardian } from "../services/tpGuardian.js";
 import { ExchangeLoop } from "../services/exchangeLoop.js";
 import { ReconciliationService } from "../services/reconciliationService.js";
-import { BinanceTransport } from "../adapters/binance/BinanceTransport.js";
+import { BinanceTransport, verifyBinanceTransportEgress } from "../adapters/binance/BinanceTransport.js";
 import type { ExchangeTradeAdapter, TradeAuditSnapshot } from "../types.js";
 import { ManualPositionService } from "../services/manualPositionService.js";
 import { TradeRecordIntegrityService } from "../services/tradeRecordIntegrityService.js";
@@ -495,6 +495,8 @@ export class EngineRuntime {
     this.every(15_000, async () => this.syncPrivate());
     await this.ai.probeResources();
     this.every(15_000, async () => this.ai.probeResources());
+    await verifyBinanceTransportEgress();
+    this.every(15 * 60_000, async () => verifyBinanceTransportEgress());
     await this.bootstrap();
     this.startTradeRecordAutoSync(tradeRecordAutoSyncStartedAt);
     if (this.state.runtimeControl.entrySafetyMode === "SAFETY_REVIEW_PAUSED")

@@ -40,7 +40,7 @@ jobs:
       - name: Install exact dependencies
         run: npm ci
       - name: Apply V3.9.3 autonomous Entry migration
-        if: github.ref_name != 'v394-binance-governance-settings-20260918'
+        if: github.ref_name != 'v394-binance-governance-settings-20260918' && github.ref_name != 'v395-economics-human-managed-20260919'
         shell: pwsh
         run: |
           node scripts/v393-apply-autonomous-entry-patch.mjs
@@ -50,7 +50,7 @@ jobs:
           node scripts/v393-contract-cleanup.mjs
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Persist migration patch
-        if: github.ref_name != 'v394-binance-governance-settings-20260918'
+        if: github.ref_name != 'v394-binance-governance-settings-20260918' && github.ref_name != 'v395-economics-human-managed-20260919'
         shell: pwsh
         run: |
           git config user.name "github-actions[bot]"

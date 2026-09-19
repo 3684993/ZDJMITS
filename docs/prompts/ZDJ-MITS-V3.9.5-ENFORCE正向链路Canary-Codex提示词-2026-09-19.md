@@ -425,26 +425,26 @@ Canary 后必须恢复：
 
 只输出：
 
-A. 当前 gross / long / short headroom  
-B. 是否具备正向 Canary 客观条件  
-C. 是否反驳 15–25 USDT 建议；计算依据  
-D. 最终 Canary margin 与理由  
-E. Canary 标的与理由  
-F. ENFORCE evaluations 数量  
-G. passed=true / passed=false 数量与 blockers  
-H. 是否出现 `passed=true`  
-I. 若 passed=true：AI 原始 side / quantity / range / target  
-J. JIT economics 结果  
-K. 是否创建 EntryIntent  
-L. 是否提交 Maker order  
-M. 是否建单/成交/形成 Position  
-N. economicAdmission 是否持久化  
-O. TP 是否进入 V3.9.5 economic-validated 路径  
-P. 旧仓 TP 是否零影响  
-Q. durable claims / UNKNOWN 是否正常  
-R. 429/418 / egress  
-S. 是否完整恢复 SHADOW + HUMAN cap + 原 Settings  
-T. 是否已经具备进入“正式 ENFORCE 策略参数决策”的证据条件  
+A. 当前 gross / long / short headroom
+B. 是否具备正向 Canary 客观条件
+C. 是否反驳 15–25 USDT 建议；计算依据
+D. 最终 Canary margin 与理由
+E. Canary 标的与理由
+F. ENFORCE evaluations 数量
+G. passed=true / passed=false 数量与 blockers
+H. 是否出现 `passed=true`
+I. 若 passed=true：AI 原始 side / quantity / range / target
+J. JIT economics 结果
+K. 是否创建 EntryIntent
+L. 是否提交 Maker order
+M. 是否建单/成交/形成 Position
+N. economicAdmission 是否持久化
+O. TP 是否进入 V3.9.5 economic-validated 路径
+P. 旧仓 TP 是否零影响
+Q. durable claims / UNKNOWN 是否正常
+R. 429/418 / egress
+S. 是否完整恢复 SHADOW + HUMAN cap + 原 Settings
+T. 是否已经具备进入“正式 ENFORCE 策略参数决策”的证据条件
 U. Codex 对现行设计/我的建议有哪些反驳或改进建议
 
 报告保存：

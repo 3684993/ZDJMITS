@@ -424,29 +424,29 @@ TP 正向腿标记 `NOT_OBSERVED`，不得伪造 PASS。
 
 只输出：
 
-A. 实验前 gross/LONG/SHORT headroom  
-B. `entryCapacity().used` 与 maxPositions 计算  
-C. 预注册候选 top 排名与联合通过概率  
-D. 最终 attempt budget / 分配 / 理由  
-E. Canary margin 与经济性计算  
-F. ENFORCE evaluation 总数  
-G. passed=true / false 数量  
-H. blocker 分布  
-I. reachProbability 分布  
-J. 是否得到 passed=true  
-K. AI side / quantity / range / target 是否保持自主  
-L. EntryIntent 是否创建  
-M. JIT economics 结果  
-N. FINAL_ORDER_RISK_EVALUATED 是否出现  
-O. Maker submit/order/fill 结果  
-P. 若形成 Position：economicAdmission 持久化结果  
-Q. economic TP 是否观测  
-R. old TP 是否零影响  
-S. durable claims / UNKNOWN  
-T. 429/418 / egress  
-U. 是否完整恢复 SHADOW + HUMAN cap + 原 Settings  
-V. 若 20 次仍全拒：全拒概率与原因分析  
-W. 是否已经具备进入“正式 ENFORCE 参数/策略裁决”的证据条件  
+A. 实验前 gross/LONG/SHORT headroom
+B. `entryCapacity().used` 与 maxPositions 计算
+C. 预注册候选 top 排名与联合通过概率
+D. 最终 attempt budget / 分配 / 理由
+E. Canary margin 与经济性计算
+F. ENFORCE evaluation 总数
+G. passed=true / false 数量
+H. blocker 分布
+I. reachProbability 分布
+J. 是否得到 passed=true
+K. AI side / quantity / range / target 是否保持自主
+L. EntryIntent 是否创建
+M. JIT economics 结果
+N. FINAL_ORDER_RISK_EVALUATED 是否出现
+O. Maker submit/order/fill 结果
+P. 若形成 Position：economicAdmission 持久化结果
+Q. economic TP 是否观测
+R. old TP 是否零影响
+S. durable claims / UNKNOWN
+T. 429/418 / egress
+U. 是否完整恢复 SHADOW + HUMAN cap + 原 Settings
+V. 若 20 次仍全拒：全拒概率与原因分析
+W. 是否已经具备进入“正式 ENFORCE 参数/策略裁决”的证据条件
 X. Codex 对当前设计或本实验方案的反驳与建议
 
 报告保存：

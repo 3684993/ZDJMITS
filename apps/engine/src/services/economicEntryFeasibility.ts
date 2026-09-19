@@ -1,5 +1,6 @@
 import { estimateTradingCost } from '@zdj/core';
-import type { EntryExecutionEnvelope, ProfitTakePlan, Side } from '@zdj/contracts';
+import type { BrainDecision, EntryExecutionEnvelope, Side } from '@zdj/contracts';
+type ProfitTakePlan=BrainDecision['profitTakePlan'];
 import type { RuntimeState } from '../state/runtimeState.js';
 import type { MarketDataHub } from './marketDataHub.js';
 import { evaluateTargetReachability, reachabilityTimeframe } from './historicalTpReachability.js';

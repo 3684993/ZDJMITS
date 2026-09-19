@@ -14,6 +14,7 @@ export function applyTradingParameterProfile(settings:SystemSettings,profile:Tra
   const p=tradingParameterProfiles[profile];
   settings.takeProfit.minNetProfitUsd=p.minNetProfitUsd;
   settings.portfolioIntelligence.baseMarginUsd=p.baseMarginUsd;
+  settings.portfolio.entryMarginUsd=p.baseMarginUsd;
   settings.portfolioIntelligence.maxMarginPerPositionUsd=p.maxMarginPerPositionUsd;
   settings.riskGovernance.perTradeRiskPctEquity=p.perTradeRiskPctEquity;
   settings.portfolioIntelligence.globalMaxLeverage=p.globalMaxLeverage;

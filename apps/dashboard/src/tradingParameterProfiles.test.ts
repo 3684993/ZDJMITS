@@ -9,6 +9,7 @@ describe('trading parameter profiles',()=>{
     const d=settings();applyTradingParameterProfile(d,'DEFAULT');
     expect(d.takeProfit.minNetProfitUsd).toBe(2);
     expect(d.portfolioIntelligence.baseMarginUsd).toBe(150);
+    expect(d.portfolio.entryMarginUsd).toBe(150);
     expect(d.portfolioIntelligence.maxMarginPerPositionUsd).toBe(300);
     expect(d.riskGovernance.perTradeRiskPctEquity).toBe(.005);
     expect(d.portfolioIntelligence.globalMaxLeverage).toBe(10);

@@ -365,7 +365,7 @@ onMounted(load);
               <option>LONG_BIASED</option>
               <option>SHORT_BIASED</option>
               <option>LONG_ONLY</option>
-              <option>SHORT_ONLY</option>
+              <option value="SHORT_ONLY">仅空（兼容字段）</option>
               <option>DISABLED</option>
             </select></label
           >
@@ -541,29 +541,29 @@ onMounted(load);
           >
         </div>
       </Panel>
-      <Panel v-else-if="tab === 'market-quality'" title="Market Quality Admission & 黑名单" subtitle="统一在 Candidate Ranking 与 Primary 前执行。0 表示按当前 Universe 分位数自动校准；不会影响已有 Position、TP 或 Reconciliation。">
+      <Panel v-else-if="tab === 'market-quality'" title="交易质量准入与黑名单" subtitle="统一在候选排序与 Primary 前执行。0 表示按当前交易范围分位数自动校准；不会影响已有持仓、TP 或对账。 ">
         <div class="form-grid four">
           <label class="switch-row"><span>启用质量准入</span><input v-model="draft.selection.marketQuality.enabled" type="checkbox" /></label>
-          <label><span>允许 Quality 等级</span><select v-model="draft.selection.marketQuality.allowedGrades" multiple><option>A</option><option>B</option><option>C</option><option>D</option></select></label>
-          <label class="switch-row"><span>允许 SPECULATIVE（仅 A）</span><input v-model="draft.selection.marketQuality.allowSpeculative" type="checkbox" /></label>
-          <label class="switch-row"><span>允许 NEW_LISTING</span><input v-model="draft.selection.marketQuality.allowNewListings" type="checkbox" /></label>
+          <label><span>允许质量等级</span><select v-model="draft.selection.marketQuality.allowedGrades" multiple><option>A</option><option>B</option><option>C</option><option>D</option></select></label>
+          <label class="switch-row"><span>允许投机资产（仅 A 级）</span><input v-model="draft.selection.marketQuality.allowSpeculative" type="checkbox" /></label>
+          <label class="switch-row"><span>允许新上市资产</span><input v-model="draft.selection.marketQuality.allowNewListings" type="checkbox" /></label>
           <label><span>最低 24h 成交额 USD（0=自动）</span><input v-model.number="draft.selection.marketQuality.minQuoteVolumeUsd24h" type="number" min="0" /></label>
-          <label><span>最低 Trade Count（0=自动）</span><input v-model.number="draft.selection.marketQuality.minTradeCount24h" type="number" min="0" /></label>
-          <label><span>最大 Spread bps（0=自动）</span><input v-model.number="draft.selection.marketQuality.maxSpreadBps" type="number" min="0" step="0.1" /></label>
-          <label><span>最低 0.5% 单侧 Depth USD（0=自动）</span><input v-model.number="draft.selection.marketQuality.minDepthUsd" type="number" min="0" /></label>
-          <label><span>最低 OI USD（0=自动）</span><input v-model.number="draft.selection.marketQuality.minOpenInterestUsd" type="number" min="0" /></label>
-          <label><span>最短 Listing Age 天（0=自动）</span><input v-model.number="draft.selection.marketQuality.minListingAgeDays" type="number" min="0" /></label>
-          <label><span>Liquidity Top N（0=不额外截断）</span><input v-model.number="draft.selection.marketQuality.liquidityTopN" type="number" min="0" max="300" /></label>
+          <label><span>最低 24h 成交笔数（0=自动）</span><input v-model.number="draft.selection.marketQuality.minTradeCount24h" type="number" min="0" /></label>
+          <label><span>最大价差 bps（0=自动）</span><input v-model.number="draft.selection.marketQuality.maxSpreadBps" type="number" min="0" step="0.1" /></label>
+          <label><span>最低 0.5% 单侧深度 USD（0=自动）</span><input v-model.number="draft.selection.marketQuality.minDepthUsd" type="number" min="0" /></label>
+          <label><span>最低未平仓量折算 USD（0=自动）</span><input v-model.number="draft.selection.marketQuality.minOpenInterestUsd" type="number" min="0" /></label>
+          <label><span>最短上市天数（0=自动）</span><input v-model.number="draft.selection.marketQuality.minListingAgeDays" type="number" min="0" /></label>
+          <label><span>流动性前 N（0=不额外截断）</span><input v-model.number="draft.selection.marketQuality.liquidityTopN" type="number" min="0" max="300" /></label>
         </div>
-        <h3 class="form-section-title">Symbol 黑名单</h3><div class="form-grid three"><label><span>Symbol</span><input v-model="blacklistSymbol" placeholder="例如 USELESSUSDT 或 币安人生/USDT" /></label><label><span>操作</span><button class="button secondary" @click="addBlacklist('symbolBlacklist',blacklistSymbol)">添加到黑名单</button></label></div>
-        <div v-if="draft.selection.marketQuality.symbolBlacklist.length" class="list"><div v-for="symbol in draft.selection.marketQuality.symbolBlacklist" :key="symbol" class="list-row"><span>{{symbol}}</span><button class="button secondary" @click="removeBlacklist('symbolBlacklist',symbol)">人工移出</button></div></div><p v-else class="muted">黑名单 Symbol 不会显示于智能选币，也不能进入分析或交易。</p>
-        <h3 class="form-section-title">Underlying 黑名单</h3><div class="form-grid three"><label><span>Underlying</span><input v-model="blacklistUnderlying" placeholder="例如 DOGE" /></label><label><span>操作</span><button class="button secondary" @click="addBlacklist('underlyingBlacklist',blacklistUnderlying)">添加 Underlying</button></label></div>
-        <div v-if="draft.selection.marketQuality.underlyingBlacklist.length" class="list"><div v-for="symbol in draft.selection.marketQuality.underlyingBlacklist" :key="symbol" class="list-row"><span>{{symbol}}</span><button class="button secondary" @click="removeBlacklist('underlyingBlacklist',symbol)">人工移出</button></div></div><p v-else class="muted">同一 Underlying 的所有 USDT/USDC 合约都会被排除。</p>
+        <h3 class="form-section-title">交易对黑名单</h3><div class="form-grid three"><label><span>交易对</span><input v-model="blacklistSymbol" placeholder="例如 USELESSUSDT 或 币安人生/USDT" /></label><label><span>操作</span><button class="button secondary" @click="addBlacklist('symbolBlacklist',blacklistSymbol)">添加到黑名单</button></label></div>
+        <div v-if="draft.selection.marketQuality.symbolBlacklist.length" class="list"><div v-for="symbol in draft.selection.marketQuality.symbolBlacklist" :key="symbol" class="list-row"><span>{{symbol}}</span><button class="button secondary" @click="removeBlacklist('symbolBlacklist',symbol)">人工移出</button></div></div><p v-else class="muted">黑名单交易对不会显示于智能选币，也不能进入分析或交易。</p>
+        <h3 class="form-section-title">底层资产黑名单</h3><div class="form-grid three"><label><span>底层资产</span><input v-model="blacklistUnderlying" placeholder="例如 DOGE" /></label><label><span>操作</span><button class="button secondary" @click="addBlacklist('underlyingBlacklist',blacklistUnderlying)">添加底层资产</button></label></div>
+        <div v-if="draft.selection.marketQuality.underlyingBlacklist.length" class="list"><div v-for="symbol in draft.selection.marketQuality.underlyingBlacklist" :key="symbol" class="list-row"><span>{{symbol}}</span><button class="button secondary" @click="removeBlacklist('underlyingBlacklist',symbol)">人工移出</button></div></div><p v-else class="muted">同一底层资产的所有 USDT/USDC 合约都会被排除。</p>
       </Panel>
       <Panel
         v-else-if="tab === 'direction'"
         title="方向策略"
-        subtitle="全局、Tier 与 Symbol Override 均会持久化；山寨 LONG 风险参数单独可见。"
+        subtitle="以下为兼容配置显示；当前生产 Entry 的 AI side 不由这些旧方向字段决定。分层与交易对覆盖仍会持久化。 "
       >
         <div class="form-grid two">
           <label
@@ -571,11 +571,11 @@ onMounted(load);
             ><select
               v-model="draft.portfolioIntelligence.globalDirectionPreference"
             >
-              <option>BALANCED</option>
-              <option>INTELLIGENT_SHORT_BIAS</option>
-              <option>STRICT_SHORT_BIAS</option>
-              <option>SHORT_ONLY</option>
-              <option>CUSTOM</option>
+              <option value="BALANCED">均衡</option>
+              <option value="INTELLIGENT_SHORT_BIAS">智能偏空（兼容字段）</option>
+              <option value="STRICT_SHORT_BIAS">严格偏空（兼容字段）</option>
+              <option value="SHORT_ONLY">仅空（兼容字段）</option>
+              <option value="CUSTOM">自定义</option>
             </select></label
           ><label
             ><span>恢复默认</span
@@ -590,7 +590,7 @@ onMounted(load);
                 }
               "
             >
-              恢复 Tier 默认
+              恢复分层默认
             </button></label
           >
         </div>
@@ -606,11 +606,11 @@ onMounted(load);
                 draft.portfolioIntelligence.tierDirectionPreferences[tier]
               "
             >
-              <option>BALANCED</option>
-              <option>INTELLIGENT_SHORT_BIAS</option>
-              <option>STRICT_SHORT_BIAS</option>
-              <option>SHORT_ONLY</option>
-              <option>CUSTOM</option>
+              <option value="BALANCED">均衡</option>
+              <option value="INTELLIGENT_SHORT_BIAS">智能偏空（兼容字段）</option>
+              <option value="STRICT_SHORT_BIAS">严格偏空（兼容字段）</option>
+              <option value="SHORT_ONLY">仅空（兼容字段）</option>
+              <option value="CUSTOM">自定义</option>
             </select></label
           ><label
             ><span>LONG Margin factor</span
@@ -634,14 +634,14 @@ onMounted(load);
           /></label>
         </div>
         <div class="form-grid three">
-          <label><span>Symbol Override</span><input v-model="overrideSymbol" placeholder="例如 SOLUSDT" /></label>
-          <label><span>方向偏好</span><select v-model="overridePreference"><option>BALANCED</option><option>INTELLIGENT_SHORT_BIAS</option><option>STRICT_SHORT_BIAS</option><option>SHORT_ONLY</option><option>CUSTOM</option></select></label>
+          <label><span>交易对覆盖</span><input v-model="overrideSymbol" placeholder="例如 SOLUSDT" /></label>
+          <label><span>方向偏好</span><select v-model="overridePreference"><option value="BALANCED">均衡</option><option value="INTELLIGENT_SHORT_BIAS">智能偏空（兼容字段）</option><option value="STRICT_SHORT_BIAS">严格偏空（兼容字段）</option><option value="SHORT_ONLY">仅空（兼容字段）</option><option value="CUSTOM">自定义</option></select></label>
           <label><span>写入覆盖</span><button class="button secondary" @click="saveSymbolDirectionOverride">添加 / 更新</button></label>
         </div>
         <div v-if="Object.keys(draft.portfolioIntelligence.symbolDirectionPreferences).length" class="list">
           <div v-for="(preference,symbol) in draft.portfolioIntelligence.symbolDirectionPreferences" :key="symbol" class="list-row"><span>{{ symbol }} → {{ preference }}</span><button class="button secondary" @click="removeSymbolDirectionOverride(symbol)">移除</button></div>
         </div>
-        <p v-else class="muted">没有 Symbol Override；添加后优先级高于 Tier 与全局设置。</p>
+        <p v-else class="muted">没有交易对覆盖配置。</p>
       </Panel>
       <Panel v-else-if="tab === 'exchange'" title="交易所资源">
         <div class="toolbar"><span>活动 Testnet REST 仅允许 Binance Demo；REST / WS 独立配置</span><button class="button primary" @click="addResource('exchange')">新增/重置</button></div>

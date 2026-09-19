@@ -27,6 +27,16 @@ it('replays only exact archived fills without writes and fails closed on conflic
 afterEach(async () => { await Promise.all(paths.splice(0).map(value => rm(value, { recursive: true, force: true }))); });
 
 describe('SettingsStore', () => {
+  it('migrates V3.9.4 economics by field facts while preserving a high optimistic settings revision',async()=>{
+    const dataDir=await mkdtemp(path.join(os.tmpdir(),'zdj-v395-settings-migration-'));paths.push(dataDir);
+    const configDir=path.resolve(process.cwd(),'../../config'),first=new SettingsStore(configDir,dataDir),initial=await first.load();
+    const legacy:any=structuredClone(initial);legacy.settingsVersion=177;legacy.takeProfit.minNetProfitUsd=.01;delete legacy.tradeEconomics;
+    delete legacy.positionManagement.humanManagedAdmissionCapsEnabled;delete legacy.positionManagement.maxHumanManagedPositions;delete legacy.positionManagement.maxHumanManagedNotionalPctEquity;
+    (first as any).db.prepare('UPDATE settings SET version=?,payload=? WHERE id=1').run(177,JSON.stringify(legacy));first.close();
+    const reopened=new SettingsStore(configDir,dataDir);
+    try{const migrated=await reopened.load();expect(migrated.settingsVersion).toBe(177);expect(migrated.takeProfit.minNetProfitUsd).toBe(1);expect(migrated.tradeEconomics.admissionMode).toBe('SHADOW');expect(migrated.positionManagement.maxHumanManagedPositions).toBe(4);}
+    finally{reopened.close();}
+  });
   it('persists versioned settings in SQLite and creates an integrity-checked backup', async () => {
     const dataDir = await mkdtemp(path.join(os.tmpdir(), 'zdj-settings-')); paths.push(dataDir);
     const configDir = path.resolve(process.cwd(), '../../config'); const store = new SettingsStore(configDir, dataDir);

@@ -103,4 +103,3 @@ export function binanceEntryBlockReason(environment:string,routeIdentity?:string
 /** Single source of truth for the configured static egress proof: absent proof is not permission. */
 export function binanceEgressState(egress:{expectedEgressIp?:string|null;status?:string|null}|null|undefined){const expected=String(egress?.expectedEgressIp??'').trim()||null,status=String(egress?.status??'UNVERIFIED');return{expected,status,verified:!expected||status==='VERIFIED'};}
 export function binanceEgressEntryBlockReason(egress:{expectedEgressIp?:string|null;status?:string|null}|null|undefined){const state=binanceEgressState(egress);return state.verified?null:`BINANCE_EGRESS_${state.status}`;}
-

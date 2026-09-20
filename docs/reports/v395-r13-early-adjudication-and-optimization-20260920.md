@@ -237,6 +237,10 @@
 6. **Primary DEGRADED 诊断语义**：区分"连接/探针/模型可用/队列健康"与"无可执行候选 idle"（S 节）。
 7. 之后再评估**正向 ENFORCE Canary**（U 节三个前提）。
 
+## 附：部署后 1 小时独立采样（只读采集器，5 轮 / 12 min 节奏）
+
+`07:18:44 → 08:06:45`：**5/5 轮 `pipelineState=RUNNING`**、**5/5 轮 TP 覆盖完整**、`klineFreshRatio` 最低 1.0、`http429/http418` 恒为 `(17, 3)`、`restartCount` 恒为 **163（部署之后再无重启）**、市场数 49 → 95。告警文件共 4 条，全部可解释且已在上文归因：启动瞬间 1 条 503 探针、07:30 一批 91 条 gap（49 次定向修复全部成功、0 失败）、同刻 1 条 `unresolvedDriftCount=4/DEGRADED`（新 Entry 在途，随后归零）、1 条 INFO 修复成功。采集器已在本轮结束时正常停止，Engine 未受其影响。
+
 ## 附：回滚基线
 
 - 旧 dist（R12 构建 `3.9.5-9a67d9f72261f548890b`）完整备份：`D:\MITS-WORKTREES\backup-live-dist-r14-20260920-0659`（832 文件）

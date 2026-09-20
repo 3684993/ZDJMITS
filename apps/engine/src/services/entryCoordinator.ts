@@ -47,8 +47,18 @@ export class EntryCoordinator {
     private market?:MarketDataHub,
     private journal?:EntryExecutionJournal,
   ) {}
+  private admissionBlockReason:string|null=null;
+  /** Layer A: ask the transport that will carry the write, so an unproven egress stops Entry before AI, reservation, leverage or submit. */
+  private writeAdmissionBlock(){return this.exchange.entryAdmissionBlockReason?.()??binanceEntryBlockReason(this.state.settings.connections?.exchange?.environment);}
+  private noteWriteAdmission(reason:string|null){
+    if(reason===this.admissionBlockReason)return;
+    const previous=this.admissionBlockReason;this.admissionBlockReason=reason;
+    this.events.publish(reason?'ENTRY_ADMISSION_BLOCKED':'ENTRY_ADMISSION_RESUMED',{reason,previousReason:previous,poolSize:this.state.pool.list().length,at:Date.now()});
+  }
   async processPool() {
-    if(binanceEntryBlockReason(this.state.settings.connections?.exchange?.environment))return;
+    const admissionBlock=this.writeAdmissionBlock();
+    if(admissionBlock){this.noteWriteAdmission(admissionBlock);return;}
+    this.noteWriteAdmission(null);
     if (
       this.state.executionGovernance?.mode !== "AUTO_RUNNING" ||
       this.state.runtimeControl.mode !== "RUNNING"
@@ -152,7 +162,7 @@ export class EntryCoordinator {
   private executionHardBlock(intent:EntryIntent, order?:EntryOrder){
     const qp=qualityPolicy(this.state.settings),qm=this.state.snapshots.get(intent.symbol);
     if(qp.mode==='ENFORCE'&&(this.state as any).tradingQualityEvidenceReady===false)return'TRADING_QUALITY_STORAGE_UNAVAILABLE';
-    const budgetBlock=binanceEntryBlockReason(this.state.settings.connections?.exchange?.environment);if(budgetBlock)return budgetBlock;
+    const budgetBlock=this.writeAdmissionBlock();if(budgetBlock)return budgetBlock;
     if([...this.state.manualExitGoals.values()].some(g=>resolveUnderlying(g.symbol)===resolveUnderlying(intent.symbol)))return 'HUMAN_EXIT_GOAL_ACTIVE';
     const now=Date.now(),symbol=intent.symbol,reservation=intent.reservationId?this.state.entryReservations.get(intent.reservationId):null,candidate=this.state.universe.find((x:any)=>x.symbol===symbol),snapshot=this.state.snapshots.get(symbol),plan=intent.allocationPlan;
     if(now>=Number(intent.aiAuthorizationExpiresAt??intent.absoluteExpiresAt)||now>=intent.absoluteExpiresAt)return'AI_AUTHORIZATION_EXPIRED';

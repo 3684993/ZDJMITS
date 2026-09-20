@@ -27,6 +27,8 @@ export interface MarketDataProvider {
 
 export interface ExchangeTradeAdapter {
   placeEntry(order:EntryOrder):Promise<EntryOrder>;
+  /** Layer A egress/budget admission truth, read from the transport that will actually carry the write. */
+  entryAdmissionBlockReason?():string|null;
   findEntryByClientOrderId(order:EntryOrder):Promise<EntryOrder|null>;
   cancelEntry(order:EntryOrder):Promise<EntryOrder>;
   replaceEntry(order:EntryOrder,newPrice:number):Promise<EntryOrder>;

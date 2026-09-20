@@ -1,6 +1,6 @@
 import {isIP} from 'node:net';
 import { createHash, randomUUID } from 'node:crypto';
-import { getBinanceRequestBudget, binanceBudgetLane, binanceHealthBlocksEntry, binanceEntryBlockReason, type RequestBudgetMeta } from './requestBudget.js';
+import { getBinanceRequestBudget, binanceBudgetLane, binanceHealthBlocksEntry, binanceEntryBlockReason, binanceEgressState, binanceEgressEntryBlockReason, type RequestBudgetMeta } from './requestBudget.js';
 import {storageEntryBlockReason} from '../../services/storageCapacityGuard.js';
 import https from 'node:https';
 import { SocksProxyAgent } from 'socks-proxy-agent';
@@ -33,10 +33,10 @@ export class BinanceTransport {
  effectiveBaseUrl(){const exchange=this.settings.exchange as typeof this.settings.exchange & {testnetRestBaseUrl?:string;productionRestBaseUrl?:string};return exchange.environment==='TESTNET'?(exchange.testnetRestBaseUrl??exchange.testnetBaseUrl):(exchange.productionRestBaseUrl??exchange.productionBaseUrl);}environment(){return this.settings.exchange.environment;}executionMode(){return this.settings.executionMode;}
  private assertProxy(){if(!this.settings.proxy.enabled||!this.agent)throw new Error('PROXY_REQUIRED: Binance exchange traffic is proxy-only and configured fail-closed');}
  requestBudgetHealth(){return{...this.budget.health(),routeIdentity:this.routeIdentity,route:this.restRoute()};}
- entryBlockReason(){const egress=this.egressStatus();if(egress.expectedEgressIp&&egress.status!=='VERIFIED')return `BINANCE_EGRESS_${egress.status}`;return binanceEntryBlockReason(this.settings.exchange.environment,this.routeIdentity);}
+ entryBlockReason(){const egressBlock=binanceEgressEntryBlockReason(this.egressStatus());if(egressBlock)return egressBlock;return binanceEntryBlockReason(this.settings.exchange.environment,this.routeIdentity);}
  restRoute(){const host=new URL(this.effectiveBaseUrl()).hostname;return{mode:'CONFIGURED' as const,throughProxy:Boolean(this.agent),host,routeIdentity:this.routeIdentity,proxyUrl:this.agent?this.settings.proxy.url:null,expectedStaticEgressIp:egressTruthByRoute.get(this.routeIdentity)?.expectedEgressIp??null,failClosed:true,deprecatedTestnetRestHost:host==='testnet.binancefuture.com'};}
  private restAgent(){this.assertProxy();return this.agent!;}
- assertTestnetExchangeWrite(){const url=new URL(this.effectiveBaseUrl());if(this.settings.exchange.environment!=='TESTNET'||this.settings.executionMode!=='TESTNET_ENABLED'||!isAllowedTestnetRestHost(url.hostname))throw new Error('TESTNET_ONLY_WRITE_LOCK: Binance Demo Testnet write disabled for this environment/host');this.assertProxy();const egress=this.egressStatus();if(egress.expectedEgressIp&&egress.status!=='VERIFIED')throw new Error(`TESTNET_WRITE_EGRESS_NOT_VERIFIED:${egress.status}`);}
+ assertTestnetExchangeWrite(){const url=new URL(this.effectiveBaseUrl());if(this.settings.exchange.environment!=='TESTNET'||this.settings.executionMode!=='TESTNET_ENABLED'||!isAllowedTestnetRestHost(url.hostname))throw new Error('TESTNET_ONLY_WRITE_LOCK: Binance Demo Testnet write disabled for this environment/host');this.assertProxy();const egress=binanceEgressState(this.egressStatus());if(!egress.verified)throw new Error(`TESTNET_WRITE_EGRESS_NOT_VERIFIED:${egress.status}`);}
  effectiveWsUrl(){const exchange=this.settings.exchange as typeof this.settings.exchange & {testnetWsBaseUrl?:string;productionWsBaseUrl?:string};return exchange.environment==='TESTNET'?(exchange.testnetWsBaseUrl??'wss://stream.binancefuture.com/ws'):(exchange.productionWsBaseUrl??'wss://fstream.binance.com/ws');}
  websocketOptions(){this.assertProxy();return{agent:this.agent!};}
  websocketRoute(){return{url:this.effectiveWsUrl(),throughProxy:Boolean(this.agent),proxyUrl:this.agent?this.settings.proxy.url:null,tlsServername:new URL(this.effectiveWsUrl()).hostname,routeIdentity:this.routeIdentity,failClosed:true};}

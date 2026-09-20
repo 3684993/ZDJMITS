@@ -4,7 +4,7 @@ import defaults from '../../../../config/settings.default.json' with {type:'json
 import {RuntimeState} from '../state/runtimeState.js';
 import {EventBus} from '../events/eventBus.js';
 import {ReconciliationService} from './reconciliationService.js';
-import {advanceRemoteRiskAudit,hasVerifiedNoActiveRisk,historicalNoRiskEligible,remoteRiskAudit,remoteRiskAuditDeferred,resetRemoteRiskAudit,riskFactHash,shouldEmitNoRiskEvent,UNKNOWN_RISK_AUDIT_PROMOTE_AFTER,UNKNOWN_RISK_EVIDENCE_TIER_MS} from './entryRiskOccupancy.js';
+import {advanceRemoteRiskAudit,hasVerifiedNoActiveRisk,jitteredNextAuditAt,historicalNoRiskEligible,remoteRiskAudit,remoteRiskAuditDeferred,resetRemoteRiskAudit,riskFactHash,shouldEmitNoRiskEvent,UNKNOWN_RISK_AUDIT_PROMOTE_AFTER,UNKNOWN_RISK_EVIDENCE_TIER_MS} from './entryRiskOccupancy.js';
 
 const settings=()=>SystemSettingsSchema.parse({...defaults,appearance:{...defaults.appearance,theme:'BINANCE_NOIR'}});
 const NO_RISK_SOURCES=['BINANCE_EXACT_ORDER_NOT_FOUND','BINANCE_OPEN_ORDERS_IDENTITY_ABSENT','BINANCE_USER_TRADES_IDENTITY_ABSENT','BINANCE_ALL_ORDERS_IDENTITY_ABSENT','BINANCE_LONG_SHORT_POSITION_ZERO'];
@@ -230,8 +230,12 @@ describe('historical UNKNOWN remote risk audit tiering',()=>{
 
   it('exposes the audit state machine as pure predicates for the reconciliation caller',()=>{
     const now=1_000_000,fresh={sources:NO_RISK_SOURCES,reason:'R'};
-    let audit=advanceRemoteRiskAudit(null,fresh,now);
-    expect(audit).toMatchObject({tier:0,consecutive:1,nextAuditAt:now+5*60_000});
+    let audit=advanceRemoteRiskAudit(null,fresh,now,'ENTRY:BTCUSDT:ml_fet');
+    // tier 0 keeps the five-minute interval as its ceiling; the deadline itself is jittered per identity.
+    expect(audit).toMatchObject({tier:0,consecutive:1});
+    expect(audit.nextAuditAt).toBeGreaterThan(now-1);
+    expect(audit.nextAuditAt).toBeLessThanOrEqual(now+UNKNOWN_RISK_EVIDENCE_TIER_MS[0]);
+    expect(audit.nextAuditAt).toBe(jitteredNextAuditAt(now,UNKNOWN_RISK_EVIDENCE_TIER_MS[0],'unknown|ENTRY:BTCUSDT:ml_fet'));
     audit=advanceRemoteRiskAudit(audit,fresh,now+5*60_000);expect(audit.consecutive).toBe(2);
     audit=advanceRemoteRiskAudit({...audit,nextAuditAt:now+10},fresh,now+20*60_000);expect(audit.consecutive).toBe(3);
     audit=advanceRemoteRiskAudit(audit,fresh,now+40*60_000);expect(audit.tier).toBe(1);

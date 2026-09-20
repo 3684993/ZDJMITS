@@ -78,18 +78,72 @@ export function riskFactHash(evidence:{sources?:string[];reason?:string|null}){
   return `${[...(evidence?.sources??[])].sort().join(',')}|${evidence?.reason??''}`;
 }
 
-export function advanceRemoteRiskAudit(previous:RemoteRiskAudit|null,evidence:{sources?:string[];reason?:string|null},now=Date.now()):RemoteRiskAudit{
-  const factHash=riskFactHash(evidence);
-  const identical=Boolean(previous&&previous.factHash===factHash);
-  const consecutive=identical?Math.max(1,previous!.consecutive)+1:1;
-  const tier=Math.max(0,Math.min(UNKNOWN_RISK_EVIDENCE_TIER_MS.length-1,consecutive-UNKNOWN_RISK_AUDIT_PROMOTE_AFTER));
-  return{tier,consecutive,nextAuditAt:now+UNKNOWN_RISK_EVIDENCE_TIER_MS[tier],factHash,
-    verifiedCount:(previous?.verifiedCount??0)+1,lastAuditAt:now,lastEventAt:previous?.lastEventAt??0,lastEmittedReason:previous?.lastEmittedReason??null};
-}
-
 /** Any conflicting or incomplete fact returns the order to the fresh, high-frequency tier. */
 export function resetRemoteRiskAudit(now=Date.now()):RemoteRiskAudit{
   return{tier:0,consecutive:0,nextAuditAt:now,factHash:null,verifiedCount:0,lastAuditAt:now,lastEventAt:0,lastEmittedReason:null};
+}
+
+/**
+ * A terminal row that was positively rejected before the wire call can never gain an exchange
+ * order id or a fill, so it needs the slowest re-probe; a terminal row whose identity was simply
+ * never confirmed still needs a real backstop, and an UNKNOWN may still be live, so it stays fastest.
+ */
+export const REMOTE_FACT_AUDIT_LADDERS_MS={
+  unknown:UNKNOWN_RISK_EVIDENCE_TIER_MS,
+  terminal:[5*60_000,30*60_000,60*60_000] as const,
+  neverSubmitted:[5*60_000,30*60_000,6*60*60_000] as const,
+} as const;
+export type RemoteFactAuditClass=keyof typeof REMOTE_FACT_AUDIT_LADDERS_MS;
+
+export function remoteFactAuditClass(order:EntryOrder):RemoteFactAuditClass|null{
+  if(order.status==='UNKNOWN')return 'unknown';
+  if(!TERMINAL_ORDER.has(order.status))return null;
+  if(Number(order.filledQuantity??0)>0||nonEmptyId(order.exchangeOrderId))return null;
+  if(String(order.factSource??'')==='LOCAL_NOT_SUBMITTED')return 'neverSubmitted';
+  return 'terminal';
+}
+
+function nonEmptyId(value:unknown){return typeof value==='string'&&value.trim().length>0}
+
+export function remoteFactAuditEligible(order:EntryOrder,now=Date.now()){
+  const cls=remoteFactAuditClass(order);
+  if(!cls)return false;
+  if(cls==='unknown')return historicalNoRiskEligible(order,now);
+  // Never slow down a row that still occupies risk, holds a recorded fill, or has an unresolved
+  // exchange-terminal outcome: those cases must keep probing at the fresh cadence.
+  if(entryOrderOccupiesRisk(order,now))return false;
+  if(Number(order.filledQuantity??0)>0)return false;
+  if(order.exchangeTerminalStatus==='UNKNOWN')return false;
+  return Number((order as any).remoteAudit?.nextAuditAt??0)>0;
+}
+
+/** Shared by every caller that would spend a per-order remote query on this row. */
+export function remoteFactAuditDeferred(order:EntryOrder,now=Date.now()){
+  const audit=remoteRiskAudit(order);
+  if(!audit||audit.tier<=0)return false;
+  return remoteFactAuditEligible(order,now)&&audit.nextAuditAt>now;
+}
+
+export function jitteredNextAuditAt(now:number,intervalMs:number,identity:string){
+  let hash=0;for(const char of String(identity))hash=(hash*31+char.charCodeAt(0))>>>0;
+  // Spread only within the last quarter of the interval so the tier bound is never exceeded.
+  const spread=Math.max(1,Math.floor(intervalMs*0.25));
+  return now+intervalMs-(hash%spread);
+}
+
+export function advanceRemoteFactAudit(previous:RemoteRiskAudit|null,evidence:{sources?:string[];reason?:string|null},now=Date.now(),cls:RemoteFactAuditClass='unknown',identity=''):RemoteRiskAudit{
+  const ladder=REMOTE_FACT_AUDIT_LADDERS_MS[cls];
+  const factHash=riskFactHash(evidence);
+  const identical=Boolean(previous&&previous.factHash===factHash);
+  const consecutive=identical?Math.max(1,previous!.consecutive)+1:1;
+  const tier=Math.max(0,Math.min(ladder.length-1,consecutive-UNKNOWN_RISK_AUDIT_PROMOTE_AFTER));
+  return{tier,consecutive,nextAuditAt:jitteredNextAuditAt(now,ladder[tier],`${cls}|${identity}`),factHash,
+    verifiedCount:(previous?.verifiedCount??0)+1,lastAuditAt:now,lastEventAt:previous?.lastEventAt??0,lastEmittedReason:previous?.lastEmittedReason??null};
+}
+
+/** UNKNOWN-class convenience wrapper; the identity defaults to the order's own tombstone. */
+export function advanceRemoteRiskAudit(previous:RemoteRiskAudit|null,evidence:{sources?:string[];reason?:string|null},now=Date.now(),identity?:string):RemoteRiskAudit{
+  return advanceRemoteFactAudit(previous,evidence,now,'unknown',identity??'');
 }
 
 /** Emit only when something is actually new; identical proofs become a summary instead of spam. */

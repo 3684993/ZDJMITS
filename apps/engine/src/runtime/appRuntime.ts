@@ -22,6 +22,7 @@ import { AiFabric } from "../services/aiFabric.js";
 import { EntryCoordinator } from "../services/entryCoordinator.js";
 import { PositionService } from "../services/positionService.js";
 import { TpGuardian } from "../services/tpGuardian.js";
+import { primaryBrainHealth } from "../services/aiResourceHealth.js";
 import { ExchangeLoop } from "../services/exchangeLoop.js";
 import { ReconciliationService } from "../services/reconciliationService.js";
 import { BinanceTransport, verifyBinanceTransportEgress } from "../adapters/binance/BinanceTransport.js";
@@ -1311,18 +1312,22 @@ export class EngineRuntime {
       lastDirection = latestPrimary?.direction ?? null,
       lastDecision = latestPrimary?.decision ?? null,
       lastPrimaryAge = latestPrimary ? now - latestPrimary.startedAt : null,
-      unexplainedIdle = Boolean(
-        !paused &&
-        this.ready &&
-        eligible > 0 && this.state.runtimeControl.capital.executableCandidateCount>0 &&
-        poolItems.length &&
-        pending < this.state.settings.portfolio.maxPendingEntries &&
-        resources.some(
-          (x) => x.role === "PRIMARY_BRAIN" && x.status !== "OFFLINE",
-        ) &&
-        lastPrimaryAge !== null &&
-        lastPrimaryAge > 10 * 60_000,
-      );
+      primaryIdleReason = resources.find((x) => x.role === "PRIMARY_BRAIN")?.idleReason ?? null,
+      // Supply-side idleness is not a model fault: the primary had nothing dispatchable, or its
+      // single slot was busy. Only an unexplained gap stays DEGRADED.
+      primaryBrainState = primaryBrainHealth({
+        paused,
+        ready: this.ready,
+        eligible,
+        executableCandidates: this.state.runtimeControl.capital.executableCandidateCount,
+        poolResidents: poolItems.length,
+        pendingEntries: pending,
+        maxPendingEntries: this.state.settings.portfolio.maxPendingEntries,
+        modelOnline: resources.some((x) => x.role === "PRIMARY_BRAIN" && x.status !== "OFFLINE"),
+        lastRunAgeMs: lastPrimaryAge,
+        idleReason: primaryIdleReason,
+      }),
+      unexplainedIdle = primaryBrainState.unexplainedIdle;
     const activityBase = this.state.activity,
       since = now - 30 * 60_000,
       recentEvents = this.settingsStore.runtimeEvents(
@@ -1444,19 +1449,13 @@ export class EngineRuntime {
         resource: resources.find((x) => x.role === "SCOUT"),
       },
       primaryBrain: {
-        status: paused
-          ? "PAUSED"
-          : unexplainedIdle
-            ? "DEGRADED"
-            : resources.some(
-                  (x) => x.role === "PRIMARY_BRAIN" && x.status !== "OFFLINE",
-                )
-              ? "READY"
-              : "UNAVAILABLE",
+        status: primaryBrainState.status,
         runs: resources.find(x=>x.role==="PRIMARY_BRAIN")?.totalRuns??0,
         historicalRuns:primary.length,
         resource: resources.find((x) => x.role === "PRIMARY_BRAIN"),
         lastRunAgeMs: lastPrimaryAge,
+        idleReason: primaryIdleReason,
+        healthReason: primaryBrainState.reason,
       },
       existingPositions: { status: "FACT", count: positions },
       excludedSymbols: {

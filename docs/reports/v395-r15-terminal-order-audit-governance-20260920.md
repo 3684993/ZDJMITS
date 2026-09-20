@@ -270,7 +270,7 @@ final_untracked_or_dirty_lines=0
 
 ## R. historical UNKNOWN / terminal 行是否零删除
 
-**零删除。** 部署前 26 个 UNKNOWN、383 个 `entryOrders` 持久化行；部署后 10 轮采样 `reconciliation.historicalUnknownCount` 恒为 **26**，`entryOrders` 行数 383 → **386**（窗口内新开 3 单，只增不减），三档求和恒等于在册 UNKNOWN 总数（`[0,6,20]`、`[3,16,7]`、`[14,5,7]`、`[4,7,15]`、`[0,14,12]`、末轮 `[0,5,21]` 均 = 26）；`unknown + terminal + neverSubmitted` 三类分档之和 = 26 + 5 + 0，与 B 节分类一致 ⇒ 没有任何记录被删除、被改写成终态、或因降频而从读模型消失。回归门槛：`never drops a historical UNKNOWN row while deferring its audit`、`costs nothing at all for a row positively rejected before the wire call`（77 行 `LOCAL_NOT_SUBMITTED` 原地不动）。
+**零删除。** 部署前 26 个 UNKNOWN、383 个 `entryOrders` 持久化行；部署后 10 轮采样 `reconciliation.historicalUnknownCount` 恒为 **26**，`entryOrders` 行数 383 → **386**（窗口内新开 3 单，只增不减），三档求和恒等于在册 UNKNOWN 总数（`[0,6,20]`、`[3,16,7]`、`[14,5,7]`、`[4,7,15]`、`[0,14,12]`、末轮 `[0,5,21]` 均 = 26）。报告提交后的补充读数（10:26:49）：`historicalUnknownCount` 已因窗口内新开仓自然增长到 **27**（`tiers=[1,2,24]`，求和同样 = 27）⇒ 只增不减的结论继续成立；`unknown + terminal + neverSubmitted` 三类分档之和 = 26 + 5 + 0，与 B 节分类一致 ⇒ 没有任何记录被删除、被改写成终态、或因降频而从读模型消失。回归门槛：`never drops a historical UNKNOWN row while deferring its audit`、`costs nothing at all for a row positively rejected before the wire call`（77 行 `LOCAL_NOT_SUBMITTED` 原地不动）。
 
 ## S. durable claims / reconciliation
 

@@ -113,7 +113,7 @@ export function remoteFactAuditEligible(order:EntryOrder,now=Date.now()){
   // exchange-terminal outcome: those cases must keep probing at the fresh cadence.
   if(entryOrderOccupiesRisk(order,now))return false;
   if(Number(order.filledQuantity??0)>0)return false;
-  if(order.exchangeTerminalStatus==='UNKNOWN')return false;
+  if((order as any).exchangeTerminalStatus==='UNKNOWN')return false;
   return Number((order as any).remoteAudit?.nextAuditAt??0)>0;
 }
 

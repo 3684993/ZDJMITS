@@ -11,21 +11,21 @@ import {
 import { primaryBrainHealth } from './aiResourceHealth.js';
 
 const ladder = REMOTE_FACT_AUDIT_LADDERS_MS;
-const row = (over: Partial<EntryOrder> = {}) => ({
+const row = (over: Record<string, unknown> = {}) => ({
   id: 'entry_1', symbol: 'BTCUSDT', side: 'LONG', quantity: 2, price: 100, filledQuantity: 0,
   status: 'CANCELED', exchangeTerminalStatus: 'CANCELED', exchangeOrderId: null, clientOrderId: 'ml_1',
   createdAt: Date.now() - 86_400_000, updatedAt: Date.now() - 86_400_000, factSource: 'LOCAL_NOT_SUBMITTED', ...over,
-} as EntryOrder);
+} as unknown as EntryOrder);
 const audit = (over: Record<string, unknown> = {}) => ({ tier: 2, consecutive: 9, nextAuditAt: Date.now() + 3_600_000, factHash: 'h', verifiedCount: 9, lastAuditAt: Date.now() - 3_600_000, lastEventAt: 0, lastEmittedReason: null, ...over });
 
 describe('shared remote fact audit policy', () => {
   it('classifies rows by what can still change about them', () => {
-    expect(remoteFactAuditClass(row({ status: 'UNKNOWN', exchangeTerminalStatus: 'UNKNOWN', factSource: null } as never))).toBe('unknown');
+    expect(remoteFactAuditClass(row({ status: 'UNKNOWN', exchangeTerminalStatus: 'UNKNOWN', factSource: null }))).toBe('unknown');
     expect(remoteFactAuditClass(row())).toBe('neverSubmitted');
-    expect(remoteFactAuditClass(row({ factSource: null } as never))).toBe('terminal');
+    expect(remoteFactAuditClass(row({ factSource: null }))).toBe('terminal');
     expect(remoteFactAuditClass(row({ filledQuantity: 2 }))).toBe(null);
-    expect(remoteFactAuditClass(row({ exchangeOrderId: '999', factSource: 'BINANCE_EXACT_ORDER' } as never))).toBe(null);
-    expect(remoteFactAuditClass(row({ status: 'WORKING', exchangeTerminalStatus: null } as never))).toBe(null);
+    expect(remoteFactAuditClass(row({ exchangeOrderId: '999', factSource: 'BINANCE_EXACT_ORDER' }))).toBe(null);
+    expect(remoteFactAuditClass(row({ status: 'WORKING', exchangeTerminalStatus: null }))).toBe(null);
   });
 
   it('keeps a recent terminal row at the fresh cadence and only escalates on identical proofs', () => {
@@ -42,16 +42,16 @@ describe('shared remote fact audit policy', () => {
 
   it('never slows a row that still occupies risk, holds a fill, or has an unresolved terminal outcome', () => {
     const now = Date.now();
-    expect(remoteFactAuditEligible(row({ filledQuantity: 1, remoteAudit: audit() } as never), now)).toBe(false);
-    expect(remoteFactAuditEligible(row({ exchangeTerminalStatus: 'UNKNOWN', remoteAudit: audit() } as never), now)).toBe(false);
-    expect(remoteFactAuditEligible(row({ status: 'UNKNOWN', exchangeTerminalStatus: 'UNKNOWN', remoteAudit: audit() } as never), now)).toBe(false);
+    expect(remoteFactAuditEligible(row({ filledQuantity: 1, remoteAudit: audit() }), now)).toBe(false);
+    expect(remoteFactAuditEligible(row({ exchangeTerminalStatus: 'UNKNOWN', remoteAudit: audit() }), now)).toBe(false);
+    expect(remoteFactAuditEligible(row({ status: 'UNKNOWN', exchangeTerminalStatus: 'UNKNOWN', remoteAudit: audit() }), now)).toBe(false);
     expect(remoteFactAuditEligible(row({ remoteAudit: audit() }), now)).toBe(true);
   });
 
   it('treats a persisted audit window that already elapsed as due, never as deferred', () => {
     const now = Date.now();
-    expect(remoteFactAuditDeferred(row({ remoteAudit: audit({ nextAuditAt: now - 1 }) } as never), now)).toBe(false);
-    expect(remoteFactAuditDeferred(row({ remoteAudit: audit({ nextAuditAt: now + 60_000 }) } as never), now)).toBe(true);
+    expect(remoteFactAuditDeferred(row({ remoteAudit: audit({ nextAuditAt: now - 1 }) }), now)).toBe(false);
+    expect(remoteFactAuditDeferred(row({ remoteAudit: audit({ nextAuditAt: now + 60_000 }) }), now)).toBe(true);
   });
 
   it('spreads audit deadlines deterministically without exceeding the tier interval', () => {

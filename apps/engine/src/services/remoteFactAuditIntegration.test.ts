@@ -24,7 +24,7 @@ function fixture(rows: Record<string, unknown>[]) {
   const bus = new EventBus(); bus.on('event', event => events.push(event));
   const adapter: any = {
     fetchOpenOrders: vi.fn(async () => []), fetchPositions: vi.fn(async () => []),
-    findEntryByClientOrderId: vi.fn(async () => null),
+    findEntryByClientOrderId: vi.fn(async (_order: any) => null),
     fetchSymbolRiskFacts: vi.fn(async () => ({ fills: [], orders: [] })),
     fetchSymbolTradeFacts: vi.fn(async () => ({ fills: [], income: [], orders: [] })),
   };
@@ -105,7 +105,7 @@ describe('remote fact audit integration', () => {
     const proof = { status: 'VERIFIED_NO_ACTIVE_RISK', sources: ['BINANCE_EXACT_ORDER_NOT_FOUND', 'BINANCE_OPEN_ORDERS_IDENTITY_ABSENT', 'BINANCE_USER_TRADES_IDENTITY_ABSENT', 'BINANCE_ALL_ORDERS_IDENTITY_ABSENT', 'BINANCE_LONG_SHORT_POSITION_ZERO'], checkedAt: now() - 60_000, validUntil: now() + 1_800_000, identityTombstone: 'ENTRY:BTCUSDT:ml_settled', reason: 'EXCHANGE_TERMINAL_STATUS_UNKNOWN_CURRENT_RISK_ABSENT' };
     const settled = { ...fresh, id: 'entry_settled', symbol: 'BTCUSDT', clientOrderId: 'ml_settled', intentId: 'i_settled', activeRiskExposure: false, activeRiskEvidence: proof, remoteAudit: { tier: 2, consecutive: 9, nextAuditAt: now() + 1_800_000, factHash: 'h', verifiedCount: 9, lastAuditAt: now() - 1, lastEventAt: 0, lastEmittedReason: null } };
     state.entryOrders.set(fresh.id, fresh as any); state.entryOrders.set(settled.id, settled as any);
-    const exchange = { findEntryByClientOrderId: vi.fn(async () => null), cancelEntry: vi.fn(async (order: any) => ({ ...order, status: 'CANCELED' })), setLeverage: vi.fn(async () => {}) };
+    const exchange = { findEntryByClientOrderId: vi.fn(async (_order: any) => null), cancelEntry: vi.fn(async (order: any) => ({ ...order, status: 'CANCELED' })), setLeverage: vi.fn(async () => {}) };
     const entry = new EntryCoordinator(state, {} as never, {} as never, exchange as never, new EventBus());
     await entry.reviewPending();
     const probed = exchange.findEntryByClientOrderId.mock.calls.map(call => (call[0] as any).id);

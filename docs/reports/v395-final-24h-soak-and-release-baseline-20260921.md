@@ -144,6 +144,25 @@ Test Files 121 passed (121)   Tests 682 passed (682)   # skipped 0
 
 ---
 
+## 偏差与过程记录（soak 期间，用户批准）
+
+### D-1 仪表盘静态资产在 soak 中途替换（UI 平仓类型，HEAD `ba0b3ea`）
+
+用户指令："交易记录增加平仓类型…这个前端完善一下，其他暂时不要修改"，并在被明确询问后选择"现在就装，并在 soak 报告记为 UI 资产偏差"。
+
+- 变更范围：仅 `apps/dashboard/src/views/TradeRecordsView.vue` + `apps/dashboard/src/styles.css`（Engine / packages / Settings / 交易逻辑零改动）。
+- 门禁：全新 worktree `D:/MITS-WORKTREES/v395-localci-ui1` 检出 `ba0b3ea`，CI 同步序 9 步全部 exit 0、`final_untracked_or_dirty_lines=0`。
+- 逐树哈希闭环（替换前后各测一次）：`apps/engine/dist`、`packages/core/dist`、`packages/contracts/dist` 三棵树在替换前后与冻结候选（`v395-localci-r16b`）**逐字节一致**（`80142167…` / `2f9f0d09…` / `517c4b71…`）；只有 `apps/dashboard/dist` 由 `6c1900f9…`（=冻结候选）变为 `90636dcc…`（=UI 候选）。
+- 运行 Engine 未受影响：`pid 10540`、`restartCount` 仍 **165**、`buildId` 仍 `3.9.5-8b7cc98ccaaa6c06456c`（身份在启动时计算，不随静态文件变化），`pipelineState=RUNNING`、TP 全保护。
+- 功能复验（浏览器只读，未点击任何写操作按钮）：表头为 建仓 / 平仓 · Symbol / 方向 · Entry → Exit · 数量 · 交易收益（不含资金费）· **平仓类型** · 状态，**正式净收益列已移除**；`LONG` 计算色 `rgb(15,159,110)`（绿）、`SHORT` `rgb(207,52,68)`（红）；被审计的那笔 `2026/9/20 10:28:58 → 平仓 11:00:27 ENAUSDC LONG -$201.60` 现在直接显示 **人工平仓**，本页计数 `止盈 19 / 人工 1 / 未知 0`；归因规则与"对不上就写未知"的判定依据写在徽章 title 里。
+- **我自己的过程失误（如实记录）**：第一次替换脚本先 `New-Item` 建了目标目录再 `Copy-Item` 目录，PowerShell 语义把文件放成了 `dist/dist/…`，导致 8080 的页面资源 404 约 **2–3 分钟**（17:21:41 备份之后到 17:24 复验通过之间；引擎 API 与交易链路全程正常，仅 UI 静态路径不可用）。随后按"目标目录不存在时复制"与 `cp -a src/. dst/` 修正，复验 `GET /` 200、`index.html` 与门禁产物逐字节一致、四棵树哈希如上。回滚点：`D:/MITS-WORKTREES/backup-live-dist-ui1-20260920/20260920-172141/apps/dashboard/dist`（22 文件，替换前原样）。
+- 对 soak 有效性的影响：`restartCount` 不变、无 P0/P1、无 Engine 重启 ⇒ 24h 窗口**不重开**；但"运行资产 == 冻结候选"这一条要按上式分树陈述，最终报告与 `V3.9.5_STABLE_BASELINE` 记录会同时写明两个 dashboard dist 哈希与切换时刻。
+
+### D-2 本机 CI 等序构建期间出现的低优先级请求排队超时（P3 观察）
+
+17:17:28 / 17:20:16 两次 `TRADE_SYNC_AUTO_FAILED`：`BINANCE_TRANSPORT_BLOCKED: Binance request timed out` 与 `BINANCE_REQUEST_QUEUE_TIMEOUT … endpoint=/fapi/v1/income source=BACKGROUND_AUDIT`。发生在 UI 候选门禁的 `npm ci` + vite 构建占用 CPU/IO 的同一时段；`/fapi/v1/income` 属最低优先级 lane，17:11:40 与之后各轮 `TRADE_SYNC_AUTO_COMPLETED` 正常，`http429/http418` 恒 17/3、`privateSync` 与交易链路无中断，`decisions.blocked` 自启动累计由 2 → 7。**结论：不是引擎回归，是"在跑 soak 的同一台机器上做完整构建"的副作用**；后续轮次应把重构建安排在 soak 之外，或在报告里把这类计数变化标注成因。
+
+
 ## G–X：24 小时 soak 结果（待窗口结束填写）
 
 采集器 `r16-soak.py` 以分离进程独立运行（每 10 min 快照、每小时 durable aggregate、P0/P1 实时落盘），只读 HTTP + `mode=ro` SQLite，不触碰 Engine 生命周期。证据文件位于 `D:\MITS-WORKTREES\dryrun\r16\`：`soak-baseline.json`、`soak-samples.jsonl`、`soak-hourly.jsonl`、`soak-alerts.md`、`soak-progress.json`、`soak-summary.json`。

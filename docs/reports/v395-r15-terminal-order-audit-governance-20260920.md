@@ -294,7 +294,7 @@ final_untracked_or_dirty_lines=0
 
 - 机制：`BinanceTransport.verifyEgressIp()` 通过代理向外部回显服务 `https://checkip.amazonaws.com/` 发一次 GET，`timeout: 5_000` + `AbortSignal.timeout(5_000)`；`appRuntime.ts:500-501` 只在启动时与**每 15 min**重新证明一次（09:21:38 / 09:36 / 09:51 成功 / 10:06 超时）。
 - 判读为"探针侧偶发超时，出口路径未变"的证据：同窗 `requestBudget.status = AVAILABLE`、`blockedUntil = 0`、`decisions.blocked = 0 / queueTimeout = 0`、`admitted` 在 10:03→10:12 从 4,766 增至 5,415（+649 次真实 Binance 请求全部准入）、`privateSync.lastSuccessAt = 10:10:09`（4 s 前成功）、`binancePrivate = READY`、`http429/418` 仍 17/3 ⇒ 走代理的 Binance 私有/公共读持续成功，失败的只是第三方回显站点。结构上也不存在"悄悄换路"的口子：Binance 请求一律经 `applyRoute()` 由 `settings.proxy.url` 构造的 `SocksProxyAgent` 发出，`json()` 再经 `assertBinance(url)` + `BINANCE_ENVIRONMENT_ORIGIN_MISMATCH` 锁定 base URL 与 origin，回显探针访问的是另一个主机（`checkip.amazonaws.com`），它的超时不会改变 Binance 流量的路径。
-- **但本轮核查出一个真实缺口（必须在提交前纠正我自己的第一版判断）**：我最初写的是"这一期间下单会被 fail-closed 阻断"，随后按代码逐条核对发现**该门禁没有被接上**。`BinanceTransport.ts:36` 的 `entryBlockReason()`（唯一会返回 `BINANCE_EGRESS_UNAVAILABLE` 的函数）在全仓库**没有任何调用方**；Entry 侧实际用的是 `entryCoordinator.ts:51 / :155` 调用的模块级 `binanceEntryBlockReason(environment)`，它只看执行环境与请求预算状态（`binanceHealthBlocksEntry`：`PRIVATE_ONLY/SATURATED/RATE_LIMITED/RECOVERING/PERSISTENCE_FAILED`），**不看出口 IP 证明状态**。⇒ 出口 IP 未被重新证明时，本轮实测 `entryPermission` 仍能在 `READY/BLOCKED` 之间摆动（摆动原因是 `noEntryReason = WAITING_EXECUTION_CAPACITY`，与出口无关），也就是**出口证明失效不会阻止新仓**。这是既有缺陷（早于 R15，本轮改动之前就在），不是我引入的回归，但它是本轮观察到的最直接安全风险。
+- **但本轮核查出一个真实缺口（必须在提交前纠正我自己的第一版判断）**：我最初写的是"这一期间下单会被 fail-closed 阻断"，随后按代码逐条核对发现**该门禁没有被接上**。`BinanceTransport.ts:36` 的 `entryBlockReason()`（唯一会返回 `BINANCE_EGRESS_UNAVAILABLE` 的函数）在全仓库**没有任何调用方**；Entry 侧实际用的是 `entryCoordinator.ts:51 / :155` 调用的模块级 `binanceEntryBlockReason(environment)`，它只看执行环境与请求预算状态（`binanceHealthBlocksEntry`：`PRIVATE_ONLY/SATURATED/RATE_LIMITED/RECOVERING/PERSISTENCE_FAILED`），**不看出口 IP 证明状态**。⇒ **出口证明失效时 Entry 早期准入不设闸**（`entryPermission` 在 `READY/BLOCKED` 之间摆动的原因是 `noEntryReason = WAITING_EXECUTION_CAPACITY`，与出口无关）。但我当时据此进一步下的结论——"那 15 min 内新仓不会被阻止"——**是错的**：真实写入被 transport 层拒了 4 次（`ENTRY_ORDER_BLOCKED reason=TESTNET_WRITE_EGRESS_NOT_VERIFIED:UNAVAILABLE stage=SET_LEVERAGE` @10:11:58 / 10:14:49 / 10:18:30，另有 10:09:33 `ENTRY_EXECUTION_WAIT_RETRY_FAILED`）。准确的缺口是 `EARLY_ENTRY_ADMISSION_EGRESS_GATE_MISSING`，而不是写路径 fail-open；这是既有缺陷（早于 R15），也是本轮观察到的最直接安全风险，详见本节末"勘误"。
 - 处置：**未重启 proxy、未重启 Engine、未修改任何网络配置、未改代码**（本轮只授权一次受控 restart，已用于部署；给未接线门禁加逻辑属新行为变更，必须单独立项 + 独立门禁）（提示词绝对禁止项 + AGENTS.md 手工启动约束）；只挂了只读观察器等下一次 15 min 证明（≈10:21）是否自行恢复，结果：`10:21:41` 下一次 15 min 定期证明**自动恢复** `status=VERIFIED`、`lastVerifiedEgressIp=172.104.186.174`（与期望一致）、`lastError=null`；失效区间 = `10:06:38 → 10:21:41`（≈15 min，正好一个证明周期），期间 `admitted` 从 6,001 增至 6,657、`blocked=0`、`429/418` 仍 17/3 ⇒ **无流量丢失、无被拒**，但这 15 min 内下单并未因出口未证明而被阻止（见 X-6）。观察器已正常结束，Engine 未受其影响（`restartCount` 仍 164、`pid` 仍 24448）。
 
 
@@ -370,6 +370,23 @@ final_untracked_or_dirty_lines=0
 5. **诚实披露的局限**：(i) 短窗验收（≈50 min）不足以观察 6 h 归档档的真实调度，`neverSubmitted` 档位在窗口内等价于"从未升档"；(ii) 5 行弱终态（`REJECTED/factSource=null`）没有正面未提交证据，只能按 terminal 阶梯慢慢爬；(iii) 迟到成交的最坏 REST 兜底延迟被本方案放宽到档位上界（E 节表格），这是本设计的代价而非免费午餐。
 
 6. **观测器的价值被直接验证了一次**：正因为采集器把 `10:08` 的 `egress.status=UNAVAILABLE` 报成告警（而不是被当成噪声吞掉），顺线核对才发现"出口 IP 未证明时并不阻止下单"这条**未接线的门禁**（U 节）。这属既有缺陷，且是"看起来有安全网、实际没接"的那一类，优先级高于本季度的任何降频工作：修法是把 `entryBlockReason()` 真正接进 Entry 判据（或在 `executionHardBlock` 内联同等条件），并配一条"egress 未 VERIFIED ⇒ 阻单"的回归测试；同时把回显探针做成多源冗余（当前只有 `checkip.amazonaws.com` 一个目标，5 s 超时即整条证明链路失效一个周期）；本轮**故意没有动它**，因为提示词只授权一次部署 restart，且改 Entry 准入判据必须独立门禁。
+
+## 勘误（2026-09-20 11:59，R16 Stage 0 逐条查写路径之后）
+
+X-6 中"出口 IP 未证明时不会阻止下单"的结论**不成立**，现更正如下（完整证据链见 R16 报告 A 节）：
+
+1. 全部真实写入（Entry `POST /order`、TP `POST /order`、Manual `POST /order`、`PUT`/`DELETE /order`、
+   `POST /leverage`）都经 `ExternalTradeAdapter.signed()`（`method!=='GET'`）→
+   `BinanceTransport.assertTestnetExchangeWrite()`，后者在 `expectedEgressIp` 已配置且 `status!=='VERIFIED'`
+   时抛 `TESTNET_WRITE_EGRESS_NOT_VERIFIED:<status>`；
+2. 因此 `10:06:38 → 10:21:41` 出口证明失效期内写入确实被拒绝：`productionWrites` 恒 0，
+   `blockedProductionWriteAttempts` 自启动累计 **4**，与事件里的 4 条拒写一一对应；当天更早的 03:45 / 03:47
+   还有 2 次同类拒写，其中 03:45 那一次是 **TP 修复**（`TP_REPAIR_FAILED submissionOutcome=NOT_ATTEMPTED`），
+   属"保护性写入也被同一道闸挡住"，R16 报告单独说明其取舍；
+3. 真实缺口在 **Layer A（早期准入）没有闸**：`EntryCoordinator.processPool()` / `executionHardBlock()` 只看
+   `binanceEntryBlockReason(environment)`，不含出口证明，于是在出口未证明时仍然消耗 AI 推理、reservation 与
+   `SET_LEVERAGE` 调用，最后一步才被 transport 拒掉，并把候选打进 `TECHNICAL_COOLDOWN`（原因标签也因此失真）；
+4. 该缺陷由 R16 修复（双层 fail-closed，候选 HEAD `e70e33e`），R15 本轮未改代码，故 R15 的性能结论不受影响。
 
 ## 附：回滚与证据位置
 

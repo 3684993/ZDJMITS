@@ -2,7 +2,15 @@ import type { EntryIntelligencePacket, MarketSymbolSnapshot, Position, SystemSet
 import { directionWeights } from './profiles.js';
 import { safeDiv, clamp, uid } from './math.js';
 
-export interface ExperienceSummary { sampleSize:number; sameSymbolWinRate:number|null; sameRegimeWinRate:number|null; averageFillMinutes:number|null; recentLessons:string[]; }
+export interface ExperienceSummary {
+  sampleSize:number;
+  sameSymbolWinRate:number|null;
+  sameRegimeWinRate:number|null;
+  averageFillMinutes:number|null;
+  recentLessons:string[];
+  /** Records excluded from the performance denominator because canonical net PnL is unavailable. */
+  coverage?: { eligible:number; closedComplete:number; excludedNetUnknown:number; excludedOther:number };
+}
 export interface EipContext {
   candidate: UniverseCandidate;
   snapshot: MarketSymbolSnapshot;

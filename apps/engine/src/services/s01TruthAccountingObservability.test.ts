@@ -1,0 +1,10 @@
+import {describe,expect,it} from 'vitest';
+import {collectorWindowSummary,primaryObservation,riskFactCoverage} from './s01TruthAccountingObservability.js';
+
+describe('S01 truth/accounting/observability projections',()=>{
+  it('keeps an UNKNOWN order unresolved when history coverage is missing',()=>expect(riskFactCoverage({openOrderIdentity:false,fillIdentity:false,positionZero:true,historyCovered:false,checkedAt:100}).currentRisk).toBe('UNKNOWN'));
+  it('distinguishes fresh current no-risk from durable terminal proof',()=>{const now=1000;expect(riskFactCoverage({openOrderIdentity:false,fillIdentity:false,positionZero:true,historyCovered:true,checkedAt:now,validUntil:now+300000}).currentRisk).toBe('CURRENT_NO_ACTIVE_RISK');expect(riskFactCoverage({terminalStatus:'CANCELED',openOrderIdentity:false,fillIdentity:false,positionZero:true,historyCovered:true,checkedAt:now}).currentRisk).toBe('DURABLE_TERMINAL_PROVEN');});
+  it('fails closed on position attribution conflict',()=>expect(riskFactCoverage({terminalStatus:'CANCELED',openOrderIdentity:false,fillIdentity:false,positionAttributed:false,historyCovered:true,checkedAt:100}).status).toBe('CONFLICT'));
+  it('normalizes count deltas by real segment hours and exposes reset',()=>{expect(collectorWindowSummary({segmentId:'s1',identity:'i1',startedAt:0,endedAt:600000,startCount:10,endCount:70,peak:70})).toMatchObject({countDelta:60,ratePerHour:360});expect(collectorWindowSummary({segmentId:'s2',identity:'i1',startedAt:0,endedAt:600000,startCount:70,endCount:2,peak:70,reset:true})).toMatchObject({countDelta:null,ratePerHour:null,reset:true,peak:70});});
+  it('does not turn healthy idle or market pause into a resource fault',()=>{expect(primaryObservation({paused:false,marketOpen:true,resourceFault:false,lastRunAt:null,now:100,maxIdleMs:10})).toBe('HEALTHY_IDLE');expect(primaryObservation({paused:true,marketOpen:true,resourceFault:false,lastRunAt:null,now:100,maxIdleMs:10})).toBe('MARKET_PAUSE');expect(primaryObservation({paused:false,marketOpen:true,resourceFault:true,lastRunAt:100,now:101,maxIdleMs:10})).toBe('RESOURCE_FAULT');});
+});

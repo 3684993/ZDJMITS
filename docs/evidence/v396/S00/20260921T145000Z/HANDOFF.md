@@ -1,6 +1,6 @@
 # S00 handoff
 
-阶段/子 PR：S00-A/B/C/D；实施：Codex（terra 审计请求）；状态：READY_FOR_REVIEW。
+阶段/子 PR：S00-A/B/C/D；实施：Codex；状态：ACCEPTED（terra 审计，限定 S00 规格与隔离基线）。
 
 ## 1. 身份与范围
 
@@ -45,4 +45,4 @@
 - 请求总设计裁决：无；请审查基线漂移是否允许以当前 HEAD 作为 S01 起点。
 - 可新增证据：EX/DA/RI/OP；本轮未改总分。
 
-审查者：terra；请求状态：READY_FOR_REVIEW，待复审。
+审查者：terra；结论：ACCEPTED；证据：`terra-audit.md`；限定：不构成部署、Engine 启用或交易授权。

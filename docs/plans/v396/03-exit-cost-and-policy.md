@@ -1,6 +1,6 @@
 # S03：退出成本估值与 10 USDT 权限闸
 
-状态 NOT_STARTED；terra 主体，luna 边界夹具。前置 S02；后继 S04、S06。重点 EX3、DA1；涉及 I01/I04/I05/I08。
+状态 `READY_FOR_REVIEW`（离线纯函数与测试子集，2026-09-21；证据 `docs/evidence/v396/S03/20260921T221000Z/`，分支 `codex/v396-s03-exit-cost-policy-20260921`。未接发单路径、未接 S04 reserve、未标 ACCEPTED）；terra 主体，luna 边界夹具。前置 S02；后继 S04、S06。重点 EX3、DA1；涉及 I01/I04/I05/I08。
 
 ## 范围与当前入口
 

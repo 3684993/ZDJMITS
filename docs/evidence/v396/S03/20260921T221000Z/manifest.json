@@ -1,0 +1,84 @@
+{
+  "stageId": "S03",
+  "runId": "20260921T221000Z",
+  "status": "READY_FOR_REVIEW",
+  "selfSignedAccepted": false,
+  "acceptanceOwner": "总设计",
+  "base": {
+    "commit": "2b502ec6a71a2079a273773a9b029f0ae24c9b42",
+    "branch": "codex/v396-s03-exit-cost-policy-20260921",
+    "worktree": "D:/MITS-WORKTREES/v396-s03-exit-cost-policy-20260921",
+    "frozenCheckpoint": "PR #9 head 2b502ec, unchanged"
+  },
+  "environment": {
+    "node": "v22.23.1",
+    "os": "Windows"
+  },
+  "contractVersion": "V396-C1",
+  "decimalPolicy": "integer milli-units (scale 1/1000 of the quote currency); no epsilon tolerance at the loss line",
+  "invariants": [
+    "I01",
+    "I04",
+    "I05",
+    "I08"
+  ],
+  "commands": [
+    {
+      "cmd": "npm run build -w @zdj/contracts && npm run build -w @zdj/core",
+      "exit": 0
+    },
+    {
+      "cmd": "npm run typecheck -w @zdj/engine",
+      "exit": 0,
+      "errors": 0
+    },
+    {
+      "cmd": "npx vitest run --root apps/engine (full workspace)",
+      "exit": 0,
+      "testFiles": 134,
+      "failed": 0
+    },
+    {
+      "cmd": "npx vitest run src/services/s03ExitCostPolicy.test.ts",
+      "exit": 0,
+      "tests": 14,
+      "failed": 0
+    },
+    {
+      "cmd": "node scripts/v396-s00-static-check.mjs",
+      "exit": 0,
+      "note": "S00 gate still PASS; entrypoint rule table untouched"
+    }
+  ],
+  "scopeGuard": {
+    "orderPathWired": false,
+    "s04ReserveWired": false,
+    "newAiWriteAuthority": "NONE",
+    "deployed": false,
+    "engineLifecycle": "NOT_USED",
+    "liveSettings": "NOT_MODIFIED",
+    "liveDatabase": "NOT_TOUCHED",
+    "exchangeAccess": "NONE",
+    "network": "NOT_USED",
+    "enforcedBy": "s03ExitCostPolicy.test.ts (purity and consumer scan)"
+  },
+  "changedFiles": [
+    {
+      "path": "apps/engine/src/services/s03ExitCostEstimator.ts",
+      "sha256NormalizedLF": "2387041145fbcad51b5261e5e972e925950b1aa3daaf8a07819773984e7826f3"
+    },
+    {
+      "path": "apps/engine/src/services/s03AiExitPolicy.ts",
+      "sha256NormalizedLF": "4fc6a3707308610bb5fcc3f0c4fccf9f5e0152be9c2bb4f87f58f45cdbd9b2c2"
+    },
+    {
+      "path": "apps/engine/src/services/s03ExitCostPolicy.test.ts",
+      "sha256NormalizedLF": "c27fa636e4091c1aacfdb13c9e29780be55a3e5a46ab967ddaf606ce2a7a7098"
+    }
+  ],
+  "defectFoundDuringBuild": {
+    "summary": "the uncertainty buffer was added to the net instead of subtracted, because it was not classified as a subtractive cost kind",
+    "caughtBy": "S03-T01 worked example (expected -9.99, observed -9.59) and S03-T06 (expected -0.2, observed +0.2)",
+    "fixed": "SUBTRACTIVE_KINDS now includes UNCERTAINTY_BUFFER; magnitude fields report contract semantics while the net uses signed contributions"
+  }
+}

@@ -45,3 +45,23 @@
 - `npm run typecheck -w @zdj/engine`：通过。
 - S00 静态门禁：6 项 PASS，108 条内容推导记录（98 禁止 / 9 边界可用 / 1 执行），规则表未放宽；`s00-static-gate.json` 为本轮输出。
 - `git diff --check`：干净。工作树在提交后应无未跟踪产品文件残留。
+
+## PR #9 独立审查（第 2 批：基线整理 + 八项定点检查）
+
+base 已改为 `codex/v396-s00-reviewed-baseline-20260921` → `1b7e38f`（不 rebase、不 squash、head 不变）。
+
+| 检查点 | 结论 |
+|---|---|
+| degraded 路径是否可能误授予 authority | 否。当前无任何消费者读取 ownership（grep 证实）；journal 以名字拒绝 `HUMAN_MANAGED→AI_ACTIVE` 与 `CLOSED` 复活；新增静态护栏断言 service/runtime 里不存在任何把状态写成 `AI_ACTIVE` 的转移。**发现并修复一处真实缺陷**：`identity()` 用 `catch{return null}` 吞掉解析器与 scope 抛错，静默少记 → 改为发 `V396_OWNERSHIP_JOURNAL_DEGRADED{stage:SUBJECT_RESOLVER|SCOPE_RESOLUTION}`。 |
+| ownerVersion/CAS 是否有漏网写路径 | 只有 `acknowledge` 用裸 upsert，且不抬版本，且整段在 `BEGIN IMMEDIATE` 内；其余写入均经 `initialize/transition`（带 CAS）。`reserve` 校验 `expectedOwnerVersion`。残余（非放宽）：`activeClaimUnits(scope)` 按域而非按 cycle 聚合，跨 cycle 的 claim 会让 reconcile 过度撤权——方向保守，S04 需把 claim 绑定到 cycle。 |
+| outbox 与 ownership 是否同事务、崩溃恢复是否安全 | 同事务（ack/迁移/mandate/撤权均在同一 `BEGIN IMMEDIATE` 内写状态与 outbox）；`drainOutbox` 刻意在事务外投递，失败只计数、不回滚已提交撤权。所有服务方法都只在一个事务层里包一次，未出现嵌套 BEGIN（各方法均有测试执行到）。崩溃只会停在 `HANDOFF_PENDING`（已撤权态）。 |
+| mandate 与 TP Guardian 是否形成第二套真源 | 目前不会：`putMandate/revokeMandateByHuman/unprotected` 无任何外部调用者，TpGuardian 未读取 mandate。但 `unprotected()` 只看 journal，会在「旧字段仍有在效 TP」时误报无保护 → 读端接线时必须与 `tpStatus/tpOrderId` 合并，属残余风险。 |
+| reconcile 是否可能错误收养/覆盖 ownership | 否，且有测试：无主 cycle 只进 `unownedCycles` 不落库；`CLOSED` 与人工态跳过；只有 AI_ACTIVE 会被抬版收窄。 |
+| migration/backup/appRuntime shutdown 失败边界 | **P1（已登记为发布阻断，不在本检查点修）**：`v396-ownership.sqlite` 不在备份/留存清单内（`scripts/maintain-storage.mjs:11` 只认 `zdj-settings.sqlite`），一次还原会丢掉所有权与 outbox 记录。已用 `storage-coverage.json` + `ownershipStorageCoverage.test.ts` 把该缺口变成机器强制的门禁项，并断言 ownership 代码永不打开现网设置库（现网 DB 迁移未被授权）。`backupTo` 拒绝备份到自身路径；关停链在 `settingsStore.close()` 之前关闭 journal。`rehearsal` 的隔离副本目录不做清理（OS 临时目录），已知非缺陷。 |
+| executionScope 与历史 claim key 是否完全兼容 | 兼容：三个调用点分别传 `'ENTRY'` 与 `position.side`（zod 限定 LONG/SHORT），越界抛错只可能来自编程错误，且发生在任何交易所调用之前。既有不对称如实记录：entry 用 `resolveUnderlying(symbol)`、manual 用完整 `symbol`，因此两条路径历史上从未共享 claim 键——这是 S04 的前置条件，不是本批引入。 |
+| `${symbol}:${side}` 非 canonical scope 是否已影响消费者 | 未影响：该串是 `positionLifecycleTracker`/`reconciliationService`/`executableRiskHeadroom` 既有的**仓位身份**约定；本批唯一新用法是 `humanManagedProjection.riskSnapshot`，其消费者数为 0（grep 证实）。S05 读取前必须换成 canonical scope，否则才是第二真源。 |
+
+本批修复：`identity()` 静默吞错、新增 `ownershipStorageCoverage.test.ts`（3 例：不碰现网设置库、备份缺口必须处于「已登记阻断」状态、journal 不出现授予态）与 `storage-coverage.json`。
+
+复跑结果：contracts/core build 通过；engine typecheck 0 错误；全仓 Engine **133 文件通过 / 退出 0**；S00 静态门禁 6 项 PASS；`git diff --check` 干净。
+

@@ -21,7 +21,7 @@
     "ALLOWED_STATIC": 1
   },
   "engineTestIsolation": {
-    "testFiles": 132,
+    "testFiles": 133,
     "openingAStore": 9,
     "everyStoreOpeningTestIsolated": true,
     "repositoryDataDirReferences": 0,

@@ -5,7 +5,7 @@
   "selfSignedAccepted": false,
   "acceptanceOwner": "总设计",
   "base": {
-    "commit": "a534a314ace15e0281cded68fc97b578809a8cb4",
+    "commit": "180c9f23babfeb40927488679e6cfd5153e5dfde",
     "branch": "codex/v396-design-completion-20260921",
     "worktree": "D:/MITS-worktrees/v396-design-completion-20260921",
     "prBase": "codex/v396-project-plan-20260921"
@@ -65,32 +65,12 @@
   },
   "changedFiles": [
     {
-      "path": "apps/engine/src/runtime/appRuntime.ts",
-      "sha256NormalizedLF": "20efa7529a783daea591e2f24ff374e9594353a1929cca7c4e4f666b18bc3b23"
-    },
-    {
-      "path": "apps/engine/src/services/ownershipJournal.ts",
-      "sha256NormalizedLF": "a662523bc77f6424d118c49f2f3082c43ea22e6087df28e0d494aabd5540f603"
-    },
-    {
-      "path": "apps/engine/src/services/ownershipRuntime.test.ts",
-      "sha256NormalizedLF": "f16b994c6288de4b2228b40782850a09381ae7fcb3befb43d069430731922769"
-    },
-    {
       "path": "apps/engine/src/services/ownershipRuntime.ts",
-      "sha256NormalizedLF": "03117d093abc79e2dc4dc318dcd76b6688cef6aa5b4c6476113b513bf56c7977"
+      "sha256NormalizedLF": "1909a785cadd46e1b048f5b9a61675d39de9e56e273584e0da7772192a9f1f77"
     },
     {
-      "path": "apps/engine/src/services/ownershipMigration.ts",
-      "sha256NormalizedLF": "231a26bec7e85bb00733e983a379e153e4ab8892cc6ddacbc432e6f0621ec40c"
-    },
-    {
-      "path": "apps/engine/src/services/ownershipS02Acceptance.test.ts",
-      "sha256NormalizedLF": "a32a4997b433b2884ab334b39df188972eaf4467b8fddad5af161deec78a5d44"
-    },
-    {
-      "path": "apps/engine/src/services/ownershipService.ts",
-      "sha256NormalizedLF": "d26e2733712f94999d94c3d3c52377a2479fa4421d09ee70c7a59b97559e85a6"
+      "path": "apps/engine/src/services/ownershipStorageCoverage.test.ts",
+      "sha256NormalizedLF": "b2cd89e62e0d7a561a9c534bb4d1bc10eaa98450db256606fd903bd9ed763e59"
     }
   ]
 }

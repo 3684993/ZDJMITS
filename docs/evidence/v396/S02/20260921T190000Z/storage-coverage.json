@@ -1,0 +1,26 @@
+{
+  "runId": "20260921T190000Z",
+  "stageId": "S02",
+  "gate": "S02_MIGRATION_AND_BACKUP_COVERAGE_OPEN",
+  "note": "Enforced by apps/engine/src/services/ownershipStorageCoverage.test.ts. The ledger deliberately lives in its own file because a production database migration is not authorised in this checkpoint; if it is ever moved into the backed-up store, flip releaseBlocking to false in the same commit that adds the coverage, otherwise the guard test fails.",
+  "files": [
+    {
+      "name": "v396-ownership.sqlite",
+      "createdBy": "apps/engine/src/runtime/appRuntime.ts (attachOwnershipRuntime, store.dataDirectory())",
+      "contents": "v396_owners, v396_outbox, v396_quantity_claims, v396_claims_history, v396_mandates",
+      "backedUpByExistingTooling": false,
+      "inStorageRetentionInventory": false,
+      "readByAnyRuntimeConsumer": false,
+      "grantsAiWriteAuthority": false,
+      "releaseBlocking": true,
+      "blockingReason": "A durable authority and notification ledger would silently escape the existing backup routine, which hard-codes zdj-settings.sqlite (scripts/maintain-storage.mjs:11). A restore point that loses ownership records cannot be trusted, so the ledger must either join the backup/retention inventory or be migrated into the already-backed-up store under an authorised migration before any deploy.",
+      "requiredBeforeDeploy": [
+        "register the file in the storage plan, retention and backup inventory, or move the tables into the settings store under an authorised migration",
+        "verify a restore of that image returns the same owner versions, deadlines and pending outbox rows",
+        "record the migration in the S02 evidence with preview output, per the stage acceptance rules"
+      ]
+    }
+  ],
+  "liveSettingsDatabaseTouched": false,
+  "productionMigrationPerformed": false
+}

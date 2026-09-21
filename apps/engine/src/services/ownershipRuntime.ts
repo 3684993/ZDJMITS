@@ -26,11 +26,14 @@ export class OwnershipRuntime {
     events.on('event',event=>this.onEvent(event));
   }
   private identity(positionId:string):{scope:string;cycleId:string}|null{
+    let subject:OwnershipSubject|null;
+    try{subject=this.subject(positionId);}catch(error){this.fail('SUBJECT_RESOLVER',error);return null;}
+    if(!subject) return null;                       // not an owned position: nothing to record
+    if(!subject.cycleId) return null;               // pre-V396 cycle: surfaced by reconcile, never invented here
     try{
-      const subject=this.subject(positionId);if(!subject||!subject.cycleId)return null;
       const exchange=this.exchangeIdentity();
       return{scope:executionScope(exchange.environment,exchange.account,subject.symbol,subject.positionSide),cycleId:subject.cycleId};
-    }catch{return null;}
+    }catch(error){this.fail('SCOPE_RESOLUTION',error);return null;}
   }
   /** Supplied by the runtime; a missing or invalid identity must never invent a scope. */
   subject(_positionId:string):OwnershipSubject|null{return null;}

@@ -1,6 +1,6 @@
 # S00：冻结基线、接口和验证规格
 
-状态 NOT_STARTED；主实施 terra，luna 可整理清单。前置：无。输出 G0；后继 S01。遵守 [总计划](README.md)、[契约](CONTRACTS.md)、[运行规则](ENGINEER-RUNBOOK.md)。
+状态 `ACCEPTED`（第 2 轮总设计复审，仅限规格与隔离基线交付；round 1 实施侧记录的 ACCEPTED 无效）；主实施 terra，luna 整理清单。前置：无。输出 G0；后继 S01。证据：`docs/evidence/v396/S00/20260921T145000Z/`（含 `audit-round-2-20260921.md`）。遵守 [总计划](README.md)、[契约](CONTRACTS.md)、[运行规则](ENGINEER-RUNBOOK.md)。
 
 ## 目标与范围
 
@@ -33,7 +33,7 @@
 | S00-T02 | 输入包含环境密钥的 manifest 源 | 输出仅白名单字段，不泄露敏感值 |
 | S00-T03 | 改一字节夹具或配置 | hash 改变，旧实验身份不能复用 |
 | S00-T04 | 旧 AUTO 仓无 plan/deadline | 迁移规格要求人工审阅，不自动补授权 |
-| S00-T05 | 比较执行域与 One-way/Hedge | scope 唯一，没有虚构两把净仓锁 |
+| S00-T05 | 比较执行域与 One-way/Hedge | scope 唯一，没有虚构两把净仓锁；判定必须读 `executionScope` 实现与其调用点，夹具示例不算证据 |
 | S00-T06 | 逐条核对 I01–I12 | 每项存在计划消费者、测试责任阶段 |
 
 验证优先静态检查和纯函数测试，不能为了采集身份启动 Engine。若读取运行 HTTP 失败，仅记不可得。

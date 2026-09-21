@@ -1,957 +1,1551 @@
 {
-  "inventoryVersion": "S00-T01-entry-review-1",
+  "inventoryVersion": "S00-T01-entry-review-2",
   "capturedAt": "2026-09-21",
-  "root": "D:\\MITS-WORKTREES\\v396-project-plan-20260921",
-  "entryCount": 99,
+  "derivation": "mechanical over-approximating static scan by scripts/v396-s00-isolation-rules.mjs; a match can only tighten a status, never relax it",
+  "entryCount": 107,
+  "statusLegend": {
+    "ALLOWED_STATIC": "executed by the S00 verification command",
+    "CONDITIONAL_NOT_RUN": "not executed; a later stage may run it only after the required boundary is proven",
+    "FORBIDDEN_OR_NOT_RUN": "not executed; process, network, exchange, host, source-tree or aggregate risk detected"
+  },
   "entries": [
+    {
+      "path": ".github/workflows/v392-verify.yml",
+      "kind": "ci-workflow",
+      "sideEffects": [
+        "aggregate-verification-chain",
+        "host-or-data-mutation",
+        "network-or-exchange",
+        "source-tree-mutation"
+      ],
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "not runnable as a unit; classify each member command separately; unique temp data dir outside the repository; no live database or Settings store; mock/no-network/no-exchange-write assertion with a write counter that throws; source-rewriting patch; never run as a test step"
+    },
+    {
+      "path": "apps/dashboard/index.html",
+      "kind": "runtime-entry",
+      "sideEffects": [],
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "CONDITIONAL_NOT_RUN",
+      "requiredBoundary": "unique temp data dir; unique loopback port; mock/no-network/no-exchange-write assertion; explicit user authorization where lifecycle is involved"
+    },
     {
       "path": "apps/dashboard/package.json",
       "kind": "package-script",
-      "status": "CONDITIONAL_NOT_RUN",
+      "commands": [
+        {
+          "name": "build",
+          "sideEffects": [],
+          "status": "CONDITIONAL_NOT_RUN"
+        },
+        {
+          "name": "dev",
+          "sideEffects": [
+            "lifecycle-named-entrypoint",
+            "process-lifecycle"
+          ],
+          "status": "FORBIDDEN_OR_NOT_RUN"
+        },
+        {
+          "name": "test",
+          "sideEffects": [],
+          "status": "CONDITIONAL_NOT_RUN"
+        },
+        {
+          "name": "typecheck",
+          "sideEffects": [],
+          "status": "CONDITIONAL_NOT_RUN"
+        }
+      ],
+      "sideEffects": [
+        "lifecycle-named-entrypoint",
+        "process-lifecycle"
+      ],
+      "derivedFrom": "package-script-command-text-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "manual lifecycle entrypoint; excluded from automated verification; no process start of any kind; requires explicit user authorization per Engine lifecycle action"
+    },
+    {
+      "path": "apps/dashboard/src/main.ts",
+      "kind": "runtime-entry",
       "sideEffects": [],
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "CONDITIONAL_NOT_RUN",
       "requiredBoundary": "unique temp data dir; unique loopback port; mock/no-network/no-exchange-write assertion; explicit user authorization where lifecycle is involved"
     },
     {
       "path": "apps/dashboard/vite.config.js",
       "kind": "test-config",
-      "status": "CONDITIONAL_NOT_RUN",
       "sideEffects": [
         "network-or-exchange",
         "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "unique temp data dir; unique loopback port; mock/no-network/no-exchange-write assertion; explicit user authorization where lifecycle is involved"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "mock/no-network/no-exchange-write assertion with a write counter that throws; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "apps/dashboard/vite.config.ts",
       "kind": "test-config",
-      "status": "CONDITIONAL_NOT_RUN",
       "sideEffects": [
         "network-or-exchange",
         "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "unique temp data dir; unique loopback port; mock/no-network/no-exchange-write assertion; explicit user authorization where lifecycle is involved"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "mock/no-network/no-exchange-write assertion with a write counter that throws; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "apps/engine/package.json",
       "kind": "package-script",
-      "status": "CONDITIONAL_NOT_RUN",
+      "commands": [
+        {
+          "name": "build",
+          "sideEffects": [],
+          "status": "CONDITIONAL_NOT_RUN"
+        },
+        {
+          "name": "dev",
+          "sideEffects": [
+            "lifecycle-named-entrypoint",
+            "process-lifecycle"
+          ],
+          "status": "FORBIDDEN_OR_NOT_RUN"
+        },
+        {
+          "name": "start",
+          "sideEffects": [
+            "lifecycle-named-entrypoint"
+          ],
+          "status": "FORBIDDEN_OR_NOT_RUN"
+        },
+        {
+          "name": "test",
+          "sideEffects": [],
+          "status": "CONDITIONAL_NOT_RUN"
+        },
+        {
+          "name": "typecheck",
+          "sideEffects": [],
+          "status": "CONDITIONAL_NOT_RUN"
+        }
+      ],
       "sideEffects": [
+        "lifecycle-named-entrypoint",
         "process-lifecycle"
       ],
-      "requiredBoundary": "unique temp data dir; unique loopback port; mock/no-network/no-exchange-write assertion; explicit user authorization where lifecycle is involved"
+      "derivedFrom": "package-script-command-text-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "manual lifecycle entrypoint; excluded from automated verification; no process start of any kind; requires explicit user authorization per Engine lifecycle action"
+    },
+    {
+      "path": "apps/engine/src/main.ts",
+      "kind": "runtime-entry",
+      "sideEffects": [
+        "network-or-exchange",
+        "runtime-data-or-credential-boundary"
+      ],
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "mock/no-network/no-exchange-write assertion with a write counter that throws; unique temp data dir plus unique loopback port; no credential read"
+    },
+    {
+      "path": "apps/engine/src/server.ts",
+      "kind": "runtime-entry",
+      "sideEffects": [
+        "lifecycle-named-entrypoint",
+        "network-or-exchange",
+        "runtime-data-or-credential-boundary"
+      ],
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "manual lifecycle entrypoint; excluded from automated verification; mock/no-network/no-exchange-write assertion with a write counter that throws; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "apps/engine/vitest.config.ts",
       "kind": "test-config",
-      "status": "CONDITIONAL_NOT_RUN",
       "sideEffects": [],
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "CONDITIONAL_NOT_RUN",
       "requiredBoundary": "unique temp data dir; unique loopback port; mock/no-network/no-exchange-write assertion; explicit user authorization where lifecycle is involved"
+    },
+    {
+      "path": "package.json",
+      "kind": "package-script",
+      "commands": [
+        {
+          "name": "acceptance",
+          "sideEffects": [
+            "lifecycle-named-entrypoint",
+            "runtime-data-or-credential-boundary"
+          ],
+          "status": "FORBIDDEN_OR_NOT_RUN"
+        },
+        {
+          "name": "audit:ai-quality",
+          "sideEffects": [
+            "host-or-data-mutation",
+            "runtime-data-or-credential-boundary"
+          ],
+          "status": "FORBIDDEN_OR_NOT_RUN"
+        },
+        {
+          "name": "audit:trading-quality",
+          "sideEffects": [
+            "host-or-data-mutation",
+            "runtime-data-or-credential-boundary"
+          ],
+          "status": "FORBIDDEN_OR_NOT_RUN"
+        },
+        {
+          "name": "build",
+          "sideEffects": [
+            "aggregate-verification-chain"
+          ],
+          "status": "FORBIDDEN_OR_NOT_RUN"
+        },
+        {
+          "name": "dev",
+          "sideEffects": [
+            "lifecycle-named-entrypoint",
+            "process-lifecycle"
+          ],
+          "status": "FORBIDDEN_OR_NOT_RUN"
+        },
+        {
+          "name": "dev:dashboard",
+          "sideEffects": [
+            "lifecycle-named-entrypoint",
+            "process-lifecycle"
+          ],
+          "status": "FORBIDDEN_OR_NOT_RUN"
+        },
+        {
+          "name": "dev:engine",
+          "sideEffects": [
+            "lifecycle-named-entrypoint",
+            "process-lifecycle"
+          ],
+          "status": "FORBIDDEN_OR_NOT_RUN"
+        },
+        {
+          "name": "start",
+          "sideEffects": [
+            "lifecycle-named-entrypoint",
+            "process-lifecycle"
+          ],
+          "status": "FORBIDDEN_OR_NOT_RUN"
+        },
+        {
+          "name": "storage:backups",
+          "sideEffects": [
+            "host-or-data-mutation",
+            "lifecycle-named-entrypoint",
+            "runtime-data-or-credential-boundary"
+          ],
+          "status": "FORBIDDEN_OR_NOT_RUN"
+        },
+        {
+          "name": "storage:inspect",
+          "sideEffects": [
+            "host-or-data-mutation",
+            "lifecycle-named-entrypoint",
+            "runtime-data-or-credential-boundary"
+          ],
+          "status": "FORBIDDEN_OR_NOT_RUN"
+        },
+        {
+          "name": "storage:plan",
+          "sideEffects": [
+            "host-or-data-mutation",
+            "lifecycle-named-entrypoint",
+            "runtime-data-or-credential-boundary"
+          ],
+          "status": "FORBIDDEN_OR_NOT_RUN"
+        },
+        {
+          "name": "storage:reset-testnet",
+          "sideEffects": [
+            "host-or-data-mutation",
+            "lifecycle-named-entrypoint",
+            "runtime-data-or-credential-boundary"
+          ],
+          "status": "FORBIDDEN_OR_NOT_RUN"
+        },
+        {
+          "name": "storage:retention",
+          "sideEffects": [
+            "lifecycle-named-entrypoint"
+          ],
+          "status": "FORBIDDEN_OR_NOT_RUN"
+        },
+        {
+          "name": "test",
+          "sideEffects": [
+            "aggregate-verification-chain"
+          ],
+          "status": "FORBIDDEN_OR_NOT_RUN"
+        },
+        {
+          "name": "typecheck",
+          "sideEffects": [
+            "aggregate-verification-chain"
+          ],
+          "status": "FORBIDDEN_OR_NOT_RUN"
+        },
+        {
+          "name": "v394:rollout",
+          "sideEffects": [
+            "aggregate-verification-chain",
+            "host-or-data-mutation",
+            "lifecycle-named-entrypoint",
+            "network-or-exchange",
+            "process-lifecycle",
+            "runtime-data-or-credential-boundary"
+          ],
+          "status": "FORBIDDEN_OR_NOT_RUN"
+        },
+        {
+          "name": "v394:stage6:observe",
+          "sideEffects": [
+            "host-or-data-mutation",
+            "lifecycle-named-entrypoint",
+            "network-or-exchange",
+            "runtime-data-or-credential-boundary"
+          ],
+          "status": "FORBIDDEN_OR_NOT_RUN"
+        },
+        {
+          "name": "v394:stage6:preflight",
+          "sideEffects": [
+            "host-or-data-mutation",
+            "lifecycle-named-entrypoint",
+            "network-or-exchange",
+            "runtime-data-or-credential-boundary"
+          ],
+          "status": "FORBIDDEN_OR_NOT_RUN"
+        },
+        {
+          "name": "v394:stage6:readonly",
+          "sideEffects": [
+            "host-or-data-mutation",
+            "lifecycle-named-entrypoint",
+            "network-or-exchange",
+            "runtime-data-or-credential-boundary"
+          ],
+          "status": "FORBIDDEN_OR_NOT_RUN"
+        },
+        {
+          "name": "verify",
+          "sideEffects": [
+            "aggregate-verification-chain"
+          ],
+          "status": "FORBIDDEN_OR_NOT_RUN"
+        },
+        {
+          "name": "verify:deps",
+          "sideEffects": [
+            "aggregate-verification-chain"
+          ],
+          "status": "FORBIDDEN_OR_NOT_RUN"
+        },
+        {
+          "name": "verify:isolated",
+          "sideEffects": [
+            "aggregate-verification-chain",
+            "runtime-data-or-credential-boundary"
+          ],
+          "status": "FORBIDDEN_OR_NOT_RUN"
+        },
+        {
+          "name": "verify:scripts",
+          "sideEffects": [
+            "host-or-data-mutation",
+            "lifecycle-named-entrypoint",
+            "network-or-exchange",
+            "process-lifecycle",
+            "runtime-data-or-credential-boundary"
+          ],
+          "status": "FORBIDDEN_OR_NOT_RUN"
+        }
+      ],
+      "sideEffects": [
+        "aggregate-verification-chain",
+        "host-or-data-mutation",
+        "lifecycle-named-entrypoint",
+        "network-or-exchange",
+        "process-lifecycle",
+        "runtime-data-or-credential-boundary"
+      ],
+      "derivedFrom": "package-script-command-text-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "not runnable as a unit; classify each member command separately; unique temp data dir outside the repository; no live database or Settings store; manual lifecycle entrypoint; excluded from automated verification; mock/no-network/no-exchange-write assertion with a write counter that throws; no process start of any kind; requires explicit user authorization per Engine lifecycle action; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "packages/contracts/package.json",
       "kind": "package-script",
-      "status": "CONDITIONAL_NOT_RUN",
+      "commands": [
+        {
+          "name": "build",
+          "sideEffects": [],
+          "status": "CONDITIONAL_NOT_RUN"
+        },
+        {
+          "name": "test",
+          "sideEffects": [],
+          "status": "CONDITIONAL_NOT_RUN"
+        },
+        {
+          "name": "typecheck",
+          "sideEffects": [],
+          "status": "CONDITIONAL_NOT_RUN"
+        }
+      ],
       "sideEffects": [],
+      "derivedFrom": "package-script-command-text-and-one-hop-target",
+      "status": "CONDITIONAL_NOT_RUN",
       "requiredBoundary": "unique temp data dir; unique loopback port; mock/no-network/no-exchange-write assertion; explicit user authorization where lifecycle is involved"
     },
     {
       "path": "packages/core/package.json",
       "kind": "package-script",
-      "status": "CONDITIONAL_NOT_RUN",
+      "commands": [
+        {
+          "name": "build",
+          "sideEffects": [],
+          "status": "CONDITIONAL_NOT_RUN"
+        },
+        {
+          "name": "test",
+          "sideEffects": [],
+          "status": "CONDITIONAL_NOT_RUN"
+        },
+        {
+          "name": "typecheck",
+          "sideEffects": [],
+          "status": "CONDITIONAL_NOT_RUN"
+        }
+      ],
       "sideEffects": [],
+      "derivedFrom": "package-script-command-text-and-one-hop-target",
+      "status": "CONDITIONAL_NOT_RUN",
       "requiredBoundary": "unique temp data dir; unique loopback port; mock/no-network/no-exchange-write assertion; explicit user authorization where lifecycle is involved"
     },
     {
       "path": "scripts/1/start-qwen3.5-9b-vulkan.ps1",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
-        "process-lifecycle",
         "host-or-data-mutation",
-        "network-or-exchange"
+        "lifecycle-named-entrypoint",
+        "network-or-exchange",
+        "process-lifecycle",
+        "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; manual lifecycle entrypoint; excluded from automated verification; mock/no-network/no-exchange-write assertion with a write counter that throws; no process start of any kind; requires explicit user authorization per Engine lifecycle action; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/1/start-qwen3.8-27b-harness-vulkan1.ps1",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
-        "process-lifecycle",
         "host-or-data-mutation",
-        "network-or-exchange"
+        "lifecycle-named-entrypoint",
+        "network-or-exchange",
+        "process-lifecycle",
+        "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; manual lifecycle entrypoint; excluded from automated verification; mock/no-network/no-exchange-write assertion with a write counter that throws; no process start of any kind; requires explicit user authorization per Engine lifecycle action; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/1/start-qwen3.8-27b-zdj-vulkan1.ps1",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
-        "process-lifecycle",
         "host-or-data-mutation",
-        "network-or-exchange"
+        "lifecycle-named-entrypoint",
+        "network-or-exchange",
+        "process-lifecycle",
+        "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; manual lifecycle entrypoint; excluded from automated verification; mock/no-network/no-exchange-write assertion with a write counter that throws; no process start of any kind; requires explicit user authorization per Engine lifecycle action; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/acceptance-static.ps1",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
-        "network-or-exchange"
+        "aggregate-verification-chain",
+        "lifecycle-named-entrypoint",
+        "network-or-exchange",
+        "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "not runnable as a unit; classify each member command separately; manual lifecycle entrypoint; excluded from automated verification; mock/no-network/no-exchange-write assertion with a write counter that throws; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/archive-runtime-telemetry.mjs",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
-        "runtime-data-or-credential-boundary"
+        "host-or-data-mutation"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store"
     },
     {
       "path": "scripts/audit-ai-entry-quality.mjs",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
+        "host-or-data-mutation",
         "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/audit-node-runtime.ps1",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
+        "host-or-data-mutation",
         "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/audit-trading-quality-baseline.mjs",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
-        "process-lifecycle",
+        "host-or-data-mutation",
         "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/audit-v312-entry-window.mjs",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
-        "network-or-exchange",
         "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "CONDITIONAL_NOT_RUN",
+      "requiredBoundary": "unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/audit-v392-closeout.mjs",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
+        "host-or-data-mutation",
         "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/audit-v394-entry-authorization.mjs",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
+        "host-or-data-mutation",
         "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/benchmark-v380-web.mjs",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
+        "host-or-data-mutation",
         "network-or-exchange",
         "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; mock/no-network/no-exchange-write assertion with a write counter that throws; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/check-v390-btr-readonly.mjs",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
+        "exchange-write-capable",
+        "host-or-data-mutation",
         "network-or-exchange",
         "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "read-only adapter only; exchange writes require separate authorization; unique temp data dir outside the repository; no live database or Settings store; mock/no-network/no-exchange-write assertion with a write counter that throws; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/check-v390-powerloss.mjs",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
+        "host-or-data-mutation",
         "process-lifecycle"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; no process start of any kind; requires explicit user authorization per Engine lifecycle action"
     },
     {
       "path": "scripts/check-v390-restore-parity.mjs",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
+        "host-or-data-mutation",
         "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/check-v391-tp-legacy-readonly.mjs",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
+        "exchange-write-capable",
         "host-or-data-mutation",
         "network-or-exchange",
         "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "read-only adapter only; exchange writes require separate authorization; unique temp data dir outside the repository; no live database or Settings store; mock/no-network/no-exchange-write assertion with a write counter that throws; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/dev.mjs",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
         "process-lifecycle"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "no process start of any kind; requires explicit user authorization per Engine lifecycle action"
     },
     {
       "path": "scripts/finalize-v320-acceptance.mjs",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
-        "process-lifecycle",
+        "host-or-data-mutation",
         "network-or-exchange"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; mock/no-network/no-exchange-write assertion with a write counter that throws"
     },
     {
       "path": "scripts/init-local-runtime.mjs",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
-        "process-lifecycle",
         "host-or-data-mutation",
+        "lifecycle-named-entrypoint",
+        "process-lifecycle",
         "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; manual lifecycle entrypoint; excluded from automated verification; no process start of any kind; requires explicit user authorization per Engine lifecycle action; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/init-local-runtime.test.mjs",
       "kind": "test-script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
-        "process-lifecycle",
+        "host-or-data-mutation",
+        "lifecycle-named-entrypoint",
         "network-or-exchange",
+        "process-lifecycle",
         "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; manual lifecycle entrypoint; excluded from automated verification; mock/no-network/no-exchange-write assertion with a write counter that throws; no process start of any kind; requires explicit user authorization per Engine lifecycle action; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/inspect-sqlite-capacity.mjs",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
+        "host-or-data-mutation",
         "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/install-fresh-testnet-db.ps1",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
         "host-or-data-mutation",
+        "lifecycle-named-entrypoint",
         "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; manual lifecycle entrypoint; excluded from automated verification; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/install-storage-retention.mjs",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
-        "host-or-data-mutation"
+        "lifecycle-named-entrypoint"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "manual lifecycle entrypoint; excluded from automated verification"
     },
     {
       "path": "scripts/install-zdj-new.ps1",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
-        "process-lifecycle",
+        "aggregate-verification-chain",
         "host-or-data-mutation",
-        "network-or-exchange"
+        "lifecycle-named-entrypoint",
+        "network-or-exchange",
+        "process-lifecycle"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "not runnable as a unit; classify each member command separately; unique temp data dir outside the repository; no live database or Settings store; manual lifecycle entrypoint; excluded from automated verification; mock/no-network/no-exchange-write assertion with a write counter that throws; no process start of any kind; requires explicit user authorization per Engine lifecycle action"
     },
     {
       "path": "scripts/maintain-storage.mjs",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
         "host-or-data-mutation",
         "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/maintain-storage.test.mjs",
       "kind": "test-script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
+        "host-or-data-mutation",
         "process-lifecycle",
         "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; no process start of any kind; requires explicit user authorization per Engine lifecycle action; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/market-health-parser.mjs",
       "kind": "script",
-      "status": "CONDITIONAL_NOT_RUN",
       "sideEffects": [],
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "CONDITIONAL_NOT_RUN",
       "requiredBoundary": "unique temp data dir; unique loopback port; mock/no-network/no-exchange-write assertion; explicit user authorization where lifecycle is involved"
     },
     {
       "path": "scripts/observe-v390-closeout.mjs",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
-        "process-lifecycle",
+        "host-or-data-mutation",
         "network-or-exchange",
+        "process-lifecycle",
         "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; mock/no-network/no-exchange-write assertion with a write counter that throws; no process start of any kind; requires explicit user authorization per Engine lifecycle action; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/observe-v391-admission.mjs",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
+        "host-or-data-mutation",
         "network-or-exchange",
         "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; mock/no-network/no-exchange-write assertion with a write counter that throws; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/package-zdj-deploy.ps1",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
-        "host-or-data-mutation"
+        "host-or-data-mutation",
+        "lifecycle-named-entrypoint"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; manual lifecycle entrypoint; excluded from automated verification"
     },
     {
       "path": "scripts/prune-zdj-backups.mjs",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
-        "process-lifecycle",
+        "host-or-data-mutation",
         "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/recompute-v320-acceptance-summary.ps1",
       "kind": "script",
-      "status": "CONDITIONAL_NOT_RUN",
-      "sideEffects": [],
-      "requiredBoundary": "unique temp data dir; unique loopback port; mock/no-network/no-exchange-write assertion; explicit user authorization where lifecycle is involved"
+      "sideEffects": [
+        "host-or-data-mutation"
+      ],
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store"
     },
     {
       "path": "scripts/repair-v391-rejected-tp.mjs",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
         "host-or-data-mutation",
+        "lifecycle-named-entrypoint",
         "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; manual lifecycle entrypoint; excluded from automated verification; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/repair-v392-storage.ps1",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
+        "host-or-data-mutation",
+        "lifecycle-named-entrypoint",
         "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; manual lifecycle entrypoint; excluded from automated verification; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/replay-cycle-accounting.ts",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
-        "host-or-data-mutation",
-        "runtime-data-or-credential-boundary"
+        "host-or-data-mutation"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store"
     },
     {
       "path": "scripts/reset-testnet-runtime-db.mjs",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
         "host-or-data-mutation",
+        "lifecycle-named-entrypoint",
         "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; manual lifecycle entrypoint; excluded from automated verification; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/reset-testnet-runtime-db.test.mjs",
       "kind": "test-script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
-        "process-lifecycle",
         "host-or-data-mutation",
+        "lifecycle-named-entrypoint",
         "network-or-exchange",
+        "process-lifecycle",
         "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; manual lifecycle entrypoint; excluded from automated verification; mock/no-network/no-exchange-write assertion with a write counter that throws; no process start of any kind; requires explicit user authorization per Engine lifecycle action; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/run-3h-endurance.ps1",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
-        "process-lifecycle",
         "host-or-data-mutation",
+        "lifecycle-named-entrypoint",
         "network-or-exchange",
+        "process-lifecycle",
         "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; manual lifecycle entrypoint; excluded from automated verification; mock/no-network/no-exchange-write assertion with a write counter that throws; no process start of any kind; requires explicit user authorization per Engine lifecycle action; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/run-acceptance.ps1",
       "kind": "script",
-      "status": "CONDITIONAL_NOT_RUN",
-      "sideEffects": [],
-      "requiredBoundary": "unique temp data dir; unique loopback port; mock/no-network/no-exchange-write assertion; explicit user authorization where lifecycle is involved"
+      "sideEffects": [
+        "lifecycle-named-entrypoint",
+        "runtime-data-or-credential-boundary"
+      ],
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "manual lifecycle entrypoint; excluded from automated verification; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/run-lan-availability-smoke.ps1",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
+        "host-or-data-mutation",
+        "lifecycle-named-entrypoint",
         "network-or-exchange",
         "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; manual lifecycle entrypoint; excluded from automated verification; mock/no-network/no-exchange-write assertion with a write counter that throws; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/run-v312-30m-acceptance.ps1",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
-        "process-lifecycle",
         "host-or-data-mutation",
+        "lifecycle-named-entrypoint",
         "network-or-exchange",
+        "process-lifecycle",
         "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; manual lifecycle entrypoint; excluded from automated verification; mock/no-network/no-exchange-write assertion with a write counter that throws; no process start of any kind; requires explicit user authorization per Engine lifecycle action; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/run-v320-final-60m-acceptance.ps1",
       "kind": "script",
-      "status": "CONDITIONAL_NOT_RUN",
-      "sideEffects": [],
-      "requiredBoundary": "unique temp data dir; unique loopback port; mock/no-network/no-exchange-write assertion; explicit user authorization where lifecycle is involved"
+      "sideEffects": [
+        "lifecycle-named-entrypoint",
+        "runtime-data-or-credential-boundary"
+      ],
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "manual lifecycle entrypoint; excluded from automated verification; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/run-v331-position-smoke.ps1",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
+        "host-or-data-mutation",
+        "lifecycle-named-entrypoint",
         "network-or-exchange",
         "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; manual lifecycle entrypoint; excluded from automated verification; mock/no-network/no-exchange-write assertion with a write counter that throws; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/run-v332-position-smoke.ps1",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
+        "host-or-data-mutation",
+        "lifecycle-named-entrypoint",
         "network-or-exchange",
         "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; manual lifecycle entrypoint; excluded from automated verification; mock/no-network/no-exchange-write assertion with a write counter that throws; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/run-v333-testnet-acceptance.ps1",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
+        "host-or-data-mutation",
+        "lifecycle-named-entrypoint",
         "network-or-exchange",
         "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; manual lifecycle entrypoint; excluded from automated verification; mock/no-network/no-exchange-write assertion with a write counter that throws; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/run-v333-trade-audit.ps1",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
+        "host-or-data-mutation",
+        "lifecycle-named-entrypoint",
         "network-or-exchange",
         "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; manual lifecycle entrypoint; excluded from automated verification; mock/no-network/no-exchange-write assertion with a write counter that throws; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/run-v333-trade-repair.ps1",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
         "host-or-data-mutation",
+        "lifecycle-named-entrypoint",
         "network-or-exchange",
         "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; manual lifecycle entrypoint; excluded from automated verification; mock/no-network/no-exchange-write assertion with a write counter that throws; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/run-v334-traderecord-smoke.ps1",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
-        "network-or-exchange",
-        "runtime-data-or-credential-boundary"
+        "lifecycle-named-entrypoint",
+        "network-or-exchange"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "manual lifecycle entrypoint; excluded from automated verification; mock/no-network/no-exchange-write assertion with a write counter that throws"
     },
     {
       "path": "scripts/run-v340-portfolio-smoke.ps1",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
-        "network-or-exchange",
-        "runtime-data-or-credential-boundary"
+        "lifecycle-named-entrypoint",
+        "network-or-exchange"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "manual lifecycle entrypoint; excluded from automated verification; mock/no-network/no-exchange-write assertion with a write counter that throws"
     },
     {
       "path": "scripts/run-v360-runtime-acceptance.ps1",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
-        "network-or-exchange",
-        "runtime-data-or-credential-boundary"
+        "host-or-data-mutation",
+        "lifecycle-named-entrypoint",
+        "network-or-exchange"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; manual lifecycle entrypoint; excluded from automated verification; mock/no-network/no-exchange-write assertion with a write counter that throws"
     },
     {
       "path": "scripts/run-v363-testnet-acceptance.ps1",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
-        "network-or-exchange",
-        "runtime-data-or-credential-boundary"
+        "host-or-data-mutation",
+        "lifecycle-named-entrypoint",
+        "network-or-exchange"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; manual lifecycle entrypoint; excluded from automated verification; mock/no-network/no-exchange-write assertion with a write counter that throws"
     },
     {
       "path": "scripts/run-v380-model-ab.mjs",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
-        "network-or-exchange"
+        "host-or-data-mutation",
+        "lifecycle-named-entrypoint",
+        "network-or-exchange",
+        "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; manual lifecycle entrypoint; excluded from automated verification; mock/no-network/no-exchange-write assertion with a write counter that throws; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/run-v392-natural-acceptance.ps1",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
+        "host-or-data-mutation",
+        "lifecycle-named-entrypoint",
         "network-or-exchange",
         "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; manual lifecycle entrypoint; excluded from automated verification; mock/no-network/no-exchange-write assertion with a write counter that throws; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/run-v394-local-rollout.ps1",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
+        "aggregate-verification-chain",
         "host-or-data-mutation",
+        "lifecycle-named-entrypoint",
         "network-or-exchange",
+        "process-lifecycle",
         "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "not runnable as a unit; classify each member command separately; unique temp data dir outside the repository; no live database or Settings store; manual lifecycle entrypoint; excluded from automated verification; mock/no-network/no-exchange-write assertion with a write counter that throws; no process start of any kind; requires explicit user authorization per Engine lifecycle action; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/run-v394-local-rollout.test.ps1",
-      "kind": "test-script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
+      "kind": "script",
       "sideEffects": [
+        "lifecycle-named-entrypoint",
         "network-or-exchange"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "manual lifecycle entrypoint; excluded from automated verification; mock/no-network/no-exchange-write assertion with a write counter that throws"
     },
     {
       "path": "scripts/run-v394-readonly-canary.ps1",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
         "host-or-data-mutation",
+        "lifecycle-named-entrypoint",
         "network-or-exchange",
         "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; manual lifecycle entrypoint; excluded from automated verification; mock/no-network/no-exchange-write assertion with a write counter that throws; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/run-v394-readonly-canary.test.ps1",
-      "kind": "test-script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
+      "kind": "script",
       "sideEffects": [
+        "lifecycle-named-entrypoint",
         "network-or-exchange"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "manual lifecycle entrypoint; excluded from automated verification; mock/no-network/no-exchange-write assertion with a write counter that throws"
     },
     {
       "path": "scripts/run-v394-stage7-to-stage9.ps1",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
-        "process-lifecycle",
         "host-or-data-mutation",
+        "lifecycle-named-entrypoint",
         "network-or-exchange",
+        "process-lifecycle",
         "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; manual lifecycle entrypoint; excluded from automated verification; mock/no-network/no-exchange-write assertion with a write counter that throws; no process start of any kind; requires explicit user authorization per Engine lifecycle action; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/run-v394-stage7-to-stage9.test.ps1",
-      "kind": "test-script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
+      "kind": "script",
       "sideEffects": [
-        "process-lifecycle",
         "host-or-data-mutation",
+        "lifecycle-named-entrypoint",
         "network-or-exchange",
-        "runtime-data-or-credential-boundary"
+        "process-lifecycle"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; manual lifecycle entrypoint; excluded from automated verification; mock/no-network/no-exchange-write assertion with a write counter that throws; no process start of any kind; requires explicit user authorization per Engine lifecycle action"
     },
     {
       "path": "scripts/serve-v380-dashboard-fixture.mjs",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
-        "process-lifecycle",
-        "network-or-exchange",
-        "runtime-data-or-credential-boundary"
+        "lifecycle-named-entrypoint",
+        "network-or-exchange"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "manual lifecycle entrypoint; excluded from automated verification; mock/no-network/no-exchange-write assertion with a write counter that throws"
     },
     {
       "path": "scripts/serve-v390-dashboard-fixture.mjs",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
-        "process-lifecycle",
-        "network-or-exchange"
+        "lifecycle-named-entrypoint",
+        "network-or-exchange",
+        "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "manual lifecycle entrypoint; excluded from automated verification; mock/no-network/no-exchange-write assertion with a write counter that throws; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/smoke.mjs",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
-        "process-lifecycle",
+        "lifecycle-named-entrypoint",
         "network-or-exchange",
         "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "manual lifecycle entrypoint; excluded from automated verification; mock/no-network/no-exchange-write assertion with a write counter that throws; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/start-v3-3h-fixed.ps1",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
+        "lifecycle-named-entrypoint",
         "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "manual lifecycle entrypoint; excluded from automated verification; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/start-v3-3h.ps1",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
+        "lifecycle-named-entrypoint",
         "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "manual lifecycle entrypoint; excluded from automated verification; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/start-v3.ps1",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
-        "process-lifecycle",
+        "aggregate-verification-chain",
         "host-or-data-mutation",
+        "lifecycle-named-entrypoint",
         "network-or-exchange",
+        "process-lifecycle",
         "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "not runnable as a unit; classify each member command separately; unique temp data dir outside the repository; no live database or Settings store; manual lifecycle entrypoint; excluded from automated verification; mock/no-network/no-exchange-write assertion with a write counter that throws; no process start of any kind; requires explicit user authorization per Engine lifecycle action; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/start-zdj-engine-host.ps1",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
+        "host-or-data-mutation",
+        "lifecycle-named-entrypoint",
         "process-lifecycle"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; manual lifecycle entrypoint; excluded from automated verification; no process start of any kind; requires explicit user authorization per Engine lifecycle action"
     },
     {
       "path": "scripts/start-zdj-engine-host.test.ps1",
-      "kind": "test-script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
+      "kind": "script",
       "sideEffects": [
+        "host-or-data-mutation",
+        "lifecycle-named-entrypoint",
         "process-lifecycle",
-        "host-or-data-mutation"
+        "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; manual lifecycle entrypoint; excluded from automated verification; no process start of any kind; requires explicit user authorization per Engine lifecycle action; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/start-zdj-lan.ps1",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
-        "process-lifecycle",
         "host-or-data-mutation",
+        "lifecycle-named-entrypoint",
         "network-or-exchange",
+        "process-lifecycle",
         "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; manual lifecycle entrypoint; excluded from automated verification; mock/no-network/no-exchange-write assertion with a write counter that throws; no process start of any kind; requires explicit user authorization per Engine lifecycle action; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/status-v3.ps1",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
         "network-or-exchange",
         "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "mock/no-network/no-exchange-write assertion with a write counter that throws; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/status-zdj-lan.ps1",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
         "network-or-exchange",
         "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "mock/no-network/no-exchange-write assertion with a write counter that throws; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/stop-v3.ps1",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
-        "host-or-data-mutation"
+        "lifecycle-named-entrypoint",
+        "process-lifecycle",
+        "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "manual lifecycle entrypoint; excluded from automated verification; no process start of any kind; requires explicit user authorization per Engine lifecycle action; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/stop-zdj-lan.ps1",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
-        "host-or-data-mutation",
+        "lifecycle-named-entrypoint",
+        "process-lifecycle",
         "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "manual lifecycle entrypoint; excluded from automated verification; no process start of any kind; requires explicit user authorization per Engine lifecycle action; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/summarize-v392-trajectories.mjs",
       "kind": "script",
-      "status": "CONDITIONAL_NOT_RUN",
-      "sideEffects": [],
-      "requiredBoundary": "unique temp data dir; unique loopback port; mock/no-network/no-exchange-write assertion; explicit user authorization where lifecycle is involved"
+      "sideEffects": [
+        "host-or-data-mutation"
+      ],
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store"
     },
     {
       "path": "scripts/summarize-v392-trajectories.test.mjs",
       "kind": "test-script",
-      "status": "CONDITIONAL_NOT_RUN",
       "sideEffects": [],
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "CONDITIONAL_NOT_RUN",
       "requiredBoundary": "unique temp data dir; unique loopback port; mock/no-network/no-exchange-write assertion; explicit user authorization where lifecycle is involved"
     },
     {
       "path": "scripts/v382-research-quality.ts",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
-        "process-lifecycle",
+        "host-or-data-mutation",
         "network-or-exchange"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; mock/no-network/no-exchange-write assertion with a write counter that throws"
     },
     {
       "path": "scripts/v390-admission-soak.ts",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
+        "host-or-data-mutation",
         "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/v390-primary-evaluation.ts",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
-        "process-lifecycle"
+        "host-or-data-mutation"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store"
     },
     {
       "path": "scripts/v390-research-evaluation.ts",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
-        "process-lifecycle"
+        "host-or-data-mutation"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store"
     },
     {
       "path": "scripts/v393-apply-autonomous-entry-patch.mjs",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
-        "process-lifecycle"
+        "host-or-data-mutation",
+        "source-tree-mutation"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; source-rewriting patch; never run as a test step"
     },
     {
       "path": "scripts/v393-contract-cleanup.mjs",
       "kind": "script",
-      "status": "CONDITIONAL_NOT_RUN",
-      "sideEffects": [],
-      "requiredBoundary": "unique temp data dir; unique loopback port; mock/no-network/no-exchange-write assertion; explicit user authorization where lifecycle is involved"
+      "sideEffects": [
+        "host-or-data-mutation",
+        "source-tree-mutation"
+      ],
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; source-rewriting patch; never run as a test step"
     },
     {
       "path": "scripts/v393-fix-entry-wiring.mjs",
       "kind": "script",
-      "status": "CONDITIONAL_NOT_RUN",
-      "sideEffects": [],
-      "requiredBoundary": "unique temp data dir; unique loopback port; mock/no-network/no-exchange-write assertion; explicit user authorization where lifecycle is involved"
+      "sideEffects": [
+        "host-or-data-mutation",
+        "source-tree-mutation"
+      ],
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; source-rewriting patch; never run as a test step"
     },
     {
       "path": "scripts/v394-stage6-preflight.mjs",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
+        "host-or-data-mutation",
         "network-or-exchange",
         "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; mock/no-network/no-exchange-write assertion with a write counter that throws; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/v394-stage6-set-readonly.mjs",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
+        "host-or-data-mutation",
         "network-or-exchange",
         "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; mock/no-network/no-exchange-write assertion with a write counter that throws; unique temp data dir plus unique loopback port; no credential read"
+    },
+    {
+      "path": "scripts/v396-s00-build-entry-review.mjs",
+      "kind": "script",
+      "sideEffects": [
+        "host-or-data-mutation"
+      ],
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store"
+    },
+    {
+      "path": "scripts/v396-s00-isolation-rules.mjs",
+      "kind": "script",
+      "sideEffects": [
+        "aggregate-verification-chain",
+        "exchange-write-capable",
+        "host-or-data-mutation",
+        "network-or-exchange",
+        "process-lifecycle",
+        "runtime-data-or-credential-boundary"
+      ],
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "not runnable as a unit; classify each member command separately; read-only adapter only; exchange writes require separate authorization; unique temp data dir outside the repository; no live database or Settings store; mock/no-network/no-exchange-write assertion with a write counter that throws; no process start of any kind; requires explicit user authorization per Engine lifecycle action; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/v396-s00-static-check.mjs",
       "kind": "script",
-      "status": "ALLOWED_STATIC",
       "sideEffects": [
-        "process-lifecycle",
-        "network-or-exchange",
-        "runtime-data-or-credential-boundary"
+        "host-or-data-mutation"
       ],
-      "requiredBoundary": "static reads only; OS temp hash mutation"
+      "derivedFrom": "restricted-capability-entry; proven by import allowlist and temp-scoped write call sites",
+      "status": "ALLOWED_STATIC",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store"
     },
     {
       "path": "scripts/watch-zdj-lan.ps1",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
+        "host-or-data-mutation",
+        "lifecycle-named-entrypoint",
         "network-or-exchange",
         "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; manual lifecycle entrypoint; excluded from automated verification; mock/no-network/no-exchange-write assertion with a write counter that throws; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/windows/credential-manager.ps1",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
+        "host-or-data-mutation",
         "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/windows/install.ps1",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
-        "host-or-data-mutation"
+        "aggregate-verification-chain",
+        "host-or-data-mutation",
+        "lifecycle-named-entrypoint"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "not runnable as a unit; classify each member command separately; unique temp data dir outside the repository; no live database or Settings store; manual lifecycle entrypoint; excluded from automated verification"
     },
     {
       "path": "scripts/windows/run-engine-guardian.ps1",
       "kind": "script",
-      "status": "FORBIDDEN_OR_NOT_RUN",
       "sideEffects": [
-        "process-lifecycle",
         "host-or-data-mutation",
+        "lifecycle-named-entrypoint",
+        "network-or-exchange",
+        "process-lifecycle",
         "runtime-data-or-credential-boundary"
       ],
-      "requiredBoundary": "do not execute in S00"
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; manual lifecycle entrypoint; excluded from automated verification; mock/no-network/no-exchange-write assertion with a write counter that throws; no process start of any kind; requires explicit user authorization per Engine lifecycle action; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/windows/start-dashboard.ps1",
       "kind": "script",
-      "status": "CONDITIONAL_NOT_RUN",
-      "sideEffects": [],
-      "requiredBoundary": "unique temp data dir; unique loopback port; mock/no-network/no-exchange-write assertion; explicit user authorization where lifecycle is involved"
+      "sideEffects": [
+        "lifecycle-named-entrypoint",
+        "process-lifecycle"
+      ],
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "manual lifecycle entrypoint; excluded from automated verification; no process start of any kind; requires explicit user authorization per Engine lifecycle action"
     },
     {
       "path": "scripts/windows/start-dev.ps1",
       "kind": "script",
-      "status": "CONDITIONAL_NOT_RUN",
-      "sideEffects": [],
-      "requiredBoundary": "unique temp data dir; unique loopback port; mock/no-network/no-exchange-write assertion; explicit user authorization where lifecycle is involved"
+      "sideEffects": [
+        "lifecycle-named-entrypoint",
+        "process-lifecycle"
+      ],
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "manual lifecycle entrypoint; excluded from automated verification; no process start of any kind; requires explicit user authorization per Engine lifecycle action"
     },
     {
       "path": "scripts/windows/start-engine.ps1",
       "kind": "script",
-      "status": "CONDITIONAL_NOT_RUN",
-      "sideEffects": [],
-      "requiredBoundary": "unique temp data dir; unique loopback port; mock/no-network/no-exchange-write assertion; explicit user authorization where lifecycle is involved"
+      "sideEffects": [
+        "host-or-data-mutation",
+        "lifecycle-named-entrypoint",
+        "network-or-exchange",
+        "process-lifecycle",
+        "runtime-data-or-credential-boundary"
+      ],
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; manual lifecycle entrypoint; excluded from automated verification; mock/no-network/no-exchange-write assertion with a write counter that throws; no process start of any kind; requires explicit user authorization per Engine lifecycle action; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/windows/verify.ps1",
       "kind": "script",
-      "status": "CONDITIONAL_NOT_RUN",
-      "sideEffects": [],
-      "requiredBoundary": "unique temp data dir; unique loopback port; mock/no-network/no-exchange-write assertion; explicit user authorization where lifecycle is involved"
+      "sideEffects": [
+        "aggregate-verification-chain"
+      ],
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "not runnable as a unit; classify each member command separately"
     }
-  ],
-  "statusLegend": {
-    "FORBIDDEN_OR_NOT_RUN": "not executed; lifecycle/host/data/network risk detected",
-    "ALLOWED_STATIC": "executed by S00",
-    "CONDITIONAL_NOT_RUN": "not executed; requires boundary proof"
-  }
+  ]
 }

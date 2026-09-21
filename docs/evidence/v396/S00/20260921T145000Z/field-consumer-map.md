@@ -1,14 +1,18 @@
-# S00 field consumer map (initial)
+# S00 field consumer map (initial, line-verified at round 2)
 
-| Field | Current source / consumer | Current default | V396 rule / phase |
-|---|---|---:|---|
-| `humanHandoffAfterMinutes` | `settings.ts`; position lifecycle/human managed services | 1440 | Deadline is a separate ownership boundary; S02/S08 |
-| `lossHandoffBars` | `lossHandoff.ts` | 4 | Deterministic handoff signal; S02/S03 |
-| `takeProfit.minNetProfitUsd` | `settings.ts`, `economicEntryFeasibility.ts`, `tpGuardian.ts` | 1 USDT-labelled setting; currency must be explicit in V396 | Do not treat as proof of V396 exit threshold; S03/S06 |
-| `takeProfit.minNetProfitRoiPct` | economic admission and TP economics | 0.15 | Preserve fee/slippage/buffer provenance; S03 |
-| `tradeEconomics.admissionMode` | pre-AI envelope and entry economic feasibility | SHADOW | V396 feature states are `OFF/SHADOW/TESTNET_ENFORCE`; S00 only specifies |
-| `riskGovernance.protectionMode` | settings/runtime control and TP protection | SHADOW | Protection maintenance remains independent of AI ownership; S02/S04 |
-| `ai.secondBrainReview` | settings schema and AI orchestration | OFF | Default remains OFF; S07 may consume frozen interface |
-| `directionReference` / direction preferences | settings and entry policy consumers | DEFAULT / mixed preference defaults | V396 must distinguish model output, capacity and policy filtering; S01/S06 |
-| `executionMode` + exchange environment | `BinanceTransport`, `ExternalTradeAdapter`, API resource write gate | READ_ONLY + TESTNET | No new V396 path may bypass existing environment/egress gates; I07/I10 |
-| `positionSide` / `ExecutionScope` | exchange adapters and runtime position/order keys | one-way may be `BOTH`; hedge uses LONG/SHORT | V396 canonical scope is `environment/account/symbol/positionSide`; S00-T05 |
+Every row names a real consumer with a location, the default that actually ships, and the V396 rule and phase that will own it. Round 1 cited file names without locations and without units, which left two unit ambiguities open; they are recorded below instead of being silently resolved.
+
+| Field | Consumer with location | Current default and unit | V396 rule / phase |
+|---|---|---|---|
+| `humanHandoffAfterMinutes` | schema and default at `packages/contracts/src/settings.ts:29`; store normalisation at `apps/engine/src/config/settingsStore.ts` | 1440, integer minutes, clamped 1..525600 | A deadline is a separate ownership boundary; not a handoff timer rename. S02/S08 |
+| `lossHandoffBars` | schema and default at `packages/contracts/src/settings.ts:29`; deterministic signal in `apps/engine/src/services/lossHandoff.ts` | 4 bars, clamped 1..96 | Handoff signal only; must not extend or reset `cycleId`. S02/S03 |
+| `takeProfit.minNetProfitUsd` | schema at `packages/contracts/src/settings.ts:28`; consumed by `apps/engine/src/services/economicEntryFeasibility.ts:61` and `tpGuardian.ts:16` through `requiredNetProfit` at `packages/core/src/tradingCost.ts:22` | 1, labelled USD in the field name; the currency is not asserted anywhere in the code path | V396 must state the quote currency explicitly (CONTRACTS section 1); USDC is not USDT. Do not treat as the V396 exit threshold. S03/S06 |
+| `takeProfit.minNetProfitRoiPct` | schema at `packages/contracts/src/settings.ts:28`; applied at `packages/core/src/tradingCost.ts:22` as `margin * value / 100` | 0.15, which the implementation reads as **0.15 percent of margin**, not 15 percent | Unit ambiguity is a finding, not a detail: the field name, the clamp (`max(100)`) and the shipped default disagree about scale. S03 must fix the unit before the V396 small-profit threshold is defined. |
+| `takeProfit.structureBufferPercent` etc. | `packages/contracts/src/settings.ts:28` | 0.05 .. 3 percent style bounds in the same object | Mixed percent scales inside one schema block; S08 must show each field's unit in the UI. |
+| `tradeEconomics.admissionMode` | `apps/engine/src/services/preAiExecutionEnvelope.ts:62` (typed `'OFF'\|'SHADOW'\|'ENFORCE'`) and `economicEntryFeasibility.ts` | SHADOW | V396 feature states are `OFF/SHADOW/TESTNET_ENFORCE`; S00 specifies only, no new runtime consumer is added |
+| `riskGovernance.protectionMode` | settings/runtime control and TP protection | SHADOW | Protection maintenance stays independent of AI ownership (CONTRACTS section 4, I07). S02/S04 |
+| `ai.secondBrainReview` | settings schema and AI orchestration | OFF | Default remains OFF; S07 may consume a frozen interface only |
+| `directionReference` | top-level key in `config/settings.default.json`; entry policy consumers | DEFAULT / mixed preference defaults | V396 must distinguish model output, capacity and policy filtering; compatibility fields are read-only. S01/S06 |
+| `executionMode` + exchange environment | `apps/engine/src/services/manualPositionService.ts:83` throws `TRADING_BLOCKED` unless the mode allows it; the API write gate is `runtimeSettingsResources.ts:91` (`writeEnabled` requires `TESTNET_ENABLED`); `BinanceTransport`, `ExternalTradeAdapter` and 15 gates in `appRuntime.ts` also read it | READ_ONLY + TESTNET | No new V396 path may bypass the existing environment/egress gates. I07/I10 |
+| `positionSide` / `ExecutionScope` | `apps/engine/src/services/executionLifecycle.ts:8-10`; call sites at `entryCoordinator.ts:211` (literal `'ENTRY'`) and `manualPositionService.ts:95` (`position.side`) | fourth key element is a caller-supplied label, not a guaranteed `positionSide` | One canonical scope identity is a precondition for the shared quantity budget; see `write-path-inventory.md`. S02/S04, S00-T05 |
+| `credentialRef` | `packages/contracts/src/settings.ts` exchange block; `apps/engine/src/api/runtimeSettingsResources.ts:90` reads only `secretStatus()` for the referenced key slots; `apps/engine/src/api/router.ts:714,772` | reference string only, e.g. `binance-primary` | Models hold no exchange credential and no general order tool (README section 1 item 5); S00 read no secret value and only a reference appears in evidence |

@@ -2,26 +2,52 @@
   "policy": "This is an index of the specifically inspected entries, not a safety approval for unlisted scripts. No runtime entry or aggregate repository command is executed by S00.",
   "s00Verification": {
     "command": "node scripts/v396-s00-static-check.mjs",
-    "classification": "STATIC_READS_AND_OS_TEMP_ONLY"
+    "classification": "STATIC_READS_AND_OS_TEMP_ONLY",
+    "proof": "The verifier checks its own import allowlist, forbids process and network capability tokens in its own source, and requires every write call site to name the temporary directory."
   },
-  "notRunCommands": ["npm run verify", "npm run verify:isolated", "npm test", "npm run dev", "npm run start"],
+  "reviewedEntrypoints": {
+    "file": "entrypoint-review.json",
+    "generator": "scripts/v396-s00-build-entry-review.mjs",
+    "rules": "scripts/v396-s00-isolation-rules.mjs",
+    "entryCount": 107,
+    "coverage": "every file under scripts/, every package.json including the root manifest, every vitest/vite config, every .github/workflows file, and the four runtime startup entries listed below",
+    "derivation": "side effects and status are recomputed from current file text, including one indirection hop; a hand-written label that understates a side effect fails the check",
+    "skippedDirectories": ["node_modules", "dist", ".git", "data", "data-test"]
+  },
+  "notRunCommands": ["npm run verify", "npm run verify:isolated", "npm run verify:scripts", "npm test", "npm run build", "npm run typecheck", "npm run dev", "npm run start", "npm run acceptance", "npm run storage:reset-testnet", "npm run v394:stage6:readonly"],
+  "notRunCommandReasons": {
+    "npm run verify": "verify:deps then verify:scripts, typecheck, build and test; verify:scripts executes PowerShell lifecycle, canary and rollout test scripts",
+    "npm run verify:isolated": "builds the dashboard into data-test/v390-build inside the repository and then runs every workspace test",
+    "npm run verify:scripts": "runs v394 stage6 set-readonly and preflight with --self-test plus four PowerShell test scripts, one of which is a rollout contract",
+    "npm run storage:reset-testnet": "drops and recreates a runtime database",
+    "npm run v394:stage6:readonly": "opens and updates the persisted settings database"
+  },
   "startupEntries": [
-    {"path":"package.json","classification":"root scripts; verify is not an Engine launcher"},
-    {"path":"scripts/dev.mjs","classification":"FORBIDDEN_AGAINST_LIVE_DATA; tsx watch"},
-    {"path":"scripts/start-zdj-lan.ps1","classification":"MANUAL_ONLY; points to worktree data and port 8080"},
-    {"path":"scripts/start-zdj-engine-host.ps1","classification":"launcher helper; only called by explicit manual launcher"},
-    {"path":"scripts/windows/start-engine.ps1","classification":"legacy/start entry; not used by S00 verification"},
-    {"path":"apps/engine/src/main.ts","classification":"runtime entry; defaults require explicit isolated env overrides"},
-    {"path":"scripts/start-zdj-engine-host.test.ps1","classification":"isolated fake-child lifecycle test; not live Engine"}
+    {"path": "package.json", "note": "root aggregate scripts; no command is boundary-eligible"},
+    {"path": "apps/engine/src/main.ts", "note": "Engine process entry; defaults to the repository data dir and port 8080"},
+    {"path": "apps/engine/src/server.ts", "note": "HTTP listener created by the Engine process"},
+    {"path": "apps/dashboard/index.html", "note": "browser bundle entry; no Node capability"},
+    {"path": "apps/dashboard/src/main.ts", "note": "browser app bootstrap; no Node capability"}
   ],
-  "testConfigurations": [
-    {"path":"apps/engine/vitest.config.ts","classification":"engine test configuration"},
-    {"path":"apps/dashboard/vite.config.ts","classification":"dashboard build/test configuration"},
-    {"path":"packages/contracts/package.json","classification":"contract test script"},
-    {"path":"packages/core/package.json","classification":"core test script"},
-    {"path":"apps/engine/package.json","classification":"engine test/build scripts"},
-    {"path":"apps/dashboard/package.json","classification":"dashboard test/build scripts"}
+  "launcherEntries": [
+    {"path": "scripts/dev.mjs", "classification": "FORBIDDEN; tsx watch dev launcher"},
+    {"path": "scripts/start-zdj-lan.ps1", "classification": "FORBIDDEN; manual Engine lifecycle entry named in AGENTS, requires a specific user instruction"},
+    {"path": "scripts/start-zdj-engine-host.ps1", "classification": "FORBIDDEN; process host helper"},
+    {"path": "scripts/windows/start-engine.ps1", "classification": "FORBIDDEN; calls start-zdj-lan.ps1"},
+    {"path": "scripts/windows/start-dev.ps1", "classification": "FORBIDDEN; runs npm run dev"},
+    {"path": "scripts/windows/start-dashboard.ps1", "classification": "FORBIDDEN; runs npm run dev:dashboard"},
+    {"path": "scripts/windows/verify.ps1", "classification": "FORBIDDEN; runs the root aggregate verify"},
+    {"path": "scripts/windows/credential-manager.ps1", "classification": "FORBIDDEN; host credential store read and write"}
   ],
-  "excludedFromS00Execution": ["All runtime, launcher, lifecycle, acceptance, rollout, smoke, guardian, aggregate-test and build commands are NOT_RUN unless separately reviewed with explicit isolation evidence."],
-  "knownUnreviewedEntrypoints": ["Other scripts matching start/run/verify/dev/acceptance/rollout/smoke/guardian are intentionally not classified safe by this file; their status is NOT_RUN."]
+  "ciEntries": [
+    {"path": ".github/workflows/v392-verify.yml", "classification": "FORBIDDEN_OR_NOT_RUN", "note": "push-triggered; runs npm ci, verify:scripts, typecheck, test and build with contents write permission and can commit and push source patches; it does not trigger on v396 branch names, but it is a repository verification entry and is therefore classified"}
+  ],
+  "boundaryEligibleEntries": [
+    {"path": "packages/contracts/package.json", "commands": ["build", "typecheck", "test"]},
+    {"path": "packages/core/package.json", "commands": ["build", "typecheck", "test"]},
+    {"path": "apps/engine/package.json", "commands": ["build", "typecheck", "test"], "note": "the manifest itself is FORBIDDEN because it also declares dev and start"},
+    {"path": "apps/dashboard/package.json", "commands": ["build", "typecheck", "test"], "note": "the manifest itself is FORBIDDEN because it also declares dev"},
+    {"path": "apps/engine/vitest.config.ts", "commands": [], "note": "pins no data dir or port; per-test isolation is measured by the verifier, not assumed"}
+  ],
+  "corrections": "Round 1 recorded 19 entries as boundary-eligible, twelve of them with an empty side-effect list, including three start-* launchers, two acceptance runners, two source-rewriting patch scripts and the credential helper. Round 2 derives the labels from file content: eight entries remain boundary-eligible and the listed nine are forbidden."
 }

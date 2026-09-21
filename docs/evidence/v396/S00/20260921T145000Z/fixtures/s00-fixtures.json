@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "V396-S00-fixtures-1",
+  "cases": [
+    {"id":"normal-entry","scope":{"environment":"TESTNET","accountId":"acct-test","symbol":"BTCUSDT","positionSide":"BOTH"},"factsStatus":"EXACT","planId":"plan-fixture-001","planVersion":1,"ownerVersion":3,"positionVersion":7,"riskGeneration":11,"at":"2026-09-21T06:00:00.000Z","events":["TRADE_PLAN_CREATED","ENTRY_SUBMIT_ATTEMPTED","ENTRY_ORDER_CREATED","ENTRY_FILLED"],"quantityClaimUnits":100,"expected":"MOCK_ENTRY_ONLY"},
+    {"id":"loss-or-deadline-handoff","scope":{"environment":"TESTNET","accountId":"acct-test","symbol":"ETHUSDT","positionSide":"BOTH"},"factsStatus":"EXACT","planId":"plan-fixture-002","planVersion":1,"ownerVersion":4,"positionVersion":9,"riskGeneration":12,"at":"2026-09-21T06:10:00.000Z","events":["TRADE_PLAN_CREATED","POSITION_REVIEW_COMPLETED","HANDOFF_CREATED"],"quantityClaimUnits":80,"expected":"HANDOFF_PENDING"},
+    {"id":"unknown-order","scope":{"environment":"TESTNET","accountId":"acct-test","symbol":"SOLUSDT","positionSide":"BOTH"},"factsStatus":"UNKNOWN","planId":"plan-fixture-003","planVersion":1,"ownerVersion":2,"positionVersion":5,"riskGeneration":13,"at":"2026-09-21T06:20:00.000Z","events":["ENTRY_SUBMIT_ATTEMPTED","EXIT_TASK_UPDATED"],"quantityClaimUnits":50,"expected":"RETAIN_CLAIM_AND_RECONCILE"},
+    {"id":"unknown-funding","scope":{"environment":"TESTNET","accountId":"acct-test","symbol":"XRPUSDT","positionSide":"BOTH"},"factsStatus":"UNKNOWN","fundingStatus":"UNKNOWN","planId":"plan-fixture-004","planVersion":2,"ownerVersion":5,"positionVersion":6,"riskGeneration":14,"at":"2026-09-21T06:30:00.000Z","events":["ACCOUNTING_RECONCILED"],"quantityClaimUnits":25,"expected":"NO_ZERO_SUBSTITUTION"},
+    {"id":"tp-human-concurrency","scope":{"environment":"TESTNET","accountId":"acct-test","symbol":"BNBUSDT","positionSide":"BOTH"},"factsStatus":"EXACT","planId":"plan-fixture-005","planVersion":1,"ownerVersion":8,"positionVersion":10,"riskGeneration":15,"at":"2026-09-21T06:40:00.000Z","events":["TP_SUBMISSION_PREPARED","HANDOFF_CREATED","MANUAL_SUBMISSION_PREPARED"],"quantityClaimUnits":120,"tpClaimUnits":70,"manualClaimUnits":50,"expected":"SHARED_QUANTITY_BUDGET"},
+    {"id":"legacy-auto-no-plan","scope":{"environment":"TESTNET","accountId":"acct-test","symbol":"ADAUSDT","positionSide":"BOTH"},"factsStatus":"EXACT","planId":null,"ownerState":"AUTO_LEGACY","at":"2026-09-21T06:50:00.000Z","events":["POSITION_REVIEW_COMPLETED"],"quantityClaimUnits":30,"expected":"MANUAL_REVIEW_REQUIRED"}
+  ],
+  "scopeExamples": {
+    "oneWay": {"environment":"TESTNET","accountId":"acct-test","symbol":"BTCUSDT","positionSide":"BOTH"},
+    "hedge": {"environment":"TESTNET","accountId":"acct-test","symbol":"BTCUSDT","positionSide":"LONG"}
+  }
+}

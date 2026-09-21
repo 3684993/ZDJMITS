@@ -1,0 +1,957 @@
+{
+  "inventoryVersion": "S00-T01-entry-review-1",
+  "capturedAt": "2026-09-21",
+  "root": "D:\\MITS-WORKTREES\\v396-project-plan-20260921",
+  "entryCount": 99,
+  "entries": [
+    {
+      "path": "apps/dashboard/package.json",
+      "kind": "package-script",
+      "status": "CONDITIONAL_NOT_RUN",
+      "sideEffects": [],
+      "requiredBoundary": "unique temp data dir; unique loopback port; mock/no-network/no-exchange-write assertion; explicit user authorization where lifecycle is involved"
+    },
+    {
+      "path": "apps/dashboard/vite.config.js",
+      "kind": "test-config",
+      "status": "CONDITIONAL_NOT_RUN",
+      "sideEffects": [
+        "network-or-exchange",
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "unique temp data dir; unique loopback port; mock/no-network/no-exchange-write assertion; explicit user authorization where lifecycle is involved"
+    },
+    {
+      "path": "apps/dashboard/vite.config.ts",
+      "kind": "test-config",
+      "status": "CONDITIONAL_NOT_RUN",
+      "sideEffects": [
+        "network-or-exchange",
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "unique temp data dir; unique loopback port; mock/no-network/no-exchange-write assertion; explicit user authorization where lifecycle is involved"
+    },
+    {
+      "path": "apps/engine/package.json",
+      "kind": "package-script",
+      "status": "CONDITIONAL_NOT_RUN",
+      "sideEffects": [
+        "process-lifecycle"
+      ],
+      "requiredBoundary": "unique temp data dir; unique loopback port; mock/no-network/no-exchange-write assertion; explicit user authorization where lifecycle is involved"
+    },
+    {
+      "path": "apps/engine/vitest.config.ts",
+      "kind": "test-config",
+      "status": "CONDITIONAL_NOT_RUN",
+      "sideEffects": [],
+      "requiredBoundary": "unique temp data dir; unique loopback port; mock/no-network/no-exchange-write assertion; explicit user authorization where lifecycle is involved"
+    },
+    {
+      "path": "packages/contracts/package.json",
+      "kind": "package-script",
+      "status": "CONDITIONAL_NOT_RUN",
+      "sideEffects": [],
+      "requiredBoundary": "unique temp data dir; unique loopback port; mock/no-network/no-exchange-write assertion; explicit user authorization where lifecycle is involved"
+    },
+    {
+      "path": "packages/core/package.json",
+      "kind": "package-script",
+      "status": "CONDITIONAL_NOT_RUN",
+      "sideEffects": [],
+      "requiredBoundary": "unique temp data dir; unique loopback port; mock/no-network/no-exchange-write assertion; explicit user authorization where lifecycle is involved"
+    },
+    {
+      "path": "scripts/1/start-qwen3.5-9b-vulkan.ps1",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "process-lifecycle",
+        "host-or-data-mutation",
+        "network-or-exchange"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/1/start-qwen3.8-27b-harness-vulkan1.ps1",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "process-lifecycle",
+        "host-or-data-mutation",
+        "network-or-exchange"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/1/start-qwen3.8-27b-zdj-vulkan1.ps1",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "process-lifecycle",
+        "host-or-data-mutation",
+        "network-or-exchange"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/acceptance-static.ps1",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "network-or-exchange"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/archive-runtime-telemetry.mjs",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/audit-ai-entry-quality.mjs",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/audit-node-runtime.ps1",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/audit-trading-quality-baseline.mjs",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "process-lifecycle",
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/audit-v312-entry-window.mjs",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "network-or-exchange",
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/audit-v392-closeout.mjs",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/audit-v394-entry-authorization.mjs",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/benchmark-v380-web.mjs",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "network-or-exchange",
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/check-v390-btr-readonly.mjs",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "network-or-exchange",
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/check-v390-powerloss.mjs",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "process-lifecycle"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/check-v390-restore-parity.mjs",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/check-v391-tp-legacy-readonly.mjs",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "host-or-data-mutation",
+        "network-or-exchange",
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/dev.mjs",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "process-lifecycle"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/finalize-v320-acceptance.mjs",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "process-lifecycle",
+        "network-or-exchange"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/init-local-runtime.mjs",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "process-lifecycle",
+        "host-or-data-mutation",
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/init-local-runtime.test.mjs",
+      "kind": "test-script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "process-lifecycle",
+        "network-or-exchange",
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/inspect-sqlite-capacity.mjs",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/install-fresh-testnet-db.ps1",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "host-or-data-mutation",
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/install-storage-retention.mjs",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "host-or-data-mutation"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/install-zdj-new.ps1",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "process-lifecycle",
+        "host-or-data-mutation",
+        "network-or-exchange"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/maintain-storage.mjs",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "host-or-data-mutation",
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/maintain-storage.test.mjs",
+      "kind": "test-script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "process-lifecycle",
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/market-health-parser.mjs",
+      "kind": "script",
+      "status": "CONDITIONAL_NOT_RUN",
+      "sideEffects": [],
+      "requiredBoundary": "unique temp data dir; unique loopback port; mock/no-network/no-exchange-write assertion; explicit user authorization where lifecycle is involved"
+    },
+    {
+      "path": "scripts/observe-v390-closeout.mjs",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "process-lifecycle",
+        "network-or-exchange",
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/observe-v391-admission.mjs",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "network-or-exchange",
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/package-zdj-deploy.ps1",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "host-or-data-mutation"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/prune-zdj-backups.mjs",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "process-lifecycle",
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/recompute-v320-acceptance-summary.ps1",
+      "kind": "script",
+      "status": "CONDITIONAL_NOT_RUN",
+      "sideEffects": [],
+      "requiredBoundary": "unique temp data dir; unique loopback port; mock/no-network/no-exchange-write assertion; explicit user authorization where lifecycle is involved"
+    },
+    {
+      "path": "scripts/repair-v391-rejected-tp.mjs",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "host-or-data-mutation",
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/repair-v392-storage.ps1",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/replay-cycle-accounting.ts",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "host-or-data-mutation",
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/reset-testnet-runtime-db.mjs",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "host-or-data-mutation",
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/reset-testnet-runtime-db.test.mjs",
+      "kind": "test-script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "process-lifecycle",
+        "host-or-data-mutation",
+        "network-or-exchange",
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/run-3h-endurance.ps1",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "process-lifecycle",
+        "host-or-data-mutation",
+        "network-or-exchange",
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/run-acceptance.ps1",
+      "kind": "script",
+      "status": "CONDITIONAL_NOT_RUN",
+      "sideEffects": [],
+      "requiredBoundary": "unique temp data dir; unique loopback port; mock/no-network/no-exchange-write assertion; explicit user authorization where lifecycle is involved"
+    },
+    {
+      "path": "scripts/run-lan-availability-smoke.ps1",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "network-or-exchange",
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/run-v312-30m-acceptance.ps1",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "process-lifecycle",
+        "host-or-data-mutation",
+        "network-or-exchange",
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/run-v320-final-60m-acceptance.ps1",
+      "kind": "script",
+      "status": "CONDITIONAL_NOT_RUN",
+      "sideEffects": [],
+      "requiredBoundary": "unique temp data dir; unique loopback port; mock/no-network/no-exchange-write assertion; explicit user authorization where lifecycle is involved"
+    },
+    {
+      "path": "scripts/run-v331-position-smoke.ps1",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "network-or-exchange",
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/run-v332-position-smoke.ps1",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "network-or-exchange",
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/run-v333-testnet-acceptance.ps1",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "network-or-exchange",
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/run-v333-trade-audit.ps1",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "network-or-exchange",
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/run-v333-trade-repair.ps1",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "host-or-data-mutation",
+        "network-or-exchange",
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/run-v334-traderecord-smoke.ps1",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "network-or-exchange",
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/run-v340-portfolio-smoke.ps1",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "network-or-exchange",
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/run-v360-runtime-acceptance.ps1",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "network-or-exchange",
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/run-v363-testnet-acceptance.ps1",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "network-or-exchange",
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/run-v380-model-ab.mjs",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "network-or-exchange"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/run-v392-natural-acceptance.ps1",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "network-or-exchange",
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/run-v394-local-rollout.ps1",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "host-or-data-mutation",
+        "network-or-exchange",
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/run-v394-local-rollout.test.ps1",
+      "kind": "test-script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "network-or-exchange"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/run-v394-readonly-canary.ps1",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "host-or-data-mutation",
+        "network-or-exchange",
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/run-v394-readonly-canary.test.ps1",
+      "kind": "test-script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "network-or-exchange"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/run-v394-stage7-to-stage9.ps1",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "process-lifecycle",
+        "host-or-data-mutation",
+        "network-or-exchange",
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/run-v394-stage7-to-stage9.test.ps1",
+      "kind": "test-script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "process-lifecycle",
+        "host-or-data-mutation",
+        "network-or-exchange",
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/serve-v380-dashboard-fixture.mjs",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "process-lifecycle",
+        "network-or-exchange",
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/serve-v390-dashboard-fixture.mjs",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "process-lifecycle",
+        "network-or-exchange"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/smoke.mjs",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "process-lifecycle",
+        "network-or-exchange",
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/start-v3-3h-fixed.ps1",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/start-v3-3h.ps1",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/start-v3.ps1",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "process-lifecycle",
+        "host-or-data-mutation",
+        "network-or-exchange",
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/start-zdj-engine-host.ps1",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "process-lifecycle"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/start-zdj-engine-host.test.ps1",
+      "kind": "test-script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "process-lifecycle",
+        "host-or-data-mutation"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/start-zdj-lan.ps1",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "process-lifecycle",
+        "host-or-data-mutation",
+        "network-or-exchange",
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/status-v3.ps1",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "network-or-exchange",
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/status-zdj-lan.ps1",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "network-or-exchange",
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/stop-v3.ps1",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "host-or-data-mutation"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/stop-zdj-lan.ps1",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "host-or-data-mutation",
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/summarize-v392-trajectories.mjs",
+      "kind": "script",
+      "status": "CONDITIONAL_NOT_RUN",
+      "sideEffects": [],
+      "requiredBoundary": "unique temp data dir; unique loopback port; mock/no-network/no-exchange-write assertion; explicit user authorization where lifecycle is involved"
+    },
+    {
+      "path": "scripts/summarize-v392-trajectories.test.mjs",
+      "kind": "test-script",
+      "status": "CONDITIONAL_NOT_RUN",
+      "sideEffects": [],
+      "requiredBoundary": "unique temp data dir; unique loopback port; mock/no-network/no-exchange-write assertion; explicit user authorization where lifecycle is involved"
+    },
+    {
+      "path": "scripts/v382-research-quality.ts",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "process-lifecycle",
+        "network-or-exchange"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/v390-admission-soak.ts",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/v390-primary-evaluation.ts",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "process-lifecycle"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/v390-research-evaluation.ts",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "process-lifecycle"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/v393-apply-autonomous-entry-patch.mjs",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "process-lifecycle"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/v393-contract-cleanup.mjs",
+      "kind": "script",
+      "status": "CONDITIONAL_NOT_RUN",
+      "sideEffects": [],
+      "requiredBoundary": "unique temp data dir; unique loopback port; mock/no-network/no-exchange-write assertion; explicit user authorization where lifecycle is involved"
+    },
+    {
+      "path": "scripts/v393-fix-entry-wiring.mjs",
+      "kind": "script",
+      "status": "CONDITIONAL_NOT_RUN",
+      "sideEffects": [],
+      "requiredBoundary": "unique temp data dir; unique loopback port; mock/no-network/no-exchange-write assertion; explicit user authorization where lifecycle is involved"
+    },
+    {
+      "path": "scripts/v394-stage6-preflight.mjs",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "network-or-exchange",
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/v394-stage6-set-readonly.mjs",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "network-or-exchange",
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/v396-s00-static-check.mjs",
+      "kind": "script",
+      "status": "ALLOWED_STATIC",
+      "sideEffects": [
+        "process-lifecycle",
+        "network-or-exchange",
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "static reads only; OS temp hash mutation"
+    },
+    {
+      "path": "scripts/watch-zdj-lan.ps1",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "network-or-exchange",
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/windows/credential-manager.ps1",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/windows/install.ps1",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "host-or-data-mutation"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/windows/run-engine-guardian.ps1",
+      "kind": "script",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "sideEffects": [
+        "process-lifecycle",
+        "host-or-data-mutation",
+        "runtime-data-or-credential-boundary"
+      ],
+      "requiredBoundary": "do not execute in S00"
+    },
+    {
+      "path": "scripts/windows/start-dashboard.ps1",
+      "kind": "script",
+      "status": "CONDITIONAL_NOT_RUN",
+      "sideEffects": [],
+      "requiredBoundary": "unique temp data dir; unique loopback port; mock/no-network/no-exchange-write assertion; explicit user authorization where lifecycle is involved"
+    },
+    {
+      "path": "scripts/windows/start-dev.ps1",
+      "kind": "script",
+      "status": "CONDITIONAL_NOT_RUN",
+      "sideEffects": [],
+      "requiredBoundary": "unique temp data dir; unique loopback port; mock/no-network/no-exchange-write assertion; explicit user authorization where lifecycle is involved"
+    },
+    {
+      "path": "scripts/windows/start-engine.ps1",
+      "kind": "script",
+      "status": "CONDITIONAL_NOT_RUN",
+      "sideEffects": [],
+      "requiredBoundary": "unique temp data dir; unique loopback port; mock/no-network/no-exchange-write assertion; explicit user authorization where lifecycle is involved"
+    },
+    {
+      "path": "scripts/windows/verify.ps1",
+      "kind": "script",
+      "status": "CONDITIONAL_NOT_RUN",
+      "sideEffects": [],
+      "requiredBoundary": "unique temp data dir; unique loopback port; mock/no-network/no-exchange-write assertion; explicit user authorization where lifecycle is involved"
+    }
+  ],
+  "statusLegend": {
+    "FORBIDDEN_OR_NOT_RUN": "not executed; lifecycle/host/data/network risk detected",
+    "ALLOWED_STATIC": "executed by S00",
+    "CONDITIONAL_NOT_RUN": "not executed; requires boundary proof"
+  }
+}

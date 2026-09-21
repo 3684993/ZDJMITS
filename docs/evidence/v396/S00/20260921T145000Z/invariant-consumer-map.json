@@ -1,0 +1,14 @@
+[
+  {"id":"I01","consumer":"ownership CAS and AI command gate","phase":"S02-S04","contractSection":"4","plannedTestStages":["S02","S04"]},
+  {"id":"I02","consumer":"durable quantity claim and UNKNOWN recovery","phase":"S01-S04","contractSection":"2,6","plannedTestStages":["S01","S04"]},
+  {"id":"I03","consumer":"exit authorization maxQuantityUnits and reduce-only adapter","phase":"S03-S04","contractSection":"6","plannedTestStages":["S03","S04"]},
+  {"id":"I04","consumer":"cycle accounting and cumulative loss estimate","phase":"S01-S03","contractSection":"5","plannedTestStages":["S01","S03"]},
+  {"id":"I05","consumer":"FactStatus and unresolved-risk state separation","phase":"S01","contractSection":"2","plannedTestStages":["S01"]},
+  {"id":"I06","consumer":"humanBook/accounting retention and admission snapshot","phase":"S01-S05","contractSection":"2,7","plannedTestStages":["S01","S05"]},
+  {"id":"I07","consumer":"environment/egress/TP maintenance boundary","phase":"S02-S04","contractSection":"6","plannedTestStages":["S02","S04"]},
+  {"id":"I08","consumer":"TradePlan authorization split from model output","phase":"S06-S07","contractSection":"3,6","plannedTestStages":["S06","S07"]},
+  {"id":"I09","consumer":"availableAt replay filter and preregistration split","phase":"S00/S09","contractSection":"1","plannedTestStages":["S00","S09"]},
+  {"id":"I10","consumer":"manual lifecycle policy and separate feature state","phase":"S00/S10","contractSection":"6","plannedTestStages":["S00","S10"]},
+  {"id":"I11","consumer":"persistent idempotent exit task and recovery reconciliation","phase":"S04","contractSection":"6","plannedTestStages":["S04"]},
+  {"id":"I12","consumer":"settings field consumer and runtime identity mapping","phase":"S08-S10","contractSection":"1,8","plannedTestStages":["S08","S10"]}
+]

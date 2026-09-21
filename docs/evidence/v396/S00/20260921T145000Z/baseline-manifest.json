@@ -1,0 +1,50 @@
+{
+  "stageId": "S00",
+  "runId": "20260921T145000Z",
+  "worktree": "D:\\MITS-WORKTREES\\v396-project-plan-20260921",
+  "branch": "codex/v396-project-plan-20260921",
+  "plannedBaselineSha": "4473a6f59f132eddb35fd3cca2ddf8e6fa7bdf8a",
+  "actualBaseSha": "d3f6d262f3bcc05dbd3d9b793f8a3f41da7e5fee",
+  "actualHeadAtStart": "d3f6d262f3bcc05dbd3d9b793f8a3f41da7e5fee",
+  "baseDrift": "The planned historical source SHA is not the current worktree HEAD; no historical line numbers were applied.",
+  "gitStatusAtStart": "clean",
+  "environment": {
+    "os": "Windows",
+    "node": "v22.23.1",
+    "npm": "10.9.8",
+    "packageVersion": "3.9.4",
+    "contractVersion": "V396-C1 proposed specification",
+    "lockfileSha256": "3ca47cf06a27c4b19c8d92d4b1b6bb1caaf3307e53301c729cfa122c89206a9a"
+  },
+  "defaultSettingsWhitelist": {
+    "settingsVersion": 20,
+    "environment": "TESTNET",
+    "executionMode": "READ_ONLY",
+    "marketDataMode": "BINANCE",
+    "aiMode": "OPENAI_COMPATIBLE",
+    "entrySafetyMode": "AUTO",
+    "protectionMode": "SHADOW",
+    "tradeEconomicsAdmissionMode": "SHADOW",
+    "secondBrainReview": "OFF",
+    "humanHandoffAfterMinutes": 1440,
+    "lossHandoffBars": 4,
+    "tpMinNetProfitUsd": 1,
+    "credentialRef": "binance-primary (reference only; secret value not read)"
+  },
+  "identityHashes": {
+    "packageLock": "3ca47cf06a27c4b19c8d92d4b1b6bb1caaf3307e53301c729cfa122c89206a9a",
+    "s00Specification": "586597e737474aa548f4c747d9a83c1d8d955c7439ff38c9d097f5927d5bfe93",
+    "settingsDefault": "c7f80e457e3ac2ede764767e2e6e2d253b39111a9f0a4bc765abe761d06adc62",
+    "contracts": "7fe2577e3a2114021b4783136e16e0eaad27562e0d061845183725f3fc406a0d",
+    "fixtureFile": "9deaa02907b4334852ac2a59080d95681191e7d95a96133a1de0a87e156325df"
+  },
+  "historicalEvidence": [
+    "docs/reports/v395-final-24h-soak-and-release-baseline-20260921.md",
+    "docs/reports/v395-1m-kline-gap-live-deployment-acceptance-20260919.md"
+  ],
+  "knownUnacceptedItems": [
+    "Historical P1/P2 and PENDING claims are references only; S00 does not re-accept them.",
+    "Live runtime identity, account state, and current exchange facts were not read.",
+    "No claim is made that package version equals loaded runtime build identity."
+  ]
+}

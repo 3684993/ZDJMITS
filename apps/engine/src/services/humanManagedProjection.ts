@@ -1,5 +1,6 @@
 import { resolveUnderlying } from '@zdj/core';
 import type { RuntimeState } from '../state/runtimeState.js';
+import {portfolioRiskSnapshot} from './v396OfflineStages.js';
 
 export type HumanManagedSeverity='LOW'|'MEDIUM'|'HIGH'|'CRITICAL';
 
@@ -47,6 +48,7 @@ export function projectHumanManaged(state:RuntimeState){
     summary:{count:items.length,notionalUsd:hmNotional,unrealizedPnl:items.reduce((n,row)=>n+Number(row.unrealizedPnl??0),0),equityUsd:equity,
       caps:{enabled:settings.humanManagedAdmissionCapsEnabled,maxPositions:settings.maxHumanManagedPositions,maxNotionalPctEquity:settings.maxHumanManagedNotionalPctEquity,maxNotionalUsd:equity*settings.maxHumanManagedNotionalPctEquity},
       newEntryBlockedByCaps:settings.humanManagedAdmissionCapsEnabled&&(items.length>=settings.maxHumanManagedPositions||hmNotional>=equity*settings.maxHumanManagedNotionalPctEquity-1e-8)},
-    policy:{humanHandoffMeansManualHold:true,automaticStopLoss:false,timeoutClose:false,panicClose:false,severityMayAutoExit:false}
+    policy:{humanHandoffMeansManualHold:true,automaticStopLoss:false,timeoutClose:false,panicClose:false,severityMayAutoExit:false},
+    riskSnapshot:portfolioRiskSnapshot({equity,positions:positions.map((p:any)=>({scope:`${p.symbol}:${p.side}`,notional:Number(p.quantity)*Number(p.markPrice??p.entryPrice),unrealizedPnl:Number(p.unrealizedPnl??0),human:p.managementStatus==='HUMAN_MANAGED'})),claims:[],unknownClaims:positions.filter((p:any)=>p.entryTimeSource==='UNKNOWN').length,stressLoss:null,coverage:'UNKNOWN'})
   };
 }

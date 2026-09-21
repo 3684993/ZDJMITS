@@ -23,6 +23,7 @@ import { EntryCoordinator } from "../services/entryCoordinator.js";
 import { PositionService } from "../services/positionService.js";
 import { TpGuardian } from "../services/tpGuardian.js";
 import { primaryBrainHealth } from "../services/aiResourceHealth.js";
+import { primaryObservation } from "../services/s01TruthAccountingObservability.js";
 import { ExchangeLoop } from "../services/exchangeLoop.js";
 import { ReconciliationService } from "../services/reconciliationService.js";
 import { BinanceTransport, verifyBinanceTransportEgress } from "../adapters/binance/BinanceTransport.js";
@@ -1327,7 +1328,8 @@ export class EngineRuntime {
         lastRunAgeMs: lastPrimaryAge,
         idleReason: primaryIdleReason,
       }),
-      unexplainedIdle = primaryBrainState.unexplainedIdle;
+      unexplainedIdle = primaryBrainState.unexplainedIdle,
+      primaryObservationState = primaryObservation({runtimePaused:paused,marketOpen:!marketDataReason,resourceFault:primaryBrainState.status==='DEGRADED'||primaryBrainState.status==='UNAVAILABLE',idleReason:primaryIdleReason,lastRunAt:latestPrimary?.startedAt??null,now,maxIdleMs:10*60_000});
     const activityBase = this.state.activity,
       since = now - 30 * 60_000,
       recentEvents = this.settingsStore.runtimeEvents(
@@ -1450,6 +1452,8 @@ export class EngineRuntime {
       },
       primaryBrain: {
         status: primaryBrainState.status,
+        observation: primaryObservationState,
+        alert: primaryObservationState==='RESOURCE_FAULT'?'PRIMARY_RESOURCE_FAULT':primaryObservationState==='RUNTIME_PAUSED'?null:primaryObservationState==='MARKET_PAUSE'?null:null,
         runs: resources.find(x=>x.role==="PRIMARY_BRAIN")?.totalRuns??0,
         historicalRuns:primary.length,
         resource: resources.find((x) => x.role === "PRIMARY_BRAIN"),

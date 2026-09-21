@@ -5,6 +5,7 @@ import type {DomainEvent,EventBus} from '../events/eventBus.js';
 import {buildOpportunityEvidence,qualityPolicy} from './opportunityEvidence.js';
 import {buildEpisodeEvidence} from './tradingEpisodeEvidence.js';
 import {candidateFunnel,summarizeEntryQuality} from './tradingQualityBaseline.js';
+import {collectorWindowSummary} from './s01TruthAccountingObservability.js';
 
 const hash=(v:unknown)=>createHash('sha256').update(JSON.stringify(v)).digest('hex');
 const rows=(db:DatabaseSync,scope:string,kind:string):any[]=>db.prepare('SELECT payload FROM tq_facts WHERE scope=? AND kind=?').all(scope,kind).map(r=>JSON.parse(String(r.payload)));
@@ -32,6 +33,7 @@ export class TradingQualityCollector {
       CREATE TABLE IF NOT EXISTS tq_episodes(scope TEXT NOT NULL,intent_id TEXT NOT NULL,updated_at INTEGER NOT NULL,payload TEXT NOT NULL,PRIMARY KEY(scope,intent_id));
       CREATE TABLE IF NOT EXISTS tq_episode_work(scope TEXT NOT NULL,intent_id TEXT NOT NULL,symbol TEXT NOT NULL,dirty INTEGER NOT NULL DEFAULT 1,first_fill_at INTEGER,observation_until INTEGER,matured INTEGER NOT NULL DEFAULT 0,updated_at INTEGER NOT NULL,PRIMARY KEY(scope,intent_id));
       CREATE TABLE IF NOT EXISTS tq_candidate_state(scope TEXT NOT NULL,candidate_id TEXT NOT NULL,fingerprint TEXT NOT NULL,revision INTEGER NOT NULL,updated_at INTEGER NOT NULL,PRIMARY KEY(scope,candidate_id));
+      CREATE TABLE IF NOT EXISTS tq_collector_samples(scope TEXT NOT NULL,identity TEXT NOT NULL,at INTEGER NOT NULL,event_count INTEGER NOT NULL,PRIMARY KEY(scope,identity,at));
       INSERT OR IGNORE INTO tq_migrations VALUES(1,${Date.now()});`);
     (this.state as any).tradingQualityEvidenceReady=true;
     this.listener=e=>{try{this.onEvent(e);}catch(error){this.error=String(error);(this.state as any).tradingQualityEvidenceReady=false;if(qualityPolicy(this.state.settings).mode==='ENFORCE'&&['TRADING_QUALITY_OPPORTUNITY','TRADING_QUALITY_PRIMARY_LINK','ENTRY_SUBMIT_ATTEMPTED'].includes(e.type))throw error;}};
@@ -157,6 +159,8 @@ export class TradingQualityCollector {
       }
       if(now-this.lastSample>=5000){
         this.lastSample=now;
+        const scope=this.scope(),eventCount=Number((this.db.prepare("SELECT COUNT(*) AS n FROM tq_facts WHERE scope=? AND kind='events' AND ts<=?").get(scope,now) as any)?.n??0);
+        this.db.prepare('INSERT OR IGNORE INTO tq_collector_samples(scope,identity,at,event_count) VALUES(?,?,?,?)').run(scope,scope,now,eventCount);
         for(const c of this.state.universe){
           const m=this.state.snapshots.get(c.symbol),opportunity=m&&p.mode!=='OFF'?buildOpportunityEvidence(m,this.state.settings,now):null;
           const candidateId=`${c.symbol}:${c.selectionGeneration}`,lifecycle=this.state.candidateLifecycle.get(c.symbol)??null;
@@ -228,7 +232,8 @@ export function tradingQualityReport(db:DatabaseSync,scope:string){
   const orders=rows(db,scope,'orders').filter(o=>o.exchangeOrderId),fills=rows(db,scope,'fills'),intents=rows(db,scope,'intents');
   const quality=summarizeEntryQuality(episodes);
   const complete=Object.values(quality.byHorizon).some(h=>h.coverage.complete>0);
-  return {schemaVersion:'TQ-BASELINE-2',scope,generatedAt:Date.now(),quality,episodes,
+  const samples=db.prepare('SELECT identity,at,event_count AS count FROM tq_collector_samples WHERE scope=? ORDER BY at').all(scope) as any[];
+  return {schemaVersion:'TQ-BASELINE-2',scope,generatedAt:Date.now(),quality,episodes,collectorWindow:collectorWindowSummary(samples.map(row=>({identity:String(row.identity),at:Number(row.at),count:Number(row.count)})),`collector:${scope}`),
     funnel:candidateFunnel({candidates:candidates.length,primaryRuns:uniqueRuns.length,place:uniqueRuns.filter(r=>String(r.decision).startsWith('PLACE_')).length,
       wait:uniqueRuns.filter(r=>r.decision==='WAIT_FOR_PRICE').length,reselect:uniqueRuns.filter(r=>r.decision==='RESELECT_SYMBOL').length,intents:intents.length,
       orders:new Set(orders.map(o=>o.id)).size,fills:new Set(fills.filter(f=>f.attributionStatus==='SYSTEM_ATTRIBUTED'&&orders.some(o=>o.symbol===f.symbol&&o.exchangeOrderId===f.orderId)).map(f=>`${f.symbol}:${f.orderId}`)).size,

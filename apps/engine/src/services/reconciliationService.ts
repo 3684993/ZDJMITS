@@ -13,7 +13,7 @@ const terminal=(status:string)=>['FILLED','CANCELED','EXPIRED','REJECTED'].inclu
 const nonEmpty=(value:unknown):value is string=>typeof value==='string'&&value.trim().length>0;
 const isTakeProfitOrder=(row:EntryOrder|TakeProfitOrder):row is TakeProfitOrder=>row.side==='BUY'||row.side==='SELL';
 export const entryOrderIdentityMatch=(local:EntryOrder,remote:EntryOrder)=>local.symbol===remote.symbol&&((nonEmpty(local.clientOrderId)&&nonEmpty(remote.clientOrderId)&&local.clientOrderId===remote.clientOrderId)||(nonEmpty(local.exchangeOrderId)&&nonEmpty(remote.exchangeOrderId)&&local.exchangeOrderId===remote.exchangeOrderId));
-const UNKNOWN_RISK_EVIDENCE_TTL_MS=5*60_000,UNKNOWN_RISK_MAX_LOOKBACK_MS=7*24*60*60_000;
+const UNKNOWN_RISK_EVIDENCE_TTL_MS=5*60_000;
 
 type EntryPositionRelation='ABSENT'|'ATTRIBUTED'|'UNRELATED_PROVEN'|'AMBIGUOUS';
 
@@ -37,9 +37,10 @@ export class ReconciliationService {
   }
   private async noActiveRiskEvidence(local:EntryOrder,positions:Position[],fullOrderScan:boolean,now:number){
     const reader=this.adapter.fetchSymbolRiskFacts??this.adapter.fetchSymbolTradeFacts;if(!fullOrderScan||!reader||(!nonEmpty(local.clientOrderId)&&!nonEmpty(local.exchangeOrderId)))return null;
-    const age=now-Number(local.createdAt??now);if(age<0||age>UNKNOWN_RISK_MAX_LOOKBACK_MS)return null;
+    const createdAt=Number(local.createdAt??now);if(!Number.isFinite(createdAt)||createdAt>now)return null;
     try{
-      const facts=await reader.call(this.adapter,local.symbol,Math.max(0,Number(local.createdAt)-60_000),now),ids=new Set([local.clientOrderId,local.exchangeOrderId].filter(nonEmpty)),orderConflict=facts.orders.some(row=>ids.has(row.clientOrderId)||ids.has(row.orderId)),fillConflict=facts.fills.some(row=>ids.has(row.clientOrderId)||ids.has(row.orderId)),positionRelation=this.entryPositionRelation(local,positions),positionConflict=positionRelation==='ATTRIBUTED';
+      const coverageStart=Math.max(0,createdAt-60_000),facts=await reader.call(this.adapter,local.symbol,coverageStart,now),ids=new Set([local.clientOrderId,local.exchangeOrderId].filter(nonEmpty)),orderConflict=facts.orders.some(row=>ids.has(row.clientOrderId)||ids.has(row.orderId)),fillConflict=facts.fills.some(row=>ids.has(row.clientOrderId)||ids.has(row.orderId)),positionRelation=this.entryPositionRelation(local,positions),positionConflict=positionRelation==='ATTRIBUTED',coverageComplete=facts.coverageComplete!==false&&Number(facts.coverageStart??coverageStart)<=coverageStart&&Number(facts.coverageEnd??now)>=now;
+      if(!coverageComplete){this.events.publish('ENTRY_ORDER_RISK_FACT_COVERAGE_INCOMPLETE',{orderId:local.id,symbol:local.symbol,coverageStart,coverageEnd:now,reportedStart:facts.coverageStart??null,reportedEnd:facts.coverageEnd??null,occupancyReleased:false,failClosed:true},local.symbol);return null;}
       if(orderConflict||fillConflict||positionConflict)return{status:'CONFLICT' as const,sources:[orderConflict?'ALL_ORDERS_IDENTITY_PRESENT':null,fillConflict?'USER_TRADES_IDENTITY_PRESENT':null,positionConflict?'POSITION_ATTRIBUTED_TO_ENTRY':null].filter((x):x is string=>Boolean(x)),checkedAt:now,validUntil:now,identityTombstone:entryIdentityTombstone(local),reason:'LATE_EXCHANGE_RISK_FACT_APPEARED'};
       if(positionRelation==='AMBIGUOUS'){this.events.publish('ENTRY_ORDER_POSITION_ATTRIBUTION_UNRESOLVED',{orderId:local.id,symbol:local.symbol,side:local.side,clientOrderId:local.clientOrderId??null,exchangeOrderId:local.exchangeOrderId??null,reason:'POSITION_PRESENT_WITHOUT_DURABLE_ENTRY_PROVENANCE',occupancyReleased:false,failClosed:true},local.symbol);return null;}
       return{status:'VERIFIED_NO_ACTIVE_RISK' as const,sources:['BINANCE_EXACT_ORDER_NOT_FOUND','BINANCE_OPEN_ORDERS_IDENTITY_ABSENT','BINANCE_USER_TRADES_IDENTITY_ABSENT','BINANCE_ALL_ORDERS_IDENTITY_ABSENT',positionRelation==='UNRELATED_PROVEN'?'POSITION_PRESENT_PROVEN_OTHER_CYCLE':'BINANCE_LONG_SHORT_POSITION_ZERO'],checkedAt:now,validUntil:now+UNKNOWN_RISK_EVIDENCE_TTL_MS,identityTombstone:entryIdentityTombstone(local),reason:'EXCHANGE_TERMINAL_STATUS_UNKNOWN_CURRENT_RISK_ABSENT'};

@@ -45,9 +45,9 @@ export interface ExchangeTradeAdapter {
   cancelManualOrder?(order:ManualOrder):Promise<ManualOrder>;
   tick?(quotes:Map<string,Quote>):Promise<{filledEntries:EntryOrder[];filledTakeProfits:TakeProfitOrder[]}>;
   fetchRecentTradeAudit?(startTime:number,endTime:number,maxFills?:number,additionalSymbols?:string[]):Promise<TradeAuditSnapshot>;
-  fetchSymbolTradeFacts?(symbol:string,startTime:number,endTime:number):Promise<{fills:ExchangeTradeFill[];income:ExchangeIncomeFact[];orders:ExchangeOrderFact[]}>;
+  fetchSymbolTradeFacts?(symbol:string,startTime:number,endTime:number):Promise<{fills:ExchangeTradeFill[];income:ExchangeIncomeFact[];orders:ExchangeOrderFact[];coverageComplete?:boolean;coverageStart?:number;coverageEnd?:number}>;
   /** Lean UNKNOWN-risk proof: identity and fill truth only; never pays the heavy income endpoint cost. */
-  fetchSymbolRiskFacts?(symbol:string,startTime:number,endTime:number):Promise<{fills:ExchangeTradeFill[];orders:ExchangeOrderFact[]}>;
+  fetchSymbolRiskFacts?(symbol:string,startTime:number,endTime:number):Promise<{fills:ExchangeTradeFill[];orders:ExchangeOrderFact[];coverageComplete?:boolean;coverageStart?:number;coverageEnd?:number}>;
 }
 
 export interface ExchangeTradeFill {

@@ -1,4 +1,5 @@
 import type { ManualIntent, ManualOrder, EntryIntent, EntryOrder } from '@zdj/contracts';
+import { canonicalScope } from './v396OfflineStages.js';
 
 /** Shared facts: UNKNOWN is occupied; an unfilled order is never a position reduction. */
 export const activeOrderStatus = (status: string) =>
@@ -7,7 +8,8 @@ export const terminalOrderStatus = (status: string) =>
   ['FILLED', 'CANCELED', 'EXPIRED', 'REJECTED'].includes(status);
 export const exitAction = (action: string) => ['REDUCE', 'EMERGENCY_CLOSE'].includes(action);
 export function executionScope(environment: string, account: string, symbol: string, side: string) {
-  return JSON.stringify([environment, account, symbol.toUpperCase(), side]);
+  const positionSide=(side==='LONG'||side==='SHORT'||side==='BOTH'?side:'BOTH') as 'LONG'|'SHORT'|'BOTH';
+  return canonicalScope({environment,accountId:account,symbol,positionSide});
 }
 export function manualOrderFor(intent: ManualIntent, orders: Iterable<ManualOrder>) {
   return [...orders].find(order => order.symbol === intent.symbol &&

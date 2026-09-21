@@ -38,6 +38,8 @@
 
 窗口完整性结论：**采样链完整、身份链完整、无窗口拼接**。唯一缺陷是"尚未满 24h"。
 
+> **收口前复核（2026-09-21 09:40:44，elapsedHours 21.70，131 采样）**：自本报告主体数据截止点（09:20:42）之后，`soak-progress.json` 与 `soak-alerts.md` 显示 **无任何新增告警**；`pipelineState=RUNNING`、`egress=VERIFIED`、`positions=33`、`TP=33/33`、`historicalUnknownCount=30`、`productionWrites=0`、`blockedProductionWriteAttempts=0`、`429/418` 仍为 17/3（**零增量**）、`restartCount=165`、pid/instanceId/buildId 全部不变。剩余 **2.3h** 应于 11:59:00 收口。
+
 ## 3. 代码 / 构建身份闭环（Stage 1）
 
 **冻结候选（运行中）**

@@ -1,0 +1,96 @@
+{
+  "stageId": "S02",
+  "runId": "20260921T190000Z",
+  "status": "READY_FOR_REVIEW",
+  "selfSignedAccepted": false,
+  "acceptanceOwner": "总设计",
+  "base": {
+    "commit": "a534a314ace15e0281cded68fc97b578809a8cb4",
+    "branch": "codex/v396-design-completion-20260921",
+    "worktree": "D:/MITS-worktrees/v396-design-completion-20260921",
+    "prBase": "codex/v396-project-plan-20260921"
+  },
+  "environment": {
+    "node": "v22.23.1",
+    "os": "Windows"
+  },
+  "contractVersion": "V396-C1",
+  "invariants": [
+    "I01",
+    "I02",
+    "I06",
+    "I08",
+    "I10",
+    "I11"
+  ],
+  "commands": [
+    {
+      "cmd": "node scripts/v396-s00-static-check.mjs",
+      "exit": 0,
+      "artifact": "docs/evidence/v396/S02/20260921T190000Z/s00-static-gate.json",
+      "note": "108 derived entries, rule table unchanged"
+    },
+    {
+      "cmd": "npm run typecheck -w @zdj/engine",
+      "exit": 0
+    },
+    {
+      "cmd": "npx vitest run --root apps/engine (full workspace)",
+      "exit": 0,
+      "note": "132 test files passed, 0 failed"
+    },
+    {
+      "cmd": "npx vitest run (ownership, audit-boundary and coverage suites)",
+      "exit": 0,
+      "artifact": "docs/evidence/v396/S02/20260921T190000Z/ownership-tests.json",
+      "tests": {
+        "files": 6,
+        "total": 62,
+        "passed": 62,
+        "failed": 0,
+        "skipped": 0
+      }
+    }
+  ],
+  "scopeGuard": {
+    "deployed": false,
+    "engineLifecycle": "NOT_USED",
+    "liveSettings": "NOT_MODIFIED",
+    "liveDatabase": "NOT_TOUCHED",
+    "exchangeWrites": 0,
+    "network": "NOT_USED",
+    "migrationAppliedToLive": false,
+    "newAiWriteAuthority": "NONE",
+    "s03Dependency": "S03 remains a precondition for any exit verdict"
+  },
+  "changedFiles": [
+    {
+      "path": "apps/engine/src/runtime/appRuntime.ts",
+      "sha256NormalizedLF": "20efa7529a783daea591e2f24ff374e9594353a1929cca7c4e4f666b18bc3b23"
+    },
+    {
+      "path": "apps/engine/src/services/ownershipJournal.ts",
+      "sha256NormalizedLF": "a662523bc77f6424d118c49f2f3082c43ea22e6087df28e0d494aabd5540f603"
+    },
+    {
+      "path": "apps/engine/src/services/ownershipRuntime.test.ts",
+      "sha256NormalizedLF": "f16b994c6288de4b2228b40782850a09381ae7fcb3befb43d069430731922769"
+    },
+    {
+      "path": "apps/engine/src/services/ownershipRuntime.ts",
+      "sha256NormalizedLF": "03117d093abc79e2dc4dc318dcd76b6688cef6aa5b4c6476113b513bf56c7977"
+    },
+    {
+      "path": "apps/engine/src/services/ownershipMigration.ts",
+      "sha256NormalizedLF": "231a26bec7e85bb00733e983a379e153e4ab8892cc6ddacbc432e6f0621ec40c"
+    },
+    {
+      "path": "apps/engine/src/services/ownershipS02Acceptance.test.ts",
+      "sha256NormalizedLF": "a32a4997b433b2884ab334b39df188972eaf4467b8fddad5af161deec78a5d44"
+    },
+    {
+      "path": "apps/engine/src/services/ownershipService.ts",
+      "sha256NormalizedLF": "d26e2733712f94999d94c3d3c52377a2479fa4421d09ee70c7a59b97559e85a6"
+    }
+  ]
+}

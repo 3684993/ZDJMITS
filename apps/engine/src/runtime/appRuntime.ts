@@ -554,7 +554,7 @@ export class EngineRuntime {
     });
     this.every(2_000,async()=>{if(this.state.settings.connections.executionMode==='TESTNET_ENABLED')await this.manual.resumeExitGoals();});
     this.every(1_000,()=>this.writes.flush());
-    this.every(60_000,()=>{this.ownership?.expireDue();});
+    this.every(5_000,()=>{this.ownership?.pump();});
     this.every(1_000,()=>this.tradingQuality?.tick());
     this.every(5_000,()=>this.qualityObserver?.tick());
     this.every(5_000, async () => this.tp.sweep());

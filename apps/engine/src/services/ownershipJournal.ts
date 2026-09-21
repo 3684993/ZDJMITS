@@ -7,13 +7,26 @@ import {allocateSharedQuantity,transitionOwner,type Ownership,type OwnerState,ty
  */
 export class OwnershipJournal {
   private db:DatabaseSync;
-  constructor(file:string){
+  constructor(private readonly file:string){
     this.db=new DatabaseSync(file);
     this.db.exec(`PRAGMA busy_timeout=3000;
       CREATE TABLE IF NOT EXISTS v396_owners(scope TEXT NOT NULL,cycle_id TEXT NOT NULL,version INTEGER NOT NULL,payload TEXT NOT NULL,PRIMARY KEY(scope,cycle_id));
       CREATE TABLE IF NOT EXISTS v396_outbox(id TEXT PRIMARY KEY,payload TEXT NOT NULL,delivered INTEGER NOT NULL DEFAULT 0);
       CREATE TABLE IF NOT EXISTS v396_quantity_claims(id TEXT PRIMARY KEY,scope TEXT NOT NULL,payload TEXT NOT NULL);
-      CREATE INDEX IF NOT EXISTS v396_claim_scope ON v396_quantity_claims(scope);`);
+      CREATE INDEX IF NOT EXISTS v396_claim_scope ON v396_quantity_claims(scope);
+      CREATE TABLE IF NOT EXISTS v396_mandates(scope TEXT NOT NULL,cycle_id TEXT NOT NULL,version INTEGER NOT NULL,payload TEXT NOT NULL,PRIMARY KEY(scope,cycle_id));
+      CREATE TABLE IF NOT EXISTS v396_claims_history(id TEXT PRIMARY KEY,payload TEXT NOT NULL,settled_at INTEGER NOT NULL);`);
+  }
+  /** Exposed for the S02 service layer so a fact and its outbox row always commit together. */
+  transact<T>(fn:()=>T):T{return this.transaction(fn);}
+  query<T>(sql:string,...params:unknown[]):T[]{return this.db.prepare(sql).all(...(params as never[])) as T[];}
+  write(sql:string,...params:unknown[]){this.db.prepare(sql).run(...(params as never[]));}
+  /** Online backup into a caller-chosen file; the destination must not be the live path. */
+  async backupTo(targetFile:string){
+    if(targetFile===this.file)throw new Error('BACKUP_TARGET_IS_LIVE_FILE');
+    const {backup}=await import('node:sqlite');
+    await backup(this.db,targetFile);
+    return targetFile;
   }
   private transaction<T>(fn:()=>T):T{
     this.db.exec('BEGIN IMMEDIATE');
@@ -43,6 +56,10 @@ export class OwnershipJournal {
     return this.transaction(()=>{
       const current=this.get(scope,cycleId);if(!current)throw new Error('OWNER_NOT_FOUND');
       if(!Number.isFinite(now)||now<current.transitionedAt||!reason)throw new Error('INVALID_TRANSITION_CLOCK');
+      // The named policy refusals come first: a rejected revival must say it needs a new
+      // human authorization, and a closed cycle must say it is immutable.
+      if(current.ownerState==='CLOSED'&&next!=='CLOSED')throw new Error('CLOSED_OWNER_IMMUTABLE');
+      if(current.ownerState==='HUMAN_MANAGED'&&next==='AI_ACTIVE')throw new Error('HUMAN_REAUTHORIZATION_REQUIRED');
       const allowed:Record<OwnerState,OwnerState[]>={AI_ACTIVE:['HANDOFF_PENDING','CLOSED'],HANDOFF_PENDING:['HUMAN_MANAGED','CLOSED'],HUMAN_MANAGED:['CLOSED'],CLOSED:[]};
       if(!allowed[current.ownerState].includes(next))throw new Error('INVALID_OWNER_TRANSITION');
       const owner=transitionOwner(current,next,expectedVersion,now,reason);this.save(owner);return owner;

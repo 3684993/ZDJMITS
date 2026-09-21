@@ -58,6 +58,8 @@ describe('ownership runtime activation',()=>{
     expect(()=>runtime.recordHumanTakeover('p1','MANUAL_SUBMISSION')).not.toThrow();
     expect(runtime.recordHumanTakeover('p1','MANUAL_SUBMISSION')).toBe(false);
     expect(runtime.expireDue()).toBe(0);
+    expect(runtime.pump()).toMatchObject({expired:0,delivered:0,failed:0});
+    expect(runtime.metrics().recorded).toBe(0);
     expect(events.filter(event=>event.type==='V396_OWNERSHIP_JOURNAL_DEGRADED').length).toBeGreaterThan(0);
     expect(events.every(event=>event.payload?.affectsTradingPath===false||event.type!=='V396_OWNERSHIP_JOURNAL_DEGRADED')).toBe(true);
     runtime.close();

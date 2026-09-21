@@ -1,5 +1,6 @@
 import {EventBus} from '../events/eventBus.js';
 import {OwnershipJournal} from './ownershipJournal.js';
+import {OwnershipService} from './ownershipService.js';
 import {executionScope} from './executionLifecycle.js';
 
 export type OwnershipSubject={symbol:string;positionSide:string;cycleId:string|null};
@@ -16,6 +17,7 @@ export type OwnershipSubject={symbol:string;positionSide:string;cycleId:string|n
  */
 export class OwnershipRuntime {
   private journal:OwnershipJournal|null=null;
+  private service:OwnershipService|null=null;
   private openError:string|null=null;
   private degradedCount=0;
   private recordedCount=0;
@@ -46,20 +48,33 @@ export class OwnershipRuntime {
   /** Records the revocation of AI management for a cycle, creating a legacy record first. */
   recordHumanTakeover(positionId:string,reason:string){
     const identity=this.identity(positionId);if(!identity)return false;
-    try{
-      const journal=this.journal??this.reopen();const now=Date.now();
-      let owner=journal.get(identity.scope,identity.cycleId);
-      if(!owner)owner=journal.initialize({scope:identity.scope,cycleId:identity.cycleId,planRef:null,firstFillAt:now-1,durationMs:null,now,legacy:true});
-      if(owner.ownerState==='HUMAN_MANAGED'||owner.ownerState==='CLOSED'){this.recordedCount++;return true;}
-      if(owner.ownerState==='AI_ACTIVE')owner=journal.transition(identity.scope,identity.cycleId,owner.ownerVersion,'HANDOFF_PENDING',now,reason);
-      journal.transition(identity.scope,identity.cycleId,owner.ownerVersion,'HUMAN_MANAGED',now,reason);
-      this.recordedCount++;return true;
-    }catch(error){this.fail('HUMAN_TAKEOVER',error);return false;}
+    try{this.requireService().recordTakeoverFromHuman(identity.scope,identity.cycleId,reason,Date.now());this.recordedCount++;return true;}
+    catch(error){this.fail('HUMAN_TAKEOVER',error);return false;}
+  }
+  /** Never report success on a journal we do not have: a missing handle must throw. */
+  private requireService(){
+    const journal=this.journal??this.reopen();
+    return this.service??(this.service=new OwnershipService(journal));
   }
   private reopen():OwnershipJournal{
     if(this.journal)return this.journal;
-    this.journal=new OwnershipJournal(this.dbFile);this.openError=null;return this.journal;
+    this.journal=new OwnershipJournal(this.dbFile);this.openError=null;this.service=new OwnershipService(this.journal);return this.journal;
   }
+  /** Expiry plus at-least-once outbox delivery. Neither can throw into a trading path. */
+  pump(now=Date.now()){
+    const expired=this.expireDue(now);
+    try{
+      const drained=this.requireService().drainOutbox(event=>{this.events.publish('V396_OWNERSHIP_OUTBOX',event,'V396');});
+      return{expired,...drained};
+    }catch(error){this.fail('OUTBOX_PUMP',error);return{expired,delivered:0,failed:0,pending:0,tasks:0};}
+  }
+  /** Records the read receipt for a handoff. Never restores AI authority (I01). */
+  acknowledge(positionId:string,now=Date.now()){
+    const identity=this.identity(positionId);if(!identity)return false;
+    try{this.requireService().acknowledge(identity.scope,identity.cycleId,now);this.recordedCount++;return true;}
+    catch(error){this.fail('ACKNOWLEDGE',error);return false;}
+  }
+  ownershipService(){return this.journal?(this.service??(this.service=new OwnershipService(this.journal))):null;}
   /** Moves AI-managed cycles whose deadline has passed into handoff. Never extends a deadline. */
   expireDue(now=Date.now()){
     if(!this.journal&&!this.openError)return 0;

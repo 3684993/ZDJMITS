@@ -17,6 +17,7 @@ export class TradingQualityCollector {
   private lastSample=0;
   private workHydrated=false;
   private session=randomUUID();
+  private observedEvents=0;
   private error:string|null=null;
   private listener:(e:DomainEvent)=>void;
   constructor(file:string,private state:RuntimeState,private events:EventBus){
@@ -80,6 +81,7 @@ export class TradingQualityCollector {
     else if(kind==='trades')this.markEpisodeDirty(row?.entryIntentId,row?.symbol??'');
   }
   private onEvent(e:DomainEvent){
+    this.observedEvents++;
     const p=e.payload as any;
     if(e.type==='TRADING_QUALITY_FUNDING_FACT')this.put('fundingFacts',hash(p),p,e.ts);
     if(e.type==='TRADING_QUALITY_OPPORTUNITY'){this.put('opportunities',p.opportunity.opportunityId+':'+p.opportunity.version,p,e.ts);this.put('opportunityObservations',`${p.opportunity.opportunityId}:${p.packetId}`,p,e.ts);}
@@ -159,8 +161,9 @@ export class TradingQualityCollector {
       }
       if(now-this.lastSample>=5000){
         this.lastSample=now;
-        const scope=this.scope(),eventCount=Number((this.db.prepare("SELECT COUNT(*) AS n FROM tq_facts WHERE scope=? AND kind='events' AND ts<=?").get(scope,now) as any)?.n??0);
-        this.db.prepare('INSERT OR IGNORE INTO tq_collector_samples(scope,identity,at,event_count) VALUES(?,?,?,?)').run(scope,scope,now,eventCount);
+        const scope=this.scope(),eventCount=this.observedEvents;
+        this.db.prepare('INSERT OR IGNORE INTO tq_collector_samples(scope,identity,at,event_count) VALUES(?,?,?,?)').run(scope,this.session,now,eventCount);
+        this.db.prepare('DELETE FROM tq_collector_samples WHERE at<?').run(now-30*86_400_000);
         for(const c of this.state.universe){
           const m=this.state.snapshots.get(c.symbol),opportunity=m&&p.mode!=='OFF'?buildOpportunityEvidence(m,this.state.settings,now):null;
           const candidateId=`${c.symbol}:${c.selectionGeneration}`,lifecycle=this.state.candidateLifecycle.get(c.symbol)??null;
@@ -232,8 +235,9 @@ export function tradingQualityReport(db:DatabaseSync,scope:string){
   const orders=rows(db,scope,'orders').filter(o=>o.exchangeOrderId),fills=rows(db,scope,'fills'),intents=rows(db,scope,'intents');
   const quality=summarizeEntryQuality(episodes);
   const complete=Object.values(quality.byHorizon).some(h=>h.coverage.complete>0);
-  const samples=db.prepare('SELECT identity,at,event_count AS count FROM tq_collector_samples WHERE scope=? ORDER BY at').all(scope) as any[];
-  return {schemaVersion:'TQ-BASELINE-2',scope,generatedAt:Date.now(),quality,episodes,collectorWindow:collectorWindowSummary(samples.map(row=>({identity:String(row.identity),at:Number(row.at),count:Number(row.count)})),`collector:${scope}`),
+  const hasSamples=Boolean(db.prepare("SELECT 1 FROM sqlite_master WHERE type='table' AND name='tq_collector_samples'").get());
+  const samples=hasSamples?db.prepare('SELECT identity,at,event_count AS count FROM tq_collector_samples WHERE scope=? ORDER BY at').all(scope) as any[]:[];
+  return {schemaVersion:'TQ-BASELINE-2',scope,generatedAt:Date.now(),quality,episodes,collectorMetric:'OBSERVED_DOMAIN_EVENTS_NOT_EXCHANGE_REQUESTS',collectorWindow:collectorWindowSummary(samples.map(row=>({identity:String(row.identity),at:Number(row.at),count:Number(row.count)})),`collector:${scope}`),
     funnel:candidateFunnel({candidates:candidates.length,primaryRuns:uniqueRuns.length,place:uniqueRuns.filter(r=>String(r.decision).startsWith('PLACE_')).length,
       wait:uniqueRuns.filter(r=>r.decision==='WAIT_FOR_PRICE').length,reselect:uniqueRuns.filter(r=>r.decision==='RESELECT_SYMBOL').length,intents:intents.length,
       orders:new Set(orders.map(o=>o.id)).size,fills:new Set(fills.filter(f=>f.attributionStatus==='SYSTEM_ATTRIBUTED'&&orders.some(o=>o.symbol===f.symbol&&o.exchangeOrderId===f.orderId)).map(f=>`${f.symbol}:${f.orderId}`)).size,

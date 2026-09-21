@@ -47,25 +47,21 @@ it('single-flights three concurrent exact-order readers and reuses the short cac
 });
 
 
-it('paginates 1000-row audit pages instead of silently truncating the evidence window',async()=>{
-  const calls:string[]=[];
+it('paginates full pages using a time-filtering most-recent server model',async()=>{
+  const calls:string[]=[],rows=Array.from({length:1001},(_,i)=>({symbol:'BTCUSDT',side:'BUY',positionSide:'LONG',orderId:i,id:i,clientOrderId:`ML_${i}`,time:100+i,updateTime:100+i,qty:'1',price:'100',realizedPnl:'0',commission:'0',commissionAsset:'USDT',maker:true,status:'FILLED',type:'LIMIT',origQty:'1',executedQty:'1',avgPrice:'100'}));
   const transport:any={effectiveBaseUrl:()=> 'https://demo-fapi.binance.com',environment:()=> 'TESTNET',executionMode:()=> 'READ_ONLY',assertTestnetExchangeWrite:()=>{},json:vi.fn(async(url:string)=>{
     calls.push(url);const u=new URL(url,'https://demo-fapi.binance.com');
     if(u.pathname==='/fapi/v1/time')return{serverTime:Date.now()};
-    if(u.pathname==='/fapi/v1/income'){const page=Number(u.searchParams.get('page')??1);return page===1?Array.from({length:1000},(_,i)=>({symbol:'BTCUSDT',incomeType:'COMMISSION',income:'0',asset:'USDT',time:100+i%10,tranId:i})):[];}
-    if(u.pathname==='/fapi/v1/userTrades'){const fromId=u.searchParams.get('fromId');return fromId===null?Array.from({length:1000},(_,i)=>({symbol:'BTCUSDT',side:'BUY',positionSide:'LONG',orderId:i,id:i,time:100+i%10,qty:'1',price:'100',realizedPnl:'0',commission:'0',commissionAsset:'USDT',maker:true})): [{symbol:'BTCUSDT',side:'BUY',positionSide:'LONG',orderId:1000,id:1000,time:150,qty:'1',price:'100',realizedPnl:'0',commission:'0',commissionAsset:'USDT',maker:true}];}
-    if(u.pathname==='/fapi/v1/allOrders'){const orderId=u.searchParams.get('orderId');return orderId===null?Array.from({length:1000},(_,i)=>({symbol:'BTCUSDT',orderId:i,clientOrderId:`ML_${i}`,side:'BUY',positionSide:'LONG',status:'FILLED',type:'LIMIT',origQty:'1',executedQty:'1',avgPrice:'100',updateTime:100+i%10})): [{symbol:'BTCUSDT',orderId:1000,clientOrderId:'ML_1000',side:'BUY',positionSide:'LONG',status:'FILLED',type:'LIMIT',origQty:'1',executedQty:'1',avgPrice:'100',updateTime:150}];}
-    if(u.pathname==='/fapi/v2/positionRisk'||u.pathname==='/fapi/v1/openOrders')return[];
+    if(['/fapi/v1/userTrades','/fapi/v1/allOrders'].includes(u.pathname))return rows.filter(r=>r.time>=Number(u.searchParams.get('startTime'))&&r.time<=Number(u.searchParams.get('endTime'))).slice(-1000);
     return[];
   })};
   const adapter=new ExternalTradeAdapter(transport,{apiKey:'key',apiSecret:'secret'});
-  const audit=await adapter.fetchRecentTradeAudit(1,2000,2000,['BTCUSDT']);
-  expect(audit.fills).toHaveLength(1000);expect(audit.fills.at(-1)?.tradeId).toBe('1000');
-  expect(calls.filter(url=>url.startsWith('/fapi/v1/userTrades'))).toHaveLength(2);
-  expect(calls.filter(url=>url.startsWith('/fapi/v1/allOrders'))).toHaveLength(2);
-  expect(calls.filter(url=>url.startsWith('/fapi/v1/income'))).toHaveLength(2);
+  const audit=await adapter.fetchSymbolRiskFacts('BTCUSDT',1,2000);
+  expect(audit.fills).toHaveLength(1001);expect(audit.orders).toHaveLength(1001);
+  expect(audit.fills.some(r=>r.tradeId==='0')).toBe(true);expect(audit.fills.some(r=>r.tradeId==='1000')).toBe(true);
+  expect(calls.filter(url=>url.startsWith('/fapi/v1/userTrades'))).toHaveLength(3);
+  expect(calls.filter(url=>url.startsWith('/fapi/v1/allOrders'))).toHaveLength(3);
 });
-
 
 it.each([20,100])('keeps trade-audit endpoint calls linear for %i unique symbols',async(count)=>{
   const h=adapterHarness(),symbols=Array.from({length:count},(_,i)=>`T${String(i).padStart(3,'0')}USDT`);

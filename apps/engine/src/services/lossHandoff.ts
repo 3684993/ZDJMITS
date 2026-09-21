@@ -1,7 +1,5 @@
 import type { RuntimeState } from '../state/runtimeState.js';
 import type { EventBus } from '../events/eventBus.js';
-import {executionScope} from './executionLifecycle.js';
-import {transitionOwner} from './v396OfflineStages.js';
 
 const PERIOD_15M=900_000;
 /** First 15m bar whose OPEN is not before the position cycle. */
@@ -38,9 +36,9 @@ export class LossHandoffService {
       }
       const loss=position.side==='LONG'?closedPrice<position.entryPrice:closedPrice>position.entryPrice,count=loss?prior.consecutiveLossBars+1:0,next={...prior,lastClosedBarAt:closedAt,consecutiveLossBars:count,status:'ACTIVE' as const};
       if(count>=threshold){
-        const now=Date.now(),exchange=this.state.settings?.connections?.exchange??{},scope=executionScope(exchange.environment??'UNKNOWN',exchange.credentialRef??'UNKNOWN',position.symbol,position.side),old=(position as any).ownership??{scope,cycleId:position.cycleId??position.id,ownerState:'AI_ACTIVE',ownerVersion:0,planRef:null,deadline:null,transitionedAt:position.openedAt,reason:'LEGACY_COMPAT',acknowledgedAt:null};
-        const ownership=transitionOwner(old,'HUMAN_MANAGED',Number(old.ownerVersion??0),now,'LOSS_HANDOFF_BARS');
-        this.state.positions.set(position.id,{...position,managementStatus:'HUMAN_MANAGED',humanManagedAt:now,ownership,lossHandoff:{...next,status:'HUMAN_HANDOFF'}});
+        const now=Date.now();
+        // Existing projection only; durable V396 authority is owned by OwnershipJournal.
+        this.state.positions.set(position.id,{...position,managementStatus:'HUMAN_MANAGED',humanManagedAt:now,lossHandoff:{...next,status:'HUMAN_HANDOFF'}});
         this.events.publish('POSITION_HUMAN_HANDOFF',{positionId:position.id,reason:'LOSS_HANDOFF_BARS',lossHandoffBars:count,closedBarAt:closedAt,tpRetained:true},position.symbol);
       }else this.state.positions.set(position.id,{...position,lossHandoff:next});
     }

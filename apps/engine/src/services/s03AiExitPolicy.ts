@@ -1,4 +1,4 @@
-import type {ExitEstimate,PriceBoundResult} from './s03ExitCostEstimator.js';
+import {INTEGRITY_REASON_CODES,stableHash,type ExitEstimate,type PriceBoundResult} from './s03ExitCostEstimator.js';
 
 export type OwnerState='AI_ACTIVE'|'HANDOFF_PENDING'|'HUMAN_MANAGED'|'CLOSED';
 export type VerdictOutcome='ALLOW'|'HOLD'|'HANDOFF'|'BLOCKED_FACTS';
@@ -9,6 +9,8 @@ export type AiExitVerdict={
   authorizationExpiresAt:number|null;boundaryPrice:number|null;
   lossLimit:number;conservativeNet:number|null;
   orderType:'LIMIT';marketFallbackAllowed:false;
+  /** Covers everything that could have changed this decision, not just the valuation. */
+  decisionHash:string;
 };
 
 export type PolicyInput={
@@ -21,12 +23,27 @@ export type PolicyInput={
 };
 
 const MILLI=1_000;
-const verdict=(input:PolicyInput,outcome:VerdictOutcome,codes:string[],extra:Partial<AiExitVerdict>={}):AiExitVerdict=>({
-  outcome,reasonCodes:[...new Set(codes)].sort(),evidenceRefs:[...new Set(input.estimate.sourceIds.concat(input.plan.invalidationEvidenceRefs))].sort(),
-  ownerVersion:input.owner.ownerVersion,planVersion:input.plan.planVersion,estimateHash:input.estimate.estimateHash,
-  authorizationExpiresAt:null,boundaryPrice:null,lossLimit:input.policy.lossLimit,conservativeNet:input.estimate.conservativeNet,
-  orderType:'LIMIT',marketFallbackAllowed:false,...extra,
-});
+const verdict=(input:PolicyInput,outcome:VerdictOutcome,codes:string[],extra:Partial<AiExitVerdict>={}):AiExitVerdict=>{
+  const {owner,plan,estimate,policy,now,bound}=input;
+  const base={
+    outcome,reasonCodes:[...new Set(codes)].sort(),evidenceRefs:[...new Set(estimate.sourceIds.concat(plan.invalidationEvidenceRefs))].sort(),
+    ownerVersion:owner.ownerVersion,planVersion:plan.planVersion,estimateHash:estimate.estimateHash,
+    authorizationExpiresAt:null as number|null,boundaryPrice:null as number|null,
+    lossLimit:policy.lossLimit,conservativeNet:estimate.conservativeNet,
+    orderType:'LIMIT' as const,marketFallbackAllowed:false as const,...extra,
+  };
+  // estimateHash alone only identifies the valuation. Two different authorities can be derived
+  // from it - a tighter loss limit, a switched small-loss flag, a bumped owner version - so the
+  // artefact that a later stage may act on has to identify the whole decision (I01, I04, I08).
+  const decisionHash=stableHash({
+    ...base,now,
+    owner:{state:owner.ownerState,version:owner.ownerVersion,cycleId:owner.cycleId,scope:owner.scope,deadline:owner.deadline},
+    plan:{version:plan.planVersion,cycleId:plan.cycleId,scope:plan.scope,thesisInvalid:plan.thesisInvalid,predicate:plan.invalidationPredicate,exitConditionMet:plan.exitConditionMet,minNetProfitUsd:plan.minNetProfitUsd},
+    policy:{lossLimit:policy.lossLimit,allowSmallLoss:policy.allowSmallLoss,authorizationTtlMs:policy.authorizationTtlMs},
+    boundPrice:bound?.limitPrice??null,
+  });
+  return {...base,decisionHash};
+};
 
 /**
  * S03-B: the AI exit authority decision, in CONTRACTS §5 order and nothing else.
@@ -44,7 +61,7 @@ export function decideAiExit(input:PolicyInput):AiExitVerdict{
   if(!Number.isFinite(now)||now<0)return verdict(input,'HOLD',['NOW_INVALID']);
   if(!Number.isFinite(policy.lossLimit)||policy.lossLimit<0||policy.lossLimit>10||!Number.isSafeInteger(Math.round(policy.lossLimit*MILLI))||!(policy.authorizationTtlMs>0))
     return verdict(input,'BLOCKED_FACTS',['POLICY_CONFIG_INVALID_LOSS_LIMIT_OR_TTL']);
-  if(!Number.isSafeInteger(plan.minNetProfitUsd*MILLI)||plan.minNetProfitUsd<0)
+  if(!Number.isSafeInteger(plan.minNetProfitUsd*MILLI)||!(plan.minNetProfitUsd>0))
     return verdict(input,'BLOCKED_FACTS',['POLICY_CONFIG_INVALID_PROFIT_FLOOR']);
 
   if(owner.scope!==estimate.scope||plan.scope!==estimate.scope||owner.cycleId!==estimate.cycleId||plan.cycleId!==estimate.cycleId)
@@ -57,6 +74,10 @@ export function decideAiExit(input:PolicyInput):AiExitVerdict{
   if(owner.deadline==null||!Number.isFinite(owner.deadline))return verdict(input,'HANDOFF',['AI_MANAGEMENT_DEADLINE_UNKNOWN'],{boundaryPrice:null});
   if(now>=owner.deadline)return verdict(input,'HANDOFF',['AI_MANAGEMENT_EXPIRED']);
 
+  // Defence in depth: the estimator already withholds the value for these, but a verdict must
+  // not become ALLOW because somebody handed the policy a re-labelled estimate object.
+  if(estimate.reasons.some(reason=>INTEGRITY_REASON_CODES.includes(reason)||reason.startsWith('FOREIGN_CYCLE_FACT')))
+    return verdict(input,'BLOCKED_FACTS',['ESTIMATE_INTEGRITY_FAILED',...estimate.reasons]);
   if(!estimate.quoteFresh)return verdict(input,'BLOCKED_FACTS',['QUOTE_EXPIRED_NO_AUTHORITY',...estimate.reasons]);
   if(estimate.factsStatus==='CONFLICT')return verdict(input,'BLOCKED_FACTS',['FACT_CONFLICT_NO_FAVORABLE_PICK',...estimate.reasons]);
   if(estimate.reasons.some(reason=>reason.startsWith('UNCONVERTED_COST')))return verdict(input,'BLOCKED_FACTS',['COST_CURRENCY_UNCONVERTED',...estimate.reasons]);
@@ -67,12 +88,10 @@ export function decideAiExit(input:PolicyInput):AiExitVerdict{
   const profitFloorMilli=Math.round(plan.minNetProfitUsd*MILLI);
 
   const executable=bound.executable&&bound.orderType==='LIMIT'&&bound.marketFallbackAllowed===false&&bound.limitPrice!=null;
-  const finalize=(codes:string[]):AiExitVerdict=>executable
-    ?verdict(input,'ALLOW',[...codes,'PRICE_BOUND_EXECUTABLE_LIMIT_ONLY'],{
-        authorizationExpiresAt:Math.min(now+policy.authorizationTtlMs,estimate.expiresAt,owner.deadline),
-        boundaryPrice:bound.limitPrice,
-      })
-    :verdict(input,'HOLD',[...codes,'EXECUTION_BOUND_UNAVAILABLE'].filter(code=>executable||code!=='PRICE_BOUND_EXECUTABLE_LIMIT_ONLY'));
+  const authorizeAt=executable?Math.min(now+policy.authorizationTtlMs,estimate.expiresAt,owner.deadline):null;
+  const finalize=(codes:string[]):AiExitVerdict=>executable&&authorizeAt!=null&&authorizeAt>now
+    ?verdict(input,'ALLOW',[...codes,'PRICE_BOUND_EXECUTABLE_LIMIT_ONLY'],{authorizationExpiresAt:authorizeAt,boundaryPrice:bound.limitPrice})
+    :verdict(input,'HOLD',executable?[...codes,'AUTHORIZATION_WINDOW_EMPTY']:[...codes,'EXECUTION_BOUND_UNAVAILABLE']);
 
   if(plan.thesisInvalid&&netMilli<0){
     if(!policy.allowSmallLoss)return verdict(input,'HOLD',['SMALL_LOSS_EXIT_NOT_PERMITTED']);

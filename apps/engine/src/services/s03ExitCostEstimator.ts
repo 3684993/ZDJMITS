@@ -66,6 +66,16 @@ const KIND_AGGREGATE:Record<CostKind,'grossRealizedToDate'|'incurredFees'|'signe
   PROJECTED_EXIT_GROSS:'projectedExitGross',PROJECTED_EXIT_FEE:'projectedExitFee',UNCERTAINTY_BUFFER:'uncertaintyBuffer',
 };
 
+/**
+ * Reasons that mean the estimate is not computable rather than merely conservative. An
+ * unusable market parameter, a wrong identity or a fact borrowed from another cycle cannot be
+ * priced around, so the net value is withheld and the policy layer must answer BLOCKED_FACTS.
+ * QUOTE_EXPIRED is deliberately absent: the value stays computable, but it carries no
+ * authority, which is what quoteFresh enforces downstream.
+ */
+export const INTEGRITY_REASON_CODES=Object.freeze(['IDENTITY_MISSING','POSITION_VERSION_INVALID','COST_VERSION_MISSING','REMAINING_QUANTITY_INVALID','SIDE_INVALID','QUOTE_WINDOW_INVALID','NOW_INVALID','ENTRY_PRICE_INVALID','TICK_SIZE_INVALID','STEP_SIZE_INVALID','MIN_NOTIONAL_INVALID','EXIT_QUOTE_MISSING','RATE_MAX_AGE_INVALID','QUOTE_NOT_YET_AVAILABLE','NEGATIVE_COST']);
+const integrityFailure=(reasons:string[]):MoneyStatus|null=>reasons.some(reason=>INTEGRITY_REASON_CODES.includes(reason)||reason.startsWith('FOREIGN_CYCLE_FACT'))?'CONFLICT':null;
+
 /** Signed contribution of a settled or projected item to the cycle net: costs subtract, pnl/funding add. */
 const signedMilli=(kind:CostKind,milli:number)=>SUBTRACTIVE_KINDS.has(kind)?-Math.abs(milli):milli;
 
@@ -81,6 +91,9 @@ export function buildExitEstimate(input:EstimateInput):ExitEstimate{
   structural(Number.isFinite(input.now),'NOW_INVALID');
   const quoteFresh=input.now<=input.expiresAt;
   structural(quoteFresh,'QUOTE_EXPIRED');
+  // A quote stamped in the future is not an available fact; treating it as fresh would let a
+  // caller mint authority out of the clock (I09).
+  structural(Number.isFinite(input.quoteAt)&&input.quoteAt<=input.now,'QUOTE_NOT_YET_AVAILABLE');
   structural(Number.isFinite(input.entryPrice)&&input.entryPrice>0,'ENTRY_PRICE_INVALID');
   structural(Number.isFinite(input.tickSize)&&input.tickSize>0,'TICK_SIZE_INVALID');
   structural(Number.isFinite(input.stepSize)&&input.stepSize>0,'STEP_SIZE_INVALID');
@@ -129,7 +142,7 @@ export function buildExitEstimate(input:EstimateInput):ExitEstimate{
   }
   const read=(key:string)=>aggregates.find(row=>row.key===key);
   const statuses=aggregates.map(row=>row?.status??'EXACT');
-  const factsStatus:MoneyStatus=statuses.includes('CONFLICT')?'CONFLICT':statuses.includes('UNKNOWN')?'UNKNOWN':statuses.includes('CONSERVATIVE_BOUND')?'CONSERVATIVE_BOUND':'EXACT';
+  const factsStatus:MoneyStatus=integrityFailure(reasons)??(statuses.includes('CONFLICT')?'CONFLICT':statuses.includes('UNKNOWN')?'UNKNOWN':statuses.includes('CONSERVATIVE_BOUND')?'CONSERVATIVE_BOUND':'EXACT');
   if(reasons.includes('QUOTE_EXPIRED'))reasons.push('QUOTE_STALE_FOR_AUTHORITY');
 
   // Sum by status class: an exact row has one value, a bounded row has a worst and best case.
@@ -223,9 +236,15 @@ export function exitPriceBound(input:{
     return lo;
   })();
   if(raw==null||!Number.isFinite(raw)||raw<=0)return reject('BOUND_UNREACHABLE');
-  const ticks=Math.ceil(raw/input.tickSize-1e-9);
-  const limitPrice=input.side==='LONG'?ticks*input.tickSize:Math.floor(raw/input.tickSize)*input.tickSize;
-  if(!(limitPrice>0)||Math.abs(limitPrice/input.tickSize-Math.round(limitPrice/input.tickSize))>1e-9)return reject('BOUND_TICK_ALIGN_FAILED');
+  // Tick arithmetic in binary floating point leaves dust (100.55000000000001), and a price
+  // carrying dust is rejected by the exchange or, worse, silently re-rounded by whoever
+  // submits it. The bound is therefore expressed as a whole number of ticks and rendered with
+  // the tick's own decimal count, on the conservative side, before it is re-verified.
+  const decimals=(input.tickSize.toString().split('.')[1]??'').length;
+  const tickUnits=(price:number)=>Number((price/input.tickSize).toFixed(9));
+  const align=(price:number,up:boolean)=>Number(((up?Math.ceil(tickUnits(price)-1e-9):Math.floor(tickUnits(price)+1e-9))*input.tickSize).toFixed(decimals));
+  const limitPrice=align(raw,input.side==='LONG');
+  if(!(limitPrice>0)||tickUnits(limitPrice)!==Math.round(tickUnits(limitPrice)))return reject('BOUND_TICK_ALIGN_FAILED');
   if(limitPrice*quantityUnits<input.minNotional)return reject('BOUND_NOTIONAL_TOO_SMALL');
   const achievedNet=fromMilli(achieved(limitPrice));
   if(achievedNet+1e-9<input.targetNet)return reject('BOUND_REVERIFY_FAILED');

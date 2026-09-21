@@ -175,12 +175,16 @@ describe('S03 exit valuation and authority gate',()=>{
     expect(estimate.netIfAllClosed).toBeCloseTo(-11.0,10);
     expect(decide({estimate}).outcome).toBe('HANDOFF');
     expect(decide({estimate}).reasonCodes).toContain('CYCLE_WOULD_BREACH_LOSS_LIMIT');
+    // a fact borrowed from another cycle or another position is a caller error: the whole
+    // estimate is refused rather than quietly dropped, so it can never offset the cycle loss
     const withForeign=buildExitEstimate(estimateInput([...cumulative,item('other-cycle','REALIZED_GROSS',50,{cycleId:'cycle_other'})]));
-    expect(withForeign.netIfAllClosed).toBeCloseTo(-11.0,10);
+    expect(withForeign.factsStatus).toBe('CONFLICT');
+    expect(withForeign.netIfAllClosed).toBeNull();
     expect(withForeign.reasons).toContain('FOREIGN_CYCLE_FACT:other-cycle');
+    expect(decide({estimate:withForeign}).outcome).toBe('BLOCKED_FACTS');
     const withForeignScope=buildExitEstimate(estimateInput([...cumulative,item('other-scope','REALIZED_GROSS',80,{scope:JSON.stringify(['TESTNET','binance-primary','ETHUSDT','LONG'])})]));
-    expect(withForeignScope.netIfAllClosed).toBeCloseTo(-11.0,10);
-    expect(decide({estimate:withForeignScope}).outcome).toBe('HANDOFF');
+    expect(withForeignScope.factsStatus).toBe('CONFLICT');
+    expect(decide({estimate:withForeignScope}).outcome).toBe('BLOCKED_FACTS');
   });
 
   it('S03-T09 rejects stale quotes, NaN, negative costs and unmodelled projections instead of returning ALLOW',()=>{
@@ -291,11 +295,127 @@ describe('S03 properties',()=>{
     const ownDirectory=fileURLToPath(new URL('.',import.meta.url));
     for(const file of moduleFiles){
       const source=readFileSync(join(ownDirectory,file),'utf8');
-      expect(source,file).not.toMatch(/^\s*import\s+(?!type)/m);
+      const imports=[...source.matchAll(/^\s*import\s[\s\S]*?from '([^']+)';/gm)].map(match=>match[1].replace(/^\.\//,''));
+      // the only permitted dependency is the sibling pure module itself
+      expect(imports,file).toEqual(imports.filter(specifier=>specifier==='s03ExitCostEstimator.js'));
       expect(source,file).not.toMatch(/node:|fetch|axios|WebSocket|DatabaseSync|settingsStore|placeEntry|placeTakeProfit|placeManualOrder|submitOrder|\.reserve\(/);
     }
     const walk=(dir:string):string[]=>readdirSync(dir,{withFileTypes:true}).flatMap(entry=>entry.isDirectory()?walk(join(dir,entry.name)):entry.name.endsWith('.ts')?[join(dir,entry.name)]:[]);
     const consumers=walk(join(ownDirectory,'..')).filter(path=>!moduleFiles.includes(basename(path))&&basename(path)!=='s03ExitCostPolicy.test.ts'&&readFileSync(path,'utf8').includes('s03ExitCostEstimator'));
     expect(consumers.map(path=>basename(path))).toEqual([]);
+  });
+});
+
+describe('S03 review regressions',()=>{
+  const goodItems=specItems(-5.79);
+  const goodEstimate=buildExitEstimate(estimateInput(goodItems));
+
+  it('R1 refuses instead of pricing on structurally broken market or identity inputs',()=>{
+    const broken:Array<[string,Partial<EstimateInput>]>=[
+      ['tick', {tickSize:Number.NaN}],['step',{stepSize:0}],['entry',{entryPrice:-100}],
+      ['window',{expiresAt:NOW-10_000,quoteAt:NOW}],['notional',{minNotional:0}],
+      ['future quote',{quoteAt:NOW+5_000,expiresAt:NOW+60_000}],['missing bid',{bid:0}],
+      ['identity',{scope:''}],['quantity',{remainingQuantityUnits:0}],['side',{side:'BOTH' as never}],
+      ['position version',{positionVersion:0}],['cost version',{costVersion:''}],
+    ];
+    for(const [label,over] of broken){
+      const estimate=buildExitEstimate(estimateInput(goodItems,over));
+      expect(estimate.factsStatus,label).not.toBe('EXACT');
+      expect(estimate.conservativeNet,label).toBeNull();
+      const outcome=decide({estimate}).outcome;
+      expect(outcome,label).not.toBe('ALLOW');
+      expect(decide({estimate}).reasonCodes.join(),label).toMatch(/ESTIMATE_INTEGRITY_FAILED|FACTS_INCOMPLETE_NO_NET_VALUE|QUOTE_|COST_CURRENCY|IDENTITY_MISMATCH/);
+    }
+  });
+
+  it('R1b a policy fed a hand-crafted estimate with integrity reasons still cannot ALLOW',()=>{
+    const forged={...goodEstimate,reasons:['TICK_SIZE_INVALID'],factsStatus:'EXACT' as const,conservativeNet:-9.99,netIfAllClosed:-9.99,quoteFresh:true};
+    const verdict=decide({estimate:forged});
+    expect(verdict.outcome).toBe('BLOCKED_FACTS');
+    expect(verdict.reasonCodes).toContain('ESTIMATE_INTEGRITY_FAILED');
+  });
+
+  it('R2 a fact from another cycle or scope blocks rather than being quietly dropped',()=>{
+    const foreign=buildExitEstimate(estimateInput([...goodItems,item('leak','REALIZED_GROSS',50,{cycleId:'cycle_other'})]));
+    expect(foreign.factsStatus).toBe('CONFLICT');
+    expect(foreign.netIfAllClosed).toBeNull();
+    expect(decide({estimate:foreign}).outcome).toBe('BLOCKED_FACTS');
+    const foreignScope=buildExitEstimate(estimateInput([...goodItems,item('leak2','REALIZED_GROSS',80,{scope:'["TESTNET","binance-primary","ETHUSDT","LONG"]'})]));
+    expect(foreignScope.factsStatus).toBe('CONFLICT');
+    // an idempotent re-submission of the same id stays conserved, it is not a conflict
+    const replayed=buildExitEstimate(estimateInput([...goodItems,item('realized','REALIZED_GROSS',-2)]));
+    expect(replayed.factsStatus).toBe('EXACT');
+    expect(replayed.netIfAllClosed).toBe(goodEstimate.netIfAllClosed);
+  });
+
+  it('R3 the returned limit price is tick-exact with no float dust and is the conservative side',()=>{
+    const fixedMilli=Math.round(-4.2*1_000);
+    const long=exitPriceBound({side:'LONG',remainingQuantityUnits:10,stepSize:1,tickSize:0.05,entryPrice:100,exitFeeRate:0.0004,fixedNetMilli:fixedMilli,targetNet:-10,minNotional:5,now:NOW});
+    const short=exitPriceBound({side:'SHORT',remainingQuantityUnits:10,stepSize:1,tickSize:0.05,entryPrice:100,exitFeeRate:0.0004,fixedNetMilli:fixedMilli,targetNet:-10,minNotional:5,now:NOW});
+    for(const bound of [long,short]){
+      expect(bound.executable).toBe(true);
+      const price=bound.limitPrice!;
+      expect(String(price)).toMatch(/^\d+(\.\d{1,4})?$/);
+      expect(Math.round(price*10_000)%500,price.toFixed(6)).toBe(0);
+      expect(price>0).toBe(true);
+    }
+    // LONG: the sell floor is never below breakeven; SHORT: the buy ceiling is never above it
+    expect(long.achievedNet!+1e-9).toBeGreaterThanOrEqual(-10);
+    expect(short.achievedNet!+1e-9).toBeGreaterThanOrEqual(-10);
+    const longNet=(price:number)=>(fixedMilli+Math.round(((price-100)*10-Math.abs(price*10*0.0004))*1_000))/1_000;
+    const shortNet=(price:number)=>(fixedMilli+Math.round(((100-price)*10-Math.abs(price*10*0.0004))*1_000))/1_000;
+    expect(longNet(long.limitPrice!-0.05)).toBeLessThan(-10);
+    expect(shortNet(short.limitPrice!+0.05)).toBeLessThan(-10);
+  });
+
+  it('R4 an authorization window that is already empty can never be ALLOW',()=>{
+    const atExpiry=buildExitEstimate(estimateInput(goodItems,{expiresAt:NOW,quoteAt:NOW-1}));
+    expect(atExpiry.conservativeNet).not.toBeNull();
+    const verdict=decide({estimate:atExpiry,now:NOW});
+    expect(verdict.outcome).not.toBe('ALLOW');
+    expect(verdict.reasonCodes).toContain('AUTHORIZATION_WINDOW_EMPTY');
+    expect(verdict.authorizationExpiresAt).toBeNull();
+    // a generous ttl is still capped by the quote expiry and by the deadline
+    const wide=decide({estimate:buildExitEstimate(estimateInput(goodItems)),policy:{lossLimit:10,allowSmallLoss:true,authorizationTtlMs:10*60_000}});
+    expect(wide.outcome).toBe('ALLOW');
+    expect(wide.authorizationExpiresAt).toBe(NOW+14_000);
+    const nearDeadline=decide({owner:{...policyInput().owner,deadline:NOW+5_000},estimate:buildExitEstimate(estimateInput(goodItems))});
+    expect(nearDeadline.authorizationExpiresAt).toBe(NOW+5_000);
+  });
+
+  it('R5 the decision identity binds the policy and ownership inputs that change the outcome',()=>{
+    const base=decide({});
+    const sameInputs=decide({});
+    expect(sameInputs.decisionHash).toBe(base.decisionHash);
+    const tighterLimit=decide({policy:{lossLimit:5,allowSmallLoss:true,authorizationTtlMs:15_000}});
+    expect(tighterLimit.decisionHash).not.toBe(base.decisionHash);
+    const switchOff=decide({policy:{lossLimit:10,allowSmallLoss:false,authorizationTtlMs:15_000}});
+    expect(switchOff.decisionHash).not.toBe(base.decisionHash);
+    const newPlan=decide({plan:{...policyInput().plan,planVersion:3}});
+    expect(newPlan.decisionHash).not.toBe(base.decisionHash);
+    const reauthorized=decide({owner:{...policyInput().owner,ownerVersion:5}});
+    expect(reauthorized.decisionHash).not.toBe(base.decisionHash);
+    const movedDeadline=decide({owner:{...policyInput().owner,deadline:NOW+90_000}});
+    expect(movedDeadline.decisionHash).not.toBe(base.decisionHash);
+    const worseEvidence=decide({plan:{...policyInput().plan,invalidationEvidenceRefs:['ev-2']}});
+    expect(worseEvidence.decisionHash).not.toBe(base.decisionHash);
+    expect(base.decisionHash).not.toBe(base.estimateHash);
+  });
+
+  it('R6 the micro-profit floor is inclusive and a net below it never reaches the profit branch',()=>{
+    const exactly=buildExitEstimate(estimateInput(specItems(-4)));
+    expect(exactly.netIfAllClosed).toBe(-8.2);
+    expect(decide({estimate:exactly}).outcome).toBe('ALLOW');
+    const floorZero=buildExitEstimate(estimateInput(specItems(4.7)));
+    expect(floorZero.netIfAllClosed).toBe(0.5);
+    const met=decide({estimate:floorZero,plan:{...policyInput().plan,thesisInvalid:false,exitConditionMet:true,minNetProfitUsd:0.5}});
+    expect(met.outcome).toBe('ALLOW');
+    const justBelow=decide({estimate:buildExitEstimate(estimateInput(specItems(4.699))),plan:{...policyInput().plan,thesisInvalid:false,exitConditionMet:true,minNetProfitUsd:0.5}});
+    expect(justBelow.outcome).toBe('HOLD');
+    expect(justBelow.reasonCodes).toContain('NO_PERMITTED_EXIT_CONDITION');
+    // a zero floor would mean "exit as soon as it is not a loss", which S03 does not authorise
+    const zero=decide({estimate:buildExitEstimate(estimateInput(specItems(4.2))),plan:{...policyInput().plan,thesisInvalid:false,exitConditionMet:true,minNetProfitUsd:0}});
+    expect(zero.outcome).toBe('BLOCKED_FACTS');
+    expect(zero.reasonCodes).toContain('POLICY_CONFIG_INVALID_PROFIT_FLOOR');
   });
 });

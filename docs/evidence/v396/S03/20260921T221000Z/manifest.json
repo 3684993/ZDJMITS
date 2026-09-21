@@ -5,7 +5,7 @@
   "selfSignedAccepted": false,
   "acceptanceOwner": "总设计",
   "base": {
-    "commit": "2b502ec6a71a2079a273773a9b029f0ae24c9b42",
+    "commit": "b09de2d5a09df3bf0da5207f4a551cfc8890036d",
     "branch": "codex/v396-s03-exit-cost-policy-20260921",
     "worktree": "D:/MITS-WORKTREES/v396-s03-exit-cost-policy-20260921",
     "frozenCheckpoint": "PR #9 head 2b502ec, unchanged"
@@ -41,7 +41,7 @@
     {
       "cmd": "npx vitest run src/services/s03ExitCostPolicy.test.ts",
       "exit": 0,
-      "tests": 14,
+      "tests": 21,
       "failed": 0
     },
     {
@@ -50,6 +50,19 @@
       "note": "S00 gate still PASS; entrypoint rule table untouched"
     }
   ],
+  "reviewRound": {
+    "method": "each finding written as a failing assertion first; 7 new assertions all failed before the fixes and pass after",
+    "fixed": [
+      "P0-1 structural inputs no longer priceable",
+      "P1-2 foreign cycle/scope facts block instead of dropping",
+      "P1-3 tick-exact limit price without float dust",
+      "P1-4 empty authorization window cannot ALLOW",
+      "P1-5 decisionHash binds policy and ownership",
+      "P2-6 future-dated quote rejected",
+      "P2-7 micro-profit floor must be positive"
+    ],
+    "evidence": "docs/evidence/v396/S03/20260921T221000Z/REVIEW-ROUND-2.md"
+  },
   "scopeGuard": {
     "orderPathWired": false,
     "s04ReserveWired": false,
@@ -65,15 +78,15 @@
   "changedFiles": [
     {
       "path": "apps/engine/src/services/s03ExitCostEstimator.ts",
-      "sha256NormalizedLF": "2387041145fbcad51b5261e5e972e925950b1aa3daaf8a07819773984e7826f3"
+      "sha256NormalizedLF": "ff1c477bcffc79239579ff01a89186f65fc1782870c61a7caa627a09ce533c3f"
     },
     {
       "path": "apps/engine/src/services/s03AiExitPolicy.ts",
-      "sha256NormalizedLF": "4fc6a3707308610bb5fcc3f0c4fccf9f5e0152be9c2bb4f87f58f45cdbd9b2c2"
+      "sha256NormalizedLF": "006137bc48f3182a51edd2884be0d4f347fe90553b22d884f1966605312eaf0b"
     },
     {
       "path": "apps/engine/src/services/s03ExitCostPolicy.test.ts",
-      "sha256NormalizedLF": "c27fa636e4091c1aacfdb13c9e29780be55a3e5a46ab967ddaf606ce2a7a7098"
+      "sha256NormalizedLF": "49c4dee7ec7557e3f7c7a6fcc272db28bfdcc3f5f3aa00309c9df9e49ce8e45c"
     }
   ],
   "defectFoundDuringBuild": {

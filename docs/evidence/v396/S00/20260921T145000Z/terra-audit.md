@@ -4,6 +4,6 @@
 
 结论：`ACCEPTED`（仅限 S00 规格与隔离基线交付）。审计对应提交：`d49e2de82cfd91fb27acd4586eb01f30cd190dfd`；复审时 worktree clean。
 
-复核确认：`node scripts/v396-s00-static-check.mjs` 的 S00-T01..T06 全部 PASS；递归扫描 `scripts/apps/packages` 共 39 个启动/验证/测试/package 候选，全部已索引或命中明确排除规则；Entry/TP/Human 写边界、默认 `TESTNET + READ_ONLY + SHADOW`、夹具版本/事件/claims、MockExchangeAdapter 无网络形状断言均已通过。工作树只新增 S00 证据与静态检查脚本；未修改源码、Settings、数据库或 dist；未启动/停止/重启 Engine，未发单，未访问交易所。
+复核确认：`node scripts/v396-s00-static-check.mjs` 的 S00-T01..T06 全部 PASS；校验器逐项覆盖当前 `scripts` 全部入口以及 `apps/packages` 的 package/test-config 入口，共 99 条精确审查记录，无宽泛排除模式绕过；每条记录均包含路径、静态副作用指标、状态和 required boundary。Entry/TP/Human 写边界、默认 `TESTNET + READ_ONLY + SHADOW`、夹具版本/事件/claims、MockExchangeAdapter 无网络形状断言均已通过。工作树只新增 S00 证据与静态检查脚本；未修改源码、Settings、数据库或 dist；未启动/停止/重启 Engine，未发单，未访问交易所。
 
 限定：未运行 root 产品全套验证；非 S00 静态验证入口均按清单保持 `NOT_RUN`；ownership CAS、共享 quantity claim、UNKNOWN recovery 属于 S01–S04；未读取当前 Engine/账户/交易所事实。本结论不构成部署、Engine 启用或交易授权。S01 可进入离线实现，但必须保留本 handoff 的契约和隔离边界。

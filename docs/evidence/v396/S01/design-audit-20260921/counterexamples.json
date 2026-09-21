@@ -1,0 +1,99 @@
+{
+  "sourceFile": "apps/engine/src/services/s01TruthAccountingObservability.ts",
+  "sourceSha256Lf": "04e933c8929e9d2ff68a0a79ef19638cc72fccba71ca008292052dd7254c1e06",
+  "tool": "typescript.transpileModule; pure exports only",
+  "checks": [
+    {
+      "id": "A01_HISTORY_OMITTED",
+      "expected": "UNKNOWN when historyCovered is missing",
+      "actual": {
+        "status": "EXACT",
+        "currentRisk": "CURRENT_NO_ACTIVE_RISK",
+        "sources": [
+          "OPEN_ORDER_IDENTITY_ABSENT",
+          "FILL_IDENTITY_ABSENT",
+          "POSITION_ZERO"
+        ],
+        "missing": [],
+        "checkedAt": 100,
+        "validUntil": null
+      },
+      "passes": false
+    },
+    {
+      "id": "A02_EXPIRED_BEFORE_CHECK",
+      "expected": "not CURRENT_NO_ACTIVE_RISK when validUntil < checkedAt",
+      "actual": {
+        "status": "EXACT",
+        "currentRisk": "CURRENT_NO_ACTIVE_RISK",
+        "sources": [
+          "OPEN_ORDER_IDENTITY_ABSENT",
+          "FILL_IDENTITY_ABSENT",
+          "POSITION_ZERO"
+        ],
+        "missing": [],
+        "checkedAt": 1000,
+        "validUntil": 999
+      },
+      "passes": false
+    },
+    {
+      "id": "A03_ATTRIBUTED_POSITION",
+      "expected": "attributed position cannot prove no active risk",
+      "actual": {
+        "status": "EXACT",
+        "currentRisk": "CURRENT_NO_ACTIVE_RISK",
+        "sources": [
+          "OPEN_ORDER_IDENTITY_ABSENT",
+          "FILL_IDENTITY_ABSENT",
+          "POSITION_ATTRIBUTED"
+        ],
+        "missing": [],
+        "checkedAt": 100,
+        "validUntil": 200
+      },
+      "passes": false
+    },
+    {
+      "id": "A04_TERMINAL_CONFLICT",
+      "expected": "terminal status alone must not override active order/fill/position conflicts",
+      "actual": {
+        "status": "EXACT",
+        "currentRisk": "DURABLE_TERMINAL_PROVEN",
+        "sources": [
+          "POSITION_ATTRIBUTED",
+          "TERMINAL_CANCELED"
+        ],
+        "missing": [],
+        "checkedAt": 100,
+        "validUntil": null
+      },
+      "passes": false
+    },
+    {
+      "id": "A05_COUNTER_RESET",
+      "expected": "counter regression detected; no negative rate",
+      "actual": {
+        "segmentId": "s",
+        "startedAt": 0,
+        "endedAt": 600000,
+        "sampleCount": 0,
+        "countDelta": -68,
+        "hours": 0.16666666666666666,
+        "ratePerHour": -408,
+        "peak": 70,
+        "reset": false,
+        "identity": "i"
+      },
+      "passes": false
+    },
+    {
+      "id": "A06_RUNTIME_PAUSE",
+      "expected": "cannot label every paused Primary as MARKET_PAUSE when market is open",
+      "actual": "MARKET_PAUSE",
+      "passes": false
+    }
+  ],
+  "passed": 0,
+  "failed": 6
+}

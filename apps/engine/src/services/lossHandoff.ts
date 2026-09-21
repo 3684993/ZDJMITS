@@ -36,7 +36,9 @@ export class LossHandoffService {
       }
       const loss=position.side==='LONG'?closedPrice<position.entryPrice:closedPrice>position.entryPrice,count=loss?prior.consecutiveLossBars+1:0,next={...prior,lastClosedBarAt:closedAt,consecutiveLossBars:count,status:'ACTIVE' as const};
       if(count>=threshold){
-        this.state.positions.set(position.id,{...position,managementStatus:'HUMAN_MANAGED',humanManagedAt:Date.now(),lossHandoff:{...next,status:'HUMAN_HANDOFF'}});
+        const now=Date.now();
+        // Existing projection only; durable V396 authority is owned by OwnershipJournal.
+        this.state.positions.set(position.id,{...position,managementStatus:'HUMAN_MANAGED',humanManagedAt:now,lossHandoff:{...next,status:'HUMAN_HANDOFF'}});
         this.events.publish('POSITION_HUMAN_HANDOFF',{positionId:position.id,reason:'LOSS_HANDOFF_BARS',lossHandoffBars:count,closedBarAt:closedAt,tpRetained:true},position.symbol);
       }else this.state.positions.set(position.id,{...position,lossHandoff:next});
     }

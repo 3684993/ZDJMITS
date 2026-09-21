@@ -23,6 +23,7 @@ import { EntryCoordinator } from "../services/entryCoordinator.js";
 import { PositionService } from "../services/positionService.js";
 import { TpGuardian } from "../services/tpGuardian.js";
 import { primaryBrainHealth } from "../services/aiResourceHealth.js";
+import { primaryObservation } from "../services/s01TruthAccountingObservability.js";
 import { ExchangeLoop } from "../services/exchangeLoop.js";
 import { ReconciliationService } from "../services/reconciliationService.js";
 import { BinanceTransport, verifyBinanceTransportEgress } from "../adapters/binance/BinanceTransport.js";
@@ -45,6 +46,7 @@ import { ProductionAssetResearchService } from '../services/productionAssetResea
 import { MarketCohort } from '../services/marketCohort.js';
 import { marketDataStaleReason } from '../services/marketDataStaleness.js';
 import { LossHandoffService } from '../services/lossHandoff.js';
+import { attachOwnershipRuntime, type OwnershipRuntime } from '../services/ownershipRuntime.js';
 
 export class EngineRuntime {
   readonly writes=new RuntimeWriteBuffer();
@@ -72,7 +74,8 @@ export class EngineRuntime {
   externalResearch!: ExternalResearchService;
   assetGovernance!: AssetGovernanceCoordinator;
   cohort!: MarketCohort;
-  lossHandoff!: LossHandoffService;
+  lossHandoff!: LossHandoffService
+  ownership?: OwnershipRuntime;
   private timers: NodeJS.Timeout[] = [];
   private stopped = false;
   private ready = false;
@@ -284,6 +287,11 @@ export class EngineRuntime {
     );
     runtime.cohort=new MarketCohort(state,market,events);
     runtime.lossHandoff=new LossHandoffService(state,events);
+    // Durable ownership facts only. The journal runs in its own file, grants no AI
+    // authority, and its failure must never block a human exit or a TP sweep (I07).
+    runtime.ownership=attachOwnershipRuntime(events, path.join(store.dataDirectory(), 'v396-ownership.sqlite'),
+      positionId=>{const position=state.positions.get(positionId);return position?{symbol:position.symbol,positionSide:position.side,cycleId:position.cycleId??null}:null;},
+      ()=>({environment:state.settings.connections.exchange.environment,account:state.settings.connections.exchange.credentialRef}));
     runtime.shadowReadiness = new ShadowReadinessService(state, store);
     runtime.temporal = new TemporalIntelligenceService(
       store.dataDirectory(),
@@ -546,6 +554,7 @@ export class EngineRuntime {
     });
     this.every(2_000,async()=>{if(this.state.settings.connections.executionMode==='TESTNET_ENABLED')await this.manual.resumeExitGoals();});
     this.every(1_000,()=>this.writes.flush());
+    this.every(5_000,()=>{this.ownership?.pump();});
     this.every(1_000,()=>this.tradingQuality?.tick());
     this.every(5_000,()=>this.qualityObserver?.tick());
     this.every(5_000, async () => this.tp.sweep());
@@ -595,7 +604,7 @@ export class EngineRuntime {
     this.persistTimer = null;
     this.market.stop();
     try{this.settingsStore.persistRuntime(this.state.serialize());this.events.publish("RUNTIME_STOPPED");this.settingsStore.checkpoint();}
-    finally{this.persistenceClosed=true;this.qualityObserver?.close();this.tradingQuality?.close();this.settingsStore.close();}
+    finally{this.persistenceClosed=true;this.qualityObserver?.close();this.tradingQuality?.close();this.ownership?.close();this.settingsStore.close();}
   }
   private async applySavedSettings(next:any) {
     this.state.setSettings(next);
@@ -1327,7 +1336,8 @@ export class EngineRuntime {
         lastRunAgeMs: lastPrimaryAge,
         idleReason: primaryIdleReason,
       }),
-      unexplainedIdle = primaryBrainState.unexplainedIdle;
+      unexplainedIdle = primaryBrainState.unexplainedIdle,
+      primaryObservationState = primaryObservation({runtimePaused:paused,marketOpen:!marketDataReason,resourceFault:primaryBrainState.status==='DEGRADED'||primaryBrainState.status==='UNAVAILABLE',idleReason:primaryIdleReason,lastRunAt:latestPrimary?.startedAt??null,now,maxIdleMs:10*60_000});
     const activityBase = this.state.activity,
       since = now - 30 * 60_000,
       recentEvents = this.settingsStore.runtimeEvents(
@@ -1450,6 +1460,8 @@ export class EngineRuntime {
       },
       primaryBrain: {
         status: primaryBrainState.status,
+        observation: primaryObservationState,
+        alert: primaryObservationState==='RESOURCE_FAULT'?'PRIMARY_RESOURCE_FAULT':primaryObservationState==='RUNTIME_PAUSED'?null:primaryObservationState==='MARKET_PAUSE'?null:null,
         runs: resources.find(x=>x.role==="PRIMARY_BRAIN")?.totalRuns??0,
         historicalRuns:primary.length,
         resource: resources.find((x) => x.role === "PRIMARY_BRAIN"),

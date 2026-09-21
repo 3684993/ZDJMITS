@@ -6,7 +6,16 @@ export const activeOrderStatus = (status: string) =>
 export const terminalOrderStatus = (status: string) =>
   ['FILLED', 'CANCELED', 'EXPIRED', 'REJECTED'].includes(status);
 export const exitAction = (action: string) => ['REDUCE', 'EMERGENCY_CLOSE'].includes(action);
+/**
+ * Journal and claim identity. The fourth element stays the persisted vocabulary ('ENTRY' for
+ * an entry intent, LONG/SHORT for a manual exit) until an explicit, reversible migration
+ * exists, because a changed key silently orphans every already-occupied claim. A value
+ * outside that vocabulary is a programming error, not a new bucket: it throws instead of
+ * minting a fresh identity that no recovery path would ever find.
+ */
+const PERSISTED_SCOPE_SIDES = new Set(['ENTRY', 'LONG', 'SHORT', 'BOTH']);
 export function executionScope(environment: string, account: string, symbol: string, side: string) {
+  if (!PERSISTED_SCOPE_SIDES.has(side)) throw new Error(`EXECUTION_SCOPE_SIDE_UNSUPPORTED: ${String(side)}`);
   return JSON.stringify([environment, account, symbol.toUpperCase(), side]);
 }
 export function manualOrderFor(intent: ManualIntent, orders: Iterable<ManualOrder>) {

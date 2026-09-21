@@ -17,7 +17,7 @@ function fixture(now:number,orders:any[]=[localOrder(now)]){
   state.entryReservations.set('r_fet',reservation(now));
   const bus=new EventBus();bus.on('event',event=>events.push(event));
   const adapter:any={fetchOpenOrders:vi.fn(async()=>[]),fetchPositions:vi.fn(async()=>[]),findEntryByClientOrderId:vi.fn(async()=>null),
-    fetchSymbolRiskFacts:vi.fn(async()=>({fills:[],orders:[]})),fetchSymbolTradeFacts:vi.fn(async()=>({fills:[],income:[],orders:[]}))};
+    fetchSymbolRiskFacts:vi.fn(async(_symbol:string,start:number,end:number)=>({fills:[],orders:[],coverageComplete:true,coverageStart:start,coverageEnd:end})),fetchSymbolTradeFacts:vi.fn(async()=>({fills:[],income:[],orders:[]}))};
   const service=new ReconciliationService(adapter,state,bus,{ensure:vi.fn()} as any);
   const auditFacts=()=>adapter.fetchSymbolRiskFacts.mock.calls.length+adapter.fetchSymbolTradeFacts.mock.calls.length;
   const unverifiedEvents=()=>events.filter(event=>event.type==='ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED').length;
@@ -26,6 +26,25 @@ function fixture(now:number,orders:any[]=[localOrder(now)]){
 }
 
 const order=async(x:any,id='entry_fet')=>x.state.entryOrders.get(id) as any;
+
+describe('S01 production coverage contract',()=>{
+  it.each([undefined,false])('never releases occupancy with coverageComplete=%s',async coverageComplete=>{
+    const x=fixture(Date.now());
+    x.adapter.fetchSymbolRiskFacts.mockImplementation(async(_symbol:string,start:number,end:number)=>({fills:[],orders:[],coverageStart:start,coverageEnd:end,coverageComplete}));
+    await x.pass();expect((await order(x)).activeRiskExposure).toBe(true);
+    expect(x.state.entryReservations.get('r_fet')?.status).toBe('WORKING');
+  });
+  it('does not resurrect the seven-day cliff when complete history is provided',async()=>{
+    const now=Date.now(),x=fixture(now,[localOrder(now,{createdAt:now-21*86_400_000})]);
+    await x.pass();expect((await order(x)).activeRiskExposure).toBe(false);
+    expect(x.adapter.fetchSymbolRiskFacts.mock.calls[0][1]).toBe(now-21*86_400_000-60_000);
+  });
+  it('positive fill conflict takes precedence over incomplete history',async()=>{
+    const x=fixture(Date.now());x.adapter.fetchSymbolRiskFacts.mockResolvedValue({fills:[{clientOrderId:'ml_fet'}],orders:[],coverageComplete:false});
+    await x.pass();expect((await order(x)).activeRiskEvidence?.status).toBe('CONFLICT');
+    expect((await order(x)).activeRiskExposure).toBe(true);
+  });
+});
 
 describe('historical UNKNOWN remote risk audit tiering',()=>{
   beforeEach(()=>{vi.useFakeTimers({now:Date.now(),toFake:['Date']});});
@@ -70,8 +89,9 @@ describe('historical UNKNOWN remote risk audit tiering',()=>{
     x.adapter.fetchSymbolRiskFacts.mockResolvedValue({fills:[],orders:[]});
     await x.pass();
     const row=await order(x);
-    row.activeRiskEvidence={...row.activeRiskEvidence,sources:row.activeRiskEvidence.sources.filter((source:string)=>source!=='BINANCE_USER_TRADES_IDENTITY_ABSENT')};
-    x.state.entryOrders.set(row.id,row);
+    expect(row.activeRiskEvidence).toBeNull();
+    expect(row.activeRiskExposure).toBe(true);
+    expect(x.state.entryReservations.get('r_fet')?.status).toBe('WORKING');
     expect(historicalNoRiskEligible(row,Date.now())).toBe(false);
     expect(remoteRiskAuditDeferred(row,Date.now()+60_000)).toBe(false);
   });

@@ -1,0 +1,76 @@
+{
+  "stageId": "S02",
+  "runId": "20260921T190000Z",
+  "status": "READY_FOR_REVIEW",
+  "selfSignedAccepted": false,
+  "acceptanceOwner": "总设计",
+  "base": {
+    "commit": "180c9f23babfeb40927488679e6cfd5153e5dfde",
+    "branch": "codex/v396-design-completion-20260921",
+    "worktree": "D:/MITS-worktrees/v396-design-completion-20260921",
+    "prBase": "codex/v396-project-plan-20260921"
+  },
+  "environment": {
+    "node": "v22.23.1",
+    "os": "Windows"
+  },
+  "contractVersion": "V396-C1",
+  "invariants": [
+    "I01",
+    "I02",
+    "I06",
+    "I08",
+    "I10",
+    "I11"
+  ],
+  "commands": [
+    {
+      "cmd": "node scripts/v396-s00-static-check.mjs",
+      "exit": 0,
+      "artifact": "docs/evidence/v396/S02/20260921T190000Z/s00-static-gate.json",
+      "note": "108 derived entries, rule table unchanged"
+    },
+    {
+      "cmd": "npm run typecheck -w @zdj/engine",
+      "exit": 0
+    },
+    {
+      "cmd": "npx vitest run --root apps/engine (full workspace)",
+      "exit": 0,
+      "note": "132 test files passed, 0 failed"
+    },
+    {
+      "cmd": "npx vitest run (ownership, audit-boundary and coverage suites)",
+      "exit": 0,
+      "artifact": "docs/evidence/v396/S02/20260921T190000Z/ownership-tests.json",
+      "tests": {
+        "files": 6,
+        "total": 62,
+        "passed": 62,
+        "failed": 0,
+        "skipped": 0
+      }
+    }
+  ],
+  "scopeGuard": {
+    "deployed": false,
+    "engineLifecycle": "NOT_USED",
+    "liveSettings": "NOT_MODIFIED",
+    "liveDatabase": "NOT_TOUCHED",
+    "exchangeWrites": 0,
+    "network": "NOT_USED",
+    "migrationAppliedToLive": false,
+    "newAiWriteAuthority": "NONE",
+    "s03Dependency": "S03 remains a precondition for any exit verdict"
+  },
+  "changedFiles": [
+    {
+      "path": "apps/engine/src/services/ownershipRuntime.ts",
+      "sha256NormalizedLF": "1909a785cadd46e1b048f5b9a61675d39de9e56e273584e0da7772192a9f1f77"
+    },
+    {
+      "path": "apps/engine/src/services/ownershipStorageCoverage.test.ts",
+      "sha256NormalizedLF": "b2cd89e62e0d7a561a9c534bb4d1bc10eaa98450db256606fd903bd9ed763e59"
+    }
+  ]
+}

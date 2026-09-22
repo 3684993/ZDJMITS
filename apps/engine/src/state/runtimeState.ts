@@ -35,6 +35,40 @@ export class RuntimeState {
     executionFills = [];
     lifecycles = new Map();
     allocationPlans = new Map();
+    /** S06: the original plan of every cycle. A stored plan is never replaced by a different one. */
+    tradePlans = new Map();
+    planExecutions = new Map();
+    /** Write-once. Returns the row that already stands when the caller tries to rewrite history. */
+    putTradePlan(plan) {
+        const id = String(plan?.planId ?? '');
+        if (!id) return { written: false, reason: 'PLAN_ID_MISSING' };
+        const existing = this.tradePlans.get(id);
+        if (existing) {
+            if (JSON.stringify(existing) === JSON.stringify(plan)) return { written: false, identical: true, plan: existing };
+            const versions = [...this.tradePlans.values()].filter(row => row.cycleId === plan.cycleId);
+            if (Number(plan.planVersion) <= versions.reduce((max, row) => Math.max(max, Number(row.planVersion ?? 0)), 0))
+                return { written: false, reason: 'PLAN_VERSION_NOT_INCREASING', plan: existing };
+            this.tradePlans.set(id, plan);
+            return { written: true, superseded: true, plan };
+        }
+        this.tradePlans.set(id, plan);
+        return { written: true, identical: false, plan };
+    }
+    plansForCycle(cycleId) {
+        return [...this.tradePlans.values()].filter(row => row.cycleId === cycleId).sort((a, b) => Number(a.planVersion) - Number(b.planVersion) || Number(a.persistedAt) - Number(b.persistedAt));
+    }
+    cycleLossBudget(cycleId) {
+        const origin = this.plansForCycle(cycleId)[0] ?? null;
+        return { originPlanId: origin?.planId ?? null, maxRealizedLossUsd: origin?.maxRealizedLossUsd ?? null, minNetProfitUsd: origin?.minNetProfitUsd ?? null, rebased: false };
+    }
+    recordPlanExecution(execution) {
+        const id = String(execution?.planId ?? '');
+        if (!id) return false;
+        const prior = this.planExecutions.get(id) ?? [];
+        this.planExecutions.set(id, [...prior.filter(row => row.recordedAt !== execution.recordedAt), execution].sort((a, b) => a.recordedAt - b.recordedAt));
+        return true;
+    }
+    executionsForPlan(planId) { return this.planExecutions.get(String(planId)) ?? []; }
     entryReservations = new Map();
     entryReservationRevision = 0;
     entryReservationTransaction = null;
@@ -193,9 +227,9 @@ export class RuntimeState {
     else
         this.executionFills.unshift(fill); if (this.executionFills.length > 5000)
         this.executionFills.length = 5000; }
-    serialize() { return { entryReservationRevision:this.entryReservationRevision, riskLedger:this.riskLedger, generation: this.generation, marketGeneration: this.marketGeneration, positions: [...this.positions], entryIntents: [...this.entryIntents], entryOrders: [...this.entryOrders], tpOrders: [...this.tpOrders], manualExitGoals:[...this.manualExitGoals], manualIntents: [...this.manualIntents], manualOrders: [...this.manualOrders], allocationPlans: [...this.allocationPlans], entryReservations: [...this.entryReservations], underlyingLocks: [...this.underlyingLocks], runtimeControl: this.runtimeControl, executionGovernance: this.executionGovernance, shadowRunner: this.shadowRunner, aiRuns: this.aiRuns, rejectionCooldown: [...this.rejectionCooldown], candidateLifecycle:[...this.candidateLifecycle], directionDecisionStates:[...this.directionDecisionStates], tradeOutcomes: this.tradeOutcomes, tradeRecords: [...this.tradeRecords], experienceSamples: [...this.experienceSamples], executionFills: this.executionFills, lifecycles: [...this.lifecycles], activity: this.activity, account: this.account }; }
+    serialize() { return { entryReservationRevision:this.entryReservationRevision, riskLedger:this.riskLedger, generation: this.generation, marketGeneration: this.marketGeneration, positions: [...this.positions], entryIntents: [...this.entryIntents], entryOrders: [...this.entryOrders], tpOrders: [...this.tpOrders], manualExitGoals:[...this.manualExitGoals], manualIntents: [...this.manualIntents], manualOrders: [...this.manualOrders], allocationPlans: [...this.allocationPlans], tradePlans: [...this.tradePlans], planExecutions: [...this.planExecutions], entryReservations: [...this.entryReservations], underlyingLocks: [...this.underlyingLocks], runtimeControl: this.runtimeControl, executionGovernance: this.executionGovernance, shadowRunner: this.shadowRunner, aiRuns: this.aiRuns, rejectionCooldown: [...this.rejectionCooldown], candidateLifecycle:[...this.candidateLifecycle], directionDecisionStates:[...this.directionDecisionStates], tradeOutcomes: this.tradeOutcomes, tradeRecords: [...this.tradeRecords], experienceSamples: [...this.experienceSamples], executionFills: this.executionFills, lifecycles: [...this.lifecycles], activity: this.activity, account: this.account }; }
     restore(value) { if (!value || typeof value !== 'object')
-        return; this.entryReservationRevision=Number.isSafeInteger(value.entryReservationRevision)?value.entryReservationRevision:0; this.riskLedger=value.riskLedger&&typeof value.riskLedger==='object'?value.riskLedger:null; this.generation = Number(value.generation) || 1; this.marketGeneration = Number(value.marketGeneration) || this.generation; for (const [key, target] of [['positions', this.positions], ['entryIntents', this.entryIntents], ['entryOrders', this.entryOrders], ['tpOrders', this.tpOrders], ['manualExitGoals',this.manualExitGoals], ['manualIntents', this.manualIntents], ['manualOrders', this.manualOrders], ['allocationPlans', this.allocationPlans], ['tradeRecords', this.tradeRecords], ['experienceSamples', this.experienceSamples], ['rejectionCooldown', this.rejectionCooldown], ['candidateLifecycle', this.candidateLifecycle], ['lifecycles', this.lifecycles], ['entryReservations', this.entryReservations], ['underlyingLocks', this.underlyingLocks]])
+        return; this.entryReservationRevision=Number.isSafeInteger(value.entryReservationRevision)?value.entryReservationRevision:0; this.riskLedger=value.riskLedger&&typeof value.riskLedger==='object'?value.riskLedger:null; this.generation = Number(value.generation) || 1; this.marketGeneration = Number(value.marketGeneration) || this.generation; for (const [key, target] of [['positions', this.positions], ['entryIntents', this.entryIntents], ['entryOrders', this.entryOrders], ['tpOrders', this.tpOrders], ['manualExitGoals',this.manualExitGoals], ['manualIntents', this.manualIntents], ['manualOrders', this.manualOrders], ['allocationPlans', this.allocationPlans], ['tradePlans', this.tradePlans], ['planExecutions', this.planExecutions], ['tradeRecords', this.tradeRecords], ['experienceSamples', this.experienceSamples], ['rejectionCooldown', this.rejectionCooldown], ['candidateLifecycle', this.candidateLifecycle], ['lifecycles', this.lifecycles], ['entryReservations', this.entryReservations], ['underlyingLocks', this.underlyingLocks]])
         if (Array.isArray(value[key]))
             for (const [id, source] of value[key]) {
                 const row = key === 'positions' ? { entryTimeSource: 'UNKNOWN', managementStatus: 'AUTO_MANAGED', humanManagedAt: null, tpLastVerifiedAt: null, tpCoverageSource: 'NONE', firstObservedAt: null, ...source } : source;

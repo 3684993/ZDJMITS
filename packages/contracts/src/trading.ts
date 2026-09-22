@@ -59,6 +59,11 @@ export const EntryIntentSchema = z.object({
   packetId: z.string(),
   brainRunId: z.string(),
   allocationPlan: z.any().optional(),
+  /** S06: the durable plan this intent was executed from, and the cycle identity it declared. */
+  planId:z.string().max(120).nullable().optional(),
+  planVersion:z.number().int().positive().nullable().optional(),
+  planCycleId:z.string().max(160).nullable().optional(),
+  planWarnings:z.array(z.string().max(160)).max(12).optional(),
   quantityUnits:z.number().int().positive().optional(),
   executionEnvelope:EntryExecutionEnvelopeSchema.optional(),
   reservationId: z.string().nullable().optional(),

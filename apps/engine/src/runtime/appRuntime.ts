@@ -51,6 +51,7 @@ import { V396ExitRuntime, exitSubjectFromPosition } from '../services/v396ExitRu
 import { V396AiExitRunner } from '../services/v396AiExitRunner.js';
 import { AiExitAuthorityService } from '../services/aiExitAuthority.js';
 import { PortfolioRiskAdmission } from '../services/portfolioRiskLedger.js';
+import { aiExitPlanFactsOf, executedPlanRecord } from '../services/tradePlanService.js';
 
 export class EngineRuntime {
   readonly writes=new RuntimeWriteBuffer();
@@ -439,7 +440,21 @@ export class EngineRuntime {
       exitRuntime,
       authority: runtime.aiExitAuthority,
       adapter: trade as ExchangeTradeAdapter,
-      planOf: () => null,
+      // S06: the AI exit is bound to the durable plan of its own cycle through the one reader that
+      // resolves it. A cycle with no plan gets no AI authority, whatever its position label says.
+      planOf: (position: any, scope: string, cycleId: string) => aiExitPlanFactsOf([...state.tradePlans.values()], {
+        scope,
+        cycleId,
+        now: Date.now(),
+        markPrice: Number((state.snapshots.get(position.symbol) as any)?.quote?.bid ?? Number.NaN),
+        firstFillAt: Number(position.openedAt ?? 0) || null,
+        latestClosedBar: (() => {
+          const card = (state.snapshots.get(position.symbol) as any)?.technical?.['15m'];
+          return card?.isClosed === true && Number.isFinite(Number(card?.barCloseTime))
+            ? { timeframe: '15m', closeTime: Number(card.barCloseTime), close: Number(card?.lastClosedBar?.close ?? card?.close ?? Number.NaN) }
+            : null;
+        })(),
+      }),
       identity: () => ({ environment: String(settings.connections.exchange.environment), account: String(settings.connections.exchange.credentialRef) }),
     });
     // C3: restart re-proves stored exits by their original clientOrderId before anything else. This
@@ -793,6 +808,39 @@ export class EngineRuntime {
     const written = exitRuntime.fixManagementDeadline(subject, minutes * 60_000, firstFillAt, position.profitTakePlan ? `plan:${cycleId}` : null);
     if (written) this.events.publish('AI_MANAGEMENT_DEADLINE_FIXED', { positionId: position.id, scope: exitRuntime.scope(subject), cycleId, ownerState: written.ownerState, deadline: written.deadline, planRef: written.planRef, source: 'FIRST_FILL' }, position.symbol);
     return written;
+  }
+
+  /**
+   * S06-E: a fill is recorded beside the plan it executed. The plan itself is never edited to match
+   * the outcome, so a later review can still tell the prediction apart from what happened.
+   */
+  recordPlanExecutionFromFacts(payload: any, now = Date.now()) {
+    const orderId = String(payload?.orderId ?? payload?.order?.id ?? '');
+    const order: any = this.state.entryOrders.get(orderId) ?? [...this.state.entryOrders.values()].find((row: any) => row.id === orderId || row.exchangeOrderId === orderId);
+    const intentId = String(order?.intentId ?? payload?.intentId ?? '');
+    const intent: any = this.state.entryIntents.get(intentId);
+    if (!intent?.planId) return null;
+    const plan: any = this.state.tradePlans.get(String(intent.planId));
+    if (!plan) return null;
+    const stepSize = Number((this.state.snapshots.get(intent.symbol) as any)?.quote?.stepSize ?? 1);
+    const filled = Number(order?.filledQuantity ?? payload?.filledQuantity ?? 0);
+    const price = Number(order?.price ?? intent.idealPrice ?? 0);
+    const record = executedPlanRecord({
+      plan,
+      intentId,
+      reservationId: order?.reservationId ?? intent.reservationId ?? null,
+      orderId: orderId || null,
+      actualEntryPrice: Number.isFinite(price) && price > 0 ? price : null,
+      executedQuantityUnits: V396ExitRuntime.quantityUnitsOf(filled, stepSize),
+      feeActualUsd: null,
+      source: filled > 0 && filled + 1e-12 >= Number(order?.quantity ?? filled) ? 'SYSTEM_FILL' : 'PARTIAL_FILL',
+      now,
+    });
+    this.state.recordPlanExecution(record);
+    this.events.publish('TRADE_PLAN_EXECUTION_RECORDED', { planId: plan.planId, cycleId: plan.cycleId, intentId, orderId: orderId || null,
+      plannedEntryPrice: record.plannedEntryPrice, actualEntryPrice: record.actualEntryPrice, priceDeviationUsd: record.priceDeviationUsd,
+      quantityDeviationUnits: record.quantityDeviationUnits, predictionMutated: false }, intent.symbol);
+    return record;
   }
 
   /** Backstop for cycles that were already open when this process started. */

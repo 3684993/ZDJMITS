@@ -1,4 +1,6 @@
 import { buildOpportunityEvidence, qualityPolicy } from './opportunityEvidence.js';
+import { buildQuantityHorizonCandidates } from './quantityHorizonCandidates.js';
+import { assembleTradePlan, planFactVersionOf } from './tradePlanService.js';
 import {binanceEntryBlockReason} from '../adapters/binance/requestBudget.js';
 import {privateAccountFresh} from './privateAccountReadiness.js';
 import { nearMarketPrice } from './nearMarketPrice.js';
@@ -317,7 +319,7 @@ export class EntryCoordinator {
       terminalRunId=result.runId;
       const d = result.decision;
       if (d.decision === 'REJECT_CANDIDATE' || !d.decision) { this.reject(symbol,d.reason,result.runId,d.tradeSide??undefined); return; }
-      if(d.decision==='WAIT_FOR_PRICE') {const market=this.state.snapshots.get(symbol),error=entryDataError(market);if(error)throw new Error(error);const wait={...waitingContext(d,result.runId,market!),opportunityVersion:opportunity?.version??null};this.transition(symbol,'WAIT_FOR_PRICE',d.reason,{waitContext:wait,nextEligibleAt:null});this.state.pool.remove(symbol);this.state.pool.replenish(this.state.universe);this.events.publish('ENTRY_WAIT_SAVED',{runId:result.runId,wait,entryIntentCreated:false},symbol);return;}
+      if(d.decision==='WAIT_FOR_PRICE') {this.persistWaitPlan({symbol,side:(d.structureDirection??d.tradeSide??'LONG') as 'LONG'|'SHORT',d,result,executionEnvelope});const market=this.state.snapshots.get(symbol),error=entryDataError(market);if(error)throw new Error(error);const wait={...waitingContext(d,result.runId,market!),opportunityVersion:opportunity?.version??null};this.transition(symbol,'WAIT_FOR_PRICE',d.reason,{waitContext:wait,nextEligibleAt:null});this.state.pool.remove(symbol);this.state.pool.replenish(this.state.universe);this.events.publish('ENTRY_WAIT_SAVED',{runId:result.runId,wait,entryIntentCreated:false},symbol);return;}
       if(d.decision!=='PLACE_LONG'&&d.decision!=='PLACE_SHORT') {const caps=this.routeCapabilities(symbol),facts=noEdgeReviewFacts({market:this.state.snapshots.get(symbol)!,...caps}),ttl=Math.max(60_000,(this.state.settings.ai.highFrequency?.retryCooldownSeconds??25)*4_000),noEdgeReview={structureDirection:d.structureDirection,rejectLayer:d.rejectLayer,blockingCondition:d.blockingCondition,releaseCondition:d.releaseCondition,facts,createdAt:Date.now(),expiresAt:Date.now()+ttl,invalidation:'15M_STRUCTURE_OR_PERMISSION_OR_ECONOMIC_SPACE_CHANGE'};this.events.publish('PRIMARY_NO_ENTRY',{runId:result.runId,decision:d.decision,reason:d.reason,rejectLayer:d.rejectLayer,blockingCondition:d.blockingCondition,releaseCondition:d.releaseCondition,noEdgeReview,entryIntentCreated:false},symbol);this.cooldown(symbol,d.reason,ttl,d.decision==='DATA_ERROR'||d.decision==='AI_OUTPUT_INVALID'?'AI_FAILURE_COOLDOWN':'REJECT_COOLDOWN',{noEdgeReview});return;}
       const decisionSide=(d.tradeSide??d.direction??(d.decision==='PLACE_LONG'?'LONG':'SHORT')) as 'LONG'|'SHORT';
       const marketForPolicy=this.state.snapshots.get(symbol)!;
@@ -368,10 +370,24 @@ export class EntryCoordinator {
         this.events.publish('ENTRY_DECISION_BLOCKED',{stage:'PORTFOLIO_RISK_ADMISSION',reason,reasons:admissionDecision.reasons,limits:admissionDecision.limits,brainRunId:result.runId,allocationPlanId:plan.planId},symbol);
         this.reject(symbol,`RISK_${reason}`,result.runId,d.direction);return;
       }
+      // S06: the plan is assembled from system-generated candidates and written durably before any
+      // reservation exists. A plan that cannot be stored must not become an order.
+      const intentId=uid('intent'),cycleIdOfIntent=`cycle_entry_${intentId}`;
+      const planOutcome=this.buildAndPersistTradePlan({symbol,side,market,d,result,executionEnvelope,admission,allocation:plan,cycleId:cycleIdOfIntent});
+      if(!planOutcome.plan){
+        this.events.publish('ENTRY_DECISION_BLOCKED',{stage:'TRADE_PLAN',reasons:planOutcome.refusals,warnings:planOutcome.warnings,brainRunId:result.runId},symbol);
+        this.reject(symbol,planOutcome.refusals[0]??'TRADE_PLAN_UNPROVEN',result.runId,d.tradeSide??undefined);return;
+      }
+      const tradePlan=planOutcome.plan;
+      this.events.publish('TRADE_PLAN_PERSISTED',{brainRunId:result.runId,planId:tradePlan.planId,planVersion:tradePlan.planVersion,cycleId:tradePlan.cycleId,
+        selectedCandidateId:tradePlan.selectedCandidateId,quantityUnits:tradePlan.quantityUnits,targetPrice:tradePlan.targetPrice,
+        entryTtlMinutes:tradePlan.entryTtlMinutes,targetHorizonMinutes:tradePlan.targetHorizonMinutes,managementDurationMs:tradePlan.managementDurationMs,
+        candidateSetHash:tradePlan.provenance.candidateSetHash,factVersion:tradePlan.provenance.factVersion,riskSnapshotHash:tradePlan.risk?.snapshotHash??null,
+        warnings:planOutcome.warnings,reservationCreated:false},symbol);
       const reservation = this.state.reserveEntry({underlying:plan.underlying,quoteAsset:plan.quoteAsset,marginUsd:plan.marginUsd,notionalUsd:plan.notionalUsd,planId:plan.planId,maxPositions:this.state.settings.portfolio.maxPositions,ttlSeconds:this.state.settings.riskGovernance.reservationTtlSeconds,leaseSeconds:this.state.settings.riskGovernance.lockLeaseSeconds,riskGeneration:riskTicket.riskGeneration,riskTicket,admissionCandidate,riskCapitalVersion:String(this.state.runtimeControl.capital.capitalVersion??''),maxConcurrentReservations:this.state.settings.riskGovernance.maxConcurrentReservations});
       if (!reservation.ok) {this.events.publish("ENTRY_DECISION_BLOCKED",{stage:"RESERVATION",reason:reservation.reason,allocationPlanId:plan.planId},symbol);this.reject(symbol,`RESERVATION_${reservation.reason}`,result.runId,d.direction);return;}
       const reservationId = reservation.reservationId,leverage = plan.leverage,now = Date.now();releaseExecutionLease(this.state,executionLeaseId);executionLeaseId=undefined;
-      const intent: EntryIntent = {id:uid("intent"),symbol,side,confidence:d.confidence,idealPrice:d.idealPrice,acceptablePriceRange:d.acceptablePriceRange,horizonMinutes:d.horizonMinutes,leverage,createdAt:now,aiAuthorizationExpiresAt:now+d.horizonMinutes*60_000,configuredOrderTtlExpiresAt:now+(this.state.settings.entry.nearMarket?.enabled?this.state.settings.entry.nearMarket.ttlSeconds*1000:this.state.settings.entry.absoluteTtlMinutes*60_000),absoluteExpiresAt:Math.min(now+d.horizonMinutes*60_000,now+(this.state.settings.entry.nearMarket?.enabled?this.state.settings.entry.nearMarket.ttlSeconds*1000:this.state.settings.entry.absoluteTtlMinutes*60_000)),packetId:packet.packetId,brainRunId:result.runId,decisionChainId:result.runId,allocationPlan:plan,reservationId,protectionMode:this.state.settings.riskGovernance.protectionMode,profitTakePlan:d.profitTakePlan,economicAdmission:economicAdmission.mode==='OFF'?null:{version:'V3.9.5',mode:economicAdmission.mode,passed:economicAdmission.passed,validatedAt:economicAdmission.validatedAt,expectedNetProfit:economicAdmission.expectedNetProfit,requiredNetProfit:economicAdmission.requiredNetProfit,reachProbability:economicAdmission.reachProbability,historicalHardMaxMovePercent:economicAdmission.historicalHardMaxMovePercent,blockers:economicAdmission.blockers},};
+      const intent: EntryIntent = {id:intentId,symbol,side,planId:tradePlan.planId,planVersion:tradePlan.planVersion,planCycleId:tradePlan.cycleId,planWarnings:planOutcome.warnings,confidence:d.confidence,idealPrice:d.idealPrice,acceptablePriceRange:d.acceptablePriceRange,horizonMinutes:d.horizonMinutes,leverage,createdAt:now,aiAuthorizationExpiresAt:now+d.horizonMinutes*60_000,configuredOrderTtlExpiresAt:now+(this.state.settings.entry.nearMarket?.enabled?this.state.settings.entry.nearMarket.ttlSeconds*1000:this.state.settings.entry.absoluteTtlMinutes*60_000),absoluteExpiresAt:Math.min(now+d.horizonMinutes*60_000,now+(this.state.settings.entry.nearMarket?.enabled?this.state.settings.entry.nearMarket.ttlSeconds*1000:this.state.settings.entry.absoluteTtlMinutes*60_000)),packetId:packet.packetId,brainRunId:result.runId,decisionChainId:result.runId,allocationPlan:plan,reservationId,protectionMode:this.state.settings.riskGovernance.protectionMode,profitTakePlan:d.profitTakePlan,economicAdmission:economicAdmission.mode==='OFF'?null:{version:'V3.9.5',mode:economicAdmission.mode,passed:economicAdmission.passed,validatedAt:economicAdmission.validatedAt,expectedNetProfit:economicAdmission.expectedNetProfit,requiredNetProfit:economicAdmission.requiredNetProfit,reachProbability:economicAdmission.reachProbability,historicalHardMaxMovePercent:economicAdmission.historicalHardMaxMovePercent,blockers:economicAdmission.blockers},};
       intent.quantityUnits=Number(d.quantityUnits);intent.executionEnvelope=executionEnvelope;
       const reservationRisk=computeExecutableRiskHeadroom({settings:this.state.settings,equity:Number(this.state.account.equityUsd??0),positions:[...this.state.positions.values()],pendingRiskExposures:collectPendingEntryRiskExposures(this.state,{now,excludeReservationId:reservationId,priorityReservationId:reservationId}),symbol,side,plannedNotional:plan.notionalUsd,expectedAdverseMovePct:Math.max(.001,market.technical['15m'].atrPercent/100),dailyDrawdownPct:Number(this.state.account.riskBaseline?.riskDrawdownPct??0),quoteNotionalCapacity:Math.max(0,Number(this.state.account.assets.find((asset:any)=>asset.asset===plan.quoteAsset)?.availableBalance??0)*leverage*.995),minimumNotional:Math.max(1,market.quote.minNotional)});
       this.events.publish("LIVE_RISK_ENVELOPE_EVALUATED",{brainRunId:result.runId,allocationPlanId:plan.planId,riskEnvelope:{...reservationRisk,status:reservationRisk.executable&&plan.notionalUsd<=reservationRisk.finalNotional+1e-8?'PASS':reservationRisk.reason,reasons:reservationRisk.blockers}},symbol);
@@ -384,7 +400,7 @@ export class EntryCoordinator {
       const quantity = Number(intent.quantityUnits)*market.quote.stepSize;
       if(quantity<=0||quantity*maker.price>plan.notionalUsd+1e-8) {this.state.releaseEntryReservation(reservationId);this.events.publish('ENTRY_ORDER_BLOCKED',{intentId:intent.id,brainRunId:result.runId,reason:'MINIMUM_SIZE_EXCEEDS_ALLOCATION'},symbol);this.cooldown(symbol,'MINIMUM_SIZE_EXCEEDS_ALLOCATION',60_000);return;}
       try {await this.exchange.setLeverage(symbol, leverage);} catch (error) {const reason=error instanceof Error?error.message:String(error);this.state.releaseEntryReservation(reservationId);this.events.publish("ENTRY_ORDER_BLOCKED",{intentId:intent.id,brainRunId:result.runId,reason,stage:"SET_LEVERAGE"},symbol);this.cooldown(symbol, reason, 60_000);return;}
-      const order: EntryOrder = {cycleId:`cycle_entry_${intent.id}`,id:`entry_${intent.id}`,clientOrderId:binanceClientOrderIdFactory.stable("ML", intent.id),exchangeOrderId:null,symbol,side:intent.side,quantity,price:maker.price,filledQuantity:0,leverage,status:"NEW",createdAt:now,updatedAt:now,absoluteExpiresAt:intent.absoluteExpiresAt,repriceCount:0,intentId:intent.id,reachability:maker.reachability,reservationId};
+      const order: EntryOrder = {cycleId:(intent as any).planCycleId??`cycle_entry_${intent.id}`,id:`entry_${intent.id}`,clientOrderId:binanceClientOrderIdFactory.stable("ML", intent.id),exchangeOrderId:null,symbol,side:intent.side,quantity,price:maker.price,filledQuantity:0,leverage,status:"NEW",createdAt:now,updatedAt:now,absoluteExpiresAt:intent.absoluteExpiresAt,repriceCount:0,intentId:intent.id,reachability:maker.reachability,reservationId};
       this.state.entryOrders.set(order.id,order);
       try {
         const latest=this.state.snapshots.get(symbol),dataError=entryDataError(latest);if(dataError||Date.now()>=intent.absoluteExpiresAt)throw new Error(dataError??'AI_AUTHORIZATION_EXPIRED');if(this.state.runtimeControl.mode!=='RUNNING'||this.state.executionGovernance.mode!=='AUTO_RUNNING'||this.state.settings.connections.executionMode!=='TESTNET_ENABLED')throw new Error('EXECUTION_PERMISSION_CHANGED');
@@ -415,6 +431,118 @@ export class EntryCoordinator {
     if(prior.longExecutable!==next.longExecutable||prior.shortExecutable!==next.shortExecutable)return true;
     return !row.nextReviewAt||Date.now()>=row.nextReviewAt;
   }
+
+  /** The facts a plan was computed from, so a reviewer can tell a re-plan from a replay. */
+  private planFactVersion(symbol:string,side:'LONG'|'SHORT'|'WAIT',riskSnapshotHash:string,envelopeExpiresAt:number){
+    const market=this.state.snapshots.get(symbol) as any,card=market?.technical?.['15m'];
+    return planFactVersionOf({symbol,side,quote:{bid:market?.quote?.bid??null,ask:market?.quote?.ask??null,ts:market?.quote?.ts??null},
+      bar:card?.isClosed===true?{closeTime:card?.barCloseTime??null,close:card?.lastClosedBar?.close??null}:null,
+      riskSnapshotHash,envelopeExpiresAt,settingsVersion:Number((this.state.settings as any).settingsVersion??0),
+      marginTier:String((this.state.settings.riskGovernance as any)?.portfolioRisk?.marginTierVersion??'')});
+  }
+
+  private planScopeOf(symbol:string,side:'LONG'|'SHORT'|'WAIT'){
+    const exchange=this.state.settings.connections.exchange;
+    return executionScope(String(exchange.environment),String(exchange.credentialRef),symbol,side==='WAIT'?'ENTRY':side);
+  }
+
+  /** Evidence is resolved against the market hub; an unusable reference is reported, never dropped. */
+  private evaluatePlanEvidenceRefs(refs:string[],symbol:string,now:number){
+    const facts:{symbol:string;timeframe:string;isClosed:boolean;barCloseTime:number;maxAgeMs:number;appliesToSymbol:string}[]=[];
+    const windows:{[key:string]:number}={'1m':90_000,'5m':360_000,'15m':1_805_000,'1h':5*3_600_000,'4h':18*3_600_000};
+    for(const timeframe of Object.keys(windows)){
+      const rows=(this.market?.cachedCandles?.(symbol,timeframe as never,4)??[]) as any[];
+      const last=rows[rows.length-1];
+      if(last&&Number.isFinite(Number(last.closeTime)))
+        facts.push({symbol,timeframe,isClosed:Number(last.closeTime)<=now,barCloseTime:Number(last.closeTime),maxAgeMs:windows[timeframe],appliesToSymbol:symbol});
+    }
+    return refs.map(ref=>{
+      const text=String(ref).trim(),match=/^(?:bar|struct|ev|15m|5m|1h)[:_\-]?([A-Z0-9]*)[:_\-]?([0-9]+)?/i.exec(text);
+      const refSymbol=(match?.[1]??'').toUpperCase();
+      if(refSymbol&&refSymbol!==symbol.toUpperCase().replace(/(USDT|USDC|BUSD)$/,'')&&refSymbol!==symbol.toUpperCase())
+        return {ref,reason:`PLAN_EVIDENCE_SYMBOL_MISMATCH:${refSymbol}`};
+      const timeframe=/1h|60m/i.test(text)?'1h':/4h/i.test(text)?'4h':/5m/i.test(text)?'5m':/1m/i.test(text)?'1m':'15m';
+      const fact=facts.find(row=>row.timeframe===timeframe);
+      if(!fact)return {ref,reason:'PLAN_EVIDENCE_TIMEFRAME_MISSING'};
+      if(!fact.isClosed)return {ref,reason:'PLAN_EVIDENCE_BAR_NOT_CLOSED'};
+      if(now-fact.barCloseTime>fact.maxAgeMs)return {ref,reason:'PLAN_EVIDENCE_STALE'};
+      return {ref,reason:''};
+    });
+  }
+
+  private buildAndPersistTradePlan(input:{symbol:string;side:'LONG'|'SHORT';market:any;d:any;result:any;executionEnvelope:any;admission:any;allocation:any;cycleId:string}){
+    const now=Date.now(),warnings:string[]=[],settings=this.state.settings as any;
+    const facts=input.admission?.preTradeFacts?.(now);
+    if(!facts||facts.complete!==true)return{plan:null,refusals:[...((facts?.blockers??['RISK_SNAPSHOT_UNPROVEN']) as string[])].slice(0,8),warnings};
+    const sideEnvelope=input.executionEnvelope[input.side],quote=input.market?.quote??{};
+    const candidateSet=buildQuantityHorizonCandidates({
+      symbol:input.symbol,side:input.side,now,
+      quote:{bid:Number(quote.bid),ask:Number(quote.ask),tickSize:Number(quote.tickSize),stepSize:Number(quote.stepSize),
+        minQty:Number(quote.minQty),minNotional:Number(quote.minNotional)},
+      leverage:Number(input.executionEnvelope.leverage??0),envelope:sideEnvelope,envelopeExpiresAt:Number(input.executionEnvelope.expiresAt??now),
+      factVersion:String(this.planFactVersion(input.symbol,input.side,String(facts.snapshotHash),Number(input.executionEnvelope.expiresAt??now))),
+      risk:{capitalAtRiskUsd:Number(facts.capitalAtRiskUsd),grossNotionalAfterUsd:Number(facts.grossNotionalUsd),longNotionalAfterUsd:Number(facts.longNotionalUsd),
+        shortNotionalAfterUsd:Number(facts.shortNotionalUsd),clusterNotionalAfterUsd:Number(facts.clusterNotionalUsd),
+        limitingConstraints:(input.allocation?.reasons??[]).filter((row:string)=>String(row).startsWith('REJECT_')),riskGeneration:Number(facts.riskGeneration),
+        snapshotHash:String(facts.snapshotHash),profileVersion:String(facts.profileVersion),humanSlotsAfter:Number(facts.humanSlots)},
+      settings:{takeProfit:settings.takeProfit,tradeEconomics:settings.tradeEconomics} as never,
+      candles:(timeframe:string,count:number)=>(this.market?.cachedCandles?.(input.symbol,timeframe as never,count)??[]) as never,
+      managementDurationMs:Math.max(60_000,Number(settings.positionManagement?.humanHandoffAfterMinutes??0)*60_000),
+      fundingEstimate:{amountUsd:null,status:'UNPROVEN' as const,sourceId:null},
+      // The model's own triple is handed to the generator, which decides whether it is legal at all.
+      selection:{quantityUnits:Number(input.d.quantityUnits??0),targetPrice:Number(input.d.profitTakePlan?.targetPrice??0),
+        targetHorizonMinutes:Number(input.d.profitTakePlan?.targetHorizonMinutes??0)},
+    });
+    const refs=[...(input.d.profitTakePlan?.evidenceRefs??[]),...(input.d.supportingEvidenceRefs??[])].map(String);
+    const evidence=this.evaluatePlanEvidenceRefs(refs,input.symbol,now);
+    const usable=evidence.filter(row=>!row.reason).map(row=>row.ref);
+    warnings.push(...evidence.filter(row=>row.reason).map(row=>`${row.reason}:${row.ref}`));
+    if(!usable.length)warnings.push('PLAN_EVIDENCE_UNRESOLVED');
+    const enforce=String(settings.tradeEconomics?.admissionMode??'OFF')==='ENFORCE';
+    if(enforce&&!usable.length)return{plan:null,refusals:['PLAN_EVIDENCE_UNRESOLVED'],warnings};
+    const level=input.side==='LONG'?Number(input.d.acceptablePriceRange?.min??0):Number(input.d.acceptablePriceRange?.max??0);
+    const outcome=assembleTradePlan({
+      selection:{decision:input.d.decision,side:input.side,quantityUnits:Number(input.d.quantityUnits??0),
+        targetPrice:Number(input.d.profitTakePlan?.targetPrice??Number.NaN),targetHorizonMinutes:Number(input.d.profitTakePlan?.targetHorizonMinutes??0),
+        horizonMinutes:Number(input.d.horizonMinutes??0),thesis:[input.d.directionReason,input.d.reason].filter(Boolean).join(' / ')||null,
+        invalidationPredicate:level>0&&usable.length?'CLOSED_BAR_BREAKS_LEVEL':'NO_PREDICATE',
+        predicateLevel:level>0?level:null,predicateEvidenceRefs:usable,counterEvidenceRefs:(input.d.missingEvidence??[]).map(String),
+        releaseCondition:null,modelRunId:input.result?.runId??null,promptVersion:input.result?.promptVersion??null,modelConfidence:Number(input.d.confidence??Number.NaN)},
+      candidateSet,scope:this.planScopeOf(input.symbol,input.side),cycleId:input.cycleId,symbol:input.symbol,
+      leverage:Number(input.executionEnvelope.leverage??0),minNetProfitUsd:Number(settings.takeProfit.minNetProfitUsd??0),
+      maxRealizedLossUsd:Number(settings.riskGovernance?.exitCoordination?.aiExitLossLimitUsd??0),factVersion:candidateSet.factVersion,now,
+      planVersion:this.state.plansForCycle(input.cycleId).length+1,source:'AI',
+    });
+    if(!outcome.plan)return{plan:null,refusals:outcome.refusals,warnings:[...warnings,...outcome.warnings]};
+    const stored=this.state.putTradePlan(outcome.plan);
+    if(!stored.written&&!stored.identical)return{plan:null,refusals:[String(stored.reason??'PLAN_PERSISTENCE_FAILED')],warnings};
+    if(stored.identical)warnings.push('PLAN_ALREADY_PERSISTED_FOR_IDENTICAL_FACTS');
+    return{plan:outcome.plan,refusals:[] as string[],warnings:[...warnings,...outcome.warnings]};
+  }
+
+  /** A WAIT leaves an auditable plan behind and nothing else: no reservation, no intent, no order. */
+  private persistWaitPlan(input:{symbol:string;side:'LONG'|'SHORT';d:any;result:any;executionEnvelope:any}){
+    const now=Date.now(),settings=this.state.settings as any,cycleId=`cycle_wait_${input.result?.runId??now}`;
+    const release=[input.d.releaseCondition,input.d.waitCondition?`${input.d.waitCondition.operator} ${input.d.waitCondition.price}`:null].filter(Boolean).join(' / ');
+    const outcome=assembleTradePlan({
+      selection:{decision:'WAIT',side:'WAIT',thesis:[input.d.blockingCondition,input.d.reason].filter(Boolean).join(' / ')||null,
+        invalidationPredicate:'NO_PREDICATE',predicateEvidenceRefs:[],counterEvidenceRefs:(input.d.missingEvidence??[]).map(String),
+        releaseCondition:release||null,modelRunId:input.result?.runId??null,promptVersion:input.result?.promptVersion??null,
+        modelConfidence:Number(input.d.confidence??Number.NaN),quantityUnits:0,targetPrice:null,targetHorizonMinutes:0},
+      candidateSet:{schemaVersion:'V396-PLAN-CANDIDATE-SET-1',symbol:input.symbol,side:input.side,createdAt:now,
+        expiresAt:Number(input.executionEnvelope?.expiresAt??now),factVersion:'wait',candidateSetHash:'wait',candidates:[],
+        noTradeReasons:[String(input.d.decision)],quantityLadder:[],horizonLadder:[],rejectedCombinations:0},
+      scope:this.planScopeOf(input.symbol,'WAIT'),cycleId,symbol:input.symbol,leverage:Number(input.executionEnvelope?.leverage??1),
+      minNetProfitUsd:Number(settings.takeProfit.minNetProfitUsd??0),maxRealizedLossUsd:Number(settings.riskGovernance?.exitCoordination?.aiExitLossLimitUsd??0),
+      factVersion:'wait',now,planVersion:this.state.plansForCycle(cycleId).length+1,source:'AI',
+    });
+    if(!outcome.plan){this.events.publish('TRADE_PLAN_WAIT_REFUSED',{brainRunId:input.result?.runId??null,reasons:outcome.refusals},input.symbol);return null;}
+    const stored=this.state.putTradePlan(outcome.plan);
+    this.events.publish('TRADE_PLAN_PERSISTED',{brainRunId:input.result?.runId??null,planId:outcome.plan.planId,planVersion:outcome.plan.planVersion,cycleId,
+      side:'WAIT',quantityUnits:0,reservationCreated:false,written:stored.written,releaseCondition:outcome.plan.releaseCondition},input.symbol);
+    return outcome.plan;
+  }
+
   private routeCapabilities(symbol:string){const route=this.state.runtimeControl.capital.routedCandidates.find((x:any)=>x.symbol===symbol);return{longExecutable:Boolean(route?.longExecutable),shortExecutable:Boolean(route?.shortExecutable)};}
   private currentDecisionContext(symbol:string,confirmation?:unknown){const market=this.state.snapshots.get(symbol);if(!market)return'MARKET_MISSING';return decisionContextKey({market,settingsContext:decisionSettingsContext(this.state.settings),confirmation,...this.routeCapabilities(symbol)});}
   private transition(symbol:string,status:string,reason:string,extra:Record<string,unknown>={}){const now=Date.now(),previous=this.state.candidateLifecycle.get(symbol),primaryLease=['PRIMARY_QUEUED','PRIMARY_RUNNING'].includes(status),runReset=primaryLease&&!Object.prototype.hasOwnProperty.call(extra,'runId')?{previousRunId:previous?.runId??previous?.previousRunId??null,runId:null}:{},next={...previous,...runReset,...extra,symbol,status,reason,triggerReason:status==='READY'?String(extra.triggerReason??reason):String(extra.triggerReason??previous?.triggerReason??(previous?.reason&&previous.reason!=='SCHEDULER_DISPATCH'?previous.reason:'FIRST_REVIEW')),updatedAt:now,from:previous?.status??null};this.state.candidateLifecycle.set(symbol,next);const candidate=this.state.universe.find((x:any)=>x.symbol===symbol);if(candidate){candidate.lifecycle=status;candidate.lifecycleReason=reason;candidate.nextEligibleAt=next.nextEligibleAt??null;candidate.pipelineEligible=status==='READY'||status==='SCOUT_QUEUED'||status==='SCOUT_RUNNING'||status==='SCOUT_DONE'||status==='PRIMARY_QUEUED'||status==='PRIMARY_RUNNING'||status==='PLACE_READY';}this.events.publish('CANDIDATE_LIFECYCLE_CHANGED',next,symbol);return next;}

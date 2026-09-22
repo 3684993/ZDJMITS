@@ -726,7 +726,7 @@ export class SettingsStore {
   persistRuntime(value: unknown) {
     const startedAt=Date.now(),core={...(value as any)},lists:Record<string,{ids:string[];tuple:boolean}>={},updates:Array<[string,string,string]>=[];
     this.runtimeEntityCache??=new Map((this.db.prepare('SELECT kind,entity_id,payload FROM runtime_entities').all() as any[]).map(r=>[`${r.kind}:${r.entity_id}`,r.payload]));
-    const tuples=new Set(['positions','entryIntents','entryOrders','tpOrders','manualIntents','manualOrders','allocationPlans','entryReservations','tradeRecords','experienceSamples']);
+    const tuples=new Set(['positions','entryIntents','entryOrders','tpOrders','manualIntents','manualOrders','allocationPlans','entryReservations','tradeRecords','experienceSamples','tradePlans','planExecutions']);
     for(const [kind,rows] of Object.entries(core)){if(!Array.isArray(rows)||(!tuples.has(kind)&&!['aiRuns','executionFills'].includes(kind)))continue;const tuple=tuples.has(kind),ids:string[]=[];
       rows.forEach((row:any,index)=>{const id=String(tuple?row[0]:row.id??row.fillId??index),entity=tuple?row[1]:row,payload=JSON.stringify(entity);ids.push(id);if(this.runtimeEntityCache!.get(`${kind}:${id}`)!==payload)updates.push([kind,id,payload]);});lists[kind]={ids,tuple};delete core[kind];
     }
@@ -811,6 +811,18 @@ export class SettingsStore {
         .prepare("SELECT payload FROM trade_records ORDER BY updated_at DESC")
         .all() as Array<{ payload: string }>
     ).map((row) => JSON.parse(row.payload));
+  }
+  /**
+   * S06-E: the original plans and their execution records live in the same entity table as the rest
+   * of the runtime, written by the runtime checkpoint inside the reservation transaction. These reads
+   * exist so a reviewer or the API can fetch them without walking the whole payload.
+   */
+  loadTradePlans() {
+    return (this.db.prepare("SELECT payload FROM runtime_entities WHERE kind='tradePlans'").all() as Array<{ payload: string }>).map((row) => JSON.parse(row.payload));
+  }
+  loadPlanExecutions() {
+    return (this.db.prepare("SELECT payload FROM runtime_entities WHERE kind='planExecutions'").all() as Array<{ payload: string }>)
+      .map((row) => JSON.parse(row.payload)).flat();
   }
   upsertExperienceSample(value: unknown) {
     const row = value as any;

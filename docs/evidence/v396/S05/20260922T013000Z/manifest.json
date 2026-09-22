@@ -1,0 +1,138 @@
+{
+  "stageId": "S05",
+  "runId": "20260922T013000Z",
+  "status": "READY_FOR_REVIEW",
+  "selfSignedAccepted": false,
+  "acceptanceOwner": "用户/指定审查者",
+  "role": "local acceptance only: this round adds tests and evidence; the three S05 production modules were not modified",
+  "base": {
+    "commit": "46b66fd8647e1204cf16819deac007131eb34f40",
+    "branch": "codex/v396-final-convergence-20260922",
+    "requiredRemoteHead": "46b66fd8647e1204cf16819deac007131eb34f40",
+    "remoteHeadVerifiedBy": "git ls-remote origin refs/heads/codex/v396-final-convergence-20260922",
+    "worktree": "D:/MITS-WORKTREES/v396-final-convergence-20260922",
+    "previousStageHead": "0fd0834",
+    "historyRewrite": "NONE - merge --ff-only only; no rebase, squash or force push"
+  },
+  "environment": {
+    "node": "v22.23.1",
+    "os": "Windows"
+  },
+  "contractVersion": "V396-C1",
+  "invariants": [
+    "I02",
+    "I05",
+    "I06",
+    "I07",
+    "I08"
+  ],
+  "scorecardFocus": [
+    "RI1",
+    "RI2",
+    "RI3",
+    "RI4"
+  ],
+  "commands": [
+    {
+      "cmd": "git fetch origin codex/v396-final-convergence-20260922 && git merge --ff-only origin/...",
+      "exit": 0,
+      "result": "local HEAD 0fd0834 -> 46b66fd"
+    },
+    {
+      "cmd": "npm run build -w @zdj/contracts && npm run build -w @zdj/core",
+      "exit": 0,
+      "errors": 0
+    },
+    {
+      "cmd": "npm run typecheck -w @zdj/engine (phase 1, before any test file existed)",
+      "exit": 0,
+      "errors": 0
+    },
+    {
+      "cmd": "npx vitest run src/services/s05PortfolioTailRisk.test.ts",
+      "exit": 0,
+      "tests": 76,
+      "failed": 0,
+      "artifact": "docs/evidence/v396/S05/20260922T013000Z/s05-tests.json"
+    },
+    {
+      "cmd": "npx vitest run (full @zdj/engine workspace)",
+      "exit": 0,
+      "testFiles": 136,
+      "tests": 882,
+      "failed": 0
+    },
+    {
+      "cmd": "npm run typecheck -w @zdj/engine (after the test file was added)",
+      "exit": 0,
+      "errors": 0
+    },
+    {
+      "cmd": "node scripts/v396-s00-static-check.mjs",
+      "exit": 0,
+      "blockers": 0,
+      "artifact": "docs/evidence/v396/S05/20260922T013000Z/s00-static-gate.json"
+    },
+    {
+      "cmd": "git diff --check",
+      "exit": 0
+    }
+  ],
+  "matrix": {
+    "S05-T01": "PASS - ownership-only transition keeps gross, notional, capital at risk, stress loss and admission identical; the transition is still visible in snapshotHash",
+    "S05-T02": "PASS - BTCUSDT+BTCUSDC merge into one BTC underlying with long/short gross kept; one dedupeKey counted once at the larger fact; UNKNOWN pending keeps its notional and closes the snapshot",
+    "S05-T03": "NOT_RUN - atomic JIT reservation belongs to S05-E and RuntimeState.reserveEntry(), both explicitly out of this round",
+    "S05-T04": "PASS - 8 adversarial axes plus an 80-step deterministic sweep: harsher scenarios never lower the worst loss and never open admission",
+    "S05-T05": "PASS - 26 fail-closed rows (profile, scenario set, correlation version, maintenance margin, liquidation buffer, account/margin asset, identity, flows, generation, time, peak)",
+    "S05-T06": "PASS - HUMAN_MANAGED / HANDOFF_PENDING / AI_ACTIVE each consume one potential handoff slot; ack timeout, pending count, slot and notional caps block new risk; protectionAllowed stays true",
+    "S05-T07": "PASS - 100 -> 90 with a +100 deposit reports equity 190, flow-adjusted 90 and 10% drawdown, identical to the no-deposit book",
+    "S05-T08": "NOT_RUN - release of capacity only on real fill requires the S04 task/exit wiring, which S05-E owns",
+    "properties": "PASS - increased risk or tighter budgets never widen admission; unmapped assets collapse to one UNMAPPED_CORRELATED bucket; reordered facts give one snapshotHash; CLOSED-over-non-zero and contradictory facts conflict at the larger quantity"
+  },
+  "sourceDefects": {
+    "p0": 0,
+    "p1": 0,
+    "p2": 5,
+    "blocking": false,
+    "notes": "all five are contract-boundary observations on modules that are still unwired; none lets a fail-closed decision return ALLOW in this tree"
+  },
+  "scopeGuard": {
+    "productionModulesModified": "NONE (portfolioRiskSnapshot.ts / portfolioStress.ts / humanCapacityPolicy.ts untouched; git status shows only the new test file and this evidence directory)",
+    "s05e": "NOT_STARTED per instruction",
+    "runtimeStateReserveEntry": "NOT_MODIFIED",
+    "s06": "NOT_STARTED",
+    "wiredIntoEngineRuntime": false,
+    "orderPathWired": false,
+    "exchangeAccess": "NONE",
+    "network": "NOT_USED",
+    "engineLifecycle": "NOT_USED",
+    "liveSettings": "NOT_MODIFIED",
+    "liveDatabase": "NOT_TOUCHED",
+    "productionMigration": false,
+    "deployed": false,
+    "newAiWriteAuthority": "NONE",
+    "g2": "NOT_ACHIEVED - S05 admission is not consumed by any entry path yet"
+  },
+  "changedFiles": [
+    {
+      "path": "apps/engine/src/services/portfolioRiskSnapshot.ts",
+      "sha256NormalizedLF": "c822431a7c4d44f6f73b63af71e25f24251fa809be0ed4176bea94120d964f80"
+    },
+    {
+      "path": "apps/engine/src/services/portfolioStress.ts",
+      "sha256NormalizedLF": "a6bddc680cc6b8f8a2a5d390e5ba7ac99ea1c08ed2c6c077f1446bfdcac34252"
+    },
+    {
+      "path": "apps/engine/src/services/humanCapacityPolicy.ts",
+      "sha256NormalizedLF": "1b5e99b59f497bbcf13285dc45dcd218f005f2e05ae472967e433bf4aa081734"
+    },
+    {
+      "path": "apps/engine/src/services/s05PortfolioTailRisk.test.ts",
+      "sha256NormalizedLF": "5342f1e86d64a7439366d90486e6d62ec552692806bb09601b377289691db2af"
+    },
+    {
+      "path": "docs/plans/v396/05-portfolio-and-tail-risk.md",
+      "sha256NormalizedLF": "f2b05141d192afe0798636dd31bf9f36358b602cbccd989844b250bad3af5338"
+    }
+  ]
+}

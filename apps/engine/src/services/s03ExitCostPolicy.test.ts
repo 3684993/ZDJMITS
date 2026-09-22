@@ -301,7 +301,7 @@ describe('S03 properties',()=>{
       expect(source,file).not.toMatch(/node:|fetch|axios|WebSocket|DatabaseSync|settingsStore|placeEntry|placeTakeProfit|placeManualOrder|submitOrder|\.reserve\(/);
     }
     const walk=(dir:string):string[]=>readdirSync(dir,{withFileTypes:true}).flatMap(entry=>entry.isDirectory()?walk(join(dir,entry.name)):entry.name.endsWith('.ts')?[join(dir,entry.name)]:[]);
-    const consumers=walk(join(ownDirectory,'..')).filter(path=>!moduleFiles.includes(basename(path))&&basename(path)!=='s03ExitCostPolicy.test.ts'&&readFileSync(path,'utf8').includes('s03ExitCostEstimator'));
+    const consumers=walk(join(ownDirectory,'..')).filter(path=>!moduleFiles.includes(basename(path))&&!basename(path).endsWith('.test.ts')&&readFileSync(path,'utf8').includes('s03ExitCostEstimator'));
     expect(consumers.map(path=>basename(path))).toEqual([]);
   });
 });

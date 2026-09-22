@@ -1,12 +1,19 @@
 # S05：组合与尾部风险、人工承载能力
 
-状态 NOT_STARTED；主实施 terra；luna 做冻结数据的展示/报告。前置 S01、S02；后继 S06、S09。重点 RI1–RI4，将历史 5/20 的缺口变为可测约束。涉及 I02/I05/I06/I07/I08。
+状态 IN_PROGRESS；主实施 terra；luna 做冻结数据的展示/报告。前置 S01、S02；后继 S06、S09。重点 RI1–RI4，将历史 5/20 的缺口变为可测约束。涉及 I02/I05/I06/I07/I08。
 
 ## 文件与目标
 
 已有 packages/core/src/{capitalAdmission,portfolio}.ts；engine services/{preAiExecutionEnvelope,executableRiskHeadroom,economicEntryFeasibility,entryRiskOccupancy,liveValidationService}.ts；contracts/riskGovernance.ts、settings.ts；runtime/appRuntime.ts。
 
-拟新增 portfolioRiskSnapshot.ts、portfolioStress.ts、humanCapacityPolicy.ts（位置按现有层次调整）。纯计算置 core，运行事实聚合置 engine；仅一个权威准入/预留服务，禁止另造互相矛盾的余额。
+新增 portfolioRiskSnapshot.ts、portfolioStress.ts、humanCapacityPolicy.ts。纯计算置 engine service 的离线纯模块，运行事实聚合与接线后续单独完成；只保留一个权威准入/预留服务，禁止另造互相矛盾的余额。
+
+当前收敛决议：
+- S05-A～D 的纯模型已进入 convergence 分支：全账户快照、同 underlying 聚合、逐保证金币种占用、现金流调整回撤、显式压力场景、人工/待交接/AI 潜在交接容量。
+- UNKNOWN/CONFLICT 永不释放风险；HUMAN_MANAGED/HANDOFF_PENDING 不降低账户暴露；CLOSED 标签不能覆盖非零数量事实。
+- 未映射相关性统一进入 `UNMAPPED_CORRELATED`，不会被当成互相独立资产。
+- 人工容量耗尽只阻断新增风险，保护路径恒保持可用。
+- S05-E 不新建第二套 reservation ledger；待本批本地测试通过后，直接扩展现有 `RuntimeState.reserveEntry()`，按 riskGeneration + 最新 S05 snapshot 做 JIT 原子预留。
 
 ## 分步实现
 
@@ -15,7 +22,7 @@
 3. **S05-B 聚合与关联。** 同 underlying 合约统一暴露，保留 LONG/SHORT 毛额与净额；相关簇采用版本化映射/滚动历史，历史缺失用保守分组，不当独立资产。压力情景相关性趋同，不能因平时相关系数小而无限分散开仓。
 4. **S05-C 压力预算。** 构建价格单边/跳空、深度收缩、价差/资金费变坏、mark-basis 变化与交易所不可用情景，输出每仓和账户压力损失、保证金消耗、清算缓冲、资金占用。使用交易所当前风险档位/模式，缺维持保证金信息不能宣称清算安全。
 5. 不设置“看起来安全”的固定倍数。风险档案包含 maxCapitalAtRisk、maxDrawdown、maxStressLoss、gross/direction/cluster limits、margin/liq buffer、human count/notional/pending/ack age；每项单位、适用模式、事实来源和违规动作明确。未配置的关键限额拒绝新风险；离线 fixture 有显式测试值但不写默认实盘值。
-6. **S05-D 人工容量。** 人工/待交接全部计入风险。新仓事前预留潜在交接容量；首版可每个 AI 仓按最坏情况占一个潜在交接名额，之后只有足够数据才引入概率预算。过量人工积压或确认过期时停止新 entry，不停止保护，不自动平掉深亏仓。
+6. **S05-D 人工容量。** 人工/待交接全部计入风险。新仓事前预留潜在交接容量；首版每个 AI 仓按最坏情况占一个潜在交接名额。过量人工积压或确认过期时停止新 entry，不停止保护，不自动平掉深亏仓。
 7. **S05-E 原子 JIT。** 初筛给出两侧最大合法数量；entry 提交时按最新 riskGeneration 再验并原子 claim 保证金/敞口。多候选并发只允许在真实剩余额度内通过；任务 UNKNOWN 不释放预留。
 8. 上限变严立即缩小新增授权；变宽不追认旧 AI 计划。记录 limitingConstraints 与事实版本，WAITING_EXECUTION_CAPACITY 改为可区分资金/方向/人工/数据/槽位原因。
 

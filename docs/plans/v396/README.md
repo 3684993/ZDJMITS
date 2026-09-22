@@ -1,5 +1,7 @@
 # V3.9.6 总升级实施计划
 
+> 2026-09-22 最新审计：**IMPLEMENTATION_PARTIAL / NOT_ACCEPTED**。本文件下文 PLAN_ONLY 是最初规格的历史状态；当前进度以[最终审计](../../reports/v396-final-convergence-audit-20260922.md)及[剩余闭环计划](FINAL-REMAINING-IMPLEMENTATION-20260922.md)为准。
+
 版本：DESIGN-1，2026-09-21。状态：**PLAN_ONLY / 未开始实施**。总设计：当前任务；实施工程师：terra、luna。本文及分步文件是实施规格，文件写入不代表任务完成、能力已上线或交易已获授权。
 
 依据：[详细设计与风险评估](../../reports/v396-detailed-upgrade-and-quant-risk-assessment-20260921.md)、[最终报告](../../reports/v395-project-final-and-v396-implementation-plan-20260921.md)、[R17](../../reports/v395-final-24h-soak-and-release-baseline-20260921.md)。源码核对基线为 `4473a6f59f132eddb35fd3cca2ddf8e6fa7bdf8a`；设计报告提交为 `9caacb32c75182deda4aa805007061f096b9493d`。工程师开始时必须记录实际 base/head 与差异，不得把基线数字当作实时账户状态。

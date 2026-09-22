@@ -26,3 +26,5 @@
 - 现网边界：不启停/热重载 Engine，不改 live Settings/DB，不部署、不发单。允许隔离 worktree 的代码、测试、临时 DB 和文档；通知脚本按用户要求执行。
 
 - C1：已完成首轮 8 项缺陷修复；84 targeted / 890 full tests PASS。证据见 final-convergence-20260922/C1/RESULT.md。C2 开始；整体仍未验收。
+
+- 最新总设计复审：C2 原子预留基础完成；C3 Round1.1 及本轮敌意修复见 d77a62a/abc158c，975 Engine tests PASS。**不等于 C2 的 S05 全量准入、C3 全生命周期、C4–C7 已完成**。剩余顺序及门见 FINAL-REMAINING-IMPLEMENTATION-20260922.md；整版 NOT_ACCEPTED。

@@ -1,5 +1,7 @@
 # V3.9.6 continuous offline completion matrix
 
+> 后续裁决（2026-09-22）：下表保留为历史交付范围，不代表原规格各阶段完整实施。最新整版结果为 NOT_ACCEPTED，见[最终收敛审计](../../../reports/v396-final-convergence-audit-20260922.md)。
+
 基线：`cf231f7ec98d95bf49be208368de6f392d55e029`。实施提交：`1d7d68ffdb79e64b9bef1fe181e9fb5a8bf725ca`。worktree：`D:\MITS-WORKTREES\v396-offline-implementation-20260921`。
 
 | 阶段 | 本轮离线结果 | 状态/边界 |

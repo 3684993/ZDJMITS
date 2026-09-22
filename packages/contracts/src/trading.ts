@@ -127,7 +127,7 @@ export const PositionSchema = z.object({
     status:z.enum(['TP_OK','TP_LOW_NET','TP_NET_NEGATIVE','TP_DATA_INCOMPLETE','TP_TARGET_BELOW_NET_FLOOR','TP_TARGET_UNREALISTIC'])
   }).nullable().optional(),
   profitTakePlan: ProfitTakePlanSchema.nullable().optional(),
-  profitTakePlanSource:z.enum(['AI','STRUCTURE_15M','FIXED_PROFITABLE']).nullable().optional(),
+  profitTakePlanSource:z.enum(['AI','STRUCTURE_15M','FIXED_PROFITABLE','HUMAN']).nullable().optional(),
   lossHandoff:z.object({cycleId:z.string(),lastClosedBarAt:z.number().int().nullable(),consecutiveLossBars:z.number().int().nonnegative(),status:z.enum(['ACTIVE','UNKNOWN','HUMAN_HANDOFF'])}).nullable().optional(),
   economicAdmission:z.object({version:z.literal('V3.9.5'),mode:z.enum(['SHADOW','ENFORCE']),passed:z.boolean(),validatedAt:z.number().int(),expectedNetProfit:z.number(),requiredNetProfit:z.number().nonnegative(),reachProbability:z.number().min(0).max(1).nullable(),historicalHardMaxMovePercent:z.number().nonnegative().nullable(),blockers:z.array(z.string())}).strict().nullable().optional(),
 });

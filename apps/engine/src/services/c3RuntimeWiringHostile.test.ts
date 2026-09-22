@@ -393,3 +393,41 @@ const jitFor=(estimate:ReturnType<typeof estimateFor>,over:Partial<JitFacts>={})
 function coordinatorFixture(){const journal=new OwnershipJournal(join(tempDir(),'ledger.sqlite'));return {journal,coordinator:new PositionExitCoordinator(journal,CAPS)};}
 function exitRequest(ctx:ReturnType<typeof coordinatorFixture>,overrides:Record<string,unknown>={}){const estimate=estimateFor(-5.79);
   return ctx.coordinator.requestExit({scope:SCOPE,cycleId:CYCLE,source:'AI',quantityUnits:10,verdict:verdictFor(estimate),jit:jitFor(estimate),...overrides} as never);}
+
+
+describe('C3 Round 1.1 binding HUMAN protection',()=>{
+  it('R1 revoke without a prior mandate survives reopening and blocks ensure and sweep',async()=>{
+    const file=join(tempDir(),'revoke.sqlite'),first=wiring({exitFile:file}),subject=exitSubjectFromPosition(first.position);
+    expect(first.exitRuntime.mandate(subject)).toBeNull();
+    expect(first.exitRuntime.revokeProtectionByHuman(subject)).toMatchObject({source:'HUMAN',allowedPrice:null});
+    first.exitRuntime.close();
+    const h=wiring({exitFile:file});
+    try{expect(h.exitRuntime.mandate(subject)?.revokedAt).not.toBeNull();await h.tp.ensure(h.position,true);await h.tp.sweep();expect(h.exchange.placeTakeProfit).not.toHaveBeenCalled();}finally{h.exitRuntime.close();}
+  });
+  it('R2 repair submits the exact HUMAN price, without Guardian repricing',async()=>{
+    const h=wiring(),subject=exitSubjectFromPosition(h.position);
+    try{h.exitRuntime.revokeProtectionByHuman(subject);h.exitRuntime.rearmProtectionByHuman(subject,101);await h.tp.ensure(h.position,true);expect(h.exchange.placeTakeProfit).toHaveBeenCalledTimes(1);expect(h.exchange.placeTakeProfit.mock.calls[0][0].price).toBe(101);}finally{h.exitRuntime.close();}
+  });
+  it('R2 invalid HUMAN tick stays blocked rather than silently rounding',async()=>{
+    const h=wiring();try{h.exitRuntime.rearmProtectionByHuman(exitSubjectFromPosition(h.position),101.05);await h.tp.ensure(h.position,true);expect(h.exchange.placeTakeProfit).not.toHaveBeenCalled();}finally{h.exitRuntime.close();}
+  });
+  it('R3 direct TP price drift is refused before submit',async()=>{
+    const h=wiring();try{h.exitRuntime.rearmProtectionByHuman(exitSubjectFromPosition(h.position),101);await expect(h.tp.place(any({id:'tp_drift',positionId:POSITION_ID,cycleId:CYCLE,symbol:'BTCUSDT',side:'SELL',quantity:1,price:102}),{stepSize:.1,tickSize:.1})).rejects.toThrow('MANDATE_PRICE_MISMATCH');expect(h.exchange.placeTakeProfit).not.toHaveBeenCalled();}finally{h.exitRuntime.close();}
+  });
+  it.each(['REPLACE_TP','REBUILD_TP'] as const)('R4 %s binds filters, mandate, cycle and durable claim before wire',async action=>{
+    const h=wiring();
+    try{
+      h.exchange.placeTakeProfit.mockImplementation(async(order:any)=>{
+        expect(h.exitRuntime.mandate(exitSubjectFromPosition(h.position))).toMatchObject({source:'HUMAN',allowedPrice:101,revokedAt:null});
+        expect(h.exitRuntime.task(order.clientOrderId)).toMatchObject({state:'SUBMITTING',scope:SCOPE,cycleId:CYCLE,stepSize:.1});
+        expect(order.positionId).toBe(POSITION_ID);expect(order.cycleId).toBe(CYCLE);
+        return {...order,status:'WORKING',updatedAt:Date.now()};
+      });
+      const result=await h.service.execute(POSITION_ID,{action,price:101,idempotencyKey:action});
+      expect(result.order).toMatchObject({price:101,cycleId:CYCLE});expect(h.exchange.placeTakeProfit).toHaveBeenCalledTimes(1);
+    }finally{h.exitRuntime.close();}
+  });
+  it.each([100,50])('R5 FULL_REMAINING accepts only 100 percent (%s)',async percent=>{
+    const h=wiring();try{h.state.settings.takeProfit.quantityPercent=percent;await h.tp.ensure(h.position,true);expect(h.exchange.placeTakeProfit).toHaveBeenCalledTimes(percent===100?1:0);if(percent!==100)expect(h.seen.map(e=>e.payload?.message??'').join('|')).toContain('MANDATE_FULL_REMAINING_REQUIRED');}finally{h.exitRuntime.close();}
+  });
+});

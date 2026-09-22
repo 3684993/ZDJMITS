@@ -102,6 +102,9 @@ export class V396ExitRuntime {
     return String(cycleId??'').trim()?this.ownership.ownership(scope,String(cycleId).trim()):null;
   }
 
+  /** Durable ledger layout, for the operator readback. A newer file refuses to open at all. */
+  schemaInfo(){return this.journal.schemaInfo();}
+
   mandate(subject:V396ExitSubject){
     const scope=this.scope(subject),cycleId=this.cycle(subject);
     return this.ownership.mandate(scope,cycleId);
@@ -157,7 +160,10 @@ export class V396ExitRuntime {
     return{
       outcome:'ALLOW',reasonCodes:[source==='MANUAL'?'HUMAN_CONFIRMED':'PROTECTION_MANDATE_ACTIVE'],evidenceRefs:[],
       ownerVersion,planVersion:1,estimateHash:id,authorizationExpiresAt:now+15_000,boundaryPrice:limitPrice,
-      lossLimit:0,conservativeNet:0,orderType:'LIMIT',marketFallbackAllowed:false,decisionHash:id,provenance:'SYNTHETIC_MAINTENANCE',
+      // A synthetic maintenance decision never evaluated an economic line: it is a human-confirmed or
+      // mandate-driven reduce-only close, so reporting a profit floor it did not use would be a lie.
+      lossLimit:0,conservativeNet:0,profitFloorUsd:null,profitFloorSource:'NONE',
+      orderType:'LIMIT',marketFallbackAllowed:false,decisionHash:id,provenance:'SYNTHETIC_MAINTENANCE',
     };
   }
 

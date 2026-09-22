@@ -387,7 +387,7 @@ const estimateFor=(remainingGross:number,extra:CostItem[]=[],over:Partial<Estima
 const boundFor=()=>exitPriceBound({side:'LONG',remainingQuantityUnits:10,stepSize:.1,tickSize:.1,entryPrice:100,exitFeeRate:.0004,fixedNetMilli:Math.round(-4.2*1_000),targetNet:-10,minNotional:5,now:NOW});
 const verdictFor=(estimate:ReturnType<typeof estimateFor>):AiExitVerdict=>decideAiExit({owner:{ownerState:'AI_ACTIVE',ownerVersion:4,cycleId:CYCLE,scope:SCOPE,deadline:NOW+60_000},
   plan:{planVersion:2,cycleId:CYCLE,scope:SCOPE,thesisInvalid:true,invalidationPredicate:'STRUCTURE_BREAK_15M',invalidationEvidenceRefs:['ev-1'],exitConditionMet:false,minNetProfitUsd:.5},
-  estimate,bound:boundFor(),policy:{lossLimit:10,allowSmallLoss:true,authorizationTtlMs:15_000},now:NOW} as PolicyInput);
+  estimate,bound:boundFor(),policy:{lossLimit:10,allowSmallLoss:true,minNetProfitUsd:0.2,authorizationTtlMs:15_000},now:NOW} as PolicyInput);
 const jitFor=(estimate:ReturnType<typeof estimateFor>,over:Partial<JitFacts>={}):JitFacts=>({now:NOW,ownerVersion:4,positionVersion:7,settingsVersion:20,riskGeneration:11,deadline:NOW+60_000,
   estimateHash:estimate.estimateHash,conservativeNet:estimate.conservativeNet!,availableReduceUnits:10,remainingUnits:10,minNotional:5,tickSize:.1,stepSize:.1,...over} as JitFacts);
 function coordinatorFixture(){const journal=new OwnershipJournal(join(tempDir(),'ledger.sqlite'));return {journal,coordinator:new PositionExitCoordinator(journal,CAPS)};}

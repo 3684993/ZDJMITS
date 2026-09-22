@@ -1,22 +1,42 @@
 import {DatabaseSync} from 'node:sqlite';
 import {allocateSharedQuantity,transitionOwner,type Ownership,type OwnerState,type QuantityClaim} from './v396OfflineStages.js';
 
+/** The ledger layout this build understands, and the oldest layout it will still open. */
+export const OWNERSHIP_SCHEMA_VERSION=1;
+export const MIN_SUPPORTED_OWNERSHIP_SCHEMA=1;
+const OWNERSHIP_TABLES=['v396_owners','v396_outbox','v396_quantity_claims','v396_mandates','v396_claims_history'];
+
 /** Durable offline foundation. No adapter, network or Engine lifecycle capabilities.
  * A caller must explicitly supply an isolated/migrated database; no default live path.
  * Runtime activation remains blocked until every write path uses the same journal.
  */
 export class OwnershipJournal {
   private db:DatabaseSync;
+  private readonly observedSchemaVersion:number;
   constructor(private readonly file:string){
     this.db=new DatabaseSync(file);
-    this.db.exec(`PRAGMA busy_timeout=3000;
-      CREATE TABLE IF NOT EXISTS v396_owners(scope TEXT NOT NULL,cycle_id TEXT NOT NULL,version INTEGER NOT NULL,payload TEXT NOT NULL,PRIMARY KEY(scope,cycle_id));
+    this.db.exec('PRAGMA busy_timeout=3000;');
+    // Read the stamp before any DDL. An older writer opening a newer ledger must refuse outright:
+    // running its own CREATE TABLE IF NOT EXISTS would half-upgrade a schema it cannot read, and the
+    // damage would only surface as wrong ownership truth later.
+    const stamped=Number(this.db.prepare('PRAGMA user_version').get()?.user_version??0);
+    this.observedSchemaVersion=stamped||OWNERSHIP_SCHEMA_VERSION;
+    if(stamped>OWNERSHIP_SCHEMA_VERSION)throw new Error(`OWNERSHIP_SCHEMA_NEWER_THAN_RUNTIME:file=${stamped},runtime=${OWNERSHIP_SCHEMA_VERSION}`);
+    if(stamped&&stamped<MIN_SUPPORTED_OWNERSHIP_SCHEMA)throw new Error(`OWNERSHIP_SCHEMA_UNSUPPORTED:file=${stamped},min=${MIN_SUPPORTED_OWNERSHIP_SCHEMA}`);
+    if(stamped&&!this.expectedTablesPresent())throw new Error(`OWNERSHIP_SCHEMA_TABLES_MISSING:version=${stamped}`);
+    this.db.exec(`CREATE TABLE IF NOT EXISTS v396_owners(scope TEXT NOT NULL,cycle_id TEXT NOT NULL,version INTEGER NOT NULL,payload TEXT NOT NULL,PRIMARY KEY(scope,cycle_id));
       CREATE TABLE IF NOT EXISTS v396_outbox(id TEXT PRIMARY KEY,payload TEXT NOT NULL,delivered INTEGER NOT NULL DEFAULT 0);
       CREATE TABLE IF NOT EXISTS v396_quantity_claims(id TEXT PRIMARY KEY,scope TEXT NOT NULL,payload TEXT NOT NULL);
       CREATE INDEX IF NOT EXISTS v396_claim_scope ON v396_quantity_claims(scope);
       CREATE TABLE IF NOT EXISTS v396_mandates(scope TEXT NOT NULL,cycle_id TEXT NOT NULL,version INTEGER NOT NULL,payload TEXT NOT NULL,PRIMARY KEY(scope,cycle_id));
       CREATE TABLE IF NOT EXISTS v396_claims_history(id TEXT PRIMARY KEY,payload TEXT NOT NULL,settled_at INTEGER NOT NULL);`);
+    if(!stamped)this.db.exec(`PRAGMA user_version=${OWNERSHIP_SCHEMA_VERSION}`);
   }
+  private expectedTablesPresent(){
+    const present=new Set(this.db.prepare("SELECT name FROM sqlite_master WHERE type='table'").all().map(row=>String(row.name)));
+    return OWNERSHIP_TABLES.every(table=>present.has(table));
+  }
+  schemaInfo(){return{schemaVersion:this.observedSchemaVersion,runtimeSchemaVersion:OWNERSHIP_SCHEMA_VERSION,minSupported:MIN_SUPPORTED_OWNERSHIP_SCHEMA,tables:OWNERSHIP_TABLES};}
   /** Exposed for the S02 service layer so a fact and its outbox row always commit together. */
   transact<T>(fn:()=>T):T{return this.transaction(fn);}
   query<T>(sql:string,...params:unknown[]):T[]{return this.db.prepare(sql).all(...(params as never[])) as T[];}

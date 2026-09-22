@@ -1,0 +1,96 @@
+{
+  "stage": "J5",
+  "title": "Settings→API→UI→消费者→回读字段矩阵、AI 独立经济许可线、durable 账本备份与迁移",
+  "date": "2026-09-22",
+  "inputCommit": "a5dcf27",
+  "authority": [
+    "docs/plans/v396/CODEX-FINAL-CLOSEOUT-20260922.md §6",
+    "docs/plans/v396/FINAL-REMAINING-IMPLEMENTATION-20260922.md J5"
+  ],
+  "files": {
+    "apps/engine/src/services/s03AiExitPolicy.ts": "42fe5a46e29bcd0b7edc838f7776c9de9523e93fb7197fde6154d2c8c46deaff",
+    "apps/engine/src/services/v396AiExitRunner.ts": "b90f0c03bbd5f9b09b73711eed5e7daf68d1f34d046bb14d66e97fcd363c8d6a",
+    "apps/engine/src/services/v396ExitRuntime.ts": "090e72e72c92d8a7ae9dbe223efea77c09a742a5a78818995dc61d40348177f3",
+    "apps/engine/src/services/ownershipJournal.ts": "7189460b2da2ac41b7f06add5169611dba3243aff54d9d16dcf83ba10bc588dc",
+    "apps/engine/src/config/governanceSettingsMatrix.ts": "5160a1eaae66f49d934dbee85a4a5f0b167ef2926eea3b4f98203fe0c9b13f7b",
+    "apps/engine/src/api/runtimeSettingsResources.ts": "a0c603347214a8962ad63994e973856a8849d2ab9e2467bb49b7593f505335e7",
+    "apps/engine/src/services/j5SettingsGovernanceHostile.test.ts": "40ee703922c8f76c01b8cc7884df69749ef10af7ed2db5a8f4bab44e18df6ee9",
+    "apps/engine/src/services/ownershipStorageCoverage.test.ts": "2b4cadefb15c3b671fd8d2be68253562dd74d7f1e6ff6fed91655c24ca195e06",
+    "apps/engine/src/services/s03ExitCostPolicy.test.ts": "e4aec2e1d915641e0ac80d8fa03db82aec53ecc0bdaeb9f5875aa63e4dc19d21",
+    "apps/engine/src/services/s04ExitCoordination.test.ts": "d078f161864b2155f3a91ad791c944241d2a583cfd59ecf01dc56399c9bf1a34",
+    "apps/engine/src/services/c3RuntimeWiringHostile.test.ts": "4bfd76aaf1a0fd8f6a9cf9c7cae4bc146bd1b20f79820d9cc19b7ba549860c0e",
+    "apps/engine/src/services/j1ExitTruthHostile.test.ts": "26f4b9ffd3249e6cdabc5527eb8c1d4d7754ff55fce5a8f33f0d51f8115490b7",
+    "apps/dashboard/src/governancePanel.ts": "a71da87d87ebd26513affdf7cf74d2649f0827e116f1fabaf0404e17ed8e1684",
+    "apps/dashboard/src/governancePanel.test.ts": "6b3977032d29d251f01142562f07ab42f3b438caf527338d7d9d8706faaae39c",
+    "apps/dashboard/src/api/client.ts": "b94381704eda64203920914484955b9cfce35edc054ddeab21d0d43f81ef4d69",
+    "apps/dashboard/src/views/SettingsView.vue": "86de78de9defca44e71188a4505de79bcf2c89dd3b313567b339bf989a7ad3ab",
+    "scripts/durable-storage-inventory.mjs": "70207cb68d97deb19785db098e3a238659fc37240505ac17b18cfaeb4ef56b5f",
+    "scripts/v396-storage-coverage.mjs": "d3933eb7e822d31c02959d2702906042ac867cfdef1522f082714799c73b382b",
+    "scripts/v394-stage6-preflight.mjs": "5e2b7eca23429f0da861d435db1da3b1e868545484233d316f0074690ec12f04",
+    "docs/evidence/v396/final-convergence-20260922/J5/storage-coverage.json": "c1a2f32f9ef76133ea9e3f834668b7e53785e80059e86c5eec9f2899478da3eb",
+    "docs/evidence/v396/S00/20260921T145000Z/entrypoint-review.json": "00e995bb4cb433b4529b35357c658fe0513ca76feacec556003193f012fab2d3"
+  },
+  "hashNormalisation": "sha256 over LF-normalised bytes",
+  "gates": {
+    "engineTests": { "files": 148, "passed": 1113, "failed": 0, "exit": 0, "baseline": "1086/147 (J4)", "added": "j5SettingsGovernanceHostile.test.ts 24 例" },
+    "coreTests": { "passed": 46, "files": 8, "exit": 0 },
+    "dashboardTests": { "passed": 25, "files": 9, "exit": 0, "added": "governancePanel.test.ts 8 例" },
+    "contractsTests": { "passed": 0, "exit": 0, "note": "0 个用例，不计为契约覆盖" },
+    "typecheck": { "command": "npm run typecheck (repo root)", "exit": 0 },
+    "build": { "command": "npm run build (repo root)", "exit": 0, "workspaces": ["contracts", "core", "engine", "dashboard"] },
+    "verifyScripts": { "command": "npm run verify:scripts", "exit": 0, "preflightSelfTest": "PASS（含 durable 覆盖与账本行数保真断言）" },
+    "s00": {
+      "T01_T06": "PASS",
+      "exit": 0,
+      "entrypointReviewCount": 110,
+      "entrypointReviewDelta": "新增 scripts/durable-storage-inventory.mjs（CONDITIONAL_NOT_RUN）与 scripts/v396-storage-coverage.mjs（FORBIDDEN_OR_NOT_RUN：写文档 + 子进程 + 预检一跳内的网络指示器），由 scripts/v396-s00-build-entry-review.mjs 重生成后逐条复核",
+      "blockers": 0,
+      "engineTestFiles": 148,
+      "everyStoreOpeningTestIsolated": true,
+      "repositoryDataDirReferences": 0,
+      "productionPortReferences": 0,
+      "exchangeWrites": 0,
+      "network": "NOT_USED",
+      "engineLifecycle": "NOT_USED",
+      "settingsModified": false
+    },
+    "storageCoverage": { "command": "node scripts/v396-storage-coverage.mjs --check", "exit": 0, "gate": "S08_STORAGE_COVERAGE_PASS", "blockingFiles": [] },
+    "diffCheck": { "exit": 0 },
+    "runFrom": "repository root"
+  },
+  "delivered": {
+    "fieldMatrix": "governanceSettingsMatrix.ts 用 66 行、83 条 file#symbol 消费者引用覆盖 riskGovernance.*（含 exitCoordination 全 14 个叶子与 portfolioRisk 限额）、positionManagement.*、takeProfit 经济字段、tradeEconomics.*；每行带单位、区间、默认值、生效时点与含义。s08 门禁逐条验证消费者文件存在且真的出现该标识符，因此矩阵不会腐化成愿望清单。",
+    "aiProfitPermission": "aiExitMinNetProfitUsd 现在有真实消费者：decideAiExit 的 policy.minNetProfitUsd 与计划利润地板同时生效、取更高者，并在 verdict 上回报 profitFloorUsd / profitFloorSource（AI_PERMISSION|PLAN_FLOOR|BOTH|NONE）。TP 经济地板不再被借用为 AI 权限，配置非法 ⇒ POLICY_CONFIG_INVALID_AI_MIN_NET_PROFIT，缺失即拒绝而不是回落到别的数。该值也进入 decisionHash（R5 身份测试覆盖）。",
+    "unitGuard": "0.15 继续是 0.15%：tradingCost 计算除以 100，字段矩阵单位 PERCENT_OF_MARGIN，并且新值恰为当前值 100 倍时写入被拒（GOVERNANCE_UNIT_REQUIRES_CONFIRMATION），要显式 ack=PERCENT_UNIT_INTENDED 才放行。",
+    "authorityGuard": "aiExitAuthority→ENFORCE 与 portfolioRisk.configured→true 必须携带对应 ack；OFF↔SHADOW 这类不增加权限的编辑仍是普通编辑。整个 PUT /settings 现在对治理命名空间做差分：未列入矩阵、只读、或需要 ack 的改动一律 400 并列出 blockedPaths，且不消耗 settingsVersion。",
+    "readback": "GET /settings/governance 返回逐字段 {value,unit,min,max,default,meaning,effectiveAt,editable,ack,ackOnlyFor,readOnlyReason,consumers,atDefault} 以及 settingsVersion 与 durable 账本的 schemaInfo；PATCH 成功后返回的是服务端存储后的回读，而不是调用方送来的值。",
+    "panel": "dashboard 新增 “AI 退出与复核” 页签，取值/单位/生效时点/只读原因全部来自服务端回读；面板逻辑抽到 governancePanel.ts 并单独测试（不会在页面里偷偷换算单位，也不会提交服务端标记为只读的字段）。",
+    "backupCoverage": "v396-ownership.sqlite 正式进入部署前备份：scripts/durable-storage-inventory.mjs 是唯一清单来源，preflight 逐文件 sqliteBackup + integrity_check + 逐表行数指纹比对（备份与源不一致即 BACKUP_FINGERPRINT_MISMATCH）；保留策略经 prune-zdj-backups.mjs 的通用 *.sqlite 扫描覆盖；storage-coverage.json 由脚本从仓库推导（含 --verify-backup 真跑一次备份自测），gate 从 S02 的 OPEN 变为 S08_STORAGE_COVERAGE_PASS，S02 的历史记录保持原样不改写。",
+    "schemaFailClosed": "OwnershipJournal 在建表之前读取 PRAGMA user_version：文件版本高于本构建 ⇒ OWNERSHIP_SCHEMA_NEWER_THAN_RUNTIME；已盖章但表缺失 ⇒ OWNERSHIP_SCHEMA_TABLES_MISSING；无章空库/旧库盖为 v1。旧构建不会把自己的表塞进新 schema，也不会把缺表的库当合法库继续写。",
+    "migrationClosure": "preview（只读）→ apply → 读回 → backup → verify（逐周期 + outbox 计数）→ 再 apply 幂等，全部在临时库上跑；人工持有的周期迁移后仍是 HUMAN_MANAGED，preview 不落任何写。",
+    "handoffConsumerProof": "humanHandoffAfterMinutes 的 FIRST_FILL deadline 消费者在 J1 已接线（appRuntime#fixCycleDeadline → exitRuntime.fixManagementDeadline），本轮把它写进矩阵并被消费者存在性断言锁住，同时测试证明 deadline=firstFillAt+minutes*60_000 且后续调用不能拉长已定的期限。"
+  },
+  "discoveredBlockers": [
+    "riskGovernance.requirePostAiVerification 与 takeProfit.tpEconomicsEnabled 在 engine 生产代码里没有任何读取点（只有页面与 settings.default.json 带着这两个键）。已在矩阵中改为 editable:false 并写明原因：在没有消费者之前不允许通过治理接口修改，页面也不得把它当成可用开关。这是本轮新发现的“看似可配置、实际无效”项，属于 S00/S08 同一类缺陷。",
+    "第一次运行 npm test 出现 16 个红测：s04ExitCoordination 与 c3RuntimeWiringHostile 用 `as PolicyInput` 绕过了类型检查，因此 AI 利润地板变成必填后它们静默降级为 BLOCKED_FACTS。已补 minNetProfitUsd 并复跑全绿（不是放宽断言）。"
+  ],
+  "redTests": [
+    "矩阵每一行的消费者引用必须能在源码里找到，否则红（防矩阵腐烂）",
+    "无生产消费者的字段必须 editable:false，否则红",
+    "0.15→15 的写入必须被单位确认拦下，0.15→0.3 放行",
+    "aiExitAuthority→ENFORCE 无 ack 必须 400 且不消耗 settingsVersion；→SHADOW 不需要 ack",
+    "PUT /settings 改未列入矩阵的治理叶子必须 400 并回显 blockedPaths",
+    "PATCH 拒绝时不得部分写入；服务端回读必须等于服务端存储值",
+    "settingsVersion 过期 ⇒ 409 且不改状态",
+    "新 schema 版本 / 缺表的已盖章账本必须拒绝打开，且拒绝发生在建表之前",
+    "迁移 preview 不得写入；apply→backup→verify 行数与 outbox 必须逐周期对得上；重复 apply 必须 0 新建",
+    "人工持有的周期迁移后不得获得 AI 权限",
+    "storage-coverage 报告必须与当前仓库推导一致（改脚本不改报告会红）"
+  ],
+  "knownOpenItems": {
+    "liveReadback": "页面在人工操作后的服务端回读已有接口（/positions/:id），但“人工操作后禁止前端乐观标 FILLED”的完整交互回归需要运行窗口，留到 J6 的授权清单。",
+    "engineApiOwnershipDisplay": "owner/state/version、plan、budget、UNKNOWN/inflight、mandate、handoff ack 的页面展示跨 S09 仪表盘面，本轮只提供治理字段与 schema 身份；完整面板随 J6 清单一起验收。",
+    "deprecatedModules": "删除/废弃模块（如两个无消费者的开关接线或删除）需要先证明无必要事实，本轮只做只读处理，不删。"
+  },
+  "boundary": "隔离 worktree、临时 SQLite（OS temp）、mock adapter、事件级夹具、静态源码派生检查。未启动/停止/重启 Engine，未部署，未修改 live Settings/live DB/生产文件，未执行真实迁移，未调用交易所写接口。运行期间观测到本机 8080 端口在监听（Engine 在跑），预检因此拒绝执行 CLI 分支——这正是其设计行为，本轮未对其做任何干预。"
+}

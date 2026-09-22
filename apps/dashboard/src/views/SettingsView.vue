@@ -9,11 +9,13 @@ import {
 import { normalizeBlacklistInput } from "../blacklistInput";
 import Panel from "../components/Panel.vue";
 import { applyTradingParameterProfile, tradingParameterProfiles, type TradingParameterProfile } from "../tradingParameterProfiles";
+import { buildGovernancePatch, changedPaths, canSubmit, describeRefusals, exitCoordinationRows, formatGovernanceValue, initialValues, requiredAcks, type GovernancePanelState, type GovernanceRow } from "../governancePanel";
 
 const tabs = [
   ["strategy", "策略与执行"],
   ["market-quality", "交易对黑名单"],
   ["direction", "方向策略"],
+  ["governance", "AI 退出与复核"],
   ["exchange", "交易所"],
   ["proxy", "网络代理"],
   ["ai", "AI 模型资源"],
@@ -35,6 +37,52 @@ const tab = ref("strategy"),
   overridePreference = ref("SHORT_ONLY"),
   blacklistSymbol = ref(""),
   blacklistUnderlying = ref("");
+const governance = ref<GovernancePanelState | null>(null),
+  governanceDraft = ref<Record<string, unknown>>({}),
+  governanceAcks = ref<string[]>([]),
+  governanceError = ref(""),
+  governanceNotice = ref("");
+const governanceRows = computed<GovernanceRow[]>(() => (governance.value ? exitCoordinationRows(governance.value) : []));
+const governancePatch = computed(() => buildGovernancePatch(governanceRows.value, governanceDraft.value));
+const governanceDirty = computed(() => changedPaths(governanceRows.value, governanceDraft.value).length);
+const governanceRequiredAcks = computed(() => requiredAcks(governanceRows.value, governancePatch.value.fields));
+const governanceSubmit = computed(() => canSubmit({ fields: governancePatch.value.fields, refused: governancePatch.value.refused,
+  requiredAcks: governanceRequiredAcks.value, grantedAcks: governanceAcks.value }));
+function governanceAckLabel(ack: string) {
+  return ack === "AI_EXIT_ENFORCE_AUTHORITY"
+    ? "我确认：把 AI 退出权限设为 ENFORCE 后，AI 可以在计划失效时提交 reduce-only 限价平仓（亏损上限与利润许可线仍按下方数值执行）。"
+    : "我确认这次权限变更。";
+}
+async function loadGovernance() {
+  try {
+    const body = await api.governanceSettings();
+    governance.value = body;
+    governanceDraft.value = initialValues(body.fields);
+    governanceAcks.value = [];
+    governanceError.value = "";
+  } catch (e) {
+    governanceError.value = `治理设置读取失败：${String(e)}`;
+  }
+}
+async function saveGovernance() {
+  governanceNotice.value = "";
+  governanceError.value = "";
+  if (!governanceSubmit.value.ok || !governance.value) { governanceError.value = governanceSubmit.value.reason; return; }
+  try {
+    const saved = await api.saveGovernanceFields(governancePatch.value.fields, governance.value.settingsVersion, governanceAcks.value);
+    governanceNotice.value = `已保存 ${saved.applied.length} 项，服务端设置版本 ${saved.settingsVersion}`;
+    await loadGovernance();
+    draft.value = structuredClone(await api.settings());
+  } catch (e) {
+    // The API client throws with the response body as its message, so the refusal list is parsed
+    // rather than swallowed: "保存失败" alone would hide which field the server said no to.
+    let parsed: any = null;
+    try { parsed = JSON.parse(String((e as Error)?.message ?? e)); } catch { parsed = null; }
+    const refusals = describeRefusals(parsed ?? {});
+    governanceError.value = refusals.length ? `服务端拒绝写入：${refusals.join("；")}` : `保存失败：${String(e)}`;
+    await loadGovernance();
+  }
+}
 const themes = [
   ["BINANCE_NOIR", "Binance Noir：深色专业交易界面"],
   ["INSTITUTIONAL_BLUE", "Institutional Blue：机构蓝白"],
@@ -88,6 +136,7 @@ async function load() {
       api.resources("exchange"),
       api.resources("proxy"),
       api.resources("ai"),
+      loadGovernance(),
     ]);
     draft.value = structuredClone(settings);
     credentialStatus.value = connections.credentials;
@@ -645,6 +694,51 @@ onMounted(load);
           <div v-for="(preference,symbol) in draft.portfolioIntelligence.symbolDirectionPreferences" :key="symbol" class="list-row"><span>{{ symbol }} → {{ directionPreferenceLabel(String(preference)) }}</span><button class="button secondary" @click="removeSymbolDirectionOverride(symbol)">移除</button></div>
         </div>
         <p v-else class="muted">没有交易对覆盖配置。</p>
+      </Panel>
+      <Panel v-else-if="tab === 'governance'" title="AI 退出与有限复核" subtitle="字段单位、生效时点与读取方都来自服务端治理矩阵；没有生产消费者的字段在此只读。">
+        <p v-if="governanceError" class="error">{{ governanceError }}</p>
+        <p v-if="governanceNotice" class="notice">{{ governanceNotice }}</p>
+        <p v-if="!governanceRows.length && !governanceError" class="muted">治理矩阵尚未加载。</p>
+        <template v-else>
+          <div class="governance-rows">
+            <div v-for="row in governanceRows" :key="row.path" class="governance-row">
+              <div class="governance-head">
+                <span class="governance-path">{{ row.path.split('.').pop() }}</span>
+                <span class="muted">当前 {{ formatGovernanceValue(row) }} · 单位 {{ row.unit }} · {{ row.effectiveAt }}</span>
+              </div>
+              <p class="muted governance-meaning">{{ row.meaning }}</p>
+              <label v-if="row.editable && row.kind === 'boolean'" class="governance-input"
+                ><input v-model="governanceDraft[row.path]" type="checkbox" /><span>启用</span></label
+              >
+              <select v-else-if="row.editable && row.kind === 'enum'" v-model="governanceDraft[row.path]" class="governance-input">
+                <option v-for="option in row.enum" :key="option" :value="option">{{ option }}</option>
+              </select>
+              <input
+                v-else-if="row.editable"
+                v-model.number="governanceDraft[row.path]"
+                class="governance-input"
+                :type="row.kind === 'integer' ? 'number' : 'number'"
+                :step="row.kind === 'integer' ? 1 : 'any'"
+                :min="row.min ?? undefined"
+                :max="row.max ?? undefined"
+              />
+              <span v-else class="muted governance-locked">只读：{{ row.readOnlyReason ?? "服务端未开放该字段写入" }}</span>
+            </div>
+          </div>
+          <label
+            v-for="ack in governanceRequiredAcks"
+            :key="ack"
+            class="governance-ack"
+            ><input v-model="governanceAcks" type="checkbox" :value="ack" /><span>{{ governanceAckLabel(ack) }}</span></label
+          >
+          <div class="toolbar">
+            <button class="button" :disabled="!governanceDirty || saving || !governanceSubmit.ok" @click="saveGovernance">
+              保存治理设置{{ governanceDirty ? `（${governanceDirty} 项）` : "" }}
+            </button>
+            <span v-if="governanceSubmit.reason" class="muted">{{ governanceSubmit.reason }}</span>
+            <span v-if="governance?.ownershipSchema" class="muted">账本 schema v{{ governance.ownershipSchema.schemaVersion }}</span>
+          </div>
+        </template>
       </Panel>
       <Panel v-else-if="tab === 'exchange'" title="交易所资源">
         <div class="toolbar"><span>活动 Testnet REST 仅允许 Binance Demo；REST / WS 独立配置</span><button class="button primary" @click="addResource('exchange')">新增/重置</button></div>

@@ -27,7 +27,7 @@ const boundFor=()=>exitPriceBound({side:'LONG',remainingQuantityUnits:100,stepSi
 const verdictFor=(estimate:ReturnType<typeof estimateFor>):AiExitVerdict=>decideAiExit({
   owner:{ownerState:'AI_ACTIVE',ownerVersion:4,cycleId:CYCLE,scope:SCOPE,deadline:NOW+60_000},
   plan:{planVersion:2,cycleId:CYCLE,scope:SCOPE,thesisInvalid:true,invalidationPredicate:'STRUCTURE_BREAK_15M',invalidationEvidenceRefs:['ev-1'],exitConditionMet:false,minNetProfitUsd:0.5},
-  estimate,bound:boundFor(),policy:{lossLimit:10,allowSmallLoss:true,authorizationTtlMs:15_000},now:NOW,
+  estimate,bound:boundFor(),policy:{lossLimit:10,allowSmallLoss:true,minNetProfitUsd:0.2,authorizationTtlMs:15_000},now:NOW,
 } as PolicyInput);
 const jitFor=(estimate:ReturnType<typeof estimateFor>,over:Partial<JitFacts>={}):JitFacts=>({
   now:NOW,ownerVersion:4,positionVersion:7,settingsVersion:20,riskGeneration:11,deadline:NOW+60_000,
@@ -214,7 +214,7 @@ describe('S04 unified exit coordination',()=>{
     const blockedFacts=decideAiExit({
       owner:{ownerState:'AI_ACTIVE',ownerVersion:4,cycleId:CYCLE,scope:SCOPE,deadline:NOW+60_000},
       plan:{planVersion:2,cycleId:CYCLE,scope:SCOPE,thesisInvalid:true,invalidationPredicate:null,invalidationEvidenceRefs:[],exitConditionMet:false,minNetProfitUsd:0.5},
-      estimate,bound:boundFor(),policy:{lossLimit:10,allowSmallLoss:true,authorizationTtlMs:15_000},now:NOW,
+      estimate,bound:boundFor(),policy:{lossLimit:10,allowSmallLoss:true,minNetProfitUsd:0.2,authorizationTtlMs:15_000},now:NOW,
     } as PolicyInput);
     expect(blockedFacts.outcome).toBe('BLOCKED_FACTS');
     expect(ctx.coordinator.requestExit({scope:SCOPE,cycleId:CYCLE,source:'AI',quantityUnits:100,verdict:blockedFacts,jit:jitFor(estimate)}).reasons).toContain('VERDICT_NOT_ALLOW');
@@ -231,7 +231,7 @@ describe('S04 unified exit coordination',()=>{
     const atDeadline=decideAiExit({
       owner:{ownerState:'AI_ACTIVE',ownerVersion:4,cycleId:CYCLE,scope:SCOPE,deadline:NOW+60_000},
       plan:{planVersion:2,cycleId:CYCLE,scope:SCOPE,thesisInvalid:true,invalidationPredicate:'STRUCTURE_BREAK_15M',invalidationEvidenceRefs:['ev-1'],exitConditionMet:false,minNetProfitUsd:0.5},
-      estimate,bound:boundFor(),policy:{lossLimit:10,allowSmallLoss:true,authorizationTtlMs:15_000},now:NOW+60_000,
+      estimate,bound:boundFor(),policy:{lossLimit:10,allowSmallLoss:true,minNetProfitUsd:0.2,authorizationTtlMs:15_000},now:NOW+60_000,
     } as PolicyInput);
     expect(atDeadline.outcome).toBe('HANDOFF');
     expect(ctx.coordinator.requestExit({scope:SCOPE,cycleId:CYCLE,source:'AI',quantityUnits:100,verdict:atDeadline,jit:jitFor(estimate,{now:NOW+60_000})}).reasons).toContain('VERDICT_NOT_ALLOW');

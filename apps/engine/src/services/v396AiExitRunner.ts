@@ -115,7 +115,8 @@ export class V396AiExitRunner {
         plan:{planVersion:plan.planVersion,cycleId,scope,thesisInvalid:plan.thesisInvalid,invalidationPredicate:plan.invalidationPredicate,
           invalidationEvidenceRefs:plan.invalidationEvidenceRefs,exitConditionMet:plan.exitConditionMet,minNetProfitUsd:plan.minNetProfitUsd},
         estimate,bound,
-        policy:{lossLimit,allowSmallLoss:coordination.aiExitAllowSmallLoss!==false,authorizationTtlMs:Number(coordination.aiExitAuthorizationTtlMs??15_000)},
+        policy:{lossLimit,allowSmallLoss:coordination.aiExitAllowSmallLoss!==false,authorizationTtlMs:Number(coordination.aiExitAuthorizationTtlMs??15_000),
+          minNetProfitUsd:Number(coordination.aiExitMinNetProfitUsd??0.2)},
       };
       const exitInput:V396PrepareExitInput={requestKey:'',subject,quantityUnits:units,limitPrice:Number(bound.limitPrice??0),now,
         positionVersion:facts.input.positionVersion,settingsVersion:Number(this.ports.state.settings.settingsVersion??0),

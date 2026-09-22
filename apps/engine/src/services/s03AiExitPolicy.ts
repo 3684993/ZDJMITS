@@ -8,6 +8,8 @@ export type AiExitVerdict={
   ownerVersion:number;planVersion:number;estimateHash:string;
   authorizationExpiresAt:number|null;boundaryPrice:number|null;
   lossLimit:number;conservativeNet:number|null;
+  /** The profit line that actually bound this decision, and which authority supplied it. */
+  profitFloorUsd:number|null;profitFloorSource:'AI_PERMISSION'|'PLAN_FLOOR'|'BOTH'|'NONE';
   orderType:'LIMIT';marketFallbackAllowed:false;
   /** Covers everything that could have changed this decision, not just the valuation. */
   decisionHash:string;
@@ -19,7 +21,7 @@ export type PolicyInput={
   plan:{planVersion:number;cycleId:string;scope:string;thesisInvalid:boolean;invalidationPredicate:string|null;invalidationEvidenceRefs:string[];exitConditionMet:boolean;minNetProfitUsd:number};
   estimate:ExitEstimate;
   bound:PriceBoundResult;
-  policy:{lossLimit:number;allowSmallLoss:boolean;authorizationTtlMs:number};
+  policy:{lossLimit:number;allowSmallLoss:boolean;authorizationTtlMs:number;minNetProfitUsd:number};
   now:number;
 };
 
@@ -31,6 +33,7 @@ const verdict=(input:PolicyInput,outcome:VerdictOutcome,codes:string[],extra:Par
     ownerVersion:owner.ownerVersion,planVersion:plan.planVersion,estimateHash:estimate.estimateHash,
     authorizationExpiresAt:null as number|null,boundaryPrice:null as number|null,
     lossLimit:policy.lossLimit,conservativeNet:estimate.conservativeNet,
+    profitFloorUsd:null,profitFloorSource:'NONE' as AiExitVerdict['profitFloorSource'],
     orderType:'LIMIT' as const,marketFallbackAllowed:false as const,provenance:'MODEL_COST_MODEL' as const,...extra,
   };
   // estimateHash alone only identifies the valuation. Two different authorities can be derived
@@ -40,7 +43,7 @@ const verdict=(input:PolicyInput,outcome:VerdictOutcome,codes:string[],extra:Par
     ...base,now,
     owner:{state:owner.ownerState,version:owner.ownerVersion,cycleId:owner.cycleId,scope:owner.scope,deadline:owner.deadline},
     plan:{version:plan.planVersion,cycleId:plan.cycleId,scope:plan.scope,thesisInvalid:plan.thesisInvalid,predicate:plan.invalidationPredicate,exitConditionMet:plan.exitConditionMet,minNetProfitUsd:plan.minNetProfitUsd},
-    policy:{lossLimit:policy.lossLimit,allowSmallLoss:policy.allowSmallLoss,authorizationTtlMs:policy.authorizationTtlMs},
+    policy:{lossLimit:policy.lossLimit,allowSmallLoss:policy.allowSmallLoss,authorizationTtlMs:policy.authorizationTtlMs,minNetProfitUsd:policy.minNetProfitUsd},
     boundPrice:bound?.limitPrice??null,
   });
   return {...base,decisionHash};
@@ -64,6 +67,11 @@ export function decideAiExit(input:PolicyInput):AiExitVerdict{
     return verdict(input,'BLOCKED_FACTS',['POLICY_CONFIG_INVALID_LOSS_LIMIT_OR_TTL']);
   if(!Number.isSafeInteger(plan.minNetProfitUsd*MILLI)||!(plan.minNetProfitUsd>0))
     return verdict(input,'BLOCKED_FACTS',['POLICY_CONFIG_INVALID_PROFIT_FLOOR']);
+  // The AI has its own profit permission line. An unset or impossible value is a configuration
+  // failure, never a silent fall back to the take-profit economics floor, which is a different
+  // authority about a different thing (S08: the TP floor must not be borrowed as AI policy).
+  if(!Number.isSafeInteger(policy.minNetProfitUsd*MILLI)||!(policy.minNetProfitUsd>0))
+    return verdict(input,'BLOCKED_FACTS',['POLICY_CONFIG_INVALID_AI_MIN_NET_PROFIT']);
 
   if(owner.scope!==estimate.scope||plan.scope!==estimate.scope||owner.cycleId!==estimate.cycleId||plan.cycleId!==estimate.cycleId)
     return verdict(input,'HOLD',['IDENTITY_MISMATCH_OWNER_PLAN_ESTIMATE']);
@@ -86,20 +94,26 @@ export function decideAiExit(input:PolicyInput):AiExitVerdict{
 
   const limitMilli=Math.round(policy.lossLimit*MILLI),netMilli=Math.round(estimate.conservativeNet*MILLI);
   if(netMilli<-limitMilli)return verdict(input,'HANDOFF',['CYCLE_WOULD_BREACH_LOSS_LIMIT']);
-  const profitFloorMilli=Math.round(plan.minNetProfitUsd*MILLI);
+  // Both lines have to hold, so the binding one is the higher. Which one it was is reported rather
+  // than left for a reader to infer, because "the AI closed early" and "the plan required more" are
+  // two different explanations an operator will be asked about.
+  const planFloorMilli=Math.round(plan.minNetProfitUsd*MILLI),aiFloorMilli=Math.round(policy.minNetProfitUsd*MILLI);
+  const profitFloorMilli=Math.max(planFloorMilli,aiFloorMilli);
+  const floorOf=()=>({profitFloorUsd:profitFloorMilli/MILLI,profitFloorSource:(planFloorMilli===aiFloorMilli?'BOTH'
+    :(planFloorMilli>aiFloorMilli?'PLAN_FLOOR':'AI_PERMISSION')) as AiExitVerdict['profitFloorSource']});
 
   const executable=bound.executable&&bound.orderType==='LIMIT'&&bound.marketFallbackAllowed===false&&bound.limitPrice!=null;
   const authorizeAt=executable?Math.min(now+policy.authorizationTtlMs,estimate.expiresAt,owner.deadline):null;
   const finalize=(codes:string[]):AiExitVerdict=>executable&&authorizeAt!=null&&authorizeAt>now
-    ?verdict(input,'ALLOW',[...codes,'PRICE_BOUND_EXECUTABLE_LIMIT_ONLY'],{authorizationExpiresAt:authorizeAt,boundaryPrice:bound.limitPrice})
-    :verdict(input,'HOLD',executable?[...codes,'AUTHORIZATION_WINDOW_EMPTY']:[...codes,'EXECUTION_BOUND_UNAVAILABLE']);
+    ?verdict(input,'ALLOW',[...codes,'PRICE_BOUND_EXECUTABLE_LIMIT_ONLY'],{authorizationExpiresAt:authorizeAt,boundaryPrice:bound.limitPrice,...floorOf()})
+    :verdict(input,'HOLD',executable?[...codes,'AUTHORIZATION_WINDOW_EMPTY']:[...codes,'EXECUTION_BOUND_UNAVAILABLE'],floorOf());
 
   if(plan.thesisInvalid&&netMilli<0){
-    if(!policy.allowSmallLoss)return verdict(input,'HOLD',['SMALL_LOSS_EXIT_NOT_PERMITTED']);
-    if(!plan.invalidationPredicate||!plan.invalidationEvidenceRefs.length)return verdict(input,'BLOCKED_FACTS',['THESIS_INVALIDATION_EVIDENCE_MISSING']);
+    if(!policy.allowSmallLoss)return verdict(input,'HOLD',['SMALL_LOSS_EXIT_NOT_PERMITTED'],floorOf());
+    if(!plan.invalidationPredicate||!plan.invalidationEvidenceRefs.length)return verdict(input,'BLOCKED_FACTS',['THESIS_INVALIDATION_EVIDENCE_MISSING'],floorOf());
     return finalize(['THESIS_INVALIDATED_WITHIN_SMALL_LOSS_LIMIT']);
   }
   if(netMilli>=profitFloorMilli&&plan.exitConditionMet)return finalize(['MICRO_PROFIT_EXIT_CONDITION_MET']);
-  if(netMilli>=profitFloorMilli)return verdict(input,'HOLD',['PROFIT_EXIT_CONDITION_NOT_MET']);
-  return verdict(input,'HOLD',['NO_PERMITTED_EXIT_CONDITION']);
+  if(netMilli>=profitFloorMilli)return verdict(input,'HOLD',['PROFIT_EXIT_CONDITION_NOT_MET'],floorOf());
+  return verdict(input,'HOLD',['NO_PERMITTED_EXIT_CONDITION'],floorOf());
 }

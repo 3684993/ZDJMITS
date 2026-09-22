@@ -30,7 +30,7 @@ const policyInput=(over:Partial<PolicyInput>={}):PolicyInput=>({
   plan:{planVersion:2,cycleId:CYCLE,scope:SCOPE,thesisInvalid:true,invalidationPredicate:'STRUCTURE_BREAK_15M',invalidationEvidenceRefs:['ev-1'],exitConditionMet:false,minNetProfitUsd:0.5},
   estimate:buildExitEstimate(estimateInput(specItems(-5.79))),
   bound:executableBound(),
-  policy:{lossLimit:10,allowSmallLoss:true,authorizationTtlMs:15_000},
+  policy:{lossLimit:10,allowSmallLoss:true,minNetProfitUsd:0.2,authorizationTtlMs:15_000},
   now:NOW,...over,
 });
 const decide=(over:Partial<PolicyInput>={}):AiExitVerdict=>decideAiExit(policyInput(over));
@@ -60,7 +60,7 @@ describe('S03 exit valuation and authority gate',()=>{
     expect(noPredicate.reasonCodes).toContain('THESIS_INVALIDATION_EVIDENCE_MISSING');
     const noRefs=decide({plan:{...policyInput().plan,invalidationEvidenceRefs:[]}});
     expect(noRefs.reasonCodes).toContain('THESIS_INVALIDATION_EVIDENCE_MISSING');
-    const switchOff=decide({policy:{lossLimit:10,allowSmallLoss:false,authorizationTtlMs:15_000}});
+    const switchOff=decide({policy:{lossLimit:10,allowSmallLoss:false,minNetProfitUsd:0.2,authorizationTtlMs:15_000}});
     expect(switchOff.outcome).toBe('HOLD');
     expect(switchOff.reasonCodes).toContain('SMALL_LOSS_EXIT_NOT_PERMITTED');
   });
@@ -206,8 +206,8 @@ describe('S03 exit valuation and authority gate',()=>{
     const badQuote=buildExitEstimate(estimateInput(specItems(-5.79),{tickSize:Number.NaN}));
     expect(badQuote.reasons).toContain('TICK_SIZE_INVALID');
     expect(decide({estimate:badQuote,plan:{...policyInput().plan,minNetProfitUsd:Number.NaN}}).reasonCodes).toContain('POLICY_CONFIG_INVALID_PROFIT_FLOOR');
-    expect(decide({estimate:badQuote,policy:{lossLimit:11,allowSmallLoss:true,authorizationTtlMs:15_000}}).reasonCodes).toContain('POLICY_CONFIG_INVALID_LOSS_LIMIT_OR_TTL');
-    expect(decide({estimate:badQuote,policy:{lossLimit:10,allowSmallLoss:true,authorizationTtlMs:0}}).outcome).toBe('BLOCKED_FACTS');
+    expect(decide({estimate:badQuote,policy:{lossLimit:11,allowSmallLoss:true,minNetProfitUsd:0.2,authorizationTtlMs:15_000}}).reasonCodes).toContain('POLICY_CONFIG_INVALID_LOSS_LIMIT_OR_TTL');
+    expect(decide({estimate:badQuote,policy:{lossLimit:10,allowSmallLoss:true,minNetProfitUsd:0.2,authorizationTtlMs:0}}).outcome).toBe('BLOCKED_FACTS');
   });
 });
 
@@ -382,7 +382,7 @@ describe('S03 review regressions',()=>{
     expect(verdict.reasonCodes).toContain('AUTHORIZATION_WINDOW_EMPTY');
     expect(verdict.authorizationExpiresAt).toBeNull();
     // a generous ttl is still capped by the quote expiry and by the deadline
-    const wide=decide({estimate:buildExitEstimate(estimateInput(goodItems)),policy:{lossLimit:10,allowSmallLoss:true,authorizationTtlMs:10*60_000}});
+    const wide=decide({estimate:buildExitEstimate(estimateInput(goodItems)),policy:{lossLimit:10,allowSmallLoss:true,minNetProfitUsd:0.2,authorizationTtlMs:10*60_000}});
     expect(wide.outcome).toBe('ALLOW');
     expect(wide.authorizationExpiresAt).toBe(NOW+14_000);
     const nearDeadline=decide({owner:{...policyInput().owner,deadline:NOW+5_000},estimate:buildExitEstimate(estimateInput(goodItems))});
@@ -393,10 +393,21 @@ describe('S03 review regressions',()=>{
     const base=decide({});
     const sameInputs=decide({});
     expect(sameInputs.decisionHash).toBe(base.decisionHash);
-    const tighterLimit=decide({policy:{lossLimit:5,allowSmallLoss:true,authorizationTtlMs:15_000}});
+    const tighterLimit=decide({policy:{lossLimit:5,allowSmallLoss:true,minNetProfitUsd:0.2,authorizationTtlMs:15_000}});
     expect(tighterLimit.decisionHash).not.toBe(base.decisionHash);
-    const switchOff=decide({policy:{lossLimit:10,allowSmallLoss:false,authorizationTtlMs:15_000}});
+    const switchOff=decide({policy:{lossLimit:10,allowSmallLoss:false,minNetProfitUsd:0.2,authorizationTtlMs:15_000}});
     expect(switchOff.decisionHash).not.toBe(base.decisionHash);
+    // The AI's own profit permission is part of the decision identity, and which of the two lines
+    // actually binds is reported: the plan floor and the AI permission are different authorities and
+    // an operator has to be able to tell them apart after the fact.
+    const higherAiFloor=decide({policy:{lossLimit:10,allowSmallLoss:true,minNetProfitUsd:0.8,authorizationTtlMs:15_000}});
+    expect(higherAiFloor.decisionHash).not.toBe(base.decisionHash);
+    expect(higherAiFloor).toMatchObject({profitFloorSource:'AI_PERMISSION',profitFloorUsd:0.8});
+    expect(base).toMatchObject({profitFloorSource:'PLAN_FLOOR',profitFloorUsd:0.5});
+    const equalFloors=decide({policy:{lossLimit:10,allowSmallLoss:true,minNetProfitUsd:0.5,authorizationTtlMs:15_000}});
+    expect(equalFloors).toMatchObject({profitFloorSource:'BOTH',profitFloorUsd:0.5});
+    expect(decide({policy:{lossLimit:10,allowSmallLoss:true,minNetProfitUsd:0,authorizationTtlMs:15_000}}).reasonCodes)
+      .toContain('POLICY_CONFIG_INVALID_AI_MIN_NET_PROFIT');
     const newPlan=decide({plan:{...policyInput().plan,planVersion:3}});
     expect(newPlan.decisionHash).not.toBe(base.decisionHash);
     const reauthorized=decide({owner:{...policyInput().owner,ownerVersion:5}});

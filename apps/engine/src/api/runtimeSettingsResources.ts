@@ -4,6 +4,7 @@ import type { SystemSettings } from '@zdj/contracts';
 import { loadAiResources } from '../config/aiResourceLoader.js';
 import { BinanceTransport, reconfigureBinanceTransports } from '../adapters/binance/BinanceTransport.js';
 import type { EngineRuntime } from '../runtime/appRuntime.js';
+import { applyGovernancePatch, changedGovernancePaths, governanceFieldOf, governanceReadback, governanceRequiresAck, readPath } from '../config/governanceSettingsMatrix.js';
 
 type RuntimeResourceKind='exchange'|'proxy'|'ai';
 const aiLoadDefault=()=>({active:0,totalRuns:0,failures:0,lastLatencyMs:null,currentSymbol:null,currentRunId:null,currentStartedAt:null,lastCompletedAt:null,lastDirection:null,lastDecision:null,idleReason:'WAITING_CANDIDATE',nextStep:'等待动态交易池候选',queueDepth:0});
@@ -59,10 +60,43 @@ export function createRuntimeSettingsResourcesRouter(runtime:EngineRuntime){
   const router=Router(),kindOf=(req:Request):RuntimeResourceKind=>{const kind=String(req.params.kind??'');if(!['exchange','proxy','ai'].includes(kind))throw new Error('RESOURCE_KIND_UNSUPPORTED');return kind as RuntimeResourceKind;};
   const legacy=canonicalProxy(runtime.state.settings),current=runtime.state.settings.connections.proxy,canonical=legacy.connections.proxy;
   if(current.forceBinanceRest!==canonical.forceBinanceRest||current.forceBinanceWs!==canonical.forceBinanceWs||current.proxyDns!==canonical.proxyDns||current.binanceRestRoute!==canonical.binanceRestRoute||current.failClosed!==canonical.failClosed)void saveRuntimeSettings(runtime,legacy).catch(error=>runtime.events.publish('SETTINGS_PROXY_MIGRATION_FAILED',{message:error instanceof Error?error.message:String(error)}));
+  /**
+   * S08: a whole-settings PUT may only change governance leaves the matrix lists and permits.
+   * Everything outside those namespaces keeps behaving as before; inside them, an unlisted path is a
+   * refusal rather than a silent write, which is what makes the matrix the real authority.
+   */
+  const governanceGuard=(req:Request,res:Response)=>{
+    const requested=req.body as SystemSettings;
+    if(!requested||typeof requested!=='object')return false;
+    const blocked=changedGovernancePaths(runtime.state.settings,requested).filter(path=>{
+      const field=governanceFieldOf(path);
+      return !field||!field.editable||governanceRequiresAck(field,readPath(runtime.state.settings,path),readPath(requested,path));
+    });
+    if(!blocked.length)return false;
+    res.status(400).json({error:{code:'SETTINGS_GOVERNANCE_PATH_REQUIRES_PATCH',blockedPaths:blocked,
+      hint:'治理字段必须走 PATCH /api/v3/settings/governance：字段矩阵会校验单位、区间、生效时点与权限确认(ack)。'}});
+    return true;
+  };
   router.put('/settings',async(req,res,next)=>{try{
+    if(governanceGuard(req,res))return;
     const requested=req.body as SystemSettings,current=runtime.state.settings;
     const candidate=canonicalProxy({...requested,connections:{...requested.connections,exchange:current.connections.exchange,proxy:current.connections.proxy},aiResources:current.aiResources});
     res.json(await saveRuntimeSettings(runtime,candidate));
+  }catch(error){if(conflict(res,error,runtime.state.settings.settingsVersion))return;next(error);}});
+  router.get('/settings/governance',(_req,res)=>{res.json({settingsVersion:runtime.state.settings.settingsVersion,
+    releaseIdentity:runtime.state.settings.releasePolicy?.lifecycleVersion??null,fields:governanceReadback(runtime.state.settings),
+    // The durable truth the operator is configuring against, read from the ledger itself rather than
+    // restated from settings, so a newer-on-disk schema cannot be hidden behind a version number.
+    ownershipSchema:runtime.exitRuntime?.schemaInfo()??null});});
+  router.patch('/settings/governance',async(req,res,next)=>{try{
+    const expected=expectedVersion(req),acks=Array.isArray(req.body?.acks)?req.body.acks.map(String):[];
+    const patch=req.body?.fields;
+    if(!patch||typeof patch!=='object'||Array.isArray(patch)||!Object.keys(patch).length){res.status(400).json({error:{code:'GOVERNANCE_PATCH_EMPTY'}});return;}
+    const {settings:candidate,applied,refusals}=applyGovernancePatch(runtime.state.settings,patch as Record<string,unknown>,{acks});
+    if(refusals.length){res.status(400).json({error:{code:'GOVERNANCE_PATCH_REFUSED'},refusals,currentSettingsVersion:runtime.state.settings.settingsVersion});return;}
+    const saved=await runtime.updateSettingsIfVersion(candidate,expected);hotApply(runtime,runtime.state.settings,saved);
+    // The response is the server's readback after the write, not the values the caller sent.
+    res.json({settingsVersion:saved.settingsVersion,applied,readback:governanceReadback(saved).filter(row=>applied.includes(row.path))});
   }catch(error){if(conflict(res,error,runtime.state.settings.settingsVersion))return;next(error);}});
   router.get('/settings/resources/:kind',(req,res,next)=>{try{const kind=kindOf(req);res.json({settingsVersion:runtime.state.settings.settingsVersion,items:resourceView(runtime.state.settings,kind)});}catch(error){next(error);}});
   const save=async(req:Request,res:Response,next:NextFunction)=>{try{

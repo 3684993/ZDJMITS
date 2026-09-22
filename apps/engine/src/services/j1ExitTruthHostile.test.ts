@@ -53,7 +53,7 @@ const policyInputOf=(ownerVersion:number,deadline:number)=>({
   plan:{planVersion:2,cycleId:SUBJECT.cycleId,scope:SCOPE,thesisInvalid:true,invalidationPredicate:'STRUCTURE_BREAK_15M',invalidationEvidenceRefs:['ev-1'],exitConditionMet:false,minNetProfitUsd:.5},
   estimate:modelEstimate(),
   bound:exitPriceBound({side:'LONG',remainingQuantityUnits:10,stepSize:1,tickSize:.1,entryPrice:100,exitFeeRate:.0004,fixedNetMilli:Math.round(-4.2*1_000),targetNet:-10,minNotional:5,now:NOW}),
-  policy:{lossLimit:10,allowSmallLoss:true,authorizationTtlMs:15_000},
+  policy:{lossLimit:10,allowSmallLoss:true,minNetProfitUsd:0.2,authorizationTtlMs:15_000},
 });
 const modelVerdict=(ownerVersion:number,deadline=NOW+60_000)=>decideAiExit({...policyInputOf(ownerVersion,deadline),now:NOW} as PolicyInput);
 

@@ -123,16 +123,18 @@ export class OwnershipService {
     return this.journal.transact(()=>{
       if(!input.scope||!input.cycleId||!['GUARDIAN','HUMAN'].includes(input.source)||!input.allowedQuantityRule)throw new Error('INVALID_MANDATE');
       if(!Number.isFinite(now))throw new Error('INVALID_MANDATE_CLOCK');
+      const allowedPrice=input.allowedPrice==null?null:Number(input.allowedPrice);
+      if(allowedPrice!=null&&(!Number.isFinite(allowedPrice)||allowedPrice<=0))throw new Error('INVALID_MANDATE_PRICE');
       const current=this.mandate(input.scope,input.cycleId);
       if(!current){
         if(expectedVersion!==0)throw new Error('MANDATE_VERSION_CONFLICT');
-        if(input.source==='GUARDIAN'&&!(input.allowedPrice!=null&&Number.isFinite(input.allowedPrice)))throw new Error('MANDATE_PRICE_REQUIRED');
+        if(input.source==='GUARDIAN'&&allowedPrice==null)throw new Error('MANDATE_PRICE_REQUIRED');
       }else{
         if(current.version!==expectedVersion)throw new Error('MANDATE_VERSION_CONFLICT');
         if(current.revokedAt!=null&&input.source==='GUARDIAN')throw new Error('MANDATE_HUMAN_REVOKED');
         if(now<current.updatedAt)throw new Error('MANDATE_CLOCK_ROLLBACK');
       }
-      const next:ProtectionMandate={scope:input.scope,cycleId:input.cycleId,version:(current?.version??0)+1,source:input.source,allowedPrice:current?Number(input.allowedPrice):Number(input.allowedPrice),allowedQuantityRule:input.allowedQuantityRule,revokedAt:null,updatedAt:now};
+      const next:ProtectionMandate={scope:input.scope,cycleId:input.cycleId,version:(current?.version??0)+1,source:input.source,allowedPrice,allowedQuantityRule:input.allowedQuantityRule,revokedAt:null,updatedAt:now};
       this.journal.write('INSERT INTO v396_mandates VALUES(?,?,?,?) ON CONFLICT(scope,cycle_id) DO UPDATE SET version=excluded.version,payload=excluded.payload',next.scope,next.cycleId,next.version,JSON.stringify(next));
       this.enqueue(JSON.stringify([next.scope,next.cycleId,next.version]),'PROTECTION_MANDATE_CHANGED',{mandate:next});
       return next;
@@ -141,10 +143,16 @@ export class OwnershipService {
 
   revokeMandateByHuman(scope:string,cycleId:string,now:number):ProtectionMandate{
     return this.journal.transact(()=>{
+      if(!scope||!cycleId||!Number.isFinite(now))throw new Error('INVALID_MANDATE_REVOKE');
       const current=this.mandate(scope,cycleId);
-      if(!current)throw new Error('MANDATE_NOT_FOUND');
+      if(!current){
+        const tombstone:ProtectionMandate={scope,cycleId,version:1,source:'HUMAN',allowedPrice:null,allowedQuantityRule:'FULL_REMAINING',revokedAt:now,updatedAt:now};
+        this.journal.write('INSERT INTO v396_mandates VALUES(?,?,?,?)',scope,cycleId,tombstone.version,JSON.stringify(tombstone));
+        this.enqueue(JSON.stringify([scope,cycleId,tombstone.version]),'PROTECTION_MANDATE_CHANGED',{mandate:tombstone,revoked:true,tombstone:true});
+        return tombstone;
+      }
       if(current.revokedAt!=null)return current;
-      if(!Number.isFinite(now)||now<current.updatedAt)throw new Error('MANDATE_CLOCK_ROLLBACK');
+      if(now<current.updatedAt)throw new Error('MANDATE_CLOCK_ROLLBACK');
       const next:ProtectionMandate={...current,version:current.version+1,source:'HUMAN',revokedAt:now,updatedAt:now};
       this.journal.write('INSERT INTO v396_mandates VALUES(?,?,?,?) ON CONFLICT(scope,cycle_id) DO UPDATE SET version=excluded.version,payload=excluded.payload',next.scope,next.cycleId,next.version,JSON.stringify(next));
       this.enqueue(JSON.stringify([next.scope,next.cycleId,next.version]),'PROTECTION_MANDATE_CHANGED',{mandate:next,revoked:true});

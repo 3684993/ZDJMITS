@@ -26,12 +26,13 @@
       "version": "3.9.6"
     }
   ],
-  "generatedAt": "2026-09-22T16:07:17.309Z",
+  "generatedAt": "2026-09-22T16:13:03.069Z",
   "source": {
-    "commit": "a7b022b24e259407e5fd9545af3148c295a29d8b",
+    "commit": "1f2643e626e0a58dcaf4b94ad29c72f92a7fab24",
     "branch": "codex/v396-final-convergence-20260922",
-    "worktreeClean": false,
-    "historyContainsBaseline": false
+    "worktreeClean": true,
+    "historyContainsBaseline": true,
+    "baselineCommit": "51e7e1e5af06510a95bca3f075da94ececd2b06c"
   },
   "settingsDefault": {
     "file": "config/settings.default.json",
@@ -70,6 +71,7 @@
     "docs/evidence/v396/final-convergence-20260922/J4/RESULT.md": "ef7ea4b3021ea0be4af2e8ea70b7bc9c93123ed5b51a2f9030f1689514e146d2",
     "docs/evidence/v396/final-convergence-20260922/J5/RESULT.md": "f187be8474098583f741a51a7d8a20ff26bdc993ee3e1f3bd4db41f16a0a3d79",
     "docs/evidence/v396/final-convergence-20260922/J5/storage-coverage.json": "c1a2f32f9ef76133ea9e3f834668b7e53785e80059e86c5eec9f2899478da3eb",
+    "docs/evidence/v396/final-convergence-20260922/J6/RESULT.md": "0e6ad90e524da22727d45f655acb2402ca93e333448899d87d6bea9b3bc00d9c",
     "docs/evidence/v396/final-convergence-20260922/J6/experiment-manifest.json": "51c147d4f6c25c7a12568bc97e57a16d45de2faf0532ef0957b2076a0abbfd9a",
     "docs/evidence/v396/final-convergence-20260922/J6/experiment-report.json": "394cf7ac07e0147cfbcbecac20e396cfb297729c03a5ac247edd1df95931ac09"
   },

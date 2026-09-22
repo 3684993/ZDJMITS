@@ -36,10 +36,14 @@ export class RuntimeState {
     entryReservationTransaction = null;
     entryRiskGate = null;
     private reservationMutationActive = false;
+    private reservationMapsChanged(reservations,locks) {
+        const same=(left,right)=>left.size===right.size&&[...left].every(([key,value])=>right.has(key)&&JSON.stringify(value)===JSON.stringify(right.get(key)));
+        return !same(reservations,this.entryReservations)||!same(locks,this.underlyingLocks);
+    }
     private mutateReservations(work) {
         if(this.reservationMutationActive)return work();
         const reservations=new Map(this.entryReservations),locks=new Map(this.underlyingLocks),revision=this.entryReservationRevision;
-        const apply=()=>{this.reservationMutationActive=true;try{const value=work();this.entryReservationRevision++;return value;}finally{this.reservationMutationActive=false;}};
+        const apply=()=>{this.reservationMutationActive=true;try{const value=work();if(this.reservationMapsChanged(reservations,locks))this.entryReservationRevision++;return value;}finally{this.reservationMutationActive=false;}};
         try{return this.entryReservationTransaction?this.entryReservationTransaction(revision,apply):apply();}
         catch(error){this.entryReservations=reservations;this.underlyingLocks=locks;this.entryReservationRevision=revision;throw error;}
     }
@@ -59,12 +63,32 @@ export class RuntimeState {
     positionSymbols() { return new Set([...this.positions.values()].map(p => p.symbol.toUpperCase())); }
     addAiRun(run) { this.aiRuns.unshift(run); if (this.aiRuns.length > 200)
         this.aiRuns.length = 200; }
-    cleanupReservations(now = Date.now()) { for (const [id, reservation] of this.entryReservations) {
-        const activeOrder=[...this.entryOrders.values()].some(order=>order.reservationId===id&&entryOrderOccupiesRisk(order,now));
-        if (reservation.expiresAt <= now && (['RESERVED','WORKING'].includes(reservation.status)&&!activeOrder))
-            this.releaseEntryReservation(id); } for (const [key, lock] of this.underlyingLocks)
-        if (lock.leaseUntil <= now)
-            this.underlyingLocks.delete(key); }
+    private cleanupReservationsAtomic(now) {
+        let changed=false;
+        for (const [id,reservation] of this.entryReservations) {
+            const activeOrder=[...this.entryOrders.values()].some(order=>order.reservationId===id&&entryOrderOccupiesRisk(order,now));
+            if(reservation.expiresAt<=now&&['RESERVED','WORKING'].includes(reservation.status)&&!activeOrder){
+                this.entryReservations.set(id,{...reservation,status:'RELEASED'});changed=true;
+                if(this.underlyingLocks.get(reservation.underlying)?.reservationId===id){this.underlyingLocks.delete(reservation.underlying);changed=true;}
+            }
+        }
+        for(const [key,lock] of this.underlyingLocks)if(lock.leaseUntil<=now){this.underlyingLocks.delete(key);changed=true;}
+        return changed;
+    }
+    private reservationCleanupNeeded(now) {
+        if(!Number.isFinite(now))return false;
+        for(const [id,reservation] of this.entryReservations){
+            if(reservation.expiresAt>now||!['RESERVED','WORKING'].includes(reservation.status))continue;
+            const activeOrder=[...this.entryOrders.values()].some(order=>order.reservationId===id&&entryOrderOccupiesRisk(order,now));
+            if(!activeOrder)return true;
+        }
+        return [...this.underlyingLocks.values()].some(lock=>lock.leaseUntil<=now);
+    }
+    cleanupReservations(now = Date.now()) {
+        if(!this.reservationCleanupNeeded(now))return false;
+        try{return this.mutateReservations(()=>this.cleanupReservationsAtomic(now));}
+        catch{return false;}
+    }
     entryCapacity(ignoreOrderId=null,ignoreReservationId=null) {
         const now=Date.now(),held=new Set([...this.positions.values()].map(p=>resolveUnderlying(p.symbol))),orders=[...this.entryOrders.values()].filter(o=>o.id!==ignoreOrderId&&entryOrderOccupiesRisk(o,now));
         const inFlight=new Set(orders.map(o=>resolveUnderlying(o.symbol)).filter(u=>!held.has(u))),reservations=[...this.entryReservations.values()].filter(r=>r.id!==ignoreReservationId&&['RESERVED','WORKING'].includes(r.status)&&r.expiresAt>now&&!held.has(r.underlying)&&!inFlight.has(r.underlying));
@@ -78,8 +102,8 @@ export class RuntimeState {
         if(!input||typeof input.underlying!=='string'||!input.underlying.trim()||!['USDT','USDC'].includes(input.quoteAsset)||
            ['marginUsd','notionalUsd','ttlSeconds','leaseSeconds'].some(key=>typeof input[key]!=='number'||!Number.isFinite(input[key])||input[key]<=0)||
            ['maxPositions','maxConcurrentReservations'].some(key=>!Number.isSafeInteger(input[key])||input[key]<=0))return {ok:false,reason:'RESERVATION_FACTS_INVALID'};
-        this.cleanupReservations();
-        const underlying=input.underlying.toUpperCase(),now=Date.now(),lock=this.underlyingLocks.get(underlying);
+        const now=Date.now();this.cleanupReservationsAtomic(now);
+        const underlying=input.underlying.toUpperCase(),lock=this.underlyingLocks.get(underlying);
         if(lock&&lock.leaseUntil>now)return {ok:false,reason:'UNDERLYING_LOCKED'};
         const reserved=[...this.entryReservations.values()].filter(x=>['RESERVED','WORKING'].includes(x.status));
         if(reserved.some(x=>x.underlying===underlying))return {ok:false,reason:'UNDERLYING_LOCKED'};
@@ -88,21 +112,27 @@ export class RuntimeState {
         const available=this.account.assets.find(x=>x.asset===input.quoteAsset)?.availableBalance;
         const committed=reserved.filter(x=>x.quoteAsset===input.quoteAsset).reduce((n,x)=>n+x.marginUsd,0);
         if(!Number.isFinite(available)||!Number.isFinite(committed)||available-committed<input.marginUsd)return {ok:false,reason:'RESERVED_QUOTE_MARGIN'};
-        const risk=this.entryRiskGate?.(input);
-        if(risk&&!risk.allowed)return {ok:false,reason:risk.reason??'PORTFOLIO_ADMISSION_BLOCKED'};
+        const risk=this.entryRiskGate?.({...input,now});
+        if(this.entryRiskGate){
+            if(!Number.isSafeInteger(input.riskGeneration)||input.riskGeneration<=0)return {ok:false,reason:'RISK_GENERATION_REQUIRED'};
+            if(!risk||risk.allowed!==true)return {ok:false,reason:risk?.reason??'PORTFOLIO_ADMISSION_BLOCKED'};
+            const binding=risk.binding;
+            if(!binding||!Number.isSafeInteger(binding.riskGeneration)||binding.riskGeneration<=0||binding.riskGeneration!==input.riskGeneration||typeof binding.snapshotHash!=='string'||!binding.snapshotHash.trim()||!Number.isFinite(binding.evaluatedAt)||binding.evaluatedAt>now||!Number.isFinite(binding.expiresAt)||binding.expiresAt<=now)return {ok:false,reason:'RISK_BINDING_INVALID'};
+        }
         const id=`reserve_${now}_${Math.random().toString(36).slice(2,8)}`;
         this.entryReservations.set(id,{id,underlying,quoteAsset:input.quoteAsset,marginUsd:input.marginUsd,notionalUsd:input.notionalUsd,planId:input.planId,intentId:null,createdAt:now,expiresAt:now+input.ttlSeconds*1000,status:'RESERVED',riskBinding:risk?.binding??null});
         this.underlyingLocks.set(underlying,{reservationId:id,leaseUntil:now+input.leaseSeconds*1000});
         return {ok:true,reservationId:id};
     }
-    attachReservationToIntent(id,intentId){return this.mutateReservations(()=>{const reservation=this.entryReservations.get(id);if(reservation&&reservation.status==='RESERVED')this.entryReservations.set(id,{...reservation,intentId,status:'WORKING'});});}
+    attachReservationToIntent(id,intentId){return this.mutateReservations(()=>{const reservation=this.entryReservations.get(id);if(!reservation||reservation.status!=='RESERVED'||reservation.expiresAt<=Date.now())return false;this.entryReservations.set(id,{...reservation,intentId,status:'WORKING'});return true;});}
     releaseEntryReservation(id){return this.mutateReservations(()=>{
-        const reservation=this.entryReservations.get(id);if(!reservation)return;
-        if([...this.entryOrders.values()].some(order=>order.reservationId===id&&entryOrderOccupiesRisk(order,Date.now())))return;
+        const reservation=this.entryReservations.get(id);if(!reservation||!['RESERVED','WORKING'].includes(reservation.status))return false;
+        if([...this.entryOrders.values()].some(order=>order.reservationId===id&&entryOrderOccupiesRisk(order,Date.now())))return false;
         this.entryReservations.set(id,{...reservation,status:'RELEASED'});
         if(this.underlyingLocks.get(reservation.underlying)?.reservationId===id)this.underlyingLocks.delete(reservation.underlying);
+        return true;
     });}
-    commitEntryReservation(id){return this.mutateReservations(()=>{const reservation=this.entryReservations.get(id);if(!reservation)return;this.entryReservations.set(id,{...reservation,status:'COMMITTED'});if(this.underlyingLocks.get(reservation.underlying)?.reservationId===id)this.underlyingLocks.delete(reservation.underlying);});}
+    commitEntryReservation(id){return this.mutateReservations(()=>{const reservation=this.entryReservations.get(id);if(!reservation||!['RESERVED','WORKING'].includes(reservation.status))return false;this.entryReservations.set(id,{...reservation,status:'COMMITTED'});if(this.underlyingLocks.get(reservation.underlying)?.reservationId===id)this.underlyingLocks.delete(reservation.underlying);return true;});}
     reservationSummary() { this.cleanupReservations(); const active=[...this.entryReservations.values()].filter(x => ['RESERVED', 'WORKING'].includes(x.status)),locks=[...this.underlyingLocks.entries()].map(([underlying, value]) => ({ underlying, ...value })),activeById=new Map(active.map(row=>[row.id,row])),orphanLocks=locks.filter(lock=>{const reservation=activeById.get(lock.reservationId);return !reservation||reservation.underlying!==lock.underlying;}); return { active, locks, orphanLocks, expiredLocks:locks.filter(lock=>lock.leaseUntil<=Date.now()) }; }
     recordExecutionFill(fill) { const index = this.executionFills.findIndex(row => row.fillId === fill.fillId||(row.symbol===fill.symbol&&String(row.tradeId)===String(fill.tradeId))); if (index >= 0)
         this.executionFills[index] = fill;
@@ -118,7 +148,7 @@ export class RuntimeState {
                 target.set(id, row);
             } for(const [symbol,row] of this.candidateLifecycle){if(['SCOUT_QUEUED','SCOUT_RUNNING','SCOUT_DONE','PRIMARY_QUEUED','PRIMARY_RUNNING','PRIMARY_COMPLETED','PLACE_READY'].includes(row?.status)){this.candidateLifecycle.set(symbol,{...row,status:'READY',reason:'ENGINE_RESTART_RECOVERY',nextEligibleAt:null,updatedAt:Date.now()});}} if (value.runtimeControl && typeof value.runtimeControl.mode === 'string')
         if (Array.isArray(value.directionDecisionStates)) for (const [id,row] of value.directionDecisionStates) this.directionDecisionStates.set(id,row); this.runtimeControl = { ...this.runtimeControl, ...value.runtimeControl, entrySafetyMode: value.runtimeControl.entrySafetyMode ?? this.runtimeControl.entrySafetyMode, manualRiskOverride: value.runtimeControl.manualRiskOverride ?? null, capital: { ...this.runtimeControl.capital, ...value.runtimeControl.capital } }; if (value.executionGovernance && typeof value.executionGovernance.mode === 'string') this.executionGovernance = value.executionGovernance; if (value.shadowRunner && typeof value.shadowRunner === 'object')
-        this.shadowRunner = { ...this.shadowRunner, ...value.shadowRunner }; this.cleanupReservations(); if (Array.isArray(value.executionFills))
+        this.shadowRunner = { ...this.shadowRunner, ...value.shadowRunner }; if (Array.isArray(value.executionFills))
         this.executionFills = value.executionFills; if (Array.isArray(value.aiRuns)) {
         const recoveredAt = Date.now();
         this.aiRuns = value.aiRuns.slice(0, 200).map((run) => run.status === 'RUNNING' ? { ...run, status: 'FAILED', completedAt: recoveredAt, latencyMs: Math.max(0, recoveredAt - run.startedAt), error: 'ENGINE_RESTART_INTERRUPTED', failure: { failureStage: 'RUNTIME_RECOVERY', errorCode: 'ENGINE_RESTART_INTERRUPTED', errorMessage: 'AI run was interrupted by engine restart', httpStatus: null, timeout: false, schemaValidation: false, retryCount: 0, rawOutput: null } } : run);

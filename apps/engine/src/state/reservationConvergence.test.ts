@@ -28,4 +28,39 @@ describe('C2 reservation safety',()=>{
    }finally{store.close();}
  });
  it('a failed durable commit leaves no in-memory claim or lock',()=>{const s=state();s.entryReservationTransaction=(_r:number,work:()=>unknown)=>{work();throw new Error('disk full');};expect(s.reserveEntry(args).ok).toBe(false);expect(s.entryReservations.size).toBe(0);expect(s.underlyingLocks.size).toBe(0);});
+ it('does not release an expired recovered reservation before durable orders are reattached',()=>{
+   const original=state(),now=Date.now(),id='recover_r';
+   original.entryReservations.set(id,{id,underlying:'BTC',quoteAsset:'USDT',marginUsd:60,notionalUsd:100,planId:'p',intentId:'i',createdAt:now-5000,expiresAt:now-1000,status:'WORKING'});
+   original.underlyingLocks.set('BTC',{reservationId:id,leaseUntil:now-1000});
+   const recovered=state();recovered.restore(original.serialize());
+   expect(recovered.entryReservations.get(id)?.status).toBe('WORKING');
+   recovered.entryOrders.set('o',{id:'o',symbol:'BTCUSDT',reservationId:id,status:'UNKNOWN'});
+   recovered.cleanupReservations(now);
+   expect(recovered.entryReservations.get(id)?.status).toBe('WORKING');
+ });
+ it('persists cleanup of an expired reservation and lock in one durable mutation',async()=>{
+   const dir=await mkdtemp(path.join(os.tmpdir(),'v396-reservation-cleanup-'));dirs.push(dir);
+   const store=new SettingsStore(path.resolve('../../config'),dir);await store.load();
+   try{
+     const s=state(),now=Date.now(),id='expired_r';
+     s.entryReservations.set(id,{id,underlying:'BTC',quoteAsset:'USDT',marginUsd:20,notionalUsd:50,planId:'p',intentId:null,createdAt:now-5000,expiresAt:now-1000,status:'RESERVED'});
+     s.underlyingLocks.set('BTC',{reservationId:id,leaseUntil:now-1000});store.persistRuntime(s.serialize());
+     s.entryReservationTransaction=(revision:number,work:()=>unknown)=>(store as any).mutateEntryReservations(revision,()=>{const result=work();store.persistRuntime(s.serialize());return result;});
+     expect(s.cleanupReservations(now)).toBe(true);
+     const durable:any=store.loadRuntime();expect(durable.entryReservations.find(([key]:any[])=>key===id)[1].status).toBe('RELEASED');expect(durable.underlyingLocks).toEqual([]);expect(durable.entryReservationRevision).toBe(1);
+   }finally{store.close();}
+ });
+ it('requires an exact fresh risk binding whenever the S05 admission gate is installed',()=>{
+   const s=state(),evaluatedAt=Date.now();
+   s.entryRiskGate=()=>({allowed:true,binding:{riskGeneration:7,snapshotHash:'v396r_test',evaluatedAt,expiresAt:evaluatedAt+60_000}});
+   expect(s.reserveEntry({...args,riskGeneration:6})).toMatchObject({ok:false,reason:'RISK_BINDING_INVALID'});
+   expect(s.reserveEntry(args)).toMatchObject({ok:false,reason:'RISK_GENERATION_REQUIRED'});
+   expect(s.reserveEntry({...args,riskGeneration:7}).ok).toBe(true);
+ });
+ it('rejects an expired risk binding and cannot resurrect a released reservation',()=>{
+   const s=state(),now=Date.now();
+   s.entryRiskGate=()=>({allowed:true,binding:{riskGeneration:1,snapshotHash:'v396r_old',evaluatedAt:now-1000,expiresAt:now-1}});
+   expect(s.reserveEntry({...args,riskGeneration:1})).toMatchObject({ok:false,reason:'RISK_BINDING_INVALID'});
+   s.entryRiskGate=null;const r=s.reserveEntry(args);expect(r.ok).toBe(true);expect(s.releaseEntryReservation(r.reservationId)).toBe(true);expect(s.commitEntryReservation(r.reservationId)).toBe(false);
+ });
 });

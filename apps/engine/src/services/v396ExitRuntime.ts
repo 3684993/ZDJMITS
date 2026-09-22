@@ -113,7 +113,8 @@ export class V396ExitRuntime {
 
   /**
    * A human may re-arm protection explicitly after a revoke. The new mandate is HUMAN, so the
-   * guardian never overwrites it, and a revoke that is still in force is reported back.
+   * guardian never overwrites it. That price and quantity rule remain binding until the next
+   * explicit human change; automatic Guardian logic may not reinterpret a HUMAN mandate.
    */
   rearmProtectionByHuman(subject:V396ExitSubject,allowedPrice:number,now=Date.now()):ProtectionMandate|null{
     if(!(Number.isFinite(allowedPrice)&&allowedPrice>0))return null;
@@ -125,8 +126,10 @@ export class V396ExitRuntime {
   }
 
   revokeProtectionByHuman(subject:V396ExitSubject,now=Date.now()){
-    const scope=this.scope(subject),cycleId=this.cycle(subject),current=this.ownership.mandate(scope,cycleId);
-    if(!current)return null;
+    const scope=this.scope(subject),cycleId=this.cycle(subject);
+    // A revoke must survive even for a legacy/migrated position that has never had a Guardian
+    // mandate row. Establish the non-AI owner first, then persist a HUMAN tombstone if necessary.
+    this.ensureProtectionOwner(subject,now);
     return this.ownership.revokeMandateByHuman(scope,cycleId,now);
   }
 
@@ -162,7 +165,14 @@ export class V396ExitRuntime {
       : this.ensureProtectionOwner(input.subject,input.now);
     if(owner.ownerState==='CLOSED')return this.reject('CYCLE_CLOSED');
     if(source==='MANUAL'&&owner.ownerState!=='HUMAN_MANAGED')return this.reject('HUMAN_OWNER_NOT_ESTABLISHED');
-    if(source==='TP'&&(!mandate||mandate.revokedAt!=null))return this.reject('MANDATE_REVOKED_OR_MISSING');
+    if(source==='TP'){
+      if(!mandate||mandate.revokedAt!=null)return this.reject('MANDATE_REVOKED_OR_MISSING');
+      if(mandate.allowedQuantityRule!=='FULL_REMAINING')return this.reject('MANDATE_QUANTITY_RULE_UNSUPPORTED');
+      if(!(mandate.allowedPrice!=null&&Number.isFinite(mandate.allowedPrice)&&mandate.allowedPrice>0))return this.reject('MANDATE_PRICE_UNPROVEN');
+      const tolerance=Math.max(1e-12,Math.abs(input.tickSize)*1e-9);
+      if(Math.abs(mandate.allowedPrice-input.limitPrice)>tolerance)return this.reject('MANDATE_PRICE_MISMATCH');
+      if(input.quantityUnits!==input.remainingUnits)return this.reject('MANDATE_FULL_REMAINING_REQUIRED');
+    }
     const verdict=this.syntheticVerdict(owner.ownerVersion,input.limitPrice,input.now,source);
     let coordinator:PositionExitCoordinator;
     try{coordinator=new PositionExitCoordinator(this.journal,await this.capabilities());}

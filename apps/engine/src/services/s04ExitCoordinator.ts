@@ -15,6 +15,7 @@
  *    a cancel-replace or a concurrent human exit cannot double-spend the position or add
  *    exposure (I02, I03).
  */
+import {createHash} from 'node:crypto';
 import type {OwnershipJournal} from './ownershipJournal.js';
 import type {AiExitVerdict} from './s03AiExitPolicy.js';
 
@@ -28,7 +29,7 @@ export type ExitTask={
   quantityUnits:number;limitPrice:number;state:ExitTaskState;version:number;filledUnits:number;
   ownerVersion:number;planVersion:number;positionVersion:number;settingsVersion:number;riskGeneration:number;
   estimateHash:string;decisionHash:string;authorizationExpiresAt:number;deadline:number;
-  createdAt:number;updatedAt:number;reasons:string[];stepSize:number;requestKey:string|null;
+  createdAt:number;updatedAt:number;reasons:string[];stepSize:number;requestKey:string|null;mandateVersion?:number;
 };
 
 export type AdapterCapabilities={
@@ -84,11 +85,9 @@ export class PositionExitCoordinator {
    * kept, which is what the offline S04 matrix was written against.
    */
   private clientOrderIdFor(scope:string,cycleId:string,source:ExitSource,quantityUnits:number,requestKey?:string){
-    let h=0x811c9dc5>>>0;
     const key=String(requestKey??'').trim();
-    const seed=key?`${scope}|${cycleId}|${source}|R:${key}`:`${scope}|${cycleId}|${source}|Q:${quantityUnits}`;
-    for(let i=0;i<seed.length;i++)h=Math.imul(h^seed.charCodeAt(i),16777619)>>>0;
-    return `v396x${h.toString(16).padStart(8,'0')}`;
+    const seed=JSON.stringify([scope,cycleId,source,key?'REQUEST':'QUANTITY',key||quantityUnits]);
+    return `v396x${createHash('sha256').update(seed).digest('hex').slice(0,30)}`;
   }
 
   private reserveClaim(task:ExitTask){
@@ -112,11 +111,13 @@ export class PositionExitCoordinator {
       const {verdict,jit}=input;
       const reject=(...reasons:string[]):CoordinatorResult=>({accepted:false,taskId:null,clientOrderId:null,reasons,submitRequired:false});
       if(!input.scope||!input.cycleId)return reject('IDENTITY_MISSING');
+      if(!['AI','MANUAL','TP'].includes(input.source))return reject('SOURCE_INVALID');
       if(!Number.isSafeInteger(input.quantityUnits)||input.quantityUnits<=0)return reject('QUANTITY_INVALID');
       for(const [name,value] of Object.entries({now:jit.now,ownerVersion:jit.ownerVersion,positionVersion:jit.positionVersion,settingsVersion:jit.settingsVersion,riskGeneration:jit.riskGeneration,availableReduceUnits:jit.availableReduceUnits,remainingUnits:jit.remainingUnits,minNotional:jit.minNotional,tickSize:jit.tickSize,stepSize:jit.stepSize})){
-        if(!Number.isFinite(Number(value)))return reject(`JIT_FACT_NOT_FINITE:${name}`);
+        if(typeof value!=='number'||!Number.isFinite(value))return reject(`JIT_FACT_NOT_FINITE:${name}`);
       }
       if(!Number.isSafeInteger(jit.availableReduceUnits)||jit.availableReduceUnits<0)return reject('JIT_AVAILABILITY_UNPROVEN');
+      if(!Number.isSafeInteger(jit.remainingUnits)||jit.remainingUnits<0||jit.stepSize<=0||jit.tickSize<=0||jit.minNotional<0)return reject('JIT_FILTERS_INVALID');
 
       if(verdict.outcome!=='ALLOW')return reject('VERDICT_NOT_ALLOW');
       if(verdict.orderType!=='LIMIT'||verdict.marketFallbackAllowed!==false)return reject('VERDICT_ORDER_TYPE_UNSAFE');
@@ -141,14 +142,22 @@ export class PositionExitCoordinator {
       // semantics stay valid without one, where the quantity itself is the intent identity.
       const requestKey=String(input.requestKey??'').trim()||null;
       const clientOrderId=this.clientOrderIdFor(input.scope,input.cycleId,input.source,input.quantityUnits,requestKey??undefined);
-      const open=existing.filter(task=>OPEN_STATES.includes(task.state));
-      const openUnits=open.reduce((sum,task)=>sum+task.quantityUnits-task.filledUnits,0);
+      const scopeTasks=this.allTasks().filter(task=>task.scope===input.scope);
+      const open=scopeTasks.filter(task=>OPEN_STATES.includes(task.state));
+      const taskClaims=new Set(scopeTasks.map(task=>`claim:${task.taskId}`));
+      const externalClaims=this.journal.query<{id:string;payload:string}>('SELECT id,payload FROM v396_quantity_claims WHERE scope=?',input.scope).filter(row=>!taskClaims.has(row.id)).map(row=>JSON.parse(row.payload));
+      if(externalClaims.some(claim=>!['ACTIVE','UNKNOWN','RELEASED'].includes(claim.status)||!Number.isSafeInteger(claim.quantityUnits)||claim.quantityUnits<0))return reject('SHARED_CLAIM_FACTS_INVALID');
+      const openUnits=open.reduce((sum,task)=>sum+task.quantityUnits-task.filledUnits,0)+externalClaims.filter(claim=>claim.status!=='RELEASED').reduce((sum,claim)=>sum+claim.quantityUnits,0);
+      if(!Number.isSafeInteger(openUnits))return reject('SHARED_CLAIM_OVERFLOW');
       // An intent this caller already prepared is answered by identity first - and only that
       // caller, and only while it is still PREPARED, may be told to submit it. Coordination
       // conflicts are then judged for a new intent, so a different source can never read
       // 'already prepared' as licence to submit somebody else's order (I11).
-      const replayed=existing.find(task=>task.clientOrderId===clientOrderId);
-      if(replayed)return {accepted:false,taskId:replayed.taskId,clientOrderId,reasons:['IDEMPOTENCY_KEY_ALREADY_PREPARED',],submitRequired:replayed.source===input.source&&replayed.state==='PREPARED'};
+      const replayed=existing.find(task=>task.clientOrderId===clientOrderId||task.source===input.source&&(requestKey?task.requestKey===requestKey:!task.requestKey&&task.quantityUnits===input.quantityUnits));
+      if(replayed){
+        if(replayed.quantityUnits!==input.quantityUnits||replayed.limitPrice!==verdict.boundaryPrice||replayed.stepSize!==jit.stepSize)return reject('IDEMPOTENCY_PAYLOAD_CONFLICT');
+        return {accepted:false,taskId:replayed.taskId,clientOrderId:replayed.clientOrderId,reasons:['IDEMPOTENCY_KEY_ALREADY_PREPARED'],submitRequired:replayed.source===input.source&&replayed.state==='PREPARED'};
+      }
       if(input.source==='TP'&&open.some(task=>task.state==='SUBMITTING'||task.state==='UNKNOWN'))return reject('TP_BLOCKED_BY_UNACKNOWLEDGED_EXIT');
       if(open.some(task=>task.state==='UNKNOWN')&&input.source!=='MANUAL')return reject('UNKNOWN_EXIT_MUST_CONVERGE_FIRST');
       // A mandate the human revoked stays revoked: protection may be restored only under a
@@ -160,11 +169,11 @@ export class PositionExitCoordinator {
       if(Math.abs(verdict.boundaryPrice/jit.tickSize-Math.round(verdict.boundaryPrice/jit.tickSize))>1e-9)return reject('PRICE_NOT_TICK_ALIGNED');
 
       const task:ExitTask={
-        taskId:`exit_${input.cycleId}_${existing.length+1}`,clientOrderId,scope:input.scope,cycleId:input.cycleId,source:input.source,
+        taskId:`exit_${clientOrderId}`,clientOrderId,scope:input.scope,cycleId:input.cycleId,source:input.source,
         quantityUnits:input.quantityUnits,limitPrice:verdict.boundaryPrice,state:'PREPARED',version:1,filledUnits:0,
         ownerVersion:verdict.ownerVersion,planVersion:verdict.planVersion,positionVersion:jit.positionVersion,settingsVersion:jit.settingsVersion,riskGeneration:jit.riskGeneration,
         estimateHash:verdict.estimateHash,decisionHash:verdict.decisionHash,authorizationExpiresAt:verdict.authorizationExpiresAt!,deadline:jit.deadline,
-        createdAt:jit.now,updatedAt:jit.now,reasons:[],stepSize:jit.stepSize,requestKey,
+        createdAt:jit.now,updatedAt:jit.now,reasons:[],stepSize:jit.stepSize,requestKey,...(input.mandate?{mandateVersion:input.mandate.version}:{}),
       };
       this.reserveClaim(task);
       this.persist(task);
@@ -178,6 +187,19 @@ export class PositionExitCoordinator {
       if(!row)return null;
       const task=JSON.parse(String(row.payload)) as ExitTask;
       if(!TRANSITIONS[task.state]?.includes(next))return null;
+      if(!Number.isFinite(now)||now<task.updatedAt)return null;
+      // Once a write may have happened, only observe(exchange facts) may free its claim.
+      if(TERMINAL_STATES.includes(next)&&task.state!=='PREPARED')return null;
+      if(next==='SUBMITTING'){
+        if(now>=task.authorizationExpiresAt||now>=task.deadline)return null;
+        const owner=this.journal.get(task.scope,task.cycleId);
+        if(owner&&(owner.ownerVersion!==task.ownerVersion||owner.ownerState==='CLOSED'||task.source==='AI'&&owner.ownerState!=='AI_ACTIVE'))return null;
+        if(task.source==='TP'&&task.mandateVersion!=null){
+          const row=this.journal.query<{payload:string}>('SELECT payload FROM v396_mandates WHERE scope=? AND cycle_id=?',task.scope,task.cycleId)[0];
+          const mandate=row?JSON.parse(row.payload):null;
+          if(!mandate||mandate.version!==task.mandateVersion||mandate.revokedAt!=null||mandate.allowedPrice!==task.limitPrice)return null;
+        }
+      }
       const moved:ExitTask={...task,state:next,version:task.version+1,updatedAt:now,reasons:[...task.reasons,reason]};
       this.persist(moved);
       if(TERMINAL_STATES.includes(next))this.settleClaim(moved);
@@ -196,20 +218,25 @@ export class PositionExitCoordinator {
         const record=(note:string)=>{skipped.push(note);this.journal.write('INSERT INTO v396_exit_observed(event_id,payload,observed_at) VALUES(?,?,?) ON CONFLICT(event_id) DO NOTHING',event.eventId,JSON.stringify(event),now);};
         if(this.journal.query<{event_id:string}>('SELECT event_id FROM v396_exit_observed WHERE event_id=?',event.eventId)[0]){skipped.push(`DUPLICATE:${event.eventId}`);continue;}
         if(!Number.isSafeInteger(event.filledUnits)||event.filledUnits<0||!Number.isSafeInteger(event.positionVersion)){record('INVALID_FACT');continue;}
+        if(!['WORKING','PARTIALLY_FILLED','FILLED','CANCELED','REJECTED','EXPIRED'].includes(event.state)){record('INVALID_EXCHANGE_STATE');continue;}
         const task=this.findTaskByClientOrderId(event.clientOrderId);
         if(!task){record(`UNBOUND_ORDER:${event.clientOrderId}`);continue;}
         if(TERMINAL_STATES.includes(task.state)){record(`TERMINAL_TASK:${task.taskId}`);continue;}
         if(event.positionVersion<task.positionVersion){record(`STALE_WATERMARK:${event.eventId}`);continue;}
         if(event.filledUnits>task.quantityUnits){record(`OVER_FILL:${event.filledUnits}>${task.quantityUnits}`);continue;}
+        if(event.state==='FILLED'&&event.filledUnits!==task.quantityUnits||event.state==='PARTIALLY_FILLED'&&(event.filledUnits===0||event.filledUnits>=task.quantityUnits)){record('INCONSISTENT_FILL_STATE');continue;}
         if(event.filledUnits<task.filledUnits){record(`FILL_REGRESSION:${event.filledUnits}<${task.filledUnits}`);continue;}
         // UNKNOWN may only be resolved by an exchange fact, never by a local guess:
         // transition() refuses to leave UNKNOWN, while observe() accepts whatever the query
         // proves. Without that, the claim of an unacknowledged order would hang forever and
         // keep occupying risk with no route to convergence.
         const resolvingUncertain=task.state==='UNKNOWN';
-        if(!resolvingUncertain&&!TRANSITIONS[task.state]?.includes(event.state)){record(`ILLEGAL_TRANSITION:${task.state}->${event.state}`);continue;}
+        if(!resolvingUncertain&&task.state!=='PREPARED'&&event.state!==task.state&&!TRANSITIONS[task.state]?.includes(event.state)){record(`ILLEGAL_TRANSITION:${task.state}->${event.state}`);continue;}
         const next:ExitTask={...task,state:event.state,filledUnits:event.filledUnits,positionVersion:event.positionVersion,version:task.version+1,updatedAt:now,reasons:[...task.reasons,resolvingUncertain?'EXCHANGE_FACT_RESOLVED_UNKNOWN':'EXCHANGE_FACT_CONVERGED']};
         this.persist(next);
+        const claimId=`claim:${next.taskId}`;
+        const savedClaim=this.journal.query<{payload:string}>('SELECT payload FROM v396_quantity_claims WHERE id=?',claimId)[0];
+        if(savedClaim){const claim=JSON.parse(savedClaim.payload);this.journal.write('UPDATE v396_quantity_claims SET payload=? WHERE id=?',JSON.stringify({...claim,quantityUnits:next.quantityUnits-next.filledUnits,version:claim.version+1,status:'ACTIVE'}),claimId);}
         this.journal.write('INSERT INTO v396_exit_observed(event_id,payload,observed_at) VALUES(?,?,?)',event.eventId,JSON.stringify(event),now);
         if(TERMINAL_STATES.includes(next.state))this.settleClaim(next);
         applied.push(`${next.taskId}:${next.state}`);

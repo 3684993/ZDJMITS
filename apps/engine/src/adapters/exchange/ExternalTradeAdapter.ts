@@ -104,7 +104,7 @@ export class ExternalTradeAdapter implements ExchangeTradeAdapter {
   async findTakeProfitByClientOrderId(order:TakeProfitOrder){
     try{const row=await this.exactOrderFact({symbol:order.symbol,origClientOrderId:order.clientOrderId??order.id});const raw=String(row.status),executed=Number(row.executedQty??0),quantity=Number(row.origQty??order.quantity);
       const status:TakeProfitOrder['status']=executed>=quantity-1e-10?'FILLED':['NEW','PARTIALLY_FILLED'].includes(raw)?'WORKING':['FILLED','CANCELED','EXPIRED','REJECTED'].includes(raw)?raw as TakeProfitOrder['status']:'UNKNOWN';
-      return{...order,exchangeOrderId:String(row.orderId),quantity:Math.max(0,quantity-executed),price:Number(row.price??order.price),status,updatedAt:Number(row.updateTime??Date.now())};
+      return{...order,exchangeOrderId:String(row.orderId),quantity:Math.max(0,quantity-executed),filledQuantity:executed,price:Number(row.price??order.price),status,updatedAt:Number(row.updateTime??Date.now())};
     }catch(error){if(String(error).includes('-2013')||String(error).includes('-2011'))return null;throw error;}
   }
   async cancelTakeProfit(order:TakeProfitOrder){

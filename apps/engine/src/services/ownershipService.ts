@@ -22,7 +22,7 @@ export class OwnershipService {
   ownership(scope:string,cycleId:string){return this.journal.get(scope,cycleId);}
   allOwners(){return this.journal.query<{payload:string}>('SELECT payload FROM v396_owners').map(row=>JSON.parse(String(row.payload)) as Ownership);}
   claimsFor(scope:string){return this.journal.query<{payload:string}>('SELECT payload FROM v396_quantity_claims WHERE scope=?',scope).map(row=>JSON.parse(String(row.payload)) as QuantityClaim);}
-  activeClaimUnits(scope:string){return this.claimsFor(scope).filter(claim=>claim.status==='ACTIVE').reduce((sum,claim)=>sum+claim.quantityUnits,0);}
+  activeClaimUnits(scope:string){return this.claimsFor(scope).filter(claim=>claim.status!=='RELEASED').reduce((sum,claim)=>sum+claim.quantityUnits,0);}
 
   private writeOwner(owner:Ownership){
     this.journal.write('INSERT INTO v396_owners VALUES(?,?,?,?) ON CONFLICT(scope,cycle_id) DO UPDATE SET version=excluded.version,payload=excluded.payload',owner.scope,owner.cycleId,owner.ownerVersion,JSON.stringify(owner));

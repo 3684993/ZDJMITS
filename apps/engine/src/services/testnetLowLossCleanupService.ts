@@ -27,7 +27,7 @@ export class TestnetLowLossCleanupService {
   }
   private convergeExit(clientOrderId:string,order:ManualOrder,stepSize:number){
     const filledUnits=V396ExitRuntime.quantityUnitsOf(Number(order.filledQuantity??0),stepSize);
-    const state=order.status==='FILLED'?'FILLED':filledUnits>0?'PARTIALLY_FILLED':order.status==='CANCELED'?'CANCELED':order.status==='REJECTED'?'REJECTED':order.status==='EXPIRED'?'EXPIRED':'WORKING';
+    const state=order.status==='FILLED'?'FILLED':order.status==='CANCELED'?'CANCELED':order.status==='REJECTED'?'REJECTED':order.status==='EXPIRED'?'EXPIRED':filledUnits>0?'PARTIALLY_FILLED':'WORKING';
     return this.exitRuntime.observe({eventId:`CLEANUP:${clientOrderId}:${state}:${filledUnits}`,clientOrderId,state,filledUnits,positionVersion:Math.trunc(Number(order.updatedAt??Date.now()))||1});
   }
 

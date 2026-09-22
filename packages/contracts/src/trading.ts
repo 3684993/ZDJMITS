@@ -141,6 +141,7 @@ export const TakeProfitOrderSchema = z.object({
   symbol: z.string(),
   side: z.enum(['SELL','BUY']),
   quantity: z.number().positive(),
+  filledQuantity: z.number().nonnegative().optional(),
   price: z.number().positive(),
   status: z.enum(['UNKNOWN','WORKING','FILLED','CANCELED','EXPIRED','REJECTED']),
   createdAt: z.number().int(),

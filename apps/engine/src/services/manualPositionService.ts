@@ -52,7 +52,7 @@ export class ManualPositionService {
         if(working){const intent=this.state.manualIntents.get(working.intentId);
           if(intent?.action==='EMERGENCY_CLOSE'&&working.status!=='UNKNOWN'&&Date.now()-working.createdAt<30000)continue;
           if(!this.exchange.cancelManualOrder)uncertain=true;
-          else{const result=await this.exchange.cancelManualOrder(working);this.state.manualOrders.set(working.id,result);if(intent){const next=manualIntentFromOrder(intent,result,true);this.state.manualIntents.set(next.id,next);this.journal?.save({intent:next,order:result});}if(activeOrderStatus(result.status))uncertain=true;}
+          else{const result=await this.exchange.cancelManualOrder(working);const task=working.clientOrderId?this.exitRuntime.task(working.clientOrderId):null;if(task)this.convergeExit(task.clientOrderId,result,task.stepSize);this.state.manualOrders.set(working.id,result);if(intent){const next=manualIntentFromOrder(intent,result,true);this.state.manualIntents.set(next.id,next);this.journal?.save({intent:next,order:result});}if(activeOrderStatus(result.status))uncertain=true;}
         }
         if(uncertain){goal.lastReason='WAITING_EXACT_CANCEL_CONFIRMATION';goal.nextAttemptAt=Date.now()+5000;continue;}
         await this.reconcile();
@@ -133,7 +133,7 @@ export class ManualPositionService {
   }
   private convergeExit(clientOrderId:string,order:ManualOrder,stepSize:number){
     const filledUnits=V396ExitRuntime.quantityUnitsOf(Number(order.filledQuantity??0),Number(stepSize));
-    const state=order.status==='FILLED'?'FILLED':filledUnits>0?'PARTIALLY_FILLED':order.status==='CANCELED'?'CANCELED':order.status==='REJECTED'?'REJECTED':order.status==='EXPIRED'?'EXPIRED':'WORKING';
+    const state=order.status==='FILLED'?'FILLED':order.status==='CANCELED'?'CANCELED':order.status==='REJECTED'?'REJECTED':order.status==='EXPIRED'?'EXPIRED':filledUnits>0?'PARTIALLY_FILLED':'WORKING';
     return this.exitRuntime.observe({eventId:`MANUAL:${clientOrderId}:${state}:${filledUnits}`,clientOrderId,state,filledUnits,
       positionVersion:Math.trunc(Number((order as any).updatedAt??Date.now()))||1});
   }

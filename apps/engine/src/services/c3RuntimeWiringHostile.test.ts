@@ -368,7 +368,7 @@ describe('C3-8 restart queries and never resends',()=>{
     expect(retry.clientOrderId).toBe(accepted.clientOrderId);
     expect(retry.reasons).toContain('IDEMPOTENCY_KEY_ALREADY_PREPARED');
     ctx.coordinator.transition(accepted.taskId!,'SUBMITTING',NOW+1,'SENT');
-    ctx.coordinator.transition(accepted.taskId!,'FILLED',NOW+2,'AT_EXCHANGE');
+    ctx.coordinator.observe([{eventId:'terminal-fill',clientOrderId:accepted.clientOrderId!,state:'FILLED',filledUnits:10,positionVersion:8}],NOW+2);
     const nextIntent=exitRequest(ctx,{requestKey:'intent_b'});
     expect(nextIntent.accepted).toBe(true);
     expect(nextIntent.clientOrderId).not.toBe(accepted.clientOrderId);
@@ -429,5 +429,72 @@ describe('C3 Round 1.1 binding HUMAN protection',()=>{
   });
   it.each([100,50])('R5 FULL_REMAINING accepts only 100 percent (%s)',async percent=>{
     const h=wiring();try{h.state.settings.takeProfit.quantityPercent=percent;await h.tp.ensure(h.position,true);expect(h.exchange.placeTakeProfit).toHaveBeenCalledTimes(percent===100?1:0);if(percent!==100)expect(h.seen.map(e=>e.payload?.message??'').join('|')).toContain('MANDATE_FULL_REMAINING_REQUIRED');}finally{h.exitRuntime.close();}
+  });
+});
+
+
+describe('final audit coordinator adversarial cases',()=>{
+  it('different scopes sharing a cycle never overwrite tasks',()=>{
+    const c=coordinatorFixture(),a=exitRequest(c),b=exitRequest(c,{scope:executionScope('TESTNET','another-account','BTCUSDT','LONG')});
+    expect(a.accepted).toBe(true);expect(b.accepted).toBe(true);expect(a.taskId).not.toBe(b.taskId);expect(c.coordinator.allTasks()).toHaveLength(2);c.journal.close();
+  });
+  it('a previous cycle claim still occupies the same position scope',()=>{
+    const c=coordinatorFixture();exitRequest(c);const b=exitRequest(c,{cycleId:'later-cycle'});expect(b.accepted).toBe(false);c.journal.close();
+  });
+  it('UNKNOWN cannot be resolved by a fabricated terminal fill quantity',()=>{
+    const c=coordinatorFixture(),a=exitRequest(c);c.coordinator.markSubmitUncertain(a.taskId!,NOW);
+    const result=c.coordinator.observe([{eventId:'bad-fill',clientOrderId:a.clientOrderId!,state:'FILLED',filledUnits:0,positionVersion:7}],NOW+1);
+    expect(result.applied).toEqual([]);expect(c.coordinator.findTaskByClientOrderId(a.clientOrderId!)?.state).toBe('UNKNOWN');c.journal.close();
+  });
+  it('UNKNOWN cannot be reset into PREPARED by an exchange event',()=>{
+    const c=coordinatorFixture(),a=exitRequest(c);c.coordinator.markSubmitUncertain(a.taskId!,NOW);
+    expect(c.coordinator.observe([{eventId:'bad-state',clientOrderId:a.clientOrderId!,state:'PREPARED',filledUnits:0,positionVersion:7}],NOW+1).applied).toEqual([]);c.journal.close();
+  });
+  it('revoke while awaiting capabilities cannot authorize a TP',async()=>{
+    let resume!:(value:AdapterCapabilities)=>void;
+    const runtime=new V396ExitRuntime(':memory:',()=>identity,()=>new Promise(resolve=>{resume=resolve;}));
+    const subject={symbol:'BTCUSDT',side:'LONG' as const,cycleId:CYCLE,openedAt:Date.now()-1000},now=Date.now();
+    const waiting=runtime.prepareTakeProfit({requestKey:'racing',subject,quantityUnits:10,limitPrice:101,now,positionVersion:1,settingsVersion:1,riskGeneration:1,availableReduceUnits:10,remainingUnits:10,minNotional:5,tickSize:.1,stepSize:.1,proof:{kind:'ONE_WAY_REDUCE_ONLY',checkedAt:now,positionSide:'LONG'}});
+    runtime.revokeProtectionByHuman(subject);resume(ONE_WAY_CAPABILITIES);
+    expect((await waiting).accepted).toBe(false);runtime.close();
+  });
+  it('manual TP replacement releases only confirmed cancellation and places the new price',async()=>{
+    const h=wiring();try{
+      await h.tp.ensure(h.position,true);expect(h.exchange.placeTakeProfit).toHaveBeenCalledTimes(1);
+      const first=h.exchange.placeTakeProfit.mock.calls[0][0];
+      await h.service.execute(POSITION_ID,{action:'REPLACE_TP',price:102,idempotencyKey:'replace-existing'});
+      expect(h.exchange.placeTakeProfit).toHaveBeenCalledTimes(2);expect(h.exitRuntime.task(first.clientOrderId)?.state).toBe('CANCELED');
+    }finally{h.exitRuntime.close();}
+  });
+});
+
+
+describe('final audit exact recovery boundaries',()=>{
+  it('a local FILLED label cannot release a submitted claim',()=>{
+    const c=coordinatorFixture(),a=exitRequest(c);c.coordinator.transition(a.taskId!,'SUBMITTING',NOW+1,'SENT');
+    expect(c.coordinator.transition(a.taskId!,'FILLED',NOW+2,'LOCAL_GUESS')).toBeNull();expect(c.coordinator.openClaimUnits(SCOPE,CYCLE)).toBe(10);c.journal.close();
+  });
+  it.each(['wrong-client','wrong-symbol','bad-quantity','unknown-status'])('recovery refuses %s exchange facts',async defect=>{
+    const h=wiring();try{
+      await closeRemaining(h);const client=h.exchange.placeManualOrder.mock.calls[0][0].clientOrderId;
+      const row:any={symbol:'BTCUSDT',clientOrderId:client,status:'CANCELED',originalQuantity:1,executedQuantity:0,positionSide:'LONG'};
+      if(defect==='wrong-client')row.clientOrderId='other';if(defect==='wrong-symbol')row.symbol='ETHUSDT';if(defect==='bad-quantity')row.executedQuantity=-1;if(defect==='unknown-status')row.status='MADE_UP';
+      const result=await h.exitRuntime.convergeRecoveredTasks(async()=>({state:'FOUND',order:row}));
+      expect(result[0].outcome).toBe('EXCHANGE_FACT_UNVERIFIED');expect(h.exitRuntime.task(client)?.state).toBe('WORKING');
+    }finally{h.exitRuntime.close();}
+  });
+});
+
+
+describe('final audit TP crash identity',()=>{
+  it('lost ACK persists the original client ID in the runtime TP projection before submit',async()=>{
+    const h=wiring({tpFails:true});try{
+      h.exchange.placeTakeProfit.mockImplementation(async(order:any)=>{
+        expect(h.state.tpOrders.get(order.id)?.clientOrderId).toBe(order.clientOrderId);
+        const prepared=h.seen.filter(e=>e.type==='TP_SUBMISSION_PREPARED').at(-1);
+        expect(prepared?.payload.order.clientOrderId).toBe(order.clientOrderId);throw new Error('ETIMEDOUT');
+      });
+      await h.tp.ensure(h.position,true);const submitted=h.exchange.placeTakeProfit.mock.calls[0][0];expect(h.state.tpOrders.get(submitted.id)?.clientOrderId).toBe(submitted.clientOrderId);
+    }finally{h.exitRuntime.close();}
   });
 });

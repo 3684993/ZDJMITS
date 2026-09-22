@@ -101,7 +101,7 @@ describe('S04 unified exit coordination',()=>{
     const stillLive=ctx.coordinator.observe([{eventId:'evt-2',clientOrderId:task.clientOrderId!,state:'FILLED',filledUnits:120,positionVersion:9}],NOW+3);
     expect(stillLive.skipped.some(note=>note.startsWith('OVER_FILL'))).toBe(true);
     expect(ctx.coordinator.findTaskByClientOrderId(task.clientOrderId!).state).toBe('PARTIALLY_FILLED');
-    ctx.coordinator.transition(task.taskId!,'CANCELED',NOW+25,'CANCEL_CONFIRMED');
+    ctx.coordinator.observe([{eventId:'confirmed-cancel',clientOrderId:task.clientOrderId!,state:'CANCELED',filledUnits:60,positionVersion:8}],NOW+25);
     expect(ctx.coordinator.openClaimUnits(SCOPE,CYCLE)).toBe(0);
     const next=request(ctx,{source:'MANUAL',quantityUnits:40,verdict:verdictFor(after),jit:jitFor(after,{positionVersion:8,availableReduceUnits:40,remainingUnits:40})});
     expect(next.accepted).toBe(true);
@@ -257,7 +257,7 @@ describe('S04 unified exit coordination',()=>{
     let task=coordinator.findTaskByClientOrderId(first.clientOrderId!)!;
     const seen:[string,number][]=[[task.state,task.version]];
     for(const next of ['SUBMITTING','WORKING','PARTIALLY_FILLED','FILLED'] as const){
-      const moved=coordinator.transition(task.taskId,next,NOW+seen.length*10,'PROPERTY_walk');
+      const moved=next==='FILLED'?(coordinator.observe([{eventId:'property-full-fill',clientOrderId:first.clientOrderId!,state:'FILLED',filledUnits:100,positionVersion:8}],NOW+seen.length*10),coordinator.findTaskByClientOrderId(first.clientOrderId!)):coordinator.transition(task.taskId,next,NOW+seen.length*10,'PROPERTY_walk');
       expect(moved,`transition to ${next}`).not.toBeNull();
       expect(moved!.version).toBeGreaterThan(task.version);
       task=moved!;seen.push([task.state,task.version]);

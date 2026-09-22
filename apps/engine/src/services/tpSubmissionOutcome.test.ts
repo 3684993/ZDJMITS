@@ -12,3 +12,10 @@ describe('TP submission outcome',()=>{
  it('preserves uncertain network outcomes and forbids another submission',async()=>{const f=fixture('BINANCE_TRANSPORT_BLOCKED: request timed out');await f.guardian.ensure(f.position);await f.guardian.ensure(f.position,true);expect([...f.state.tpOrders.values()][0]!.status).toBe('UNKNOWN');expect(f.exchange.placeTakeProfit).toHaveBeenCalledTimes(1);});
  it('does not interpret duplicate, lookup-not-found, malformed or 5xx responses as definitive rejection',()=>{for(const message of ['Binance HTTP 400: {"code":-2010,"msg":"Duplicate order"}','Binance HTTP 400: {"code":-2013}','Binance HTTP 500: {"code":-2022}','Binance HTTP 400: {"code":-2022','untrusted -2022'])expect(confirmedTpSubmissionRejection(message)).toBe(false);});
 });
+
+it('confirmed rejected TP may be repaired as a new intent while uncertainty may not',async()=>{
+ const f=fixture('Binance HTTP 400: {"code":-2022,"msg":"ReduceOnly Order is rejected."}');
+ await f.guardian.ensure(f.position);await f.guardian.ensure(f.state.positions.get('p')!,true);
+ expect(f.exchange.placeTakeProfit).toHaveBeenCalledTimes(2);
+ const ids=f.exchange.placeTakeProfit.mock.calls.map((call:any[])=>call[0].clientOrderId);expect(new Set(ids).size).toBe(2);
+});

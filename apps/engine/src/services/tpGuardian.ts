@@ -12,7 +12,12 @@ export class TpGuardian {
   private unknownAbsenceProof=new Map<string,{firstAt:number;lastAt:number;observations:number}>();private crossedVerificationAt=new Map<string,number>();
   suspend(positionId:string){this.suspendedPositions.add(positionId);}
   resume(positionId:string){this.suspendedPositions.delete(positionId);}
-  async cancel(order:TakeProfitOrder){return this.exchange.cancelTakeProfit(order);}
+  async cancel(order:TakeProfitOrder){
+    const canceled=await this.exchange.cancelTakeProfit(order);
+    const task=order.clientOrderId?this.exitRuntime.task(order.clientOrderId):null;
+    if(task)this.converge(task.clientOrderId,canceled,task.stepSize);
+    return canceled;
+  }
   /**
    * C3: the only way a TP reaches the exchange. A durable mandate must exist and not be revoked,
    * the reduction must be proven against live positions, and PREPARED must be persisted with the
@@ -34,7 +39,7 @@ export class TpGuardian {
     const mandate=this.exitRuntime.ensureGuardianMandate(subject,order.price,now);
     const proof=await this.exchange.proveReduction({symbol:order.symbol,positionSide,quantity:order.quantity});
     const liveUnits=V396ExitRuntime.quantityUnitsOf(proof.liveQuantity,stepSize),positionUnits=V396ExitRuntime.quantityUnitsOf(Number(position?.quantity??order.quantity),stepSize)||quantityUnits;
-    const requestKey=`TP|${cycleId}|v${mandate.version}|${V396ExitRuntime.quantityUnitsOf(order.price,Number(position?.tickSize??order.price))||order.price}|${quantityUnits}`;
+    const requestKey=JSON.stringify(['TP',cycleId,mandate.version,order.id]);
     const prepared=await this.exitRuntime.prepareTakeProfit({requestKey,subject,quantityUnits,limitPrice:order.price,now:Date.now(),
       positionVersion:Math.trunc(Number((position as any)?.updatedAt??position?.firstObservedAt??position?.openedAt??0))||1,
       settingsVersion:Number((this.state.settings as any).settingsVersion??0),riskGeneration:Number(this.state.runtimeControl.capital.generation??0),
@@ -43,12 +48,18 @@ export class TpGuardian {
     if(!prepared.clientOrderId)throw new Error(`TP_EXIT_CLIENT_ORDER_ID_MISSING: ${prepared.reasons.join('|')}`);
     if(!prepared.accepted&&!prepared.submitRequired)throw new Error(`TP_EXIT_PREPARE_REFUSED: ${prepared.reasons.join('|')}`);
     const submitted:TakeProfitOrder={...order,clientOrderId:prepared.clientOrderId};
-    if(!this.exitRuntime.transitionByClientOrderId(prepared.clientOrderId,'SUBMITTING',now,'TP_SUBMIT_SENT'))throw new Error('TP_EXIT_PREPARED_STATE_LOST');
+    this.state.tpOrders.set(order.id,{...submitted,status:'UNKNOWN'});
+    this.events.publish('TP_SUBMISSION_PREPARED',{positionId:order.positionId,order:{...submitted,status:'UNKNOWN'}},order.symbol);
+    if(!this.exitRuntime.transitionByClientOrderId(prepared.clientOrderId,'SUBMITTING',Date.now(),'TP_SUBMIT_SENT'))throw new Error('TP_EXIT_PREPARED_STATE_LOST');
     try{
       const placed=await this.exchange.placeTakeProfit(submitted);
       this.converge(prepared.clientOrderId,placed,stepSize);
       return placed;
     }catch(error){
+      if(confirmedTpSubmissionRejection(error)){
+        this.exitRuntime.observe({eventId:`TP_REJECTED:${prepared.clientOrderId}`,clientOrderId:prepared.clientOrderId,state:'REJECTED',filledUnits:0,positionVersion:this.exitRuntime.task(prepared.clientOrderId)!.positionVersion});
+        throw error;
+      }
       let fact:Awaited<ReturnType<NonNullable<ExchangeTradeAdapter['findExitByClientOrderId']>>>|null=null;
       try{fact=await this.exchange.findExitByClientOrderId({symbol:submitted.symbol,clientOrderId:prepared.clientOrderId});}catch{fact=null;}
       if(fact?.state==='FOUND'&&fact.order){
@@ -65,7 +76,7 @@ export class TpGuardian {
   }
   private converge(clientOrderId:string,order:TakeProfitOrder,stepSize:number){
     const filledUnits=V396ExitRuntime.quantityUnitsOf(Number((order as any).filledQuantity??0),stepSize);
-    const state=order.status==='FILLED'?'FILLED':filledUnits>0?'PARTIALLY_FILLED':order.status==='CANCELED'?'CANCELED':order.status==='REJECTED'?'REJECTED':order.status==='EXPIRED'?'EXPIRED':'WORKING';
+    const state=order.status==='FILLED'?'FILLED':order.status==='CANCELED'?'CANCELED':order.status==='REJECTED'?'REJECTED':order.status==='EXPIRED'?'EXPIRED':filledUnits>0?'PARTIALLY_FILLED':'WORKING';
     return this.exitRuntime.observe({eventId:`TP:${clientOrderId}:${state}:${filledUnits}`,clientOrderId,state,filledUnits,positionVersion:Math.trunc(Number(order.updatedAt??Date.now()))||1});
   }
   economicsFor(position:Position,exitPrice:number){const settings=this.state.settings.takeProfit,exitRate=settings.exitFeeAssumption==='MAKER'?settings.makerFeeRate:settings.takerFeeRate;return estimateTradingCost({entryPrice:position.entryPrice,qty:position.quantity,direction:position.side,leverage:position.leverage,entryFeeRate:settings.entryFeeRate,expectedExitFeeRate:exitRate,expectedSlippagePct:settings.slippageBufferPct,feeSafetyBufferPct:settings.feeSafetyBufferPct,minNetProfitUsd:settings.minNetProfitUsd,minNetProfitRoiPct:settings.minNetProfitRoiPct},exitPrice);}
@@ -144,8 +155,8 @@ export class TpGuardian {
     if(!finalValid||!economics){status=economics&&economics.expectedNetProfit<economics.requiredNetProfit?'TP_TARGET_BELOW_NET_FLOOR':'TP_TARGET_UNREALISTIC';const exhausted=attempt>=5,delay=Math.min(15*60_000,60_000*2**Math.min(attempt-1,4)),nextAt=Date.now()+delay,fallbackEconomics=economics??fixedEconomics;if(!fallbackEconomics){this.state.positions.set(current.id,{...current,tpStatus:'MANUAL_REVIEW_REQUIRED',tpOrderId:null,tpLastVerifiedAt:Date.now(),tpCoverageSource:'NONE'});this.retry.set(current.id,{attempt,nextAt:Date.now()+15*60_000,lastError:'TP_ECONOMICS_UNAVAILABLE'});this.events.publish('TP_MANUAL_REVIEW_REQUIRED',{positionId:current.id,attempt,price,markPrice:liveMark,reason:'TP_ECONOMICS_UNAVAILABLE'},current.symbol);this.repairing.delete(current.id);return;}const blocked={...current,tpStatus:exhausted?'MANUAL_REVIEW_REQUIRED' as const:'REPAIR_FAILED' as const,tpOrderId:null,tpLastVerifiedAt:Date.now(),tpCoverageSource:'NONE' as const,tpEconomics:{currentTpPrice:Number.isFinite(price)&&price>0?price:null,expectedGrossProfit:fallbackEconomics.expectedGrossProfit,expectedFees:fallbackEconomics.estimatedTotalFee+fallbackEconomics.slippageBuffer+fallbackEconomics.feeSafetyBuffer,expectedNetProfit:fallbackEconomics.expectedNetProfit,requiredNetProfit:fallbackEconomics.requiredNetProfit,breakEvenPrice:fallbackEconomics.breakEvenPrice,minProfitableExitPrice:fallbackEconomics.minProfitableExitPrice,status}};this.state.positions.set(current.id,blocked);this.retry.set(current.id,{attempt,nextAt:exhausted?Date.now()+15*60_000:nextAt,lastError:status});this.events.publish(exhausted?'TP_MANUAL_REVIEW_REQUIRED':'TP_TARGET_UNREALISTIC',{positionId:current.id,attempt,price,markPrice:liveMark,reason:status,source:target.source,requiredNetProfit:fallbackEconomics.requiredNetProfit,expectedNetProfit:fallbackEconomics.expectedNetProfit,nextRetryAt:exhausted?Date.now()+15*60_000:nextAt},current.symbol);this.repairing.delete(current.id);return;}
 
     const tpEconomics={currentTpPrice:price,expectedGrossProfit:economics.expectedGrossProfit,expectedFees:economics.estimatedTotalFee+economics.slippageBuffer+economics.feeSafetyBuffer,expectedNetProfit:economics.expectedNetProfit,requiredNetProfit:economics.requiredNetProfit,breakEvenPrice:economics.breakEvenPrice,minProfitableExitPrice:economics.minProfitableExitPrice,status:'TP_OK' as const};this.state.positions.set(current.id,{...current,tpEconomics,profitTakePlanSource:target.source});const order:TakeProfitOrder={id:uid('tp'),clientOrderId:null,exchangeOrderId:null,cycleId:current.cycleId,positionId:current.id,symbol:current.symbol,side:current.side==='LONG'?'SELL':'BUY',quantity:Math.max(market.quote.minQty,qty),price,status:'WORKING',createdAt:now,updatedAt:now};
-    try{if(existing?.status==='WORKING'){const canceled=await this.exchange.cancelTakeProfit(existing);if(!['CANCELED','EXPIRED','REJECTED'].includes(canceled.status))throw new Error('TP_REPLACEMENT_CANCEL_UNVERIFIED');this.state.tpOrders.set(existing.id,canceled);}this.state.tpOrders.set(order.id,{...order,status:'UNKNOWN'});this.events.publish('TP_SUBMISSION_PREPARED',{positionId:current.id,order:{...order,status:'UNKNOWN'}},current.symbol);const placed=await this.place(order,{stepSize:Number(market.quote.stepSize),tickSize:Number(market.quote.tickSize)});this.state.tpOrders.set(placed.id,placed);this.state.positions.set(current.id,{...this.state.positions.get(current.id)!,tpStatus:placed.status==='WORKING'?'PROTECTED':'PENDING',tpOrderId:placed.id,tpLastVerifiedAt:Date.now(),tpCoverageSource:'SYSTEM_CREATED'});this.retry.delete(current.id);this.events.publish('TP_PROTECTED',{positionId:current.id,order:placed,repairAttempt:attempt,tpEconomics},current.symbol);}
-    catch(error){const message=error instanceof Error?error.message:String(error);const submitted=this.state.tpOrders.get(order.id),rejected=submitted?.status==='UNKNOWN'&&confirmedTpSubmissionRejection(error);if(rejected){this.state.tpOrders.set(order.id,{...submitted,status:'REJECTED',updatedAt:Date.now()});this.events.publish('TP_ORDER_REJECTED',{positionId:current.id,orderId:order.id,clientOrderId:order.clientOrderId,exchangeCode:-2022,message},current.symbol);}const exhausted=attempt>=5,delay=Math.min(15*60_000,60_000*2**Math.min(attempt-1,4)),nextAt=Date.now()+delay;this.retry.set(current.id,{attempt,nextAt:exhausted?Date.now()+15*60_000:nextAt,lastError:message});const latest=this.state.positions.get(current.id);if(latest)this.state.positions.set(current.id,{...latest,tpStatus:exhausted?'MANUAL_REVIEW_REQUIRED':'REPAIR_FAILED',tpOrderId:null,tpLastVerifiedAt:Date.now(),tpCoverageSource:'NONE'});this.events.publish(exhausted?'TP_MANUAL_REVIEW_REQUIRED':'TP_REPAIR_FAILED',{positionId:current.id,orderId:order.id,clientOrderId:order.clientOrderId,submissionOutcome:rejected?'REJECTED':submitted?'UNKNOWN':'NOT_ATTEMPTED',message,attempt,nextRetryAt:exhausted?Date.now()+15*60_000:nextAt},current.symbol);}
+    try{if(existing?.status==='WORKING'){const canceled=await this.cancel(existing);if(!['CANCELED','EXPIRED','REJECTED'].includes(canceled.status))throw new Error('TP_REPLACEMENT_CANCEL_UNVERIFIED');this.state.tpOrders.set(existing.id,canceled);}const placed=await this.place(order,{stepSize:Number(market.quote.stepSize),tickSize:Number(market.quote.tickSize)});this.state.tpOrders.set(placed.id,placed);this.state.positions.set(current.id,{...this.state.positions.get(current.id)!,tpStatus:placed.status==='WORKING'?'PROTECTED':'PENDING',tpOrderId:placed.id,tpLastVerifiedAt:Date.now(),tpCoverageSource:'SYSTEM_CREATED'});this.retry.delete(current.id);this.events.publish('TP_PROTECTED',{positionId:current.id,order:placed,repairAttempt:attempt,tpEconomics},current.symbol);}
+    catch(error){const message=error instanceof Error?error.message:String(error);const submitted=this.state.tpOrders.get(order.id),rejected=submitted?.status==='UNKNOWN'&&confirmedTpSubmissionRejection(error);if(rejected){this.state.tpOrders.set(order.id,{...submitted,status:'REJECTED',updatedAt:Date.now()});this.events.publish('TP_ORDER_REJECTED',{positionId:current.id,orderId:order.id,clientOrderId:submitted?.clientOrderId??order.clientOrderId,exchangeCode:-2022,message},current.symbol);}const exhausted=attempt>=5,delay=Math.min(15*60_000,60_000*2**Math.min(attempt-1,4)),nextAt=Date.now()+delay;this.retry.set(current.id,{attempt,nextAt:exhausted?Date.now()+15*60_000:nextAt,lastError:message});const latest=this.state.positions.get(current.id);if(latest)this.state.positions.set(current.id,{...latest,tpStatus:exhausted?'MANUAL_REVIEW_REQUIRED':'REPAIR_FAILED',tpOrderId:null,tpLastVerifiedAt:Date.now(),tpCoverageSource:'NONE'});this.events.publish(exhausted?'TP_MANUAL_REVIEW_REQUIRED':'TP_REPAIR_FAILED',{positionId:current.id,orderId:order.id,clientOrderId:submitted?.clientOrderId??order.clientOrderId,submissionOutcome:rejected?'REJECTED':submitted?'UNKNOWN':'NOT_ATTEMPTED',message,attempt,nextRetryAt:exhausted?Date.now()+15*60_000:nextAt},current.symbol);}
     finally{this.repairing.delete(current.id);}
   }
   async sweep(){for(const position of this.state.positions.values())await this.ensure(position);}

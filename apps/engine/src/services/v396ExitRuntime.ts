@@ -177,6 +177,13 @@ export class V396ExitRuntime {
     let coordinator:PositionExitCoordinator;
     try{coordinator=new PositionExitCoordinator(this.journal,await this.capabilities());}
     catch{return this.reject('ADAPTER_CAPABILITIES_UNPROVEN');}
+    const checkedNow=Date.now(),latestOwner=this.ownership.ownership(scope,cycleId);
+    if(!this.proofValid({...input,now:checkedNow}))return this.reject('REDUCTION_PROOF_EXPIRED');
+    if(!latestOwner||latestOwner.ownerVersion!==owner.ownerVersion||latestOwner.ownerState==='CLOSED')return this.reject('OWNER_CHANGED_DURING_PREPARE');
+    if(source==='TP'){
+      const latest=this.ownership.mandate(scope,cycleId);
+      if(!latest||latest.revokedAt!=null||latest.version!==mandate!.version)return this.reject('MANDATE_CHANGED_DURING_PREPARE');
+    }
     return coordinator.requestExit({
       scope,cycleId,source,requestKey,quantityUnits:input.quantityUnits,verdict,
       mandate:source==='TP'?{version:mandate!.version,revokedAt:mandate!.revokedAt}:null,
@@ -230,6 +237,8 @@ export class V396ExitRuntime {
       if(!task){converged.push({clientOrderId:entry.clientOrderId,outcome:'TASK_MISSING',state:null});continue;}
       const identity=V396ExitRuntime.parseScope(task.scope);
       if(!identity||!['LONG','SHORT','BOTH'].includes(identity.side)){converged.push({clientOrderId:task.clientOrderId,outcome:'SCOPE_UNPARSEABLE',state:task.state});continue;}
+      const currentIdentity=this.exchangeIdentity();
+      if(identity.environment!==currentIdentity.environment||identity.account!==currentIdentity.account){converged.push({clientOrderId:task.clientOrderId,outcome:'ACCOUNT_SCOPE_MISMATCH',state:task.state});continue;}
       let fact:Awaited<ReturnType<typeof query>>;
       try{fact=await query({symbol:identity.symbol,clientOrderId:task.clientOrderId});}
       catch{converged.push({clientOrderId:task.clientOrderId,outcome:'QUERY_FAILED_STAYS_UNACKED',state:task.state});continue;}
@@ -240,7 +249,8 @@ export class V396ExitRuntime {
       }
       const raw=String(fact.order.status??'').toUpperCase(),executed=Number(fact.order.executedQuantity??0),original=Number(fact.order.originalQuantity??0);
       const units=(quantity:number)=>V396ExitRuntime.quantityUnitsOf(quantity,task.stepSize);
-      const filledUnits=Math.max(0,Math.min(task.quantityUnits,units(executed)));
+      if(fact.order.symbol!==identity.symbol||fact.order.clientOrderId!==task.clientOrderId||!['BOTH',identity.side].includes(fact.order.positionSide)||!Number.isFinite(executed)||executed<0||!Number.isFinite(original)||units(original)!==task.quantityUnits||executed>original||executed>0&&units(executed)===0||!['NEW','WORKING','PARTIALLY_FILLED','FILLED','CANCELED','EXPIRED','REJECTED'].includes(raw)||raw==='FILLED'&&units(executed)!==task.quantityUnits){converged.push({clientOrderId:task.clientOrderId,outcome:'EXCHANGE_FACT_UNVERIFIED',state:task.state});continue;}
+      const filledUnits=units(executed);
       const state:ExitTaskState=executed>0&&original>0&&executed>=original-1e-12?'FILLED':raw==='CANCELED'?'CANCELED':raw==='EXPIRED'?'EXPIRED':raw==='REJECTED'?'REJECTED':executed>0?'PARTIALLY_FILLED':'WORKING';
       const applied=this.recoveryCoordinator.observe([{eventId:`RECOVERY:${task.clientOrderId}:${state}:${filledUnits}:${task.version}`,clientOrderId:task.clientOrderId,state,filledUnits,positionVersion:task.positionVersion}],now);
       converged.push({clientOrderId:task.clientOrderId,outcome:applied.applied.length?`EXCHANGE_FACT_${state}`:'OBSERVE_REFUSED',state});

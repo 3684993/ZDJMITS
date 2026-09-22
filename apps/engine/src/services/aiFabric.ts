@@ -9,6 +9,7 @@ import { redactAudit } from '../api/projections.js';
 import { normalizeAiProtocol, type ProtocolNormalization } from './aiProtocolNormalizer.js';
 import type {ExternalIntelligenceSnapshot} from './externalIntelligenceService.js';
 import {buildExternalResearchPrompt,externalResearchJsonSchema,verifyExternalResearch,materializeExternalResearch} from './externalResearchQuality.js';
+import {buildPositionReviewPrompt,parsePositionReview,type PositionReviewRequest,type PositionReviewVerdict} from './positionReviewPrompt.js';
 
 interface ResourceLoad {
   active:number; totalRuns:number; failures:number; lastLatencyMs:number|null;
@@ -168,9 +169,9 @@ export class AiFabric {
     const choices=this.state.aiResources.filter(r=>r.role===role&&r.status!=='OFFLINE'&&this.endpointAvailable(r.id)&&r.id!==excludeId&&(this.load.get(r.id)?.active??0)<r.maxConcurrency);if(!choices.length)throw new Error(`AI_RESOURCE_BUSY:${role}`);
     return [...choices].sort((a,b)=>(this.load.get(a.id)?.active??0)-(this.load.get(b.id)?.active??0)||(this.load.get(a.id)?.lastLatencyMs??0)-(this.load.get(b.id)?.lastLatencyMs??0))[0]!;
   }
-  private async run<T>(args:{resource:AiResource;symbol:string;packet:EntryIntelligencePacket;role:'SCOUT'|'PRIMARY_BRAIN'|'REVIEW_BRAIN';prompt:string;schemaName:string;parse:(v:unknown)=>T;queueMs?:number}):Promise<{value:T;run:AiRun}>{
+  private async run<T>(args:{resource:AiResource;symbol:string;packet:EntryIntelligencePacket;role:'SCOUT'|'PRIMARY_BRAIN'|'REVIEW_BRAIN';prompt:string;schemaName:string;parse:(v:unknown)=>T;queueMs?:number;triggerReason?:string}):Promise<{value:T;run:AiRun}>{
     const startedAt=Date.now(),runId=uid('airun'),load=this.load.get(args.resource.id)!;load.active++;load.currentSymbol=args.symbol;load.currentRunId=runId;load.currentStartedAt=startedAt;args.resource.status='BUSY';
-    let run:AiRun=AiRunSchema.parse({id:runId,symbol:args.symbol,resourceId:args.resource.id,model:args.resource.model,role:args.role,startedAt,completedAt:null,latencyMs:null,inputTokens:null,outputTokens:null,finishReason:null,status:'RUNNING',direction:null,decision:null,packetId:args.packet.packetId,error:null,inputPreview:redactAudit({prompt:args.prompt,packet:args.packet},Infinity),requestSource:'ENTRY',inputContractHash:createHash('sha256').update(JSON.stringify(args.packet)).digest('hex'),promptHash:createHash('sha256').update(args.prompt).digest('hex'),outputContractVersion:'V3.9.3',timing:{queueMs:args.queueMs??0,promptBuildMs:0,requestMs:0,retryMs:0,parseMs:0,totalMs:0},failure:null});const lifecycle=this.state.candidateLifecycle.get(args.symbol);Object.assign(run,{triggerReason:lifecycle?.confirmation?.trigger??lifecycle?.triggerReason??'FIRST_REVIEW',previousRunId:lifecycle?.previousRunId??null,runKind:args.role==='SCOUT'?'SCOUT_ENTRY_INFERENCE':'PRIMARY_INFERENCE_RUN',recordKind:'PRIMARY_INFERENCE_RUN',marketOpportunityEpisodeId:args.packet.opportunityEvidence?.opportunityId??null,opportunityVersion:args.packet.opportunityEvidence?.version??null});this.state.addAiRun(run);this.events.publish('AI_RUN_STARTED',run,args.symbol);
+    let run:AiRun=AiRunSchema.parse({id:runId,symbol:args.symbol,resourceId:args.resource.id,model:args.resource.model,role:args.role,startedAt,completedAt:null,latencyMs:null,inputTokens:null,outputTokens:null,finishReason:null,status:'RUNNING',direction:null,decision:null,packetId:args.packet.packetId,error:null,inputPreview:redactAudit({prompt:args.prompt,packet:args.packet},Infinity),requestSource:args.role==='REVIEW_BRAIN'?'REVIEW':'ENTRY',inputContractHash:createHash('sha256').update(JSON.stringify(args.packet)).digest('hex'),promptHash:createHash('sha256').update(args.prompt).digest('hex'),outputContractVersion:'V3.9.3',timing:{queueMs:args.queueMs??0,promptBuildMs:0,requestMs:0,retryMs:0,parseMs:0,totalMs:0},failure:null});const lifecycle=this.state.candidateLifecycle.get(args.symbol);Object.assign(run,{triggerReason:args.triggerReason??lifecycle?.confirmation?.trigger??lifecycle?.triggerReason??'FIRST_REVIEW',previousRunId:lifecycle?.previousRunId??null,runKind:args.role==='SCOUT'?'SCOUT_ENTRY_INFERENCE':args.role==='REVIEW_BRAIN'?'POSITION_REVIEW_RUN':'PRIMARY_INFERENCE_RUN',recordKind:args.role==='REVIEW_BRAIN'?'POSITION_REVIEW_RUN':'PRIMARY_INFERENCE_RUN',marketOpportunityEpisodeId:args.packet.opportunityEvidence?.opportunityId??null,opportunityVersion:args.packet.opportunityEvidence?.version??null});this.state.addAiRun(run);this.events.publish('AI_RUN_STARTED',run,args.symbol);
     try{
     const isEntry=args.schemaName==='EntryDecisionV392';
       const result=await this.openAi.runJson({baseUrl:args.resource.baseUrl,model:args.resource.model,prompt:args.prompt,schemaName:args.schemaName,timeoutMs:this.state.settings.ai.decisionTimeoutMs,jsonSchema:isEntry?EntryDecisionJsonSchema as unknown as Record<string,unknown>:args.role==='SCOUT'?ScoutAnnotationJsonSchema as unknown as Record<string,unknown>:undefined,maxOutputTokens:isEntry?900:600,parse:args.parse});const completedAt=Date.now();
@@ -209,6 +210,17 @@ export class AiFabric {
     this.events.publish('PRIMARY_DECISION_NORMALIZED',{runId:result.run.id,rawDirection,rawDecision,normalizedDirection:decision.direction,normalizedDecision:decision.decision,parserRepaired,reason:decision.reason},packet.symbol);
     this.events.publish('AI_RUN_TERMINAL',result.run,packet.symbol);
     return{decision,run:result.run,resource};
+  }
+  /**
+   * S07-A: the position review brain's only entry point. It runs on the same 27B endpoint as the entry
+   * Primary but under its own run role, so the usage ledger can tell the two apart and a review that
+   * cannot reach the model costs review budget rather than tripping the entry circuit breaker.
+   */
+  async review(packet:EntryIntelligencePacket,request:PositionReviewRequest):Promise<{verdict:PositionReviewVerdict;run:AiRun;promptHash:string}>{
+    const prompt=buildPositionReviewPrompt(packet,request),resource=this.choose('PRIMARY_BRAIN');
+    const {value,run}=await this.run({resource,symbol:packet.symbol,packet,role:'REVIEW_BRAIN',prompt,schemaName:'PositionReviewV396',
+      parse:parsePositionReview,triggerReason:`POSITION_REVIEW:${request.triggerKey}:n${request.reviewNumber}`});
+    return{verdict:value,run,promptHash:run.promptHash??'missing-prompt-hash'};
   }
   async decide(packet:EntryIntelligencePacket,_scout:ScoutAnnotation|null=null,queueMs=0,confirmation?:unknown):Promise<{decision:BrainDecision;runId:string}> {
     try {const first=await this.primaryOnce(packet,_scout,undefined,'PRIMARY_BRAIN',{confirmation},queueMs);return {decision:first.decision,runId:first.run.id};}

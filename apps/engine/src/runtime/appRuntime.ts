@@ -36,7 +36,7 @@ import { ShadowRunner } from "../services/shadowRunner.js";
 import { ShadowReadinessService } from "../services/shadowReadiness.js";
 import { TestnetLowLossCleanupService } from "../services/testnetLowLossCleanupService.js";
 import { currentLanIps, type RuntimeIdentity } from "./runtimeIdentity.js";
-import { RELEASE_VERSION, type Position } from "@zdj/contracts";
+import { RELEASE_VERSION, type Position, type TradePlan } from "@zdj/contracts";
 import { TemporalIntelligenceService } from "../services/temporalIntelligenceService.js";
 import { LiveValidationService } from "../services/liveValidationService.js";
 import {ExternalIntelligenceService} from "../services/externalIntelligenceService.js";
@@ -52,6 +52,11 @@ import { V396AiExitRunner } from '../services/v396AiExitRunner.js';
 import { AiExitAuthorityService } from '../services/aiExitAuthority.js';
 import { PortfolioRiskAdmission } from '../services/portfolioRiskLedger.js';
 import { aiExitPlanFactsOf, executedPlanRecord } from '../services/tradePlanService.js';
+import { AiUsageLedger, aiUsageRowOf } from '../services/aiUsageLedger.js';
+import { PositionReviewScheduler, type ReviewTicket } from '../services/positionReviewScheduler.js';
+import { PositionReviewRunner, type ReviewAnswer, type ReviewTickReport } from '../services/positionReviewRunner.js';
+import { reviewMemoryFor, tradeMemoryVersionOf } from '../services/tradeMemoryService.js';
+import type { PositionReviewRequest } from '../services/positionReviewPrompt.js';
 
 export class EngineRuntime {
   readonly writes=new RuntimeWriteBuffer();
@@ -82,6 +87,11 @@ export class EngineRuntime {
   lossHandoff!: LossHandoffService
   ownership?: OwnershipRuntime;  exitRuntime?: V396ExitRuntime;  aiExitAuthority?: AiExitAuthorityService;  aiExitRunner?: V396AiExitRunner;
   portfolioRisk?: PortfolioRiskAdmission;
+  aiUsage?: AiUsageLedger;
+  positionReviewScheduler?: PositionReviewScheduler;
+  positionReviewRunner?: PositionReviewRunner;
+  /** What the last review pass actually did, for the operator readback. Never a claimed intention. */
+  reviewTickReport:ReviewTickReport|null=null;
   cashFlowFacts: () => Array<{ id: string; amountUsd: number; factStatus: 'VERIFIED' }> = () => [];
   refreshCashFlowFacts: (now?: number) => Promise<{ rows: number; complete?: boolean; asOf: number } | null> = async () => null;
   private timers: NodeJS.Timeout[] = [];
@@ -165,6 +175,9 @@ export class EngineRuntime {
       : loadedSettings;
     const state = new RuntimeState(settings);
     state.restore(store.loadRuntime());
+    // J4: the usage ledger is a view over the durable RuntimeState rows, so it exists before the first
+    // request can be made and comes back from a restart already holding the rows it wrote.
+    const aiUsage = new AiUsageLedger(state as any);
     state.entryReservationTransaction=(revision:number,work:()=>unknown)=>store.mutateEntryReservations(revision,()=>{const result=work();store.persistRuntime(state.serialize());return result;});
     for(const saved of store.loadManualExecutions()) {
       const existing=state.manualOrders.get(saved.order.id);if(existing&&existing.updatedAt>saved.order.updatedAt){store.saveManualExecution({intent:state.manualIntents.get(saved.intent.id)??saved.intent,order:existing});continue;}
@@ -431,6 +444,40 @@ export class EngineRuntime {
       const coordination = (state.settings.riskGovernance as any)?.exitCoordination ?? {};
       return coordination.aiExitAuthority ?? 'OFF';
     });
+    // J4: bounded review of cycles already under AI management. The scheduler owns the trigger
+    // identity and the budget, the ledger owns the record of what was asked, and this is the only
+    // path by which a model answer becomes exit evidence. Entry inference and review share an
+    // endpoint but never share a budget.
+    runtime.aiUsage = aiUsage;
+    const reviewSettings = () => {
+      const coordination = (state.settings.riskGovernance as any)?.exitCoordination ?? {};
+      return {
+        normalReviewsPerPlan: Number(coordination.normalReviewsPerPlan ?? 2),
+        exceptionReviewsPerPlan: Number(coordination.exceptionReviewsPerPlan ?? 1),
+        failureBudget: Number(coordination.reviewFailureBudget ?? 2),
+        minIntervalMs: Number(coordination.reviewMinIntervalMs ?? 300_000),
+        authorityTtlMs: Number(coordination.reviewAuthorityTtlMs ?? 20_000),
+      };
+    };
+    runtime.positionReviewScheduler = new PositionReviewScheduler({
+      ledger: aiUsage,
+      settings: reviewSettings,
+      ownerOf: (scope, cycleId) => {
+        const owner = exitRuntime.ownerOfScope(scope, cycleId);
+        return owner ? { ownerState: String(owner.ownerState), ownerVersion: Number(owner.ownerVersion), deadline: owner.deadline ?? null } : null;
+      },
+    });
+    runtime.positionReviewScheduler.restore([...(state as any).reviewBudgets.values()]);
+    runtime.positionReviewRunner = new PositionReviewRunner({
+      state,
+      events,
+      exitRuntime,
+      scheduler: runtime.positionReviewScheduler,
+      settings: () => (state.settings.riskGovernance as any)?.exitCoordination ?? {},
+      evidenceVersion: symbol => String((state.snapshots.get(symbol) as any)?.technical?.['15m']?.asOf ?? 0),
+      memoryVersion: () => tradeMemoryVersionOf([...state.tradeRecords.values()]),
+      review: input => runtime.reviewPosition(input),
+    });
     // J1: the AI exit door has exactly one production consumer. Its plan port returns null until a
     // durable TradePlan exists for the cycle, so even ENFORCE refuses with AI_PLAN_UNPROVEN rather
     // than inventing an invalidation signal from a position label (I01, I06).
@@ -442,19 +489,31 @@ export class EngineRuntime {
       adapter: trade as ExchangeTradeAdapter,
       // S06: the AI exit is bound to the durable plan of its own cycle through the one reader that
       // resolves it. A cycle with no plan gets no AI authority, whatever its position label says.
-      planOf: (position: any, scope: string, cycleId: string) => aiExitPlanFactsOf([...state.tradePlans.values()], {
-        scope,
-        cycleId,
-        now: Date.now(),
-        markPrice: Number((state.snapshots.get(position.symbol) as any)?.quote?.bid ?? Number.NaN),
-        firstFillAt: Number(position.openedAt ?? 0) || null,
-        latestClosedBar: (() => {
-          const card = (state.snapshots.get(position.symbol) as any)?.technical?.['15m'];
-          return card?.isClosed === true && Number.isFinite(Number(card?.barCloseTime))
-            ? { timeframe: '15m', closeTime: Number(card.barCloseTime), close: Number(card?.lastClosedBar?.close ?? card?.close ?? Number.NaN) }
-            : null;
-        })(),
-      }),
+      planOf: (position: any, scope: string, cycleId: string) => {
+        const facts = aiExitPlanFactsOf([...state.tradePlans.values()], {
+          scope,
+          cycleId,
+          now: Date.now(),
+          markPrice: Number((state.snapshots.get(position.symbol) as any)?.quote?.bid ?? Number.NaN),
+          firstFillAt: Number(position.openedAt ?? 0) || null,
+          latestClosedBar: (() => {
+            const card = (state.snapshots.get(position.symbol) as any)?.technical?.['15m'];
+            return card?.isClosed === true && Number.isFinite(Number(card?.barCloseTime))
+              ? { timeframe: '15m', closeTime: Number(card.barCloseTime), close: Number(card?.lastClosedBar?.close ?? card?.close ?? Number.NaN) }
+              : null;
+          })(),
+        });
+        if (!facts) return null;
+        // A review counts as evidence only while it is still the answer about this exact plan
+        // version, and only for as long as the next review would have been owed.
+        return PositionReviewRunner.planFactsWithReview(facts, PositionReviewRunner.usableVerdict(state, {
+          cycleId,
+          planRef: facts.planRef,
+          planVersion: facts.planVersion,
+          maxAgeMs: reviewSettings().minIntervalMs,
+          now: Date.now(),
+        }));
+      },
       identity: () => ({ environment: String(settings.connections.exchange.environment), account: String(settings.connections.exchange.credentialRef) }),
     });
     // C3: restart re-proves stored exits by their original clientOrderId before anything else. This
@@ -464,6 +523,9 @@ export class EngineRuntime {
     try{runtime.tradingQuality = new TradingQualityCollector(path.join(opts.dataDir,"trading-quality.sqlite"),state,events);}catch(error){events.publish('TRADING_QUALITY_STORAGE_UNAVAILABLE',{reason:String(error)});}
     events.on("event", (event) => {
       if(runtime.persistenceClosed)return;
+      // J4: the usage ledger is fed from the same event stream the audit uses, so a request that
+      // failed before the caller ever saw an answer is still on the record.
+      runtime.observeModelUsage(event);
       const requiredBeforeWrite=['ENTRY_SUBMIT_ATTEMPTED','MANUAL_SUBMISSION_PREPARED','TP_SUBMISSION_PREPARED'];
       if(requiredBeforeWrite.includes(event.type))store.recordRuntimeEvent(event);else runtime.writes.apply(`event:${event.id}`,()=>store.recordRuntimeEvent(event));
       if(event.type==='RECONCILIATION_COMPLETED'||event.type==='ENTRY_ORDER_TTL_CLOSED'||event.type==='ENTRY_ORDER_REPRICED'){
@@ -693,6 +755,16 @@ export class EngineRuntime {
     this.every(60_000,async()=>{
       if((this.state.settings.riskGovernance as any)?.portfolioRisk?.configured===true)await this.refreshCashFlowFacts().catch(()=>null);
     });
+    // J4: bounded review runs on its own slow cadence and never overlaps itself. When the switch is
+    // off (the default) the tick costs nothing at all; when the model is unreachable it spends review
+    // budget and stops, while the deadline, the TP sweep, reconciliation and the handoff keep running.
+    this.every(60_000,async()=>{
+      const runner=this.positionReviewRunner;
+      if(!runner)return;
+      try{this.reviewTickReport=await runner.tick();}
+      catch(error){this.reviewTickReport={enabled:true,considered:0,reserved:0,deduplicated:0,refused:['REVIEW_TICK_FAILED'],completed:0,discarded:0,failed:1,zeroRoutineCalls:0};
+        this.events.publish('POSITION_REVIEW_TICK_FAILED',{reason:error instanceof Error?error.message:String(error),orderSent:false});}
+    });
     this.every(1_000,()=>this.tradingQuality?.tick());
     this.every(5_000,()=>this.qualityObserver?.tick());
     this.every(5_000, async () => this.tp.sweep());
@@ -808,6 +880,79 @@ export class EngineRuntime {
     const written = exitRuntime.fixManagementDeadline(subject, minutes * 60_000, firstFillAt, position.profitTakePlan ? `plan:${cycleId}` : null);
     if (written) this.events.publish('AI_MANAGEMENT_DEADLINE_FIXED', { positionId: position.id, scope: exitRuntime.scope(subject), cycleId, ownerState: written.ownerState, deadline: written.deadline, planRef: written.planRef, source: 'FIRST_FILL' }, position.symbol);
     return written;
+  }
+
+  /**
+   * J4: one bounded review request, assembled from the exact plan the budget was spent for. Nothing
+   * here decides an exit: it turns the model's structured answer into a row that the exit path may
+   * read only if the same authority still stands when it comes back.
+   */
+  private async reviewPosition(input:{ticket:ReviewTicket;position:any;plan:TradePlan}):Promise<ReviewAnswer>{
+    const owner=this.exitRuntime?.ownerOfScope(input.ticket.scope,input.ticket.cycleId);
+    if(!owner||owner.ownerState!=='AI_ACTIVE')throw new Error(`REVIEW_OWNER_NOT_AI_AT_CALL:${String(owner?.ownerState??'UNTRACKED')}`);
+    if(Number(owner.ownerVersion)!==Number(input.ticket.ownerVersion))throw new Error('REVIEW_OWNER_VERSION_DRIFT_AT_CALL');
+    const num=(value:unknown)=>Number.isFinite(Number(value))?Number(value):null;
+    const coordination=(this.state.settings.riskGovernance as any)?.exitCoordination??{};
+    const snapshot=this.state.snapshots.get(input.position.symbol) as any;
+    const memory=reviewMemoryFor([...this.state.tradeRecords.values()],{
+      direction:input.plan.side==='SHORT'?'SHORT':'LONG',excludeCycleId:input.ticket.cycleId});
+    const request:PositionReviewRequest={
+      symbol:input.position.symbol,cycleId:input.ticket.cycleId,positionId:input.position.id,
+      planRef:input.plan.planId,planVersion:input.plan.planVersion,reviewNumber:input.ticket.reviewNumber,
+      at:Date.now(),ownerVersion:input.ticket.ownerVersion,triggerKey:input.ticket.triggerKey,
+      factsHash:String(snapshot?.technical?.['15m']?.asOf??0),
+      position:{side:String(input.position.side),entryPrice:num(input.position.entryPrice)??0,quantity:num(input.position.quantity)??0,
+        markPrice:num(snapshot?.quote?.mark??input.position.markPrice),unrealizedPnlUsd:num(input.position.unrealizedPnl),
+        openedAt:num(input.position.openedAt)??0,managementDeadlineAt:num(owner.deadline)??0,
+        remainingMs:Math.max(0,(num(owner.deadline)??0)-Date.now())},
+      plan:{side:input.plan.side,quantityUnits:input.plan.quantityUnits,entryReferencePrice:input.plan.entryReferencePrice,
+        targetPrice:input.plan.targetPrice,targetHorizonMinutes:input.plan.targetHorizonMinutes,thesis:input.plan.thesis,
+        invalidationPredicate:input.plan.invalidationPredicate,predicateEvidenceRefs:[...input.plan.predicateEvidenceRefs],
+        minNetProfitUsd:input.plan.minNetProfitUsd,maxRealizedLossUsd:input.plan.maxRealizedLossUsd},
+      budget:{normalReviewsPerPlan:Number(coordination.normalReviewsPerPlan??2),exceptionReviewsPerPlan:Number(coordination.exceptionReviewsPerPlan??1),
+        used:Math.max(0,input.ticket.reviewNumber-1)},
+      memory:memory.status==='READY'?memory.entries:{status:memory.status,reasons:memory.reasons},
+    };
+    const startedAt=Date.now();
+    const {verdict,run,promptHash}=await this.ai.review(this.eip.build(input.position.symbol),request);
+    return{decision:verdict.decision,runId:run.id,usage:{inputTokens:num(run.inputTokens),outputTokens:num(run.outputTokens)},
+      finishReason:run.finishReason??null,modelIdentity:run.modelIdentity?JSON.stringify(run.modelIdentity):String(run.model??''),
+      promptHash,latencyMs:num(run.latencyMs)??Math.max(0,Date.now()-startedAt),transportAttempts:num((run.timing as any)?.transportAttempts)};
+  }
+
+  /**
+   * J4: the ledger sees every model request the Engine makes, failures and timeouts included. Review
+   * rows are written by the scheduler because they carry the budget key, so REVIEW_BRAIN runs are
+   * deliberately skipped here and no request is ever counted twice.
+   */
+  observeModelUsage(event:{id?:string;type:string;ts:number;payload:any}){
+    const ledger=this.aiUsage;
+    if(!ledger)return;
+    const payload=event.payload??{};
+    const num=(value:unknown)=>Number.isFinite(Number(value))?Number(value):null;
+    if(event.type.startsWith('AI_RUN_')&&event.type!=='AI_RUN_TERMINAL'){
+      if(payload.role==='REVIEW_BRAIN'||!payload.id||!Number(payload.startedAt))return;
+      const status=event.type==='AI_RUN_FAILED'?'FAILED':event.type==='AI_RUN_STARTED'?'RUNNING':'COMPLETED';
+      ledger.record(aiUsageRowOf({requestKey:String(payload.id),role:payload.role==='SCOUT'?'SCOUT':'ENTRY',status,
+        inputTokens:payload.inputTokens,outputTokens:payload.outputTokens,latencyMs:payload.latencyMs,
+        finishReason:payload.finishReason,promptHash:String(payload.promptHash??'missing-prompt-hash'),
+        modelIdentity:payload.modelIdentity?JSON.stringify(payload.modelIdentity):String(payload.model??''),
+        triggerReason:String(payload.triggerReason??'UNSTATED'),symbol:String(payload.symbol??''),
+        errorCode:status==='FAILED'?String(payload.failure?.errorCode??'AI_RUN_FAILED'):null,
+        startedAt:Number(payload.startedAt),completedAt:payload.completedAt,
+        transportAttempts:num(payload.timing?.transportAttempts)}));
+      return;
+    }
+    if(event.type==='EXTERNAL_RESEARCH_COMPLETED'||event.type==='EXTERNAL_RESEARCH_FAILED'){
+      // The research endpoint reports no token usage at all, so these rows are UNKNOWN by fact. They
+      // keep the request visible without ever letting a total be computed from a number nobody gave.
+      const completedAt=num(event.ts)??Date.now();
+      ledger.record(aiUsageRowOf({requestKey:String(payload.runId??`${event.type}:${completedAt}`),role:'EXTERNAL_RESEARCH',
+        status:event.type==='EXTERNAL_RESEARCH_FAILED'?'FAILED':'COMPLETED',promptHash:'missing-prompt-hash',
+        modelIdentity:payload.model?String(payload.model):null,triggerReason:`EXTERNAL_RESEARCH:${String(payload.sourceId??'')}`,
+        symbol:'',latencyMs:payload.latencyMs,errorCode:event.type==='EXTERNAL_RESEARCH_FAILED'?'EXTERNAL_RESEARCH_FAILED':null,
+        startedAt:completedAt-Math.max(0,num(payload.latencyMs)??0),completedAt}));
+    }
   }
 
   /**

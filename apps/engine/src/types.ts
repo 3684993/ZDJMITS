@@ -69,7 +69,7 @@ export interface TradeAuditSnapshot {
   fills:ExchangeTradeFill[]; income:ExchangeIncomeFact[]; orders:ExchangeOrderFact[]; positions:Position[]; openOrders:Array<EntryOrder|TakeProfitOrder>;
 }
 
-export interface ModelRunResult<T> { value:T; inputTokens:number|null; outputTokens:number|null; finishReason:string|null; modelIdentity:Record<string,unknown>|null; raw:unknown; timing:{requestMs:number;parseMs:number;retryMs:number}; }
+export interface ModelRunResult<T> { value:T; inputTokens:number|null; outputTokens:number|null; finishReason:string|null; modelIdentity:Record<string,unknown>|null; raw:unknown; timing:{requestMs:number;parseMs:number;retryMs:number;transportAttempts?:number}; }
 export interface AiModelClient {
   runJson<T>(args:{baseUrl:string;model:string;prompt:string;schemaName:string;timeoutMs:number;jsonSchema?:Record<string,unknown>;maxOutputTokens?:number;parse:(value:unknown)=>T}):Promise<ModelRunResult<T>>;
 }

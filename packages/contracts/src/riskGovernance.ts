@@ -37,6 +37,14 @@ export const ExitCoordinationSettingsSchema = z.object({
   /** Small-loss exits are refused until a human enables them explicitly. */
   aiExitAllowSmallLoss: z.boolean().default(false),
   aiExitAuthorizationTtlMs: z.number().int().min(1_000).max(30_000).default(15_000),
+  /** Bounded review is opt-in: with this off the Engine makes no routine review call at all. */
+  positionReviewEnabled: z.boolean().default(false),
+  normalReviewsPerPlan: z.number().int().min(0).max(6).default(2),
+  exceptionReviewsPerPlan: z.number().int().min(0).max(3).default(1),
+  reviewFailureBudget: z.number().int().min(1).max(6).default(2),
+  reviewMinIntervalMs: z.number().int().min(30_000).max(3_600_000).default(300_000),
+  /** How long a review answer stays applicable after the call returned. */
+  reviewAuthorityTtlMs: z.number().int().min(1_000).max(120_000).default(20_000),
   continuousConvergenceEnabled: z.boolean().default(true),
   convergenceIntervalMs: z.number().int().min(30_000).max(3_600_000).default(120_000),
   convergenceBatchLimit: z.number().int().min(1).max(20).default(8),

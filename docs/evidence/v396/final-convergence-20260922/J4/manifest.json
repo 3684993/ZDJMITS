@@ -1,0 +1,130 @@
+{
+  "stage": "J4",
+  "title": "有限复核调度器 + token 用量台账 + 交易记忆",
+  "date": "2026-09-22",
+  "inputCommit": "26e64c1",
+  "authority": [
+    "docs/plans/v396/CODEX-FINAL-CLOSEOUT-20260922.md §5",
+    "docs/plans/v396/FINAL-REMAINING-IMPLEMENTATION-20260922.md J4",
+    "docs/plans/v396/07-model-review-memory-budget.md"
+  ],
+  "files": {
+    "packages/contracts/src/riskGovernance.ts": "4278fc84aa6db4667507f7ca7ff4083e29da214140f6bd17ee468e748e055106",
+    "packages/contracts/src/ai.ts": "f10543f653947afad257aee7c07a37e4967dad533c044507f5c9f29f0f8759a9",
+    "apps/engine/src/types.ts": "9de4310aa79fba88383f52bcf2045f26b37336c923a23c421f446a2c20408cb1",
+    "apps/engine/src/adapters/ai/OpenAiCompatibleClient.ts": "13579b59ee42d7fe06b1ff3f6e6a43120f321e4b3b2b845ed114d1e2145a8b78",
+    "apps/engine/src/services/aiFabric.ts": "99efdf59a0fd11a0ea99e1ae7d57be3434f1cbd9d046e235a617e8ec326f8cb3",
+    "apps/engine/src/services/v396ExitRuntime.ts": "1db1d6ba730be771e28e41e972de88e1b3f47550c105ee66e0105e7ad4bff1a2",
+    "apps/engine/src/services/aiUsageLedger.ts": "c113b68236af4346f8fcb9f85ae06725a33cc970010d4decf735030d7ef31e09",
+    "apps/engine/src/services/positionReviewScheduler.ts": "a71e62c2317c34d9f9067ea8597b56555e5ea2b1c48c40e8dd7974c635ac1ce7",
+    "apps/engine/src/services/positionReviewRunner.ts": "38132720fd22736996afd0cce4e644882dd0daf252ce94808f4c3f25b79daf27",
+    "apps/engine/src/services/positionReviewPrompt.ts": "f441394d79edb37a49db4f434c94787cdd42774f46fede8602caeba3893699fc",
+    "apps/engine/src/services/tradeMemoryRetriever.ts": "959a4cc268b0635d72acb6872521a3f6c14af07198f41d97d246bdc7abf616d4",
+    "apps/engine/src/services/tradeMemoryService.ts": "a695d00e1f293cc2095512fb2e735082c5cf123b24eb107a22cd6a4153d07677",
+    "apps/engine/src/state/runtimeState.ts": "108a258decfa6eef4991839bdb647ffa9dffa44cd2b3cac73bc7459d6b460e3b",
+    "apps/engine/src/config/settingsStore.ts": "6c0d606eb7b3150776c61dc859e2a20e361df6030cc0c61e80e214455f9b8e65",
+    "apps/engine/src/runtime/appRuntime.ts": "af23a019cc9c2bb4d684f8b989e0895d70b2d1c17f6a4ee19256649a29deaec2",
+    "apps/engine/src/services/j4ReviewMemoryHostile.test.ts": "00f0f29978d9062689b3bd2db0634af135698470d8ba0fe056380af54d9f8a52",
+    "apps/engine/src/services/s07ConsumerBoundary.test.ts": "0627ffecf0955e392fb9d6f60d90cde7bd445a40ffaad114df46dd8b0f15d146"
+  },
+  "hashNormalisation": "sha256 over LF-normalised bytes",
+  "gates": {
+    "engineTests": {
+      "files": 147,
+      "passed": 1086,
+      "failed": 0,
+      "exit": 0,
+      "baseline": "1029/145 (J3)",
+      "added": "j4ReviewMemoryHostile.test.ts 50 例 + s07ConsumerBoundary.test.ts 7 例"
+    },
+    "coreTests": {
+      "passed": 46,
+      "files": 8,
+      "exit": 0
+    },
+    "dashboardTests": {
+      "passed": 17,
+      "files": 8,
+      "exit": 0
+    },
+    "contractsTests": {
+      "passed": 0,
+      "exit": 0,
+      "note": "0 个用例，不计为契约覆盖"
+    },
+    "build": {
+      "contracts": 0,
+      "core": 0,
+      "engine": 0,
+      "dashboard": 0,
+      "command": "npm run build (repo root)",
+      "exit": 0
+    },
+    "typecheck": {
+      "command": "npm run typecheck (repo root)",
+      "exit": 0
+    },
+    "s00": {
+      "T01_T06": "PASS",
+      "exit": 0,
+      "entrypointReviewCount": 108,
+      "blockers": 0,
+      "engineTestFiles": 147,
+      "everyStoreOpeningTestIsolated": true,
+      "repositoryDataDirReferences": 0,
+      "productionPortReferences": 0,
+      "exchangeWrites": 0,
+      "network": "NOT_USED",
+      "engineLifecycle": "NOT_USED",
+      "settingsModified": false
+    },
+    "diffCheck": {
+      "exit": 0
+    },
+    "runFrom": "repository root",
+    "toolingNote": "首轮 typecheck 曾把 `tsc|head` 的退出码当作门禁退出码（假绿）；随后改为不带管道的 `npm run typecheck`/`npm run build` 并直接读取 $?，暴露出 5 个真实测试类型错误并已修复。"
+  },
+  "delivered": {
+    "reviewScheduler": "PositionReviewScheduler：trigger key 覆盖 plan/owner/position/settings/riskGeneration/snapshotHash/evidence/memory 八个版本维度；预算在同一个不换线程的步骤内检查并扣除（源码门禁断言 reserve 体内无 await/async）；HUMAN_MANAGED 与 HANDOFF_PENDING 直接 OWNER_NOT_AI 且 zeroRoutineCall=true，不开任何预算口子。",
+    "lateCallback": "accept() 一律重新从 ownership journal 读 owner（不采信调用方自报的 ownerVersion/ownerState）：owner 不再是 AI、版本已漂移、授权窗口已过、管理期限已过四类迟到结果全部 usable:false + archived:true，用量行照写。真实回答即使迟到也不退还预算。",
+    "failureBudget": "未抵达模型的失败（REVIEW_CALL_FAILED/超时/断网）退还一次例行复核名额并释放 trigger，但计入独立的 failureBudget（默认 2）；用尽后 REVIEW_FAILURE_BUDGET_EXHAUSTED 停止推理，不停止 deadline、TP 扫描、对账或交接。",
+    "usageLedger": "AiUsageLedger 覆盖 ENTRY/SCOUT/REVIEW/EXTERNAL_RESEARCH：AI_RUN_STARTED/COMPLETED/FAILED 与 EXTERNAL_RESEARCH_* 全部经 appRuntime 的事件桥写入；服务端未报 usage ⇒ usageStatus UNKNOWN、token=null（禁止 0）；totals 只要有一行 UNKNOWN 或被裁剪就 computable:false、totalTokens:null。REVIEW_BRAIN 的事件行由调度器写（带 budgetKey），事件桥显式跳过，一次请求一行、绝不双计。",
+    "openRow": "预约即写入 RUNNING 行（requestKey 由 triggerKey+复核序号导出），回调在同一 eventId 上定稿；进程中途死掉的请求仍留下一条未回答的行，而不是消失。",
+    "transportRetry": "OpenAiCompatibleClient 现在回报 transportAttempts，台账记录该请求实际发了几次传输；未回报时写 null，且 totals 只有在全部行都证明时才给出合计。",
+    "boundedWindow": "台账是窗口不是档案：默认 5000 行，超限时淘汰最旧的已定稿行并累加 state.aiUsageDroppedRows（随 serialize/restore 持久化）；droppedRows>0 ⇒ computable:false，任何汇总都必须声明自己描述的是一个窗口。",
+    "tokenMetric": "tokenSavingRatio 只在两侧同一冻结事件集（aiUsageEventSetHash）、无裁剪、usage 全部 EXACT 时给出 PASS/FAIL；否则分别返回 EVENT_SET_NOT_FROZEN / EVENT_SET_TRUNCATED / USAGE_UNREPORTED / BASELINE_HAS_NO_TOKENS 的 NOT_MEASURED。",
+    "reviewBrain": "AiFabric.review() 把此前只存在于类型里的 REVIEW_BRAIN 变成真实调用路径：runKind/recordKind=POSITION_REVIEW_RUN、requestSource='REVIEW'（契约枚举扩展），复核失败不再污染 ENTRY 侧熔断计数。positionReviewPrompt 明确禁止新仓位/反向/数量/限价，parsePositionReview 对夹带下单字段的输出直接 REVIEW_OUTPUT_CARRIES_ENTRY_AUTHORITY，无证据的 EXIT_PROPOSAL 直接拒绝。",
+    "reviewConsumer": "PositionReviewRunner 是唯一消费者：tick() 只扫 AI_ACTIVE 且有非 WAIT 计划的周期；默认 positionReviewEnabled=false ⇒ 一次读取都不做。可用回答只通过 planFactsWithReview 变成退出证据，且 HANDOFF 不使 thesis 失效（交接是请求托管，不是平仓指令）。",
+    "tradeMemory": "tradeMemoryRetriever + tradeMemoryService：只有已平仓且 funding EXACT、fees COMPLETE 的周期进入已实现分母；未平仓（含深亏浮盈）=CENSORED_OPEN 且 netPnlUsd=null，闭合但账目不全=UNKNOWN_NET，全部按原因显式列出；Top-3 必须含反例，全赢家⇒NO_COUNTER_EXAMPLE，凑不满⇒INSUFFICIENT_SAMPLES；同一 scope|cycleId 去重，duplicateOf 显式剔除。",
+    "attribution": "attributeCycleOutcome 三数桥：AI 归因止于交接点位，人工增量=终点-点位，周期总额=终点；无人工接手的周期 NO_HANDOFF_AI_OWNED_WHOLE_CYCLE；缺点位或最终净值 ⇒ computable:false，不给出任何拆分。",
+    "durable": "RuntimeState 新增 aiUsage/positionReviews/reviewBudgets/aiUsageDroppedRows 并进入 serialize/restore；aiUsage 同时列入 settingsStore 的 runtime_entities tuple 集；复核预算每次 tick 回写 state，重启不退还已花掉的复核。"
+  },
+  "metrics": {
+    "humanManagedZeroRoutineCalls": "PROVEN_OFFLINE（S07-T01 单元 + runner 级：considered=0、reserved=0、zeroRoutineCalls=1、ledger 行数 0）",
+    "deduplication": "PROVEN_OFFLINE（同事实第二次 REVIEW_FACTS_UNCHANGED；runner 第二次 tick deduplicated=1，模型调用计数保持 1）",
+    "unknownUsage": "PROVEN_OFFLINE（缺失 usage ⇒ UNKNOWN/null，totals computable:false）",
+    "tokenSavingRatio": "NOT_MEASURED — 本轮为离线实现轮，没有可冻结的同事件集真实对照运行（离线工具与门禁已备齐，见 J6）；未以口径调整换取 PASS。",
+    "reviewLatencyAndCost": "INSUFFICIENT_EVIDENCE — 需要授权后的 Testnet 运行窗口。",
+    "engineRestartOnReviewFailure": "PROVEN_OFFLINE（POSITION_REVIEW_FAILED 固定 engineRestartTriggered:false, orderSent:false；owner deadline 在失败前后逐字节相同）"
+  },
+  "redTests": [
+    "HUMAN_MANAGED / HANDOFF_PENDING / UNTRACKED 三种非 AI 状态都不得产生任何模型请求或预算支出（T01）",
+    "模型运行中发生交接、owner 版本漂移、授权窗口关闭、期限到期 ⇒ 一律 usable:false 且预算不退还（T02）",
+    "同一事实集合的重复事件必须去重；例行次数达到上限必须 REVIEW_BUDGET_EXHAUSTED；最小间隔内不得压缩两次请求（T03）",
+    "riskGeneration/snapshotHash/settingsVersion/memoryVersion/evidenceVersion/planVersion/positionVersion 任一变化都必须产生新的 trigger key（T04）",
+    "funding UNKNOWN、费用 PARTIAL、未闭合深亏不得进入已实现分母，也不得从周期列表里消失（T05）",
+    "全赢家匹配必须报 NO_COUNTER_EXAMPLE；凑不满必须 INSUFFICIENT_SAMPLES，不许用重复或浮盈填充（T06）",
+    "交接后人工加仓导致最终大亏：AI 只认交接点位前的份额，缺点位则整段拆分不可计算（T07）",
+    "usage 缺失写 UNKNOWN；finish_reason=length 记 truncated 且计失败；夹带下单字段的复核输出必须抛错（T08）",
+    "模型全离线：失败预算用尽后停止复核，deadline 与 owner 不变，无 Engine 重启、无下单（T09）",
+    "复核回答只允许 HOLD/EXIT_PROPOSAL/HANDOFF；HANDOFF 不得使 thesis 失效；上一版计划的回答不得作为新版证据",
+    "调度器只能被 runner 使用：appRuntime 仅 import 票据类型，不得自行 reserve"
+  ],
+  "knownOpenItems": {
+    "tokenComparison": "≥30% token 降低需要一次授权的真实对照运行（同一事件集、两侧 usage 完整）；本轮只交付并验证了测量工具与 NOT_MEASURED 的诚实出口。",
+    "settingsUiMatrix": "positionReviewEnabled / normalReviewsPerPlan / exceptionReviewsPerPlan / reviewFailureBudget / reviewMinIntervalMs / reviewAuthorityTtlMs 的 schema→API→UI→消费者→回读矩阵属 J5；当前默认全部关闭或保守。",
+    "memoryEnrichment": "shape/volatility/liquidity 分桶在当前账目记录里没有入场时点事实，保持 UNKNOWN；用今日快照回填会制造假样本，故不做。",
+    "evidenceFreshnessBound": "复核证据的可读时限复用 reviewMinIntervalMs（下一次复核应发生的时点）；若 J5 认为需要独立字段，再显式加参数，不在此偷加。"
+  },
+  "boundary": "隔离 worktree、临时 SQLite、mock adapter、事件级夹具；未启动/停止/重启 Engine，未部署，未修改 live Settings/DB，未调用交易所写接口，未运行需要真实 Testnet 写入的步骤。"
+}

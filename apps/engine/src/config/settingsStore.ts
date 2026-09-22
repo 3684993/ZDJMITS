@@ -726,7 +726,7 @@ export class SettingsStore {
   persistRuntime(value: unknown) {
     const startedAt=Date.now(),core={...(value as any)},lists:Record<string,{ids:string[];tuple:boolean}>={},updates:Array<[string,string,string]>=[];
     this.runtimeEntityCache??=new Map((this.db.prepare('SELECT kind,entity_id,payload FROM runtime_entities').all() as any[]).map(r=>[`${r.kind}:${r.entity_id}`,r.payload]));
-    const tuples=new Set(['positions','entryIntents','entryOrders','tpOrders','manualIntents','manualOrders','allocationPlans','entryReservations','tradeRecords','experienceSamples','tradePlans','planExecutions']);
+    const tuples=new Set(['positions','entryIntents','entryOrders','tpOrders','manualIntents','manualOrders','allocationPlans','entryReservations','tradeRecords','experienceSamples','tradePlans','planExecutions','aiUsage']);
     for(const [kind,rows] of Object.entries(core)){if(!Array.isArray(rows)||(!tuples.has(kind)&&!['aiRuns','executionFills'].includes(kind)))continue;const tuple=tuples.has(kind),ids:string[]=[];
       rows.forEach((row:any,index)=>{const id=String(tuple?row[0]:row.id??row.fillId??index),entity=tuple?row[1]:row,payload=JSON.stringify(entity);ids.push(id);if(this.runtimeEntityCache!.get(`${kind}:${id}`)!==payload)updates.push([kind,id,payload]);});lists[kind]={ids,tuple};delete core[kind];
     }

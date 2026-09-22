@@ -97,6 +97,11 @@ export class V396ExitRuntime {
     return this.ownership.ownership(scope,cycleId);
   }
 
+  /** The same ownership read for a caller that already resolved the canonical scope. */
+  ownerOfScope(scope:string,cycleId:string){
+    return String(cycleId??'').trim()?this.ownership.ownership(scope,String(cycleId).trim()):null;
+  }
+
   mandate(subject:V396ExitSubject){
     const scope=this.scope(subject),cycleId=this.cycle(subject);
     return this.ownership.mandate(scope,cycleId);

@@ -29,6 +29,9 @@ export function deterministicAdmission(now = Date.now()) {
       snapshot: { grossNotionalUsd: 0, capitalAtRiskUsd: 0, drawdownPct: 0, blockers: [], complete: true },
       stress: { blockers: [], limitingConstraints: [], scenarios: [] }, capacity: { blockers: [], executable: true },
     }),
+    preTradeFacts: () => ({complete:true,blockers:[] as string[],snapshotHash:DETERMINISTIC_SNAPSHOT_HASH,riskGeneration:DETERMINISTIC_RISK_GENERATION,
+      profileVersion:'v396-fixture-profile',capitalAtRiskUsd:0,grossNotionalUsd:0,longNotionalUsd:0,shortNotionalUsd:0,clusterNotionalUsd:0,pendingNotionalUsd:0,
+      drawdownPct:0,humanSlots:0,maxGrossNotionalUsd:1e12,maxDirectionNotionalUsd:1e12,maxClusterNotionalUsd:1e12,maxCapitalAtRiskUsd:1e12,maxHumanPositions:99,createdAt:now}),
     refresh: () => null, serialize: () => ({}), restore: () => null, state: () => ({}), snapshot: () => null, denies: () => null,
   };
 }

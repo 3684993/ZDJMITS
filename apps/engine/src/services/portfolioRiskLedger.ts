@@ -189,6 +189,26 @@ export class PortfolioRiskAdmission {
     return Math.floor(Math.min(...bounds));
   }
 
+  /**
+   * The account as it stands, with no candidate in it. S06 sizes each option against these numbers,
+   * so a plan's risk block describes the book it was computed on rather than a fresh evaluation.
+   */
+  preTradeFacts(now=Date.now()){
+    const built=this.inputs(now,[]);
+    const snapshot=buildPortfolioRiskSnapshot({...built.inputs,riskGeneration:this.ledger.generation||1});
+    const cluster=Math.max(0,...Object.values(snapshot.exposures.reduce<Record<string,number>>((acc,row)=>{
+      const key=String((built.profile.row.clusters??{})[row.underlying]??(row.underlying||'UNMAPPED'));acc[key]=(acc[key]??0)+row.notionalUsd;return acc;},{})));
+    const profile=built.profile.row;
+    return{snapshotHash:snapshot.snapshotHash,riskGeneration:snapshot.riskGeneration,profileVersion:built.profile.profileVersion,
+      capitalAtRiskUsd:snapshot.capitalAtRiskUsd,grossNotionalUsd:snapshot.grossNotionalUsd,longNotionalUsd:snapshot.longNotionalUsd,shortNotionalUsd:snapshot.shortNotionalUsd,
+      clusterNotionalUsd:cluster,pendingNotionalUsd:snapshot.pendingNotionalUsd,drawdownPct:snapshot.drawdownPct,
+      humanSlots:snapshot.exposures.filter(row=>row.kind==='POSITION'&&row.notionalUsd>0).length,
+      complete:snapshot.complete,blockers:[...new Set([...built.blockers,...snapshot.blockers])].sort(),
+      maxGrossNotionalUsd:Number(profile.maxGrossNotionalUsd??0),maxDirectionNotionalUsd:Number(profile.maxDirectionNotionalUsd??0),
+      maxClusterNotionalUsd:Number(profile.maxClusterNotionalUsd??0),maxCapitalAtRiskUsd:Number(profile.maxCapitalAtRiskUsd??0),
+      maxHumanPositions:Number(profile.maxHumanPositions??0),createdAt:snapshot.createdAt};
+  }
+
   /** Read-only pre-check. It locks nothing; the claim only happens through the gate. */
   admit(candidate:AdmissionCandidate,now=Date.now()):AdmissionDecision{
     const invalid=this.emptySnapshot(now);

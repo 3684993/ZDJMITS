@@ -11,6 +11,7 @@ export type AiExitVerdict={
   orderType:'LIMIT';marketFallbackAllowed:false;
   /** Covers everything that could have changed this decision, not just the valuation. */
   decisionHash:string;
+  provenance:'MODEL_COST_MODEL'|'SYNTHETIC_MAINTENANCE';
 };
 
 export type PolicyInput={
@@ -30,7 +31,7 @@ const verdict=(input:PolicyInput,outcome:VerdictOutcome,codes:string[],extra:Par
     ownerVersion:owner.ownerVersion,planVersion:plan.planVersion,estimateHash:estimate.estimateHash,
     authorizationExpiresAt:null as number|null,boundaryPrice:null as number|null,
     lossLimit:policy.lossLimit,conservativeNet:estimate.conservativeNet,
-    orderType:'LIMIT' as const,marketFallbackAllowed:false as const,...extra,
+    orderType:'LIMIT' as const,marketFallbackAllowed:false as const,provenance:'MODEL_COST_MODEL' as const,...extra,
   };
   // estimateHash alone only identifies the valuation. Two different authorities can be derived
   // from it - a tighter loss limit, a switched small-loss flag, a bumped owner version - so the

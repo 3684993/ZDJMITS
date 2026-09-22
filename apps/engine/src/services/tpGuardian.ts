@@ -36,6 +36,14 @@ export class TpGuardian {
     if(!cycleId){this.events.publish('TP_REPAIR_BLOCKED_CYCLE_UNKNOWN',{positionId:order.positionId,symbol:order.symbol},order.symbol);throw new Error('TP_CYCLE_ID_REQUIRED');}
     const durable=this.exitRuntime.mandate(subject);
     if(durable?.revokedAt!=null){this.events.publish('TP_REPAIR_BLOCKED_MANDATE_REVOKED',{positionId:order.positionId,scope:this.exitRuntime.scope(subject),cycleId,revokedAt:durable.revokedAt},order.symbol);throw new Error('TP_REPAIR_BLOCKED_MANDATE_REVOKED');}
+    // J1: an exit order that exists locally or remotely without a complete identity holds the
+    // quantity conservatively. Adoption is proved before anything is prepared or persisted, so a
+    // refused TP can never leave a dangling PREPARED claim that would free capacity later.
+    const unadopted=this.unadoptedExitUnits(position,order.id,stepSize);
+    if(!unadopted.adopted){
+      this.events.publish('TP_REPAIR_BLOCKED_UNADOPTED_EXIT',{positionId:order.positionId,scope:this.exitRuntime.scope(subject),cycleId,blockers:unadopted.blockers},order.symbol);
+      throw new Error(`TP_EXIT_ADOPTION_REQUIRED: ${unadopted.blockers.join('|')}`);
+    }
     const mandate=this.exitRuntime.ensureGuardianMandate(subject,order.price,now);
     const proof=await this.exchange.proveReduction({symbol:order.symbol,positionSide,quantity:order.quantity});
     const liveUnits=V396ExitRuntime.quantityUnitsOf(proof.liveQuantity,stepSize),positionUnits=V396ExitRuntime.quantityUnitsOf(Number(position?.quantity??order.quantity),stepSize)||quantityUnits;
@@ -51,6 +59,8 @@ export class TpGuardian {
     this.state.tpOrders.set(order.id,{...submitted,status:'UNKNOWN'});
     this.events.publish('TP_SUBMISSION_PREPARED',{positionId:order.positionId,order:{...submitted,status:'UNKNOWN'}},order.symbol);
     if(!this.exitRuntime.transitionByClientOrderId(prepared.clientOrderId,'SUBMITTING',Date.now(),'TP_SUBMIT_SENT'))throw new Error('TP_EXIT_PREPARED_STATE_LOST');
+    const jit=this.exitRuntime.jitBeforeSubmit({subject,clientOrderId:prepared.clientOrderId,proofCheckedAt:proof.checkedAt,now:Date.now()});
+    if(!jit.allowed)throw new Error(`TP_EXIT_JIT_RECHECK_FAILED: ${jit.blockers.join('|')}`);
     try{
       const placed=await this.exchange.placeTakeProfit(submitted);
       this.converge(prepared.clientOrderId,placed,stepSize);
@@ -74,6 +84,22 @@ export class TpGuardian {
       throw error;
     }
   }
+  /** J1: every other live exit row for this position must carry a full identity, or be adopted. */
+  private unadoptedExitUnits(position:any,currentOrderId:string,stepSize:number){
+    const subject=exitSubjectFromPosition(position);
+    const rows=[...this.state.tpOrders.values()].filter((row:any)=>row.positionId===position?.id&&row.id!==currentOrderId
+      &&['NEW','SUBMITTING','UNKNOWN','WORKING','PARTIALLY_FILLED'].includes(String(row.status)));
+    let blockers:string[]=[],adopted=true;
+    for(const row of rows){
+      const units=V396ExitRuntime.quantityUnitsOf(Number(row.quantity),stepSize);
+      const complete=Boolean(String(row.clientOrderId??'').trim())&&Boolean(String(row.cycleId??'').trim())&&units>0;
+      if(complete)continue;
+      const outcome=this.exitRuntime.adoptRemoteExit({subject,clientOrderId:row.clientOrderId??null,quantityUnits:units,source:'TP',evidenceRef:row.exchangeOrderId??null});
+      adopted=adopted&&outcome.adopted;blockers=blockers.concat(outcome.blockers);
+    }
+    return{adopted,blockers:[...new Set(blockers)]};
+  }
+
   private converge(clientOrderId:string,order:TakeProfitOrder,stepSize:number){
     const filledUnits=V396ExitRuntime.quantityUnitsOf(Number((order as any).filledQuantity??0),stepSize);
     const state=order.status==='FILLED'?'FILLED':order.status==='CANCELED'?'CANCELED':order.status==='REJECTED'?'REJECTED':order.status==='EXPIRED'?'EXPIRED':filledUnits>0?'PARTIALLY_FILLED':'WORKING';

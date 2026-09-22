@@ -290,7 +290,7 @@ describe('S03 properties',()=>{
     expect(staleVersion.reasonCodes).toContain('OWNER_OR_PLAN_VERSION_INVALID');
   });
 
-  it('the S03 modules stay pure: no adapter, no order path, and no consumer outside this test',()=>{
+  it('the S03 modules stay pure, and their only production consumers are the two named files',()=>{
     const moduleFiles=['s03ExitCostEstimator.ts','s03AiExitPolicy.ts'];
     const ownDirectory=fileURLToPath(new URL('.',import.meta.url));
     for(const file of moduleFiles){
@@ -302,7 +302,13 @@ describe('S03 properties',()=>{
     }
     const walk=(dir:string):string[]=>readdirSync(dir,{withFileTypes:true}).flatMap(entry=>entry.isDirectory()?walk(join(dir,entry.name)):entry.name.endsWith('.ts')?[join(dir,entry.name)]:[]);
     const consumers=walk(join(ownDirectory,'..')).filter(path=>!moduleFiles.includes(basename(path))&&!basename(path).endsWith('.test.ts')&&readFileSync(path,'utf8').includes('s03ExitCostEstimator'));
-    expect(consumers.map(path=>basename(path))).toEqual([]);
+    // J1 replaced "S03 has no consumer" with a closed list: the fact assembler and the single
+    // authority-gated AI exit runner. A new entry point has to be added here on purpose, and the
+    // runner itself may never become a second order path.
+    expect(consumers.map(path=>basename(path)).sort()).toEqual(['s03ExitCostFacts.ts','v396AiExitRunner.ts']);
+    const runner=readFileSync(join(ownDirectory,'v396AiExitRunner.ts'),'utf8');
+    expect(runner).toMatch(/currentAuthority\(\)[\s\S]*AI_EXIT_ADAPTER_CAPABILITIES_UNPROVEN/);
+    expect(runner).toMatch(/if\(authority==='OFF'\)return report;/);
   });
 });
 

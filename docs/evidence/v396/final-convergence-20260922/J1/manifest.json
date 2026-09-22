@@ -1,0 +1,66 @@
+{
+  "stage": "J1",
+  "title": "退出真源、持续收敛、真实成本与 JIT",
+  "date": "2026-09-22",
+  "inputCommit": "cf2e9a2d75db3489cfa76a2dfd40ca63bc308074",
+  "authority": [
+    "docs/plans/v396/CODEX-FINAL-CLOSEOUT-20260922.md",
+    "docs/plans/v396/FINAL-REMAINING-IMPLEMENTATION-20260922.md",
+    "docs/reports/v396-final-convergence-audit-20260922.md"
+  ],
+  "files": {
+    "apps/engine/src/services/v396ExitRuntime.ts": "e8c8029c57e7734660e1fbf8a21c63f19514270894ac31ab7811fd842b320f99",
+    "apps/engine/src/services/aiExitAuthority.ts": "87a6be3c8cd30431acf45fdaf271a5545bc7cafdfcb85a3a802b07d39e87599e",
+    "apps/engine/src/services/v396AiExitRunner.ts": "c26b705a283992343d1d42f66c439052c0dbf267e4c96679cdfef82b74b0e048",
+    "apps/engine/src/services/s03ExitCostFacts.ts": "4db0c7de8ef6465c0a5eae776424e5bdb146cce5fdf807ae42b4333e305f3dd3",
+    "apps/engine/src/services/s03AiExitPolicy.ts": "9ef36e4634e408f09492b2d42eb4dc26359408a791bbcf7ebf3f3e9435da19d9",
+    "apps/engine/src/services/tpGuardian.ts": "901941ebd23cc7e14c5c84ef5ac3d092d444dfb00ab96eb26b32e42694ac7400",
+    "apps/engine/src/services/manualPositionService.ts": "047548c318f8bb68fdbdf4e360ffc84fe4195e108e86580985f254780cb6c473",
+    "apps/engine/src/runtime/appRuntime.ts": "7ca396b978575663dfe0c502356e837b8dbc4219df9d61b924dfcc7b1b024026",
+    "packages/contracts/src/riskGovernance.ts": "1ea138aa6b632e8bd2c5f0925108622fad3b80b105b8c18e89358c57c63fed0e",
+    "apps/engine/src/services/j1ExitTruthHostile.test.ts": "6a8edf1ea576ccb87941ac898bb3443127bba97a50d1c95d427b1c636e355675",
+    "apps/engine/src/services/j1AiExitConsumer.test.ts": "35ea755aae18ac65347753a1f71fd9b9cd8d7f25ee8f83f70e38a965d64f28b3",
+    "apps/engine/src/services/s03ExitCostPolicy.test.ts": "b8e89cd6d4a7abf7ceef8c1d94c7d6ffe052b80b125e2934fa5a971df7f38105"
+  },
+  "hashNormalisation": "sha256 over LF-normalised bytes",
+  "gates": {
+    "engineTests": { "files": 143, "passed": 997, "failed": 0, "exit": 0, "baseline": "975/975 (142 files)" },
+    "coreTests": { "passed": 46, "failed": 0, "exit": 0 },
+    "dashboardTests": { "passed": 17, "failed": 0, "exit": 0 },
+    "contractsTests": { "passed": 0, "exit": 0, "note": "0 个用例：passWithNoTests，不计为契约覆盖" },
+    "build": { "contracts": 0, "core": 0, "engine": 0, "dashboard": 0 },
+    "typecheck": { "engine": 0, "dashboard": 0 },
+    "s00": {
+      "T01": "PASS", "T02": "PASS", "T03": "PASS", "T04": "PASS", "T05": "PASS", "T06": "PASS",
+      "entrypointReviewCount": 108, "blockers": 0, "engineTestFiles": 143,
+      "everyStoreOpeningTestIsolated": true, "repositoryDataDirReferences": 0, "productionPortReferences": 0,
+      "exchangeWrites": 0, "network": "NOT_USED", "engineLifecycle": "NOT_USED", "settingsModified": false,
+      "fixtureHash": "295c949a0cf5b2c7c06db81db91e42fd6fd4437fe5a2f23143c09ac4a7fbab21"
+    },
+    "diffCheck": { "exit": 0 },
+    "runFrom": "repository root"
+  },
+  "delivered": {
+    "continuousConvergence": "convergenceDue/convergePeriodically：设置驱动的低频有界精确查询（默认 120s、批 8、每单尝试窗口 max(60s, interval/2)），in-flight 去重，只读；appRuntime 5s tick 消费并发布 EXIT_TASK_CONVERGED。",
+    "claimReleaseTruth": "WORKING/PARTIALLY_FILLED/UNKNOWN 只能由校验过的交易所事实终局化；ABSENT/查询失败保持未确认并继续占用；SUBMITTING 之后的本地终局跳转被拒绝。",
+    "adoption": "adoptRemoteExit/adoptedUnits/settleAdoptedExit：身份不完整（缺 clientOrderId、缺交易所证据、缺周期、数量非法）时保守占用并阻断新 TP，TpGuardian.place 在 prepare 之前执行。",
+    "managementDeadline": "fixManagementDeadline + appRuntime.fixCycleDeadline：POSITION_OPENED 同一事件轮内按 positionManagement.humanHandoffAfterMinutes 写一次；迟到成交、重启、重新观测均不改；无 durable plan 时记为 HANDOFF_PENDING（AI 无权限）。",
+    "aiExitAuthority": "AiExitAuthoritySchema(OFF|SHADOW|ENFORCE) 默认 OFF；OFF 不决策、不准备、不查询；SHADOW 只记 shadowDecision；prepareAiExit 只接受 provenance=MODEL_COST_MODEL 且 owner=AI_ACTIVE 且 deadline 未过期，synthetic MANUAL/TP 判决被拒。",
+    "s03RealCostFacts": "assembleExitCostFacts：绑定 record/fills/fee/funding/FX/depth/quote/tick/step/minNotional/settings 版本；缺任一项产出 UNKNOWN 或 blocker，绝不写 0。",
+    "jitBeforeSubmit": "jitBeforeSubmit：OWNER_UNTRACKED/CYCLE_CLOSED/PREPARED_TASK_MISSING/TASK_NOT_SUBMITTABLE:<state>/JIT_WINDOW_STALE(>2s)/REDUCTION_PROOF_EXPIRED(>5s)；TP 与人工平仓在最后一道 await 之后、发单之前复验。",
+    "boundaryTest": "s03ExitCostPolicy 的消费者边界测试从“无消费者”改为具名白名单（s03ExitCostFacts.ts、v396AiExitRunner.ts），并断言 runner 的 OFF 早退与能力未证早退。"
+  },
+  "knownOpenItems": {
+    "aiPlanSource": "appRuntime 的 planOf 端口当前恒为 null，因此即使 ENFORCE 也只能得到 AI_PLAN_UNPROVEN；真实 TradePlan 读取在 J3 接入（Runner 单测用注入计划证明完整提交链）。",
+    "depthFact": "市场层只有 top-of-book Quote，无 book depth 事实；AI 退出因此固定被 EXIT_DEPTH_INSUFFICIENT 拒绝，不伪造深度。",
+    "aiExitAuthorityValue": "现网 settings 的 aiExitAuthority 仍为 OFF，本轮未改动任何 live Settings。"
+  },
+  "redTests": [
+    "prepareManual 合法建立 HUMAN owner 后，AI 门必须答 AI_EXIT_OWNER_NOT_AI 而不是 UNTRACKED",
+    "ENFORCE 判决必须绑定 owner.deadline；否则两次同额决策会生成两个 clientOrderId（QUANTITY_BUDGET_EXCEEDED）",
+    "本地把 SUBMITTING 标成 CANCELED 不能释放 claim（必须 observe）",
+    "身份不完整的 TP 必须在 prepare 之前被采纳并阻断，且不留下 PREPARED 任务",
+    "无 durable plan / 无 depth / 费用或资金费 UNKNOWN 时 0 次发单"
+  ],
+  "boundary": "仅隔离 worktree、':memory:'/临时 SQLite、mock adapter；没有启动/停止/重启 Engine，没有部署，没有 live Settings/DB/生产文件修改，没有交易所写接口调用。"
+}

@@ -101,9 +101,14 @@ export class ManualPositionService {
       if(claimed.intent.id!==id){this.state.manualIntents.delete(id);return{intent:claimed.intent,order:claimed.order,replayed:true,reason:'DURABLE_POSITION_TASK'};}
       this.events.publish('MANUAL_SUBMISSION_PREPARED',{intent,order:pendingOrder},position.symbol);
       const rebalanceTp=['REDUCE','EMERGENCY_CLOSE'].includes(action);if(rebalanceTp){protectionCleared=true;await this.clearProtectionForExit(position);}
-      if(['REDUCE','EMERGENCY_CLOSE'].includes(action)){const prepared=await this.prepareExitClaim(position,qty,price,q as any,key);clientForSubmit=prepared.clientOrderId;coordinatedExit=true;}
+      let coordinatedProof={checkedAt:Date.now()};
+      if(['REDUCE','EMERGENCY_CLOSE'].includes(action)){const prepared=await this.prepareExitClaim(position,qty,price,q as any,key);clientForSubmit=prepared.clientOrderId;coordinatedProof={checkedAt:prepared.checkedAt};coordinatedExit=true;}
       const request={clientOrderId:clientForSubmit,internalOrderId:`manual_order_${id}`,symbol:position.symbol,side,positionSide:position.side,type:'LIMIT' as const,quantity:qty,price,reduceOnly:action!=='ADD',postOnly:false};let order:ManualOrder;
-      if(coordinatedExit&&!this.exitRuntime.transitionByClientOrderId(clientForSubmit,'SUBMITTING',Date.now(),'MANUAL_SUBMIT_SENT'))throw new Error('MANUAL_EXIT_PREPARED_STATE_LOST');
+      if(coordinatedExit){
+        if(!this.exitRuntime.transitionByClientOrderId(clientForSubmit,'SUBMITTING',Date.now(),'MANUAL_SUBMIT_SENT'))throw new Error('MANUAL_EXIT_PREPARED_STATE_LOST');
+        const jit=this.exitRuntime.jitBeforeSubmit({subject:exitSubjectFromPosition(position),clientOrderId:clientForSubmit,proofCheckedAt:coordinatedProof.checkedAt,now:Date.now()});
+        if(!jit.allowed)throw new Error(`MANUAL_EXIT_JIT_RECHECK_FAILED: ${jit.blockers.join('|')}`);
+      }
       try{submissionAttempted=true;order=await this.submitOrder(position,intent,request);if(coordinatedExit)this.convergeExit(clientForSubmit,order,q.stepSize);}catch(submitError){let recovered:ManualOrder|null=null;try{recovered=await this.exchange.findManualByClientOrderId?.({...request,internalOrderId:request.internalOrderId,positionId:position.id})??null;}catch{}if(recovered){order=recovered;if(coordinatedExit)this.convergeExit(clientForSubmit,recovered,q.stepSize);this.events.publish('MANUAL_ORDER_RECOVERED_BY_CLIENT_ID',{intentId:id,clientOrderId:clientForSubmit,exchangeOrderId:order.exchangeOrderId,status:order.status},position.symbol);}else{order=ManualOrderSchema.parse({id:request.internalOrderId,intentId:id,clientOrderId:clientForSubmit,exchangeOrderId:null,cycleId:position.cycleId,positionId:position.id,symbol:position.symbol,side,positionSide:position.side,type:'LIMIT',quantity:qty,price,reduceOnly:request.reduceOnly,postOnly:false,status:'UNKNOWN',filledQuantity:0,createdAt:Date.now(),updatedAt:Date.now()});intent=ManualIntentSchema.parse({...intent,status:'UNKNOWN',reason:`SUBMIT_RESULT_UNKNOWN: ${submitError instanceof Error?submitError.message:String(submitError)}`,updatedAt:Date.now()});if(coordinatedExit)this.exitRuntime.markSubmitUncertain(clientForSubmit,Date.now());this.events.publish('MANUAL_ORDER_SUBMIT_UNKNOWN',{intentId:id,clientOrderId:client,reason:intent.reason,retryForbidden:true},position.symbol);}}
       const stored=ManualOrderSchema.parse({...order,cycleId:position.cycleId,positionId:position.id,intentId:id,clientOrderId:clientForSubmit});this.state.manualOrders.set(stored.id,stored);if(stored.status==='REJECTED'||stored.status==='CANCELED')throw new Error(`EXCHANGE_ORDER_${stored.status}: clientOrderId=${client}`);intent=ManualIntentSchema.parse({...intent,status:stored.status==='UNKNOWN'?'UNKNOWN':'SUBMITTED',exchangeOrderId:stored.exchangeOrderId,reason:stored.status==='UNKNOWN'?intent.reason??'SUBMIT_RESULT_UNKNOWN':intent.reason,updatedAt:Date.now()});this.state.manualIntents.set(id,intent);this.events.publish('MANUAL_ACTION_SUBMITTED',{intent,order:stored,submissionComplete:true,positionCloseComplete:false},position.symbol);if(rebalanceTp)this.tp.resume(position.id);
       this.journal.save({intent,order:stored});
@@ -129,7 +134,7 @@ export class ManualPositionService {
       minNotional:Number(quote.minNotional),tickSize,stepSize,proof:{kind:proof.kind,checkedAt:proof.checkedAt,positionSide:proof.positionSide}});
     if(!prepared.accepted&&!prepared.submitRequired)throw new Error(`MANUAL_EXIT_PREPARE_REFUSED: ${prepared.reasons.join('|')}`);
     if(!prepared.clientOrderId)throw new Error('MANUAL_EXIT_CLIENT_ORDER_ID_MISSING');
-    return prepared;
+    return{...prepared,checkedAt:proof.checkedAt};
   }
   private convergeExit(clientOrderId:string,order:ManualOrder,stepSize:number){
     const filledUnits=V396ExitRuntime.quantityUnitsOf(Number(order.filledQuantity??0),Number(stepSize));

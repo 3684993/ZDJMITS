@@ -36,7 +36,7 @@ import { ShadowRunner } from "../services/shadowRunner.js";
 import { ShadowReadinessService } from "../services/shadowReadiness.js";
 import { TestnetLowLossCleanupService } from "../services/testnetLowLossCleanupService.js";
 import { currentLanIps, type RuntimeIdentity } from "./runtimeIdentity.js";
-import { RELEASE_VERSION } from "@zdj/contracts";
+import { RELEASE_VERSION, type Position } from "@zdj/contracts";
 import { TemporalIntelligenceService } from "../services/temporalIntelligenceService.js";
 import { LiveValidationService } from "../services/liveValidationService.js";
 import {ExternalIntelligenceService} from "../services/externalIntelligenceService.js";
@@ -47,7 +47,9 @@ import { MarketCohort } from '../services/marketCohort.js';
 import { marketDataStaleReason } from '../services/marketDataStaleness.js';
 import { LossHandoffService } from '../services/lossHandoff.js';
 import { attachOwnershipRuntime, type OwnershipRuntime } from '../services/ownershipRuntime.js';
-import { V396ExitRuntime } from '../services/v396ExitRuntime.js';
+import { V396ExitRuntime, exitSubjectFromPosition } from '../services/v396ExitRuntime.js';
+import { V396AiExitRunner } from '../services/v396AiExitRunner.js';
+import { AiExitAuthorityService } from '../services/aiExitAuthority.js';
 
 export class EngineRuntime {
   readonly writes=new RuntimeWriteBuffer();
@@ -76,7 +78,7 @@ export class EngineRuntime {
   assetGovernance!: AssetGovernanceCoordinator;
   cohort!: MarketCohort;
   lossHandoff!: LossHandoffService
-  ownership?: OwnershipRuntime;  exitRuntime?: V396ExitRuntime;
+  ownership?: OwnershipRuntime;  exitRuntime?: V396ExitRuntime;  aiExitAuthority?: AiExitAuthorityService;  aiExitRunner?: V396AiExitRunner;
   private timers: NodeJS.Timeout[] = [];
   private stopped = false;
   private ready = false;
@@ -248,6 +250,16 @@ export class EngineRuntime {
         if (!(trade as any)?.exitCoordinationCapabilities) throw new Error('ADAPTER_CAPABILITIES_UNPROVEN');
         return await (trade as any).exitCoordinationCapabilities();
       },
+      // J1: AI exit authority is read from settings on every use and defaults to OFF.
+      () => {
+        const coordination = (state.settings.riskGovernance as any)?.exitCoordination ?? {};
+        return {
+          aiExitAuthority: coordination.aiExitAuthority ?? 'OFF',
+          intervalMs: coordination.convergenceIntervalMs,
+          batchLimit: coordination.convergenceBatchLimit,
+          continuousEnabled: coordination.continuousConvergenceEnabled,
+        };
+      },
     );
     const market = new MarketDataHub(provider, state, events),
       universe = new UniverseCoordinator(state, events),
@@ -350,6 +362,22 @@ export class EngineRuntime {
     );
     if (trade instanceof ExternalTradeAdapter) runtime.trade = trade;
     runtime.exitRuntime = exitRuntime;
+    runtime.aiExitAuthority = new AiExitAuthorityService(exitRuntime, () => {
+      const coordination = (state.settings.riskGovernance as any)?.exitCoordination ?? {};
+      return coordination.aiExitAuthority ?? 'OFF';
+    });
+    // J1: the AI exit door has exactly one production consumer. Its plan port returns null until a
+    // durable TradePlan exists for the cycle, so even ENFORCE refuses with AI_PLAN_UNPROVEN rather
+    // than inventing an invalidation signal from a position label (I01, I06).
+    runtime.aiExitRunner = new V396AiExitRunner({
+      state,
+      events,
+      exitRuntime,
+      authority: runtime.aiExitAuthority,
+      adapter: trade as ExchangeTradeAdapter,
+      planOf: () => null,
+      identity: () => ({ environment: String(settings.connections.exchange.environment), account: String(settings.connections.exchange.credentialRef) }),
+    });
     // C3: restart re-proves stored exits by their original clientOrderId before anything else. This
     // path is read-only by construction; a failed or absent answer leaves the task unacked.
     void runtime.convergeRecoveredExits();
@@ -409,7 +437,11 @@ export class EngineRuntime {
       if (event.type === "ENTRY_FILLED") {
         a.lastEntryFilledAt = now;
         a.fillCount30m++;
+        // J1: the management deadline is bound in the same synchronous event turn as the fill, so a
+        // TP repair that only needs a protection owner can never record the cycle first as legacy.
+        runtime.fixCycleDeadlineFromEvent(event.payload, now);
       }
+      if (event.type === "POSITION_OPENED") runtime.fixCycleDeadlineFromEvent(event.payload, now);
       if (
         event.type === "TRADE_RECORD_OPENED" ||
         event.type === "TRADE_RECORD_CLOSED" ||
@@ -576,7 +608,7 @@ export class EngineRuntime {
     });
     this.every(2_000,async()=>{if(this.state.settings.connections.executionMode==='TESTNET_ENABLED')await this.manual.resumeExitGoals();});
     this.every(1_000,()=>this.writes.flush());
-    this.every(5_000,()=>{this.ownership?.pump();});
+    this.every(5_000,()=>{this.ownership?.pump();this.fixFirstFillDeadlines();void this.convergeExitsPeriodically();void this.aiExitRunner?.tick();});
     this.every(1_000,()=>this.tradingQuality?.tick());
     this.every(5_000,()=>this.qualityObserver?.tick());
     this.every(5_000, async () => this.tp.sweep());
@@ -670,6 +702,60 @@ export class EngineRuntime {
     this.settingsStore.persistRuntime(this.state.serialize());
     return result;
   }
+  /**
+   * J1: the FIRST_FILL management deadline is written exactly once, from the fill that opened the
+   * cycle. A late partial fill, a restart or a re-observed position can never move it, and a cycle
+   * without a durable plan is recorded without AI authority rather than inheriting the legacy
+   * AUTO_MANAGED label (I01, I06).
+   */
+  private fixCycleDeadline(position: Position, now = Date.now()) {
+    const exitRuntime = this.exitRuntime;
+    if (!exitRuntime) return null;
+    const cycleId = String(position.cycleId ?? '').trim();
+    const firstFillAt = Number(position.openedAt ?? 0);
+    const minutes = Number((this.state.settings as any).positionManagement?.humanHandoffAfterMinutes ?? 0);
+    if (!cycleId || !Number.isFinite(firstFillAt) || firstFillAt <= 0 || firstFillAt > now) return null;
+    if (!Number.isSafeInteger(minutes) || minutes <= 0) {
+      this.events.publish('AI_MANAGEMENT_DEADLINE_UNPROVEN', { positionId: position.id, cycleId, reason: 'HANDOFF_DURATION_UNCONFIGURED' }, position.symbol);
+      return null;
+    }
+    const subject = exitSubjectFromPosition(position);
+    if (this.exitRuntime!.owner(subject)) return null;
+    const written = exitRuntime.fixManagementDeadline(subject, minutes * 60_000, firstFillAt, position.profitTakePlan ? `plan:${cycleId}` : null);
+    if (written) this.events.publish('AI_MANAGEMENT_DEADLINE_FIXED', { positionId: position.id, scope: exitRuntime.scope(subject), cycleId, ownerState: written.ownerState, deadline: written.deadline, planRef: written.planRef, source: 'FIRST_FILL' }, position.symbol);
+    return written;
+  }
+
+  /** Backstop for cycles that were already open when this process started. */
+  fixFirstFillDeadlines(now = Date.now()) {
+    let fixed = 0;
+    for (const position of [...this.state.positions.values()]) if (this.fixCycleDeadline(position, now)) fixed++;
+    return { fixed, candidates: this.state.positions.size };
+  }
+
+  /** Resolves the position a fill event speaks about; an unresolvable event is simply not a fill. */
+  fixCycleDeadlineFromEvent(payload: any, now = Date.now()) {
+    const position = this.state.positions.get(String(payload?.positionId ?? payload?.id ?? ''));
+    return position ? this.fixCycleDeadline(position, now) : null;
+  }
+
+  /**
+   * J1: continuous, bounded and read-only. Every pass re-proves a limited set of non-terminal exit
+   * tasks against their stored clientOrderId; nothing here may submit, and the cadence plus the
+   * batch size come from settings so the loop can never become unbounded polling.
+   */
+  async convergeExitsPeriodically(now = Date.now()) {
+    const adapter = this.trade as any;
+    if (!this.exitRuntime || !adapter?.findExitByClientOrderId) return null;
+    const due = this.exitRuntime.convergenceDue(now);
+    if (!due.due) return due;
+    const converged = await this.exitRuntime.convergePeriodically((input) => adapter.findExitByClientOrderId(input), now);
+    for (const task of (converged.converged ?? []).filter((row: any) => String(row.outcome).startsWith('EXCHANGE_FACT_'))) {
+      this.events.publish('EXIT_TASK_CONVERGED', { clientOrderId: task.clientOrderId, outcome: task.outcome, state: task.state }, undefined);
+    }
+    return converged;
+  }
+
   /**
    * C3: startup convergence for non-terminal exit tasks. Query only - it never resubmits, and an
    * ABSENT/unverified answer keeps the claim occupied as UNKNOWN so a later writer cannot fork it.

@@ -1,6 +1,6 @@
 import type {Position} from '@zdj/contracts';
 import type {AdapterCapabilities,CoordinatorResult,ExitTaskState} from './s04ExitCoordinator.js';
-import {PositionExitCoordinator} from './s04ExitCoordinator.js';
+import {PositionExitCoordinator,OPEN_STATES} from './s04ExitCoordinator.js';
 import {OwnershipJournal} from './ownershipJournal.js';
 import {OwnershipService,type ProtectionMandate} from './ownershipService.js';
 import {executionScope} from './executionLifecycle.js';
@@ -46,10 +46,12 @@ export class V396ExitRuntime {
   private readonly ownership:OwnershipService;
   private readonly recoveryCoordinator:PositionExitCoordinator;
 
+  private lastConvergenceAt=0;private converging=false;private readonly convergenceAttempts=new Map<string,number>();
   constructor(
     dbFile:string,
     private readonly exchangeIdentity:()=>{environment:string;account:string},
     private readonly capabilities:()=>Promise<AdapterCapabilities>,
+    private readonly authority:()=>{aiExitAuthority:'OFF'|'SHADOW'|'ENFORCE';intervalMs?:number;batchLimit?:number;continuousEnabled?:boolean}=()=>({aiExitAuthority:'OFF'}),
   ){
     this.journal=new OwnershipJournal(dbFile);
     this.ownership=new OwnershipService(this.journal);
@@ -150,7 +152,7 @@ export class V396ExitRuntime {
     return{
       outcome:'ALLOW',reasonCodes:[source==='MANUAL'?'HUMAN_CONFIRMED':'PROTECTION_MANDATE_ACTIVE'],evidenceRefs:[],
       ownerVersion,planVersion:1,estimateHash:id,authorizationExpiresAt:now+15_000,boundaryPrice:limitPrice,
-      lossLimit:0,conservativeNet:0,orderType:'LIMIT',marketFallbackAllowed:false,decisionHash:id,
+      lossLimit:0,conservativeNet:0,orderType:'LIMIT',marketFallbackAllowed:false,decisionHash:id,provenance:'SYNTHETIC_MAINTENANCE',
     };
   }
 
@@ -198,6 +200,134 @@ export class V396ExitRuntime {
   }
 
   async prepareManual(input:V396PrepareExitInput){return this.prepare('MANUAL',input,null);}
+
+  /**
+   * J1: the only AI exit door. Unlike MANUAL/TP it never accepts a synthetic verdict - it needs the
+   * real S03 model verdict over actual cost facts, an unexpired management deadline, an AI-owned
+   * cycle and an explicit ENFORCE authority. OFF and SHADOW therefore produce zero prepared tasks.
+   */
+  async prepareAiExit(input:V396PrepareExitInput,verdict:AiExitVerdict){
+    const authority=this.authority();
+    if(authority.aiExitAuthority!=='ENFORCE')return this.reject('AI_EXIT_AUTHORITY_'+(authority.aiExitAuthority==='SHADOW'?'SHADOW':'OFF'));
+    if(!verdict||verdict.provenance!=='MODEL_COST_MODEL'||(verdict as any).synthetic===true)return this.reject('AI_EXIT_VERDICT_NOT_MODEL_COST_MODEL');
+    if(verdict.outcome!=='ALLOW')return this.reject('AI_EXIT_VERDICT_NOT_ALLOW');
+    const scope=this.scope(input.subject),cycleId=this.cycle(input.subject),now=Date.now();
+    if(!Number.isSafeInteger(input.quantityUnits)||input.quantityUnits<=0)return this.reject('QUANTITY_INVALID');
+    if(!this.proofValid({...input,now}))return this.reject('REDUCTION_PROOF_UNPROVEN');
+    const owner=this.ownership.ownership(scope,cycleId);
+    if(!owner)return this.reject('AI_EXIT_OWNER_UNTRACKED');
+    if(owner.ownerState!=='AI_ACTIVE')return this.reject('AI_EXIT_OWNER_NOT_AI:'+String(owner.ownerState));
+    if(!(Number.isFinite(owner.deadline??Number.NaN)&&owner.deadline>now))return this.reject('AI_EXIT_DEADLINE_EXPIRED');
+    if(verdict.ownerVersion!==owner.ownerVersion)return this.reject('AI_EXIT_OWNER_DRIFT');
+    let coordinator:PositionExitCoordinator;
+    try{coordinator=new PositionExitCoordinator(this.journal,await this.capabilities());}
+    catch{return this.reject('ADAPTER_CAPABILITIES_UNPROVEN');}
+    const checkedNow=Date.now(),latest=this.ownership.ownership(scope,cycleId);
+    if(!latest||latest.ownerVersion!==owner.ownerVersion||latest.ownerState!=='AI_ACTIVE')return this.reject('OWNER_CHANGED_DURING_PREPARE');
+    if(!(Number.isFinite(latest.deadline??Number.NaN)&&latest.deadline>checkedNow))return this.reject('AI_EXIT_DEADLINE_EXPIRED');
+    if(!this.proofValid({...input,now:checkedNow}))return this.reject('REDUCTION_PROOF_EXPIRED');
+    return coordinator.requestExit({scope,cycleId,source:'AI',requestKey:verdict.decisionHash,quantityUnits:input.quantityUnits,verdict,mandate:null,
+      jit:{now:input.now,ownerVersion:owner.ownerVersion,positionVersion:input.positionVersion,settingsVersion:input.settingsVersion,riskGeneration:input.riskGeneration,
+        deadline:Number(owner.deadline),estimateHash:verdict.estimateHash,conservativeNet:verdict.conservativeNet??0,
+        availableReduceUnits:input.availableReduceUnits,remainingUnits:input.remainingUnits,minNotional:input.minNotional,tickSize:input.tickSize,stepSize:input.stepSize}});
+  }
+
+  /**
+   * J1: an exit order that already exists at the exchange but is missing from the local ledger must
+   * be adopted with a complete identity, otherwise it holds the quantity conservatively. A new submit
+   * on top of an unadopted order is refused; the ledger is never repaired after the fact.
+   */
+  adoptRemoteExit(input:{subject:V396ExitSubject;clientOrderId:string|null;quantityUnits:number;source:'TP'|'MANUAL';evidenceRef:string|null}){
+    const scope=this.scope(input.subject),cycleId=String(input.subject.cycleId??'').trim();
+    const clientOrderId=String(input.clientOrderId??'').trim(),missing:string[]=[];
+    if(!cycleId)missing.push('CYCLE_ID_MISSING');
+    if(!clientOrderId)missing.push('CLIENT_ORDER_ID_MISSING');
+    if(!Number.isSafeInteger(input.quantityUnits)||input.quantityUnits<=0)missing.push('QUANTITY_UNITS_INVALID');
+    if(!input.evidenceRef)missing.push('EXCHANGE_EVIDENCE_MISSING');
+    const claimKey='adopt:'+scope+'|'+(cycleId||'NO_CYCLE')+'|'+(clientOrderId||'NO_ID');
+    this.journal.transact(()=>{
+      if(this.journal.query<{id:string}>('SELECT id FROM v396_quantity_claims WHERE id=?',claimKey)[0])return;
+      this.journal.write('INSERT INTO v396_quantity_claims VALUES(?,?,?)',claimKey,scope,JSON.stringify({scope,cycleId:cycleId||null,source:input.source,claimId:claimKey,
+        quantityUnits:Math.max(1,Number.isSafeInteger(input.quantityUnits)?input.quantityUnits:1),version:1,status:'ACTIVE',clientOrderId:clientOrderId||null,
+        adopted:true,blockers:missing,observedAt:Date.now()}));
+    });
+    return{adopted:missing.length===0,blockers:missing,claimKey};
+  }
+
+  /** Units still held by adopted or unacked exits for one scope+cycle, including incomplete ones. */
+  adoptedUnits(subject:V396ExitSubject){
+    const scope=this.scope(subject),cycleId=String(subject.cycleId??'').trim();
+    return this.journal.query<{payload:string}>('SELECT payload FROM v396_quantity_claims WHERE scope=?',scope)
+      .map((row:any)=>JSON.parse(String(row.payload)))
+      .filter((claim:any)=>claim.status==='ACTIVE'&&(claim.cycleId??null)===cycleId)
+      .reduce((sum:number,claim:any)=>sum+Number(claim.quantityUnits),0);
+  }
+
+  /** Release an adoption claim only once its exchange identity is positively terminal. */
+  settleAdoptedExit(input:{subject:V396ExitSubject;clientOrderId:string;terminal:boolean}){
+    const scope=this.scope(input.subject),cycleId=String(input.subject.cycleId??'').trim();
+    if(!input.terminal)return false;
+    const claimKey='adopt:'+scope+'|'+cycleId+'|'+String(input.clientOrderId).trim();
+    const row=this.journal.query<{payload:string}>('SELECT payload FROM v396_quantity_claims WHERE id=?',claimKey)[0];
+    if(!row)return false;
+    const claim=JSON.parse(String(row.payload));
+    this.journal.write('UPDATE v396_quantity_claims SET payload=? WHERE id=?',JSON.stringify({...claim,version:claim.version+1,status:'RELEASED'}),claimKey);
+    return true;
+  }
+
+  /**
+   * J1: the FIRST_FILL management deadline is fixed once and is never extended by a late fill, a
+   * partial fill or a restart. Expiry only withdraws AI authority; protection stays in force.
+   */
+  fixManagementDeadline(subject:V396ExitSubject,durationMs:number,firstFillAt:number,planRef:string|null=null){
+    const scope=this.scope(subject),cycleId=this.cycle(subject);
+    if(!(Number.isSafeInteger(durationMs)&&durationMs>0)||!Number.isFinite(firstFillAt))return null;
+    const existing=this.ownership.ownership(scope,cycleId);
+    if(existing&&Number.isFinite(existing.deadline??Number.NaN))return existing;
+    return this.journal.initialize({scope,cycleId,planRef:existing?.planRef??planRef,firstFillAt,durationMs,now:Math.max(Number(existing?.transitionedAt??0),firstFillAt),legacy:false});
+  }
+
+  /** JIT immediately before the wire call: authority, task state and proof must still hold. */
+  jitBeforeSubmit(input:{subject:V396ExitSubject;clientOrderId:string;proofCheckedAt:number;now:number}){
+    const blockers:string[]=[];
+    const owner=this.ownership.ownership(this.scope(input.subject),this.cycle(input.subject));
+    if(!owner)blockers.push('OWNER_UNTRACKED');
+    else if(owner.ownerState==='CLOSED')blockers.push('CYCLE_CLOSED');
+    const task=this.recoveryCoordinator.findTaskByClientOrderId(input.clientOrderId);
+    if(!task)blockers.push('PREPARED_TASK_MISSING');
+    else if(!OPEN_STATES.includes(task.state))blockers.push('TASK_NOT_SUBMITTABLE:'+task.state);
+    if(Date.now()-input.now>2_000)blockers.push('JIT_WINDOW_STALE');
+    if(input.now-input.proofCheckedAt>5_000)blockers.push('REDUCTION_PROOF_EXPIRED');
+    return{allowed:blockers.length===0,blockers,task};
+  }
+
+  /** J1: is the bounded continuous convergence pass due yet? */
+  convergenceDue(now=Date.now()){
+    const authority=this.authority();
+    if(authority.continuousEnabled===false)return{due:false as const,reason:'CONTINUOUS_CONVERGENCE_DISABLED' as const};
+    const intervalMs=Number(authority.intervalMs??120_000),limit=Math.max(1,Math.min(20,Number(authority.batchLimit??8)));
+    if(this.converging)return{due:false as const,reason:'CONVERGENCE_IN_FLIGHT' as const};
+    if(now-this.lastConvergenceAt<intervalMs)return{due:false as const,reason:'CONVERGENCE_NOT_DUE' as const};
+    return{due:true as const,intervalMs,limit};
+  }
+
+  /**
+   * J1: low-frequency, bounded, deduplicated continuous convergence. It only ever reads; a claim
+   * becomes terminal exclusively through a verified exchange fact, so an unreachable query keeps
+   * the quantity pinned instead of freeing capacity.
+   */
+  async convergePeriodically(query:(input:{symbol:string;clientOrderId:string})=>Promise<{state:'FOUND';order:any}|{state:'ABSENT';reason:string}>,now=Date.now()){
+    const gate=this.convergenceDue(now);
+    if(!gate.due)return{...gate,converged:[] as Array<{clientOrderId:string;outcome:string;state:ExitTaskState|null}>,attempted:0};
+    this.converging=true;this.lastConvergenceAt=now;
+    try{
+      const pending=this.tasksNeedingQuery(now).filter((entry:any)=>(this.convergenceAttempts.get(entry.clientOrderId)??0)<=now).slice(0,gate.limit);
+      const converged=await this.convergeTasks(pending,query,now);
+      for(const entry of pending)this.convergenceAttempts.set(entry.clientOrderId,now+Math.max(60_000,Math.floor(gate.intervalMs/2)));
+      return{due:true,intervalMs:gate.intervalMs,limit:gate.limit,converged,attempted:pending.length};
+    }
+    finally{this.converging=false;}
+  }
   async prepareTakeProfit(input:V396PrepareExitInput){
     const mandate=this.ensureGuardianMandate(input.subject,input.limitPrice,input.now);
     return this.prepare('TP',input,mandate);
@@ -231,8 +361,12 @@ export class V396ExitRuntime {
    * FOUND converges the task, ABSENT or a failed query keeps it unacked - nothing here may submit.
    */
   async convergeRecoveredTasks(query:(input:{symbol:string;clientOrderId:string})=>Promise<{state:'FOUND';order:any}|{state:'ABSENT';reason:string}>,now=Date.now()){
+    return this.convergeTasks(this.tasksNeedingQuery(now),query,now);
+  }
+
+  private async convergeTasks(entries:Array<{clientOrderId:string}>,query:(input:{symbol:string;clientOrderId:string})=>Promise<{state:'FOUND';order:any}|{state:'ABSENT';reason:string}>,now:number){
     const converged:Array<{clientOrderId:string;outcome:string;state:ExitTaskState|null}>=[];
-    for(const entry of this.tasksNeedingQuery(now)){
+    for(const entry of entries){
       const task=this.recoveryCoordinator.findTaskByClientOrderId(entry.clientOrderId);
       if(!task){converged.push({clientOrderId:entry.clientOrderId,outcome:'TASK_MISSING',state:null});continue;}
       const identity=V396ExitRuntime.parseScope(task.scope);

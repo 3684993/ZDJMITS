@@ -24,3 +24,5 @@
 
 - 初始：C1 IN_PROGRESS；C2–C7 NOT_STARTED。本计划只声明待办，不能充当实现证据。
 - 现网边界：不启停/热重载 Engine，不改 live Settings/DB，不部署、不发单。允许隔离 worktree 的代码、测试、临时 DB 和文档；通知脚本按用户要求执行。
+
+- C1：已完成首轮 8 项缺陷修复；84 targeted / 890 full tests PASS。证据见 final-convergence-20260922/C1/RESULT.md。C2 开始；整体仍未验收。

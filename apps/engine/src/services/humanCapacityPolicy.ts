@@ -38,6 +38,7 @@ export function evaluateHumanCapacity(input:{snapshot:PortfolioRiskSnapshot;prof
   const positions=snapshot.exposures.filter(row=>row.kind==='POSITION'&&row.notionalUsd>0);
   const human=positions.filter(row=>row.ownerState==='HUMAN_MANAGED');
   const pending=positions.filter(row=>row.ownerState==='HANDOFF_PENDING');
+  if(pending.some(row=>!finite(row.handoffAt)||Number(row.handoffAt)<0||Number(row.handoffAt)>input.now||row.acknowledgedAt!=null&&(!finite(row.acknowledgedAt)||Number(row.acknowledgedAt)<Number(row.handoffAt)||Number(row.acknowledgedAt)>input.now)))blockers.push('HUMAN_HANDOFF_TIME_UNPROVEN');
   const ai=positions.filter(row=>row.ownerState==='AI_ACTIVE');
   const overdue=pending.filter(row=>row.acknowledgedAt==null&&row.handoffAt!=null&&finite(input.now)&&input.now-row.handoffAt>profile.maxAckAgeMs).map(row=>row.id).sort();
   const humanManagedPositions=human.length,pendingHandoffs=pending.length,aiActivePositions=ai.length;

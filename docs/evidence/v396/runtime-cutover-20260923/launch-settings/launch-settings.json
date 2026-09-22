@@ -1,0 +1,93 @@
+{
+ "verdict": "PASS",
+ "nowUtc8": "2026-09-23 07:59:04+08",
+ "engineLifecycle": "NOT_USED_BY_THIS_SCRIPT (settings written while the engine is stopped, through SettingsStore.saveIfVersion CAS)",
+ "before": {
+  "settingsVersion": 189,
+  "executionMode": "READ_ONLY",
+  "aiExitAuthority": "OFF",
+  "positionReviewEnabled": false,
+  "admissionMode": "SHADOW"
+ },
+ "after": {
+  "settingsVersion": 190,
+  "executionMode": "READ_ONLY",
+  "aiExitAuthority": "SHADOW",
+  "positionReviewEnabled": false,
+  "admissionMode": "SHADOW"
+ },
+ "changedPaths": [
+  {
+   "path": "riskGovernance.exitCoordination.aiExitAuthority",
+   "from": "OFF",
+   "to": "SHADOW"
+  }
+ ],
+ "guards": [
+  {
+   "name": "engine-is-stopped",
+   "ok": true
+  },
+  {
+   "name": "only-the-required-paths-changed",
+   "ok": true,
+   "changedPaths": [
+    "riskGovernance.exitCoordination.aiExitAuthority:\"OFF\"->\"SHADOW\""
+   ],
+   "durableMatchesSavedObject": true
+  },
+  {
+   "name": "execution-mode-read-only",
+   "ok": true,
+   "executionMode": "READ_ONLY"
+  },
+  {
+   "name": "ai-exit-authority-shadow",
+   "ok": true,
+   "aiExitAuthority": "SHADOW"
+  },
+  {
+   "name": "position-review-disabled",
+   "ok": true,
+   "positionReviewEnabled": false
+  },
+  {
+   "name": "trade-economics-admission-shadow",
+   "ok": true,
+   "admissionMode": "SHADOW"
+  },
+  {
+   "name": "environment-still-testnet-demo",
+   "ok": true,
+   "environment": "TESTNET",
+   "rest": "https://demo-fapi.binance.com"
+  },
+  {
+   "name": "settings-version-monotonic",
+   "ok": true,
+   "before": 189,
+   "after": 190,
+   "auditRow": {
+    "source": "cas",
+    "old_version": 189,
+    "new_version": 190,
+    "summary": "{\"message\":\"non-secret system settings updated\",\"maxPositions\":{\"before\":50,\"after\":50}}"
+   },
+   "settingsRows": 1
+  },
+  {
+   "name": "ai-exit-loss-limit-not-loosened",
+   "ok": true,
+   "aiExitLossLimitUsd": 10,
+   "aiExitMinNetProfitUsd": 0.2,
+   "aiExitAllowSmallLoss": false
+  },
+  {
+   "name": "portfolio-limits-not-loosened",
+   "ok": true,
+   "maxGrossExposurePct": 1,
+   "maxPositions": 50,
+   "entryMarginUsd": 200
+  }
+ ]
+}

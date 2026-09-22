@@ -47,6 +47,7 @@ import { MarketCohort } from '../services/marketCohort.js';
 import { marketDataStaleReason } from '../services/marketDataStaleness.js';
 import { LossHandoffService } from '../services/lossHandoff.js';
 import { attachOwnershipRuntime, type OwnershipRuntime } from '../services/ownershipRuntime.js';
+import { V396ExitRuntime } from '../services/v396ExitRuntime.js';
 
 export class EngineRuntime {
   readonly writes=new RuntimeWriteBuffer();
@@ -75,7 +76,7 @@ export class EngineRuntime {
   assetGovernance!: AssetGovernanceCoordinator;
   cohort!: MarketCohort;
   lossHandoff!: LossHandoffService
-  ownership?: OwnershipRuntime;
+  ownership?: OwnershipRuntime;  exitRuntime?: V396ExitRuntime;
   private timers: NodeJS.Timeout[] = [];
   private stopped = false;
   private ready = false;
@@ -237,6 +238,17 @@ export class EngineRuntime {
           apiKey && apiSecret ? { apiKey, apiSecret } : null,
           settings.connections.exchange.recvWindowMs,
         );
+    // C3: one durable exit-coordination store, sharing v396-ownership.sqlite with OwnershipRuntime.
+    // It owns scope/cycle/ownerVersion/mandate/quantity truth for MANUAL, TP and future AI exits, and
+    // it owns no exchange writer: a caller may submit only with the clientOrderId this returns.
+    const exitRuntime = new V396ExitRuntime(
+      path.join(store.dataDirectory(), 'v396-ownership.sqlite'),
+      () => ({ environment: String(settings.connections.exchange.environment), account: String(settings.connections.exchange.credentialRef) }),
+      async () => {
+        if (!(trade as any)?.exitCoordinationCapabilities) throw new Error('ADAPTER_CAPABILITIES_UNPROVEN');
+        return await (trade as any).exitCoordinationCapabilities();
+      },
+    );
     const market = new MarketDataHub(provider, state, events),
       universe = new UniverseCoordinator(state, events),
       experience = new ExperienceService(state),
@@ -244,7 +256,7 @@ export class EngineRuntime {
       eip = new EipService(state, experience,externalIntelligence),
       ai = new AiFabric(state, events, eip),
       positions = new PositionService(state, events),
-      tp = new TpGuardian(state, trade, events),
+      tp = new TpGuardian(state, trade, events, exitRuntime),
       entry = new EntryCoordinator(state, eip, ai, trade, events,market,{claim:(scope,value,retry)=>store.claimEntryExecution(scope,value,retry),save:value=>store.saveEntryExecution(value)}),
       exchangeLoop = new ExchangeLoop(
         trade,
@@ -271,6 +283,7 @@ export class EngineRuntime {
       events,
       async () => { await reconciliation.whenSettled(); await reconciliation.run(); },
       { claim: (scope,value) => store.claimManualExecution(scope,value), save: value => store.saveManualExecution(value) },
+      exitRuntime,
     );
     runtime = new EngineRuntime(
       events,
@@ -332,9 +345,14 @@ export class EngineRuntime {
       tp,
       events,
       () => reconciliation.run(),
+      exitRuntime,
       store,
     );
     if (trade instanceof ExternalTradeAdapter) runtime.trade = trade;
+    runtime.exitRuntime = exitRuntime;
+    // C3: restart re-proves stored exits by their original clientOrderId before anything else. This
+    // path is read-only by construction; a failed or absent answer leaves the task unacked.
+    void runtime.convergeRecoveredExits();
     (state as any).tradingQualityEvidenceReady=false;
     try{runtime.tradingQuality = new TradingQualityCollector(path.join(opts.dataDir,"trading-quality.sqlite"),state,events);}catch(error){events.publish('TRADING_QUALITY_STORAGE_UNAVAILABLE',{reason:String(error)});}
     events.on("event", (event) => {
@@ -608,7 +626,7 @@ export class EngineRuntime {
     this.persistTimer = null;
     this.market.stop();
     try{this.settingsStore.persistRuntime(this.state.serialize());this.events.publish("RUNTIME_STOPPED");this.settingsStore.checkpoint();}
-    finally{this.persistenceClosed=true;this.qualityObserver?.close();this.tradingQuality?.close();this.ownership?.close();this.settingsStore.close();}
+    finally{this.persistenceClosed=true;this.qualityObserver?.close();this.tradingQuality?.close();this.exitRuntime?.close();this.ownership?.close();this.settingsStore.close();}
   }
   private async applySavedSettings(next:any) {
     this.state.setSettings(next);
@@ -652,6 +670,21 @@ export class EngineRuntime {
     this.settingsStore.persistRuntime(this.state.serialize());
     return result;
   }
+  /**
+   * C3: startup convergence for non-terminal exit tasks. Query only - it never resubmits, and an
+   * ABSENT/unverified answer keeps the claim occupied as UNKNOWN so a later writer cannot fork it.
+   */
+  async convergeRecoveredExits(){
+    const exitRuntime=this.exitRuntime,adapter=this.trade as any;
+    if(!exitRuntime)return [];
+    if(!adapter?.findExitByClientOrderId){this.events.publish('EXIT_RECOVERY_QUERY_UNAVAILABLE',{tasks:this.exitRuntime.tasksNeedingQuery().length},undefined);return [];}
+    try{
+      const converged=await exitRuntime.convergeRecoveredTasks((input)=>adapter.findExitByClientOrderId(input));
+      if(converged.length)this.events.publish('EXIT_RECOVERY_CONVERGED',{tasks:converged},undefined);
+      return converged;
+    }catch(error){this.events.publish('EXIT_RECOVERY_FAILED',{reason:String(error instanceof Error?error.message:error)},undefined);return [];}
+  }
+
   runtimeControlStatus() {
     return {
       ...this.state.runtimeControl,

@@ -162,8 +162,8 @@ describe('C2 concurrent writers and lost updates',()=>{
       expect(a.reserveEntry(ARGS).ok).toBe(true);
       const raced=b.reserveEntry({...ARGS,underlying:'ETH'});
       expect(raced.ok,`second connection must not write over a newer revision: ${JSON.stringify(raced)}`).toBe(false);
-      expect(first.loadRuntime().entryReservations).toHaveLength(second.loadRuntime().entryReservations.length);
-      expect(second.loadRuntime().entryReservationRevision).toBe(first.loadRuntime().entryReservationRevision);
+      expect((first.loadRuntime() as any).entryReservations).toHaveLength((second.loadRuntime() as any).entryReservations.length);
+      expect((second.loadRuntime() as any).entryReservationRevision).toBe((first.loadRuntime() as any).entryReservationRevision);
     }finally{first.close();second.close();}
   });
 

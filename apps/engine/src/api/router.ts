@@ -18,6 +18,7 @@ import { p0EntryIntegrity } from '../services/p0EntryIntegrity.js';
 import { byClosedAtDesc, byOpenedAtDesc } from './chronologicalSort.js';
 import { entryObservation } from '../services/entryObservation.js';
 import { projectHumanManaged } from '../services/humanManagedProjection.js';
+import { exitSubjectFromPosition } from '../services/v396ExitRuntime.js';
 
 export function createApiRouter(runtime: EngineRuntime) {
   const r = Router();
@@ -1028,9 +1029,48 @@ export function createApiRouter(runtime: EngineRuntime) {
     try {
       const pos = runtime.state.positions.get(req.params.positionId);
       if (!pos) return res.status(404).json({ error: "position not found" });
+      const exitRuntime = (runtime as any).exitRuntime;
+      if (exitRuntime) {
+        // C3: a human revoke is durable and binding. Only an explicit confirmRearm, which writes a
+        // HUMAN mandate the guardian may never overwrite, may bring automatic protection back.
+        const mandate = exitRuntime.mandate(exitSubjectFromPosition(pos));
+        if (mandate?.revokedAt != null) {
+          if (req.body?.confirmRearm !== true)
+            return res.status(409).json({ error: "TP_REPAIR_BLOCKED_MANDATE_REVOKED", revokedAt: mandate.revokedAt });
+          const rearmPrice = Number(req.body?.rearmPrice ?? pos.tpEconomics?.currentTpPrice ?? 0);
+          if (!exitRuntime.rearmProtectionByHuman(exitSubjectFromPosition(pos), rearmPrice))
+            return res.status(409).json({ error: "TP_MANDATE_REARM_UNPROVEN", rearmPrice });
+        }
+      }
       runtime.state.positions.set(pos.id, { ...pos, tpStatus: "MISSING" });
       await runtime.tp.ensure(runtime.state.positions.get(pos.id)!, true);
       res.json(runtime.state.positions.get(pos.id));
+    } catch (e) {
+      next(e);
+    }
+  });
+  r.post("/tp/:positionId/revoke", async (req, res, next) => {
+    try {
+      const pos = runtime.state.positions.get(req.params.positionId);
+      if (!pos) return res.status(404).json({ error: "position not found" });
+      if (req.body?.confirm !== true) return res.status(400).json({ error: "CONFIRMATION_REQUIRED" });
+      const exitRuntime = (runtime as any).exitRuntime;
+      if (!exitRuntime) return res.status(503).json({ error: "EXIT_COORDINATION_UNAVAILABLE" });
+      // The durable revoke comes first: even if the cancel below ends UNKNOWN the guardian must not
+      // rebuild protection automatically, and the outcome is reported honestly.
+      const mandate = exitRuntime.revokeProtectionByHuman(exitSubjectFromPosition(pos));
+      const results: Array<{ orderId: string; status: string; reason?: string }> = [];
+      for (const order of [...runtime.state.tpOrders.values()].filter((row) => row.positionId === pos.id && row.status === "WORKING")) {
+        try {
+          const canceled = await runtime.tp.cancel(order);
+          runtime.state.tpOrders.set(canceled.id, canceled);
+          results.push({ orderId: order.id, status: canceled.status });
+        } catch (error) {
+          results.push({ orderId: order.id, status: "UNKNOWN", reason: String(error instanceof Error ? error.message : error) });
+        }
+      }
+      runtime.events.publish("TP_PROTECTION_REVOKED_BY_HUMAN", { positionId: pos.id, mandate, orders: results }, pos.symbol);
+      res.json({ revoked: mandate, orders: results, canceled: results.every((row) => ["CANCELED", "EXPIRED", "REJECTED"].includes(row.status)), unknown: results.some((row) => row.status === "UNKNOWN") });
     } catch (e) {
       next(e);
     }

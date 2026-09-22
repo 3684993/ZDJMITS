@@ -28,7 +28,7 @@ export type ExitTask={
   quantityUnits:number;limitPrice:number;state:ExitTaskState;version:number;filledUnits:number;
   ownerVersion:number;planVersion:number;positionVersion:number;settingsVersion:number;riskGeneration:number;
   estimateHash:string;decisionHash:string;authorizationExpiresAt:number;deadline:number;
-  createdAt:number;updatedAt:number;reasons:string[];
+  createdAt:number;updatedAt:number;reasons:string[];stepSize:number;requestKey:string|null;
 };
 
 export type AdapterCapabilities={
@@ -77,10 +77,16 @@ export class PositionExitCoordinator {
     this.journal.write('INSERT INTO v396_outbox(id,payload,delivered) VALUES(?,?,0) ON CONFLICT(id) DO NOTHING',JSON.stringify([task.scope,task.cycleId,task.taskId,task.version]),JSON.stringify({type:'EXIT_TASK_UPDATED',payload:{task}}));
   }
 
-  /** clientOrderId derives from scope+cycle+intent quantity, so a retry can never fork it. */
-  private clientOrderIdFor(scope:string,cycleId:string,source:ExitSource,quantityUnits:number){
+  /**
+   * The submit identity is owned by the caller's request, not by its size: with a requestKey the
+   * seed is scope|cycle|source|requestKey, so a retry of one intent is constant while a later intent
+   * in the same cycle legitimately gets a new ID. Without a requestKey the legacy quantity seed is
+   * kept, which is what the offline S04 matrix was written against.
+   */
+  private clientOrderIdFor(scope:string,cycleId:string,source:ExitSource,quantityUnits:number,requestKey?:string){
     let h=0x811c9dc5>>>0;
-    const seed=`${scope}|${cycleId}|${source}|${quantityUnits}`;
+    const key=String(requestKey??'').trim();
+    const seed=key?`${scope}|${cycleId}|${source}|R:${key}`:`${scope}|${cycleId}|${source}|Q:${quantityUnits}`;
     for(let i=0;i<seed.length;i++)h=Math.imul(h^seed.charCodeAt(i),16777619)>>>0;
     return `v396x${h.toString(16).padStart(8,'0')}`;
   }
@@ -101,7 +107,7 @@ export class PositionExitCoordinator {
    * quantity budget and the PREPARED row are decided in one transaction, and the row exists
    * before the caller is told a request may go out.
    */
-  requestExit(input:{scope:string;cycleId:string;source:ExitSource;quantityUnits:number;verdict:AiExitVerdict;jit:JitFacts;mandate?:{version:number;revokedAt:number|null}|null}):CoordinatorResult{
+  requestExit(input:{scope:string;cycleId:string;source:ExitSource;quantityUnits:number;verdict:AiExitVerdict;jit:JitFacts;mandate?:{version:number;revokedAt:number|null}|null;requestKey?:string}):CoordinatorResult{
     return this.journal.transact<CoordinatorResult>(()=>{
       const {verdict,jit}=input;
       const reject=(...reasons:string[]):CoordinatorResult=>({accepted:false,taskId:null,clientOrderId:null,reasons,submitRequired:false});
@@ -131,7 +137,10 @@ export class PositionExitCoordinator {
       if(input.source==='AI'&&!this.capabilities.oneWayReduceOnly&&!this.capabilities.hedgePositionSide)return reject('ADAPTER_CANNOT_PROVE_NO_EXPOSURE_INCREASE');
 
       const existing=this.tasksFor(input.scope,input.cycleId);
-      const clientOrderId=this.clientOrderIdFor(input.scope,input.cycleId,input.source,input.quantityUnits);
+      // The request key is required at the production bridge (V396ExitRuntime); the offline S04
+      // semantics stay valid without one, where the quantity itself is the intent identity.
+      const requestKey=String(input.requestKey??'').trim()||null;
+      const clientOrderId=this.clientOrderIdFor(input.scope,input.cycleId,input.source,input.quantityUnits,requestKey??undefined);
       const open=existing.filter(task=>OPEN_STATES.includes(task.state));
       const openUnits=open.reduce((sum,task)=>sum+task.quantityUnits-task.filledUnits,0);
       // An intent this caller already prepared is answered by identity first - and only that
@@ -155,7 +164,7 @@ export class PositionExitCoordinator {
         quantityUnits:input.quantityUnits,limitPrice:verdict.boundaryPrice,state:'PREPARED',version:1,filledUnits:0,
         ownerVersion:verdict.ownerVersion,planVersion:verdict.planVersion,positionVersion:jit.positionVersion,settingsVersion:jit.settingsVersion,riskGeneration:jit.riskGeneration,
         estimateHash:verdict.estimateHash,decisionHash:verdict.decisionHash,authorizationExpiresAt:verdict.authorizationExpiresAt!,deadline:jit.deadline,
-        createdAt:jit.now,updatedAt:jit.now,reasons:[],
+        createdAt:jit.now,updatedAt:jit.now,reasons:[],stepSize:jit.stepSize,requestKey,
       };
       this.reserveClaim(task);
       this.persist(task);

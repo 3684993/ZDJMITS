@@ -9,6 +9,8 @@ import type {AiExitVerdict} from './s03AiExitPolicy.js';
 export type V396ExitSubject={symbol:string;side:'LONG'|'SHORT';cycleId:string|null;openedAt?:number|null};
 export type V396ReductionProof={kind:'ONE_WAY_REDUCE_ONLY'|'HEDGE_POSITION_SIDE';checkedAt:number;positionSide:'LONG'|'SHORT'};
 export type V396PrepareExitInput={
+  /** Stable submit identity for one human/TP intent: a retry of it must reuse the clientOrderId. */
+  requestKey:string;
   subject:V396ExitSubject;
   quantityUnits:number;
   limitPrice:number;
@@ -109,6 +111,19 @@ export class V396ExitRuntime {
     return this.ownership.putMandate({scope,cycleId,source:'GUARDIAN',allowedPrice,allowedQuantityRule:'FULL_REMAINING'},current?.version??0,now);
   }
 
+  /**
+   * A human may re-arm protection explicitly after a revoke. The new mandate is HUMAN, so the
+   * guardian never overwrites it, and a revoke that is still in force is reported back.
+   */
+  rearmProtectionByHuman(subject:V396ExitSubject,allowedPrice:number,now=Date.now()):ProtectionMandate|null{
+    if(!(Number.isFinite(allowedPrice)&&allowedPrice>0))return null;
+    const scope=this.scope(subject),cycleId=this.cycle(subject);
+    this.ensureProtectionOwner(subject,now);
+    const current=this.ownership.mandate(scope,cycleId);
+    const written=this.ownership.putMandate({scope,cycleId,source:'HUMAN',allowedPrice,allowedQuantityRule:'FULL_REMAINING'},current?.version??0,now);
+    return written.revokedAt==null?written:null;
+  }
+
   revokeProtectionByHuman(subject:V396ExitSubject,now=Date.now()){
     const scope=this.scope(subject),cycleId=this.cycle(subject),current=this.ownership.mandate(scope,cycleId);
     if(!current)return null;
@@ -140,6 +155,8 @@ export class V396ExitRuntime {
     if(!this.proofValid(input))return this.reject('REDUCTION_PROOF_UNPROVEN');
     if(!Number.isSafeInteger(input.quantityUnits)||input.quantityUnits<=0)return this.reject('QUANTITY_INVALID');
     const scope=this.scope(input.subject),cycleId=this.cycle(input.subject);
+    const requestKey=String(input.requestKey??'').trim();
+    if(!requestKey)return this.reject('REQUEST_KEY_REQUIRED');
     const owner=source==='MANUAL'
       ? this.recordHumanTakeover(input.subject,'MANUAL_SUBMISSION',input.now)
       : this.ensureProtectionOwner(input.subject,input.now);
@@ -151,7 +168,7 @@ export class V396ExitRuntime {
     try{coordinator=new PositionExitCoordinator(this.journal,await this.capabilities());}
     catch{return this.reject('ADAPTER_CAPABILITIES_UNPROVEN');}
     return coordinator.requestExit({
-      scope,cycleId,source,quantityUnits:input.quantityUnits,verdict,
+      scope,cycleId,source,requestKey,quantityUnits:input.quantityUnits,verdict,
       mandate:source==='TP'?{version:mandate!.version,revokedAt:mandate!.revokedAt}:null,
       jit:{
         now:input.now,ownerVersion:owner.ownerVersion,positionVersion:input.positionVersion,
@@ -167,6 +184,58 @@ export class V396ExitRuntime {
   async prepareTakeProfit(input:V396PrepareExitInput){
     const mandate=this.ensureGuardianMandate(input.subject,input.limitPrice,input.now);
     return this.prepare('TP',input,mandate);
+  }
+
+  /** Convert a live quantity into the integer units the claim budget is counted in. */
+  static quantityUnitsOf(quantity:number,stepSize:number){
+    if(!Number.isFinite(quantity)||!Number.isFinite(stepSize)||stepSize<=0)return 0;
+    const units=Math.round((quantity+Number.EPSILON)/stepSize);
+    return Number.isSafeInteger(units)&&units>0&&Math.abs(units*stepSize-quantity)<=1e-9?units:0;
+  }
+
+  /**
+   * Parse the canonical scope back into the exchange identity a read-only query needs. A scope that
+   * does not carry a full symbol and LONG/SHORT side is refused rather than guessed at.
+   */
+  static parseScope(scope:string){
+    let parsed:unknown;
+    try{parsed=JSON.parse(String(scope));}catch{return null;}
+    if(!Array.isArray(parsed)||parsed.length!==4)return null;
+    const [environment,account,symbol,side]=parsed.map(part=>String(part??'').trim());
+    if(!environment||!account||!symbol||!['LONG','SHORT','BOTH','ENTRY'].includes(side))return null;
+    return{environment,account,symbol,side} as {environment:string;account:string;symbol:string;side:'LONG'|'SHORT'|'BOTH'|'ENTRY'};
+  }
+
+  /** Non-terminal tasks a restart must re-prove before anything else may be submitted. */
+  tasksNeedingQuery(now=Date.now()){return this.recoveryCoordinator.recoveryPlan(now).mustQuery;}
+
+  /**
+   * Startup/restart convergence: read-only exact queries against the stored clientOrderId.
+   * FOUND converges the task, ABSENT or a failed query keeps it unacked - nothing here may submit.
+   */
+  async convergeRecoveredTasks(query:(input:{symbol:string;clientOrderId:string})=>Promise<{state:'FOUND';order:any}|{state:'ABSENT';reason:string}>,now=Date.now()){
+    const converged:Array<{clientOrderId:string;outcome:string;state:ExitTaskState|null}>=[];
+    for(const entry of this.tasksNeedingQuery(now)){
+      const task=this.recoveryCoordinator.findTaskByClientOrderId(entry.clientOrderId);
+      if(!task){converged.push({clientOrderId:entry.clientOrderId,outcome:'TASK_MISSING',state:null});continue;}
+      const identity=V396ExitRuntime.parseScope(task.scope);
+      if(!identity||!['LONG','SHORT','BOTH'].includes(identity.side)){converged.push({clientOrderId:task.clientOrderId,outcome:'SCOPE_UNPARSEABLE',state:task.state});continue;}
+      let fact:Awaited<ReturnType<typeof query>>;
+      try{fact=await query({symbol:identity.symbol,clientOrderId:task.clientOrderId});}
+      catch{converged.push({clientOrderId:task.clientOrderId,outcome:'QUERY_FAILED_STAYS_UNACKED',state:task.state});continue;}
+      if(fact?.state!=='FOUND'||!fact.order){
+        if(task.state!=='UNKNOWN'&&task.state!=='SUBMITTING')this.recoveryCoordinator.markSubmitUncertain(task.taskId,now);
+        converged.push({clientOrderId:task.clientOrderId,outcome:'EXCHANGE_ABSENT_STAYS_UNACKED',state:task.state==='PREPARED'?'PREPARED':'UNKNOWN'});
+        continue;
+      }
+      const raw=String(fact.order.status??'').toUpperCase(),executed=Number(fact.order.executedQuantity??0),original=Number(fact.order.originalQuantity??0);
+      const units=(quantity:number)=>V396ExitRuntime.quantityUnitsOf(quantity,task.stepSize);
+      const filledUnits=Math.max(0,Math.min(task.quantityUnits,units(executed)));
+      const state:ExitTaskState=executed>0&&original>0&&executed>=original-1e-12?'FILLED':raw==='CANCELED'?'CANCELED':raw==='EXPIRED'?'EXPIRED':raw==='REJECTED'?'REJECTED':executed>0?'PARTIALLY_FILLED':'WORKING';
+      const applied=this.recoveryCoordinator.observe([{eventId:`RECOVERY:${task.clientOrderId}:${state}:${filledUnits}:${task.version}`,clientOrderId:task.clientOrderId,state,filledUnits,positionVersion:task.positionVersion}],now);
+      converged.push({clientOrderId:task.clientOrderId,outcome:applied.applied.length?`EXCHANGE_FACT_${state}`:'OBSERVE_REFUSED',state});
+    }
+    return converged;
   }
 
   transitionByClientOrderId(clientOrderId:string,next:ExitTaskState,now:number,reason:string){

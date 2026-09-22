@@ -40,7 +40,13 @@ export interface ExchangeTradeAdapter {
   fetchPositions():Promise<Position[]>;
   invalidateOrderFact?(symbol:string,exchangeOrderId?:string|null,clientOrderId?:string|null):void;
   setLeverage(symbol:string,leverage:number):Promise<void>;
-  placeManualOrder(request:{clientOrderId:string;internalOrderId?:string;symbol:string;side:'BUY'|'SELL';positionSide?:'LONG'|'SHORT';type:'LIMIT'|'MARKET';quantity:number;price?:number;reduceOnly:boolean;postOnly:boolean}):Promise<ManualOrder>;
+  placeManualOrder(request:{clientOrderId:string;internalOrderId?:string;symbol:string;side:'BUY'|'SELL';positionSide?:'LONG'|'SHORT';type:'LIMIT'|'MARKET';quantity:number;price?:number;reduceOnly:boolean;postOnly:boolean;positionId?:string}):Promise<ManualOrder>;
+  /** C3: the capability matrix a coordinated exit trusts, read from the exchange itself. */
+  exitCoordinationCapabilities?():Promise<{oneWayReduceOnly:boolean;hedgePositionSide:boolean;cancelReplaceAtomic:boolean;partialFillExpected:boolean;supportsTimeInForce:string[];positionMode:'ONE_WAY'|'HEDGE'}>;
+  /** C3: prove from live positions that a reduce cannot become an increase. */
+  proveReduction?(input:{symbol:string;positionSide:'LONG'|'SHORT';quantity:number}):Promise<{kind:'ONE_WAY_REDUCE_ONLY'|'HEDGE_POSITION_SIDE';checkedAt:number;positionSide:'LONG'|'SHORT';liveQuantity:number}>;
+  /** C3: tri-state exact read; ABSENT only for the exchange's own no-such-order codes. */
+  findExitByClientOrderId?(input:{symbol:string;clientOrderId:string}):Promise<{state:'FOUND';order:any}|{state:'ABSENT';reason:string}>;
   findManualByClientOrderId?(request:{symbol:string;clientOrderId:string;internalOrderId:string;positionId:string;side:'BUY'|'SELL';positionSide:'LONG'|'SHORT';quantity:number;price:number;reduceOnly:boolean;postOnly:boolean}):Promise<ManualOrder|null>;
   cancelManualOrder?(order:ManualOrder):Promise<ManualOrder>;
   tick?(quotes:Map<string,Quote>):Promise<{filledEntries:EntryOrder[];filledTakeProfits:TakeProfitOrder[]}>;

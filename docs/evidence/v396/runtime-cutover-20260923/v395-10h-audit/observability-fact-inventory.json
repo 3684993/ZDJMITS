@@ -1,0 +1,119 @@
+{
+ "generatedAtUtc8": "2026-09-23 07:33:25+08",
+ "alreadyAvailable": {
+  "lastAiRunStartedAt": {
+   "where": "ai_runs_archive.max(started_at) / pipeline.entryActivity.lastPrimaryRunAt",
+   "value": "2026-09-23 04:55:28+08"
+  },
+  "lastAiRunTerminalAt": {
+   "where": "runtime_events type='AI_RUN_TERMINAL' max(ts) / pipeline.work.recentDecision.at",
+   "value": "2026-09-23 04:56:27+08"
+  },
+  "lastAiDispatchAttemptAt": {
+   "where": "runtime_events type='POOL_ANALYSIS_STARTED' max(ts)",
+   "value": "2026-09-23 04:55:18+08"
+  },
+  "lastRunAgeMs": {
+   "where": "pipeline.primaryBrain.lastRunAgeMs",
+   "value": 9477548
+  },
+  "aiRunFailuresAndReasons": {
+   "where": "ai_runs_archive.status/short_reason + AI_RUN_FAILED + ENTRY_ANALYSIS_FAILED",
+   "value": "present; 5 in-window AI_OUTPUT_INVALID failures"
+  },
+  "consecutiveAiFailures": {
+   "where": "pipeline.aiHealth.consecutiveFailures",
+   "value": 0,
+   "caveat": "window-scoped counter, resets; it is 0 during the entire silence so it cannot express \"stalled\""
+  },
+  "aiServiceHealth": {
+   "where": "pipeline.primaryBrain.resource.{status,connectionStatus,healthCheckedAt,healthReason} + AI_RESOURCE_HEALTH_CHANGED",
+   "value": "ONLINE/ONLINE checked 2026-09-23 07:33:12+08"
+  },
+  "aiQueueAndBudget": {
+   "where": "pipeline.primaryBrain.resource.{queueDepth,active,totalRuns,failures} + pipeline.aiHealth.{cooldown,quarantine}",
+   "value": {
+    "queueDepth": 0,
+    "active": 0,
+    "cooldown": 0,
+    "quarantine": 0
+   }
+  },
+  "candidateSupplyCounts": {
+   "where": "pipeline.pool.health.counts + CANDIDATE_SUPPLY_HEALTH event payload",
+   "value": {
+    "pipelineReadyCount": 4,
+    "poolReadySymbols": 0,
+    "dispatchReadySymbols": 0,
+    "governanceBlockedSymbols": 76,
+    "occupiedUnderlyings": 29
+   }
+  },
+  "preAiAdmissionReasons": {
+   "where": "CANDIDATE_REJECTED / ENTRY_DECISION_BLOCKED / ENTRY_ORDER_BLOCKED payloads + /api/v3/diagnostics/supply capacity.candidates",
+   "value": {
+    "REJECT_GROSS_EXPOSURE": 61,
+    "RISK_REJECT_GROSS_EXPOSURE:REJECT_GROSS_EXPOSURE": 56,
+    "RISK_REJECT_GROSS_EXPOSURE:REJECT_GROSS_EXPOSURE,REJECT_DIRECTION_EXPOSURE": 5
+   }
+  },
+  "riskHeadroomArithmetic": {
+   "where": "capacity.candidates[].riskHeadroom.remaining + runtimeControl.capital.directionBudget",
+   "value": {
+    "directionBudget": {
+     "longAvailableNotionalUsd": 0,
+     "shortAvailableNotionalUsd": 0,
+     "grossAvailableNotionalUsd": 0,
+     "evaluatedAt": 1790120004488
+    },
+    "remaining": null
+   }
+  },
+  "scanHeartbeat": {
+   "where": "CANDIDATE_LIFECYCLE_REDERIVED / CANDIDATE_SUPPLY_HEALTH / MARKET_COHORT_REFILLED / shadow.lastSampleAt",
+   "value": {
+    "lastRederive": "2026-09-23 07:31:51+08",
+    "lastSupplyHealth": "2026-09-23 07:31:45+08",
+    "lastCohortRefill": "2026-09-23 07:32:13+08",
+    "shadowLastSampleAt": "2026-09-23 07:32:56+08"
+   }
+  },
+  "privateAndMarketFreshness": {
+   "where": "pipeline.binancePrivate / pipeline.freshMarkets / /api/v3/diagnostics/private-sync",
+   "value": {
+    "privateStatus": "READY",
+    "snapshotAgeMs": 7670,
+    "consecutiveFailures": 0,
+    "marketStatus": "FRESH",
+    "quoteFreshRatio": 1,
+    "klineFreshRatio": 1
+   }
+  }
+ },
+ "missing": {
+  "dispatchTickHeartbeatTimestamp": {
+   "gap": "pipeline.scheduler exposes only {status:\"RUNNING\"}; there is no lastProcessPoolAt / lastRefreshReadyViewAt, so \"the dispatch loop is alive\" can only be inferred indirectly from pool states.",
+   "neededFor": "separating \"capacity starved but loop alive\" from \"loop hung\""
+  },
+  "lastCandidateOfferedToAiVsLastAiSuccess": {
+   "gap": "both exist as raw events but no aggregate observability field names \"last time a candidate passed the pre-AI capacity gate\"; pipeline.candidateLifecycle.nextCandidate is null with no reason code",
+   "neededFor": "one-line root cause on the dashboard"
+  },
+  "idleAlertIndependentOfDispatchability": {
+   "gap": "aiResourceHealth.primaryBrainHealth() returns DEGRADED only when dispatchable is true (executableCandidates > 0); in a capacity-starved portfolio a multi-hour AI gap is reported READY",
+   "neededFor": "the >30 minute alert the user requires"
+  },
+  "exposureCapVsNoOpportunityDistinction": {
+   "gap": "runtimeControlService.ts:128 only swaps in position-capacity wording when slots.used >= slots.max; a 100%-of-equity gross exposure cap is described with the same text as \"no qualified opportunity\"",
+   "neededFor": "telling the operator that the account is full, not that the market is empty"
+  },
+  "alertingChannelForAiSilence": {
+   "gap": "no runtime_events type or settings field represents \"AI has not analysed for N minutes\"; the only nearby pause event is TRADING_PIPELINE_PAUSED_DAILY_RISK_LIMIT which did not fire because entryRiskBlocked is false",
+   "neededFor": "any proactive notification"
+  },
+  "fundingFacts": {
+   "gap": "every trade record in the window carries fundingAttributionStatus=UNKNOWN and funding=null; economicEligibility/formalNetPnlStatus are null",
+   "neededFor": "complete per-cycle economics"
+  }
+ }
+}

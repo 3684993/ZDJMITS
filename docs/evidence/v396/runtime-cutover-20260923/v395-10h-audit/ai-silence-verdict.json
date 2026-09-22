@@ -1,0 +1,188 @@
+{
+ "generatedAtUtc8": "2026-09-23 07:33:25+08",
+ "observationWindow": {
+  "startUtc8": "2026-09-22 21:33:25+08",
+  "endUtc8": "2026-09-23 07:33:25+08"
+ },
+ "headline": {
+  "lastAiAnalysisRequestStartedUtc8": "2026-09-23 04:55:28+08",
+  "lastAiRunTerminalUtc8": "2026-09-23 04:56:27+08",
+  "lastAiDispatchAttemptUtc8": "2026-09-23 04:55:18+08",
+  "lastRunAgeMsAtObservation": 9477548,
+  "lastRunAgeMinutesAtObservation": 158,
+  "silenceGapMinutesAtObservation": 158,
+  "aiRunsInsideWindow": {
+   "total": 271,
+   "byRoleStatus": {
+    "SCOUT/COMPLETED": 136,
+    "PRIMARY_BRAIN/COMPLETED": 130,
+    "PRIMARY_BRAIN/FAILED": 5
+   }
+  },
+  "lastCapitalExecutablePositiveUtc8": "2026-09-23 04:54:53+08",
+  "supplyHealthSamplesAfterThatWithZero": 165,
+  "continuousZeroMinutes": 156.9
+ },
+ "rootCause": {
+  "verdict": "CONFIRMED",
+  "layer": "pre-AI capital/risk admission (entryCoordinator objectiveCapacity gate)",
+  "mechanism": [
+   "appRuntime.start registers a 2500ms non-overlapping timer (appRuntime.ts:537) that calls runtimeControl.evaluate(true) and then, only when canDispatch() is true, entry.processPool().",
+   "entry.processPool refreshes the dispatch-ready view from objectiveCapacity(symbol) (entryCoordinator.ts:96), which is buildPreAiExecutionEnvelope(symbol).LONG.executable || .SHORT.executable (entryCoordinator.ts:148).",
+   "With remaining.gross == 0 every routed candidate is non-executable, the ready view is empty, so no symbol is ever transitioned to PRIMARY_QUEUED and no AI request is issued.",
+   "The same engine that reports \"no dispatchable candidate\" is still running: capital.evaluatedAt advances, refreshReadyView keeps every pool resident in WAITING, and CANDIDATE_LIFECYCLE_REDERIVED / CANDIDATE_SUPPLY_HEALTH / MARKET_COHORT_REFILLED keep emitting."
+  ],
+  "arithmetic": {
+   "equityUsd": 10412.1320618907,
+   "grossExposureLimitUsd": 10412.1320618907,
+   "directionExposureLimitUsd": 5206.06603094535,
+   "currentGrossExposureUsd": 10724.699846,
+   "remainingGrossUsd": 0,
+   "remainingDirectionLongUsd": 590.1021367180429,
+   "remainingDirectionShortUsd": 0,
+   "longExposureUsd": 4615.963894227307,
+   "shortExposureUsd": 6108.735951360401,
+   "blockersOnRoutedCandidate": [
+    "REJECT_GROSS_EXPOSURE"
+   ],
+   "maxGrossExposurePct": 1,
+   "maxDirectionExposurePct": 0.5,
+   "directionBudget": {
+    "longAvailableNotionalUsd": 0,
+    "shortAvailableNotionalUsd": 0,
+    "grossAvailableNotionalUsd": 0,
+    "evaluatedAt": 1790120004488
+   },
+   "positionCount": 29,
+   "positionGrossNotionalUsd": 10724.703404,
+   "positionUnrealizedPnlUsd": -915.371675
+  },
+  "candidateRejectionReasonsInWindow": {
+   "REJECT_GROSS_EXPOSURE": 61,
+   "RISK_REJECT_GROSS_EXPOSURE:REJECT_GROSS_EXPOSURE": 56,
+   "RISK_REJECT_GROSS_EXPOSURE:REJECT_GROSS_EXPOSURE,REJECT_DIRECTION_EXPOSURE": 5
+  },
+  "routedCandidatesAtObservation": [
+   {
+    "symbol": "UNIUSDC",
+    "admission": "ALLOW_REDUCED_SIZE",
+    "reason": "REJECT_GROSS_EXPOSURE",
+    "longExecutable": false,
+    "shortExecutable": false,
+    "remainingGross": 0
+   },
+   {
+    "symbol": "TUTUSDT",
+    "admission": "ALLOW_REDUCED_SIZE",
+    "reason": "REJECT_GROSS_EXPOSURE",
+    "longExecutable": false,
+    "shortExecutable": false,
+    "remainingGross": 0
+   },
+   {
+    "symbol": "TIAUSDT",
+    "admission": "ALLOW_REDUCED_SIZE",
+    "reason": "REJECT_GROSS_EXPOSURE",
+    "longExecutable": false,
+    "shortExecutable": false,
+    "remainingGross": 0
+   }
+  ]
+ },
+ "hypotheses": {
+  "noCandidateEverReachedAiStage": {
+   "verdict": "REFUTED",
+   "evidence": "ai_runs_archive holds 271 PRIMARY_BRAIN/SCOUT runs inside the window ({\"SCOUT/COMPLETED\":136,\"PRIMARY_BRAIN/COMPLETED\":130,\"PRIMARY_BRAIN/FAILED\":5}); CANDIDATE_LIFECYCLE_CHANGED shows READY -> PRIMARY_QUEUED -> PRIMARY_RUNNING -> PRIMARY_COMPLETED -> PLACE_READY chains up to 2026-09-23 04:56:27+08."
+  },
+  "candidatesFilteredBeforeAi": {
+   "verdict": "CONFIRMED_primary_root_cause",
+   "evidence": "CANDIDATE_REJECTED / ENTRY_DECISION_BLOCKED in-window reasons are exclusively gross/direction exposure rejections; at observation the pool holds residents in WAITING because objectiveCapacity is false while pipelineReadyCount stays above zero."
+  },
+  "aiSchedulingBudgetQueueLockCooldownTimeout": {
+   "verdict": "RULED_OUT",
+   "evidence": "dispatch timer alive (capital.evaluatedAt 2026-09-23 07:33:24+08, nextRecheckAt 2026-09-23 07:33:54+08); queueDepth 0; aiHealth {\"completed\":0,\"failed\":0,\"dataError\":0,\"rawPlaceFailed\":0,\"schemaInvalid\":0,\"normalized\":0,\"timeout\":0,\"cooldown\":0,\"quarantine\":0,\"topError\":null,\"consecutiveFailures\":0,\"alert\":null}; last lifecycle reason for the final symbol was AI_QUANTITY_BELOW_MIN_NOTIONAL followed by a return to READY at 2026-09-23 04:56:52+08, not a lock or quarantine latch."
+  },
+  "modelUnavailableOrCallFailed": {
+   "verdict": "RULED_OUT_as_cause_of_the_silence",
+   "evidence": "resource brain-7900-primary status ONLINE/connectionStatus ONLINE, healthCheckedAt 2026-09-23 07:33:12+08; AI_RESOURCE_HEALTH_CHANGED aborted flaps at 04:58:16->04:58:29 and 05:25:37->05:25:50 self-recovered in ~13s. 5 in-window runs failed with AI_OUTPUT_INVALID (output token limit) - a real quality defect, but the last one is 2026-09-23 04:36:01+08, before the silence boundary, and dispatch continued afterwards."
+  },
+  "engineSchedulerOrEventLoopStalled": {
+   "verdict": "RULED_OUT",
+   "evidence": "shadow.lastSampleAt 2026-09-23 07:32:56+08 (age ms 28969), privateSync.lastSuccessAt 2026-09-23 07:33:18+08, CANDIDATE_LIFECYCLE_REDERIVED last 2026-09-23 07:31:51+08, pool residents all re-evaluated to WAITING."
+  },
+  "privateOrMarketFactsStaleFailClosed": {
+   "verdict": "RULED_OUT_for_the_silence",
+   "evidence": "binancePrivate READY snapshotAgeMs 7670 consecutiveFailures 0; freshMarkets FRESH quoteFreshRatio 1 klineFreshRatio 1. PRIVATE_SYNC_FAILED did occur 121 times in-window but ended 2026-09-23 00:10:20+08 and AI analysis continued for another 4 hours afterwards."
+  },
+  "other": {
+   "verdict": "CONFIRMED_contributor",
+   "evidence": "Equity erosion (see trade-and-position-summary.json) shrinks the gross-exposure cap, which is defined as equity x maxGrossExposurePct, while 29 surviving positions hold ~10.8k USD notional; the cap therefore closed without any single new order being rejected for a strategy reason."
+  }
+ },
+ "dispatchChainLiveness": {
+  "conclusion": "the AI dispatch chain is alive and correctly refusing to dispatch; nothing is hung",
+  "canDispatchTermsFromRuntimeControlService": {
+   "storageEntryBlockReason": null,
+   "privateAccountFresh": true,
+   "entryRiskBlocked": false,
+   "executionGovernanceMode": "AUTO_RUNNING",
+   "runtimeControlMode": "RUNNING",
+   "entrySafetyMode": "AUTO"
+  },
+  "sharedTimerProof": "runtimeControl.evaluate(true) and entry.processPool() share one 2500ms non-overlapping timer (appRuntime.ts:537-542); capital.evaluatedAt advancing proves that callback still runs, and every canDispatch() term above is satisfied, so processPool() is reached.",
+  "capitalEvaluatedAtUtc8": "2026-09-23 07:33:24+08",
+  "capitalNextRecheckAtUtc8": "2026-09-23 07:33:54+08",
+  "refreshReadyViewProof": {
+   "note": "DynamicPool.replenish marks a pipeline-eligible resident READY (pool.ts:26,31); only entryCoordinator.refreshReadyView demotes READY back to WAITING when objectiveCapacity is false (entryCoordinator.ts:96, pool.ts:11). Observing pipeline-eligible symbols sitting WAITING therefore proves the dispatch tick executed after that replenish.",
+   "poolHealthCounts": {
+    "rankedSymbols": 13,
+    "residentSymbols": 13,
+    "potentialReadySymbols": 4,
+    "dispatchReadySymbols": 0,
+    "poolReadySymbols": 0,
+    "poolWaitingSymbols": 13,
+    "poolAnalyzingSymbols": 0,
+    "cooldownSymbols": 0,
+    "staleSymbols": 0,
+    "governanceBlockedSymbols": 76,
+    "occupiedUnderlyings": 29,
+    "freeResidentUnderlyings": 3,
+    "snapshotCount": 101,
+    "consumedSymbols": null
+   },
+   "poolHealthRootBlocker": "CAPITAL",
+   "poolHealthReasonCounts": {
+    "SUPPLY": 0,
+    "CAPITAL": 4,
+    "CAPACITY": 0,
+    "RISK": 0,
+    "MARKET": 0,
+    "GOVERNANCE": 76,
+    "AI": 0
+   },
+   "residentStateTally": {
+    "WAITING": 13
+   },
+   "pipelineEligibleYetWaiting": [
+    "XRPUSDC",
+    "UNIUSDC",
+    "TUTUSDT",
+    "TIAUSDT"
+   ]
+  }
+ },
+ "dashboardWording": {
+  "reasonCode": "NO_EXECUTABLE_CONTRACT",
+  "reasonText": "持续扫描中：当前没有合格可执行机会",
+  "pipelineState": "RUNNING",
+  "aiIdleReason": "WAITING_CANDIDATE",
+  "aiHealthReason": "IDLE_NO_DISPATCHABLE_CANDIDATE",
+  "topNoEntryReason": "WAITING_EXECUTION_CAPACITY",
+  "codeRefs": {
+   "genericText": "apps/engine/src/services/runtimeControlService.ts:128 - text becomes position-capacity wording only when slots.used >= slots.max, otherwise \"持续扫描中：当前没有合格可执行机会\"",
+   "idleClassification": "apps/engine/src/services/aiResourceHealth.ts:29-32 - dispatchable requires executableCandidates > 0, so a long gap is classified READY / IDLE_NO_DISPATCHABLE_CANDIDATE",
+   "idleReasonProducer": "apps/engine/src/services/entryCoordinator.ts:127-130 - WAITING_CANDIDATE is produced when the capacity-filtered ready list is empty, not when no candidate exists"
+  },
+  "distinguishesNormalNoOpportunityFromSilentAiFailure": false
+ }
+}

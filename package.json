@@ -1,6 +1,6 @@
 {
   "name": "zdj-mits-v3",
-  "version": "3.9.4",
+  "version": "3.9.6",
   "private": true,
   "type": "module",
   "workspaces": ["packages/*", "apps/*"],

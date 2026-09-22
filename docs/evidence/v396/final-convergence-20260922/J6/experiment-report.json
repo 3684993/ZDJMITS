@@ -1,0 +1,223 @@
+{
+  "schemaVersion": "V396-EXPERIMENT-REPORT-1",
+  "experimentId": "exp_35be9526fc2b8c5d080295797f4f320c",
+  "formal": false,
+  "hypothesis": "有限复核与不可变计划在保持经济优势的同时降低模型调用成本",
+  "manifest": {
+    "schemaVersion": "V396-EXPERIMENT-1",
+    "hypothesis": "有限复核与不可变计划在保持经济优势的同时降低模型调用成本",
+    "frozenAt": 1790035200000,
+    "splits": {
+      "trainEnd": 1792627200000,
+      "validationEnd": 1793923200000,
+      "finalTestEnd": 1795219200000
+    },
+    "embargoMs": 14400000,
+    "universeRule": {
+      "asOf": "AT_EVENT_TIME",
+      "listingSource": "exchange-info-at-event-time",
+      "exclusions": [
+        "DELISTED_BEFORE_DECISION"
+      ],
+      "snapshotHash": "uni_pending_frozen_listing_snapshot"
+    },
+    "missingDataRule": {
+      "maxGapMs": 300000,
+      "treatUnknownAs": "UNRESOLVED",
+      "dropCycle": false
+    },
+    "groups": [
+      {
+        "id": "A",
+        "description": "冻结基线：现状完整账户表现",
+        "policy": "v395-baseline",
+        "parameters": {
+          "aiExitAuthority": "OFF",
+          "positionReviewEnabled": false,
+          "horizonMs": 14400000
+        },
+        "configHash": "cfg_c126ea4399f4b01e0438242b"
+      },
+      {
+        "id": "B",
+        "description": "基线 + 确定性有限期/交接/合法退出，决策输入可控",
+        "policy": "deterministic-management",
+        "parameters": {
+          "aiExitAuthority": "OFF",
+          "positionReviewEnabled": false,
+          "humanHandoffAfterMinutes": 1440,
+          "horizonMs": 14400000
+        },
+        "configHash": "cfg_fcb46641564cb8dc8381d5e9"
+      },
+      {
+        "id": "C",
+        "description": "无 LLM 的简单可解释规则，同执行与风控",
+        "policy": "simple-rule",
+        "parameters": {
+          "rule": "momentum-15m",
+          "horizonMs": 14400000
+        },
+        "configHash": "cfg_25425b735ade95249f40dda9"
+      },
+      {
+        "id": "D",
+        "description": "27B 计划，无 9B 增量研究",
+        "policy": "plan-27b-only",
+        "parameters": {
+          "scout": false,
+          "review": false,
+          "horizonMs": 14400000
+        },
+        "configHash": "cfg_e5e85053d83eafeb0c7177b5"
+      },
+      {
+        "id": "E",
+        "description": "27B 计划 + 9B 增量研究 + 交易记忆",
+        "policy": "plan-27b-plus-memory",
+        "parameters": {
+          "scout": true,
+          "review": true,
+          "memory": true,
+          "horizonMs": 14400000
+        },
+        "configHash": "cfg_abab0d8007b96e4e027e9f3c"
+      },
+      {
+        "id": "E-minus-memory",
+        "description": "E 去交易记忆（预注册子消融，不允许事后删除）",
+        "policy": "plan-27b-plus-memory",
+        "parameters": {
+          "scout": true,
+          "review": true,
+          "memory": false,
+          "horizonMs": 14400000
+        },
+        "configHash": "cfg_d2a3565788acf4c1e5d8a6e9"
+      }
+    ],
+    "primaryMetric": {
+      "id": "account_net_return_after_funding",
+      "formula": "(finalEquity-startEquity)/startEquity*100，含手续费/资金费/滑点/模型与人工延迟",
+      "denominator": "startEquityUsd",
+      "currencyUnit": "USDT",
+      "timeGranularity": "per-cycle-closed-then-account"
+    },
+    "secondaryMetrics": [
+      "maxDrawdownPct",
+      "tailLossUsd",
+      "capitalUsageUsdSeconds",
+      "handoffBacklog",
+      "openAgeMsP95",
+      "exitSlippageBpsAvg",
+      "modelCostMsTotal"
+    ],
+    "riskBudget": {
+      "source": "S05_PORTFOLIO_PROFILE",
+      "snapshotHash": "v396r0000000000000000000000000000000000000000000000000000000000000000",
+      "maxCapitalAtRiskUsd": 0,
+      "maxStressLossUsd": 0
+    },
+    "thresholds": {
+      "nonInferiorityMarginPct": 5,
+      "minIndependentSamples": 240,
+      "minCoverageRatio": 0.95,
+      "acceptableExecutionModelErrorBps": 25,
+      "minimumTokenSavingPct": 30
+    },
+    "bootstrap": {
+      "method": "stationary-block",
+      "blockLengthMs": 21600000,
+      "replicates": 4000,
+      "intervalLevelPct": 95,
+      "seed": 20260922
+    },
+    "costModel": {
+      "makerRate": 0.0002,
+      "takerRate": 0.0004,
+      "slippageSource": "observed-vs-arrival-price",
+      "fundingSource": "exchange-income-facts",
+      "modelLatencyMs": 1500,
+      "ackLossModelled": true
+    },
+    "humanResponseScenarios": [
+      {
+        "id": "5m",
+        "responseMs": 300000,
+        "description": "人工 5 分钟内响应"
+      },
+      {
+        "id": "1h",
+        "responseMs": 3600000,
+        "description": "人工 1 小时响应"
+      },
+      {
+        "id": "8h",
+        "responseMs": 28800000,
+        "description": "人工 8 小时响应"
+      },
+      {
+        "id": "never",
+        "responseMs": null,
+        "description": "无人响应：周期保持右删失且资本仍被占用"
+      }
+    ],
+    "tokenComparison": {
+      "frozenEventSetHash": null,
+      "baselineRows": 0,
+      "boundedRows": 0
+    },
+    "reproduction": {
+      "command": "node scripts/v396-replay-report.mjs --manifest docs/evidence/v396/final-convergence-20260922/J6/experiment-manifest.json --bundle <frozen-bundle.json>",
+      "sourceCommit": "a7b022b24e259407e5fd9545af3148c295a29d8b",
+      "settingsHash": "pending-settings-hash-at-run-time",
+      "promptSchemaVersion": "V3.9.2",
+      "dataHashes": {}
+    },
+    "experimentId": "exp_35be9526fc2b8c5d080295797f4f320c",
+    "formal": false
+  },
+  "thresholds": {
+    "nonInferiorityMarginPct": 5,
+    "minIndependentSamples": 240,
+    "minCoverageRatio": 0.95,
+    "acceptableExecutionModelErrorBps": 25,
+    "minimumTokenSavingPct": 30
+  },
+  "requiredGroups": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "E-minus-memory"
+  ],
+  "notMeasured": [
+    {
+      "item": "out_of_sample_economics",
+      "status": "NOT_RUN",
+      "reason": "需要授权后的冻结事件流与真实账户会计。"
+    },
+    {
+      "item": "tokenSavingRatio",
+      "status": "NOT_MEASURED",
+      "reason": "缺少同一冻结事件集两侧完整 usage。"
+    },
+    {
+      "item": "migration_canary_soak",
+      "status": "PENDING_WINDOW_INCOMPLETE",
+      "reason": "运行窗口未开始，不以离线结果冒充。"
+    }
+  ],
+  "reproduction": {
+    "command": "node scripts/v396-replay-report.mjs --manifest docs/evidence/v396/final-convergence-20260922/J6/experiment-manifest.json --bundle <frozen-bundle.json>",
+    "sourceCommit": "a7b022b24e259407e5fd9545af3148c295a29d8b",
+    "settingsHash": "pending-settings-hash-at-run-time",
+    "promptSchemaVersion": "V3.9.2",
+    "dataHashes": {}
+  },
+  "generatedBy": "scripts/v396-replay-report.mjs",
+  "runStatus": "NOT_RUN",
+  "reason": "没有冻结的事件流输入；未生成任何数值，也不得据此声称经济结论。",
+  "reproduceWith": "node scripts/v396-replay-report.mjs --manifest docs\\evidence\\v396\\final-convergence-20260922\\J6\\experiment-manifest.json --bundle <frozen-bundle.json>"
+}

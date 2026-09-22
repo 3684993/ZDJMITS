@@ -26,7 +26,7 @@ const finite=(value:unknown)=>typeof value==='number'&&Number.isFinite(value);
  * HUMAN_MANAGED/HANDOFF_PENDING risk is never discounted. Capacity exhaustion blocks only
  * new risk; protection remains allowed.
  */
-export function evaluateHumanCapacity(input:{snapshot:PortfolioRiskSnapshot;profile:HumanCapacityProfile;now:number;candidateNotionalUsd?:number}):HumanCapacityDecision{
+export function evaluateHumanCapacity(input:{snapshot:PortfolioRiskSnapshot;profile:HumanCapacityProfile;now:number;candidateNotionalUsd?:number;candidateAlreadyCounted?:boolean}):HumanCapacityDecision{
   const {snapshot,profile}=input,blockers:string[]=[];
   const validProfile=Number.isSafeInteger(profile.maxHumanPositions)&&profile.maxHumanPositions>=0&&finite(profile.maxHumanNotionalUsd)&&profile.maxHumanNotionalUsd>=0&&Number.isSafeInteger(profile.maxPendingHandoffs)&&profile.maxPendingHandoffs>=0&&finite(profile.maxAckAgeMs)&&profile.maxAckAgeMs>=0;
   if(!validProfile)blockers.push('HUMAN_CAPACITY_PROFILE_INVALID');
@@ -48,7 +48,9 @@ export function evaluateHumanCapacity(input:{snapshot:PortfolioRiskSnapshot;prof
   if(validProfile){
     if(pendingHandoffs>profile.maxPendingHandoffs)blockers.push('HUMAN_PENDING_HANDOFF_LIMIT');
     if(overdue.length)blockers.push('HUMAN_ACK_OVERDUE');
-    if(potentialHandoffSlots+1>profile.maxHumanPositions)blockers.push('HUMAN_POTENTIAL_SLOT_LIMIT');
+    // A caller whose candidate is already inside the snapshot must not be charged the slot twice.
+    const reservedSlots=potentialHandoffSlots+(input.candidateAlreadyCounted?0:1);
+    if(reservedSlots>profile.maxHumanPositions)blockers.push('HUMAN_POTENTIAL_SLOT_LIMIT');
     if(potentialHandoffNotionalUsd+Math.max(0,candidateNotionalUsd)>profile.maxHumanNotionalUsd)blockers.push('HUMAN_POTENTIAL_NOTIONAL_LIMIT');
   }
 

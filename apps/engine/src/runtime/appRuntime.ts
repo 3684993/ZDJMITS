@@ -50,6 +50,7 @@ import { attachOwnershipRuntime, type OwnershipRuntime } from '../services/owner
 import { V396ExitRuntime, exitSubjectFromPosition } from '../services/v396ExitRuntime.js';
 import { V396AiExitRunner } from '../services/v396AiExitRunner.js';
 import { AiExitAuthorityService } from '../services/aiExitAuthority.js';
+import { PortfolioRiskAdmission } from '../services/portfolioRiskLedger.js';
 
 export class EngineRuntime {
   readonly writes=new RuntimeWriteBuffer();
@@ -79,6 +80,9 @@ export class EngineRuntime {
   cohort!: MarketCohort;
   lossHandoff!: LossHandoffService
   ownership?: OwnershipRuntime;  exitRuntime?: V396ExitRuntime;  aiExitAuthority?: AiExitAuthorityService;  aiExitRunner?: V396AiExitRunner;
+  portfolioRisk?: PortfolioRiskAdmission;
+  cashFlowFacts: () => Array<{ id: string; amountUsd: number; factStatus: 'VERIFIED' }> = () => [];
+  refreshCashFlowFacts: (now?: number) => Promise<{ rows: number; complete?: boolean; asOf: number } | null> = async () => null;
   private timers: NodeJS.Timeout[] = [];
   private stopped = false;
   private ready = false;
@@ -322,6 +326,66 @@ export class EngineRuntime {
       positionId=>{const position=state.positions.get(positionId);return position?{symbol:position.symbol,positionSide:position.side,cycleId:position.cycleId??null}:null;},
       ()=>({environment:state.settings.connections.exchange.environment,account:state.settings.connections.exchange.credentialRef}));
     runtime.shadowReadiness = new ShadowReadinessService(state, store);
+    // J2: one authoritative portfolio admission. It reads only facts the Engine already keeps plus a
+    // bounded external-transfer coverage read, and it is the single source of a reservation's risk
+    // binding: no snapshot, no claim. Ownership lookups never invent an AI owner - a journal miss is
+    // UNKNOWN risk, which keeps occupying capacity.
+    const cashFlow:{rows:Array<{id:string;amountUsd:number;asset:string;time:number}>;complete:boolean;asOf:number;windowStart:number;windowEnd:number;inFlight:boolean;lastError:string|null}
+      = {rows:[],complete:false,asOf:0,windowStart:0,windowEnd:0,inFlight:false,lastError:null};
+    runtime.portfolioRisk = new PortfolioRiskAdmission({
+      state,
+      identity: () => ({ environment: String(state.settings.connections.exchange.environment), account: String(state.settings.connections.exchange.credentialRef) }),
+      ownerOf: (scope, cycleId) => {
+        const service = runtime.ownership?.ownershipService();
+        if (!service) return null;
+        try {
+          const row = service.ownership(scope, cycleId);
+          return row ? { ownerState: row.ownerState as any, handoffAt: Number(row.transitionedAt) || null, acknowledgedAt: row.acknowledgedAt == null ? null : Number(row.acknowledgedAt) } : null;
+        } catch { return null; }
+      },
+      cashFlows: () => runtime.cashFlowFacts(),
+      profile: () => (state.settings.riskGovernance as any)?.portfolioRisk ?? {},
+    });
+    runtime.portfolioRisk.restore(state.riskLedger);
+    (state as any).riskAdmission = runtime.portfolioRisk;
+    state.entryRiskGate = (input: any) => {
+      const decision = runtime.portfolioRisk!.gate(input);
+      state.riskLedger = runtime.portfolioRisk!.serialize();
+      return decision;
+    };
+    runtime.cashFlowFacts = () => {
+      const profile = (state.settings.riskGovernance as any)?.portfolioRisk ?? {};
+      const maxAge = Number(profile.cashFlowMaxAgeMs ?? 900_000);
+      if (!cashFlow.complete || !cashFlow.asOf || Date.now() - cashFlow.asOf > maxAge) return [];
+      // A complete read with no transfer is a proven zero for that window; an unread window is
+      // reported as no facts at all so the snapshot stays incomplete.
+      return cashFlow.rows.length
+        ? cashFlow.rows.map(row => ({ id: row.id, amountUsd: row.amountUsd, factStatus: 'VERIFIED' as const }))
+        : [{ id: `cashflow-coverage:${cashFlow.windowStart}:${cashFlow.windowEnd}`, amountUsd: 0, factStatus: 'VERIFIED' as const }];
+    };
+    runtime.refreshCashFlowFacts = async (now = Date.now()) => {
+      const adapter = runtime.trade as any, profile = (state.settings.riskGovernance as any)?.portfolioRisk ?? {};
+      if (!adapter?.fetchCashFlowFacts || cashFlow.inFlight) return null;
+      if (state.settings.connections.executionMode !== 'TESTNET_ENABLED' || !privateAccountFresh(state.account as never, now)) return null;
+      if (now - cashFlow.asOf < Math.max(60_000, Number(profile.cashFlowMaxAgeMs ?? 900_000) / 3)) return cashFlow.complete ? { rows: cashFlow.rows.length, asOf: cashFlow.asOf } : null;
+      cashFlow.inFlight = true;
+      try {
+        const windowMs = Math.max(60_000, Number(profile.cashFlowWindowMs ?? 86_400_000));
+        const read = await adapter.fetchCashFlowFacts(now - windowMs, now);
+        cashFlow.rows = Array.isArray(read?.facts) ? read.facts : [];
+        cashFlow.complete = read?.complete === true;
+        cashFlow.windowStart = Number(read?.windowStart ?? 0); cashFlow.windowEnd = Number(read?.windowEnd ?? 0);
+        cashFlow.asOf = cashFlow.complete ? now : cashFlow.asOf;
+        cashFlow.lastError = null;
+        if (!cashFlow.complete) events.publish('PORTFOLIO_CASH_FLOW_COVERAGE_INCOMPLETE', { rows: cashFlow.rows.length, windowStart: cashFlow.windowStart, windowEnd: cashFlow.windowEnd }, 'V396');
+        return { rows: cashFlow.rows.length, complete: cashFlow.complete, asOf: cashFlow.asOf };
+      } catch (error) {
+        cashFlow.complete = false; cashFlow.asOf = 0;
+        cashFlow.lastError = error instanceof Error ? error.message : String(error);
+        events.publish('PORTFOLIO_CASH_FLOW_READ_FAILED', { reason: cashFlow.lastError, failClosed: true }, 'V396');
+        return null;
+      } finally { cashFlow.inFlight = false; }
+    };
     runtime.temporal = new TemporalIntelligenceService(
       store.dataDirectory(),
       events,
@@ -609,6 +673,11 @@ export class EngineRuntime {
     this.every(2_000,async()=>{if(this.state.settings.connections.executionMode==='TESTNET_ENABLED')await this.manual.resumeExitGoals();});
     this.every(1_000,()=>this.writes.flush());
     this.every(5_000,()=>{this.ownership?.pump();this.fixFirstFillDeadlines();void this.convergeExitsPeriodically();void this.aiExitRunner?.tick();});
+    // J2: the external-transfer coverage read is only attempted when a human configured the
+    // portfolio profile and the adapter can answer it; otherwise it costs no request at all.
+    this.every(60_000,async()=>{
+      if((this.state.settings.riskGovernance as any)?.portfolioRisk?.configured===true)await this.refreshCashFlowFacts().catch(()=>null);
+    });
     this.every(1_000,()=>this.tradingQuality?.tick());
     this.every(5_000,()=>this.qualityObserver?.tick());
     this.every(5_000, async () => this.tp.sweep());

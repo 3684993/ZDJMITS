@@ -2,7 +2,6 @@
 import { DynamicPool, resolveUnderlying } from '@zdj/core';
 import { entryOrderOccupiesRisk } from '../services/entryRiskOccupancy.js';
 import { privateAccountFresh } from '../services/privateAccountReadiness.js';
-import { stableRiskHash } from '../services/portfolioRiskSnapshot.js';
 export type PositionLifecycleState = any;
 export type AccountState = any;
 const RESERVATION_NO_CHANGE='RESERVATION_NO_CHANGE';
@@ -40,6 +39,8 @@ export class RuntimeState {
     entryReservationRevision = 0;
     entryReservationTransaction = null;
     entryRiskGate = null;
+    /** Serialized portfolio risk ledger (generation + last content hash). Never an authority by itself. */
+    riskLedger = null;
     private reservationMutationActive = false;
     private reservationMapsChanged(reservations,locks) {
         const same=(left,right)=>left.size===right.size&&[...left].every(([key,value])=>right.has(key)&&JSON.stringify(value)===JSON.stringify(right.get(key)));
@@ -130,18 +131,18 @@ export class RuntimeState {
         const capitalVersion=String(capital?.capitalVersion??'').trim();
         if(!capitalVersion||capitalVersion==='0')return {ok:false,reason:'CAPITAL_VERSION_REQUIRED'};
         if(!Number.isFinite(capital?.nextRecheckAt)||capital.nextRecheckAt<=now)return {ok:false,reason:'CAPITAL_FACTS_EXPIRED'};
-        if(input.riskGeneration!==undefined&&input.riskGeneration!==null){
-            if(!Number.isSafeInteger(input.riskGeneration)||input.riskGeneration<=0)return {ok:false,reason:'RISK_GENERATION_REQUIRED'};
-            if(input.riskGeneration!==capital.generation)return {ok:false,reason:'RISK_GENERATION_STALE'};
-        }
         if(input.riskCapitalVersion!==undefined&&input.riskCapitalVersion!==null&&String(input.riskCapitalVersion).trim()!==capitalVersion)return {ok:false,reason:'CAPITAL_VERSION_STALE'};
-        const risk=this.entryRiskGate?.({...input,now,riskGeneration:capital.generation,capitalVersion});
-        if(this.entryRiskGate){
-            if(!Number.isSafeInteger(input.riskGeneration)||input.riskGeneration<=0)return {ok:false,reason:'RISK_GENERATION_REQUIRED'};
-            if(!risk||risk.allowed!==true)return {ok:false,reason:risk?.reason??'PORTFOLIO_ADMISSION_BLOCKED'};
-        }
-        const binding=risk?.binding??{riskGeneration:capital.generation,snapshotHash:stableRiskHash({riskGeneration:capital.generation,capitalVersion,evaluatedAt:capital.evaluatedAt,nextRecheckAt:capital.nextRecheckAt,accountAsOf:this.account.asOf}),evaluatedAt:capital.evaluatedAt,expiresAt:Math.min(capital.nextRecheckAt,Number(this.account.asOf)+60_000)};
-        if(!Number.isSafeInteger(binding?.riskGeneration)||binding.riskGeneration!==capital.generation||typeof binding.snapshotHash!=='string'||!binding.snapshotHash.trim()||!Number.isFinite(binding.evaluatedAt)||binding.evaluatedAt>now||!Number.isFinite(binding.expiresAt)||binding.expiresAt<=now)return {ok:false,reason:'RISK_BINDING_INVALID'};
+        // J2: the portfolio admission is the only source of a risk binding. There is no default
+        // binding computed from the capital route, and no selection generation standing in for a
+        // risk generation - without a snapshot of what the account actually holds, no new risk.
+        if(typeof this.entryRiskGate!=='function')return {ok:false,reason:'RISK_ADMISSION_UNPROVEN'};
+        const risk=this.entryRiskGate({...input,now,riskGeneration:capital.generation,capitalVersion});
+        if(!risk||risk.allowed!==true)return {ok:false,reason:risk?.reason??'PORTFOLIO_ADMISSION_BLOCKED'};
+        const binding=risk.binding;
+        if(!Number.isSafeInteger(binding?.riskGeneration)||binding.riskGeneration<=0||typeof binding.snapshotHash!=='string'||!/^v396r[0-9a-f]{32,}$/.test(binding.snapshotHash)||
+           !Number.isFinite(binding.evaluatedAt)||binding.evaluatedAt>now||!Number.isFinite(binding.expiresAt)||binding.expiresAt<=now||!String(binding.profileVersion??'').trim())
+            return {ok:false,reason:'RISK_BINDING_INVALID'};
+        if(input.riskGeneration!==undefined&&input.riskGeneration!==null&&input.riskGeneration!==binding.riskGeneration)return {ok:false,reason:'RISK_GENERATION_STALE'};
         const id=`reserve_${now}_${Math.random().toString(36).slice(2,8)}`;
         this.entryReservations.set(id,{id,underlying,quoteAsset:input.quoteAsset,marginUsd:input.marginUsd,notionalUsd:input.notionalUsd,planId:input.planId,intentId:null,createdAt:now,expiresAt:now+input.ttlSeconds*1000,status:'RESERVED',riskBinding:binding});
         this.underlyingLocks.set(underlying,{reservationId:id,leaseUntil:now+input.leaseSeconds*1000});
@@ -192,9 +193,9 @@ export class RuntimeState {
     else
         this.executionFills.unshift(fill); if (this.executionFills.length > 5000)
         this.executionFills.length = 5000; }
-    serialize() { return { entryReservationRevision:this.entryReservationRevision, generation: this.generation, marketGeneration: this.marketGeneration, positions: [...this.positions], entryIntents: [...this.entryIntents], entryOrders: [...this.entryOrders], tpOrders: [...this.tpOrders], manualExitGoals:[...this.manualExitGoals], manualIntents: [...this.manualIntents], manualOrders: [...this.manualOrders], allocationPlans: [...this.allocationPlans], entryReservations: [...this.entryReservations], underlyingLocks: [...this.underlyingLocks], runtimeControl: this.runtimeControl, executionGovernance: this.executionGovernance, shadowRunner: this.shadowRunner, aiRuns: this.aiRuns, rejectionCooldown: [...this.rejectionCooldown], candidateLifecycle:[...this.candidateLifecycle], directionDecisionStates:[...this.directionDecisionStates], tradeOutcomes: this.tradeOutcomes, tradeRecords: [...this.tradeRecords], experienceSamples: [...this.experienceSamples], executionFills: this.executionFills, lifecycles: [...this.lifecycles], activity: this.activity, account: this.account }; }
+    serialize() { return { entryReservationRevision:this.entryReservationRevision, riskLedger:this.riskLedger, generation: this.generation, marketGeneration: this.marketGeneration, positions: [...this.positions], entryIntents: [...this.entryIntents], entryOrders: [...this.entryOrders], tpOrders: [...this.tpOrders], manualExitGoals:[...this.manualExitGoals], manualIntents: [...this.manualIntents], manualOrders: [...this.manualOrders], allocationPlans: [...this.allocationPlans], entryReservations: [...this.entryReservations], underlyingLocks: [...this.underlyingLocks], runtimeControl: this.runtimeControl, executionGovernance: this.executionGovernance, shadowRunner: this.shadowRunner, aiRuns: this.aiRuns, rejectionCooldown: [...this.rejectionCooldown], candidateLifecycle:[...this.candidateLifecycle], directionDecisionStates:[...this.directionDecisionStates], tradeOutcomes: this.tradeOutcomes, tradeRecords: [...this.tradeRecords], experienceSamples: [...this.experienceSamples], executionFills: this.executionFills, lifecycles: [...this.lifecycles], activity: this.activity, account: this.account }; }
     restore(value) { if (!value || typeof value !== 'object')
-        return; this.entryReservationRevision=Number.isSafeInteger(value.entryReservationRevision)?value.entryReservationRevision:0; this.generation = Number(value.generation) || 1; this.marketGeneration = Number(value.marketGeneration) || this.generation; for (const [key, target] of [['positions', this.positions], ['entryIntents', this.entryIntents], ['entryOrders', this.entryOrders], ['tpOrders', this.tpOrders], ['manualExitGoals',this.manualExitGoals], ['manualIntents', this.manualIntents], ['manualOrders', this.manualOrders], ['allocationPlans', this.allocationPlans], ['tradeRecords', this.tradeRecords], ['experienceSamples', this.experienceSamples], ['rejectionCooldown', this.rejectionCooldown], ['candidateLifecycle', this.candidateLifecycle], ['lifecycles', this.lifecycles], ['entryReservations', this.entryReservations], ['underlyingLocks', this.underlyingLocks]])
+        return; this.entryReservationRevision=Number.isSafeInteger(value.entryReservationRevision)?value.entryReservationRevision:0; this.riskLedger=value.riskLedger&&typeof value.riskLedger==='object'?value.riskLedger:null; this.generation = Number(value.generation) || 1; this.marketGeneration = Number(value.marketGeneration) || this.generation; for (const [key, target] of [['positions', this.positions], ['entryIntents', this.entryIntents], ['entryOrders', this.entryOrders], ['tpOrders', this.tpOrders], ['manualExitGoals',this.manualExitGoals], ['manualIntents', this.manualIntents], ['manualOrders', this.manualOrders], ['allocationPlans', this.allocationPlans], ['tradeRecords', this.tradeRecords], ['experienceSamples', this.experienceSamples], ['rejectionCooldown', this.rejectionCooldown], ['candidateLifecycle', this.candidateLifecycle], ['lifecycles', this.lifecycles], ['entryReservations', this.entryReservations], ['underlyingLocks', this.underlyingLocks]])
         if (Array.isArray(value[key]))
             for (const [id, source] of value[key]) {
                 const row = key === 'positions' ? { entryTimeSource: 'UNKNOWN', managementStatus: 'AUTO_MANAGED', humanManagedAt: null, tpLastVerifiedAt: null, tpCoverageSource: 'NONE', firstObservedAt: null, ...source } : source;

@@ -1,0 +1,78 @@
+{
+  "stage": "J2",
+  "title": "单一权威组合准入 Portfolio Risk Admission",
+  "date": "2026-09-22",
+  "inputCommit": "5688478",
+  "authority": [
+    "docs/plans/v396/CODEX-FINAL-CLOSEOUT-20260922.md §3",
+    "docs/plans/v396/FINAL-REMAINING-IMPLEMENTATION-20260922.md J2",
+    "docs/plans/v396/05-portfolio-and-tail-risk.md"
+  ],
+  "files": {
+    "apps/engine/src/services/portfolioRiskLedger.ts": "8538cbdcf1826aa3f0885855381bae1b4c8e5948d28b18aa0981b13c73a7be74",
+    "apps/engine/src/state/runtimeState.ts": "35c49befde1834eab727ee5c748de4acefe4d20755ab4873d818b05b5e1e612c",
+    "apps/engine/src/services/entryCoordinator.ts": "4ea051612bbeeb54b5c699afe82b5958f26168ccba81c2f6b6ff8ca8368ff898",
+    "apps/engine/src/runtime/appRuntime.ts": "beaffe574a59122406cf57ba56ca53db35ae268e8feabb2f1c425f1ba13c6308",
+    "apps/engine/src/adapters/exchange/ExternalTradeAdapter.ts": "dd290b25fc0de1b649dd30ece2d63b35afaa4b964e3b61bd12b867b4a3e2caa0",
+    "apps/engine/src/services/humanCapacityPolicy.ts": "2dc331eb958ffd617afeb821339f93002c2056f4094504bd6eb412ea25008878",
+    "apps/engine/src/services/s05ConsumerBoundary.test.ts": "827d2d466ef09a0705fa2e9fa32d0d169b4c73c966936f0c66a49cb46e418411",
+    "apps/engine/src/services/j2PortfolioAdmissionHostile.test.ts": "327055643101ca3f96d89039cfe37b09194f954d9166e3eae47dcc92c7eaf6f3",
+    "apps/engine/src/testing/deterministicRiskAdmission.ts": "c4b65ce98babc5b14f86e721af42ffb11eaa02590fb0bba670a5c2687129751b",
+    "packages/contracts/src/riskGovernance.ts": "2dfcf1b4a2ad4c445961b17a1c8602aa3eabaf8267c551a5089a144ba2db1568",
+    "packages/contracts/src/trading.ts": "5c3199629c128549c46849ec6c9e5e75da6f6f212ab6d538dfd2ea4fe447f719",
+    "apps/engine/src/types.ts": "6ee6acf882787796aa858a4d2119980c7370bbfac0ba668ca65fb62ae4cf0df1",
+    "apps/engine/src/state/c2ReservationAtomicityHostile.test.ts": "644f72ba2d26fc150048490fda425db83b009155529a25f28f1261bd9bfbf59a",
+    "apps/engine/src/state/reservationConvergence.test.ts": "3d6e39d5b9306503c38fe4be3792cf5518a794f0c6a8e9f02a8d11a6ff2c401e",
+    "apps/engine/src/state/runtimeState.test.ts": "078a71a26a285535fc7a64ac0bca65a5e5ac6775e9293c8bb5401e1a7933301f",
+    "apps/engine/src/services/v370Contract.test.ts": "e6c44bd0ba9bb4de33112b1ea381eeb2ddc1f02c07431027738ad161d75b629b",
+    "apps/engine/src/services/tradingQualityTestHarness.ts": "62286a9b39cda7d85101c6bb6bcddbc8f474ac881c5a04d0a75fa2f7ca1464ed"
+  },
+  "hashNormalisation": "sha256 over LF-normalised bytes",
+  "gates": {
+    "engineTests": { "files": 144, "passed": 1013, "failed": 0, "exit": 0, "baseline": "997/143" },
+    "coreTests": { "passed": 46, "failed": 0, "exit": 0 },
+    "dashboardTests": { "passed": 17, "failed": 0, "exit": 0 },
+    "contractsTests": { "passed": 0, "exit": 0, "note": "0 个用例，不计为契约覆盖" },
+    "build": { "contracts": 0, "core": 0, "engine": 0, "dashboard": 0 },
+    "typecheck": { "engine": 0, "dashboard": 0 },
+    "s00": { "T01_T06": "PASS", "entrypointReviewCount": 108, "blockers": 0, "engineTestFiles": 144, "everyStoreOpeningTestIsolated": true, "repositoryDataDirReferences": 0, "productionPortReferences": 0, "exchangeWrites": 0, "network": "NOT_USED", "engineLifecycle": "NOT_USED", "settingsModified": false },
+    "diffCheck": { "exit": 0 },
+    "runFrom": "repository root"
+  },
+  "delivered": {
+    "singleAuthority": "portfolioRiskLedger.PortfolioRiskAdmission 是唯一把 buildPortfolioRiskSnapshot + evaluatePortfolioStress + evaluateHumanCapacity 串成准入决策的模块；RuntimeState 不再 import 任何 S05 纯模块。",
+    "durableBinding": "reserveEntryAtomic：无 entryRiskGate ⇒ RISK_ADMISSION_UNPROVEN；binding 必须 riskGeneration>0、snapshotHash=^v396r[0-9a-f]{32,}$、profileVersion 非空、evaluatedAt≤now<expiresAt，且与调用方声明的 generation 一致，写入 reservation.riskBinding。",
+    "selectionGenerationRetired": "entryCoordinator 不再用 candidate.selectionGeneration 冒充当风险版本；改为 admit() 预检票据 + 同事务 gate() 重验。",
+    "factVersion": "riskGeneration 只在真实事实（资产/持仓/现金流/订单/预留）内容变化时递增；仅仅评估另一个候选不会使已发票据失效（有测试固定该方向）。",
+    "candidateAsPlannedPosition": "候选以计划持仓进入快照，因此它自身的保证金档位与清算缓冲必须先被证明，否则 MARGIN_TIER_UNPROVEN / POSITION_FACT_UNVERIFIED 拒绝；人工容量只计一次（candidateAlreadyCounted）。",
+    "unknownKeepsRisk": "durable ownership 缺失记 UNKNOWN 持仓（拒绝），HUMAN_MANAGED/HANDOFF_PENDING 不降风险，UNKNOWN 在途单继续占 pending，外部入金按 flow-adjusted 净值算回撤，入金未证实 ⇒ CASH_FLOW_UNVERIFIED。",
+    "marginFacts": "fetchPositions 现在透传 /fapi/v2/positionRisk 已返回的 liquidationPrice/marginAsset/notional/maintenanceMargin，缺失保持 null（不推导、不补零）；新增 fetchCashFlowFacts 只读分页 TRANSFER 采集，窗口不完整 ⇒ complete=false ⇒ 不视为零。",
+    "cashFlowCadence": "现网 60s tick 只在 portfolioRisk.configured=true 且私有账户新鲜时尝试刷新现金流覆盖，未配置 profile 时不产生任何新请求。",
+    "restart": "ledger.restore 保留 generation 单调序但清空 snapshotHash/expiresAt；重启后必须重新读事实才可能再次授权，恢复本身不给权限。",
+    "boundaryTest": "s05ConsumerBoundary 由“无消费者”改为具名白名单：portfolioRiskLedger 是唯一 admit 消费者，runtimeState 不得 import S05 纯模块，写单路径模块不得 import 准入模块，且断言 selectionGeneration 冒充不得回归。"
+  },
+  "redTests": [
+    "profile 未配置 ⇒ RISK_PROFILE_UNCONFIGURED，绝不自动填可交易数值",
+    "缺 marginTier / cash-flow 覆盖 / 私有账户新鲜 / FX 折算 ⇒ 各自 blocker，不编造 headroom",
+    "S05-T01 转人工不降暴露、不换 hash 为更小风险",
+    "S05-T02 同 underlying 多报价与同 lineage 重复只计一次",
+    "S05-T03 两候选共用旧快照版本 ⇒ 第二单 RISK_SNAPSHOT_CHANGED，不得双花",
+    "S05-T04 更坏场景收紧准入；放宽预算不追认旧票据（旧票再用作废）",
+    "S05-T06 人工积压/超时阻断新仓但 protectionAllowed 恒真",
+    "S05-T07 入金不掩盖回撤；未证实入金不可当 0",
+    "S05-T08 UNKNOWN 在途与未成交继续占额度",
+    "重启/无 gate/畸形 binding/过期 binding ⇒ 一律拒绝，且不留 reservation"
+  ],
+  "testSemanticsChanged": [
+    "c2ReservationAtomicityHostile：binding.riskGeneration 由 capital.generation(7) 改为组合账本 generation，并显式断言两者不再相等（那正是被废除的冒充）。",
+    "reservationConvergence：删除“gate 为 null 时仍可预留”的旧语义，改为 RISK_ADMISSION_UNPROVEN；补齐格式合法/缺 profileVersion/拒绝/过期四类断言。",
+    "runtimeState/v370/sideNeutral/tradingQuality：这些用例的意图不是组合准入，改由 testing/deterministicRiskAdmission 显式声明替身门，替身不导入任何 S05 模块。"
+  ],
+  "knownOpenItems": {
+    "productionAdmissionIsFailClosed": "现网默认 portfolioRisk.configured=false ⇒ 新增风险一律拒绝（保护、平仓、人工路径不受影响）。要开始接纳新仓必须由人工显式配置限额、单位、保证金档位版本、相关性版本与压力场景。",
+    "cashFlowSource": "现金流覆盖依赖 fetchCashFlowFacts 的 TRANSFER 只读采集；未刷新成功前窗口按 UNPROVIDED 处理，而不是零。该读取只在 profile 配置后发生。",
+    "maintenanceMarginField": "positionRisk v2 若无维护保证金字段则保持 null，快照按 MAINTENANCE_MARGIN_UNPROVEN 拒绝，等档表事实由 profile.marginTierVersion + maintenanceMarginRatePct 提供。",
+    "uiReadSide": "快照 generation/hash/factCoverage/限制原因的页面与 API 展示归 J5。"
+  },
+  "boundary": "仅隔离 worktree、临时 SQLite、mock adapter；未启动/停止/重启 Engine，未部署，未修改 live Settings/DB，未调用任何交易所写接口。"
+}

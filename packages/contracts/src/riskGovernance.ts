@@ -65,6 +65,15 @@ export const PortfolioRiskProfileSettingsSchema = z.object({
   correlationVersion: z.string().default(''),
   clusters: z.record(z.string()).default({}),
   scenarioVersion: z.string().default(''),
+  /** How long one portfolio snapshot may authorise a claim. A shorter TTL can only tighten. */
+  snapshotTtlMs: z.number().int().min(5_000).max(120_000).default(20_000),
+  /** Identifies the margin-bracket table the operator supplied; empty means no tier is proven. */
+  marginTierVersion: z.string().default(''),
+  /** Maintenance margin as a fraction of notional for the bracket in use. Null means unproven. */
+  maintenanceMarginRatePct: z.number().min(0).max(0.2).nullable().default(null),
+  /** How the external-transfer coverage window is read and how long it may authorise admission. */
+  cashFlowWindowMs: z.number().int().min(60_000).max(7 * 86_400_000).default(86_400_000),
+  cashFlowMaxAgeMs: z.number().int().min(60_000).max(3_600_000).default(900_000),
   scenarios: z.array(z.object({
     id: z.string(),
     priceShockPct: z.number(),

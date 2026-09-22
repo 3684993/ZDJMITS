@@ -3,12 +3,13 @@ import {mkdtemp,rm} from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import {RuntimeState} from './runtimeState.js';
+import {installDeterministicAdmission, DETERMINISTIC_SNAPSHOT_HASH} from '../testing/deterministicRiskAdmission.js';
 import {SettingsStore} from '../config/settingsStore.js';
 const dirs:string[]=[];
 afterEach(async()=>{for(const dir of dirs.splice(0))await rm(dir,{recursive:true,force:true});});
 const settings:any={portfolio:{maxPositions:10},riskGovernance:{}};
 const args={underlying:'BTC',quoteAsset:'USDT',marginUsd:60,notionalUsd:100,planId:'p',maxPositions:10,ttlSeconds:300,leaseSeconds:120,maxConcurrentReservations:10};
-function state(){const s=new RuntimeState(settings),now=Date.now();s.account={...s.account,status:'READY',asOf:now,equityUsd:100,assets:[{asset:'USDT',availableBalance:100}]};
+function state(){const s=new RuntimeState(settings);installDeterministicAdmission(s);const now=Date.now();s.account={...s.account,status:'READY',asOf:now,equityUsd:100,assets:[{asset:'USDT',availableBalance:100}]};
 s.runtimeControl={...s.runtimeControl,capital:{...s.runtimeControl.capital,generation:7,evaluatedAt:now,capitalVersion:'capital-fixture',nextRecheckAt:now+120_000}};return s;}
 describe('C2 reservation safety',()=>{
  it('retains expired reserved risk while an unknown write exists',()=>{const s=state(),r=s.reserveEntry(args);s.entryReservations.get(r.reservationId).expiresAt=1;s.entryOrders.set('o',{id:'o',symbol:'BTCUSDT',reservationId:r.reservationId,status:'UNKNOWN'});s.cleanupReservations();expect(s.entryReservations.get(r.reservationId).status).toBe('RESERVED');expect(s.reserveEntry({...args,underlying:'ETH'}).ok).toBe(false);});
@@ -51,18 +52,30 @@ describe('C2 reservation safety',()=>{
      const durable:any=store.loadRuntime();expect(durable.entryReservations.find(([key]:any[])=>key===id)[1].status).toBe('RELEASED');expect(durable.underlyingLocks).toEqual([]);expect(durable.entryReservationRevision).toBe(1);
    }finally{store.close();}
  });
- it('requires an exact fresh risk binding whenever the S05 admission gate is installed',()=>{
+ it('accepts only an exact, well-formed and fresh risk binding from the installed admission gate',()=>{
    const s=state(),evaluatedAt=Date.now();
-   s.entryRiskGate=()=>({allowed:true,binding:{riskGeneration:7,snapshotHash:'v396r_test',evaluatedAt,expiresAt:evaluatedAt+60_000}});
-   expect(s.reserveEntry({...args,riskGeneration:6})).toMatchObject({ok:false,reason:'RISK_GENERATION_STALE'});
-   expect(s.reserveEntry(args)).toMatchObject({ok:false,reason:'RISK_GENERATION_REQUIRED'});
-   expect(s.reserveEntry({...args,riskGeneration:7}).ok).toBe(true);
+   // Enough margin headroom that every case below is decided by the binding, not by the balance.
+   s.account={...s.account,equityUsd:10_000,assets:[{asset:'USDT',availableBalance:10_000}]};
+   const good={riskGeneration:7,snapshotHash:DETERMINISTIC_SNAPSHOT_HASH,evaluatedAt,expiresAt:evaluatedAt+60_000,profileVersion:'v396r_profile'};
+   s.entryRiskGate=()=>({allowed:true,binding:good});
+   // A caller naming a different generation than the binding is acting on stale facts.
+   expect(s.reserveEntry({...args,riskGeneration:6,underlying:'ETH'})).toMatchObject({ok:false,reason:'RISK_GENERATION_STALE'});
+   expect(s.reserveEntry({...args,underlying:'SOL'}).ok).toBe(true);
+   s.entryRiskGate=()=>({allowed:true,binding:{...good,snapshotHash:'v396r_not_a_hash'}});
+   expect(s.reserveEntry({...args,underlying:'DOGE'})).toMatchObject({ok:false,reason:'RISK_BINDING_INVALID'});
+   s.entryRiskGate=()=>({allowed:true,binding:{...good,profileVersion:''}});
+   expect(s.reserveEntry({...args,underlying:'XRP'})).toMatchObject({ok:false,reason:'RISK_BINDING_INVALID'});
+   s.entryRiskGate=()=>({allowed:false,reason:'STRESS_BUDGET_EXCEEDED'});
+   expect(s.reserveEntry({...args,underlying:'ADA'})).toMatchObject({ok:false,reason:'STRESS_BUDGET_EXCEEDED'});
+   // J2 removed the optional-gate path: with no gate there is no proven binding and nothing reserves.
+   s.entryRiskGate=null;
+   expect(s.reserveEntry({...args,underlying:'LINK'})).toMatchObject({ok:false,reason:'RISK_ADMISSION_UNPROVEN'});
  });
  it('rejects an expired risk binding and cannot resurrect a released reservation',()=>{
    const s=state(),now=Date.now();
    s.runtimeControl={...s.runtimeControl,capital:{...s.runtimeControl.capital,generation:1}};
    s.entryRiskGate=()=>({allowed:true,binding:{riskGeneration:1,snapshotHash:'v396r_old',evaluatedAt:now-1000,expiresAt:now-1}});
    expect(s.reserveEntry({...args,riskGeneration:1})).toMatchObject({ok:false,reason:'RISK_BINDING_INVALID'});
-   s.entryRiskGate=null;const r=s.reserveEntry(args);expect(r.ok).toBe(true);expect(s.releaseEntryReservation(r.reservationId)).toBe(true);expect(s.commitEntryReservation(r.reservationId)).toBe(false);
+   s.entryRiskGate=()=>({allowed:true,binding:{riskGeneration:1,snapshotHash:DETERMINISTIC_SNAPSHOT_HASH,evaluatedAt:now,expiresAt:now+60_000,profileVersion:'v396r_profile'}});const r=s.reserveEntry(args);expect(r.ok,JSON.stringify(r)).toBe(true);expect(s.releaseEntryReservation(r.reservationId)).toBe(true);expect(s.commitEntryReservation(r.reservationId)).toBe(false);
  });
 });

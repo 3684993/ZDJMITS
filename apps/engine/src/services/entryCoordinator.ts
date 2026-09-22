@@ -347,7 +347,28 @@ export class EntryCoordinator {
       if(economicAdmission.mode==='ENFORCE'&&!economicAdmission.passed){const reason=economicAdmission.blockers[0]??'ECONOMIC_ADMISSION_FAILED';this.events.publish('ENTRY_DECISION_BLOCKED',{stage:'ECONOMIC_ADMISSION',reason,reasons:economicAdmission.blockers,brainRunId:result.runId},symbol);this.reject(symbol,reason,result.runId,d.tradeSide??undefined);return;}
       this.state.allocationPlans.set(plan.planId, plan);
       if (plan.admission.startsWith("REJECT_")) {this.events.publish("PORTFOLIO_ADMISSION_REJECTED",{ plan, brainRunId: result.runId },symbol);this.reject(symbol,`PORTFOLIO_${plan.admission}: ${plan.reasons.join(",")}`,result.runId,d.direction);return;}
-      const reservation = this.state.reserveEntry({underlying:plan.underlying,quoteAsset:plan.quoteAsset,marginUsd:plan.marginUsd,notionalUsd:plan.notionalUsd,planId:plan.planId,maxPositions:this.state.settings.portfolio.maxPositions,ttlSeconds:this.state.settings.riskGovernance.reservationTtlSeconds,leaseSeconds:this.state.settings.riskGovernance.lockLeaseSeconds,riskGeneration:Number(candidate?.selectionGeneration)>0?Number(candidate.selectionGeneration):Number(this.state.runtimeControl.capital.generation),riskCapitalVersion:String(this.state.runtimeControl.capital.capitalVersion??''),maxConcurrentReservations:this.state.settings.riskGovernance.maxConcurrentReservations});
+      // J2: one authoritative portfolio admission decides both the read-only pre-check and the
+      // in-transaction claim. Without it there is no route to a reservation at all.
+      const admission=(this.state as any).riskAdmission;
+      const admissionCandidate={symbol,side,quoteAsset:plan.quoteAsset,notionalUsd:plan.notionalUsd,marginUsd:plan.marginUsd,
+        leverage:Number(plan.leverage??0),markPrice:Number(market?.quote?.mark??market?.quote?.last??0),planId:plan.planId,intentId:null};
+      if(!admission?.admit||!admission?.gate){
+        this.events.publish('ENTRY_DECISION_BLOCKED',{stage:'PORTFOLIO_RISK_ADMISSION',reason:'RISK_ADMISSION_UNPROVEN',reasons:['PORTFOLIO_RISK_ADMISSION_NOT_INSTALLED'],brainRunId:result.runId,allocationPlanId:plan.planId},symbol);
+        this.reject(symbol,'RISK_ADMISSION_UNPROVEN',result.runId,d.direction);return;
+      }
+      const admissionDecision=admission.admit(admissionCandidate,Date.now());
+      this.events.publish('PORTFOLIO_RISK_ADMISSION_EVALUATED',{brainRunId:result.runId,allocationPlanId:plan.planId,allowed:admissionDecision.allowed,
+        reasons:admissionDecision.reasons,limits:admissionDecision.limits,riskGeneration:admissionDecision.ticket?.riskGeneration??null,
+        snapshotHash:admissionDecision.ticket?.snapshotHash??null,factCoverage:admissionDecision.ticket?.coverage??null,
+        grossNotionalUsd:admissionDecision.snapshot.grossNotionalUsd,capitalAtRiskUsd:admissionDecision.snapshot.capitalAtRiskUsd,
+        drawdownPct:admissionDecision.snapshot.drawdownPct,locked:false},symbol);
+      const riskTicket=admissionDecision.ticket;
+      if(!admissionDecision.allowed||!riskTicket){
+        const reason=admissionDecision.reasons[0]??'PORTFOLIO_ADMISSION_BLOCKED';
+        this.events.publish('ENTRY_DECISION_BLOCKED',{stage:'PORTFOLIO_RISK_ADMISSION',reason,reasons:admissionDecision.reasons,limits:admissionDecision.limits,brainRunId:result.runId,allocationPlanId:plan.planId},symbol);
+        this.reject(symbol,`RISK_${reason}`,result.runId,d.direction);return;
+      }
+      const reservation = this.state.reserveEntry({underlying:plan.underlying,quoteAsset:plan.quoteAsset,marginUsd:plan.marginUsd,notionalUsd:plan.notionalUsd,planId:plan.planId,maxPositions:this.state.settings.portfolio.maxPositions,ttlSeconds:this.state.settings.riskGovernance.reservationTtlSeconds,leaseSeconds:this.state.settings.riskGovernance.lockLeaseSeconds,riskGeneration:riskTicket.riskGeneration,riskTicket,admissionCandidate,riskCapitalVersion:String(this.state.runtimeControl.capital.capitalVersion??''),maxConcurrentReservations:this.state.settings.riskGovernance.maxConcurrentReservations});
       if (!reservation.ok) {this.events.publish("ENTRY_DECISION_BLOCKED",{stage:"RESERVATION",reason:reservation.reason,allocationPlanId:plan.planId},symbol);this.reject(symbol,`RESERVATION_${reservation.reason}`,result.runId,d.direction);return;}
       const reservationId = reservation.reservationId,leverage = plan.leverage,now = Date.now();releaseExecutionLease(this.state,executionLeaseId);executionLeaseId=undefined;
       const intent: EntryIntent = {id:uid("intent"),symbol,side,confidence:d.confidence,idealPrice:d.idealPrice,acceptablePriceRange:d.acceptablePriceRange,horizonMinutes:d.horizonMinutes,leverage,createdAt:now,aiAuthorizationExpiresAt:now+d.horizonMinutes*60_000,configuredOrderTtlExpiresAt:now+(this.state.settings.entry.nearMarket?.enabled?this.state.settings.entry.nearMarket.ttlSeconds*1000:this.state.settings.entry.absoluteTtlMinutes*60_000),absoluteExpiresAt:Math.min(now+d.horizonMinutes*60_000,now+(this.state.settings.entry.nearMarket?.enabled?this.state.settings.entry.nearMarket.ttlSeconds*1000:this.state.settings.entry.absoluteTtlMinutes*60_000)),packetId:packet.packetId,brainRunId:result.runId,decisionChainId:result.runId,allocationPlan:plan,reservationId,protectionMode:this.state.settings.riskGovernance.protectionMode,profitTakePlan:d.profitTakePlan,economicAdmission:economicAdmission.mode==='OFF'?null:{version:'V3.9.5',mode:economicAdmission.mode,passed:economicAdmission.passed,validatedAt:economicAdmission.validatedAt,expectedNetProfit:economicAdmission.expectedNetProfit,requiredNetProfit:economicAdmission.requiredNetProfit,reachProbability:economicAdmission.reachProbability,historicalHardMaxMovePercent:economicAdmission.historicalHardMaxMovePercent,blockers:economicAdmission.blockers},};

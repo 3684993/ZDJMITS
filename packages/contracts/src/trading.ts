@@ -114,6 +114,11 @@ export const PositionSchema = z.object({
   unrealizedPnlPercent: z.number(),
   openedAt: z.number().int(),
   firstObservedAt: z.number().int().nullable().default(null),
+  /** Margin composition facts as the exchange reports them; never derived or defaulted here. */
+  liquidationPrice: z.number().nonnegative().nullable().default(null),
+  marginAsset: z.string().nullable().default(null),
+  notionalUsd: z.number().nonnegative().nullable().default(null),
+  maintenanceMarginUsd: z.number().nonnegative().nullable().default(null),
   entryTimeSource: z.enum(['SYSTEM_FILL','BINANCE_TRADE_HISTORY','BINANCE_ORDER_HISTORY','SQLITE_EXECUTION_HISTORY','RECONCILIATION','IMPORTED_AT_STARTUP','UNKNOWN']).default('UNKNOWN'),
   managementStatus: z.enum(['AUTO_MANAGED','HUMAN_MANAGED']).default('AUTO_MANAGED'),
   humanManagedAt: z.number().int().nullable().default(null),

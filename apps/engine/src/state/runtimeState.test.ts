@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { RuntimeState } from './runtimeState.js';
+import { installDeterministicAdmission } from '../testing/deterministicRiskAdmission.js';
 
 const settings:any={portfolio:{maxPositions:2},riskGovernance:{reservationTtlSeconds:300,lockLeaseSeconds:120,maxConcurrentReservations:8}};
-function fresh(state:RuntimeState){const now=Date.now();state.account={...state.account,status:'READY',asOf:now,assets:[{asset:'USDT',walletBalance:1000,availableBalance:1000,crossWalletBalance:1000,unrealizedPnl:0,usdValue:1000,marginEligible:true}]};state.runtimeControl={...state.runtimeControl,capital:{...state.runtimeControl.capital,generation:3,evaluatedAt:now,capitalVersion:'capital-fixture',nextRecheckAt:now+120_000}};return state;}
+function fresh(state:RuntimeState){installDeterministicAdmission(state);const now=Date.now();state.account={...state.account,status:'READY',asOf:now,assets:[{asset:'USDT',walletBalance:1000,availableBalance:1000,crossWalletBalance:1000,unrealizedPnl:0,usdValue:1000,marginEligible:true}]};state.runtimeControl={...state.runtimeControl,capital:{...state.runtimeControl.capital,generation:3,evaluatedAt:now,capitalVersion:'capital-fixture',nextRecheckAt:now+120_000}};return state;}
 
 describe('RuntimeState entry reservations',()=>{
   it('allows only one concurrent reservation for the same underlying',()=>{

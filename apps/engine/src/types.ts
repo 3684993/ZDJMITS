@@ -54,6 +54,8 @@ export interface ExchangeTradeAdapter {
   fetchSymbolTradeFacts?(symbol:string,startTime:number,endTime:number):Promise<{fills:ExchangeTradeFill[];income:ExchangeIncomeFact[];orders:ExchangeOrderFact[];coverageComplete?:boolean;coverageStart?:number;coverageEnd?:number}>;
   /** Lean UNKNOWN-risk proof: identity and fill truth only; never pays the heavy income endpoint cost. */
   fetchSymbolRiskFacts?(symbol:string,startTime:number,endTime:number):Promise<{fills:ExchangeTradeFill[];orders:ExchangeOrderFact[];coverageComplete?:boolean;coverageStart?:number;coverageEnd?:number}>;
+  /** Account-level external transfers, used only by the portfolio risk snapshot. */
+  fetchCashFlowFacts?(startTime:number,endTime?:number):Promise<{facts:Array<{id:string;amountUsd:number;asset:string;time:number}>;complete:boolean;windowStart:number;windowEnd:number}>;
 }
 
 export interface ExchangeTradeFill {

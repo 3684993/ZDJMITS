@@ -4,6 +4,7 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {afterEach,describe,expect,it} from 'vitest';
 import {RuntimeState} from './runtimeState.js';
+import {installDeterministicAdmission, DETERMINISTIC_RISK_GENERATION, DETERMINISTIC_SNAPSHOT_HASH} from '../testing/deterministicRiskAdmission.js';
 import {SettingsStore} from '../config/settingsStore.js';
 import {privateAccountFresh} from '../services/privateAccountReadiness.js';
 
@@ -29,6 +30,7 @@ const idOf=(result:any)=>String(result.reservationId);
 /** Authoritative facts the reservation transaction now demands: fresh private account + capital route. */
 function authoritative(state:RuntimeState,over:{balance?:number;asOf?:number;generation?:number;capitalVersion?:string;nextRecheckAt?:number}={}){
   const now=Date.now(),asOf=over.asOf??now;
+  installDeterministicAdmission(state,now);
   state.account={...state.account,status:'READY',asOf,equityUsd:over.balance??1_000,assets:[{asset:'USDT',availableBalance:over.balance??1_000}]};
   state.runtimeControl={...state.runtimeControl,capital:{...state.runtimeControl.capital,generation:over.generation??7,evaluatedAt:asOf,capitalVersion:over.capitalVersion??'capital-fixture',nextRecheckAt:over.nextRecheckAt??now+120_000}};
   return state;
@@ -51,7 +53,10 @@ describe('C2 one durable transaction: version, freshness, reservation',()=>{
       expect(admitted.ok).toBe(true);
       const binding=state.entryReservations.get(idOf(admitted)).riskBinding;
       expect(binding).not.toBeNull();
-      expect(binding.riskGeneration).toBe(7);
+      // J2: the binding's risk generation belongs to the portfolio ledger, not to the capital route.
+      // The old expectation (7 = capital.generation) was exactly the impersonation this stage removes.
+      expect(binding.riskGeneration).toBe(DETERMINISTIC_RISK_GENERATION);
+      expect(binding.riskGeneration).not.toBe(7);
       expect(String(binding.snapshotHash)).toMatch(/^v396r[0-9a-f]{16,}$/);
       expect(binding.evaluatedAt).toBeLessThanOrEqual(Date.now());
       expect(binding.expiresAt).toBeGreaterThan(Date.now());
@@ -96,14 +101,19 @@ describe('C2 one durable transaction: version, freshness, reservation',()=>{
       wire(state,store);
       state.entryRiskGate=()=>({allowed:false,reason:'STRESS_BUDGET_EXCEEDED'});
       expect(state.reserveEntry({...ARGS,riskGeneration:7})).toMatchObject({ok:false,reason:'STRESS_BUDGET_EXCEEDED'});
-      state.entryRiskGate=()=>({allowed:true,binding:{riskGeneration:9,snapshotHash:'v396r_other',evaluatedAt:now-1,expiresAt:now+60_000}});
+      state.entryRiskGate=()=>({allowed:true,binding:{riskGeneration:9,snapshotHash:DETERMINISTIC_SNAPSHOT_HASH,evaluatedAt:now-1,expiresAt:now+60_000,profileVersion:'v396r_profile'}});
+      expect(state.reserveEntry({...ARGS,riskGeneration:7})).toMatchObject({ok:false,reason:'RISK_GENERATION_STALE'});
+      state.entryRiskGate=()=>({allowed:true,binding:{riskGeneration:7,snapshotHash:'',evaluatedAt:now-1,expiresAt:now+60_000,profileVersion:'v396r_profile'}});
       expect(state.reserveEntry({...ARGS,riskGeneration:7})).toMatchObject({ok:false,reason:'RISK_BINDING_INVALID'});
-      state.entryRiskGate=()=>({allowed:true,binding:{riskGeneration:7,snapshotHash:'',evaluatedAt:now-1,expiresAt:now+60_000}});
+      state.entryRiskGate=()=>({allowed:true,binding:{riskGeneration:7,snapshotHash:DETERMINISTIC_SNAPSHOT_HASH,evaluatedAt:now-1,expiresAt:now-1,profileVersion:'v396r_profile'}});
       expect(state.reserveEntry({...ARGS,riskGeneration:7})).toMatchObject({ok:false,reason:'RISK_BINDING_INVALID'});
-      state.entryRiskGate=()=>({allowed:true,binding:{riskGeneration:7,snapshotHash:'v396r_ok',evaluatedAt:now-1,expiresAt:now-1}});
+      state.entryRiskGate=()=>({allowed:true,binding:{riskGeneration:7,snapshotHash:DETERMINISTIC_SNAPSHOT_HASH,evaluatedAt:now-1,expiresAt:now+60_000}});
       expect(state.reserveEntry({...ARGS,riskGeneration:7})).toMatchObject({ok:false,reason:'RISK_BINDING_INVALID'});
+      // J2: the portfolio admission is not an optional extension any more. With no gate installed
+      // there is no proven risk binding, and an unproven binding may not reserve.
       state.entryRiskGate=null;
-      expect(state.reserveEntry({...ARGS,riskGeneration:7}).ok).toBe(true);
+      expect(state.reserveEntry({...ARGS,riskGeneration:7})).toMatchObject({ok:false,reason:'RISK_ADMISSION_UNPROVEN'});
+      expect(state.entryReservations.size).toBe(0);
     }finally{store.close();}
   });
 
@@ -244,7 +254,7 @@ describe('C2 restart keeps in-flight risk and stays revision-consistent',()=>{
       const durable=store.loadRuntime() as any;
       expect(restarted.entryReservationRevision).toBe(durable.entryReservationRevision);
       expect(counter.transactions).toBe(1);
-      expect(restarted.reserveEntry({...ARGS,underlying:'ETH'}).ok,'a restart that only expired a reservation must not block later entries').toBe(true);
+      expect(restarted.reserveEntry({...ARGS,underlying:'ETH'}),'a restart that only expired a reservation must not block later entries').toMatchObject({ok:true});
     }finally{store.close();}
   });
 

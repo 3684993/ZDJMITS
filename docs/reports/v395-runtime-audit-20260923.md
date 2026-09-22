@@ -119,7 +119,7 @@
 
 `stopline-snapshot.json` 的 8 项判据全部为真，**未发现 A2 中止条件**：29/29 持仓由交易所侧 `WORKING` 止盈单保护（停机后仍在交易所生效）；46 笔非终态 Entry 订单在 3 次采样中全部带 `VERIFIED_NO_ACTIVE_RISK` 证据且 `capacity.inFlight` 恒为 0（即不存在"无法判定且可能重复成交"的活单）；环境身份明确为 TESTNET / `demo-fapi.binance.com` / `credentialRef=binance-primary` / `settingsVersion=188`，无生产端点；私有账户 `READY`（age 7.7 s）、行情 `FRESH`（stale 0）；durable 存储 `AVAILABLE`（375.3 MB / 阻断阈值 1,342.2 MB），可做一致性在线备份。
 
-一个必须记录的判据口径问题：**不能用单点 `activeRiskUnresolvedCount==0` 作为放行条件**。UNKNOWN 订单的"无活跃风险"证据带 TTL（300 s）并按 5/15/30 分钟阶梯重审，因此该值会在 0↔1 之间抖动（07:19–07:24 直接观测到 `activeRiskUnresolved=1 / unresolvedDrift=1`，随后自愈）。若把"必须为 0"写成停机前置条件，理论上可以永远等不到。本次改用"三次采样中 `inFlight` 恒为 0 + 全部 UNKNOWN 均带无风险证据 + 未解决数 ≤1（仅一个重审槽）"的组合判据。
+一个必须记录的判据口径问题：**不能用单点 `activeRiskUnresolvedCount==0` 作为放行条件**。UNKNOWN 订单的"无活跃风险"证据带 TTL（300 s）并按 5/15/30 分钟阶梯重审，因此该值只是采样时刻的函数：07:19–07:24 观测到 1，07:33–07:34 三次采样为 0，07:39:29 又观测到 2，而同一分钟 `/api/v3/orders` 显示全部 46 笔的证据均在 0.9–29.3 分钟内刷新且无一笔缺证据。我最初把判据写成"未解决数 ≤1"，事后证明这个上界是凭空设定的（07:39 就被突破），已在 `lifecycle.json.stopLineDecision.correction` 里保留这条错误并说明实际采用的口径：**停机瞬间每一笔非终态 Entry 订单都必须带 `VERIFIED_NO_ACTIVE_RISK`（实测 46/46，缺失 0）、`capacity.inFlight` 在重复采样中恒为 0、29 笔持仓全部由交易所侧 `WORKING` 止盈单保护**。若把"必须为 0"写成停机前置条件，理论上可以永远等不到。
 
 ## 9. 发现的真实问题与优先级
 
@@ -131,10 +131,11 @@
 **P2**
 - P2-1 归因口径不一致：`rootBlocker=CAPITAL` 与同刻 `reasonCounts GOVERNANCE:76/CAPITAL:4`、事件载荷 `blockerCategories SUPPLY:18/CAPITAL:20/GOVERNANCE:0`、以及 `reasonCounts.EXECUTABLE>0` 与 `executableCandidateCount=0` 并存。
 - P2-2 派发 tick 无心跳字段（`scheduler` 仅 `status`），故障与满载不可分离。
-- P2-3 `activeRiskUnresolved` 因证据 TTL 抖动，任何以它为条件的门禁都不稳定（本次实测发生一次）。
+- P2-3 `activeRiskUnresolved` 因证据 TTL 抖动，任何以它为条件的门禁都不稳定（10 分钟内实测取值为 0、1、2）。
 - P2-4 UNKNOWN 订单每 ~30 分钟一轮的 5 来源重审产生 879 条窗口内事件（R17 已知，不再优化请求数）。
 - P2-5 一次 `ORPHAN_TP_CANCEL_FAILED`（已自愈，`orphanTp=0`）。
 - P2-6 funding 事实缺失（14/14 UNKNOWN），全账本 canonical 覆盖 0/185。
+- P2-7 构建可复现性：停机时重算 `contentTreeHash(apps/engine/dist, packages/core/dist, packages/contracts/dist, apps/dashboard/dist)` 得 `f64edc21…`，与运行实例记录的 `artifactHash=8b7cc98c…` **不一致**。三个真正提供运行代码的 dist 树 mtime 均早于 11:48:11 启动时刻，唯 `apps/dashboard/dist`（22 文件）在 13:55:49 被本机重建过——这足以改变复合哈希，也与提交 `65e390e` 已记录的现象一致。裁决 `PARTIALLY_CORROBORATED`：不构成本轮运行行为结论的反证，但 **V3.9.5 的构建产物在文件层面不可复现**，且去掉 dashboard 也无法用减法隔离差异。V3.9.6 侧改由干净构建重新登记哈希。
 
 **P0：无。** 未发现执行正确性、重复成交、越权或保护缺口类问题。
 

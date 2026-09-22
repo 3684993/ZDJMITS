@@ -8,7 +8,8 @@ const dirs:string[]=[];
 afterEach(async()=>{for(const dir of dirs.splice(0))await rm(dir,{recursive:true,force:true});});
 const settings:any={portfolio:{maxPositions:10},riskGovernance:{}};
 const args={underlying:'BTC',quoteAsset:'USDT',marginUsd:60,notionalUsd:100,planId:'p',maxPositions:10,ttlSeconds:300,leaseSeconds:120,maxConcurrentReservations:10};
-function state(){const s=new RuntimeState(settings);s.account.assets=[{asset:'USDT',availableBalance:100}];return s;}
+function state(){const s=new RuntimeState(settings),now=Date.now();s.account={...s.account,status:'READY',asOf:now,equityUsd:100,assets:[{asset:'USDT',availableBalance:100}]};
+s.runtimeControl={...s.runtimeControl,capital:{...s.runtimeControl.capital,generation:7,evaluatedAt:now,capitalVersion:'capital-fixture',nextRecheckAt:now+120_000}};return s;}
 describe('C2 reservation safety',()=>{
  it('retains expired reserved risk while an unknown write exists',()=>{const s=state(),r=s.reserveEntry(args);s.entryReservations.get(r.reservationId).expiresAt=1;s.entryOrders.set('o',{id:'o',symbol:'BTCUSDT',reservationId:r.reservationId,status:'UNKNOWN'});s.cleanupReservations();expect(s.entryReservations.get(r.reservationId).status).toBe('RESERVED');expect(s.reserveEntry({...args,underlying:'ETH'}).ok).toBe(false);});
  it('working reservations cannot double spend available margin',()=>{const s=state(),r=s.reserveEntry(args);s.attachReservationToIntent(r.reservationId,'i');expect(s.reserveEntry({...args,underlying:'ETH'}).ok).toBe(false);});
@@ -53,12 +54,13 @@ describe('C2 reservation safety',()=>{
  it('requires an exact fresh risk binding whenever the S05 admission gate is installed',()=>{
    const s=state(),evaluatedAt=Date.now();
    s.entryRiskGate=()=>({allowed:true,binding:{riskGeneration:7,snapshotHash:'v396r_test',evaluatedAt,expiresAt:evaluatedAt+60_000}});
-   expect(s.reserveEntry({...args,riskGeneration:6})).toMatchObject({ok:false,reason:'RISK_BINDING_INVALID'});
+   expect(s.reserveEntry({...args,riskGeneration:6})).toMatchObject({ok:false,reason:'RISK_GENERATION_STALE'});
    expect(s.reserveEntry(args)).toMatchObject({ok:false,reason:'RISK_GENERATION_REQUIRED'});
    expect(s.reserveEntry({...args,riskGeneration:7}).ok).toBe(true);
  });
  it('rejects an expired risk binding and cannot resurrect a released reservation',()=>{
    const s=state(),now=Date.now();
+   s.runtimeControl={...s.runtimeControl,capital:{...s.runtimeControl.capital,generation:1}};
    s.entryRiskGate=()=>({allowed:true,binding:{riskGeneration:1,snapshotHash:'v396r_old',evaluatedAt:now-1000,expiresAt:now-1}});
    expect(s.reserveEntry({...args,riskGeneration:1})).toMatchObject({ok:false,reason:'RISK_BINDING_INVALID'});
    s.entryRiskGate=null;const r=s.reserveEntry(args);expect(r.ok).toBe(true);expect(s.releaseEntryReservation(r.reservationId)).toBe(true);expect(s.commitEntryReservation(r.reservationId)).toBe(false);

@@ -167,10 +167,13 @@ export class EngineRuntime {
     for(const saved of durableEntries) {
       const existing=state.entryOrders.get(saved.order.id);if(existing&&existing.updatedAt>saved.order.updatedAt){store.saveEntryExecution({intent:state.entryIntents.get(saved.intent.id)??saved.intent,order:existing});continue;}
       state.entryIntents.set(saved.intent.id,saved.intent);state.entryOrders.set(saved.order.id,saved.order);
-      if(saved.reservation){const reservation=saved.reservation as any;state.entryReservations.set(reservation.id,reservation);}
+      if(saved.reservation)state.upsertRecoveredEntryReservation(saved.reservation as any);
     }
     const unverifiedUnsent=[...state.entryOrders.values()].filter(o=>o.status==='UNKNOWN'&&!o.exchangeOrderId&&o.filledQuantity===0&&!durableEntries.some(d=>d.intent.id===o.intentId));
     if(unverifiedUnsent.length){const evidence=store.runtimeEvents(Math.min(...unverifiedUnsent.map(o=>o.createdAt)),['ENTRY_ORDER_BLOCKED','ENTRY_SUBMIT_ATTEMPTED'],5000),durableIds=new Set(durableEntries.map(d=>d.intent.id));for(const order of unverifiedUnsent){const recovered=recoverUnsubmittedEntry(order,durableIds,evidence);if(recovered){state.entryOrders.set(order.id,recovered);if(order.reservationId)state.releaseEntryReservation(order.reservationId);}}}
+    // C2/D3: reservations are merged through the atomic API first, then provably expired ones are
+    // released in one durable mutation so the memory revision stays equal to the stored revision.
+    state.cleanupReservations();
     // Testnet entry safety is AUTO, while persisted operator/risk pauses remain
     // authoritative across restart. Only the obsolete no-candidate pause migrates.
     if (

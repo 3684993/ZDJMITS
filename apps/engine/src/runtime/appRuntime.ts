@@ -157,6 +157,7 @@ export class EngineRuntime {
       : loadedSettings;
     const state = new RuntimeState(settings);
     state.restore(store.loadRuntime());
+    state.entryReservationTransaction=(revision:number,work:()=>unknown)=>store.mutateEntryReservations(revision,()=>{const result=work();store.persistRuntime(state.serialize());return result;});
     for(const saved of store.loadManualExecutions()) {
       const existing=state.manualOrders.get(saved.order.id);if(existing&&existing.updatedAt>saved.order.updatedAt){store.saveManualExecution({intent:state.manualIntents.get(saved.intent.id)??saved.intent,order:existing});continue;}
       state.manualIntents.set(saved.intent.id,saved.intent);

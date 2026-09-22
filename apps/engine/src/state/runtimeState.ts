@@ -32,6 +32,17 @@ export class RuntimeState {
     lifecycles = new Map();
     allocationPlans = new Map();
     entryReservations = new Map();
+    entryReservationRevision = 0;
+    entryReservationTransaction = null;
+    entryRiskGate = null;
+    private reservationMutationActive = false;
+    private mutateReservations(work) {
+        if(this.reservationMutationActive)return work();
+        const reservations=new Map(this.entryReservations),locks=new Map(this.underlyingLocks),revision=this.entryReservationRevision;
+        const apply=()=>{this.reservationMutationActive=true;try{const value=work();this.entryReservationRevision++;return value;}finally{this.reservationMutationActive=false;}};
+        try{return this.entryReservationTransaction?this.entryReservationTransaction(revision,apply):apply();}
+        catch(error){this.entryReservations=reservations;this.underlyingLocks=locks;this.entryReservationRevision=revision;throw error;}
+    }
     underlyingLocks = new Map();
     shadowRunner = { status: 'STOPPED', startAt: null, requiredUntil: null, samples: 0, violations: 0, dataQualityBlocks: 0, exposureBlocks: 0, reviewBlocks: 0, wouldStops: 0, duplicateUnderlyingAttempts: 0, reservationConflicts: 0, snapshotInvalidations: 0, lastSampleAt: null, validityEpochAt: null, validObservationStartedAt: null, validObservationRequiredUntil: null, validObservationStreak: 0, shadowOnlyRuns: 0, shadowOnlyPlaceDecisions: 0, shadowOnlyErrors: 0 };
     runtimeControl = { mode: 'RUNNING', reasonCode: 'NONE', reasonText: '运行中', pausedAt: null, pauseSource: 'NONE', autoResume: true, lastTransitionAt: Date.now(), nextCapitalCheckAt: null, entrySafetyMode: 'SAFETY_REVIEW_PAUSED', manualRiskOverride: null, capital: { evaluatedAt: 0, generation: 0, capitalVersion:'0', directionBudget:{longAvailableNotionalUsd:0,shortAvailableNotionalUsd:0,grossAvailableNotionalUsd:0,evaluatedAt:0}, executableCandidateCount: 0, usdtAvailable: 0, usdcAvailable: 0, usdtExecutableUnderlyings: 0, usdcExecutableUnderlyings: 0, noUsdtMargin: 0, noUsdcMargin: 0, noUsdcContract: 0, liquidityRejected: 0, exposureRejected: 0, minMarginRejected: 0, marketNotFresh: 0, underlyingBlocked: 0, reasonCounts: {}, routedCandidates: [], nextRecheckAt: null } };
@@ -50,7 +61,7 @@ export class RuntimeState {
         this.aiRuns.length = 200; }
     cleanupReservations(now = Date.now()) { for (const [id, reservation] of this.entryReservations) {
         const activeOrder=[...this.entryOrders.values()].some(order=>order.reservationId===id&&entryOrderOccupiesRisk(order,now));
-        if (reservation.expiresAt <= now && (reservation.status === 'RESERVED' || (reservation.status === 'WORKING'&&!activeOrder)))
+        if (reservation.expiresAt <= now && (['RESERVED','WORKING'].includes(reservation.status)&&!activeOrder))
             this.releaseEntryReservation(id); } for (const [key, lock] of this.underlyingLocks)
         if (lock.leaseUntil <= now)
             this.underlyingLocks.delete(key); }
@@ -59,28 +70,48 @@ export class RuntimeState {
         const inFlight=new Set(orders.map(o=>resolveUnderlying(o.symbol)).filter(u=>!held.has(u))),reservations=[...this.entryReservations.values()].filter(r=>r.id!==ignoreReservationId&&['RESERVED','WORKING'].includes(r.status)&&r.expiresAt>now&&!held.has(r.underlying)&&!inFlight.has(r.underlying));
         const reserved=new Set(reservations.map(r=>r.underlying));return {positions:this.positions.size,inFlight:inFlight.size,reserved:reserved.size,used:this.positions.size+inFlight.size+reserved.size,max:this.settings.portfolio.maxPositions};
     }
-    reserveEntry(input) { this.cleanupReservations(); const underlying = input.underlying.toUpperCase(), lock = this.underlyingLocks.get(underlying); if (lock && lock.leaseUntil > Date.now())
-        return { ok: false, reason: 'UNDERLYING_LOCKED' }; const reserved = [...this.entryReservations.values()].filter(x => x.status === 'RESERVED'); if (reserved.length >= input.maxConcurrentReservations)
-        return { ok: false, reason: 'RESERVATION_CAPACITY' }; if (this.entryCapacity().used >= input.maxPositions)
-        return { ok: false, reason: 'MAX_POSITIONS_REACHED' }; const available = this.account.assets.find(x => x.asset === input.quoteAsset)?.availableBalance ?? 0; const committed = [...this.entryReservations.values()].filter(x => x.status === 'RESERVED' && x.quoteAsset === input.quoteAsset).reduce((n, x) => n + x.marginUsd, 0); if (input.quoteAsset !== 'UNKNOWN' && available - committed < input.marginUsd)
-        return { ok: false, reason: 'RESERVED_QUOTE_MARGIN' }; const now = Date.now(), id = `reserve_${now}_${Math.random().toString(36).slice(2, 8)}`; this.entryReservations.set(id, { id, underlying, quoteAsset: input.quoteAsset, marginUsd: input.marginUsd, notionalUsd: input.notionalUsd, planId: input.planId, intentId: null, createdAt: now, expiresAt: now + input.ttlSeconds * 1000, status: 'RESERVED' }); this.underlyingLocks.set(underlying, { reservationId: id, leaseUntil: now + input.leaseSeconds * 1000 }); return { ok: true, reservationId: id }; }
-    attachReservationToIntent(id, intentId) { const reservation = this.entryReservations.get(id); if (reservation)
-        this.entryReservations.set(id, { ...reservation, intentId, status: 'WORKING' }); }
-    releaseEntryReservation(id) { const reservation = this.entryReservations.get(id); if (!reservation)
-        return; this.entryReservations.set(id, { ...reservation, status: 'RELEASED' }); const lock = this.underlyingLocks.get(reservation.underlying); if (lock?.reservationId === id)
-        this.underlyingLocks.delete(reservation.underlying); }
-    commitEntryReservation(id) { const reservation = this.entryReservations.get(id); if (!reservation)
-        return; this.entryReservations.set(id, { ...reservation, status: 'COMMITTED' }); const lock = this.underlyingLocks.get(reservation.underlying); if (lock?.reservationId === id)
-        this.underlyingLocks.delete(reservation.underlying); }
+    reserveEntry(input) {
+        try{return this.mutateReservations(()=>this.reserveEntryAtomic(input));}
+        catch{return {ok:false,reason:'RESERVATION_DURABILITY_FAILED'};}
+    }
+    private reserveEntryAtomic(input) {
+        if(!input||typeof input.underlying!=='string'||!input.underlying.trim()||!['USDT','USDC'].includes(input.quoteAsset)||
+           ['marginUsd','notionalUsd','ttlSeconds','leaseSeconds'].some(key=>typeof input[key]!=='number'||!Number.isFinite(input[key])||input[key]<=0)||
+           ['maxPositions','maxConcurrentReservations'].some(key=>!Number.isSafeInteger(input[key])||input[key]<=0))return {ok:false,reason:'RESERVATION_FACTS_INVALID'};
+        this.cleanupReservations();
+        const underlying=input.underlying.toUpperCase(),now=Date.now(),lock=this.underlyingLocks.get(underlying);
+        if(lock&&lock.leaseUntil>now)return {ok:false,reason:'UNDERLYING_LOCKED'};
+        const reserved=[...this.entryReservations.values()].filter(x=>['RESERVED','WORKING'].includes(x.status));
+        if(reserved.some(x=>x.underlying===underlying))return {ok:false,reason:'UNDERLYING_LOCKED'};
+        if(reserved.length>=input.maxConcurrentReservations)return {ok:false,reason:'RESERVATION_CAPACITY'};
+        if(this.entryCapacity().used>=input.maxPositions)return {ok:false,reason:'MAX_POSITIONS_REACHED'};
+        const available=this.account.assets.find(x=>x.asset===input.quoteAsset)?.availableBalance;
+        const committed=reserved.filter(x=>x.quoteAsset===input.quoteAsset).reduce((n,x)=>n+x.marginUsd,0);
+        if(!Number.isFinite(available)||!Number.isFinite(committed)||available-committed<input.marginUsd)return {ok:false,reason:'RESERVED_QUOTE_MARGIN'};
+        const risk=this.entryRiskGate?.(input);
+        if(risk&&!risk.allowed)return {ok:false,reason:risk.reason??'PORTFOLIO_ADMISSION_BLOCKED'};
+        const id=`reserve_${now}_${Math.random().toString(36).slice(2,8)}`;
+        this.entryReservations.set(id,{id,underlying,quoteAsset:input.quoteAsset,marginUsd:input.marginUsd,notionalUsd:input.notionalUsd,planId:input.planId,intentId:null,createdAt:now,expiresAt:now+input.ttlSeconds*1000,status:'RESERVED',riskBinding:risk?.binding??null});
+        this.underlyingLocks.set(underlying,{reservationId:id,leaseUntil:now+input.leaseSeconds*1000});
+        return {ok:true,reservationId:id};
+    }
+    attachReservationToIntent(id,intentId){return this.mutateReservations(()=>{const reservation=this.entryReservations.get(id);if(reservation&&reservation.status==='RESERVED')this.entryReservations.set(id,{...reservation,intentId,status:'WORKING'});});}
+    releaseEntryReservation(id){return this.mutateReservations(()=>{
+        const reservation=this.entryReservations.get(id);if(!reservation)return;
+        if([...this.entryOrders.values()].some(order=>order.reservationId===id&&entryOrderOccupiesRisk(order,Date.now())))return;
+        this.entryReservations.set(id,{...reservation,status:'RELEASED'});
+        if(this.underlyingLocks.get(reservation.underlying)?.reservationId===id)this.underlyingLocks.delete(reservation.underlying);
+    });}
+    commitEntryReservation(id){return this.mutateReservations(()=>{const reservation=this.entryReservations.get(id);if(!reservation)return;this.entryReservations.set(id,{...reservation,status:'COMMITTED'});if(this.underlyingLocks.get(reservation.underlying)?.reservationId===id)this.underlyingLocks.delete(reservation.underlying);});}
     reservationSummary() { this.cleanupReservations(); const active=[...this.entryReservations.values()].filter(x => ['RESERVED', 'WORKING'].includes(x.status)),locks=[...this.underlyingLocks.entries()].map(([underlying, value]) => ({ underlying, ...value })),activeById=new Map(active.map(row=>[row.id,row])),orphanLocks=locks.filter(lock=>{const reservation=activeById.get(lock.reservationId);return !reservation||reservation.underlying!==lock.underlying;}); return { active, locks, orphanLocks, expiredLocks:locks.filter(lock=>lock.leaseUntil<=Date.now()) }; }
     recordExecutionFill(fill) { const index = this.executionFills.findIndex(row => row.fillId === fill.fillId||(row.symbol===fill.symbol&&String(row.tradeId)===String(fill.tradeId))); if (index >= 0)
         this.executionFills[index] = fill;
     else
         this.executionFills.unshift(fill); if (this.executionFills.length > 5000)
         this.executionFills.length = 5000; }
-    serialize() { return { generation: this.generation, marketGeneration: this.marketGeneration, positions: [...this.positions], entryIntents: [...this.entryIntents], entryOrders: [...this.entryOrders], tpOrders: [...this.tpOrders], manualExitGoals:[...this.manualExitGoals], manualIntents: [...this.manualIntents], manualOrders: [...this.manualOrders], allocationPlans: [...this.allocationPlans], entryReservations: [...this.entryReservations], underlyingLocks: [...this.underlyingLocks], runtimeControl: this.runtimeControl, executionGovernance: this.executionGovernance, shadowRunner: this.shadowRunner, aiRuns: this.aiRuns, rejectionCooldown: [...this.rejectionCooldown], candidateLifecycle:[...this.candidateLifecycle], directionDecisionStates:[...this.directionDecisionStates], tradeOutcomes: this.tradeOutcomes, tradeRecords: [...this.tradeRecords], experienceSamples: [...this.experienceSamples], executionFills: this.executionFills, lifecycles: [...this.lifecycles], activity: this.activity, account: this.account }; }
+    serialize() { return { entryReservationRevision:this.entryReservationRevision, generation: this.generation, marketGeneration: this.marketGeneration, positions: [...this.positions], entryIntents: [...this.entryIntents], entryOrders: [...this.entryOrders], tpOrders: [...this.tpOrders], manualExitGoals:[...this.manualExitGoals], manualIntents: [...this.manualIntents], manualOrders: [...this.manualOrders], allocationPlans: [...this.allocationPlans], entryReservations: [...this.entryReservations], underlyingLocks: [...this.underlyingLocks], runtimeControl: this.runtimeControl, executionGovernance: this.executionGovernance, shadowRunner: this.shadowRunner, aiRuns: this.aiRuns, rejectionCooldown: [...this.rejectionCooldown], candidateLifecycle:[...this.candidateLifecycle], directionDecisionStates:[...this.directionDecisionStates], tradeOutcomes: this.tradeOutcomes, tradeRecords: [...this.tradeRecords], experienceSamples: [...this.experienceSamples], executionFills: this.executionFills, lifecycles: [...this.lifecycles], activity: this.activity, account: this.account }; }
     restore(value) { if (!value || typeof value !== 'object')
-        return; this.generation = Number(value.generation) || 1; this.marketGeneration = Number(value.marketGeneration) || this.generation; for (const [key, target] of [['positions', this.positions], ['entryIntents', this.entryIntents], ['entryOrders', this.entryOrders], ['tpOrders', this.tpOrders], ['manualExitGoals',this.manualExitGoals], ['manualIntents', this.manualIntents], ['manualOrders', this.manualOrders], ['allocationPlans', this.allocationPlans], ['tradeRecords', this.tradeRecords], ['experienceSamples', this.experienceSamples], ['rejectionCooldown', this.rejectionCooldown], ['candidateLifecycle', this.candidateLifecycle], ['lifecycles', this.lifecycles], ['entryReservations', this.entryReservations], ['underlyingLocks', this.underlyingLocks]])
+        return; this.entryReservationRevision=Number.isSafeInteger(value.entryReservationRevision)?value.entryReservationRevision:0; this.generation = Number(value.generation) || 1; this.marketGeneration = Number(value.marketGeneration) || this.generation; for (const [key, target] of [['positions', this.positions], ['entryIntents', this.entryIntents], ['entryOrders', this.entryOrders], ['tpOrders', this.tpOrders], ['manualExitGoals',this.manualExitGoals], ['manualIntents', this.manualIntents], ['manualOrders', this.manualOrders], ['allocationPlans', this.allocationPlans], ['tradeRecords', this.tradeRecords], ['experienceSamples', this.experienceSamples], ['rejectionCooldown', this.rejectionCooldown], ['candidateLifecycle', this.candidateLifecycle], ['lifecycles', this.lifecycles], ['entryReservations', this.entryReservations], ['underlyingLocks', this.underlyingLocks]])
         if (Array.isArray(value[key]))
             for (const [id, source] of value[key]) {
                 const row = key === 'positions' ? { entryTimeSource: 'UNKNOWN', managementStatus: 'AUTO_MANAGED', humanManagedAt: null, tpLastVerifiedAt: null, tpCoverageSource: 'NONE', firstObservedAt: null, ...source } : source;

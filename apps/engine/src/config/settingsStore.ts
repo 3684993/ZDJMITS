@@ -708,6 +708,21 @@ export class SettingsStore {
     }
     return value as T;
   }
+  /** One existing runtime ledger, synchronously locked through fact check and persistence. */
+  mutateEntryReservations<T>(expectedRevision:number,work:()=>T):T{
+    if(this.transactionActive)throw new Error('RESERVATION_NESTED_TRANSACTION');
+    this.db.exec('BEGIN IMMEDIATE');
+    this.transactionActive=true;
+    try{
+      const row=this.db.prepare('SELECT payload FROM runtime_state WHERE id=1').get() as {payload:string}|undefined;
+      const revision=row?(JSON.parse(row.payload).entryReservationRevision??0):0;
+      if(!Number.isSafeInteger(expectedRevision)||expectedRevision!==revision)throw new Error('RESERVATION_VERSION_CONFLICT');
+      const result=work();
+      if(result&&typeof (result as any).then==='function')throw new Error('RESERVATION_ASYNC_CALLBACK');
+      this.db.exec('COMMIT');return result;
+    }catch(error){this.db.exec('ROLLBACK');this.runtimeEntityCache=null;throw error;}
+    finally{this.transactionActive=false;}
+  }
   persistRuntime(value: unknown) {
     const startedAt=Date.now(),core={...(value as any)},lists:Record<string,{ids:string[];tuple:boolean}>={},updates:Array<[string,string,string]>=[];
     this.runtimeEntityCache??=new Map((this.db.prepare('SELECT kind,entity_id,payload FROM runtime_entities').all() as any[]).map(r=>[`${r.kind}:${r.entity_id}`,r.payload]));
@@ -717,6 +732,8 @@ export class SettingsStore {
     }
     core._entityLists=lists;const payload=JSON.stringify(core),outer=this.transactionActive;
     this.db.exec('SAVEPOINT runtime_checkpoint');try{
+      const prior=this.db.prepare('SELECT payload FROM runtime_state WHERE id=1').get() as {payload:string}|undefined;
+      if(prior&&(JSON.parse(prior.payload).entryReservationRevision??0)>(core.entryReservationRevision??0))throw new Error('STALE_RESERVATION_CHECKPOINT');
       // Retention uses another connection. A cached payload does not prove its row still exists.
       const durable=this.db.prepare('SELECT 1 FROM runtime_entities WHERE kind=? AND entity_id=?'),pending=new Set(updates.map(([kind,id])=>`${kind}:${id}`));
       for(const [kind,info] of Object.entries(lists))for(const id of info.ids){const key=`${kind}:${id}`;if(!pending.has(key)&&!durable.get(kind,id)){const raw=this.runtimeEntityCache!.get(key);if(raw===undefined)throw new Error(`CHECKPOINT_ENTITY_UNAVAILABLE:${key}`);updates.push([kind,id,raw]);}}

@@ -1,0 +1,5 @@
+Firewall configuration skipped by explicit manual launch request.
+ZDJ-MITS started in background. PID=33432 HOST_PID=44524 LAUNCH_ID=f38b0eb3ef4e494dbc12553061ecebfc
+LAN URL(s): http://192.168.1.50:8080
+Logs: D:\MITS-WORKTREES\v396-final-convergence-20260922\data\runtime-logs\engine.stdout.log / D:\MITS-WORKTREES\v396-final-convergence-20260922\data\runtime-logs\engine.stderr.log
+Process lifecycle: D:\MITS-WORKTREES\v396-final-convergence-20260922\data\runtime-logs\engine-process-lifecycle.jsonl / D:\MITS-WORKTREES\v396-final-convergence-20260922\data\runtime-logs\engine-launch-lifecycle.jsonl

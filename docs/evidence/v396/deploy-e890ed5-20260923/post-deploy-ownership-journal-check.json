@@ -1,0 +1,16 @@
+{
+  "openedReadOnly": true,
+  "schemaUserVersion": 1,
+  "ownerRows": 27,
+  "cycles": 27,
+  "cyclesWithMultipleRows": [],
+  "ownerStates": {
+    "HUMAN_MANAGED": 25,
+    "HANDOFF_PENDING": 2
+  },
+  "aiActiveCount": 0,
+  "mandates": 1,
+  "quantityClaims": 0,
+  "outboxUndelivered": 0,
+  "claimsHistory": 0
+}

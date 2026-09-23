@@ -1,0 +1,216 @@
+{
+  "capturedAt": "2026-09-23T10:30:16.392Z",
+  "identity": {
+    "pid": 33432,
+    "buildId": "3.9.6-50d14dbd22d1ea5ed7d2",
+    "instanceId": "8835e95d-0018-4665-a89c-47f17f09165f",
+    "startedAt": 1790158781504,
+    "startReason": "MANUAL_START"
+  },
+  "capacityVisibility": {
+    "slots": {
+      "used": 14,
+      "max": 50,
+      "positions": 14,
+      "inFlight": 0,
+      "reserved": 0
+    },
+    "gross": {
+      "notionalUsd": 9747.586329685582,
+      "limitUsd": 10459.882550567101,
+      "remainingUsd": 712.2962208815188,
+      "usedPct": 0.9319020823189931
+    },
+    "direction": {
+      "LONG": {
+        "notionalUsd": 3694.6193573083806,
+        "limitUsd": 5229.941275283551,
+        "remainingUsd": 712.2962208815188
+      },
+      "SHORT": {
+        "notionalUsd": 6052.9669723772,
+        "limitUsd": 5229.941275283551,
+        "remainingUsd": 0
+      }
+    },
+    "firstBlocker": "DIRECTION_SHORT",
+    "blockingDimensions": [
+      "DIRECTION_SHORT"
+    ],
+    "exhaustedReason": null,
+    "exhaustedForNewRisk": false,
+    "evaluatedAt": 1790159414532
+  },
+  "capital": {
+    "executableCandidateCount": 4,
+    "evaluatedAt": 1790159414532
+  },
+  "eligibility": {
+    "status": "READY",
+    "count": 4,
+    "cooldown": 0,
+    "excluded": 14
+  },
+  "pool": {
+    "residents": 12,
+    "readySupply": 2
+  },
+  "analysis": {
+    "mode": "ANALYSIS_ONLY",
+    "lastTickAt": 1790159415787,
+    "lastAttemptAt": 1790159372982,
+    "lastRequestAt": 1790159389729,
+    "lastSuccessAt": 1790159371230,
+    "lastFailureAt": null,
+    "lastBlockedReason": "AI_RESOURCE_BUSY",
+    "reason": "AI_RESOURCE_BUSY",
+    "capitalExecutableCount": 4,
+    "active": 1,
+    "silenceMs": 45129,
+    "observationStartedAt": 1790158785551,
+    "text": "ANALYSIS_ONLY：仅分析，交易写锁定；AI_RESOURCE_BUSY"
+  },
+  "primaryResource": {
+    "id": "brain-7900-primary",
+    "role": "PRIMARY_BRAIN",
+    "baseUrl": "http://127.0.0.1:8084/v1",
+    "model": "qwen/qwen3.8-27b",
+    "maxConcurrency": 1,
+    "gpu": "AMD Radeon RX 7900 XTX 24GB",
+    "status": "BUSY",
+    "active": 1,
+    "totalRuns": 3,
+    "failures": 0,
+    "lastLatencyMs": 57722,
+    "currentStatus": "ANALYZING",
+    "currentSymbol": "1000PEPEUSDC",
+    "currentRunId": "airun_mudyohep_zdjwsbla",
+    "currentRunSeconds": 26,
+    "lastCompletedAt": 1790159370980,
+    "lastDirection": "LONG",
+    "lastDecision": "PLACE_LONG",
+    "idleReason": null,
+    "nextStep": "正在处理 1000PEPEUSDC",
+    "queueDepth": 1,
+    "connectionStatus": "ONLINE",
+    "healthCheckedAt": 1790159399851,
+    "healthReason": null
+  },
+  "noEntryReason": "ENTRY_BLOCKED",
+  "takeProfit": {
+    "status": "READY",
+    "unverifiedTp": 0,
+    "required": 14,
+    "protected": 14,
+    "missing": 0,
+    "repairing": 0,
+    "repairFailed": 0,
+    "manualReviewRequired": 0,
+    "orphanTp": 0,
+    "duplicateTp": 0,
+    "qtyMismatch": 0,
+    "wrongSide": 0,
+    "tpMissing": 0,
+    "retryQueue": 0
+  },
+  "reconciliation": {
+    "status": "READY",
+    "lastRun": 1790159413400,
+    "lastError": null,
+    "driftCount": 0,
+    "unresolvedDriftCount": 0,
+    "historicalUnknownCount": 46,
+    "activeRiskUnresolvedCount": 0,
+    "verifiedNoActiveRiskUnknownCount": 46,
+    "correctedDifferenceCount": 0,
+    "verifiedOrderFactMismatchCount": 0,
+    "lastFullOrderScanAt": 1790159397832,
+    "fullOrderScanIntervalMs": 300000,
+    "unknownRiskScanIntervalMs": 60000,
+    "unknownRiskEvidenceTtlMs": 300000,
+    "unknownRiskAuditTierIntervalsMs": [
+      300000,
+      900000,
+      1800000
+    ],
+    "unknownRiskAuditsByTier": [
+      0,
+      0,
+      46
+    ],
+    "unknownRiskLastAuditAt": 1790159397832,
+    "unknownRiskNextAuditAt": 1790159453864,
+    "remoteFactAuditsByClassAndTier": [
+      {
+        "class": "unknown",
+        "ladderMs": [
+          300000,
+          900000,
+          1800000
+        ],
+        "tiers": [
+          0,
+          0,
+          46
+        ],
+        "deferred": 46
+      },
+      {
+        "class": "terminal",
+        "ladderMs": [
+          300000,
+          1800000,
+          3600000
+        ],
+        "tiers": [
+          0,
+          0,
+          6
+        ],
+        "deferred": 6
+      },
+      {
+        "class": "neverSubmitted",
+        "ladderMs": [
+          300000,
+          1800000,
+          21600000
+        ],
+        "tiers": [
+          0,
+          0,
+          0
+        ],
+        "deferred": 0
+      }
+    ]
+  },
+  "positions": {
+    "status": "FACT",
+    "count": 14
+  },
+  "pendingEntries": {
+    "status": "FACT",
+    "count": 0,
+    "max": 6
+  },
+  "writeBoundary": {
+    "environment": "TESTNET",
+    "executionMode": "READ_ONLY",
+    "lockedToTestnet": true,
+    "testnetWrites": 0,
+    "productionWrites": 0,
+    "blockedProductionWriteAttempts": 0,
+    "lastWriteAt": null,
+    "lastWritePath": null
+  },
+  "persistence": {
+    "integrity": true,
+    "status": "HEALTHY",
+    "auditEvents": 70268,
+    "runtimePersistedAt": 1790158768740,
+    "checkedAt": 1790158782324,
+    "error": null
+  },
+  "settingsVersion": 190
+}

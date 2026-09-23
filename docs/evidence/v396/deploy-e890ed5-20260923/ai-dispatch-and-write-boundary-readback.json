@@ -1,0 +1,117 @@
+{
+  "capturedAt": "18:34:51",
+  "instanceStartedAt": "18:19:41",
+  "runsOnNewInstance": 15,
+  "completed": 14,
+  "rows": [
+    {
+      "role": "SCOUT",
+      "symbol": "ADAUSDT",
+      "status": "RUNNING",
+      "decision": null,
+      "direction": null,
+      "startedAt": "18:34:45",
+      "inputTokens": null,
+      "outputTokens": null
+    },
+    {
+      "role": "PRIMARY_BRAIN",
+      "symbol": "TAOUSDT",
+      "status": "COMPLETED",
+      "decision": "PLACE_SHORT",
+      "direction": "SHORT",
+      "startedAt": "18:33:45",
+      "inputTokens": 19516,
+      "outputTokens": 770
+    },
+    {
+      "role": "SCOUT",
+      "symbol": "TAOUSDT",
+      "status": "COMPLETED",
+      "decision": null,
+      "direction": null,
+      "startedAt": "18:33:27",
+      "inputTokens": 3558,
+      "outputTokens": 379
+    },
+    {
+      "role": "PRIMARY_BRAIN",
+      "symbol": "DOGEUSDT",
+      "status": "COMPLETED",
+      "decision": "PLACE_SHORT",
+      "direction": "SHORT",
+      "startedAt": "18:32:25",
+      "inputTokens": 19226,
+      "outputTokens": 835
+    },
+    {
+      "role": "SCOUT",
+      "symbol": "DOGEUSDT",
+      "status": "COMPLETED",
+      "decision": null,
+      "direction": null,
+      "startedAt": "18:32:08",
+      "inputTokens": 3842,
+      "outputTokens": 348
+    },
+    {
+      "role": "PRIMARY_BRAIN",
+      "symbol": "SUIUSDC",
+      "status": "COMPLETED",
+      "decision": "PLACE_SHORT",
+      "direction": "SHORT",
+      "startedAt": "18:31:10",
+      "inputTokens": 19047,
+      "outputTokens": 724
+    },
+    {
+      "role": "SCOUT",
+      "symbol": "SUIUSDC",
+      "status": "COMPLETED",
+      "decision": null,
+      "direction": null,
+      "startedAt": "18:30:52",
+      "inputTokens": 3623,
+      "outputTokens": 450
+    },
+    {
+      "role": "PRIMARY_BRAIN",
+      "symbol": "1000PEPEUSDC",
+      "status": "COMPLETED",
+      "decision": "PLACE_SHORT",
+      "direction": "SHORT",
+      "startedAt": "18:29:49",
+      "inputTokens": 19524,
+      "outputTokens": 744
+    }
+  ],
+  "analysis": {
+    "reason": "AI_RESOURCE_BUSY",
+    "lastAttemptAt": "18:34:45",
+    "lastSuccessAt": "18:34:42",
+    "lastFailureAt": null,
+    "mode": "ANALYSIS_ONLY",
+    "active": 1,
+    "capitalExecutableCount": 7
+  },
+  "writeBoundary": {
+    "environment": "TESTNET",
+    "executionMode": "READ_ONLY",
+    "lockedToTestnet": true,
+    "testnetWrites": 0,
+    "productionWrites": 0,
+    "blockedProductionWriteAttempts": 0,
+    "lastWriteAt": null,
+    "lastWritePath": null
+  },
+  "egress": {
+    "status": "VERIFIED",
+    "lastVerifiedAt": "18:34:48",
+    "lastError": null
+  },
+  "reservationOrOrderCounts": {
+    "pendingEntries": 0,
+    "positions": 14
+  },
+  "note": "READ_ONLY 下 Primary 真实运行；模型给过 PLACE_SHORT，被只读分析路径接住，未产生 reservation/intent/order"
+}

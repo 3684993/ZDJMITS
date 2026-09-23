@@ -1,0 +1,161 @@
+{
+  "round": "v396-deploy-e890ed5",
+  "date": "2026-09-23",
+  "plan": "docs/plans/v396/CODEX-V396-DEPLOY-E890ED5-NOW-20260923.md",
+  "branch": "codex/v396-final-convergence-20260922",
+  "deployedSourceCommit": "e890ed572a7f11fd46e240639089d6a1dbd27886",
+  "headAtExecution": "d2cea4a (e890ed5 + docs-only authorization commit; product source byte-identical to e890ed5)",
+  "verdict": "DEPLOYED AND VERIFIED — no new P0/P1; state remains V396_TESTNET_ACTIVE_ANALYSIS_ONLY with e890ed5 live",
+  "lifecycle": {
+    "stop": {
+      "tool": "scripts/stop-zdj-lan.ps1",
+      "count": 1,
+      "exit": 0,
+      "oldPid": 26784,
+      "oldBuildId": "3.9.6-2fb37e445af4d3d351da",
+      "result": "port 8080 free; CHILD_EXITED exitCode=-1 (Stop-Process -Force by design)"
+    },
+    "start": {
+      "tool": "scripts/start-zdj-lan.ps1 -StartReason MANUAL_START -SkipFirewall",
+      "count": 1,
+      "exit": 0,
+      "newPid": 33432,
+      "hostPid": 44524,
+      "launchId": "f38b0eb3ef4e494dbc12553061ecebfc",
+      "instanceId": "8835e95d-0018-4665-a89c-47f17f09165f",
+      "buildId": "3.9.6-50d14dbd22d1ea5ed7d2",
+      "startedAt": 1790158781504,
+      "readyAfterMs": 75814
+    },
+    "watchdogOrAutostartInstalled": false,
+    "hotReloadUsed": false,
+    "stopStartLoops": 0,
+    "permissionsChanged": false,
+    "settingsOrDatabaseModified": false,
+    "exchangeWriteRequestsIssued": 0
+  },
+  "buildProvenance": {
+    "expectedArtifactHash": "50d14dbd22d1ea5ed7d299b9700e53efd234451fe242cc325322a36e0b8cc05d",
+    "identityFileArtifactHash": "50d14dbd22d1ea5ed7d299b9700e53efd234451fe242cc325322a36e0b8cc05d",
+    "expectedSourceHash": "4c628c6e5bfb96d1dd80539765b2d2f442032f33b8aaad50955608fd4f53e4fd",
+    "identityFileSourceHash": "4c628c6e5bfb96d1dd80539765b2d2f442032f33b8aaad50955608fd4f53e4fd",
+    "method": "apps/engine/dist/runtime/runtimeIdentity.js#contentTreeHash computed before start, compared with what the new process wrote itself"
+  },
+  "gates": {
+    "verify_deps": 0,
+    "engine_build": 0,
+    "dashboard_build": 0
+  },
+  "acceptance": {
+    "capacityVisibilityKeysPresent": true,
+    "exhaustedForNewRiskLiveValue": false,
+    "liveFirstBlocker": "DIRECTION_SHORT",
+    "singleSideSaturationNoLongerClaimsExhaustion": true,
+    "executableCandidatesNotMisreportedAsCapacityBlocked": true,
+    "cockpitShowsSaturatedDimensionAndVerdictSeparately": true,
+    "cockpitNumbersVerbatimFromApi": true,
+    "aiContinuesAnalysingUnderReadOnly": true,
+    "exchangeWritesStillZero": true,
+    "dashboardDrawerInteractions": "all 6 PASS live (see dashboard-interaction-readback.json); insufficientUiEvidence empty",
+    "tpOwnershipUnknownFatal": "TP 14/14 protected, ownership 27 rows / 27 cycles / 0 duplicates / 0 AI_ACTIVE, activeClaims 0, activeUnknownClaims 0, fatal 0"
+  },
+  "files": [
+    {
+      "name": "RESULT.md",
+      "bytes": 7296,
+      "sha256": "20397b9d2a5895edb33d9ec07f1bf387b5b814fee4b6af54244af7a9d5594187"
+    },
+    {
+      "name": "ai-dispatch-and-write-boundary-readback.json",
+      "bytes": 2831,
+      "sha256": "0f14abe173ca96a7f53adfb1bd856706c7baebe0e80c848cdcb43a476b54b5e7"
+    },
+    {
+      "name": "build-01-verify-deps.txt",
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "name": "build-02-engine-build.txt",
+      "bytes": 50,
+      "sha256": "58702c2bce638a249622b034da12d953f6c71465743d5d17c0e493a8c78abe3d"
+    },
+    {
+      "name": "build-03-dashboard-build.txt",
+      "bytes": 3696,
+      "sha256": "e6dbb0ad918f0aa54235bc74e3d36f08d322f0c29f2e26e34426d51af18fc79f"
+    },
+    {
+      "name": "build-04-expected-artifact-identity.json",
+      "bytes": 211,
+      "sha256": "0f61ae30a4b6e430d4b8f771e2ab4f6db554b0e742cfd17104d77674d1debb1f"
+    },
+    {
+      "name": "dashboard-ai-run-drawer-top-close.png",
+      "bytes": 166730,
+      "binary": true,
+      "sha256": "ea99b3f565b4d3bd56c8ffbba6190f405ba4e10524bf518fc50296e4c467a8b5"
+    },
+    {
+      "name": "dashboard-interaction-readback.json",
+      "bytes": 2720,
+      "sha256": "587986d80e0e2a45f22d68b8eb3fa39c4f414bb25f426c64bb75cf06ce14e319"
+    },
+    {
+      "name": "dashboard-overview-capacity-card.png",
+      "bytes": 114755,
+      "binary": true,
+      "sha256": "80ddd0320c99af793e7e0c9fc729e05d9137941430992a3ab9120edecad7b251"
+    },
+    {
+      "name": "lifecycle-stop-start-records.jsonl",
+      "bytes": 644,
+      "sha256": "8619ec54f8c7e5b378bdc20ec267f1d83b640ba8da100034a34e03d343ec553c"
+    },
+    {
+      "name": "pipeline-capacity-readback-live.json",
+      "bytes": 5048,
+      "sha256": "60154f1d7a35b335adbdc2da598a105867d581d637dd47dd0fe01411517a418a"
+    },
+    {
+      "name": "post-deploy-log-scan.json",
+      "bytes": 224,
+      "sha256": "79689cd773560623a49f086965d6f5d2001a15438125bd510a664a4d45612132"
+    },
+    {
+      "name": "post-deploy-ownership-journal-check.json",
+      "bytes": 306,
+      "sha256": "36bc89d7001ef31e9da7dd3c1584c5ac394484e2149618681deb7aae21e87f63"
+    },
+    {
+      "name": "post-deploy-runtime-snapshot-t-late.json",
+      "bytes": 125449,
+      "sha256": "2fd6f10191ecfcc967df701dec86c004b84a6cfcac1d3876159a76d4a2cfe5c4"
+    },
+    {
+      "name": "post-deploy-runtime-snapshot-t0.json",
+      "bytes": 105123,
+      "sha256": "01f29048b37563a217e8bba08808135a4c7989964fe912c34a4f217bacbfc8fa"
+    },
+    {
+      "name": "pre-deploy-egress-and-running-payload-shape.json",
+      "bytes": 581,
+      "sha256": "c7addccbd13987b2cb069929fc020649203f8271f7ccb18a78ff2227206b21c3"
+    },
+    {
+      "name": "pre-deploy-runtime-snapshot.json",
+      "bytes": 126210,
+      "sha256": "8a0be1df0af3e997218de203591a1f987499244656799347dc228fc84baa3d4a"
+    },
+    {
+      "name": "start-01-output.txt",
+      "bytes": 601,
+      "sha256": "17e6e979f4c6b83464fdbb537bb55ac44834e9c7cca70cbd61517cdcf01620b9"
+    },
+    {
+      "name": "stop-01-output.txt",
+      "bytes": 36,
+      "sha256": "7e24928f570ed5c31fc16c455e87130ca0f49259f70abf12b0442bf68df3b763"
+    }
+  ]
+}

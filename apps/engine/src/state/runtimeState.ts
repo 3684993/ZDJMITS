@@ -7,6 +7,15 @@ export type AccountState = any;
 const RESERVATION_NO_CHANGE='RESERVATION_NO_CHANGE';
 const RESERVATION_TERMINAL_STATUS=new Set(['RELEASED','COMMITTED']);
 const RESERVATION_KNOWN_STATUS=new Set(['RESERVED','WORKING','RELEASED','COMMITTED']);
+/**
+ * Rows persisted before the unsigned-notional decision carry the exchange sign. Direction lives in
+ * side and quantity, so the stored amount is normalised here rather than re-derived: leaving the
+ * sign in place would fail PositionSchema again on the next snapshot projection.
+ */
+function normalizeRestoredPosition(row: any) {
+    const magnitude = (value: unknown) => (typeof value === 'number' && Number.isFinite(value) ? Math.abs(value) : value);
+    return { ...row, notionalUsd: magnitude(row.notionalUsd), maintenanceMarginUsd: magnitude(row.maintenanceMarginUsd) };
+}
 export class RuntimeState {
     settings;
     generation = 1;
@@ -235,11 +244,11 @@ export class RuntimeState {
         this.executionFills.unshift(fill); if (this.executionFills.length > 5000)
         this.executionFills.length = 5000; }
     serialize() { return { entryReservationRevision:this.entryReservationRevision, riskLedger:this.riskLedger, aiUsageDroppedRows:this.aiUsageDroppedRows, generation: this.generation, marketGeneration: this.marketGeneration, positions: [...this.positions], entryIntents: [...this.entryIntents], entryOrders: [...this.entryOrders], tpOrders: [...this.tpOrders], manualExitGoals:[...this.manualExitGoals], manualIntents: [...this.manualIntents], manualOrders: [...this.manualOrders], allocationPlans: [...this.allocationPlans], tradePlans: [...this.tradePlans], planExecutions: [...this.planExecutions], aiUsage: [...this.aiUsage], positionReviews: [...this.positionReviews], reviewBudgets: [...this.reviewBudgets], entryReservations: [...this.entryReservations], underlyingLocks: [...this.underlyingLocks], runtimeControl: this.runtimeControl, executionGovernance: this.executionGovernance, shadowRunner: this.shadowRunner, aiRuns: this.aiRuns, rejectionCooldown: [...this.rejectionCooldown], candidateLifecycle:[...this.candidateLifecycle], directionDecisionStates:[...this.directionDecisionStates], tradeOutcomes: this.tradeOutcomes, tradeRecords: [...this.tradeRecords], experienceSamples: [...this.experienceSamples], executionFills: this.executionFills, lifecycles: [...this.lifecycles], activity: this.activity, account: this.account }; }
-    restore(value) { if (!value || typeof value !== 'object')
+restore(value) { if (!value || typeof value !== 'object')
         return; this.entryReservationRevision=Number.isSafeInteger(value.entryReservationRevision)?value.entryReservationRevision:0; this.riskLedger=value.riskLedger&&typeof value.riskLedger==='object'?value.riskLedger:null; this.aiUsageDroppedRows=Math.max(0,Math.trunc(Number(value.aiUsageDroppedRows)||0)); this.generation = Number(value.generation) || 1; this.marketGeneration = Number(value.marketGeneration) || this.generation; for (const [key, target] of [['positions', this.positions], ['entryIntents', this.entryIntents], ['entryOrders', this.entryOrders], ['tpOrders', this.tpOrders], ['manualExitGoals',this.manualExitGoals], ['manualIntents', this.manualIntents], ['manualOrders', this.manualOrders], ['allocationPlans', this.allocationPlans], ['tradePlans', this.tradePlans], ['planExecutions', this.planExecutions], ['aiUsage', this.aiUsage], ['positionReviews', this.positionReviews], ['reviewBudgets', this.reviewBudgets], ['tradeRecords', this.tradeRecords], ['experienceSamples', this.experienceSamples], ['rejectionCooldown', this.rejectionCooldown], ['candidateLifecycle', this.candidateLifecycle], ['lifecycles', this.lifecycles], ['entryReservations', this.entryReservations], ['underlyingLocks', this.underlyingLocks]])
         if (Array.isArray(value[key]))
             for (const [id, source] of value[key]) {
-                const row = key === 'positions' ? { entryTimeSource: 'UNKNOWN', managementStatus: 'AUTO_MANAGED', humanManagedAt: null, tpLastVerifiedAt: null, tpCoverageSource: 'NONE', firstObservedAt: null, ...source } : source;
+                const row = key === 'positions' ? normalizeRestoredPosition({ entryTimeSource: 'UNKNOWN', managementStatus: 'AUTO_MANAGED', humanManagedAt: null, tpLastVerifiedAt: null, tpCoverageSource: 'NONE', firstObservedAt: null, ...source }) : source;
                 target.set(id, row);
             } for(const [symbol,row] of this.candidateLifecycle){if(['SCOUT_QUEUED','SCOUT_RUNNING','SCOUT_DONE','PRIMARY_QUEUED','PRIMARY_RUNNING','PRIMARY_COMPLETED','PLACE_READY'].includes(row?.status)){this.candidateLifecycle.set(symbol,{...row,status:'READY',reason:'ENGINE_RESTART_RECOVERY',nextEligibleAt:null,updatedAt:Date.now()});}} if (value.runtimeControl && typeof value.runtimeControl.mode === 'string')
         if (Array.isArray(value.directionDecisionStates)) for (const [id,row] of value.directionDecisionStates) this.directionDecisionStates.set(id,row); this.runtimeControl = { ...this.runtimeControl, ...value.runtimeControl, entrySafetyMode: value.runtimeControl.entrySafetyMode ?? this.runtimeControl.entrySafetyMode, manualRiskOverride: value.runtimeControl.manualRiskOverride ?? null, capital: { ...this.runtimeControl.capital, ...value.runtimeControl.capital } }; if (value.executionGovernance && typeof value.executionGovernance.mode === 'string') this.executionGovernance = value.executionGovernance; if (value.shadowRunner && typeof value.shadowRunner === 'object')

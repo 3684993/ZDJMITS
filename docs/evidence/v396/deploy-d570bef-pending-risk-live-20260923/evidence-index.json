@@ -1,0 +1,248 @@
+{
+  "round": "v396-deploy-d570bef-pending-risk-live",
+  "date": "2026-09-24",
+  "deployedCommit": "d570befca02e952bf174d3e1f42b93cf241285a3",
+  "branch": "codex/v396-final-convergence-20260922",
+  "authorization": "one normal stop + one MANUAL_START, then read-only acceptance and evidence only; no settings write, no PortfolioRisk profile configuration, no ENFORCE, no testnet/production trade write, no extra restart",
+  "verdict": "DEPLOYED AND ACCEPTED — the running payload now takes entry occupancy from the single authority; the 46 phantom pending rows and their $31,236.33 phantom notional are gone on live durable data; Anti-Waste still spends zero model calls; write boundary 0/0/null; no new P0/P1",
+  "lifecycle": {
+    "stop": 1,
+    "start": 1,
+    "hotReload": 0,
+    "watchdog": 0,
+    "autostart": 0,
+    "secondRestart": 0,
+    "settingsWrite": 0,
+    "profileConfigured": false,
+    "exchangeOrderAction": 0
+  },
+  "oldInstance": {
+    "pid": 50996,
+    "buildId": "3.9.6-dc8fb58b578c25d10726",
+    "sourceCommit": "e284a1a",
+    "uptimeHours": 9.1,
+    "blockedProductionWriteAttemptsAtEnd": 1
+  },
+  "newInstance": {
+    "instanceId": "1c10189b-ad4c-4f2c-9a51-bf409e04e78f",
+    "pid": 34196,
+    "startedAt": 1790203326563,
+    "host": "0.0.0.0",
+    "port": 8080,
+    "version": "3.9.6",
+    "buildId": "3.9.6-eaaabc52c682cc1ce56a",
+    "artifactHash": "eaaabc52c682cc1ce56afaa9301fd18aa64c6a51ab99ebfe3c770949660d2786",
+    "sourceHash": "189b3326304c1cc6684337abe19ce7f1de2fd358d6ef7f1dbf7c9055a0b812a5",
+    "startReason": "MANUAL_START",
+    "lanIps": [
+      "192.168.1.50"
+    ],
+    "restartCount": 173,
+    "hostPid": 43236,
+    "launchId": "50ecd3e0ad624e9fbe68af1e1d97edac",
+    "provenanceClosedByHashMatch": true
+  },
+  "deployedPayloadProof": {
+    "statusOnlyOrderFilterGone": true,
+    "ledgerCallsSingleAuthority": true,
+    "usdtHardcodeGone": true,
+    "newExportPresent": true
+  },
+  "liveDurableReplay": {
+    "legacyPendingOrders": 46,
+    "legacyPendingNotionalUsd": 31236.33,
+    "authorityPendingOrders": 0,
+    "authorityPendingNotionalUsd": 0,
+    "releasedPhantomNotionalUsd": 31236.33,
+    "durableUnknownRowsUnchanged": 46,
+    "releasedWithoutValidProof": 0,
+    "releasedWithExchangeOrderId": 0,
+    "releasedWithFill": 0,
+    "unknownRowsStillOccupyingWouldBeCounted": true
+  },
+  "notClaimed": "No real PORTFOLIO_RISK_ADMISSION_EVALUATED run exists on the new instance because READ_ONLY keeps model spend at zero, so the live admission path was not exercised; the numbers above come from the deployed module driven with the live durable rows.",
+  "antiWaste": {
+    "modelCallsSinceInstanceStart": 0,
+    "aiRunTerminal": 0,
+    "analysisOnlyCompleted": 0,
+    "tradePlanPersisted": 0,
+    "entryOrderSubmit": 0,
+    "executionReadinessBlocked": 1,
+    "supplyMaintenanceStillRunning": true,
+    "candidateLifecycleEvents": 90,
+    "marketMessagesAdvanced": true,
+    "executionReadiness": {
+      "intent": true,
+      "ready": false,
+      "modelSpendPermitted": false,
+      "firstBlocker": "EXECUTION_WRITE_LOCKED",
+      "profileStatus": "PROFILE_NOT_CONFIGURED"
+    }
+  },
+  "privateData": {
+    "windowMinutes": 7.9,
+    "failures": 0,
+    "recoveries": 0,
+    "status": "READY",
+    "snapshotAgeMs": 8,
+    "note": "previous instance saw 114 timeouts in 9h; nothing was loosened"
+  },
+  "safety": {
+    "testnetWrites": 0,
+    "productionWrites": 0,
+    "lastWriteAt": null,
+    "blockedProductionWriteAttemptsThisInstance": 0,
+    "executionMode": "READ_ONLY",
+    "environment": "TESTNET",
+    "settingsVersion": 197,
+    "positions": 13,
+    "tpProtected": "13/13",
+    "orphans": 0,
+    "unverifiedTp": 0,
+    "ownership": "27 rows / 27 cycles / 0 AI_ACTIVE / outbox 0, identical before and after",
+    "sqliteIntegrity": true,
+    "fatalMatches": 0
+  },
+  "preExistingDriftNotCausedByThisRound": {
+    "settingsVersion": "191 -> 197 by six cas writes between 06:04:25 and 06:28:26",
+    "positions": "14 -> 13 closed by hand before this round",
+    "blockedWriteCounter": "one orphan-TP cancel refused under READ_ONLY on the previous instance; the counter is per instance and counts any refused exchange write"
+  },
+  "files": [
+    {
+      "path": "docs/evidence/v396/deploy-d570bef-pending-risk-live-20260923/RESULT.md",
+      "bytes": 8721,
+      "sha256": "287a7a68d3cfc2884ba87d5595e6af8f0996261867269fbbe66be8bc909a911b"
+    },
+    {
+      "path": "docs/evidence/v396/deploy-d570bef-pending-risk-live-20260923/anti-waste-window.mjs",
+      "bytes": 6257,
+      "sha256": "235e9c52527968eb109618796ea3ba8a98d2214ddf0d7f59d7044649a2ae59ae"
+    },
+    {
+      "path": "docs/evidence/v396/deploy-d570bef-pending-risk-live-20260923/build-01-verify-deps.txt",
+      "bytes": 102,
+      "sha256": "a216e84f9c3193fa6d58305f06361f534e1bf72d8f709dc4de7b4718f05e55d2"
+    },
+    {
+      "path": "docs/evidence/v396/deploy-d570bef-pending-risk-live-20260923/build-02-engine.txt",
+      "bytes": 50,
+      "sha256": "58702c2bce638a249622b034da12d953f6c71465743d5d17c0e493a8c78abe3d"
+    },
+    {
+      "path": "docs/evidence/v396/deploy-d570bef-pending-risk-live-20260923/build-03-dashboard.txt",
+      "bytes": 3696,
+      "sha256": "3e2f5d070f0b5f92d3125db93c8111172f7e1d444cd90077e489cd12adedfd6c"
+    },
+    {
+      "path": "docs/evidence/v396/deploy-d570bef-pending-risk-live-20260923/build-04-expected-artifact-identity.json",
+      "bytes": 224,
+      "sha256": "2e3a54e8e4c22d91d91c43dea47119399c055c0275bd4fafc4c4a2ded41ab94e"
+    },
+    {
+      "path": "docs/evidence/v396/deploy-d570bef-pending-risk-live-20260923/build-exit-codes.txt",
+      "bytes": 62,
+      "sha256": "7494804235c5bba9d56f44c288b6ce478e1a73e8c69f0524a6a0129205aebe30"
+    },
+    {
+      "path": "docs/evidence/v396/deploy-d570bef-pending-risk-live-20260923/dashboard-after-deploy.png",
+      "bytes": 119508,
+      "sha256": "45bc19b9e53c74e030100d2248b9cf80974b026a1ce24a13efd7327e68cb4bdc"
+    },
+    {
+      "path": "docs/evidence/v396/deploy-d570bef-pending-risk-live-20260923/dashboard-readback.json",
+      "bytes": 1891,
+      "sha256": "c8dd5e291898e68d100048e3879c8c784b84952f51f5939fa72c7d4cfc1eaf99"
+    },
+    {
+      "path": "docs/evidence/v396/deploy-d570bef-pending-risk-live-20260923/execution-readiness-readback.json",
+      "bytes": 2416,
+      "sha256": "066c4bddac2312daaae5a9c640e414f650a0014f92f159ed337073d79546deab"
+    },
+    {
+      "path": "docs/evidence/v396/deploy-d570bef-pending-risk-live-20260923/lifecycle-stop-start-records.jsonl",
+      "bytes": 783,
+      "sha256": "9ed9f116efee666cf6dc7a282fadf7a53ee4f5e253b8db29e4d0153e7879ab6c"
+    },
+    {
+      "path": "docs/evidence/v396/deploy-d570bef-pending-risk-live-20260923/no-model-spend-window.json",
+      "bytes": 31236,
+      "sha256": "571c30135ae27c2ef96af3756b17b971c64f371ba44c24d66d0c1f87f6e485db"
+    },
+    {
+      "path": "docs/evidence/v396/deploy-d570bef-pending-risk-live-20260923/pending-risk-live-replay.json",
+      "bytes": 1089,
+      "sha256": "22fcfb60cc68e5ba19919e979e5cf2af8f287df85bbbdb4b650ec8931ddd4de9"
+    },
+    {
+      "path": "docs/evidence/v396/deploy-d570bef-pending-risk-live-20260923/pending-risk-live-replay.mjs",
+      "bytes": 5338,
+      "sha256": "be43caa054103795aa836851ed11bd1e0414268117d4cae5050df54777d927d4"
+    },
+    {
+      "path": "docs/evidence/v396/deploy-d570bef-pending-risk-live-20260923/post-deploy-continuity.json",
+      "bytes": 5158,
+      "sha256": "a95efe3e7f8fffdcae68c2cb6ffd35372db151bf40fdcc7857afdb12d95e397b"
+    },
+    {
+      "path": "docs/evidence/v396/deploy-d570bef-pending-risk-live-20260923/post-deploy-log-scan.json",
+      "bytes": 950,
+      "sha256": "3d17aada5cafb54e78ad1fbfcace5e8868e66f0ce7b1f54d2b6d070a525b8676"
+    },
+    {
+      "path": "docs/evidence/v396/deploy-d570bef-pending-risk-live-20260923/post-deploy-readback.mjs",
+      "bytes": 4969,
+      "sha256": "879effabefcb890a7224417265e018f4f599c4454d0a608e020b240a943570b2"
+    },
+    {
+      "path": "docs/evidence/v396/deploy-d570bef-pending-risk-live-20260923/post-deploy-runtime-snapshot-t0.json",
+      "bytes": 55795,
+      "sha256": "6e92fc49f4940c1ed2822979f5d1a945dc791c929f92e23afc0bec422e9f0317"
+    },
+    {
+      "path": "docs/evidence/v396/deploy-d570bef-pending-risk-live-20260923/pre-deploy-runtime-snapshot.json",
+      "bytes": 123833,
+      "sha256": "441615d383b8be15f9bbbce728b92f024a6009b2b633fb3405fbeb604d7764b6"
+    },
+    {
+      "path": "docs/evidence/v396/deploy-d570bef-pending-risk-live-20260923/pre-deploy-safety-notes.json",
+      "bytes": 4161,
+      "sha256": "d2b6efc8cc2010fcdebc19482bd62813cf5fd2cd53a877bd55388f9ba479c058"
+    },
+    {
+      "path": "docs/evidence/v396/deploy-d570bef-pending-risk-live-20260923/private-data-and-boundary-readback.json",
+      "bytes": 1726,
+      "sha256": "9c03e0409d910383e02cb0b74b7cad245d21c5b834d7d6befa794714ad671d2a"
+    },
+    {
+      "path": "docs/evidence/v396/deploy-d570bef-pending-risk-live-20260923/private-data-and-boundary-readback.mjs",
+      "bytes": 3123,
+      "sha256": "665c654104c5b604d1a8a70eec7c5885bcaa780da73329889a2f670408458dfd"
+    },
+    {
+      "path": "docs/evidence/v396/deploy-d570bef-pending-risk-live-20260923/run-build.sh",
+      "bytes": 1605,
+      "sha256": "54601c492ed07d2c4478f130f3e1e340ff5308115ef9a316972fb95962b192c6"
+    },
+    {
+      "path": "docs/evidence/v396/deploy-d570bef-pending-risk-live-20260923/snapshot.mjs",
+      "bytes": 6864,
+      "sha256": "82b992ddf574a96affab29af8ba2af4938cced6d564f4ab877dcd9643b393048"
+    },
+    {
+      "path": "docs/evidence/v396/deploy-d570bef-pending-risk-live-20260923/start-01-output.txt",
+      "bytes": 601,
+      "sha256": "ce555edf13c8946e5209fd7f92f2949b045e00cad6579420894efca8a02f5b87"
+    },
+    {
+      "path": "docs/evidence/v396/deploy-d570bef-pending-risk-live-20260923/stop-01-output.txt",
+      "bytes": 36,
+      "sha256": "7e24928f570ed5c31fc16c455e87130ca0f49259f70abf12b0442bf68df3b763"
+    },
+    {
+      "path": "docs/evidence/v396/deploy-d570bef-pending-risk-live-20260923/supply-maintenance-readback.json",
+      "bytes": 13223,
+      "sha256": "e3269bdfb6833ca7eae4c0f20210cc6191ca7b986dc88a19f61013c87a02f81f"
+    }
+  ]
+}

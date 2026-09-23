@@ -1,0 +1,487 @@
+{
+  "source": "no-model-spend-window.json samples, same live process",
+  "verdict": {
+    "zeroModelCallsOnNewInstance": true,
+    "modelCallsObserved": 0,
+    "readinessBlockedEverySample": true,
+    "supplyMaintenanceStillRunning": true,
+    "candidateLifecycleEvents": 90,
+    "marketLastMessageAdvanced": "1790203427572 -> 1790203734503",
+    "noEntrySubmit": true
+  },
+  "eventsSinceInstanceStart": {
+    "ANALYSIS_DISPATCH_HEARTBEAT": 11,
+    "CANDIDATE_LIFECYCLE_REDERIVED": 90,
+    "CANDIDATE_SUPPLY_HEALTH": 18,
+    "EXECUTION_READINESS_BLOCKED": 1,
+    "MARKET_COHORT_REFILLED": 5
+  },
+  "samples": [
+    {
+      "at": 1790203427526,
+      "local": "2026/9/24 06:43:47",
+      "marketFreshness": {
+        "state": "LIVE",
+        "lastMessageAt": 1790203427572,
+        "subscriptions": 88,
+        "reconnects": 0,
+        "pipelineAsOf": 1790203427560
+      },
+      "pool": {
+        "target": 20,
+        "qualifiedSupply": 2,
+        "readySupply": 1,
+        "ready": 1,
+        "display": 2,
+        "targetGap": 18,
+        "supplyShortage": true,
+        "refillFailure": false,
+        "health": {
+          "cohort": {
+            "status": "NOT_ESTABLISHED",
+            "memberCount": null
+          },
+          "retention": {
+            "status": "NOT_INVENTORIED",
+            "zombieSnapshotCount": null
+          },
+          "counts": {
+            "rankedSymbols": 2,
+            "residentSymbols": 2,
+            "potentialReadySymbols": 1,
+            "dispatchReadySymbols": 1,
+            "poolReadySymbols": 1,
+            "poolWaitingSymbols": 1,
+            "poolAnalyzingSymbols": 0,
+            "cooldownSymbols": 0,
+            "staleSymbols": 1,
+            "governanceBlockedSymbols": 2,
+            "occupiedUnderlyings": 13,
+            "freeResidentUnderlyings": 2,
+            "snapshotCount": 5,
+            "consumedSymbols": null
+          },
+          "target": 20,
+          "lowWatermark": 4,
+          "rootBlocker": null,
+          "reasonCounts": {
+            "SUPPLY": 0,
+            "CAPITAL": 0,
+            "CAPACITY": 0,
+            "RISK": 0,
+            "MARKET": 1,
+            "GOVERNANCE": 2,
+            "AI": 0
+          },
+          "poolCount": 2,
+          "readyCount": 1,
+          "qualifiedSupply": 2,
+          "readySupply": 1,
+          "targetGap": 18,
+          "supplyShortage": true,
+          "refillFailure": false,
+          "belowLowWatermark": true
+        },
+        "status": "POOL_SUPPLY_SHORTAGE",
+        "current": 2
+      },
+      "eligibility": {
+        "status": "READY",
+        "count": 1,
+        "cooldown": 0,
+        "excluded": 1
+      },
+      "capacity": {
+        "positions": 13,
+        "inFlight": 0,
+        "reserved": 0,
+        "used": 13,
+        "max": 50
+      },
+      "readinessFirstBlocker": "EXECUTION_WRITE_LOCKED",
+      "blockers": [
+        "EXECUTION_WRITE_LOCKED",
+        "RISK_PROFILE_UNCONFIGURED"
+      ],
+      "executableCandidateCount": 1,
+      "reconciliation": {
+        "historicalUnknown": 46,
+        "verifiedNoActiveRisk": 46,
+        "activeRiskUnresolved": 0
+      }
+    },
+    {
+      "at": 1790203502596,
+      "local": "2026/9/24 06:45:02",
+      "marketFreshness": {
+        "state": "LIVE",
+        "lastMessageAt": 1790203502969,
+        "subscriptions": 98,
+        "reconnects": 0,
+        "pipelineAsOf": 1790203502693
+      },
+      "pool": {
+        "target": 20,
+        "qualifiedSupply": 3,
+        "readySupply": 2,
+        "ready": 2,
+        "display": 3,
+        "targetGap": 17,
+        "supplyShortage": true,
+        "refillFailure": false,
+        "health": {
+          "cohort": {
+            "status": "NOT_ESTABLISHED",
+            "memberCount": null
+          },
+          "retention": {
+            "status": "NOT_INVENTORIED",
+            "zombieSnapshotCount": null
+          },
+          "counts": {
+            "rankedSymbols": 3,
+            "residentSymbols": 3,
+            "potentialReadySymbols": 2,
+            "dispatchReadySymbols": 2,
+            "poolReadySymbols": 2,
+            "poolWaitingSymbols": 1,
+            "poolAnalyzingSymbols": 0,
+            "cooldownSymbols": 0,
+            "staleSymbols": 0,
+            "governanceBlockedSymbols": 6,
+            "occupiedUnderlyings": 13,
+            "freeResidentUnderlyings": 2,
+            "snapshotCount": 10,
+            "consumedSymbols": null
+          },
+          "target": 20,
+          "lowWatermark": 4,
+          "rootBlocker": null,
+          "reasonCounts": {
+            "SUPPLY": 0,
+            "CAPITAL": 0,
+            "CAPACITY": 0,
+            "RISK": 0,
+            "MARKET": 0,
+            "GOVERNANCE": 6,
+            "AI": 0
+          },
+          "poolCount": 3,
+          "readyCount": 2,
+          "qualifiedSupply": 3,
+          "readySupply": 2,
+          "targetGap": 17,
+          "supplyShortage": true,
+          "refillFailure": false,
+          "belowLowWatermark": true
+        },
+        "status": "POOL_SUPPLY_SHORTAGE",
+        "current": 3
+      },
+      "eligibility": {
+        "status": "READY",
+        "count": 2,
+        "cooldown": 0,
+        "excluded": 4
+      },
+      "capacity": {
+        "positions": 13,
+        "inFlight": 0,
+        "reserved": 0,
+        "used": 13,
+        "max": 50
+      },
+      "readinessFirstBlocker": "EXECUTION_WRITE_LOCKED",
+      "blockers": [
+        "EXECUTION_WRITE_LOCKED",
+        "RISK_PROFILE_UNCONFIGURED"
+      ],
+      "executableCandidateCount": 2,
+      "reconciliation": {
+        "historicalUnknown": 46,
+        "verifiedNoActiveRisk": 46,
+        "activeRiskUnresolved": 0
+      }
+    },
+    {
+      "at": 1790203577990,
+      "local": "2026/9/24 06:46:17",
+      "marketFreshness": {
+        "state": "LIVE",
+        "lastMessageAt": 1790203578942,
+        "subscriptions": 98,
+        "reconnects": 0,
+        "pipelineAsOf": 1790203578912
+      },
+      "pool": {
+        "target": 20,
+        "qualifiedSupply": 6,
+        "readySupply": 2,
+        "ready": 2,
+        "display": 6,
+        "targetGap": 14,
+        "supplyShortage": true,
+        "refillFailure": false,
+        "health": {
+          "cohort": {
+            "status": "NOT_ESTABLISHED",
+            "memberCount": null
+          },
+          "retention": {
+            "status": "NOT_INVENTORIED",
+            "zombieSnapshotCount": null
+          },
+          "counts": {
+            "rankedSymbols": 6,
+            "residentSymbols": 6,
+            "potentialReadySymbols": 2,
+            "dispatchReadySymbols": 2,
+            "poolReadySymbols": 2,
+            "poolWaitingSymbols": 4,
+            "poolAnalyzingSymbols": 0,
+            "cooldownSymbols": 0,
+            "staleSymbols": 0,
+            "governanceBlockedSymbols": 7,
+            "occupiedUnderlyings": 13,
+            "freeResidentUnderlyings": 2,
+            "snapshotCount": 15,
+            "consumedSymbols": null
+          },
+          "target": 20,
+          "lowWatermark": 4,
+          "rootBlocker": null,
+          "reasonCounts": {
+            "SUPPLY": 0,
+            "CAPITAL": 0,
+            "CAPACITY": 0,
+            "RISK": 0,
+            "MARKET": 0,
+            "GOVERNANCE": 7,
+            "AI": 0
+          },
+          "poolCount": 6,
+          "readyCount": 2,
+          "qualifiedSupply": 6,
+          "readySupply": 2,
+          "targetGap": 14,
+          "supplyShortage": true,
+          "refillFailure": false,
+          "belowLowWatermark": true
+        },
+        "status": "POOL_SUPPLY_SHORTAGE",
+        "current": 6
+      },
+      "eligibility": {
+        "status": "READY",
+        "count": 2,
+        "cooldown": 0,
+        "excluded": 9
+      },
+      "capacity": {
+        "positions": 13,
+        "inFlight": 0,
+        "reserved": 0,
+        "used": 13,
+        "max": 50
+      },
+      "readinessFirstBlocker": "EXECUTION_WRITE_LOCKED",
+      "blockers": [
+        "EXECUTION_WRITE_LOCKED",
+        "RISK_PROFILE_UNCONFIGURED"
+      ],
+      "executableCandidateCount": 2,
+      "reconciliation": {
+        "historicalUnknown": 46,
+        "verifiedNoActiveRisk": 46,
+        "activeRiskUnresolved": 0
+      }
+    },
+    {
+      "at": 1790203653964,
+      "local": "2026/9/24 06:47:33",
+      "marketFreshness": {
+        "state": "LIVE",
+        "lastMessageAt": 1790203658802,
+        "subscriptions": 113,
+        "reconnects": 0,
+        "pipelineAsOf": 1790203658772
+      },
+      "pool": {
+        "target": 20,
+        "qualifiedSupply": 7,
+        "readySupply": 0,
+        "ready": 0,
+        "display": 7,
+        "targetGap": 13,
+        "supplyShortage": true,
+        "refillFailure": false,
+        "health": {
+          "cohort": {
+            "status": "NOT_ESTABLISHED",
+            "memberCount": null
+          },
+          "retention": {
+            "status": "NOT_INVENTORIED",
+            "zombieSnapshotCount": null
+          },
+          "counts": {
+            "rankedSymbols": 7,
+            "residentSymbols": 7,
+            "potentialReadySymbols": 0,
+            "dispatchReadySymbols": 0,
+            "poolReadySymbols": 0,
+            "poolWaitingSymbols": 7,
+            "poolAnalyzingSymbols": 0,
+            "cooldownSymbols": 0,
+            "staleSymbols": 0,
+            "governanceBlockedSymbols": 9,
+            "occupiedUnderlyings": 14,
+            "freeResidentUnderlyings": 0,
+            "snapshotCount": 19,
+            "consumedSymbols": null
+          },
+          "target": 20,
+          "lowWatermark": 4,
+          "rootBlocker": "GOVERNANCE",
+          "reasonCounts": {
+            "SUPPLY": 0,
+            "CAPITAL": 0,
+            "CAPACITY": 0,
+            "RISK": 0,
+            "MARKET": 0,
+            "GOVERNANCE": 9,
+            "AI": 0
+          },
+          "poolCount": 7,
+          "readyCount": 0,
+          "qualifiedSupply": 7,
+          "readySupply": 0,
+          "targetGap": 13,
+          "supplyShortage": true,
+          "refillFailure": false,
+          "belowLowWatermark": true
+        },
+        "status": "POOL_SUPPLY_SHORTAGE",
+        "current": 7
+      },
+      "eligibility": {
+        "status": "BLOCKED",
+        "count": 0,
+        "cooldown": 0,
+        "excluded": 13
+      },
+      "capacity": {
+        "positions": 13,
+        "inFlight": 1,
+        "reserved": 0,
+        "used": 14,
+        "max": 50
+      },
+      "readinessFirstBlocker": "EXECUTION_WRITE_LOCKED",
+      "blockers": [
+        "EXECUTION_WRITE_LOCKED",
+        "RISK_PROFILE_UNCONFIGURED",
+        "NO_EXECUTABLE_CANDIDATE"
+      ],
+      "executableCandidateCount": 0,
+      "reconciliation": {
+        "historicalUnknown": 46,
+        "verifiedNoActiveRisk": 45,
+        "activeRiskUnresolved": 1
+      }
+    },
+    {
+      "at": 1790203733817,
+      "local": "2026/9/24 06:48:53",
+      "marketFreshness": {
+        "state": "LIVE",
+        "lastMessageAt": 1790203734503,
+        "subscriptions": 118,
+        "reconnects": 0,
+        "pipelineAsOf": 1790203734274
+      },
+      "pool": {
+        "target": 20,
+        "qualifiedSupply": 10,
+        "readySupply": 3,
+        "ready": 3,
+        "display": 10,
+        "targetGap": 10,
+        "supplyShortage": true,
+        "refillFailure": false,
+        "health": {
+          "cohort": {
+            "status": "NOT_ESTABLISHED",
+            "memberCount": null
+          },
+          "retention": {
+            "status": "NOT_INVENTORIED",
+            "zombieSnapshotCount": null
+          },
+          "counts": {
+            "rankedSymbols": 10,
+            "residentSymbols": 10,
+            "potentialReadySymbols": 3,
+            "dispatchReadySymbols": 3,
+            "poolReadySymbols": 3,
+            "poolWaitingSymbols": 7,
+            "poolAnalyzingSymbols": 0,
+            "cooldownSymbols": 0,
+            "staleSymbols": 0,
+            "governanceBlockedSymbols": 11,
+            "occupiedUnderlyings": 13,
+            "freeResidentUnderlyings": 3,
+            "snapshotCount": 23,
+            "consumedSymbols": null
+          },
+          "target": 20,
+          "lowWatermark": 4,
+          "rootBlocker": null,
+          "reasonCounts": {
+            "SUPPLY": 0,
+            "CAPITAL": 0,
+            "CAPACITY": 0,
+            "RISK": 0,
+            "MARKET": 0,
+            "GOVERNANCE": 11,
+            "AI": 0
+          },
+          "poolCount": 10,
+          "readyCount": 3,
+          "qualifiedSupply": 10,
+          "readySupply": 3,
+          "targetGap": 10,
+          "supplyShortage": true,
+          "refillFailure": false,
+          "belowLowWatermark": true
+        },
+        "status": "POOL_SUPPLY_SHORTAGE",
+        "current": 10
+      },
+      "eligibility": {
+        "status": "READY",
+        "count": 3,
+        "cooldown": 0,
+        "excluded": 13
+      },
+      "capacity": {
+        "positions": 13,
+        "inFlight": 0,
+        "reserved": 0,
+        "used": 13,
+        "max": 50
+      },
+      "readinessFirstBlocker": "EXECUTION_WRITE_LOCKED",
+      "blockers": [
+        "EXECUTION_WRITE_LOCKED",
+        "RISK_PROFILE_UNCONFIGURED"
+      ],
+      "executableCandidateCount": 3,
+      "reconciliation": {
+        "historicalUnknown": 46,
+        "verifiedNoActiveRisk": 46,
+        "activeRiskUnresolved": 0
+      }
+    }
+  ]
+}

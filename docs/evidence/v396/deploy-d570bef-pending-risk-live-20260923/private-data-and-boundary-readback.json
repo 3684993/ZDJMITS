@@ -1,0 +1,53 @@
+{
+  "capturedAt": "2026-09-23T22:50:02.530Z",
+  "instance": {
+    "pid": 34196,
+    "buildId": "3.9.6-eaaabc52c682cc1ce56a",
+    "startedAtIso": "2026-09-23T22:42:06.563Z"
+  },
+  "windowMinutes": 7.9,
+  "failures": [],
+  "recoveryCount": 0,
+  "stats": {
+    "failures": 0,
+    "recoveries": 0,
+    "errorCodeTally": {},
+    "durationMsRange": null,
+    "maxConsecutiveFailures": 0
+  },
+  "livePrivate": {
+    "status": "READY",
+    "asOf": 1790203802225,
+    "snapshotAgeMs": 8,
+    "consecutiveFailures": 0,
+    "lastError": null
+  },
+  "executionReadiness": {
+    "intent": true,
+    "ready": false,
+    "modelSpendPermitted": false,
+    "blockers": [
+      "EXECUTION_WRITE_LOCKED",
+      "RISK_PROFILE_UNCONFIGURED"
+    ],
+    "firstBlocker": "EXECUTION_WRITE_LOCKED",
+    "profileStatus": "PROFILE_NOT_CONFIGURED",
+    "privateFresh": true,
+    "writeLocked": true,
+    "executableCandidateCount": 3,
+    "mode": "EXECUTION_BLOCKED",
+    "text": "执行事实未齐：EXECUTION_WRITE_LOCKED · RISK_PROFILE_UNCONFIGURED；已停止调用模型，避免产生无法执行的决策"
+  },
+  "perInstanceWriteBoundary": {
+    "environment": "TESTNET",
+    "executionMode": "READ_ONLY",
+    "lockedToTestnet": true,
+    "testnetWrites": 0,
+    "productionWrites": 0,
+    "blockedProductionWriteAttempts": 0,
+    "lastWriteAt": null,
+    "lastWritePath": null
+  },
+  "countersExplained": "blockedProductionWriteAttempts is per instance: the previous instance ended at 1 (an orphan-TP cancel refused because executionMode is READ_ONLY). A fresh zero on this instance is not proof that nothing ever happened historically.",
+  "discipline": "No timeout change, no freshness-window change, no cached fact used to admit a write."
+}

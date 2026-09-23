@@ -1,0 +1,186 @@
+{
+  "capturedAtIso": "2026-09-23T22:46:22.281Z",
+  "identity": {
+    "expectedFromBuild": {
+      "expectedBuildId": "3.9.6-eaaabc52c682cc1ce56a",
+      "artifactHash": "eaaabc52c682cc1ce56afaa9301fd18aa64c6a51ab99ebfe3c770949660d2786",
+      "sourceHash": "189b3326304c1cc6684337abe19ce7f1de2fd358d6ef7f1dbf7c9055a0b812a5"
+    },
+    "writtenByProcess": {
+      "pid": 34196,
+      "instanceId": "1c10189b-ad4c-4f2c-9a51-bf409e04e78f",
+      "buildId": "3.9.6-eaaabc52c682cc1ce56a",
+      "artifactHash": "eaaabc52c682cc1ce56afaa9301fd18aa64c6a51ab99ebfe3c770949660d2786",
+      "sourceHash": "189b3326304c1cc6684337abe19ce7f1de2fd358d6ef7f1dbf7c9055a0b812a5",
+      "startReason": "MANUAL_START",
+      "restartCount": 173,
+      "startedAtIso": "2026-09-23T22:42:06.563Z"
+    },
+    "provenanceClosed": true
+  },
+  "positions": {
+    "beforeThisRound": {
+      "count": 13,
+      "tpByStatus": {
+        "PROTECTED": 13
+      },
+      "management": {
+        "HUMAN_MANAGED": 13
+      }
+    },
+    "tp": {
+      "status": "READY",
+      "unverifiedTp": 0,
+      "required": 13,
+      "protected": 13,
+      "missing": 0,
+      "repairing": 0,
+      "repairFailed": 0,
+      "manualReviewRequired": 0,
+      "orphanTp": 0,
+      "duplicateTp": 0,
+      "qtyMismatch": 0,
+      "wrongSide": 0,
+      "tpMissing": 0,
+      "retryQueue": 0
+    },
+    "rows": [
+      {
+        "symbol": "XRPUSDT",
+        "side": "LONG",
+        "quantity": 10,
+        "cycleId": "cycle_entry_intent_mud2rkdc_27t7dcpo",
+        "tpStatus": "PROTECTED",
+        "management": "HUMAN_MANAGED",
+        "ownerRow": "HUMAN_MANAGED"
+      },
+      {
+        "symbol": "BCHUSDT",
+        "side": "LONG",
+        "quantity": 0.017,
+        "cycleId": "cycle_entry_intent_mud27kh7_wdfh3ake",
+        "tpStatus": "PROTECTED",
+        "management": "HUMAN_MANAGED",
+        "ownerRow": "HUMAN_MANAGED"
+      },
+      {
+        "symbol": "BTCUSDT",
+        "side": "LONG",
+        "quantity": 0.0425,
+        "cycleId": "cycle_entry_intent_mubpoawr_aiicz3a2",
+        "tpStatus": "PROTECTED",
+        "management": "HUMAN_MANAGED",
+        "ownerRow": "HUMAN_MANAGED"
+      },
+      {
+        "symbol": "ETHUSDT",
+        "side": "LONG",
+        "quantity": 0.01,
+        "cycleId": "cycle_entry_intent_mubgebej_x5kj2tle",
+        "tpStatus": "PROTECTED",
+        "management": "HUMAN_MANAGED",
+        "ownerRow": "HUMAN_MANAGED"
+      },
+      {
+        "symbol": "ZECUSDT",
+        "side": "SHORT",
+        "quantity": 0.788,
+        "cycleId": "cycle_entry_intent_mu9lpe0w_u7yjdvud",
+        "tpStatus": "PROTECTED",
+        "management": "HUMAN_MANAGED",
+        "ownerRow": "HUMAN_MANAGED"
+      },
+      {
+        "symbol": "ENAUSDT",
+        "side": "SHORT",
+        "quantity": 1000,
+        "cycleId": "cycle_entry_intent_mu992hw3_fj637bez",
+        "tpStatus": "PROTECTED",
+        "management": "HUMAN_MANAGED",
+        "ownerRow": "HUMAN_MANAGED"
+      },
+      {
+        "symbol": "FETUSDT",
+        "side": "SHORT",
+        "quantity": 76,
+        "cycleId": "cycle_entry_intent_mu95o9o8_c4nzb3h3",
+        "tpStatus": "PROTECTED",
+        "management": "HUMAN_MANAGED",
+        "ownerRow": "HUMAN_MANAGED"
+      },
+      {
+        "symbol": "AVAXUSDT",
+        "side": "SHORT",
+        "quantity": 400,
+        "cycleId": "cycle_entry_intent_mu8l1mm0_rcobpxad",
+        "tpStatus": "PROTECTED",
+        "management": "HUMAN_MANAGED",
+        "ownerRow": "HUMAN_MANAGED"
+      },
+      {
+        "symbol": "ARBUSDT",
+        "side": "SHORT",
+        "quantity": 29.8,
+        "cycleId": "cycle_entry_intent_mu83kx05_o828djl5",
+        "tpStatus": "PROTECTED",
+        "management": "HUMAN_MANAGED",
+        "ownerRow": "HUMAN_MANAGED"
+      },
+      {
+        "symbol": "ONDOUSDT",
+        "side": "SHORT",
+        "quantity": 15,
+        "cycleId": "cycle_entry_intent_mu83d7ho_tpicfrwf",
+        "tpStatus": "PROTECTED",
+        "management": "HUMAN_MANAGED",
+        "ownerRow": "HUMAN_MANAGED"
+      },
+      {
+        "symbol": "LTCUSDT",
+        "side": "SHORT",
+        "quantity": 0.36,
+        "cycleId": "cycle_entry_intent_mu835vg9_5fvhw7y9",
+        "tpStatus": "PROTECTED",
+        "management": "HUMAN_MANAGED",
+        "ownerRow": "HUMAN_MANAGED"
+      },
+      {
+        "symbol": "BNBUSDC",
+        "side": "SHORT",
+        "quantity": 0.06,
+        "cycleId": "cycle_entry_intent_mu7xja2g_vg36bi9m",
+        "tpStatus": "PROTECTED",
+        "management": "HUMAN_MANAGED",
+        "ownerRow": "HUMAN_MANAGED"
+      },
+      {
+        "symbol": "DOTUSDT",
+        "side": "SHORT",
+        "quantity": 10,
+        "cycleId": "cycle_entry_intent_mu7x18sq_5ssvwucx",
+        "tpStatus": "PROTECTED",
+        "management": "HUMAN_MANAGED",
+        "ownerRow": "HUMAN_MANAGED"
+      }
+    ],
+    "ownerRowsMissing": 0,
+    "allProtected": true,
+    "allHumanManaged": true
+  },
+  "ownership": {
+    "before": {
+      "owners": 27,
+      "cycles": 27,
+      "aiActive": 0,
+      "outboxPending": 0
+    },
+    "after": {
+      "owners": 27,
+      "cycles": 27,
+      "aiActive": 0,
+      "outboxPending": 0
+    },
+    "journalRows": 27,
+    "aiActive": 0
+  }
+}

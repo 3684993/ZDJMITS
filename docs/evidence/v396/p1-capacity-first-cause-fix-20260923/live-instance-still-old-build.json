@@ -1,0 +1,15 @@
+{
+  "capturedAt": "2026-09-23T09:57:33.649Z",
+  "note": "修 P1 本轮未部署：运行实例仍是 buildId 3.9.6-2fb37e445af4d3d351da（含 P1 文案）",
+  "health": {
+    "status": "READY",
+    "ready": true,
+    "pid": 26784,
+    "uptimeMin": 42
+  },
+  "runningPayloadHasExhaustedFlag": false,
+  "currentFirstBlocker": "DIRECTION_SHORT",
+  "currentPrimaryIdle": null,
+  "currentNextStep": "正在处理 FILUSDC",
+  "writes": {}
+}

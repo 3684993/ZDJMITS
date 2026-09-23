@@ -1,0 +1,29 @@
+{
+  "capturedAt": "17:57:48",
+  "egress": {
+    "status": "VERIFIED",
+    "lastError": null,
+    "lastVerifiedAt": "17:45:51"
+  },
+  "analysis": {
+    "reason": "AI_RESOURCE_BUSY",
+    "lastBlocked": "AI_RESOURCE_BUSY",
+    "attempt": "17:57:11",
+    "success": "17:57:08",
+    "active": 1
+  },
+  "writes": {
+    "environment": "TESTNET",
+    "executionMode": "READ_ONLY",
+    "lockedToTestnet": true,
+    "testnetWrites": 0,
+    "productionWrites": 0,
+    "blockedProductionWriteAttempts": 0,
+    "lastWriteAt": null,
+    "lastWritePath": null
+  },
+  "tp": "14/14",
+  "positions": 14,
+  "drift": 0,
+  "note": "出口复验已恢复，分析派发重新进行；本轮未部署修复，运行实例仍为 2fb37e44 构建"
+}

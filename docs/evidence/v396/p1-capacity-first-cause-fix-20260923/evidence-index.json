@@ -1,0 +1,164 @@
+{
+  "round": "v396-p1-capacity-first-cause-fix",
+  "date": "2026-09-23",
+  "branch": "codex/v396-final-convergence-20260922",
+  "baseHead": "c9fc3b2",
+  "findingFixed": "docs/evidence/v396/deploy-d624b21-20260923/finding-p1-capacity-first-cause-overclaim.json",
+  "redBefore": "3 failed | 10 passed (13) on the pre-fix implementation at c9fc3b2",
+  "engineLifecycleUsed": false,
+  "liveArtifactsReplaced": false,
+  "liveSettingsOrDatabaseModified": false,
+  "exchangeWriteRequestsIssued": 0,
+  "verdict": "READY_FOR_REVIEW — not self-signed ACCEPTED; deploying this fix needs a separate authorization",
+  "gates": {
+    "engine_vitest_full": {
+      "exit": 0,
+      "summary": "153 files / 1168 tests pass"
+    },
+    "engine_typecheck": {
+      "exit": 0
+    },
+    "engine_build": {
+      "exit": 0,
+      "note": "tsc --outDir build-check/engine; apps/engine/dist untouched (live build still 3.9.6-2fb37e445af4d3d351da)"
+    },
+    "dashboard_vitest_full": {
+      "exit": 0,
+      "summary": "12 files / 40 tests pass"
+    },
+    "dashboard_typecheck": {
+      "exit": 0
+    },
+    "dashboard_build": {
+      "exit": 0,
+      "note": "vite build --outDir build-check/dashboard; apps/dashboard/dist untouched"
+    },
+    "core_typecheck_and_test": {
+      "exit": 0,
+      "summary": "46 tests"
+    },
+    "contracts_typecheck_and_test": {
+      "exit": 0,
+      "summary": "0 tests (passWithNoTests); no contract-level coverage claimed"
+    },
+    "verify_deps": {
+      "exit": 0
+    },
+    "verify_scripts": {
+      "exit": 0
+    },
+    "v396_s00_static_check": {
+      "exit": 0,
+      "summary": "S00_T01..T06 PASS, 153 engine test files isolated, blockers []"
+    },
+    "v396_storage_coverage_check": {
+      "exit": 0,
+      "summary": "STORAGE_COVERAGE_CHECK_PASS"
+    },
+    "git_diff_check": {
+      "exit": 0
+    }
+  },
+  "files": [
+    {
+      "name": "RESULT.md",
+      "bytes": 5914,
+      "sha256": "8348cde75ef6712124f745ebd7b4b4acb38196db38baa98728648e015c0a2a61"
+    },
+    {
+      "name": "gate-01-engine-full.txt",
+      "bytes": 37245,
+      "sha256": "26910745fc0eb9164edc116a8bb2a94558fb4953705e5e66094b608cdb1ad4b8"
+    },
+    {
+      "name": "gate-02-engine-typecheck.txt",
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "name": "gate-03-dashboard-full.txt",
+      "bytes": 2541,
+      "sha256": "5901bfd55779d405a68a6a3732fc4bbc0b21b881865a47f18efe89bacfd52093"
+    },
+    {
+      "name": "gate-04-dashboard-typecheck.txt",
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "name": "gate-05-core-test.txt",
+      "bytes": 1529,
+      "sha256": "c45370adb79eacc391beec61fcbe49f3a1eb80fafcaebdba91002c003003b5b0"
+    },
+    {
+      "name": "gate-06-contracts-test.txt",
+      "bytes": 801,
+      "sha256": "198f56487aa91ea64c47db7cb628b021e8b8923b08074c0b86364ec9d513ee7b"
+    },
+    {
+      "name": "gate-07-core-typecheck.txt",
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "name": "gate-08-contracts-typecheck.txt",
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "name": "gate-09-verify-deps.txt",
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "name": "gate-10-verify-scripts.txt",
+      "bytes": 4225,
+      "sha256": "795d335b056bd93cdafcab0a7122e203340b5efafa60204e50da61666c4363e9"
+    },
+    {
+      "name": "gate-11-engine-build-to-scratch.txt",
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "name": "gate-12-dashboard-build-to-scratch.txt",
+      "bytes": 4144,
+      "sha256": "abcc091a936584db006b09a9032fd9cd569cce9c40351cf52caf78a6e6d071a3"
+    },
+    {
+      "name": "gate-13-s00-static.txt",
+      "bytes": 790,
+      "sha256": "958080e2a7782cd60e30516cc385d7d5daaca24d771d8a5499e922ed32d0e6c1"
+    },
+    {
+      "name": "gate-14-storage-coverage.txt",
+      "bytes": 59,
+      "sha256": "ca38611ca88321490e80ba01ac813e19e61f3345b08608522396d8420db374c6"
+    },
+    {
+      "name": "green-01-engine-targeted.txt",
+      "bytes": 1055,
+      "sha256": "62d27d01055db12b22db558f0ed084f63d731d9414e574ea2f7e2e4fa2cb3cec"
+    },
+    {
+      "name": "green-02-dashboard-capacity.txt",
+      "bytes": 1374,
+      "sha256": "8a2c056141d6665b5ac0e7ea8ce523c95449b2a88b39a156f62245d83c87c435"
+    },
+    {
+      "name": "live-instance-state-after-fix-round.json",
+      "bytes": 724,
+      "sha256": "d90276c23525fc0bf24907984b3b0b5b83af355f3dd6716cc7aa45df0573b936"
+    },
+    {
+      "name": "live-instance-still-old-build.json",
+      "bytes": 435,
+      "sha256": "1d0c120cf135d846c3663d822541697acca862add36c2bd1e91ce76ac9a2bda6"
+    },
+    {
+      "name": "red-01-engine-live-case.txt",
+      "bytes": 7674,
+      "sha256": "622e588026f06124f9bb88c873b9d76bcb10202220f3536dd8f54eb403f50d0a"
+    }
+  ]
+}

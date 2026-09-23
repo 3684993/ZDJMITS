@@ -26,13 +26,12 @@ const entryPermissionText = () =>
         ? "旧验证窗口仅保留审计记录；新建仓由资金驱动模式管理"
         : `执行安全锁生效：${pipeline.value?.noEntryReason ?? autoMode()}`;
 // Slot fill and new-risk headroom are different gates, and both numbers already exist on the
-// Engine side. The page only picks which one explains the silence; it never re-adds exposures.
-const CAPACITY_BLOCKERS = ["POSITION_CAPACITY", "GROSS", "DIRECTION_LONG", "DIRECTION_SHORT"];
+// Engine side. The page only reads the projected verdict; it never re-derives or guesses it.
 const SUPPLY_SIDE_WAITS = ["WAITING_CANDIDATE", "WAITING_NEW_FACTS", "NO_SUPPLY", "RULE_FILTERED"];
 const capacityVisibility = computed(() => pipeline.value?.capacityVisibility ?? null);
 const capacityBlocked = computed(() => {
   const view = capacityVisibility.value;
-  if (!view || !CAPACITY_BLOCKERS.includes(view.firstBlocker)) return null;
+  if (!view || view.exhaustedForNewRisk !== true) return null;
   const eligible = pipeline.value?.eligibility?.count ?? 0;
   const executable = pipeline.value?.runtimeControl?.capital?.executableCandidateCount ?? 0;
   return eligible > 0 && executable === 0 ? view : null;
@@ -253,8 +252,18 @@ onUnmounted(() => {
           </dd>
         </div>
         <div>
-          <dt>首个容量阻断</dt>
+          <dt>首个饱和维度</dt>
           <dd>{{ capacityVisibility.firstBlocker }}</dd>
+        </div>
+        <div>
+          <dt>新增风险额度</dt>
+          <dd>
+            {{
+              capacityVisibility.exhaustedForNewRisk
+                ? `已用尽 · ${capacityVisibility.exhaustedReason}`
+                : `仍有空间（Gross 剩 ${money(capacityVisibility.gross.remainingUsd)} · LONG 剩 ${money(capacityVisibility.direction.LONG.remainingUsd)} · SHORT 剩 ${money(capacityVisibility.direction.SHORT.remainingUsd)}）`
+            }}
+          </dd>
         </div>
       </div>
       <div

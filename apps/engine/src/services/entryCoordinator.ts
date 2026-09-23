@@ -23,7 +23,7 @@ import type { ExchangeTradeAdapter } from "../types.js";
 import type { EipService } from "./eipService.js";
 import type { AiFabric } from "./aiFabric.js";
 import { binanceClientOrderIdFactory } from "./binanceClientOrderIdFactory.js";
-import { computeExecutableRiskHeadroom, OCCUPIED_CAPACITY_BLOCKERS, portfolioCapacityVisibility } from "./riskReadiness.js";
+import { computeExecutableRiskHeadroom, portfolioCapacityVisibility } from "./riskReadiness.js";
 import { collectPendingEntryRiskExposures, entryOrderOccupiesRisk } from './entryRiskOccupancy.js';
 import { reconcileCandidateLifecycles } from './candidateLifecycleDeriver.js';
 import type { MarketDataHub } from './marketDataHub.js';
@@ -151,15 +151,23 @@ export class EntryCoordinator {
     }
     if (!ready.length) {
       this.analysisFacts.lastBlockedReason='NO_RUNNABLE_CANDIDATE';
-      // A book with candidates but no new-risk headroom must never read as "still waiting for a
-      // candidate": the operator would keep watching for supply that is already there.
+      // A book with candidates and no new-risk headroom must never read as "still waiting for a
+      // candidate". But headroom is not the same as one saturated side: LONG and SHORT are
+      // independent, so only a projected exhaustion verdict may say the cap is used up, and only
+      // when the capital pre-check itself found nothing executable — otherwise something else
+      // (occupancy, facts, cooldown) is the real first cause and must not be masked.
       const capacity = portfolioCapacityVisibility(this.state.entryCapacity(), this.state.runtimeControl.capital.directionBudget);
-      const capacityBlocked = (routes.size > 0 || this.state.universe.some((candidate: any) => candidate.eligible)) && OCCUPIED_CAPACITY_BLOCKERS.includes(capacity.firstBlocker);
+      const demand = routes.size > 0 || this.state.universe.some((candidate: any) => candidate.eligible);
+      const executable = this.state.runtimeControl.capital.executableCandidateCount ?? 0;
+      const capacityBlocked = demand && executable === 0 && capacity.exhaustedForNewRisk;
       const reason = capacityBlocked || !routes.size ? 'WAITING_EXECUTION_CAPACITY' : this.state.pool.readyList().length ? 'WAITING_NEW_FACTS' : 'WAITING_CANDIDATE';
       const usd = (value: number) => `$${value.toFixed(2)}`;
-      this.ai.setIdleContext(reason, 0, capacityBlocked
-        ? `新增风险额度已用尽：${capacity.firstBlocker}（Gross ${usd(capacity.gross.notionalUsd)} / ${usd(capacity.gross.limitUsd)}，槽位 ${capacity.slots.used}/${capacity.slots.max}）；继续供给与订单维护`
-        : !routes.size ? '当前无资本可执行路由；继续供给与订单维护' : '等待新的候选事实，避免重复推理');
+      const nextStep = capacityBlocked
+        ? `新增风险额度已用尽：${capacity.exhaustedReason === 'BOTH_DIRECTIONS' ? 'LONG 与 SHORT 双向额度均满' : capacity.exhaustedReason}（Gross ${usd(capacity.gross.notionalUsd)} / ${usd(capacity.gross.limitUsd)}，槽位 ${capacity.slots.used}/${capacity.slots.max}）；继续供给与订单维护`
+        : reason === 'WAITING_EXECUTION_CAPACITY' ? '当前无资本可执行路由；继续供给与订单维护'
+        : reason === 'WAITING_NEW_FACTS' ? '等待新的候选事实，避免重复推理'
+        : '暂无可派发候选；继续供给与订单维护';
+      this.ai.setIdleContext(reason, 0, nextStep);
       return;
     }
     this.ai.setIdleContext(

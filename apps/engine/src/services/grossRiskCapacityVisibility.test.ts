@@ -69,6 +69,40 @@ describe('gross and direction exposure headroom projection', () => {
     expect(portfolioCapacityVisibility(slots(0), headroom(settings(1), 10_000, [], Date.now())).firstBlocker).toBe('NONE');
   });
 
+  it('keeps a single saturated side from being reported as an exhausted book (the live t1/t2 case)', () => {
+    // 100% gross, 50% per direction: a $6,000 SHORT book fills the direction cap while $4,000 of
+    // gross and LONG headroom remain. The pre-fix predicate called this "额度已用尽".
+    const view = portfolioCapacityVisibility(slots(1), headroom(settings(1), 10_000, [position('SEOUSDT', 'SHORT', 600, 10)], Date.now()));
+    expect(view.firstBlocker).toBe('DIRECTION_SHORT');
+    expect(view.blockingDimensions).toEqual(['DIRECTION_SHORT']);
+    expect(view.exhaustedForNewRisk).toBe(false);
+    expect(view.exhaustedReason).toBeNull();
+    expect(view.gross.remainingUsd).toBe(4_000);
+    expect(view.direction.LONG.remainingUsd).toBe(4_000);
+    expect(view.direction.SHORT.remainingUsd).toBe(0);
+  });
+
+  it('reports an exhausted book only when a gate denies every new risk', () => {
+    const gross = portfolioCapacityVisibility(slots(27), headroom(settings(1), 10_000, [position('BTCUSDT', 'LONG', 0.1, 86_000), position('AVAXUSDT', 'SHORT', 800, 11)], Date.now()));
+    expect(gross.gross.remainingUsd).toBe(0);
+    expect(gross.exhaustedForNewRisk).toBe(true);
+    expect(gross.exhaustedReason).toBe('GROSS');
+    const bothSides = portfolioCapacityVisibility(slots(2), headroom(settings(2, 0.5), 10_000, [position('AAAUSDT', 'LONG', 50, 100), position('BBBUSDT', 'SHORT', 50, 100)], Date.now()));
+    expect(bothSides.gross.remainingUsd).toBe(10_000);
+    expect(bothSides.direction.LONG.remainingUsd).toBe(0);
+    expect(bothSides.direction.SHORT.remainingUsd).toBe(0);
+    expect(bothSides.firstBlocker).toBe('DIRECTION_LONG');
+    expect(bothSides.exhaustedForNewRisk).toBe(true);
+    expect(bothSides.exhaustedReason).toBe('BOTH_DIRECTIONS');
+    const slotsFull = portfolioCapacityVisibility(slots(50), headroom(settings(2), 10_000, [], Date.now()));
+    expect(slotsFull.gross.remainingUsd).toBe(20_000);
+    expect(slotsFull.exhaustedReason).toBe('POSITION_CAPACITY');
+    const unevaluated = portfolioCapacityVisibility(slots(0), { ...headroom(settings(1), 10_000, [], Date.now()), evaluatedAt: 0 });
+    expect(unevaluated.firstBlocker).toBe('NOT_EVALUATED');
+    expect(unevaluated.exhaustedForNewRisk).toBe(false);
+  });
+
+
   it('recovers headroom from a manual reduction with no threshold, mode or restart change', () => {
     const s = settings(1);
     const full = [position('BTCUSDT', 'LONG', 0.1, 86_000), position('AVAXUSDT', 'SHORT', 800, 11)];
@@ -113,14 +147,34 @@ describe('capacity starvation is never reported as a missing candidate', () => {
     // underlying stays free, so exposure — not occupancy — is what binds.
     h.state.positions.set('SOLUSDT', { symbol: 'SOLUSDT', side: 'LONG', quantity: 400, markPrice: 25.1, leverage: 5 } as never);
     // The same assignment RuntimeControlService.evaluate() makes every capital check cycle: the
-    // stored budget is the object the gates just consumed, not a second computation.
+    // stored budget and the executable count are the object the gates just consumed, not a second
+    // computation. A book that denies all new risk leaves no executable candidate; otherwise the
+    // routed candidates stay executable and some other layer decides whether to dispatch.
     const sync = () => {
       const budget = directionBudget(h.state.settings, Number(h.state.account.equityUsd), [...h.state.positions.values()], Date.now());
+      const view = portfolioCapacityVisibility(h.state.entryCapacity(), budget);
       h.state.runtimeControl.capital.directionBudget = budget as never;
-      return portfolioCapacityVisibility(h.state.entryCapacity(), budget);
+      h.state.runtimeControl.capital.executableCandidateCount = view.exhaustedForNewRisk ? 0 : h.state.runtimeControl.capital.routedCandidates.length;
+      return view;
     };
     return { h, setIdle, sync, lastIdle: () => setIdle.mock.calls.at(-1) ?? [] };
   }
+
+  it('does not claim exhausted risk when only one side is full and a candidate is still executable', async () => {
+    const { h, sync, lastIdle } = pipeline();
+    // The live t1/t2 shape: SHORT fills its 50% cap while Gross and LONG keep ~$4,000 of headroom,
+    // the routed candidate is executable on LONG, and the reason nothing dispatched is that the
+    // candidate's own underlying is already held.
+    h.state.positions.delete('SOLUSDT');
+    h.state.positions.set('SEOUSDT', { symbol: 'SEOUSDT', side: 'SHORT', quantity: 600, markPrice: 10, leverage: 5 } as never);
+    h.state.positions.set('4USDT', { symbol: '4USDT', side: 'SHORT', quantity: 1, markPrice: 0.03, leverage: 5 } as never);
+    sync();
+    expect(h.state.runtimeControl.capital.executableCandidateCount).toBe(1);
+    await h.coordinator.processPool();
+    expect(lastIdle()[0]).not.toBe('WAITING_EXECUTION_CAPACITY');
+    expect(String(lastIdle()[2])).not.toContain('已用尽');
+    expect(h.events.some(event => event.type === 'ANALYSIS_DISPATCH_INTENT')).toBe(false);
+  });
 
   it('names the capacity blocker while eligible candidates exist but no risk headroom does', async () => {
     const { h, sync, lastIdle } = pipeline();
@@ -177,7 +231,7 @@ describe('capacity starvation is never reported as a missing candidate', () => {
 
   it('types the projection against the same directionBudget result the gates consume', () => {
     const visibility = portfolioCapacityVisibility(slots(27), headroom(settings(1), 10_000, [position('AAAUSDT', 'LONG', 100, 10)], Date.now()));
-    expect(Object.keys(visibility).sort()).toEqual(['direction', 'evaluatedAt', 'firstBlocker', 'gross', 'slots']);
+    expect(Object.keys(visibility).sort()).toEqual(['blockingDimensions', 'direction', 'evaluatedAt', 'exhaustedForNewRisk', 'exhaustedReason', 'firstBlocker', 'gross', 'slots']);
     expect(visibility.direction.LONG).toMatchObject({ notionalUsd: 1_000, limitUsd: 5_000, remainingUsd: 4_000 });
   });
 });

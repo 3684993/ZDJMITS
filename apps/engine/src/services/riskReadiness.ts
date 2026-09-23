@@ -62,16 +62,24 @@ export function directionBudget(settings:SystemSettings,equityInput:number,posit
 export type PositionCapacity={positions:number;inFlight:number;reserved:number;used:number;max:number};
 export type GrossDirectionBudget=ReturnType<typeof directionBudget>;
 export type CapacityBlocker='POSITION_CAPACITY'|'GROSS'|'DIRECTION_LONG'|'DIRECTION_SHORT'|'NOT_EVALUATED'|'NONE';
-/** A blocker that actually denies new Entry risk. `NOT_EVALUATED` is a missing fact, not a limit. */
-export const OCCUPIED_CAPACITY_BLOCKERS:readonly CapacityBlocker[]=['POSITION_CAPACITY','GROSS','DIRECTION_LONG','DIRECTION_SHORT'];
+/** The dimension that denies new Entry risk on its own, whatever the other side still allows. */
+export type ExhaustedReason='POSITION_CAPACITY'|'GROSS'|'BOTH_DIRECTIONS';
 
 /**
  * Which capacity gate binds first, composed from the already-computed headroom and the slot count.
  * It never recomputes exposure: a page that re-derived the risk ledger could disagree with the gate
  * that actually refused the Entry.
+ *
+ * `firstBlocker` is only the first *saturated* dimension, and LONG/SHORT are independent sides: one
+ * side full does not mean the book has no room for new risk. `exhaustedForNewRisk` is therefore a
+ * separate, explicitly derived verdict, so no surface has to guess it from `firstBlocker`.
  */
 export function portfolioCapacityVisibility(capacity:PositionCapacity,budget:GrossDirectionBudget){
-  const firstBlocker:CapacityBlocker=budget.evaluatedAt<=0?'NOT_EVALUATED':capacity.used>=capacity.max?'POSITION_CAPACITY':budget.remainingGrossUsd<=0?'GROSS':budget.longAvailableNotionalUsd<=0?'DIRECTION_LONG':budget.shortAvailableNotionalUsd<=0?'DIRECTION_SHORT':'NONE';
+  const evaluated=budget.evaluatedAt>0;
+  const slotsFull=capacity.used>=capacity.max,grossFull=budget.remainingGrossUsd<=0,longFull=budget.longAvailableNotionalUsd<=0,shortFull=budget.shortAvailableNotionalUsd<=0;
+  const firstBlocker:CapacityBlocker=!evaluated?'NOT_EVALUATED':slotsFull?'POSITION_CAPACITY':grossFull?'GROSS':longFull?'DIRECTION_LONG':shortFull?'DIRECTION_SHORT':'NONE';
+  const blockingDimensions=[slotsFull&&evaluated?'POSITION_CAPACITY':null,grossFull&&evaluated?'GROSS':null,longFull&&evaluated?'DIRECTION_LONG':null,shortFull&&evaluated?'DIRECTION_SHORT':null].filter(Boolean) as Exclude<CapacityBlocker,'NONE'|'NOT_EVALUATED'>[];
+  const exhaustedReason:ExhaustedReason|null=!evaluated?null:slotsFull?'POSITION_CAPACITY':grossFull?'GROSS':longFull&&shortFull?'BOTH_DIRECTIONS':null;
   return{
     slots:{used:capacity.used,max:capacity.max,positions:capacity.positions,inFlight:capacity.inFlight,reserved:capacity.reserved},
     gross:{notionalUsd:budget.grossNotionalUsd,limitUsd:budget.grossLimitUsd,remainingUsd:budget.remainingGrossUsd,usedPct:budget.grossUsedPct},
@@ -79,7 +87,7 @@ export function portfolioCapacityVisibility(capacity:PositionCapacity,budget:Gro
       LONG:{notionalUsd:budget.longNotionalUsd,limitUsd:budget.directionLimitUsd,remainingUsd:budget.longAvailableNotionalUsd},
       SHORT:{notionalUsd:budget.shortNotionalUsd,limitUsd:budget.directionLimitUsd,remainingUsd:budget.shortAvailableNotionalUsd},
     },
-    firstBlocker,evaluatedAt:budget.evaluatedAt,
+    firstBlocker,blockingDimensions,exhaustedReason,exhaustedForNewRisk:exhaustedReason!==null,evaluatedAt:budget.evaluatedAt,
   };
 }
 

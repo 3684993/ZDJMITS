@@ -1,0 +1,259 @@
+{
+ "findingId": "ownership-scope-key-divergence-20260923",
+ "generatedAtUtc8": "2026-09-23 10:18:25+08",
+ "severity": "P1",
+ "summary": "The V3.9.6 runtime derives an ownership scope from the position side (LONG/SHORT), while the C2 migration wrote its subjects under the persisted entry-intent side \"ENTRY\". The two keys never collide, so every migrated cycle is invisible to the runtime, which then re-initialises ownership from scratch: 28 of 29 cycles now carry two owner rows, and 6 of them assert HUMAN_MANAGED and AI_ACTIVE at the same time.",
+ "introducedBy": "my own phase C2 subject derivation (executionScope(environment, credentialRef, SYMBOL, \"ENTRY\")); the migration itself reported 0 AI_ACTIVE and preserved 27 HUMAN_MANAGED, so the C-phase invariant held only against the keys the migration could see",
+ "mechanism": {
+  "migrationKeySource": "phase-c-d/phaseC2-migrate.mjs -> executionScope(env, cred, symbol, \"ENTRY\")",
+  "runtimeKeySource": "apps/engine/src/services/ownershipRuntime.ts:35 uses subject.positionSide; v396ExitRuntime.ts:64 uses subject.side",
+  "persistedVocabularyWarning": "apps/engine/src/services/executionLifecycle.ts:10-13 states the fourth scope element must stay the persisted vocabulary (\"ENTRY\" for an entry intent) because a changed key silently orphans every already-occupied claim - the divergence is exactly that failure mode, reached from the other direction"
+ },
+ "ownershipLedger": {
+  "totalRows": 57,
+  "distinctCycles": 29,
+  "tallyByScopeSideAndState": {
+   "ENTRY|HUMAN_MANAGED": 27,
+   "SHORT|HANDOFF_PENDING": 10,
+   "LONG|HANDOFF_PENDING": 11,
+   "ENTRY|HANDOFF_PENDING": 2,
+   "LONG|AI_ACTIVE": 7
+  },
+  "cyclesWithMultipleOwnerRows": 28,
+  "cyclesWithContradictoryAuthority": 6,
+  "contradictoryExamples": [
+   {
+    "cycleId": "cycle_entry_intent_muc5w5r3_l3jp3qra",
+    "openPositionSymbol": "DOGEUSDT",
+    "storeManagementStatus": "HUMAN_MANAGED",
+    "rows": [
+     {
+      "scopeSide": "ENTRY",
+      "ownerState": "HUMAN_MANAGED",
+      "ownerVersion": 2,
+      "planRef": null,
+      "deadlineUtc8": null,
+      "reason": "MIGRATED_HUMAN_PRESERVED"
+     },
+     {
+      "scopeSide": "LONG",
+      "ownerState": "AI_ACTIVE",
+      "ownerVersion": 1,
+      "planRef": "plan:cycle_entry_intent_muc5w5r3_l3jp3qra",
+      "deadlineUtc8": "2026-09-23 12:16:20+08",
+      "reason": "FIRST_FILL_PLAN"
+     }
+    ]
+   },
+   {
+    "cycleId": "cycle_entry_intent_mucep921_vykz7th7",
+    "openPositionSymbol": "1000PEPEUSDC",
+    "storeManagementStatus": "HUMAN_MANAGED",
+    "rows": [
+     {
+      "scopeSide": "ENTRY",
+      "ownerState": "HUMAN_MANAGED",
+      "ownerVersion": 2,
+      "planRef": null,
+      "deadlineUtc8": null,
+      "reason": "MIGRATED_HUMAN_PRESERVED"
+     },
+     {
+      "scopeSide": "LONG",
+      "ownerState": "AI_ACTIVE",
+      "ownerVersion": 1,
+      "planRef": "plan:cycle_entry_intent_mucep921_vykz7th7",
+      "deadlineUtc8": "2026-09-23 16:22:57+08",
+      "reason": "FIRST_FILL_PLAN"
+     }
+    ]
+   },
+   {
+    "cycleId": "cycle_entry_intent_much5uct_jfowx94r",
+    "openPositionSymbol": "NEARUSDC",
+    "storeManagementStatus": "HUMAN_MANAGED",
+    "rows": [
+     {
+      "scopeSide": "ENTRY",
+      "ownerState": "HUMAN_MANAGED",
+      "ownerVersion": 2,
+      "planRef": null,
+      "deadlineUtc8": null,
+      "reason": "MIGRATED_HUMAN_PRESERVED"
+     },
+     {
+      "scopeSide": "LONG",
+      "ownerState": "AI_ACTIVE",
+      "ownerVersion": 1,
+      "planRef": "plan:cycle_entry_intent_much5uct_jfowx94r",
+      "deadlineUtc8": "2026-09-23 17:31:57+08",
+      "reason": "FIRST_FILL_PLAN"
+     }
+    ]
+   },
+   {
+    "cycleId": "cycle_entry_intent_mud27kh7_wdfh3ake",
+    "openPositionSymbol": "BCHUSDT",
+    "storeManagementStatus": "HUMAN_MANAGED",
+    "rows": [
+     {
+      "scopeSide": "ENTRY",
+      "ownerState": "HUMAN_MANAGED",
+      "ownerVersion": 2,
+      "planRef": null,
+      "deadlineUtc8": null,
+      "reason": "MIGRATED_HUMAN_PRESERVED"
+     },
+     {
+      "scopeSide": "LONG",
+      "ownerState": "AI_ACTIVE",
+      "ownerVersion": 1,
+      "planRef": "plan:cycle_entry_intent_mud27kh7_wdfh3ake",
+      "deadlineUtc8": "2026-09-24 03:22:13+08",
+      "reason": "FIRST_FILL_PLAN"
+     }
+    ]
+   },
+   {
+    "cycleId": "cycle_entry_intent_mud2rkdc_27t7dcpo",
+    "openPositionSymbol": "XRPUSDT",
+    "storeManagementStatus": "HUMAN_MANAGED",
+    "rows": [
+     {
+      "scopeSide": "ENTRY",
+      "ownerState": "HUMAN_MANAGED",
+      "ownerVersion": 2,
+      "planRef": null,
+      "deadlineUtc8": null,
+      "reason": "MIGRATED_HUMAN_PRESERVED"
+     },
+     {
+      "scopeSide": "LONG",
+      "ownerState": "AI_ACTIVE",
+      "ownerVersion": 1,
+      "planRef": "plan:cycle_entry_intent_mud2rkdc_27t7dcpo",
+      "deadlineUtc8": "2026-09-24 03:36:58+08",
+      "reason": "FIRST_FILL_PLAN"
+     }
+    ]
+   },
+   {
+    "cycleId": "cycle_entry_intent_mud50w9f_hyr0vesg",
+    "openPositionSymbol": "HBARUSDT",
+    "storeManagementStatus": "HUMAN_MANAGED",
+    "rows": [
+     {
+      "scopeSide": "ENTRY",
+      "ownerState": "HUMAN_MANAGED",
+      "ownerVersion": 2,
+      "planRef": null,
+      "deadlineUtc8": null,
+      "reason": "MIGRATED_HUMAN_PRESERVED"
+     },
+     {
+      "scopeSide": "LONG",
+      "ownerState": "AI_ACTIVE",
+      "ownerVersion": 1,
+      "planRef": "plan:cycle_entry_intent_mud50w9f_hyr0vesg",
+      "deadlineUtc8": "2026-09-24 04:40:03+08",
+      "reason": "FIRST_FILL_PLAN"
+     }
+    ]
+   }
+  ],
+  "aiActiveOwners": [
+   {
+    "cycleId": "cycle_entry_intent_muc5w5r3_l3jp3qra",
+    "scopeSide": "LONG",
+    "reason": "FIRST_FILL_PLAN",
+    "planRef": "plan:cycle_entry_intent_muc5w5r3_l3jp3qra",
+    "deadlineUtc8": "2026-09-23 12:16:20+08",
+    "openPosition": true
+   },
+   {
+    "cycleId": "cycle_entry_intent_mucep921_vykz7th7",
+    "scopeSide": "LONG",
+    "reason": "FIRST_FILL_PLAN",
+    "planRef": "plan:cycle_entry_intent_mucep921_vykz7th7",
+    "deadlineUtc8": "2026-09-23 16:22:57+08",
+    "openPosition": true
+   },
+   {
+    "cycleId": "cycle_entry_intent_much5uct_jfowx94r",
+    "scopeSide": "LONG",
+    "reason": "FIRST_FILL_PLAN",
+    "planRef": "plan:cycle_entry_intent_much5uct_jfowx94r",
+    "deadlineUtc8": "2026-09-23 17:31:57+08",
+    "openPosition": true
+   },
+   {
+    "cycleId": "cycle_entry_intent_mucwzx7g_uw2jzyhd",
+    "scopeSide": "LONG",
+    "reason": "FIRST_FILL_PLAN",
+    "planRef": "plan:cycle_entry_intent_mucwzx7g_uw2jzyhd",
+    "deadlineUtc8": "2026-09-24 00:55:29+08",
+    "openPosition": true
+   },
+   {
+    "cycleId": "cycle_entry_intent_mud27kh7_wdfh3ake",
+    "scopeSide": "LONG",
+    "reason": "FIRST_FILL_PLAN",
+    "planRef": "plan:cycle_entry_intent_mud27kh7_wdfh3ake",
+    "deadlineUtc8": "2026-09-24 03:22:13+08",
+    "openPosition": true
+   },
+   {
+    "cycleId": "cycle_entry_intent_mud2rkdc_27t7dcpo",
+    "scopeSide": "LONG",
+    "reason": "FIRST_FILL_PLAN",
+    "planRef": "plan:cycle_entry_intent_mud2rkdc_27t7dcpo",
+    "deadlineUtc8": "2026-09-24 03:36:58+08",
+    "openPosition": true
+   },
+   {
+    "cycleId": "cycle_entry_intent_mud50w9f_hyr0vesg",
+    "scopeSide": "LONG",
+    "reason": "FIRST_FILL_PLAN",
+    "planRef": "plan:cycle_entry_intent_mud50w9f_hyr0vesg",
+    "deadlineUtc8": "2026-09-24 04:40:03+08",
+    "openPosition": true
+   }
+  ]
+ },
+ "safetyFactsAtDetection": {
+  "exchangeWrites": {
+   "environment": "TESTNET",
+   "executionMode": "READ_ONLY",
+   "lockedToTestnet": true,
+   "testnetWrites": 0,
+   "productionWrites": 0,
+   "blockedProductionWriteAttempts": 0,
+   "lastWriteAt": null,
+   "lastWritePath": null
+  },
+  "orderLifecycleEventsSinceV396Start": 0,
+  "executionMode": "READ_ONLY",
+  "note": "No exchange write occurred, so no trade was placed or closed under the wrong authority; the defect is in the authority bookkeeping and would become executable if aiExitAuthority were moved to ENFORCE."
+ },
+ "shadowWindowCounts": {
+  "sinceUtc8": "2026-09-23 10:00:00+08",
+  "AI_EXIT_PLAN_UNPROVEN": 602,
+  "AI_MANAGEMENT_DEADLINE_FIXED": 28,
+  "V396_OWNERSHIP_OUTBOX": 105,
+  "AI_EXIT_SHADOW_DECISION": 0,
+  "TRADE_PLAN_PERSISTED": 0,
+  "POSITION_FACT_UNVERIFIED": 0,
+  "RISK_any": 0,
+  "outboxDelivered": 105,
+  "quantityClaims": 0,
+  "mandates": 0
+ },
+ "notionalP0ConfirmationLive": {
+  "openPositions": 28,
+  "carryingNotionalField": 28,
+  "negativeNotionalAfterHydration": 0,
+  "unprotectedPositions": 0,
+  "engineFatalEventsThisRun": 0
+ },
+ "consequenceForReadonly": "While executionMode is READ_ONLY the engine cannot repair a lapsed take-profit order either; protection currently rests on the 28 exchange-side WORKING orders that predate the cutover."
+}

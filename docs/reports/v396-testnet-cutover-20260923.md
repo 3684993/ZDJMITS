@@ -74,3 +74,35 @@
 3. 或者保持现状（引擎停止、持仓由交易所侧止盈单保护）等待进一步指示。
 
 现场已完整保留：`data/runtime-logs/engine-process-lifecycle.jsonl`、`zdj-settings.sqlite` 中的 `ENGINE_FATAL_ERROR`、`phase-d-incident/crash-forensics.json`。
+
+---
+
+# 追加：D 段第二次启动结果（2026-09-23 10:04 起，用户新授权）
+
+修复 `eaf0382` 后按新授权单独启动一次（PID 51008）。
+
+**P0 已在真实路径确认修复**：进程越过上次 199 秒死亡点，7.0 分钟时 `status=READY`，本轮 `ENGINE_FATAL_ERROR` 计数 **0**；启动后持仓 28 条全部带 `notionalUsd` 且**负值 0 条**（原为 10 条），`quantity`/`side` 不变。
+
+**D1 判据通过**：`productionWriteBoundary = { environment: TESTNET, executionMode: READ_ONLY, lockedToTestnet: true, testnetWrites: 0, productionWrites: 0, blockedProductionWriteAttempts: 0, lastWriteAt: null }`，且自启动起订单生命周期类事件计数 **0**。SHADOW 事件：`AI_EXIT_PLAN_UNPROVEN` 336、`AI_MANAGEMENT_DEADLINE_FIXED` 28、`V396_OWNERSHIP_OUTBOX` 105（全部 delivered），`AI_EXIT_SHADOW_DECISION` / `TRADE_PLAN_PERSISTED` / `POSITION_FACT_UNVERIFIED` / `RISK_*` 均为 0——因为敞口上限仍使 `capitalExecutableCount=0`，AI 未被派发，没有可影子决策的提案（`lastRunAge` 已 318 分钟，驾驶舱仍显示"持续扫描中：当前没有合格可执行机会"，P1-1 在 V3.9.6 上同样成立）。
+
+## 新发现 P1：所有权 scope 键与运行时不一致（由我在 C2 引入）
+
+账本现有 **57 行 / 29 个周期**，其中 **28 个周期各有 2 条所有权行，6 个周期同时主张 `HUMAN_MANAGED` 与 `AI_ACTIVE`**：
+
+| scope 第四元 × ownerState | 行数 |
+|---|---:|
+| `ENTRY × HUMAN_MANAGED` | 27 |
+| `ENTRY × HANDOFF_PENDING` | 2 |
+| `LONG × HANDOFF_PENDING` | 11 |
+| `SHORT × HANDOFF_PENDING` | 10 |
+| `LONG × AI_ACTIVE` | 7 |
+
+机制：我在 C2 用 `executionScope(env, cred, SYMBOL, 'ENTRY')` 生成迁移主体，而运行时按 `ownershipRuntime.ts:35` 的 `subject.positionSide`（LONG/SHORT）推导 scope。两把键永不相撞，所以运行时看不到任何迁移结果，转而从首次成交重新初始化所有权（`reason: FIRST_FILL_PLAN`，`transitionedAt` 等于持仓开仓时刻，带 `plan:cycle_*` 与约 48 小时期限）。讽刺的是 `executionLifecycle.ts:10-13` 的注释正是在警告这件事："改了键会静默孤立所有已占用的 claim"——我从反方向踩中了它。
+
+C2 当时报告的"0 个 AI_ACTIVE、27 个 HUMAN_MANAGED 保持"并非虚假：它在**迁移自己写入的那把键**上确实成立。它没有、也不可能检测到运行时会用另一把键重建权威，所以我把该不变式的验证做窄了，这是我在 C 段判断上的失误，不是数据被篡改。
+
+后果边界：`READ_ONLY` 下没有发生任何交易所写入，错误权威目前未变成实际动作；但一旦把 `aiExitAuthority` 切到 `ENFORCE`，这 7 条 `AI_ACTIVE` 就会对 6 笔人工持仓给出 AI 退出权威，直接违反"HUMAN_MANAGED 不得回到 AI_ACTIVE"。因此按停止线与 H-AUTHORITY（SHADOW / Testnet 执行 / 实盘是独立权限，前一层通过不自动解锁后一层），**E 段不执行**。
+
+另一个需知晓的后果：`READ_ONLY` 同时意味着引擎无法补挂失效的止盈单，当前保护依赖切换前已存在的 28 张交易所侧 `WORKING` 单（停机期间有 1 笔持仓已平掉，29→28）。
+
+证据：`phase-d-shadow/ownership-scope-divergence.json`。

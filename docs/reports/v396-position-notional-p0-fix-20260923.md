@@ -53,3 +53,17 @@ AVAXUSDT SHORT: 存储 -4516.200524 -> 读回 4516.200524（quantity 400 不变�
 本修复只覆盖已确证的 P0 崩溃路径，以下仍是 `NOT_RUN`，不能由离线绿灯推断：SHADOW 观察窗及其事件计数（`AI_EXIT_SHADOW_DECISION`、`AI_MANAGEMENT_DEADLINE_FIXED`、`POSITION_FACT_UNVERIFIED`、`RISK_*`、`TRADE_PLAN_PERSISTED`、复核台账与 `usageStatus=UNKNOWN` 比例）、SHADOW 期交易所写请求数为 0 的判据、E 段自然候选写链、24h soak、以及 >30 分钟 AI 静默告警（P1-1，属 V3.9.5/V3.9.6 共同缺口，本轮未改）。**不签 ACCEPTED。**
 
 下一次启动需要一次新的具体授权；本轮不自行启动。
+
+---
+
+# 追加：所有权 scope 键修复（同日，D 段后发现）
+
+D 段第二次启动后确认 P0 已修，但发现我在 C2 引入的 P1：迁移主体用 `executionScope(env, cred, SYMBOL, 'ENTRY')`，而 `OwnershipRuntime.identity()` 按持仓方向 `positionSide` 推导 scope，两把键永不相撞。裁决是**运行时为准、迁移写错了**：`OwnershipSubject` 本身就是 `{symbol, positionSide, cycleId}`，`'ENTRY'` 属于建仓订单占用域（`executionLifecycle.ts:10-13` 明确区分），持仓周期的权威必须按方向记账；反过来改运行时键会孤立既有 claim，正是那段注释警告的事。
+
+**修法**：把派生收进产品代码，调用方不能再手搓 scope——`OwnershipMigration.subjectsForPositions(positions, identity)` 用与运行时同一个 `executionScope(env, account, SYMBOL, side)`，并在身份缺失、cycleId 为空、方向不在持久词表、管理状态未知时直接抛错（不补默认、不静默跳过）。新增驱动 `phase-c-d/ownership-migration-v2-driver.mjs` 的关键不同是**用运行时自己的键读回**（`journal.get(executionScope(...side), cycleId)`）再判定不变式，而不是检查迁移写了什么；Engine 运行中会先被 `engine-is-stopped` 拒绝（已实测拒绝并落 FAIL 记录）。
+
+**测试**：`ownershipScopeIdentity.test.ts` 3 项——红测先失败（helper 不存在），随后因我对迁移版本语义的误解再次失败（人工持仓迁移是 initialize + takeover，起点就是 version 2 而非 1，这是产品行为、不是缺陷；断言因此改为"同一行且被推进"而不是钉死版本号）。现在 3 项全绿：共享派生下 Engine 落在**同一行**；`'ENTRY'` 键产生**两条并行行且迁移行永不被读取**（正是现网账本的形状，留作回归护栏）；派生守卫按预期抛错。
+
+**门禁**：`npm run verify` exit 0（engine 1,142/151 文件、core 46、dashboard 25），S00 exit 0 且 `blockers: []`，storage coverage `S08_STORAGE_COVERAGE_PASS`，`git diff --check` 0。测试数 1,139 → 1,142 为新增 3 项，未删或跳过任何既有用例。
+
+**仍未闭合，且需要单独授权**：现网 `v396-ownership.sqlite` 里 57 行 / 28 个双行周期 / 6 个 `HUMAN_MANAGED`+`AI_ACTIVE` 冲突不会因代码修好而消失——引擎在运行且持有该文件，清理必须"停机 → 备份 → 用 v2 驱动重建 → 读回校验 → 再启动"。在该清理完成前**不得**把 `aiExitAuthority` 切到 `ENFORCE`（那会给 6 笔人工持仓授予 AI 退出权限），E 段因此仍为 `NOT_RUN`。`AI_MANAGEMENT_DEADLINE_FIXED`/`V396_OWNERSHIP_OUTBOX` 仍在正常记录，`READ_ONLY` 下交易所写入累计仍为 0。

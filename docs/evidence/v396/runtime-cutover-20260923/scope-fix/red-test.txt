@@ -1,0 +1,43 @@
+VITEST_TEST_TIMEOUT=5000 CI=
+
+[1m[46m RUN [49m[22m [36mv3.2.7 [39m[90mD:/MITS-worktrees/v396-final-convergence-20260922/apps/engine[39m
+
+(node:27212) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [31m❯[39m src/services/ownershipScopeIdentity.test.ts [2m([22m[2m2 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 219[2mms[22m[39m
+[31m   [31m×[31m ownership scope identity agreement[2m > [22mderives migration subjects with the same scope the Engine uses, so a migrated cycle is one row[39m[32m 5[2mms[22m[39m
+[31m     → OwnershipMigration.subjectsForPositions is not a function[39m
+[31m   [31m×[31m ownership scope identity agreement[2m > [22mshows that an entry-side scope creates a parallel row the Engine cannot see[39m[32m 212[2mms[22m[39m
+[31m     → EBUSY: resource busy or locked, unlink 'C:\Users\5700x\AppData\Local\Temp\zdj-ownership-scope-3lHaaf\v396-ownership.sqlite'[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 2 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m src/services/ownershipScopeIdentity.test.ts[2m > [22mownership scope identity agreement[2m > [22mderives migration subjects with the same scope the Engine uses, so a migrated cycle is one row
+[31m[1mTypeError[22m: OwnershipMigration.subjectsForPositions is not a function[39m
+[36m [2m❯[22m src/services/ownershipScopeIdentity.test.ts:[2m48:43[22m[39m
+    [90m 46| [39m    [35mconst[39m { dir[33m,[39m file } [33m=[39m [34mjournalFile[39m()[33m;[39m
+    [90m 47| [39m    [35mtry[39m {
+    [90m 48| [39m      const subjects = OwnershipMigration.subjectsForPositions([POSITI…
+    [90m   | [39m                                          [31m^[39m
+    [90m 49| [39m      [34mexpect[39m(subjects)[33m.[39m[34mtoHaveLength[39m([34m1[39m)[33m;[39m
+    [90m 50| [39m      const expected = executionScope(IDENTITY.environment, IDENTITY.a…
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/services/ownershipScopeIdentity.test.ts[2m > [22mownership scope identity agreement[2m > [22mshows that an entry-side scope creates a parallel row the Engine cannot see
+[31m[1mError[22m: EBUSY: resource busy or locked, unlink 'C:\Users\5700x\AppData\Local\Temp\zdj-ownership-scope-3lHaaf\v396-ownership.sqlite'[39m
+[36m [2m❯[22m src/services/ownershipScopeIdentity.test.ts:[2m103:7[22m[39m
+    [90m101| [39m      check[33m.[39m[34mclose[39m()[33m;[39m
+    [90m102| [39m    } [35mfinally[39m {
+    [90m103| [39m      [34mrmSync[39m(dir[33m,[39m { recursive[33m:[39m [35mtrue[39m[33m,[39m force[33m:[39m [35mtrue[39m })[33m;[39m
+    [90m   | [39m      [31m^[39m
+    [90m104| [39m    }
+    [90m105| [39m  })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[90m (2)[39m
+[2m   Start at [22m 11:10:07
+[2m   Duration [22m 840ms[2m (transform 105ms, setup 0ms, collect 126ms, tests 219ms, environment 0ms, prepare 147ms)[22m

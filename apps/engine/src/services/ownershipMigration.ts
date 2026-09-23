@@ -3,6 +3,7 @@ import {join} from 'node:path';
 import {tmpdir} from 'node:os';
 import {OwnershipJournal} from './ownershipJournal.js';
 import {OwnershipService} from './ownershipService.js';
+import { executionScope } from './executionLifecycle.js';
 
 export type MigrationSubject={scope:string;cycleId:string;planRef:string|null;firstFillAt:number|null;deadline:number|null;managementStatus:string;legacy:boolean};
 export type MigrationPlan={created:{scope:string;cycleId:string;ownerState:string;reason:string}[];preserved:string[];skipped:string[];wouldMutateExisting:number};
@@ -53,6 +54,32 @@ export class OwnershipMigration {
     return result;
   }
 
+  /**
+   * Derives migration subjects using exactly the scope identity the Engine uses at runtime:
+   * OwnershipRuntime keys a held position by its position side, while an entry intent claims
+   * under the persisted ENTRY vocabulary. A caller that hand-rolls the scope writes a parallel
+   * ledger the Engine cannot see, after which the Engine re-initialises authority from the first
+   * fill and one human-held cycle ends up claimed twice, so this is the only sanctioned way to
+   * build subjects from positions.
+   */
+  static subjectsForPositions(positions:Iterable<Record<string,unknown>>,identity:{environment:string;account:string}){
+    if(!identity||!String(identity.environment??'').trim()||!String(identity.account??'').trim())throw new Error('MIGRATION_IDENTITY_REQUIRED');
+    return [...positions].map((position)=>{
+      const symbol=String(position.symbol??'').trim().toUpperCase();
+      const cycleId=String(position.cycleId??'').trim();
+      const side=String(position.positionSide??position.side??'').trim().toUpperCase();
+      const firstFillAt=Number(position.openedAt??position.firstObservedAt);
+      if(!symbol||!cycleId||!['LONG','SHORT','BOTH'].includes(side))throw new Error('MIGRATION_SUBJECT_INCOMPLETE:'+JSON.stringify([symbol,side,cycleId]));
+      if(!Number.isFinite(firstFillAt))throw new Error('MIGRATION_SUBJECT_FIRST_FILL_MISSING:'+cycleId);
+      const planRef=typeof position.planRef==='string'&&position.planRef.trim()?position.planRef:null;
+      const deadline=Number.isFinite(Number(position.deadline))?Number(position.deadline):null;
+      const managementStatus=String(position.managementStatus??'AUTO_MANAGED');
+      if(managementStatus!=='AUTO_MANAGED'&&managementStatus!=='HUMAN_MANAGED')throw new Error('MIGRATION_SUBJECT_MANAGEMENT_UNKNOWN:'+cycleId+':'+managementStatus);
+      return{scope:executionScope(identity.environment,identity.account,symbol,side),cycleId,planRef,firstFillAt,deadline,managementStatus,
+        // A cycle with no plan cannot justify AI authority, so it migrates conservatively.
+        legacy:position.legacy===undefined?!planRef:Boolean(position.legacy)};
+    });
+  }
   /** Runs the whole apply against a throwaway copy and reports read-back equality. */
   static rehearsal(subjects:MigrationSubject[],now:number){
     const dir=mkdtempSync(join(tmpdir(),'zdj-v396-migration-'));

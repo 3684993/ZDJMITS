@@ -72,7 +72,7 @@
 
 17:31:28 之后 `analysis.lastBlockedReason` 持续为 `BINANCE_EGRESS_UNAVAILABLE`：`/diagnostics/binance-governance` 显示 `egress={routeIdentity:proxy-a087cc91667b, expectedEgressIp:172.104.186.174, lastVerifiedEgressIp:172.104.186.174, lastVerifiedAt:17:15:49, status:"UNAVAILABLE", lastError:"The operation was aborted"}`。即启动时出口证明成功过，之后复验请求被中止，R16 的写前双层 fail-closed 因此停止新 Entry 派发（行情、私有同步、持仓/TP 维护继续，`privateSync.lastSuccessAt=17:37:45`，`consecutiveFailures=0`）。
 
-这是既有安全闸按设计工作，不是本轮部署造成的回归；证据见 `post-deploy-egress-gate-state.json`。它同时说明第 7 节 P1 的“额度已用尽”文案出现在派发被出口闸挡住的时段，属于双重误导，应在下一轮修谓词时一并复验。本轮未重启、未改代理或设置，也未尝试人工验证出口。
+这是既有安全闸按设计工作，不是本轮部署造成的回归；证据见 `post-deploy-egress-gate-state.json` 与 `finding-obs-egress-gate-couples-analysis-dispatch.json`。到本轮观察结束（17:43:46 仍有 tick，但 `lastAttemptAt` 停在 17:30:10）该状态持续约 28 分钟，期间行情、私有同步、TP 与对账正常（`driftCount=0`、`protected=14/14`）。它同时暴露一处既有耦合值得单独裁决：`processPool()` 开头的写侧出口闸一旦命中就整体 return，因此在 ANALYSIS_ONLY 下也停掉了分析派发——这与上一轮“分析链与写许可解耦”的意图不完全一致。本轮未重启、未改代理或 Settings、也未尝试人工验证出口；是否解耦由下一轮离线红→绿决定。
 
 ## 9. 遗留观测（P3，不作结论）
 

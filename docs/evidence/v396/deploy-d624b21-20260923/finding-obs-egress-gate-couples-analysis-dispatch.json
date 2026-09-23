@@ -1,0 +1,42 @@
+{
+  "observedAt": "17:43:46",
+  "instance": {
+    "pid": 26784,
+    "buildId": "3.9.6-2fb37e445af4d3d351da",
+    "startedAt": "17:15:43"
+  },
+  "egress": {
+    "routeIdentity": "proxy-a087cc91667b",
+    "expectedEgressIp": "172.104.186.174",
+    "lastVerifiedEgressIp": "172.104.186.174",
+    "lastVerifiedAt": "17:15:49",
+    "status": "UNAVAILABLE",
+    "lastError": "The operation was aborted"
+  },
+  "dispatch": {
+    "lastAttemptAt": "17:30:10",
+    "lastSuccessAt": "17:31:28",
+    "lastTickAt": "17:43:46",
+    "lastBlockedReason": "BINANCE_EGRESS_UNAVAILABLE",
+    "eligible": 7,
+    "capitalExecutable": 7
+  },
+  "stillRunning": {
+    "marketStream": {
+      "status": "READY",
+      "snapshots": 41,
+      "stream": "LIVE",
+      "privateData": "READY"
+    },
+    "tp": "14/14",
+    "positions": 14,
+    "drift": 0
+  },
+  "assessment": {
+    "introducedByThisRound": false,
+    "mechanism": "processPool 起始处 writeAdmissionBlock() 命中出口未验证即 return，READ_ONLY 下同时停掉分析派发（写侧闸门与分析侧派发未解耦）",
+    "effect": "新 Entry 派发已暂停约 28 分钟（17:15:49 起未再验证成功），行情/私有同步/持仓/TP/对账继续，testnetWrites=0",
+    "actionTaken": "none — 未重启、未改代理或 Settings，未尝试人工验证出口",
+    "nextStepForUser": "若需要恢复派发需人工确认代理出口探测；若要解耦分析派发与出口写闸，需要单独一轮离线红→绿改动"
+  }
+}

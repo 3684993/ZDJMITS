@@ -1,0 +1,341 @@
+{
+ "verdict": "PASS",
+ "ranAtUtc8": "2026-09-23 11:56:41+08",
+ "dataDir": "D:/MITS/data",
+ "ledger": "D:/MITS/data/v396-ownership.sqlite",
+ "identity": {
+  "environment": "TESTNET",
+  "account": "binance-primary"
+ },
+ "applied": {
+  "created": 27,
+  "preserved": 0,
+  "humanPreserved": 25
+ },
+ "readBackThroughEngineKey": [
+  {
+   "symbol": "1000PEPEUSDC",
+   "side": "LONG",
+   "managementStatus": "HUMAN_MANAGED",
+   "found": true,
+   "ownerState": "HUMAN_MANAGED",
+   "ownerVersion": 2,
+   "deadline": null,
+   "planRef": null
+  },
+  {
+   "symbol": "ADAUSDT",
+   "side": "LONG",
+   "managementStatus": "HUMAN_MANAGED",
+   "found": true,
+   "ownerState": "HUMAN_MANAGED",
+   "ownerVersion": 2,
+   "deadline": null,
+   "planRef": null
+  },
+  {
+   "symbol": "ARBUSDT",
+   "side": "SHORT",
+   "managementStatus": "HUMAN_MANAGED",
+   "found": true,
+   "ownerState": "HUMAN_MANAGED",
+   "ownerVersion": 2,
+   "deadline": null,
+   "planRef": null
+  },
+  {
+   "symbol": "AVAXUSDT",
+   "side": "SHORT",
+   "managementStatus": "HUMAN_MANAGED",
+   "found": true,
+   "ownerState": "HUMAN_MANAGED",
+   "ownerVersion": 2,
+   "deadline": null,
+   "planRef": null
+  },
+  {
+   "symbol": "BCHUSDT",
+   "side": "LONG",
+   "managementStatus": "HUMAN_MANAGED",
+   "found": true,
+   "ownerState": "HUMAN_MANAGED",
+   "ownerVersion": 2,
+   "deadline": null,
+   "planRef": null
+  },
+  {
+   "symbol": "BNBUSDC",
+   "side": "SHORT",
+   "managementStatus": "HUMAN_MANAGED",
+   "found": true,
+   "ownerState": "HUMAN_MANAGED",
+   "ownerVersion": 2,
+   "deadline": null,
+   "planRef": null
+  },
+  {
+   "symbol": "BTCUSDT",
+   "side": "LONG",
+   "managementStatus": "HUMAN_MANAGED",
+   "found": true,
+   "ownerState": "HUMAN_MANAGED",
+   "ownerVersion": 2,
+   "deadline": null,
+   "planRef": null
+  },
+  {
+   "symbol": "CRVUSDT",
+   "side": "SHORT",
+   "managementStatus": "HUMAN_MANAGED",
+   "found": true,
+   "ownerState": "HUMAN_MANAGED",
+   "ownerVersion": 2,
+   "deadline": null,
+   "planRef": null
+  },
+  {
+   "symbol": "DASHUSDT",
+   "side": "LONG",
+   "managementStatus": "AUTO_MANAGED",
+   "found": true,
+   "ownerState": "HANDOFF_PENDING",
+   "ownerVersion": 1,
+   "deadline": null,
+   "planRef": null
+  },
+  {
+   "symbol": "DOGEUSDT",
+   "side": "LONG",
+   "managementStatus": "HUMAN_MANAGED",
+   "found": true,
+   "ownerState": "HUMAN_MANAGED",
+   "ownerVersion": 2,
+   "deadline": null,
+   "planRef": null
+  },
+  {
+   "symbol": "DOTUSDT",
+   "side": "SHORT",
+   "managementStatus": "HUMAN_MANAGED",
+   "found": true,
+   "ownerState": "HUMAN_MANAGED",
+   "ownerVersion": 2,
+   "deadline": null,
+   "planRef": null
+  },
+  {
+   "symbol": "ENAUSDT",
+   "side": "SHORT",
+   "managementStatus": "HUMAN_MANAGED",
+   "found": true,
+   "ownerState": "HUMAN_MANAGED",
+   "ownerVersion": 2,
+   "deadline": null,
+   "planRef": null
+  },
+  {
+   "symbol": "ETHUSDT",
+   "side": "LONG",
+   "managementStatus": "HUMAN_MANAGED",
+   "found": true,
+   "ownerState": "HUMAN_MANAGED",
+   "ownerVersion": 2,
+   "deadline": null,
+   "planRef": null
+  },
+  {
+   "symbol": "FETUSDT",
+   "side": "SHORT",
+   "managementStatus": "HUMAN_MANAGED",
+   "found": true,
+   "ownerState": "HUMAN_MANAGED",
+   "ownerVersion": 2,
+   "deadline": null,
+   "planRef": null
+  },
+  {
+   "symbol": "FILUSDT",
+   "side": "LONG",
+   "managementStatus": "HUMAN_MANAGED",
+   "found": true,
+   "ownerState": "HUMAN_MANAGED",
+   "ownerVersion": 2,
+   "deadline": null,
+   "planRef": null
+  },
+  {
+   "symbol": "INJUSDT",
+   "side": "LONG",
+   "managementStatus": "HUMAN_MANAGED",
+   "found": true,
+   "ownerState": "HUMAN_MANAGED",
+   "ownerVersion": 2,
+   "deadline": null,
+   "planRef": null
+  },
+  {
+   "symbol": "LTCUSDT",
+   "side": "SHORT",
+   "managementStatus": "HUMAN_MANAGED",
+   "found": true,
+   "ownerState": "HUMAN_MANAGED",
+   "ownerVersion": 2,
+   "deadline": null,
+   "planRef": null
+  },
+  {
+   "symbol": "NEARUSDC",
+   "side": "LONG",
+   "managementStatus": "HUMAN_MANAGED",
+   "found": true,
+   "ownerState": "HUMAN_MANAGED",
+   "ownerVersion": 2,
+   "deadline": null,
+   "planRef": null
+  },
+  {
+   "symbol": "ONDOUSDT",
+   "side": "SHORT",
+   "managementStatus": "HUMAN_MANAGED",
+   "found": true,
+   "ownerState": "HUMAN_MANAGED",
+   "ownerVersion": 2,
+   "deadline": null,
+   "planRef": null
+  },
+  {
+   "symbol": "OPUSDT",
+   "side": "LONG",
+   "managementStatus": "HUMAN_MANAGED",
+   "found": true,
+   "ownerState": "HUMAN_MANAGED",
+   "ownerVersion": 2,
+   "deadline": null,
+   "planRef": null
+  },
+  {
+   "symbol": "SUIUSDC",
+   "side": "LONG",
+   "managementStatus": "HUMAN_MANAGED",
+   "found": true,
+   "ownerState": "HUMAN_MANAGED",
+   "ownerVersion": 2,
+   "deadline": null,
+   "planRef": null
+  },
+  {
+   "symbol": "TAOUSDT",
+   "side": "LONG",
+   "managementStatus": "AUTO_MANAGED",
+   "found": true,
+   "ownerState": "HANDOFF_PENDING",
+   "ownerVersion": 1,
+   "deadline": null,
+   "planRef": null
+  },
+  {
+   "symbol": "VVVUSDT",
+   "side": "LONG",
+   "managementStatus": "HUMAN_MANAGED",
+   "found": true,
+   "ownerState": "HUMAN_MANAGED",
+   "ownerVersion": 2,
+   "deadline": null,
+   "planRef": null
+  },
+  {
+   "symbol": "XMRUSDT",
+   "side": "LONG",
+   "managementStatus": "HUMAN_MANAGED",
+   "found": true,
+   "ownerState": "HUMAN_MANAGED",
+   "ownerVersion": 2,
+   "deadline": null,
+   "planRef": null
+  },
+  {
+   "symbol": "XPLUSDT",
+   "side": "LONG",
+   "managementStatus": "HUMAN_MANAGED",
+   "found": true,
+   "ownerState": "HUMAN_MANAGED",
+   "ownerVersion": 2,
+   "deadline": null,
+   "planRef": null
+  },
+  {
+   "symbol": "XRPUSDT",
+   "side": "LONG",
+   "managementStatus": "HUMAN_MANAGED",
+   "found": true,
+   "ownerState": "HUMAN_MANAGED",
+   "ownerVersion": 2,
+   "deadline": null,
+   "planRef": null
+  },
+  {
+   "symbol": "ZECUSDT",
+   "side": "SHORT",
+   "managementStatus": "HUMAN_MANAGED",
+   "found": true,
+   "ownerState": "HUMAN_MANAGED",
+   "ownerVersion": 2,
+   "deadline": null,
+   "planRef": null
+  }
+ ],
+ "checks": [
+  {
+   "name": "engine-is-stopped",
+   "ok": true
+  },
+  {
+   "name": "identity-is-testnet-credential",
+   "ok": true,
+   "environment": "TESTNET",
+   "account": "binance-primary"
+  },
+  {
+   "name": "one-subject-per-open-position",
+   "ok": true,
+   "subjects": 27,
+   "positions": 27
+  },
+  {
+   "name": "subjects-use-the-position-side-scope",
+   "ok": true,
+   "sampleScope": "[\"TESTNET\",\"binance-primary\",\"1000PEPEUSDC\",\"LONG\"]"
+  },
+  {
+   "name": "preview-creates-no-ai-authority",
+   "ok": true,
+   "wouldCreate": 27,
+   "wouldMutateExisting": 0
+  },
+  {
+   "name": "every-open-cycle-readable-by-the-engine-key",
+   "ok": true,
+   "missing": []
+  },
+  {
+   "name": "no-human-managed-cycle-granted-ai-authority",
+   "ok": true,
+   "offenders": []
+  },
+  {
+   "name": "no-cycle-granted-ai-authority-in-a-shadow-window",
+   "ok": true,
+   "offenders": []
+  },
+  {
+   "name": "no-cycle-carries-two-owner-rows",
+   "ok": true,
+   "cyclesWithTwoRows": 0
+  },
+  {
+   "name": "every-open-position-still-protected",
+   "ok": true,
+   "tpWorkingSymbols": 27
+  }
+ ]
+}

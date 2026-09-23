@@ -1,0 +1,3 @@
+warning: in the working copy of 'apps/dashboard/src/views/OverviewView.capacity.test.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'apps/engine/src/runtime/appRuntime.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'apps/engine/src/services/entryCoordinator.ts', LF will be replaced by CRLF the next time Git touches it

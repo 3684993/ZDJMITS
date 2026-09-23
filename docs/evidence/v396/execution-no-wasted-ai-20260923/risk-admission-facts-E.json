@@ -1,0 +1,171 @@
+{
+  "capturedAtLocal": "Wed Sep 23 2026 20:45:28 GMT+0800 (中国标准时间)",
+  "windowMinutes": 30,
+  "evaluations": [
+    {
+      "at": 1790165760025,
+      "allowed": false,
+      "symbol": null,
+      "distinctBlockers": 0,
+      "families": {}
+    },
+    {
+      "at": 1790165829884,
+      "allowed": false,
+      "symbol": null,
+      "distinctBlockers": 0,
+      "families": {}
+    },
+    {
+      "at": 1790165898896,
+      "allowed": false,
+      "symbol": null,
+      "distinctBlockers": 0,
+      "families": {}
+    },
+    {
+      "at": 1790165990633,
+      "allowed": false,
+      "symbol": null,
+      "distinctBlockers": 0,
+      "families": {}
+    },
+    {
+      "at": 1790166080579,
+      "allowed": false,
+      "symbol": null,
+      "distinctBlockers": 0,
+      "families": {}
+    },
+    {
+      "at": 1790166165288,
+      "allowed": false,
+      "symbol": null,
+      "distinctBlockers": 0,
+      "families": {}
+    },
+    {
+      "at": 1790166233566,
+      "allowed": false,
+      "symbol": null,
+      "distinctBlockers": 0,
+      "families": {}
+    },
+    {
+      "at": 1790166397172,
+      "allowed": false,
+      "symbol": null,
+      "distinctBlockers": 0,
+      "families": {}
+    },
+    {
+      "at": 1790166465289,
+      "allowed": false,
+      "symbol": null,
+      "distinctBlockers": 0,
+      "families": {}
+    },
+    {
+      "at": 1790166533355,
+      "allowed": false,
+      "symbol": null,
+      "distinctBlockers": 0,
+      "families": {}
+    },
+    {
+      "at": 1790166599391,
+      "allowed": false,
+      "symbol": null,
+      "distinctBlockers": 0,
+      "families": {}
+    },
+    {
+      "at": 1790166687429,
+      "allowed": false,
+      "symbol": null,
+      "distinctBlockers": 0,
+      "families": {}
+    },
+    {
+      "at": 1790166758182,
+      "allowed": false,
+      "symbol": null,
+      "distinctBlockers": 0,
+      "families": {}
+    },
+    {
+      "at": 1790166825973,
+      "allowed": false,
+      "symbol": null,
+      "distinctBlockers": 0,
+      "families": {}
+    },
+    {
+      "at": 1790166890612,
+      "allowed": false,
+      "symbol": null,
+      "distinctBlockers": 0,
+      "families": {}
+    },
+    {
+      "at": 1790166959893,
+      "allowed": false,
+      "symbol": null,
+      "distinctBlockers": 0,
+      "families": {}
+    },
+    {
+      "at": 1790167025285,
+      "allowed": false,
+      "symbol": null,
+      "distinctBlockers": 0,
+      "families": {}
+    },
+    {
+      "at": 1790167091796,
+      "allowed": false,
+      "symbol": null,
+      "distinctBlockers": 0,
+      "families": {}
+    },
+    {
+      "at": 1790167176856,
+      "allowed": false,
+      "symbol": null,
+      "distinctBlockers": 0,
+      "families": {}
+    },
+    {
+      "at": 1790167255816,
+      "allowed": false,
+      "symbol": null,
+      "distinctBlockers": 0,
+      "families": {}
+    },
+    {
+      "at": 1790167326777,
+      "allowed": false,
+      "symbol": null,
+      "distinctBlockers": 0,
+      "families": {}
+    },
+    {
+      "at": 1790167397891,
+      "allowed": false,
+      "symbol": null,
+      "distinctBlockers": 0,
+      "families": {}
+    },
+    {
+      "at": 1790167471005,
+      "allowed": false,
+      "symbol": null,
+      "distinctBlockers": 0,
+      "families": {}
+    }
+  ],
+  "latestBlockerFamilies": {},
+  "profileConfigured": false,
+  "profileStatus": "NOT_PROJECTED_BY_RUNNING_BUILD",
+  "note": "The running build predates profileReadback().status, so the cockpit status is asserted by the offline dashboard test, not by this capture."
+}

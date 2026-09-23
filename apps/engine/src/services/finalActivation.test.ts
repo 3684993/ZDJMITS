@@ -1,10 +1,21 @@
 import {harness} from './tradingQualityTestHarness.js';
 import {describe,it,expect,vi} from 'vitest';
 import {PortfolioRiskAdmission} from './portfolioRiskLedger.js';
+import {executionReadiness} from './executionReadiness.js';
 import {EngineRuntime} from '../runtime/appRuntime.js';
 import {RuntimeState} from '../state/runtimeState.js';
 import {EntryCoordinator} from './entryCoordinator.js';
 import {EventBus} from '../events/eventBus.js';
+function readinessGate(fake:any){
+  return executionReadiness({
+    settings:fake.state.settings,
+    account:fake.state.account,
+    runtimeControlMode:fake.state.runtimeControl?.mode,
+    executionGovernanceMode:fake.state.executionGovernance?.mode,
+    writeAdmissionBlock:fake.entry.writeAdmissionBlockReason?.()??null,
+    executableCandidateCount:fake.state.runtimeControl?.capital?.executableCandidateCount??0,
+  });
+}
 function risk(asset:any={asset:'USDT',walletBalance:100,availableBalance:90,usdValue:100},position:any=null){
  const now=Date.now(),state=new RuntimeState({riskGovernance:{portfolioRisk:{configured:false}},portfolio:{maxPositions:50}} as any);
  state.account={...state.account,status:'READY',asOf:now,equityUsd:100,assets:[asset],enrichment:{valuationAsOf:now}} as any;
@@ -13,12 +24,16 @@ function risk(asset:any={asset:'USDT',walletBalance:100,availableBalance:90,usdV
  return {state,service,now};
 }
 describe('final activation independent analysis and write authorities',()=>{
+ // READ_ONLY without an AUTO_RUNNING trade intent is the explicit research mode and still dispatches.
+ // An armed trade intent under READ_ONLY must not burn a model: see executionReadiness.test.ts.
  it('dispatches the real analysis tick in READ_ONLY without an exchange loop',async()=>{
   const processPool=vi.fn(async()=>{}),fake:any={state:{settings:{connections:{executionMode:'READ_ONLY',exchange:{environment:'TESTNET'}}}},runtimeControl:{canDispatch:()=>true},entry:{processPool}};
+  fake.executionReadinessSnapshot=()=>readinessGate(fake);
   await (EngineRuntime.prototype as any).dispatchAnalysisTick.call(fake);expect(processPool).toHaveBeenCalledOnce();
  });
  it('refuses production analysis and does not dispatch through a closed fact gate',async()=>{
   const processPool=vi.fn(),fake:any={state:{settings:{connections:{executionMode:'READ_ONLY',exchange:{environment:'PRODUCTION'}}}},runtimeControl:{canDispatch:()=>true},entry:{processPool}};
+  fake.executionReadinessSnapshot=()=>readinessGate(fake);
   await (EngineRuntime.prototype as any).dispatchAnalysisTick.call(fake);expect(processPool).not.toHaveBeenCalled();
  });
  it('does not resume pending execution waits in READ_ONLY',async()=>{

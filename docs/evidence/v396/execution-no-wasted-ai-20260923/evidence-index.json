@@ -1,0 +1,43 @@
+{
+  "round": "v396-execution-no-wasted-ai",
+  "date": "2026-09-23",
+  "plan": "docs/plans/v396/CODEX-V396-EXECUTION-NO-WASTED-AI-20260923.md",
+  "branch": "codex/v396-final-convergence-20260922",
+  "baselineHead": "5879182",
+  "verdict": "PATCHED OFFLINE AND GATED GREEN — the pre-model execution-readiness gate stops the Primary while an armed trade intent cannot execute; READ_ONLY -> TESTNET_ENABLED NOT performed because riskGovernance.portfolioRisk.configured=false; no Engine lifecycle action, no settings write, testnetWrites=0, productionWrites=0",
+  "liveInstance": {
+    "pid": 33432,
+    "buildId": "3.9.6-50d14dbd22d1ea5ed7d2",
+    "instanceId": "8835e95d-0018-4665-a89c-47f17f09165f",
+    "deployedSourceCommit": "e890ed5",
+    "hasPreModelGate": false,
+    "wasteContinuesUntilDeploy": true
+  },
+  "gates": {
+    "engineFiles": 154,
+    "engineTests": 1183,
+    "dashboardFiles": 12,
+    "dashboardTests": 44,
+    "coreFiles": 8,
+    "coreTests": 46,
+    "contracts": "passWithNoTests (0 cases, not counted as coverage)",
+    "allExitZero": true,
+    "builds": "scratch build-check/ outDir only; live apps/*/dist untouched",
+    "powerShellRolloutSelfTests": "skipped while the live instance runs; replaced by node --check syntax gate"
+  },
+  "measuredWasteLast30Min": {
+    "aiRunTerminal": 23,
+    "analysisOnlyCompleted": 23,
+    "tradePlanPersisted": 23,
+    "entryOrderSubmit": 0,
+    "privateSyncFailed": 16,
+    "privateSyncRecovered": 17
+  },
+  "lifecycle": {
+    "stop": 0,
+    "start": 0,
+    "settingsWrite": 0,
+    "exchangeWrite": 0
+  },
+  "files": []
+}

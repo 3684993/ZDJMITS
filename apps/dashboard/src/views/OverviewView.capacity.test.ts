@@ -60,7 +60,8 @@ const oneSideFull = {
 async function open(payload: any) {
   vi.mocked(api.pipeline).mockResolvedValue(payload);
   vi.mocked(api.accountAssets).mockResolvedValue({ assets: [] } as never);
-  const wrapper = mount(Overview, { global: { stubs: { Panel: { template: '<div><slot/></slot></div>' }, StatusBadge: true } } });
+  // StatusBadge renders its value so a test can assert the verdict the operator actually reads.
+  const wrapper = mount(Overview, { global: { stubs: { Panel: { template: '<div><slot/></slot></div>' }, StatusBadge: { props: ['value'], template: '<span>{{ value }}</span>' } } } });
   await flushPromises();
   return wrapper;
 }
@@ -135,4 +136,49 @@ it('falls back to the supply explanation when there is genuinely no candidate', 
   expect(headline).not.toContain('CAPACITY_BLOCKED');
   expect(headline).not.toContain('已用尽');
   expect(headline).toContain('NO_SUPPLY');
+});
+
+// The live 2026-09-23 shape: READ_ONLY with an armed AUTO_RUNNING intent and no approved risk profile.
+const factsBlocked = {
+  ...base,
+  executionReadiness: {
+    intent: true, ready: false, mode: 'EXECUTION_BLOCKED', modelSpendPermitted: false,
+    blockers: ['EXECUTION_WRITE_LOCKED', 'PRIVATE_DATA_UNAVAILABLE', 'RISK_PROFILE_UNCONFIGURED'],
+    firstBlocker: 'EXECUTION_WRITE_LOCKED', profileStatus: 'PROFILE_NOT_CONFIGURED',
+    executableCandidateCount: 10, lastReadyAt: null,
+    text: '执行事实未齐：EXECUTION_WRITE_LOCKED · PRIVATE_DATA_UNAVAILABLE · RISK_PROFILE_UNCONFIGURED；已停止调用模型，避免产生无法执行的决策',
+  },
+  portfolioRiskProfile: { status: 'PROFILE_NOT_CONFIGURED', configured: false, version: 'v396r38', values: { configured: false }, missingFields: ['maxCapitalAtRiskUsd', 'correlationVersion'], blockers: ['RISK_PROFILE_UNCONFIGURED'] },
+};
+
+it('shows the pre-model readiness verdict and its first blocker instead of a silent wait', async () => {
+  const row = (await open(factsBlocked)).find('[data-execution-readiness]').text();
+  expect(row).toContain('EXECUTION_BLOCKED');
+  expect(row).toContain('EXECUTION_WRITE_LOCKED');
+  expect(row).toContain('已停止调用模型');
+});
+
+it('labels an unapproved risk profile PROFILE_NOT_CONFIGURED and never a generic READY', async () => {
+  const row = (await open(factsBlocked)).find('[data-risk-profile]').text();
+  expect(row).toContain('PROFILE_NOT_CONFIGURED');
+  expect(row).toContain('maxCapitalAtRiskUsd');
+  expect(row).not.toContain('READY');
+});
+
+it('reports NOT_EVALUATED rather than inventing a ready state when the Engine projection is absent', async () => {
+  const wrapper = await open(base);
+  expect(wrapper.find('[data-execution-readiness]').text()).toContain('NOT_EVALUATED');
+  expect(wrapper.find('[data-risk-profile]').text()).toContain('NOT_EVALUATED');
+});
+
+it('shows the profile as configured once the readback says so, with its version', async () => {
+  const ready = structuredClone(factsBlocked);
+  ready.executionReadiness = { ...ready.executionReadiness, ready: true, mode: 'EXECUTION_READY', firstBlocker: null, blockers: [], lastReadyAt: 1 };
+  ready.portfolioRiskProfile = { ...ready.portfolioRiskProfile, status: 'READY', configured: true, missingFields: [], blockers: [] };
+  const wrapper = await open(ready);
+  expect(wrapper.find('[data-execution-readiness]').text()).toContain('EXECUTION_READY');
+  const profile = wrapper.find('[data-risk-profile]').text();
+  expect(profile).toContain('READY');
+  expect(profile).toContain('v396r38');
+  expect(profile).not.toContain('PROFILE_NOT_CONFIGURED');
 });

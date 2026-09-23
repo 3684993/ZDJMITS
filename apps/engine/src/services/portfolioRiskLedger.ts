@@ -5,6 +5,32 @@ import {executionScope} from './executionLifecycle.js';
 import {privateAccountFresh} from './privateAccountReadiness.js';
 import type {RuntimeState} from '../state/runtimeState.js';
 
+const PROFILE_LIMIT_KEYS=['maxCapitalAtRiskUsd','maxStressLossUsd','maxGrossNotionalUsd','maxDirectionNotionalUsd','maxClusterNotionalUsd',
+  'maxHumanNotionalUsd','maxDrawdownPct','minMarginBufferPct','minLiquidationBufferPct','maxHumanPositions','maxPendingHandoffs','maxAckAgeMs','snapshotTtlMs'] as const;
+
+/**
+ * The profile facts the admission needs before it can issue a risk ticket. Exported because the
+ * pre-model readiness gate must answer with exactly these codes: a cockpit that invents its own
+ * list of "what is missing" is a second authority over the same settings row.
+ */
+export function portfolioRiskProfileBlockers(profile:Record<string,unknown>|null|undefined):string[]{
+  const row=profile??{};
+  if(row.configured!==true)return['RISK_PROFILE_UNCONFIGURED'];
+  const blockers:string[]=[];
+  const missing=PROFILE_LIMIT_KEYS.filter(key=>row[key]==null);
+  if(missing.length)blockers.push(`RISK_PROFILE_FIELDS_MISSING:${missing.join(',')}`);
+  if(!String(row.marginTierVersion??'').trim()||!finite(row.maintenanceMarginRatePct))blockers.push('MARGIN_TIER_UNPROVEN');
+  if(!String(row.correlationVersion??'').trim())blockers.push('CORRELATION_VERSION_UNPROVEN');
+  if(!Array.isArray(row.scenarios)||!row.scenarios.length||!String(row.scenarioVersion??'').trim())blockers.push('STRESS_SCENARIO_SET_UNPROVEN');
+  return blockers;
+}
+
+/** Three states, so a page can never render an unapproved profile as `READY`. */
+export function portfolioRiskProfileStatus(profile:Record<string,unknown>|null|undefined):'PROFILE_NOT_CONFIGURED'|'PROFILE_FACTS_UNPROVEN'|'READY'{
+  if((profile??{}).configured!==true)return 'PROFILE_NOT_CONFIGURED';
+  return portfolioRiskProfileBlockers(profile).length?'PROFILE_FACTS_UNPROVEN':'READY';
+}
+
 /**
  * J2: the single authoritative portfolio admission for new risk.
  *
@@ -69,24 +95,19 @@ export class PortfolioRiskAdmission {
   private profileSettings(){
     const row=this.ports.profile()??{};
     const numbers=['maxCapitalAtRiskUsd','maxStressLossUsd','maxGrossNotionalUsd','maxDirectionNotionalUsd','maxClusterNotionalUsd','maxHumanNotionalUsd','maxDrawdownPct','minMarginBufferPct','minLiquidationBufferPct','maxHumanPositions','maxPendingHandoffs','maxAckAgeMs','snapshotTtlMs'];
-    return{row,missing:numbers.filter(key=>row[key]==null),profileVersion:stableRiskHash(row),
+    return{row,missing:numbers.filter(key=>row[key]==null),blockers:portfolioRiskProfileBlockers(row as Record<string,unknown>),profileVersion:stableRiskHash(row),
       provenance:{source:'SETTINGS',settingsVersion:(this.ports.state.settings as any).settingsVersion??null,
         path:'riskGovernance.portfolioRisk',configured:row.configured===true,contentHash:stableRiskHash(row)}};
   }
 
-  profileReadback(){const p=this.profileSettings();return{...p.provenance,version:p.profileVersion,values:p.row,missingFields:p.missing};}
+  profileReadback(){const p=this.profileSettings();return{...p.provenance,status:portfolioRiskProfileStatus(p.row as Record<string,unknown>),version:p.profileVersion,values:p.row,missingFields:p.missing,blockers:p.blockers};}
 
   /** Position, order, reservation, ownership and account facts, mapped into the snapshot inputs. */
   private inputs(now:number,plannedPositions:PortfolioPositionFact[]){
     const state=this.ports.state,identity=this.ports.identity(),settings=state.settings as any;
     const riskSettings=settings?.riskGovernance??{};
     const profile=this.profileSettings();
-    const blockers:string[]=[];
-    if(profile.row.configured!==true)blockers.push('RISK_PROFILE_UNCONFIGURED');
-    if(profile.missing.length)blockers.push(`RISK_PROFILE_FIELDS_MISSING:${profile.missing.join(',')}`);
-    if(!String(profile.row.marginTierVersion??'').trim()||!finite(profile.row.maintenanceMarginRatePct))blockers.push('MARGIN_TIER_UNPROVEN');
-    if(!String(profile.row.correlationVersion??'').trim())blockers.push('CORRELATION_VERSION_UNPROVEN');
-    if(!Array.isArray(profile.row.scenarios)||!profile.row.scenarios.length||!String(profile.row.scenarioVersion??'').trim())blockers.push('STRESS_SCENARIO_SET_UNPROVEN');
+    const blockers:string[]=[...portfolioRiskProfileBlockers(profile.row as Record<string,unknown>)];
 
     const account:any=state.account??{};
     const accountVerified=account.status==='READY'&&privateAccountFresh(account as never,now);

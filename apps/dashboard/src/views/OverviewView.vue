@@ -29,6 +29,17 @@ const entryPermissionText = () =>
 // Engine side. The page only reads the projected verdict; it never re-derives or guesses it.
 const SUPPLY_SIDE_WAITS = ["WAITING_CANDIDATE", "WAITING_NEW_FACTS", "NO_SUPPLY", "RULE_FILTERED"];
 const capacityVisibility = computed(() => pipeline.value?.capacityVisibility ?? null);
+// The Engine already decides whether a model call can be acted on and whether the risk profile is
+// actually configured; the page renders those verdicts instead of guessing a READY of its own.
+const readiness = computed(() => pipeline.value?.executionReadiness ?? null);
+const riskProfile = computed(() => pipeline.value?.portfolioRiskProfile ?? null);
+const riskProfileNote = () => {
+  const profile = riskProfile.value;
+  if (!profile) return "本实例尚未读回组合风险档案";
+  if (profile.status === "READY") return `档案版本 ${profile.version ?? "—"} 已配置`;
+  const missing = (profile.missingFields ?? []).join(" · ");
+  return `${(profile.blockers ?? []).join(" · ") || "PROFILE_NOT_CONFIGURED"}${missing ? `；缺失字段：${missing}` : ""}`;
+};
 const capacityBlocked = computed(() => {
   const view = capacityVisibility.value;
   if (!view || view.exhaustedForNewRisk !== true) return null;
@@ -172,6 +183,21 @@ onUnmounted(() => {
             <StatusBadge
               :value="control()?.entrySafetyMode ?? 'SAFETY_REVIEW_PAUSED'"
             />
+          </dd>
+        </div>
+        <div data-execution-readiness>
+          <dt>执行就绪判定</dt>
+          <dd>
+            <StatusBadge :value="readiness?.mode ?? 'NOT_EVALUATED'" />
+            {{ readiness?.text ?? "本实例尚未评估执行事实" }}
+            <small v-if="readiness">首因 {{ readiness.firstBlocker ?? "NONE" }}；最近就绪：{{ readiness.lastReadyAt ? new Date(readiness.lastReadyAt).toLocaleString() : '本实例暂无' }}</small>
+          </dd>
+        </div>
+        <div data-risk-profile>
+          <dt>组合风险档案（权威 readback）</dt>
+          <dd>
+            <StatusBadge :value="riskProfile?.status ?? 'NOT_EVALUATED'" />
+            <small>{{ riskProfileNote() }}</small>
           </dd>
         </div>
         <div>

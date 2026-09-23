@@ -53,12 +53,39 @@ export class EntryCoordinator {
   private lastAnalysisHeartbeat=0;
   private analysisFacts={lastTickAt:null as number|null,lastAttemptAt:null as number|null,lastRequestAt:null as number|null,lastSuccessAt:null as number|null,lastFailureAt:null as number|null,lastBlockedReason:null as string|null};
   private analysisOnly(){return this.state.settings.connections?.executionMode==='READ_ONLY'&&this.state.settings.connections?.exchange?.environment==='TESTNET';}
+  /**
+   * The last pre-model readiness verdict, pushed by the runtime every scheduler tick. A model call is
+   * a cost the pipeline may only pay when the book could act on the answer, so the reason it refuses
+   * belongs to the same object that reports the silence.
+   */
+  private executionGate:{intent:boolean;ready:boolean;blockers:string[];firstBlocker:string|null;text:string;at:number;lastReadyAt:number}|null=null;
+  private modelSpendPermitted(){const gate=this.executionGate;return gate===null||gate.ready||!gate.intent;}
+  noteExecutionReadiness(readiness:{intent:boolean;ready:boolean;blockers:string[];firstBlocker:string|null;text:string;executableCandidateCount:number}){
+    const now=Date.now(),lastReadyAt=readiness.ready?now:(this.executionGate?.lastReadyAt??0);
+    const previouslyBlocked=this.executionGate!==null&&!this.executionGate.ready&&this.executionGate.intent;
+    this.executionGate={intent:readiness.intent,ready:readiness.ready,blockers:readiness.blockers,firstBlocker:readiness.firstBlocker,text:readiness.text,at:now,lastReadyAt};
+    if(readiness.ready||!readiness.intent){
+      if(previouslyBlocked)this.events.publish('EXECUTION_READINESS_RESUMED',{at:now,lastReadyAt});
+      return;
+    }
+    this.analysisFacts.lastTickAt=now;
+    this.analysisFacts.lastBlockedReason=readiness.firstBlocker??'EXECUTION_FACTS_BLOCKED';
+    this.ai.setIdleContext(readiness.firstBlocker??'EXECUTION_FACTS_BLOCKED',readiness.executableCandidateCount,readiness.text);
+    if(!previouslyBlocked)this.events.publish('EXECUTION_READINESS_BLOCKED',{firstBlocker:readiness.firstBlocker,blockers:readiness.blockers,executableCandidateCount:readiness.executableCandidateCount,at:now});
+  }
   noteAnalysisBlocked(reason:string){this.analysisFacts.lastTickAt=Date.now();this.analysisFacts.lastBlockedReason=reason;}
+  /** The transport that would carry the write answers for itself; the readiness gate must not guess. */
+  writeAdmissionBlockReason(){return this.writeAdmissionBlock();}
+
   analysisDiagnostics(){
     const now=Date.now(),f=this.analysisFacts,capital=this.state.runtimeControl.capital.executableCandidateCount??0;
     const model=this.state.aiResources.find((r:any)=>r.role==='PRIMARY_BRAIN') as any;
+    const gate=this.executionGate;
     let reason=f.lastBlockedReason??'ANALYSIS_READY';
-    if(!privateAccountFresh(this.state.account))reason='FACTS_BLOCKED';
+    // The pre-model gate is the strongest statement available: it names the fact that made the model
+    // call worthless, so no supply or capacity guess may replace it.
+    if(gate?.intent&&!gate.ready)reason=gate.firstBlocker??'EXECUTION_FACTS_BLOCKED';
+    else if(!privateAccountFresh(this.state.account))reason='FACTS_BLOCKED';
     else if(this.state.runtimeControl.mode!=='RUNNING'||this.state.executionGovernance?.mode!=='AUTO_RUNNING'||this.state.settings.riskGovernance?.entrySafetyMode!=='AUTO')reason='POLICY_DISABLED';
     else if(model?.status==='OFFLINE')reason='MODEL_UNREACHABLE';
     else if(!f.lastTickAt||now-f.lastTickAt>30_000)reason='SILENCE_UNKNOWN';
@@ -67,6 +94,7 @@ export class EntryCoordinator {
     else if(this.active.size===0&&now-Number(f.lastAttemptAt??this.analysisStartedAt)>30*60_000)reason='DISPATCH_STALLED';
     return{mode:this.analysisOnly()?'ANALYSIS_ONLY':'EXECUTION_ENABLED',...f,reason,capitalExecutableCount:capital,
       active:this.active.size,silenceMs:now-(f.lastSuccessAt??this.analysisStartedAt),observationStartedAt:this.analysisStartedAt,
+      execution:{intent:gate?.intent??false,ready:gate?.ready??true,blockers:gate?.blockers??[],firstBlocker:gate?.firstBlocker??null,lastReadyAt:gate?.lastReadyAt||null,readinessText:gate?.text??null},
       text:`${this.analysisOnly()?'ANALYSIS_ONLY：仅分析，交易写锁定':'分析管线'}；${reason}`};
   }
   private admissionBlockReason:string|null=null;
@@ -143,6 +171,10 @@ export class EntryCoordinator {
     }
     const primaryCapacity = this.state.aiResources.filter((r:any) => r.role === "PRIMARY_BRAIN").reduce((n:number,r:any) => n + r.maxConcurrency, 0);
     if(this.active.size>=Math.max(1,primaryCapacity)) {this.analysisFacts.lastBlockedReason='AI_RESOURCE_BUSY';this.ai.setIdleContext('AI_RESOURCE_BUSY',ready.length,'等待 Primary 完成本次决策');return;}
+    // A model call is a cost, not a status report: with an armed AUTO_RUNNING intent the Primary is
+    // only worth asking when the answer could actually be executed. Everything above this point is
+    // deterministic supply maintenance, so the first ready tick resumes without a warm-up cycle.
+    if (!this.modelSpendPermitted()) return;
     await this.ai.probePrimaryIfDue(now);
     if(!this.ai.hasCapacity('PRIMARY_BRAIN')) {
       this.analysisFacts.lastBlockedReason='BUDGET_OR_COOLDOWN';

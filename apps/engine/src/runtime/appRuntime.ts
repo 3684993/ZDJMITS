@@ -2,6 +2,7 @@ import type {TradingQualityRuntimeObserver} from '../services/tradingQualityRunt
 import { TradingQualityCollector } from '../services/tradingQualityCollector.js';
 import { privateAccountFresh } from '../services/privateAccountReadiness.js';
 import { portfolioCapacityVisibility } from '../services/riskReadiness.js';
+import { executionReadiness } from '../services/executionReadiness.js';
 import { PrivateAccountSync } from '../services/privateAccountSync.js';
 import { recoverUnsubmittedEntry } from '../services/unsubmittedEntryRecovery.js';
 import {RuntimeWriteBuffer} from '../services/runtimeWriteBuffer.js';
@@ -695,11 +696,27 @@ export class EngineRuntime {
         }),
       );
   }
+  /** The pre-model cost gate: read the facts the write path itself will check, before paying for them. */
+  executionReadinessSnapshot(now = Date.now()) {
+    return executionReadiness({
+      settings: this.state.settings,
+      account: this.state.account,
+      runtimeControlMode: this.state.runtimeControl.mode,
+      executionGovernanceMode: this.state.executionGovernance?.mode ?? '',
+      writeAdmissionBlock: this.entry.writeAdmissionBlockReason(),
+      executableCandidateCount: this.state.runtimeControl.capital.executableCandidateCount ?? 0,
+      now,
+    });
+  }
   async dispatchAnalysisTick(){
     const permitted=this.state.settings.connections.exchange.environment==='TESTNET'&&this.runtimeControl.canDispatch();
     if(!permitted){this.entry.noteAnalysisBlocked?.('POLICY_OR_FACT_GATE');return;}
+    // The verdict is pushed, not polled: the tick that changes it is the tick that must stop paying
+    // for a model, and the deterministic supply maintenance inside processPool keeps running.
+    this.entry.noteExecutionReadiness?.(this.executionReadinessSnapshot());
     await this.entry.processPool();
   }
+
   async start() {
     this.stopped = false;
     const tradeRecordAutoSyncStartedAt = Date.now();
@@ -1894,6 +1911,7 @@ export class EngineRuntime {
       },
       analysis: this.entry.analysisDiagnostics(),
       portfolioRiskProfile: this.portfolioRisk?.profileReadback?.()??null,
+      executionReadiness:this.executionReadinessSnapshot(now),
       scheduler: {
         status: paused ? "PAUSED" : this.ready ? "RUNNING" : "STOPPED",
       },

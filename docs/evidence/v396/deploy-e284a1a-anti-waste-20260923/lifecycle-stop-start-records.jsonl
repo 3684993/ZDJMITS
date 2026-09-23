@@ -1,0 +1,5 @@
+{"op":"stop","tool":"scripts/stop-zdj-lan.ps1","count":1,"exit":0,"oldPid":33432,"oldBuildId":"3.9.6-50d14dbd22d1ea5ed7d2","result":"ZDJ-MITS stopped; port 8080 is free","stdout":"stop-01-output.txt"}
+{"op":"verify-port-free","method":"netstat + tasklist","listenersOn8080":0,"oldPidRunning":false}
+{"op":"start","tool":"scripts/start-zdj-lan.ps1 -StartReason MANUAL_START -SkipFirewall","count":1,"exit":0,"newPid":50996,"hostPid":42040,"launchId":"e635a90192b2405788f5ce5a18d05a9c","instanceId":"dc5c58b8-3c9a-4414-8f02-b00d3b1005fb","buildId":"3.9.6-dc8fb58b578c25d10726","startedAtIso":"2026-09-23T13:30:09.247Z","stdout":"start-01-output.txt"}
+{"op":"ready","pollsUntilReady":6,"observedSequence":"STARTING -> DEGRADED -> READY","health":{"status":"READY","databaseIntegrity":true,"databaseStatus":"HEALTHY"}}
+{"op":"forbidden-not-done","list":["hot reload","watchdog","supervisor","autostart","scheduled task","second restart","retry loop","settings write","order action"]}

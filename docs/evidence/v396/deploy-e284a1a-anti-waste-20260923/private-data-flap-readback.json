@@ -1,0 +1,340 @@
+{
+  "capturedAtIso": "2026-09-23T13:50:34.470Z",
+  "instance": {
+    "pid": 50996,
+    "buildId": "3.9.6-dc8fb58b578c25d10726",
+    "startedAtIso": "2026-09-23T13:30:09.247Z"
+  },
+  "windowMinutes": 20.4,
+  "failures": [
+    {
+      "at": 1790170235513,
+      "local": "2026/9/23 21:30:35",
+      "errorCode": "TIMEOUT",
+      "lastError": "BINANCE_TRANSPORT_BLOCKED: Binance request timed out",
+      "durationMs": 20662,
+      "consecutiveFailures": 1,
+      "trigger": "POLL"
+    },
+    {
+      "at": 1790170348313,
+      "local": "2026/9/23 21:32:28",
+      "errorCode": "TIMEOUT",
+      "lastError": "BINANCE_TRANSPORT_BLOCKED: Binance request timed out",
+      "durationMs": 15010,
+      "consecutiveFailures": 1,
+      "trigger": "POLL"
+    },
+    {
+      "at": 1790170378317,
+      "local": "2026/9/23 21:32:58",
+      "errorCode": "TIMEOUT",
+      "lastError": "BINANCE_TRANSPORT_BLOCKED: Binance request timed out",
+      "durationMs": 15002,
+      "consecutiveFailures": 2,
+      "trigger": "POLL"
+    },
+    {
+      "at": 1790170408315,
+      "local": "2026/9/23 21:33:28",
+      "errorCode": "TIMEOUT",
+      "lastError": "BINANCE_TRANSPORT_BLOCKED: Binance request timed out",
+      "durationMs": 15001,
+      "consecutiveFailures": 3,
+      "trigger": "POLL"
+    },
+    {
+      "at": 1790170453327,
+      "local": "2026/9/23 21:34:13",
+      "errorCode": "TIMEOUT",
+      "lastError": "BINANCE_TRANSPORT_BLOCKED: Binance request timed out",
+      "durationMs": 15004,
+      "consecutiveFailures": 1,
+      "trigger": "POLL"
+    },
+    {
+      "at": 1790170519184,
+      "local": "2026/9/23 21:35:19",
+      "errorCode": "TIMEOUT",
+      "lastError": "BINANCE_TRANSPORT_BLOCKED: Binance request timed out",
+      "durationMs": 20843,
+      "consecutiveFailures": 1,
+      "trigger": "POLL"
+    },
+    {
+      "at": 1790170543359,
+      "local": "2026/9/23 21:35:43",
+      "errorCode": "TIMEOUT",
+      "lastError": "BINANCE_TRANSPORT_BLOCKED: Binance request timed out",
+      "durationMs": 15011,
+      "consecutiveFailures": 2,
+      "trigger": "POLL"
+    },
+    {
+      "at": 1790170591041,
+      "local": "2026/9/23 21:36:31",
+      "errorCode": "TIMEOUT",
+      "lastError": "BINANCE_TRANSPORT_BLOCKED: Binance request timed out",
+      "durationMs": 17684,
+      "consecutiveFailures": 1,
+      "trigger": "POLL"
+    },
+    {
+      "at": 1790170633452,
+      "local": "2026/9/23 21:37:13",
+      "errorCode": "TIMEOUT",
+      "lastError": "BINANCE_TRANSPORT_BLOCKED: Binance request timed out",
+      "durationMs": 15010,
+      "consecutiveFailures": 1,
+      "trigger": "POLL"
+    },
+    {
+      "at": 1790170693678,
+      "local": "2026/9/23 21:38:13",
+      "errorCode": "TIMEOUT",
+      "lastError": "BINANCE_TRANSPORT_BLOCKED: Binance request timed out",
+      "durationMs": 15001,
+      "consecutiveFailures": 1,
+      "trigger": "POLL"
+    },
+    {
+      "at": 1790170753700,
+      "local": "2026/9/23 21:39:13",
+      "errorCode": "TIMEOUT",
+      "lastError": "BINANCE_TRANSPORT_BLOCKED: Binance request timed out",
+      "durationMs": 15013,
+      "consecutiveFailures": 1,
+      "trigger": "POLL"
+    },
+    {
+      "at": 1790170798728,
+      "local": "2026/9/23 21:39:58",
+      "errorCode": "TIMEOUT",
+      "lastError": "BINANCE_TRANSPORT_BLOCKED: Binance request timed out",
+      "durationMs": 15004,
+      "consecutiveFailures": 1,
+      "trigger": "POLL"
+    },
+    {
+      "at": 1790170829049,
+      "local": "2026/9/23 21:40:29",
+      "errorCode": "TIMEOUT",
+      "lastError": "BINANCE_TRANSPORT_BLOCKED: Binance request timed out",
+      "durationMs": 15322,
+      "consecutiveFailures": 2,
+      "trigger": "POLL"
+    },
+    {
+      "at": 1790170865679,
+      "local": "2026/9/23 21:41:05",
+      "errorCode": "TIMEOUT",
+      "lastError": "BINANCE_TRANSPORT_BLOCKED: Binance request timed out",
+      "durationMs": 6729,
+      "consecutiveFailures": 1,
+      "trigger": "POLL"
+    },
+    {
+      "at": 1790170897583,
+      "local": "2026/9/23 21:41:37",
+      "errorCode": "TIMEOUT",
+      "lastError": "BINANCE_TRANSPORT_BLOCKED: Binance request timed out",
+      "durationMs": 23524,
+      "consecutiveFailures": 2,
+      "trigger": "POLL"
+    },
+    {
+      "at": 1790170919318,
+      "local": "2026/9/23 21:41:59",
+      "errorCode": "TIMEOUT",
+      "lastError": "BINANCE_TRANSPORT_BLOCKED: Binance request timed out",
+      "durationMs": 15080,
+      "consecutiveFailures": 3,
+      "trigger": "POLL"
+    },
+    {
+      "at": 1790170980069,
+      "local": "2026/9/23 21:43:00",
+      "errorCode": "TIMEOUT",
+      "lastError": "BINANCE_TRANSPORT_BLOCKED: Binance request timed out",
+      "durationMs": 15211,
+      "consecutiveFailures": 1,
+      "trigger": "POLL"
+    },
+    {
+      "at": 1790171010144,
+      "local": "2026/9/23 21:43:30",
+      "errorCode": "TIMEOUT",
+      "lastError": "BINANCE_TRANSPORT_BLOCKED: Binance request timed out",
+      "durationMs": 15072,
+      "consecutiveFailures": 2,
+      "trigger": "POLL"
+    },
+    {
+      "at": 1790171040372,
+      "local": "2026/9/23 21:44:00",
+      "errorCode": "TIMEOUT",
+      "lastError": "BINANCE_TRANSPORT_BLOCKED: Binance request timed out",
+      "durationMs": 15147,
+      "consecutiveFailures": 3,
+      "trigger": "POLL"
+    },
+    {
+      "at": 1790171087834,
+      "local": "2026/9/23 21:44:47",
+      "errorCode": "TIMEOUT",
+      "lastError": "BINANCE_TRANSPORT_BLOCKED: Binance request timed out",
+      "durationMs": 1233,
+      "consecutiveFailures": 1,
+      "trigger": "POLL"
+    },
+    {
+      "at": 1790171146985,
+      "local": "2026/9/23 21:45:46",
+      "errorCode": "TIMEOUT",
+      "lastError": "BINANCE_TRANSPORT_BLOCKED: Binance request timed out",
+      "durationMs": 15087,
+      "consecutiveFailures": 1,
+      "trigger": "POLL"
+    },
+    {
+      "at": 1790171207186,
+      "local": "2026/9/23 21:46:47",
+      "errorCode": "TIMEOUT",
+      "lastError": "BINANCE_TRANSPORT_BLOCKED: Binance request timed out",
+      "durationMs": 15028,
+      "consecutiveFailures": 1,
+      "trigger": "POLL"
+    },
+    {
+      "at": 1790171282220,
+      "local": "2026/9/23 21:48:02",
+      "errorCode": "TIMEOUT",
+      "lastError": "BINANCE_TRANSPORT_BLOCKED: Binance request timed out",
+      "durationMs": 15004,
+      "consecutiveFailures": 1,
+      "trigger": "POLL"
+    },
+    {
+      "at": 1790171320476,
+      "local": "2026/9/23 21:48:40",
+      "errorCode": "TIMEOUT",
+      "lastError": "BINANCE_TRANSPORT_BLOCKED: Binance request timed out",
+      "durationMs": 23247,
+      "consecutiveFailures": 2,
+      "trigger": "POLL"
+    },
+    {
+      "at": 1790171342292,
+      "local": "2026/9/23 21:49:02",
+      "errorCode": "TIMEOUT",
+      "lastError": "BINANCE_TRANSPORT_BLOCKED: Binance request timed out",
+      "durationMs": 15015,
+      "consecutiveFailures": 3,
+      "trigger": "POLL"
+    },
+    {
+      "at": 1790171376444,
+      "local": "2026/9/23 21:49:36",
+      "errorCode": "TIMEOUT",
+      "lastError": "BINANCE_TRANSPORT_BLOCKED: Binance request timed out",
+      "durationMs": 19153,
+      "consecutiveFailures": 4,
+      "trigger": "POLL"
+    },
+    {
+      "at": 1790171402313,
+      "local": "2026/9/23 21:50:02",
+      "errorCode": "TIMEOUT",
+      "lastError": "BINANCE_TRANSPORT_BLOCKED: Binance request timed out",
+      "durationMs": 15016,
+      "consecutiveFailures": 5,
+      "trigger": "POLL"
+    }
+  ],
+  "recoveries": [
+    {
+      "at": 1790170256440,
+      "durationMs": 13170
+    },
+    {
+      "at": 1790170431443,
+      "durationMs": 8126
+    },
+    {
+      "at": 1790170472490,
+      "durationMs": 4164
+    },
+    {
+      "at": 1790170563963,
+      "durationMs": 5609
+    },
+    {
+      "at": 1790170610710,
+      "durationMs": 7337
+    },
+    {
+      "at": 1790170666135,
+      "durationMs": 17575
+    },
+    {
+      "at": 1790170714491,
+      "durationMs": 5808
+    },
+    {
+      "at": 1790170773677,
+      "durationMs": 4966
+    },
+    {
+      "at": 1790170850665,
+      "durationMs": 6921
+    },
+    {
+      "at": 1790170946741,
+      "durationMs": 12306
+    },
+    {
+      "at": 1790171061576,
+      "durationMs": 5651
+    },
+    {
+      "at": 1790171107604,
+      "durationMs": 5840
+    },
+    {
+      "at": 1790171174408,
+      "durationMs": 12423
+    },
+    {
+      "at": 1790171230828,
+      "durationMs": 8628
+    },
+    {
+      "at": 1790171431963,
+      "durationMs": 14665
+    }
+  ],
+  "stats": {
+    "failures": 27,
+    "recoveries": 15,
+    "errorCodeTally": {
+      "TIMEOUT": 27
+    },
+    "durationMsRange": [
+      1233,
+      23524
+    ],
+    "maxConsecutiveFailures": 5
+  },
+  "livePrivate": {
+    "status": "READY",
+    "asOf": 1790171431962,
+    "snapshotAgeMs": 2497,
+    "consecutiveFailures": 0
+  },
+  "readinessBlockersNow": [
+    "EXECUTION_WRITE_LOCKED",
+    "RISK_PROFILE_UNCONFIGURED",
+    "NO_EXECUTABLE_CANDIDATE"
+  ],
+  "note": "Counted only from this instance start. The 60s freshness window and the REST timeout were not changed, and no cached fact is used to admit a write."
+}

@@ -1,0 +1,1423 @@
+{
+  "label": "post-deploy-runtime-snapshot-t-late",
+  "capturedAt": "2026-09-23T13:53:32.643Z",
+  "identityFile": {
+    "instanceId": "dc5c58b8-3c9a-4414-8f02-b00d3b1005fb",
+    "pid": 50996,
+    "startedAt": 1790170209247,
+    "host": "0.0.0.0",
+    "port": 8080,
+    "version": "3.9.6",
+    "buildId": "3.9.6-dc8fb58b578c25d10726",
+    "artifactHash": "dc8fb58b578c25d10726b9ea52b9a5c3706215c31f2697e626b4c46b507e6bad",
+    "sourceHash": "84cecf6b2497790e963c942b3d037c888b8705ccd748008cbd537a01d4551897",
+    "startReason": "MANUAL_START",
+    "lanIps": [
+      "192.168.1.50"
+    ],
+    "restartCount": 172
+  },
+  "health": {
+    "status": "READY",
+    "ready": true,
+    "checks": {
+      "database": {
+        "integrity": true,
+        "status": "HEALTHY",
+        "auditEvents": 70365,
+        "runtimePersistedAt": 1790170170203,
+        "checkedAt": 1790170210054,
+        "error": null
+      },
+      "marketSnapshots": 24,
+      "reconciliation": {
+        "lastRun": 1790171280430,
+        "lastError": "BINANCE_TRANSPORT_BLOCKED: Binance request timed out",
+        "driftCount": 7,
+        "unresolvedDriftCount": 0,
+        "historicalUnknownCount": 46,
+        "activeRiskUnresolvedCount": 0,
+        "verifiedNoActiveRiskUnknownCount": 46,
+        "correctedDifferenceCount": 7,
+        "verifiedOrderFactMismatchCount": 0,
+        "lastFullOrderScanAt": 1790171456117,
+        "fullOrderScanIntervalMs": 300000,
+        "unknownRiskScanIntervalMs": 60000,
+        "unknownRiskEvidenceTtlMs": 300000,
+        "unknownRiskAuditTierIntervalsMs": [
+          300000,
+          900000,
+          1800000
+        ],
+        "unknownRiskAuditsByTier": [
+          3,
+          0,
+          43
+        ],
+        "unknownRiskLastAuditAt": 1790171456118,
+        "unknownRiskNextAuditAt": 1790171105212,
+        "remoteFactAuditsByClassAndTier": [
+          {
+            "class": "unknown",
+            "ladderMs": [
+              300000,
+              900000,
+              1800000
+            ],
+            "tiers": [
+              3,
+              0,
+              43
+            ],
+            "deferred": 39
+          },
+          {
+            "class": "terminal",
+            "ladderMs": [
+              300000,
+              1800000,
+              3600000
+            ],
+            "tiers": [
+              0,
+              0,
+              6
+            ],
+            "deferred": 5
+          },
+          {
+            "class": "neverSubmitted",
+            "ladderMs": [
+              300000,
+              1800000,
+              21600000
+            ],
+            "tiers": [
+              0,
+              0,
+              0
+            ],
+            "deferred": 0
+          }
+        ]
+      },
+      "marketStream": {
+        "state": "LIVE",
+        "connectedAt": 1790170237892,
+        "lastMessageAt": 1790171612698,
+        "lastTickerMessageAt": 1790171612453,
+        "lastBookTickerMessageAt": 1790171612698,
+        "lastPongAt": 1790171609626,
+        "reconnects": 0,
+        "gaps": 0,
+        "gapsByType": {
+          "websocketConnection": 0,
+          "quote": 0,
+          "bookTicker": 0,
+          "depthSequence": 0,
+          "kline": 0,
+          "eventTimestamp": 0,
+          "subscription": 0
+        },
+        "backfills": 0,
+        "subscriptions": 123,
+        "cumulativeSubscriptions": 178,
+        "recoverySuccess": 0,
+        "recoveryFailure": 0,
+        "lastError": null,
+        "lastKlineGap": null,
+        "recoveryQueue": 3
+      },
+      "privateData": {
+        "walletBalanceUsd": 11309.766677208801,
+        "availableUsd": 3810.79219545,
+        "equityUsd": 10590.782045068801,
+        "unrealizedPnlUsd": -718.98463214,
+        "realizedPnlUsd24h": 16.258482600000008,
+        "assets": [
+          {
+            "asset": "BTC",
+            "walletBalance": 0.01,
+            "availableBalance": 0.01,
+            "crossWalletBalance": 0.01,
+            "unrealizedPnl": 0,
+            "usdValue": 856.5726373187999,
+            "marginEligible": true
+          },
+          {
+            "asset": "USDT",
+            "walletBalance": 5472.03498475,
+            "availableBalance": 3810.79219545,
+            "crossWalletBalance": 5472.03498475,
+            "unrealizedPnl": -718.98463214,
+            "usdValue": 5472.03498475,
+            "marginEligible": true
+          },
+          {
+            "asset": "USDC",
+            "walletBalance": 4981.15905514,
+            "availableBalance": 4974.16194861,
+            "crossWalletBalance": 4981.15905514,
+            "unrealizedPnl": -1.13385218,
+            "usdValue": 4981.15905514,
+            "marginEligible": true
+          }
+        ],
+        "enrichment": {
+          "incomeAsOf": 1790171579856,
+          "valuationAsOf": 1790171579295,
+          "error": null,
+          "pending": false
+        },
+        "asOf": 1790171593656,
+        "status": "READY",
+        "source": "BINANCE_TESTNET_ACCOUNT",
+        "reason": null,
+        "riskBaseline": null
+      }
+    }
+  },
+  "runtime": {
+    "instanceId": "dc5c58b8-3c9a-4414-8f02-b00d3b1005fb",
+    "pid": 50996,
+    "buildId": "3.9.6-dc8fb58b578c25d10726",
+    "uptimeMs": 1404477
+  },
+  "settings": {
+    "settingsVersion": 191,
+    "environment": "TESTNET",
+    "executionMode": "READ_ONLY",
+    "entrySafetyMode": "AUTO",
+    "aiExitAuthority": "SHADOW",
+    "maxGrossExposurePct": 1,
+    "maxDirectionExposurePct": 0.8,
+    "maxPositions": 50,
+    "portfolioRiskConfigured": false
+  },
+  "writeBoundary": {
+    "environment": "TESTNET",
+    "executionMode": "READ_ONLY",
+    "lockedToTestnet": true,
+    "testnetWrites": 0,
+    "productionWrites": 0,
+    "blockedProductionWriteAttempts": 0,
+    "lastWriteAt": null,
+    "lastWritePath": null
+  },
+  "persistence": {
+    "integrity": true,
+    "status": "HEALTHY",
+    "auditEvents": 70365,
+    "runtimePersistedAt": 1790170170203,
+    "checkedAt": 1790170210054,
+    "error": null
+  },
+  "pipelineFacts": {
+    "pipelineState": "RUNNING",
+    "noEntryReason": "ENTRY_BLOCKED",
+    "eligibility": {
+      "status": "READY",
+      "count": 2,
+      "cooldown": 0,
+      "excluded": 17
+    },
+    "capacity": {
+      "positions": 14,
+      "inFlight": 2,
+      "reserved": 0,
+      "used": 16,
+      "max": 50
+    },
+    "capacityVisibility": {
+      "slots": {
+        "used": 16,
+        "max": 50,
+        "positions": 14,
+        "inFlight": 2,
+        "reserved": 0
+      },
+      "gross": {
+        "notionalUsd": 9590.874838239572,
+        "limitUsd": 10590.782045068801,
+        "remainingUsd": 999.9072068292298,
+        "usedPct": 0.9055870281746758
+      },
+      "direction": {
+        "LONG": {
+          "notionalUsd": 3692.1358723541703,
+          "limitUsd": 8472.625636055041,
+          "remainingUsd": 999.9072068292298
+        },
+        "SHORT": {
+          "notionalUsd": 5898.7389658854,
+          "limitUsd": 8472.625636055041,
+          "remainingUsd": 999.9072068292298
+        }
+      },
+      "firstBlocker": "NONE",
+      "blockingDimensions": [],
+      "exhaustedReason": null,
+      "exhaustedForNewRisk": false,
+      "evaluatedAt": 1790171610381
+    },
+    "analysis": {
+      "mode": "ANALYSIS_ONLY",
+      "lastTickAt": 1790171610384,
+      "lastAttemptAt": null,
+      "lastRequestAt": null,
+      "lastSuccessAt": null,
+      "lastFailureAt": null,
+      "lastBlockedReason": "EXECUTION_WRITE_LOCKED",
+      "reason": "EXECUTION_WRITE_LOCKED",
+      "capitalExecutableCount": 2,
+      "active": 0,
+      "silenceMs": 1399537,
+      "observationStartedAt": 1790170213159,
+      "execution": {
+        "intent": true,
+        "ready": false,
+        "blockers": [
+          "EXECUTION_WRITE_LOCKED",
+          "RISK_PROFILE_UNCONFIGURED"
+        ],
+        "firstBlocker": "EXECUTION_WRITE_LOCKED",
+        "lastReadyAt": null,
+        "readinessText": "执行事实未齐：EXECUTION_WRITE_LOCKED · RISK_PROFILE_UNCONFIGURED；已停止调用模型，避免产生无法执行的决策"
+      },
+      "text": "ANALYSIS_ONLY：仅分析，交易写锁定；EXECUTION_WRITE_LOCKED"
+    },
+    "executionReadinessProjected": true,
+    "executionReadiness": {
+      "intent": true,
+      "ready": false,
+      "modelSpendPermitted": false,
+      "blockers": [
+        "EXECUTION_WRITE_LOCKED",
+        "RISK_PROFILE_UNCONFIGURED"
+      ],
+      "firstBlocker": "EXECUTION_WRITE_LOCKED",
+      "profileStatus": "PROFILE_NOT_CONFIGURED",
+      "privateFresh": true,
+      "writeLocked": true,
+      "executableCandidateCount": 2,
+      "mode": "EXECUTION_BLOCKED",
+      "text": "执行事实未齐：EXECUTION_WRITE_LOCKED · RISK_PROFILE_UNCONFIGURED；已停止调用模型，避免产生无法执行的决策"
+    },
+    "portfolioRiskProfileStatus": "PROFILE_NOT_CONFIGURED",
+    "portfolioRiskProfileConfigured": false,
+    "privateSync": {
+      "requestId": "497f3bef-3b90-43d6-b50b-f15fe996fb11",
+      "lastSuccessAt": 1790171593656,
+      "lastFailureAt": 1790171537504,
+      "consecutiveFailures": 0,
+      "coalesced": 1,
+      "lastError": null,
+      "durationMs": 9953,
+      "inFlight": true,
+      "snapshotAgeMs": 19039
+    },
+    "binancePrivate": {
+      "status": "READY",
+      "asOf": 1790171593656,
+      "reason": null,
+      "requestId": "497f3bef-3b90-43d6-b50b-f15fe996fb11",
+      "lastSuccessAt": 1790171593656,
+      "lastFailureAt": 1790171537504,
+      "consecutiveFailures": 0,
+      "coalesced": 1,
+      "lastError": null,
+      "durationMs": 9953,
+      "inFlight": true,
+      "snapshotAgeMs": 19039
+    },
+    "universeEligible": null,
+    "pool": {
+      "target": 20,
+      "qualifiedSupply": 9,
+      "readySupply": 2,
+      "ready": 2,
+      "display": 9,
+      "targetGap": 11,
+      "supplyShortage": true,
+      "refillFailure": false,
+      "health": {
+        "cohort": {
+          "status": "NOT_ESTABLISHED",
+          "memberCount": null
+        },
+        "retention": {
+          "status": "NOT_INVENTORIED",
+          "zombieSnapshotCount": null
+        },
+        "counts": {
+          "rankedSymbols": 9,
+          "residentSymbols": 9,
+          "potentialReadySymbols": 2,
+          "dispatchReadySymbols": 2,
+          "poolReadySymbols": 2,
+          "poolWaitingSymbols": 7,
+          "poolAnalyzingSymbols": 0,
+          "cooldownSymbols": 0,
+          "staleSymbols": 0,
+          "governanceBlockedSymbols": 11,
+          "occupiedUnderlyings": 16,
+          "freeResidentUnderlyings": 2,
+          "snapshotCount": 24,
+          "consumedSymbols": null
+        },
+        "target": 20,
+        "lowWatermark": 4,
+        "rootBlocker": null,
+        "reasonCounts": {
+          "SUPPLY": 0,
+          "CAPITAL": 0,
+          "CAPACITY": 0,
+          "RISK": 0,
+          "MARKET": 0,
+          "GOVERNANCE": 11,
+          "AI": 0
+        },
+        "poolCount": 9,
+        "readyCount": 2,
+        "qualifiedSupply": 9,
+        "readySupply": 2,
+        "targetGap": 11,
+        "supplyShortage": true,
+        "refillFailure": false,
+        "belowLowWatermark": true
+      },
+      "status": "POOL_SUPPLY_SHORTAGE",
+      "current": 9
+    },
+    "takeProfit": {
+      "status": "READY",
+      "unverifiedTp": 0,
+      "required": 14,
+      "protected": 14,
+      "missing": 0,
+      "repairing": 0,
+      "repairFailed": 0,
+      "manualReviewRequired": 0,
+      "orphanTp": 0,
+      "duplicateTp": 0,
+      "qtyMismatch": 0,
+      "wrongSide": 0,
+      "tpMissing": 0,
+      "retryQueue": 0
+    },
+    "reconciliation": {
+      "status": "DEGRADED",
+      "lastRun": 1790171280430,
+      "lastError": "BINANCE_TRANSPORT_BLOCKED: Binance request timed out",
+      "driftCount": 7,
+      "unresolvedDriftCount": 0,
+      "historicalUnknownCount": 46,
+      "activeRiskUnresolvedCount": 0,
+      "verifiedNoActiveRiskUnknownCount": 46,
+      "correctedDifferenceCount": 7,
+      "verifiedOrderFactMismatchCount": 0,
+      "lastFullOrderScanAt": 1790171456117,
+      "fullOrderScanIntervalMs": 300000,
+      "unknownRiskScanIntervalMs": 60000,
+      "unknownRiskEvidenceTtlMs": 300000,
+      "unknownRiskAuditTierIntervalsMs": [
+        300000,
+        900000,
+        1800000
+      ],
+      "unknownRiskAuditsByTier": [
+        3,
+        0,
+        43
+      ],
+      "unknownRiskLastAuditAt": 1790171456118,
+      "unknownRiskNextAuditAt": 1790171105212,
+      "remoteFactAuditsByClassAndTier": [
+        {
+          "class": "unknown",
+          "ladderMs": [
+            300000,
+            900000,
+            1800000
+          ],
+          "tiers": [
+            3,
+            0,
+            43
+          ],
+          "deferred": 39
+        },
+        {
+          "class": "terminal",
+          "ladderMs": [
+            300000,
+            1800000,
+            3600000
+          ],
+          "tiers": [
+            0,
+            0,
+            6
+          ],
+          "deferred": 5
+        },
+        {
+          "class": "neverSubmitted",
+          "ladderMs": [
+            300000,
+            1800000,
+            21600000
+          ],
+          "tiers": [
+            0,
+            0,
+            0
+          ],
+          "deferred": 0
+        }
+      ]
+    }
+  },
+  "supply": {
+    "note": "see rawSupply",
+    "raw": {
+      "health": {
+        "cohort": {
+          "status": "NOT_ESTABLISHED",
+          "memberCount": null
+        },
+        "retention": {
+          "status": "NOT_INVENTORIED",
+          "zombieSnapshotCount": null
+        },
+        "counts": {
+          "rankedSymbols": 9,
+          "residentSymbols": 9,
+          "potentialReadySymbols": 2,
+          "dispatchReadySymbols": 2,
+          "poolReadySymbols": 2,
+          "poolWaitingSymbols": 7,
+          "poolAnalyzingSymbols": 0,
+          "cooldownSymbols": 0,
+          "staleSymbols": 0,
+          "governanceBlockedSymbols": 11,
+          "occupiedUnderlyings": 16,
+          "freeResidentUnderlyings": 2,
+          "snapshotCount": 24,
+          "consumedSymbols": null
+        },
+        "target": 20,
+        "lowWatermark": 4,
+        "rootBlocker": null,
+        "reasonCounts": {
+          "SUPPLY": 0,
+          "CAPITAL": 0,
+          "CAPACITY": 0,
+          "RISK": 0,
+          "MARKET": 0,
+          "GOVERNANCE": 11,
+          "AI": 0
+        },
+        "poolCount": 9,
+        "readyCount": 2,
+        "qualifiedSupply": 9,
+        "readySupply": 2,
+        "targetGap": 11,
+        "supplyShortage": true,
+        "refillFailure": false,
+        "belowLowWatermark": true
+      },
+      "residentTarget": 20,
+      "residents": [
+        {
+          "id": "pool_mue5izt1_h36anofv",
+          "symbol": "BCHUSDT",
+          "rank": 1,
+          "score": 78.84782608695652,
+          "components": {
+            "liquidity": 97.82608695652173,
+            "tradingActivity": 93.47826086956522,
+            "capitalActivity": 15.217391304347828,
+            "technicalOpportunity": 76.08695652173914,
+            "executionReachability": 80.43478260869566,
+            "dataQuality": 52.17391304347826
+          },
+          "state": "WAITING",
+          "addedAt": 1790170890949,
+          "expiresAt": 1790171802218,
+          "selectionGeneration": 1
+        },
+        {
+          "id": "pool_mue5xqsb_2yafovt4",
+          "symbol": "NEARUSDT",
+          "rank": 8,
+          "score": 77.3695652173913,
+          "components": {
+            "liquidity": 63.04347826086957,
+            "tradingActivity": 97.82608695652173,
+            "capitalActivity": 71.73913043478261,
+            "technicalOpportunity": 93.47826086956522,
+            "executionReachability": 80.43478260869566,
+            "dataQuality": 52.17391304347826
+          },
+          "state": "WAITING",
+          "addedAt": 1790171579099,
+          "expiresAt": 1790171879099,
+          "selectionGeneration": 1
+        },
+        {
+          "id": "pool_mue5vp7a_5pmyel1m",
+          "symbol": "ARBUSDT",
+          "rank": 2,
+          "score": 71.15217391304348,
+          "components": {
+            "liquidity": 58.69565217391305,
+            "tradingActivity": 67.3913043478261,
+            "capitalActivity": 71.73913043478261,
+            "technicalOpportunity": 97.82608695652173,
+            "executionReachability": 80.43478260869566,
+            "dataQuality": 52.17391304347826
+          },
+          "state": "WAITING",
+          "addedAt": 1790171483734,
+          "expiresAt": 1790171783734,
+          "selectionGeneration": 1
+        },
+        {
+          "id": "pool_mue5u08c_erncpu93",
+          "symbol": "UNIUSDT",
+          "rank": 3,
+          "score": 61.630434782608695,
+          "components": {
+            "liquidity": 71.73913043478261,
+            "tradingActivity": 80.43478260869566,
+            "capitalActivity": 71.73913043478261,
+            "technicalOpportunity": 32.608695652173914,
+            "executionReachability": 41.30434782608695,
+            "dataQuality": 52.17391304347826
+          },
+          "state": "READY",
+          "addedAt": 1790171404715,
+          "expiresAt": 1790171704715,
+          "selectionGeneration": 1
+        },
+        {
+          "id": "pool_mue5jc4u_70nc66xb",
+          "symbol": "XRPUSDT",
+          "rank": 4,
+          "score": 61.45652173913043,
+          "components": {
+            "liquidity": 89.13043478260869,
+            "tradingActivity": 32.608695652173914,
+            "capitalActivity": 71.73913043478261,
+            "technicalOpportunity": 19.565217391304348,
+            "executionReachability": 80.43478260869566,
+            "dataQuality": 52.17391304347826
+          },
+          "state": "WAITING",
+          "addedAt": 1790170906926,
+          "expiresAt": 1790171831410,
+          "selectionGeneration": 1
+        },
+        {
+          "id": "pool_mue5arb1_t37gbqdl",
+          "symbol": "DOGEUSDT",
+          "rank": 5,
+          "score": 59.58695652173913,
+          "components": {
+            "liquidity": 93.47826086956522,
+            "tradingActivity": 36.95652173913043,
+            "capitalActivity": 71.73913043478261,
+            "technicalOpportunity": 10.869565217391305,
+            "executionReachability": 58.69565217391305,
+            "dataQuality": 52.17391304347826
+          },
+          "state": "READY",
+          "addedAt": 1790170506685,
+          "expiresAt": 1790171735911,
+          "selectionGeneration": 1
+        },
+        {
+          "id": "pool_mue5w3gq_tp68hbd0",
+          "symbol": "ZECUSDT",
+          "rank": 9,
+          "score": 59.5,
+          "components": {
+            "liquidity": 50,
+            "tradingActivity": 58.69565217391305,
+            "capitalActivity": 71.73913043478261,
+            "technicalOpportunity": 58.69565217391305,
+            "executionReachability": 80.43478260869566,
+            "dataQuality": 52.17391304347826
+          },
+          "state": "WAITING",
+          "addedAt": 1790171502218,
+          "expiresAt": 1790171802218,
+          "selectionGeneration": 1
+        },
+        {
+          "id": "pool_mue5gtqg_er5mera0",
+          "symbol": "BTCUSDT",
+          "rank": 6,
+          "score": 46.41304347826087,
+          "components": {
+            "liquidity": 80.43478260869566,
+            "tradingActivity": 2.1739130434782608,
+            "capitalActivity": 15.217391304347828,
+            "technicalOpportunity": 41.30434782608695,
+            "executionReachability": 50,
+            "dataQuality": 52.17391304347826
+          },
+          "state": "WAITING",
+          "addedAt": 1790170789768,
+          "expiresAt": 1790171704715,
+          "selectionGeneration": 1
+        },
+        {
+          "id": "pool_mue5izt1_ulsyayt0",
+          "symbol": "ETHUSDT",
+          "rank": 7,
+          "score": 45.06521739130435,
+          "components": {
+            "liquidity": 84.78260869565217,
+            "tradingActivity": 15.217391304347828,
+            "capitalActivity": 15.217391304347828,
+            "technicalOpportunity": 15.217391304347828,
+            "executionReachability": 45.65217391304348,
+            "dataQuality": 52.17391304347826
+          },
+          "state": "WAITING",
+          "addedAt": 1790170890949,
+          "expiresAt": 1790171802218,
+          "selectionGeneration": 1
+        }
+      ],
+      "capacity": {
+        "slots": {
+          "positions": 14,
+          "inFlight": 2,
+          "reserved": 0,
+          "used": 16,
+          "max": 50
+        },
+        "newRiskBlocked": false,
+        "storage": {
+          "status": "AVAILABLE",
+          "dbPath": "D:\\MITS-WORKTREES\\v396-final-convergence-20260922\\data\\zdj-settings.sqlite",
+          "dbBytes": 392388608,
+          "walBytes": 5496112,
+          "totalBytes": 397884720,
+          "limits": {
+            "warningBytes": 536870912,
+            "pressureBytes": 805306368,
+            "shedBytes": 1073741824,
+            "entryBlockBytes": 1342177280,
+            "hardReserveBytes": 1879048192
+          },
+          "checkedAt": 1790171612694
+        },
+        "candidates": [
+          {
+            "symbol": "UNIUSDT",
+            "underlying": "UNI",
+            "executable": true,
+            "reason": "可执行",
+            "reasonText": "可执行",
+            "long": {
+              "planId": "alloc_mue5yexa_memhxnwg",
+              "underlying": "UNI",
+              "symbol": "UNIUSDT",
+              "quoteAsset": "USDT",
+              "riskTier": "LIQUID_ALT",
+              "directionPolicy": "BOTH",
+              "directionPreference": "INTELLIGENT_SHORT_BIAS",
+              "direction": "LONG",
+              "locationScore": 43,
+              "locationWouldBlock": true,
+              "marginMode": "AUTO",
+              "leverage": 8,
+              "marginUsd": 24.108223128185152,
+              "notionalUsd": 192.86578502548122,
+              "minExecutableMarginUsd": 1.3102375000000002,
+              "altLongMarginFactor": 0.65,
+              "directionLeverageCap": 8,
+              "exposureBefore": {
+                "longNotionalUsd": 3692.1358723541703,
+                "shortNotionalUsd": 5898.7389658854,
+                "longExposurePct": 0.32645552978510894,
+                "shortExposurePct": 0.5215615082292027,
+                "speculativeNotionalUsd": 0,
+                "speculativeExposurePct": 0,
+                "usdtMarginUsd": 940.296370329836,
+                "usdcMarginUsd": 5.868225,
+                "sameUnderlyingExposure": 0,
+                "duplicateBlocks": 0,
+                "locationBlocks": 0
+              },
+              "exposureAfter": {
+                "longNotionalUsd": 3885.0016573796515,
+                "shortNotionalUsd": 5898.7389658854,
+                "longExposurePct": 0.3435085593064111,
+                "shortExposurePct": 0.5215615082292027,
+                "speculativeNotionalUsd": 0,
+                "speculativeExposurePct": 0,
+                "usdtMarginUsd": 964.4045934580212,
+                "usdcMarginUsd": 5.868225,
+                "sameUnderlyingExposure": 0,
+                "duplicateBlocks": 0,
+                "locationBlocks": 0
+              },
+              "admission": "ALLOW_REDUCED_SIZE",
+              "policySource": "V3.8.0_SINGLE_PERMISSION_SOURCE",
+              "reasons": [
+                "EXPOSURE_REDUCED_SIZE"
+              ],
+              "createdAt": 1790171610382
+            },
+            "short": {
+              "planId": "alloc_mue5yexa_75zub42q",
+              "underlying": "UNI",
+              "symbol": "UNIUSDT",
+              "quoteAsset": "USDT",
+              "riskTier": "LIQUID_ALT",
+              "directionPolicy": "BOTH",
+              "directionPreference": "INTELLIGENT_SHORT_BIAS",
+              "direction": "SHORT",
+              "locationScore": 43,
+              "locationWouldBlock": true,
+              "marginMode": "AUTO",
+              "leverage": 12,
+              "marginUsd": 1,
+              "notionalUsd": 12,
+              "minExecutableMarginUsd": 1,
+              "altLongMarginFactor": 1,
+              "directionLeverageCap": 20,
+              "exposureBefore": {
+                "longNotionalUsd": 3692.1358723541703,
+                "shortNotionalUsd": 5898.7389658854,
+                "longExposurePct": 0.32645552978510894,
+                "shortExposurePct": 0.5215615082292027,
+                "speculativeNotionalUsd": 0,
+                "speculativeExposurePct": 0,
+                "usdtMarginUsd": 940.296370329836,
+                "usdcMarginUsd": 5.868225,
+                "sameUnderlyingExposure": 0,
+                "duplicateBlocks": 0,
+                "locationBlocks": 0
+              },
+              "exposureAfter": {
+                "longNotionalUsd": 3692.1358723541703,
+                "shortNotionalUsd": 5910.7389658854,
+                "longExposurePct": 0.32645552978510894,
+                "shortExposurePct": 0.5226225380755727,
+                "speculativeNotionalUsd": 0,
+                "speculativeExposurePct": 0,
+                "usdtMarginUsd": 941.296370329836,
+                "usdcMarginUsd": 5.868225,
+                "sameUnderlyingExposure": 0,
+                "duplicateBlocks": 0,
+                "locationBlocks": 0
+              },
+              "admission": "REJECT_EXPOSURE_LIMIT",
+              "policySource": "V3.8.0_SINGLE_PERMISSION_SOURCE",
+              "reasons": [
+                "REJECT_EXPOSURE_LIMIT"
+              ],
+              "createdAt": 1790171610382
+            },
+            "riskHeadroom": {
+              "LONG": {
+                "factVersion": "{\"equity\":10590.782045068801,\"side\":\"LONG\",\"symbol\":\"UNIUSDT\",\"exposures\":[[\"order:entry_intent_mu4pd2b3_oz5rymd4\",\"NEARUSDT\",\"LONG\",136.21],[\"order:entry_intent_mucaxp42_pdpvv2yg\",\"1000PEPEUSDC\",\"LONG\",83.1907767],[\"position:ARBUSDT:SHORT\",\"ARBUSDT\",\"SHORT\",6.84692608],[\"position:AVAXUSDT:SHORT\",\"AVAXUSDT\",\"SHORT\",4259.6],[\"position:BCHUSDT:LONG\",\"BCHUSDT\",\"LONG\",6.04504745],[\"position:BNBUSDC:SHORT\",\"BNBUSDC\",\"SHORT\",46.9458],[\"position:BTCUSDT:LONG\",\"BTCUSDT\",\"LONG\",3643.1173865],[\"position:CRVUSDT:SHORT\",\"CRVUSDT\",\"SHORT\",24.78296237],[\"position:DOTUSDT:SHORT\",\"DOTUSDT\",\"SHORT\",11.5338338],[\"position:ENAUSDT:SHORT\",\"ENAUSDT\",\"SHORT\",211.8],[\"position:ETHUSDT:LONG\",\"ETHUSDT\",\"LONG\",27.1829],[\"position:FETUSDT:SHORT\",\"FETUSDT\",\"SHORT\",15.5952],[\"position:LTCUSDT:SHORT\",\"LTCUSDT\",\"SHORT\",22.50402364],[\"position:ONDOUSDT:SHORT\",\"ONDOUSDT\",\"SHORT\",6.4635],[\"position:XRPUSDT:LONG\",\"XRPUSDT\",\"LONG\",15.7905384],[\"position:ZECUSDT:SHORT\",\"ZECUSDT\",\"SHORT\",1292.66672]],\"limits\":{\"gross\":10590.782045068801,\"direction\":8472.625636055041,\"cluster\":3706.7737157740803,\"clusterDirection\":3706.7737157740803},\"dailyDrawdownPct\":0,\"expectedAdverseMovePct\":0.011942776183782467}",
+                "equity": 10590.782045068801,
+                "cluster": "DEFI",
+                "clusterKey": "DEFI",
+                "gross": 9810.27561493957,
+                "long": 3911.53664905417,
+                "short": 5898.7389658854,
+                "clusterNow": 24.782962365000003,
+                "clusterDirectionNow": 0,
+                "pendingRiskNotional": 219.4007767,
+                "limits": {
+                  "gross": 10590.782045068801,
+                  "direction": 8472.625636055041,
+                  "cluster": 3706.7737157740803,
+                  "clusterDirection": 3706.7737157740803
+                },
+                "remaining": {
+                  "gross": 780.5064301292314,
+                  "direction": 4561.088987000871,
+                  "cluster": 3681.9907534090803,
+                  "clusterDirection": 3706.7737157740803,
+                  "riskSizing": 8867.939817419012,
+                  "quote": 30333.905875782
+                },
+                "perTradeRiskUsd": 105.90782045068802,
+                "expectedAdverseMovePct": 0.011942776183782467,
+                "plannedNotional": 192.86578502548122,
+                "finalNotional": 192.86578502548122,
+                "minimumNotional": 9.529,
+                "executable": true,
+                "reason": "PASS",
+                "blockers": []
+              },
+              "SHORT": {
+                "factVersion": "{\"equity\":10590.782045068801,\"side\":\"SHORT\",\"symbol\":\"UNIUSDT\",\"exposures\":[[\"order:entry_intent_mu4pd2b3_oz5rymd4\",\"NEARUSDT\",\"LONG\",136.21],[\"order:entry_intent_mucaxp42_pdpvv2yg\",\"1000PEPEUSDC\",\"LONG\",83.1907767],[\"position:ARBUSDT:SHORT\",\"ARBUSDT\",\"SHORT\",6.84692608],[\"position:AVAXUSDT:SHORT\",\"AVAXUSDT\",\"SHORT\",4259.6],[\"position:BCHUSDT:LONG\",\"BCHUSDT\",\"LONG\",6.04504745],[\"position:BNBUSDC:SHORT\",\"BNBUSDC\",\"SHORT\",46.9458],[\"position:BTCUSDT:LONG\",\"BTCUSDT\",\"LONG\",3643.1173865],[\"position:CRVUSDT:SHORT\",\"CRVUSDT\",\"SHORT\",24.78296237],[\"position:DOTUSDT:SHORT\",\"DOTUSDT\",\"SHORT\",11.5338338],[\"position:ENAUSDT:SHORT\",\"ENAUSDT\",\"SHORT\",211.8],[\"position:ETHUSDT:LONG\",\"ETHUSDT\",\"LONG\",27.1829],[\"position:FETUSDT:SHORT\",\"FETUSDT\",\"SHORT\",15.5952],[\"position:LTCUSDT:SHORT\",\"LTCUSDT\",\"SHORT\",22.50402364],[\"position:ONDOUSDT:SHORT\",\"ONDOUSDT\",\"SHORT\",6.4635],[\"position:XRPUSDT:LONG\",\"XRPUSDT\",\"LONG\",15.7905384],[\"position:ZECUSDT:SHORT\",\"ZECUSDT\",\"SHORT\",1292.66672]],\"limits\":{\"gross\":10590.782045068801,\"direction\":8472.625636055041,\"cluster\":3706.7737157740803,\"clusterDirection\":3706.7737157740803},\"dailyDrawdownPct\":0,\"expectedAdverseMovePct\":0.011942776183782467}",
+                "equity": 10590.782045068801,
+                "cluster": "DEFI",
+                "clusterKey": "DEFI",
+                "gross": 9810.27561493957,
+                "long": 3911.53664905417,
+                "short": 5898.7389658854,
+                "clusterNow": 24.782962365000003,
+                "clusterDirectionNow": 24.782962365000003,
+                "pendingRiskNotional": 219.4007767,
+                "limits": {
+                  "gross": 10590.782045068801,
+                  "direction": 8472.625636055041,
+                  "cluster": 3706.7737157740803,
+                  "clusterDirection": 3706.7737157740803
+                },
+                "remaining": {
+                  "gross": 780.5064301292314,
+                  "direction": 2573.8866701696415,
+                  "cluster": 3681.9907534090803,
+                  "clusterDirection": 3681.9907534090803,
+                  "riskSizing": 8867.939817419012,
+                  "quote": 30333.905875782
+                },
+                "perTradeRiskUsd": 105.90782045068802,
+                "expectedAdverseMovePct": 0.011942776183782467,
+                "plannedNotional": 0,
+                "finalNotional": 0,
+                "minimumNotional": 9.529,
+                "executable": false,
+                "reason": "BELOW_MINIMUM_NOTIONAL",
+                "blockers": [
+                  "BELOW_MINIMUM_NOTIONAL"
+                ]
+              }
+            }
+          },
+          {
+            "symbol": "DOGEUSDT",
+            "underlying": "DOGE",
+            "executable": true,
+            "reason": "可执行",
+            "reasonText": "可执行",
+            "long": {
+              "planId": "alloc_mue5yexa_kgxiu90s",
+              "underlying": "DOGE",
+              "symbol": "DOGEUSDT",
+              "quoteAsset": "USDT",
+              "riskTier": "LIQUID_ALT",
+              "directionPolicy": "BOTH",
+              "directionPreference": "INTELLIGENT_SHORT_BIAS",
+              "direction": "LONG",
+              "locationScore": 86,
+              "locationWouldBlock": false,
+              "marginMode": "AUTO",
+              "leverage": 8,
+              "marginUsd": 31.16344180469904,
+              "notionalUsd": 249.30753443759232,
+              "minExecutableMarginUsd": 1,
+              "altLongMarginFactor": 0.65,
+              "directionLeverageCap": 8,
+              "exposureBefore": {
+                "longNotionalUsd": 3692.1358723541703,
+                "shortNotionalUsd": 5898.7389658854,
+                "longExposurePct": 0.32645552978510894,
+                "shortExposurePct": 0.5215615082292027,
+                "speculativeNotionalUsd": 0,
+                "speculativeExposurePct": 0,
+                "usdtMarginUsd": 940.296370329836,
+                "usdcMarginUsd": 5.868225,
+                "sameUnderlyingExposure": 0,
+                "duplicateBlocks": 0,
+                "locationBlocks": 0
+              },
+              "exposureAfter": {
+                "longNotionalUsd": 3941.4434067917628,
+                "shortNotionalUsd": 5898.7389658854,
+                "longExposurePct": 0.3484990910320436,
+                "shortExposurePct": 0.5215615082292027,
+                "speculativeNotionalUsd": 0,
+                "speculativeExposurePct": 0,
+                "usdtMarginUsd": 971.459812134535,
+                "usdcMarginUsd": 5.868225,
+                "sameUnderlyingExposure": 0,
+                "duplicateBlocks": 0,
+                "locationBlocks": 0
+              },
+              "admission": "ALLOW_REDUCED_SIZE",
+              "policySource": "V3.8.0_SINGLE_PERMISSION_SOURCE",
+              "reasons": [
+                "EXPOSURE_REDUCED_SIZE"
+              ],
+              "createdAt": 1790171610382
+            },
+            "short": {
+              "planId": "alloc_mue5yexa_gu9o5zfm",
+              "underlying": "DOGE",
+              "symbol": "DOGEUSDT",
+              "quoteAsset": "USDT",
+              "riskTier": "LIQUID_ALT",
+              "directionPolicy": "BOTH",
+              "directionPreference": "INTELLIGENT_SHORT_BIAS",
+              "direction": "SHORT",
+              "locationScore": 86,
+              "locationWouldBlock": false,
+              "marginMode": "AUTO",
+              "leverage": 12,
+              "marginUsd": 1,
+              "notionalUsd": 12,
+              "minExecutableMarginUsd": 1,
+              "altLongMarginFactor": 1,
+              "directionLeverageCap": 20,
+              "exposureBefore": {
+                "longNotionalUsd": 3692.1358723541703,
+                "shortNotionalUsd": 5898.7389658854,
+                "longExposurePct": 0.32645552978510894,
+                "shortExposurePct": 0.5215615082292027,
+                "speculativeNotionalUsd": 0,
+                "speculativeExposurePct": 0,
+                "usdtMarginUsd": 940.296370329836,
+                "usdcMarginUsd": 5.868225,
+                "sameUnderlyingExposure": 0,
+                "duplicateBlocks": 0,
+                "locationBlocks": 0
+              },
+              "exposureAfter": {
+                "longNotionalUsd": 3692.1358723541703,
+                "shortNotionalUsd": 5910.7389658854,
+                "longExposurePct": 0.32645552978510894,
+                "shortExposurePct": 0.5226225380755727,
+                "speculativeNotionalUsd": 0,
+                "speculativeExposurePct": 0,
+                "usdtMarginUsd": 941.296370329836,
+                "usdcMarginUsd": 5.868225,
+                "sameUnderlyingExposure": 0,
+                "duplicateBlocks": 0,
+                "locationBlocks": 0
+              },
+              "admission": "REJECT_EXPOSURE_LIMIT",
+              "policySource": "V3.8.0_SINGLE_PERMISSION_SOURCE",
+              "reasons": [
+                "REJECT_EXPOSURE_LIMIT"
+              ],
+              "createdAt": 1790171610382
+            },
+            "riskHeadroom": {
+              "LONG": {
+                "factVersion": "{\"equity\":10590.782045068801,\"side\":\"LONG\",\"symbol\":\"DOGEUSDT\",\"exposures\":[[\"order:entry_intent_mu4pd2b3_oz5rymd4\",\"NEARUSDT\",\"LONG\",136.21],[\"order:entry_intent_mucaxp42_pdpvv2yg\",\"1000PEPEUSDC\",\"LONG\",83.1907767],[\"position:ARBUSDT:SHORT\",\"ARBUSDT\",\"SHORT\",6.84692608],[\"position:AVAXUSDT:SHORT\",\"AVAXUSDT\",\"SHORT\",4259.6],[\"position:BCHUSDT:LONG\",\"BCHUSDT\",\"LONG\",6.04504745],[\"position:BNBUSDC:SHORT\",\"BNBUSDC\",\"SHORT\",46.9458],[\"position:BTCUSDT:LONG\",\"BTCUSDT\",\"LONG\",3643.1173865],[\"position:CRVUSDT:SHORT\",\"CRVUSDT\",\"SHORT\",24.78296237],[\"position:DOTUSDT:SHORT\",\"DOTUSDT\",\"SHORT\",11.5338338],[\"position:ENAUSDT:SHORT\",\"ENAUSDT\",\"SHORT\",211.8],[\"position:ETHUSDT:LONG\",\"ETHUSDT\",\"LONG\",27.1829],[\"position:FETUSDT:SHORT\",\"FETUSDT\",\"SHORT\",15.5952],[\"position:LTCUSDT:SHORT\",\"LTCUSDT\",\"SHORT\",22.50402364],[\"position:ONDOUSDT:SHORT\",\"ONDOUSDT\",\"SHORT\",6.4635],[\"position:XRPUSDT:LONG\",\"XRPUSDT\",\"LONG\",15.7905384],[\"position:ZECUSDT:SHORT\",\"ZECUSDT\",\"SHORT\",1292.66672]],\"limits\":{\"gross\":10590.782045068801,\"direction\":8472.625636055041,\"cluster\":3706.7737157740803,\"clusterDirection\":3706.7737157740803},\"dailyDrawdownPct\":0,\"expectedAdverseMovePct\":0.006031336701228379}",
+                "equity": 10590.782045068801,
+                "cluster": "MEME",
+                "clusterKey": "MEME",
+                "gross": 9810.27561493957,
+                "long": 3911.53664905417,
+                "short": 5898.7389658854,
+                "clusterNow": 83.1907767,
+                "clusterDirectionNow": 83.1907767,
+                "pendingRiskNotional": 219.4007767,
+                "limits": {
+                  "gross": 10590.782045068801,
+                  "direction": 8472.625636055041,
+                  "cluster": 3706.7737157740803,
+                  "clusterDirection": 3706.7737157740803
+                },
+                "remaining": {
+                  "gross": 780.5064301292314,
+                  "direction": 4561.088987000871,
+                  "cluster": 3623.5829390740805,
+                  "clusterDirection": 3623.5829390740805,
+                  "riskSizing": 17559.593452827496,
+                  "quote": 30333.905875782
+                },
+                "perTradeRiskUsd": 105.90782045068802,
+                "expectedAdverseMovePct": 0.006031336701228379,
+                "plannedNotional": 249.30753443759232,
+                "finalNotional": 249.30753443759232,
+                "minimumNotional": 5,
+                "executable": true,
+                "reason": "PASS",
+                "blockers": []
+              },
+              "SHORT": {
+                "factVersion": "{\"equity\":10590.782045068801,\"side\":\"SHORT\",\"symbol\":\"DOGEUSDT\",\"exposures\":[[\"order:entry_intent_mu4pd2b3_oz5rymd4\",\"NEARUSDT\",\"LONG\",136.21],[\"order:entry_intent_mucaxp42_pdpvv2yg\",\"1000PEPEUSDC\",\"LONG\",83.1907767],[\"position:ARBUSDT:SHORT\",\"ARBUSDT\",\"SHORT\",6.84692608],[\"position:AVAXUSDT:SHORT\",\"AVAXUSDT\",\"SHORT\",4259.6],[\"position:BCHUSDT:LONG\",\"BCHUSDT\",\"LONG\",6.04504745],[\"position:BNBUSDC:SHORT\",\"BNBUSDC\",\"SHORT\",46.9458],[\"position:BTCUSDT:LONG\",\"BTCUSDT\",\"LONG\",3643.1173865],[\"position:CRVUSDT:SHORT\",\"CRVUSDT\",\"SHORT\",24.78296237],[\"position:DOTUSDT:SHORT\",\"DOTUSDT\",\"SHORT\",11.5338338],[\"position:ENAUSDT:SHORT\",\"ENAUSDT\",\"SHORT\",211.8],[\"position:ETHUSDT:LONG\",\"ETHUSDT\",\"LONG\",27.1829],[\"position:FETUSDT:SHORT\",\"FETUSDT\",\"SHORT\",15.5952],[\"position:LTCUSDT:SHORT\",\"LTCUSDT\",\"SHORT\",22.50402364],[\"position:ONDOUSDT:SHORT\",\"ONDOUSDT\",\"SHORT\",6.4635],[\"position:XRPUSDT:LONG\",\"XRPUSDT\",\"LONG\",15.7905384],[\"position:ZECUSDT:SHORT\",\"ZECUSDT\",\"SHORT\",1292.66672]],\"limits\":{\"gross\":10590.782045068801,\"direction\":8472.625636055041,\"cluster\":3706.7737157740803,\"clusterDirection\":3706.7737157740803},\"dailyDrawdownPct\":0,\"expectedAdverseMovePct\":0.006031336701228379}",
+                "equity": 10590.782045068801,
+                "cluster": "MEME",
+                "clusterKey": "MEME",
+                "gross": 9810.27561493957,
+                "long": 3911.53664905417,
+                "short": 5898.7389658854,
+                "clusterNow": 83.1907767,
+                "clusterDirectionNow": 0,
+                "pendingRiskNotional": 219.4007767,
+                "limits": {
+                  "gross": 10590.782045068801,
+                  "direction": 8472.625636055041,
+                  "cluster": 3706.7737157740803,
+                  "clusterDirection": 3706.7737157740803
+                },
+                "remaining": {
+                  "gross": 780.5064301292314,
+                  "direction": 2573.8866701696415,
+                  "cluster": 3623.5829390740805,
+                  "clusterDirection": 3706.7737157740803,
+                  "riskSizing": 17559.593452827496,
+                  "quote": 30333.905875782
+                },
+                "perTradeRiskUsd": 105.90782045068802,
+                "expectedAdverseMovePct": 0.006031336701228379,
+                "plannedNotional": 0,
+                "finalNotional": 0,
+                "minimumNotional": 5,
+                "executable": false,
+                "reason": "BELOW_MINIMUM_NOTIONAL",
+                "blockers": [
+                  "BELOW_MINIMUM_NOTIONAL"
+                ]
+              }
+            }
+          }
+        ],
+        "capital": {
+          "generation": 1,
+          "capitalVersion": "{\"assets\":[[\"BTC\",0.01,0.01,856.5726373187999],[\"USDC\",4974.16194861,4981.15905514,4981.15905514],[\"USDT\",3810.79219545,5472.03498475,5472.03498475]],\"positions\":[[\"ARBUSDT\",\"SHORT\",29.8,0.22976262,12],[\"AVAXUSDT\",\"SHORT\",400,10.649,8],[\"BCHUSDT\",\"LONG\",0.017,355.59102651,8],[\"BNBUSDC\",\"SHORT\",0.06,782.43,8],[\"BTCUSDT\",\"LONG\",0.0425,85720.4090942,14],[\"CRVUSDT\",\"SHORT\",70.7,0.35053695,12],[\"DOTUSDT\",\"SHORT\",10,1.15338338,8],[\"ENAUSDT\",\"SHORT\",1000,0.2118,8],[\"ETHUSDT\",\"LONG\",0.01,2718.29,16],[\"FETUSDT\",\"SHORT\",76,0.2052,12],[\"LTCUSDT\",\"SHORT\",0.36,62.51117679,8],[\"ONDOUSDT\",\"SHORT\",15,0.4309,8],[\"XRPUSDT\",\"LONG\",10,1.57905384,8],[\"ZECUSDT\",\"SHORT\",0.788,1640.44,12]],\"reservations\":[],\"orders\":[[\"1000PEPEUSDC\",\"UNKNOWN\",16361,0,false,1790171299557],[\"NEARUSDT\",\"UNKNOWN\",53,0,true,1790171463021]],\"equity\":10590.782045068801,\"risk\":null,\"limits\":{\"portfolio\":{\"maxPositions\":50,\"maxPendingEntries\":6,\"entryMarginUsd\":200},\"portfolioIntelligence\":{\"enabled\":true,\"quoteAssetPolicy\":\"AUTO\",\"underlyingExposurePolicy\":\"BLOCK_SAME_DIRECTION\",\"riskTierMode\":\"AUTO\",\"globalDirectionPolicy\":\"BOTH\",\"tierDirectionPolicies\":{},\"symbolDirectionPolicies\":{},\"globalDirectionPreference\":\"BALANCED\",\"tierDirectionPreferences\":{\"CORE\":\"BALANCED\",\"LIQUID_ALT\":\"INTELLIGENT_SHORT_BIAS\",\"SPECULATIVE\":\"STRICT_SHORT_BIAS\",\"NEW_LISTING\":\"SHORT_ONLY\"},\"symbolDirectionPreferences\":{},\"altLongMarginFactors\":{\"CORE\":1,\"LIQUID_ALT\":0.65,\"SPECULATIVE\":0.35,\"NEW_LISTING\":0.1},\"altLongLeverageCaps\":{\"CORE\":20,\"LIQUID_ALT\":8,\"SPECULATIVE\":3,\"NEW_LISTING\":1},\"dynamicMarginEnabled\":true,\"baseMarginUsd\":200,\"minMarginUsd\":1,\"maxMarginPerPositionUsd\":500,\"maxEquityPct\":0.1,\"tierMarginFactors\":{\"CORE\":1,\"LIQUID_ALT\":0.8,\"SPECULATIVE\":0.45,\"NEW_LISTING\":0.3,\"RESTRICTED\":0},\"dynamicLeverageEnabled\":true,\"globalMaxLeverage\":20,\"tierMaxLeverage\":{\"CORE\":20,\"LIQUID_ALT\":12,\"SPECULATIVE\":5,\"NEW_LISTING\":3,\"RESTRICTED\":1},\"marginMode\":\"AUTO\",\"tierMarginModes\":{},\"symbolMarginModes\":{},\"locationProtectionEnabled\":true,\"minLocationScore\":45,\"maxEma21DistanceAtr\":2,\"maxBbLong\":0.9,\"minBbShort\":0.1,\"maxImpulseAtr\":2,\"maxSameUnderlyingPositions\":1,\"maxLongExposurePct\":0.5,\"maxShortExposurePct\":0.5,\"maxSpeculativeExposurePct\":0.2,\"maxSpeculativePositions\":2,\"maxQuoteAssetMarginUsagePct\":0.8,\"symbolOverrides\":{}},\"riskGovernance\":{\"entrySafetyMode\":\"AUTO\",\"protectionMode\":\"SHADOW\",\"requirePostAiVerification\":true,\"failClosedOnMissingEvidence\":true,\"requiredEvidenceCompleteness\":0.92,\"maxDailyLossUsd\":0,\"maxDailyLossPct\":0,\"maxConcurrentReservations\":6,\"reservationTtlSeconds\":300,\"lockLeaseSeconds\":120,\"circuitBreakerEnabled\":true,\"perTradeRiskPctEquity\":0.01,\"maxGrossExposurePct\":1,\"maxDirectionExposurePct\":0.8,\"maxClusterExposurePct\":0.35,\"maxClusterDirectionExposurePct\":0.35,\"maxDailyDrawdownPct\":0.05,\"highRiskReviewEnabled\":true,\"highRiskEvidenceThreshold\":0.95,\"shadowDurationDays\":7,\"protectionShadowEnabled\":true,\"shadow\":{\"quoteTtlMs\":20000,\"bookTtlMs\":20000,\"klineTtlMs\":125000,\"accountTtlMs\":45000,\"reconnectGraceMs\":30000,\"aiEnabled\":true,\"aiMaxRunsPerMinute\":2,\"aiQueueLimit\":8,\"aiSamplingRatio\":0.25,\"markRetentionDays\":30,\"posteriorMinSamples\":1},\"exitCoordination\":{\"aiExitAuthority\":\"SHADOW\",\"aiExitLossLimitUsd\":10,\"aiExitMinNetProfitUsd\":0.2,\"aiExitAllowSmallLoss\":false,\"aiExitAuthorizationTtlMs\":15000,\"positionReviewEnabled\":false,\"normalReviewsPerPlan\":2,\"exceptionReviewsPerPlan\":1,\"reviewFailureBudget\":2,\"reviewMinIntervalMs\":300000,\"reviewAuthorityTtlMs\":20000,\"continuousConvergenceEnabled\":true,\"convergenceIntervalMs\":120000,\"convergenceBatchLimit\":8},\"portfolioRisk\":{\"configured\":false,\"maxCapitalAtRiskUsd\":0,\"maxDrawdownPct\":0,\"maxStressLossUsd\":0,\"maxGrossNotionalUsd\":0,\"maxDirectionNotionalUsd\":0,\"maxClusterNotionalUsd\":0,\"minMarginBufferPct\":0,\"minLiquidationBufferPct\":0,\"maxHumanPositions\":0,\"maxHumanNotionalUsd\":0,\"maxPendingHandoffs\":0,\"maxAckAgeMs\":0,\"correlationVersion\":\"\",\"clusters\":{},\"scenarioVersion\":\"\",\"snapshotTtlMs\":20000,\"marginTierVersion\":\"\",\"maintenanceMarginRatePct\":null,\"cashFlowWindowMs\":86400000,\"cashFlowMaxAgeMs\":900000,\"scenarios\":[]}}}}",
+          "directionBudget": {
+            "equityUsd": 10590.782045068801,
+            "grossLimitUsd": 10590.782045068801,
+            "directionLimitUsd": 8472.625636055041,
+            "grossNotionalUsd": 9590.874838239572,
+            "longNotionalUsd": 3692.1358723541703,
+            "shortNotionalUsd": 5898.7389658854,
+            "remainingGrossUsd": 999.9072068292298,
+            "grossUsedPct": 0.9055870281746758,
+            "longAvailableNotionalUsd": 999.9072068292298,
+            "shortAvailableNotionalUsd": 999.9072068292298,
+            "grossAvailableNotionalUsd": 999.9072068292298,
+            "evaluatedAt": 1790171610381
+          },
+          "evaluatedAt": 1790171610381,
+          "executableCandidateCount": 2,
+          "usdtAvailable": 3810.79219545,
+          "usdcAvailable": 4974.16194861,
+          "usdtExecutableUnderlyings": 2,
+          "usdcExecutableUnderlyings": 0,
+          "noUsdtMargin": 0,
+          "noUsdcMargin": 0,
+          "noUsdcContract": 0,
+          "liquidityRejected": 0,
+          "exposureRejected": 0,
+          "minMarginRejected": 0,
+          "marketNotFresh": 0,
+          "underlyingBlocked": 0,
+          "reasonCounts": {
+            "EXECUTABLE": 2
+          },
+          "routedCandidates": [
+            {
+              "symbol": "UNIUSDT",
+              "underlying": "UNI",
+              "quoteAsset": "USDT",
+              "marginUsd": 24.108223128185152,
+              "leverage": 8,
+              "admission": "ALLOW_REDUCED_SIZE",
+              "reason": "可执行",
+              "longExecutable": true,
+              "shortExecutable": false,
+              "longRecommendedNotionalUsd": 192.86578502548122,
+              "shortRecommendedNotionalUsd": null,
+              "longFeasibleNotionalUsd": 192.86578502548122,
+              "shortFeasibleNotionalUsd": 0,
+              "minExecutableNotionalUsd": 9.529,
+              "riskHeadroom": {
+                "LONG": {
+                  "factVersion": "{\"equity\":10590.782045068801,\"side\":\"LONG\",\"symbol\":\"UNIUSDT\",\"exposures\":[[\"order:entry_intent_mu4pd2b3_oz5rymd4\",\"NEARUSDT\",\"LONG\",136.21],[\"order:entry_intent_mucaxp42_pdpvv2yg\",\"1000PEPEUSDC\",\"LONG\",83.1907767],[\"position:ARBUSDT:SHORT\",\"ARBUSDT\",\"SHORT\",6.84692608],[\"position:AVAXUSDT:SHORT\",\"AVAXUSDT\",\"SHORT\",4259.6],[\"position:BCHUSDT:LONG\",\"BCHUSDT\",\"LONG\",6.04504745],[\"position:BNBUSDC:SHORT\",\"BNBUSDC\",\"SHORT\",46.9458],[\"position:BTCUSDT:LONG\",\"BTCUSDT\",\"LONG\",3643.1173865],[\"position:CRVUSDT:SHORT\",\"CRVUSDT\",\"SHORT\",24.78296237],[\"position:DOTUSDT:SHORT\",\"DOTUSDT\",\"SHORT\",11.5338338],[\"position:ENAUSDT:SHORT\",\"ENAUSDT\",\"SHORT\",211.8],[\"position:ETHUSDT:LONG\",\"ETHUSDT\",\"LONG\",27.1829],[\"position:FETUSDT:SHORT\",\"FETUSDT\",\"SHORT\",15.5952],[\"position:LTCUSDT:SHORT\",\"LTCUSDT\",\"SHORT\",22.50402364],[\"position:ONDOUSDT:SHORT\",\"ONDOUSDT\",\"SHORT\",6.4635],[\"position:XRPUSDT:LONG\",\"XRPUSDT\",\"LONG\",15.7905384],[\"position:ZECUSDT:SHORT\",\"ZECUSDT\",\"SHORT\",1292.66672]],\"limits\":{\"gross\":10590.782045068801,\"direction\":8472.625636055041,\"cluster\":3706.7737157740803,\"clusterDirection\":3706.7737157740803},\"dailyDrawdownPct\":0,\"expectedAdverseMovePct\":0.011942776183782467}",
+                  "equity": 10590.782045068801,
+                  "cluster": "DEFI",
+                  "clusterKey": "DEFI",
+                  "gross": 9810.27561493957,
+                  "long": 3911.53664905417,
+                  "short": 5898.7389658854,
+                  "clusterNow": 24.782962365000003,
+                  "clusterDirectionNow": 0,
+                  "pendingRiskNotional": 219.4007767,
+                  "limits": {
+                    "gross": 10590.782045068801,
+                    "direction": 8472.625636055041,
+                    "cluster": 3706.7737157740803,
+                    "clusterDirection": 3706.7737157740803
+                  },
+                  "remaining": {
+                    "gross": 780.5064301292314,
+                    "direction": 4561.088987000871,
+                    "cluster": 3681.9907534090803,
+                    "clusterDirection": 3706.7737157740803,
+                    "riskSizing": 8867.939817419012,
+                    "quote": 30333.905875782
+                  },
+                  "perTradeRiskUsd": 105.90782045068802,
+                  "expectedAdverseMovePct": 0.011942776183782467,
+                  "plannedNotional": 192.86578502548122,
+                  "finalNotional": 192.86578502548122,
+                  "minimumNotional": 9.529,
+                  "executable": true,
+                  "reason": "PASS",
+                  "blockers": []
+                },
+                "SHORT": {
+                  "factVersion": "{\"equity\":10590.782045068801,\"side\":\"SHORT\",\"symbol\":\"UNIUSDT\",\"exposures\":[[\"order:entry_intent_mu4pd2b3_oz5rymd4\",\"NEARUSDT\",\"LONG\",136.21],[\"order:entry_intent_mucaxp42_pdpvv2yg\",\"1000PEPEUSDC\",\"LONG\",83.1907767],[\"position:ARBUSDT:SHORT\",\"ARBUSDT\",\"SHORT\",6.84692608],[\"position:AVAXUSDT:SHORT\",\"AVAXUSDT\",\"SHORT\",4259.6],[\"position:BCHUSDT:LONG\",\"BCHUSDT\",\"LONG\",6.04504745],[\"position:BNBUSDC:SHORT\",\"BNBUSDC\",\"SHORT\",46.9458],[\"position:BTCUSDT:LONG\",\"BTCUSDT\",\"LONG\",3643.1173865],[\"position:CRVUSDT:SHORT\",\"CRVUSDT\",\"SHORT\",24.78296237],[\"position:DOTUSDT:SHORT\",\"DOTUSDT\",\"SHORT\",11.5338338],[\"position:ENAUSDT:SHORT\",\"ENAUSDT\",\"SHORT\",211.8],[\"position:ETHUSDT:LONG\",\"ETHUSDT\",\"LONG\",27.1829],[\"position:FETUSDT:SHORT\",\"FETUSDT\",\"SHORT\",15.5952],[\"position:LTCUSDT:SHORT\",\"LTCUSDT\",\"SHORT\",22.50402364],[\"position:ONDOUSDT:SHORT\",\"ONDOUSDT\",\"SHORT\",6.4635],[\"position:XRPUSDT:LONG\",\"XRPUSDT\",\"LONG\",15.7905384],[\"position:ZECUSDT:SHORT\",\"ZECUSDT\",\"SHORT\",1292.66672]],\"limits\":{\"gross\":10590.782045068801,\"direction\":8472.625636055041,\"cluster\":3706.7737157740803,\"clusterDirection\":3706.7737157740803},\"dailyDrawdownPct\":0,\"expectedAdverseMovePct\":0.011942776183782467}",
+                  "equity": 10590.782045068801,
+                  "cluster": "DEFI",
+                  "clusterKey": "DEFI",
+                  "gross": 9810.27561493957,
+                  "long": 3911.53664905417,
+                  "short": 5898.7389658854,
+                  "clusterNow": 24.782962365000003,
+                  "clusterDirectionNow": 24.782962365000003,
+                  "pendingRiskNotional": 219.4007767,
+                  "limits": {
+                    "gross": 10590.782045068801,
+                    "direction": 8472.625636055041,
+                    "cluster": 3706.7737157740803,
+                    "clusterDirection": 3706.7737157740803
+                  },
+                  "remaining": {
+                    "gross": 780.5064301292314,
+                    "direction": 2573.8866701696415,
+                    "cluster": 3681.9907534090803,
+                    "clusterDirection": 3681.9907534090803,
+                    "riskSizing": 8867.939817419012,
+                    "quote": 30333.905875782
+                  },
+                  "perTradeRiskUsd": 105.90782045068802,
+                  "expectedAdverseMovePct": 0.011942776183782467,
+                  "plannedNotional": 0,
+                  "finalNotional": 0,
+                  "minimumNotional": 9.529,
+                  "executable": false,
+                  "reason": "BELOW_MINIMUM_NOTIONAL",
+                  "blockers": [
+                    "BELOW_MINIMUM_NOTIONAL"
+                  ]
+                }
+              },
+              "physicalCapacity": {
+                "LONG": true,
+                "SHORT": false
+              }
+            },
+            {
+              "symbol": "DOGEUSDT",
+              "underlying": "DOGE",
+              "quoteAsset": "USDT",
+              "marginUsd": 31.16344180469904,
+              "leverage": 8,
+              "admission": "ALLOW_REDUCED_SIZE",
+              "reason": "可执行",
+              "longExecutable": true,
+              "shortExecutable": false,
+              "longRecommendedNotionalUsd": 249.30753443759232,
+              "shortRecommendedNotionalUsd": null,
+              "longFeasibleNotionalUsd": 249.30753443759232,
+              "shortFeasibleNotionalUsd": 0,
+              "minExecutableNotionalUsd": 5,
+              "riskHeadroom": {
+                "LONG": {
+                  "factVersion": "{\"equity\":10590.782045068801,\"side\":\"LONG\",\"symbol\":\"DOGEUSDT\",\"exposures\":[[\"order:entry_intent_mu4pd2b3_oz5rymd4\",\"NEARUSDT\",\"LONG\",136.21],[\"order:entry_intent_mucaxp42_pdpvv2yg\",\"1000PEPEUSDC\",\"LONG\",83.1907767],[\"position:ARBUSDT:SHORT\",\"ARBUSDT\",\"SHORT\",6.84692608],[\"position:AVAXUSDT:SHORT\",\"AVAXUSDT\",\"SHORT\",4259.6],[\"position:BCHUSDT:LONG\",\"BCHUSDT\",\"LONG\",6.04504745],[\"position:BNBUSDC:SHORT\",\"BNBUSDC\",\"SHORT\",46.9458],[\"position:BTCUSDT:LONG\",\"BTCUSDT\",\"LONG\",3643.1173865],[\"position:CRVUSDT:SHORT\",\"CRVUSDT\",\"SHORT\",24.78296237],[\"position:DOTUSDT:SHORT\",\"DOTUSDT\",\"SHORT\",11.5338338],[\"position:ENAUSDT:SHORT\",\"ENAUSDT\",\"SHORT\",211.8],[\"position:ETHUSDT:LONG\",\"ETHUSDT\",\"LONG\",27.1829],[\"position:FETUSDT:SHORT\",\"FETUSDT\",\"SHORT\",15.5952],[\"position:LTCUSDT:SHORT\",\"LTCUSDT\",\"SHORT\",22.50402364],[\"position:ONDOUSDT:SHORT\",\"ONDOUSDT\",\"SHORT\",6.4635],[\"position:XRPUSDT:LONG\",\"XRPUSDT\",\"LONG\",15.7905384],[\"position:ZECUSDT:SHORT\",\"ZECUSDT\",\"SHORT\",1292.66672]],\"limits\":{\"gross\":10590.782045068801,\"direction\":8472.625636055041,\"cluster\":3706.7737157740803,\"clusterDirection\":3706.7737157740803},\"dailyDrawdownPct\":0,\"expectedAdverseMovePct\":0.006031336701228379}",
+                  "equity": 10590.782045068801,
+                  "cluster": "MEME",
+                  "clusterKey": "MEME",
+                  "gross": 9810.27561493957,
+                  "long": 3911.53664905417,
+                  "short": 5898.7389658854,
+                  "clusterNow": 83.1907767,
+                  "clusterDirectionNow": 83.1907767,
+                  "pendingRiskNotional": 219.4007767,
+                  "limits": {
+                    "gross": 10590.782045068801,
+                    "direction": 8472.625636055041,
+                    "cluster": 3706.7737157740803,
+                    "clusterDirection": 3706.7737157740803
+                  },
+                  "remaining": {
+                    "gross": 780.5064301292314,
+                    "direction": 4561.088987000871,
+                    "cluster": 3623.5829390740805,
+                    "clusterDirection": 3623.5829390740805,
+                    "riskSizing": 17559.593452827496,
+                    "quote": 30333.905875782
+                  },
+                  "perTradeRiskUsd": 105.90782045068802,
+                  "expectedAdverseMovePct": 0.006031336701228379,
+                  "plannedNotional": 249.30753443759232,
+                  "finalNotional": 249.30753443759232,
+                  "minimumNotional": 5,
+                  "executable": true,
+                  "reason": "PASS",
+                  "blockers": []
+                },
+                "SHORT": {
+                  "factVersion": "{\"equity\":10590.782045068801,\"side\":\"SHORT\",\"symbol\":\"DOGEUSDT\",\"exposures\":[[\"order:entry_intent_mu4pd2b3_oz5rymd4\",\"NEARUSDT\",\"LONG\",136.21],[\"order:entry_intent_mucaxp42_pdpvv2yg\",\"1000PEPEUSDC\",\"LONG\",83.1907767],[\"position:ARBUSDT:SHORT\",\"ARBUSDT\",\"SHORT\",6.84692608],[\"position:AVAXUSDT:SHORT\",\"AVAXUSDT\",\"SHORT\",4259.6],[\"position:BCHUSDT:LONG\",\"BCHUSDT\",\"LONG\",6.04504745],[\"position:BNBUSDC:SHORT\",\"BNBUSDC\",\"SHORT\",46.9458],[\"position:BTCUSDT:LONG\",\"BTCUSDT\",\"LONG\",3643.1173865],[\"position:CRVUSDT:SHORT\",\"CRVUSDT\",\"SHORT\",24.78296237],[\"position:DOTUSDT:SHORT\",\"DOTUSDT\",\"SHORT\",11.5338338],[\"position:ENAUSDT:SHORT\",\"ENAUSDT\",\"SHORT\",211.8],[\"position:ETHUSDT:LONG\",\"ETHUSDT\",\"LONG\",27.1829],[\"position:FETUSDT:SHORT\",\"FETUSDT\",\"SHORT\",15.5952],[\"position:LTCUSDT:SHORT\",\"LTCUSDT\",\"SHORT\",22.50402364],[\"position:ONDOUSDT:SHORT\",\"ONDOUSDT\",\"SHORT\",6.4635],[\"position:XRPUSDT:LONG\",\"XRPUSDT\",\"LONG\",15.7905384],[\"position:ZECUSDT:SHORT\",\"ZECUSDT\",\"SHORT\",1292.66672]],\"limits\":{\"gross\":10590.782045068801,\"direction\":8472.625636055041,\"cluster\":3706.7737157740803,\"clusterDirection\":3706.7737157740803},\"dailyDrawdownPct\":0,\"expectedAdverseMovePct\":0.006031336701228379}",
+                  "equity": 10590.782045068801,
+                  "cluster": "MEME",
+                  "clusterKey": "MEME",
+                  "gross": 9810.27561493957,
+                  "long": 3911.53664905417,
+                  "short": 5898.7389658854,
+                  "clusterNow": 83.1907767,
+                  "clusterDirectionNow": 0,
+                  "pendingRiskNotional": 219.4007767,
+                  "limits": {
+                    "gross": 10590.782045068801,
+                    "direction": 8472.625636055041,
+                    "cluster": 3706.7737157740803,
+                    "clusterDirection": 3706.7737157740803
+                  },
+                  "remaining": {
+                    "gross": 780.5064301292314,
+                    "direction": 2573.8866701696415,
+                    "cluster": 3623.5829390740805,
+                    "clusterDirection": 3706.7737157740803,
+                    "riskSizing": 17559.593452827496,
+                    "quote": 30333.905875782
+                  },
+                  "perTradeRiskUsd": 105.90782045068802,
+                  "expectedAdverseMovePct": 0.006031336701228379,
+                  "plannedNotional": 0,
+                  "finalNotional": 0,
+                  "minimumNotional": 5,
+                  "executable": false,
+                  "reason": "BELOW_MINIMUM_NOTIONAL",
+                  "blockers": [
+                    "BELOW_MINIMUM_NOTIONAL"
+                  ]
+                }
+              },
+              "physicalCapacity": {
+                "LONG": true,
+                "SHORT": false
+              }
+            }
+          ],
+          "nextRecheckAt": 1790171640381
+        }
+      },
+      "reserve": []
+    }
+  },
+  "positions": {
+    "count": 14,
+    "tpByStatus": {
+      "PROTECTED": 14
+    },
+    "management": {
+      "HUMAN_MANAGED": 14
+    }
+  },
+  "humanManaged": {
+    "count": null,
+    "notionalUsd": null,
+    "caps": null
+  },
+  "entryIntegrity": {
+    "since": 1790170209247,
+    "verifiedNoActiveRiskReleaseCount": 17,
+    "crossSymbolOrderMismatchCount": 0,
+    "activeRemoteEntryWithNewPrimaryCount": 0,
+    "unverifiedRemoteTerminalReleasedOccupancyCount": 0,
+    "BrainRunMisattributionCount": 0,
+    "verifiedOrderFactMismatchCount": 0,
+    "passed": true,
+    "durableClaims": {
+      "durableTasks": 415,
+      "activeClaims": 0,
+      "activeUnknownClaims": 0,
+      "releasedClaims": 44,
+      "releasedUnknownClaims": 44
+    }
+  },
+  "ownership": {
+    "owners": 27,
+    "cycles": 27,
+    "aiActive": 0,
+    "outboxPending": 0
+  },
+  "modelSpend": {
+    "windowMinutes": 30,
+    "eventCounts": {
+      "AI_RESOURCE_HEALTH_CHANGED": 2,
+      "AI_RUN_TERMINAL": 5,
+      "ANALYSIS_DISPATCH_HEARTBEAT": 28,
+      "ANALYSIS_DISPATCH_INTENT": 5,
+      "ANALYSIS_ONLY_COMPLETED": 5,
+      "CANDIDATE_LIFECYCLE_CHANGED": 25,
+      "CANDIDATE_LIFECYCLE_REDERIVED": 262,
+      "CANDIDATE_SUPPLY_HEALTH": 31,
+      "ENGINE_INSTANCE_STARTED": 1,
+      "ENTRY_ORDER_HISTORICAL_VERIFY_FAILED": 2,
+      "ENTRY_ORDER_NO_ACTIVE_RISK_EVIDENCE_FAILED": 6,
+      "ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED": 30,
+      "EXECUTION_READINESS_BLOCKED": 1,
+      "LAN_AVAILABLE": 1,
+      "MARKET_COHORT_DEFERRED": 1,
+      "MARKET_COHORT_FAILED": 1,
+      "MARKET_COHORT_REFILLED": 8,
+      "MARKET_COHORT_RETIRED": 2,
+      "MARKET_RECOVERY_FAILED": 2,
+      "MARKET_SYMBOL_ERROR": 20,
+      "POOL_ANALYSIS_STARTED": 5,
+      "PORTFOLIO_RISK_ADMISSION_EVALUATED": 5,
+      "POSITION_MARKETS_REFRESHED": 5,
+      "PRE_AI_EXECUTION_ENVELOPE_CREATED": 5,
+      "PRIMARY_DECISION_NORMALIZED": 5,
+      "PRIVATE_SYNC_FAILED": 39,
+      "PRIVATE_SYNC_RECOVERED": 21,
+      "RECONCILIATION_FAILED": 5,
+      "RUNTIME_STARTED": 1,
+      "SHADOW_RUNNER_STARTED": 1,
+      "TRADE_PLAN_PERSISTED": 5,
+      "TRADE_SYNC_AUTO_COMPLETED": 1,
+      "TRADE_SYNC_AUTO_FAILED": 5,
+      "TRADING_QUALITY_OPPORTUNITY": 5,
+      "TRADING_QUALITY_PRIMARY_LINK": 5,
+      "UNKNOWN_RISK_AUDIT_SUMMARY": 4,
+      "V393_OBSERVER_UNAVAILABLE": 1
+    },
+    "aiRunsByRoleAndStatus": {
+      "PRIMARY_BRAIN:COMPLETED": 4,
+      "SCOUT:COMPLETED": 4,
+      "SCOUT:RUNNING": 1
+    },
+    "aiRunsSinceInstanceStart": {},
+    "lastPrimary": [
+      {
+        "run_id": "airun_mue525y8_p8c1aelv",
+        "symbol": "TAOUSDT",
+        "role": "PRIMARY_BRAIN",
+        "status": "COMPLETED",
+        "decision": "PLACE_LONG",
+        "started_at": 1790170105760,
+        "completed_at": 1790170164904
+      },
+      {
+        "run_id": "airun_mue50hby_0h770uvu",
+        "symbol": "DOGEUSDT",
+        "role": "PRIMARY_BRAIN",
+        "status": "COMPLETED",
+        "decision": "PLACE_SHORT",
+        "started_at": 1790170027198,
+        "completed_at": 1790170084724
+      },
+      {
+        "run_id": "airun_mue4yfz7_f9o6ql8p",
+        "symbol": "ADAUSDT",
+        "role": "PRIMARY_BRAIN",
+        "status": "COMPLETED",
+        "decision": "PLACE_SHORT",
+        "started_at": 1790169932131,
+        "completed_at": 1790169987737
+      }
+    ]
+  }
+}

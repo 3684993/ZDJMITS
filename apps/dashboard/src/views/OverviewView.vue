@@ -13,11 +13,12 @@ const s = useSystemStore(),
 const autoMode = () =>
   pipeline.value?.entryPermission?.autoExecutionMode ?? "SHADOW_ONLY";
 const entryEnabled = () =>
+  pipeline.value?.entryPermission?.executionMode === 'TESTNET_ENABLED' &&
   autoMode() === "AUTO_RUNNING" &&
   control()?.mode === "RUNNING" &&
   control()?.entrySafetyMode === "AUTO";
 const entryPermissionText = () =>
-  entryEnabled()
+  pipeline.value?.analysis?.mode === 'ANALYSIS_ONLY' ? pipeline.value.analysis.text : entryEnabled()
     ? `Testnet 自动流程已启用；${pipeline.value?.noEntryReason ?? '分析与订单维护运行中'}`
     : autoMode() === "AUTO_READY"
       ? "资金可用但执行锁仍未释放；资金驱动 Testnet AUTO 正在启用"
@@ -143,7 +144,8 @@ onUnmounted(() => {
           <dt>分析管线状态</dt>
           <dd>
             <StatusBadge :value="control()?.mode ?? 'RUNNING'" />
-            {{ control()?.reasonText ?? "运行中" }}
+            {{ pipeline?.analysis?.text ?? control()?.reasonText ?? "运行中" }}
+            <small v-if="pipeline?.analysis">最近调度：{{ pipeline.analysis.lastAttemptAt ? new Date(pipeline.analysis.lastAttemptAt).toLocaleString() : '本实例尚未派发' }}；最近分析成功：{{ pipeline.analysis.lastSuccessAt ? new Date(pipeline.analysis.lastSuccessAt).toLocaleString() : '本实例暂无' }}；静默 {{ Math.floor(pipeline.analysis.silenceMs / 60000) }} 分钟；资本候选 {{ pipeline.analysis.capitalExecutableCount }}</small>
           </dd>
         </div>
         <div>

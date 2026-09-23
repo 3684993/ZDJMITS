@@ -684,7 +684,7 @@ export class EngineRuntime {
     this.ready = true;
     this.runtimeControl.evaluate(true);
     if (
-      this.state.settings.connections.executionMode === "TESTNET_ENABLED" &&
+      this.state.settings.connections.exchange.environment === "TESTNET" &&
       this.runtimeControl.canDispatch()
     )
       void this.entry.processPool().catch((error) =>
@@ -693,6 +693,11 @@ export class EngineRuntime {
           scope: "BOOTSTRAP",
         }),
       );
+  }
+  async dispatchAnalysisTick(){
+    const permitted=this.state.settings.connections.exchange.environment==='TESTNET'&&this.runtimeControl.canDispatch();
+    if(!permitted){this.entry.noteAnalysisBlocked?.('POLICY_OR_FACT_GATE');return;}
+    await this.entry.processPool();
   }
   async start() {
     this.stopped = false;
@@ -739,9 +744,7 @@ export class EngineRuntime {
     });
     this.every(2_500, async () => {
       this.runtimeControl.evaluate(true);
-      if (this.state.settings.connections.executionMode === "TESTNET_ENABLED") {
-        if (this.runtimeControl.canDispatch()) await this.entry.processPool();
-      }
+      await this.dispatchAnalysisTick();
     });
     // Model latency must never delay order TTL, cancellation or repricing.
     this.every(2_000,async()=>{
@@ -1886,6 +1889,8 @@ export class EngineRuntime {
             : "READY",
         ...this.tp.metrics(),
       },
+      analysis: this.entry.analysisDiagnostics(),
+      portfolioRiskProfile: this.portfolioRisk?.profileReadback?.()??null,
       scheduler: {
         status: paused ? "PAUSED" : this.ready ? "RUNNING" : "STOPPED",
       },

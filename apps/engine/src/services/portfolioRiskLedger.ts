@@ -69,8 +69,12 @@ export class PortfolioRiskAdmission {
   private profileSettings(){
     const row=this.ports.profile()??{};
     const numbers=['maxCapitalAtRiskUsd','maxStressLossUsd','maxGrossNotionalUsd','maxDirectionNotionalUsd','maxClusterNotionalUsd','maxHumanNotionalUsd','maxDrawdownPct','minMarginBufferPct','minLiquidationBufferPct','maxHumanPositions','maxPendingHandoffs','maxAckAgeMs','snapshotTtlMs'];
-    return{row,missing:numbers.filter(key=>row[key]==null),profileVersion:stableRiskHash({configured:row.configured===true,limits:Object.fromEntries(numbers.map(key=>[key,row[key]])),correlationVersion:row.correlationVersion??'',clusters:row.clusters??{},scenarioVersion:row.scenarioVersion??'',scenarios:row.scenarios??[],marginTierVersion:row.marginTierVersion??''})};
+    return{row,missing:numbers.filter(key=>row[key]==null),profileVersion:stableRiskHash(row),
+      provenance:{source:'SETTINGS',settingsVersion:(this.ports.state.settings as any).settingsVersion??null,
+        path:'riskGovernance.portfolioRisk',configured:row.configured===true,contentHash:stableRiskHash(row)}};
   }
+
+  profileReadback(){const p=this.profileSettings();return{...p.provenance,version:p.profileVersion,values:p.row,missingFields:p.missing};}
 
   /** Position, order, reservation, ownership and account facts, mapped into the snapshot inputs. */
   private inputs(now:number,plannedPositions:PortfolioPositionFact[]){
@@ -87,14 +91,17 @@ export class PortfolioRiskAdmission {
     const account:any=state.account??{};
     const accountVerified=account.status==='READY'&&privateAccountFresh(account as never,now);
     if(!accountVerified)blockers.push('PRIVATE_ACCOUNT_NOT_FRESH');
-    const assets:PortfolioAssetFact[]=(Array.isArray(account.assets)?account.assets:[]).map((row:any)=>({
-      asset:String(row?.asset??'').toUpperCase(),
-      // usdValue is the FX-converted equity the account read produced; a null there is an unproven
-      // rate, which must stay an unverified asset rather than becoming a zero.
-      equityUsd:finite(row?.usdValue)?Number(row.usdValue):null,
-      availableMarginUsd:finite(row?.availableBalance)?Number(row.availableBalance):null,
-      factStatus:finite(row?.usdValue)&&finite(row?.availableBalance)&&accountVerified?'VERIFIED' as const:'UNKNOWN' as const,
-    }));
+    const valuationAt=Number(account.enrichment?.valuationAsOf??0);
+    const freshFx=valuationAt>0&&valuationAt<=now&&now-valuationAt<=120_000;
+    const assets:PortfolioAssetFact[]=(Array.isArray(account.assets)?account.assets:[]).map((row:any)=>{
+      const asset=String(row?.asset??'').toUpperCase(),stable=['USDT','USDC','BUSD','FDUSD'].includes(asset);
+      const wallet=row?.walletBalance;
+      // Stable quote convention is explicit; other assets require a fresh observed valuation.
+      const rate=stable?1:freshFx&&finite(wallet)&&wallet>0&&finite(row?.usdValue)&&row.usdValue>0?row.usdValue/wallet:null;
+      const available=finite(row?.availableBalance)&&finite(rate)?row.availableBalance*rate:null;
+      return{asset,equityUsd:finite(row?.usdValue)?row.usdValue:null,availableMarginUsd:available,
+        factStatus:finite(row?.usdValue)&&finite(available)&&accountVerified?'VERIFIED' as const:'UNKNOWN' as const};
+    });
     if(!assets.length)blockers.push('ACCOUNT_ASSETS_UNPROVEN');
 
     const cashFlows=this.ports.cashFlows()??[];
@@ -109,12 +116,13 @@ export class PortfolioRiskAdmission {
       const markPrice=finite(position.markPrice)?Number(position.markPrice):Number.NaN;
       const liquidation=finite(position.liquidationPrice)&&Number(position.liquidationPrice)>0?Number(position.liquidationPrice):null;
       const buffer=liquidation!=null&&finite(markPrice)&&markPrice>0?Math.max(0,Math.abs(markPrice-liquidation)/markPrice):null;
-      const marginAsset=String(position.marginAsset??'USDT').toUpperCase()||'USDT';
+      const marginAsset=String(position.marginAsset??'').trim().toUpperCase();
+      if(!marginAsset)blockers.push('POSITION_MARGIN_ASSET_UNPROVEN');
       return{scope,cycleId:cycleId||'UNKNOWN_CYCLE',symbol:position.symbol,side:position.side==='SHORT'?'SHORT':'LONG',
         quantity:Math.abs(Number(position.quantity??0)),markPrice,leverage:Number(position.leverage??0),
         quoteAsset:marginAsset,marginAsset,
         ownerState:durable?durable.ownerState:'UNKNOWN' as unknown as PortfolioOwnerState,
-        factStatus:durable&&finite(position.quantity)&&finite(position.markPrice)&&position.markPrice>0?'VERIFIED' as const:'UNKNOWN' as const,
+        factStatus:durable&&Boolean(marginAsset)&&finite(position.quantity)&&finite(position.markPrice)&&position.markPrice>0?'VERIFIED' as const:'UNKNOWN' as const,
         maintenanceMarginUsd:finite(position.maintenanceMarginUsd)?Number(position.maintenanceMarginUsd):null,
         liquidationBufferPct:buffer,handoffAt:durable?.handoffAt??null,acknowledgedAt:durable?.acknowledgedAt??null} as PortfolioPositionFact;
     });
@@ -150,7 +158,7 @@ export class PortfolioRiskAdmission {
 
   /** Rebuild the snapshot and advance the durable generation only when the facts moved. */
   refresh(now:number,candidate?:AdmissionCandidate){
-    const rate=Number((this.ports.profile()??{}).maintenanceMarginRatePct);
+    const rawRate=(this.ports.profile()??{}).maintenanceMarginRatePct,rate=finite(rawRate)?rawRate:Number.NaN;
     const identity=this.ports.identity();
     const built=this.inputs(now,candidate?[this.plannedOf(candidate,identity,Number.isFinite(rate)?rate:Number.NaN)]:[]);
     const content=contentHashOf({now,peakEquityUsd:built.inputs.peakEquityUsd,...built.live});
@@ -203,10 +211,20 @@ export class PortfolioRiskAdmission {
       capitalAtRiskUsd:snapshot.capitalAtRiskUsd,grossNotionalUsd:snapshot.grossNotionalUsd,longNotionalUsd:snapshot.longNotionalUsd,shortNotionalUsd:snapshot.shortNotionalUsd,
       clusterNotionalUsd:cluster,pendingNotionalUsd:snapshot.pendingNotionalUsd,drawdownPct:snapshot.drawdownPct,
       humanSlots:snapshot.exposures.filter(row=>row.kind==='POSITION'&&row.notionalUsd>0).length,
-      complete:snapshot.complete,blockers:[...new Set([...built.blockers,...snapshot.blockers])].sort(),
+      complete:snapshot.complete&&built.blockers.length===0,blockers:[...new Set([...built.blockers,...snapshot.blockers])].sort(),
       maxGrossNotionalUsd:Number(profile.maxGrossNotionalUsd??0),maxDirectionNotionalUsd:Number(profile.maxDirectionNotionalUsd??0),
       maxClusterNotionalUsd:Number(profile.maxClusterNotionalUsd??0),maxCapitalAtRiskUsd:Number(profile.maxCapitalAtRiskUsd??0),
       maxHumanPositions:Number(profile.maxHumanPositions??0),createdAt:snapshot.createdAt};
+  }
+
+  /** Observe the existing book without inventing a proposed trade or a risk ticket. */
+  observe(now=Date.now()){
+    const built=this.refresh(now),p=built.profile.row,snapshot=built.snapshot;
+    const stress=evaluatePortfolioStress({snapshot,profile:p as any,correlation:{version:String(p.correlationVersion??''),clusters:p.clusters??{}},scenarios:p.scenarios??[]});
+    const capacity=evaluateHumanCapacity({snapshot,profile:p as any,now});
+    const reasons=[...new Set([...built.blockers,...snapshot.blockers,...stress.blockers,...stress.limitingConstraints.map(x=>`STRESS_LIMIT:${x}`),...capacity.blockers])].sort();
+    return{allowed:reasons.length===0,reasons,snapshotHash:snapshot.snapshotHash,riskGeneration:snapshot.riskGeneration,
+      profileVersion:built.profile.profileVersion,provenance:built.profile.provenance,coverage:built.coverage,scope:'CURRENT_BOOK',ticket:null};
   }
 
   /** Read-only pre-check. It locks nothing; the claim only happens through the gate. */

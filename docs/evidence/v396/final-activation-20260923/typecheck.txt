@@ -1,0 +1,27 @@
+(node:19292) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:48176) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> zdj-mits-v3@3.9.6 typecheck
+> npm run typecheck -ws --if-present
+
+(node:29580) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:48800) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> @zdj/contracts@3.9.6 typecheck
+> tsc -p tsconfig.json --noEmit
+
+
+> @zdj/core@3.9.6 typecheck
+> tsc -p tsconfig.json --noEmit
+
+
+> @zdj/dashboard@3.9.6 typecheck
+> vue-tsc --noEmit
+
+
+> @zdj/engine@3.9.6 typecheck
+> tsc -p tsconfig.json --noEmit

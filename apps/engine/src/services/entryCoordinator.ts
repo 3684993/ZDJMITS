@@ -49,6 +49,26 @@ export class EntryCoordinator {
     private market?:MarketDataHub,
     private journal?:EntryExecutionJournal,
   ) {}
+  private analysisStartedAt=Date.now();
+  private lastAnalysisHeartbeat=0;
+  private analysisFacts={lastTickAt:null as number|null,lastAttemptAt:null as number|null,lastRequestAt:null as number|null,lastSuccessAt:null as number|null,lastFailureAt:null as number|null,lastBlockedReason:null as string|null};
+  private analysisOnly(){return this.state.settings.connections?.executionMode==='READ_ONLY'&&this.state.settings.connections?.exchange?.environment==='TESTNET';}
+  noteAnalysisBlocked(reason:string){this.analysisFacts.lastTickAt=Date.now();this.analysisFacts.lastBlockedReason=reason;}
+  analysisDiagnostics(){
+    const now=Date.now(),f=this.analysisFacts,capital=this.state.runtimeControl.capital.executableCandidateCount??0;
+    const model=this.state.aiResources.find((r:any)=>r.role==='PRIMARY_BRAIN') as any;
+    let reason=f.lastBlockedReason??'ANALYSIS_READY';
+    if(!privateAccountFresh(this.state.account))reason='FACTS_BLOCKED';
+    else if(this.state.runtimeControl.mode!=='RUNNING'||this.state.executionGovernance?.mode!=='AUTO_RUNNING'||this.state.settings.riskGovernance?.entrySafetyMode!=='AUTO')reason='POLICY_DISABLED';
+    else if(model?.status==='OFFLINE')reason='MODEL_UNREACHABLE';
+    else if(!f.lastTickAt||now-f.lastTickAt>30_000)reason='SILENCE_UNKNOWN';
+    else if(!this.state.universe.some((x:any)=>x.eligible))reason='NO_SUPPLY';
+    else if(capital===0)reason='CAPACITY_BLOCKED';
+    else if(this.active.size===0&&now-Number(f.lastAttemptAt??this.analysisStartedAt)>30*60_000)reason='DISPATCH_STALLED';
+    return{mode:this.analysisOnly()?'ANALYSIS_ONLY':'EXECUTION_ENABLED',...f,reason,capitalExecutableCount:capital,
+      active:this.active.size,silenceMs:now-(f.lastSuccessAt??this.analysisStartedAt),observationStartedAt:this.analysisStartedAt,
+      text:`${this.analysisOnly()?'ANALYSIS_ONLY：仅分析，交易写锁定':'分析管线'}；${reason}`};
+  }
   private admissionBlockReason:string|null=null;
   /** Layer A: ask the transport that will carry the write, so an unproven egress stops Entry before AI, reservation, leverage or submit. */
   private writeAdmissionBlock(){return this.exchange.entryAdmissionBlockReason?.()??binanceEntryBlockReason(this.state.settings.connections?.exchange?.environment);}
@@ -58,8 +78,10 @@ export class EntryCoordinator {
     this.events.publish(reason?'ENTRY_ADMISSION_BLOCKED':'ENTRY_ADMISSION_RESUMED',{reason,previousReason:previous,poolSize:this.state.pool.list().length,at:Date.now()});
   }
   async processPool() {
+    this.analysisFacts.lastTickAt=Date.now();
+    if(Date.now()-this.lastAnalysisHeartbeat>=30_000){this.lastAnalysisHeartbeat=Date.now();this.events.publish('ANALYSIS_DISPATCH_HEARTBEAT',this.analysisDiagnostics());}
     const admissionBlock=this.writeAdmissionBlock();
-    if(admissionBlock){this.noteWriteAdmission(admissionBlock);return;}
+    if(admissionBlock){this.noteAnalysisBlocked(admissionBlock);this.noteWriteAdmission(admissionBlock);return;}
     this.noteWriteAdmission(null);
     if (
       this.state.executionGovernance?.mode !== "AUTO_RUNNING" ||
@@ -81,7 +103,7 @@ export class EntryCoordinator {
       const trigger=waitTrigger(row.waitContext,market,now)??(currentOpportunity?.disposition==='ALLOW'&&currentOpportunity.version!==row.waitContext.opportunityVersion?'OPPORTUNITY_EVENT_CHANGED':null);
       if(trigger){this.transition(symbol,'READY',trigger,{confirmation:{...row.waitContext,trigger},waitContext:null,nextEligibleAt:null});this.events.publish('ENTRY_WAIT_TRIGGERED',{runId:row.waitContext.runId,trigger,orderAuthorization:false},symbol);}
     }
-    await this.resumeExecutionWaits(now);
+    if(!this.analysisOnly())await this.resumeExecutionWaits(now);
     this.state.pool.replenish(this.state.universe);
     for(const [symbol,row] of this.state.candidateLifecycle)
       if(row?.status==='SCOUT_QUEUED'&&!this.active.has(symbol)) this.transition(symbol,'READY','SCOUT_REQUEUE_AFTER_LEASE');
@@ -120,13 +142,15 @@ export class EntryCoordinator {
       return;
     }
     const primaryCapacity = this.state.aiResources.filter((r:any) => r.role === "PRIMARY_BRAIN").reduce((n:number,r:any) => n + r.maxConcurrency, 0);
-    if(this.active.size>=Math.max(1,primaryCapacity)) {this.ai.setIdleContext('AI_RESOURCE_BUSY',ready.length,'等待 Primary 完成本次决策');return;}
+    if(this.active.size>=Math.max(1,primaryCapacity)) {this.analysisFacts.lastBlockedReason='AI_RESOURCE_BUSY';this.ai.setIdleContext('AI_RESOURCE_BUSY',ready.length,'等待 Primary 完成本次决策');return;}
     await this.ai.probePrimaryIfDue(now);
     if(!this.ai.hasCapacity('PRIMARY_BRAIN')) {
+      this.analysisFacts.lastBlockedReason='BUDGET_OR_COOLDOWN';
       this.ai.setIdleContext('AI_PRIMARY_CIRCUIT_OPEN',ready.length,'Primary 请求连续失败，等待退避窗口后再尝试');
       return;
     }
     if (!ready.length) {
+      this.analysisFacts.lastBlockedReason='NO_RUNNABLE_CANDIDATE';
       const reason = !routes.size?'WAITING_EXECUTION_CAPACITY':this.state.pool.readyList().length?'WAITING_NEW_FACTS':'WAITING_CANDIDATE';
       this.ai.setIdleContext(reason, 0, !routes.size?'当前无可执行容量；继续供给与订单维护':'等待新的候选事实，避免重复推理');
       return;
@@ -137,6 +161,8 @@ export class EntryCoordinator {
       `准备分析 ${ready[0]!.symbol}`,
     );
     const symbol=ready.find(item=>!this.active.has(item.symbol))!.symbol;
+    this.analysisFacts.lastAttemptAt=now;this.analysisFacts.lastBlockedReason=null;
+    this.events.publish('ANALYSIS_DISPATCH_INTENT',{mode:this.analysisOnly()?'ANALYSIS_ONLY':'EXECUTION_ENABLED',at:now},symbol);
     this.lastDispatched.set(symbol,now);
     this.transition(symbol,"PRIMARY_QUEUED","SCHEDULER_DISPATCH");
     void this.analyze(symbol);
@@ -312,12 +338,19 @@ export class EntryCoordinator {
         this.events.publish('TRADING_QUALITY_OPPORTUNITY',{opportunity,packetId:packet.packetId,stage:'BEFORE_PRIMARY',candidate:this.state.universe.find(x=>x.symbol===symbol)},symbol);
         }
       const scout = this.state.settings.ai.scoutEnabled ? await this.ai.scout(packet) : null;
+      this.analysisFacts.lastRequestAt=Date.now();
       const result = await this.ai.decide(packet, scout, Date.now()-primaryQueuedAt, confirmation);
       if(opportunity)this.events.publish('TRADING_QUALITY_PRIMARY_LINK',{runId:result.runId,packetId:packet.packetId,opportunity,decision:result.decision},symbol);
 
       this.transition(symbol,'PRIMARY_COMPLETED','PRIMARY_TERMINAL',{confirmation:null,runId:result.runId,decisionContextKey:contextKey,lastDecision:result.decision.decision,nextReviewAt:nextClosedFiveMinute()});
       terminalRunId=result.runId;
       const d = result.decision;
+      this.analysisFacts.lastSuccessAt=Date.now();
+      if(this.analysisOnly()){
+        this.completeReadOnlyAnalysis({symbol,d,result,executionEnvelope});
+        this.cooldown(symbol,'ANALYSIS_ONLY_COMPLETED',Math.max(60_000,nextClosedFiveMinute()-Date.now()));
+        return;
+      }
       if (d.decision === 'REJECT_CANDIDATE' || !d.decision) { this.reject(symbol,d.reason,result.runId,d.tradeSide??undefined); return; }
       if(d.decision==='WAIT_FOR_PRICE') {this.persistWaitPlan({symbol,side:(d.structureDirection??d.tradeSide??'LONG') as 'LONG'|'SHORT',d,result,executionEnvelope});const market=this.state.snapshots.get(symbol),error=entryDataError(market);if(error)throw new Error(error);const wait={...waitingContext(d,result.runId,market!),opportunityVersion:opportunity?.version??null};this.transition(symbol,'WAIT_FOR_PRICE',d.reason,{waitContext:wait,nextEligibleAt:null});this.state.pool.remove(symbol);this.state.pool.replenish(this.state.universe);this.events.publish('ENTRY_WAIT_SAVED',{runId:result.runId,wait,entryIntentCreated:false},symbol);return;}
       if(d.decision!=='PLACE_LONG'&&d.decision!=='PLACE_SHORT') {const caps=this.routeCapabilities(symbol),facts=noEdgeReviewFacts({market:this.state.snapshots.get(symbol)!,...caps}),ttl=Math.max(60_000,(this.state.settings.ai.highFrequency?.retryCooldownSeconds??25)*4_000),noEdgeReview={structureDirection:d.structureDirection,rejectLayer:d.rejectLayer,blockingCondition:d.blockingCondition,releaseCondition:d.releaseCondition,facts,createdAt:Date.now(),expiresAt:Date.now()+ttl,invalidation:'15M_STRUCTURE_OR_PERMISSION_OR_ECONOMIC_SPACE_CHANGE'};this.events.publish('PRIMARY_NO_ENTRY',{runId:result.runId,decision:d.decision,reason:d.reason,rejectLayer:d.rejectLayer,blockingCondition:d.blockingCondition,releaseCondition:d.releaseCondition,noEdgeReview,entryIntentCreated:false},symbol);this.cooldown(symbol,d.reason,ttl,d.decision==='DATA_ERROR'||d.decision==='AI_OUTPUT_INVALID'?'AI_FAILURE_COOLDOWN':'REJECT_COOLDOWN',{noEdgeReview});return;}
@@ -409,7 +442,9 @@ export class EntryCoordinator {
         this.state.markEntryReservationWorking(reservationId);this.state.entryOrders.set(placed.id, placed);const candidate = this.state.universe.find((x) => x.symbol === symbol);if (candidate) {candidate.eligible = false;candidate.rank = 0;if (!candidate.exclusionReasons.includes("ACTIVE_ENTRY_ORDER"))candidate.exclusionReasons.push("ACTIVE_ENTRY_ORDER");}this.transition(symbol,"ENTRY_WORKING","ENTRY_SUBMITTED",{runId:result.runId});this.state.pool.remove(symbol);this.state.pool.replenish(this.state.universe);this.events.publish("ENTRY_ORDER_CREATED",{order:placed,intent,brainRunId:result.runId,decisionChainId:result.runId},symbol);
       } catch (error) {const reason=error instanceof Error?error.message:String(error);if(reason.startsWith('ENTRY_SUBMISSION_UNKNOWN')||['SUBMITTING','UNKNOWN'].includes(this.state.entryOrders.get(order.id)?.status??'')){this.events.publish('ENTRY_ORDER_SUBMISSION_UNKNOWN',{intentId:intent.id,brainRunId:result.runId,orderId:order.id,clientOrderId:order.clientOrderId,reason},symbol);this.transition(symbol,'WAIT_EXECUTION_RANGE','SUBMISSION_UNKNOWN_RECONCILIATION',{runId:result.runId,executionWait:{intentId:intent.id,reservationId,reason,startedAt:Date.now(),expiresAt:intent.aiAuthorizationExpiresAt,acceptablePriceRange:intent.acceptablePriceRange}});return;}const unsent=this.state.entryOrders.get(order.id);if(unsent?.status==='NEW')this.state.entryOrders.set(order.id,{...unsent,status:'REJECTED',factSource:'LOCAL_NOT_SUBMITTED',updatedAt:Date.now()});this.state.releaseEntryReservation(reservationId);this.events.publish("ENTRY_ORDER_BLOCKED",{intentId:intent.id,brainRunId:result.runId,reason,stage:"BINANCE_SUBMIT"},symbol);this.cooldown(symbol, reason, 60_000);}
     } catch (error) {
+      this.analysisFacts.lastFailureAt=Date.now();
       const reason = error instanceof Error ? error.message : String(error);
+      this.analysisFacts.lastBlockedReason=reason;
       if(reason.startsWith('EIP_EVIDENCE_STALE')){this.events.publish('PRIMARY_DATA_ERROR',{stage:'EIP_STALE',reason,entryIntentCreated:false},symbol);this.cooldown(symbol,'EIP_STALE',this.aiFailureCooldownSeconds(),'TECHNICAL_COOLDOWN');return;}
       this.events.publish("ENTRY_ANALYSIS_FAILED",{ runId:terminalRunId??(error as any)?.runId,message: reason, intentCreated:terminalRunId?[...this.state.entryIntents.values()].some(x=>x.brainRunId===terminalRunId):false, policy: 'FAIL_CLOSED' },symbol);this.cooldown(symbol, reason, this.aiFailureCooldownSeconds(), "AI_FAILURE_COOLDOWN");
     } finally {
@@ -470,6 +505,20 @@ export class EntryCoordinator {
     });
   }
 
+  private completeReadOnlyAnalysis(input:{symbol:string;d:any;result:any;executionEnvelope:any}){
+    const admission=(this.state as any).riskAdmission;
+    const observation=admission?.observe?.()??{allowed:false,reasons:['PORTFOLIO_RISK_ADMISSION_NOT_INSTALLED'],scope:'CURRENT_BOOK'};
+    this.events.publish('PORTFOLIO_RISK_ADMISSION_EVALUATED',{...observation,brainRunId:input.result.runId,analysisOnly:true,locked:false},input.symbol);
+    // The model output stays in its immutable run. A system WAIT records the independent write lock,
+    // not a fabricated model PLACE/WAIT and not a reservation or ownership claim.
+    const reasons=['EXCHANGE_WRITE_LOCKED',...observation.reasons];
+    this.persistWaitPlan({...input,side:input.d.tradeSide==='SHORT'?'SHORT':'LONG',systemWait:true,
+      factVersion:planFactVersionOf({runId:input.result.runId,observation,settingsVersion:(this.state.settings as any).settingsVersion}),
+      d:{...input.d,reason:`Model ${input.d.decision}: ${input.d.reason??''}`,releaseCondition:reasons.join('|'),blockingCondition:'SYSTEM_ANALYSIS_ONLY'}});
+    this.analysisFacts.lastBlockedReason='EXCHANGE_WRITE_LOCKED';
+    this.events.publish('ANALYSIS_ONLY_COMPLETED',{brainRunId:input.result.runId,modelDecision:input.d.decision,reasons,reservationCreated:false,orderCreated:false},input.symbol);
+  }
+
   private buildAndPersistTradePlan(input:{symbol:string;side:'LONG'|'SHORT';market:any;d:any;result:any;executionEnvelope:any;admission:any;allocation:any;cycleId:string}){
     const now=Date.now(),warnings:string[]=[],settings=this.state.settings as any;
     const facts=input.admission?.preTradeFacts?.(now);
@@ -521,7 +570,7 @@ export class EntryCoordinator {
   }
 
   /** A WAIT leaves an auditable plan behind and nothing else: no reservation, no intent, no order. */
-  private persistWaitPlan(input:{symbol:string;side:'LONG'|'SHORT';d:any;result:any;executionEnvelope:any}){
+  private persistWaitPlan(input:{symbol:string;side:'LONG'|'SHORT';d:any;result:any;executionEnvelope:any;systemWait?:boolean;factVersion?:string}){
     const now=Date.now(),settings=this.state.settings as any,cycleId=`cycle_wait_${input.result?.runId??now}`;
     const release=[input.d.releaseCondition,input.d.waitCondition?`${input.d.waitCondition.operator} ${input.d.waitCondition.price}`:null].filter(Boolean).join(' / ');
     const outcome=assembleTradePlan({
@@ -530,14 +579,15 @@ export class EntryCoordinator {
         releaseCondition:release||null,modelRunId:input.result?.runId??null,promptVersion:input.result?.promptVersion??null,
         modelConfidence:Number(input.d.confidence??Number.NaN),quantityUnits:0,targetPrice:null,targetHorizonMinutes:0},
       candidateSet:{schemaVersion:'V396-PLAN-CANDIDATE-SET-1',symbol:input.symbol,side:input.side,createdAt:now,
-        expiresAt:Number(input.executionEnvelope?.expiresAt??now),factVersion:'wait',candidateSetHash:'wait',candidates:[],
+        expiresAt:Math.max(now+1,Number(input.executionEnvelope?.expiresAt??now)),factVersion:input.factVersion??'wait',candidateSetHash:input.factVersion??'wait',candidates:[],
         noTradeReasons:[String(input.d.decision)],quantityLadder:[],horizonLadder:[],rejectedCombinations:0},
       scope:this.planScopeOf(input.symbol,'WAIT'),cycleId,symbol:input.symbol,leverage:Number(input.executionEnvelope?.leverage??1),
       minNetProfitUsd:Number(settings.takeProfit.minNetProfitUsd??0),maxRealizedLossUsd:Number(settings.riskGovernance?.exitCoordination?.aiExitLossLimitUsd??0),
-      factVersion:'wait',now,planVersion:this.state.plansForCycle(cycleId).length+1,source:'AI',
+      factVersion:input.factVersion??'wait',now,planVersion:this.state.plansForCycle(cycleId).length+1,source:input.systemWait?'SYSTEM':'AI',
     });
     if(!outcome.plan){this.events.publish('TRADE_PLAN_WAIT_REFUSED',{brainRunId:input.result?.runId??null,reasons:outcome.refusals},input.symbol);return null;}
     const stored=this.state.putTradePlan(outcome.plan);
+    if(!stored.written&&!stored.identical)throw new Error('ANALYSIS_PLAN_PERSISTENCE_FAILED');
     this.events.publish('TRADE_PLAN_PERSISTED',{brainRunId:input.result?.runId??null,planId:outcome.plan.planId,planVersion:outcome.plan.planVersion,cycleId,
       side:'WAIT',quantityUnits:0,reservationCreated:false,written:stored.written,releaseCondition:outcome.plan.releaseCondition},input.symbol);
     return outcome.plan;

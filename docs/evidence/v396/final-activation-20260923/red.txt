@@ -1,0 +1,190 @@
+(node:42856) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:32200) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> @zdj/engine@3.9.6 test
+> vitest run src/services/finalActivation.test.ts
+
+(node:39872) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+VITEST_TEST_TIMEOUT=5000 CI=
+
+ RUN  v3.2.7 D:/MITS-worktrees/v396-shadow-advanced-audit-20260923/apps/engine
+
+(node:39380) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:32192) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:32136) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:41040) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:51100) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:41924) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:30472) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:38428) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:44420) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:31112) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:26052) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:42264) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:30500) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:43456) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:26256) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:39380) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+ ❯ src/services/finalActivation.test.ts (10 tests | 8 failed) 30ms
+   × final activation independent analysis and write authorities > dispatches the real analysis tick in READ_ONLY without an exchange loop 5ms
+     → Cannot read properties of undefined (reading 'call')
+   × final activation independent analysis and write authorities > refuses production analysis and does not dispatch through a closed fact gate 1ms
+     → Cannot read properties of undefined (reading 'call')
+   × final activation independent analysis and write authorities > does not resume pending execution waits in READ_ONLY 4ms
+     → expected "spy" to not be called at all, but actually been called 1 times
+
+Received:
+
+  1st spy call:
+
+    Array [
+      1790139694382,
+    ]
+
+
+Number of calls: 1
+
+   × authoritative profile and real units > does not call an incomplete profile a complete pre-trade fact set 13ms
+     → expected true to be false // Object.is equality
+   × authoritative profile and real units > versions all profile authority including maintenance rate 1ms
+     → expected 'v396re414b94ff537f62672c99f017b7f2bf4…' not to be 'v396re414b94ff537f62672c99f017b7f2bf4…' // Object.is equality
+   × authoritative profile and real units > does not label an unknown USDC margin asset USDT 2ms
+     → expected 'USDT' not to be 'USDT' // Object.is equality
+   × authoritative profile and real units > converts BTC 0.01 with fresh valuation, not into 0.01 dollars 1ms
+     → expected 0.01 to be 870 // Object.is equality
+   × authoritative profile and real units > keeps a stale BTC rate UNKNOWN 1ms
+     → expected 'VERIFIED' to be 'UNVERIFIED' // Object.is equality
+   ✓ authoritative profile and real units > preserves explicit stable asset units for USDT 1ms
+   ✓ authoritative profile and real units > preserves explicit stable asset units for USDC 0ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 8 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/services/finalActivation.test.ts > final activation independent analysis and write authorities > dispatches the real analysis tick in READ_ONLY without an exchange loop
+TypeError: Cannot read properties of undefined (reading 'call')
+ ❯ src/services/finalActivation.test.ts:17:63
+     15|  it('dispatches the real analysis tick in READ_ONLY without an exchang…
+     16|   const processPool=vi.fn(async()=>{}),fake:any={state:{settings:{conn…
+     17|   await (EngineRuntime.prototype as any).dispatchAnalysisTick.call(fak…
+       |                                                               ^
+     18|  });
+     19|  it('refuses production analysis and does not dispatch through a close…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/8]⎯
+
+ FAIL  src/services/finalActivation.test.ts > final activation independent analysis and write authorities > refuses production analysis and does not dispatch through a closed fact gate
+TypeError: Cannot read properties of undefined (reading 'call')
+ ❯ src/services/finalActivation.test.ts:21:63
+     19|  it('refuses production analysis and does not dispatch through a close…
+     20|   const processPool=vi.fn(),fake:any={state:{settings:{connections:{ex…
+     21|   await (EngineRuntime.prototype as any).dispatchAnalysisTick.call(fak…
+       |                                                               ^
+     22|  });
+     23|  it('does not resume pending execution waits in READ_ONLY',async()=>{
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/8]⎯
+
+ FAIL  src/services/finalActivation.test.ts > final activation independent analysis and write authorities > does not resume pending execution waits in READ_ONLY
+AssertionError: expected "spy" to not be called at all, but actually been called 1 times
+
+Received:
+
+  1st spy call:
+
+    Array [
+      1790139694382,
+    ]
+
+
+Number of calls: 1
+
+ ❯ src/services/finalActivation.test.ts:26:60
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/8]⎯
+
+ FAIL  src/services/finalActivation.test.ts > authoritative profile and real units > does not call an incomplete profile a complete pre-trade fact set
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ src/services/finalActivation.test.ts:30:141
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/8]⎯
+
+ FAIL  src/services/finalActivation.test.ts > authoritative profile and real units > versions all profile authority including maintenance rate
+AssertionError: expected 'v396re414b94ff537f62672c99f017b7f2bf4…' not to be 'v396re414b94ff537f62672c99f017b7f2bf4…' // Object.is equality
+ ❯ src/services/finalActivation.test.ts:31:281
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/8]⎯
+
+ FAIL  src/services/finalActivation.test.ts > authoritative profile and real units > does not label an unknown USDC margin asset USDT
+AssertionError: expected 'USDT' not to be 'USDT' // Object.is equality
+ ❯ src/services/finalActivation.test.ts:32:186
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/8]⎯
+
+ FAIL  src/services/finalActivation.test.ts > authoritative profile and real units > converts BTC 0.01 with fresh valuation, not into 0.01 dollars
+AssertionError: expected 0.01 to be 870 // Object.is equality
+
+- Expected
++ Received
+
+- 870
++ 0.01
+
+ ❯ src/services/finalActivation.test.ts:33:236
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/8]⎯
+
+ FAIL  src/services/finalActivation.test.ts > authoritative profile and real units > keeps a stale BTC rate UNKNOWN
+AssertionError: expected 'VERIFIED' to be 'UNVERIFIED' // Object.is equality
+
+Expected: "UNVERIFIED"
+Received: "VERIFIED"
+
+ ❯ src/services/finalActivation.test.ts:34:236
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/8]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  8 failed | 2 passed (10)
+   Start at  13:01:31
+   Duration  3.00s (transform 1.02s, setup 0ms, collect 2.11s, tests 30ms, environment 0ms, prepare 450ms)
+
+(node:12184) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+npm error Lifecycle script `test` failed with error:
+npm error code 1
+npm error path D:\MITS-worktrees\v396-shadow-advanced-audit-20260923\apps\engine
+npm error workspace @zdj/engine@3.9.6
+npm error location D:\MITS-worktrees\v396-shadow-advanced-audit-20260923\apps\engine
+npm error command failed
+npm error command C:\Windows\system32\cmd.exe /d /s /c vitest run src/services/finalActivation.test.ts

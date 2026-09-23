@@ -64,8 +64,7 @@ export class RuntimeState {
             const versions = [...this.tradePlans.values()].filter(row => row.cycleId === plan.cycleId);
             if (Number(plan.planVersion) <= versions.reduce((max, row) => Math.max(max, Number(row.planVersion ?? 0)), 0))
                 return { written: false, reason: 'PLAN_VERSION_NOT_INCREASING', plan: existing };
-            this.tradePlans.set(id, plan);
-            return { written: true, superseded: true, plan };
+            return { written: false, reason: 'PLAN_ID_IMMUTABLE', plan: existing };
         }
         this.tradePlans.set(id, plan);
         return { written: true, identical: false, plan };

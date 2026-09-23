@@ -1,0 +1,67 @@
+{
+  "round": "v396-formal-testnet-execution-activation",
+  "date": "2026-09-24",
+  "plan": "docs/plans/v396/CODEX-V396-FORMAL-TESTNET-EXECUTION-ACTIVATION-20260924.md",
+  "report": "docs/reports/v396-formal-testnet-execution-activation-20260924.md",
+  "branch": "codex/v396-final-convergence-20260922",
+  "headAtExecution": "423318c (docs-only above 14be196)",
+  "liveProduct": "d570bef / buildId 3.9.6-eaaabc52c682cc1ce56a / PID 34196",
+  "verdict": "ACTIVATION BLOCKED by the section B3 fact gap: no Testnet maintenance-margin bracket collector exists in the running product, and the live governance matrix refuses marginTierVersion/correlationVersion/scenarioVersion/scenarios/clusters as editable:false. The single authorized profile CAS attempt returned 400 GOVERNANCE_PATCH_REFUSED; settingsVersion stayed 197 and the whole settings object is byte-identical. executionMode was NOT flipped, so nothing had to fall back.",
+  "actions": {
+    "settingsWrites": 0,
+    "settingsVersionBefore": 197,
+    "settingsVersionAfter": 197,
+    "wholeSettingsByteEquivalent": true,
+    "executionModeFlip": 0,
+    "engineLifecycle": 0,
+    "databaseWrites": 0,
+    "exchangeWrites": 0,
+    "matrixEdits": 0,
+    "fabricatedVersions": 0
+  },
+  "stateAfter": {
+    "executionMode": "READ_ONLY",
+    "environment": "TESTNET",
+    "profileStatus": "PROFILE_NOT_CONFIGURED",
+    "modelSpendPermitted": false,
+    "firstBlocker": "EXECUTION_WRITE_LOCKED",
+    "testnetWrites": 0,
+    "productionWrites": 0,
+    "lastWriteAt": null,
+    "positions": 13,
+    "tpProtected": "13/13",
+    "ownership": "27/27/0 AI_ACTIVE",
+    "durableUnknownRows": 46,
+    "pendingPhantom": 0,
+    "egress": "VERIFIED",
+    "integrity": true,
+    "fatal": 0
+  },
+  "files": [
+    {
+      "path": "docs/evidence/v396/formal-testnet-execution-activation-20260924/activation-baseline-A.json",
+      "bytes": 18391,
+      "sha256": "4dac6e3f4e50778a1fab79f28b09c167becbebb1314f3c1e1866efc565cf9685"
+    },
+    {
+      "path": "docs/evidence/v396/formal-testnet-execution-activation-20260924/capture-baseline-A.mjs",
+      "bytes": 6492,
+      "sha256": "2ad7c01879bd9178afeb1fdd76fefd39e7d0fcee77c0f39bff0d17b61978fa14"
+    },
+    {
+      "path": "docs/evidence/v396/formal-testnet-execution-activation-20260924/margin-tier-collector-gap-B3.json",
+      "bytes": 4826,
+      "sha256": "91e69ce96a70268b3cc6439e4709dd16a966eb541804f0b8b41a7847a2796350"
+    },
+    {
+      "path": "docs/evidence/v396/formal-testnet-execution-activation-20260924/profile-cas-attempt-C.json",
+      "bytes": 4794,
+      "sha256": "444b1e1c298635ac09d73f3fee8cc59c00758589a56e10460d50c1c6f2b9396b"
+    },
+    {
+      "path": "docs/evidence/v396/formal-testnet-execution-activation-20260924/profile-cas-attempt-C.mjs",
+      "bytes": 5026,
+      "sha256": "0efa7ed411ac01ef83a8c1f1dc10ec0c3cf897839e7028ac6dab72a14d9537d7"
+    }
+  ]
+}

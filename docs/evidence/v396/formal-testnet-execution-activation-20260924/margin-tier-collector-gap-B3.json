@@ -1,0 +1,43 @@
+{
+  "question": "Can this round obtain a real Binance/Testnet maintenance-margin bracket snapshot through any reachable read-only path, as section B3 requires?",
+  "answer": "NO. There is no Testnet bracket reader in the running product.",
+  "evidence": {
+    "onlyBracketCallSites": [
+      "apps/engine/src/adapters/exchange/ExternalTradeAdapter.ts:202 setLeverage() — signed GET /fapi/v1/leverageBracket, used only to cap leverage at submit time; it keeps one number (initialLeverage) in an in-memory cache and discards the bracket rows",
+      "apps/engine/src/services/productionReadOnlyPreflight.ts:5,20,25 — signed GET /fapi/v1/leverageBracket, but that collector is bound to environment PRODUCTION (allowedMethods ['GET'], liveApproval PENDING_LIMITS_EXIT_PLAN_AND_EXPLICIT_ORDER_AUTHORIZATION) and is not a Testnet path",
+      "apps/engine/src/adapters/binance/BinanceTransport.ts:11,12 — endpoint weight/source registration only"
+    ],
+    "apiExposureSearched": "grep over apps/engine/src/api found no route returning bracket data",
+    "probeResults": {
+      "GET /api/v3/diagnostics/binance-governance": "returns routes/egress only; egress VERIFIED (routeIdentity proxy-a087cc91667b, expected 172.104.186.174 == lastVerifiedEgressIp)",
+      "GET /api/v3/settings/governance": "reports riskGovernance.portfolioRisk.marginTierVersion='' editable:false, maintenanceMarginRatePct=null, correlationVersion/scenarioVersion/scenarios/clusters editable:false — the running server itself declares these unreadable-by-page",
+      "settings.default.json": "contains no riskGovernance.portfolioRisk object at all, so there is no shipped dataset to validate against"
+    }
+  },
+  "whyNotWorkedAround": {
+    "noDirectDatabaseWrite": "section C authorizes a Settings CAS write only; writing the settings row in SQLite would bypass the governance matrix, saveIfVersion and settings_audit, which is the opposite of what this round is for",
+    "noMatrixEdit": "riskGovernance.portfolioRisk.marginTierVersion/correlationVersion/scenarioVersion/scenarios/clusters are editable:false on purpose: readOnlyReason says a bracket table is an operator-supplied dataset that must arrive with offline validation, so a version string alone must never mean proven. Flipping those flags to make activation pass is exactly the gate-loosening the plan forbids (and section 0 forbids inventing a Binance margin-tier authority).",
+    "noPlaceholderVersion": "Writing marginTierVersion without the bracket snapshot it is supposed to name would create a fake PROVEN fact; the ledger only checks non-empty string + finite rate, so such a value would silently unlock real money paths on a lie."
+  },
+  "whatActivationActuallyNeeds": {
+    "step1Collector": "a Testnet, read-only, rate-aware bracket snapshot: for the current positions plus the routed candidate universe, fetch /fapi/v1/leverageBracket per underlying, keep symbol/notionalFloor/notionalCap/maintenanceMarginRatio/initialLeverage, canonicalise deterministically (sorted, fixed numeric formatting), and expose { canonicalSnapshot, sha256, maxApplicableMaintenanceRatePct } where the rate is the maximum over the brackets that the sizing range can reach, never a guess",
+    "step2DatasetChannel": "one audited whole-profile submission that validates the dataset together with its version (scenarios array + scenarioVersion, clusters map + correlationVersion, bracket snapshot + marginTierVersion + rate) and refuses when the version does not hash to the submitted dataset; the numeric limits keep using the existing governance field checks",
+    "step3HostileTests": "version without dataset refused; dataset with mismatched version refused; rate taken from the maximum applicable bracket, not the average; universe entry missing a bracket fails closed; a bracket that changes later invalidates the version instead of silently reusing it; nothing writable through PUT /settings that PATCH refuses",
+    "then": "only after that lands and is deployed, section C's CAS and section E's mode flip can be executed as written, with the real READY profile"
+  },
+  "stateAfterThisRound": {
+    "settingsVersionBeforeAndAfter": [197, 197],
+    "wholeSettingsByteEquivalent": true,
+    "executionMode": "READ_ONLY (never changed; nothing to fall back from)",
+    "profileStatus": "PROFILE_NOT_CONFIGURED",
+    "executionReadinessBlockers": ["EXECUTION_WRITE_LOCKED", "RISK_PROFILE_UNCONFIGURED"],
+    "modelSpendPermitted": false,
+    "testnetWrites": 0,
+    "productionWrites": 0,
+    "positionsAllProtected": "13/13",
+    "ownership": "27 rows / 27 cycles / 0 AI_ACTIVE / 0 duplicate",
+    "persistence": "HEALTHY, integrity true",
+    "egress": "VERIFIED",
+    "httpAttemptResult": "400 GOVERNANCE_PATCH_REFUSED on scenarioVersion, scenarios, correlationVersion, clusters"
+  }
+}

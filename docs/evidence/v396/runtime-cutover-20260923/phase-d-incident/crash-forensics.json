@@ -1,0 +1,156 @@
+{
+ "incidentId": "v396-d-phase-fatal-20260923",
+ "generatedAtUtc8": "2026-09-23 08:13:27+08",
+ "verdict": "P0_CUTOVER_HALTED_AT_PHASE_D",
+ "engine": {
+  "instanceId": "a9c88bb1-754c-49a6-ae40-d7a009566dcf",
+  "pid": 29340,
+  "version": "3.9.6",
+  "buildId": "3.9.6-fe1c9ae7ce59ad675e10",
+  "artifactHash": "fe1c9ae7ce59ad675e10eda9d2272d1869381e3d29ac33791d4f553acf0f1ab1",
+  "sourceHash": "f0a08f903c5ad34ab86a0cbd5e0662e10cf2909f4ce8618d32f87fc71234cc14",
+  "startReason": "MANUAL_START",
+  "startedUtc8": "2026-09-23 08:04:21+08",
+  "fatalAtUtc8": "2026-09-23 08:07:41+08",
+  "uptimeSecondsAtFatal": 199.2,
+  "sourceCommit": "1e97b69 on codex/v396-final-convergence-20260922",
+  "distBuild": "built by `npm run verify` in the convergence worktree, exit code 0",
+  "launchMethod": "scripts/start-zdj-lan.ps1 -StartReason MANUAL_START -SkipFirewall (single manual start, as authorized)",
+  "dataDirectory": "D:/MITS/data reached through the worktree data junction, so the migrated Testnet store is the one in use"
+ },
+ "failure": {
+  "kind": "uncaughtException -> process.on(uncaughtException) -> shutdown(UNCAUGHT_EXCEPTION, exitCode 1)",
+  "errorName": "ZodError",
+  "issueCount": 10,
+  "failingPaths": [
+   "positions.0.notionalUsd",
+   "positions.1.notionalUsd",
+   "positions.2.notionalUsd",
+   "positions.3.notionalUsd",
+   "positions.4.notionalUsd",
+   "positions.5.notionalUsd",
+   "positions.7.notionalUsd",
+   "positions.10.notionalUsd",
+   "positions.11.notionalUsd",
+   "positions.12.notionalUsd"
+  ],
+  "constraintViolated": "packages/contracts/src/trading.ts:125 notionalUsd: z.number().nonnegative().nullable().default(null)",
+  "throwSite": "packages/contracts DashboardSnapshotSchema.parse called from apps/engine/src/api/projections.ts:128 (positions passed unchanged at :189)",
+  "trigger": "apps/engine/src/api/router.ts:35 schedules publishSnapshot() 250ms after every runtime event, and :34 calls it once at router construction; the throw is therefore self-triggered and does not require an operator request",
+  "fatalHandlerSite": "apps/engine/src/main.ts:33",
+  "reproduction": "Load any durable store containing at least one SHORT position under V3.9.6 READ_ONLY/SHADOW and let private sync populate positions; the next snapshot publication throws and the process exits with code 1."
+ },
+ "dataContradiction": {
+  "positionsTotal": 29,
+  "withNotionalUsdField": 29,
+  "negativeNotionalUsd": 10,
+  "positiveNotionalUsd": 19,
+  "shortSide": 10,
+  "longSide": 19,
+  "everyShortIsNegative": true,
+  "everyLongIsPositive": true,
+  "examples": [
+   {
+    "symbol": "ARBUSDT",
+    "side": "SHORT",
+    "notionalUsd": -7.10479978,
+    "absQuantityTimesMark": 7.1048
+   },
+   {
+    "symbol": "AVAXUSDT",
+    "side": "SHORT",
+    "notionalUsd": -4516.200524,
+    "absQuantityTimesMark": 4516.2005
+   },
+   {
+    "symbol": "BNBUSDC",
+    "side": "SHORT",
+    "notionalUsd": -47.33648102,
+    "absQuantityTimesMark": 47.3365
+   }
+  ],
+  "reading": "V3.9.6 persists exchange-signed notional (negative for SHORT) on the position row, while its own contract declares the same field non-negative. The two layers disagree about what notionalUsd means: signed direction exposure versus unsigned magnitude.",
+  "wasPresentBeforeCutover": "the V3.9.5 position rows written before this cutover carried no notionalUsd field at all, so the contradiction is introduced by V3.9.6 sync, not inherited from migrated data"
+ },
+ "lifecycleRecords": [
+  {
+   "utc8": "2026-09-23 08:07:41+08",
+   "event": "UNCAUGHT_EXCEPTION_MONITOR",
+   "exitCode": null,
+   "reason": null,
+   "errorName": "ZodError"
+  },
+  {
+   "utc8": "2026-09-23 08:07:41+08",
+   "event": "ENGINE_FATAL_HANDLER",
+   "exitCode": 1,
+   "reason": null,
+   "errorName": "ZodError"
+  },
+  {
+   "utc8": "2026-09-23 08:07:41+08",
+   "event": "SHUTDOWN_REQUESTED",
+   "exitCode": 1,
+   "reason": "UNCAUGHT_EXCEPTION",
+   "errorName": null
+  },
+  {
+   "utc8": "2026-09-23 08:07:41+08",
+   "event": "HTTP_SERVER_CLOSED",
+   "exitCode": 1,
+   "reason": "UNCAUGHT_EXCEPTION",
+   "errorName": null
+  },
+  {
+   "utc8": "2026-09-23 08:07:41+08",
+   "event": "PROCESS_EXIT",
+   "exitCode": 1,
+   "reason": null,
+   "errorName": null
+  }
+ ],
+ "fatalEventPayloadPreview": "[\n  {\n    \"code\": \"too_small\",\n    \"minimum\": 0,\n    \"type\": \"number\",\n    \"inclusive\": true,\n    \"exact\": false,\n    \"message\": \"Number must be greater than or equal to 0\",\n    \"path\": [\n      \"positions\",\n      0,\n      \"notionalUsd\"\n    ]\n  },\n  {\n    \"code\": \"too_small\",\n    \"minimum\": 0,\n    \"type\": \"number\",\n    \"inclusive\": true,\n    \"exact\": false,\n    \"message\": \"Number must be greater th",
+ "settingsAtFatal": {
+  "settingsVersion": 190,
+  "executionMode": "READ_ONLY",
+  "aiExitAuthority": "SHADOW",
+  "positionReviewEnabled": false,
+  "admissionMode": "SHADOW",
+  "environment": "TESTNET"
+ },
+ "migratedLedgerAtFatal": {
+  "ownerRows": 29,
+  "ownerStateTally": {
+   "HUMAN_MANAGED": 27,
+   "HANDOFF_PENDING": 2
+  },
+  "ownershipLedgerBytes": 122880,
+  "ownershipLedgerSha256": "8ce0fed1b7a3098bcb4974e71de9571d316c5d35f6ba6db58f99784a7cd8af01",
+  "tpOrderEntitiesPersisted": 441
+ },
+ "exchangeWriteAudit": {
+  "productionWriteRequests": 0,
+  "note": "executionMode was READ_ONLY for the entire V3.9.6 run and aiExitAuthority was SHADOW; the phase-D SHADOW write-count criterion could not be evaluated over an observation window because the process died before one completed, so it stays NOT_RUN rather than PASS"
+ },
+ "postIncidentState": {
+  "engineRunning": false,
+  "listenersOn8080": 0,
+  "v395RestartedAutomatically": false,
+  "rollbackAvailable": {
+   "coldImage": "D:/MITS-backups/cutover-20260923/cold/zdj-settings.sqlite",
+   "sha256Prefix": "88c8ed2eca109534",
+   "settingsVersionAtBackup": 189
+  },
+  "positionsLeftUnmanaged": 29,
+  "positionsProtectedExchangeSide": "the 29 take-profit orders were WORKING on Binance at stop time; they are exchange-side and remain active while no engine runs"
+ },
+ "stopLineCompliance": {
+  "didNotRestartToObtainGreen": true,
+  "didNotRelaxSchemaOrThreshold": true,
+  "didNotDeleteAssertions": true,
+  "didNotFabricateFacts": true,
+  "phaseEExecuted": false,
+  "phaseFSucceeded": false,
+  "acceptedSelfSigned": false
+ }
+}

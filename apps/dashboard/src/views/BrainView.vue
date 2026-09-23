@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, watch } from "vue";
+import { nextTick, onMounted, onUnmounted, ref, watch } from "vue";
 import { brainRun, brainRuns } from "../api/client";
 import { useSystemStore } from "../stores/system";
 import Panel from "../components/Panel.vue";
@@ -21,8 +21,32 @@ const symbol = ref(""),
   from = ref(""),
   to = ref("");
 let listController:AbortController|null=null,detailController:AbortController|null=null,listSequence=0,detailSequence=0,debounceTimer:number|undefined;
+const drawerEl=ref<HTMLElement|null>(null);
+let detailTrigger:HTMLElement|null=null;
 const printable = (v: any) =>
   v == null ? "—" : typeof v === "string" ? v : JSON.stringify(v, null, 2);
+const detailOpen = () => detailLoading.value || Boolean(detailError.value) || Boolean(detail.value);
+/** One exit for every way the detail closes, so a response that is already in flight cannot reopen it. */
+function closeDetail(){
+  detailSequence++;
+  detailController?.abort();
+  detailController=null;
+  detailLoading.value=false;
+  detail.value=null;
+  detailError.value="";
+  detailId.value="";
+  if(detailTrigger?.isConnected)detailTrigger.focus();
+  detailTrigger=null;
+}
+function onDrawerFocusOut(event: FocusEvent){
+  // Focus landing back on the drawer itself or a child is a move inside the detail, not a leave.
+  const next=event.relatedTarget as Node|null;
+  const container=drawerEl.value;
+  if(next&&container&&!container.contains(next))closeDetail();
+}
+function onWindowKeydown(event: KeyboardEvent){
+  if(event.key==='Escape'&&detailOpen())closeDetail();
+}
 const localMs = (v: string) => (v ? String(new Date(v).getTime()) : "");
 async function load() {
   const sequence=++listSequence;listController?.abort();listController=new AbortController();
@@ -48,9 +72,12 @@ async function load() {
     if(sequence===listSequence)loading.value = false;
   }
 }
-async function show(id: string) {
+async function show(id: string, event?: Event) {
+  detailTrigger=(event?.currentTarget as HTMLElement|null)??(document.activeElement instanceof HTMLElement?document.activeElement:null);
   const sequence=++detailSequence;detailController?.abort();detailController=new AbortController();detailId.value=id;detailLoading.value=true;detailError.value="";
   try{const result=await brainRun(id,detailController.signal);if(sequence===detailSequence)detail.value=result;}catch(error){if((error as any)?.name!=='AbortError'&&sequence===detailSequence){detail.value=null;detailError.value=error instanceof Error?error.message:String(error);}}finally{if(sequence===detailSequence)detailLoading.value=false;}
+  await nextTick();
+  if(sequence===detailSequence)drawerEl.value?.focus();
 }
 function reset() {
   symbol.value =
@@ -68,8 +95,8 @@ watch([symbol, role, status, decision, model, from, to], () => {
   page.value = 1;
   if(debounceTimer)clearTimeout(debounceTimer);debounceTimer=window.setTimeout(()=>void load(),300);
 });
-onMounted(load);
-onUnmounted(()=>{listController?.abort();detailController?.abort();if(debounceTimer)clearTimeout(debounceTimer);});
+onMounted(()=>{void load();window.addEventListener('keydown',onWindowKeydown);});
+onUnmounted(()=>{listController?.abort();detailController?.abort();window.removeEventListener('keydown',onWindowKeydown);if(debounceTimer)clearTimeout(debounceTimer);});
 </script>
 <template>
   <div class="page-stack">
@@ -152,7 +179,7 @@ onUnmounted(()=>{listController?.abort();detailController?.abort();if(debounceTi
             v-for="r in rows"
             :key="r.id"
             class="clickable"
-            @click="show(r.id)"
+            @click="show(r.id,$event)"
           >
             <td>{{ new Date(r.startedAt).toLocaleString() }}</td>
             <td>{{ r.symbol }}</td>
@@ -189,9 +216,33 @@ onUnmounted(()=>{listController?.abort();detailController?.abort();if(debounceTi
           下一页
         </button>
       </div></Panel
-    ><div v-if="detailLoading || detailError || detail" class="audit-drawer"><Panel
-      :title="detail ? `Run Detail · ${detail.run.id}` : 'Run Detail'"
-      :subtitle="detail ? `${detail.run.symbol} · ${detail.run.role} · ${detail.run.model}` : '读取归档事实'"
+    ><div
+      v-if="detailLoading || detailError || detail"
+      ref="drawerEl"
+      class="audit-drawer"
+      tabindex="-1"
+      role="dialog"
+      aria-label="AI Run 完整审计详情"
+      @focusout="onDrawerFocusOut"
+      ><div
+        class="audit-drawer-head"
+        style="position:sticky;top:0;z-index:2;display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding-bottom:12px;background:rgba(8,12,18,.98)"
+      >
+        <div>
+          <strong>{{ detail ? `Run Detail · ${detail.run.id}` : "Run Detail" }}</strong>
+          <p class="muted">
+            {{
+              detail
+                ? `${detail.run.symbol} · ${detail.run.role} · ${detail.run.model}`
+                : "读取归档事实"
+            }}
+          </p>
+        </div>
+        <button class="button secondary" @click="closeDetail">关闭</button>
+      </div>
+      <Panel
+      title="审计内容"
+      subtitle="Input → Raw Output → Normalized Decision → Error；拒绝与失败永不自动转 PLACE"
       ><div class="facts wide">
         <div v-if="detailLoading">加载中…</div><div v-else-if="detailError"><strong>{{detailError}}</strong><button class="button secondary" @click="show(detailId)">重试</button></div>
         <template v-else>
@@ -249,11 +300,14 @@ onUnmounted(()=>{listController?.abort();detailController?.abort();if(debounceTi
       <pre class="mono">{{ printable(detail.temporalMemory) }}</pre>
       <h3>Error / Raw Audit</h3>
       <pre class="mono">{{ printable(detail.rawAudit) }}</pre>
-      </template><button class="button secondary" @click="detail=null;detailError='';detailId=''">关闭</button>
+      </template><button class="button secondary" @click="closeDetail">关闭</button>
     </Panel></div>
   </div>
 </template>
 <style scoped>
 .audit-drawer{position:fixed;inset:0 0 0 min(24vw,320px);z-index:40;overflow:auto;padding:20px;background:rgba(8,12,18,.98);box-shadow:-12px 0 36px rgba(0,0,0,.45)}
+.audit-drawer:focus{outline:none}
+.audit-drawer-head strong{font-size:13px}
+.audit-drawer-head p{margin:4px 0 0}
 @media(max-width:760px){.audit-drawer{inset:0;padding:12px}}
 </style>

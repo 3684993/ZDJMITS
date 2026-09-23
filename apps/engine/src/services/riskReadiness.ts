@@ -48,10 +48,41 @@ export function evaluateProtectionShadow(position:Pick<Position,'side'|'entryPri
 }
 
 
+/** The one book-level gross/direction computation. Admission gates and the cockpit read the same object. */
 export function directionBudget(settings:SystemSettings,equityInput:number,positions:Position[],evaluatedAt=Date.now()){
-  const equity=Math.max(1,equityInput),gross=positions.reduce((n,p)=>n+Math.abs(p.quantity*p.markPrice),0),long=positions.filter(p=>p.side==='LONG').reduce((n,p)=>n+p.quantity*p.markPrice,0),short=positions.filter(p=>p.side==='SHORT').reduce((n,p)=>n+p.quantity*p.markPrice,0),grossAvailable=Math.max(0,equity*settings.riskGovernance.maxGrossExposurePct-gross),directionLimit=equity*settings.riskGovernance.maxDirectionExposurePct;
-  return{longAvailableNotionalUsd:Math.max(0,Math.min(grossAvailable,directionLimit-long)),shortAvailableNotionalUsd:Math.max(0,Math.min(grossAvailable,directionLimit-short)),grossAvailableNotionalUsd:grossAvailable,evaluatedAt};
+  const equity=Math.max(1,equityInput),gross=positions.reduce((n,p)=>n+Math.abs(p.quantity*p.markPrice),0),long=positions.filter(p=>p.side==='LONG').reduce((n,p)=>n+p.quantity*p.markPrice,0),short=positions.filter(p=>p.side==='SHORT').reduce((n,p)=>n+p.quantity*p.markPrice,0),grossLimit=equity*settings.riskGovernance.maxGrossExposurePct,directionLimit=equity*settings.riskGovernance.maxDirectionExposurePct,grossAvailable=Math.max(0,grossLimit-gross);
+  return{
+    equityUsd:equity,grossLimitUsd:grossLimit,directionLimitUsd:directionLimit,
+    grossNotionalUsd:gross,longNotionalUsd:long,shortNotionalUsd:short,
+    remainingGrossUsd:grossAvailable,grossUsedPct:grossLimit>0?gross/grossLimit:0,
+    longAvailableNotionalUsd:Math.max(0,Math.min(grossAvailable,directionLimit-long)),shortAvailableNotionalUsd:Math.max(0,Math.min(grossAvailable,directionLimit-short)),grossAvailableNotionalUsd:grossAvailable,evaluatedAt,
+  };
 }
+
+export type PositionCapacity={positions:number;inFlight:number;reserved:number;used:number;max:number};
+export type GrossDirectionBudget=ReturnType<typeof directionBudget>;
+export type CapacityBlocker='POSITION_CAPACITY'|'GROSS'|'DIRECTION_LONG'|'DIRECTION_SHORT'|'NOT_EVALUATED'|'NONE';
+/** A blocker that actually denies new Entry risk. `NOT_EVALUATED` is a missing fact, not a limit. */
+export const OCCUPIED_CAPACITY_BLOCKERS:readonly CapacityBlocker[]=['POSITION_CAPACITY','GROSS','DIRECTION_LONG','DIRECTION_SHORT'];
+
+/**
+ * Which capacity gate binds first, composed from the already-computed headroom and the slot count.
+ * It never recomputes exposure: a page that re-derived the risk ledger could disagree with the gate
+ * that actually refused the Entry.
+ */
+export function portfolioCapacityVisibility(capacity:PositionCapacity,budget:GrossDirectionBudget){
+  const firstBlocker:CapacityBlocker=budget.evaluatedAt<=0?'NOT_EVALUATED':capacity.used>=capacity.max?'POSITION_CAPACITY':budget.remainingGrossUsd<=0?'GROSS':budget.longAvailableNotionalUsd<=0?'DIRECTION_LONG':budget.shortAvailableNotionalUsd<=0?'DIRECTION_SHORT':'NONE';
+  return{
+    slots:{used:capacity.used,max:capacity.max,positions:capacity.positions,inFlight:capacity.inFlight,reserved:capacity.reserved},
+    gross:{notionalUsd:budget.grossNotionalUsd,limitUsd:budget.grossLimitUsd,remainingUsd:budget.remainingGrossUsd,usedPct:budget.grossUsedPct},
+    direction:{
+      LONG:{notionalUsd:budget.longNotionalUsd,limitUsd:budget.directionLimitUsd,remainingUsd:budget.longAvailableNotionalUsd},
+      SHORT:{notionalUsd:budget.shortNotionalUsd,limitUsd:budget.directionLimitUsd,remainingUsd:budget.shortAvailableNotionalUsd},
+    },
+    firstBlocker,evaluatedAt:budget.evaluatedAt,
+  };
+}
+
 
 export function buildRiskEnvelope(input:{settings:SystemSettings;equity:number;positions:Position[];symbol:string;side:Side;plannedNotional:number;reservedIntents:number;workingOrders:number;dailyDrawdownPct:number;expectedAdverseMovePct:number;quoteMarginUsage:number;now?:number}):RiskEnvelope {
   const now=input.now??Date.now(), h=computeExecutableRiskHeadroom(input), equity=input.equity,

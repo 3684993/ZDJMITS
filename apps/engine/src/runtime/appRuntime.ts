@@ -1,6 +1,7 @@
 import type {TradingQualityRuntimeObserver} from '../services/tradingQualityRuntimeObserver.js';
 import { TradingQualityCollector } from '../services/tradingQualityCollector.js';
 import { privateAccountFresh } from '../services/privateAccountReadiness.js';
+import { portfolioCapacityVisibility } from '../services/riskReadiness.js';
 import { PrivateAccountSync } from '../services/privateAccountSync.js';
 import { recoverUnsubmittedEntry } from '../services/unsubmittedEntryRecovery.js';
 import {RuntimeWriteBuffer} from '../services/runtimeWriteBuffer.js';
@@ -1661,6 +1662,7 @@ export class EngineRuntime {
           x.exclusionReasons.includes("ACTIVE_POSITION") ||
           x.exclusionReasons.includes("ACTIVE_ENTRY_ORDER"),
       ).length;
+    const slotCapacity = this.state.entryCapacity();
     const marketDataReason = marketDataStaleReason({
       freshness,
       marketInsufficient,
@@ -1695,7 +1697,7 @@ export class EngineRuntime {
     else if (pending >= this.state.settings.portfolio.maxPendingEntries)
       noEntryReason = "ENTRY_BACKPRESSURE";
     else if (!poolItems.length) noEntryReason = poolStatus;
-    else if(this.state.entryCapacity().used>=this.state.settings.portfolio.maxPositions)noEntryReason='POSITION_CAPACITY_FULL';
+    else if(slotCapacity.used>=this.state.settings.portfolio.maxPositions)noEntryReason='POSITION_CAPACITY_FULL';
     else if(this.state.runtimeControl.capital.executableCandidateCount===0)noEntryReason='WAITING_EXECUTION_CAPACITY';
     const primaryHealth=this.ai.resourceMetrics().find(r=>r.role==='PRIMARY_BRAIN');
     if(this.ready&&this.state.executionGovernance.mode==='AUTO_RUNNING'&&this.state.runtimeControl.mode==='RUNNING'){
@@ -1801,7 +1803,8 @@ export class EngineRuntime {
     return {
       runtimeControl: this.state.runtimeControl,
       asOf:now,observationVersion:`${this.state.marketGeneration}:${this.state.runtimeControl.capital.generation}:${this.state.account.asOf}`,
-      capacity:this.state.entryCapacity(),privateSync:this.privateSyncHealth(),
+      capacity:slotCapacity,privateSync:this.privateSyncHealth(),
+      capacityVisibility:portfolioCapacityVisibility(slotCapacity,this.state.runtimeControl.capital.directionBudget),
       pipelineState,
       marketDataReason,
       marketDataDetail: marketDataReason ? { streamState: stream.state, streamError: stream.lastError ?? null, quotesFresh: freshness.quoteFresh, orderBooksFresh: freshness.orderBookFresh } : null,

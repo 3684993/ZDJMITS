@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from "vue";
+import { computed, onMounted, onUnmounted, ref } from "vue";
 import { useSystemStore } from "../stores/system";
 import { api } from "../api/client";
 import { money } from "../format";
@@ -25,6 +25,25 @@ const entryPermissionText = () =>
       : autoMode() === "WEEKLY_REVIEW_PENDING"
         ? "旧验证窗口仅保留审计记录；新建仓由资金驱动模式管理"
         : `执行安全锁生效：${pipeline.value?.noEntryReason ?? autoMode()}`;
+// Slot fill and new-risk headroom are different gates, and both numbers already exist on the
+// Engine side. The page only picks which one explains the silence; it never re-adds exposures.
+const CAPACITY_BLOCKERS = ["POSITION_CAPACITY", "GROSS", "DIRECTION_LONG", "DIRECTION_SHORT"];
+const SUPPLY_SIDE_WAITS = ["WAITING_CANDIDATE", "WAITING_NEW_FACTS", "NO_SUPPLY", "RULE_FILTERED"];
+const capacityVisibility = computed(() => pipeline.value?.capacityVisibility ?? null);
+const capacityBlocked = computed(() => {
+  const view = capacityVisibility.value;
+  if (!view || !CAPACITY_BLOCKERS.includes(view.firstBlocker)) return null;
+  const eligible = pipeline.value?.eligibility?.count ?? 0;
+  const executable = pipeline.value?.runtimeControl?.capital?.executableCandidateCount ?? 0;
+  return eligible > 0 && executable === 0 ? view : null;
+});
+const firstExplanation = computed(() => {
+  const view = capacityBlocked.value;
+  if (view) return `CAPACITY_BLOCKED · Gross ${money(view.gross.notionalUsd)} / ${money(view.gross.limitUsd)}`;
+  const analysis = pipeline.value?.analysis;
+  return SUPPLY_SIDE_WAITS.includes(String(analysis?.reason ?? "")) ? (analysis?.text ?? "") : (pipeline.value?.noEntryReason ?? analysis?.text ?? "");
+});
+
 const labels: Record<string, string> = {
   market: "行情中心",
   restBudget: "交易所REST预算",
@@ -199,6 +218,57 @@ onUnmounted(() => {
           </dd>
         </div>
       </div>
+      <div v-if="capacityVisibility" class="facts wide" data-capacity-visibility>
+        <div>
+          <dt>仓位槽位（持仓 / 在途 / 预留）</dt>
+          <dd>
+            {{ capacityVisibility.slots.used }} / {{ capacityVisibility.slots.max }}（{{
+              capacityVisibility.slots.positions
+            }}/{{ capacityVisibility.slots.inFlight }}/{{ capacityVisibility.slots.reserved }}）
+          </dd>
+        </div>
+        <div>
+          <dt>组合总名义敞口 / 上限（剩余）</dt>
+          <dd>
+            {{ money(capacityVisibility.gross.notionalUsd) }} /
+            {{ money(capacityVisibility.gross.limitUsd) }}（剩余
+            {{ money(capacityVisibility.gross.remainingUsd) }}，已用
+            {{ (capacityVisibility.gross.usedPct * 100).toFixed(1) }}%）
+          </dd>
+        </div>
+        <div>
+          <dt>LONG 名义敞口 / 上限（剩余）</dt>
+          <dd>
+            {{ money(capacityVisibility.direction.LONG.notionalUsd) }} /
+            {{ money(capacityVisibility.direction.LONG.limitUsd) }}（剩余
+            {{ money(capacityVisibility.direction.LONG.remainingUsd) }}）
+          </dd>
+        </div>
+        <div>
+          <dt>SHORT 名义敞口 / 上限（剩余）</dt>
+          <dd>
+            {{ money(capacityVisibility.direction.SHORT.notionalUsd) }} /
+            {{ money(capacityVisibility.direction.SHORT.limitUsd) }}（剩余
+            {{ money(capacityVisibility.direction.SHORT.remainingUsd) }}）
+          </dd>
+        </div>
+        <div>
+          <dt>首个容量阻断</dt>
+          <dd>{{ capacityVisibility.firstBlocker }}</dd>
+        </div>
+      </div>
+      <div
+        v-if="capacityVisibility"
+        class="policy-card"
+        :class="capacityBlocked ? 'danger-lite' : ''"
+        data-caps-first-explanation
+      >
+        <strong>{{ firstExplanation }}</strong
+        ><span
+          >额度与槽位取自 Engine 同一次风险计算；此额度只限制新增 Entry 风险，不强平已有仓位，也不撤已有
+          TP/保护。持仓数未达上限不等于仍有新增风险额度。</span
+        >
+      </div>
       <div class="policy-card" :class="entryEnabled() ? '' : 'danger-lite'">
         <strong>{{ entryPermissionText() }}</strong
         ><span
@@ -288,7 +358,7 @@ onUnmounted(() => {
         <div
           v-for="(item, name) in pipeline"
           v-show="
-            !['asOf', 'observationVersion', 'capacity', 'privateSync', 'noEntryReason', 'work', 'stagnation', 'runtimeControl', 'pipelineState', 'marketDataReason', 'marketDataDetail'].includes(
+            !['asOf', 'observationVersion', 'capacity', 'capacityVisibility', 'privateSync', 'noEntryReason', 'work', 'stagnation', 'runtimeControl', 'pipelineState', 'marketDataReason', 'marketDataDetail'].includes(
               String(name),
             )
           "

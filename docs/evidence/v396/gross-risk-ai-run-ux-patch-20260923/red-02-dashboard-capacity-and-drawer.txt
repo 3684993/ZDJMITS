@@ -1,0 +1,204 @@
+
+[1m[46m RUN [49m[22m [36mv3.2.7 [39m[90mD:/MITS-worktrees/v396-final-convergence-20260922/apps/dashboard[39m
+
+[1m[43m DEPRECATED [49m[22m [33m'basic' reporter is deprecated and will be removed in Vitest v3.
+Remove 'basic' from 'reporters' option. To match 'basic' reporter 100%, use configuration:
+{
+  "test": {
+    "reporters": [
+      [
+        "default",
+        {
+          "summary": false
+        }
+      ]
+    ]
+  }
+}[39m
+[90mstderr[2m | src/views/OverviewView.capacity.test.ts[2m > [22m[2mseparates position slots from gross and direction exposure using the Engine projection verbatim
+[22m[39m[Vue warn]: Template compilation error: Invalid end tag.
+1  |  <div><slot/></slot></div>
+   |              ^
+  at <Anonymous title="最近 1 小时交易事实" subtitle="Binance 成交按系统归因与外部成交分开统计；外部成交只进入审计，不触发建仓循环。" >
+  at <OverviewView ref="VTU_COMPONENT" >
+  at <VTUROOT>
+
+ [31m❯[39m src/views/OverviewView.capacity.test.ts [2m([22m[2m4 tests[22m[2m | [22m[31m4 failed[39m[2m)[22m[32m 154[2mms[22m[39m
+[31m   [31m×[31m separates position slots from gross and direction exposure using the Engine projection verbatim[39m[32m 93[2mms[22m[39m
+[31m     → expected '总资产估值—真实资产 USD 估值浮动盈亏—当前持仓—已实现交易收益（不含…' to contain '27 / 50'[39m
+[31m   [31m×[31m reports the capacity blocker as the first explanation while eligible candidates exist[39m[32m 28[2mms[22m[39m
+[31m     → Cannot call text on an empty DOMWrapper.[39m
+[31m   [31m×[31m renders the projected numbers it is given instead of recomputing them[39m[32m 14[2mms[22m[39m
+[31m     → expected '总资产估值—真实资产 USD 估值浮动盈亏—当前持仓—已实现交易收益（不含…' to contain '$4,321.50'[39m
+[31m   [31m×[31m falls back to the supply explanation when there is genuinely no candidate[39m[32m 18[2mms[22m[39m
+[31m     → Cannot call text on an empty DOMWrapper.[39m
+ [31m❯[39m src/views/BrainView.auditDrawer.test.ts [2m([22m[2m6 tests[22m[2m | [22m[31m5 failed[39m[2m)[22m[32m 189[2mms[22m[39m
+[31m   [31m×[31m puts a close control at the top of the detail, before any audit content[39m[32m 102[2mms[22m[39m
+[31m     → expected false to be true // Object.is equality[39m
+[31m   [31m×[31m closes on Escape and keeps the bottom close as well[39m[32m 20[2mms[22m[39m
+[31m     → expected 1 to be greater than or equal to 2[39m
+[31m   [31m×[31m closes when focus leaves the detail for the surrounding app UI[39m[32m 22[2mms[22m[39m
+[31m     → expected true to be false // Object.is equality[39m
+   [32m✓[39m keeps the detail open for focus moves inside it, text selection and a null focus target[32m 13[2mms[22m[39m
+[31m   [31m×[31m never lets a late detail response reopen a closed drawer[39m[32m 14[2mms[22m[39m
+[31m     → Cannot call text on an empty DOMWrapper.[39m
+[31m   [31m×[31m returns focus to the row that opened the detail[39m[32m 15[2mms[22m[39m
+[31m     → Cannot call find on an empty DOMWrapper.[39m
+
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Suites 1 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m src/views/SettingsView.exposure.test.ts[2m [ src/views/SettingsView.exposure.test.ts ][22m
+[31m[1mTypeError[22m: The URL must be of scheme file[39m
+[36m [2m❯[22m src/views/SettingsView.exposure.test.ts:[2m14:29[22m[39m
+    [90m 12| [39m}))[33m;[39m
+    [90m 13| [39m
+    [90m 14| [39mconst defaults = JSON.parse(readFileSync(new URL('../../../config/sett…
+    [90m   | [39m                            [31m^[39m
+    [90m 15| [39m[35mconst[39m stored [33m=[39m (gross[33m:[39m number[33m,[39m direction[33m:[39m number) [33m=>[39m ({
+    [90m 16| [39m  [33m...[39mdefaults[33m,[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/10]⎯[22m[39m
+
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 9 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m src/views/BrainView.auditDrawer.test.ts[2m > [22mputs a close control at the top of the detail, before any audit content
+[31m[1mAssertionError[22m: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m src/views/BrainView.auditDrawer.test.ts:[2m38:25[22m[39m
+    [90m 36| [39m  [34mexpect[39m([34mdrawer[39m(wrapper)[33m.[39m[34mexists[39m())[33m.[39m[34mtoBe[39m([35mtrue[39m)[33m;[39m
+    [90m 37| [39m  [35mconst[39m head [33m=[39m [34mdrawer[39m(wrapper)[33m.[39m[34mfind[39m([32m'.audit-drawer-head'[39m)[33m;[39m
+    [90m 38| [39m  [34mexpect[39m(head[33m.[39m[34mexists[39m())[33m.[39m[34mtoBe[39m([35mtrue[39m)[33m;[39m
+    [90m   | [39m                        [31m^[39m
+    [90m 39| [39m  [34mexpect[39m(head[33m.[39m[34mtext[39m())[33m.[39m[34mtoContain[39m([32m'关闭'[39m)[33m;[39m
+    [90m 40| [39m  // The head is the first child of the scrolling container and sticks…
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/10]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/views/BrainView.auditDrawer.test.ts[2m > [22mcloses on Escape and keeps the bottom close as well
+[31m[1mAssertionError[22m: expected 1 to be greater than or equal to 2[39m
+[36m [2m❯[22m src/views/BrainView.auditDrawer.test.ts:[2m52:26[22m[39m
+    [90m 50| [39m  [35mconst[39m { wrapper } [33m=[39m [35mawait[39m [34mopen[39m()[33m;[39m
+    [90m 51| [39m  const buttons = drawer(wrapper).findAll('button').filter(node => nod…
+    [90m 52| [39m  [34mexpect[39m(buttons[33m.[39mlength)[33m.[39m[34mtoBeGreaterThanOrEqual[39m([34m2[39m)[33m;[39m
+    [90m   | [39m                         [31m^[39m
+    [90m 53| [39m  window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', b…
+    [90m 54| [39m  [35mawait[39m [34mflushPromises[39m()[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/10]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/views/BrainView.auditDrawer.test.ts[2m > [22mcloses when focus leaves the detail for the surrounding app UI
+[31m[1mAssertionError[22m: expected true to be false // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- false[39m
+[31m+ true[39m
+
+[36m [2m❯[22m src/views/BrainView.auditDrawer.test.ts:[2m63:36[22m[39m
+    [90m 61| [39m  drawer(wrapper).element.dispatchEvent(new FocusEvent('focusout', { r…
+    [90m 62| [39m  [35mawait[39m [34mflushPromises[39m()[33m;[39m
+    [90m 63| [39m  [34mexpect[39m([34mdrawer[39m(wrapper)[33m.[39m[34mexists[39m())[33m.[39m[34mtoBe[39m([35mfalse[39m)[33m;[39m
+    [90m   | [39m                                   [31m^[39m
+    [90m 64| [39m})[33m;[39m
+    [90m 65| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/10]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/views/BrainView.auditDrawer.test.ts[2m > [22mnever lets a late detail response reopen a closed drawer
+[31m[1mError[22m: Cannot call text on an empty DOMWrapper.[39m
+[36m [2m❯[22m Object.get ../../../v396-design-completion-20260921/node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:[2m1482:27[22m[39m
+    [90m1480| [39m                    return () => false;
+    [90m1481| [39m                default:
+    [90m1482| [39m                    throw new Error(`Cannot call ${String(prop)} on an…
+    [90m   | [39m                          [31m^[39m
+    [90m1483| [39m            }
+    [90m1484| [39m        }
+[90m [2m❯[22m src/views/BrainView.auditDrawer.test.ts:[2m85:24[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/10]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/views/BrainView.auditDrawer.test.ts[2m > [22mreturns focus to the row that opened the detail
+[31m[1mError[22m: Cannot call find on an empty DOMWrapper.[39m
+[36m [2m❯[22m Object.get ../../../v396-design-completion-20260921/node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:[2m1482:27[22m[39m
+    [90m1480| [39m                    return () => false;
+    [90m1481| [39m                default:
+    [90m1482| [39m                    throw new Error(`Cannot call ${String(prop)} on an…
+    [90m   | [39m                          [31m^[39m
+    [90m1483| [39m            }
+    [90m1484| [39m        }
+[90m [2m❯[22m src/views/BrainView.auditDrawer.test.ts:[2m98:44[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/10]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/views/OverviewView.capacity.test.ts[2m > [22mseparates position slots from gross and direction exposure using the Engine projection verbatim
+[31m[1mAssertionError[22m: expected '总资产估值—真实资产 USD 估值浮动盈亏—当前持仓—已实现交易收益（不含…' to contain '27 / 50'[39m
+
+Expected: [32m"27 / 50"[39m
+Received: [31m"总资产估值—真实资产 USD 估值浮动盈亏—当前持仓—已实现交易收益（不含资金费）$0.00正式净收益 $0.00 · 0 个完整周期活动委托0Entry fills0Exit fills0Closed trades0Net PnL$0.00External / unlinked fills0自动执行模式 禁止自动建仓分析管线状态 ANALYSIS_ONLY：仅分析，交易写锁定；CAPACITY_BLOCKED 最近调度：本实例尚未派发；最近分析成功：本实例暂无；静默 0 分钟；资本候选 0Entry Safety可执行候选0 / 最低 1USDT 可用 / 可路由标的$1,200.00 / 0USDC 可用 / 可路由标的$0.00 / 0下次资金检查—实际路由暂无ANALYSIS_ONLY：仅分析，交易写锁定；CAPACITY_BLOCKED行情、私有数据、对账、持仓、止盈和人工控制台不受该 Entry 权限影响。 >LONG exposure$0.00 / 0.0% SHORT exposure$0.00 / 0.0% Speculative$0.00 / 0.0% Allocation Plans0asOfpipelineStatenoEntryReason资格筛选6runtimeControl下单许可analysisPrimary 本次运行capacityVisibility事实时间：08:00:00；容量：— / —当前：等待运行数据最近方向 / 决策：— / —下一步：—当前未建新仓：WAITING_EXECUTION_CAPACITY新建仓流水线暂停时，已有仓位和保护链不受影响。AI completed / failed (30m)0 / 0Schema / normalized0 / 0Cooldown / quarantine0 / 0Next candidate—上次未建仓：—；下一步：—。USDT 可用$1,200.00USDT 可执行保证金$1,200.00USDC 可用$0.00USDC 可执行保证金$0.00Primary 30m0PLACE / REJECT0 / 0Submit / Fill0 / 0资产钱包余额可用USD 估值保证金资产"[39m
+
+[36m [2m❯[22m src/views/OverviewView.capacity.test.ts:[2m45:16[22m[39m
+    [90m 43| [39m  [35mconst[39m wrapper [33m=[39m [35mawait[39m [34mopen[39m(blocked)[33m;[39m
+    [90m 44| [39m  [35mconst[39m text [33m=[39m wrapper[33m.[39m[34mtext[39m()[33m;[39m
+    [90m 45| [39m  [34mexpect[39m(text)[33m.[39m[34mtoContain[39m([32m'27 / 50'[39m)[33m;[39m
+    [90m   | [39m               [31m^[39m
+    [90m 46| [39m  [34mexpect[39m(text)[33m.[39m[34mtoContain[39m([32m'$10,494.31'[39m)[33m;[39m
+    [90m 47| [39m  [34mexpect[39m(text)[33m.[39m[34mtoContain[39m([32m'$10,504.73'[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/10]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/views/OverviewView.capacity.test.ts[2m > [22mreports the capacity blocker as the first explanation while eligible candidates exist
+[31m[1mError[22m: Cannot call text on an empty DOMWrapper.[39m
+[36m [2m❯[22m Object.get ../../../v396-design-completion-20260921/node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:[2m1482:27[22m[39m
+    [90m1480| [39m                    return () => false;
+    [90m1481| [39m                default:
+    [90m1482| [39m                    throw new Error(`Cannot call ${String(prop)} on an…
+    [90m   | [39m                          [31m^[39m
+    [90m1483| [39m            }
+    [90m1484| [39m        }
+[90m [2m❯[22m src/views/OverviewView.capacity.test.ts:[2m57:64[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/10]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/views/OverviewView.capacity.test.ts[2m > [22mrenders the projected numbers it is given instead of recomputing them
+[31m[1mAssertionError[22m: expected '总资产估值—真实资产 USD 估值浮动盈亏—当前持仓—已实现交易收益（不含…' to contain '$4,321.50'[39m
+
+Expected: [32m"$4,321.50"[39m
+Received: [31m"总资产估值—真实资产 USD 估值浮动盈亏—当前持仓—已实现交易收益（不含资金费）$0.00正式净收益 $0.00 · 0 个完整周期活动委托0Entry fills0Exit fills0Closed trades0Net PnL$0.00External / unlinked fills0自动执行模式 禁止自动建仓分析管线状态 ANALYSIS_ONLY：仅分析，交易写锁定；CAPACITY_BLOCKED 最近调度：本实例尚未派发；最近分析成功：本实例暂无；静默 0 分钟；资本候选 0Entry Safety可执行候选0 / 最低 1USDT 可用 / 可路由标的$1,200.00 / 0USDC 可用 / 可路由标的$0.00 / 0下次资金检查—实际路由暂无ANALYSIS_ONLY：仅分析，交易写锁定；CAPACITY_BLOCKED行情、私有数据、对账、持仓、止盈和人工控制台不受该 Entry 权限影响。 >LONG exposure$0.00 / 0.0% SHORT exposure$0.00 / 0.0% Speculative$0.00 / 0.0% Allocation Plans0asOfpipelineStatenoEntryReason资格筛选6runtimeControl下单许可analysisPrimary 本次运行capacityVisibility事实时间：08:00:00；容量：— / —当前：等待运行数据最近方向 / 决策：— / —下一步：—当前未建新仓：WAITING_EXECUTION_CAPACITY新建仓流水线暂停时，已有仓位和保护链不受影响。AI completed / failed (30m)0 / 0Schema / normalized0 / 0Cooldown / quarantine0 / 0Next candidate—上次未建仓：—；下一步：—。USDT 可用$1,200.00USDT 可执行保证金$1,200.00USDC 可用$0.00USDC 可执行保证金$0.00Primary 30m0PLACE / REJECT0 / 0Submit / Fill0 / 0资产钱包余额可用USD 估值保证金资产"[39m
+
+[36m [2m❯[22m src/views/OverviewView.capacity.test.ts:[2m71:16[22m[39m
+    [90m 69| [39m  [35mconst[39m wrapper [33m=[39m [35mawait[39m [34mopen[39m(mutated)[33m;[39m
+    [90m 70| [39m  [35mconst[39m text [33m=[39m wrapper[33m.[39m[34mtext[39m()[33m;[39m
+    [90m 71| [39m  [34mexpect[39m(text)[33m.[39m[34mtoContain[39m([32m'$4,321.50'[39m)[33m;[39m
+    [90m   | [39m               [31m^[39m
+    [90m 72| [39m  [34mexpect[39m(text)[33m.[39m[34mtoContain[39m([32m'12.3%'[39m)[33m;[39m
+    [90m 73| [39m  [34mexpect[39m(text)[33m.[39m[34mtoContain[39m([32m'DIRECTION_LONG'[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/10]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/views/OverviewView.capacity.test.ts[2m > [22mfalls back to the supply explanation when there is genuinely no candidate
+[31m[1mError[22m: Cannot call text on an empty DOMWrapper.[39m
+[36m [2m❯[22m Object.get ../../../v396-design-completion-20260921/node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js:[2m1482:27[22m[39m
+    [90m1480| [39m                    return () => false;
+    [90m1481| [39m                default:
+    [90m1482| [39m                    throw new Error(`Cannot call ${String(prop)} on an…
+    [90m   | [39m                          [31m^[39m
+    [90m1483| [39m            }
+    [90m1484| [39m        }
+[90m [2m❯[22m src/views/OverviewView.capacity.test.ts:[2m89:64[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/10]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m3 failed[39m[22m[90m (3)[39m
+[2m      Tests [22m [1m[31m9 failed[39m[22m[2m | [22m[1m[32m1 passed[39m[22m[90m (10)[39m
+[2m   Start at [22m 15:49:17
+[2m   Duration [22m 2.41s[2m (transform 965ms, setup 0ms, collect 1.23s, tests 343ms, environment 2.86s, prepare 551ms)[22m

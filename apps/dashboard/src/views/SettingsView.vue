@@ -113,6 +113,16 @@ const humanManagedNotionalPercent=computed({
   get:()=>Number(draft.value?.positionManagement.maxHumanManagedNotionalPctEquity??0)*100,
   set:(value:number)=>{if(draft.value){draft.value.positionManagement.maxHumanManagedNotionalPctEquity=Number(value)/100;markTradingProfileCustom();}},
 });
+// Both exposure caps are stored as ratios (1 = 100% equity); the page edits percent and divides by
+// exactly 100 on the way back, so a saved 100 can never land as 10000.
+const grossExposurePercent=computed({
+  get:()=>Number(draft.value?.riskGovernance.maxGrossExposurePct??0)*100,
+  set:(value:number)=>{if(draft.value)draft.value.riskGovernance.maxGrossExposurePct=Number(value)/100;},
+});
+const directionExposurePercent=computed({
+  get:()=>Number(draft.value?.riskGovernance.maxDirectionExposurePct??0)*100,
+  set:(value:number)=>{if(draft.value)draft.value.riskGovernance.maxDirectionExposurePct=Number(value)/100;},
+});
 function applySelectedTradingProfile(){
   if(!draft.value)return;
   applyTradingParameterProfile(draft.value,draft.value.tradeEconomics.parameterProfile as TradingParameterProfile);
@@ -283,6 +293,14 @@ onMounted(load);
             <option v-for="[id,label] in tradingProfileOptions" :key="id" :value="id">{{ label }}</option>
           </select>
           <span>保守 / 默认 / 激进会一次性写入对应参数；单项修改后自动标记为“自定义”。档位选择不会暗中切换经济性准入模式。</span>
+        </div>
+        <div class="policy-callout">
+          <strong>组合暴露上限</strong>
+          <div class="form-grid four">
+            <label><span>组合总名义敞口上限（占权益 %）</span><input v-model.number="grossExposurePercent" type="number" min="0.01" max="2000" step="1" /></label>
+            <label><span>单方向名义敞口上限（占权益 %）</span><input v-model.number="directionExposurePercent" type="number" min="0.01" max="2000" step="1" /></label>
+          </div>
+          <span>页面按百分比显示，保存时精确除以 100 写回后端比例（100% 即比例 1）。此额度只限制新增 Entry 风险：不强平已有仓位，也不撤已有 TP/保护。最大持仓数量与组合总敞口是两条独立限制；即使持仓数小于上限，总敞口或单方向额度任一耗尽仍会 CAPACITY_BLOCKED。提高额度只能由操作员显式编辑并保存，系统不会按持仓数量推导或为恢复交易自动放宽。技术上限 2000% 只是取值边界，不代表建议值。</span>
         </div>
         <div class="form-grid four">
           <label><span>经济性准入模式</span><select v-model="draft.tradeEconomics.admissionMode"><option value="OFF">关闭</option><option value="SHADOW">影子观察（只记录不拦截）</option><option value="ENFORCE">强制执行（不满足则拒绝建仓）</option></select></label>

@@ -1,0 +1,181 @@
+VITEST_TEST_TIMEOUT=5000 CI=
+
+[1m[46m RUN [49m[22m [36mv3.2.7 [39m[90mD:/MITS-worktrees/v396-final-convergence-20260922/apps/engine[39m
+
+[1m[43m DEPRECATED [49m[22m [33m'basic' reporter is deprecated and will be removed in Vitest v3.
+Remove 'basic' from 'reporters' option. To match 'basic' reporter 100%, use configuration:
+{
+  "test": {
+    "reporters": [
+      [
+        "default",
+        {
+          "summary": false
+        }
+      ]
+    ]
+  }
+}[39m
+(node:45344) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [31m❯[39m src/services/grossRiskCapacityVisibility.test.ts [2m([22m[2m10 tests[22m[2m | [22m[31m9 failed[39m[2m)[22m[32m 37[2mms[22m[39m
+[31m   [31m×[31m gross and direction exposure headroom projection[2m > [22mprojects the dynamic limits from equity x the stored ratio and leaves the gate outputs unchanged[39m[32m 13[2mms[22m[39m
+[31m     → expected undefined to be 10000 // Object.is equality[39m
+[31m   [31m×[31m gross and direction exposure headroom projection[2m > [22mreads the stored ratio: 1 = 100% equity, 2 = 200% equity, 0.5 = 50% per direction[39m[32m 2[2mms[22m[39m
+[31m     → expected undefined to be 10000 // Object.is equality[39m
+[31m   [31m×[31m gross and direction exposure headroom projection[2m > [22mbinds the first capacity blocker in the order the gates themselves run[39m[32m 1[2mms[22m[39m
+[31m     → (0 , portfolioCapacityVisibility) is not a function[39m
+[31m   [31m×[31m gross and direction exposure headroom projection[2m > [22mrecovers headroom from a manual reduction with no threshold, mode or restart change[39m[32m 1[2mms[22m[39m
+[31m     → (0 , portfolioCapacityVisibility) is not a function[39m
+   [32m✓[39m gross and direction exposure headroom projection[2m > [22mexposes both caps through the existing governance write boundary as NEXT_ENTRY_CYCLE ratios[32m 1[2mms[22m[39m
+[31m   [31m×[31m gross and direction exposure headroom projection[2m > [22mraises only future admission when the operator raises a cap, never an existing position[39m[32m 2[2mms[22m[39m
+[31m     → expected undefined to be NaN // Object.is equality[39m
+[31m   [31m×[31m capacity starvation is never reported as a missing candidate[2m > [22mnames the capacity blocker while eligible candidates exist but no risk headroom does[39m[32m 7[2mms[22m[39m
+[31m     → (0 , portfolioCapacityVisibility) is not a function[39m
+[31m   [31m×[31m capacity starvation is never reported as a missing candidate[2m > [22mstill says WAITING_CANDIDATE when there is genuinely no supply[39m[32m 3[2mms[22m[39m
+[31m     → (0 , portfolioCapacityVisibility) is not a function[39m
+[31m   [31m×[31m capacity starvation is never reported as a missing candidate[2m > [22mresumes PRIMARY on the next tick after a manual reduction, with every exchange write still zero[39m[32m 4[2mms[22m[39m
+[31m     → (0 , portfolioCapacityVisibility) is not a function[39m
+[31m   [31m×[31m capacity starvation is never reported as a missing candidate[2m > [22mtypes the projection against the same directionBudget result the gates consume[39m[32m 2[2mms[22m[39m
+[31m     → (0 , portfolioCapacityVisibility) is not a function[39m
+
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 9 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m src/services/grossRiskCapacityVisibility.test.ts[2m > [22mgross and direction exposure headroom projection[2m > [22mprojects the dynamic limits from equity x the stored ratio and leaves the gate outputs unchanged
+[31m[1mAssertionError[22m: expected undefined to be 10000 // Object.is equality[39m
+
+[32m- Expected:[39m
+10000
+
+[31m+ Received:[39m
+undefined
+
+[36m [2m❯[22m src/services/grossRiskCapacityVisibility.test.ts:[2m28:30[22m[39m
+    [90m 26| [39m    [35mconst[39m at [33m=[39m [33mDate[39m[33m.[39m[34mnow[39m()[33m;[39m
+    [90m 27| [39m    const budget = directionBudget(settings(1), 10_000, [position('AAA…
+    [90m 28| [39m    [34mexpect[39m(budget[33m.[39mequityUsd)[33m.[39m[34mtoBe[39m([34m10_000[39m)[33m;[39m
+    [90m   | [39m                             [31m^[39m
+    [90m 29| [39m    [34mexpect[39m(budget[33m.[39mgrossLimitUsd)[33m.[39m[34mtoBe[39m([34m10_000[39m)[33m;[39m
+    [90m 30| [39m    [34mexpect[39m(budget[33m.[39mdirectionLimitUsd)[33m.[39m[34mtoBe[39m([34m5_000[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/9]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/services/grossRiskCapacityVisibility.test.ts[2m > [22mgross and direction exposure headroom projection[2m > [22mreads the stored ratio: 1 = 100% equity, 2 = 200% equity, 0.5 = 50% per direction
+[31m[1mAssertionError[22m: expected undefined to be 10000 // Object.is equality[39m
+
+[32m- Expected:[39m
+10000
+
+[31m+ Received:[39m
+undefined
+
+[36m [2m❯[22m src/services/grossRiskCapacityVisibility.test.ts:[2m43:80[22m[39m
+    [90m 41| [39m
+    [90m 42| [39m  it('reads the stored ratio: 1 = 100% equity, 2 = 200% equity, 0.5 = …
+    [90m 43| [39m    expect(directionBudget(settings(1), 10_000, [], Date.now()).grossL…
+    [90m   | [39m                                                                               [31m^[39m
+    [90m 44| [39m    expect(directionBudget(settings(2), 10_000, [], Date.now()).grossL…
+    [90m 45| [39m    expect(directionBudget(settings(0.5), 10_000, [], Date.now()).dire…
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/9]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/services/grossRiskCapacityVisibility.test.ts[2m > [22mgross and direction exposure headroom projection[2m > [22mbinds the first capacity blocker in the order the gates themselves run
+[31m[1mTypeError[22m: (0 , portfolioCapacityVisibility) is not a function[39m
+[36m [2m❯[22m src/services/grossRiskCapacityVisibility.test.ts:[2m51:21[22m[39m
+    [90m 49| [39m  it('binds the first capacity blocker in the order the gates themselv…
+    [90m 50| [39m    const full = [position('BTCUSDT', 'LONG', 0.1, 86_000), position('…
+    [90m 51| [39m    const blocked = portfolioCapacityVisibility(slots(27), directionBu…
+    [90m   | [39m                    [31m^[39m
+    [90m 52| [39m    [34mexpect[39m(blocked[33m.[39mgross[33m.[39mremainingUsd)[33m.[39m[34mtoBe[39m([34m0[39m)[33m;[39m
+    [90m 53| [39m    [34mexpect[39m(blocked[33m.[39mfirstBlocker)[33m.[39m[34mtoBe[39m([32m'GROSS'[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/9]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/services/grossRiskCapacityVisibility.test.ts[2m > [22mgross and direction exposure headroom projection[2m > [22mrecovers headroom from a manual reduction with no threshold, mode or restart change
+[31m[1mTypeError[22m: (0 , portfolioCapacityVisibility) is not a function[39m
+[36m [2m❯[22m src/services/grossRiskCapacityVisibility.test.ts:[2m71:20[22m[39m
+    [90m 69| [39m    [35mconst[39m s [33m=[39m [34msettings[39m([34m1[39m)[33m;[39m
+    [90m 70| [39m    const full = [position('BTCUSDT', 'LONG', 0.1, 86_000), position('…
+    [90m 71| [39m    const before = portfolioCapacityVisibility(slots(2), directionBudg…
+    [90m   | [39m                   [31m^[39m
+    [90m 72| [39m    [34mexpect[39m(before[33m.[39mfirstBlocker)[33m.[39m[34mtoBe[39m([32m'GROSS'[39m)[33m;[39m
+    [90m 73| [39m    const after = portfolioCapacityVisibility(slots(1), directionBudge…
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/9]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/services/grossRiskCapacityVisibility.test.ts[2m > [22mgross and direction exposure headroom projection[2m > [22mraises only future admission when the operator raises a cap, never an existing position
+[31m[1mAssertionError[22m: expected undefined to be NaN // Object.is equality[39m
+
+[32m- Expected:[39m
+NaN
+
+[31m+ Received:[39m
+undefined
+
+[36m [2m❯[22m src/services/grossRiskCapacityVisibility.test.ts:[2m90:33[22m[39m
+    [90m 88| [39m    const before = directionBudget(settings(1), 10_000, [...rows.value…
+    [90m 89| [39m    const after = directionBudget(settings(2), 10_000, [...rows.values…
+    [90m 90| [39m    [34mexpect[39m(after[33m.[39mgrossLimitUsd)[33m.[39m[34mtoBe[39m(before[33m.[39mgrossLimitUsd [33m*[39m [34m2[39m)[33m;[39m
+    [90m   | [39m                                [31m^[39m
+    [90m 91| [39m    [34mexpect[39m(after[33m.[39mgrossNotionalUsd)[33m.[39m[34mtoBe[39m(before[33m.[39mgrossNotionalUsd)[33m;[39m
+    [90m 92| [39m    expect(held).toEqual({ symbol: 'BTCUSDT', side: 'LONG', quantity: …
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/9]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/services/grossRiskCapacityVisibility.test.ts[2m > [22mcapacity starvation is never reported as a missing candidate[2m > [22mnames the capacity blocker while eligible candidates exist but no risk headroom does
+[31m[1mTypeError[22m: (0 , portfolioCapacityVisibility) is not a function[39m
+[36m [2m❯[22m sync src/services/grossRiskCapacityVisibility.test.ts:[2m115:14[22m[39m
+    [90m113| [39m      const budget = directionBudget(h.state.settings, Number(h.state.…
+    [90m114| [39m      h[33m.[39mstate[33m.[39mruntimeControl[33m.[39mcapital[33m.[39mdirectionBudget [33m=[39m budget [35mas[39m never[33m;[39m
+    [90m115| [39m      return portfolioCapacityVisibility(h.state.entryCapacity(), budg…
+    [90m   | [39m             [31m^[39m
+    [90m116| [39m    }[33m;[39m
+    [90m117| [39m    return { h, setIdle, sync, lastIdle: () => setIdle.mock.calls.at(-…
+[90m [2m❯[22m src/services/grossRiskCapacityVisibility.test.ts:[2m122:12[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/9]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/services/grossRiskCapacityVisibility.test.ts[2m > [22mcapacity starvation is never reported as a missing candidate[2m > [22mstill says WAITING_CANDIDATE when there is genuinely no supply
+[31m[1mTypeError[22m: (0 , portfolioCapacityVisibility) is not a function[39m
+[36m [2m❯[22m sync src/services/grossRiskCapacityVisibility.test.ts:[2m115:14[22m[39m
+    [90m113| [39m      const budget = directionBudget(h.state.settings, Number(h.state.…
+    [90m114| [39m      h[33m.[39mstate[33m.[39mruntimeControl[33m.[39mcapital[33m.[39mdirectionBudget [33m=[39m budget [35mas[39m never[33m;[39m
+    [90m115| [39m      return portfolioCapacityVisibility(h.state.entryCapacity(), budg…
+    [90m   | [39m             [31m^[39m
+    [90m116| [39m    }[33m;[39m
+    [90m117| [39m    return { h, setIdle, sync, lastIdle: () => setIdle.mock.calls.at(-…
+[90m [2m❯[22m src/services/grossRiskCapacityVisibility.test.ts:[2m135:12[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/9]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/services/grossRiskCapacityVisibility.test.ts[2m > [22mcapacity starvation is never reported as a missing candidate[2m > [22mresumes PRIMARY on the next tick after a manual reduction, with every exchange write still zero
+[31m[1mTypeError[22m: (0 , portfolioCapacityVisibility) is not a function[39m
+[36m [2m❯[22m sync src/services/grossRiskCapacityVisibility.test.ts:[2m115:14[22m[39m
+    [90m113| [39m      const budget = directionBudget(h.state.settings, Number(h.state.…
+    [90m114| [39m      h[33m.[39mstate[33m.[39mruntimeControl[33m.[39mcapital[33m.[39mdirectionBudget [33m=[39m budget [35mas[39m never[33m;[39m
+    [90m115| [39m      return portfolioCapacityVisibility(h.state.entryCapacity(), budg…
+    [90m   | [39m             [31m^[39m
+    [90m116| [39m    }[33m;[39m
+    [90m117| [39m    return { h, setIdle, sync, lastIdle: () => setIdle.mock.calls.at(-…
+[90m [2m❯[22m src/services/grossRiskCapacityVisibility.test.ts:[2m143:5[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/9]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/services/grossRiskCapacityVisibility.test.ts[2m > [22mcapacity starvation is never reported as a missing candidate[2m > [22mtypes the projection against the same directionBudget result the gates consume
+[31m[1mTypeError[22m: (0 , portfolioCapacityVisibility) is not a function[39m
+[36m [2m❯[22m src/services/grossRiskCapacityVisibility.test.ts:[2m168:24[22m[39m
+    [90m166| [39m
+    [90m167| [39m  it('types the projection against the same directionBudget result the…
+    [90m168| [39m    const visibility = portfolioCapacityVisibility(slots(27), directio…
+    [90m   | [39m                       [31m^[39m
+    [90m169| [39m    expect(Object.keys(visibility).sort()).toEqual(['direction', 'eval…
+    [90m170| [39m    expect(visibility.direction.LONG).toMatchObject({ notionalUsd: 1_0…
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/9]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m9 failed[39m[22m[2m | [22m[1m[32m1 passed[39m[22m[90m (10)[39m
+[2m   Start at [22m 15:22:13
+[2m   Duration [22m 2.85s[2m (transform 1.00s, setup 0ms, collect 1.52s, tests 37ms, environment 0ms, prepare 740ms)[22m

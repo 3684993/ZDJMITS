@@ -1,0 +1,53 @@
+{
+  "capturedAt": "2026-09-23T08:28:57.068Z",
+  "note": "只读 GET；本轮未启停 Engine、未修改 live Settings/DB、未部署本轮构建（因此下列 payload 不含 capacityVisibility）。",
+  "health": {
+    "status": "READY",
+    "ready": true,
+    "releaseVersion": "3.9.6",
+    "pid": 31776,
+    "uptimeMs": 11197780
+  },
+  "writeBoundary": {
+    "environment": "TESTNET",
+    "executionMode": "READ_ONLY",
+    "lockedToTestnet": true,
+    "testnetWrites": 0,
+    "productionWrites": 0,
+    "blockedProductionWriteAttempts": 9,
+    "lastWriteAt": null,
+    "lastWritePath": null
+  },
+  "pipeline": {
+    "noEntryReason": "ENTRY_BLOCKED",
+    "eligibility": {
+      "status": "READY",
+      "count": 10,
+      "cooldown": 0,
+      "excluded": 14
+    },
+    "capacity": {
+      "positions": 14,
+      "inFlight": 1,
+      "reserved": 0,
+      "used": 15,
+      "max": 50
+    },
+    "analysis": {
+      "reason": "AI_RESOURCE_BUSY",
+      "text": "ANALYSIS_ONLY：仅分析，交易写锁定；AI_RESOURCE_BUSY",
+      "capitalExecutableCount": 10
+    },
+    "primaryNextStep": "正在处理 ADAUSDC",
+    "runningCapitalDirectionBudget": {
+      "longAvailableNotionalUsd": 651.5992259022496,
+      "shortAvailableNotionalUsd": 0,
+      "grossAvailableNotionalUsd": 651.5992259022496,
+      "evaluatedAt": 1790152136840
+    },
+    "executableCandidateCount": 10,
+    "usdtAvailable": 3637.8287719,
+    "usdcAvailable": 4973.56111058,
+    "capacityVisibilityPresent": false
+  }
+}

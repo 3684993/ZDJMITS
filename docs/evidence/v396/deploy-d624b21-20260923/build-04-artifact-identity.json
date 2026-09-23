@@ -1,0 +1,22 @@
+{
+  "method": "apps/engine/dist/runtime/runtimeIdentity.js#contentTreeHash, the same function the runtime uses to write engine-instance.json",
+  "preDeployArtifactHash": "17b70933748fb230d5b7fa1ec5f41f9fff3970b59fa4b131d79f2dbe2139362c",
+  "preDeployMatchesRunningBuildId": true,
+  "runningInstanceBeforeDeploy": { "pid": 31776, "buildId": "3.9.6-17b70933748fb230d5b7", "sourceHash": "ad238312608c9a92b4dbf9d85f7d5de643957e47b0f201696c0888b2c825dda1" },
+  "expectedAfterBuild": {
+    "buildId": "3.9.6-2fb37e445af4d3d351da",
+    "artifactHash": "2fb37e445af4d3d351da89d17899c9597dd3ab2b180b08896c8c5865130f84c8",
+    "sourceHash": "501d95e218a4fef767a3cda7d72fe7a2097c9b50158167bbd96e4c0f902a6277"
+  },
+  "sourceBaselineCommit": "d624b21a2fd2455fbc78bee3f7a27c65d700b653",
+  "deployedHeadCommit": "4a9330f6d5161d203877a4c9de57ad6ee585b6f2",
+  "artifactContentChecks": {
+    "apps/engine/dist/runtime/appRuntime.js contains capacityVisibility": true,
+    "apps/engine/dist/services/riskReadiness.js contains portfolioCapacityVisibility": true,
+    "apps/engine/dist/services/entryCoordinator.js contains portfolioCapacityVisibility": true,
+    "dashboard SettingsView chunk contains 组合暴露上限": true,
+    "dashboard BrainView chunk contains audit-drawer-head": true,
+    "dashboard OverviewView chunk contains data-caps-first-explanation / 首个容量阻断": true
+  },
+  "restorePoint": "D:/MITS-backups/deploy-d624b21-20260923/pre-dist (engine-dist, dashboard-dist copied before overwrite)"
+}

@@ -1,0 +1,67 @@
+{
+  "finding": "P1 · 已部署的容量首因把“单方向额度已满”说成“新增风险额度已用尽”",
+  "severity": "P1（操作员可见根因不真实；可能诱导无必要地提高额度，正是计划禁止的方向）",
+  "status": "OPEN — 本轮按授权停止线未修改源码、未再次重启",
+  "introducedBy": "d624b21（apps/engine/src/services/entryCoordinator.ts processPool 空 ready 分支）",
+  "observedOn": {
+    "instance": "PID 26784 / buildId 3.9.6-2fb37e445af4d3d351da / instanceId 2b534955-4bce-4c0f-bb28-a96a289dfaba",
+    "settingsVersion": 190,
+    "permission": "TESTNET + READ_ONLY + aiExitAuthority=SHADOW"
+  },
+  "liveSamples": [
+    {
+      "sample": "t1",
+      "capturedAt": "2026-09-23T17:24+08:00",
+      "eligibleCandidates": 1,
+      "capitalExecutableCandidates": 1,
+      "primaryIdleReason": "WAITING_EXECUTION_CAPACITY",
+      "primaryNextStep": "新增风险额度已用尽：DIRECTION_SHORT（Gross $9757.18 / $10465.88，槽位 14/50）；继续供给与订单维护",
+      "capacityVisibility": {
+        "firstBlocker": "DIRECTION_SHORT",
+        "grossRemainingUsd": 708.7,
+        "longRemainingUsd": 708.7,
+        "shortRemainingUsd": 0,
+        "slots": "14/50"
+      },
+      "whyWrong": "Gross 与 LONG 各仍有 $708.70 新增风险额度，且资本预检已有 1 个可执行候选；此时说“新增风险额度已用尽”不真实"
+    },
+    {
+      "sample": "t2",
+      "eligibleCandidates": 3,
+      "capitalExecutableCandidates": 3,
+      "primaryIdleReason": "WAITING_EXECUTION_CAPACITY",
+      "primaryNextStep": "新增风险额度已用尽：DIRECTION_SHORT（Gross $9757.18 / $10470.10，槽位 14/50）；继续供给与订单维护",
+      "capacityVisibility": {
+        "firstBlocker": "DIRECTION_SHORT",
+        "grossRemainingUsd": 712.92,
+        "longRemainingUsd": 712.92,
+        "shortRemainingUsd": 0
+      },
+      "whyWrong": "同上：3 个资本可执行候选存在，组合额度未用尽；真实阻断是单候选层（同底层占用/池内可运行性），不是组合预算"
+    },
+    {
+      "sample": "t3",
+      "note": "同一实例随后 Primary 正常处理候选（idle=AI_RESOURCE_BUSY，next=正在处理 UNIUSDT），说明 t1/t2 的“额度已用尽”并非当时的真实状态",
+      "capitalExecutableCandidates": 6,
+      "eligibleCandidates": 6
+    }
+  ],
+  "selfContradictionObservedLive": "同一时刻驾驶舱容量卡的主解释走的是另一条判断（要求 capitalExecutableCount===0），因此显示 ENTRY_BLOCKED 而非 CAPACITY_BLOCKED；Engine 文案与页面卡片对同一事实给出不同结论",
+  "rootCause": {
+    "code": "apps/engine/src/services/entryCoordinator.ts:154-165",
+    "predicate": "capacityBlocked = (routes.size > 0 || universe.some(eligible)) && OCCUPIED_CAPACITY_BLOCKERS.includes(capacity.firstBlocker)",
+    "defect": "firstBlocker 是“第一个已饱和的维度”。LONG 与 SHORT 是相互独立的方向：只有一侧满（另一侧仍有 $708.70）时组合仍有新增风险额度，但该谓词把它当成“额度已用尽”。真正决定“被容量挡住”的事实是资本预检的逐候选结论 capital.executableCandidateCount===0（其内部已含 gross/direction/cluster/margin 判断）。",
+    "missingTest": "离线红测只覆盖了 gross 满、单方向满的投影值，以及 gross 满时的 idle 文案；没有覆盖“一侧满 + 另一侧有余量 + 存在资本可执行候选”这一线上真实组合同时对 idle 文案的断言。"
+  },
+  "proposedFixNextRound": {
+    "offlineOnly": true,
+    "redFirst": "新增红测：LONG 有剩、SHORT 为 0、capital.executableCandidateCount>0 且存在 eligible 候选时，idle 不得为 WAITING_EXECUTION_CAPACITY，也不得出现“已用尽”；同时保留 gross 满/双向满/槽位满三种情形的现有断言",
+    "predicateChange": "capacityBlocked 需同时要求候选存在与 capital.executableCandidateCount===0；方向类首因措辞改为“该方向额度已满（SHORT 剩余 $0.00）”，只有 gross 或双向都无余量时才写“新增风险额度已用尽”",
+    "noTuning": "不改 maxGrossExposurePct / maxDirectionExposurePct / maxPositions，不改风险算法，不删既有断言"
+  },
+  "unresolvedMinorObservation": {
+    "what": "一次浏览器读取显示“下一步：无可执行容量：当前没有新的风险额度；持仓槽位与新增风险额度是两条独立限制。”该句在本仓库任一提交、本轮新旧 dist 以及持久化表中均不存在，且随后同一页面渲染为正常文案",
+    "assessment": "P3 观测项：疑似浏览器缓存的旧响应或页面残留，不构成运行事实；已如实保留不作结论",
+    "checked": ["git grep 于 2a909f3/d624b21^/d624b21", "apps/engine/dist 与 apps/dashboard/dist 全文检索", "D:/MITS-backups/deploy-d624b21-20260923/pre-dist 备份检索", "zdj-settings.sqlite 的 runtime_state/runtime_entities/ai_resources/settings/decision_chains 列级 LIKE 检索"]
+  }
+}

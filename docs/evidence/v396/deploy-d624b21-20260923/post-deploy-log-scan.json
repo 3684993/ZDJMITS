@@ -1,0 +1,11 @@
+{
+  "scannedAt": "2026-09-23T09:34:19.425Z",
+  "pid": 26784,
+  "startedAt": 1790154943580,
+  "stderrBytes": 338,
+  "stdoutBytes": 247,
+  "fatalOrUncaughtLines": [],
+  "nonExperimentalWarningStderr": [
+    "{\"ts\":1790154947782,\"level\":\"info\",\"event\":\"HTTP_LISTENING\",\"host\":\"0.0.0.0\",\"port\":8080,\"dataMode\":\"BINANCE\",\"aiMode\":\"OPENAI_COMPATIBLE\",\"instanceId\":\"2b534955-4bce-4c0f-bb28-a96a289dfaba\",\"lanIps\":[\"192.168.1.50\"],\"startReason\":\"MANUAL_START\"}"
+  ]
+}

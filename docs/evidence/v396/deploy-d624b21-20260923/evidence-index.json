@@ -1,0 +1,143 @@
+{
+  "round": "v396-deploy-d624b21",
+  "date": "2026-09-23",
+  "plan": "docs/plans/v396/CODEX-V396-DEPLOY-RESTART-D624B21-20260923.md",
+  "branch": "codex/v396-final-convergence-20260922",
+  "sourceBaselineCommit": "d624b21a2fd2455fbc78bee3f7a27c65d700b653",
+  "deployedHeadCommit": "4a9330f6d5161d203877a4c9de57ad6ee585b6f2",
+  "verdict": "DEPLOYED — ACCEPTANCE HALTED ON P1 (capacity first-cause over-claim). Not ACCEPTED.",
+  "lifecycle": {
+    "stop": {
+      "tool": "scripts/stop-zdj-lan.ps1",
+      "count": 1,
+      "exit": 0,
+      "targetPid": 31776,
+      "result": "port 8080 free; CHILD_EXITED exitCode=-1 (Stop-Process -Force by design)"
+    },
+    "start": {
+      "tool": "scripts/start-zdj-lan.ps1 -StartReason MANUAL_START -SkipFirewall",
+      "count": 1,
+      "exit": 0,
+      "newPid": 26784,
+      "hostPid": 8592,
+      "launchId": "20536eae751645aeb7fde2855e0e3a20",
+      "instanceId": "2b534955-4bce-4c0f-bb28-a96a289dfaba",
+      "buildId": "3.9.6-2fb37e445af4d3d351da",
+      "startedAt": 1790154943580,
+      "readyAfterMs": 91536
+    },
+    "watchdogOrAutostartInstalled": false,
+    "settingsOrDatabaseModified": false,
+    "exchangeWriteRequestsIssued": 0
+  },
+  "gates": {
+    "verify_deps": {
+      "exit": 0
+    },
+    "engine_build": {
+      "exit": 0,
+      "target": "apps/engine/dist (live path, by design this round)"
+    },
+    "dashboard_build": {
+      "exit": 0,
+      "target": "apps/dashboard/dist (live path, by design this round)"
+    },
+    "buildProvenance": "expected artifactHash/sourceHash recomputed with runtimeIdentity#contentTreeHash equal to the identity file the new process wrote",
+    "fullTestSuiteRerun": "NOT_RUN this round by plan §5 (offline gates already evidenced at d624b21); only build + readback executed"
+  },
+  "findings": [
+    {
+      "id": "P1-capacity-first-cause-overclaim",
+      "file": "finding-p1-capacity-first-cause-overclaim.json",
+      "blocksAcceptance": true
+    },
+    {
+      "id": "OBS-egress-fail-closed-pausing-dispatch",
+      "file": "post-deploy-egress-gate-state.json",
+      "blocksAcceptance": false,
+      "note": "pre-existing R16 gate reacting to proxy egress re-verification failure; writes stayed 0"
+    }
+  ],
+  "files": [
+    {
+      "name": "RESULT.md",
+      "bytes": 11027,
+      "sha256": "dbdb1cba01894280441337e39847c56f4789621ed7d4a42e0bc153514a06e3e7"
+    },
+    {
+      "name": "build-01-verify-deps.txt",
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "name": "build-02-engine-build.txt",
+      "bytes": 50,
+      "sha256": "58702c2bce638a249622b034da12d953f6c71465743d5d17c0e493a8c78abe3d"
+    },
+    {
+      "name": "build-03-dashboard-build.txt",
+      "bytes": 3696,
+      "sha256": "12110826528a99acf1ea5b8fb829718d190c46c57507e46c06c20044437bdfdc"
+    },
+    {
+      "name": "build-04-artifact-identity.json",
+      "bytes": 1504,
+      "sha256": "e8cc8a753451b4f78bed79632ee0cefd5b73a01b4c8d77731063a068cf5bb4d0"
+    },
+    {
+      "name": "finding-p1-capacity-first-cause-overclaim.json",
+      "bytes": 5069,
+      "sha256": "e94a3b5cfed718eeb1a83abfd47efd6410a67b99010bc62843b1b1238fb596e4"
+    },
+    {
+      "name": "lifecycle-stop-start-records.jsonl",
+      "bytes": 1213,
+      "sha256": "80eab19130e3dc2d2479eb70423e8a047dea5ffb84756068afacbf80763fc82d"
+    },
+    {
+      "name": "post-deploy-egress-gate-state.json",
+      "bytes": 829,
+      "sha256": "737f873ab87f05dd72dbb913ccb028530dc9ef19c80e0ef8015357c72031862a"
+    },
+    {
+      "name": "post-deploy-log-scan.json",
+      "bytes": 496,
+      "sha256": "56b8c8d01c6dbab52c77832c12575b4acdbc74589d5c9cd85c3e6df0b4d3ec1a"
+    },
+    {
+      "name": "post-deploy-runtime-snapshot-t0.json",
+      "bytes": 116395,
+      "sha256": "2c6c73443b39f4a9688e95a076526a55f0aaaac1d96eb572168dd46ff3a9e78a"
+    },
+    {
+      "name": "post-deploy-runtime-snapshot-t1.json",
+      "bytes": 125753,
+      "sha256": "72fb5d04ba93d9885b491e4913f8e035683f8d1eae13dffeaab3ce94b9797ef1"
+    },
+    {
+      "name": "post-deploy-runtime-snapshot-t2.json",
+      "bytes": 125802,
+      "sha256": "3d1d7397fae17b065bc35280f0b372c8e70c950c0a84dd68c8830b44d13a8884"
+    },
+    {
+      "name": "post-deploy-runtime-snapshot-t3.json",
+      "bytes": 126150,
+      "sha256": "dcedc11a7a550226a3303f067af25afdc5dc7a9c483ab8eee7bf34214638ba4d"
+    },
+    {
+      "name": "pre-deploy-runtime-snapshot.json",
+      "bytes": 125141,
+      "sha256": "83496d0a1b9858c3710319f9ead0252f793106d044e2ccf7cd3c59da22671a83"
+    },
+    {
+      "name": "start-01-output.txt",
+      "bytes": 600,
+      "sha256": "de103e49ac6804a14f3006cf2596c37613a4d862fa055402f7a5e9d7cbfe235d"
+    },
+    {
+      "name": "stop-01-output.txt",
+      "bytes": 36,
+      "sha256": "7e24928f570ed5c31fc16c455e87130ca0f49259f70abf12b0442bf68df3b763"
+    }
+  ]
+}

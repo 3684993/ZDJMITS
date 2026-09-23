@@ -1,0 +1,12 @@
+verify-deps=0
+s00-static=0
+storage-coverage=0
+engine-affected-tests=0
+engine-typecheck=0
+engine-tests=0
+engine-build-check=0
+core-typecheck=0
+core-tests=0
+contracts-typecheck=0
+contracts-tests=0
+git-diff-check=0

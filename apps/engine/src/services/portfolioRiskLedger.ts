@@ -3,6 +3,7 @@ import {evaluatePortfolioStress, type PortfolioStressResult} from './portfolioSt
 import {evaluateHumanCapacity, type HumanCapacityDecision} from './humanCapacityPolicy.js';
 import {executionScope} from './executionLifecycle.js';
 import {privateAccountFresh} from './privateAccountReadiness.js';
+import {collectPortfolioPendingRiskFacts} from './entryRiskOccupancy.js';
 import type {RuntimeState} from '../state/runtimeState.js';
 
 const PROFILE_LIMIT_KEYS=['maxCapitalAtRiskUsd','maxStressLossUsd','maxGrossNotionalUsd','maxDirectionNotionalUsd','maxClusterNotionalUsd',
@@ -150,17 +151,10 @@ export class PortfolioRiskAdmission {
     // A cycle the durable journal never saw is UNKNOWN risk, and UNKNOWN keeps occupying capacity.
     const allPositions=[...positions,...plannedPositions];
     const unknownOwners=positions.filter(row=>!String(row.ownerState).match(/AI_ACTIVE|HANDOFF_PENDING|HUMAN_MANAGED|CLOSED/));
-    const builtPending:PortfolioPendingRiskFact[]=[
-      ...[...state.entryReservations.values()].filter((row:any)=>['RESERVED','WORKING'].includes(String(row.status))&&Number(row.expiresAt)>now).map((row:any):PortfolioPendingRiskFact=>({
-        id:`reservation:${row.id}`,dedupeKey:`reservation:${row.id}`,symbol:row.underlying,side:'BOTH' as const,
-        notionalUsd:Number(row.notionalUsd),marginUsd:Number(row.marginUsd),quoteAsset:String(row.quoteAsset).toUpperCase(),source:'RESERVATION' as const,
-        factStatus:Number.isFinite(Number(row.notionalUsd))&&Number.isFinite(Number(row.marginUsd))?'VERIFIED' as const:'UNKNOWN' as const})),
-      ...[...state.entryOrders.values()].filter((row:any)=>['NEW','PARTIALLY_FILLED','UNKNOWN','SUBMITTING'].includes(String(row.status))&&(!row.expiresAt||Number(row.expiresAt)>now)).map((row:any):PortfolioPendingRiskFact=>({
-        id:`order:${row.id}`,dedupeKey:`order:${row.id}`,symbol:row.symbol,side:row.side==='SELL'?'SHORT':'LONG',
-        notionalUsd:Number(row.quantity??0)*Number(row.price??0),marginUsd:Number(row.leverage??0)>0?Number(row.quantity??0)*Number(row.price??0)/Number(row.leverage):Number.NaN,
-        quoteAsset:'USDT',source:String(row.status)==='UNKNOWN'?'UNKNOWN':'ORDER',
-        factStatus:String(row.status)==='UNKNOWN'?'UNKNOWN':'VERIFIED'})),
-    ];
+    // Which entry lineage still occupies risk is answered in exactly one place: this project the
+    // occupancy authority produces. A second status list here would let the risk account disagree
+    // with slots, capacity and the remote-release evidence about the same durable order.
+    const builtPending:PortfolioPendingRiskFact[]=collectPortfolioPendingRiskFacts(state,{now});
     const equityUsd=finite(account.equityUsd)?Number(account.equityUsd):Number.NaN;
     const baseline:any=account.riskBaseline??{};
     const observedPeak=Math.max(this.ledger.peakEquityUsd,finite(baseline.startingEquityUsd)?Number(baseline.startingEquityUsd):0,finite(equityUsd)?equityUsd:0);

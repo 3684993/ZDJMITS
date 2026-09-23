@@ -1,0 +1,41 @@
+{
+  "capturedAtIso": "2026-09-23T14:42:27.741Z",
+  "instance": {
+    "pid": 50996,
+    "buildId": "3.9.6-dc8fb58b578c25d10726",
+    "instanceId": "dc5c58b8-3c9a-4414-8f02-b00d3b1005fb",
+    "startReason": "MANUAL_START",
+    "startedAtIso": "2026-09-23T13:30:09.247Z"
+  },
+  "writeBoundary": {
+    "environment": "TESTNET",
+    "executionMode": "READ_ONLY",
+    "lockedToTestnet": true,
+    "testnetWrites": 0,
+    "productionWrites": 0,
+    "blockedProductionWriteAttempts": 0,
+    "lastWriteAt": null,
+    "lastWritePath": null
+  },
+  "settings": {
+    "settingsVersion": 191,
+    "executionMode": "READ_ONLY",
+    "environment": "TESTNET",
+    "aiExitAuthority": "SHADOW",
+    "entrySafetyMode": "AUTO",
+    "portfolioRiskConfigured": false,
+    "maxGrossExposurePct": 1,
+    "maxDirectionExposurePct": 0.8,
+    "maxPositions": 50
+  },
+  "capacity": {
+    "positions": 14,
+    "inFlight": 0,
+    "reserved": 0,
+    "used": 14,
+    "max": 50
+  },
+  "positions": 14,
+  "executionReadinessFirstBlocker": "EXECUTION_WRITE_LOCKED",
+  "note": "Read-only proof that this offline round performed no lifecycle action, no Settings write and no exchange write. The live build still predates the patch, so its pending blockers are the old projection."
+}

@@ -1,0 +1,77 @@
+{
+  "capturedAt": "2026-09-23T14:40:13.343Z",
+  "previousSnapshot": {
+    "capturedAtIso": "2026-09-23T13:42:59.534Z",
+    "counted": 46,
+    "stillOccupying": 2,
+    "released": 44
+  },
+  "thisReplay": {
+    "unknownDurableRows": 46,
+    "identicalIdSetToPrevious": true,
+    "occupying": 0,
+    "released": 46
+  },
+  "whyItChanged": "Nothing in this round rewrote or deleted a durable row. The only input that moved is the periodic remote re-proof: hasVerifiedNoActiveRisk requires activeRiskExposure=false plus VERIFIED_NO_ACTIVE_RISK evidence whose validUntil is still in the future and whose identity tombstone matches, and the remote audit re-emits exactly that on its ladder. Rows whose evidence had expired at the earlier sample have since been re-proven, so the authority released them; The remote audit re-proves an identical fact without emitting a new event (shouldEmitNoRiskEvent turns repeats into a summary), so the absence of an event since the earlier sample does not mean the row was never re-checked: each row carries remoteAudit.lastAuditAt, consecutive and verifiedCount for exactly that question.",
+  "rowsThatChangedClassification": [
+    {
+      "orderId": "entry_intent_mu5qflt6_c92gu3id",
+      "symbol": "BTCUSDT",
+      "wasStillOccupyingAtPreviousSnapshot": true,
+      "nowOccupies": false,
+      "activeRiskExposure": false,
+      "evidence": {
+        "status": "VERIFIED_NO_ACTIVE_RISK",
+        "checkedAtLocal": "22:33:27",
+        "checkedAfterPreviousSnapshot": true,
+        "validUntilLocal": "23:03:27",
+        "validUntilAfterNow": true,
+        "identityTombstoneMatches": true
+      },
+      "remoteAudit": {
+        "tier": 2,
+        "consecutive": 6,
+        "verifiedCount": 6,
+        "lastAuditAtLocal": "22:33:27",
+        "reAuditedAfterPreviousSnapshot": true,
+        "nextAuditAtLocal": "22:56:43"
+      },
+      "reProvenByAuditEventsSincePreviousSnapshot": true
+    },
+    {
+      "orderId": "entry_intent_mu7py6a7_7wqd8fu3",
+      "symbol": "VVVUSDT",
+      "wasStillOccupyingAtPreviousSnapshot": true,
+      "nowOccupies": false,
+      "activeRiskExposure": false,
+      "evidence": {
+        "status": "VERIFIED_NO_ACTIVE_RISK",
+        "checkedAtLocal": "22:35:21",
+        "checkedAfterPreviousSnapshot": true,
+        "validUntilLocal": "23:05:21",
+        "validUntilAfterNow": true,
+        "identityTombstoneMatches": true
+      },
+      "remoteAudit": {
+        "tier": 2,
+        "consecutive": 6,
+        "verifiedCount": 6,
+        "lastAuditAtLocal": "22:35:21",
+        "reAuditedAfterPreviousSnapshot": true,
+        "nextAuditAtLocal": "23:02:03"
+      },
+      "reProvenByAuditEventsSincePreviousSnapshot": true
+    }
+  ],
+  "auditEventsSincePreviousSnapshot": {
+    "count": 70,
+    "distinctOrders": 40,
+    "firstLocal": "21:43:16",
+    "lastLocal": "22:39:05",
+    "reasons": {
+      "EXACT_QUERY_NOT_FOUND_VERIFIED_NO_ACTIVE_RISK": 56,
+      "EXACT_QUERY_FAILED": 4,
+      "EXACT_QUERY_NOT_FOUND": 10
+    }
+  }
+}

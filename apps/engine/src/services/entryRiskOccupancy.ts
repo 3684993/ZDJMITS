@@ -197,3 +197,60 @@ export function collectPendingEntryRiskExposures(state:any,options:{now?:number;
   if(options.priorityReservationId)Object.defineProperty(result,'strictPlannedNotional',{value:true,enumerable:false});
   return result;
 }
+
+const QUOTE_ASSETS=['USDT','USDC','BUSD','FDUSD'] as const;
+
+export type PendingEntryQuoteFact={quoteAsset:string;provenBy:'RESERVATION'|'ALLOCATION_PLAN'|'SYMBOL_SUFFIX'|'UNPROVEN'};
+
+/**
+ * Which quote leg actually funds one pending lineage. The reservation is the contract-verified
+ * source, the allocation plan is the next fact in the same lineage, and the symbol suffix is only a
+ * last resort once no lineage row proves it — never a reason to call a USDC order USDT.
+ */
+export function pendingEntryQuoteAsset(state:any,exposure:Pick<PendingEntryRiskExposure,'symbol'|'reservationId'|'orderId'>):PendingEntryQuoteFact{
+  const asQuote=(value:unknown)=>{const asset=String(value??'').trim().toUpperCase();return (QUOTE_ASSETS as readonly string[]).includes(asset)?asset:null;};
+  const reservation=exposure.reservationId?state.entryReservations.get(exposure.reservationId):null;
+  const fromReservation=asQuote(reservation?.quoteAsset);
+  if(fromReservation)return{quoteAsset:fromReservation,provenBy:'RESERVATION'};
+  const order=exposure.orderId?state.entryOrders.get(exposure.orderId):null;
+  const intent=[...(state.entryIntents?.values()??[])].find((row:any)=>(order?.intentId&&row.id===order.intentId)||(exposure.reservationId&&row.reservationId===exposure.reservationId));
+  const plan=intent?.allocationPlan??(reservation?.planId?state.allocationPlans?.get(reservation.planId):null);
+  const fromPlan=asQuote(plan?.quoteAsset);
+  if(fromPlan)return{quoteAsset:fromPlan,provenBy:'ALLOCATION_PLAN'};
+  const symbol=String(exposure.symbol??'').trim().toUpperCase();
+  const suffix=QUOTE_ASSETS.map(asset=>({asset,at:symbol.lastIndexOf(asset)})).filter(row=>row.at>0&&row.at+row.asset.length===symbol.length).sort((a,b)=>b.at-a.at)[0];
+  if(suffix)return{quoteAsset:suffix.asset,provenBy:'SYMBOL_SUFFIX'};
+  return{quoteAsset:'UNKNOWN',provenBy:'UNPROVEN'};
+}
+
+export type PortfolioPendingRiskFactSeed={id:string;dedupeKey:string;symbol:string;side:Side|'BOTH';notionalUsd:number;marginUsd:number;quoteAsset:string;source:'RESERVATION'|'ORDER'|'UNKNOWN';factStatus:'VERIFIED'|'UNKNOWN'};
+
+/**
+ * The portfolio risk account's view of the very same pending facts: membership is decided only by
+ * collectPendingEntryRiskExposures, so a lineage proven to hold no active risk cannot be counted by
+ * one module and released by another. This adds the fields the risk snapshot requires and nothing
+ * else — in particular it never re-decides whether an order still occupies risk.
+ */
+export function collectPortfolioPendingRiskFacts(state:any,options:{now?:number}={}):PortfolioPendingRiskFactSeed[]{
+  const now=options.now??Date.now();
+  return collectPendingEntryRiskExposures(state,{now}).map(exposure=>{
+    const order=exposure.orderId?state.entryOrders.get(exposure.orderId):null;
+    const reservation=exposure.reservationId?state.entryReservations.get(exposure.reservationId):null;
+    const {quoteAsset}=pendingEntryQuoteAsset(state,exposure);
+    const notionalUsd=Math.max(0,Number(exposure.notionalUsd));
+    const leverage=Number(order?.leverage??reservation?.leverage??Number.NaN);
+    // A reservation carries its own verified margin; an order's margin is its remaining notional at
+    // its own leverage. An unprovable leverage stays unproven rather than becoming a default.
+    const marginUsd=exposure.source==='RESERVATION'?Number(reservation?.marginUsd??Number.NaN):Number.isFinite(leverage)&&leverage>0?notionalUsd/leverage:Number.NaN;
+    const outcomeUnproven=Boolean(order)&&(order.status==='UNKNOWN'||(order as any).exchangeTerminalStatus==='UNKNOWN');
+    const factStatus=outcomeUnproven||quoteAsset==='UNKNOWN'||!Number.isFinite(notionalUsd)||notionalUsd<=0||!Number.isFinite(marginUsd)?'UNKNOWN' as const:'VERIFIED' as const;
+    return{id:exposure.id,dedupeKey:exposure.id,symbol:exposure.symbol,side:portfolioRiskSide(exposure.side),notionalUsd,marginUsd,quoteAsset,
+      source:outcomeUnproven?'UNKNOWN' as const:exposure.source,factStatus};
+  });
+}
+
+/** The risk contract names directions, the exchange names order sides; one row must not fall out of the bucket because of that. */
+function portfolioRiskSide(value:unknown):Side|'BOTH'{
+  const side=String(value??'').trim().toUpperCase();
+  return side==='SELL'?'SHORT':side==='BUY'?'LONG':side==='LONG'||side==='SHORT'?side:'BOTH';
+}

@@ -1,0 +1,9 @@
+# P1 修复后的复跑门禁（派生率界约束 + USDC 覆盖 + 只读 preview 通道）
+
+### apps/engine: npx vitest run  → EXIT=0
+[2m Test Files [22m [1m[32m157 passed[39m[22m[90m (157)[39m
+[2m      Tests [22m [1m[32m1237 passed[39m[22m[90m (1237)[39m
+### apps/engine: npx tsc --noEmit -p tsconfig.json  → EXIT=0（无诊断）
+### node scripts/v396-s00-static-check.mjs  → EXIT=0（blockers: []）
+### node scripts/v396-storage-coverage.mjs --check  → EXIT=0（STORAGE_COVERAGE_CHECK_PASS gate=S08_STORAGE_COVERAGE_PASS）
+### git diff --check  → EXIT=0

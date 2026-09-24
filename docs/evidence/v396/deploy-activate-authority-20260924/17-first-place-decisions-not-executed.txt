@@ -1,0 +1,22 @@
+RUN 2026-09-24T11:37:04.323Z UNIUSDT PLACE_SHORT status=COMPLETED id=airun_mufgit6r_tfdjmm8i
+  keys=id,symbol,role,model,status,decision,direction,startedAt,completedAt,latencyMs,inputTokens,outputTokens,reason
+  exec=null
+  post={}
+RUN 2026-09-24T11:35:48.970Z NEARUSDC PLACE_SHORT status=COMPLETED id=airun_mufgh71m_dd4dxdjl
+  keys=id,symbol,role,model,status,decision,direction,startedAt,completedAt,latencyMs,inputTokens,outputTokens,reason
+  exec=null
+  post={}
+RUN 2026-09-24T11:34:43.121Z TAOUSDT PLACE_SHORT status=COMPLETED id=airun_mufgfs8h_z3yukbi6
+  keys=id,symbol,role,model,status,decision,direction,startedAt,completedAt,latencyMs,inputTokens,outputTokens,reason
+  exec=null
+  post={}
+RUN 2026-09-24T11:33:35.872Z XRPUSDC PLACE_SHORT status=COMPLETED id=airun_mufgeccg_vbd5r6ec
+  keys=id,symbol,role,model,status,decision,direction,startedAt,completedAt,latencyMs,inputTokens,outputTokens,reason
+  exec=null
+  post={}
+RUN 2026-09-24T11:31:41.252Z DOGEUSDC PLACE_SHORT status=COMPLETED id=airun_mufgbvwk_r64otr32
+  keys=id,symbol,role,model,status,decision,direction,startedAt,completedAt,latencyMs,inputTokens,outputTokens,reason
+  exec=null
+  post={}
+
+## run detail: {"run":{"id":"airun_mufgit6r_tfdjmm8i","symbol":"UNIUSDT","resourceId":"brain-7900-primary","model":"qwen/qwen3.8-27b","role":"PRIMARY_BRAIN","startedAt":1790249824323,"completedAt":1790249884073,"latencyMs":59750,"inputTokens":19310,"outputTokens":804,"status":"COMPLETED","direction":"SHORT","decision":"PLACE_SHORT","requestSource":"ENTRY","inputContractHash":"3a4710331f5578af5ba051fbead2e2cb6cc1bf91ed7a7132638e741ca921936a","promptHash":"14726d35b52c8c06ea10ca53d8914bc6e411c9a49063c46c31b8b23808130e78","outputContractVersion":"V3.9.3","finishReason":"stop","packetId":"eip_mufgilat_ss7pvdc1","error":null,"inputPreview":"{\"prompt\":\"You are the single autonomous Entry Primary under protocol V3.9.3. Use only the supplied MARKET_FACTS and EXECUTION_ENVELOPE. You have no tools and no order-write permission.\\nEXECUTION FACTS ARE NOT MARKET SIGNALS. Capacity asymmetry, leverage, margin, maxNotional, maxQuantityUnits, position slots, permissions and risk headroom may constrain execution but MUST NOT select LONG or SHORT.\\nIndependently test BOTH LONG and SHORT hypotheses from MARKET_FACTS. 15m is the tactical focus, not a direction command. 1m/5m are timing evidence. 1h/4h/1d/1w are context. BTC and ETH reference markets are evidence only. Evaluate EMA, MACD, Bollinger, ATR, volume, swing/HH/HL/LH/LL, order book, recent trades and derivatives without treating any derived trend label as an answer key.\\nReturn exactly one unfenced JSON object matching the provided schema. For PLACE_LONG or PLACE_SHORT you must autonomously choose tradeSide, quantityUnits, idealPrice, acceptablePriceRange, horizonMinutes and profitTakePlan. quantity = quantityUnits * EXECUTION_ENVELOPE.exchange.stepSize. quantityUnits must be a positive integer no greater than the chosen side maxQuantityUnits. Do not choose direction because one side has more capacity.\\nFor PLACE, idealPrice must be inside acceptablePriceRange and the range must remain compatible with objective maker reachability. When EXECUTION_ENVELOPE.economics is present, choose quantityUnits and profitTakePlan together so the target can satisfy the stated minimum net profit, historical reachability and HUMAN_MANAGED capacity facts; never exceed maxQuantityUnits and never push a target beyond the supplied historical reachable domain merely to satisfy profit. If no feasible combination exists, return a non-PLACE decision. If your independently chosen side has zero executable capacity, do not flip to the other side merely b

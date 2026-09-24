@@ -1,0 +1,5 @@
+CAS before = {"environment":"TESTNET","executionMode":"READ_ONLY","aiExit":"SHADOW","entrySafety":"AUTO","G":1,"D":0.8,"P":50,"version":198}
+## PUT /api/v3/settings -> HTTP 200
+settingsVersion after = 199 (expected 199)
+CAS after = {"environment":"TESTNET","executionMode":"TESTNET_ENABLED","aiExit":"SHADOW","entrySafety":"AUTO","G":1,"D":0.8,"P":50,"cluster":0.35,"configured":true}
+changed paths = ["settingsVersion 198 -> 199","connections.executionMode \"READ_ONLY\" -> \"TESTNET_ENABLED\""]

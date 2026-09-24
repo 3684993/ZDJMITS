@@ -1,0 +1,12 @@
+# 红测 R1/R2/R4（live P1 的离线复现，先红后绿）at 2026-09-24T19:16:19+08:00
+[31m   [31m×[31m the derived rate is bounded by the notional the account can actually reach[2m > [22mR1 excludes brackets the entry cap makes unreachable, and still takes the maximum, not an average[39m[32m 8[2mms[22m[39m
+[31m     → expected 0.5 to be 0.004 // Object.is equality[39m
+[31m   [31m×[31m the derived rate is bounded by the notional the account can actually reach[2m > [22mR2 refuses and names the symbol when the rate inside the cap still exceeds the field bound; it never clamps[39m[32m 1[2mms[22m[39m
+[31m     → expected true to be false // Object.is equality[39m
+[31m   [31m×[31m the derived rate is bounded by the notional the account can actually reach[2m > [22mR4 the coverage rule keeps USDC-margined positions and candidates instead of excluding them by name[39m[32m 3[2mms[22m[39m
+[31m     → expected [ '1000PEPEUSDT', 'BTCUSDT', …(2) ] to include 'BNBUSDC'[39m
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 3 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+[31m[1mAssertionError[22m: expected 0.5 to be 0.004 // Object.is equality[39m
+[31m[1mAssertionError[22m: expected true to be false // Object.is equality[39m
+[31m[1mAssertionError[22m: expected [ '1000PEPEUSDT', 'BTCUSDT', …(2) ] to include 'BNBUSDC'[39m
+[2m      Tests [22m [1m[31m3 failed[39m[22m[2m | [22m[1m[32m25 passed[39m[22m[90m (28)[39m

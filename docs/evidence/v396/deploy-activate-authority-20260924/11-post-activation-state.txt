@@ -1,0 +1,8 @@
+executionReadiness = {"intent":true,"ready":true,"modelSpendPermitted":true,"blockers":[],"firstBlocker":null,"profileStatus":"READY","privateFresh":true,"writeLocked":false,"executableCandidateCount":1,"mode":"EXECUTION_READY","text":"执行事实齐备：PLACE 可进入 reservation → intent → order submit 链"}
+runtimeControl mode=RUNNING reason=NONE entrySafety=AUTO
+capacity = {"positions":13,"inFlight":0,"reserved":0,"used":13,"max":50}
+pool = {"ready":1}
+scout/primary = {"scout":{"status":"READY","runs":0,"historicalRuns":101,"resource":{"id":"scout-b580","role":"SCOUT","baseUrl":"http://127.0.0.1:8081/v1","model":"qwen3.5:9b","maxConcurrency":1,"gpu":"Intel Arc B580 12GB","status":"ONL
+noEntryReason = null
+writeBoundary = {"environment":"TESTNET","executionMode":"TESTNET_ENABLED","lockedToTestnet":true,"testnetWrites":1,"productionWrites":0,"blockedProductionWriteAttempts":0,"lastWriteAt":1790249356243,"lastWritePath":"/fapi/v1/order"}
+health status=READY private asOf age=10.4s equity=10813.706324253802

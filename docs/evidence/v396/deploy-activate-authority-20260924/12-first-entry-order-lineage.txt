@@ -1,0 +1,8 @@
+## /orders HTTP 200
+count=?
+## /audit/entry-chain HTTP 200 len 34
+{"since":1790238578343,"items":[]}
+## pipeline.entryActivity = {"lastPrimaryRunAt":1790170164920,"lastPlaceDecisionAt":1790170164920,"lastEntryIntentAt":1790109989661,"lastEntrySubmittedAt":1790109725293,"lastEntryFilledAt":1790109638800,"primaryRunsSinceLastPlace":0,"uniqueSymbolsSinceLastPlace":12,"consecutiveRejects":0,"placeCount30m":0,"rejectCount30m":0,"primaryCount30m":0,"entryIntentCount30m":0,"submitCount30m":0,"fillCount30m":0}
+## pipeline.pendingEntries = {"status":"FACT","count":0,"max":6}
+## pipeline.work = {"current":"WAITING_NEW_FACTS","recentDecision":{"symbol":"TAOUSDT","direction":"LONG","decision":"PLACE_LONG","at":1790170164904},"next":"等待新的候选事实，避免重复推理"}
+## positions count=13 (was 13)

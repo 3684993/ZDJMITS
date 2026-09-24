@@ -124,6 +124,12 @@ export const PositionSchema = z.object({
   marginAsset: z.string().nullable().default(null),
   notionalUsd: z.number().nonnegative().nullable().default(null),
   maintenanceMarginUsd: z.number().nonnegative().nullable().default(null),
+  /**
+   * Which exchange contract produced the risk fields above. V2 is only allowed to prove that a
+   * position exists; treating its absent margin/maintenance/liquidation fields as verified is exactly
+   * the bug this tag makes visible instead of silently survivable.
+   */
+  positionRiskSource: z.enum(['V3_VERIFIED','V2_EXISTENCE_ONLY']).nullable().default(null),
   entryTimeSource: z.enum(['SYSTEM_FILL','BINANCE_TRADE_HISTORY','BINANCE_ORDER_HISTORY','SQLITE_EXECUTION_HISTORY','RECONCILIATION','IMPORTED_AT_STARTUP','UNKNOWN']).default('UNKNOWN'),
   managementStatus: z.enum(['AUTO_MANAGED','HUMAN_MANAGED']).default('AUTO_MANAGED'),
   humanManagedAt: z.number().int().nullable().default(null),

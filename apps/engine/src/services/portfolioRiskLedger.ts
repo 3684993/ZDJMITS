@@ -4,6 +4,7 @@ import {evaluateHumanCapacity, type HumanCapacityDecision} from './humanCapacity
 import {executionScope} from './executionLifecycle.js';
 import {privateAccountFresh} from './privateAccountReadiness.js';
 import {collectPortfolioPendingRiskFacts} from './entryRiskOccupancy.js';
+import {liquidationBufferFact} from './positionRiskFacts.js';
 import {portfolioRiskAuthorityBlockers, portfolioRiskAuthorityReadback, type PortfolioRiskAuthorityFacts} from './portfolioRiskAuthority.js';
 import type {RuntimeState} from '../state/runtimeState.js';
 
@@ -172,17 +173,28 @@ export class PortfolioRiskAdmission {
       const durable=this.ports.ownerOf(scope,cycleId);
       ownershipKnown.total++;if(durable)ownershipKnown.count++;
       const markPrice=finite(position.markPrice)?Number(position.markPrice):Number.NaN;
-      const liquidation=finite(position.liquidationPrice)&&Number(position.liquidationPrice)>0?Number(position.liquidationPrice):null;
-      const buffer=liquidation!=null&&finite(markPrice)&&markPrice>0?Math.max(0,Math.abs(markPrice-liquidation)/markPrice):null;
+      // The exchange's own liquidation price, read directionally: never abs(), never an estimate from
+      // leverage or the bracket table, and only a reported zero on a long is a proven zero-price
+      // boundary (100 %, deliberately not Infinity).
+      const liquidation=liquidationBufferFact({symbol:String(position.symbol??''),side:position.side==='SHORT'?'SHORT':'LONG',markPrice,liquidationPrice:finite(position.liquidationPrice)?Number(position.liquidationPrice):null});
+      if(liquidation.blocker)blockers.push(liquidation.blocker);
+      const buffer=liquidation.bufferPct;
       const marginAsset=String(position.marginAsset??'').trim().toUpperCase();
       if(!marginAsset)blockers.push('POSITION_MARGIN_ASSET_UNPROVEN');
+      // C4: a position fact is only VERIFIED on the strength of its own numbers. A READY authority
+      // upgrades nothing here, and a row the exchange only confirmed exists (V2 existence fallback)
+      // can never carry a proven margin.
+      const maintenance=finite(position.maintenanceMarginUsd)&&Number(position.maintenanceMarginUsd)>=0?Number(position.maintenanceMarginUsd):null;
+      const exchangeRiskProven=position.positionRiskSource!=='V2_EXISTENCE_ONLY';
+      const quantity=finite(position.quantity)?Math.abs(Number(position.quantity)):Number.NaN;
+      const verifiedFact=durable&&Boolean(marginAsset)&&quantity>0&&finite(position.markPrice)&&position.markPrice>0&&exchangeRiskProven&&maintenance!=null&&buffer!=null;
       return{scope,cycleId:cycleId||'UNKNOWN_CYCLE',symbol:position.symbol,side:position.side==='SHORT'?'SHORT':'LONG',
-        quantity:Math.abs(Number(position.quantity??0)),markPrice,leverage:Number(position.leverage??0),
+        quantity,markPrice,leverage:Number(position.leverage??0),
         quoteAsset:marginAsset,marginAsset,
         ownerState:durable?durable.ownerState:'UNKNOWN' as unknown as PortfolioOwnerState,
-        factStatus:durable&&Boolean(marginAsset)&&finite(position.quantity)&&finite(position.markPrice)&&position.markPrice>0?'VERIFIED' as const:'UNKNOWN' as const,
-        maintenanceMarginUsd:finite(position.maintenanceMarginUsd)?Number(position.maintenanceMarginUsd):null,
-        liquidationBufferPct:buffer,handoffAt:durable?.handoffAt??null,acknowledgedAt:durable?.acknowledgedAt??null} as PortfolioPositionFact;
+        factStatus:verifiedFact?'VERIFIED' as const:'UNKNOWN' as const,
+        maintenanceMarginUsd:maintenance,
+        liquidationBufferPct:buffer,liquidationPriceFact:liquidation.fact,handoffAt:durable?.handoffAt??null,acknowledgedAt:durable?.acknowledgedAt??null} as PortfolioPositionFact;
     });
     // A cycle the durable journal never saw is UNKNOWN risk, and UNKNOWN keeps occupying capacity.
     const allPositions=[...positions,...plannedPositions];
@@ -237,7 +249,7 @@ export class PortfolioRiskAdmission {
       ownerState:'AI_ACTIVE',
       factStatus:buffer!=null&&finite(candidate.notionalUsd)&&candidate.notionalUsd>0&&finite(markPrice)&&markPrice>0&&Number.isSafeInteger(leverage)&&leverage>0?'VERIFIED':'UNKNOWN',
       maintenanceMarginRatePct,maintenanceMarginUsd:buffer!=null?candidate.notionalUsd*maintenanceMarginRatePct:null,
-      liquidationBufferPct:buffer,handoffAt:null,acknowledgedAt:null} as PortfolioPositionFact;
+      liquidationBufferPct:buffer,liquidationPriceFact:buffer==null?'UNPROVEN':'PROJECTED_FROM_LEVERAGE',handoffAt:null,acknowledgedAt:null} as PortfolioPositionFact;
   }
 
   /** The authority window is the shortest of every input's own freshness. */

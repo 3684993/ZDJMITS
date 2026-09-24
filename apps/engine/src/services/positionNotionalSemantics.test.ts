@@ -18,8 +18,8 @@ import { computeExecutableRiskHeadroom } from './executableRiskHeadroom.js';
  * exposure at all. These tests pin that decision at all three layers at once.
  */
 const settings = () => SystemSettingsSchema.parse({ ...defaults, appearance: { ...defaults.appearance, theme: 'BINANCE_NOIR' } });
-const shortRow = { symbol: 'AVAXUSDT', positionSide: 'SHORT', positionAmt: '-90.5', entryPrice: '8.10', markPrice: '8.20', leverage: '8', unRealizedProfit: '-9.05', notional: '-742.10', maintMarginAmt: '92.76', marginAsset: 'USDT', liquidationPrice: '16.20' };
-const longRow = { symbol: 'ADAUSDT', positionSide: 'LONG', positionAmt: '47', entryPrice: '0.24', markPrice: '0.25', leverage: '8', unRealizedProfit: '0.47', notional: '11.75', maintMarginAmt: '1.47', marginAsset: 'USDT', liquidationPrice: '0.02' };
+const shortRow = { symbol: 'AVAXUSDT', positionSide: 'SHORT', positionAmt: '-90.5', entryPrice: '8.10', markPrice: '8.20', leverage: '8', unRealizedProfit: '-9.05', notional: '-742.10', maintMargin: '92.76', marginAsset: 'USDT', liquidationPrice: '16.20' };
+const longRow = { symbol: 'ADAUSDT', positionSide: 'LONG', positionAmt: '47', entryPrice: '0.24', markPrice: '0.25', leverage: '8', unRealizedProfit: '0.47', notional: '11.75', maintMargin: '1.47', marginAsset: 'USDT', liquidationPrice: '0.22' };
 
 function adapterWith(positionRisk: unknown[]) {
   const transport = {
@@ -29,7 +29,7 @@ function adapterWith(positionRisk: unknown[]) {
     assertTestnetExchangeWrite: () => {},
     json: vi.fn(async (url: string) => {
       if (url.startsWith('/fapi/v1/time')) return { serverTime: 1 };
-      if (url.startsWith('/fapi/v2/positionRisk')) return positionRisk;
+      if (url.startsWith('/fapi/v3/positionRisk')) return positionRisk;
       return {};
     }),
   };

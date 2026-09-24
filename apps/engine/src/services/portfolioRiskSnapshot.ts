@@ -38,6 +38,11 @@ export interface PortfolioPositionFact{
   factStatus:PortfolioFactStatus;
   maintenanceMarginUsd?:number|null;
   liquidationBufferPct?:number|null;
+  /**
+   * How the buffer above was obtained, so an exchange-reported zero-price boundary, a projected
+   * pre-trade figure for a candidate that does not exist yet, and a genuine gap never look alike.
+   */
+  liquidationPriceFact?:'EXCHANGE_REPORTED_ZERO'|'EXCHANGE_REPORTED_PRICE'|'PROJECTED_FROM_LEVERAGE'|'UNPROVEN'|null;
   handoffAt?:number|null;
   acknowledgedAt?:number|null;
 }
@@ -69,6 +74,11 @@ export interface PortfolioRiskExposure{
   factStatus:PortfolioFactStatus;
   maintenanceMarginUsd:number|null;
   liquidationBufferPct:number|null;
+  /**
+   * How the buffer above was obtained, so an exchange-reported zero-price boundary, a projected
+   * pre-trade figure for a candidate that does not exist yet, and a genuine gap never look alike.
+   */
+  liquidationPriceFact?:'EXCHANGE_REPORTED_ZERO'|'EXCHANGE_REPORTED_PRICE'|'PROJECTED_FROM_LEVERAGE'|'UNPROVEN'|null;
   handoffAt:number|null;
   acknowledgedAt:number|null;
 }
@@ -199,12 +209,15 @@ export function buildPortfolioRiskSnapshot(input:{
     const marginUsd=Number.isFinite(leverage)&&leverage>0?notionalUsd/leverage:notionalUsd;
     const maintenanceRows=rows.map(row=>row.maintenanceMarginUsd).filter(nonNegative) as number[];
     const liquidationRows=rows.map(row=>row.liquidationBufferPct).filter(nonNegative) as number[];
+    // The published buffer is the tightest one, so the provenance that travels with it must be the
+    // provenance of that same row: "exchange reported 0" and "we projected it" cannot share a hash.
+    const tightest=rows.filter(row=>nonNegative(row.liquidationBufferPct)).sort((a,b)=>Number(a.liquidationBufferPct)-Number(b.liquidationBufferPct))[0];
     for(const row of rows){
       if(row.ownerState==='HANDOFF_PENDING'&&(!nonNegative(row.handoffAt)||Number(row.handoffAt)>input.now))blockers.add(`HANDOFF_TIME_UNPROVEN:${key}`);
       if(row.acknowledgedAt!=null&&(!nonNegative(row.acknowledgedAt)||!nonNegative(row.handoffAt)||Number(row.acknowledgedAt)<Number(row.handoffAt)||Number(row.acknowledgedAt)>input.now))blockers.add(`HANDOFF_ACK_INVALID:${key}`);
     }
     if(sample.ownerState==='CLOSED'&&notionalUsd>0){status='CONFLICT';blockers.add(`CLOSED_POSITION_HAS_RISK:${key}`);}
-    exposures.push({id:`position:${key}`,kind:'POSITION',symbol:norm(sample.symbol),underlying:canonicalRiskUnderlying(sample.symbol),side:sample.side,notionalUsd,marginUsd,quoteAsset:norm(sample.quoteAsset),marginAsset:norm(sample.marginAsset),ownerState:sample.ownerState,factStatus:status,maintenanceMarginUsd:maintenanceRows.length?Math.max(...maintenanceRows):null,liquidationBufferPct:liquidationRows.length?Math.min(...liquidationRows):null,handoffAt:finite(sample.handoffAt)?Number(sample.handoffAt):null,acknowledgedAt:finite(sample.acknowledgedAt)?Number(sample.acknowledgedAt):null});
+    exposures.push({id:`position:${key}`,kind:'POSITION',symbol:norm(sample.symbol),underlying:canonicalRiskUnderlying(sample.symbol),side:sample.side,notionalUsd,marginUsd,quoteAsset:norm(sample.quoteAsset),marginAsset:norm(sample.marginAsset),ownerState:sample.ownerState,factStatus:status,maintenanceMarginUsd:maintenanceRows.length?Math.max(...maintenanceRows):null,liquidationBufferPct:liquidationRows.length?Math.min(...liquidationRows):null,liquidationPriceFact:tightest?.liquidationPriceFact??'UNPROVEN',handoffAt:finite(sample.handoffAt)?Number(sample.handoffAt):null,acknowledgedAt:finite(sample.acknowledgedAt)?Number(sample.acknowledgedAt):null});
   }
 
   const groupedPending=new Map<string,PortfolioPendingRiskFact[]>();

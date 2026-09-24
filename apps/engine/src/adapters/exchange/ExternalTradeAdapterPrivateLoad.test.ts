@@ -33,7 +33,8 @@ it('collects each audit symbol once without a second income/userTrades/allOrders
   expect(h.calls.filter(url=>url.startsWith('/fapi/v1/userTrades'))).toHaveLength(2);
   expect(h.calls.filter(url=>url.startsWith('/fapi/v1/allOrders'))).toHaveLength(2);
   expect(h.calls.filter(url=>url.startsWith('/fapi/v1/openOrders'))).toHaveLength(1);
-  expect(h.calls.filter(url=>url.startsWith('/fapi/v2/positionRisk'))).toHaveLength(1);
+  expect(h.calls.filter(url=>url.startsWith('/fapi/v3/positionRisk'))).toHaveLength(1);
+  expect(h.calls.filter(url=>url.startsWith('/fapi/v2/positionRisk'))).toHaveLength(0);
 });
 
 

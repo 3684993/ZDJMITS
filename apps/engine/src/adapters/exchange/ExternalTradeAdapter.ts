@@ -6,6 +6,8 @@ import { BinanceTransport } from '../binance/BinanceTransport.js';
 import { BinanceUserDataStream } from '../binance/BinanceUserDataStream.js';
 import { binanceClientOrderIdFactory } from '../../services/binanceClientOrderIdFactory.js';
 type Credentials={apiKey:string;apiSecret:string}|null;
+/** An exchange field that is absent, empty or non-numeric stays null; a reported zero stays zero. */
+const numberOrNull=(value:unknown)=>Number.isFinite(Number(value))&&value!=null&&String(value)!==''?Number(value):null;
 
 export class ExternalTradeAdapter implements ExchangeTradeAdapter {
   private userStream:BinanceUserDataStream|null=null;private positionMode:{hedge:boolean;checkedAt:number}|null=null;private openTimeCache=new Map<string,{openedAt:number;source:Position['entryTimeSource'];checkedAt:number}>();private leverageCache=new Map<string,number>();private leverageFlights=new Map<string,Promise<number>>();private serverTime:{offset:number;fetchedAt:number}|null=null;private exactOrderCache=new Map<string,{expiresAt:number;row:any}>();private exactOrderFlights=new Map<string,Promise<any>>();private writeStats={testnetWrites:0,productionWrites:0,blockedProductionWriteAttempts:0,lastWriteAt:null as number|null,lastWritePath:null as string|null};
@@ -168,18 +170,47 @@ export class ExternalTradeAdapter implements ExchangeTradeAdapter {
   async fetchSymbolTradeFacts(symbol:string,startTime:number,endTime:number):Promise<{fills:ExchangeTradeFill[];income:ExchangeIncomeFact[];orders:ExchangeOrderFact[];coverageComplete:boolean;coverageStart:number;coverageEnd:number}>{const [incomeRows,trades,allOrders]=await Promise.all([this.pagedIncome(startTime,endTime,symbol),this.pagedUserTrades(symbol,startTime,endTime),this.pagedAllOrders(symbol,startTime,endTime)]);return{fills:trades.map(row=>({symbol:String(row.symbol),side:(String(row.side)==='BUY'?'BUY':'SELL') as 'BUY'|'SELL',positionSide:(['LONG','SHORT'].includes(String(row.positionSide))?String(row.positionSide):'BOTH') as 'LONG'|'SHORT'|'BOTH',orderId:String(row.orderId),clientOrderId:String(row.clientOrderId??''),tradeId:String(row.id??row.tradeId??''),executionTime:Number(row.time??0),qty:Number(row.qty??0),price:Number(row.price??0),realizedPnl:Number(row.realizedPnl??0),commission:Number(row.commission??0),commissionAsset:String(row.commissionAsset??''),maker:Boolean(row.maker)})),income:incomeRows.map(row=>({symbol:String(row.symbol??symbol),incomeType:String(row.incomeType??'UNKNOWN'),income:Number(row.income??0),asset:String(row.asset??''),time:Number(row.time??0),info:row.info==null?null:String(row.info),tradeId:row.tradeId==null?null:String(row.tradeId),transactionId:row.tranId==null?null:String(row.tranId)})),orders:allOrders.map(row=>({symbol:String(row.symbol),orderId:String(row.orderId),clientOrderId:String(row.clientOrderId??''),side:String(row.side),positionSide:String(row.positionSide??'BOTH'),status:String(row.status),type:String(row.type),origQty:Number(row.origQty??0),executedQty:Number(row.executedQty??0),avgPrice:Number(row.avgPrice??row.price??0),updateTime:Number(row.updateTime??row.time??0)})),coverageComplete:startTime>=Date.now()-80*86_400_000,coverageStart:startTime,coverageEnd:endTime};}
   async fetchSymbolRiskFacts(symbol:string,startTime:number,endTime:number):Promise<{fills:ExchangeTradeFill[];orders:ExchangeOrderFact[];coverageComplete:boolean;coverageStart:number;coverageEnd:number}>{const [trades,allOrders]=await Promise.all([this.pagedUserTrades(symbol,startTime,endTime,'ORDER_VERIFICATION'),this.pagedAllOrders(symbol,startTime,endTime,'ORDER_VERIFICATION')]);return{fills:trades.map(row=>({symbol:String(row.symbol),side:(String(row.side)==='BUY'?'BUY':'SELL') as 'BUY'|'SELL',positionSide:(['LONG','SHORT'].includes(String(row.positionSide))?String(row.positionSide):'BOTH') as 'LONG'|'SHORT'|'BOTH',orderId:String(row.orderId),clientOrderId:String(row.clientOrderId??''),tradeId:String(row.id??row.tradeId??''),executionTime:Number(row.time??0),qty:Number(row.qty??0),price:Number(row.price??0),realizedPnl:Number(row.realizedPnl??0),commission:Number(row.commission??0),commissionAsset:String(row.commissionAsset??''),maker:Boolean(row.maker)})),orders:allOrders.map(row=>({symbol:String(row.symbol),orderId:String(row.orderId),clientOrderId:String(row.clientOrderId??''),side:String(row.side),positionSide:String(row.positionSide??'BOTH'),status:String(row.status),type:String(row.type),origQty:Number(row.origQty??0),executedQty:Number(row.executedQty??0),avgPrice:Number(row.avgPrice??row.price??0),updateTime:Number(row.updateTime??row.time??0)})),coverageComplete:startTime>=Date.now()-80*86_400_000,coverageStart:startTime,coverageEnd:endTime};}
   private async recoverOpenedAt(symbol:string,side:'LONG'|'SHORT',_quantity:number){const key=`${symbol}:${side}`,cached=this.openTimeCache.get(key);if(cached&&Date.now()-cached.checkedAt<6*60*60_000)return cached;const result={openedAt:0,source:'UNKNOWN' as const,checkedAt:Date.now()};this.openTimeCache.set(key,result);return result;}
-  async fetchPositions(){const rows=(await this.signed<any[]>('GET','/fapi/v2/positionRisk')).filter(row=>Number(row.positionAmt)!==0);return Promise.all(rows.map(async row=>{const amount=Number(row.positionAmt),direction:'LONG'|'SHORT'=amount>0?'LONG':'SHORT',time=await this.recoverOpenedAt(String(row.symbol),direction,Math.abs(amount));const numberOrNull=(value:unknown)=>Number.isFinite(Number(value))&&value!=null&&String(value)!==''?Number(value):null;
-      /**
-       * Binance signs these amount fields by position direction. A Position already carries direction
-       * in side and quantity is stored as Math.abs(amount), and PositionSchema declares both amounts
-       * non-negative, so keeping the exchange sign contradicts the row beside it and makes every
-       * notionalUsd > 0 exposure filter treat a short position as no exposure at all.
-       */
-      const magnitudeOrNull=(value:unknown)=>{const n=numberOrNull(value);return n===null?null:Math.abs(n)};return{id:`exchange_${row.symbol}_${row.positionSide}`,symbol:String(row.symbol),side:direction,quantity:Math.abs(amount),entryPrice:Number(row.entryPrice),markPrice:Number(row.markPrice),leverage:Number(row.leverage),unrealizedPnl:Number(row.unRealizedProfit),unrealizedPnlPercent:0,openedAt:time.openedAt,firstObservedAt:null,
-    /** Margin composition is carried exactly as the exchange reported it; a missing field stays null. */
-    liquidationPrice:numberOrNull(row.liquidationPrice),marginAsset:String(row.marginAsset??'').trim().toUpperCase()||null,
-    notionalUsd:magnitudeOrNull(row.notional??row.markValue),maintenanceMarginUsd:magnitudeOrNull(row.maintMarginAmt??row.maintenanceMargin),
-    entryTimeSource:time.source,managementStatus:'AUTO_MANAGED',humanManagedAt:null,tpStatus:'PENDING',tpOrderId:null,tpLastVerifiedAt:null,tpCoverageSource:'NONE'} as Position;}));}
+  /**
+   * Position risk truth: USDⓈ-M Position Information **V3**, and only V3, because V3 is the contract
+   * that states a position's own `marginAsset`, `maintMargin`, `notional` and `liquidationPrice`. The
+   * retired V2 read asked for `maintMarginAmt` / `maintenanceMargin`, which the endpoint does not
+   * return, so every live position arrived without a maintenance margin or margin asset and PortfolioRisk
+   * refused every candidate at every size — an availability gap that looked like a risk decision.
+   *
+   * A V2 fallback exists for one job only: keep knowing *which positions exist* if V3 is unavailable,
+   * so exits and reconciliation still see the book. It never claims a risk fact: the fields stay null,
+   * which the risk layer reports as unproven instead of letting anyone synthesise them.
+   */
+  private static readonly POSITION_RISK_ENDPOINT = '/fapi/v3/positionRisk';
+  async fetchPositions(){
+    const magnitudeOrNull=(value:unknown)=>{const n=numberOrNull(value);return n===null?null:Math.abs(n);};
+    const mapRow=(row:any,source:'V3_VERIFIED'|'V2_EXISTENCE_ONLY')=>({
+      id:`exchange_${row.symbol}_${row.positionSide}`,symbol:String(row.symbol),side:Number(row.positionAmt)>0?'LONG' as const:'SHORT' as const,
+      quantity:Math.abs(Number(row.positionAmt)),entryPrice:Number(row.entryPrice),markPrice:Number(row.markPrice),leverage:Number(row.leverage),
+      unrealizedPnl:Number(row.unrealizedProfit??row.unRealizedProfit??0),unrealizedPnlPercent:0,openedAt:0,firstObservedAt:null,
+      /** Margin composition is carried exactly as the exchange reported it; a missing field stays null. */
+      liquidationPrice:numberOrNull(row.liquidationPrice),marginAsset:String(row.marginAsset??'').trim().toUpperCase()||null,
+      notionalUsd:magnitudeOrNull(row.notional??row.markValue),
+      maintenanceMarginUsd:magnitudeOrNull(row.maintMargin??row.maintMarginAmt??row.maintenanceMargin),
+      positionRiskSource:source,entryTimeSource:'UNKNOWN' as const,managementStatus:'AUTO_MANAGED' as const,humanManagedAt:null,
+      tpStatus:'PENDING' as const,tpOrderId:null,tpLastVerifiedAt:null,tpCoverageSource:'NONE' as const} as Position);
+    let rows:any[]|null=null,source:'V3_VERIFIED'|'V2_EXISTENCE_ONLY'='V3_VERIFIED';
+    try{rows=await this.signed<any[]>('GET',ExternalTradeAdapter.POSITION_RISK_ENDPOINT,{},'POSITION_RISK_V3','PRIVATE_STATE');}
+    catch(error){
+      // Existence only. The caller cannot tell a proven risk fact from this row, and neither can we.
+      this.lastPositionRiskError=`${ExternalTradeAdapter.POSITION_RISK_ENDPOINT}:${String(error instanceof Error?error.message:error).slice(0,160)}`;
+      rows=await this.signed<any[]>('GET','/fapi/v2/positionRisk',{},'POSITION_RISK_V2_EXISTENCE','PRIVATE_STATE');source='V2_EXISTENCE_ONLY';
+    }
+    const nonzero=(Array.isArray(rows)?rows:[]).filter(row=>Number(row.positionAmt)!==0);
+    return Promise.all(nonzero.map(async row=>{
+      const amount=Number(row.positionAmt),direction:'LONG'|'SHORT'=amount>0?'LONG':'SHORT';
+      const time=await this.recoverOpenedAt(String(row.symbol),direction,Math.abs(amount));
+      return{...mapRow(row,source),openedAt:time.openedAt,entryTimeSource:time.source};
+    }));
+  }
+  /** The last position-risk read failure, so a V2 existence fallback is visible instead of silent. */
+  lastPositionRiskError:string|null=null;
+  positionRiskEndpoint(){return ExternalTradeAdapter.POSITION_RISK_ENDPOINT;}
   private enrichmentGeneration=0;
   private enrichmentFlight:Promise<void>|null=null;
   private enrichment={income:null as number|null,incomeAsOf:null as number|null,prices:new Map<string,number>(),pricesAsOf:null as number|null,lastAttempt:0,lastError:null as string|null};
@@ -200,19 +231,25 @@ export class ExternalTradeAdapter implements ExchangeTradeAdapter {
   }
   async validatePrivate(){const account=await this.fetchAccountSnapshot(),orders=await this.fetchOpenOrders(),positions=await this.fetchPositions();return{status:'BINANCE DEMO PRIVATE READY',endpoint:this.transport.effectiveBaseUrl(),accountAvailable:Number.isFinite(account.walletBalanceUsd),openOrders:orders.length,positions:positions.length};}
   /**
-   * Read-only field-presence probe over the same signed path fetchPositions uses. The position risk
-   * facts are the one layer where a wrong field name silently becomes "the exchange did not tell us",
-   * so the operator can ask the exchange directly instead of inferring it from a null in the UI.
-   * Nothing here is persisted and no writer is reachable.
+   * Read-only field-presence probe over the *same* endpoint and mapping the runtime trades against. A
+   * probe that reads a different version could certify fields the position sync never sees, which is
+   * exactly how the V2 gap stayed invisible. Non-zero rows are reported verbatim so "field absent" and
+   * "exchange reported 0" stay distinguishable in evidence. Nothing here is persisted and no writer is
+   * reachable.
    */
-  async probePositionRiskFields():Promise<{environment:string;endpoint:string;observedAt:number;rowCount:number;fieldNames:string[];rows:Record<string,unknown>[]}>{
+  async probePositionRiskFields():Promise<{environment:string;endpoint:string;observedAt:number;rowCount:number;fieldNames:string[];rows:Record<string,unknown>[];readError:string|null}>{
     const environment=this.transport.environment();
     if(environment!=='TESTNET')throw new Error(`POSITION_PROBE_REQUIRES_TESTNET:${environment}`);
-    const rows=await this.signed<any[]>('GET','/fapi/v2/positionRisk',undefined,'POSITION_FACT_PROBE','PRIVATE_STATE');
-    const nonzero=(Array.isArray(rows)?rows:[]).filter((row:any)=>Math.abs(Number(row?.positionAmt??row?.positionAmount??0))>0).slice(0,3);
-    return {environment,endpoint:'/fapi/v2/positionRisk',observedAt:Date.now(),rowCount:(Array.isArray(rows)?rows.length:0),
-      fieldNames:[...new Set((Array.isArray(rows)?rows:[]).flatMap(row=>Object.keys(row??{})))].sort(),
-      rows:nonzero.map(row=>Object.fromEntries(Object.entries(row??{}).filter(([key])=>/amount|asset|ratio|margin|notional|leverage|liquidation|price|symbol|side/i.test(key)).map(([key,value])=>[key,typeof value==='string'&&value.length<=24?value:String(value).slice(0,24)])))};
+    const endpoint=ExternalTradeAdapter.POSITION_RISK_ENDPOINT;
+    let rows:any[]=[],readError:string|null=null;
+    try{rows=await this.signed<any[]>('GET',endpoint,{},'POSITION_FACT_PROBE','PRIVATE_STATE')??[];}
+    catch(error){readError=String(error instanceof Error?error.message:error).slice(0,200);}
+    const list=Array.isArray(rows)?rows:[];
+    return {environment,endpoint,observedAt:Date.now(),rowCount:list.length,readError,
+      fieldNames:[...new Set(list.flatMap(row=>Object.keys(row??{})))].sort(),
+      rows:list.filter(row=>Math.abs(Number(row?.positionAmt??0))>0).slice(0,40).map(row=>Object.fromEntries(Object.entries(row??{})
+        .filter(([key])=>/amt|amount|asset|ratio|margin|notional|leverage|liquidation|price|symbol|side/i.test(key))
+        .map(([key,value])=>[key,typeof value==='string'?value:String(value).slice(0,24)])))};
   }
   /**
    * The only margin-tier read the PortfolioRisk profile is allowed to trust. Purely GET: it never

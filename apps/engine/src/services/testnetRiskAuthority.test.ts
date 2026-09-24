@@ -272,7 +272,7 @@ describe('the bracket collector is a pure read', () => {
   it('the position-fact probe is a single GET and never reaches a writer', async () => {
     const transport = fakeTransport();
     const probe = await adapterFor(transport).probePositionRiskFields();
-    expect([...new Set(transport.calls)].sort()).toEqual(['/fapi/v1/time', '/fapi/v2/positionRisk']);
+    expect([...new Set(transport.calls)].sort()).toEqual(['/fapi/v1/time', '/fapi/v3/positionRisk']);
     expect(transport.writes).toEqual([]);
     expect(probe.environment).toBe('TESTNET');
     // No positionAmt on the fake rows: the probe reports what the exchange sent, not a guess.

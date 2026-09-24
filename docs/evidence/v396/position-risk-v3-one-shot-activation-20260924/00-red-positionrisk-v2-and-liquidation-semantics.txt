@@ -1,0 +1,27 @@
+# 红测 v1 (2026-09-24T21:41:23+08:00) — 旧实现：/fapi/v2/positionRisk + maintMarginAmt + abs() 缓冲 + liq=0 当作缺失
+[31m   [31m×[31m position risk truth comes from the V3 contract[2m > [22mreads /fapi/v3/positionRisk and maps marginAsset / maintMargin / liquidationPrice
+[31m     → expected [] to have a length of 1 but got +0[39m
+[31m   [31m×[31m position risk truth comes from the V3 contract[2m > [22man exchange-reported liquidation price of exactly zero stays 0, it is not silentl
+[31m     → expected null to be 1.47 // Object.is equality[39m
+[31m   [31m×[31m position risk truth comes from the V3 contract[2m > [22mprobe and mapper must read the same endpoint, so a probe can never certify what t
+[31m     → expected '/fapi/v2/positionRisk' to be '/fapi/v3/positionRisk' // Object.is equality[39m
+[31m   [31m×[31m position risk truth comes from the V3 contract[2m > [22mwhen V3 is unsupported the row still exists for exits, but no risk fact may be cl
+[31m     → expected [ '/fapi/v1/time', …(1) ] to include '/fapi/v3/positionRisk'[39m
+[31m   [31m×[31m D.13 a READY authority never upgrades a position-level gap, and never synthesizes one[2m > [22mdropping maintMargin from the row must fai
+[31m     → expected '' to contain 'MAINTENANCE_MARGIN_UNPROVEN'[39m
+[31m   [31m×[31m D.13 a READY authority never upgrades a position-level gap, and never synthesizes one[2m > [22ma SHORT whose exchange row reports 0 liqui
+[31m     → expected '' to contain 'LIQUIDATION_BUFFER_UNPROVEN'[39m
+[31m   [31m×[31m D.13 a READY authority never upgrades a position-level gap, and never synthesizes one[2m > [22man impossible liquidation price is named a
+[31m     → expected '' to contain 'LIQUIDATION_PRICE_DIRECTION_INVALID:B…'[39m
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 7 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+[41m[1m FAIL [22m[49m src/services/positionRiskV3Facts.test.ts[2m > [22mposition risk truth comes from the V3 contract[2m > [22mreads /fapi/v3/positionR
+[41m[1m FAIL [22m[49m src/services/positionRiskV3Facts.test.ts[2m > [22mposition risk truth comes from the V3 contract[2m > [22man exchange-reported liq
+[41m[1m FAIL [22m[49m src/services/positionRiskV3Facts.test.ts[2m > [22mposition risk truth comes from the V3 contract[2m > [22mprobe and mapper must re
+[41m[1m FAIL [22m[49m src/services/positionRiskV3Facts.test.ts[2m > [22mposition risk truth comes from the V3 contract[2m > [22mwhen V3 is unsupported t
+[41m[1m FAIL [22m[49m src/services/positionRiskV3Facts.test.ts[2m > [22mD.13 a READY authority never upgrades a position-level gap, and never synthesizes
+    [90m181| [39m    // 0.025 × 3548.13 = 88.7 would be the synthesized value; it appea…
+[41m[1m FAIL [22m[49m src/services/positionRiskV3Facts.test.ts[2m > [22mD.13 a READY authority never upgrades a position-level gap, and never synthesizes
+[41m[1m FAIL [22m[49m src/services/positionRiskV3Facts.test.ts[2m > [22mD.13 a READY authority never upgrades a position-level gap, and never synthesizes
+[2m      Tests [22m [1m[31m7 failed[39m[22m[2m | [22m[1m[32m6 passed[39m[22m[90m (13)[39m
+
+注：D.13 组的三条 'expected "" to contain …' 是夹具走错出口（preTradeFacts 不含 stress blockers），改用 admit() 后仍是同一断言；这条红测记录的是 mapper 与 C3 语义的真实缺口。

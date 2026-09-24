@@ -1,0 +1,8 @@
+### 09-engine-scratch-build : bash -c cd apps/engine && npx tsc -p tsconfig.json --outDir build-check && node -e 'const n=require("fs").readdirSync("build-check").length;console.log("build-check entries="+n)'
+build-check entries=19
+
+[exit=0]
+### 09-engine-scratch-build : bash -c cd apps/engine && npx tsc -p tsconfig.json --outDir build-check && node -e 'console.log("built entries="+require("fs").readdirSync("build-check").length)' && rm -rf build-check (re-run after the final provenance edit)
+built entries=19
+
+[exit=0]

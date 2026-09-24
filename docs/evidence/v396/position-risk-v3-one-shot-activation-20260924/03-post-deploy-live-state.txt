@@ -1,0 +1,46 @@
+# post-deploy read-only live capture (2026-09-24T14:19:28.315Z) base=http://127.0.0.1:8080
+# endpoints: /api/v3/settings, /api/v3/pipeline, /api/v3/diagnostics/closeout, /health, /api/v3/positions, /api/v3/settings/portfolio-risk-authority
+
+## settings HTTP 200
+  {"settingsVersion":201,"environment":"TESTNET","credentialRef":"binance-primary","maxPositions":50,"maxGrossExposurePct":1,"maxDirectionExposurePct":0.8,"maxClusterExposurePct":0.35,"maxClusterDirectionExposurePct":0.35,"entrySafetyMode":"AUTO","aiExitAuthority":"SHADOW","profileConfigured":true,"marginTierVersion":"TESTNET_BINANCE_LEVERAGE_BRACKET_V1_SHA256_c8ac0070d479834cfc23febd5507ba083e6e1c64e66064558092bb0701791bbe","maintenanceMarginRatePct":0.025}
+
+## pipeline HTTP 200
+  runtimeControl={"mode":"RUNNING","reasonCode":"PRIVATE_NOT_READY","entrySafetyMode":"AUTO","autoExecutionMode":"AUTO_RUNNING"}
+  executionReadiness={"intent":true,"ready":false,"modelSpendPermitted":false,"blockers":["EXECUTION_WRITE_LOCKED"],"firstBlocker":"EXECUTION_WRITE_LOCKED","profileStatus":"READY","privateFresh":true,"writeLocked":true,"executableCandidateCount":9,"mode":"EXECUTION_BLOCKED","text":"执行事实未齐：EXECUTION_WRITE_LOCKED；已停止调用模型，避免产生无法执行的决策"}
+  capacityVisibility={"slots":{"used":12,"max":50,"positions":12,"inFlight":0,"reserved":0},"gross":{"notionalUsd":9249.876983990305,"limitUsd":10761.0054236181,"remainingUsd":1511.1284396277952,"usedPct":0.8595736754940024},"direction":{"LONG":{"notionalUsd":3609.7566444479853,"limitUsd":8608.80433889448,"remainingUsd":1511.1284396277952},"SHORT":{"notionalUsd":5640.12033954232,"limitUsd":8608.80433889448,"remainingUsd":1511.1284396277952}},"firstBlocker":"NONE","blockingDimensions":[],"exhaustedReason":null,"exhaustedForNewRisk":false,"evaluatedAt":1790259473627}
+  portfolioRiskProfile={"configured":true,"status":"READY","settingsVersion":201,"version":"v396r57df8814cdabb29e1d8485121dbec077408d300b25b79c9178cb251449794cdb","blockers":[],"missingFields":[],"authority":{"committed":true,"authorityStatus":"MATCHED","profileStatus":"READY","marginTierVersion":"TESTNET_BINANCE_LEVERAGE_BRACKET_V1_SHA256_c8ac0070d479834cfc23febd5507ba083e6e1c64e66064558092bb0701791bbe","contentHash":"c8ac0070d479834cfc23febd5507ba083e6e1c64e66064558092bb0701791bbe","derivedMaintenanceMarginRatePct":0.025,"rateDerivation":"ENTRY_BOUND_TIERS","coverageCount":14,"coverageSymbols":["ARBUSDT","AVAXUSDT","BCHUSDT","BNBUSDC","BTCUSDT","DOTUSDT","ENAUSDT","ETHUSDT","FETUSDT","LTCUSDT","ONDOUSDT","UNIUSDT","XRPUSDT","ZECUSDT"],"missingSymbols":[],"mismatchReasons":[],"observedAt":1790249518033,"committedAt":1790249518033}}
+  positions={"status":"FACT","count":12} takeProfit={"status":"READY","unverifiedTp":0,"required":12,"protected":12,"missing":0,"repairing":0,"repairFailed":0,"manualReviewRequired":0,"orphanTp":0,"duplicateTp":0,"qtyMismatch":0,"wrongSide":0,"tpMissing":0,"retryQueue":0}
+  pendingEntries={"status":"FACT","count":0,"max":6}
+  reconciliation={"status":"READY","driftCount":0,"unresolvedDriftCount":0,"historicalUnknownCount":0,"activeRiskUnresolvedCount":0,"verifiedNoActiveRiskUnknownCount":0}
+  binancePrivate={"status":"READY","asOf":1790259555245,"consecutiveFailures":0,"lastError":null,"snapshotAgeMs":14084}
+  entryPermission={"status":"BLOCKED","executionMode":"READ_ONLY","autoExecutionMode":"AUTO_RUNNING"} noEntryReason="SCHEDULER_STOPPED"
+  analysis={"mode":"ANALYSIS_ONLY","reason":"SILENCE_UNKNOWN","lastBlockedReason":null,"capitalExecutableCount":9,"lastTickAt":null,"lastSuccessAt":null}
+  primaryBrain={"status":"READY","runs":0,"historicalRuns":99,"idleReason":"WAITING_CANDIDATE","lastDecision":null,"lastCompletedAt":null,"queueDepth":0}
+  budgetTotals=[["TESTNET:default",{"usedWeight1m":null,"status":"AVAILABLE","http418":0,"http429":0,"blocked":0,"queueTimeout":0,"positionRiskEndpoints":[]}],["TESTNET:proxy-a087cc91667b",{"usedWeight1m":114,"status":"AVAILABLE","http418":3,"http429":17,"blocked":0,"queueTimeout":0,"positionRiskEndpoints":[]}]]
+
+## closeout HTTP 200
+  writeBoundary={"environment":"TESTNET","executionMode":"READ_ONLY","lockedToTestnet":true,"testnetWrites":0,"productionWrites":0,"blockedProductionWriteAttempts":0,"lastWriteAt":null,"lastWritePath":null}
+  runtime={"pid":36200,"instanceId":"c701ad19-eecc-49e5-b8cf-8214c863573d","buildId":"3.9.6-8f800564c40f5ae64f7b","restartCount":176,"uptimeMs":82427,"lastRestartReason":"MANUAL_START"}
+  persistence={"integrity":true,"status":"HEALTHY","error":null}
+
+## /health HTTP 503
+  {"fatal":null,"runtime":null}
+
+## positions HTTP 200 count=12
+  keys of row0 = entryTimeSource,managementStatus,humanManagedAt,tpLastVerifiedAt,tpCoverageSource,firstObservedAt,id,symbol,side,quantity,entryPrice,markPrice,leverage,unrealizedPnl,unrealizedPnlPercent,openedAt,liquidationPrice,marginAsset,notionalUsd,maintenanceMarginUsd,tpStatus,tpOrderId,cycleId,profitTakePlan,profitTakePlanSource,lossHandoff,tpEconomics
+  BCHUSDT | LONG | marginAsset=null | maint=null | liq=0 | mark=340.20091043 | notional=5.78341547 | src=null | tp=PROTECTED | cycle=cycle_entry_intent_mud27kh7_wdfh3ake
+  BTCUSDT | LONG | marginAsset=null | maint=null | liq=0 | mark=84172.07967391 | notional=3577.31338614 | src=null | tp=PROTECTED | cycle=cycle_entry_intent_mubpoawr_aiicz3a2
+  ETHUSDT | LONG | marginAsset=null | maint=null | liq=0 | mark=2665.98428295 | notional=26.65984282 | src=null | tp=PROTECTED | cycle=cycle_entry_intent_mubgebej_x5kj2tle
+  ZECUSDT | SHORT | marginAsset=null | maint=null | liq=7592.35690456 | mark=1513.48565394 | notional=1192.6266953 | src=null | tp=PROTECTED | cycle=cycle_entry_intent_mu9lpe0w_u7yjdvud
+  ENAUSDT | SHORT | marginAsset=null | maint=null | liq=5.00817005 | mark=0.2181 | notional=218.1 | src=null | tp=PROTECTED | cycle=cycle_entry_intent_mu992hw3_fj637bez
+  FETUSDT | SHORT | marginAsset=null | maint=null | liq=62.9273721 | mark=0.20803769 | notional=15.81086444 | src=null | tp=PROTECTED | cycle=cycle_entry_intent_mu95o9o8_c4nzb3h3
+  AVAXUSDT | SHORT | marginAsset=null | maint=null | liq=22.17895086 | mark=10.28803725 | notional=4115.2149 | src=null | tp=PROTECTED | cycle=cycle_entry_intent_mu8l1mm0_rcobpxad
+  ARBUSDT | SHORT | marginAsset=null | maint=null | liq=162.39920551 | mark=0.21783722 | notional=6.49154915 | src=null | tp=PROTECTED | cycle=cycle_entry_intent_mu83kx05_o828djl5
+  ONDOUSDT | SHORT | marginAsset=null | maint=null | liq=319.8406697 | mark=0.4973 | notional=7.4595 | src=null | tp=PROTECTED | cycle=cycle_entry_intent_mu83d7ho_tpicfrwf
+  LTCUSDT | SHORT | marginAsset=null | maint=null | liq=13490.90175391 | mark=72.55764706 | notional=26.12075294 | src=null | tp=PROTECTED | cycle=cycle_entry_intent_mu835vg9_5fvhw7y9
+  BNBUSDC | SHORT | marginAsset=null | maint=null | liq=83365.17202634 | mark=777.59 | notional=46.6554 | src=null | tp=PROTECTED | cycle=cycle_entry_intent_mu7xja2g_vg36bi9m
+  DOTUSDT | SHORT | marginAsset=null | maint=null | liq=484.22445562 | mark=1.16406777 | notional=11.6406777 | src=null | tp=PROTECTED | cycle=cycle_entry_intent_mu7x18sq_5ssvwucx
+  totals: positions=12 marginAssetProven=0 maintMarginProven=0 liqReportedZero=3 liqPositive=9 liqMissing=0 v3Tagged=0
+
+## authority GET HTTP 200
+  {"settingsVersion":201,"authority":{"source":"settings portfolio_risk_authority","environment":"TESTNET","accountScope":"binance-primary","committed":true,"marginTierVersion":"TESTNET_BINANCE_LEVERAGE_BRACKET_V1_SHA256_c8ac0070d479834cfc23febd5507ba083e6e1c64e66064558092bb0701791bbe","contentHash":"c8ac0070d479834cfc23febd5507ba083e6e1c64e66064558092bb0701791bbe","coverageSymbols":["ARBUSDT","AVAXUSDT","BCHUSDT","BNBUSDC","BTCUSDT","DOTUSDT","ENAUSDT","ETHUSDT","FETUSDT","LTCUSDT","ONDOUSDT","UNIUSDT","XRPUSDT","ZECUSDT"],"derivedMaintenanceMarginRatePct":0.025,"rateDerivation":"ENTRY_BOUND_TIERS","observedAt":1790249518033,"committedAt":1790249518033,"correlationVersion":"TESTNET_CORRELATION_CLUSTERS_V1_SHA256_d7ada0f6ba5cb950105a69439c409177748e1c87b164fa0872e845271d2bff65","scenarioVersion":"TESTNET_STRESS_SCENARIO_SET_V1_SHA256_3b9c016189e3b2cb2c2bad5f7bc761e7ae25181eadfa03b574be2ec9

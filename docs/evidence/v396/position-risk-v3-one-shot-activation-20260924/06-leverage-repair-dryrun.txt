@@ -1,0 +1,28 @@
+# durable position rows = 12   mode=DRY RUN
+# rows whose stored leverage is not a positive integer = 12
+  ARBUSDT/SHORT storedLeverage=null qty=29.8  <-- invalid
+  AVAXUSDT/SHORT storedLeverage=null qty=400  <-- invalid
+  BCHUSDT/LONG storedLeverage=null qty=0.017  <-- invalid
+  BNBUSDC/SHORT storedLeverage=null qty=0.06  <-- invalid
+  BTCUSDT/LONG storedLeverage=null qty=0.0425  <-- invalid
+  DOTUSDT/SHORT storedLeverage=null qty=10  <-- invalid
+  ENAUSDT/SHORT storedLeverage=null qty=1000  <-- invalid
+  ETHUSDT/LONG storedLeverage=null qty=0.01  <-- invalid
+  FETUSDT/SHORT storedLeverage=null qty=76  <-- invalid
+  LTCUSDT/SHORT storedLeverage=null qty=0.36  <-- invalid
+  ONDOUSDT/SHORT storedLeverage=null qty=15  <-- invalid
+  ZECUSDT/SHORT storedLeverage=null qty=0.788  <-- invalid
+# live V3 positions read through the deployed adapter = 12 (V2 stated leverage is available too; the mapper prefers it)
+  REPAIR ARBUSDT/SHORT leverage null -> 12 (storedQty=29.8 liveQty=29.8)
+  REPAIR AVAXUSDT/SHORT leverage null -> 8 (storedQty=400 liveQty=400)
+  REPAIR BCHUSDT/LONG leverage null -> 8 (storedQty=0.017 liveQty=0.017)
+  REPAIR BNBUSDC/SHORT leverage null -> 8 (storedQty=0.06 liveQty=0.06)
+  REPAIR BTCUSDT/LONG leverage null -> 14 (storedQty=0.0425 liveQty=0.0425)
+  REPAIR DOTUSDT/SHORT leverage null -> 8 (storedQty=10 liveQty=10)
+  REPAIR ENAUSDT/SHORT leverage null -> 8 (storedQty=1000 liveQty=1000)
+  REPAIR ETHUSDT/LONG leverage null -> 16 (storedQty=0.01 liveQty=0.01)
+  REPAIR FETUSDT/SHORT leverage null -> 12 (storedQty=76 liveQty=76)
+  REPAIR LTCUSDT/SHORT leverage null -> 8 (storedQty=0.36 liveQty=0.36)
+  REPAIR ONDOUSDT/SHORT leverage null -> 8 (storedQty=15 liveQty=15)
+  REPAIR ZECUSDT/SHORT leverage null -> 12 (storedQty=0.788 liveQty=0.788)
+# dry run only: 12 row(s) would be repaired. Re-run with --apply.

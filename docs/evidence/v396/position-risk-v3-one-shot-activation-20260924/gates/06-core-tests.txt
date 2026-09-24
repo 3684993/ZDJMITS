@@ -1,0 +1,22 @@
+### 06-core-tests : npm run test -w @zdj/core
+
+> @zdj/core@3.9.6 test
+> vitest run
+
+[1m[46m RUN [49m[22m [36mv3.2.7 [39m[90mD:/MITS-worktrees/v396-final-convergence-20260922/packages/core[39m
+
+ [32m✓[39m src/tradingCost.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+ [32m✓[39m src/tpStructure.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+ [32m✓[39m src/makerPricing.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 92[2mms[22m[39m
+ [32m✓[39m src/selection.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 20[2mms[22m[39m
+ [32m✓[39m src/assetAdmission.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32m✓[39m src/portfolio.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+ [32m✓[39m src/pool.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32m✓[39m src/capitalAdmission.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m8 passed[39m[22m[90m (8)[39m
+[2m      Tests [22m [1m[32m46 passed[39m[22m[90m (46)[39m
+[2m   Start at [22m 22:04:33
+[2m   Duration [22m 1.29s[2m (transform 1.08s, setup 0ms, collect 2.89s, tests 163ms, environment 2ms, prepare 1.97s)[22m
+
+[exit=0]

@@ -1,0 +1,4 @@
+### 15-dashboard-scratch-build-again : bash -c cd apps/dashboard && npx vite build --outDir ../../build-check/dashboard --emptyOutDir >/dev/null && echo dashboard-build-ok && rm -rf ../../build-check (re-run after the final provenance edit)
+dashboard-build-ok
+
+[exit=0]

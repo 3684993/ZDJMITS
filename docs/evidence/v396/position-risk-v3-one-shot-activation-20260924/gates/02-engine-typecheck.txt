@@ -1,0 +1,6 @@
+### 02-engine-typecheck : npx --prefix apps/engine tsc --noEmit -p apps/engine/tsconfig.json
+
+[exit=0]
+### 02-engine-typecheck : bash -c cd apps/engine && npx tsc --noEmit -p tsconfig.json
+
+[exit=0]

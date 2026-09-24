@@ -1,0 +1,25 @@
+### red-02 leverage: the V3 contract states no leverage, so Number(row.leverage) produced NaN and killed the dashboard projection
+### command: (cd apps/engine && npx vitest run src/services/positionLeverageV3.test.ts)  BEFORE the fix -> 5 failed / 1 passed
+### the V3 endpoint itself is confirmed working live; see 05-p0-live-v3-vs-v2-payload.txt. The defect is ours.
+     → BTCUSDT: expected false to be true // Object.is equality
+     → BTCUSDT: expected [Function] to not throw an error but '[\n  {\n    "code": "invalid_type",\n…' was thrown
+     → [
+    "expected": "number",
+    "expected": "number",
+     → expected null to be 14 // Object.is equality
+     → expected [] to include 'BTCUSDT'
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  src/services/positionLeverageV3.test.ts > V3 states no leverage, and a NaN leverage kills the whole engine > every position mapped from the real Testnet payload has the leverage the exchange actually uses
+AssertionError: BTCUSDT: expected false to be true // Object.is equality
+ FAIL  src/services/positionLeverageV3.test.ts > V3 states no leverage, and a NaN leverage kills the whole engine > the mapped rows satisfy PositionSchema, which is what the dashboard projection parses
+AssertionError: BTCUSDT: expected [Function] to not throw an error but '[\n  {\n    "code": "invalid_type",\n…' was thrown
+    \"expected\": \"number\",
+ FAIL  src/services/positionLeverageV3.test.ts > V3 states no leverage, and a NaN leverage kills the whole engine > the exposure projection that crashed cannot produce a non-finite margin from these rows
+    "expected": "number",
+    "expected": "number",
+ FAIL  src/services/positionLeverageV3.test.ts > V3 states no leverage, and a NaN leverage kills the whole engine > a fresh row with no leverage at all never overwrites a leverage the exchange already supported
+AssertionError: expected null to be 14 // Object.is equality
+ FAIL  src/services/positionLeverageV3.test.ts > V3 states no leverage, and a NaN leverage kills the whole engine > neither side stating a leverage keeps the position out of the poisoned state and says why
+AssertionError: expected [] to include 'BTCUSDT'
+ Test Files  1 failed (1)
+      Tests  5 failed | 1 passed (6)

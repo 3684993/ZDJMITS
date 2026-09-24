@@ -1,0 +1,129 @@
+### 11-verify-scripts : npm run verify:scripts
+
+> zdj-mits-v3@3.9.6 verify:scripts
+> node --check scripts/maintain-storage.mjs && node --check scripts/reset-testnet-runtime-db.mjs && node --check scripts/init-local-runtime.mjs && node --check scripts/prune-zdj-backups.mjs && node --check scripts/install-storage-retention.mjs && node --check scripts/v394-stage6-set-readonly.mjs && node scripts/v394-stage6-set-readonly.mjs --self-test && node --check scripts/v394-stage6-preflight.mjs && node scripts/v394-stage6-preflight.mjs --self-test && node --check scripts/audit-ai-entry-quality.mjs && node --check scripts/audit-trading-quality-baseline.mjs && node --check scripts/inspect-sqlite-capacity.mjs && node --check scripts/audit-v394-entry-authorization.mjs && node --test scripts/maintain-storage.test.mjs scripts/reset-testnet-runtime-db.test.mjs scripts/init-local-runtime.test.mjs && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/start-zdj-engine-host.test.ps1 && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/run-v394-readonly-canary.test.ps1 && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/run-v394-local-rollout.test.ps1 && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/run-v394-stage7-to-stage9.test.ps1
+
+(node:37188) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V3.9.4 explicit proxy-enable + legacy normalization + READ_ONLY self-test PASS
+(node:12792) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V3.9.4 Stage6 preflight self-test PASS
+TAP version 13
+# (node:7740) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: V3.9.3 init preserves static configuration and removes active local trading history
+ok 1 - V3.9.3 init preserves static configuration and removes active local trading history
+  ---
+  duration_ms: 444.5137
+  type: 'test'
+  ...
+# (node:31688) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: offline maintenance preserves source: dry
+ok 2 - offline maintenance preserves source: dry
+  ---
+  duration_ms: 258.7522
+  type: 'test'
+  ...
+# Subtest: offline maintenance preserves source: build
+ok 3 - offline maintenance preserves source: build
+  ---
+  duration_ms: 233.4364
+  type: 'test'
+  ...
+# Subtest: offline maintenance preserves source: alias
+ok 4 - offline maintenance preserves source: alias
+  ---
+  duration_ms: 226.3863
+  type: 'test'
+  ...
+# Subtest: offline maintenance preserves source: existing
+ok 5 - offline maintenance preserves source: existing
+  ---
+  duration_ms: 179.3326
+  type: 'test'
+  ...
+# Subtest: offline maintenance preserves source: wal
+ok 6 - offline maintenance preserves source: wal
+  ---
+  duration_ms: 174.2763
+  type: 'test'
+  ...
+# Subtest: offline maintenance preserves source: disk
+ok 7 - offline maintenance preserves source: disk
+  ---
+  duration_ms: 175.5166
+  type: 'test'
+  ...
+# Subtest: offline maintenance preserves source: delete-failure
+ok 8 - offline maintenance preserves source: delete-failure
+  ---
+  duration_ms: 204.2284
+  type: 'test'
+  ...
+# Subtest: offline maintenance preserves source: vacuum-failure
+ok 9 - offline maintenance preserves source: vacuum-failure
+  ---
+  duration_ms: 192.1996
+  type: 'test'
+  ...
+# Subtest: offline maintenance preserves source: publish-lock
+ok 10 - offline maintenance preserves source: publish-lock
+  ---
+  duration_ms: 211.3842
+  type: 'test'
+  ...
+# Subtest: offline maintenance preserves source: corrupt-copy
+ok 11 - offline maintenance preserves source: corrupt-copy
+  ---
+  duration_ms: 220.324
+  type: 'test'
+  ...
+# Subtest: offline maintenance preserves source: crash
+ok 12 - offline maintenance preserves source: crash
+  ---
+  duration_ms: 192.1538
+  type: 'test'
+  ...
+# Subtest: backup pruning requires an explicit verified baseline and keeps it even when it is oldest
+ok 13 - backup pruning requires an explicit verified baseline and keeps it even when it is oldest
+  ---
+  duration_ms: 445.4664
+  type: 'test'
+  ...
+# Subtest: AI quality treats missing outcomes as missing and does not promote PLACE-only samples
+ok 14 - AI quality treats missing outcomes as missing and does not promote PLACE-only samples
+  ---
+  duration_ms: 319.8961
+  type: 'test'
+  ...
+# Subtest: valid WAL is copied and replayed only on the working database
+ok 15 - valid WAL is copied and replayed only on the working database
+  ---
+  duration_ms: 241.5858
+  type: 'test'
+  ...
+# (node:43852) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: schema-only reset preserves schema/static configuration and never copies runtime history
+ok 16 - schema-only reset preserves schema/static configuration and never copies runtime history
+  ---
+  duration_ms: 318.6318
+  type: 'test'
+  ...
+1..16
+# tests 16
+# suites 0
+# pass 16
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3430.6043
+start-zdj-engine-host.test.ps1 PASS
+V3.9.4 read-only canary script contract PASS
+V3.9.4 local rollout script contract PASS
+V3.9.4 stage7-to-stage9 runner contract PASS
+
+[exit=0]

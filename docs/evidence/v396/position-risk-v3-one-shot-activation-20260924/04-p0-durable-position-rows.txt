@@ -1,0 +1,16 @@
+# durable position rows (readOnly open of data/zdj-settings.sqlite) count=12
+  ARBUSDT/SHORT | qty=29.8 mark=0.21947469 lev=object:null notional=6.54034576 marginAsset="USDT" maint=0.03924207 liq=162.14331887 src="V3_VERIFIED" tp=PROTECTED  <-- NON-FINITE: leverage
+  AVAXUSDT/SHORT | qty=400 mark=10.307 lev=object:null notional=4122.8 marginAsset="USDT" maint=41.228 liq=22.17880619 src="V3_VERIFIED" tp=PROTECTED  <-- NON-FINITE: leverage
+  BCHUSDT/LONG | qty=0.017 mark=340.1814211 lev=object:null notional=5.78308415 marginAsset="USDT" maint=0.02313233 liq=0 src="V3_VERIFIED" tp=PROTECTED  <-- NON-FINITE: leverage
+  BNBUSDC/SHORT | qty=0.06 mark=777.83 lev=object:null notional=46.6698 marginAsset="USDC" maint=0.233349 liq=83365.17202634 src="V3_VERIFIED" tp=PROTECTED  <-- NON-FINITE: leverage
+  BTCUSDT/LONG | qty=0.0425 mark=84193.4 lev=object:null notional=3578.2195 marginAsset="USDT" maint=14.312878 liq=0 src="V3_VERIFIED" tp=PROTECTED  <-- NON-FINITE: leverage
+  DOTUSDT/SHORT | qty=10 mark=1.1689 lev=object:null notional=11.689 marginAsset="USDT" maint=0.0759785 liq=483.46224723 src="V3_VERIFIED" tp=PROTECTED  <-- NON-FINITE: leverage
+  ENAUSDT/SHORT | qty=1000 mark=0.21834595 lev=object:null notional=218.34595 marginAsset="USDT" maint=3.27518925 liq=5.00088164 src="V3_VERIFIED" tp=PROTECTED  <-- NON-FINITE: leverage
+  ETHUSDT/LONG | qty=0.01 mark=2671.3 lev=object:null notional=26.713 marginAsset="USDT" maint=0.133565 liq=0 src="V3_VERIFIED" tp=PROTECTED  <-- NON-FINITE: leverage
+  FETUSDT/SHORT | qty=76 mark=0.2086 lev=object:null notional=15.8536 marginAsset="USDT" maint=0.317072 liq=62.82834381 src="V3_VERIFIED" tp=PROTECTED  <-- NON-FINITE: leverage
+  LTCUSDT/SHORT | qty=0.36 mark=73.2 lev=object:null notional=26.352 marginAsset="USDT" maint=0.171288 liq=13470.237423 src="V3_VERIFIED" tp=PROTECTED  <-- NON-FINITE: leverage
+  ONDOUSDT/SHORT | qty=15 mark=0.50276801 lev=object:null notional=7.54152015 marginAsset="USDT" maint=0.1131228 liq=319.33905963 src="V3_VERIFIED" tp=PROTECTED  <-- NON-FINITE: leverage
+  ZECUSDT/SHORT | qty=0.788 mark=1513.87 lev=object:null notional=1192.92956 marginAsset="USDT" maint=17.8939434 liq=7583.08874902 src="V3_VERIFIED" tp=PROTECTED  <-- NON-FINITE: leverage
+  rows with a non-finite quantity/markPrice/leverage/entryPrice/notionalUsd = 12
+
+# part 2 skipped (pass --live to issue signed GETs through the deployed adapter)

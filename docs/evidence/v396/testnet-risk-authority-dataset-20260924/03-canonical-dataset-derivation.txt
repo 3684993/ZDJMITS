@@ -1,0 +1,11 @@
+COVERAGE=BTCUSDT,ETHUSDT
+CANONICAL_MARGIN_DATASET=[{"symbol":"BTCUSDT","tiers":[{"bracket":0,"notionalFloor":0,"notionalCap":50000,"maintenanceMarginRatio":0.004,"initialLeverage":20,"cum":0},{"bracket":1,"notionalFloor":50000,"notionalCap":200000,"maintenanceMarginRatio":0.01,"initialLeverage":10,"cum":100},{"bracket":2,"notionalFloor":200000,"notionalCap":null,"maintenanceMarginRatio":0.025,"initialLeverage":5,"cum":300}]},{"symbol":"ETHUSDT","tiers":[{"bracket":0,"notionalFloor":0,"notionalCap":null,"maintenanceMarginRatio":0.005,"initialLeverage":25,"cum":0}]}]
+MARGIN_TIER_VERSION=TESTNET_BINANCE_LEVERAGE_BRACKET_V1_SHA256_aa042acb62d638c6ba0bfa3945e99891f7e9c632be8f439e829402b579141efe
+MARGIN_CONTENT_HASH=aa042acb62d638c6ba0bfa3945e99891f7e9c632be8f439e829402b579141efe
+CORRELATION_VERSION=TESTNET_CORRELATION_CLUSTERS_V1_SHA256_d7ada0f6ba5cb950105a69439c409177748e1c87b164fa0872e845271d2bff65
+SCENARIO_VERSION=TESTNET_STRESS_SCENARIO_SET_V1_SHA256_3b9c016189e3b2cb2c2bad5f7bc761e7ae25181eadfa03b574be2ec9d1a0749c
+DERIVED_MAINTENANCE_RATE=0.025 derivation=ALL_COVERED_TIERS
+REACHABLE_MAINTENANCE_RATE=0.005 derivation=REACHABLE_TIERS
+MAX_OF_ALL_TIERS=0.025  AVG_WOULD_BE=0.011000
+OBSERVED_TIME_ONLY_SAME_HASH=true
+DRIFTED_TIER_NEW_HASH=true

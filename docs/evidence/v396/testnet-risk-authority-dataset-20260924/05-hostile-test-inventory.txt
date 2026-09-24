@@ -1,0 +1,79 @@
+# 敌意/回归测试清单：vitest --reporter=verbose 四个文件（authority compiler 24 + durable store 6 + executionReadiness 18 + settings routes 13 = 61 tests），EXIT=0
+VITEST_TEST_TIMEOUT=5000 CI=
+
+[1m[46m RUN [49m[22m [36mv3.2.7 [39m[90mD:/MITS-worktrees/v396-final-convergence-20260922/apps/engine[39m
+
+(node:34280) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:50796) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:27280) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:33304) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m src/api/runtimeSettingsResources.test.ts[2m > [22mruntime settings resource CRUD[2m > [22mmigrates legacy DIRECT proxy settings to persisted proxy-only truth[32m 12[2mms[22m[39m
+ [32m✓[39m src/api/runtimeSettingsResources.test.ts[2m > [22mruntime settings resource CRUD[2m > [22mpersists AI CRUD and keeps enabled Scout in runtime resources[32m 41[2mms[22m[39m
+ [32m✓[39m src/api/runtimeSettingsResources.test.ts[2m > [22mruntime settings resource CRUD[2m > [22mmakes proxy CRUD canonical, fail-closed and immediately visible to REST and WS consumers[32m 13[2mms[22m[39m
+ [32m✓[39m src/api/runtimeSettingsResources.test.ts[2m > [22mruntime settings resource CRUD[2m > [22mrejects stale resource edits with optimistic concurrency instead of overwriting newer settings[32m 11[2mms[22m[39m
+ [32m✓[39m src/api/runtimeSettingsResources.test.ts[2m > [22mruntime settings resource CRUD[2m > [22mapplies Binance Demo exchange REST and keeps WS independently configurable[32m 6[2mms[22m[39m
+ [32m✓[39m src/api/runtimeSettingsResources.test.ts[2m > [22mruntime settings resource CRUD[2m > [22mguards active exchange deletion and rejects secret material in resource payloads[32m 14[2mms[22m[39m
+ [32m✓[39m src/api/runtimeSettingsResources.test.ts[2m > [22mruntime settings resource CRUD[2m > [22mkeeps Exchange Proxy and AI under Resource Manager when generic settings are saved[32m 7[2mms[22m[39m
+ [32m✓[39m src/api/runtimeSettingsResources.test.ts[2m > [22mruntime settings resource CRUD[2m > [22mpersists a valid static egress expectation and rejects malformed IP values[32m 11[2mms[22m[39m
+ [32m✓[39m src/api/runtimeSettingsResources.test.ts[2m > [22mportfolio risk authority commit channel[2m > [22mcommits through the dedicated channel and returns the server readback, never the caller values[32m 8[2mms[22m[39m
+ [32m✓[39m src/api/runtimeSettingsResources.test.ts[2m > [22mportfolio risk authority commit channel[2m > [22mH2/H7 refuses a request that carries a version, a rate or a bracket table[32m 36[2mms[22m[39m
+ [32m✓[39m src/api/runtimeSettingsResources.test.ts[2m > [22mportfolio risk authority commit channel[2m > [22mH1 fails closed with the real blockers and writes nothing when the facts cannot be proven[32m 7[2mms[22m[39m
+ [32m✓[39m src/api/runtimeSettingsResources.test.ts[2m > [22mportfolio risk authority commit channel[2m > [22mreports the durable authority state on readback instead of an inferred READY[32m 4[2mms[22m[39m
+ [32m✓[39m src/api/runtimeSettingsResources.test.ts[2m > [22mportfolio risk authority commit channel[2m > [22mH10 keeps refusing a whole-settings PUT that tries to name a dataset version[32m 6[2mms[22m[39m
+ [32m✓[39m src/config/portfolioRiskAuthorityStore.test.ts[2m > [22mone commit, or nothing[2m > [22mwrites the three dataset rows and the settings row together, bumping the version exactly once[32m 114[2mms[22m[39m
+ [32m✓[39m src/config/portfolioRiskAuthorityStore.test.ts[2m > [22mone commit, or nothing[2m > [22mreads the durable authority back and refuses a hand-edited row instead of trusting its hash[32m 95[2mms[22m[39m
+ [32m✓[39m src/config/portfolioRiskAuthorityStore.test.ts[2m > [22mone commit, or nothing[2m > [22mH11 rolls every byte back when a dataset row write fails mid-transaction[32m 99[2mms[22m[39m
+ [32m✓[39m src/config/portfolioRiskAuthorityStore.test.ts[2m > [22mone commit, or nothing[2m > [22mrefuses a CAS conflict, a forged row set and a production context without touching anything[32m 106[2mms[22m[39m
+ [32m✓[39m src/config/portfolioRiskAuthorityStore.test.ts[2m > [22mthe dataset fields stay locked on the generic channels[2m > [22mH7/H25 refuses a PATCH that only wants to lower the derived maintenance rate[32m 99[2mms[22m[39m
+ [32m✓[39m src/config/portfolioRiskAuthorityStore.test.ts[2m > [22mthe dataset fields stay locked on the generic channels[2m > [22mH9 refuses to write a dataset version through the patch channel at all[32m 95[2mms[22m[39m
+ [32m✓[39m src/services/testnetRiskAuthority.test.ts[2m > [22mmargin dataset canonicalisation is fail-closed[2m > [22maccepts a well-formed read and orders symbols and tiers deterministically[32m 11[2mms[22m[39m
+ [32m✓[39m src/services/testnetRiskAuthority.test.ts[2m > [22mmargin dataset canonicalisation is fail-closed[2m > [22mrejects NaN, Infinity, negative ratios and inverted floor/cap instead of normalising them[32m 1[2mms[22m[39m
+ [32m✓[39m src/services/testnetRiskAuthority.test.ts[2m > [22mmargin dataset canonicalisation is fail-closed[2m > [22mrefuses an unprovable tier gap and a missing bracket for a required symbol[32m 1[2mms[22m[39m
+ [32m✓[39m src/services/testnetRiskAuthority.test.ts[2m > [22mmargin dataset canonicalisation is fail-closed[2m > [22mrejects two tiers that claim the same range with different maintenance ratios[32m 0[2mms[22m[39m
+ [32m✓[39m src/services/testnetRiskAuthority.test.ts[2m > [22mauthority versions and the maintenance rate are server-derived[2m > [22mderives every version from dataset content and never from a client label[32m 2[2mms[22m[39m
+ [32m✓[39m src/services/testnetRiskAuthority.test.ts[2m > [22mauthority versions and the maintenance rate are server-derived[2m > [22mtakes the maximum applicable bracket rate, never an average, and repeats identically[32m 1[2mms[22m[39m
+ [32m✓[39m src/services/testnetRiskAuthority.test.ts[2m > [22mauthority versions and the maintenance rate are server-derived[2m > [22muses the reachable bracket range when sizing envelopes are provable, and still conservative[32m 1[2mms[22m[39m
+ [32m✓[39m src/services/testnetRiskAuthority.test.ts[2m > [22mauthority versions and the maintenance rate are server-derived[2m > [22mchanges the hash when any tier drifts, and keeps it for observation-time-only differences[32m 1[2mms[22m[39m
+ [32m✓[39m src/services/testnetRiskAuthority.test.ts[2m > [22mauthority versions and the maintenance rate are server-derived[2m > [22mis insensitive to JSON key order and scenario order, and derives correlation identity from the dataset[32m 2[2mms[22m[39m
+ [32m✓[39m src/services/testnetRiskAuthority.test.ts[2m > [22mauthority versions and the maintenance rate are server-derived[2m > [22mrefuses a PRODUCTION read used to claim Testnet authority[32m 0[2mms[22m[39m
+ [32m✓[39m src/services/testnetRiskAuthority.test.ts[2m > [22mprofile validation trusts the durable authority, not strings[2m > [22mH1 a non-empty version triple with no committed authority is never READY[32m 1[2mms[22m[39m
+ [32m✓[39m src/services/testnetRiskAuthority.test.ts[2m > [22mprofile validation trusts the durable authority, not strings[2m > [22maccepts exactly the profile the compiler produced and nothing weaker[32m 2[2mms[22m[39m
+ [32m✓[39m src/services/testnetRiskAuthority.test.ts[2m > [22mprofile validation trusts the durable authority, not strings[2m > [22mH23/H3 a candidate symbol outside the committed coverage fails closed with a named blocker[32m 1[2mms[22m[39m
+ [32m✓[39m src/services/testnetRiskAuthority.test.ts[2m > [22mprofile validation trusts the durable authority, not strings[2m > [22mmarks drift stale and refuses readiness, without silently adopting the new hash[32m 1[2mms[22m[39m
+ [32m✓[39m src/services/testnetRiskAuthority.test.ts[2m > [22mprofile validation trusts the durable authority, not strings[2m > [22mrefuses a scope mismatch so a Testnet authority cannot be replayed on another account[32m 0[2mms[22m[39m
+ [32m✓[39m src/services/testnetRiskAuthority.test.ts[2m > [22mthe bracket collector is a pure read[2m > [22missues one signed GET per required symbol and never touches a writer or setLeverage[32m 2[2mms[22m[39m
+ [32m✓[39m src/services/testnetRiskAuthority.test.ts[2m > [22mthe bracket collector is a pure read[2m > [22mrefuses to collect authority in production and reports per-symbol failures instead of a partial dataset[32m 2[2mms[22m[39m
+ [32m✓[39m src/services/executionReadiness.test.ts[2m > [22mexecution readiness judgment[2m > [22mpermits model spend only when every execution fact is present[32m 2[2mms[22m[39m
+ [32m✓[39m src/services/executionReadiness.test.ts[2m > [22mexecution readiness judgment[2m > [22mF2 stops paying when no executable candidate has a proven bracket, without freezing a partly covered pool[32m 12[2mms[22m[39m
+ [32m✓[39m src/services/executionReadiness.test.ts[2m > [22mexecution readiness judgment[2m > [22mrefuses to pay for a PLACE the write lock will only convert to a WAIT[32m 0[2mms[22m[39m
+ [32m✓[39m src/services/executionReadiness.test.ts[2m > [22mexecution readiness judgment[2m > [22mtreats a stale private account as no facts, not as the cached balance it still holds[32m 0[2mms[22m[39m
+ [32m✓[39m src/services/executionReadiness.test.ts[2m > [22mexecution readiness judgment[2m > [22mnames the exact profile fact that is missing, and never calls an unconfigured profile "ready"[32m 1[2mms[22m[39m
+ [32m✓[39m src/services/executionReadiness.test.ts[2m > [22mexecution readiness judgment[2m > [22mkeeps production out of reach and a non-auto policy in research mode[32m 0[2mms[22m[39m
+ [32m✓[39m src/services/testnetRiskAuthority.test.ts[2m > [22mthe bracket collector is a pure read[2m > [22mbounds fan-out so a wide universe cannot launch an unbounded weight-30 burst[32m 156[2mms[22m[39m
+ [32m✓[39m src/services/testnetRiskAuthority.test.ts[2m > [22mthe authority commit channel derives its own facts[2m > [22mH8 collects by GET only and commits versions and a rate this server derived[32m 7[2mms[22m[39m
+ [32m✓[39m src/services/testnetRiskAuthority.test.ts[2m > [22mthe authority commit channel derives its own facts[2m > [22mrefuses a request that names a version or a rate before it spends one request[32m 1[2mms[22m[39m
+ [32m✓[39m src/services/testnetRiskAuthority.test.ts[2m > [22mthe authority commit channel derives its own facts[2m > [22mH18 refuses a production context and an adapter without the read capability, without touching settings[32m 1[2mms[22m[39m
+ [32m✓[39m src/services/testnetRiskAuthority.test.ts[2m > [22mthe authority commit channel derives its own facts[2m > [22mH3 reports the missing bracket by name and commits nothing[32m 1[2mms[22m[39m
+ [32m✓[39m src/services/testnetRiskAuthority.test.ts[2m > [22mthe authority commit channel derives its own facts[2m > [22mH24 marks a drifted bracket table stale and never adopts the new hash[32m 3[2mms[22m[39m
+ [32m✓[39m src/services/testnetRiskAuthority.test.ts[2m > [22mthe authority commit channel derives its own facts[2m > [22mF2 the admission itself refuses until the durable authority exists, and names an uncovered symbol[32m 7[2mms[22m[39m
+ [32m✓[39m src/services/executionReadiness.test.ts[2m > [22man armed trade intent spends no model on facts it cannot execute[2m > [22masks the Primary zero times under READ_ONLY while candidates are executable[32m 136[2mms[22m[39m
+ [32m✓[39m src/services/executionReadiness.test.ts[2m > [22man armed trade intent spends no model on facts it cannot execute[2m > [22mblocks on stale private facts and resumes on the next tick without a restart[32m 263[2mms[22m[39m
+ [32m✓[39m src/services/executionReadiness.test.ts[2m > [22man armed trade intent spends no model on facts it cannot execute[2m > [22mspends nothing while the risk profile is unconfigured, and names the missing fact[32m 124[2mms[22m[39m
+ [32m✓[39m src/services/executionReadiness.test.ts[2m > [22man armed trade intent spends no model on facts it cannot execute[2m > [22mkeeps deterministic supply maintenance running while the model is refused[32m 126[2mms[22m[39m
+ [32m✓[39m src/services/executionReadiness.test.ts[2m > [22man armed trade intent spends no model on facts it cannot execute[2m > [22mnever spends a model outside Testnet, whatever the settings claim[32m 125[2mms[22m[39m
+ [32m✓[39m src/services/executionReadiness.test.ts[2m > [22mthe runtime pushes the verdict instead of deciding it per surface[2m > [22mreports the first real reason every tick and still runs the deterministic tick body[32m 4[2mms[22m[39m
+ [32m✓[39m src/services/executionReadiness.test.ts[2m > [22mthe runtime pushes the verdict instead of deciding it per surface[2m > [22mH1 spends no model on a profile whose versions name no committed authority[32m 2[2mms[22m[39m
+ [32m✓[39m src/services/executionReadiness.test.ts[2m > [22mthe runtime pushes the verdict instead of deciding it per surface[2m > [22mH17 stops paying for a PLACE the moment the committed bracket table drifts[32m 2[2mms[22m[39m
+ [32m✓[39m src/services/executionReadiness.test.ts[2m > [22mthe runtime pushes the verdict instead of deciding it per surface[2m > [22mdoes not evaluate readiness at all when the environment is not Testnet[32m 2[2mms[22m[39m
+ [32m✓[39m src/services/executionReadiness.test.ts[2m > [22ma PLACE with every fact present walks the real entry chain[2m > [22mLONG reserves, creates intent and order, and submits exactly once[32m 131[2mms[22m[39m
+ [32m✓[39m src/services/executionReadiness.test.ts[2m > [22ma PLACE with every fact present walks the real entry chain[2m > [22mSHORT reserves, creates intent and order, and submits exactly once[32m 125[2mms[22m[39m
+ [32m✓[39m src/services/executionReadiness.test.ts[2m > [22ma PLACE with every fact present walks the real entry chain[2m > [22mreports a post-AI refusal with its stage and reason instead of a vague WAIT, and spends no second call[32m 187[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m4 passed[39m[22m[90m (4)[39m
+[2m      Tests [22m [1m[32m61 passed[39m[22m[90m (61)[39m
+[2m   Start at [22m 18:49:29
+[2m   Duration [22m 3.07s[2m (transform 1.31s, setup 0ms, collect 3.67s, tests 2.25s, environment 1ms, prepare 618ms)[22m

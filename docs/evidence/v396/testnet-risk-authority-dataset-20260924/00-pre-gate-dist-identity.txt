@@ -1,0 +1,5 @@
+# pre-gate live dist identity (computed with the running build's own helper)
+artifactHash=eaaabc52c682cc1ce56afaa9301fd18aa64c6a51ab99ebfe3c770949660d2786
+buildId=3.9.6-eaaabc52c682cc1ce56a
+sourceHash(with my uncommitted src edits)=6188381e9a6e9982a941bc8c51a821d389b8bbbc801d90d345ae37a6591d18a2
+live instance artifactHash from data/runtime/engine-instance.json = eaaabc52c682cc1ce56afaa9301fd18aa64c6a51ab99ebfe3c770949660d2786

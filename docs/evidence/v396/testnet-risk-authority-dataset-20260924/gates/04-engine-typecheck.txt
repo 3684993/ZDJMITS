@@ -1,0 +1,3 @@
+### 04-engine-typecheck : npx tsc --noEmit -p tsconfig.json
+(no diagnostics)
+EXIT=0

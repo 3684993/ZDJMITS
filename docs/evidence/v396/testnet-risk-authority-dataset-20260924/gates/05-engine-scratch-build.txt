@@ -1,0 +1,19 @@
+### 05-engine-scratch-build : npx tsc -p tsconfig.json --outDir build-check (live apps/engine/dist untouched)
+(tsc emitted no diagnostics)
+EXIT=0
+
+scratch output sample:
+aiExitAuthority.d.ts
+aiExitAuthority.d.ts.map
+aiExitAuthority.js
+portfolioRiskAuthority.d.ts
+portfolioRiskAuthority.d.ts.map
+portfolioRiskAuthority.js
+testnetRiskAuthority.test.d.ts
+testnetRiskAuthority.test.d.ts.map
+testnetRiskAuthority.test.js
+
+live dist sample (must NOT contain the new module):
+aiExitAuthority.d.ts
+aiExitAuthority.d.ts.map
+aiExitAuthority.js

@@ -8,6 +8,7 @@ import {
   portfolioRiskAuthorityCompile,
 } from './portfolioRiskAuthority.js';
 import {PortfolioRiskAdmission, portfolioRiskProfileBlockers, portfolioRiskProfileStatus} from './portfolioRiskLedger.js';
+import {executionReadiness} from './executionReadiness.js';
 
 /**
  * A PortfolioRisk profile must never become "proven" because somebody typed a version string. The
@@ -267,6 +268,19 @@ describe('the bracket collector is a pure read', () => {
     expect(peak).toBeLessThanOrEqual(4);
     expect(peak).toBeGreaterThan(1);
   });
+
+  it('the position-fact probe is a single GET and never reaches a writer', async () => {
+    const transport = fakeTransport();
+    const probe = await adapterFor(transport).probePositionRiskFields();
+    expect([...new Set(transport.calls)].sort()).toEqual(['/fapi/v1/time', '/fapi/v2/positionRisk']);
+    expect(transport.writes).toEqual([]);
+    expect(probe.environment).toBe('TESTNET');
+    // No positionAmt on the fake rows: the probe reports what the exchange sent, not a guess.
+    expect(probe.rowCount).toBe(1);
+    expect(probe.rows).toEqual([]);
+    expect(probe.fieldNames).toEqual(['brackets', 'symbol']);
+    await expect(adapterFor(fakeTransport('PRODUCTION')).probePositionRiskFields()).rejects.toThrow(/POSITION_PROBE_REQUIRES_TESTNET/);
+  });
 });
 
 const COMMIT_LIMITS = {configured: true, maxCapitalAtRiskUsd: 600, maxStressLossUsd: 300, maxGrossNotionalUsd: 6000, maxDirectionNotionalUsd: 4000, maxClusterNotionalUsd: 6000,
@@ -329,18 +343,66 @@ describe('the derived rate is bounded by the notional the account can actually r
     }
   });
 
-  it('R4 the coverage rule keeps USDC-margined positions and candidates instead of excluding them by name', () => {
+  it('R4 the coverage rule keeps USDC-margined symbols and spans the eligible universe, not one routing tick', () => {
+    const eligible = (symbol: string, rank: number) => ({symbol, eligible: true, rank});
     const state: any = {
-      positions: new Map([['p1', {symbol: 'BTCUSDT'}], ['p2', {symbol: 'BNBUSDC'}]]),
-      entryOrders: new Map([['o1', {symbol: 'ethusdt', status: 'NEW', quantity: 1, filledQuantity: 0, createdAt: Date.now(), absoluteExpiresAt: Date.now() + 60_000, factSource: 'BINANCE', activeRiskExposure: true}]]),
-      entryReservations: new Map(),
-      activeEntrySymbols: () => new Set(['SOLUSDT']), positionSymbols: () => new Set(['BTCUSDT', 'BNBUSDC']),
-      pool: {readyList: () => [{symbol: '1000PEPEUSDT', state: 'READY'}, {symbol: 'GALAUSDT', state: 'WAITING'}]},
+      entryOrders: new Map(), entryReservations: new Map(),
+      activeEntrySymbols: () => new Set<string>(), positionSymbols: () => new Set(['BTCUSDT', 'BNBUSDC']),
+      pool: {readyList: () => [{symbol: 'SOLUSDT', state: 'READY'}]},
+      universe: [eligible('NEARUSDC', 1), eligible('DOGEUSDC', 2), eligible('XRPUSDT', 3), {symbol: 'JUNKUSDT', eligible: false, rank: 0},
+        ...Array.from({length: 60}, (_, i) => eligible(`U${i}USDT`, 10 + i))],
+      settings: {selection: {poolMax: 24}},
     };
     const self: any = {state};
     const symbols = (EngineRuntime.prototype as unknown as {portfolioRiskRequiredSymbols: (this: unknown) => string[]}).portfolioRiskRequiredSymbols.call(self);
-    expect(symbols).toContain('BNBUSDC');
-    expect(symbols).toEqual(['1000PEPEUSDT', 'BNBUSDC', 'BTCUSDT', 'GALAUSDT', 'SOLUSDT']);
+    // USDC-margined symbols must be covered, and a routed candidate must not depend on which two
+    // symbols capital happened to route this second.
+    expect(symbols).toEqual(expect.arrayContaining(['BTCUSDT', 'BNBUSDC', 'SOLUSDT', 'NEARUSDC', 'DOGEUSDC', 'XRPUSDT']));
+    expect(symbols).not.toContain('JUNKUSDT');
+    // Bounded: positions + pool + at most poolMax*2 universe symbols, never the whole 60-strong tail.
+    expect(symbols.length).toBeLessThanOrEqual(3 + 24 * 2 + 1);
+    expect(new Set(symbols).size).toBe(symbols.length);
+  });
+
+  it('R5 an uncovered candidate is refused by admission, and a moving routing tick never freezes model spend', () => {
+    const accountScope = 'binance-primary';
+    const compiled = portfolioRiskAuthorityCompile({
+      environment: 'TESTNET', accountScope,
+      bracketRead: {environment: 'TESTNET', credentialRef: accountScope, observedAt: 1, failures: [],
+        symbols: [{symbol: 'BTCUSDT', brackets: [{bracket: 0, notionalFloor: 0, notionalCap: null, maintMarginRatio: 0.005, initialLeverage: 10, cum: 0}]}]},
+      requiredSymbols: ['BTCUSDT'], clusters: {BTC: 'MAJOR'}, scenarios: SCENARIOS,
+    });
+    if (!compiled.ok) throw new Error('fixture must compile');
+    const profileRow = profileFrom(compiled.profileFacts);
+    const input = {
+      settings: {connections: {executionMode: 'TESTNET_ENABLED', exchange: {environment: 'TESTNET'}},
+        riskGovernance: {entrySafetyMode: 'AUTO', portfolioRisk: profileRow}} as never,
+      account: {status: 'READY', asOf: Date.now()} as never, runtimeControlMode: 'RUNNING', executionGovernanceMode: 'AUTO_RUNNING',
+      writeAdmissionBlock: null, executableCandidateCount: 2, portfolioRiskAuthority: {facts: compiled.facts},
+      authorityScope: {environment: 'TESTNET', accountScope}, sizingWatchSymbols: ['BTCUSDT', 'NEARUSDC'],
+    };
+    // Capital routed only uncovered symbols this tick: the sized universe is still coverable, so the
+    // pipeline keeps paying for analysis instead of oscillating into a self-made silence.
+    const routedElsewhere = executionReadiness({...input, executableCandidateSymbols: ['NEARUSDC', 'DOGEUSDC'], sizingWatchSymbols: ['BTCUSDT', 'NEARUSDC']} as never);
+    expect(routedElsewhere.blockers).not.toContain('MARGIN_TIER_NO_COVERED_CANDIDATE');
+    expect(routedElsewhere.ready).toBe(true);
+    // Nothing in the sized universe is covered: that, and only that, stops the spend.
+    const noneCovered = executionReadiness({...input, executableCandidateSymbols: ['NEARUSDC'], sizingWatchSymbols: ['NEARUSDC', 'DOGEUSDC']} as never);
+    expect(noneCovered.blockers).toContain('MARGIN_TIER_NO_COVERED_CANDIDATE');
+    expect(noneCovered.modelSpendPermitted).toBe(false);
+    // A specific candidate outside coverage is still refused, by name, at admission.
+    const admission = new PortfolioRiskAdmission({
+      state: {positions: new Map(), entryOrders: new Map(), entryReservations: new Map(), account: {status: 'READY', asOf: Date.now(), equityUsd: 10_000, assets: [], riskBaseline: {}}, settings: input.settings} as never,
+      identity: () => ({environment: 'TESTNET', account: accountScope}), ownerOf: () => null, cashFlows: () => [],
+      coverageWatch: () => ['DOGEUSDT', 'BTCUSDT'],
+      profile: () => profileRow,
+      authority: () => ({facts: compiled.facts, staleObservedContentHash: null}),
+    });
+    const blockers = admission.profileReadback(['DOGEUSDT']).blockers;
+    expect(blockers).toContain('MARGIN_TIER_SYMBOL_UNPROVEN:DOGEUSDT');
+    // The profile itself stays READY: coverage of one candidate is not a global licence or a global veto.
+    expect(admission.profileReadback([]).status).toBe('READY');
+    expect(admission.profileReadback([]).authority.uncoveredCoverageCandidates).toEqual(['DOGEUSDT']);
   });
 });
 

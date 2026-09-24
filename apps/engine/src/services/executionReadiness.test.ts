@@ -239,6 +239,7 @@ describe('the runtime pushes the verdict instead of deciding it per surface', ()
     const privateMethod = (name: string) => (EngineRuntime.prototype as unknown as Record<string, (this: unknown) => unknown>)[name];
     // Bind the runtime's own gate instead of reimplementing it, so the test cannot drift from production.
     fake.authorityScope = () => privateMethod('authorityScope').call(fake);
+    fake.portfolioRiskRequiredSymbols = () => privateMethod('portfolioRiskRequiredSymbols').call(fake);
     fake.executionReadinessSnapshot = () => privateMethod('executionReadinessSnapshot').call(fake);
     const dispatch = (EngineRuntime.prototype as unknown as { dispatchAnalysisTick: (this: unknown) => Promise<void> }).dispatchAnalysisTick;
     return { h, fake, noted, processPool, profileFacts: authority.profileFacts, tick: () => dispatch.call(fake) };

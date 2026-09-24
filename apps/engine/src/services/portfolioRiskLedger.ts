@@ -84,6 +84,8 @@ export class PortfolioRiskAdmission {
     ownerOf:(scope:string,cycleId:string)=>{ownerState:PortfolioOwnerState;handoffAt:number|null;acknowledgedAt:number|null}|null;
     /** Verified external transfer facts (deposit/withdraw). Empty means "not provided", not zero. */
     cashFlows:()=>PortfolioCashFlowFact[];
+    /** Symbols the pipeline may want next. Informational in the readback; never an authority. */
+    coverageWatch?:()=>string[];
     profile:()=>Record<string,any>;
     /**
      * The durable dataset those versions claim to name. The runtime always wires this; a profile whose
@@ -125,10 +127,16 @@ export class PortfolioRiskAdmission {
   profileReadback(requiredSymbols:string[]=[]){
     const p=this.profileSettings(requiredSymbols),authority=this.authorityContext(requiredSymbols);
     const status=portfolioRiskProfileStatus(p.row as Record<string,unknown>,authority);
+    // Symbols the pipeline might want next, reported as information only: a candidate outside the
+    // committed coverage is refused by admission, by name, and must never be a global veto that
+    // re-decides whether the profile is proven every tick.
+    const watch=[...new Set((this.ports.coverageWatch?.()??[]).map(symbol=>String(symbol).trim().toUpperCase()).filter(Boolean))].sort();
+    const covered=authority?.facts?.margin.coverageSymbols??[];
+    const uncovered=authority?watch.filter(symbol=>!covered.includes(symbol)):[];
     return{...p.provenance,status,version:p.profileVersion,values:p.row,missingFields:p.missing,blockers:p.blockers,
       // The cockpit may only render this projection; a page that hashed a dataset itself would be a
       // second authority over the same fact.
-      authority:authority?portfolioRiskAuthorityReadback({...authority,profile:p.row as Record<string,unknown>,operatorStatus:status}):null};
+      authority:authority?{...portfolioRiskAuthorityReadback({...authority,profile:p.row as Record<string,unknown>,operatorStatus:status}),uncoveredCoverageCandidates:uncovered}:null};
   }
 
   /** Position, order, reservation, ownership and account facts, mapped into the snapshot inputs. */

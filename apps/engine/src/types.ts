@@ -45,6 +45,8 @@ export interface ExchangeTradeAdapter {
    * The PortfolioRisk profile may only claim a proven bracket table that this produced.
    */
   fetchMaintenanceMarginBrackets?(symbols:string[],options?:{maxInFlight?:number;credentialRef?:string}):Promise<import('./services/portfolioRiskAuthority.js').MarginBracketAuthorityRead>;
+  /** Read-only field-presence probe of the per-position risk facts. */
+  probePositionRiskFields?():Promise<{environment:string;endpoint:string;observedAt:number;rowCount:number;fieldNames:string[];rows:Record<string,unknown>[]}>;
   placeManualOrder(request:{clientOrderId:string;internalOrderId?:string;symbol:string;side:'BUY'|'SELL';positionSide?:'LONG'|'SHORT';type:'LIMIT'|'MARKET';quantity:number;price?:number;reduceOnly:boolean;postOnly:boolean;positionId?:string}):Promise<ManualOrder>;
   /** C3: the capability matrix a coordinated exit trusts, read from the exchange itself. */
   exitCoordinationCapabilities?():Promise<{oneWayReduceOnly:boolean;hedgePositionSide:boolean;cancelReplaceAtomic:boolean;partialFillExpected:boolean;supportsTimeInForce:string[];positionMode:'ONE_WAY'|'HEDGE'}>;

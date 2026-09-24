@@ -200,6 +200,21 @@ export class ExternalTradeAdapter implements ExchangeTradeAdapter {
   }
   async validatePrivate(){const account=await this.fetchAccountSnapshot(),orders=await this.fetchOpenOrders(),positions=await this.fetchPositions();return{status:'BINANCE DEMO PRIVATE READY',endpoint:this.transport.effectiveBaseUrl(),accountAvailable:Number.isFinite(account.walletBalanceUsd),openOrders:orders.length,positions:positions.length};}
   /**
+   * Read-only field-presence probe over the same signed path fetchPositions uses. The position risk
+   * facts are the one layer where a wrong field name silently becomes "the exchange did not tell us",
+   * so the operator can ask the exchange directly instead of inferring it from a null in the UI.
+   * Nothing here is persisted and no writer is reachable.
+   */
+  async probePositionRiskFields():Promise<{environment:string;endpoint:string;observedAt:number;rowCount:number;fieldNames:string[];rows:Record<string,unknown>[]}>{
+    const environment=this.transport.environment();
+    if(environment!=='TESTNET')throw new Error(`POSITION_PROBE_REQUIRES_TESTNET:${environment}`);
+    const rows=await this.signed<any[]>('GET','/fapi/v2/positionRisk',undefined,'POSITION_FACT_PROBE','PRIVATE_STATE');
+    const nonzero=(Array.isArray(rows)?rows:[]).filter((row:any)=>Math.abs(Number(row?.positionAmt??row?.positionAmount??0))>0).slice(0,3);
+    return {environment,endpoint:'/fapi/v2/positionRisk',observedAt:Date.now(),rowCount:(Array.isArray(rows)?rows.length:0),
+      fieldNames:[...new Set((Array.isArray(rows)?rows:[]).flatMap(row=>Object.keys(row??{})))].sort(),
+      rows:nonzero.map(row=>Object.fromEntries(Object.entries(row??{}).filter(([key])=>/amount|asset|ratio|margin|notional|leverage|liquidation|price|symbol|side/i.test(key)).map(([key,value])=>[key,typeof value==='string'&&value.length<=24?value:String(value).slice(0,24)])))};
+  }
+  /**
    * The only margin-tier read the PortfolioRisk profile is allowed to trust. Purely GET: it never
    * reuses setLeverage (which POSTs /fapi/v1/leverage), never touches a writer, and refuses to run
    * anywhere but Testnet, so a production read can never mint Testnet activation authority. One

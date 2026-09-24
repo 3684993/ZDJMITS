@@ -372,6 +372,7 @@ export class EngineRuntime {
         } catch { return null; }
       },
       cashFlows: () => runtime.cashFlowFacts(),
+      coverageWatch: () => runtime.portfolioRiskRequiredSymbols(),
       authority: () => ({facts: runtime.portfolioRiskAuthority.facts, staleObservedContentHash: runtime.portfolioRiskAuthority.staleObservedContentHash}),
       profile: () => (state.settings.riskGovernance as any)?.portfolioRisk ?? {},
     });
@@ -728,6 +729,7 @@ export class EngineRuntime {
       executableCandidateSymbols: (this.state.runtimeControl.capital.routedCandidates ?? [])
         .filter((route: any) => route?.longExecutable || route?.shortExecutable)
         .map((route: any) => String(route?.symbol ?? '')),
+      sizingWatchSymbols: this.portfolioRiskRequiredSymbols(),
       portfolioRiskAuthority: {facts: this.portfolioRiskAuthority.facts, staleObservedContentHash: this.portfolioRiskAuthority.staleObservedContentHash},
       authorityScope: this.authorityScope(),
       now,
@@ -886,16 +888,27 @@ export class EngineRuntime {
   }
   /**
    * The symbols a committed margin dataset has to cover: what the account holds, what is already in
-   * flight, and what the pool can route into this tick. Deliberately not "every listed symbol" — a
-   * universe-wide sweep would spend the whole request budget, and a candidate outside this set is
-   * refused by name at admission rather than priced by an unproven bracket.
+   * flight, what the pool can route, and the top of the eligible universe those candidates come from.
+   *
+   * The universe part is the point. Coverage of only "what capital happened to route this second"
+   * makes a one-shot snapshot chase a set that changes every tick, so the profile keeps flipping
+   * between usable and unusable and the account silently stops trading. A commit is an explicit
+   * operator action, so it can afford to price the whole sized universe once.
    */
   portfolioRiskRequiredSymbols(){
-    const ready=(Array.isArray(this.state.pool?.readyList?.())?this.state.pool.readyList():[]).map((item:any)=>String(item?.symbol??'').toUpperCase());
-    // Quote suffixes the account can actually margin an entry with; filtering to USDT alone would
-    // silently exclude live USDC-margined positions and candidates from the coverage they need.
     const quoteable=/^(?:\d+x)?[A-Z0-9]+(?:USDT|USDC|BUSD|FDUSD)$/;
-    return [...new Set([...this.state.positionSymbols(),...this.state.activeEntrySymbols(),...ready].filter(symbol=>quoteable.test(symbol)))].sort();
+    const held=[...this.state.positionSymbols(),...this.state.activeEntrySymbols()];
+    const symbols=new Set<string>(held);
+    for(const row of Array.isArray(this.state.pool?.readyList?.())?this.state.pool.readyList():[])symbols.add(String(row?.symbol??'').toUpperCase());
+    // Bounded so a wide directory cannot spend the whole request budget: the ranked shortlist the
+    // pipeline actually draws from is poolMax-sized, and twice that is already ahead of rotation.
+    const cap=Math.max(8,2*(Number(this.state.settings?.selection?.poolMax??24)||24));
+    const ranked=(this.state.universe??[]).filter((row:any)=>row?.eligible&&Number(row?.rank)>0)
+      .sort((a:any,b:any)=>Number(a.rank)-Number(b.rank)).map((row:any)=>String(row?.symbol??'').toUpperCase());
+    // Insertion order is the bound: holdings first, then the pool, then the best-ranked universe
+    // members. Sorting before truncating would keep the alphabetically-first symbols instead.
+    for(const symbol of ranked){if(symbols.size>=cap)break;symbols.add(symbol);}
+    return [...new Set([...symbols].filter(symbol=>quoteable.test(symbol)))].sort();
   }
   /**
    * The bound the conservative maintenance rate is allowed to consider. Any single new entry is capped
@@ -948,8 +961,8 @@ export class EngineRuntime {
     return {settingsVersion:settings.settingsVersion,authority,readback:this.portfolioRiskAuthorityReadback()};
   }
   /** The operator projection: what the durable rows say, never a re-derivation in the page. */
-  portfolioRiskAuthorityReadback(requiredSymbols?:string[]){
-    return this.portfolioRisk?.profileReadback(requiredSymbols??this.portfolioRiskRequiredSymbols())??null;
+  portfolioRiskAuthorityReadback(requiredSymbols:string[]=[]){
+    return this.portfolioRisk?.profileReadback(requiredSymbols)??null;
   }
   /**
    * A read-only look at what a commit *would* say: the same GET-only collection and the same compiler,
@@ -975,6 +988,8 @@ export class EngineRuntime {
           highestAnyTierRatio:Math.max(...row.tiers.map(tier=>tier.maintenanceMarginRatio))};
       }),
       ok:compiled.ok,blockers:compiled.blockers,
+      /** What the exchange actually reports per open position: the fact layer admission depends on. */
+      positionRiskProbe:await this.trade?.probePositionRiskFields?.()??null,
       wouldCommit:compiled.ok?{marginTierVersion:compiled.facts.margin.version,contentHash:compiled.facts.margin.contentHash,
         derivedMaintenanceMarginRatePct:compiled.facts.margin.maintenanceMarginRatePct,derivation:compiled.facts.margin.derivation,
         coverageSymbols:compiled.facts.margin.coverageSymbols,correlationVersion:compiled.facts.correlation.version,scenarioVersion:compiled.facts.scenarios.version}:null,

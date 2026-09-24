@@ -28,6 +28,12 @@ export type ExecutionReadinessInput = {
   executableCandidateCount: number;
   /** The symbols this tick could actually route; used only to detect that none of them is proven. */
   executableCandidateSymbols?: string[];
+  /**
+   * The sized universe margin coverage is committed against. Coverage of the routed two symbols is a
+   * moving target that changes every capital route; the sized universe is what decides whether paying
+   * for a model call could ever lead to an executable PLACE.
+   */
+  sizingWatchSymbols?: string[];
   /** The durable dataset authority, supplied by the runtime that read it from the same store. */
   portfolioRiskAuthority?: Pick<PortfolioRiskProfileAuthorityContext, 'facts' | 'staleObservedContentHash'> | null;
   authorityScope?: { environment: string; accountScope: string } | null;
@@ -67,7 +73,8 @@ export function executionReadiness(input: ExecutionReadinessInput): ExecutionRea
   // A single uncovered symbol in the pool must not freeze the fleet - the admission refuses that
   // candidate by name. But when *none* of this tick's executable candidates has a proven bracket,
   // every model call is a guaranteed waste, so the gate says so instead of paying for it.
-  const executableSymbols = [...new Set((input.executableCandidateSymbols ?? []).map(symbol => String(symbol).trim().toUpperCase()).filter(Boolean))];
+  const executableSymbols = [...new Set((input.sizingWatchSymbols?.length ? input.sizingWatchSymbols : input.executableCandidateSymbols ?? [])
+    .map(symbol => String(symbol).trim().toUpperCase()).filter(Boolean))];
   const uncoveredOnly = executableSymbols.length > 0 && authority?.facts
     && !executableSymbols.some(symbol => authority.facts!.margin.coverageSymbols.includes(symbol));
   const blockers: ExecutionBlocker[] = [];

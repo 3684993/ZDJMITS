@@ -6,6 +6,15 @@ import { entryOrderOccupiesRisk } from './entryRiskOccupancy.js';
 const ACTIVE_AI=new Set(['SCOUT_QUEUED','SCOUT_RUNNING','SCOUT_DONE','PRIMARY_QUEUED','PRIMARY_RUNNING','PLACE_READY']);
 const COOLDOWN=new Set(['REJECT_COOLDOWN','AI_FAILURE_COOLDOWN','TECHNICAL_COOLDOWN','QUARANTINED','COOLDOWN']);
 
+/**
+ * The lifecycle states that mean "the scheduler may put this symbol in front of the model". It is one
+ * predicate on purpose: the margin-tier coverage universe has to be priced for exactly this set, and a
+ * second copy drifting behind the dispatcher is what turned real routed candidates into
+ * `MARGIN_TIER_SYMBOL_UNPROVEN` refusals on the live account.
+ */
+export const PIPELINE_ROUTABLE_LIFECYCLE = new Set(['READY', ...ACTIVE_AI]);
+export const isPipelineRoutableLifecycle = (status: unknown) => PIPELINE_ROUTABLE_LIFECYCLE.has(String(status ?? ''));
+
 /** Rebuilds occupancy states from live facts. Historical lifecycle rows are never an occupancy source. */
 export function reconcileCandidateLifecycles(state:RuntimeState,events?:EventBus,reason='FACT_RECONCILIATION',now=Date.now()){
   state.cleanupReservations(now);

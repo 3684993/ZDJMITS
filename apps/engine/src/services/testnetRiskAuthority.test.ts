@@ -407,7 +407,7 @@ describe('the derived rate is bounded by the notional the account can actually r
 });
 
 describe('the authority commit channel derives its own facts', () => {
-  function commitFixture(options: {environment?: string; collector?: boolean; extraPosition?: string; poolSymbols?: string[]} = {}) {
+  function commitFixture(options: {environment?: string; collector?: boolean; extraPosition?: string; poolSymbols?: string[]; lifecycle?: [string, string][]} = {}) {
     const environment = options.environment ?? 'TESTNET';
     const transport = fakeTransport(environment);
     const adapter = options.collector === false ? {label: 'adapter-without-the-capability'} : adapterFor(transport);
@@ -418,7 +418,10 @@ describe('the authority commit channel derives its own facts', () => {
       account: {status: 'UNKNOWN', asOf: 0, assets: [], riskBaseline: {}}, snapshots: new Map(),
       activeEntrySymbols: () => new Set(['ETHUSDT', options.extraPosition ?? ''].filter(Boolean)),
       positionSymbols: () => new Set(['BTCUSDT']),
-      pool: {readyList: () => (options.poolSymbols ?? ['SOLUSDT']).map(symbol => ({symbol, state: 'READY'}))}, setSettings: (next: any) => {state.settings = next;}};
+      pool: {readyList: () => (options.poolSymbols ?? ['SOLUSDT']).map(symbol => ({symbol, state: 'READY'}))},
+      // The ledger the scheduler actually routes from: a symbol with a routable lifecycle state can be
+      // dispatched for analysis and reach admission even while the pool holds something else.
+      candidateLifecycle: new Map<string, any>((options.lifecycle ?? []).map(([symbol, status]) => [symbol, {symbol, status}])), setSettings: (next: any) => {state.settings = next;}};
     const self: any = {state, trade: adapter, events: {publish: vi.fn()}, applied: [] as number[],
       portfolioRiskAuthority: {facts: null, reasons: ['AUTHORITY_NOT_LOADED'], loadedAt: 0, staleObservedContentHash: null},
       portfolioRiskAuthorityDriftReport: null,
@@ -481,6 +484,28 @@ describe('the authority commit channel derives its own facts', () => {
     expect(self.portfolioRiskAuthorityReadback()).toMatchObject({status: 'READY', authority: {authorityStatus: 'MATCHED', missingSymbols: []}});
     const near = self.portfolioRisk.admit({symbol: 'NEARUSDT', side: 'LONG', quoteAsset: 'USDT', notionalUsd: 200, marginUsd: 25, leverage: 8, markPrice: 2.4, planId: 'plan-near'} as never);
     expect(near.reasons).not.toContain('MARGIN_TIER_SYMBOL_UNPROVEN:NEARUSDT');
+  });
+
+  it('coverage follows what the scheduler can route, not just what the pool holds this tick', async () => {
+    // Live evidence: WLDUSDT, TAOUSDT, NEARUSDT, PENGUUSDT, UNIUSDT and DOGEUSDC each carried a natural
+    // PLACE_LONG into admission and each was refused with MARGIN_TIER_SYMBOL_UNPROVEN, because coverage
+    // was priced from the instantaneous pool while these symbols sat in the candidate ledger instead.
+    const {self, state} = commitFixture({
+      poolSymbols: ['SOLUSDT'],
+      lifecycle: [['WLDUSDT', 'READY'], ['TAOUSDT', 'SCOUT_DONE'], ['NEARUSDT', 'PRIMARY_RUNNING'], ['GONEUSDT', 'EXCLUDED_UNDERLYING'], ['HELDUSDT', 'POSITION_OPEN']],
+    });
+    const required = self.portfolioRiskRequiredSymbols();
+    expect(required).toEqual(expect.arrayContaining(['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'WLDUSDT', 'TAOUSDT', 'NEARUSDT']));
+    // An excluded or already-held underlying is not routing demand, so it must not spend a bracket read.
+    expect(required).not.toContain('GONEUSDT');
+    expect(required).not.toContain('HELDUSDT');
+    await self.commitPortfolioRiskAuthority(request());
+    const coverage = self.portfolioRiskAuthority.facts.margin.coverageSymbols;
+    expect(coverage).toEqual(expect.arrayContaining(['WLDUSDT', 'TAOUSDT', 'NEARUSDT']));
+    // The refusal the live account saw is now impossible for a routed symbol.
+    const routed = self.portfolioRisk.admit({symbol: 'WLDUSDT', side: 'LONG', quoteAsset: 'USDT', notionalUsd: 300, marginUsd: 25, leverage: 10, markPrice: 1.7, planId: 'plan-wld'} as never);
+    expect(routed.reasons).not.toContain('MARGIN_TIER_SYMBOL_UNPROVEN:WLDUSDT');
+    expect(state.settings.riskGovernance.portfolioRisk.marginTierVersion).toMatch(/^TESTNET_BINANCE_LEVERAGE_BRACKET_V1_SHA256_/);
   });
 
   it('refuses a request that names a version or a rate before it spends one request', async () => {

@@ -61,6 +61,15 @@ import { PositionReviewScheduler, type ReviewTicket } from '../services/position
 import { PositionReviewRunner, type ReviewAnswer, type ReviewTickReport } from '../services/positionReviewRunner.js';
 import { reviewMemoryFor, tradeMemoryVersionOf } from '../services/tradeMemoryService.js';
 import type { PositionReviewRequest } from '../services/positionReviewPrompt.js';
+import { isPipelineRoutableLifecycle } from '../services/candidateLifecycleDeriver.js';
+
+/**
+ * How many margin brackets one authority commit is allowed to price. Each read weighs 30 against a
+ * 6,000-per-minute Testnet budget and the collector runs four at a time, so 96 rows (~2,880 weight) is
+ * the most a single explicit commit should spend. Past it a commit is refused by name — the alternative
+ * is truncation, and truncation is what made real candidates unpriceable in the first place.
+ */
+const MARGIN_AUTHORITY_COVERAGE_CEILING = 96;
 
 export class EngineRuntime {
   readonly writes=new RuntimeWriteBuffer();
@@ -900,13 +909,21 @@ export class EngineRuntime {
     const held=[...this.state.positionSymbols(),...this.state.activeEntrySymbols()];
     const symbols=new Set<string>(held);
     for(const row of Array.isArray(this.state.pool?.readyList?.())?this.state.pool.readyList():[])symbols.add(String(row?.symbol??'').toUpperCase());
-    // Bounded so a wide directory cannot spend the whole request budget: the ranked shortlist the
-    // pipeline actually draws from is poolMax-sized, and twice that is already ahead of rotation.
-    const cap=Math.max(8,2*(Number(this.state.settings?.selection?.poolMax??24)||24));
+    // The routing ledger, not the pool snapshot, is what "can be routed" means: a symbol whose
+    // lifecycle says it may reach the model can also reach admission, and if its bracket was never
+    // priced the refusal reads MARGIN_TIER_SYMBOL_UNPROVEN — which is how six real PLACE_LONG decisions
+    // (WLDUSDT, TAOUSDT, NEARUSDT, PENGUUSDT, UNIUSDT, DOGEUSDC) were lost on the live account.
+    for(const [symbol,row] of this.state.candidateLifecycle ?? new Map<string,unknown>())if(isPipelineRoutableLifecycle((row as {status?:unknown})?.status))symbols.add(String(symbol).toUpperCase());
+    // Budget bound. The ranked shortlist the pipeline draws from is poolMax-sized and twice that is
+    // already ahead of rotation, but actual demand always fits: the shortlist may only top up what
+    // holdings, the pool and the routing ledger have not already claimed, never displace them.
+    const demand=symbols.size;
+    const cap=Math.max(Math.max(8,2*(Number(this.state.settings?.selection?.poolMax??24)||24)),Math.min(demand,MARGIN_AUTHORITY_COVERAGE_CEILING));
     const ranked=(this.state.universe??[]).filter((row:any)=>row?.eligible&&Number(row?.rank)>0)
       .sort((a:any,b:any)=>Number(a.rank)-Number(b.rank)).map((row:any)=>String(row?.symbol??'').toUpperCase());
-    // Insertion order is the bound: holdings first, then the pool, then the best-ranked universe
-    // members. Sorting before truncating would keep the alphabetically-first symbols instead.
+    // Insertion order is the bound: holdings first, then the pool, then the routing ledger, then the
+    // best-ranked universe members. Sorting before truncating would keep the alphabetically-first
+    // symbols instead of the ones the pipeline is actually using.
     for(const symbol of ranked){if(symbols.size>=cap)break;symbols.add(symbol);}
     return [...new Set([...symbols].filter(symbol=>quoteable.test(symbol)))].sort();
   }
@@ -960,8 +977,7 @@ export class EngineRuntime {
     // Carrying a name forward never carries its data forward: every symbol below is re-read from the
     // exchange, and if any of them cannot be priced the whole commit is refused rather than truncated.
     const requiredSymbols=this.portfolioRiskCoverageUniverse();
-    const coverageCeiling = 96;
-    if (requiredSymbols.length > coverageCeiling) throw new Error(`MARGIN_AUTHORITY_COVERAGE_TOO_WIDE:${requiredSymbols.length}>${coverageCeiling}`);
+    if (requiredSymbols.length > MARGIN_AUTHORITY_COVERAGE_CEILING) throw new Error(`MARGIN_AUTHORITY_COVERAGE_TOO_WIDE:${requiredSymbols.length}>${MARGIN_AUTHORITY_COVERAGE_CEILING}`);
     const bracketRead=await this.collectPortfolioRiskMarginBrackets(requiredSymbols);
     const compiled=portfolioRiskAuthorityCompile({environment:scope.environment,accountScope:scope.accountScope,bracketRead,requiredSymbols,
       clusters:input.clusters,scenarios:input.scenarios,credentialRef:scope.accountScope,committedAt:Date.now(),

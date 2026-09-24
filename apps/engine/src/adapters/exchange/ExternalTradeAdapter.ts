@@ -5,6 +5,7 @@ import type { ExchangeTradeAdapter, TradeAuditSnapshot, ExchangeTradeFill, Excha
 import { BinanceTransport } from '../binance/BinanceTransport.js';
 import { BinanceUserDataStream } from '../binance/BinanceUserDataStream.js';
 import { binanceClientOrderIdFactory } from '../../services/binanceClientOrderIdFactory.js';
+import { positionLeverageFact } from '../../services/positionRiskFacts.js';
 type Credentials={apiKey:string;apiSecret:string}|null;
 /** An exchange field that is absent, empty or non-numeric stays null; a reported zero stays zero. */
 const numberOrNull=(value:unknown)=>Number.isFinite(Number(value))&&value!=null&&String(value)!==''?Number(value):null;
@@ -186,7 +187,8 @@ export class ExternalTradeAdapter implements ExchangeTradeAdapter {
     const magnitudeOrNull=(value:unknown)=>{const n=numberOrNull(value);return n===null?null:Math.abs(n);};
     const mapRow=(row:any,source:'V3_VERIFIED'|'V2_EXISTENCE_ONLY')=>({
       id:`exchange_${row.symbol}_${row.positionSide}`,symbol:String(row.symbol),side:Number(row.positionAmt)>0?'LONG' as const:'SHORT' as const,
-      quantity:Math.abs(Number(row.positionAmt)),entryPrice:Number(row.entryPrice),markPrice:Number(row.markPrice),leverage:Number(row.leverage),
+      quantity:Math.abs(Number(row.positionAmt)),entryPrice:Number(row.entryPrice),markPrice:Number(row.markPrice),
+      leverage:positionLeverageFact({leverage:row.leverage,notional:row.notional??row.markValue,initialMargin:row.initialMargin}).leverage,
       unrealizedPnl:Number(row.unrealizedProfit??row.unRealizedProfit??0),unrealizedPnlPercent:0,openedAt:0,firstObservedAt:null,
       /** Margin composition is carried exactly as the exchange reported it; a missing field stays null. */
       liquidationPrice:numberOrNull(row.liquidationPrice),marginAsset:String(row.marginAsset??'').trim().toUpperCase()||null,

@@ -33,3 +33,37 @@ export function liquidationBufferFact(input: { symbol: string; side: 'LONG' | 'S
   if (!(liquidation > mark)) return { bufferPct: null, fact: 'UNPROVEN', blocker: `LIQUIDATION_PRICE_DIRECTION_INVALID:${symbol}:SHORT` };
   return { bufferPct: Math.max(0, (liquidation - mark) / mark), fact: 'EXCHANGE_REPORTED_PRICE' };
 }
+
+/**
+ * A position's leverage, and the honest answer about where it came from.
+ *
+ * The live Testnet payload proved the two contracts differ here: `/fapi/v2/positionRisk` states
+ * `leverage`, `/fapi/v3/positionRisk` does not. `PositionSchema` requires a positive integer, so a
+ * blind `Number(row.leverage)` produced NaN, the durable row kept it, and `core.exposure()` divided by
+ * `Math.max(1, NaN)` inside the 250 ms dashboard projection — an uncaught ZodError and exit 1.
+ *
+ * V3 does state the two numbers whose quotient *is* leverage (`notional` and `initialMargin`, both
+ * from the same row), so a derivation there is the exchange's own arithmetic, not our guess. Anything
+ * that is neither stated nor exactly reconcilable is reported as unproven so a caller keeps the last
+ * value the exchange actually supported instead of writing a fabricated one.
+ */
+export type PositionLeverageFact = { leverage: number | null; fact: 'EXCHANGE_STATED' | 'EXCHANGE_DERIVED_FROM_INITIAL_MARGIN' | 'UNPROVEN' };
+
+export function validPositionLeverage(value: unknown): number | null {
+  const number = Number(value);
+  return Number.isInteger(number) && number > 0 ? number : null;
+}
+
+export function positionLeverageFact(input: { leverage?: unknown; notional?: unknown; initialMargin?: unknown }): PositionLeverageFact {
+  const stated = validPositionLeverage(input.leverage);
+  if (stated !== null) return { leverage: stated, fact: 'EXCHANGE_STATED' };
+  // The exchange sends amounts as decimal strings, so the same row can be read either way.
+  const notional = Math.abs(Number(input.notional)), initial = Number(input.initialMargin);
+  if (Number.isFinite(notional) && notional > 0 && Number.isFinite(initial) && initial > 0) {
+    const quotient = notional / initial, rounded = Math.round(quotient);
+    // The exchange rounds each amount to 8 decimals, so a genuine integer leverage reconciles to
+    // within ~1e-7 relative. Outside that band the pair is not describing one leverage: unproven.
+    if (rounded >= 1 && Math.abs(quotient - rounded) / rounded < 1e-6) return { leverage: rounded, fact: 'EXCHANGE_DERIVED_FROM_INITIAL_MARGIN' };
+  }
+  return { leverage: null, fact: 'UNPROVEN' };
+}

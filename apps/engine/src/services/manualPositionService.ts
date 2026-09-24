@@ -1,4 +1,5 @@
 import { ManualIntentSchema, ManualOrderSchema, type ManualAction, type ManualIntent, type ManualOrder, type Position, type TakeProfitOrder } from '@zdj/contracts';
+import { validPositionLeverage } from './positionRiskFacts.js';
 import { uid } from '@zdj/core';
 import type { MarketDataHub } from './marketDataHub.js';
 import type { RuntimeState } from '../state/runtimeState.js';
@@ -77,7 +78,7 @@ export class ManualPositionService {
     if(!position)throw new Error('POSITION_NOT_FOUND: 持仓不存在或已被对账关闭');
     const occupied=[...this.state.manualOrders.values()].find(order=>order.symbol===position!.symbol&&(order.positionSide===position!.side||order.positionSide==='BOTH')&&activeOrderStatus(order.status));
     if(occupied&&!['REBUILD_TP','REPLACE_TP'].includes(input.action)){const prior=this.state.manualIntents.get(occupied.intentId);if(prior)return{intent:prior,order:occupied,replayed:true,reason:input.action==='EMERGENCY_CLOSE'&&prior.action!=='EMERGENCY_CLOSE'?'EXIT_QUEUED_BEHIND_ACTIVE_TASK':'EXISTING_POSITION_TASK'};throw new Error('UNLINKED_ACTIVE_POSITION_TASK');}
-    const remote=await this.exchange.fetchPositions(),fresh=remote.find(x=>x.symbol===position!.symbol&&x.side===position!.side);if(!fresh||fresh.quantity<=0)return{intent:null,order:null,replayed:true,goalSatisfied:true,reason:'POSITION_ALREADY_CLOSED'};position={...position,quantity:fresh.quantity,entryPrice:fresh.entryPrice,markPrice:fresh.markPrice,leverage:fresh.leverage};this.state.positions.set(position.id,position);
+    const remote=await this.exchange.fetchPositions(),fresh=remote.find(x=>x.symbol===position!.symbol&&x.side===position!.side);if(!fresh||fresh.quantity<=0)return{intent:null,order:null,replayed:true,goalSatisfied:true,reason:'POSITION_ALREADY_CLOSED'};position={...position,quantity:fresh.quantity,entryPrice:fresh.entryPrice,markPrice:fresh.markPrice,leverage:validPositionLeverage(fresh.leverage)??position.leverage};this.state.positions.set(position.id,position);
     const action=input.action,now=Date.now(),id=uid('manual_intent'),key=existingKey||id,client=binanceClientOrderIdFactory.create(action==='REDUCE'?'MR':action==='ADD'?'MA':action==='PLACE_LIMIT'?'ML':action==='EMERGENCY_CLOSE'?'EC1':'MC',id);let clientForSubmit=client;let coordinatedExit=false;
     try{this.exitRuntime.recordHumanTakeover(exitSubjectFromPosition(position!),`MANUAL_${action}`,now);}catch(error){throw new Error(`MANUAL_OWNER_TAKEOVER_UNPROVEN: ${error instanceof Error?error.message:String(error)}`);}
     let intent=ManualIntentSchema.parse({id,idempotencyKey:key,positionId,symbol:position.symbol,side:position.side,action,quantity:null,price:null,reduceOnly:action!=='ADD',postOnly:!['EMERGENCY_CLOSE','REBUILD_TP','REPLACE_TP'].includes(action),status:'RECEIVED',reason:typeof input.reason==='string'?input.reason.slice(0,240):null,exchangeOrderId:null,clientOrderId:client,createdAt:now,updatedAt:now});

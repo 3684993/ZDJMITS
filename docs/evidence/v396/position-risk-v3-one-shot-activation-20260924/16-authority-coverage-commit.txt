@@ -1,0 +1,18 @@
+# live profile=READY settingsVersion=201 committedCoverage=14 committedHash=c8ac0070d479 rate=0.025 derivation=ENTRY_BOUND_TIERS
+# protected numbers are re-sent verbatim (no cap is touched): {"maxCapitalAtRiskUsd":10811.957,"maxStressLossUsd":5405.978,"maxGrossNotionalUsd":10811.957,"maxDirectionNotionalUsd":8649.565,"maxClusterNotionalUsd":10811.957,"maxHumanNotionalUsd":10811.957,"maxDrawdownPct":1,"minMarginBufferPct":0,"minLiquidationBufferPct":0,"maxHumanPositions":50,"maxPendingHandoffs":50,"maxAckAgeMs":86400000}
+# scenarios/clusters re-sent verbatim: count=3/[]
+
+## preview HTTP 200 ok=true persisted=false required=13 collectionFailures=[] blockers=[]
+   symbols outside committed coverage (1): TUTUSDT
+   wouldCommit: hash=66b8d82356d6 rate=0.025 derivation=ENTRY_BOUND_TIERS coverage=13
+
+## POST .../portfolio-risk-authority -> HTTP 200
+   {"settingsVersion":202,"profileStatus":"READY","authorityStatus":"MATCHED","marginTierVersion":"TESTNET_BINANCE_LEVERAGE_BRACKET_V1_SHA256_66b8d82356d674856d14a3cad9bc56a950f5de4d4ef4682e6c400db94c1be4af","rate":0.025,"derivation":"ENTRY_BOUND_TIERS","coverage":13,"missingSymbols":[],"mismatchReasons":[],"error":null,"refusals":null,"blockers":null}
+
+## authority GET HTTP 200 settingsVersion=202
+   {"authorityStatus":"MATCHED","profileStatus":"READY","marginTierVersion":"TESTNET_BINANCE_LEVERAGE_BRACKET_V1_SHA256_66b8d82356d674856d14a3cad9bc56a950f5de4d4ef4682e6c400db94c1be4af","rate":0.025,"derivation":"ENTRY_BOUND_TIERS","coverage":13,"coverageSymbols":["ARBUSDT","AVAXUSDT","BCHUSDT","BNBUSDC","BTCUSDT","DOTUSDT","ENAUSDT","ETHUSDT","FETUSDT","LTCUSDT","ONDOUSDT","TUTUSDT","ZECUSDT"],"missingSymbols":[],"mismatchReasons":[],"committedAt":1790262924202,"blockers":[]}
+
+## post-commit readback profile=READY authority=MATCHED coverage=13 missing=[] rate=0.025
+## readiness after commit {"intent":true,"ready":false,"modelSpendPermitted":false,"blockers":["EXECUTION_WRITE_LOCKED","PRIVATE_DATA_UNAVAILABLE","NO_EXECUTABLE_CANDIDATE"],"firstBlocker":"EXECUTION_WRITE_LOCKED","profileStatus":"READY","privateFresh":false,"writeLocked":true,"executableCandidateCount":0,"mode":"EXECUTION_BLOCKED","text":"执行事实未齐：EXECUTION_WRITE_LOCKED · PRIVATE_DATA_UNAVAILABLE · NO_EXECUTABLE_CANDIDATE；已停止调用模型，避免产生无法执行的决策"}
+## protected facts unchanged: settingsVersion 201 -> 202 (must be exactly +1) executionMode=undefined environment=TESTNET entrySafetyMode=AUTO aiExitAuthority=SHADOW caps=1/0.8/0.35/0.35 maxPositions=50
+## write boundary before=[testnetWrites=0 productionWrites=0 blockedProduction=0 lastWriteAt=null] after=[testnetWrites=0 productionWrites=0 blockedProduction=0 lastWriteAt=null]

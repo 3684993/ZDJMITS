@@ -1,0 +1,52 @@
+(node:41416) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+# observedAt=2026-09-24T15:22:09.203Z since=2026-09-24T15:15:08.000Z
+# execution=TESTNET_ENABLED testnetWrites=0 productionWrites=0 lastWriteAt=null lastWritePath=null
+# readiness={"intent":true,"ready":true,"modelSpendPermitted":true,"blockers":[],"firstBlocker":null,"profileStatus":"READY","privateFresh":true,"writeLocked":false,"executableCandidateCount":1,"mode":"EXECUTION_READY","text":"执行事实齐备：PLACE 可进入 reservation → intent → order submit 链"}
+# analysis={"mode":"EXECUTION_ENABLED","reason":"AI_RESOURCE_BUSY","lastBlockedReason":"AI_RESOURCE_BUSY","lastTickAt":1790263328941,"capitalExecutableCount":1,"active":1}
+# primaryBrain={"status":"READY","runs":1,"historicalRuns":99,"idleReason":"AI_RESOURCE_BUSY","model":"qwen/qwen3.8-27b","lastDecision":"PLACE_LONG","lastDirection":"LONG","lastCompletedAt":1790263322513,"lastLatencyMs":54013,"queueDepth":0,"active":0}
+# capacity={"used":12,"max":50,"positions":12,"inFlight":0,"reserved":0} gross={"used":9229.359781359959,"limit":10761.151535385901,"remaining":1531.7917540259423} firstBlocker=NONE exhausted=false
+# entryActivity={"lastPrimaryRunAt":1790263322519,"lastPlaceDecisionAt":1790263322519,"lastEntryIntentAt":1790109989661,"lastEntrySubmittedAt":1790109725293,"lastEntryFilledAt":1790109638800,"primaryRunsSinceLastPlace":0,"uniqueSymbolsSinceLastPlace":1,"consecutiveRejects":0,"placeCount30m":1,"rejectCount30m":0,"primaryCount30m":1,"entryIntentCount30m":0,"submitCount30m":0,"fillCount30m":0}
+# pool={"count":null,"ready":0,"reason":null}
+# positions={"status":"FACT","count":12} tp={"required":12,"protected":12} pendingEntries={"status":"FACT","count":0,"max":6}
+# noEntryReason=null pipelineState="RUNNING"
+
+## durable event types since window (total 201)
+   99 x CANDIDATE_LIFECYCLE_REDERIVED
+   18 x MANUAL_ORDER_REMOTE_STATUS_UNVERIFIED
+   17 x CANDIDATE_SUPPLY_HEALTH
+   12 x ANALYSIS_DISPATCH_HEARTBEAT
+   9 x CANDIDATE_LIFECYCLE_CHANGED
+   9 x POSITION_MARKETS_REFRESHED
+   3 x UNKNOWN_RISK_AUDIT_SUMMARY
+   3 x MARKET_COHORT_REFILLED
+   2 x TRADING_QUALITY_OPPORTUNITY
+   2 x PRE_AI_EXECUTION_ENVELOPE_CREATED
+   2 x POOL_ANALYSIS_STARTED
+   2 x ANALYSIS_DISPATCH_INTENT
+   2 x SETTINGS_UPDATED
+   2 x ENTRY_ORDER_HISTORICAL_VERIFY_FAILED
+   2 x ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED
+   1 x CANDIDATE_REJECTED
+   1 x ENTRY_DECISION_BLOCKED
+   1 x PORTFOLIO_RISK_ADMISSION_EVALUATED
+   1 x ENTRY_ECONOMIC_ADMISSION_EVALUATED
+   1 x MATERIAL_DECISION_CHANGE
+   1 x TRADING_QUALITY_PRIMARY_LINK
+   1 x AI_RUN_TERMINAL
+   1 x PRIMARY_DECISION_NORMALIZED
+   1 x EXECUTION_READINESS_RESUMED
+
+## execution-relevant events (12), newest first
+   2026-09-24T15:22:02.737Z PORTFOLIO_RISK_ADMISSION_EVALUATED NEARUSDT "{\"brainRunId\":\"airun_mufoiys4_uxlwpb2c\",\"allocationPlanId\":\"alloc_ai_mufok4l5_wi4fyt8r\",\"allowed\":false,\"reasons\":[\"MARGIN_TIER_SYMBOL_UNPROVEN:NEARUSDT\"],\"limits\":[],\"riskGeneration\":null,\"snapshotHash\":null,\"factCoverage\":null,\"grossN
+   2026-09-24T15:22:02.682Z ENTRY_ECONOMIC_ADMISSION_EVALUATED NEARUSDT "{\"brainRunId\":\"airun_mufoiys4_uxlwpb2c\",\"mode\":\"SHADOW\",\"passed\":false,\"wouldBlock\":true,\"expectedNetProfit\":85.06840235999996,\"requiredNetProfit\":1,\"reachProbability\":0.3333333333333333,\"historicalHardMaxMovePercent\":8.438143151154808,\"t
+   2026-09-24T15:22:02.521Z AI_RUN_TERMINAL NEARUSDT "{\"id\":\"airun_mufoiys4_uxlwpb2c\",\"symbol\":\"NEARUSDT\",\"resourceId\":\"brain-7900-primary\",\"model\":\"qwen/qwen3.8-27b\",\"role\":\"PRIMARY_BRAIN\",\"startedAt\":1790263268500,\"completedAt\":1790263322513,\"latencyMs\":54013,\"inputTokens\":18594,\"o
+   2026-09-24T15:21:50.247Z MARKET_COHORT_REFILLED  "{\"reason\":\"PERIODIC_60S\",\"requested\":2,\"loaded\":2,\"accepted\":2,\"partial\":false,\"retryAt\":0,\"members\":8,\"retention\":20}"
+   2026-09-24T15:20:57.679Z EXECUTION_READINESS_RESUMED  "{\"at\":1790263257679,\"lastReadyAt\":1790263257679}"
+   2026-09-24T15:17:44.590Z MARKET_COHORT_REFILLED  "{\"reason\":\"PERIODIC_60S\",\"requested\":2,\"loaded\":2,\"accepted\":2,\"partial\":false,\"retryAt\":0,\"members\":6,\"retention\":18}"
+   2026-09-24T15:16:51.262Z ENTRY_ORDER_HISTORICAL_VERIFY_FAILED BCHUSDT "{\"orderId\":\"entry_intent_mucwez17_vj7s4jqm\",\"symbol\":\"BCHUSDT\",\"clientOrderId\":\"ml_032a193644baf5ec29d06b2001e7\",\"exchangeOrderId\":null,\"reason\":\"EXACT_ORDER_NOT_FOUND\",\"occupancyReleased\":true,\"auditTier\":2,\"auditConsecutive\":52,\"nex
+   2026-09-24T15:16:49.403Z ENTRY_ORDER_HISTORICAL_VERIFY_FAILED OPUSDT "{\"orderId\":\"entry_intent_mu4y6v27_umastke1\",\"symbol\":\"OPUSDT\",\"clientOrderId\":\"ml_7cf51472497ff701c047bb28d481\",\"exchangeOrderId\":null,\"reason\":\"EXACT_ORDER_NOT_FOUND\",\"occupancyReleased\":true,\"auditTier\":2,\"auditConsecutive\":113,\"nex
+   2026-09-24T15:16:05.034Z EXECUTION_READINESS_BLOCKED  "{\"firstBlocker\":\"EXECUTION_WRITE_LOCKED\",\"blockers\":[\"EXECUTION_WRITE_LOCKED\",\"NO_EXECUTABLE_CANDIDATE\"],\"executableCandidateCount\":0,\"at\":1790262965034}"
+   2026-09-24T15:16:01.476Z MARKET_COHORT_REFILLED  "{\"reason\":\"POST_RECONCILIATION_BOOTSTRAP\",\"requested\":2,\"loaded\":2,\"accepted\":2,\"partial\":false,\"retryAt\":0,\"members\":4,\"retention\":16}"
+   2026-09-24T15:15:14.345Z ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED TUTUSDT "{\"orderId\":\"entry_intent_mud1swid_lwkdsxmn\",\"symbol\":\"TUTUSDT\",\"clientOrderId\":\"ml_4c0c0eb98bebfc43db6488b0c148\",\"exchangeOrderId\":null,\"reason\":\"EXACT_QUERY_NOT_FOUND_VERIFIED_NO_ACTIVE_RISK\",\"exchangeTerminalStatus\":\"UNKNOWN\",\"activeR
+   2026-09-24T15:15:10.218Z ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED TUTUSDT "{\"orderId\":\"entry_intent_mud1fz7z_re2900hm\",\"symbol\":\"TUTUSDT\",\"clientOrderId\":\"ml_a02b842aad3a8ea71982f41acb6c\",\"exchangeOrderId\":null,\"reason\":\"EXACT_QUERY_NOT_FOUND_VERIFIED_NO_ACTIVE_RISK\",\"exchangeTerminalStatus\":\"UNKNOWN\",\"activeR

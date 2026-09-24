@@ -1,0 +1,18 @@
+# live profile=READY settingsVersion=206 committedCoverage=15 committedHash=bd44e21e416a rate=0.025 derivation=ENTRY_BOUND_TIERS
+# protected numbers are re-sent verbatim (no cap is touched): {"maxCapitalAtRiskUsd":10811.957,"maxStressLossUsd":5405.978,"maxGrossNotionalUsd":10811.957,"maxDirectionNotionalUsd":8649.565,"maxClusterNotionalUsd":10811.957,"maxHumanNotionalUsd":10811.957,"maxDrawdownPct":1,"minMarginBufferPct":0,"minLiquidationBufferPct":0,"maxHumanPositions":50,"maxPendingHandoffs":50,"maxAckAgeMs":86400000}
+# scenarios/clusters re-sent verbatim: count=3/[]
+
+## preview HTTP 200 ok=true persisted=false required=58 collectionFailures=[] blockers=[]
+   symbols outside committed coverage (43): 1000PEPEUSDC,1000SHIBUSDC,1000SHIBUSDT,AAVEUSDT,ADAUSDC,ADAUSDT,APTUSDT,BRUSDT,CRVUSDC,CRVUSDT,DASHUSDT,DOGEUSDC,DOGEUSDT,FILUSDC,FILUSDT,HBARUSDC,HBARUSDT,HYPEUSDT,INJUSDT,LINKUSDC,LINKUSDT,NEARUSDC,NEARUSDT,OPUSDT,PENGUUSDC,PENGUUSDT,SOLUSDC,SUIUSDC,SUIUSDT,TAOUSDT,TIAUSDC,TIAUSDT,TRUMPUSDC,UNIUSDC,UNIUSDT,USELESSUSDT,VVVUSDT,WLDUSDC,WLDUSDT,XLMUSDT,XMRUSDT,XPLUSDT,XRPUSDT
+   wouldCommit: hash=0081998e0d49 rate=0.167 derivation=ENTRY_BOUND_TIERS coverage=58
+
+## POST .../portfolio-risk-authority -> HTTP 200
+   {"settingsVersion":207,"profileStatus":"READY","authorityStatus":"MATCHED","marginTierVersion":"TESTNET_BINANCE_LEVERAGE_BRACKET_V1_SHA256_0081998e0d496d8f0378199553dd438a9e6cf8740decf226d4af6eb822846d77","rate":0.167,"derivation":"ENTRY_BOUND_TIERS","coverage":58,"missingSymbols":[],"mismatchReasons":[],"error":null,"refusals":null,"blockers":null}
+
+## authority GET HTTP 200 settingsVersion=207
+   {"authorityStatus":"MATCHED","profileStatus":"READY","marginTierVersion":"TESTNET_BINANCE_LEVERAGE_BRACKET_V1_SHA256_0081998e0d496d8f0378199553dd438a9e6cf8740decf226d4af6eb822846d77","rate":0.167,"derivation":"ENTRY_BOUND_TIERS","coverage":58,"coverageSymbols":["1000PEPEUSDC","1000SHIBUSDC","1000SHIBUSDT","AAVEUSDT","ADAUSDC","ADAUSDT","APTUSDT","ARBUSDT","AVAXUSDT","BCHUSDT","BNBUSDC","BRUSDT","BTCUSDT","CRVUSDC","CRVUSDT","DASHUSDT","DOGEUSDC","DOGEUSDT","DOTUSDT","ENAUSDT","ETHUSDT","FETUSDT","FILUSDC","FILUSDT","HBARUSDC","HBARUSDT","HYPEUSDT","INJUSDT","LINKUSDC","LINKUSDT","LTCUSDT","NEARUSDC","NEARUSDT","ONDOUSDT","OPUSDT","PENGUUSDC","PENGUUSDT","SOLUSDC","SOLUSDT","SUIUSDC","SUIUSDT","TAOUSDT","TIAUSDC","TIAUSDT","TRUMPUSDC","TUTUSDT","UNIUSDC","UNIUSDT","USELESSUSDT","VVVUSDT","WLDUSDC","WLDUSDT","XLMUSDT","XMRUSDT","XPLUSDT","XRPUSDC","XRPUSDT","ZECUSDT"],"missingSymbols":[],"mismatchReasons":[],"committedAt":1790266340568,"blockers":[]}
+
+## post-commit readback profile=READY authority=MATCHED coverage=58 missing=[] rate=0.167
+## readiness after commit {"intent":true,"ready":true,"modelSpendPermitted":true,"blockers":[],"firstBlocker":null,"profileStatus":"READY","privateFresh":true,"writeLocked":false,"executableCandidateCount":3,"mode":"EXECUTION_READY","text":"执行事实齐备：PLACE 可进入 reservation → intent → order submit 链"}
+## protected facts unchanged: settingsVersion 206 -> 207 (must be exactly +1) executionMode=undefined environment=TESTNET entrySafetyMode=AUTO aiExitAuthority=SHADOW caps=1/0.8/0.35/0.35 maxPositions=50
+## write boundary before=[testnetWrites=0 productionWrites=0 blockedProduction=0 lastWriteAt=null] after=[testnetWrites=0 productionWrites=0 blockedProduction=0 lastWriteAt=null]

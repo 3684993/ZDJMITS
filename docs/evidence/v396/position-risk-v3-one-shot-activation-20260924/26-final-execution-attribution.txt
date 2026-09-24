@@ -1,0 +1,65 @@
+(node:44808) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+# observedAt=2026-09-24T16:18:41.432Z since=2026-09-24T15:18:39.000Z
+# execution=TESTNET_ENABLED testnetWrites=0 productionWrites=0 lastWriteAt=null lastWritePath=null
+# readiness={"intent":true,"ready":true,"modelSpendPermitted":true,"blockers":[],"firstBlocker":null,"profileStatus":"READY","privateFresh":true,"writeLocked":false,"executableCandidateCount":2,"mode":"EXECUTION_READY","text":"执行事实齐备：PLACE 可进入 reservation → intent → order submit 链"}
+# analysis={"mode":"EXECUTION_ENABLED","reason":"AI_RESOURCE_BUSY","lastBlockedReason":"AI_RESOURCE_BUSY","lastTickAt":1790266720829,"capitalExecutableCount":2,"active":1}
+# primaryBrain={"status":"READY","runs":4,"historicalRuns":99,"idleReason":null,"model":"qwen/qwen3.8-27b","lastDecision":"PLACE_LONG","lastDirection":"LONG","lastCompletedAt":1790266671854,"lastLatencyMs":58525,"queueDepth":0,"active":1}
+# capacity={"used":12,"max":50,"positions":12,"inFlight":0,"reserved":0} gross={"used":9322.97666290093,"limit":10723.65849804,"remaining":1400.6818351390702} firstBlocker=NONE exhausted=false
+# entryActivity={"lastPrimaryRunAt":1790266671859,"lastPlaceDecisionAt":1790266671859,"lastEntryIntentAt":1790109989661,"lastEntrySubmittedAt":1790109725293,"lastEntryFilledAt":1790109638800,"primaryRunsSinceLastPlace":0,"uniqueSymbolsSinceLastPlace":11,"consecutiveRejects":0,"placeCount30m":18,"rejectCount30m":0,"primaryCount30m":18,"entryIntentCount30m":0,"submitCount30m":0,"fillCount30m":0}
+# pool={"count":null,"ready":0,"reason":null}
+# positions={"status":"FACT","count":12} tp={"required":12,"protected":12} pendingEntries={"status":"FACT","count":0,"max":6}
+# noEntryReason=null pipelineState="RUNNING"
+
+## durable event types since window (total 400)
+   245 x CANDIDATE_LIFECYCLE_REDERIVED
+   28 x CANDIDATE_SUPPLY_HEALTH
+   26 x CANDIDATE_LIFECYCLE_CHANGED
+   17 x MANUAL_ORDER_REMOTE_STATUS_UNVERIFIED
+   14 x ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED
+   12 x ANALYSIS_DISPATCH_HEARTBEAT
+   5 x TRADING_QUALITY_OPPORTUNITY
+   5 x PRE_AI_EXECUTION_ENVELOPE_CREATED
+   5 x POOL_ANALYSIS_STARTED
+   5 x ANALYSIS_DISPATCH_INTENT
+   4 x CANDIDATE_REJECTED
+   4 x TRADING_QUALITY_PRIMARY_LINK
+   4 x AI_RUN_TERMINAL
+   4 x PRIMARY_DECISION_NORMALIZED
+   3 x MARKET_COHORT_REFILLED
+   3 x POSITION_MARKETS_REFRESHED
+   2 x ENTRY_DATA_ERROR
+   2 x ENTRY_DECISION_BLOCKED
+   2 x PORTFOLIO_RISK_ADMISSION_EVALUATED
+   2 x ENTRY_ECONOMIC_ADMISSION_EVALUATED
+   2 x MATERIAL_DECISION_CHANGE
+   1 x UNKNOWN_RISK_AUDIT_SUMMARY
+   1 x MARKET_SYMBOL_ERROR
+   1 x TRADE_SYNC_AUTO_COMPLETED
+
+## execution-relevant events (25), newest first
+   2026-09-24T16:18:36.271Z ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED APTUSDT "{\"orderId\":\"entry_intent_mu5xqmou_9hr5l6ur\",\"symbol\":\"APTUSDT\",\"clientOrderId\":\"ml_1b4ce8e0307d2fa5e2e934347560\",\"exchangeOrderId\":null,\"reason\":\"EXACT_QUERY_NOT_FOUND_VERIFIED_NO_ACTIVE_RISK\",\"exchangeTerminalStatus\":\"UNKNOWN\",\"activeR
+   2026-09-24T16:17:51.861Z AI_RUN_TERMINAL DOGEUSDC "{\"id\":\"airun_mufqino1_gzo5pj7i\",\"symbol\":\"DOGEUSDC\",\"resourceId\":\"brain-7900-primary\",\"model\":\"qwen/qwen3.8-27b\",\"role\":\"PRIMARY_BRAIN\",\"startedAt\":1790266613329,\"completedAt\":1790266671854,\"latencyMs\":58525,\"inputTokens\":18910,\"o
+   2026-09-24T16:17:48.196Z MARKET_COHORT_REFILLED  "{\"reason\":\"PERIODIC_60S\",\"requested\":2,\"loaded\":1,\"accepted\":1,\"partial\":true,\"retryAt\":1790266728196,\"members\":11,\"retention\":23}"
+   2026-09-24T16:16:41.306Z PORTFOLIO_RISK_ADMISSION_EVALUATED XRPUSDT "{\"brainRunId\":\"airun_mufqh7ey_fj686apl\",\"allocationPlanId\":\"alloc_ai_mufqieck_0wv1330h\",\"allowed\":true,\"reasons\":[],\"limits\":[],\"riskGeneration\":2,\"snapshotHash\":\"v396r33b3662196e9053ae135d351a752553a73ef47915eb6aed5a362e7fe8352a587\",\"fac
+   2026-09-24T16:16:41.253Z ENTRY_ECONOMIC_ADMISSION_EVALUATED XRPUSDT "{\"brainRunId\":\"airun_mufqh7ey_fj686apl\",\"mode\":\"SHADOW\",\"passed\":false,\"wouldBlock\":true,\"expectedNetProfit\":12.467128924800003,\"requiredNetProfit\":1,\"reachProbability\":0.896551724137931,\"historicalHardMaxMovePercent\":3.7523835467175193,\"
+   2026-09-24T16:16:41.083Z AI_RUN_TERMINAL XRPUSDT "{\"id\":\"airun_mufqh7ey_fj686apl\",\"symbol\":\"XRPUSDT\",\"resourceId\":\"brain-7900-primary\",\"model\":\"qwen/qwen3.8-27b\",\"role\":\"PRIMARY_BRAIN\",\"startedAt\":1790266545610,\"completedAt\":1790266601076,\"latencyMs\":55466,\"inputTokens\":19134,\"ou
+   2026-09-24T16:15:58.975Z MARKET_COHORT_REFILLED  "{\"reason\":\"PERIODIC_60S\",\"requested\":2,\"loaded\":2,\"accepted\":2,\"partial\":false,\"retryAt\":0,\"members\":10,\"retention\":22}"
+   2026-09-24T16:15:34.604Z PORTFOLIO_RISK_ADMISSION_EVALUATED NEARUSDT "{\"brainRunId\":\"airun_mufqftz2_twf5p32z\",\"allocationPlanId\":\"alloc_ai_mufqgyvn_e4g35e7x\",\"allowed\":true,\"reasons\":[],\"limits\":[],\"riskGeneration\":1,\"snapshotHash\":\"v396r9439ad04ebba62b906b3696fc6adcf07ccdf7e068318604fc31630a3dbfcbb95\",\"fac
+   2026-09-24T16:15:34.548Z ENTRY_ECONOMIC_ADMISSION_EVALUATED NEARUSDT "{\"brainRunId\":\"airun_mufqftz2_twf5p32z\",\"mode\":\"SHADOW\",\"passed\":false,\"wouldBlock\":true,\"expectedNetProfit\":63.333094399999986,\"requiredNetProfit\":1,\"reachProbability\":0.7368421052631579,\"historicalHardMaxMovePercent\":8.438143151154808,\"
+   2026-09-24T16:15:34.367Z AI_RUN_TERMINAL NEARUSDT "{\"id\":\"airun_mufqftz2_twf5p32z\",\"symbol\":\"NEARUSDT\",\"resourceId\":\"brain-7900-primary\",\"model\":\"qwen/qwen3.8-27b\",\"role\":\"PRIMARY_BRAIN\",\"startedAt\":1790266481534,\"completedAt\":1790266534342,\"latencyMs\":52808,\"inputTokens\":18943,\"o
+   2026-09-24T16:14:55.708Z ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED DASHUSDT "{\"orderId\":\"entry_intent_mubhqs3x_2b3q7i9x\",\"symbol\":\"DASHUSDT\",\"clientOrderId\":\"ml_c2cd77a73bac9c93bcdf67f2ed54\",\"exchangeOrderId\":null,\"reason\":\"EXACT_QUERY_NOT_FOUND_VERIFIED_NO_ACTIVE_RISK\",\"exchangeTerminalStatus\":\"UNKNOWN\",\"active
+   2026-09-24T16:14:50.705Z ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED APTUSDT "{\"orderId\":\"entry_intent_mu5xqmou_9hr5l6ur\",\"symbol\":\"APTUSDT\",\"clientOrderId\":\"ml_1b4ce8e0307d2fa5e2e934347560\",\"exchangeOrderId\":null,\"reason\":\"EXACT_QUERY_NOT_FOUND_VERIFIED_NO_ACTIVE_RISK\",\"exchangeTerminalStatus\":\"UNKNOWN\",\"activeR
+   2026-09-24T16:14:32.663Z ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED DASHUSDT "{\"orderId\":\"entry_intent_mubhqs3x_2b3q7i9x\",\"symbol\":\"DASHUSDT\",\"clientOrderId\":\"ml_c2cd77a73bac9c93bcdf67f2ed54\",\"exchangeOrderId\":null,\"reason\":\"EXACT_QUERY_NOT_FOUND\",\"exchangeTerminalStatus\":\"UNKNOWN\",\"activeRiskExposure\":true,\"ev
+   2026-09-24T16:14:29.806Z AI_RUN_TERMINAL XRPUSDC "{\"id\":\"airun_mufqee9j_9bd9j1rn\",\"symbol\":\"XRPUSDC\",\"resourceId\":\"brain-7900-primary\",\"model\":\"qwen/qwen3.8-27b\",\"role\":\"PRIMARY_BRAIN\",\"startedAt\":1790266414519,\"completedAt\":1790266469781,\"latencyMs\":55262,\"inputTokens\":19093,\"ou
+   2026-09-24T16:14:29.536Z ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED APTUSDT "{\"orderId\":\"entry_intent_mu5xqmou_9hr5l6ur\",\"symbol\":\"APTUSDT\",\"clientOrderId\":\"ml_1b4ce8e0307d2fa5e2e934347560\",\"exchangeOrderId\":null,\"reason\":\"EXACT_QUERY_NOT_FOUND\",\"exchangeTerminalStatus\":\"UNKNOWN\",\"activeRiskExposure\":true,\"evi
+   2026-09-24T16:14:19.430Z ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED DASHUSDT "{\"orderId\":\"entry_intent_mubhqs3x_2b3q7i9x\",\"symbol\":\"DASHUSDT\",\"clientOrderId\":\"ml_c2cd77a73bac9c93bcdf67f2ed54\",\"exchangeOrderId\":null,\"reason\":\"EXACT_QUERY_NOT_FOUND\",\"exchangeTerminalStatus\":\"UNKNOWN\",\"activeRiskExposure\":true,\"ev
+   2026-09-24T16:14:17.186Z ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED APTUSDT "{\"orderId\":\"entry_intent_mu5xqmou_9hr5l6ur\",\"symbol\":\"APTUSDT\",\"clientOrderId\":\"ml_1b4ce8e0307d2fa5e2e934347560\",\"exchangeOrderId\":null,\"reason\":\"EXACT_QUERY_NOT_FOUND\",\"exchangeTerminalStatus\":\"UNKNOWN\",\"activeRiskExposure\":true,\"evi
+   2026-09-24T16:13:59.184Z ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED DASHUSDT "{\"orderId\":\"entry_intent_mubhqs3x_2b3q7i9x\",\"symbol\":\"DASHUSDT\",\"clientOrderId\":\"ml_c2cd77a73bac9c93bcdf67f2ed54\",\"exchangeOrderId\":null,\"reason\":\"EXACT_QUERY_NOT_FOUND\",\"exchangeTerminalStatus\":\"UNKNOWN\",\"activeRiskExposure\":true,\"ev
+   2026-09-24T16:13:56.701Z ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED APTUSDT "{\"orderId\":\"entry_intent_mu5xqmou_9hr5l6ur\",\"symbol\":\"APTUSDT\",\"clientOrderId\":\"ml_1b4ce8e0307d2fa5e2e934347560\",\"exchangeOrderId\":null,\"reason\":\"EXACT_QUERY_NOT_FOUND\",\"exchangeTerminalStatus\":\"UNKNOWN\",\"activeRiskExposure\":true,\"evi
+   2026-09-24T16:13:47.268Z MARKET_COHORT_REFILLED  "{\"reason\":\"PERIODIC_60S\",\"requested\":2,\"loaded\":2,\"accepted\":2,\"partial\":false,\"retryAt\":0,\"members\":8,\"retention\":22}"
+   2026-09-24T16:13:38.571Z ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED DASHUSDT "{\"orderId\":\"entry_intent_mubhqs3x_2b3q7i9x\",\"symbol\":\"DASHUSDT\",\"clientOrderId\":\"ml_c2cd77a73bac9c93bcdf67f2ed54\",\"exchangeOrderId\":null,\"reason\":\"EXACT_QUERY_NOT_FOUND_VERIFIED_NO_ACTIVE_RISK\",\"exchangeTerminalStatus\":\"UNKNOWN\",\"active
+   2026-09-24T16:13:34.132Z ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED APTUSDT "{\"orderId\":\"entry_intent_mu5xqmou_9hr5l6ur\",\"symbol\":\"APTUSDT\",\"clientOrderId\":\"ml_1b4ce8e0307d2fa5e2e934347560\",\"exchangeOrderId\":null,\"reason\":\"EXACT_QUERY_NOT_FOUND_VERIFIED_NO_ACTIVE_RISK\",\"exchangeTerminalStatus\":\"UNKNOWN\",\"activeR
+   2026-09-24T16:13:10.924Z ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED APTUSDT "{\"orderId\":\"entry_intent_mu5xqmou_9hr5l6ur\",\"symbol\":\"APTUSDT\",\"clientOrderId\":\"ml_1b4ce8e0307d2fa5e2e934347560\",\"exchangeOrderId\":null,\"reason\":\"EXACT_QUERY_NOT_FOUND\",\"exchangeTerminalStatus\":\"UNKNOWN\",\"activeRiskExposure\":true,\"evi
+   2026-09-24T16:12:59.416Z ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED APTUSDT "{\"orderId\":\"entry_intent_mu5xqmou_9hr5l6ur\",\"symbol\":\"APTUSDT\",\"clientOrderId\":\"ml_1b4ce8e0307d2fa5e2e934347560\",\"exchangeOrderId\":null,\"reason\":\"EXACT_QUERY_NOT_FOUND\",\"exchangeTerminalStatus\":\"UNKNOWN\",\"activeRiskExposure\":true,\"evi
+   2026-09-24T16:12:25.460Z ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED DASHUSDT "{\"orderId\":\"entry_intent_mubl212x_z8fndm8t\",\"symbol\":\"DASHUSDT\",\"clientOrderId\":\"ml_8b7c9c31a99d028c353801f4130c\",\"exchangeOrderId\":null,\"reason\":\"EXACT_QUERY_NOT_FOUND_VERIFIED_NO_ACTIVE_RISK\",\"exchangeTerminalStatus\":\"UNKNOWN\",\"active

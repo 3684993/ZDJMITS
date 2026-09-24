@@ -45,6 +45,9 @@ AGENTS.md，我不做第二次启动：Engine 现在是**停止**状态，需要
    unRealizedProfit, updateTime`。
    与 V2 的关键差异：V2 另有 `leverage, maxNotionalValue, marginType, isAutoAddMargin, isolated,
    adlQuantile` 且返回 1,484 行（含零仓），V3 只返回 12 行非零仓但**没有 `leverage`**。
+   取得通道需说明：§F 的 preview 端点没能用上新实例（它在 175 秒就退了），因此这份原始载荷是经
+   `p0-postmortem.mjs --live` 在**同一份已部署 dist** 上以签名 GET 直接读取的（零写、无第二网络路径、
+   无自建签名实现），不是对官方文档的转述。
 5. **`marginAsset` 与 `maintMargin` 实际可证明数量：12/12**。保证金资产不是猜的：BNBUSDC 为
    `USDC`，其余 11 个为 `USDT`。`maintMargin` 从 0.0235（BCH）到 41.276（AVAX）都是交易所自报值。
 6. **每个 `liquidationPrice=0` 的 side / 原始值 / 语义**：3 个，全部 LONG —— BTCUSDT、ETHUSDT、

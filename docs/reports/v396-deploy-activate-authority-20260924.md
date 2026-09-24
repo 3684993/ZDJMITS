@@ -27,7 +27,7 @@ testnetWrites          = 6              blockedProductionWriteAttempts = 0
 
 | # | 项 | 事实 | 证据 |
 | --- | --- | --- | --- |
-| 1 | 最终 HEAD / 产品提交 / 证据提交 | 产品：`d82949c`（派生率界，**已部署**）、`423262c`（覆盖集+探针，**未部署**）；文档随本提交 | `git log` |
+| 1 | 最终 HEAD / 产品提交 / 证据提交 | 产品：`d82949c`（派生率界，**已部署**）、`423262c` + `9c24796`（覆盖宇宙 + 探针 + 预模型闸，**未部署**；`9c24796` 补的是 `423262c` 漏提的一个文件）；文档 `68ba1be` 及本提交 | `git log` |
 | 2 | 部署前后身份 | 旧：PID 34196 / `3.9.6-eaaabc52c682cc1ce56a` / instanceId `1c10189b…`；新（第一轮部署）：PID 24412 / `3.9.6-3d04c580bac4cdc355a5` / `8fe7ec9f…`；P1 修复重部署后：PID 14200 / `3.9.6-65ee704a8b14cbc18f70` / `8ef62368-28c4-43d4-abf9-6193e3c7e199` | `00`、`01`、`02`、`07` |
 | 3 | stop/start 次数 | **2 次 stop + 2 次 MANUAL_START**（计划允许的 1 次部署 + P1 修复的 1 次额外部署；无第三次） | `02`、`07`、§7 |
 | 4 | requiredSymbols / coverage / missing | 首次提交 13 → 覆盖刷新后 14；含 USDC 计价的 `BNBUSDC`；readback `missingSymbols=[]` | `08`、`09`、`16` |
@@ -90,11 +90,11 @@ testnetWrites          = 6              blockedProductionWriteAttempts = 0
 
 ## 5. 未部署代码与运行实例的关系（不污染现场）
 
-`423262c` 只提交、不部署。为证明没有半部署：全部门禁后重新计算内容树 hash，live 四棵 dist 树仍是 `65ee704a8b14cbc18f70…`（与运行中 buildId 逐字节一致），`gates/13-live-dist-identity.txt`；隔离构建只写到 `build-check/`（已删除），`gates/03`。所有 isolated test 使用 `mkdtemp` 独立 dataDir、`listen(0)` 随机端口、假 transport。
+`423262c` 与 `9c24796` 只提交、不部署。为证明没有半部署：全部门禁后重新计算内容树 hash，live 四棵 dist 树仍是 `65ee704a8b14cbc18f70…`（与运行中 buildId 逐字节一致），`gates/13-live-dist-identity.txt`；隔离构建只写到 `build-check/`（已删除），`gates/03`。所有 isolated test 使用 `mkdtemp` 独立 dataDir、`listen(0)` 随机端口、假 transport。
 
 ## 6. 为什么回退 READ_ONLY（以及为什么这不是"停在 READ_ONLY"）
 
-激活后 9 分钟内出现 6 个自然 Primary 决策，全部因**同一条确定性事实层 blocker** 在 admission 被拒（不是市场/大小原因，任意候选任意数量都不能通过），即 §F1/§G 所定义的"同一确定性事实缺口反复造成模型白跑"。继续 `TESTNET_ENABLED` 的净效果只是每 ~90 秒消耗一次本地 GPU 大模型调用而执行概率为 0。§E1 允许把回退作为真实 P1 的缓解，并要求显式记录：
+激活后 9 分钟内出现 5 个自然 PLACE_SHORT 决策（另有 1 个 Primary 运行未出 PLACE），全部因**同一条确定性事实层 blocker** 在 admission 被拒（不是市场/大小原因，任意候选任意数量都不能通过），即 §F1/§G 所定义的"同一确定性事实缺口反复造成模型白跑"。继续 `TESTNET_ENABLED` 的净效果只是每 ~90 秒消耗一次本地 GPU 大模型调用而执行概率为 0。§E1 允许把回退作为真实 P1 的缓解，并要求显式记录：
 
 - CAS 变更面实测只有 2 条路径（`settingsVersion`、`connections.executionMode`），见 `19-…`；
 - authority、profile、limits、`AUTO_RUNNING`、`AUTO`、`SHADOW`、`lockedToTestnet` 全部保留；

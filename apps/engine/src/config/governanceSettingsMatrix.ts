@@ -43,7 +43,7 @@ export type GovernanceField = {
 
 const EXIT = 'riskGovernance.exitCoordination';
 const RISK = 'riskGovernance';
-const PORTFOLIO_RISK = 'riskGovernance.portfolioRisk';
+export const PORTFOLIO_RISK = 'riskGovernance.portfolioRisk';
 
 export const V396_GOVERNANCE_FIELDS: readonly GovernanceField[] = [
   { path: `${EXIT}.aiExitAuthority`, kind: 'enum', enum: ['OFF', 'SHADOW', 'ENFORCE'], unit: 'ENUM', defaultValue: 'OFF', editable: true,

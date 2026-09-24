@@ -24,7 +24,9 @@ export type PortfolioRiskAuthorityFacts = {
   /** The exact objects each hash was computed from. A durable row without its content cannot be re-verified. */
   canonical: {margin: unknown; correlation: unknown; scenarios: unknown};
   reachability: SizingReachability[];
-  margin: {contentHash: string; version: string; maintenanceMarginRatePct: number; coverageSymbols: string[]; observedAt: number; derivation: 'REACHABLE_TIERS' | 'ALL_COVERED_TIERS'};
+  /** Which notional bound the conservative rate used, and which field bound it must respect. */
+  sizingBound: {maxEntryNotionalUsd: number | null; maintenanceRateBound: number | null};
+  margin: {contentHash: string; version: string; maintenanceMarginRatePct: number; coverageSymbols: string[]; observedAt: number; derivation: MaintenanceRateDerivation};
   correlation: {contentHash: string; version: string; clusters: Record<string, string>};
   scenarios: {contentHash: string; version: string; scenarios: Record<string, unknown>[]};
 };
@@ -161,21 +163,43 @@ function reachableTiers(tiers: MarginBracketTier[], reach?: SizingReachability):
   return cursor >= Math.min(reach.maxNotionalUsd, reach.maxNotionalUsd) && covered.length ? covered : null;
 }
 
-/** The conservative bound: the largest maintenance ratio the book can actually land in. Never an average. */
-export function deriveMaintenanceMarginRatePct(dataset: MarginBracketSymbolDataset[], reachability: SizingReachability[] = []): {ratePct: number; derivation: 'REACHABLE_TIERS' | 'ALL_COVERED_TIERS'} {
+/**
+ * The conservative bound: the largest maintenance ratio the book can actually land in. Never an average.
+ *
+ * `maxEntryNotionalUsd` is the outer bound on any single new entry, taken from the operator's own gross
+ * cap. Without it, "degrade to the maximum over every covered tier" would include brackets the account
+ * can never occupy — a 2x-leverage top tier on an unrelated symbol would then price every entry in the
+ * book, which is both wrong and inexpressible in the profile field. Excluding unreachable tiers is a
+ * precision fix, not a relaxation: whatever remains is still a maximum over real exchange data, and if
+ * that still exceeds the field's bound the caller refuses instead of rounding down.
+ */
+export type MaintenanceRateDerivation = 'REACHABLE_TIERS' | 'ENTRY_BOUND_TIERS' | 'ALL_COVERED_TIERS';
+export type DerivedMaintenanceRate = {ratePct: number; derivation: MaintenanceRateDerivation; drivenBy: {symbol: string; bracket: number; ratio: number} | null};
+
+export function deriveMaintenanceMarginRatePct(dataset: MarginBracketSymbolDataset[], reachability: SizingReachability[] = [], maxEntryNotionalUsd?: number | null): DerivedMaintenanceRate {
   const bySymbol = new Map(dataset.map(row => [row.symbol, row.tiers]));
   const reachBySymbol = new Map((reachability ?? []).map(row => [String(row.symbol ?? '').toUpperCase(), row]));
-  const reachable: MarginBracketTier[] = [];
-  let provable = dataset.length > 0;
+  const cap = finite(maxEntryNotionalUsd ?? null) && Number(maxEntryNotionalUsd) > 0 ? Number(maxEntryNotionalUsd) : null;
+  const reachable: {symbol: string; tier: MarginBracketTier}[] = [];
+  let perSymbolProvable = dataset.length > 0;
   for (const [symbol, tiers] of bySymbol) {
     const reach = reachBySymbol.get(symbol);
     const tiersForSymbol = reach ? reachableTiers(tiers, reach) : null;
-    if (!tiersForSymbol) {provable = false; break;}
-    reachable.push(...tiersForSymbol);
+    if (tiersForSymbol) {reachable.push(...tiersForSymbol.map(tier => ({symbol, tier}))); continue;}
+    perSymbolProvable = false;
+    if (!cap) continue;
+    // A ladder is anchored at zero, so at least its first tier always intersects the cap.
+    reachable.push(...tiers.filter(tier => tier.notionalFloor < cap).map(tier => ({symbol, tier})));
   }
-  const source = provable ? reachable : dataset.flatMap(row => row.tiers);
-  const ratePct = source.reduce((max, tier) => Math.max(max, tier.maintenanceMarginRatio), 0);
-  return {ratePct, derivation: provable ? 'REACHABLE_TIERS' : 'ALL_COVERED_TIERS'};
+  const bounded = perSymbolProvable ? null : cap ? reachable : dataset.flatMap(row => row.tiers.map(tier => ({symbol: row.symbol, tier})));
+  const source = bounded ?? reachable;
+  let best: {symbol: string; tier: MarginBracketTier} | null = null;
+  for (const row of source) if (!best || row.tier.maintenanceMarginRatio > best.tier.maintenanceMarginRatio) best = row;
+  return {
+    ratePct: best ? best.tier.maintenanceMarginRatio : 0,
+    derivation: perSymbolProvable ? 'REACHABLE_TIERS' : cap ? 'ENTRY_BOUND_TIERS' : 'ALL_COVERED_TIERS',
+    drivenBy: best ? {symbol: best.symbol, bracket: best.tier.bracket, ratio: best.tier.maintenanceMarginRatio} : null,
+  };
 }
 
 export const SCENARIO_FIELDS = ['id', 'priceShockPct', 'spreadWidenPct', 'fundingShockPct', 'markBasisShockPct', 'depthPenaltyPct', 'exchangeUnavailable', 'unavailablePenaltyPct', 'clusterConvergencePct'] as const;
@@ -229,6 +253,7 @@ export type CompileAuthorityInput = {
   bracketRead: unknown; requiredSymbols: string[];
   clusters: unknown; scenarios: unknown;
   reachability?: SizingReachability[];
+  sizingBound?: {maxEntryNotionalUsd?: number | null; maintenanceRateBound?: number | null};
   credentialRef?: string; committedAt?: number;
 };
 
@@ -261,22 +286,28 @@ export function portfolioRiskAuthorityCompile(input: CompileAuthorityInput): Com
   if (!scenarioSet.ok) blockers.push(...scenarioSet.reasons);
   const clusterSet = canonicalClusters(input.clusters);
   if (!clusterSet.ok) blockers.push(...clusterSet.reasons);
+  const reachability = (input.reachability ?? []).filter(row => row && String(row.symbol ?? '').trim());
+  const maxEntryNotionalUsd = finite(input.sizingBound?.maxEntryNotionalUsd ?? null) ? Number(input.sizingBound?.maxEntryNotionalUsd) : null;
+  const maintenanceRateBound = finite(input.sizingBound?.maintenanceRateBound ?? null) ? Number(input.sizingBound?.maintenanceRateBound) : null;
+  const rate = deriveMaintenanceMarginRatePct(canonical.dataset, reachability, maxEntryNotionalUsd);
+  // A real exchange ratio is never clamped into the field's domain: it is named and the commit refuses.
+  if (maintenanceRateBound !== null && rate.ratePct > maintenanceRateBound) {
+    blockers.push(`MAINTENANCE_RATE_EXCEEDS_PROFILE_BOUND:${maintenanceRateBound}:${rate.drivenBy?.symbol ?? 'UNKNOWN'}`);
+  }
   if (blockers.length || !canonical.ok || !scenarioSet.ok || !clusterSet.ok) {
     return {ok: false, facts: null, profileFacts: null, blockers: [...new Set(blockers)].sort(), coverageSymbols: covered};
   }
   const dataset = canonical.dataset;
   const observedAt = Number((input.bracketRead as {observedAt?: unknown}).observedAt ?? 0);
-  const reachability = (input.reachability ?? []).filter(row => row && String(row.symbol ?? '').trim());
   // Observation time and the sizing envelope stay out of the content identity: the same bracket table
   // must not mint a new version because it was read a second later or because sizing moved.
   const content = {schema: MARGIN_AUTHORITY_SCHEMA, environment: 'TESTNET', accountScope: input.accountScope, credentialRef: String(input.credentialRef ?? (input.bracketRead as {credentialRef?: unknown})?.credentialRef ?? ''), dataset};
   const correlationContent = {schema: CORRELATION_AUTHORITY_SCHEMA, clusters: clusterSet.clusters};
   const scenarioContent = {schema: SCENARIO_AUTHORITY_SCHEMA, scenarios: scenarioSet.scenarios};
-  const rate = deriveMaintenanceMarginRatePct(dataset, reachability);
   const facts: PortfolioRiskAuthorityFacts = {
     environment: 'TESTNET', accountScope: input.accountScope, committedAt: Number(input.committedAt ?? 0),
     canonical: {margin: content, correlation: correlationContent, scenarios: scenarioContent},
-    reachability,
+    reachability, sizingBound: {maxEntryNotionalUsd, maintenanceRateBound},
     margin: {contentHash: hex(content), version: versionFor(MARGIN_AUTHORITY_SCHEMA, content), maintenanceMarginRatePct: rate.ratePct, coverageSymbols: covered, observedAt: Number.isFinite(observedAt) ? observedAt : 0, derivation: rate.derivation},
     correlation: {contentHash: hex(correlationContent), version: versionFor(CORRELATION_AUTHORITY_SCHEMA, correlationContent), clusters: clusterSet.clusters},
     scenarios: {contentHash: hex(scenarioContent), version: versionFor(SCENARIO_AUTHORITY_SCHEMA, scenarioContent), scenarios: scenarioSet.scenarios},
@@ -333,13 +364,17 @@ export function portfolioRiskAuthorityVerifyRows(rows: PortfolioRiskAuthorityRow
   if (!canonical.ok) reasons.push(...canonical.failures.map(f => `AUTHORITY_MARGIN_DATASET_${f.reason}:${f.symbol}`));
   const provenance = margin.provenance ?? {};
   const reachability = Array.isArray(provenance.reachability) ? provenance.reachability as SizingReachability[] : [];
-  const rate = deriveMaintenanceMarginRatePct(canonical.dataset, reachability);
+  const sizingBound = provenance.sizingBound && typeof provenance.sizingBound === 'object'
+    ? provenance.sizingBound as {maxEntryNotionalUsd?: number | null; maintenanceRateBound?: number | null}
+    : {maxEntryNotionalUsd: null, maintenanceRateBound: null};
+  const rate = deriveMaintenanceMarginRatePct(canonical.dataset, reachability, sizingBound.maxEntryNotionalUsd ?? null);
   if (Number(provenance.maintenanceMarginRatePct) !== rate.ratePct) reasons.push('AUTHORITY_DERIVED_RATE_MISMATCH');
   if (String(provenance.derivation ?? '') !== rate.derivation) reasons.push('AUTHORITY_DERIVATION_MISMATCH');
   if (reasons.length || !canonical.ok) return {ok: false, facts: null, reasons: [...new Set(reasons)].sort()};
   return {ok: true, facts: {
     environment: String(margin.environment).toUpperCase(), accountScope: String(margin.accountScope), committedAt: margin.committedAt,
     canonical: {margin: margin.canonical, correlation: correlation.canonical, scenarios: scenario.canonical}, reachability,
+    sizingBound: {maxEntryNotionalUsd: finite(sizingBound.maxEntryNotionalUsd ?? null) ? Number(sizingBound.maxEntryNotionalUsd) : null, maintenanceRateBound: finite(sizingBound.maintenanceRateBound ?? null) ? Number(sizingBound.maintenanceRateBound) : null},
     margin: {contentHash: margin.contentHash, version: margin.version, maintenanceMarginRatePct: rate.ratePct, coverageSymbols: canonical.dataset.map(row => row.symbol), observedAt: margin.observedAt, derivation: rate.derivation},
     correlation: {contentHash: correlation.contentHash, version: correlation.version, clusters: (correlation.canonical as {clusters: Record<string, string>}).clusters},
     scenarios: {contentHash: scenario.contentHash, version: scenario.version, scenarios: (scenario.canonical as {scenarios: Record<string, unknown>[]}).scenarios},

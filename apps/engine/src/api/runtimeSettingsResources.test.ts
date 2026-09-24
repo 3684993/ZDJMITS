@@ -68,6 +68,20 @@ describe('portfolio risk authority commit channel',()=>{
     expect(await read.json()).toMatchObject({settingsVersion:1,profileStatus:'PROFILE_NOT_CONFIGURED',authority:{authorityStatus:'NOT_COMMITTED'}});
     expect(runtime.portfolioRiskAuthorityReadback).toHaveBeenCalled();
   });
+  it('previews a collection without persisting anything, and still refuses forged fields',async()=>{
+    const{runtime,url}=await fixture();
+    runtime.collectPortfolioRiskAuthorityPreview=vi.fn(async()=>({persisted:true,ok:false,blockers:['MAINTENANCE_RATE_EXCEEDS_PROFILE_BOUND:0.2:ZECUSDT'],perSymbol:[],wouldCommit:null}));
+    const call=await fetch(`${url}/settings/portfolio-risk-authority/preview`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({limits:limitsBody.limits,correlation:limitsBody.correlation,scenarios:limitsBody.scenarios})});
+    expect(call.status).toBe(200);
+    // The route owns the "nothing was written" claim; whatever the service reports cannot overwrite it.
+    const body=await call.json();
+    expect(body).toMatchObject({persisted:false,blockers:['MAINTENANCE_RATE_EXCEEDS_PROFILE_BOUND:0.2:ZECUSDT']});
+    expect(runtime.commitPortfolioRiskAuthority).not.toHaveBeenCalled();
+    expect(runtime.state.settings.settingsVersion).toBe(1);
+    const forged=await fetch(`${url}/settings/portfolio-risk-authority/preview`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({limits:{...limitsBody.limits,contentHash:'x'},correlation:limitsBody.correlation,scenarios:limitsBody.scenarios})});
+    expect(forged.status).toBe(400);expect((await forged.json()).error.code).toBe('PORTFOLIO_RISK_AUTHORITY_FIELD_IS_SERVER_DERIVED');
+    expect(runtime.collectPortfolioRiskAuthorityPreview).toHaveBeenCalledTimes(1);
+  });
   it('H10 keeps refusing a whole-settings PUT that tries to name a dataset version',async()=>{
     const{runtime,url}=await fixture();
     const requested=structuredClone(runtime.state.settings);

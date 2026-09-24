@@ -53,8 +53,8 @@ import { V396ExitRuntime, exitSubjectFromPosition } from '../services/v396ExitRu
 import { V396AiExitRunner } from '../services/v396AiExitRunner.js';
 import { AiExitAuthorityService } from '../services/aiExitAuthority.js';
 import { PortfolioRiskAdmission } from '../services/portfolioRiskLedger.js';
-import { portfolioRiskAuthorityCompile, type PortfolioRiskAuthorityFacts } from '../services/portfolioRiskAuthority.js';
-import { applyGovernancePatch } from '../config/governanceSettingsMatrix.js';
+import { canonicalizeMarginBrackets, portfolioRiskAuthorityCompile, type PortfolioRiskAuthorityFacts } from '../services/portfolioRiskAuthority.js';
+import { applyGovernancePatch, governanceFieldOf, PORTFOLIO_RISK } from '../config/governanceSettingsMatrix.js';
 import { aiExitPlanFactsOf, executedPlanRecord } from '../services/tradePlanService.js';
 import { AiUsageLedger, aiUsageRowOf } from '../services/aiUsageLedger.js';
 import { PositionReviewScheduler, type ReviewTicket } from '../services/positionReviewScheduler.js';
@@ -892,7 +892,20 @@ export class EngineRuntime {
    */
   portfolioRiskRequiredSymbols(){
     const ready=(Array.isArray(this.state.pool?.readyList?.())?this.state.pool.readyList():[]).map((item:any)=>String(item?.symbol??'').toUpperCase());
-    return [...new Set([...this.state.positionSymbols(),...this.state.activeEntrySymbols(),...ready].filter(symbol=>symbol.endsWith('USDT')))].sort();
+    // Quote suffixes the account can actually margin an entry with; filtering to USDT alone would
+    // silently exclude live USDC-margined positions and candidates from the coverage they need.
+    const quoteable=/^(?:\d+x)?[A-Z0-9]+(?:USDT|USDC|BUSD|FDUSD)$/;
+    return [...new Set([...this.state.positionSymbols(),...this.state.activeEntrySymbols(),...ready].filter(symbol=>quoteable.test(symbol)))].sort();
+  }
+  /**
+   * The bound the conservative maintenance rate is allowed to consider. Any single new entry is capped
+   * by the operator's own gross notional limit, so brackets above it cannot describe this account's
+   * risk - and the field's own schema bound comes from the governance matrix, not from a copy here.
+   */
+  private portfolioRiskSizingBound(limitsRow:Record<string,unknown>){
+    const gross=Number(limitsRow?.maxGrossNotionalUsd);
+    const bound=governanceFieldOf(`${PORTFOLIO_RISK}.maintenanceMarginRatePct`)?.max;
+    return {maxEntryNotionalUsd:Number.isFinite(gross)&&gross>0?gross:null,maintenanceRateBound:Number.isFinite(bound as number)?Number(bound):null};
   }
   private async collectPortfolioRiskMarginBrackets(requiredSymbols:string[]){
     const adapter=this.trade;
@@ -919,7 +932,8 @@ export class EngineRuntime {
     const requiredSymbols=this.portfolioRiskRequiredSymbols();
     const bracketRead=await this.collectPortfolioRiskMarginBrackets(requiredSymbols);
     const compiled=portfolioRiskAuthorityCompile({environment:scope.environment,accountScope:scope.accountScope,bracketRead,requiredSymbols,
-      clusters:input.clusters,scenarios:input.scenarios,credentialRef:scope.accountScope,committedAt:Date.now()});
+      clusters:input.clusters,scenarios:input.scenarios,credentialRef:scope.accountScope,committedAt:Date.now(),
+      sizingBound:this.portfolioRiskSizingBound((staged.settings.riskGovernance as any)?.portfolioRisk??{})});
     if(!compiled.ok){const error=new Error(`PORTFOLIO_RISK_AUTHORITY_UNPROVEN:${compiled.blockers.join(',')}`) as Error&{blockers?:string[]};error.blockers=compiled.blockers;throw error;}
     const next=structuredClone(staged.settings) as any;
     Object.assign(next.riskGovernance.portfolioRisk,compiled.profileFacts);
@@ -938,6 +952,35 @@ export class EngineRuntime {
     return this.portfolioRisk?.profileReadback(requiredSymbols??this.portfolioRiskRequiredSymbols())??null;
   }
   /**
+   * A read-only look at what a commit *would* say: the same GET-only collection and the same compiler,
+   * with nothing persisted. Without this an operator facing a refusal can only guess which bracket the
+   * server considered, and guessing invites hand-editing the database.
+   */
+  async collectPortfolioRiskAuthorityPreview(input:{limits:Record<string,unknown>;clusters:unknown;scenarios:unknown}){
+    const scope=this.authorityScope();
+    const requiredSymbols=this.portfolioRiskRequiredSymbols();
+    const sizingBound=this.portfolioRiskSizingBound({...input.limits});
+    const bracketRead=await this.collectPortfolioRiskMarginBrackets(requiredSymbols);
+    const compiled=portfolioRiskAuthorityCompile({environment:scope.environment,accountScope:scope.accountScope,bracketRead,requiredSymbols,
+      clusters:input.clusters,scenarios:input.scenarios,credentialRef:scope.accountScope,committedAt:0,sizingBound});
+    const canonical=canonicalizeMarginBrackets(bracketRead);
+    return {
+      collectedAt:Date.now(),environment:scope.environment,accountScope:scope.accountScope,requiredSymbols,
+      collectionFailures:bracketRead.failures,sizingBound,
+      perSymbol:canonical.dataset.map(row=>{
+        const considered=row.tiers.filter(tier=>!sizingBound.maxEntryNotionalUsd||tier.notionalFloor<sizingBound.maxEntryNotionalUsd);
+        return {symbol:row.symbol,tierCount:row.tiers.length,
+          consideredTiers:considered.map(tier=>({bracket:tier.bracket,notionalFloor:tier.notionalFloor,notionalCap:tier.notionalCap,maintenanceMarginRatio:tier.maintenanceMarginRatio,initialLeverage:tier.initialLeverage})),
+          highestConsideredRatio:considered.length?Math.max(...considered.map(tier=>tier.maintenanceMarginRatio)):null,
+          highestAnyTierRatio:Math.max(...row.tiers.map(tier=>tier.maintenanceMarginRatio))};
+      }),
+      ok:compiled.ok,blockers:compiled.blockers,
+      wouldCommit:compiled.ok?{marginTierVersion:compiled.facts.margin.version,contentHash:compiled.facts.margin.contentHash,
+        derivedMaintenanceMarginRatePct:compiled.facts.margin.maintenanceMarginRatePct,derivation:compiled.facts.margin.derivation,
+        coverageSymbols:compiled.facts.margin.coverageSymbols,correlationVersion:compiled.facts.correlation.version,scenarioVersion:compiled.facts.scenarios.version}:null,
+    };
+  }
+  /**
    * Detect bracket drift against the committed authority. Finding a different table marks it stale,
    * which refuses new risk; it never adopts the new hash, because that would let the exchange move
    * the goalposts under an operator-approved profile.
@@ -950,7 +993,7 @@ export class EngineRuntime {
       const read=await this.collectPortfolioRiskMarginBrackets(requiredSymbols);
       const compiled=portfolioRiskAuthorityCompile({environment:this.authorityScope().environment,accountScope:this.authorityScope().accountScope,
         bracketRead:read,requiredSymbols,clusters:committed.correlation.clusters,scenarios:committed.scenarios.scenarios,
-        credentialRef:this.authorityScope().accountScope,committedAt:committed.committedAt,reachability:committed.reachability});
+        credentialRef:this.authorityScope().accountScope,committedAt:committed.committedAt,reachability:committed.reachability,sizingBound:committed.sizingBound});
       if(!compiled.ok){this.portfolioRiskAuthority.staleObservedContentHash=`unproven:${compiled.blockers[0]??'UNKNOWN'}`;report={status:'UNPROVEN',reasons:compiled.blockers};}
       else{
         const moved=compiled.facts.margin.contentHash!==committed.margin.contentHash;

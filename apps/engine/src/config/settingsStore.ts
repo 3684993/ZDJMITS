@@ -36,7 +36,7 @@ function authorityRowsForCommit(
       observedAt: Number(facts.margin.observedAt) || 0,
       provenance: { ...provenance, source: 'BINANCE_TESTNET_LEVERAGE_BRACKET_COLLECTOR',
         maintenanceMarginRatePct: facts.margin.maintenanceMarginRatePct, derivation: facts.margin.derivation,
-        coverageSymbols: facts.margin.coverageSymbols, reachability: facts.reachability } },
+        coverageSymbols: facts.margin.coverageSymbols, reachability: facts.reachability, sizingBound: facts.sizingBound } },
     { ...identity, kind: 'correlation' as const, schemaVersion: CORRELATION_AUTHORITY_SCHEMA,
       contentHash: facts.correlation.contentHash, version: facts.correlation.version, canonical: facts.canonical.correlation,
       observedAt: committedAt, provenance: { ...provenance, source: 'OPERATOR_DECLARED_TESTNET_DISCOVERY_MODEL' } },

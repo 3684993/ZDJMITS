@@ -118,6 +118,18 @@ export function createRuntimeSettingsResourcesRouter(runtime:EngineRuntime){
     nested(body?.limits,'limits');nested(body?.correlation,'correlation');
     return found;
   };
+  /**
+   * The same collection and compilation a commit performs, with nothing persisted. A refusal that only
+   * says "0.2" leaves the operator to guess which bracket the server saw, and a guess invites somebody
+   * to edit the database by hand.
+   */
+  router.post('/settings/portfolio-risk-authority/preview',async(req,res,next)=>{try{
+    const body=req.body as {limits?:Record<string,unknown>;correlation?:{clusters?:unknown};scenarios?:unknown[]}|undefined;
+    const forged=forgedAuthorityFields(body as {[key:string]:unknown}|undefined);
+    if(forged.length){res.status(400).json({error:{code:'PORTFOLIO_RISK_AUTHORITY_FIELD_IS_SERVER_DERIVED',fields:forged}});return;}
+    if(!body?.limits||!Array.isArray(body.scenarios)||!body.scenarios.length){res.status(400).json({error:{code:'PORTFOLIO_RISK_PREVIEW_INCOMPLETE'}});return;}
+    res.json({...await runtime.collectPortfolioRiskAuthorityPreview({limits:body.limits,clusters:body.correlation?.clusters,scenarios:body.scenarios}),persisted:false});
+  }catch(error){next(error);}});
   router.get('/settings/portfolio-risk-authority',(_req,res,next)=>{try{
     const readback=runtime.portfolioRiskAuthorityReadback?.()??null;
     res.json({settingsVersion:runtime.state.settings.settingsVersion,authority:readback?.authority??null,profileStatus:readback?.status??'PROFILE_NOT_CONFIGURED',

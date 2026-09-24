@@ -278,6 +278,72 @@ const COMMIT_LIMITS = {configured: true, maxCapitalAtRiskUsd: 600, maxStressLoss
  * gets back must be derived by this server from a GET-only collection, and every refusal has to leave
  * Settings exactly where it found them.
  */
+describe('the derived rate is bounded by the notional the account can actually reach', () => {
+  // A live-shaped ladder: the top bracket prices 2x leverage, which no entry inside the
+  // operator's own gross cap can ever occupy.
+  const ladder = (symbol: string, top: number) => ({symbol, brackets: [
+    {bracket: 0, initialLeverage: 20, notionalFloor: 0, notionalCap: 50_000, maintMarginRatio: 0.004, cum: 0},
+    {bracket: 1, initialLeverage: 10, notionalFloor: 50_000, notionalCap: 200_000, maintMarginRatio: 0.01, cum: 100},
+    {bracket: 2, initialLeverage: 2, notionalFloor: 200_000, notionalCap: null, maintMarginRatio: top, cum: 5_000},
+  ]});
+  const readOf = (rows: unknown[]) => ({environment: 'TESTNET', credentialRef: 'binance-primary', observedAt: 1_700_000_000_000, symbols: rows, failures: []});
+  const build = (rows: unknown[], sizingBound: Record<string, unknown>) => portfolioRiskAuthorityCompile({
+    environment: 'TESTNET', accountScope: 'binance-primary', bracketRead: readOf(rows),
+    requiredSymbols: [...new Set(rows.map(row => String((row as {symbol: string}).symbol)))], clusters: {}, scenarios: SCENARIOS, sizingBound,
+  });
+
+  it('R1 excludes brackets the entry cap makes unreachable, and still takes the maximum, not an average', () => {
+    const bounded = build([ladder('BTCUSDT', 0.5)], {maxEntryNotionalUsd: 10_813, maintenanceRateBound: 0.2});
+    expect(bounded.ok, JSON.stringify((bounded as {blockers: string[]}).blockers)).toBe(true);
+    if (!bounded.ok) return;
+    expect(bounded.facts.margin.maintenanceMarginRatePct).toBe(0.004);
+    expect(bounded.facts.margin.derivation).toBe('ENTRY_BOUND_TIERS');
+    // The unbounded degradation is what produced the impossible 0.5 in the first place.
+    const unbounded = build([ladder('BTCUSDT', 0.5)], {});
+    expect(unbounded.ok).toBe(true);
+    if (!unbounded.ok) return;
+    expect(unbounded.facts.margin.maintenanceMarginRatePct).toBe(0.5);
+    expect(unbounded.facts.margin.derivation).toBe('ALL_COVERED_TIERS');
+  });
+
+  it('R2 refuses and names the symbol when the rate inside the cap still exceeds the field bound; it never clamps', () => {
+    // ETHUSDT prices everything up to null notional at 25% - unreachable or not, that is a fact about a
+    // bracket the account could actually sit in, so the commit must fail rather than round it down.
+    const result = build([ladder('BTCUSDT', 0.5), {symbol: 'ETHUSDT', brackets: [{bracket: 0, initialLeverage: 4, notionalFloor: 0, notionalCap: null, maintMarginRatio: 0.25, cum: 0}]}],
+      {maxEntryNotionalUsd: 10_813, maintenanceRateBound: 0.2});
+    expect(result.ok).toBe(false);
+    const blockers = (result as {blockers: string[]}).blockers;
+    expect(blockers.join(',')).toMatch(/MAINTENANCE_RATE_EXCEEDS_PROFILE_BOUND:0\.2:ETHUSDT/);
+    expect((result as {facts: null}).facts).toBeNull();
+    expect((result as {profileFacts: null}).profileFacts).toBeNull();
+    expect(JSON.stringify(blockers)).not.toMatch(/:0\.2[,}"]/);
+  });
+
+  it('R3 a cap that is not provable degrades to the all-covered maximum and reports that honestly', () => {
+    for (const cap of [undefined, null, 0, Number.NaN, -1]) {
+      const built = build([ladder('BTCUSDT', 0.012)], {maxEntryNotionalUsd: cap, maintenanceRateBound: 0.2});
+      expect(built.ok, String(cap)).toBe(true);
+      if (!built.ok) continue;
+      expect(built.facts.margin.derivation, String(cap)).toBe('ALL_COVERED_TIERS');
+      expect(built.facts.margin.maintenanceMarginRatePct).toBe(0.012);
+    }
+  });
+
+  it('R4 the coverage rule keeps USDC-margined positions and candidates instead of excluding them by name', () => {
+    const state: any = {
+      positions: new Map([['p1', {symbol: 'BTCUSDT'}], ['p2', {symbol: 'BNBUSDC'}]]),
+      entryOrders: new Map([['o1', {symbol: 'ethusdt', status: 'NEW', quantity: 1, filledQuantity: 0, createdAt: Date.now(), absoluteExpiresAt: Date.now() + 60_000, factSource: 'BINANCE', activeRiskExposure: true}]]),
+      entryReservations: new Map(),
+      activeEntrySymbols: () => new Set(['SOLUSDT']), positionSymbols: () => new Set(['BTCUSDT', 'BNBUSDC']),
+      pool: {readyList: () => [{symbol: '1000PEPEUSDT', state: 'READY'}, {symbol: 'GALAUSDT', state: 'WAITING'}]},
+    };
+    const self: any = {state};
+    const symbols = (EngineRuntime.prototype as unknown as {portfolioRiskRequiredSymbols: (this: unknown) => string[]}).portfolioRiskRequiredSymbols.call(self);
+    expect(symbols).toContain('BNBUSDC');
+    expect(symbols).toEqual(['1000PEPEUSDT', 'BNBUSDC', 'BTCUSDT', 'GALAUSDT', 'SOLUSDT']);
+  });
+});
+
 describe('the authority commit channel derives its own facts', () => {
   function commitFixture(options: {environment?: string; collector?: boolean; extraPosition?: string} = {}) {
     const environment = options.environment ?? 'TESTNET';
@@ -304,7 +370,7 @@ describe('the authority commit channel derives its own facts', () => {
       ownerOf: () => ({ownerState: 'HUMAN_MANAGED' as const, handoffAt: null, acknowledgedAt: null}), cashFlows: () => [], profile: () => state.settings.riskGovernance.portfolioRisk ?? {},
       authority: () => ({facts: self.portfolioRiskAuthority.facts, staleObservedContentHash: self.portfolioRiskAuthority.staleObservedContentHash})});
     const proto = EngineRuntime.prototype as unknown as Record<string, (this: unknown, ...args: any[]) => any>;
-    for (const name of ['authorityScope', 'portfolioRiskRequiredSymbols', 'collectPortfolioRiskMarginBrackets', 'commitPortfolioRiskAuthority', 'portfolioRiskAuthorityReadback', 'inspectPortfolioRiskAuthorityDrift']) {
+    for (const name of ['authorityScope', 'portfolioRiskRequiredSymbols', 'portfolioRiskSizingBound', 'collectPortfolioRiskMarginBrackets', 'commitPortfolioRiskAuthority', 'portfolioRiskAuthorityReadback', 'inspectPortfolioRiskAuthorityDrift']) {
       self[name] = (...args: any[]) => proto[name].call(self, ...args);
     }
     return {self, state, transport};
@@ -320,13 +386,15 @@ describe('the authority commit channel derives its own facts', () => {
     expect(transport.writes).toEqual([]);
     const profile = state.settings.riskGovernance.portfolioRisk;
     expect(profile.marginTierVersion).toMatch(/^TESTNET_BINANCE_LEVERAGE_BRACKET_V1_SHA256_[0-9a-f]{64}$/);
-    expect(profile.maintenanceMarginRatePct).toBe(0.01);
+    // The 6,000 USDT gross cap in COMMIT_LIMITS makes the 50k+ tier unreachable, so the honest
+    // conservative rate is the maximum of the tiers the account could actually sit in.
+    expect(profile.maintenanceMarginRatePct).toBe(0.004);
     expect(profile.correlationVersion).toMatch(/^TESTNET_CORRELATION_CLUSTERS_V1_SHA256_/);
     expect(profile.scenarioVersion).toMatch(/^TESTNET_STRESS_SCENARIO_SET_V1_SHA256_/);
     expect(state.settings.settingsVersion).toBe(198);
     expect(self.settingsStore.commitPortfolioRiskAuthority).toHaveBeenCalledTimes(1);
     expect(self.portfolioRiskAuthorityReadback()).toMatchObject({status: 'READY', authority: {authorityStatus: 'MATCHED', coverageSymbols: ['BTCUSDT', 'ETHUSDT', 'SOLUSDT'], missingSymbols: []}});
-    expect(self.events.publish).toHaveBeenCalledWith('PORTFOLIO_RISK_AUTHORITY_COMMITTED', expect.objectContaining({settingsVersion: 198, rateDerivation: 'ALL_COVERED_TIERS'}));
+    expect(self.events.publish).toHaveBeenCalledWith('PORTFOLIO_RISK_AUTHORITY_COMMITTED', expect.objectContaining({settingsVersion: 198, rateDerivation: 'ENTRY_BOUND_TIERS'}));
   });
 
   it('refuses a request that names a version or a rate before it spends one request', async () => {

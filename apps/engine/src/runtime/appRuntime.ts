@@ -53,6 +53,8 @@ import { V396ExitRuntime, exitSubjectFromPosition } from '../services/v396ExitRu
 import { V396AiExitRunner } from '../services/v396AiExitRunner.js';
 import { AiExitAuthorityService } from '../services/aiExitAuthority.js';
 import { PortfolioRiskAdmission } from '../services/portfolioRiskLedger.js';
+import { portfolioRiskAuthorityCompile, type PortfolioRiskAuthorityFacts } from '../services/portfolioRiskAuthority.js';
+import { applyGovernancePatch } from '../config/governanceSettingsMatrix.js';
 import { aiExitPlanFactsOf, executedPlanRecord } from '../services/tradePlanService.js';
 import { AiUsageLedger, aiUsageRowOf } from '../services/aiUsageLedger.js';
 import { PositionReviewScheduler, type ReviewTicket } from '../services/positionReviewScheduler.js';
@@ -96,6 +98,16 @@ export class EngineRuntime {
   reviewTickReport:ReviewTickReport|null=null;
   cashFlowFacts: () => Array<{ id: string; amountUsd: number; factStatus: 'VERIFIED' }> = () => [];
   refreshCashFlowFacts: (now?: number) => Promise<{ rows: number; complete?: boolean; asOf: number } | null> = async () => null;
+  /**
+   * The durable PortfolioRisk authority this process last verified, plus any bracket drift it has
+   * observed. Drift is a diagnosis only: a fresh collection can never replace these facts, because
+   * only an explicit operator commit decides which dataset the account trades against.
+   */
+  portfolioRiskAuthority: {
+    facts: PortfolioRiskAuthorityFacts | null; reasons: string[]; loadedAt: number; staleObservedContentHash: string | null;
+  } = { facts: null, reasons: ['AUTHORITY_NOT_LOADED'], loadedAt: 0, staleObservedContentHash: null };
+  /** The last drift inspection this process ran, for the operator readback. A diagnosis, never authority. */
+  portfolioRiskAuthorityDriftReport: {status: string; reasons?: string[]; committedMarginTierVersion?: string; observedMarginTierVersion?: string; inspectedAt: number} | null = null;
   private timers: NodeJS.Timeout[] = [];
   private stopped = false;
   private ready = false;
@@ -360,9 +372,17 @@ export class EngineRuntime {
         } catch { return null; }
       },
       cashFlows: () => runtime.cashFlowFacts(),
+      authority: () => ({facts: runtime.portfolioRiskAuthority.facts, staleObservedContentHash: runtime.portfolioRiskAuthority.staleObservedContentHash}),
       profile: () => (state.settings.riskGovernance as any)?.portfolioRisk ?? {},
     });
     runtime.portfolioRisk.restore(state.riskLedger);
+    // The authority is a fact read from the same durable store the profile points at, so it has to be
+    // verified before this process can call anything "READY" - including on a cold boot.
+    void runtime.refreshPortfolioRiskAuthority().then(read=>{
+      if(read.facts)events.publish('PORTFOLIO_RISK_AUTHORITY_LOADED',{marginTierVersion:read.facts.margin.version,coverageSymbols:read.facts.margin.coverageSymbols.length,
+        derivedMaintenanceMarginRatePct:read.facts.margin.maintenanceMarginRatePct,settingsVersion:state.settings.settingsVersion});
+      else events.publish('PORTFOLIO_RISK_AUTHORITY_UNAVAILABLE',{reasons:read.reasons});
+    });
     (state as any).riskAdmission = runtime.portfolioRisk;
     state.entryRiskGate = (input: any) => {
       const decision = runtime.portfolioRisk!.gate(input);
@@ -705,6 +725,11 @@ export class EngineRuntime {
       executionGovernanceMode: this.state.executionGovernance?.mode ?? '',
       writeAdmissionBlock: this.entry.writeAdmissionBlockReason(),
       executableCandidateCount: this.state.runtimeControl.capital.executableCandidateCount ?? 0,
+      executableCandidateSymbols: (this.state.runtimeControl.capital.routedCandidates ?? [])
+        .filter((route: any) => route?.longExecutable || route?.shortExecutable)
+        .map((route: any) => String(route?.symbol ?? '')),
+      portfolioRiskAuthority: {facts: this.portfolioRiskAuthority.facts, staleObservedContentHash: this.portfolioRiskAuthority.staleObservedContentHash},
+      authorityScope: this.authorityScope(),
       now,
     });
   }
@@ -848,6 +873,99 @@ export class EngineRuntime {
   async updateSettings(input: unknown) {return this.applySavedSettings(await this.settingsStore.save(input));}
   async updateSettingsIfVersion(input:unknown,expectedVersion:number){return this.applySavedSettings(await this.settingsStore.saveIfVersion(input,expectedVersion));}
   async updateResourceSettings(input:unknown,expectedVersion:number,mutation:{kind:"exchange"|"proxy"|"ai";operation:"SAVE"|"DELETE";id:string;value?:unknown}){return this.applySavedSettings(await this.settingsStore.saveResourceIfVersion(input,expectedVersion,mutation));}
+  private authorityScope(){
+    const exchange=this.state.settings.connections.exchange;
+    return {environment:String(exchange.environment??'').toUpperCase(),accountScope:String(exchange.credentialRef??'')};
+  }
+  /** Reload and verify the durable authority rows; a half-written or hand-edited set yields none. */
+  async refreshPortfolioRiskAuthority(){
+    const read=await this.settingsStore.readPortfolioRiskAuthority();
+    this.portfolioRiskAuthority={facts:read.facts,reasons:read.reasons,loadedAt:Date.now(),
+      staleObservedContentHash:read.facts?this.portfolioRiskAuthority.staleObservedContentHash:null};
+    return read;
+  }
+  /**
+   * The symbols a committed margin dataset has to cover: what the account holds, what is already in
+   * flight, and what the pool can route into this tick. Deliberately not "every listed symbol" — a
+   * universe-wide sweep would spend the whole request budget, and a candidate outside this set is
+   * refused by name at admission rather than priced by an unproven bracket.
+   */
+  portfolioRiskRequiredSymbols(){
+    const ready=(Array.isArray(this.state.pool?.readyList?.())?this.state.pool.readyList():[]).map((item:any)=>String(item?.symbol??'').toUpperCase());
+    return [...new Set([...this.state.positionSymbols(),...this.state.activeEntrySymbols(),...ready].filter(symbol=>symbol.endsWith('USDT')))].sort();
+  }
+  private async collectPortfolioRiskMarginBrackets(requiredSymbols:string[]){
+    const adapter=this.trade;
+    if(!adapter?.fetchMaintenanceMarginBrackets)throw new Error('MARGIN_BRACKET_COLLECTOR_UNAVAILABLE');
+    if(!requiredSymbols.length)throw new Error('MARGIN_AUTHORITY_COVERAGE_EMPTY');
+    return adapter.fetchMaintenanceMarginBrackets(requiredSymbols,{credentialRef:this.authorityScope().accountScope});
+  }
+  /**
+   * The only channel that can create or replace a PortfolioRisk authority.
+   *
+   * A client supplies numeric limits and the two operator-declared datasets; it never supplies margin
+   * brackets, a version, or a maintenance rate. Those are read from the exchange by this process and
+   * hashed here, so the version in Settings is always an identity this server derived. Everything
+   * lands in one SQLite transaction with the Settings row that names it.
+   */
+  async commitPortfolioRiskAuthority(input:{limits:Record<string,unknown>;clusters:unknown;scenarios:unknown;acks?:string[];expectedSettingsVersion:number;operator?:string}){
+    const scope=this.authorityScope();
+    if(scope.environment!=='TESTNET')throw new Error(`PORTFOLIO_RISK_AUTHORITY_REQUIRES_TESTNET:${scope.environment}`);
+    if(!scope.accountScope)throw new Error('PORTFOLIO_RISK_AUTHORITY_ACCOUNT_SCOPE_MISSING');
+    const patch:Record<string,unknown>={};
+    for(const [key,value] of Object.entries(input.limits??{})) patch[`riskGovernance.portfolioRisk.${key}`]=value;
+    const staged=applyGovernancePatch(this.state.settings,patch,{acks:input.acks??[]});
+    if(staged.refusals.length){const error=new Error('PORTFOLIO_RISK_LIMITS_REFUSED') as Error&{refusals?:unknown};error.refusals=staged.refusals;throw error;}
+    const requiredSymbols=this.portfolioRiskRequiredSymbols();
+    const bracketRead=await this.collectPortfolioRiskMarginBrackets(requiredSymbols);
+    const compiled=portfolioRiskAuthorityCompile({environment:scope.environment,accountScope:scope.accountScope,bracketRead,requiredSymbols,
+      clusters:input.clusters,scenarios:input.scenarios,credentialRef:scope.accountScope,committedAt:Date.now()});
+    if(!compiled.ok){const error=new Error(`PORTFOLIO_RISK_AUTHORITY_UNPROVEN:${compiled.blockers.join(',')}`) as Error&{blockers?:string[]};error.blockers=compiled.blockers;throw error;}
+    const next=structuredClone(staged.settings) as any;
+    Object.assign(next.riskGovernance.portfolioRisk,compiled.profileFacts);
+    const {settings,authority}=await this.settingsStore.commitPortfolioRiskAuthority({facts:compiled.facts,settings:next,
+      expectedSettingsVersion:input.expectedSettingsVersion,provenance:{operator:String(input.operator??'operator').slice(0,80)}});
+    await this.applySavedSettings(settings);
+    this.portfolioRiskAuthority={facts:authority,reasons:[],loadedAt:Date.now(),staleObservedContentHash:null};
+    this.events.publish('PORTFOLIO_RISK_AUTHORITY_COMMITTED',{settingsVersion:settings.settingsVersion,environment:authority.environment,accountScope:authority.accountScope,
+      marginTierVersion:authority.margin.version,marginContentHash:authority.margin.contentHash,coverageSymbols:authority.margin.coverageSymbols.length,
+      derivedMaintenanceMarginRatePct:authority.margin.maintenanceMarginRatePct,rateDerivation:authority.margin.derivation,
+      correlationVersion:authority.correlation.version,scenarioVersion:authority.scenarios.version,scenarioCount:authority.scenarios.scenarios.length});
+    return {settingsVersion:settings.settingsVersion,authority,readback:this.portfolioRiskAuthorityReadback()};
+  }
+  /** The operator projection: what the durable rows say, never a re-derivation in the page. */
+  portfolioRiskAuthorityReadback(requiredSymbols?:string[]){
+    return this.portfolioRisk?.profileReadback(requiredSymbols??this.portfolioRiskRequiredSymbols())??null;
+  }
+  /**
+   * Detect bracket drift against the committed authority. Finding a different table marks it stale,
+   * which refuses new risk; it never adopts the new hash, because that would let the exchange move
+   * the goalposts under an operator-approved profile.
+   */
+  async inspectPortfolioRiskAuthorityDrift(requiredSymbols=this.portfolioRiskRequiredSymbols()){
+    const committed=this.portfolioRiskAuthority.facts;
+    if(!committed)return {status:'NOT_COMMITTED' as const,reasons:this.portfolioRiskAuthority.reasons};
+    let report:{status:string;reasons?:string[];committedMarginTierVersion?:string;observedMarginTierVersion?:string};
+    try{
+      const read=await this.collectPortfolioRiskMarginBrackets(requiredSymbols);
+      const compiled=portfolioRiskAuthorityCompile({environment:this.authorityScope().environment,accountScope:this.authorityScope().accountScope,
+        bracketRead:read,requiredSymbols,clusters:committed.correlation.clusters,scenarios:committed.scenarios.scenarios,
+        credentialRef:this.authorityScope().accountScope,committedAt:committed.committedAt,reachability:committed.reachability});
+      if(!compiled.ok){this.portfolioRiskAuthority.staleObservedContentHash=`unproven:${compiled.blockers[0]??'UNKNOWN'}`;report={status:'UNPROVEN',reasons:compiled.blockers};}
+      else{
+        const moved=compiled.facts.margin.contentHash!==committed.margin.contentHash;
+        this.portfolioRiskAuthority.staleObservedContentHash=moved?compiled.facts.margin.contentHash:null;
+        report={status:moved?'STALE':'MATCHED',committedMarginTierVersion:committed.margin.version,observedMarginTierVersion:compiled.facts.margin.version};
+      }
+    }catch(error){
+      const reason=String(error instanceof Error?error.message:error).slice(0,160);
+      this.portfolioRiskAuthority.staleObservedContentHash=`unreadable:${reason}`;
+      report={status:'UNREADABLE',reasons:[reason]};
+    }
+    this.portfolioRiskAuthorityDriftReport={...report,inspectedAt:Date.now()};
+    if(report.status==='STALE')this.events.publish('PORTFOLIO_RISK_AUTHORITY_STALE',{committedMarginTierVersion:report.committedMarginTierVersion,observedMarginTierVersion:report.observedMarginTierVersion});
+    return report;
+  }
   pauseNewEntries(reason?: string) {
     return this.runtimeControl.pauseManual(reason);
   }

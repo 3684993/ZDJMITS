@@ -1,5 +1,5 @@
 import { privateAccountFresh } from './privateAccountReadiness.js';
-import { portfolioRiskProfileBlockers, portfolioRiskProfileStatus } from './portfolioRiskLedger.js';
+import { portfolioRiskProfileBlockers, portfolioRiskProfileStatus, type PortfolioRiskProfileAuthorityContext } from './portfolioRiskLedger.js';
 
 /**
  * Whether the runtime may spend a model call.
@@ -26,6 +26,11 @@ export type ExecutionReadinessInput = {
   executionGovernanceMode: string;
   writeAdmissionBlock: string | null;
   executableCandidateCount: number;
+  /** The symbols this tick could actually route; used only to detect that none of them is proven. */
+  executableCandidateSymbols?: string[];
+  /** The durable dataset authority, supplied by the runtime that read it from the same store. */
+  portfolioRiskAuthority?: Pick<PortfolioRiskProfileAuthorityContext, 'facts' | 'staleObservedContentHash'> | null;
+  authorityScope?: { environment: string; accountScope: string } | null;
   now?: number;
 };
 
@@ -52,6 +57,19 @@ export function executionReadiness(input: ExecutionReadinessInput): ExecutionRea
   const profile = settings.riskGovernance?.portfolioRisk ?? {};
   const intent = input.executionGovernanceMode === 'AUTO_RUNNING' && settings.riskGovernance?.entrySafetyMode === 'AUTO';
   const privateFresh = privateAccountFresh({ status: String(input.account?.status ?? 'UNKNOWN'), asOf: input.account?.asOf ?? null } as never, now);
+  // The same authority object the write path will check, not a second copy of its rules: an empty
+  // required-symbol list is deliberate, because this gate answers "could any new risk be admitted",
+  // and a specific candidate that falls outside coverage is named by the admission itself.
+  const authority: PortfolioRiskProfileAuthorityContext | undefined = input.portfolioRiskAuthority && input.authorityScope
+    ? {facts: input.portfolioRiskAuthority.facts, staleObservedContentHash: input.portfolioRiskAuthority.staleObservedContentHash ?? null,
+      environment: input.authorityScope.environment, accountScope: input.authorityScope.accountScope, requiredSymbols: []}
+    : undefined;
+  // A single uncovered symbol in the pool must not freeze the fleet - the admission refuses that
+  // candidate by name. But when *none* of this tick's executable candidates has a proven bracket,
+  // every model call is a guaranteed waste, so the gate says so instead of paying for it.
+  const executableSymbols = [...new Set((input.executableCandidateSymbols ?? []).map(symbol => String(symbol).trim().toUpperCase()).filter(Boolean))];
+  const uncoveredOnly = executableSymbols.length > 0 && authority?.facts
+    && !executableSymbols.some(symbol => authority.facts!.margin.coverageSymbols.includes(symbol));
   const blockers: ExecutionBlocker[] = [];
   if (environment !== 'TESTNET') blockers.push('ENVIRONMENT_NOT_TESTNET');
   if (executionMode !== 'TESTNET_ENABLED') blockers.push('EXECUTION_WRITE_LOCKED');
@@ -59,12 +77,13 @@ export function executionReadiness(input: ExecutionReadinessInput): ExecutionRea
   if (input.writeAdmissionBlock) blockers.push(input.writeAdmissionBlock);
   if (input.runtimeControlMode !== 'RUNNING') blockers.push('RUNTIME_NOT_RUNNING');
   else if (!intent) blockers.push('POLICY_NOT_AUTO');
-  blockers.push(...portfolioRiskProfileBlockers(profile));
+  blockers.push(...portfolioRiskProfileBlockers(profile, authority));
+  if (uncoveredOnly) blockers.push('MARGIN_TIER_NO_COVERED_CANDIDATE');
   if (input.executableCandidateCount < 1) blockers.push('NO_EXECUTABLE_CANDIDATE');
   const ready = blockers.length === 0;
   return {
     intent, ready, modelSpendPermitted: !intent || ready, blockers, firstBlocker: blockers[0] ?? null,
-    profileStatus: portfolioRiskProfileStatus(profile), privateFresh,
+    profileStatus: portfolioRiskProfileStatus(profile, authority), privateFresh,
     writeLocked: executionMode !== 'TESTNET_ENABLED', executableCandidateCount: input.executableCandidateCount,
     mode: ready ? 'EXECUTION_READY' : intent ? 'EXECUTION_BLOCKED' : 'RESEARCH_ONLY',
     text: ready

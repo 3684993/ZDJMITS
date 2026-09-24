@@ -40,6 +40,11 @@ export interface ExchangeTradeAdapter {
   fetchPositions():Promise<Position[]>;
   invalidateOrderFact?(symbol:string,exchangeOrderId?:string|null,clientOrderId?:string|null):void;
   setLeverage(symbol:string,leverage:number):Promise<void>;
+  /**
+   * Read-only margin-tier authority: one signed GET per symbol, bounded, and never a writer.
+   * The PortfolioRisk profile may only claim a proven bracket table that this produced.
+   */
+  fetchMaintenanceMarginBrackets?(symbols:string[],options?:{maxInFlight?:number;credentialRef?:string}):Promise<import('./services/portfolioRiskAuthority.js').MarginBracketAuthorityRead>;
   placeManualOrder(request:{clientOrderId:string;internalOrderId?:string;symbol:string;side:'BUY'|'SELL';positionSide?:'LONG'|'SHORT';type:'LIMIT'|'MARKET';quantity:number;price?:number;reduceOnly:boolean;postOnly:boolean;positionId?:string}):Promise<ManualOrder>;
   /** C3: the capability matrix a coordinated exit trusts, read from the exchange itself. */
   exitCoordinationCapabilities?():Promise<{oneWayReduceOnly:boolean;hedgePositionSide:boolean;cancelReplaceAtomic:boolean;partialFillExpected:boolean;supportsTimeInForce:string[];positionMode:'ONE_WAY'|'HEDGE'}>;

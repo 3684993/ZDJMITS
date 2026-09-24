@@ -98,6 +98,49 @@ export function createRuntimeSettingsResourcesRouter(runtime:EngineRuntime){
     // The response is the server's readback after the write, not the values the caller sent.
     res.json({settingsVersion:saved.settingsVersion,applied,readback:governanceReadback(saved).filter(row=>applied.includes(row.path))});
   }catch(error){if(conflict(res,error,runtime.state.settings.settingsVersion))return;next(error);}});
+  /**
+   * The only channel that can put a PortfolioRisk dataset authority into this account. It is separate
+   * from the governance PATCH on purpose: the margin brackets, every version and the maintenance rate
+   * are derived by the server from content it collected itself, so a request that carries one of those
+   * names is refused rather than quietly accepted and re-derived.
+   */
+  const serverDerivedField=(name:string)=>/version|contenthash|margintier|maintenancemarginrate|brackets|credential|clustermap/i.test(name);
+  const AUTHORITY_REQUEST_FIELDS=['limits','correlation','scenarios','acks','expectedSettingsVersion','operator'];
+  const forgedAuthorityFields=(body:{[key:string]:unknown}|undefined)=>{
+    const found=Object.keys(body??{}).filter(key=>!AUTHORITY_REQUEST_FIELDS.includes(key));
+    const nested=(value:unknown,prefix:string)=>{
+      if(!value||typeof value!=='object'||Array.isArray(value))return;
+      for(const key of Object.keys(value as Record<string,unknown>)){
+        if(serverDerivedField(key))found.push(`${prefix}.${key}`);
+        if(key==='clusters')nested((value as Record<string,unknown>).clusters,`${prefix}.clusters`);
+      }
+    };
+    nested(body?.limits,'limits');nested(body?.correlation,'correlation');
+    return found;
+  };
+  router.get('/settings/portfolio-risk-authority',(_req,res,next)=>{try{
+    const readback=runtime.portfolioRiskAuthorityReadback?.()??null;
+    res.json({settingsVersion:runtime.state.settings.settingsVersion,authority:readback?.authority??null,profileStatus:readback?.status??'PROFILE_NOT_CONFIGURED',
+      profileBlockers:readback?.blockers??[],lastDriftInspection:runtime.portfolioRiskAuthorityDriftReport??null});
+  }catch(error){next(error);}});
+  router.post('/settings/portfolio-risk-authority',async(req,res,next)=>{try{
+    const expected=expectedVersion(req),body=req.body as {limits?:Record<string,unknown>;correlation?:{clusters?:unknown};scenarios?:unknown[];acks?:unknown[];operator?:string}|undefined;
+    const forged=forgedAuthorityFields(body as {[key:string]:unknown}|undefined);
+    if(forged.length){res.status(400).json({error:{code:'PORTFOLIO_RISK_AUTHORITY_FIELD_IS_SERVER_DERIVED',fields:forged,
+      hint:'保证金档位、各数据集版本与维持保证金率只能由服务端从真实采集内容派生；请求不携带这些字段。'}});return;}
+    if(!body?.limits||typeof body.limits!=='object'||Array.isArray(body.limits)||!Object.keys(body.limits).length){res.status(400).json({error:{code:'PORTFOLIO_RISK_LIMITS_REQUIRED'}});return;}
+    if(!Array.isArray(body.scenarios)||!body.scenarios.length){res.status(400).json({error:{code:'PORTFOLIO_RISK_SCENARIOS_REQUIRED'}});return;}
+    const committed=await runtime.commitPortfolioRiskAuthority({limits:body.limits,clusters:body.correlation?.clusters,scenarios:body.scenarios,
+      acks:Array.isArray(body.acks)?body.acks.map(String):[],expectedSettingsVersion:expected,operator:String(body.operator??'cockpit')});
+    res.json({...committed,authority:committed.readback?.authority??null,profileStatus:committed.readback?.status??null});
+  }catch(error){
+    if(conflict(res,error,runtime.state.settings.settingsVersion))return;
+    const message=String(error instanceof Error?error.message:error);
+    if(message.includes('PORTFOLIO_RISK_LIMITS_REFUSED')){res.status(400).json({error:{code:'PORTFOLIO_RISK_LIMITS_REFUSED'},refusals:(error as unknown as {refusals?:unknown[]}).refusals??[],currentSettingsVersion:runtime.state.settings.settingsVersion});return;}
+    if(message.includes('PORTFOLIO_RISK_AUTHORITY_UNPROVEN')||message.includes('MARGIN_')||message.includes('AUTHORITY_')||message.includes('BRACKET_')){
+      res.status(423).json({error:{code:'PORTFOLIO_RISK_AUTHORITY_UNPROVEN',blockers:(error as unknown as {blockers?:string[]}).blockers??[message.slice(0,400)],
+        explanation:'组合风险权威数据集未能从真实 Testnet 事实证明，未写入任何 Settings。'}});return;}
+    next(error);}});
   router.get('/settings/resources/:kind',(req,res,next)=>{try{const kind=kindOf(req);res.json({settingsVersion:runtime.state.settings.settingsVersion,items:resourceView(runtime.state.settings,kind)});}catch(error){next(error);}});
   const save=async(req:Request,res:Response,next:NextFunction)=>{try{
     const kind=kindOf(req),expected=expectedVersion(req),before=runtime.state.settings;rejectSecretFields(req.body);

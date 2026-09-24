@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { executionReadiness } from './executionReadiness.js';
 import { portfolioRiskProfileBlockers, portfolioRiskProfileStatus } from './portfolioRiskLedger.js';
+import { portfolioRiskAuthorityCompile } from './portfolioRiskAuthority.js';
 import { EngineRuntime } from '../runtime/appRuntime.js';
 import { harness } from './tradingQualityTestHarness.js';
 
@@ -32,6 +33,28 @@ describe('execution readiness judgment', () => {
     expect(ready).toMatchObject({ intent: true, ready: true, modelSpendPermitted: true, blockers: [], firstBlocker: null, mode: 'EXECUTION_READY' });
   });
 
+  it('F2 stops paying when no executable candidate has a proven bracket, without freezing a partly covered pool', () => {
+    const accountScope = 'binance-primary';
+    const compiled = portfolioRiskAuthorityCompile({
+      environment: 'TESTNET', accountScope,
+      bracketRead: {environment: 'TESTNET', credentialRef: accountScope, observedAt: now, failures: [],
+        symbols: [{symbol: 'BTCUSDT', brackets: [{bracket: 0, notionalFloor: 0, notionalCap: null, maintMarginRatio: 0.005, initialLeverage: 10, cum: 0}]}]},
+      requiredSymbols: ['BTCUSDT'], clusters: {BTC: 'MAJOR'}, scenarios: [{id: 'shock10', priceShockPct: 0.1, spreadWidenPct: 0.01, fundingShockPct: 0.005, markBasisShockPct: 0, depthPenaltyPct: 0, exchangeUnavailable: false, unavailablePenaltyPct: 0, clusterConvergencePct: 0.5}],
+    });
+    if (!compiled.ok) throw new Error(`fixture must compile: ${compiled.blockers.join(',')}`);
+    const input = {settings: {connections: {executionMode: 'TESTNET_ENABLED', exchange: {environment: 'TESTNET'}},
+      riskGovernance: {entrySafetyMode: 'AUTO', portfolioRisk: profile(compiled.profileFacts)}} as never,
+    account: {status: 'READY', asOf: now - 5_000} as never, runtimeControlMode: 'RUNNING', executionGovernanceMode: 'AUTO_RUNNING',
+      writeAdmissionBlock: null, executableCandidateCount: 2, portfolioRiskAuthority: {facts: compiled.facts}, authorityScope: {environment: 'TESTNET', accountScope}, now};
+    expect(executionReadiness({...input, executableCandidateSymbols: ['BTCUSDT', 'DOGEUSDT']})).toMatchObject({ready: true, modelSpendPermitted: true});
+    const noneCovered = executionReadiness({...input, executableCandidateSymbols: ['DOGEUSDT', 'SOLUSDT']});
+    expect(noneCovered.blockers).toContain('MARGIN_TIER_NO_COVERED_CANDIDATE');
+    expect(noneCovered.ready).toBe(false);
+    expect(noneCovered.modelSpendPermitted).toBe(false);
+    // Without a durable authority the pool comparison is meaningless: the absence is the blocker.
+    expect(executionReadiness({...input, portfolioRiskAuthority: {facts: null}, executableCandidateSymbols: ['DOGEUSDT']})).toMatchObject({profileStatus: 'PROFILE_FACTS_UNPROVEN'});
+  });
+
   it('refuses to pay for a PLACE the write lock will only convert to a WAIT', () => {
     const locked = readiness({ settings: { connections: { executionMode: 'READ_ONLY', exchange: { environment: 'TESTNET' } }, riskGovernance: { entrySafetyMode: 'AUTO', portfolioRisk: profile() } } });
     expect(locked.intent).toBe(true);
@@ -58,8 +81,12 @@ describe('execution readiness judgment', () => {
     expect(portfolioRiskProfileBlockers(profile({ maintenanceMarginRatePct: null }))).toEqual(['MARGIN_TIER_UNPROVEN']);
     expect(portfolioRiskProfileBlockers(profile({ scenarios: [], scenarioVersion: '' }))).toEqual(['STRESS_SCENARIO_SET_UNPROVEN']);
     expect(portfolioRiskProfileBlockers(profile({ maxGrossNotionalUsd: null }))[0]).toContain('RISK_PROFILE_FIELDS_MISSING');
+    // The shape layer's own list is complete - and that is exactly why it is not the authority: with
+    // no durable dataset behind these versions the runtime never reaches READY (see the H1 case below).
     expect(portfolioRiskProfileBlockers(profile())).toEqual([]);
     expect(portfolioRiskProfileStatus(profile())).toBe('READY');
+    expect(portfolioRiskProfileBlockers(profile(), {facts: null, environment: 'TESTNET', accountScope: 'binance-primary'})).toEqual(['MARGIN_AUTHORITY_MISSING']);
+    expect(portfolioRiskProfileStatus(profile(), {facts: null, environment: 'TESTNET', accountScope: 'binance-primary'})).toBe('PROFILE_FACTS_UNPROVEN');
     const factsUnproven = readiness({ settings: { connections: { executionMode: 'TESTNET_ENABLED', exchange: { environment: 'TESTNET' } }, riskGovernance: { entrySafetyMode: 'AUTO', portfolioRisk: profile({ correlationVersion: '' }) } } });
     expect(factsUnproven.blockers).toEqual(['CORRELATION_VERSION_UNPROVEN']);
     expect(factsUnproven.profileStatus).toBe('PROFILE_FACTS_UNPROVEN');
@@ -176,30 +203,55 @@ describe('an armed trade intent spends no model on facts it cannot execute', () 
 });
 
 describe('the runtime pushes the verdict instead of deciding it per surface', () => {
-  function runtime() {
+  const authorityScenarios = [
+    { id: 'DOWN_10', priceShockPct: -0.1, spreadWidenPct: 0.01, fundingShockPct: 0.005, markBasisShockPct: -0.01, depthPenaltyPct: 0.02, exchangeUnavailable: false, unavailablePenaltyPct: 0, clusterConvergencePct: 0.5 },
+    { id: 'EXCHANGE_GAP_15', priceShockPct: -0.15, spreadWidenPct: 0.02, fundingShockPct: 0.005, markBasisShockPct: -0.02, depthPenaltyPct: 0.03, exchangeUnavailable: true, unavailablePenaltyPct: 0.03, clusterConvergencePct: 0.75 },
+  ];
+  /** Compiled by the real authority compiler from a synthetic bracket read: a fixture is not a weaker rule. */
+  function committedAuthority(h: ReturnType<typeof harness>) {
+    const accountScope = String(h.state.settings.connections.exchange.credentialRef ?? 'binance-primary');
+    // Coverage has to include what this tick can actually execute, or the gate is right to refuse.
+    const routed = ((h.state.runtimeControl.capital.routedCandidates ?? []) as Array<{symbol?: string; longExecutable?: boolean; shortExecutable?: boolean}>)
+      .filter(route => route.longExecutable || route.shortExecutable).map(route => String(route.symbol ?? '').toUpperCase()).filter(Boolean);
+    const symbols = [...new Set(['BTCUSDT', ...routed])].sort();
+    const compiled = portfolioRiskAuthorityCompile({
+      environment: 'TESTNET', accountScope,
+      bracketRead: {environment: 'TESTNET', credentialRef: accountScope, observedAt: Date.now(), failures: [],
+        symbols: symbols.map(symbol => ({symbol, brackets: [{bracket: 0, notionalFloor: 0, notionalCap: null, maintMarginRatio: 0.005, initialLeverage: 10, cum: 0}]}))},
+      requiredSymbols: symbols, clusters: {BTC: 'MAJOR'}, scenarios: authorityScenarios,
+    });
+    if (!compiled.ok) throw new Error(`fixture authority must compile: ${compiled.blockers.join(',')}`);
+    return compiled;
+  }
+  function runtime(options: { authority?: boolean } = {}) {
     const h = harness();
+    const authority = committedAuthority(h);
     const noted = vi.fn();
     const processPool = vi.fn(async () => {});
     const fake: Record<string, unknown> = {
       state: h.state,
       runtimeControl: { canDispatch: () => true },
       entry: { processPool, noteExecutionReadiness: noted, writeAdmissionBlockReason: () => null },
+      portfolioRiskAuthority: options.authority === false
+        ? {facts: null, reasons: ['AUTHORITY_NOT_LOADED'], loadedAt: 0, staleObservedContentHash: null}
+        : {facts: authority.facts, reasons: [], loadedAt: Date.now(), staleObservedContentHash: null},
     };
+    const privateMethod = (name: string) => (EngineRuntime.prototype as unknown as Record<string, (this: unknown) => unknown>)[name];
     // Bind the runtime's own gate instead of reimplementing it, so the test cannot drift from production.
-    fake.executionReadinessSnapshot = () =>
-      (EngineRuntime.prototype as unknown as { executionReadinessSnapshot: (this: unknown) => unknown }).executionReadinessSnapshot.call(fake);
+    fake.authorityScope = () => privateMethod('authorityScope').call(fake);
+    fake.executionReadinessSnapshot = () => privateMethod('executionReadinessSnapshot').call(fake);
     const dispatch = (EngineRuntime.prototype as unknown as { dispatchAnalysisTick: (this: unknown) => Promise<void> }).dispatchAnalysisTick;
-    return { h, noted, processPool, tick: () => dispatch.call(fake) };
+    return { h, fake, noted, processPool, profileFacts: authority.profileFacts, tick: () => dispatch.call(fake) };
   }
 
   it('reports the first real reason every tick and still runs the deterministic tick body', async () => {
-    const { h, noted, processPool, tick } = runtime();
+    const { h, noted, processPool, profileFacts, tick } = runtime();
     h.state.settings.connections.executionMode = 'READ_ONLY';
     h.state.account = { ...h.state.account, status: 'READY', asOf: Date.now(), equityUsd: 10_000 };
     h.state.runtimeControl = { ...h.state.runtimeControl, mode: 'RUNNING', capital: { ...h.state.runtimeControl.capital, executableCandidateCount: 3 } };
     h.state.executionGovernance = { ...h.state.executionGovernance, mode: 'AUTO_RUNNING' };
     (h.state.settings.riskGovernance as Record<string, unknown>).entrySafetyMode = 'AUTO';
-    (h.state.settings.riskGovernance as Record<string, unknown>).portfolioRisk = profile();
+    (h.state.settings.riskGovernance as Record<string, unknown>).portfolioRisk = profile(profileFacts);
     await tick();
     expect(noted).toHaveBeenCalledOnce();
     expect(noted.mock.calls[0][0]).toMatchObject({ intent: true, ready: false, firstBlocker: 'EXECUTION_WRITE_LOCKED' });
@@ -210,11 +262,45 @@ describe('the runtime pushes the verdict instead of deciding it per surface', ()
     expect(noted.mock.calls.at(-1)?.[0]).toMatchObject({ ready: true, modelSpendPermitted: true });
   });
 
+  it('H1 spends no model on a profile whose versions name no committed authority', async () => {
+    const { h, noted, profileFacts, tick } = runtime({ authority: false });
+    h.state.account = { ...h.state.account, status: 'READY', asOf: Date.now(), equityUsd: 10_000 };
+    h.state.runtimeControl = { ...h.state.runtimeControl, mode: 'RUNNING', capital: { ...h.state.runtimeControl.capital, executableCandidateCount: 3 } };
+    h.state.executionGovernance = { ...h.state.executionGovernance, mode: 'AUTO_RUNNING' };
+    (h.state.settings.riskGovernance as Record<string, unknown>).entrySafetyMode = 'AUTO';
+    (h.state.settings.riskGovernance as Record<string, unknown>).portfolioRisk = profile(profileFacts);
+    await tick();
+    const verdict = noted.mock.calls.at(-1)?.[0] as { ready: boolean; modelSpendPermitted: boolean; blockers: string[]; profileStatus: string };
+    expect(verdict.blockers).toContain('MARGIN_AUTHORITY_MISSING');
+    expect(verdict.profileStatus).toBe('PROFILE_FACTS_UNPROVEN');
+    expect(verdict.ready).toBe(false);
+    expect(verdict.modelSpendPermitted).toBe(false);
+  });
+
+  it('H17 stops paying for a PLACE the moment the committed bracket table drifts', async () => {
+    const { h, fake, noted, profileFacts, tick } = runtime();
+    h.state.account = { ...h.state.account, status: 'READY', asOf: Date.now(), equityUsd: 10_000 };
+    h.state.runtimeControl = { ...h.state.runtimeControl, mode: 'RUNNING', capital: { ...h.state.runtimeControl.capital, executableCandidateCount: 3 } };
+    h.state.executionGovernance = { ...h.state.executionGovernance, mode: 'AUTO_RUNNING' };
+    (h.state.settings.riskGovernance as Record<string, unknown>).entrySafetyMode = 'AUTO';
+    (h.state.settings.riskGovernance as Record<string, unknown>).portfolioRisk = profile(profileFacts);
+    h.state.settings.connections.executionMode = 'TESTNET_ENABLED';
+    await tick();
+    expect((noted.mock.calls.at(-1)?.[0] as {ready: boolean}).ready).toBe(true);
+    // A fresher collection that disagrees with the committed one is a diagnosis, and it costs no model.
+    (fake.portfolioRiskAuthority as {staleObservedContentHash: string | null}).staleObservedContentHash = 'f'.repeat(64);
+    await tick();
+    const verdict = noted.mock.calls.at(-1)?.[0] as {ready: boolean; modelSpendPermitted: boolean; blockers: string[]};
+    expect(verdict.blockers).toContain('MARGIN_AUTHORITY_STALE');
+    expect(verdict.ready).toBe(false);
+    expect(verdict.modelSpendPermitted).toBe(false);
+  });
+
   it('does not evaluate readiness at all when the environment is not Testnet', async () => {
-    const { h, noted, processPool, tick } = runtime();
+    const { h, noted, processPool, profileFacts, tick } = runtime();
     h.state.settings.connections.exchange.environment = 'PRODUCTION';
     h.state.settings.connections.executionMode = 'TESTNET_ENABLED';
-    (h.state.settings.riskGovernance as Record<string, unknown>).portfolioRisk = profile();
+    (h.state.settings.riskGovernance as Record<string, unknown>).portfolioRisk = profile(profileFacts);
     await tick();
     expect(noted).not.toHaveBeenCalled();
     expect(processPool).not.toHaveBeenCalled();

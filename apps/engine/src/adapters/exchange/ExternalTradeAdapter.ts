@@ -199,6 +199,38 @@ export class ExternalTradeAdapter implements ExchangeTradeAdapter {
     return{walletBalanceUsd:assets.reduce((sum,row)=>sum+(row.usdValue??0),0),availableUsd:Number(usdt?.availableBalance??account.availableBalance),equityUsd:assets.some(row=>row.usdValue===null)&&account.totalMarginBalance!=null&&Number.isFinite(Number(account.totalMarginBalance))?Number(account.totalMarginBalance):equity,unrealizedPnlUsd:Number(account.totalUnrealizedProfit??0),realizedPnlUsd24h:Date.now()-(this.enrichment.incomeAsOf??0)<120_000?this.enrichment.income:null,assets,enrichment:{incomeAsOf:this.enrichment.incomeAsOf,valuationAsOf:this.enrichment.pricesAsOf,error:this.enrichment.lastError,pending:Boolean(this.enrichmentFlight)},asOf:Date.now()};
   }
   async validatePrivate(){const account=await this.fetchAccountSnapshot(),orders=await this.fetchOpenOrders(),positions=await this.fetchPositions();return{status:'BINANCE DEMO PRIVATE READY',endpoint:this.transport.effectiveBaseUrl(),accountAvailable:Number.isFinite(account.walletBalanceUsd),openOrders:orders.length,positions:positions.length};}
+  /**
+   * The only margin-tier read the PortfolioRisk profile is allowed to trust. Purely GET: it never
+   * reuses setLeverage (which POSTs /fapi/v1/leverage), never touches a writer, and refuses to run
+   * anywhere but Testnet, so a production read can never mint Testnet activation authority. One
+   * request per required symbol, bounded in flight, because each /leverageBracket call weighs 30.
+   */
+  async fetchMaintenanceMarginBrackets(symbols:string[],options:{maxInFlight?:number;credentialRef?:string}={}){
+    const environment=this.transport.environment();
+    if(environment!=='TESTNET')throw new Error(`MARGIN_AUTHORITY_REQUIRES_TESTNET:${environment}`);
+    const required=[...new Set((symbols??[]).map(symbol=>String(symbol).trim().toUpperCase()).filter(Boolean))].sort();
+    if(!required.length)throw new Error('MARGIN_AUTHORITY_COVERAGE_EMPTY');
+    const limit=Math.max(1,Math.min(4,Number(options.maxInFlight??4)||4));
+    const collected:{symbol:string;brackets:unknown[]}[]=[],failures:{symbol:string;reason:string}[]=[];
+    let cursor=0;
+    const worker=async()=>{
+      while(cursor<required.length){
+        const symbol=required[cursor++];
+        try{
+          const rows=await this.signed<any[]>('GET','/fapi/v1/leverageBracket',{symbol},'MARGIN_TIER_AUTHORITY_READ','PRIVATE_STATE');
+          const list=Array.isArray(rows)?rows:[];
+          const row=list.find(item=>String(item?.symbol??'').toUpperCase()===symbol)??(list.length===1?list[0]:null);
+          const brackets=Array.isArray(row?.brackets)?row.brackets:null;
+          if(!brackets?.length){failures.push({symbol,reason:'BRACKET_SET_EMPTY'});continue;}
+          collected.push({symbol,brackets});
+        }catch(error){failures.push({symbol,reason:String(error instanceof Error?error.message:error).slice(0,160)});}
+      }
+    };
+    await Promise.all(Array.from({length:Math.min(limit,required.length)},()=>worker()));
+    return {environment,credentialRef:String(options.credentialRef??''),observedAt:Date.now(),
+      symbols:collected.sort((a,b)=>a.symbol.localeCompare(b.symbol)),
+      failures:failures.sort((a,b)=>a.symbol.localeCompare(b.symbol))};
+  }
   async setLeverage(symbol:string,requested:number){let maximum=this.leverageCache.get(symbol);if(!maximum){let flight=this.leverageFlights.get(symbol);if(!flight){flight=this.signed<any[]>('GET','/fapi/v1/leverageBracket',{symbol}).then(rows=>{const bracket=Array.isArray(rows)?rows[0]:rows,value=Math.max(1,Number(bracket?.brackets?.[0]?.initialLeverage??requested));this.leverageCache.set(symbol,value);return value;}).finally(()=>this.leverageFlights.delete(symbol));this.leverageFlights.set(symbol,flight);}maximum=await flight;}const leverage=Math.min(requested,maximum);await this.signed('POST','/fapi/v1/leverage',{symbol,leverage});}
   startUserData(onEvent:(event:any)=>void){if(!this.credentials||this.transport.environment()!=='TESTNET')return null;this.userStream=new BinanceUserDataStream(this.transport,this.credentials.apiKey,onEvent);this.userStream.start();return this.userStream;}
   stopUserData(){this.userStream?.stop();this.userStream=null;}

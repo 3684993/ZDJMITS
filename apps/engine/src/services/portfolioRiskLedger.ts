@@ -4,7 +4,10 @@ import {evaluateHumanCapacity, type HumanCapacityDecision} from './humanCapacity
 import {executionScope} from './executionLifecycle.js';
 import {privateAccountFresh} from './privateAccountReadiness.js';
 import {collectPortfolioPendingRiskFacts} from './entryRiskOccupancy.js';
+import {portfolioRiskAuthorityBlockers, portfolioRiskAuthorityReadback, type PortfolioRiskAuthorityFacts} from './portfolioRiskAuthority.js';
 import type {RuntimeState} from '../state/runtimeState.js';
+
+export type PortfolioRiskProfileAuthorityContext={facts:PortfolioRiskAuthorityFacts|null;staleObservedContentHash?:string|null;environment:string;accountScope:string;requiredSymbols?:string[]};
 
 const PROFILE_LIMIT_KEYS=['maxCapitalAtRiskUsd','maxStressLossUsd','maxGrossNotionalUsd','maxDirectionNotionalUsd','maxClusterNotionalUsd',
   'maxHumanNotionalUsd','maxDrawdownPct','minMarginBufferPct','minLiquidationBufferPct','maxHumanPositions','maxPendingHandoffs','maxAckAgeMs','snapshotTtlMs'] as const;
@@ -13,8 +16,12 @@ const PROFILE_LIMIT_KEYS=['maxCapitalAtRiskUsd','maxStressLossUsd','maxGrossNoti
  * The profile facts the admission needs before it can issue a risk ticket. Exported because the
  * pre-model readiness gate must answer with exactly these codes: a cockpit that invents its own
  * list of "what is missing" is a second authority over the same settings row.
+ *
+ * `authority` is the durable dataset the versions in Settings claim to name. The runtime always
+ * supplies it, and an unlisted version then produces no blocker at all is precisely the bug that
+ * made a typed string look like proof; omitting the argument is only for the pure shape layer.
  */
-export function portfolioRiskProfileBlockers(profile:Record<string,unknown>|null|undefined):string[]{
+export function portfolioRiskProfileBlockers(profile:Record<string,unknown>|null|undefined,authority?:PortfolioRiskProfileAuthorityContext):string[]{
   const row=profile??{};
   if(row.configured!==true)return['RISK_PROFILE_UNCONFIGURED'];
   const blockers:string[]=[];
@@ -23,13 +30,14 @@ export function portfolioRiskProfileBlockers(profile:Record<string,unknown>|null
   if(!String(row.marginTierVersion??'').trim()||!finite(row.maintenanceMarginRatePct))blockers.push('MARGIN_TIER_UNPROVEN');
   if(!String(row.correlationVersion??'').trim())blockers.push('CORRELATION_VERSION_UNPROVEN');
   if(!Array.isArray(row.scenarios)||!row.scenarios.length||!String(row.scenarioVersion??'').trim())blockers.push('STRESS_SCENARIO_SET_UNPROVEN');
+  if(authority)blockers.push(...portfolioRiskAuthorityBlockers({...authority,profile:row as Record<string,unknown>}));
   return blockers;
 }
 
 /** Three states, so a page can never render an unapproved profile as `READY`. */
-export function portfolioRiskProfileStatus(profile:Record<string,unknown>|null|undefined):'PROFILE_NOT_CONFIGURED'|'PROFILE_FACTS_UNPROVEN'|'READY'{
+export function portfolioRiskProfileStatus(profile:Record<string,unknown>|null|undefined,authority?:PortfolioRiskProfileAuthorityContext):'PROFILE_NOT_CONFIGURED'|'PROFILE_FACTS_UNPROVEN'|'READY'{
   if((profile??{}).configured!==true)return 'PROFILE_NOT_CONFIGURED';
-  return portfolioRiskProfileBlockers(profile).length?'PROFILE_FACTS_UNPROVEN':'READY';
+  return portfolioRiskProfileBlockers(profile,authority).length?'PROFILE_FACTS_UNPROVEN':'READY';
 }
 
 /**
@@ -77,7 +85,19 @@ export class PortfolioRiskAdmission {
     /** Verified external transfer facts (deposit/withdraw). Empty means "not provided", not zero. */
     cashFlows:()=>PortfolioCashFlowFact[];
     profile:()=>Record<string,any>;
+    /**
+     * The durable dataset those versions claim to name. The runtime always wires this; a profile whose
+     * version has no committed dataset behind it is never proven, however well the string looks.
+     */
+    authority?:()=>{facts:PortfolioRiskAuthorityFacts|null;staleObservedContentHash?:string|null};
   }){}
+
+  private authorityContext(requiredSymbols:string[]=[]){
+    if(!this.ports.authority)return undefined;
+    const identity=this.ports.identity(),read=this.ports.authority();
+    return{facts:read?.facts??null,staleObservedContentHash:read?.staleObservedContentHash??null,
+      environment:identity.environment,accountScope:identity.account,requiredSymbols:requiredSymbols.filter(Boolean)};
+  }
 
   serialize():PortfolioLedgerState{return {...this.ledger};}
   restore(value:Partial<PortfolioLedgerState>|null|undefined){
@@ -93,22 +113,30 @@ export class PortfolioRiskAdmission {
   snapshot(){return this.lastSnapshot;}
   denies(){return this.lastDeny;}
 
-  private profileSettings(){
+  private profileSettings(requiredSymbols:string[]=[]){
     const row=this.ports.profile()??{};
     const numbers=['maxCapitalAtRiskUsd','maxStressLossUsd','maxGrossNotionalUsd','maxDirectionNotionalUsd','maxClusterNotionalUsd','maxHumanNotionalUsd','maxDrawdownPct','minMarginBufferPct','minLiquidationBufferPct','maxHumanPositions','maxPendingHandoffs','maxAckAgeMs','snapshotTtlMs'];
-    return{row,missing:numbers.filter(key=>row[key]==null),blockers:portfolioRiskProfileBlockers(row as Record<string,unknown>),profileVersion:stableRiskHash(row),
+    const authority=this.authorityContext(requiredSymbols);
+    return{row,missing:numbers.filter(key=>row[key]==null),blockers:portfolioRiskProfileBlockers(row as Record<string,unknown>,authority),profileVersion:stableRiskHash(row),
       provenance:{source:'SETTINGS',settingsVersion:(this.ports.state.settings as any).settingsVersion??null,
         path:'riskGovernance.portfolioRisk',configured:row.configured===true,contentHash:stableRiskHash(row)}};
   }
 
-  profileReadback(){const p=this.profileSettings();return{...p.provenance,status:portfolioRiskProfileStatus(p.row as Record<string,unknown>),version:p.profileVersion,values:p.row,missingFields:p.missing,blockers:p.blockers};}
+  profileReadback(requiredSymbols:string[]=[]){
+    const p=this.profileSettings(requiredSymbols),authority=this.authorityContext(requiredSymbols);
+    const status=portfolioRiskProfileStatus(p.row as Record<string,unknown>,authority);
+    return{...p.provenance,status,version:p.profileVersion,values:p.row,missingFields:p.missing,blockers:p.blockers,
+      // The cockpit may only render this projection; a page that hashed a dataset itself would be a
+      // second authority over the same fact.
+      authority:authority?portfolioRiskAuthorityReadback({...authority,profile:p.row as Record<string,unknown>,operatorStatus:status}):null};
+  }
 
   /** Position, order, reservation, ownership and account facts, mapped into the snapshot inputs. */
   private inputs(now:number,plannedPositions:PortfolioPositionFact[]){
     const state=this.ports.state,identity=this.ports.identity(),settings=state.settings as any;
     const riskSettings=settings?.riskGovernance??{};
-    const profile=this.profileSettings();
-    const blockers:string[]=[...portfolioRiskProfileBlockers(profile.row as Record<string,unknown>)];
+    const profile=this.profileSettings([...new Set(plannedPositions.map(row=>String(row.symbol??'').toUpperCase()).filter(Boolean))]);
+    const blockers:string[]=[...profile.blockers];
 
     const account:any=state.account??{};
     const accountVerified=account.status==='READY'&&privateAccountFresh(account as never,now);

@@ -9,9 +9,48 @@ import { redactAudit } from "../api/projections.js";
 import { isTelemetry } from '../services/operationalLogger.js';
 import { activeOrderStatus, type ManualExecutionRecord, type EntryExecutionRecord } from '../services/executionLifecycle.js';
 import { durableEntryClaimActive, entryClaimReleasedByExchangeFacts } from '../services/entryRiskOccupancy.js';
+import {
+  CORRELATION_AUTHORITY_SCHEMA, MARGIN_AUTHORITY_SCHEMA, SCENARIO_AUTHORITY_SCHEMA,
+  portfolioRiskAuthorityVerifyRows,
+  type PortfolioRiskAuthorityFacts, type PortfolioRiskAuthorityRow,
+} from '../services/portfolioRiskAuthority.js';
 
 function record(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+/**
+ * Expand compiled authority facts into the three durable rows of one commit. `provenance` is metadata
+ * (who collected it, which sizing envelope the derived rate used) and is deliberately outside the
+ * hashed content, so re-collecting the same bracket table never mints a new version.
+ */
+function authorityRowsForCommit(
+  facts: PortfolioRiskAuthorityFacts,
+  settingsVersion: number,
+  provenance: Record<string, unknown> = {},
+): PortfolioRiskAuthorityRow[] {
+  const committedAt = Number(facts.committedAt) || Date.now();
+  const identity = { environment: facts.environment, accountScope: facts.accountScope, committedAt, settingsVersion };
+  return [
+    { ...identity, kind: 'margin' as const, schemaVersion: MARGIN_AUTHORITY_SCHEMA,
+      contentHash: facts.margin.contentHash, version: facts.margin.version, canonical: facts.canonical.margin,
+      observedAt: Number(facts.margin.observedAt) || 0,
+      provenance: { ...provenance, source: 'BINANCE_TESTNET_LEVERAGE_BRACKET_COLLECTOR',
+        maintenanceMarginRatePct: facts.margin.maintenanceMarginRatePct, derivation: facts.margin.derivation,
+        coverageSymbols: facts.margin.coverageSymbols, reachability: facts.reachability } },
+    { ...identity, kind: 'correlation' as const, schemaVersion: CORRELATION_AUTHORITY_SCHEMA,
+      contentHash: facts.correlation.contentHash, version: facts.correlation.version, canonical: facts.canonical.correlation,
+      observedAt: committedAt, provenance: { ...provenance, source: 'OPERATOR_DECLARED_TESTNET_DISCOVERY_MODEL' } },
+    { ...identity, kind: 'scenarios' as const, schemaVersion: SCENARIO_AUTHORITY_SCHEMA,
+      contentHash: facts.scenarios.contentHash, version: facts.scenarios.version, canonical: facts.canonical.scenarios,
+      observedAt: committedAt, provenance: { ...provenance, source: 'OPERATOR_APPROVED_TESTNET_ENGINEERING_SCENARIOS' } },
+  ];
+}
+function parseAuthorityPayload(value: unknown): unknown {
+  try { return typeof value === 'string' ? JSON.parse(value) : value ?? null; } catch { return null; }
+}
+function parseAuthorityProvenance(value: unknown): Record<string, unknown> {
+  const parsed = parseAuthorityPayload(value);
+  return record(parsed) ? parsed : {};
 }
 function merge(defaults: unknown, override: unknown): unknown {
   if (!record(defaults) || !record(override)) return override ?? defaults;
@@ -379,6 +418,15 @@ export class SettingsStore {
     this.db.exec(`CREATE INDEX IF NOT EXISTS external_research_retention ON external_research_tasks(updated_at);
       CREATE INDEX IF NOT EXISTS temporal_jobs_retention ON temporal_jobs(completed_at);
       CREATE INDEX IF NOT EXISTS ai_raw_retention ON ai_runs_archive(started_at) WHERE payload<>'{}' AND status IN ('COMPLETED','FAILED','CANCELED');`);
+    // The durable side of a PortfolioRisk authority: the datasets whose hashes the Settings row only
+    // names. Three rows are one commit, so a half-written set is never read back as authority.
+    this.db.exec(`CREATE TABLE IF NOT EXISTS portfolio_risk_authority (
+        kind TEXT PRIMARY KEY CHECK(kind IN ('margin','correlation','scenarios')),
+        environment TEXT NOT NULL, account_scope TEXT NOT NULL, schema_version TEXT NOT NULL,
+        content_hash TEXT NOT NULL, version TEXT NOT NULL, canonical_payload TEXT NOT NULL,
+        observed_at INTEGER NOT NULL, committed_at INTEGER NOT NULL, settings_version INTEGER NOT NULL,
+        provenance TEXT NOT NULL
+      ); INSERT OR IGNORE INTO schema_migrations(version,applied_at) VALUES(10,${Date.now()});`);
     const secretColumns = new Set(
       (
         this.db.prepare("PRAGMA table_info(secrets)").all() as Array<{
@@ -539,6 +587,67 @@ export class SettingsStore {
     this.persist(updated,'cas',expectedVersion);
     this.current=updated;
     return updated;
+  }
+  /**
+   * The single durable PortfolioRisk authority commit: the Settings row that names the dataset hashes
+   * and the rows holding those datasets land in one `BEGIN IMMEDIATE`, so there is never a Settings
+   * claiming an authority the database does not contain, nor an authority no Settings names.
+   *
+   * The caller passes content this server already compiled; this method re-verifies every identity
+   * against the payload it is about to store, so a hand-built row cannot pass as a commit.
+   */
+  async commitPortfolioRiskAuthority(input:{
+    facts:PortfolioRiskAuthorityFacts;
+    settings:unknown;
+    expectedSettingsVersion:number;
+    provenance?:Record<string,unknown>;
+  }):Promise<{settings:SystemSettings;authority:PortfolioRiskAuthorityFacts}>{
+    await this.open();
+    if(this.current.settingsVersion!==input.expectedSettingsVersion)throw new Error('SETTINGS_VERSION_CONFLICT');
+    const nextVersion=input.expectedSettingsVersion+1;
+    const rows=authorityRowsForCommit(input.facts,nextVersion,input.provenance);
+    const verified=portfolioRiskAuthorityVerifyRows(rows);
+    if(!verified.ok||!verified.facts)throw new Error(`AUTHORITY_COMMIT_UNVERIFIED:${verified.reasons.join(',')}`);
+    const parsed=SystemSettingsSchema.parse(input.settings);
+    const next={...parsed,settingsVersion:nextVersion};
+    const now=Date.now();
+    await this.transaction(()=>{
+      const old=this.db.prepare('SELECT payload FROM settings WHERE id=1').get() as {payload:string}|undefined;
+      const oldVersion=Number(old?JSON.parse(old.payload).settingsVersion??0:0);
+      if(oldVersion!==input.expectedSettingsVersion)throw new Error('SETTINGS_VERSION_CONFLICT');
+      for(const row of rows){
+        this.db.prepare(`INSERT INTO portfolio_risk_authority(kind,environment,account_scope,schema_version,content_hash,version,canonical_payload,observed_at,committed_at,settings_version,provenance)
+          VALUES(?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT(kind) DO UPDATE SET environment=excluded.environment,account_scope=excluded.account_scope,schema_version=excluded.schema_version,content_hash=excluded.content_hash,version=excluded.version,canonical_payload=excluded.canonical_payload,observed_at=excluded.observed_at,committed_at=excluded.committed_at,settings_version=excluded.settings_version,provenance=excluded.provenance`)
+          .run(row.kind,row.environment,row.accountScope,row.schemaVersion,row.contentHash,row.version,JSON.stringify(row.canonical),row.observedAt,row.committedAt,row.settingsVersion,JSON.stringify(row.provenance));
+      }
+      this.db.prepare('INSERT INTO settings(id,version,payload,updated_at) VALUES(1,?,?,?) ON CONFLICT(id) DO UPDATE SET version=excluded.version,payload=excluded.payload,updated_at=excluded.updated_at')
+        .run(next.settingsVersion,JSON.stringify(next),now);
+      this.db.prepare('INSERT INTO settings_audit(changed_at,source,old_version,new_version,summary) VALUES(?,?,?,?,?)')
+        .run(now,'portfolio-risk-authority',input.expectedSettingsVersion,next.settingsVersion,
+          JSON.stringify({message:'portfolio risk authority dataset commit',
+            marginTierVersion:verified.facts.margin.version,marginContentHash:verified.facts.margin.contentHash,
+            coverageSymbols:verified.facts.margin.coverageSymbols.length,derivedMaintenanceMarginRatePct:verified.facts.margin.maintenanceMarginRatePct,
+            rateDerivation:verified.facts.margin.derivation,correlationVersion:verified.facts.correlation.version,scenarioVersion:verified.facts.scenarios.version}));
+      this.db.prepare('INSERT INTO connection_profiles(id,profile,updated_at) VALUES(?,?,?) ON CONFLICT(id) DO UPDATE SET profile=excluded.profile,updated_at=excluded.updated_at')
+        .run('active',JSON.stringify({connections:next.connections,aiResources:next.aiResources}),now);
+      return null;
+    },{timeoutMs:2000,label:'PORTFOLIO_RISK_AUTHORITY_COMMIT'});
+    this.current=next;
+    return {settings:next,authority:verified.facts};
+  }
+  /** Read the durable authority back, verifying it reproduces its own identities. Never a guess. */
+  async readPortfolioRiskAuthority():Promise<{facts:PortfolioRiskAuthorityFacts|null;reasons:string[]}>{
+    await this.open();
+    const rows=(this.db.prepare('SELECT kind,environment,account_scope,schema_version,content_hash,version,canonical_payload,observed_at,committed_at,settings_version,provenance FROM portfolio_risk_authority').all() as Array<Record<string,unknown>>)
+      .map(row=>({
+        kind:String(row.kind) as 'margin'|'correlation'|'scenarios',environment:String(row.environment),accountScope:String(row.account_scope),
+        schemaVersion:String(row.schema_version),contentHash:String(row.content_hash),version:String(row.version),
+        canonical:parseAuthorityPayload(row.canonical_payload),observedAt:Number(row.observed_at),committedAt:Number(row.committed_at),
+        settingsVersion:Number(row.settings_version),provenance:parseAuthorityProvenance(row.provenance),
+      }));
+    if(!rows.length)return {facts:null,reasons:['AUTHORITY_NOT_COMMITTED']};
+    const verified=portfolioRiskAuthorityVerifyRows(rows);
+    return {facts:verified.facts,reasons:verified.ok?[]:verified.reasons};
   }
   private target(ref: string) {
     return `ZDJ-MITS/V3.1/${this.current.connections.exchange.environment}/${ref}`;

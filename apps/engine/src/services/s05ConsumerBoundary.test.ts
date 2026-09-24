@@ -23,10 +23,16 @@ describe('S05 production consumer boundary',()=>{
     expect(consumers('portfolioRiskSnapshot')).toEqual([
       'services/humanCapacityPolicy.ts',
       ADMISSION,
+      // The authority compiler borrows the one canonical hash function; it does not build a snapshot,
+      // evaluate stress, or admit anything - that still happens only in the ledger.
+      'services/portfolioRiskAuthority.ts',
       'services/portfolioStress.ts',
     ].sort());
     expect(consumers('portfolioStress')).toEqual([ADMISSION]);
     expect(consumers('humanCapacityPolicy')).toEqual([ADMISSION]);
+    // And the authority module must not acquire the decision-making imports by accident.
+    const authority=readFileSync(path.join(SRC,'services/portfolioRiskAuthority.ts'),'utf8');
+    expect(authority).not.toMatch(/buildPortfolioRiskSnapshot|evaluatePortfolioStress|evaluateHumanCapacity/);
   });
 
   it('RuntimeState no longer imports the S05 modules at all; the gate is injected',()=>{

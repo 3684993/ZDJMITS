@@ -911,6 +911,17 @@ export class EngineRuntime {
     return [...new Set([...symbols].filter(symbol=>quoteable.test(symbol)))].sort();
   }
   /**
+   * The set an authority commit — or a drift comparison against one — has to price: this tick's sized
+   * universe plus every symbol the already-committed authority covers. Coverage may widen but may not
+   * narrow silently, and a drift check that priced a narrower set than the commit did would report the
+   * exchange's unchanged bracket table as moved.
+   */
+  portfolioRiskCoverageUniverse(){
+    const carried=(this.portfolioRiskAuthority.facts?.margin.coverageSymbols ?? [])
+      .map(symbol=>String(symbol ?? '').trim().toUpperCase()).filter(Boolean);
+    return [...new Set([...this.portfolioRiskRequiredSymbols(),...carried])].sort();
+  }
+  /**
    * The bound the conservative maintenance rate is allowed to consider. Any single new entry is capped
    * by the operator's own gross notional limit, so brackets above it cannot describe this account's
    * risk - and the field's own schema bound comes from the governance matrix, not from a copy here.
@@ -942,7 +953,15 @@ export class EngineRuntime {
     for(const [key,value] of Object.entries(input.limits??{})) patch[`riskGovernance.portfolioRisk.${key}`]=value;
     const staged=applyGovernancePatch(this.state.settings,patch,{acks:input.acks??[]});
     if(staged.refusals.length){const error=new Error('PORTFOLIO_RISK_LIMITS_REFUSED') as Error&{refusals?:unknown};error.refusals=staged.refusals;throw error;}
-    const requiredSymbols=this.portfolioRiskRequiredSymbols();
+    // A refresh may only widen or hold coverage. `portfolioRiskRequiredSymbols()` is a per-tick view of
+    // a rotating pool, so replacing the committed set silently drops symbols the pipeline sized
+    // earlier — on the live account that turned a real PLACE_LONG into
+    // `MARGIN_TIER_SYMBOL_UNPROVEN:NEARUSDT`, an availability artifact expressed as a risk refusal.
+    // Carrying a name forward never carries its data forward: every symbol below is re-read from the
+    // exchange, and if any of them cannot be priced the whole commit is refused rather than truncated.
+    const requiredSymbols=this.portfolioRiskCoverageUniverse();
+    const coverageCeiling = 96;
+    if (requiredSymbols.length > coverageCeiling) throw new Error(`MARGIN_AUTHORITY_COVERAGE_TOO_WIDE:${requiredSymbols.length}>${coverageCeiling}`);
     const bracketRead=await this.collectPortfolioRiskMarginBrackets(requiredSymbols);
     const compiled=portfolioRiskAuthorityCompile({environment:scope.environment,accountScope:scope.accountScope,bracketRead,requiredSymbols,
       clusters:input.clusters,scenarios:input.scenarios,credentialRef:scope.accountScope,committedAt:Date.now(),
@@ -971,7 +990,9 @@ export class EngineRuntime {
    */
   async collectPortfolioRiskAuthorityPreview(input:{limits:Record<string,unknown>;clusters:unknown;scenarios:unknown}){
     const scope=this.authorityScope();
-    const requiredSymbols=this.portfolioRiskRequiredSymbols();
+    // The same universe the commit will price: a preview that names a narrower set than the commit
+    // would let the operator approve a hash they are not actually about to get.
+    const requiredSymbols=this.portfolioRiskCoverageUniverse();
     const sizingBound=this.portfolioRiskSizingBound({...input.limits});
     const bracketRead=await this.collectPortfolioRiskMarginBrackets(requiredSymbols);
     const compiled=portfolioRiskAuthorityCompile({environment:scope.environment,accountScope:scope.accountScope,bracketRead,requiredSymbols,
@@ -1000,7 +1021,7 @@ export class EngineRuntime {
    * which refuses new risk; it never adopts the new hash, because that would let the exchange move
    * the goalposts under an operator-approved profile.
    */
-  async inspectPortfolioRiskAuthorityDrift(requiredSymbols=this.portfolioRiskRequiredSymbols()){
+  async inspectPortfolioRiskAuthorityDrift(requiredSymbols=this.portfolioRiskCoverageUniverse()){
     const committed=this.portfolioRiskAuthority.facts;
     if(!committed)return {status:'NOT_COMMITTED' as const,reasons:this.portfolioRiskAuthority.reasons};
     let report:{status:string;reasons?:string[];committedMarginTierVersion?:string;observedMarginTierVersion?:string};

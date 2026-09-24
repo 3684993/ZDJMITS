@@ -407,7 +407,7 @@ describe('the derived rate is bounded by the notional the account can actually r
 });
 
 describe('the authority commit channel derives its own facts', () => {
-  function commitFixture(options: {environment?: string; collector?: boolean; extraPosition?: string} = {}) {
+  function commitFixture(options: {environment?: string; collector?: boolean; extraPosition?: string; poolSymbols?: string[]} = {}) {
     const environment = options.environment ?? 'TESTNET';
     const transport = fakeTransport(environment);
     const adapter = options.collector === false ? {label: 'adapter-without-the-capability'} : adapterFor(transport);
@@ -418,7 +418,7 @@ describe('the authority commit channel derives its own facts', () => {
       account: {status: 'UNKNOWN', asOf: 0, assets: [], riskBaseline: {}}, snapshots: new Map(),
       activeEntrySymbols: () => new Set(['ETHUSDT', options.extraPosition ?? ''].filter(Boolean)),
       positionSymbols: () => new Set(['BTCUSDT']),
-      pool: {readyList: () => [{symbol: 'SOLUSDT', state: 'READY'}]}, setSettings: (next: any) => {state.settings = next;}};
+      pool: {readyList: () => (options.poolSymbols ?? ['SOLUSDT']).map(symbol => ({symbol, state: 'READY'}))}, setSettings: (next: any) => {state.settings = next;}};
     const self: any = {state, trade: adapter, events: {publish: vi.fn()}, applied: [] as number[],
       portfolioRiskAuthority: {facts: null, reasons: ['AUTHORITY_NOT_LOADED'], loadedAt: 0, staleObservedContentHash: null},
       portfolioRiskAuthorityDriftReport: null,
@@ -432,7 +432,7 @@ describe('the authority commit channel derives its own facts', () => {
       ownerOf: () => ({ownerState: 'HUMAN_MANAGED' as const, handoffAt: null, acknowledgedAt: null}), cashFlows: () => [], profile: () => state.settings.riskGovernance.portfolioRisk ?? {},
       authority: () => ({facts: self.portfolioRiskAuthority.facts, staleObservedContentHash: self.portfolioRiskAuthority.staleObservedContentHash})});
     const proto = EngineRuntime.prototype as unknown as Record<string, (this: unknown, ...args: any[]) => any>;
-    for (const name of ['authorityScope', 'portfolioRiskRequiredSymbols', 'portfolioRiskSizingBound', 'collectPortfolioRiskMarginBrackets', 'commitPortfolioRiskAuthority', 'portfolioRiskAuthorityReadback', 'inspectPortfolioRiskAuthorityDrift']) {
+    for (const name of ['authorityScope', 'portfolioRiskRequiredSymbols', 'portfolioRiskCoverageUniverse', 'portfolioRiskSizingBound', 'collectPortfolioRiskMarginBrackets', 'collectPortfolioRiskAuthorityPreview', 'commitPortfolioRiskAuthority', 'portfolioRiskAuthorityReadback', 'inspectPortfolioRiskAuthorityDrift']) {
       self[name] = (...args: any[]) => proto[name].call(self, ...args);
     }
     return {self, state, transport};
@@ -457,6 +457,30 @@ describe('the authority commit channel derives its own facts', () => {
     expect(self.settingsStore.commitPortfolioRiskAuthority).toHaveBeenCalledTimes(1);
     expect(self.portfolioRiskAuthorityReadback()).toMatchObject({status: 'READY', authority: {authorityStatus: 'MATCHED', coverageSymbols: ['BTCUSDT', 'ETHUSDT', 'SOLUSDT'], missingSymbols: []}});
     expect(self.events.publish).toHaveBeenCalledWith('PORTFOLIO_RISK_AUTHORITY_COMMITTED', expect.objectContaining({settingsVersion: 198, rateDerivation: 'ENTRY_BOUND_TIERS'}));
+  });
+
+  it('an explicit refresh never narrows coverage, because the required universe is a snapshot of a rotating pool', async () => {
+    const {self, state, transport} = commitFixture({poolSymbols: ['SOLUSDT', 'NEARUSDT']});
+    await self.commitPortfolioRiskAuthority(request());
+    expect(self.portfolioRiskAuthority.facts.margin.coverageSymbols).toEqual(['BTCUSDT', 'ETHUSDT', 'NEARUSDT', 'SOLUSDT']);
+    // The pool rotates and NEARUSDT leaves this tick's universe. A refresh must widen-or-hold; silently
+    // dropping is what turned a real live PLACE_LONG into MARGIN_TIER_SYMBOL_UNPROVEN:NEARUSDT.
+    state.pool.readyList = () => [{symbol: 'SOLUSDT', state: 'READY'}];
+    // The preview is the operator's dry run of the commit, so it must name the same universe — and an
+    // unchanged bracket table must reproduce the committed identity rather than minting a new one.
+    const preview = await self.collectPortfolioRiskAuthorityPreview({limits: COMMIT_LIMITS, clusters: {}, scenarios: SCENARIOS});
+    expect(preview.requiredSymbols).toEqual(['BTCUSDT', 'ETHUSDT', 'NEARUSDT', 'SOLUSDT']);
+    expect(preview.wouldCommit?.marginTierVersion).toBe(self.portfolioRiskAuthority.facts.margin.version);
+    const callsBefore = transport.calls.length;
+    await self.commitPortfolioRiskAuthority(request({expectedSettingsVersion: state.settings.settingsVersion}));
+    const coverage = self.portfolioRiskAuthority.facts.margin.coverageSymbols;
+    expect(coverage).toContain('NEARUSDT');
+    expect(coverage).toEqual(['BTCUSDT', 'ETHUSDT', 'NEARUSDT', 'SOLUSDT']);
+    // Carrying a symbol forward is not carrying its data forward: the tier is re-read from the exchange.
+    expect(transport.calls.slice(callsBefore).filter(path => path === '/fapi/v1/leverageBracket')).toHaveLength(4);
+    expect(self.portfolioRiskAuthorityReadback()).toMatchObject({status: 'READY', authority: {authorityStatus: 'MATCHED', missingSymbols: []}});
+    const near = self.portfolioRisk.admit({symbol: 'NEARUSDT', side: 'LONG', quoteAsset: 'USDT', notionalUsd: 200, marginUsd: 25, leverage: 8, markPrice: 2.4, planId: 'plan-near'} as never);
+    expect(near.reasons).not.toContain('MARGIN_TIER_SYMBOL_UNPROVEN:NEARUSDT');
   });
 
   it('refuses a request that names a version or a rate before it spends one request', async () => {

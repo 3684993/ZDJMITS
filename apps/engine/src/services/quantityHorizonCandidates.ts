@@ -272,21 +272,22 @@ export function buildQuantityHorizonCandidates(input:{
       // Statistics refuse a selection only where they are enforced; elsewhere they are recorded, so a
       // SHADOW account cannot silently be running an ENFORCE policy through the selection path.
       if(priced.floorBeyondCeiling===true&&enforceEconomics)refusals.push(`NO_FEASIBLE_TARGET_WITHIN_STATISTICAL_BOUND:floor=${priced.floorTarget},ceiling=${priced.statisticalTarget}`);
-      else if(priced.floorBeyondCeiling===true)statisticalEvidence.push(`SELECTION_TARGET_BEYOND_STATISTICAL_CEILING:units=${units},horizon=${horizon},floor=${priced.floorTarget},ceiling=${priced.statisticalTarget}`);
-      else if(side==='LONG'?target+1e-12<priced.floorTarget:target-1e-12>priced.floorTarget)
-        refusals.push(`CANDIDATE_TARGET_BELOW_PROFIT_FLOOR:target=${target},${side==='LONG'?'<':'>'}floor=${priced.floorTarget}`);
-      else if(priced.statisticalTarget!=null&&(side==='LONG'?target>priced.statisticalTarget+1e-12:target<priced.statisticalTarget-1e-12)){
-        if(enforceEconomics)refusals.push(`CANDIDATE_TARGET_BEYOND_STATISTICAL_BOUND:target=${target},bound=${priced.statisticalTarget}`);
-        else statisticalEvidence.push(`CANDIDATE_TARGET_BEYOND_STATISTICAL_BOUND:target=${target},bound=${priced.statisticalTarget}`);
-        computed=buildCandidate(units,horizon,target,[priced.floorTarget,priced.statisticalTarget].filter(finite) as number[]);
+      else{
+        if(priced.floorBeyondCeiling===true)statisticalEvidence.push(`SELECTION_TARGET_BEYOND_STATISTICAL_CEILING:units=${units},horizon=${horizon},floor=${priced.floorTarget},ceiling=${priced.statisticalTarget}`);
+        else if(side==='LONG'?target+1e-12<priced.floorTarget:target-1e-12>priced.floorTarget)
+          refusals.push(`CANDIDATE_TARGET_BELOW_PROFIT_FLOOR:target=${target},${side==='LONG'?'<':'>'}floor=${priced.floorTarget}`);
+        else if(priced.statisticalTarget!=null&&(side==='LONG'?target>priced.statisticalTarget+1e-12:target<priced.statisticalTarget-1e-12)){
+          if(enforceEconomics)refusals.push(`CANDIDATE_TARGET_BEYOND_STATISTICAL_BOUND:target=${target},bound=${priced.statisticalTarget}`);
+          else statisticalEvidence.push(`CANDIDATE_TARGET_BEYOND_STATISTICAL_BOUND:target=${target},bound=${priced.statisticalTarget}`);
+        }
+        if(refusals.length===0)computed=buildCandidate(units,horizon,target,[priced.floorTarget,priced.statisticalTarget].filter(finite) as number[]);
       }
-      else computed=buildCandidate(units,horizon,target,[priced.floorTarget,priced.statisticalTarget].filter(finite) as number[]);
     }
     if(computed&&refusals.length===0){
       if(!kept.some(row=>row.candidateId===computed!.candidateId))kept.push(computed);
       selectionOutcome={offered:true,refusals:[],fallbacks,resolved:{quantityUnits:units,targetPrice:target,targetHorizonMinutes:horizon,candidateId:computed.candidateId}};
       selected=computed;
-    }else selectionOutcome={offered:false,refusals,fallbacks};
+    }else selectionOutcome={offered:false,refusals:refusals.length?refusals:['SELECTION_NOT_OFFERED_UNSPECIFIED'],fallbacks};
     selectionRequest={quantityUnits:units,targetPrice:target,targetHorizonMinutes:horizon};
   }
   const bounds=horizons.map(horizon=>{const priced=targetFor(quantities[0],horizon);

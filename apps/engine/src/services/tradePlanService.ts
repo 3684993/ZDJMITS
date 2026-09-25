@@ -92,7 +92,9 @@ export function assembleTradePlan(input:{
   // The candidate set validated the caller's triple and resolved any parameter the model left unset.
   // An unoffered choice is refused with the reason the system computed, never rewritten to fit.
   const offered=candidateSet.selection??null;
-  if(offered&&!offered.offered)return{plan:null,refusals:[...new Set(offered.refusals)],warnings:[],candidate:null};
+  // An unoffered selection must arrive with the reason it was computed; a plan layer that refused
+  // with an empty list would leave the operator with a blocked decision and nothing to read.
+  if(offered&&!offered.offered){const stated=[...new Set(offered.refusals)];return{plan:null,refusals:stated.length?stated:['CANDIDATE_SELECTION_REFUSED_UNSPECIFIED'],warnings:[],candidate:null};}
   // A candidate id that is not the one the system resolved for this triple is a forged reference: it
   // is refused rather than quietly remapped onto whatever was offered.
   if(offered?.resolved&&selection.selectedCandidateId&&selection.selectedCandidateId!==offered.resolved.candidateId)

@@ -145,6 +145,53 @@ describe('S06 candidate generation',()=>{
     }
   });
 
+  it('S06-T07 a SHADOW selection the sample does not support is offered, with the evidence named',()=>{
+    // Live 2026-09-25 00:23: a PLACE_SHORT was refused at TRADE_PLAN with an empty reason list. This is
+    // that path: the model asked for the smallest legal size at a target the historical sample does
+    // not support, the profit floor itself is satisfied, and the account runs SHADOW.
+    const tight=candles(new Array(300).fill(.02));
+    const shadowSettings=baseSettings({tradeEconomics:{...baseSettings().tradeEconomics,admissionMode:'SHADOW'}});
+    const offered=candidates({settings:shadowSettings,candles:tight}).set;
+    const row=offered.candidates[0];
+    expect(row).toBeTruthy();
+    const selection={quantityUnits:row.quantityUnits,targetHorizonMinutes:row.targetHorizonMinutes,targetPrice:row.targetPrice};
+    const asked=candidates({settings:shadowSettings,candles:tight,selection}).set;
+    expect(asked.selection?.offered, 'a SHADOW ceiling is evidence; it may not veto the model triple silently').toBe(true);
+    expect(asked.selection?.refusals).toEqual([]);
+    expect(asked.statisticalEvidence?.join('|')).toMatch(/SELECTION_TARGET_BEYOND_STATISTICAL_CEILING|BEYOND_STATISTICAL/i);
+    expect(asked.selection?.resolved?.candidateId).toBeTruthy();
+    // ENFORCE keeps its authority over exactly this selection, named as the ceiling it is.
+    const enforced=candidates({settings:baseSettings(),candles:tight,selection}).set;
+    expect(enforced.selection?.offered).toBe(false);
+    expect(enforced.selection?.refusals.join('|')).toMatch(/STATISTICAL_BOUND|CEILING/);
+    expect(enforced.selection?.refusals.length).toBeGreaterThan(0);
+  });
+
+  it('S06-T08 a selection is never refused without a reason that can be shown to an operator',()=>{
+    const tight=candles(new Array(300).fill(.02));
+    const shadowSettings=baseSettings({tradeEconomics:{...baseSettings().tradeEconomics,admissionMode:'SHADOW'}});
+    const row=candidates({settings:shadowSettings,candles:tight}).set.candidates[0];
+    const cases:Array<Record<string,any>>=[
+      // The triple the generator itself offered is the case that must never come back unexplained.
+      {selection:{quantityUnits:row.quantityUnits,targetHorizonMinutes:row.targetHorizonMinutes,targetPrice:row.targetPrice},candles:tight},
+      {selection:{quantityUnits:0,targetHorizonMinutes:15,targetPrice:104}},
+      {selection:{quantityUnits:1,targetHorizonMinutes:15,targetPrice:104}},
+      {selection:{quantityUnits:25,targetHorizonMinutes:7,targetPrice:104}},
+      {selection:{quantityUnits:25,targetHorizonMinutes:15,targetPrice:100.2},candles:tight},
+      {selection:{quantityUnits:25,targetHorizonMinutes:15,targetPrice:1},candles:tight},
+      {selection:{quantityUnits:25,targetHorizonMinutes:15,targetPrice:104},candles:tight},
+    ];
+    for(const over of cases){
+      for(const admissionMode of ['SHADOW','ENFORCE'] as const){
+        const set=candidates({settings:baseSettings({tradeEconomics:{...baseSettings().tradeEconomics,admissionMode}}),
+          ...(over.candles?{candles:over.candles}:{})
+          ,selection:over.selection}).set;
+        if(set.selection&&set.selection.offered===false)
+          expect(set.selection.refusals.length,`${admissionMode} ${JSON.stringify(over.selection)} refused silently`).toBeGreaterThan(0);
+      }
+    }
+  });
+
   it('S06-T03 confidence is never a probability, and a missing sample is named',()=>{
     const noSample=candidates({candles:()=>new Array(5).fill({high:100,low:99,close:99.5,closeTime:NOW-900_000,openTime:NOW-1_800_000})});
     expect(noSample.set.noTradeReasons.join('|')+JSON.stringify(noSample.set.candidates.map(row=>row.economics.expectedNetPnlAtHorizonStatus)))

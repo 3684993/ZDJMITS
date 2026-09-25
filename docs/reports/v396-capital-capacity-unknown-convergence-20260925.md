@@ -2,6 +2,10 @@
 
 最终状态：`V396_TESTNET_ACTIVE_EXECUTION_CAPACITY_MODEL_CLOSED`
 
+容量模型、UNKNOWN 占用单一真源与驾驶舱四块真值已在 Engine 与在线 Testnet 同时闭合；两处仍属"需要更长
+自然窗口"的观察项（§7 第 8 条：重启窗口内尚无新的自然提交，`ENTRY_ORDER_NO_ACTIVE_RISK_PROOF_RETAINED`
+尚未在线上出现）在本报告中按原样标出，不折算成已通过。
+
 计划：`docs/plans/v396/CODEX-V396-CAPITAL-CAPACITY-UNKNOWN-CONVERGENCE-20260925.md`
 提交：`c2d3022`（§A/§B2 证据）→ `daf7149`（§B3 修复）→ `fa9a721`（§C/§D 模型）→ `54ebc96`（部署与迁移证据）
 证据目录：`docs/evidence/v396/capital-capacity-unknown-convergence-20260925/`
@@ -197,12 +201,14 @@ S00 静态检查 `blockers=[]`，S00_T01…T06 全 PASS（隔离性：16 个开�
    18 Primary / 18 PLACE / 7 风险通过 / 4 TradePlan / 4 Reservation / 4 Intent / 1 提交尝试 / 1 已提交，
    并继续精确归因（含重启前的 `JIT_BLOCKED:RISK_REJECT_GROSS_EXPOSURE`、
    `PENDING_RISK_UNVERIFIED:order:entry_intent_muga3hgh_dukt59f4` ×3——本轮修的正是这两类，重启后为 0）。
-8. 重启后 ~22 分钟自然流量窗口：4 次派发、3 次 Primary 归一化、4 次 pre-AI 包络与硬可行性、
+8. 重启后约 11 分钟自然流量窗口（截至最后一次采样，uptime 660 s）：4 次派发、3 次 AI Run 终止、
    2 次 PORTFOLIO_RISK 准入评估、2 次准入阻断，两条阻断的理由都被 Run 级事实精确点名：
-   `HUMAN_POTENTIAL_NOTIONAL_LIMIT`（人工持仓名义上限，非本轮改动、也不在允许放宽的清单内）。
-   该窗口内没有出现新的 reservation/submit，因此"所有硬门 PASS 即提交"这一条在本窗口未被自然流量覆盖，
+   `HUMAN_POTENTIAL_NOTIONAL_LIMIT`（人工持仓名义上限，非本轮改动、也不在允许放宽的清单内）；
+   `PENDING_RISK_UNVERIFIED` 在该窗口为 0。两点必须说清楚，不用短窗口冒充长结论：
+   该窗口内没有出现新的 reservation/intent/submit，因此"所有硬门 PASS 即提交"未被本窗口自然覆盖，
    由同日上午（旧构建、同账户）的 4 Reservation / 4 Intent / 1 交易所接受提交证明链路仍在工作；
-   24 小时级确认列入下一步第 1 项，不以本轮 22 分钟冒充更长结论。
+   `ENTRY_ORDER_NO_ACTIVE_RISK_PROOF_RETAINED` 在该窗口也为 0——重启后尚未发生一次"不确定复探打断有效
+   证明"的场景，因此保留路径目前只有 9 条单测与 7 天 344 次历史打断的支持，其在线出现频率列入下一步第 1 项。
 
 ## 8. 本轮新暴露的真实首要阻断（未放宽，只点名）
 

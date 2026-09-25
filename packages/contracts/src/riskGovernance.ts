@@ -113,6 +113,16 @@ export const RiskGovernanceSettingsSchema = z.object({
   maxDirectionExposurePct: z.number().positive().max(20).default(.5),
   maxClusterExposurePct: z.number().positive().max(20).default(.35),
   maxClusterDirectionExposurePct: z.number().positive().max(20).default(.35),
+  // Whether each notional ratio may veto new Entry risk. ENFORCE is the default for every deployment,
+  // so an untouched document keeps the historical behaviour; OBSERVE keeps computing and publishing
+  // the ratio as a portfolio fact and takes only the veto away. The percentages themselves are never
+  // relaxed by this field, and per-trade risk, real available margin, cluster and every other
+  // integrity gate stay hard.
+  exposureCapacityPolicy: z.object({
+    gross: z.enum(['ENFORCE','OBSERVE']).default('ENFORCE'),
+    direction: z.enum(['ENFORCE','OBSERVE']).default('ENFORCE'),
+    cluster: z.enum(['ENFORCE','OBSERVE']).default('ENFORCE'),
+  }).default({gross:'ENFORCE',direction:'ENFORCE',cluster:'ENFORCE'}),
   maxDailyDrawdownPct: z.number().nonnegative().max(1).default(.05),
   highRiskReviewEnabled: z.boolean().default(true),
   highRiskEvidenceThreshold: z.number().min(0).max(1).default(.95),

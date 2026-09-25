@@ -123,6 +123,13 @@ const directionExposurePercent=computed({
   get:()=>Number(draft.value?.riskGovernance.maxDirectionExposurePct??0)*100,
   set:(value:number)=>{if(draft.value)draft.value.riskGovernance.maxDirectionExposurePct=Number(value)/100;},
 });
+// The ratio and its enforcement are two separate settings: this edits only whether a stored ratio may
+// veto new Entry risk. It never writes the ratio itself, so switching to OBSERVE cannot raise a ceiling.
+const capacityModeOf=(key:string)=>computed({
+  get:()=>String((draft.value?.riskGovernance as any)?.exposureCapacityPolicy?.[key]??'ENFORCE'),
+  set:(value:string)=>{const g=draft.value?.riskGovernance as any;if(!g)return;const current=g.exposureCapacityPolicy??{};g.exposureCapacityPolicy={gross:'ENFORCE',direction:'ENFORCE',cluster:'ENFORCE',...current,[key]:value};},
+});
+const grossCapacityMode=capacityModeOf('gross'),directionCapacityMode=capacityModeOf('direction'),clusterCapacityMode=capacityModeOf('cluster');
 function applySelectedTradingProfile(){
   if(!draft.value)return;
   applyTradingParameterProfile(draft.value,draft.value.tradeEconomics.parameterProfile as TradingParameterProfile);
@@ -299,8 +306,11 @@ onMounted(load);
           <div class="form-grid four">
             <label><span>组合总名义敞口上限（占权益 %）</span><input v-model.number="grossExposurePercent" type="number" min="0.01" max="2000" step="1" /></label>
             <label><span>单方向名义敞口上限（占权益 %）</span><input v-model.number="directionExposurePercent" type="number" min="0.01" max="2000" step="1" /></label>
+            <label><span>总名义比例的执行方式</span><select v-model="grossCapacityMode" data-exposure-capacity-mode="gross"><option value="ENFORCE">强制执行（比例耗尽即拒绝新增）</option><option value="OBSERVE">仅观测（新增容量由真实保证金与风险事实决定）</option></select></label>
+            <label><span>单方向比例的执行方式</span><select v-model="directionCapacityMode" data-exposure-capacity-mode="direction"><option value="ENFORCE">强制执行</option><option value="OBSERVE">仅观测</option></select></label>
+            <label><span>相关性集中度的执行方式</span><select v-model="clusterCapacityMode" data-exposure-capacity-mode="cluster"><option value="ENFORCE">强制执行</option><option value="OBSERVE">仅观测</option></select></label>
           </div>
-          <span>页面按百分比显示，保存时精确除以 100 写回后端比例（100% 即比例 1）。此额度只限制新增 Entry 风险：不强平已有仓位，也不撤已有 TP/保护。最大持仓数量与组合总敞口是两条独立限制；即使持仓数小于上限，总敞口或单方向额度任一耗尽仍会 CAPACITY_BLOCKED。提高额度只能由操作员显式编辑并保存，系统不会按持仓数量推导或为恢复交易自动放宽。技术上限 2000% 只是取值边界，不代表建议值。</span>
+          <span>页面按百分比显示，保存时精确除以 100 写回后端比例（100% 即比例 1）。此额度只限制新增 Entry 风险：不强平已有仓位，也不撤已有 TP/保护。最大持仓数量与组合总敞口是两条独立限制；即使持仓数小于上限，总敞口或单方向额度任一耗尽仍会 CAPACITY_BLOCKED。提高额度只能由操作员显式编辑并保存，系统不会按持仓数量推导或为恢复交易自动放宽。技术上限 2000% 只是取值边界，不代表建议值。切换为“仅观测”只取消该比例的否决权，不修改比例数值本身，也不再把它当作可动用资金展示：真实可执行新增名义仍受可用保证金、已验证杠杆、维持保证金与强平距离、单风险、集中度、槽位、JIT 与 PortfolioRisk 压力共同约束。</span>
         </div>
         <div class="form-grid four">
           <label><span>经济性准入模式</span><select v-model="draft.tradeEconomics.admissionMode"><option value="OFF">关闭</option><option value="SHADOW">影子观察（只记录不拦截）</option><option value="ENFORCE">强制执行（不满足则拒绝建仓）</option></select></label>

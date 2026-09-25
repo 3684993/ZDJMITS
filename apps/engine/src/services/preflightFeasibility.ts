@@ -3,6 +3,7 @@ import { privateAccountFresh } from './privateAccountReadiness.js';
 import { computeExecutableRiskHeadroom } from './riskReadiness.js';
 import { capitalFactVersion } from './runtimeControlService.js';
 import { collectPendingEntryRiskExposures } from './entryRiskOccupancy.js';
+import { candidateCapitalFromState } from './capitalCapacity.js';
 
 const ACTIVE_ORDER = new Set(['NEW','SUBMITTING','UNKNOWN','WORKING','PARTIALLY_FILLED']);
 const ACTIVE_RESERVATION = new Set(['RESERVED','WORKING']);
@@ -14,7 +15,11 @@ export function evaluatePreflightFeasibility(state:RuntimeState,symbol:string,ma
   const activeReservations=[...state.entryReservations.values()].filter((row:any)=>ACTIVE_RESERVATION.has(row.status)&&Number(row.expiresAt)>now),workingOrders=[...state.entryOrders.values()].filter((row:any)=>ACTIVE_ORDER.has(row.status));
   const storedCapitalVersion=String(capital.capitalVersion??''),currentCapitalVersion=capitalFactVersion(state),legacyInjectedRoute=storedCapitalVersion==='0'&&Number(capital.evaluatedAt??0)===0;
   const capitalVersionCurrent=legacyInjectedRoute||Boolean(storedCapitalVersion&&storedCapitalVersion!=='0'&&storedCapitalVersion===currentCapitalVersion),maxCapitalAge=Math.max(15_000,Number(state.settings.runtimeControl?.capitalCheckIntervalSeconds??30)*1000+5_000),capitalFresh=legacyInjectedRoute||(Number.isFinite(capital.evaluatedAt)&&now-Number(capital.evaluatedAt)>=0&&now-Number(capital.evaluatedAt)<=maxCapitalAge),routeGenerationCurrent=!candidate||legacyInjectedRoute||Number(capital.generation??0)===Number(candidate.selectionGeneration??capital.generation??0),privateReady=privateAccountFresh(state.account,now),governance=Boolean(candidate?.eligible&&candidate?.pipelineEligible!==false&&state.runtimeControl.mode==='RUNNING'&&state.executionGovernance?.mode==='AUTO_RUNNING'&&state.settings.riskGovernance.entrySafetyMode==='AUTO');
-  const quoteAsset=String(route?.quoteAsset??'UNKNOWN'),quoteAvailable=Number(state.account.assets.find((asset:any)=>asset.asset===quoteAsset)?.availableBalance??0),reservedMargin=activeReservations.filter((row:any)=>row.quoteAsset===quoteAsset).reduce((sum:number,row:any)=>sum+Math.max(0,Number(row.marginUsd??0)),0),availableMarginUsd=quoteAsset==='UNKNOWN'?0:Math.max(0,quoteAvailable-reservedMargin),leverage=Math.max(1,Number(route?.leverage??1)),minimumNotionalUsd=Math.max(Number(route?.minExecutableNotionalUsd??0),Number(market?.quote?.minNotional??0)),balanceNotionalCap=availableMarginUsd*leverage;
+  const quoteAsset=String(route?.quoteAsset??'UNKNOWN'),minimumNotionalUsd=Math.max(Number(route?.minExecutableNotionalUsd??0),Number(market?.quote?.minNotional??0));
+  // One funding computation for the whole pipeline: the wallet figure, the committed margin and the
+  // route's own verified leverage come from the same object the cockpit displays.
+  const capital0=candidateCapitalFromState(state,{symbol,quoteAsset,leverage:route?.leverage,leverageFact:Number(route?.leverage)>=1?'CANDIDATE_RECOMMENDED':'UNPROVEN',minimumNotionalUsd,now});
+  const {executableMarginUsd:availableMarginUsd,reservedMarginUsd:reservedMargin,leverage}=capital0;
   const equity=Number(state.account.equityUsd??0),expectedAdverseMovePct=Math.max(.001,Number(market?.technical?.['15m']?.atrPercent)/100),dailyDrawdownPct=Number(state.account.riskBaseline?.riskDrawdownPct??0),maxReservations=Number(state.settings.riskGovernance.maxConcurrentReservations??Number.POSITIVE_INFINITY),pendingRiskExposures=collectPendingEntryRiskExposures(state,{now});
   const requested:Direction[]=[];if(route?.longExecutable)requested.push('LONG');if(route?.shortExecutable)requested.push('SHORT');
   const riskHeadroom:Record<Direction,any>={LONG:null,SHORT:null},feasibleNotionalUsd:Record<Direction,number>={LONG:0,SHORT:0},allowedDirections:Direction[]=[];
@@ -22,7 +27,7 @@ export function evaluatePreflightFeasibility(state:RuntimeState,symbol:string,ma
     const routeCap=Number(side==='LONG'?(route.longFeasibleNotionalUsd??route.longRecommendedNotionalUsd??0):(route.shortFeasibleNotionalUsd??route.shortRecommendedNotionalUsd??0)),
       recommended=Number(side==='LONG'?(route.longRecommendedNotionalUsd??routeCap):(route.shortRecommendedNotionalUsd??routeCap)),
       plannedNotional=Math.max(0,Math.min(routeCap,recommended>0?recommended:routeCap)),
-      risk=computeExecutableRiskHeadroom({settings:state.settings,equity,positions:[...state.positions.values()],pendingRiskExposures,symbol,side,plannedNotional,expectedAdverseMovePct,dailyDrawdownPct,quoteNotionalCapacity:balanceNotionalCap*.995,minimumNotional:minimumNotionalUsd});
+      risk=computeExecutableRiskHeadroom({settings:state.settings,equity,positions:[...state.positions.values()],pendingRiskExposures,symbol,side,plannedNotional,expectedAdverseMovePct,dailyDrawdownPct,capital:capital0,minimumNotional:minimumNotionalUsd});
     riskHeadroom[side]=risk;
     if(risk.executable){allowedDirections.push(side);feasibleNotionalUsd[side]=risk.finalNotional;}
   }

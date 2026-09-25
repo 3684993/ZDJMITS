@@ -88,3 +88,45 @@ it('leaves the trading parameter profile untouched when only an exposure cap is 
   const profile = wrapper.findAll('select').find(node => node.findAll('option').some(option => option.text().includes('保守')));
   expect(profile?.element.value).toBe('CONSERVATIVE');
 });
+
+function selectFor(wrapper: any, label: string) {
+  const row = wrapper.findAll('label').find((node: any) => node.text().includes(label));
+  return row?.find('select');
+}
+
+// Relaxing a ratio's veto must be visible and separate from the ratio itself: the plan forbids solving
+// the capacity problem by editing 1.0 / 0.8 into a bigger number.
+it('exposes the enforcement mode of each notional ratio beside the ratio', async () => {
+  const wrapper = await opened(stored(1, 0.8));
+  const gross = selectFor(wrapper, '总名义比例的执行方式');
+  expect(gross?.exists()).toBe(true);
+  expect(gross!.element.value).toBe('ENFORCE');
+  expect(selectFor(wrapper, '单方向比例的执行方式')!.element.value).toBe('ENFORCE');
+  expect(selectFor(wrapper, '相关性集中度的执行方式')!.element.value).toBe('ENFORCE');
+  await gross!.setValue('OBSERVE');
+  await saveButton(wrapper).trigger('click');
+  await flushPromises();
+  const saved = vi.mocked(api.saveSettings).mock.calls.at(-1)?.[0] as any;
+  expect(saved.riskGovernance.exposureCapacityPolicy).toMatchObject({ gross: 'OBSERVE', direction: 'ENFORCE', cluster: 'ENFORCE' });
+  // The stored ratios are untouched by a mode switch, in either direction.
+  expect(saved.riskGovernance.maxGrossExposurePct).toBe(1);
+  expect(saved.riskGovernance.maxDirectionExposurePct).toBe(0.8);
+});
+
+it('defaults an older document with no policy field to enforcing every ratio', async () => {
+  const legacy = stored(1, 0.5);
+  delete (legacy.riskGovernance as any).exposureCapacityPolicy;
+  const wrapper = await opened(legacy);
+  expect(selectFor(wrapper, '总名义比例的执行方式')!.element.value).toBe('ENFORCE');
+  await saveButton(wrapper).trigger('click');
+  await flushPromises();
+  const saved = vi.mocked(api.saveSettings).mock.calls.at(-1)?.[0] as any;
+  expect(saved.riskGovernance.exposureCapacityPolicy?.gross ?? 'ENFORCE').toBe('ENFORCE');
+});
+
+it('says that observing a ratio removes only its veto, never the money and risk gates', async () => {
+  const text = (await opened(stored(1, 0.5))).text();
+  expect(text).toContain('只取消该比例的否决权');
+  expect(text).toContain('可用保证金');
+  expect(text).toContain('PortfolioRisk');
+});

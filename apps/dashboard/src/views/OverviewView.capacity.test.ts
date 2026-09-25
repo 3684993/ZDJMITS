@@ -7,7 +7,10 @@ import { api } from '../api/client';
 vi.mock('../stores/system', () => ({ useSystemStore: () => ({ snapshot: null, settings: null, refresh: vi.fn() }) }));
 vi.mock('../api/client', () => ({ api: { pipeline: vi.fn(), accountAssets: vi.fn() } }));
 
-// Values taken from the live capital evaluation shape: the page must render these, not re-derive them.
+/**
+ * §D: the cockpit answers four different questions, and the page renders the Engine's own answers.
+ * The fixtures are the projected shapes, not numbers this file computes.
+ */
 const base = {
   asOf: 1,
   pipelineState: 'RUNNING',
@@ -19,48 +22,53 @@ const base = {
   primaryBrain: { status: 'READY', resource: { nextStep: '暂无可派发候选；继续供给与订单维护', idleReason: 'WAITING_CANDIDATE' } },
 };
 
-const grossExhausted = {
+// The live 2026-09-25 09:40 shape: the 100%-of-equity gross ratio is spent while the wallet holds
+// $8,834.44 of genuinely available margin, and every route is denied by that ratio.
+const marginDrivenBook = {
   ...base,
   capacityVisibility: {
-    slots: { used: 27, max: 50, positions: 27, inFlight: 0, reserved: 0 },
-    gross: { notionalUsd: 10494.3129, limitUsd: 10504.7287, remainingUsd: 0, usedPct: 0.9990079 },
-    direction: {
-      LONG: { notionalUsd: 4402.5226, limitUsd: 5252.3643, remainingUsd: 0 },
-      SHORT: { notionalUsd: 6091.7903, limitUsd: 5252.3643, remainingUsd: 0 },
+    funding: {
+      quoteAssets: [
+        { quoteAsset: 'USDT', availableBalanceUsd: 3861.560262, walletBalanceUsd: 5473.133262, reservedMarginUsd: 0, executionLeaseMarginUsd: 0, executableMarginUsd: 3861.560262, factsComplete: true, reasons: [] },
+        { quoteAsset: 'USDC', availableBalanceUsd: 4972.875697, walletBalanceUsd: 4981.175512, reservedMarginUsd: 0, executionLeaseMarginUsd: 0, executableMarginUsd: 4972.875697, factsComplete: true, reasons: [] },
+      ],
+      executableMarginUsd: 8834.435959, proven: true,
     },
-    firstBlocker: 'GROSS',
-    blockingDimensions: ['GROSS', 'DIRECTION_LONG', 'DIRECTION_SHORT'],
-    exhaustedReason: 'GROSS',
-    exhaustedForNewRisk: true,
-    evaluatedAt: 1,
+    exposure: {
+      gross: { notionalUsd: 10494.3129, limitUsd: 10504.7287, remainingUsd: 0, usedPct: 0.9990079, mode: 'OBSERVE', enforced: false },
+      LONG: { notionalUsd: 4402.5226, limitUsd: 10504.7287, remainingUsd: 6102.2061, usedPct: 0.4191, mode: 'OBSERVE', enforced: false },
+      SHORT: { notionalUsd: 6091.7903, limitUsd: 10504.7287, remainingUsd: 4412.9384, usedPct: 0.5799, mode: 'OBSERVE', enforced: false },
+    },
+    limits: { slots: { used: 17, max: 50, positions: 17, inFlight: 0, reserved: 0 }, policy: { gross: 'OBSERVE', direction: 'OBSERVE', cluster: 'ENFORCE' } },
+    entryCapacity: {
+      LONG: { executableNotionalUsd: 3680.06, quoteAsset: 'USDT', symbol: 'LINKUSDT', firstBindingConstraint: 'CLUSTER', executableRoutes: 4 },
+      SHORT: { executableNotionalUsd: 3680.06, quoteAsset: 'USDC', symbol: 'SUIUSDC', firstBindingConstraint: 'CLUSTER', executableRoutes: 3 },
+    },
+    firstBlocker: 'NONE', blockingDimensions: [], exhaustedReason: null, exhaustedForNewRisk: false, evaluatedAt: 1,
   },
 };
 
-// The live 2026-09-23 17:24 shape: one side full, the other still has room, candidates executable.
-const oneSideFull = {
-  ...base,
-  eligibility: { status: 'READY', count: 1 },
-  runtimeControl: { ...base.runtimeControl, capital: { ...base.runtimeControl.capital, executableCandidateCount: 1 } },
-  analysis: { ...base.analysis, reason: 'NO_RUNNABLE_CANDIDATE', text: 'ANALYSIS_ONLY：仅分析，交易写锁定；NO_RUNNABLE_CANDIDATE', capitalExecutableCount: 1 },
+// The enforced default: the spent ratio really does deny new risk, and it is the named first cause.
+const grossExhausted = {
+  ...structuredClone(marginDrivenBook),
   capacityVisibility: {
-    slots: { used: 14, max: 50, positions: 14, inFlight: 0, reserved: 0 },
-    gross: { notionalUsd: 9757.18, limitUsd: 10465.88, remainingUsd: 708.7, usedPct: 0.93228 },
-    direction: {
-      LONG: { notionalUsd: 3683.39, limitUsd: 5232.94, remainingUsd: 708.7 },
-      SHORT: { notionalUsd: 6073.79, limitUsd: 5232.94, remainingUsd: 0 },
+    ...structuredClone(marginDrivenBook.capacityVisibility) as any,
+    exposure: {
+      ...structuredClone(marginDrivenBook.capacityVisibility).exposure,
+      gross: { ...structuredClone(marginDrivenBook.capacityVisibility).exposure.gross, mode: 'ENFORCE', enforced: true },
     },
-    firstBlocker: 'DIRECTION_SHORT',
-    blockingDimensions: ['DIRECTION_SHORT'],
-    exhaustedReason: null,
-    exhaustedForNewRisk: false,
-    evaluatedAt: 1,
+    limits: { slots: { used: 27, max: 50, positions: 27, inFlight: 0, reserved: 0 }, policy: { gross: 'ENFORCE', direction: 'ENFORCE', cluster: 'ENFORCE' } },
+    entryCapacity: {
+      LONG: { executableNotionalUsd: 0, quoteAsset: null, symbol: null, firstBindingConstraint: 'GROSS_ENFORCED', executableRoutes: 0 },
+      SHORT: { executableNotionalUsd: 0, quoteAsset: null, symbol: null, firstBindingConstraint: 'GROSS_ENFORCED', executableRoutes: 0 },
+    },
+    firstBlocker: 'GROSS', blockingDimensions: ['GROSS'], exhaustedReason: 'GROSS', exhaustedForNewRisk: true,
   },
 };
 
 async function open(payload: any) {
   vi.mocked(api.pipeline).mockResolvedValue(payload);
   vi.mocked(api.accountAssets).mockResolvedValue({ assets: [] } as never);
-  // StatusBadge renders its value so a test can assert the verdict the operator actually reads.
   const wrapper = mount(Overview, { global: { stubs: { Panel: { template: '<div><slot/></slot></div>' }, StatusBadge: { props: ['value'], template: '<span>{{ value }}</span>' } } } });
   await flushPromises();
   return wrapper;
@@ -68,45 +76,75 @@ async function open(payload: any) {
 
 beforeEach(() => vi.clearAllMocks());
 
-it('separates position slots from gross and direction exposure using the Engine projection verbatim', async () => {
-  const text = (await open(grossExhausted)).text();
-  expect(text).toContain('27 / 50');
-  expect(text).toContain('$10,494.31');
-  expect(text).toContain('$10,504.73');
-  expect(text).toContain('$6,091.79');
-  expect(text).toContain('GROSS');
-  expect(text).toMatch(/99\.9%/);
-  expect(text).toContain('已用尽 · GROSS');
+it('keeps money, notional, policy and final entry capacity in four separate blocks', async () => {
+  const wrapper = await open(marginDrivenBook);
+  const funding = wrapper.find('[data-capital-block="funding"]').text();
+  const exposure = wrapper.find('[data-capital-block="exposure"]').text();
+  const limits = wrapper.find('[data-capital-block="limits"]').text();
+  const entry = wrapper.find('[data-capital-block="entry"]').text();
+  // Block 1 is money the account can actually commit.
+  expect(funding).toContain('USDT 可用 $3,861.56');
+  expect(funding).toContain('USDC 可用 $4,972.88');
+  expect(funding).toContain('合计可执行保证金 $8,834.44');
+  // Block 2 is a notional fact and says so; it must not be presented as a balance to spend.
+  expect(exposure).toContain('Gross $10,494.31 / 上限 $10,504.73');
+  expect(exposure).toContain('组合名义敞口（事实，不等于可用资金）');
+  expect(exposure).not.toContain('新增风险额度');
+  // Block 3 carries the enforcement mode next to the caps and the slots.
+  expect(limits).toContain('Gross=OBSERVE');
+  expect(limits).toContain('Cluster=ENFORCE');
+  expect(limits).toContain('槽位 17 / 50');
+  // Block 4 is the only place that answers "how much new Entry risk fits".
+  expect(entry).toContain('LONG 可执行新增名义 $3,680.06 via LINKUSDT/USDT · 首因 CLUSTER');
+  expect(entry).toContain('SHORT 可执行新增名义 $3,680.06 via SUIUSDC/USDC · 首因 CLUSTER');
+  expect(entry).toContain('仍有空间');
 });
 
-it('reports the capacity blocker as the first explanation while eligible candidates exist but no risk headroom does', async () => {
-  const headline = (await open(grossExhausted)).find('[data-caps-first-explanation]').text();
-  expect(headline).toContain('CAPACITY_BLOCKED');
-  expect(headline).toContain('$10,494.31 / $10,504.73');
-  expect(headline).not.toContain('WAITING_CANDIDATE');
-  expect(headline).not.toContain('等待新');
-  expect(headline).not.toContain('暂无可派发候选');
+it('does not report a spent observed ratio as an exhausted book when the margin and risk facts allow more', async () => {
+  const text = (await open(marginDrivenBook)).text();
+  expect(text).not.toContain('已用尽');
+  expect(text).toContain('首个饱和硬维度 NONE');
 });
 
-it('does not claim exhausted capacity when only one side is full and a candidate is still executable', async () => {
-  const wrapper = await open(oneSideFull);
-  const text = wrapper.text();
+it('names the enforced ratio as the first cause instead of dressing its remainder as money', async () => {
+  const wrapper = await open(grossExhausted);
   const headline = wrapper.find('[data-caps-first-explanation]').text();
-  expect(headline).not.toContain('CAPACITY_BLOCKED');
-  expect(headline).not.toContain('已用尽');
-  // The saturated dimension is still reported as a fact, next to the room the other side has.
-  expect(text).toContain('DIRECTION_SHORT');
+  expect(headline).toContain('CAPACITY_BLOCKED');
+  expect(headline).toContain('GROSS');
+  expect(headline).toContain('首因 GROSS_ENFORCED');
+  expect(headline).not.toContain('$10,494.31 / $10,504.73');
+  expect(headline).not.toContain('WAITING_CANDIDATE');
+  expect(headline).not.toContain('暂无可派发候选');
+  expect(wrapper.find('[data-capital-block="entry"]').text()).toContain('新增风险额度已用尽 · GROSS');
+});
+
+it('renders a single saturated side as a fact beside the room the other side still has', async () => {
+  const oneSide = structuredClone(marginDrivenBook);
+  const view = oneSide.capacityVisibility as any;
+  view.exposure.LONG = { notionalUsd: 4402.5226, limitUsd: 5232.94, remainingUsd: 830.42, usedPct: 0.8413, mode: 'ENFORCE', enforced: true };
+  view.exposure.SHORT = { notionalUsd: 6073.79, limitUsd: 5232.94, remainingUsd: 0, usedPct: 1.1607, mode: 'ENFORCE', enforced: true };
+  view.limits.policy = { gross: 'ENFORCE', direction: 'ENFORCE', cluster: 'ENFORCE' };
+  view.firstBlocker = 'DIRECTION_SHORT';
+  view.blockingDimensions = ['DIRECTION_SHORT'];
+  view.entryCapacity.SHORT = { executableNotionalUsd: 0, quoteAsset: null, symbol: null, firstBindingConstraint: 'DIRECTION_ENFORCED', executableRoutes: 0 };
+  const wrapper = await open(oneSide);
+  const text = wrapper.text();
+  expect(wrapper.find('[data-caps-first-explanation]').text()).not.toContain('已用尽');
+  expect(text).toContain('首个饱和硬维度 DIRECTION_SHORT');
+  // The saturated side is shown as its own notional fact, next to the side that still has room.
+  expect(text).toContain('SHORT $6,073.79 / $5,232.94');
+  expect(text).toContain('LONG $4,402.52 / $5,232.94');
+  expect(text).toContain('SHORT 可执行新增名义 $0.00 · 首因 DIRECTION_ENFORCED');
   expect(text).toContain('仍有空间');
-  expect(text).toContain('$708.70');
 });
 
 it('renders the projected numbers and verdict it is given instead of recomputing them', async () => {
-  const mutated = structuredClone(oneSideFull);
-  mutated.capacityVisibility.gross.remainingUsd = 4321.5;
-  mutated.capacityVisibility.gross.usedPct = 0.1234;
-  mutated.capacityVisibility.firstBlocker = 'DIRECTION_LONG';
-  mutated.capacityVisibility.exhaustedForNewRisk = true;
-  mutated.capacityVisibility.exhaustedReason = 'BOTH_DIRECTIONS';
+  const mutated = structuredClone(marginDrivenBook);
+  (mutated.capacityVisibility as any).exposure.LONG.notionalUsd = 4321.5;
+  (mutated.capacityVisibility as any).exposure.gross.usedPct = 0.1234;
+  (mutated.capacityVisibility as any).firstBlocker = 'DIRECTION_LONG';
+  (mutated.capacityVisibility as any).exhaustedForNewRisk = true;
+  (mutated.capacityVisibility as any).exhaustedReason = 'BOTH_DIRECTIONS';
   const text = (await open(mutated)).text();
   expect(text).toContain('$4,321.50');
   expect(text).toContain('12.3%');
@@ -114,21 +152,29 @@ it('renders the projected numbers and verdict it is given instead of recomputing
   expect(text).toContain('已用尽 · BOTH_DIRECTIONS');
 });
 
+it('says a missing funding fact is missing, rather than inventing executable margin', async () => {
+  const unfunded = structuredClone(marginDrivenBook);
+  (unfunded.capacityVisibility as any).funding = { quoteAssets: [{ quoteAsset: 'USDT', availableBalanceUsd: 0, walletBalanceUsd: null, reservedMarginUsd: 0, executionLeaseMarginUsd: 0, executableMarginUsd: 0, factsComplete: false, reasons: ['AVAILABLE_BALANCE_UNPROVEN'] }], executableMarginUsd: 0, proven: false };
+  const funding = (await open(unfunded)).find('[data-capital-block="funding"]').text();
+  expect(funding).toContain('资金事实不完整');
+});
+
 it('falls back to the supply explanation when there is genuinely no candidate', async () => {
-  const empty = structuredClone(oneSideFull);
+  const empty = structuredClone(marginDrivenBook);
   empty.eligibility.count = 0;
   empty.runtimeControl.capital.executableCandidateCount = 0;
-  empty.capacityVisibility = {
-    ...empty.capacityVisibility,
-    gross: { notionalUsd: 0, limitUsd: 10504.7287, remainingUsd: 10504.7287, usedPct: 0 },
-    direction: {
-      LONG: { notionalUsd: 0, limitUsd: 5252.3643, remainingUsd: 5252.3643 },
-      SHORT: { notionalUsd: 0, limitUsd: 5252.3643, remainingUsd: 5252.3643 },
-    },
-    firstBlocker: 'NONE',
-    blockingDimensions: [],
-    exhaustedReason: null,
-    exhaustedForNewRisk: false,
+  (empty.capacityVisibility as any).exposure = {
+    gross: { notionalUsd: 0, limitUsd: 10504.7287, remainingUsd: 10504.7287, usedPct: 0, mode: 'ENFORCE', enforced: true },
+    LONG: { notionalUsd: 0, limitUsd: 5252.3643, remainingUsd: 5252.3643, usedPct: 0, mode: 'ENFORCE', enforced: true },
+    SHORT: { notionalUsd: 0, limitUsd: 5252.3643, remainingUsd: 5252.3643, usedPct: 0, mode: 'ENFORCE', enforced: true },
+  };
+  (empty.capacityVisibility as any).firstBlocker = 'NONE';
+  (empty.capacityVisibility as any).blockingDimensions = [];
+  (empty.capacityVisibility as any).exhaustedReason = null;
+  (empty.capacityVisibility as any).exhaustedForNewRisk = false;
+  (empty.capacityVisibility as any).entryCapacity = {
+    LONG: { executableNotionalUsd: 0, quoteAsset: null, symbol: null, firstBindingConstraint: 'NO_CAPITAL_ROUTE', executableRoutes: 0 },
+    SHORT: { executableNotionalUsd: 0, quoteAsset: null, symbol: null, firstBindingConstraint: 'NO_CAPITAL_ROUTE', executableRoutes: 0 },
   };
   empty.analysis.reason = 'NO_SUPPLY';
   empty.analysis.text = 'ANALYSIS_ONLY：仅分析，交易写锁定；NO_SUPPLY';

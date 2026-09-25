@@ -1,6 +1,7 @@
 import type { MarketSymbolSnapshot, Position, Side, SystemSettings } from '@zdj/contracts';
 import { uid } from '@zdj/core';
-import { computeExecutableRiskHeadroom } from './executableRiskHeadroom.js';
+import { computeExecutableRiskHeadroom, exposureCapacityPolicy, type BindingConstraint, type HeadroomInput } from './executableRiskHeadroom.js';
+import type { QuoteAssetCapitalLedger } from './capitalCapacity.js';
 export { clusterFor, computeExecutableRiskHeadroom } from './executableRiskHeadroom.js';
 
 export type DataQualityStatus='GOOD'|'DEGRADED'|'UNTRUSTED';
@@ -8,7 +9,7 @@ export type InvalidationType='PRICE_LEVEL'|'ATR_BREAK'|'STRUCTURE_BREAK'|'TIME_E
 export interface EntryInvalidationSpec { id:string; type:InvalidationType; triggerPrice:number|null; referencePrice:number; timeframe:string; expiryAt:number|null; maxLossUsd:number|null; maxLossPctEquity:number|null; atrDistance:number|null; reasonCode:string; evidenceRefs:string[]; generatedAt:number; snapshotId:string; }
 export interface ProtectionShadowResult { status:'ARMED'|'WOULD_TRIGGER'|'EXPIRED'|'INVALID_DATA'|'NOT_APPLICABLE'; wouldTriggerAt:number|null; theoreticalExitPrice:number|null; theoreticalGrossPnl:number|null; estimatedFees:number|null; theoreticalNetPnl:number|null; mfe:number|null; mae:number|null; }
 export interface MarketQualityResult { id:string; status:DataQualityStatus; reasons:string[]; checkedAt:number; snapshotId:string; }
-export interface RiskEnvelope { id:string; status:'PASS'|'REJECT_GROSS_EXPOSURE'|'REJECT_DIRECTION_EXPOSURE'|'REJECT_CORRELATED_CLUSTER'|'REJECT_CLUSTER_DIRECTION_EXPOSURE'|'RISK_FACTS_INVALID'|'REJECT_LIQUIDATION_BUFFER'|'REJECT_DAILY_DRAWDOWN'|'REJECT_RISK_PER_TRADE'; equity:number; grossNotional:number; grossNotionalPct:number; longNotional:number; shortNotional:number; longExposurePct:number; shortExposurePct:number; cluster:string; clusterExposurePct:number; quoteAssetMarginUsage:number; maxPositions:number; reservedIntents:number; workingOrders:number; liquidationBufferEstimate:number; perTradeRiskUsd:number; perTradeRiskPctEquity:number; dailyDrawdownPct:number; expectedAdverseMovePct:number; riskLimitedNotional:number; finalNotional:number; reasons:string[]; createdAt:number; }
+export interface RiskEnvelope { id:string; status:'PASS'|'REJECT_GROSS_EXPOSURE'|'REJECT_DIRECTION_EXPOSURE'|'REJECT_CORRELATED_CLUSTER'|'REJECT_CLUSTER_DIRECTION_EXPOSURE'|'RISK_FACTS_INVALID'|'REJECT_LIQUIDATION_BUFFER'|'REJECT_DAILY_DRAWDOWN'|'REJECT_RISK_PER_TRADE'|'REJECT_AVAILABLE_MARGIN'; firstBindingConstraint:BindingConstraint; equity:number; grossNotional:number; grossNotionalPct:number; longNotional:number; shortNotional:number; longExposurePct:number; shortExposurePct:number; cluster:string; clusterExposurePct:number; quoteAssetMarginUsage:number; maxPositions:number; reservedIntents:number; workingOrders:number; liquidationBufferEstimate:number; perTradeRiskUsd:number; perTradeRiskPctEquity:number; dailyDrawdownPct:number; expectedAdverseMovePct:number; riskLimitedNotional:number; finalNotional:number; reasons:string[]; createdAt:number; }
 
 export function marketDataQuality(snapshot:MarketSymbolSnapshot, now=Date.now()):MarketQualityResult {
   const q=snapshot.quote, reasons:string[]=[];
@@ -48,14 +49,22 @@ export function evaluateProtectionShadow(position:Pick<Position,'side'|'entryPri
 }
 
 
-/** The one book-level gross/direction computation. Admission gates and the cockpit read the same object. */
+/**
+ * The one book-level gross/direction computation. Admission gates and the cockpit read the same object.
+ *
+ * Each dimension reports its own remaining amount: a spent gross ratio must not be rendered as "LONG has
+ * no room", and a full LONG side must not be rendered as "the book has no room". Whether a ratio may veto
+ * at all is the deployment's policy, and it travels with the numbers so no surface has to know it.
+ */
 export function directionBudget(settings:SystemSettings,equityInput:number,positions:Position[],evaluatedAt=Date.now()){
   const equity=Math.max(1,equityInput),gross=positions.reduce((n,p)=>n+Math.abs(p.quantity*p.markPrice),0),long=positions.filter(p=>p.side==='LONG').reduce((n,p)=>n+p.quantity*p.markPrice,0),short=positions.filter(p=>p.side==='SHORT').reduce((n,p)=>n+p.quantity*p.markPrice,0),grossLimit=equity*settings.riskGovernance.maxGrossExposurePct,directionLimit=equity*settings.riskGovernance.maxDirectionExposurePct,grossAvailable=Math.max(0,grossLimit-gross);
   return{
     equityUsd:equity,grossLimitUsd:grossLimit,directionLimitUsd:directionLimit,
     grossNotionalUsd:gross,longNotionalUsd:long,shortNotionalUsd:short,
     remainingGrossUsd:grossAvailable,grossUsedPct:grossLimit>0?gross/grossLimit:0,
-    longAvailableNotionalUsd:Math.max(0,Math.min(grossAvailable,directionLimit-long)),shortAvailableNotionalUsd:Math.max(0,Math.min(grossAvailable,directionLimit-short)),grossAvailableNotionalUsd:grossAvailable,evaluatedAt,
+    longAvailableNotionalUsd:Math.max(0,directionLimit-long),shortAvailableNotionalUsd:Math.max(0,directionLimit-short),
+    longUsedPct:directionLimit>0?long/directionLimit:0,shortUsedPct:directionLimit>0?short/directionLimit:0,
+    grossAvailableNotionalUsd:grossAvailable,policy:exposureCapacityPolicy(settings),evaluatedAt,
   };
 }
 
@@ -63,49 +72,67 @@ export type PositionCapacity={positions:number;inFlight:number;reserved:number;u
 export type GrossDirectionBudget=ReturnType<typeof directionBudget>;
 export type CapacityBlocker='POSITION_CAPACITY'|'GROSS'|'DIRECTION_LONG'|'DIRECTION_SHORT'|'NOT_EVALUATED'|'NONE';
 /** The dimension that denies new Entry risk on its own, whatever the other side still allows. */
-export type ExhaustedReason='POSITION_CAPACITY'|'GROSS'|'BOTH_DIRECTIONS';
+export type ExhaustedReason='POSITION_CAPACITY'|'GROSS'|'BOTH_DIRECTIONS'|'AVAILABLE_MARGIN';
 
 /**
- * Which capacity gate binds first, composed from the already-computed headroom and the slot count.
- * It never recomputes exposure: a page that re-derived the risk ledger could disagree with the gate
- * that actually refused the Entry.
- *
- * `firstBlocker` is only the first *saturated* dimension, and LONG/SHORT are independent sides: one
- * side full does not mean the book has no room for new risk. `exhaustedForNewRisk` is therefore a
- * separate, explicitly derived verdict, so no surface has to guess it from `firstBlocker`.
+ * The best executable Entry notional one side can get right now, with the single reason it is limited.
+ * The amounts come from the Engine's own per-route headroom, so this only reads that verdict and never
+ * re-decides it. With no route open it reports the constraint the routes themselves named.
  */
-export function portfolioCapacityVisibility(capacity:PositionCapacity,budget:GrossDirectionBudget){
-  const evaluated=budget.evaluatedAt>0;
-  const slotsFull=capacity.used>=capacity.max,grossFull=budget.remainingGrossUsd<=0,longFull=budget.longAvailableNotionalUsd<=0,shortFull=budget.shortAvailableNotionalUsd<=0;
+export function bestExecutableSide(routes:any[],side:'LONG'|'SHORT'){
+  const key=side==='LONG'?'longFeasibleNotionalUsd':'shortFeasibleNotionalUsd';
+  const open=routes.filter(route=>Number(route?.[key]??0)>0).sort((a,b)=>Number(b[key])-Number(a[key]));
+  if(open.length){const best=open[0];return{executableNotionalUsd:Number(best[key]),quoteAsset:String(best.quoteAsset??'UNKNOWN'),symbol:String(best.symbol??'UNKNOWN'),firstBindingConstraint:(best.riskHeadroom?.[side]?.firstBindingConstraint??'EXECUTABLE_HEADROOM') as BindingConstraint,executableRoutes:open.length};}
+  const counted=new Map<string,number>();
+  for(const route of routes){const constraint=String(route?.riskHeadroom?.[side]?.firstBindingConstraint??'');if(!constraint||constraint==='EXECUTABLE_HEADROOM')continue;counted.set(constraint,(counted.get(constraint)??0)+1);}
+  const named=[...counted.entries()].sort((a,b)=>b[1]-a[1])[0]?.[0];
+  return{executableNotionalUsd:0,quoteAsset:null,symbol:null,firstBindingConstraint:(named??(routes.length?'NO_FEASIBLE_ROUTE':'NO_CAPITAL_ROUTE')) as BindingConstraint,executableRoutes:0};
+}
+
+/**
+ * Which capacity gate binds first, composed from the already-computed headroom, the slot count, the real
+ * funding ledger and the per-route executable verdicts. It never recomputes exposure: a page that
+ * re-derived the risk ledger could disagree with the gate that actually refused the Entry.
+ *
+ * A ratio dimension the deployment only observes is reported as a fact and never as a blocker.
+ */
+export function portfolioCapacityVisibility(capacity:PositionCapacity,budget:GrossDirectionBudget,facts:{funding?:QuoteAssetCapitalLedger[];routes?:any[]}={}){
+  const evaluated=budget.evaluatedAt>0,policy=budget.policy??{gross:'ENFORCE' as const,direction:'ENFORCE' as const,cluster:'ENFORCE' as const},routes=facts.routes??[];
+  const executable={LONG:bestExecutableSide(routes,'LONG'),SHORT:bestExecutableSide(routes,'SHORT')};
+  const funding=facts.funding??[];
+  const fundableMarginUsd=funding.reduce((n,row)=>n+row.executableMarginUsd,0),marginProven=funding.length>0&&funding.every(row=>row.factsComplete);
+  const slotsFull=capacity.used>=capacity.max,grossFull=policy.gross==='ENFORCE'&&budget.remainingGrossUsd<=0,longFull=policy.direction==='ENFORCE'&&budget.longAvailableNotionalUsd<=0,shortFull=policy.direction==='ENFORCE'&&budget.shortAvailableNotionalUsd<=0,marginFull=marginProven&&fundableMarginUsd<=0;
   const firstBlocker:CapacityBlocker=!evaluated?'NOT_EVALUATED':slotsFull?'POSITION_CAPACITY':grossFull?'GROSS':longFull?'DIRECTION_LONG':shortFull?'DIRECTION_SHORT':'NONE';
   const blockingDimensions=[slotsFull&&evaluated?'POSITION_CAPACITY':null,grossFull&&evaluated?'GROSS':null,longFull&&evaluated?'DIRECTION_LONG':null,shortFull&&evaluated?'DIRECTION_SHORT':null].filter(Boolean) as Exclude<CapacityBlocker,'NONE'|'NOT_EVALUATED'>[];
-  const exhaustedReason:ExhaustedReason|null=!evaluated?null:slotsFull?'POSITION_CAPACITY':grossFull?'GROSS':longFull&&shortFull?'BOTH_DIRECTIONS':null;
+  const exhaustedReason:ExhaustedReason|null=!evaluated?null:slotsFull?'POSITION_CAPACITY':marginFull?'AVAILABLE_MARGIN':grossFull?'GROSS':longFull&&shortFull?'BOTH_DIRECTIONS':null;
   return{
-    slots:{used:capacity.used,max:capacity.max,positions:capacity.positions,inFlight:capacity.inFlight,reserved:capacity.reserved},
-    gross:{notionalUsd:budget.grossNotionalUsd,limitUsd:budget.grossLimitUsd,remainingUsd:budget.remainingGrossUsd,usedPct:budget.grossUsedPct},
-    direction:{
-      LONG:{notionalUsd:budget.longNotionalUsd,limitUsd:budget.directionLimitUsd,remainingUsd:budget.longAvailableNotionalUsd},
-      SHORT:{notionalUsd:budget.shortNotionalUsd,limitUsd:budget.directionLimitUsd,remainingUsd:budget.shortAvailableNotionalUsd},
+    funding:{quoteAssets:funding,executableMarginUsd:fundableMarginUsd,proven:marginProven},
+    exposure:{
+      gross:{notionalUsd:budget.grossNotionalUsd,limitUsd:budget.grossLimitUsd,remainingUsd:budget.remainingGrossUsd,usedPct:budget.grossUsedPct,mode:policy.gross,enforced:policy.gross==='ENFORCE'},
+      LONG:{notionalUsd:budget.longNotionalUsd,limitUsd:budget.directionLimitUsd,remainingUsd:budget.longAvailableNotionalUsd,usedPct:budget.longUsedPct??0,mode:policy.direction,enforced:policy.direction==='ENFORCE'},
+      SHORT:{notionalUsd:budget.shortNotionalUsd,limitUsd:budget.directionLimitUsd,remainingUsd:budget.shortAvailableNotionalUsd,usedPct:budget.shortUsedPct??0,mode:policy.direction,enforced:policy.direction==='ENFORCE'},
     },
+    limits:{slots:{used:capacity.used,max:capacity.max,positions:capacity.positions,inFlight:capacity.inFlight,reserved:capacity.reserved},policy},
+    entryCapacity:executable,
     firstBlocker,blockingDimensions,exhaustedReason,exhaustedForNewRisk:exhaustedReason!==null,evaluatedAt:budget.evaluatedAt,
   };
 }
 
 
-export function buildRiskEnvelope(input:{settings:SystemSettings;equity:number;positions:Position[];symbol:string;side:Side;plannedNotional:number;reservedIntents:number;workingOrders:number;dailyDrawdownPct:number;expectedAdverseMovePct:number;quoteMarginUsage:number;now?:number}):RiskEnvelope {
-  const now=input.now??Date.now(), h=computeExecutableRiskHeadroom(input), equity=input.equity,
+/**
+ * The envelope is a report of the single headroom verdict, never a second decision about what binds:
+ * re-deriving statuses from `remaining` here would let a dimension the deployment only observes come
+ * back as a rejection through another door.
+ */
+export function buildRiskEnvelope(input:HeadroomInput&{reservedIntents:number;workingOrders:number;quoteMarginUsage:number}):RiskEnvelope {
+  const now=input.now??Date.now(), h=computeExecutableRiskHeadroom({...input,strictPlannedNotional:true}), equity=input.equity,
     current=h.gross,long=h.long,short=h.short,gross=current+input.plannedNotional,
     cluster=h.cluster,clusterPct=(h.clusterNow+input.plannedNotional)/equity,
     perTradeRiskUsd=h.perTradeRiskUsd,move=h.expectedAdverseMovePct,riskLimitedNotional=h.remaining.riskSizing,
-    finalNotional=Math.min(input.plannedNotional,riskLimitedNotional),reasons:string[]=[],g=input.settings.riskGovernance;
-  let status:RiskEnvelope['status']='PASS';
-  if(h.reason==='RISK_FACTS_INVALID'){status='RISK_FACTS_INVALID';reasons.push(status);}
-  else if(input.plannedNotional>h.remaining.gross+1e-8){status='REJECT_GROSS_EXPOSURE';reasons.push('GROSS_EXPOSURE_LIMIT');}
-  else if(input.plannedNotional>h.remaining.direction+1e-8){status='REJECT_DIRECTION_EXPOSURE';reasons.push('DIRECTION_EXPOSURE_LIMIT');}
-  else if(input.plannedNotional>h.remaining.cluster+1e-8){status='REJECT_CORRELATED_CLUSTER';reasons.push('CLUSTER_EXPOSURE_LIMIT');}
-  else if(input.plannedNotional>h.remaining.clusterDirection+1e-8){status='REJECT_CLUSTER_DIRECTION_EXPOSURE';reasons.push('CLUSTER_DIRECTION_EXPOSURE_LIMIT');}
-  else if(input.dailyDrawdownPct>g.maxDailyDrawdownPct){status='REJECT_DAILY_DRAWDOWN';reasons.push('DAILY_DRAWDOWN_LIMIT');}
-  else if(input.plannedNotional>riskLimitedNotional){reasons.push('RISK_SIZING_CLAMP');}
-  if(input.plannedNotional>0&&finalNotional<1){status='REJECT_RISK_PER_TRADE';reasons.push('RISK_NOT_EXECUTABLE');}
-  return {id:uid('risk'),status,equity,grossNotional:gross,grossNotionalPct:gross/equity,longNotional:long,longExposurePct:(input.side==='LONG'?long+input.plannedNotional:long)/equity,shortNotional:short,shortExposurePct:(input.side==='SHORT'?short+input.plannedNotional:short)/equity,cluster,clusterExposurePct:clusterPct,quoteAssetMarginUsage:input.quoteMarginUsage,maxPositions:input.settings.portfolio.maxPositions,reservedIntents:input.reservedIntents,workingOrders:input.workingOrders,liquidationBufferEstimate:Math.max(0,1-gross/equity),perTradeRiskUsd,perTradeRiskPctEquity:perTradeRiskUsd/equity,dailyDrawdownPct:input.dailyDrawdownPct,expectedAdverseMovePct:move,riskLimitedNotional,finalNotional,reasons,createdAt:now};
+    finalNotional=h.finalNotional;
+  const statusOf:(reason:string)=>RiskEnvelope['status']=(reason)=>reason==='INSUFFICIENT_AVAILABLE_MARGIN'||reason==='QUOTE_CAPACITY_UNPROVEN'?'REJECT_AVAILABLE_MARGIN':reason==='BELOW_MINIMUM_NOTIONAL'||reason==='REJECT_RISK_PER_TRADE'?'REJECT_RISK_PER_TRADE':reason==='PASS'?'PASS':reason as RiskEnvelope['status'];
+  const status=h.blockers.length?statusOf(h.blockers[0]):'PASS';
+  const reasons=[...h.blockers];
+  if(!h.blockers.length&&input.plannedNotional>riskLimitedNotional)reasons.push('RISK_SIZING_CLAMP');
+  return {id:uid('risk'),status,equity,grossNotional:gross,grossNotionalPct:gross/equity,longNotional:long,longExposurePct:(input.side==='LONG'?long+input.plannedNotional:long)/equity,shortNotional:short,shortExposurePct:(input.side==='SHORT'?short+input.plannedNotional:short)/equity,cluster,clusterExposurePct:clusterPct,quoteAssetMarginUsage:input.quoteMarginUsage,maxPositions:input.settings.portfolio.maxPositions,reservedIntents:input.reservedIntents,workingOrders:input.workingOrders,liquidationBufferEstimate:Math.max(0,1-gross/equity),perTradeRiskUsd,perTradeRiskPctEquity:perTradeRiskUsd/equity,dailyDrawdownPct:input.dailyDrawdownPct,expectedAdverseMovePct:move,riskLimitedNotional,finalNotional,reasons,createdAt:now,firstBindingConstraint:h.firstBindingConstraint};
 }

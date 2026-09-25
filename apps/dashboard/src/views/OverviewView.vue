@@ -47,9 +47,34 @@ const capacityBlocked = computed(() => {
   const executable = pipeline.value?.runtimeControl?.capital?.executableCandidateCount ?? 0;
   return eligible > 0 && executable === 0 ? view : null;
 });
+// The four Engine blocks, projected as four lines. Each one answers a different question, and the page
+// never adds a number of its own: funding is money, exposure is notional, limits are policy, and the
+// entry block is the only answer to "how much new Entry risk is there room for".
+const fmt = (value: unknown) => money(Number(value ?? 0));
+const capacityFunding = computed(() => {
+  const assets = capacityVisibility.value?.funding?.quoteAssets ?? [];
+  const perAsset = assets.map((row: any) => `${row.quoteAsset} 可用 ${fmt(row.availableBalanceUsd)}（预留 ${fmt(row.reservedMarginUsd)} + 租约 ${fmt(row.executionLeaseMarginUsd)}）→ 可执行保证金 ${fmt(row.executableMarginUsd)}`);
+  return { perAsset, totalExecutableMarginUsd: capacityVisibility.value?.funding?.executableMarginUsd ?? 0, proven: capacityVisibility.value?.funding?.proven === true };
+});
+const capacityEntry = computed(() => {
+  const view = capacityVisibility.value;
+  if (!view) return null;
+  const side = (name: 'LONG' | 'SHORT') => {
+    const row = view.entryCapacity?.[name] ?? {};
+    const route = row.symbol && row.quoteAsset ? ` via ${row.symbol}/${row.quoteAsset}` : "";
+    return `${name} 可执行新增名义 ${fmt(row.executableNotionalUsd)}${route} · 首因 ${row.firstBindingConstraint ?? "NOT_EVALUATED"}`;
+  };
+  return { LONG: side('LONG'), SHORT: side('SHORT'), constraint: view.entryCapacity?.LONG?.firstBindingConstraint ?? view.entryCapacity?.SHORT?.firstBindingConstraint ?? "NOT_EVALUATED" };
+});
+const capacityPolicyText = computed(() => {
+  const policy = capacityVisibility.value?.exposure?.gross?.mode === undefined ? null : capacityVisibility.value;
+  if (!policy) return "政策未投影";
+  const e = policy.exposure;
+  return `Gross=${e.gross.mode} · Direction=${e.LONG.mode} · Cluster=${policy.limits?.policy?.cluster ?? "ENFORCE"}（OBSERVE 仅展示不否决，ENFORCE 一票否决）`;
+});
 const firstExplanation = computed(() => {
   const view = capacityBlocked.value;
-  if (view) return `CAPACITY_BLOCKED · Gross ${money(view.gross.notionalUsd)} / ${money(view.gross.limitUsd)}`;
+  if (view) return `CAPACITY_BLOCKED · ${view.exhaustedReason} · 首因 ${capacityEntry.value?.constraint ?? "NOT_EVALUATED"}`;
   const analysis = pipeline.value?.analysis;
   return SUPPLY_SIDE_WAITS.includes(String(analysis?.reason ?? "")) ? (analysis?.text ?? "") : (pipeline.value?.noEntryReason ?? analysis?.text ?? "");
 });
@@ -261,50 +286,44 @@ onUnmounted(() => {
         </div>
       </div>
       <div v-if="capacityVisibility" class="facts wide" data-capacity-visibility>
-        <div>
-          <dt>仓位槽位（持仓 / 在途 / 预留）</dt>
+        <div data-capital-block="funding">
+          <dt>1 · 资金与保证金容量（可动用）</dt>
           <dd>
-            {{ capacityVisibility.slots.used }} / {{ capacityVisibility.slots.max }}（{{
-              capacityVisibility.slots.positions
-            }}/{{ capacityVisibility.slots.inFlight }}/{{ capacityVisibility.slots.reserved }}）
+            {{ capacityFunding.perAsset.length ? capacityFunding.perAsset.join("；") : "未投影计价资产资金事实" }} ·
+            合计可执行保证金 {{ fmt(capacityFunding.totalExecutableMarginUsd) }}
+            <span v-if="!capacityFunding.proven">（资金事实不完整，按 0 处理）</span>
           </dd>
         </div>
-        <div>
-          <dt>组合总名义敞口 / 上限（剩余）</dt>
+        <div data-capital-block="exposure">
+          <dt>2 · 组合名义敞口（事实，不等于可用资金）</dt>
           <dd>
-            {{ money(capacityVisibility.gross.notionalUsd) }} /
-            {{ money(capacityVisibility.gross.limitUsd) }}（剩余
-            {{ money(capacityVisibility.gross.remainingUsd) }}，已用
-            {{ (capacityVisibility.gross.usedPct * 100).toFixed(1) }}%）
+            Gross {{ fmt(capacityVisibility.exposure.gross.notionalUsd) }} / 上限
+            {{ fmt(capacityVisibility.exposure.gross.limitUsd) }}（已用
+            {{ (capacityVisibility.exposure.gross.usedPct * 100).toFixed(1) }}%）· LONG
+            {{ fmt(capacityVisibility.exposure.LONG.notionalUsd) }} /
+            {{ fmt(capacityVisibility.exposure.LONG.limitUsd) }} · SHORT
+            {{ fmt(capacityVisibility.exposure.SHORT.notionalUsd) }} /
+            {{ fmt(capacityVisibility.exposure.SHORT.limitUsd) }}
           </dd>
         </div>
-        <div>
-          <dt>LONG 名义敞口 / 上限（剩余）</dt>
+        <div data-capital-block="limits">
+          <dt>3 · 风险与安全限制</dt>
           <dd>
-            {{ money(capacityVisibility.direction.LONG.notionalUsd) }} /
-            {{ money(capacityVisibility.direction.LONG.limitUsd) }}（剩余
-            {{ money(capacityVisibility.direction.LONG.remainingUsd) }}）
+            {{ capacityPolicyText }} · 槽位 {{ capacityVisibility.limits.slots.used }} /
+            {{ capacityVisibility.limits.slots.max }}（持仓 {{ capacityVisibility.limits.slots.positions }} / 在途
+            {{ capacityVisibility.limits.slots.inFlight }} / 预留 {{ capacityVisibility.limits.slots.reserved }}）·
+            首个饱和硬维度 {{ capacityVisibility.firstBlocker }}
           </dd>
         </div>
-        <div>
-          <dt>SHORT 名义敞口 / 上限（剩余）</dt>
-          <dd>
-            {{ money(capacityVisibility.direction.SHORT.notionalUsd) }} /
-            {{ money(capacityVisibility.direction.SHORT.limitUsd) }}（剩余
-            {{ money(capacityVisibility.direction.SHORT.remainingUsd) }}）
-          </dd>
-        </div>
-        <div>
-          <dt>首个饱和维度</dt>
-          <dd>{{ capacityVisibility.firstBlocker }}</dd>
-        </div>
-        <div>
-          <dt>新增风险额度</dt>
+        <div data-capital-block="entry">
+          <dt>4 · 最终可执行新增 Entry 容量</dt>
+          <dd data-entry-capacity>{{ capacityEntry.LONG }}</dd>
+          <dd data-entry-capacity>{{ capacityEntry.SHORT }}</dd>
           <dd>
             {{
               capacityVisibility.exhaustedForNewRisk
-                ? `已用尽 · ${capacityVisibility.exhaustedReason}`
-                : `仍有空间（Gross 剩 ${money(capacityVisibility.gross.remainingUsd)} · LONG 剩 ${money(capacityVisibility.direction.LONG.remainingUsd)} · SHORT 剩 ${money(capacityVisibility.direction.SHORT.remainingUsd)}）`
+                ? `新增风险额度已用尽 · ${capacityVisibility.exhaustedReason}`
+                : `仍有空间（可执行保证金 ${fmt(capacityFunding.totalExecutableMarginUsd)}）`
             }}
           </dd>
         </div>

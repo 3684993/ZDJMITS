@@ -8,6 +8,7 @@ import { ExternalTradeAdapter } from '../adapters/exchange/ExternalTradeAdapter.
 import { dashboardProjection } from '../api/projections.js';
 import { EngineRuntime } from '../runtime/appRuntime.js';
 import { computeExecutableRiskHeadroom } from './executableRiskHeadroom.js';
+import { candidateCapitalCapacity } from './capitalCapacity.js';
 
 /**
  * What `Position.notionalUsd` means. The position row already carries direction in
@@ -113,7 +114,7 @@ describe('position notionalUsd semantics', () => {
         plannedNotional: 100,
         expectedAdverseMovePct: 0.005,
         dailyDrawdownPct: 0,
-        quoteNotionalCapacity: 100_000,
+        capital: candidateCapitalCapacity({quoteAsset: 'USDT', availableBalanceUsd: 100_000, reservedMarginUsd: 0, executionLeaseMarginUsd: 0, leverage: 1, leverageFact: 'CANDIDATE_RECOMMENDED', reserveMarginBufferPct: 0, minimumNotionalUsd: 0}),
         minimumNotional: 5,
       });
     const signed = headroom(book((side, magnitude) => (side === 'SHORT' ? -magnitude : magnitude)));

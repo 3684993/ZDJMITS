@@ -2036,7 +2036,7 @@ export class EngineRuntime {
       runtimeControl: this.state.runtimeControl,
       asOf:now,observationVersion:`${this.state.marketGeneration}:${this.state.runtimeControl.capital.generation}:${this.state.account.asOf}`,
       capacity:slotCapacity,privateSync:this.privateSyncHealth(),
-      capacityVisibility:portfolioCapacityVisibility(slotCapacity,this.state.runtimeControl.capital.directionBudget),
+      capacityVisibility:portfolioCapacityVisibility(slotCapacity,this.state.runtimeControl.capital.directionBudget,{funding:this.state.runtimeControl.capital.funding??[],routes:this.state.runtimeControl.capital.routedCandidates??[]}),
       pipelineState,
       marketDataReason,
       marketDataDetail: marketDataReason ? { streamState: stream.state, streamError: stream.lastError ?? null, quotesFresh: freshness.quoteFresh, orderBooksFresh: freshness.orderBookFresh } : null,

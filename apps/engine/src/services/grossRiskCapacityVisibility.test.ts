@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { SystemSettingsSchema } from '@zdj/contracts';
 import defaults from '../../../../config/settings.default.json' with { type: 'json' };
 import { directionBudget, portfolioCapacityVisibility, type PositionCapacity } from './riskReadiness.js';
+import { capitalCapacityForQuoteAsset } from './capitalCapacity.js';
 import { governanceFieldOf } from '../config/governanceSettingsMatrix.js';
 import { harness } from './tradingQualityTestHarness.js';
 
@@ -50,21 +51,35 @@ describe('gross and direction exposure headroom projection', () => {
     expect(headroom(settings(20), 10_000, [], Date.now()).grossLimitUsd).toBe(200_000);
   });
 
+  it('publishes the stored 0.8 direction cap as the same limit for both sides and both surfaces', () => {
+    // The live Testnet setting is maxDirectionExposurePct=0.8: one Engine number must reach the API
+    // projection and the cockpit, with no surface substituting the gross limit for it.
+    const at = Date.now();
+    const budget = headroom(settings(1, 0.8), 10_000, [position('AAAUSDT', 'LONG', 100, 10)], at);
+    expect(budget.directionLimitUsd).toBeCloseTo(8_000, 8);
+    const view = portfolioCapacityVisibility(slots(1), budget);
+    expect(view.exposure.LONG.limitUsd).toBeCloseTo(8_000, 8);
+    expect(view.exposure.SHORT.limitUsd).toBeCloseTo(8_000, 8);
+    // Gross is a different question and keeps its own ceiling.
+    expect(view.exposure.gross.limitUsd).toBeCloseTo(10_000, 8);
+    expect(view.exposure.LONG.remainingUsd).toBeCloseTo(7_000, 8);
+  });
+
   it('binds the first capacity blocker in the order the gates themselves run', () => {
     const full = [position('BTCUSDT', 'LONG', 0.1, 86_000), position('AVAXUSDT', 'SHORT', 800, 11)];
     const blocked = portfolioCapacityVisibility(slots(27), headroom(settings(1), 10_000, full, Date.now()));
-    expect(blocked.gross.remainingUsd).toBe(0);
+    expect(blocked.exposure.gross.remainingUsd).toBe(0);
     expect(blocked.firstBlocker).toBe('GROSS');
     // 27/50 slots say nothing about new-risk headroom.
-    expect(blocked.slots.used).toBe(27);
-    expect(blocked.slots.max).toBe(50);
+    expect(blocked.limits.slots.used).toBe(27);
+    expect(blocked.limits.slots.max).toBe(50);
     const oneSide = portfolioCapacityVisibility(slots(1), headroom(settings(4, 0.5), 10_000, [position('ZZZUSDT', 'SHORT', 100, 50)], Date.now()));
-    expect(oneSide.gross.remainingUsd).toBeGreaterThan(0);
-    expect(oneSide.direction.SHORT.remainingUsd).toBe(0);
-    expect(oneSide.direction.LONG.remainingUsd).toBeGreaterThan(0);
+    expect(oneSide.exposure.gross.remainingUsd).toBeGreaterThan(0);
+    expect(oneSide.exposure.SHORT.remainingUsd).toBe(0);
+    expect(oneSide.exposure.LONG.remainingUsd).toBeGreaterThan(0);
     expect(oneSide.firstBlocker).toBe('DIRECTION_SHORT');
     const noSlots = portfolioCapacityVisibility(slots(50), headroom(settings(1), 10_000, [], Date.now()));
-    expect(noSlots.gross.remainingUsd).toBe(10_000);
+    expect(noSlots.exposure.gross.remainingUsd).toBe(10_000);
     expect(noSlots.firstBlocker).toBe('POSITION_CAPACITY');
     expect(portfolioCapacityVisibility(slots(0), headroom(settings(1), 10_000, [], Date.now())).firstBlocker).toBe('NONE');
   });
@@ -77,25 +92,28 @@ describe('gross and direction exposure headroom projection', () => {
     expect(view.blockingDimensions).toEqual(['DIRECTION_SHORT']);
     expect(view.exhaustedForNewRisk).toBe(false);
     expect(view.exhaustedReason).toBeNull();
-    expect(view.gross.remainingUsd).toBe(4_000);
-    expect(view.direction.LONG.remainingUsd).toBe(4_000);
-    expect(view.direction.SHORT.remainingUsd).toBe(0);
+    expect(view.exposure.gross.remainingUsd).toBe(4_000);
+    // LONG's own dimension has $5,000 free; the $4,000 that actually limits new risk is the gross
+    // ratio above it, and it is reported separately instead of being folded into the direction line.
+    expect(view.exposure.LONG.remainingUsd).toBe(5_000);
+    expect(view.exposure.LONG.mode).toBe('ENFORCE');
+    expect(view.exposure.SHORT.remainingUsd).toBe(0);
   });
 
   it('reports an exhausted book only when a gate denies every new risk', () => {
     const gross = portfolioCapacityVisibility(slots(27), headroom(settings(1), 10_000, [position('BTCUSDT', 'LONG', 0.1, 86_000), position('AVAXUSDT', 'SHORT', 800, 11)], Date.now()));
-    expect(gross.gross.remainingUsd).toBe(0);
+    expect(gross.exposure.gross.remainingUsd).toBe(0);
     expect(gross.exhaustedForNewRisk).toBe(true);
     expect(gross.exhaustedReason).toBe('GROSS');
     const bothSides = portfolioCapacityVisibility(slots(2), headroom(settings(2, 0.5), 10_000, [position('AAAUSDT', 'LONG', 50, 100), position('BBBUSDT', 'SHORT', 50, 100)], Date.now()));
-    expect(bothSides.gross.remainingUsd).toBe(10_000);
-    expect(bothSides.direction.LONG.remainingUsd).toBe(0);
-    expect(bothSides.direction.SHORT.remainingUsd).toBe(0);
+    expect(bothSides.exposure.gross.remainingUsd).toBe(10_000);
+    expect(bothSides.exposure.LONG.remainingUsd).toBe(0);
+    expect(bothSides.exposure.SHORT.remainingUsd).toBe(0);
     expect(bothSides.firstBlocker).toBe('DIRECTION_LONG');
     expect(bothSides.exhaustedForNewRisk).toBe(true);
     expect(bothSides.exhaustedReason).toBe('BOTH_DIRECTIONS');
     const slotsFull = portfolioCapacityVisibility(slots(50), headroom(settings(2), 10_000, [], Date.now()));
-    expect(slotsFull.gross.remainingUsd).toBe(20_000);
+    expect(slotsFull.exposure.gross.remainingUsd).toBe(20_000);
     expect(slotsFull.exhaustedReason).toBe('POSITION_CAPACITY');
     const unevaluated = portfolioCapacityVisibility(slots(0), { ...headroom(settings(1), 10_000, [], Date.now()), evaluatedAt: 0 });
     expect(unevaluated.firstBlocker).toBe('NOT_EVALUATED');
@@ -109,8 +127,8 @@ describe('gross and direction exposure headroom projection', () => {
     const before = portfolioCapacityVisibility(slots(2), headroom(s, 10_000, full, Date.now()));
     expect(before.firstBlocker).toBe('GROSS');
     const after = portfolioCapacityVisibility(slots(1), headroom(s, 10_000, [full[1]], Date.now()));
-    expect(after.gross.remainingUsd).toBeGreaterThan(0);
-    expect(after.gross.limitUsd).toBe(before.gross.limitUsd);
+    expect(after.exposure.gross.remainingUsd).toBeGreaterThan(0);
+    expect(after.exposure.gross.limitUsd).toBe(before.exposure.gross.limitUsd);
     expect(after.firstBlocker).not.toBe('GROSS');
   });
 
@@ -152,7 +170,7 @@ describe('capacity starvation is never reported as a missing candidate', () => {
     // routed candidates stay executable and some other layer decides whether to dispatch.
     const sync = () => {
       const budget = directionBudget(h.state.settings, Number(h.state.account.equityUsd), [...h.state.positions.values()], Date.now());
-      const view = portfolioCapacityVisibility(h.state.entryCapacity(), budget);
+      const view = portfolioCapacityVisibility(h.state.entryCapacity(), budget, {routes:h.state.runtimeControl.capital.routedCandidates??[]});
       h.state.runtimeControl.capital.directionBudget = budget as never;
       h.state.runtimeControl.capital.executableCandidateCount = view.exhaustedForNewRisk ? 0 : h.state.runtimeControl.capital.routedCandidates.length;
       return view;
@@ -181,8 +199,15 @@ describe('capacity starvation is never reported as a missing candidate', () => {
     expect(sync().firstBlocker).toBe('GROSS');
     await h.coordinator.processPool();
     expect(lastIdle()[0]).toBe('WAITING_EXECUTION_CAPACITY');
-    // The operator sees which gate bound, at what size, instead of an unexplained silence.
-    expect(lastIdle()[2]).toBe('新增风险额度已用尽：GROSS（Gross $10040.00 / $10000.00，槽位 1/50）；继续供给与订单维护');
+    // The operator sees which gate bound, how large the book is, and under which policy — never a
+    // notional ratio dressed up as a remaining money balance.
+    const spoken = String(lastIdle()[2]);
+    expect(spoken).toContain('新增风险额度已用尽：GROSS');
+    expect(spoken).toContain('首因');
+    expect(spoken).toContain('槽位 1/50');
+    expect(spoken).toContain('组合名义 $10040.00');
+    expect(spoken).toContain('其政策为 ENFORCE');
+    expect(spoken).not.toMatch(/Gross 剩/);
     expect(h.events.some(event => event.type === 'ANALYSIS_DISPATCH_INTENT')).toBe(false);
     expect(h.ai.decide).not.toHaveBeenCalled();
   });
@@ -229,9 +254,37 @@ describe('capacity starvation is never reported as a missing candidate', () => {
     expect(h.events.find(event => event.type === 'ANALYSIS_DISPATCH_INTENT')?.payload?.mode).toBe('ANALYSIS_ONLY');
   });
 
+  it('observes a notional ratio without letting it veto or rename itself as money', () => {
+    const at = Date.now();
+    const marginDriven = (gross: string, direction: string) => SystemSettingsSchema.parse({
+      ...defaults, appearance: {...defaults.appearance, theme: 'BINANCE_NOIR'},
+      riskGovernance: {...defaults.riskGovernance, maxGrossExposurePct: 1, maxDirectionExposurePct: 0.5, exposureCapacityPolicy: {gross, direction, cluster: 'ENFORCE'}},
+    });
+    const spent = headroom(marginDriven('OBSERVE', 'OBSERVE'), 10_000, [position('BTCUSDT', 'LONG', 0.1, 86_000), position('AVAXUSDT', 'SHORT', 800, 11)], at);
+    // The default document still enforces both ratios, and the fact itself is never deleted.
+    expect(headroom(settings(1), 10_000, [], at).policy).toEqual({gross: 'ENFORCE', direction: 'ENFORCE', cluster: 'ENFORCE'});
+    expect(spent.grossLimitUsd).toBe(10_000);
+    expect(spent.remainingGrossUsd).toBe(0);
+    const view = portfolioCapacityVisibility(slots(27), spent);
+    expect(view.exposure.gross).toMatchObject({mode: 'OBSERVE', enforced: false, remainingUsd: 0, notionalUsd: 17_400, limitUsd: 10_000});
+    expect(view.firstBlocker).toBe('NONE');
+    expect(view.exhaustedForNewRisk).toBe(false);
+    // A funded account is reported as funded even while the ratio is over its observed ceiling.
+    const funded = portfolioCapacityVisibility(slots(1), spent, {funding: [
+      capitalCapacityForQuoteAsset({quoteAsset: 'USDT', availableBalanceUsd: 3_861.56, reservedMarginUsd: 0, executionLeaseMarginUsd: 0}),
+      capitalCapacityForQuoteAsset({quoteAsset: 'USDC', availableBalanceUsd: 4_972.88, reservedMarginUsd: 0, executionLeaseMarginUsd: 0}),
+    ]});
+    expect(funded.funding.executableMarginUsd).toBeCloseTo(8_834.44, 2);
+    expect(funded.funding.proven).toBe(true);
+    // With no money left, the blocker is the money — not the ratio.
+    const broke = portfolioCapacityVisibility(slots(1), spent, {funding: [capitalCapacityForQuoteAsset({quoteAsset: 'USDT', availableBalanceUsd: 0, reservedMarginUsd: 0, executionLeaseMarginUsd: 0})]});
+    expect(broke.exhaustedReason).toBe('AVAILABLE_MARGIN');
+    expect(broke.exposure.gross.mode).toBe('OBSERVE');
+  });
+
   it('types the projection against the same directionBudget result the gates consume', () => {
     const visibility = portfolioCapacityVisibility(slots(27), headroom(settings(1), 10_000, [position('AAAUSDT', 'LONG', 100, 10)], Date.now()));
-    expect(Object.keys(visibility).sort()).toEqual(['blockingDimensions', 'direction', 'evaluatedAt', 'exhaustedForNewRisk', 'exhaustedReason', 'firstBlocker', 'gross', 'slots']);
-    expect(visibility.direction.LONG).toMatchObject({ notionalUsd: 1_000, limitUsd: 5_000, remainingUsd: 4_000 });
+    expect(Object.keys(visibility).sort()).toEqual(['blockingDimensions', 'entryCapacity', 'evaluatedAt', 'exhaustedForNewRisk', 'exhaustedReason', 'funding', 'limits', 'firstBlocker', 'exposure'].sort());
+    expect(visibility.exposure.LONG).toMatchObject({ notionalUsd: 1_000, limitUsd: 5_000, remainingUsd: 4_000 });
   });
 });

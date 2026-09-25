@@ -128,6 +128,14 @@ function migrate(value: unknown): unknown {
     pi.altLongLeverageCaps=pi.altLongLeverageCaps??{CORE:20,LIQUID_ALT:8,SPECULATIVE:3,NEW_LISTING:1};
     next.settingsVersion=18;
   }
+  // V3.9.6 adds the exposure-capacity policy. An existing document keeps enforcing every ratio it
+  // has always enforced: the backfill only names the default, and switching a deployment to margin-
+  // driven capacity is an explicit, audited settings write, never a side effect of loading a file.
+  if (record(next.riskGovernance)) {
+    const governance = next.riskGovernance as Record<string, unknown>;
+    if (!record(governance.exposureCapacityPolicy))
+      governance.exposureCapacityPolicy = { gross: "ENFORCE", direction: "ENFORCE", cluster: "ENFORCE" };
+  }
   // V3.9.5 migrates by field facts, because settingsVersion is a revision counter that is already
   // 100+ on a healthy V3.9.4 runtime. Only a pre-V3.9.5 document gets its sub-$1 floor raised once;
   // after that the stored value is authoritative and an out-of-range one fails closed in the schema.

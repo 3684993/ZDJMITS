@@ -85,8 +85,9 @@ describe('V3.9.6 pre-AI hard plan feasibility', () => {
       expect(printed.length).toBe(2);
       const [min, attained] = [Number(printed[0].split('=')[1]), Number(printed[1].split('=')[1])];
       expect(attained).toBeLessThan(min);
-      // Sizing to the outcome is forbidden: the probe tests exactly the smallest legal quantity.
-      const entryPrice = side === 'LONG' ? envelope.makerReachableBand.max : envelope.makerReachableBand.min;
+      // Sizing to the outcome is forbidden: the probe tests exactly the smallest legal quantity,
+      // priced at the favourable edge of the maker band it is allowed to hope for.
+      const entryPrice = side === 'LONG' ? envelope.makerReachableBand.min : envelope.makerReachableBand.max;
       const ladder = quantityLadder(1, envelope[side].maxQuantityUnits, quote.stepSize, entryPrice, quote.minNotional);
       expect(row.quantityUnits).toBe(ladder[0]);
     }
@@ -121,6 +122,26 @@ describe('V3.9.6 pre-AI hard plan feasibility', () => {
     expect(probe.sides.LONG.executable).toBe(true);
     // The probe reports capacity; it must not read as a recommendation, so it carries no ranking field.
     expect(JSON.stringify(probe)).not.toMatch(/preferred|recommend|suggest/i);
+  });
+
+  it('PF-09 the probe answers the same way whatever the adverse band edge looks like', () => {
+    const base = structuredClone(envelopeOf());
+    // A feasibility probe may only refuse when no legal price could clear the floor. If it read the
+    // adverse edge of the maker band, widening that edge would change the answer and the pipeline
+    // would silently stop calling the model on opportunities the plan would have written.
+    const narrow: PreAiExecutionEnvelope = {...base, makerReachableBand: {min: base.makerReachableBand.min, max: base.makerReachableBand.min * 1.002}};
+    const wide: PreAiExecutionEnvelope = {...base, makerReachableBand: {min: base.makerReachableBand.min, max: base.makerReachableBand.min * 1.4}};
+    const settings = settingsWith({});
+    const tight = evaluatePreAiPlanFeasibility({symbol: fixtureSymbol, now: Date.now(), envelope: narrow, settings});
+    const loose = evaluatePreAiPlanFeasibility({symbol: fixtureSymbol, now: Date.now(), envelope: wide, settings});
+    expect(loose.sides.LONG, 'the LONG answer is priced at the favourable edge only').toEqual(tight.sides.LONG);
+    // The mirrored case: SHORT reads the upper edge, so moving only the lower edge cannot change it.
+    const lowBand: PreAiExecutionEnvelope = {...base, makerReachableBand: {min: base.makerReachableBand.max * 0.6, max: base.makerReachableBand.max}};
+    const sameTop: PreAiExecutionEnvelope = {...base, makerReachableBand: {min: base.makerReachableBand.max, max: base.makerReachableBand.max}};
+    const dropped = evaluatePreAiPlanFeasibility({symbol: fixtureSymbol, now: Date.now(), envelope: lowBand, settings});
+    const held = evaluatePreAiPlanFeasibility({symbol: fixtureSymbol, now: Date.now(), envelope: sameTop, settings});
+    expect(dropped.sides.SHORT).toEqual(held.sides.SHORT);
+    expect(dropped.sides.SHORT.executable).toBe(true);
   });
 
   it('PF-06 the whole chain still calls Primary when a legal hard path exists', async () => {

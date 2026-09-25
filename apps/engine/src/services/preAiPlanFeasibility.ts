@@ -27,7 +27,10 @@ export function evaluatePreAiPlanFeasibility(input:{symbol:string;now:number;env
     const capacity=envelope[side];
     const reasons:string[]=[];
     if(!capacity.executable)reasons.push(...(capacity.riskHeadroom?.blockers?.length?capacity.riskHeadroom.blockers:[capacity.riskHeadroom?.reason||'SIDE_NOT_EXECUTABLE']));
-    const entryPrice=side==='LONG'?Number(envelope.makerReachableBand.max):Number(envelope.makerReachableBand.min);
+    // Each side is priced at the most favourable maker price it could legally get, because this
+    // probe may only refuse when no legal price works: priced at the adverse edge it would be
+    // stricter than the plan it precedes and could silently starve the pipeline of model calls.
+    const entryPrice=side==='LONG'?Number(envelope.makerReachableBand.min):Number(envelope.makerReachableBand.max);
     if(!(quote.stepSize>0)||!(quote.tickSize>0)||!(envelope.leverage>0)||!(entryPrice>0))reasons.push('CANDIDATE_MARKET_FACT_INVALID');
     if(reasons.length)return{executable:false,reasons:[...new Set(reasons)],statisticalEvidence:[],quantityUnits:0,floorTargetPrice:null};
     const quantityCeiling=Math.min(Number(capacity.maxQuantityUnits??0),Number(capacity.maxNotionalUsd??0)/(quote.stepSize*entryPrice),

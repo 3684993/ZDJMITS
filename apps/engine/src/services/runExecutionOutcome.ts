@@ -149,7 +149,11 @@ const reasonsOf = (payload: any, fallback: string | null): string[] => {
   const list: string[] = Array.isArray(payload?.reasons) ? payload.reasons.map((row: unknown) => String(row)) : [];
   const first = payload?.reason != null ? String(payload.reason) : fallback;
   const all: string[] = first ? [first, ...list.filter((row) => row !== first)] : list;
-  return [...new Set(all)].slice(0, 8);
+  // A layer may headline the symptom it detected (`PLAN_SIDE_NOT_EXECUTABLE:SHORT`) and append the
+  // cause it computed after it. Operators read the first reason and the cockpit names its top drop
+  // with it, so the cause has to lead; nothing is dropped, only ordered.
+  const wrapper = (row: string) => /^PLAN_SIDE_NOT_EXECUTABLE:/.test(row);
+  return [...new Set([...all.filter((row) => !wrapper(row)), ...all.filter(wrapper)])].slice(0, 8);
 };
 
 interface Mutable {
@@ -487,9 +491,7 @@ export function entryConversionWindow(
       case 'ENTRY_DECISION_BLOCKED':
       case 'ENTRY_ORDER_BLOCKED':
       case 'ENTRY_EXECUTION_WAIT_TERMINATED': {
-        const reason = payload.reason == null
-          ? (Array.isArray(payload.reasons) ? String(payload.reasons[0] ?? 'UNSPECIFIED') : 'UNSPECIFIED')
-          : String(payload.reason);
+        const reason = reasonsOf(payload, null)[0] ?? 'UNSPECIFIED';
         const stage = stageOf(event, reason) ?? 'UNKNOWN';
         const key = `${stage}|${reason}`;
         const known = counts.get(key);

@@ -198,6 +198,21 @@ describe('V3.9.6 Run -> execution outcome projection', () => {
     expect(late.lineageProven).toBe(false);
   });
 
+  it('EO-09a a symptom headline never hides the cause the layer computed', () => {
+    const outcome = outcomeOf([
+      ev('ENTRY_DECISION_BLOCKED', {stage: 'TRADE_PLAN', reasons: ['PLAN_SIDE_NOT_EXECUTABLE:SHORT', 'CANDIDATE_SET_MIN_PROFIT_FLOOR_UNMET_AT_MINIMUM_QUANTITY']}, 1),
+    ], [run({brainRunId: 'run-a', decision: 'PLACE_SHORT', direction: 'SHORT'})]);
+    expect(outcome.blockReasons).toEqual([
+      'CANDIDATE_SET_MIN_PROFIT_FLOOR_UNMET_AT_MINIMUM_QUANTITY',
+      'PLAN_SIDE_NOT_EXECUTABLE:SHORT',
+    ]);
+    expect(outcome.executionLabel).toBe('未挂单 · TRADE_PLAN · CANDIDATE_SET_MIN_PROFIT_FLOOR_UNMET_AT_MINIMUM_QUANTITY');
+    const window = entryConversionWindow([
+      ev('ENTRY_DECISION_BLOCKED', {stage: 'TRADE_PLAN', reasons: ['PLAN_SIDE_NOT_EXECUTABLE:SHORT', 'CANDIDATE_SET_MIN_PROFIT_FLOOR_UNMET_AT_MINIMUM_QUANTITY']}, 1),
+    ], {since: T0, until: at(60)});
+    expect(window.topDropReason).toBe('CANDIDATE_SET_MIN_PROFIT_FLOOR_UNMET_AT_MINIMUM_QUANTITY');
+  });
+
   it('EO-09 a duplicate event for one run counts once, because two plans would be a defect', () => {
     const events = [...chain({until: 'plan'}), ...chain({until: 'plan'}), ...chain({until: 'plan'})];
     const window = entryConversionWindow(events, {since: T0, until: at(60)});

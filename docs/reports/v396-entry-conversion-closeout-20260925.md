@@ -231,4 +231,3 @@
 - UI 可审计文本证据：`ui-overview-snapshot.txt`、`ui-overview-funnel-final.txt`、`ui-brain-runs-snapshot.txt`、`ui-brain-runs-snapshot-final.txt`、`ui-brain-page1.txt`。
 - 测试清单：修补 A `j3TradePlanHostile.test.ts`（S06-T02/T04/T05/T06/T07/T08）、修补 B `preAiPlanFeasibility.test.ts`（PF-01…PF-09）、修补 C `entryExecutionChain.test.ts`（EC-01…EC-04）、修补 D `runExecutionOutcome.test.ts`（EO-01…EO-15）+ `api/brainRunExecution.test.ts`（RX-01…RX-04）+ 仪表盘 `OverviewView.conversion.test.ts`、`BrainView.execution.test.ts`、修补 F `targetHorizonContract.test.ts`（TH-01…TH-04）。
 - 新增运维脚本（只读）：`scripts/v396-entry-conversion-baseline.mjs`、`scripts/v396-entry-conversion-observe.mjs`。
-

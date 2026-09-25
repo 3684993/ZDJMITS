@@ -14,4 +14,32 @@ describe('Portfolio Intelligence',()=>{
   it('records overextended location in shadow without duplicating Primary timing as a veto',()=>{const s=snap('ALTUSDT',{technical:{...snap('ALTUSDT').technical,'15m':card(100,{ema21:90,bbPosition:.97,atr14:1,atrPercent:1,trend:'UP'})}});expect(locationScore(s,'LONG')).toBeLessThan(45);const plan=buildAllocationPlan({candidate:{symbol:'ALTUSDT',rank:1,score:80,lifecycle:'SHORTLIST',eligible:true,exclusionReasons:[],components:{liquidity:80,tradingActivity:70,capitalActivity:60,technicalOpportunity:70,executionReachability:80,dataQuality:100},quoteVolumeUsd24h:100_000_000,spreadBps:2,lastPrice:100,change24hPercent:0,dataCompleteness:1,selectionGeneration:1,updatedAt:Date.now(),underlyingAsset:'ALT',quoteAsset:'USDT',riskTier:'LIQUID_ALT',directionPolicy:'BOTH',locationScore:20} as any,snapshot:s,direction:'LONG',confidence:.8,settings,positions:[],assets:[{asset:'USDT',availableBalance:1000,usdValue:1000}] as any});expect(plan.admission).toBe('ALLOW');expect(plan.locationWouldBlock).toBe(true);expect(plan.marginUsd).not.toBe(200);});
   it('fails closed when exposure room is below the executable minimum instead of forcing min margin',()=>{const s=snap('BTCUSDT');const current=[{symbol:'ETHUSDT',side:'LONG' as const,quantity:50,markPrice:100,leverage:10}];const plan=buildAllocationPlan({candidate:{symbol:'BTCUSDT',rank:1,score:80,lifecycle:'SHORTLIST',eligible:true,exclusionReasons:[],components:{liquidity:80,tradingActivity:70,capitalActivity:60,technicalOpportunity:70,executionReachability:80,dataQuality:100},quoteVolumeUsd24h:100_000_000,spreadBps:2,lastPrice:100,change24hPercent:0,dataCompleteness:1,selectionGeneration:1,updatedAt:Date.now(),underlyingAsset:'BTC',quoteAsset:'USDT',riskTier:'LIQUID_ALT',directionPolicy:'BOTH'} as any,snapshot:s,direction:'LONG',confidence:.8,settings:{...settings,portfolioIntelligence:{...p,maxLongExposurePct:.5}} as any,positions:current,assets:[{asset:'USDT',availableBalance:1000,usdValue:1000}] as any});expect(plan.admission).toBe('REJECT_EXPOSURE_LIMIT');expect(plan.reasons).toContain('REJECT_EXPOSURE_LIMIT');});
   it('hard blocks max positions including working and reserved capacity',()=>{const s=snap('BTCUSDT');const plan=buildAllocationPlan({candidate:{symbol:'BTCUSDT',rank:1,score:80,lifecycle:'SHORTLIST',eligible:true,exclusionReasons:[],components:{liquidity:80,tradingActivity:70,capitalActivity:60,technicalOpportunity:70,executionReachability:80,dataQuality:100},quoteVolumeUsd24h:100_000_000,spreadBps:2,lastPrice:100,change24hPercent:0,dataCompleteness:1,selectionGeneration:1,updatedAt:Date.now(),underlyingAsset:'BTC',quoteAsset:'USDT',riskTier:'LIQUID_ALT',directionPolicy:'BOTH'} as any,snapshot:s,direction:'LONG',confidence:.8,settings:{...settings,portfolio:{entryMarginUsd:200,maxPositions:1,maxPendingEntries:2}} as any,positions:[],admissionContext:{reservedIntents:1,workingEntryOrders:0},assets:[{asset:'USDT',availableBalance:1000,usdValue:1000}] as any});expect(plan.admission).toBe('REJECT_MAX_POSITIONS');});
+
+  // §B3: a side sized to zero has to arrive with the one number that bound it, because "REJECT_EXPOSURE_LIMIT"
+  // alone is still a label. The room is the minimum over the capacities sizing actually consumed.
+  const sized=(direction:'LONG'|'SHORT',over:Record<string,any>)=>buildAllocationPlan({candidate:{symbol:'BTCUSDT',rank:1,score:80,lifecycle:'SHORTLIST',eligible:true,exclusionReasons:[],components:{liquidity:80,tradingActivity:70,capitalActivity:60,technicalOpportunity:70,executionReachability:80,dataQuality:100},quoteVolumeUsd24h:100_000_000,spreadBps:2,lastPrice:100,change24hPercent:0,dataCompleteness:1,selectionGeneration:1,updatedAt:Date.now(),underlyingAsset:'BTC',quoteAsset:'USDT',riskTier:'LIQUID_ALT',directionPolicy:'BOTH'} as any,snapshot:snap('BTCUSDT'),direction,confidence:.8,settings,positions:[],assets:[{asset:'USDT',availableBalance:5_000,usdValue:5_000},{asset:'USDC',availableBalance:5_000,usdValue:5_000}] as any,...over} as any);
+  it('CR-01 names the direction cap and its used/ceiling numbers when sizing a side comes out zero',()=>{
+    const plan=sized('SHORT',{positions:[{symbol:'ETHUSDT',side:'SHORT' as const,quantity:70,markPrice:100,leverage:10}]});
+    expect(plan.admission).toBe('REJECT_EXPOSURE_LIMIT');
+    expect(plan.capacityRoom).toMatchObject({source:'SHORT_EXPOSURE',ceilingUsd:5_000,usedUsd:7_000,roomUsd:0,limitPct:.5,usedPct:.7});
+    expect(plan.marginUsd).toBe(plan.minExecutableMarginUsd);
+  });
+  it('CR-02 attributes a quote-asset squeeze to the quote margin, not to exposure',()=>{
+    const plan=sized('LONG',{assets:[{asset:'USDT',availableBalance:0,usdValue:0},{asset:'USDC',availableBalance:5_000,usdValue:5_000}] as any});
+    expect(plan.admission).toBe('REJECT_QUOTE_MARGIN');
+    expect(plan.capacityRoom).toMatchObject({source:'QUOTE_ASSET_MARGIN',ceilingUsd:0,usedUsd:0,roomUsd:0});
+  });
+  it('CR-03 reports the room that would bind first even when the plan is allowed',()=>{
+    const plan=sized('LONG',{});
+    expect(plan.admission).not.toMatch(/^REJECT_/);
+    expect(plan.capacityRoom).toMatchObject({source:'QUOTE_ASSET_MARGIN',ceilingUsd:4_000,roomUsd:4_000});
+    expect(plan.capacityRoom!.roomUsd).toBeCloseTo(Math.min(plan.capacityRoom!.ceilingUsd-plan.capacityRoom!.usedUsd,plan.capacityRoom!.roomUsd),8);
+  });
+  it('CR-04 keeps a speculative cap visible when it is the tighter of the two exposure rooms',()=>{
+    const plan=sized('SHORT',{settings:{...settings,portfolioIntelligence:{...p,maxSpeculativeExposurePct:.1,symbolOverrides:{DOGEUSDT:{riskTier:'SPECULATIVE'}}}} as any,
+      candidate:{symbol:'BTCUSDT',rank:1,score:80,lifecycle:'SHORTLIST',eligible:true,exclusionReasons:[],components:{liquidity:80,tradingActivity:70,capitalActivity:60,technicalOpportunity:70,executionReachability:80,dataQuality:100},quoteVolumeUsd24h:100_000_000,spreadBps:2,lastPrice:100,change24hPercent:0,dataCompleteness:1,selectionGeneration:1,updatedAt:Date.now(),underlyingAsset:'BTC',quoteAsset:'USDT',riskTier:'SPECULATIVE',directionPolicy:'BOTH'} as any,
+      positions:[{symbol:'DOGEUSDT',side:'LONG' as const,quantity:100,markPrice:100,leverage:10}]});
+    expect(plan.capacityRoom).toMatchObject({source:'SPECULATIVE_EXPOSURE',ceilingUsd:1_000,usedUsd:10_000,roomUsd:0});
+    expect(plan.admission).toBe('REJECT_EXPOSURE_LIMIT');
+  });
 });

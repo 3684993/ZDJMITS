@@ -105,6 +105,38 @@ describe('the pre-AI envelope publishes which sides are actually executable', ()
     await h.run();
     expect(h.ai.decide).toHaveBeenCalled();
   });
+
+  /** The sizing plan is the layer that will produce the order size, so its own verdict is a pre-AI fact. */
+  const routed = (shortFacts: any, longFacts: any) => (state: any) => {
+    state.runtimeControl.capital.routedCandidates = [{symbol: fixtureSymbol, underlying: 'FIX', quoteAsset: 'USDT', leverage: 8, admission: 'ALLOW', reason: 'EXECUTABLE',
+      longPlanFacts: longFacts, shortPlanFacts: shortFacts}] as never;
+  };
+  const refused = {present: true, admission: 'REJECT_EXPOSURE_LIMIT', reasons: ['REJECT_EXPOSURE_LIMIT'], minExecutableMarginUsd: 1, notionalUsd: 5, marginUsd: 0.63, leverage: 8,
+    capacityRoom: {source: 'SHORT_EXPOSURE', ceilingUsd: 5_248.68, usedUsd: 7_438.39, roomUsd: 0}};
+  const allowed = {present: true, admission: 'ALLOW_REDUCED_SIZE', reasons: ['EXPOSURE_REDUCED_SIZE'], minExecutableMarginUsd: 1, notionalUsd: 197.01, marginUsd: 24.63, leverage: 8};
+
+  it('EP-06 a side the sizing plan already refused is named before the model spends a run on it', () => {
+    const h = harness();
+    routed(refused, allowed)(h.state);
+    const envelope = buildPreAiExecutionEnvelope(h.state, fixtureSymbol);
+    expect(envelope.LONG.executable).toBe(true);
+    expect(envelope.SHORT.executable).toBe(false);
+    expect(envelope.executableSides).toEqual(['LONG']);
+    expect(envelope.SHORT.authorization).toBe('NOT_EXECUTABLE:SIDE_PLAN_REJECT_EXPOSURE_LIMIT');
+    const facts: any = compactEntryFacts({...h.packet, executionEnvelope: envelope} as never);
+    expect(facts.EXECUTION_ENVELOPE.sideAuthorization.SHORT).toContain('SIDE_PLAN_REJECT_EXPOSURE_LIMIT');
+    expect(facts.EXECUTION_ENVELOPE.sideAuthorization.LONG).toBe('EXECUTABLE');
+  });
+
+  it('EP-07 an absent route sample never invents a refusal', () => {
+    const h = harness();
+    routed(null, null)(h.state);
+    const envelope = buildPreAiExecutionEnvelope(h.state, fixtureSymbol);
+    expect(envelope.executableSides).toEqual(['LONG', 'SHORT']);
+    const other = harness();
+    other.state.runtimeControl.capital.routedCandidates = [{symbol: 'OTHERUSDT', underlying: 'OTHER', quoteAsset: 'USDT', shortPlanFacts: refused}] as never;
+    expect(buildPreAiExecutionEnvelope(other.state, fixtureSymbol).executableSides).toEqual(['LONG', 'SHORT']);
+  });
 });
 
 // keep vi imported for harness stubs

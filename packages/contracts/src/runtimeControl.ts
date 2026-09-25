@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { EntrySafetyModeSchema } from './riskGovernance.js';
+import { AllocationCapacityRoomSchema } from './portfolio.js';
 
 export const RuntimeModeSchema=z.enum(['RUNNING','PAUSED_MANUAL','PAUSED_NO_CAPITAL','PAUSED_NO_EXECUTABLE_CONTRACT','PAUSED_DAILY_RISK_LIMIT','DEGRADED']);
 export type RuntimeMode=z.infer<typeof RuntimeModeSchema>;
@@ -24,7 +25,8 @@ export type RuntimeControlSettings=z.infer<typeof RuntimeControlSettingsSchema>;
  * cannot carry them.
  */
 export const CapitalSidePlanFactsSchema=z.object({present:z.boolean(),admission:z.string(),reasons:z.array(z.string()).default([]),
-  minExecutableMarginUsd:z.number().nonnegative(),notionalUsd:z.number().nonnegative(),marginUsd:z.number().nonnegative(),leverage:z.number().int().positive()}).nullable().default(null);
+  minExecutableMarginUsd:z.number().nonnegative(),notionalUsd:z.number().nonnegative(),marginUsd:z.number().nonnegative(),leverage:z.number().int().positive(),
+  capacityRoom:AllocationCapacityRoomSchema.nullish()}).nullable().default(null);
 export type CapitalSidePlanFacts=z.infer<typeof CapitalSidePlanFactsSchema>;
 
 export const CapitalRouteSampleSchema=z.object({symbol:z.string(),underlying:z.string(),quoteAsset:z.enum(['USDT','USDC','BUSD','UNKNOWN']),marginUsd:z.number().nonnegative(),leverage:z.number().int().positive(),admission:z.string(),reason:z.string(),longExecutable:z.boolean().default(true),shortExecutable:z.boolean().default(true),longRecommendedNotionalUsd:z.number().nonnegative().nullable().default(null),shortRecommendedNotionalUsd:z.number().nonnegative().nullable().default(null),longFeasibleNotionalUsd:z.number().nonnegative().nullable().default(null),shortFeasibleNotionalUsd:z.number().nonnegative().nullable().default(null),minExecutableNotionalUsd:z.number().nonnegative().default(0),longPlanFacts:CapitalSidePlanFactsSchema,shortPlanFacts:CapitalSidePlanFactsSchema});

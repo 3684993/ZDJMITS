@@ -1,4 +1,4 @@
-import { isEntryQuoteAsset, quoteSuffixOf } from '@zdj/contracts';
+import { isEntryQuoteAsset, quoteSuffixOf, type AllocationCapacityRoom } from '@zdj/contracts';
 import { entryTradingCapital } from './capitalCapacity.js';
 import type { BindingConstraint } from './executableRiskHeadroom.js';
 
@@ -23,7 +23,7 @@ export type SideCapacityTrace = {
   funding: {availableBalanceUsd: number; reservedMarginUsd: number; executionLeaseMarginUsd: number; executableMarginUsd: number; policyMarginCapUsd: number; executableNotionalUsd: number; bindingConstraint: string};
   risk: {marginTierProven: boolean; portfolioRiskBlockersSeen: number; grossRemainingUsd: number; grossMode: string; grossEnforced: boolean; directionRemainingUsd: number; directionMode: string; directionEnforced: boolean;
     clusterRemainingUsd: number; clusterDirectionRemainingUsd: number; perTradeRiskRemainingUsd: number; portfolioRiskAllowed: boolean; portfolioRiskBlockers: string[]};
-  plan: {present: boolean; admission: string | null; reasons: string[]; recommendedNotionalUsd: number; minExecutableMarginUsd: number | null};
+  plan: {present: boolean; admission: string | null; reasons: string[]; recommendedNotionalUsd: number; minExecutableMarginUsd: number | null; capacityRoom: AllocationCapacityRoom | null};
   plannedNotionalUsd: number;
   finalNotionalBeforeRoundingUsd: number;
   rounded: {quantityUnits: number; legalNotionalUsd: number; stepSize: number | null; minQty: number | null};
@@ -49,6 +49,7 @@ export function classifySideCapacityBinding(input: {
   plannedNotionalUsd: number; finalNotionalUsd: number; minimumLegalNotionalUsd: number | null; exchangeFiltersComplete: boolean;
   planPresent: boolean; routePresent: boolean; marginTierProven: boolean; portfolioRiskAllowed: boolean; capitalBindingConstraint: string | null;
   capitalExecutableNotionalUsd?: number | null;
+  planAdmission?: string | null; capacityRoom?: AllocationCapacityRoom | null;
 }): {constraint: BindingConstraint | string; detail: string; actualUsd: number | null; requiredUsd: number | null} {
   const {symbol, side} = input;
   const verdict = (constraint: string, detail: string, actualUsd: number | null = null, requiredUsd: number | null = null) => ({constraint, detail, actualUsd, requiredUsd});
@@ -69,6 +70,17 @@ export function classifySideCapacityBinding(input: {
   }
   if (!input.exchangeFiltersComplete) return verdict('EXCHANGE_FILTERS_UNPROVEN', `${symbol} 的 minQty/stepSize/minNotional 未全部验证，不能声称交易所最小名义`);
   if (!input.planPresent) return verdict('SIDE_PLAN_ABSENT', `${symbol} 的 ${side} 侧没有生成 AllocationPlan，plannedNotional 从未被计算，不是最小名义问题`);
+  // The sizing layer refused this side for one bounded capacity. Its own reason and the two numbers that
+  // made it zero come next, before any inference about the exchange floor.
+  const admission = String(input.planAdmission ?? '');
+  if (admission.startsWith('REJECT_')) {
+    const room = input.capacityRoom ?? null;
+    const money = (value: number) => Number(value).toFixed(2);
+    const detail = room
+      ? `${symbol} 的 ${side} 侧被 sizing 以 ${admission} 拒绝：${room.source} 上限 ${money(room.ceilingUsd)} 已用 ${money(room.usedUsd)}，剩余 ${money(room.roomUsd)}；计划名义被容量压成 0，不是交易所最小名义问题`
+      : `${symbol} 的 ${side} 侧被 sizing 以 ${admission} 拒绝，计划名义为 0，不是交易所最小名义问题`;
+    return verdict(`SIDE_PLAN_${admission}`, detail, Number(input.plannedNotionalUsd), input.minimumLegalNotionalUsd);
+  }
   if (!(input.plannedNotionalUsd > 0)) return verdict('PLANNED_NOTIONAL_ZERO', `${symbol} 的 ${side} 侧计划名义为 0（sizing 未落地），不是最小名义问题`);
   if (!(input.finalNotionalUsd > 0)) return verdict('FINAL_NOTIONAL_ZERO', `${symbol} 的 ${side} 侧经过容量与风险后剩余为 0`, input.finalNotionalUsd, input.minimumLegalNotionalUsd);
   // Only now is there a real, finite size to compare with a real, verified floor — and if funding is
@@ -120,13 +132,17 @@ export function entrySideCapacityTrace(input: {
   const blockers = Array.isArray(headroom?.blockers) ? [...headroom.blockers] : [];
   const plannedNotionalUsd = Number(headroom?.plannedNotional ?? 0);
   const finalNotionalUsd = Number(headroom?.finalNotional ?? 0);
-  const executable = Boolean(headroom?.executable);
+  // A plan the sizing layer refused cannot be executable whatever the capacity probe says: the refusal is
+  // the fact that will produce (or not produce) an order size.
+  const planRejects = String(planFacts?.admission ?? '').startsWith('REJECT_');
+  const executable = Boolean(headroom?.executable) && !planRejects;
   const binding = classifySideCapacityBinding({
     symbol, side, executable, blockers, firstBindingConstraint: headroom?.firstBindingConstraint ?? null,
     plannedNotionalUsd, finalNotionalUsd, minimumLegalNotionalUsd, exchangeFiltersComplete: filtersComplete,
     planPresent: Boolean(planFacts?.present), routePresent: Boolean(route), marginTierProven: input.marginTier?.proven !== false,
     portfolioRiskAllowed: input.portfolioRisk?.allowed !== false, capitalBindingConstraint: capital?.bindingConstraint ?? null,
     capitalExecutableNotionalUsd: numberOrNull(capital?.executableNotionalUsd),
+    planAdmission: planFacts?.admission ?? null, capacityRoom: planFacts?.capacityRoom ?? null,
   });
   const rounded = roundToLegalQuantity(executable ? finalNotionalUsd : plannedNotionalUsd > 0 ? finalNotionalUsd : 0, price, stepSize, minQty);
   return {
@@ -145,7 +161,7 @@ export function entrySideCapacityTrace(input: {
       clusterRemainingUsd: Number(remaining.cluster ?? 0), clusterDirectionRemainingUsd: Number(remaining.clusterDirection ?? 0),
       perTradeRiskRemainingUsd: Number(remaining.riskSizing ?? 0), portfolioRiskAllowed: input.portfolioRisk?.allowed !== false, portfolioRiskBlockers: input.portfolioRisk?.blockers ?? []},
     plan: {present: Boolean(planFacts?.present), admission: planFacts?.admission ?? null, reasons: planFacts?.reasons ?? [], recommendedNotionalUsd,
-      minExecutableMarginUsd: numberOrNull(planFacts?.minExecutableMarginUsd)},
+      minExecutableMarginUsd: numberOrNull(planFacts?.minExecutableMarginUsd), capacityRoom: planFacts?.capacityRoom ?? null},
     plannedNotionalUsd, finalNotionalBeforeRoundingUsd: finalNotionalUsd,
     rounded: {...rounded, stepSize, minQty},
     executable, blockers,

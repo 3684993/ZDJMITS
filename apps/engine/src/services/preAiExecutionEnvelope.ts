@@ -54,6 +54,15 @@ export interface PreAiExecutionEnvelope {
 
 const roundDownUnits=(quantity:number,step:number)=>step>0?Math.max(0,Math.floor(quantity/step+1e-9)):0;
 
+/**
+ * The allocation plan this route's own side was sized with, read back from the capital admission that
+ * produced the route. Absent facts (no sample for this symbol yet) mean "no verdict", never a refusal.
+ */
+function routedSidePlanFacts(state:RuntimeState,symbol:string,side:ExecutionEnvelopeSide){
+  const route=(state.runtimeControl?.capital?.routedCandidates??[]).find((row:any)=>String(row?.symbol??'').toUpperCase()===symbol.toUpperCase());
+  return (side==='LONG'?route?.longPlanFacts:route?.shortPlanFacts)??null;
+}
+
 /** Objective execution capacity computed before Primary. It contains no market-direction recommendation. */
 export function buildPreAiExecutionEnvelope(state:RuntimeState,symbol:string,now=Date.now(),reachability?:HistoricalTpReachabilityEnvelope):PreAiExecutionEnvelope {
   const market=state.snapshots.get(symbol);if(!market)throw new Error(`PRE_AI_ENVELOPE_MARKET_MISSING:${symbol}`);
@@ -68,15 +77,22 @@ export function buildPreAiExecutionEnvelope(state:RuntimeState,symbol:string,now
   const minimumNotional=Math.max(Number(q.minNotional??0),Number(q.minQty??0)*Number(q.last??0)),quoteNotionalCapacity=capital.executableNotionalUsd;
   const pendingRiskExposures=collectPendingEntryRiskExposures(state,{now}),expectedAdverseMovePct=Math.max(.001,Number(market.technical['15m'].atrPercent??0)/100),dailyDrawdownPct=Number(state.account.riskBaseline?.riskDrawdownPct??0),human=humanManagedExposure(state),humanHardBlock=state.settings.tradeEconomics.admissionMode==='ENFORCE'&&state.settings.positionManagement.humanManagedAdmissionCapsEnabled&&!human.withinLimits;
   const sideCapacity=(side:ExecutionEnvelopeSide):SideExecutionCapacity=>{
+    // Sizing has already refused some sides for a bounded capacity. That verdict is a pre-AI fact: the
+    // envelope must not present a side as selectable when the layer that produces the order size said no.
+    const planFacts=routedSidePlanFacts(state,symbol,side),planRejects=String(planFacts?.admission??'').startsWith('REJECT_');
     const risk=computeExecutableRiskHeadroom({settings:state.settings,equity:equityUsd,positions:[...state.positions.values()],pendingRiskExposures,symbol,side,plannedNotional:Number.MAX_SAFE_INTEGER,expectedAdverseMovePct,dailyDrawdownPct,capital,minimumNotional});
-    const maxNotionalUsd=slotAvailable&&risk.executable?Math.max(0,Math.min(quoteNotionalCapacity,risk.finalNotional)):0,maxMarginUsd=maxNotionalUsd/Math.max(1,leverage),maxQuantityUnits=roundDownUnits(maxNotionalUsd/Math.max(q.last,q.tickSize),q.stepSize),minUnits=Math.max(1,Math.ceil(q.minQty/q.stepSize-1e-9));
-    const executable=privateReady&&slotAvailable&&!humanHardBlock&&maxNotionalUsd+1e-8>=minimumNotional&&maxQuantityUnits>=minUnits;
+    const maxNotionalUsd=slotAvailable&&risk.executable&&!planRejects?Math.max(0,Math.min(quoteNotionalCapacity,risk.finalNotional)):0,maxMarginUsd=maxNotionalUsd/Math.max(1,leverage),maxQuantityUnits=roundDownUnits(maxNotionalUsd/Math.max(q.last,q.tickSize),q.stepSize),minUnits=Math.max(1,Math.ceil(q.minQty/q.stepSize-1e-9));
+    const executable=privateReady&&slotAvailable&&!humanHardBlock&&!planRejects&&maxNotionalUsd+1e-8>=minimumNotional&&maxQuantityUnits>=minUnits;
     const filtersComplete=[q.tickSize,q.stepSize,q.minQty,q.minNotional,q.last].every((value:number)=>Number.isFinite(Number(value))&&Number(value)>0);
     const minimumLegalNotionalUsd=filtersComplete?Math.max(Number(q.minNotional),Number(q.minQty)*Number(q.last)):0;
-    const blockers=[...risk.blockers,...(humanHardBlock?['HUMAN_MANAGED_EXPOSURE_LIMIT']:[])];
-    const binding=classifySideCapacityBinding({symbol,side,executable,blockers,firstBindingConstraint:risk.firstBindingConstraint??null,
+    const blockers=[...risk.blockers,...(planRejects?[`SIDE_PLAN_${planFacts.admission}`]:[]),...(humanHardBlock?['HUMAN_MANAGED_EXPOSURE_LIMIT']:[])];
+    const binding=classifySideCapacityBinding({symbol,side,executable,blockers,
+      // The probe asked "how much room is there", so its own constraint name is not a denial. When the gate
+      // raised no blocker but sizing already refused this side, the refusal is the nearer cause.
+      firstBindingConstraint:planRejects&&!risk.blockers?.length?null:risk.firstBindingConstraint??null,
       plannedNotionalUsd:Number(risk.plannedNotional??0),finalNotionalUsd:maxNotionalUsd,minimumLegalNotionalUsd:filtersComplete?minimumLegalNotionalUsd:null,exchangeFiltersComplete:filtersComplete,
-      planPresent:true,routePresent:true,marginTierProven:true,portfolioRiskAllowed:true,capitalBindingConstraint:capital?.bindingConstraint??null,capitalExecutableNotionalUsd:capital?.executableNotionalUsd??null});
+      planPresent:true,routePresent:true,marginTierProven:true,portfolioRiskAllowed:true,capitalBindingConstraint:capital?.bindingConstraint??null,capitalExecutableNotionalUsd:capital?.executableNotionalUsd??null,
+      planAdmission:planFacts?.admission??null,capacityRoom:planFacts?.capacityRoom??null});
     return {executable,maxMarginUsd,maxNotionalUsd,maxQuantityUnits,firstBindingConstraint:binding.constraint,minimumLegalNotionalUsd,
       legalNotionalRangeUsd:executable?[minimumLegalNotionalUsd,maxNotionalUsd]:null,
       authorization:executable?'EXECUTABLE':`NOT_EXECUTABLE:${binding.constraint}`,

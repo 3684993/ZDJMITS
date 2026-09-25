@@ -96,6 +96,46 @@ describe('a side may only be blamed on the exchange minimum when that is the tru
     expect(trace.explanation).toContain('SHORT');
   });
 
+  it('MN-11 names the sizing room that zeroed the plan, with the two numbers behind it', () => {
+    const verdict = binding({plannedNotionalUsd: 0, finalNotionalUsd: 0, planAdmission: 'REJECT_EXPOSURE_LIMIT',
+      capacityRoom: {source: 'SHORT_EXPOSURE', ceilingUsd: 5_248.68, usedUsd: 7_438.39, roomUsd: 0}});
+    expect(verdict.constraint).toBe('SIDE_PLAN_REJECT_EXPOSURE_LIMIT');
+    expect(verdict.detail).toContain('SHORT_EXPOSURE');
+    expect(verdict.detail).toContain('5248.68');
+    expect(verdict.detail).toContain('7438.39');
+    expect(verdict.detail).toContain('0.00');
+    // §B2: the exchange floor is never the first cause when sizing already produced zero.
+    expect(verdict.constraint).not.toMatch(/MINIMUM/);
+    const quote = binding({plannedNotionalUsd: 0, finalNotionalUsd: 0, planAdmission: 'REJECT_QUOTE_MARGIN',
+      capacityRoom: {source: 'QUOTE_ASSET_MARGIN', ceilingUsd: 0, usedUsd: 0, roomUsd: 0}});
+    expect(quote.constraint).toBe('SIDE_PLAN_REJECT_QUOTE_MARGIN');
+  });
+
+  it('MN-12 leaves an allowed plan alone and keeps the precedence above sizing', () => {
+    expect(binding({executable: true, blockers: [], firstBindingConstraint: 'PLANNED_NOTIONAL', plannedNotionalUsd: 197, finalNotionalUsd: 197,
+      planAdmission: 'ALLOW_REDUCED_SIZE', capacityRoom: {source: 'QUOTE_ASSET_MARGIN', ceilingUsd: 4_000, usedUsd: 0, roomUsd: 4_000}})).toMatchObject({constraint: 'PLANNED_NOTIONAL'});
+    // A gate that denied the side before sizing still outranks the plan's own reason.
+    expect(binding({firstBindingConstraint: 'CLUSTER', blockers: ['REJECT_CORRELATED_CLUSTER'], plannedNotionalUsd: 0, planAdmission: 'REJECT_EXPOSURE_LIMIT'})).toMatchObject({constraint: 'CLUSTER'});
+    const trace = entrySideCapacityTrace({
+      symbol: 'WLDUSDT', underlying: 'WLD', side: 'SHORT', quoteAsset: 'USDT',
+      snapshot: {quote: {last: 0.4571, tickSize: 0.0001, stepSize: 1, minQty: 1, minNotional: 5}} as never,
+      route: {leverage: 8, marginUsd: 24.6, shortExecutable: false, shortRecommendedNotionalUsd: 0, minExecutableNotionalUsd: 5,
+        shortPlanFacts: {present: true, admission: 'REJECT_EXPOSURE_LIMIT', reasons: ['REJECT_EXPOSURE_LIMIT'], minExecutableMarginUsd: 1, notionalUsd: 5, marginUsd: 0.63, leverage: 8,
+          capacityRoom: {source: 'SHORT_EXPOSURE', ceilingUsd: 5_248.68, usedUsd: 7_438.39, roomUsd: 0}}} as never,
+      headroom: {plannedNotional: 0, finalNotional: 0, minimumNotional: 5, executable: false, reason: 'BELOW_MINIMUM_NOTIONAL', blockers: ['BELOW_MINIMUM_NOTIONAL'], firstBindingConstraint: 'MINIMUM_NOTIONAL',
+        remaining: {gross: 0, direction: 3_058.98, cluster: 3_636.57, clusterDirection: 3_636.57, riskSizing: 15_511.55, quote: 3_980}, limits: {},
+        observed: {gross: {mode: 'OBSERVE', enforced: false}, direction: {mode: 'OBSERVE', enforced: false}, cluster: {mode: 'ENFORCE', enforced: true}},
+        capital: {availableBalanceUsd: 3_601.59, reservedMarginUsd: 0, executionLeaseMarginUsd: 0, executableMarginUsd: 3_601.59, policyMarginCapUsd: 500, executableNotionalUsd: 3_980, leverage: 8, leverageFact: 'CANDIDATE_RECOMMENDED', bindingConstraint: 'MARGIN_POLICY_CAP'}} as never,
+      portfolioRisk: {allowed: true, blockers: []} as never, marginTier: {proven: true} as never, evaluationSnapshot: null,
+    });
+    expect(trace.executable).toBe(false);
+    expect(trace.firstBindingConstraint).toBe('SIDE_PLAN_REJECT_EXPOSURE_LIMIT');
+    expect(trace.plan).toMatchObject({present: true, admission: 'REJECT_EXPOSURE_LIMIT',
+      capacityRoom: {source: 'SHORT_EXPOSURE', ceilingUsd: 5_248.68, usedUsd: 7_438.39, roomUsd: 0}});
+    expect(trace.minimumLegalNotionalUsd).toBe(5);
+    expect(trace.explanation).toContain('不是交易所最小名义');
+  });
+
   it('MN-09 rounds down to the largest legal quantity instead of over-claiming', () => {
     const trace = entrySideCapacityTrace({
       symbol: 'XRPUSDT', underlying: 'XRP', side: 'LONG', quoteAsset: 'USDT',

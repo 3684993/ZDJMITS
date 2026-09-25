@@ -46,7 +46,8 @@ const marginDrivenBook = {
       LONG: { executableNotionalUsd: 3680.06, quoteAsset: 'USDT', symbol: 'LINKUSDT', firstBindingConstraint: 'CLUSTER', executableRoutes: 4,
         candidates: [{symbol: 'LINKUSDT', side: 'LONG', executable: true, firstBindingConstraint: 'CLUSTER', funding: {executableNotionalUsd: 3980}, finalNotionalBeforeRoundingUsd: 3680.06, minimumLegalNotionalUsd: 5}] },
       SHORT: { executableNotionalUsd: 3680.06, quoteAsset: 'USDC', symbol: 'SUIUSDC', firstBindingConstraint: 'CLUSTER', executableRoutes: 3,
-        candidates: [{symbol: 'SUIUSDC', side: 'SHORT', executable: false, firstBindingConstraint: 'SIDE_PLAN_ABSENT', funding: {executableNotionalUsd: 3980}, finalNotionalBeforeRoundingUsd: 0, minimumLegalNotionalUsd: 5}] },
+        candidates: [{symbol: 'SUIUSDC', side: 'SHORT', executable: false, firstBindingConstraint: 'SIDE_PLAN_ABSENT', funding: {executableNotionalUsd: 3980}, finalNotionalBeforeRoundingUsd: 0, minimumLegalNotionalUsd: 5,
+          plan: {present: true, admission: 'REJECT_EXPOSURE_LIMIT', capacityRoom: {source: 'SHORT_EXPOSURE', ceilingUsd: 5248.68, usedUsd: 7438.39, roomUsd: 0}}}] },
     },
     firstBlocker: 'NONE', blockingDimensions: [], exhaustedReason: null, exhaustedForNewRisk: false, evaluatedAt: 1,
   },
@@ -113,6 +114,14 @@ it('keeps money, notional, policy and final entry capacity in four separate bloc
   expect(traces[0].text()).toContain('资金容量 $3,980.00');
   expect(traces[0].text()).toContain('交易所最小合法名义 $5.00');
   expect(traces[1].text()).toContain('首因 SIDE_PLAN_ABSENT');
+  // §D3/§B3: a refused side reads as the ceiling, the used number and the room the Engine named.
+  expect(traces[1].text()).toContain('计划 REJECT_EXPOSURE_LIMIT');
+  expect(traces[1].text()).toContain('容量上限 $5,248.68');
+  expect(traces[1].text()).toContain('已用 $7,438.39');
+  expect(traces[1].text()).toContain('剩余 $0.00');
+  expect(traces[1].text()).toContain('SHORT_EXPOSURE');
+  // A side with no plan facts never gets an invented room line.
+  expect(traces[0].text()).not.toContain('容量上限');
 });
 
 it('does not report a spent observed ratio as an exhausted book when the margin and risk facts allow more', async () => {

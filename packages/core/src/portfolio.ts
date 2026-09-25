@@ -416,6 +416,25 @@ export function buildAllocationPlan(input: {
         : Number.POSITIVE_INFINITY,
       quoteRoom,
     );
+  // Which capacity sizing consumed is a fact the operator has to see: a side that sizes to zero has to
+  // arrive with the ceiling and the used number behind it, not with a bare rejection label.
+  const directionRoom = input.direction === "LONG" ? longRoom : shortRoom,
+    directionUsedUsd = input.direction === "LONG" ? before.longNotionalUsd : before.shortNotionalUsd,
+    directionLimitPct = input.direction === "LONG" ? p.maxLongExposurePct : p.maxShortExposurePct,
+    roomSources: Array<{source: string; ceilingUsd: number; usedUsd: number; roomUsd: number; limitPct: number; usedPct: number; equityUsd: number}> = [
+      {source: input.direction === "LONG" ? "LONG_EXPOSURE" : "SHORT_EXPOSURE", ceilingUsd: directionLimitPct * equity, usedUsd: directionUsedUsd, roomUsd: directionRoom,
+        limitPct: directionLimitPct, usedPct: input.direction === "LONG" ? before.longExposurePct : before.shortExposurePct, equityUsd: equity},
+    ];
+  if (tier === "SPECULATIVE" || tier === "NEW_LISTING" || tier === "RESTRICTED")
+    roomSources.push({source: "SPECULATIVE_EXPOSURE", ceilingUsd: p.maxSpeculativeExposurePct * equity, usedUsd: before.speculativeNotionalUsd, roomUsd: specRoom,
+      limitPct: p.maxSpeculativeExposurePct, usedPct: before.speculativeExposurePct, equityUsd: equity});
+  if (quoteAvailable != null)
+    roomSources.push({source: "QUOTE_ASSET_MARGIN", ceilingUsd: quoteAvailable * p.maxQuoteAssetMarginUsagePct, usedUsd: quoteMargin, roomUsd: quoteRoom,
+      limitPct: p.maxQuoteAssetMarginUsagePct, usedPct: quoteAvailable > 0 ? quoteMargin / quoteAvailable : 0, equityUsd: equity});
+  const boundedRooms = roomSources.filter((row) => Number.isFinite(row.roomUsd));
+  const capacityRoom = boundedRooms.length
+    ? boundedRooms.reduce((tightest, row) => (row.roomUsd < tightest.roomUsd ? row : tightest))
+    : undefined;
   let admission: AllocationPlan["admission"] = reasons.length
     ? reasons.includes("DUPLICATE_UNDERLYING") ||
       reasons.includes("MAX_SAME_UNDERLYING")
@@ -497,6 +516,7 @@ export function buildAllocationPlan(input: {
     admission,
     policySource: "V3.8.0_SINGLE_PERMISSION_SOURCE",
     reasons: reasonsOut,
+    capacityRoom,
     createdAt: Date.now(),
   });
 }

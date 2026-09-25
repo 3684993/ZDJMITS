@@ -70,9 +70,16 @@ const capacityEntry = computed(() => {
 const entryFundingAssets = computed(() => new Set((capacityVisibility.value?.funding?.quoteAssets ?? []).map((row: any) => String(row.quoteAsset).toUpperCase())));
 const excludedEntryFunding = computed(() => (capacityVisibility.value?.funding?.excludedAssets ?? []).map((row: any) => `${row.asset}（估值 ${fmt(row.usdValue)}）`));
 const capacitySides = ['LONG', 'SHORT'] as const;
+// The sizing layer's own binding capacity, verbatim from the Engine trace: which ceiling, how much of it
+// is already used, and what room is left. A zero on one side has to read as these three numbers.
+const capacityRoomText = (row: any) => {
+  const room = row?.plan?.capacityRoom;
+  if (!room) return "";
+  return `｜容量上限 ${fmt(room.ceilingUsd)}（已用 ${fmt(room.usedUsd)}，剩余 ${fmt(room.roomUsd)}）来自 ${room.source}`;
+};
 const sideCandidateRows = (side: 'LONG' | 'SHORT') =>
   (capacityVisibility.value?.entryCapacity?.[side]?.candidates ?? []).map((row: any) =>
-    `${row.symbol} ${row.side}：资金容量 ${fmt(row.funding?.executableNotionalUsd)}｜风险后 ${fmt(row.finalNotionalBeforeRoundingUsd)}｜交易所最小合法名义 ${row.minimumLegalNotionalUsd == null ? "未验证" : fmt(row.minimumLegalNotionalUsd)}｜${row.executable ? "可执行" : `首因 ${row.firstBindingConstraint}`}`);
+    `${row.symbol} ${row.side}：资金容量 ${fmt(row.funding?.executableNotionalUsd)}｜风险后 ${fmt(row.finalNotionalBeforeRoundingUsd)}｜交易所最小合法名义 ${row.minimumLegalNotionalUsd == null ? "未验证" : fmt(row.minimumLegalNotionalUsd)}｜计划 ${row.plan?.admission ?? "未生成"}${capacityRoomText(row)}｜${row.executable ? "可执行" : `首因 ${row.firstBindingConstraint}`}`);
 const capacitySideStatusText = computed(() => capacityVisibility.value?.sideStatus?.text ?? "Engine 尚未投影两侧状态");
 
 const capacityPolicyText = computed(() => {

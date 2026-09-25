@@ -72,11 +72,77 @@ describe('S06 candidate generation',()=>{
   it('S06-T02 the minimum size either clears its own profit floor or the answer is NO_TRADE',()=>{
     const rich=candidates();
     expect(rich.set.candidates.length).toBeGreaterThan(0);
-    // A 100% profit requirement on a 1x-notional position cannot be reached inside anything the
-    // sample has ever moved, so no size is offered - the size is not grown to chase the floor.
-    const thin=candidates({settings:baseSettings({takeProfit:{...baseSettings().takeProfit,minNetProfitUsd:100}})});
-    expect(thin.set.candidates).toEqual([]);
-    expect(thin.set.noTradeReasons).toContain('NO_PROFITABLE_COMBINATION_AT_MINIMUM_QUANTITY');
+    // A hard profit floor the arithmetic itself cannot reach (the whole 1x-3x price band still fails
+    // it) is NO_TRADE, and the refused set offers no quantity at all: sizing is never grown to chase
+    // the floor (S06-T02). A requirement that is only beyond what the sample ever moved is the
+    // statistical ceiling, and is named that way instead - see S06-T06.
+    const unreachable=candidates({settings:baseSettings({takeProfit:{...baseSettings().takeProfit,minNetProfitUsd:1e9}})});
+    expect(unreachable.set.candidates).toEqual([]);
+    expect(unreachable.set.noTradeReasons).toContain('MIN_PROFIT_FLOOR_UNMET_AT_MINIMUM_QUANTITY');
+    expect(unreachable.set.noTradeReasons.join('|')).toMatch(/MIN_NET_PROFIT_USD=.*ATTAINED_NET_PROFIT_USD=/);
+    expect(unreachable.set.feasibleQuantityUnits).toEqual({min:0,max:0});
+    expect(unreachable.set.statisticalEvidence??[]).toEqual([]);
+    // A generous sample and a reachable floor keep the smallest legal size offered.
+    expect(rich.set.candidates[0].quantityUnits).toBe(rich.set.feasibleQuantityUnits.min);
+  });
+
+  it('S06-T04 a SHADOW statistical ceiling is evidence, never a silent hard veto',()=>{
+    // The tight sample makes the historical ceiling smaller than the price the profit floor needs,
+    // while the profit floor itself is satisfied: exactly the case the account lost 26 PLACE decisions to.
+    const tight=candles(new Array(300).fill(.02));
+    const shadow=candidates({settings:baseSettings({tradeEconomics:{...baseSettings().tradeEconomics,admissionMode:'SHADOW'}}),candles:tight});
+    const refused=shadow.set.noTradeReasons.join('|');
+    expect(refused).not.toMatch(/NO_PROFITABLE_COMBINATION_AT_MINIMUM_QUANTITY|NO_EXECUTABLE_CANDIDATE/);
+    expect(refused).not.toMatch(/HISTORICAL_TARGET_CEILING_EXCEEDED/);
+    // The candidate survives, is still the smallest legal size, and says out loud that the sample
+    // does not support its target. Recording it is not the same as claiming the sample supports it.
+    const row=shadow.set.candidates[0];
+    expect(row).toBeTruthy();
+    expect(row.quantityUnits).toBe(shadow.set.feasibleQuantityUnits.min);
+    expect(row.executable).toBe(true);
+    expect(row.economics.targetVsStatisticalCeiling).toBe('BEYOND');
+    expect(shadow.set.statisticalEvidence??[]).toContain('HISTORICAL_TARGET_CEILING_EXCEEDED_AT_MINIMUM_QUANTITY');
+    const bounds=shadow.set.bounds?.[0];
+    expect(bounds && bounds.maxTargetPrice!=null && bounds.minTargetPrice>bounds.maxTargetPrice).toBe(true);
+    // A SHADOW refusal is never smuggled in as a blocker either, so no consumer can read it as a veto.
+    expect(row.blockers).toEqual([]);
+  });
+
+  it('S06-T05 the same ceiling still refuses outright once the account runs ENFORCE',()=>{
+    const tight=candles(new Array(300).fill(.02));
+    const enforced=candidates({candles:tight});
+    expect(enforced.set.candidates).toEqual([]);
+    expect(enforced.set.noTradeReasons.join('|')).toMatch(/HISTORICAL_TARGET_CEILING_EXCEEDED_AT_MINIMUM_QUANTITY/);
+    // The profit numbers are not printed as if they had failed: they belong to the other reason.
+    expect(enforced.set.noTradeReasons.join('|')).not.toMatch(/MIN_PROFIT_FLOOR_UNMET/);
+    // And the model's own choice on that side is refused for the same named reason, not another.
+    const selection=enforced.compute({quantityUnits:1,targetHorizonMinutes:15,targetPrice:100.2});
+    expect(selection.candidate).toBeNull();
+    expect(selection.refusals.join('|')).toMatch(/STATISTICAL_BOUND|CEILING/);
+  });
+
+  it('S06-T06 the two refusals are never conflated: profit floor and statistical ceiling are named apart',()=>{
+    // Ceiling exceeded, profit satisfied.
+    const ceiling=candidates({candles:candles(new Array(300).fill(.02)),
+      settings:baseSettings({tradeEconomics:{...baseSettings().tradeEconomics,admissionMode:'ENFORCE'}})});
+    const ceilingText=ceiling.set.noTradeReasons.join('|');
+    expect(ceilingText).toMatch(/HISTORICAL_TARGET_CEILING_EXCEEDED/);
+    expect(ceilingText).not.toMatch(/MIN_PROFIT_FLOOR_UNMET|NO_PROFITABLE_COMBINATION/);
+    // Profit unmet in arithmetic, ceiling irrelevant: the only case allowed to quote the profit numbers.
+    const profit=candidates({settings:baseSettings({takeProfit:{...baseSettings().takeProfit,minNetProfitUsd:1e9}})});
+    const profitText=profit.set.noTradeReasons.join('|');
+    expect(profitText).toMatch(/MIN_PROFIT_FLOOR_UNMET_AT_MINIMUM_QUANTITY/);
+    expect(profitText).toMatch(/MIN_NET_PROFIT_USD=.*ATTAINED_NET_PROFIT_USD=/);
+    expect(profitText).not.toMatch(/CEILING/);
+    // Nothing in either case is a message of the shape "attained >= minimum, therefore no trade".
+    for(const set of [ceiling.set,profit.set]){
+      const attained=set.noTradeReasons.find(row=>row.startsWith('ATTAINED_NET_PROFIT_USD='));
+      const minimum=set.noTradeReasons.find(row=>row.startsWith('MIN_NET_PROFIT_USD='));
+      if(attained&&minimum){
+        expect(Number(attained.split('=')[1])).toBeLessThan(Number(minimum.split('=')[1]));
+        expect(set.noTradeReasons.join('|')).not.toMatch(/NO_PROFITABLE_COMBINATION/);
+      }
+    }
   });
 
   it('S06-T03 confidence is never a probability, and a missing sample is named',()=>{

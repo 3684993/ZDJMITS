@@ -62,6 +62,7 @@ import { PositionReviewRunner, type ReviewAnswer, type ReviewTickReport } from '
 import { reviewMemoryFor, tradeMemoryVersionOf } from '../services/tradeMemoryService.js';
 import type { PositionReviewRequest } from '../services/positionReviewPrompt.js';
 import { isPipelineRoutableLifecycle } from '../services/candidateLifecycleDeriver.js';
+import { ENTRY_CONVERSION_EVENT_TYPES, entryConversionReport } from '../services/runExecutionOutcome.js';
 
 /**
  * How many margin brackets one authority commit is allowed to price. Each read weighs 30 against a
@@ -2018,6 +2019,7 @@ export class EngineRuntime {
         consecutiveFailures:consecutiveAiFailures,
         alert:consecutiveAiFailures>=3?"AI_CONSECUTIVE_FAILURE":null,
       },
+      entryConversion = entryConversionReport((since) => this.settingsStore.runtimeEvents(since, [...ENTRY_CONVERSION_EVENT_TYPES], 20_000), now),
       stagnated = Boolean(
         this.ready &&
         eligible > 0 && this.state.runtimeControl.capital.executableCandidateCount>0 &&
@@ -2147,6 +2149,7 @@ export class EngineRuntime {
           "等待调度",
       },
       entryActivity: activity,
+      entryConversion,
       candidateLifecycle:{counts:lifecycleCounts,nextCandidate:poolItems.find(item=>item.state==="READY")?.symbol??null,primaryWaiters:[...this.state.candidateLifecycle.values()].filter((row:any)=>row.status==="PRIMARY_QUEUED").map((row:any)=>row.symbol)},
       aiHealth,
       stagnation: stagnated

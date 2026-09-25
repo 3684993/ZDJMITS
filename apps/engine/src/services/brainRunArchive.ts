@@ -1,3 +1,5 @@
+import type { RunExecutionOutcome } from './runExecutionOutcome.js';
+
 export function archivedPacket(inputPreview:unknown){
   try{
     const value=typeof inputPreview==='string'?JSON.parse(inputPreview):inputPreview;
@@ -16,7 +18,7 @@ const eventIntentId=(event:any)=>text(event?.payload?.intentId)??text(event?.pay
 const eventOrderId=(event:any)=>text(event?.payload?.orderId)??text(event?.payload?.order?.id);
 const semanticDirection=(decision:unknown,direction:unknown)=>['PLACE_LONG','PLACE_SHORT','WAIT_FOR_PRICE'].includes(String(decision??''))?direction??null:null;
 
-export function projectBrainRun(run:any,chain:any,entryOrders:any[]=[],fills:any[]=[],now=Date.now()){
+export function projectBrainRun(run:any,chain:any,entryOrders:any[]=[],fills:any[]=[],now=Date.now(),execution:RunExecutionOutcome|null=null){
   const events=[...(chain?.events??[])].sort((a:any,b:any)=>Number(a.ts??0)-Number(b.ts??0));
   const intentIds=new Set(events.map(eventIntentId).filter(Boolean));
   const orderIds=new Set(events.map(eventOrderId).filter(Boolean));
@@ -30,8 +32,11 @@ export function projectBrainRun(run:any,chain:any,entryOrders:any[]=[],fills:any
   const terminalStage=order?(active?(order.status==='UNKNOWN'?'ORDER_SUBMISSION_UNKNOWN':order.status==='NEW'?'ORDER_PREPARED':order.status==='SUBMITTING'?'ORDER_SUBMITTING':'ORDER_WORKING'):order.status==='FILLED'?'ORDER_FILLED':partial?`ORDER_${order.status}_PARTIAL`:`ORDER_${order.status}`):(chain?.status&&chain.status!=='PRIMARY_RUNNING'&&chain.status!=='PRIMARY_QUEUED'?chain.status:run.terminalStage??run.status);
   const reasonEvent=[...events].reverse().find((event:any)=>reasonEventTypes.has(event.type)&&(text(event.payload?.reason)||text(event.payload?.error)||text(event.payload?.message)));
   const submitted=Boolean(order&&order.status!=='NEW')||events.some((event:any)=>['ENTRY_SUBMIT_ATTEMPTED','ENTRY_ORDER_CREATED','ENTRY_SUBMIT_RESPONSE_RECOVERED'].includes(event.type));
-  const reason=active?null:text(reasonEvent?.payload?.reason)??text(reasonEvent?.payload?.error)??text(reasonEvent?.payload?.message)??(!submitted?'UNKNOWN':null);
+  const reason=active?null:text(reasonEvent?.payload?.reason)??text(reasonEvent?.payload?.error)??text(reasonEvent?.payload?.message)??text(execution?.blockReasons?.[0])??(!submitted?'UNKNOWN':null);
   const remaining=order?Math.max(0,Number(order.quantity)-Number(order.filledQuantity??0)):null;
   const orderFact=order?{status:order.status,internalOrderId:order.id,clientOrderId:order.clientOrderId??null,exchangeOrderId:order.exchangeOrderId??null,symbol:order.symbol,side:order.side,quantity:order.quantity,limitPrice:order.price,filledQuantity:order.filledQuantity,remainingQuantity:remaining,ageMs:Math.max(0,now-Number(order.createdAt)),absoluteExpiresAt:order.absoluteExpiresAt??null,ttlRemainingMs:order.absoluteExpiresAt?Math.max(0,order.absoluteExpiresAt-now):null,repriceCount:order.repriceCount??0,executionState:order.status==='UNKNOWN'?'WAITING_EXACT_EXCHANGE_RESULT':active?'WAITING_LIMIT_MATCH':'TERMINAL',orderType:order.orderType??'LIMIT',timeInForce:order.timeInForce??'UNKNOWN',maker:order.maker??order.timeInForce==='GTX',factSource:order.factSource??'LOCAL_STATE',verifiedAt:order.verifiedAt??order.updatedAt??null}:null;
-  return{timeline,orderFact,summary:{direction:semanticDirection(run.decision,run.direction),decision:run.decision,status:run.status,error:run.failure?.errorMessage??run.error,finalStage:terminalStage,reason,actual:reasonEvent?.payload?.actual??null,limit:reasonEvent?.payload?.limit??reasonEvent?.payload?.acceptablePriceRange??null,submitted,orderStatus:order?.status??null}};
+  return{timeline,orderFact,execution,summary:{direction:semanticDirection(run.decision,run.direction),decision:run.decision,status:run.status,error:run.failure?.errorMessage??run.error,finalStage:terminalStage,reason,actual:reasonEvent?.payload?.actual??null,limit:reasonEvent?.payload?.limit??reasonEvent?.payload?.acceptablePriceRange??null,submitted,orderStatus:order?.status??null,
+    // The run-level answer comes from the durable fold, never from a second reading of these events:
+    // `orderFact.executionState` describes the order object, this describes the whole chain.
+    executionState:execution?.executionState??null,executionLabel:execution?.executionLabel??null,blockStage:execution?.blockStage??null}};
 }

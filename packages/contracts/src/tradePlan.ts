@@ -55,6 +55,13 @@ export const TradePlanEconomicsSchema = z.object({
   historicalHardMaxMovePercent: z.number().finite().nullable(),
   targetMovePercent: z.number().finite().nonnegative(),
   statisticalSource: z.string().max(160).nullable(),
+  /**
+   * Where this target sits against the largest move the closed-candle sample has ever produced for the
+   * same side and horizon. It is a statement about evidence, not a probability: `BEYOND` is recorded
+   * and shown even when the account runs SHADOW and therefore does not refuse on it, so a reviewer can
+   * see that the sample did not support the target without the code having to pretend it did.
+   */
+  targetVsStatisticalCeiling: z.enum(['WITHIN', 'BEYOND', 'UNPROVEN']).default('UNPROVEN'),
   modelConfidence: z.number().finite().nullable(),
   modelConfidenceIsAuthority: z.literal(false),
 }).strict();

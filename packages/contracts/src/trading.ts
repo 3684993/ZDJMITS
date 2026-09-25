@@ -89,6 +89,9 @@ export const EntryOrderSchema = z.object({
   status: z.enum(['NEW','SUBMITTING','UNKNOWN','WORKING','PARTIALLY_FILLED','FILLED','CANCELED','EXPIRED','REJECTED']),
   createdAt: z.number().int(),
   updatedAt: z.number().int(),
+  /** When the exchange accepted the order. `createdAt` is when the Engine prepared it, so a submit
+   * that was retried or resumed from a waiting state has no other honest submission timestamp. */
+  submittedAt: z.number().int().nullable().optional(),
   absoluteExpiresAt: z.number().int(),
   repriceCount: z.number().int().nonnegative(),
   intentId: z.string(),

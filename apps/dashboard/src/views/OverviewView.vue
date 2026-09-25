@@ -54,6 +54,23 @@ const firstExplanation = computed(() => {
   return SUPPLY_SIDE_WAITS.includes(String(analysis?.reason ?? "")) ? (analysis?.text ?? "") : (pipeline.value?.noEntryReason ?? analysis?.text ?? "");
 });
 
+// The funnel is the Engine's fold over its own durable journal. This page counts nothing: a stage
+// appears here only because the layer that creates it wrote an event saying so.
+const FUNNEL_STAGES: Array<[string, string]> = [
+  ["primaryCompleted", "Primary 完成"],
+  ["place", "PLACE"],
+  ["riskAllowed", "风险准入通过"],
+  ["tradePlanReady", "TradePlan 就绪"],
+  ["reservationCreated", "Reservation 建立"],
+  ["intentCreated", "Intent 建立"],
+  ["orderSubmitted", "订单已提交"],
+  ["entryFilled", "建仓成交"],
+];
+const conversionWindowKey = ref<"thirtyMinutes" | "oneHour">("thirtyMinutes");
+const conversionWindow = computed(() => pipeline.value?.entryConversion?.[conversionWindowKey.value] ?? null);
+const stageCount = (key: string) => Number(conversionWindow.value?.[key] ?? 0);
+const percent = (value: unknown) => (typeof value === "number" ? `${value}%` : "—");
+
 const labels: Record<string, string> = {
   market: "行情中心",
   restBudget: "交易所REST预算",
@@ -463,28 +480,67 @@ onUnmounted(() => {
             </dd>
           </div>
         </div></Panel
-      ><Panel title="建仓活动状态"
-        ><div class="facts">
-          <div>
-            <dt>Primary 30m</dt>
-            <dd>{{ pipeline?.entryActivity?.primaryCount30m ?? 0 }}</dd>
+      ><Panel title="建仓转化漏斗"
+        ><div class="toolbar">
+          <button
+            class="button"
+            :class="conversionWindowKey === 'thirtyMinutes' ? 'primary' : 'secondary'"
+            @click="conversionWindowKey = 'thirtyMinutes'"
+          >30 分钟</button>
+          <button
+            class="button"
+            :class="conversionWindowKey === 'oneHour' ? 'primary' : 'secondary'"
+            @click="conversionWindowKey = 'oneHour'"
+          >1 小时</button>
+        </div>
+        <p v-if="!conversionWindow" class="muted">Engine 尚未提供转化投影</p>
+        <template v-else>
+          <div class="facts wide" data-entry-conversion>
+            <div v-for="[key, label] in FUNNEL_STAGES" :key="key">
+              <dt>{{ label }}</dt>
+              <dd>{{ stageCount(key) }}</dd>
+            </div>
+            <div>
+              <dt>等待价格</dt>
+              <dd>{{ stageCount("waitingPrice") }}</dd>
+            </div>
+            <div>
+              <dt>REJECT 30m</dt>
+              <dd>{{ pipeline?.entryActivity?.rejectCount30m ?? 0 }}</dd>
+            </div>
           </div>
-          <div>
-            <dt>PLACE / REJECT</dt>
-            <dd>
-              {{ pipeline?.entryActivity?.placeCount30m ?? 0 }} /
-              {{ pipeline?.entryActivity?.rejectCount30m ?? 0 }}
-            </dd>
+          <div class="facts">
+            <div>
+              <dt>PLACE→TradePlan</dt>
+              <dd>{{ percent(conversionWindow.ratios?.placeToTradePlan) }}</dd>
+            </div>
+            <div>
+              <dt>TradePlan→Submit</dt>
+              <dd>{{ percent(conversionWindow.ratios?.tradePlanToSubmit) }}</dd>
+            </div>
+            <div>
+              <dt>PLACE→Submit</dt>
+              <dd>{{ percent(conversionWindow.ratios?.placeToSubmit) }}</dd>
+            </div>
+            <div>
+              <dt>Submit→Fill</dt>
+              <dd>{{ percent(conversionWindow.ratios?.submitToFill) }}</dd>
+            </div>
           </div>
-          <div>
-            <dt>Submit / Fill</dt>
-            <dd>
-              {{ pipeline?.entryActivity?.submitCount30m ?? 0 }} /
-              {{ pipeline?.entryActivity?.fillCount30m ?? 0 }}
-            </dd>
-          </div>
-        </div></Panel
-      >
+          <p class="permission-note" data-conversion-drop>
+            最大流失：{{ conversionWindow.topDropStage ?? "无阻断事件" }}
+            <template v-if="conversionWindow.topDropReason">
+              · {{ conversionWindow.topDropReason }} · {{ conversionWindow.topDropCount }} 次</template
+            >
+          </p>
+          <p v-if="conversionWindow.degraded" class="error-text" data-conversion-degraded>
+            ENTRY_CONVERSION_DEGRADED：{{ conversionWindow.degradedReason }}（仅告警，不会自动暂停 Testnet 执行）
+          </p>
+          <p class="muted">
+            执行就绪只说明有权进入链路；“已挂单”必须是交易所已接受订单，成交另计。
+          </p>
+        </template>
+      </Panel>
     </div>
     <Panel title="真实资产"
       ><table class="data-table">

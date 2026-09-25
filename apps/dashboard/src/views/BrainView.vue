@@ -25,6 +25,17 @@ const drawerEl=ref<HTMLElement|null>(null);
 let detailTrigger:HTMLElement|null=null;
 const printable = (v: any) =>
   v == null ? "—" : typeof v === "string" ? v : JSON.stringify(v, null, 2);
+// The wording comes from the Engine's own projection; the page only picks a colour for it.
+const executionTone = (execution: any) =>
+  execution?.executionState === "FILLED" || execution?.executionState === "SUBMITTED" ? "positive"
+    : execution?.executionState === "NOT_SUBMITTED" ? "negative" : "muted";
+const stamp = (value: unknown) => (typeof value === "number" && value > 0 ? new Date(value).toLocaleString() : null);
+const executionChain = (e: any) => (e ? {
+  brainRunId: e.brainRunId, tradePlanId: e.tradePlanId, reservationId: e.reservationId, intentId: e.intentId,
+  orderId: e.orderId, clientOrderId: e.clientOrderId, exchangeOrderId: e.exchangeOrderId,
+  portfolioRiskAllowed: e.portfolioRiskAllowed, submittedAt: stamp(e.submittedAt), firstFillAt: stamp(e.firstFillAt), updatedAt: stamp(e.updatedAt),
+  inconsistentFacts: e.inconsistentFacts ?? [],
+} : null);
 const detailOpen = () => detailLoading.value || Boolean(detailError.value) || Boolean(detail.value);
 /** One exit for every way the detail closes, so a response that is already in flight cannot reopen it. */
 function closeDetail(){
@@ -169,6 +180,7 @@ onUnmounted(()=>{listController?.abort();detailController?.abort();window.remove
             <th>Status</th>
             <th>方向倾向</th>
             <th>交易动作</th>
+            <th>执行结果</th>
             <th>Total</th>
             <th>Tokens</th>
             <th>审计</th>
@@ -185,9 +197,10 @@ onUnmounted(()=>{listController?.abort();detailController?.abort();window.remove
             <td>{{ r.symbol }}</td>
             <td>{{ r.role }} · {{ r.model }}</td>
             <td><StatusBadge :value="r.status" /></td>
-            <td v-if="r.role === 'SCOUT'" colspan="2">该次 9B Run：{{ r.status }}（不代表在线职责已启用）</td>
+            <td v-if="r.role === 'SCOUT'" colspan="3">该次 9B Run：{{ r.status }}（不代表在线职责已启用）</td>
             <template v-else><td><StatusBadge :value="r.direction ?? '—'" /></td>
-            <td>{{ r.decision === 'NO_DIRECTION_EDGE' ? '不交易' : (r.decision ?? "—") }}</td></template>
+            <td>{{ r.decision === 'NO_DIRECTION_EDGE' ? '不交易' : (r.decision ?? "—") }}</td>
+            <td :class="executionTone(r.execution)">{{ r.execution ? r.execution.executionLabel : "不适用" }}</td></template>
             <td>{{ r.timing?.totalMs ?? r.latencyMs ?? "—" }}ms</td>
             <td>{{ r.inputTokens ?? "—" }} / {{ r.outputTokens ?? "—" }}</td>
             <td><button class="button secondary" @click.stop="show(r.id)">查看决策/未执行原因</button></td>
@@ -273,6 +286,8 @@ onUnmounted(()=>{listController?.abort();detailController?.abort();window.remove
         <div><dt>最终阶段 / 未执行原因</dt><dd>{{detail.summary?.finalStage??'—'}} / {{detail.summary?.reason??'—'}}</dd></div>
         <div><dt>Actual / Limit</dt><dd>{{printable({actual:detail.summary?.actual,limit:detail.summary?.limit})}}</dd></div>
         <div><dt>交易所订单事实</dt><dd>{{printable(detail.orderFact)}}</dd></div>
+        <div><dt>执行结果 / 阻断层</dt><dd>{{ detail.execution ? `${detail.execution.executionLabel}${detail.execution.blockStage ? ` · ${detail.execution.blockStage} · ${(detail.execution.blockReasons ?? []).join(' | ')}` : ''}` : '不适用（该 Run 不负责建仓）' }}</dd></div>
+        <div><dt>执行链 ID 与时间</dt><dd>{{printable(executionChain(detail.execution))}}</dd></div>
         </template>
       </div>
       <template v-if="detail">

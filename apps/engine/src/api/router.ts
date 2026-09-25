@@ -17,8 +17,39 @@ import { archivedPacket, projectBrainRun } from '../services/brainRunArchive.js'
 import { p0EntryIntegrity } from '../services/p0EntryIntegrity.js';
 import { byClosedAtDesc, byOpenedAtDesc } from './chronologicalSort.js';
 import { entryObservation } from '../services/entryObservation.js';
+import { ENTRY_CONVERSION_EVENT_TYPES, EXECUTION_LINEAGE_GRACE_MS, projectRunExecutionOutcomes } from '../services/runExecutionOutcome.js';
 import { projectHumanManaged } from '../services/humanManagedProjection.js';
 import { exitSubjectFromPosition } from '../services/v396ExitRuntime.js';
+
+/**
+ * Attach the Engine's execution answer to one page of run rows.
+ *
+ * The page is folded from the durable journal in a single pass, so the list and the detail view read
+ * the same authority. Scout rows get `execution: null` - they never had an order to place, and a
+ * dash in that column is a fact rather than a missing one.
+ */
+export function withExecutionOutcomes(runtime: EngineRuntime, items: any[]) {
+  const rows = Array.isArray(items) ? items : [];
+  const primaries = rows.filter((row) => row?.role === 'PRIMARY_BRAIN' && row?.id);
+  if (!primaries.length) return rows.map((row) => ({...row, execution: null}));
+  const ends = primaries.map((row) => Number(row.completedAt ?? row.startedAt ?? 0)).filter((value) => Number.isFinite(value) && value > 0);
+  const since = Math.min(...ends) - 60_000;
+  const until = Math.max(...ends) + EXECUTION_LINEAGE_GRACE_MS;
+  const events = runtime.settingsStore
+    .runtimeEvents(since, [...ENTRY_CONVERSION_EVENT_TYPES], 20_000)
+    .filter((event: any) => Number(event.ts) <= until);
+  const outcomes = projectRunExecutionOutcomes(events, primaries.map((row) => ({
+    brainRunId: String(row.id),
+    symbol: row.symbol ?? null,
+    decision: row.decision ?? null,
+    direction: row.direction ?? null,
+    decidedAt: Number(row.completedAt ?? row.startedAt ?? Date.now()),
+  })));
+  return rows.map((row) => ({
+    ...row,
+    execution: row?.role === 'PRIMARY_BRAIN' ? outcomes.get(String(row.id)) ?? null : null,
+  }));
+}
 
 export function createApiRouter(runtime: EngineRuntime) {
   const r = Router();
@@ -114,7 +145,8 @@ export function createApiRouter(runtime: EngineRuntime) {
     const q = req.query as Record<string, string | undefined>,
       page = Math.max(1, Number(q.page ?? 1)),
       limit = Math.min(100, Math.max(1, Number(q.limit ?? 20)));
-    res.json(runtime.settingsStore.listAiRunSummaries({from:Math.max(0,Number(q.from??Date.now()-90*24*60*60_000)),to:q.to?Number(q.to):undefined,symbol:q.symbol,role:q.role,status:q.status,decision:q.decision,model:q.model,page,limit}));
+    const summary = runtime.settingsStore.listAiRunSummaries({from:Math.max(0,Number(q.from??Date.now()-90*24*60*60_000)),to:q.to?Number(q.to):undefined,symbol:q.symbol,role:q.role,status:q.status,decision:q.decision,model:q.model,page,limit});
+    res.json({...summary, items: withExecutionOutcomes(runtime, summary.items)});
   });
   r.get("/brain/runs/:id", (req, res) => {
     const run =
@@ -132,9 +164,17 @@ export function createApiRouter(runtime: EngineRuntime) {
       if (typeof normalizedDecision === "string")
         normalizedDecision = JSON.parse(normalizedDecision);
     } catch {}
-    const chain=runtime.settingsStore.getDecisionChain(run.id),projection=projectBrainRun(run,chain,[...runtime.state.entryOrders.values()],runtime.state.executionFills),finalEvent=projection.timeline.at(-1);
+    const chain=runtime.settingsStore.getDecisionChain(run.id),
+      execution = projectRunExecutionOutcomes(
+        [...(chain?.events ?? [])].sort((a: any, b: any) => Number(a.ts ?? 0) - Number(b.ts ?? 0)),
+        [{brainRunId: run.id, symbol: run.symbol ?? null, decision: run.decision ?? null, direction: run.direction ?? null, decidedAt: Number(run.completedAt ?? run.startedAt ?? Date.now())}],
+        Date.now(),
+        run.id,
+      ).get(run.id) ?? null,
+      projection=projectBrainRun(run,chain,[...runtime.state.entryOrders.values()],runtime.state.executionFills,Date.now(),execution),finalEvent=projection.timeline.at(-1);
     res.json({
       run,
+      execution,
       summary: projection.summary,
       temporalMemory: runtime.settingsStore.getDecisionEpisodeByRun(run.id),
       eip:packet,

@@ -2041,7 +2041,9 @@ export class EngineRuntime {
       asOf:now,observationVersion:`${this.state.marketGeneration}:${this.state.runtimeControl.capital.generation}:${this.state.account.asOf}`,
       capacity:slotCapacity,privateSync:this.privateSyncHealth(),
       capacityVisibility:portfolioCapacityVisibility(slotCapacity,this.state.runtimeControl.capital.directionBudget,{
-        funding:this.state.runtimeControl.capital.funding??entryTradingCapital(this.state,now),
+        // Read the funding block from the live account at projection time: the durable route summary can
+        // lag a build behind, and a stale ledger array must never zero out the money the account has.
+        funding:entryTradingCapital(this.state,now),
         routes:this.state.runtimeControl.capital.routedCandidates??[],
         traces:(()=>{const built=entrySideCapacityTraces(this.state,this.state.runtimeControl.capital.routedCandidates??[],{coverageSymbols:this.portfolioRiskAuthority?.facts?.margin.coverageSymbols??null,now});return [...built.LONG,...built.SHORT];})(),
       }),

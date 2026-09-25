@@ -21,7 +21,7 @@ export type SideCapacityTrace = {
   leverage: number | null;
   leverageFact: string | null;
   funding: {availableBalanceUsd: number; reservedMarginUsd: number; executionLeaseMarginUsd: number; executableMarginUsd: number; policyMarginCapUsd: number; executableNotionalUsd: number; bindingConstraint: string};
-  risk: {grossRemainingUsd: number; grossMode: string; grossEnforced: boolean; directionRemainingUsd: number; directionMode: string; directionEnforced: boolean;
+  risk: {marginTierProven: boolean; portfolioRiskBlockersSeen: number; grossRemainingUsd: number; grossMode: string; grossEnforced: boolean; directionRemainingUsd: number; directionMode: string; directionEnforced: boolean;
     clusterRemainingUsd: number; clusterDirectionRemainingUsd: number; perTradeRiskRemainingUsd: number; portfolioRiskAllowed: boolean; portfolioRiskBlockers: string[]};
   plan: {present: boolean; admission: string | null; reasons: string[]; recommendedNotionalUsd: number; minExecutableMarginUsd: number | null};
   plannedNotionalUsd: number;
@@ -56,10 +56,13 @@ export function classifySideCapacityBinding(input: {
   // a risk layer that denied the candidate before sizing, no verified bracket row, no verified leverage.
   if (input.capitalBindingConstraint === 'QUOTE_ASSET_NOT_ENTRY_ELIGIBLE') return verdict('QUOTE_ASSET_NOT_ENTRY_ELIGIBLE', `${symbol} 的计价资产 ${quoteSuffixOf(symbol)} 不在 Entry 资金白名单（仅 USDT/USDC）内`);
   if (!input.routePresent) return verdict(`NO_ROUTABLE_${side}_CANDIDATE`, `${symbol} 没有 ${side} 侧的可路由资本计划，容量尚未被任何数字压小`);
+  // The gate's own verdict wins: an executable side is never relabelled by a fact that sits in front of
+  // capacity, and those facts stay on the trace as annotations instead.
+  if (input.executable) return verdict(input.firstBindingConstraint ?? 'EXECUTABLE_HEADROOM', `${symbol} ${side} 可执行`, input.finalNotionalUsd, null);
+  // A gate that already denied the side by name outranks any inference about the exchange floor.
   if (!input.portfolioRiskAllowed) return verdict('PORTFOLIO_RISK_DENIED', `PortfolioRisk 在容量计算之前拒绝 ${symbol} 的新增风险`);
   if (!input.marginTierProven) return verdict(`MARGIN_TIER_SYMBOL_UNPROVEN:${symbol}`, `${symbol} 在 margin-tier 权威里没有已验证的 bracket 行`);
   if (input.capitalBindingConstraint === 'LEVERAGE_UNPROVEN') return verdict('LEVERAGE_UNPROVEN', `${symbol} 没有可验证的杠杆事实，容量不成立（不会用全局默认杠杆凑数）`);
-  if (input.executable) return verdict(input.firstBindingConstraint ?? 'EXECUTABLE_HEADROOM', `${symbol} ${side} 可执行`, input.finalNotionalUsd, null);
   // A gate that already denied the side by name outranks any inference about the exchange floor.
   if (input.firstBindingConstraint && !minimumConstraints.has(input.firstBindingConstraint)) {
     return verdict(input.firstBindingConstraint, `${symbol} ${side} 由 ${input.firstBindingConstraint} 决定`, input.finalNotionalUsd, null);
@@ -136,7 +139,8 @@ export function entrySideCapacityTrace(input: {
       executionLeaseMarginUsd: Number(capital?.executionLeaseMarginUsd ?? 0), executableMarginUsd: Number(capital?.executableMarginUsd ?? 0),
       policyMarginCapUsd: Number(capital?.policyMarginCapUsd ?? 0), executableNotionalUsd: Number(capital?.executableNotionalUsd ?? 0),
       bindingConstraint: String(capital?.bindingConstraint ?? 'NONE')},
-    risk: {grossRemainingUsd: Number(remaining.gross ?? 0), grossMode: String(observed.gross?.mode ?? 'ENFORCE'), grossEnforced: Boolean(observed.gross?.enforced ?? true),
+    risk: {marginTierProven: input.marginTier?.proven !== false, portfolioRiskBlockersSeen: input.portfolioRisk?.blockers?.length ?? 0,
+      grossRemainingUsd: Number(remaining.gross ?? 0), grossMode: String(observed.gross?.mode ?? 'ENFORCE'), grossEnforced: Boolean(observed.gross?.enforced ?? true),
       directionRemainingUsd: Number(remaining.direction ?? 0), directionMode: String(observed.direction?.mode ?? 'ENFORCE'), directionEnforced: Boolean(observed.direction?.enforced ?? true),
       clusterRemainingUsd: Number(remaining.cluster ?? 0), clusterDirectionRemainingUsd: Number(remaining.clusterDirection ?? 0),
       perTradeRiskRemainingUsd: Number(remaining.riskSizing ?? 0), portfolioRiskAllowed: input.portfolioRisk?.allowed !== false, portfolioRiskBlockers: input.portfolioRisk?.blockers ?? []},

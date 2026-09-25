@@ -48,6 +48,23 @@ describe('a side may only be blamed on the exchange minimum when that is the tru
     expect(binding({executable: true, blockers: [], firstBindingConstraint: 'PLANNED_NOTIONAL', plannedNotionalUsd: 200, finalNotionalUsd: 200})).toMatchObject({constraint: 'PLANNED_NOTIONAL', actualUsd: 200});
   });
 
+  it('MN-10 never relabels an executable side with a fact that sits in front of capacity', () => {
+    const executed = binding({executable: true, blockers: [], firstBindingConstraint: 'PLANNED_NOTIONAL', plannedNotionalUsd: 202, finalNotionalUsd: 202, marginTierProven: false});
+    expect(executed.constraint).toBe('PLANNED_NOTIONAL');
+    const trace = entrySideCapacityTrace({
+      symbol: 'ADAUSDC', underlying: 'ADA', side: 'LONG', quoteAsset: 'USDC',
+      snapshot: {quote: {last: 0.75, tickSize: 0.001, stepSize: 0.1, minQty: 0.1, minNotional: 5}} as never,
+      route: {leverage: 8, longExecutable: true, longRecommendedNotionalUsd: 202, longPlanFacts: {present: true, admission: 'ALLOW_REDUCED_SIZE', reasons: [], minExecutableMarginUsd: 25}} as never,
+      headroom: {plannedNotional: 202, finalNotional: 202, minimumNotional: 5, executable: true, reason: 'PASS', blockers: [], firstBindingConstraint: 'PLANNED_NOTIONAL',
+        remaining: {gross: 0, direction: 7_000, cluster: 3_700, clusterDirection: 3_700, riskSizing: 15_000, quote: 3_980}, limits: {}, observed: {}, capital: null} as never,
+      marginTier: {proven: false} as never, portfolioRisk: {allowed: true, blockers: []} as never, evaluationSnapshot: null,
+    });
+    expect(trace.executable).toBe(true);
+    expect(trace.firstBindingConstraint).toBe('PLANNED_NOTIONAL');
+    // The missing bracket row is still visible, just not dressed up as the reason.
+    expect(trace.risk.marginTierProven).toBe(false);
+  });
+
   it('MN-08 builds the whole per-candidate trace out of the facts the gates already computed', () => {
     const trace = entrySideCapacityTrace({
       symbol: 'ADAUSDC', underlying: 'ADA', side: 'SHORT', quoteAsset: 'USDC',

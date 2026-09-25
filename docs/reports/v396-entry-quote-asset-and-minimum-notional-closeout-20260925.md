@@ -107,9 +107,11 @@ sizing 以 `REJECT_*` 拒绝的一侧 → `executable=false` + `NOT_EXECUTABLE:S
 且不再声称可有名义；门自己报了 blocker 时仍以门为第一因（`CLUSTER` 等优先，MN-12/EP-06 双向钉住）；
 无路由样本一律不臆造拒绝（EP-07）。
 
-live 证明（自然流量，uptime 10m→13m）：`PRE_AI_EXECUTION_ENVELOPE_CREATED` 共 2 条，每条
-`sideAuthorization = {LONG: 'EXECUTABLE', SHORT: 'NOT_EXECUTABLE:SIDE_PLAN_REJECT_EXPOSURE_LIMIT'}`，
-同窗口 `ANALYSIS_DISPATCH_INTENT=2`、`AI_RUN_TERMINAL=2`、`PRE_AI_TRADE_PLAN_FEASIBILITY=2`、
+live 证明（新 build 自然流量窗口 26.3 分钟）：`PRE_AI_EXECUTION_ENVELOPE_CREATED` 共 12 条，
+最近 6 条逐条读回（`live-sample-flow-7.json` → `envelopeFacts.latest`）都是
+`executableSides=["LONG"]` +
+`{LONG: EXECUTABLE, SHORT: NOT_EXECUTABLE:SIDE_PLAN_REJECT_EXPOSURE_LIMIT}`；
+同窗口 `ANALYSIS_DISPATCH_INTENT=12`、`AI_RUN_TERMINAL=11`、`PRE_AI_TRADE_PLAN_FEASIBILITY=12`、
 `PRE_AI_NO_EXECUTABLE_CAPACITY=0` —— 一侧可执行时仍正常调用 Primary，另一侧被点名 NOT_EXECUTABLE。
 两侧都不可执行时不调用 Primary 由 EP-02（离线）+ 上一轮 `PRE_AI_NO_EXECUTABLE_CAPACITY` 路径覆盖；
 模型越界选择不可执行侧 → `MODEL_SELECTION_OUTSIDE_EXECUTABLE_ENVELOPE`（EP-04，不重映射、不建仓）。
@@ -211,8 +213,9 @@ Run outcome 阶段准确→沿用 conversion 测试；Production 边界不被暗
    本轮也未改该写路径，故不声称本窗口重放了 reservation→submit 链路。
 7. 一批自然 Primary Run —— 新 build 窗口 26.3 分钟：`ANALYSIS_DISPATCH_INTENT=12`、
    `PRE_AI_EXECUTION_ENVELOPE_CREATED=12`、`PRE_AI_TRADE_PLAN_FEASIBILITY=12`、`AI_RUN_TERMINAL=11`、
-   `PRE_AI_NO_EXECUTABLE_CAPACITY=0`；envelope 的 `sideAuthorization` 全程
-   `{LONG: EXECUTABLE, SHORT: NOT_EXECUTABLE:SIDE_PLAN_REJECT_EXPOSURE_LIMIT}`。
+   `PRE_AI_NO_EXECUTABLE_CAPACITY=0`。最近 6 条 envelope 的 `executableSides` 全部为 `["LONG"]`，
+   `sideAuthorization` 全部为 `{LONG: EXECUTABLE, SHORT: NOT_EXECUTABLE:SIDE_PLAN_REJECT_EXPOSURE_LIMIT}`
+   （逐事件明细见 `live-sample-flow-7.json` 的 `envelopeFacts`；“12 条全部如此”未被逐条核验，不据此声称）。
    11 次 run 之后未 submit 的真实首因有两个，且都是点名数字而非标签：
    (a) `ENTRY_ANALYSIS_FAILED · AI_QUANTITY_BELOW_MIN_NOTIONAL · policy=FAIL_CLOSED` 6 次
    ——模型给出的数量 × stepSize × price 低于该合约交易所最小名义（根因与量化见 §8-D2）；
@@ -317,8 +320,8 @@ egress/integrity fail-closed；不新增 watchdog/autostart；不触碰 PR #9；
 11. **pre-AI 是否停止为两侧都不可执行的候选调用模型？** 是：两侧都不可执行 →
     `PRE_AI_NO_EXECUTABLE_CAPACITY` + 不调用 Primary（EP-02 断言 `h.ai.decide` 未被调用、无 intent、无 place）；
     live 本窗口 `PRE_AI_NO_EXECUTABLE_CAPACITY=0`（因为始终至少 LONG 一侧可执行）。
-12. **一侧不可执行时是否发布 envelope 而不自动翻向？** 是，且 live 直接证明：两条自然 run 的 envelope
-    `sideAuthorization={LONG:EXECUTABLE, SHORT:NOT_EXECUTABLE:SIDE_PLAN_REJECT_EXPOSURE_LIMIT}`；
+12. **一侧不可执行时是否发布 envelope 而不自动翻向？** 是，且 live 直接证明：新窗口最近 6 条 envelope 逐条
+    `executableSides=["LONG"]` 且 `sideAuthorization={LONG:EXECUTABLE, SHORT:NOT_EXECUTABLE:SIDE_PLAN_REJECT_EXPOSURE_LIMIT}`；
     `PRIMARY_DECISION_NORMALIZED` 里模型自述 “…Short side is not executable due to exposure limits” 后独立选择 LONG。
     模型若仍选不可执行侧 → `MODEL_SELECTION_OUTSIDE_EXECUTABLE_ENVELOPE`（EP-04，不重映射、不建仓）。
 13. **margin-tier coverage 是否与 USDT/USDC route universe 同语义？** 是：`portfolioRiskRequiredSymbols()`

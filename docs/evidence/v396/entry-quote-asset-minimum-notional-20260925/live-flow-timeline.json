@@ -1,0 +1,723 @@
+{
+  "capturedAt": "2026-09-25T12:37:35.730Z",
+  "rounds": [
+    {
+      "at": "2026-09-25T12:19:33.248Z",
+      "label": "flow-1",
+      "ok": true,
+      "uptimeMin": 4,
+      "buildId": "3.9.6-146f7eabad8e7353276d",
+      "productionWrites": 0,
+      "fundingTotal": 8657.16260247,
+      "sumCheck": true,
+      "sideStatus": "LONG_ONLY_EXECUTABLE",
+      "shortCause": "SIDE_PLAN_REJECT_EXPOSURE_LIMIT",
+      "routed": 1,
+      "envelopes": 0,
+      "envelopeAuth": [],
+      "events": {
+        "ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED": 0,
+        "ENTRY_ORDER_NO_ACTIVE_RISK_PROOF_RETAINED": 0,
+        "ENTRY_RESERVATION_CREATED": 0,
+        "ENTRY_INTENT_CREATED": 0,
+        "ORDER_SUBMISSION_ACCEPTED": 0,
+        "ENTRY_FILL_RECORDED": 0,
+        "AI_RUN_TERMINAL": 0,
+        "ANALYSIS_DISPATCH_INTENT": 0,
+        "PRE_AI_TRADE_PLAN_FEASIBILITY": 0,
+        "PRE_AI_NO_EXECUTABLE_CAPACITY": 0
+      },
+      "blockedReasons": {},
+      "violations": [],
+      "conversion": {
+        "generatedAt": 1790338773173,
+        "thirtyMinutes": {
+          "since": 1790336973173,
+          "until": 1790338773173,
+          "primaryCompleted": 12,
+          "place": 12,
+          "riskAllowed": 0,
+          "economicAdmissionPassed": 0,
+          "tradePlanReady": 0,
+          "reservationCreated": 0,
+          "intentCreated": 0,
+          "submitAttempted": 0,
+          "orderSubmitted": 0,
+          "entryFilled": 0,
+          "waitingPrice": 0,
+          "blocked": [
+            {
+              "stage": "PORTFOLIO_RISK",
+              "reason": "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+              "count": 7
+            }
+          ],
+          "ratios": {
+            "placeToTradePlan": 0,
+            "tradePlanToSubmit": null,
+            "placeToSubmit": 0,
+            "submitToFill": null
+          },
+          "topDropStage": "PORTFOLIO_RISK",
+          "topDropReason": "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+          "topDropCount": 7,
+          "degraded": false,
+          "degradedReason": null
+        },
+        "oneHour": {
+          "since": 1790335173173,
+          "until": 1790338773173,
+          "primaryCompleted": 35,
+          "place": 35,
+          "riskAllowed": 0,
+          "economicAdmissionPassed": 0,
+          "tradePlanReady": 0,
+          "reservationCreated": 0,
+          "intentCreated": 0,
+          "submitAttempted": 0,
+          "orderSubmitted": 0,
+          "entryFilled": 0,
+          "waitingPrice": 0,
+          "blocked": [
+            {
+              "stage": "PORTFOLIO_RISK",
+              "reason": "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+              "count": 20
+            }
+          ],
+          "ratios": {
+            "placeToTradePlan": 0,
+            "tradePlanToSubmit": null,
+            "placeToSubmit": 0,
+            "submitToFill": null
+          },
+          "topDropStage": "PORTFOLIO_RISK",
+          "topDropReason": "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+          "topDropCount": 20,
+          "degraded": false,
+          "degradedReason": null
+        }
+      }
+    },
+    {
+      "at": "2026-09-25T12:22:33.442Z",
+      "label": "flow-2",
+      "ok": true,
+      "uptimeMin": 7,
+      "buildId": "3.9.6-146f7eabad8e7353276d",
+      "productionWrites": 0,
+      "fundingTotal": 8616.81664595,
+      "sumCheck": true,
+      "sideStatus": "NO_EXECUTABLE_SIDE",
+      "shortCause": "NO_CAPITAL_ROUTE",
+      "routed": 0,
+      "envelopes": 0,
+      "envelopeAuth": [],
+      "events": {
+        "ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED": 3,
+        "ENTRY_ORDER_NO_ACTIVE_RISK_PROOF_RETAINED": 0,
+        "ENTRY_RESERVATION_CREATED": 0,
+        "ENTRY_INTENT_CREATED": 0,
+        "ORDER_SUBMISSION_ACCEPTED": 0,
+        "ENTRY_FILL_RECORDED": 0,
+        "AI_RUN_TERMINAL": 0,
+        "ANALYSIS_DISPATCH_INTENT": 0,
+        "PRE_AI_TRADE_PLAN_FEASIBILITY": 0,
+        "PRE_AI_NO_EXECUTABLE_CAPACITY": 0
+      },
+      "blockedReasons": {},
+      "violations": [],
+      "conversion": {
+        "generatedAt": 1790338953367,
+        "thirtyMinutes": {
+          "since": 1790337153367,
+          "until": 1790338953367,
+          "primaryCompleted": 12,
+          "place": 12,
+          "riskAllowed": 0,
+          "economicAdmissionPassed": 0,
+          "tradePlanReady": 0,
+          "reservationCreated": 0,
+          "intentCreated": 0,
+          "submitAttempted": 0,
+          "orderSubmitted": 0,
+          "entryFilled": 0,
+          "waitingPrice": 0,
+          "blocked": [
+            {
+              "stage": "PORTFOLIO_RISK",
+              "reason": "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+              "count": 7
+            }
+          ],
+          "ratios": {
+            "placeToTradePlan": 0,
+            "tradePlanToSubmit": null,
+            "placeToSubmit": 0,
+            "submitToFill": null
+          },
+          "topDropStage": "PORTFOLIO_RISK",
+          "topDropReason": "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+          "topDropCount": 7,
+          "degraded": false,
+          "degradedReason": null
+        },
+        "oneHour": {
+          "since": 1790335353367,
+          "until": 1790338953367,
+          "primaryCompleted": 32,
+          "place": 32,
+          "riskAllowed": 0,
+          "economicAdmissionPassed": 0,
+          "tradePlanReady": 0,
+          "reservationCreated": 0,
+          "intentCreated": 0,
+          "submitAttempted": 0,
+          "orderSubmitted": 0,
+          "entryFilled": 0,
+          "waitingPrice": 0,
+          "blocked": [
+            {
+              "stage": "PORTFOLIO_RISK",
+              "reason": "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+              "count": 18
+            }
+          ],
+          "ratios": {
+            "placeToTradePlan": 0,
+            "tradePlanToSubmit": null,
+            "placeToSubmit": 0,
+            "submitToFill": null
+          },
+          "topDropStage": "PORTFOLIO_RISK",
+          "topDropReason": "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+          "topDropCount": 18,
+          "degraded": false,
+          "degradedReason": null
+        }
+      }
+    },
+    {
+      "at": "2026-09-25T12:25:34.627Z",
+      "label": "flow-3",
+      "ok": true,
+      "uptimeMin": 10,
+      "buildId": "3.9.6-146f7eabad8e7353276d",
+      "productionWrites": 0,
+      "fundingTotal": 8132.192812430032,
+      "sumCheck": true,
+      "sideStatus": "LONG_ONLY_EXECUTABLE",
+      "shortCause": "SIDE_PLAN_REJECT_EXPOSURE_LIMIT",
+      "routed": 1,
+      "envelopes": 1,
+      "envelopeAuth": [
+        "?:1790339080580:EXECUTABLE/NOT_EXECUTABLE:SIDE_PLAN_REJECT_EXPOSURE_LIMIT"
+      ],
+      "events": {
+        "ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED": 4,
+        "ENTRY_ORDER_NO_ACTIVE_RISK_PROOF_RETAINED": 0,
+        "ENTRY_RESERVATION_CREATED": 0,
+        "ENTRY_INTENT_CREATED": 0,
+        "ORDER_SUBMISSION_ACCEPTED": 0,
+        "ENTRY_FILL_RECORDED": 0,
+        "AI_RUN_TERMINAL": 0,
+        "ANALYSIS_DISPATCH_INTENT": 1,
+        "PRE_AI_TRADE_PLAN_FEASIBILITY": 1,
+        "PRE_AI_NO_EXECUTABLE_CAPACITY": 0
+      },
+      "blockedReasons": {},
+      "violations": [],
+      "conversion": {
+        "generatedAt": 1790339134549,
+        "thirtyMinutes": {
+          "since": 1790337334549,
+          "until": 1790339134549,
+          "primaryCompleted": 12,
+          "place": 12,
+          "riskAllowed": 0,
+          "economicAdmissionPassed": 0,
+          "tradePlanReady": 0,
+          "reservationCreated": 0,
+          "intentCreated": 0,
+          "submitAttempted": 0,
+          "orderSubmitted": 0,
+          "entryFilled": 0,
+          "waitingPrice": 0,
+          "blocked": [
+            {
+              "stage": "PORTFOLIO_RISK",
+              "reason": "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+              "count": 7
+            }
+          ],
+          "ratios": {
+            "placeToTradePlan": 0,
+            "tradePlanToSubmit": null,
+            "placeToSubmit": 0,
+            "submitToFill": null
+          },
+          "topDropStage": "PORTFOLIO_RISK",
+          "topDropReason": "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+          "topDropCount": 7,
+          "degraded": false,
+          "degradedReason": null
+        },
+        "oneHour": {
+          "since": 1790335534549,
+          "until": 1790339134549,
+          "primaryCompleted": 30,
+          "place": 30,
+          "riskAllowed": 0,
+          "economicAdmissionPassed": 0,
+          "tradePlanReady": 0,
+          "reservationCreated": 0,
+          "intentCreated": 0,
+          "submitAttempted": 0,
+          "orderSubmitted": 0,
+          "entryFilled": 0,
+          "waitingPrice": 0,
+          "blocked": [
+            {
+              "stage": "PORTFOLIO_RISK",
+              "reason": "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+              "count": 16
+            }
+          ],
+          "ratios": {
+            "placeToTradePlan": 0,
+            "tradePlanToSubmit": null,
+            "placeToSubmit": 0,
+            "submitToFill": null
+          },
+          "topDropStage": "PORTFOLIO_RISK",
+          "topDropReason": "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+          "topDropCount": 16,
+          "degraded": false,
+          "degradedReason": null
+        }
+      }
+    },
+    {
+      "at": "2026-09-25T12:28:34.852Z",
+      "label": "flow-4",
+      "ok": true,
+      "uptimeMin": 13,
+      "buildId": "3.9.6-146f7eabad8e7353276d",
+      "productionWrites": 0,
+      "fundingTotal": 8576.42215496,
+      "sumCheck": true,
+      "sideStatus": "LONG_ONLY_EXECUTABLE",
+      "shortCause": "SIDE_PLAN_REJECT_EXPOSURE_LIMIT",
+      "routed": 1,
+      "envelopes": 2,
+      "envelopeAuth": [
+        "?:1790339210085:EXECUTABLE/NOT_EXECUTABLE:SIDE_PLAN_REJECT_EXPOSURE_LIMIT",
+        "?:1790339080580:EXECUTABLE/NOT_EXECUTABLE:SIDE_PLAN_REJECT_EXPOSURE_LIMIT"
+      ],
+      "events": {
+        "ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED": 4,
+        "ENTRY_ORDER_NO_ACTIVE_RISK_PROOF_RETAINED": 0,
+        "ENTRY_RESERVATION_CREATED": 0,
+        "ENTRY_INTENT_CREATED": 0,
+        "ORDER_SUBMISSION_ACCEPTED": 0,
+        "ENTRY_FILL_RECORDED": 0,
+        "AI_RUN_TERMINAL": 2,
+        "ANALYSIS_DISPATCH_INTENT": 2,
+        "PRE_AI_TRADE_PLAN_FEASIBILITY": 2,
+        "PRE_AI_NO_EXECUTABLE_CAPACITY": 0
+      },
+      "blockedReasons": {},
+      "violations": [],
+      "conversion": {
+        "generatedAt": 1790339314767,
+        "thirtyMinutes": {
+          "since": 1790337514767,
+          "until": 1790339314767,
+          "primaryCompleted": 13,
+          "place": 13,
+          "riskAllowed": 0,
+          "economicAdmissionPassed": 0,
+          "tradePlanReady": 0,
+          "reservationCreated": 0,
+          "intentCreated": 0,
+          "submitAttempted": 0,
+          "orderSubmitted": 0,
+          "entryFilled": 0,
+          "waitingPrice": 0,
+          "blocked": [
+            {
+              "stage": "PORTFOLIO_RISK",
+              "reason": "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+              "count": 7
+            }
+          ],
+          "ratios": {
+            "placeToTradePlan": 0,
+            "tradePlanToSubmit": null,
+            "placeToSubmit": 0,
+            "submitToFill": null
+          },
+          "topDropStage": "PORTFOLIO_RISK",
+          "topDropReason": "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+          "topDropCount": 7,
+          "degraded": false,
+          "degradedReason": null
+        },
+        "oneHour": {
+          "since": 1790335714767,
+          "until": 1790339314767,
+          "primaryCompleted": 29,
+          "place": 29,
+          "riskAllowed": 0,
+          "economicAdmissionPassed": 0,
+          "tradePlanReady": 0,
+          "reservationCreated": 0,
+          "intentCreated": 0,
+          "submitAttempted": 0,
+          "orderSubmitted": 0,
+          "entryFilled": 0,
+          "waitingPrice": 0,
+          "blocked": [
+            {
+              "stage": "PORTFOLIO_RISK",
+              "reason": "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+              "count": 14
+            }
+          ],
+          "ratios": {
+            "placeToTradePlan": 0,
+            "tradePlanToSubmit": null,
+            "placeToSubmit": 0,
+            "submitToFill": null
+          },
+          "topDropStage": "PORTFOLIO_RISK",
+          "topDropReason": "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+          "topDropCount": 14,
+          "degraded": false,
+          "degradedReason": null
+        }
+      }
+    },
+    {
+      "at": "2026-09-25T12:31:35.168Z",
+      "label": "flow-5",
+      "ok": true,
+      "uptimeMin": 16,
+      "buildId": "3.9.6-146f7eabad8e7353276d",
+      "productionWrites": 0,
+      "fundingTotal": 8119.174262971502,
+      "sumCheck": true,
+      "sideStatus": "LONG_ONLY_EXECUTABLE",
+      "shortCause": "SIDE_PLAN_REJECT_EXPOSURE_LIMIT",
+      "routed": 2,
+      "envelopes": 3,
+      "envelopeAuth": [
+        "?:1790339429952:EXECUTABLE/NOT_EXECUTABLE:SIDE_PLAN_REJECT_EXPOSURE_LIMIT",
+        "?:1790339210085:EXECUTABLE/NOT_EXECUTABLE:SIDE_PLAN_REJECT_EXPOSURE_LIMIT",
+        "?:1790339080580:EXECUTABLE/NOT_EXECUTABLE:SIDE_PLAN_REJECT_EXPOSURE_LIMIT"
+      ],
+      "events": {
+        "ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED": 4,
+        "ENTRY_ORDER_NO_ACTIVE_RISK_PROOF_RETAINED": 0,
+        "ENTRY_RESERVATION_CREATED": 0,
+        "ENTRY_INTENT_CREATED": 0,
+        "ORDER_SUBMISSION_ACCEPTED": 0,
+        "ENTRY_FILL_RECORDED": 0,
+        "AI_RUN_TERMINAL": 2,
+        "ANALYSIS_DISPATCH_INTENT": 3,
+        "PRE_AI_TRADE_PLAN_FEASIBILITY": 3,
+        "PRE_AI_NO_EXECUTABLE_CAPACITY": 0
+      },
+      "blockedReasons": {},
+      "violations": [],
+      "conversion": {
+        "generatedAt": 1790339495065,
+        "thirtyMinutes": {
+          "since": 1790337695065,
+          "until": 1790339495065,
+          "primaryCompleted": 12,
+          "place": 12,
+          "riskAllowed": 0,
+          "economicAdmissionPassed": 0,
+          "tradePlanReady": 0,
+          "reservationCreated": 0,
+          "intentCreated": 0,
+          "submitAttempted": 0,
+          "orderSubmitted": 0,
+          "entryFilled": 0,
+          "waitingPrice": 0,
+          "blocked": [
+            {
+              "stage": "PORTFOLIO_RISK",
+              "reason": "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+              "count": 6
+            }
+          ],
+          "ratios": {
+            "placeToTradePlan": 0,
+            "tradePlanToSubmit": null,
+            "placeToSubmit": 0,
+            "submitToFill": null
+          },
+          "topDropStage": "PORTFOLIO_RISK",
+          "topDropReason": "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+          "topDropCount": 6,
+          "degraded": false,
+          "degradedReason": null
+        },
+        "oneHour": {
+          "since": 1790335895065,
+          "until": 1790339495065,
+          "primaryCompleted": 27,
+          "place": 27,
+          "riskAllowed": 0,
+          "economicAdmissionPassed": 0,
+          "tradePlanReady": 0,
+          "reservationCreated": 0,
+          "intentCreated": 0,
+          "submitAttempted": 0,
+          "orderSubmitted": 0,
+          "entryFilled": 0,
+          "waitingPrice": 0,
+          "blocked": [
+            {
+              "stage": "PORTFOLIO_RISK",
+              "reason": "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+              "count": 13
+            }
+          ],
+          "ratios": {
+            "placeToTradePlan": 0,
+            "tradePlanToSubmit": null,
+            "placeToSubmit": 0,
+            "submitToFill": null
+          },
+          "topDropStage": "PORTFOLIO_RISK",
+          "topDropReason": "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+          "topDropCount": 13,
+          "degraded": false,
+          "degradedReason": null
+        }
+      }
+    },
+    {
+      "at": "2026-09-25T12:34:35.541Z",
+      "label": "flow-6",
+      "ok": true,
+      "uptimeMin": 19,
+      "buildId": "3.9.6-146f7eabad8e7353276d",
+      "productionWrites": 0,
+      "fundingTotal": 8097.923878882754,
+      "sumCheck": true,
+      "sideStatus": "LONG_ONLY_EXECUTABLE",
+      "shortCause": "SIDE_PLAN_REJECT_EXPOSURE_LIMIT",
+      "routed": 4,
+      "envelopes": 6,
+      "envelopeAuth": [
+        "?:1790339641378:EXECUTABLE/NOT_EXECUTABLE:SIDE_PLAN_REJECT_EXPOSURE_LIMIT",
+        "?:1790339569338:EXECUTABLE/NOT_EXECUTABLE:SIDE_PLAN_REJECT_EXPOSURE_LIMIT",
+        "?:1790339498712:EXECUTABLE/NOT_EXECUTABLE:SIDE_PLAN_REJECT_EXPOSURE_LIMIT"
+      ],
+      "events": {
+        "ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED": 7,
+        "ENTRY_ORDER_NO_ACTIVE_RISK_PROOF_RETAINED": 0,
+        "ENTRY_RESERVATION_CREATED": 0,
+        "ENTRY_INTENT_CREATED": 0,
+        "ORDER_SUBMISSION_ACCEPTED": 0,
+        "ENTRY_FILL_RECORDED": 0,
+        "AI_RUN_TERMINAL": 5,
+        "ANALYSIS_DISPATCH_INTENT": 6,
+        "PRE_AI_TRADE_PLAN_FEASIBILITY": 6,
+        "PRE_AI_NO_EXECUTABLE_CAPACITY": 0
+      },
+      "blockedReasons": {
+        "HUMAN_POTENTIAL_NOTIONAL_LIMIT": 1
+      },
+      "violations": [],
+      "conversion": {
+        "generatedAt": 1790339675301,
+        "thirtyMinutes": {
+          "since": 1790337875301,
+          "until": 1790339675301,
+          "primaryCompleted": 13,
+          "place": 13,
+          "riskAllowed": 0,
+          "economicAdmissionPassed": 0,
+          "tradePlanReady": 0,
+          "reservationCreated": 0,
+          "intentCreated": 0,
+          "submitAttempted": 0,
+          "orderSubmitted": 0,
+          "entryFilled": 0,
+          "waitingPrice": 0,
+          "blocked": [
+            {
+              "stage": "PORTFOLIO_RISK",
+              "reason": "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+              "count": 5
+            }
+          ],
+          "ratios": {
+            "placeToTradePlan": 0,
+            "tradePlanToSubmit": null,
+            "placeToSubmit": 0,
+            "submitToFill": null
+          },
+          "topDropStage": "PORTFOLIO_RISK",
+          "topDropReason": "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+          "topDropCount": 5,
+          "degraded": false,
+          "degradedReason": null
+        },
+        "oneHour": {
+          "since": 1790336075301,
+          "until": 1790339675301,
+          "primaryCompleted": 27,
+          "place": 27,
+          "riskAllowed": 0,
+          "economicAdmissionPassed": 0,
+          "tradePlanReady": 0,
+          "reservationCreated": 0,
+          "intentCreated": 0,
+          "submitAttempted": 0,
+          "orderSubmitted": 0,
+          "entryFilled": 0,
+          "waitingPrice": 0,
+          "blocked": [
+            {
+              "stage": "PORTFOLIO_RISK",
+              "reason": "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+              "count": 13
+            }
+          ],
+          "ratios": {
+            "placeToTradePlan": 0,
+            "tradePlanToSubmit": null,
+            "placeToSubmit": 0,
+            "submitToFill": null
+          },
+          "topDropStage": "PORTFOLIO_RISK",
+          "topDropReason": "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+          "topDropCount": 13,
+          "degraded": false,
+          "degradedReason": null
+        }
+      }
+    },
+    {
+      "at": "2026-09-25T12:37:35.730Z",
+      "label": "flow-7",
+      "ok": true,
+      "uptimeMin": 22,
+      "buildId": "3.9.6-146f7eabad8e7353276d",
+      "productionWrites": 0,
+      "fundingTotal": 8093.016750489107,
+      "sumCheck": true,
+      "sideStatus": "LONG_ONLY_EXECUTABLE",
+      "shortCause": "SIDE_PLAN_REJECT_EXPOSURE_LIMIT",
+      "routed": 5,
+      "envelopes": 8,
+      "envelopeAuth": [
+        "?:1790339800833:EXECUTABLE/NOT_EXECUTABLE:SIDE_PLAN_REJECT_EXPOSURE_LIMIT",
+        "?:1790339727885:EXECUTABLE/NOT_EXECUTABLE:SIDE_PLAN_REJECT_EXPOSURE_LIMIT",
+        "?:1790339641378:EXECUTABLE/NOT_EXECUTABLE:SIDE_PLAN_REJECT_EXPOSURE_LIMIT"
+      ],
+      "events": {
+        "ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED": 9,
+        "ENTRY_ORDER_NO_ACTIVE_RISK_PROOF_RETAINED": 0,
+        "ENTRY_RESERVATION_CREATED": 0,
+        "ENTRY_INTENT_CREATED": 0,
+        "ORDER_SUBMISSION_ACCEPTED": 0,
+        "ENTRY_FILL_RECORDED": 0,
+        "AI_RUN_TERMINAL": 7,
+        "ANALYSIS_DISPATCH_INTENT": 8,
+        "PRE_AI_TRADE_PLAN_FEASIBILITY": 8,
+        "PRE_AI_NO_EXECUTABLE_CAPACITY": 0
+      },
+      "blockedReasons": {
+        "ACCOUNT_ASSET_UNVERIFIED:BTC": 1,
+        "HUMAN_POTENTIAL_NOTIONAL_LIMIT": 1
+      },
+      "violations": [],
+      "conversion": {
+        "generatedAt": 1790339855654,
+        "thirtyMinutes": {
+          "since": 1790338055654,
+          "until": 1790339855654,
+          "primaryCompleted": 12,
+          "place": 12,
+          "riskAllowed": 0,
+          "economicAdmissionPassed": 0,
+          "tradePlanReady": 0,
+          "reservationCreated": 0,
+          "intentCreated": 0,
+          "submitAttempted": 0,
+          "orderSubmitted": 0,
+          "entryFilled": 0,
+          "waitingPrice": 0,
+          "blocked": [
+            {
+              "stage": "PORTFOLIO_RISK",
+              "reason": "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+              "count": 4
+            },
+            {
+              "stage": "PORTFOLIO_RISK",
+              "reason": "ACCOUNT_ASSET_UNVERIFIED:BTC",
+              "count": 1
+            }
+          ],
+          "ratios": {
+            "placeToTradePlan": 0,
+            "tradePlanToSubmit": null,
+            "placeToSubmit": 0,
+            "submitToFill": null
+          },
+          "topDropStage": "PORTFOLIO_RISK",
+          "topDropReason": "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+          "topDropCount": 4,
+          "degraded": false,
+          "degradedReason": null
+        },
+        "oneHour": {
+          "since": 1790336255654,
+          "until": 1790339855654,
+          "primaryCompleted": 26,
+          "place": 26,
+          "riskAllowed": 0,
+          "economicAdmissionPassed": 0,
+          "tradePlanReady": 0,
+          "reservationCreated": 0,
+          "intentCreated": 0,
+          "submitAttempted": 0,
+          "orderSubmitted": 0,
+          "entryFilled": 0,
+          "waitingPrice": 0,
+          "blocked": [
+            {
+              "stage": "PORTFOLIO_RISK",
+              "reason": "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+              "count": 11
+            },
+            {
+              "stage": "PORTFOLIO_RISK",
+              "reason": "ACCOUNT_ASSET_UNVERIFIED:BTC",
+              "count": 1
+            }
+          ],
+          "ratios": {
+            "placeToTradePlan": 0,
+            "tradePlanToSubmit": null,
+            "placeToSubmit": 0,
+            "submitToFill": null
+          },
+          "topDropStage": "PORTFOLIO_RISK",
+          "topDropReason": "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+          "topDropCount": 11,
+          "degraded": false,
+          "degradedReason": null
+        }
+      }
+    }
+  ]
+}

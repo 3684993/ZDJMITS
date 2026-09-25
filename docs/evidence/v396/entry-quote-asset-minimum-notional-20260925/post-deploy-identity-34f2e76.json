@@ -1,0 +1,26 @@
+{
+  "capturedAt": "2026-09-25T12:16:55.121Z",
+  "head": "34f2e76",
+  "previousBuild": {
+    "buildId": "3.9.6-5f49941cb62fe9cd67fc",
+    "pid": 23404
+  },
+  "identity": {
+    "pid": 28628,
+    "buildId": "3.9.6-146f7eabad8e7353276d",
+    "instanceId": "ca211970-015d-44e3-9181-68d4cef3f257",
+    "restartCount": 187,
+    "lastRestartReason": "MANUAL_START"
+  },
+  "productionWriteBoundary": {
+    "environment": "TESTNET",
+    "executionMode": "TESTNET_ENABLED",
+    "lockedToTestnet": true,
+    "testnetWrites": 0,
+    "productionWrites": 0,
+    "blockedProductionWriteAttempts": 0,
+    "lastWriteAt": null,
+    "lastWritePath": null
+  },
+  "sourceProvenance": null
+}

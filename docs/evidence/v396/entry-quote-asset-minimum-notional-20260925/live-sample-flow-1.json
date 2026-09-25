@@ -1,0 +1,400 @@
+{
+  "label": "flow-1",
+  "capturedAt": "2026-09-25T12:19:33.219Z",
+  "uptimeMs": 247403,
+  "identity": {
+    "pid": 28628,
+    "buildId": "3.9.6-146f7eabad8e7353276d",
+    "instanceId": "ca211970-015d-44e3-9181-68d4cef3f257",
+    "restartCount": 187,
+    "lastRestartReason": "MANUAL_START",
+    "lastRestartAt": 1790338526779
+  },
+  "permission": {
+    "settingsVersion": 217,
+    "environment": "TESTNET",
+    "executionMode": "TESTNET_ENABLED",
+    "entrySafetyMode": "AUTO",
+    "aiExitAuthority": "SHADOW",
+    "productionWrites": 0,
+    "blockedProductionWriteAttempts": 0,
+    "executionReadiness": {
+      "intent": true,
+      "ready": true,
+      "modelSpendPermitted": true,
+      "blockers": [],
+      "firstBlocker": null,
+      "profileStatus": "READY",
+      "privateFresh": true,
+      "writeLocked": false,
+      "executableCandidateCount": 1,
+      "mode": "EXECUTION_READY",
+      "text": "执行事实齐备：PLACE 可进入 reservation → intent → order submit 链"
+    },
+    "portfolioRiskStatus": "READY"
+  },
+  "entryFunding": {
+    "ledger": [
+      {
+        "quoteAsset": "USDT",
+        "entryFundingEligible": true,
+        "availableBalanceUsd": 3686.25923966,
+        "walletBalanceUsd": 5473.8652037,
+        "reservedMarginUsd": 0,
+        "executionLeaseMarginUsd": 0,
+        "executableMarginUsd": 3686.25923966,
+        "factsComplete": true,
+        "reasons": []
+      },
+      {
+        "quoteAsset": "USDC",
+        "entryFundingEligible": true,
+        "availableBalanceUsd": 4970.90336281,
+        "walletBalanceUsd": 4982.23127794,
+        "reservedMarginUsd": 0,
+        "executionLeaseMarginUsd": 0,
+        "executableMarginUsd": 4970.90336281,
+        "factsComplete": true,
+        "reasons": []
+      }
+    ],
+    "totalExecutableMarginUsd": 8657.16260247,
+    "proven": true,
+    "excludedAssets": [
+      {
+        "asset": "BTC",
+        "usdValue": 840.11,
+        "reason": "NOT_IN_ENTRY_FUNDING_UNIVERSE"
+      }
+    ],
+    "accountEquityUsd": 10564.475463159999,
+    "accountAssets": [
+      {
+        "asset": "BTC",
+        "availableBalance": 0.01,
+        "usdValue": 840.11,
+        "marginEligible": true
+      },
+      {
+        "asset": "USDT",
+        "availableBalance": 3686.25923966,
+        "usdValue": 5473.8652037,
+        "marginEligible": true
+      },
+      {
+        "asset": "USDC",
+        "availableBalance": 4970.90336281,
+        "usdValue": 4982.23127794,
+        "marginEligible": true
+      }
+    ],
+    "sumCheck": true
+  },
+  "capacity": {
+    "policy": {
+      "gross": "OBSERVE",
+      "direction": "OBSERVE",
+      "cluster": "ENFORCE"
+    },
+    "exposure": {
+      "gross": {
+        "notionalUsd": 11030.283104299475,
+        "limitUsd": 10564.475463159999,
+        "remainingUsd": 0,
+        "usedPct": 1.0440918853722383,
+        "mode": "OBSERVE",
+        "enforced": false
+      },
+      "LONG": {
+        "notionalUsd": 3670.960361505155,
+        "limitUsd": 10564.475463159999,
+        "remainingUsd": 6893.515101654844,
+        "usedPct": 0.3474815549817287,
+        "mode": "OBSERVE",
+        "enforced": false
+      },
+      "SHORT": {
+        "notionalUsd": 7359.322742794321,
+        "limitUsd": 10564.475463159999,
+        "remainingUsd": 3205.152720365678,
+        "usedPct": 0.6966103303905098,
+        "mode": "OBSERVE",
+        "enforced": false
+      }
+    },
+    "limits": {
+      "slots": {
+        "used": 24,
+        "max": 50,
+        "positions": 24,
+        "inFlight": 0,
+        "reserved": 0
+      },
+      "policy": {
+        "gross": "OBSERVE",
+        "direction": "OBSERVE",
+        "cluster": "ENFORCE"
+      }
+    },
+    "sideStatus": {
+      "code": "LONG_ONLY_EXECUTABLE",
+      "text": "LONG executable / SHORT blocked"
+    },
+    "entryCapacitySummary": {
+      "LONG": {
+        "executableNotionalUsd": 192.68387014634405,
+        "quoteAsset": "USDT",
+        "symbol": "SOLUSDT",
+        "firstBindingConstraint": "PLANNED_NOTIONAL",
+        "executableRoutes": 1,
+        "minimumLegalNotionalUsd": 5
+      },
+      "SHORT": {
+        "executableNotionalUsd": 0,
+        "quoteAsset": null,
+        "symbol": null,
+        "firstBindingConstraint": "SIDE_PLAN_REJECT_EXPOSURE_LIMIT",
+        "executableRoutes": 0,
+        "minimumLegalNotionalUsd": null
+      }
+    },
+    "candidateCount": 2,
+    "traces": {
+      "LONG": [
+        {
+          "symbol": "SOLUSDT",
+          "side": "LONG",
+          "quoteAsset": "USDT",
+          "entryFundingEligible": true,
+          "leverage": 8,
+          "leverageFact": "CANDIDATE_RECOMMENDED",
+          "executable": true,
+          "blockers": [],
+          "firstBindingConstraint": "PLANNED_NOTIONAL",
+          "actualUsd": 192.68387014634405,
+          "requiredUsd": null,
+          "explanation": "SOLUSDT LONG：SOLUSDT LONG 可执行",
+          "funding": {
+            "availableBalanceUsd": 3686.25923966,
+            "reservedMarginUsd": 0,
+            "executionLeaseMarginUsd": 0,
+            "executableMarginUsd": 3686.25923966,
+            "policyMarginCapUsd": 500,
+            "executableNotionalUsd": 3980,
+            "bindingConstraint": "MARGIN_POLICY_CAP"
+          },
+          "risk": {
+            "grossRemainingUsd": 0,
+            "grossMode": "OBSERVE",
+            "directionRemainingUsd": 6893.515101654844,
+            "clusterRemainingUsd": 3697.5664121059995,
+            "perTradeRiskRemainingUsd": 13118.981038549784,
+            "portfolioRiskAllowed": true
+          },
+          "plan": {
+            "present": true,
+            "admission": "ALLOW_REDUCED_SIZE",
+            "reasons": [
+              "EXPOSURE_REDUCED_SIZE"
+            ],
+            "recommendedNotionalUsd": 192.68387014634405,
+            "minExecutableMarginUsd": 1,
+            "capacityRoom": {
+              "source": "QUOTE_ASSET_MARGIN",
+              "ceilingUsd": 2949.007391728,
+              "usedUsd": 1057.4818226382438,
+              "roomUsd": 1891.5255690897563,
+              "limitPct": 0.8,
+              "usedPct": 0.2868712572520483,
+              "equityUsd": 11296.20648164
+            }
+          },
+          "exchangeFilters": {
+            "tickSize": 0.01,
+            "stepSize": 0.01,
+            "minQty": 0.01,
+            "minNotional": 5,
+            "factsComplete": true,
+            "reasons": []
+          },
+          "minimumLegalNotionalUsd": 5,
+          "plannedNotionalUsd": 192.68387014634405,
+          "finalNotionalBeforeRoundingUsd": 192.68387014634405,
+          "rounded": {
+            "quantityUnits": 162,
+            "legalNotionalUsd": 192.45600000000002,
+            "stepSize": 0.01,
+            "minQty": 0.01
+          }
+        }
+      ],
+      "SHORT": [
+        {
+          "symbol": "SOLUSDT",
+          "side": "SHORT",
+          "quoteAsset": "USDT",
+          "entryFundingEligible": true,
+          "leverage": 8,
+          "leverageFact": "CANDIDATE_RECOMMENDED",
+          "executable": false,
+          "blockers": [
+            "BELOW_MINIMUM_NOTIONAL"
+          ],
+          "firstBindingConstraint": "SIDE_PLAN_REJECT_EXPOSURE_LIMIT",
+          "actualUsd": 0,
+          "requiredUsd": 5,
+          "explanation": "SOLUSDT SHORT：SOLUSDT 的 SHORT 侧被 sizing 以 REJECT_EXPOSURE_LIMIT 拒绝：SHORT_EXPOSURE 上限 5648.10 已用 7359.32，剩余 0.00；计划名义被容量压成 0，不是交易所最小名义问题",
+          "funding": {
+            "availableBalanceUsd": 3686.25923966,
+            "reservedMarginUsd": 0,
+            "executionLeaseMarginUsd": 0,
+            "executableMarginUsd": 3686.25923966,
+            "policyMarginCapUsd": 500,
+            "executableNotionalUsd": 3980,
+            "bindingConstraint": "MARGIN_POLICY_CAP"
+          },
+          "risk": {
+            "grossRemainingUsd": 0,
+            "grossMode": "OBSERVE",
+            "directionRemainingUsd": 3205.152720365678,
+            "clusterRemainingUsd": 3697.5664121059995,
+            "perTradeRiskRemainingUsd": 13118.981038549784,
+            "portfolioRiskAllowed": true
+          },
+          "plan": {
+            "present": true,
+            "admission": "REJECT_EXPOSURE_LIMIT",
+            "reasons": [
+              "REJECT_EXPOSURE_LIMIT"
+            ],
+            "recommendedNotionalUsd": 0,
+            "minExecutableMarginUsd": 1,
+            "capacityRoom": {
+              "source": "SHORT_EXPOSURE",
+              "ceilingUsd": 5648.10324082,
+              "usedUsd": 7359.322742794321,
+              "roomUsd": 0,
+              "limitPct": 0.5,
+              "usedPct": 0.6514862095302177,
+              "equityUsd": 11296.20648164
+            }
+          },
+          "exchangeFilters": {
+            "tickSize": 0.01,
+            "stepSize": 0.01,
+            "minQty": 0.01,
+            "minNotional": 5,
+            "factsComplete": true,
+            "reasons": []
+          },
+          "minimumLegalNotionalUsd": 5,
+          "plannedNotionalUsd": 0,
+          "finalNotionalBeforeRoundingUsd": 0,
+          "rounded": {
+            "quantityUnits": 0,
+            "legalNotionalUsd": 0,
+            "stepSize": 0.01,
+            "minQty": 0.01
+          }
+        }
+      ]
+    },
+    "executableCandidateCount": 1,
+    "routedCount": 1
+  },
+  "envelopeFacts": {
+    "events": 0,
+    "latest": []
+  },
+  "blockedSinceRestart": {
+    "total": 0,
+    "pendingRiskUnverified": 0,
+    "violations": [],
+    "reasons": {}
+  },
+  "unknownRisk": {
+    "durableUnknown": 47,
+    "occupyingPendingRisk": 0
+  },
+  "eventsSinceRestart": {
+    "ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED": 0,
+    "ENTRY_ORDER_NO_ACTIVE_RISK_PROOF_RETAINED": 0,
+    "ENTRY_RESERVATION_CREATED": 0,
+    "ENTRY_INTENT_CREATED": 0,
+    "ORDER_SUBMISSION_ACCEPTED": 0,
+    "ENTRY_FILL_RECORDED": 0,
+    "AI_RUN_TERMINAL": 0,
+    "ANALYSIS_DISPATCH_INTENT": 0,
+    "PRE_AI_TRADE_PLAN_FEASIBILITY": 0,
+    "PRE_AI_NO_EXECUTABLE_CAPACITY": 0
+  },
+  "conversion": {
+    "generatedAt": 1790338773173,
+    "thirtyMinutes": {
+      "since": 1790336973173,
+      "until": 1790338773173,
+      "primaryCompleted": 12,
+      "place": 12,
+      "riskAllowed": 0,
+      "economicAdmissionPassed": 0,
+      "tradePlanReady": 0,
+      "reservationCreated": 0,
+      "intentCreated": 0,
+      "submitAttempted": 0,
+      "orderSubmitted": 0,
+      "entryFilled": 0,
+      "waitingPrice": 0,
+      "blocked": [
+        {
+          "stage": "PORTFOLIO_RISK",
+          "reason": "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+          "count": 7
+        }
+      ],
+      "ratios": {
+        "placeToTradePlan": 0,
+        "tradePlanToSubmit": null,
+        "placeToSubmit": 0,
+        "submitToFill": null
+      },
+      "topDropStage": "PORTFOLIO_RISK",
+      "topDropReason": "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+      "topDropCount": 7,
+      "degraded": false,
+      "degradedReason": null
+    },
+    "oneHour": {
+      "since": 1790335173173,
+      "until": 1790338773173,
+      "primaryCompleted": 35,
+      "place": 35,
+      "riskAllowed": 0,
+      "economicAdmissionPassed": 0,
+      "tradePlanReady": 0,
+      "reservationCreated": 0,
+      "intentCreated": 0,
+      "submitAttempted": 0,
+      "orderSubmitted": 0,
+      "entryFilled": 0,
+      "waitingPrice": 0,
+      "blocked": [
+        {
+          "stage": "PORTFOLIO_RISK",
+          "reason": "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+          "count": 20
+        }
+      ],
+      "ratios": {
+        "placeToTradePlan": 0,
+        "tradePlanToSubmit": null,
+        "placeToSubmit": 0,
+        "submitToFill": null
+      },
+      "topDropStage": "PORTFOLIO_RISK",
+      "topDropReason": "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+      "topDropCount": 20,
+      "degraded": false,
+      "degradedReason": null
+    }
+  }
+}

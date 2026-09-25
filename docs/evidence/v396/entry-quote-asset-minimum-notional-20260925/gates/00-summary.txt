@@ -1,0 +1,11 @@
+# §G 门禁汇总（2026-09-25，HEAD 见 git rev-parse）
+- verify:deps: exit 0（contracts+core 构建）
+- contracts 测试: 0 个测试文件（npm test -w @zdj/contracts 用 --passWithNoTests 退出 0；本轮未声称任何 coverage）
+- core 测试: 8 files / 53 tests passed
+- engine 测试: 170 files / 1362 tests passed
+- dashboard 测试: 14 files / 58 tests passed
+- typecheck（全仓 -ws）: exit 0
+- verify:scripts: exit 0
+- S00 静态门禁: exit 0，blockers=[]，entrypointReviewCount=123（本轮新增 3 个只读采样脚本已逐项复核），isolation={"testFiles":170,"openingAStore":16,"everyStoreOpeningTestIsolated":true,"repositoryDataDirReferences":0,"productionPortReferences":0}
+- storage coverage: exit 0 → STORAGE_COVERAGE_WRITTEN docs\evidence\v396\final-convergence-20260922\J5\storage-coverage.json gate=S08_STORAGE_COVERAGE_PASS
+- git diff --check: exit 0（无输出）

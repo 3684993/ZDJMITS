@@ -97,6 +97,16 @@ function horizonLadder(settings:any,targetHorizons:number[]|undefined){
   return [...new Set(picked.length?picked:allowed.slice(0,3))].slice(0,3);
 }
 
+/**
+ * The horizons a plan can actually be written for. This is exported so the pre-AI envelope can publish
+ * the same set the plan layer will enforce: the model was being invited to choose any horizon from 5 to
+ * 1440 minutes and then refused for `CANDIDATE_HORIZON_UNSUPPORTED`, which is a self-inflicted loss of
+ * conversions, not a risk decision.
+ */
+export function legalTargetHorizonMinutes(settings:any,targetHorizons?:number[]):number[]{
+  return horizonLadder(settings,targetHorizons??settings?.tradeEconomics?.standardTpHorizons);
+}
+
 export function buildQuantityHorizonCandidates(input:{
   symbol:string;
   side:'LONG'|'SHORT';

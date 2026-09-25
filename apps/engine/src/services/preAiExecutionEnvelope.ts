@@ -6,6 +6,7 @@ import { activeExecutionLeaseMargin } from './executionLease.js';
 import { privateAccountFresh } from './privateAccountReadiness.js';
 import type { HistoricalTpReachabilityEnvelope } from './historicalTpReachability.js';
 import { humanManagedExposure } from './economicEntryFeasibility.js';
+import { legalTargetHorizonMinutes } from './quantityHorizonCandidates.js';
 
 export type ExecutionEnvelopeSide = 'LONG' | 'SHORT';
 export interface SideExecutionCapacity {
@@ -30,7 +31,7 @@ export interface PreAiExecutionEnvelope {
   makerReachableBand:{min:number;max:number};
   recentTradedPrices:Array<{price:number;lastSeenAt:number}>;
   fees:{makerFeeBps:number;takerFeeBps:number;roundTripCostBps:number;safetyMarginBps:number};
-  economics?:{version:'V3.9.5';minNetProfitUsd:number;minNetProfitRoiPct:number;admissionMode:'OFF'|'SHADOW'|'ENFORCE';historicalTpReachabilityEnabled:boolean;minHistoricalReachProbability:number;reachabilityLookbackBars:number;reachabilityMinSamples:number;humanManagedExposure:{positions:number;notionalUsd:number;maxPositions:number;maxNotionalUsd:number;withinLimits:boolean}};
+  economics?:{version:'V3.9.5';minNetProfitUsd:number;minNetProfitRoiPct:number;admissionMode:'OFF'|'SHADOW'|'ENFORCE';historicalTpReachabilityEnabled:boolean;minHistoricalReachProbability:number;reachabilityLookbackBars:number;reachabilityMinSamples:number;targetHorizonMinutes:number[];humanManagedExposure:{positions:number;notionalUsd:number;maxPositions:number;maxNotionalUsd:number;withinLimits:boolean}};
   reachability?:HistoricalTpReachabilityEnvelope;
   LONG:SideExecutionCapacity;
   SHORT:SideExecutionCapacity;
@@ -59,6 +60,6 @@ export function buildPreAiExecutionEnvelope(state:RuntimeState,symbol:string,now
   const LONG=sideCapacity('LONG'),SHORT=sideCapacity('SHORT'),atr1=Math.max(Number(market.technical['1m'].atr14??0),q.tickSize),bandMin=Math.max(q.tickSize,q.last-atr1*.8),bandMax=q.last+atr1*.8;
   for(const side of [LONG,SHORT])side.maxQuantityUnits=Math.min(side.maxQuantityUnits,roundDownUnits(side.maxNotionalUsd/Math.max(bandMax,q.ask,q.last),q.stepSize));
   const makerFeeBps=state.settings.takeProfit.makerFeeRate*10_000,takerFeeBps=state.settings.takeProfit.takerFeeRate*10_000,safetyMarginBps=(makerFeeBps+(state.settings.takeProfit.exitFeeAssumption==='TAKER'?takerFeeBps:makerFeeBps))*state.settings.takeProfit.feeSafetyBufferPct/100;
-  const economics={version:'V3.9.5' as const,minNetProfitUsd:state.settings.takeProfit.minNetProfitUsd,minNetProfitRoiPct:state.settings.takeProfit.minNetProfitRoiPct,admissionMode:state.settings.tradeEconomics.admissionMode,historicalTpReachabilityEnabled:state.settings.tradeEconomics.historicalTpReachabilityEnabled,minHistoricalReachProbability:state.settings.tradeEconomics.minHistoricalReachProbability,reachabilityLookbackBars:state.settings.tradeEconomics.reachabilityLookbackBars,reachabilityMinSamples:state.settings.tradeEconomics.reachabilityMinSamples,humanManagedExposure:{positions:human.positions,notionalUsd:human.notionalUsd,maxPositions:human.maxPositions,maxNotionalUsd:human.maxNotionalUsd,withinLimits:human.withinLimits}};
+  const economics={version:'V3.9.5' as const,minNetProfitUsd:state.settings.takeProfit.minNetProfitUsd,minNetProfitRoiPct:state.settings.takeProfit.minNetProfitRoiPct,admissionMode:state.settings.tradeEconomics.admissionMode,historicalTpReachabilityEnabled:state.settings.tradeEconomics.historicalTpReachabilityEnabled,minHistoricalReachProbability:state.settings.tradeEconomics.minHistoricalReachProbability,reachabilityLookbackBars:state.settings.tradeEconomics.reachabilityLookbackBars,reachabilityMinSamples:state.settings.tradeEconomics.reachabilityMinSamples,targetHorizonMinutes:legalTargetHorizonMinutes(state.settings),humanManagedExposure:{positions:human.positions,notionalUsd:human.notionalUsd,maxPositions:human.maxPositions,maxNotionalUsd:human.maxNotionalUsd,withinLimits:human.withinLimits}};
   return {version:'V3.9.3_PRE_AI_EXECUTION_ENVELOPE',symbol,underlying,quoteAsset,createdAt:now,expiresAt:now+Math.max(45_000,Number(state.settings.ai.decisionTimeoutMs??30_000)+15_000),notice:'EXECUTION FACTS ARE NOT MARKET SIGNALS.',account:{status:String(state.account.status),equityUsd,availableMarginUsd:availableBalance,reservedMarginUsd,executionLeaseMarginUsd,freeMarginUsd},positionCapacity:{used:capacity.used,max:state.settings.portfolio.maxPositions,slotAvailable,sameUnderlyingOccupied},leverage,exchange:{tickSize:q.tickSize,stepSize:q.stepSize,minQty:q.minQty,minNotional:q.minNotional},makerReachableBand:{min:bandMin,max:bandMax},recentTradedPrices:market.recentTradedPrices??[],fees:{makerFeeBps,takerFeeBps,roundTripCostBps:makerFeeBps+(state.settings.takeProfit.exitFeeAssumption==='TAKER'?takerFeeBps:makerFeeBps),safetyMarginBps},economics,...(reachability?{reachability}:{}),LONG,SHORT,leaseRequiredMarginUsd:Math.max(LONG.maxMarginUsd,SHORT.maxMarginUsd)};
 }

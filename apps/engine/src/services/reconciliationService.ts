@@ -7,7 +7,7 @@ import type { PositionService } from './positionService.js';
 import { manualIntentFromOrder } from './executionLifecycle.js';
 import { validPositionLeverage } from './positionRiskFacts.js';
 import { reconcileCandidateLifecycles } from './candidateLifecycleDeriver.js';
-import { entryHasUnresolvedExchangeTerminalRisk, entryIdentityTombstone, entryOrderOccupiesRisk, hasVerifiedNoActiveRisk, isHistoricalUnknownEntryOrder, advanceRemoteFactAudit, advanceRemoteRiskAudit, remoteFactAuditClass, remoteFactAuditDeferred, remoteRiskAudit, remoteRiskAuditDeferred, resetRemoteRiskAudit, shouldEmitNoRiskEvent, REMOTE_FACT_AUDIT_LADDERS_MS, UNKNOWN_RISK_EVIDENCE_TIER_MS } from './entryRiskOccupancy.js';
+import { entryHasUnresolvedExchangeTerminalRisk, entryIdentityTombstone, entryOrderOccupiesRisk, hasVerifiedNoActiveRisk, isHistoricalUnknownEntryOrder, advanceRemoteFactAudit, advanceRemoteRiskAudit, remoteFactAuditClass, remoteFactAuditDeferred, remoteRiskAudit, remoteRiskAuditDeferred, resetRemoteRiskAudit, retainedNoActiveRiskProof, shouldEmitNoRiskEvent, REMOTE_FACT_AUDIT_LADDERS_MS, UNKNOWN_RISK_EVIDENCE_TIER_MS } from './entryRiskOccupancy.js';
 
 const active=(status:string)=>['NEW','SUBMITTING','UNKNOWN','WORKING','PARTIALLY_FILLED'].includes(status);
 const terminal=(status:string)=>['FILLED','CANCELED','EXPIRED','REJECTED'].includes(status);
@@ -36,16 +36,23 @@ export class ReconciliationService {
     const unrelated=statePositions.some(position=>{const cycle=nonEmpty(position.cycleId)?position.cycleId:null;if(cycle===null||cycle===localCycle)return false;const ownerOrder=[...this.state.entryOrders.values()].find(order=>order.cycleId===cycle&&order.symbol===local.symbol&&order.side===local.side),ownerFill=this.state.executionFills.find((fill:any)=>fill.cycleId===cycle&&fill.symbol===local.symbol&&fill.direction===local.side);if(!ownerOrder&&!ownerFill)return false;const ownerIds=new Set([ownerOrder?.id,ownerOrder?.clientOrderId,ownerOrder?.exchangeOrderId,ownerFill?.orderId,ownerFill?.clientOrderId].filter(nonEmpty));return![...ids].some(id=>ownerIds.has(id));});
     return unrelated?'UNRELATED_PROVEN':'AMBIGUOUS';
   }
+  /**
+   * The probe answers with the evidence it proved plus, when it proved nothing, the one reason it
+   * could not. The reason is what lets the caller tell "the exchange told us less than we needed"
+   * apart from "the exchange told us something new", which have opposite consequences for a proof
+   * that is still inside its own window.
+   */
   private async noActiveRiskEvidence(local:EntryOrder,positions:Position[],fullOrderScan:boolean,now:number){
-    const reader=this.adapter.fetchSymbolRiskFacts??this.adapter.fetchSymbolTradeFacts;if(!fullOrderScan||!reader||(!nonEmpty(local.clientOrderId)&&!nonEmpty(local.exchangeOrderId)))return null;
-    const createdAt=Number(local.createdAt??now);if(!Number.isFinite(createdAt)||createdAt>now)return null;
+    const inconclusive=(inconclusiveBecause:string)=>({evidence:null as null,inconclusiveBecause});
+    const reader=this.adapter.fetchSymbolRiskFacts??this.adapter.fetchSymbolTradeFacts;if(!fullOrderScan||!reader||(!nonEmpty(local.clientOrderId)&&!nonEmpty(local.exchangeOrderId)))return inconclusive('PROBE_NOT_APPLICABLE');
+    const createdAt=Number(local.createdAt??now);if(!Number.isFinite(createdAt)||createdAt>now)return inconclusive('PROBE_NOT_APPLICABLE');
     try{
       const coverageStart=Math.max(0,createdAt-60_000),facts=await reader.call(this.adapter,local.symbol,coverageStart,now),ids=new Set([local.clientOrderId,local.exchangeOrderId].filter(nonEmpty)),orderConflict=facts.orders.some(row=>ids.has(row.clientOrderId)||ids.has(row.orderId)),fillConflict=facts.fills.some(row=>ids.has(row.clientOrderId)||ids.has(row.orderId)),positionRelation=this.entryPositionRelation(local,positions),positionConflict=positionRelation==='ATTRIBUTED',coverageComplete=facts.coverageComplete===true&&Number.isFinite(facts.coverageStart)&&Number.isFinite(facts.coverageEnd)&&Number(facts.coverageStart)<=coverageStart&&Number(facts.coverageEnd)>=now;
-      if(orderConflict||fillConflict||positionConflict)return{status:'CONFLICT' as const,sources:[orderConflict?'ALL_ORDERS_IDENTITY_PRESENT':null,fillConflict?'USER_TRADES_IDENTITY_PRESENT':null,positionConflict?'POSITION_ATTRIBUTED_TO_ENTRY':null].filter((x):x is string=>Boolean(x)),checkedAt:now,validUntil:now,identityTombstone:entryIdentityTombstone(local),reason:'LATE_EXCHANGE_RISK_FACT_APPEARED'};
-      if(!coverageComplete){this.events.publish('ENTRY_ORDER_RISK_FACT_COVERAGE_INCOMPLETE',{orderId:local.id,symbol:local.symbol,coverageStart,coverageEnd:now,reportedStart:facts.coverageStart??null,reportedEnd:facts.coverageEnd??null,occupancyReleased:false,failClosed:true},local.symbol);return null;}
-      if(positionRelation==='AMBIGUOUS'){this.events.publish('ENTRY_ORDER_POSITION_ATTRIBUTION_UNRESOLVED',{orderId:local.id,symbol:local.symbol,side:local.side,clientOrderId:local.clientOrderId??null,exchangeOrderId:local.exchangeOrderId??null,reason:'POSITION_PRESENT_WITHOUT_DURABLE_ENTRY_PROVENANCE',occupancyReleased:false,failClosed:true},local.symbol);return null;}
-      return{status:'VERIFIED_NO_ACTIVE_RISK' as const,sources:['BINANCE_EXACT_ORDER_NOT_FOUND','BINANCE_OPEN_ORDERS_IDENTITY_ABSENT','BINANCE_USER_TRADES_IDENTITY_ABSENT','BINANCE_ALL_ORDERS_IDENTITY_ABSENT',positionRelation==='UNRELATED_PROVEN'?'POSITION_PRESENT_PROVEN_OTHER_CYCLE':'BINANCE_LONG_SHORT_POSITION_ZERO'],checkedAt:now,validUntil:now+UNKNOWN_RISK_EVIDENCE_TTL_MS,identityTombstone:entryIdentityTombstone(local),reason:'EXCHANGE_TERMINAL_STATUS_UNKNOWN_CURRENT_RISK_ABSENT'};
-    }catch(error){this.events.publish('ENTRY_ORDER_NO_ACTIVE_RISK_EVIDENCE_FAILED',{orderId:local.id,symbol:local.symbol,clientOrderId:local.clientOrderId??null,message:error instanceof Error?error.message:String(error),occupancyReleased:false},local.symbol);return null;}
+      if(orderConflict||fillConflict||positionConflict)return{evidence:{status:'CONFLICT' as const,sources:[orderConflict?'ALL_ORDERS_IDENTITY_PRESENT':null,fillConflict?'USER_TRADES_IDENTITY_PRESENT':null,positionConflict?'POSITION_ATTRIBUTED_TO_ENTRY':null].filter((x):x is string=>Boolean(x)),checkedAt:now,validUntil:now,identityTombstone:entryIdentityTombstone(local),reason:'LATE_EXCHANGE_RISK_FACT_APPEARED'},inconclusiveBecause:null};
+      if(!coverageComplete){this.events.publish('ENTRY_ORDER_RISK_FACT_COVERAGE_INCOMPLETE',{orderId:local.id,symbol:local.symbol,coverageStart,coverageEnd:now,reportedStart:facts.coverageStart??null,reportedEnd:facts.coverageEnd??null,occupancyReleased:false,failClosed:true},local.symbol);return inconclusive('RISK_FACT_COVERAGE_INCOMPLETE');}
+      if(positionRelation==='AMBIGUOUS'){this.events.publish('ENTRY_ORDER_POSITION_ATTRIBUTION_UNRESOLVED',{orderId:local.id,symbol:local.symbol,side:local.side,clientOrderId:local.clientOrderId??null,exchangeOrderId:local.exchangeOrderId??null,reason:'POSITION_PRESENT_WITHOUT_DURABLE_ENTRY_PROVENANCE',occupancyReleased:false,failClosed:true},local.symbol);return inconclusive('POSITION_ATTRIBUTION_UNRESOLVED');}
+      return{evidence:{status:'VERIFIED_NO_ACTIVE_RISK' as const,sources:['BINANCE_EXACT_ORDER_NOT_FOUND','BINANCE_OPEN_ORDERS_IDENTITY_ABSENT','BINANCE_USER_TRADES_IDENTITY_ABSENT','BINANCE_ALL_ORDERS_IDENTITY_ABSENT',positionRelation==='UNRELATED_PROVEN'?'POSITION_PRESENT_PROVEN_OTHER_CYCLE':'BINANCE_LONG_SHORT_POSITION_ZERO'],checkedAt:now,validUntil:now+UNKNOWN_RISK_EVIDENCE_TTL_MS,identityTombstone:entryIdentityTombstone(local),reason:'EXCHANGE_TERMINAL_STATUS_UNKNOWN_CURRENT_RISK_ABSENT'},inconclusiveBecause:null};
+    }catch(error){this.events.publish('ENTRY_ORDER_NO_ACTIVE_RISK_EVIDENCE_FAILED',{orderId:local.id,symbol:local.symbol,clientOrderId:local.clientOrderId??null,message:error instanceof Error?error.message:String(error),occupancyReleased:false},local.symbol);return inconclusive('RISK_FACT_READER_FAILED');}
   }
   async run(){
     const requestedAt=Date.now();if(this.running)return;this.running=true;
@@ -81,7 +88,7 @@ export class ReconciliationService {
         }}
         if(local.status==='UNKNOWN'&&hasVerifiedNoActiveRisk(local,now)&&!fullOrderScan){if(local.reservationId)this.state.releaseEntryReservation(local.reservationId);continue;}
         if(!active(local.status)&&!entryHasUnresolvedExchangeTerminalRisk(local,now))continue;
-        const evidence=await this.noActiveRiskEvidence(local,positions,fullOrderScan,now);
+        const probe=await this.noActiveRiskEvidence(local,positions,fullOrderScan,now),evidence=probe.evidence;
         if(evidence?.status==='VERIFIED_NO_ACTIVE_RISK'){
           const identityChanged=(local as any).activeRiskEvidence?.identityTombstone&&(local as any).activeRiskEvidence.identityTombstone!==entryIdentityTombstone(local);
           const audit=advanceRemoteRiskAudit(identityChanged?null:remoteRiskAudit(local),evidence,now,entryIdentityTombstone(local));
@@ -90,7 +97,19 @@ export class ReconciliationService {
           if(emit){audit.lastEventAt=now;audit.lastEmittedReason='EXACT_QUERY_NOT_FOUND_VERIFIED_NO_ACTIVE_RISK';}else suppressedNoRiskEvents++;
           this.state.entryOrders.set(id,{...local,status:'UNKNOWN',exchangeTerminalStatus:'UNKNOWN',activeRiskExposure:false,activeRiskEvidence:evidence,remoteAudit:audit,updatedAt:Date.now()} as any);if(local.reservationId)this.state.releaseEntryReservation(local.reservationId);if(emit)this.events.publish('ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED',{orderId:id,symbol:local.symbol,clientOrderId:local.clientOrderId??null,exchangeOrderId:local.exchangeOrderId??null,reason:'EXACT_QUERY_NOT_FOUND_VERIFIED_NO_ACTIVE_RISK',exchangeTerminalStatus:'UNKNOWN',activeRiskExposure:false,evidence,occupancyReleased:true,auditTier:audit.tier,auditConsecutive:audit.consecutive,nextRemoteAuditAt:audit.nextAuditAt},local.symbol);
         }else{
-          const conflict=evidence?.status==='CONFLICT',nextEvidence=conflict?evidence:(local as any).activeRiskEvidence,audit=resetRemoteRiskAudit(now);if(conflict)audit.lastEmittedReason='LATE_EXCHANGE_RISK_FACT_APPEARED';if(conflict)audit.lastEventAt=now;if(local.reservationId){this.state.markEntryReservationWorking(local.reservationId,local.intentId,{orderId:id,reason:'REMOTE_ORDER_FACT_ACTIVE'});}this.state.entryOrders.set(id,{...local,status:'UNKNOWN',exchangeTerminalStatus:'UNKNOWN',activeRiskExposure:true,activeRiskEvidence:nextEvidence??null,remoteAudit:audit,updatedAt:Date.now()} as any);this.events.publish(conflict?'ENTRY_ORDER_NO_ACTIVE_RISK_CONFLICT':'ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED',{orderId:id,symbol:local.symbol,clientOrderId:local.clientOrderId??null,exchangeOrderId:local.exchangeOrderId??null,reason:conflict?'LATE_EXCHANGE_RISK_FACT_APPEARED':nonEmpty(local.clientOrderId)||nonEmpty(local.exchangeOrderId)?'EXACT_QUERY_NOT_FOUND':'IDENTITY_INCOMPLETE',exchangeTerminalStatus:'UNKNOWN',activeRiskExposure:true,evidence:nextEvidence??null,occupancyReleased:false,failClosed:true,auditTier:0,nextRemoteAuditAt:audit.nextAuditAt},local.symbol);
+          // The verdict is taken against the row as it stands at write time, never as this pass last
+          // read it: a renewal that landed while the probe awaited the exchange is already a fact the
+          // account agreed to, and a probe that observed nothing cannot take it back.
+          const live=this.state.entryOrders.get(id)??local,retained=retainedNoActiveRiskProof(live,probe.inconclusiveBecause,Date.now());
+          if(retained.evidence){
+            const audit=retained.audit??((live as any).remoteAudit??null),reason=`PROOF_RETAINED:${retained.reason}`,emit=audit?shouldEmitNoRiskEvent(live,audit,reason,Date.now()):true;
+            if(audit&&emit){audit.lastEventAt=Date.now();audit.lastEmittedReason=reason;}
+            this.state.entryOrders.set(id,{...live,status:'UNKNOWN',exchangeTerminalStatus:'UNKNOWN',activeRiskExposure:false,activeRiskEvidence:retained.evidence,remoteAudit:audit,updatedAt:Date.now()} as any);
+            if(live.reservationId)this.state.releaseEntryReservation(live.reservationId);
+            if(emit)this.events.publish('ENTRY_ORDER_NO_ACTIVE_RISK_PROOF_RETAINED',{orderId:id,symbol:live.symbol,clientOrderId:live.clientOrderId??null,exchangeOrderId:live.exchangeOrderId??null,inconclusiveBecause:retained.reason,reason:'NO_ACTIVE_RISK_PROOF_STILL_UNEXPIRED',activeRiskExposure:false,evidence:retained.evidence,proofValidUntil:(retained.evidence as any).validUntil,occupancyReleased:true,failClosed:false,auditTier:audit?.tier??0,nextRemoteAuditAt:audit?.nextAuditAt??null},live.symbol);
+            continue;
+          }
+          const conflict=evidence?.status==='CONFLICT',nextEvidence=conflict?evidence:(live as any).activeRiskEvidence,audit=resetRemoteRiskAudit(now);if(conflict)audit.lastEmittedReason='LATE_EXCHANGE_RISK_FACT_APPEARED';if(conflict)audit.lastEventAt=now;if(live.reservationId){this.state.markEntryReservationWorking(live.reservationId,live.intentId,{orderId:id,reason:'REMOTE_ORDER_FACT_ACTIVE'});}this.state.entryOrders.set(id,{...live,status:'UNKNOWN',exchangeTerminalStatus:'UNKNOWN',activeRiskExposure:true,activeRiskEvidence:nextEvidence??null,remoteAudit:audit,updatedAt:Date.now()} as any);this.events.publish(conflict?'ENTRY_ORDER_NO_ACTIVE_RISK_CONFLICT':'ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED',{orderId:id,symbol:live.symbol,clientOrderId:live.clientOrderId??null,exchangeOrderId:live.exchangeOrderId??null,inconclusiveBecause:probe.inconclusiveBecause,reason:conflict?'LATE_EXCHANGE_RISK_FACT_APPEARED':nonEmpty(live.clientOrderId)||nonEmpty(live.exchangeOrderId)?'EXACT_QUERY_NOT_FOUND':'IDENTITY_INCOMPLETE',exchangeTerminalStatus:'UNKNOWN',activeRiskExposure:true,evidence:nextEvidence??null,occupancyReleased:false,failClosed:true,auditTier:0,nextRemoteAuditAt:audit.nextAuditAt},live.symbol);
         }
         drift++;
       }

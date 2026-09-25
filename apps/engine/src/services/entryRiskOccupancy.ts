@@ -84,6 +84,34 @@ export function resetRemoteRiskAudit(now=Date.now()):RemoteRiskAudit{
 }
 
 /**
+ * Which inconclusive outcomes may leave a still-unexpired proof alone. Both of them report the
+ * absence of new information — the exchange handed back a partial history window, or the request
+ * never answered — so neither can retire a proof that has not expired on its own terms.
+ * `POSITION_ATTRIBUTION_UNRESOLVED` is deliberately excluded: there a position the entry cannot be
+ * ruled out *did* appear, which is a new fact and must fail closed.
+ */
+export const RETAINABLE_INCONCLUSIVE_RISK_FACTS=['RISK_FACT_COVERAGE_INCOMPLETE','RISK_FACT_READER_FAILED'] as const;
+export type RetainableInconclusiveRiskFact=(typeof RETAINABLE_INCONCLUSIVE_RISK_FACTS)[number];
+
+/** An inconclusive probe keeps the promotion history but must ask again at the fastest cadence. */
+export function inconclusiveRiskRetry(previous:RemoteRiskAudit,now=Date.now(),identity=''):RemoteRiskAudit{
+  return{...previous,nextAuditAt:jitteredNextAuditAt(now,UNKNOWN_RISK_EVIDENCE_TIER_MS[0],`unknown|${identity}`)};
+}
+
+/**
+ * The single rule every writer of an UNKNOWN occupancy verdict must pass through: a probe that
+ * observed nothing cannot return a row to "occupies risk" while its own no-active-risk proof is
+ * still inside its window. The caller hands over the row as it exists at write time, never as it
+ * was when the pass began, so a renewal that landed mid-pass cannot be lost.
+ */
+export function retainedNoActiveRiskProof(order:EntryOrder,inconclusiveBecause:string|null,now=Date.now()):{evidence:Record<string,unknown>|null;audit:RemoteRiskAudit|null;reason:string|null}{
+  if(!RETAINABLE_INCONCLUSIVE_RISK_FACTS.includes(inconclusiveBecause as RetainableInconclusiveRiskFact))return{evidence:null,audit:null,reason:null};
+  if(!hasVerifiedNoActiveRisk(order,now))return{evidence:null,audit:null,reason:null};
+  const previous=remoteRiskAudit(order),identity=entryIdentityTombstone(order);
+  return{evidence:(order as any).activeRiskEvidence??null,audit:previous?inconclusiveRiskRetry(previous,now,identity):null,reason:inconclusiveBecause};
+}
+
+/**
  * A terminal row that was positively rejected before the wire call can never gain an exchange
  * order id or a fill, so it needs the slowest re-probe; a terminal row whose identity was simply
  * never confirmed still needs a real backstop, and an UNKNOWN may still be live, so it stays fastest.

@@ -4,6 +4,7 @@ import { collectPendingEntryRiskExposures, entryOrderOccupiesRisk } from './entr
 import { computeExecutableRiskHeadroom } from './riskReadiness.js';
 import { activeExecutionLeaseMargin } from './executionLease.js';
 import { candidateCapitalFromState, leverageFactOf } from './capitalCapacity.js';
+import { classifySideCapacityBinding } from './entryCapacityTrace.js';
 import { privateAccountFresh } from './privateAccountReadiness.js';
 import type { HistoricalTpReachabilityEnvelope } from './historicalTpReachability.js';
 import { humanManagedExposure } from './economicEntryFeasibility.js';
@@ -16,6 +17,13 @@ export interface SideExecutionCapacity {
   maxNotionalUsd: number;
   maxQuantityUnits: number;
   riskHeadroom: { factVersion:string; remaining:Record<string,number>; blockers:string[]; reason:string };
+  /** The one number that limits this side, named from the same classifier the cockpit reads. */
+  firstBindingConstraint?: string;
+  /** max(exchange minNotional, minQty x reference price), computed from the real filters. */
+  minimumLegalNotionalUsd?: number;
+  /** [floor, ceiling] of a notional this side could legally be submitted at, or null when it cannot. */
+  legalNotionalRangeUsd?: [number, number] | null;
+  authorization?: 'EXECUTABLE' | string;
 }
 export interface PreAiExecutionEnvelope {
   version:'V3.9.3_PRE_AI_EXECUTION_ENVELOPE';
@@ -36,6 +44,11 @@ export interface PreAiExecutionEnvelope {
   reachability?:HistoricalTpReachabilityEnvelope;
   LONG:SideExecutionCapacity;
   SHORT:SideExecutionCapacity;
+  /** Sides a submission could actually be placed on right now; deterministic, never a judgement. */
+  executableSides:ExecutionEnvelopeSide[];
+  noExecutableSide:boolean;
+  /** Stated in words because a nested number is not an instruction: the model must not choose a side it cannot submit. */
+  sideAuthorization:Record<ExecutionEnvelopeSide,string>;
   leaseRequiredMarginUsd:number;
 }
 
@@ -57,11 +70,23 @@ export function buildPreAiExecutionEnvelope(state:RuntimeState,symbol:string,now
   const sideCapacity=(side:ExecutionEnvelopeSide):SideExecutionCapacity=>{
     const risk=computeExecutableRiskHeadroom({settings:state.settings,equity:equityUsd,positions:[...state.positions.values()],pendingRiskExposures,symbol,side,plannedNotional:Number.MAX_SAFE_INTEGER,expectedAdverseMovePct,dailyDrawdownPct,capital,minimumNotional});
     const maxNotionalUsd=slotAvailable&&risk.executable?Math.max(0,Math.min(quoteNotionalCapacity,risk.finalNotional)):0,maxMarginUsd=maxNotionalUsd/Math.max(1,leverage),maxQuantityUnits=roundDownUnits(maxNotionalUsd/Math.max(q.last,q.tickSize),q.stepSize),minUnits=Math.max(1,Math.ceil(q.minQty/q.stepSize-1e-9));
-    return {executable:privateReady&&slotAvailable&&!humanHardBlock&&maxNotionalUsd+1e-8>=minimumNotional&&maxQuantityUnits>=minUnits,maxMarginUsd,maxNotionalUsd,maxQuantityUnits,riskHeadroom:{factVersion:risk.factVersion,remaining:risk.remaining,blockers:[...risk.blockers,...(humanHardBlock?['HUMAN_MANAGED_EXPOSURE_LIMIT']:[])],reason:humanHardBlock?'HUMAN_MANAGED_EXPOSURE_LIMIT':risk.reason}};
+    const executable=privateReady&&slotAvailable&&!humanHardBlock&&maxNotionalUsd+1e-8>=minimumNotional&&maxQuantityUnits>=minUnits;
+    const filtersComplete=[q.tickSize,q.stepSize,q.minQty,q.minNotional,q.last].every((value:number)=>Number.isFinite(Number(value))&&Number(value)>0);
+    const minimumLegalNotionalUsd=filtersComplete?Math.max(Number(q.minNotional),Number(q.minQty)*Number(q.last)):0;
+    const blockers=[...risk.blockers,...(humanHardBlock?['HUMAN_MANAGED_EXPOSURE_LIMIT']:[])];
+    const binding=classifySideCapacityBinding({symbol,side,executable,blockers,firstBindingConstraint:risk.firstBindingConstraint??null,
+      plannedNotionalUsd:Number(risk.plannedNotional??0),finalNotionalUsd:maxNotionalUsd,minimumLegalNotionalUsd:filtersComplete?minimumLegalNotionalUsd:null,exchangeFiltersComplete:filtersComplete,
+      planPresent:true,routePresent:true,marginTierProven:true,portfolioRiskAllowed:true,capitalBindingConstraint:capital?.bindingConstraint??null,capitalExecutableNotionalUsd:capital?.executableNotionalUsd??null});
+    return {executable,maxMarginUsd,maxNotionalUsd,maxQuantityUnits,firstBindingConstraint:binding.constraint,minimumLegalNotionalUsd,
+      legalNotionalRangeUsd:executable?[minimumLegalNotionalUsd,maxNotionalUsd]:null,
+      authorization:executable?'EXECUTABLE':`NOT_EXECUTABLE:${binding.constraint}`,
+      riskHeadroom:{factVersion:risk.factVersion,remaining:risk.remaining,blockers,reason:humanHardBlock?'HUMAN_MANAGED_EXPOSURE_LIMIT':risk.reason}};
   };
-  const LONG=sideCapacity('LONG'),SHORT=sideCapacity('SHORT'),atr1=Math.max(Number(market.technical['1m'].atr14??0),q.tickSize),bandMin=Math.max(q.tickSize,q.last-atr1*.8),bandMax=q.last+atr1*.8;
+  const LONG=sideCapacity('LONG'),SHORT=sideCapacity('SHORT'),
+    executableSides=([['LONG',LONG],['SHORT',SHORT]] as const).filter(([,capacity])=>capacity.executable).map(([side])=>side),
+    sideAuthorization={LONG:LONG.authorization??'NOT_EXECUTABLE:UNCLASSIFIED',SHORT:SHORT.authorization??'NOT_EXECUTABLE:UNCLASSIFIED'} as Record<ExecutionEnvelopeSide,string>,atr1=Math.max(Number(market.technical['1m'].atr14??0),q.tickSize),bandMin=Math.max(q.tickSize,q.last-atr1*.8),bandMax=q.last+atr1*.8;
   for(const side of [LONG,SHORT])side.maxQuantityUnits=Math.min(side.maxQuantityUnits,roundDownUnits(side.maxNotionalUsd/Math.max(bandMax,q.ask,q.last),q.stepSize));
   const makerFeeBps=state.settings.takeProfit.makerFeeRate*10_000,takerFeeBps=state.settings.takeProfit.takerFeeRate*10_000,safetyMarginBps=(makerFeeBps+(state.settings.takeProfit.exitFeeAssumption==='TAKER'?takerFeeBps:makerFeeBps))*state.settings.takeProfit.feeSafetyBufferPct/100;
   const economics={version:'V3.9.5' as const,minNetProfitUsd:state.settings.takeProfit.minNetProfitUsd,minNetProfitRoiPct:state.settings.takeProfit.minNetProfitRoiPct,admissionMode:state.settings.tradeEconomics.admissionMode,historicalTpReachabilityEnabled:state.settings.tradeEconomics.historicalTpReachabilityEnabled,minHistoricalReachProbability:state.settings.tradeEconomics.minHistoricalReachProbability,reachabilityLookbackBars:state.settings.tradeEconomics.reachabilityLookbackBars,reachabilityMinSamples:state.settings.tradeEconomics.reachabilityMinSamples,targetHorizonMinutes:legalTargetHorizonMinutes(state.settings),humanManagedExposure:{positions:human.positions,notionalUsd:human.notionalUsd,maxPositions:human.maxPositions,maxNotionalUsd:human.maxNotionalUsd,withinLimits:human.withinLimits}};
-  return {version:'V3.9.3_PRE_AI_EXECUTION_ENVELOPE',symbol,underlying,quoteAsset,createdAt:now,expiresAt:now+Math.max(45_000,Number(state.settings.ai.decisionTimeoutMs??30_000)+15_000),notice:'EXECUTION FACTS ARE NOT MARKET SIGNALS.',account:{status:String(state.account.status),equityUsd,availableMarginUsd:availableBalance,reservedMarginUsd,executionLeaseMarginUsd,freeMarginUsd},positionCapacity:{used:capacity.used,max:state.settings.portfolio.maxPositions,slotAvailable,sameUnderlyingOccupied},leverage,exchange:{tickSize:q.tickSize,stepSize:q.stepSize,minQty:q.minQty,minNotional:q.minNotional},makerReachableBand:{min:bandMin,max:bandMax},recentTradedPrices:market.recentTradedPrices??[],fees:{makerFeeBps,takerFeeBps,roundTripCostBps:makerFeeBps+(state.settings.takeProfit.exitFeeAssumption==='TAKER'?takerFeeBps:makerFeeBps),safetyMarginBps},economics,...(reachability?{reachability}:{}),LONG,SHORT,leaseRequiredMarginUsd:Math.max(LONG.maxMarginUsd,SHORT.maxMarginUsd)};
+  return {version:'V3.9.3_PRE_AI_EXECUTION_ENVELOPE',symbol,underlying,quoteAsset,executableSides,noExecutableSide:executableSides.length===0,sideAuthorization,createdAt:now,expiresAt:now+Math.max(45_000,Number(state.settings.ai.decisionTimeoutMs??30_000)+15_000),notice:'EXECUTION FACTS ARE NOT MARKET SIGNALS.',account:{status:String(state.account.status),equityUsd,availableMarginUsd:availableBalance,reservedMarginUsd,executionLeaseMarginUsd,freeMarginUsd},positionCapacity:{used:capacity.used,max:state.settings.portfolio.maxPositions,slotAvailable,sameUnderlyingOccupied},leverage,exchange:{tickSize:q.tickSize,stepSize:q.stepSize,minQty:q.minQty,minNotional:q.minNotional},makerReachableBand:{min:bandMin,max:bandMax},recentTradedPrices:market.recentTradedPrices??[],fees:{makerFeeBps,takerFeeBps,roundTripCostBps:makerFeeBps+(state.settings.takeProfit.exitFeeAssumption==='TAKER'?takerFeeBps:makerFeeBps),safetyMarginBps},economics,...(reachability?{reachability}:{}),LONG,SHORT,leaseRequiredMarginUsd:Math.max(LONG.maxMarginUsd,SHORT.maxMarginUsd)};
 }

@@ -26,11 +26,11 @@ export function exposureCapacityPolicy(settings:SystemSettings):ExposureCapacity
 }
 
 /** The one dimension that denies new Entry risk right now, whatever every other side still allows. */
-export type BindingConstraint='RISK_FACTS'|'DAILY_DRAWDOWN'|'GROSS_ENFORCED'|'DIRECTION_ENFORCED'|'CLUSTER'|'CLUSTER_DIRECTION'|'PER_TRADE_RISK'|'AVAILABLE_MARGIN'|'LEVERAGE_UNPROVEN'|'MARGIN_POLICY_CAP'|'MINIMUM_NOTIONAL'|'PLANNED_NOTIONAL'|'EXECUTABLE_HEADROOM'|'NONE';
+export type BindingConstraint='RISK_FACTS'|'DAILY_DRAWDOWN'|'SIDE_PLAN_ABSENT'|'PLANNED_NOTIONAL_ZERO'|'FINAL_NOTIONAL_ZERO'|'BELOW_EXCHANGE_MIN_NOTIONAL'|'EXCHANGE_FILTERS_UNPROVEN'|'PORTFOLIO_RISK_DENIED'|'QUOTE_ASSET_NOT_ENTRY_ELIGIBLE'|'GROSS_ENFORCED'|'DIRECTION_ENFORCED'|'CLUSTER'|'CLUSTER_DIRECTION'|'PER_TRADE_RISK'|'AVAILABLE_MARGIN'|'LEVERAGE_UNPROVEN'|'MARGIN_POLICY_CAP'|'MINIMUM_NOTIONAL'|'PLANNED_NOTIONAL'|'EXECUTABLE_HEADROOM'|'NONE'|(string & {});
 
 const CONSTRAINT_BY_BLOCKER:Record<string,BindingConstraint>={
   RISK_FACTS_INVALID:'RISK_FACTS',REJECT_DAILY_DRAWDOWN:'DAILY_DRAWDOWN',REJECT_GROSS_EXPOSURE:'GROSS_ENFORCED',REJECT_DIRECTION_EXPOSURE:'DIRECTION_ENFORCED',
-  REJECT_CORRELATED_CLUSTER:'CLUSTER',REJECT_CLUSTER_DIRECTION_EXPOSURE:'CLUSTER_DIRECTION',REJECT_RISK_PER_TRADE:'PER_TRADE_RISK',
+  REJECT_CORRELATED_CLUSTER:'CLUSTER',REJECT_CLUSTER_DIRECTION_EXPOSURE:'CLUSTER_DIRECTION',REJECT_RISK_PER_TRADE:'PER_TRADE_RISK',QUOTE_ASSET_NOT_ENTRY_ELIGIBLE:'QUOTE_ASSET_NOT_ENTRY_ELIGIBLE',
   BELOW_MINIMUM_NOTIONAL:'MINIMUM_NOTIONAL',RISK_SIZING_CLAMP:'PER_TRADE_RISK',
 };
 const CONSTRAINT_BY_DIMENSION:Record<string,BindingConstraint>={gross:'GROSS_ENFORCED',direction:'DIRECTION_ENFORCED',cluster:'CLUSTER',clusterDirection:'CLUSTER_DIRECTION',riskSizing:'PER_TRADE_RISK',quote:'AVAILABLE_MARGIN'};
@@ -57,7 +57,7 @@ export function computeExecutableRiskHeadroom(input:HeadroomInput){
   if(enforced.gross)checks.push(['gross','REJECT_GROSS_EXPOSURE']);
   if(enforced.direction)checks.push(['direction','REJECT_DIRECTION_EXPOSURE']);
   if(enforced.cluster)checks.push(['cluster','REJECT_CORRELATED_CLUSTER'],['clusterDirection','REJECT_CLUSTER_DIRECTION_EXPOSURE']);
-  const quoteReason=!capital?'QUOTE_CAPACITY_UNPROVEN':capital.leverageFact==='UNPROVEN'?'LEVERAGE_UNPROVEN':'INSUFFICIENT_AVAILABLE_MARGIN';
+  const quoteReason=!capital?'QUOTE_CAPACITY_UNPROVEN':capital.bindingConstraint==='QUOTE_ASSET_NOT_ENTRY_ELIGIBLE'?'QUOTE_ASSET_NOT_ENTRY_ELIGIBLE':capital.leverageFact==='UNPROVEN'?'LEVERAGE_UNPROVEN':'INSUFFICIENT_AVAILABLE_MARGIN';
   checks.push(['riskSizing','REJECT_RISK_PER_TRADE'],['quote',quoteReason]);
   const valid=equity>0&&Number.isFinite(equity)&&Number.isFinite(input.plannedNotional)&&input.plannedNotional>=0&&Number.isFinite(move)&&Number.isFinite(input.dailyDrawdownPct)&&Object.values(limits).every(Number.isFinite)&&Object.values(remaining).every(v=>Number.isFinite(v)&&v>=0)&&exposures.every(p=>Number.isFinite(p.notionalUsd)&&p.notionalUsd>=0&&Boolean(p.symbol));
   if(!valid)blockers.push('RISK_FACTS_INVALID');
@@ -91,7 +91,7 @@ export function computeExecutableRiskHeadroom(input:HeadroomInput){
 function firstBinding(input:{valid:boolean;blockers:string[];checks:[string,string][];remaining:Record<string,number>;plannedNotional:number;capital:CapitalCapacityFact|undefined;finalNotional:number}):BindingConstraint{
   if(!input.valid)return 'RISK_FACTS';
   const fromBlocker=(reason:string):BindingConstraint=>{
-    if(reason==='LEVERAGE_UNPROVEN')return 'LEVERAGE_UNPROVEN';
+    if(reason==='LEVERAGE_UNPROVEN'||reason==='QUOTE_ASSET_NOT_ENTRY_ELIGIBLE')return reason;
     if(reason==='INSUFFICIENT_AVAILABLE_MARGIN'||reason==='QUOTE_CAPACITY_UNPROVEN')return input.capital?.bindingConstraint==='MARGIN_POLICY_CAP'?'MARGIN_POLICY_CAP':'AVAILABLE_MARGIN';
     return CONSTRAINT_BY_BLOCKER[reason]??'NONE';
   };

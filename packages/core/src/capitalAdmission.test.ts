@@ -17,3 +17,33 @@ describe('Capital Admission pre-gate',()=>{
 });
 
 it('reports position capacity independently of sufficient quote balances',()=>{const positions=Array.from({length:14},(_,i)=>({symbol:`OLD${i}USDT`,side:'LONG' as const,quantity:.001,markPrice:1,leverage:1})),result=evaluateCapitalAdmission({candidates:[candidate()],snapshots:[snap('ETHUSDT')],settings:{...settings,portfolio:{...settings.portfolio,maxPositions:12}},positions,assets:assets(100000,100000)});expect(result.decisions[0]?.reason).toBe('POSITION_CAPACITY_FULL');expect(result.summary.reasonCounts.POSITION_CAPACITY_FULL).toBe(1);expect(result.decisions[0]?.longPlan?.reasons).toContain('MAX_POSITIONS');});
+
+// §A: Entry funding is the product's own whitelist, so a quote leg the exchange happily reports as
+// margin-eligible still cannot reserve, lease, route or size an Entry here.
+describe('the Entry routing universe is only USDT and USDC', () => {
+  const assets = (over: Record<string, number> = {}) => [
+    {asset: 'USDT', availableBalance: 10_000, walletBalance: 10_000, usdValue: 10_000},
+    {asset: 'USDC', availableBalance: 10_000, walletBalance: 10_000, usdValue: 10_000},
+    {asset: 'BUSD', availableBalance: 10_000, walletBalance: 10_000, usdValue: 10_000},
+    {asset: 'FDUSD', availableBalance: 10_000, walletBalance: 10_000, usdValue: 10_000},
+    {asset: 'BTC', availableBalance: 5, walletBalance: 5, usdValue: 500_000}, ...[over]].filter(Boolean) as any[];
+  const run = (symbol: string) => evaluateCapitalAdmission({candidates: [candidate(symbol)], snapshots: [snap(symbol)], settings: {portfolioIntelligence: p, portfolio: {maxPositions: 10}} as any,
+    positions: [], assets: assets(), now: Date.now()});
+
+  it.each(['ETHBUSD', 'BNBFDUSD'])('QA-12 refuses %s with its own named reason, not a margin shortage', (symbol) => {
+    const {decisions, summary} = run(symbol);
+    expect(decisions[0].executable).toBe(false);
+    expect(decisions[0].reason).toBe('QUOTE_ASSET_NOT_ENTRY_ELIGIBLE');
+    expect(summary.reasonCounts.QUOTE_ASSET_NOT_ENTRY_ELIGIBLE).toBe(1);
+    // The BUSD/FDUSD balance is real and is not spent: those assets never enter the routing ledger.
+    expect(summary.usdtAvailable).toBe(10_000);
+    expect(summary.usdcAvailable).toBe(10_000);
+    expect(JSON.stringify(summary)).not.toContain('BUSD');
+  });
+
+  it('QA-13 still routes an eligible USDT symbol with the same asset book', () => {
+    const {decisions} = run('ETHUSDT');
+    expect(decisions[0].executable, JSON.stringify(decisions[0])).toBe(true);
+    expect(decisions[0].quoteAsset).toBe('USDT');
+  });
+});

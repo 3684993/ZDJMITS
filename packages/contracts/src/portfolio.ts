@@ -1,6 +1,35 @@
 import { z } from 'zod';
 
 export const QuoteAssetPolicySchema=z.enum(['AUTO','USDT_ONLY','USDC_ONLY']);
+
+/**
+ * A Binance futures symbol can be quoted in more assets than this system is allowed to *fund* a new
+ * Entry with. Parsing and funding are two different questions, and only one of them is a list of
+ * suffixes: `4000BONKUSDT`, `BNBFDUSD` and a BTC wallet balance are all real account facts, while
+ * `EntryFundingUniverse` is the product's own permission for what may pay for a new position.
+ */
+export const QUOTE_SUFFIXES = ['USDT', 'USDC', 'BUSD', 'FDUSD'] as const;
+export type QuoteSuffix = (typeof QUOTE_SUFFIXES)[number];
+/** The single Entry funding universe. Nothing outside it may size, reserve, lease or route an Entry. */
+export const ENTRY_QUOTE_ASSETS = ['USDT', 'USDC'] as const;
+export type EntryQuoteAsset = (typeof ENTRY_QUOTE_ASSETS)[number];
+
+/** Which quote leg a symbol name actually carries; never a funding permission. */
+export function quoteSuffixOf(symbolOrAsset: unknown): QuoteSuffix | 'UNKNOWN' {
+  const value = String(symbolOrAsset ?? '').trim().toUpperCase();
+  const hit = QUOTE_SUFFIXES.map((suffix) => ({suffix, at: value.lastIndexOf(suffix)})).filter((row) => row.at > 0 && row.at + row.suffix.length === value.length).sort((a, b) => b.at - a.at)[0];
+  return hit?.suffix ?? (value === 'BUSD' || value === 'FDUSD' ? 'UNKNOWN' : (QUOTE_SUFFIXES as readonly string[]).includes(value) ? value as QuoteSuffix : 'UNKNOWN');
+}
+
+/** The one answer to "may this asset pay for a new Entry". */
+export function isEntryQuoteAsset(value: unknown): value is EntryQuoteAsset {
+  return (ENTRY_QUOTE_ASSETS as readonly string[]).includes(String(value ?? '').trim().toUpperCase());
+}
+
+/** Symbol-level form of the same test, so no caller keeps its own copy of the list. */
+export function entryFundingEligibleSymbol(symbol: unknown): boolean {
+  return isEntryQuoteAsset(quoteSuffixOf(symbol));
+}
 export type QuoteAssetPolicy=z.infer<typeof QuoteAssetPolicySchema>;
 export const UnderlyingExposurePolicySchema=z.enum(['BLOCK_ALL','BLOCK_SAME_DIRECTION','ALLOW_HEDGE']);
 export type UnderlyingExposurePolicy=z.infer<typeof UnderlyingExposurePolicySchema>;

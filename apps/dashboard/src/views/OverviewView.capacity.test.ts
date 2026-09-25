@@ -32,7 +32,8 @@ const marginDrivenBook = {
         { quoteAsset: 'USDT', availableBalanceUsd: 3861.560262, walletBalanceUsd: 5473.133262, reservedMarginUsd: 0, executionLeaseMarginUsd: 0, executableMarginUsd: 3861.560262, factsComplete: true, reasons: [] },
         { quoteAsset: 'USDC', availableBalanceUsd: 4972.875697, walletBalanceUsd: 4981.175512, reservedMarginUsd: 0, executionLeaseMarginUsd: 0, executableMarginUsd: 4972.875697, factsComplete: true, reasons: [] },
       ],
-      executableMarginUsd: 8834.435959, proven: true,
+      totalExecutableMarginUsd: 8834.435959, proven: true,
+      excludedAssets: [{asset: 'BTC', usdValue: 850.23, reason: 'NOT_IN_ENTRY_FUNDING_UNIVERSE'}], accountEquityUsd: 19_685.67,
     },
     exposure: {
       gross: { notionalUsd: 10494.3129, limitUsd: 10504.7287, remainingUsd: 0, usedPct: 0.9990079, mode: 'OBSERVE', enforced: false },
@@ -40,9 +41,12 @@ const marginDrivenBook = {
       SHORT: { notionalUsd: 6091.7903, limitUsd: 10504.7287, remainingUsd: 4412.9384, usedPct: 0.5799, mode: 'OBSERVE', enforced: false },
     },
     limits: { slots: { used: 17, max: 50, positions: 17, inFlight: 0, reserved: 0 }, policy: { gross: 'OBSERVE', direction: 'OBSERVE', cluster: 'ENFORCE' } },
+    sideStatus: {code: 'BOTH_SIDES_EXECUTABLE', text: 'LONG 与 SHORT 均可新增'},
     entryCapacity: {
-      LONG: { executableNotionalUsd: 3680.06, quoteAsset: 'USDT', symbol: 'LINKUSDT', firstBindingConstraint: 'CLUSTER', executableRoutes: 4 },
-      SHORT: { executableNotionalUsd: 3680.06, quoteAsset: 'USDC', symbol: 'SUIUSDC', firstBindingConstraint: 'CLUSTER', executableRoutes: 3 },
+      LONG: { executableNotionalUsd: 3680.06, quoteAsset: 'USDT', symbol: 'LINKUSDT', firstBindingConstraint: 'CLUSTER', executableRoutes: 4,
+        candidates: [{symbol: 'LINKUSDT', side: 'LONG', executable: true, firstBindingConstraint: 'CLUSTER', funding: {executableNotionalUsd: 3980}, finalNotionalBeforeRoundingUsd: 3680.06, minimumLegalNotionalUsd: 5}] },
+      SHORT: { executableNotionalUsd: 3680.06, quoteAsset: 'USDC', symbol: 'SUIUSDC', firstBindingConstraint: 'CLUSTER', executableRoutes: 3,
+        candidates: [{symbol: 'SUIUSDC', side: 'SHORT', executable: false, firstBindingConstraint: 'SIDE_PLAN_ABSENT', funding: {executableNotionalUsd: 3980}, finalNotionalBeforeRoundingUsd: 0, minimumLegalNotionalUsd: 5}] },
     },
     firstBlocker: 'NONE', blockingDimensions: [], exhaustedReason: null, exhaustedForNewRisk: false, evaluatedAt: 1,
   },
@@ -66,9 +70,9 @@ const grossExhausted = {
   },
 };
 
-async function open(payload: any) {
+async function open(payload: any, accountAssets: any = {assets: []}) {
   vi.mocked(api.pipeline).mockResolvedValue(payload);
-  vi.mocked(api.accountAssets).mockResolvedValue({ assets: [] } as never);
+  vi.mocked(api.accountAssets).mockResolvedValue(accountAssets as never);
   const wrapper = mount(Overview, { global: { stubs: { Panel: { template: '<div><slot/></slot></div>' }, StatusBadge: { props: ['value'], template: '<span>{{ value }}</span>' } } } });
   await flushPromises();
   return wrapper;
@@ -83,9 +87,11 @@ it('keeps money, notional, policy and final entry capacity in four separate bloc
   const limits = wrapper.find('[data-capital-block="limits"]').text();
   const entry = wrapper.find('[data-capital-block="entry"]').text();
   // Block 1 is money the account can actually commit.
-  expect(funding).toContain('USDT 可用 $3,861.56');
-  expect(funding).toContain('USDC 可用 $4,972.88');
-  expect(funding).toContain('合计可执行保证金 $8,834.44');
+  expect(funding).toContain('USDT：可用 $3,861.56 − 预留 $0.00 − 租约 $0.00 = 可执行保证金 $3,861.56');
+  expect(funding).toContain('USDC：可用 $4,972.88');
+  expect(funding).toContain('Total Entry Trading Capital $8,834.44');
+  // BTC is a real account asset and is named as excluded from Entry funding, not silently dropped.
+  expect(funding).toContain('不参与新建仓资金：BTC');
   // Block 2 is a notional fact and says so; it must not be presented as a balance to spend.
   expect(exposure).toContain('Gross $10,494.31 / 上限 $10,504.73');
   expect(exposure).toContain('组合名义敞口（事实，不等于可用资金）');
@@ -98,12 +104,34 @@ it('keeps money, notional, policy and final entry capacity in four separate bloc
   expect(entry).toContain('LONG 可执行新增名义 $3,680.06 via LINKUSDT/USDT · 首因 CLUSTER');
   expect(entry).toContain('SHORT 可执行新增名义 $3,680.06 via SUIUSDC/USDC · 首因 CLUSTER');
   expect(entry).toContain('仍有空间');
+  // One side open, the other refused: the page states which is which, and never "no capacity".
+  expect(entry).toContain('LONG 与 SHORT 均可新增');
+  // §D3: each side expands into the per-candidate decomposition the Engine produced.
+  const traces = wrapper.findAll('[data-capacity-trace]');
+  expect(traces).toHaveLength(2);
+  expect(traces[0].text()).toContain('LONG 逐候选容量（1 个可路由候选）');
+  expect(traces[0].text()).toContain('资金容量 $3,980.00');
+  expect(traces[0].text()).toContain('交易所最小合法名义 $5.00');
+  expect(traces[1].text()).toContain('首因 SIDE_PLAN_ABSENT');
 });
 
 it('does not report a spent observed ratio as an exhausted book when the margin and risk facts allow more', async () => {
   const text = (await open(marginDrivenBook)).text();
   expect(text).not.toContain('已用尽');
   expect(text).toContain('首个饱和硬维度 NONE');
+});
+
+it('labels account assets and Entry funding eligibility as two different columns', async () => {
+  const wrapper = await open(marginDrivenBook, {assets: [
+    {asset: 'BTC', walletBalance: 0.01, availableBalance: 0.01, usdValue: 850.23, marginEligible: true},
+    {asset: 'USDT', walletBalance: 5473.13, availableBalance: 3861.56, usdValue: 5473.13, marginEligible: true},
+    {asset: 'USDC', walletBalance: 4981.18, availableBalance: 4972.88, usdValue: 4981.18, marginEligible: true},
+  ]});
+  const rows = wrapper.findAll('[data-entry-funding-eligible]');
+  expect(rows).toHaveLength(3);
+  expect(rows.map((row) => row.text())).toEqual(['NO', 'YES', 'YES']);
+  expect(wrapper.text()).toContain('可用于新建仓（Entry）');
+  expect(wrapper.text()).toContain('交易所保证金资产');
 });
 
 it('names the enforced ratio as the first cause instead of dressing its remainder as money', async () => {
@@ -126,7 +154,8 @@ it('renders a single saturated side as a fact beside the room the other side sti
   view.limits.policy = { gross: 'ENFORCE', direction: 'ENFORCE', cluster: 'ENFORCE' };
   view.firstBlocker = 'DIRECTION_SHORT';
   view.blockingDimensions = ['DIRECTION_SHORT'];
-  view.entryCapacity.SHORT = { executableNotionalUsd: 0, quoteAsset: null, symbol: null, firstBindingConstraint: 'DIRECTION_ENFORCED', executableRoutes: 0 };
+  view.entryCapacity.SHORT = { executableNotionalUsd: 0, quoteAsset: null, symbol: null, firstBindingConstraint: 'DIRECTION_ENFORCED', executableRoutes: 0, candidates: [] };
+  view.sideStatus = {code: 'LONG_ONLY_EXECUTABLE', text: 'LONG executable / SHORT blocked'};
   const wrapper = await open(oneSide);
   const text = wrapper.text();
   expect(wrapper.find('[data-caps-first-explanation]').text()).not.toContain('已用尽');
@@ -136,6 +165,8 @@ it('renders a single saturated side as a fact beside the room the other side sti
   expect(text).toContain('LONG $4,402.52 / $5,232.94');
   expect(text).toContain('SHORT 可执行新增名义 $0.00 · 首因 DIRECTION_ENFORCED');
   expect(text).toContain('仍有空间');
+  expect(text).toContain('LONG executable / SHORT blocked');
+  expect(text).not.toContain('无容量');
 });
 
 it('renders the projected numbers and verdict it is given instead of recomputing them', async () => {

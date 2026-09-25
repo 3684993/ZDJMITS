@@ -16,6 +16,12 @@ const EntryExecutionCapacitySchema=z.object({
   maxMarginUsd:z.number().nonnegative(),
   maxNotionalUsd:z.number().nonnegative(),
   maxQuantityUnits:z.number().int().nonnegative(),
+  // The deterministic answer the model is told, not a suggestion: which side could be submitted now,
+  // what the exchange floor is, and which single number limits the side that cannot.
+  firstBindingConstraint:z.string().optional(),
+  minimumLegalNotionalUsd:z.number().nonnegative().optional(),
+  legalNotionalRangeUsd:z.tuple([z.number().nonnegative(),z.number().nonnegative()]).nullable().optional(),
+  authorization:z.string().optional(),
   riskHeadroom:EntryRiskHeadroomSchema,
 }).strict();
 /** Frozen pre-AI execution facts carried with an EntryIntent for restart-safe authorization. */
@@ -28,6 +34,9 @@ export const EntryExecutionEnvelopeSchema=z.object({
   expiresAt:z.number().int(),
   notice:z.literal('EXECUTION FACTS ARE NOT MARKET SIGNALS.'),
   account:z.object({status:z.string(),equityUsd:z.number(),availableMarginUsd:z.number(),reservedMarginUsd:z.number(),executionLeaseMarginUsd:z.number(),freeMarginUsd:z.number()}).strict(),
+  executableSides:z.array(z.enum(['LONG','SHORT'])).optional(),
+  noExecutableSide:z.boolean().optional(),
+  sideAuthorization:z.record(z.enum(['LONG','SHORT']),z.string()).optional(),
   positionCapacity:z.object({used:z.number().int().nonnegative(),max:z.number().int().nonnegative(),slotAvailable:z.boolean(),sameUnderlyingOccupied:z.boolean()}).strict(),
   leverage:z.number().int().positive(),
   exchange:z.object({tickSize:z.number().positive(),stepSize:z.number().positive(),minQty:z.number().positive(),minNotional:z.number().nonnegative()}).strict(),

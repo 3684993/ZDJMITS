@@ -6,7 +6,7 @@ import type { RuntimeState } from '../state/runtimeState.js';
 import type { EventBus } from '../events/eventBus.js';
 import { bestExecutableSide, computeExecutableRiskHeadroom, directionBudget } from './riskReadiness.js';
 import { collectPendingEntryRiskExposures, entryOrderOccupiesRisk } from './entryRiskOccupancy.js';
-import { candidateCapitalFromState, leverageFactOf, quoteAssetCapitalLedgers } from './capitalCapacity.js';
+import { candidateCapitalFromState, entryTradingCapital, leverageFactOf } from './capitalCapacity.js';
 import {storageCapacityHealth,storageEntryBlockReason} from './storageCapacityGuard.js';
 
 const reasonText=(code:RuntimeReasonCode)=>({
@@ -83,7 +83,7 @@ export class RuntimeControlService {
     const admission=evaluateCapitalAdmission({candidates,snapshots:[...this.state.snapshots.values()],settings:this.state.settings,positions,assets:this.state.account.assets});
     const slots=this.state.entryCapacity();if(slots.used>=slots.max){admission.summary.executableCandidateCount=0;admission.summary.routedCandidates=[];admission.summary.reasonCounts={POSITION_CAPACITY_FULL:admission.decisions.length};for(const row of admission.decisions){row.executable=false;row.reason='POSITION_CAPACITY_FULL';row.reasonText=`仓位容量 ${slots.used}/${slots.max}（持仓${slots.positions}、在途${slots.inFlight}、预留${slots.reserved}）`;}}
     this.admissionDetails=admission.decisions.map(row=>({symbol:row.symbol,underlying:row.underlying,executable:row.executable,reason:row.reason,reasonText:row.reasonText,long:row.longPlan,short:row.shortPlan}));
-    const nextAt=now+settings.capitalCheckIntervalSeconds*1000,capitalEquity=Number(this.state.account.equityUsd??0),budget=directionBudget(this.state.settings,capitalEquity,[...this.state.positions.values()],now),funding=quoteAssetCapitalLedgers(this.state,now);
+    const nextAt=now+settings.capitalCheckIntervalSeconds*1000,capitalEquity=Number(this.state.account.equityUsd??0),budget=directionBudget(this.state.settings,capitalEquity,[...this.state.positions.values()],now),funding=entryTradingCapital(this.state,now);
     const routed=admission.summary.routedCandidates.map(route=>{
       const market=this.state.snapshots.get(route.symbol),minimum=Math.max(route.minExecutableNotionalUsd??0,market?.quote?.minNotional??0),
         // Funding comes from the same object the cockpit displays: wallet availability minus the margin this

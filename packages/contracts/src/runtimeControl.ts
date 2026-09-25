@@ -18,7 +18,16 @@ export const RuntimeControlSettingsSchema=z.object({
 });
 export type RuntimeControlSettings=z.infer<typeof RuntimeControlSettingsSchema>;
 
-export const CapitalRouteSampleSchema=z.object({symbol:z.string(),underlying:z.string(),quoteAsset:z.enum(['USDT','USDC','BUSD','UNKNOWN']),marginUsd:z.number().nonnegative(),leverage:z.number().int().positive(),admission:z.string(),reason:z.string(),longExecutable:z.boolean().default(true),shortExecutable:z.boolean().default(true),longRecommendedNotionalUsd:z.number().nonnegative().nullable().default(null),shortRecommendedNotionalUsd:z.number().nonnegative().nullable().default(null),longFeasibleNotionalUsd:z.number().nonnegative().nullable().default(null),shortFeasibleNotionalUsd:z.number().nonnegative().nullable().default(null),minExecutableNotionalUsd:z.number().nonnegative().default(0)});
+/**
+ * What one side's allocation plan actually said. A side that was never sized, a side that was sized and
+ * refused, and a side whose size is below the exchange floor are three different answers, and a boolean
+ * cannot carry them.
+ */
+export const CapitalSidePlanFactsSchema=z.object({present:z.boolean(),admission:z.string(),reasons:z.array(z.string()).default([]),
+  minExecutableMarginUsd:z.number().nonnegative(),notionalUsd:z.number().nonnegative(),marginUsd:z.number().nonnegative(),leverage:z.number().int().positive()}).nullable().default(null);
+export type CapitalSidePlanFacts=z.infer<typeof CapitalSidePlanFactsSchema>;
+
+export const CapitalRouteSampleSchema=z.object({symbol:z.string(),underlying:z.string(),quoteAsset:z.enum(['USDT','USDC','BUSD','UNKNOWN']),marginUsd:z.number().nonnegative(),leverage:z.number().int().positive(),admission:z.string(),reason:z.string(),longExecutable:z.boolean().default(true),shortExecutable:z.boolean().default(true),longRecommendedNotionalUsd:z.number().nonnegative().nullable().default(null),shortRecommendedNotionalUsd:z.number().nonnegative().nullable().default(null),longFeasibleNotionalUsd:z.number().nonnegative().nullable().default(null),shortFeasibleNotionalUsd:z.number().nonnegative().nullable().default(null),minExecutableNotionalUsd:z.number().nonnegative().default(0),longPlanFacts:CapitalSidePlanFactsSchema,shortPlanFacts:CapitalSidePlanFactsSchema});
 export type CapitalRouteSample=z.infer<typeof CapitalRouteSampleSchema>;
 
 export const CapitalAdmissionSummarySchema=z.object({

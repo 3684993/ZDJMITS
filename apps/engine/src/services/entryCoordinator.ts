@@ -24,7 +24,7 @@ import type { EipService } from "./eipService.js";
 import type { AiFabric } from "./aiFabric.js";
 import { binanceClientOrderIdFactory } from "./binanceClientOrderIdFactory.js";
 import { computeExecutableRiskHeadroom, portfolioCapacityVisibility } from "./riskReadiness.js";
-import { candidateCapitalCapacity, capitalCapacityForQuoteAsset, leverageFactOf, quoteAssetCapitalLedgers } from "./capitalCapacity.js";
+import { candidateCapitalCapacity, entryTradingCapital, leverageFactOf } from "./capitalCapacity.js";
 import { collectPendingEntryRiskExposures, entryOrderOccupiesRisk } from './entryRiskOccupancy.js';
 import { candidateCapitalFromState } from './capitalCapacity.js';
 import { isPipelineRoutableLifecycle, reconcileCandidateLifecycles } from './candidateLifecycleDeriver.js';
@@ -191,7 +191,7 @@ export class EntryCoordinator {
       // independent, so only a projected exhaustion verdict may say the cap is used up, and only
       // when the capital pre-check itself found nothing executable — otherwise something else
       // (occupancy, facts, cooldown) is the real first cause and must not be masked.
-      const capacity = portfolioCapacityVisibility(this.state.entryCapacity(), this.state.runtimeControl.capital.directionBudget, {funding:this.state.runtimeControl.capital.funding??[],routes:this.state.runtimeControl.capital.routedCandidates??[]});
+      const capacity = portfolioCapacityVisibility(this.state.entryCapacity(), this.state.runtimeControl.capital.directionBudget, {funding:this.state.runtimeControl.capital.funding??entryTradingCapital(this.state),routes:this.state.runtimeControl.capital.routedCandidates??[]});
       const demand = routes.size > 0 || this.state.universe.some((candidate: any) => candidate.eligible);
       const executable = this.state.runtimeControl.capital.executableCandidateCount ?? 0;
       const capacityBlocked = demand && executable === 0 && capacity.exhaustedForNewRisk;
@@ -435,7 +435,7 @@ export class EntryCoordinator {
       if(!executionEnvelope)throw new Error('PRE_AI_EXECUTION_ENVELOPE_MISSING');
       const leaseCheck=validateExecutionLease(this.state,executionLeaseId,symbol);if(!leaseCheck.ok){this.events.publish('ENTRY_DECISION_BLOCKED',{stage:'POST_AI_EXECUTION_LEASE',reason:leaseCheck.reason},symbol);this.reject(symbol,leaseCheck.reason,result.runId,d.tradeSide??undefined);return;}
       const sideEnvelope=executionEnvelope[side];
-      if(!sideEnvelope.executable){this.events.publish('ENTRY_DECISION_BLOCKED',{stage:'POST_PRIMARY_EXECUTION_ENVELOPE',reason:'AI_DIRECTION_NOT_EXECUTABLE',brainRunId:result.runId,direction:side},symbol);this.reject(symbol,'AI_DIRECTION_NOT_EXECUTABLE',result.runId,d.tradeSide??undefined);return;}
+      if(!sideEnvelope.executable){this.events.publish('ENTRY_DECISION_BLOCKED',{stage:'POST_PRIMARY_EXECUTION_ENVELOPE',reason:'AI_DIRECTION_NOT_EXECUTABLE',violation:'MODEL_SELECTION_OUTSIDE_EXECUTABLE_ENVELOPE',envelopeAuthorization:executionEnvelope.sideAuthorization?.[side]??null,executableSides:executionEnvelope.executableSides??null,brainRunId:result.runId,direction:side},symbol);this.reject(symbol,'AI_DIRECTION_NOT_EXECUTABLE',result.runId,d.tradeSide??undefined);return;}
       const quantityUnits=Number(d.quantityUnits);if(!Number.isInteger(quantityUnits)||quantityUnits<=0){this.reject(symbol,'AI_QUANTITY_UNITS_INVALID',result.runId,d.tradeSide??undefined);return;}
       if(quantityUnits>sideEnvelope.maxQuantityUnits){this.events.publish('AI_SIZING_ERROR',{brainRunId:result.runId,reason:'AI_QUANTITY_EXCEEDS_ENVELOPE',quantityUnits,maxQuantityUnits:sideEnvelope.maxQuantityUnits,direction:side},symbol);this.reject(symbol,'AI_QUANTITY_EXCEEDS_ENVELOPE',result.runId,d.tradeSide??undefined);return;}
       const plan=materializeAiQuantityAllocation({state:this.state,candidate,snapshot:market,side,quantityUnits,authorizationMaxPrice:d.acceptablePriceRange.max,envelope:executionEnvelope});

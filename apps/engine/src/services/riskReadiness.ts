@@ -1,7 +1,9 @@
 import type { MarketSymbolSnapshot, Position, Side, SystemSettings } from '@zdj/contracts';
 import { uid } from '@zdj/core';
 import { computeExecutableRiskHeadroom, exposureCapacityPolicy, type BindingConstraint, type HeadroomInput } from './executableRiskHeadroom.js';
-import type { QuoteAssetCapitalLedger } from './capitalCapacity.js';
+
+import type { EntryTradingCapital } from './capitalCapacity.js';
+import { entrySideStatus } from './entryCapacityTrace.js';
 export { clusterFor, computeExecutableRiskHeadroom } from './executableRiskHeadroom.js';
 
 export type DataQualityStatus='GOOD'|'DEGRADED'|'UNTRUSTED';
@@ -48,7 +50,6 @@ export function evaluateProtectionShadow(position:Pick<Position,'side'|'entryPri
   return {status:hit?'WOULD_TRIGGER':'ARMED',wouldTriggerAt:hit?now:null,theoreticalExitPrice:spec.triggerPrice,theoreticalGrossPnl:gross,estimatedFees:fees,theoreticalNetPnl:gross-fees,mfe:Math.max(0,position.side==='LONG'?position.markPrice-position.entryPrice:position.entryPrice-position.markPrice)*position.quantity,mae:Math.min(0,position.side==='LONG'?position.markPrice-position.entryPrice:position.entryPrice-position.markPrice)*position.quantity};
 }
 
-
 /**
  * The one book-level gross/direction computation. Admission gates and the cockpit read the same object.
  *
@@ -76,17 +77,32 @@ export type ExhaustedReason='POSITION_CAPACITY'|'GROSS'|'BOTH_DIRECTIONS'|'AVAIL
 
 /**
  * The best executable Entry notional one side can get right now, with the single reason it is limited.
- * The amounts come from the Engine's own per-route headroom, so this only reads that verdict and never
- * re-decides it. With no route open it reports the constraint the routes themselves named.
+ * The amounts come from the Engine's own per-route headroom and the constraint from that route's
+ * capacity trace, so this only reads the verdict — and a side whose candidates were never sized is
+ * reported as such instead of as an exchange-minimum problem.
  */
-export function bestExecutableSide(routes:any[],side:'LONG'|'SHORT'){
+export function bestExecutableSide(routes:any[],side:'LONG'|'SHORT',traces:any[]=[]){
   const key=side==='LONG'?'longFeasibleNotionalUsd':'shortFeasibleNotionalUsd';
+  const traceBySymbol=new Map(traces.filter(row=>row?.side===side).map(row=>[String(row.symbol).toUpperCase(),row]));
+  const constraintOf=(route:any):string=>{
+    const trace=traceBySymbol.get(String(route?.symbol??'').toUpperCase());
+    if(trace?.firstBindingConstraint)return String(trace.firstBindingConstraint);
+    return String(route?.riskHeadroom?.[side]?.firstBindingConstraint??'');
+  };
   const open=routes.filter(route=>Number(route?.[key]??0)>0).sort((a,b)=>Number(b[key])-Number(a[key]));
-  if(open.length){const best=open[0];return{executableNotionalUsd:Number(best[key]),quoteAsset:String(best.quoteAsset??'UNKNOWN'),symbol:String(best.symbol??'UNKNOWN'),firstBindingConstraint:(best.riskHeadroom?.[side]?.firstBindingConstraint??'EXECUTABLE_HEADROOM') as BindingConstraint,executableRoutes:open.length};}
+  if(open.length){
+    const best=open[0];
+    return{executableNotionalUsd:Number(best[key]),quoteAsset:String(best.quoteAsset??'UNKNOWN'),symbol:String(best.symbol??'UNKNOWN'),
+      firstBindingConstraint:(constraintOf(best)||'EXECUTABLE_HEADROOM') as BindingConstraint,executableRoutes:open.length,
+      minimumLegalNotionalUsd:traceBySymbol.get(String(best.symbol).toUpperCase())?.minimumLegalNotionalUsd??null,
+      candidates:traces.filter(row=>row?.side===side).sort((a,b)=>Number(b.finalNotionalBeforeRoundingUsd??0)-Number(a.finalNotionalBeforeRoundingUsd??0)).slice(0,12)};
+  }
   const counted=new Map<string,number>();
-  for(const route of routes){const constraint=String(route?.riskHeadroom?.[side]?.firstBindingConstraint??'');if(!constraint||constraint==='EXECUTABLE_HEADROOM')continue;counted.set(constraint,(counted.get(constraint)??0)+1);}
+  for(const route of routes){const constraint=constraintOf(route);if(!constraint||constraint==='EXECUTABLE_HEADROOM')continue;counted.set(constraint,(counted.get(constraint)??0)+1);}
   const named=[...counted.entries()].sort((a,b)=>b[1]-a[1])[0]?.[0];
-  return{executableNotionalUsd:0,quoteAsset:null,symbol:null,firstBindingConstraint:(named??(routes.length?'NO_FEASIBLE_ROUTE':'NO_CAPITAL_ROUTE')) as BindingConstraint,executableRoutes:0};
+  return{executableNotionalUsd:0,quoteAsset:null,symbol:null,
+    firstBindingConstraint:(named??(routes.length?'NO_FEASIBLE_ROUTE':'NO_CAPITAL_ROUTE')) as BindingConstraint,executableRoutes:0,
+    minimumLegalNotionalUsd:null,candidates:traces.filter(row=>row?.side===side).sort((a,b)=>Number(Boolean(b.executable))-Number(Boolean(a.executable))).slice(0,12)};
 }
 
 /**
@@ -96,34 +112,29 @@ export function bestExecutableSide(routes:any[],side:'LONG'|'SHORT'){
  *
  * A ratio dimension the deployment only observes is reported as a fact and never as a blocker.
  */
-export function portfolioCapacityVisibility(capacity:PositionCapacity,budget:GrossDirectionBudget,facts:{funding?:QuoteAssetCapitalLedger[];routes?:any[]}={}){
-  const evaluated=budget.evaluatedAt>0,policy=budget.policy??{gross:'ENFORCE' as const,direction:'ENFORCE' as const,cluster:'ENFORCE' as const},routes=facts.routes??[];
-  const executable={LONG:bestExecutableSide(routes,'LONG'),SHORT:bestExecutableSide(routes,'SHORT')};
-  const funding=facts.funding??[];
-  const fundableMarginUsd=funding.reduce((n,row)=>n+row.executableMarginUsd,0),marginProven=funding.length>0&&funding.every(row=>row.factsComplete);
+export function portfolioCapacityVisibility(capacity:PositionCapacity,budget:GrossDirectionBudget,facts:{funding?:EntryTradingCapital;routes?:any[];traces?:any[]}={}){
+  const evaluated=budget.evaluatedAt>0,policy=budget.policy??{gross:'ENFORCE' as const,direction:'ENFORCE' as const,cluster:'ENFORCE' as const},routes=facts.routes??[],traces=facts.traces??[];
+  const fundingBlock=facts.funding??{quoteAssets:[],totalExecutableMarginUsd:0,proven:false,excludedAssets:[],accountEquityUsd:null};
+  const executable={LONG:bestExecutableSide(routes,'LONG',traces),SHORT:bestExecutableSide(routes,'SHORT',traces)};
+  const fundableMarginUsd=Number(fundingBlock.totalExecutableMarginUsd??0),marginProven=fundingBlock.proven===true&&fundingBlock.quoteAssets.length>0;
   const slotsFull=capacity.used>=capacity.max,grossFull=policy.gross==='ENFORCE'&&budget.remainingGrossUsd<=0,longFull=policy.direction==='ENFORCE'&&budget.longAvailableNotionalUsd<=0,shortFull=policy.direction==='ENFORCE'&&budget.shortAvailableNotionalUsd<=0,marginFull=marginProven&&fundableMarginUsd<=0;
   const firstBlocker:CapacityBlocker=!evaluated?'NOT_EVALUATED':slotsFull?'POSITION_CAPACITY':grossFull?'GROSS':longFull?'DIRECTION_LONG':shortFull?'DIRECTION_SHORT':'NONE';
   const blockingDimensions=[slotsFull&&evaluated?'POSITION_CAPACITY':null,grossFull&&evaluated?'GROSS':null,longFull&&evaluated?'DIRECTION_LONG':null,shortFull&&evaluated?'DIRECTION_SHORT':null].filter(Boolean) as Exclude<CapacityBlocker,'NONE'|'NOT_EVALUATED'>[];
   const exhaustedReason:ExhaustedReason|null=!evaluated?null:slotsFull?'POSITION_CAPACITY':marginFull?'AVAILABLE_MARGIN':grossFull?'GROSS':longFull&&shortFull?'BOTH_DIRECTIONS':null;
+  const sideStatus=entrySideStatus(executable,routes.length);
   return{
-    funding:{quoteAssets:funding,executableMarginUsd:fundableMarginUsd,proven:marginProven},
+    funding:{quoteAssets:fundingBlock.quoteAssets,totalExecutableMarginUsd:fundableMarginUsd,proven:marginProven,excludedAssets:fundingBlock.excludedAssets??[],accountEquityUsd:fundingBlock.accountEquityUsd??null},
     exposure:{
       gross:{notionalUsd:budget.grossNotionalUsd,limitUsd:budget.grossLimitUsd,remainingUsd:budget.remainingGrossUsd,usedPct:budget.grossUsedPct,mode:policy.gross,enforced:policy.gross==='ENFORCE'},
       LONG:{notionalUsd:budget.longNotionalUsd,limitUsd:budget.directionLimitUsd,remainingUsd:budget.longAvailableNotionalUsd,usedPct:budget.longUsedPct??0,mode:policy.direction,enforced:policy.direction==='ENFORCE'},
       SHORT:{notionalUsd:budget.shortNotionalUsd,limitUsd:budget.directionLimitUsd,remainingUsd:budget.shortAvailableNotionalUsd,usedPct:budget.shortUsedPct??0,mode:policy.direction,enforced:policy.direction==='ENFORCE'},
     },
     limits:{slots:{used:capacity.used,max:capacity.max,positions:capacity.positions,inFlight:capacity.inFlight,reserved:capacity.reserved},policy},
-    entryCapacity:executable,
+    entryCapacity:executable,sideStatus,
     firstBlocker,blockingDimensions,exhaustedReason,exhaustedForNewRisk:exhaustedReason!==null,evaluatedAt:budget.evaluatedAt,
   };
 }
 
-
-/**
- * The envelope is a report of the single headroom verdict, never a second decision about what binds:
- * re-deriving statuses from `remaining` here would let a dimension the deployment only observes come
- * back as a rejection through another door.
- */
 export function buildRiskEnvelope(input:HeadroomInput&{reservedIntents:number;workingOrders:number;quoteMarginUsage:number}):RiskEnvelope {
   const now=input.now??Date.now(), h=computeExecutableRiskHeadroom({...input,strictPlannedNotional:true}), equity=input.equity,
     current=h.gross,long=h.long,short=h.short,gross=current+input.plannedNotional,

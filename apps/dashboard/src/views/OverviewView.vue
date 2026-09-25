@@ -53,8 +53,8 @@ const capacityBlocked = computed(() => {
 const fmt = (value: unknown) => money(Number(value ?? 0));
 const capacityFunding = computed(() => {
   const assets = capacityVisibility.value?.funding?.quoteAssets ?? [];
-  const perAsset = assets.map((row: any) => `${row.quoteAsset} 可用 ${fmt(row.availableBalanceUsd)}（预留 ${fmt(row.reservedMarginUsd)} + 租约 ${fmt(row.executionLeaseMarginUsd)}）→ 可执行保证金 ${fmt(row.executableMarginUsd)}`);
-  return { perAsset, totalExecutableMarginUsd: capacityVisibility.value?.funding?.executableMarginUsd ?? 0, proven: capacityVisibility.value?.funding?.proven === true };
+  const perAsset = assets.map((row: any) => `${row.quoteAsset}：可用 ${fmt(row.availableBalanceUsd)} − 预留 ${fmt(row.reservedMarginUsd)} − 租约 ${fmt(row.executionLeaseMarginUsd)} = 可执行保证金 ${fmt(row.executableMarginUsd)}`);
+  return { perAsset, totalExecutableMarginUsd: capacityVisibility.value?.funding?.totalExecutableMarginUsd ?? 0, proven: capacityVisibility.value?.funding?.proven === true };
 });
 const capacityEntry = computed(() => {
   const view = capacityVisibility.value;
@@ -66,6 +66,15 @@ const capacityEntry = computed(() => {
   };
   return { LONG: side('LONG'), SHORT: side('SHORT'), constraint: view.entryCapacity?.LONG?.firstBindingConstraint ?? view.entryCapacity?.SHORT?.firstBindingConstraint ?? "NOT_EVALUATED" };
 });
+// Which balances the Engine counted as Entry funding, read back from its ledger rather than re-listed here.
+const entryFundingAssets = computed(() => new Set((capacityVisibility.value?.funding?.quoteAssets ?? []).map((row: any) => String(row.quoteAsset).toUpperCase())));
+const excludedEntryFunding = computed(() => (capacityVisibility.value?.funding?.excludedAssets ?? []).map((row: any) => `${row.asset}（估值 ${fmt(row.usdValue)}）`));
+const capacitySides = ['LONG', 'SHORT'] as const;
+const sideCandidateRows = (side: 'LONG' | 'SHORT') =>
+  (capacityVisibility.value?.entryCapacity?.[side]?.candidates ?? []).map((row: any) =>
+    `${row.symbol} ${row.side}：资金容量 ${fmt(row.funding?.executableNotionalUsd)}｜风险后 ${fmt(row.finalNotionalBeforeRoundingUsd)}｜交易所最小合法名义 ${row.minimumLegalNotionalUsd == null ? "未验证" : fmt(row.minimumLegalNotionalUsd)}｜${row.executable ? "可执行" : `首因 ${row.firstBindingConstraint}`}`);
+const capacitySideStatusText = computed(() => capacityVisibility.value?.sideStatus?.text ?? "Engine 尚未投影两侧状态");
+
 const capacityPolicyText = computed(() => {
   const policy = capacityVisibility.value?.exposure?.gross?.mode === undefined ? null : capacityVisibility.value;
   if (!policy) return "政策未投影";
@@ -290,8 +299,10 @@ onUnmounted(() => {
           <dt>1 · 资金与保证金容量（可动用）</dt>
           <dd>
             {{ capacityFunding.perAsset.length ? capacityFunding.perAsset.join("；") : "未投影计价资产资金事实" }} ·
-            合计可执行保证金 {{ fmt(capacityFunding.totalExecutableMarginUsd) }}
+            <strong data-entry-trading-capital>Total Entry Trading Capital
+            {{ fmt(capacityFunding.totalExecutableMarginUsd) }}</strong>
             <span v-if="!capacityFunding.proven">（资金事实不完整，按 0 处理）</span>
+            <span v-if="excludedEntryFunding.length"> · 不参与新建仓资金：{{ excludedEntryFunding.join("、") }}</span>
           </dd>
         </div>
         <div data-capital-block="exposure">
@@ -319,12 +330,19 @@ onUnmounted(() => {
           <dt>4 · 最终可执行新增 Entry 容量</dt>
           <dd data-entry-capacity>{{ capacityEntry.LONG }}</dd>
           <dd data-entry-capacity>{{ capacityEntry.SHORT }}</dd>
+          <dd data-side-status>{{ capacitySideStatusText }}</dd>
           <dd>
             {{
               capacityVisibility.exhaustedForNewRisk
                 ? `新增风险额度已用尽 · ${capacityVisibility.exhaustedReason}`
                 : `仍有空间（可执行保证金 ${fmt(capacityFunding.totalExecutableMarginUsd)}）`
             }}
+          </dd>
+          <dd v-for="side in capacitySides" :key="side" class="wide" data-capacity-trace>
+            <details>
+              <summary>{{ side }} 逐候选容量（{{ sideCandidateRows(side).length }} 个可路由候选）</summary>
+              <ul><li v-for="row in sideCandidateRows(side)" :key="row">{{ row }}</li></ul>
+            </details>
           </dd>
         </div>
       </div>
@@ -569,7 +587,8 @@ onUnmounted(() => {
             <th>钱包余额</th>
             <th>可用</th>
             <th>USD 估值</th>
-            <th>保证金资产</th>
+            <th>交易所保证金资产</th>
+            <th>可用于新建仓（Entry）</th>
           </tr>
         </thead>
         <tbody>
@@ -579,6 +598,7 @@ onUnmounted(() => {
             <td>{{ a.availableBalance }}</td>
             <td>{{ a.usdValue == null ? "—" : money(a.usdValue) }}</td>
             <td><StatusBadge :value="a.marginEligible ? 'YES' : 'NO'" /></td>
+            <td data-entry-funding-eligible><StatusBadge :value="entryFundingAssets.has(String(a.asset).toUpperCase()) ? 'YES' : 'NO'" /></td>
           </tr>
         </tbody></table
     ></Panel>

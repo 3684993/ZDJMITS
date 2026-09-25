@@ -1,8 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
 import { SystemSettingsSchema } from '@zdj/contracts';
 import defaults from '../../../../config/settings.default.json' with { type: 'json' };
+import { RuntimeState } from '../state/runtimeState.js';
 import { directionBudget, portfolioCapacityVisibility, type PositionCapacity } from './riskReadiness.js';
-import { capitalCapacityForQuoteAsset } from './capitalCapacity.js';
+import { capitalCapacityForQuoteAsset, entryTradingCapital } from './capitalCapacity.js';
 import { governanceFieldOf } from '../config/governanceSettingsMatrix.js';
 import { harness } from './tradingQualityTestHarness.js';
 
@@ -254,6 +255,21 @@ describe('capacity starvation is never reported as a missing candidate', () => {
     expect(h.events.find(event => event.type === 'ANALYSIS_DISPATCH_INTENT')?.payload?.mode).toBe('ANALYSIS_ONLY');
   });
 
+// A live-shaped account: two allowed quote assets plus a BTC collateral row.
+const fundedState = () => {
+  const state = new RuntimeState(settings(1) as never) as any;
+  state.account = {...state.account, status: 'READY', asOf: Date.now(), equityUsd: 11_645.44,
+    assets: [{asset: 'USDT', availableBalance: 3_861.560262, walletBalance: 5_473.133262, usdValue: 5_473.133262},
+      {asset: 'USDC', availableBalance: 4_972.875697, walletBalance: 4_981.175512, usdValue: 4_981.175512},
+      {asset: 'BTC', availableBalance: 0.01, walletBalance: 0.01, usdValue: 850.23}]};
+  return state;
+};
+const brokeState = () => {
+  const state = fundedState();
+  state.account = {...state.account, assets: [{asset: 'USDT', availableBalance: 0, walletBalance: 0, usdValue: 0}, {asset: 'USDC', availableBalance: 0, walletBalance: 0, usdValue: 0}]};
+  return state;
+};
+
   it('observes a notional ratio without letting it veto or rename itself as money', () => {
     const at = Date.now();
     const marginDriven = (gross: string, direction: string) => SystemSettingsSchema.parse({
@@ -270,21 +286,26 @@ describe('capacity starvation is never reported as a missing candidate', () => {
     expect(view.firstBlocker).toBe('NONE');
     expect(view.exhaustedForNewRisk).toBe(false);
     // A funded account is reported as funded even while the ratio is over its observed ceiling.
-    const funded = portfolioCapacityVisibility(slots(1), spent, {funding: [
-      capitalCapacityForQuoteAsset({quoteAsset: 'USDT', availableBalanceUsd: 3_861.56, reservedMarginUsd: 0, executionLeaseMarginUsd: 0}),
-      capitalCapacityForQuoteAsset({quoteAsset: 'USDC', availableBalanceUsd: 4_972.88, reservedMarginUsd: 0, executionLeaseMarginUsd: 0}),
-    ]});
-    expect(funded.funding.executableMarginUsd).toBeCloseTo(8_834.44, 2);
+    const funded = portfolioCapacityVisibility(slots(1), spent, {funding: entryTradingCapital(fundedState(), Date.now())});
+    expect(funded.funding.totalExecutableMarginUsd).toBeCloseTo(8_834.44, 2);
     expect(funded.funding.proven).toBe(true);
+    // BTC is a real account fact and is excluded from Entry funding by name, not silently.
+    expect(funded.funding.excludedAssets).toEqual([{asset: 'BTC', usdValue: 850.23, reason: 'NOT_IN_ENTRY_FUNDING_UNIVERSE'}]);
     // With no money left, the blocker is the money — not the ratio.
-    const broke = portfolioCapacityVisibility(slots(1), spent, {funding: [capitalCapacityForQuoteAsset({quoteAsset: 'USDT', availableBalanceUsd: 0, reservedMarginUsd: 0, executionLeaseMarginUsd: 0})]});
+    const broke = portfolioCapacityVisibility(slots(1), spent, {funding: entryTradingCapital(brokeState(), Date.now())});
     expect(broke.exhaustedReason).toBe('AVAILABLE_MARGIN');
     expect(broke.exposure.gross.mode).toBe('OBSERVE');
+    // The enforcement mode itself is a governed enum: switchable only through the boundary, only to a
+    // listed value, and only with an acknowledgement.
+    const grossField = governanceFieldOf('riskGovernance.exposureCapacityPolicy.gross');
+    expect(grossField).toMatchObject({kind: 'enum', editable: true, effectiveAt: 'NEXT_ENTRY_CYCLE', ack: 'EXPOSURE_CAPACITY_OBSERVE'});
+    expect(grossField?.enum).toEqual(['ENFORCE', 'OBSERVE']);
+    expect(grossField?.ackOnlyFor).toEqual(['OBSERVE']);
   });
 
   it('types the projection against the same directionBudget result the gates consume', () => {
     const visibility = portfolioCapacityVisibility(slots(27), headroom(settings(1), 10_000, [position('AAAUSDT', 'LONG', 100, 10)], Date.now()));
-    expect(Object.keys(visibility).sort()).toEqual(['blockingDimensions', 'entryCapacity', 'evaluatedAt', 'exhaustedForNewRisk', 'exhaustedReason', 'funding', 'limits', 'firstBlocker', 'exposure'].sort());
+    expect(Object.keys(visibility).sort()).toEqual(['blockingDimensions', 'entryCapacity', 'evaluatedAt', 'exhaustedForNewRisk', 'exhaustedReason', 'firstBlocker', 'funding', 'limits', 'sideStatus', 'exposure'].sort());
     expect(visibility.exposure.LONG).toMatchObject({ notionalUsd: 1_000, limitUsd: 5_000, remainingUsd: 4_000 });
   });
 });

@@ -129,3 +129,23 @@ describe('margin-driven capacity is separated from the notional exposure facts',
     expect(JSON.parse(observed.factVersion)).toMatchObject({exposureCapacityPolicy: {gross: 'OBSERVE', direction: 'OBSERVE', cluster: 'ENFORCE'}});
   });
 });
+
+describe('the funding universe reaches the capital fact itself', () => {
+  it('CC-11 refuses capacity for a quote asset outside USDT/USDC', () => {
+    const capital = candidateCapitalCapacity({quoteAsset: 'BUSD', availableBalanceUsd: 9_000, reservedMarginUsd: 0, executionLeaseMarginUsd: 0, leverage: 10, leverageFact: 'CANDIDATE_RECOMMENDED', minimumNotionalUsd: 1});
+    expect(capital.entryFundingEligible).toBe(false);
+    expect(capital.executableMarginUsd).toBe(0);
+    expect(capital.executableNotionalUsd).toBe(0);
+    expect(capital.bindingConstraint).toBe('QUOTE_ASSET_NOT_ENTRY_ELIGIBLE');
+    expect(capital.reasons).toContain('QUOTE_ASSET_NOT_ENTRY_ELIGIBLE');
+    const h = headroom(settingsWith({gross: 'OBSERVE', direction: 'OBSERVE'}), {capital});
+    expect(h.executable).toBe(false);
+    expect(h.firstBindingConstraint).toBe('QUOTE_ASSET_NOT_ENTRY_ELIGIBLE');
+  });
+
+  it('CC-12 reports an empty wallet as AVAILABLE_MARGIN, not as a policy cap', () => {
+    const capital = usdtCapital({availableBalanceUsd: 0});
+    expect(capital.bindingConstraint).toBe('AVAILABLE_MARGIN');
+    expect(capital.executableNotionalUsd).toBe(0);
+  });
+});

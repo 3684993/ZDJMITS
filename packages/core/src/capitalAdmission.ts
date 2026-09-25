@@ -1,11 +1,11 @@
 import type { AssetRiskTier, DirectionPolicy, MarketSymbolSnapshot, PortfolioIntelligenceSettings, SystemSettings, UniverseCandidate } from '@zdj/contracts';
-import { CapitalAdmissionSummarySchema, type CapitalAdmissionSummary } from '@zdj/contracts';
+import { isEntryQuoteAsset, CapitalAdmissionSummarySchema, type CapitalAdmissionSummary } from '@zdj/contracts';
 import { buildAllocationPlan, directionPermissions, exposure, resolveQuoteAsset, resolveUnderlying, riskTier } from './portfolio.js';
 
 type AccountAsset={asset:string;availableBalance:number;usdValue:number|null};
 type PositionFact={symbol:string;side:'LONG'|'SHORT';quantity:number;markPrice:number;leverage:number};
 
-export type CapitalAdmissionReason='EXECUTABLE'|'POSITION_CAPACITY_FULL'|'ALLOCATION_FAILED'|'NO_USDT_MARGIN'|'NO_USDC_MARGIN'|'NO_USDC_CONTRACT'|'USDC_CONTRACT_NOT_ELIGIBLE'|'MIN_MARGIN_NOT_MET'|'EXPOSURE_BLOCKED'|'UNDERLYING_BLOCKED'|'MARKET_NOT_FRESH'|'LOCATION_BLOCKED'|'DIRECTION_BLOCKED';
+export type CapitalAdmissionReason='EXECUTABLE'|'POSITION_CAPACITY_FULL'|'ALLOCATION_FAILED'|'NO_USDT_MARGIN'|'NO_USDC_MARGIN'|'NO_USDC_CONTRACT'|'USDC_CONTRACT_NOT_ELIGIBLE'|'MIN_MARGIN_NOT_MET'|'EXPOSURE_BLOCKED'|'UNDERLYING_BLOCKED'|'MARKET_NOT_FRESH'|'LOCATION_BLOCKED'|'DIRECTION_BLOCKED'|'QUOTE_ASSET_NOT_ENTRY_ELIGIBLE';
 export interface CapitalAdmissionDecision{symbol:string;underlying:string;quoteAsset:'USDT'|'USDC'|'BUSD'|'UNKNOWN';executable:boolean;reason:CapitalAdmissionReason;reasonText:string;plan:null|ReturnType<typeof buildAllocationPlan>;longPlan:null|ReturnType<typeof buildAllocationPlan>;shortPlan:null|ReturnType<typeof buildAllocationPlan>;minExecutableNotionalUsd:number;}
 
 const quoteAvailable=(assets:AccountAsset[],quote:'USDT'|'USDC'|'BUSD'|'UNKNOWN')=>assets.find(asset=>asset.asset===quote)?.availableBalance??0;
@@ -33,6 +33,9 @@ export function evaluateCapitalAdmission(input:{candidates:UniverseCandidate[];s
     const reject=()=>decisions.push({symbol:candidate.symbol,underlying,quoteAsset,executable:false,reason,reasonText,plan,longPlan,shortPlan,minExecutableNotionalUsd});
     if(!snapshot){reason='NO_USDC_CONTRACT';reasonText='当前 Underlying 没有可用合约';noUsdcContract++;addReason(reason);reject();continue;}
     if(!fresh(snapshot,now)){reason='MARKET_NOT_FRESH';reasonText='行情或订单簿超过可执行新鲜度窗口';marketNotFresh++;addReason(reason);reject();continue;}
+    // Entry funding is the product's own permission, not Binance's: a BUSD/FDUSD-quoted contract (or an
+    // unrecognised quote leg) never reserves, leases, routes or sizes, whatever the exchange reports.
+    if(!isEntryQuoteAsset(quoteAsset)){reason='QUOTE_ASSET_NOT_ENTRY_ELIGIBLE';reasonText=`${quoteAsset} 不在 Entry 资金白名单（仅 USDT/USDC）内`;addReason(reason);reject();continue;}
     const available=quoteAvailable(assets,quoteAsset);
     if(quoteAsset==='USDT'&&available<=0&&quoteAvailable(assets,'USDC')>0){
       const usdcRows=snapshots.filter(item=>resolveUnderlying(item.symbol)===underlying&&resolveQuoteAsset(item.symbol)==='USDC'&&item.dataCompleteness>=.86);
@@ -54,7 +57,12 @@ export function evaluateCapitalAdmission(input:{candidates:UniverseCandidate[];s
     if(directionPlans.every(candidatePlan=>quoteMargin+candidatePlan.minExecutableMarginUsd>available*p.maxQuoteAssetMarginUsagePct)){reason='EXPOSURE_BLOCKED';reasonText=`${quoteAsset} 保证金或方向敞口没有最小可执行空间`;exposureRejected++;addReason(reason);reject();continue;}
     if(quoteAsset==='USDT')usdtExecutableUnderlyings++;if(quoteAsset==='USDC')usdcExecutableUnderlyings++;decisions.push({symbol:candidate.symbol,underlying,quoteAsset,executable:true,reason:'EXECUTABLE',reasonText:'可执行',plan,longPlan,shortPlan,minExecutableNotionalUsd});addReason('EXECUTABLE');
   }
-  const routedCandidates=decisions.filter(item=>item.executable&&item.plan).slice(0,50).map(item=>({symbol:item.symbol,underlying:item.underlying,quoteAsset:item.quoteAsset,marginUsd:item.plan!.marginUsd,leverage:item.plan!.leverage,admission:item.plan!.admission,reason:item.reasonText,longExecutable:Boolean(item.longPlan&&!item.longPlan.admission.startsWith('REJECT_')),shortExecutable:Boolean(item.shortPlan&&!item.shortPlan.admission.startsWith('REJECT_')),longRecommendedNotionalUsd:item.longPlan&&!item.longPlan.admission.startsWith('REJECT_')?item.longPlan.notionalUsd:null,shortRecommendedNotionalUsd:item.shortPlan&&!item.shortPlan.admission.startsWith('REJECT_')?item.shortPlan.notionalUsd:null,longFeasibleNotionalUsd:null,shortFeasibleNotionalUsd:null,minExecutableNotionalUsd:item.minExecutableNotionalUsd}));
+  // A side that was never sized is a different fact from a side that was sized and then refused, and the
+// downstream capacity gate cannot tell them apart from a boolean. The plan's own admission and reasons
+// therefore travel with the route, so the first binding constraint is read from one source everywhere.
+const sideFacts=(plan:null|ReturnType<typeof buildAllocationPlan>)=>plan?{present:true,admission:plan.admission,reasons:plan.reasons??[],minExecutableMarginUsd:plan.minExecutableMarginUsd,notionalUsd:plan.notionalUsd,marginUsd:plan.marginUsd,leverage:plan.leverage}:null;
+const sideOpen=(plan:null|ReturnType<typeof buildAllocationPlan>)=>Boolean(plan&&!plan.admission.startsWith('REJECT_'));
+const routedCandidates=decisions.filter(item=>item.executable&&item.plan).slice(0,50).map(item=>({symbol:item.symbol,underlying:item.underlying,quoteAsset:item.quoteAsset,marginUsd:item.plan!.marginUsd,leverage:item.plan!.leverage,admission:item.plan!.admission,reason:item.reasonText,longExecutable:sideOpen(item.longPlan),shortExecutable:sideOpen(item.shortPlan),longRecommendedNotionalUsd:sideOpen(item.longPlan)?item.longPlan!.notionalUsd:null,shortRecommendedNotionalUsd:sideOpen(item.shortPlan)?item.shortPlan!.notionalUsd:null,longPlanFacts:sideFacts(item.longPlan),shortPlanFacts:sideFacts(item.shortPlan),longFeasibleNotionalUsd:null,shortFeasibleNotionalUsd:null,minExecutableNotionalUsd:item.minExecutableNotionalUsd}));
   const summary=CapitalAdmissionSummarySchema.parse({evaluatedAt:now,executableCandidateCount:decisions.filter(item=>item.executable).length,usdtAvailable:quoteAvailable(assets,'USDT'),usdcAvailable:quoteAvailable(assets,'USDC'),usdtExecutableUnderlyings,usdcExecutableUnderlyings,noUsdtMargin,noUsdcMargin,noUsdcContract,liquidityRejected,exposureRejected,minMarginRejected,marketNotFresh,underlyingBlocked,reasonCounts:reasons,routedCandidates,nextRecheckAt:null});
   return{summary,decisions};
 }

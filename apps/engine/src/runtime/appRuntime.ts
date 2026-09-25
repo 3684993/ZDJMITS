@@ -2,6 +2,8 @@ import type {TradingQualityRuntimeObserver} from '../services/tradingQualityRunt
 import { TradingQualityCollector } from '../services/tradingQualityCollector.js';
 import { privateAccountFresh } from '../services/privateAccountReadiness.js';
 import { portfolioCapacityVisibility } from '../services/riskReadiness.js';
+import { entrySideCapacityTraces } from '../services/entryCapacityTrace.js';
+import { entryTradingCapital } from '../services/capitalCapacity.js';
 import { executionReadiness } from '../services/executionReadiness.js';
 import { PrivateAccountSync } from '../services/privateAccountSync.js';
 import { recoverUnsubmittedEntry } from '../services/unsubmittedEntryRecovery.js';
@@ -38,7 +40,7 @@ import { ShadowRunner } from "../services/shadowRunner.js";
 import { ShadowReadinessService } from "../services/shadowReadiness.js";
 import { TestnetLowLossCleanupService } from "../services/testnetLowLossCleanupService.js";
 import { currentLanIps, type RuntimeIdentity } from "./runtimeIdentity.js";
-import { RELEASE_VERSION, type Position, type TradePlan } from "@zdj/contracts";
+import { entryFundingEligibleSymbol, RELEASE_VERSION, type Position, type TradePlan } from "@zdj/contracts";
 import { TemporalIntelligenceService } from "../services/temporalIntelligenceService.js";
 import { LiveValidationService } from "../services/liveValidationService.js";
 import {ExternalIntelligenceService} from "../services/externalIntelligenceService.js";
@@ -906,7 +908,9 @@ export class EngineRuntime {
    * operator action, so it can afford to price the whole sized universe once.
    */
   portfolioRiskRequiredSymbols(){
-    const quoteable=/^(?:\d+x)?[A-Z0-9]+(?:USDT|USDC|BUSD|FDUSD)$/;
+    // §E: the coverage demand and the Entry funding universe are the same set of symbols, read from the
+    // one contract constant. A BUSD/FDUSD contract can no longer both be unroutable and require a bracket.
+    const quoteable=(symbol:string)=>entryFundingEligibleSymbol(symbol);
     const held=[...this.state.positionSymbols(),...this.state.activeEntrySymbols()];
     const symbols=new Set<string>(held);
     for(const row of Array.isArray(this.state.pool?.readyList?.())?this.state.pool.readyList():[])symbols.add(String(row?.symbol??'').toUpperCase());
@@ -926,7 +930,7 @@ export class EngineRuntime {
     // best-ranked universe members. Sorting before truncating would keep the alphabetically-first
     // symbols instead of the ones the pipeline is actually using.
     for(const symbol of ranked){if(symbols.size>=cap)break;symbols.add(symbol);}
-    return [...new Set([...symbols].filter(symbol=>quoteable.test(symbol)))].sort();
+    return [...new Set([...symbols].filter(symbol=>quoteable(symbol)))].sort();
   }
   /**
    * The set an authority commit — or a drift comparison against one — has to price: this tick's sized
@@ -2036,7 +2040,11 @@ export class EngineRuntime {
       runtimeControl: this.state.runtimeControl,
       asOf:now,observationVersion:`${this.state.marketGeneration}:${this.state.runtimeControl.capital.generation}:${this.state.account.asOf}`,
       capacity:slotCapacity,privateSync:this.privateSyncHealth(),
-      capacityVisibility:portfolioCapacityVisibility(slotCapacity,this.state.runtimeControl.capital.directionBudget,{funding:this.state.runtimeControl.capital.funding??[],routes:this.state.runtimeControl.capital.routedCandidates??[]}),
+      capacityVisibility:portfolioCapacityVisibility(slotCapacity,this.state.runtimeControl.capital.directionBudget,{
+        funding:this.state.runtimeControl.capital.funding??entryTradingCapital(this.state,now),
+        routes:this.state.runtimeControl.capital.routedCandidates??[],
+        traces:(()=>{const built=entrySideCapacityTraces(this.state,this.state.runtimeControl.capital.routedCandidates??[],{coverageSymbols:this.portfolioRiskAuthority?.facts?.margin.coverageSymbols??null,now});return [...built.LONG,...built.SHORT];})(),
+      }),
       pipelineState,
       marketDataReason,
       marketDataDetail: marketDataReason ? { streamState: stream.state, streamError: stream.lastError ?? null, quotesFresh: freshness.quoteFresh, orderBooksFresh: freshness.orderBookFresh } : null,

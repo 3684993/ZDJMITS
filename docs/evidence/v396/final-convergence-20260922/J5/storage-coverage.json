@@ -54,9 +54,5 @@
   "blockingFiles": [],
   "liveSettingsDatabaseTouched": false,
   "productionMigrationPerformed": false,
-  "note": "S08 覆盖报告由本脚本从仓库内容推导；人工改写会被 apps/engine/src/services/ownershipStorageCoverage.test.ts 的推导复核判为不一致。",
-  "backupSelfTest": {
-    "command": "node scripts/v394-stage6-preflight.mjs --self-test",
-    "pass": true
-  }
+  "note": "S08 覆盖报告由本脚本从仓库内容推导；人工改写会被 apps/engine/src/services/ownershipStorageCoverage.test.ts 的推导复核判为不一致。"
 }

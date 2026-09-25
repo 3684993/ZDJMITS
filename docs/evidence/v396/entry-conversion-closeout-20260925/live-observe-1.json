@@ -1,0 +1,993 @@
+{
+  "observedAt": "2026-09-25T00:17:21.987Z",
+  "identity": {
+    "pid": 33496,
+    "buildId": "3.9.6-7d96882f72697b3f03ed",
+    "instanceId": "b52cad49-bd72-40ff-bf90-0f31949483c2",
+    "restartAt": 1790295314534,
+    "uptimeMs": 128281,
+    "lastRestartReason": "MANUAL_START"
+  },
+  "permission": {
+    "entryPermission": {
+      "status": "READY",
+      "executionMode": "TESTNET_ENABLED",
+      "autoExecutionMode": "AUTO_RUNNING"
+    },
+    "noEntryReason": null,
+    "readinessReady": true,
+    "firstBlocker": null,
+    "analysis": "EXECUTION_ENABLED",
+    "lifecycleCounts": {
+      "POSITION_HELD": 11,
+      "EXCLUDED_UNDERLYING": 7,
+      "READY": 50
+    }
+  },
+  "writeBoundary": {
+    "environment": "TESTNET",
+    "executionMode": "TESTNET_ENABLED",
+    "lockedToTestnet": true,
+    "testnetWrites": 0,
+    "productionWrites": 0,
+    "blockedProductionWriteAttempts": 0,
+    "lastWriteAt": null,
+    "lastWritePath": null
+  },
+  "funnel": {
+    "thirtyMinutes": {
+      "since": 1790293641951,
+      "until": 1790295441951,
+      "primaryCompleted": 20,
+      "place": 20,
+      "riskAllowed": 11,
+      "economicAdmissionPassed": 0,
+      "tradePlanReady": 0,
+      "reservationCreated": 0,
+      "intentCreated": 0,
+      "submitAttempted": 0,
+      "orderSubmitted": 0,
+      "entryFilled": 0,
+      "waitingPrice": 0,
+      "blocked": [
+        {
+          "stage": "TRADE_PLAN",
+          "reason": "PLAN_SIDE_NOT_EXECUTABLE:SHORT",
+          "count": 8
+        },
+        {
+          "stage": "PORTFOLIO_RISK",
+          "reason": "PENDING_RISK_UNVERIFIED:order:entry_intent_mu5xqmou_9hr5l6ur",
+          "count": 3
+        },
+        {
+          "stage": "TRADE_PLAN",
+          "reason": "PLAN_SIDE_NOT_EXECUTABLE:LONG",
+          "count": 3
+        },
+        {
+          "stage": "PORTFOLIO_RISK",
+          "reason": "PENDING_RISK_UNVERIFIED:order:entry_intent_muavotu9_5fl4erfe",
+          "count": 1
+        },
+        {
+          "stage": "PORTFOLIO_RISK",
+          "reason": "PENDING_RISK_UNVERIFIED:order:entry_intent_mubhqs3x_2b3q7i9x",
+          "count": 1
+        },
+        {
+          "stage": "PORTFOLIO_RISK",
+          "reason": "MARGIN_TIER_SYMBOL_UNPROVEN:ZROUSDT",
+          "count": 1
+        }
+      ],
+      "ratios": {
+        "placeToTradePlan": 0,
+        "tradePlanToSubmit": null,
+        "placeToSubmit": 0,
+        "submitToFill": null
+      },
+      "topDropStage": "TRADE_PLAN",
+      "topDropReason": "PLAN_SIDE_NOT_EXECUTABLE:SHORT",
+      "topDropCount": 8,
+      "degraded": false,
+      "degradedReason": null
+    },
+    "oneHour": {
+      "since": 1790291841951,
+      "until": 1790295441951,
+      "primaryCompleted": 43,
+      "place": 43,
+      "riskAllowed": 24,
+      "economicAdmissionPassed": 0,
+      "tradePlanReady": 0,
+      "reservationCreated": 0,
+      "intentCreated": 0,
+      "submitAttempted": 0,
+      "orderSubmitted": 0,
+      "entryFilled": 0,
+      "waitingPrice": 0,
+      "blocked": [
+        {
+          "stage": "TRADE_PLAN",
+          "reason": "PLAN_SIDE_NOT_EXECUTABLE:SHORT",
+          "count": 18
+        },
+        {
+          "stage": "TRADE_PLAN",
+          "reason": "PLAN_SIDE_NOT_EXECUTABLE:LONG",
+          "count": 6
+        },
+        {
+          "stage": "PORTFOLIO_RISK",
+          "reason": "PENDING_RISK_UNVERIFIED:order:entry_intent_mu5xqmou_9hr5l6ur",
+          "count": 3
+        },
+        {
+          "stage": "PORTFOLIO_RISK",
+          "reason": "MARGIN_TIER_SYMBOL_UNPROVEN:ZROUSDT",
+          "count": 2
+        },
+        {
+          "stage": "PORTFOLIO_RISK",
+          "reason": "PENDING_RISK_UNVERIFIED:order:entry_intent_mubhqs3x_2b3q7i9x",
+          "count": 2
+        },
+        {
+          "stage": "PORTFOLIO_RISK",
+          "reason": "MARGIN_TIER_SYMBOL_UNPROVEN:ETCUSDT",
+          "count": 1
+        },
+        {
+          "stage": "PORTFOLIO_RISK",
+          "reason": "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+          "count": 1
+        },
+        {
+          "stage": "PORTFOLIO_RISK",
+          "reason": "PENDING_RISK_UNVERIFIED:order:entry_intent_mu82u6cf_s2lkqvpm",
+          "count": 1
+        },
+        {
+          "stage": "PORTFOLIO_RISK",
+          "reason": "PENDING_RISK_UNVERIFIED:order:entry_intent_muavotu9_5fl4erfe",
+          "count": 1
+        }
+      ],
+      "ratios": {
+        "placeToTradePlan": 0,
+        "tradePlanToSubmit": null,
+        "placeToSubmit": 0,
+        "submitToFill": null
+      },
+      "topDropStage": "TRADE_PLAN",
+      "topDropReason": "PLAN_SIDE_NOT_EXECUTABLE:SHORT",
+      "topDropCount": 18,
+      "degraded": true,
+      "degradedReason": "ENTRY_CONVERSION_DEGRADED:TRADE_PLAN:PLAN_SIDE_NOT_EXECUTABLE:SHORT"
+    }
+  },
+  "runs": {
+    "scanned": 40,
+    "placeTotal": 37,
+    "placeSinceRestart": 0,
+    "outcomesAll": {
+      "NOT_SUBMITTED": 30,
+      "EXECUTING": 7
+    },
+    "outcomesSinceRestart": {},
+    "dropSinceRestart": {},
+    "dropAll": {
+      "TRADE_PLAN / PLAN_SIDE_NOT_EXECUTABLE:SHORT": 17,
+      "TRADE_PLAN / PLAN_SIDE_NOT_EXECUTABLE:LONG": 5,
+      "PORTFOLIO_RISK / PENDING_RISK_UNVERIFIED:order:entry_intent_mu5xqmou_9hr5l6ur": 3,
+      "PORTFOLIO_RISK / MARGIN_TIER_SYMBOL_UNPROVEN:ZROUSDT": 1,
+      "PORTFOLIO_RISK / PENDING_RISK_UNVERIFIED:order:entry_intent_mubhqs3x_2b3q7i9x": 2,
+      "PORTFOLIO_RISK / PENDING_RISK_UNVERIFIED:order:entry_intent_muavotu9_5fl4erfe": 1,
+      "PORTFOLIO_RISK / PENDING_RISK_UNVERIFIED:order:entry_intent_mu82u6cf_s2lkqvpm": 1
+    }
+  },
+  "placeRows": [
+    {
+      "brainRunId": "airun_mug7iy6l_u8sfklp9",
+      "symbol": "NEARUSDT",
+      "decision": "PLACE_SHORT",
+      "direction": "SHORT",
+      "completedAt": 1790295235413,
+      "afterRestart": false,
+      "execution": {
+        "state": "NOT_SUBMITTED",
+        "label": "未挂单 · TRADE_PLAN · PLAN_SIDE_NOT_EXECUTABLE:SHORT",
+        "blockStage": "TRADE_PLAN",
+        "blockReasons": [
+          "PLAN_SIDE_NOT_EXECUTABLE:SHORT",
+          "CANDIDATE_SET_NO_PROFITABLE_COMBINATION_AT_MINIMUM_QUANTITY",
+          "CANDIDATE_SET_MIN_NET_PROFIT_USD=1",
+          "CANDIDATE_SET_ATTAINED_NET_PROFIT_USD=1.000205"
+        ],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug7hhmr_cqnazqph",
+      "symbol": "CRVUSDT",
+      "decision": "PLACE_SHORT",
+      "direction": "SHORT",
+      "completedAt": 1790295170374,
+      "afterRestart": false,
+      "execution": {
+        "state": "NOT_SUBMITTED",
+        "label": "未挂单 · TRADE_PLAN · PLAN_SIDE_NOT_EXECUTABLE:SHORT",
+        "blockStage": "TRADE_PLAN",
+        "blockReasons": [
+          "PLAN_SIDE_NOT_EXECUTABLE:SHORT",
+          "CANDIDATE_SET_NO_PROFITABLE_COMBINATION_AT_MINIMUM_QUANTITY",
+          "CANDIDATE_SET_MIN_NET_PROFIT_USD=1",
+          "CANDIDATE_SET_ATTAINED_NET_PROFIT_USD=1.000864"
+        ],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug7fuj4_yncb2mzv",
+      "symbol": "DOGEUSDT",
+      "decision": "PLACE_LONG",
+      "direction": "LONG",
+      "completedAt": 1790295093067,
+      "afterRestart": false,
+      "execution": {
+        "state": "NOT_SUBMITTED",
+        "label": "未挂单 · TRADE_PLAN · PLAN_SIDE_NOT_EXECUTABLE:LONG",
+        "blockStage": "TRADE_PLAN",
+        "blockReasons": [
+          "PLAN_SIDE_NOT_EXECUTABLE:LONG",
+          "CANDIDATE_SET_NO_PROFITABLE_COMBINATION_AT_MINIMUM_QUANTITY",
+          "CANDIDATE_SET_MIN_NET_PROFIT_USD=1",
+          "CANDIDATE_SET_ATTAINED_NET_PROFIT_USD=1.000489"
+        ],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug7e6v0_2b0pl6gc",
+      "symbol": "XRPUSDC",
+      "decision": "PLACE_LONG",
+      "direction": "LONG",
+      "completedAt": 1790295017686,
+      "afterRestart": false,
+      "execution": {
+        "state": "NOT_SUBMITTED",
+        "label": "未挂单 · PORTFOLIO_RISK · PENDING_RISK_UNVERIFIED:order:entry_intent_mu5xqmou_9hr5l6ur",
+        "blockStage": "PORTFOLIO_RISK",
+        "blockReasons": [
+          "PENDING_RISK_UNVERIFIED:order:entry_intent_mu5xqmou_9hr5l6ur",
+          "PENDING_RISK_UNVERIFIED:order:entry_intent_mubl212x_z8fndm8t",
+          "PORTFOLIO_RISK_SNAPSHOT_INCOMPLETE"
+        ],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug7ck9j_6n9vtw4c",
+      "symbol": "BRUSDT",
+      "decision": "PLACE_SHORT",
+      "direction": "SHORT",
+      "completedAt": 1790294939148,
+      "afterRestart": false,
+      "execution": {
+        "state": "NOT_SUBMITTED",
+        "label": "未挂单 · TRADE_PLAN · PLAN_SIDE_NOT_EXECUTABLE:SHORT",
+        "blockStage": "TRADE_PLAN",
+        "blockReasons": [
+          "PLAN_SIDE_NOT_EXECUTABLE:SHORT",
+          "CANDIDATE_SET_NO_PROFITABLE_COMBINATION_AT_MINIMUM_QUANTITY",
+          "CANDIDATE_SET_MIN_NET_PROFIT_USD=1",
+          "CANDIDATE_SET_ATTAINED_NET_PROFIT_USD=1.000044"
+        ],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug7azcs_hd2qo8r0",
+      "symbol": "CRVUSDC",
+      "decision": "PLACE_SHORT",
+      "direction": "SHORT",
+      "completedAt": 1790294865265,
+      "afterRestart": false,
+      "execution": {
+        "state": "EXECUTING",
+        "label": "正在执行",
+        "blockStage": null,
+        "blockReasons": [],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug79h1k_m5s7enxw",
+      "symbol": "UNIUSDT",
+      "decision": "PLACE_SHORT",
+      "direction": "SHORT",
+      "completedAt": 1790294793824,
+      "afterRestart": false,
+      "execution": {
+        "state": "NOT_SUBMITTED",
+        "label": "未挂单 · TRADE_PLAN · PLAN_SIDE_NOT_EXECUTABLE:SHORT",
+        "blockStage": "TRADE_PLAN",
+        "blockReasons": [
+          "PLAN_SIDE_NOT_EXECUTABLE:SHORT",
+          "CANDIDATE_SET_NO_PROFITABLE_COMBINATION_AT_MINIMUM_QUANTITY",
+          "CANDIDATE_SET_MIN_NET_PROFIT_USD=1",
+          "CANDIDATE_SET_ATTAINED_NET_PROFIT_USD=1.000393"
+        ],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug77wvc_dek7gsh9",
+      "symbol": "PENGUUSDC",
+      "decision": "PLACE_SHORT",
+      "direction": "SHORT",
+      "completedAt": 1790294723360,
+      "afterRestart": false,
+      "execution": {
+        "state": "NOT_SUBMITTED",
+        "label": "未挂单 · TRADE_PLAN · PLAN_SIDE_NOT_EXECUTABLE:SHORT",
+        "blockStage": "TRADE_PLAN",
+        "blockReasons": [
+          "PLAN_SIDE_NOT_EXECUTABLE:SHORT",
+          "CANDIDATE_SET_NO_PROFITABLE_COMBINATION_AT_MINIMUM_QUANTITY",
+          "CANDIDATE_SET_MIN_NET_PROFIT_USD=1",
+          "CANDIDATE_SET_ATTAINED_NET_PROFIT_USD=1.000176"
+        ],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug76ell_q61ljkbk",
+      "symbol": "DASHUSDT",
+      "decision": "PLACE_LONG",
+      "direction": "LONG",
+      "completedAt": 1790294650899,
+      "afterRestart": false,
+      "execution": {
+        "state": "EXECUTING",
+        "label": "正在执行",
+        "blockStage": null,
+        "blockReasons": [],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug74qvo_opqqbp86",
+      "symbol": "DOGEUSDC",
+      "decision": "PLACE_LONG",
+      "direction": "LONG",
+      "completedAt": 1790294576059,
+      "afterRestart": false,
+      "execution": {
+        "state": "NOT_SUBMITTED",
+        "label": "未挂单 · TRADE_PLAN · PLAN_SIDE_NOT_EXECUTABLE:LONG",
+        "blockStage": "TRADE_PLAN",
+        "blockReasons": [
+          "PLAN_SIDE_NOT_EXECUTABLE:LONG",
+          "CANDIDATE_SET_NO_PROFITABLE_COMBINATION_AT_MINIMUM_QUANTITY",
+          "CANDIDATE_SET_MIN_NET_PROFIT_USD=1",
+          "CANDIDATE_SET_ATTAINED_NET_PROFIT_USD=1.0005"
+        ],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug734vf_d48053we",
+      "symbol": "WLDUSDC",
+      "decision": "PLACE_LONG",
+      "direction": "LONG",
+      "completedAt": 1790294500707,
+      "afterRestart": false,
+      "execution": {
+        "state": "NOT_SUBMITTED",
+        "label": "未挂单 · TRADE_PLAN · PLAN_SIDE_NOT_EXECUTABLE:LONG",
+        "blockStage": "TRADE_PLAN",
+        "blockReasons": [
+          "PLAN_SIDE_NOT_EXECUTABLE:LONG",
+          "CANDIDATE_SET_NO_PROFITABLE_COMBINATION_AT_MINIMUM_QUANTITY",
+          "CANDIDATE_SET_MIN_NET_PROFIT_USD=1",
+          "CANDIDATE_SET_ATTAINED_NET_PROFIT_USD=1.000627"
+        ],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug70ysm_p4s23k9e",
+      "symbol": "NEARUSDC",
+      "decision": "PLACE_SHORT",
+      "direction": "SHORT",
+      "completedAt": 1790294399479,
+      "afterRestart": false,
+      "execution": {
+        "state": "NOT_SUBMITTED",
+        "label": "未挂单 · TRADE_PLAN · PLAN_SIDE_NOT_EXECUTABLE:SHORT",
+        "blockStage": "TRADE_PLAN",
+        "blockReasons": [
+          "PLAN_SIDE_NOT_EXECUTABLE:SHORT",
+          "CANDIDATE_SET_NO_PROFITABLE_COMBINATION_AT_MINIMUM_QUANTITY",
+          "CANDIDATE_SET_MIN_NET_PROFIT_USD=1",
+          "CANDIDATE_SET_ATTAINED_NET_PROFIT_USD=1.000372"
+        ],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug6xtav_imakobv9",
+      "symbol": "APTUSDT",
+      "decision": "PLACE_SHORT",
+      "direction": "SHORT",
+      "completedAt": 1790294251123,
+      "afterRestart": false,
+      "execution": {
+        "state": "NOT_SUBMITTED",
+        "label": "未挂单 · TRADE_PLAN · PLAN_SIDE_NOT_EXECUTABLE:SHORT",
+        "blockStage": "TRADE_PLAN",
+        "blockReasons": [
+          "PLAN_SIDE_NOT_EXECUTABLE:SHORT",
+          "CANDIDATE_SET_NO_PROFITABLE_COMBINATION_AT_MINIMUM_QUANTITY",
+          "CANDIDATE_SET_MIN_NET_PROFIT_USD=1",
+          "CANDIDATE_SET_ATTAINED_NET_PROFIT_USD=1.000432"
+        ],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug6w9qu_de952afh",
+      "symbol": "FILUSDT",
+      "decision": "PLACE_SHORT",
+      "direction": "SHORT",
+      "completedAt": 1790294177021,
+      "afterRestart": false,
+      "execution": {
+        "state": "EXECUTING",
+        "label": "正在执行",
+        "blockStage": null,
+        "blockReasons": [],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug6t476_hq0q64pq",
+      "symbol": "ZROUSDT",
+      "decision": "PLACE_SHORT",
+      "direction": "SHORT",
+      "completedAt": 1790294027910,
+      "afterRestart": false,
+      "execution": {
+        "state": "NOT_SUBMITTED",
+        "label": "未挂单 · PORTFOLIO_RISK · MARGIN_TIER_SYMBOL_UNPROVEN:ZROUSDT",
+        "blockStage": "PORTFOLIO_RISK",
+        "blockReasons": [
+          "MARGIN_TIER_SYMBOL_UNPROVEN:ZROUSDT"
+        ],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug6rj3k_lc6ffmfk",
+      "symbol": "VVVUSDT",
+      "decision": "PLACE_SHORT",
+      "direction": "SHORT",
+      "completedAt": 1790293956730,
+      "afterRestart": false,
+      "execution": {
+        "state": "NOT_SUBMITTED",
+        "label": "未挂单 · PORTFOLIO_RISK · PENDING_RISK_UNVERIFIED:order:entry_intent_mubhqs3x_2b3q7i9x",
+        "blockStage": "PORTFOLIO_RISK",
+        "blockReasons": [
+          "PENDING_RISK_UNVERIFIED:order:entry_intent_mubhqs3x_2b3q7i9x",
+          "PORTFOLIO_RISK_SNAPSHOT_INCOMPLETE"
+        ],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug6px5o_0qnjczcn",
+      "symbol": "TAOUSDT",
+      "decision": "PLACE_LONG",
+      "direction": "LONG",
+      "completedAt": 1790293884987,
+      "afterRestart": false,
+      "execution": {
+        "state": "NOT_SUBMITTED",
+        "label": "未挂单 · PORTFOLIO_RISK · PENDING_RISK_UNVERIFIED:order:entry_intent_mu5xqmou_9hr5l6ur",
+        "blockStage": "PORTFOLIO_RISK",
+        "blockReasons": [
+          "PENDING_RISK_UNVERIFIED:order:entry_intent_mu5xqmou_9hr5l6ur",
+          "PORTFOLIO_RISK_SNAPSHOT_INCOMPLETE"
+        ],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug6oby5_6dvgfmip",
+      "symbol": "XRPUSDC",
+      "decision": "PLACE_LONG",
+      "direction": "LONG",
+      "completedAt": 1790293807346,
+      "afterRestart": false,
+      "execution": {
+        "state": "NOT_SUBMITTED",
+        "label": "未挂单 · PORTFOLIO_RISK · PENDING_RISK_UNVERIFIED:order:entry_intent_mu5xqmou_9hr5l6ur",
+        "blockStage": "PORTFOLIO_RISK",
+        "blockReasons": [
+          "PENDING_RISK_UNVERIFIED:order:entry_intent_mu5xqmou_9hr5l6ur",
+          "PORTFOLIO_RISK_SNAPSHOT_INCOMPLETE"
+        ],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug6mub5_5wve18yo",
+      "symbol": "DASHUSDT",
+      "decision": "PLACE_LONG",
+      "direction": "LONG",
+      "completedAt": 1790293736193,
+      "afterRestart": false,
+      "execution": {
+        "state": "NOT_SUBMITTED",
+        "label": "未挂单 · PORTFOLIO_RISK · PENDING_RISK_UNVERIFIED:order:entry_intent_muavotu9_5fl4erfe",
+        "blockStage": "PORTFOLIO_RISK",
+        "blockReasons": [
+          "PENDING_RISK_UNVERIFIED:order:entry_intent_muavotu9_5fl4erfe",
+          "PORTFOLIO_RISK_SNAPSHOT_INCOMPLETE",
+          "STRESS_LIMIT:MAX_CLUSTER_NOTIONAL",
+          "STRESS_LIMIT:MAX_GROSS_NOTIONAL"
+        ],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug6l98o_kzgmysnz",
+      "symbol": "INJUSDT",
+      "decision": "PLACE_SHORT",
+      "direction": "SHORT",
+      "completedAt": 1790293666240,
+      "afterRestart": false,
+      "execution": {
+        "state": "NOT_SUBMITTED",
+        "label": "未挂单 · TRADE_PLAN · PLAN_SIDE_NOT_EXECUTABLE:SHORT",
+        "blockStage": "TRADE_PLAN",
+        "blockReasons": [
+          "PLAN_SIDE_NOT_EXECUTABLE:SHORT",
+          "CANDIDATE_SET_NO_PROFITABLE_COMBINATION_AT_MINIMUM_QUANTITY",
+          "CANDIDATE_SET_MIN_NET_PROFIT_USD=1",
+          "CANDIDATE_SET_ATTAINED_NET_PROFIT_USD=1.0007"
+        ],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug6jovb_f9yh0bja",
+      "symbol": "DOGEUSDC",
+      "decision": "PLACE_SHORT",
+      "direction": "SHORT",
+      "completedAt": 1790293592129,
+      "afterRestart": false,
+      "execution": {
+        "state": "NOT_SUBMITTED",
+        "label": "未挂单 · TRADE_PLAN · PLAN_SIDE_NOT_EXECUTABLE:SHORT",
+        "blockStage": "TRADE_PLAN",
+        "blockReasons": [
+          "PLAN_SIDE_NOT_EXECUTABLE:SHORT",
+          "CANDIDATE_SET_NO_PROFITABLE_COMBINATION_AT_MINIMUM_QUANTITY",
+          "CANDIDATE_SET_MIN_NET_PROFIT_USD=1",
+          "CANDIDATE_SET_ATTAINED_NET_PROFIT_USD=1.000329"
+        ],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug6i5ve_nfdpvd5b",
+      "symbol": "WLDUSDT",
+      "decision": "PLACE_SHORT",
+      "direction": "SHORT",
+      "completedAt": 1790293517692,
+      "afterRestart": false,
+      "execution": {
+        "state": "EXECUTING",
+        "label": "正在执行",
+        "blockStage": null,
+        "blockReasons": [],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug6gpy4_6x9w67ic",
+      "symbol": "BRUSDT",
+      "decision": "PLACE_SHORT",
+      "direction": "SHORT",
+      "completedAt": 1790293448688,
+      "afterRestart": false,
+      "execution": {
+        "state": "NOT_SUBMITTED",
+        "label": "未挂单 · TRADE_PLAN · PLAN_SIDE_NOT_EXECUTABLE:SHORT",
+        "blockStage": "TRADE_PLAN",
+        "blockReasons": [
+          "PLAN_SIDE_NOT_EXECUTABLE:SHORT",
+          "CANDIDATE_SET_NO_PROFITABLE_COMBINATION_AT_MINIMUM_QUANTITY",
+          "CANDIDATE_SET_MIN_NET_PROFIT_USD=1",
+          "CANDIDATE_SET_ATTAINED_NET_PROFIT_USD=1.000026"
+        ],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug6f417_snxsoy7n",
+      "symbol": "PENGUUSDC",
+      "decision": "PLACE_SHORT",
+      "direction": "SHORT",
+      "completedAt": 1790293381678,
+      "afterRestart": false,
+      "execution": {
+        "state": "NOT_SUBMITTED",
+        "label": "未挂单 · TRADE_PLAN · PLAN_SIDE_NOT_EXECUTABLE:SHORT",
+        "blockStage": "TRADE_PLAN",
+        "blockReasons": [
+          "PLAN_SIDE_NOT_EXECUTABLE:SHORT",
+          "CANDIDATE_SET_NO_PROFITABLE_COMBINATION_AT_MINIMUM_QUANTITY",
+          "CANDIDATE_SET_MIN_NET_PROFIT_USD=1",
+          "CANDIDATE_SET_ATTAINED_NET_PROFIT_USD=1.000286"
+        ],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug6ddnw_w2kxy517",
+      "symbol": "PENGUUSDT",
+      "decision": "PLACE_SHORT",
+      "direction": "SHORT",
+      "completedAt": 1790293305801,
+      "afterRestart": false,
+      "execution": {
+        "state": "NOT_SUBMITTED",
+        "label": "未挂单 · TRADE_PLAN · PLAN_SIDE_NOT_EXECUTABLE:SHORT",
+        "blockStage": "TRADE_PLAN",
+        "blockReasons": [
+          "PLAN_SIDE_NOT_EXECUTABLE:SHORT",
+          "CANDIDATE_SET_NO_PROFITABLE_COMBINATION_AT_MINIMUM_QUANTITY",
+          "CANDIDATE_SET_MIN_NET_PROFIT_USD=1",
+          "CANDIDATE_SET_ATTAINED_NET_PROFIT_USD=1.000395"
+        ],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug6bxtt_gyi0qe6a",
+      "symbol": "WLDUSDC",
+      "decision": "PLACE_LONG",
+      "direction": "LONG",
+      "completedAt": 1790293225372,
+      "afterRestart": false,
+      "execution": {
+        "state": "EXECUTING",
+        "label": "正在执行",
+        "blockStage": null,
+        "blockReasons": [],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug6ad2x_yad1l3h8",
+      "symbol": "UNIUSDC",
+      "decision": "PLACE_SHORT",
+      "direction": "SHORT",
+      "completedAt": 1790293156176,
+      "afterRestart": false,
+      "execution": {
+        "state": "NOT_SUBMITTED",
+        "label": "未挂单 · TRADE_PLAN · PLAN_SIDE_NOT_EXECUTABLE:SHORT",
+        "blockStage": "TRADE_PLAN",
+        "blockReasons": [
+          "PLAN_SIDE_NOT_EXECUTABLE:SHORT",
+          "CANDIDATE_SET_NO_PROFITABLE_COMBINATION_AT_MINIMUM_QUANTITY",
+          "CANDIDATE_SET_MIN_NET_PROFIT_USD=1",
+          "CANDIDATE_SET_ATTAINED_NET_PROFIT_USD=1.000382"
+        ],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug68qbl_1hwinxwj",
+      "symbol": "HYPEUSDT",
+      "decision": "PLACE_SHORT",
+      "direction": "SHORT",
+      "completedAt": 1790293079880,
+      "afterRestart": false,
+      "execution": {
+        "state": "NOT_SUBMITTED",
+        "label": "未挂单 · TRADE_PLAN · PLAN_SIDE_NOT_EXECUTABLE:SHORT",
+        "blockStage": "TRADE_PLAN",
+        "blockReasons": [
+          "PLAN_SIDE_NOT_EXECUTABLE:SHORT",
+          "CANDIDATE_SET_NO_PROFITABLE_COMBINATION_AT_MINIMUM_QUANTITY",
+          "CANDIDATE_SET_MIN_NET_PROFIT_USD=1",
+          "CANDIDATE_SET_ATTAINED_NET_PROFIT_USD=1.000038"
+        ],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug678ib_13j8k1qm",
+      "symbol": "ETCUSDT",
+      "decision": "PLACE_SHORT",
+      "direction": "SHORT",
+      "completedAt": 1790293009784,
+      "afterRestart": false,
+      "execution": {
+        "state": "EXECUTING",
+        "label": "正在执行",
+        "blockStage": null,
+        "blockReasons": [],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug65iqx_sy7l2hpf",
+      "symbol": "TAOUSDT",
+      "decision": "PLACE_LONG",
+      "direction": "LONG",
+      "completedAt": 1790292933187,
+      "afterRestart": false,
+      "execution": {
+        "state": "NOT_SUBMITTED",
+        "label": "未挂单 · TRADE_PLAN · PLAN_SIDE_NOT_EXECUTABLE:LONG",
+        "blockStage": "TRADE_PLAN",
+        "blockReasons": [
+          "PLAN_SIDE_NOT_EXECUTABLE:LONG",
+          "CANDIDATE_SET_NO_PROFITABLE_COMBINATION_AT_MINIMUM_QUANTITY",
+          "CANDIDATE_SET_MIN_NET_PROFIT_USD=1",
+          "CANDIDATE_SET_ATTAINED_NET_PROFIT_USD=1.000169"
+        ],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    }
+  ],
+  "rowsDigest": "6b9b2de6f8bca161"
+}

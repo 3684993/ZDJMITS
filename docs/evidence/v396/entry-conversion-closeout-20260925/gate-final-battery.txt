@@ -1,0 +1,28 @@
+== FINAL GATE BATTERY (code at 21de6c8) ==
+--- git diff --check ---
+warning: in the working copy of 'docs/evidence/v396/final-convergence-20260922/J5/storage-coverage.json', LF will be replaced by CRLF the next time Git touches it
+exit=0
+--- verify:deps ---
+exit=0
+--- typecheck (all) ---
+exit=0
+0
+--- tests (all workspaces) ---
+exit=0
+[2m Test Files [22m [1m[32m8 passed[39m[22m[90m (8)[39m
+[2m      Tests [22m [1m[32m46 passed[39m[22m[90m (46)[39m
+[2m Test Files [22m [1m[32m14 passed[39m[22m[90m (14)[39m
+[2m      Tests [22m [1m[32m52 passed[39m[22m[90m (52)[39m
+[2m Test Files [22m [1m[32m163 passed[39m[22m[90m (163)[39m
+[2m      Tests [22m [1m[32m1301 passed[39m[22m[90m (1301)[39m
+--- verify:scripts ---
+exit=0
+start-zdj-engine-host.test.ps1 PASS
+V3.9.4 read-only canary script contract PASS
+V3.9.4 local rollout script contract PASS
+V3.9.4 stage7-to-stage9 runner contract PASS
+--- s00 static ---
+exit=1
+--- storage coverage ---
+STORAGE_COVERAGE_WRITTEN docs\evidence\v396\final-convergence-20260922\J5\storage-coverage.json gate=S08_STORAGE_COVERAGE_PASS
+exit=0

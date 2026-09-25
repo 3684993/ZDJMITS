@@ -1,0 +1,30 @@
+== verify:scripts ==
+  ---
+  duration_ms: 234.4365
+  type: 'test'
+  ...
+# (node:38580) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: schema-only reset preserves schema/static configuration and never copies runtime history
+ok 16 - schema-only reset preserves schema/static configuration and never copies runtime history
+  ---
+  duration_ms: 737.266
+  type: 'test'
+  ...
+1..16
+# tests 16
+# suites 0
+# pass 16
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3485.1338
+start-zdj-engine-host.test.ps1 PASS
+V3.9.4 read-only canary script contract PASS
+V3.9.4 local rollout script contract PASS
+V3.9.4 stage7-to-stage9 runner contract PASS
+verify:scripts-exit=0
+== storage coverage ==
+STORAGE_COVERAGE_WRITTEN docs\evidence\v396\final-convergence-20260922\J5\storage-coverage.json gate=S08_STORAGE_COVERAGE_PASS
+storage-coverage-exit=0

@@ -1,0 +1,969 @@
+{
+  "observedAt": "2026-09-25T01:04:09.814Z",
+  "identity": {
+    "pid": 32584,
+    "buildId": "3.9.6-9f8c4b8c229460b90c99",
+    "instanceId": "11e1a52b-a382-4f35-bcfe-3a10533ec757",
+    "restartAt": 1790297966648,
+    "uptimeMs": 284020,
+    "lastRestartReason": "MANUAL_START"
+  },
+  "permission": {
+    "entryPermission": {
+      "status": "READY",
+      "executionMode": "TESTNET_ENABLED",
+      "autoExecutionMode": "AUTO_RUNNING"
+    },
+    "noEntryReason": null,
+    "readinessReady": true,
+    "firstBlocker": null,
+    "analysis": "EXECUTION_ENABLED",
+    "lifecycleCounts": {
+      "POSITION_HELD": 9,
+      "EXCLUDED_UNDERLYING": 8,
+      "READY": 51
+    }
+  },
+  "writeBoundary": {
+    "environment": "TESTNET",
+    "executionMode": "TESTNET_ENABLED",
+    "lockedToTestnet": true,
+    "testnetWrites": 0,
+    "productionWrites": 0,
+    "blockedProductionWriteAttempts": 0,
+    "lastWriteAt": null,
+    "lastWritePath": null
+  },
+  "funnel": {
+    "thirtyMinutes": {
+      "since": 1790296449769,
+      "until": 1790298249769,
+      "primaryCompleted": 15,
+      "place": 15,
+      "riskAllowed": 11,
+      "economicAdmissionPassed": 0,
+      "tradePlanReady": 2,
+      "reservationCreated": 2,
+      "intentCreated": 1,
+      "submitAttempted": 1,
+      "orderSubmitted": 1,
+      "entryFilled": 0,
+      "waitingPrice": 1,
+      "blocked": [
+        {
+          "stage": "TRADE_PLAN",
+          "reason": "CANDIDATE_HORIZON_UNSUPPORTED:30",
+          "count": 6
+        },
+        {
+          "stage": "TRADE_PLAN",
+          "reason": "CANDIDATE_HORIZON_UNSUPPORTED:120",
+          "count": 2
+        },
+        {
+          "stage": "JIT",
+          "reason": "REJECT_GROSS_EXPOSURE",
+          "count": 1
+        },
+        {
+          "stage": "PORTFOLIO_RISK",
+          "reason": "PENDING_RISK_UNVERIFIED:order:entry_intent_mu5qimuf_nsgl39g3",
+          "count": 1
+        },
+        {
+          "stage": "PORTFOLIO_RISK",
+          "reason": "PENDING_RISK_UNVERIFIED:order:entry_intent_mu82u6cf_s2lkqvpm",
+          "count": 1
+        },
+        {
+          "stage": "TRADE_PLAN",
+          "reason": "CANDIDATE_QUANTITY_EXCEEDS_ENVELOPE:units=5039>5030",
+          "count": 1
+        }
+      ],
+      "ratios": {
+        "placeToTradePlan": 13.3,
+        "tradePlanToSubmit": 50,
+        "placeToSubmit": 6.7,
+        "submitToFill": 0
+      },
+      "topDropStage": "TRADE_PLAN",
+      "topDropReason": "CANDIDATE_HORIZON_UNSUPPORTED:30",
+      "topDropCount": 6,
+      "degraded": false,
+      "degradedReason": null
+    },
+    "oneHour": {
+      "since": 1790294649769,
+      "until": 1790298249769,
+      "primaryCompleted": 31,
+      "place": 31,
+      "riskAllowed": 22,
+      "economicAdmissionPassed": 0,
+      "tradePlanReady": 3,
+      "reservationCreated": 3,
+      "intentCreated": 2,
+      "submitAttempted": 2,
+      "orderSubmitted": 2,
+      "entryFilled": 0,
+      "waitingPrice": 1,
+      "blocked": [
+        {
+          "stage": "TRADE_PLAN",
+          "reason": "CANDIDATE_HORIZON_UNSUPPORTED:30",
+          "count": 8
+        },
+        {
+          "stage": "TRADE_PLAN",
+          "reason": "CANDIDATE_SET_NO_PROFITABLE_COMBINATION_AT_MINIMUM_QUANTITY",
+          "count": 6
+        },
+        {
+          "stage": "TRADE_PLAN",
+          "reason": "CANDIDATE_HORIZON_UNSUPPORTED:120",
+          "count": 3
+        },
+        {
+          "stage": "PORTFOLIO_RISK",
+          "reason": "PENDING_RISK_UNVERIFIED:order:entry_intent_mubl212x_z8fndm8t",
+          "count": 2
+        },
+        {
+          "stage": "JIT",
+          "reason": "REJECT_GROSS_EXPOSURE",
+          "count": 1
+        },
+        {
+          "stage": "PORTFOLIO_RISK",
+          "reason": "PENDING_RISK_UNVERIFIED:order:entry_intent_mu5xqmou_9hr5l6ur",
+          "count": 1
+        },
+        {
+          "stage": "PORTFOLIO_RISK",
+          "reason": "PENDING_RISK_UNVERIFIED:order:entry_intent_mu5qimuf_nsgl39g3",
+          "count": 1
+        },
+        {
+          "stage": "PORTFOLIO_RISK",
+          "reason": "PENDING_RISK_UNVERIFIED:order:entry_intent_mu82u6cf_s2lkqvpm",
+          "count": 1
+        },
+        {
+          "stage": "TRADE_PLAN",
+          "reason": "UNSPECIFIED",
+          "count": 1
+        },
+        {
+          "stage": "TRADE_PLAN",
+          "reason": "CANDIDATE_QUANTITY_EXCEEDS_ENVELOPE:units=5039>5030",
+          "count": 1
+        }
+      ],
+      "ratios": {
+        "placeToTradePlan": 9.7,
+        "tradePlanToSubmit": 66.7,
+        "placeToSubmit": 6.5,
+        "submitToFill": 0
+      },
+      "topDropStage": "TRADE_PLAN",
+      "topDropReason": "CANDIDATE_HORIZON_UNSUPPORTED:30",
+      "topDropCount": 8,
+      "degraded": false,
+      "degradedReason": null
+    }
+  },
+  "runs": {
+    "scanned": 40,
+    "placeTotal": 35,
+    "placeSinceRestart": 0,
+    "outcomesAll": {
+      "NOT_SUBMITTED": 29,
+      "EXECUTING": 4,
+      "PARTIALLY_FILLED": 1,
+      "SUBMITTED": 1
+    },
+    "outcomesSinceRestart": {},
+    "dropSinceRestart": {},
+    "dropAll": {
+      "PORTFOLIO_RISK / PENDING_RISK_UNVERIFIED:order:entry_intent_mu82u6cf_s2lkqvpm": 1,
+      "TRADE_PLAN / CANDIDATE_HORIZON_UNSUPPORTED:30": 8,
+      "TRADE_PLAN / CANDIDATE_QUANTITY_EXCEEDS_ENVELOPE:units=5039>5030": 1,
+      "JIT / REJECT_GROSS_EXPOSURE": 1,
+      "PORTFOLIO_RISK / PENDING_RISK_UNVERIFIED:order:entry_intent_mu5qimuf_nsgl39g3": 1,
+      "TRADE_PLAN / CANDIDATE_HORIZON_UNSUPPORTED:120": 3,
+      "PORTFOLIO_RISK / PENDING_RISK_UNVERIFIED:order:entry_intent_mubl212x_z8fndm8t": 2,
+      "TRADE_PLAN / UNSPECIFIED": 1,
+      "TRADE_PLAN / CANDIDATE_SET_NO_PROFITABLE_COMBINATION_AT_MINIMUM_QUANTITY": 10,
+      "PORTFOLIO_RISK / PENDING_RISK_UNVERIFIED:order:entry_intent_mu5xqmou_9hr5l6ur": 1
+    }
+  },
+  "placeRows": [
+    {
+      "brainRunId": "airun_mug9466x_xfhs8m45",
+      "symbol": "UNIUSDT",
+      "decision": "PLACE_SHORT",
+      "direction": "SHORT",
+      "completedAt": 1790297908743,
+      "afterRestart": false,
+      "execution": {
+        "state": "NOT_SUBMITTED",
+        "label": "未挂单 · PORTFOLIO_RISK · PENDING_RISK_UNVERIFIED:order:entry_intent_mu82u6cf_s2lkqvpm",
+        "blockStage": "PORTFOLIO_RISK",
+        "blockReasons": [
+          "PENDING_RISK_UNVERIFIED:order:entry_intent_mu82u6cf_s2lkqvpm",
+          "PORTFOLIO_RISK_SNAPSHOT_INCOMPLETE",
+          "STRESS_LIMIT:MAX_CLUSTER_NOTIONAL",
+          "STRESS_LIMIT:MAX_GROSS_NOTIONAL"
+        ],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug92ms4_yggl5ujb",
+      "symbol": "DOGEUSDT",
+      "decision": "PLACE_LONG",
+      "direction": "LONG",
+      "completedAt": 1790297835409,
+      "afterRestart": false,
+      "execution": {
+        "state": "NOT_SUBMITTED",
+        "label": "未挂单 · TRADE_PLAN · CANDIDATE_HORIZON_UNSUPPORTED:30",
+        "blockStage": "TRADE_PLAN",
+        "blockReasons": [
+          "CANDIDATE_HORIZON_UNSUPPORTED:30"
+        ],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug8zaim_xfb8w1on",
+      "symbol": "XRPUSDT",
+      "decision": "PLACE_LONG",
+      "direction": "LONG",
+      "completedAt": 1790297677865,
+      "afterRestart": false,
+      "execution": {
+        "state": "EXECUTING",
+        "label": "正在执行",
+        "blockStage": null,
+        "blockReasons": [],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug8xp82_xcliu1a7",
+      "symbol": "PENGUUSDT",
+      "decision": "PLACE_SHORT",
+      "direction": "SHORT",
+      "completedAt": 1790297607846,
+      "afterRestart": false,
+      "execution": {
+        "state": "PARTIALLY_FILLED",
+        "label": "部分成交",
+        "blockStage": null,
+        "blockReasons": [],
+        "tradePlanId": "plan_9285681ea28484f9b4ff029a207265e3",
+        "reservationId": "reserve_1790297608208_syu4mi",
+        "intentId": "intent_mug8yzgd_q650tibs",
+        "orderId": "entry_intent_mug8yzgd_q650tibs",
+        "clientOrderId": "ml_8eb15cd892b49061aee9c06466af",
+        "exchangeOrderId": "345503371",
+        "submittedAt": 1790297626293,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug8w7gc_x9mfcsza",
+      "symbol": "WLDUSDC",
+      "decision": "PLACE_SHORT",
+      "direction": "SHORT",
+      "completedAt": 1790297534405,
+      "afterRestart": false,
+      "execution": {
+        "state": "EXECUTING",
+        "label": "正在执行",
+        "blockStage": null,
+        "blockReasons": [],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug8uqu3_65z4ih2c",
+      "symbol": "TAOUSDT",
+      "decision": "PLACE_LONG",
+      "direction": "LONG",
+      "completedAt": 1790297466205,
+      "afterRestart": false,
+      "execution": {
+        "state": "NOT_SUBMITTED",
+        "label": "未挂单 · TRADE_PLAN · CANDIDATE_QUANTITY_EXCEEDS_ENVELOPE:units=5039>5030",
+        "blockStage": "TRADE_PLAN",
+        "blockReasons": [
+          "CANDIDATE_QUANTITY_EXCEEDS_ENVELOPE:units=5039>5030"
+        ],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug8t9uc_l2txw4h6",
+      "symbol": "NEARUSDC",
+      "decision": "PLACE_SHORT",
+      "direction": "SHORT",
+      "completedAt": 1790297398216,
+      "afterRestart": false,
+      "execution": {
+        "state": "NOT_SUBMITTED",
+        "label": "未挂单 · TRADE_PLAN · CANDIDATE_HORIZON_UNSUPPORTED:30",
+        "blockStage": "TRADE_PLAN",
+        "blockReasons": [
+          "CANDIDATE_HORIZON_UNSUPPORTED:30"
+        ],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug8rs46_og6x9cim",
+      "symbol": "XRPUSDC",
+      "decision": "PLACE_LONG",
+      "direction": "LONG",
+      "completedAt": 1790297328418,
+      "afterRestart": false,
+      "execution": {
+        "state": "NOT_SUBMITTED",
+        "label": "未挂单 · JIT · REJECT_GROSS_EXPOSURE",
+        "blockStage": "JIT",
+        "blockReasons": [
+          "REJECT_GROSS_EXPOSURE"
+        ],
+        "tradePlanId": "plan_b4271c4b71e4e23eeed7e6d7e568888b",
+        "reservationId": "reserve_1790297328809_8thd7e",
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug8qa6c_ry0dnh2j",
+      "symbol": "DOGEUSDC",
+      "decision": "PLACE_LONG",
+      "direction": "LONG",
+      "completedAt": 1790297255114,
+      "afterRestart": false,
+      "execution": {
+        "state": "NOT_SUBMITTED",
+        "label": "未挂单 · TRADE_PLAN · CANDIDATE_HORIZON_UNSUPPORTED:30",
+        "blockStage": "TRADE_PLAN",
+        "blockReasons": [
+          "CANDIDATE_HORIZON_UNSUPPORTED:30"
+        ],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug8osq9_yax4ci5c",
+      "symbol": "NEARUSDC",
+      "decision": "PLACE_SHORT",
+      "direction": "SHORT",
+      "completedAt": 1790297190244,
+      "afterRestart": false,
+      "execution": {
+        "state": "NOT_SUBMITTED",
+        "label": "未挂单 · TRADE_PLAN · CANDIDATE_HORIZON_UNSUPPORTED:30",
+        "blockStage": "TRADE_PLAN",
+        "blockReasons": [
+          "CANDIDATE_HORIZON_UNSUPPORTED:30"
+        ],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug8nbr4_wgl1qr5u",
+      "symbol": "XRPUSDC",
+      "decision": "PLACE_LONG",
+      "direction": "LONG",
+      "completedAt": 1790297120754,
+      "afterRestart": false,
+      "execution": {
+        "state": "NOT_SUBMITTED",
+        "label": "未挂单 · TRADE_PLAN · CANDIDATE_HORIZON_UNSUPPORTED:30",
+        "blockStage": "TRADE_PLAN",
+        "blockReasons": [
+          "CANDIDATE_HORIZON_UNSUPPORTED:30"
+        ],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug8e8dp_bahpxtvz",
+      "symbol": "PENGUUSDT",
+      "decision": "PLACE_SHORT",
+      "direction": "SHORT",
+      "completedAt": 1790296699265,
+      "afterRestart": false,
+      "execution": {
+        "state": "NOT_SUBMITTED",
+        "label": "未挂单 · PORTFOLIO_RISK · PENDING_RISK_UNVERIFIED:order:entry_intent_mu5qimuf_nsgl39g3",
+        "blockStage": "PORTFOLIO_RISK",
+        "blockReasons": [
+          "PENDING_RISK_UNVERIFIED:order:entry_intent_mu5qimuf_nsgl39g3",
+          "PORTFOLIO_RISK_SNAPSHOT_INCOMPLETE",
+          "STRESS_LIMIT:MAX_CLUSTER_NOTIONAL",
+          "STRESS_LIMIT:MAX_GROSS_NOTIONAL"
+        ],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug8clzo_g1iwswjj",
+      "symbol": "NEARUSDT",
+      "decision": "PLACE_LONG",
+      "direction": "LONG",
+      "completedAt": 1790296623399,
+      "afterRestart": false,
+      "execution": {
+        "state": "NOT_SUBMITTED",
+        "label": "未挂单 · TRADE_PLAN · CANDIDATE_HORIZON_UNSUPPORTED:30",
+        "blockStage": "TRADE_PLAN",
+        "blockReasons": [
+          "CANDIDATE_HORIZON_UNSUPPORTED:30"
+        ],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug8azp7_ox9m71cl",
+      "symbol": "XRPUSDC",
+      "decision": "PLACE_LONG",
+      "direction": "LONG",
+      "completedAt": 1790296547168,
+      "afterRestart": false,
+      "execution": {
+        "state": "NOT_SUBMITTED",
+        "label": "未挂单 · TRADE_PLAN · CANDIDATE_HORIZON_UNSUPPORTED:120",
+        "blockStage": "TRADE_PLAN",
+        "blockReasons": [
+          "CANDIDATE_HORIZON_UNSUPPORTED:120"
+        ],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug89cmh_1flrtwww",
+      "symbol": "UNIUSDT",
+      "decision": "PLACE_SHORT",
+      "direction": "SHORT",
+      "completedAt": 1790296469599,
+      "afterRestart": false,
+      "execution": {
+        "state": "NOT_SUBMITTED",
+        "label": "未挂单 · TRADE_PLAN · CANDIDATE_HORIZON_UNSUPPORTED:120",
+        "blockStage": "TRADE_PLAN",
+        "blockReasons": [
+          "CANDIDATE_HORIZON_UNSUPPORTED:120"
+        ],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug87utc_wuooxdju",
+      "symbol": "NEARUSDC",
+      "decision": "PLACE_LONG",
+      "direction": "LONG",
+      "completedAt": 1790296402495,
+      "afterRestart": false,
+      "execution": {
+        "state": "NOT_SUBMITTED",
+        "label": "未挂单 · TRADE_PLAN · CANDIDATE_HORIZON_UNSUPPORTED:30",
+        "blockStage": "TRADE_PLAN",
+        "blockReasons": [
+          "CANDIDATE_HORIZON_UNSUPPORTED:30"
+        ],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug86caa_3ygkjvxs",
+      "symbol": "DOGEUSDC",
+      "decision": "PLACE_LONG",
+      "direction": "LONG",
+      "completedAt": 1790296329696,
+      "afterRestart": false,
+      "execution": {
+        "state": "NOT_SUBMITTED",
+        "label": "未挂单 · TRADE_PLAN · CANDIDATE_HORIZON_UNSUPPORTED:30",
+        "blockStage": "TRADE_PLAN",
+        "blockReasons": [
+          "CANDIDATE_HORIZON_UNSUPPORTED:30"
+        ],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug84tnr_vmfqov7f",
+      "symbol": "XRPUSDC",
+      "decision": "PLACE_LONG",
+      "direction": "LONG",
+      "completedAt": 1790296257289,
+      "afterRestart": false,
+      "execution": {
+        "state": "NOT_SUBMITTED",
+        "label": "未挂单 · PORTFOLIO_RISK · PENDING_RISK_UNVERIFIED:order:entry_intent_mubl212x_z8fndm8t",
+        "blockStage": "PORTFOLIO_RISK",
+        "blockReasons": [
+          "PENDING_RISK_UNVERIFIED:order:entry_intent_mubl212x_z8fndm8t",
+          "PORTFOLIO_RISK_SNAPSHOT_INCOMPLETE"
+        ],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug83avr_vg4twzkx",
+      "symbol": "XRPUSDT",
+      "decision": "PLACE_LONG",
+      "direction": "LONG",
+      "completedAt": 1790296188570,
+      "afterRestart": false,
+      "execution": {
+        "state": "NOT_SUBMITTED",
+        "label": "未挂单 · PORTFOLIO_RISK · PENDING_RISK_UNVERIFIED:order:entry_intent_mubl212x_z8fndm8t",
+        "blockStage": "PORTFOLIO_RISK",
+        "blockReasons": [
+          "PENDING_RISK_UNVERIFIED:order:entry_intent_mubl212x_z8fndm8t",
+          "PORTFOLIO_RISK_SNAPSHOT_INCOMPLETE"
+        ],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug7vhrg_ubefld71",
+      "symbol": "NEARUSDC",
+      "decision": "PLACE_SHORT",
+      "direction": "SHORT",
+      "completedAt": 1790295822882,
+      "afterRestart": false,
+      "execution": {
+        "state": "NOT_SUBMITTED",
+        "label": "未挂单 · TRADE_PLAN · UNPROVEN",
+        "blockStage": "TRADE_PLAN",
+        "blockReasons": [],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug7tjog_dlsbzmbn",
+      "symbol": "XRPUSDT",
+      "decision": "PLACE_LONG",
+      "direction": "LONG",
+      "completedAt": 1790295732230,
+      "afterRestart": false,
+      "execution": {
+        "state": "SUBMITTED",
+        "label": "已挂单",
+        "blockStage": null,
+        "blockReasons": [],
+        "tradePlanId": "plan_ac5dcee50c37d33ec1bda74203fee7d0",
+        "reservationId": "reserve_1790295732558_lj37il",
+        "intentId": "intent_mug7us6x_978h3kgy",
+        "orderId": "entry_intent_mug7us6x_978h3kgy",
+        "clientOrderId": "ml_25d6a89fc9f25b0bb536a6a74d98",
+        "exchangeOrderId": "3508829138",
+        "submittedAt": 1790295750938,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug7s11i_0fk9eb7s",
+      "symbol": "NEARUSDT",
+      "decision": "PLACE_SHORT",
+      "direction": "SHORT",
+      "completedAt": 1790295658173,
+      "afterRestart": false,
+      "execution": {
+        "state": "NOT_SUBMITTED",
+        "label": "未挂单 · TRADE_PLAN · CANDIDATE_HORIZON_UNSUPPORTED:120",
+        "blockStage": "TRADE_PLAN",
+        "blockReasons": [
+          "CANDIDATE_HORIZON_UNSUPPORTED:120"
+        ],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug7iy6l_u8sfklp9",
+      "symbol": "NEARUSDT",
+      "decision": "PLACE_SHORT",
+      "direction": "SHORT",
+      "completedAt": 1790295235413,
+      "afterRestart": false,
+      "execution": {
+        "state": "NOT_SUBMITTED",
+        "label": "未挂单 · TRADE_PLAN · CANDIDATE_SET_NO_PROFITABLE_COMBINATION_AT_MINIMUM_QUANTITY",
+        "blockStage": "TRADE_PLAN",
+        "blockReasons": [
+          "CANDIDATE_SET_NO_PROFITABLE_COMBINATION_AT_MINIMUM_QUANTITY",
+          "CANDIDATE_SET_MIN_NET_PROFIT_USD=1",
+          "CANDIDATE_SET_ATTAINED_NET_PROFIT_USD=1.000205",
+          "PLAN_SIDE_NOT_EXECUTABLE:SHORT"
+        ],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug7hhmr_cqnazqph",
+      "symbol": "CRVUSDT",
+      "decision": "PLACE_SHORT",
+      "direction": "SHORT",
+      "completedAt": 1790295170374,
+      "afterRestart": false,
+      "execution": {
+        "state": "NOT_SUBMITTED",
+        "label": "未挂单 · TRADE_PLAN · CANDIDATE_SET_NO_PROFITABLE_COMBINATION_AT_MINIMUM_QUANTITY",
+        "blockStage": "TRADE_PLAN",
+        "blockReasons": [
+          "CANDIDATE_SET_NO_PROFITABLE_COMBINATION_AT_MINIMUM_QUANTITY",
+          "CANDIDATE_SET_MIN_NET_PROFIT_USD=1",
+          "CANDIDATE_SET_ATTAINED_NET_PROFIT_USD=1.000864",
+          "PLAN_SIDE_NOT_EXECUTABLE:SHORT"
+        ],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug7fuj4_yncb2mzv",
+      "symbol": "DOGEUSDT",
+      "decision": "PLACE_LONG",
+      "direction": "LONG",
+      "completedAt": 1790295093067,
+      "afterRestart": false,
+      "execution": {
+        "state": "NOT_SUBMITTED",
+        "label": "未挂单 · TRADE_PLAN · CANDIDATE_SET_NO_PROFITABLE_COMBINATION_AT_MINIMUM_QUANTITY",
+        "blockStage": "TRADE_PLAN",
+        "blockReasons": [
+          "CANDIDATE_SET_NO_PROFITABLE_COMBINATION_AT_MINIMUM_QUANTITY",
+          "CANDIDATE_SET_MIN_NET_PROFIT_USD=1",
+          "CANDIDATE_SET_ATTAINED_NET_PROFIT_USD=1.000489",
+          "PLAN_SIDE_NOT_EXECUTABLE:LONG"
+        ],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug7e6v0_2b0pl6gc",
+      "symbol": "XRPUSDC",
+      "decision": "PLACE_LONG",
+      "direction": "LONG",
+      "completedAt": 1790295017686,
+      "afterRestart": false,
+      "execution": {
+        "state": "NOT_SUBMITTED",
+        "label": "未挂单 · PORTFOLIO_RISK · PENDING_RISK_UNVERIFIED:order:entry_intent_mu5xqmou_9hr5l6ur",
+        "blockStage": "PORTFOLIO_RISK",
+        "blockReasons": [
+          "PENDING_RISK_UNVERIFIED:order:entry_intent_mu5xqmou_9hr5l6ur",
+          "PENDING_RISK_UNVERIFIED:order:entry_intent_mubl212x_z8fndm8t",
+          "PORTFOLIO_RISK_SNAPSHOT_INCOMPLETE"
+        ],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug7ck9j_6n9vtw4c",
+      "symbol": "BRUSDT",
+      "decision": "PLACE_SHORT",
+      "direction": "SHORT",
+      "completedAt": 1790294939148,
+      "afterRestart": false,
+      "execution": {
+        "state": "NOT_SUBMITTED",
+        "label": "未挂单 · TRADE_PLAN · CANDIDATE_SET_NO_PROFITABLE_COMBINATION_AT_MINIMUM_QUANTITY",
+        "blockStage": "TRADE_PLAN",
+        "blockReasons": [
+          "CANDIDATE_SET_NO_PROFITABLE_COMBINATION_AT_MINIMUM_QUANTITY",
+          "CANDIDATE_SET_MIN_NET_PROFIT_USD=1",
+          "CANDIDATE_SET_ATTAINED_NET_PROFIT_USD=1.000044",
+          "PLAN_SIDE_NOT_EXECUTABLE:SHORT"
+        ],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug7azcs_hd2qo8r0",
+      "symbol": "CRVUSDC",
+      "decision": "PLACE_SHORT",
+      "direction": "SHORT",
+      "completedAt": 1790294865265,
+      "afterRestart": false,
+      "execution": {
+        "state": "EXECUTING",
+        "label": "正在执行",
+        "blockStage": null,
+        "blockReasons": [],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug79h1k_m5s7enxw",
+      "symbol": "UNIUSDT",
+      "decision": "PLACE_SHORT",
+      "direction": "SHORT",
+      "completedAt": 1790294793824,
+      "afterRestart": false,
+      "execution": {
+        "state": "NOT_SUBMITTED",
+        "label": "未挂单 · TRADE_PLAN · CANDIDATE_SET_NO_PROFITABLE_COMBINATION_AT_MINIMUM_QUANTITY",
+        "blockStage": "TRADE_PLAN",
+        "blockReasons": [
+          "CANDIDATE_SET_NO_PROFITABLE_COMBINATION_AT_MINIMUM_QUANTITY",
+          "CANDIDATE_SET_MIN_NET_PROFIT_USD=1",
+          "CANDIDATE_SET_ATTAINED_NET_PROFIT_USD=1.000393",
+          "PLAN_SIDE_NOT_EXECUTABLE:SHORT"
+        ],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "brainRunId": "airun_mug77wvc_dek7gsh9",
+      "symbol": "PENGUUSDC",
+      "decision": "PLACE_SHORT",
+      "direction": "SHORT",
+      "completedAt": 1790294723360,
+      "afterRestart": false,
+      "execution": {
+        "state": "NOT_SUBMITTED",
+        "label": "未挂单 · TRADE_PLAN · CANDIDATE_SET_NO_PROFITABLE_COMBINATION_AT_MINIMUM_QUANTITY",
+        "blockStage": "TRADE_PLAN",
+        "blockReasons": [
+          "CANDIDATE_SET_NO_PROFITABLE_COMBINATION_AT_MINIMUM_QUANTITY",
+          "CANDIDATE_SET_MIN_NET_PROFIT_USD=1",
+          "CANDIDATE_SET_ATTAINED_NET_PROFIT_USD=1.000176",
+          "PLAN_SIDE_NOT_EXECUTABLE:SHORT"
+        ],
+        "tradePlanId": null,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "inconsistentFacts": []
+      }
+    }
+  ],
+  "rowsDigest": "626e8906c3853485"
+}

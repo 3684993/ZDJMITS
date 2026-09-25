@@ -1,0 +1,357 @@
+VITEST_TEST_TIMEOUT=5000 CI=
+
+ RUN  v3.2.7 D:/MITS-worktrees/v396-final-convergence-20260922/apps/engine
+
+(node:48712) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:28436) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:33848) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:38268) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:49588) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:42984) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:35212) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:48780) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:12668) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:26196) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:46256) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:31632) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:13492) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:50216) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/services/ownershipJournal.test.ts (9 tests) 741ms
+(node:13244) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:4272) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/services/ownershipS02Acceptance.test.ts (11 tests) 1404ms
+ ✓ src/services/s04ExitCoordination.test.ts (11 tests) 1910ms
+   ✓ S04 unified exit coordination > S04-T06 a crash at PREPARED, SUBMITTING or WORKING recovers with a stable identity  337ms
+   ✓ S04 unified exit coordination > S04-T08 both position modes, precision and exposure rules refuse rather than add risk  385ms
+(node:26932) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/config/portfolioRiskAuthorityStore.test.ts (6 tests) 1435ms
+ ✓ src/services/c3RuntimeWiringHostile.test.ts (45 tests) 1788ms
+(node:40040) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/services/executionReadiness.test.ts (18 tests) 1378ms
+ ✓ src/api/projections.test.ts (3 tests) 1242ms
+   ✓ dashboard projections > schema-validates one server-side snapshot and redacts audit secrets  782ms
+   ✓ projects exchange-complete trading PnL while funding keeps canonical net unavailable  449ms
+(node:41172) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/services/j4ReviewMemoryHostile.test.ts (50 tests) 2889ms
+ ✓ src/services/executionLifecycle.integration.test.ts (17 tests) 2880ms
+   ✓ V3.9 execution outcomes with real services > retains UNKNOWN claim across SQLite reopen without another submission  322ms
+   ✓ V3.9.5 durable entry claim release on proven no-active-risk > does not resurrect a released claim across restart after the evidence TTL lapses  301ms
+ ✓ src/services/eipService.test.ts (3 tests) 1994ms
+   ✓ EIP 3.0 evidence gates > builds seven-timeframe evidence within a bounded prompt size  790ms
+   ✓ EIP 3.0 evidence gates > fails closed for stale price but sanitizes stale derivatives as contextual evidence  632ms
+   ✓ EIP 3.0 evidence gates > sanitizes stale partial derivatives before classifying exchange availability, while preserving fresh partial facts  571ms
+ ✓ src/adapters/market/klineRecoverySimulation.test.ts (1 test) 875ms
+   ✓ V3.9.5 mass 1m gap heals without a request storm > uses at most one klines request per symbol, reloads no snapshots and restores readiness  873ms
+(node:19176) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/api/snapshotReadOnly.test.ts (4 tests) 2055ms
+   ✓ TradeRecord GET list/detail and Experience perform zero SQLite writes and zero state mutation  653ms
+   ✓ published dashboard snapshot > serves a bounded immutable summary without reconciliation waits or SQLite writes  481ms
+   ✓ position detail and stale manual preview perform zero market REST reads  476ms
+   ✓ reconciliation telemetry still persists execution facts  443ms
+(node:32760) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/api/brainRunExecution.test.ts (4 tests) 1291ms
+   ✓ V3.9.6 durable run -> execution result > RX-01 a natural PLACE that reaches the wire is journalled as 已挂单 with its whole lineage  415ms
+   ✓ V3.9.6 durable run -> execution result > RX-02 a legal wait for price says 等待价格 and never borrows 已挂单  320ms
+   ✓ V3.9.6 durable run -> execution result > RX-04 the funnel reads the same journal the rows do  335ms
+(node:46164) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:452) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:48000) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:448) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/services/j5SettingsGovernanceHostile.test.ts (24 tests) 1138ms
+(node:42704) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:49544) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/services/eipResidentInspection.test.ts (1 test) 759ms
+   ✓ resident EIP inspection > keeps a held contract available to read-only EIP inspection  757ms
+ ✓ src/runtime/appRuntime.test.ts (7 tests) 3410ms
+   ✓ mock V3 runtime > retains an in-flight cohort hydrate through the real runtime sync, then admits its snapshot  490ms
+   ✓ mock V3 runtime > starts degraded runtime loops when the initial cohort bootstrap fails  1097ms
+   ✓ does not publish into the closed database from queued UI snapshots  1043ms
+   ✓ starts private synchronization before a delayed bounded cohort bootstrap  442ms
+ ✓ src/services/tradingQualityIntegration.test.ts (29 tests) 4055ms
+   ✓ prospective runtime evidence collection > 100 unchanged SHADOW candidates do not create poll-time observation rows  701ms
+   ✓ prospective runtime evidence collection > samples an exactly attributed filled Entry and ignores idle-symbol quotes  557ms
+   ✓ prospective runtime evidence collection > restarts an unfinished exact observation window without changing its identity  533ms
+   ✓ prospective runtime evidence collection > stops raw path writes and episode recomputation after the observation horizon matures  792ms
+   ✓ prospective runtime evidence collection > automatically persists fills/episodes, samples fresh quote timestamps and survives reopen  654ms
+(node:30020) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/services/j1AiExitConsumer.test.ts (12 tests) 624ms
+   ✓ J1 runtime consumer > binds the management deadline in the same turn as the fill and never re-fixes it  536ms
+ ✓ src/state/reservationConvergence.test.ts (13 tests) 527ms
+ ✓ src/runtime/tradeRecordAutoSync.test.ts (1 test) 598ms
+   ✓ automatic TradeRecord sync window > reads the full 24 hours before startup and caps the final read at startup plus 24 hours  597ms
+ ✓ src/state/c2ReservationAtomicityHostile.test.ts (23 tests) 5013ms
+(node:22760) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/api/assetDirectoryReview.test.ts (1 test) 649ms
+   ✓ asset directory review API > keeps default preview read-only and only explicitly applies through governance CAS  646ms
+ ✓ src/runtime/v393FrozenEntryRestart.test.ts (1 test) 593ms
+   ✓ V3.9.3 frozen Entry authorization restart persistence > preserves AI side, quantityUnits, acceptable range and pre-AI envelope through SQLite and Engine restart  591ms
+ ✓ src/runtime/restartRecovery.test.ts (1 test) 551ms
+   ✓ runtime restart recovery > restores test-harness facts only through the explicit harness factory  549ms
+ ✓ src/runtime/riskPauseOverride.test.ts (1 test) 508ms
+   ✓ Testnet risk-pause override > records a complete audit, preserves risk metrics, restores AUTO, and survives restart state  507ms
+(node:27608) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:42828) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/services/externalResearchService.test.ts (3 tests) 477ms
+(node:33692) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:34232) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:36296) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:44696) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/services/positionNotionalSemantics.test.ts (4 tests) 675ms
+   ✓ position notionalUsd semantics > normalises legacy persisted signed notionals so the dashboard snapshot still validates  656ms
+ ✓ src/services/ownershipRuntime.test.ts (5 tests) 455ms
+ ✓ src/services/j2PortfolioAdmissionHostile.test.ts (15 tests) 333ms
+(node:27608) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:29428) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:50288) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/services/tradingQualityObserverWorker.test.ts (1 test) 491ms
+   ✓ runs compiled evidence worker in an isolated database, without trading authority  489ms
+ ✓ src/services/s03ExitCostPolicy.test.ts (21 tests) 285ms
+ ✓ src/services/ownershipScopeIdentity.test.ts (3 tests) 356ms
+ ✓ src/services/aiFabric.test.ts (13 tests) 5130ms
+   ✓ Primary decision fail-closed normalization > normalizes a reject without inventing an executable side  628ms
+   ✓ Primary decision fail-closed normalization > repairs reject formatting without restoring a trade side or direction authority  483ms
+   ✓ Primary decision fail-closed normalization > preserves raw PLACE_LONG including autonomous quantity  477ms
+   ✓ Primary decision fail-closed normalization > preserves raw PLACE_SHORT including autonomous quantity  459ms
+   ✓ Primary decision fail-closed normalization > normalizes only unambiguous confidence protocol values  454ms
+   ✓ Primary decision fail-closed normalization > normalizes only unambiguous confidence protocol values  470ms
+   ✓ Primary decision fail-closed normalization > normalizes only unambiguous confidence protocol values  479ms
+   ✓ Primary decision fail-closed normalization > does not manufacture a missing executable price range  454ms
+   ✓ Primary decision fail-closed normalization > accepts a directionless reject without inventing PLACE  417ms
+   ✓ Primary decision fail-closed normalization > computes 15m structure evidence without creating an execution decision  375ms
+   ✓ Primary decision fail-closed normalization > accepts both AI sides regardless of 15m trend when protocol fields are valid  424ms
+(node:44068) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/services/j3TradePlanHostile.test.ts (19 tests) 485ms
+ ✓ src/services/v370Contract.test.ts (36 tests) 379ms
+ ✓ src/services/manualPositionService.test.ts (16 tests) 364ms
+ ✓ src/services/s07ConsumerBoundary.test.ts (7 tests) 199ms
+ ✓ src/api/exchangeFillProjection.test.ts (1 test) 453ms
+   ✓ exchange fill projection > does not raise a system attribution alert for an external Binance App fill  451ms
+(node:41208) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/api/runtimeSettingsResources.test.ts (14 tests) 485ms
+(node:45524) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/services/runtimeControlService.test.ts (12 tests) 194ms
+(node:24948) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/config/assetAdmissionIntegration.test.ts (1 test) 201ms
+(node:20424) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/adapters/market/BinancePublicMarketDataProvider.test.ts (9 tests) 300ms
+ ✓ src/adapters/market/BinanceMarketStream.test.ts (9 tests) 198ms
+ ✓ src/services/grossRiskCapacityVisibility.test.ts (13 tests) 177ms
+ ✓ src/config/settingsStore.test.ts (26 tests) 7197ms
+   ✓ SettingsStore > keeps in-range migrated floors untouched and migrates a legacy document exactly once  1142ms
+   ✓ SettingsStore > paginates compact AI summaries in SQL with a stable tie-break and keeps full detail by id  663ms
+   ✓ runs bounded retention, keeps raw running AI and all critical events, and evicts only orphan AI entities  396ms
+ ✓ src/services/testnetRiskAuthority.test.ts (32 tests) 280ms
+(node:24320) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/adapters/binance/requestBudget.test.ts (21 tests) 169ms
+ ✓ src/services/unknownRiskAuditTiering.test.ts (22 tests) 131ms
+ ✓ src/services/preAiPlanFeasibility.test.ts (8 tests) 175ms
+ ✓ src/services/s05ConsumerBoundary.test.ts (4 tests) 109ms
+(node:48384) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:28184) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:3836) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/services/runtimeWriteBuffer.test.ts (1 test) 106ms
+(node:31460) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/services/operationalLogger.test.ts (2 tests) 132ms
+ ✓ src/services/collectorRecovery.test.ts (1 test) 143ms
+ ✓ src/services/egressFailClosed.test.ts (11 tests) 134ms
+ ✓ src/services/ownershipStorageCoverage.test.ts (6 tests) 82ms
+ ✓ src/services/sideNeutralEntryAuthorization.test.ts (3 tests) 73ms
+(node:11780) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:31896) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/services/storageCapacityGuard.test.ts (4 tests) 108ms
+ ✓ src/adapters/binance/BinanceTransport.test.ts (17 tests) 91ms
+ ✓ src/services/s05PortfolioTailRisk.test.ts (76 tests) 145ms
+ ✓ src/adapters/exchange/ExternalTradeAdapterPrivateLoad.test.ts (7 tests) 57ms
+(node:31420) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/services/finalActivation.test.ts (13 tests) 97ms
+ ✓ src/services/reconciliationUnknownRisk.test.ts (10 tests) 63ms
+(node:42444) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:44384) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/services/tpGuardianEconomics.test.ts (11 tests) 80ms
+ ✓ src/services/s09ReplayStressHostile.test.ts (22 tests) 55ms
+ ✓ src/services/positionRiskV3Facts.test.ts (17 tests) 48ms
+ ✓ src/services/entryExecutionChain.test.ts (4 tests) 96ms
+ ✓ src/services/j1ExitTruthHostile.test.ts (10 tests) 77ms
+ ✓ src/services/aiFabricResourceState.test.ts (2 tests) 88ms
+ ✓ src/services/cycleAccounting.test.ts (16 tests) 55ms
+(node:46468) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/services/remoteFactAuditIntegration.test.ts (7 tests) 61ms
+(node:5516) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/services/liveValidationObservation.test.ts (2 tests) 45ms
+ ✓ src/services/pendingRiskOccupancyConvergence.test.ts (11 tests) 52ms
+ ✓ src/services/reconciliationService.test.ts (15 tests) 54ms
+ ✓ src/services/reconciliationCoverageContract.test.ts (6 tests) 40ms
+ ✓ src/services/tpSubmissionOutcome.test.ts (5 tests) 34ms
+ ✓ src/adapters/binance/requestBudgetPrivateTruth.test.ts (3 tests) 38ms
+ ✓ src/services/v396OfflineStages.test.ts (11 tests) 31ms
+(node:35828) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/services/entryCoordinator.test.ts (17 tests) 36ms
+ ✓ src/services/v370Decision.test.ts (6 tests) 44ms
+(node:50992) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/adapters/market/klineTargetedRepair.test.ts (8 tests) 32ms
+ ✓ src/services/tpUnknownRecovery.test.ts (2 tests) 36ms
+ ✓ src/adapters/market/klineContinuity.test.ts (11 tests) 34ms
+(node:40024) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/services/s05ConvergenceHostile.test.ts (8 tests) 31ms
+ ✓ src/services/v396AuditBoundaries.test.ts (23 tests) 31ms
+ ✓ src/services/preflightFeasibility.test.ts (6 tests) 34ms
+ ✓ src/services/v396AuditFollowup.test.ts (8 tests) 27ms
+ ✓ src/adapters/exchange/ExternalTradeAdapter.test.ts (13 tests) 30ms
+(node:7768) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/runtime/processLifecycleTelemetry.test.ts (2 tests) 108ms
+ ✓ src/services/positionLeverageV3.test.ts (6 tests) 28ms
+ ✓ src/services/tradingQualityV393EvidenceStore.test.ts (5 tests) 28ms
+ ✓ src/services/remoteFactAuditPolicy.test.ts (7 tests) 19ms
+ ✓ src/services/candidateSupplyHealth.test.ts (3 tests) 25ms
+ ✓ src/services/externalIntelligenceService.test.ts (5 tests) 28ms
+ ✓ src/adapters/binance/requestBudgetProxyTruth.test.ts (1 test) 17ms
+(node:30360) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/services/marketCohort.test.ts (12 tests) 31ms
+ ✓ src/adapters/binance/requestBudgetAnomaly.test.ts (1 test) 23ms
+ ✓ src/services/marketDataHub.test.ts (10 tests) 26ms
+ ✓ src/services/marketDataHubSlowFields.test.ts (4 tests) 23ms
+(node:39032) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/services/finalRiskConvergence.test.ts (5 tests) 27ms
+ ✓ src/services/tpGuardianCrossedTruth.test.ts (2 tests) 27ms
+(node:46992) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/services/executableRiskHeadroom.test.ts (6 tests) 24ms
+(node:42508) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/services/privateAccountSync.test.ts (4 tests) 19ms
+ ✓ src/services/positionLifecycleIntegrity.test.ts (3 tests) 22ms
+ ✓ src/services/productionAssetResearch.test.ts (6 tests) 27ms
+ ✓ src/services/assetGovernanceCoordinator.test.ts (6 tests) 16ms
+ ✓ src/services/tradingEpisodeEvidence.test.ts (10 tests) 19ms
+ ✓ src/services/reconciliationRequestBudget.test.ts (1 test) 24ms
+ ✓ src/services/productionReadOnlyPreflight.test.ts (4 tests) 18ms
+ ✓ src/services/runExecutionOutcome.test.ts (14 tests) 25ms
+ ✓ src/runtime/userPositionFacts.test.ts (3 tests) 26ms
+ ✓ src/services/tradeRecordIntegrity.test.ts (5 tests) 17ms
+ ✓ src/services/tradeRecordSyncService.test.ts (3 tests) 18ms
+ ✓ src/services/tradingQualityV393.test.ts (10 tests) 12ms
+ ✓ src/adapters/exchange/historyWindow.test.ts (5 tests) 14ms
+ ✓ src/services/lossHandoff.test.ts (4 tests) 14ms
+ ✓ src/services/temporalAlgorithms.test.ts (11 tests) 18ms
+ ✓ src/services/tradingQualityEligibility.test.ts (7 tests) 16ms
+ ✓ src/config/aiResourceLoader.test.ts (1 test) 14ms
+ ✓ src/services/positionService.test.ts (2 tests) 14ms
+ ✓ src/adapters/binance/BinanceUserDataStream.test.ts (2 tests) 12ms
+ ✓ src/services/directionPolicyService.test.ts (1 test) 17ms
+ ✓ src/state/runtimeState.test.ts (4 tests) 11ms
+ ✓ src/services/candidateLifecycleDeriver.test.ts (10 tests) 10ms
+(node:22784) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/services/nearMarketPrice.test.ts (4 tests) 12ms
+ ✓ src/adapters/binance/requestBudgetEntryGate.test.ts (2 tests) 11ms
+ ✓ src/services/tradingQualityBaseline.test.ts (4 tests) 9ms
+(node:19616) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/services/tradeRecordReadModel.test.ts (4 tests) 10ms
+ ✓ src/adapters/binance/BinanceTransportLanes.test.ts (3 tests) 6ms
+ ✓ src/services/brainRunArchive.test.ts (4 tests) 8ms
+ ✓ src/services/TemporalIntelligenceService.test.ts (1 test) 10ms
+ ✓ src/services/externalResearchQuality.test.ts (2 tests) 9ms
+ ✓ src/services/economicEntryFeasibility.test.ts (4 tests) 10ms
+ ✓ src/services/s01TruthAccountingObservability.test.ts (5 tests) 8ms
+ ✓ src/services/entryObservation.test.ts (4 tests) 8ms
+ ✓ src/services/supplyHealth.test.ts (3 tests) 9ms
+ ✓ src/services/aiQuantityAllocation.test.ts (3 tests) 10ms
+ ✓ src/services/tradingQualityReleaseGate.test.ts (5 tests) 7ms
+ ✓ src/services/binanceClientOrderIdFactory.test.ts (3 tests) 9ms
+ ✓ src/services/p0EntryIntegrity.test.ts (4 tests) 8ms
+ ✓ src/services/historicalTpReachability.test.ts (3 tests) 7ms
+ ✓ src/services/unsubmittedEntryRecovery.test.ts (2 tests) 7ms
+ ✓ src/services/v392HistoricalDecisionRegression.test.ts (3 tests) 8ms
+ ✓ src/services/tradingQualityObservationPlan.test.ts (3 tests) 7ms
+ ✓ src/services/marketDataReadiness.test.ts (3 tests) 7ms
+ ✓ src/api/chronologicalSort.test.ts (2 tests) 5ms
+ ✓ src/services/marketDataStaleness.test.ts (4 tests) 5ms
+ ✓ src/services/humanManagedProjection.test.ts (1 test) 7ms
+ ✓ src/events/eventBus.test.ts (1 test) 7ms
+ ✓ src/services/shadowObservation.test.ts (4 tests) 7ms
+ ✓ src/services/decisionContext.test.ts (3 tests) 6ms
+ ✓ src/services/experienceService.test.ts (1 test) 6ms
+ ✓ src/services/riskReadiness.test.ts (3 tests) 7ms
+ ✓ src/services/p0RiskConvergence.test.ts (3 tests) 7ms
+ ✓ src/adapters/market/BinanceExchangeInfoSingleFlight.test.ts (1 test) 13ms
+ ✓ src/services/entryWaiting.test.ts (4 tests) 6ms
+ ✓ src/runtime/bootstrapReconciliationInvariant.test.ts (1 test) 5ms
+ ✓ src/config/settingsCloseoutInvariant.test.ts (1 test) 5ms
+(node:31812) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:33204) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/services/testnetLowLossCleanupService.test.ts (2 tests) 5ms
+ ✓ src/adapters/binance/BinanceBudgetFailureTelemetry.test.ts (1 test) 5ms
+ ✓ src/services/privateAccountReadiness.test.ts (1 test) 4ms
+ ✓ src/config/engineTestTimeout.test.ts (1 test) 4ms
+ ✓ src/services/shadowReadiness.test.ts (2 tests) 7ms
+ ✓ src/api/activeEntryProjection.test.ts (1 test) 5ms
+
+ Test Files  163 passed (163)
+      Tests  1297 passed (1297)
+   Start at  07:59:56
+   Duration  19.28s (transform 14.73s, setup 0ms, collect 85.31s, tests 63.53s, environment 54ms, prepare 41.84s)
+

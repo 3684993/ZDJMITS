@@ -451,10 +451,26 @@ export function entryConversionWindow(
   const counts = new Map<string, { stage: ExecutionBlockStage | 'UNKNOWN'; reason: string; count: number }>();
   const primaryRuns = new Set<string>();
   const placeRuns = new Set<string>();
+  // Same attribution rule as the run projection: the event that introduces an intent or an order owns
+  // the identity, and a later event that names only that identity belongs to the same run. Without
+  // this the fill written by the simulated path - which carries no run id at all - would leave the
+  // funnel reporting zero fills while the run row on the same screen says 已成交.
+  const intentOwner = new Map<string, string>();
+  const orderOwner = new Map<string, string>();
+  const note = (index: Map<string, string>, id: unknown, runId: string) => {
+    if (id == null || !runId) return;
+    const key = String(id);
+    if (!index.has(key)) index.set(key, runId);
+  };
 
   for (const event of events) {
     const payload: any = event.payload ?? {};
-    const runId = String(payload.brainRunId ?? payload.decisionChainId ?? payload.runId ?? '');
+    const directRunId = String(payload.brainRunId ?? payload.decisionChainId ?? payload.runId ?? '');
+    const intentKey = payload.intentId ?? payload.intent?.id ?? null;
+    const orderKey = payload.orderId ?? payload.order?.id ?? null;
+    const runId = (intentKey != null ? intentOwner.get(String(intentKey)) : undefined)
+      ?? (orderKey != null ? orderOwner.get(String(orderKey)) : undefined)
+      ?? directRunId;
     switch (event.type) {
       case 'PRIMARY_DECISION_NORMALIZED':
         if (!runId) break;
@@ -471,21 +487,34 @@ export function entryConversionWindow(
         add('tradePlanReady', runId);
         break;
       case 'ENTRY_RESERVATION_CREATED':
+        note(intentOwner, payload.intentId, runId);
         add('reservationCreated', runId);
         break;
       case 'ENTRY_INTENT_CREATED':
+        note(intentOwner, payload.intent?.id ?? payload.intentId, runId);
         add('intentCreated', runId);
         break;
       case 'ENTRY_EXECUTION_WAITING':
+        note(intentOwner, payload.intentId, runId);
         add('waitingPrice', runId);
         break;
       case 'ENTRY_SUBMIT_ATTEMPTED':
+        note(orderOwner, payload.orderId, runId);
         add('submitAttempted', runId);
         break;
       case 'ENTRY_ORDER_CREATED':
+        note(orderOwner, payload.order?.id ?? payload.orderId, runId);
+        note(intentOwner, payload.order?.intentId ?? payload.intentId, runId);
         add('orderSubmitted', runId);
         break;
+      case 'ORDER_FILL_RECONCILED':
+        note(orderOwner, payload.orderId, runId);
+        // A partial reconciliation is not an entry filled; only the terminal status counts, or the
+        // cockpit's Submit→Fill ratio would rise on every partial.
+        if (String(payload.status ?? '') === 'FILLED') add('entryFilled', runId);
+        break;
       case 'ENTRY_FILLED':
+        note(orderOwner, payload.orderId ?? payload.order?.id, runId);
         add('entryFilled', runId);
         break;
       case 'ENTRY_DECISION_BLOCKED':

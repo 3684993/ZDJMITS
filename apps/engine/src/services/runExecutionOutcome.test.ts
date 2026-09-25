@@ -62,9 +62,18 @@ function chain(over: {until?: 'plan' | 'risk' | 'reservation' | 'intent' | 'wait
 const outcomeOf = (events: LineageEvent[], runs: RunRow[], now = at(60)) =>
   projectRunExecutionOutcomes(events, runs, now).get(runs[0].brainRunId)!;
 
-/** Re-sign a chain fixture for another run, the way a second Primary run would produce it. */
+/** Re-sign a chain fixture for another run, the way a second Primary run would produce it - with its
+ * own intent, reservation and order ids, because identity is what the attribution rules depend on. */
 const retarget = (events: LineageEvent[], runId: string, extra: Record<string, unknown> = {}): LineageEvent[] =>
-  events.map((event) => ({...event, payload: {...(event.payload as Record<string, unknown>), brainRunId: runId, ...extra}}));
+  events.map((event) => {
+    const payload: Record<string, any> = {...(event.payload as Record<string, unknown>), brainRunId: runId, ...extra};
+    if (payload.intent) payload.intent = {...payload.intent, id: `intent_${runId}`, reservationId: `res_${runId}`};
+    if (payload.intentId != null) payload.intentId = `intent_${runId}`;
+    if (payload.reservationId != null) payload.reservationId = `res_${runId}`;
+    if (payload.order) payload.order = {...payload.order, id: `entry_intent_${runId}`, intentId: `intent_${runId}`};
+    if (payload.orderId != null) payload.orderId = `entry_intent_${runId}`;
+    return {...event, payload};
+  });
 
 describe('V3.9.6 Run -> execution outcome projection', () => {
   it('EO-01 a run that reached the exchange reads as 已成交 with the whole lineage', () => {
@@ -316,5 +325,22 @@ describe('V3.9.6 entry conversion funnel', () => {
   it('EO-14 the funnel reads exactly the event types the projection is built from', () => {
     const produced = new Set(chain().map((event) => event.type));
     for (const type of produced) expect(ENTRY_CONVERSION_EVENT_TYPES, `chain event ${type} must be readable by the funnel`).toContain(type);
+  });
+
+  it('EO-15 a fill written without a run id still counts for the run that created the order', () => {
+    // The simulated-fill path publishes ENTRY_FILLED with only the order object, so a funnel that
+    // reads run ids off the payload alone reports "0 filled" while the cockpit's own row says 已成交.
+    const events: LineageEvent[] = [
+      primary('r9', 'PLACE_LONG', 1),
+      ...retarget(chain({until: 'intent'}), 'r9'),
+      ev('ENTRY_ORDER_CREATED', {brainRunId: 'r9', order: {id: 'entry_intent_1', intentId: 'intent_1', clientOrderId: 'ML_intent_1', exchangeOrderId: '9001', status: 'WORKING', submittedAt: at(8)}}, 8),
+      {id: 'evt_fill_no_run', type: 'ENTRY_FILLED', ts: at(9), symbol: 'BTCUSDT', payload: {order: {id: 'entry_intent_1', intentId: 'intent_1', exchangeOrderId: '9001', status: 'FILLED', filledQuantity: 2}, positionId: 'pos_entry_intent_1'}},
+    ];
+    const window = entryConversionWindow(events, {since: T0, until: at(60)});
+    expect(window.orderSubmitted).toBe(1);
+    expect(window.entryFilled, 'the fill must be attributed to the run that owns the intent').toBe(1);
+    expect(window.ratios.submitToFill).toBe(100);
+    const outcome = outcomeOf(events, [run({brainRunId: 'r9'})]);
+    expect(outcome).toMatchObject({executionState: 'FILLED', exchangeOrderId: '9001'});
   });
 });

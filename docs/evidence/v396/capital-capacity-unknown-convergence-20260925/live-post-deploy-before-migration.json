@@ -1,0 +1,360 @@
+{
+  "capturedAt": "2026-09-25T03:02:48.569Z",
+  "mode": "snapshot",
+  "write": {
+    "performed": false
+  },
+  "governancePolicyRows": [
+    {
+      "path": "riskGovernance.exposureCapacityPolicy.gross",
+      "kind": "enum",
+      "enum": [
+        "ENFORCE",
+        "OBSERVE"
+      ],
+      "editable": true,
+      "effectiveAt": "NEXT_ENTRY_CYCLE",
+      "ack": "EXPOSURE_CAPACITY_OBSERVE",
+      "consumers": [
+        "services/executableRiskHeadroom.ts#exposureCapacityPolicy",
+        "services/riskReadiness.ts#exposureCapacityPolicy"
+      ]
+    },
+    {
+      "path": "riskGovernance.exposureCapacityPolicy.direction",
+      "kind": "enum",
+      "enum": [
+        "ENFORCE",
+        "OBSERVE"
+      ],
+      "editable": true,
+      "effectiveAt": "NEXT_ENTRY_CYCLE",
+      "ack": "EXPOSURE_CAPACITY_OBSERVE",
+      "consumers": [
+        "services/executableRiskHeadroom.ts#exposureCapacityPolicy",
+        "services/riskReadiness.ts#exposureCapacityPolicy"
+      ]
+    },
+    {
+      "path": "riskGovernance.exposureCapacityPolicy.cluster",
+      "kind": "enum",
+      "enum": [
+        "ENFORCE",
+        "OBSERVE"
+      ],
+      "editable": true,
+      "effectiveAt": "NEXT_ENTRY_CYCLE",
+      "ack": "EXPOSURE_CAPACITY_OBSERVE",
+      "consumers": [
+        "services/executableRiskHeadroom.ts#exposureCapacityPolicy"
+      ]
+    }
+  ],
+  "before": {
+    "settingsVersion": 214,
+    "ratios": {
+      "maxGrossExposurePct": 1,
+      "maxDirectionExposurePct": 1,
+      "maxClusterExposurePct": 0.35,
+      "maxClusterDirectionExposurePct": 0.35,
+      "perTradeRiskPctEquity": 0.01
+    },
+    "policy": {
+      "gross": "ENFORCE",
+      "direction": "ENFORCE",
+      "cluster": "ENFORCE"
+    },
+    "equityUsd": null,
+    "funding": {
+      "quoteAssets": [
+        {
+          "quoteAsset": "USDT",
+          "availableBalanceUsd": 3948.16363387,
+          "walletBalanceUsd": 5473.13326246,
+          "reservedMarginUsd": 0,
+          "executionLeaseMarginUsd": 0,
+          "executableMarginUsd": 3948.16363387,
+          "factsComplete": true,
+          "reasons": []
+        },
+        {
+          "quoteAsset": "USDC",
+          "availableBalanceUsd": 4973.11534849,
+          "walletBalanceUsd": 4981.17551216,
+          "reservedMarginUsd": 0,
+          "executionLeaseMarginUsd": 0,
+          "executableMarginUsd": 4973.11534849,
+          "factsComplete": true,
+          "reasons": []
+        }
+      ],
+      "executableMarginUsd": 8921.27898236,
+      "proven": true
+    },
+    "exposure": {
+      "gross": {
+        "notionalUsd": 10705.28459196359,
+        "limitUsd": 10797.701109149999,
+        "remainingUsd": 92.41651718640969,
+        "usedPct": 0.9914410932241775,
+        "mode": "ENFORCE",
+        "enforced": true
+      },
+      "LONG": {
+        "notionalUsd": 3653.4678707427856,
+        "limitUsd": 10797.701109149999,
+        "remainingUsd": 7144.233238407213,
+        "usedPct": 0.3383560846712851,
+        "mode": "ENFORCE",
+        "enforced": true
+      },
+      "SHORT": {
+        "notionalUsd": 7051.816721220799,
+        "limitUsd": 10797.701109149999,
+        "remainingUsd": 3745.8843879292,
+        "usedPct": 0.6530850085528921,
+        "mode": "ENFORCE",
+        "enforced": true
+      }
+    },
+    "limits": {
+      "slots": {
+        "used": 17,
+        "max": 50,
+        "positions": 17,
+        "inFlight": 0,
+        "reserved": 0
+      },
+      "policy": {
+        "gross": "ENFORCE",
+        "direction": "ENFORCE",
+        "cluster": "ENFORCE"
+      }
+    },
+    "entryCapacity": {
+      "LONG": {
+        "executableNotionalUsd": 92.41651718640969,
+        "quoteAsset": "USDC",
+        "symbol": "XRPUSDC",
+        "firstBindingConstraint": "GROSS_ENFORCED",
+        "executableRoutes": 1
+      },
+      "SHORT": {
+        "executableNotionalUsd": 0,
+        "quoteAsset": null,
+        "symbol": null,
+        "firstBindingConstraint": "MINIMUM_NOTIONAL",
+        "executableRoutes": 0
+      }
+    },
+    "firstBlocker": "NONE",
+    "exhaustedForNewRisk": false,
+    "executableCandidateCount": 1,
+    "routedCandidates": [
+      {
+        "symbol": "XRPUSDC",
+        "quoteAsset": "USDC",
+        "leverage": 8,
+        "long": {
+          "feasibleNotionalUsd": 92.41651718640969,
+          "executable": true,
+          "constraint": "GROSS_ENFORCED",
+          "capital": 3980,
+          "blockers": []
+        },
+        "short": {
+          "feasibleNotionalUsd": 0,
+          "executable": false,
+          "constraint": "MINIMUM_NOTIONAL",
+          "capital": 3980,
+          "blockers": [
+            "BELOW_MINIMUM_NOTIONAL"
+          ]
+        }
+      }
+    ]
+  },
+  "after": {
+    "settingsVersion": 214,
+    "ratios": {
+      "maxGrossExposurePct": 1,
+      "maxDirectionExposurePct": 1,
+      "maxClusterExposurePct": 0.35,
+      "maxClusterDirectionExposurePct": 0.35,
+      "perTradeRiskPctEquity": 0.01
+    },
+    "policy": {
+      "gross": "ENFORCE",
+      "direction": "ENFORCE",
+      "cluster": "ENFORCE"
+    },
+    "equityUsd": null,
+    "funding": {
+      "quoteAssets": [
+        {
+          "quoteAsset": "USDT",
+          "availableBalanceUsd": 3948.16363387,
+          "walletBalanceUsd": 5473.13326246,
+          "reservedMarginUsd": 0,
+          "executionLeaseMarginUsd": 0,
+          "executableMarginUsd": 3948.16363387,
+          "factsComplete": true,
+          "reasons": []
+        },
+        {
+          "quoteAsset": "USDC",
+          "availableBalanceUsd": 4973.11534849,
+          "walletBalanceUsd": 4981.17551216,
+          "reservedMarginUsd": 0,
+          "executionLeaseMarginUsd": 0,
+          "executableMarginUsd": 4973.11534849,
+          "factsComplete": true,
+          "reasons": []
+        }
+      ],
+      "executableMarginUsd": 8921.27898236,
+      "proven": true
+    },
+    "exposure": {
+      "gross": {
+        "notionalUsd": 10705.28459196359,
+        "limitUsd": 10797.701109149999,
+        "remainingUsd": 92.41651718640969,
+        "usedPct": 0.9914410932241775,
+        "mode": "ENFORCE",
+        "enforced": true
+      },
+      "LONG": {
+        "notionalUsd": 3653.4678707427856,
+        "limitUsd": 10797.701109149999,
+        "remainingUsd": 7144.233238407213,
+        "usedPct": 0.3383560846712851,
+        "mode": "ENFORCE",
+        "enforced": true
+      },
+      "SHORT": {
+        "notionalUsd": 7051.816721220799,
+        "limitUsd": 10797.701109149999,
+        "remainingUsd": 3745.8843879292,
+        "usedPct": 0.6530850085528921,
+        "mode": "ENFORCE",
+        "enforced": true
+      }
+    },
+    "limits": {
+      "slots": {
+        "used": 17,
+        "max": 50,
+        "positions": 17,
+        "inFlight": 0,
+        "reserved": 0
+      },
+      "policy": {
+        "gross": "ENFORCE",
+        "direction": "ENFORCE",
+        "cluster": "ENFORCE"
+      }
+    },
+    "entryCapacity": {
+      "LONG": {
+        "executableNotionalUsd": 92.41651718640969,
+        "quoteAsset": "USDC",
+        "symbol": "XRPUSDC",
+        "firstBindingConstraint": "GROSS_ENFORCED",
+        "executableRoutes": 1
+      },
+      "SHORT": {
+        "executableNotionalUsd": 0,
+        "quoteAsset": null,
+        "symbol": null,
+        "firstBindingConstraint": "MINIMUM_NOTIONAL",
+        "executableRoutes": 0
+      }
+    },
+    "firstBlocker": "NONE",
+    "exhaustedForNewRisk": false,
+    "executableCandidateCount": 1,
+    "routedCandidates": [
+      {
+        "symbol": "XRPUSDC",
+        "quoteAsset": "USDC",
+        "leverage": 8,
+        "long": {
+          "feasibleNotionalUsd": 92.41651718640969,
+          "executable": true,
+          "constraint": "GROSS_ENFORCED",
+          "capital": 3980,
+          "blockers": []
+        },
+        "short": {
+          "feasibleNotionalUsd": 0,
+          "executable": false,
+          "constraint": "MINIMUM_NOTIONAL",
+          "capital": 3980,
+          "blockers": [
+            "BELOW_MINIMUM_NOTIONAL"
+          ]
+        }
+      }
+    ]
+  },
+  "ratiosUnchangedByPolicyWrite": true,
+  "closeout": {
+    "runtime": {
+      "pid": 36780,
+      "buildId": "3.9.6-169693874541082bb325",
+      "instanceId": "1ffc6b98-d7c1-4438-9773-9bc02c167be3",
+      "restartCount": 185,
+      "lastRestartAt": 1790305187962,
+      "lastRestartReason": "MANUAL_START",
+      "uptimeMs": 181399
+    },
+    "productionWriteBoundary": {
+      "environment": "TESTNET",
+      "executionMode": "TESTNET_ENABLED",
+      "lockedToTestnet": true,
+      "testnetWrites": 0,
+      "productionWrites": 0,
+      "blockedProductionWriteAttempts": 0,
+      "lastWriteAt": null,
+      "lastWritePath": null
+    },
+    "pipelineState": "RUNNING",
+    "entryPermission": {
+      "status": "READY",
+      "executionMode": "TESTNET_ENABLED",
+      "autoExecutionMode": "AUTO_RUNNING"
+    },
+    "executionReadiness": {
+      "intent": true,
+      "ready": true,
+      "modelSpendPermitted": true,
+      "blockers": [],
+      "firstBlocker": null,
+      "profileStatus": "READY",
+      "privateFresh": true,
+      "writeLocked": false,
+      "executableCandidateCount": 1,
+      "mode": "EXECUTION_READY",
+      "text": "执行事实齐备：PLACE 可进入 reservation → intent → order submit 链"
+    },
+    "activity": null
+  },
+  "pendingRisk": {
+    "since": 1790305187962,
+    "verifiedNoActiveRiskReleaseCount": 5,
+    "crossSymbolOrderMismatchCount": 0,
+    "activeRemoteEntryWithNewPrimaryCount": 0,
+    "unverifiedRemoteTerminalReleasedOccupancyCount": 0,
+    "BrainRunMisattributionCount": 0,
+    "verifiedOrderFactMismatchCount": 0,
+    "passed": true,
+    "durableClaims": {
+      "durableTasks": 423,
+      "activeClaims": 0,
+      "activeUnknownClaims": 0,
+      "releasedClaims": 45,
+      "releasedUnknownClaims": 45
+    }
+  }
+}

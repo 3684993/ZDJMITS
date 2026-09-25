@@ -1,0 +1,439 @@
+{
+  "label": "post-migration-1",
+  "capturedAt": "2026-09-25T03:04:44.537Z",
+  "uptimeMs": 297339,
+  "identity": {
+    "pid": 36780,
+    "buildId": "3.9.6-169693874541082bb325",
+    "instanceId": "1ffc6b98-d7c1-4438-9773-9bc02c167be3",
+    "restartCount": 185,
+    "lastRestartAt": 1790305187962,
+    "lastRestartReason": "MANUAL_START"
+  },
+  "permission": {
+    "settingsVersion": 215,
+    "environment": "TESTNET",
+    "executionMode": "TESTNET_ENABLED",
+    "productionWrites": 0,
+    "blockedProductionWriteAttempts": 0,
+    "testnetWrites": 0,
+    "lastWritePath": null
+  },
+  "policy": {
+    "gross": "OBSERVE",
+    "direction": "OBSERVE",
+    "cluster": "ENFORCE"
+  },
+  "ratios": {
+    "maxGrossExposurePct": 1,
+    "maxDirectionExposurePct": 1,
+    "maxClusterExposurePct": 0.35,
+    "perTradeRiskPctEquity": 0.01
+  },
+  "capacity": {
+    "funding": {
+      "quoteAssets": [
+        {
+          "quoteAsset": "USDT",
+          "availableBalanceUsd": 3939.20621482,
+          "walletBalanceUsd": 5473.13326246,
+          "reservedMarginUsd": 0,
+          "executionLeaseMarginUsd": 0,
+          "executableMarginUsd": 3939.20621482,
+          "factsComplete": true,
+          "reasons": []
+        },
+        {
+          "quoteAsset": "USDC",
+          "availableBalanceUsd": 4973.11860358,
+          "walletBalanceUsd": 4981.17551216,
+          "reservedMarginUsd": 0,
+          "executionLeaseMarginUsd": 0,
+          "executableMarginUsd": 4973.11860358,
+          "factsComplete": true,
+          "reasons": []
+        }
+      ],
+      "executableMarginUsd": 8912.3248184,
+      "proven": true
+    },
+    "exposure": {
+      "gross": {
+        "notionalUsd": 10703.80042581369,
+        "limitUsd": 10790.5908506419,
+        "remainingUsd": 86.79042482821023,
+        "usedPct": 0.9919568422128574,
+        "mode": "OBSERVE",
+        "enforced": false
+      },
+      "LONG": {
+        "notionalUsd": 3653.15955374369,
+        "limitUsd": 10790.5908506419,
+        "remainingUsd": 7137.43129689821,
+        "usedPct": 0.3385504653367869,
+        "mode": "OBSERVE",
+        "enforced": false
+      },
+      "SHORT": {
+        "notionalUsd": 7050.64087207,
+        "limitUsd": 10790.5908506419,
+        "remainingUsd": 3739.9499785719,
+        "usedPct": 0.6534063768760705,
+        "mode": "OBSERVE",
+        "enforced": false
+      }
+    },
+    "limits": {
+      "slots": {
+        "used": 17,
+        "max": 50,
+        "positions": 17,
+        "inFlight": 0,
+        "reserved": 0
+      },
+      "policy": {
+        "gross": "OBSERVE",
+        "direction": "OBSERVE",
+        "cluster": "ENFORCE"
+      }
+    },
+    "entryCapacity": {
+      "LONG": {
+        "executableNotionalUsd": 254.38206900173418,
+        "quoteAsset": "USDC",
+        "symbol": "XRPUSDC",
+        "firstBindingConstraint": "PLANNED_NOTIONAL",
+        "executableRoutes": 3
+      },
+      "SHORT": {
+        "executableNotionalUsd": 0,
+        "quoteAsset": null,
+        "symbol": null,
+        "firstBindingConstraint": "MINIMUM_NOTIONAL",
+        "executableRoutes": 0
+      }
+    },
+    "grossRatioLimitUsd": 10790.5908506419,
+    "directionRatioLimitUsd": 10790.5908506419,
+    "storedDirectionLimitEqualsSettings": true,
+    "executableCandidateCount": 3,
+    "routedCount": 3,
+    "routes": [
+      {
+        "symbol": "XRPUSDC",
+        "quoteAsset": "USDC",
+        "leverage": 8,
+        "long": {
+          "notionalUsd": 254.38206900173418,
+          "executable": true,
+          "constraint": "PLANNED_NOTIONAL",
+          "capitalUsd": 3980,
+          "blockers": []
+        },
+        "short": {
+          "notionalUsd": 0,
+          "executable": false,
+          "constraint": "MINIMUM_NOTIONAL",
+          "capitalUsd": 3980,
+          "blockers": [
+            "BELOW_MINIMUM_NOTIONAL"
+          ]
+        }
+      },
+      {
+        "symbol": "HYPEUSDT",
+        "quoteAsset": "USDT",
+        "leverage": 8,
+        "long": {
+          "notionalUsd": 198.71274085783392,
+          "executable": true,
+          "constraint": "PLANNED_NOTIONAL",
+          "capitalUsd": 3980,
+          "blockers": []
+        },
+        "short": {
+          "notionalUsd": 0,
+          "executable": false,
+          "constraint": "MINIMUM_NOTIONAL",
+          "capitalUsd": 3980,
+          "blockers": [
+            "BELOW_MINIMUM_NOTIONAL"
+          ]
+        }
+      },
+      {
+        "symbol": "SOLUSDT",
+        "quoteAsset": "USDT",
+        "leverage": 8,
+        "long": {
+          "notionalUsd": 199.54460661567128,
+          "executable": true,
+          "constraint": "PLANNED_NOTIONAL",
+          "capitalUsd": 3980,
+          "blockers": []
+        },
+        "short": {
+          "notionalUsd": 0,
+          "executable": false,
+          "constraint": "MINIMUM_NOTIONAL",
+          "capitalUsd": 3980,
+          "blockers": [
+            "BELOW_MINIMUM_NOTIONAL"
+          ]
+        }
+      }
+    ]
+  },
+  "account": {
+    "positionCount": 17,
+    "assets": [
+      {
+        "asset": "BTC",
+        "availableBalance": 0.01,
+        "walletBalance": 0.01
+      },
+      {
+        "asset": "USDT",
+        "availableBalance": 3939.20621482,
+        "walletBalance": 5473.13326246
+      },
+      {
+        "asset": "USDC",
+        "availableBalance": 4973.11860358,
+        "walletBalance": 4981.17551216
+      }
+    ]
+  },
+  "unknownRisk": {
+    "durableUnknown": 47,
+    "occupyingPendingRisk": 0,
+    "occupyingRows": []
+  },
+  "eventsSinceRestart": {
+    "ENTRY_DECISION_BLOCKED": 0,
+    "ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED": 5,
+    "ENTRY_ORDER_NO_ACTIVE_RISK_PROOF_RETAINED": 0,
+    "ENTRY_ORDER_NO_ACTIVE_RISK_CONFLICT": 0,
+    "ENTRY_ORDER_RISK_FACT_COVERAGE_INCOMPLETE": 0,
+    "ENTRY_ORDER_POSITION_ATTRIBUTION_UNRESOLVED": 0,
+    "ENTRY_ORDER_NO_ACTIVE_RISK_EVIDENCE_FAILED": 0,
+    "ENTRY_RESERVATION_CREATED": 0,
+    "ENTRY_ORDER_SUBMITTED": 0,
+    "ENTRY_FILL_RECORDED": 0,
+    "ORDER_SUBMISSION_ACCEPTED": 0,
+    "pendingRiskBlockCount": 0,
+    "pendingRiskBlockFirst": null,
+    "pendingRiskBlockLast": null
+  },
+  "topBlockReasonsSinceRestart": [],
+  "conversion": {
+    "generatedAt": 1790305484481,
+    "thirtyMinutes": {
+      "since": 1790303684481,
+      "until": 1790305484481,
+      "primaryCompleted": 18,
+      "place": 18,
+      "riskAllowed": 7,
+      "economicAdmissionPassed": 0,
+      "tradePlanReady": 4,
+      "reservationCreated": 4,
+      "intentCreated": 4,
+      "submitAttempted": 1,
+      "orderSubmitted": 1,
+      "entryFilled": 0,
+      "waitingPrice": 1,
+      "blocked": [
+        {
+          "stage": "PORTFOLIO_RISK",
+          "reason": "PENDING_RISK_UNVERIFIED:order:entry_intent_muga3hgh_dukt59f4",
+          "count": 3
+        },
+        {
+          "stage": "JIT",
+          "reason": "JIT_BLOCKED:MARKET_QUALITY_NOT_ADMITTED",
+          "count": 1
+        },
+        {
+          "stage": "JIT",
+          "reason": "JIT_BLOCKED:RISK_REJECT_GROSS_EXPOSURE",
+          "count": 1
+        },
+        {
+          "stage": "PORTFOLIO_RISK",
+          "reason": "MARGIN_TIER_SYMBOL_UNPROVEN:JUPUSDT",
+          "count": 1
+        },
+        {
+          "stage": "PORTFOLIO_RISK",
+          "reason": "MARGIN_TIER_SYMBOL_UNPROVEN:COTIUSDT",
+          "count": 1
+        },
+        {
+          "stage": "PORTFOLIO_RISK",
+          "reason": "MARGIN_TIER_SYMBOL_UNPROVEN:WIFUSDT",
+          "count": 1
+        },
+        {
+          "stage": "PORTFOLIO_RISK",
+          "reason": "MARGIN_TIER_SYMBOL_UNPROVEN:RAYSOLUSDT",
+          "count": 1
+        },
+        {
+          "stage": "PORTFOLIO_RISK",
+          "reason": "MARGIN_TIER_SYMBOL_UNPROVEN:WIFUSDC",
+          "count": 1
+        },
+        {
+          "stage": "PORTFOLIO_RISK",
+          "reason": "PENDING_RISK_UNVERIFIED:order:entry_intent_mugd63p6_vfwlkz8j",
+          "count": 1
+        },
+        {
+          "stage": "PORTFOLIO_RISK",
+          "reason": "PENDING_RISK_UNVERIFIED:order:entry_intent_muavotu9_5fl4erfe",
+          "count": 1
+        },
+        {
+          "stage": "PORTFOLIO_RISK",
+          "reason": "PENDING_RISK_UNVERIFIED:order:entry_intent_mubhqs3x_2b3q7i9x",
+          "count": 1
+        },
+        {
+          "stage": "TRADE_PLAN",
+          "reason": "CANDIDATE_TARGET_BELOW_PROFIT_FLOOR:target=0.338,>floor=0.3366",
+          "count": 1
+        },
+        {
+          "stage": "TRADE_PLAN",
+          "reason": "CANDIDATE_TARGET_BELOW_PROFIT_FLOOR:target=0.475,>floor=0.4738",
+          "count": 1
+        },
+        {
+          "stage": "TRADE_PLAN",
+          "reason": "CANDIDATE_TARGET_BELOW_PROFIT_FLOOR:target=30.45,>floor=30.238",
+          "count": 1
+        },
+        {
+          "stage": "UNKNOWN",
+          "reason": "MARKET_QUALITY_NOT_ADMITTED",
+          "count": 1
+        }
+      ],
+      "ratios": {
+        "placeToTradePlan": 22.2,
+        "tradePlanToSubmit": 25,
+        "placeToSubmit": 5.6,
+        "submitToFill": 0
+      },
+      "topDropStage": "PORTFOLIO_RISK",
+      "topDropReason": "PENDING_RISK_UNVERIFIED:order:entry_intent_muga3hgh_dukt59f4",
+      "topDropCount": 3,
+      "degraded": false,
+      "degradedReason": null
+    },
+    "oneHour": {
+      "since": 1790301884481,
+      "until": 1790305484481,
+      "primaryCompleted": 18,
+      "place": 18,
+      "riskAllowed": 7,
+      "economicAdmissionPassed": 0,
+      "tradePlanReady": 4,
+      "reservationCreated": 4,
+      "intentCreated": 4,
+      "submitAttempted": 1,
+      "orderSubmitted": 1,
+      "entryFilled": 0,
+      "waitingPrice": 1,
+      "blocked": [
+        {
+          "stage": "PORTFOLIO_RISK",
+          "reason": "PENDING_RISK_UNVERIFIED:order:entry_intent_muga3hgh_dukt59f4",
+          "count": 3
+        },
+        {
+          "stage": "JIT",
+          "reason": "JIT_BLOCKED:MARKET_QUALITY_NOT_ADMITTED",
+          "count": 1
+        },
+        {
+          "stage": "JIT",
+          "reason": "JIT_BLOCKED:RISK_REJECT_GROSS_EXPOSURE",
+          "count": 1
+        },
+        {
+          "stage": "PORTFOLIO_RISK",
+          "reason": "MARGIN_TIER_SYMBOL_UNPROVEN:JUPUSDT",
+          "count": 1
+        },
+        {
+          "stage": "PORTFOLIO_RISK",
+          "reason": "MARGIN_TIER_SYMBOL_UNPROVEN:COTIUSDT",
+          "count": 1
+        },
+        {
+          "stage": "PORTFOLIO_RISK",
+          "reason": "MARGIN_TIER_SYMBOL_UNPROVEN:WIFUSDT",
+          "count": 1
+        },
+        {
+          "stage": "PORTFOLIO_RISK",
+          "reason": "MARGIN_TIER_SYMBOL_UNPROVEN:RAYSOLUSDT",
+          "count": 1
+        },
+        {
+          "stage": "PORTFOLIO_RISK",
+          "reason": "MARGIN_TIER_SYMBOL_UNPROVEN:WIFUSDC",
+          "count": 1
+        },
+        {
+          "stage": "PORTFOLIO_RISK",
+          "reason": "PENDING_RISK_UNVERIFIED:order:entry_intent_mugd63p6_vfwlkz8j",
+          "count": 1
+        },
+        {
+          "stage": "PORTFOLIO_RISK",
+          "reason": "PENDING_RISK_UNVERIFIED:order:entry_intent_muavotu9_5fl4erfe",
+          "count": 1
+        },
+        {
+          "stage": "PORTFOLIO_RISK",
+          "reason": "PENDING_RISK_UNVERIFIED:order:entry_intent_mubhqs3x_2b3q7i9x",
+          "count": 1
+        },
+        {
+          "stage": "TRADE_PLAN",
+          "reason": "CANDIDATE_TARGET_BELOW_PROFIT_FLOOR:target=0.338,>floor=0.3366",
+          "count": 1
+        },
+        {
+          "stage": "TRADE_PLAN",
+          "reason": "CANDIDATE_TARGET_BELOW_PROFIT_FLOOR:target=0.475,>floor=0.4738",
+          "count": 1
+        },
+        {
+          "stage": "TRADE_PLAN",
+          "reason": "CANDIDATE_TARGET_BELOW_PROFIT_FLOOR:target=30.45,>floor=30.238",
+          "count": 1
+        },
+        {
+          "stage": "UNKNOWN",
+          "reason": "MARKET_QUALITY_NOT_ADMITTED",
+          "count": 1
+        }
+      ],
+      "ratios": {
+        "placeToTradePlan": 22.2,
+        "tradePlanToSubmit": 25,
+        "placeToSubmit": 5.6,
+        "submitToFill": 0
+      },
+      "topDropStage": "PORTFOLIO_RISK",
+      "topDropReason": "PENDING_RISK_UNVERIFIED:order:entry_intent_muga3hgh_dukt59f4",
+      "topDropCount": 3,
+      "degraded": false,
+      "degradedReason": null
+    }
+  },
+  "activity": null
+}

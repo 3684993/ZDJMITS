@@ -1,62 +1,62 @@
 {
-  "capturedAt": "2026-09-25T02:07:09.880Z",
-  "label": "baseline-freeze",
+  "capturedAt": "2026-09-25T03:02:48.727Z",
+  "label": "baseline",
   "identity": {
-    "pid": 39252,
-    "buildId": "3.9.6-e802da247ee8e861e1c4",
-    "instanceId": "ffcc26bb-c4a6-4b2a-8640-9c2867e1526a",
-    "lastRestartAt": 1790299069153,
+    "pid": 36780,
+    "buildId": "3.9.6-169693874541082bb325",
+    "instanceId": "1ffc6b98-d7c1-4438-9773-9bc02c167be3",
+    "lastRestartAt": 1790305187962,
     "lastRestartReason": "MANUAL_START",
-    "restartCount": 184,
+    "restartCount": 185,
     "runtimeDataDir": "D:\\MITS-WORKTREES\\v396-final-convergence-20260922\\data"
   },
   "permission": {
-    "settingsVersion": 213,
+    "settingsVersion": 214,
     "environment": "TESTNET",
     "executionMode": "TESTNET_ENABLED",
     "entrySafetyMode": "AUTO",
     "aiExitAuthority": "SHADOW",
     "entryPermission": {
-      "status": "BLOCKED",
+      "status": "READY",
       "executionMode": "TESTNET_ENABLED",
       "autoExecutionMode": "AUTO_RUNNING"
     },
     "executionReadiness": {
-      "ready": false,
-      "firstBlocker": "NO_EXECUTABLE_CANDIDATE"
+      "ready": true,
+      "firstBlocker": null
     },
     "writeBoundary": {
       "environment": "TESTNET",
       "executionMode": "TESTNET_ENABLED",
       "lockedToTestnet": true,
-      "testnetWrites": 11,
+      "testnetWrites": 0,
       "productionWrites": 0,
       "blockedProductionWriteAttempts": 0,
-      "lastWriteAt": 1790301155164,
-      "lastWritePath": "/fapi/v1/order"
+      "lastWriteAt": null,
+      "lastWritePath": null
     }
   },
   "money": {
-    "equityUsd": 10728.748015,
+    "equityUsd": 10797.701109,
     "assets": [
       {
         "asset": "BTC",
         "walletBalance": 0.01,
         "availableBalance": 0.01,
-        "usdValue": 847.129,
+        "usdValue": 841.8,
         "marginEligible": true
       },
       {
         "asset": "USDT",
         "walletBalance": 5473.133262,
-        "availableBalance": 3861.560262,
+        "availableBalance": 3948.163634,
         "usdValue": 5473.133262,
         "marginEligible": true
       },
       {
         "asset": "USDC",
         "walletBalance": 4981.175512,
-        "availableBalance": 4972.875697,
+        "availableBalance": 4973.115348,
         "usdValue": 4981.175512,
         "marginEligible": true
       }
@@ -79,7 +79,7 @@
   "portfolioRisk": {
     "profile": {
       "source": "SETTINGS",
-      "settingsVersion": 213,
+      "settingsVersion": 214,
       "path": "riskGovernance.portfolioRisk",
       "configured": true,
       "contentHash": "v396r2dc9bae77b6f09abaa164172abfdd2f40000834ad7fe68d0693dd961722e2dae",
@@ -224,7 +224,12 @@
         "profileStatus": "READY",
         "uncoveredCoverageCandidates": [
           "1000BONKUSDC",
+          "COTIUSDT",
           "ETCUSDT",
+          "JUPUSDT",
+          "RAYSOLUSDT",
+          "WIFUSDC",
+          "WIFUSDT",
           "ZROUSDT"
         ]
       }
@@ -243,69 +248,129 @@
   },
   "exposures": {
     "capacityVisibility": {
-      "slots": {
-        "used": 17,
-        "max": 50,
-        "positions": 17,
-        "inFlight": 0,
-        "reserved": 0
+      "funding": {
+        "quoteAssets": [
+          {
+            "quoteAsset": "USDT",
+            "availableBalanceUsd": 3948.16363387,
+            "walletBalanceUsd": 5473.13326246,
+            "reservedMarginUsd": 0,
+            "executionLeaseMarginUsd": 0,
+            "executableMarginUsd": 3948.16363387,
+            "factsComplete": true,
+            "reasons": []
+          },
+          {
+            "quoteAsset": "USDC",
+            "availableBalanceUsd": 4973.11534849,
+            "walletBalanceUsd": 4981.17551216,
+            "reservedMarginUsd": 0,
+            "executionLeaseMarginUsd": 0,
+            "executableMarginUsd": 4973.11534849,
+            "factsComplete": true,
+            "reasons": []
+          }
+        ],
+        "executableMarginUsd": 8921.27898236,
+        "proven": true
       },
-      "gross": {
-        "notionalUsd": 10820.93870739764,
-        "limitUsd": 10728.74801544,
-        "remainingUsd": 0,
-        "usedPct": 1.0085928658054943
-      },
-      "direction": {
+      "exposure": {
+        "gross": {
+          "notionalUsd": 10705.28459196359,
+          "limitUsd": 10797.701109149999,
+          "remainingUsd": 92.41651718640969,
+          "usedPct": 0.9914410932241775,
+          "mode": "ENFORCE",
+          "enforced": true
+        },
         "LONG": {
-          "notionalUsd": 3675.87764749532,
-          "limitUsd": 10728.74801544,
-          "remainingUsd": 0
+          "notionalUsd": 3653.4678707427856,
+          "limitUsd": 10797.701109149999,
+          "remainingUsd": 7144.233238407213,
+          "usedPct": 0.3383560846712851,
+          "mode": "ENFORCE",
+          "enforced": true
         },
         "SHORT": {
-          "notionalUsd": 7145.061059902321,
-          "limitUsd": 10728.74801544,
-          "remainingUsd": 0
+          "notionalUsd": 7051.816721220799,
+          "limitUsd": 10797.701109149999,
+          "remainingUsd": 3745.8843879292,
+          "usedPct": 0.6530850085528921,
+          "mode": "ENFORCE",
+          "enforced": true
         }
       },
-      "firstBlocker": "GROSS",
-      "blockingDimensions": [
-        "GROSS",
-        "DIRECTION_LONG",
-        "DIRECTION_SHORT"
-      ],
-      "exhaustedReason": "GROSS",
-      "exhaustedForNewRisk": true,
-      "evaluatedAt": 1790302029101
+      "limits": {
+        "slots": {
+          "used": 17,
+          "max": 50,
+          "positions": 17,
+          "inFlight": 0,
+          "reserved": 0
+        },
+        "policy": {
+          "gross": "ENFORCE",
+          "direction": "ENFORCE",
+          "cluster": "ENFORCE"
+        }
+      },
+      "entryCapacity": {
+        "LONG": {
+          "executableNotionalUsd": 92.41651718640969,
+          "quoteAsset": "USDC",
+          "symbol": "XRPUSDC",
+          "firstBindingConstraint": "GROSS_ENFORCED",
+          "executableRoutes": 1
+        },
+        "SHORT": {
+          "executableNotionalUsd": 0,
+          "quoteAsset": null,
+          "symbol": null,
+          "firstBindingConstraint": "MINIMUM_NOTIONAL",
+          "executableRoutes": 0
+        }
+      },
+      "firstBlocker": "NONE",
+      "blockingDimensions": [],
+      "exhaustedReason": null,
+      "exhaustedForNewRisk": false,
+      "evaluatedAt": 1790305367181
     },
     "directionBudget": {
-      "equityUsd": 10728.74801544,
-      "grossLimitUsd": 10728.74801544,
-      "directionLimitUsd": 10728.74801544,
-      "grossNotionalUsd": 10820.93870739764,
-      "longNotionalUsd": 3675.87764749532,
-      "shortNotionalUsd": 7145.061059902321,
-      "remainingGrossUsd": 0,
-      "grossUsedPct": 1.0085928658054943,
-      "longAvailableNotionalUsd": 0,
-      "shortAvailableNotionalUsd": 0,
-      "grossAvailableNotionalUsd": 0,
-      "evaluatedAt": 1790302029101
+      "equityUsd": 10797.701109149999,
+      "grossLimitUsd": 10797.701109149999,
+      "directionLimitUsd": 10797.701109149999,
+      "grossNotionalUsd": 10705.28459196359,
+      "longNotionalUsd": 3653.4678707427856,
+      "shortNotionalUsd": 7051.816721220799,
+      "remainingGrossUsd": 92.41651718640969,
+      "grossUsedPct": 0.9914410932241775,
+      "longAvailableNotionalUsd": 7144.233238407213,
+      "shortAvailableNotionalUsd": 3745.8843879292,
+      "longUsedPct": 0.3383560846712851,
+      "shortUsedPct": 0.6530850085528921,
+      "grossAvailableNotionalUsd": 92.41651718640969,
+      "policy": {
+        "gross": "ENFORCE",
+        "direction": "ENFORCE",
+        "cluster": "ENFORCE"
+      },
+      "evaluatedAt": 1790305367181
     },
-    "positionNotional": 10821.08486965857,
+    "positionNotional": 10705.284591963586,
     "positions": null,
     "count": {
       "positions": 0,
-      "entryOrders": 525,
+      "entryOrders": 528,
       "activeEntryOrders": 47,
       "byStatus": {
         "FILLED": 208,
-        "CANCELED": 161,
+        "CANCELED": 162,
         "UNKNOWN": 47,
-        "REJECTED": 109
+        "REJECTED": 111
       },
-      "routedCandidates": 13,
-      "executableCandidateCount": 0
+      "routedCandidates": 1,
+      "executableCandidateCount": 1
     }
   },
   "unknownRisk": {
@@ -317,9 +382,9 @@
       "id": "entry_intent_mu4op8x2_3pwywucr",
       "symbol": "XRPUSDC",
       "createdAt": 1789598433638,
-      "ageDays": 8.1,
+      "ageDays": 8.2,
       "auditTier": 2,
-      "consecutive": 130
+      "consecutive": 132
     },
     "rows": [
       {
@@ -331,12 +396,12 @@
         "exchangeOrderId": null,
         "clientOrderId": "ml_281bf485cc19b4585acdf0eceb67",
         "createdAt": 1789598433638,
-        "ageDays": 8.1,
+        "ageDays": 8.2,
         "hasProof": true,
         "freshProof": true,
         "status": "VERIFIED_NO_ACTIVE_RISK",
-        "validUntil": 1790302424831,
-        "ageMs": 1405049,
+        "validUntil": 1790305676297,
+        "ageMs": 1492430,
         "sources": [
           "BINANCE_EXACT_ORDER_NOT_FOUND",
           "BINANCE_OPEN_ORDERS_IDENTITY_ABSENT",
@@ -345,9 +410,9 @@
           "BINANCE_LONG_SHORT_POSITION_ZERO"
         ],
         "auditTier": 2,
-        "consecutive": 130,
-        "nextAuditAt": 1790302211422,
-        "verifiedCount": 130
+        "consecutive": 132,
+        "nextAuditAt": 1790305462888,
+        "verifiedCount": 132
       },
       {
         "id": "entry_intent_mu4pd2b3_oz5rymd4",
@@ -358,12 +423,12 @@
         "exchangeOrderId": null,
         "clientOrderId": "ml_d617459231fb579f91743ff3cc77",
         "createdAt": 1789599544815,
-        "ageDays": 8.1,
+        "ageDays": 8.2,
         "hasProof": true,
         "freshProof": true,
         "status": "VERIFIED_NO_ACTIVE_RISK",
-        "validUntil": 1790302424831,
-        "ageMs": 1405049,
+        "validUntil": 1790306719463,
+        "ageMs": 449264,
         "sources": [
           "BINANCE_EXACT_ORDER_NOT_FOUND",
           "BINANCE_OPEN_ORDERS_IDENTITY_ABSENT",
@@ -372,9 +437,9 @@
           "BINANCE_LONG_SHORT_POSITION_ZERO"
         ],
         "auditTier": 2,
-        "consecutive": 92,
-        "nextAuditAt": 1790302025049,
-        "verifiedCount": 92
+        "consecutive": 95,
+        "nextAuditAt": 1790306319681,
+        "verifiedCount": 95
       },
       {
         "id": "entry_intent_mu4rcjw2_kjpca2iy",
@@ -389,8 +454,8 @@
         "hasProof": true,
         "freshProof": true,
         "status": "VERIFIED_NO_ACTIVE_RISK",
-        "validUntil": 1790302963767,
-        "ageMs": 866113,
+        "validUntil": 1790305842150,
+        "ageMs": 1326577,
         "sources": [
           "BINANCE_EXACT_ORDER_NOT_FOUND",
           "BINANCE_OPEN_ORDERS_IDENTITY_ABSENT",
@@ -399,9 +464,9 @@
           "BINANCE_LONG_SHORT_POSITION_ZERO"
         ],
         "auditTier": 2,
-        "consecutive": 146,
-        "nextAuditAt": 1790302580305,
-        "verifiedCount": 146
+        "consecutive": 148,
+        "nextAuditAt": 1790305458688,
+        "verifiedCount": 148
       },
       {
         "id": "entry_intent_mu4vhyal_ar65mupm",
@@ -416,8 +481,8 @@
         "hasProof": true,
         "freshProof": true,
         "status": "VERIFIED_NO_ACTIVE_RISK",
-        "validUntil": 1790303650550,
-        "ageMs": 179330,
+        "validUntil": 1790306809789,
+        "ageMs": 358938,
         "sources": [
           "BINANCE_EXACT_ORDER_NOT_FOUND",
           "BINANCE_OPEN_ORDERS_IDENTITY_ABSENT",
@@ -426,9 +491,9 @@
           "BINANCE_LONG_SHORT_POSITION_ZERO"
         ],
         "auditTier": 2,
-        "consecutive": 83,
-        "nextAuditAt": 1790303359082,
-        "verifiedCount": 83
+        "consecutive": 85,
+        "nextAuditAt": 1790306518321,
+        "verifiedCount": 85
       },
       {
         "id": "entry_intent_mu5bvol4_6f75vr0u",
@@ -443,8 +508,8 @@
         "hasProof": true,
         "freshProof": true,
         "status": "VERIFIED_NO_ACTIVE_RISK",
-        "validUntil": 1790302348079,
-        "ageMs": 1481801,
+        "validUntil": 1790305676297,
+        "ageMs": 1492430,
         "sources": [
           "BINANCE_EXACT_ORDER_NOT_FOUND",
           "BINANCE_OPEN_ORDERS_IDENTITY_ABSENT",
@@ -453,9 +518,9 @@
           "POSITION_PRESENT_PROVEN_OTHER_CYCLE"
         ],
         "auditTier": 2,
-        "consecutive": 24,
-        "nextAuditAt": 1790302162093,
-        "verifiedCount": 24
+        "consecutive": 26,
+        "nextAuditAt": 1790305490311,
+        "verifiedCount": 26
       },
       {
         "id": "entry_intent_mu5hvwld_6olu9ulu",
@@ -470,8 +535,8 @@
         "hasProof": true,
         "freshProof": true,
         "status": "VERIFIED_NO_ACTIVE_RISK",
-        "validUntil": 1790302579194,
-        "ageMs": 1250686,
+        "validUntil": 1790305920233,
+        "ageMs": 1248494,
         "sources": [
           "BINANCE_EXACT_ORDER_NOT_FOUND",
           "BINANCE_OPEN_ORDERS_IDENTITY_ABSENT",
@@ -480,9 +545,9 @@
           "BINANCE_LONG_SHORT_POSITION_ZERO"
         ],
         "auditTier": 2,
-        "consecutive": 82,
-        "nextAuditAt": 1790302381658,
-        "verifiedCount": 82
+        "consecutive": 84,
+        "nextAuditAt": 1790305722697,
+        "verifiedCount": 84
       },
       {
         "id": "entry_intent_mu5qflt6_c92gu3id",
@@ -497,8 +562,8 @@
         "hasProof": true,
         "freshProof": true,
         "status": "VERIFIED_NO_ACTIVE_RISK",
-        "validUntil": 1790302650542,
-        "ageMs": 1179338,
+        "validUntil": 1790306966359,
+        "ageMs": 202368,
         "sources": [
           "BINANCE_EXACT_ORDER_NOT_FOUND",
           "BINANCE_OPEN_ORDERS_IDENTITY_ABSENT",
@@ -507,9 +572,9 @@
           "POSITION_PRESENT_PROVEN_OTHER_CYCLE"
         ],
         "auditTier": 2,
-        "consecutive": 33,
-        "nextAuditAt": 1790302246310,
-        "verifiedCount": 33
+        "consecutive": 36,
+        "nextAuditAt": 1790306562127,
+        "verifiedCount": 36
       },
       {
         "id": "entry_intent_mu5qimuf_nsgl39g3",
@@ -524,8 +589,8 @@
         "hasProof": true,
         "freshProof": true,
         "status": "VERIFIED_NO_ACTIVE_RISK",
-        "validUntil": 1790303205829,
-        "ageMs": 624051,
+        "validUntil": 1790306070489,
+        "ageMs": 1098238,
         "sources": [
           "BINANCE_EXACT_ORDER_NOT_FOUND",
           "BINANCE_OPEN_ORDERS_IDENTITY_ABSENT",
@@ -534,9 +599,9 @@
           "BINANCE_LONG_SHORT_POSITION_ZERO"
         ],
         "auditTier": 2,
-        "consecutive": 7,
-        "nextAuditAt": 1790303052165,
-        "verifiedCount": 7
+        "consecutive": 5,
+        "nextAuditAt": 1790305916825,
+        "verifiedCount": 5
       },
       {
         "id": "entry_intent_mu5xqmou_9hr5l6ur",
@@ -551,8 +616,8 @@
         "hasProof": true,
         "freshProof": true,
         "status": "VERIFIED_NO_ACTIVE_RISK",
-        "validUntil": 1790302310140,
-        "ageMs": 19740,
+        "validUntil": 1790306644589,
+        "ageMs": 524138,
         "sources": [
           "BINANCE_EXACT_ORDER_NOT_FOUND",
           "BINANCE_OPEN_ORDERS_IDENTITY_ABSENT",
@@ -560,10 +625,10 @@
           "BINANCE_ALL_ORDERS_IDENTITY_ABSENT",
           "BINANCE_LONG_SHORT_POSITION_ZERO"
         ],
-        "auditTier": 0,
-        "consecutive": 2,
-        "nextAuditAt": 1790302273010,
-        "verifiedCount": 2
+        "auditTier": 2,
+        "consecutive": 6,
+        "nextAuditAt": 1790306607459,
+        "verifiedCount": 6
       },
       {
         "id": "entry_intent_mu67hlck_d6wwbat4",
@@ -578,8 +643,8 @@
         "hasProof": true,
         "freshProof": true,
         "status": "VERIFIED_NO_ACTIVE_RISK",
-        "validUntil": 1790303494233,
-        "ageMs": 335647,
+        "validUntil": 1790306885319,
+        "ageMs": 283408,
         "sources": [
           "BINANCE_EXACT_ORDER_NOT_FOUND",
           "BINANCE_OPEN_ORDERS_IDENTITY_ABSENT",
@@ -588,9 +653,9 @@
           "BINANCE_LONG_SHORT_POSITION_ZERO"
         ],
         "auditTier": 2,
-        "consecutive": 86,
-        "nextAuditAt": 1790303245916,
-        "verifiedCount": 86
+        "consecutive": 88,
+        "nextAuditAt": 1790306637002,
+        "verifiedCount": 88
       },
       {
         "id": "entry_intent_mu7g0tua_rsxod6g8",
@@ -601,12 +666,12 @@
         "exchangeOrderId": null,
         "clientOrderId": "ml_6be4bb2ad4c13ed909b9f43098eb",
         "createdAt": 1789765285680,
-        "ageDays": 6.2,
+        "ageDays": 6.3,
         "hasProof": true,
         "freshProof": true,
         "status": "VERIFIED_NO_ACTIVE_RISK",
-        "validUntil": 1790303347335,
-        "ageMs": 482545,
+        "validUntil": 1790306568064,
+        "ageMs": 600663,
         "sources": [
           "BINANCE_EXACT_ORDER_NOT_FOUND",
           "BINANCE_OPEN_ORDERS_IDENTITY_ABSENT",
@@ -615,9 +680,9 @@
           "BINANCE_LONG_SHORT_POSITION_ZERO"
         ],
         "auditTier": 2,
-        "consecutive": 87,
-        "nextAuditAt": 1790303121554,
-        "verifiedCount": 87
+        "consecutive": 89,
+        "nextAuditAt": 1790306342283,
+        "verifiedCount": 89
       },
       {
         "id": "entry_intent_mu7joxay_qkkssxaw",
@@ -628,12 +693,12 @@
         "exchangeOrderId": null,
         "clientOrderId": "ml_d3c8f974dc05ed326cd0b42df4c0",
         "createdAt": 1789771419034,
-        "ageDays": 6.1,
+        "ageDays": 6.2,
         "hasProof": true,
         "freshProof": true,
         "status": "VERIFIED_NO_ACTIVE_RISK",
-        "validUntil": 1790303347335,
-        "ageMs": 482545,
+        "validUntil": 1790306326692,
+        "ageMs": 842035,
         "sources": [
           "BINANCE_EXACT_ORDER_NOT_FOUND",
           "BINANCE_OPEN_ORDERS_IDENTITY_ABSENT",
@@ -642,9 +707,9 @@
           "BINANCE_LONG_SHORT_POSITION_ZERO"
         ],
         "auditTier": 2,
-        "consecutive": 89,
-        "nextAuditAt": 1790302977908,
-        "verifiedCount": 89
+        "consecutive": 91,
+        "nextAuditAt": 1790305957265,
+        "verifiedCount": 91
       },
       {
         "id": "entry_intent_mu7oglpi_n7wcb8si",
@@ -655,12 +720,12 @@
         "exchangeOrderId": null,
         "clientOrderId": "ml_fd8193d7489de3c9ba889290751a",
         "createdAt": 1789779428838,
-        "ageDays": 6,
+        "ageDays": 6.1,
         "hasProof": true,
         "freshProof": true,
         "status": "VERIFIED_NO_ACTIVE_RISK",
-        "validUntil": 1790302424831,
-        "ageMs": 1405049,
+        "validUntil": 1790307043815,
+        "ageMs": 124912,
         "sources": [
           "BINANCE_EXACT_ORDER_NOT_FOUND",
           "BINANCE_OPEN_ORDERS_IDENTITY_ABSENT",
@@ -669,9 +734,9 @@
           "BINANCE_LONG_SHORT_POSITION_ZERO"
         ],
         "auditTier": 2,
-        "consecutive": 107,
-        "nextAuditAt": 1790302083787,
-        "verifiedCount": 142
+        "consecutive": 110,
+        "nextAuditAt": 1790306702771,
+        "verifiedCount": 145
       },
       {
         "id": "entry_intent_mu7pl054_0zap65tp",
@@ -682,12 +747,12 @@
         "exchangeOrderId": null,
         "clientOrderId": "ml_fa45e02ddb285fbe35b8fe92671e",
         "createdAt": 1789781340376,
-        "ageDays": 6,
+        "ageDays": 6.1,
         "hasProof": true,
         "freshProof": true,
         "status": "VERIFIED_NO_ACTIVE_RISK",
-        "validUntil": 1790302424831,
-        "ageMs": 1405049,
+        "validUntil": 1790305842150,
+        "ageMs": 1326577,
         "sources": [
           "BINANCE_EXACT_ORDER_NOT_FOUND",
           "BINANCE_OPEN_ORDERS_IDENTITY_ABSENT",
@@ -696,9 +761,9 @@
           "BINANCE_LONG_SHORT_POSITION_ZERO"
         ],
         "auditTier": 2,
-        "consecutive": 98,
-        "nextAuditAt": 1790302207078,
-        "verifiedCount": 146
+        "consecutive": 100,
+        "nextAuditAt": 1790305624397,
+        "verifiedCount": 148
       },
       {
         "id": "entry_intent_mu7py6a7_7wqd8fu3",
@@ -709,12 +774,12 @@
         "exchangeOrderId": null,
         "clientOrderId": "ml_e2998fd813f890af6c8f26141491",
         "createdAt": 1789781928271,
-        "ageDays": 6,
+        "ageDays": 6.1,
         "hasProof": true,
         "freshProof": true,
         "status": "VERIFIED_NO_ACTIVE_RISK",
-        "validUntil": 1790302650542,
-        "ageMs": 1179338,
+        "validUntil": 1790307138155,
+        "ageMs": 30572,
         "sources": [
           "BINANCE_EXACT_ORDER_NOT_FOUND",
           "BINANCE_OPEN_ORDERS_IDENTITY_ABSENT",
@@ -723,9 +788,9 @@
           "BINANCE_LONG_SHORT_POSITION_ZERO"
         ],
         "auditTier": 2,
-        "consecutive": 82,
-        "nextAuditAt": 1790302452194,
-        "verifiedCount": 82
+        "consecutive": 6,
+        "nextAuditAt": 1790306939807,
+        "verifiedCount": 6
       },
       {
         "id": "entry_intent_mu82f1zd_59hd8amf",
@@ -740,8 +805,8 @@
         "hasProof": true,
         "freshProof": true,
         "status": "VERIFIED_NO_ACTIVE_RISK",
-        "validUntil": 1790302517483,
-        "ageMs": 1312397,
+        "validUntil": 1790307138155,
+        "ageMs": 30572,
         "sources": [
           "BINANCE_EXACT_ORDER_NOT_FOUND",
           "BINANCE_OPEN_ORDERS_IDENTITY_ABSENT",
@@ -750,9 +815,9 @@
           "BINANCE_LONG_SHORT_POSITION_ZERO"
         ],
         "auditTier": 2,
-        "consecutive": 188,
-        "nextAuditAt": 1790302233195,
-        "verifiedCount": 188
+        "consecutive": 191,
+        "nextAuditAt": 1790306853867,
+        "verifiedCount": 191
       },
       {
         "id": "entry_intent_mu82u6cf_s2lkqvpm",
@@ -767,8 +832,8 @@
         "hasProof": true,
         "freshProof": true,
         "status": "VERIFIED_NO_ACTIVE_RISK",
-        "validUntil": 1790302805848,
-        "ageMs": 1024032,
+        "validUntil": 1790306326692,
+        "ageMs": 842035,
         "sources": [
           "BINANCE_EXACT_ORDER_NOT_FOUND",
           "BINANCE_OPEN_ORDERS_IDENTITY_ABSENT",
@@ -777,9 +842,9 @@
           "BINANCE_LONG_SHORT_POSITION_ZERO"
         ],
         "auditTier": 2,
-        "consecutive": 6,
-        "nextAuditAt": 1790302726914,
-        "verifiedCount": 6
+        "consecutive": 8,
+        "nextAuditAt": 1790306247758,
+        "verifiedCount": 8
       },
       {
         "id": "entry_intent_mu85q2z1_0rkc5eko",
@@ -790,12 +855,12 @@
         "exchangeOrderId": null,
         "clientOrderId": "ml_c1257aae23aff3d1dc2dad760e29",
         "createdAt": 1789808424589,
-        "ageDays": 5.7,
+        "ageDays": 5.8,
         "hasProof": true,
         "freshProof": true,
         "status": "VERIFIED_NO_ACTIVE_RISK",
-        "validUntil": 1790303428155,
-        "ageMs": 401725,
+        "validUntil": 1790307043815,
+        "ageMs": 124912,
         "sources": [
           "BINANCE_EXACT_ORDER_NOT_FOUND",
           "BINANCE_OPEN_ORDERS_IDENTITY_ABSENT",
@@ -804,9 +869,9 @@
           "BINANCE_LONG_SHORT_POSITION_ZERO"
         ],
         "auditTier": 2,
-        "consecutive": 16,
-        "nextAuditAt": 1790303331324,
-        "verifiedCount": 16
+        "consecutive": 18,
+        "nextAuditAt": 1790306946984,
+        "verifiedCount": 18
       },
       {
         "id": "entry_intent_mu8h3jej_9pkl2kjm",
@@ -821,8 +886,8 @@
         "hasProof": true,
         "freshProof": true,
         "status": "VERIFIED_NO_ACTIVE_RISK",
-        "validUntil": 1790302963767,
-        "ageMs": 866113,
+        "validUntil": 1790306235011,
+        "ageMs": 933716,
         "sources": [
           "BINANCE_EXACT_ORDER_NOT_FOUND",
           "BINANCE_OPEN_ORDERS_IDENTITY_ABSENT",
@@ -831,9 +896,9 @@
           "BINANCE_LONG_SHORT_POSITION_ZERO"
         ],
         "auditTier": 2,
-        "consecutive": 144,
-        "nextAuditAt": 1790302590017,
-        "verifiedCount": 144
+        "consecutive": 146,
+        "nextAuditAt": 1790305861261,
+        "verifiedCount": 146
       },
       {
         "id": "entry_intent_mu8id828_0lkugbeu",
@@ -848,8 +913,8 @@
         "hasProof": true,
         "freshProof": true,
         "status": "VERIFIED_NO_ACTIVE_RISK",
-        "validUntil": 1790303273140,
-        "ageMs": 556740,
+        "validUntil": 1790306417755,
+        "ageMs": 750972,
         "sources": [
           "BINANCE_EXACT_ORDER_NOT_FOUND",
           "BINANCE_OPEN_ORDERS_IDENTITY_ABSENT",
@@ -858,9 +923,9 @@
           "BINANCE_LONG_SHORT_POSITION_ZERO"
         ],
         "auditTier": 2,
-        "consecutive": 185,
-        "nextAuditAt": 1790303023307,
-        "verifiedCount": 185
+        "consecutive": 187,
+        "nextAuditAt": 1790306167922,
+        "verifiedCount": 187
       },
       {
         "id": "entry_intent_mu8lwayf_o63la8tg",
@@ -875,8 +940,8 @@
         "hasProof": true,
         "freshProof": true,
         "status": "VERIFIED_NO_ACTIVE_RISK",
-        "validUntil": 1790303040888,
-        "ageMs": 788992,
+        "validUntil": 1790306326692,
+        "ageMs": 842035,
         "sources": [
           "BINANCE_EXACT_ORDER_NOT_FOUND",
           "BINANCE_OPEN_ORDERS_IDENTITY_ABSENT",
@@ -885,9 +950,9 @@
           "POSITION_PRESENT_PROVEN_OTHER_CYCLE"
         ],
         "auditTier": 2,
-        "consecutive": 82,
-        "nextAuditAt": 1790302798122,
-        "verifiedCount": 82
+        "consecutive": 84,
+        "nextAuditAt": 1790306083926,
+        "verifiedCount": 84
       },
       {
         "id": "entry_intent_mu8orpjr_1p9yt3yr",
@@ -898,12 +963,12 @@
         "exchangeOrderId": null,
         "clientOrderId": "ml_5bf37d4a1350570614a89e84ca1b",
         "createdAt": 1789840413207,
-        "ageDays": 5.3,
+        "ageDays": 5.4,
         "hasProof": true,
         "freshProof": true,
         "status": "VERIFIED_NO_ACTIVE_RISK",
-        "validUntil": 1790303428155,
-        "ageMs": 401725,
+        "validUntil": 1790306809789,
+        "ageMs": 358938,
         "sources": [
           "BINANCE_EXACT_ORDER_NOT_FOUND",
           "BINANCE_OPEN_ORDERS_IDENTITY_ABSENT",
@@ -912,9 +977,9 @@
           "BINANCE_LONG_SHORT_POSITION_ZERO"
         ],
         "auditTier": 2,
-        "consecutive": 108,
-        "nextAuditAt": 1790303281330,
-        "verifiedCount": 108
+        "consecutive": 110,
+        "nextAuditAt": 1790306662964,
+        "verifiedCount": 110
       },
       {
         "id": "entry_intent_mu8qgyxb_tntjtpbm",
@@ -929,8 +994,8 @@
         "hasProof": true,
         "freshProof": true,
         "status": "VERIFIED_NO_ACTIVE_RISK",
-        "validUntil": 1790303205829,
-        "ageMs": 624051,
+        "validUntil": 1790306326692,
+        "ageMs": 842035,
         "sources": [
           "BINANCE_EXACT_ORDER_NOT_FOUND",
           "BINANCE_OPEN_ORDERS_IDENTITY_ABSENT",
@@ -939,9 +1004,9 @@
           "POSITION_PRESENT_PROVEN_OTHER_CYCLE"
         ],
         "auditTier": 2,
-        "consecutive": 138,
-        "nextAuditAt": 1790302894184,
-        "verifiedCount": 138
+        "consecutive": 140,
+        "nextAuditAt": 1790306015047,
+        "verifiedCount": 140
       },
       {
         "id": "entry_intent_mu8tvnlc_iqw318av",
@@ -952,12 +1017,12 @@
         "exchangeOrderId": null,
         "clientOrderId": "ml_d2721dde29d5540850797ae83cb8",
         "createdAt": 1789849010760,
-        "ageDays": 5.2,
+        "ageDays": 5.3,
         "hasProof": true,
         "freshProof": true,
         "status": "VERIFIED_NO_ACTIVE_RISK",
-        "validUntil": 1790302579194,
-        "ageMs": 1250686,
+        "validUntil": 1790305920233,
+        "ageMs": 1248494,
         "sources": [
           "BINANCE_EXACT_ORDER_NOT_FOUND",
           "BINANCE_OPEN_ORDERS_IDENTITY_ABSENT",
@@ -966,9 +1031,9 @@
           "BINANCE_LONG_SHORT_POSITION_ZERO"
         ],
         "auditTier": 2,
-        "consecutive": 84,
-        "nextAuditAt": 1790302375999,
-        "verifiedCount": 84
+        "consecutive": 86,
+        "nextAuditAt": 1790305717038,
+        "verifiedCount": 86
       },
       {
         "id": "entry_intent_mu8vsjh6_gjpmvx8h",
@@ -983,8 +1048,8 @@
         "hasProof": true,
         "freshProof": true,
         "status": "VERIFIED_NO_ACTIVE_RISK",
-        "validUntil": 1790302869207,
-        "ageMs": 960673,
+        "validUntil": 1790306326692,
+        "ageMs": 842035,
         "sources": [
           "BINANCE_EXACT_ORDER_NOT_FOUND",
           "BINANCE_OPEN_ORDERS_IDENTITY_ABSENT",
@@ -993,9 +1058,9 @@
           "BINANCE_LONG_SHORT_POSITION_ZERO"
         ],
         "auditTier": 2,
-        "consecutive": 97,
-        "nextAuditAt": 1790302620686,
-        "verifiedCount": 97
+        "consecutive": 99,
+        "nextAuditAt": 1790306078171,
+        "verifiedCount": 99
       },
       {
         "id": "entry_intent_mu8ys5rt_egrthflu",
@@ -1006,12 +1071,12 @@
         "exchangeOrderId": null,
         "clientOrderId": "ml_85c1c1a6f92d463abacf5eb74fff",
         "createdAt": 1789857230393,
-        "ageDays": 5.1,
+        "ageDays": 5.2,
         "hasProof": true,
         "freshProof": true,
         "status": "VERIFIED_NO_ACTIVE_RISK",
-        "validUntil": 1790303129605,
-        "ageMs": 700275,
+        "validUntil": 1790306568064,
+        "ageMs": 600663,
         "sources": [
           "BINANCE_EXACT_ORDER_NOT_FOUND",
           "BINANCE_OPEN_ORDERS_IDENTITY_ABSENT",
@@ -1020,9 +1085,9 @@
           "BINANCE_LONG_SHORT_POSITION_ZERO"
         ],
         "auditTier": 2,
-        "consecutive": 17,
-        "nextAuditAt": 1790302996010,
-        "verifiedCount": 17
+        "consecutive": 19,
+        "nextAuditAt": 1790306434469,
+        "verifiedCount": 19
       },
       {
         "id": "entry_intent_mu96h4ze_8xhvq008",
@@ -1037,8 +1102,8 @@
         "hasProof": true,
         "freshProof": true,
         "status": "VERIFIED_NO_ACTIVE_RISK",
-        "validUntil": 1790302517483,
-        "ageMs": 1312397,
+        "validUntil": 1790305751765,
+        "ageMs": 1416962,
         "sources": [
           "BINANCE_EXACT_ORDER_NOT_FOUND",
           "BINANCE_OPEN_ORDERS_IDENTITY_ABSENT",
@@ -1047,9 +1112,9 @@
           "BINANCE_LONG_SHORT_POSITION_ZERO"
         ],
         "auditTier": 2,
-        "consecutive": 125,
-        "nextAuditAt": 1790302250182,
-        "verifiedCount": 125
+        "consecutive": 127,
+        "nextAuditAt": 1790305484464,
+        "verifiedCount": 127
       },
       {
         "id": "entry_intent_mu97yhpv_4gq6gyce",
@@ -1064,8 +1129,8 @@
         "hasProof": true,
         "freshProof": true,
         "status": "VERIFIED_NO_ACTIVE_RISK",
-        "validUntil": 1790303713440,
-        "ageMs": 116440,
+        "validUntil": 1790307043815,
+        "ageMs": 124912,
         "sources": [
           "BINANCE_EXACT_ORDER_NOT_FOUND",
           "BINANCE_OPEN_ORDERS_IDENTITY_ABSENT",
@@ -1074,9 +1139,9 @@
           "POSITION_PRESENT_PROVEN_OTHER_CYCLE"
         ],
         "auditTier": 2,
-        "consecutive": 84,
-        "nextAuditAt": 1790303434957,
-        "verifiedCount": 84
+        "consecutive": 86,
+        "nextAuditAt": 1790306765332,
+        "verifiedCount": 86
       },
       {
         "id": "entry_intent_mu9ksebd_klhrq3ax",
@@ -1087,12 +1152,12 @@
         "exchangeOrderId": null,
         "clientOrderId": "ml_740c6b7ba8361a6f334478fe4155",
         "createdAt": 1789894193017,
-        "ageDays": 4.7,
+        "ageDays": 4.8,
         "hasProof": true,
         "freshProof": true,
         "status": "VERIFIED_NO_ACTIVE_RISK",
-        "validUntil": 1790302963767,
-        "ageMs": 866113,
+        "validUntil": 1790305842150,
+        "ageMs": 1326577,
         "sources": [
           "BINANCE_EXACT_ORDER_NOT_FOUND",
           "BINANCE_OPEN_ORDERS_IDENTITY_ABSENT",
@@ -1101,9 +1166,9 @@
           "POSITION_PRESENT_PROVEN_OTHER_CYCLE"
         ],
         "auditTier": 2,
-        "consecutive": 125,
-        "nextAuditAt": 1790302576679,
-        "verifiedCount": 125
+        "consecutive": 127,
+        "nextAuditAt": 1790305455062,
+        "verifiedCount": 127
       },
       {
         "id": "entry_intent_mu9kue9a_iri7u9dk",
@@ -1114,12 +1179,12 @@
         "exchangeOrderId": null,
         "clientOrderId": "ml_19dd3142e048c94e1b5ef5e05e05",
         "createdAt": 1789894286254,
-        "ageDays": 4.7,
+        "ageDays": 4.8,
         "hasProof": true,
         "freshProof": true,
         "status": "VERIFIED_NO_ACTIVE_RISK",
-        "validUntil": 1790302740389,
-        "ageMs": 1089491,
+        "validUntil": 1790305751765,
+        "ageMs": 1416962,
         "sources": [
           "BINANCE_EXACT_ORDER_NOT_FOUND",
           "BINANCE_OPEN_ORDERS_IDENTITY_ABSENT",
@@ -1128,9 +1193,9 @@
           "BINANCE_LONG_SHORT_POSITION_ZERO"
         ],
         "auditTier": 2,
-        "consecutive": 146,
-        "nextAuditAt": 1790302414654,
-        "verifiedCount": 146
+        "consecutive": 148,
+        "nextAuditAt": 1790305426030,
+        "verifiedCount": 148
       },
       {
         "id": "entry_intent_muavotu9_5fl4erfe",
@@ -1145,8 +1210,8 @@
         "hasProof": true,
         "freshProof": true,
         "status": "VERIFIED_NO_ACTIVE_RISK",
-        "validUntil": 1790302174017,
-        "ageMs": 1655863,
+        "validUntil": 1790306238155,
+        "ageMs": 30572,
         "sources": [
           "BINANCE_EXACT_ORDER_NOT_FOUND",
           "BINANCE_OPEN_ORDERS_IDENTITY_ABSENT",
@@ -1154,10 +1219,10 @@
           "BINANCE_ALL_ORDERS_IDENTITY_ABSENT",
           "BINANCE_LONG_SHORT_POSITION_ZERO"
         ],
-        "auditTier": 2,
-        "consecutive": 95,
-        "nextAuditAt": 1790301946781,
-        "verifiedCount": 95
+        "auditTier": 1,
+        "consecutive": 4,
+        "nextAuditAt": 1790306235919,
+        "verifiedCount": 4
       },
       {
         "id": "entry_intent_mub08xmz_2m9udmpt",
@@ -1168,12 +1233,12 @@
         "exchangeOrderId": null,
         "clientOrderId": "ml_184e9a495cf37d933fa51ffaa63c",
         "createdAt": 1789980624971,
-        "ageDays": 3.7,
+        "ageDays": 3.8,
         "hasProof": true,
         "freshProof": true,
         "status": "VERIFIED_NO_ACTIVE_RISK",
-        "validUntil": 1790302963767,
-        "ageMs": 866113,
+        "validUntil": 1790306326692,
+        "ageMs": 842035,
         "sources": [
           "BINANCE_EXACT_ORDER_NOT_FOUND",
           "BINANCE_OPEN_ORDERS_IDENTITY_ABSENT",
@@ -1182,9 +1247,9 @@
           "POSITION_PRESENT_PROVEN_OTHER_CYCLE"
         ],
         "auditTier": 2,
-        "consecutive": 120,
-        "nextAuditAt": 1790302792833,
-        "verifiedCount": 120
+        "consecutive": 122,
+        "nextAuditAt": 1790306155758,
+        "verifiedCount": 122
       },
       {
         "id": "entry_intent_mub1unyq_xk22v1x6",
@@ -1199,8 +1264,8 @@
         "hasProof": true,
         "freshProof": true,
         "status": "VERIFIED_NO_ACTIVE_RISK",
-        "validUntil": 1790303129605,
-        "ageMs": 700275,
+        "validUntil": 1790306326692,
+        "ageMs": 842035,
         "sources": [
           "BINANCE_EXACT_ORDER_NOT_FOUND",
           "BINANCE_OPEN_ORDERS_IDENTITY_ABSENT",
@@ -1209,9 +1274,9 @@
           "POSITION_PRESENT_PROVEN_OTHER_CYCLE"
         ],
         "auditTier": 2,
-        "consecutive": 130,
-        "nextAuditAt": 1790302890374,
-        "verifiedCount": 130
+        "consecutive": 132,
+        "nextAuditAt": 1790306087461,
+        "verifiedCount": 132
       },
       {
         "id": "entry_intent_mub8f4wg_s8n875lo",
@@ -1226,8 +1291,8 @@
         "hasProof": true,
         "freshProof": true,
         "status": "VERIFIED_NO_ACTIVE_RISK",
-        "validUntil": 1790303713440,
-        "ageMs": 116440,
+        "validUntil": 1790306809789,
+        "ageMs": 358938,
         "sources": [
           "BINANCE_EXACT_ORDER_NOT_FOUND",
           "BINANCE_OPEN_ORDERS_IDENTITY_ABSENT",
@@ -1236,9 +1301,9 @@
           "POSITION_PRESENT_PROVEN_OTHER_CYCLE"
         ],
         "auditTier": 2,
-        "consecutive": 181,
-        "nextAuditAt": 1790303407583,
-        "verifiedCount": 181
+        "consecutive": 183,
+        "nextAuditAt": 1790306503932,
+        "verifiedCount": 183
       },
       {
         "id": "entry_intent_mubfl89e_jee3vcpl",
@@ -1249,12 +1314,12 @@
         "exchangeOrderId": null,
         "clientOrderId": "ml_1438d03731dd7e8d4f204d2e9c9c",
         "createdAt": 1790006419210,
-        "ageDays": 3.4,
+        "ageDays": 3.5,
         "hasProof": true,
         "freshProof": true,
         "status": "VERIFIED_NO_ACTIVE_RISK",
-        "validUntil": 1790303428155,
-        "ageMs": 401725,
+        "validUntil": 1790307043815,
+        "ageMs": 124912,
         "sources": [
           "BINANCE_EXACT_ORDER_NOT_FOUND",
           "BINANCE_OPEN_ORDERS_IDENTITY_ABSENT",
@@ -1263,9 +1328,9 @@
           "POSITION_PRESENT_PROVEN_OTHER_CYCLE"
         ],
         "auditTier": 2,
-        "consecutive": 10,
-        "nextAuditAt": 1790303327825,
-        "verifiedCount": 10
+        "consecutive": 12,
+        "nextAuditAt": 1790306943485,
+        "verifiedCount": 12
       },
       {
         "id": "entry_intent_mubgiv5c_opx59o6t",
@@ -1280,8 +1345,8 @@
         "hasProof": true,
         "freshProof": true,
         "status": "VERIFIED_NO_ACTIVE_RISK",
-        "validUntil": 1790303713440,
-        "ageMs": 116440,
+        "validUntil": 1790306885319,
+        "ageMs": 283408,
         "sources": [
           "BINANCE_EXACT_ORDER_NOT_FOUND",
           "BINANCE_OPEN_ORDERS_IDENTITY_ABSENT",
@@ -1290,9 +1355,9 @@
           "BINANCE_LONG_SHORT_POSITION_ZERO"
         ],
         "auditTier": 2,
-        "consecutive": 117,
-        "nextAuditAt": 1790303476047,
-        "verifiedCount": 117
+        "consecutive": 119,
+        "nextAuditAt": 1790306647926,
+        "verifiedCount": 119
       },
       {
         "id": "entry_intent_mubhqs3x_2b3q7i9x",
@@ -1307,8 +1372,8 @@
         "hasProof": true,
         "freshProof": true,
         "status": "VERIFIED_NO_ACTIVE_RISK",
-        "validUntil": 1790302310140,
-        "ageMs": 19740,
+        "validUntil": 1790306719463,
+        "ageMs": 449264,
         "sources": [
           "BINANCE_EXACT_ORDER_NOT_FOUND",
           "BINANCE_OPEN_ORDERS_IDENTITY_ABSENT",
@@ -1316,10 +1381,10 @@
           "BINANCE_ALL_ORDERS_IDENTITY_ABSENT",
           "BINANCE_LONG_SHORT_POSITION_ZERO"
         ],
-        "auditTier": 0,
-        "consecutive": 1,
-        "nextAuditAt": 1790302266819,
-        "verifiedCount": 1
+        "auditTier": 2,
+        "consecutive": 6,
+        "nextAuditAt": 1790306676142,
+        "verifiedCount": 6
       },
       {
         "id": "entry_intent_mubl212x_z8fndm8t",
@@ -1330,12 +1395,12 @@
         "exchangeOrderId": null,
         "clientOrderId": "ml_8b7c9c31a99d028c353801f4130c",
         "createdAt": 1790015574777,
-        "ageDays": 3.3,
+        "ageDays": 3.4,
         "hasProof": true,
         "freshProof": true,
         "status": "VERIFIED_NO_ACTIVE_RISK",
-        "validUntil": 1790303713440,
-        "ageMs": 116440,
+        "validUntil": 1790305521591,
+        "ageMs": 1647136,
         "sources": [
           "BINANCE_EXACT_ORDER_NOT_FOUND",
           "BINANCE_OPEN_ORDERS_IDENTITY_ABSENT",
@@ -1344,9 +1409,9 @@
           "BINANCE_LONG_SHORT_POSITION_ZERO"
         ],
         "auditTier": 2,
-        "consecutive": 6,
-        "nextAuditAt": 1790303651847,
-        "verifiedCount": 6
+        "consecutive": 7,
+        "nextAuditAt": 1790305459998,
+        "verifiedCount": 7
       },
       {
         "id": "entry_intent_mucaxp42_pdpvv2yg",
@@ -1357,12 +1422,12 @@
         "exchangeOrderId": null,
         "clientOrderId": "ml_64e008f399dd697e440776205ce7",
         "createdAt": 1790059046224,
-        "ageDays": 2.8,
+        "ageDays": 2.9,
         "hasProof": true,
         "freshProof": true,
         "status": "VERIFIED_NO_ACTIVE_RISK",
-        "validUntil": 1790302257069,
-        "ageMs": 1572811,
+        "validUntil": 1790307138155,
+        "ageMs": 30572,
         "sources": [
           "BINANCE_EXACT_ORDER_NOT_FOUND",
           "BINANCE_OPEN_ORDERS_IDENTITY_ABSENT",
@@ -1371,9 +1436,9 @@
           "BINANCE_LONG_SHORT_POSITION_ZERO"
         ],
         "auditTier": 2,
-        "consecutive": 13,
-        "nextAuditAt": 1790302062724,
-        "verifiedCount": 13
+        "consecutive": 16,
+        "nextAuditAt": 1790306943810,
+        "verifiedCount": 16
       },
       {
         "id": "entry_intent_mucjsyu2_yewsavam",
@@ -1384,12 +1449,12 @@
         "exchangeOrderId": null,
         "clientOrderId": "ml_544afbeccbc707917b7769291a6d",
         "createdAt": 1790073938522,
-        "ageDays": 2.6,
+        "ageDays": 2.7,
         "hasProof": true,
         "freshProof": true,
         "status": "VERIFIED_NO_ACTIVE_RISK",
-        "validUntil": 1790303713440,
-        "ageMs": 116440,
+        "validUntil": 1790306885319,
+        "ageMs": 283408,
         "sources": [
           "BINANCE_EXACT_ORDER_NOT_FOUND",
           "BINANCE_OPEN_ORDERS_IDENTITY_ABSENT",
@@ -1398,9 +1463,9 @@
           "POSITION_PRESENT_PROVEN_OTHER_CYCLE"
         ],
         "auditTier": 2,
-        "consecutive": 23,
-        "nextAuditAt": 1790303441028,
-        "verifiedCount": 23
+        "consecutive": 25,
+        "nextAuditAt": 1790306612907,
+        "verifiedCount": 25
       },
       {
         "id": "entry_intent_mucxe65j_xxji301t",
@@ -1415,8 +1480,8 @@
         "hasProof": true,
         "freshProof": true,
         "status": "VERIFIED_NO_ACTIVE_RISK",
-        "validUntil": 1790303040888,
-        "ageMs": 788992,
+        "validUntil": 1790305920233,
+        "ageMs": 1248494,
         "sources": [
           "BINANCE_EXACT_ORDER_NOT_FOUND",
           "BINANCE_OPEN_ORDERS_IDENTITY_ABSENT",
@@ -1425,9 +1490,9 @@
           "BINANCE_LONG_SHORT_POSITION_ZERO"
         ],
         "auditTier": 2,
-        "consecutive": 138,
-        "nextAuditAt": 1790302641461,
-        "verifiedCount": 138
+        "consecutive": 140,
+        "nextAuditAt": 1790305520806,
+        "verifiedCount": 140
       },
       {
         "id": "entry_intent_mucyj7z9_47vdfef9",
@@ -1442,8 +1507,8 @@
         "hasProof": true,
         "freshProof": true,
         "status": "VERIFIED_NO_ACTIVE_RISK",
-        "validUntil": 1790302650542,
-        "ageMs": 1179338,
+        "validUntil": 1790305676297,
+        "ageMs": 1492430,
         "sources": [
           "BINANCE_EXACT_ORDER_NOT_FOUND",
           "BINANCE_OPEN_ORDERS_IDENTITY_ABSENT",
@@ -1452,9 +1517,9 @@
           "BINANCE_LONG_SHORT_POSITION_ZERO"
         ],
         "auditTier": 2,
-        "consecutive": 34,
-        "nextAuditAt": 1790302253911,
-        "verifiedCount": 34
+        "consecutive": 36,
+        "nextAuditAt": 1790305279666,
+        "verifiedCount": 36
       },
       {
         "id": "entry_intent_mud144sh_fwvcqffx",
@@ -1469,8 +1534,8 @@
         "hasProof": true,
         "freshProof": true,
         "status": "VERIFIED_NO_ACTIVE_RISK",
-        "validUntil": 1790303129605,
-        "ageMs": 700275,
+        "validUntil": 1790306143815,
+        "ageMs": 124912,
         "sources": [
           "BINANCE_EXACT_ORDER_NOT_FOUND",
           "BINANCE_OPEN_ORDERS_IDENTITY_ABSENT",
@@ -1478,10 +1543,10 @@
           "BINANCE_ALL_ORDERS_IDENTITY_ABSENT",
           "BINANCE_LONG_SHORT_POSITION_ZERO"
         ],
-        "auditTier": 2,
-        "consecutive": 12,
-        "nextAuditAt": 1790302998235,
-        "verifiedCount": 12
+        "auditTier": 1,
+        "consecutive": 4,
+        "nextAuditAt": 1790306012445,
+        "verifiedCount": 4
       },
       {
         "id": "entry_intent_mud1fz7z_re2900hm",
@@ -1496,8 +1561,8 @@
         "hasProof": true,
         "freshProof": true,
         "status": "VERIFIED_NO_ACTIVE_RISK",
-        "validUntil": 1790302424831,
-        "ageMs": 1405049,
+        "validUntil": 1790306885319,
+        "ageMs": 283408,
         "sources": [
           "BINANCE_EXACT_ORDER_NOT_FOUND",
           "BINANCE_OPEN_ORDERS_IDENTITY_ABSENT",
@@ -1506,9 +1571,9 @@
           "BINANCE_LONG_SHORT_POSITION_ZERO"
         ],
         "auditTier": 2,
-        "consecutive": 127,
-        "nextAuditAt": 1790302051176,
-        "verifiedCount": 137
+        "consecutive": 130,
+        "nextAuditAt": 1790306511664,
+        "verifiedCount": 140
       },
       {
         "id": "entry_intent_mud1swid_lwkdsxmn",
@@ -1523,8 +1588,8 @@
         "hasProof": true,
         "freshProof": true,
         "status": "VERIFIED_NO_ACTIVE_RISK",
-        "validUntil": 1790303428155,
-        "ageMs": 401725,
+        "validUntil": 1790306326692,
+        "ageMs": 842035,
         "sources": [
           "BINANCE_EXACT_ORDER_NOT_FOUND",
           "BINANCE_OPEN_ORDERS_IDENTITY_ABSENT",
@@ -1533,9 +1598,9 @@
           "BINANCE_LONG_SHORT_POSITION_ZERO"
         ],
         "auditTier": 2,
-        "consecutive": 90,
-        "nextAuditAt": 1790303041889,
-        "verifiedCount": 90
+        "consecutive": 92,
+        "nextAuditAt": 1790305940426,
+        "verifiedCount": 92
       },
       {
         "id": "entry_intent_mud2tch3_ay6ayqcd",
@@ -1550,8 +1615,8 @@
         "hasProof": true,
         "freshProof": true,
         "status": "VERIFIED_NO_ACTIVE_RISK",
-        "validUntil": 1790303494233,
-        "ageMs": 335647,
+        "validUntil": 1790306417755,
+        "ageMs": 750972,
         "sources": [
           "BINANCE_EXACT_ORDER_NOT_FOUND",
           "BINANCE_OPEN_ORDERS_IDENTITY_ABSENT",
@@ -1560,9 +1625,9 @@
           "BINANCE_LONG_SHORT_POSITION_ZERO"
         ],
         "auditTier": 2,
-        "consecutive": 130,
-        "nextAuditAt": 1790303100527,
-        "verifiedCount": 139
+        "consecutive": 132,
+        "nextAuditAt": 1790306024049,
+        "verifiedCount": 141
       },
       {
         "id": "entry_intent_muga3hgh_dukt59f4",
@@ -1573,12 +1638,12 @@
         "exchangeOrderId": null,
         "clientOrderId": "ml_01b9d5450c2dd6364c7c5fb82420",
         "createdAt": 1790299498017,
-        "ageDays": 0,
+        "ageDays": 0.1,
         "hasProof": true,
         "freshProof": true,
         "status": "VERIFIED_NO_ACTIVE_RISK",
-        "validUntil": 1790302063767,
-        "ageMs": 866113,
+        "validUntil": 1790305543815,
+        "ageMs": 124912,
         "sources": [
           "BINANCE_EXACT_ORDER_NOT_FOUND",
           "BINANCE_OPEN_ORDERS_IDENTITY_ABSENT",
@@ -1586,29 +1651,29 @@
           "BINANCE_ALL_ORDERS_IDENTITY_ABSENT",
           "BINANCE_LONG_SHORT_POSITION_ZERO"
         ],
-        "auditTier": 1,
-        "consecutive": 4,
-        "nextAuditAt": 1790302040418,
-        "verifiedCount": 4
+        "auditTier": 0,
+        "consecutive": 1,
+        "nextAuditAt": 1790305520466,
+        "verifiedCount": 1
       }
     ],
     "durableCounts": {
-      "entryIntents": 541,
-      "entryOrders": 525,
-      "entryReservations": 1452,
+      "entryIntents": 545,
+      "entryOrders": 528,
+      "entryReservations": 1456,
       "positions": 17,
-      "tradePlans": 338
+      "tradePlans": 342
     },
     "pendingRiskEventsLast24h": [
+      {
+        "reason": "PENDING_RISK_UNVERIFIED:order:entry_intent_mubhqs3x_2b3q7i9x",
+        "count": 11,
+        "lastAt": "2026-09-25T02:55:24.459Z"
+      },
       {
         "reason": "PENDING_RISK_UNVERIFIED:order:entry_intent_mu5xqmou_9hr5l6ur",
         "count": 11,
         "lastAt": "2026-09-25T01:54:47.429Z"
-      },
-      {
-        "reason": "PENDING_RISK_UNVERIFIED:order:entry_intent_mubhqs3x_2b3q7i9x",
-        "count": 10,
-        "lastAt": "2026-09-25T01:44:00.658Z"
       },
       {
         "reason": "PENDING_RISK_UNVERIFIED:order:entry_intent_mubl212x_z8fndm8t",
@@ -1619,6 +1684,11 @@
         "reason": "PENDING_RISK_UNVERIFIED:order:entry_intent_mu82u6cf_s2lkqvpm",
         "count": 5,
         "lastAt": "2026-09-25T00:58:29.049Z"
+      },
+      {
+        "reason": "PENDING_RISK_UNVERIFIED:order:entry_intent_muga3hgh_dukt59f4",
+        "count": 4,
+        "lastAt": "2026-09-25T02:58:58.107Z"
       },
       {
         "reason": "PENDING_RISK_UNVERIFIED:order:entry_intent_mu85q2z1_0rkc5eko",
@@ -1636,14 +1706,19 @@
         "lastAt": "2026-09-24T23:09:49.708Z"
       },
       {
+        "reason": "PENDING_RISK_UNVERIFIED:order:entry_intent_muavotu9_5fl4erfe",
+        "count": 2,
+        "lastAt": "2026-09-25T02:53:23.505Z"
+      },
+      {
         "reason": "PENDING_RISK_UNVERIFIED:order:entry_intent_mu8ys5rt_egrthflu",
         "count": 2,
         "lastAt": "2026-09-24T22:35:15.550Z"
       },
       {
-        "reason": "PENDING_RISK_UNVERIFIED:order:entry_intent_muga3hgh_dukt59f4",
+        "reason": "PENDING_RISK_UNVERIFIED:order:entry_intent_mugd63p6_vfwlkz8j",
         "count": 1,
-        "lastAt": "2026-09-25T01:49:00.196Z"
+        "lastAt": "2026-09-25T02:52:17.853Z"
       },
       {
         "reason": "PENDING_RISK_UNVERIFIED:order:entry_intent_mucaxp42_pdpvv2yg",
@@ -1651,85 +1726,50 @@
         "lastAt": "2026-09-24T21:34:56.576Z"
       },
       {
-        "reason": "PENDING_RISK_UNVERIFIED:order:entry_intent_muavotu9_5fl4erfe",
-        "count": 1,
-        "lastAt": "2026-09-24T23:48:56.564Z"
-      },
-      {
-        "reason": "PENDING_RISK_UNVERIFIED:order:entry_intent_mu8qgyxb_tntjtpbm",
-        "count": 1,
-        "lastAt": "2026-09-24T16:33:41.136Z"
-      },
-      {
         "reason": "PENDING_RISK_UNVERIFIED:order:entry_intent_mu5qimuf_nsgl39g3",
         "count": 1,
         "lastAt": "2026-09-25T00:38:19.608Z"
-      },
-      {
-        "reason": "PENDING_RISK_UNVERIFIED:order:entry_intent_mu5bvol4_6f75vr0u",
-        "count": 1,
-        "lastAt": "2026-09-24T16:37:02.200Z"
       }
     ],
-    "pendingRiskEventCount24h": 49,
+    "pendingRiskEventCount24h": 53,
     "noRiskAuditEvents24h": 6
   },
   "conversion": {
     "activity": {
-      "lastPrimaryRunAt": 1790301745518,
-      "lastPlaceDecisionAt": 1790301745518,
-      "lastEntryIntentAt": 1790301027014,
-      "lastEntrySubmittedAt": 1790301041682,
+      "lastPrimaryRunAt": 1790305137863,
+      "lastPlaceDecisionAt": 1790305137863,
+      "lastEntryIntentAt": 1790305007629,
+      "lastEntrySubmittedAt": 1790304670981,
       "lastEntryFilledAt": 1790301113552,
       "primaryRunsSinceLastPlace": 0,
-      "uniqueSymbolsSinceLastPlace": 12,
+      "uniqueSymbolsSinceLastPlace": 18,
       "consecutiveRejects": 0,
-      "placeCount30m": 14,
+      "placeCount30m": 18,
       "rejectCount30m": 0,
-      "primaryCount30m": 14,
-      "entryIntentCount30m": 2,
+      "primaryCount30m": 18,
+      "entryIntentCount30m": 4,
       "submitCount30m": 1,
-      "fillCount30m": 1
+      "fillCount30m": 0
     },
     "thirtyMinutes": {
-      "since": 1790300229826,
-      "until": 1790302029826,
-      "primaryCompleted": 14,
-      "place": 14,
-      "riskAllowed": 4,
+      "since": 1790303568692,
+      "until": 1790305368692,
+      "primaryCompleted": 18,
+      "place": 18,
+      "riskAllowed": 7,
       "economicAdmissionPassed": 0,
       "tradePlanReady": 4,
       "reservationCreated": 4,
-      "intentCreated": 2,
+      "intentCreated": 4,
       "submitAttempted": 1,
       "orderSubmitted": 1,
-      "entryFilled": 1,
-      "waitingPrice": 0,
+      "entryFilled": 0,
+      "waitingPrice": 1,
       "blocked": [
         {
           "stage": "PORTFOLIO_RISK",
-          "reason": "PENDING_RISK_UNVERIFIED:order:entry_intent_mubhqs3x_2b3q7i9x",
+          "reason": "PENDING_RISK_UNVERIFIED:order:entry_intent_muga3hgh_dukt59f4",
           "count": 3
-        },
-        {
-          "stage": "PRE_AI",
-          "reason": "PRE_AI_TRADE_PLAN_NO_HARD_EXECUTABLE_SIDE",
-          "count": 3
-        },
-        {
-          "stage": "EXECUTION_LEASE",
-          "reason": "EXECUTION_LEASE_EXPIRED",
-          "count": 2
-        },
-        {
-          "stage": "JIT",
-          "reason": "REJECT_GROSS_EXPOSURE",
-          "count": 2
-        },
-        {
-          "stage": "PORTFOLIO_RISK",
-          "reason": "MARGIN_TIER_SYMBOL_UNPROVEN:ZROUSDT",
-          "count": 2
         },
         {
           "stage": "JIT",
@@ -1737,106 +1777,63 @@
           "count": 1
         },
         {
-          "stage": "PORTFOLIO_RISK",
-          "reason": "PENDING_RISK_UNVERIFIED:order:entry_intent_muga3hgh_dukt59f4",
-          "count": 1
-        },
-        {
-          "stage": "PORTFOLIO_RISK",
-          "reason": "PENDING_RISK_UNVERIFIED:order:entry_intent_mu5xqmou_9hr5l6ur",
-          "count": 1
-        },
-        {
-          "stage": "PORTFOLIO_RISK",
-          "reason": "MARGIN_TIER_SYMBOL_UNPROVEN:ETCUSDT",
-          "count": 1
-        }
-      ],
-      "ratios": {
-        "placeToTradePlan": 28.6,
-        "tradePlanToSubmit": 25,
-        "placeToSubmit": 7.1,
-        "submitToFill": 100
-      },
-      "topDropStage": "PORTFOLIO_RISK",
-      "topDropReason": "PENDING_RISK_UNVERIFIED:order:entry_intent_mubhqs3x_2b3q7i9x",
-      "topDropCount": 3,
-      "degraded": false,
-      "degradedReason": null
-    },
-    "oneHour": {
-      "since": 1790298429826,
-      "until": 1790302029826,
-      "primaryCompleted": 29,
-      "place": 29,
-      "riskAllowed": 14,
-      "economicAdmissionPassed": 0,
-      "tradePlanReady": 13,
-      "reservationCreated": 13,
-      "intentCreated": 7,
-      "submitAttempted": 5,
-      "orderSubmitted": 4,
-      "entryFilled": 4,
-      "waitingPrice": 2,
-      "blocked": [
-        {
           "stage": "JIT",
-          "reason": "REJECT_GROSS_EXPOSURE",
-          "count": 6
+          "reason": "JIT_BLOCKED:RISK_REJECT_GROSS_EXPOSURE",
+          "count": 1
+        },
+        {
+          "stage": "PORTFOLIO_RISK",
+          "reason": "MARGIN_TIER_SYMBOL_UNPROVEN:JUPUSDT",
+          "count": 1
+        },
+        {
+          "stage": "PORTFOLIO_RISK",
+          "reason": "MARGIN_TIER_SYMBOL_UNPROVEN:COTIUSDT",
+          "count": 1
+        },
+        {
+          "stage": "PORTFOLIO_RISK",
+          "reason": "MARGIN_TIER_SYMBOL_UNPROVEN:WIFUSDT",
+          "count": 1
+        },
+        {
+          "stage": "PORTFOLIO_RISK",
+          "reason": "MARGIN_TIER_SYMBOL_UNPROVEN:RAYSOLUSDT",
+          "count": 1
+        },
+        {
+          "stage": "PORTFOLIO_RISK",
+          "reason": "MARGIN_TIER_SYMBOL_UNPROVEN:WIFUSDC",
+          "count": 1
+        },
+        {
+          "stage": "PORTFOLIO_RISK",
+          "reason": "PENDING_RISK_UNVERIFIED:order:entry_intent_mugd63p6_vfwlkz8j",
+          "count": 1
+        },
+        {
+          "stage": "PORTFOLIO_RISK",
+          "reason": "PENDING_RISK_UNVERIFIED:order:entry_intent_muavotu9_5fl4erfe",
+          "count": 1
         },
         {
           "stage": "PORTFOLIO_RISK",
           "reason": "PENDING_RISK_UNVERIFIED:order:entry_intent_mubhqs3x_2b3q7i9x",
-          "count": 3
-        },
-        {
-          "stage": "PRE_AI",
-          "reason": "PRE_AI_TRADE_PLAN_NO_HARD_EXECUTABLE_SIDE",
-          "count": 3
-        },
-        {
-          "stage": "EXECUTION_LEASE",
-          "reason": "EXECUTION_LEASE_EXPIRED",
-          "count": 2
-        },
-        {
-          "stage": "JIT",
-          "reason": "JIT_BLOCKED:MARKET_QUALITY_NOT_ADMITTED",
-          "count": 2
-        },
-        {
-          "stage": "PORTFOLIO_RISK",
-          "reason": "PENDING_RISK_UNVERIFIED:order:entry_intent_mubl212x_z8fndm8t",
-          "count": 2
-        },
-        {
-          "stage": "PORTFOLIO_RISK",
-          "reason": "PENDING_RISK_UNVERIFIED:order:entry_intent_mu5xqmou_9hr5l6ur",
-          "count": 2
-        },
-        {
-          "stage": "PORTFOLIO_RISK",
-          "reason": "MARGIN_TIER_SYMBOL_UNPROVEN:ZROUSDT",
-          "count": 2
-        },
-        {
-          "stage": "PORTFOLIO_RISK",
-          "reason": "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
-          "count": 1
-        },
-        {
-          "stage": "PORTFOLIO_RISK",
-          "reason": "PENDING_RISK_UNVERIFIED:order:entry_intent_muga3hgh_dukt59f4",
-          "count": 1
-        },
-        {
-          "stage": "PORTFOLIO_RISK",
-          "reason": "MARGIN_TIER_SYMBOL_UNPROVEN:ETCUSDT",
           "count": 1
         },
         {
           "stage": "TRADE_PLAN",
-          "reason": "CANDIDATE_TARGET_BELOW_PROFIT_FLOOR:target=4.45,>floor=4.397",
+          "reason": "CANDIDATE_TARGET_BELOW_PROFIT_FLOOR:target=0.338,>floor=0.3366",
+          "count": 1
+        },
+        {
+          "stage": "TRADE_PLAN",
+          "reason": "CANDIDATE_TARGET_BELOW_PROFIT_FLOOR:target=0.475,>floor=0.4738",
+          "count": 1
+        },
+        {
+          "stage": "TRADE_PLAN",
+          "reason": "CANDIDATE_TARGET_BELOW_PROFIT_FLOOR:target=30.45,>floor=30.238",
           "count": 1
         },
         {
@@ -1846,23 +1843,125 @@
         }
       ],
       "ratios": {
-        "placeToTradePlan": 44.8,
-        "tradePlanToSubmit": 30.8,
-        "placeToSubmit": 13.8,
-        "submitToFill": 100
+        "placeToTradePlan": 22.2,
+        "tradePlanToSubmit": 25,
+        "placeToSubmit": 5.6,
+        "submitToFill": 0
       },
-      "topDropStage": "JIT",
-      "topDropReason": "REJECT_GROSS_EXPOSURE",
-      "topDropCount": 6,
+      "topDropStage": "PORTFOLIO_RISK",
+      "topDropReason": "PENDING_RISK_UNVERIFIED:order:entry_intent_muga3hgh_dukt59f4",
+      "topDropCount": 3,
+      "degraded": false,
+      "degradedReason": null
+    },
+    "oneHour": {
+      "since": 1790301768692,
+      "until": 1790305368692,
+      "primaryCompleted": 18,
+      "place": 18,
+      "riskAllowed": 7,
+      "economicAdmissionPassed": 0,
+      "tradePlanReady": 4,
+      "reservationCreated": 4,
+      "intentCreated": 4,
+      "submitAttempted": 1,
+      "orderSubmitted": 1,
+      "entryFilled": 0,
+      "waitingPrice": 1,
+      "blocked": [
+        {
+          "stage": "PORTFOLIO_RISK",
+          "reason": "PENDING_RISK_UNVERIFIED:order:entry_intent_muga3hgh_dukt59f4",
+          "count": 3
+        },
+        {
+          "stage": "JIT",
+          "reason": "JIT_BLOCKED:MARKET_QUALITY_NOT_ADMITTED",
+          "count": 1
+        },
+        {
+          "stage": "JIT",
+          "reason": "JIT_BLOCKED:RISK_REJECT_GROSS_EXPOSURE",
+          "count": 1
+        },
+        {
+          "stage": "PORTFOLIO_RISK",
+          "reason": "MARGIN_TIER_SYMBOL_UNPROVEN:JUPUSDT",
+          "count": 1
+        },
+        {
+          "stage": "PORTFOLIO_RISK",
+          "reason": "MARGIN_TIER_SYMBOL_UNPROVEN:COTIUSDT",
+          "count": 1
+        },
+        {
+          "stage": "PORTFOLIO_RISK",
+          "reason": "MARGIN_TIER_SYMBOL_UNPROVEN:WIFUSDT",
+          "count": 1
+        },
+        {
+          "stage": "PORTFOLIO_RISK",
+          "reason": "MARGIN_TIER_SYMBOL_UNPROVEN:RAYSOLUSDT",
+          "count": 1
+        },
+        {
+          "stage": "PORTFOLIO_RISK",
+          "reason": "MARGIN_TIER_SYMBOL_UNPROVEN:WIFUSDC",
+          "count": 1
+        },
+        {
+          "stage": "PORTFOLIO_RISK",
+          "reason": "PENDING_RISK_UNVERIFIED:order:entry_intent_mugd63p6_vfwlkz8j",
+          "count": 1
+        },
+        {
+          "stage": "PORTFOLIO_RISK",
+          "reason": "PENDING_RISK_UNVERIFIED:order:entry_intent_muavotu9_5fl4erfe",
+          "count": 1
+        },
+        {
+          "stage": "PORTFOLIO_RISK",
+          "reason": "PENDING_RISK_UNVERIFIED:order:entry_intent_mubhqs3x_2b3q7i9x",
+          "count": 1
+        },
+        {
+          "stage": "TRADE_PLAN",
+          "reason": "CANDIDATE_TARGET_BELOW_PROFIT_FLOOR:target=0.338,>floor=0.3366",
+          "count": 1
+        },
+        {
+          "stage": "TRADE_PLAN",
+          "reason": "CANDIDATE_TARGET_BELOW_PROFIT_FLOOR:target=0.475,>floor=0.4738",
+          "count": 1
+        },
+        {
+          "stage": "TRADE_PLAN",
+          "reason": "CANDIDATE_TARGET_BELOW_PROFIT_FLOOR:target=30.45,>floor=30.238",
+          "count": 1
+        },
+        {
+          "stage": "UNKNOWN",
+          "reason": "MARKET_QUALITY_NOT_ADMITTED",
+          "count": 1
+        }
+      ],
+      "ratios": {
+        "placeToTradePlan": 22.2,
+        "tradePlanToSubmit": 25,
+        "placeToSubmit": 5.6,
+        "submitToFill": 0
+      },
+      "topDropStage": "PORTFOLIO_RISK",
+      "topDropReason": "PENDING_RISK_UNVERIFIED:order:entry_intent_muga3hgh_dukt59f4",
+      "topDropCount": 3,
       "degraded": false,
       "degradedReason": null
     }
   },
   "lifecycleCounts": {
-    "POSITION_HELD": 17,
+    "POSITION_HELD": 16,
     "EXCLUDED_UNDERLYING": 11,
-    "READY": 39,
-    "ENTRY_WORKING": 1
+    "READY": 46
   },
   "closeoutKeys": [
     "asOf",

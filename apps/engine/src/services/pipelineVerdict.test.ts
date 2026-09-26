@@ -110,4 +110,27 @@ describe('the authoritative pipeline verdict', () => {
     const primaries = [withRefusal.code, ...withRefusal.secondary.filter((row) => !row.code.includes('DIAGNOSTIC')).map((row) => row.code)];
     expect(primaries).toEqual([withRefusal.code]);
   });
+
+  it('PV-11 a book-level denial is the first cause even when no cycle ever reached admit', () => {
+    const verdict = authoritativePipelineVerdict({...base, pipelineState: 'RUNNING',
+      capacityVisibility: {sideStatus: {code: 'RISK_ADMISSION_EXHAUSTED', text: '确定性风险门拒绝任何新增名义：见首因的每道门数值'},
+        exhaustedForNewRisk: true, exhaustedReason: 'RISK_ADMISSION',
+        admission: {exhausted: true, hasVerdict: true, code: 'HUMAN_ACK_OVERDUE', gate: null, evaluatedAt: base.now - 1_200,
+          detail: 'HUMAN_ACK_OVERDUE：22 行人工交接未确认，超过上限 24 小时，最旧 175.2 小时 —— 任意名义均拒，只能由人工确认',
+          ceilingUsdBySide: {LONG: 0, SHORT: 0}}}});
+    // Answering NONE here would be the same lie in a new place: nothing was blocked upstream, so nothing ran.
+    expect(verdict.code).toBe('HUMAN_ACK_OVERDUE');
+    expect(verdict.stage).toBe('RISK_ADMISSION');
+    expect(verdict.nextAction).toContain('22 行人工交接未确认');
+    expect(verdict.nextAction).toContain('可新增 0.00 USD');
+    expect(verdict.evidence).toMatchObject({riskAdmissionStage: 'PORTFOLIO_RISK_ADMISSION', riskAdmissionAgeMs: 1_200, riskAdmissionExhausted: true});
+  });
+
+  it('PV-12 the synthesized denial expires the moment the gate reports room again', () => {
+    const open = authoritativePipelineVerdict({...base, pipelineState: 'RUNNING',
+      capacityVisibility: {sideStatus: {code: 'BOTH_SIDES_EXECUTABLE', text: 'LONG 与 SHORT 均可新增'},
+        admission: {exhausted: false, hasVerdict: true, code: null, gate: null, evaluatedAt: base.now, detail: null, ceilingUsdBySide: {LONG: 5_012.31, SHORT: 1_173.27}}}});
+    expect(open).toMatchObject({code: 'NONE', stage: 'NONE'});
+    expect(open.evidence.riskAdmissionExhausted).toBe(false);
+  });
 });

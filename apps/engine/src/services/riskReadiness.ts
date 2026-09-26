@@ -112,7 +112,7 @@ export function bestExecutableSide(routes:any[],side:'LONG'|'SHORT',traces:any[]
  *
  * A ratio dimension the deployment only observes is reported as a fact and never as a blocker.
  */
-export function portfolioCapacityVisibility(capacity:PositionCapacity,budget:GrossDirectionBudget,facts:{funding?:EntryTradingCapital;routes?:any[];traces?:any[];admission?:{hasVerdict?:boolean;exhausted?:boolean;code?:string|null;gate?:string|null;detail?:string|null;ceilingUsdBySide?:{LONG:number;SHORT:number}}|null}={}){
+export function portfolioCapacityVisibility(capacity:PositionCapacity,budget:GrossDirectionBudget,facts:{funding?:EntryTradingCapital;routes?:any[];traces?:any[];admission?:{hasVerdict?:boolean;exhausted?:boolean;code?:string|null;gate?:string|null;detail?:string|null;evaluatedAt?:number;ceilingUsdBySide?:{LONG:number;SHORT:number}}|null}={}){
   const evaluated=budget.evaluatedAt>0,policy=budget.policy??{gross:'ENFORCE' as const,direction:'ENFORCE' as const,cluster:'ENFORCE' as const},routes=facts.routes??[],traces=facts.traces??[];
   const fundingBlock=facts.funding??{quoteAssets:[],totalExecutableMarginUsd:0,proven:false,excludedAssets:[],accountEquityUsd:null};
   const executable={LONG:bestExecutableSide(routes,'LONG',traces),SHORT:bestExecutableSide(routes,'SHORT',traces)};
@@ -123,7 +123,7 @@ export function portfolioCapacityVisibility(capacity:PositionCapacity,budget:Gro
   // that refuses every order — which is precisely the contradiction this projection exists to prevent.
   const gate=facts.admission??null,admissionExhausted=gate?.exhausted===true;
   const admission={exhausted:admissionExhausted,hasVerdict:gate?.hasVerdict===true,code:gate?.code??null,gate:gate?.gate??null,
-    detail:gate?.detail??null,ceilingUsdBySide:gate?.ceilingUsdBySide??{LONG:0,SHORT:0}};
+    detail:gate?.detail??null,evaluatedAt:Number(gate?.evaluatedAt)||0,ceilingUsdBySide:gate?.ceilingUsdBySide??{LONG:0,SHORT:0}};
   const firstBlocker:CapacityBlocker=!evaluated?'NOT_EVALUATED':slotsFull?'POSITION_CAPACITY':admissionExhausted?'RISK_ADMISSION':grossFull?'GROSS':longFull?'DIRECTION_LONG':shortFull?'DIRECTION_SHORT':'NONE';
   const blockingDimensions=[slotsFull&&evaluated?'POSITION_CAPACITY':null,admissionExhausted?'RISK_ADMISSION':null,grossFull&&evaluated?'GROSS':null,longFull&&evaluated?'DIRECTION_LONG':null,shortFull&&evaluated?'DIRECTION_SHORT':null].filter(Boolean) as Exclude<CapacityBlocker,'NONE'|'NOT_EVALUATED'>[];
   const exhaustedReason:ExhaustedReason|null=!evaluated?null:slotsFull?'POSITION_CAPACITY':admissionExhausted?'RISK_ADMISSION':marginFull?'AVAILABLE_MARGIN':grossFull?'GROSS':longFull&&shortFull?'BOTH_DIRECTIONS':null;

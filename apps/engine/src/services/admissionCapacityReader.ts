@@ -7,6 +7,7 @@
 
 /** The part of the ledger's capacity facts a capacity surface is allowed to consume. */
 export type AdmissionCapacityView={
+  evaluatedAt:number;
   admitsAnyPositiveNotional:boolean;
   maxNewRiskNotionalUsd:number;
   maxNewRiskNotionalUsdBySide:{LONG:number;SHORT:number};
@@ -55,7 +56,7 @@ export function inputsFor(facts:AdmissionCapacityView|null,side:'LONG'|'SHORT'):
 
 /** The book-level answer a display page needs: is there any size this gate would accept at all, and if not, what number says so. */
 export type AdmissionBookSummary={hasVerdict:boolean;exhausted:boolean;code:string|null;gate:string|null;detail:string|null;
-  ceilingUsdBySide:{LONG:number;SHORT:number};reasons:string[]};
+  ceilingUsdBySide:{LONG:number;SHORT:number};reasons:string[];evaluatedAt:number};
 
 /**
  * The gate's verdict about the book, with no candidate in it. Read once per projection: money capacity and
@@ -64,14 +65,14 @@ export type AdmissionBookSummary={hasVerdict:boolean;exhausted:boolean;code:stri
  */
 export function bookAdmissionSummary(state:any,now=Date.now()):AdmissionBookSummary{
   const ledger=state?.riskAdmission;
-  const none:AdmissionBookSummary={hasVerdict:false,exhausted:false,code:null,gate:null,detail:null,ceilingUsdBySide:{LONG:0,SHORT:0},reasons:[]};
+  const none:AdmissionBookSummary={hasVerdict:false,exhausted:false,code:null,gate:null,detail:null,ceilingUsdBySide:{LONG:0,SHORT:0},reasons:[],evaluatedAt:0};
   if(!ledger||typeof ledger.capacityFacts!=='function')return none;
   let facts:AdmissionCapacityView|null=null;
   try{facts=ledger.capacityFacts(now,null)as AdmissionCapacityView;}
   catch{facts=null;}
   if(!facts)return none;
   const reasons=[...new Set([...facts.evidenceBlockers,...facts.sizeIndependentRefusals])];
-  return{hasVerdict:true,exhausted:facts.admitsAnyPositiveNotional===false,
+  return{hasVerdict:true,exhausted:facts.admitsAnyPositiveNotional===false,evaluatedAt:Number(facts.evaluatedAt)||now,
     code:facts.firstBinding?.code??reasons[0]??null,gate:facts.firstBinding?.gate??null,detail:facts.firstBinding?.detail??null,
     ceilingUsdBySide:{LONG:Math.max(0,Number(facts.maxNewRiskNotionalUsdBySide?.LONG??0)),SHORT:Math.max(0,Number(facts.maxNewRiskNotionalUsdBySide?.SHORT??0))},reasons};
 }

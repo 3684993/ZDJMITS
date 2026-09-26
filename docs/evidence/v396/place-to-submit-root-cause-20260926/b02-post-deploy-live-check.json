@@ -1,0 +1,103 @@
+{
+ "label": "post-deploy",
+ "at": "2026-09-26T14:23:56.109Z",
+ "identity": {
+  "head": null,
+  "buildId": "3.9.6-3ae58df252aad4155f93",
+  "artifactHash": "3ae58df252aad4155f932ad4dfea3ea02b8f2f8bd61838e4ba738e670c7f40a0",
+  "sourceHash": "e6dd2d4befc6cae09f0cbabbeff211b22d0b6cf34a99cb81515c243f98e352b0",
+  "pid": 30748,
+  "startedAt": 1790432601597,
+  "startReason": "MANUAL_START",
+  "restartCount": 190
+ },
+ "writeBoundary": {
+  "environment": "TESTNET",
+  "executionMode": "TESTNET_ENABLED",
+  "lockedToTestnet": true,
+  "testnetWrites": 0,
+  "productionWrites": 0,
+  "blockedProductionWriteAttempts": 0,
+  "lastWriteAt": null,
+  "lastWritePath": null
+ },
+ "safety": {
+  "environment": "TESTNET",
+  "executionMode": "TESTNET_ENABLED",
+  "entrySafetyMode": "AUTO",
+  "aiExitAuthority": null,
+  "tradeEconomicsAdmissionMode": "SHADOW",
+  "settingsVersion": 219
+ },
+ "protection": {
+  "required": 22,
+  "protected": 22,
+  "missing": 0,
+  "unresolved": 0,
+  "unverifiedTp": 0,
+  "existingPositions": {
+   "status": "FACT",
+   "count": 22
+  }
+ },
+ "capacitySays": {
+  "sideStatus": "RISK_ADMISSION_EXHAUSTED",
+  "firstBlocker": "RISK_ADMISSION",
+  "exhaustedForNewRisk": true,
+  "exhaustedReason": "RISK_ADMISSION",
+  "admission": {
+   "exhausted": true,
+   "hasVerdict": true,
+   "code": "CASH_FLOW_COVERAGE_UNPROVIDED",
+   "gate": null,
+   "detail": "CASH_FLOW_COVERAGE_UNPROVIDED（与名义规模无关的拒因，或本层无数值可归属的账本事实）",
+   "ceilingUsdBySide": {
+    "LONG": 0,
+    "SHORT": 0
+   }
+  },
+  "entryCapacityUsd": {
+   "LONG": 395.390657743008,
+   "SHORT": 453.0124921236496
+  }
+ },
+ "admissionSays": {
+  "code": "SCHEDULER_STOPPED",
+  "stage": "PERMISSION",
+  "nextAction": "等待人工恢复 Entry 权限；不自动重启、不改阈值换取放行",
+  "binding": null,
+  "gates": [],
+  "reasons": [],
+  "ageMs": null
+ },
+ "secondaryCodes": [
+  "MARKET_DATA_DIAGNOSTIC:MARKET_QUOTES_STALE",
+  "CAPACITY_DIAGNOSTIC:RISK_ADMISSION_EXHAUSTED",
+  "SUPPLY_DIAGNOSTIC:ELIGIBILITY",
+  "MODEL_DIAGNOSTIC:IDLE_REASON",
+  "MODEL_DIAGNOSTIC:ANALYSIS_REASON"
+ ],
+ "consistent": true,
+ "conversion30m": {
+  "place": 12,
+  "riskAllowed": 0,
+  "tradePlanReady": 0,
+  "reservationCreated": 0,
+  "intentCreated": 0,
+  "submitAttempted": 0,
+  "orderSubmitted": 0,
+  "topDropReason": "HUMAN_ACK_OVERDUE"
+ },
+ "conversion1h": {
+  "place": 37,
+  "riskAllowed": 0,
+  "reservationCreated": 0,
+  "orderSubmitted": 0,
+  "topDropReason": "HUMAN_ACK_OVERDUE"
+ },
+ "modelCost": {
+  "primaryBrain": null,
+  "scout": null,
+  "aiHealth": null
+ }
+}

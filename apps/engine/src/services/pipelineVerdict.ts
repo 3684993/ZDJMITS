@@ -25,7 +25,7 @@ type VerdictFacts = {
   executionReadiness?: {mode?: string; ready?: boolean; firstBlocker?: string | null; blockers?: string[]} | null;
   capacityVisibility?: {firstBlocker?: string | null; exhaustedForNewRisk?: boolean; exhaustedReason?: string | null; sideStatus?: {code?: string; text?: string} | null;
     admission?: {exhausted?: boolean; hasVerdict?: boolean; code?: string | null; gate?: string | null; detail?: string | null;
-      ceilingUsdBySide?: {LONG: number; SHORT: number} | null} | null} | null;
+      evaluatedAt?: number; ceilingUsdBySide?: {LONG: number; SHORT: number} | null} | null} | null;
   slots?: {used: number; max: number} | null;
   eligibility?: {status?: string; count?: number} | null;
   executableCandidateCount?: number | null;
@@ -82,7 +82,10 @@ const NEXT_ACTION: Record<PipelineVerdict['stage'], (facts: VerdictFacts, code: 
         + (binding.kind === 'SIZE_INDEPENDENT' ? '（与订单规模无关，缩小订单不能通过）' : '')
       : (refusal?.code ?? 'RISK_ADMISSION');
     const coBinding = (refusal?.reasons ?? []).filter((code: string) => code !== binding?.code);
-    return `确定性风险门拒绝新增风险（${refusal?.symbol ?? '候选'}：${headline}${coBinding.length ? `；同时成立 ${coBinding.slice(0, 6).join(' · ')}` : ''}）；只能由人工减少已有敞口、人工确认交接，或经 governance 写入调整权威上限。不放宽阈值、不重启流程、不再调用模型换取放行`;
+    // A dollar ceiling is already fully stated by its own numbers above; anything else needs the gate's
+    // sentence, which is where the count and the age a human has to act on live.
+    const measure = binding && binding.kind !== 'NOTIONAL' && binding.detail ? `：${binding.detail}` : '';
+    return `确定性风险门拒绝新增风险（${refusal?.symbol ?? '候选'}：${headline}${measure}${coBinding.length ? `；同时成立 ${coBinding.slice(0, 6).join(' · ')}` : ''}）；只能由人工减少已有敞口、人工确认交接，或经 governance 写入调整权威上限。不放宽阈值、不重启流程、不再调用模型换取放行`;
   },
   NONE: () => '无需处理：Entry 管线可用，继续由确定性硬门决定是否建仓',
 };
@@ -90,7 +93,17 @@ const NEXT_ACTION: Record<PipelineVerdict['stage'], (facts: VerdictFacts, code: 
 /** The single authoritative verdict for one pipeline cycle, with everything else demoted to diagnostics. */
 export function authoritativePipelineVerdict(facts: VerdictFacts): PipelineVerdict {
   const isolatedCount = facts.marketIsolation?.isolated?.length ?? facts.marketIsolation?.isolatedCount ?? 0,
-    riskAdmission = facts.riskAdmission ?? null,
+    gate = facts.capacityVisibility?.admission ?? null,
+    // The gate may deny the whole book before any candidate reaches `admit` — that is the pre-model capacity
+    // stop. Its book-level verdict is then still the first cause: answering "nothing is blocking" because no
+    // cycle was ever submitted to admit() would rebuild the same contradiction one layer up.
+    riskAdmission = facts.riskAdmission ?? (gate?.exhausted ? {
+      at: Number(gate.evaluatedAt) || facts.now, symbol: '书本级', stage: 'PORTFOLIO_RISK_ADMISSION',
+      code: gate.code ?? 'RISK_ADMISSION_EXHAUSTED', reasons: [], limits: [],
+      binding: {kind: 'OTHER', code: gate.code ?? 'RISK_ADMISSION_EXHAUSTED', gate: gate.gate ?? null, limitUsd: null, usedUsd: null,
+        headroomUsd: Math.min(Number(gate.ceilingUsdBySide?.LONG ?? 0), Number(gate.ceilingUsdBySide?.SHORT ?? 0)), shortfallUsd: null, detail: gate.detail ?? ''},
+      ageMs: Math.max(0, facts.now - (Number(gate.evaluatedAt) || facts.now)),
+    } : null),
     // A pipeline-level blocker outranks everything: while the pipeline itself is stopped, the refusal of
     // an older cycle is history, not the operator's next action. Only with the pipeline open does the
     // newest deterministic admission decision become the first cause, and it expires on its own.
@@ -110,7 +123,7 @@ export function authoritativePipelineVerdict(facts: VerdictFacts): PipelineVerdi
   if (facts.analysisReason && facts.analysisReason !== code && facts.analysisReason !== facts.idleReason) secondary.push({code: 'MODEL_DIAGNOSTIC:ANALYSIS_REASON', detail: facts.analysisReason});
   return {
     code, stage,
-    nextAction: NEXT_ACTION[stage](facts, code),
+    nextAction: NEXT_ACTION[stage](riskAdmission === facts.riskAdmission ? facts : {...facts, riskAdmission}, code),
     evidence: {pipelineState: facts.pipelineState ?? null, marketDataReason: facts.marketDataReason ?? null,
       isolatedSymbols: (facts.marketIsolation?.isolated ?? []).slice(0, 12).map((row) => `${row.symbol}:${row.reasons[0] ?? 'DATA_INVALID'}`),
       isolatedCount, healthyCandidates: facts.marketIsolation?.healthyCandidates ?? 0,

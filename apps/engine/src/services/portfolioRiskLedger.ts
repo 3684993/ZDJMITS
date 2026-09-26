@@ -450,6 +450,12 @@ export class PortfolioRiskAdmission {
     const maxAckAgeMs=finite(profile.maxAckAgeMs)?Number(profile.maxAckAgeMs):0;
     const overdue=snapshot.exposures.filter(row=>row.kind==='POSITION'&&row.ownerState==='HANDOFF_PENDING'&&row.acknowledgedAt==null
       &&finite(row.handoffAt)&&now-Number(row.handoffAt)>maxAckAgeMs);
+    // The size-independent denials get their own measurements too: "an ack is late" is not actionable,
+    // "22 handoffs are past the 24h limit, the oldest by 175h" is.
+    const oldestOverdueHours=overdue.length?Math.max(...overdue.map(row=>now-Number(row.handoffAt)))/3_600_000:null;
+    const binding=ranked.firstBinding;
+    if(binding&&binding.kind==='SIZE_INDEPENDENT'&&binding.code==='HUMAN_ACK_OVERDUE'&&overdue.length)
+      binding.detail=`HUMAN_ACK_OVERDUE：${overdue.length} 行人工交接未确认，超过上限 ${Math.round(maxAckAgeMs/3_600_000)/10} 小时，最旧 ${oldestOverdueHours?.toFixed(1)} 小时 —— 任意名义均拒，只能由人工确认`;
     // A missing fact or a policy that denies at every size leaves no room for any candidate; a dollar
     // ceiling leaves exactly its own headroom, and only for the side that ceiling is measured on.
     // Direction is excluded from the any-size test because one saturated side never denies the other.
@@ -471,8 +477,7 @@ export class PortfolioRiskAdmission {
       firstBinding:ranked.firstBinding??{kind:'OTHER',code:'NONE',gate:null,limitUsd:null,usedUsd:null,headroomUsd:null,shortfallUsd:null,detail:'当前无候选时组合准入没有拒因'},
       bookGrossNotionalUsd:snapshot.exposures.filter(row=>row.kind==='POSITION').reduce((sum,row)=>sum+row.notionalUsd,0),
       pendingNotionalUsd:snapshot.pendingNotionalUsd,claimGrossNotionalUsd:snapshot.grossNotionalUsd,
-      humanHandoffNotionalUsd:capacity.potentialHandoffNotionalUsd,overdueHandoffs:overdue.length,
-      oldestOverdueHours:overdue.length?Math.max(...overdue.map(row=>now-Number(row.handoffAt)))/3_600_000:null};
+      humanHandoffNotionalUsd:capacity.potentialHandoffNotionalUsd,overdueHandoffs:overdue.length,oldestOverdueHours};
   }
 
   /** Observe the existing book without inventing a proposed trade or a risk ticket. */

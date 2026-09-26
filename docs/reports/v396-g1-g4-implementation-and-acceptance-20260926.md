@@ -86,7 +86,10 @@ G1–G4 已作为真实产品提交落在当前分支（`aa06461`），全部门
 | 运行时 `sourceHash` | `294d7b9173f25752ddec32724136e3c5b894b34ddb01c0a95c838941e3b4892d` |
 | `instanceId` / PID | `edfeb7b5-7cd2-4c08-bef7-01d8447713f0` / 8732 |
 | 闭合方法 | `scripts/v396-g1-g4-identity-closure.mjs` 以与 `runtimeIdentity.ts` 相同算法重算 `contentTreeHash`：`src` 目录集得到 `sourceHash`，`dist` 目录集得到 `artifactHash`，并校验 `buildId == version + '-' + artifactHash[0..20)` |
-| 结果 | `IDENTITY_CLOSED`（证据 `11-identity-closure.json`） |
+| 结果 | `IDENTITY_CLOSED`（证据 `11-identity-closure.json`：6 项检查全 true，含 `committedSourceTreeMatchesRuntimeSourceHash`、`workingDistMatchesRuntimeArtifactHash`、`buildIdDerivedFromArtifactHash`） |
+
+`11-identity-closure.json` 记录的 HEAD 是其采集时刻（`960b63f`）；仅把该证据文件本身入库的后续提交不再改变任何被哈希目录，
+故 `sourceHash`/`artifactHash`/`buildId` 与运行实例仍逐项相等。
 
 ## 7. 冻结语义未被改动（深比对）
 

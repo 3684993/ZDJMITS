@@ -1,0 +1,136 @@
+{
+ "at": "2026-09-26T04:44:31.598Z",
+ "identity": {
+  "pid": 37996,
+  "buildId": "3.9.6-e45d25472c241b412be7",
+  "restartCount": 189,
+  "startReason": "MANUAL_START"
+ },
+ "writes": {
+  "environment": "TESTNET",
+  "executionMode": "TESTNET_ENABLED",
+  "lockedToTestnet": true,
+  "testnetWrites": 5,
+  "productionWrites": 0,
+  "blockedProductionWriteAttempts": 0,
+  "lastWriteAt": 1790397857591,
+  "lastWritePath": "/fapi/v1/order"
+ },
+ "tp": {
+  "tally": {
+   "MISSING": 3,
+   "PROTECTED": 20
+  },
+  "metrics": {
+   "required": 23,
+   "protected": 20,
+   "missing": 3,
+   "positionFactUnresolved": 0,
+   "unverifiedTp": 0
+  },
+  "unprotected": [
+   "DASHUSDT:SHORT:MISSING:NONE",
+   "VVVUSDT:SHORT:MISSING:NONE",
+   "APTUSDT:SHORT:MISSING:NONE"
+  ]
+ },
+ "authoritativeBlocker": {
+  "code": "NONE",
+  "stage": "NONE",
+  "nextAction": "无需处理：Entry 管线可用，继续由确定性硬门决定是否建仓",
+  "evidence": {
+   "pipelineState": "RUNNING",
+   "marketDataReason": null,
+   "isolatedSymbols": [
+    "DOGEUSDC:TECHNICAL_1m_MISSING_LATEST_CLOSED"
+   ],
+   "isolatedCount": 1,
+   "healthyCandidates": 11,
+   "slotsUsed": 23,
+   "slotsMax": 50,
+   "executableCandidateCount": 1,
+   "exhaustedForNewRisk": false,
+   "pendingEntries": 0,
+   "maxPendingEntries": 6,
+   "poolStatus": "POOL_SUPPLY_SHORTAGE",
+   "riskAdmissionStage": null,
+   "riskAdmissionSymbol": null,
+   "riskAdmissionReasons": [],
+   "riskAdmissionLimits": [],
+   "riskAdmissionAgeMs": null
+  },
+  "secondary": [
+   {
+    "code": "CAPACITY_DIAGNOSTIC:BOTH_SIDES_EXECUTABLE",
+    "detail": "LONG 与 SHORT 均可新增"
+   },
+   {
+    "code": "SUPPLY_DIAGNOSTIC:ELIGIBILITY",
+    "detail": "READY 1（可执行 1）"
+   },
+   {
+    "code": "MARKET_DIAGNOSTIC:STALE_SYMBOLS",
+    "detail": "RECOVERING 序列无效 0：DOGEUSDC FILUSDT"
+   },
+   {
+    "code": "MODEL_DIAGNOSTIC:ANALYSIS_REASON",
+    "detail": "AI_RESOURCE_BUSY"
+   }
+  ],
+  "evaluatedAt": 1790397871585
+ },
+ "marketDataIsolation": {
+  "candidateCount": 12,
+  "isolatedCount": 1,
+  "healthyCandidates": 11,
+  "isolated": [
+   {
+    "symbol": "DOGEUSDC",
+    "reasons": [
+     "TECHNICAL_1m_MISSING_LATEST_CLOSED"
+    ]
+   }
+  ]
+ },
+ "authority": {
+  "status": "MATCHED",
+  "missingSymbols": [],
+  "uncoveredCount": 13,
+  "coverageLag": {
+   "uncoveredCandidates": [
+    "1000BONKUSDC",
+    "COTIUSDT",
+    "ETCUSDT",
+    "ETHFIUSDC",
+    "ETHFIUSDT",
+    "JUPUSDT",
+    "POLUSDT",
+    "RAYSOLUSDT",
+    "VIRTUALUSDT",
+    "WIFUSDC",
+    "WIFUSDT",
+    "ZENUSDT",
+    "ZROUSDT"
+   ],
+   "marginTierVersion": "TESTNET_BINANCE_LEVERAGE_BRACKET_V1_SHA256_0081998e0d496d8f0378199553dd438a9e6cf8740decf226d4af6eb822846d77",
+   "committedAt": 1790266340568,
+   "action": "re-collect and commit the margin-tier authority for these symbols; until then each is refused by name before a model call"
+  }
+ },
+ "funnel30m": {
+  "place": 18,
+  "riskAllowed": 0,
+  "topDrop": "HUMAN_ACK_OVERDUE",
+  "blocked": [
+   {
+    "stage": "PORTFOLIO_RISK",
+    "reason": "HUMAN_ACK_OVERDUE",
+    "count": 18
+   }
+  ]
+ },
+ "analysis": {
+  "reason": "AI_RESOURCE_BUSY",
+  "idleReason": null
+ }
+}

@@ -1,0 +1,46 @@
+{
+ "branch": "codex/v396-final-convergence-20260922",
+ "localHead": "07794f236699707ca2ea5d7b65c2bda308dc04a0",
+ "remoteHead": "07794f236699707ca2ea5d7b65c2bda308dc04a0",
+ "gitHeadSubject": "fix(v396): 关闭 A-D 四项运行真值缺陷——风险准入权威首因、margin-tier 预模型拒因、空头减仓证明的符号位、启动空操作的版本递增",
+ "computed": {
+  "sourceHash": "b2e9f84f7868d11ff2b3c7061d27e7d85ca1756068396a54b1cfbdcb8f50ed58",
+  "artifactHash": "e45d25472c241b412be7d3b626fc7a078fd84a3357a679286887d8d9f781236a",
+  "buildId": "3.9.6-e45d25472c241b412be7"
+ },
+ "runtimeFile": {
+  "instanceId": "5ff8ed85-bbde-42a7-94de-fb60896ad507",
+  "pid": 37996,
+  "startedAt": 1790397466863,
+  "host": "0.0.0.0",
+  "port": 8080,
+  "version": "3.9.6",
+  "buildId": "3.9.6-e45d25472c241b412be7",
+  "artifactHash": "e45d25472c241b412be7d3b626fc7a078fd84a3357a679286887d8d9f781236a",
+  "sourceHash": "b2e9f84f7868d11ff2b3c7061d27e7d85ca1756068396a54b1cfbdcb8f50ed58",
+  "startReason": "MANUAL_START",
+  "lanIps": [
+   "192.168.1.50"
+  ],
+  "restartCount": 189
+ },
+ "runtimeApi": {
+  "buildId": "3.9.6-e45d25472c241b412be7",
+  "instanceId": "5ff8ed85-bbde-42a7-94de-fb60896ad507",
+  "pid": 37996,
+  "version": "3.9.6",
+  "lastRestartReason": "MANUAL_START",
+  "restartCount": 189,
+  "lastRestartAt": 1790397466863
+ },
+ "dirtySourcePaths": "",
+ "checks": {
+  "remoteHeadEqualsLocalHead": true,
+  "committedSourceTreeMatchesRuntimeSourceHash": true,
+  "workingDistMatchesRuntimeArtifactHash": true,
+  "buildIdDerivedFromArtifactHash": true,
+  "runtimeApiMatchesInstanceFile": true,
+  "sourceTreeCleanForHashedFolders": true
+ },
+ "verdict": "IDENTITY_CLOSED"
+}

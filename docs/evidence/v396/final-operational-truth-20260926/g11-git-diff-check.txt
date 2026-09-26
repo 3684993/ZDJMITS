@@ -1,0 +1,1 @@
+warning: in the working copy of 'docs/evidence/v396/final-convergence-20260922/J5/storage-coverage.json', LF will be replaced by CRLF the next time Git touches it

@@ -1,0 +1,20 @@
+{
+  "capturedAt": "2026-09-26T04:52:30Z",
+  "source": "Browser read-only inspection of the deployed cockpit at http://127.0.0.1:8080/ (dashboard dist built from commit 07794f2). Page text below is untrusted rendered content, recorded verbatim.",
+  "A_authoritative_primary_card": {
+    "headline": "HUMAN_ACK_OVERDUE · 确定性风险门拒绝新增风险（AAVEUSDT：HUMAN_ACK_OVERDUE · HUMAN_POTENTIAL_NOTIONAL_LIMIT · STRESS_LIMIT:MAX_CLUSTER_NOTIONAL · STRESS_LIMIT:MAX_GROSS_NOTIONAL）；只能由人工减少已有敞口，或经 governance 写入调整权威上限。不放宽阈值、不重启流程、不再调用模型换取放行",
+    "engineProvided": true,
+    "note": "The page renders the Engine verdict unchanged: code + nextAction came from one authoritativePipelineVerdict call, not from a UI-side ranking."
+  },
+  "A_secondary_diagnostics": {
+    "summaryLabel": "次级诊断 3 项（不作为第二个首因）",
+    "competingPrimaryRendered": false
+  },
+  "C_position_protection_surface": {"unprotectedBannerPresent": false, "unresolvedBannerPresent": false, "note": "All 23 durable rows were PROTECTED at capture time, so neither TP banner renders; positionFactUnresolved=0."},
+  "B_market_isolation_panel": {"present": false, "reason": "marketDataIsolation.isolated was empty at capture time; the panel is data-driven (an isolated DOGEUSDC row was observed at 04:44 and a BCHUSDT row at 04:37 in p04/p02)."},
+  "residual_wording_collision": {
+    "finding": "OverviewView.vue lines 254, 75 and 92 also print the word 首因 for row-scoped Engine fields (executionReadiness.firstBlocker and per-candidate firstBindingConstraint). At pipeline level this can read as a competing '首因 NONE' next to the authoritative card.",
+    "authorityCheck": "No UI-side priority algorithm was reintroduced: every one of those strings is a value the Engine supplied for its own row.",
+    "proposedFix": "Relabel the row-scoped occurrences (for example 执行事实缺口 / 该候选首因) so 首因 is reserved for authoritativeBlocker. Not applied this round because it needs a source change after the single lifecycle authorization was consumed."
+  }
+}

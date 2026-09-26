@@ -1,0 +1,170 @@
+{
+ "instance": {
+  "pid": 37996,
+  "buildId": "3.9.6-e45d25472c241b412be7",
+  "startedAt": "2026-09-26T04:37:46.863Z"
+ },
+ "tpWritesSinceStart": {
+  "prepared": 8,
+  "protectedOrders": 8,
+  "repairFailed": 0,
+  "positionFactUnresolved": 0
+ },
+ "attribution": [
+  {
+   "at": "2026-09-26T04:43:31.730Z",
+   "positionId": "exchange_PENGUUSDT_SHORT",
+   "clientOrderId": "v396x3bc84007bafb807c95c0154dcd968f",
+   "side": "BUY",
+   "quantity": 36332,
+   "price": 0.009607,
+   "domain": "TAKE_PROFIT_REDUCE_ONLY",
+   "endpoint": "/fapi/v1/order",
+   "environment": "TESTNET"
+  },
+  {
+   "at": "2026-09-26T04:43:36.048Z",
+   "positionId": "exchange_UNIUSDT_SHORT",
+   "clientOrderId": "v396x2ea0a34769042b6de8cf999485ca48",
+   "side": "BUY",
+   "quantity": 117,
+   "price": 9.095,
+   "domain": "TAKE_PROFIT_REDUCE_ONLY",
+   "endpoint": "/fapi/v1/order",
+   "environment": "TESTNET"
+  },
+  {
+   "at": "2026-09-26T04:43:41.685Z",
+   "positionId": "exchange_NEARUSDT_SHORT",
+   "clientOrderId": "v396x125ad613b11b91266653b17091a1a1",
+   "side": "BUY",
+   "quantity": 2,
+   "price": 4.056,
+   "domain": "TAKE_PROFIT_REDUCE_ONLY",
+   "endpoint": "/fapi/v1/order",
+   "environment": "TESTNET"
+  },
+  {
+   "at": "2026-09-26T04:44:11.417Z",
+   "positionId": "exchange_FILUSDT_SHORT",
+   "clientOrderId": "v396x997ef944c368b360de63ddc6aa8db9",
+   "side": "BUY",
+   "quantity": 10,
+   "price": 0.8801,
+   "domain": "TAKE_PROFIT_REDUCE_ONLY",
+   "endpoint": "/fapi/v1/order",
+   "environment": "TESTNET"
+  },
+  {
+   "at": "2026-09-26T04:44:17.394Z",
+   "positionId": "exchange_SUIUSDC_SHORT",
+   "clientOrderId": "v396x7cba10ffbf944ba7b4dc49ae7c7a8a",
+   "side": "BUY",
+   "quantity": 10,
+   "price": 0.908,
+   "domain": "TAKE_PROFIT_REDUCE_ONLY",
+   "endpoint": "/fapi/v1/order",
+   "environment": "TESTNET"
+  },
+  {
+   "at": "2026-09-26T04:45:03.538Z",
+   "positionId": "exchange_APTUSDT_SHORT",
+   "clientOrderId": "v396xb684396535807894d6d4a920062d9a",
+   "side": "BUY",
+   "quantity": 10,
+   "price": 0.6945,
+   "domain": "TAKE_PROFIT_REDUCE_ONLY",
+   "endpoint": "/fapi/v1/order",
+   "environment": "TESTNET"
+  },
+  {
+   "at": "2026-09-26T04:45:08.630Z",
+   "positionId": "exchange_VVVUSDT_SHORT",
+   "clientOrderId": "v396xed5a6ec49009724efaa007f386f008",
+   "side": "BUY",
+   "quantity": 1,
+   "price": 29.913,
+   "domain": "TAKE_PROFIT_REDUCE_ONLY",
+   "endpoint": "/fapi/v1/order",
+   "environment": "TESTNET"
+  },
+  {
+   "at": "2026-09-26T04:45:15.231Z",
+   "positionId": "exchange_DASHUSDT_SHORT",
+   "clientOrderId": "v396xeccd0501894018762c7c5f43f6596a",
+   "side": "BUY",
+   "quantity": 0.1,
+   "price": 52.82,
+   "domain": "TAKE_PROFIT_REDUCE_ONLY",
+   "endpoint": "/fapi/v1/order",
+   "environment": "TESTNET"
+  }
+ ],
+ "protectedOrders": [
+  {
+   "at": "2026-09-26T04:43:34.606Z",
+   "positionId": "exchange_PENGUUSDT_SHORT",
+   "clientOrderId": "v396x3bc84007bafb807c95c0154dcd968f",
+   "status": "WORKING",
+   "repairAttempt": 1
+  },
+  {
+   "at": "2026-09-26T04:43:37.712Z",
+   "positionId": "exchange_UNIUSDT_SHORT",
+   "clientOrderId": "v396x2ea0a34769042b6de8cf999485ca48",
+   "status": "WORKING",
+   "repairAttempt": 1
+  },
+  {
+   "at": "2026-09-26T04:43:44.942Z",
+   "positionId": "exchange_NEARUSDT_SHORT",
+   "clientOrderId": "v396x125ad613b11b91266653b17091a1a1",
+   "status": "WORKING",
+   "repairAttempt": 1
+  },
+  {
+   "at": "2026-09-26T04:44:14.162Z",
+   "positionId": "exchange_FILUSDT_SHORT",
+   "clientOrderId": "v396x997ef944c368b360de63ddc6aa8db9",
+   "status": "WORKING",
+   "repairAttempt": 1
+  },
+  {
+   "at": "2026-09-26T04:44:19.802Z",
+   "positionId": "exchange_SUIUSDC_SHORT",
+   "clientOrderId": "v396x7cba10ffbf944ba7b4dc49ae7c7a8a",
+   "status": "WORKING",
+   "repairAttempt": 1
+  },
+  {
+   "at": "2026-09-26T04:45:06.308Z",
+   "positionId": "exchange_APTUSDT_SHORT",
+   "clientOrderId": "v396xb684396535807894d6d4a920062d9a",
+   "status": "WORKING",
+   "repairAttempt": 1
+  },
+  {
+   "at": "2026-09-26T04:45:11.551Z",
+   "positionId": "exchange_VVVUSDT_SHORT",
+   "clientOrderId": "v396xed5a6ec49009724efaa007f386f008",
+   "status": "WORKING",
+   "repairAttempt": 1
+  },
+  {
+   "at": "2026-09-26T04:45:20.981Z",
+   "positionId": "exchange_DASHUSDT_SHORT",
+   "clientOrderId": "v396xeccd0501894018762c7c5f43f6596a",
+   "status": "WORKING",
+   "repairAttempt": 1
+  }
+ ],
+ "positions": 23,
+ "tpTally": {
+  "PROTECTED": 23
+ },
+ "rowsWithTpOrderId": 23,
+ "unresolvedRows": [],
+ "auditRowsSinceStart": 0,
+ "settingsVersionNow": 218
+}
+(Use `node --trace-warnings ...` to show where the warning was created)

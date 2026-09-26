@@ -51,7 +51,12 @@ export class ExternalTradeAdapter implements ExchangeTradeAdapter {
     const live=rows.filter(row=>String(row.symbol??'').toUpperCase()===symbol&&Number(row.positionAmt)!==0);
     if(hedge){
       const match=live.find(row=>String(row.positionSide??'').toUpperCase()===side);
-      const available=Number(match?.positionAmt??0);
+      // Hedge mode reports a SHORT as a negative positionAmt, so the reduce capability of that row is
+      // its absolute size and the sign only says which side it is. Comparing the raw amount against 0
+      // refused every live SHORT as "no live position" and left eight real shorts without protection.
+      const amount=Number(match?.positionAmt??Number.NaN);
+      const expectedSign=side==='LONG'?1:-1;
+      const available=Number.isFinite(amount)&&Math.sign(amount)===expectedSign?Math.abs(amount):0;
       if(!match||!Number.isFinite(available)||available<=0)throw new Error(`REDUCTION_PROOF_NO_LIVE_POSITION:${symbol}:${side}`);
       if(quantity>available+1e-12)throw new Error(`REDUCTION_PROOF_EXCEEDS_LIVE_POSITION:${symbol}:${side}:${quantity}>${available}`);
       return{kind:'HEDGE_POSITION_SIDE' as const,checkedAt:Date.now(),positionSide:side,liveQuantity:available};

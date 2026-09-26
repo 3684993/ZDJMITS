@@ -38,6 +38,18 @@ export class RuntimeState {
     tradeOutcomes = [];
     tradeRecords = new Map();
     manualExitGoals = new Map<string,{positionId:string;symbol:string;side:string;rootKey:string;attempt:number;createdAt:number;nextAttemptAt:number;lastReason:string|null}>();
+    /**
+     * Problem A: the deterministic risk-admission verdict of the most recent Entry decision. This is a
+     * live verdict, not an audit fact — the next cycle that passes admission clears it, and a reader
+     * bounds its age, so the cockpit's authoritative first cause can never be a stale blocker.
+     */
+    lastRiskAdmissionVerdict: {at:number;symbol:string;stage:string;code:string;reasons:string[];limits:string[];brainRunId:string|null;allocationPlanId:string|null} | null = null;
+    /**
+     * Problem B: a read-only copy of which symbols the committed margin-tier authority covers, written only
+     * by the runtime that owns that authority. It lets the pipeline refuse a candidate it can already
+     * prove will be refused by admission, instead of paying for a model call first.
+     */
+    marginTierCoverage: {symbols:string[];version:string;contentHash:string;loadedAt:number} | null = null;
     manualIntents = new Map();
     manualOrders = new Map();
     experienceSamples = new Map();

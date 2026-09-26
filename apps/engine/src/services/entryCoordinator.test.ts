@@ -1,6 +1,6 @@
 import {getBinanceRequestBudget} from '../adapters/binance/requestBudget.js';
 import { describe,expect,it,vi } from 'vitest';
-import { RuntimeState } from '../state/runtimeState.js';import { EventBus } from '../events/eventBus.js';import { EntryCoordinator } from './entryCoordinator.js';import { PositionService } from './positionService.js';import type { EntryIntent,EntryOrder,SystemSettings } from '@zdj/contracts';
+import { RuntimeState } from '../state/runtimeState.js';import { EventBus } from '../events/eventBus.js';import { EntryCoordinator, RISK_ADMISSION_VERDICT_TTL_MS } from './entryCoordinator.js';import { PositionService } from './positionService.js';import type { EntryIntent,EntryOrder,SystemSettings } from '@zdj/contracts';
 const settings={entry:{reviewIntervalSeconds:5,maxReprices:12,minReachability:.1,makerOffsetTicks:0},portfolio:{maxPendingEntries:6,maxPositions:12}} as unknown as SystemSettings;
 const intent={id:'i',symbol:'BTCUSDT',side:'LONG',confidence:.8,idealPrice:100,acceptablePriceRange:{min:99,max:101},horizonMinutes:5,leverage:20,createdAt:1,absoluteExpiresAt:2,packetId:'p',brainRunId:'r'} as EntryIntent;
 const order={id:'o',exchangeOrderId:'x',symbol:'BTCUSDT',side:'LONG',quantity:2,price:100,filledQuantity:.4,leverage:20,status:'PARTIALLY_FILLED',createdAt:1,updatedAt:1,absoluteExpiresAt:2,repriceCount:0,intentId:'i',reachability:.8} as EntryOrder;
@@ -34,5 +34,25 @@ describe('Primary trigger provenance',()=>{
     expect(move('PRIMARY_RUNNING','PRIMARY_START').triggerReason).toBe('PERMISSION_CHANGED');
     move('READY','DECISION_CONTEXT_CHANGED');move('PRIMARY_QUEUED','WAITING_PRIMARY_SLOT');
     expect(move('PRIMARY_RUNNING','PRIMARY_START').triggerReason).toBe('DECISION_CONTEXT_CHANGED');
+  });
+});
+
+describe('A: the current risk-admission verdict is bounded and self-clearing',()=>{
+  const coordinator=()=>new EntryCoordinator(new RuntimeState(settings),{} as never,{} as never,{} as never,new EventBus());
+  it('records the leading reason and its full set for the newest cycle only',()=>{
+    const entry=coordinator();
+    (entry as any).recordRiskAdmissionVerdict('PORTFOLIO_RISK_ADMISSION','HUMAN_ACK_OVERDUE',
+      ['HUMAN_ACK_OVERDUE','HUMAN_ACK_OVERDUE','HUMAN_POTENTIAL_NOTIONAL_LIMIT'],['MAX_GROSS_NOTIONAL'],'TAOUSDT','run-1','plan-1');
+    const verdict=entry.riskAdmissionVerdict(Date.now());
+    expect(verdict).toMatchObject({code:'HUMAN_ACK_OVERDUE',stage:'PORTFOLIO_RISK_ADMISSION',symbol:'TAOUSDT',brainRunId:'run-1',allocationPlanId:'plan-1'});
+    expect(verdict?.reasons).toEqual(['HUMAN_ACK_OVERDUE','HUMAN_POTENTIAL_NOTIONAL_LIMIT']);
+  });
+  it('expires so an old refusal can never stay the primary reason, and a cleared verdict reads as none',()=>{
+    const entry=coordinator();
+    (entry as any).recordRiskAdmissionVerdict('PORTFOLIO_RISK_ADMISSION','HUMAN_POTENTIAL_NOTIONAL_LIMIT',['HUMAN_POTENTIAL_NOTIONAL_LIMIT'],[],'WLDUSDT',null,'plan-2');
+    expect(entry.riskAdmissionVerdict(Date.now()+RISK_ADMISSION_VERDICT_TTL_MS+1)).toBeNull();
+    expect(entry.riskAdmissionVerdict(Date.now()+RISK_ADMISSION_VERDICT_TTL_MS-1_000)).not.toBeNull();
+    (entry as any).state.lastRiskAdmissionVerdict=null;
+    expect(entry.riskAdmissionVerdict(Date.now())).toBeNull();
   });
 });

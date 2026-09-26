@@ -38,6 +38,9 @@ import { materializeAiQuantityAllocation } from './aiQuantityAllocation.js';
 import { buildHistoricalTpReachability } from './historicalTpReachability.js';
 import { evaluateEconomicEntryFeasibility } from './economicEntryFeasibility.js';
 
+/** How long the latest deterministic admission refusal may still be called the current first cause. */
+export const RISK_ADMISSION_VERDICT_TTL_MS = 5 * 60_000;
+
 export class EntryCoordinator {
   private active = new Set<string>();
   private primaryWaiters = new Set<string>();
@@ -380,7 +383,14 @@ export class EntryCoordinator {
       const reachability=this.market?buildHistoricalTpReachability({candles:(timeframe,limit)=>this.market!.cachedCandles(symbol,timeframe,limit),lookbackBars:this.state.settings.tradeEconomics.reachabilityLookbackBars,minSamples:this.state.settings.tradeEconomics.reachabilityMinSamples}):undefined;
       executionEnvelope=buildPreAiExecutionEnvelope(this.state,symbol,Date.now(),reachability);
       this.events.publish('PRE_AI_EXECUTION_ENVELOPE_CREATED',{executionEnvelope},symbol);
-      if(!executionEnvelope.LONG.executable&&!executionEnvelope.SHORT.executable){this.reject(symbol,'PRE_AI_NO_EXECUTABLE_CAPACITY');return;}
+      if(!executionEnvelope.LONG.executable&&!executionEnvelope.SHORT.executable){
+        // Name what actually denied the side. A symbol with no verified margin bracket is refused here,
+        // before Primary is called, and the refusal is about that symbol alone.
+        const constraint=[executionEnvelope.LONG,executionEnvelope.SHORT].map((side:any)=>String(side.firstBindingConstraint??'')).find(Boolean)??'PRE_AI_NO_EXECUTABLE_CAPACITY';
+        this.events.publish('ENTRY_DECISION_BLOCKED',{stage:'PRE_AI_EXECUTION_ENVELOPE',reason:constraint,
+          reasons:[...new Set([executionEnvelope.LONG,executionEnvelope.SHORT].flatMap((side:any)=>side.riskHeadroom?.blockers??[]))].slice(0,12),
+          sideAuthorization:executionEnvelope.sideAuthorization,modelCallConsumed:false},symbol);
+        this.reject(symbol,constraint);return;}
       // The envelope says a side has capital; it does not say a plan can be written for it. This probe
       // answers the plan question - does any exchange-legal quantity on this side clear its own hard
       // profit floor - with the same functions the plan layer uses, so a refusal here is a refusal the
@@ -450,7 +460,7 @@ export class EntryCoordinator {
       const plan=materializeAiQuantityAllocation({state:this.state,candidate,snapshot:market,side,quantityUnits,authorizationMaxPrice:d.acceptablePriceRange.max,envelope:executionEnvelope});
       const economicAdmission=evaluateEconomicEntryFeasibility({state:this.state,market:this.market,symbol,side,quantityUnits,acceptablePriceRange:{min:Number(d.acceptablePriceRange.min),max:Number(d.acceptablePriceRange.max)},profitTakePlan:d.profitTakePlan,envelope:executionEnvelope});
       this.events.publish('ENTRY_ECONOMIC_ADMISSION_EVALUATED',{brainRunId:result.runId,mode:economicAdmission.mode,passed:economicAdmission.passed,wouldBlock:!economicAdmission.passed,expectedNetProfit:economicAdmission.expectedNetProfit,requiredNetProfit:economicAdmission.requiredNetProfit,reachProbability:economicAdmission.reachProbability,historicalHardMaxMovePercent:economicAdmission.historicalHardMaxMovePercent,targetMovePercent:economicAdmission.targetMovePercent,notionalUsd:economicAdmission.notionalUsd,blockers:economicAdmission.blockers,quantityMutated:false,targetMutated:false},symbol);
-      if(economicAdmission.mode==='ENFORCE'&&!economicAdmission.passed){const reason=economicAdmission.blockers[0]??'ECONOMIC_ADMISSION_FAILED';this.events.publish('ENTRY_DECISION_BLOCKED',{stage:'ECONOMIC_ADMISSION',reason,reasons:economicAdmission.blockers,brainRunId:result.runId},symbol);this.reject(symbol,reason,result.runId,d.tradeSide??undefined);return;}
+      if(economicAdmission.mode==='ENFORCE'&&!economicAdmission.passed){const reason=economicAdmission.blockers[0]??'ECONOMIC_ADMISSION_FAILED';this.events.publish('ENTRY_DECISION_BLOCKED',{stage:'ECONOMIC_ADMISSION',reason,reasons:economicAdmission.blockers,brainRunId:result.runId},symbol);this.recordRiskAdmissionVerdict('ECONOMIC_ADMISSION',reason,economicAdmission.blockers,[],symbol,result.runId,null);this.reject(symbol,reason,result.runId,d.tradeSide??undefined);return;}
       this.state.allocationPlans.set(plan.planId, plan);
       if (plan.admission.startsWith("REJECT_")) {this.events.publish("PORTFOLIO_ADMISSION_REJECTED",{ plan, brainRunId: result.runId },symbol);this.reject(symbol,`PORTFOLIO_${plan.admission}: ${plan.reasons.join(",")}`,result.runId,d.direction);return;}
       // J2: one authoritative portfolio admission decides both the read-only pre-check and the
@@ -460,6 +470,7 @@ export class EntryCoordinator {
         leverage:Number(plan.leverage??0),markPrice:Number(market?.quote?.mark??market?.quote?.last??0),planId:plan.planId,intentId:null};
       if(!admission?.admit||!admission?.gate){
         this.events.publish('ENTRY_DECISION_BLOCKED',{stage:'PORTFOLIO_RISK_ADMISSION',reason:'RISK_ADMISSION_UNPROVEN',reasons:['PORTFOLIO_RISK_ADMISSION_NOT_INSTALLED'],brainRunId:result.runId,allocationPlanId:plan.planId},symbol);
+        this.recordRiskAdmissionVerdict('PORTFOLIO_RISK_ADMISSION','RISK_ADMISSION_UNPROVEN',['PORTFOLIO_RISK_ADMISSION_NOT_INSTALLED'],[],symbol,result.runId,plan.planId);
         this.reject(symbol,'RISK_ADMISSION_UNPROVEN',result.runId,d.direction);return;
       }
       const admissionDecision=admission.admit(admissionCandidate,Date.now());
@@ -472,8 +483,12 @@ export class EntryCoordinator {
       if(!admissionDecision.allowed||!riskTicket){
         const reason=admissionDecision.reasons[0]??'PORTFOLIO_ADMISSION_BLOCKED';
         this.events.publish('ENTRY_DECISION_BLOCKED',{stage:'PORTFOLIO_RISK_ADMISSION',reason,reasons:admissionDecision.reasons,limits:admissionDecision.limits,brainRunId:result.runId,allocationPlanId:plan.planId},symbol);
+        this.recordRiskAdmissionVerdict('PORTFOLIO_RISK_ADMISSION',reason,admissionDecision.reasons,admissionDecision.limits??[],symbol,result.runId,plan.planId);
         this.reject(symbol,`RISK_${reason}`,result.runId,d.direction);return;
       }
+      // The most recent decision is the only one the authoritative first cause may describe: a cycle
+      // that gets through admission clears the previous refusal instead of leaving it on screen.
+      this.state.lastRiskAdmissionVerdict=null;
       // S06: the plan is assembled from system-generated candidates and written durably before any
       // reservation exists. A plan that cannot be stored must not become an order.
       const intentId=uid('intent'),cycleIdOfIntent=`cycle_entry_${intentId}`;
@@ -675,6 +690,21 @@ export class EntryCoordinator {
   private async waitForPrimary(symbol:string){this.primaryWaiters.add(symbol);try{while(!this.ai.hasCapacity('PRIMARY_BRAIN')){if(this.ai.isCircuitOpen('PRIMARY_BRAIN'))throw new Error('AI_PRIMARY_CIRCUIT_OPEN');await new Promise(resolve=>setTimeout(resolve,100));}}finally{this.primaryWaiters.delete(symbol);}}
   private cooldown(symbol: string, reason: string, duration: number, lifecycle:string="TECHNICAL_COOLDOWN",extra:Record<string,unknown>={}) {const candidate = this.state.universe.find((x) => x.symbol === symbol),now = Date.now();const previous=this.state.candidateLifecycle.get(symbol),failureCount=lifecycle==='AI_FAILURE_COOLDOWN'?(Number(previous?.failureCount??0)+1):0,quarantineAfter=this.state.settings.ai.highFrequency?.quarantineAfterFailures??3,status=lifecycle==='AI_FAILURE_COOLDOWN'&&failureCount>=quarantineAfter?'QUARANTINED':lifecycle,finalDuration=status==='QUARANTINED'?(this.state.settings.ai.highFrequency?.quarantineSeconds??300)*1000:duration;this.state.rejectionCooldown.set(symbol,{until:now+finalDuration,reason,rank:candidate?.rank??9999,at:now});const snapshot=this.state.snapshots.get(symbol),fingerprint=JSON.stringify({trend:snapshot?.technical?.['15m']?.trend,atr:Math.round((snapshot?.quote?.last??0)/Math.max(.0000001,snapshot?.technical?.['15m']?.atr14??1)),spread:Math.round(candidate?.spreadBps??0)});this.transition(symbol,status,reason,{nextEligibleAt:now+finalDuration,failureCount,fingerprint,...extra});this.state.pool.remove(symbol,"REJECTED");this.state.pool.replenish(this.state.universe);}
   private reject(symbol:string,reason:string,brainRunId?:string,direction?:"LONG"|"SHORT") {const now=Date.now(),until=now+(this.state.settings.ai.highFrequency?.retryCooldownSeconds??25)*1000;this.cooldown(symbol,reason,until-now,"REJECT_COOLDOWN");this.events.publish("CANDIDATE_REJECTED",{reason,cooldownUntil:until,brainRunId,direction,decision:"REJECT_CANDIDATE",entryIntentCreated:false},symbol);}
+  /**
+   * Problem A: remember *which* deterministic admission decision stopped the most recent Entry cycle, so
+   * the authoritative first cause can name it instead of reporting a healthy pipeline. Only the two
+   * admission gates that refuse new risk write this, and only a cycle that passes them clears it.
+   */
+  private recordRiskAdmissionVerdict(stage:string,code:string,reasons:string[],limits:string[],symbol:string,brainRunId:string|null,allocationPlanId:string|null){
+    this.state.lastRiskAdmissionVerdict={at:Date.now(),symbol,stage,code,reasons:[...new Set((reasons??[]).map(String))].slice(0,12),
+      limits:(limits??[]).map(String).slice(0,12),brainRunId,allocationPlanId};
+  }
+  /** The current risk-admission refusal, or null once it is no longer the newest word on Entry. */
+  riskAdmissionVerdict(now:number,ttlMs=RISK_ADMISSION_VERDICT_TTL_MS){
+    const verdict=this.state.lastRiskAdmissionVerdict;
+    if(!verdict||!Number.isFinite(Number(verdict.at))||now-Number(verdict.at)>ttlMs)return null;
+    return {...verdict,ageMs:now-Number(verdict.at)};
+  }
   private reviewBusy=false;
   async reviewPending() {
     const now=Date.now(),policy=this.state.settings.entry.nearMarket,interval=(policy?.enabled?policy.reviewSeconds:this.state.settings.entry.reviewIntervalSeconds)*1000;if(this.reviewBusy||now-this.lastReview<interval)return;this.reviewBusy=true;this.lastReview=now;

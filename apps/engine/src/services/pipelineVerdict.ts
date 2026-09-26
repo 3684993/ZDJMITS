@@ -8,7 +8,7 @@
  */
 export type PipelineVerdict = {
   code: string;
-  stage: 'PERMISSION' | 'RUNTIME_CONTROL' | 'MARKET_DATA' | 'EXECUTION_FACTS' | 'CAPACITY' | 'SUPPLY' | 'POSITION_SLOTS' | 'IN_FLIGHT' | 'MODEL' | 'NONE';
+  stage: 'PERMISSION' | 'RUNTIME_CONTROL' | 'MARKET_DATA' | 'EXECUTION_FACTS' | 'CAPACITY' | 'SUPPLY' | 'POSITION_SLOTS' | 'IN_FLIGHT' | 'RISK_ADMISSION' | 'MODEL' | 'NONE';
   nextAction: string;
   evidence: Record<string, unknown>;
   /** Lower-level facts about the same cycle. Never presented as a second first cause. */
@@ -33,6 +33,8 @@ type VerdictFacts = {
   pendingEntries?: number | null;
   maxPendingEntries?: number | null;
   freshMarkets?: {status?: string; stale?: string[]; sequenceInvalid?: number} | null;
+  /** Problem A: the deterministic admission refusal of the newest Entry cycle, already age-bounded. */
+  riskAdmission?: {at: number; symbol: string; stage: string; code: string; reasons: string[]; limits: string[]; ageMs: number} | null;
 };
 
 const STAGE_BY_CODE: Record<string, PipelineVerdict['stage']> = {
@@ -65,15 +67,28 @@ const NEXT_ACTION: Record<PipelineVerdict['stage'], (facts: VerdictFacts, code: 
   POSITION_SLOTS: (facts) => `持仓槽位 ${facts.slots?.used ?? 0}/${facts.slots?.max ?? 0} 已满；只能人工释放槽位，不自动减仓`,
   IN_FLIGHT: (facts) => `在途建仓 ${facts.pendingEntries ?? 0}/${facts.maxPendingEntries ?? 0} 已达上限；等待在途订单收敛或终态确认，不并发追加`,
   MODEL: (facts) => `恢复 Primary 模型可用性（${facts.noEntryReason ?? 'MODEL'}）；模型不可用时不猜测方向、不消费额度`,
+  RISK_ADMISSION: (facts) => {
+    const refusal = facts.riskAdmission;
+    const reasons = (refusal?.reasons ?? []).length ? (refusal?.reasons ?? []).join(' · ') : refusal?.code ?? 'RISK_ADMISSION';
+    return `确定性风险门拒绝新增风险（${refusal?.symbol ?? '候选'}：${reasons}）；只能由人工减少已有敞口，或经 governance 写入调整权威上限。不放宽阈值、不重启流程、不再调用模型换取放行`;
+  },
   NONE: () => '无需处理：Entry 管线可用，继续由确定性硬门决定是否建仓',
 };
 
 /** The single authoritative verdict for one pipeline cycle, with everything else demoted to diagnostics. */
 export function authoritativePipelineVerdict(facts: VerdictFacts): PipelineVerdict {
   const isolatedCount = facts.marketIsolation?.isolated?.length ?? facts.marketIsolation?.isolatedCount ?? 0,
-    code = facts.noEntryReason ?? 'NONE',
-    stage = STAGE_BY_CODE[code] ?? (code.startsWith('POOL_') ? 'SUPPLY' : facts.noEntryReason ? 'EXECUTION_FACTS' : 'NONE'),
-    secondary: Array<{code: string; detail: string}> = [];
+    riskAdmission = facts.riskAdmission ?? null,
+    // A pipeline-level blocker outranks everything: while the pipeline itself is stopped, the refusal of
+    // an older cycle is history, not the operator's next action. Only with the pipeline open does the
+    // newest deterministic admission decision become the first cause, and it expires on its own.
+    code = facts.noEntryReason ?? riskAdmission?.code ?? 'NONE',
+    stage = facts.noEntryReason ? (STAGE_BY_CODE[code] ?? (code.startsWith('POOL_') ? 'SUPPLY' : 'EXECUTION_FACTS'))
+      : riskAdmission ? 'RISK_ADMISSION' : 'NONE',
+    secondary: Array<{code: string; detail: string}> = [],
+    // The refusal is evidence for the verdict it produced. While a higher stage is primary, an older
+    // admission refusal is history and must not ride along in the current first cause's evidence.
+    admission = stage === 'RISK_ADMISSION' ? riskAdmission : null;
   if (facts.marketDataReason && facts.marketDataReason !== code) secondary.push({code: `MARKET_DATA_DIAGNOSTIC:${facts.marketDataReason}`, detail: `健康候选 ${facts.marketIsolation?.healthyCandidates ?? 0}/${facts.marketIsolation?.candidateCount ?? 0}，已隔离 ${isolatedCount}`});
   if (facts.executionReadiness && facts.executionReadiness.ready === false) secondary.push({code: `EXECUTION_FACTS_DIAGNOSTIC:${facts.executionReadiness.firstBlocker ?? 'BLOCKED'}`, detail: (facts.executionReadiness.blockers ?? []).join(' · ')});
   if (facts.capacityVisibility?.sideStatus?.code) secondary.push({code: `CAPACITY_DIAGNOSTIC:${facts.capacityVisibility.sideStatus.code}`, detail: facts.capacityVisibility.sideStatus.text ?? ''});
@@ -89,7 +104,10 @@ export function authoritativePipelineVerdict(facts: VerdictFacts): PipelineVerdi
       isolatedCount, healthyCandidates: facts.marketIsolation?.healthyCandidates ?? 0,
       slotsUsed: facts.slots?.used ?? null, slotsMax: facts.slots?.max ?? null,
       executableCandidateCount: facts.executableCandidateCount ?? null, exhaustedForNewRisk: facts.capacityVisibility?.exhaustedForNewRisk ?? null,
-      pendingEntries: facts.pendingEntries ?? null, maxPendingEntries: facts.maxPendingEntries ?? null, poolStatus: facts.poolStatus ?? null},
+      pendingEntries: facts.pendingEntries ?? null, maxPendingEntries: facts.maxPendingEntries ?? null, poolStatus: facts.poolStatus ?? null,
+      riskAdmissionStage: admission?.stage ?? null, riskAdmissionSymbol: admission?.symbol ?? null,
+      riskAdmissionReasons: admission?.reasons ?? [], riskAdmissionLimits: admission?.limits ?? [],
+      riskAdmissionAgeMs: admission?.ageMs ?? null},
     secondary, evaluatedAt: facts.now,
   };
 }

@@ -150,7 +150,7 @@ export const PositionSchema = z.object({
   entryTimeSource: z.enum(['SYSTEM_FILL','BINANCE_TRADE_HISTORY','BINANCE_ORDER_HISTORY','SQLITE_EXECUTION_HISTORY','RECONCILIATION','IMPORTED_AT_STARTUP','UNKNOWN']).default('UNKNOWN'),
   managementStatus: z.enum(['AUTO_MANAGED','HUMAN_MANAGED']).default('AUTO_MANAGED'),
   humanManagedAt: z.number().int().nullable().default(null),
-  tpStatus: z.enum(['PENDING','PROTECTED','MISSING','MISMATCH','REPAIRING','REPAIR_FAILED','MANUAL_REVIEW_REQUIRED']),
+  tpStatus: z.enum(['PENDING','PROTECTED','MISSING','MISMATCH','REPAIRING','REPAIR_FAILED','MANUAL_REVIEW_REQUIRED','POSITION_FACT_UNRESOLVED']),
   tpOrderId: z.string().nullable(),
   tpLastVerifiedAt: z.number().int().nullable().default(null),
   tpCoverageSource: z.enum(['BINANCE_OPEN_ORDER','SYSTEM_CREATED','NONE']).default('NONE'),

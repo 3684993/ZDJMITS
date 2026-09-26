@@ -305,6 +305,45 @@ describe('C3-6 canonical identity and no reduce-becomes-increase',()=>{
   });
 });
 
+describe('C3-6b hedge-mode SHORT positions are proved live by absolute quantity',()=>{
+  const bracketAdapter=(rows:Record<string,unknown>[])=>{
+    const adapter=any(Object.create(ExternalTradeAdapter.prototype));
+    adapter.positionMode={hedge:true,checkedAt:Date.now()};adapter.exactOrderCache=new Map();adapter.exactOrderFlights=new Map();
+    adapter.signed=vi.fn(async()=>rows);
+    return adapter;
+  };
+
+  it('a SHORT reported as a negative positionAmt is a proven live position of that absolute size',async()=>{
+    const adapter=bracketAdapter([{symbol:'DASHUSDT',positionSide:'LONG',positionAmt:0},{symbol:'DASHUSDT',positionSide:'SHORT',positionAmt:-0.1}]);
+    const proof=await adapter.proveReduction({symbol:'DASHUSDT',positionSide:'SHORT',quantity:0.1});
+    expect(proof).toMatchObject({kind:'HEDGE_POSITION_SIDE',positionSide:'SHORT',liveQuantity:0.1});
+    await expect(adapter.proveReduction({symbol:'DASHUSDT',positionSide:'SHORT',quantity:0.2}))
+      .rejects.toThrow(/REDUCTION_PROOF_EXCEEDS_LIVE_POSITION:DASHUSDT:SHORT:0\.2>0\.1/);
+  });
+
+  it('a side whose sign contradicts the requested position side still fails closed',async()=>{
+    const adapter=bracketAdapter([{symbol:'APTUSDT',positionSide:'SHORT',positionAmt:-10}]);
+    await expect(adapter.proveReduction({symbol:'APTUSDT',positionSide:'LONG',quantity:1}))
+      .rejects.toThrow(/REDUCTION_PROOF_NO_LIVE_POSITION:APTUSDT:LONG/);
+    const flat=bracketAdapter([{symbol:'APTUSDT',positionSide:'SHORT',positionAmt:0}]);
+    await expect(flat.proveReduction({symbol:'APTUSDT',positionSide:'SHORT',quantity:1}))
+      .rejects.toThrow(/REDUCTION_PROOF_NO_LIVE_POSITION:APTUSDT:SHORT/);
+    const garbage=bracketAdapter([{symbol:'APTUSDT',positionSide:'SHORT',positionAmt:'not-a-number'}]);
+    await expect(garbage.proveReduction({symbol:'APTUSDT',positionSide:'SHORT',quantity:1}))
+      .rejects.toThrow(/REDUCTION_PROOF_NO_LIVE_POSITION:APTUSDT:SHORT/);
+  });
+
+  it('one-way mode keeps its net-sign rule for both directions',async()=>{
+    const adapter=any(Object.create(ExternalTradeAdapter.prototype));
+    adapter.positionMode={hedge:false,checkedAt:Date.now()};adapter.exactOrderCache=new Map();adapter.exactOrderFlights=new Map();
+    adapter.signed=vi.fn(async()=>[{symbol:'UNIUSDT',positionSide:'BOTH',positionAmt:-117}]);
+    expect(await adapter.proveReduction({symbol:'UNIUSDT',positionSide:'SHORT',quantity:117}))
+      .toMatchObject({kind:'ONE_WAY_REDUCE_ONLY',liveQuantity:117});
+    await expect(adapter.proveReduction({symbol:'UNIUSDT',positionSide:'LONG',quantity:1}))
+      .rejects.toThrow(/REDUCTION_PROOF_NO_LIVE_POSITION:UNIUSDT:ONE_WAY_NET:SHORT/);
+  });
+});
+
 describe('C3-7 partial fills leave only the real remainder claimed',()=>{
   it('a half-filled close frees exactly the filled half of the claim',async()=>{
     const h=wiring({submitStatus:'PARTIALLY_FILLED'});

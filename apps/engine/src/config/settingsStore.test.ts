@@ -147,3 +147,44 @@ describe('Live inference evidence',()=>{
     } finally {store.close();}
   });
 });
+
+describe('D: a semantic no-op must not mint settings lineage',()=>{
+  const configDir=()=>path.resolve(process.cwd(),'../../config');
+  const auditCount=(store:unknown)=>((store as any).db.prepare('SELECT COUNT(*) n FROM settings_audit').get().n as number);
+  const storedRow=(store:unknown)=>((store as any).db.prepare('SELECT version,payload FROM settings WHERE id=1').get() as {version:number,payload:string});
+  it('saving the same decision set changes no version and writes no audit row, while a real change still does',async()=>{
+    const dir=await mkdtemp(path.join(os.tmpdir(),'zdj-settings-noop-'));paths.push(dir);
+    const store=new SettingsStore(configDir(),dir);const initial=await store.load();
+    try{
+      const version=initial.settingsVersion,audits=auditCount(store);
+      expect((await store.save(structuredClone(initial))).settingsVersion).toBe(version);
+      expect(auditCount(store)).toBe(audits);
+      // A stale client cannot mint versions by re-posting the same document with a bumped number.
+      expect((await store.save({...structuredClone(initial),settingsVersion:version+99})).settingsVersion).toBe(version);
+      expect(auditCount(store)).toBe(audits);
+      expect(storedRow(store).version).toBe(version);
+      const changed=await store.save({...structuredClone(initial),portfolio:{...initial.portfolio,maxPositions:12}});
+      expect(changed.settingsVersion).toBe(version+1);
+      expect(auditCount(store)).toBe(audits+1);
+      expect(storedRow(store).version).toBe(version+1);
+      const reopened=new SettingsStore(configDir(),dir);
+      expect((await reopened.load()).portfolio.maxPositions).toBe(12);
+      reopened.close();
+    }finally{store.close();}
+  });
+  it('a reopen that migrates nothing adds no audit row, and a real migration still audits exactly once',async()=>{
+    const dir=await mkdtemp(path.join(os.tmpdir(),'zdj-settings-reopen-'));paths.push(dir);
+    const boot=new SettingsStore(configDir(),dir);const base:any=await boot.load();
+    const legacy:any=structuredClone(base);legacy.settingsVersion=177;legacy.takeProfit.minNetProfitUsd=.01;delete legacy.tradeEconomics;
+    (boot as any).db.prepare('UPDATE settings SET version=?,payload=? WHERE id=1').run(177,JSON.stringify(legacy));boot.close();
+    const migrated=new SettingsStore(configDir(),dir);const afterMigrate=await migrated.load();
+    const auditsAtMigrate=auditCount(migrated);
+    expect(afterMigrate.settingsVersion).toBe(177);expect(afterMigrate.takeProfit.minNetProfitUsd).toBe(1);expect(afterMigrate.tradeEconomics).toBeDefined();
+    expect(JSON.parse(storedRow(migrated).payload).tradeEconomics).toBeDefined();
+    migrated.close();
+    const reopened=new SettingsStore(configDir(),dir);await reopened.load();
+    expect(auditCount(reopened)).toBe(auditsAtMigrate);
+    expect(storedRow(reopened).version).toBe(177);
+    reopened.close();
+  });
+});

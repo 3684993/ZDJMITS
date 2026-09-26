@@ -73,4 +73,41 @@ describe('the authoritative pipeline verdict', () => {
     expect(verdict.evidence).toMatchObject({isolatedCount: 1, healthyCandidates: 1, isolatedSymbols: ['BADUSDT:TECHNICAL_5m_SEQUENCE_INVALID']});
     expect(verdict.secondary.map((row) => row.code)).toContain('MARKET_DIAGNOSTIC:STALE_SYMBOLS');
   });
+
+  const refusal = {at: 1, symbol: 'TAOUSDT', stage: 'PORTFOLIO_RISK_ADMISSION', code: 'HUMAN_ACK_OVERDUE',
+    reasons: ['HUMAN_ACK_OVERDUE', 'HUMAN_POTENTIAL_NOTIONAL_LIMIT', 'STRESS_LIMIT:MAX_GROSS_NOTIONAL'],
+    limits: ['MAX_GROSS_NOTIONAL'], ageMs: 42_000};
+
+  it('PV-08 a healthy pipeline whose newest cycle was refused by risk admission is not reported as NONE', () => {
+    const verdict = authoritativePipelineVerdict({...base, pipelineState: 'RUNNING', noEntryReason: null,
+      capacityVisibility: {exhaustedForNewRisk: false, sideStatus: {code: 'BOTH_SIDES_EXECUTABLE', text: 'LONG 与 SHORT 均可新增'}},
+      eligibility: {status: 'READY', count: 2}, executableCandidateCount: 2, riskAdmission: refusal});
+    expect(verdict.code).toBe('HUMAN_ACK_OVERDUE');
+    expect(verdict.stage).toBe('RISK_ADMISSION');
+    expect(verdict.nextAction).toContain('TAOUSDT');
+    expect(verdict.nextAction).toContain('HUMAN_POTENTIAL_NOTIONAL_LIMIT');
+    expect(verdict.nextAction).toContain('人工减少已有敞口');
+    expect(verdict.evidence).toMatchObject({riskAdmissionStage: 'PORTFOLIO_RISK_ADMISSION', riskAdmissionSymbol: 'TAOUSDT',
+      riskAdmissionLimits: ['MAX_GROSS_NOTIONAL'], riskAdmissionAgeMs: 42_000, exhaustedForNewRisk: false});
+  });
+
+  it('PV-09 a pipeline-level blocker still outranks the refusal of an older cycle', () => {
+    const verdict = authoritativePipelineVerdict({...base, noEntryReason: 'ENTRY_BACKPRESSURE', pipelineState: 'RUNNING',
+      pendingEntries: 6, maxPendingEntries: 6, riskAdmission: refusal});
+    expect(verdict.code).toBe('ENTRY_BACKPRESSURE');
+    expect(verdict.stage).toBe('IN_FLIGHT');
+    expect(verdict.nextAction).toContain('在途建仓 6/6');
+    expect(verdict.evidence.riskAdmissionSymbol).toBeNull();
+  });
+
+  it('PV-10 the risk-admission stage disappears by itself once the newest cycle passes admission', () => {
+    const cleared = authoritativePipelineVerdict({...base, pipelineState: 'RUNNING', riskAdmission: null,
+      capacityVisibility: {sideStatus: {code: 'BOTH_SIDES_EXECUTABLE', text: 'LONG 与 SHORT 均可新增'}}});
+    expect(cleared).toMatchObject({code: 'NONE', stage: 'NONE'});
+    // The refusal is named once as the primary and never re-listed as a competing primary.
+    const withRefusal = authoritativePipelineVerdict({...base, pipelineState: 'RUNNING', riskAdmission: refusal,
+      capacityVisibility: {sideStatus: {code: 'BOTH_SIDES_EXECUTABLE', text: 'LONG 与 SHORT 均可新增'}}, eligibility: {status: 'READY', count: 1}});
+    const primaries = [withRefusal.code, ...withRefusal.secondary.filter((row) => !row.code.includes('DIAGNOSTIC')).map((row) => row.code)];
+    expect(primaries).toEqual([withRefusal.code]);
+  });
 });

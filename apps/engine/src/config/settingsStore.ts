@@ -18,6 +18,33 @@ import {
 function record(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
+
+function canonicalSettings(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(canonicalSettings);
+  if (!record(value)) return value;
+  return Object.fromEntries(
+    Object.keys(value)
+      .sort()
+      .map((key) => [key, canonicalSettings(value[key])]),
+  );
+}
+
+/**
+ * Two settings documents are the same decision set when they differ in nothing but
+ * `settingsVersion`. Version-only equality is what makes a write a semantic no-op, and a no-op must
+ * not mint a version, an audit row, or a JIT binding that never existed as an operator decision.
+ */
+function sameSettingsSemantics(before: unknown, after: unknown): boolean {
+  const strip = (value: unknown) => {
+    if (!record(value)) return value;
+    const { settingsVersion: _ignored, ...rest } = value;
+    return rest;
+  };
+  return (
+    JSON.stringify(canonicalSettings(strip(before))) ===
+    JSON.stringify(canonicalSettings(strip(after)))
+  );
+}
 /**
  * Expand compiled authority facts into the three durable rows of one commit. `provenance` is metadata
  * (who collected it, which sizing envelope the derived rate used) and is deliberately outside the
@@ -471,16 +498,20 @@ export class SettingsStore {
       .prepare("SELECT payload FROM settings WHERE id=1")
       .get() as { payload: string } | undefined;
     if (row) {
-      this.current = SystemSettingsSchema.parse(
-        migrate(JSON.parse(row.payload)),
-      );
+      const stored = JSON.parse(row.payload) as unknown;
+      this.current = SystemSettingsSchema.parse(migrate(stored));
       this.migrateCredentialNamespace();
       this.seedResources(this.current);
-      this.persist(
-        this.current,
-        "v3.2-migration",
-        this.current.settingsVersion,
-      );
+      // Reopening a document that migrate() did not change must not rewrite the settings row or
+      // claim a mutation lineage: `settingsVersion` and the audit table stay exactly as the
+      // operator left them. A real migration/backfill still persists and audits at its own version.
+      if (!sameSettingsSemantics(stored, this.current)) {
+        this.persist(
+          this.current,
+          "v3.2-migration",
+          this.current.settingsVersion,
+        );
+      }
       this.seedOperationalMetrics();
       return this.current;
     }
@@ -577,6 +608,10 @@ export class SettingsStore {
   async save(next: unknown): Promise<SystemSettings> {
     await this.open();
     const parsed = SystemSettingsSchema.parse(next);
+    const stored = (this.db.prepare("SELECT payload FROM settings WHERE id=1").get() as {payload:string}|undefined)?.payload;
+    // Writing the same decision set back is not a change: it must not mint a version, an audit row, or
+    // a JIT binding that no operator ever made. A real edit still version-numbers and audits as before.
+    if (stored && sameSettingsSemantics(JSON.parse(stored), parsed)) return (this.current ??= parsed);
     const version = Math.max(
       (this.current?.settingsVersion ?? 0) + 1,
       parsed.settingsVersion + 1,

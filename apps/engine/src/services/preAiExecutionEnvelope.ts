@@ -82,6 +82,12 @@ export function buildPreAiExecutionEnvelope(state:RuntimeState,symbol:string,now
   const minimumNotional=Math.max(Number(q.minNotional??0),Number(q.minQty??0)*Number(q.last??0)),quoteNotionalCapacity=capital.executableNotionalUsd;
   const pendingRiskExposures=collectPendingEntryRiskExposures(state,{now}),expectedAdverseMovePct=Math.max(.001,Number(market.technical['15m'].atrPercent??0)/100),dailyDrawdownPct=Number(state.account.riskBaseline?.riskDrawdownPct??0),human=humanManagedExposure(state),humanHardBlock=state.settings.tradeEconomics.admissionMode==='ENFORCE'&&state.settings.positionManagement.humanManagedAdmissionCapsEnabled&&!human.withinLimits;
   const atr1=Math.max(Number(market.technical['1m'].atr14??0),q.tickSize),bandMin=Math.max(q.tickSize,q.last-atr1*.8),bandMax=q.last+atr1*.8;
+  // Problem B: a symbol the committed margin-tier authority does not cover has no verified maintenance
+  // bracket, so no capacity claim for it is proven. Absence of the mirror (no committed authority at all)
+  // is deliberately not a refusal — the fleet-level profile gate owns that case, and one uncovered symbol
+  // must never suppress healthy candidates.
+  const coverage=state.marginTierCoverage as {symbols?:string[]}|null;
+  const marginTierProven=Array.isArray(coverage?.symbols)?coverage!.symbols!.includes(String(symbol).trim().toUpperCase()):true;
   const sideCapacity=(side:ExecutionEnvelopeSide):SideExecutionCapacity=>{
     // Sizing has already refused some sides for a bounded capacity. That verdict is a pre-AI fact: the
     // envelope must not present a side as selectable when the layer that produces the order size said no.
@@ -98,14 +104,14 @@ export function buildPreAiExecutionEnvelope(state:RuntimeState,symbol:string,now
       bandLimitedUnits=roundDownUnits(maxNotionalUsd/bandCeilingPrice,q.stepSize),
       legalMaxQuantityUnits=Math.min(capacityUnits,bandLimitedUnits),
       minQuantityUnits=filtersComplete?Math.max(1,Math.ceil(Number(q.minQty)/Number(q.stepSize)-1e-9),Math.ceil(minimumLegalNotionalUsd/(Math.max(q.last,q.tickSize)*Number(q.stepSize))-1e-9)):0;
-    const executable=privateReady&&slotAvailable&&!humanHardBlock&&!planRejects&&maxNotionalUsd+1e-8>=minimumNotional&&legalMaxQuantityUnits>=minQuantityUnits;
-    const blockers=[...risk.blockers,...(planRejects?[`SIDE_PLAN_${planFacts.admission}`]:[]),...(humanHardBlock?['HUMAN_MANAGED_EXPOSURE_LIMIT']:[])];
+    const executable=marginTierProven&&privateReady&&slotAvailable&&!humanHardBlock&&!planRejects&&maxNotionalUsd+1e-8>=minimumNotional&&legalMaxQuantityUnits>=minQuantityUnits;
+    const blockers=[...risk.blockers,...(planRejects?[`SIDE_PLAN_${planFacts.admission}`]:[]),...(humanHardBlock?['HUMAN_MANAGED_EXPOSURE_LIMIT']:[]),...(marginTierProven?[]:[`MARGIN_TIER_SYMBOL_UNPROVEN:${symbol}`])];
     const binding=classifySideCapacityBinding({symbol,side,executable,blockers,
       // The probe asked "how much room is there", so its own constraint name is not a denial. When the gate
       // raised no blocker but sizing already refused this side, the refusal is the nearer cause.
       firstBindingConstraint:planRejects&&!risk.blockers?.length?null:risk.firstBindingConstraint??null,
       plannedNotionalUsd:Number(risk.plannedNotional??0),finalNotionalUsd:maxNotionalUsd,minimumLegalNotionalUsd:filtersComplete?minimumLegalNotionalUsd:null,exchangeFiltersComplete:filtersComplete,
-      planPresent:true,routePresent:true,marginTierProven:true,portfolioRiskAllowed:true,capitalBindingConstraint:capital?.bindingConstraint??null,capitalExecutableNotionalUsd:capital?.executableNotionalUsd??null,
+      planPresent:true,routePresent:true,marginTierProven,portfolioRiskAllowed:true,capitalBindingConstraint:capital?.bindingConstraint??null,capitalExecutableNotionalUsd:capital?.executableNotionalUsd??null,
       planAdmission:planFacts?.admission??null,capacityRoom:planFacts?.capacityRoom??null});
     return {executable,maxMarginUsd,maxNotionalUsd,maxQuantityUnits:legalMaxQuantityUnits,minQuantityUnits,
       legalQuantityRangeUnits:executable?[minQuantityUnits,legalMaxQuantityUnits]:null,

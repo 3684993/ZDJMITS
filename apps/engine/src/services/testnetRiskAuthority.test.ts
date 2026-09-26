@@ -435,7 +435,7 @@ describe('the authority commit channel derives its own facts', () => {
       ownerOf: () => ({ownerState: 'HUMAN_MANAGED' as const, handoffAt: null, acknowledgedAt: null}), cashFlows: () => [], profile: () => state.settings.riskGovernance.portfolioRisk ?? {},
       authority: () => ({facts: self.portfolioRiskAuthority.facts, staleObservedContentHash: self.portfolioRiskAuthority.staleObservedContentHash})});
     const proto = EngineRuntime.prototype as unknown as Record<string, (this: unknown, ...args: any[]) => any>;
-    for (const name of ['authorityScope', 'portfolioRiskRequiredSymbols', 'portfolioRiskCoverageUniverse', 'portfolioRiskSizingBound', 'collectPortfolioRiskMarginBrackets', 'collectPortfolioRiskAuthorityPreview', 'commitPortfolioRiskAuthority', 'portfolioRiskAuthorityReadback', 'inspectPortfolioRiskAuthorityDrift']) {
+    for (const name of ['authorityScope', 'portfolioRiskRequiredSymbols', 'portfolioRiskCoverageUniverse', 'portfolioRiskSizingBound', 'collectPortfolioRiskMarginBrackets', 'collectPortfolioRiskAuthorityPreview', 'commitPortfolioRiskAuthority', 'mirrorMarginTierCoverage', 'portfolioRiskAuthorityReadback', 'inspectPortfolioRiskAuthorityDrift']) {
       self[name] = (...args: any[]) => proto[name].call(self, ...args);
     }
     return {self, state, transport};

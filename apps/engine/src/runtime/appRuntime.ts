@@ -231,8 +231,12 @@ export class EngineRuntime {
     ) {
       const next = structuredClone(settings);
       next.riskGovernance.entrySafetyMode = "AUTO";
-      const saved = await store.save(next);
-      state.setSettings(saved);
+      // Testnet Entry Safety is already AUTO on every legitimate restart, so asking the store to write
+      // that again used to mint a settings version per start. Only a real difference is persisted.
+      if (settings.riskGovernance.entrySafetyMode !== "AUTO") {
+        const saved = await store.save(next);
+        state.setSettings(saved);
+      }
       const obsoleteNoCandidatePause=state.runtimeControl.mode==='PAUSED_NO_EXECUTABLE_CONTRACT';
       state.runtimeControl = {...state.runtimeControl,...(obsoleteNoCandidatePause?{mode:"RUNNING" as const,reasonCode:"NO_EXECUTABLE_CONTRACT" as const,reasonText:"持续扫描中：当前没有合格可执行机会",pausedAt:null,pauseSource:"NONE" as const,autoResume:true}:{}),entrySafetyMode:"AUTO"};
       if(!['AUTO_PAUSED_USER','AUTO_PAUSED_RISK'].includes(state.executionGovernance.mode))state.executionGovernance = {mode:"AUTO_RUNNING",changedAt:Date.now(),reason:"TESTNET_CAPITAL_AVAILABLE_AUTO",capitalEpochId:state.executionGovernance?.capitalEpochId??null,validationId:null};
@@ -897,7 +901,17 @@ export class EngineRuntime {
     const read=await this.settingsStore.readPortfolioRiskAuthority();
     this.portfolioRiskAuthority={facts:read.facts,reasons:read.reasons,loadedAt:Date.now(),
       staleObservedContentHash:read.facts?this.portfolioRiskAuthority.staleObservedContentHash:null};
+    this.mirrorMarginTierCoverage(read.facts);
     return read;
+  }
+  /**
+   * The read-only coverage mirror the pipeline consults before it spends a model call. The committed
+   * dataset stays the only authority over margin tiers; this copy answers exactly one question —
+   * "is this symbol inside it" — so a symbol that admission would refuse by name never reaches Primary.
+   */
+  private mirrorMarginTierCoverage(facts: PortfolioRiskAuthorityFacts | null){
+    this.state.marginTierCoverage=facts?{symbols:[...facts.margin.coverageSymbols].map(symbol=>String(symbol).trim().toUpperCase()).sort(),
+      version:facts.margin.version,contentHash:facts.margin.contentHash,loadedAt:Date.now()}:null;
   }
   /**
    * The symbols a committed margin dataset has to cover: what the account holds, what is already in
@@ -995,6 +1009,7 @@ export class EngineRuntime {
       expectedSettingsVersion:input.expectedSettingsVersion,provenance:{operator:String(input.operator??'operator').slice(0,80)}});
     await this.applySavedSettings(settings);
     this.portfolioRiskAuthority={facts:authority,reasons:[],loadedAt:Date.now(),staleObservedContentHash:null};
+    this.mirrorMarginTierCoverage(authority);
     this.events.publish('PORTFOLIO_RISK_AUTHORITY_COMMITTED',{settingsVersion:settings.settingsVersion,environment:authority.environment,accountScope:authority.accountScope,
       marginTierVersion:authority.margin.version,marginContentHash:authority.margin.contentHash,coverageSymbols:authority.margin.coverageSymbols.length,
       derivedMaintenanceMarginRatePct:authority.margin.maintenanceMarginRatePct,rateDerivation:authority.margin.derivation,
@@ -2072,7 +2087,8 @@ export class EngineRuntime {
         slots: {used: slotCapacity.used, max: slotCapacity.max}, eligibility: eligibilityView,
         executableCandidateCount: this.state.runtimeControl.capital.executableCandidateCount, poolStatus,
         analysisReason: analysisView?.reason ?? null, idleReason: primaryIdleReason,
-        pendingEntries: pending, maxPendingEntries: this.state.settings.portfolio.maxPendingEntries, freshMarkets});
+        pendingEntries: pending, maxPendingEntries: this.state.settings.portfolio.maxPendingEntries, freshMarkets,
+        riskAdmission: this.entry.riskAdmissionVerdict(now)});
     return {
       runtimeControl: this.state.runtimeControl,
       asOf:now,observationVersion:`${this.state.marketGeneration}:${this.state.runtimeControl.capital.generation}:${this.state.account.asOf}`,
@@ -2254,6 +2270,7 @@ export class EngineRuntime {
         status:
           this.tp.metrics().missing ||
           this.tp.metrics().repairFailed ||
+          this.tp.metrics().positionFactUnresolved ||
           this.tp.metrics().qtyMismatch ||
           this.tp.metrics().wrongSide
             ? "DEGRADED"

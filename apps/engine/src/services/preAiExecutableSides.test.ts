@@ -182,5 +182,29 @@ describe('the pre-AI envelope publishes which sides are actually executable', ()
   });
 });
 
+describe('B: an uncovered symbol is refused before the model, and only that symbol', () => {
+  it('EP-10 a symbol outside the committed margin-tier coverage has no executable side and names itself', () => {
+    const h = harness();
+    h.state.marginTierCoverage = {symbols: ['ETHUSDT', 'BNBUSDT'], version: 'V1', contentHash: 'hash-1', loadedAt: Date.now()} as any;
+    const envelope = buildPreAiExecutionEnvelope(h.state, fixtureSymbol);
+    expect(envelope.executableSides).toEqual([]);
+    for (const side of ['LONG', 'SHORT'] as const) {
+      expect(envelope[side].executable).toBe(false);
+      expect(envelope[side].firstBindingConstraint).toBe(`MARGIN_TIER_SYMBOL_UNPROVEN:${fixtureSymbol}`);
+      expect(envelope[side].authorization).toBe(`NOT_EXECUTABLE:MARGIN_TIER_SYMBOL_UNPROVEN:${fixtureSymbol}`);
+      expect(envelope[side].legalQuantityRangeUnits).toBeNull();
+    }
+    // The refusal is about this symbol only: a covered candidate keeps its capacity untouched.
+    const covered = harness();
+    covered.state.marginTierCoverage = {symbols: [fixtureSymbol], version: 'V1', contentHash: 'hash-1', loadedAt: Date.now()} as any;
+    expect(buildPreAiExecutionEnvelope(covered.state, fixtureSymbol).executableSides.length).toBeGreaterThan(0);
+  });
+
+  it('EP-11 no committed authority mirror changes nothing (the profile gate owns that case)', () => {
+    const withMirror = buildPreAiExecutionEnvelope(harness().state, fixtureSymbol);
+    expect(withMirror.executableSides.length).toBeGreaterThan(0);
+  });
+});
+
 // keep vi imported for harness stubs
 void vi;

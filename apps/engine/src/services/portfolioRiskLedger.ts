@@ -137,7 +137,12 @@ export class PortfolioRiskAdmission {
     return{...p.provenance,status,version:p.profileVersion,values:p.row,missingFields:p.missing,blockers:p.blockers,
       // The cockpit may only render this projection; a page that hashed a dataset itself would be a
       // second authority over the same fact.
-      authority:authority?{...portfolioRiskAuthorityReadback({...authority,profile:p.row as Record<string,unknown>,operatorStatus:status}),uncoveredCoverageCandidates:uncovered}:null};
+      // `authorityStatus` says whether the committed dataset matches the approved profile. It is not a
+      // claim that every symbol the pipeline might route is inside that dataset, so the lag is reported
+      // beside it instead of being hidden behind a MATCHED verdict.
+      authority:authority?{...portfolioRiskAuthorityReadback({...authority,profile:p.row as Record<string,unknown>,operatorStatus:status}),uncoveredCoverageCandidates:uncovered,
+        coverageLag:uncovered.length?{uncoveredCandidates:uncovered,marginTierVersion:authority.facts?.margin.version??null,committedAt:authority.facts?.committedAt??null,
+          action:'re-collect and commit the margin-tier authority for these symbols; until then each is refused by name before a model call'}:null}:null};
   }
 
   /** Position, order, reservation, ownership and account facts, mapped into the snapshot inputs. */

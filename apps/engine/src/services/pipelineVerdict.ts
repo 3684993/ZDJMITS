@@ -23,7 +23,9 @@ type VerdictFacts = {
   marketDataReason?: string | null;
   marketIsolation?: {candidateCount: number; isolatedCount?: number; healthyCandidates: number; isolated?: Array<{symbol: string; reasons: string[]}>} | null;
   executionReadiness?: {mode?: string; ready?: boolean; firstBlocker?: string | null; blockers?: string[]} | null;
-  capacityVisibility?: {firstBlocker?: string | null; exhaustedForNewRisk?: boolean; exhaustedReason?: string | null; sideStatus?: {code?: string; text?: string} | null} | null;
+  capacityVisibility?: {firstBlocker?: string | null; exhaustedForNewRisk?: boolean; exhaustedReason?: string | null; sideStatus?: {code?: string; text?: string} | null;
+    admission?: {exhausted?: boolean; hasVerdict?: boolean; code?: string | null; gate?: string | null; detail?: string | null;
+      ceilingUsdBySide?: {LONG: number; SHORT: number} | null} | null} | null;
   slots?: {used: number; max: number} | null;
   eligibility?: {status?: string; count?: number} | null;
   executableCandidateCount?: number | null;
@@ -34,7 +36,9 @@ type VerdictFacts = {
   maxPendingEntries?: number | null;
   freshMarkets?: {status?: string; stale?: string[]; sequenceInvalid?: number} | null;
   /** Problem A: the deterministic admission refusal of the newest Entry cycle, already age-bounded. */
-  riskAdmission?: {at: number; symbol: string; stage: string; code: string; reasons: string[]; limits: string[]; ageMs: number} | null;
+  riskAdmission?: {at: number; symbol: string; stage: string; code: string; reasons: string[]; limits: string[]; ageMs: number;
+    binding?: {kind: string; code: string; gate: string | null; limitUsd: number | null; usedUsd: number | null; headroomUsd: number | null; shortfallUsd: number | null; detail: string} | null;
+    gates?: Array<{name: string; unit: string; limitUsd: number; usedUsd: number; maxAdditionalUsd: number; clusterKey?: string | null}>} | null;
 };
 
 const STAGE_BY_CODE: Record<string, PipelineVerdict['stage']> = {
@@ -68,9 +72,17 @@ const NEXT_ACTION: Record<PipelineVerdict['stage'], (facts: VerdictFacts, code: 
   IN_FLIGHT: (facts) => `在途建仓 ${facts.pendingEntries ?? 0}/${facts.maxPendingEntries ?? 0} 已达上限；等待在途订单收敛或终态确认，不并发追加`,
   MODEL: (facts) => `恢复 Primary 模型可用性（${facts.noEntryReason ?? 'MODEL'}）；模型不可用时不猜测方向、不消费额度`,
   RISK_ADMISSION: (facts) => {
-    const refusal = facts.riskAdmission;
-    const reasons = (refusal?.reasons ?? []).length ? (refusal?.reasons ?? []).join(' · ') : refusal?.code ?? 'RISK_ADMISSION';
-    return `确定性风险门拒绝新增风险（${refusal?.symbol ?? '候选'}：${reasons}）；只能由人工减少已有敞口，或经 governance 写入调整权威上限。不放宽阈值、不重启流程、不再调用模型换取放行`;
+    const refusal = facts.riskAdmission, binding = refusal?.binding;
+    // The gate's own arithmetic is the sentence: which limit, how much room is left, how much a human has
+    // to release. A bare reason code is what let five labels stand in for one measurable ceiling.
+    const headline = binding
+      ? `${binding.code}${binding.gate && binding.gate !== binding.code ? ` · ${binding.gate}` : ''}`
+        + (binding.headroomUsd != null ? ` 可新增 ${binding.headroomUsd.toFixed(2)} USD` : '')
+        + (binding.shortfallUsd != null && binding.shortfallUsd > 0 ? `，需人工先释放 ${binding.shortfallUsd.toFixed(2)} USD` : '')
+        + (binding.kind === 'SIZE_INDEPENDENT' ? '（与订单规模无关，缩小订单不能通过）' : '')
+      : (refusal?.code ?? 'RISK_ADMISSION');
+    const coBinding = (refusal?.reasons ?? []).filter((code: string) => code !== binding?.code);
+    return `确定性风险门拒绝新增风险（${refusal?.symbol ?? '候选'}：${headline}${coBinding.length ? `；同时成立 ${coBinding.slice(0, 6).join(' · ')}` : ''}）；只能由人工减少已有敞口、人工确认交接，或经 governance 写入调整权威上限。不放宽阈值、不重启流程、不再调用模型换取放行`;
   },
   NONE: () => '无需处理：Entry 管线可用，继续由确定性硬门决定是否建仓',
 };
@@ -107,6 +119,11 @@ export function authoritativePipelineVerdict(facts: VerdictFacts): PipelineVerdi
       pendingEntries: facts.pendingEntries ?? null, maxPendingEntries: facts.maxPendingEntries ?? null, poolStatus: facts.poolStatus ?? null,
       riskAdmissionStage: admission?.stage ?? null, riskAdmissionSymbol: admission?.symbol ?? null,
       riskAdmissionReasons: admission?.reasons ?? [], riskAdmissionLimits: admission?.limits ?? [],
+      riskAdmissionBinding: admission?.binding ?? null, riskAdmissionGates: admission?.gates ?? [],
+      // A "can add" capacity reading beside a 0% admission is the contradiction this verdict exists to kill,
+      // so the number the gate reported is carried into the evidence even when the ratio model is OBSERVE.
+      riskAdmissionCeilingUsdBySide: facts.capacityVisibility?.admission?.ceilingUsdBySide ?? null,
+      riskAdmissionExhausted: facts.capacityVisibility?.admission?.exhausted ?? false,
       riskAdmissionAgeMs: admission?.ageMs ?? null},
     secondary, evaluatedAt: facts.now,
   };

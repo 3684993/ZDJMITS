@@ -305,7 +305,8 @@ const brokeState = () => {
 
   it('types the projection against the same directionBudget result the gates consume', () => {
     const visibility = portfolioCapacityVisibility(slots(27), headroom(settings(1), 10_000, [position('AAAUSDT', 'LONG', 100, 10)], Date.now()));
-    expect(Object.keys(visibility).sort()).toEqual(['blockingDimensions', 'entryCapacity', 'evaluatedAt', 'exhaustedForNewRisk', 'exhaustedReason', 'firstBlocker', 'funding', 'limits', 'sideStatus', 'exposure'].sort());
+    expect(Object.keys(visibility).sort()).toEqual(['admission', 'blockingDimensions', 'entryCapacity', 'evaluatedAt', 'exhaustedForNewRisk', 'exhaustedReason', 'firstBlocker', 'funding', 'limits', 'sideStatus', 'exposure'].sort());
+    expect(visibility).toMatchObject({admission:{hasVerdict:false,exhausted:false,code:null,ceilingUsdBySide:{LONG:0,SHORT:0}}});
     expect(visibility.exposure.LONG).toMatchObject({ notionalUsd: 1_000, limitUsd: 5_000, remainingUsd: 4_000 });
   });
 });

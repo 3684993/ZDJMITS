@@ -24,6 +24,10 @@ const EntryExecutionCapacitySchema=z.object({
   minimumLegalNotionalUsd:z.number().nonnegative().optional(),
   legalNotionalRangeUsd:z.tuple([z.number().nonnegative(),z.number().nonnegative()]).nullable().optional(),
   authorization:z.string().optional(),
+  // The committing gate's own verdict for this side, persisted with the envelope so a restart resumes the
+  // same refusal instead of re-deriving it — and a page cannot claim room the gate already denied.
+  admission:z.object({ceilingUsd:z.number().nonnegative().nullable(),refusal:z.string().nullable(),
+    gate:z.string().nullable(),detail:z.string().nullable()}).strict().nullable().optional(),
   riskHeadroom:EntryRiskHeadroomSchema,
 }).strict();
 /** Frozen pre-AI execution facts carried with an EntryIntent for restart-safe authorization. */

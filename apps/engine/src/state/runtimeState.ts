@@ -43,7 +43,9 @@ export class RuntimeState {
      * live verdict, not an audit fact — the next cycle that passes admission clears it, and a reader
      * bounds its age, so the cockpit's authoritative first cause can never be a stale blocker.
      */
-    lastRiskAdmissionVerdict: {at:number;symbol:string;stage:string;code:string;reasons:string[];limits:string[];brainRunId:string|null;allocationPlanId:string|null} | null = null;
+    lastRiskAdmissionVerdict: {at:number;symbol:string;stage:string;code:string;reasons:string[];limits:string[];brainRunId:string|null;allocationPlanId:string|null;
+      binding?:{kind:string;code:string;gate:string|null;limitUsd:number|null;usedUsd:number|null;headroomUsd:number|null;shortfallUsd:number|null;detail:string}|null;
+      gates?:Array<{name:string;unit:string;limitUsd:number;usedUsd:number;maxAdditionalUsd:number;clusterKey?:string|null}>} | null = null;
     /**
      * Problem B: a read-only copy of which symbols the committed margin-tier authority covers, written only
      * by the runtime that owns that authority. It lets the pipeline refuse a candidate it can already

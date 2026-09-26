@@ -22,7 +22,8 @@ export type SideCapacityTrace = {
   leverageFact: string | null;
   funding: {availableBalanceUsd: number; reservedMarginUsd: number; executionLeaseMarginUsd: number; executableMarginUsd: number; policyMarginCapUsd: number; executableNotionalUsd: number; bindingConstraint: string};
   risk: {marginTierProven: boolean; portfolioRiskBlockersSeen: number; grossRemainingUsd: number; grossMode: string; grossEnforced: boolean; directionRemainingUsd: number; directionMode: string; directionEnforced: boolean;
-    clusterRemainingUsd: number; clusterDirectionRemainingUsd: number; perTradeRiskRemainingUsd: number; portfolioRiskAllowed: boolean; portfolioRiskBlockers: string[]};
+    clusterRemainingUsd: number; clusterDirectionRemainingUsd: number; perTradeRiskRemainingUsd: number; portfolioRiskAllowed: boolean; portfolioRiskBlockers: string[];
+    admissionCeilingUsd: number | null; admissionGate: string | null; admissionRefusal: string | null; admissionDetail: string | null};
   plan: {present: boolean; admission: string | null; reasons: string[]; recommendedNotionalUsd: number; minExecutableMarginUsd: number | null; capacityRoom: AllocationCapacityRoom | null};
   plannedNotionalUsd: number;
   finalNotionalBeforeRoundingUsd: number;
@@ -50,6 +51,7 @@ export function classifySideCapacityBinding(input: {
   planPresent: boolean; routePresent: boolean; marginTierProven: boolean; portfolioRiskAllowed: boolean; capitalBindingConstraint: string | null;
   capitalExecutableNotionalUsd?: number | null;
   planAdmission?: string | null; capacityRoom?: AllocationCapacityRoom | null;
+  riskAdmission?: {ceilingUsd: number | null; refusal: string | null; gate: string | null; detail: string | null} | null;
 }): {constraint: BindingConstraint | string; detail: string; actualUsd: number | null; requiredUsd: number | null} {
   const {symbol, side} = input;
   const verdict = (constraint: string, detail: string, actualUsd: number | null = null, requiredUsd: number | null = null) => ({constraint, detail, actualUsd, requiredUsd});
@@ -60,7 +62,18 @@ export function classifySideCapacityBinding(input: {
   // The gate's own verdict wins: an executable side is never relabelled by a fact that sits in front of
   // capacity, and those facts stay on the trace as annotations instead.
   if (input.executable) return verdict(input.firstBindingConstraint ?? 'EXECUTABLE_HEADROOM', `${symbol} ${side} 可执行`, input.finalNotionalUsd, null);
-  // A gate that already denied the side by name outranks any inference about the exchange floor.
+  // The committing gate speaks for itself, with its own numbers: a refusal that holds at every size is
+  // named as that refusal, and a ceiling is stated as the room left against the floor it must clear.
+  const refusal = input.riskAdmission?.refusal ?? null;
+  if (refusal && !input.portfolioRiskAllowed) {
+    return verdict(refusal, `组合准入在任何名义下拒绝 ${symbol} ${side}：${input.riskAdmission?.detail ?? refusal}；缩小订单不能通过这道门`, null, null);
+  }
+  if (!input.portfolioRiskAllowed && input.blockers.includes('REJECT_RISK_ADMISSION_CEILING')) {
+    const ceiling = Number(input.riskAdmission?.ceilingUsd ?? 0), floor = input.minimumLegalNotionalUsd;
+    return verdict('RISK_ADMISSION_CEILING',
+      `${symbol} ${side}：组合准入上限只剩 ${ceiling.toFixed(2)} USD（${input.riskAdmission?.gate ?? '见逐门数值'}）${floor != null ? `，交易所最小合法名义 ${floor.toFixed(2)} USD` : ''}——资金充足，是现有敞口已占用该上限`,
+      ceiling, floor);
+  }
   if (!input.portfolioRiskAllowed) return verdict('PORTFOLIO_RISK_DENIED', `PortfolioRisk 在容量计算之前拒绝 ${symbol} 的新增风险`);
   if (!input.marginTierProven) return verdict(`MARGIN_TIER_SYMBOL_UNPROVEN:${symbol}`, `${symbol} 在 margin-tier 权威里没有已验证的 bracket 行`);
   if (input.capitalBindingConstraint === 'LEVERAGE_UNPROVEN') return verdict('LEVERAGE_UNPROVEN', `${symbol} 没有可验证的杠杆事实，容量不成立（不会用全局默认杠杆凑数）`);
@@ -109,6 +122,9 @@ export function entrySideCapacityTrace(input: {
   symbol: string; underlying: string; side: 'LONG' | 'SHORT'; quoteAsset: string;
   snapshot: any; route: any; headroom: any; portfolioRisk?: {allowed: boolean; blockers: string[]} | null; marginTier?: {proven: boolean} | null;
   evaluationSnapshot?: {equityUsd: number; grossNotionalUsd: number; clusterNotionalUsd: number; positions: number; maxPositions: number} | null;
+  riskAdmission?: {ceilingUsd: number | null; refusal: string | null; gate: string | null; detail: string | null} | null;
+  /** The gate denies this candidate at any size: the money number stays, but the row is no longer executable. */
+  admissionDenied?: boolean;
   now?: number;
 }): SideCapacityTrace {
   const {symbol, underlying, side, quoteAsset, snapshot, route, headroom} = input;
@@ -135,14 +151,16 @@ export function entrySideCapacityTrace(input: {
   // A plan the sizing layer refused cannot be executable whatever the capacity probe says: the refusal is
   // the fact that will produce (or not produce) an order size.
   const planRejects = String(planFacts?.admission ?? '').startsWith('REJECT_');
-  const executable = Boolean(headroom?.executable) && !planRejects;
+  const gateDenied = input.admissionDenied === true;
+  const executable = Boolean(headroom?.executable) && !planRejects && !gateDenied;
   const binding = classifySideCapacityBinding({
-    symbol, side, executable, blockers, firstBindingConstraint: headroom?.firstBindingConstraint ?? null,
+    symbol, side, executable, blockers: gateDenied ? [...blockers, 'REJECT_RISK_ADMISSION_CEILING'] : blockers, firstBindingConstraint: headroom?.firstBindingConstraint ?? null,
     plannedNotionalUsd, finalNotionalUsd, minimumLegalNotionalUsd, exchangeFiltersComplete: filtersComplete,
     planPresent: Boolean(planFacts?.present), routePresent: Boolean(route), marginTierProven: input.marginTier?.proven !== false,
     portfolioRiskAllowed: input.portfolioRisk?.allowed !== false, capitalBindingConstraint: capital?.bindingConstraint ?? null,
     capitalExecutableNotionalUsd: numberOrNull(capital?.executableNotionalUsd),
     planAdmission: planFacts?.admission ?? null, capacityRoom: planFacts?.capacityRoom ?? null,
+    riskAdmission: input.riskAdmission ?? null,
   });
   const rounded = roundToLegalQuantity(executable ? finalNotionalUsd : plannedNotionalUsd > 0 ? finalNotionalUsd : 0, price, stepSize, minQty);
   return {
@@ -159,12 +177,14 @@ export function entrySideCapacityTrace(input: {
       grossRemainingUsd: Number(remaining.gross ?? 0), grossMode: String(observed.gross?.mode ?? 'ENFORCE'), grossEnforced: Boolean(observed.gross?.enforced ?? true),
       directionRemainingUsd: Number(remaining.direction ?? 0), directionMode: String(observed.direction?.mode ?? 'ENFORCE'), directionEnforced: Boolean(observed.direction?.enforced ?? true),
       clusterRemainingUsd: Number(remaining.cluster ?? 0), clusterDirectionRemainingUsd: Number(remaining.clusterDirection ?? 0),
-      perTradeRiskRemainingUsd: Number(remaining.riskSizing ?? 0), portfolioRiskAllowed: input.portfolioRisk?.allowed !== false, portfolioRiskBlockers: input.portfolioRisk?.blockers ?? []},
+      perTradeRiskRemainingUsd: Number(remaining.riskSizing ?? 0), portfolioRiskAllowed: input.portfolioRisk?.allowed !== false, portfolioRiskBlockers: input.portfolioRisk?.blockers ?? [],
+      admissionCeilingUsd: numberOrNull(input.riskAdmission?.ceilingUsd), admissionGate: input.riskAdmission?.gate ?? null,
+      admissionRefusal: input.riskAdmission?.refusal ?? null, admissionDetail: input.riskAdmission?.detail ?? null},
     plan: {present: Boolean(planFacts?.present), admission: planFacts?.admission ?? null, reasons: planFacts?.reasons ?? [], recommendedNotionalUsd,
       minExecutableMarginUsd: numberOrNull(planFacts?.minExecutableMarginUsd), capacityRoom: planFacts?.capacityRoom ?? null},
     plannedNotionalUsd, finalNotionalBeforeRoundingUsd: finalNotionalUsd,
     rounded: {...rounded, stepSize, minQty},
-    executable, blockers,
+    executable, blockers: gateDenied && !blockers.includes('REJECT_RISK_ADMISSION_CEILING') ? [...blockers, 'REJECT_RISK_ADMISSION_CEILING'] : blockers,
     firstBindingConstraint: binding.constraint, actualUsd: binding.actualUsd, requiredUsd: binding.requiredUsd,
     explanation: `${symbol} ${side}：${binding.detail}`,
     evaluatedAt: now,
@@ -176,8 +196,9 @@ export function entrySideCapacityTrace(input: {
  * owns it: filters from the market snapshot, funding from the capital fact, risk remainders from the
  * headroom the gate itself ran, and the side plan from the allocation plan that sized (or refused) it.
  */
-export function entrySideCapacityTraces(state: any, routes: any[], facts: {coverageSymbols?: string[] | null; now?: number} = {}): {LONG: SideCapacityTrace[]; SHORT: SideCapacityTrace[]} {
-  const now = facts.now ?? Date.now(), coverage = facts.coverageSymbols ?? null,
+export function entrySideCapacityTraces(state: any, routes: any[], facts: {coverageSymbols?: string[] | null; now?: number;
+  admission?: {exhausted: boolean; code: string | null; gate: string | null; detail: string | null; ceilingUsdBySide: {LONG: number; SHORT: number}} | null} = {}): {LONG: SideCapacityTrace[]; SHORT: SideCapacityTrace[]} {
+  const now = facts.now ?? Date.now(), coverage = facts.coverageSymbols ?? null, book = facts.admission ?? null,
     positions = [...(state.positions?.values() ?? [])],
     traces: {LONG: SideCapacityTrace[]; SHORT: SideCapacityTrace[]} = {LONG: [], SHORT: []};
   const evaluationSnapshot = {equityUsd: Number(state.account?.equityUsd ?? 0), grossNotionalUsd: positions.reduce((n: number, row: any) => n + Math.abs(Number(row.quantity) * Number(row.markPrice)), 0),
@@ -185,19 +206,34 @@ export function entrySideCapacityTraces(state: any, routes: any[], facts: {cover
   for (const route of routes ?? []) {
     const snapshot = state.snapshots?.get?.(route.symbol);
     for (const side of ['LONG', 'SHORT'] as const) {
+      const headroom = route.riskHeadroom?.[side] ?? null;
+      // Either the route was sized against the gate itself, or the projection supplies the gate's book-level
+      // answer. One of the two must speak; neither may be inferred from the money number.
+      const own = headroom?.observed?.admission ?? null;
+      const refusal = own?.refusal ?? (book?.exhausted ? book.code : null);
+      const ceilingUsd = own?.ceilingUsd ?? book?.ceilingUsdBySide?.[side] ?? null;
+      const gate = own?.gate ?? book?.gate ?? null, detail = own?.detail ?? book?.detail ?? null;
+      const denied = Boolean(refusal) || (Array.isArray(headroom?.blockers) && headroom.blockers.includes('REJECT_RISK_ADMISSION_CEILING'))
+        || Boolean(book?.exhausted);
       traces[side].push(entrySideCapacityTrace({symbol: route.symbol, underlying: route.underlying ?? route.symbol, side, quoteAsset: route.quoteAsset,
-        snapshot, route, headroom: route.riskHeadroom?.[side] ?? null,
+        snapshot, route, headroom,
         // An uncovered symbol is refused before any capacity number means anything, and the authority's
         // own coverage list is the only place that decides it.
         marginTier: {proven: coverage ? coverage.includes(String(route.symbol).toUpperCase()) : true},
-        portfolioRisk: {allowed: true, blockers: []}, evaluationSnapshot, now}));
+        portfolioRisk: {allowed: !denied, blockers: [refusal, denied && !refusal ? 'RISK_ADMISSION_CEILING' : null].filter(Boolean) as string[]},
+        riskAdmission: {ceilingUsd, refusal: refusal ?? null, gate, detail},
+        admissionDenied: denied,
+        evaluationSnapshot, now}));
     }
   }
   return traces;
 }
 
 /** One verdict for the whole book, so a page never infers "can it trade?" from two numbers. */
-export function entrySideStatus(perSide: {LONG: {executableNotionalUsd: number}; SHORT: {executableNotionalUsd: number}}, routeCount: number) {
+export function entrySideStatus(perSide: {LONG: {executableNotionalUsd: number}; SHORT: {executableNotionalUsd: number}}, routeCount: number, deniedByAdmission = false) {
+  // Money on the side is not permission to use it: when the committing gate refuses at any size, the status
+  // line says so instead of naming a side "executable" beside a 0% admission rate.
+  if (deniedByAdmission) return {code: 'RISK_ADMISSION_EXHAUSTED' as const, text: '确定性风险门拒绝任何新增名义：见首因的每道门数值'};
   const long = Number(perSide.LONG?.executableNotionalUsd ?? 0) > 0, short = Number(perSide.SHORT?.executableNotionalUsd ?? 0) > 0;
   if (long && short) return {code: 'BOTH_SIDES_EXECUTABLE' as const, text: 'LONG 与 SHORT 均可新增'};
   if (long) return {code: 'LONG_ONLY_EXECUTABLE' as const, text: 'LONG executable / SHORT blocked'};

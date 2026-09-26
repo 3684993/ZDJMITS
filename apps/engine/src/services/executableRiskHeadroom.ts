@@ -26,16 +26,23 @@ export function exposureCapacityPolicy(settings:SystemSettings):ExposureCapacity
 }
 
 /** The one dimension that denies new Entry risk right now, whatever every other side still allows. */
-export type BindingConstraint='RISK_FACTS'|'DAILY_DRAWDOWN'|'SIDE_PLAN_ABSENT'|'PLANNED_NOTIONAL_ZERO'|'FINAL_NOTIONAL_ZERO'|'BELOW_EXCHANGE_MIN_NOTIONAL'|'EXCHANGE_FILTERS_UNPROVEN'|'PORTFOLIO_RISK_DENIED'|'QUOTE_ASSET_NOT_ENTRY_ELIGIBLE'|'GROSS_ENFORCED'|'DIRECTION_ENFORCED'|'CLUSTER'|'CLUSTER_DIRECTION'|'PER_TRADE_RISK'|'AVAILABLE_MARGIN'|'LEVERAGE_UNPROVEN'|'MARGIN_POLICY_CAP'|'MINIMUM_NOTIONAL'|'PLANNED_NOTIONAL'|'EXECUTABLE_HEADROOM'|'NONE'|(string & {});
+export type BindingConstraint='RISK_FACTS'|'DAILY_DRAWDOWN'|'SIDE_PLAN_ABSENT'|'PLANNED_NOTIONAL_ZERO'|'FINAL_NOTIONAL_ZERO'|'BELOW_EXCHANGE_MIN_NOTIONAL'|'EXCHANGE_FILTERS_UNPROVEN'|'PORTFOLIO_RISK_DENIED'|'QUOTE_ASSET_NOT_ENTRY_ELIGIBLE'|'GROSS_ENFORCED'|'DIRECTION_ENFORCED'|'CLUSTER'|'CLUSTER_DIRECTION'|'PER_TRADE_RISK'|'AVAILABLE_MARGIN'|'LEVERAGE_UNPROVEN'|'MARGIN_POLICY_CAP'|'MINIMUM_NOTIONAL'|'PLANNED_NOTIONAL'|'EXECUTABLE_HEADROOM'|'RISK_ADMISSION_CEILING'|'NONE'|(string & {});
 
 const CONSTRAINT_BY_BLOCKER:Record<string,BindingConstraint>={
   RISK_FACTS_INVALID:'RISK_FACTS',REJECT_DAILY_DRAWDOWN:'DAILY_DRAWDOWN',REJECT_GROSS_EXPOSURE:'GROSS_ENFORCED',REJECT_DIRECTION_EXPOSURE:'DIRECTION_ENFORCED',
   REJECT_CORRELATED_CLUSTER:'CLUSTER',REJECT_CLUSTER_DIRECTION_EXPOSURE:'CLUSTER_DIRECTION',REJECT_RISK_PER_TRADE:'PER_TRADE_RISK',QUOTE_ASSET_NOT_ENTRY_ELIGIBLE:'QUOTE_ASSET_NOT_ENTRY_ELIGIBLE',
-  BELOW_MINIMUM_NOTIONAL:'MINIMUM_NOTIONAL',RISK_SIZING_CLAMP:'PER_TRADE_RISK',
+  BELOW_MINIMUM_NOTIONAL:'MINIMUM_NOTIONAL',RISK_SIZING_CLAMP:'PER_TRADE_RISK',REJECT_RISK_ADMISSION_CEILING:'RISK_ADMISSION_CEILING',
 };
-const CONSTRAINT_BY_DIMENSION:Record<string,BindingConstraint>={gross:'GROSS_ENFORCED',direction:'DIRECTION_ENFORCED',cluster:'CLUSTER',clusterDirection:'CLUSTER_DIRECTION',riskSizing:'PER_TRADE_RISK',quote:'AVAILABLE_MARGIN'};
+const CONSTRAINT_BY_DIMENSION:Record<string,BindingConstraint>={gross:'GROSS_ENFORCED',direction:'DIRECTION_ENFORCED',cluster:'CLUSTER',clusterDirection:'CLUSTER_DIRECTION',riskSizing:'PER_TRADE_RISK',quote:'AVAILABLE_MARGIN',admission:'RISK_ADMISSION_CEILING'};
 
-export type HeadroomInput={settings:SystemSettings;equity:number;positions:Pick<Position,'symbol'|'side'|'quantity'|'markPrice'>[];pendingRiskExposures?:PendingEntryRiskExposureList;symbol:string;side:Side;plannedNotional:number;expectedAdverseMovePct:number;dailyDrawdownPct:number;capital?:CapitalCapacityFact;minimumNotional?:number;now?:number;strictPlannedNotional?:boolean};
+export type HeadroomInput={settings:SystemSettings;equity:number;positions:Pick<Position,'symbol'|'side'|'quantity'|'markPrice'>[];pendingRiskExposures?:PendingEntryRiskExposureList;symbol:string;side:Side;plannedNotional:number;expectedAdverseMovePct:number;dailyDrawdownPct:number;capital?:CapitalCapacityFact;minimumNotional?:number;now?:number;strictPlannedNotional?:boolean;
+  /** The most this side could add and still pass portfolio admission, as the admission ledger itself computes it.
+   *  Absent means "this layer has no verdict", which is never the same as "unlimited". */
+  riskAdmissionCeilingUsd?:number|null;
+  /** A denial the gate issues regardless of size — no amount of shrinking the order can clear it. */
+  riskAdmissionRefusal?:string|null;
+  /** Which committed ceiling that verdict came from, carried through so a reader need not re-derive it. */
+  riskAdmissionNote?:{gate:string|null;detail:string|null}|null;};
 
 /** Pure capacity calculation shared by routing, pre-Primary JIT and final risk validation. */
 export function computeExecutableRiskHeadroom(input:HeadroomInput){
@@ -48,7 +55,15 @@ export function computeExecutableRiskHeadroom(input:HeadroomInput){
   const gross=sum(()=>true),long=sum(p=>p.side==='LONG'||p.side==='BOTH'),short=sum(p=>p.side==='SHORT'||p.side==='BOTH'),clusterNow=sum(p=>riskClusterKey(p.symbol)===clusterKey),clusterDirectionNow=sum(p=>riskClusterKey(p.symbol)===clusterKey&&(p.side===input.side||p.side==='BOTH'));
   const move=Math.max(.0001,input.expectedAdverseMovePct),perTradeRiskUsd=equity*g.perTradeRiskPctEquity;
   const limits={gross:equity*g.maxGrossExposurePct,direction:equity*g.maxDirectionExposurePct,cluster:equity*g.maxClusterExposurePct,clusterDirection:equity*g.maxClusterDirectionExposurePct};
-  const remaining={gross:Math.max(0,limits.gross-gross),direction:Math.max(0,limits.direction-(input.side==='LONG'?long:short)),cluster:Math.max(0,limits.cluster-clusterNow),clusterDirection:Math.max(0,limits.clusterDirection-clusterDirectionNow),riskSizing:perTradeRiskUsd/move,quote:input.capital?.executableNotionalUsd??Number.MAX_VALUE};
+  // The admission ledger's own ceiling is a dimension of its own, so a page that reads "how much room is
+  // left" cannot miss the limit that will actually refuse the order. No verdict from that ledger is
+  // rendered as unlimited room: it is simply not part of this calculation then.
+  const ceilingSupplied=input.riskAdmissionCeilingUsd!=null&&Number.isFinite(Number(input.riskAdmissionCeilingUsd));
+  const refusal=input.riskAdmissionRefusal??null;
+  // A refusal that holds at every size is expressed as zero room rather than as an extra capacity blocker:
+  // the money arithmetic stays in this layer's own vocabulary, while the refusal is still the named cause.
+  const admission=refusal?0:ceilingSupplied?Math.max(0,Number(input.riskAdmissionCeilingUsd)):null;
+  const remaining={gross:Math.max(0,limits.gross-gross),direction:Math.max(0,limits.direction-(input.side==='LONG'?long:short)),cluster:Math.max(0,limits.cluster-clusterNow),clusterDirection:Math.max(0,limits.clusterDirection-clusterDirectionNow),riskSizing:perTradeRiskUsd/move,quote:input.capital?.executableNotionalUsd??Number.MAX_VALUE,admission:admission??Number.MAX_VALUE};
   const minimum=Math.max(1,input.minimumNotional??1),blockers:string[]=[];
   const policy=exposureCapacityPolicy(input.settings),capital=input.capital;
   const enforced={gross:policy.gross==='ENFORCE',direction:policy.direction==='ENFORCE',cluster:policy.cluster==='ENFORCE'};
@@ -59,6 +74,7 @@ export function computeExecutableRiskHeadroom(input:HeadroomInput){
   if(enforced.cluster)checks.push(['cluster','REJECT_CORRELATED_CLUSTER'],['clusterDirection','REJECT_CLUSTER_DIRECTION_EXPOSURE']);
   const quoteReason=!capital?'QUOTE_CAPACITY_UNPROVEN':capital.bindingConstraint==='QUOTE_ASSET_NOT_ENTRY_ELIGIBLE'?'QUOTE_ASSET_NOT_ENTRY_ELIGIBLE':capital.leverageFact==='UNPROVEN'?'LEVERAGE_UNPROVEN':'INSUFFICIENT_AVAILABLE_MARGIN';
   checks.push(['riskSizing','REJECT_RISK_PER_TRADE'],['quote',quoteReason]);
+  if(admission!=null)checks.push(['admission','REJECT_RISK_ADMISSION_CEILING']);
   const valid=equity>0&&Number.isFinite(equity)&&Number.isFinite(input.plannedNotional)&&input.plannedNotional>=0&&Number.isFinite(move)&&Number.isFinite(input.dailyDrawdownPct)&&Object.values(limits).every(Number.isFinite)&&Object.values(remaining).every(v=>Number.isFinite(v)&&v>=0)&&exposures.every(p=>Number.isFinite(p.notionalUsd)&&p.notionalUsd>=0&&Boolean(p.symbol));
   if(!valid)blockers.push('RISK_FACTS_INVALID');
   if(input.dailyDrawdownPct>g.maxDailyDrawdownPct)blockers.push('REJECT_DAILY_DRAWDOWN');
@@ -70,7 +86,7 @@ export function computeExecutableRiskHeadroom(input:HeadroomInput){
   const binding=(key:keyof typeof remaining)=>remaining[key];
   const finalNotional=valid?Math.max(0,Math.min(input.plannedNotional,...checks.map(([key])=>binding(key)))):0;
   if(finalNotional+1e-8<minimum&&!blockers.length)blockers.push('BELOW_MINIMUM_NOTIONAL');
-  const firstBindingConstraint=firstBinding({valid,blockers,checks,remaining,plannedNotional:input.plannedNotional,capital,finalNotional});
+  const firstBindingConstraint=firstBinding({valid,blockers,checks,remaining,plannedNotional:input.plannedNotional,capital,finalNotional,refusal:input.riskAdmissionRefusal??null});
   const observed={
     policy,enforced,
     gross:{mode:policy.gross,enforced:enforced.gross,notionalUsd:gross,limitUsd:limits.gross,remainingUsd:remaining.gross,usedPct:limits.gross>0?gross/limits.gross:0},
@@ -78,8 +94,11 @@ export function computeExecutableRiskHeadroom(input:HeadroomInput){
     directionBoth:{LONG:{notionalUsd:long,remainingUsd:Math.max(0,limits.direction-long)},SHORT:{notionalUsd:short,remainingUsd:Math.max(0,limits.direction-short)}},
     cluster:{mode:policy.cluster,enforced:enforced.cluster,clusterKey,notionalUsd:clusterNow,limitUsd:limits.cluster,remainingUsd:remaining.cluster},
     clusterDirection:{mode:policy.cluster,enforced:enforced.cluster,notionalUsd:clusterDirectionNow,limitUsd:limits.clusterDirection,remainingUsd:remaining.clusterDirection},
+    // The committed gate's own number, published beside the ratio dimensions so a page never has to
+    // reconstruct it. Null means this calculation ran without the gate's verdict, not that room is infinite.
+    admission:{ceilingUsd:admission,refusal:input.riskAdmissionRefusal??null,gate:input.riskAdmissionNote?.gate??null,detail:input.riskAdmissionNote?.detail??null},
   };
-  const factVersion=JSON.stringify({equity,side:input.side,symbol:input.symbol,exposures:exposures.map(p=>[p.id,p.symbol,p.side,Number(p.notionalUsd.toFixed(8))]).sort((a,b)=>String(a[0]).localeCompare(String(b[0]))),limits,exposureCapacityPolicy:policy,capital:capital?[capital.quoteAsset,Number(capital.availableBalanceUsd.toFixed(8)),Number(capital.reservedMarginUsd.toFixed(8)),Number(capital.executionLeaseMarginUsd.toFixed(8)),Number(capital.leverage.toFixed(4)),capital.leverageFact,Number(capital.executableNotionalUsd.toFixed(8))]:null,dailyDrawdownPct:input.dailyDrawdownPct,expectedAdverseMovePct:move});
+  const factVersion=JSON.stringify({equity,side:input.side,symbol:input.symbol,exposures:exposures.map(p=>[p.id,p.symbol,p.side,Number(p.notionalUsd.toFixed(8))]).sort((a,b)=>String(a[0]).localeCompare(String(b[0]))),limits,exposureCapacityPolicy:policy,capital:capital?[capital.quoteAsset,Number(capital.availableBalanceUsd.toFixed(8)),Number(capital.reservedMarginUsd.toFixed(8)),Number(capital.executionLeaseMarginUsd.toFixed(8)),Number(capital.leverage.toFixed(4)),capital.leverageFact,Number(capital.executableNotionalUsd.toFixed(8))]:null,dailyDrawdownPct:input.dailyDrawdownPct,expectedAdverseMovePct:move,riskAdmission:[admission==null?null:Number(admission.toFixed(8)),input.riskAdmissionRefusal??null]});
   return {factVersion,equity,cluster,clusterKey,gross,long,short,clusterNow,clusterDirectionNow,pendingRiskNotional:pending.reduce((n,p)=>n+Math.max(0,p.notionalUsd),0),limits,remaining,observed,exposureCapacityPolicy:policy,capital:capital??null,firstBindingConstraint,perTradeRiskUsd,expectedAdverseMovePct:move,plannedNotional:input.plannedNotional,finalNotional:blockers.length?0:finalNotional,minimumNotional:minimum,executable:!blockers.length,reason:blockers[0]??'PASS',blockers};
 }
 
@@ -88,13 +107,16 @@ export function computeExecutableRiskHeadroom(input:HeadroomInput){
  * either the plan size itself or the narrowest enforced ceiling, so no surface has to infer a cause
  * from a blocker list — and an observed dimension can never be named as the reason.
  */
-function firstBinding(input:{valid:boolean;blockers:string[];checks:[string,string][];remaining:Record<string,number>;plannedNotional:number;capital:CapitalCapacityFact|undefined;finalNotional:number}):BindingConstraint{
+function firstBinding(input:{valid:boolean;blockers:string[];checks:[string,string][];remaining:Record<string,number>;plannedNotional:number;capital:CapitalCapacityFact|undefined;finalNotional:number;refusal:string|null}):BindingConstraint{
   if(!input.valid)return 'RISK_FACTS';
   const fromBlocker=(reason:string):BindingConstraint=>{
     if(reason==='LEVERAGE_UNPROVEN'||reason==='QUOTE_ASSET_NOT_ENTRY_ELIGIBLE')return reason;
     if(reason==='INSUFFICIENT_AVAILABLE_MARGIN'||reason==='QUOTE_CAPACITY_UNPROVEN')return input.capital?.bindingConstraint==='MARGIN_POLICY_CAP'?'MARGIN_POLICY_CAP':'AVAILABLE_MARGIN';
     return CONSTRAINT_BY_BLOCKER[reason]??'NONE';
   };
+  // The gate's own size-independent denial is the name, quoted verbatim: relabelling it as a generic
+  // "portfolio risk denied" is what let a cockpit point at capacity while the refusal was an ack.
+  if(input.refusal)return input.refusal;
   if(input.blockers.length){const named=input.blockers.map(fromBlocker).find(reason=>reason!=='NONE');return named??'NONE';}
   const tightest=input.checks.map(([key])=>({key,value:input.remaining[key]})).sort((a,b)=>a.value-b.value)[0];
   if(input.plannedNotional<= (tightest?.value??Number.MAX_VALUE)+1e-8)return 'PLANNED_NOTIONAL';

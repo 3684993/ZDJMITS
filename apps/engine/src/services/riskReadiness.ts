@@ -71,9 +71,9 @@ export function directionBudget(settings:SystemSettings,equityInput:number,posit
 
 export type PositionCapacity={positions:number;inFlight:number;reserved:number;used:number;max:number};
 export type GrossDirectionBudget=ReturnType<typeof directionBudget>;
-export type CapacityBlocker='POSITION_CAPACITY'|'GROSS'|'DIRECTION_LONG'|'DIRECTION_SHORT'|'NOT_EVALUATED'|'NONE';
+export type CapacityBlocker='POSITION_CAPACITY'|'RISK_ADMISSION'|'GROSS'|'DIRECTION_LONG'|'DIRECTION_SHORT'|'NOT_EVALUATED'|'NONE';
 /** The dimension that denies new Entry risk on its own, whatever the other side still allows. */
-export type ExhaustedReason='POSITION_CAPACITY'|'GROSS'|'BOTH_DIRECTIONS'|'AVAILABLE_MARGIN';
+export type ExhaustedReason='POSITION_CAPACITY'|'RISK_ADMISSION'|'GROSS'|'BOTH_DIRECTIONS'|'AVAILABLE_MARGIN';
 
 /**
  * The best executable Entry notional one side can get right now, with the single reason it is limited.
@@ -112,16 +112,22 @@ export function bestExecutableSide(routes:any[],side:'LONG'|'SHORT',traces:any[]
  *
  * A ratio dimension the deployment only observes is reported as a fact and never as a blocker.
  */
-export function portfolioCapacityVisibility(capacity:PositionCapacity,budget:GrossDirectionBudget,facts:{funding?:EntryTradingCapital;routes?:any[];traces?:any[]}={}){
+export function portfolioCapacityVisibility(capacity:PositionCapacity,budget:GrossDirectionBudget,facts:{funding?:EntryTradingCapital;routes?:any[];traces?:any[];admission?:{hasVerdict?:boolean;exhausted?:boolean;code?:string|null;gate?:string|null;detail?:string|null;ceilingUsdBySide?:{LONG:number;SHORT:number}}|null}={}){
   const evaluated=budget.evaluatedAt>0,policy=budget.policy??{gross:'ENFORCE' as const,direction:'ENFORCE' as const,cluster:'ENFORCE' as const},routes=facts.routes??[],traces=facts.traces??[];
   const fundingBlock=facts.funding??{quoteAssets:[],totalExecutableMarginUsd:0,proven:false,excludedAssets:[],accountEquityUsd:null};
   const executable={LONG:bestExecutableSide(routes,'LONG',traces),SHORT:bestExecutableSide(routes,'SHORT',traces)};
   const fundableMarginUsd=Number(fundingBlock.totalExecutableMarginUsd??0),marginProven=fundingBlock.proven===true&&fundingBlock.quoteAssets.length>0;
   const slotsFull=capacity.used>=capacity.max,grossFull=policy.gross==='ENFORCE'&&budget.remainingGrossUsd<=0,longFull=policy.direction==='ENFORCE'&&budget.longAvailableNotionalUsd<=0,shortFull=policy.direction==='ENFORCE'&&budget.shortAvailableNotionalUsd<=0,marginFull=marginProven&&fundableMarginUsd<=0;
-  const firstBlocker:CapacityBlocker=!evaluated?'NOT_EVALUATED':slotsFull?'POSITION_CAPACITY':grossFull?'GROSS':longFull?'DIRECTION_LONG':shortFull?'DIRECTION_SHORT':'NONE';
-  const blockingDimensions=[slotsFull&&evaluated?'POSITION_CAPACITY':null,grossFull&&evaluated?'GROSS':null,longFull&&evaluated?'DIRECTION_LONG':null,shortFull&&evaluated?'DIRECTION_SHORT':null].filter(Boolean) as Exclude<CapacityBlocker,'NONE'|'NOT_EVALUATED'>[];
-  const exhaustedReason:ExhaustedReason|null=!evaluated?null:slotsFull?'POSITION_CAPACITY':marginFull?'AVAILABLE_MARGIN':grossFull?'GROSS':longFull&&shortFull?'BOTH_DIRECTIONS':null;
-  const sideStatus=entrySideStatus(executable,routes.length);
+  // Permission and money are different questions, and only the committing gate answers the first. Without
+  // its verdict here, a page reading an OBSERVE ratio could publish "both sides executable" beside a gate
+  // that refuses every order — which is precisely the contradiction this projection exists to prevent.
+  const gate=facts.admission??null,admissionExhausted=gate?.exhausted===true;
+  const admission={exhausted:admissionExhausted,hasVerdict:gate?.hasVerdict===true,code:gate?.code??null,gate:gate?.gate??null,
+    detail:gate?.detail??null,ceilingUsdBySide:gate?.ceilingUsdBySide??{LONG:0,SHORT:0}};
+  const firstBlocker:CapacityBlocker=!evaluated?'NOT_EVALUATED':slotsFull?'POSITION_CAPACITY':admissionExhausted?'RISK_ADMISSION':grossFull?'GROSS':longFull?'DIRECTION_LONG':shortFull?'DIRECTION_SHORT':'NONE';
+  const blockingDimensions=[slotsFull&&evaluated?'POSITION_CAPACITY':null,admissionExhausted?'RISK_ADMISSION':null,grossFull&&evaluated?'GROSS':null,longFull&&evaluated?'DIRECTION_LONG':null,shortFull&&evaluated?'DIRECTION_SHORT':null].filter(Boolean) as Exclude<CapacityBlocker,'NONE'|'NOT_EVALUATED'>[];
+  const exhaustedReason:ExhaustedReason|null=!evaluated?null:slotsFull?'POSITION_CAPACITY':admissionExhausted?'RISK_ADMISSION':marginFull?'AVAILABLE_MARGIN':grossFull?'GROSS':longFull&&shortFull?'BOTH_DIRECTIONS':null;
+  const sideStatus=entrySideStatus(executable,routes.length,admissionExhausted);
   return{
     funding:{quoteAssets:fundingBlock.quoteAssets,totalExecutableMarginUsd:fundableMarginUsd,proven:marginProven,excludedAssets:fundingBlock.excludedAssets??[],accountEquityUsd:fundingBlock.accountEquityUsd??null},
     exposure:{
@@ -130,7 +136,7 @@ export function portfolioCapacityVisibility(capacity:PositionCapacity,budget:Gro
       SHORT:{notionalUsd:budget.shortNotionalUsd,limitUsd:budget.directionLimitUsd,remainingUsd:budget.shortAvailableNotionalUsd,usedPct:budget.shortUsedPct??0,mode:policy.direction,enforced:policy.direction==='ENFORCE'},
     },
     limits:{slots:{used:capacity.used,max:capacity.max,positions:capacity.positions,inFlight:capacity.inFlight,reserved:capacity.reserved},policy},
-    entryCapacity:executable,sideStatus,
+    entryCapacity:executable,sideStatus,admission,
     firstBlocker,blockingDimensions,exhaustedReason,exhaustedForNewRisk:exhaustedReason!==null,evaluatedAt:budget.evaluatedAt,
   };
 }

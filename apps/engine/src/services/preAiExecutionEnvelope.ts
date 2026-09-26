@@ -5,6 +5,7 @@ import { computeExecutableRiskHeadroom } from './riskReadiness.js';
 import { activeExecutionLeaseMargin } from './executionLease.js';
 import { candidateCapitalFromState, leverageFactOf } from './capitalCapacity.js';
 import { classifySideCapacityBinding } from './entryCapacityTrace.js';
+import { readAdmissionCapacity } from './admissionCapacityReader.js';
 import { privateAccountFresh } from './privateAccountReadiness.js';
 import type { HistoricalTpReachabilityEnvelope } from './historicalTpReachability.js';
 import { humanManagedExposure } from './economicEntryFeasibility.js';
@@ -26,6 +27,8 @@ export interface SideExecutionCapacity {
   firstBindingConstraint?: string;
   /** max(exchange minNotional, minQty x reference price), computed from the real filters. */
   minimumLegalNotionalUsd?: number;
+  /** The admission ledger's own verdict for this side, carried so the pre-model refusal can state numbers. */
+  admission?: {ceilingUsd: number | null; refusal: string | null; gate: string | null; detail: string | null} | null;
   /** [floor, ceiling] of a notional this side could legally be submitted at, or null when it cannot. */
   legalNotionalRangeUsd?: [number, number] | null;
   authorization?: 'EXECUTABLE' | string;
@@ -92,7 +95,10 @@ export function buildPreAiExecutionEnvelope(state:RuntimeState,symbol:string,now
     // Sizing has already refused some sides for a bounded capacity. That verdict is a pre-AI fact: the
     // envelope must not present a side as selectable when the layer that produces the order size said no.
     const planFacts=routedSidePlanFacts(state,symbol,side),planRejects=String(planFacts?.admission??'').startsWith('REJECT_');
-    const risk=computeExecutableRiskHeadroom({settings:state.settings,equity:equityUsd,positions:[...state.positions.values()],pendingRiskExposures,symbol,side,plannedNotional:Number.MAX_SAFE_INTEGER,expectedAdverseMovePct,dailyDrawdownPct,capital,minimumNotional});
+    // The gate this candidate will actually be judged by, read before the model is asked: a side that no
+    // positive notional can pass is not offered to the model as an executable choice.
+    const admission=readAdmissionCapacity(state,symbol,side,now);
+    const risk=computeExecutableRiskHeadroom({settings:state.settings,equity:equityUsd,positions:[...state.positions.values()],pendingRiskExposures,symbol,side,...admission,plannedNotional:Number.MAX_SAFE_INTEGER,expectedAdverseMovePct,dailyDrawdownPct,capital,minimumNotional});
     const filtersComplete=[q.tickSize,q.stepSize,q.minQty,q.minNotional,q.last].every((value:number)=>Number.isFinite(Number(value))&&Number(value)>0);
     const minimumLegalNotionalUsd=filtersComplete?Math.max(Number(q.minNotional),Number(q.minQty)*Number(q.last)):0;
     const maxNotionalUsd=slotAvailable&&risk.executable&&!planRejects?Math.max(0,Math.min(quoteNotionalCapacity,risk.finalNotional)):0,maxMarginUsd=maxNotionalUsd/Math.max(1,leverage);
@@ -111,11 +117,16 @@ export function buildPreAiExecutionEnvelope(state:RuntimeState,symbol:string,now
       // raised no blocker but sizing already refused this side, the refusal is the nearer cause.
       firstBindingConstraint:planRejects&&!risk.blockers?.length?null:risk.firstBindingConstraint??null,
       plannedNotionalUsd:Number(risk.plannedNotional??0),finalNotionalUsd:maxNotionalUsd,minimumLegalNotionalUsd:filtersComplete?minimumLegalNotionalUsd:null,exchangeFiltersComplete:filtersComplete,
-      planPresent:true,routePresent:true,marginTierProven,portfolioRiskAllowed:true,capitalBindingConstraint:capital?.bindingConstraint??null,capitalExecutableNotionalUsd:capital?.executableNotionalUsd??null,
-      planAdmission:planFacts?.admission??null,capacityRoom:planFacts?.capacityRoom??null});
+      planPresent:true,routePresent:true,marginTierProven,portfolioRiskAllowed:!admission.riskAdmissionRefusal&&!risk.blockers.includes('REJECT_RISK_ADMISSION_CEILING'),capitalBindingConstraint:capital?.bindingConstraint??null,capitalExecutableNotionalUsd:capital?.executableNotionalUsd??null,
+      planAdmission:planFacts?.admission??null,capacityRoom:planFacts?.capacityRoom??null,
+      // The admission ledger's own words, so the envelope refuses with the number that binds.
+      riskAdmission:{ceilingUsd:admission.riskAdmissionCeilingUsd,refusal:admission.riskAdmissionRefusal,
+        gate:admission.capacity?.firstBinding?.gate??null,detail:admission.capacity?.firstBinding?.detail??null}});
     return {executable,maxMarginUsd,maxNotionalUsd,maxQuantityUnits:legalMaxQuantityUnits,minQuantityUnits,
       legalQuantityRangeUnits:executable?[minQuantityUnits,legalMaxQuantityUnits]:null,
       firstBindingConstraint:binding.constraint,minimumLegalNotionalUsd,
+      admission:{ceilingUsd:admission.riskAdmissionCeilingUsd,refusal:admission.riskAdmissionRefusal,
+        gate:admission.capacity?.firstBinding?.gate??null,detail:admission.capacity?.firstBinding?.detail??null},
       legalNotionalRangeUsd:executable?[minimumLegalNotionalUsd,Math.min(maxNotionalUsd,legalMaxQuantityUnits*Number(q.stepSize)*bandCeilingPrice)]:null,
       authorization:executable?'EXECUTABLE':`NOT_EXECUTABLE:${binding.constraint}`,
       riskHeadroom:{factVersion:risk.factVersion,remaining:risk.remaining,blockers,reason:humanHardBlock?'HUMAN_MANAGED_EXPOSURE_LIMIT':risk.reason}};

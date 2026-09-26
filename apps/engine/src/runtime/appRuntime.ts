@@ -2,6 +2,7 @@ import type {TradingQualityRuntimeObserver} from '../services/tradingQualityRunt
 import { TradingQualityCollector } from '../services/tradingQualityCollector.js';
 import { privateAccountFresh } from '../services/privateAccountReadiness.js';
 import { portfolioCapacityVisibility } from '../services/riskReadiness.js';
+import { bookAdmissionSummary } from '../services/admissionCapacityReader.js';
 import { entrySideCapacityTraces } from '../services/entryCapacityTrace.js';
 import { entryTradingCapital } from '../services/capitalCapacity.js';
 import { executionReadiness } from '../services/executionReadiness.js';
@@ -2072,12 +2073,16 @@ export class EngineRuntime {
         klineFreshRatio: freshness.klineFreshRatio,
         sequenceInvalid: freshness.sequenceInvalid,
       },
+      admissionBookSummary = bookAdmissionSummary(this.state, now),
       capacityView = portfolioCapacityVisibility(slotCapacity,this.state.runtimeControl.capital.directionBudget,{
         // Read the funding block from the live account at projection time: the durable route summary can
         // lag a build behind, and a stale ledger array must never zero out the money the account has.
         funding:entryTradingCapital(this.state,now),
         routes:this.state.runtimeControl.capital.routedCandidates??[],
-        traces:(()=>{const built=entrySideCapacityTraces(this.state,this.state.runtimeControl.capital.routedCandidates??[],{coverageSymbols:this.portfolioRiskAuthority?.facts?.margin.coverageSymbols??null,now});return [...built.LONG,...built.SHORT];})(),
+        // One read of the committing gate serves both the per-candidate rows and the book verdict, so the
+        // page cannot show room the gate refuses and cannot name a cause the gate did not give.
+        admission:admissionBookSummary,
+        traces:(()=>{const built=entrySideCapacityTraces(this.state,this.state.runtimeControl.capital.routedCandidates??[],{coverageSymbols:this.portfolioRiskAuthority?.facts?.margin.coverageSymbols??null,now,admission:admissionBookSummary});return [...built.LONG,...built.SHORT];})(),
       }),
       eligibilityView = {status: eligible ? "READY" : "BLOCKED", count: eligible, cooldown, excluded},
       executionReadinessView = this.executionReadinessSnapshot(now),

@@ -4,6 +4,7 @@ import { computeExecutableRiskHeadroom } from './riskReadiness.js';
 import { capitalFactVersion } from './runtimeControlService.js';
 import { collectPendingEntryRiskExposures } from './entryRiskOccupancy.js';
 import { candidateCapitalFromState } from './capitalCapacity.js';
+import { readAdmissionCapacity } from './admissionCapacityReader.js';
 
 const ACTIVE_ORDER = new Set(['NEW','SUBMITTING','UNKNOWN','WORKING','PARTIALLY_FILLED']);
 const ACTIVE_RESERVATION = new Set(['RESERVED','WORKING']);
@@ -27,7 +28,11 @@ export function evaluatePreflightFeasibility(state:RuntimeState,symbol:string,ma
     const routeCap=Number(side==='LONG'?(route.longFeasibleNotionalUsd??route.longRecommendedNotionalUsd??0):(route.shortFeasibleNotionalUsd??route.shortRecommendedNotionalUsd??0)),
       recommended=Number(side==='LONG'?(route.longRecommendedNotionalUsd??routeCap):(route.shortRecommendedNotionalUsd??routeCap)),
       plannedNotional=Math.max(0,Math.min(routeCap,recommended>0?recommended:routeCap)),
-      risk=computeExecutableRiskHeadroom({settings:state.settings,equity,positions:[...state.positions.values()],pendingRiskExposures,symbol,side,plannedNotional,expectedAdverseMovePct,dailyDrawdownPct,capital:capital0,minimumNotional:minimumNotionalUsd});
+      risk=computeExecutableRiskHeadroom({settings:state.settings,equity,positions:[...state.positions.values()],pendingRiskExposures,symbol,side,
+        // The gate's own ceiling is part of the pre-model answer, so a direction can never be declared
+        // feasible here and refused there by a limit this layer never looked at.
+        ...readAdmissionCapacity(state,symbol,side,now),
+        plannedNotional,expectedAdverseMovePct,dailyDrawdownPct,capital:capital0,minimumNotional:minimumNotionalUsd});
     riskHeadroom[side]=risk;
     if(risk.executable){allowedDirections.push(side);feasibleNotionalUsd[side]=risk.finalNotional;}
   }

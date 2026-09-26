@@ -113,7 +113,7 @@ export const V396_GOVERNANCE_FIELDS: readonly GovernanceField[] = [
   { path: `${RISK}.maxGrossExposurePct`, kind: 'number', unit: 'RATIO', min: 0.0001, max: 20, defaultValue: 1, editable: true, effectiveAt: 'NEXT_ENTRY_CYCLE',
     meaning: '总敞口上限（比例，1 = 100%）。', consumers: ['services/executableRiskHeadroom.ts#maxGrossExposurePct', 'services/riskReadiness.ts#maxGrossExposurePct'] },
   { path: `${RISK}.maxDirectionExposurePct`, kind: 'number', unit: 'RATIO', min: 0.0001, max: 20, defaultValue: 0.5, editable: true, effectiveAt: 'NEXT_ENTRY_CYCLE',
-    meaning: '单向敞口上限。', consumers: ['services/executableRiskHeadroom.ts#maxDirectionExposurePct', 'services/riskReadiness.ts#maxDirectionExposurePct'] },
+    meaning: '单向敞口上限。', consumers: ['services/executableRiskHeadroom.ts#maxDirectionExposurePct', 'services/riskReadiness.ts#maxDirectionExposurePct', 'packages/core/src/portfolio.ts#maxDirectionExposurePct'] },
   { path: `${RISK}.exposureCapacityPolicy.gross`, kind: 'enum', enum: ['ENFORCE', 'OBSERVE'], unit: 'ENUM', defaultValue: 'ENFORCE', editable: true,
     ack: 'EXPOSURE_CAPACITY_OBSERVE', ackOnlyFor: ['OBSERVE'], effectiveAt: 'NEXT_ENTRY_CYCLE',
     meaning: '总名义敞口比例是硬门（ENFORCE）还是只观测的组合事实（OBSERVE）。OBSERVE 只取消该比例的否决权，金额、杠杆、维持保证金/强平距离、单风险、cluster、槽位、JIT 与 PortfolioRisk 压力继续硬约束；比例本身仍按 equity×上限计算并展示。',

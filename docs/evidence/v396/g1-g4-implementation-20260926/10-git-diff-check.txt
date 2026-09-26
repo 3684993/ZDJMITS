@@ -1,0 +1,11 @@
+warning: in the working copy of 'apps/dashboard/src/views/OverviewView.capacity.test.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'apps/dashboard/src/views/OverviewView.vue', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'apps/engine/src/config/governanceSettingsMatrix.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'apps/engine/src/runtime/appRuntime.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'apps/engine/src/services/aiQuantityAllocation.test.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'apps/engine/src/services/entryCoordinator.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'apps/engine/src/services/preAiExecutableSides.test.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'apps/engine/src/services/preAiExecutionEnvelope.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'docs/evidence/v396/final-convergence-20260922/J5/storage-coverage.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'packages/contracts/src/portfolio.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'packages/contracts/src/trading.ts', LF will be replaced by CRLF the next time Git touches it

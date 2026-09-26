@@ -9,7 +9,10 @@ export function materializeAiQuantityAllocation(input:{state:RuntimeState;candid
   if(!Number.isInteger(units)||units<=0)throw new Error('AI_QUANTITY_UNITS_INVALID');
   const sideEnvelope=envelope[side];
   if(!sideEnvelope.executable)throw new Error('AI_DIRECTION_NOT_EXECUTABLE');
+  // Both bounds of the legal quantity interval are verified here; nothing is clamped into range. The upper
+  // bound is checked first because it is the authorized-capacity limit, and its name is the useful one.
   if(units>sideEnvelope.maxQuantityUnits)throw new Error('AI_QUANTITY_EXCEEDS_ENVELOPE');
+  if(Number.isFinite(Number(sideEnvelope.minQuantityUnits))&&units<Number(sideEnvelope.minQuantityUnits))throw new Error('AI_QUANTITY_BELOW_ENVELOPE');
   const quantity=units*step,price=Number(input.authorizationMaxPrice),notionalUsd=quantity*price;
   if(!Number.isFinite(quantity)||quantity+1e-12<snapshot.quote.minQty)throw new Error('AI_QUANTITY_BELOW_MIN_QTY');
   if(!Number.isFinite(price)||price<=0||notionalUsd+1e-8<snapshot.quote.minNotional)throw new Error('AI_QUANTITY_BELOW_MIN_NOTIONAL');

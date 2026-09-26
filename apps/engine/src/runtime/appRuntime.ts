@@ -48,7 +48,8 @@ import {ExternalResearchService} from "../services/externalResearchService.js";
 import { AssetGovernanceCoordinator } from '../services/assetGovernanceCoordinator.js';
 import { ProductionAssetResearchService } from '../services/productionAssetResearch.js';
 import { MarketCohort } from '../services/marketCohort.js';
-import { marketDataStaleReason } from '../services/marketDataStaleness.js';
+import { marketDataIsolation, marketDataStaleReason } from '../services/marketDataStaleness.js';
+import { authoritativePipelineVerdict } from '../services/pipelineVerdict.js';
 import { LossHandoffService } from '../services/lossHandoff.js';
 import { attachOwnershipRuntime, type OwnershipRuntime } from '../services/ownershipRuntime.js';
 import { V396ExitRuntime, exitSubjectFromPosition } from '../services/v396ExitRuntime.js';
@@ -1898,12 +1899,22 @@ export class EngineRuntime {
           x.exclusionReasons.includes("ACTIVE_ENTRY_ORDER"),
       ).length;
     const slotCapacity = this.state.entryCapacity();
-    const marketDataReason = marketDataStaleReason({
-      freshness,
-      marketInsufficient,
-      streamState: stream.state,
-      streamError: stream.lastError,
+    // G3: the symbols the pipeline could actually dispatch next are the ones whose data matters. A broken
+    // candle sequence on one of them isolates that symbol; the rest keep their Entry cycle.
+    const marketIsolation = marketDataIsolation({
+      candidateSymbols: [
+        ...poolItems.map((item: any) => String(item.symbol)),
+        ...(this.state.runtimeControl?.capital?.routedCandidates ?? []).map((row: any) => String(row.symbol)),
+      ],
+      readinessReasons: (symbol: string) => this.market.primaryReadyReasons(symbol, now),
     }),
+      marketDataReason = marketDataStaleReason({
+        freshness,
+        marketInsufficient,
+        streamState: stream.state,
+        streamError: stream.lastError,
+        isolation: marketIsolation,
+      }),
       pipelineState = marketDataReason ? "PAUSED_MARKET_DATA_UNAVAILABLE" : "RUNNING";
     const supply=this.supplyHealth(poolItems),{qualifiedSupply,readySupply,target,targetGap,supplyShortage,refillFailure}=supply;
     let poolStatus = supplyShortage ? "POOL_SUPPLY_SHORTAGE" : refillFailure ? "POOL_REFILL_FAILURE" : "POOL_READY";
@@ -2036,36 +2047,55 @@ export class EngineRuntime {
         (!activity.lastEntryIntentAt ||
           now - activity.lastEntryIntentAt > 10 * 60_000),
       );
-    return {
-      runtimeControl: this.state.runtimeControl,
-      asOf:now,observationVersion:`${this.state.marketGeneration}:${this.state.runtimeControl.capital.generation}:${this.state.account.asOf}`,
-      capacity:slotCapacity,privateSync:this.privateSyncHealth(),
-      capacityVisibility:portfolioCapacityVisibility(slotCapacity,this.state.runtimeControl.capital.directionBudget,{
-        // Read the funding block from the live account at projection time: the durable route summary can
-        // lag a build behind, and a stale ledger array must never zero out the money the account has.
-        funding:entryTradingCapital(this.state,now),
-        routes:this.state.runtimeControl.capital.routedCandidates??[],
-        traces:(()=>{const built=entrySideCapacityTraces(this.state,this.state.runtimeControl.capital.routedCandidates??[],{coverageSymbols:this.portfolioRiskAuthority?.facts?.margin.coverageSymbols??null,now});return [...built.LONG,...built.SHORT];})(),
-      }),
-      pipelineState,
-      marketDataReason,
-      marketDataDetail: marketDataReason ? { streamState: stream.state, streamError: stream.lastError ?? null, quotesFresh: freshness.quoteFresh, orderBooksFresh: freshness.orderBookFresh } : null,
-      market: {
-        status: this.state.snapshots.size ? "READY" : "OFFLINE",
-        count: this.state.snapshots.size,
-      },
-      freshMarkets: {
-        status: marketInsufficient
-          ? "DEGRADED"
-          : freshness.stale.length
-            ? "RECOVERING"
-            : "FRESH",
+    // One computation site each for the capacity view, the readiness snapshot and the market freshness
+    // block, so the authoritative verdict and the fields it describes can never drift apart.
+    const freshMarkets = {
+        status: marketInsufficient ? "DEGRADED" : freshness.stale.length ? "RECOVERING" : "FRESH",
         count: freshness.fresh,
         stale: freshness.stale,
         quoteFreshRatio: freshness.quoteFreshRatio,
         klineFreshRatio: freshness.klineFreshRatio,
         sequenceInvalid: freshness.sequenceInvalid,
       },
+      capacityView = portfolioCapacityVisibility(slotCapacity,this.state.runtimeControl.capital.directionBudget,{
+        // Read the funding block from the live account at projection time: the durable route summary can
+        // lag a build behind, and a stale ledger array must never zero out the money the account has.
+        funding:entryTradingCapital(this.state,now),
+        routes:this.state.runtimeControl.capital.routedCandidates??[],
+        traces:(()=>{const built=entrySideCapacityTraces(this.state,this.state.runtimeControl.capital.routedCandidates??[],{coverageSymbols:this.portfolioRiskAuthority?.facts?.margin.coverageSymbols??null,now});return [...built.LONG,...built.SHORT];})(),
+      }),
+      eligibilityView = {status: eligible ? "READY" : "BLOCKED", count: eligible, cooldown, excluded},
+      executionReadinessView = this.executionReadinessSnapshot(now),
+      analysisView = this.entry.analysisDiagnostics(),
+      authoritativeBlocker = authoritativePipelineVerdict({now, noEntryReason, pipelineState, marketDataReason,
+        marketIsolation, executionReadiness: executionReadinessView, capacityVisibility: capacityView,
+        slots: {used: slotCapacity.used, max: slotCapacity.max}, eligibility: eligibilityView,
+        executableCandidateCount: this.state.runtimeControl.capital.executableCandidateCount, poolStatus,
+        analysisReason: analysisView?.reason ?? null, idleReason: primaryIdleReason,
+        pendingEntries: pending, maxPendingEntries: this.state.settings.portfolio.maxPendingEntries, freshMarkets});
+    return {
+      runtimeControl: this.state.runtimeControl,
+      asOf:now,observationVersion:`${this.state.marketGeneration}:${this.state.runtimeControl.capital.generation}:${this.state.account.asOf}`,
+      capacity:slotCapacity,privateSync:this.privateSyncHealth(),
+      capacityVisibility: capacityView,
+      // G4: what is stopping a new Entry right now, and the action that matches it. Pages render this and
+      // nothing else as the first cause; every other status field is a subordinate diagnostic.
+      authoritativeBlocker,
+      pipelineState,
+      marketDataReason,
+      // The isolated symbols stay visible as facts about themselves, whether or not the pipeline paused.
+      marketDataIsolation: {
+        candidateCount: marketIsolation.candidateCount,
+        isolatedCount: marketIsolation.isolated.length,
+        healthyCandidates: marketIsolation.healthyCandidates,
+        isolated: marketIsolation.isolated.slice(0, 12),
+      },
+      marketDataDetail: marketDataReason ? { streamState: stream.state, streamError: stream.lastError ?? null, quotesFresh: freshness.quoteFresh, orderBooksFresh: freshness.orderBookFresh, healthyCandidates: marketIsolation.healthyCandidates } : null,
+      market: {
+        status: this.state.snapshots.size ? "READY" : "OFFLINE",
+        count: this.state.snapshots.size,
+      },
+      freshMarkets,
       pool: {
         target,qualifiedSupply,readySupply,ready:supply.readyCount,display:poolItems.length,targetGap,supplyShortage,refillFailure,health:supply,
         status: poolStatus,
@@ -2075,12 +2105,7 @@ export class EngineRuntime {
         status: this.state.universe.length ? "READY" : "SYNCING",
         count: this.state.universe.length,
       },
-      eligibility: {
-        status: eligible ? "READY" : "BLOCKED",
-        count: eligible,
-        cooldown,
-        excluded,
-      },
+      eligibility: eligibilityView,
       scout: {
         status: paused
           ? "PAUSED"
@@ -2134,9 +2159,9 @@ export class EngineRuntime {
             : "READY",
         ...this.tp.metrics(),
       },
-      analysis: this.entry.analysisDiagnostics(),
+      analysis: analysisView,
       portfolioRiskProfile: this.portfolioRisk?.profileReadback?.()??null,
-      executionReadiness:this.executionReadinessSnapshot(now),
+      executionReadiness:executionReadinessView,
       scheduler: {
         status: paused ? "PAUSED" : this.ready ? "RUNNING" : "STOPPED",
       },

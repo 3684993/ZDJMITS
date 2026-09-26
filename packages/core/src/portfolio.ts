@@ -350,10 +350,30 @@ export function buildAllocationPlan(input: {
     ),
     volatility = clamp(1 - s.technical["15m"].atrPercent / 10, 0.35, 1),
     confidenceFactor = 0.5 + 0.5 * clamp(input.confidence, 0, 1),
-    exposureFactor =
+    // G1: one direction authority. The ratio that throttles or refuses a side is the governance field the
+    // risk gates themselves consume, and it only refuses while that gate holds its veto. The intelligence
+    // tier's own max{Long,Short}ExposurePct is no longer a second independent hard veto, so a deployment
+    // that observes direction can never be refused twice for one ratio.
+    directionGovernance = (input.settings.riskGovernance ?? {}) as {
+      maxDirectionExposurePct?: number;
+      exposureCapacityPolicy?: { direction?: "ENFORCE" | "OBSERVE" };
+    },
+    directionLimitPct = Number(
+      directionGovernance.maxDirectionExposurePct ??
+        (input.direction === "LONG" ? p.maxLongExposurePct : p.maxShortExposurePct),
+    ),
+    directionEnforced =
+      (directionGovernance.exposureCapacityPolicy?.direction ?? "ENFORCE") ===
+      "ENFORCE",
+    directionUsedPct =
       input.direction === "LONG"
-        ? clamp(1 - before.longExposurePct / p.maxLongExposurePct, 0.25, 1)
-        : clamp(1 - before.shortExposurePct / p.maxShortExposurePct, 0.25, 1),
+        ? before.longExposurePct
+        : before.shortExposurePct,
+    exposureFactor = clamp(
+      1 - directionUsedPct / Math.max(0.0001, directionLimitPct),
+      0.25,
+      1,
+    ),
     raw =
       (p.dynamicMarginEnabled
         ? p.baseMarginUsd
@@ -388,10 +408,13 @@ export function buildAllocationPlan(input: {
       input.assets,
       p,
     );
-  const longRoom =
-      Math.max(0, p.maxLongExposurePct - before.longExposurePct) * equity,
-    shortRoom =
-      Math.max(0, p.maxShortExposurePct - before.shortExposurePct) * equity,
+  // The direction room is reported whether or not it binds: OBSERVE keeps the number visible and removes
+  // only the veto, so an operator can still see how close the book is to the authoritative cap.
+  const directionRoomUsd =
+      Math.max(0, directionLimitPct - directionUsedPct) * equity,
+    directionRoom = directionEnforced
+      ? directionRoomUsd
+      : Number.POSITIVE_INFINITY,
     specRoom =
       Math.max(0, p.maxSpeculativeExposurePct - before.speculativeExposurePct) *
       equity,
@@ -410,31 +433,33 @@ export function buildAllocationPlan(input: {
             quoteAvailable * p.maxQuoteAssetMarginUsagePct - quoteMargin,
           ),
     room = Math.min(
-      input.direction === "LONG" ? longRoom : shortRoom,
+      directionRoom,
       tier === "SPECULATIVE" || tier === "NEW_LISTING" || tier === "RESTRICTED"
         ? specRoom
         : Number.POSITIVE_INFINITY,
       quoteRoom,
     );
   // Which capacity sizing consumed is a fact the operator has to see: a side that sizes to zero has to
-  // arrive with the ceiling and the used number behind it, not with a bare rejection label.
-  const directionRoom = input.direction === "LONG" ? longRoom : shortRoom,
-    directionUsedUsd = input.direction === "LONG" ? before.longNotionalUsd : before.shortNotionalUsd,
-    directionLimitPct = input.direction === "LONG" ? p.maxLongExposurePct : p.maxShortExposurePct,
-    roomSources: Array<{source: string; ceilingUsd: number; usedUsd: number; roomUsd: number; limitPct: number; usedPct: number; equityUsd: number}> = [
-      {source: input.direction === "LONG" ? "LONG_EXPOSURE" : "SHORT_EXPOSURE", ceilingUsd: directionLimitPct * equity, usedUsd: directionUsedUsd, roomUsd: directionRoom,
-        limitPct: directionLimitPct, usedPct: input.direction === "LONG" ? before.longExposurePct : before.shortExposurePct, equityUsd: equity},
+  // arrive with the ceiling and the used number behind it, not with a bare rejection label. `roomUsd` is the
+  // real room either way; `enforced` says whether that room is allowed to veto under the live policy.
+  const directionUsedUsd = input.direction === "LONG" ? before.longNotionalUsd : before.shortNotionalUsd,
+    roomSources: Array<{source: string; authority: string; enforced: boolean; vetoRoomUsd: number; ceilingUsd: number; usedUsd: number; roomUsd: number; limitPct: number; usedPct: number; equityUsd: number}> = [
+      {source: input.direction === "LONG" ? "LONG_EXPOSURE" : "SHORT_EXPOSURE", authority: "riskGovernance.maxDirectionExposurePct + exposureCapacityPolicy.direction",
+        enforced: directionEnforced, vetoRoomUsd: directionRoom, ceilingUsd: directionLimitPct * equity, usedUsd: directionUsedUsd, roomUsd: directionRoomUsd,
+        limitPct: directionLimitPct, usedPct: directionUsedPct, equityUsd: equity},
     ];
   if (tier === "SPECULATIVE" || tier === "NEW_LISTING" || tier === "RESTRICTED")
-    roomSources.push({source: "SPECULATIVE_EXPOSURE", ceilingUsd: p.maxSpeculativeExposurePct * equity, usedUsd: before.speculativeNotionalUsd, roomUsd: specRoom,
+    roomSources.push({source: "SPECULATIVE_EXPOSURE", authority: "portfolioIntelligence.maxSpeculativeExposurePct", enforced: true, vetoRoomUsd: specRoom,
+      ceilingUsd: p.maxSpeculativeExposurePct * equity, usedUsd: before.speculativeNotionalUsd, roomUsd: specRoom,
       limitPct: p.maxSpeculativeExposurePct, usedPct: before.speculativeExposurePct, equityUsd: equity});
   if (quoteAvailable != null)
-    roomSources.push({source: "QUOTE_ASSET_MARGIN", ceilingUsd: quoteAvailable * p.maxQuoteAssetMarginUsagePct, usedUsd: quoteMargin, roomUsd: quoteRoom,
+    roomSources.push({source: "QUOTE_ASSET_MARGIN", authority: "portfolioIntelligence.maxQuoteAssetMarginUsagePct", enforced: true, vetoRoomUsd: quoteRoom,
+      ceilingUsd: quoteAvailable * p.maxQuoteAssetMarginUsagePct, usedUsd: quoteMargin, roomUsd: quoteRoom,
       limitPct: p.maxQuoteAssetMarginUsagePct, usedPct: quoteAvailable > 0 ? quoteMargin / quoteAvailable : 0, equityUsd: equity});
-  const boundedRooms = roomSources.filter((row) => Number.isFinite(row.roomUsd));
-  const capacityRoom = boundedRooms.length
-    ? boundedRooms.reduce((tightest, row) => (row.roomUsd < tightest.roomUsd ? row : tightest))
-    : undefined;
+  const vetoableRooms = roomSources.filter((row) => Number.isFinite(row.vetoRoomUsd));
+  const capacityRoom = vetoableRooms.length
+    ? vetoableRooms.reduce((tightest, row) => (row.vetoRoomUsd < tightest.vetoRoomUsd ? row : tightest))
+    : roomSources.find((row) => !row.enforced);
   let admission: AllocationPlan["admission"] = reasons.length
     ? reasons.includes("DUPLICATE_UNDERLYING") ||
       reasons.includes("MAX_SAME_UNDERLYING")
@@ -447,8 +472,11 @@ export function buildAllocationPlan(input: {
             ? "REJECT_MAX_POSITIONS"
             : "REJECT_LOCATION"
     : after.speculativeExposurePct > p.maxSpeculativeExposurePct ||
-        after.longExposurePct > p.maxLongExposurePct ||
-        after.shortExposurePct > p.maxShortExposurePct ||
+        (directionEnforced &&
+          (input.direction === "LONG"
+            ? after.longExposurePct
+            : after.shortExposurePct) >
+            directionLimitPct) ||
         after.usdtMarginUsd >
           quoteAvailable! *
             (quote === "USDT" ? p.maxQuoteAssetMarginUsagePct : 1) ||

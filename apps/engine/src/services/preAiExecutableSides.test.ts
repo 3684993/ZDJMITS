@@ -44,9 +44,14 @@ describe('the pre-AI envelope publishes which sides are actually executable', ()
     expect(envelope.sideAuthorization).toEqual({LONG: 'EXECUTABLE', SHORT: 'EXECUTABLE'});
     const floor = Math.max(Number(quote.minNotional), Number(quote.minQty) * Number(quote.last));
     for (const side of ['LONG', 'SHORT'] as const) {
-      expect(envelope[side].minimumLegalNotionalUsd).toBeCloseTo(floor, 8);
-      expect(envelope[side].legalNotionalRangeUsd).toEqual([floor, envelope[side].maxNotionalUsd]);
-      expect(envelope[side].firstBindingConstraint).toBeTruthy();
+      const capacity = envelope[side];
+      expect(capacity.minimumLegalNotionalUsd).toBeCloseTo(floor, 8);
+      // The stated ceiling is the notional the published maximum quantity can actually cost, so it never
+      // exceeds the authorized notional and still covers the whole-step maximum at the reference price.
+      expect(capacity.legalNotionalRangeUsd).toEqual([floor, expect.any(Number)]);
+      expect(capacity.legalNotionalRangeUsd![1]).toBeLessThanOrEqual(capacity.maxNotionalUsd + 1e-8);
+      expect(capacity.legalNotionalRangeUsd![1]).toBeGreaterThanOrEqual(capacity.maxQuantityUnits * Number(quote.stepSize) * Number(quote.last) - 1e-8);
+      expect(capacity.firstBindingConstraint).toBeTruthy();
     }
   });
 
@@ -136,6 +141,44 @@ describe('the pre-AI envelope publishes which sides are actually executable', ()
     const other = harness();
     other.state.runtimeControl.capital.routedCandidates = [{symbol: 'OTHERUSDT', underlying: 'OTHER', quoteAsset: 'USDT', shortPlanFacts: refused}] as never;
     expect(buildPreAiExecutionEnvelope(other.state, fixtureSymbol).executableSides).toEqual(['LONG', 'SHORT']);
+  });
+
+  // G2: the envelope is where the exchange floor becomes a number the model cannot miss.
+  it('EP-08 publishes both ends of the legal quantity interval from the real filters', () => {
+    const h = harness();
+    const envelope = buildPreAiExecutionEnvelope(h.state, fixtureSymbol);
+    const q = h.state.snapshots.get(fixtureSymbol)!.quote as any;
+    const floor = Math.max(q.minNotional, q.minQty * q.last);
+    for (const side of ['LONG', 'SHORT'] as const) {
+      const capacity = envelope[side];
+      expect(capacity.minQuantityUnits).toBe(Math.max(1, Math.ceil(q.minQty / q.stepSize - 1e-9), Math.ceil(floor / (q.last * q.stepSize) - 1e-9)));
+      expect(capacity.maxQuantityUnits % 1).toBe(0);
+      if (capacity.executable) {
+        expect(capacity.legalQuantityRangeUnits).toEqual([capacity.minQuantityUnits, capacity.maxQuantityUnits]);
+        expect(capacity.maxQuantityUnits).toBeGreaterThanOrEqual(capacity.minQuantityUnits);
+        expect(capacity.legalNotionalRangeUsd![0]).toBeCloseTo(floor, 8);
+      } else {
+        expect(capacity.legalQuantityRangeUnits).toBeNull();
+      }
+    }
+    const facts: any = compactEntryFacts({...h.packet, executionEnvelope: envelope} as never);
+    expect(facts.EXECUTION_ENVELOPE.LONG.minQuantityUnits).toBe(envelope.LONG.minQuantityUnits);
+    expect(facts.EXECUTION_ENVELOPE.LONG.legalQuantityRangeUnits).toEqual(envelope.LONG.legalQuantityRangeUnits);
+  });
+
+  it('EP-09 a side whose authorized capacity cannot reach the exchange floor is not executable', () => {
+    const h = harness();
+    // Squeeze the quote leg so even maximum leverage cannot produce one fillable step.
+    h.state.account = {...h.state.account, assets: [{asset: 'USDT', availableBalance: 0.01, walletBalance: 0.01, usdValue: 0.01, marginEligible: true}]};
+    const envelope = buildPreAiExecutionEnvelope(h.state, fixtureSymbol);
+    expect(envelope.executableSides).toEqual([]);
+    expect(envelope.noExecutableSide).toBe(true);
+    expect(envelope.LONG.legalQuantityRangeUnits).toBeNull();
+    expect(envelope.LONG.minQuantityUnits).toBeGreaterThan(0);
+    expect(envelope.LONG.maxQuantityUnits).toBeLessThan(envelope.LONG.minQuantityUnits!);
+    // The named cause is the funding shortfall, not a fabricated floor problem.
+    expect(envelope.LONG.firstBindingConstraint).toBe('AVAILABLE_MARGIN');
+    expect(String(envelope.LONG.authorization)).toBe('NOT_EXECUTABLE:AVAILABLE_MARGIN');
   });
 });
 

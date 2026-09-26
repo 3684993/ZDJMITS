@@ -18,6 +18,8 @@ const EntryExecutionCapacitySchema=z.object({
   maxQuantityUnits:z.number().int().nonnegative(),
   // The deterministic answer the model is told, not a suggestion: which side could be submitted now,
   // what the exchange floor is, and which single number limits the side that cannot.
+  minQuantityUnits:z.number().int().nonnegative().optional(),
+  legalQuantityRangeUnits:z.tuple([z.number().int().nonnegative(),z.number().int().nonnegative()]).nullable().optional(),
   firstBindingConstraint:z.string().optional(),
   minimumLegalNotionalUsd:z.number().nonnegative().optional(),
   legalNotionalRangeUsd:z.tuple([z.number().nonnegative(),z.number().nonnegative()]).nullable().optional(),

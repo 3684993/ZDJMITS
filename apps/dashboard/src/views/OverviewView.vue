@@ -27,8 +27,24 @@ const entryPermissionText = () =>
         : `执行安全锁生效：${pipeline.value?.noEntryReason ?? autoMode()}`;
 // Slot fill and new-risk headroom are different gates, and both numbers already exist on the
 // Engine side. The page only reads the projected verdict; it never re-derives or guesses it.
-const SUPPLY_SIDE_WAITS = ["WAITING_CANDIDATE", "WAITING_NEW_FACTS", "NO_SUPPLY", "RULE_FILTERED"];
 const capacityVisibility = computed(() => pipeline.value?.capacityVisibility ?? null);
+// G4: the Engine publishes the one authoritative blocker and the next action that matches it. The page
+// renders that pair verbatim and labels everything else subordinate; it must not rank the same facts again.
+const authoritative = computed(() => pipeline.value?.authoritativeBlocker ?? null);
+const authoritativeStage = computed(() => authoritative.value?.stage ?? "NOT_EVALUATED");
+const authoritativeText = computed(() =>
+  authoritative.value
+    ? `${authoritative.value.code} · ${authoritative.value.nextAction}`
+    : "Engine 尚未投影权威首因（本实例尚未完成一次管线评估）",
+);
+const secondaryDiagnostics = computed(() =>
+  (authoritative.value?.secondary ?? []).map((row: any) => `${row.code}${row.detail ? ` · ${row.detail}` : ""}`),
+);
+// G3: symbols held back for their own data facts stay visible as facts about themselves.
+const marketIsolation = computed(() => pipeline.value?.marketDataIsolation ?? null);
+const isolatedSymbolLines = computed(() =>
+  (marketIsolation.value?.isolated ?? []).map((row: any) => `${row.symbol}：${(row.reasons ?? []).join(" · ")}`),
+);
 // The Engine already decides whether a model call can be acted on and whether the risk profile is
 // actually configured; the page renders those verdicts instead of guessing a READY of its own.
 const readiness = computed(() => pipeline.value?.executionReadiness ?? null);
@@ -40,13 +56,7 @@ const riskProfileNote = () => {
   const missing = (profile.missingFields ?? []).join(" · ");
   return `${(profile.blockers ?? []).join(" · ") || "PROFILE_NOT_CONFIGURED"}${missing ? `；缺失字段：${missing}` : ""}`;
 };
-const capacityBlocked = computed(() => {
-  const view = capacityVisibility.value;
-  if (!view || view.exhaustedForNewRisk !== true) return null;
-  const eligible = pipeline.value?.eligibility?.count ?? 0;
-  const executable = pipeline.value?.runtimeControl?.capital?.executableCandidateCount ?? 0;
-  return eligible > 0 && executable === 0 ? view : null;
-});
+const capacityBlocked = computed(() => (pipeline.value?.authoritativeBlocker?.stage === "CAPACITY" ? capacityVisibility.value : null));
 // The four Engine blocks, projected as four lines. Each one answers a different question, and the page
 // never adds a number of its own: funding is money, exposure is notional, limits are policy, and the
 // entry block is the only answer to "how much new Entry risk is there room for".
@@ -88,13 +98,6 @@ const capacityPolicyText = computed(() => {
   const e = policy.exposure;
   return `Gross=${e.gross.mode} · Direction=${e.LONG.mode} · Cluster=${policy.limits?.policy?.cluster ?? "ENFORCE"}（OBSERVE 仅展示不否决，ENFORCE 一票否决）`;
 });
-const firstExplanation = computed(() => {
-  const view = capacityBlocked.value;
-  if (view) return `CAPACITY_BLOCKED · ${view.exhaustedReason} · 首因 ${capacityEntry.value?.constraint ?? "NOT_EVALUATED"}`;
-  const analysis = pipeline.value?.analysis;
-  return SUPPLY_SIDE_WAITS.includes(String(analysis?.reason ?? "")) ? (analysis?.text ?? "") : (pipeline.value?.noEntryReason ?? analysis?.text ?? "");
-});
-
 // The funnel is the Engine's fold over its own durable journal. This page counts nothing: a stage
 // appears here only because the layer that creates it wrote an event saying so.
 const FUNNEL_STAGES: Array<[string, string]> = [
@@ -354,16 +357,26 @@ onUnmounted(() => {
         </div>
       </div>
       <div
-        v-if="capacityVisibility"
         class="policy-card"
-        :class="capacityBlocked ? 'danger-lite' : ''"
+        :class="authoritativeStage === 'NONE' ? '' : 'danger-lite'"
         data-caps-first-explanation
       >
-        <strong>{{ firstExplanation }}</strong
+        <strong>{{ authoritativeText }}</strong
         ><span
-          >额度与槽位取自 Engine 同一次风险计算；此额度只限制新增 Entry 风险，不强平已有仓位，也不撤已有
-          TP/保护。持仓数未达上限不等于仍有新增风险额度。</span
+          >权威首因与下一步由 Engine 在同一次评估中给出（stage {{ authoritativeStage }}）；额度与槽位取自同一次风险计算，此额度只限制新增
+          Entry 风险，不强平已有仓位，也不撤已有 TP/保护。持仓数未达上限不等于仍有新增风险额度。</span
         >
+        <div v-if="isolatedSymbolLines.length" data-market-isolation>
+          <span
+            >已按 symbol 隔离 {{ marketIsolation?.isolatedCount ?? 0 }}/{{ marketIsolation?.candidateCount ?? 0 }}
+            个行情故障合约（健康候选 {{ marketIsolation?.healthyCandidates ?? 0 }} 个继续走管线）：</span
+          >
+          <ul><li v-for="line in isolatedSymbolLines" :key="line">{{ line }}</li></ul>
+        </div>
+        <details v-if="secondaryDiagnostics.length" data-secondary-diagnostics>
+          <summary>次级诊断 {{ secondaryDiagnostics.length }} 项（不作为第二个首因）</summary>
+          <ul><li v-for="line in secondaryDiagnostics" :key="line">{{ line }}</li></ul>
+        </details>
       </div>
       <div class="policy-card" :class="entryEnabled() ? '' : 'danger-lite'">
         <strong>{{ entryPermissionText() }}</strong
@@ -477,7 +490,7 @@ onUnmounted(() => {
           / {{ pipeline?.work?.recentDecision?.decision ?? "—" }}</span
         ><span>下一步：{{ pipeline?.work?.next ?? "—" }}</span>
       </div>
-      <div v-if="pipeline?.pipelineState==='PAUSED_MARKET_DATA_UNAVAILABLE'" class="policy-card danger-lite"><strong>建仓管线：PAUSED_MARKET_DATA_UNAVAILABLE</strong><span>原因：{{pipeline.marketDataReason}}。智能选币等待实时行情恢复；自动执行模式保持 {{autoMode()}}。</span></div>
+      <div v-if="pipeline?.pipelineState==='PAUSED_MARKET_DATA_UNAVAILABLE'" class="policy-card danger-lite"><strong>建仓管线：PAUSED_MARKET_DATA_UNAVAILABLE</strong><span>系统级原因：{{pipeline.marketDataReason}}；健康候选 {{ marketIsolation?.healthyCandidates ?? 0 }} 个（已隔离 {{ marketIsolation?.isolatedCount ?? 0 }} 个）。只有行情源整体故障或全部候选都失去数据时才暂停整条管线；单 symbol 缺口只隔离该 symbol。自动执行模式保持 {{autoMode()}}。</span></div>
       <div v-if="pipeline?.noEntryReason && pipeline?.pipelineState!=='PAUSED_MARKET_DATA_UNAVAILABLE'" class="policy-card danger-lite">
         <strong>当前未建新仓：{{ pipeline.noEntryReason }}</strong
         ><span>新建仓流水线暂停时，已有仓位和保护链不受影响。</span>

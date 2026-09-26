@@ -11,7 +11,7 @@ vi.mock('../api/client', () => ({ api: { pipeline: vi.fn(), accountAssets: vi.fn
  * §D: the cockpit answers four different questions, and the page renders the Engine's own answers.
  * The fixtures are the projected shapes, not numbers this file computes.
  */
-const base = {
+const base: any = {
   asOf: 1,
   pipelineState: 'RUNNING',
   noEntryReason: 'ENTRY_BLOCKED',
@@ -20,12 +20,17 @@ const base = {
   entryPermission: { status: 'BLOCKED', executionMode: 'READ_ONLY', autoExecutionMode: 'AUTO_RUNNING' },
   analysis: { mode: 'ANALYSIS_ONLY', text: 'ANALYSIS_ONLY：仅分析，交易写锁定；CAPACITY_BLOCKED', reason: 'CAPACITY_BLOCKED', capitalExecutableCount: 0, lastAttemptAt: null, lastSuccessAt: null, silenceMs: 40000 },
   primaryBrain: { status: 'READY', resource: { nextStep: '暂无可派发候选；继续供给与订单维护', idleReason: 'WAITING_CANDIDATE' } },
+  // G4: the verdict below is what the Engine publishes; the page only renders it.
+  authoritativeBlocker: { code: 'ENTRY_BLOCKED', stage: 'EXECUTION_FACTS', nextAction: '先补齐执行事实 ENTRY_BLOCKED；在事实齐备前不调用模型、不提交订单', evidence: {}, secondary: [], evaluatedAt: 1 },
 };
 
 // The live 2026-09-25 09:40 shape: the 100%-of-equity gross ratio is spent while the wallet holds
 // $8,834.44 of genuinely available margin, and every route is denied by that ratio.
-const marginDrivenBook = {
+const marginDrivenBook: any = {
   ...base,
+  marketDataIsolation: { candidateCount: 4, isolatedCount: 0, healthyCandidates: 4, isolated: [] },
+  authoritativeBlocker: { code: 'NONE', stage: 'NONE', nextAction: '无需处理：Entry 管线可用，继续由确定性硬门决定是否建仓',
+    evidence: { healthyCandidates: 4, isolatedCount: 0 }, secondary: [{ code: 'SUPPLY_DIAGNOSTIC:ELIGIBILITY', detail: 'READY 6（可执行 6）' }], evaluatedAt: 1 },
   capacityVisibility: {
     funding: {
       quoteAssets: [
@@ -54,8 +59,16 @@ const marginDrivenBook = {
 };
 
 // The enforced default: the spent ratio really does deny new risk, and it is the named first cause.
-const grossExhausted = {
+const grossExhausted: any = {
   ...structuredClone(marginDrivenBook),
+  // G4: this is the Engine's own answer for the same cycle, not a page-side comparison of counts.
+  authoritativeBlocker: { code: 'WAITING_EXECUTION_CAPACITY', stage: 'CAPACITY',
+    nextAction: '新增风险受限于 GROSS；只能由人工减仓或经 governance 写入调整权威上限，不静默放宽',
+    evidence: { exhaustedForNewRisk: true, executableCandidateCount: 0, slotsUsed: 27, slotsMax: 50 },
+    secondary: [
+      { code: 'CAPACITY_DIAGNOSTIC:NO_EXECUTABLE_SIDE', detail: '两侧都无可执行容量：见各侧逐候选首因' },
+      { code: 'SUPPLY_DIAGNOSTIC:ELIGIBILITY', detail: 'READY 6（可执行 0）' },
+    ], evaluatedAt: 1 },
   capacityVisibility: {
     ...structuredClone(marginDrivenBook.capacityVisibility) as any,
     exposure: {
@@ -143,16 +156,50 @@ it('labels account assets and Entry funding eligibility as two different columns
   expect(wrapper.text()).toContain('交易所保证金资产');
 });
 
-it('names the enforced ratio as the first cause instead of dressing its remainder as money', async () => {
+it('renders the one authoritative blocker the Engine declared and its matching next action', async () => {
   const wrapper = await open(grossExhausted);
   const headline = wrapper.find('[data-caps-first-explanation]').text();
-  expect(headline).toContain('CAPACITY_BLOCKED');
-  expect(headline).toContain('GROSS');
-  expect(headline).toContain('首因 GROSS_ENFORCED');
-  expect(headline).not.toContain('$10,494.31 / $10,504.73');
+  expect(headline).toContain('WAITING_EXECUTION_CAPACITY');
+  expect(headline).toContain('新增风险受限于 GROSS');
+  expect(headline).toContain('人工减仓');
+  expect(headline).toContain('stage CAPACITY');
+  // The model's own idle text and the analysis label are never promoted to a second first cause.
   expect(headline).not.toContain('WAITING_CANDIDATE');
   expect(headline).not.toContain('暂无可派发候选');
+  expect(headline).not.toContain('ANALYSIS_ONLY');
   expect(wrapper.find('[data-capital-block="entry"]').text()).toContain('新增风险额度已用尽 · GROSS');
+  // G4: the subordinate facts stay inside a labelled diagnostics block.
+  const secondary = wrapper.find('[data-secondary-diagnostics]').text();
+  expect(secondary).toContain('次级诊断 2 项');
+  expect(secondary).toContain('CAPACITY_DIAGNOSTIC:NO_EXECUTABLE_SIDE');
+  expect(secondary).toContain('SUPPLY_DIAGNOSTIC:ELIGIBILITY');
+});
+
+it('G4-UI never ranks the facts again: it follows whatever the Engine declared', async () => {
+  const moved: any = structuredClone(grossExhausted);
+  moved.authoritativeBlocker = { code: 'PRIMARY_MODEL_OFFLINE', stage: 'MODEL',
+    nextAction: '恢复 Primary 模型可用性（PRIMARY_MODEL_OFFLINE）；模型不可用时不猜测方向、不消费额度',
+    evidence: {}, secondary: [], evaluatedAt: 2 };
+  const wrapper = await open(moved);
+  const headline = wrapper.find('[data-caps-first-explanation]').text();
+  expect(headline).toContain('PRIMARY_MODEL_OFFLINE');
+  expect(headline).toContain('stage MODEL');
+  // The capacity facts are unchanged in the same payload: the page does not re-derive CAPACITY from them.
+  expect(headline).not.toContain('WAITING_EXECUTION_CAPACITY');
+  expect(wrapper.find('[data-secondary-diagnostics]').exists()).toBe(false);
+});
+
+it('G3-UI shows an isolated symbol as its own fact while the pipeline keeps working', async () => {
+  const isolated: any = structuredClone(marginDrivenBook);
+  isolated.marketDataIsolation = { candidateCount: 4, isolatedCount: 1, healthyCandidates: 3, isolated: [{ symbol: 'DOGEUSDT', reasons: ['TECHNICAL_15m_SEQUENCE_INVALID', 'QUOTE_STALE'] }] };
+  isolated.freshMarkets = { status: 'RECOVERING', count: 34, stale: ['DOGEUSDT'], sequenceInvalid: 1 };
+  const wrapper = await open(isolated);
+  const panel = wrapper.find('[data-market-isolation]').text();
+  expect(panel).toContain('已按 symbol 隔离 1/4');
+  expect(panel).toContain('健康候选 3');
+  expect(panel).toContain('DOGEUSDT：TECHNICAL_15m_SEQUENCE_INVALID · QUOTE_STALE');
+  // No system-level pause is claimed while healthy candidates remain.
+  expect(wrapper.text()).not.toContain('建仓管线：PAUSED_MARKET_DATA_UNAVAILABLE');
 });
 
 it('renders a single saturated side as a fact beside the room the other side still has', async () => {
@@ -200,7 +247,7 @@ it('says a missing funding fact is missing, rather than inventing executable mar
 });
 
 it('falls back to the supply explanation when there is genuinely no candidate', async () => {
-  const empty = structuredClone(marginDrivenBook);
+  const empty: any = structuredClone(marginDrivenBook);
   empty.eligibility.count = 0;
   empty.runtimeControl.capital.executableCandidateCount = 0;
   (empty.capacityVisibility as any).exposure = {
@@ -216,16 +263,20 @@ it('falls back to the supply explanation when there is genuinely no candidate', 
     LONG: { executableNotionalUsd: 0, quoteAsset: null, symbol: null, firstBindingConstraint: 'NO_CAPITAL_ROUTE', executableRoutes: 0 },
     SHORT: { executableNotionalUsd: 0, quoteAsset: null, symbol: null, firstBindingConstraint: 'NO_CAPITAL_ROUTE', executableRoutes: 0 },
   };
+  empty.authoritativeBlocker = { code: 'POOL_SUPPLY_SHORTAGE', stage: 'SUPPLY',
+    nextAction: '等待合格候选供给（POOL_SUPPLY_SHORTAGE）；不为凑数放宽资格或行情事实', evidence: { poolStatus: 'POOL_SUPPLY_SHORTAGE' }, secondary: [], evaluatedAt: 3 };
   empty.analysis.reason = 'NO_SUPPLY';
   empty.analysis.text = 'ANALYSIS_ONLY：仅分析，交易写锁定；NO_SUPPLY';
   const headline = (await open(empty)).find('[data-caps-first-explanation]').text();
   expect(headline).not.toContain('CAPACITY_BLOCKED');
   expect(headline).not.toContain('已用尽');
-  expect(headline).toContain('NO_SUPPLY');
+  expect(headline).toContain('POOL_SUPPLY_SHORTAGE');
+  // The supply stage is the Engine's call; the analysis label is not a competing first cause.
+  expect(headline).not.toContain('ANALYSIS_ONLY');
 });
 
 // The live 2026-09-23 shape: READ_ONLY with an armed AUTO_RUNNING intent and no approved risk profile.
-const factsBlocked = {
+const factsBlocked: any = {
   ...base,
   executionReadiness: {
     intent: true, ready: false, mode: 'EXECUTION_BLOCKED', modelSpendPermitted: false,

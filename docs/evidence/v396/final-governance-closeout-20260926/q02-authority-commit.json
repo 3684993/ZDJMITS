@@ -1,0 +1,246 @@
+{
+ "mode": "preview+commit",
+ "at": "2026-09-26T05:23:38.549Z",
+ "before": {
+  "settingsVersion": 218,
+  "profileStatus": "READY",
+  "authorityStatus": "MATCHED",
+  "marginTierVersion": "TESTNET_BINANCE_LEVERAGE_BRACKET_V1_SHA256_0081998e0d496d8f0378199553dd438a9e6cf8740decf226d4af6eb822846d77",
+  "contentHash": "0081998e0d496d8f0378199553dd438a9e6cf8740decf226d4af6eb822846d77",
+  "coverageCount": 58,
+  "uncoveredCandidates": [
+   "1000BONKUSDC",
+   "COTIUSDT",
+   "ETCUSDT",
+   "ETHFIUSDC",
+   "ETHFIUSDT",
+   "JUPUSDT",
+   "POLUSDT",
+   "RAYSOLUSDT",
+   "VIRTUALUSDT",
+   "WIFUSDC",
+   "WIFUSDT",
+   "ZENUSDT",
+   "ZROUSDT"
+  ],
+  "coverageLagCount": 13
+ },
+ "preview": {
+  "requiredSymbols": 71,
+  "pricedSymbols": 71,
+  "collectionFailures": [],
+  "compiledOk": true,
+  "blockers": [],
+  "sizingBound": {
+   "maxEntryNotionalUsd": 10811.957,
+   "maintenanceRateBound": 0.2
+  },
+  "derivedMaintenanceMarginRatePct": null,
+  "contentHash": null
+ },
+ "uncoveredSymbolFacts": [
+  {
+   "symbol": "1000BONKUSDC",
+   "inRequiredUniverse": true,
+   "tierCount": 8,
+   "consideredTiers": 2,
+   "highestAnyTierRatio": 0.5,
+   "initialLeverageLowestTier": 50
+  },
+  {
+   "symbol": "COTIUSDT",
+   "inRequiredUniverse": true,
+   "tierCount": 6,
+   "consideredTiers": 2,
+   "highestAnyTierRatio": 0.5,
+   "initialLeverageLowestTier": 50
+  },
+  {
+   "symbol": "ETCUSDT",
+   "inRequiredUniverse": true,
+   "tierCount": 10,
+   "consideredTiers": 3,
+   "highestAnyTierRatio": 0.5,
+   "initialLeverageLowestTier": 75
+  },
+  {
+   "symbol": "ETHFIUSDC",
+   "inRequiredUniverse": true,
+   "tierCount": 8,
+   "consideredTiers": 2,
+   "highestAnyTierRatio": 0.5,
+   "initialLeverageLowestTier": 50
+  },
+  {
+   "symbol": "ETHFIUSDT",
+   "inRequiredUniverse": true,
+   "tierCount": 7,
+   "consideredTiers": 2,
+   "highestAnyTierRatio": 0.5,
+   "initialLeverageLowestTier": 50
+  },
+  {
+   "symbol": "JUPUSDT",
+   "inRequiredUniverse": true,
+   "tierCount": 7,
+   "consideredTiers": 2,
+   "highestAnyTierRatio": 0.5,
+   "initialLeverageLowestTier": 50
+  },
+  {
+   "symbol": "POLUSDT",
+   "inRequiredUniverse": true,
+   "tierCount": 9,
+   "consideredTiers": 2,
+   "highestAnyTierRatio": 0.5,
+   "initialLeverageLowestTier": 75
+  },
+  {
+   "symbol": "RAYSOLUSDT",
+   "inRequiredUniverse": true,
+   "tierCount": 9,
+   "consideredTiers": 3,
+   "highestAnyTierRatio": 0.5,
+   "initialLeverageLowestTier": 75
+  },
+  {
+   "symbol": "VIRTUALUSDT",
+   "inRequiredUniverse": true,
+   "tierCount": 9,
+   "consideredTiers": 3,
+   "highestAnyTierRatio": 0.5,
+   "initialLeverageLowestTier": 75
+  },
+  {
+   "symbol": "WIFUSDC",
+   "inRequiredUniverse": true,
+   "tierCount": 8,
+   "consideredTiers": 2,
+   "highestAnyTierRatio": 0.5,
+   "initialLeverageLowestTier": 50
+  },
+  {
+   "symbol": "WIFUSDT",
+   "inRequiredUniverse": true,
+   "tierCount": 7,
+   "consideredTiers": 2,
+   "highestAnyTierRatio": 0.5,
+   "initialLeverageLowestTier": 50
+  },
+  {
+   "symbol": "ZENUSDT",
+   "inRequiredUniverse": true,
+   "tierCount": 6,
+   "consideredTiers": 2,
+   "highestAnyTierRatio": 0.5,
+   "initialLeverageLowestTier": 50
+  },
+  {
+   "symbol": "ZROUSDT",
+   "inRequiredUniverse": true,
+   "tierCount": 8,
+   "consideredTiers": 2,
+   "highestAnyTierRatio": 0.5,
+   "initialLeverageLowestTier": 50
+  }
+ ],
+ "gates": {
+  "persistedFalse": true,
+  "collectionFailuresZero": true,
+  "compiledOk": true,
+  "compileBlockersEmpty": true,
+  "previewIsTestnet": true,
+  "universeWithinCeiling": true,
+  "uncoveredAllRequested": true,
+  "uncoveredAllHaveExchangeFacts": true,
+  "uncoveredAllHaveTierRows": true,
+  "uncoveredAllHaveMaintenanceRatio": true,
+  "clustersUnchanged": true,
+  "scenariosUnchanged": true,
+  "limitsUnchanged": true,
+  "serverDerivedFieldsNotSent": true
+ },
+ "failedGates": [],
+ "writesBefore": {
+  "environment": "TESTNET",
+  "executionMode": "TESTNET_ENABLED",
+  "lockedToTestnet": true,
+  "testnetWrites": 8,
+  "productionWrites": 0,
+  "blockedProductionWriteAttempts": 0,
+  "lastWriteAt": 1790397915530,
+  "lastWritePath": "/fapi/v1/order"
+ },
+ "committed": true,
+ "commit": {
+  "status": 200,
+  "newSettingsVersion": 219,
+  "marginTierVersion": "TESTNET_BINANCE_LEVERAGE_BRACKET_V1_SHA256_67dee0aca734d82f8718c7b6ad995ba6afb50be4a10798cba5071c9a08bb0fa9",
+  "contentHash": "67dee0aca734d82f8718c7b6ad995ba6afb50be4a10798cba5071c9a08bb0fa9",
+  "profileStatus": "READY"
+ },
+ "after": {
+  "settingsVersion": 219,
+  "profileStatus": "READY",
+  "authorityStatus": "MATCHED",
+  "marginTierVersion": "TESTNET_BINANCE_LEVERAGE_BRACKET_V1_SHA256_67dee0aca734d82f8718c7b6ad995ba6afb50be4a10798cba5071c9a08bb0fa9",
+  "contentHash": "67dee0aca734d82f8718c7b6ad995ba6afb50be4a10798cba5071c9a08bb0fa9",
+  "coverageCount": 71,
+  "uncoveredCandidates": [
+   "AAVEUSDC"
+  ],
+  "missingSymbols": [],
+  "mismatchReasons": []
+ },
+ "coverageDelta": {
+  "added": [
+   "1000BONKUSDC",
+   "COTIUSDT",
+   "ETCUSDT",
+   "ETHFIUSDC",
+   "ETHFIUSDT",
+   "JUPUSDT",
+   "POLUSDT",
+   "RAYSOLUSDT",
+   "VIRTUALUSDT",
+   "WIFUSDC",
+   "WIFUSDT",
+   "ZENUSDT",
+   "ZROUSDT"
+  ],
+  "removed": [],
+  "stillUncovered": [
+   "AAVEUSDC"
+  ]
+ },
+ "invariants": {
+  "settingsVersionAdvancedOnce": true,
+  "settingsChangesOutsideAuthority": [],
+  "settingsChangedLeaves": [
+   "settingsVersion",
+   "riskGovernance.portfolioRisk.marginTierVersion"
+  ],
+  "limitsUnchangedAfterCommit": true,
+  "productionWrites": 0,
+  "blockedProductionWrites": 0,
+  "testnetWrites": 8,
+  "positions": 23,
+  "tpProtected": 23,
+  "tpNotProtected": [],
+  "reconciliation": {
+   "historicalUnknown": 48,
+   "verifiedNoActiveRisk": 47,
+   "activeRiskUnresolved": 1
+  }
+ },
+ "writesAfter": {
+  "environment": "TESTNET",
+  "executionMode": "TESTNET_ENABLED",
+  "lockedToTestnet": true,
+  "testnetWrites": 8,
+  "productionWrites": 0,
+  "blockedProductionWriteAttempts": 0,
+  "lastWriteAt": 1790397915530,
+  "lastWritePath": "/fapi/v1/order"
+ }
+}

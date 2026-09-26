@@ -1,0 +1,39 @@
+{
+ "asOf": "2026-09-26T02:54:59.252Z",
+ "profile": {
+  "maxHumanPositions": 50,
+  "maxHumanNotionalUsd": 10811.957,
+  "maxPendingHandoffs": 50,
+  "maxAckAgeMs": 86400000,
+  "maxGrossNotionalUsd": 10811.957,
+  "maxDirectionNotionalUsd": 8649.565,
+  "maxClusterNotionalUsd": 10811.957
+ },
+ "facts": {
+  "positions": 23,
+  "humanHandoffPositions": 23,
+  "unacknowledgedBeyondMaxAckAge": 12,
+  "unacknowledgedHours": [
+   "ARBUSDT:SHORT:161.7h",
+   "AVAXUSDT:SHORT:153.7h",
+   "BCHUSDT:LONG:78.4h",
+   "BNBUSDC:SHORT:164.7h",
+   "BTCUSDT:LONG:100.9h",
+   "DOTUSDT:SHORT:164.9h",
+   "ENAUSDT:SHORT:142.4h",
+   "ETHUSDT:LONG:105.4h",
+   "FETUSDT:SHORT:129.4h",
+   "LTCUSDT:SHORT:161.9h",
+   "ONDOUSDT:SHORT:161.9h",
+   "ZECUSDT:SHORT:136.4h"
+  ],
+  "grossNotionalUsd": 11116.14
+ },
+ "stopLine": {
+  "humanNotionalHeadroomUsd": -304.19,
+  "grossHeadroomUsd": -304.19,
+  "slotsUsed": 23,
+  "slotsMax": 50
+ },
+ "reading": "A negative headroom means no new Entry risk exists at any size: the only release is a human closing notional. Acknowledging an overdue handoff removes HUMAN_ACK_OVERDUE but not the notional limit."
+}

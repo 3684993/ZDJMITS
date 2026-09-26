@@ -1,0 +1,241 @@
+{
+ "authorities": {
+  "legacyPortfolioIntelligence": {
+   "LONG": 0.5,
+   "SHORT": 0.5
+  },
+  "authoritativeRiskGovernance": {
+   "maxDirectionExposurePct": 1,
+   "directionPolicy": "OBSERVE"
+  },
+  "note": "legacy values are read-only diagnostics once exposureCapacityPolicy.direction is OBSERVE; the Engine never vetoes on them"
+ },
+ "liveExposureBlock": {
+  "gross": {
+   "notionalUsd": 11117.517443793073,
+   "limitUsd": 10425.8952379877,
+   "remainingUsd": 0,
+   "usedPct": 1.0663369610012372,
+   "mode": "OBSERVE",
+   "enforced": false
+  },
+  "LONG": {
+   "notionalUsd": 3638.156905585235,
+   "limitUsd": 10425.8952379877,
+   "remainingUsd": 6787.738332402464,
+   "usedPct": 0.3489539097160001,
+   "mode": "OBSERVE",
+   "enforced": false
+  },
+  "SHORT": {
+   "notionalUsd": 7479.36053820784,
+   "limitUsd": 10425.8952379877,
+   "remainingUsd": 2946.534699779859,
+   "usedPct": 0.7173830512852373,
+   "mode": "OBSERVE",
+   "enforced": false
+  }
+ },
+ "sideStatus": {
+  "code": "BOTH_SIDES_EXECUTABLE",
+  "text": "LONG 与 SHORT 均可新增"
+ },
+ "totals": {
+  "plans": 10,
+  "aboveLegacyLimit": 4,
+  "admittedAboveLegacyLimit": 4,
+  "vetoedByLegacyThreshold": 0
+ },
+ "plans": [
+  {
+   "symbol": "TAOUSDT",
+   "direction": "LONG",
+   "admission": "ALLOW",
+   "reasons": [
+    "AI_QUANTITY_UNITS_FROZEN",
+    "NO_CONFIDENCE_RESIZING",
+    "NO_DIRECTION_POLICY_RESIZING"
+   ],
+   "notionalUsd": 5.0552,
+   "marginUsd": 0.6319,
+   "locationWouldBlock": false,
+   "minExecutableMarginUsd": 0.625,
+   "legacyDirectionLimitPct": 0.5,
+   "exceedsLegacyLimit": false,
+   "exposureBeforePct": 0.32202278962144837,
+   "exposureAfterPct": 0.322470241303482,
+   "rejectedByLegacyThreshold": false
+  },
+  {
+   "symbol": "WLDUSDT",
+   "direction": "LONG",
+   "admission": "ALLOW",
+   "reasons": [
+    "AI_QUANTITY_UNITS_FROZEN",
+    "NO_CONFIDENCE_RESIZING",
+    "NO_DIRECTION_POLICY_RESIZING"
+   ],
+   "notionalUsd": 5.3372,
+   "marginUsd": 0.66715,
+   "locationWouldBlock": false,
+   "minExecutableMarginUsd": 0.625,
+   "legacyDirectionLimitPct": 0.5,
+   "exceedsLegacyLimit": false,
+   "exposureBeforePct": 0.3220088024993743,
+   "exposureAfterPct": 0.3224812124229962,
+   "rejectedByLegacyThreshold": false
+  },
+  {
+   "symbol": "TAOUSDT",
+   "direction": "LONG",
+   "admission": "ALLOW",
+   "reasons": [
+    "AI_QUANTITY_UNITS_FROZEN",
+    "NO_CONFIDENCE_RESIZING",
+    "NO_DIRECTION_POLICY_RESIZING"
+   ],
+   "notionalUsd": 5.05904,
+   "marginUsd": 0.63238,
+   "locationWouldBlock": false,
+   "minExecutableMarginUsd": 0.625,
+   "legacyDirectionLimitPct": 0.5,
+   "exceedsLegacyLimit": false,
+   "exposureBeforePct": 0.3219573152331025,
+   "exposureAfterPct": 0.32240510215775436,
+   "rejectedByLegacyThreshold": false
+  },
+  {
+   "symbol": "AAVEUSDT",
+   "direction": "LONG",
+   "admission": "ALLOW",
+   "reasons": [
+    "AI_QUANTITY_UNITS_FROZEN",
+    "NO_CONFIDENCE_RESIZING",
+    "NO_DIRECTION_POLICY_RESIZING"
+   ],
+   "notionalUsd": 2508.894,
+   "marginUsd": 313.61175,
+   "locationWouldBlock": false,
+   "minExecutableMarginUsd": 1.9358750000000002,
+   "legacyDirectionLimitPct": 0.5,
+   "exceedsLegacyLimit": true,
+   "exposureBeforePct": 0.32198421507520053,
+   "exposureAfterPct": 0.5440544273660073,
+   "rejectedByLegacyThreshold": false
+  },
+  {
+   "symbol": "BRUSDT",
+   "direction": "SHORT",
+   "admission": "ALLOW",
+   "reasons": [
+    "AI_QUANTITY_UNITS_FROZEN",
+    "NO_CONFIDENCE_RESIZING",
+    "NO_DIRECTION_POLICY_RESIZING"
+   ],
+   "notionalUsd": 5.484,
+   "marginUsd": 0.5484,
+   "locationWouldBlock": false,
+   "minExecutableMarginUsd": 0.5,
+   "legacyDirectionLimitPct": 0.5,
+   "exceedsLegacyLimit": true,
+   "exposureBeforePct": 0.6638988295942757,
+   "exposureAfterPct": 0.6643842295357859,
+   "rejectedByLegacyThreshold": false
+  },
+  {
+   "symbol": "ZROUSDT",
+   "direction": "SHORT",
+   "admission": "ALLOW",
+   "reasons": [
+    "AI_QUANTITY_UNITS_FROZEN",
+    "NO_CONFIDENCE_RESIZING",
+    "NO_DIRECTION_POLICY_RESIZING"
+   ],
+   "notionalUsd": 5.072,
+   "marginUsd": 0.634,
+   "locationWouldBlock": false,
+   "minExecutableMarginUsd": 0.625,
+   "legacyDirectionLimitPct": 0.5,
+   "exceedsLegacyLimit": true,
+   "exposureBeforePct": 0.6641677433592645,
+   "exposureAfterPct": 0.6646166779047669,
+   "rejectedByLegacyThreshold": false
+  },
+  {
+   "symbol": "1000BONKUSDC",
+   "direction": "SHORT",
+   "admission": "ALLOW",
+   "reasons": [
+    "AI_QUANTITY_UNITS_FROZEN",
+    "NO_CONFIDENCE_RESIZING",
+    "NO_DIRECTION_POLICY_RESIZING"
+   ],
+   "notionalUsd": 5.006725,
+   "marginUsd": 0.625840625,
+   "locationWouldBlock": false,
+   "minExecutableMarginUsd": 0.625,
+   "legacyDirectionLimitPct": 0.5,
+   "exceedsLegacyLimit": true,
+   "exposureBeforePct": 0.6639529456467594,
+   "exposureAfterPct": 0.6643960954355567,
+   "rejectedByLegacyThreshold": false
+  },
+  {
+   "symbol": "OPUSDT",
+   "direction": "LONG",
+   "admission": "ALLOW",
+   "reasons": [
+    "AI_QUANTITY_UNITS_FROZEN",
+    "NO_CONFIDENCE_RESIZING",
+    "NO_DIRECTION_POLICY_RESIZING"
+   ],
+   "notionalUsd": 5.017620000000001,
+   "marginUsd": 0.6272025000000001,
+   "locationWouldBlock": false,
+   "minExecutableMarginUsd": 0.625,
+   "legacyDirectionLimitPct": 0.5,
+   "exceedsLegacyLimit": false,
+   "exposureBeforePct": 0.322062675646418,
+   "exposureAfterPct": 0.32250678980089503,
+   "rejectedByLegacyThreshold": false
+  },
+  {
+   "symbol": "TAOUSDT",
+   "direction": "LONG",
+   "admission": "ALLOW",
+   "reasons": [
+    "AI_QUANTITY_UNITS_FROZEN",
+    "NO_CONFIDENCE_RESIZING",
+    "NO_DIRECTION_POLICY_RESIZING"
+   ],
+   "notionalUsd": 5.051520000000001,
+   "marginUsd": 0.6314400000000001,
+   "locationWouldBlock": false,
+   "minExecutableMarginUsd": 0.625,
+   "legacyDirectionLimitPct": 0.5,
+   "exceedsLegacyLimit": false,
+   "exposureBeforePct": 0.322047721693657,
+   "exposureAfterPct": 0.32249483898020265,
+   "rejectedByLegacyThreshold": false
+  },
+  {
+   "symbol": "WLDUSDT",
+   "direction": "LONG",
+   "admission": "ALLOW",
+   "reasons": [
+    "AI_QUANTITY_UNITS_FROZEN",
+    "NO_CONFIDENCE_RESIZING",
+    "NO_DIRECTION_POLICY_RESIZING"
+   ],
+   "notionalUsd": 5.3207,
+   "marginUsd": 0.6650875,
+   "locationWouldBlock": false,
+   "minExecutableMarginUsd": 0.625,
+   "legacyDirectionLimitPct": 0.5,
+   "exceedsLegacyLimit": false,
+   "exposureBeforePct": 0.32203791039384816,
+   "exposureAfterPct": 0.3225088510945292,
+   "rejectedByLegacyThreshold": false
+  }
+ ]
+}

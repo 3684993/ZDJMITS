@@ -1,0 +1,35 @@
+## targeted tests, 2026-09-26T02:56:24Z
+
+=== packages/core: portfolio.test.ts (G1)
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m15 passed[39m[22m[90m (15)[39m
+[2m   Start at [22m 10:56:26
+[2m   Duration [22m 945ms[2m (transform 181ms, setup 0ms, collect 289ms, tests 15ms, environment 0ms, prepare 152ms)[22m
+
+=== apps/engine: preAiExecutableSides + aiQuantityAllocation (G2), marketDataStaleness (G3), pipelineVerdict (G4)
+ [32m✓[39m src/services/marketDataStaleness.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+ [32m✓[39m src/services/pipelineVerdict.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+ [32m✓[39m src/services/aiQuantityAllocation.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+ [32m✓[39m src/services/preAiExecutableSides.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 71[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m4 passed[39m[22m[90m (4)[39m
+[2m      Tests [22m [1m[32m31 passed[39m[22m[90m (31)[39m
+[2m   Start at [22m 10:56:29
+[2m   Duration [22m 1.69s[2m (transform 802ms, setup 0ms, collect 1.55s, tests 91ms, environment 1ms, prepare 671ms)[22m
+
+=== apps/dashboard: OverviewView.capacity.test.ts (G4 UI + G3 UI)
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m14 passed[39m[22m[90m (14)[39m
+[2m   Start at [22m 10:56:34
+[2m   Duration [22m 2.24s[2m (transform 295ms, setup 0ms, collect 417ms, tests 311ms, environment 820ms, prepare 152ms)[22m
+
+=== capacity trace + envelope neighbours (G1/G2 regression neighbours)
+ [32m✓[39m src/services/executableRiskHeadroom.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32m✓[39m src/services/j5SettingsGovernanceHostile.test.ts [2m([22m[2m24 tests[22m[2m)[22m[33m 382[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m3 passed[39m[22m[90m (3)[39m
+[2m      Tests [22m [1m[32m42 passed[39m[22m[90m (42)[39m
+[2m   Start at [22m 10:56:38
+[2m   Duration [22m 1.70s[2m (transform 480ms, setup 0ms, collect 1.36s, tests 402ms, environment 1ms, prepare 487ms)[22m

@@ -1,0 +1,3123 @@
+{
+ "asOf": "2026-09-26T02:55:18.140Z",
+ "identity": {
+  "buildId": "3.9.6-642a976eea2f65033c2c",
+  "version": "3.9.6",
+  "instanceId": "edfeb7b5-7cd2-4c08-bef7-01d8447713f0",
+  "pid": 8732,
+  "startReason": "MANUAL_START",
+  "restartCount": 188,
+  "lastRestartAt": 1790389890187,
+  "uptimeMs": 1428881,
+  "runtimeDataDir": "D:\\MITS-WORKTREES\\v396-final-convergence-20260922\\data"
+ },
+ "productionWriteBoundary": {
+  "environment": "TESTNET",
+  "executionMode": "TESTNET_ENABLED",
+  "lockedToTestnet": true,
+  "testnetWrites": 0,
+  "productionWrites": 0,
+  "blockedProductionWriteAttempts": 0,
+  "lastWriteAt": null,
+  "lastWritePath": null
+ },
+ "frozenEconomics": {
+  "settingsVersion": 218,
+  "entryMarginUsd": 200,
+  "maxPositions": 50,
+  "maxPendingEntries": 6,
+  "maxDirectionExposurePct": 1,
+  "exposureCapacityPolicy": {
+   "gross": "OBSERVE",
+   "direction": "OBSERVE",
+   "cluster": "ENFORCE"
+  },
+  "legacyMaxLongExposurePct": 0.5,
+  "legacyMaxShortExposurePct": 0.5
+ },
+ "g1": {
+  "sideStatus": {
+   "code": "BOTH_SIDES_EXECUTABLE",
+   "text": "LONG 与 SHORT 均可新增"
+  },
+  "exhaustedForNewRisk": false,
+  "firstBlocker": "NONE",
+  "limits": {
+   "slots": {
+    "used": 23,
+    "max": 50,
+    "positions": 23,
+    "inFlight": 0,
+    "reserved": 0
+   },
+   "policy": {
+    "gross": "OBSERVE",
+    "direction": "OBSERVE",
+    "cluster": "ENFORCE"
+   }
+  },
+  "exposure": {
+   "gross": {
+    "notionalUsd": 11117.517443793073,
+    "limitUsd": 10425.8952379877,
+    "remainingUsd": 0,
+    "usedPct": 1.0663369610012372,
+    "mode": "OBSERVE",
+    "enforced": false
+   },
+   "LONG": {
+    "notionalUsd": 3638.156905585235,
+    "limitUsd": 10425.8952379877,
+    "remainingUsd": 6787.738332402464,
+    "usedPct": 0.3489539097160001,
+    "mode": "OBSERVE",
+    "enforced": false
+   },
+   "SHORT": {
+    "notionalUsd": 7479.36053820784,
+    "limitUsd": 10425.8952379877,
+    "remainingUsd": 2946.534699779859,
+    "usedPct": 0.7173830512852373,
+    "mode": "OBSERVE",
+    "enforced": false
+   }
+  },
+  "entryCapacitySummary": {
+   "LONG": {
+    "executableNotionalUsd": 387.4552063993082,
+    "quoteAsset": "USDT",
+    "symbol": "ZROUSDT",
+    "firstBindingConstraint": "PLANNED_NOTIONAL",
+    "executableRoutes": 2,
+    "minimumLegalNotionalUsd": 5,
+    "candidates": [
+     {
+      "symbol": "ZROUSDT",
+      "underlying": "ZRO",
+      "side": "LONG",
+      "quoteAsset": "USDT",
+      "entryFundingEligible": true,
+      "referencePrice": 1.5756,
+      "exchangeFilters": {
+       "tickSize": 0.0001,
+       "stepSize": 0.1,
+       "minQty": 0.1,
+       "minNotional": 5,
+       "factsComplete": true,
+       "reasons": []
+      },
+      "minimumLegalNotionalUsd": 5,
+      "leverage": 8,
+      "leverageFact": "CANDIDATE_RECOMMENDED",
+      "funding": {
+       "availableBalanceUsd": 3533.00567066,
+       "reservedMarginUsd": 0,
+       "executionLeaseMarginUsd": 455.93146342964934,
+       "executableMarginUsd": 3077.0742072303506,
+       "policyMarginCapUsd": 500,
+       "executableNotionalUsd": 3980,
+       "bindingConstraint": "MARGIN_POLICY_CAP"
+      },
+      "risk": {
+       "marginTierProven": false,
+       "portfolioRiskBlockersSeen": 0,
+       "grossRemainingUsd": 0,
+       "grossMode": "OBSERVE",
+       "grossEnforced": false,
+       "directionRemainingUsd": 6787.738332402464,
+       "directionMode": "OBSERVE",
+       "directionEnforced": false,
+       "clusterRemainingUsd": 3649.0633332956945,
+       "clusterDirectionRemainingUsd": 3649.0633332956945,
+       "perTradeRiskRemainingUsd": 11627.356745125651,
+       "portfolioRiskAllowed": true,
+       "portfolioRiskBlockers": []
+      },
+      "plan": {
+       "present": true,
+       "admission": "ALLOW",
+       "reasons": [],
+       "recommendedNotionalUsd": 387.4552063993082,
+       "minExecutableMarginUsd": 1,
+       "capacityRoom": {
+        "source": "QUOTE_ASSET_MARGIN",
+        "ceilingUsd": 2826.404536528,
+        "usedUsd": 1070.0386665851681,
+        "roomUsd": 1756.3658699428318,
+        "limitPct": 0.8,
+        "usedPct": 0.30286921854424154,
+        "equityUsd": 11298.0254038477,
+        "authority": "portfolioIntelligence.maxQuoteAssetMarginUsagePct",
+        "enforced": true
+       }
+      },
+      "plannedNotionalUsd": 387.4552063993082,
+      "finalNotionalBeforeRoundingUsd": 387.4552063993082,
+      "rounded": {
+       "quantityUnits": 2459,
+       "legalNotionalUsd": 387.44003999999995,
+       "stepSize": 0.1,
+       "minQty": 0.1
+      },
+      "executable": true,
+      "blockers": [],
+      "firstBindingConstraint": "PLANNED_NOTIONAL",
+      "actualUsd": 387.4552063993082,
+      "requiredUsd": null,
+      "explanation": "ZROUSDT LONG：ZROUSDT LONG 可执行",
+      "evaluatedAt": 1790391318115
+     },
+     {
+      "symbol": "OPUSDT",
+      "underlying": "OP",
+      "side": "LONG",
+      "quoteAsset": "USDT",
+      "entryFundingEligible": true,
+      "referencePrice": 0.1441,
+      "exchangeFilters": {
+       "tickSize": 0.0001,
+       "stepSize": 0.1,
+       "minQty": 0.1,
+       "minNotional": 5,
+       "factsComplete": true,
+       "reasons": []
+      },
+      "minimumLegalNotionalUsd": 5,
+      "leverage": 8,
+      "leverageFact": "CANDIDATE_RECOMMENDED",
+      "funding": {
+       "availableBalanceUsd": 3533.00567066,
+       "reservedMarginUsd": 0,
+       "executionLeaseMarginUsd": 455.93146342964934,
+       "executableMarginUsd": 3077.0742072303506,
+       "policyMarginCapUsd": 500,
+       "executableNotionalUsd": 3980,
+       "bindingConstraint": "MARGIN_POLICY_CAP"
+      },
+      "risk": {
+       "marginTierProven": true,
+       "portfolioRiskBlockersSeen": 0,
+       "grossRemainingUsd": 0,
+       "grossMode": "OBSERVE",
+       "grossEnforced": false,
+       "directionRemainingUsd": 6787.738332402464,
+       "directionMode": "OBSERVE",
+       "directionEnforced": false,
+       "clusterRemainingUsd": 3649.0633332956945,
+       "clusterDirectionRemainingUsd": 3649.0633332956945,
+       "perTradeRiskRemainingUsd": 11007.175519976063,
+       "portfolioRiskAllowed": true,
+       "portfolioRiskBlockers": []
+      },
+      "plan": {
+       "present": true,
+       "admission": "ALLOW",
+       "reasons": [],
+       "recommendedNotionalUsd": 380.6202860850456,
+       "minExecutableMarginUsd": 1,
+       "capacityRoom": {
+        "source": "QUOTE_ASSET_MARGIN",
+        "ceilingUsd": 2826.404536528,
+        "usedUsd": 1070.0386665851681,
+        "roomUsd": 1756.3658699428318,
+        "limitPct": 0.8,
+        "usedPct": 0.30286921854424154,
+        "equityUsd": 11298.0254038477,
+        "authority": "portfolioIntelligence.maxQuoteAssetMarginUsagePct",
+        "enforced": true
+       }
+      },
+      "plannedNotionalUsd": 380.6202860850456,
+      "finalNotionalBeforeRoundingUsd": 380.6202860850456,
+      "rounded": {
+       "quantityUnits": 26413,
+       "legalNotionalUsd": 380.61133000000007,
+       "stepSize": 0.1,
+       "minQty": 0.1
+      },
+      "executable": true,
+      "blockers": [],
+      "firstBindingConstraint": "PLANNED_NOTIONAL",
+      "actualUsd": 380.6202860850456,
+      "requiredUsd": null,
+      "explanation": "OPUSDT LONG：OPUSDT LONG 可执行",
+      "evaluatedAt": 1790391318115
+     }
+    ]
+   },
+   "SHORT": {
+    "executableNotionalUsd": 445.74823787175677,
+    "quoteAsset": "USDT",
+    "symbol": "ZROUSDT",
+    "firstBindingConstraint": "PLANNED_NOTIONAL",
+    "executableRoutes": 2,
+    "minimumLegalNotionalUsd": 5,
+    "candidates": [
+     {
+      "symbol": "ZROUSDT",
+      "underlying": "ZRO",
+      "side": "SHORT",
+      "quoteAsset": "USDT",
+      "entryFundingEligible": true,
+      "referencePrice": 1.5756,
+      "exchangeFilters": {
+       "tickSize": 0.0001,
+       "stepSize": 0.1,
+       "minQty": 0.1,
+       "minNotional": 5,
+       "factsComplete": true,
+       "reasons": []
+      },
+      "minimumLegalNotionalUsd": 5,
+      "leverage": 8,
+      "leverageFact": "CANDIDATE_RECOMMENDED",
+      "funding": {
+       "availableBalanceUsd": 3533.00567066,
+       "reservedMarginUsd": 0,
+       "executionLeaseMarginUsd": 455.93146342964934,
+       "executableMarginUsd": 3077.0742072303506,
+       "policyMarginCapUsd": 500,
+       "executableNotionalUsd": 3980,
+       "bindingConstraint": "MARGIN_POLICY_CAP"
+      },
+      "risk": {
+       "marginTierProven": false,
+       "portfolioRiskBlockersSeen": 0,
+       "grossRemainingUsd": 0,
+       "grossMode": "OBSERVE",
+       "grossEnforced": false,
+       "directionRemainingUsd": 2946.534699779859,
+       "directionMode": "OBSERVE",
+       "directionEnforced": false,
+       "clusterRemainingUsd": 3649.0633332956945,
+       "clusterDirectionRemainingUsd": 3649.0633332956945,
+       "perTradeRiskRemainingUsd": 11627.356745125651,
+       "portfolioRiskAllowed": true,
+       "portfolioRiskBlockers": []
+      },
+      "plan": {
+       "present": true,
+       "admission": "ALLOW",
+       "reasons": [],
+       "recommendedNotionalUsd": 445.74823787175677,
+       "minExecutableMarginUsd": 1,
+       "capacityRoom": {
+        "source": "QUOTE_ASSET_MARGIN",
+        "ceilingUsd": 2826.404536528,
+        "usedUsd": 1070.0386665851681,
+        "roomUsd": 1756.3658699428318,
+        "limitPct": 0.8,
+        "usedPct": 0.30286921854424154,
+        "equityUsd": 11298.0254038477,
+        "authority": "portfolioIntelligence.maxQuoteAssetMarginUsagePct",
+        "enforced": true
+       }
+      },
+      "plannedNotionalUsd": 445.74823787175677,
+      "finalNotionalBeforeRoundingUsd": 445.74823787175677,
+      "rounded": {
+       "quantityUnits": 2829,
+       "legalNotionalUsd": 445.73724000000004,
+       "stepSize": 0.1,
+       "minQty": 0.1
+      },
+      "executable": true,
+      "blockers": [],
+      "firstBindingConstraint": "PLANNED_NOTIONAL",
+      "actualUsd": 445.74823787175677,
+      "requiredUsd": null,
+      "explanation": "ZROUSDT SHORT：ZROUSDT SHORT 可执行",
+      "evaluatedAt": 1790391318115
+     },
+     {
+      "symbol": "OPUSDT",
+      "underlying": "OP",
+      "side": "SHORT",
+      "quoteAsset": "USDT",
+      "entryFundingEligible": true,
+      "referencePrice": 0.1441,
+      "exchangeFilters": {
+       "tickSize": 0.0001,
+       "stepSize": 0.1,
+       "minQty": 0.1,
+       "minNotional": 5,
+       "factsComplete": true,
+       "reasons": []
+      },
+      "minimumLegalNotionalUsd": 5,
+      "leverage": 8,
+      "leverageFact": "CANDIDATE_RECOMMENDED",
+      "funding": {
+       "availableBalanceUsd": 3533.00567066,
+       "reservedMarginUsd": 0,
+       "executionLeaseMarginUsd": 455.93146342964934,
+       "executableMarginUsd": 3077.0742072303506,
+       "policyMarginCapUsd": 500,
+       "executableNotionalUsd": 3980,
+       "bindingConstraint": "MARGIN_POLICY_CAP"
+      },
+      "risk": {
+       "marginTierProven": true,
+       "portfolioRiskBlockersSeen": 0,
+       "grossRemainingUsd": 0,
+       "grossMode": "OBSERVE",
+       "grossEnforced": false,
+       "directionRemainingUsd": 2946.534699779859,
+       "directionMode": "OBSERVE",
+       "directionEnforced": false,
+       "clusterRemainingUsd": 3649.0633332956945,
+       "clusterDirectionRemainingUsd": 3649.0633332956945,
+       "perTradeRiskRemainingUsd": 11007.175519976063,
+       "portfolioRiskAllowed": true,
+       "portfolioRiskBlockers": []
+      },
+      "plan": {
+       "present": true,
+       "admission": "ALLOW",
+       "reasons": [],
+       "recommendedNotionalUsd": 437.8849968163853,
+       "minExecutableMarginUsd": 1,
+       "capacityRoom": {
+        "source": "QUOTE_ASSET_MARGIN",
+        "ceilingUsd": 2826.404536528,
+        "usedUsd": 1070.0386665851681,
+        "roomUsd": 1756.3658699428318,
+        "limitPct": 0.8,
+        "usedPct": 0.30286921854424154,
+        "equityUsd": 11298.0254038477,
+        "authority": "portfolioIntelligence.maxQuoteAssetMarginUsagePct",
+        "enforced": true
+       }
+      },
+      "plannedNotionalUsd": 437.8849968163853,
+      "finalNotionalBeforeRoundingUsd": 437.8849968163853,
+      "rounded": {
+       "quantityUnits": 30387,
+       "legalNotionalUsd": 437.87667000000005,
+       "stepSize": 0.1,
+       "minQty": 0.1
+      },
+      "executable": true,
+      "blockers": [],
+      "firstBindingConstraint": "PLANNED_NOTIONAL",
+      "actualUsd": 437.8849968163853,
+      "requiredUsd": null,
+      "explanation": "OPUSDT SHORT：OPUSDT SHORT 可执行",
+      "evaluatedAt": 1790391318115
+     }
+    ]
+   }
+  },
+  "longTraces": [
+   {
+    "symbol": "ZROUSDT",
+    "side": "LONG",
+    "quoteAsset": "USDT",
+    "entryFundingEligible": true,
+    "referencePrice": 1.5756,
+    "minimumLegalNotionalUsd": 5,
+    "exchangeFilters": {
+     "tickSize": 0.0001,
+     "stepSize": 0.1,
+     "minQty": 0.1,
+     "minNotional": 5,
+     "factsComplete": true,
+     "reasons": []
+    },
+    "leverage": 8,
+    "leverageFact": "CANDIDATE_RECOMMENDED",
+    "plannedNotionalUsd": 387.4552063993082,
+    "finalNotionalBeforeRoundingUsd": 387.4552063993082,
+    "rounded": {
+     "quantityUnits": 2459,
+     "legalNotionalUsd": 387.44003999999995,
+     "stepSize": 0.1,
+     "minQty": 0.1
+    },
+    "executable": true,
+    "blockers": [],
+    "firstBindingConstraint": "PLANNED_NOTIONAL",
+    "actualUsd": 387.4552063993082,
+    "requiredUsd": null,
+    "explanation": "ZROUSDT LONG：ZROUSDT LONG 可执行",
+    "funding": {
+     "availableBalanceUsd": 3533.00567066,
+     "reservedMarginUsd": 0,
+     "executionLeaseMarginUsd": 455.93146342964934,
+     "executableMarginUsd": 3077.0742072303506,
+     "policyMarginCapUsd": 500,
+     "executableNotionalUsd": 3980,
+     "bindingConstraint": "MARGIN_POLICY_CAP"
+    },
+    "risk": {
+     "marginTierProven": false,
+     "portfolioRiskBlockersSeen": 0,
+     "grossRemainingUsd": 0,
+     "grossMode": "OBSERVE",
+     "grossEnforced": false,
+     "directionRemainingUsd": 6787.738332402464,
+     "directionMode": "OBSERVE",
+     "directionEnforced": false,
+     "clusterRemainingUsd": 3649.0633332956945,
+     "clusterDirectionRemainingUsd": 3649.0633332956945,
+     "perTradeRiskRemainingUsd": 11627.356745125651,
+     "portfolioRiskAllowed": true,
+     "portfolioRiskBlockers": []
+    },
+    "plan": {
+     "present": true,
+     "admission": "ALLOW",
+     "reasons": [],
+     "recommendedNotionalUsd": 387.4552063993082,
+     "minExecutableMarginUsd": 1,
+     "capacityRoom": {
+      "source": "QUOTE_ASSET_MARGIN",
+      "ceilingUsd": 2826.404536528,
+      "usedUsd": 1070.0386665851681,
+      "roomUsd": 1756.3658699428318,
+      "limitPct": 0.8,
+      "usedPct": 0.30286921854424154,
+      "equityUsd": 11298.0254038477,
+      "authority": "portfolioIntelligence.maxQuoteAssetMarginUsagePct",
+      "enforced": true
+     }
+    }
+   },
+   {
+    "symbol": "OPUSDT",
+    "side": "LONG",
+    "quoteAsset": "USDT",
+    "entryFundingEligible": true,
+    "referencePrice": 0.1441,
+    "minimumLegalNotionalUsd": 5,
+    "exchangeFilters": {
+     "tickSize": 0.0001,
+     "stepSize": 0.1,
+     "minQty": 0.1,
+     "minNotional": 5,
+     "factsComplete": true,
+     "reasons": []
+    },
+    "leverage": 8,
+    "leverageFact": "CANDIDATE_RECOMMENDED",
+    "plannedNotionalUsd": 380.6202860850456,
+    "finalNotionalBeforeRoundingUsd": 380.6202860850456,
+    "rounded": {
+     "quantityUnits": 26413,
+     "legalNotionalUsd": 380.61133000000007,
+     "stepSize": 0.1,
+     "minQty": 0.1
+    },
+    "executable": true,
+    "blockers": [],
+    "firstBindingConstraint": "PLANNED_NOTIONAL",
+    "actualUsd": 380.6202860850456,
+    "requiredUsd": null,
+    "explanation": "OPUSDT LONG：OPUSDT LONG 可执行",
+    "funding": {
+     "availableBalanceUsd": 3533.00567066,
+     "reservedMarginUsd": 0,
+     "executionLeaseMarginUsd": 455.93146342964934,
+     "executableMarginUsd": 3077.0742072303506,
+     "policyMarginCapUsd": 500,
+     "executableNotionalUsd": 3980,
+     "bindingConstraint": "MARGIN_POLICY_CAP"
+    },
+    "risk": {
+     "marginTierProven": true,
+     "portfolioRiskBlockersSeen": 0,
+     "grossRemainingUsd": 0,
+     "grossMode": "OBSERVE",
+     "grossEnforced": false,
+     "directionRemainingUsd": 6787.738332402464,
+     "directionMode": "OBSERVE",
+     "directionEnforced": false,
+     "clusterRemainingUsd": 3649.0633332956945,
+     "clusterDirectionRemainingUsd": 3649.0633332956945,
+     "perTradeRiskRemainingUsd": 11007.175519976063,
+     "portfolioRiskAllowed": true,
+     "portfolioRiskBlockers": []
+    },
+    "plan": {
+     "present": true,
+     "admission": "ALLOW",
+     "reasons": [],
+     "recommendedNotionalUsd": 380.6202860850456,
+     "minExecutableMarginUsd": 1,
+     "capacityRoom": {
+      "source": "QUOTE_ASSET_MARGIN",
+      "ceilingUsd": 2826.404536528,
+      "usedUsd": 1070.0386665851681,
+      "roomUsd": 1756.3658699428318,
+      "limitPct": 0.8,
+      "usedPct": 0.30286921854424154,
+      "equityUsd": 11298.0254038477,
+      "authority": "portfolioIntelligence.maxQuoteAssetMarginUsagePct",
+      "enforced": true
+     }
+    }
+   }
+  ],
+  "shortTraces": [
+   {
+    "symbol": "ZROUSDT",
+    "side": "SHORT",
+    "quoteAsset": "USDT",
+    "entryFundingEligible": true,
+    "referencePrice": 1.5756,
+    "minimumLegalNotionalUsd": 5,
+    "exchangeFilters": {
+     "tickSize": 0.0001,
+     "stepSize": 0.1,
+     "minQty": 0.1,
+     "minNotional": 5,
+     "factsComplete": true,
+     "reasons": []
+    },
+    "leverage": 8,
+    "leverageFact": "CANDIDATE_RECOMMENDED",
+    "plannedNotionalUsd": 445.74823787175677,
+    "finalNotionalBeforeRoundingUsd": 445.74823787175677,
+    "rounded": {
+     "quantityUnits": 2829,
+     "legalNotionalUsd": 445.73724000000004,
+     "stepSize": 0.1,
+     "minQty": 0.1
+    },
+    "executable": true,
+    "blockers": [],
+    "firstBindingConstraint": "PLANNED_NOTIONAL",
+    "actualUsd": 445.74823787175677,
+    "requiredUsd": null,
+    "explanation": "ZROUSDT SHORT：ZROUSDT SHORT 可执行",
+    "funding": {
+     "availableBalanceUsd": 3533.00567066,
+     "reservedMarginUsd": 0,
+     "executionLeaseMarginUsd": 455.93146342964934,
+     "executableMarginUsd": 3077.0742072303506,
+     "policyMarginCapUsd": 500,
+     "executableNotionalUsd": 3980,
+     "bindingConstraint": "MARGIN_POLICY_CAP"
+    },
+    "risk": {
+     "marginTierProven": false,
+     "portfolioRiskBlockersSeen": 0,
+     "grossRemainingUsd": 0,
+     "grossMode": "OBSERVE",
+     "grossEnforced": false,
+     "directionRemainingUsd": 2946.534699779859,
+     "directionMode": "OBSERVE",
+     "directionEnforced": false,
+     "clusterRemainingUsd": 3649.0633332956945,
+     "clusterDirectionRemainingUsd": 3649.0633332956945,
+     "perTradeRiskRemainingUsd": 11627.356745125651,
+     "portfolioRiskAllowed": true,
+     "portfolioRiskBlockers": []
+    },
+    "plan": {
+     "present": true,
+     "admission": "ALLOW",
+     "reasons": [],
+     "recommendedNotionalUsd": 445.74823787175677,
+     "minExecutableMarginUsd": 1,
+     "capacityRoom": {
+      "source": "QUOTE_ASSET_MARGIN",
+      "ceilingUsd": 2826.404536528,
+      "usedUsd": 1070.0386665851681,
+      "roomUsd": 1756.3658699428318,
+      "limitPct": 0.8,
+      "usedPct": 0.30286921854424154,
+      "equityUsd": 11298.0254038477,
+      "authority": "portfolioIntelligence.maxQuoteAssetMarginUsagePct",
+      "enforced": true
+     }
+    }
+   },
+   {
+    "symbol": "OPUSDT",
+    "side": "SHORT",
+    "quoteAsset": "USDT",
+    "entryFundingEligible": true,
+    "referencePrice": 0.1441,
+    "minimumLegalNotionalUsd": 5,
+    "exchangeFilters": {
+     "tickSize": 0.0001,
+     "stepSize": 0.1,
+     "minQty": 0.1,
+     "minNotional": 5,
+     "factsComplete": true,
+     "reasons": []
+    },
+    "leverage": 8,
+    "leverageFact": "CANDIDATE_RECOMMENDED",
+    "plannedNotionalUsd": 437.8849968163853,
+    "finalNotionalBeforeRoundingUsd": 437.8849968163853,
+    "rounded": {
+     "quantityUnits": 30387,
+     "legalNotionalUsd": 437.87667000000005,
+     "stepSize": 0.1,
+     "minQty": 0.1
+    },
+    "executable": true,
+    "blockers": [],
+    "firstBindingConstraint": "PLANNED_NOTIONAL",
+    "actualUsd": 437.8849968163853,
+    "requiredUsd": null,
+    "explanation": "OPUSDT SHORT：OPUSDT SHORT 可执行",
+    "funding": {
+     "availableBalanceUsd": 3533.00567066,
+     "reservedMarginUsd": 0,
+     "executionLeaseMarginUsd": 455.93146342964934,
+     "executableMarginUsd": 3077.0742072303506,
+     "policyMarginCapUsd": 500,
+     "executableNotionalUsd": 3980,
+     "bindingConstraint": "MARGIN_POLICY_CAP"
+    },
+    "risk": {
+     "marginTierProven": true,
+     "portfolioRiskBlockersSeen": 0,
+     "grossRemainingUsd": 0,
+     "grossMode": "OBSERVE",
+     "grossEnforced": false,
+     "directionRemainingUsd": 2946.534699779859,
+     "directionMode": "OBSERVE",
+     "directionEnforced": false,
+     "clusterRemainingUsd": 3649.0633332956945,
+     "clusterDirectionRemainingUsd": 3649.0633332956945,
+     "perTradeRiskRemainingUsd": 11007.175519976063,
+     "portfolioRiskAllowed": true,
+     "portfolioRiskBlockers": []
+    },
+    "plan": {
+     "present": true,
+     "admission": "ALLOW",
+     "reasons": [],
+     "recommendedNotionalUsd": 437.8849968163853,
+     "minExecutableMarginUsd": 1,
+     "capacityRoom": {
+      "source": "QUOTE_ASSET_MARGIN",
+      "ceilingUsd": 2826.404536528,
+      "usedUsd": 1070.0386665851681,
+      "roomUsd": 1756.3658699428318,
+      "limitPct": 0.8,
+      "usedPct": 0.30286921854424154,
+      "equityUsd": 11298.0254038477,
+      "authority": "portfolioIntelligence.maxQuoteAssetMarginUsagePct",
+      "enforced": true
+     }
+    }
+   }
+  ]
+ },
+ "g2": {
+  "envelopeCount": 12,
+  "envelopes": [
+   {
+    "at": "2026-09-26T02:48:15.496Z",
+    "symbol": "WLDUSDT",
+    "executableSides": [
+     "LONG",
+     "SHORT"
+    ],
+    "sideAuthorization": {
+     "LONG": "EXECUTABLE",
+     "SHORT": "EXECUTABLE"
+    },
+    "exchange": {
+     "tickSize": 0.0001,
+     "stepSize": 1,
+     "minQty": 1,
+     "minNotional": 5
+    },
+    "makerReachableBand": {
+     "min": 0.48380317863973704,
+     "max": 0.484596821360263
+    },
+    "LONG": {
+     "minimumLegalNotionalUsd": 5,
+     "minQuantityUnits": 11,
+     "maxQuantityUnits": 7474,
+     "legalQuantityRangeUnits": [
+      11,
+      7474
+     ],
+     "legalNotionalRangeUsd": [
+      5,
+      3621.8766428466056
+     ],
+     "executable": true,
+     "firstBindingConstraint": "CLUSTER"
+    },
+    "SHORT": {
+     "minimumLegalNotionalUsd": 5,
+     "minQuantityUnits": 11,
+     "maxQuantityUnits": 7474,
+     "legalQuantityRangeUnits": [
+      11,
+      7474
+     ],
+     "legalNotionalRangeUsd": [
+      5,
+      3621.8766428466056
+     ],
+     "executable": true,
+     "firstBindingConstraint": "CLUSTER"
+    }
+   },
+   {
+    "at": "2026-09-26T02:49:28.529Z",
+    "symbol": "1000BONKUSDC",
+    "executableSides": [
+     "LONG",
+     "SHORT"
+    ],
+    "sideAuthorization": {
+     "LONG": "EXECUTABLE",
+     "SHORT": "EXECUTABLE"
+    },
+    "exchange": {
+     "tickSize": 0.000001,
+     "stepSize": 1,
+     "minQty": 1,
+     "minNotional": 5
+    },
+    "makerReachableBand": {
+     "min": 0.0036886789793263244,
+     "max": 0.0036933210206736753
+    },
+    "LONG": {
+     "minimumLegalNotionalUsd": 5,
+     "minQuantityUnits": 1355,
+     "maxQuantityUnits": 981782,
+     "legalQuantityRangeUnits": [
+      1355,
+      981782
+     ],
+     "legalNotionalRangeUsd": [
+      5,
+      3626.036098319042
+     ],
+     "executable": true,
+     "firstBindingConstraint": "CLUSTER"
+    },
+    "SHORT": {
+     "minimumLegalNotionalUsd": 5,
+     "minQuantityUnits": 1355,
+     "maxQuantityUnits": 981782,
+     "legalQuantityRangeUnits": [
+      1355,
+      981782
+     ],
+     "legalNotionalRangeUsd": [
+      5,
+      3626.036098319042
+     ],
+     "executable": true,
+     "firstBindingConstraint": "CLUSTER"
+    }
+   },
+   {
+    "at": "2026-09-26T02:50:40.977Z",
+    "symbol": "OPUSDT",
+    "executableSides": [
+     "LONG",
+     "SHORT"
+    ],
+    "sideAuthorization": {
+     "LONG": "EXECUTABLE",
+     "SHORT": "EXECUTABLE"
+    },
+    "exchange": {
+     "tickSize": 0.0001,
+     "stepSize": 0.1,
+     "minQty": 0.1,
+     "minNotional": 5
+    },
+    "makerReachableBand": {
+     "min": 0.14420231567089684,
+     "max": 0.14459768432910317
+    },
+    "LONG": {
+     "minimumLegalNotionalUsd": 5,
+     "minQuantityUnits": 347,
+     "maxQuantityUnits": 251643,
+     "legalQuantityRangeUnits": [
+      347,
+      251643
+     ],
+     "legalNotionalRangeUsd": [
+      5,
+      3641.2742100000005
+     ],
+     "executable": true,
+     "firstBindingConstraint": "CLUSTER"
+    },
+    "SHORT": {
+     "minimumLegalNotionalUsd": 5,
+     "minQuantityUnits": 347,
+     "maxQuantityUnits": 251643,
+     "legalQuantityRangeUnits": [
+      347,
+      251643
+     ],
+     "legalNotionalRangeUsd": [
+      5,
+      3641.2742100000005
+     ],
+     "executable": true,
+     "firstBindingConstraint": "CLUSTER"
+    }
+   },
+   {
+    "at": "2026-09-26T02:51:51.034Z",
+    "symbol": "TAOUSDT",
+    "executableSides": [
+     "LONG",
+     "SHORT"
+    ],
+    "sideAuthorization": {
+     "LONG": "EXECUTABLE",
+     "SHORT": "EXECUTABLE"
+    },
+    "exchange": {
+     "tickSize": 0.01,
+     "stepSize": 0.001,
+     "minQty": 0.001,
+     "minNotional": 5
+    },
+    "makerReachableBand": {
+     "min": 315.15645817698584,
+     "max": 315.72354182301416
+    },
+    "LONG": {
+     "minimumLegalNotionalUsd": 5,
+     "minQuantityUnits": 16,
+     "maxQuantityUnits": 11481,
+     "legalQuantityRangeUnits": [
+      16,
+      11481
+     ],
+     "legalNotionalRangeUsd": [
+      5,
+      3626.27385
+     ],
+     "executable": true,
+     "firstBindingConstraint": "CLUSTER"
+    },
+    "SHORT": {
+     "minimumLegalNotionalUsd": 5,
+     "minQuantityUnits": 16,
+     "maxQuantityUnits": 11481,
+     "legalQuantityRangeUnits": [
+      16,
+      11481
+     ],
+     "legalNotionalRangeUsd": [
+      5,
+      3626.27385
+     ],
+     "executable": true,
+     "firstBindingConstraint": "CLUSTER"
+    }
+   },
+   {
+    "at": "2026-09-26T02:53:02.302Z",
+    "symbol": "WLDUSDT",
+    "executableSides": [
+     "LONG",
+     "SHORT"
+    ],
+    "sideAuthorization": {
+     "LONG": "EXECUTABLE",
+     "SHORT": "EXECUTABLE"
+    },
+    "exchange": {
+     "tickSize": 0.0001,
+     "stepSize": 1,
+     "minQty": 1,
+     "minNotional": 5
+    },
+    "makerReachableBand": {
+     "min": 0.4830868358544105,
+     "max": 0.4837131641455895
+    },
+    "LONG": {
+     "minimumLegalNotionalUsd": 5,
+     "minQuantityUnits": 11,
+     "maxQuantityUnits": 7486,
+     "legalQuantityRangeUnits": [
+      11,
+      7486
+     ],
+     "legalNotionalRangeUsd": [
+      5,
+      3627.7156
+     ],
+     "executable": true,
+     "firstBindingConstraint": "CLUSTER"
+    },
+    "SHORT": {
+     "minimumLegalNotionalUsd": 5,
+     "minQuantityUnits": 11,
+     "maxQuantityUnits": 7486,
+     "legalQuantityRangeUnits": [
+      11,
+      7486
+     ],
+     "legalNotionalRangeUsd": [
+      5,
+      3627.7156
+     ],
+     "executable": true,
+     "firstBindingConstraint": "CLUSTER"
+    }
+   },
+   {
+    "at": "2026-09-26T02:54:15.777Z",
+    "symbol": "ZROUSDT",
+    "executableSides": [
+     "LONG",
+     "SHORT"
+    ],
+    "sideAuthorization": {
+     "LONG": "EXECUTABLE",
+     "SHORT": "EXECUTABLE"
+    },
+    "exchange": {
+     "tickSize": 0.0001,
+     "stepSize": 0.1,
+     "minQty": 0.1,
+     "minNotional": 5
+    },
+    "makerReachableBand": {
+     "min": 1.5752147942551304,
+     "max": 1.5823852057448695
+    },
+    "LONG": {
+     "minimumLegalNotionalUsd": 5,
+     "minQuantityUnits": 32,
+     "maxQuantityUnits": 23050,
+     "legalQuantityRangeUnits": [
+      32,
+      23050
+     ],
+     "legalNotionalRangeUsd": [
+      5,
+      3647.3978992419243
+     ],
+     "executable": true,
+     "firstBindingConstraint": "CLUSTER"
+    },
+    "SHORT": {
+     "minimumLegalNotionalUsd": 5,
+     "minQuantityUnits": 32,
+     "maxQuantityUnits": 23050,
+     "legalQuantityRangeUnits": [
+      32,
+      23050
+     ],
+     "legalNotionalRangeUsd": [
+      5,
+      3647.3978992419243
+     ],
+     "executable": true,
+     "firstBindingConstraint": "CLUSTER"
+    }
+   }
+  ],
+  "sizingErrorEvents": 0,
+  "decisions": [
+   {
+    "at": "2026-09-26T02:38:06.406Z",
+    "type": "PRIMARY_DECISION_NORMALIZED",
+    "runId": "airun_muhs43lk_7u1ynekp",
+    "rawDirection": null,
+    "rawDecision": "PLACE_LONG",
+    "normalizedDirection": "LONG",
+    "normalizedDecision": "PLACE_LONG",
+    "parserRepaired": true,
+    "reason": "Multi-timeframe bullish alignment on 1m/5m/15m/1h. 15m MACD divergence noted as risk. Capacity allows 16 units (min)."
+   },
+   {
+    "at": "2026-09-26T02:38:06.418Z",
+    "type": "AI_RUN_TERMINAL",
+    "id": "airun_muhs43lk_7u1ynekp",
+    "symbol": "TAOUSDT",
+    "resourceId": "brain-7900-primary",
+    "model": "qwen/qwen3.8-27b",
+    "role": "PRIMARY_BRAIN",
+    "startedAt": 1790390225720,
+    "completedAt": 1790390286390,
+    "latencyMs": 60670,
+    "inputTokens": 20637,
+    "outputTokens": 842,
+    "status": "COMPLETED",
+    "direction": "LONG",
+    "decision": "PLACE_LONG",
+    "requestSource": "ENTRY",
+    "inputContractHash": "2af5bd74586349eb9e73ea71d97b94d17e913fcbb5990d4bc6cbf856f4bfaba7",
+    "promptHash": "9b62a3539ee06248e2cd068c6b65f6271c3c05aebf85a05de9fcaf7272522389",
+    "outputContractVersion": "V3.9.3",
+    "finishReason": "stop",
+    "packetId": "eip_muhs3s3c_8w1s5q4q",
+    "error": null,
+    "timing": {
+     "queueMs": 15033,
+     "promptBuildMs": 0,
+     "requestMs": 60655,
+     "parseMs": 2,
+     "retryMs": 0,
+     "transportAttempts": 1,
+     "totalMs": 60670
+    },
+    "failure": null,
+    "triggerReason": "DECISION_CONTEXT_CHANGED",
+    "previousRunId": "airun_muhrpiwx_o6uunxx1",
+    "runKind": "PRIMARY_INFERENCE_RUN",
+    "recordKind": "PRIMARY_INFERENCE_RUN",
+    "marketOpportunityEpisodeId": null,
+    "opportunityVersion": null,
+    "rawDirection": null,
+    "rawDecision": "PLACE_LONG",
+    "terminalStage": "SCHEMA_VALID",
+    "modelIdentity": {
+     "requestedModel": "",
+     "modelAlias": "qwen/qwen3.8-27b",
+     "modelPath": "D:\\.lmstudio\\models\\lmstudio-community\\Qwen3.8-27B-GGUF\\Qwen3.8-27B-Q4_K_M.gguf",
+     "quantization": "Q4_K - Medium",
+     "contextTokens": 65536,
+     "reasoningFormat": "none",
+     "templateSha256": "2b7fa377e9178d7a36f9e948387d6146f6fec10e6dd5d8cf24485d477bafcff6",
+     "serverBuild": "b10276-6ea215d17",
+     "observedAt": 1790389894711
+    },
+    "protocolNormalization": {
+     "applied": false,
+     "fields": [],
+     "repairAttempted": false
+    },
+    "scoutHandoff": false,
+    "parserRepaired": true,
+    "artifactRef": {
+     "table": "ai_runs_archive",
+     "runId": "airun_muhs43lk_7u1ynekp"
+    }
+   },
+   {
+    "at": "2026-09-26T02:38:06.721Z",
+    "type": "ENTRY_ECONOMIC_ADMISSION_EVALUATED",
+    "brainRunId": "airun_muhs43lk_7u1ynekp",
+    "mode": "SHADOW",
+    "passed": false,
+    "wouldBlock": true,
+    "expectedNetProfit": 0.020340512000000182,
+    "requiredNetProfit": 1,
+    "reachProbability": 0.7246376811594203,
+    "historicalHardMaxMovePercent": 3.040562536623459,
+    "targetMovePercent": 0.4905839531571532,
+    "notionalUsd": 5.0552,
+    "blockers": [
+     "ECONOMIC_MIN_NET_PROFIT_UNMET",
+     "HUMAN_MANAGED_EXPOSURE_LIMIT"
+    ],
+    "quantityMutated": false,
+    "targetMutated": false
+   },
+   {
+    "at": "2026-09-26T02:38:06.804Z",
+    "type": "PORTFOLIO_RISK_ADMISSION_EVALUATED",
+    "brainRunId": "airun_muhs43lk_7u1ynekp",
+    "allocationPlanId": "alloc_ai_muhs5eo0_6w148ycj",
+    "allowed": false,
+    "reasons": [
+     "HUMAN_ACK_OVERDUE",
+     "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+     "STRESS_LIMIT:MAX_CLUSTER_NOTIONAL",
+     "STRESS_LIMIT:MAX_GROSS_NOTIONAL"
+    ],
+    "limits": [
+     "MAX_CLUSTER_NOTIONAL",
+     "MAX_GROSS_NOTIONAL"
+    ],
+    "riskGeneration": null,
+    "snapshotHash": null,
+    "factCoverage": null,
+    "grossNotionalUsd": 11185.121378343716,
+    "capitalAtRiskUsd": 1088.2396771097515,
+    "drawdownPct": 0,
+    "locked": false
+   },
+   {
+    "at": "2026-09-26T02:38:06.814Z",
+    "type": "ENTRY_DECISION_BLOCKED",
+    "stage": "PORTFOLIO_RISK_ADMISSION",
+    "reason": "HUMAN_ACK_OVERDUE",
+    "reasons": [
+     "HUMAN_ACK_OVERDUE",
+     "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+     "STRESS_LIMIT:MAX_CLUSTER_NOTIONAL",
+     "STRESS_LIMIT:MAX_GROSS_NOTIONAL"
+    ],
+    "limits": [
+     "MAX_CLUSTER_NOTIONAL",
+     "MAX_GROSS_NOTIONAL"
+    ],
+    "brainRunId": "airun_muhs43lk_7u1ynekp",
+    "allocationPlanId": "alloc_ai_muhs5eo0_6w148ycj"
+   },
+   {
+    "at": "2026-09-26T02:38:06.951Z",
+    "type": "CANDIDATE_REJECTED",
+    "reason": "RISK_HUMAN_ACK_OVERDUE",
+    "cooldownUntil": 1790390311883,
+    "brainRunId": "airun_muhs43lk_7u1ynekp",
+    "direction": "LONG",
+    "decision": "REJECT_CANDIDATE",
+    "entryIntentCreated": false
+   },
+   {
+    "at": "2026-09-26T02:40:41.281Z",
+    "type": "PRIMARY_DECISION_NORMALIZED",
+    "runId": "airun_muhs7h5b_3pwediu5",
+    "rawDirection": null,
+    "rawDecision": "PLACE_LONG",
+    "normalizedDirection": "LONG",
+    "normalizedDecision": "PLACE_LONG",
+    "parserRepaired": true,
+    "reason": "The 15m and 1h timeframes exhibit a clear bullish trend with price above EMAs and positive MACD, indicating a strong underlying structure. The 1m and 5m time"
+   },
+   {
+    "at": "2026-09-26T02:40:41.284Z",
+    "type": "AI_RUN_TERMINAL",
+    "id": "airun_muhs7h5b_3pwediu5",
+    "symbol": "WLDUSDT",
+    "resourceId": "brain-7900-primary",
+    "model": "qwen/qwen3.8-27b",
+    "role": "PRIMARY_BRAIN",
+    "startedAt": 1790390383247,
+    "completedAt": 1790390441274,
+    "latencyMs": 58027,
+    "inputTokens": 20318,
+    "outputTokens": 773,
+    "status": "COMPLETED",
+    "direction": "LONG",
+    "decision": "PLACE_LONG",
+    "requestSource": "ENTRY",
+    "inputContractHash": "706690e6dcc143f539e885b24eea03ed70ea96c660aa1dbde238d87c28330b9b",
+    "promptHash": "3b80e23559b336398ae6d2da3be7cb7e4798939254c157f005d7a1b329566e39",
+    "outputContractVersion": "V3.9.3",
+    "finishReason": "stop",
+    "packetId": "eip_muhs76t0_cfondw8z",
+    "error": null,
+    "timing": {
+     "queueMs": 13521,
+     "promptBuildMs": 0,
+     "requestMs": 58021,
+     "parseMs": 1,
+     "retryMs": 0,
+     "transportAttempts": 1,
+     "totalMs": 58027
+    },
+    "failure": null,
+    "triggerReason": "DECISION_CONTEXT_CHANGED",
+    "previousRunId": "airun_muhq9f29_3glbhvwt",
+    "runKind": "PRIMARY_INFERENCE_RUN",
+    "recordKind": "PRIMARY_INFERENCE_RUN",
+    "marketOpportunityEpisodeId": null,
+    "opportunityVersion": null,
+    "rawDirection": null,
+    "rawDecision": "PLACE_LONG",
+    "terminalStage": "SCHEMA_VALID",
+    "modelIdentity": {
+     "requestedModel": "",
+     "modelAlias": "qwen/qwen3.8-27b",
+     "modelPath": "D:\\.lmstudio\\models\\lmstudio-community\\Qwen3.8-27B-GGUF\\Qwen3.8-27B-Q4_K_M.gguf",
+     "quantization": "Q4_K - Medium",
+     "contextTokens": 65536,
+     "reasoningFormat": "none",
+     "templateSha256": "2b7fa377e9178d7a36f9e948387d6146f6fec10e6dd5d8cf24485d477bafcff6",
+     "serverBuild": "b10276-6ea215d17",
+     "observedAt": 1790389894711
+    },
+    "protocolNormalization": {
+     "applied": false,
+     "fields": [],
+     "repairAttempted": false
+    },
+    "scoutHandoff": false,
+    "parserRepaired": true,
+    "artifactRef": {
+     "table": "ai_runs_archive",
+     "runId": "airun_muhs7h5b_3pwediu5"
+    }
+   },
+   {
+    "at": "2026-09-26T02:40:41.468Z",
+    "type": "ENTRY_ECONOMIC_ADMISSION_EVALUATED",
+    "brainRunId": "airun_muhs7h5b_3pwediu5",
+    "mode": "SHADOW",
+    "passed": false,
+    "wouldBlock": true,
+    "expectedNetProfit": 0.10305583199999972,
+    "requiredNetProfit": 1,
+    "reachProbability": 0.5217391304347826,
+    "historicalHardMaxMovePercent": 5.6253995312167016,
+    "targetMovePercent": 2.0197856553998195,
+    "notionalUsd": 5.3372,
+    "blockers": [
+     "ECONOMIC_MIN_NET_PROFIT_UNMET",
+     "HUMAN_MANAGED_EXPOSURE_LIMIT"
+    ],
+    "quantityMutated": false,
+    "targetMutated": false
+   },
+   {
+    "at": "2026-09-26T02:40:41.529Z",
+    "type": "PORTFOLIO_RISK_ADMISSION_EVALUATED",
+    "brainRunId": "airun_muhs7h5b_3pwediu5",
+    "allocationPlanId": "alloc_ai_muhs8q2k_l1fnx5tu",
+    "allowed": false,
+    "reasons": [
+     "HUMAN_ACK_OVERDUE",
+     "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+     "PENDING_RISK_UNVERIFIED:order:entry_intent_mubl212x_z8fndm8t",
+     "PORTFOLIO_RISK_SNAPSHOT_INCOMPLETE",
+     "STRESS_LIMIT:MAX_CLUSTER_NOTIONAL",
+     "STRESS_LIMIT:MAX_GROSS_NOTIONAL"
+    ],
+    "limits": [
+     "MAX_CLUSTER_NOTIONAL",
+     "MAX_GROSS_NOTIONAL"
+    ],
+    "riskGeneration": null,
+    "snapshotHash": null,
+    "factCoverage": null,
+    "grossNotionalUsd": 11168.457339905834,
+    "capitalAtRiskUsd": 1086.0043548831666,
+    "drawdownPct": 0,
+    "locked": false
+   },
+   {
+    "at": "2026-09-26T02:40:41.532Z",
+    "type": "ENTRY_DECISION_BLOCKED",
+    "stage": "PORTFOLIO_RISK_ADMISSION",
+    "reason": "HUMAN_ACK_OVERDUE",
+    "reasons": [
+     "HUMAN_ACK_OVERDUE",
+     "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+     "PENDING_RISK_UNVERIFIED:order:entry_intent_mubl212x_z8fndm8t",
+     "PORTFOLIO_RISK_SNAPSHOT_INCOMPLETE",
+     "STRESS_LIMIT:MAX_CLUSTER_NOTIONAL",
+     "STRESS_LIMIT:MAX_GROSS_NOTIONAL"
+    ],
+    "limits": [
+     "MAX_CLUSTER_NOTIONAL",
+     "MAX_GROSS_NOTIONAL"
+    ],
+    "brainRunId": "airun_muhs7h5b_3pwediu5",
+    "allocationPlanId": "alloc_ai_muhs8q2k_l1fnx5tu"
+   },
+   {
+    "at": "2026-09-26T02:40:41.643Z",
+    "type": "CANDIDATE_REJECTED",
+    "reason": "RISK_HUMAN_ACK_OVERDUE",
+    "cooldownUntil": 1790390466588,
+    "brainRunId": "airun_muhs7h5b_3pwediu5",
+    "direction": "LONG",
+    "decision": "REJECT_CANDIDATE",
+    "entryIntentCreated": false
+   },
+   {
+    "at": "2026-09-26T02:41:57.058Z",
+    "type": "PRIMARY_DECISION_NORMALIZED",
+    "runId": "airun_muhs932c_2bvklnwl",
+    "rawDirection": null,
+    "rawDecision": "PLACE_LONG",
+    "normalizedDirection": "LONG",
+    "normalizedDecision": "PLACE_LONG",
+    "parserRepaired": true,
+    "reason": "Bullish multi-timeframe alignment (15m/1h/4h) with short-term momentum (1m/5m) supports a long entry. The 15m MACD bearish cross is a risk, but the higher highs"
+   },
+   {
+    "at": "2026-09-26T02:41:57.061Z",
+    "type": "AI_RUN_TERMINAL",
+    "id": "airun_muhs932c_2bvklnwl",
+    "symbol": "TAOUSDT",
+    "resourceId": "brain-7900-primary",
+    "model": "qwen/qwen3.8-27b",
+    "role": "PRIMARY_BRAIN",
+    "startedAt": 1790390458308,
+    "completedAt": 1790390517052,
+    "latencyMs": 58744,
+    "inputTokens": 20248,
+    "outputTokens": 829,
+    "status": "COMPLETED",
+    "direction": "LONG",
+    "decision": "PLACE_LONG",
+    "requestSource": "ENTRY",
+    "inputContractHash": "2c07a80cdb203cd38001846ef04b17438e5f994fff462bfa2540a55f51f2f27b",
+    "promptHash": "2fced95e882941e8b6645cc84ef7021d69c2626194f097ff397f4fbcffda0421",
+    "outputContractVersion": "V3.9.3",
+    "finishReason": "stop",
+    "packetId": "eip_muhs8r81_ah2qvx4w",
+    "error": null,
+    "timing": {
+     "queueMs": 15488,
+     "promptBuildMs": 0,
+     "requestMs": 58738,
+     "parseMs": 1,
+     "retryMs": 0,
+     "transportAttempts": 1,
+     "totalMs": 58744
+    },
+    "failure": null,
+    "triggerReason": "DECISION_CONTEXT_CHANGED",
+    "previousRunId": "airun_muhs43lk_7u1ynekp",
+    "runKind": "PRIMARY_INFERENCE_RUN",
+    "recordKind": "PRIMARY_INFERENCE_RUN",
+    "marketOpportunityEpisodeId": null,
+    "opportunityVersion": null,
+    "rawDirection": null,
+    "rawDecision": "PLACE_LONG",
+    "terminalStage": "SCHEMA_VALID",
+    "modelIdentity": {
+     "requestedModel": "",
+     "modelAlias": "qwen/qwen3.8-27b",
+     "modelPath": "D:\\.lmstudio\\models\\lmstudio-community\\Qwen3.8-27B-GGUF\\Qwen3.8-27B-Q4_K_M.gguf",
+     "quantization": "Q4_K - Medium",
+     "contextTokens": 65536,
+     "reasoningFormat": "none",
+     "templateSha256": "2b7fa377e9178d7a36f9e948387d6146f6fec10e6dd5d8cf24485d477bafcff6",
+     "serverBuild": "b10276-6ea215d17",
+     "observedAt": 1790389894711
+    },
+    "protocolNormalization": {
+     "applied": false,
+     "fields": [],
+     "repairAttempted": false
+    },
+    "scoutHandoff": false,
+    "parserRepaired": true,
+    "artifactRef": {
+     "table": "ai_runs_archive",
+     "runId": "airun_muhs932c_2bvklnwl"
+    }
+   },
+   {
+    "at": "2026-09-26T02:41:57.240Z",
+    "type": "ENTRY_ECONOMIC_ADMISSION_EVALUATED",
+    "brainRunId": "airun_muhs932c_2bvklnwl",
+    "mode": "SHADOW",
+    "passed": false,
+    "wouldBlock": true,
+    "expectedNetProfit": 0.03249178240000003,
+    "requiredNetProfit": 1,
+    "reachProbability": 0.6571428571428571,
+    "historicalHardMaxMovePercent": 3.040562536623459,
+    "targetMovePercent": 0.7305733894177546,
+    "notionalUsd": 5.05904,
+    "blockers": [
+     "ECONOMIC_MIN_NET_PROFIT_UNMET",
+     "HUMAN_MANAGED_EXPOSURE_LIMIT"
+    ],
+    "quantityMutated": false,
+    "targetMutated": false
+   },
+   {
+    "at": "2026-09-26T02:41:57.304Z",
+    "type": "PORTFOLIO_RISK_ADMISSION_EVALUATED",
+    "brainRunId": "airun_muhs932c_2bvklnwl",
+    "allocationPlanId": "alloc_ai_muhsacjc_suqzng1k",
+    "allowed": false,
+    "reasons": [
+     "HUMAN_ACK_OVERDUE",
+     "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+     "STRESS_LIMIT:MAX_CLUSTER_NOTIONAL",
+     "STRESS_LIMIT:MAX_GROSS_NOTIONAL"
+    ],
+    "limits": [
+     "MAX_CLUSTER_NOTIONAL",
+     "MAX_GROSS_NOTIONAL"
+    ],
+    "riskGeneration": null,
+    "snapshotHash": null,
+    "factCoverage": null,
+    "grossNotionalUsd": 11153.007034692802,
+    "capitalAtRiskUsd": 1084.4624382863917,
+    "drawdownPct": 0,
+    "locked": false
+   },
+   {
+    "at": "2026-09-26T02:41:57.306Z",
+    "type": "ENTRY_DECISION_BLOCKED",
+    "stage": "PORTFOLIO_RISK_ADMISSION",
+    "reason": "HUMAN_ACK_OVERDUE",
+    "reasons": [
+     "HUMAN_ACK_OVERDUE",
+     "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+     "STRESS_LIMIT:MAX_CLUSTER_NOTIONAL",
+     "STRESS_LIMIT:MAX_GROSS_NOTIONAL"
+    ],
+    "limits": [
+     "MAX_CLUSTER_NOTIONAL",
+     "MAX_GROSS_NOTIONAL"
+    ],
+    "brainRunId": "airun_muhs932c_2bvklnwl",
+    "allocationPlanId": "alloc_ai_muhsacjc_suqzng1k"
+   },
+   {
+    "at": "2026-09-26T02:41:57.424Z",
+    "type": "CANDIDATE_REJECTED",
+    "reason": "RISK_HUMAN_ACK_OVERDUE",
+    "cooldownUntil": 1790390542365,
+    "brainRunId": "airun_muhs932c_2bvklnwl",
+    "direction": "LONG",
+    "decision": "REJECT_CANDIDATE",
+    "entryIntentCreated": false
+   },
+   {
+    "at": "2026-09-26T02:45:51.651Z",
+    "type": "PRIMARY_DECISION_NORMALIZED",
+    "runId": "airun_muhse2xz_zbazznx6",
+    "rawDirection": null,
+    "rawDecision": "PLACE_LONG",
+    "normalizedDirection": "LONG",
+    "normalizedDecision": "PLACE_LONG",
+    "parserRepaired": true,
+    "reason": "The 15m and 1h timeframes show a strong bullish trend with higher highs and lows, supported by positive MACD histograms and EMA alignment. The 1m timeframe is"
+   },
+   {
+    "at": "2026-09-26T02:45:51.654Z",
+    "type": "AI_RUN_TERMINAL",
+    "id": "airun_muhse2xz_zbazznx6",
+    "symbol": "AAVEUSDT",
+    "resourceId": "brain-7900-primary",
+    "model": "qwen/qwen3.8-27b",
+    "role": "PRIMARY_BRAIN",
+    "startedAt": 1790390691431,
+    "completedAt": 1790390751646,
+    "latencyMs": 60215,
+    "inputTokens": 20216,
+    "outputTokens": 846,
+    "status": "COMPLETED",
+    "direction": "LONG",
+    "decision": "PLACE_LONG",
+    "requestSource": "ENTRY",
+    "inputContractHash": "2883a628e859c43c411a345c94d4edbfe0b612d3f058c678e8b172f6d3b79e3a",
+    "promptHash": "5136e694bf00cb9b754a6de4f25c63dad6cff4f89920dccdf66e71430485a2e9",
+    "outputContractVersion": "V3.9.3",
+    "finishReason": "stop",
+    "packetId": "eip_muhsdsbm_zfxok4au",
+    "error": null,
+    "timing": {
+     "queueMs": 13906,
+     "promptBuildMs": 0,
+     "requestMs": 60208,
+     "parseMs": 0,
+     "retryMs": 0,
+     "transportAttempts": 1,
+     "totalMs": 60215
+    },
+    "failure": null,
+    "triggerReason": "NO_EDGE_TTL_EXPIRED",
+    "previousRunId": "airun_muhrhub0_efolecsp",
+    "runKind": "PRIMARY_INFERENCE_RUN",
+    "recordKind": "PRIMARY_INFERENCE_RUN",
+    "marketOpportunityEpisodeId": null,
+    "opportunityVersion": null,
+    "rawDirection": null,
+    "rawDecision": "PLACE_LONG",
+    "terminalStage": "SCHEMA_VALID",
+    "modelIdentity": {
+     "requestedModel": "",
+     "modelAlias": "qwen/qwen3.8-27b",
+     "modelPath": "D:\\.lmstudio\\models\\lmstudio-community\\Qwen3.8-27B-GGUF\\Qwen3.8-27B-Q4_K_M.gguf",
+     "quantization": "Q4_K - Medium",
+     "contextTokens": 65536,
+     "reasoningFormat": "none",
+     "templateSha256": "2b7fa377e9178d7a36f9e948387d6146f6fec10e6dd5d8cf24485d477bafcff6",
+     "serverBuild": "b10276-6ea215d17",
+     "observedAt": 1790389894711
+    },
+    "protocolNormalization": {
+     "applied": false,
+     "fields": [],
+     "repairAttempted": false
+    },
+    "scoutHandoff": false,
+    "parserRepaired": true,
+    "artifactRef": {
+     "table": "ai_runs_archive",
+     "runId": "airun_muhse2xz_zbazznx6"
+    }
+   },
+   {
+    "at": "2026-09-26T02:45:51.850Z",
+    "type": "ENTRY_ECONOMIC_ADMISSION_EVALUATED",
+    "brainRunId": "airun_muhse2xz_zbazznx6",
+    "mode": "SHADOW",
+    "passed": false,
+    "wouldBlock": true,
+    "expectedNetProfit": 8.80332624000011,
+    "requiredNetProfit": 1,
+    "reachProbability": 0.6142857142857143,
+    "historicalHardMaxMovePercent": 2.0204653587955423,
+    "targetMovePercent": 0.4390779363337094,
+    "notionalUsd": 2508.894,
+    "blockers": [
+     "HUMAN_MANAGED_EXPOSURE_LIMIT"
+    ],
+    "quantityMutated": false,
+    "targetMutated": false
+   },
+   {
+    "at": "2026-09-26T02:45:51.915Z",
+    "type": "PORTFOLIO_RISK_ADMISSION_EVALUATED",
+    "brainRunId": "airun_muhse2xz_zbazznx6",
+    "allocationPlanId": "alloc_ai_muhsfdk9_u25fn9it",
+    "allowed": false,
+    "reasons": [
+     "HUMAN_ACK_OVERDUE",
+     "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+     "STRESS_LIMIT:MAX_CLUSTER_NOTIONAL",
+     "STRESS_LIMIT:MAX_GROSS_NOTIONAL"
+    ],
+    "limits": [
+     "MAX_CLUSTER_NOTIONAL",
+     "MAX_GROSS_NOTIONAL"
+    ],
+    "riskGeneration": null,
+    "snapshotHash": null,
+    "factCoverage": null,
+    "grossNotionalUsd": 13642.503262201568,
+    "capitalAtRiskUsd": 1395.6271866253755,
+    "drawdownPct": 0,
+    "locked": false
+   },
+   {
+    "at": "2026-09-26T02:45:51.918Z",
+    "type": "ENTRY_DECISION_BLOCKED",
+    "stage": "PORTFOLIO_RISK_ADMISSION",
+    "reason": "HUMAN_ACK_OVERDUE",
+    "reasons": [
+     "HUMAN_ACK_OVERDUE",
+     "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+     "STRESS_LIMIT:MAX_CLUSTER_NOTIONAL",
+     "STRESS_LIMIT:MAX_GROSS_NOTIONAL"
+    ],
+    "limits": [
+     "MAX_CLUSTER_NOTIONAL",
+     "MAX_GROSS_NOTIONAL"
+    ],
+    "brainRunId": "airun_muhse2xz_zbazznx6",
+    "allocationPlanId": "alloc_ai_muhsfdk9_u25fn9it"
+   },
+   {
+    "at": "2026-09-26T02:45:52.035Z",
+    "type": "CANDIDATE_REJECTED",
+    "reason": "RISK_HUMAN_ACK_OVERDUE",
+    "cooldownUntil": 1790390776976,
+    "brainRunId": "airun_muhse2xz_zbazznx6",
+    "direction": "LONG",
+    "decision": "REJECT_CANDIDATE",
+    "entryIntentCreated": false
+   },
+   {
+    "at": "2026-09-26T02:47:03.524Z",
+    "type": "PRIMARY_DECISION_NORMALIZED",
+    "runId": "airun_muhsfqqi_8wj7wax6",
+    "rawDirection": null,
+    "rawDecision": "PLACE_SHORT",
+    "normalizedDirection": "SHORT",
+    "normalizedDecision": "PLACE_SHORT",
+    "parserRepaired": true,
+    "reason": "Short-term bearish structure on 15m/5m with a temporary 1m bounce offers a favorable risk-reward setup for a short entry"
+   },
+   {
+    "at": "2026-09-26T02:47:03.527Z",
+    "type": "AI_RUN_TERMINAL",
+    "id": "airun_muhsfqqi_8wj7wax6",
+    "symbol": "BRUSDT",
+    "resourceId": "brain-7900-primary",
+    "model": "qwen/qwen3.8-27b",
+    "role": "PRIMARY_BRAIN",
+    "startedAt": 1790390768922,
+    "completedAt": 1790390823516,
+    "latencyMs": 54594,
+    "inputTokens": 20704,
+    "outputTokens": 666,
+    "status": "COMPLETED",
+    "direction": "SHORT",
+    "decision": "PLACE_SHORT",
+    "requestSource": "ENTRY",
+    "inputContractHash": "52d1e1aca7cf4a6ac9d801dc9a2f44ad81aff4cb6e6c418626ba8d1e74429597",
+    "promptHash": "ff843af54373b236a03694db97e399759dec4445b1f37c97a5864ed2f5759fdb",
+    "outputContractVersion": "V3.9.3",
+    "finishReason": "stop",
+    "packetId": "eip_muhsfg4y_9oa7tvb2",
+    "error": null,
+    "timing": {
+     "queueMs": 13877,
+     "promptBuildMs": 0,
+     "requestMs": 54580,
+     "parseMs": 0,
+     "retryMs": 0,
+     "transportAttempts": 1,
+     "totalMs": 54594
+    },
+    "failure": null,
+    "triggerReason": "NO_EDGE_TTL_EXPIRED",
+    "previousRunId": "airun_muhqh3hl_t396k9o4",
+    "runKind": "PRIMARY_INFERENCE_RUN",
+    "recordKind": "PRIMARY_INFERENCE_RUN",
+    "marketOpportunityEpisodeId": null,
+    "opportunityVersion": null,
+    "rawDirection": null,
+    "rawDecision": "PLACE_SHORT",
+    "terminalStage": "SCHEMA_VALID",
+    "modelIdentity": {
+     "requestedModel": "",
+     "modelAlias": "qwen/qwen3.8-27b",
+     "modelPath": "D:\\.lmstudio\\models\\lmstudio-community\\Qwen3.8-27B-GGUF\\Qwen3.8-27B-Q4_K_M.gguf",
+     "quantization": "Q4_K - Medium",
+     "contextTokens": 65536,
+     "reasoningFormat": "none",
+     "templateSha256": "2b7fa377e9178d7a36f9e948387d6146f6fec10e6dd5d8cf24485d477bafcff6",
+     "serverBuild": "b10276-6ea215d17",
+     "observedAt": 1790389894711
+    },
+    "protocolNormalization": {
+     "applied": false,
+     "fields": [],
+     "repairAttempted": false
+    },
+    "scoutHandoff": false,
+    "parserRepaired": true,
+    "artifactRef": {
+     "table": "ai_runs_archive",
+     "runId": "airun_muhsfqqi_8wj7wax6"
+    }
+   },
+   {
+    "at": "2026-09-26T02:47:03.714Z",
+    "type": "ENTRY_ECONOMIC_ADMISSION_EVALUATED",
+    "brainRunId": "airun_muhsfqqi_8wj7wax6",
+    "mode": "SHADOW",
+    "passed": false,
+    "wouldBlock": true,
+    "expectedNetProfit": 0.03720312000000004,
+    "requiredNetProfit": 1,
+    "reachProbability": 0.6666666666666666,
+    "historicalHardMaxMovePercent": 8.915432592023741,
+    "targetMovePercent": 0.7675438596491224,
+    "notionalUsd": 5.472,
+    "blockers": [
+     "ECONOMIC_MIN_NET_PROFIT_UNMET",
+     "HUMAN_MANAGED_EXPOSURE_LIMIT"
+    ],
+    "quantityMutated": false,
+    "targetMutated": false
+   },
+   {
+    "at": "2026-09-26T02:47:03.776Z",
+    "type": "PORTFOLIO_RISK_ADMISSION_EVALUATED",
+    "brainRunId": "airun_muhsfqqi_8wj7wax6",
+    "allocationPlanId": "alloc_ai_muhsgx0h_yog30m9v",
+    "allowed": false,
+    "reasons": [
+     "HUMAN_ACK_OVERDUE",
+     "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+     "STRESS_LIMIT:MAX_CLUSTER_NOTIONAL",
+     "STRESS_LIMIT:MAX_GROSS_NOTIONAL"
+    ],
+    "limits": [
+     "MAX_CLUSTER_NOTIONAL",
+     "MAX_GROSS_NOTIONAL"
+    ],
+    "riskGeneration": null,
+    "snapshotHash": null,
+    "factCoverage": null,
+    "grossNotionalUsd": 11143.771345232426,
+    "capitalAtRiskUsd": 1083.1462263087424,
+    "drawdownPct": 0,
+    "locked": false
+   },
+   {
+    "at": "2026-09-26T02:47:03.778Z",
+    "type": "ENTRY_DECISION_BLOCKED",
+    "stage": "PORTFOLIO_RISK_ADMISSION",
+    "reason": "HUMAN_ACK_OVERDUE",
+    "reasons": [
+     "HUMAN_ACK_OVERDUE",
+     "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+     "STRESS_LIMIT:MAX_CLUSTER_NOTIONAL",
+     "STRESS_LIMIT:MAX_GROSS_NOTIONAL"
+    ],
+    "limits": [
+     "MAX_CLUSTER_NOTIONAL",
+     "MAX_GROSS_NOTIONAL"
+    ],
+    "brainRunId": "airun_muhsfqqi_8wj7wax6",
+    "allocationPlanId": "alloc_ai_muhsgx0h_yog30m9v"
+   },
+   {
+    "at": "2026-09-26T02:47:03.892Z",
+    "type": "CANDIDATE_REJECTED",
+    "reason": "RISK_HUMAN_ACK_OVERDUE",
+    "cooldownUntil": 1790390848836,
+    "brainRunId": "airun_muhsfqqi_8wj7wax6",
+    "direction": "SHORT",
+    "decision": "REJECT_CANDIDATE",
+    "entryIntentCreated": false
+   },
+   {
+    "at": "2026-09-26T02:48:14.952Z",
+    "type": "PRIMARY_DECISION_NORMALIZED",
+    "runId": "airun_muhsh7ti_3qsb7vis",
+    "rawDirection": null,
+    "rawDecision": "PLACE_SHORT",
+    "normalizedDirection": "SHORT",
+    "normalizedDecision": "PLACE_SHORT",
+    "parserRepaired": true,
+    "reason": "The market exhibits a clear short-term downtrend (1m/5m) with bearish MACD and price action near support, while the 15m timeframe is in a range. The higher time"
+   },
+   {
+    "at": "2026-09-26T02:48:14.954Z",
+    "type": "AI_RUN_TERMINAL",
+    "id": "airun_muhsh7ti_3qsb7vis",
+    "symbol": "ZROUSDT",
+    "resourceId": "brain-7900-primary",
+    "model": "qwen/qwen3.8-27b",
+    "role": "PRIMARY_BRAIN",
+    "startedAt": 1790390837718,
+    "completedAt": 1790390894945,
+    "latencyMs": 57227,
+    "inputTokens": 20548,
+    "outputTokens": 753,
+    "status": "COMPLETED",
+    "direction": "SHORT",
+    "decision": "PLACE_SHORT",
+    "requestSource": "ENTRY",
+    "inputContractHash": "0bb708a36cfe205dc0467ae05d9a62e1485f96819c0b5abd1e12441a6b479c8f",
+    "promptHash": "ba397895309198dc69033365029dd06af21c0d683932a73459a05c65e63660f6",
+    "outputContractVersion": "V3.9.3",
+    "finishReason": "stop",
+    "packetId": "eip_muhsgyqz_bzodsuhm",
+    "error": null,
+    "timing": {
+     "queueMs": 11907,
+     "promptBuildMs": 0,
+     "requestMs": 57220,
+     "parseMs": 0,
+     "retryMs": 0,
+     "transportAttempts": 1,
+     "totalMs": 57227
+    },
+    "failure": null,
+    "triggerReason": "DECISION_CONTEXT_CHANGED",
+    "previousRunId": "airun_muhrr35p_i234j67c",
+    "runKind": "PRIMARY_INFERENCE_RUN",
+    "recordKind": "PRIMARY_INFERENCE_RUN",
+    "marketOpportunityEpisodeId": null,
+    "opportunityVersion": null,
+    "rawDirection": null,
+    "rawDecision": "PLACE_SHORT",
+    "terminalStage": "SCHEMA_VALID",
+    "modelIdentity": {
+     "requestedModel": "",
+     "modelAlias": "qwen/qwen3.8-27b",
+     "modelPath": "D:\\.lmstudio\\models\\lmstudio-community\\Qwen3.8-27B-GGUF\\Qwen3.8-27B-Q4_K_M.gguf",
+     "quantization": "Q4_K - Medium",
+     "contextTokens": 65536,
+     "reasoningFormat": "none",
+     "templateSha256": "2b7fa377e9178d7a36f9e948387d6146f6fec10e6dd5d8cf24485d477bafcff6",
+     "serverBuild": "b10276-6ea215d17",
+     "observedAt": 1790389894711
+    },
+    "protocolNormalization": {
+     "applied": false,
+     "fields": [],
+     "repairAttempted": false
+    },
+    "scoutHandoff": false,
+    "parserRepaired": true,
+    "artifactRef": {
+     "table": "ai_runs_archive",
+     "runId": "airun_muhsh7ti_3qsb7vis"
+    }
+   },
+   {
+    "at": "2026-09-26T02:48:15.136Z",
+    "type": "ENTRY_ECONOMIC_ADMISSION_EVALUATED",
+    "brainRunId": "airun_muhsh7ti_3qsb7vis",
+    "mode": "SHADOW",
+    "passed": false,
+    "wouldBlock": true,
+    "expectedNetProfit": 0.043571840000000396,
+    "requiredNetProfit": 1,
+    "reachProbability": 0.18840579710144928,
+    "historicalHardMaxMovePercent": 1.3775985107043143,
+    "targetMovePercent": 0.9493670886076,
+    "notionalUsd": 5.056000000000001,
+    "blockers": [
+     "ECONOMIC_MIN_NET_PROFIT_UNMET",
+     "TP_REACH_PROBABILITY_UNMET",
+     "HUMAN_MANAGED_EXPOSURE_LIMIT"
+    ],
+    "quantityMutated": false,
+    "targetMutated": false
+   },
+   {
+    "at": "2026-09-26T02:48:15.199Z",
+    "type": "PORTFOLIO_RISK_ADMISSION_EVALUATED",
+    "brainRunId": "airun_muhsh7ti_3qsb7vis",
+    "allocationPlanId": "alloc_ai_muhsig4g_fnhp640c",
+    "allowed": false,
+    "reasons": [
+     "HUMAN_ACK_OVERDUE",
+     "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+     "MARGIN_TIER_SYMBOL_UNPROVEN:ZROUSDT",
+     "STRESS_LIMIT:MAX_CLUSTER_NOTIONAL",
+     "STRESS_LIMIT:MAX_GROSS_NOTIONAL"
+    ],
+    "limits": [
+     "MAX_CLUSTER_NOTIONAL",
+     "MAX_GROSS_NOTIONAL"
+    ],
+    "riskGeneration": null,
+    "snapshotHash": null,
+    "factCoverage": null,
+    "grossNotionalUsd": 11146.432173743242,
+    "capitalAtRiskUsd": 1083.5064706409191,
+    "drawdownPct": 0,
+    "locked": false
+   },
+   {
+    "at": "2026-09-26T02:48:15.202Z",
+    "type": "ENTRY_DECISION_BLOCKED",
+    "stage": "PORTFOLIO_RISK_ADMISSION",
+    "reason": "HUMAN_ACK_OVERDUE",
+    "reasons": [
+     "HUMAN_ACK_OVERDUE",
+     "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+     "MARGIN_TIER_SYMBOL_UNPROVEN:ZROUSDT",
+     "STRESS_LIMIT:MAX_CLUSTER_NOTIONAL",
+     "STRESS_LIMIT:MAX_GROSS_NOTIONAL"
+    ],
+    "limits": [
+     "MAX_CLUSTER_NOTIONAL",
+     "MAX_GROSS_NOTIONAL"
+    ],
+    "brainRunId": "airun_muhsh7ti_3qsb7vis",
+    "allocationPlanId": "alloc_ai_muhsig4g_fnhp640c"
+   },
+   {
+    "at": "2026-09-26T02:48:15.316Z",
+    "type": "CANDIDATE_REJECTED",
+    "reason": "RISK_HUMAN_ACK_OVERDUE",
+    "cooldownUntil": 1790390920259,
+    "brainRunId": "airun_muhsh7ti_3qsb7vis",
+    "direction": "SHORT",
+    "decision": "REJECT_CANDIDATE",
+    "entryIntentCreated": false
+   },
+   {
+    "at": "2026-09-26T02:50:39.362Z",
+    "type": "PRIMARY_DECISION_NORMALIZED",
+    "runId": "airun_muhskbc6_irhgfy3j",
+    "rawDirection": null,
+    "rawDecision": "PLACE_SHORT",
+    "normalizedDirection": "SHORT",
+    "normalizedDecision": "PLACE_SHORT",
+    "parserRepaired": true,
+    "reason": "Short setup based on bearish 15m structure and strong downward momentum on lower timeframes"
+   },
+   {
+    "at": "2026-09-26T02:50:39.373Z",
+    "type": "AI_RUN_TERMINAL",
+    "id": "airun_muhskbc6_irhgfy3j",
+    "symbol": "1000BONKUSDC",
+    "resourceId": "brain-7900-primary",
+    "model": "qwen/qwen3.8-27b",
+    "role": "PRIMARY_BRAIN",
+    "startedAt": 1790390982246,
+    "completedAt": 1790391039344,
+    "latencyMs": 57098,
+    "inputTokens": 20482,
+    "outputTokens": 692,
+    "status": "COMPLETED",
+    "direction": "SHORT",
+    "decision": "PLACE_SHORT",
+    "requestSource": "ENTRY",
+    "inputContractHash": "d52b309cddf8fadb9aa3e031e08a58ad7028e7d226d6d35692ccbf4218b32cea",
+    "promptHash": "b0787ec57da11a4697a4aa40344d1a464b5b84fdc93451dd9842e18066c982f2",
+    "outputContractVersion": "V3.9.3",
+    "finishReason": "stop",
+    "packetId": "eip_muhsk0rg_cs5qgnao",
+    "error": null,
+    "timing": {
+     "queueMs": 13850,
+     "promptBuildMs": 0,
+     "requestMs": 57087,
+     "parseMs": 1,
+     "retryMs": 0,
+     "transportAttempts": 1,
+     "totalMs": 57098
+    },
+    "failure": null,
+    "triggerReason": "DECISION_CONTEXT_CHANGED",
+    "previousRunId": "airun_muhq1gpq_q3xb07qh",
+    "runKind": "PRIMARY_INFERENCE_RUN",
+    "recordKind": "PRIMARY_INFERENCE_RUN",
+    "marketOpportunityEpisodeId": null,
+    "opportunityVersion": null,
+    "rawDirection": null,
+    "rawDecision": "PLACE_SHORT",
+    "terminalStage": "SCHEMA_VALID",
+    "modelIdentity": {
+     "requestedModel": "",
+     "modelAlias": "qwen/qwen3.8-27b",
+     "modelPath": "D:\\.lmstudio\\models\\lmstudio-community\\Qwen3.8-27B-GGUF\\Qwen3.8-27B-Q4_K_M.gguf",
+     "quantization": "Q4_K - Medium",
+     "contextTokens": 65536,
+     "reasoningFormat": "none",
+     "templateSha256": "2b7fa377e9178d7a36f9e948387d6146f6fec10e6dd5d8cf24485d477bafcff6",
+     "serverBuild": "b10276-6ea215d17",
+     "observedAt": 1790389894711
+    },
+    "protocolNormalization": {
+     "applied": false,
+     "fields": [],
+     "repairAttempted": false
+    },
+    "scoutHandoff": false,
+    "parserRepaired": true,
+    "artifactRef": {
+     "table": "ai_runs_archive",
+     "runId": "airun_muhskbc6_irhgfy3j"
+    }
+   },
+   {
+    "at": "2026-09-26T02:50:39.618Z",
+    "type": "ENTRY_ECONOMIC_ADMISSION_EVALUATED",
+    "brainRunId": "airun_muhskbc6_irhgfy3j",
+    "mode": "SHADOW",
+    "passed": false,
+    "wouldBlock": true,
+    "expectedNetProfit": 0.04305187299999983,
+    "requiredNetProfit": 1,
+    "reachProbability": 0.2753623188405797,
+    "historicalHardMaxMovePercent": 1.8598382749326126,
+    "targetMovePercent": 0.9497964721845276,
+    "notionalUsd": 4.993175,
+    "blockers": [
+     "ECONOMIC_MIN_NET_PROFIT_UNMET",
+     "TP_REACH_PROBABILITY_UNMET",
+     "HUMAN_MANAGED_EXPOSURE_LIMIT"
+    ],
+    "quantityMutated": false,
+    "targetMutated": false
+   },
+   {
+    "at": "2026-09-26T02:50:39.696Z",
+    "type": "PORTFOLIO_RISK_ADMISSION_EVALUATED",
+    "brainRunId": "airun_muhskbc6_irhgfy3j",
+    "allocationPlanId": "alloc_ai_muhsljlt_gtjdspzg",
+    "allowed": false,
+    "reasons": [
+     "HUMAN_ACK_OVERDUE",
+     "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+     "MARGIN_TIER_SYMBOL_UNPROVEN:1000BONKUSDC",
+     "STRESS_LIMIT:MAX_CLUSTER_NOTIONAL",
+     "STRESS_LIMIT:MAX_GROSS_NOTIONAL"
+    ],
+    "limits": [
+     "MAX_CLUSTER_NOTIONAL",
+     "MAX_GROSS_NOTIONAL"
+    ],
+    "riskGeneration": null,
+    "snapshotHash": null,
+    "factCoverage": null,
+    "grossNotionalUsd": 11145.083123537699,
+    "capitalAtRiskUsd": 1083.3460824355955,
+    "drawdownPct": 0,
+    "locked": false
+   },
+   {
+    "at": "2026-09-26T02:50:39.705Z",
+    "type": "ENTRY_DECISION_BLOCKED",
+    "stage": "PORTFOLIO_RISK_ADMISSION",
+    "reason": "HUMAN_ACK_OVERDUE",
+    "reasons": [
+     "HUMAN_ACK_OVERDUE",
+     "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+     "MARGIN_TIER_SYMBOL_UNPROVEN:1000BONKUSDC",
+     "STRESS_LIMIT:MAX_CLUSTER_NOTIONAL",
+     "STRESS_LIMIT:MAX_GROSS_NOTIONAL"
+    ],
+    "limits": [
+     "MAX_CLUSTER_NOTIONAL",
+     "MAX_GROSS_NOTIONAL"
+    ],
+    "brainRunId": "airun_muhskbc6_irhgfy3j",
+    "allocationPlanId": "alloc_ai_muhsljlt_gtjdspzg"
+   },
+   {
+    "at": "2026-09-26T02:50:39.852Z",
+    "type": "CANDIDATE_REJECTED",
+    "reason": "RISK_HUMAN_ACK_OVERDUE",
+    "cooldownUntil": 1790391064779,
+    "brainRunId": "airun_muhskbc6_irhgfy3j",
+    "direction": "SHORT",
+    "decision": "REJECT_CANDIDATE",
+    "entryIntentCreated": false
+   },
+   {
+    "at": "2026-09-26T02:51:48.393Z",
+    "type": "PRIMARY_DECISION_NORMALIZED",
+    "runId": "airun_muhsltpt_q25hwtkg",
+    "rawDirection": null,
+    "rawDecision": "PLACE_LONG",
+    "normalizedDirection": "LONG",
+    "normalizedDecision": "PLACE_LONG",
+    "parserRepaired": true,
+    "reason": "The 15m and 1h timeframes exhibit a clear uptrend with higher highs and higher lows, supported by positive MACD and EMA alignment. The 1m and 5m timeframes show"
+   },
+   {
+    "at": "2026-09-26T02:51:48.395Z",
+    "type": "AI_RUN_TERMINAL",
+    "id": "airun_muhsltpt_q25hwtkg",
+    "symbol": "OPUSDT",
+    "resourceId": "brain-7900-primary",
+    "model": "qwen/qwen3.8-27b",
+    "role": "PRIMARY_BRAIN",
+    "startedAt": 1790391052721,
+    "completedAt": 1790391108387,
+    "latencyMs": 55666,
+    "inputTokens": 19989,
+    "outputTokens": 744,
+    "status": "COMPLETED",
+    "direction": "LONG",
+    "decision": "PLACE_LONG",
+    "requestSource": "ENTRY",
+    "inputContractHash": "0f3036ecff6a9c94b6bf2ef67f739f84d9ce8eb32363a2e54a5d850bd53eb149",
+    "promptHash": "6fa71acdbb4eddb4fdb762cc93ece9d8d6c3da70e9e4992bc888715e0da9d94d",
+    "outputContractVersion": "V3.9.3",
+    "finishReason": "stop",
+    "packetId": "eip_muhslko0_kd7zvx5m",
+    "error": null,
+    "timing": {
+     "queueMs": 11876,
+     "promptBuildMs": 0,
+     "requestMs": 55660,
+     "parseMs": 1,
+     "retryMs": 0,
+     "transportAttempts": 1,
+     "totalMs": 55666
+    },
+    "failure": null,
+    "triggerReason": "NO_EDGE_TTL_EXPIRED",
+    "previousRunId": "airun_muhqsali_w2eq9eqq",
+    "runKind": "PRIMARY_INFERENCE_RUN",
+    "recordKind": "PRIMARY_INFERENCE_RUN",
+    "marketOpportunityEpisodeId": null,
+    "opportunityVersion": null,
+    "rawDirection": null,
+    "rawDecision": "PLACE_LONG",
+    "terminalStage": "SCHEMA_VALID",
+    "modelIdentity": {
+     "requestedModel": "",
+     "modelAlias": "qwen/qwen3.8-27b",
+     "modelPath": "D:\\.lmstudio\\models\\lmstudio-community\\Qwen3.8-27B-GGUF\\Qwen3.8-27B-Q4_K_M.gguf",
+     "quantization": "Q4_K - Medium",
+     "contextTokens": 65536,
+     "reasoningFormat": "none",
+     "templateSha256": "2b7fa377e9178d7a36f9e948387d6146f6fec10e6dd5d8cf24485d477bafcff6",
+     "serverBuild": "b10276-6ea215d17",
+     "observedAt": 1790389894711
+    },
+    "protocolNormalization": {
+     "applied": false,
+     "fields": [],
+     "repairAttempted": false
+    },
+    "scoutHandoff": false,
+    "parserRepaired": true,
+    "artifactRef": {
+     "table": "ai_runs_archive",
+     "runId": "airun_muhsltpt_q25hwtkg"
+    }
+   },
+   {
+    "at": "2026-09-26T02:51:48.588Z",
+    "type": "ENTRY_ECONOMIC_ADMISSION_EVALUATED",
+    "brainRunId": "airun_muhsltpt_q25hwtkg",
+    "mode": "SHADOW",
+    "passed": false,
+    "wouldBlock": true,
+    "expectedNetProfit": 0.016395333599999635,
+    "requiredNetProfit": 1,
+    "reachProbability": 0.5774647887323944,
+    "historicalHardMaxMovePercent": 1.1854951185495066,
+    "targetMovePercent": 0.4149377593360981,
+    "notionalUsd": 5.017620000000001,
+    "blockers": [
+     "ECONOMIC_MIN_NET_PROFIT_UNMET",
+     "HUMAN_MANAGED_EXPOSURE_LIMIT"
+    ],
+    "quantityMutated": false,
+    "targetMutated": false
+   },
+   {
+    "at": "2026-09-26T02:51:48.652Z",
+    "type": "PORTFOLIO_RISK_ADMISSION_EVALUATED",
+    "brainRunId": "airun_muhsltpt_q25hwtkg",
+    "allocationPlanId": "alloc_ai_muhsn0to_ycbwrd1a",
+    "allowed": false,
+    "reasons": [
+     "HUMAN_ACK_OVERDUE",
+     "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+     "STRESS_LIMIT:MAX_CLUSTER_NOTIONAL",
+     "STRESS_LIMIT:MAX_GROSS_NOTIONAL"
+    ],
+    "limits": [
+     "MAX_CLUSTER_NOTIONAL",
+     "MAX_GROSS_NOTIONAL"
+    ],
+    "riskGeneration": null,
+    "snapshotHash": null,
+    "factCoverage": null,
+    "grossNotionalUsd": 11135.42082498264,
+    "capitalAtRiskUsd": 1082.171662675114,
+    "drawdownPct": 0,
+    "locked": false
+   },
+   {
+    "at": "2026-09-26T02:51:48.655Z",
+    "type": "ENTRY_DECISION_BLOCKED",
+    "stage": "PORTFOLIO_RISK_ADMISSION",
+    "reason": "HUMAN_ACK_OVERDUE",
+    "reasons": [
+     "HUMAN_ACK_OVERDUE",
+     "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+     "STRESS_LIMIT:MAX_CLUSTER_NOTIONAL",
+     "STRESS_LIMIT:MAX_GROSS_NOTIONAL"
+    ],
+    "limits": [
+     "MAX_CLUSTER_NOTIONAL",
+     "MAX_GROSS_NOTIONAL"
+    ],
+    "brainRunId": "airun_muhsltpt_q25hwtkg",
+    "allocationPlanId": "alloc_ai_muhsn0to_ycbwrd1a"
+   },
+   {
+    "at": "2026-09-26T02:51:48.766Z",
+    "type": "CANDIDATE_REJECTED",
+    "reason": "RISK_HUMAN_ACK_OVERDUE",
+    "cooldownUntil": 1790391133711,
+    "brainRunId": "airun_muhsltpt_q25hwtkg",
+    "direction": "LONG",
+    "decision": "REJECT_CANDIDATE",
+    "entryIntentCreated": false
+   },
+   {
+    "at": "2026-09-26T02:53:00.651Z",
+    "type": "PRIMARY_DECISION_NORMALIZED",
+    "runId": "airun_muhsnbcr_gxv1uw6g",
+    "rawDirection": null,
+    "rawDecision": "PLACE_LONG",
+    "normalizedDirection": "LONG",
+    "normalizedDecision": "PLACE_LONG",
+    "parserRepaired": true,
+    "reason": "Strong multi-timeframe bullish alignment with supportive order book depth. Entry is timed to catch a minor pullback in an uptrend"
+   },
+   {
+    "at": "2026-09-26T02:53:00.662Z",
+    "type": "AI_RUN_TERMINAL",
+    "id": "airun_muhsnbcr_gxv1uw6g",
+    "symbol": "TAOUSDT",
+    "resourceId": "brain-7900-primary",
+    "model": "qwen/qwen3.8-27b",
+    "role": "PRIMARY_BRAIN",
+    "startedAt": 1790391122235,
+    "completedAt": 1790391180637,
+    "latencyMs": 58402,
+    "inputTokens": 20446,
+    "outputTokens": 722,
+    "status": "COMPLETED",
+    "direction": "LONG",
+    "decision": "PLACE_LONG",
+    "requestSource": "ENTRY",
+    "inputContractHash": "dcc15962a74b860a47b61ba7347688bd94687486f018ce2eab0b0a91f4e91580",
+    "promptHash": "ef178d0a63471252f767fa025a5a28b899f8a76db0be95b9cb01329ce89f3f44",
+    "outputContractVersion": "V3.9.3",
+    "finishReason": "stop",
+    "packetId": "eip_muhsn2py_a8xfe1gf",
+    "error": null,
+    "timing": {
+     "queueMs": 11330,
+     "promptBuildMs": 0,
+     "requestMs": 58395,
+     "parseMs": 0,
+     "retryMs": 0,
+     "transportAttempts": 1,
+     "totalMs": 58402
+    },
+    "failure": null,
+    "triggerReason": "DECISION_CONTEXT_CHANGED",
+    "previousRunId": "airun_muhs932c_2bvklnwl",
+    "runKind": "PRIMARY_INFERENCE_RUN",
+    "recordKind": "PRIMARY_INFERENCE_RUN",
+    "marketOpportunityEpisodeId": null,
+    "opportunityVersion": null,
+    "rawDirection": null,
+    "rawDecision": "PLACE_LONG",
+    "terminalStage": "SCHEMA_VALID",
+    "modelIdentity": {
+     "requestedModel": "",
+     "modelAlias": "qwen/qwen3.8-27b",
+     "modelPath": "D:\\.lmstudio\\models\\lmstudio-community\\Qwen3.8-27B-GGUF\\Qwen3.8-27B-Q4_K_M.gguf",
+     "quantization": "Q4_K - Medium",
+     "contextTokens": 65536,
+     "reasoningFormat": "none",
+     "templateSha256": "2b7fa377e9178d7a36f9e948387d6146f6fec10e6dd5d8cf24485d477bafcff6",
+     "serverBuild": "b10276-6ea215d17",
+     "observedAt": 1790389894711
+    },
+    "protocolNormalization": {
+     "applied": false,
+     "fields": [],
+     "repairAttempted": false
+    },
+    "scoutHandoff": false,
+    "parserRepaired": true,
+    "artifactRef": {
+     "table": "ai_runs_archive",
+     "runId": "airun_muhsnbcr_gxv1uw6g"
+    }
+   },
+   {
+    "at": "2026-09-26T02:53:00.894Z",
+    "type": "ENTRY_ECONOMIC_ADMISSION_EVALUATED",
+    "brainRunId": "airun_muhsnbcr_gxv1uw6g",
+    "mode": "SHADOW",
+    "passed": false,
+    "wouldBlock": true,
+    "expectedNetProfit": 0.02402213119999956,
+    "requiredNetProfit": 1,
+    "reachProbability": 0.6805555555555556,
+    "historicalHardMaxMovePercent": 3.040562536623459,
+    "targetMovePercent": 0.5637907006208032,
+    "notionalUsd": 5.051520000000001,
+    "blockers": [
+     "ECONOMIC_MIN_NET_PROFIT_UNMET",
+     "HUMAN_MANAGED_EXPOSURE_LIMIT"
+    ],
+    "quantityMutated": false,
+    "targetMutated": false
+   },
+   {
+    "at": "2026-09-26T02:53:00.964Z",
+    "type": "PORTFOLIO_RISK_ADMISSION_EVALUATED",
+    "brainRunId": "airun_muhsnbcr_gxv1uw6g",
+    "allocationPlanId": "alloc_ai_muhsokm6_5312fpj7",
+    "allowed": false,
+    "reasons": [
+     "HUMAN_ACK_OVERDUE",
+     "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+     "STRESS_LIMIT:MAX_CLUSTER_NOTIONAL",
+     "STRESS_LIMIT:MAX_GROSS_NOTIONAL"
+    ],
+    "limits": [
+     "MAX_CLUSTER_NOTIONAL",
+     "MAX_GROSS_NOTIONAL"
+    ],
+    "riskGeneration": null,
+    "snapshotHash": null,
+    "factCoverage": null,
+    "grossNotionalUsd": 11129.446019082834,
+    "capitalAtRiskUsd": 1081.6093249524058,
+    "drawdownPct": 0,
+    "locked": false
+   },
+   {
+    "at": "2026-09-26T02:53:00.974Z",
+    "type": "ENTRY_DECISION_BLOCKED",
+    "stage": "PORTFOLIO_RISK_ADMISSION",
+    "reason": "HUMAN_ACK_OVERDUE",
+    "reasons": [
+     "HUMAN_ACK_OVERDUE",
+     "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+     "STRESS_LIMIT:MAX_CLUSTER_NOTIONAL",
+     "STRESS_LIMIT:MAX_GROSS_NOTIONAL"
+    ],
+    "limits": [
+     "MAX_CLUSTER_NOTIONAL",
+     "MAX_GROSS_NOTIONAL"
+    ],
+    "brainRunId": "airun_muhsnbcr_gxv1uw6g",
+    "allocationPlanId": "alloc_ai_muhsokm6_5312fpj7"
+   },
+   {
+    "at": "2026-09-26T02:53:01.110Z",
+    "type": "CANDIDATE_REJECTED",
+    "reason": "RISK_HUMAN_ACK_OVERDUE",
+    "cooldownUntil": 1790391206040,
+    "brainRunId": "airun_muhsnbcr_gxv1uw6g",
+    "direction": "LONG",
+    "decision": "REJECT_CANDIDATE",
+    "entryIntentCreated": false
+   },
+   {
+    "at": "2026-09-26T02:54:14.443Z",
+    "type": "PRIMARY_DECISION_NORMALIZED",
+    "runId": "airun_muhsouc2_9tsglh8b",
+    "rawDirection": null,
+    "rawDecision": "PLACE_LONG",
+    "normalizedDirection": "LONG",
+    "normalizedDecision": "PLACE_LONG",
+    "parserRepaired": true,
+    "reason": "Long-term trend (1h/4h/1d) is strongly bullish. Short-term (1m/5m) pullback is likely a continuation setup. 15m trend is UP despite recent bearish MACD cross,"
+   },
+   {
+    "at": "2026-09-26T02:54:14.455Z",
+    "type": "AI_RUN_TERMINAL",
+    "id": "airun_muhsouc2_9tsglh8b",
+    "symbol": "WLDUSDT",
+    "resourceId": "brain-7900-primary",
+    "model": "qwen/qwen3.8-27b",
+    "role": "PRIMARY_BRAIN",
+    "startedAt": 1790391193490,
+    "completedAt": 1790391254429,
+    "latencyMs": 60939,
+    "inputTokens": 20476,
+    "outputTokens": 853,
+    "status": "COMPLETED",
+    "direction": "LONG",
+    "decision": "PLACE_LONG",
+    "requestSource": "ENTRY",
+    "inputContractHash": "073d71f49ac7370a527cdc8089d1682987328a918fb6f81e3f66eed74362cd9d",
+    "promptHash": "f4d2f4a87a93dd1cdb9e59ad3a22c0bb968e0b2576141ceada2b95cb571b8126",
+    "outputContractVersion": "V3.9.3",
+    "finishReason": "stop",
+    "packetId": "eip_muhsolpk_gec4zkcv",
+    "error": null,
+    "timing": {
+     "queueMs": 11321,
+     "promptBuildMs": 0,
+     "requestMs": 60931,
+     "parseMs": 1,
+     "retryMs": 0,
+     "transportAttempts": 1,
+     "totalMs": 60939
+    },
+    "failure": null,
+    "triggerReason": "DECISION_CONTEXT_CHANGED",
+    "previousRunId": "airun_muhs7h5b_3pwediu5",
+    "runKind": "PRIMARY_INFERENCE_RUN",
+    "recordKind": "PRIMARY_INFERENCE_RUN",
+    "marketOpportunityEpisodeId": null,
+    "opportunityVersion": null,
+    "rawDirection": null,
+    "rawDecision": "PLACE_LONG",
+    "terminalStage": "SCHEMA_VALID",
+    "modelIdentity": {
+     "requestedModel": "",
+     "modelAlias": "qwen/qwen3.8-27b",
+     "modelPath": "D:\\.lmstudio\\models\\lmstudio-community\\Qwen3.8-27B-GGUF\\Qwen3.8-27B-Q4_K_M.gguf",
+     "quantization": "Q4_K - Medium",
+     "contextTokens": 65536,
+     "reasoningFormat": "none",
+     "templateSha256": "2b7fa377e9178d7a36f9e948387d6146f6fec10e6dd5d8cf24485d477bafcff6",
+     "serverBuild": "b10276-6ea215d17",
+     "observedAt": 1790389894711
+    },
+    "protocolNormalization": {
+     "applied": false,
+     "fields": [],
+     "repairAttempted": false
+    },
+    "scoutHandoff": false,
+    "parserRepaired": true,
+    "artifactRef": {
+     "table": "ai_runs_archive",
+     "runId": "airun_muhsouc2_9tsglh8b"
+    }
+   },
+   {
+    "at": "2026-09-26T02:54:14.639Z",
+    "type": "ENTRY_ECONOMIC_ADMISSION_EVALUATED",
+    "brainRunId": "airun_muhsouc2_9tsglh8b",
+    "mode": "SHADOW",
+    "passed": false,
+    "wouldBlock": true,
+    "expectedNetProfit": 0.11956309199999975,
+    "requiredNetProfit": 1,
+    "reachProbability": 0.4788732394366197,
+    "historicalHardMaxMovePercent": 5.6253995312167016,
+    "targetMovePercent": 2.336158776100894,
+    "notionalUsd": 5.3207,
+    "blockers": [
+     "ECONOMIC_MIN_NET_PROFIT_UNMET",
+     "TP_REACH_PROBABILITY_UNMET",
+     "HUMAN_MANAGED_EXPOSURE_LIMIT"
+    ],
+    "quantityMutated": false,
+    "targetMutated": false
+   },
+   {
+    "at": "2026-09-26T02:54:14.699Z",
+    "type": "PORTFOLIO_RISK_ADMISSION_EVALUATED",
+    "brainRunId": "airun_muhsouc2_9tsglh8b",
+    "allocationPlanId": "alloc_ai_muhsq5in_1vieq49r",
+    "allowed": false,
+    "reasons": [
+     "HUMAN_ACK_OVERDUE",
+     "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+     "STRESS_LIMIT:MAX_CLUSTER_NOTIONAL",
+     "STRESS_LIMIT:MAX_GROSS_NOTIONAL"
+    ],
+    "limits": [
+     "MAX_CLUSTER_NOTIONAL",
+     "MAX_GROSS_NOTIONAL"
+    ],
+    "riskGeneration": null,
+    "snapshotHash": null,
+    "factCoverage": null,
+    "grossNotionalUsd": 11126.512910874444,
+    "capitalAtRiskUsd": 1081.3372251398919,
+    "drawdownPct": 0,
+    "locked": false
+   },
+   {
+    "at": "2026-09-26T02:54:14.701Z",
+    "type": "ENTRY_DECISION_BLOCKED",
+    "stage": "PORTFOLIO_RISK_ADMISSION",
+    "reason": "HUMAN_ACK_OVERDUE",
+    "reasons": [
+     "HUMAN_ACK_OVERDUE",
+     "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+     "STRESS_LIMIT:MAX_CLUSTER_NOTIONAL",
+     "STRESS_LIMIT:MAX_GROSS_NOTIONAL"
+    ],
+    "limits": [
+     "MAX_CLUSTER_NOTIONAL",
+     "MAX_GROSS_NOTIONAL"
+    ],
+    "brainRunId": "airun_muhsouc2_9tsglh8b",
+    "allocationPlanId": "alloc_ai_muhsq5in_1vieq49r"
+   },
+   {
+    "at": "2026-09-26T02:54:14.815Z",
+    "type": "CANDIDATE_REJECTED",
+    "reason": "RISK_HUMAN_ACK_OVERDUE",
+    "cooldownUntil": 1790391279757,
+    "brainRunId": "airun_muhsouc2_9tsglh8b",
+    "direction": "LONG",
+    "decision": "REJECT_CANDIDATE",
+    "entryIntentCreated": false
+   }
+  ]
+ },
+ "g3": {
+  "pipelineState": "RUNNING",
+  "noEntryReason": null,
+  "marketDataReason": null,
+  "marketDataIsolation": {
+   "candidateCount": 14,
+   "isolatedCount": 0,
+   "healthyCandidates": 14,
+   "isolated": []
+  },
+  "marketDataDetail": null,
+  "freshMarkets": {
+   "status": "FRESH",
+   "count": 51,
+   "stale": [],
+   "quoteFreshRatio": 1,
+   "klineFreshRatio": 1,
+   "sequenceInvalid": 0
+  }
+ },
+ "g4": {
+  "authoritativeBlocker": {
+   "code": "NONE",
+   "stage": "NONE",
+   "nextAction": "无需处理：Entry 管线可用，继续由确定性硬门决定是否建仓",
+   "evidence": {
+    "pipelineState": "RUNNING",
+    "marketDataReason": null,
+    "isolatedSymbols": [],
+    "isolatedCount": 0,
+    "healthyCandidates": 14,
+    "slotsUsed": 23,
+    "slotsMax": 50,
+    "executableCandidateCount": 2,
+    "exhaustedForNewRisk": false,
+    "pendingEntries": 0,
+    "maxPendingEntries": 6,
+    "poolStatus": "POOL_SUPPLY_SHORTAGE"
+   },
+   "secondary": [
+    {
+     "code": "CAPACITY_DIAGNOSTIC:BOTH_SIDES_EXECUTABLE",
+     "detail": "LONG 与 SHORT 均可新增"
+    },
+    {
+     "code": "SUPPLY_DIAGNOSTIC:ELIGIBILITY",
+     "detail": "READY 2（可执行 2）"
+    },
+    {
+     "code": "MODEL_DIAGNOSTIC:ANALYSIS_REASON",
+     "detail": "AI_RESOURCE_BUSY"
+    }
+   ],
+   "evaluatedAt": 1790391318115
+  },
+  "entryConversion": {
+   "generatedAt": 1790391318115,
+   "thirtyMinutes": {
+    "since": 1790389518115,
+    "until": 1790391318115,
+    "primaryCompleted": 15,
+    "place": 14,
+    "riskAllowed": 0,
+    "economicAdmissionPassed": 0,
+    "tradePlanReady": 0,
+    "reservationCreated": 0,
+    "intentCreated": 0,
+    "submitAttempted": 0,
+    "orderSubmitted": 0,
+    "entryFilled": 0,
+    "waitingPrice": 0,
+    "blocked": [
+     {
+      "stage": "PORTFOLIO_RISK",
+      "reason": "HUMAN_ACK_OVERDUE",
+      "count": 13
+     },
+     {
+      "stage": "AI_VERIFY",
+      "reason": "AI_DIRECTION_NOT_EXECUTABLE",
+      "count": 1
+     }
+    ],
+    "ratios": {
+     "placeToTradePlan": 0,
+     "tradePlanToSubmit": null,
+     "placeToSubmit": 0,
+     "submitToFill": null
+    },
+    "topDropStage": "PORTFOLIO_RISK",
+    "topDropReason": "HUMAN_ACK_OVERDUE",
+    "topDropCount": 13,
+    "degraded": true,
+    "degradedReason": "ENTRY_CONVERSION_DEGRADED:PORTFOLIO_RISK:HUMAN_ACK_OVERDUE"
+   },
+   "oneHour": {
+    "since": 1790387718115,
+    "until": 1790391318115,
+    "primaryCompleted": 26,
+    "place": 25,
+    "riskAllowed": 0,
+    "economicAdmissionPassed": 0,
+    "tradePlanReady": 0,
+    "reservationCreated": 0,
+    "intentCreated": 0,
+    "submitAttempted": 0,
+    "orderSubmitted": 0,
+    "entryFilled": 0,
+    "waitingPrice": 0,
+    "blocked": [
+     {
+      "stage": "PORTFOLIO_RISK",
+      "reason": "HUMAN_ACK_OVERDUE",
+      "count": 19
+     },
+     {
+      "stage": "AI_VERIFY",
+      "reason": "AI_DIRECTION_NOT_EXECUTABLE",
+      "count": 2
+     }
+    ],
+    "ratios": {
+     "placeToTradePlan": 0,
+     "tradePlanToSubmit": null,
+     "placeToSubmit": 0,
+     "submitToFill": null
+    },
+    "topDropStage": "PORTFOLIO_RISK",
+    "topDropReason": "HUMAN_ACK_OVERDUE",
+    "topDropCount": 19,
+    "degraded": true,
+    "degradedReason": "ENTRY_CONVERSION_DEGRADED:PORTFOLIO_RISK:HUMAN_ACK_OVERDUE"
+   }
+  },
+  "portfolioRiskProfile": {
+   "source": "SETTINGS",
+   "settingsVersion": 218,
+   "path": "riskGovernance.portfolioRisk",
+   "configured": true,
+   "contentHash": "v396r2dc9bae77b6f09abaa164172abfdd2f40000834ad7fe68d0693dd961722e2dae",
+   "status": "READY",
+   "version": "v396r2dc9bae77b6f09abaa164172abfdd2f40000834ad7fe68d0693dd961722e2dae",
+   "values": {
+    "configured": true,
+    "maxCapitalAtRiskUsd": 10811.957,
+    "maxDrawdownPct": 1,
+    "maxStressLossUsd": 5405.978,
+    "maxGrossNotionalUsd": 10811.957,
+    "maxDirectionNotionalUsd": 8649.565,
+    "maxClusterNotionalUsd": 10811.957,
+    "minMarginBufferPct": 0,
+    "minLiquidationBufferPct": 0,
+    "maxHumanPositions": 50,
+    "maxHumanNotionalUsd": 10811.957,
+    "maxPendingHandoffs": 50,
+    "maxAckAgeMs": 86400000,
+    "correlationVersion": "TESTNET_CORRELATION_CLUSTERS_V1_SHA256_d7ada0f6ba5cb950105a69439c409177748e1c87b164fa0872e845271d2bff65",
+    "clusters": {},
+    "scenarioVersion": "TESTNET_STRESS_SCENARIO_SET_V1_SHA256_3b9c016189e3b2cb2c2bad5f7bc761e7ae25181eadfa03b574be2ec9d1a0749c",
+    "snapshotTtlMs": 20000,
+    "marginTierVersion": "TESTNET_BINANCE_LEVERAGE_BRACKET_V1_SHA256_0081998e0d496d8f0378199553dd438a9e6cf8740decf226d4af6eb822846d77",
+    "maintenanceMarginRatePct": 0.167,
+    "cashFlowWindowMs": 86400000,
+    "cashFlowMaxAgeMs": 900000,
+    "scenarios": [
+     {
+      "id": "DOWN_10_LIQUIDITY",
+      "priceShockPct": -0.1,
+      "spreadWidenPct": 0.01,
+      "fundingShockPct": 0.005,
+      "markBasisShockPct": -0.01,
+      "depthPenaltyPct": 0.02,
+      "exchangeUnavailable": false,
+      "unavailablePenaltyPct": 0,
+      "clusterConvergencePct": 0.5
+     },
+     {
+      "id": "EXCHANGE_GAP_15",
+      "priceShockPct": -0.15,
+      "spreadWidenPct": 0.02,
+      "fundingShockPct": 0.005,
+      "markBasisShockPct": -0.02,
+      "depthPenaltyPct": 0.03,
+      "exchangeUnavailable": true,
+      "unavailablePenaltyPct": 0.03,
+      "clusterConvergencePct": 0.75
+     },
+     {
+      "id": "UP_10_LIQUIDITY",
+      "priceShockPct": 0.1,
+      "spreadWidenPct": 0.01,
+      "fundingShockPct": 0.005,
+      "markBasisShockPct": 0.01,
+      "depthPenaltyPct": 0.02,
+      "exchangeUnavailable": false,
+      "unavailablePenaltyPct": 0,
+      "clusterConvergencePct": 0.5
+     }
+    ]
+   },
+   "missingFields": [],
+   "blockers": [],
+   "authority": {
+    "source": "settings portfolio_risk_authority",
+    "environment": "TESTNET",
+    "accountScope": "binance-primary",
+    "committed": true,
+    "marginTierVersion": "TESTNET_BINANCE_LEVERAGE_BRACKET_V1_SHA256_0081998e0d496d8f0378199553dd438a9e6cf8740decf226d4af6eb822846d77",
+    "contentHash": "0081998e0d496d8f0378199553dd438a9e6cf8740decf226d4af6eb822846d77",
+    "coverageSymbols": [
+     "1000PEPEUSDC",
+     "1000SHIBUSDC",
+     "1000SHIBUSDT",
+     "AAVEUSDT",
+     "ADAUSDC",
+     "ADAUSDT",
+     "APTUSDT",
+     "ARBUSDT",
+     "AVAXUSDT",
+     "BCHUSDT",
+     "BNBUSDC",
+     "BRUSDT",
+     "BTCUSDT",
+     "CRVUSDC",
+     "CRVUSDT",
+     "DASHUSDT",
+     "DOGEUSDC",
+     "DOGEUSDT",
+     "DOTUSDT",
+     "ENAUSDT",
+     "ETHUSDT",
+     "FETUSDT",
+     "FILUSDC",
+     "FILUSDT",
+     "HBARUSDC",
+     "HBARUSDT",
+     "HYPEUSDT",
+     "INJUSDT",
+     "LINKUSDC",
+     "LINKUSDT",
+     "LTCUSDT",
+     "NEARUSDC",
+     "NEARUSDT",
+     "ONDOUSDT",
+     "OPUSDT",
+     "PENGUUSDC",
+     "PENGUUSDT",
+     "SOLUSDC",
+     "SOLUSDT",
+     "SUIUSDC",
+     "SUIUSDT",
+     "TAOUSDT",
+     "TIAUSDC",
+     "TIAUSDT",
+     "TRUMPUSDC",
+     "TUTUSDT",
+     "UNIUSDC",
+     "UNIUSDT",
+     "USELESSUSDT",
+     "VVVUSDT",
+     "WLDUSDC",
+     "WLDUSDT",
+     "XLMUSDT",
+     "XMRUSDT",
+     "XPLUSDT",
+     "XRPUSDC",
+     "XRPUSDT",
+     "ZECUSDT"
+    ],
+    "derivedMaintenanceMarginRatePct": 0.167,
+    "rateDerivation": "ENTRY_BOUND_TIERS",
+    "observedAt": 1790266340567,
+    "committedAt": 1790266340568,
+    "correlationVersion": "TESTNET_CORRELATION_CLUSTERS_V1_SHA256_d7ada0f6ba5cb950105a69439c409177748e1c87b164fa0872e845271d2bff65",
+    "scenarioVersion": "TESTNET_STRESS_SCENARIO_SET_V1_SHA256_3b9c016189e3b2cb2c2bad5f7bc761e7ae25181eadfa03b574be2ec9d1a0749c",
+    "missingSymbols": [],
+    "mismatchReasons": [],
+    "authorityStatus": "MATCHED",
+    "profileStatus": "READY",
+    "uncoveredCoverageCandidates": [
+     "1000BONKUSDC",
+     "COTIUSDT",
+     "ETCUSDT",
+     "ETHFIUSDC",
+     "ETHFIUSDT",
+     "JUPUSDT",
+     "POLUSDT",
+     "RAYSOLUSDT",
+     "VIRTUALUSDT",
+     "WIFUSDC",
+     "WIFUSDT",
+     "ZENUSDT",
+     "ZROUSDT"
+    ]
+   }
+  },
+  "analysis": {
+   "mode": "EXECUTION_ENABLED",
+   "lastTickAt": 1790391318065,
+   "lastAttemptAt": 1790391255599,
+   "lastRequestAt": 1790391267453,
+   "lastSuccessAt": 1790391254580,
+   "lastFailureAt": 1790390966672,
+   "lastBlockedReason": "AI_RESOURCE_BUSY",
+   "reason": "AI_RESOURCE_BUSY",
+   "capitalExecutableCount": 2,
+   "active": 1,
+   "silenceMs": 63550,
+   "observationStartedAt": 1790389894586,
+   "execution": {
+    "intent": true,
+    "ready": true,
+    "blockers": [],
+    "firstBlocker": null,
+    "lastReadyAt": 1790391318065,
+    "readinessText": "执行事实齐备：PLACE 可进入 reservation → intent → order submit 链"
+   },
+   "text": "分析管线；AI_RESOURCE_BUSY"
+  },
+  "eligibility": {
+   "status": "READY",
+   "count": 2,
+   "cooldown": 0,
+   "excluded": 23
+  }
+ },
+ "assets": {
+  "positions": 23,
+  "managementStatus": {
+   "HUMAN_MANAGED": 23
+  },
+  "tpStatus": {
+   "MISSING": 8,
+   "PROTECTED": 15
+  },
+  "grossNotionalUsd": 11117.517443793076,
+  "unrealizedPnlUsd": -875.0293946226062,
+  "rows": [
+   {
+    "symbol": "DASHUSDT",
+    "side": "SHORT",
+    "quantity": 0.1,
+    "tpStatus": "MISSING",
+    "managementStatus": "HUMAN_MANAGED",
+    "positionRiskSource": "V3_VERIFIED",
+    "cycleId": "cycle_entry_intent_mugkidet_8lh0blpk"
+   },
+   {
+    "symbol": "INJUSDT",
+    "side": "LONG",
+    "quantity": 1,
+    "tpStatus": "PROTECTED",
+    "managementStatus": "HUMAN_MANAGED",
+    "positionRiskSource": "V3_VERIFIED",
+    "cycleId": "cycle_entry_intent_mugibwtb_7pe0vgfx"
+   },
+   {
+    "symbol": "VVVUSDT",
+    "side": "SHORT",
+    "quantity": 1,
+    "tpStatus": "MISSING",
+    "managementStatus": "HUMAN_MANAGED",
+    "positionRiskSource": "V3_VERIFIED",
+    "cycleId": "cycle_entry_intent_mughjbjh_yaqsiv88"
+   },
+   {
+    "symbol": "APTUSDT",
+    "side": "SHORT",
+    "quantity": 10,
+    "tpStatus": "MISSING",
+    "managementStatus": "HUMAN_MANAGED",
+    "positionRiskSource": "V3_VERIFIED",
+    "cycleId": "cycle_entry_intent_mugfaltp_ddydvxsb"
+   },
+   {
+    "symbol": "SUIUSDC",
+    "side": "SHORT",
+    "quantity": 10,
+    "tpStatus": "MISSING",
+    "managementStatus": "HUMAN_MANAGED",
+    "positionRiskSource": "V3_VERIFIED",
+    "cycleId": "cycle_entry_intent_mugedgac_xpkclvga"
+   },
+   {
+    "symbol": "XRPUSDC",
+    "side": "LONG",
+    "quantity": 10,
+    "tpStatus": "PROTECTED",
+    "managementStatus": "HUMAN_MANAGED",
+    "positionRiskSource": "V3_VERIFIED",
+    "cycleId": "cycle_entry_intent_mugdyg3n_ywyc3aca"
+   },
+   {
+    "symbol": "FILUSDT",
+    "side": "SHORT",
+    "quantity": 10,
+    "tpStatus": "MISSING",
+    "managementStatus": "HUMAN_MANAGED",
+    "positionRiskSource": "V3_VERIFIED",
+    "cycleId": "cycle_entry_intent_mugdwy2l_z5qhhj62"
+   },
+   {
+    "symbol": "DOGEUSDC",
+    "side": "LONG",
+    "quantity": 119,
+    "tpStatus": "PROTECTED",
+    "managementStatus": "HUMAN_MANAGED",
+    "positionRiskSource": "V3_VERIFIED",
+    "cycleId": "cycle_entry_intent_mugb090c_t4le4g8u"
+   },
+   {
+    "symbol": "NEARUSDT",
+    "side": "SHORT",
+    "quantity": 2,
+    "tpStatus": "MISSING",
+    "managementStatus": "HUMAN_MANAGED",
+    "positionRiskSource": "V3_VERIFIED",
+    "cycleId": "cycle_entry_intent_mugaaj5z_1vn0gxp2"
+   },
+   {
+    "symbol": "UNIUSDT",
+    "side": "SHORT",
+    "quantity": 117,
+    "tpStatus": "MISSING",
+    "managementStatus": "HUMAN_MANAGED",
+    "positionRiskSource": "V3_VERIFIED",
+    "cycleId": "cycle_entry_intent_mug9gjt5_p9n3qold"
+   },
+   {
+    "symbol": "PENGUUSDT",
+    "side": "SHORT",
+    "quantity": 36332,
+    "tpStatus": "MISSING",
+    "managementStatus": "HUMAN_MANAGED",
+    "positionRiskSource": "V3_VERIFIED",
+    "cycleId": "cycle_entry_intent_mug8yzgd_q650tibs"
+   },
+   {
+    "symbol": "BCHUSDT",
+    "side": "LONG",
+    "quantity": 0.017,
+    "tpStatus": "PROTECTED",
+    "managementStatus": "HUMAN_MANAGED",
+    "positionRiskSource": "V3_VERIFIED",
+    "cycleId": "cycle_entry_intent_mud27kh7_wdfh3ake"
+   },
+   {
+    "symbol": "BTCUSDT",
+    "side": "LONG",
+    "quantity": 0.0425,
+    "tpStatus": "PROTECTED",
+    "managementStatus": "HUMAN_MANAGED",
+    "positionRiskSource": "V3_VERIFIED",
+    "cycleId": "cycle_entry_intent_mubpoawr_aiicz3a2"
+   },
+   {
+    "symbol": "ETHUSDT",
+    "side": "LONG",
+    "quantity": 0.01,
+    "tpStatus": "PROTECTED",
+    "managementStatus": "HUMAN_MANAGED",
+    "positionRiskSource": "V3_VERIFIED",
+    "cycleId": "cycle_entry_intent_mubgebej_x5kj2tle"
+   },
+   {
+    "symbol": "ZECUSDT",
+    "side": "SHORT",
+    "quantity": 0.788,
+    "tpStatus": "PROTECTED",
+    "managementStatus": "HUMAN_MANAGED",
+    "positionRiskSource": "V3_VERIFIED",
+    "cycleId": "cycle_entry_intent_mu9lpe0w_u7yjdvud"
+   },
+   {
+    "symbol": "ENAUSDT",
+    "side": "SHORT",
+    "quantity": 1000,
+    "tpStatus": "PROTECTED",
+    "managementStatus": "HUMAN_MANAGED",
+    "positionRiskSource": "V3_VERIFIED",
+    "cycleId": "cycle_entry_intent_mu992hw3_fj637bez"
+   },
+   {
+    "symbol": "FETUSDT",
+    "side": "SHORT",
+    "quantity": 76,
+    "tpStatus": "PROTECTED",
+    "managementStatus": "HUMAN_MANAGED",
+    "positionRiskSource": "V3_VERIFIED",
+    "cycleId": "cycle_entry_intent_mu95o9o8_c4nzb3h3"
+   },
+   {
+    "symbol": "AVAXUSDT",
+    "side": "SHORT",
+    "quantity": 400,
+    "tpStatus": "PROTECTED",
+    "managementStatus": "HUMAN_MANAGED",
+    "positionRiskSource": "V3_VERIFIED",
+    "cycleId": "cycle_entry_intent_mu8l1mm0_rcobpxad"
+   },
+   {
+    "symbol": "ARBUSDT",
+    "side": "SHORT",
+    "quantity": 29.8,
+    "tpStatus": "PROTECTED",
+    "managementStatus": "HUMAN_MANAGED",
+    "positionRiskSource": "V3_VERIFIED",
+    "cycleId": "cycle_entry_intent_mu83kx05_o828djl5"
+   },
+   {
+    "symbol": "ONDOUSDT",
+    "side": "SHORT",
+    "quantity": 15,
+    "tpStatus": "PROTECTED",
+    "managementStatus": "HUMAN_MANAGED",
+    "positionRiskSource": "V3_VERIFIED",
+    "cycleId": "cycle_entry_intent_mu83d7ho_tpicfrwf"
+   },
+   {
+    "symbol": "LTCUSDT",
+    "side": "SHORT",
+    "quantity": 0.36,
+    "tpStatus": "PROTECTED",
+    "managementStatus": "HUMAN_MANAGED",
+    "positionRiskSource": "V3_VERIFIED",
+    "cycleId": "cycle_entry_intent_mu835vg9_5fvhw7y9"
+   },
+   {
+    "symbol": "BNBUSDC",
+    "side": "SHORT",
+    "quantity": 0.06,
+    "tpStatus": "PROTECTED",
+    "managementStatus": "HUMAN_MANAGED",
+    "positionRiskSource": "V3_VERIFIED",
+    "cycleId": "cycle_entry_intent_mu7xja2g_vg36bi9m"
+   },
+   {
+    "symbol": "DOTUSDT",
+    "side": "SHORT",
+    "quantity": 10,
+    "tpStatus": "PROTECTED",
+    "managementStatus": "HUMAN_MANAGED",
+    "positionRiskSource": "V3_VERIFIED",
+    "cycleId": "cycle_entry_intent_mu7x18sq_5ssvwucx"
+   }
+  ]
+ },
+ "unknownEntryOrders": {
+  "durable": 47,
+  "liveNoActiveRiskProofs": 47,
+  "withoutLiveProof": 0,
+  "occupying": []
+ },
+ "eventCountsSinceRestart": {
+  "AI_FAILED_NO_INTENT": 1,
+  "AI_RESOURCE_HEALTH_CHANGED": 2,
+  "AI_RUN_FAILED": 1,
+  "AI_RUN_TERMINAL": 10,
+  "ANALYSIS_DISPATCH_HEARTBEAT": 42,
+  "ANALYSIS_DISPATCH_INTENT": 12,
+  "CANDIDATE_LIFECYCLE_CHANGED": 75,
+  "CANDIDATE_LIFECYCLE_REDERIVED": 464,
+  "CANDIDATE_REJECTED": 10,
+  "CANDIDATE_SUPPLY_HEALTH": 36,
+  "ENGINE_INSTANCE_STARTED": 1,
+  "ENTRY_ANALYSIS_FAILED": 1,
+  "ENTRY_DECISION_BLOCKED": 10,
+  "ENTRY_ECONOMIC_ADMISSION_EVALUATED": 10,
+  "ENTRY_ORDER_HISTORICAL_VERIFY_FAILED": 2,
+  "ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED": 12,
+  "EXECUTION_READINESS_BLOCKED": 2,
+  "EXECUTION_READINESS_RESUMED": 2,
+  "EXIT_RECOVERY_CONVERGED": 1,
+  "EXIT_TASK_CONVERGED": 33,
+  "LAN_AVAILABLE": 1,
+  "MANUAL_ORDER_REMOTE_STATUS_UNVERIFIED": 40,
+  "MARKET_COHORT_REFILLED": 14,
+  "MATERIAL_DECISION_CHANGE": 10,
+  "POOL_ANALYSIS_STARTED": 12,
+  "PORTFOLIO_RISK_ADMISSION_EVALUATED": 10,
+  "PORTFOLIO_RISK_AUTHORITY_LOADED": 1,
+  "POSITION_MARKETS_REFRESHED": 7,
+  "PRE_AI_EXECUTION_ENVELOPE_CREATED": 12,
+  "PRE_AI_TRADE_PLAN_FEASIBILITY": 12,
+  "PRIMARY_DECISION_NORMALIZED": 10,
+  "PRIVATE_SYNC_FAILED": 1,
+  "PRIVATE_SYNC_RECOVERED": 1,
+  "RUNTIME_STARTED": 1,
+  "SHADOW_RUNNER_STARTED": 1,
+  "TP_MANUAL_REVIEW_REQUIRED": 8,
+  "TP_REPAIR_FAILED": 32,
+  "TP_REPAIR_STARTED": 40,
+  "TP_TARGET_SELECTED": 40,
+  "TRADE_SYNC_AUTO_COMPLETED": 3,
+  "TRADE_SYNC_AUTO_FAILED": 2,
+  "TRADING_QUALITY_OPPORTUNITY": 12,
+  "TRADING_QUALITY_PRIMARY_LINK": 10,
+  "UNKNOWN_RISK_AUDIT_SUMMARY": 5,
+  "V393_OBSERVER_UNAVAILABLE": 1,
+  "V396_OWNERSHIP_OUTBOX": 36
+ }
+}

@@ -1,0 +1,55 @@
+{
+  "capturedAt": "2026-09-26T02:53:10Z",
+  "source": "Browser read-only inspection of the deployed cockpit at http://127.0.0.1:8080/ (dashboard dist built from commit aa06461). Text below is untrusted page content, recorded verbatim as rendered.",
+  "g4_authoritative_verdict": {
+    "selector": "[data-caps-first-explanation]",
+    "headline": "NONE · 无需处理：Entry 管线可用，继续由确定性硬门决定是否建仓",
+    "explanation": "权威首因与下一步由 Engine 在同一次评估中给出（stage NONE）；额度与槽位取自同一次风险计算，此额度只限制新增 Entry 风险，不强平已有仓位，也不撤已有 TP/保护。持仓数未达上限不等于仍有新增风险额度。"
+  },
+  "g4_secondary_diagnostics": {
+    "selector": "[data-secondary-diagnostics]",
+    "summary": "次级诊断 3 项（不作为第二个首因）",
+    "items": [
+      "CAPACITY_DIAGNOSTIC:BOTH_SIDES_EXECUTABLE · LONG 与 SHORT 均可新增",
+      "SUPPLY_DIAGNOSTIC:ELIGIBILITY · READY 3（可执行 3）",
+      "MODEL_DIAGNOSTIC:ANALYSIS_REASON · AI_RESOURCE_BUSY"
+    ],
+    "secondFirstCauseRendered": false,
+    "note": "Every subordinate row is named *_DIAGNOSTIC by the Engine; the page adds no ranking of its own."
+  },
+  "g3_market_isolation": {
+    "selector": "[data-market-isolation]",
+    "renderedAtCapture": false,
+    "reason": "marketDataIsolation.isolated was [] at capture time (candidateCount 14-17, isolatedCount 0, pipelineState RUNNING, freshness FRESH), so the isolation panel is absent by design.",
+    "systemicBannerRendered": false,
+    "isolatedSampleCapturedEarlier": "docs/evidence/v396/g1-g4-final-acceptance-20260926/01-pipeline-after-deploy.json recorded candidateCount 6 / isolatedCount 1 / healthyCandidates 5 with BNBUSDC TECHNICAL_5m_MISSING_LATEST_CLOSED while pipelineState stayed RUNNING and marketDataReason stayed null."
+  },
+  "g1_per_candidate_capacity_traces": {
+    "selector": "details[data-caps-capacity-long] / details[data-caps-capacity-short]",
+    "longRows": [
+      "1000BONKUSDC LONG：资金容量 $3,980.00｜风险后 $394.84｜交易所最小合法名义 $5.00｜计划 ALLOW｜容量上限 $3,976.20（已用 $10.21，剩余 $3,965.99）来自 QUOTE_ASSET_MARGIN｜可执行",
+      "TAOUSDT LONG：资金容量 $3,980.00｜风险后 $380.56｜交易所最小合法名义 $5.00｜计划 ALLOW｜容量上限 $2,818.70（已用 $1,070.77，剩余 $1,747.94）来自 QUOTE_ASSET_MARGIN｜可执行",
+      "WLDUSDT LONG：资金容量 $3,980.00｜风险后 $368.61｜交易所最小合法名义 $5.00｜计划 ALLOW｜容量上限 $2,818.70（已用 $1,070.77，剩余 $1,747.94）来自 QUOTE_ASSET_MARGIN｜可执行"
+    ],
+    "bindingAuthorityShown": "QUOTE_ASSET_MARGIN only; no DIRECTION_LONG/DIRECTION_SHORT ceiling is named while exposureCapacityPolicy.direction=OBSERVE",
+    "sideStatus": "LONG 与 SHORT 均可新增",
+    "riskPolicyRow": "Gross=OBSERVE · Direction=OBSERVE · Cluster=ENFORCE（OBSERVE 仅展示不否决，ENFORCE 一票否决） · 槽位 23 / 50（持仓 23 / 在途 0 / 预留 0） · 首个饱和硬维度 NONE"
+  },
+  "g2_entry_side_trace_minimum_notional": {
+    "shownInTrace": "交易所最小合法名义 $5.00 per candidate",
+    "envelopeIntervalLivesIn": "pre-AI execution envelope, captured in 04-readback-after-deploy.json and 06-g2-quantity-chain-since-restart.json",
+    "note": "The cockpit deliberately does not re-derive an interval: the Engine publishes minQuantityUnits/legalQuantityRangeUnits once, and the deterministic verifier refuses outside it."
+  },
+  "conversion_funnel_30m": {
+    "primaryCompleted": 15,
+    "place": 14,
+    "riskAllowed": 0,
+    "tradePlanReady": 0,
+    "reservationCreated": 0,
+    "intentCreated": 0,
+    "orderSubmitted": 0,
+    "entryFilled": 0,
+    "topDrop": "PORTFOLIO_RISK · HUMAN_ACK_OVERDUE · 11 次",
+    "banner": "ENTRY_CONVERSION_DEGRADED:PORTFOLIO_RISK:HUMAN_ACK_OVERDUE（仅告警，不会自动暂停 Testnet 执行）"
+  }
+}

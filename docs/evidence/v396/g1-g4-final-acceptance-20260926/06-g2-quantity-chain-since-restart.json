@@ -1,0 +1,823 @@
+{
+ "sinceIso": "2026-09-26T02:31:30.187Z",
+ "totals": {
+  "primaryRuns": 12,
+  "allocationPlans": 10,
+  "envelopes": 12,
+  "aiSizingErrorEvents": 0,
+  "quantityMutated": 0,
+  "targetMutated": 0,
+  "frozenQuantityPlans": 10,
+  "belowMinimumLegalNotional": 0,
+  "outsideLegalNotionalInterval": 0,
+  "submittedOrFilledEvents": 0
+ },
+ "chains": [
+  {
+   "allocationPlanId": "alloc_ai_muhs5eo0_6w148ycj",
+   "symbol": "TAOUSDT",
+   "direction": "LONG",
+   "createdAt": "2026-09-26T02:38:06.720Z",
+   "runId": "airun_muhs43lk_7u1ynekp",
+   "model": "qwen/qwen3.8-27b",
+   "decision": "PLACE_LONG",
+   "envelope": {
+    "minQuantityUnits": 16,
+    "maxQuantityUnits": 11402,
+    "legalQuantityRangeUnits": [
+     16,
+     11402
+    ],
+    "legalNotionalRangeUsd": [
+     5,
+     3603.894795214492
+    ],
+    "minimumLegalNotionalUsd": 5,
+    "executable": true,
+    "firstBindingConstraint": "CLUSTER"
+   },
+   "plan": {
+    "admission": "ALLOW",
+    "reasons": [
+     "AI_QUANTITY_UNITS_FROZEN",
+     "NO_CONFIDENCE_RESIZING",
+     "NO_DIRECTION_POLICY_RESIZING"
+    ],
+    "notionalUsd": 5.0552,
+    "marginUsd": 0.6319,
+    "leverage": 8,
+    "minExecutableMarginUsd": 0.625,
+    "locationWouldBlock": false,
+    "exposureBefore": {
+     "longNotionalUsd": 3638.1349572668755,
+     "shortNotionalUsd": 7541.9312210768385,
+     "longExposurePct": 0.32202278962144837,
+     "shortExposurePct": 0.6675600986415262,
+     "speculativeNotionalUsd": 0,
+     "speculativeExposurePct": 0,
+     "usdtMarginUsd": 1077.3808313368347,
+     "usdcMarginUsd": 10.226945772916666,
+     "sameUnderlyingExposure": 0,
+     "duplicateBlocks": 0,
+     "locationBlocks": 0
+    },
+    "exposureAfter": {
+     "longNotionalUsd": 3643.1901572668753,
+     "shortNotionalUsd": 7541.9312210768385,
+     "longExposurePct": 0.322470241303482,
+     "shortExposurePct": 0.6675600986415262,
+     "speculativeNotionalUsd": 0,
+     "speculativeExposurePct": 0,
+     "usdtMarginUsd": 1078.0127313368348,
+     "usdcMarginUsd": 10.226945772916666,
+     "sameUnderlyingExposure": 0,
+     "duplicateBlocks": 0,
+     "locationBlocks": 0
+    }
+   },
+   "aboveMinimumLegalNotional": true,
+   "insideLegalNotionalInterval": true,
+   "quantityMutated": false,
+   "targetMutated": false,
+   "economicBlockers": [
+    "ECONOMIC_MIN_NET_PROFIT_UNMET",
+    "HUMAN_MANAGED_EXPOSURE_LIMIT"
+   ],
+   "refusal": {
+    "stage": "PORTFOLIO_RISK_ADMISSION",
+    "reasons": [
+     "HUMAN_ACK_OVERDUE",
+     "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+     "STRESS_LIMIT:MAX_CLUSTER_NOTIONAL",
+     "STRESS_LIMIT:MAX_GROSS_NOTIONAL"
+    ]
+   }
+  },
+  {
+   "allocationPlanId": "alloc_ai_muhs8q2k_l1fnx5tu",
+   "symbol": "WLDUSDT",
+   "direction": "LONG",
+   "createdAt": "2026-09-26T02:40:41.468Z",
+   "runId": "airun_muhs7h5b_3pwediu5",
+   "model": "qwen/qwen3.8-27b",
+   "decision": "PLACE_LONG",
+   "envelope": {
+    "minQuantityUnits": 11,
+    "maxQuantityUnits": 7441,
+    "legalQuantityRangeUnits": [
+     11,
+     7441
+    ],
+    "legalNotionalRangeUsd": [
+     5,
+     3611.1173
+    ],
+    "minimumLegalNotionalUsd": 5,
+    "executable": true,
+    "firstBindingConstraint": "CLUSTER"
+   },
+   "plan": {
+    "admission": "ALLOW",
+    "reasons": [
+     "AI_QUANTITY_UNITS_FROZEN",
+     "NO_CONFIDENCE_RESIZING",
+     "NO_DIRECTION_POLICY_RESIZING"
+    ],
+    "notionalUsd": 5.3372,
+    "marginUsd": 0.66715,
+    "leverage": 8,
+    "minExecutableMarginUsd": 0.625,
+    "locationWouldBlock": false,
+    "exposureBefore": {
+     "longNotionalUsd": 3637.9959326915555,
+     "shortNotionalUsd": 7518.08059721428,
+     "longExposurePct": 0.3220088024993743,
+     "shortExposurePct": 0.6654455296247864,
+     "speculativeNotionalUsd": 0,
+     "speculativeExposurePct": 0,
+     "usdtMarginUsd": 1074.5349427248332,
+     "usdcMarginUsd": 10.215294658333335,
+     "sameUnderlyingExposure": 0,
+     "duplicateBlocks": 0,
+     "locationBlocks": 0
+    },
+    "exposureAfter": {
+     "longNotionalUsd": 3643.3331326915554,
+     "shortNotionalUsd": 7518.08059721428,
+     "longExposurePct": 0.3224812124229962,
+     "shortExposurePct": 0.6654455296247864,
+     "speculativeNotionalUsd": 0,
+     "speculativeExposurePct": 0,
+     "usdtMarginUsd": 1075.2020927248332,
+     "usdcMarginUsd": 10.215294658333335,
+     "sameUnderlyingExposure": 0,
+     "duplicateBlocks": 0,
+     "locationBlocks": 0
+    }
+   },
+   "aboveMinimumLegalNotional": true,
+   "insideLegalNotionalInterval": true,
+   "quantityMutated": false,
+   "targetMutated": false,
+   "economicBlockers": [
+    "ECONOMIC_MIN_NET_PROFIT_UNMET",
+    "HUMAN_MANAGED_EXPOSURE_LIMIT"
+   ],
+   "refusal": {
+    "stage": "PORTFOLIO_RISK_ADMISSION",
+    "reasons": [
+     "HUMAN_ACK_OVERDUE",
+     "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+     "PENDING_RISK_UNVERIFIED:order:entry_intent_mubl212x_z8fndm8t",
+     "PORTFOLIO_RISK_SNAPSHOT_INCOMPLETE",
+     "STRESS_LIMIT:MAX_CLUSTER_NOTIONAL",
+     "STRESS_LIMIT:MAX_GROSS_NOTIONAL"
+    ]
+   }
+  },
+  {
+   "allocationPlanId": "alloc_ai_muhsacjc_suqzng1k",
+   "symbol": "TAOUSDT",
+   "direction": "LONG",
+   "createdAt": "2026-09-26T02:41:57.240Z",
+   "runId": "airun_muhs932c_2bvklnwl",
+   "model": "qwen/qwen3.8-27b",
+   "decision": "PLACE_LONG",
+   "envelope": {
+    "minQuantityUnits": 16,
+    "maxQuantityUnits": 11438,
+    "legalQuantityRangeUnits": [
+     16,
+     11438
+    ],
+    "legalNotionalRangeUsd": [
+     5,
+     3616.675637122492
+    ],
+    "minimumLegalNotionalUsd": 5,
+    "executable": true,
+    "firstBindingConstraint": "CLUSTER"
+   },
+   "plan": {
+    "admission": "ALLOW",
+    "reasons": [
+     "AI_QUANTITY_UNITS_FROZEN",
+     "NO_CONFIDENCE_RESIZING",
+     "NO_DIRECTION_POLICY_RESIZING"
+    ],
+    "notionalUsd": 5.05904,
+    "marginUsd": 0.63238,
+    "leverage": 8,
+    "minExecutableMarginUsd": 0.625,
+    "locationWouldBlock": false,
+    "exposureBefore": {
+     "longNotionalUsd": 3637.432998570001,
+     "shortNotionalUsd": 7510.514996122798,
+     "longExposurePct": 0.3219573152331025,
+     "shortExposurePct": 0.6647724494500036,
+     "speculativeNotionalUsd": 0,
+     "speculativeExposurePct": 0,
+     "usdtMarginUsd": 1073.6148949516667,
+     "usdcMarginUsd": 10.215163334725,
+     "sameUnderlyingExposure": 0,
+     "duplicateBlocks": 0,
+     "locationBlocks": 0
+    },
+    "exposureAfter": {
+     "longNotionalUsd": 3642.492038570001,
+     "shortNotionalUsd": 7510.514996122798,
+     "longExposurePct": 0.32240510215775436,
+     "shortExposurePct": 0.6647724494500036,
+     "speculativeNotionalUsd": 0,
+     "speculativeExposurePct": 0,
+     "usdtMarginUsd": 1074.2472749516667,
+     "usdcMarginUsd": 10.215163334725,
+     "sameUnderlyingExposure": 0,
+     "duplicateBlocks": 0,
+     "locationBlocks": 0
+    }
+   },
+   "aboveMinimumLegalNotional": true,
+   "insideLegalNotionalInterval": true,
+   "quantityMutated": false,
+   "targetMutated": false,
+   "economicBlockers": [
+    "ECONOMIC_MIN_NET_PROFIT_UNMET",
+    "HUMAN_MANAGED_EXPOSURE_LIMIT"
+   ],
+   "refusal": {
+    "stage": "PORTFOLIO_RISK_ADMISSION",
+    "reasons": [
+     "HUMAN_ACK_OVERDUE",
+     "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+     "STRESS_LIMIT:MAX_CLUSTER_NOTIONAL",
+     "STRESS_LIMIT:MAX_GROSS_NOTIONAL"
+    ]
+   }
+  },
+  {
+   "allocationPlanId": "alloc_ai_muhsfdk9_u25fn9it",
+   "symbol": "AAVEUSDT",
+   "direction": "LONG",
+   "createdAt": "2026-09-26T02:45:51.849Z",
+   "runId": "airun_muhse2xz_zbazznx6",
+   "model": "qwen/qwen3.8-27b",
+   "decision": "PLACE_LONG",
+   "envelope": {
+    "minQuantityUnits": 1,
+    "maxQuantityUnits": 162,
+    "legalQuantityRangeUnits": [
+     1,
+     162
+    ],
+    "legalNotionalRangeUsd": [
+     15.472000000000001,
+     2509.38
+    ],
+    "minimumLegalNotionalUsd": 15.472000000000001,
+    "executable": true,
+    "firstBindingConstraint": "CLUSTER"
+   },
+   "plan": {
+    "admission": "ALLOW",
+    "reasons": [
+     "AI_QUANTITY_UNITS_FROZEN",
+     "NO_CONFIDENCE_RESIZING",
+     "NO_DIRECTION_POLICY_RESIZING"
+    ],
+    "notionalUsd": 2508.894,
+    "marginUsd": 313.61175,
+    "leverage": 8,
+    "minExecutableMarginUsd": 1.9358750000000002,
+    "locationWouldBlock": false,
+    "exposureBefore": {
+     "longNotionalUsd": 3637.697541528051,
+     "shortNotionalUsd": 7495.911720673522,
+     "longExposurePct": 0.32198421507520053,
+     "shortExposurePct": 0.6634870612800364,
+     "speculativeNotionalUsd": 0,
+     "speculativeExposurePct": 0,
+     "usdtMarginUsd": 1071.7977147017505,
+     "usdcMarginUsd": 10.217721923625,
+     "sameUnderlyingExposure": 0,
+     "duplicateBlocks": 0,
+     "locationBlocks": 0
+    },
+    "exposureAfter": {
+     "longNotionalUsd": 6146.591541528051,
+     "shortNotionalUsd": 7495.911720673522,
+     "longExposurePct": 0.5440544273660073,
+     "shortExposurePct": 0.6634870612800364,
+     "speculativeNotionalUsd": 0,
+     "speculativeExposurePct": 0,
+     "usdtMarginUsd": 1385.4094647017505,
+     "usdcMarginUsd": 10.217721923625,
+     "sameUnderlyingExposure": 0,
+     "duplicateBlocks": 0,
+     "locationBlocks": 0
+    }
+   },
+   "aboveMinimumLegalNotional": true,
+   "insideLegalNotionalInterval": true,
+   "quantityMutated": false,
+   "targetMutated": false,
+   "economicBlockers": [
+    "HUMAN_MANAGED_EXPOSURE_LIMIT"
+   ],
+   "refusal": {
+    "stage": "PORTFOLIO_RISK_ADMISSION",
+    "reasons": [
+     "HUMAN_ACK_OVERDUE",
+     "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+     "STRESS_LIMIT:MAX_CLUSTER_NOTIONAL",
+     "STRESS_LIMIT:MAX_GROSS_NOTIONAL"
+    ]
+   }
+  },
+  {
+   "allocationPlanId": "alloc_ai_muhsgx0h_yog30m9v",
+   "symbol": "BRUSDT",
+   "direction": "SHORT",
+   "createdAt": "2026-09-26T02:47:03.713Z",
+   "runId": "airun_muhsfqqi_8wj7wax6",
+   "model": "qwen/qwen3.8-27b",
+   "decision": "PLACE_SHORT",
+   "envelope": {
+    "minQuantityUnits": 6,
+    "maxQuantityUnits": 3980,
+    "legalQuantityRangeUnits": [
+     6,
+     3980
+    ],
+    "legalNotionalRangeUsd": [
+     5,
+     3642.467042470001
+    ],
+    "minimumLegalNotionalUsd": 5,
+    "executable": true,
+    "firstBindingConstraint": "CLUSTER"
+   },
+   "plan": {
+    "admission": "ALLOW",
+    "reasons": [
+     "AI_QUANTITY_UNITS_FROZEN",
+     "NO_CONFIDENCE_RESIZING",
+     "NO_DIRECTION_POLICY_RESIZING"
+    ],
+    "notionalUsd": 5.484,
+    "marginUsd": 0.5484,
+    "leverage": 10,
+    "minExecutableMarginUsd": 0.5,
+    "locationWouldBlock": false,
+    "exposureBefore": {
+     "longNotionalUsd": 3637.6247572480247,
+     "shortNotionalUsd": 7500.6625879844005,
+     "longExposurePct": 0.3219735310729521,
+     "shortExposurePct": 0.6638988295942757,
+     "speculativeNotionalUsd": 0,
+     "speculativeExposurePct": 0,
+     "usdtMarginUsd": 1072.3815286690588,
+     "usdcMarginUsd": 10.216297639683333,
+     "sameUnderlyingExposure": 0,
+     "duplicateBlocks": 0,
+     "locationBlocks": 0
+    },
+    "exposureAfter": {
+     "longNotionalUsd": 3637.6247572480247,
+     "shortNotionalUsd": 7506.146587984401,
+     "longExposurePct": 0.3219735310729521,
+     "shortExposurePct": 0.6643842295357859,
+     "speculativeNotionalUsd": 0,
+     "speculativeExposurePct": 0,
+     "usdtMarginUsd": 1072.9299286690587,
+     "usdcMarginUsd": 10.216297639683333,
+     "sameUnderlyingExposure": 0,
+     "duplicateBlocks": 0,
+     "locationBlocks": 0
+    }
+   },
+   "aboveMinimumLegalNotional": true,
+   "insideLegalNotionalInterval": true,
+   "quantityMutated": false,
+   "targetMutated": false,
+   "economicBlockers": [
+    "ECONOMIC_MIN_NET_PROFIT_UNMET",
+    "HUMAN_MANAGED_EXPOSURE_LIMIT"
+   ],
+   "refusal": {
+    "stage": "PORTFOLIO_RISK_ADMISSION",
+    "reasons": [
+     "HUMAN_ACK_OVERDUE",
+     "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+     "STRESS_LIMIT:MAX_CLUSTER_NOTIONAL",
+     "STRESS_LIMIT:MAX_GROSS_NOTIONAL"
+    ]
+   }
+  },
+  {
+   "allocationPlanId": "alloc_ai_muhsig4g_fnhp640c",
+   "symbol": "ZROUSDT",
+   "direction": "SHORT",
+   "createdAt": "2026-09-26T02:48:15.136Z",
+   "runId": "airun_muhsh7ti_3qsb7vis",
+   "model": "qwen/qwen3.8-27b",
+   "decision": "PLACE_SHORT",
+   "envelope": {
+    "minQuantityUnits": 32,
+    "maxQuantityUnits": 22921,
+    "legalQuantityRangeUnits": [
+     32,
+     22921
+    ],
+    "legalNotionalRangeUsd": [
+     5,
+     3642.1211263622567
+    ],
+    "minimumLegalNotionalUsd": 5,
+    "executable": true,
+    "firstBindingConstraint": "CLUSTER"
+   },
+   "plan": {
+    "admission": "ALLOW",
+    "reasons": [
+     "AI_QUANTITY_UNITS_FROZEN",
+     "NO_CONFIDENCE_RESIZING",
+     "NO_DIRECTION_POLICY_RESIZING"
+    ],
+    "notionalUsd": 5.072,
+    "marginUsd": 0.634,
+    "leverage": 8,
+    "minExecutableMarginUsd": 0.625,
+    "locationWouldBlock": false,
+    "exposureBefore": {
+     "longNotionalUsd": 3637.6854664448397,
+     "shortNotionalUsd": 7503.6747072984,
+     "longExposurePct": 0.32198002199502646,
+     "shortExposurePct": 0.6641677433592645,
+     "speculativeNotionalUsd": 0,
+     "speculativeExposurePct": 0,
+     "usdtMarginUsd": 1072.6559683561188,
+     "usdcMarginUsd": 10.2165022848,
+     "sameUnderlyingExposure": 0,
+     "duplicateBlocks": 0,
+     "locationBlocks": 0
+    },
+    "exposureAfter": {
+     "longNotionalUsd": 3637.6854664448397,
+     "shortNotionalUsd": 7508.7467072984,
+     "longExposurePct": 0.32198002199502646,
+     "shortExposurePct": 0.6646166779047669,
+     "speculativeNotionalUsd": 0,
+     "speculativeExposurePct": 0,
+     "usdtMarginUsd": 1073.2899683561188,
+     "usdcMarginUsd": 10.2165022848,
+     "sameUnderlyingExposure": 0,
+     "duplicateBlocks": 0,
+     "locationBlocks": 0
+    }
+   },
+   "aboveMinimumLegalNotional": true,
+   "insideLegalNotionalInterval": true,
+   "quantityMutated": false,
+   "targetMutated": false,
+   "economicBlockers": [
+    "ECONOMIC_MIN_NET_PROFIT_UNMET",
+    "TP_REACH_PROBABILITY_UNMET",
+    "HUMAN_MANAGED_EXPOSURE_LIMIT"
+   ],
+   "refusal": {
+    "stage": "PORTFOLIO_RISK_ADMISSION",
+    "reasons": [
+     "HUMAN_ACK_OVERDUE",
+     "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+     "MARGIN_TIER_SYMBOL_UNPROVEN:ZROUSDT",
+     "STRESS_LIMIT:MAX_CLUSTER_NOTIONAL",
+     "STRESS_LIMIT:MAX_GROSS_NOTIONAL"
+    ]
+   }
+  },
+  {
+   "allocationPlanId": "alloc_ai_muhsljlt_gtjdspzg",
+   "symbol": "1000BONKUSDC",
+   "direction": "SHORT",
+   "createdAt": "2026-09-26T02:50:39.617Z",
+   "runId": "airun_muhskbc6_irhgfy3j",
+   "model": "qwen/qwen3.8-27b",
+   "decision": "PLACE_SHORT",
+   "envelope": {
+    "minQuantityUnits": 1355,
+    "maxQuantityUnits": 981782,
+    "legalQuantityRangeUnits": [
+     1355,
+     981782
+    ],
+    "legalNotionalRangeUsd": [
+     5,
+     3626.036098319042
+    ],
+    "minimumLegalNotionalUsd": 5,
+    "executable": true,
+    "firstBindingConstraint": "CLUSTER"
+   },
+   "plan": {
+    "admission": "ALLOW",
+    "reasons": [
+     "AI_QUANTITY_UNITS_FROZEN",
+     "NO_CONFIDENCE_RESIZING",
+     "NO_DIRECTION_POLICY_RESIZING"
+    ],
+    "notionalUsd": 5.006725,
+    "marginUsd": 0.625840625,
+    "leverage": 8,
+    "minExecutableMarginUsd": 0.625,
+    "locationWouldBlock": false,
+    "exposureBefore": {
+     "longNotionalUsd": 3638.7080219093004,
+     "shortNotionalUsd": 7501.368376628399,
+     "longExposurePct": 0.32206536037109657,
+     "shortExposurePct": 0.6639529456467594,
+     "speculativeNotionalUsd": 0,
+     "speculativeExposurePct": 0,
+     "usdtMarginUsd": 1072.501300325212,
+     "usdcMarginUsd": 10.218941485383333,
+     "sameUnderlyingExposure": 0,
+     "duplicateBlocks": 0,
+     "locationBlocks": 0
+    },
+    "exposureAfter": {
+     "longNotionalUsd": 3638.7080219093004,
+     "shortNotionalUsd": 7506.3751016283995,
+     "longExposurePct": 0.32206536037109657,
+     "shortExposurePct": 0.6643960954355567,
+     "speculativeNotionalUsd": 0,
+     "speculativeExposurePct": 0,
+     "usdtMarginUsd": 1072.501300325212,
+     "usdcMarginUsd": 10.844782110383333,
+     "sameUnderlyingExposure": 0,
+     "duplicateBlocks": 0,
+     "locationBlocks": 0
+    }
+   },
+   "aboveMinimumLegalNotional": true,
+   "insideLegalNotionalInterval": true,
+   "quantityMutated": false,
+   "targetMutated": false,
+   "economicBlockers": [
+    "ECONOMIC_MIN_NET_PROFIT_UNMET",
+    "TP_REACH_PROBABILITY_UNMET",
+    "HUMAN_MANAGED_EXPOSURE_LIMIT"
+   ],
+   "refusal": {
+    "stage": "PORTFOLIO_RISK_ADMISSION",
+    "reasons": [
+     "HUMAN_ACK_OVERDUE",
+     "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+     "MARGIN_TIER_SYMBOL_UNPROVEN:1000BONKUSDC",
+     "STRESS_LIMIT:MAX_CLUSTER_NOTIONAL",
+     "STRESS_LIMIT:MAX_GROSS_NOTIONAL"
+    ]
+   }
+  },
+  {
+   "allocationPlanId": "alloc_ai_muhsn0to_ycbwrd1a",
+   "symbol": "OPUSDT",
+   "direction": "LONG",
+   "createdAt": "2026-09-26T02:51:48.588Z",
+   "runId": "airun_muhsltpt_q25hwtkg",
+   "model": "qwen/qwen3.8-27b",
+   "decision": "PLACE_LONG",
+   "envelope": {
+    "minQuantityUnits": 347,
+    "maxQuantityUnits": 251643,
+    "legalQuantityRangeUnits": [
+     347,
+     251643
+    ],
+    "legalNotionalRangeUsd": [
+     5,
+     3641.2742100000005
+    ],
+    "minimumLegalNotionalUsd": 5,
+    "executable": true,
+    "firstBindingConstraint": "CLUSTER"
+   },
+   "plan": {
+    "admission": "ALLOW",
+    "reasons": [
+     "AI_QUANTITY_UNITS_FROZEN",
+     "NO_CONFIDENCE_RESIZING",
+     "NO_DIRECTION_POLICY_RESIZING"
+    ],
+    "notionalUsd": 5.017620000000001,
+    "marginUsd": 0.6272025000000001,
+    "leverage": 8,
+    "minExecutableMarginUsd": 0.625,
+    "locationWouldBlock": false,
+    "exposureBefore": {
+     "longNotionalUsd": 3638.6773677140004,
+     "shortNotionalUsd": 7491.725837268639,
+     "longExposurePct": 0.322062675646418,
+     "shortExposurePct": 0.6630995343992216,
+     "speculativeNotionalUsd": 0,
+     "speculativeExposurePct": 0,
+     "usdtMarginUsd": 1071.3265032677227,
+     "usdcMarginUsd": 10.217956907391667,
+     "sameUnderlyingExposure": 0,
+     "duplicateBlocks": 0,
+     "locationBlocks": 0
+    },
+    "exposureAfter": {
+     "longNotionalUsd": 3643.6949877140005,
+     "shortNotionalUsd": 7491.725837268639,
+     "longExposurePct": 0.32250678980089503,
+     "shortExposurePct": 0.6630995343992216,
+     "speculativeNotionalUsd": 0,
+     "speculativeExposurePct": 0,
+     "usdtMarginUsd": 1071.9537057677228,
+     "usdcMarginUsd": 10.217956907391667,
+     "sameUnderlyingExposure": 0,
+     "duplicateBlocks": 0,
+     "locationBlocks": 0
+    }
+   },
+   "aboveMinimumLegalNotional": true,
+   "insideLegalNotionalInterval": true,
+   "quantityMutated": false,
+   "targetMutated": false,
+   "economicBlockers": [
+    "ECONOMIC_MIN_NET_PROFIT_UNMET",
+    "HUMAN_MANAGED_EXPOSURE_LIMIT"
+   ],
+   "refusal": {
+    "stage": "PORTFOLIO_RISK_ADMISSION",
+    "reasons": [
+     "HUMAN_ACK_OVERDUE",
+     "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+     "STRESS_LIMIT:MAX_CLUSTER_NOTIONAL",
+     "STRESS_LIMIT:MAX_GROSS_NOTIONAL"
+    ]
+   }
+  },
+  {
+   "allocationPlanId": "alloc_ai_muhsokm6_5312fpj7",
+   "symbol": "TAOUSDT",
+   "direction": "LONG",
+   "createdAt": "2026-09-26T02:53:00.894Z",
+   "runId": "airun_muhsnbcr_gxv1uw6g",
+   "model": "qwen/qwen3.8-27b",
+   "decision": "PLACE_LONG",
+   "envelope": {
+    "minQuantityUnits": 16,
+    "maxQuantityUnits": 11481,
+    "legalQuantityRangeUnits": [
+     16,
+     11481
+    ],
+    "legalNotionalRangeUsd": [
+     5,
+     3626.27385
+    ],
+    "minimumLegalNotionalUsd": 5,
+    "executable": true,
+    "firstBindingConstraint": "CLUSTER"
+   },
+   "plan": {
+    "admission": "ALLOW",
+    "reasons": [
+     "AI_QUANTITY_UNITS_FROZEN",
+     "NO_CONFIDENCE_RESIZING",
+     "NO_DIRECTION_POLICY_RESIZING"
+    ],
+    "notionalUsd": 5.051520000000001,
+    "marginUsd": 0.6314400000000001,
+    "leverage": 8,
+    "minExecutableMarginUsd": 0.625,
+    "locationWouldBlock": false,
+    "exposureBefore": {
+     "longNotionalUsd": 3638.4871621904695,
+     "shortNotionalUsd": 7485.907336892358,
+     "longExposurePct": 0.322047721693657,
+     "shortExposurePct": 0.6625884042434371,
+     "speculativeNotionalUsd": 0,
+     "speculativeExposurePct": 0,
+     "usdtMarginUsd": 1070.7666582866475,
+     "usdcMarginUsd": 10.211226665758334,
+     "sameUnderlyingExposure": 0,
+     "duplicateBlocks": 0,
+     "locationBlocks": 0
+    },
+    "exposureAfter": {
+     "longNotionalUsd": 3643.5386821904694,
+     "shortNotionalUsd": 7485.907336892358,
+     "longExposurePct": 0.32249483898020265,
+     "shortExposurePct": 0.6625884042434371,
+     "speculativeNotionalUsd": 0,
+     "speculativeExposurePct": 0,
+     "usdtMarginUsd": 1071.3980982866476,
+     "usdcMarginUsd": 10.211226665758334,
+     "sameUnderlyingExposure": 0,
+     "duplicateBlocks": 0,
+     "locationBlocks": 0
+    }
+   },
+   "aboveMinimumLegalNotional": true,
+   "insideLegalNotionalInterval": true,
+   "quantityMutated": false,
+   "targetMutated": false,
+   "economicBlockers": [
+    "ECONOMIC_MIN_NET_PROFIT_UNMET",
+    "HUMAN_MANAGED_EXPOSURE_LIMIT"
+   ],
+   "refusal": {
+    "stage": "PORTFOLIO_RISK_ADMISSION",
+    "reasons": [
+     "HUMAN_ACK_OVERDUE",
+     "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+     "STRESS_LIMIT:MAX_CLUSTER_NOTIONAL",
+     "STRESS_LIMIT:MAX_GROSS_NOTIONAL"
+    ]
+   }
+  },
+  {
+   "allocationPlanId": "alloc_ai_muhsq5in_1vieq49r",
+   "symbol": "WLDUSDT",
+   "direction": "LONG",
+   "createdAt": "2026-09-26T02:54:14.639Z",
+   "runId": "airun_muhsouc2_9tsglh8b",
+   "model": "qwen/qwen3.8-27b",
+   "decision": "PLACE_LONG",
+   "envelope": {
+    "minQuantityUnits": 11,
+    "maxQuantityUnits": 7486,
+    "legalQuantityRangeUnits": [
+     11,
+     7486
+    ],
+    "legalNotionalRangeUsd": [
+     5,
+     3627.7156
+    ],
+    "minimumLegalNotionalUsd": 5,
+    "executable": true,
+    "firstBindingConstraint": "CLUSTER"
+   },
+   "plan": {
+    "admission": "ALLOW",
+    "reasons": [
+     "AI_QUANTITY_UNITS_FROZEN",
+     "NO_CONFIDENCE_RESIZING",
+     "NO_DIRECTION_POLICY_RESIZING"
+    ],
+    "notionalUsd": 5.3207,
+    "marginUsd": 0.6650875,
+    "leverage": 8,
+    "minExecutableMarginUsd": 0.625,
+    "locationWouldBlock": false,
+    "exposureBefore": {
+     "longNotionalUsd": 3638.392492631726,
+     "shortNotionalUsd": 7482.799718242722,
+     "longExposurePct": 0.32203791039384816,
+     "shortExposurePct": 0.6623103994521334,
+     "speculativeNotionalUsd": 0,
+     "speculativeExposurePct": 0,
+     "usdtMarginUsd": 1070.4638288674837,
+     "usdcMarginUsd": 10.208308772408333,
+     "sameUnderlyingExposure": 0,
+     "duplicateBlocks": 0,
+     "locationBlocks": 0
+    },
+    "exposureAfter": {
+     "longNotionalUsd": 3643.713192631726,
+     "shortNotionalUsd": 7482.799718242722,
+     "longExposurePct": 0.3225088510945292,
+     "shortExposurePct": 0.6623103994521334,
+     "speculativeNotionalUsd": 0,
+     "speculativeExposurePct": 0,
+     "usdtMarginUsd": 1071.1289163674837,
+     "usdcMarginUsd": 10.208308772408333,
+     "sameUnderlyingExposure": 0,
+     "duplicateBlocks": 0,
+     "locationBlocks": 0
+    }
+   },
+   "aboveMinimumLegalNotional": true,
+   "insideLegalNotionalInterval": true,
+   "quantityMutated": false,
+   "targetMutated": false,
+   "economicBlockers": [
+    "ECONOMIC_MIN_NET_PROFIT_UNMET",
+    "TP_REACH_PROBABILITY_UNMET",
+    "HUMAN_MANAGED_EXPOSURE_LIMIT"
+   ],
+   "refusal": {
+    "stage": "PORTFOLIO_RISK_ADMISSION",
+    "reasons": [
+     "HUMAN_ACK_OVERDUE",
+     "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+     "STRESS_LIMIT:MAX_CLUSTER_NOTIONAL",
+     "STRESS_LIMIT:MAX_GROSS_NOTIONAL"
+    ]
+   }
+  }
+ ]
+}

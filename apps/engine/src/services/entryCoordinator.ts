@@ -24,7 +24,7 @@ import type { EipService } from "./eipService.js";
 import type { AiFabric } from "./aiFabric.js";
 import { binanceClientOrderIdFactory } from "./binanceClientOrderIdFactory.js";
 import { computeExecutableRiskHeadroom, portfolioCapacityVisibility } from "./riskReadiness.js";
-import { readAdmissionCapacity, analysisOnlyMode } from "./admissionCapacityReader.js";
+import { readAdmissionCapacity, analysisOnlyMode, bookAdmissionSummary } from "./admissionCapacityReader.js";
 import { candidateCapitalCapacity, entryTradingCapital, leverageFactOf } from "./capitalCapacity.js";
 import { collectPendingEntryRiskExposures, entryOrderOccupiesRisk } from './entryRiskOccupancy.js';
 import { candidateCapitalFromState } from './capitalCapacity.js';
@@ -195,14 +195,17 @@ export class EntryCoordinator {
       // independent, so only a projected exhaustion verdict may say the cap is used up, and only
       // when the capital pre-check itself found nothing executable — otherwise something else
       // (occupancy, facts, cooldown) is the real first cause and must not be masked.
-      const capacity = portfolioCapacityVisibility(this.state.entryCapacity(), this.state.runtimeControl.capital.directionBudget, {funding:this.state.runtimeControl.capital.funding??entryTradingCapital(this.state),routes:this.state.runtimeControl.capital.routedCandidates??[]});
+      const capacity = portfolioCapacityVisibility(this.state.entryCapacity(), this.state.runtimeControl.capital.directionBudget, {funding:this.state.runtimeControl.capital.funding??entryTradingCapital(this.state),routes:this.state.runtimeControl.capital.routedCandidates??[],admission:bookAdmissionSummary(this.state, now)});
       const demand = routes.size > 0 || this.state.universe.some((candidate: any) => candidate.eligible);
       const executable = this.state.runtimeControl.capital.executableCandidateCount ?? 0;
-      const capacityBlocked = demand && executable === 0 && capacity.exhaustedForNewRisk;
+      // The gate may deny the whole book while several candidates still have money behind them. Those are
+      // two different facts, and only the first one decides whether "no runnable candidate" is the truth.
+      const gateDeniesNewRisk = capacity.admission?.exhausted === true;
+      const capacityBlocked = demand && (executable === 0 || gateDeniesNewRisk) && capacity.exhaustedForNewRisk;
       const reason = capacityBlocked || !routes.size ? 'WAITING_EXECUTION_CAPACITY' : this.state.pool.readyList().length ? 'WAITING_NEW_FACTS' : 'WAITING_CANDIDATE';
       const usd = (value: number) => `$${value.toFixed(2)}`;
       const nextStep = capacityBlocked
-        ? `新增风险额度已用尽：${capacity.exhaustedReason === 'BOTH_DIRECTIONS' ? 'LONG 与 SHORT 双向额度均满' : capacity.exhaustedReason}（首因 ${capacity.entryCapacity.LONG.firstBindingConstraint}/${capacity.entryCapacity.SHORT.firstBindingConstraint}，槽位 ${capacity.limits.slots.used}/${capacity.limits.slots.max}；组合名义 ${usd(capacity.exposure.gross.notionalUsd)}，其政策为 ${capacity.exposure.gross.mode}）；继续供给与订单维护`
+        ? `新增风险额度已用尽：${gateDeniesNewRisk ? `确定性风险门 ${capacity.admission.code}（${capacity.admission.detail ?? '任意名义均拒'}；当前两侧可新增 ${usd(Math.min(capacity.admission.ceilingUsdBySide.LONG, capacity.admission.ceilingUsdBySide.SHORT))}）` : capacity.exhaustedReason === 'BOTH_DIRECTIONS' ? 'LONG 与 SHORT 双向额度均满' : capacity.exhaustedReason}（首因 ${capacity.entryCapacity.LONG.firstBindingConstraint}/${capacity.entryCapacity.SHORT.firstBindingConstraint}，槽位 ${capacity.limits.slots.used}/${capacity.limits.slots.max}；组合名义 ${usd(capacity.exposure.gross.notionalUsd)}，其政策为 ${capacity.exposure.gross.mode}）；继续供给与订单维护`
         : reason === 'WAITING_EXECUTION_CAPACITY' ? '当前无资本可执行路由；继续供给与订单维护'
         : reason === 'WAITING_NEW_FACTS' ? '等待新的候选事实，避免重复推理'
         : '暂无可派发候选；继续供给与订单维护';

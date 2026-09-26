@@ -66,6 +66,9 @@ export type AdmissionBookSummary={hasVerdict:boolean;exhausted:boolean;code:stri
 export function bookAdmissionSummary(state:any,now=Date.now()):AdmissionBookSummary{
   const ledger=state?.riskAdmission;
   const none:AdmissionBookSummary={hasVerdict:false,exhausted:false,code:null,gate:null,detail:null,ceilingUsdBySide:{LONG:0,SHORT:0},reasons:[],evaluatedAt:0};
+  // Analysis-only writes nothing, so there is no new risk for the gate to deny: its book verdict must not
+  // silence the market evidence this mode exists to produce, exactly as the dispatch path must not.
+  if(analysisOnlyMode(state))return none;
   if(!ledger||typeof ledger.capacityFacts!=='function')return none;
   let facts:AdmissionCapacityView|null=null;
   try{facts=ledger.capacityFacts(now,null)as AdmissionCapacityView;}

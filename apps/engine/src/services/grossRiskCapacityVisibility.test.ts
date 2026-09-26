@@ -213,6 +213,29 @@ describe('capacity starvation is never reported as a missing candidate', () => {
     expect(h.ai.decide).not.toHaveBeenCalled();
   });
 
+  it('a book-level denial from the committing gate outranks "executable candidates exist" when naming the blocker', async () => {
+    const { h, sync, lastIdle } = pipeline();
+    // The ratio model sees a free book: nothing observed or enforced denies new risk on its own numbers,
+    // and the routing summary still counts executable candidates.
+    h.state.positions.delete('SOLUSDT');
+    h.state.settings.connections.executionMode = 'TESTNET_ENABLED';
+    (h.state as any).riskAdmission = {capacityFacts: () => ({evaluatedAt: Date.now(), admitsAnyPositiveNotional: false, maxNewRiskNotionalUsd: 0,
+      maxNewRiskNotionalUsdBySide: {LONG: 0, SHORT: 0}, evidenceBlockers: [], sizeIndependentRefusals: ['HUMAN_ACK_OVERDUE'],
+      firstBinding: {kind: 'SIZE_INDEPENDENT', code: 'HUMAN_ACK_OVERDUE', gate: null, limitUsd: null, usedUsd: null, headroomUsd: null, shortfallUsd: null,
+        detail: 'HUMAN_ACK_OVERDUE：22 行人工交接未确认，超过上限 24 小时，最旧 175.2 小时 —— 任意名义均拒，只能由人工确认'}})};
+    expect(sync().exhaustedForNewRisk).toBe(false);
+    expect(h.state.runtimeControl.capital.executableCandidateCount).toBeGreaterThan(0);
+    await h.coordinator.processPool();
+    const idle = lastIdle();
+    // Permission is the gate's question, so its answer decides the label: "no runnable candidate" would
+    // send the operator to supply while the real stop is an unacknowledged handoff at any size.
+    expect(idle[0]).toBe('WAITING_EXECUTION_CAPACITY');
+    expect(String(idle[2])).toContain('确定性风险门 HUMAN_ACK_OVERDUE');
+    expect(String(idle[2])).toContain('可新增 $0.00');
+    expect(String(idle[2])).toContain('22 行人工交接未确认');
+    expect(h.ai.decide).not.toHaveBeenCalled();
+  });
+
   it('still says WAITING_CANDIDATE when there is genuinely no supply', async () => {
     const { h, sync, lastIdle } = pipeline();
     h.state.positions.clear();

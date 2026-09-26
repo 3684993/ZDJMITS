@@ -152,6 +152,9 @@ typecheck 0 错误、`verify:deps`/`verify:scripts` 0、S00 `T01–T06` 全 PASS
 
 `07794f2` 之后 `apps/`、`packages/` 零改动，因此部署用的 dist 与提交的源码同源（`p10`）。
 
+交工前再次以证据提交所在 HEAD 复跑同一闭环（`p13`，采集时 HEAD `ffd2e90`）：仍为 **`IDENTITY_CLOSED`**、6 项全 true、
+buildId/pid/restartCount/startReason 未变。docs-only 提交不进入被哈希目录，因此该性质对任意后续报告提交保持不变。
+
 ## 8. 仍存在的真实阻断（属于约束，不属于缺陷）
 
 1. `HUMAN_POTENTIAL_NOTIONAL_LIMIT` + `STRESS_LIMIT:MAX_GROSS_NOTIONAL` + `STRESS_LIMIT:MAX_CLUSTER_NOTIONAL`：
@@ -196,7 +199,7 @@ TP 15/8 → 23/0，UNKNOWN 建仓单 47 持久且 47 份活跃无风险续证、
 - C 根因：`c01-position-facts-before-fix.txt`（V2 与 V3 双活、8 条 SHORT 被拒）
 - 部署后：`p02-readback-after-deploy.json`、`p03-identity-closure.json`、`p04/p05/p09/p12-live-probe*.json`、
   `p06-c-d-write-attribution.json`（8 笔 TP 写归因 + settingsVersion/审计行不变）、`p07-dashboard-risk-admission-primary.png`、
-  `p08-dashboard-dom-proof.json`、`p10-identity-closure-after-build.txt`、`p11-margin-coverage-preview.json`（71/71 可采集）
+  `p08-dashboard-dom-proof.json`、`p10-identity-closure-after-build.txt`、`p11-margin-coverage-preview.json`（71/71 可采集）、`p13-identity-closure-at-handoff.json`
 - 只读回采工具（GET + readOnly + 临时副本，绝不写 live 数据目录）：`scripts/v396-a-c-d-live-probe.mjs`、
   `scripts/v396-position-fact-compare.mjs`、`scripts/v396-margin-coverage-preview.mjs`（并复用上一轮
   `v396-g1-g4-identity-closure.mjs`、`v396-g1-g4-acceptance-readback.mjs`）

@@ -1,0 +1,69 @@
+# G1-G4 existence check on GitHub HEAD (raw, read-only)
+capturedAt: 2026-09-26T01:30:57Z
+HEAD: a83d204c58c71efa69baccd49f5242770449cc0d
+
+## grep -rn 'minQuantityUnits' apps packages (.ts/.vue, non-node_modules)
+count=0
+
+## grep -rn 'exposureCapacityPolicy' packages/core/src (non-test)
+count=0
+
+## grep -rn 'nextAction|authoritativeBlocker' apps packages
+count=0
+
+## G1 sizing room and rejection (packages/core/src/portfolio.ts)
+    );
+  const longRoom =
+      Math.max(0, p.maxLongExposurePct - before.longExposurePct) * equity,
+    shortRoom =
+      Math.max(0, p.maxShortExposurePct - before.shortExposurePct) * equity,
+    specRoom =
+      Math.max(0, p.maxSpeculativeExposurePct - before.speculativeExposurePct) *
+        ? "REJECT_DIRECTION_POLICY"
+        : reasons.includes("RESTRICTED_RISK_TIER")
+          ? "REJECT_RISK_TIER"
+          : reasons.includes("MAX_POSITIONS")
+            ? "REJECT_MAX_POSITIONS"
+            : "REJECT_LOCATION"
+    : after.speculativeExposurePct > p.maxSpeculativeExposurePct ||
+        after.longExposurePct > p.maxLongExposurePct ||
+        after.shortExposurePct > p.maxShortExposurePct ||
+        after.usdtMarginUsd >
+          quoteAvailable! *
+            (quote === "USDT" ? p.maxQuoteAssetMarginUsagePct : 1) ||
+        after.usdcMarginUsd >
+          quoteAvailable! *
+
+## G2 prompt line (packages/core/src/compactEntry.ts:31)
+Return exactly one unfenced JSON object matching the provided schema. For PLACE_LONG or PLACE_SHORT you must autonomously choose tradeSide, quantityUnits, idealPrice, acceptablePriceRange, horizonMinutes and profitTakePlan. quantity = quantityUnits * EXECUTION_ENVELOPE.exchange.stepSize. quantityUnits must be a positive integer no greater than the chosen side maxQuantityUnits. Do not choose direction because one side has more capacity.
+
+## G3 system-level label + global pause
+  if(!input.marketInsufficient)return null;
+  // Quotes really are the problem, or the book/quote pipeline is: keep the historical label.
+  if((input.freshness.quoteFreshRatio ?? 1) < 0.5)return 'MARKET_QUOTES_STALE';
+  // A WebSocket candle hole leaves quotes fresh and every closed sequence unusable.
+  if((input.freshness.sequenceInvalid ?? 0) > 0)return 'MARKET_KLINE_SEQUENCE_INVALID';
+  return 'MARKET_TECHNICAL_STALE';
+}
+      ).length;
+    const slotCapacity = this.state.entryCapacity();
+    const marketDataReason = marketDataStaleReason({
+      freshness,
+      marketInsufficient,
+      streamState: stream.state,
+      streamError: stream.lastError,
+    }),
+      pipelineState = marketDataReason ? "PAUSED_MARKET_DATA_UNAVAILABLE" : "RUNNING";
+    const supply=this.supplyHealth(poolItems),{qualifiedSupply,readySupply,target,targetGap,supplyShortage,refillFailure}=supply;
+    let poolStatus = supplyShortage ? "POOL_SUPPLY_SHORTAGE" : refillFailure ? "POOL_REFILL_FAILURE" : "POOL_READY";
+    if (!poolItems.length&&!supplyShortage&&!refillFailure) {
+      if (marketInsufficient) poolStatus = "POOL_EMPTY_MARKET_DEGRADED";
+      else if (cooldown && cooldown + excluded >= this.state.universe.length)
+
+## G4 UI-side priority derivation
+30:const SUPPLY_SIDE_WAITS = ["WAITING_CANDIDATE", "WAITING_NEW_FACTS", "NO_SUPPLY", "RULE_FILTERED"];
+91:const firstExplanation = computed(() => {
+95:  return SUPPLY_SIDE_WAITS.includes(String(analysis?.reason ?? "")) ? (analysis?.text ?? "") : (pipeline.value?.noEntryReason ?? analysis?.text ?? "");
+
+## targeted tests for G1-G4?
+(empty = none)

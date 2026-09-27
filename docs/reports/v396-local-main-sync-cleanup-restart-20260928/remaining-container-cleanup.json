@@ -1,0 +1,15 @@
+{
+  "at": "2026-09-27T23:33:17.9525859Z",
+  "obsoleteBuildsDeleted": [
+    "D:\\MITS-worktrees\\backup-live-dist",
+    "D:\\MITS-worktrees\\backup-live-dist-r12-20260919-2319",
+    "D:\\MITS-worktrees\\backup-live-dist-r14-20260920-0659",
+    "D:\\MITS-worktrees\\backup-live-dist-r15-20260920",
+    "D:\\MITS-worktrees\\backup-live-dist-r16-20260920",
+    "D:\\MITS-worktrees\\backup-live-dist-ui1-20260920"
+  ],
+  "remainingForensicsMovedTo": "D:\\MITS\\backups\\local-convergence-20260928\\legacy-directories\\MITS-worktrees-forensics",
+  "DTopLevelMitsDirectories": [
+    "D:\\MITS"
+  ]
+}

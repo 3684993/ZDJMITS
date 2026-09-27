@@ -1,0 +1,69 @@
+{
+  "path": "C:\\Users\\5700x\\.codex\\worktrees\\v396-entry-frequency-risk-audit\\MITS",
+  "preservedIgnoredFiles": [
+    {
+      "path": "data-test/trading-quality.sqlite",
+      "sha256": "22d737d580c6159bbd95fa6585ebbf81f10469004290e88b6b6f6939c0c20a41",
+      "bytes": 77824
+    },
+    {
+      "path": "data-test/v396-ownership.sqlite",
+      "sha256": "26d41087a424b1bbeeb483914821a8715bcbe3cfe9fbbb86e2f303e54ba28159",
+      "bytes": 69632
+    },
+    {
+      "path": "data-test/zdj-settings.sqlite",
+      "sha256": "05990797e14750754af64b7e69c065ae2586a8af558478261fa1e3e4932f5149",
+      "bytes": 589824
+    },
+    {
+      "path": "docs/reports/v396-entry-frequency-risk-audit-20260927/chain-events-local.jsonl",
+      "sha256": "27ea2133fd443594a745891158a6033d07e4225763a1ea9638fa2f9104f3603c",
+      "bytes": 147893265
+    },
+    {
+      "path": "docs/reports/v396-entry-frequency-risk-audit-20260927/chains-local.json",
+      "sha256": "ac39978fd488aa8477022c8e78a23bf491f0fbf3343798dff8c32f0100fc6761",
+      "bytes": 21750112
+    },
+    {
+      "path": "docs/reports/v396-entry-frequency-risk-audit-20260927/closeout-local.json",
+      "sha256": "da265617969fb8b7604dd09b697662033478c5fbcd71fdbd2ea1bb211210a854",
+      "bytes": 244832
+    },
+    {
+      "path": "docs/reports/v396-entry-frequency-risk-audit-20260927/entities-local.json",
+      "sha256": "063e1a7ef022d9eecb01a63ee9ad6880f4191cdd1af28b3bb102b79b433787ff",
+      "bytes": 8009429
+    },
+    {
+      "path": "docs/reports/v396-entry-frequency-risk-audit-20260927/event-samples-local.json",
+      "sha256": "c9ee7fbc72298b1f6ea963aa36fedd6669a643d084943ed7b6b919d330afe870",
+      "bytes": 100652
+    },
+    {
+      "path": "docs/reports/v396-entry-frequency-risk-audit-20260927/owners-local.json",
+      "sha256": "b30d402a9f1ea385ab6c09394dda0070b43ad706811aba3d8e550a0985481ccb",
+      "bytes": 6903
+    },
+    {
+      "path": "docs/reports/v396-entry-frequency-risk-audit-20260927/risk-settings.json",
+      "sha256": "c0a882ea16c25dddafbac628ff055834d75511a389394822735cb16ff0903683",
+      "bytes": 42655
+    },
+    {
+      "path": "docs/reports/v396-entry-frequency-risk-audit-20260927/runtime-state-local.json",
+      "sha256": "bd9f6753861ba24c2209ecfbb472ff39b93c3ae8998c9b399ed3dd6db016bc77",
+      "bytes": 738405
+    },
+    {
+      "path": "docs/reports/v396-entry-frequency-risk-audit-20260927/snapshot-local.json",
+      "sha256": "d88fed577125eb19114fe8dce0a56ef17252df553abffff19e0f8dfab961ced0",
+      "bytes": 153397
+    }
+  ],
+  "scope": "Reproducible dependencies/builds excluded. No live process uses this worktree.",
+  "archiveTool": "mcp__codex_app__archive_worktree",
+  "verifiedArtifactType": "archived_worktree",
+  "archived": true
+}

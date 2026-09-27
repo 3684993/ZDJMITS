@@ -27,5 +27,7 @@
     "storage coverage",
     "diff check"
   ],
-  "githubActions": "NOT_RUN_BILLING_LIMIT"
+  "githubActions": "NOT_RUN_BILLING_LIMIT",
+  "finalDecision": "FULL_GATES_RERUN_IN_CANONICAL_ENVIRONMENT",
+  "reuseOnly": false
 }

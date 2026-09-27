@@ -1,0 +1,163 @@
+{
+  "status": "UNAVAILABLE",
+  "hasVerdict": true,
+  "exhausted": true,
+  "evaluatedAt": 1790552146448,
+  "code": "PENDING_RISK_UNVERIFIED:order:entry_intent_muga3hgh_dukt59f4",
+  "gate": null,
+  "detail": "PENDING_RISK_UNVERIFIED:order:entry_intent_muga3hgh_dukt59f4（与名义规模无关的拒因，或本层无数值可归属的账本事实）",
+  "ceilingUsdBySide": {
+    "LONG": 0,
+    "SHORT": 0
+  },
+  "reasons": [
+    "PENDING_RISK_UNVERIFIED:order:entry_intent_muga3hgh_dukt59f4"
+  ],
+  "overdueHandoffs": 2,
+  "oldestOverdueHours": 70.66677416666667,
+  "scope": "BOOK",
+  "snapshotHash": "v396r42ae1e75ab59732c5ef575980dcda619b0b28cdbcefa3799fe6e76bb25082b1d",
+  "profileVersion": "v396rc287216460554e02fb05153b54eeae5d30bf5f683aa34156a776a2e1b95ea113",
+  "settingsVersion": "219",
+  "riskGeneration": 175,
+  "authorityVersions": {
+    "source": "SETTINGS",
+    "settingsVersion": 219,
+    "path": "riskGovernance.portfolioRisk",
+    "configured": true,
+    "contentHash": "v396rc287216460554e02fb05153b54eeae5d30bf5f683aa34156a776a2e1b95ea113",
+    "correlationVersion": "TESTNET_CORRELATION_CLUSTERS_V1_SHA256_d7ada0f6ba5cb950105a69439c409177748e1c87b164fa0872e845271d2bff65",
+    "scenarioVersion": "TESTNET_STRESS_SCENARIO_SET_V1_SHA256_3b9c016189e3b2cb2c2bad5f7bc761e7ae25181eadfa03b574be2ec9d1a0749c",
+    "marginTierVersion": "TESTNET_BINANCE_LEVERAGE_BRACKET_V1_SHA256_67dee0aca734d82f8718c7b6ad995ba6afb50be4a10798cba5071c9a08bb0fa9"
+  },
+  "coverage": {
+    "assets": "VERIFIED",
+    "marginTier": "VERIFIED",
+    "cashFlow": "VERIFIED",
+    "ownership": "VERIFIED",
+    "account": "VERIFIED"
+  },
+  "gates": [
+    {
+      "name": "MAX_GROSS_NOTIONAL",
+      "reason": "STRESS_LIMIT:MAX_GROSS_NOTIONAL",
+      "unit": "NOTIONAL_USD",
+      "limitUsd": 10811.957,
+      "usedUsd": 11213.323051621,
+      "maxAdditionalUsd": 0,
+      "shortfallUsd": 401.3660516210002,
+      "candidateShortfallUsd": 401.3660516210002,
+      "candidateImpactUsd": 0
+    },
+    {
+      "name": "MAX_DIRECTION_NOTIONAL",
+      "reason": "STRESS_LIMIT:MAX_DIRECTION_NOTIONAL",
+      "unit": "NOTIONAL_USD",
+      "limitUsd": 8649.565,
+      "usedUsd": 7523.631109720998,
+      "maxAdditionalUsd": 1125.9338902790023,
+      "shortfallUsd": 0,
+      "candidateShortfallUsd": 0,
+      "candidateImpactUsd": 0,
+      "maxAdditionalUsdBySide": {
+        "LONG": 4959.8730581,
+        "SHORT": 1125.9338902790023
+      }
+    },
+    {
+      "name": "MAX_CLUSTER_NOTIONAL",
+      "reason": "STRESS_LIMIT:MAX_CLUSTER_NOTIONAL",
+      "unit": "NOTIONAL_USD",
+      "limitUsd": 10811.957,
+      "usedUsd": 11213.323051621,
+      "maxAdditionalUsd": 0,
+      "shortfallUsd": 401.3660516210002,
+      "candidateShortfallUsd": 401.3660516210002,
+      "candidateImpactUsd": 0,
+      "clusterKey": "UNMAPPED_CORRELATED"
+    },
+    {
+      "name": "MAX_CAPITAL_AT_RISK",
+      "reason": "STRESS_LIMIT:MAX_CAPITAL_AT_RISK",
+      "unit": "MARGIN_USD",
+      "limitUsd": 10811.957,
+      "usedUsd": 1090.49822224425,
+      "maxAdditionalUsd": 9721.45877775575,
+      "shortfallUsd": 0,
+      "candidateShortfallUsd": 0,
+      "candidateImpactUsd": 0
+    },
+    {
+      "name": "MAX_STRESS_LOSS",
+      "reason": "STRESS_LIMIT:MAX_STRESS_LOSS",
+      "unit": "LOSS_USD",
+      "limitUsd": 5405.978,
+      "usedUsd": 4120.896221470717,
+      "maxAdditionalUsd": 1285.081778529283,
+      "shortfallUsd": 0,
+      "candidateShortfallUsd": 0,
+      "candidateImpactUsd": 0
+    },
+    {
+      "name": "HUMAN_POTENTIAL_NOTIONAL",
+      "reason": "HUMAN_POTENTIAL_NOTIONAL_LIMIT",
+      "unit": "NOTIONAL_USD",
+      "limitUsd": 10811.957,
+      "usedUsd": 11176.454911621,
+      "maxAdditionalUsd": 0,
+      "shortfallUsd": 364.49791162099973,
+      "candidateShortfallUsd": 364.49791162099973,
+      "candidateImpactUsd": 0
+    },
+    {
+      "name": "MIN_MARGIN_BUFFER:USDC",
+      "reason": "STRESS_LIMIT:MIN_MARGIN_BUFFER:USDC",
+      "unit": "MARGIN_USD",
+      "limitUsd": 4968.41968201,
+      "usedUsd": 14.810749495833333,
+      "maxAdditionalUsd": 4953.608932514167,
+      "shortfallUsd": 0,
+      "candidateShortfallUsd": 0,
+      "candidateImpactUsd": 0
+    },
+    {
+      "name": "MIN_MARGIN_BUFFER:USDT",
+      "reason": "STRESS_LIMIT:MIN_MARGIN_BUFFER:USDT",
+      "unit": "MARGIN_USD",
+      "limitUsd": 3471.04848345,
+      "usedUsd": 1075.6874727484167,
+      "maxAdditionalUsd": 2395.361010701583,
+      "shortfallUsd": 0,
+      "candidateShortfallUsd": 0,
+      "candidateImpactUsd": 0
+    }
+  ],
+  "firstBinding": {
+    "kind": "EVIDENCE",
+    "code": "PENDING_RISK_UNVERIFIED:order:entry_intent_muga3hgh_dukt59f4",
+    "gate": null,
+    "limitUsd": null,
+    "usedUsd": null,
+    "unit": null,
+    "headroomUsd": null,
+    "shortfallUsd": null,
+    "detail": "PENDING_RISK_UNVERIFIED:order:entry_intent_muga3hgh_dukt59f4（与名义规模无关的拒因，或本层无数值可归属的账本事实）"
+  },
+  "pendingLineage": [
+    {
+      "id": "order:entry_intent_muga3hgh_dukt59f4",
+      "dedupeKey": "order:entry_intent_muga3hgh_dukt59f4",
+      "symbol": "XRPUSDC",
+      "side": "LONG",
+      "notionalUsd": 36.868140000000004,
+      "marginUsd": 4.6085175000000005,
+      "quoteAsset": "USDC",
+      "source": "UNKNOWN",
+      "ownerState": "UNKNOWN",
+      "factStatus": "UNKNOWN"
+    }
+  ],
+  "quoteAsset": null,
+  "leverage": null,
+  "leverageFact": null
+}

@@ -1,4 +1,4 @@
-import os,json,subprocess,datetime
+import os,json,subprocess,datetime,sys
 from pathlib import Path
 out=Path(__file__).resolve().parent
 skip={'.git','node_modules','data','data-test','dist','build','.venv','venv','.cache','$RECYCLE.BIN','System Volume Information','Windows','Program Files','.pnpm-store','.lmstudio','models'}
@@ -21,5 +21,5 @@ for root in sorted(found):
  status=git(root,'status','--short')
  rows.append(dict(path=root,branch=git(root,'branch','--show-current'),head=git(root,'rev-parse','HEAD'),commonDir=git(root,'rev-parse','--git-common-dir'),statusShort=status,dirty=bool(status),statusEntries=len(status.splitlines()) if status else 0,remote=remote,untracked=git(root,'ls-files','--others','--exclude-standard'),modified=git(root,'diff','--name-only','HEAD')))
 result=dict(capturedAt=datetime.datetime.now(datetime.timezone.utc).isoformat(),worktreesPorcelain=raw,repositories=rows,discoveryScope='D:/ depth5 and Codex managed worktrees depth5; prune dependencies/data/builds/reparse points; union all registered worktrees',mitsTopDirectories=[str(p) for p in Path('D:/').iterdir() if p.is_dir() and p.name.upper().startswith('MITS')])
-(out/'inventory-before.json').write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+(out/('inventory-'+(sys.argv[1] if len(sys.argv)>1 else 'before')+'.json')).write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
 print(json.dumps([{'path':r['path'],'dirty':r['dirty'],'statusEntries':r['statusEntries']} for r in rows],indent=2))

@@ -1,0 +1,269 @@
+{
+  "capture": {
+    "endpoint": "/api/v3/snapshot",
+    "capturedFileSha256": "61360083badf3a3862f61ae71a91fa7577f5621e55f68c69c96298c3a989d58d"
+  },
+  "ts": 1790470722810,
+  "account": {
+    "status": "READY",
+    "source": "BINANCE_TESTNET_ACCOUNT",
+    "asOf": 1790470711528,
+    "equityUsd": 10322.73514701,
+    "availableUsd": 3419.08610953,
+    "activePositions": 22,
+    "pendingEntries": 0,
+    "activeEntryOrders": 0,
+    "activeTpOrders": 22
+  },
+  "positions": [
+    {
+      "symbol": "DOTUSDT",
+      "underlying": "DOT",
+      "side": "SHORT",
+      "quantity": 10,
+      "markPrice": 1.23747998,
+      "leverage": 8,
+      "notionalUsd": 12.3770081,
+      "managementStatus": "HUMAN_MANAGED",
+      "tpStatus": "PROTECTED"
+    },
+    {
+      "symbol": "BNBUSDC",
+      "underlying": "BNB",
+      "side": "SHORT",
+      "quantity": 0.06,
+      "markPrice": 773.01627201,
+      "leverage": 8,
+      "notionalUsd": 46.38003675,
+      "managementStatus": "HUMAN_MANAGED",
+      "tpStatus": "PROTECTED"
+    },
+    {
+      "symbol": "LTCUSDT",
+      "underlying": "LTC",
+      "side": "SHORT",
+      "quantity": 0.36,
+      "markPrice": 71.8916038,
+      "leverage": 8,
+      "notionalUsd": 25.87748545,
+      "managementStatus": "HUMAN_MANAGED",
+      "tpStatus": "PROTECTED"
+    },
+    {
+      "symbol": "ONDOUSDT",
+      "underlying": "ONDO",
+      "side": "SHORT",
+      "quantity": 15,
+      "markPrice": 0.5394,
+      "leverage": 8,
+      "notionalUsd": 8.0895,
+      "managementStatus": "HUMAN_MANAGED",
+      "tpStatus": "PROTECTED"
+    },
+    {
+      "symbol": "ARBUSDT",
+      "underlying": "ARB",
+      "side": "SHORT",
+      "quantity": 29.8,
+      "markPrice": 0.22551209,
+      "leverage": 12,
+      "notionalUsd": 6.69606,
+      "managementStatus": "HUMAN_MANAGED",
+      "tpStatus": "PROTECTED"
+    },
+    {
+      "symbol": "AVAXUSDT",
+      "underlying": "AVAX",
+      "side": "SHORT",
+      "quantity": 400,
+      "markPrice": 10.81743216,
+      "leverage": 8,
+      "notionalUsd": 4328,
+      "managementStatus": "HUMAN_MANAGED",
+      "tpStatus": "PROTECTED"
+    },
+    {
+      "symbol": "FETUSDT",
+      "underlying": "FET",
+      "side": "SHORT",
+      "quantity": 76,
+      "markPrice": 0.2396,
+      "leverage": 12,
+      "notionalUsd": 18.19602868,
+      "managementStatus": "HUMAN_MANAGED",
+      "tpStatus": "PROTECTED"
+    },
+    {
+      "symbol": "ENAUSDT",
+      "underlying": "ENA",
+      "side": "SHORT",
+      "quantity": 1000,
+      "markPrice": 0.26935382,
+      "leverage": 8,
+      "notionalUsd": 269.26759,
+      "managementStatus": "HUMAN_MANAGED",
+      "tpStatus": "PROTECTED"
+    },
+    {
+      "symbol": "ZECUSDT",
+      "underlying": "ZEC",
+      "side": "SHORT",
+      "quantity": 0.788,
+      "markPrice": 1646.19,
+      "leverage": 12,
+      "notionalUsd": 1297.42960721,
+      "managementStatus": "HUMAN_MANAGED",
+      "tpStatus": "PROTECTED"
+    },
+    {
+      "symbol": "ETHUSDT",
+      "underlying": "ETH",
+      "side": "LONG",
+      "quantity": 0.01,
+      "markPrice": 2692.41823643,
+      "leverage": 16,
+      "notionalUsd": 26.9278,
+      "managementStatus": "HUMAN_MANAGED",
+      "tpStatus": "PROTECTED"
+    },
+    {
+      "symbol": "BTCUSDT",
+      "underlying": "BTC",
+      "side": "LONG",
+      "quantity": 0.0425,
+      "markPrice": 84265.91028986,
+      "leverage": 14,
+      "notionalUsd": 3581.305,
+      "managementStatus": "HUMAN_MANAGED",
+      "tpStatus": "PROTECTED"
+    },
+    {
+      "symbol": "BCHUSDT",
+      "underlying": "BCH",
+      "side": "LONG",
+      "quantity": 0.017,
+      "markPrice": 333.7820708,
+      "leverage": 8,
+      "notionalUsd": 5.67613,
+      "managementStatus": "HUMAN_MANAGED",
+      "tpStatus": "PROTECTED"
+    },
+    {
+      "symbol": "PENGUUSDT",
+      "underlying": "PENGU",
+      "side": "SHORT",
+      "quantity": 36332,
+      "markPrice": 0.009769,
+      "leverage": 12,
+      "notionalUsd": 354.8982424,
+      "managementStatus": "HUMAN_MANAGED",
+      "tpStatus": "PROTECTED"
+    },
+    {
+      "symbol": "UNIUSDT",
+      "underlying": "UNI",
+      "side": "SHORT",
+      "quantity": 117,
+      "markPrice": 9.84499147,
+      "leverage": 12,
+      "notionalUsd": 1150.33779432,
+      "managementStatus": "HUMAN_MANAGED",
+      "tpStatus": "PROTECTED"
+    },
+    {
+      "symbol": "NEARUSDT",
+      "underlying": "NEAR",
+      "side": "SHORT",
+      "quantity": 2,
+      "markPrice": 5.057,
+      "leverage": 8,
+      "notionalUsd": 10.11738244,
+      "managementStatus": "HUMAN_MANAGED",
+      "tpStatus": "PROTECTED"
+    },
+    {
+      "symbol": "DOGEUSDC",
+      "underlying": "DOGE",
+      "side": "LONG",
+      "quantity": 119,
+      "markPrice": 0.09624,
+      "leverage": 8,
+      "notionalUsd": 11.45576824,
+      "managementStatus": "HUMAN_MANAGED",
+      "tpStatus": "PROTECTED"
+    },
+    {
+      "symbol": "FILUSDT",
+      "underlying": "FIL",
+      "side": "SHORT",
+      "quantity": 10,
+      "markPrice": 1.1265,
+      "leverage": 12,
+      "notionalUsd": 11.2625677,
+      "managementStatus": "HUMAN_MANAGED",
+      "tpStatus": "PROTECTED"
+    },
+    {
+      "symbol": "XRPUSDC",
+      "underlying": "XRP",
+      "side": "LONG",
+      "quantity": 10,
+      "markPrice": 1.5166,
+      "leverage": 8,
+      "notionalUsd": 15.1682878,
+      "managementStatus": "HUMAN_MANAGED",
+      "tpStatus": "PROTECTED"
+    },
+    {
+      "symbol": "SUIUSDC",
+      "underlying": "SUI",
+      "side": "SHORT",
+      "quantity": 10,
+      "markPrice": 1.16473394,
+      "leverage": 12,
+      "notionalUsd": 11.6516095,
+      "managementStatus": "HUMAN_MANAGED",
+      "tpStatus": "PROTECTED"
+    },
+    {
+      "symbol": "APTUSDT",
+      "underlying": "APT",
+      "side": "SHORT",
+      "quantity": 10,
+      "markPrice": 0.8437,
+      "leverage": 12,
+      "notionalUsd": 8.434,
+      "managementStatus": "HUMAN_MANAGED",
+      "tpStatus": "PROTECTED"
+    },
+    {
+      "symbol": "INJUSDT",
+      "underlying": "INJ",
+      "side": "LONG",
+      "quantity": 1,
+      "markPrice": 7.71918325,
+      "leverage": 8,
+      "notionalUsd": 7.72069589,
+      "managementStatus": "HUMAN_MANAGED",
+      "tpStatus": "PROTECTED"
+    },
+    {
+      "symbol": "DASHUSDT",
+      "underlying": "DASH",
+      "side": "SHORT",
+      "quantity": 0.1,
+      "markPrice": 71.78,
+      "leverage": 12,
+      "notionalUsd": 7.176,
+      "managementStatus": "HUMAN_MANAGED",
+      "tpStatus": "PROTECTED"
+    }
+  ],
+  "ownerCounts": {
+    "HUMAN_MANAGED": 22
+  },
+  "tpCounts": {
+    "PROTECTED": 22
+  },
+  "pendingEntries": 0
+}

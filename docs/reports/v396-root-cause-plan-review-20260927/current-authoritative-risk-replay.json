@@ -1,0 +1,85 @@
+{
+  "schema": "V396_ROOT_CAUSE_READ_ONLY_REPLAY_V1",
+  "classification": "S00_READ_ONLY_AUDIT",
+  "capturedAt": "2026-09-27T02:52:43.947Z",
+  "capturedAtEpochMs": 1790477563947,
+  "runtimeStateUpdatedAtEpochMs": 1790477563207,
+  "settings": {
+    "version": 219,
+    "updatedAtEpochMs": 1790400271594,
+    "grossLimitUsd": 10811.957,
+    "directionLimitUsd": 8649.565,
+    "clusterLimitUsd": 10811.957,
+    "humanLimitUsd": 10811.957,
+    "stressLossLimitUsd": 5405.978,
+    "maxHumanPositions": 50,
+    "correlationClusters": {},
+    "tradeEconomicsMode": "SHADOW",
+    "minNetProfitUsd": 1,
+    "minNetProfitRoiPct": 0.15
+  },
+  "positions": {
+    "count": 22,
+    "grossNotionalUsd": 11196.33857498,
+    "longNotionalUsd": 3655.74320558,
+    "shortNotionalUsd": 7540.595369399999,
+    "humanManagedCount": 22,
+    "humanManagedNotionalUsd": 11196.33857498
+  },
+  "pendingEntryRisk": {
+    "count": 0,
+    "notionalUsd": 0,
+    "rows": [],
+    "activeUnexpiredReservationCount": 0
+  },
+  "grossReplay": {
+    "usedUsd": 11196.33857498,
+    "limitUsd": 10811.957,
+    "headroomUsd": 0,
+    "shortfallUsd": 384.38157497999964,
+    "overLimit": true
+  },
+  "unknownReconciliation": {
+    "entryUnknownHistoryRows": 47,
+    "entryUnknownWithCurrentlyValidNoRiskProof": 47,
+    "entryOrdersOccupyingRisk": 0,
+    "validEntryProofAgeMs": {
+      "min": 38878,
+      "median": 539634,
+      "max": 1742047
+    },
+    "manualUnknownRows": 1,
+    "takeProfitUnknownRows": 0,
+    "closeoutFormulaCount": 48,
+    "p0EntryClaims": {
+      "total": 432,
+      "activeUnknown": 0,
+      "releasedUnknown": 45
+    },
+    "manualExecutionClaims": {
+      "total": 38,
+      "activeUnknown": 1
+    },
+    "manualUnknownDetails": [
+      {
+        "id": "manual_order_manual_intent_mufgan4j_qkas7dya",
+        "intentId": "manual_intent_mufgan4j_qkas7dya",
+        "symbol": "XRPUSDT",
+        "side": "SELL",
+        "quantity": 10,
+        "price": 1.47,
+        "reduceOnly": true,
+        "positionId": "exchange_XRPUSDT_LONG",
+        "status": "UNKNOWN"
+      }
+    ]
+  },
+  "arithmetic": {
+    "pendingEntryOrderNotional": "max(0, quantity - filledQuantity) * order.price",
+    "reservationDeduplication": "one active order per reservation; reservation excluded when its order is included",
+    "occupancyPredicate": "UNKNOWN occupies unless activeRiskExposure=false and VERIFIED_NO_ACTIVE_RISK proof is unexpired and identity tombstone matches",
+    "grossHeadroom": "max(0, approvedGrossLimit - canonicalPositionGross - includedPendingEntryGross)",
+    "grossShortfall": "max(0, canonicalPositionGross + includedPendingEntryGross - approvedGrossLimit)"
+  },
+  "boundary": "One SQLite read transaction; readOnly=true; PRAGMA query_only=ON; rolled back at end. Captures persisted projections, not a live exchange query or proof of running source identity."
+}

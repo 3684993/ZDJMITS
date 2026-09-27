@@ -7,7 +7,10 @@
 
 /** The part of the ledger's capacity facts a capacity surface is allowed to consume. */
 export type AdmissionCapacityView={
-  evaluatedAt:number;
+  evaluatedAt:number;scope?:'BOOK'|'CANDIDATE_CONTEXT';snapshotHash?:string;profileVersion?:string;settingsVersion?:string|null;riskGeneration?:number;authorityVersions?:Record<string,unknown>;coverage?:Record<string,string>;complete?:boolean;
+  quoteAsset?:string|null;leverage?:number|null;leverageFact?:string|null;pendingLineage?:Array<{id:string;dedupeKey?:string;symbol:string;side:string;notionalUsd:number;marginUsd?:number;quoteAsset:string|null;source?:string;ownerState?:string;factStatus:string}>;
+  gates?:Array<{name:string;reason:string;unit:string;limitUsd:number;usedUsd:number;maxAdditionalUsd:number;shortfallUsd?:number;candidateImpactUsd?:number;candidateShortfallUsd?:number;clusterKey?:string|null}>;
+  firstBinding?:{kind:string;code:string;gate:string|null;unit?:string|null;limitUsd:number|null;usedUsd:number|null;headroomUsd:number|null;shortfallUsd:number|null;detail:string}|null;
   admitsAnyPositiveNotional:boolean;
   maxNewRiskNotionalUsd:number;
   maxNewRiskNotionalUsdBySide:{LONG:number;SHORT:number};
@@ -15,7 +18,6 @@ export type AdmissionCapacityView={
   sizeIndependentRefusals:string[];
   overdueHandoffs?:number;
   oldestOverdueHours?:number|null;
-  firstBinding:{kind:string;code:string;gate:string|null;limitUsd:number|null;usedUsd:number|null;headroomUsd:number|null;shortfallUsd:number|null;detail:string}|null;
 };
 
 export type AdmissionCapacityInputs={riskAdmissionCeilingUsd:number|null;riskAdmissionRefusal:string|null;
@@ -60,8 +62,10 @@ export function inputsFor(facts:AdmissionCapacityView|null,side:'LONG'|'SHORT'):
 }
 
 /** The book-level answer a display page needs: is there any size this gate would accept at all, and if not, what number says so. */
-export type AdmissionBookSummary={status:'AVAILABLE'|'UNAVAILABLE'|'NOT_APPLICABLE';hasVerdict:boolean;exhausted:boolean;code:string|null;gate:string|null;detail:string|null;
-  ceilingUsdBySide:{LONG:number;SHORT:number};reasons:string[];evaluatedAt:number;overdueHandoffs:number;oldestOverdueHours:number|null};
+export type AdmissionBookSummary={status:'AVAILABLE'|'ZERO'|'UNAVAILABLE'|'NOT_APPLICABLE';hasVerdict:boolean;exhausted:boolean;code:string|null;gate:string|null;detail:string|null;
+  ceilingUsdBySide:{LONG:number;SHORT:number};reasons:string[];evaluatedAt:number;overdueHandoffs:number;oldestOverdueHours:number|null;
+  scope?:'BOOK'|'CANDIDATE_CONTEXT';snapshotHash?:string;profileVersion?:string;settingsVersion?:string|null;riskGeneration?:number;authorityVersions?:Record<string,unknown>;coverage?:Record<string,string>;gates?:AdmissionCapacityView['gates'];firstBinding?:AdmissionCapacityView['firstBinding'];pendingLineage?:AdmissionCapacityView['pendingLineage'];
+  quoteAsset?:string|null;leverage?:number|null;leverageFact?:string|null};
 
 /**
  * The gate's verdict about the book, with no candidate in it. Read once per projection: money capacity and
@@ -85,8 +89,12 @@ export function bookAdmissionSummary(state:any,now=Date.now()):AdmissionBookSumm
     ||!Number.isFinite(Number(facts.maxNewRiskNotionalUsdBySide.LONG))||!Number.isFinite(Number(facts.maxNewRiskNotionalUsdBySide.SHORT))
     ||!Array.isArray(facts.evidenceBlockers)||!Array.isArray(facts.sizeIndependentRefusals))return unavailable;
   const reasons=[...new Set([...facts.evidenceBlockers,...facts.sizeIndependentRefusals])];
-  return{status:'AVAILABLE',hasVerdict:true,exhausted:facts.admitsAnyPositiveNotional===false,evaluatedAt:Number(facts.evaluatedAt)||now,
+  const ceilingUsdBySide={LONG:Math.max(0,Number(facts.maxNewRiskNotionalUsdBySide?.LONG??0)),SHORT:Math.max(0,Number(facts.maxNewRiskNotionalUsdBySide?.SHORT??0))};
+  const status=facts.complete===false?'UNAVAILABLE':Math.max(ceilingUsdBySide.LONG,ceilingUsdBySide.SHORT)>0?'AVAILABLE':'ZERO';
+  return{status,hasVerdict:true,exhausted:facts.admitsAnyPositiveNotional===false,evaluatedAt:Number(facts.evaluatedAt)||now,
     code:facts.firstBinding?.code??reasons[0]??null,gate:facts.firstBinding?.gate??null,detail:facts.firstBinding?.detail??null,
-    ceilingUsdBySide:{LONG:Math.max(0,Number(facts.maxNewRiskNotionalUsdBySide?.LONG??0)),SHORT:Math.max(0,Number(facts.maxNewRiskNotionalUsdBySide?.SHORT??0))},reasons,
-    overdueHandoffs:Number(facts.overdueHandoffs??0),oldestOverdueHours:facts.oldestOverdueHours??null};
+    ceilingUsdBySide,reasons,
+    overdueHandoffs:Number(facts.overdueHandoffs??0),oldestOverdueHours:facts.oldestOverdueHours??null,scope:facts.scope,snapshotHash:facts.snapshotHash,
+    profileVersion:facts.profileVersion,settingsVersion:facts.settingsVersion,riskGeneration:facts.riskGeneration,authorityVersions:facts.authorityVersions,coverage:facts.coverage,gates:facts.gates,firstBinding:facts.firstBinding,
+    pendingLineage:facts.pendingLineage,quoteAsset:facts.quoteAsset,leverage:facts.leverage,leverageFact:facts.leverageFact};
 }

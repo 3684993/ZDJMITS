@@ -94,6 +94,13 @@ async function open(payload: any, accountAssets: any = {assets: []}) {
 
 beforeEach(() => vi.clearAllMocks());
 
+it('formats the Engine admission readback and gate arithmetic without client-side ranking',async()=>{
+  const wrapper=await open({...marginDrivenBook,authoritativeBlocker:{...marginDrivenBook.authoritativeBlocker,evidence:{riskAdmissionReadback:{scope:'BOOK',status:'ZERO',evaluatedAt:10,
+    snapshotHash:'snapshot-1',riskGeneration:3,profileVersion:'profile-1',settingsVersion:'settings-2'},riskAdmissionGates:[{name:'MAX_GROSS_NOTIONAL',unit:'NOTIONAL_USD',usedUsd:120,limitUsd:100,maxAdditionalUsd:0,candidateImpactUsd:20,candidateShortfallUsd:40}]}}});
+  const panel=wrapper.find('[data-risk-admission-readback]').text();expect(panel).toContain('ZERO');expect(panel).toContain('snapshot-1');
+  expect(panel).toContain('used $120.00 / limit $100.00 · headroom $0.00 · candidate $20.00 · shortfall $40.00');
+});
+
 it('keeps money, notional, policy and final entry capacity in four separate blocks', async () => {
   const wrapper = await open(marginDrivenBook);
   const funding = wrapper.find('[data-capital-block="funding"]').text();

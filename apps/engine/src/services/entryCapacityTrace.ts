@@ -197,7 +197,7 @@ export function entrySideCapacityTrace(input: {
  * headroom the gate itself ran, and the side plan from the allocation plan that sized (or refused) it.
  */
 export function entrySideCapacityTraces(state: any, routes: any[], facts: {coverageSymbols?: string[] | null; now?: number;
-  admission?: {status?: 'AVAILABLE'|'UNAVAILABLE'|'NOT_APPLICABLE'; exhausted: boolean; code: string | null; gate: string | null; detail: string | null; ceilingUsdBySide: {LONG: number; SHORT: number}} | null} = {}): {LONG: SideCapacityTrace[]; SHORT: SideCapacityTrace[]} {
+  admission?: {status?: 'AVAILABLE'|'ZERO'|'UNAVAILABLE'|'NOT_APPLICABLE'; exhausted: boolean; code: string | null; gate: string | null; detail: string | null; ceilingUsdBySide: {LONG: number; SHORT: number}} | null} = {}): {LONG: SideCapacityTrace[]; SHORT: SideCapacityTrace[]} {
   const now = facts.now ?? Date.now(), coverage = facts.coverageSymbols ?? null, book = facts.admission ?? null,
     positions = [...(state.positions?.values() ?? [])],
     traces: {LONG: SideCapacityTrace[]; SHORT: SideCapacityTrace[]} = {LONG: [], SHORT: []};

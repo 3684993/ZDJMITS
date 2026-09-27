@@ -8,6 +8,15 @@ import {authoritativePipelineVerdict} from './pipelineVerdict.js';
 const base = {now: 1, noEntryReason: null as string | null};
 
 describe('the authoritative pipeline verdict', () => {
+  it('carries the book gate arithmetic and versioned readback as the same first-cause evidence',()=>{
+    const verdict=authoritativePipelineVerdict({...base,capacityVisibility:{admission:{status:'AVAILABLE',exhausted:true,hasVerdict:true,code:'GROSS',gate:'MAX_GROSS_NOTIONAL',
+      evaluatedAt:7,scope:'BOOK',snapshotHash:'snapshot-1',profileVersion:'profile-2',settingsVersion:'settings-3',riskGeneration:4,
+      firstBinding:{kind:'NOTIONAL',code:'GROSS',gate:'MAX_GROSS_NOTIONAL',limitUsd:100,usedUsd:100,headroomUsd:0,shortfallUsd:25,detail:'full'},
+      gates:[{name:'MAX_GROSS_NOTIONAL',reason:'GROSS',unit:'NOTIONAL_USD',limitUsd:100,usedUsd:100,maxAdditionalUsd:0,candidateImpactUsd:25,candidateShortfallUsd:25}],
+      pendingLineage:[{id:'reservation-1',symbol:'BTCUSDT',side:'LONG',notionalUsd:5,quoteAsset:'USDT',ownerState:'AI_ACTIVE',factStatus:'VERIFIED'}]}}});
+    expect(verdict.evidence).toMatchObject({riskAdmissionReadback:{scope:'BOOK',evaluatedAt:7,snapshotHash:'snapshot-1',riskGeneration:4,profileVersion:'profile-2'},
+      riskAdmissionGates:[{candidateImpactUsd:25,candidateShortfallUsd:25}]});
+  });
   it('PV-01 says nothing is blocking when the Engine chain is empty, without inventing a cause', () => {
     const verdict = authoritativePipelineVerdict({...base, pipelineState: 'RUNNING'});
     expect(verdict).toMatchObject({code: 'NONE', stage: 'NONE', secondary: []});

@@ -31,6 +31,9 @@ const capacityVisibility = computed(() => pipeline.value?.capacityVisibility ?? 
 // G4: the Engine publishes the one authoritative blocker and the next action that matches it. The page
 // renders that pair verbatim and labels everything else subordinate; it must not rank the same facts again.
 const authoritative = computed(() => pipeline.value?.authoritativeBlocker ?? null);
+const admissionReadback = computed(() => authoritative.value?.evidence?.riskAdmissionReadback ?? null);
+const admissionGateLines = computed(() => (authoritative.value?.evidence?.riskAdmissionGates ?? []).slice(0, 12).map((gate: any) =>
+  `${gate.name} · ${gate.unit} · used ${gate.usedUsd == null ? "—" : fmt(gate.usedUsd)} / limit ${gate.limitUsd == null ? "—" : fmt(gate.limitUsd)} · headroom ${gate.maxAdditionalUsd == null ? "—" : fmt(gate.maxAdditionalUsd)} · candidate ${gate.candidateImpactUsd == null ? "—" : fmt(gate.candidateImpactUsd)} · shortfall ${(gate.candidateShortfallUsd ?? gate.shortfallUsd) == null ? "—" : fmt(gate.candidateShortfallUsd ?? gate.shortfallUsd)}`));
 const authoritativeStage = computed(() => authoritative.value?.stage ?? "NOT_EVALUATED");
 const authoritativeText = computed(() =>
   authoritative.value
@@ -366,6 +369,13 @@ onUnmounted(() => {
           >权威首因与下一步由 Engine 在同一次评估中给出（stage {{ authoritativeStage }}）；额度与槽位取自同一次风险计算，此额度只限制新增
           Entry 风险，不强平已有仓位，也不撤已有 TP/保护。持仓数未达上限不等于仍有新增风险额度。</span
         >
+        <details v-if="admissionReadback" data-risk-admission-readback>
+          <summary>权威风险读数 · {{ admissionReadback.status }} · {{ admissionReadback.scope }} · generation {{ admissionReadback.riskGeneration ?? "—" }}</summary>
+          <p>评估 {{ admissionReadback.evaluatedAt ? new Date(admissionReadback.evaluatedAt).toLocaleString() : "—" }} · snapshot {{ admissionReadback.snapshotHash ?? "—" }} · profile {{ admissionReadback.profileVersion ?? "—" }} · settings {{ admissionReadback.settingsVersion ?? "—" }}</p>
+          <p v-if="admissionReadback.symbol">候选 {{ admissionReadback.symbol }} {{ admissionReadback.side }} · {{ admissionReadback.quoteAsset }} · leverage {{ admissionReadback.leverage ?? "—" }} ({{ admissionReadback.leverageFact ?? "—" }})</p>
+          <p v-if="admissionReadback.firstBinding">首个绑定 {{ admissionReadback.firstBinding.code }} · {{ admissionReadback.firstBinding.unit ?? "—" }} · used {{ admissionReadback.firstBinding.usedUsd ?? "—" }} / limit {{ admissionReadback.firstBinding.limitUsd ?? "—" }} · headroom {{ admissionReadback.firstBinding.headroomUsd ?? "—" }} · shortfall {{ admissionReadback.firstBinding.shortfallUsd ?? "—" }}</p>
+          <ul><li v-for="line in admissionGateLines" :key="line">{{ line }}</li></ul>
+        </details>
         <div v-if="isolatedSymbolLines.length" data-market-isolation>
           <span
             >已按 symbol 隔离 {{ marketIsolation?.isolatedCount ?? 0 }}/{{ marketIsolation?.candidateCount ?? 0 }}

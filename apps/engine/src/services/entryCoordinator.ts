@@ -1,6 +1,7 @@
 import { buildOpportunityEvidence, qualityPolicy } from './opportunityEvidence.js';
 import { buildQuantityHorizonCandidates } from './quantityHorizonCandidates.js';
 import { assembleTradePlan, planFactVersionOf } from './tradePlanService.js';
+import { publishFrozenChoiceConversionTelemetry } from './frozenChoiceTelemetry.js';
 import {binanceEntryBlockReason} from '../adapters/binance/requestBudget.js';
 import {privateAccountFresh} from './privateAccountReadiness.js';
 import { nearMarketPrice } from './nearMarketPrice.js';
@@ -502,8 +503,16 @@ export class EntryCoordinator {
         // to guess which of these codes the book is actually out of room on.
         this.events.publish('ENTRY_DECISION_BLOCKED',{stage:'PORTFOLIO_RISK_ADMISSION',reason,reasons:admissionDecision.reasons,limits:admissionDecision.limits,
           firstBinding:admissionDecision.firstBinding??null,gates:admissionDecision.gates??[],brainRunId:result.runId,allocationPlanId:plan.planId},symbol);
+        const admissionSnapshot=admissionDecision.snapshot,sourceReadback=admissionDecision.readback,admissionReadback={scope:'CANDIDATE' as const,evaluatedAt:Number(sourceReadback?.evaluatedAt??Date.now()),
+          snapshotHash:String(admissionSnapshot?.snapshotHash??'')||null,riskGeneration:Number.isSafeInteger(Number(admissionSnapshot?.riskGeneration))?Number(admissionSnapshot.riskGeneration):null,
+          profileVersion:String(sourceReadback?.profileVersion??admissionDecision.ticket?.profileVersion??'')||null,
+          settingsVersion:String((this.state.settings as any).settingsVersion??'')||null,symbol,side,quoteAsset:plan.quoteAsset,
+          leverage:Number(plan.leverage),leverageFact:String((market as any)?.leverageFact??'UNKNOWN'),candidateNotionalUsd:Number(plan.notionalUsd),candidateMarginUsd:Number(plan.marginUsd),
+          authorityVersions:sourceReadback?.authorityVersions,coverage:sourceReadback?.coverage,
+          status:admissionSnapshot?.complete===false||admissionDecision.firstBinding?.kind==='EVIDENCE'||admissionDecision.firstBinding?.kind==='SUMMARY'?'UNAVAILABLE' as const:'ZERO' as const,
+          pendingLineage:(sourceReadback?.pendingLineage??[]).slice(0,128)};
         this.recordRiskAdmissionVerdict('PORTFOLIO_RISK_ADMISSION',reason,admissionDecision.reasons,admissionDecision.limits??[],symbol,result.runId,plan.planId,
-          admissionDecision.firstBinding??null,admissionDecision.gates??[]);
+          admissionDecision.firstBinding??null,admissionDecision.gates??[],admissionReadback);
         this.reject(symbol,`RISK_${reason}`,result.runId,d.direction);return;
       }
       // The most recent decision is the only one the authoritative first cause may describe: a cycle
@@ -652,13 +661,17 @@ export class EntryCoordinator {
       selection:{quantityUnits:Number(input.d.quantityUnits??0),targetPrice:Number(input.d.profitTakePlan?.targetPrice??0),
         targetHorizonMinutes:Number(input.d.profitTakePlan?.targetHorizonMinutes??0)},
     });
+    const selectedChoice={quantityUnits:Number(input.d.quantityUnits??0),targetPrice:Number(input.d.profitTakePlan?.targetPrice??0),targetHorizonMinutes:Number(input.d.profitTakePlan?.targetHorizonMinutes??0)};
+    const recordConversion=(conversion:'CONVERTED'|'REFUSED'|'NOT_ATTEMPTED')=>publishFrozenChoiceConversionTelemetry({
+      evaluatedAt:now,snapshotHash:String(facts.snapshotHash),side:input.side,modelSelection:selectedChoice,
+      modelVisibleQuantityRange:{min:Number(sideEnvelope.minQuantityUnits??1),max:Number(sideEnvelope.maxQuantityUnits??0)},candidateSet,conversion},payload=>this.events.publish('FROZEN_CHOICE_CONVERSION_OBSERVED',payload,input.symbol));
     const refs=[...(input.d.profitTakePlan?.evidenceRefs??[]),...(input.d.supportingEvidenceRefs??[])].map(String);
     const evidence=this.evaluatePlanEvidenceRefs(refs,input.symbol,now);
     const usable=evidence.filter(row=>!row.reason).map(row=>row.ref);
     warnings.push(...evidence.filter(row=>row.reason).map(row=>`${row.reason}:${row.ref}`));
     if(!usable.length)warnings.push('PLAN_EVIDENCE_UNRESOLVED');
     const enforce=String(settings.tradeEconomics?.admissionMode??'OFF')==='ENFORCE';
-    if(enforce&&!usable.length)return{plan:null,refusals:['PLAN_EVIDENCE_UNRESOLVED'],warnings};
+    if(enforce&&!usable.length){recordConversion('NOT_ATTEMPTED');return{plan:null,refusals:['PLAN_EVIDENCE_UNRESOLVED'],warnings};}
     const level=input.side==='LONG'?Number(input.d.acceptablePriceRange?.min??0):Number(input.d.acceptablePriceRange?.max??0);
     const outcome=assembleTradePlan({
       selection:{decision:input.d.decision,side:input.side,quantityUnits:Number(input.d.quantityUnits??0),
@@ -672,9 +685,10 @@ export class EntryCoordinator {
       maxRealizedLossUsd:Number(settings.riskGovernance?.exitCoordination?.aiExitLossLimitUsd??0),factVersion:candidateSet.factVersion,now,
       planVersion:this.state.plansForCycle(input.cycleId).length+1,source:'AI',
     });
-    if(!outcome.plan)return{plan:null,refusals:outcome.refusals,warnings:[...warnings,...outcome.warnings]};
+    if(!outcome.plan){recordConversion('REFUSED');return{plan:null,refusals:outcome.refusals,warnings:[...warnings,...outcome.warnings]};}
     const stored=this.state.putTradePlan(outcome.plan);
-    if(!stored.written&&!stored.identical)return{plan:null,refusals:[String(stored.reason??'PLAN_PERSISTENCE_FAILED')],warnings};
+    if(!stored.written&&!stored.identical){recordConversion('REFUSED');return{plan:null,refusals:[String(stored.reason??'PLAN_PERSISTENCE_FAILED')],warnings};}
+    recordConversion('CONVERTED');
     if(stored.identical)warnings.push('PLAN_ALREADY_PERSISTED_FOR_IDENTICAL_FACTS');
     return{plan:outcome.plan,refusals:[] as string[],warnings:[...warnings,...outcome.warnings]};
   }
@@ -716,12 +730,16 @@ export class EntryCoordinator {
    * admission gates that refuse new risk write this, and only a cycle that passes them clears it.
    */
   private recordRiskAdmissionVerdict(stage:string,code:string,reasons:string[],limits:string[],symbol:string,brainRunId:string|null,allocationPlanId:string|null,
-    binding?:{kind:string;code:string;gate:string|null;limitUsd:number|null;usedUsd:number|null;headroomUsd:number|null;shortfallUsd:number|null;detail:string}|null,gates?:Array<{name:string;unit:string;limitUsd:number;usedUsd:number;maxAdditionalUsd:number;clusterKey?:string|null}>){
+    binding?:{kind:string;code:string;gate:string|null;unit?:string|null;limitUsd:number|null;usedUsd:number|null;headroomUsd:number|null;shortfallUsd:number|null;detail:string}|null,
+    gates?:Array<{name:string;unit:string;limitUsd:number;usedUsd:number;maxAdditionalUsd:number;shortfallUsd?:number;candidateImpactUsd?:number;candidateShortfallUsd?:number;clusterKey?:string|null}>,
+    readback?:NonNullable<RuntimeState['lastRiskAdmissionVerdict']>['readback']){
     this.state.lastRiskAdmissionVerdict={at:Date.now(),symbol,stage,code,reasons:[...new Set((reasons??[]).map(String))].slice(0,12),
       limits:(limits??[]).map(String).slice(0,12),brainRunId,allocationPlanId,
       // The numbers travel with the code: a reason the operator cannot measure is not an actionable first cause.
-      ...(binding?{binding}:{})};
-    if(gates?.length)this.state.lastRiskAdmissionVerdict.gates=gates.map(gate=>({name:gate.name,unit:gate.unit,limitUsd:gate.limitUsd,usedUsd:gate.usedUsd,maxAdditionalUsd:gate.maxAdditionalUsd,...(gate.clusterKey?{clusterKey:gate.clusterKey}:{})}));
+      ...(binding?{binding}:{}),readback:readback??null};
+    if(gates?.length)this.state.lastRiskAdmissionVerdict.gates=gates.map(gate=>({name:gate.name,unit:gate.unit,limitUsd:gate.limitUsd,usedUsd:gate.usedUsd,maxAdditionalUsd:gate.maxAdditionalUsd,
+      ...(gate.shortfallUsd!==undefined?{shortfallUsd:gate.shortfallUsd}:{}),
+      ...(gate.candidateImpactUsd!==undefined?{candidateImpactUsd:gate.candidateImpactUsd}:{}),...(gate.candidateShortfallUsd!==undefined?{candidateShortfallUsd:gate.candidateShortfallUsd}:{}),...(gate.clusterKey?{clusterKey:gate.clusterKey}:{})}));
   }
   /** The current risk-admission refusal, or null once it is no longer the newest word on Entry. */
   riskAdmissionVerdict(now:number,ttlMs=RISK_ADMISSION_VERDICT_TTL_MS){

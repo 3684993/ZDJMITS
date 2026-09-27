@@ -1076,9 +1076,10 @@ export class SettingsStore {
   loadEntryExecutions():EntryExecutionRecord[]{return(this.db.prepare('SELECT payload FROM entry_execution_tasks').all() as Array<{payload:string}>).map(row=>JSON.parse(row.payload));}
   /** Historical UNKNOWN orders and live scope occupancy are different facts; keep both countable. */
   entryExecutionClaimStats(){
+    const evaluatedAt=Date.now();
     const rows=this.db.prepare('SELECT active,released_at,payload FROM entry_execution_tasks').all() as Array<{active:number;released_at:number;payload:string}>;
     const statusOf=(payload:string)=>{try{return String(JSON.parse(payload)?.order?.status??'');}catch{return '';}};
-    return{durableTasks:rows.length,activeClaims:rows.filter(row=>row.active===1).length,
+    return{evaluatedAt,durableTasks:rows.length,activeClaims:rows.filter(row=>row.active===1).length,
       activeUnknownClaims:rows.filter(row=>row.active===1&&statusOf(row.payload)==='UNKNOWN').length,
       releasedClaims:rows.filter(row=>row.released_at>0).length,
       releasedUnknownClaims:rows.filter(row=>row.released_at>0&&statusOf(row.payload)==='UNKNOWN').length};

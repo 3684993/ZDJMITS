@@ -45,7 +45,8 @@ describe('V3.9.6 PLACE -> submit chain closure', () => {
     expect([...h.state.entryOrders.values()]).toHaveLength(1);
     expect(h.exchange.placeEntry).toHaveBeenCalledOnce();
     expect(h.exchange.setLeverage).toHaveBeenCalledOnce();
-    expect(h.events.some((event: any) => /AWAIT|APPROVAL|OBSERV/i.test(event.type)), 'no new holding state may sit between a legal plan and the wire').toBe(false);
+    expect(h.events.some((event: any) => event.type !== 'FROZEN_CHOICE_CONVERSION_OBSERVED' && /AWAIT|APPROVAL|OBSERV/i.test(event.type)), 'no new holding state may sit between a legal plan and the wire').toBe(false);
+    expect(types.filter((type: string) => type === 'FROZEN_CHOICE_CONVERSION_OBSERVED')).toHaveLength(1);
 
     const reservation = [...h.state.entryReservations.values()][0] as any;
     expect(reservation.status, 'the booking is still live: it became the order, it was not refunded').not.toBe('RELEASED');

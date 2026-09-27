@@ -44,8 +44,16 @@ export class RuntimeState {
      * bounds its age, so the cockpit's authoritative first cause can never be a stale blocker.
      */
     lastRiskAdmissionVerdict: {at:number;symbol:string;stage:string;code:string;reasons:string[];limits:string[];brainRunId:string|null;allocationPlanId:string|null;
-      binding?:{kind:string;code:string;gate:string|null;limitUsd:number|null;usedUsd:number|null;headroomUsd:number|null;shortfallUsd:number|null;detail:string}|null;
-      gates?:Array<{name:string;unit:string;limitUsd:number;usedUsd:number;maxAdditionalUsd:number;clusterKey?:string|null}>} | null = null;
+      binding?:{kind:string;code:string;gate:string|null;unit?:string|null;limitUsd:number|null;usedUsd:number|null;headroomUsd:number|null;shortfallUsd:number|null;detail:string}|null;
+      readback?:{scope:'BOOK'|'CANDIDATE';evaluatedAt:number;snapshotHash:string|null;riskGeneration:number|null;profileVersion:string|null;settingsVersion:string|null;
+        symbol:string|null;side:'LONG'|'SHORT'|null;quoteAsset:string|null;leverage:number|null;leverageFact:string|null;candidateNotionalUsd:number|null;candidateMarginUsd:number|null;
+        authorityVersions?:Record<string,unknown>;coverage?:Record<string,string>;status:'AVAILABLE'|'ZERO'|'UNAVAILABLE';
+        pendingLineage:Array<{id:string;dedupeKey?:string;symbol:string;side:string;notionalUsd:number;marginUsd?:number;quoteAsset:string|null;source?:string;ownerState?:string;factStatus:string}>}|null;
+      readback?:{scope:'BOOK'|'CANDIDATE';evaluatedAt:number;snapshotHash:string|null;riskGeneration:number|null;profileVersion:string|null;settingsVersion:string|null;
+        symbol:string|null;side:'LONG'|'SHORT'|null;quoteAsset:string|null;leverage:number|null;leverageFact:string|null;candidateNotionalUsd:number|null;candidateMarginUsd:number|null;
+        authorityVersions?:Record<string,unknown>;coverage?:Record<string,string>;status:'AVAILABLE'|'ZERO'|'UNAVAILABLE';
+        pendingLineage:Array<{id:string;dedupeKey?:string;symbol:string;side:string;notionalUsd:number;marginUsd?:number;quoteAsset:string|null;source?:string;ownerState?:string;factStatus:string}>}|null;
+      gates?:Array<{name:string;unit:string;limitUsd:number;usedUsd:number;maxAdditionalUsd:number;shortfallUsd?:number;candidateImpactUsd?:number;candidateShortfallUsd?:number;clusterKey?:string|null}>} | null = null;
     /**
      * Problem B: a read-only copy of which symbols the committed margin-tier authority covers, written only
      * by the runtime that owns that authority. It lets the pipeline refuse a candidate it can already

@@ -1,0 +1,69 @@
+{
+  "schema": "V396_ROOT_CAUSE_READ_ONLY_REPLAY_V1",
+  "classification": "S00_READ_ONLY_AUDIT",
+  "capturedAt": "2026-09-27T04:09:04.820Z",
+  "capturedAtEpochMs": 1790482144820,
+  "runtimeStateUpdatedAtEpochMs": 1790140094083,
+  "settings": {
+    "version": 20,
+    "updatedAtEpochMs": 1790140089180,
+    "grossLimitUsd": 0,
+    "directionLimitUsd": 0,
+    "clusterLimitUsd": 0,
+    "humanLimitUsd": 0,
+    "stressLossLimitUsd": 0,
+    "maxHumanPositions": 0,
+    "correlationClusters": {},
+    "tradeEconomicsMode": "SHADOW",
+    "minNetProfitUsd": 1,
+    "minNetProfitRoiPct": 0.15
+  },
+  "positions": {
+    "count": 0,
+    "grossNotionalUsd": 0,
+    "longNotionalUsd": 0,
+    "shortNotionalUsd": 0,
+    "humanManagedCount": 0,
+    "humanManagedNotionalUsd": 0
+  },
+  "pendingEntryRisk": {
+    "count": 0,
+    "notionalUsd": 0,
+    "rows": [],
+    "activeUnexpiredReservationCount": 0
+  },
+  "grossReplay": {
+    "usedUsd": 0,
+    "limitUsd": 0,
+    "headroomUsd": 0,
+    "shortfallUsd": 0,
+    "overLimit": false
+  },
+  "unknownReconciliation": {
+    "entryUnknownHistoryRows": 0,
+    "entryUnknownWithCurrentlyValidNoRiskProof": 0,
+    "entryOrdersOccupyingRisk": 0,
+    "validEntryProofAgeMs": null,
+    "manualUnknownRows": 0,
+    "takeProfitUnknownRows": 0,
+    "closeoutFormulaCount": 0,
+    "p0EntryClaims": {
+      "total": 0,
+      "activeUnknown": 0,
+      "releasedUnknown": 0
+    },
+    "manualExecutionClaims": {
+      "total": 0,
+      "activeUnknown": 0
+    },
+    "manualUnknownDetails": []
+  },
+  "arithmetic": {
+    "pendingEntryOrderNotional": "max(0, quantity - filledQuantity) * order.price",
+    "reservationDeduplication": "one active order per reservation; reservation excluded when its order is included",
+    "occupancyPredicate": "UNKNOWN occupies unless activeRiskExposure=false and VERIFIED_NO_ACTIVE_RISK proof is unexpired and identity tombstone matches",
+    "grossHeadroom": "max(0, approvedGrossLimit - canonicalPositionGross - includedPendingEntryGross)",
+    "grossShortfall": "max(0, canonicalPositionGross + includedPendingEntryGross - approvedGrossLimit)"
+  },
+  "boundary": "One SQLite read transaction; readOnly=true; PRAGMA query_only=ON; rolled back at end. Captures persisted projections, not a live exchange query or proof of running source identity."
+}

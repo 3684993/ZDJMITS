@@ -112,7 +112,7 @@ export function bestExecutableSide(routes:any[],side:'LONG'|'SHORT',traces:any[]
  *
  * A ratio dimension the deployment only observes is reported as a fact and never as a blocker.
  */
-export function portfolioCapacityVisibility(capacity:PositionCapacity,budget:GrossDirectionBudget,facts:{funding?:EntryTradingCapital;routes?:any[];traces?:any[];admission?:{status?:'AVAILABLE'|'UNAVAILABLE'|'NOT_APPLICABLE';hasVerdict?:boolean;exhausted?:boolean;code?:string|null;gate?:string|null;detail?:string|null;evaluatedAt?:number;ceilingUsdBySide?:{LONG:number;SHORT:number};overdueHandoffs?:number;oldestOverdueHours?:number|null}|null}={}){
+export function portfolioCapacityVisibility(capacity:PositionCapacity,budget:GrossDirectionBudget,facts:{funding?:EntryTradingCapital;routes?:any[];traces?:any[];admission?:{status?:'AVAILABLE'|'ZERO'|'UNAVAILABLE'|'NOT_APPLICABLE';hasVerdict?:boolean;exhausted?:boolean;code?:string|null;gate?:string|null;detail?:string|null;evaluatedAt?:number;ceilingUsdBySide?:{LONG:number;SHORT:number};overdueHandoffs?:number;oldestOverdueHours?:number|null}|null}={}){
   const evaluated=budget.evaluatedAt>0,policy=budget.policy??{gross:'ENFORCE' as const,direction:'ENFORCE' as const,cluster:'ENFORCE' as const},routes=facts.routes??[],traces=facts.traces??[];
   const fundingBlock=facts.funding??{quoteAssets:[],totalExecutableMarginUsd:0,proven:false,excludedAssets:[],accountEquityUsd:null};
   const executable={LONG:bestExecutableSide(routes,'LONG',traces),SHORT:bestExecutableSide(routes,'SHORT',traces)};
@@ -123,7 +123,7 @@ export function portfolioCapacityVisibility(capacity:PositionCapacity,budget:Gro
   // that refuses every order — which is precisely the contradiction this projection exists to prevent.
   const gate=facts.admission??null,admissionUnavailable=gate?.status==='UNAVAILABLE',admissionExhausted=gate?.exhausted===true,
     admissionDenied=admissionUnavailable||admissionExhausted;
-  const admission={status:gate?.status??(gate?.hasVerdict?'AVAILABLE':'NOT_APPLICABLE'),exhausted:admissionExhausted,hasVerdict:gate?.hasVerdict===true,code:gate?.code??null,gate:gate?.gate??null,
+  const admission={...(gate??{}),status:gate?.status??(gate?.hasVerdict?'AVAILABLE':'NOT_APPLICABLE'),exhausted:admissionExhausted,hasVerdict:gate?.hasVerdict===true,code:gate?.code??null,gate:gate?.gate??null,
     detail:gate?.detail??null,evaluatedAt:Number(gate?.evaluatedAt)||0,ceilingUsdBySide:gate?.ceilingUsdBySide??{LONG:0,SHORT:0},
     overdueHandoffs:Number(gate?.overdueHandoffs??0),oldestOverdueHours:gate?.oldestOverdueHours??null};
   const firstBlocker:CapacityBlocker=!evaluated?'NOT_EVALUATED':slotsFull?'POSITION_CAPACITY':admissionUnavailable?'RISK_ADMISSION_UNAVAILABLE':admissionExhausted?'RISK_ADMISSION':grossFull?'GROSS':longFull?'DIRECTION_LONG':shortFull?'DIRECTION_SHORT':'NONE';

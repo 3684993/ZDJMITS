@@ -334,6 +334,7 @@ export class EngineRuntime {
         events,
         tp,
         positions,
+        ()=>store.entryExecutionClaimStats(),
       ),
       runtimeControl = new RuntimeControlService(state, events);
     let runtime!: EngineRuntime;

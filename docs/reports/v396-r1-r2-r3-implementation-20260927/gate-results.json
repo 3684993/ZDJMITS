@@ -1,0 +1,54 @@
+{
+  "schema": "V396_R1_R2_R3_IMPLEMENTATION_GATES_V1",
+  "status": "IMPLEMENTATION_BLOCKED_NEEDS_HUMAN_REVIEW",
+  "baseCommit": "b8396402dd0dd7a4b05dea11feb4384329020fb6",
+  "fetchAllPrune": "PASS",
+  "focusedEngine": {
+    "command": "npm test -- --run src/services/reconciliationService.test.ts src/services/reconciliationUnknownRisk.test.ts src/services/reconciliationCoverageContract.test.ts src/services/executionLifecycle.integration.test.ts src/services/placeToSubmitCapacityTruth.test.ts src/services/pipelineVerdict.test.ts src/services/grossRiskCapacityVisibility.test.ts src/services/frozenChoiceTelemetry.test.ts src/services/entryExecutionChain.test.ts",
+    "status": "PASS",
+    "tests": 104
+  },
+  "focusedDashboard": {
+    "status": "PASS",
+    "tests": 15,
+    "command": "npm test -- --run src/views/OverviewView.capacity.test.ts"
+  },
+  "fullEngine": {
+    "tests": 1422,
+    "command": "npm test",
+    "status": "PASS",
+    "files": 174
+  },
+  "typecheck": {
+    "command": "npm run typecheck",
+    "status": "PASS"
+  },
+  "verify": {
+    "command": "npm run verify",
+    "status": "PASS"
+  },
+  "formalBuild": {
+    "command": "npm run build",
+    "status": "PASS"
+  },
+  "S00": {
+    "status": "PASS_READ_ONLY_FIXTURE_ONLY",
+    "evidence": "S00-offline-replay.json",
+    "runtimeEvidence": false
+  },
+  "diffCheck": {
+    "evidence": "git-diff-check.log",
+    "status": "PASS",
+    "command": "git diff --cached --check"
+  },
+  "R1": "IMPLEMENTED_LOCAL_PASS",
+  "R2": "IMPLEMENTED_LOCAL_PASS",
+  "R3": "PARTIAL_HUMAN_REVIEW_REQUIRED",
+  "runtimeAcceptance": "NOT_RUN_EXTERNAL",
+  "deployment": "DEPLOYMENT_NOT_AUTHORIZED",
+  "lifecycle": "NOT_RUN",
+  "exchangeWrites": "NOT_RUN",
+  "githubActions": "NOT_RUN_BILLING_LIMIT",
+  "originalV395Worktree": "UNTOUCHED",
+  "limitation": "Primary receives a legal quantity interval, while candidate IDs are generated after Primary returns. Full offered-ID telemetry conflicts with the no-prompt/no-contract-change authorization."
+}

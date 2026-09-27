@@ -24,8 +24,12 @@ type VerdictFacts = {
   marketIsolation?: {candidateCount: number; isolatedCount?: number; healthyCandidates: number; isolated?: Array<{symbol: string; reasons: string[]}>} | null;
   executionReadiness?: {mode?: string; ready?: boolean; firstBlocker?: string | null; blockers?: string[]} | null;
   capacityVisibility?: {firstBlocker?: string | null; exhaustedForNewRisk?: boolean; exhaustedReason?: string | null; sideStatus?: {code?: string; text?: string} | null;
-    admission?: {status?: 'AVAILABLE'|'UNAVAILABLE'|'NOT_APPLICABLE'; exhausted?: boolean; hasVerdict?: boolean; code?: string | null; gate?: string | null; detail?: string | null;
-      evaluatedAt?: number; ceilingUsdBySide?: {LONG: number; SHORT: number} | null} | null} | null;
+    admission?: {status?: 'AVAILABLE'|'ZERO'|'UNAVAILABLE'|'NOT_APPLICABLE'; exhausted?: boolean; hasVerdict?: boolean; code?: string | null; gate?: string | null; detail?: string | null;
+      evaluatedAt?: number; ceilingUsdBySide?: {LONG: number; SHORT: number} | null;reasons?:string[];scope?:string;snapshotHash?:string;profileVersion?:string;settingsVersion?:string|null;riskGeneration?:number;
+      authorityVersions?:Record<string,unknown>;coverage?:Record<string,string>;
+      gates?:Array<{name:string;reason:string;unit:string;limitUsd:number;usedUsd:number;maxAdditionalUsd:number;shortfallUsd?:number;candidateImpactUsd?:number;candidateShortfallUsd?:number;clusterKey?:string|null}>;
+      firstBinding?:{kind:string;code:string;gate:string|null;unit?:string|null;limitUsd:number|null;usedUsd:number|null;headroomUsd:number|null;shortfallUsd:number|null;detail:string}|null;
+      pendingLineage?:Array<{id:string;dedupeKey?:string;symbol:string;side:string;notionalUsd:number;marginUsd?:number;quoteAsset:string|null;source?:string;ownerState?:string;factStatus:string}>;quoteAsset?:string|null;leverage?:number|null;leverageFact?:string|null} | null} | null;
   slots?: {used: number; max: number} | null;
   eligibility?: {status?: string; count?: number} | null;
   executableCandidateCount?: number | null;
@@ -37,8 +41,11 @@ type VerdictFacts = {
   freshMarkets?: {status?: string; stale?: string[]; sequenceInvalid?: number} | null;
   /** Problem A: the deterministic admission refusal of the newest Entry cycle, already age-bounded. */
   riskAdmission?: {at: number; symbol: string; stage: string; code: string; reasons: string[]; limits: string[]; ageMs: number;
-    binding?: {kind: string; code: string; gate: string | null; limitUsd: number | null; usedUsd: number | null; headroomUsd: number | null; shortfallUsd: number | null; detail: string} | null;
-    gates?: Array<{name: string; unit: string; limitUsd: number; usedUsd: number; maxAdditionalUsd: number; clusterKey?: string | null}>} | null;
+    binding?: {kind: string; code: string; gate: string | null; unit?:string|null;limitUsd: number | null; usedUsd: number | null; headroomUsd: number | null; shortfallUsd: number | null; detail: string} | null;
+    readback?:{scope:'BOOK'|'CANDIDATE';evaluatedAt:number;snapshotHash:string|null;riskGeneration:number|null;profileVersion:string|null;settingsVersion:string|null;authorityVersions?:Record<string,unknown>;coverage?:Record<string,string>;
+      symbol:string|null;side:'LONG'|'SHORT'|null;quoteAsset:string|null;leverage:number|null;leverageFact:string|null;candidateNotionalUsd:number|null;candidateMarginUsd:number|null;
+      status:'AVAILABLE'|'ZERO'|'UNAVAILABLE';pendingLineage:Array<{id:string;dedupeKey?:string;symbol:string;side:string;notionalUsd:number;marginUsd?:number;quoteAsset:string|null;source?:string;ownerState?:string;factStatus:string}>}|null;
+    gates?: Array<{name: string; unit: string; limitUsd: number; usedUsd: number; maxAdditionalUsd: number;shortfallUsd?:number;candidateImpactUsd?:number;candidateShortfallUsd?:number; clusterKey?: string | null}>} | null;
 };
 
 const STAGE_BY_CODE: Record<string, PipelineVerdict['stage']> = {
@@ -99,9 +106,13 @@ export function authoritativePipelineVerdict(facts: VerdictFacts): PipelineVerdi
     // cycle was ever submitted to admit() would rebuild the same contradiction one layer up.
     riskAdmission = facts.riskAdmission ?? (gate?.exhausted||gate?.status==='UNAVAILABLE' ? {
       at: Number(gate.evaluatedAt) || facts.now, symbol: '书本级', stage: 'PORTFOLIO_RISK_ADMISSION',
-      code: gate.code ?? 'RISK_ADMISSION_EXHAUSTED', reasons: [], limits: [],
-      binding: {kind: 'OTHER', code: gate.code ?? 'RISK_ADMISSION_EXHAUSTED', gate: gate.gate ?? null, limitUsd: null, usedUsd: null,
+      code: gate.code ?? 'RISK_ADMISSION_EXHAUSTED', reasons: gate.reasons??[], limits: [],binding:gate.firstBinding??
+        {kind: 'OTHER', code: gate.code ?? 'RISK_ADMISSION_EXHAUSTED', gate: gate.gate ?? null, limitUsd: null, usedUsd: null,
         headroomUsd: Math.min(Number(gate.ceilingUsdBySide?.LONG ?? 0), Number(gate.ceilingUsdBySide?.SHORT ?? 0)), shortfallUsd: null, detail: gate.detail ?? ''},
+      readback:{scope:'BOOK',evaluatedAt:Number(gate.evaluatedAt)||facts.now,snapshotHash:gate.snapshotHash??null,riskGeneration:gate.riskGeneration??null,
+        profileVersion:gate.profileVersion??null,settingsVersion:gate.settingsVersion??null,authorityVersions:gate.authorityVersions,coverage:gate.coverage,symbol:null,side:null,quoteAsset:gate.quoteAsset??null,leverage:gate.leverage??null,
+        leverageFact:gate.leverageFact??null,candidateNotionalUsd:null,candidateMarginUsd:null,status:gate.status==='UNAVAILABLE'?'UNAVAILABLE':
+          gate.exhausted?'ZERO':'AVAILABLE',pendingLineage:gate.pendingLineage??[]},gates:gate.gates??[],
       ageMs: Math.max(0, facts.now - (Number(gate.evaluatedAt) || facts.now)),
     } : null),
     // A pipeline-level blocker outranks everything: while the pipeline itself is stopped, the refusal of
@@ -132,7 +143,7 @@ export function authoritativePipelineVerdict(facts: VerdictFacts): PipelineVerdi
       pendingEntries: facts.pendingEntries ?? null, maxPendingEntries: facts.maxPendingEntries ?? null, poolStatus: facts.poolStatus ?? null,
       riskAdmissionStage: admission?.stage ?? null, riskAdmissionSymbol: admission?.symbol ?? null,
       riskAdmissionReasons: admission?.reasons ?? [], riskAdmissionLimits: admission?.limits ?? [],
-      riskAdmissionBinding: admission?.binding ?? null, riskAdmissionGates: admission?.gates ?? [],
+      riskAdmissionBinding: admission?.binding ?? null, riskAdmissionGates: admission?.gates ?? [],riskAdmissionReadback:admission?.readback??null,
       // A "can add" capacity reading beside a 0% admission is the contradiction this verdict exists to kill,
       // so the number the gate reported is carried into the evidence even when the ratio model is OBSERVE.
       riskAdmissionCeilingUsdBySide: facts.capacityVisibility?.admission?.ceilingUsdBySide ?? null,

@@ -133,7 +133,7 @@ describe('the admitting gate names the constraint that actually binds', () => {
   it('PT-06 the capacity view and the gate agree on the same book, with the number attached', () => {
     const live = book();
     const summary = bookAdmissionSummary(live.state, live.now);
-    expect(summary).toMatchObject({status: 'AVAILABLE', hasVerdict: true, exhausted: true, code: 'STRESS_LIMIT:MAX_GROSS_NOTIONAL'});
+    expect(summary).toMatchObject({status: 'ZERO', hasVerdict: true, exhausted: true, code: 'STRESS_LIMIT:MAX_GROSS_NOTIONAL'});
     expect(summary.overdueHandoffs).toBe(1);
     expect(summary.ceilingUsdBySide).toEqual({LONG: 0, SHORT: 0});
     const budget = {evaluatedAt: live.now, policy: {gross: 'OBSERVE', direction: 'OBSERVE', cluster: 'ENFORCE'},
@@ -148,6 +148,8 @@ describe('the admitting gate names the constraint that actually binds', () => {
     expect(view.firstBlocker).toBe('RISK_ADMISSION');
     expect(view.exhaustedForNewRisk).toBe(true);
     expect(view.admission.detail).toContain('MAX_GROSS_NOTIONAL');
+    expect(view.admission).toMatchObject({scope:'BOOK',snapshotHash:summary.snapshotHash,riskGeneration:summary.riskGeneration,
+      firstBinding:summary.firstBinding,gates:summary.gates,pendingLineage:summary.pendingLineage});
   });
 
   it('PT-07 absent or failed admission is unavailable in execution mode; analysis-only remains non-vetoing', () => {

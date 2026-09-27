@@ -1,0 +1,410 @@
+[
+  {
+    "path": "apps/engine/src/services/entryRiskOccupancy.ts",
+    "line": 10,
+    "matches": [
+      "hasVerifiedNoActiveRisk"
+    ],
+    "source": "export function hasVerifiedNoActiveRisk(order:EntryOrder,now=Date.now()){"
+  },
+  {
+    "path": "apps/engine/src/services/entryRiskOccupancy.ts",
+    "line": 16,
+    "matches": [
+      "hasVerifiedNoActiveRisk"
+    ],
+    "source": "return TERMINAL_ORDER.has(order.status)&&(order as any).exchangeTerminalStatus==='UNKNOWN'&&!hasVerifiedNoActiveRisk(order,now);"
+  },
+  {
+    "path": "apps/engine/src/services/entryRiskOccupancy.ts",
+    "line": 23,
+    "matches": [
+      "entryOrderOccupiesRisk"
+    ],
+    "source": "export function entryOrderOccupiesRisk(order:EntryOrder,now=Date.now()){"
+  },
+  {
+    "path": "apps/engine/src/services/entryRiskOccupancy.ts",
+    "line": 24,
+    "matches": [
+      "hasVerifiedNoActiveRisk"
+    ],
+    "source": "if(ACTIVE_ORDER.has(order.status))return order.status==='UNKNOWN'?!hasVerifiedNoActiveRisk(order,now):true;"
+  },
+  {
+    "path": "apps/engine/src/services/entryRiskOccupancy.ts",
+    "line": 31,
+    "matches": [
+      "hasVerifiedNoActiveRisk"
+    ],
+    "source": "return order.status==='UNKNOWN'&&!order.exchangeOrderId&&Number(order.filledQuantity??0)===0&&hasVerifiedNoActiveRisk(order,now);"
+  },
+  {
+    "path": "apps/engine/src/services/entryRiskOccupancy.ts",
+    "line": 35,
+    "matches": [
+      "durableEntryClaimActive"
+    ],
+    "source": "export function durableEntryClaimActive(order:EntryOrder,now=Date.now()){"
+  },
+  {
+    "path": "apps/engine/src/services/entryRiskOccupancy.ts",
+    "line": 63,
+    "matches": [
+      "historicalNoRiskEligible"
+    ],
+    "source": "export function historicalNoRiskEligible(order:EntryOrder,now=Date.now()){"
+  },
+  {
+    "path": "apps/engine/src/services/entryRiskOccupancy.ts",
+    "line": 74,
+    "matches": [
+      "historicalNoRiskEligible"
+    ],
+    "source": "return historicalNoRiskEligible(order,now)&&Number(audit.nextAuditAt)>now;"
+  },
+  {
+    "path": "apps/engine/src/services/entryRiskOccupancy.ts",
+    "line": 109,
+    "matches": [
+      "hasVerifiedNoActiveRisk"
+    ],
+    "source": "if(!hasVerifiedNoActiveRisk(order,now))return{evidence:null,audit:null,reason:null};"
+  },
+  {
+    "path": "apps/engine/src/services/entryRiskOccupancy.ts",
+    "line": 139,
+    "matches": [
+      "historicalNoRiskEligible"
+    ],
+    "source": "if(cls==='unknown')return historicalNoRiskEligible(order,now);"
+  },
+  {
+    "path": "apps/engine/src/services/entryRiskOccupancy.ts",
+    "line": 142,
+    "matches": [
+      "entryOrderOccupiesRisk"
+    ],
+    "source": "if(entryOrderOccupiesRisk(order,now))return false;"
+  },
+  {
+    "path": "apps/engine/src/services/entryRiskOccupancy.ts",
+    "line": 204,
+    "matches": [
+      "entryOrderOccupiesRisk"
+    ],
+    "source": "const orders=[...state.entryOrders.values()].filter((row:EntryOrder)=>row.id!==options.excludeOrderId&&entryOrderOccupiesRisk(row,now));"
+  },
+  {
+    "path": "apps/engine/src/config/settingsStore.ts",
+    "line": 1076,
+    "matches": [
+      "loadEntryExecutions():"
+    ],
+    "source": "loadEntryExecutions():EntryExecutionRecord[]{return(this.db.prepare('SELECT payload FROM entry_execution_tasks').all() as Array<{payload:string}>).map(row=>JSON.parse(row.payload));}"
+  },
+  {
+    "path": "apps/engine/src/services/reconciliationService.ts",
+    "line": 23,
+    "matches": [
+      "snapshotConsistency:"
+    ],
+    "source": "private unknownReadback:any={evaluatedAt:0,entryUnknownHistorical:0,entryUnknownOccupyingRisk:0,entryUnknownProofValid:0,activeEntryClaims:null,activeUnknownEntryClaims:null,activeEntryClaimsObservedAt:null,manualUnknown:0,manualUnknownDetails:[],tpUnknown:0,tpUnknownDetails:[],snapshotConsistency:'BEST_EFFORT_CROSS_STORE'};"
+  },
+  {
+    "path": "apps/engine/src/services/reconciliationService.ts",
+    "line": 123,
+    "matches": [
+      "const evaluatedAt=Date.now(),entryRows"
+    ],
+    "source": "const evaluatedAt=Date.now(),entryRows=[...this.state.entryOrders.values()],manualRows=[...this.state.manualOrders.values()],tpRows=[...this.state.tpOrders.values()],entryUnknown=entryRows.filter(isHistoricalUnknownEntryOrder),manualUnknown=manualRows.filter(order=>order.status==='UNKNOWN'),tpUnknown=tpRows.filter(order=>order.status==='UNKNOWN'),verifiedNoActiveRisk=entryUnknown.filter(order=>hasVerifiedNoActiveRisk(order,evaluatedAt)),unresolvedEntryRisk=entryUnknown.filter(order=>entryOrderOccupiesRisk(order,evaluatedAt));this.historicalUnknownCount=entryUnknown.length+manualUnknown.length+tpUnknown.length;this.verifiedNoActiveRiskUnknownCount=verifiedNoActiveRisk.length;this.activeRiskUnresolvedCount=unresolvedEntryRisk.length+manualUnknown.length+tpUnknown.length;"
+  },
+  {
+    "path": "apps/engine/src/services/reconciliationService.ts",
+    "line": 126,
+    "matches": [
+      "activeEntryClaims:typeof"
+    ],
+    "source": "activeEntryClaims:typeof claims?.activeClaims==='number'&&Number.isSafeInteger(claims.activeClaims)&&claims.activeClaims>=0?claims.activeClaims:null,"
+  },
+  {
+    "path": "apps/engine/src/services/reconciliationService.ts",
+    "line": 129,
+    "matches": [
+      "manualUnknown:manualUnknown.length"
+    ],
+    "source": "manualUnknown:manualUnknown.length,manualUnknownDetails:manualUnknown.slice(0,64).map(order=>({id:String(order.id).slice(0,160),symbol:String(order.symbol).slice(0,32),reduceOnly:typeof (order as any).reduceOnly==='boolean'?(order as any).reduceOnly:null,positionId:String((order as any).positionId??'').slice(0,160)||null,intentId:String(order.intentId??'').slice(0,160)||null,clientOrderId:nonEmpty(order.clientOrderId)?String(order.clientOrderId).slice(0,160):null,exchangeOrderId:nonEmpty(order.exchangeOrderId)?String(order.exchangeOrderId).slice(0,160):null,positionSide:String((order as any).positionSide??'UNKNOWN')})),"
+  },
+  {
+    "path": "apps/engine/src/services/reconciliationService.ts",
+    "line": 130,
+    "matches": [
+      "snapshotConsistency:"
+    ],
+    "source": "tpUnknown:tpUnknown.length,tpUnknownDetails:tpUnknown.slice(0,64).map(order=>({id:String(order.id).slice(0,160),symbol:String(order.symbol).slice(0,32),positionId:String(order.positionId??'').slice(0,160),clientOrderId:nonEmpty(order.clientOrderId)?String(order.clientOrderId).slice(0,160):null,exchangeOrderId:nonEmpty(order.exchangeOrderId)?String(order.exchangeOrderId).slice(0,160):null})),snapshotConsistency:'BEST_EFFORT_CROSS_STORE'};"
+  },
+  {
+    "path": "apps/engine/src/services/portfolioRiskLedger.ts",
+    "line": 115,
+    "matches": [
+      "hasCandidate="
+    ],
+    "source": "const seen=new Set(input.reasons),candidate=input.candidateNotionalUsd??0,hasCandidate=candidate>0||input.gates.some(gate=>(gate.candidateImpactUsd??0)>0);"
+  },
+  {
+    "path": "apps/engine/src/services/portfolioRiskLedger.ts",
+    "line": 128,
+    "matches": [
+      "const ratio="
+    ],
+    "source": "const ratio=(gate:AdmissionGateFact)=>impact(gate)>0?gate.maxAdditionalUsd/impact(gate):hasCandidate?"
+  },
+  {
+    "path": "apps/engine/src/services/portfolioRiskLedger.ts",
+    "line": 404,
+    "matches": [
+      "private gateFacts"
+    ],
+    "source": "private gateFacts(snapshot:PortfolioRiskSnapshot,stress:PortfolioStressResult,capacity:HumanCapacityDecision,profile:Record<string,any>,"
+  },
+  {
+    "path": "apps/engine/src/services/portfolioRiskLedger.ts",
+    "line": 464,
+    "matches": [
+      "capacityFacts(now="
+    ],
+    "source": "capacityFacts(now=Date.now(),symbol:string|null=null,candidate?:AdmissionCapacityCandidate):AdmissionCapacityFacts{"
+  },
+  {
+    "path": "apps/engine/src/services/portfolioRiskLedger.ts",
+    "line": 499,
+    "matches": [
+      "private computeCapacityFacts"
+    ],
+    "source": "private computeCapacityFacts(now:number,symbol:string|null,candidate?:AdmissionCapacityCandidate):AdmissionCapacityFacts{"
+  },
+  {
+    "path": "apps/engine/src/services/portfolioRiskLedger.ts",
+    "line": 571,
+    "matches": [
+      "admit(candidate:"
+    ],
+    "source": "admit(candidate:AdmissionCandidate,now=Date.now()):AdmissionDecision{"
+  },
+  {
+    "path": "apps/engine/src/services/portfolioRiskLedger.ts",
+    "line": 580,
+    "matches": [
+      "readback={evaluatedAt"
+    ],
+    "source": "const readback={evaluatedAt:now,profileVersion:built.profile.profileVersion,settingsVersion:String((this.ports.state as any)?.settings?.settingsVersion??'')||null,"
+  },
+  {
+    "path": "apps/engine/src/services/portfolioRiskLedger.ts",
+    "line": 604,
+    "matches": [
+      "candidateDirectionImpact="
+    ],
+    "source": "candidateDirectionImpact=Math.max(sideUsed+candidateNotional,otherSideUsed)-Math.max(sideUsed,otherSideUsed);"
+  },
+  {
+    "path": "apps/engine/src/services/admissionCapacityReader.ts",
+    "line": 75,
+    "matches": [
+      "bookAdmissionSummary"
+    ],
+    "source": "export function bookAdmissionSummary(state:any,now=Date.now()):AdmissionBookSummary{"
+  },
+  {
+    "path": "apps/engine/src/services/admissionCapacityReader.ts",
+    "line": 88,
+    "matches": [
+      "typeof facts.evaluatedAt"
+    ],
+    "source": "if(!facts||typeof facts.evaluatedAt!=='number'||!Number.isFinite(facts.evaluatedAt)||!facts.maxNewRiskNotionalUsdBySide"
+  },
+  {
+    "path": "apps/engine/src/services/admissionCapacityReader.ts",
+    "line": 94,
+    "matches": [
+      "const status=facts.complete"
+    ],
+    "source": "const status=facts.complete===false||facts.evidenceBlockers.length>0?'UNAVAILABLE':Math.max(ceilingUsdBySide.LONG,ceilingUsdBySide.SHORT)>0?'AVAILABLE':'ZERO';"
+  },
+  {
+    "path": "apps/engine/src/services/entryCoordinator.ts",
+    "line": 509,
+    "matches": [
+      "settingsVersion:sourceReadback"
+    ],
+    "source": "settingsVersion:sourceReadback?.settingsVersion??null,symbol,side,quoteAsset:plan.quoteAsset,"
+  },
+  {
+    "path": "apps/engine/src/services/entryCoordinator.ts",
+    "line": 520,
+    "matches": [
+      "lastRiskAdmissionVerdict=null"
+    ],
+    "source": "this.state.lastRiskAdmissionVerdict=null;"
+  },
+  {
+    "path": "apps/engine/src/services/entryCoordinator.ts",
+    "line": 666,
+    "matches": [
+      "recordConversion="
+    ],
+    "source": "const recordConversion=(conversion:'CONVERTED'|'REFUSED'|'NOT_ATTEMPTED')=>publishFrozenChoiceConversionTelemetry({"
+  },
+  {
+    "path": "apps/engine/src/services/entryCoordinator.ts",
+    "line": 670,
+    "matches": [
+      "modelVisibleQuantityRange:"
+    ],
+    "source": "modelVisibleQuantityRange:{min:Number(sideEnvelope.minQuantityUnits??1),max:Number(sideEnvelope.maxQuantityUnits??0)},candidateSet,conversion},payload=>this.events.publish('FROZEN_CHOICE_CONVERSION_OBSERVED',payload,input.symbol));"
+  },
+  {
+    "path": "apps/engine/src/services/entryCoordinator.ts",
+    "line": 748,
+    "matches": [
+      "riskAdmissionVerdict(now"
+    ],
+    "source": "riskAdmissionVerdict(now:number,ttlMs=RISK_ADMISSION_VERDICT_TTL_MS){"
+  },
+  {
+    "path": "apps/engine/src/services/pipelineVerdict.ts",
+    "line": 109,
+    "matches": [
+      "riskAdmission ="
+    ],
+    "source": "riskAdmission = (facts.riskAdmission?.readback||!(gate?.exhausted||gate?.status==='UNAVAILABLE')?facts.riskAdmission:null) ?? (gate?.exhausted||gate?.status==='UNAVAILABLE' ? {"
+  },
+  {
+    "path": "apps/engine/src/services/pipelineVerdict.ts",
+    "line": 139,
+    "matches": [
+      "riskAdmission ="
+    ],
+    "source": "nextAction: NEXT_ACTION[stage](riskAdmission === facts.riskAdmission ? facts : {...facts, riskAdmission}, code),"
+  },
+  {
+    "path": "apps/engine/src/services/pipelineVerdict.ts",
+    "line": 149,
+    "matches": [
+      "riskAdmissionReadback:"
+    ],
+    "source": "riskAdmissionReadback:admission?.readback?{...admission.readback,firstBinding:admission.binding??null,gates:admission.gates??[]}:null,"
+  },
+  {
+    "path": "apps/engine/src/services/pipelineVerdict.ts",
+    "line": 152,
+    "matches": [
+      "riskAdmissionCeilingUsdBySide:"
+    ],
+    "source": "riskAdmissionCeilingUsdBySide: admission?.readback?.scope==='CANDIDATE'?null:gate?.ceilingUsdBySide??null,"
+  },
+  {
+    "path": "apps/engine/src/services/pipelineVerdict.ts",
+    "line": 154,
+    "matches": [
+      "bookAdmission:gate"
+    ],
+    "source": "bookAdmission:gate,"
+  },
+  {
+    "path": "apps/engine/src/runtime/appRuntime.ts",
+    "line": 2077,
+    "matches": [
+      "admissionBookSummary ="
+    ],
+    "source": "admissionBookSummary = bookAdmissionSummary(this.state, now),"
+  },
+  {
+    "path": "apps/engine/src/runtime/appRuntime.ts",
+    "line": 2078,
+    "matches": [
+      "capacityView ="
+    ],
+    "source": "capacityView = portfolioCapacityVisibility(slotCapacity,this.state.runtimeControl.capital.directionBudget,{"
+  },
+  {
+    "path": "apps/engine/src/runtime/appRuntime.ts",
+    "line": 2091,
+    "matches": [
+      "authoritativeBlocker ="
+    ],
+    "source": "authoritativeBlocker = authoritativePipelineVerdict({now, noEntryReason, pipelineState, marketDataReason,"
+  },
+  {
+    "path": "apps/engine/src/api/router.ts",
+    "line": 672,
+    "matches": [
+      "r.get(\"/pipeline\""
+    ],
+    "source": "r.get(\"/pipeline\", (_q, res) => res.json({...runtime.pipelineStatus(),restBudget:binanceRequestBudgetsHealth()}));"
+  },
+  {
+    "path": "apps/engine/src/services/frozenChoiceTelemetry.ts",
+    "line": 9,
+    "matches": [
+      "const candidates="
+    ],
+    "source": "const candidates=input.candidateSet.candidates.slice(0,18),selected=input.candidateSet.candidates.find(row=>row.quantityUnits===input.modelSelection.quantityUnits"
+  },
+  {
+    "path": "apps/engine/src/services/frozenChoiceTelemetry.ts",
+    "line": 14,
+    "matches": [
+      "timingScopes:"
+    ],
+    "source": "timingScopes:{prePrimaryVisible:'PRE_PRIMARY_VISIBLE',postPrimaryGenerated:'POST_PRIMARY_GENERATED'},"
+  },
+  {
+    "path": "apps/engine/src/services/frozenChoiceTelemetry.ts",
+    "line": 15,
+    "matches": [
+      "prePrimaryVisibleAt:"
+    ],
+    "source": "prePrimaryVisibleAt:input.executionEnvelopeIdentity.createdAt,prePrimaryFactIdentity:String(input.prePrimaryFactIdentity).slice(0,160),"
+  },
+  {
+    "path": "apps/engine/src/services/frozenChoiceTelemetry.ts",
+    "line": 26,
+    "matches": [
+      "selectedCandidateId:"
+    ],
+    "source": "selectedCandidateId:selected?.candidateId==null?null:String(selected.candidateId).slice(0,80),selectionInGeneratedSet:Boolean(selected),candidateSetSelectionMarkedOffered:Boolean(input.candidateSet.selection?.offered),"
+  },
+  {
+    "path": "apps/engine/src/services/frozenChoiceTelemetry.ts",
+    "line": 36,
+    "matches": [
+      "try{payload="
+    ],
+    "source": "try{payload=frozenChoiceConversionTelemetry(input);publish(payload);}catch{/* construction and storage are both observational */}"
+  },
+  {
+    "path": "apps/dashboard/src/views/OverviewView.vue",
+    "line": 34,
+    "matches": [
+      "const admissionReadback"
+    ],
+    "source": "const admissionReadback = computed(() => authoritative.value?.evidence?.riskAdmissionReadback ?? capacityVisibility.value?.admission ?? null);"
+  },
+  {
+    "path": "apps/dashboard/src/views/OverviewView.vue",
+    "line": 35,
+    "matches": [
+      "const admissionGateLines"
+    ],
+    "source": "const admissionGateLines = computed(() => (admissionReadback.value?.gates ?? authoritative.value?.evidence?.riskAdmissionGates ?? []).slice(0, 12).map((gate: any) =>"
+  },
+  {
+    "path": "apps/dashboard/src/views/OverviewView.vue",
+    "line": 372,
+    "matches": [
+      "data-risk-admission-readback"
+    ],
+    "source": "<details v-if=\"admissionReadback\" data-risk-admission-readback>"
+  }
+]

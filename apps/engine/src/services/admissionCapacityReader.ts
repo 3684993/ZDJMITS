@@ -85,12 +85,13 @@ export function bookAdmissionSummary(state:any,now=Date.now()):AdmissionBookSumm
   let facts:AdmissionCapacityView|null=null;
   try{facts=ledger.capacityFacts(now,null)as AdmissionCapacityView;}
   catch{facts=null;}
-  if(!facts||!Number.isFinite(Number(facts.evaluatedAt))||!facts.maxNewRiskNotionalUsdBySide
-    ||!Number.isFinite(Number(facts.maxNewRiskNotionalUsdBySide.LONG))||!Number.isFinite(Number(facts.maxNewRiskNotionalUsdBySide.SHORT))
+  if(!facts||typeof facts.evaluatedAt!=='number'||!Number.isFinite(facts.evaluatedAt)||!facts.maxNewRiskNotionalUsdBySide
+    ||typeof facts.maxNewRiskNotionalUsdBySide.LONG!=='number'||!Number.isFinite(facts.maxNewRiskNotionalUsdBySide.LONG)
+    ||typeof facts.maxNewRiskNotionalUsdBySide.SHORT!=='number'||!Number.isFinite(facts.maxNewRiskNotionalUsdBySide.SHORT)
     ||!Array.isArray(facts.evidenceBlockers)||!Array.isArray(facts.sizeIndependentRefusals))return unavailable;
   const reasons=[...new Set([...facts.evidenceBlockers,...facts.sizeIndependentRefusals])];
   const ceilingUsdBySide={LONG:Math.max(0,Number(facts.maxNewRiskNotionalUsdBySide?.LONG??0)),SHORT:Math.max(0,Number(facts.maxNewRiskNotionalUsdBySide?.SHORT??0))};
-  const status=facts.complete===false?'UNAVAILABLE':Math.max(ceilingUsdBySide.LONG,ceilingUsdBySide.SHORT)>0?'AVAILABLE':'ZERO';
+  const status=facts.complete===false||facts.evidenceBlockers.length>0?'UNAVAILABLE':Math.max(ceilingUsdBySide.LONG,ceilingUsdBySide.SHORT)>0?'AVAILABLE':'ZERO';
   return{status,hasVerdict:true,exhausted:facts.admitsAnyPositiveNotional===false,evaluatedAt:Number(facts.evaluatedAt)||now,
     code:facts.firstBinding?.code??reasons[0]??null,gate:facts.firstBinding?.gate??null,detail:facts.firstBinding?.detail??null,
     ceilingUsdBySide,reasons,

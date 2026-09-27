@@ -506,7 +506,7 @@ export class EntryCoordinator {
         const admissionSnapshot=admissionDecision.snapshot,sourceReadback=admissionDecision.readback,admissionReadback={scope:'CANDIDATE' as const,evaluatedAt:Number(sourceReadback?.evaluatedAt??Date.now()),
           snapshotHash:String(admissionSnapshot?.snapshotHash??'')||null,riskGeneration:Number.isSafeInteger(Number(admissionSnapshot?.riskGeneration))?Number(admissionSnapshot.riskGeneration):null,
           profileVersion:String(sourceReadback?.profileVersion??admissionDecision.ticket?.profileVersion??'')||null,
-          settingsVersion:String((this.state.settings as any).settingsVersion??'')||null,symbol,side,quoteAsset:plan.quoteAsset,
+          settingsVersion:sourceReadback?.settingsVersion??null,symbol,side,quoteAsset:plan.quoteAsset,
           leverage:Number(plan.leverage),leverageFact:String((market as any)?.leverageFact??'UNKNOWN'),candidateNotionalUsd:Number(plan.notionalUsd),candidateMarginUsd:Number(plan.marginUsd),
           authorityVersions:sourceReadback?.authorityVersions,coverage:sourceReadback?.coverage,
           status:admissionSnapshot?.complete===false||admissionDecision.firstBinding?.kind==='EVIDENCE'||admissionDecision.firstBinding?.kind==='SUMMARY'?'UNAVAILABLE' as const:'ZERO' as const,

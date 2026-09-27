@@ -43,3 +43,16 @@ describe('frozen choice conversion telemetry',()=>{
     expect(payload).toMatchObject({selectedQuantityUnits:20,selectedTargetPrice:101,selectedTargetHorizonMinutes:15,selectedHorizonMinutes:60,conversion:'CONVERTED'});
   });
 });
+
+it('isolates telemetry construction failures as well as sink failures',()=>{
+  let published=false;
+  expect(()=>publishFrozenChoiceConversionTelemetry({candidateSet:null} as any,()=>{published=true;})).not.toThrow();
+  expect(published).toBe(false);
+});
+it('bounds the selected ID and distinguishes conversion not attempted',()=>{
+  const row={candidateId:'x'.repeat(1000),quantityUnits:1,targetPrice:10,targetHorizonMinutes:15};
+  const data=frozenChoiceConversionTelemetry({evaluatedAt:10,prePrimaryFactIdentity:'f',snapshotHash:'s',side:'LONG',
+    executionEnvelopeIdentity:{version:'v1',symbol:'BTCUSDT',createdAt:8,expiresAt:50,side:'LONG'},
+    modelSelection:{...row,horizonMinutes:30},modelVisibleQuantityRange:{min:1,max:2},candidateSet:{candidateSetHash:'s',candidates:[row]},conversion:'NOT_ATTEMPTED'});
+  expect(data.selectedCandidateId).toHaveLength(80);expect(data.reasonClass).toBe('PLAN_CONVERSION_NOT_ATTEMPTED');
+});

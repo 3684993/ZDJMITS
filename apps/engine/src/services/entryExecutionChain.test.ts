@@ -113,3 +113,12 @@ describe('V3.9.6 PLACE -> submit chain closure', () => {
     expect(h.state.entryOrders.get(`entry_${[...h.state.entryIntents.values()][0].id}`)?.status).toBe('UNKNOWN');
   });
 });
+
+it('a throwing telemetry subscriber cannot alter the real conversion/submit chain or call Primary twice',async()=>{
+  const h=armed();h.bus.on('FROZEN_CHOICE_CONVERSION_OBSERVED',()=>{throw new Error('telemetry sink failure');});
+  await h.run();expect(h.ai.decide).toHaveBeenCalledOnce();expect(h.exchange.placeEntry).toHaveBeenCalledOnce();
+  expect(h.state.entryReservations.size).toBe(1);expect(h.state.entryIntents.size).toBe(1);expect(h.state.entryOrders.size).toBe(1);
+  const observation=h.events.find((row:any)=>row.type==='FROZEN_CHOICE_CONVERSION_OBSERVED')!.payload as any;
+  expect(observation).toMatchObject({side:'LONG',selectedQuantityUnits:1000,selectedHorizonMinutes:3,conversion:'CONVERTED'});
+  expect(outcome(h.events).executionState).toBe('SUBMITTED');
+});

@@ -1,0 +1,7 @@
+STORAGE_COVERAGE_WRITTEN docs\reports\v396-astra-predeployment-closeout-20260927\storage-coverage.json gate=S08_STORAGE_COVERAGE_PASS
+
+(node:25920) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:41616) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:41616) ExperimentalWarning: SQLite is an experimental feature and might change at any time

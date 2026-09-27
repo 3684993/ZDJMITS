@@ -326,3 +326,18 @@ it('shows the profile as configured once the readback says so, with its version'
   expect(profile).toContain('v396r38');
   expect(profile).not.toContain('PROFILE_NOT_CONFIGURED');
 });
+
+it('renders non-refusing BOOK observations and their explicit applicability status',async()=>{
+  for(const status of ['AVAILABLE','NOT_APPLICABLE']){
+    const row=structuredClone(marginDrivenBook);row.capacityVisibility.admission={status,scope:'BOOK',evaluatedAt:1,snapshotHash:'book-pass',gates:[]};
+    const wrapper=await open(row);expect(wrapper.find('[data-risk-admission-readback]').text()).toContain(status);wrapper.unmount();
+  }
+});
+it('renders candidate binding and gates without mixing the separate BOOK pass',async()=>{
+  const row=structuredClone(marginDrivenBook);row.capacityVisibility.admission={status:'ZERO',scope:'BOOK',gates:[{name:'WRONG_BOOK_GATE'}]};
+  row.authoritativeBlocker.evidence.riskAdmissionReadback={status:'ZERO',scope:'CANDIDATE',snapshotHash:'candidate-pass',evaluatedAt:1,
+    firstBinding:{code:'CANDIDATE_MARGIN',unit:'MARGIN_USD',usedUsd:90,limitUsd:100,headroomUsd:10,shortfallUsd:5},
+    gates:[{name:'CANDIDATE_MARGIN',unit:'MARGIN_USD',usedUsd:90,limitUsd:100,maxAdditionalUsd:10,candidateImpactUsd:15,candidateShortfallUsd:5}]};
+  const wrapper=await open(row),text=wrapper.find('[data-risk-admission-readback]').text();
+  expect(text).toContain('CANDIDATE_MARGIN');expect(text).toContain('MARGIN_USD');expect(text).toContain('shortfall 5');expect(text).not.toContain('WRONG_BOOK_GATE');
+});

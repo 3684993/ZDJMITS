@@ -143,3 +143,15 @@ describe('the authoritative pipeline verdict', () => {
     expect(open.evidence.riskAdmissionExhausted).toBe(false);
   });
 });
+
+it('prefers complete BOOK evidence over an unversioned pre-model refusal and keeps candidate passes separate',()=>{
+  const binding={kind:'MARGIN',code:'MARGIN_LIMIT',gate:'MIN_MARGIN_BUFFER:USDT',unit:'MARGIN_USD',limitUsd:100,usedUsd:90,headroomUsd:10,shortfallUsd:5,detail:'margin'};
+  const gates=[{name:'MIN_MARGIN_BUFFER:USDT',reason:'MARGIN_LIMIT',unit:'MARGIN_USD',limitUsd:100,usedUsd:90,maxAdditionalUsd:10,candidateImpactUsd:15,candidateShortfallUsd:5}];
+  const capacityVisibility={admission:{status:'ZERO' as const,exhausted:true,code:'BOOK_LIMIT',evaluatedAt:10,scope:'BOOK',snapshotHash:'book',gates,firstBinding:binding}};
+  const legacy={at:9,symbol:'BTCUSDT',stage:'PRE_AI',code:'LEGACY',reasons:['LEGACY'],limits:[],ageMs:1};
+  expect(authoritativePipelineVerdict({...base,capacityVisibility,riskAdmission:legacy})).toMatchObject({code:'BOOK_LIMIT',evidence:{riskAdmissionReadback:{scope:'BOOK',snapshotHash:'book',gates,firstBinding:binding}}});
+  const readback={scope:'CANDIDATE' as const,evaluatedAt:9,snapshotHash:'candidate',riskGeneration:1,profileVersion:'p',settingsVersion:'s',symbol:'BTCUSDT',side:'LONG' as const,quoteAsset:'USDT',leverage:10,leverageFact:'MARKET',candidateNotionalUsd:150,candidateMarginUsd:15,status:'ZERO' as const,pendingLineage:[]};
+  const result=authoritativePipelineVerdict({...base,capacityVisibility,riskAdmission:{...legacy,code:'MARGIN_LIMIT',binding,gates,readback}});
+  expect(result.evidence).toMatchObject({riskAdmissionReadback:{...readback,gates,firstBinding:binding},riskAdmissionCeilingUsdBySide:null,riskAdmissionExhausted:null,bookAdmission:{snapshotHash:'book'}});
+  expect(result.nextAction).toContain('MARGIN_USD');
+});

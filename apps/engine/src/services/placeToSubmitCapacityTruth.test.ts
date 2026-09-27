@@ -1,3 +1,4 @@
+import {authoritativePipelineVerdict} from './pipelineVerdict.js';
 import {describe, expect, it} from 'vitest';
 import {RuntimeState} from '../state/runtimeState.js';
 import {PortfolioRiskAdmission, rankAdmissionReasons, type AdmissionCapacityFacts} from './portfolioRiskLedger.js';
@@ -356,4 +357,43 @@ describe('the ceiling is a real dimension of the capacity arithmetic', () => {
     // The money blocker list keeps its own vocabulary: the refusal is named, not folded in.
     expect(refused.blockers.filter((reason: string) => reason === 'REJECT_RISK_ADMISSION_CEILING')).toHaveLength(1);
   });
+});
+
+
+describe('Astra same-pass numeric closeout',()=>{
+  it('separates candidate margin from existing used and measures direction crossing as change in maximum',()=>{
+    const h=book({grossUsd:100,profile:{maxDirectionNotionalUsd:120}});
+    const decision=h.admission.admit(h.candidate({side:'SHORT',notionalUsd:150,marginUsd:15}),h.now);
+    const margin=decision.gates!.find(row=>row.name==='MIN_MARGIN_BUFFER:USDT')!;
+    expect(margin.unit).toBe('MARGIN_USD');expect(margin.usedUsd).toBeCloseTo(10);expect(margin.candidateImpactUsd).toBe(15);
+    const direction=decision.gates!.find(row=>row.name==='MAX_DIRECTION_NOTIONAL')!;
+    expect(direction).toMatchObject({usedUsd:100,limitUsd:120,candidateImpactUsd:50,candidateShortfallUsd:30});
+    expect(decision.allowed).toBe(false);expect(decision.reasons).toContain('STRESS_LIMIT:MAX_DIRECTION_NOTIONAL');
+  });
+  it('carries actual installed ledger BOOK gates through reader, capacity projection, verdict and JSON without rebuilding',()=>{
+    const h=book(), summary=bookAdmissionSummary(h.state,h.now);
+    const visibility=portfolioCapacityVisibility({positions:1,inFlight:0,reserved:0,used:1,max:10},{evaluatedAt:h.now,policy:{gross:'OBSERVE',direction:'OBSERVE',cluster:'OBSERVE'},grossNotionalUsd:6500,grossLimitUsd:10000,remainingGrossUsd:3500,grossUsedPct:.65,longNotionalUsd:6500,shortNotionalUsd:0,directionLimitUsd:10000,longAvailableNotionalUsd:3500,shortAvailableNotionalUsd:10000} as any,{admission:summary});
+    const verdict=authoritativePipelineVerdict({now:h.now,noEntryReason:null,capacityVisibility:visibility});
+    const wire=JSON.parse(JSON.stringify(verdict));
+    expect(wire.evidence.riskAdmissionReadback).toMatchObject({scope:'BOOK',snapshotHash:summary.snapshotHash,evaluatedAt:summary.evaluatedAt,
+      firstBinding:summary.firstBinding,gates:summary.gates});
+    expect(wire.evidence.riskAdmissionGates).toEqual(summary.gates);
+  });
+  it('keeps absent and malformed observations distinct from an evaluated zero ceiling',()=>{
+    const h=book(),facts=h.admission.capacityFacts(h.now,null);
+    const view=(over:any)=>bookAdmissionSummary({riskAdmission:{capacityFacts:()=>({...facts,...over})}},h.now);
+    expect(view({complete:true,evidenceBlockers:[],maxNewRiskNotionalUsdBySide:{LONG:0,SHORT:0}}).status).toBe('ZERO');
+    expect(view({complete:true,evidenceBlockers:['MISSING_FACT']}).status).toBe('UNAVAILABLE');
+    expect(view({maxNewRiskNotionalUsdBySide:{LONG:null,SHORT:0}}).status).toBe('UNAVAILABLE');
+    expect(view({evaluatedAt:null}).status).toBe('UNAVAILABLE');
+    expect(bookAdmissionSummary({settings:{connections:{executionMode:'READ_ONLY',exchange:{environment:'TESTNET'}}}},h.now).status).toBe('NOT_APPLICABLE');
+  });
+});
+
+it('compares BOOK co-binding diagnostics dimensionlessly across margin and notional units',()=>{
+ const gross={...gate('MAX_GROSS_NOTIONAL','STRESS_LIMIT:MAX_GROSS_NOTIONAL',100,10000,9900),candidateImpactUsd:0};
+ const margin={...gate('MAX_CAPITAL_AT_RISK','STRESS_LIMIT:MAX_CAPITAL_AT_RISK',20,100,80),unit:'MARGIN_USD' as const,candidateImpactUsd:0};
+ const ranked=rankAdmissionReasons({reasons:[gross.reason,margin.reason],gates:[gross,margin]});
+ expect(ranked.firstBinding?.code).toBe(gross.reason);
+ // Raw 20 margin USD is smaller than 100 notional USD, but 20% room is larger than 1% room.
 });

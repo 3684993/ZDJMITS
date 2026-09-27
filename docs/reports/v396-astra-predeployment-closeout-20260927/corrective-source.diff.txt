@@ -1,0 +1,357 @@
+diff --git a/apps/dashboard/src/views/OverviewView.capacity.test.ts b/apps/dashboard/src/views/OverviewView.capacity.test.ts
+index b65b164..a76279a 100644
+--- a/apps/dashboard/src/views/OverviewView.capacity.test.ts
++++ b/apps/dashboard/src/views/OverviewView.capacity.test.ts
+@@ -326,3 +326,18 @@ it('shows the profile as configured once the readback says so, with its version'
+   expect(profile).toContain('v396r38');
+   expect(profile).not.toContain('PROFILE_NOT_CONFIGURED');
+ });
++
++it('renders non-refusing BOOK observations and their explicit applicability status',async()=>{
++  for(const status of ['AVAILABLE','NOT_APPLICABLE']){
++    const row=structuredClone(marginDrivenBook);row.capacityVisibility.admission={status,scope:'BOOK',evaluatedAt:1,snapshotHash:'book-pass',gates:[]};
++    const wrapper=await open(row);expect(wrapper.find('[data-risk-admission-readback]').text()).toContain(status);wrapper.unmount();
++  }
++});
++it('renders candidate binding and gates without mixing the separate BOOK pass',async()=>{
++  const row=structuredClone(marginDrivenBook);row.capacityVisibility.admission={status:'ZERO',scope:'BOOK',gates:[{name:'WRONG_BOOK_GATE'}]};
++  row.authoritativeBlocker.evidence.riskAdmissionReadback={status:'ZERO',scope:'CANDIDATE',snapshotHash:'candidate-pass',evaluatedAt:1,
++    firstBinding:{code:'CANDIDATE_MARGIN',unit:'MARGIN_USD',usedUsd:90,limitUsd:100,headroomUsd:10,shortfallUsd:5},
++    gates:[{name:'CANDIDATE_MARGIN',unit:'MARGIN_USD',usedUsd:90,limitUsd:100,maxAdditionalUsd:10,candidateImpactUsd:15,candidateShortfallUsd:5}]};
++  const wrapper=await open(row),text=wrapper.find('[data-risk-admission-readback]').text();
++  expect(text).toContain('CANDIDATE_MARGIN');expect(text).toContain('MARGIN_USD');expect(text).toContain('shortfall 5');expect(text).not.toContain('WRONG_BOOK_GATE');
++});
+diff --git a/apps/dashboard/src/views/OverviewView.vue b/apps/dashboard/src/views/OverviewView.vue
+index c2e6469..92be6be 100644
+--- a/apps/dashboard/src/views/OverviewView.vue
++++ b/apps/dashboard/src/views/OverviewView.vue
+@@ -31,8 +31,8 @@ const capacityVisibility = computed(() => pipeline.value?.capacityVisibility ??
+ // G4: the Engine publishes the one authoritative blocker and the next action that matches it. The page
+ // renders that pair verbatim and labels everything else subordinate; it must not rank the same facts again.
+ const authoritative = computed(() => pipeline.value?.authoritativeBlocker ?? null);
+-const admissionReadback = computed(() => authoritative.value?.evidence?.riskAdmissionReadback ?? null);
+-const admissionGateLines = computed(() => (authoritative.value?.evidence?.riskAdmissionGates ?? []).slice(0, 12).map((gate: any) =>
++const admissionReadback = computed(() => authoritative.value?.evidence?.riskAdmissionReadback ?? capacityVisibility.value?.admission ?? null);
++const admissionGateLines = computed(() => (admissionReadback.value?.gates ?? authoritative.value?.evidence?.riskAdmissionGates ?? []).slice(0, 12).map((gate: any) =>
+   `${gate.name} · ${gate.unit} · used ${gate.usedUsd == null ? "—" : fmt(gate.usedUsd)} / limit ${gate.limitUsd == null ? "—" : fmt(gate.limitUsd)} · headroom ${gate.maxAdditionalUsd == null ? "—" : fmt(gate.maxAdditionalUsd)} · candidate ${gate.candidateImpactUsd == null ? "—" : fmt(gate.candidateImpactUsd)} · shortfall ${(gate.candidateShortfallUsd ?? gate.shortfallUsd) == null ? "—" : fmt(gate.candidateShortfallUsd ?? gate.shortfallUsd)}`));
+ const authoritativeStage = computed(() => authoritative.value?.stage ?? "NOT_EVALUATED");
+ const authoritativeText = computed(() =>
+diff --git a/apps/engine/src/api/snapshotReadOnly.test.ts b/apps/engine/src/api/snapshotReadOnly.test.ts
+index 2dd0b30..9f40cc4 100644
+--- a/apps/engine/src/api/snapshotReadOnly.test.ts
++++ b/apps/engine/src/api/snapshotReadOnly.test.ts
+@@ -35,3 +35,15 @@ it('reconciliation telemetry still persists execution facts',async()=>{
+  const entry=vi.spyOn(runtime.settingsStore,'saveEntryExecution').mockImplementation(()=>{}),manual=vi.spyOn(runtime.settingsStore,'saveManualExecution').mockImplementation(()=>{});
+  runtime.events.publish('RECONCILIATION_COMPLETED',{});expect(entry).toHaveBeenCalled();expect(manual).toHaveBeenCalled();
+ });
++
++it('pipeline HTTP preserves the installed admission readback and scoped reconciliation without writes after the initial authority diagnostic',async()=>{
++ dataDir=await mkdtemp(path.join(os.tmpdir(),'zdj-pipeline-readback-'));runtime=await EngineRuntime.createTestHarness({configDir:'../../config',dataDir});
++ const db=(runtime.settingsStore as any).db;
++ const app=express();app.use('/api/v3',createApiRouter(runtime));server=app.listen(0,'127.0.0.1');await new Promise(resolve=>server.once('listening',resolve));
++ // Initial authority refresh may persist its existing cash-flow coverage diagnostic. HTTP reads the same memoized pass.
++ const expected=runtime.pipelineStatus() as any,changes=db.prepare('SELECT total_changes() n').get().n;
++ const response=await fetch(`http://127.0.0.1:${server.address().port}/api/v3/pipeline`),body=await response.json() as any;
++ expect(response.status).toBe(200);expect(body.capacityVisibility.admission.status).toBe(expected.capacityVisibility.admission.status);
++ expect(body.reconciliation).toMatchObject({snapshotConsistency:'BEST_EFFORT_CROSS_STORE',activeRiskUnresolvedCountScope:'ENTRY_OCCUPYING_RISK_PLUS_MANUAL_UNKNOWN_PLUS_TP_UNKNOWN'});
++ expect(db.prepare('SELECT total_changes() n').get().n).toBe(changes);
++});
+diff --git a/apps/engine/src/services/admissionCapacityReader.ts b/apps/engine/src/services/admissionCapacityReader.ts
+index 39fcfe2..e15de08 100644
+--- a/apps/engine/src/services/admissionCapacityReader.ts
++++ b/apps/engine/src/services/admissionCapacityReader.ts
+@@ -85,12 +85,13 @@ export function bookAdmissionSummary(state:any,now=Date.now()):AdmissionBookSumm
+   let facts:AdmissionCapacityView|null=null;
+   try{facts=ledger.capacityFacts(now,null)as AdmissionCapacityView;}
+   catch{facts=null;}
+-  if(!facts||!Number.isFinite(Number(facts.evaluatedAt))||!facts.maxNewRiskNotionalUsdBySide
+-    ||!Number.isFinite(Number(facts.maxNewRiskNotionalUsdBySide.LONG))||!Number.isFinite(Number(facts.maxNewRiskNotionalUsdBySide.SHORT))
++  if(!facts||typeof facts.evaluatedAt!=='number'||!Number.isFinite(facts.evaluatedAt)||!facts.maxNewRiskNotionalUsdBySide
++    ||typeof facts.maxNewRiskNotionalUsdBySide.LONG!=='number'||!Number.isFinite(facts.maxNewRiskNotionalUsdBySide.LONG)
++    ||typeof facts.maxNewRiskNotionalUsdBySide.SHORT!=='number'||!Number.isFinite(facts.maxNewRiskNotionalUsdBySide.SHORT)
+     ||!Array.isArray(facts.evidenceBlockers)||!Array.isArray(facts.sizeIndependentRefusals))return unavailable;
+   const reasons=[...new Set([...facts.evidenceBlockers,...facts.sizeIndependentRefusals])];
+   const ceilingUsdBySide={LONG:Math.max(0,Number(facts.maxNewRiskNotionalUsdBySide?.LONG??0)),SHORT:Math.max(0,Number(facts.maxNewRiskNotionalUsdBySide?.SHORT??0))};
+-  const status=facts.complete===false?'UNAVAILABLE':Math.max(ceilingUsdBySide.LONG,ceilingUsdBySide.SHORT)>0?'AVAILABLE':'ZERO';
++  const status=facts.complete===false||facts.evidenceBlockers.length>0?'UNAVAILABLE':Math.max(ceilingUsdBySide.LONG,ceilingUsdBySide.SHORT)>0?'AVAILABLE':'ZERO';
+   return{status,hasVerdict:true,exhausted:facts.admitsAnyPositiveNotional===false,evaluatedAt:Number(facts.evaluatedAt)||now,
+     code:facts.firstBinding?.code??reasons[0]??null,gate:facts.firstBinding?.gate??null,detail:facts.firstBinding?.detail??null,
+     ceilingUsdBySide,reasons,
+diff --git a/apps/engine/src/services/entryCoordinator.ts b/apps/engine/src/services/entryCoordinator.ts
+index 8aa2864..003d8b7 100644
+--- a/apps/engine/src/services/entryCoordinator.ts
++++ b/apps/engine/src/services/entryCoordinator.ts
+@@ -506,7 +506,7 @@ export class EntryCoordinator {
+         const admissionSnapshot=admissionDecision.snapshot,sourceReadback=admissionDecision.readback,admissionReadback={scope:'CANDIDATE' as const,evaluatedAt:Number(sourceReadback?.evaluatedAt??Date.now()),
+           snapshotHash:String(admissionSnapshot?.snapshotHash??'')||null,riskGeneration:Number.isSafeInteger(Number(admissionSnapshot?.riskGeneration))?Number(admissionSnapshot.riskGeneration):null,
+           profileVersion:String(sourceReadback?.profileVersion??admissionDecision.ticket?.profileVersion??'')||null,
+-          settingsVersion:String((this.state.settings as any).settingsVersion??'')||null,symbol,side,quoteAsset:plan.quoteAsset,
++          settingsVersion:sourceReadback?.settingsVersion??null,symbol,side,quoteAsset:plan.quoteAsset,
+           leverage:Number(plan.leverage),leverageFact:String((market as any)?.leverageFact??'UNKNOWN'),candidateNotionalUsd:Number(plan.notionalUsd),candidateMarginUsd:Number(plan.marginUsd),
+           authorityVersions:sourceReadback?.authorityVersions,coverage:sourceReadback?.coverage,
+           status:admissionSnapshot?.complete===false||admissionDecision.firstBinding?.kind==='EVIDENCE'||admissionDecision.firstBinding?.kind==='SUMMARY'?'UNAVAILABLE' as const:'ZERO' as const,
+diff --git a/apps/engine/src/services/entryExecutionChain.test.ts b/apps/engine/src/services/entryExecutionChain.test.ts
+index a3858eb..38bb485 100644
+--- a/apps/engine/src/services/entryExecutionChain.test.ts
++++ b/apps/engine/src/services/entryExecutionChain.test.ts
+@@ -113,3 +113,12 @@ describe('V3.9.6 PLACE -> submit chain closure', () => {
+     expect(h.state.entryOrders.get(`entry_${[...h.state.entryIntents.values()][0].id}`)?.status).toBe('UNKNOWN');
+   });
+ });
++
++it('a throwing telemetry subscriber cannot alter the real conversion/submit chain or call Primary twice',async()=>{
++  const h=armed();h.bus.on('FROZEN_CHOICE_CONVERSION_OBSERVED',()=>{throw new Error('telemetry sink failure');});
++  await h.run();expect(h.ai.decide).toHaveBeenCalledOnce();expect(h.exchange.placeEntry).toHaveBeenCalledOnce();
++  expect(h.state.entryReservations.size).toBe(1);expect(h.state.entryIntents.size).toBe(1);expect(h.state.entryOrders.size).toBe(1);
++  const observation=h.events.find((row:any)=>row.type==='FROZEN_CHOICE_CONVERSION_OBSERVED')!.payload as any;
++  expect(observation).toMatchObject({side:'LONG',selectedQuantityUnits:1000,selectedHorizonMinutes:3,conversion:'CONVERTED'});
++  expect(outcome(h.events).executionState).toBe('SUBMITTED');
++});
+diff --git a/apps/engine/src/services/frozenChoiceTelemetry.test.ts b/apps/engine/src/services/frozenChoiceTelemetry.test.ts
+index 0aca7c2..41980b5 100644
+--- a/apps/engine/src/services/frozenChoiceTelemetry.test.ts
++++ b/apps/engine/src/services/frozenChoiceTelemetry.test.ts
+@@ -43,3 +43,16 @@ describe('frozen choice conversion telemetry',()=>{
+     expect(payload).toMatchObject({selectedQuantityUnits:20,selectedTargetPrice:101,selectedTargetHorizonMinutes:15,selectedHorizonMinutes:60,conversion:'CONVERTED'});
+   });
+ });
++
++it('isolates telemetry construction failures as well as sink failures',()=>{
++  let published=false;
++  expect(()=>publishFrozenChoiceConversionTelemetry({candidateSet:null} as any,()=>{published=true;})).not.toThrow();
++  expect(published).toBe(false);
++});
++it('bounds the selected ID and distinguishes conversion not attempted',()=>{
++  const row={candidateId:'x'.repeat(1000),quantityUnits:1,targetPrice:10,targetHorizonMinutes:15};
++  const data=frozenChoiceConversionTelemetry({evaluatedAt:10,prePrimaryFactIdentity:'f',snapshotHash:'s',side:'LONG',
++    executionEnvelopeIdentity:{version:'v1',symbol:'BTCUSDT',createdAt:8,expiresAt:50,side:'LONG'},
++    modelSelection:{...row,horizonMinutes:30},modelVisibleQuantityRange:{min:1,max:2},candidateSet:{candidateSetHash:'s',candidates:[row]},conversion:'NOT_ATTEMPTED'});
++  expect(data.selectedCandidateId).toHaveLength(80);expect(data.reasonClass).toBe('PLAN_CONVERSION_NOT_ATTEMPTED');
++});
+diff --git a/apps/engine/src/services/frozenChoiceTelemetry.ts b/apps/engine/src/services/frozenChoiceTelemetry.ts
+index 12cf789..2ba7f6f 100644
+--- a/apps/engine/src/services/frozenChoiceTelemetry.ts
++++ b/apps/engine/src/services/frozenChoiceTelemetry.ts
+@@ -23,14 +23,16 @@ export function frozenChoiceConversionTelemetry(input:FrozenChoiceConversionInpu
+       targetPrice:Number(row.targetPrice??0),targetHorizonMinutes:Number(row.targetHorizonMinutes??0)})),
+     selectedQuantityUnits:input.modelSelection.quantityUnits,selectedTargetPrice:input.modelSelection.targetPrice,
+     selectedTargetHorizonMinutes:input.modelSelection.targetHorizonMinutes,selectedHorizonMinutes:input.modelSelection.horizonMinutes,
+-    selectedCandidateId:selected?.candidateId??null,selectionInGeneratedSet:Boolean(selected),candidateSetSelectionMarkedOffered:Boolean(input.candidateSet.selection?.offered),
++    selectedCandidateId:selected?.candidateId==null?null:String(selected.candidateId).slice(0,80),selectionInGeneratedSet:Boolean(selected),candidateSetSelectionMarkedOffered:Boolean(input.candidateSet.selection?.offered),
+     alternativeGeneratedCandidates,refusalHasAlternativeLegalCandidate:input.conversion==='REFUSED'&&alternativeGeneratedCandidates>0,
+     postPrimaryAlternativeExistsOnRefusal:input.conversion==='REFUSED'&&input.candidateSet.candidates.length>0&&!selected,
+     conversion:input.conversion,
+-    reasonClass:input.conversion==='CONVERTED'?'PLAN_ASSEMBLED':input.candidateSet.candidates.length?'PLAN_CONVERSION_REFUSED':'NO_LEGAL_CANDIDATE'};
++    reasonClass:input.conversion==='NOT_ATTEMPTED'?'PLAN_CONVERSION_NOT_ATTEMPTED':input.conversion==='CONVERTED'?'PLAN_ASSEMBLED':input.candidateSet.candidates.length?'PLAN_CONVERSION_REFUSED':'NO_LEGAL_CANDIDATE'};
+ }
+
+ /** The sink is deliberately behind a catch boundary so diagnostic storage cannot affect the plan path. */
+ export function publishFrozenChoiceConversionTelemetry(input:Parameters<typeof frozenChoiceConversionTelemetry>[0],publish:(payload:Record<string,unknown>)=>void){
+-  const payload=frozenChoiceConversionTelemetry(input);try{publish(payload);}catch{/* observational event sinks are best effort */}return payload;
++  let payload:Record<string,unknown>|null=null;
++  try{payload=frozenChoiceConversionTelemetry(input);publish(payload);}catch{/* construction and storage are both observational */}
++  return payload;
+ }
+diff --git a/apps/engine/src/services/pipelineVerdict.test.ts b/apps/engine/src/services/pipelineVerdict.test.ts
+index b4a8327..42280a3 100644
+--- a/apps/engine/src/services/pipelineVerdict.test.ts
++++ b/apps/engine/src/services/pipelineVerdict.test.ts
+@@ -143,3 +143,15 @@ describe('the authoritative pipeline verdict', () => {
+     expect(open.evidence.riskAdmissionExhausted).toBe(false);
+   });
+ });
++
++it('prefers complete BOOK evidence over an unversioned pre-model refusal and keeps candidate passes separate',()=>{
++  const binding={kind:'MARGIN',code:'MARGIN_LIMIT',gate:'MIN_MARGIN_BUFFER:USDT',unit:'MARGIN_USD',limitUsd:100,usedUsd:90,headroomUsd:10,shortfallUsd:5,detail:'margin'};
++  const gates=[{name:'MIN_MARGIN_BUFFER:USDT',reason:'MARGIN_LIMIT',unit:'MARGIN_USD',limitUsd:100,usedUsd:90,maxAdditionalUsd:10,candidateImpactUsd:15,candidateShortfallUsd:5}];
++  const capacityVisibility={admission:{status:'ZERO' as const,exhausted:true,code:'BOOK_LIMIT',evaluatedAt:10,scope:'BOOK',snapshotHash:'book',gates,firstBinding:binding}};
++  const legacy={at:9,symbol:'BTCUSDT',stage:'PRE_AI',code:'LEGACY',reasons:['LEGACY'],limits:[],ageMs:1};
++  expect(authoritativePipelineVerdict({...base,capacityVisibility,riskAdmission:legacy})).toMatchObject({code:'BOOK_LIMIT',evidence:{riskAdmissionReadback:{scope:'BOOK',snapshotHash:'book',gates,firstBinding:binding}}});
++  const readback={scope:'CANDIDATE' as const,evaluatedAt:9,snapshotHash:'candidate',riskGeneration:1,profileVersion:'p',settingsVersion:'s',symbol:'BTCUSDT',side:'LONG' as const,quoteAsset:'USDT',leverage:10,leverageFact:'MARKET',candidateNotionalUsd:150,candidateMarginUsd:15,status:'ZERO' as const,pendingLineage:[]};
++  const result=authoritativePipelineVerdict({...base,capacityVisibility,riskAdmission:{...legacy,code:'MARGIN_LIMIT',binding,gates,readback}});
++  expect(result.evidence).toMatchObject({riskAdmissionReadback:{...readback,gates,firstBinding:binding},riskAdmissionCeilingUsdBySide:null,riskAdmissionExhausted:null,bookAdmission:{snapshotHash:'book'}});
++  expect(result.nextAction).toContain('MARGIN_USD');
++});
+diff --git a/apps/engine/src/services/pipelineVerdict.ts b/apps/engine/src/services/pipelineVerdict.ts
+index e9ea484..1aa4f7d 100644
+--- a/apps/engine/src/services/pipelineVerdict.ts
++++ b/apps/engine/src/services/pipelineVerdict.ts
+@@ -84,8 +84,8 @@ const NEXT_ACTION: Record<PipelineVerdict['stage'], (facts: VerdictFacts, code:
+     // to release. A bare reason code is what let five labels stand in for one measurable ceiling.
+     const headline = binding
+       ? `${binding.code}${binding.gate && binding.gate !== binding.code ? ` · ${binding.gate}` : ''}`
+-        + (binding.headroomUsd != null ? ` 可新增 ${binding.headroomUsd.toFixed(2)} USD` : '')
+-        + (binding.shortfallUsd != null && binding.shortfallUsd > 0 ? `，需人工先释放 ${binding.shortfallUsd.toFixed(2)} USD` : '')
++        + (binding.headroomUsd != null ? ` 可新增 ${binding.headroomUsd.toFixed(2)} ${binding.unit??'USD'}` : '')
++        + (binding.shortfallUsd != null && binding.shortfallUsd > 0 ? `，需人工先释放 ${binding.shortfallUsd.toFixed(2)} ${binding.unit??'USD'}` : '')
+         + (binding.kind === 'SIZE_INDEPENDENT' ? '（与订单规模无关，缩小订单不能通过）' : '')
+       : (refusal?.code ?? 'RISK_ADMISSION');
+     const coBinding = (refusal?.reasons ?? []).filter((code: string) => code !== binding?.code);
+@@ -104,7 +104,9 @@ export function authoritativePipelineVerdict(facts: VerdictFacts): PipelineVerdi
+     // The gate may deny the whole book before any candidate reaches `admit` — that is the pre-model capacity
+     // stop. Its book-level verdict is then still the first cause: answering "nothing is blocking" because no
+     // cycle was ever submitted to admit() would rebuild the same contradiction one layer up.
+-    riskAdmission = facts.riskAdmission ?? (gate?.exhausted||gate?.status==='UNAVAILABLE' ? {
++    // A legacy pre-model summary has no numeric pass. Prefer the complete BOOK readback
++    // when that book is refusing; never attach BOOK numbers to the legacy candidate label.
++    riskAdmission = (facts.riskAdmission?.readback||!(gate?.exhausted||gate?.status==='UNAVAILABLE')?facts.riskAdmission:null) ?? (gate?.exhausted||gate?.status==='UNAVAILABLE' ? {
+       at: Number(gate.evaluatedAt) || facts.now, symbol: '书本级', stage: 'PORTFOLIO_RISK_ADMISSION',
+       code: gate.code ?? 'RISK_ADMISSION_EXHAUSTED', reasons: gate.reasons??[], limits: [],binding:gate.firstBinding??
+         {kind: 'OTHER', code: gate.code ?? 'RISK_ADMISSION_EXHAUSTED', gate: gate.gate ?? null, limitUsd: null, usedUsd: null,
+@@ -143,11 +145,13 @@ export function authoritativePipelineVerdict(facts: VerdictFacts): PipelineVerdi
+       pendingEntries: facts.pendingEntries ?? null, maxPendingEntries: facts.maxPendingEntries ?? null, poolStatus: facts.poolStatus ?? null,
+       riskAdmissionStage: admission?.stage ?? null, riskAdmissionSymbol: admission?.symbol ?? null,
+       riskAdmissionReasons: admission?.reasons ?? [], riskAdmissionLimits: admission?.limits ?? [],
+-      riskAdmissionBinding: admission?.binding ?? null, riskAdmissionGates: admission?.gates ?? [],riskAdmissionReadback:admission?.readback??null,
++      riskAdmissionBinding: admission?.binding ?? null, riskAdmissionGates: admission?.gates ?? [],
++      riskAdmissionReadback:admission?.readback?{...admission.readback,firstBinding:admission.binding??null,gates:admission.gates??[]}:null,
+       // A "can add" capacity reading beside a 0% admission is the contradiction this verdict exists to kill,
+       // so the number the gate reported is carried into the evidence even when the ratio model is OBSERVE.
+-      riskAdmissionCeilingUsdBySide: facts.capacityVisibility?.admission?.ceilingUsdBySide ?? null,
+-      riskAdmissionExhausted: facts.capacityVisibility?.admission?.exhausted ?? false,
++      riskAdmissionCeilingUsdBySide: admission?.readback?.scope==='CANDIDATE'?null:gate?.ceilingUsdBySide??null,
++      riskAdmissionExhausted: admission?.readback?.scope==='CANDIDATE'?null:gate?.exhausted??false,
++      bookAdmission:gate,
+       riskAdmissionAgeMs: admission?.ageMs ?? null},
+     secondary, evaluatedAt: facts.now,
+   };
+diff --git a/apps/engine/src/services/placeToSubmitCapacityTruth.test.ts b/apps/engine/src/services/placeToSubmitCapacityTruth.test.ts
+index e69230d..7b471a6 100644
+--- a/apps/engine/src/services/placeToSubmitCapacityTruth.test.ts
++++ b/apps/engine/src/services/placeToSubmitCapacityTruth.test.ts
+@@ -1,3 +1,4 @@
++import {authoritativePipelineVerdict} from './pipelineVerdict.js';
+ import {describe, expect, it} from 'vitest';
+ import {RuntimeState} from '../state/runtimeState.js';
+ import {PortfolioRiskAdmission, rankAdmissionReasons, type AdmissionCapacityFacts} from './portfolioRiskLedger.js';
+@@ -357,3 +358,42 @@ describe('the ceiling is a real dimension of the capacity arithmetic', () => {
+     expect(refused.blockers.filter((reason: string) => reason === 'REJECT_RISK_ADMISSION_CEILING')).toHaveLength(1);
+   });
+ });
++
++
++describe('Astra same-pass numeric closeout',()=>{
++  it('separates candidate margin from existing used and measures direction crossing as change in maximum',()=>{
++    const h=book({grossUsd:100,profile:{maxDirectionNotionalUsd:120}});
++    const decision=h.admission.admit(h.candidate({side:'SHORT',notionalUsd:150,marginUsd:15}),h.now);
++    const margin=decision.gates!.find(row=>row.name==='MIN_MARGIN_BUFFER:USDT')!;
++    expect(margin.unit).toBe('MARGIN_USD');expect(margin.usedUsd).toBeCloseTo(10);expect(margin.candidateImpactUsd).toBe(15);
++    const direction=decision.gates!.find(row=>row.name==='MAX_DIRECTION_NOTIONAL')!;
++    expect(direction).toMatchObject({usedUsd:100,limitUsd:120,candidateImpactUsd:50,candidateShortfallUsd:30});
++    expect(decision.allowed).toBe(false);expect(decision.reasons).toContain('STRESS_LIMIT:MAX_DIRECTION_NOTIONAL');
++  });
++  it('carries actual installed ledger BOOK gates through reader, capacity projection, verdict and JSON without rebuilding',()=>{
++    const h=book(), summary=bookAdmissionSummary(h.state,h.now);
++    const visibility=portfolioCapacityVisibility({positions:1,inFlight:0,reserved:0,used:1,max:10},{evaluatedAt:h.now,policy:{gross:'OBSERVE',direction:'OBSERVE',cluster:'OBSERVE'},grossNotionalUsd:6500,grossLimitUsd:10000,remainingGrossUsd:3500,grossUsedPct:.65,longNotionalUsd:6500,shortNotionalUsd:0,directionLimitUsd:10000,longAvailableNotionalUsd:3500,shortAvailableNotionalUsd:10000} as any,{admission:summary});
++    const verdict=authoritativePipelineVerdict({now:h.now,noEntryReason:null,capacityVisibility:visibility});
++    const wire=JSON.parse(JSON.stringify(verdict));
++    expect(wire.evidence.riskAdmissionReadback).toMatchObject({scope:'BOOK',snapshotHash:summary.snapshotHash,evaluatedAt:summary.evaluatedAt,
++      firstBinding:summary.firstBinding,gates:summary.gates});
++    expect(wire.evidence.riskAdmissionGates).toEqual(summary.gates);
++  });
++  it('keeps absent and malformed observations distinct from an evaluated zero ceiling',()=>{
++    const h=book(),facts=h.admission.capacityFacts(h.now,null);
++    const view=(over:any)=>bookAdmissionSummary({riskAdmission:{capacityFacts:()=>({...facts,...over})}},h.now);
++    expect(view({complete:true,evidenceBlockers:[],maxNewRiskNotionalUsdBySide:{LONG:0,SHORT:0}}).status).toBe('ZERO');
++    expect(view({complete:true,evidenceBlockers:['MISSING_FACT']}).status).toBe('UNAVAILABLE');
++    expect(view({maxNewRiskNotionalUsdBySide:{LONG:null,SHORT:0}}).status).toBe('UNAVAILABLE');
++    expect(view({evaluatedAt:null}).status).toBe('UNAVAILABLE');
++    expect(bookAdmissionSummary({settings:{connections:{executionMode:'READ_ONLY',exchange:{environment:'TESTNET'}}}},h.now).status).toBe('NOT_APPLICABLE');
++  });
++});
++
++it('compares BOOK co-binding diagnostics dimensionlessly across margin and notional units',()=>{
++ const gross={...gate('MAX_GROSS_NOTIONAL','STRESS_LIMIT:MAX_GROSS_NOTIONAL',100,10000,9900),candidateImpactUsd:0};
++ const margin={...gate('MAX_CAPITAL_AT_RISK','STRESS_LIMIT:MAX_CAPITAL_AT_RISK',20,100,80),unit:'MARGIN_USD' as const,candidateImpactUsd:0};
++ const ranked=rankAdmissionReasons({reasons:[gross.reason,margin.reason],gates:[gross,margin]});
++ expect(ranked.firstBinding?.code).toBe(gross.reason);
++ // Raw 20 margin USD is smaller than 100 notional USD, but 20% room is larger than 1% room.
++});
+diff --git a/apps/engine/src/services/portfolioRiskLedger.ts b/apps/engine/src/services/portfolioRiskLedger.ts
+index 75d7c71..3955395 100644
+--- a/apps/engine/src/services/portfolioRiskLedger.ts
++++ b/apps/engine/src/services/portfolioRiskLedger.ts
+@@ -112,7 +112,7 @@ const NOTIONAL_PRECEDENCE=['STRESS_LIMIT:MAX_GROSS_NOTIONAL','HUMAN_POTENTIAL_NO
+  * ordering changes which one is named, never what was seen.
+  */
+ export function rankAdmissionReasons(input:{reasons:string[];gates:AdmissionGateFact[];candidateNotionalUsd?:number}):{ordered:string[];firstBinding:AdmissionFirstBinding|null}{
+-  const seen=new Set(input.reasons),candidate=input.candidateNotionalUsd??0;
++  const seen=new Set(input.reasons),candidate=input.candidateNotionalUsd??0,hasCandidate=candidate>0||input.gates.some(gate=>(gate.candidateImpactUsd??0)>0);
+   const evidence=[...seen].filter(code=>!SIZE_INDEPENDENT_CODES.includes(code)&&!SUMMARY_CODES.includes(code)&&!DIAGNOSTIC_ONLY_CODES.includes(code)&&!isLimitReason(code)).sort();
+   const summary=[...seen].filter(code=>SUMMARY_CODES.includes(code));
+   const sizeIndependent=SIZE_INDEPENDENT_CODES.filter(code=>seen.has(code));
+@@ -123,7 +123,11 @@ export function rankAdmissionReasons(input:{reasons:string[];gates:AdmissionGate
+     if(!left)return right?1:0;
+     if(!right)return -1;
+     const impact=(gate:AdmissionGateFact)=>gate.candidateImpactUsd??(gate.unit==='NOTIONAL_USD'?candidate:0);
+-    const ratio=(gate:AdmissionGateFact)=>impact(gate)>0?gate.maxAdditionalUsd/impact(gate):candidate===0?gate.maxAdditionalUsd:Number.POSITIVE_INFINITY;
++    // Compare dimensionless ratios, never raw margin dollars against notional or loss dollars.
++    // A zero-impact candidate cannot cure an existing breach; otherwise that gate does not bind it.
++    const ratio=(gate:AdmissionGateFact)=>impact(gate)>0?gate.maxAdditionalUsd/impact(gate):hasCandidate?
++      (gate.usedUsd>gate.limitUsd?Number.NEGATIVE_INFINITY:Number.POSITIVE_INFINITY):
++      gate.limitUsd>0?gate.maxAdditionalUsd/gate.limitUsd:gate.usedUsd>0?Number.NEGATIVE_INFINITY:0;
+     return ratio(left)-ratio(right)||NOTIONAL_PRECEDENCE.indexOf(a)-NOTIONAL_PRECEDENCE.indexOf(b);
+   });
+   const known=new Set([...evidence,...summary,...sizeIndependent,...limits]);
+@@ -414,7 +418,7 @@ export class PortfolioRiskAdmission {
+     const directionLimit=amount(profile.maxDirectionNotionalUsd);
+     const marginBufferGates=snapshot.quoteAssets.map(row=>{
+       const available=amount(row.availableMarginUsd),limit=available*(1-amount(profile.minMarginBufferPct)),matches=row.asset===String(options.candidateQuoteAsset??'').toUpperCase();
+-      return gate(`MIN_MARGIN_BUFFER:${row.asset}`,`STRESS_LIMIT:MIN_MARGIN_BUFFER:${row.asset}`,'MARGIN_USD',limit,amount(row.marginUsedUsd),
++      return gate(`MIN_MARGIN_BUFFER:${row.asset}`,`STRESS_LIMIT:MIN_MARGIN_BUFFER:${row.asset}`,'MARGIN_USD',limit,amount(row.marginUsedUsd)-(matches?candidateMargin:0),
+         {candidateImpactUsd:matches?candidateMargin:0});
+     });
+     return[
+@@ -597,11 +601,11 @@ export class PortfolioRiskAdmission {
+     const candidateStressLossUsd=Math.max(0,stress.maxStressLossUsd-stressBefore.maxStressLossUsd);
+     const sideUsed=candidate.side==='LONG'?baseSnapshot.longNotionalUsd:baseSnapshot.shortNotionalUsd,
+       otherSideUsed=candidate.side==='LONG'?baseSnapshot.shortNotionalUsd:baseSnapshot.longNotionalUsd,
+-      candidateMovesDirectionMaximum=sideUsed+candidateNotional>=otherSideUsed;
++      candidateDirectionImpact=Math.max(sideUsed+candidateNotional,otherSideUsed)-Math.max(sideUsed,otherSideUsed);
+     const gates=this.gateFacts(snapshot,stress,capacity,profile,{candidateNotionalUsd:candidateNotional,candidateMarginUsd:candidateMargin,candidateStressLossUsd,
+-      candidateSide:candidate.side,clusterKey:correlationClusterOf(String(candidate.symbol),correlation)});
++      candidateSide:candidate.side,candidateQuoteAsset:candidate.quoteAsset,clusterKey:correlationClusterOf(String(candidate.symbol),correlation)});
+     const directionGate=gates.find(row=>row.name==='MAX_DIRECTION_NOTIONAL');
+-      if(directionGate){directionGate.candidateImpactUsd=candidateMovesDirectionMaximum?candidateNotional:0;directionGate.candidateShortfallUsd=Math.max(0,directionGate.usedUsd+directionGate.candidateImpactUsd-directionGate.limitUsd);}
++      if(directionGate){directionGate.candidateImpactUsd=candidateDirectionImpact;directionGate.candidateShortfallUsd=Math.max(0,directionGate.usedUsd+directionGate.candidateImpactUsd-directionGate.limitUsd);}
+     const ranked=rankAdmissionReasons({reasons,gates});
+     if(reasons.length){
+       const ordered=ranked.ordered;
+diff --git a/apps/engine/src/services/reconciliationService.test.ts b/apps/engine/src/services/reconciliationService.test.ts
+index 74783e1..1474f45 100644
+--- a/apps/engine/src/services/reconciliationService.test.ts
++++ b/apps/engine/src/services/reconciliationService.test.ts
+@@ -28,3 +28,12 @@ it('coalesces local TP aliases by exact exchange identity without canceling the
+ it('does not turn a prepared NEW order into UNKNOWN while preflight is in flight',async()=>{const state=new RuntimeState(settings),local:any={id:'new',symbol:'BTCUSDT',status:'NEW',exchangeOrderId:null,clientOrderId:'ml_pending',intentId:'i'};state.entryOrders.set(local.id,local);const query=vi.fn(async()=>null);await new ReconciliationService({fetchOpenOrders:vi.fn(async()=>[]),fetchPositions:vi.fn(async()=>[]),findEntryByClientOrderId:query} as never,state,new EventBus(),{ensure:vi.fn()} as never).run();expect(state.entryOrders.get('new')?.status).toBe('NEW');expect(query).not.toHaveBeenCalled();});
+
+ it('retains exact TP cycle through remote adoption instead of copying current position cycle',async()=>{const state=new RuntimeState(settings),local={...tp,cycleId:'original-cycle',clientOrderId:'tp_identity'},remote={...local,cycleId:undefined,id:'tp_identity',positionId:'exchange-unknown'};state.positions.set('p',{...position,cycleId:'different-current-cycle'});state.tpOrders.set(local.id,local);await new ReconciliationService({fetchOpenOrders:vi.fn(async()=>[remote]),fetchPositions:vi.fn(async()=>[position]),cancelTakeProfit:vi.fn()} as never,state,new EventBus(),{ensure:vi.fn()} as never).run();expect(state.tpOrders.get(local.id)?.cycleId).toBe('original-cycle');});
++
++it('does not coerce missing claim facts or missing reduce-only evidence into zero or false',async()=>{
++  const state=new RuntimeState(settings);state.manualOrders.set('m',{id:'m',symbol:'BTCUSDT',status:'UNKNOWN',intentId:'missing',positionId:'p'} as any);
++  const service=new ReconciliationService({fetchOpenOrders:vi.fn(async()=>[]),fetchPositions:vi.fn(async()=>[])} as never,state,new EventBus(),{ensure:vi.fn()} as never,
++    undefined,()=>({evaluatedAt:null,activeClaims:null,activeUnknownClaims:-1}) as any);
++  await service.run();expect(service.health()).toMatchObject({activeEntryClaims:null,activeUnknownEntryClaims:null,activeEntryClaimsObservedAt:null,
++    manualUnknownDetails:[{id:'m',positionId:'p',intentId:'missing',reduceOnly:null}]});
++  expect(state.manualOrders.get('m')?.status).toBe('UNKNOWN');
++});
+diff --git a/apps/engine/src/services/reconciliationService.ts b/apps/engine/src/services/reconciliationService.ts
+index 1b973c9..bd4df07 100644
+--- a/apps/engine/src/services/reconciliationService.ts
++++ b/apps/engine/src/services/reconciliationService.ts
+@@ -123,11 +123,11 @@ this.state.positionFactTimes?.set(key,requestedAt);this.state.positions.set(merg
+       const evaluatedAt=Date.now(),entryRows=[...this.state.entryOrders.values()],manualRows=[...this.state.manualOrders.values()],tpRows=[...this.state.tpOrders.values()],entryUnknown=entryRows.filter(isHistoricalUnknownEntryOrder),manualUnknown=manualRows.filter(order=>order.status==='UNKNOWN'),tpUnknown=tpRows.filter(order=>order.status==='UNKNOWN'),verifiedNoActiveRisk=entryUnknown.filter(order=>hasVerifiedNoActiveRisk(order,evaluatedAt)),unresolvedEntryRisk=entryUnknown.filter(order=>entryOrderOccupiesRisk(order,evaluatedAt));this.historicalUnknownCount=entryUnknown.length+manualUnknown.length+tpUnknown.length;this.verifiedNoActiveRiskUnknownCount=verifiedNoActiveRisk.length;this.activeRiskUnresolvedCount=unresolvedEntryRisk.length+manualUnknown.length+tpUnknown.length;
+       let claims:any=null;try{claims=this.readEntryClaims?.()??null;}catch{claims=null;}
+       this.unknownReadback={evaluatedAt,entryUnknownHistorical:entryUnknown.length,entryUnknownOccupyingRisk:unresolvedEntryRisk.length,entryUnknownProofValid:verifiedNoActiveRisk.length,
+-        activeEntryClaims:Number.isSafeInteger(Number(claims?.activeClaims))?Number(claims.activeClaims):null,
+-        activeUnknownEntryClaims:Number.isSafeInteger(Number(claims?.activeUnknownClaims))?Number(claims.activeUnknownClaims):null,
+-        activeEntryClaimsObservedAt:Number.isFinite(Number(claims?.evaluatedAt))?Number(claims.evaluatedAt):null,
+-        manualUnknown:manualUnknown.length,manualUnknownDetails:manualUnknown.slice(0,64).map(order=>({id:String(order.id).slice(0,160),symbol:String(order.symbol).slice(0,32),reduceOnly:Boolean((order as any).reduceOnly),clientOrderId:nonEmpty(order.clientOrderId)?order.clientOrderId:null,exchangeOrderId:nonEmpty(order.exchangeOrderId)?order.exchangeOrderId:null,positionSide:String((order as any).positionSide??'UNKNOWN')})),
+-        tpUnknown:tpUnknown.length,tpUnknownDetails:tpUnknown.slice(0,64).map(order=>({id:String(order.id).slice(0,160),symbol:String(order.symbol).slice(0,32),positionId:String(order.positionId??'').slice(0,160),clientOrderId:nonEmpty(order.clientOrderId)?order.clientOrderId:null,exchangeOrderId:nonEmpty(order.exchangeOrderId)?order.exchangeOrderId:null})),snapshotConsistency:'BEST_EFFORT_CROSS_STORE'};
++        activeEntryClaims:typeof claims?.activeClaims==='number'&&Number.isSafeInteger(claims.activeClaims)&&claims.activeClaims>=0?claims.activeClaims:null,
++        activeUnknownEntryClaims:typeof claims?.activeUnknownClaims==='number'&&Number.isSafeInteger(claims.activeUnknownClaims)&&claims.activeUnknownClaims>=0?claims.activeUnknownClaims:null,
++        activeEntryClaimsObservedAt:typeof claims?.evaluatedAt==='number'&&Number.isFinite(claims.evaluatedAt)&&claims.evaluatedAt>0?claims.evaluatedAt:null,
++        manualUnknown:manualUnknown.length,manualUnknownDetails:manualUnknown.slice(0,64).map(order=>({id:String(order.id).slice(0,160),symbol:String(order.symbol).slice(0,32),reduceOnly:typeof (order as any).reduceOnly==='boolean'?(order as any).reduceOnly:null,positionId:String((order as any).positionId??'').slice(0,160)||null,intentId:String(order.intentId??'').slice(0,160)||null,clientOrderId:nonEmpty(order.clientOrderId)?String(order.clientOrderId).slice(0,160):null,exchangeOrderId:nonEmpty(order.exchangeOrderId)?String(order.exchangeOrderId).slice(0,160):null,positionSide:String((order as any).positionSide??'UNKNOWN')})),
++        tpUnknown:tpUnknown.length,tpUnknownDetails:tpUnknown.slice(0,64).map(order=>({id:String(order.id).slice(0,160),symbol:String(order.symbol).slice(0,32),positionId:String(order.positionId??'').slice(0,160),clientOrderId:nonEmpty(order.clientOrderId)?String(order.clientOrderId).slice(0,160):null,exchangeOrderId:nonEmpty(order.exchangeOrderId)?String(order.exchangeOrderId).slice(0,160):null})),snapshotConsistency:'BEST_EFFORT_CROSS_STORE'};
+       if(deferredUnknownAudits||suppressedNoRiskEvents){
+         if(now-this.lastUnknownAuditSummaryAt>=this.fullOrderScanIntervalMs){
+           this.lastUnknownAuditSummaryAt=now;

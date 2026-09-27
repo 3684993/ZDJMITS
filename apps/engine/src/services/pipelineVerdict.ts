@@ -84,8 +84,8 @@ const NEXT_ACTION: Record<PipelineVerdict['stage'], (facts: VerdictFacts, code: 
     // to release. A bare reason code is what let five labels stand in for one measurable ceiling.
     const headline = binding
       ? `${binding.code}${binding.gate && binding.gate !== binding.code ? ` · ${binding.gate}` : ''}`
-        + (binding.headroomUsd != null ? ` 可新增 ${binding.headroomUsd.toFixed(2)} USD` : '')
-        + (binding.shortfallUsd != null && binding.shortfallUsd > 0 ? `，需人工先释放 ${binding.shortfallUsd.toFixed(2)} USD` : '')
+        + (binding.headroomUsd != null ? ` 可新增 ${binding.headroomUsd.toFixed(2)} ${binding.unit??'USD'}` : '')
+        + (binding.shortfallUsd != null && binding.shortfallUsd > 0 ? `，需人工先释放 ${binding.shortfallUsd.toFixed(2)} ${binding.unit??'USD'}` : '')
         + (binding.kind === 'SIZE_INDEPENDENT' ? '（与订单规模无关，缩小订单不能通过）' : '')
       : (refusal?.code ?? 'RISK_ADMISSION');
     const coBinding = (refusal?.reasons ?? []).filter((code: string) => code !== binding?.code);
@@ -104,7 +104,9 @@ export function authoritativePipelineVerdict(facts: VerdictFacts): PipelineVerdi
     // The gate may deny the whole book before any candidate reaches `admit` — that is the pre-model capacity
     // stop. Its book-level verdict is then still the first cause: answering "nothing is blocking" because no
     // cycle was ever submitted to admit() would rebuild the same contradiction one layer up.
-    riskAdmission = facts.riskAdmission ?? (gate?.exhausted||gate?.status==='UNAVAILABLE' ? {
+    // A legacy pre-model summary has no numeric pass. Prefer the complete BOOK readback
+    // when that book is refusing; never attach BOOK numbers to the legacy candidate label.
+    riskAdmission = (facts.riskAdmission?.readback||!(gate?.exhausted||gate?.status==='UNAVAILABLE')?facts.riskAdmission:null) ?? (gate?.exhausted||gate?.status==='UNAVAILABLE' ? {
       at: Number(gate.evaluatedAt) || facts.now, symbol: '书本级', stage: 'PORTFOLIO_RISK_ADMISSION',
       code: gate.code ?? 'RISK_ADMISSION_EXHAUSTED', reasons: gate.reasons??[], limits: [],binding:gate.firstBinding??
         {kind: 'OTHER', code: gate.code ?? 'RISK_ADMISSION_EXHAUSTED', gate: gate.gate ?? null, limitUsd: null, usedUsd: null,
@@ -143,11 +145,13 @@ export function authoritativePipelineVerdict(facts: VerdictFacts): PipelineVerdi
       pendingEntries: facts.pendingEntries ?? null, maxPendingEntries: facts.maxPendingEntries ?? null, poolStatus: facts.poolStatus ?? null,
       riskAdmissionStage: admission?.stage ?? null, riskAdmissionSymbol: admission?.symbol ?? null,
       riskAdmissionReasons: admission?.reasons ?? [], riskAdmissionLimits: admission?.limits ?? [],
-      riskAdmissionBinding: admission?.binding ?? null, riskAdmissionGates: admission?.gates ?? [],riskAdmissionReadback:admission?.readback??null,
+      riskAdmissionBinding: admission?.binding ?? null, riskAdmissionGates: admission?.gates ?? [],
+      riskAdmissionReadback:admission?.readback?{...admission.readback,firstBinding:admission.binding??null,gates:admission.gates??[]}:null,
       // A "can add" capacity reading beside a 0% admission is the contradiction this verdict exists to kill,
       // so the number the gate reported is carried into the evidence even when the ratio model is OBSERVE.
-      riskAdmissionCeilingUsdBySide: facts.capacityVisibility?.admission?.ceilingUsdBySide ?? null,
-      riskAdmissionExhausted: facts.capacityVisibility?.admission?.exhausted ?? false,
+      riskAdmissionCeilingUsdBySide: admission?.readback?.scope==='CANDIDATE'?null:gate?.ceilingUsdBySide??null,
+      riskAdmissionExhausted: admission?.readback?.scope==='CANDIDATE'?null:gate?.exhausted??false,
+      bookAdmission:gate,
       riskAdmissionAgeMs: admission?.ageMs ?? null},
     secondary, evaluatedAt: facts.now,
   };

@@ -1,0 +1,530 @@
+{
+  "schema": "V396_READ_ONLY_RUNTIME_OBSERVATION_1",
+  "capturedAt": "2026-09-27T06:33:50.2451836Z",
+  "label": "before",
+  "receiptPath": "D:/MITS/data/runtime/engine-instance.json",
+  "receipt": {
+    "instanceId": "e0919ffb-a97e-4eb6-b4bb-09818a489150",
+    "pid": 18644,
+    "startedAt": 1790466413727,
+    "host": "0.0.0.0",
+    "port": 8080,
+    "version": "3.9.6",
+    "buildId": "3.9.6-fa4fbc8660ef12849644",
+    "artifactHash": "fa4fbc8660ef12849644402e2928ce127406fda654898f79bb8b3d1306aa3e61",
+    "sourceHash": "ad4754a44c2a8b6747f7bac39027032e865dfee156bc096a01c2559cb834a237",
+    "startReason": "MANUAL_START",
+    "lanIps": [
+      "192.168.1.50"
+    ],
+    "restartCount": 191
+  },
+  "process": {
+    "pid": 18644,
+    "parentPid": 17168,
+    "creationDate": "2026-09-27T07:46:52.761034+08:00",
+    "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" \"D:\\MITS-worktrees\\v396-final-convergence-20260922\\apps\\engine\\dist\\main.js\" ",
+    "artifactRoot": "D:\\MITS-worktrees\\v396-final-convergence-20260922"
+  },
+  "listener": [
+    {
+      "LocalAddress": "0.0.0.0",
+      "LocalPort": 8080,
+      "OwningProcess": 18644
+    }
+  ],
+  "runtime": {
+    "pid": 18644,
+    "instanceId": "e0919ffb-a97e-4eb6-b4bb-09818a489150",
+    "buildId": "3.9.6-fa4fbc8660ef12849644",
+    "uptimeMs": 24417155,
+    "runtimeDataDir": "D:\\MITS-worktrees\\v396-final-convergence-20260922\\data",
+    "lastRestartAt": 1790466413727,
+    "restartCount": 191
+  },
+  "settingsVersion": 219,
+  "environment": "TESTNET",
+  "executionMode": "TESTNET_ENABLED",
+  "entryPermission": {
+    "status": "READY",
+    "executionMode": "TESTNET_ENABLED",
+    "autoExecutionMode": "AUTO_RUNNING"
+  },
+  "executionReadiness": {
+    "intent": true,
+    "ready": true,
+    "modelSpendPermitted": true,
+    "blockers": [],
+    "firstBlocker": null,
+    "profileStatus": "READY",
+    "privateFresh": true,
+    "writeLocked": false,
+    "executableCandidateCount": 9,
+    "mode": "EXECUTION_READY",
+    "text": "执行事实齐备：PLACE 可进入 reservation → intent → order submit 链"
+  },
+  "productionWriteBoundary": {
+    "environment": "TESTNET",
+    "executionMode": "TESTNET_ENABLED",
+    "lockedToTestnet": true,
+    "testnetWrites": 0,
+    "productionWrites": 0,
+    "blockedProductionWriteAttempts": 0,
+    "lastWriteAt": null,
+    "lastWritePath": null
+  },
+  "reconciliation": {
+    "status": "DEGRADED",
+    "lastRun": 1790490799756,
+    "lastError": null,
+    "driftCount": 23,
+    "unresolvedDriftCount": 11,
+    "historicalUnknownCount": 48,
+    "activeRiskUnresolvedCount": 1,
+    "verifiedNoActiveRiskUnknownCount": 47,
+    "correctedDifferenceCount": 12,
+    "verifiedOrderFactMismatchCount": 0,
+    "lastFullOrderScanAt": 1790490763311,
+    "fullOrderScanIntervalMs": 300000,
+    "unknownRiskScanIntervalMs": 60000,
+    "unknownRiskEvidenceTtlMs": 300000,
+    "unknownRiskAuditTierIntervalsMs": [
+      300000,
+      900000,
+      1800000
+    ],
+    "unknownRiskAuditsByTier": [
+      1,
+      0,
+      46
+    ],
+    "unknownRiskLastAuditAt": 1790490688109,
+    "unknownRiskNextAuditAt": 1790490644063,
+    "remoteFactAuditsByClassAndTier": [
+      {
+        "class": "unknown",
+        "ladderMs": [
+          300000,
+          900000,
+          1800000
+        ],
+        "tiers": [
+          1,
+          0,
+          46
+        ],
+        "deferred": 41
+      },
+      {
+        "class": "terminal",
+        "ladderMs": [
+          300000,
+          1800000,
+          3600000
+        ],
+        "tiers": [
+          0,
+          0,
+          6
+        ],
+        "deferred": 6
+      },
+      {
+        "class": "neverSubmitted",
+        "ladderMs": [
+          300000,
+          1800000,
+          21600000
+        ],
+        "tiers": [
+          0,
+          0,
+          0
+        ],
+        "deferred": 0
+      }
+    ]
+  },
+  "scopedUnknown": {
+    "evaluatedAt": "NOT_EXPOSED_BY_RUNNING_ARTIFACT",
+    "entryUnknownHistorical": "NOT_EXPOSED_BY_RUNNING_ARTIFACT",
+    "entryUnknownOccupyingRisk": "NOT_EXPOSED_BY_RUNNING_ARTIFACT",
+    "entryUnknownProofValid": "NOT_EXPOSED_BY_RUNNING_ARTIFACT",
+    "activeEntryClaims": "NOT_EXPOSED_BY_RUNNING_ARTIFACT",
+    "activeUnknownEntryClaims": "NOT_EXPOSED_BY_RUNNING_ARTIFACT",
+    "activeEntryClaimsObservedAt": "NOT_EXPOSED_BY_RUNNING_ARTIFACT",
+    "manualUnknown": "NOT_EXPOSED_BY_RUNNING_ARTIFACT",
+    "tpUnknown": "NOT_EXPOSED_BY_RUNNING_ARTIFACT",
+    "snapshotConsistency": "NOT_EXPOSED_BY_RUNNING_ARTIFACT",
+    "activeRiskUnresolvedCountScope": "NOT_EXPOSED_BY_RUNNING_ARTIFACT"
+  },
+  "positions": [
+    {
+      "id": "exchange_DOTUSDT_SHORT",
+      "symbol": "DOTUSDT",
+      "side": "SHORT",
+      "quantity": 10,
+      "tpStatus": "PROTECTED",
+      "tpOrderId": "tp_mu7xbhca_t5tdst86",
+      "managementStatus": "HUMAN_MANAGED"
+    },
+    {
+      "id": "exchange_BNBUSDC_SHORT",
+      "symbol": "BNBUSDC",
+      "side": "SHORT",
+      "quantity": 0.06,
+      "tpStatus": "PROTECTED",
+      "tpOrderId": "tp_mu7xl6de_iat1j6lw",
+      "managementStatus": "HUMAN_MANAGED"
+    },
+    {
+      "id": "exchange_LTCUSDT_SHORT",
+      "symbol": "LTCUSDT",
+      "side": "SHORT",
+      "quantity": 0.36,
+      "tpStatus": "PROTECTED",
+      "tpOrderId": "tp_mu838cfp_ak2t2pds",
+      "managementStatus": "HUMAN_MANAGED"
+    },
+    {
+      "id": "exchange_ONDOUSDT_SHORT",
+      "symbol": "ONDOUSDT",
+      "side": "SHORT",
+      "quantity": 15,
+      "tpStatus": "PROTECTED",
+      "tpOrderId": "tp_mu83fdlx_o0cms2e9",
+      "managementStatus": "HUMAN_MANAGED"
+    },
+    {
+      "id": "exchange_ARBUSDT_SHORT",
+      "symbol": "ARBUSDT",
+      "side": "SHORT",
+      "quantity": 29.8,
+      "tpStatus": "PROTECTED",
+      "tpOrderId": "tp_mu83nl40_kus39ey1",
+      "managementStatus": "HUMAN_MANAGED"
+    },
+    {
+      "id": "exchange_AVAXUSDT_SHORT",
+      "symbol": "AVAXUSDT",
+      "side": "SHORT",
+      "quantity": 400,
+      "tpStatus": "PROTECTED",
+      "tpOrderId": "tp_mu8l75bo_id0bis72",
+      "managementStatus": "HUMAN_MANAGED"
+    },
+    {
+      "id": "exchange_FETUSDT_SHORT",
+      "symbol": "FETUSDT",
+      "side": "SHORT",
+      "quantity": 76,
+      "tpStatus": "PROTECTED",
+      "tpOrderId": "tp_mu95ph6z_rlkcm4sc",
+      "managementStatus": "HUMAN_MANAGED"
+    },
+    {
+      "id": "exchange_ENAUSDT_SHORT",
+      "symbol": "ENAUSDT",
+      "side": "SHORT",
+      "quantity": 1000,
+      "tpStatus": "PROTECTED",
+      "tpOrderId": "tp_mu993i6t_y79wsiar",
+      "managementStatus": "HUMAN_MANAGED"
+    },
+    {
+      "id": "exchange_ZECUSDT_SHORT",
+      "symbol": "ZECUSDT",
+      "side": "SHORT",
+      "quantity": 0.788,
+      "tpStatus": "PROTECTED",
+      "tpOrderId": "tp_mu9lt5jz_64cylkvz",
+      "managementStatus": "HUMAN_MANAGED"
+    },
+    {
+      "id": "exchange_ETHUSDT_LONG",
+      "symbol": "ETHUSDT",
+      "side": "LONG",
+      "quantity": 0.01,
+      "tpStatus": "PROTECTED",
+      "tpOrderId": "tp_mubgf5su_lsh9nfvs",
+      "managementStatus": "HUMAN_MANAGED"
+    },
+    {
+      "id": "exchange_BTCUSDT_LONG",
+      "symbol": "BTCUSDT",
+      "side": "LONG",
+      "quantity": 0.0425,
+      "tpStatus": "PROTECTED",
+      "tpOrderId": "tp_mubpotr7_vyy2ok27",
+      "managementStatus": "HUMAN_MANAGED"
+    },
+    {
+      "id": "exchange_BCHUSDT_LONG",
+      "symbol": "BCHUSDT",
+      "side": "LONG",
+      "quantity": 0.017,
+      "tpStatus": "PROTECTED",
+      "tpOrderId": "tp_mud29mru_0dw5qdwh",
+      "managementStatus": "HUMAN_MANAGED"
+    },
+    {
+      "id": "exchange_PENGUUSDT_SHORT",
+      "symbol": "PENGUUSDT",
+      "side": "SHORT",
+      "quantity": 36332,
+      "tpStatus": "PROTECTED",
+      "tpOrderId": "tp_muhwmlzs_bj38bt6f",
+      "managementStatus": "HUMAN_MANAGED"
+    },
+    {
+      "id": "exchange_UNIUSDT_SHORT",
+      "symbol": "UNIUSDT",
+      "side": "SHORT",
+      "quantity": 117,
+      "tpStatus": "PROTECTED",
+      "tpOrderId": "tp_muhwmr82_u8c5b1x7",
+      "managementStatus": "HUMAN_MANAGED"
+    },
+    {
+      "id": "exchange_NEARUSDT_SHORT",
+      "symbol": "NEARUSDT",
+      "side": "SHORT",
+      "quantity": 2,
+      "tpStatus": "PROTECTED",
+      "tpOrderId": "tp_muhwmtmc_w7giygkr",
+      "managementStatus": "HUMAN_MANAGED"
+    },
+    {
+      "id": "exchange_DOGEUSDC_LONG",
+      "symbol": "DOGEUSDC",
+      "side": "LONG",
+      "quantity": 119,
+      "tpStatus": "PROTECTED",
+      "tpOrderId": "tp_mugb2usr_ekbthgko",
+      "managementStatus": "HUMAN_MANAGED"
+    },
+    {
+      "id": "exchange_FILUSDT_SHORT",
+      "symbol": "FILUSDT",
+      "side": "SHORT",
+      "quantity": 10,
+      "tpStatus": "PROTECTED",
+      "tpOrderId": "tp_muhwnhdk_zoea8tvl",
+      "managementStatus": "HUMAN_MANAGED"
+    },
+    {
+      "id": "exchange_XRPUSDC_LONG",
+      "symbol": "XRPUSDC",
+      "side": "LONG",
+      "quantity": 10,
+      "tpStatus": "PROTECTED",
+      "tpOrderId": "tp_muge12zi_fjtndwpb",
+      "managementStatus": "HUMAN_MANAGED"
+    },
+    {
+      "id": "exchange_SUIUSDC_SHORT",
+      "symbol": "SUIUSDC",
+      "side": "SHORT",
+      "quantity": 10,
+      "tpStatus": "PROTECTED",
+      "tpOrderId": "tp_muhwnlqu_n2vcjda2",
+      "managementStatus": "HUMAN_MANAGED"
+    },
+    {
+      "id": "exchange_APTUSDT_SHORT",
+      "symbol": "APTUSDT",
+      "side": "SHORT",
+      "quantity": 10,
+      "tpStatus": "PROTECTED",
+      "tpOrderId": "tp_muhwokdv_ninh4rcr",
+      "managementStatus": "HUMAN_MANAGED"
+    },
+    {
+      "id": "exchange_INJUSDT_LONG",
+      "symbol": "INJUSDT",
+      "side": "LONG",
+      "quantity": 1,
+      "tpStatus": "PROTECTED",
+      "tpOrderId": "tp_mugif93t_atxdaku7",
+      "managementStatus": "HUMAN_MANAGED"
+    },
+    {
+      "id": "exchange_DASHUSDT_SHORT",
+      "symbol": "DASHUSDT",
+      "side": "SHORT",
+      "quantity": 0.1,
+      "tpStatus": "PROTECTED",
+      "tpOrderId": "tp_muhwou1b_uk40ubi3",
+      "managementStatus": "HUMAN_MANAGED"
+    }
+  ],
+  "takeProfitOrders": [
+    {
+      "id": "tp_muhwou1b_uk40ubi3",
+      "symbol": "DASHUSDT",
+      "positionId": "exchange_DASHUSDT_SHORT",
+      "status": "WORKING",
+      "quantity": 0.1
+    },
+    {
+      "id": "tp_muhwokdv_ninh4rcr",
+      "symbol": "APTUSDT",
+      "positionId": "exchange_APTUSDT_SHORT",
+      "status": "WORKING",
+      "quantity": 10
+    },
+    {
+      "id": "tp_muhwnlqu_n2vcjda2",
+      "symbol": "SUIUSDC",
+      "positionId": "exchange_SUIUSDC_SHORT",
+      "status": "WORKING",
+      "quantity": 10
+    },
+    {
+      "id": "tp_muhwnhdk_zoea8tvl",
+      "symbol": "FILUSDT",
+      "positionId": "exchange_FILUSDT_SHORT",
+      "status": "WORKING",
+      "quantity": 10
+    },
+    {
+      "id": "tp_muhwmtmc_w7giygkr",
+      "symbol": "NEARUSDT",
+      "positionId": "exchange_NEARUSDT_SHORT",
+      "status": "WORKING",
+      "quantity": 2
+    },
+    {
+      "id": "tp_muhwmr82_u8c5b1x7",
+      "symbol": "UNIUSDT",
+      "positionId": "exchange_UNIUSDT_SHORT",
+      "status": "WORKING",
+      "quantity": 117
+    },
+    {
+      "id": "tp_muhwmlzs_bj38bt6f",
+      "symbol": "PENGUUSDT",
+      "positionId": "exchange_PENGUUSDT_SHORT",
+      "status": "WORKING",
+      "quantity": 36332
+    },
+    {
+      "id": "tp_mugif93t_atxdaku7",
+      "symbol": "INJUSDT",
+      "positionId": "exchange_INJUSDT_LONG",
+      "status": "WORKING",
+      "quantity": 1
+    },
+    {
+      "id": "tp_muge12zi_fjtndwpb",
+      "symbol": "XRPUSDC",
+      "positionId": "exchange_XRPUSDC_LONG",
+      "status": "WORKING",
+      "quantity": 10
+    },
+    {
+      "id": "tp_mugb2usr_ekbthgko",
+      "symbol": "DOGEUSDC",
+      "positionId": "exchange_DOGEUSDC_LONG",
+      "status": "WORKING",
+      "quantity": 119
+    },
+    {
+      "id": "tp_mud29mru_0dw5qdwh",
+      "symbol": "BCHUSDT",
+      "positionId": "exchange_BCHUSDT_LONG",
+      "status": "WORKING",
+      "quantity": 0.017
+    },
+    {
+      "id": "tp_mubpotr7_vyy2ok27",
+      "symbol": "BTCUSDT",
+      "positionId": "exchange_BTCUSDT_LONG",
+      "status": "WORKING",
+      "quantity": 0.0425
+    },
+    {
+      "id": "tp_mubgf5su_lsh9nfvs",
+      "symbol": "ETHUSDT",
+      "positionId": "exchange_ETHUSDT_LONG",
+      "status": "WORKING",
+      "quantity": 0.01
+    },
+    {
+      "id": "tp_mu7xbhca_t5tdst86",
+      "symbol": "DOTUSDT",
+      "positionId": "exchange_DOTUSDT_SHORT",
+      "status": "WORKING",
+      "quantity": 10
+    },
+    {
+      "id": "tp_mu7xl6de_iat1j6lw",
+      "symbol": "BNBUSDC",
+      "positionId": "exchange_BNBUSDC_SHORT",
+      "status": "WORKING",
+      "quantity": 0.06
+    },
+    {
+      "id": "tp_mu838cfp_ak2t2pds",
+      "symbol": "LTCUSDT",
+      "positionId": "exchange_LTCUSDT_SHORT",
+      "status": "WORKING",
+      "quantity": 0.36
+    },
+    {
+      "id": "tp_mu83fdlx_o0cms2e9",
+      "symbol": "ONDOUSDT",
+      "positionId": "exchange_ONDOUSDT_SHORT",
+      "status": "WORKING",
+      "quantity": 15
+    },
+    {
+      "id": "tp_mu83nl40_kus39ey1",
+      "symbol": "ARBUSDT",
+      "positionId": "exchange_ARBUSDT_SHORT",
+      "status": "WORKING",
+      "quantity": 29.8
+    },
+    {
+      "id": "tp_mu8l75bo_id0bis72",
+      "symbol": "AVAXUSDT",
+      "positionId": "exchange_AVAXUSDT_SHORT",
+      "status": "WORKING",
+      "quantity": 400
+    },
+    {
+      "id": "tp_mu95ph6z_rlkcm4sc",
+      "symbol": "FETUSDT",
+      "positionId": "exchange_FETUSDT_SHORT",
+      "status": "WORKING",
+      "quantity": 76
+    },
+    {
+      "id": "tp_mu993i6t_y79wsiar",
+      "symbol": "ENAUSDT",
+      "positionId": "exchange_ENAUSDT_SHORT",
+      "status": "WORKING",
+      "quantity": 1000
+    },
+    {
+      "id": "tp_mu9lt5jz_64cylkvz",
+      "symbol": "ZECUSDT",
+      "positionId": "exchange_ZECUSDT_SHORT",
+      "status": "WORKING",
+      "quantity": 0.788
+    }
+  ],
+  "positionCount": 22,
+  "tpOrderCount": 22,
+  "entryOrders": [],
+  "observationOnly": true,
+  "runtimeAcceptance": "NOT_RUN_EXTERNAL",
+  "lifecycle": "NOT_RUN",
+  "deployment": "DEPLOYMENT_NOT_AUTHORIZED",
+  "limitations": [
+    "Two HTTP responses are sequential and not atomic.",
+    "Current artifact may lack new scoped fields; legacy counts are not relabelled.",
+    "Write-boundary counters describe their instrumented path, not total exchange activity.",
+    "No external exchange request or lifecycle command was made by this collector."
+  ]
+}

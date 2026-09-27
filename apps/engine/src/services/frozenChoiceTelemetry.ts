@@ -23,14 +23,16 @@ export function frozenChoiceConversionTelemetry(input:FrozenChoiceConversionInpu
       targetPrice:Number(row.targetPrice??0),targetHorizonMinutes:Number(row.targetHorizonMinutes??0)})),
     selectedQuantityUnits:input.modelSelection.quantityUnits,selectedTargetPrice:input.modelSelection.targetPrice,
     selectedTargetHorizonMinutes:input.modelSelection.targetHorizonMinutes,selectedHorizonMinutes:input.modelSelection.horizonMinutes,
-    selectedCandidateId:selected?.candidateId??null,selectionInGeneratedSet:Boolean(selected),candidateSetSelectionMarkedOffered:Boolean(input.candidateSet.selection?.offered),
+    selectedCandidateId:selected?.candidateId==null?null:String(selected.candidateId).slice(0,80),selectionInGeneratedSet:Boolean(selected),candidateSetSelectionMarkedOffered:Boolean(input.candidateSet.selection?.offered),
     alternativeGeneratedCandidates,refusalHasAlternativeLegalCandidate:input.conversion==='REFUSED'&&alternativeGeneratedCandidates>0,
     postPrimaryAlternativeExistsOnRefusal:input.conversion==='REFUSED'&&input.candidateSet.candidates.length>0&&!selected,
     conversion:input.conversion,
-    reasonClass:input.conversion==='CONVERTED'?'PLAN_ASSEMBLED':input.candidateSet.candidates.length?'PLAN_CONVERSION_REFUSED':'NO_LEGAL_CANDIDATE'};
+    reasonClass:input.conversion==='NOT_ATTEMPTED'?'PLAN_CONVERSION_NOT_ATTEMPTED':input.conversion==='CONVERTED'?'PLAN_ASSEMBLED':input.candidateSet.candidates.length?'PLAN_CONVERSION_REFUSED':'NO_LEGAL_CANDIDATE'};
 }
 
 /** The sink is deliberately behind a catch boundary so diagnostic storage cannot affect the plan path. */
 export function publishFrozenChoiceConversionTelemetry(input:Parameters<typeof frozenChoiceConversionTelemetry>[0],publish:(payload:Record<string,unknown>)=>void){
-  const payload=frozenChoiceConversionTelemetry(input);try{publish(payload);}catch{/* observational event sinks are best effort */}return payload;
+  let payload:Record<string,unknown>|null=null;
+  try{payload=frozenChoiceConversionTelemetry(input);publish(payload);}catch{/* construction and storage are both observational */}
+  return payload;
 }

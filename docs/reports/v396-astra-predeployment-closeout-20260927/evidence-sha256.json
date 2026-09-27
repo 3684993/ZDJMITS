@@ -1,0 +1,173 @@
+{
+  "algorithm": "SHA256 UTF8, optional BOM removed, CRLF normalized to LF; excludes self and later Git receipt",
+  "files": [
+    {
+      "path": "capture-identity.mjs",
+      "normalizedUtf8LfSha256": "285ae1a63ff2ffe07465b5dc923f067f6b3b3dd6bf4ea5d356e290f9230714e7"
+    },
+    {
+      "path": "capture-runtime.ps1",
+      "normalizedUtf8LfSha256": "b3d75eab5709f4a7ec860a63120045fa6744d72d589a912b5cd753d6d146f574"
+    },
+    {
+      "path": "changed-files.tsv",
+      "normalizedUtf8LfSha256": "0ec87dc22c200d5a0727cc30bebcac38c654db3fdf322d99c9973fb58ddcde7d"
+    },
+    {
+      "path": "check-unknown-proof.mjs",
+      "normalizedUtf8LfSha256": "c300cead183ce3b4932bc91ec8eec460ca7bd5461651383e090b5a9a76fb2127"
+    },
+    {
+      "path": "corrective-source.diff.txt",
+      "normalizedUtf8LfSha256": "c603e7078d2dc39075774ece6d63dfc8cd7a6289b24fcf2985b25317fa8d6f04"
+    },
+    {
+      "path": "diff-check-1.txt",
+      "normalizedUtf8LfSha256": "fe30fd7891d360bf9b6abca801a4cec1c1c17d272528827e2274856132757c11"
+    },
+    {
+      "path": "focused-dashboard-1.txt",
+      "normalizedUtf8LfSha256": "cf1059f6c7200c3a1d0701801ecde6aa9d4e4b6b32117d09aec20036d2d2900d"
+    },
+    {
+      "path": "focused-dashboard-2.txt",
+      "normalizedUtf8LfSha256": "a65cdf2603eb861271ee37491b4ae875069c296e3662965f2ca31cc03a6803a1"
+    },
+    {
+      "path": "focused-engine-1.txt",
+      "normalizedUtf8LfSha256": "c942ca01cddc8eb890ec8dcc4ef4f50d335ea2ae2fe2c5c2de28994ac4bf1826"
+    },
+    {
+      "path": "focused-engine-2.txt",
+      "normalizedUtf8LfSha256": "6f021198780493c060ae9d61bca1ea6948e873bcffd280484a52397e702f223a"
+    },
+    {
+      "path": "focused-initial.txt",
+      "normalizedUtf8LfSha256": "e11e4811108db2a0be2980c2aff57f479d7927c4e040eb80b15d3c60fdc914e3"
+    },
+    {
+      "path": "formal-build-1.txt",
+      "normalizedUtf8LfSha256": "75cb8dd53de4847563c9a1f184ca0160e8ffa6b48e6d2b7d2b105f9f35865ef3"
+    },
+    {
+      "path": "formal-build-2.txt",
+      "normalizedUtf8LfSha256": "24470e78f5e89dbc52af76c725af66e2e26a19ebdf35af2128908ea23bfe23cd"
+    },
+    {
+      "path": "full-verify-1.txt",
+      "normalizedUtf8LfSha256": "259c262bc7166c4018e36b5d38ed58005f51b4bccde6b5f69116edd73bf64a2b"
+    },
+    {
+      "path": "full-verify-2.txt",
+      "normalizedUtf8LfSha256": "b8c82496db5ac79e7e0e292771337d8f1c20cf16b79641f0bbc0bede26bde04a"
+    },
+    {
+      "path": "future-runtime-acceptance.md",
+      "normalizedUtf8LfSha256": "b9938b1432b3b9dfc7f37b98689f795976b9b8237f155ec9dd5ba8c5b7b1d599"
+    },
+    {
+      "path": "gate-results.json",
+      "normalizedUtf8LfSha256": "50be22c339f7ea925e562df1e1ac012a6716f24b5baa47cd168b8ce83fcf0fc6"
+    },
+    {
+      "path": "protected-v395-worktree.json",
+      "normalizedUtf8LfSha256": "f964499336267a6f18111e8b2e319972e18d34437aa17711afe862a3e41789b4"
+    },
+    {
+      "path": "REPORT.md",
+      "normalizedUtf8LfSha256": "76021237bd33490a3c2189365a121d7c9b191c936e6cf8f0dea6ea674ca118ab"
+    },
+    {
+      "path": "run-local-gates.mjs",
+      "normalizedUtf8LfSha256": "778c097e3b5bab51c81f5794937a5f1264a8134b47c0bdbb6cb6305447d117bb"
+    },
+    {
+      "path": "runtime-after.json",
+      "normalizedUtf8LfSha256": "ba62a2e6b478ffd908f4bc856f4e7e12cb0d780879f82e7230b4192ba4c6adb0"
+    },
+    {
+      "path": "runtime-before.json",
+      "normalizedUtf8LfSha256": "c62428ba519c1f682626f2436264e0d932685ce522325b869e19b6d4fd14bcf0"
+    },
+    {
+      "path": "runtime-vs-source.json",
+      "normalizedUtf8LfSha256": "b826458a80e2d0162e66883107991eeadc21ba07b139e10ae7f39464dc45133e"
+    },
+    {
+      "path": "s00-1.txt",
+      "normalizedUtf8LfSha256": "79f5f694c4d2021fc95956781d9970b9b0e9ec74941d0a89ef55e91cb861d247"
+    },
+    {
+      "path": "s00-2.txt",
+      "normalizedUtf8LfSha256": "965201e96bdf5ab7c6f829375bb14ffbb53716c67b63ef445f046edccc558223"
+    },
+    {
+      "path": "source-build-identity.json",
+      "normalizedUtf8LfSha256": "32d72c8bff689e7911b70309c798ec20ccd45ce907d3ff01c16745c4f7e262ee"
+    },
+    {
+      "path": "source-map.json",
+      "normalizedUtf8LfSha256": "6f39a046c3f7c0f4c58052dffbd32a04aa5eb676a6e1cd21483aac891a144011"
+    },
+    {
+      "path": "source-review.md",
+      "normalizedUtf8LfSha256": "0ef9638349b73abdc0ec859404357a2a0e699a963e0427c61b6965c901e6fd32"
+    },
+    {
+      "path": "staged-diff-check.txt",
+      "normalizedUtf8LfSha256": "4a9be303d0acf0f6f088edd4de1df61a37fd90092fdff86520ebddec28ed2567"
+    },
+    {
+      "path": "storage-coverage-1.txt",
+      "normalizedUtf8LfSha256": "ca187965aa4107d8e6a93f517209d5c78bc5b3fbfec753c0a5d67e5381317407"
+    },
+    {
+      "path": "storage-coverage.json",
+      "normalizedUtf8LfSha256": "c1a2f32f9ef76133ea9e3f834668b7e53785e80059e86c5eec9f2899478da3eb"
+    },
+    {
+      "path": "typecheck-initial.txt",
+      "normalizedUtf8LfSha256": "1cd39642f7f824b54d7ea3ccb68de1025e971fcaa432f8795eea6c790b58d186"
+    },
+    {
+      "path": "unknown-proof-negative-control.json",
+      "normalizedUtf8LfSha256": "06c87f7b248584abd79dad7dd183f35335d4838edfadaacfb270f7b4ac486545"
+    },
+    {
+      "path": "unknown-proof-negative-control.txt",
+      "normalizedUtf8LfSha256": "faaeeadf87f89955bc1ad57ca6e96043aadb51bb8a476bbb75d03a32458264d8"
+    },
+    {
+      "path": "verify-deps-1.txt",
+      "normalizedUtf8LfSha256": "7faffa8c99c5415fd4b557314f6e71df0c759c1d32d4e2d1d5252332afd016b9"
+    },
+    {
+      "path": "verify-deps-2.txt",
+      "normalizedUtf8LfSha256": "cdb8c84cc07e4f2e4eddf1e7365323e0e4545111046c3fa8dd4c21eb353c75fe"
+    },
+    {
+      "path": "verify-scripts-1.txt",
+      "normalizedUtf8LfSha256": "e0d98c82ce01849ccebf5dab8784e70665a8a936e4904f54fbfda4a7665d9e28"
+    },
+    {
+      "path": "verify-scripts-2.txt",
+      "normalizedUtf8LfSha256": "2e04cacca8157569e19a26cb204542c29bac5a009d2e0aeec5462cba0e71c91c"
+    },
+    {
+      "path": "workspace-tests-1.txt",
+      "normalizedUtf8LfSha256": "63d5e013b4d74d89bb3fa05fdbc46b5d5df0e254b92bfbfee341cd9bcdc08835"
+    },
+    {
+      "path": "workspace-tests-2.txt",
+      "normalizedUtf8LfSha256": "cbe783b39e736e8f41a0ef1087b98dc13249216f788d8d0c9503d61317bbf1c0"
+    },
+    {
+      "path": "workspace-typecheck-1.txt",
+      "normalizedUtf8LfSha256": "5ba1a90b6e46b29877dbe7471a9a261399ebec6f88b0d06bc608e16c11287e75"
+    },
+    {
+      "path": "workspace-typecheck-2.txt",
+      "normalizedUtf8LfSha256": "58fec5801cc4705da7b2b079fd63e2cd853fd92c89ea63e686e86cb10df79ede"
+    }
+  ]
+}

@@ -35,3 +35,15 @@ it('reconciliation telemetry still persists execution facts',async()=>{
  const entry=vi.spyOn(runtime.settingsStore,'saveEntryExecution').mockImplementation(()=>{}),manual=vi.spyOn(runtime.settingsStore,'saveManualExecution').mockImplementation(()=>{});
  runtime.events.publish('RECONCILIATION_COMPLETED',{});expect(entry).toHaveBeenCalled();expect(manual).toHaveBeenCalled();
 });
+
+it('pipeline HTTP preserves the installed admission readback and scoped reconciliation without writes after the initial authority diagnostic',async()=>{
+ dataDir=await mkdtemp(path.join(os.tmpdir(),'zdj-pipeline-readback-'));runtime=await EngineRuntime.createTestHarness({configDir:'../../config',dataDir});
+ const db=(runtime.settingsStore as any).db;
+ const app=express();app.use('/api/v3',createApiRouter(runtime));server=app.listen(0,'127.0.0.1');await new Promise(resolve=>server.once('listening',resolve));
+ // Initial authority refresh may persist its existing cash-flow coverage diagnostic. HTTP reads the same memoized pass.
+ const expected=runtime.pipelineStatus() as any,changes=db.prepare('SELECT total_changes() n').get().n;
+ const response=await fetch(`http://127.0.0.1:${server.address().port}/api/v3/pipeline`),body=await response.json() as any;
+ expect(response.status).toBe(200);expect(body.capacityVisibility.admission.status).toBe(expected.capacityVisibility.admission.status);
+ expect(body.reconciliation).toMatchObject({snapshotConsistency:'BEST_EFFORT_CROSS_STORE',activeRiskUnresolvedCountScope:'ENTRY_OCCUPYING_RISK_PLUS_MANUAL_UNKNOWN_PLUS_TP_UNKNOWN'});
+ expect(db.prepare('SELECT total_changes() n').get().n).toBe(changes);
+});

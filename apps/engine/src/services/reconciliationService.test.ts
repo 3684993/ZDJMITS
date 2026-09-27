@@ -28,3 +28,12 @@ it('coalesces local TP aliases by exact exchange identity without canceling the 
 it('does not turn a prepared NEW order into UNKNOWN while preflight is in flight',async()=>{const state=new RuntimeState(settings),local:any={id:'new',symbol:'BTCUSDT',status:'NEW',exchangeOrderId:null,clientOrderId:'ml_pending',intentId:'i'};state.entryOrders.set(local.id,local);const query=vi.fn(async()=>null);await new ReconciliationService({fetchOpenOrders:vi.fn(async()=>[]),fetchPositions:vi.fn(async()=>[]),findEntryByClientOrderId:query} as never,state,new EventBus(),{ensure:vi.fn()} as never).run();expect(state.entryOrders.get('new')?.status).toBe('NEW');expect(query).not.toHaveBeenCalled();});
 
 it('retains exact TP cycle through remote adoption instead of copying current position cycle',async()=>{const state=new RuntimeState(settings),local={...tp,cycleId:'original-cycle',clientOrderId:'tp_identity'},remote={...local,cycleId:undefined,id:'tp_identity',positionId:'exchange-unknown'};state.positions.set('p',{...position,cycleId:'different-current-cycle'});state.tpOrders.set(local.id,local);await new ReconciliationService({fetchOpenOrders:vi.fn(async()=>[remote]),fetchPositions:vi.fn(async()=>[position]),cancelTakeProfit:vi.fn()} as never,state,new EventBus(),{ensure:vi.fn()} as never).run();expect(state.tpOrders.get(local.id)?.cycleId).toBe('original-cycle');});
+
+it('does not coerce missing claim facts or missing reduce-only evidence into zero or false',async()=>{
+  const state=new RuntimeState(settings);state.manualOrders.set('m',{id:'m',symbol:'BTCUSDT',status:'UNKNOWN',intentId:'missing',positionId:'p'} as any);
+  const service=new ReconciliationService({fetchOpenOrders:vi.fn(async()=>[]),fetchPositions:vi.fn(async()=>[])} as never,state,new EventBus(),{ensure:vi.fn()} as never,
+    undefined,()=>({evaluatedAt:null,activeClaims:null,activeUnknownClaims:-1}) as any);
+  await service.run();expect(service.health()).toMatchObject({activeEntryClaims:null,activeUnknownEntryClaims:null,activeEntryClaimsObservedAt:null,
+    manualUnknownDetails:[{id:'m',positionId:'p',intentId:'missing',reduceOnly:null}]});
+  expect(state.manualOrders.get('m')?.status).toBe('UNKNOWN');
+});

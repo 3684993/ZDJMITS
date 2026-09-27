@@ -31,8 +31,8 @@ const capacityVisibility = computed(() => pipeline.value?.capacityVisibility ?? 
 // G4: the Engine publishes the one authoritative blocker and the next action that matches it. The page
 // renders that pair verbatim and labels everything else subordinate; it must not rank the same facts again.
 const authoritative = computed(() => pipeline.value?.authoritativeBlocker ?? null);
-const admissionReadback = computed(() => authoritative.value?.evidence?.riskAdmissionReadback ?? null);
-const admissionGateLines = computed(() => (authoritative.value?.evidence?.riskAdmissionGates ?? []).slice(0, 12).map((gate: any) =>
+const admissionReadback = computed(() => authoritative.value?.evidence?.riskAdmissionReadback ?? capacityVisibility.value?.admission ?? null);
+const admissionGateLines = computed(() => (admissionReadback.value?.gates ?? authoritative.value?.evidence?.riskAdmissionGates ?? []).slice(0, 12).map((gate: any) =>
   `${gate.name} · ${gate.unit} · used ${gate.usedUsd == null ? "—" : fmt(gate.usedUsd)} / limit ${gate.limitUsd == null ? "—" : fmt(gate.limitUsd)} · headroom ${gate.maxAdditionalUsd == null ? "—" : fmt(gate.maxAdditionalUsd)} · candidate ${gate.candidateImpactUsd == null ? "—" : fmt(gate.candidateImpactUsd)} · shortfall ${(gate.candidateShortfallUsd ?? gate.shortfallUsd) == null ? "—" : fmt(gate.candidateShortfallUsd ?? gate.shortfallUsd)}`));
 const authoritativeStage = computed(() => authoritative.value?.stage ?? "NOT_EVALUATED");
 const authoritativeText = computed(() =>

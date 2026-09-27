@@ -112,7 +112,7 @@ const NOTIONAL_PRECEDENCE=['STRESS_LIMIT:MAX_GROSS_NOTIONAL','HUMAN_POTENTIAL_NO
  * ordering changes which one is named, never what was seen.
  */
 export function rankAdmissionReasons(input:{reasons:string[];gates:AdmissionGateFact[];candidateNotionalUsd?:number}):{ordered:string[];firstBinding:AdmissionFirstBinding|null}{
-  const seen=new Set(input.reasons),candidate=input.candidateNotionalUsd??0;
+  const seen=new Set(input.reasons),candidate=input.candidateNotionalUsd??0,hasCandidate=candidate>0||input.gates.some(gate=>(gate.candidateImpactUsd??0)>0);
   const evidence=[...seen].filter(code=>!SIZE_INDEPENDENT_CODES.includes(code)&&!SUMMARY_CODES.includes(code)&&!DIAGNOSTIC_ONLY_CODES.includes(code)&&!isLimitReason(code)).sort();
   const summary=[...seen].filter(code=>SUMMARY_CODES.includes(code));
   const sizeIndependent=SIZE_INDEPENDENT_CODES.filter(code=>seen.has(code));
@@ -123,7 +123,11 @@ export function rankAdmissionReasons(input:{reasons:string[];gates:AdmissionGate
     if(!left)return right?1:0;
     if(!right)return -1;
     const impact=(gate:AdmissionGateFact)=>gate.candidateImpactUsd??(gate.unit==='NOTIONAL_USD'?candidate:0);
-    const ratio=(gate:AdmissionGateFact)=>impact(gate)>0?gate.maxAdditionalUsd/impact(gate):candidate===0?gate.maxAdditionalUsd:Number.POSITIVE_INFINITY;
+    // Compare dimensionless ratios, never raw margin dollars against notional or loss dollars.
+    // A zero-impact candidate cannot cure an existing breach; otherwise that gate does not bind it.
+    const ratio=(gate:AdmissionGateFact)=>impact(gate)>0?gate.maxAdditionalUsd/impact(gate):hasCandidate?
+      (gate.usedUsd>gate.limitUsd?Number.NEGATIVE_INFINITY:Number.POSITIVE_INFINITY):
+      gate.limitUsd>0?gate.maxAdditionalUsd/gate.limitUsd:gate.usedUsd>0?Number.NEGATIVE_INFINITY:0;
     return ratio(left)-ratio(right)||NOTIONAL_PRECEDENCE.indexOf(a)-NOTIONAL_PRECEDENCE.indexOf(b);
   });
   const known=new Set([...evidence,...summary,...sizeIndependent,...limits]);
@@ -414,7 +418,7 @@ export class PortfolioRiskAdmission {
     const directionLimit=amount(profile.maxDirectionNotionalUsd);
     const marginBufferGates=snapshot.quoteAssets.map(row=>{
       const available=amount(row.availableMarginUsd),limit=available*(1-amount(profile.minMarginBufferPct)),matches=row.asset===String(options.candidateQuoteAsset??'').toUpperCase();
-      return gate(`MIN_MARGIN_BUFFER:${row.asset}`,`STRESS_LIMIT:MIN_MARGIN_BUFFER:${row.asset}`,'MARGIN_USD',limit,amount(row.marginUsedUsd),
+      return gate(`MIN_MARGIN_BUFFER:${row.asset}`,`STRESS_LIMIT:MIN_MARGIN_BUFFER:${row.asset}`,'MARGIN_USD',limit,amount(row.marginUsedUsd)-(matches?candidateMargin:0),
         {candidateImpactUsd:matches?candidateMargin:0});
     });
     return[
@@ -597,11 +601,11 @@ export class PortfolioRiskAdmission {
     const candidateStressLossUsd=Math.max(0,stress.maxStressLossUsd-stressBefore.maxStressLossUsd);
     const sideUsed=candidate.side==='LONG'?baseSnapshot.longNotionalUsd:baseSnapshot.shortNotionalUsd,
       otherSideUsed=candidate.side==='LONG'?baseSnapshot.shortNotionalUsd:baseSnapshot.longNotionalUsd,
-      candidateMovesDirectionMaximum=sideUsed+candidateNotional>=otherSideUsed;
+      candidateDirectionImpact=Math.max(sideUsed+candidateNotional,otherSideUsed)-Math.max(sideUsed,otherSideUsed);
     const gates=this.gateFacts(snapshot,stress,capacity,profile,{candidateNotionalUsd:candidateNotional,candidateMarginUsd:candidateMargin,candidateStressLossUsd,
-      candidateSide:candidate.side,clusterKey:correlationClusterOf(String(candidate.symbol),correlation)});
+      candidateSide:candidate.side,candidateQuoteAsset:candidate.quoteAsset,clusterKey:correlationClusterOf(String(candidate.symbol),correlation)});
     const directionGate=gates.find(row=>row.name==='MAX_DIRECTION_NOTIONAL');
-      if(directionGate){directionGate.candidateImpactUsd=candidateMovesDirectionMaximum?candidateNotional:0;directionGate.candidateShortfallUsd=Math.max(0,directionGate.usedUsd+directionGate.candidateImpactUsd-directionGate.limitUsd);}
+      if(directionGate){directionGate.candidateImpactUsd=candidateDirectionImpact;directionGate.candidateShortfallUsd=Math.max(0,directionGate.usedUsd+directionGate.candidateImpactUsd-directionGate.limitUsd);}
     const ranked=rankAdmissionReasons({reasons,gates});
     if(reasons.length){
       const ordered=ranked.ordered;

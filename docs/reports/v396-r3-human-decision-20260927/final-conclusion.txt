@@ -1,0 +1,3 @@
+V396_R1_R2_R3_IMPLEMENTED_LOCAL_PASS
+
+The revised R3 timing contract is implemented as observational telemetry. Focused Engine tests (8), Engine typecheck, and Engine build pass. No Primary prompt/input, decision schema, retry, selection, or execution behavior changed. See REPORT.md and gate-results.json.

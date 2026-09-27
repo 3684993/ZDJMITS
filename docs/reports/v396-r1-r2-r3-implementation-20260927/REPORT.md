@@ -1,12 +1,12 @@
 # V3.9.6 R1–R3 implementation report
 
-Status: `IMPLEMENTATION_BLOCKED_NEEDS_HUMAN_REVIEW`
+Status: `V396_R1_R2_R3_IMPLEMENTED_LOCAL_PASS`
 
 Base: `origin/main` commit `b8396402dd0dd7a4b05dea11feb4384329020fb6` at implementation start. Work was performed on the clean `main` checkout after fetching all remotes; the original dirty v395 worktree was not accessed or changed.
 
 ## Scope and decision
 
-This pass implements the authorized R1 scoped UNKNOWN reconciliation and R2 single authoritative numeric admission readback. For R3 it adds frozen-choice conversion telemetry that observes the quantity interval visible to Primary and the system-generated candidate set created after Primary returns. It truthfully records `candidateIdsPresentedToPrimary: []` and `offerTiming: POST_PRIMARY_VALIDATION`. Therefore R3 is only partially satisfied: no legal candidate IDs were presented to Primary. The authorized plan simultaneously requires frozen-choice telemetry only/no prompt or decision-contract changes and telemetry about offered IDs. In this architecture, candidate IDs do not exist until after Primary validation, so the two requirements cannot both be met without changing the prompt/contract or falsifying telemetry. No such change was made. Human review must resolve this boundary before this work can be declared fully implemented.
+The original implementation at `902d83d` completed R1/R2 and observational R3, but its gate was conservatively marked blocked while the offered-ID requirement was unresolved. The human decision at `d971519` revised R3 to accept the actual pre/post-Primary timing and preserve the Primary contract. The follow-up report records the minimal telemetry clarifications and focused local gates; no R1/R2 implementation was repeated.
 
 ## R1 — scoped UNKNOWN reconciliation
 
@@ -24,7 +24,7 @@ No Settings values, approved limits, governance mode, economic thresholds, lever
 
 A bounded, sanitized, best-effort telemetry event records the quantity interval visible to Primary, the generated candidate-set identity and alternatives, the selected choice, and whether the selection maps exactly into the frozen set. It has no return path into prompts, candidate generation, admission, verdicts, retries, reservations, routing, or order submission. Telemetry failures are swallowed. No order is manufactured and no execution policy is changed.
 
-The candidate IDs are generated after Primary responds. They therefore cannot truthfully be reported as IDs offered to Primary in this implementation. Full R3 completion needs a human decision on whether to authorize a prompt/contract change that exposes the frozen IDs or to revise the telemetry requirement to measure post-response candidate conversion only.
+The candidate IDs are generated after Primary responds. The original telemetry was truthful about this ordering, and the subsequent human decision explicitly accepts `NOT_APPLICABLE / IDS_NOT_YET_EXISTING` for Primary-visible IDs. The reviewed schema now labels `PRE_PRIMARY_VISIBLE` and `POST_PRIMARY_GENERATED` scopes, records the existing execution-envelope identity and selected target price/horizons, and reports alternatives in the same post-Primary candidate set on refusal. See the R3 decision addendum and committed gate evidence for this final pass.
 
 ## Validation
 
@@ -43,6 +43,6 @@ The S00 fixture is a 2026-09-23 isolated test snapshot with zero positions, pend
 
 No deployment, lifecycle action, exchange write, order-generation attempt, GitHub Actions run, or runtime acceptance was performed. `DEPLOYMENT_NOT_AUTHORIZED`; runtime acceptance is `NOT_RUN_EXTERNAL`; GitHub Actions are `NOT_RUN_BILLING_LIMIT`. The original v395 worktree and its 48 uncommitted files remain untouched.
 
-## Required human follow-up
+## R3 decision addendum
 
-Resolve the R3 boundary between “frozen-choice conversion telemetry only” and “candidate IDs offered to Primary.” Until that decision is made, the final gate remains `IMPLEMENTATION_BLOCKED_NEEDS_HUMAN_REVIEW`, despite passing local verification and completion of R1/R2 plus observational R3 instrumentation.
+The human decision in `docs/plans/v396/CODEX-V396-R3-HUMAN-DECISION-20260927.md` resolves the earlier boundary by accepting the real pre/post-Primary timing. The final R3 review and evidence are in `docs/reports/v396-r3-human-decision-20260927/REPORT.md`. R1/R2 were not reimplemented in this follow-up.

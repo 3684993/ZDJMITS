@@ -1,0 +1,16 @@
+apps/engine/src/services/entryCoordinator.ts
+apps/engine/src/services/frozenChoiceTelemetry.test.ts
+apps/engine/src/services/frozenChoiceTelemetry.ts
+docs/reports/v396-r1-r2-r3-implementation-20260927/REPORT.md
+docs/reports/v396-r1-r2-r3-implementation-20260927/final-conclusion.txt
+docs/reports/v396-r1-r2-r3-implementation-20260927/gate-results.json
+docs/reports/v396-r1-r2-r3-implementation-20260927/source-artifact-manifest.json
+docs/reports/v396-r3-human-decision-20260927/REPORT.md
+docs/reports/v396-r3-human-decision-20260927/changed-files.txt
+docs/reports/v396-r3-human-decision-20260927/engine-build.log
+docs/reports/v396-r3-human-decision-20260927/engine-typecheck.log
+docs/reports/v396-r3-human-decision-20260927/final-conclusion.txt
+docs/reports/v396-r3-human-decision-20260927/focused-engine.log
+docs/reports/v396-r3-human-decision-20260927/gate-results.json
+docs/reports/v396-r3-human-decision-20260927/git-diff-check.log
+docs/reports/v396-r3-human-decision-20260927/source-artifact-manifest.json

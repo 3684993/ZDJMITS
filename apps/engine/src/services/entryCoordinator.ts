@@ -661,9 +661,12 @@ export class EntryCoordinator {
       selection:{quantityUnits:Number(input.d.quantityUnits??0),targetPrice:Number(input.d.profitTakePlan?.targetPrice??0),
         targetHorizonMinutes:Number(input.d.profitTakePlan?.targetHorizonMinutes??0)},
     });
-    const selectedChoice={quantityUnits:Number(input.d.quantityUnits??0),targetPrice:Number(input.d.profitTakePlan?.targetPrice??0),targetHorizonMinutes:Number(input.d.profitTakePlan?.targetHorizonMinutes??0)};
+    const selectedChoice={quantityUnits:Number(input.d.quantityUnits??0),targetPrice:Number(input.d.profitTakePlan?.targetPrice??0),
+      targetHorizonMinutes:Number(input.d.profitTakePlan?.targetHorizonMinutes??0),horizonMinutes:Number(input.d.horizonMinutes??0)};
     const recordConversion=(conversion:'CONVERTED'|'REFUSED'|'NOT_ATTEMPTED')=>publishFrozenChoiceConversionTelemetry({
-      evaluatedAt:now,snapshotHash:String(facts.snapshotHash),side:input.side,modelSelection:selectedChoice,
+      evaluatedAt:now,prePrimaryFactIdentity:String(sideEnvelope.riskHeadroom?.factVersion??''),snapshotHash:String(facts.snapshotHash),side:input.side,
+      executionEnvelopeIdentity:{version:String(input.executionEnvelope.version),symbol:input.symbol,
+        createdAt:Number(input.executionEnvelope.createdAt),expiresAt:Number(input.executionEnvelope.expiresAt),side:input.side},modelSelection:selectedChoice,
       modelVisibleQuantityRange:{min:Number(sideEnvelope.minQuantityUnits??1),max:Number(sideEnvelope.maxQuantityUnits??0)},candidateSet,conversion},payload=>this.events.publish('FROZEN_CHOICE_CONVERSION_OBSERVED',payload,input.symbol));
     const refs=[...(input.d.profitTakePlan?.evidenceRefs??[]),...(input.d.supportingEvidenceRefs??[])].map(String);
     const evidence=this.evaluatePlanEvidenceRefs(refs,input.symbol,now);

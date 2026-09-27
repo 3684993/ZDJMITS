@@ -1,0 +1,40 @@
+{
+  "schema": "V396_R3_HUMAN_DECISION_GATE_V1",
+  "status": "V396_R1_R2_R3_IMPLEMENTED_LOCAL_PASS",
+  "decisionCommit": "d971519c618cba19dceaa59d08f2d9dc0a5d9370",
+  "implementationBase": "902d83ddca690d10136aa81eaf920a33fd7ec959",
+  "changedR1R2": false,
+  "promptInputSchemaExecutionBehaviorChanged": false,
+  "focusedTests": {
+    "files": 2,
+    "status": "PASS",
+    "tests": 8,
+    "command": "npm test -w @zdj/engine -- --run src/services/frozenChoiceTelemetry.test.ts src/services/entryExecutionChain.test.ts"
+  },
+  "engineTypecheck": {
+    "status": "PASS",
+    "command": "npm run typecheck -w @zdj/engine"
+  },
+  "engineBuild": {
+    "status": "PASS",
+    "command": "npm run build -w @zdj/engine"
+  },
+  "gitDiffCheck": {
+    "status": "PASS",
+    "command": "git diff --cached --check"
+  },
+  "fullSuite": "NOT_RERUN_SCOPE_LIMITED",
+  "S00": "NOT_RERUN",
+  "runtimeAcceptance": "NOT_RUN_EXTERNAL",
+  "deployment": "DEPLOYMENT_NOT_AUTHORIZED",
+  "lifecycle": "NOT_RUN",
+  "exchangeWrites": "NOT_RUN",
+  "githubActions": "NOT_RUN_BILLING_LIMIT",
+  "r3Decision": "PRE_PRIMARY_VISIBLE quantity/fact/envelope identity; POST_PRIMARY_GENERATED candidate IDs and conversion/alternatives",
+  "candidateIdsPresentedToPrimary": {
+    "status": "NOT_APPLICABLE",
+    "value": [],
+    "reason": "IDS_NOT_YET_EXISTING"
+  },
+  "humanDecisionNoContractChange": true
+}

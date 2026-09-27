@@ -1,6 +1,6 @@
 {
   "schema": "V396_R1_R2_R3_IMPLEMENTATION_GATES_V1",
-  "status": "IMPLEMENTATION_BLOCKED_NEEDS_HUMAN_REVIEW",
+  "status": "V396_R1_R2_R3_IMPLEMENTED_LOCAL_PASS",
   "baseCommit": "b8396402dd0dd7a4b05dea11feb4384329020fb6",
   "fetchAllPrune": "PASS",
   "focusedEngine": {
@@ -43,12 +43,17 @@
   },
   "R1": "IMPLEMENTED_LOCAL_PASS",
   "R2": "IMPLEMENTED_LOCAL_PASS",
-  "R3": "PARTIAL_HUMAN_REVIEW_REQUIRED",
+  "R3": "IMPLEMENTED_LOCAL_PASS",
   "runtimeAcceptance": "NOT_RUN_EXTERNAL",
   "deployment": "DEPLOYMENT_NOT_AUTHORIZED",
   "lifecycle": "NOT_RUN",
   "exchangeWrites": "NOT_RUN",
   "githubActions": "NOT_RUN_BILLING_LIMIT",
   "originalV395Worktree": "UNTOUCHED",
-  "limitation": "Primary receives a legal quantity interval, while candidate IDs are generated after Primary returns. Full offered-ID telemetry conflicts with the no-prompt/no-contract-change authorization."
+  "limitation": "Primary receives a legal quantity interval, while candidate IDs are generated after Primary returns. Full offered-ID telemetry conflicts with the no-prompt/no-contract-change authorization.",
+  "r3HumanDecision": "R3_REQUIREMENT_REVISED_NO_PROMPT_CONTRACT_CHANGE",
+  "r3ReviewReport": "docs/reports/v396-r3-human-decision-20260927/REPORT.md",
+  "r3RequiredFocusedTests": "PASS: 8",
+  "r3EngineTypecheck": "PASS",
+  "r3EngineBuild": "PASS"
 }

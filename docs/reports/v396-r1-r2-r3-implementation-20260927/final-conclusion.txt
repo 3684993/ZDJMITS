@@ -1,3 +1,3 @@
-IMPLEMENTATION_BLOCKED_NEEDS_HUMAN_REVIEW
+V396_R1_R2_R3_IMPLEMENTED_LOCAL_PASS
 
-R1 and R2 are implemented and locally verified. R3 telemetry is observational and records truthful post-Primary candidate-set conversion, but the requirement to record candidate IDs presented to Primary cannot be met under the simultaneously authorized no-prompt/no-contract-change boundary: the IDs are created after Primary returns. No runtime acceptance, deployment, or lifecycle action was performed. See REPORT.md and gate-results.json.
+R1/R2 remain implemented from 902d83d. The accepted R3 timing contract and focused follow-up verification are documented in ../v396-r3-human-decision-20260927/REPORT.md. No runtime acceptance, deployment, or lifecycle action was performed.

@@ -2,7 +2,7 @@
   "schema": "V396_IMPLEMENTATION_ARTIFACT_MANIFEST_V1",
   "baseCommit": "b8396402dd0dd7a4b05dea11feb4384329020fb6",
   "workingBranch": "main",
-  "status": "IMPLEMENTATION_BLOCKED_NEEDS_HUMAN_REVIEW",
+  "status": "V396_R1_R2_R3_IMPLEMENTED_LOCAL_PASS",
   "sourceAndEvidence": [
     {
       "path": "apps/dashboard/src/views/OverviewView.capacity.test.ts",
@@ -78,7 +78,7 @@
     },
     {
       "path": "docs/reports/v396-r1-r2-r3-implementation-20260927/final-conclusion.txt",
-      "sha256": "4f26fbc84af42fdf0982270911cc446e39b3c3cabccad260d9979c76b0491e52"
+      "sha256": "f8e1ba0b100f88fff6ab05d1838101e0d570c89f16b3e047d68fdc32c3435c9a"
     },
     {
       "path": "docs/reports/v396-r1-r2-r3-implementation-20260927/focused-dashboard.log",
@@ -98,7 +98,7 @@
     },
     {
       "path": "docs/reports/v396-r1-r2-r3-implementation-20260927/gate-results.json",
-      "sha256": "31f4f6fb98ca4352385c5ed18bdc6b264b47301e6d5bac0961d16c93ea4f7c30"
+      "sha256": "3eb0a7a7b9fd4e8ea0800f2b44d78097611a169a1a4faf964665205e180ef39e"
     },
     {
       "path": "docs/reports/v396-r1-r2-r3-implementation-20260927/git-diff-check.log",
@@ -106,7 +106,7 @@
     },
     {
       "path": "docs/reports/v396-r1-r2-r3-implementation-20260927/REPORT.md",
-      "sha256": "9fd031a03762ca533adb30da9779b3b6b05d98ebe89d46dc5f96d5b422d1b16a"
+      "sha256": "75f9d423411ee36103c2a0195f7e1f2411356b0a992e1ad9f24c21b1e98797ea"
     },
     {
       "path": "docs/reports/v396-r1-r2-r3-implementation-20260927/S00-fixture-manifest.json",

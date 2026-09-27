@@ -1,100 +1,163 @@
-# V3.9.6 Root-Cause Fix and Readback Plan — Human Review Required
+# V3.9.6 Root-Cause Fix and Readback Plan — Revised for Human Confirmation
 
 **State:** `PLAN_READY_FOR_HUMAN_CONFIRMATION`
-**This document is a plan only. Nothing below was implemented, built, deployed, or run against the Engine.**
-**Plan basis:** `docs/reports/v396-root-cause-plan-review-20260927/REPORT.md` and its timestamped evidence.
-**Base commit audited:** `40d13d3f999d9cb0b2e8a11975df892dd899adf5` (`origin/main` at investigation start).
+**This is a plan only. Product implementation, Settings changes, limit changes, deployment, lifecycle actions, and exchange writes are not authorized by this document.**
+**Review basis:** `docs/plans/v396/CODEX-V396-ROOT-CAUSE-IMPLEMENTATION-PLAN-REVIEW-20260927.md` and `docs/reports/v396-root-cause-plan-review-20260927/REPORT.md`.
+**Base source reviewed:** `origin/main` at `8cc1dc8d3cf5449a8cc16ad97b3d3989dadf4081`.
 
-## Objective and scope
+## Objective
 
-Make the operator's Entry-risk explanation numerically complete and separate Entry exposure from manual/TP UNKNOWN execution state, while retaining one portfolio risk authority and all current hard-risk behavior. No work item may increase Entry throughput by widening a limit, clearing an UNKNOWN, resizing the model's immutable quantity, bypassing JIT admission, or inventing an order.
+After a separate human confirmation, implement only the read-only observability work in this plan: scoped UNKNOWN reconciliation (R1), a single authoritative numeric admission readback (R2), and frozen-choice conversion telemetry (R3). Preserve the existing admission policy and fail-closed behavior. Do not add a risk approval layer or use telemetry to change an execution decision.
 
-The current report found no proven P1/P2 admission bug and no live P3 false-zero. Gross capacity is correctly zero while the measured canonical position book exceeds its approved cap. The likely implementation is therefore narrow and observational; if tests show a current failing invariant, pause and update the plan for human review before changing execution behavior.
+The accepted root-cause review found that the P1 count mismatch is a domain/scope difference; P2 zero capacity is `POLICY-BINDING, NOT A BUG`; P4 lacks a complete numeric runtime readback; and P6 duplicate labels are not independent hard vetoes under the reviewed settings. P3 did not reproduce a live frozen-choice conversion loss. See the committed report and replay evidence for time and source limitations.
 
-## A. Mandatory correctness fixes
+## Confirmed decisions C1–C4
 
-The investigation did **not** establish a mandatory risk-policy or order-path correctness fix. Preserve current behavior. These two narrow semantic protections are mandatory if the readback work is implemented:
+These decisions are accepted inputs to this revised plan and are not reopened as questions:
 
-1. **Keep UNKNOWN populations separate.** Add named per-domain facts for `entryUnknownHistorical`, `entryUnknownOccupyingRisk`, `entryUnknownProofValid`, `manualUnknown`, `tpUnknown`, and `activeEntryClaims`. Retain current broad closeout aggregate only as an explicitly named compatibility field if a consumer depends on it. Do not clear/alter any UNKNOWN row, order identity, proof, reservation, claim latch, or manual/TP execution behavior.
-2. **Keep the existing gate the only authority.** API and dashboard work must pass through the installed `PortfolioRiskAdmission` result. They may format/expose its returned facts; they must not recalculate limits, stress, candidate impact, used exposure, or first-cause ranking.
+- **C1 — compatibility aggregate:** retain `activeRiskUnresolvedCount` temporarily for backward compatibility only. Mark it explicitly as a mixed-scope compatibility field and deprecated for new consumers. New consumers must use scoped fields. Before eventual removal, inventory and migrate every consumer.
+- **C2 — manual UNKNOWN:** a reduce-only manual exit UNKNOWN remains unresolved in manual execution/position reconciliation, but does not alone veto unrelated NEW Entry. A same-domain identity/position conflict or another independent execution-risk fact may still block under its own existing rule. Do not weaken position, TP, ownership, or manual reconciliation.
+- **C3 — frozen choice:** no prompt/contract change, candidate substitution, retry, clamp, resize, or other behavior change. Add R3 observability only, so a later authorized runtime window can measure whether frozen model selection loses conversions.
+- **C4 — policy unchanged:** no approved risk threshold, governance mode, leverage rule, economics threshold, Entry Safety mode, Production/Testnet boundary, or Settings value changes.
 
-No required storage migration or settings change is identified.
+## A. Mandatory correctness invariants
 
-## B. Observability fixes
+The review established no mandatory risk-policy or order-path behavior fix. Keep current behavior and enforce these invariants while implementing observability:
 
-### B1. Domain-specific UNKNOWN reconciliation output
+1. Keep one installed `PortfolioRiskAdmission` as the sole risk authority. API and dashboard code may serialize/format its returned facts but may not independently recalculate exposure, capacity, stress, candidate impact, gate ordering, or first cause.
+2. Preserve `UNKNOWN` records and audit history. Never coerce UNKNOWN to zero, clear a row to reconcile counters, release an Entry claim without current matching proof, or omit a qualifying unresolved pending order.
+3. Keep manual reduce-only UNKNOWN separate from Entry occupancy while preserving its unresolved state in its own domain. Do not change position/TP/ownership/reduce-only execution semantics.
+4. Telemetry must be observational. It cannot modify an immutable plan, authorize or mutate quantity/side/target/horizon, reserve capacity, bypass JIT admission, trigger a second model call, or create/place/submit an order.
 
-**Expected product files:**
+No Settings or database schema migration is planned. If implementation discovers a need for a persistent schema change or execution-path behavior change, stop and obtain a revised human-approved plan first.
 
-- `apps/engine/src/services/reconciliationService.ts` — retain existing strict occupancy predicate and compute separately named Entry/manual/TP categories from the same reconciled in-memory state and one `now` value.
-- `apps/engine/src/api/router.ts` — expose these new facts through the existing read-only closeout/diagnostic response without adding a write route.
-- `apps/engine/src/config/settingsStore.ts` — only if the readback needs to expose manual claims alongside existing Entry claim stats; read both existing tables with SELECTs. Do not change schemas or `saveEntryExecution`/`saveManualExecution` behavior.
-- `apps/engine/src/services/reconciliationUnknownRisk.test.ts`, `apps/engine/src/services/reconciliationCoverageContract.test.ts`, `apps/engine/src/services/executionLifecycle.integration.test.ts` — assert separate counts and preservation of the reduce-only manual UNKNOWN while 47 proven Entry UNKNOWN records do not occupy Entry risk.
+## B. Implementation scope
 
-**Acceptance invariant:** for an input with 47 UNKNOWN Entry orders carrying currently valid matching proofs, zero Entry active claims, one UNKNOWN manual `reduceOnly` exit, and zero UNKNOWN TP rows: `entryUnknownHistorical=47`, `entryUnknownOccupyingRisk=0`, `manualUnknown=1`, `tpUnknown=0`, and `activeEntryClaims=0`. The Entry capacity projection remains zero pending Entries, while the separate manual-execution UNKNOWN remains visible and unresolved. Add hostile cases for expired/mismatched proof and for late exchange risk so they remain fail-closed.
+### B1 / R1 — scoped UNKNOWN reconciliation contract
 
-### B2. One numeric book-level and candidate-level risk readback
+Add an additive, read-only reconciliation response with these exact fields and semantics:
 
-**Expected product files:**
+| Field | Definition |
+|---|---|
+| `evaluatedAt` | One reconciliation evaluation timestamp in epoch milliseconds; use the same `now` for all time-sensitive proof predicates and age calculations in that result. |
+| `entryUnknownHistorical` | Count Entry order records classified historical UNKNOWN by the existing source predicate, including terminal orders whose exchange terminal status remains UNKNOWN. This is history count, not active exposure. |
+| `entryUnknownOccupyingRisk` | Count Entry orders that pass the existing `entryOrderOccupiesRisk(order, evaluatedAt)` predicate. Do not derive this from status alone or claim counts. |
+| `entryUnknownProofValid` | Count historical Entry UNKNOWN rows whose `hasVerifiedNoActiveRisk(order, evaluatedAt)` proof is valid, identity-tombstone matched, and unexpired at `evaluatedAt`. This count never rewrites the historical row. |
+| `activeEntryClaims` | Count active durable Entry claims from `entry_execution_tasks` at the read time, with `status=UNKNOWN` separately exposed as `activeUnknownEntryClaims` if present. This is execution-scope ownership, not a replacement for Entry-order occupancy. |
+| `manualUnknown` | Count manual execution/order records whose current status is UNKNOWN in the manual execution domain. Preserve `reduceOnly`, identity and position linkage in bounded detail where needed; this is not an Entry pending count. |
+| `tpUnknown` | Count TP order records with UNKNOWN status in the TP domain. Do not infer a TP fill, absence, or coverage from this count. |
+| `activeRiskUnresolvedCount` | Compatibility-only aggregate retaining its existing mixed scope: Entry UNKNOWN occupying risk + manual UNKNOWN + TP UNKNOWN. Include `scopeLabel: "ENTRY_MANUAL_TP_MIXED_COMPAT"` and a deprecation note that new consumers must use the scoped fields. Do not present it as Entry occupancy. |
+| `snapshotConsistency` | Identify the source snapshot/read consistency. Capture each in-memory collection once and use one `evaluatedAt`. If durable claim storage cannot be read atomically with in-memory reconciliation, state `BEST_EFFORT_CROSS_STORE` and include its read timestamp; do not imply a transactional cross-store snapshot. |
 
-- `apps/engine/src/services/admissionCapacityReader.ts` — extend the existing typed view/summary to carry `riskGeneration`, `snapshotHash`, `profileVersion`, completeness/coverage status, quote asset/leverage provenance where candidate-specific, `gates`, evidence blockers, size-independent refusals, and `firstBinding` as returned by the installed ledger. Preserve `AVAILABLE`, `UNAVAILABLE`, and `NOT_APPLICABLE` distinctions.
-- `apps/engine/src/services/pipelineVerdict.ts` — book-level fallback must carry the actual gate facts and blocker lists rather than synthesizing an empty array around a refusal. Keep existing precedence and single first cause; do not run another ranking pass.
-- `apps/engine/src/runtime/appRuntime.ts`, `apps/engine/src/api/projections.ts`, and the existing read-only route in `apps/engine/src/api/router.ts` — serialize one evaluated-at snapshot including included pending Entry identities/status/proof validity/dedupe lineage, versions, gate facts, side ceilings, and first binding. Use existing response surfaces if possible; any new API response is additive and read-only.
-- `apps/dashboard/src/views/OverviewView.vue` and `apps/dashboard/src/views/OverviewView.capacity.test.ts` — render the returned authoritative first binding and exact unit/used/limit/headroom/shortfall. Render unavailable distinctly; do not calculate or infer capacity in the browser.
-- `apps/engine/src/services/placeToSubmitCapacityTruth.test.ts`, `apps/engine/src/services/pipelineVerdict.test.ts`, and `apps/engine/src/services/grossRiskCapacityVisibility.test.ts` — cover book-level no-candidate zero capacity with populated gates; candidate-specific incremental impact; both direction ceilings; proof-valid and proof-expired UNKNOWN; and unavailable admission. Keep the 5-second capacity memo observational only; `admit()` continues to recompute JIT facts.
+**Expected files:**
 
-**Proposed gate item contract:** `{name, unit, used, limit, headroom, shortfall, candidateImpact, clusterKey}`. USD values must carry `NOTIONAL_USD`, `MARGIN_USD`, or `LOSS_USD` units; count/evidence refusals must state `SIZE_INDEPENDENT` or `EVIDENCE` and must not manufacture a dollar shortfall. For each gate, `headroom=max(0,limit-used)`; candidate shortfall is `max(0,used+candidateImpact-limit)`. The first binding and all accompanying gate facts must come from the same evaluator pass and timestamp.
+- `apps/engine/src/services/reconciliationService.ts`: compute and retain these scoped facts from one captured state view and the shared `evaluatedAt`. Keep current occupancy/proof predicates and the compatibility formula.
+- `apps/engine/src/config/settingsStore.ts`: expose the existing durable Entry claim count through a read-only query only if required to name `activeEntryClaims`; do not change its schema or save/release behavior. If the store read has a later timestamp than reconciliation, expose the timestamp/consistency label.
+- `apps/engine/src/api/router.ts`: add the fields to the existing read-only reconciliation/closeout response. No write route.
+- Tests: `apps/engine/src/services/reconciliationUnknownRisk.test.ts`, `reconciliationCoverageContract.test.ts`, `reconciliationService.test.ts`, and `executionLifecycle.integration.test.ts`.
 
-No SQLite schema change or new risk-approval layer is expected. If consumers require durable readback history, first return it in the current read-only API; persistence requires a separate human-approved migration design.
+**Acceptance cases:**
 
-## C. Policy questions requiring human approval
+- The accepted replay shape yields `entryUnknownHistorical=47`, `entryUnknownOccupyingRisk=0`, `entryUnknownProofValid=47`, `activeEntryClaims=0`, `manualUnknown=1`, `tpUnknown=0`, and compatibility aggregate `1`, while preserving the manual reduce-only UNKNOWN row.
+- Expired proof, mismatched identity tombstone, attributed position, late exchange order/fill, or incomplete remote facts keep the Entry row risk-bearing under the existing predicate.
+- Counts and compatibility label are returned together with `evaluatedAt` and truthful snapshot consistency. No test deletes/rewrites UNKNOWN history to make fields agree.
+- A consumer inventory records all current uses of `activeRiskUnresolvedCount`; new consumers use scoped fields. Removal of the compatibility aggregate is not part of this scope.
 
-The implementation must not silently decide these policy questions:
+### B2 / R2 — single authoritative numeric admission readback
 
-1. Should `activeRiskUnresolvedCount` remain as a compatibility aggregate, or should it be deprecated after consumers migrate to scoped Entry/manual/TP counts? Recommended: preserve temporarily, explicitly label its mixed scope, and remove only after consumer inventory.
-2. Should any UNKNOWN manual execution block all unrelated new Entry? Current recommendation: **no** for a reduce-only close command with no same-identity conflict; keep it visible and fail-closed within its own execution/position reconciliation. Any wider veto changes the admission policy and needs explicit approval.
-3. Should the model be given a precomputed allowed candidate list/IDs so it can select a legal smaller quantity when its current request falls outside the legal envelope? Current plan does not change frozen quantity semantics or silently clamp. If desired, approve a separate prompt/contract design with explicit candidate authorization and measured conversion-loss evidence.
-4. Confirm no thresholds, governance mode, Settings, or trade-size behavior are to change in this scope. Recommended: confirm they remain unchanged.
+Make the existing admission evaluator result available end-to-end for both book and candidate scopes. Each response represents one evaluator pass. Every surface showing the same decision must carry the same timestamp, risk generation, snapshot hash, profile/authority versions, gates, ceiling, and first binding from that pass. A book result and candidate result may be separate passes/scopes; they must not be merged or presented as if they were one calculation.
 
-No item in Section C is authorized by approval of this document alone unless the human explicitly confirms that item.
+**Required additive response fields:**
 
-## D. Items requiring no code change
+- `evaluatedAt` and `scope: "BOOK" | "CANDIDATE"`;
+- `riskGeneration`, `snapshotHash`, settings version, profile version, and portfolio risk authority versions/content identity;
+- for candidate scope: candidate symbol, side, quote asset, leverage and provenance/fact status;
+- completeness/coverage and relevant owner/account/private-fact freshness provenance;
+- included pending Entry/reservation lineages with identity, source, status, remaining quantity/notional, reservation/order dedupe link, and whether an UNKNOWN no-risk proof is valid at this `evaluatedAt`;
+- every gate item with `name`, `unit`, `used`, `limit`, `headroom`, `candidateImpact`, and `candidateShortfall`; include cluster identity where relevant;
+- `maxNewRiskNotionalUsdBySide` and the existing ceiling values;
+- the authoritative `firstBinding` result and its exact unit/numbers/detail;
+- explicit status distinguishing `AVAILABLE` with positive capacity, valid `ZERO` capacity, and `UNAVAILABLE`/failed admission. `NOT_APPLICABLE` may remain for analysis-only mode, clearly distinguished from available capacity.
 
-- P2 over-limit behavior: preserve existing positions and protection; zero new Entry headroom until current canonical exposure falls under the approved limit through ordinary activity.
-- Gross accounting: count positions plus currently occupying pending Entry/reservation exposure once; an order replaces its linked reservation; unproven UNKNOWN remains included.
-- Existing strict no-risk proof requirements: matching identity, `activeRiskExposure=false`, `VERIFIED_NO_ACTIVE_RISK`, and unexpired proof at the evaluator timestamp. Preserve historical UNKNOWN rows and audit history.
-- Existing directional, mapped cluster, quote-margin, verified leverage, capital-at-risk, stress-loss, private-account, legal exchange filters, JIT snapshot, reservation, and idempotency conditions.
-- Current source duplicate suppression when human notional or unmapped cluster limits are equal to/wider than gross; ACK-age telemetry; diagnostic-only snapshot summary labels; SHADOW historical reachability behavior. Keep concrete evidence blockers and the mechanical `$1`/`0.15%` profit floor.
-- Do not auto-clamp a model quantity, switch sides, broaden horizon/target, make up facts, synthesize PLACE/submit/fill events, or alter exchange filters.
+For a numeric gate, preserve the source evaluator's unit and values. Where derived for serialization only, `headroom=max(0,limit-used)` and candidate shortfall is `max(0,used+candidateImpact-limit)`. Do not translate `LOSS_USD` or `MARGIN_USD` into notional room in the UI. Size-independent and evidence refusals retain their category and do not receive a fabricated dollar shortfall.
 
-## Implementation sequence after human confirmation
+**Expected files:**
 
-1. **Start on current `main`:** fetch all remotes; fast-forward local `main` only if clean and behind; verify remote/local base and clean status. Do not create a long-lived implementation branch. Stop if concurrent main changes invalidate the inspected source map.
-2. **Record baseline:** commit-independent evidence with commit SHA, settings version/profile version, current read-only position/pending/proof summary, existing positions/TP coverage, and current Engine PID/instance/build identity as observable. Do not call an exchange write or lifecycle action for this snapshot.
-3. **Implement B1 first:** add scoped counters and focused hostile tests; do not alter the entry occupancy predicate.
-4. **Implement B2:** extend the single admission readback end-to-end. Preserve source-returned timestamps/versions/gates and demonstrate no second authority in the dashboard. Update API schema/types if present; fields must be additive and read-only.
-5. **Local verification:**
-   - install/use only the repository-pinned dependencies already available; no runtime data directory.
-   - run focused Engine tests for reconciliation UNKNOWN/lifecycle, `placeToSubmitCapacityTruth`, `pipelineVerdict`, `grossRiskCapacityVisibility`, and candidate quantity/horizon feasibility.
-   - run `npm run typecheck`.
-   - run `npm run verify:scripts` and `npm run verify:deps` if required by the changed workspaces.
-   - run complete `npm test` and `npm run build` for all workspaces, then `npm run verify` (which includes these repository checks) if workspace resources permit. Record exit codes and logs; do not use hosted CI/GitHub Actions.
-   - run the committed S00 replay helper against an explicitly selected offline snapshot, check SQLite read-only safety, compare the serialized gate arithmetic to the source result, and record `NOT_RUN_EXTERNAL` for unobserved exchange facts.
-6. **Review/commit/push:** inspect `git diff --check`, status, exact product diff and evidence; commit implementation plus tests/readback evidence to `main`; fetch again; verify ancestry/fast-forward-only state; push only after the human-approved implementation scope and all required checks pass. Store reports, JSON/CSV evidence, scripts, build identity manifest, and results in-repository.
-7. **Runtime acceptance is a separate human-authorized phase:** local build success does not establish loaded runtime identity. If the accepted code requires a new deployed artifact, one controlled stop followed by one `MANUAL_START` is required to prove the new process loaded it. This plan itself does not authorize that lifecycle action. Obtain explicit approval for that exact stop/start before any attempt.
+- `apps/engine/src/services/admissionCapacityReader.ts`: widen the typed book view to preserve evaluator-returned version, gate, coverage and lineage facts; retain UNAVAILABLE vs valid ZERO.
+- `apps/engine/src/services/pipelineVerdict.ts`: carry the exact book-level gate facts and refusal category through its fallback; do not synthesize empty gates/reasons for a populated book refusal or rerank a second cause.
+- `apps/engine/src/runtime/appRuntime.ts`, `apps/engine/src/api/projections.ts`, and existing read-only API route(s) in `apps/engine/src/api/router.ts`: serialize the same pass and add fields without a write API.
+- `apps/dashboard/src/views/OverviewView.vue`: format the returned facts only. No client-side admission formula, first-cause ranking, or synthesized capacity.
+- Tests: `apps/engine/src/services/placeToSubmitCapacityTruth.test.ts`, `pipelineVerdict.test.ts`, `grossRiskCapacityVisibility.test.ts`, relevant projection/API tests, and `apps/dashboard/src/views/OverviewView.capacity.test.ts`.
 
-## Later runtime acceptance and rollback
+**Acceptance cases:** book zero due to gross over-limit includes used/limit/zero headroom/shortfall and versions; candidate denial includes candidate impact and candidate shortfall; side ceilings remain separately represented; pending UNKNOWN participates only when the existing proof predicate says it occupies risk; unavailable authority stays distinct from a valid zero; every adapter/dashboard field matches the originating evaluator pass. Keep the five-second memo informational; final `admit()` continues to re-evaluate current facts for JIT authorization.
 
-Before the separately authorized transition: verify fetched `origin/main == local HEAD`, clean worktree, full local gate results, artifact SHA-256 and build manifest tied to the commit, old PID/instance and old artifact hash, TESTNET/write-lock state, current Settings version, every current position's TP/protection invariant, and all active/UNKNOWN Entry/manual/TP facts. If an unresolved fact could be harmed by stopping, do not proceed; report it for human action.
+No second ledger, secondary approval, persisted risk authority, or SQLite schema migration is permitted.
 
-After approval and one controlled stop/manual start via the repository's approved start script, record new PID, instance, source hash and artifact hash; verify the instance reports the exact built identity. Confirm Settings version is unchanged, protected positions/TP coverage remain intact, UNKNOWN history is preserved, no unintended Entry submit occurred, and one timestamped read-only API response contains numerically consistent authoritative gates. A failed health check is reported for manual intervention; no automatic kill or restart.
+### B3 / R3 — frozen-choice conversion telemetry only
 
-Rollback requires separate human lifecycle authorization. Pin the prior validated artifact hash and deployment manifest before the forward transition. If acceptance fails, stop only with explicit authorization, restore the pinned artifact, and manually start once if explicitly authorized. Preserve runtime data and UNKNOWN history; do not reverse Settings/data migrations because none are in scope. Capture the failed identity/readback and rollback result in committed evidence.
+Add bounded, sanitized diagnostics around the existing Primary offered-choice and selection evaluation. This is not an admission input and must not change the candidate/plan result.
 
-## Required implementation-phase repository evidence
+**Required telemetry fields:**
 
-Commit/push all retained reports, source diff summary, scoped P1 test result, numeric P4 readback JSON/CSV, reproducible S00 replay script/output, typecheck/test/verify/build exit codes, source-to-artifact SHA manifest, and final runtime acceptance/rollback conclusion. No required evidence may remain only in a local or temporary directory. GitHub Actions remain `NOT_RUN_BILLING_LIMIT` unless the human later changes that constraint.
+- `evaluatedAt` and candidate-set `snapshotHash`/fact identity;
+- offered legal candidate IDs and count, plus the offered legal quantity-unit interval(s) (and side/horizon identity needed to interpret the set);
+- selected candidate ID and model-selected quantity;
+- whether the selected ID/quantity was inside the offered set;
+- if rejected, whether one or more other executable legal candidates existed in that same offered set/snapshot;
+- a bounded rejection class/code from the existing refusal result.
 
-## Human decisions needed to leave PLAN_READY
+Do not record prompts, raw model output, account secrets, or unbounded payloads. The event/storage path must be diagnostic-only and cannot feed `PipelineVerdict`, `PortfolioRiskAdmission`, routing, execution readiness, or later automatic retry.
 
-Confirm the four Section C decisions, approve the exact B1/B2 scope, and separately authorize any later Engine stop/start if runtime acceptance is requested. Until those confirmations, implementation, Settings changes, deployment, and lifecycle actions remain out of scope.
+**Expected files, confirmed during implementation against the current tree:**
+
+- `apps/engine/src/services/entryCoordinator.ts` and/or `apps/engine/src/services/tradePlanService.ts`: emit the telemetry from the existing immutable candidate-set and selection/refusal objects without changing them.
+- Use an existing bounded diagnostic event/projection path; only add a schema/type field if necessary. Do not persist an unbounded new history table in this scope.
+- Tests: `apps/engine/src/services/j3TradePlanHostile.test.ts` plus a focused telemetry contract test at the actual event producer.
+
+**Acceptance tests must prove:** valid telemetry accurately states offered and selected facts; out-of-set selection reports alternatives only from that same evaluated set; changing telemetry sinks does not alter plan bytes or result; quantity, side, target and horizon are unchanged; no second model call/retry occurs; no reservation or order is authorized/created by telemetry; all hard risk/JIT gates still run as before.
+
+## C. Confirmed policy decisions applied by the plan
+
+This section records approved constraints, not open questions:
+
+- Keep the mixed-scope `activeRiskUnresolvedCount` only as the clearly labeled compatibility/deprecated field described by C1/R1; inventory consumers before any future removal.
+- A manual reduce-only UNKNOWN alone does not globally block unrelated Entry, per C2; same-identity/position conflict and independent existing safety facts remain binding.
+- C3/R3 is observability only. Frozen selection stays immutable; no alternative selection, model retry, or silent resize.
+- C4 leaves every approved limit, Settings value, mode, leverage and economics rule unchanged.
+- No deployment, lifecycle, exchange write, or production action is included.
+
+## D. Behavior requiring no change
+
+- P2 over-limit semantics: do not forcibly close existing positions; new Entry headroom remains zero while current canonical gross is above the unchanged approved cap.
+- Count current Entry positions plus qualifying pending Entry/reservation risk once; an order replaces its linked reservation; preserve unproven UNKNOWN as risk-bearing.
+- Preserve matching identity-bound, unexpired no-active-risk proof semantics, durable claim release latch, reservation/idempotency, final JIT admission, verified leverage/margin/stress, market/private freshness, exchange legal filters, ownership, and TP protection.
+- Preserve human-notional and unmapped-cluster duplicate suppression when equal to/wider than gross; ACK-age diagnostics; summary-wrapper handling while concrete blockers stay fail-closed; SHADOW statistical economics. The mechanical `$1` / `0.15%` floor remains.
+- No threshold widening, policy change, Settings write, invented facts, forced candidate/order/fill, quantity clamp, side switch, target/horizon rewrite, or exchange-filter change.
+
+## Implementation sequence after the next human confirmation
+
+1. Fetch all remotes and start from current `main`. Fast-forward only if the worktree is clean and behind. Do not create a new long-lived branch. Stop if new source changes invalidate this plan's file/test map.
+2. Record a read-only baseline and source identity: commit, settings/profile versions, position/pending/proof summary, TP/protection coverage, and observable PID/instance/build identity. No lifecycle or exchange write for collection.
+3. Implement R1/B1 scoped reconciliation and tests first. Verify C1/C2 invariants and truthful cross-store consistency labeling.
+4. Implement R2/B2 numeric readback through the existing evaluator pass; test book and candidate pass identity, API shape, projection and dashboard formatting. No second authority.
+5. Implement R3 telemetry only. Verify the selection/plan output and authorization are byte/behavior unchanged under telemetry capture, rejection, or sink failure.
+6. Run all validation locally: focused UNKNOWN/lifecycle, admission/readback, pipeline/projection/dashboard and frozen-choice telemetry tests; `npm run typecheck`; `npm run verify:scripts`; `npm run verify:deps` where affected; complete workspace `npm test` and `npm run build`; and repository `npm run verify` if available/resource-permitting. Record exact commands, exit codes and retained logs. GitHub Actions stay `NOT_RUN_BILLING_LIMIT`.
+7. Run the committed S00 replay helper on an explicitly selected offline snapshot. Validate it remains read-only; compare output serialization to the source evaluator; mark unobserved exchange/runtime facts `NOT_RUN_EXTERNAL` rather than inferring them.
+8. Review `git diff --check`, clean/status, exact changed file list, tests and evidence. Commit and push only the human-approved implementation and its complete repository evidence to GitHub `main`; fetch again and verify remote `main` contains the pushed commit by fast-forward ancestry. Do not squash, rebase, or force push.
+9. Stop after local implementation gates unless separate explicit deployment/lifecycle authorization arrives. A successful local build is not runtime acceptance.
+
+## Runtime acceptance and rollback boundary
+
+No stop/start/restart is authorized by this plan. If a later human explicitly authorizes runtime acceptance for a built change, one controlled stop followed by one `MANUAL_START` is required to prove the new artifact is loaded. Before that authorization is exercised, verify exact `origin/main == local HEAD`, clean worktree, complete local gates, source-to-artifact SHA manifest, old PID/instance/artifact identity, TESTNET/write-lock state, unchanged Settings version, position and TP/protection invariants, and all Entry/manual/TP UNKNOWN facts. If an unresolved fact could be harmed by stopping, stop and report it for human decision.
+
+After the separately authorized transition, record the new PID/instance/source/artifact identity; confirm Settings version unchanged, protected positions/TP coverage intact, UNKNOWN history retained, and no unintended Entry submit. Obtain one timestamped read-only admission readback and verify evaluator/gate arithmetic and hashes. A failed health probe requires reporting/manual intervention; never kill or automatically restart.
+
+Rollback also needs separate explicit lifecycle authorization. Pin the previous validated artifact hash/manifest before deployment. If acceptance fails, restore only that pinned artifact under the authorized manual sequence; preserve runtime data, Settings and UNKNOWN history. Commit the failure/readback/rollback evidence. Do not attempt an unapproved Settings or data migration rollback.
+
+## Persistent repository evidence requirement
+
+This plan revision itself must be committed and pushed to GitHub `main`; after implementation is later confirmed and authorized, **all persistent reports, evidence JSON/CSV/TXT, reusable scripts, tests and gate results, source/artifact manifests, and final conclusions must also be written into the repository and committed/pushed to GitHub `main`**. No required artifact may remain only in a local checkout, temporary directory, or `C:\...`/`D:\...` path. The final implementation report must link committed repository artifacts and state exact commit identities. GitHub Actions remain `NOT_RUN_BILLING_LIMIT`.
+
+## Required stop state
+
+The C1–C4 decisions and R1–R3 plan requirements are now incorporated. This revision is still awaiting human confirmation before any implementation. Stop at `PLAN_READY_FOR_HUMAN_CONFIRMATION`.

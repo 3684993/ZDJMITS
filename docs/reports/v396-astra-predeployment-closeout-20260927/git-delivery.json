@@ -1,0 +1,23 @@
+{
+  "schema": "V396_GITHUB_DELIVERY_1",
+  "verifiedAt": "2026-09-27T06:44:11.263400+00:00",
+  "remote": "https://github.com/3684993/ZDJMITS",
+  "branch": "main",
+  "sourceAndEvidenceCommit": "cfdd8dc3e9f909c6b79743de30c67a34bed244de",
+  "observedOriginMain": "cfdd8dc3e9f909c6b79743de30c67a34bed244de",
+  "headEqualsOriginMain": true,
+  "cleanAfterSourcePush": true,
+  "push": "PASS normal git push origin main; no force/rebase/squash",
+  "sourceDiffSha256": "236f106f1165242c6b41efa749fdddb4a249c476fc72e1ec761035d306ee533d",
+  "committedSourceMatchesFinalGates": true,
+  "committedDiffCheckExitCode": 0,
+  "evidenceFilesHashVerified": 42,
+  "status": "V396_ASTRA_PREDEPLOYMENT_BLOCKED",
+  "blockingFinding": "B1 incomplete UNKNOWN proof validation; HUMAN_DECISION_REQUIRED",
+  "githubActions": "NOT_RUN_BILLING_LIMIT",
+  "lifecycle": "NOT_RUN",
+  "deployment": "DEPLOYMENT_NOT_AUTHORIZED",
+  "runtimeAcceptance": "NOT_RUN_EXTERNAL",
+  "reportUrl": "https://github.com/3684993/ZDJMITS/blob/cfdd8dc3e9f909c6b79743de30c67a34bed244de/docs/reports/v396-astra-predeployment-closeout-20260927/REPORT.md",
+  "receiptCommit": "This follow-up commit contains only this receipt. Source and gates remain at sourceAndEvidenceCommit. It is then pushed normally to main; no recursive self-commit assertion."
+}

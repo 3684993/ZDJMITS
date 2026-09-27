@@ -46,7 +46,7 @@ const unknownOrder = (id: string, symbol: string, {quantity = 1, price = 100, le
     status: 'UNKNOWN', createdAt: 1, updatedAt: 1, absoluteExpiresAt: 999_999_999_999, repriceCount: 0, intentId: `intent_${id}`, reservationId, reachability: 1};
   if (proof !== 'none') {
     row.activeRiskExposure = false;
-    row.activeRiskEvidence = {status: proof === 'unverified' ? 'UNVERIFIED' : 'VERIFIED_NO_ACTIVE_RISK', sources: ['BINANCE_EXACT_ORDER_NOT_FOUND'], checkedAt: now - 1_000,
+    row.activeRiskEvidence = {status: proof === 'unverified' ? 'UNVERIFIED' : 'VERIFIED_NO_ACTIVE_RISK', sources: ['BINANCE_EXACT_ORDER_NOT_FOUND','BINANCE_OPEN_ORDERS_IDENTITY_ABSENT','BINANCE_USER_TRADES_IDENTITY_ABSENT','BINANCE_ALL_ORDERS_IDENTITY_ABSENT','BINANCE_LONG_SHORT_POSITION_ZERO'], checkedAt: now - 1_000,
       validUntil: proof === 'expired' ? now - 1 : now + 60_000, identityTombstone: proof === 'tombstone' ? `ENTRY:${symbol}:other` : tombstone};
   }
   return row as never;

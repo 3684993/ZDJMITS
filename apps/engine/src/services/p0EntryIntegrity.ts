@@ -1,3 +1,4 @@
+import {hasVerifiedNoActiveRisk} from './entryRiskOccupancy.js';
 import { resolveUnderlying } from '@zdj/core';
 
 const activeStatuses=new Set(['NEW','SUBMITTING','UNKNOWN','WORKING','PARTIALLY_FILLED']);
@@ -15,10 +16,10 @@ export function p0EntryIntegrity(input:{entryOrders:any[];entryIntents:any[];fil
     return count+input.primaryRuns.filter(run=>run.role==='PRIMARY_BRAIN'&&run.id!==owner&&run.startedAt>=anchor&&resolveUnderlying(run.symbol)===underlying).length;
   },0);
   const verifiedRiskRelease=(event:any)=>{
-    const p=event.payload,e=p?.evidence,at=Number(event.ts),symbol=p?.symbol??event.symbol,identity=p?.clientOrderId??p?.exchangeOrderId??p?.orderId;
-    const required=['BINANCE_EXACT_ORDER_NOT_FOUND','BINANCE_OPEN_ORDERS_IDENTITY_ABSENT','BINANCE_USER_TRADES_IDENTITY_ABSENT','BINANCE_ALL_ORDERS_IDENTITY_ABSENT'];
-    const positionRiskExcluded=e?.sources?.includes('BINANCE_LONG_SHORT_POSITION_ZERO')||e?.sources?.includes('POSITION_PRESENT_PROVEN_OTHER_CYCLE');
-    return p?.occupancyReleased===true&&p.activeRiskExposure===false&&e?.status==='VERIFIED_NO_ACTIVE_RISK'&&Number.isFinite(at)&&Number.isFinite(e.checkedAt)&&e.checkedAt<=at&&e.validUntil>at&&symbol&&identity&&e.identityTombstone===`ENTRY:${String(symbol).toUpperCase()}:${identity}`&&required.every(source=>e.sources?.includes(source))&&positionRiskExcluded;
+    const p=event.payload,symbol=p?.symbol??event.symbol;
+    return p?.occupancyReleased===true&&hasVerifiedNoActiveRisk({id:p?.orderId,symbol,clientOrderId:p?.clientOrderId,
+      exchangeOrderId:p?.exchangeOrderId,filledQuantity:0,activeRiskExposure:p?.activeRiskExposure,activeRiskEvidence:p?.evidence,
+      remoteAudit:{tier:p?.auditTier??0}} as any,event.ts);
   };
   const releaseEvents=input.events.filter(event=>event.type==='ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED'&&event.payload?.occupancyReleased!==false);
   const verifiedNoActiveRiskReleaseCount=releaseEvents.filter(verifiedRiskRelease).length;

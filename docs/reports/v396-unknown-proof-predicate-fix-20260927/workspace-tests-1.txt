@@ -1,0 +1,971 @@
+
+> zdj-mits-v3@3.9.6 test
+> npm run test -ws --if-present
+
+
+> @zdj/contracts@3.9.6 test
+> vitest run --passWithNoTests
+
+
+ RUN  v3.2.4 C:/Users/5700x/.codex/worktrees/v396-entry-frequency-risk-audit/MITS/packages/contracts
+
+No test files found, exiting with code 0
+
+
+> @zdj/core@3.9.6 test
+> vitest run
+
+
+ RUN  v3.2.4 C:/Users/5700x/.codex/worktrees/v396-entry-frequency-risk-audit/MITS/packages/core
+
+ ✓ src/tradingCost.test.ts (4 tests) 6ms
+ ✓ src/tpStructure.test.ts (3 tests) 5ms
+ ✓ src/makerPricing.test.ts (5 tests) 73ms
+ ✓ src/selection.test.ts (9 tests) 19ms
+ ✓ src/assetAdmission.test.ts (3 tests) 3ms
+ ✓ src/pool.test.ts (11 tests) 9ms
+ ✓ src/portfolio.test.ts (15 tests) 16ms
+ ✓ src/capitalAdmission.test.ts (8 tests) 12ms
+
+ Test Files  8 passed (8)
+      Tests  58 passed (58)
+   Start at  19:33:09
+   Duration  892ms (transform 773ms, setup 0ms, collect 2.03s, tests 143ms, environment 2ms, prepare 1.61s)
+
+
+> @zdj/dashboard@3.9.6 test
+> vitest run
+
+
+ RUN  v3.2.4 C:/Users/5700x/.codex/worktrees/v396-entry-frequency-risk-audit/MITS/apps/dashboard
+
+ ✓ src/positionModel.test.ts (4 tests) 7ms
+ ✓ src/governancePanel.test.ts (8 tests) 11ms
+ ✓ src/navigation.test.ts (2 tests) 7ms
+ ✓ src/stores/system.test.ts (1 test) 5ms
+ ✓ src/blacklistInput.test.ts (2 tests) 7ms
+ ✓ src/tradingParameterProfiles.test.ts (2 tests) 5ms
+ ✓ src/requestId.test.ts (3 tests) 5ms
+ ✓ src/candidateBlacklistDto.test.ts (2 tests) 6ms
+ ✓ src/views/OverviewView.test.ts (1 test) 71ms
+ ✓ src/views/BrainView.execution.test.ts (3 tests) 140ms
+ ✓ src/views/OverviewView.conversion.test.ts (5 tests) 159ms
+ ✓ src/views/BrainView.auditDrawer.test.ts (6 tests) 200ms
+ ✓ src/views/SettingsView.exposure.test.ts (7 tests) 215ms
+ ✓ src/views/OverviewView.capacity.test.ts (17 tests) 383ms
+
+ Test Files  14 passed (14)
+      Tests  63 passed (63)
+   Start at  19:33:11
+   Duration  2.69s (transform 1.41s, setup 0ms, collect 4.51s, tests 1.22s, environment 7.44s, prepare 3.01s)
+
+
+> @zdj/engine@3.9.6 test
+> vitest run
+
+VITEST_TEST_TIMEOUT=5000 CI=
+
+ RUN  v3.2.4 C:/Users/5700x/.codex/worktrees/v396-entry-frequency-risk-audit/MITS/apps/engine
+
+ ✓ src/services/ownershipJournal.test.ts (9 tests) 748ms
+ ✓ src/services/ownershipS02Acceptance.test.ts (11 tests) 1530ms
+ ✓ src/config/portfolioRiskAuthorityStore.test.ts (6 tests) 1507ms
+   ✓ one commit, or nothing > H11 rolls every byte back when a dataset row write fails mid-transaction  309ms
+ ✓ src/services/s04ExitCoordination.test.ts (11 tests) 2117ms
+   ✓ S04 unified exit coordination > S04-T06 a crash at PREPARED, SUBMITTING or WORKING recovers with a stable identity  394ms
+   ✓ S04 unified exit coordination > S04-T08 both position modes, precision and exposure rules refuse rather than add risk  441ms
+ ✓ src/api/projections.test.ts (3 tests) 1047ms
+   ✓ dashboard projections > schema-validates one server-side snapshot and redacts audit secrets  640ms
+   ✓ projects exchange-complete trading PnL while funding keeps canonical net unavailable  400ms
+ ✓ src/services/c3RuntimeWiringHostile.test.ts (48 tests) 1840ms
+ ✓ src/api/brainRunExecution.test.ts (4 tests) 1223ms
+   ✓ V3.9.6 durable run -> execution result > RX-01 a natural PLACE that reaches the wire is journalled as 已挂单 with its whole lineage  388ms
+   ✓ V3.9.6 durable run -> execution result > RX-02 a legal wait for price says 等待价格 and never borrows 已挂单  312ms
+   ✓ V3.9.6 durable run -> execution result > RX-04 the funnel reads the same journal the rows do  305ms
+ ✓ src/services/executionReadiness.test.ts (18 tests) 1294ms
+ ✓ src/services/eipService.test.ts (3 tests) 1650ms
+   ✓ EIP 3.0 evidence gates > builds seven-timeframe evidence within a bounded prompt size  635ms
+   ✓ EIP 3.0 evidence gates > fails closed for stale price but sanitizes stale derivatives as contextual evidence  515ms
+   ✓ EIP 3.0 evidence gates > sanitizes stale partial derivatives before classifying exchange availability, while preserving fresh partial facts  498ms
+ ✓ src/services/executionLifecycle.integration.test.ts (17 tests) 2666ms
+   ✓ V3.9.5 durable entry claim release on proven no-active-risk > keeps blocking a second intent while an UNKNOWN submission is still genuinely unresolved  300ms
+ ✓ src/services/j4ReviewMemoryHostile.test.ts (50 tests) 2879ms
+ ✓ src/config/exposureCapacityPolicyMigration.test.ts (3 tests) 653ms
+ ✓ src/services/j5SettingsGovernanceHostile.test.ts (24 tests) 947ms
+ ✓ src/services/eipResidentInspection.test.ts (1 test) 629ms
+   ✓ resident EIP inspection > keeps a held contract available to read-only EIP inspection  628ms
+ ✓ src/services/unknownProofHydration.test.ts (7 tests) 983ms
+ ✓ src/api/assetDirectoryReview.test.ts (1 test) 549ms
+   ✓ asset directory review API > keeps default preview read-only and only explicitly applies through governance CAS  547ms
+ ✓ src/services/j1AiExitConsumer.test.ts (12 tests) 505ms
+   ✓ J1 runtime consumer > binds the management deadline in the same turn as the fill and never re-fixes it  447ms
+ ✓ src/runtime/restartRecovery.test.ts (1 test) 517ms
+   ✓ runtime restart recovery > restores test-harness facts only through the explicit harness factory  515ms
+ ✓ src/services/tradingQualityIntegration.test.ts (29 tests) 3677ms
+   ✓ prospective runtime evidence collection > 100 unchanged SHADOW candidates do not create poll-time observation rows  648ms
+   ✓ prospective runtime evidence collection > samples an exactly attributed filled Entry and ignores idle-symbol quotes  486ms
+   ✓ prospective runtime evidence collection > restarts an unfinished exact observation window without changing its identity  496ms
+   ✓ prospective runtime evidence collection > stops raw path writes and episode recomputation after the observation horizon matures  756ms
+   ✓ prospective runtime evidence collection > automatically persists fills/episodes, samples fresh quote timestamps and survives reopen  581ms
+ ✓ src/runtime/tradeRecordAutoSync.test.ts (1 test) 487ms
+   ✓ automatic TradeRecord sync window > reads the full 24 hours before startup and caps the final read at startup plus 24 hours  486ms
+ ✓ src/runtime/v393FrozenEntryRestart.test.ts (1 test) 478ms
+   ✓ V3.9.3 frozen Entry authorization restart persistence > preserves AI side, quantityUnits, acceptable range and pre-AI envelope through SQLite and Engine restart  477ms
+ ✓ src/runtime/riskPauseOverride.test.ts (1 test) 485ms
+   ✓ Testnet risk-pause override > records a complete audit, preserves risk metrics, restores AUTO, and survives restart state  483ms
+ ✓ src/services/externalResearchService.test.ts (3 tests) 456ms
+ ✓ src/api/snapshotReadOnly.test.ts (5 tests) 2255ms
+   ✓ TradeRecord GET list/detail and Experience perform zero SQLite writes and zero state mutation  570ms
+   ✓ published dashboard snapshot > serves a bounded immutable summary without reconciliation waits or SQLite writes  403ms
+   ✓ position detail and stale manual preview perform zero market REST reads  452ms
+   ✓ reconciliation telemetry still persists execution facts  397ms
+   ✓ pipeline HTTP preserves the installed admission readback and scoped reconciliation without writes after the initial authority diagnostic  432ms
+ ✓ src/services/ownershipRuntime.test.ts (5 tests) 462ms
+ ✓ src/state/reservationConvergence.test.ts (13 tests) 478ms
+ ✓ src/state/c2ReservationAtomicityHostile.test.ts (23 tests) 4728ms
+ ✓ src/services/ownershipScopeIdentity.test.ts (3 tests) 324ms
+ ✓ src/services/tradingQualityObserverWorker.test.ts (1 test) 466ms
+   ✓ runs compiled evidence worker in an isolated database, without trading authority  464ms
+ ✓ src/services/positionNotionalSemantics.test.ts (4 tests) 485ms
+   ✓ position notionalUsd semantics > normalises legacy persisted signed notionals so the dashboard snapshot still validates  468ms
+ ✓ src/services/j3TradePlanHostile.test.ts (21 tests) 440ms
+ ✓ src/services/j2PortfolioAdmissionHostile.test.ts (15 tests) 314ms
+ ✓ src/adapters/market/klineRecoverySimulation.test.ts (1 test) 723ms
+   ✓ V3.9.5 mass 1m gap heals without a request storm > uses at most one klines request per symbol, reloads no snapshots and restores readiness  721ms
+ ✓ src/api/runtimeSettingsResources.test.ts (14 tests) 289ms
+ ✓ src/services/v370Contract.test.ts (36 tests) 282ms
+ ✓ src/config/assetAdmissionIntegration.test.ts (1 test) 237ms
+ ✓ src/api/exchangeFillProjection.test.ts (1 test) 506ms
+   ✓ exchange fill projection > does not raise a system attribution alert for an external Binance App fill  505ms
+ ✓ src/services/s03ExitCostPolicy.test.ts (21 tests) 231ms
+ ✓ src/adapters/market/BinancePublicMarketDataProvider.test.ts (9 tests) 218ms
+ ✓ src/services/aiFabric.test.ts (13 tests) 4802ms
+   ✓ Primary decision fail-closed normalization > normalizes a reject without inventing an executable side  566ms
+   ✓ Primary decision fail-closed normalization > repairs reject formatting without restoring a trade side or direction authority  438ms
+   ✓ Primary decision fail-closed normalization > preserves raw PLACE_LONG including autonomous quantity  417ms
+   ✓ Primary decision fail-closed normalization > preserves raw PLACE_SHORT including autonomous quantity  408ms
+   ✓ Primary decision fail-closed normalization > normalizes only unambiguous confidence protocol values  417ms
+   ✓ Primary decision fail-closed normalization > normalizes only unambiguous confidence protocol values  456ms
+   ✓ Primary decision fail-closed normalization > normalizes only unambiguous confidence protocol values  437ms
+   ✓ Primary decision fail-closed normalization > does not manufacture a missing executable price range  437ms
+   ✓ Primary decision fail-closed normalization > accepts a directionless reject without inventing PLACE  421ms
+   ✓ Primary decision fail-closed normalization > computes 15m structure evidence without creating an execution decision  449ms
+   ✓ Primary decision fail-closed normalization > accepts both AI sides regardless of 15m trend when protocol fields are valid  348ms
+ ✓ src/services/s07ConsumerBoundary.test.ts (7 tests) 207ms
+ ✓ src/adapters/market/BinanceMarketStream.test.ts (9 tests) 143ms
+ ✓ src/adapters/binance/requestBudget.test.ts (21 tests) 127ms
+ ✓ src/services/testnetRiskAuthority.test.ts (32 tests) 260ms
+ ✓ src/services/manualPositionService.test.ts (16 tests) 221ms
+ ✓ src/services/grossRiskCapacityVisibility.test.ts (16 tests) 169ms
+ ✓ src/services/preAiExecutableSides.test.ts (11 tests) 126ms
+ ✓ src/services/egressFailClosed.test.ts (11 tests) 149ms
+ ✓ src/services/targetHorizonContract.test.ts (4 tests) 90ms
+ ✓ src/services/s05ConsumerBoundary.test.ts (4 tests) 153ms
+ ✓ src/services/preAiPlanFeasibility.test.ts (9 tests) 143ms
+ ✓ src/services/runtimeControlService.test.ts (12 tests) 179ms
+ ✓ src/services/ownershipStorageCoverage.test.ts (6 tests) 124ms
+ ✓ src/services/collectorRecovery.test.ts (1 test) 97ms
+ ✓ src/services/placeToSubmitCapacityTruth.test.ts (23 tests) 123ms
+ ✓ src/services/s05PortfolioTailRisk.test.ts (76 tests) 66ms
+ ✓ src/config/settingsStore.test.ts (28 tests) 6803ms
+   ✓ SettingsStore > keeps in-range migrated floors untouched and migrates a legacy document exactly once  924ms
+   ✓ SettingsStore > paginates compact AI summaries in SQL with a stable tie-break and keeps full detail by id  586ms
+   ✓ runs bounded retention, keeps raw running AI and all critical events, and evicts only orphan AI entities  336ms
+ ✓ src/services/unknownRiskAuditTiering.test.ts (22 tests) 85ms
+ ✓ src/services/capitalCapacityModel.test.ts (12 tests) 62ms
+ ✓ src/services/entryExecutionChain.test.ts (5 tests) 110ms
+ ✓ src/services/runtimeWriteBuffer.test.ts (1 test) 50ms
+ ✓ src/services/storageCapacityGuard.test.ts (4 tests) 56ms
+ ✓ src/services/sideNeutralEntryAuthorization.test.ts (3 tests) 69ms
+ ✓ src/services/s09ReplayStressHostile.test.ts (22 tests) 53ms
+ ✓ src/services/positionRiskV3Facts.test.ts (17 tests) 45ms
+ ✓ src/runtime/processLifecycleTelemetry.test.ts (2 tests) 28ms
+ ✓ src/services/operationalLogger.test.ts (2 tests) 103ms
+ ✓ src/services/tpGuardianEconomics.test.ts (11 tests) 56ms
+ ✓ src/services/j1ExitTruthHostile.test.ts (10 tests) 57ms
+ ✓ src/services/liveValidationObservation.test.ts (2 tests) 38ms
+ ✓ src/services/finalActivation.test.ts (13 tests) 103ms
+ ✓ src/services/cycleAccounting.test.ts (16 tests) 46ms
+ ✓ src/adapters/binance/BinanceTransport.test.ts (17 tests) 45ms
+ ✓ src/services/unknownNoActiveRiskProofRenewal.test.ts (9 tests) 61ms
+ ✓ src/services/pendingRiskOccupancyConvergence.test.ts (11 tests) 48ms
+ ✓ src/adapters/exchange/ExternalTradeAdapterPrivateLoad.test.ts (7 tests) 41ms
+ ✓ src/services/reconciliationUnknownRisk.test.ts (10 tests) 55ms
+ ✓ src/services/entryFundingUniverse.test.ts (11 tests) 34ms
+ ✓ src/adapters/market/klineTargetedRepair.test.ts (8 tests) 20ms
+ ✓ src/services/remoteFactAuditIntegration.test.ts (7 tests) 43ms
+ ✓ src/services/reconciliationService.test.ts (17 tests) 52ms
+ ✓ src/services/tpSubmissionOutcome.test.ts (5 tests) 31ms
+ ✓ src/services/v396AuditBoundaries.test.ts (23 tests) 29ms
+ ✓ src/services/entryCoordinator.test.ts (19 tests) 34ms
+ ✓ src/services/v396OfflineStages.test.ts (11 tests) 31ms
+ ✓ src/services/v370Decision.test.ts (6 tests) 29ms
+ ✓ src/adapters/market/klineContinuity.test.ts (11 tests) 34ms
+ ✓ src/services/s05ConvergenceHostile.test.ts (8 tests) 28ms
+ ✓ src/services/tpUnknownRecovery.test.ts (2 tests) 32ms
+ ✓ src/services/tpPositionFactTruth.test.ts (4 tests) 36ms
+ ✓ src/services/positionLeverageV3.test.ts (6 tests) 28ms
+ ✓ src/services/preflightFeasibility.test.ts (6 tests) 28ms
+ ✓ src/services/externalIntelligenceService.test.ts (5 tests) 25ms
+ ✓ src/services/runExecutionOutcome.test.ts (16 tests) 24ms
+ ✓ src/services/executableRiskHeadroom.test.ts (6 tests) 24ms
+ ✓ src/services/tradingQualityV393EvidenceStore.test.ts (5 tests) 29ms
+ ✓ src/services/v396AuditFollowup.test.ts (8 tests) 25ms
+ ✓ src/adapters/exchange/ExternalTradeAdapter.test.ts (13 tests) 27ms
+ ✓ src/services/reconciliationCoverageContract.test.ts (6 tests) 36ms
+ ✓ src/services/marketCohort.test.ts (12 tests) 25ms
+ ✓ src/services/candidateSupplyHealth.test.ts (3 tests) 23ms
+ ✓ src/adapters/binance/requestBudgetPrivateTruth.test.ts (3 tests) 22ms
+ ✓ src/services/marketDataHub.test.ts (10 tests) 25ms
+ ✓ src/services/productionAssetResearch.test.ts (6 tests) 22ms
+ ✓ src/services/aiFabricResourceState.test.ts (2 tests) 33ms
+ ✓ src/services/marketDataHubSlowFields.test.ts (4 tests) 20ms
+ ✓ src/services/tpGuardianCrossedTruth.test.ts (2 tests) 19ms
+ ✓ src/services/tradingEpisodeEvidence.test.ts (10 tests) 20ms
+ ✓ src/services/reconciliationRequestBudget.test.ts (1 test) 20ms
+ ✓ src/services/finalRiskConvergence.test.ts (5 tests) 25ms
+ ✓ src/services/privateAccountSync.test.ts (4 tests) 18ms
+ ✓ src/runtime/userPositionFacts.test.ts (3 tests) 26ms
+ ✓ src/services/unknownProofValidation.test.ts (47 tests) 27ms
+ ✓ src/adapters/binance/requestBudgetProxyTruth.test.ts (1 test) 16ms
+ ✓ src/services/tradeRecordSyncService.test.ts (3 tests) 18ms
+ ✓ src/services/remoteFactAuditPolicy.test.ts (7 tests) 16ms
+ ✓ src/adapters/binance/requestBudgetAnomaly.test.ts (1 test) 16ms
+ ✓ src/services/positionLifecycleIntegrity.test.ts (3 tests) 21ms
+ ✓ src/services/pipelineVerdict.test.ts (14 tests) 16ms
+ ✓ src/services/tradeRecordIntegrity.test.ts (5 tests) 17ms
+ ✓ src/services/assetGovernanceCoordinator.test.ts (6 tests) 15ms
+ ✓ src/services/productionReadOnlyPreflight.test.ts (4 tests) 14ms
+ ✓ src/services/directionPolicyService.test.ts (1 test) 14ms
+ ✓ src/services/temporalAlgorithms.test.ts (11 tests) 14ms
+ ✓ src/config/aiResourceLoader.test.ts (1 test) 13ms
+ ✓ src/services/tradingQualityEligibility.test.ts (7 tests) 14ms
+ ✓ src/services/entryCapacityTrace.test.ts (12 tests) 14ms
+ ✓ src/services/positionService.test.ts (2 tests) 14ms
+ ✓ src/adapters/exchange/historyWindow.test.ts (5 tests) 13ms
+ ✓ src/services/tradingQualityV393.test.ts (10 tests) 12ms
+ ✓ src/services/frozenChoiceTelemetry.test.ts (6 tests) 12ms
+ ✓ src/services/lossHandoff.test.ts (4 tests) 14ms
+ ✓ src/services/nearMarketPrice.test.ts (4 tests) 11ms
+ ✓ src/services/tradeRecordReadModel.test.ts (4 tests) 9ms
+ ✓ src/services/aiQuantityAllocation.test.ts (6 tests) 12ms
+ ✓ src/adapters/binance/BinanceUserDataStream.test.ts (2 tests) 12ms
+ ✓ src/state/runtimeState.test.ts (4 tests) 10ms
+ ✓ src/services/tradingQualityBaseline.test.ts (4 tests) 10ms
+ ✓ src/adapters/binance/requestBudgetEntryGate.test.ts (2 tests) 12ms
+ ✓ src/services/marketDataStaleness.test.ts (9 tests) 11ms
+ ✓ src/services/TemporalIntelligenceService.test.ts (1 test) 9ms
+ ✓ src/services/economicEntryFeasibility.test.ts (4 tests) 10ms
+ ✓ src/services/brainRunArchive.test.ts (4 tests) 8ms
+ ✓ src/services/externalResearchQuality.test.ts (2 tests) 8ms
+ ✓ src/services/binanceClientOrderIdFactory.test.ts (3 tests) 7ms
+ ✓ src/adapters/market/BinanceExchangeInfoSingleFlight.test.ts (1 test) 9ms
+ ✓ src/services/candidateLifecycleDeriver.test.ts (10 tests) 8ms
+ ✓ src/services/entryObservation.test.ts (4 tests) 8ms
+ ✓ src/services/s01TruthAccountingObservability.test.ts (5 tests) 8ms
+ ✓ src/services/supplyHealth.test.ts (3 tests) 9ms
+ ✓ src/services/tradingQualityReleaseGate.test.ts (5 tests) 7ms
+ ✓ src/services/shadowObservation.test.ts (4 tests) 7ms
+ ✓ src/services/marketDataReadiness.test.ts (3 tests) 7ms
+ ✓ src/runtime/appRuntime.test.ts (7 tests) 11144ms
+   ✓ mock V3 runtime > retains an in-flight cohort hydrate through the real runtime sync, then admits its snapshot  431ms
+   ✓ mock V3 runtime > starts critical runtime loops without awaiting risk baseline I/O  4991ms
+   ✓ mock V3 runtime > starts degraded runtime loops when the initial cohort bootstrap fails  4289ms
+   ✓ does not publish into the closed database from queued UI snapshots  987ms
+ ✓ src/config/settingsCloseoutInvariant.test.ts (1 test) 7ms
+ ✓ src/services/v392HistoricalDecisionRegression.test.ts (3 tests) 6ms
+ ✓ src/services/decisionContext.test.ts (3 tests) 6ms
+ ✓ src/services/p0RiskConvergence.test.ts (3 tests) 6ms
+ ✓ src/services/p0EntryIntegrity.test.ts (4 tests) 8ms
+ ✓ src/services/unsubmittedEntryRecovery.test.ts (2 tests) 6ms
+ ✓ src/services/historicalTpReachability.test.ts (3 tests) 6ms
+ ✓ src/services/humanManagedProjection.test.ts (1 test) 7ms
+ ✓ src/events/eventBus.test.ts (1 test) 7ms
+ ✓ src/services/entryWaiting.test.ts (4 tests) 5ms
+ ✓ src/services/tradingQualityObservationPlan.test.ts (3 tests) 6ms
+ ✓ src/api/chronologicalSort.test.ts (2 tests) 6ms
+ ✓ src/services/shadowReadiness.test.ts (2 tests) 6ms
+ ✓ src/services/experienceService.test.ts (1 test) 6ms
+ ✓ src/runtime/bootstrapReconciliationInvariant.test.ts (1 test) 4ms
+ ✓ src/adapters/binance/BinanceTransportLanes.test.ts (3 tests) 6ms
+ ✓ src/services/testnetLowLossCleanupService.test.ts (2 tests) 4ms
+ ✓ src/services/privateAccountReadiness.test.ts (1 test) 4ms
+ ✓ src/config/engineTestTimeout.test.ts (1 test) 3ms
+ ✓ src/services/riskReadiness.test.ts (3 tests) 5ms
+ ✓ src/api/activeEntryProjection.test.ts (1 test) 4ms
+ ✓ src/adapters/binance/BinanceBudgetFailureTelemetry.test.ts (1 test) 2ms
+
+ Test Files  176 passed (176)
+      Tests  1487 passed (1487)
+   Start at  19:33:14
+   Duration  14.58s (transform 7.70s, setup 0ms, collect 58.38s, tests 69.24s, environment 49ms, prepare 32.76s)
+
+
+(node:5624) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:40232) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:4028) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:51084) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:41380) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+include: **/*.{test,spec}.?(c|m)[jt]s?(x)
+exclude:  **/node_modules/**, **/dist/**, **/cypress/**, **/.{idea,git,cache,output,temp}/**, **/{karma,rollup,webpack,vite,vitest,jest,ava,babel,nyc,cypress,tsup,build,eslint,prettier}.config.*
+
+(node:47000) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:30120) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:46736) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:48512) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:31980) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:20580) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:24932) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:30820) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:22060) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:49516) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:51040) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:26256) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:19844) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:28412) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:38664) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:42960) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:33584) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:13164) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:45572) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:37836) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:49064) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:41660) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:37980) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:48608) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:49628) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:33736) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:39012) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:35432) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:17064) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:47772) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:45892) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:39504) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:47432) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:38464) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:40408) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:33128) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:7740) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:35628) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:10736) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:29052) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:38168) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:44020) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:5176) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:7768) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:35452) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:48192) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:27740) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:47356) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+stderr | src/views/OverviewView.conversion.test.ts > renders the whole conversion chain from the Engine projection, in order, without counting anything itself
+[Vue warn]: Template compilation error: Invalid end tag.
+1  |  <div><slot/></slot></div>
+   |              ^
+  at <Anonymous title="最近 1 小时交易事实" subtitle="Binance 成交按系统归因与外部成交分开统计；外部成交只进入审计，不触发建仓循环。" >
+  at <OverviewView ref="VTU_COMPONENT" >
+  at <VTUROOT>
+
+stderr | src/views/OverviewView.capacity.test.ts > formats the Engine admission readback and gate arithmetic without client-side ranking
+[Vue warn]: Template compilation error: Invalid end tag.
+1  |  <div><slot/></slot></div>
+   |              ^
+  at <Anonymous title="最近 1 小时交易事实" subtitle="Binance 成交按系统归因与外部成交分开统计；外部成交只进入审计，不触发建仓循环。" >
+  at <OverviewView ref="VTU_COMPONENT" >
+  at <VTUROOT>
+
+(node:9644) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:5536) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:32264) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:50048) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:50428) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:7016) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:31900) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:9500) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:38284) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:29864) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:26996) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:44532) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:27676) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:25836) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:17972) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:3336) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:26460) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:22328) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:44152) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:27792) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:15484) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:13504) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:15484) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:22328) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:25836) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:13504) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:29864) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:44532) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:9500) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:38284) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:17972) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:44152) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:27792) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:26460) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:27676) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:3336) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:26996) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:21648) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:21648) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:9500) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:36776) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:29864) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:9500) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:17972) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:13504) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:9500) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:36776) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:14200) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:33784) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:29864) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:14200) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:13504) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:33784) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:17972) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:43440) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:30084) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:50868) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:29864) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:30084) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:43440) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:50868) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:17972) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:36776) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:36996) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:40772) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:29864) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:39100) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:33688) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:36996) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:44124) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:40772) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:36776) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:39100) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:33688) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:29864) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:44124) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:28852) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:36776) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:43440) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:50868) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:29864) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:38220) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:28852) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:51132) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:25824) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:36996) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:36776) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:40772) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:51132) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:39100) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:8844) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:38220) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:29864) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:33688) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:27588) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:33676) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:12068) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:44124) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:48588) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:25824) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:36776) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:8844) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:50488) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:38096) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:29864) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:44004) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:12068) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:48588) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:35516) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:23980) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:33676) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:48588) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:44004) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:8720) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:50488) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:29864) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:38096) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:25040) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:35516) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:48588) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:23980) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:25824) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:27144) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:29864) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:41388) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:46952) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:15120) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:50144) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:43248) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:8844) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:25232) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:27808) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:29864) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:29664) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:34540) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:36420) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:23904) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:27144) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:46952) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:40484) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:15120) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:43248) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:16512) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:23904) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:32016) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:22776) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:28740) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:27808) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:29664) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:34540) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:45820) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:23760) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:36420) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:30896) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:9500) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:29008) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:33900) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:24756) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:46996) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:33516) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:5516) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:31256) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:32016) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:22776) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:47696) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:45476) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:23760) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:24756) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:33516) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:33900) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:25812) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:50380) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:39532) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:10016) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:46996) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:1148) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:4668) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:33252) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:31408) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:28072) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:48460) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:48344) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:45088) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:10016) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:2372) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:44764) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:46828) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:35376) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:37408) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:36212) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:24036) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:33252) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:40756) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:48344) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:34384) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:48460) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:39176) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:46116) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:17212) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:34704) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:28920) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:50772) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:42236) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:23156) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:50808) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:37408) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:36212) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:34384) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:46116) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:32196) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:38108) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:42804) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:28920) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:43984) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:28632) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:46208) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:14308) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:43584) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:17436) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:49616) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:51036) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:40644) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:23632) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:28632) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:43588) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:29292) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:40492) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:48040) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:46208) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:39552) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:13216) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:34328) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:33692) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:40020) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:43084) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:5016) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:15784) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:44760) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:46656) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:40824) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:50316) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:13216) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:19532) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:49132) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:26484) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:6920) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:5136) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:35464) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:35024) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:50080) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:3040) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:50296) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:28608) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:30792) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:33740) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:40824) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:23736) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:50384) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:13092) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:50924) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:49072) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:20104) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:9500) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:28784) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:29020) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:49644) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:34672) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:42976) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:30576) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:26376) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:41396) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:48760) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:38228) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:31828) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:38572) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:21520) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:26140) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:17372) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:9500) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:27392) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:38316) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:24904) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:42824) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:20960) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:48508) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:14632) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:29788) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:38644) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:51100) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:36676) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:24904) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:8652) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:24708) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:50468) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:43460) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:39372) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:50856) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:29788) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:45836) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:37252) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:29584) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:36676) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:31244) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:30040) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:26132) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:48976) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:44112) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:43664) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)

@@ -1,0 +1,2 @@
+
+warning: in the working copy of 'docs/evidence/v396/S00/20260921T145000Z/entrypoint-review.json', LF will be replaced by CRLF the next time Git touches it

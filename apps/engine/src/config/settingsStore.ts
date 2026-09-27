@@ -8,7 +8,7 @@ import { WindowsDpapiSecretStore } from "./windowsDpapiSecretStore.js";
 import { redactAudit } from "../api/projections.js";
 import { isTelemetry } from '../services/operationalLogger.js';
 import { activeOrderStatus, type ManualExecutionRecord, type EntryExecutionRecord } from '../services/executionLifecycle.js';
-import { durableEntryClaimActive, entryClaimReleasedByExchangeFacts } from '../services/entryRiskOccupancy.js';
+import { durableEntryClaimActive, entryClaimReleasedByExchangeFacts, isHistoricalUnknownEntryOrder } from '../services/entryRiskOccupancy.js';
 import {
   CORRELATION_AUTHORITY_SCHEMA, MARGIN_AUTHORITY_SCHEMA, SCENARIO_AUTHORITY_SCHEMA,
   portfolioRiskAuthorityVerifyRows,
@@ -1047,42 +1047,54 @@ export class SettingsStore {
       .map(row => JSON.parse(row.payload) as ManualExecutionRecord);
   }
   claimEntryExecution(scope:string,value:EntryExecutionRecord,retryRejected=false){
-    let result=this.db.prepare('INSERT OR IGNORE INTO entry_execution_tasks(intent_id,scope,active,payload,updated_at) VALUES(?,?,1,?,?)').run(value.intent.id,scope,JSON.stringify(value),Date.now());
-    if(!result.changes&&retryRejected)result=this.db.prepare('UPDATE OR IGNORE entry_execution_tasks SET active=1,payload=?,updated_at=? WHERE intent_id=? AND active=0 AND released_at=0').run(JSON.stringify(value),Date.now(),value.intent.id);
-    const row=this.db.prepare('SELECT payload FROM entry_execution_tasks WHERE scope=? AND active=1').get(scope) as {payload:string}|undefined;
-    if(!row){
-      // A proof-released submission is never re-armed, so a retry of that same intent must report a
-      // collision instead of reaching the exchange, rather than throwing on an empty incumbent.
-      const released=this.db.prepare('SELECT payload FROM entry_execution_tasks WHERE intent_id=? AND released_at>0').get(value.intent.id) as {payload:string}|undefined;
-      if(released)return{acquired:false,record:JSON.parse(released.payload) as EntryExecutionRecord};
-      throw new Error('ENTRY_SUBMISSION_UNKNOWN_JOURNAL_CONFLICT');
-    }
-    return{acquired:result.changes>0,record:JSON.parse(row.payload) as EntryExecutionRecord};
+    // The indexed active bit is only a materialized claim. Expired/malformed historical proofs can
+    // reactivate several old submissions in one scope; inspect them under the SAME SQLite write lock
+    // before acquiring a new intent. Never resubmit an old proof-released identity.
+    const work=()=>{
+      const now=Date.now(),rows=this.db.prepare('SELECT active,payload FROM entry_execution_tasks WHERE scope=? ORDER BY active DESC,updated_at DESC,intent_id').all(scope) as Array<{active:number;payload:string}>;
+      for(const row of rows){const record=JSON.parse(row.payload) as EntryExecutionRecord;
+        if(row.active===1||durableEntryClaimActive(record.order,now))return{acquired:false,record};}
+      let result=this.db.prepare('INSERT OR IGNORE INTO entry_execution_tasks(intent_id,scope,active,payload,updated_at) VALUES(?,?,1,?,?)').run(value.intent.id,scope,JSON.stringify(value),now);
+      if(!result.changes&&retryRejected)result=this.db.prepare('UPDATE OR IGNORE entry_execution_tasks SET active=1,payload=?,updated_at=? WHERE intent_id=? AND scope=? AND active=0 AND released_at=0').run(JSON.stringify(value),now,value.intent.id,scope);
+      const row=this.db.prepare('SELECT payload FROM entry_execution_tasks WHERE scope=? AND active=1').get(scope) as {payload:string}|undefined;
+      if(!row){
+        const released=this.db.prepare('SELECT payload FROM entry_execution_tasks WHERE intent_id=? AND released_at>0').get(value.intent.id) as {payload:string}|undefined;
+        if(released)return{acquired:false,record:JSON.parse(released.payload) as EntryExecutionRecord};
+        throw new Error('ENTRY_SUBMISSION_UNKNOWN_JOURNAL_CONFLICT');
+      }
+      return{acquired:result.changes>0,record:JSON.parse(row.payload) as EntryExecutionRecord};
+    };
+    if(this.transactionActive)return work();
+    this.db.exec('BEGIN IMMEDIATE');this.transactionActive=true;
+    try{const result=work();this.db.exec('COMMIT');return result;}
+    catch(error){this.db.exec('ROLLBACK');throw error;}
+    finally{this.transactionActive=false;}
   }
   saveEntryExecution(value:EntryExecutionRecord){
     const now=Date.now(),order=value.order as any;
     const stored=this.db.prepare('SELECT active,released_at FROM entry_execution_tasks WHERE intent_id=?').get(value.intent.id) as {active:number;released_at:number}|undefined;
-    let active=durableEntryClaimActive(order,now)?1:0;
-    // A claim released by proven exchange facts stays released while that submission is still the same
-    // unsubmitted UNKNOWN, so an evidence TTL that lapses between two re-checks cannot silently
-    // re-occupy the underlying. Real risk (an exchange order id, a fill, or a live status) re-arms it.
-    if(stored&&stored.released_at>0&&order.status==='UNKNOWN'&&!order.exchangeOrderId&&!Number(order.filledQuantity??0))active=0;
-    // Only a proof-driven release is latched; an order that simply reached a terminal exchange status
-    // keeps the pre-existing re-arm behaviour (for example a post-only reprice retry).
-    const releasedByProof=active===0&&order.status==='UNKNOWN'&&(entryClaimReleasedByExchangeFacts(order,now)||(stored?.released_at??0)>0);
-    this.db.prepare('UPDATE entry_execution_tasks SET active=?,payload=?,updated_at=?,released_at=? WHERE intent_id=?')
-      .run(active,JSON.stringify(value),now,releasedByProof?Math.max(stored?.released_at??0,now):(stored?.released_at??0),value.intent.id);
+    const active=durableEntryClaimActive(order,now)?1:0,releasedByProof=entryClaimReleasedByExchangeFacts(order,now);
+    // released_at preserves history/idempotency, never overrides current proof validity. If another
+    // claim owns the unique index, retain both payloads; claimEntryExecution/stats enforce both risks.
+    this.db.prepare(`UPDATE entry_execution_tasks SET active=CASE WHEN ?=1 AND EXISTS(
+      SELECT 1 FROM entry_execution_tasks other WHERE other.scope=entry_execution_tasks.scope AND other.intent_id<>entry_execution_tasks.intent_id AND other.active=1
+    ) THEN active ELSE ? END,payload=?,updated_at=?,released_at=? WHERE intent_id=?`)
+      .run(active,active,JSON.stringify(value),now,releasedByProof?Math.max(stored?.released_at??0,now):(stored?.released_at??0),value.intent.id);
   }
+  /** Hydrate history verbatim. Validity is time-dependent, so no load-time flag can grant a release. */
   loadEntryExecutions():EntryExecutionRecord[]{return(this.db.prepare('SELECT payload FROM entry_execution_tasks').all() as Array<{payload:string}>).map(row=>JSON.parse(row.payload));}
-  /** Historical UNKNOWN orders and live scope occupancy are different facts; keep both countable. */
+  /** Effective risk claims include invalid/expired proof releases, even before a reconciliation write. */
   entryExecutionClaimStats(){
     const evaluatedAt=Date.now();
     const rows=this.db.prepare('SELECT active,released_at,payload FROM entry_execution_tasks').all() as Array<{active:number;released_at:number;payload:string}>;
-    const statusOf=(payload:string)=>{try{return String(JSON.parse(payload)?.order?.status??'');}catch{return '';}};
-    return{evaluatedAt,durableTasks:rows.length,activeClaims:rows.filter(row=>row.active===1).length,
-      activeUnknownClaims:rows.filter(row=>row.active===1&&statusOf(row.payload)==='UNKNOWN').length,
+    const facts=rows.map(row=>{try{const order=JSON.parse(row.payload)?.order;return{...row,status:String(order?.status??''),historicalUnknown:Boolean(order)&&isHistoricalUnknownEntryOrder(order),effectiveActive:row.active===1||!order||durableEntryClaimActive(order,evaluatedAt)};}
+      catch{return{...row,status:'UNREADABLE',historicalUnknown:false,effectiveActive:true};}});
+    return{evaluatedAt,durableTasks:rows.length,activeClaims:facts.filter(row=>row.effectiveActive).length,
+      activeUnknownClaims:facts.filter(row=>row.effectiveActive&&row.historicalUnknown).length,
+      storedActiveClaims:rows.filter(row=>row.active===1).length,reactivatedByProofValidation:facts.filter(row=>row.effectiveActive&&row.active!==1).length,
+      claimSemantics:'CURRENT_STRICT_PROOF_OR_STORED_ACTIVE',releasedAtSemantics:'HISTORICAL_RELEASE_NOT_CURRENT_VALIDITY',
       releasedClaims:rows.filter(row=>row.released_at>0).length,
-      releasedUnknownClaims:rows.filter(row=>row.released_at>0&&statusOf(row.payload)==='UNKNOWN').length};
+      releasedUnknownClaims:facts.filter(row=>row.released_at>0&&row.status==='UNKNOWN').length};
   }
   recordTradeSyncHistory(value: unknown) {
     const row = value as any;

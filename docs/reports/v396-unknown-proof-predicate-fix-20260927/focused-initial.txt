@@ -1,0 +1,155 @@
+(node:19944) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:47908) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> @zdj/engine@3.9.6 test
+> vitest run src/services/unknownProofValidation.test.ts src/services/reconciliationUnknownRisk.test.ts src/services/reconciliationCoverageContract.test.ts src/services/unknownNoActiveRiskProofRenewal.test.ts src/services/unknownRiskAuditTiering.test.ts src/services/executionLifecycle.integration.test.ts src/services/remoteFactAuditIntegration.test.ts src/services/p0EntryIntegrity.test.ts src/api/activeEntryProjection.test.ts
+
+(node:16456) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+VITEST_TEST_TIMEOUT=5000 CI=
+
+ RUN  v3.2.4 C:/Users/5700x/.codex/worktrees/v396-entry-frequency-risk-audit/MITS/apps/engine
+
+(node:47552) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:30256) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:44864) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:34388) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:7232) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:44816) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:50432) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:49808) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:5632) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:41968) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:24032) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:50328) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:46836) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:39800) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:47004) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ❯ src/services/unknownProofValidation.test.ts (46 tests | 1 failed) 20ms
+   ✓ canonical strict UNKNOWN release proof > rejects expired consistently through all release consumers 2ms
+   ✓ canonical strict UNKNOWN release proof > rejects identity consistently through all release consumers 0ms
+   ✓ canonical strict UNKNOWN release proof > rejects checked-null consistently through all release consumers 0ms
+   ✓ canonical strict UNKNOWN release proof > rejects checked-missing consistently through all release consumers 0ms
+   ✓ canonical strict UNKNOWN release proof > rejects checked-string consistently through all release consumers 0ms
+   ✓ canonical strict UNKNOWN release proof > rejects checked-empty consistently through all release consumers 0ms
+   ✓ canonical strict UNKNOWN release proof > rejects checked-NaN consistently through all release consumers 0ms
+   ✓ canonical strict UNKNOWN release proof > rejects checked-Infinity consistently through all release consumers 0ms
+   ✓ canonical strict UNKNOWN release proof > rejects checked-negative consistently through all release consumers 0ms
+   ✓ canonical strict UNKNOWN release proof > rejects checked-zero consistently through all release consumers 0ms
+   ✓ canonical strict UNKNOWN release proof > rejects until-null consistently through all release consumers 0ms
+   ✓ canonical strict UNKNOWN release proof > rejects until-missing consistently through all release consumers 0ms
+   ✓ canonical strict UNKNOWN release proof > rejects until-string consistently through all release consumers 0ms
+   ✓ canonical strict UNKNOWN release proof > rejects until-NaN consistently through all release consumers 0ms
+   ✓ canonical strict UNKNOWN release proof > rejects until-Infinity consistently through all release consumers 0ms
+   ✓ canonical strict UNKNOWN release proof > rejects until-negative consistently through all release consumers 0ms
+   ✓ canonical strict UNKNOWN release proof > rejects until-zero consistently through all release consumers 0ms
+   ✓ canonical strict UNKNOWN release proof > rejects inverted consistently through all release consumers 0ms
+   ✓ canonical strict UNKNOWN release proof > rejects equal consistently through all release consumers 0ms
+   ✓ canonical strict UNKNOWN release proof > rejects future consistently through all release consumers 0ms
+   ✓ canonical strict UNKNOWN release proof > rejects sources-empty consistently through all release consumers 0ms
+   ✓ canonical strict UNKNOWN release proof > rejects sources-missing consistently through all release consumers 0ms
+   ✓ canonical strict UNKNOWN release proof > rejects partial consistently through all release consumers 0ms
+   ✓ canonical strict UNKNOWN release proof > rejects duplicate consistently through all release consumers 0ms
+   ✓ canonical strict UNKNOWN release proof > rejects unsupported consistently through all release consumers 0ms
+   ✓ canonical strict UNKNOWN release proof > rejects both-position-classes consistently through all release consumers 0ms
+   ✓ canonical strict UNKNOWN release proof > rejects wrong-class consistently through all release consumers 0ms
+   ✓ canonical strict UNKNOWN release proof > rejects unsupported-class consistently through all release consumers 0ms
+   × canonical strict UNKNOWN release proof > rejects over-tier-ttl consistently through all release consumers 6ms
+     → expected true to be false // Object.is equality
+   ✓ canonical strict UNKNOWN release proof > rejects oversized-max-ttl consistently through all release consumers 0ms
+   ✓ canonical strict UNKNOWN release proof > rejects tier-string consistently through all release consumers 0ms
+   ✓ canonical strict UNKNOWN release proof > rejects tier-negative consistently through all release consumers 0ms
+   ✓ canonical strict UNKNOWN release proof > rejects tier-unsupported consistently through all release consumers 0ms
+   ✓ canonical strict UNKNOWN release proof > rejects wrong-status consistently through all release consumers 0ms
+   ✓ canonical strict UNKNOWN release proof > accepts producer class POSITION_ABSENT and preserves history 1ms
+   ✓ canonical strict UNKNOWN release proof > accepts producer class POSITION_OTHER_CYCLE and preserves history 0ms
+   ✓ canonical strict UNKNOWN release proof > accepts exact supported tier 0 TTL and rejects one extra millisecond 0ms
+   ✓ canonical strict UNKNOWN release proof > accepts exact supported tier 1 TTL and rejects one extra millisecond 0ms
+   ✓ canonical strict UNKNOWN release proof > accepts exact supported tier 2 TTL and rejects one extra millisecond 0ms
+   ✓ canonical strict UNKNOWN release proof > supports legacy producer tiers without weakening timestamps or sources 0ms
+   ✓ canonical strict UNKNOWN release proof > cannot gain release from Number(null) or string numeric conversion 1ms
+   ✓ canonical strict UNKNOWN release proof > retains terminal CANCELED plus UNKNOWN occupancy and claim until valid proof 0ms
+   ✓ canonical strict UNKNOWN release proof > retains terminal EXPIRED plus UNKNOWN occupancy and claim until valid proof 0ms
+   ✓ canonical strict UNKNOWN release proof > retains terminal REJECTED plus UNKNOWN occupancy and claim until valid proof 0ms
+   ✓ canonical strict UNKNOWN release proof > retains terminal FILLED plus UNKNOWN occupancy and claim until valid proof 0ms
+   ✓ canonical strict UNKNOWN release proof > rejects malformed objects, fill conflicts and missing external identity 0ms
+(node:50400) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/services/p0EntryIntegrity.test.ts (4 tests) 5ms
+ ✓ src/api/activeEntryProjection.test.ts (1 test) 3ms
+(node:47552) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:7648) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/services/reconciliationCoverageContract.test.ts (6 tests) 22ms
+ ✓ src/services/reconciliationUnknownRisk.test.ts (10 tests) 42ms
+ ✓ src/services/unknownNoActiveRiskProofRenewal.test.ts (9 tests) 40ms
+ ✓ src/services/unknownRiskAuditTiering.test.ts (22 tests) 59ms
+(node:34360) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:45268) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:15764) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:50360) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:39192) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:7232) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+ ✓ src/services/remoteFactAuditIntegration.test.ts (7 tests) 23ms
+(node:49836) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/services/executionLifecycle.integration.test.ts (17 tests) 1129ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/services/unknownProofValidation.test.ts > canonical strict UNKNOWN release proof > rejects over-tier-ttl consistently through all release consumers
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ src/services/unknownProofValidation.test.ts:22:149
+     20|   expect(hasVerifiedNoActiveRisk(order,now)).toBe(false);expect(entryO…
+     21|   expect(durableEntryClaimActive(order,now)).toBe(true);expect(entryCl…
+     22|   expect(historicalNoRiskEligible(order,now)).toBe(false);expect(remot…
+       |                                                                                                                                                     ^
+     23|   expect(order).toEqual(original);
+     24|  });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 8 passed (9)
+      Tests  1 failed | 121 passed (122)
+   Start at  19:28:51
+   Duration  3.37s (transform 1.88s, setup 0ms, collect 7.42s, tests 1.34s, environment 2ms, prepare 5.44s)
+
+(node:36796) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+npm error Lifecycle script `test` failed with error:
+npm error code 1
+npm error path C:\Users\5700x\.codex\worktrees\v396-entry-frequency-risk-audit\MITS\apps\engine
+npm error workspace @zdj/engine@3.9.6
+npm error location C:\Users\5700x\.codex\worktrees\v396-entry-frequency-risk-audit\MITS\apps\engine
+npm error command failed
+npm error command C:\Windows\system32\cmd.exe /d /s /c vitest run src/services/unknownProofValidation.test.ts src/services/reconciliationUnknownRisk.test.ts src/services/reconciliationCoverageContract.test.ts src/services/unknownNoActiveRiskProofRenewal.test.ts src/services/unknownRiskAuditTiering.test.ts src/services/executionLifecycle.integration.test.ts src/services/remoteFactAuditIntegration.test.ts src/services/p0EntryIntegrity.test.ts src/api/activeEntryProjection.test.ts

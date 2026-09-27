@@ -7,9 +7,37 @@ const ACTIVE_ORDER=new Set(['NEW','SUBMITTING','UNKNOWN','WORKING','PARTIALLY_FI
 const TERMINAL_ORDER=new Set(['FILLED','CANCELED','EXPIRED','REJECTED']);
 const ACTIVE_RESERVATION=new Set(['RESERVED','WORKING']);
 
+export const NO_RISK_ABSENCE_SOURCES=['BINANCE_EXACT_ORDER_NOT_FOUND','BINANCE_OPEN_ORDERS_IDENTITY_ABSENT','BINANCE_USER_TRADES_IDENTITY_ABSENT','BINANCE_ALL_ORDERS_IDENTITY_ABSENT'] as const;
+export type NoActiveRiskProofClass='POSITION_ABSENT'|'POSITION_OTHER_CYCLE';
+export type NoActiveRiskEvidence={status:'VERIFIED_NO_ACTIVE_RISK';sources:string[];checkedAt:number;validUntil:number;identityTombstone:string;reason:string;proofClass?:NoActiveRiskProofClass;proofTier?:number};
+export type NoActiveRiskProofValidation={valid:boolean;reason:string;proofClass:NoActiveRiskProofClass|null};
+/** The sole release contract, including for untrusted hydrated history. No coercions or status-only shortcuts. */
+export function validateNoActiveRiskProof(order:EntryOrder,now=Date.now()):NoActiveRiskProofValidation{
+  const fail=(reason:string):NoActiveRiskProofValidation=>({valid:false,reason,proofClass:null});
+  const row=order as any,evidence=row?.activeRiskEvidence;
+  if(row?.activeRiskExposure!==false)return fail('EXPOSURE_NOT_PROVEN_ABSENT');
+  if(!evidence||typeof evidence!=='object'||Array.isArray(evidence)||evidence.status!=='VERIFIED_NO_ACTIVE_RISK')return fail('PROOF_STATUS_INVALID');
+  const timestamp=(value:unknown):value is number=>typeof value==='number'&&Number.isSafeInteger(value)&&value>0;
+  if(!timestamp(now)||!timestamp(evidence.checkedAt)||!timestamp(evidence.validUntil))return fail('PROOF_TIMESTAMP_INVALID');
+  if(evidence.checkedAt>now||evidence.validUntil<=evidence.checkedAt)return fail('PROOF_TIME_ORDER_INVALID');
+  if(now>=evidence.validUntil)return fail('PROOF_EXPIRED');
+  const tier=evidence.proofTier!==undefined?evidence.proofTier:row.remoteAudit?.tier!==undefined?row.remoteAudit.tier:0;
+  if(typeof tier!=='number'||!Number.isInteger(tier)||tier<0||tier>=UNKNOWN_RISK_EVIDENCE_TIER_MS.length)return fail('PROOF_TIER_INVALID');
+  if(row.remoteAudit?.tier!==undefined&&row.remoteAudit.tier!==tier)return fail('PROOF_TIER_MISMATCH');
+  if(evidence.validUntil-evidence.checkedAt>UNKNOWN_RISK_EVIDENCE_TIER_MS[tier])return fail('PROOF_TTL_EXCEEDS_TIER');
+  const identity=row.clientOrderId??row.exchangeOrderId;
+  if(typeof row.symbol!=='string'||!row.symbol.trim()||typeof identity!=='string'||!identity.trim()||evidence.identityTombstone!==entryIdentityTombstone(order))return fail('PROOF_IDENTITY_MISMATCH');
+  if(typeof row.filledQuantity!=='number'||!Number.isFinite(row.filledQuantity)||row.filledQuantity!==0)return fail('ORDER_FILL_NOT_PROVEN_ZERO');
+  const sources=evidence.sources;
+  if(!Array.isArray(sources)||sources.length!==5||sources.some(source=>typeof source!=='string')||new Set(sources).size!==5)return fail('PROOF_SOURCES_INVALID');
+  const absent=sources.includes('BINANCE_LONG_SHORT_POSITION_ZERO'),other=sources.includes('POSITION_PRESENT_PROVEN_OTHER_CYCLE');
+  if(!NO_RISK_ABSENCE_SOURCES.every(source=>sources.includes(source))||absent===other)return fail('PROOF_SOURCE_CLASS_UNSUPPORTED');
+  const proofClass:NoActiveRiskProofClass=absent?'POSITION_ABSENT':'POSITION_OTHER_CYCLE';
+  if(evidence.proofClass!==undefined&&evidence.proofClass!==proofClass)return fail('PROOF_CLASS_MISMATCH');
+  return{valid:true,reason:'VERIFIED_NO_ACTIVE_RISK',proofClass};
+}
 export function hasVerifiedNoActiveRisk(order:EntryOrder,now=Date.now()){
-  const evidence=(order as any).activeRiskEvidence;
-  return (order as any).activeRiskExposure===false&&evidence?.status==='VERIFIED_NO_ACTIVE_RISK'&&Number.isFinite(Number(evidence.checkedAt))&&Number(evidence.validUntil)>now&&evidence.identityTombstone===entryIdentityTombstone(order);
+  return validateNoActiveRiskProof(order,now).valid;
 }
 
 export function entryHasUnresolvedExchangeTerminalRisk(order:EntryOrder,now=Date.now()){
@@ -28,12 +56,12 @@ export function entryOrderOccupiesRisk(order:EntryOrder,now=Date.now()){
 /** True when a submitted-but-unverified entry has been positively proven to hold no exchange order,
  *  no fill and no position. The UNKNOWN row itself is never rewritten. */
 export function entryClaimReleasedByExchangeFacts(order:EntryOrder,now=Date.now()){
-  return order.status==='UNKNOWN'&&!order.exchangeOrderId&&Number(order.filledQuantity??0)===0&&hasVerifiedNoActiveRisk(order,now);
+  return isHistoricalUnknownEntryOrder(order)&&hasVerifiedNoActiveRisk(order,now);
 }
 
-/** Durable entry scope is owned only while the submission can still become real risk. */
+/** Durable scope follows the same occupancy rule, including terminal rows with unresolved exchange risk. */
 export function durableEntryClaimActive(order:EntryOrder,now=Date.now()){
-  return ACTIVE_ORDER.has(order.status)&&!entryClaimReleasedByExchangeFacts(order,now);
+  return entryOrderOccupiesRisk(order,now);
 }
 
 /**
@@ -57,14 +85,9 @@ export function remoteRiskAudit(order:EntryOrder):RemoteRiskAudit|null{
     lastEmittedReason:typeof row.lastEmittedReason==='string'?row.lastEmittedReason:null};
 }
 
-const NO_RISK_ABSENCE_SOURCES=['BINANCE_EXACT_ORDER_NOT_FOUND','BINANCE_OPEN_ORDERS_IDENTITY_ABSENT','BINANCE_USER_TRADES_IDENTITY_ABSENT','BINANCE_ALL_ORDERS_IDENTITY_ABSENT'];
-
-/** Category B: a historical UNKNOWN whose absence of risk has been proven by every remote source. */
+/** Category B uses exactly the same proof contract as occupancy and durable claims. */
 export function historicalNoRiskEligible(order:EntryOrder,now=Date.now()){
-  if(order.status!=='UNKNOWN'||!entryClaimReleasedByExchangeFacts(order,now))return false;
-  const evidence=(order as any).activeRiskEvidence;
-  if(!NO_RISK_ABSENCE_SOURCES.every(source=>(evidence?.sources??[]).includes(source)))return false;
-  return (evidence?.sources??[]).includes('BINANCE_LONG_SHORT_POSITION_ZERO')||(evidence?.sources??[]).includes('POSITION_PRESENT_PROVEN_OTHER_CYCLE');
+  return isHistoricalUnknownEntryOrder(order)&&hasVerifiedNoActiveRisk(order,now);
 }
 
 /** True when the next active remote audit of a promoted historical UNKNOWN is not yet due. */

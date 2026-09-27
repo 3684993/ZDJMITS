@@ -18,7 +18,7 @@ describe('active Entry dashboard projection',()=>{
         checkedAt:now,
         validUntil:now+60_000,
         identityTombstone:'ENTRY:BTCUSDT:ml_historical',
-        sources:['BINANCE_EXACT_ORDER_NOT_FOUND'],
+        sources:['BINANCE_EXACT_ORDER_NOT_FOUND','BINANCE_OPEN_ORDERS_IDENTITY_ABSENT','BINANCE_USER_TRADES_IDENTITY_ABSENT','BINANCE_ALL_ORDERS_IDENTITY_ABSENT','BINANCE_LONG_SHORT_POSITION_ZERO'],
         reason:'EXCHANGE_TERMINAL_STATUS_UNKNOWN_CURRENT_RISK_ABSENT',
       },
     });

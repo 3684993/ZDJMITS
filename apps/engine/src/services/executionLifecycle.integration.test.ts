@@ -86,7 +86,7 @@ describe('V3.9.5 durable entry claim release on proven no-active-risk',()=>{
   const scope='TESTNET/account/BTC/ENTRY';
   const unknownOrder=(id:string,evidence:{verified:boolean;ttlMs?:number})=>{
     const order:any={cycleId:'cycle_test_1',id,intentId:id,clientOrderId:`ml_${id}`,symbol:'BTCUSDT',side:'LONG',quantity:1,price:100,filledQuantity:0,exchangeOrderId:null,status:'UNKNOWN',createdAt:1,updatedAt:Date.now()};
-    if(evidence.verified){order.activeRiskExposure=false;order.activeRiskEvidence={status:'VERIFIED_NO_ACTIVE_RISK',sources:['BINANCE_EXACT_ORDER_NOT_FOUND','BINANCE_OPEN_ORDERS_IDENTITY_ABSENT','BINANCE_USER_TRADES_IDENTITY_ABSENT','BINANCE_ALL_ORDERS_IDENTITY_ABSENT','BINANCE_LONG_SHORT_POSITION_ZERO'],checkedAt:Date.now(),validUntil:Date.now()+(evidence.ttlMs??300_000),identityTombstone:`ENTRY:BTCUSDT:ml_${id}`,reason:'EXCHANGE_TERMINAL_STATUS_UNKNOWN_CURRENT_RISK_ABSENT'};}
+    if(evidence.verified){const checkedAt=Date.now();order.activeRiskExposure=false;order.activeRiskEvidence={status:'VERIFIED_NO_ACTIVE_RISK',sources:['BINANCE_EXACT_ORDER_NOT_FOUND','BINANCE_OPEN_ORDERS_IDENTITY_ABSENT','BINANCE_USER_TRADES_IDENTITY_ABSENT','BINANCE_ALL_ORDERS_IDENTITY_ABSENT','BINANCE_LONG_SHORT_POSITION_ZERO'],checkedAt,validUntil:checkedAt+(evidence.ttlMs??300_000),identityTombstone:`ENTRY:BTCUSDT:ml_${id}`,reason:'EXCHANGE_TERMINAL_STATUS_UNKNOWN_CURRENT_RISK_ABSENT'};}
     return order;
   };
   const recordFor=(id:string,evidence:{verified:boolean;ttlMs?:number})=>({intent:{id},order:unknownOrder(id,evidence),reservation:{id:`r_${id}`,status:'WORKING'}}) as any;
@@ -146,7 +146,7 @@ describe('V3.9.5 durable entry claim release on proven no-active-risk',()=>{
       expect(store.claimEntryExecution(scope,recordFor('first',{verified:false}),true).acquired).toBe(true);
     }finally{store.close();}
   });
-  it('does not resurrect a released claim across restart after the evidence TTL lapses',async()=>{
+  it('reactivates a released claim across restart when its proof is no longer valid',async()=>{
     const dir=await mkdtemp(path.join(os.tmpdir(),'mits-claim-restart-'));dirs.push(dir);
     const first=await openStore(dir);
     try{
@@ -157,8 +157,8 @@ describe('V3.9.5 durable entry claim release on proven no-active-risk',()=>{
     try{
       reopened.saveEntryExecution(recordFor('first',{verified:true,ttlMs:-1}));
       const row=rowsOf(reopened).find((item:any)=>item.intent_id==='first')!;
-      expect(row.active).toBe(0);expect(row.released_at).toBeGreaterThan(0);
-      expect(reopened.claimEntryExecution(scope,recordFor('second',{verified:false})).acquired).toBe(true);
+      expect(row.active).toBe(1);expect(row.released_at).toBeGreaterThan(0);
+      expect(reopened.claimEntryExecution(scope,recordFor('second',{verified:false})).acquired).toBe(false);
     }finally{reopened.close();}
   });
   it('restores a genuinely uncertain task across restart so it keeps blocking and cannot double-submit',async()=>{

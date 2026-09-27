@@ -1,0 +1,133 @@
+{
+  "schema": "V396_UNKNOWN_PROOF_NEGATIVE_CONTROL_1",
+  "classification": "SYNTHETIC_OFFLINE_COUNTEREXAMPLE_NOT_RUNTIME_EVIDENCE",
+  "now": 1790491200000,
+  "source": "apps/engine/src/services/entryRiskOccupancy.ts:10",
+  "results": [
+    {
+      "id": "valid-proof",
+      "evidence": {
+        "status": "VERIFIED_NO_ACTIVE_RISK",
+        "sources": [
+          "BINANCE_EXACT_ORDER_NOT_FOUND",
+          "BINANCE_OPEN_ORDERS_IDENTITY_ABSENT",
+          "BINANCE_USER_TRADES_IDENTITY_ABSENT",
+          "BINANCE_ALL_ORDERS_IDENTITY_ABSENT",
+          "BINANCE_LONG_SHORT_POSITION_ZERO"
+        ],
+        "checkedAt": 1790491199000,
+        "validUntil": 1790491260000,
+        "identityTombstone": "ENTRY:FIXTUREUSDT:offline_client"
+      },
+      "expectedValid": true,
+      "actualValid": true,
+      "occupiesRisk": false,
+      "durableClaimActive": false,
+      "invariantPass": true
+    },
+    {
+      "id": "expired",
+      "evidence": {
+        "status": "VERIFIED_NO_ACTIVE_RISK",
+        "sources": [
+          "BINANCE_EXACT_ORDER_NOT_FOUND",
+          "BINANCE_OPEN_ORDERS_IDENTITY_ABSENT",
+          "BINANCE_USER_TRADES_IDENTITY_ABSENT",
+          "BINANCE_ALL_ORDERS_IDENTITY_ABSENT",
+          "BINANCE_LONG_SHORT_POSITION_ZERO"
+        ],
+        "checkedAt": 1790491199000,
+        "validUntil": 1790491199999,
+        "identityTombstone": "ENTRY:FIXTUREUSDT:offline_client"
+      },
+      "expectedValid": false,
+      "actualValid": false,
+      "occupiesRisk": true,
+      "durableClaimActive": true,
+      "invariantPass": true
+    },
+    {
+      "id": "identity-mismatch",
+      "evidence": {
+        "status": "VERIFIED_NO_ACTIVE_RISK",
+        "sources": [
+          "BINANCE_EXACT_ORDER_NOT_FOUND",
+          "BINANCE_OPEN_ORDERS_IDENTITY_ABSENT",
+          "BINANCE_USER_TRADES_IDENTITY_ABSENT",
+          "BINANCE_ALL_ORDERS_IDENTITY_ABSENT",
+          "BINANCE_LONG_SHORT_POSITION_ZERO"
+        ],
+        "checkedAt": 1790491199000,
+        "validUntil": 1790491260000,
+        "identityTombstone": "ENTRY:OTHER:other"
+      },
+      "expectedValid": false,
+      "actualValid": false,
+      "occupiesRisk": true,
+      "durableClaimActive": true,
+      "invariantPass": true
+    },
+    {
+      "id": "null-checked-at",
+      "evidence": {
+        "status": "VERIFIED_NO_ACTIVE_RISK",
+        "sources": [
+          "BINANCE_EXACT_ORDER_NOT_FOUND",
+          "BINANCE_OPEN_ORDERS_IDENTITY_ABSENT",
+          "BINANCE_USER_TRADES_IDENTITY_ABSENT",
+          "BINANCE_ALL_ORDERS_IDENTITY_ABSENT",
+          "BINANCE_LONG_SHORT_POSITION_ZERO"
+        ],
+        "checkedAt": null,
+        "validUntil": 1790491260000,
+        "identityTombstone": "ENTRY:FIXTUREUSDT:offline_client"
+      },
+      "expectedValid": false,
+      "actualValid": false,
+      "occupiesRisk": true,
+      "durableClaimActive": true,
+      "invariantPass": true
+    },
+    {
+      "id": "missing-sources",
+      "evidence": {
+        "status": "VERIFIED_NO_ACTIVE_RISK",
+        "sources": [],
+        "checkedAt": 1790491199000,
+        "validUntil": 1790491260000,
+        "identityTombstone": "ENTRY:FIXTUREUSDT:offline_client"
+      },
+      "expectedValid": false,
+      "actualValid": false,
+      "occupiesRisk": true,
+      "durableClaimActive": true,
+      "invariantPass": true
+    },
+    {
+      "id": "future-checked-at",
+      "evidence": {
+        "status": "VERIFIED_NO_ACTIVE_RISK",
+        "sources": [
+          "BINANCE_EXACT_ORDER_NOT_FOUND",
+          "BINANCE_OPEN_ORDERS_IDENTITY_ABSENT",
+          "BINANCE_USER_TRADES_IDENTITY_ABSENT",
+          "BINANCE_ALL_ORDERS_IDENTITY_ABSENT",
+          "BINANCE_LONG_SHORT_POSITION_ZERO"
+        ],
+        "checkedAt": 1790491800000,
+        "validUntil": 1790491260000,
+        "identityTombstone": "ENTRY:FIXTUREUSDT:offline_client"
+      },
+      "expectedValid": false,
+      "actualValid": false,
+      "occupiesRisk": true,
+      "durableClaimActive": true,
+      "invariantPass": true
+    }
+  ],
+  "blockers": [],
+  "resolution": "Canonical strict validator is authorized and implemented; all malformed cases must retain occupancy and claim."
+}
+
+(node:34916) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)

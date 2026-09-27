@@ -1,0 +1,13 @@
+added	deleted	path
+1	1	apps/engine/src/api/activeEntryProjection.test.ts
+40	28	apps/engine/src/config/settingsStore.ts
+1	1	apps/engine/src/services/entryCoordinator.ts
+35	12	apps/engine/src/services/entryRiskOccupancy.ts
+4	4	apps/engine/src/services/executionLifecycle.integration.test.ts
+1	1	apps/engine/src/services/finalRiskConvergence.test.ts
+5	4	apps/engine/src/services/p0EntryIntegrity.ts
+1	1	apps/engine/src/services/pendingRiskOccupancyConvergence.test.ts
+14	10	apps/engine/src/services/reconciliationService.ts
+1	1	apps/engine/src/services/remoteFactAuditIntegration.test.ts
+108	0	apps/engine/src/services/unknownProofHydration.test.ts
+53	0	apps/engine/src/services/unknownProofValidation.test.ts

@@ -1,0 +1,27 @@
+{
+  "schema": "V396_UNKNOWN_PROOF_RUNTIME_VS_SOURCE_1",
+  "candidateBuildId": "3.9.6-08575adfc68a25f6c874",
+  "candidateSourceHash": "030ab076b704dafc941da04f8222091b36cb7c4c0a86e69f9fbb68ddd1427f55",
+  "candidateArtifactHash": "08575adfc68a25f6c874b7546a81c21175695b34af879f67cc81501c118252ba",
+  "runningBuildId": "3.9.6-fa4fbc8660ef12849644",
+  "samePid": true,
+  "sameInstance": true,
+  "sameRunningBuild": true,
+  "sameSettingsVersion": true,
+  "runningPid": 18644,
+  "runningInstance": "e0919ffb-a97e-4eb6-b4bb-09818a489150",
+  "settingsVersion": 219,
+  "candidateIsRunning": false,
+  "rollbackArtifactMatchesLoadedReceipt": true,
+  "rollbackSourceMatchesLoadedReceipt": true,
+  "runtimeAcceptance": "NOT_RUN_EXTERNAL",
+  "deployment": "DEPLOYMENT_NOT_AUTHORIZED",
+  "lifecycle": "NOT_RUN",
+  "proofDataSnapshotHash": "9dbc5e1c9e29130dc9d4474e1bad8bd6ce3210f5011f26cb7546cf9c9fd4ca80",
+  "limitations": [
+    "Process command, loopback identity and receipt identify the old artifact; new source is not loaded.",
+    "Input is an allowlisted SQLite read-transaction snapshot hash, not a quiescent full-database file hash or cryptographic attestation from the process.",
+    "Proof comparison uses the SAME captured timestamp; natural future expiry is not deployment acceptance.",
+    "Startup merge is an offline model of existing source precedence, not a performed restart."
+  ]
+}

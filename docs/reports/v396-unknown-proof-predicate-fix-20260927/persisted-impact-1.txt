@@ -1,0 +1,28 @@
+{
+  "durable": {
+    "count": 45,
+    "oldProofValid": 42,
+    "newProofValid": 42,
+    "proofChanged": 0,
+    "occupancyChanged": 0,
+    "claimChanged": 0,
+    "storedClaimWouldReactivate": 3,
+    "invalidReasons": {
+      "PROOF_EXPIRED": 3
+    }
+  },
+  "runtime": {
+    "count": 47,
+    "oldProofValid": 47,
+    "newProofValid": 47,
+    "proofChanged": 0,
+    "occupancyChanged": 0,
+    "claimChanged": 0,
+    "storedClaimWouldReactivate": 0,
+    "invalidReasons": {}
+  }
+}
+
+(node:24980) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:24980) ExperimentalWarning: SQLite is an experimental feature and might change at any time

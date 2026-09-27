@@ -1,0 +1,87 @@
+(node:33740) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:31008) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> @zdj/engine@3.9.6 test
+> vitest run src/services/unknownProofValidation.test.ts src/services/unknownProofHydration.test.ts
+
+(node:48920) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+VITEST_TEST_TIMEOUT=5000 CI=
+
+ RUN  v3.2.4 C:/Users/5700x/.codex/worktrees/v396-entry-frequency-risk-audit/MITS/apps/engine
+
+(node:25668) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:29504) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:29916) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:40788) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:44136) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:28512) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:50340) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:21480) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:41404) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:23788) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:41800) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:32240) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:43664) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:20420) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:44476) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:25668) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+ ✓ src/services/unknownProofValidation.test.ts (46 tests) 15ms
+(node:13156) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ❯ src/services/unknownProofHydration.test.ts (7 tests | 1 failed) 441ms
+   × hydrates malformed and expired proof verbatim but blocks new claims without waiting for a save 147ms
+     → state.hydrate is not a function
+   ✓ expired proof reactivates effective claim on a pure stats/claim read, retaining release history 91ms
+   ✓ multiple reactivated proofs cannot bypass the unique active index or overwrite the current owner 101ms
+   ✓ terminal-UNKNOWN cannot pass through the ordinary historical terminal audit branch 5ms
+   ✓ fresh real producer facts naturally renew invalid proof and R1/claims agree 90ms
+   ✓ a successful absence probe cannot overwrite a newer fill arriving during its await 1ms
+   ✓ coordinator exact order recovery clears a prior absence proof before any later UNKNOWN 5ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/services/unknownProofHydration.test.ts > hydrates malformed and expired proof verbatim but blocks new claims without waiting for a save
+TypeError: state.hydrate is not a function
+ ❯ src/services/unknownProofHydration.test.ts:26:75
+     24|   expect(reopened.entryExecutionClaimStats()).toMatchObject({activeCla…
+     25|   expect(reopened.claimEntryExecution(scope,record(order('next'))).acq…
+     26|   const state=new RuntimeState({takeProfit:{enabled:false}} as any);st…
+       |                                                                           ^
+     27|  }finally{reopened.close();}
+     28| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 52 passed (53)
+   Start at  19:30:35
+   Duration  1.80s (transform 584ms, setup 0ms, collect 960ms, tests 456ms, environment 0ms, prepare 337ms)
+
+(node:24320) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+npm error Lifecycle script `test` failed with error:
+npm error code 1
+npm error path C:\Users\5700x\.codex\worktrees\v396-entry-frequency-risk-audit\MITS\apps\engine
+npm error workspace @zdj/engine@3.9.6
+npm error location C:\Users\5700x\.codex\worktrees\v396-entry-frequency-risk-audit\MITS\apps\engine
+npm error command failed
+npm error command C:\Windows\system32\cmd.exe /d /s /c vitest run src/services/unknownProofValidation.test.ts src/services/unknownProofHydration.test.ts

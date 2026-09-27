@@ -88,9 +88,9 @@ describe('the admitting gate names the constraint that actually binds', () => {
   });
 
   it('PT-03 a denial that holds at any size outranks the arithmetic, and says so', () => {
-    const ranked = rankAdmissionReasons({reasons: ['HUMAN_ACK_OVERDUE', 'STRESS_LIMIT:MAX_GROSS_NOTIONAL'],
+    const ranked = rankAdmissionReasons({reasons: ['HUMAN_PENDING_HANDOFF_LIMIT', 'STRESS_LIMIT:MAX_GROSS_NOTIONAL'],
       gates: [gate('MAX_GROSS_NOTIONAL', 'STRESS_LIMIT:MAX_GROSS_NOTIONAL', 0)]});
-    expect(ranked.firstBinding?.code).toBe('HUMAN_ACK_OVERDUE');
+    expect(ranked.firstBinding?.code).toBe('HUMAN_PENDING_HANDOFF_LIMIT');
     expect(ranked.firstBinding?.kind).toBe('SIZE_INDEPENDENT');
     // Shrinking the order cannot answer this one, and the number is still not hidden.
     expect(ranked.firstBinding?.shortfallUsd).toBeNull();
@@ -105,14 +105,15 @@ describe('the admitting gate names the constraint that actually binds', () => {
     expect(ranked.ordered.indexOf('PORTFOLIO_RISK_SNAPSHOT_INCOMPLETE')).toBeGreaterThan(ranked.ordered.indexOf('PENDING_RISK_UNVERIFIED:order:intent_1'));
   });
 
-  it('PT-05 clearing one blocker exposes the next real one instead of a pass', () => {
+  it('PT-05 ACK age is diagnostic; clearing real exposure is what changes the admission result', () => {
     const overdue = book();
     expect(overdue.admission.capacityFacts(overdue.now).admitsAnyPositiveNotional).toBe(false);
     const denied = overdue.admission.admit(overdue.candidate(), overdue.now);
     expect(denied.allowed).toBe(false);
-    expect(denied.reason).toBe('HUMAN_ACK_OVERDUE');
+    expect(denied.reason).toBe('STRESS_LIMIT:MAX_GROSS_NOTIONAL');
+    expect(denied.reasons).not.toContain('HUMAN_ACK_OVERDUE');
 
-    // The human acknowledges the handoff: the ack refusal is gone, and the ceiling it hid is now the cause.
+    // Acknowledgement remains ownership evidence but cannot alter the risk ceiling.
     overdue.owners.set('p1', {ownerState: 'HANDOFF_PENDING', handoffAt: overdue.now - 1_000, acknowledgedAt: overdue.now});
     const afterAck = overdue.admission.admit(overdue.candidate(), overdue.now);
     expect(afterAck.allowed).toBe(false);
@@ -132,7 +133,8 @@ describe('the admitting gate names the constraint that actually binds', () => {
   it('PT-06 the capacity view and the gate agree on the same book, with the number attached', () => {
     const live = book();
     const summary = bookAdmissionSummary(live.state, live.now);
-    expect(summary).toMatchObject({hasVerdict: true, exhausted: true, code: 'HUMAN_ACK_OVERDUE'});
+    expect(summary).toMatchObject({status: 'AVAILABLE', hasVerdict: true, exhausted: true, code: 'STRESS_LIMIT:MAX_GROSS_NOTIONAL'});
+    expect(summary.overdueHandoffs).toBe(1);
     expect(summary.ceilingUsdBySide).toEqual({LONG: 0, SHORT: 0});
     const budget = {evaluatedAt: live.now, policy: {gross: 'OBSERVE', direction: 'OBSERVE', cluster: 'ENFORCE'},
       grossNotionalUsd: 6_500, grossLimitUsd: 10_000, remainingGrossUsd: 3_500, grossUsedPct: .65,
@@ -145,10 +147,10 @@ describe('the admitting gate names the constraint that actually binds', () => {
     expect(view.sideStatus.code).toBe('RISK_ADMISSION_EXHAUSTED');
     expect(view.firstBlocker).toBe('RISK_ADMISSION');
     expect(view.exhaustedForNewRisk).toBe(true);
-    expect(view.admission.detail).toContain('HUMAN_ACK_OVERDUE');
+    expect(view.admission.detail).toContain('MAX_GROSS_NOTIONAL');
   });
 
-  it('PT-07 no verdict is no veto: an observed ratio never refuses, and an absent gate never invents room', () => {
+  it('PT-07 absent or failed admission is unavailable in execution mode; analysis-only remains non-vetoing', () => {
     const permissive = book({profile: {maxGrossNotionalUsd: 60_000, maxHumanNotionalUsd: 60_000, maxClusterNotionalUsd: 60_000, maxCapitalAtRiskUsd: 60_000,
       maxDirectionNotionalUsd: 40_000, maxStressLossUsd: 5_000}, acknowledgedAt: Date.now()});
     const summary = bookAdmissionSummary(permissive.state, permissive.now);
@@ -156,19 +158,82 @@ describe('the admitting gate names the constraint that actually binds', () => {
     expect(summary.hasVerdict).toBe(true);
     expect(permissive.admission.admit(permissive.candidate(), permissive.now).allowed,
       JSON.stringify(permissive.admission.admit(permissive.candidate(), permissive.now).reasons)).toBe(true);
-    // No installed admission means this layer says nothing — never "unlimited", never a refusal.
-    expect(inputsFor(null, 'LONG')).toEqual({riskAdmissionCeilingUsd: null, riskAdmissionRefusal: null, riskAdmissionNote: null, capacity: null});
+    // An absent admission is different from a valid numeric zero and fails closed before execution.
+    expect(inputsFor(null, 'LONG')).toMatchObject({riskAdmissionCeilingUsd: null, riskAdmissionRefusal: 'RISK_ADMISSION_UNAVAILABLE'});
+    const missing = new RuntimeState(any({}));
+    expect(bookAdmissionSummary(missing, Date.now())).toMatchObject({status: 'UNAVAILABLE', hasVerdict: false, code: 'RISK_ADMISSION_UNAVAILABLE'});
+    const broken = new RuntimeState(any({}));
+    (broken as any).riskAdmission = {capacityFacts: () => { throw new Error('read failure'); }};
+    expect(bookAdmissionSummary(broken, Date.now())).toMatchObject({status: 'UNAVAILABLE', hasVerdict: false, code: 'RISK_ADMISSION_UNAVAILABLE'});
+    const analysis = new RuntimeState(any({connections: {executionMode: 'READ_ONLY', exchange: {environment: 'TESTNET'}}}));
+    expect(bookAdmissionSummary(analysis, Date.now()).status).toBe('NOT_APPLICABLE');
     const budget = {evaluatedAt: Date.now(), policy: {gross: 'OBSERVE', direction: 'OBSERVE', cluster: 'OBSERVE'}, grossNotionalUsd: 0, grossLimitUsd: 1, remainingGrossUsd: 0,
       grossUsedPct: 1, longNotionalUsd: 0, shortNotionalUsd: 0, directionLimitUsd: 1, longAvailableNotionalUsd: 0, shortAvailableNotionalUsd: 0, longUsedPct: 0, shortUsedPct: 0} as any;
-    const view = portfolioCapacityVisibility({positions: 0, inFlight: 0, reserved: 0, used: 0, max: 10}, budget, {});
-    expect(view.firstBlocker).toBe('NONE');
-    expect(view.exhaustedReason).toBeNull();
+    const view = portfolioCapacityVisibility({positions: 0, inFlight: 0, reserved: 0, used: 0, max: 10}, budget, {admission: bookAdmissionSummary(missing)});
+    expect(view.firstBlocker).toBe('RISK_ADMISSION_UNAVAILABLE');
+    expect(view.admission.status).toBe('UNAVAILABLE');
+    expect(view.sideStatus.code).toBe('RISK_ADMISSION_UNAVAILABLE');
+  });
+});
+
+describe('risk-chain simplification preserves independent limits and sizes in each gate unit', () => {
+  it('an overdue ACK stays visible as governance work but cannot veto an otherwise admissible Entry', () => {
+    const overdue = book({grossUsd: 1_200, handoffAgeMs: 10 * 3_600_000, profile: {maxAckAgeMs: 8 * 3_600_000,
+      maxGrossNotionalUsd: 6_000, maxHumanNotionalUsd: 6_000, maxClusterNotionalUsd: 6_000, maxCapitalAtRiskUsd: 600,
+      maxDirectionNotionalUsd: 4_000, maxStressLossUsd: 900, maxHumanPositions: 6, maxPendingHandoffs: 4}});
+    const facts = overdue.admission.capacityFacts(overdue.now);
+    expect(facts.overdueHandoffs).toBe(1);
+    expect(facts.oldestOverdueHours).toBeGreaterThan(9);
+    const decision = overdue.admission.admit(overdue.candidate(), overdue.now);
+    expect(decision.allowed, JSON.stringify(decision.reasons)).toBe(true);
+    expect(decision.snapshot.grossNotionalUsd).toBeCloseTo(1_700, 6);
+  });
+
+  it('ranked gate shortfalls add candidate impact in the gate unit only', () => {
+    const ranked = rankAdmissionReasons({reasons: ['STRESS_LIMIT:MAX_GROSS_NOTIONAL', 'STRESS_LIMIT:MAX_CAPITAL_AT_RISK', 'STRESS_LIMIT:MAX_STRESS_LOSS'], gates: [
+      {name: 'MAX_GROSS_NOTIONAL', reason: 'STRESS_LIMIT:MAX_GROSS_NOTIONAL', unit: 'NOTIONAL_USD', limitUsd: 100, usedUsd: 95, maxAdditionalUsd: 5, candidateImpactUsd: 20},
+      {name: 'MAX_CAPITAL_AT_RISK', reason: 'STRESS_LIMIT:MAX_CAPITAL_AT_RISK', unit: 'MARGIN_USD', limitUsd: 100, usedUsd: 98, maxAdditionalUsd: 2, candidateImpactUsd: 5},
+      {name: 'MAX_STRESS_LOSS', reason: 'STRESS_LIMIT:MAX_STRESS_LOSS', unit: 'LOSS_USD', limitUsd: 60, usedUsd: 50, maxAdditionalUsd: 10, candidateImpactUsd: 3},
+    ]});
+    const byCode = new Map(ranked.ordered.map(code => [code, code]));
+    expect([...byCode.keys()]).toHaveLength(3);
+    expect(ranked.firstBinding?.kind).toBe('NOTIONAL');
+    const margin = rankAdmissionReasons({reasons: ['STRESS_LIMIT:MAX_CAPITAL_AT_RISK'], gates: [
+      {name: 'MAX_CAPITAL_AT_RISK', reason: 'STRESS_LIMIT:MAX_CAPITAL_AT_RISK', unit: 'MARGIN_USD', limitUsd: 100, usedUsd: 98, maxAdditionalUsd: 2, candidateImpactUsd: 5},
+    ]});
+    expect(margin.firstBinding?.kind).toBe('LIMIT');
+    expect(margin.firstBinding?.shortfallUsd).toBe(3);
+  });
+
+  it('candidate risk ceiling converts margin headroom by verified leverage and solves stress loss in loss dollars', () => {
+    const stress = book({grossUsd: 1_200, profile: {maxGrossNotionalUsd: 20_000, maxHumanNotionalUsd: 20_000,
+      maxClusterNotionalUsd: 20_000, maxCapitalAtRiskUsd: 60_000, maxDirectionNotionalUsd: 20_000, maxStressLossUsd: 600,
+      maxHumanPositions: 6, maxPendingHandoffs: 4}});
+    const ceiling = stress.admission.capacityFacts(stress.now, 'ETHUSDT', {leverage: 10, leverageFact: 'CANDIDATE_RECOMMENDED', quoteAsset: 'USDT'});
+    const expectedStressCeiling = (600 - 1_200 * (.126 + .025)) / (.126 + .025);
+    expect(ceiling.maxNewRiskNotionalUsdBySide.LONG).toBeCloseTo(expectedStressCeiling, 4);
+    expect(ceiling.maxNewRiskNotionalUsdBySide.SHORT).toBeCloseTo(expectedStressCeiling, 4);
+    const margin = book({grossUsd: 1_200, profile: {maxGrossNotionalUsd: 20_000, maxHumanNotionalUsd: 20_000,
+      maxClusterNotionalUsd: 20_000, maxCapitalAtRiskUsd: 180, maxDirectionNotionalUsd: 20_000, maxStressLossUsd: 20_000,
+      maxHumanPositions: 6, maxPendingHandoffs: 4}});
+    const marginFacts = margin.admission.capacityFacts(margin.now, 'ETHUSDT', {leverage: 10, leverageFact: 'CANDIDATE_RECOMMENDED', quoteAsset: 'USDT'});
+    expect(marginFacts.maxNewRiskNotionalUsdBySide.LONG).toBeCloseTo(600, 6);
+  });
+
+  it('retains a genuinely tighter mapped-cluster ceiling', () => {
+    const clustered = book({grossUsd: 1_200, profile: {maxGrossNotionalUsd: 5_000, maxHumanNotionalUsd: 5_000,
+      maxClusterNotionalUsd: 1_500, maxCapitalAtRiskUsd: 60_000, maxDirectionNotionalUsd: 5_000, maxStressLossUsd: 20_000,
+      maxHumanPositions: 6, maxPendingHandoffs: 4, clusters: {BTC: 'MAJORS'}}});
+    const facts = clustered.admission.capacityFacts(clustered.now, 'BTCUSDT', {leverage: 10, leverageFact: 'CANDIDATE_RECOMMENDED', quoteAsset: 'USDT'});
+    expect(facts.maxNewRiskNotionalUsdBySide.LONG).toBeCloseTo(300, 6);
+    const decision = clustered.admission.admit(clustered.candidate({symbol: 'BTCUSDT', notionalUsd: 500, marginUsd: 50}), clustered.now);
+    expect(decision.reasons).toContain('STRESS_LIMIT:MAX_CLUSTER_NOTIONAL');
   });
 });
 
 describe('the pre-AI envelope refuses with the gate number, before any model run', () => {
   const capacityFacts = (over: Partial<AdmissionCapacityFacts> = {}): any => ({
-    admitsAnyPositiveNotional: false, maxNewRiskNotionalUsd: 0, maxNewRiskNotionalUsdBySide: {LONG: 0, SHORT: 0},
+    evaluatedAt: Date.now(), admitsAnyPositiveNotional: false, maxNewRiskNotionalUsd: 0, maxNewRiskNotionalUsdBySide: {LONG: 0, SHORT: 0},
     evidenceBlockers: [], sizeIndependentRefusals: ['HUMAN_ACK_OVERDUE'],
     firstBinding: {kind: 'SIZE_INDEPENDENT', code: 'HUMAN_ACK_OVERDUE', gate: null, limitUsd: null, usedUsd: null, headroomUsd: null, shortfallUsd: null,
       detail: 'HUMAN_ACK_OVERDUE（与名义规模无关的拒因）'}, ...over,

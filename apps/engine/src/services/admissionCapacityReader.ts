@@ -13,6 +13,8 @@ export type AdmissionCapacityView={
   maxNewRiskNotionalUsdBySide:{LONG:number;SHORT:number};
   evidenceBlockers:string[];
   sizeIndependentRefusals:string[];
+  overdueHandoffs?:number;
+  oldestOverdueHours?:number|null;
   firstBinding:{kind:string;code:string;gate:string|null;limitUsd:number|null;usedUsd:number|null;headroomUsd:number|null;shortfallUsd:number|null;detail:string}|null;
 };
 
@@ -21,6 +23,8 @@ export type AdmissionCapacityInputs={riskAdmissionCeilingUsd:number|null;riskAdm
 
 const NOTHING:{riskAdmissionCeilingUsd:number|null;riskAdmissionRefusal:string|null;riskAdmissionNote:null;capacity:null}=
   {riskAdmissionCeilingUsd:null,riskAdmissionRefusal:null,riskAdmissionNote:null,capacity:null};
+const UNAVAILABLE:AdmissionCapacityInputs={riskAdmissionCeilingUsd:null,riskAdmissionRefusal:'RISK_ADMISSION_UNAVAILABLE',
+  riskAdmissionNote:{gate:null,detail:'Portfolio risk admission did not return a valid capacity result; new Entry capacity is unavailable'},capacity:null};
 
 /** The one definition of the mode where the Engine analyses but never writes. */
 export function analysisOnlyMode(state:any){const connections=state?.settings?.connections;return connections?.executionMode==='READ_ONLY'&&connections?.exchange?.environment==='TESTNET';}
@@ -28,35 +32,36 @@ export function analysisOnlyMode(state:any){const connections=state?.settings?.c
 /**
  * The two numbers a capacity calculation needs from the gate that will judge the order.
  *
- * "No installed admission" returns no verdict at all, which the headroom layer leaves out of its arithmetic;
- * it is never read as unlimited room and never as a refusal. Only a denial that no smaller order can answer
- * is quoted as a refusal — a dollar ceiling stays the number it is.
+ * An absent or failed portfolio admission is unavailable and fails closed in execution mode. It remains
+ * distinct from a valid zero ceiling. Only analysis-only mode is exempt because it cannot write orders.
  *
  * Analysis-only mode is exempt by design: there the admission is evaluated once and published as an
  * observation (`allowed:false, analysisOnly:true`), because nothing it refuses could have been written anyway.
  * Letting it gate dispatch there would silence the market evidence the mode exists to produce.
  */
-export function readAdmissionCapacity(state:any,symbol:string,side:'LONG'|'SHORT',now=Date.now()):AdmissionCapacityInputs{
+export function readAdmissionCapacity(state:any,symbol:string,side:'LONG'|'SHORT',now=Date.now(),candidate?:{leverage:number;leverageFact?:string|null;quoteAsset:string}):AdmissionCapacityInputs{
   if(analysisOnlyMode(state))return NOTHING;
   const ledger=state?.riskAdmission;
-  if(!ledger||typeof ledger.capacityFacts!=='function')return NOTHING;
+  if(!ledger||typeof ledger.capacityFacts!=='function')return UNAVAILABLE;
   let facts:AdmissionCapacityView|null=null;
-  try{facts=ledger.capacityFacts(now,symbol)as AdmissionCapacityView;}
-  catch{facts=null;} // A capacity read must never break a dispatch: with no verdict this layer says nothing.
+  try{facts=ledger.capacityFacts(now,symbol,candidate)as AdmissionCapacityView;}
+  catch{facts=null;}
   return inputsFor(facts,side);
 }
 
 /** Split out so the same precedence is testable without a runtime state object. */
 export function inputsFor(facts:AdmissionCapacityView|null,side:'LONG'|'SHORT'):AdmissionCapacityInputs{
-  if(!facts)return NOTHING;
+  if(!facts||!Number.isFinite(Number(facts.evaluatedAt))||!facts.maxNewRiskNotionalUsdBySide
+    ||!Number.isFinite(Number(facts.maxNewRiskNotionalUsdBySide.LONG))||!Number.isFinite(Number(facts.maxNewRiskNotionalUsdBySide.SHORT))
+    ||!Array.isArray(facts.evidenceBlockers)||!Array.isArray(facts.sizeIndependentRefusals))return UNAVAILABLE;
   const refusal=facts.evidenceBlockers.length?facts.evidenceBlockers[0]:facts.sizeIndependentRefusals.length?facts.sizeIndependentRefusals[0]:null;
   return{riskAdmissionCeilingUsd:refusal?null:Math.max(0,Number(facts.maxNewRiskNotionalUsdBySide?.[side]??0)),riskAdmissionRefusal:refusal,
     riskAdmissionNote:{gate:facts.firstBinding?.gate??null,detail:facts.firstBinding?.detail??null},capacity:facts};
 }
 
 /** The book-level answer a display page needs: is there any size this gate would accept at all, and if not, what number says so. */
-export type AdmissionBookSummary={hasVerdict:boolean;exhausted:boolean;code:string|null;gate:string|null;detail:string|null;
-  ceilingUsdBySide:{LONG:number;SHORT:number};reasons:string[];evaluatedAt:number};
+export type AdmissionBookSummary={status:'AVAILABLE'|'UNAVAILABLE'|'NOT_APPLICABLE';hasVerdict:boolean;exhausted:boolean;code:string|null;gate:string|null;detail:string|null;
+  ceilingUsdBySide:{LONG:number;SHORT:number};reasons:string[];evaluatedAt:number;overdueHandoffs:number;oldestOverdueHours:number|null};
 
 /**
  * The gate's verdict about the book, with no candidate in it. Read once per projection: money capacity and
@@ -65,17 +70,23 @@ export type AdmissionBookSummary={hasVerdict:boolean;exhausted:boolean;code:stri
  */
 export function bookAdmissionSummary(state:any,now=Date.now()):AdmissionBookSummary{
   const ledger=state?.riskAdmission;
-  const none:AdmissionBookSummary={hasVerdict:false,exhausted:false,code:null,gate:null,detail:null,ceilingUsdBySide:{LONG:0,SHORT:0},reasons:[],evaluatedAt:0};
+  const none:AdmissionBookSummary={status:'NOT_APPLICABLE',hasVerdict:false,exhausted:false,code:null,gate:null,detail:null,ceilingUsdBySide:{LONG:0,SHORT:0},reasons:[],evaluatedAt:0,overdueHandoffs:0,oldestOverdueHours:null};
+  const unavailable:AdmissionBookSummary={status:'UNAVAILABLE',hasVerdict:false,exhausted:false,code:'RISK_ADMISSION_UNAVAILABLE',gate:null,
+    detail:'Portfolio risk admission did not return a valid capacity result; new Entry capacity is unavailable',ceilingUsdBySide:{LONG:0,SHORT:0},
+    reasons:['RISK_ADMISSION_UNAVAILABLE'],evaluatedAt:now,overdueHandoffs:0,oldestOverdueHours:null};
   // Analysis-only writes nothing, so there is no new risk for the gate to deny: its book verdict must not
   // silence the market evidence this mode exists to produce, exactly as the dispatch path must not.
   if(analysisOnlyMode(state))return none;
-  if(!ledger||typeof ledger.capacityFacts!=='function')return none;
+  if(!ledger||typeof ledger.capacityFacts!=='function')return unavailable;
   let facts:AdmissionCapacityView|null=null;
   try{facts=ledger.capacityFacts(now,null)as AdmissionCapacityView;}
   catch{facts=null;}
-  if(!facts)return none;
+  if(!facts||!Number.isFinite(Number(facts.evaluatedAt))||!facts.maxNewRiskNotionalUsdBySide
+    ||!Number.isFinite(Number(facts.maxNewRiskNotionalUsdBySide.LONG))||!Number.isFinite(Number(facts.maxNewRiskNotionalUsdBySide.SHORT))
+    ||!Array.isArray(facts.evidenceBlockers)||!Array.isArray(facts.sizeIndependentRefusals))return unavailable;
   const reasons=[...new Set([...facts.evidenceBlockers,...facts.sizeIndependentRefusals])];
-  return{hasVerdict:true,exhausted:facts.admitsAnyPositiveNotional===false,evaluatedAt:Number(facts.evaluatedAt)||now,
+  return{status:'AVAILABLE',hasVerdict:true,exhausted:facts.admitsAnyPositiveNotional===false,evaluatedAt:Number(facts.evaluatedAt)||now,
     code:facts.firstBinding?.code??reasons[0]??null,gate:facts.firstBinding?.gate??null,detail:facts.firstBinding?.detail??null,
-    ceilingUsdBySide:{LONG:Math.max(0,Number(facts.maxNewRiskNotionalUsdBySide?.LONG??0)),SHORT:Math.max(0,Number(facts.maxNewRiskNotionalUsdBySide?.SHORT??0))},reasons};
+    ceilingUsdBySide:{LONG:Math.max(0,Number(facts.maxNewRiskNotionalUsdBySide?.LONG??0)),SHORT:Math.max(0,Number(facts.maxNewRiskNotionalUsdBySide?.SHORT??0))},reasons,
+    overdueHandoffs:Number(facts.overdueHandoffs??0),oldestOverdueHours:facts.oldestOverdueHours??null};
 }

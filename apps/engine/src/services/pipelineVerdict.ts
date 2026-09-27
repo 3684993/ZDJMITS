@@ -24,7 +24,7 @@ type VerdictFacts = {
   marketIsolation?: {candidateCount: number; isolatedCount?: number; healthyCandidates: number; isolated?: Array<{symbol: string; reasons: string[]}>} | null;
   executionReadiness?: {mode?: string; ready?: boolean; firstBlocker?: string | null; blockers?: string[]} | null;
   capacityVisibility?: {firstBlocker?: string | null; exhaustedForNewRisk?: boolean; exhaustedReason?: string | null; sideStatus?: {code?: string; text?: string} | null;
-    admission?: {exhausted?: boolean; hasVerdict?: boolean; code?: string | null; gate?: string | null; detail?: string | null;
+    admission?: {status?: 'AVAILABLE'|'UNAVAILABLE'|'NOT_APPLICABLE'; exhausted?: boolean; hasVerdict?: boolean; code?: string | null; gate?: string | null; detail?: string | null;
       evaluatedAt?: number; ceilingUsdBySide?: {LONG: number; SHORT: number} | null} | null} | null;
   slots?: {used: number; max: number} | null;
   eligibility?: {status?: string; count?: number} | null;
@@ -97,7 +97,7 @@ export function authoritativePipelineVerdict(facts: VerdictFacts): PipelineVerdi
     // The gate may deny the whole book before any candidate reaches `admit` — that is the pre-model capacity
     // stop. Its book-level verdict is then still the first cause: answering "nothing is blocking" because no
     // cycle was ever submitted to admit() would rebuild the same contradiction one layer up.
-    riskAdmission = facts.riskAdmission ?? (gate?.exhausted ? {
+    riskAdmission = facts.riskAdmission ?? (gate?.exhausted||gate?.status==='UNAVAILABLE' ? {
       at: Number(gate.evaluatedAt) || facts.now, symbol: '书本级', stage: 'PORTFOLIO_RISK_ADMISSION',
       code: gate.code ?? 'RISK_ADMISSION_EXHAUSTED', reasons: [], limits: [],
       binding: {kind: 'OTHER', code: gate.code ?? 'RISK_ADMISSION_EXHAUSTED', gate: gate.gate ?? null, limitUsd: null, usedUsd: null,

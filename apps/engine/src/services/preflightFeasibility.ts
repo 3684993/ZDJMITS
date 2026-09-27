@@ -31,7 +31,7 @@ export function evaluatePreflightFeasibility(state:RuntimeState,symbol:string,ma
       risk=computeExecutableRiskHeadroom({settings:state.settings,equity,positions:[...state.positions.values()],pendingRiskExposures,symbol,side,
         // The gate's own ceiling is part of the pre-model answer, so a direction can never be declared
         // feasible here and refused there by a limit this layer never looked at.
-        ...readAdmissionCapacity(state,symbol,side,now),
+        ...readAdmissionCapacity(state,symbol,side,now,{leverage,leverageFact:capital0.leverageFact??'UNPROVEN',quoteAsset}),
         plannedNotional,expectedAdverseMovePct,dailyDrawdownPct,capital:capital0,minimumNotional:minimumNotionalUsd});
     riskHeadroom[side]=risk;
     if(risk.executable){allowedDirections.push(side);feasibleNotionalUsd[side]=risk.finalNotional;}

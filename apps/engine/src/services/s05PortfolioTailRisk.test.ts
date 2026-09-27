@@ -354,11 +354,11 @@ describe('S05-T06 human capacity is consumed by every owned position',()=>{
     expect(decision.executable).toBe(false);
   });
 
-  it('an unacknowledged handoff past the timeout blocks new risk until a human acknowledges',()=>{
+  it('an unacknowledged handoff past the timeout remains visible without vetoing unrelated new risk',()=>{
     const stale=capacityOf(pending,{profile:capacityProfile({maxHumanPositions:9,maxPendingHandoffs:9,maxAckAgeMs:60_000}),now:NOW+120_000});
-    expect(stale.blockers).toContain('HUMAN_ACK_OVERDUE');
+    expect(stale.blockers).not.toContain('HUMAN_ACK_OVERDUE');
     expect(stale.overdueHandoffs).toEqual([exposureId('cycle_1')]);
-    expect(stale.executable).toBe(false);
+    expect(stale.executable).toBe(true);
     const acknowledged=capacityOf(snapshotOf([position({ownerState:'HANDOFF_PENDING',handoffAt:NOW-120_000,acknowledgedAt:NOW-1_000})]),
       {profile:capacityProfile({maxHumanPositions:9,maxPendingHandoffs:9}),now:NOW+120_000});
     expect(acknowledged.overdueHandoffs).toEqual([]);
@@ -425,7 +425,7 @@ describe('S05-T06 human capacity is consumed by every owned position',()=>{
     expect(capacityOf(ai,{profile:{} as never}).protectionAllowed).toBe(true);
     const overdue=capacityOf(snapshotOf([position({ownerState:'HANDOFF_PENDING',handoffAt:NOW-9_000})]),
       {profile:capacityProfile({maxHumanPositions:9,maxPendingHandoffs:9,maxAckAgeMs:1}),now:NOW});
-    expect(overdue.blockers).toContain('HUMAN_ACK_OVERDUE');
+    expect(overdue.blockers).not.toContain('HUMAN_ACK_OVERDUE');
     expect(overdue.protectionAllowed).toBe(true);
   });
 });

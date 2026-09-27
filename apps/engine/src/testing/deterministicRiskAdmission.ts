@@ -24,6 +24,13 @@ export function deterministicAdmission(now = Date.now()) {
   });
   return {
     gate: () => ({ allowed: true, reason: 'PORTFOLIO_ADMISSION_AUTHORISED', binding: binding() }),
+    // Entry-flow tests that are not exercising the real ledger still provide an explicit,
+    // timestamped capacity authority. Missing authority is intentionally fail-closed in production.
+    capacityFacts: (at = now) => ({evaluatedAt:at,profileVersion:'v396-fixture-profile',riskGeneration:DETERMINISTIC_RISK_GENERATION,
+      complete:true,gates:[],evidenceBlockers:[],sizeIndependentRefusals:[],maxNewRiskNotionalUsd:1e12,
+      maxNewRiskNotionalUsdBySide:{LONG:1e12,SHORT:1e12},admitsAnyPositiveNotional:true,firstBinding:{kind:'OTHER',code:'NONE',gate:null,
+        limitUsd:null,usedUsd:null,headroomUsd:null,shortfallUsd:null,detail:'explicit deterministic test authority'},
+      bookGrossNotionalUsd:0,pendingNotionalUsd:0,claimGrossNotionalUsd:0,humanHandoffNotionalUsd:0,overdueHandoffs:0,oldestOverdueHours:null}),
     admit: () => ({
       allowed: true, reason: 'PORTFOLIO_ADMISSION_AUTHORISED', reasons: [], limits: [], ticket: ticket(),
       snapshot: { grossNotionalUsd: 0, capitalAtRiskUsd: 0, drawdownPct: 0, blockers: [], complete: true },

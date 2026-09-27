@@ -1,4 +1,4 @@
-import {buildPortfolioRiskSnapshot, canonicalRiskUnderlying, stableRiskHash, type PortfolioAssetFact, type PortfolioCashFlowFact, type PortfolioOwnerState, type PortfolioPendingRiskFact, type PortfolioPositionFact, type PortfolioRiskSnapshot} from './portfolioRiskSnapshot.js';
+import {buildPortfolioRiskSnapshot, canonicalRiskUnderlying, stableRiskHash, type PortfolioAssetFact, type PortfolioCashFlowFact, type PortfolioOwnerState, type PortfolioPendingRiskFact, type PortfolioPositionFact, type PortfolioRiskExposure, type PortfolioRiskSnapshot} from './portfolioRiskSnapshot.js';
 import {evaluatePortfolioStress, type PortfolioStressResult} from './portfolioStress.js';
 import {evaluateHumanCapacity, type HumanCapacityDecision} from './humanCapacityPolicy.js';
 import {executionScope} from './executionLifecycle.js';
@@ -66,10 +66,10 @@ export type PortfolioLedgerState={generation:number;contentHash:string|null;snap
 
 /** One committed limit, stated as the numbers the human has to act on: what it allows, what is used, what more fits. */
 export type AdmissionGateFact={name:string;reason:string;unit:'NOTIONAL_USD'|'MARGIN_USD'|'LOSS_USD';limitUsd:number;usedUsd:number;
-  maxAdditionalUsd:number;maxAdditionalUsdBySide?:{LONG:number;SHORT:number}|null;clusterKey?:string|null};
+  maxAdditionalUsd:number;candidateImpactUsd?:number;maxAdditionalUsdBySide?:{LONG:number;SHORT:number}|null;clusterKey?:string|null};
 
 /** The gate that actually decides this cycle, with its own arithmetic attached. */
-export type AdmissionFirstBinding={kind:'EVIDENCE'|'SUMMARY'|'SIZE_INDEPENDENT'|'NOTIONAL'|'OTHER';code:string;gate:string|null;
+export type AdmissionFirstBinding={kind:'EVIDENCE'|'SUMMARY'|'SIZE_INDEPENDENT'|'NOTIONAL'|'LIMIT'|'OTHER';code:string;gate:string|null;
   limitUsd:number|null;usedUsd:number|null;headroomUsd:number|null;shortfallUsd:number|null;detail:string};
 
 /** What the book, with no candidate in it, can still admit. Derived from the same evaluations `admit` runs. */
@@ -78,17 +78,20 @@ export type AdmissionCapacityFacts={evaluatedAt:number;profileVersion:string;ris
   maxNewRiskNotionalUsd:number;maxNewRiskNotionalUsdBySide:{LONG:number;SHORT:number};admitsAnyPositiveNotional:boolean;
   firstBinding:AdmissionFirstBinding;bookGrossNotionalUsd:number;pendingNotionalUsd:number;claimGrossNotionalUsd:number;
   humanHandoffNotionalUsd:number;overdueHandoffs:number;oldestOverdueHours:number|null};
+export type AdmissionCapacityCandidate={leverage:number;leverageFact?:string|null;quoteAsset:string};
 
 /** One decision pass asks many readers; this bounds how long they may share a computed ceiling. */
 const ADMISSION_CAPACITY_MEMO_MS=5_000;
 
 /** The codes that refuse a candidate of any size: a policy or count fact, not a dollar comparison. */
-const SIZE_INDEPENDENT_CODES=['HUMAN_ACK_OVERDUE','HUMAN_PENDING_HANDOFF_LIMIT','HUMAN_POTENTIAL_SLOT_LIMIT','HUMAN_CAPACITY_PROFILE_INVALID','HUMAN_CAPACITY_TIME_INVALID',
-  'STRESS_LIMIT:MAX_DRAWDOWN','STRESS_LIMIT:MIN_MARGIN_BUFFER','STRESS_LIMIT:MIN_LIQUIDATION_BUFFER'];
+const SIZE_INDEPENDENT_CODES=['HUMAN_PENDING_HANDOFF_LIMIT','HUMAN_POTENTIAL_SLOT_LIMIT','HUMAN_CAPACITY_PROFILE_INVALID','HUMAN_CAPACITY_TIME_INVALID',
+  'STRESS_LIMIT:MAX_DRAWDOWN','STRESS_LIMIT:MIN_LIQUIDATION_BUFFER'];
 /** `complete=false` is a restatement of the concrete per-row blockers above it, never a gate of its own. */
 const SUMMARY_CODES=['PORTFOLIO_RISK_SNAPSHOT_INCOMPLETE'];
-const NOTIONAL_GATE_REASONS=['STRESS_LIMIT:MAX_GROSS_NOTIONAL','STRESS_LIMIT:MAX_DIRECTION_NOTIONAL','STRESS_LIMIT:MAX_CLUSTER_NOTIONAL','HUMAN_POTENTIAL_NOTIONAL_LIMIT',
-  'STRESS_LIMIT:MAX_CAPITAL_AT_RISK','STRESS_LIMIT:MIN_MARGIN_BUFFER','STRESS_LIMIT:MIN_LIQUIDATION_BUFFER','STRESS_LIMIT:MAX_DRAWDOWN','STRESS_LIMIT:MAX_STRESS_LOSS'];
+const DIAGNOSTIC_ONLY_CODES=['HUMAN_ACK_OVERDUE'];
+const LIMIT_GATE_REASONS=['STRESS_LIMIT:MAX_GROSS_NOTIONAL','STRESS_LIMIT:MAX_DIRECTION_NOTIONAL','STRESS_LIMIT:MAX_CLUSTER_NOTIONAL','HUMAN_POTENTIAL_NOTIONAL_LIMIT',
+  'STRESS_LIMIT:MAX_CAPITAL_AT_RISK','STRESS_LIMIT:MIN_LIQUIDATION_BUFFER','STRESS_LIMIT:MAX_DRAWDOWN','STRESS_LIMIT:MAX_STRESS_LOSS'];
+const isLimitReason=(code:string)=>LIMIT_GATE_REASONS.includes(code)||code.startsWith('STRESS_LIMIT:MIN_MARGIN_BUFFER:');
 /**
  * Two ceilings breached by the same dollar amount are one fact about one book, not a coin toss. The order
  * here is which question an operator can answer first: the whole book, then the human-managed share of it,
@@ -107,25 +110,28 @@ const NOTIONAL_PRECEDENCE=['STRESS_LIMIT:MAX_GROSS_NOTIONAL','HUMAN_POTENTIAL_NO
  */
 export function rankAdmissionReasons(input:{reasons:string[];gates:AdmissionGateFact[];candidateNotionalUsd?:number}):{ordered:string[];firstBinding:AdmissionFirstBinding|null}{
   const seen=new Set(input.reasons),candidate=input.candidateNotionalUsd??0;
-  const evidence=[...seen].filter(code=>!SIZE_INDEPENDENT_CODES.includes(code)&&!SUMMARY_CODES.includes(code)&&!NOTIONAL_GATE_REASONS.includes(code)).sort();
+  const evidence=[...seen].filter(code=>!SIZE_INDEPENDENT_CODES.includes(code)&&!SUMMARY_CODES.includes(code)&&!DIAGNOSTIC_ONLY_CODES.includes(code)&&!isLimitReason(code)).sort();
   const summary=[...seen].filter(code=>SUMMARY_CODES.includes(code));
   const sizeIndependent=SIZE_INDEPENDENT_CODES.filter(code=>seen.has(code));
   const byName=new Map(input.gates.map(gate=>[gate.reason,gate]));
-  const notional=[...seen].filter(code=>NOTIONAL_GATE_REASONS.includes(code)).sort((a,b)=>{
+  const limits=[...seen].filter(isLimitReason).sort((a,b)=>{
     const left=byName.get(a),right=byName.get(b);
     // A ceiling the ledger could not attach numbers to is reported after the ones it could.
     if(!left)return right?1:0;
     if(!right)return -1;
-    return left.maxAdditionalUsd-right.maxAdditionalUsd||NOTIONAL_PRECEDENCE.indexOf(a)-NOTIONAL_PRECEDENCE.indexOf(b);
+    const impact=(gate:AdmissionGateFact)=>gate.candidateImpactUsd??(gate.unit==='NOTIONAL_USD'?candidate:0);
+    const ratio=(gate:AdmissionGateFact)=>impact(gate)>0?gate.maxAdditionalUsd/impact(gate):candidate===0?gate.maxAdditionalUsd:Number.POSITIVE_INFINITY;
+    return ratio(left)-ratio(right)||NOTIONAL_PRECEDENCE.indexOf(a)-NOTIONAL_PRECEDENCE.indexOf(b);
   });
-  const known=new Set([...evidence,...summary,...sizeIndependent,...notional]);
-  const other=[...seen].filter(code=>!known.has(code)).sort();
-  const ordered=[...evidence,...summary,...sizeIndependent,...notional,...other];
+  const known=new Set([...evidence,...summary,...sizeIndependent,...limits]);
+  const other=[...seen].filter(code=>!known.has(code)&&!DIAGNOSTIC_ONLY_CODES.includes(code)).sort();
+  const ordered=[...evidence,...summary,...sizeIndependent,...limits,...other];
   const first=ordered[0];
   if(!first)return{ordered:[],firstBinding:null};
-  const kind:AdmissionFirstBinding['kind']=evidence.includes(first)?'EVIDENCE':summary.includes(first)?'SUMMARY':sizeIndependent.includes(first)?'SIZE_INDEPENDENT':notional.includes(first)?'NOTIONAL':'OTHER';
+  const kind:AdmissionFirstBinding['kind']=evidence.includes(first)?'EVIDENCE':summary.includes(first)?'SUMMARY':sizeIndependent.includes(first)?'SIZE_INDEPENDENT':limits.includes(first)?(byName.get(first)?.unit==='NOTIONAL_USD'?'NOTIONAL':'LIMIT'):'OTHER';
   const gate=byName.get(first)??null;
-  const shortfallUsd=gate?Math.max(0,gate.usedUsd+candidate-gate.limitUsd):null;
+  const impact=gate?(gate.candidateImpactUsd??(gate.unit==='NOTIONAL_USD'?candidate:0)):0;
+  const shortfallUsd=gate?Math.max(0,gate.usedUsd+impact-gate.limitUsd):null;
   const detail=gate
     ? `${gate.name} 上限 ${gate.limitUsd.toFixed(2)} ${gate.unit}，已用 ${gate.usedUsd.toFixed(2)}，可新增 ${gate.maxAdditionalUsd.toFixed(2)}${shortfallUsd&&shortfallUsd>0?`，缺口 ${shortfallUsd.toFixed(2)}`:''}`
     : `${first}（与名义规模无关的拒因，或本层无数值可归属的账本事实）`;
@@ -365,9 +371,22 @@ export class PortfolioRiskAdmission {
   }
 
   /** The one composition of denials every surface must read: inputs, snapshot, stress limits, human capacity. */
-  private reasonsOf(built:{blockers:string[]},snapshot:PortfolioRiskSnapshot,stress:PortfolioStressResult,capacity:HumanCapacityDecision){
+  private effectiveStressLimits(stress:PortfolioStressResult,profile:Record<string,any>){
+    const grossLimit=Number(profile.maxGrossNotionalUsd),clusterLimit=Number(profile.maxClusterNotionalUsd),humanLimit=Number(profile.maxHumanNotionalUsd);
+    return stress.limitingConstraints.filter(limit=>limit!=='MAX_CLUSTER_NOTIONAL'||!(Number.isFinite(clusterLimit)&&Number.isFinite(grossLimit)&&clusterLimit>=grossLimit));
+  }
+
+  private reasonsOf(built:{blockers:string[]},snapshot:PortfolioRiskSnapshot,stress:PortfolioStressResult,capacity:HumanCapacityDecision,profile:Record<string,any>){
+    const grossLimit=Number(profile.maxGrossNotionalUsd),humanLimit=Number(profile.maxHumanNotionalUsd);
+    const stressLimits=this.effectiveStressLimits(stress,profile),marginBufferReasons=stress.limitingConstraints.includes('MIN_MARGIN_BUFFER')
+      ?Object.entries(stress.marginBuffers).filter(([,value])=>value==null||Number(value)<Number(profile.minMarginBufferPct))
+        .map(([asset])=>`STRESS_LIMIT:MIN_MARGIN_BUFFER:${asset}`):[];
+    // Every human-managed position is already in the canonical gross exposure set. Pending entry risk is
+    // also in that set, so an equal-or-looser human ceiling cannot veto any exposure gross does not see.
+    const humanBlockers=capacity.blockers.filter(code=>code!=='HUMAN_POTENTIAL_NOTIONAL_LIMIT'
+      ||!(Number.isFinite(humanLimit)&&Number.isFinite(grossLimit)&&humanLimit>=grossLimit));
     return[...new Set([...built.blockers,...snapshot.blockers,...stress.blockers,
-      ...stress.limitingConstraints.map(limit=>`STRESS_LIMIT:${limit}`),...capacity.blockers])].sort();
+      ...stressLimits.filter(limit=>limit!=='MIN_MARGIN_BUFFER').map(limit=>`STRESS_LIMIT:${limit}`),...marginBufferReasons,...humanBlockers])].sort();
   }
 
   /**
@@ -376,7 +395,7 @@ export class PortfolioRiskAdmission {
    * `maxAdditionalUsd` is reported as zero room, never as room.
    */
   private gateFacts(snapshot:PortfolioRiskSnapshot,stress:PortfolioStressResult,capacity:HumanCapacityDecision,profile:Record<string,any>,
-    options:{candidateNotionalUsd?:number;candidateMarginUsd?:number;candidateSide?:'LONG'|'SHORT'|null;clusterKey?:string|null}={}){
+    options:{candidateNotionalUsd?:number;candidateMarginUsd?:number;candidateStressLossUsd?:number;candidateSide?:'LONG'|'SHORT'|null;candidateQuoteAsset?:string|null;clusterKey?:string|null}={}){
     const amount=(value:unknown)=>finite(value)?Number(value):0;
     const candidate=options.candidateNotionalUsd??0,candidateMargin=options.candidateMarginUsd??0;
     const gross=amount(snapshot.grossNotionalUsd)-candidate;
@@ -389,16 +408,27 @@ export class PortfolioRiskAdmission {
     const gate=(name:string,reason:string,unit:AdmissionGateFact['unit'],limitUsd:number,usedUsd:number,extra:Partial<AdmissionGateFact>={})=>
       ({name,reason,unit,limitUsd,usedUsd,maxAdditionalUsd:Math.max(0,limitUsd-usedUsd),...extra});
     const directionLimit=amount(profile.maxDirectionNotionalUsd);
+    const marginBufferGates=snapshot.quoteAssets.map(row=>{
+      const available=amount(row.availableMarginUsd),limit=available*(1-amount(profile.minMarginBufferPct)),matches=row.asset===String(options.candidateQuoteAsset??'').toUpperCase();
+      return gate(`MIN_MARGIN_BUFFER:${row.asset}`,`STRESS_LIMIT:MIN_MARGIN_BUFFER:${row.asset}`,'MARGIN_USD',limit,amount(row.marginUsedUsd),
+        {candidateImpactUsd:matches?candidateMargin:0});
+    });
     return[
-      gate('MAX_GROSS_NOTIONAL','STRESS_LIMIT:MAX_GROSS_NOTIONAL','NOTIONAL_USD',amount(profile.maxGrossNotionalUsd),gross),
+      gate('MAX_GROSS_NOTIONAL','STRESS_LIMIT:MAX_GROSS_NOTIONAL','NOTIONAL_USD',amount(profile.maxGrossNotionalUsd),gross,
+        {candidateImpactUsd:candidate}),
       gate('MAX_DIRECTION_NOTIONAL','STRESS_LIMIT:MAX_DIRECTION_NOTIONAL','NOTIONAL_USD',directionLimit,Math.max(long,short),
-        {maxAdditionalUsdBySide:{LONG:Math.max(0,directionLimit-long),SHORT:Math.max(0,directionLimit-short)}}),
-      gate('MAX_CLUSTER_NOTIONAL','STRESS_LIMIT:MAX_CLUSTER_NOTIONAL','NOTIONAL_USD',amount(profile.maxClusterNotionalUsd),clusterUsed,{clusterKey:bucket}),
-      gate('MAX_CAPITAL_AT_RISK','STRESS_LIMIT:MAX_CAPITAL_AT_RISK','MARGIN_USD',amount(profile.maxCapitalAtRiskUsd),capitalUsed),
+        {candidateImpactUsd:candidate,maxAdditionalUsdBySide:{LONG:Math.max(0,directionLimit-long),SHORT:Math.max(0,directionLimit-short)}}),
+      gate('MAX_CLUSTER_NOTIONAL','STRESS_LIMIT:MAX_CLUSTER_NOTIONAL','NOTIONAL_USD',amount(profile.maxClusterNotionalUsd),clusterUsed,
+        {candidateImpactUsd:candidate,clusterKey:bucket}),
+      gate('MAX_CAPITAL_AT_RISK','STRESS_LIMIT:MAX_CAPITAL_AT_RISK','MARGIN_USD',amount(profile.maxCapitalAtRiskUsd),capitalUsed,
+        {candidateImpactUsd:candidateMargin}),
       // Stress loss is measured in loss dollars, not notional: adding risk can only make it worse, so a
       // book that already breaches it admits nothing — but it is never converted into a fake notional room.
-      gate('MAX_STRESS_LOSS','STRESS_LIMIT:MAX_STRESS_LOSS','LOSS_USD',amount(profile.maxStressLossUsd),amount(stress.maxStressLossUsd)),
-      gate('HUMAN_POTENTIAL_NOTIONAL','HUMAN_POTENTIAL_NOTIONAL_LIMIT','NOTIONAL_USD',amount(profile.maxHumanNotionalUsd),humanUsed),
+      gate('MAX_STRESS_LOSS','STRESS_LIMIT:MAX_STRESS_LOSS','LOSS_USD',amount(profile.maxStressLossUsd),Math.max(0,amount(stress.maxStressLossUsd)-amount(options.candidateStressLossUsd)),
+        {candidateImpactUsd:amount(options.candidateStressLossUsd)}),
+      gate('HUMAN_POTENTIAL_NOTIONAL','HUMAN_POTENTIAL_NOTIONAL_LIMIT','NOTIONAL_USD',amount(profile.maxHumanNotionalUsd),humanUsed,
+        {candidateImpactUsd:candidate}),
+      ...marginBufferGates,
     ];
   }
 
@@ -423,19 +453,42 @@ export class PortfolioRiskAdmission {
    * because `admit` recomputes from live facts. A number this stale can therefore only ever delay a
    * dispatch, never authorise one.
    */
-  capacityFacts(now=Date.now(),symbol:string|null=null):AdmissionCapacityFacts{
+  capacityFacts(now=Date.now(),symbol:string|null=null,candidate?:AdmissionCapacityCandidate):AdmissionCapacityFacts{
     const bucket=Math.floor(now/ADMISSION_CAPACITY_MEMO_MS);
     if(bucket!==this.capacityMemoBucket){this.capacityMemoBucket=bucket;this.capacityMemo.clear();}
-    const memoKey=String(symbol??'').trim().toUpperCase();
+    const memoKey=[String(symbol??'').trim().toUpperCase(),candidate?.quoteAsset?.toUpperCase()??'',candidate?.leverage??'',candidate?.leverageFact??''].join('|');
     const cached=this.capacityMemo.get(memoKey);
     if(cached)return cached;
-    const facts=this.computeCapacityFacts(now,symbol);
+    const facts=this.computeCapacityFacts(now,symbol,candidate);
     if(this.capacityMemo.size>256)this.capacityMemo.clear();
     this.capacityMemo.set(memoKey,facts);
     return facts;
   }
 
-  private computeCapacityFacts(now:number,symbol:string|null):AdmissionCapacityFacts{
+  private stressCapacityUsd(snapshot:PortfolioRiskSnapshot,profile:Record<string,any>,symbol:string,side:'LONG'|'SHORT',quoteAsset:string,leverage:number,grossRoom:number){
+    const limit=Number(profile.maxStressLossUsd),marginRate=Number(profile.maintenanceMarginRatePct),liquidationBuffer=1/leverage-marginRate;
+    if(!(grossRoom>0)||!(limit>=0)||liquidationBuffer<Number(profile.minLiquidationBufferPct))return 0;
+    const correlation={version:String(profile.correlationVersion??''),clusters:profile.clusters??{}},scenarios=Array.isArray(profile.scenarios)?profile.scenarios:[];
+    const stressAt=(notional:number)=>{
+      const exposure:PortfolioRiskExposure={id:'capacity:candidate',kind:'POSITION',symbol,underlying:canonicalRiskUnderlying(symbol),side,
+        notionalUsd:notional,marginUsd:notional/leverage,quoteAsset,marginAsset:quoteAsset,ownerState:'AI_ACTIVE',factStatus:'VERIFIED',
+        maintenanceMarginUsd:notional*marginRate,liquidationBufferPct:liquidationBuffer,liquidationPriceFact:'PROJECTED_FROM_LEVERAGE',handoffAt:null,acknowledgedAt:null};
+      const quoteAssets=snapshot.quoteAssets.map(row=>row.asset===quoteAsset?{...row,marginUsedUsd:row.marginUsedUsd+notional/leverage}:row);
+      const next:PortfolioRiskSnapshot={...snapshot,exposures:[...snapshot.exposures,exposure],
+        grossNotionalUsd:snapshot.grossNotionalUsd+notional,longNotionalUsd:snapshot.longNotionalUsd+(side==='LONG'?notional:0),
+        shortNotionalUsd:snapshot.shortNotionalUsd+(side==='SHORT'?notional:0),capitalAtRiskUsd:snapshot.capitalAtRiskUsd+notional/leverage,quoteAssets};
+      return evaluatePortfolioStress({snapshot:next,profile:this.stressProfileOf(profile) as any,correlation,scenarios}).maxStressLossUsd;
+    };
+    if(stressAt(grossRoom)<=limit)return grossRoom;
+    let low=0,high=grossRoom;
+    for(let i=0;i<64;i++){
+      const mid=(low+high)/2;
+      if(stressAt(mid)<=limit)low=mid;else high=mid;
+    }
+    return low;
+  }
+
+  private computeCapacityFacts(now:number,symbol:string|null,candidate?:AdmissionCapacityCandidate):AdmissionCapacityFacts{
     const built=this.inputs(now,[]);
     const snapshot=buildPortfolioRiskSnapshot({...built.inputs,riskGeneration:this.ledger.generation||1});
     const profile=built.profile.row;
@@ -443,9 +496,9 @@ export class PortfolioRiskAdmission {
     const stress=evaluatePortfolioStress({snapshot,profile:this.stressProfileOf(profile) as any,correlation,
       scenarios:Array.isArray(profile.scenarios)?profile.scenarios:[]});
     const capacity=evaluateHumanCapacity({snapshot,profile:this.humanProfileOf(profile) as any,now});
-    const reasons=this.reasonsOf(built,snapshot,stress,capacity);
+    const reasons=this.reasonsOf(built,snapshot,stress,capacity,profile);
     const clusterKey=symbol?correlationClusterOf(String(symbol),correlation):null;
-    const gates=this.gateFacts(snapshot,stress,capacity,profile,{clusterKey});
+    const gates=this.gateFacts(snapshot,stress,capacity,profile,{clusterKey,candidateQuoteAsset:candidate?.quoteAsset??null});
     const ranked=rankAdmissionReasons({reasons,gates});
     const maxAckAgeMs=finite(profile.maxAckAgeMs)?Number(profile.maxAckAgeMs):0;
     const overdue=snapshot.exposures.filter(row=>row.kind==='POSITION'&&row.ownerState==='HANDOFF_PENDING'&&row.acknowledgedAt==null
@@ -454,24 +507,34 @@ export class PortfolioRiskAdmission {
     // "22 handoffs are past the 24h limit, the oldest by 175h" is.
     const oldestOverdueHours=overdue.length?Math.max(...overdue.map(row=>now-Number(row.handoffAt)))/3_600_000:null;
     const binding=ranked.firstBinding;
-    if(binding&&binding.kind==='SIZE_INDEPENDENT'&&binding.code==='HUMAN_ACK_OVERDUE'&&overdue.length)
-      binding.detail=`HUMAN_ACK_OVERDUE：${overdue.length} 行人工交接未确认，超过上限 ${Math.round(maxAckAgeMs/3_600_000)/10} 小时，最旧 ${oldestOverdueHours?.toFixed(1)} 小时 —— 任意名义均拒，只能由人工确认`;
     // A missing fact or a policy that denies at every size leaves no room for any candidate; a dollar
     // ceiling leaves exactly its own headroom, and only for the side that ceiling is measured on.
     // Direction is excluded from the any-size test because one saturated side never denies the other.
-    const deniesAtAnySize=reasons.some(code=>SIZE_INDEPENDENT_CODES.includes(code))
-      ||reasons.some(code=>!SIZE_INDEPENDENT_CODES.includes(code)&&!NOTIONAL_GATE_REASONS.includes(code)&&!SUMMARY_CODES.includes(code))
-      ||gates.some(gate=>gate.name!=='MAX_DIRECTION_NOTIONAL'&&gate.maxAdditionalUsd<=0);
+    const quoteAsset=String(candidate?.quoteAsset??'').trim().toUpperCase(),leverage=candidate?Number(candidate.leverage):1;
+    const candidateFactsValid=!candidate||(candidate.leverageFact!=='UNPROVEN'&&Number.isFinite(leverage)&&leverage>=1&&Boolean(quoteAsset)
+      &&snapshot.quoteAssets.some(row=>row.asset===quoteAsset&&row.availableMarginUsd!=null));
+    const unrelatedMarginBlock=reasons.some(code=>code.startsWith('STRESS_LIMIT:MIN_MARGIN_BUFFER:')
+      &&(!quoteAsset||code!==`STRESS_LIMIT:MIN_MARGIN_BUFFER:${quoteAsset}`));
+    const deniesAtAnySize=!candidateFactsValid||unrelatedMarginBlock||reasons.some(code=>SIZE_INDEPENDENT_CODES.includes(code))
+      ||reasons.some(code=>!SIZE_INDEPENDENT_CODES.includes(code)&&!isLimitReason(code)&&!SUMMARY_CODES.includes(code));
+    const grossRoom=Math.max(0,Number(profile.maxGrossNotionalUsd)-snapshot.grossNotionalUsd);
+    const marginGates=gates.filter(gate=>gate.unit==='MARGIN_USD'
+      &&(!candidate||gate.name===`MIN_MARGIN_BUFFER:${quoteAsset}`||gate.name==='MAX_CAPITAL_AT_RISK'));
+    const sizeDependentNotional=[
+      ...gates.filter(gate=>gate.unit==='NOTIONAL_USD'&&gate.name!=='MAX_DIRECTION_NOTIONAL').map(gate=>gate.maxAdditionalUsd),
+      ...marginGates.map(gate=>gate.maxAdditionalUsd*leverage),
+    ];
     const ceilingFor=(side:'LONG'|'SHORT')=>{
       if(deniesAtAnySize)return 0;
-      const notional=gates.filter(gate=>gate.unit==='NOTIONAL_USD'&&gate.name!=='MAX_DIRECTION_NOTIONAL').map(gate=>gate.maxAdditionalUsd);
       const direction=gates.find(gate=>gate.name==='MAX_DIRECTION_NOTIONAL')?.maxAdditionalUsdBySide?.[side]??0;
-      return Math.max(0,Math.min(direction,...notional));
+      const stress=this.stressCapacityUsd(snapshot,profile,String(symbol??''),side,quoteAsset||'UNKNOWN',leverage,grossRoom);
+      const limits=[...sizeDependentNotional,stress].filter(value=>Number.isFinite(value));
+      return Math.max(0,Math.min(direction,...limits));
     };
     const maxNewRiskNotionalUsdBySide={LONG:ceilingFor('LONG'),SHORT:ceilingFor('SHORT')};
     return{evaluatedAt:now,profileVersion:built.profile.profileVersion,riskGeneration:snapshot.riskGeneration,complete:snapshot.complete&&built.blockers.length===0,
-      gates,evidenceBlockers:reasons.filter(code=>!SIZE_INDEPENDENT_CODES.includes(code)&&!NOTIONAL_GATE_REASONS.includes(code)&&!SUMMARY_CODES.includes(code)),
-      sizeIndependentRefusals:reasons.filter(code=>SIZE_INDEPENDENT_CODES.includes(code)),
+      gates,evidenceBlockers:reasons.filter(code=>!SIZE_INDEPENDENT_CODES.includes(code)&&!isLimitReason(code)&&!SUMMARY_CODES.includes(code)),
+      sizeIndependentRefusals:[...reasons.filter(code=>SIZE_INDEPENDENT_CODES.includes(code)),...(!candidateFactsValid?['RISK_ADMISSION_UNAVAILABLE']:[])],
       maxNewRiskNotionalUsd:Math.max(maxNewRiskNotionalUsdBySide.LONG,maxNewRiskNotionalUsdBySide.SHORT),maxNewRiskNotionalUsdBySide,
       admitsAnyPositiveNotional:maxNewRiskNotionalUsdBySide.LONG>0||maxNewRiskNotionalUsdBySide.SHORT>0,
       firstBinding:ranked.firstBinding??{kind:'OTHER',code:'NONE',gate:null,limitUsd:null,usedUsd:null,headroomUsd:null,shortfallUsd:null,detail:'当前无候选时组合准入没有拒因'},
@@ -485,7 +548,7 @@ export class PortfolioRiskAdmission {
     const built=this.refresh(now),p=built.profile.row,snapshot=built.snapshot;
     const stress=evaluatePortfolioStress({snapshot,profile:p as any,correlation:{version:String(p.correlationVersion??''),clusters:p.clusters??{}},scenarios:p.scenarios??[]});
     const capacity=evaluateHumanCapacity({snapshot,profile:p as any,now});
-    const reasons=this.reasonsOf(built,snapshot,stress,capacity);
+    const reasons=this.reasonsOf(built,snapshot,stress,capacity,p);
     return{allowed:reasons.length===0,reasons,snapshotHash:snapshot.snapshotHash,riskGeneration:snapshot.riskGeneration,
       profileVersion:built.profile.profileVersion,provenance:built.profile.provenance,coverage:built.coverage,scope:'CURRENT_BOOK',ticket:null};
   }
@@ -504,16 +567,32 @@ export class PortfolioRiskAdmission {
     const stress=evaluatePortfolioStress({snapshot,profile:this.stressProfileOf(profile) as any,correlation,
       scenarios:Array.isArray(profile.scenarios)?profile.scenarios:[]});
     const capacity=evaluateHumanCapacity({snapshot,profile:this.humanProfileOf(profile) as any,now,candidateNotionalUsd:0,candidateAlreadyCounted:true});
-    const reasons=this.reasonsOf(built,snapshot,stress,capacity);
+    const reasons=this.reasonsOf(built,snapshot,stress,capacity,profile);
+    const effectiveLimits=this.effectiveStressLimits(stress,profile);
     // The candidate is inside this snapshot, so its own numbers are subtracted to describe the book it
     // arrived at; that is what lets the same gate facts serve a denial and a granted claim alike.
-    const gates=this.gateFacts(snapshot,stress,capacity,profile,{candidateNotionalUsd:candidate.notionalUsd,candidateMarginUsd:candidate.marginUsd,
+    const candidateRow=snapshot.exposures.find(row=>row.kind==='POSITION'&&row.id.endsWith(`|plan:${candidate.planId}`));
+    const candidateNotional=Number(candidateRow?.notionalUsd??candidate.notionalUsd),candidateMargin=Number(candidateRow?.marginUsd??candidate.marginUsd);
+    const baseSnapshot:PortfolioRiskSnapshot={...snapshot,exposures:snapshot.exposures.filter(row=>row!==candidateRow),
+      grossNotionalUsd:Math.max(0,snapshot.grossNotionalUsd-candidateNotional),
+      longNotionalUsd:Math.max(0,snapshot.longNotionalUsd-(candidate.side==='LONG'?candidateNotional:0)),
+      shortNotionalUsd:Math.max(0,snapshot.shortNotionalUsd-(candidate.side==='SHORT'?candidateNotional:0)),
+      capitalAtRiskUsd:Math.max(0,snapshot.capitalAtRiskUsd-candidateMargin)};
+    const stressBefore=evaluatePortfolioStress({snapshot:baseSnapshot,profile:this.stressProfileOf(profile) as any,correlation,
+      scenarios:Array.isArray(profile.scenarios)?profile.scenarios:[]});
+    const candidateStressLossUsd=Math.max(0,stress.maxStressLossUsd-stressBefore.maxStressLossUsd);
+    const sideUsed=candidate.side==='LONG'?baseSnapshot.longNotionalUsd:baseSnapshot.shortNotionalUsd,
+      otherSideUsed=candidate.side==='LONG'?baseSnapshot.shortNotionalUsd:baseSnapshot.longNotionalUsd,
+      candidateMovesDirectionMaximum=sideUsed+candidateNotional>=otherSideUsed;
+    const gates=this.gateFacts(snapshot,stress,capacity,profile,{candidateNotionalUsd:candidateNotional,candidateMarginUsd:candidateMargin,candidateStressLossUsd,
       candidateSide:candidate.side,clusterKey:correlationClusterOf(String(candidate.symbol),correlation)});
-    const ranked=rankAdmissionReasons({reasons,gates,candidateNotionalUsd:candidate.notionalUsd});
+    const directionGate=gates.find(row=>row.name==='MAX_DIRECTION_NOTIONAL');
+    if(directionGate)directionGate.candidateImpactUsd=candidateMovesDirectionMaximum?candidateNotional:0;
+    const ranked=rankAdmissionReasons({reasons,gates});
     if(reasons.length){
       const ordered=ranked.ordered;
-      this.lastDeny={at:now,candidateKey:candidateKeyOf(candidate),reasons:ordered,limits:stress.limitingConstraints};
-      return{allowed:false,reason:ordered[0],reasons:ordered,limits:stress.limitingConstraints,ticket:null,snapshot,stress,capacity,
+      this.lastDeny={at:now,candidateKey:candidateKeyOf(candidate),reasons:ordered,limits:effectiveLimits};
+      return{allowed:false,reason:ordered[0],reasons:ordered,limits:effectiveLimits,ticket:null,snapshot,stress,capacity,
         firstBinding:ranked.firstBinding,gates};
     }
     const expiresAt=this.ledger.expiresAt;
@@ -524,7 +603,7 @@ export class PortfolioRiskAdmission {
     }
     return{allowed:true,reason:'PORTFOLIO_ADMISSION_AUTHORISED',reasons:[],limits:[],
       ticket:{riskGeneration:this.ledger.generation,snapshotHash:String(this.ledger.snapshotHash),profileVersion:String(this.ledger.profileVersion),
-        evaluatedAt:now,expiresAt,candidateKey:candidateKeyOf(candidate),coverage,limits:stress.limitingConstraints,reasons:[]},snapshot,stress,capacity,
+        evaluatedAt:now,expiresAt,candidateKey:candidateKeyOf(candidate),coverage,limits:effectiveLimits,reasons:[]},snapshot,stress,capacity,
       firstBinding:null,gates};
   }
 
@@ -560,10 +639,9 @@ export class PortfolioRiskAdmission {
       correlation:{version:String(profile.correlationVersion??''),clusters:profile.clusters??{}},scenarios:Array.isArray(profile.scenarios)?profile.scenarios:[]});
     const capacity=evaluateHumanCapacity({snapshot:built.snapshot,profile:{maxHumanPositions:profile.maxHumanPositions,maxHumanNotionalUsd:profile.maxHumanNotionalUsd,
       maxPendingHandoffs:profile.maxPendingHandoffs,maxAckAgeMs:profile.maxAckAgeMs},now,candidateNotionalUsd:0,candidateAlreadyCounted:true});
-    const blockers=[...new Set([...built.blockers,...built.snapshot.blockers,...stress.blockers,
-      ...stress.limitingConstraints.map(row=>`STRESS_LIMIT:${row}`),...capacity.blockers])].sort();
+    const blockers=this.reasonsOf(built,built.snapshot,stress,capacity,profile);
     if(blockers.length){
-      this.lastDeny={at:now,candidateKey:candidateKeyOf(candidate),reasons:blockers,limits:stress.limitingConstraints};
+      this.lastDeny={at:now,candidateKey:candidateKeyOf(candidate),reasons:blockers,limits:this.effectiveStressLimits(stress,profile)};
       return{allowed:false,reason:blockers[0]};
     }
     if(ticket.snapshotHash!==built.snapshot.snapshotHash)return{allowed:false,reason:'RISK_SNAPSHOT_CHANGED'};
@@ -573,6 +651,6 @@ export class PortfolioRiskAdmission {
     if(!(finite(expiresAt)&&expiresAt>now))return{allowed:false,reason:'RISK_TICKET_EXPIRED'};
     return{allowed:true,reason:'PORTFOLIO_ADMISSION_AUTHORISED',binding:{riskGeneration:this.ledger.generation,snapshotHash:this.ledger.snapshotHash,
       evaluatedAt:this.ledger.evaluatedAt,expiresAt,profileVersion:this.ledger.profileVersion,factCoverage:built.coverage,
-      limitingConstraints:stress.limitingConstraints,scenarioSet:stress.scenarios.map(row=>row.id)}};
+      limitingConstraints:this.effectiveStressLimits(stress,profile),scenarioSet:stress.scenarios.map(row=>row.id)}};
   }
 }

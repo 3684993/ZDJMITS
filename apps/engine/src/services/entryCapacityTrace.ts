@@ -197,7 +197,7 @@ export function entrySideCapacityTrace(input: {
  * headroom the gate itself ran, and the side plan from the allocation plan that sized (or refused) it.
  */
 export function entrySideCapacityTraces(state: any, routes: any[], facts: {coverageSymbols?: string[] | null; now?: number;
-  admission?: {exhausted: boolean; code: string | null; gate: string | null; detail: string | null; ceilingUsdBySide: {LONG: number; SHORT: number}} | null} = {}): {LONG: SideCapacityTrace[]; SHORT: SideCapacityTrace[]} {
+  admission?: {status?: 'AVAILABLE'|'UNAVAILABLE'|'NOT_APPLICABLE'; exhausted: boolean; code: string | null; gate: string | null; detail: string | null; ceilingUsdBySide: {LONG: number; SHORT: number}} | null} = {}): {LONG: SideCapacityTrace[]; SHORT: SideCapacityTrace[]} {
   const now = facts.now ?? Date.now(), coverage = facts.coverageSymbols ?? null, book = facts.admission ?? null,
     positions = [...(state.positions?.values() ?? [])],
     traces: {LONG: SideCapacityTrace[]; SHORT: SideCapacityTrace[]} = {LONG: [], SHORT: []};
@@ -210,11 +210,11 @@ export function entrySideCapacityTraces(state: any, routes: any[], facts: {cover
       // Either the route was sized against the gate itself, or the projection supplies the gate's book-level
       // answer. One of the two must speak; neither may be inferred from the money number.
       const own = headroom?.observed?.admission ?? null;
-      const refusal = own?.refusal ?? (book?.exhausted ? book.code : null);
+      const refusal = own?.refusal ?? (book?.status==='UNAVAILABLE'||book?.exhausted ? book.code : null);
       const ceilingUsd = own?.ceilingUsd ?? book?.ceilingUsdBySide?.[side] ?? null;
       const gate = own?.gate ?? book?.gate ?? null, detail = own?.detail ?? book?.detail ?? null;
       const denied = Boolean(refusal) || (Array.isArray(headroom?.blockers) && headroom.blockers.includes('REJECT_RISK_ADMISSION_CEILING'))
-        || Boolean(book?.exhausted);
+        || Boolean(book?.exhausted)||book?.status==='UNAVAILABLE';
       traces[side].push(entrySideCapacityTrace({symbol: route.symbol, underlying: route.underlying ?? route.symbol, side, quoteAsset: route.quoteAsset,
         snapshot, route, headroom,
         // An uncovered symbol is refused before any capacity number means anything, and the authority's
@@ -230,10 +230,10 @@ export function entrySideCapacityTraces(state: any, routes: any[], facts: {cover
 }
 
 /** One verdict for the whole book, so a page never infers "can it trade?" from two numbers. */
-export function entrySideStatus(perSide: {LONG: {executableNotionalUsd: number}; SHORT: {executableNotionalUsd: number}}, routeCount: number, deniedByAdmission = false) {
+export function entrySideStatus(perSide: {LONG: {executableNotionalUsd: number}; SHORT: {executableNotionalUsd: number}}, routeCount: number, deniedByAdmission = false, denialCode='RISK_ADMISSION_EXHAUSTED') {
   // Money on the side is not permission to use it: when the committing gate refuses at any size, the status
   // line says so instead of naming a side "executable" beside a 0% admission rate.
-  if (deniedByAdmission) return {code: 'RISK_ADMISSION_EXHAUSTED' as const, text: '确定性风险门拒绝任何新增名义：见首因的每道门数值'};
+  if (deniedByAdmission) return {code: denialCode, text: denialCode==='RISK_ADMISSION_UNAVAILABLE'?'组合风险准入结果不可用：新增风险容量 fail-closed':'确定性风险门拒绝任何新增名义：见首因的每道门数值'};
   const long = Number(perSide.LONG?.executableNotionalUsd ?? 0) > 0, short = Number(perSide.SHORT?.executableNotionalUsd ?? 0) > 0;
   if (long && short) return {code: 'BOTH_SIDES_EXECUTABLE' as const, text: 'LONG 与 SHORT 均可新增'};
   if (long) return {code: 'LONG_ONLY_EXECUTABLE' as const, text: 'LONG executable / SHORT blocked'};

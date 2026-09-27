@@ -24,7 +24,8 @@ const finite=(value:unknown)=>typeof value==='number'&&Number.isFinite(value);
 /**
  * S05-D. Every AI_ACTIVE position pre-reserves one worst-case handoff slot. Existing
  * HUMAN_MANAGED/HANDOFF_PENDING risk is never discounted. Capacity exhaustion blocks only
- * new risk; protection remains allowed.
+ * new risk; protection remains allowed. ACK age is retained in `overdueHandoffs` as governance telemetry
+ * and never vetoes an unrelated new Entry.
  */
 export function evaluateHumanCapacity(input:{snapshot:PortfolioRiskSnapshot;profile:HumanCapacityProfile;now:number;candidateNotionalUsd?:number;candidateAlreadyCounted?:boolean}):HumanCapacityDecision{
   const {snapshot,profile}=input,blockers:string[]=[];
@@ -47,7 +48,6 @@ export function evaluateHumanCapacity(input:{snapshot:PortfolioRiskSnapshot;prof
 
   if(validProfile){
     if(pendingHandoffs>profile.maxPendingHandoffs)blockers.push('HUMAN_PENDING_HANDOFF_LIMIT');
-    if(overdue.length)blockers.push('HUMAN_ACK_OVERDUE');
     // A caller whose candidate is already inside the snapshot must not be charged the slot twice.
     const reservedSlots=potentialHandoffSlots+(input.candidateAlreadyCounted?0:1);
     if(reservedSlots>profile.maxHumanPositions)blockers.push('HUMAN_POTENTIAL_SLOT_LIMIT');

@@ -1,0 +1,102 @@
+{
+  "72": {
+    "primary": 1632,
+    "scout": 1635,
+    "decisions": {
+      "PLACE_SHORT": 540,
+      "PLACE_LONG": 1032,
+      "NO_DIRECTION_EDGE": 8,
+      "None": 52
+    },
+    "admission": {
+      "runs": 1286,
+      "allowed": 314,
+      "denied": 972,
+      "numericGateRows": 0,
+      "familyHits": {
+        "POSITION_FACT_UNVERIFIED": 6,
+        "MAINTENANCE_MARGIN_UNPROVEN": 6,
+        "POSITION_MARGIN_ASSET_UNPROVEN": 6,
+        "STRESS_LIMIT:MIN_MARGIN_BUFFER": 18,
+        "STRESS_LIMIT:MAX_GROSS_NOTIONAL": 852,
+        "PORTFOLIO_RISK_SNAPSHOT_INCOMPLETE": 271,
+        "MARGIN_ASSET_UNVERIFIED": 18,
+        "POSITION_FACT_INVALID": 6,
+        "STRESS_LIMIT:MAX_CLUSTER_NOTIONAL": 852,
+        "HUMAN_POTENTIAL_NOTIONAL_LIMIT": 832,
+        "LIQUIDATION_BUFFER_UNPROVEN": 5,
+        "MARGIN_TIER_SYMBOL_UNPROVEN": 267,
+        "PRIVATE_ACCOUNT_NOT_FRESH": 13,
+        "ACCOUNT_ASSET_UNVERIFIED": 14,
+        "ACCOUNT_EQUITY_UNPROVEN": 13,
+        "PENDING_RISK_UNVERIFIED": 257,
+        "STRESS_LIMIT:MAX_DIRECTION_NOTIONAL": 71,
+        "STRESS_LIMIT:MAX_STRESS_LOSS": 66,
+        "CASH_FLOW_COVERAGE_UNPROVIDED": 1,
+        "HUMAN_ACK_OVERDUE": 560
+      }
+    }
+  },
+  "24": {
+    "primary": 639,
+    "scout": 641,
+    "decisions": {
+      "PLACE_SHORT": 218,
+      "PLACE_LONG": 401,
+      "None": 15,
+      "NO_DIRECTION_EDGE": 5
+    },
+    "admission": {
+      "runs": 577,
+      "allowed": 0,
+      "denied": 577,
+      "numericGateRows": 0,
+      "familyHits": {
+        "STRESS_LIMIT:MAX_CLUSTER_NOTIONAL": 577,
+        "STRESS_LIMIT:MAX_GROSS_NOTIONAL": 577,
+        "HUMAN_POTENTIAL_NOTIONAL_LIMIT": 577,
+        "MARGIN_TIER_SYMBOL_UNPROVEN": 67,
+        "STRESS_LIMIT:MAX_STRESS_LOSS": 23,
+        "CASH_FLOW_COVERAGE_UNPROVIDED": 1,
+        "PENDING_RISK_UNVERIFIED": 116,
+        "PORTFOLIO_RISK_SNAPSHOT_INCOMPLETE": 122,
+        "HUMAN_ACK_OVERDUE": 560,
+        "STRESS_LIMIT:MAX_DIRECTION_NOTIONAL": 7,
+        "ACCOUNT_ASSET_UNVERIFIED": 8,
+        "STRESS_LIMIT:MIN_MARGIN_BUFFER": 7,
+        "PRIVATE_ACCOUNT_NOT_FRESH": 7,
+        "ACCOUNT_EQUITY_UNPROVEN": 7,
+        "MARGIN_ASSET_UNVERIFIED": 7
+      }
+    }
+  },
+  "12": {
+    "primary": 92,
+    "scout": 92,
+    "decisions": {
+      "PLACE_SHORT": 21,
+      "PLACE_LONG": 70,
+      "None": 1
+    },
+    "admission": {
+      "runs": 91,
+      "allowed": 0,
+      "denied": 91,
+      "numericGateRows": 0,
+      "familyHits": {
+        "STRESS_LIMIT:MAX_CLUSTER_NOTIONAL": 91,
+        "STRESS_LIMIT:MAX_GROSS_NOTIONAL": 91,
+        "HUMAN_POTENTIAL_NOTIONAL_LIMIT": 91,
+        "HUMAN_ACK_OVERDUE": 91,
+        "PENDING_RISK_UNVERIFIED": 19,
+        "PORTFOLIO_RISK_SNAPSHOT_INCOMPLETE": 23,
+        "STRESS_LIMIT:MIN_MARGIN_BUFFER": 5,
+        "ACCOUNT_ASSET_UNVERIFIED": 5,
+        "PRIVATE_ACCOUNT_NOT_FRESH": 5,
+        "ACCOUNT_EQUITY_UNPROVEN": 5,
+        "MARGIN_ASSET_UNVERIFIED": 5,
+        "STRESS_LIMIT:MAX_DIRECTION_NOTIONAL": 1
+      }
+    }
+  }
+}

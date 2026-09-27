@@ -1,0 +1,1 @@
+path=C:\Users\5700x\.codex\worktrees\v396-entry-frequency-risk-audit\MITS branch=codex/v396-entry-frequency-risk-audit-20260927 HEAD=667177f7106cf00a657e86c5818b0cfc9e702aff origin/main=667177f7106cf00a657e86c5818b0cfc9e702aff initial status --short: empty (verified before inventory creation)

@@ -1,0 +1,14 @@
+{
+  "scope": "AUDIT_ARITHMETIC_ONLY",
+  "checks": [
+    "72h gross and cluster hit run sets identical",
+    "12h 91 denials / 0 allowed",
+    "24 captured symbol-side minima pass 5 USD and one step less fails",
+    "66 sole bracket coverage refusals",
+    "original 48-entry status unchanged"
+  ],
+  "productTests": "NOT_RUN_ANALYSIS_ONLY",
+  "formalBuild": "NOT_RUN_ANALYSIS_ONLY",
+  "hostedCI": "NOT_RUN_BILLING_LIMIT",
+  "deployment": "NOT_RUN_EXTERNAL"
+}

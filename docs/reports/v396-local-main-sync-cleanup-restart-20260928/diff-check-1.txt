@@ -1,0 +1,15 @@
+
+warning: in the working copy of 'apps/dashboard/src/views/OverviewView.vue', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'apps/engine/src/runtime/appRuntime.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'apps/engine/src/services/entryCapacityTrace.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'apps/engine/src/services/frozenChoiceTelemetry.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'apps/engine/src/services/humanCapacityPolicy.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'apps/engine/src/services/pipelineVerdict.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'apps/engine/src/services/preAiExecutionEnvelope.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'apps/engine/src/services/preflightFeasibility.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'apps/engine/src/services/riskReadiness.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'apps/engine/src/services/s05PortfolioTailRisk.test.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'apps/engine/src/services/tradingQualityObserverWorker.test.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'apps/engine/src/state/runtimeState.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'apps/engine/src/testing/deterministicRiskAdmission.ts', LF will be replaced by CRLF the next time Git touches it
+

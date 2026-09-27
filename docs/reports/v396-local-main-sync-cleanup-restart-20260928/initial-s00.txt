@@ -1,0 +1,17 @@
+
+(node:29164) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+file:///D:/MITS/scripts/v396-s00-static-check.mjs:17
+const assert = (condition, message) => { if (!condition) throw new Error(`S00_CHECK_FAILED: ${message}`); };
+                                                               ^
+
+Error: S00_CHECK_FAILED: entrypoint review count 140 does not match the derived 143
+    at assert (file:///D:/MITS/scripts/v396-s00-static-check.mjs:17:64)
+    at file:///D:/MITS/scripts/v396-s00-static-check.mjs:112:1
+    at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+
+Node.js v22.23.1
+

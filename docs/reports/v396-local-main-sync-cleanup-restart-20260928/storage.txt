@@ -1,0 +1,8 @@
+STORAGE_COVERAGE_WRITTEN docs\reports\v396-local-main-sync-cleanup-restart-20260928\storage-coverage.json gate=S08_STORAGE_COVERAGE_PASS
+
+(node:26848) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:37900) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:37900) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+

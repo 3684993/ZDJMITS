@@ -1,0 +1,31 @@
+{
+  "basisCommit": "4d0d9ad655aae9cef991e3f98ebd8c0690d8c5a7",
+  "targetCommit": "2aa2d7d2ac348b642fcc9b8d89fbbe54cc22cd9e",
+  "changedPaths": [
+    "docs/plans/v396/CODEX-V396-FINAL-RUNTIME-ACCEPTANCE-20260927.md",
+    "docs/reports/v396-local-main-sync-cleanup-restart-20260928/capture-runtime.ps1",
+    "docs/reports/v396-local-main-sync-cleanup-restart-20260928/inventory-before.json",
+    "docs/reports/v396-local-main-sync-cleanup-restart-20260928/inventory.py",
+    "docs/reports/v396-local-main-sync-cleanup-restart-20260928/preservation-manifest.json",
+    "docs/reports/v396-local-main-sync-cleanup-restart-20260928/preserve-dirty.py",
+    "docs/reports/v396-local-main-sync-cleanup-restart-20260928/runtime-inventory.json",
+    "docs/reports/v396-unknown-proof-predicate-fix-20260927/git-delivery.json"
+  ],
+  "allChangesDocsOnly": true,
+  "fullGateEvidence": "../v396-unknown-proof-predicate-fix-20260927/gate-results.json",
+  "counts": {
+    "engine": 1493,
+    "core": 58,
+    "dashboard": 63,
+    "focusedEngine": 261,
+    "focusedDashboard": 17
+  },
+  "freshRequired": [
+    "canonical dependency/build",
+    "canonical source/artifact manifest",
+    "S00",
+    "storage coverage",
+    "diff check"
+  ],
+  "githubActions": "NOT_RUN_BILLING_LIMIT"
+}

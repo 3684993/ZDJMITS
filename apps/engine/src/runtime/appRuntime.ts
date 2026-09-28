@@ -1,3 +1,4 @@
+import { testnetFundsOnlyEntry } from '@zdj/core';
 import type {TradingQualityRuntimeObserver} from '../services/tradingQualityRuntimeObserver.js';
 import { TradingQualityCollector } from '../services/tradingQualityCollector.js';
 import { privateAccountFresh } from '../services/privateAccountReadiness.js';
@@ -404,6 +405,7 @@ export class EngineRuntime {
       else events.publish('PORTFOLIO_RISK_AUTHORITY_UNAVAILABLE',{reasons:read.reasons});
     });
     (state as any).riskAdmission = runtime.portfolioRisk;
+    events.publish('ENTRY_RESOURCE_POLICY_LOADED',{mode:testnetFundsOnlyEntry(state.settings)?'TESTNET_FUNDS_ONLY':'LEGACY_RISK_ENFORCED',portfolioRiskVeto:!testnetFundsOnlyEntry(state.settings),productionPolicyChanged:false});
     state.entryRiskGate = (input: any) => {
       const decision = runtime.portfolioRisk!.gate(input);
       state.riskLedger = runtime.portfolioRisk!.serialize();
@@ -1958,10 +1960,10 @@ export class EngineRuntime {
       this.state.settings.connections.executionMode !== "TESTNET_ENABLED"
     )
       noEntryReason = "ENTRY_BLOCKED";
-    else if (pending >= this.state.settings.portfolio.maxPendingEntries)
+    else if (!testnetFundsOnlyEntry(this.state.settings)&&pending >= this.state.settings.portfolio.maxPendingEntries)
       noEntryReason = "ENTRY_BACKPRESSURE";
     else if (!poolItems.length) noEntryReason = poolStatus;
-    else if(slotCapacity.used>=this.state.settings.portfolio.maxPositions)noEntryReason='POSITION_CAPACITY_FULL';
+    else if(!testnetFundsOnlyEntry(this.state.settings)&&slotCapacity.used>=this.state.settings.portfolio.maxPositions)noEntryReason='POSITION_CAPACITY_FULL';
     else if(this.state.runtimeControl.capital.executableCandidateCount===0)noEntryReason='WAITING_EXECUTION_CAPACITY';
     const primaryHealth=this.ai.resourceMetrics().find(r=>r.role==='PRIMARY_BRAIN');
     if(this.ready&&this.state.executionGovernance.mode==='AUTO_RUNNING'&&this.state.runtimeControl.mode==='RUNNING'){
@@ -2101,6 +2103,7 @@ export class EngineRuntime {
       asOf:now,observationVersion:`${this.state.marketGeneration}:${this.state.runtimeControl.capital.generation}:${this.state.account.asOf}`,
       capacity:slotCapacity,privateSync:this.privateSyncHealth(),
       capacityVisibility: capacityView,
+      entryResourcePolicy:{mode:testnetFundsOnlyEntry(this.state.settings)?'TESTNET_FUNDS_ONLY':'LEGACY_RISK_ENFORCED',portfolioRiskVeto:!testnetFundsOnlyEntry(this.state.settings),fundingSource:'EXCHANGE_AVAILABLE_BALANCE',executionCorrectnessEnforced:true},
       // G4: what is stopping a new Entry right now, and the action that matches it. Pages render this and
       // nothing else as the first cause; every other status field is a subordinate diagnostic.
       authoritativeBlocker,

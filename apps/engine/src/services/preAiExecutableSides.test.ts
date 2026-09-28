@@ -72,35 +72,18 @@ describe('the pre-AI envelope publishes which sides are actually executable', ()
     expect(h.exchange.placeEntry).not.toHaveBeenCalled();
   });
 
-  it('EP-03 tells the model the other side is not executable without choosing for it', () => {
-    const h = harness();
-    squeezeLong(h.state);
-    const envelope = buildPreAiExecutionEnvelope(h.state, fixtureSymbol);
-    expect(envelope.SHORT.executable).toBe(true);
-    expect(envelope.LONG.executable).toBe(false);
-    expect(envelope.executableSides).toEqual(['SHORT']);
-    expect(envelope.sideAuthorization.LONG.startsWith('NOT_EXECUTABLE:')).toBe(true);
-    const packet = {...h.packet, executionEnvelope: envelope} as never;
-    const facts: any = compactEntryFacts(packet);
+  it('EP-03 TESTNET exposes both funded sides despite exhausted direction risk', () => {
+    const h=harness();squeezeLong(h.state);const envelope=buildPreAiExecutionEnvelope(h.state,fixtureSymbol);
+    expect(envelope.executableSides).toEqual(['LONG','SHORT']);
+    const facts:any=compactEntryFacts({...h.packet,executionEnvelope:envelope} as never);
     expect(facts.EXECUTION_ENVELOPE.sideAuthorization).toEqual(envelope.sideAuthorization);
-    expect(facts.EXECUTION_ENVELOPE.executableSides).toEqual(['SHORT']);
-    // S06-T01: the envelope never rewrites a direction.
-    expect(envelope.LONG.authorization).not.toContain('USE_SHORT');
+    expect(facts.EXECUTION_ENVELOPE.executableSides).toEqual(['LONG','SHORT']);
   });
 
-  it('EP-04 a model choice outside the envelope is named as a violation and is not remapped', async () => {
-    const h = armedHarness('LONG', squeezeLong);
-    await h.run();
-    const blocked = h.events.filter((event: any) => event.type === 'ENTRY_DECISION_BLOCKED' && event.payload?.stage === 'POST_PRIMARY_EXECUTION_ENVELOPE');
-    expect(blocked.length).toBeGreaterThan(0);
-    expect(blocked.at(-1).payload).toMatchObject({reason: 'AI_DIRECTION_NOT_EXECUTABLE', violation: 'MODEL_SELECTION_OUTSIDE_EXECUTABLE_ENVELOPE', direction: 'LONG', executableSides: ['SHORT']});
-    expect(String(blocked.at(-1).payload.envelopeAuthorization)).toMatch(/^NOT_EXECUTABLE:/);
-    // It stays a refusal on the side the model chose: no silent flip, no reservation, no order.
-    expect(h.state.entryIntents.size).toBe(0);
-    expect(h.state.entryOrders.size).toBe(0);
-    expect(h.exchange.placeEntry).not.toHaveBeenCalled();
-    const flipped = h.events.filter((event: any) => event.payload?.direction === 'SHORT' && event.type === 'ENTRY_INTENT_CREATED');
-    expect(flipped.length).toBe(0);
+  it('EP-04 TESTNET executes the chosen funded LONG without a risk-driven direction remap', async () => {
+    const h=armedHarness('LONG',squeezeLong);await h.run();
+    expect(h.exchange.placeEntry).toHaveBeenCalledOnce();
+    expect([...h.state.entryOrders.values()][0].side).toBe('LONG');
   });
 
   it('EP-05 keeps the whole-side probe honest: one executable side is never a reason to skip Primary', async () => {
@@ -183,21 +166,11 @@ describe('the pre-AI envelope publishes which sides are actually executable', ()
 });
 
 describe('B: an uncovered symbol is refused before the model, and only that symbol', () => {
-  it('EP-10 a symbol outside the committed margin-tier coverage has no executable side and names itself', () => {
-    const h = harness();
-    h.state.marginTierCoverage = {symbols: ['ETHUSDT', 'BNBUSDT'], version: 'V1', contentHash: 'hash-1', loadedAt: Date.now()} as any;
-    const envelope = buildPreAiExecutionEnvelope(h.state, fixtureSymbol);
-    expect(envelope.executableSides).toEqual([]);
-    for (const side of ['LONG', 'SHORT'] as const) {
-      expect(envelope[side].executable).toBe(false);
-      expect(envelope[side].firstBindingConstraint).toBe(`MARGIN_TIER_SYMBOL_UNPROVEN:${fixtureSymbol}`);
-      expect(envelope[side].authorization).toBe(`NOT_EXECUTABLE:MARGIN_TIER_SYMBOL_UNPROVEN:${fixtureSymbol}`);
-      expect(envelope[side].legalQuantityRangeUnits).toBeNull();
-    }
-    // The refusal is about this symbol only: a covered candidate keeps its capacity untouched.
-    const covered = harness();
-    covered.state.marginTierCoverage = {symbols: [fixtureSymbol], version: 'V1', contentHash: 'hash-1', loadedAt: Date.now()} as any;
-    expect(buildPreAiExecutionEnvelope(covered.state, fixtureSymbol).executableSides.length).toBeGreaterThan(0);
+  it('EP-10 missing committed margin risk coverage does not deny either funded TESTNET side', () => {
+    const h=harness();h.state.marginTierCoverage={symbols:[]} as any;
+    const envelope=buildPreAiExecutionEnvelope(h.state,fixtureSymbol);
+    expect(envelope.executableSides).toEqual(['LONG','SHORT']);
+    expect(envelope.LONG.legalQuantityRangeUnits).not.toBeNull();
   });
 
   it('EP-11 no committed authority mirror changes nothing (the profile gate owns that case)', () => {

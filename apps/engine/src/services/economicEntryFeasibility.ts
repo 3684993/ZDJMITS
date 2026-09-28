@@ -1,3 +1,4 @@
+import { testnetFundsOnlyEntry } from '@zdj/core';
 import { estimateTradingCost } from '@zdj/core';
 import type { BrainDecision, EntryExecutionEnvelope, Side } from '@zdj/contracts';
 type ProfitTakePlan=BrainDecision['profitTakePlan'];
@@ -77,6 +78,6 @@ export function evaluateEconomicEntryFeasibility(input:{
     }}
   }
   const human=humanManagedExposure(state);
-  if(settings.positionManagement.humanManagedAdmissionCapsEnabled&&!human.withinLimits)blockers.push('HUMAN_MANAGED_EXPOSURE_LIMIT');
+  if(!testnetFundsOnlyEntry(settings)&&settings.positionManagement.humanManagedAdmissionCapsEnabled&&!human.withinLimits)blockers.push('HUMAN_MANAGED_EXPOSURE_LIMIT');
   return{version:'V3.9.5',mode,passed:blockers.length===0,validatedAt:now,expectedNetProfit,requiredNetProfit,reachProbability,historicalHardMaxMovePercent,targetMovePercent,notionalUsd,blockers};
 }

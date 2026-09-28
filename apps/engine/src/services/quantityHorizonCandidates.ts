@@ -116,7 +116,7 @@ export function buildQuantityHorizonCandidates(input:{
   envelope:{maxQuantityUnits:number;maxNotionalUsd:number;maxMarginUsd:number;executable:boolean;riskHeadroom?:{reason?:string;blockers?:string[]}};
   envelopeExpiresAt:number;
   factVersion:string;
-  risk:CandidateRiskFacts;
+  risk:CandidateRiskFacts|null;
   settings:{takeProfit:{entryFeeRate:number;takerFeeRate:number;makerFeeRate:number;exitFeeAssumption:string;slippageBufferPct:number;feeSafetyBufferPct:number;minNetProfitUsd:number;minNetProfitRoiPct:number};
     tradeEconomics:{admissionMode:string;historicalTpReachabilityEnabled?:boolean;reachabilityLookbackBars?:number;reachabilityMinSamples?:number;minHistoricalReachProbability?:number}};
   candles:(timeframe:string,count:number)=>CandleRow[];
@@ -222,13 +222,13 @@ export function buildQuantityHorizonCandidates(input:{
         :targetMovePercent>(reach.hardMaxMovePercent as number)+1e-9?'BEYOND':'WITHIN',
       modelConfidence:null,modelConfidenceIsAuthority:false,
     };
-    const risk:TradePlanRisk={capitalAtRiskUsd:round(input.risk.capitalAtRiskUsd+margin,6),grossNotionalAfterUsd:round(input.risk.grossNotionalAfterUsd+notional,6),
+    const risk:TradePlanRisk|null=input.risk?{capitalAtRiskUsd:round(input.risk.capitalAtRiskUsd+margin,6),grossNotionalAfterUsd:round(input.risk.grossNotionalAfterUsd+notional,6),
       longNotionalAfterUsd:round(side==='LONG'?input.risk.longNotionalAfterUsd+notional:input.risk.longNotionalAfterUsd,6),
       shortNotionalAfterUsd:round(side==='SHORT'?input.risk.shortNotionalAfterUsd+notional:input.risk.shortNotionalAfterUsd,6),
       clusterNotionalAfterUsd:round(input.risk.clusterNotionalAfterUsd+notional,6),
       limitingConstraints:[...new Set(input.risk.limitingConstraints)].slice(0,24),riskGeneration:input.risk.riskGeneration,
-      snapshotHash:input.risk.snapshotHash,profileVersion:input.risk.profileVersion,humanSlotsAfter:input.risk.humanSlotsAfter+1};
-    const payload={symbol,side,units,horizon,targetPrice:round(targetPrice,10),entryPrice:round(entryPrice,10),snapshotHash:risk.snapshotHash};
+      snapshotHash:input.risk.snapshotHash,profileVersion:input.risk.profileVersion,humanSlotsAfter:input.risk.humanSlotsAfter+1}:null;
+    const payload={symbol,side,units,horizon,targetPrice:round(targetPrice,10),entryPrice:round(entryPrice,10),snapshotHash:risk?.snapshotHash??null};
     const range=rangeTargets.filter(value=>finite(value));
     return {schemaVersion:'V396-PLAN-CANDIDATE-1',candidateId:stableId(payload),symbol,side,quantityUnits:units,quantitySteps:units,
       notionalUsd:round(notional,6),marginUsd:round(margin,6),leverage,entryReferencePrice:round(entryPrice,10),targetPrice:round(targetPrice,10),

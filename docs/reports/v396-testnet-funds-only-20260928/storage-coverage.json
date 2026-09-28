@@ -1,0 +1,62 @@
+{
+  "schema": "V396-STORAGE-COVERAGE-2",
+  "generatedBy": "scripts/v396-storage-coverage.mjs",
+  "stageId": "S08",
+  "gate": "S08_STORAGE_COVERAGE_PASS",
+  "durableSqliteInventory": [
+    "zdj-settings.sqlite",
+    "v396-ownership.sqlite"
+  ],
+  "backupTooling": {
+    "script": "scripts/v394-stage6-preflight.mjs",
+    "enumeratesInventory": true,
+    "perTableRestoreProof": true
+  },
+  "retentionTooling": {
+    "script": "scripts/prune-zdj-backups.mjs",
+    "mechanism": "generic *.sqlite scan"
+  },
+  "compactionTooling": {
+    "script": "scripts/maintain-storage.mjs",
+    "targetsSingleDatabase": true
+  },
+  "files": [
+    {
+      "name": "zdj-settings.sqlite",
+      "backedUpByExistingTooling": true,
+      "contentVerifiedPerTable": true,
+      "inStorageRetentionInventory": true,
+      "retentionMechanism": "generic-sqlite-scan(scripts/prune-zdj-backups.mjs)",
+      "readByAnyRuntimeConsumer": true,
+      "runtimeConsumers": [
+        "apps/engine/src/config/settingsStore.ts",
+        "apps/engine/src/services/storageCapacityGuard.ts",
+        "apps/engine/src/services/temporalIntelligenceService.ts"
+      ],
+      "grantsAiWriteAuthority": false,
+      "releaseBlocking": false
+    },
+    {
+      "name": "v396-ownership.sqlite",
+      "backedUpByExistingTooling": true,
+      "contentVerifiedPerTable": true,
+      "inStorageRetentionInventory": true,
+      "retentionMechanism": "generic-sqlite-scan(scripts/prune-zdj-backups.mjs)",
+      "readByAnyRuntimeConsumer": true,
+      "runtimeConsumers": [
+        "apps/engine/src/runtime/appRuntime.ts",
+        "apps/engine/src/services/v396ExitRuntime.ts"
+      ],
+      "grantsAiWriteAuthority": false,
+      "releaseBlocking": false
+    }
+  ],
+  "blockingFiles": [],
+  "liveSettingsDatabaseTouched": false,
+  "productionMigrationPerformed": false,
+  "note": "S08 覆盖报告由本脚本从仓库内容推导；人工改写会被 apps/engine/src/services/ownershipStorageCoverage.test.ts 的推导复核判为不一致。",
+  "backupSelfTest": {
+    "command": "node scripts/v394-stage6-preflight.mjs --self-test",
+    "pass": true
+  }
+}

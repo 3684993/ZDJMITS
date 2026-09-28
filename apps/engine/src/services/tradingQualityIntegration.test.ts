@@ -86,7 +86,7 @@ describe('real EntryCoordinator opportunity authorization',()=>{
   });
   it('restored execution wait cannot reuse an expired PLACE and missing intent cannot release UNKNOWN',async()=>{
     const h=ready();await h.run();const i=[...h.state.entryIntents.values()][0],o=[...h.state.entryOrders.values()][0];
-    o.status='NEW';o.exchangeOrderId=null;
+    o.status='NEW';o.exchangeOrderId=null;i.aiAuthorizationExpiresAt=Date.now()-1;i.absoluteExpiresAt=Date.now()-1;
     h.state.candidateLifecycle.set(i.symbol,{status:'WAIT_EXECUTION_RANGE',executionWait:{intentId:i.id,reservationId:i.reservationId}});
     await (h.coordinator as any).resumeExecutionWaits(Date.now());expect(h.exchange.placeEntry).toHaveBeenCalledTimes(1);expect(o.clientOrderId).toBeTruthy();
     o.status='UNKNOWN';h.state.entryOrders.set(o.id,o);h.state.entryReservations.get(i.reservationId).status='WORKING';h.state.entryIntents.delete(i.id);

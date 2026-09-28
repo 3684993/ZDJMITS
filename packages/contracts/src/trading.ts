@@ -33,6 +33,7 @@ const EntryExecutionCapacitySchema=z.object({
 /** Frozen pre-AI execution facts carried with an EntryIntent for restart-safe authorization. */
 export const EntryExecutionEnvelopeSchema=z.object({
   version:z.literal('V3.9.3_PRE_AI_EXECUTION_ENVELOPE'),
+  resourcePolicy:z.enum(['TESTNET_FUNDS_ONLY','LEGACY_RISK_ENFORCED']).optional(),
   symbol:z.string(),
   underlying:z.string(),
   quoteAsset:z.string(),

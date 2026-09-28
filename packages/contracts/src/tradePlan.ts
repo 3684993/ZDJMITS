@@ -99,7 +99,7 @@ export const TradePlanCandidateSchema = z.object({
   managementDurationMs: z.number().int().positive(),
   costs: TradePlanCostsSchema,
   economics: TradePlanEconomicsSchema,
-  risk: TradePlanRiskSchema,
+  risk: TradePlanRiskSchema.nullable(),
   evidenceRefs: z.array(z.string().max(160)).max(12),
   executable: z.boolean(),
   blockers: z.array(z.string().max(160)).max(24),

@@ -1,3 +1,4 @@
+import { testnetFundsOnlyEntry } from './entryResourcePolicy.js';
 import type { AssetRiskTier, DirectionPolicy, MarketSymbolSnapshot, PortfolioIntelligenceSettings, SystemSettings, UniverseCandidate } from '@zdj/contracts';
 import { isEntryQuoteAsset, CapitalAdmissionSummarySchema, type CapitalAdmissionSummary } from '@zdj/contracts';
 import { buildAllocationPlan, directionPermissions, exposure, resolveQuoteAsset, resolveUnderlying, riskTier } from './portfolio.js';
@@ -44,7 +45,7 @@ export function evaluateCapitalAdmission(input:{candidates:UniverseCandidate[];s
     }
     if(quoteAsset==='USDT'&&available<=0){reason='NO_USDT_MARGIN';reasonText='USDT 可用保证金为 0，等待合格 USDC 路由';noUsdtMargin++;addReason(reason);reject();continue;}
     if(quoteAsset==='USDC'&&available<=0){reason='NO_USDC_MARGIN';reasonText='USDC 可用保证金为 0';noUsdcMargin++;addReason(reason);reject();continue;}
-    const tier=(candidate.riskTier as AssetRiskTier|undefined)??riskTier(snapshot,p),permissions=directionPermissions(snapshot.symbol,tier,p),make=(direction:'LONG'|'SHORT')=>permissions.allowedDirections.includes(direction)?buildAllocationPlan({candidate:{...candidate,symbol:snapshot.symbol,underlyingAsset:underlying,quoteAsset},snapshot,direction,confidence:.65,settings:input.settings,positions,assets}):null;
+    const tier=(candidate.riskTier as AssetRiskTier|undefined)??riskTier(snapshot,p),permissions=directionPermissions(snapshot.symbol,tier,p),make=(direction:'LONG'|'SHORT')=>(testnetFundsOnlyEntry(input.settings)||permissions.allowedDirections.includes(direction))?buildAllocationPlan({candidate:{...candidate,symbol:snapshot.symbol,underlyingAsset:underlying,quoteAsset},snapshot,direction,confidence:.65,settings:input.settings,positions,assets}):null;
     try{longPlan=make('LONG');shortPlan=make('SHORT');}catch{reason='ALLOCATION_FAILED';reasonText='AllocationPlan 无法生成';exposureRejected++;addReason(reason);reject();continue;}
     const valid=(candidatePlan:null|ReturnType<typeof buildAllocationPlan>)=>Boolean(candidatePlan&&!candidatePlan.admission.startsWith('REJECT_')&&candidatePlan.minExecutableMarginUsd<=available);
     plan=valid(longPlan)?longPlan:valid(shortPlan)?shortPlan:longPlan??shortPlan;
@@ -54,7 +55,7 @@ export function evaluateCapitalAdmission(input:{candidates:UniverseCandidate[];s
     const quoteMargin=quoteAsset==='USDT'?exposure(positions,assets,p).usdtMarginUsd:quoteAsset==='USDC'?exposure(positions,assets,p).usdcMarginUsd:0;
     const directionPlans=[longPlan,shortPlan].filter(valid) as ReturnType<typeof buildAllocationPlan>[];
     if(!directionPlans.length){reason=reasonFromPlan(plan.admission,plan.reasons);reasonText=reason==='POSITION_CAPACITY_FULL'?`仓位容量 ${positions.length}/${input.settings.portfolio.maxPositions}`:plan.reasons.join(',');addReason(reason);reject();continue;}
-    if(directionPlans.every(candidatePlan=>quoteMargin+candidatePlan.minExecutableMarginUsd>available*p.maxQuoteAssetMarginUsagePct)){reason='EXPOSURE_BLOCKED';reasonText=`${quoteAsset} 保证金或方向敞口没有最小可执行空间`;exposureRejected++;addReason(reason);reject();continue;}
+    if(!testnetFundsOnlyEntry(input.settings)&&directionPlans.every(candidatePlan=>quoteMargin+candidatePlan.minExecutableMarginUsd>available*p.maxQuoteAssetMarginUsagePct)){reason='EXPOSURE_BLOCKED';reasonText=`${quoteAsset} 保证金或方向敞口没有最小可执行空间`;exposureRejected++;addReason(reason);reject();continue;}
     if(quoteAsset==='USDT')usdtExecutableUnderlyings++;if(quoteAsset==='USDC')usdcExecutableUnderlyings++;decisions.push({symbol:candidate.symbol,underlying,quoteAsset,executable:true,reason:'EXECUTABLE',reasonText:'可执行',plan,longPlan,shortPlan,minExecutableNotionalUsd});addReason('EXECUTABLE');
   }
   // A side that was never sized is a different fact from a side that was sized and then refused, and the

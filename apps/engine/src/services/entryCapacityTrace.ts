@@ -1,3 +1,4 @@
+import {testnetFundsOnlyEntry} from '@zdj/core';
 import { isEntryQuoteAsset, quoteSuffixOf, type AllocationCapacityRoom } from '@zdj/contracts';
 import { entryTradingCapital } from './capitalCapacity.js';
 import type { BindingConstraint } from './executableRiskHeadroom.js';
@@ -219,7 +220,7 @@ export function entrySideCapacityTraces(state: any, routes: any[], facts: {cover
         snapshot, route, headroom,
         // An uncovered symbol is refused before any capacity number means anything, and the authority's
         // own coverage list is the only place that decides it.
-        marginTier: {proven: coverage ? coverage.includes(String(route.symbol).toUpperCase()) : true},
+        marginTier: {proven: testnetFundsOnlyEntry(state.settings)||(coverage ? coverage.includes(String(route.symbol).toUpperCase()) : true)},
         portfolioRisk: {allowed: !denied, blockers: [refusal, denied && !refusal ? 'RISK_ADMISSION_CEILING' : null].filter(Boolean) as string[]},
         riskAdmission: {ceilingUsd, refusal: refusal ?? null, gate, detail},
         admissionDenied: denied,

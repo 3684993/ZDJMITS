@@ -1,4 +1,7 @@
 // @ts-nocheck
+import {reservationDebitsAvailableFunds} from '../services/entryFundingCommitment.js';
+import { testnetFundsOnlyEntry } from '@zdj/core';
+
 import { DynamicPool, resolveUnderlying } from '@zdj/core';
 import { entryOrderOccupiesRisk } from '../services/entryRiskOccupancy.js';
 import { privateAccountFresh } from '../services/privateAccountReadiness.js';
@@ -186,13 +189,13 @@ export class RuntimeState {
            ['maxPositions','maxConcurrentReservations'].some(key=>!Number.isSafeInteger(input[key])||input[key]<=0))return {ok:false,reason:'RESERVATION_FACTS_INVALID'};
         const now=Date.now();this.cleanupReservationsAtomic(now);
         const underlying=input.underlying.toUpperCase(),lock=this.underlyingLocks.get(underlying);
-        if(lock&&lock.leaseUntil>now)return {ok:false,reason:'UNDERLYING_LOCKED'};
+        if(!testnetFundsOnlyEntry(this.settings)&&lock&&lock.leaseUntil>now)return {ok:false,reason:'UNDERLYING_LOCKED'};
         const reserved=[...this.entryReservations.values()].filter(x=>this.reservationHoldsRisk(x));
-        if(reserved.some(x=>String(x.underlying).toUpperCase()===underlying))return {ok:false,reason:'UNDERLYING_LOCKED'};
-        if(reserved.length>=input.maxConcurrentReservations)return {ok:false,reason:'RESERVATION_CAPACITY'};
-        if(this.entryCapacity(null,null,now).used>=input.maxPositions)return {ok:false,reason:'MAX_POSITIONS_REACHED'};
+        if(!testnetFundsOnlyEntry(this.settings)&&reserved.some(x=>String(x.underlying).toUpperCase()===underlying))return {ok:false,reason:'UNDERLYING_LOCKED'};
+        if(!testnetFundsOnlyEntry(this.settings)&&reserved.length>=input.maxConcurrentReservations)return {ok:false,reason:'RESERVATION_CAPACITY'};
+        if(!testnetFundsOnlyEntry(this.settings)&&this.entryCapacity(null,null,now).used>=input.maxPositions)return {ok:false,reason:'MAX_POSITIONS_REACHED'};
         const available=this.account.assets.find(x=>x.asset===input.quoteAsset)?.availableBalance;
-        const committed=reserved.filter(x=>x.quoteAsset===input.quoteAsset).reduce((n,x)=>n+Math.max(0,Number(x.marginUsd)),0);
+        const committed=reserved.filter(x=>x.quoteAsset===input.quoteAsset&&(!testnetFundsOnlyEntry(this.settings)||reservationDebitsAvailableFunds(this,x,now))).reduce((n,x)=>n+Math.max(0,Number(x.marginUsd)),0);
         if(!Number.isFinite(available)||!Number.isFinite(committed)||available-committed<input.marginUsd)return {ok:false,reason:'RESERVED_QUOTE_MARGIN'};
         // C2/D1: the authoritative facts are re-read and enforced inside this BEGIN IMMEDIATE window.
         if(!privateAccountFresh(this.account,now))return {ok:false,reason:`PRIVATE_ACCOUNT_${this.account?.status==='READY'?'STALE':String(this.account?.status??'UNKNOWN')}`};
@@ -206,14 +209,18 @@ export class RuntimeState {
         // J2: the portfolio admission is the only source of a risk binding. There is no default
         // binding computed from the capital route, and no selection generation standing in for a
         // risk generation - without a snapshot of what the account actually holds, no new risk.
+        let binding=null;
+        if(!testnetFundsOnlyEntry(this.settings)){
         if(typeof this.entryRiskGate!=='function')return {ok:false,reason:'RISK_ADMISSION_UNPROVEN'};
         const risk=this.entryRiskGate({...input,now,riskGeneration:capital.generation,capitalVersion});
         if(!risk||risk.allowed!==true)return {ok:false,reason:risk?.reason??'PORTFOLIO_ADMISSION_BLOCKED'};
-        const binding=risk.binding;
+        binding=risk.binding;
         if(!Number.isSafeInteger(binding?.riskGeneration)||binding.riskGeneration<=0||typeof binding.snapshotHash!=='string'||!/^v396r[0-9a-f]{32,}$/.test(binding.snapshotHash)||
            !Number.isFinite(binding.evaluatedAt)||binding.evaluatedAt>now||!Number.isFinite(binding.expiresAt)||binding.expiresAt<=now||!String(binding.profileVersion??'').trim())
             return {ok:false,reason:'RISK_BINDING_INVALID'};
         if(input.riskGeneration!==undefined&&input.riskGeneration!==null&&input.riskGeneration!==binding.riskGeneration)return {ok:false,reason:'RISK_GENERATION_STALE'};
+        }
+        if(testnetFundsOnlyEntry(this.settings)&&input.planId&&[...this.entryReservations.values()].some(row=>row.planId===input.planId))return {ok:false,reason:'PLAN_ALREADY_RESERVED'};
         const id=`reserve_${now}_${Math.random().toString(36).slice(2,8)}`;
         this.entryReservations.set(id,{id,underlying,quoteAsset:input.quoteAsset,marginUsd:input.marginUsd,notionalUsd:input.notionalUsd,planId:input.planId,intentId:null,createdAt:now,expiresAt:now+input.ttlSeconds*1000,status:'RESERVED',riskBinding:binding});
         this.underlyingLocks.set(underlying,{reservationId:id,leaseUntil:now+input.leaseSeconds*1000});

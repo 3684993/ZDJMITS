@@ -1,0 +1,6 @@
+(node:12884) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:46292) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:46292) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+STORAGE_COVERAGE_WRITTEN docs\reports\v396-testnet-funds-only-20260928\storage-coverage.json gate=S08_STORAGE_COVERAGE_PASS

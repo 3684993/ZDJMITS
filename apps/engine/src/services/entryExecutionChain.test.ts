@@ -82,23 +82,10 @@ describe('V3.9.6 PLACE -> submit chain closure', () => {
     expect(row.tradePlanId).toBeTruthy();
   });
 
-  it('EC-03 (T6) a human exit goal raised while the order is prepared stops the entry', async () => {
-    const h = armed();
-    h.exchange.setLeverage.mockImplementation(async () => {
-      const now = Date.now();
-      h.state.manualExitGoals.set('goal_1', {
-        positionId: 'pos_manual', symbol: fixtureSymbol, side: 'LONG', rootKey: 'ML_manual',
-        attempt: 1, createdAt: now, nextAttemptAt: now + 60_000, lastReason: 'HUMAN_TAKE_OVER',
-      } as never);
-    });
-    await h.run();
-    expect(h.exchange.placeEntry, 'a position under human management may not receive an automatic entry').not.toHaveBeenCalled();
-    const blocked = h.events.filter((event: any) => event.type === 'ENTRY_ORDER_BLOCKED');
-    expect(blocked[0]?.payload).toMatchObject({brainRunId: RUN, stage: 'JIT', reason: 'JIT_BLOCKED:HUMAN_EXIT_GOAL_ACTIVE'});
-    expect([...h.state.entryReservations.values()][0].status).toBe('RELEASED');
-    const row = outcome(h.events);
-    expect(row).toMatchObject({executionState: 'NOT_SUBMITTED', blockStage: 'JIT', orderId: null});
-    expect(row.executionLabel).toContain('未挂单 · JIT · JIT_BLOCKED:HUMAN_EXIT_GOAL_ACTIVE');
+  it('EC-03 a human exit goal remains intact and cannot veto a separate TESTNET Entry', async () => {
+    const h=armed();h.exchange.setLeverage.mockImplementation(async()=>{h.state.manualExitGoals.set('goal_1',{symbol:fixtureSymbol} as never);});
+    await h.run();expect(h.exchange.placeEntry).toHaveBeenCalledOnce();
+    expect(h.state.manualExitGoals.has('goal_1')).toBe(true);expect(outcome(h.events).executionState).toBe('SUBMITTED');
   });
 
   it('EC-04 (T5) an unknown submission is reconciled, never re-sent', async () => {

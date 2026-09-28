@@ -1,3 +1,4 @@
+import { testnetFundsOnlyEntry } from '@zdj/core';
 import type { Position, Side, SystemSettings } from '@zdj/contracts';
 import type { PendingEntryRiskExposureList } from './entryRiskOccupancy.js';
 import type { CapitalCapacityFact } from './capitalCapacity.js';
@@ -21,6 +22,7 @@ export type ExposureCapacityPolicy={gross:ExposureEnforcement;direction:Exposure
 export const DEFAULT_EXPOSURE_CAPACITY_POLICY:ExposureCapacityPolicy={gross:'ENFORCE',direction:'ENFORCE',cluster:'ENFORCE'};
 const mode=(value:unknown):ExposureEnforcement=>value==='OBSERVE'?'OBSERVE':'ENFORCE';
 export function exposureCapacityPolicy(settings:SystemSettings):ExposureCapacityPolicy{
+  if(testnetFundsOnlyEntry(settings))return {gross:'OBSERVE',direction:'OBSERVE',cluster:'OBSERVE'};
   const policy=(settings?.riskGovernance as {exposureCapacityPolicy?:Partial<ExposureCapacityPolicy>}|undefined)?.exposureCapacityPolicy;
   return {gross:mode(policy?.gross),direction:mode(policy?.direction),cluster:mode(policy?.cluster)};
 }
@@ -46,6 +48,7 @@ export type HeadroomInput={settings:SystemSettings;equity:number;positions:Pick<
 
 /** Pure capacity calculation shared by routing, pre-Primary JIT and final risk validation. */
 export function computeExecutableRiskHeadroom(input:HeadroomInput){
+  const fundsOnly=testnetFundsOnlyEntry(input.settings);
   const g=input.settings.riskGovernance,equity=input.equity,cluster=clusterFor(input.symbol),clusterKey=riskClusterKey(input.symbol),pending=input.pendingRiskExposures??[];
   const exposures=[
     ...input.positions.map(p=>({id:`position:${p.symbol}:${p.side}`,symbol:p.symbol,side:p.side as Side|'BOTH',notionalUsd:Math.abs(p.quantity*p.markPrice),source:'POSITION'})),
@@ -58,8 +61,8 @@ export function computeExecutableRiskHeadroom(input:HeadroomInput){
   // The admission ledger's own ceiling is a dimension of its own, so a page that reads "how much room is
   // left" cannot miss the limit that will actually refuse the order. No verdict from that ledger is
   // rendered as unlimited room: it is simply not part of this calculation then.
-  const ceilingSupplied=input.riskAdmissionCeilingUsd!=null&&Number.isFinite(Number(input.riskAdmissionCeilingUsd));
-  const refusal=input.riskAdmissionRefusal??null;
+  const ceilingSupplied=!fundsOnly&&input.riskAdmissionCeilingUsd!=null&&Number.isFinite(Number(input.riskAdmissionCeilingUsd));
+  const refusal=fundsOnly?null:input.riskAdmissionRefusal??null;
   // A refusal that holds at every size is expressed as zero room rather than as an extra capacity blocker:
   // the money arithmetic stays in this layer's own vocabulary, while the refusal is still the named cause.
   const admission=refusal?0:ceilingSupplied?Math.max(0,Number(input.riskAdmissionCeilingUsd)):null;
@@ -73,11 +76,12 @@ export function computeExecutableRiskHeadroom(input:HeadroomInput){
   if(enforced.direction)checks.push(['direction','REJECT_DIRECTION_EXPOSURE']);
   if(enforced.cluster)checks.push(['cluster','REJECT_CORRELATED_CLUSTER'],['clusterDirection','REJECT_CLUSTER_DIRECTION_EXPOSURE']);
   const quoteReason=!capital?'QUOTE_CAPACITY_UNPROVEN':capital.bindingConstraint==='QUOTE_ASSET_NOT_ENTRY_ELIGIBLE'?'QUOTE_ASSET_NOT_ENTRY_ELIGIBLE':capital.leverageFact==='UNPROVEN'?'LEVERAGE_UNPROVEN':'INSUFFICIENT_AVAILABLE_MARGIN';
-  checks.push(['riskSizing','REJECT_RISK_PER_TRADE'],['quote',quoteReason]);
+  if(!fundsOnly)checks.push(['riskSizing','REJECT_RISK_PER_TRADE']);
+  checks.push(['quote',quoteReason]);
   if(admission!=null)checks.push(['admission','REJECT_RISK_ADMISSION_CEILING']);
-  const valid=equity>0&&Number.isFinite(equity)&&Number.isFinite(input.plannedNotional)&&input.plannedNotional>=0&&Number.isFinite(move)&&Number.isFinite(input.dailyDrawdownPct)&&Object.values(limits).every(Number.isFinite)&&Object.values(remaining).every(v=>Number.isFinite(v)&&v>=0)&&exposures.every(p=>Number.isFinite(p.notionalUsd)&&p.notionalUsd>=0&&Boolean(p.symbol));
+  const valid=fundsOnly ? Number.isFinite(input.plannedNotional)&&input.plannedNotional>=0&&Boolean(capital?.factsComplete)&&Number.isFinite(remaining.quote)&&remaining.quote>=0 : equity>0&&Number.isFinite(equity)&&Number.isFinite(input.plannedNotional)&&input.plannedNotional>=0&&Number.isFinite(move)&&Number.isFinite(input.dailyDrawdownPct)&&Object.values(limits).every(Number.isFinite)&&Object.values(remaining).every(v=>Number.isFinite(v)&&v>=0)&&exposures.every(p=>Number.isFinite(p.notionalUsd)&&p.notionalUsd>=0&&Boolean(p.symbol));
   if(!valid)blockers.push('RISK_FACTS_INVALID');
-  if(input.dailyDrawdownPct>g.maxDailyDrawdownPct)blockers.push('REJECT_DAILY_DRAWDOWN');
+  if(!fundsOnly&&input.dailyDrawdownPct>g.maxDailyDrawdownPct)blockers.push('REJECT_DAILY_DRAWDOWN');
   for(const [key,reason] of checks)if(remaining[key]+1e-8<minimum)blockers.push(reason);
   // Routing/preflight are capacity calculations and may clamp an oversized
   // recommendation. Final-order JIT snapshots are strict: the already
@@ -86,7 +90,7 @@ export function computeExecutableRiskHeadroom(input:HeadroomInput){
   const binding=(key:keyof typeof remaining)=>remaining[key];
   const finalNotional=valid?Math.max(0,Math.min(input.plannedNotional,...checks.map(([key])=>binding(key)))):0;
   if(finalNotional+1e-8<minimum&&!blockers.length)blockers.push('BELOW_MINIMUM_NOTIONAL');
-  const firstBindingConstraint=firstBinding({valid,blockers,checks,remaining,plannedNotional:input.plannedNotional,capital,finalNotional,refusal:input.riskAdmissionRefusal??null});
+  const firstBindingConstraint=firstBinding({valid,blockers,checks,remaining,plannedNotional:input.plannedNotional,capital,finalNotional,refusal});
   const observed={
     policy,enforced,
     gross:{mode:policy.gross,enforced:enforced.gross,notionalUsd:gross,limitUsd:limits.gross,remainingUsd:remaining.gross,usedPct:limits.gross>0?gross/limits.gross:0},

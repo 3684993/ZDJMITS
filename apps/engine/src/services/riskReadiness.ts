@@ -1,3 +1,4 @@
+import { testnetFundsOnlyEntry } from '@zdj/core';
 import type { MarketSymbolSnapshot, Position, Side, SystemSettings } from '@zdj/contracts';
 import { uid } from '@zdj/core';
 import { computeExecutableRiskHeadroom, exposureCapacityPolicy, type BindingConstraint, type HeadroomInput } from './executableRiskHeadroom.js';
@@ -65,12 +66,12 @@ export function directionBudget(settings:SystemSettings,equityInput:number,posit
     remainingGrossUsd:grossAvailable,grossUsedPct:grossLimit>0?gross/grossLimit:0,
     longAvailableNotionalUsd:Math.max(0,directionLimit-long),shortAvailableNotionalUsd:Math.max(0,directionLimit-short),
     longUsedPct:directionLimit>0?long/directionLimit:0,shortUsedPct:directionLimit>0?short/directionLimit:0,
-    grossAvailableNotionalUsd:grossAvailable,policy:exposureCapacityPolicy(settings),evaluatedAt,
+    grossAvailableNotionalUsd:grossAvailable,policy:exposureCapacityPolicy(settings),positionLimitsEnforced:!testnetFundsOnlyEntry(settings),evaluatedAt,
   };
 }
 
 export type PositionCapacity={positions:number;inFlight:number;reserved:number;used:number;max:number};
-export type GrossDirectionBudget=ReturnType<typeof directionBudget>;
+export type GrossDirectionBudget=Omit<ReturnType<typeof directionBudget>,'positionLimitsEnforced'>&{positionLimitsEnforced?:boolean};
 export type CapacityBlocker='POSITION_CAPACITY'|'RISK_ADMISSION'|'RISK_ADMISSION_UNAVAILABLE'|'GROSS'|'DIRECTION_LONG'|'DIRECTION_SHORT'|'NOT_EVALUATED'|'NONE';
 /** The dimension that denies new Entry risk on its own, whatever the other side still allows. */
 export type ExhaustedReason='POSITION_CAPACITY'|'RISK_ADMISSION'|'RISK_ADMISSION_UNAVAILABLE'|'GROSS'|'BOTH_DIRECTIONS'|'AVAILABLE_MARGIN';
@@ -117,7 +118,7 @@ export function portfolioCapacityVisibility(capacity:PositionCapacity,budget:Gro
   const fundingBlock=facts.funding??{quoteAssets:[],totalExecutableMarginUsd:0,proven:false,excludedAssets:[],accountEquityUsd:null};
   const executable={LONG:bestExecutableSide(routes,'LONG',traces),SHORT:bestExecutableSide(routes,'SHORT',traces)};
   const fundableMarginUsd=Number(fundingBlock.totalExecutableMarginUsd??0),marginProven=fundingBlock.proven===true&&fundingBlock.quoteAssets.length>0;
-  const slotsFull=capacity.used>=capacity.max,grossFull=policy.gross==='ENFORCE'&&budget.remainingGrossUsd<=0,longFull=policy.direction==='ENFORCE'&&budget.longAvailableNotionalUsd<=0,shortFull=policy.direction==='ENFORCE'&&budget.shortAvailableNotionalUsd<=0,marginFull=marginProven&&fundableMarginUsd<=0;
+  const slotsFull=budget.positionLimitsEnforced!==false&&capacity.used>=capacity.max,grossFull=policy.gross==='ENFORCE'&&budget.remainingGrossUsd<=0,longFull=policy.direction==='ENFORCE'&&budget.longAvailableNotionalUsd<=0,shortFull=policy.direction==='ENFORCE'&&budget.shortAvailableNotionalUsd<=0,marginFull=marginProven&&fundableMarginUsd<=0;
   // Permission and money are different questions, and only the committing gate answers the first. Without
   // its verdict here, a page reading an OBSERVE ratio could publish "both sides executable" beside a gate
   // that refuses every order — which is precisely the contradiction this projection exists to prevent.

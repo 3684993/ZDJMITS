@@ -10,7 +10,7 @@ const card=(last:number)=>({timeframe:'15m',asOf:Date.now(),sampleSize:80,lastPr
 afterEach(async()=>Promise.all(paths.splice(0).map(dir=>rm(dir,{recursive:true,force:true,maxRetries:3,retryDelay:50}))));
 
 describe('Testnet risk-pause override',()=>{
-  it('records a complete audit, preserves risk metrics, restores AUTO, and survives restart state',async()=>{
+  it('TESTNET records daily loss without pausing Entry, including restored state',async()=>{
     const dataDir=await mkdtemp(path.join(os.tmpdir(),'zdj-risk-'));paths.push(dataDir);
     const runtime=await EngineRuntime.createTestHarness({configDir:path.resolve(process.cwd(),'../..','config'),dataDir});
     try {
@@ -23,19 +23,13 @@ describe('Testnet risk-pause override',()=>{
       runtime.state.universe=[{symbol:'ETHUSDT',rank:1,score:90,lifecycle:'SHORTLIST',eligible:true,exclusionReasons:[],components:{liquidity:90,tradingActivity:90,capitalActivity:80,technicalOpportunity:80,executionReachability:90,dataQuality:100},quoteVolumeUsd24h:100_000_000,spreadBps:2,lastPrice:last,change24hPercent:0,dataCompleteness:1,selectionGeneration:1,updatedAt:now,underlyingAsset:'ETH',quoteAsset:'USDT',riskTier:'LIQUID_ALT',directionPolicy:'BOTH',locationScore:80} as any];
       runtime.state.settings.releasePolicy={lifecycleVersion:382};runtime.state.executionGovernance={...runtime.state.executionGovernance,mode:'AUTO_RUNNING'};
       runtime.runtimeControl.evaluate(true);
-      expect(runtime.state.runtimeControl.mode).toBe('PAUSED_DAILY_RISK_LIMIT');
-      expect(runtime.state.runtimeControl.capital.executableCandidateCount).toBe(0);
-      const blockedRoute:any=runtime.state.runtimeControl.capital.routedCandidates[0];
-      expect(blockedRoute.riskHeadroom.LONG.blockers).toEqual(['REJECT_DAILY_DRAWDOWN']);
-      expect(blockedRoute.physicalCapacity.LONG).toBe(true);
-      const result=runtime.manualRiskPauseOverride('验收：人工复核后继续 Testnet AUTO');
-      expect(result.status).toBe('AUTO_RUNNING');
+      expect(runtime.state.runtimeControl.mode).toBe('RUNNING');
+      expect(runtime.state.runtimeControl.capital.executableCandidateCount).toBe(1);
       expect(runtime.runtimeControl.canDispatch()).toBe(true);
       expect(runtime.state.account.riskBaseline.riskDrawdownPct).toBe(.06);
-      const event=(runtime.settingsStore.runtimeEvents(Date.now()-60_000,['MANUAL_RISK_PAUSE_OVERRIDE'],10) as any[])[0];
-      expect(event.payload).toMatchObject({operatorAction:'MANUAL_RISK_PAUSE_OVERRIDE',riskMetrics:{riskDrawdownPct:.06},sessionScope:{riskCycleKey:expect.any(String)}});
       const restored=new RuntimeState(runtime.state.settings);restored.restore(runtime.state.serialize());
-      expect(restored.runtimeControl.manualRiskOverride.status).toBe('MANUAL_RISK_OVERRIDE_ACTIVE');
+      expect(restored.runtimeControl.mode).toBe('RUNNING');
+      expect(restored.account.riskBaseline.riskDrawdownPct).toBe(.06);
     } finally { runtime.stop(); }
   });
 });

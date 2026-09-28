@@ -1,4 +1,6 @@
 // @ts-nocheck
+import { testnetFundsOnlyEntry } from '@zdj/core';
+
 import {privateAccountFresh} from './privateAccountReadiness.js';
 import type { RuntimeMode, RuntimeReasonCode } from '@zdj/contracts';
 import { evaluateCapitalAdmission } from '@zdj/core';
@@ -81,7 +83,7 @@ export class RuntimeControlService {
     // partially depleted pool back into routing creates a self-locking two-item
     // loop and prevents high-frequency replacement of locally cooled symbols.
     const admission=evaluateCapitalAdmission({candidates,snapshots:[...this.state.snapshots.values()],settings:this.state.settings,positions,assets:this.state.account.assets});
-    const slots=this.state.entryCapacity();if(slots.used>=slots.max){admission.summary.executableCandidateCount=0;admission.summary.routedCandidates=[];admission.summary.reasonCounts={POSITION_CAPACITY_FULL:admission.decisions.length};for(const row of admission.decisions){row.executable=false;row.reason='POSITION_CAPACITY_FULL';row.reasonText=`仓位容量 ${slots.used}/${slots.max}（持仓${slots.positions}、在途${slots.inFlight}、预留${slots.reserved}）`;}}
+    const slots=this.state.entryCapacity();if(!testnetFundsOnlyEntry(this.state.settings)&&slots.used>=slots.max){admission.summary.executableCandidateCount=0;admission.summary.routedCandidates=[];admission.summary.reasonCounts={POSITION_CAPACITY_FULL:admission.decisions.length};for(const row of admission.decisions){row.executable=false;row.reason='POSITION_CAPACITY_FULL';row.reasonText=`仓位容量 ${slots.used}/${slots.max}（持仓${slots.positions}、在途${slots.inFlight}、预留${slots.reserved}）`;}}
     this.admissionDetails=admission.decisions.map(row=>({symbol:row.symbol,underlying:row.underlying,executable:row.executable,reason:row.reason,reasonText:row.reasonText,long:row.longPlan,short:row.shortPlan}));
     const nextAt=now+settings.capitalCheckIntervalSeconds*1000,capitalEquity=Number(this.state.account.equityUsd??0),budget=directionBudget(this.state.settings,capitalEquity,[...this.state.positions.values()],now),funding=entryTradingCapital(this.state,now);
     const routed=admission.summary.routedCandidates.map(route=>{
@@ -99,7 +101,7 @@ export class RuntimeControlService {
     const routeGeneration=candidates.length?Math.max(...candidates.map((candidate:any)=>candidate.selectionGeneration??0)):this.state.marketGeneration,summary={...admission.summary,routedCandidates:routed,executableCandidateCount:routed.filter(x=>x.longExecutable||x.shortExecutable).length,directionBudget:budget,funding,firstBindingConstraint:{LONG:bestExecutableSide(routed,'LONG'),SHORT:bestExecutableSide(routed,'SHORT')},generation:routeGeneration,capitalVersion:capitalFactVersion(this.state),nextRecheckAt:nextAt};
     this.state.runtimeControl={...current,capital:summary,nextCapitalCheckAt:nextAt};
     this.events.publish('CAPITAL_ROUTE_EVALUATED',{capitalVersion:summary.capitalVersion,selectionGeneration:routeGeneration,executableCandidateCount:summary.executableCandidateCount,evaluatedAt:summary.evaluatedAt,pendingRiskExposureCount:pendingRiskExposures.length,pendingRiskNotionalUsd:pendingRiskExposures.reduce((sum,row)=>sum+row.notionalUsd,0)});
-    const governance=this.state.settings.riskGovernance,risk=this.state.account.riskBaseline,loss=Math.max(0,-Number(risk?.calendarDayRealizedPnlUsd??risk?.capitalEpochRealizedPnlUsd??0)),equity=Math.max(1,this.state.account.equityUsd??0),drawdownPct=Number(risk?.riskDrawdownPct??0),dailyLimitHit=governance.circuitBreakerEnabled&&((governance.maxDailyLossUsd>0&&loss>=governance.maxDailyLossUsd)||(governance.maxDailyLossPct>0&&loss/equity>=governance.maxDailyLossPct)||drawdownPct>governance.maxDailyDrawdownPct);
+    const governance=this.state.settings.riskGovernance,risk=this.state.account.riskBaseline,loss=Math.max(0,-Number(risk?.calendarDayRealizedPnlUsd??risk?.capitalEpochRealizedPnlUsd??0)),equity=Math.max(1,this.state.account.equityUsd??0),drawdownPct=Number(risk?.riskDrawdownPct??0),dailyLimitHit=!testnetFundsOnlyEntry(this.state.settings)&&governance.circuitBreakerEnabled&&((governance.maxDailyLossUsd>0&&loss>=governance.maxDailyLossUsd)||(governance.maxDailyLossPct>0&&loss/equity>=governance.maxDailyLossPct)||drawdownPct>governance.maxDailyDrawdownPct);
     const manualOverride=this.manualRiskOverrideActive(now);
     this.entryRiskBlocked=dailyLimitHit&&!manualOverride;
     if(this.state.settings.releasePolicy?.lifecycleVersion>=390&&current.mode!=='PAUSED_MANUAL'){

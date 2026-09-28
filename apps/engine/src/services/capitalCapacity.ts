@@ -1,3 +1,5 @@
+import {reservationDebitsAvailableFunds} from './entryFundingCommitment.js';
+import { testnetFundsOnlyEntry } from '@zdj/core';
 import type { SystemSettings } from '@zdj/contracts';
 import { ENTRY_QUOTE_ASSETS, isEntryQuoteAsset, quoteSuffixOf } from '@zdj/contracts';
 import { activeExecutionLeaseMargin } from './executionLease.js';
@@ -59,10 +61,10 @@ export const entryQuoteAssets = (): readonly string[] => ENTRY_QUOTE_ASSETS;
 export const leverageFactOf = (value: unknown): LeverageFact => (Number.isFinite(Number(value)) && Number(value) >= 1 ? 'CANDIDATE_RECOMMENDED' : 'UNPROVEN');
 
 /** Margin already spoken for in one quote asset: live reservations plus execution leases, from their own owners. */
-export function quoteAssetCommittedMargin(state: any, quoteAsset: string, now = Date.now()) {
+export function quoteAssetCommittedMargin(state: any, quoteAsset: string, now = Date.now(), excludeReservationId?:string) {
   const asset = String(quoteAsset).toUpperCase();
   const reservedMarginUsd = [...(state.entryReservations?.values() ?? [])]
-    .filter((row: any) => ['RESERVED', 'WORKING'].includes(String(row.status)) && Number(row.expiresAt) > now && String(row.quoteAsset).toUpperCase() === asset)
+    .filter((row: any) => row.id!==excludeReservationId && reservationDebitsAvailableFunds(state,row,now) && String(row.quoteAsset).toUpperCase() === asset)
     .reduce((sum: number, row: any) => sum + Math.max(0, Number(row.marginUsd ?? 0)), 0);
   return {reservedMarginUsd, executionLeaseMarginUsd: activeExecutionLeaseMargin(state, asset, now)};
 }
@@ -153,14 +155,14 @@ export function candidateCapitalCapacity(input: {
  * to re-derive which reservations and leases already hold this quote asset's margin. A symbol quoted
  * outside the Entry universe is refused here, at the same place every other consumer reads capacity.
  */
-export function candidateCapitalFromState(state: any, input: {symbol: string; quoteAsset: string; leverage: unknown; leverageFact: LeverageFact; minimumNotionalUsd?: number; now?: number; settings?: SystemSettings}): CapitalCapacityFact {
+export function candidateCapitalFromState(state: any, input: {symbol: string; quoteAsset: string; leverage: unknown; leverageFact: LeverageFact; minimumNotionalUsd?: number; now?: number; excludeReservationId?:string; settings?: SystemSettings}): CapitalCapacityFact {
   const now = input.now ?? Date.now(), settings = input.settings ?? state.settings,
     quoteAsset = String(input.quoteAsset ?? quoteSuffixOf(input.symbol)).toUpperCase(),
     asset = (state.account?.assets ?? []).find((row: any) => String(row.asset).toUpperCase() === quoteAsset),
-    {reservedMarginUsd, executionLeaseMarginUsd} = quoteAssetCommittedMargin(state, quoteAsset, now),
+    {reservedMarginUsd, executionLeaseMarginUsd} = quoteAssetCommittedMargin(state, quoteAsset, now,input.excludeReservationId),
     pi = settings?.portfolioIntelligence ?? {};
   return candidateCapitalCapacity({quoteAsset, availableBalanceUsd: isEntryQuoteAsset(quoteAsset) ? asset?.availableBalance : Number.NaN, walletBalanceUsd: asset?.walletBalance,
     reservedMarginUsd, executionLeaseMarginUsd, leverage: input.leverage, leverageFact: input.leverageFact,
-    maxMarginPerPositionUsd: pi.maxMarginPerPositionUsd, maxEquityPctPerPosition: pi.maxEquityPct, equityUsd: state.account?.equityUsd,
+    maxMarginPerPositionUsd: testnetFundsOnlyEntry(settings)?undefined:pi.maxMarginPerPositionUsd, maxEquityPctPerPosition: testnetFundsOnlyEntry(settings)?undefined:pi.maxEquityPct, reserveMarginBufferPct:testnetFundsOnlyEntry(settings)?0:undefined, equityUsd: state.account?.equityUsd,
     minimumNotionalUsd: input.minimumNotionalUsd ?? 1, evaluatedAt: now});
 }

@@ -1,3 +1,4 @@
+import { testnetFundsOnlyEntry } from './entryResourcePolicy.js';
 import type {
   AllocationPlan,
   AssetRiskTier,
@@ -500,6 +501,14 @@ export function buildAllocationPlan(input: {
       quoteRoom < minMargin ? "REJECT_QUOTE_MARGIN" : "REJECT_EXPOSURE_LIMIT";
     scaled = minMargin;
   }
+  if (testnetFundsOnlyEntry(input.settings)) {
+    const available = Number(assetAvailable(input.assets, quote));
+    const minimum = exchangeMinimumNotional / leverage;
+    scaled = Number.isFinite(available) ? Math.max(0, Math.min(available, Math.max(minimum, Number.isFinite(raw) ? raw : minimum))) : 0;
+    admission = scaled + 1e-8 >= minimum ? 'ALLOW' : 'REJECT_QUOTE_MARGIN';
+    reasons.length = 0;
+    reasons.push('TESTNET_FUNDS_ONLY_ENTRY');
+  }
   const afterScaled = exposure(
       [
         ...input.positions,
@@ -536,7 +545,7 @@ export function buildAllocationPlan(input: {
     leverage,
     marginUsd: scaled,
     notionalUsd: scaled * leverage,
-    minExecutableMarginUsd: minMargin,
+    minExecutableMarginUsd: testnetFundsOnlyEntry(input.settings) ? exchangeMinimumNotional / leverage : minMargin,
     altLongMarginFactor,
     directionLeverageCap,
     exposureBefore: before,

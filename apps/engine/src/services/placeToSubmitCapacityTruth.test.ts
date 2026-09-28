@@ -7,7 +7,8 @@ import {computeExecutableRiskHeadroom} from './executableRiskHeadroom.js';
 import {buildPreAiExecutionEnvelope} from './preAiExecutionEnvelope.js';
 import {portfolioCapacityVisibility} from './riskReadiness.js';
 import {entrySideCapacityTraces} from './entryCapacityTrace.js';
-import {harness} from './tradingQualityTestHarness.js';
+import {harness as testnetHarness} from './tradingQualityTestHarness.js';
+const harness=()=>{const h=testnetHarness();h.state.settings.connections.exchange.environment='PRODUCTION';return h;}; // Pure legacy capacity tests; no adapter calls.
 import {readFileSync} from 'node:fs';
 import {fileURLToPath} from 'node:url';
 import path from 'node:path';

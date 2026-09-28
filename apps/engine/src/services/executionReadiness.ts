@@ -1,3 +1,4 @@
+import { testnetFundsOnlyEntry } from '@zdj/core';
 import { privateAccountFresh } from './privateAccountReadiness.js';
 import { portfolioRiskProfileBlockers, portfolioRiskProfileStatus, type PortfolioRiskProfileAuthorityContext } from './portfolioRiskLedger.js';
 
@@ -84,8 +85,8 @@ export function executionReadiness(input: ExecutionReadinessInput): ExecutionRea
   if (input.writeAdmissionBlock) blockers.push(input.writeAdmissionBlock);
   if (input.runtimeControlMode !== 'RUNNING') blockers.push('RUNTIME_NOT_RUNNING');
   else if (!intent) blockers.push('POLICY_NOT_AUTO');
-  blockers.push(...portfolioRiskProfileBlockers(profile, authority));
-  if (uncoveredOnly) blockers.push('MARGIN_TIER_NO_COVERED_CANDIDATE');
+  if(!testnetFundsOnlyEntry(settings))blockers.push(...portfolioRiskProfileBlockers(profile, authority));
+  if (!testnetFundsOnlyEntry(settings)&&uncoveredOnly) blockers.push('MARGIN_TIER_NO_COVERED_CANDIDATE');
   if (input.executableCandidateCount < 1) blockers.push('NO_EXECUTABLE_CANDIDATE');
   const ready = blockers.length === 0;
   return {

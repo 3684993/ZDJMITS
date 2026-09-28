@@ -388,8 +388,8 @@ describe('the derived rate is bounded by the notional the account can actually r
     expect(routedElsewhere.ready).toBe(true);
     // Nothing in the sized universe is covered: that, and only that, stops the spend.
     const noneCovered = executionReadiness({...input, executableCandidateSymbols: ['NEARUSDC'], sizingWatchSymbols: ['NEARUSDC', 'DOGEUSDC']} as never);
-    expect(noneCovered.blockers).toContain('MARGIN_TIER_NO_COVERED_CANDIDATE');
-    expect(noneCovered.modelSpendPermitted).toBe(false);
+    expect(noneCovered.blockers).toEqual([]);
+    expect(noneCovered.modelSpendPermitted).toBe(true);
     // A specific candidate outside coverage is still refused, by name, at admission.
     const admission = new PortfolioRiskAdmission({
       state: {positions: new Map(), entryOrders: new Map(), entryReservations: new Map(), account: {status: 'READY', asOf: Date.now(), equityUsd: 10_000, assets: [], riskBaseline: {}}, settings: input.settings} as never,

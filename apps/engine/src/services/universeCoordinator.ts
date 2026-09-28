@@ -1,3 +1,4 @@
+import { testnetFundsOnlyEntry } from '@zdj/core';
 import { classifyAsset, decorateUniverse, isOnlineAsset, resolveUnderlying, selectUniverse } from '@zdj/core';
 import type { RuntimeState } from '../state/runtimeState.js';
 import type { EventBus } from '../events/eventBus.js';
@@ -33,7 +34,7 @@ export class UniverseCoordinator {
       else if(!row?.noEdgeReview&&row?.decisionContextKey&&contextKey&&row.decisionContextKey!==contextKey&&['REJECT_COOLDOWN','TECHNICAL_COOLDOWN'].includes(row.status)){this.state.candidateLifecycle.set(candidate.symbol,{...row,status:'READY',reason:'MATERIAL_STATE_CHANGE',nextEligibleAt:null,updatedAt:now,fingerprint});this.state.rejectionCooldown.delete(candidate.symbol);}
       const current=this.state.candidateLifecycle.get(candidate.symbol);
       // Capital routing is a dispatch fact, not a Universe membership gate.
-      const blocked=current?.status==='POSITION_HELD'?'POSITION_HELD':current?.status==='EXCLUDED_UNDERLYING'?'EXCLUDED_UNDERLYING':this.state.activeEntrySymbols().has(candidate.symbol)?'ENTRY_WORKING':current?.status;
+      const blocked=current?.status==='POSITION_HELD'?'POSITION_HELD':current?.status==='EXCLUDED_UNDERLYING'?'EXCLUDED_UNDERLYING':!testnetFundsOnlyEntry(this.state.settings)&&this.state.activeEntrySymbols().has(candidate.symbol)?'ENTRY_WORKING':current?.status;
       candidate.lifecycle=(blocked??'READY') as any;candidate.lifecycleReason=current?.reason;candidate.nextEligibleAt=current?.nextEligibleAt??null;
       candidate.pipelineEligible=!blocked||['READY','SCOUT_QUEUED','SCOUT_RUNNING','SCOUT_DONE','PRIMARY_QUEUED','PRIMARY_RUNNING','PLACE_READY'].includes(blocked);
       if(cooldown&&cooldown.until>now)candidate.pipelineEligible=false;

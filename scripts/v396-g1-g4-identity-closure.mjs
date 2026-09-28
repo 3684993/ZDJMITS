@@ -7,7 +7,7 @@ import {execFileSync} from 'node:child_process';
 
 const root = path.resolve(process.argv[2] ?? '.');
 const base = process.argv[3] ?? 'http://127.0.0.1:8080/api/v3';
-const branch = 'codex/v396-final-convergence-20260922';
+const branch = process.argv[4] ?? 'main';
 const ARTIFACT = ['apps/engine/dist', 'packages/core/dist', 'packages/contracts/dist', 'apps/dashboard/dist'];
 const SOURCE = ['apps/engine/src', 'packages/core/src', 'packages/contracts/src', 'apps/dashboard/src'];
 

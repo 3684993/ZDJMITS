@@ -33,7 +33,7 @@ describe('execution readiness judgment', () => {
     expect(ready).toMatchObject({ intent: true, ready: true, modelSpendPermitted: true, blockers: [], firstBlocker: null, mode: 'EXECUTION_READY' });
   });
 
-  it('F2 stops paying when no executable candidate has a proven bracket, without freezing a partly covered pool', () => {
+  it('F2 missing risk brackets remain observational for TESTNET', () => {
     const accountScope = 'binance-primary';
     const compiled = portfolioRiskAuthorityCompile({
       environment: 'TESTNET', accountScope,
@@ -48,9 +48,9 @@ describe('execution readiness judgment', () => {
       writeAdmissionBlock: null, executableCandidateCount: 2, portfolioRiskAuthority: {facts: compiled.facts}, authorityScope: {environment: 'TESTNET', accountScope}, now};
     expect(executionReadiness({...input, executableCandidateSymbols: ['BTCUSDT', 'DOGEUSDT']})).toMatchObject({ready: true, modelSpendPermitted: true});
     const noneCovered = executionReadiness({...input, executableCandidateSymbols: ['DOGEUSDT', 'SOLUSDT']});
-    expect(noneCovered.blockers).toContain('MARGIN_TIER_NO_COVERED_CANDIDATE');
-    expect(noneCovered.ready).toBe(false);
-    expect(noneCovered.modelSpendPermitted).toBe(false);
+    expect(noneCovered.blockers).toEqual([]);
+    expect(noneCovered.ready).toBe(true);
+    expect(noneCovered.modelSpendPermitted).toBe(true);
     // Without a durable authority the pool comparison is meaningless: the absence is the blocker.
     expect(executionReadiness({...input, portfolioRiskAuthority: {facts: null}, executableCandidateSymbols: ['DOGEUSDT']})).toMatchObject({profileStatus: 'PROFILE_FACTS_UNPROVEN'});
   });
@@ -74,7 +74,7 @@ describe('execution readiness judgment', () => {
 
   it('names the exact profile fact that is missing, and never calls an unconfigured profile "ready"', () => {
     const unconfigured = readiness({ settings: { connections: { executionMode: 'TESTNET_ENABLED', exchange: { environment: 'TESTNET' } }, riskGovernance: { entrySafetyMode: 'AUTO', portfolioRisk: { configured: false } } } });
-    expect(unconfigured.blockers).toEqual(['RISK_PROFILE_UNCONFIGURED']);
+    expect(unconfigured.blockers).toEqual([]);
     expect(unconfigured.profileStatus).toBe('PROFILE_NOT_CONFIGURED');
     expect(portfolioRiskProfileStatus({ configured: false })).toBe('PROFILE_NOT_CONFIGURED');
     expect(portfolioRiskProfileBlockers(profile({ correlationVersion: '' }))).toEqual(['CORRELATION_VERSION_UNPROVEN']);
@@ -88,7 +88,7 @@ describe('execution readiness judgment', () => {
     expect(portfolioRiskProfileBlockers(profile(), {facts: null, environment: 'TESTNET', accountScope: 'binance-primary'})).toEqual(['MARGIN_AUTHORITY_MISSING']);
     expect(portfolioRiskProfileStatus(profile(), {facts: null, environment: 'TESTNET', accountScope: 'binance-primary'})).toBe('PROFILE_FACTS_UNPROVEN');
     const factsUnproven = readiness({ settings: { connections: { executionMode: 'TESTNET_ENABLED', exchange: { environment: 'TESTNET' } }, riskGovernance: { entrySafetyMode: 'AUTO', portfolioRisk: profile({ correlationVersion: '' }) } } });
-    expect(factsUnproven.blockers).toEqual(['CORRELATION_VERSION_UNPROVEN']);
+    expect(factsUnproven.blockers).toEqual([]);
     expect(factsUnproven.profileStatus).toBe('PROFILE_FACTS_UNPROVEN');
   });
 
@@ -172,15 +172,11 @@ describe('an armed trade intent spends no model on facts it cannot execute', () 
     expect(h.coordinator.analysisDiagnostics().execution.ready).toBe(true);
   });
 
-  it('spends nothing while the risk profile is unconfigured, and names the missing fact', async () => {
-    const { h, cycle } = await equipped('LONG');
-    (h.state.settings.riskGovernance as Record<string, unknown>).portfolioRisk = { configured: false };
-    await cycle();
-    expect(h.ai.decide).not.toHaveBeenCalled();
-    expect(h.events.filter(event => event.type === 'EXECUTION_READINESS_BLOCKED').at(-1)?.payload?.blockers).toContain('RISK_PROFILE_UNCONFIGURED');
-    const gate = h.coordinator.analysisDiagnostics().execution;
-    expect(gate.ready).toBe(false);
-    expect(gate.blockers).toContain('RISK_PROFILE_UNCONFIGURED');
+  it('TESTNET spends model capacity despite an unconfigured risk profile', async () => {
+    const {h,cycle}=await equipped('LONG');
+    (h.state.settings.riskGovernance as any).portfolioRisk={configured:false};
+    await cycle();expect(h.ai.decide).toHaveBeenCalledOnce();
+    expect(h.coordinator.analysisDiagnostics().execution).toMatchObject({ready:true,blockers:[]});
   });
 
   it('keeps deterministic supply maintenance running while the model is refused', async () => {
@@ -263,7 +259,7 @@ describe('the runtime pushes the verdict instead of deciding it per surface', ()
     expect(noted.mock.calls.at(-1)?.[0]).toMatchObject({ ready: true, modelSpendPermitted: true });
   });
 
-  it('H1 spends no model on a profile whose versions name no committed authority', async () => {
+  it('H1 missing committed risk authority does not suppress TESTNET analysis', async () => {
     const { h, noted, profileFacts, tick } = runtime({ authority: false });
     h.state.account = { ...h.state.account, status: 'READY', asOf: Date.now(), equityUsd: 10_000 };
     h.state.runtimeControl = { ...h.state.runtimeControl, mode: 'RUNNING', capital: { ...h.state.runtimeControl.capital, executableCandidateCount: 3 } };
@@ -272,13 +268,13 @@ describe('the runtime pushes the verdict instead of deciding it per surface', ()
     (h.state.settings.riskGovernance as Record<string, unknown>).portfolioRisk = profile(profileFacts);
     await tick();
     const verdict = noted.mock.calls.at(-1)?.[0] as { ready: boolean; modelSpendPermitted: boolean; blockers: string[]; profileStatus: string };
-    expect(verdict.blockers).toContain('MARGIN_AUTHORITY_MISSING');
+    expect(verdict.blockers).toEqual([]);
     expect(verdict.profileStatus).toBe('PROFILE_FACTS_UNPROVEN');
-    expect(verdict.ready).toBe(false);
-    expect(verdict.modelSpendPermitted).toBe(false);
+    expect(verdict.ready).toBe(true);
+    expect(verdict.modelSpendPermitted).toBe(true);
   });
 
-  it('H17 stops paying for a PLACE the moment the committed bracket table drifts', async () => {
+  it('H17 risk bracket drift does not veto TESTNET PLACE', async () => {
     const { h, fake, noted, profileFacts, tick } = runtime();
     h.state.account = { ...h.state.account, status: 'READY', asOf: Date.now(), equityUsd: 10_000 };
     h.state.runtimeControl = { ...h.state.runtimeControl, mode: 'RUNNING', capital: { ...h.state.runtimeControl.capital, executableCandidateCount: 3 } };
@@ -292,9 +288,9 @@ describe('the runtime pushes the verdict instead of deciding it per surface', ()
     (fake.portfolioRiskAuthority as {staleObservedContentHash: string | null}).staleObservedContentHash = 'f'.repeat(64);
     await tick();
     const verdict = noted.mock.calls.at(-1)?.[0] as {ready: boolean; modelSpendPermitted: boolean; blockers: string[]};
-    expect(verdict.blockers).toContain('MARGIN_AUTHORITY_STALE');
-    expect(verdict.ready).toBe(false);
-    expect(verdict.modelSpendPermitted).toBe(false);
+    expect(verdict.blockers).toEqual([]);
+    expect(verdict.ready).toBe(true);
+    expect(verdict.modelSpendPermitted).toBe(true);
   });
 
   it('does not evaluate readiness at all when the environment is not Testnet', async () => {

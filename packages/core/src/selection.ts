@@ -1,3 +1,4 @@
+import { testnetFundsOnlyEntry } from './entryResourcePolicy.js';
 import type { MarketSymbolSnapshot, OpportunityComponents, SystemSettings, UniverseCandidate } from '@zdj/contracts';
 import { percentileRank, clamp, safeDiv } from './math.js';
 import { selectionWeights } from './profiles.js';
@@ -30,8 +31,8 @@ export function selectUniverse(ctx:SelectionContext):UniverseCandidate[] {
   const candidates: UniverseCandidate[]=rows.map(row=>{
     const s=row.s, reasons:string[]=[]; const sym=s.symbol.toUpperCase();
     const marketQuality=quality.get(sym)!;
-    if(ctx.positions.has(sym)) reasons.push('ACTIVE_POSITION');
-    if(ctx.pendingEntries.has(sym)) reasons.push('ACTIVE_ENTRY_ORDER');
+    if(!testnetFundsOnlyEntry(ctx.settings)&&ctx.positions.has(sym)) reasons.push('ACTIVE_POSITION');
+    if(!testnetFundsOnlyEntry(ctx.settings)&&ctx.pendingEntries.has(sym)) reasons.push('ACTIVE_ENTRY_ORDER');
     if(excluded.has(sym)) reasons.push('USER_EXCLUDED');
     if(mode==='CUSTOM_SYMBOLS'&&!allowed.has(sym)) reasons.push('NOT_IN_CUSTOM_SYMBOLS');
     if(s.quote.quoteVolumeUsd24h<ctx.settings.selection.minQuoteVolumeUsd24h) reasons.push('LOW_24H_QUOTE_VOLUME');

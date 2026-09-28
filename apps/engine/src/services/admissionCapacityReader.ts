@@ -1,3 +1,4 @@
+import { testnetFundsOnlyEntry } from '@zdj/core';
 /**
  * The read-only bridge between the installed portfolio admission and the capacity surfaces that must agree
  * with it. It deliberately imports nothing from the ledger: a writer that reached for the authority module
@@ -42,7 +43,7 @@ export function analysisOnlyMode(state:any){const connections=state?.settings?.c
  * Letting it gate dispatch there would silence the market evidence the mode exists to produce.
  */
 export function readAdmissionCapacity(state:any,symbol:string,side:'LONG'|'SHORT',now=Date.now(),candidate?:{leverage:number;leverageFact?:string|null;quoteAsset:string}):AdmissionCapacityInputs{
-  if(analysisOnlyMode(state))return NOTHING;
+  if(analysisOnlyMode(state)||testnetFundsOnlyEntry(state.settings))return NOTHING;
   const ledger=state?.riskAdmission;
   if(!ledger||typeof ledger.capacityFacts!=='function')return UNAVAILABLE;
   let facts:AdmissionCapacityView|null=null;
@@ -80,7 +81,7 @@ export function bookAdmissionSummary(state:any,now=Date.now()):AdmissionBookSumm
     reasons:['RISK_ADMISSION_UNAVAILABLE'],evaluatedAt:now,overdueHandoffs:0,oldestOverdueHours:null};
   // Analysis-only writes nothing, so there is no new risk for the gate to deny: its book verdict must not
   // silence the market evidence this mode exists to produce, exactly as the dispatch path must not.
-  if(analysisOnlyMode(state))return none;
+  if(analysisOnlyMode(state)||testnetFundsOnlyEntry(state.settings))return {...none,detail:testnetFundsOnlyEntry(state.settings)?'TESTNET_FUNDS_ONLY_ENTRY: portfolio risk is observational; see risk diagnostics':null};
   if(!ledger||typeof ledger.capacityFacts!=='function')return unavailable;
   let facts:AdmissionCapacityView|null=null;
   try{facts=ledger.capacityFacts(now,null)as AdmissionCapacityView;}

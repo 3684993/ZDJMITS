@@ -1,3 +1,4 @@
+import {reservationDebitsAvailableFunds} from './entryFundingCommitment.js';
 import type { RuntimeState } from '../state/runtimeState.js';
 
 export interface ExecutionLease {
@@ -15,7 +16,7 @@ const prune=(state:RuntimeState,now=Date.now())=>{const value=store(state);for(c
 export function activeExecutionLeaseMargin(state:RuntimeState,quoteAsset:string,now=Date.now(),excludeId?:string){return [...prune(state,now).values()].filter(row=>row.id!==excludeId&&row.quoteAsset===quoteAsset).reduce((sum,row)=>sum+Math.max(0,row.reservedMarginUsd),0);}
 export function acquireExecutionLease(state:RuntimeState,input:{symbol:string;quoteAsset:string;reservedMarginUsd:number;ttlMs:number},now=Date.now()):{ok:true;lease:ExecutionLease}|{ok:false;reason:string}{
   const requested=Math.max(0,Number(input.reservedMarginUsd));if(!Number.isFinite(requested)||requested<=0)return{ok:false,reason:'EXECUTION_LEASE_NO_CAPACITY'};
-  const available=Number(state.account.assets.find((asset:any)=>asset.asset===input.quoteAsset)?.availableBalance??0),active=activeExecutionLeaseMargin(state,input.quoteAsset,now),reservations=[...state.entryReservations.values()].filter((row:any)=>['RESERVED','WORKING'].includes(row.status)&&row.quoteAsset===input.quoteAsset&&Number(row.expiresAt)>now).reduce((sum:number,row:any)=>sum+Math.max(0,Number(row.marginUsd??0)),0);
+  const available=Number(state.account.assets.find((asset:any)=>asset.asset===input.quoteAsset)?.availableBalance??0),active=activeExecutionLeaseMargin(state,input.quoteAsset,now),reservations=[...state.entryReservations.values()].filter((row:any)=>reservationDebitsAvailableFunds(state,row,now)&&row.quoteAsset===input.quoteAsset).reduce((sum:number,row:any)=>sum+Math.max(0,Number(row.marginUsd??0)),0);
   if(available-reservations-active+1e-8<requested)return{ok:false,reason:'EXECUTION_LEASE_MARGIN_CHANGED'};
   const id=`execlease_${input.symbol}_${now}_${Math.random().toString(36).slice(2,9)}`,lease:ExecutionLease={id,symbol:input.symbol,quoteAsset:input.quoteAsset,reservedMarginUsd:requested,createdAt:now,expiresAt:now+Math.max(1_000,input.ttlMs)};store(state).set(id,lease);return{ok:true,lease};
 }

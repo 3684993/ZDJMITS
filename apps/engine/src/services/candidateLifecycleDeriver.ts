@@ -1,3 +1,4 @@
+import { testnetFundsOnlyEntry } from '@zdj/core';
 import { resolveUnderlying } from '@zdj/core';
 import type { RuntimeState } from '../state/runtimeState.js';
 import type { EventBus } from '../events/eventBus.js';
@@ -30,14 +31,14 @@ export function reconcileCandidateLifecycles(state:RuntimeState,events?:EventBus
   for(const symbol of symbols){
     const previous=state.candidateLifecycle.get(symbol),oldStatus=previous?.status as string|undefined,cooldown=state.rejectionCooldown.get(symbol),underlying=resolveUnderlying(symbol);
     let status:string|undefined,derivedReason:string|undefined;
-    if(positionSymbols.has(symbol)){status='POSITION_HELD';derivedReason='ACTIVE_POSITION_FACT';}
-    else if(activeOrderSymbols.has(symbol)){status='ENTRY_WORKING';derivedReason='ACTIVE_ENTRY_ORDER_FACT';}
-    else if(oldStatus==='WAIT_EXECUTION_RANGE'&&previous?.executionWait&&activeIntentIds.has(previous.executionWait.intentId)){status='WAIT_EXECUTION_RANGE';derivedReason=previous.reason;}
-    else if(reservedSymbols.has(symbol)){status='ENTRY_WORKING';derivedReason='ACTIVE_RESERVATION_FACT';}
+    if(!testnetFundsOnlyEntry(state.settings)&&positionSymbols.has(symbol)){status='POSITION_HELD';derivedReason='ACTIVE_POSITION_FACT';}
+    else if(!testnetFundsOnlyEntry(state.settings)&&activeOrderSymbols.has(symbol)){status='ENTRY_WORKING';derivedReason='ACTIVE_ENTRY_ORDER_FACT';}
+    else if(oldStatus==='WAIT_EXECUTION_RANGE'&&previous?.executionWait&&activeIntentIds.has(previous.executionWait.intentId)&&(!testnetFundsOnlyEntry(state.settings)||!activeOrders.some((order:any)=>order.intentId===previous.executionWait.intentId&&['UNKNOWN','SUBMITTING'].includes(order.status)))){status='WAIT_EXECUTION_RANGE';derivedReason=previous.reason;}
+    else if(!testnetFundsOnlyEntry(state.settings)&&reservedSymbols.has(symbol)){status='ENTRY_WORKING';derivedReason='ACTIVE_RESERVATION_FACT';}
     else if(oldStatus==='WAIT_FOR_PRICE'&&previous?.waitContext&&(!previous.waitContext.expiresAt||previous.waitContext.expiresAt>now)){status='WAIT_FOR_PRICE';derivedReason=previous.reason;}
     else if(cooldown&&cooldown.until>now){status=COOLDOWN.has(oldStatus??'')?oldStatus:'COOLDOWN';derivedReason=cooldown.reason;}
     else if(ACTIVE_AI.has(oldStatus??'')&&activeAiSymbols.has(symbol)){status=oldStatus;derivedReason=previous.reason;}
-    else if(occupiedUnderlyings.has(underlying)){status='EXCLUDED_UNDERLYING';derivedReason='UNDERLYING_OCCUPIED_BY_FACT';}
+    else if(!testnetFundsOnlyEntry(state.settings)&&occupiedUnderlyings.has(underlying)){status='EXCLUDED_UNDERLYING';derivedReason='UNDERLYING_OCCUPIED_BY_FACT';}
     else if(['ENTRY_WORKING','WAIT_EXECUTION_RANGE','HELD','POSITION_HELD','PENDING_ENTRY','POSITION','EXCLUDED_UNDERLYING','PRIMARY_COMPLETED',...ACTIVE_AI].includes(oldStatus??'')){status='READY';derivedReason='OCCUPANCY_RELEASED';}
     else continue;
     if(status===oldStatus)continue;

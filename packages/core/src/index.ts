@@ -13,3 +13,5 @@ export * from './tradingCost.js';
 export * from './compactEntry.js';
 export * from './marketQuality.js';
 export * from './assetAdmission.js';
+
+export * from './entryResourcePolicy.js';

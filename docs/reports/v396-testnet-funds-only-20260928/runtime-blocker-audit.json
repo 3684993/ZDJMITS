@@ -1,0 +1,261 @@
+{
+  "observedAt": "2026-09-28T12:13:26.635Z",
+  "since": "2026-09-28T07:01:55.575Z",
+  "instanceId": "2cac26f8-587d-4757-a631-db0461ca90a4",
+  "blockedReasonCounts": {
+    "[\"ENTRY_ORDER_BLOCKED\",\"JIT_BLOCKED:MARKET_QUALITY_NOT_ADMITTED\",\"JIT\"]": 21,
+    "[\"ENTRY_ORDER_BLOCKED\",\"Binance HTTP 400: {\\\"code\\\":-5022,\\\"msg\\\":\\\"Due to the order could not be executed as maker, the Post Only order will be rejected. The order will not be recorded in the order history\\\"}\",\"BINANCE_SUBMIT\"]": 3,
+    "[\"ENTRY_ORDER_BLOCKED\",\"JIT_BLOCKED:MARKET_DATA_STALE\",\"JIT\"]": 5,
+    "[\"ENTRY_DECISION_BLOCKED\",[\"CANDIDATE_QUANTITY_BELOW_LEGAL_MINIMUM:units=373<374\"],\"TRADE_PLAN\"]": 1,
+    "[\"ENTRY_DECISION_BLOCKED\",\"PRIVATE_ACCOUNT_UNAVAILABLE\",\"RESERVATION\"]": 2,
+    "[\"ENTRY_DECISION_BLOCKED\",[\"CANDIDATE_QUANTITY_BELOW_LEGAL_MINIMUM:units=530<531\"],\"TRADE_PLAN\"]": 1,
+    "[\"ENTRY_DECISION_BLOCKED\",[\"CANDIDATE_QUANTITY_BELOW_LEGAL_MINIMUM:units=361<362\"],\"TRADE_PLAN\"]": 1,
+    "[\"ENTRY_DECISION_BLOCKED\",[\"CANDIDATE_QUANTITY_BELOW_LEGAL_MINIMUM:units=1444<1446\"],\"TRADE_PLAN\"]": 1,
+    "[\"ENTRY_DECISION_BLOCKED\",[\"CANDIDATE_QUANTITY_BELOW_LEGAL_MINIMUM:units=1444<1447\"],\"TRADE_PLAN\"]": 1,
+    "[\"ENTRY_DECISION_BLOCKED\",[\"CANDIDATE_QUANTITY_BELOW_LEGAL_MINIMUM:units=217<218\"],\"TRADE_PLAN\"]": 1,
+    "[\"ENTRY_DECISION_BLOCKED\",[\"CANDIDATE_QUANTITY_BELOW_LEGAL_MINIMUM:units=360<362\"],\"TRADE_PLAN\"]": 1,
+    "[\"ENTRY_DECISION_BLOCKED\",[\"CANDIDATE_QUANTITY_BELOW_LEGAL_MINIMUM:units=522<523\"],\"TRADE_PLAN\"]": 1,
+    "[\"ENTRY_DECISION_BLOCKED\",[\"CANDIDATE_QUANTITY_BELOW_LEGAL_MINIMUM:units=98<99\"],\"TRADE_PLAN\"]": 1
+  },
+  "riskObservationCount": 145,
+  "riskObservationsWithoutExplicitNonVeto": 0,
+  "riskReasonPrefixes": [
+    "PENDING_RISK_UNVERIFIED",
+    "PORTFOLIO_RISK_SNAPSHOT_INCOMPLETE",
+    "STRESS_LIMIT",
+    "ACCOUNT_ASSET_UNVERIFIED",
+    "ACCOUNT_EQUITY_UNPROVEN",
+    "MARGIN_ASSET_UNVERIFIED",
+    "PRIVATE_ACCOUNT_NOT_FRESH",
+    "MARGIN_TIER_SYMBOL_UNPROVEN",
+    "LIQUIDATION_BUFFER_UNPROVEN",
+    "LIQUIDATION_PRICE_DIRECTION_INVALID",
+    "POSITION_FACT_UNVERIFIED"
+  ],
+  "submitEvents": 109,
+  "uniqueSubmittedOrders": 103,
+  "createdEventsWithExchangeId": 85,
+  "uniqueExchangeOrderIds": 85,
+  "sampleChain": [
+    {
+      "ts": 1790597360858,
+      "type": "PRIMARY_DECISION_NORMALIZED",
+      "symbol": "APTUSDT",
+      "runId": "airun_mul7ego5_7h2mqprt"
+    },
+    {
+      "ts": 1790597360868,
+      "type": "TRADING_QUALITY_PRIMARY_LINK",
+      "symbol": "APTUSDT",
+      "runId": "airun_mul7ego5_7h2mqprt",
+      "decision": {
+        "action": "FINAL",
+        "structureDirection": "SHORT",
+        "tradeSide": "SHORT",
+        "direction": "SHORT",
+        "decision": "PLACE_SHORT",
+        "quantityUnits": 60,
+        "waitCondition": null,
+        "protocolVersion": "V3.9.3",
+        "confidence": 0.65,
+        "idealPrice": 0.8349,
+        "acceptablePriceRange": {
+          "min": 0.833,
+          "max": 0.836
+        },
+        "horizonMinutes": 1,
+        "reachability": 0,
+        "directionAnalysis": {
+          "trend1m": "1m shows a short-term bounce (UP trend), but 5m/15m/1h are DOWN. Entering short on the 1m pullback aligns with the dominant 15m/1h bearish structure.",
+          "trend5m": "1m shows a short-term bounce (UP trend), but 5m/15m/1h are DOWN. Entering short on the 1m pullback aligns with the dominant 15m/1h bearish structure.",
+          "trend15m": "15m and 1h trends are DOWN with bearish MACD crosses. Price is near recent swing highs (0.8288-0.8349) but lacks volume confirmation (15m volume Z-score -0.96).",
+          "trend4h": "15m and 1h trends are DOWN with bearish MACD crosses. Price is near recent swing highs (0.8288-0.8349) but lacks volume confirmation (15m volume Z-score -0.96).",
+          "trend1d": "15m and 1h trends are DOWN with bearish MACD crosses. Price is near recent swing highs (0.8288-0.8349) but lacks volume confirmation (15m volume Z-score -0.96).",
+          "trend1w": "15m and 1h trends are DOWN with bearish MACD crosses. Price is near recent swing highs (0.8288-0.8349) but lacks volume confirmation (15m volume Z-score -0.96).",
+          "weightedConclusion": "15m and 1h trends are DOWN with bearish MACD crosses. Price is near recent swing highs (0.8288-0.8349) but lacks volume confirmation (15m volume Z-score -0.96)."
+        },
+        "supportingEvidence": [],
+        "contradictions": [],
+        "missingEvidence": [],
+        "evidenceRefs": [
+          "technical.15m.confirmed",
+          "technical.1h.confirmed",
+          "technical.5m.confirmed",
+          "quote.top",
+          "microstructure.book5"
+        ],
+        "entryInvalidation": "Price closes above 0.8380 (15m BB Upper + ATR buffer) or 15m MACD histogram turns strongly negative against the short (i.e., if price breaks 0.8380).",
+        "reason": "Dominant 15m/1h bearish trend with price at resistance. 1m bounce offers a tactical entry point for a short continuation.",
+        "longException": false,
+        "longExceptionReason": null,
+        "altLongQuality": null,
+        "supportingEvidenceRefs": [
+          "technical.15m.confirmed",
+          "technical.1h.confirmed",
+          "technical.5m.confirmed",
+          "quote.top",
+          "microstructure.book5"
+        ],
+        "evidenceRequests": [],
+        "schemaVersion": "V3.9.3",
+        "opportunityType": "TREND_RESUMPTION",
+        "marketRegime": "RANGE",
+        "entryLocationReason": "Price is at 0.8349, near the 15m swing high and upper Bollinger Band. Shorting here targets a reversion to the 15m EMA21 (0.8246) or lower.",
+        "profitTakePlan": {
+          "targetPrice": 0.8246,
+          "acceptableTargetRange": {
+            "min": 0.822,
+            "max": 0.828
+          },
+          "targetHorizonMinutes": 60,
+          "targetReason": "Target is the 15m EMA21 (0.8246), a key support level. 60m horizon allows for the 15m trend to reassert itself.",
+          "evidenceRefs": [
+            "technical.15m.confirmed",
+            "economics.entry"
+          ]
+        },
+        "rejectLayer": "NONE",
+        "blockingCondition": "NONE",
+        "releaseCondition": "NONE",
+        "timingEvent": {
+          "id": "none",
+          "status": "NONE",
+          "time": null,
+          "anchorPrice": null,
+          "timeframe": null,
+          "provenance": "NONE"
+        }
+      }
+    },
+    {
+      "ts": 1790597360939,
+      "type": "CANDIDATE_LIFECYCLE_CHANGED",
+      "symbol": "APTUSDT",
+      "runId": "airun_mul7ego5_7h2mqprt"
+    },
+    {
+      "ts": 1790597361006,
+      "type": "CANDIDATE_LIFECYCLE_CHANGED",
+      "symbol": "APTUSDT",
+      "runId": "airun_mul7ego5_7h2mqprt"
+    },
+    {
+      "ts": 1790597361073,
+      "type": "ENTRY_ECONOMIC_ADMISSION_EVALUATED",
+      "symbol": "APTUSDT",
+      "runId": "airun_mul7ego5_7h2mqprt"
+    },
+    {
+      "ts": 1790597361148,
+      "type": "PORTFOLIO_RISK_ADMISSION_EVALUATED",
+      "symbol": "APTUSDT",
+      "runId": "airun_mul7ego5_7h2mqprt",
+      "allowed": false,
+      "entryVetoEnforced": false,
+      "reasons": [
+        "LIQUIDATION_BUFFER_UNPROVEN:position:[\"TESTNET\",\"binance-primary\",\"BCHUSDT\",\"LONG\"]|cycle_entry_intent_mud27kh7_wdfh3ake",
+        "LIQUIDATION_BUFFER_UNPROVEN:position:[\"TESTNET\",\"binance-primary\",\"BRUSDT\",\"LONG\"]|cycle_entry_intent_mul2zn05_qm1525zs",
+        "LIQUIDATION_PRICE_DIRECTION_INVALID:BCHUSDT:LONG",
+        "LIQUIDATION_PRICE_DIRECTION_INVALID:BRUSDT:LONG",
+        "PENDING_RISK_UNVERIFIED:order:entry_intent_mubfl89e_jee3vcpl",
+        "POSITION_FACT_UNVERIFIED:[\"TESTNET\",\"binance-primary\",\"BCHUSDT\",\"LONG\"]|cycle_entry_intent_mud27kh7_wdfh3ake",
+        "POSITION_FACT_UNVERIFIED:[\"TESTNET\",\"binance-primary\",\"BRUSDT\",\"LONG\"]|cycle_entry_intent_mul2zn05_qm1525zs",
+        "PORTFOLIO_RISK_SNAPSHOT_INCOMPLETE",
+        "STRESS_LIMIT:MAX_GROSS_NOTIONAL"
+      ]
+    },
+    {
+      "ts": 1790597361163,
+      "type": "TRADE_PLAN_PERSISTED",
+      "symbol": "APTUSDT",
+      "runId": "airun_mul7ego5_7h2mqprt",
+      "planId": "plan_de02fcc598b437cddaa6aa07a970a06a"
+    },
+    {
+      "ts": 1790597361385,
+      "type": "ENTRY_RESERVATION_CREATED",
+      "symbol": "APTUSDT",
+      "runId": "airun_mul7ego5_7h2mqprt",
+      "planId": "plan_de02fcc598b437cddaa6aa07a970a06a",
+      "intentId": "intent_mul7fqbj_h64h7a1t",
+      "reservationId": "reserve_1790597361170_hch828"
+    },
+    {
+      "ts": 1790597361456,
+      "type": "LIVE_RISK_ENVELOPE_EVALUATED",
+      "symbol": "APTUSDT",
+      "runId": "airun_mul7ego5_7h2mqprt"
+    },
+    {
+      "ts": 1790597361777,
+      "type": "ENTRY_INTENT_CREATED",
+      "symbol": "APTUSDT",
+      "runId": "airun_mul7ego5_7h2mqprt",
+      "planId": "plan_de02fcc598b437cddaa6aa07a970a06a",
+      "intentId": "intent_mul7fqbj_h64h7a1t"
+    },
+    {
+      "ts": 1790597364062,
+      "type": "ENTRY_SUBMIT_ATTEMPTED",
+      "symbol": "APTUSDT",
+      "runId": "airun_mul7ego5_7h2mqprt",
+      "intentId": "intent_mul7fqbj_h64h7a1t",
+      "orderId": "entry_intent_mul7fqbj_h64h7a1t",
+      "environment": "TESTNET"
+    },
+    {
+      "ts": 1790597368394,
+      "type": "CANDIDATE_LIFECYCLE_CHANGED",
+      "symbol": "APTUSDT",
+      "runId": "airun_mul7ego5_7h2mqprt"
+    },
+    {
+      "ts": 1790597368470,
+      "type": "ENTRY_ORDER_CREATED",
+      "symbol": "APTUSDT",
+      "runId": "airun_mul7ego5_7h2mqprt",
+      "planId": "plan_de02fcc598b437cddaa6aa07a970a06a",
+      "intentId": "intent_mul7fqbj_h64h7a1t",
+      "reservationId": "reserve_1790597361170_hch828",
+      "orderId": "entry_intent_mul7fqbj_h64h7a1t",
+      "exchangeOrderId": "480536954",
+      "status": "WORKING"
+    },
+    {
+      "ts": 1790597398331,
+      "type": "ORDER_FILL_RECONCILED",
+      "symbol": "APTUSDT",
+      "runId": "airun_mul7ego5_7h2mqprt",
+      "intentId": "intent_mul7fqbj_h64h7a1t",
+      "orderId": "entry_intent_mul7fqbj_h64h7a1t"
+    },
+    {
+      "ts": 1790597398334,
+      "type": "ENTRY_FILLED",
+      "symbol": "APTUSDT",
+      "runId": "airun_mul7ego5_7h2mqprt",
+      "intentId": "intent_mul7fqbj_h64h7a1t",
+      "orderId": "entry_intent_mul7fqbj_h64h7a1t"
+    },
+    {
+      "ts": 1790597398877,
+      "type": "EXCHANGE_FILL_ATTRIBUTED",
+      "symbol": "APTUSDT",
+      "runId": "airun_mul7ego5_7h2mqprt"
+    },
+    {
+      "ts": 1790597556566,
+      "type": "ORDER_FILL_RECONCILED",
+      "symbol": "APTUSDT",
+      "runId": "airun_mul7ego5_7h2mqprt",
+      "intentId": "intent_mul7fqbj_h64h7a1t",
+      "orderId": "entry_intent_mul7fqbj_h64h7a1t"
+    },
+    {
+      "ts": 1790597557032,
+      "type": "EXCHANGE_FILL_ATTRIBUTED",
+      "symbol": "APTUSDT",
+      "runId": "airun_mul7ego5_7h2mqprt"
+    }
+  ]
+}

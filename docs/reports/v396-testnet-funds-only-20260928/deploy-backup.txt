@@ -1,0 +1,12 @@
+(node:26360) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:26360) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+file:///D:/MITS/scripts/v394-stage6-preflight.mjs:31
+    if(connections.executionMode!=='READ_ONLY')throw new Error('STAGE6_REQUIRES_READ_ONLY');
+                                                     ^
+
+Error: STAGE6_REQUIRES_READ_ONLY
+    at runPreflight (file:///D:/MITS/scripts/v394-stage6-preflight.mjs:31:54)
+    at async file:///D:/MITS/scripts/v394-stage6-preflight.mjs:96:18
+
+Node.js v22.23.1

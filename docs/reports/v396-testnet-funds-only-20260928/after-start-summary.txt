@@ -1,0 +1,223 @@
+(node:25448) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:25448) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+{
+  "runtime": {
+    "pid": 10480,
+    "instanceId": "2cac26f8-587d-4757-a631-db0461ca90a4",
+    "buildId": "3.9.6-8349d66ab6af161e855d",
+    "lastRestartAt": 1790578915575,
+    "lastRestartReason": "MANUAL_START"
+  },
+  "policy": {
+    "mode": "TESTNET_FUNDS_ONLY",
+    "portfolioRiskVeto": false,
+    "fundingSource": "EXCHANGE_AVAILABLE_BALANCE",
+    "executionCorrectnessEnforced": true
+  },
+  "pipeline": {
+    "state": "RUNNING",
+    "noEntryReason": null,
+    "authoritativeBlocker": {
+      "code": "NONE",
+      "stage": "NONE",
+      "nextAction": "无需处理：Entry 管线可用，继续由确定性硬门决定是否建仓",
+      "evidence": {
+        "pipelineState": "RUNNING",
+        "marketDataReason": null,
+        "isolatedSymbols": [],
+        "isolatedCount": 0,
+        "healthyCandidates": 30,
+        "slotsUsed": 38,
+        "slotsMax": 50,
+        "executableCandidateCount": 5,
+        "exhaustedForNewRisk": false,
+        "pendingEntries": 6,
+        "maxPendingEntries": 6,
+        "poolStatus": "POOL_READY",
+        "riskAdmissionStage": null,
+        "riskAdmissionSymbol": null,
+        "riskAdmissionReasons": [],
+        "riskAdmissionLimits": [],
+        "riskAdmissionBinding": null,
+        "riskAdmissionGates": [],
+        "riskAdmissionReadback": null,
+        "riskAdmissionCeilingUsdBySide": {
+          "LONG": 0,
+          "SHORT": 0
+        },
+        "riskAdmissionExhausted": false,
+        "bookAdmission": {
+          "status": "NOT_APPLICABLE",
+          "hasVerdict": false,
+          "exhausted": false,
+          "code": null,
+          "gate": null,
+          "detail": "TESTNET_FUNDS_ONLY_ENTRY: portfolio risk is observational; see risk diagnostics",
+          "ceilingUsdBySide": {
+            "LONG": 0,
+            "SHORT": 0
+          },
+          "reasons": [],
+          "evaluatedAt": 0,
+          "overdueHandoffs": 0,
+          "oldestOverdueHours": null
+        },
+        "riskAdmissionAgeMs": null
+      },
+      "secondary": [
+        {
+          "code": "CAPACITY_DIAGNOSTIC:BOTH_SIDES_EXECUTABLE",
+          "detail": "LONG 与 SHORT 均可新增"
+        },
+        {
+          "code": "SUPPLY_DIAGNOSTIC:ELIGIBILITY",
+          "detail": "READY 30（可执行 5）"
+        },
+        {
+          "code": "MODEL_DIAGNOSTIC:ANALYSIS_REASON",
+          "detail": "AI_BUSY"
+        }
+      ],
+      "evaluatedAt": 1790597387001
+    },
+    "analysis": {
+      "mode": "EXECUTION_ENABLED",
+      "lastTickAt": 1790597386812,
+      "lastAttemptAt": 1790597370801,
+      "lastRequestAt": 1790597383753,
+      "lastSuccessAt": 1790597361005,
+      "lastFailureAt": 1790594960236,
+      "lastBlockedReason": "AI_BUSY",
+      "reason": "AI_BUSY",
+      "schedulerStatus": "RUNNING",
+      "schedulerCycle": 6957,
+      "instanceId": "2cac26f8-587d-4757-a631-db0461ca90a4",
+      "heartbeatAt": 1790597386812,
+      "heartbeatAgeMs": 218,
+      "nextEvaluationAt": 1790597389312,
+      "suppression": {
+        "evaluatedAt": 1790597386839,
+        "instanceId": "2cac26f8-587d-4757-a631-db0461ca90a4",
+        "schedulerCycle": 6957,
+        "candidateCount": 1,
+        "capacityStatus": "PRIMARY_CONCURRENCY",
+        "authoritativeBlocker": "PRIMARY_RESOURCE_BUSY",
+        "nextEvaluationAt": 1790597389339,
+        "dispatchSuppressed": true,
+        "suppressionReason": "AI_BUSY"
+      },
+      "capitalExecutableCount": 5,
+      "active": 1,
+      "primaryDispatchAgeMs": 16229,
+      "primarySuccessAgeMs": 26025,
+      "silenceMs": 26025,
+      "observationStartedAt": 1790578919791,
+      "execution": {
+        "intent": true,
+        "ready": true,
+        "blockers": [],
+        "firstBlocker": null,
+        "lastReadyAt": 1790597386812,
+        "readinessText": "执行事实齐备：PLACE 可进入 reservation → intent → order submit 链"
+      },
+      "text": "RUNNING · AI_BUSY"
+    },
+    "executionReadiness": {
+      "intent": true,
+      "ready": true,
+      "modelSpendPermitted": true,
+      "blockers": [],
+      "firstBlocker": null,
+      "profileStatus": "READY",
+      "privateFresh": true,
+      "writeLocked": false,
+      "executableCandidateCount": 5,
+      "mode": "EXECUTION_READY",
+      "text": "执行事实齐备：PLACE 可进入 reservation → intent → order submit 链"
+    },
+    "capitalExecutableCandidates": 5,
+    "capitalReasons": {
+      "EXECUTABLE": 30
+    }
+  },
+  "capacity": {
+    "firstBlocker": "NONE",
+    "exhaustedReason": null
+  },
+  "counts": {
+    "ENTRY_DECISION_BLOCKED": 12,
+    "ENTRY_INTENT_CREATED": 203,
+    "ENTRY_ORDER_ACTIVE_RESTORED": 26,
+    "ENTRY_ORDER_BLOCKED": 29,
+    "ENTRY_ORDER_CREATED": 85,
+    "ENTRY_ORDER_FILL_ATTRIBUTION_REVISED": 13,
+    "ENTRY_ORDER_HISTORICAL_VERIFY_FAILED": 19,
+    "ENTRY_ORDER_MANAGEMENT_UNVERIFIED": 5,
+    "ENTRY_ORDER_NO_ACTIVE_RISK_EVIDENCE_FAILED": 2,
+    "ENTRY_ORDER_NO_ACTIVE_RISK_PROOF_RETAINED": 1,
+    "ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED": 342,
+    "ENTRY_ORDER_SUBMISSION_UNKNOWN": 25,
+    "ENTRY_ORDER_TTL_CLOSED": 67,
+    "ENTRY_RESERVATION_CREATED": 133,
+    "ENTRY_SUBMIT_ATTEMPTED": 108,
+    "PRE_AI_TRADE_PLAN_FEASIBILITY": 147,
+    "PRIMARY_DATA_ERROR": 1,
+    "PRIMARY_DECISION_NORMALIZED": 145,
+    "TRADE_PLAN_PERSISTED": 135,
+    "TRADING_QUALITY_PRIMARY_LINK": 145
+  },
+  "envelopes": [
+    {
+      "ts": 1790597371093,
+      "symbol": "INJUSDT",
+      "resourcePolicy": "TESTNET_FUNDS_ONLY",
+      "executableSides": [
+        "LONG",
+        "SHORT"
+      ],
+      "LONG": {
+        "executable": true,
+        "blockers": []
+      },
+      "SHORT": {
+        "executable": true,
+        "blockers": []
+      }
+    },
+    {
+      "ts": 1790597291673,
+      "symbol": "APTUSDT",
+      "resourcePolicy": "TESTNET_FUNDS_ONLY",
+      "executableSides": [
+        "LONG",
+        "SHORT"
+      ],
+      "LONG": {
+        "executable": true,
+        "blockers": []
+      },
+      "SHORT": {
+        "executable": true,
+        "blockers": []
+      }
+    },
+    {
+      "ts": 1790597214948,
+      "symbol": "1000BONKUSDC",
+      "resourcePolicy": "TESTNET_FUNDS_ONLY",
+      "executableSides": [
+        "LONG",
+        "SHORT"
+      ],
+      "LONG": {
+        "executable": true,
+        "blockers": []
+      },
+      "SHORT": {
+        "executable": true,
+        "blockers": []
+      }
+    }
+  ]
+}

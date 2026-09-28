@@ -1,7 +1,7 @@
 {
   "schema": "V396-ENTRY-ROOT-CAUSE-GATES-1",
   "capturedAt": "2026-09-28T04:24:41.4066575Z",
-  "scope": "local source verification; runtime identity and 120-minute observation pending",
+  "scope": "local source verification passed; one manual lifecycle completed; runtime acceptance incomplete pending health intervention",
   "results": [
     {
       "gate": "focused-engine-scheduler-and-ownership",
@@ -56,11 +56,37 @@
       "command": "GitHub Actions",
       "status": "NOT_RUN_BILLING_LIMIT",
       "result": "not run"
+    },
+    {
+      "gate": "post-load-process-start",
+      "command": "scripts/stop-zdj-lan.ps1 then scripts/start-zdj-lan.ps1 -StartReason MANUAL_START -SkipFirewall",
+      "status": "PARTIAL",
+      "result": "single authorized lifecycle completed; PID 25520 logged HTTP_LISTENING; API readiness probe incomplete"
+    },
+    {
+      "gate": "post-load-runtime-identity",
+      "command": "compare source/artifact/runtime file and runtime API",
+      "status": "INCOMPLETE",
+      "result": "local source/artifact/build and HEAD/origin checks match runtime file; API identity/readiness unavailable"
+    },
+    {
+      "gate": "post-load-tp-coverage",
+      "command": "read-only closeout projection",
+      "status": "INCOMPLETE",
+      "result": "not obtained after start"
+    },
+    {
+      "gate": "120-minute-runtime-monitor",
+      "command": "node scripts/v396-monitor-120m.mjs --duration-minutes=120",
+      "status": "NOT_STARTED",
+      "result": "blocked by incomplete post-load health/closeout probe"
     }
   ],
   "openGates": [
-    "post-load identity closure",
+    "manual health intervention and full API readiness",
+    "runtime API identity closure",
+    "post-load TP coverage",
     "continuous 120-minute monitor",
-    "GitHub main ref equality after final evidence push"
+    "final evidence push and final HEAD == origin/main proof"
   ]
 }

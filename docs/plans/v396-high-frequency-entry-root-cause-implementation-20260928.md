@@ -25,7 +25,9 @@ An explicit state such as `WAITING_EXECUTION_CAPACITY`, `WAITING_CANDIDATE`, `DA
 - Scheduler liveness/suppression telemetry, dashboard capacity labeling, and outbox event-type namespaces are implemented with regression coverage.
 - Focused checks and full local verification passed: 176 test files / 1,497 tests, typecheck and production build; S00 T01–T06 passed with 141 derived entrypoints and zero blockers; S08 storage coverage and backup self-test passed; monitor script syntax and `git diff --check` passed.
 - Current admission remains `UNAVAILABLE`; this implementation preserves the three other expired pending-risk lineages and explicit gross/human notional shortfalls. No risk threshold or Settings changed.
-- Still open: ordinary push of this source/report/plan checkpoint; one authorized manual `stop → MANUAL_START`; post-load identity closure; full 120-minute continuous monitor; final evidence commit/push and `HEAD == origin/main` proof. Hosted CI status is `NOT_RUN_BILLING_LIMIT`.
+- The source/report/plan checkpoint was pushed as `4ed6c4d8b769a5759446759bc772e7de9f5be307`; at that checkpoint `HEAD == origin/main` and the working tree was clean.
+- The one authorized `stop → MANUAL_START` was performed. The launcher created PID 25520 and the process log records `HTTP_LISTENING`, but the combined `/health` and closeout probe did not complete within 45 seconds. No retry or second lifecycle action was made, as required by `AGENTS.md`. Runtime identity closure, post-load TP coverage and the full 120-minute monitor remain `INCOMPLETE`; manual health intervention is required before acceptance can resume.
+- Still open: complete runtime health/identity evidence, the continuous 120-minute window, final evidence commit/push and final `HEAD == origin/main` proof. Hosted CI status is `NOT_RUN_BILLING_LIMIT`.
 
 ### 1. Correct scheduler liveness and suppression reporting
 

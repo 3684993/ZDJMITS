@@ -1,0 +1,33 @@
+{
+  "schema": "V396-POST-LOAD-OBSERVATION-1",
+  "capturedAt": "2026-09-28T04:29:27.2323007Z",
+  "status": "INCOMPLETE",
+  "process": {
+    "pid": 25520,
+    "alive": true,
+    "responding": true,
+    "port": 8080,
+    "listening": true,
+    "source": "Get-Process and Get-NetTCPConnection read-only observations"
+  },
+  "runtimeLog": {
+    "event": "HTTP_LISTENING",
+    "ts": 1790569592160,
+    "instanceId": "6137bfb8-0ac5-4e11-beb9-cd5302682077",
+    "host": "0.0.0.0",
+    "port": 8080
+  },
+  "probe": {
+    "status": "INCOMPLETE",
+    "attemptedAt": "2026-09-28T04:26:46Z to 2026-09-28T04:27:31Z",
+    "routes": [
+      "/health",
+      "/api/v3/diagnostics/closeout"
+    ],
+    "result": "No complete JSON response from combined probe",
+    "retry": "NOT_RUN_PER_OPERATION_POLICY",
+    "lifecycleRecovery": "NOT_RUN"
+  },
+  "postLoadTpCoverage": "UNKNOWN",
+  "nextAction": "Manual health intervention is required before identity closure or monitoring"
+}

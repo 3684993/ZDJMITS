@@ -70,7 +70,7 @@ index 22a3a51..3b9d8e2 100644
 +        this.events.publish('ENTRY_DECISION_ALREADY_CONSUMED',{brainRunId:result.runId},symbol);return;
 +      }
        if(opportunity)this.events.publish('TRADING_QUALITY_PRIMARY_LINK',{runId:result.runId,packetId:packet.packetId,opportunity,decision:result.decision},symbol);
- 
+
        this.transition(symbol,'PRIMARY_COMPLETED','PRIMARY_TERMINAL',{confirmation:null,runId:result.runId,decisionContextKey:contextKey,lastDecision:result.decision.decision,nextReviewAt:nextClosedFiveMinute()});
 @@ -508,19 +515,19 @@ export class EntryCoordinator {
        const admission=(this.state as any).riskAdmission;
@@ -126,7 +126,7 @@ index 22a3a51..3b9d8e2 100644
      if(!row||row.status!=='READY')return !row;
      if(!row.decisionContextKey)return true;
 @@ -663,19 +670,19 @@ export class EntryCoordinator {
- 
+
    private buildAndPersistTradePlan(input:{symbol:string;side:'LONG'|'SHORT';market:any;d:any;result:any;executionEnvelope:any;admission:any;allocation:any;cycleId:string}){
      const now=Date.now(),warnings:string[]=[],settings=this.state.settings as any;
 -    const facts=input.admission?.preTradeFacts?.(now);

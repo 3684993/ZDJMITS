@@ -88,7 +88,7 @@ VITEST_TEST_TIMEOUT=5000 CI=
    × V3.7.0 isolated real-EIP contracts; production write=0 > does not submit DUPLICATE_UNDERLYING 21ms
      → expected "spy" to not be called at all, but actually been called 1 times
 
-Received: 
+Received:
 
   1st spy call:
 
@@ -838,7 +838,7 @@ Number of calls: 1
  FAIL  src/services/v370Contract.test.ts > V3.7.0 isolated real-EIP contracts; production write=0 > does not submit DUPLICATE_UNDERLYING
 AssertionError: expected "spy" to not be called at all, but actually been called 1 times
 
-Received: 
+Received:
 
   1st spy call:
 

@@ -42,3 +42,5 @@ before.json: actual Engine PID 25520, build 3.9.6-a89009a8d51573218981, schedule
 ## Deployment closure
 
 PENDING at implementation commit. Follow-up evidence will record canonical main formal build, authorized stop/MANUAL_START, runtime policy and identity, production-write isolation and natural analysis/submit outcomes. No acceptance is claimed from tests alone.
+
+Evidence text has trailing whitespace normalized only (command content, outcomes and failures retained). Source diff check passed before commit; staged evidence whitespace was then corrected before main promotion.

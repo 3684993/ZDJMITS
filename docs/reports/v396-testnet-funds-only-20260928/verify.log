@@ -436,17 +436,17 @@ exclude:  **/node_modules/**, **/dist/**, **/cypress/**, **/.{idea,git,cache,out
 stderr | src/views/OverviewView.conversion.test.ts > renders the whole conversion chain from the Engine projection, in order, without counting anything itself
 [Vue warn]: Template compilation error: Invalid end tag.
 1  |  <div><slot/></slot></div>
-   |              ^ 
-  at <Anonymous title="最近 1 小时交易事实" subtitle="Binance 成交按系统归因与外部成交分开统计；外部成交只进入审计，不触发建仓循环。" > 
-  at <OverviewView ref="VTU_COMPONENT" > 
+   |              ^
+  at <Anonymous title="最近 1 小时交易事实" subtitle="Binance 成交按系统归因与外部成交分开统计；外部成交只进入审计，不触发建仓循环。" >
+  at <OverviewView ref="VTU_COMPONENT" >
   at <VTUROOT>
 
 stderr | src/views/OverviewView.capacity.test.ts > formats the Engine admission readback and gate arithmetic without client-side ranking
 [Vue warn]: Template compilation error: Invalid end tag.
 1  |  <div><slot/></slot></div>
-   |              ^ 
-  at <Anonymous title="最近 1 小时交易事实" subtitle="Binance 成交按系统归因与外部成交分开统计；外部成交只进入审计，不触发建仓循环。" > 
-  at <OverviewView ref="VTU_COMPONENT" > 
+   |              ^
+  at <Anonymous title="最近 1 小时交易事实" subtitle="Binance 成交按系统归因与外部成交分开统计；外部成交只进入审计，不触发建仓循环。" >
+  at <OverviewView ref="VTU_COMPONENT" >
   at <VTUROOT>
 
  ✓ src/views/OverviewView.test.ts (1 test) 68ms

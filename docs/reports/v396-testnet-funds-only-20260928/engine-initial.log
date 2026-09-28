@@ -141,7 +141,7 @@ VITEST_TEST_TIMEOUT=5000 CI=
    × V3.7.0 isolated real-EIP contracts; production write=0 > does not submit DUPLICATE_UNDERLYING 13ms
      → expected "spy" to not be called at all, but actually been called 1 times
 
-Received: 
+Received:
 
   1st spy call:
 
@@ -190,7 +190,7 @@ Number of calls: 1
    × V3.7.0 isolated real-EIP contracts; production write=0 > terminates authorized wait once when direction exposure exhausted 9ms
      → expected "spy" to not be called at all, but actually been called 1 times
 
-Received: 
+Received:
 
   1st spy call:
 
@@ -225,7 +225,7 @@ Number of calls: 1
    × V3.7.0 isolated real-EIP contracts; production write=0 > terminates authorized wait once when same underlying position 7ms
      → expected "spy" to not be called at all, but actually been called 1 times
 
-Received: 
+Received:
 
   1st spy call:
 
@@ -392,7 +392,7 @@ Number of calls: 1
    × an armed trade intent spends no model on facts it cannot execute > spends nothing while the risk profile is unconfigured, and names the missing fact 147ms
      → expected "spy" to not be called at all, but actually been called 1 times
 
-Received: 
+Received:
 
   1st spy call:
 
@@ -542,7 +542,7 @@ Number of calls: 1
    × V3.9.6 PLACE -> submit chain closure > EC-03 (T6) a human exit goal raised while the order is prepared stops the entry 21ms
      → a position under human management may not receive an automatic entry: expected "spy" to not be called at all, but actually been called 1 times
 
-Received: 
+Received:
 
   1st spy call:
 
@@ -1201,7 +1201,7 @@ AssertionError: a restart that only expired a reservation must not block later e
  FAIL  src/services/entryExecutionChain.test.ts > V3.9.6 PLACE -> submit chain closure > EC-03 (T6) a human exit goal raised while the order is prepared stops the entry
 AssertionError: a position under human management may not receive an automatic entry: expected "spy" to not be called at all, but actually been called 1 times
 
-Received: 
+Received:
 
   1st spy call:
 
@@ -1272,7 +1272,7 @@ AssertionError: expected [] to deeply equal [ 'RISK_PROFILE_UNCONFIGURED' ]
  FAIL  src/services/executionReadiness.test.ts > an armed trade intent spends no model on facts it cannot execute > spends nothing while the risk profile is unconfigured, and names the missing fact
 AssertionError: expected "spy" to not be called at all, but actually been called 1 times
 
-Received: 
+Received:
 
   1st spy call:
 
@@ -1546,7 +1546,7 @@ AssertionError: expected "spy" to be called once, but got 2 times
  FAIL  src/services/v370Contract.test.ts > V3.7.0 isolated real-EIP contracts; production write=0 > does not submit DUPLICATE_UNDERLYING
 AssertionError: expected "spy" to not be called at all, but actually been called 1 times
 
-Received: 
+Received:
 
   1st spy call:
 
@@ -1584,7 +1584,7 @@ Number of calls: 1
  FAIL  src/services/v370Contract.test.ts > V3.7.0 isolated real-EIP contracts; production write=0 > terminates authorized wait once when direction exposure exhausted
 AssertionError: expected "spy" to not be called at all, but actually been called 1 times
 
-Received: 
+Received:
 
   1st spy call:
 
@@ -1623,7 +1623,7 @@ Number of calls: 1
  FAIL  src/services/v370Contract.test.ts > V3.7.0 isolated real-EIP contracts; production write=0 > terminates authorized wait once when same underlying position
 AssertionError: expected "spy" to not be called at all, but actually been called 1 times
 
-Received: 
+Received:
 
   1st spy call:
 

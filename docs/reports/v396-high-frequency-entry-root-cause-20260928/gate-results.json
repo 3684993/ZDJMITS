@@ -1,0 +1,66 @@
+{
+  "schema": "V396-ENTRY-ROOT-CAUSE-GATES-1",
+  "capturedAt": "2026-09-28T04:24:41.4066575Z",
+  "scope": "local source verification; runtime identity and 120-minute observation pending",
+  "results": [
+    {
+      "gate": "focused-engine-scheduler-and-ownership",
+      "command": "npm run test -w @zdj/engine -- src/services/entryCoordinator.test.ts src/services/ownershipJournal.test.ts",
+      "status": "PASS",
+      "result": "2 files, 32 tests"
+    },
+    {
+      "gate": "dashboard-capacity",
+      "command": "npm run test -w @zdj/dashboard -- src/views/OverviewView.capacity.test.ts",
+      "status": "PASS",
+      "result": "19 tests"
+    },
+    {
+      "gate": "pending-risk-and-reconciliation",
+      "command": "targeted pending-risk/reconciliation Vitest set",
+      "status": "PASS",
+      "result": "9 files, 136 tests"
+    },
+    {
+      "gate": "workspace",
+      "command": "npm run verify",
+      "status": "PASS",
+      "result": "typecheck + production build + 176 test files / 1497 tests"
+    },
+    {
+      "gate": "S00",
+      "command": "node scripts/v396-s00-static-check.mjs",
+      "status": "PASS",
+      "result": "T01-T06; blockers 0; derived entrypoint review 141 entries"
+    },
+    {
+      "gate": "S08-storage",
+      "command": "node scripts/v396-storage-coverage.mjs --out=... --verify-backup",
+      "status": "PASS",
+      "result": "S08_STORAGE_COVERAGE_PASS; backup self-test passed"
+    },
+    {
+      "gate": "monitor-script-syntax",
+      "command": "node --check scripts/v396-monitor-120m.mjs",
+      "status": "PASS",
+      "result": "Node syntax check"
+    },
+    {
+      "gate": "diff-whitespace",
+      "command": "git diff --check",
+      "status": "PASS",
+      "result": "no whitespace errors"
+    },
+    {
+      "gate": "hosted-ci",
+      "command": "GitHub Actions",
+      "status": "NOT_RUN_BILLING_LIMIT",
+      "result": "not run"
+    }
+  ],
+  "openGates": [
+    "post-load identity closure",
+    "continuous 120-minute monitor",
+    "GitHub main ref equality after final evidence push"
+  ]
+}

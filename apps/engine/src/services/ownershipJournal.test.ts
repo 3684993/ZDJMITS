@@ -27,6 +27,16 @@ describe('S02/S04 durable foundation; no exchange writes',()=>{
     expect(recovered.pendingEvents()).toHaveLength(2);
     expect(()=>recovered.reserve(claim,10,2,111)).toThrow('AI_AUTHORITY_REVOKED');
   });
+  it('keeps owner expiry events separate from an existing mandate event with the same scope and version',()=>{
+    const j=open(database());j.initialize(init);
+    const collidingLegacyId=JSON.stringify([init.scope,'c',2]);
+    j.write('INSERT INTO v396_outbox(id,payload,delivered) VALUES(?,?,1)',collidingLegacyId,JSON.stringify({id:collidingLegacyId,type:'PROTECTION_MANDATE_CHANGED'}));
+    expect(j.expire(110)).toBe(1);
+    expect(j.get(init.scope,'c')).toMatchObject({ownerState:'HANDOFF_PENDING',ownerVersion:2});
+    const ownerEvent=j.pendingEvents().find(event=>event.payload.type==='OWNERSHIP_CHANGED'&&event.payload.owner?.ownerVersion===2);
+    expect(ownerEvent?.id).toBe(`OWNERSHIP_CHANGED:${JSON.stringify([init.scope,'c',2])}`);
+    expect(j.pendingEvents().some(event=>event.id===collidingLegacyId)).toBe(false);
+  });
   it('never extends deadline on later fills or restart and never automatically restores human authority',()=>{
     const j=open(database());j.initialize(init);
     expect(j.initialize({...init,now:105,firstFillAt:105,durationMs:100}).deadline).toBe(110);

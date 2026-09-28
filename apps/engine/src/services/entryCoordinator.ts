@@ -42,6 +42,8 @@ import { evaluateEconomicEntryFeasibility } from './economicEntryFeasibility.js'
 
 /** How long the latest deterministic admission refusal may still be called the current first cause. */
 export const RISK_ADMISSION_VERDICT_TTL_MS = 5 * 60_000;
+export const ANALYSIS_SCHEDULER_TICK_INTERVAL_MS = 2_500;
+export const ANALYSIS_SCHEDULER_STALL_SLA_MS = 60_000;
 
 export class EntryCoordinator {
   private active = new Set<string>();
@@ -59,6 +61,9 @@ export class EntryCoordinator {
   ) {}
   private analysisStartedAt=Date.now();
   private lastAnalysisHeartbeat=0;
+  private schedulerCycle=0;
+  private schedulerInstanceId:string|null=null;
+  private lastSuppression:{evaluatedAt:number;instanceId:string|null;schedulerCycle:number;candidateCount:number;capacityStatus:string;authoritativeBlocker:string|null;nextEvaluationAt:number;dispatchSuppressed:true;suppressionReason:string}|null=null;
   private analysisFacts={lastTickAt:null as number|null,lastAttemptAt:null as number|null,lastRequestAt:null as number|null,lastSuccessAt:null as number|null,lastFailureAt:null as number|null,lastBlockedReason:null as string|null};
   private analysisOnly(){return analysisOnlyMode(this.state);}
   /**
@@ -81,29 +86,46 @@ export class EntryCoordinator {
     this.ai.setIdleContext(readiness.firstBlocker??'EXECUTION_FACTS_BLOCKED',readiness.executableCandidateCount,readiness.text);
     if(!previouslyBlocked)this.events.publish('EXECUTION_READINESS_BLOCKED',{firstBlocker:readiness.firstBlocker,blockers:readiness.blockers,executableCandidateCount:readiness.executableCandidateCount,at:now});
   }
-  noteAnalysisBlocked(reason:string){this.analysisFacts.lastTickAt=Date.now();this.analysisFacts.lastBlockedReason=reason;}
+  noteAnalysisBlocked(reason:string){this.noteDispatchSuppressed({reason:'DATA_BLOCKED',candidateCount:this.state.pool.readyList().length,capacityStatus:'POLICY_OR_FACT_GATE',authoritativeBlocker:reason});}
   /** The transport that would carry the write answers for itself; the readiness gate must not guess. */
   writeAdmissionBlockReason(){return this.writeAdmissionBlock();}
 
-  analysisDiagnostics(){
-    const now=Date.now(),f=this.analysisFacts,capital=this.state.runtimeControl.capital.executableCandidateCount??0;
+  setSchedulerInstanceId(instanceId:string|null){this.schedulerInstanceId=instanceId;}
+  /** Non-trading heartbeat; it records liveness only and grants no Entry or exchange authority. */
+  noteSchedulerTick(now=Date.now()){
+    this.schedulerCycle++;
+    this.analysisFacts.lastTickAt=now;
+    if(now-this.lastAnalysisHeartbeat>=30_000){this.lastAnalysisHeartbeat=now;this.events.publish('ANALYSIS_DISPATCH_HEARTBEAT',this.analysisDiagnostics(now));}
+  }
+  private noteDispatchSuppressed(suppression:{reason:string;candidateCount:number;capacityStatus?:string;authoritativeBlocker?:string|null;at?:number}){
+    const evaluatedAt=suppression.at??Date.now(),suppressionReason=String(suppression.reason||'SUPPRESSED_WITH_REASON');
+    this.analysisFacts.lastBlockedReason=suppressionReason;
+    this.lastSuppression={evaluatedAt,instanceId:this.schedulerInstanceId,schedulerCycle:this.schedulerCycle,candidateCount:Math.max(0,Math.trunc(suppression.candidateCount)),capacityStatus:suppression.capacityStatus??'UNKNOWN',authoritativeBlocker:suppression.authoritativeBlocker??null,nextEvaluationAt:evaluatedAt+ANALYSIS_SCHEDULER_TICK_INTERVAL_MS,dispatchSuppressed:true,suppressionReason};
+  }
+  analysisDiagnostics(now=Date.now()){
+    const f=this.analysisFacts,capital=this.state.runtimeControl.capital.executableCandidateCount??0;
     const model=this.state.aiResources.find((r:any)=>r.role==='PRIMARY_BRAIN') as any;
     const gate=this.executionGate;
-    let reason=f.lastBlockedReason??'ANALYSIS_READY';
+    let reason=f.lastBlockedReason??'WAITING_CANDIDATE';
     // The pre-model gate is the strongest statement available: it names the fact that made the model
     // call worthless, so no supply or capacity guess may replace it.
-    if(gate?.intent&&!gate.ready)reason=gate.firstBlocker??'EXECUTION_FACTS_BLOCKED';
+    const heartbeatAgeMs=f.lastTickAt===null?Number.POSITIVE_INFINITY:Math.max(0,now-f.lastTickAt),schedulerStatus=heartbeatAgeMs>ANALYSIS_SCHEDULER_STALL_SLA_MS?'STALLED':'RUNNING';
+    if(schedulerStatus==='STALLED')reason='DISPATCH_STALLED';
+    else if(this.active.size>0)reason='AI_BUSY';
+    else if(this.lastSuppression)reason=this.lastSuppression.suppressionReason==='DATA_BLOCKED'
+      ?this.lastSuppression.authoritativeBlocker??this.lastSuppression.suppressionReason
+      :this.lastSuppression.suppressionReason;
+    else if(gate?.intent&&!gate.ready)reason=gate.firstBlocker??'EXECUTION_FACTS_BLOCKED';
     else if(!privateAccountFresh(this.state.account))reason='FACTS_BLOCKED';
     else if(this.state.runtimeControl.mode!=='RUNNING'||this.state.executionGovernance?.mode!=='AUTO_RUNNING'||this.state.settings.riskGovernance?.entrySafetyMode!=='AUTO')reason='POLICY_DISABLED';
     else if(model?.status==='OFFLINE')reason='MODEL_UNREACHABLE';
-    else if(!f.lastTickAt||now-f.lastTickAt>30_000)reason='SILENCE_UNKNOWN';
-    else if(!this.state.universe.some((x:any)=>x.eligible))reason='NO_SUPPLY';
-    else if(capital===0)reason='CAPACITY_BLOCKED';
-    else if(this.active.size===0&&now-Number(f.lastAttemptAt??this.analysisStartedAt)>30*60_000)reason='DISPATCH_STALLED';
-    return{mode:this.analysisOnly()?'ANALYSIS_ONLY':'EXECUTION_ENABLED',...f,reason,capitalExecutableCount:capital,
-      active:this.active.size,silenceMs:now-(f.lastSuccessAt??this.analysisStartedAt),observationStartedAt:this.analysisStartedAt,
+    else if(!this.state.universe.some((x:any)=>x.eligible))reason='WAITING_CANDIDATE';
+    else if(capital===0)reason='WAITING_EXECUTION_CAPACITY';
+    return{mode:this.analysisOnly()?'ANALYSIS_ONLY':'EXECUTION_ENABLED',...f,reason,schedulerStatus,schedulerCycle:this.schedulerCycle,instanceId:this.schedulerInstanceId,
+      heartbeatAt:f.lastTickAt,heartbeatAgeMs,nextEvaluationAt:f.lastTickAt===null?null:f.lastTickAt+ANALYSIS_SCHEDULER_TICK_INTERVAL_MS,suppression:this.lastSuppression,capitalExecutableCount:capital,
+      active:this.active.size,primaryDispatchAgeMs:now-(f.lastAttemptAt??this.analysisStartedAt),primarySuccessAgeMs:now-(f.lastSuccessAt??this.analysisStartedAt),silenceMs:now-(f.lastSuccessAt??this.analysisStartedAt),observationStartedAt:this.analysisStartedAt,
       execution:{intent:gate?.intent??false,ready:gate?.ready??true,blockers:gate?.blockers??[],firstBlocker:gate?.firstBlocker??null,lastReadyAt:gate?.lastReadyAt||null,readinessText:gate?.text??null},
-      text:`${this.analysisOnly()?'ANALYSIS_ONLY：仅分析，交易写锁定':'分析管线'}；${reason}`};
+      text:`${schedulerStatus==='RUNNING'?'RUNNING':'STALLED'} · ${reason}`};
   }
   private admissionBlockReason:string|null=null;
   /** Layer A: ask the transport that will carry the write, so an unproven egress stops Entry before AI, reservation, leverage or submit. */
@@ -114,15 +136,15 @@ export class EntryCoordinator {
     this.events.publish(reason?'ENTRY_ADMISSION_BLOCKED':'ENTRY_ADMISSION_RESUMED',{reason,previousReason:previous,poolSize:this.state.pool.list().length,at:Date.now()});
   }
   async processPool() {
-    this.analysisFacts.lastTickAt=Date.now();
-    if(Date.now()-this.lastAnalysisHeartbeat>=30_000){this.lastAnalysisHeartbeat=Date.now();this.events.publish('ANALYSIS_DISPATCH_HEARTBEAT',this.analysisDiagnostics());}
+    this.noteSchedulerTick();
     const admissionBlock=this.writeAdmissionBlock();
-    if(admissionBlock){this.noteAnalysisBlocked(admissionBlock);this.noteWriteAdmission(admissionBlock);return;}
+    if(admissionBlock){this.noteDispatchSuppressed({reason:'DATA_BLOCKED',candidateCount:this.state.pool.readyList().length,authoritativeBlocker:admissionBlock});this.noteWriteAdmission(admissionBlock);return;}
     this.noteWriteAdmission(null);
     if (
       this.state.executionGovernance?.mode !== "AUTO_RUNNING" ||
       this.state.runtimeControl.mode !== "RUNNING"
     ) {
+      this.noteDispatchSuppressed({reason:'POLICY_DISABLED',candidateCount:this.state.pool.readyList().length,authoritativeBlocker:this.state.executionGovernance?.reason??this.state.runtimeControl.reasonCode});
       this.ai.setIdleContext(
         "PAUSED",
         this.state.pool.list().length,
@@ -170,6 +192,7 @@ export class EntryCoordinator {
           },
         ).sort((a,b)=>(this.lastDispatched.get(a.symbol)??0)-(this.lastDispatched.get(b.symbol)??0)||this.primaryReadinessScore(b.symbol,b.score)-this.primaryReadinessScore(a.symbol,a.score)||a.symbol.localeCompare(b.symbol));
     if (pending >= this.state.settings.portfolio.maxPendingEntries) {
+      this.noteDispatchSuppressed({reason:'WAITING_EXECUTION_CAPACITY',candidateCount:ready.length,capacityStatus:'MAX_PENDING_ENTRIES',authoritativeBlocker:'MAX_PENDING_ENTRIES'});
       this.ai.setIdleContext(
         "ENTRY_BACKPRESSURE",
         ready.length,
@@ -178,19 +201,18 @@ export class EntryCoordinator {
       return;
     }
     const primaryCapacity = this.state.aiResources.filter((r:any) => r.role === "PRIMARY_BRAIN").reduce((n:number,r:any) => n + r.maxConcurrency, 0);
-    if(this.active.size>=Math.max(1,primaryCapacity)) {this.analysisFacts.lastBlockedReason='AI_RESOURCE_BUSY';this.ai.setIdleContext('AI_RESOURCE_BUSY',ready.length,'等待 Primary 完成本次决策');return;}
+    if(this.active.size>=Math.max(1,primaryCapacity)) {this.noteDispatchSuppressed({reason:'AI_BUSY',candidateCount:ready.length,capacityStatus:'PRIMARY_CONCURRENCY',authoritativeBlocker:'PRIMARY_RESOURCE_BUSY'});this.ai.setIdleContext('AI_RESOURCE_BUSY',ready.length,'等待 Primary 完成本次决策');return;}
     // A model call is a cost, not a status report: with an armed AUTO_RUNNING intent the Primary is
     // only worth asking when the answer could actually be executed. Everything above this point is
     // deterministic supply maintenance, so the first ready tick resumes without a warm-up cycle.
-    if (!this.modelSpendPermitted()) return;
+    if (!this.modelSpendPermitted()) {this.noteDispatchSuppressed({reason:'DATA_BLOCKED',candidateCount:ready.length,capacityStatus:'EXECUTION_READINESS',authoritativeBlocker:this.executionGate?.firstBlocker??'MODEL_SPEND_NOT_PERMITTED'});return;}
     await this.ai.probePrimaryIfDue(now);
     if(!this.ai.hasCapacity('PRIMARY_BRAIN')) {
-      this.analysisFacts.lastBlockedReason='BUDGET_OR_COOLDOWN';
+      this.noteDispatchSuppressed({reason:'COOLDOWN',candidateCount:ready.length,capacityStatus:'PRIMARY_CIRCUIT_OPEN',authoritativeBlocker:'BUDGET_OR_COOLDOWN'});
       this.ai.setIdleContext('AI_PRIMARY_CIRCUIT_OPEN',ready.length,'Primary 请求连续失败，等待退避窗口后再尝试');
       return;
     }
     if (!ready.length) {
-      this.analysisFacts.lastBlockedReason='NO_RUNNABLE_CANDIDATE';
       // A book with candidates and no new-risk headroom must never read as "still waiting for a
       // candidate". But headroom is not the same as one saturated side: LONG and SHORT are
       // independent, so only a projected exhaustion verdict may say the cap is used up, and only
@@ -204,6 +226,7 @@ export class EntryCoordinator {
       const gateDeniesNewRisk = capacity.admission?.exhausted === true;
       const capacityBlocked = demand && (executable === 0 || gateDeniesNewRisk) && capacity.exhaustedForNewRisk;
       const reason = capacityBlocked || !routes.size ? 'WAITING_EXECUTION_CAPACITY' : this.state.pool.readyList().length ? 'WAITING_NEW_FACTS' : 'WAITING_CANDIDATE';
+      this.noteDispatchSuppressed({reason,candidateCount:routes.size||this.state.pool.readyList().length,capacityStatus:capacity.admission?.status??capacity.exhaustedReason??'ROUTES_PRESENT',authoritativeBlocker:capacity.admission?.code??capacity.entryCapacity?.LONG?.firstBindingConstraint??capacity.entryCapacity?.SHORT?.firstBindingConstraint??null});
       const usd = (value: number) => `$${value.toFixed(2)}`;
       const nextStep = capacityBlocked
         ? `新增风险额度已用尽：${gateDeniesNewRisk ? `确定性风险门 ${capacity.admission.code}（${capacity.admission.detail ?? '任意名义均拒'}；当前两侧可新增 ${usd(Math.min(capacity.admission.ceilingUsdBySide.LONG, capacity.admission.ceilingUsdBySide.SHORT))}）` : capacity.exhaustedReason === 'BOTH_DIRECTIONS' ? 'LONG 与 SHORT 双向额度均满' : capacity.exhaustedReason}（首因 ${capacity.entryCapacity.LONG.firstBindingConstraint}/${capacity.entryCapacity.SHORT.firstBindingConstraint}，槽位 ${capacity.limits.slots.used}/${capacity.limits.slots.max}；组合名义 ${usd(capacity.exposure.gross.notionalUsd)}，其政策为 ${capacity.exposure.gross.mode}）；继续供给与订单维护`
@@ -219,7 +242,7 @@ export class EntryCoordinator {
       `准备分析 ${ready[0]!.symbol}`,
     );
     const symbol=ready.find(item=>!this.active.has(item.symbol))!.symbol;
-    this.analysisFacts.lastAttemptAt=now;this.analysisFacts.lastBlockedReason=null;
+    this.lastSuppression=null;this.analysisFacts.lastAttemptAt=now;this.analysisFacts.lastBlockedReason=null;
     this.events.publish('ANALYSIS_DISPATCH_INTENT',{mode:this.analysisOnly()?'ANALYSIS_ONLY':'EXECUTION_ENABLED',at:now},symbol);
     this.lastDispatched.set(symbol,now);
     this.transition(symbol,"PRIMARY_QUEUED","SCHEDULER_DISPATCH");

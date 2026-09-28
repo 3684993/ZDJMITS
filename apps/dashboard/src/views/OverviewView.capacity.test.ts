@@ -163,6 +163,15 @@ it('labels account assets and Entry funding eligibility as two different columns
   expect(wrapper.text()).toContain('交易所保证金资产');
 });
 
+it('never labels pre-risk candidate estimates executable while authoritative BOOK capacity is unavailable',async()=>{
+  const unavailable=structuredClone(marginDrivenBook);
+  unavailable.capacityVisibility.admission={status:'UNAVAILABLE',hasVerdict:true,exhausted:true,code:'PENDING_RISK_UNVERIFIED:order:entry-1',ceilingUsdBySide:{LONG:0,SHORT:0}};
+  const entry=(await open(unavailable)).find('[data-capital-block="entry"]')!.text();
+  expect(entry).toContain('权威最终 Entry 容量：LONG $0.00 / UNAVAILABLE；SHORT $0.00 / UNAVAILABLE');
+  expect(entry).toContain('PRE-RISK / NOT EXECUTABLE');
+  expect(entry).not.toContain('LONG 可执行新增名义 $3,680.06');
+});
+
 it('renders the one authoritative blocker the Engine declared and its matching next action', async () => {
   const wrapper = await open(grossExhausted);
   const headline = wrapper.find('[data-caps-first-explanation]').text();
@@ -180,6 +189,18 @@ it('renders the one authoritative blocker the Engine declared and its matching n
   expect(secondary).toContain('次级诊断 2 项');
   expect(secondary).toContain('CAPACITY_DIAGNOSTIC:NO_EXECUTABLE_SIDE');
   expect(secondary).toContain('SUPPLY_DIAGNOSTIC:ELIGIBILITY');
+});
+
+it('renders scheduler liveness separately from Primary dispatch age and suppression cause',async()=>{
+  const wrapper=await open({...marginDrivenBook,analysis:{mode:'EXECUTION_ENABLED',text:'RUNNING · WAITING_EXECUTION_CAPACITY',reason:'WAITING_EXECUTION_CAPACITY',schedulerStatus:'RUNNING',heartbeatAt:1_800_000_000_000,
+    lastAttemptAt:null,lastSuccessAt:null,primarySuccessAgeMs:257*60_000,capitalExecutableCount:13,nextEvaluationAt:1_800_000_002_500,
+    suppression:{suppressionReason:'WAITING_EXECUTION_CAPACITY',authoritativeBlocker:'PENDING_RISK_UNVERIFIED:order:entry-1'}}});
+  const text=wrapper.text();
+  expect(text).toContain('RUNNING · WAITING_EXECUTION_CAPACITY');
+  expect(text).toContain('调度心跳 RUNNING');
+  expect(text).toContain('本实例尚未派发');
+  expect(text).toContain('PENDING_RISK_UNVERIFIED:order:entry-1');
+  expect(text).not.toContain('静默 257 分钟');
 });
 
 it('G4-UI never ranks the facts again: it follows whatever the Engine declared', async () => {

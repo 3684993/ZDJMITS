@@ -756,7 +756,7 @@ export class EngineRuntime {
   }
   async dispatchAnalysisTick(){
     const permitted=this.state.settings.connections.exchange.environment==='TESTNET'&&this.runtimeControl.canDispatch();
-    if(!permitted){this.entry.noteAnalysisBlocked?.('POLICY_OR_FACT_GATE');return;}
+    if(!permitted){this.entry.noteSchedulerTick?.();this.entry.noteAnalysisBlocked?.('POLICY_OR_FACT_GATE');return;}
     // The verdict is pushed, not polled: the tick that changes it is the tick that must stop paying
     // for a model, and the deterministic supply maintenance inside processPool keeps running.
     this.entry.noteExecutionReadiness?.(this.executionReadinessSnapshot());
@@ -1304,6 +1304,7 @@ export class EngineRuntime {
   }
   setRuntimeIdentity(identity: RuntimeIdentity) {
     this.runtimeIdentity = identity;
+    this.entry.setSchedulerInstanceId(identity.instanceId??null);
   }
   writeBoundaryMetrics(){return this.trade?.writeBoundaryMetrics()??{lockedToTestnet:true,productionWrites:0,blockedProductionWriteAttempts:0};}
   runtimeStatus() {

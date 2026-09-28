@@ -28,7 +28,8 @@ export class OwnershipService {
     this.journal.write('INSERT INTO v396_owners VALUES(?,?,?,?) ON CONFLICT(scope,cycle_id) DO UPDATE SET version=excluded.version,payload=excluded.payload',owner.scope,owner.cycleId,owner.ownerVersion,JSON.stringify(owner));
   }
   private enqueue(id:string,type:string,payload:unknown){
-    this.journal.write('INSERT INTO v396_outbox(id,payload,delivered) VALUES(?,?,0) ON CONFLICT(id) DO NOTHING',id,JSON.stringify({id,type,payload}));
+    const namespacedId=`${type}:${id}`;
+    this.journal.write('INSERT INTO v396_outbox(id,payload,delivered) VALUES(?,?,0) ON CONFLICT(id) DO NOTHING',namespacedId,JSON.stringify({id:namespacedId,type,payload}));
   }
 
   /**

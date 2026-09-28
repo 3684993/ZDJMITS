@@ -58,7 +58,9 @@ export class OwnershipJournal {
   }
   private save(owner:Ownership){
     this.db.prepare('INSERT INTO v396_owners VALUES(?,?,?,?) ON CONFLICT(scope,cycle_id) DO UPDATE SET version=excluded.version,payload=excluded.payload').run(owner.scope,owner.cycleId,owner.ownerVersion,JSON.stringify(owner));
-    const id=JSON.stringify([owner.scope,owner.cycleId,owner.ownerVersion]);
+    // Owner and protection-mandate versions share scope/cycle/version numbers. Keep their
+    // outbox namespaces disjoint so an expiry cannot collide with a Guardian mandate event.
+    const id=`OWNERSHIP_CHANGED:${JSON.stringify([owner.scope,owner.cycleId,owner.ownerVersion])}`;
     this.db.prepare('INSERT INTO v396_outbox(id,payload) VALUES(?,?)').run(id,JSON.stringify({id,type:'OWNERSHIP_CHANGED',owner}));
   }
   initialize(input:{scope:string;cycleId:string;planRef:string|null;firstFillAt:number;durationMs:number|null;now:number;legacy:boolean}):Ownership{

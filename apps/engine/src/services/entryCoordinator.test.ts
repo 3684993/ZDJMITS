@@ -56,3 +56,29 @@ describe('A: the current risk-admission verdict is bounded and self-clearing',()
     expect(entry.riskAdmissionVerdict(Date.now())).toBeNull();
   });
 });
+
+describe('scheduler liveness and dispatch suppression',()=>{
+  it('does not call a live never-dispatched instance stalled because it has been up for 30 minutes',()=>{
+    const entry=new EntryCoordinator(new RuntimeState(settings),{} as never,{} as never,{} as never,new EventBus());
+    (entry as any).analysisStartedAt=Date.now()-31*60_000;
+    entry.noteSchedulerTick(Date.now());
+    const diagnostics=entry.analysisDiagnostics();
+    expect(diagnostics.schedulerStatus).toBe('RUNNING');
+    expect(diagnostics.reason).not.toBe('DISPATCH_STALLED');
+    expect(diagnostics.lastAttemptAt).toBeNull();
+  });
+  it('reports stalled only after scheduler heartbeat exceeds the 60-second SLA',()=>{
+    const now=Date.now(),entry=new EntryCoordinator(new RuntimeState(settings),{} as never,{} as never,{} as never,new EventBus());
+    entry.noteSchedulerTick(now-60_000);
+    expect(entry.analysisDiagnostics(now).schedulerStatus).toBe('RUNNING');
+    expect(entry.analysisDiagnostics(now+1).schedulerStatus).toBe('STALLED');
+    expect(entry.analysisDiagnostics(now+1).reason).toBe('DISPATCH_STALLED');
+  });
+  it('includes instance, cycle, blocker and next evaluation in capacity suppression',()=>{
+    const now=Date.now(),entry=new EntryCoordinator(new RuntimeState(settings),{} as never,{} as never,{} as never,new EventBus());
+    entry.setSchedulerInstanceId('instance-a');entry.noteSchedulerTick(now);
+    (entry as any).noteDispatchSuppressed({reason:'WAITING_EXECUTION_CAPACITY',candidateCount:3,capacityStatus:'UNAVAILABLE',authoritativeBlocker:'PENDING_RISK_UNVERIFIED:order:entry-1',at:now});
+    expect(entry.analysisDiagnostics(now).suppression).toMatchObject({evaluatedAt:now,instanceId:'instance-a',schedulerCycle:1,candidateCount:3,capacityStatus:'UNAVAILABLE',authoritativeBlocker:'PENDING_RISK_UNVERIFIED:order:entry-1',nextEvaluationAt:now+2_500,dispatchSuppressed:true,suppressionReason:'WAITING_EXECUTION_CAPACITY'});
+    expect(entry.analysisDiagnostics(now).reason).toBe('WAITING_EXECUTION_CAPACITY');
+  });
+});

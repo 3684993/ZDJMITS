@@ -72,12 +72,18 @@ const capacityFunding = computed(() => {
 const capacityEntry = computed(() => {
   const view = capacityVisibility.value;
   if (!view) return null;
+  const admission=view.admission??{},blocked=admission.status==='UNAVAILABLE'||admission.exhausted===true;
   const side = (name: 'LONG' | 'SHORT') => {
     const row = view.entryCapacity?.[name] ?? {};
     const route = row.symbol && row.quoteAsset ? ` via ${row.symbol}/${row.quoteAsset}` : "";
-    return `${name} 可执行新增名义 ${fmt(row.executableNotionalUsd)}${route} · 首因 ${row.firstBindingConstraint ?? "NOT_EVALUATED"}`;
+    return blocked
+      ? `${name} 候选估算 ${fmt(row.executableNotionalUsd)}${route} · PRE-RISK / NOT EXECUTABLE · 首因 ${row.firstBindingConstraint ?? "NOT_EVALUATED"}`
+      : `${name} 可执行新增名义 ${fmt(admission.ceilingUsdBySide?.[name] ?? row.executableNotionalUsd)}${route} · 首因 ${row.firstBindingConstraint ?? "NOT_EVALUATED"}`;
   };
-  return { LONG: side('LONG'), SHORT: side('SHORT'), constraint: view.entryCapacity?.LONG?.firstBindingConstraint ?? view.entryCapacity?.SHORT?.firstBindingConstraint ?? "NOT_EVALUATED" };
+  const finalStatus=admission.status??'NOT_EVALUATED',finalLine=blocked
+    ? `权威最终 Entry 容量：LONG $0.00 / ${finalStatus}；SHORT $0.00 / ${finalStatus} · ${admission.code??admission.detail??'BOOK admission unavailable'}`
+    : `权威最终 Entry 容量：LONG ${fmt(admission.ceilingUsdBySide?.LONG??view.entryCapacity?.LONG?.executableNotionalUsd)} / ${finalStatus}；SHORT ${fmt(admission.ceilingUsdBySide?.SHORT??view.entryCapacity?.SHORT?.executableNotionalUsd)} / ${finalStatus}`;
+  return { LONG: side('LONG'), SHORT: side('SHORT'), finalLine, constraint: view.entryCapacity?.LONG?.firstBindingConstraint ?? view.entryCapacity?.SHORT?.firstBindingConstraint ?? "NOT_EVALUATED" };
 });
 // Which balances the Engine counted as Entry funding, read back from its ledger rather than re-listed here.
 const entryFundingAssets = computed(() => new Set((capacityVisibility.value?.funding?.quoteAssets ?? []).map((row: any) => String(row.quoteAsset).toUpperCase())));
@@ -238,7 +244,7 @@ onUnmounted(() => {
           <dd>
             <StatusBadge :value="control()?.mode ?? 'RUNNING'" />
             {{ pipeline?.analysis?.text ?? control()?.reasonText ?? "运行中" }}
-            <small v-if="pipeline?.analysis">最近调度：{{ pipeline.analysis.lastAttemptAt ? new Date(pipeline.analysis.lastAttemptAt).toLocaleString() : '本实例尚未派发' }}；最近分析成功：{{ pipeline.analysis.lastSuccessAt ? new Date(pipeline.analysis.lastSuccessAt).toLocaleString() : '本实例暂无' }}；静默 {{ Math.floor(pipeline.analysis.silenceMs / 60000) }} 分钟；资本候选 {{ pipeline.analysis.capitalExecutableCount }}</small>
+            <small v-if="pipeline?.analysis">调度心跳 {{ pipeline.analysis.schedulerStatus ?? 'UNKNOWN' }}（{{ pipeline.analysis.heartbeatAt ? new Date(pipeline.analysis.heartbeatAt).toLocaleTimeString() : '尚未收到' }}）；最近 Primary dispatch：{{ pipeline.analysis.lastAttemptAt ? new Date(pipeline.analysis.lastAttemptAt).toLocaleString() : '本实例尚未派发' }}；距最近分析成功 {{ Math.floor((pipeline.analysis.primarySuccessAgeMs ?? pipeline.analysis.silenceMs ?? 0) / 60000) }} 分钟；抑制原因 {{ pipeline.analysis.suppression?.suppressionReason ?? pipeline.analysis.reason }}{{ pipeline.analysis.suppression?.authoritativeBlocker ? ` · 首因 ${pipeline.analysis.suppression.authoritativeBlocker}` : '' }}；下次评估 {{ pipeline.analysis.nextEvaluationAt ? new Date(pipeline.analysis.nextEvaluationAt).toLocaleTimeString() : '待定' }}；候选 {{ pipeline.analysis.capitalExecutableCount }}</small>
           </dd>
         </div>
         <div>
@@ -341,6 +347,7 @@ onUnmounted(() => {
         </div>
         <div data-capital-block="entry">
           <dt>4 · 最终可执行新增 Entry 容量</dt>
+          <dd data-final-entry-capacity>{{ capacityEntry.finalLine }}</dd>
           <dd data-entry-capacity>{{ capacityEntry.LONG }}</dd>
           <dd data-entry-capacity>{{ capacityEntry.SHORT }}</dd>
           <dd data-side-status>{{ capacitySideStatusText }}</dd>

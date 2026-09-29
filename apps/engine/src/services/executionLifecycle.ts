@@ -38,7 +38,14 @@ export interface ManualExecutionJournal {
   save(value: ManualExecutionRecord): void;
 }
 export type EntryExecutionRecord={intent:EntryIntent;order:EntryOrder;reservation?:unknown};
+/**
+ * P3: the claim is keyed by a submission identity, and a refusal carries its own typed cause. The
+ * `isolation` argument states which durable exclusion the caller's mode requires, so the storage
+ * layer cannot quietly keep enforcing per-underlying排他 through a shared unique index.
+ */
 export interface EntryExecutionJournal {
-  claim(scope:string,value:EntryExecutionRecord,retryRejected:boolean):{acquired:boolean;record:EntryExecutionRecord};
+  claim(scope:string,value:EntryExecutionRecord,retryRejected:boolean,isolation?:{mode:'SUBMISSION_ONLY'|'UNDERLYING_LEGACY';submissionKey:string;isolationKey:string}|null):{
+    acquired:boolean;cause:string;record:EntryExecutionRecord;conflict?:{intentId:string|null;orderId:string|null;clientOrderId:string|null;status:string|null;at:number|null}|null;
+    maySubmit:boolean;mustQueryFirst:boolean};
   save(value:EntryExecutionRecord):void;
 }

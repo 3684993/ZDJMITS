@@ -79,6 +79,16 @@ export class RuntimeState {
     /** Latest review verdict per cycle, with the history that produced it. */
     positionReviews = new Map();
     reviewBudgets = new Map();
+    /**
+     * P2: the durable order registry the engine writes through whenever it mints or confirms an
+     * order identity. It is a projection of v396_order_provenance, not a second truth: fill
+     * attribution asks it whether an identity is system-generated instead of reading a client-id
+     * prefix, so a take-profit fill is no longer labelled external (R5).
+     */
+    orderProvenance: {
+      record:(input:{environment?:string;accountId?:string;symbol:string;clientOrderId:string;exchangeOrderId?:string|null;role:'ENTRY'|'TP'|'EXIT'|'MANUAL';intentId?:string|null;orderId?:string|null;cycleId?:string|null;source:string;observedAt?:number})=>{recorded:boolean;conflict:string|null};
+      resolve:(input:{symbol:string;clientOrderId?:string|null;exchangeOrderId?:string|null})=>{status:'SYSTEM_PROVEN'|'UNRESOLVED';proof:string[]};
+    } | null = null;
     /** Write-once. Returns the row that already stands when the caller tries to rewrite history. */
     putTradePlan(plan) {
         const id = String(plan?.planId ?? '');

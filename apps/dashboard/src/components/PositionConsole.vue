@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useSystemStore } from "../stores/system";
 import { api } from "../api/client";
 import Panel from "./Panel.vue";
 import StatusBadge from "./StatusBadge.vue";
-import { money, pct, age } from "../format";
+import { money, pct } from "../format";
+import { cycleMoments, holdingDuration, positionCycleKey } from "../utils/holdingDuration";
 import { createUiRequestId } from "../requestId";
+import { useNow } from "../utils/useNow";
 const props = defineProps<{ positionId: string }>(),
   emit = defineEmits<{ close: [] }>(),
   s = useSystemStore();
@@ -17,6 +19,14 @@ const detail = ref<any>(null),
   reason = ref(""),
   busy = ref(false),
   feedback = ref("");
+// The console ages against a ticking clock and states which moment the age came from, so an operator
+// never reads a first-observed position as a cycle whose first fill is proven.
+const now = useNow(30_000);
+const holding = () => holdingDuration(detail.value?.position, now.value);
+const moments = () => cycleMoments(detail.value?.position);
+const environment = computed(() => s.settings?.connections?.exchange?.environment ?? null);
+const accountSource = computed(() => s.snapshot?.account?.source ?? null);
+const cycleKey = () => positionCycleKey(detail.value?.position, environment.value, accountSource.value);
 const requestKeys = new Map<string,string>();
 async function load() {
   try {
@@ -131,13 +141,16 @@ onMounted(load);
             {{ detail.position.entryPrice }} / {{ detail.position.markPrice }}
           </dd>
         </div>
-        <div>
+        <div data-holding-duration-block>
           <dt>持仓时间</dt>
           <dd>
-            {{
-              detail.position.openedAt ? age(detail.position.openedAt) : "未知"
-            }}
+            <strong data-holding-duration="">{{ holding().text }}</strong>
+            <small data-holding-provenance="">{{ holding().detail }}</small>
           </dd>
+        </div>
+        <div data-position-cycle-key>
+          <dt>物理周期标识</dt>
+          <dd class="mono">{{ cycleKey() }}</dd>
         </div>
         <div>
           <dt>TP</dt>
@@ -146,6 +159,9 @@ onMounted(load);
             {{ detail.tp?.quantity ?? "—" }} @ {{ detail.tp?.price ?? "—" }}
           </dd>
         </div>
+      </div>
+      <div class="cycle-moments" data-cycle-moments>
+        <small v-for="m in moments()" :key="m.key" data-cycle-moment>{{ m.text }}</small>
       </div>
       <div class="management-card">
         <strong>人工交易控制台 · HUMAN ONLY · TESTNET</strong

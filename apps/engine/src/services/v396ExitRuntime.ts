@@ -63,7 +63,7 @@ export class V396ExitRuntime {
     this.recoveryCoordinator=new PositionExitCoordinator(this.journal,RECOVERY_CAPABILITIES);
     // The durable order registry lives beside the exit ledger so identity and quantity budget are
     // written by the same process against the same file.
-    this.provenance=new OrderProvenanceRegistry(dbFile);
+    this.provenance=new OrderProvenanceRegistry(dbFile,()=>this.exchangeIdentity());
   }
 
   scope(subject:Pick<V396ExitSubject,'symbol'|'side'>){

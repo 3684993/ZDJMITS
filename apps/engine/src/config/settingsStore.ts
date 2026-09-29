@@ -9,6 +9,7 @@ import { redactAudit } from "../api/projections.js";
 import { isTelemetry } from '../services/operationalLogger.js';
 import { activeOrderStatus, type ManualExecutionRecord, type EntryExecutionRecord } from '../services/executionLifecycle.js';
 import { durableEntryClaimActive, entryClaimReleasedByExchangeFacts, isHistoricalUnknownEntryOrder } from '../services/entryRiskOccupancy.js';
+import { describeClaimConflict, type EntryClaimCause, type EntryClaimOutcome } from '../services/entrySubmissionIdentity.js';
 import {
   CORRELATION_AUTHORITY_SCHEMA, MARGIN_AUTHORITY_SCHEMA, SCENARIO_AUTHORITY_SCHEMA,
   portfolioRiskAuthorityVerifyRows,
@@ -447,6 +448,24 @@ export class SettingsStore {
       CREATE UNIQUE INDEX IF NOT EXISTS entry_execution_scope ON entry_execution_tasks(scope) WHERE active=1;`);
     const entryTaskColumns=new Set((this.db.prepare('PRAGMA table_info(entry_execution_tasks)').all() as Array<{name:string}>).map(row=>row.name));
     if(!entryTaskColumns.has('released_at'))try{this.db.exec('ALTER TABLE entry_execution_tasks ADD COLUMN released_at INTEGER NOT NULL DEFAULT 0');}catch(error){if(!String(error).includes('duplicate column name'))throw error;}
+    // P3: submission identity and portfolio-scope exclusion are two different controls, so they get two
+    // different indexes. `entry_execution_scope` used one partial unique index on the underlying scope
+    // for both, which is how an unrelated historical UNKNOWN claim could veto a brand-new Intent.
+    for(const column of ['submission_key','isolation_key','isolation_mode']){
+      if(entryTaskColumns.has(column))continue;
+      try{this.db.exec(`ALTER TABLE entry_execution_tasks ADD COLUMN ${column} TEXT NOT NULL DEFAULT ''`);}
+      catch(error){if(!String(error).includes('duplicate column name'))throw error;}
+    }
+    this.db.exec(`
+      UPDATE entry_execution_tasks SET isolation_key=scope WHERE isolation_key='' OR isolation_key IS NULL;
+      UPDATE entry_execution_tasks SET submission_key=json_array(json_extract(scope,'$[0]'),json_extract(scope,'$[1]'),COALESCE(json_extract(payload,'$.intent.id'),intent_id),json_extract(scope,'$[3]')) WHERE submission_key='' OR submission_key IS NULL;
+      UPDATE entry_execution_tasks SET isolation_mode=CASE WHEN json_extract(scope,'$[0]')='TESTNET' THEN 'SUBMISSION_ONLY' ELSE 'UNDERLYING_LEGACY' END WHERE isolation_mode='' OR isolation_mode IS NULL;
+    `);
+    this.db.exec('DROP INDEX IF EXISTS entry_execution_scope');
+    this.db.exec(`CREATE UNIQUE INDEX IF NOT EXISTS entry_execution_submission ON entry_execution_tasks(submission_key) WHERE active=1;
+      CREATE UNIQUE INDEX IF NOT EXISTS entry_execution_underlying_isolation ON entry_execution_tasks(isolation_key) WHERE active=1 AND isolation_mode='UNDERLYING_LEGACY';
+      CREATE INDEX IF NOT EXISTS entry_execution_scope_history ON entry_execution_tasks(scope,active,updated_at);
+      INSERT OR IGNORE INTO schema_migrations(version,applied_at) VALUES(11,${Date.now()});`);
     this.db.exec(`CREATE INDEX IF NOT EXISTS ai_runs_summary_symbol_decision_nocase ON ai_runs_archive(symbol COLLATE NOCASE,decision COLLATE NOCASE,started_at DESC,run_id DESC);
       CREATE INDEX IF NOT EXISTS ai_runs_summary_role_status_nocase ON ai_runs_archive(role COLLATE NOCASE,status COLLATE NOCASE,started_at DESC,run_id DESC);
       CREATE INDEX IF NOT EXISTS ai_runs_summary_decision_nocase ON ai_runs_archive(decision COLLATE NOCASE,started_at DESC,run_id DESC);`);
@@ -1046,23 +1065,65 @@ export class SettingsStore {
     return (this.db.prepare('SELECT payload FROM execution_tasks').all() as Array<{payload:string}>)
       .map(row => JSON.parse(row.payload) as ManualExecutionRecord);
   }
-  claimEntryExecution(scope:string,value:EntryExecutionRecord,retryRejected=false){
-    // The indexed active bit is only a materialized claim. Expired/malformed historical proofs can
-    // reactivate several old submissions in one scope; inspect them under the SAME SQLite write lock
-    // before acquiring a new intent. Never resubmit an old proof-released identity.
-    const work=()=>{
-      const now=Date.now(),rows=this.db.prepare('SELECT active,payload FROM entry_execution_tasks WHERE scope=? ORDER BY active DESC,updated_at DESC,intent_id').all(scope) as Array<{active:number;payload:string}>;
-      for(const row of rows){const record=JSON.parse(row.payload) as EntryExecutionRecord;
-        if(row.active===1||durableEntryClaimActive(record.order,now))return{acquired:false,record};}
-      let result=this.db.prepare('INSERT OR IGNORE INTO entry_execution_tasks(intent_id,scope,active,payload,updated_at) VALUES(?,?,1,?,?)').run(value.intent.id,scope,JSON.stringify(value),now);
-      if(!result.changes&&retryRejected)result=this.db.prepare('UPDATE OR IGNORE entry_execution_tasks SET active=1,payload=?,updated_at=? WHERE intent_id=? AND scope=? AND active=0 AND released_at=0').run(JSON.stringify(value),now,value.intent.id,scope);
-      const row=this.db.prepare('SELECT payload FROM entry_execution_tasks WHERE scope=? AND active=1').get(scope) as {payload:string}|undefined;
+  /**
+   * P3: the submission claim, keyed by one Intent, not by an underlying's risk history.
+   *
+   * `isolation.mode` decides which durable exclusion applies. SUBMISSION_ONLY (the precise
+   * TESTNET + TESTNET_ENABLED funds-only path) can only ever collide with the same Intent;
+   * UNDERLYING_LEGACY keeps the per-underlying exclusion Production still relies on. A refused claim
+   * returns its own typed cause and the conflicting identity instead of a bare boolean, because the
+   * caller has to be able to tell "re-query my own unknown order" from "another Intent holds the
+   * ledger" - collapsing both into one error is what let a journal conflict reappear as
+   * RESERVATION_INVALID after the reservation had already been released.
+   */
+  claimEntryExecution(scope:string,value:EntryExecutionRecord,retryRejected=false,isolation?:{mode:'SUBMISSION_ONLY'|'UNDERLYING_LEGACY';submissionKey:string;isolationKey:string}|null):EntryClaimOutcome{
+    const work=():EntryClaimOutcome=>{
+      const now=Date.now();
+      const mode=isolation?.mode??'UNDERLYING_LEGACY';
+      const submissionKey=isolation?.submissionKey??value.intent.id;
+      const isolationKey=isolation?.isolationKey??scope;
+      const own=this.db.prepare('SELECT active,released_at,payload FROM entry_execution_tasks WHERE intent_id=?').get(value.intent.id) as {active:number;released_at:number;payload:string}|undefined;
+      // A released identity is never re-armed, not even by the retry path: the exchange already proved
+      // this client order id terminal, so reviving it would fork a second order under one identity.
+      if(own&&own.released_at>0&&own.active!==1)
+        return{acquired:false,cause:'RELEASED_IDENTITY_IMMUTABLE' as const,record:JSON.parse(own.payload),conflict:describeClaimConflict(JSON.parse(own.payload)),maySubmit:false,mustQueryFirst:false};
+      const rows=this.db.prepare('SELECT active,payload FROM entry_execution_tasks WHERE submission_key=? OR intent_id=? ORDER BY active DESC,updated_at DESC,intent_id').all(submissionKey,value.intent.id) as Array<{active:number;payload:string}>;
+      const blocking=rows.filter(row=>row.active===1||durableEntryClaimActive(JSON.parse(row.payload)?.order,now));
+      if(blocking.length){
+        const record=JSON.parse(blocking[0].payload) as EntryExecutionRecord;
+        const sameIntent=String(record?.intent?.id??'')===String(value.intent.id);
+        const order=record?.order??{} as any;
+        const unacknowledged=['SUBMITTING','UNKNOWN'].includes(String(order.status??''));
+        return{acquired:false,
+          cause:(sameIntent?(unacknowledged?'SAME_INTENT_UNACKNOWLEDGED_RECOVER':'SAME_INTENT_REPLAY'):'SUBMISSION_IDENTITY_CONFLICT') as EntryClaimCause,
+          record,conflict:describeClaimConflict(record),
+          // Only the caller that owns the identity may re-submit; an unacknowledged order must be
+          // queried by its own client order id, never sent a second time.
+          maySubmit:sameIntent&&!unacknowledged&&activeOrderStatus(String(order.status??'')),mustQueryFirst:sameIntent&&unacknowledged};
+      }
+      if(mode==='UNDERLYING_LEGACY'){
+        // The stored active bit is only a materialized claim: an expired or malformed no-active-risk
+        // proof reactivates the row, and the legacy exclusion must see that without a save first.
+        const held=this.db.prepare('SELECT active,payload FROM entry_execution_tasks WHERE isolation_key=? AND isolation_mode=? AND intent_id<>? ORDER BY active DESC,updated_at DESC,intent_id')
+          .all(isolationKey,mode,value.intent.id) as Array<{active:number;payload:string}>;
+        const live=held.find(row=>{let order:any=null;try{order=JSON.parse(row.payload)?.order;}catch{return true;}
+          return row.active===1||!order||durableEntryClaimActive(order,now);});
+        if(live){
+          const record=JSON.parse(live.payload) as EntryExecutionRecord;
+          return{acquired:false,cause:'LEGACY_UNDERLYING_ISOLATION' as const,record,conflict:describeClaimConflict(record),maySubmit:false,mustQueryFirst:false};
+        }
+      }
+      let result=this.db.prepare('INSERT OR IGNORE INTO entry_execution_tasks(intent_id,scope,active,payload,updated_at,submission_key,isolation_key,isolation_mode) VALUES(?,?,1,?,?,?,?,?)')
+        .run(value.intent.id,scope,JSON.stringify(value),now,submissionKey,isolationKey,mode);
+      if(!result.changes&&retryRejected)result=this.db.prepare('UPDATE OR IGNORE entry_execution_tasks SET active=1,payload=?,updated_at=?,released_at=0 WHERE intent_id=? AND submission_key=? AND active=0 AND released_at=0').run(JSON.stringify(value),now,value.intent.id,submissionKey);
+      const row=this.db.prepare('SELECT payload FROM entry_execution_tasks WHERE submission_key=? AND active=1').get(submissionKey) as {payload:string}|undefined;
       if(!row){
         const released=this.db.prepare('SELECT payload FROM entry_execution_tasks WHERE intent_id=? AND released_at>0').get(value.intent.id) as {payload:string}|undefined;
-        if(released)return{acquired:false,record:JSON.parse(released.payload) as EntryExecutionRecord};
-        throw new Error('ENTRY_SUBMISSION_UNKNOWN_JOURNAL_CONFLICT');
+        if(released){const record=JSON.parse(released.payload) as EntryExecutionRecord;return{acquired:false,cause:'RELEASED_IDENTITY_IMMUTABLE' as const,record,conflict:describeClaimConflict(record),maySubmit:false,mustQueryFirst:false};}
+        return{acquired:false,cause:'JOURNAL_CONFLICT' as const,record:value,conflict:null,maySubmit:false,mustQueryFirst:false};
       }
-      return{acquired:result.changes>0,record:JSON.parse(row.payload) as EntryExecutionRecord};
+      const record=JSON.parse(row.payload) as EntryExecutionRecord;
+      return{acquired:result.changes>0,cause:(result.changes>0?'ACQUIRED':'SAME_INTENT_REPLAY') as EntryClaimCause,record,conflict:describeClaimConflict(record),maySubmit:true,mustQueryFirst:false};
     };
     if(this.transactionActive)return work();
     this.db.exec('BEGIN IMMEDIATE');this.transactionActive=true;
@@ -1072,21 +1133,30 @@ export class SettingsStore {
   }
   saveEntryExecution(value:EntryExecutionRecord){
     const now=Date.now(),order=value.order as any;
-    const stored=this.db.prepare('SELECT active,released_at FROM entry_execution_tasks WHERE intent_id=?').get(value.intent.id) as {active:number;released_at:number}|undefined;
+    const stored=this.db.prepare('SELECT active,released_at,isolation_mode,isolation_key FROM entry_execution_tasks WHERE intent_id=?')
+      .get(value.intent.id) as {active:number;released_at:number;isolation_mode:string;isolation_key:string}|undefined;
     const active=durableEntryClaimActive(order,now)?1:0,releasedByProof=entryClaimReleasedByExchangeFacts(order,now);
-    // released_at preserves history/idempotency, never overrides current proof validity. If another
-    // claim owns the unique index, retain both payloads; claimEntryExecution/stats enforce both risks.
-    this.db.prepare(`UPDATE entry_execution_tasks SET active=CASE WHEN ?=1 AND EXISTS(
-      SELECT 1 FROM entry_execution_tasks other WHERE other.scope=entry_execution_tasks.scope AND other.intent_id<>entry_execution_tasks.intent_id AND other.active=1
-    ) THEN active ELSE ? END,payload=?,updated_at=?,released_at=? WHERE intent_id=?`)
-      .run(active,active,JSON.stringify(value),now,releasedByProof?Math.max(stored?.released_at??0,now):(stored?.released_at??0),value.intent.id);
+    // released_at preserves history/idempotency, never overrides current proof validity.
+    // P3: the cross-Intent hold is now a property of the legacy isolation mode only. Under
+    // SUBMISSION_ONLY a row's active bit follows its own order proof, so an unrelated Intent in the
+    // same underlying scope can no longer force it to stay claimed - or stay released - to fit a shared
+    // unique index.
+    const mode=stored?.isolation_mode||'UNDERLYING_LEGACY';
+    let nextActive=active;
+    if(active===1&&mode==='UNDERLYING_LEGACY'){
+      const held=this.db.prepare(`SELECT 1 FROM entry_execution_tasks other WHERE other.isolation_key=? AND other.intent_id<>? AND other.active=1 AND other.isolation_mode='UNDERLYING_LEGACY' LIMIT 1`)
+        .get(stored?.isolation_key??'',value.intent.id);
+      if(held)nextActive=0;
+    }
+    this.db.prepare('UPDATE entry_execution_tasks SET active=?,payload=?,updated_at=?,released_at=? WHERE intent_id=?')
+      .run(nextActive,JSON.stringify(value),now,releasedByProof?Math.max(stored?.released_at??0,now):(stored?.released_at??0),value.intent.id);
   }
   /** Hydrate history verbatim. Validity is time-dependent, so no load-time flag can grant a release. */
   loadEntryExecutions():EntryExecutionRecord[]{return(this.db.prepare('SELECT payload FROM entry_execution_tasks').all() as Array<{payload:string}>).map(row=>JSON.parse(row.payload));}
   /** Effective risk claims include invalid/expired proof releases, even before a reconciliation write. */
   entryExecutionClaimStats(){
     const evaluatedAt=Date.now();
-    const rows=this.db.prepare('SELECT active,released_at,payload FROM entry_execution_tasks').all() as Array<{active:number;released_at:number;payload:string}>;
+    const rows=this.db.prepare('SELECT active,released_at,payload,scope,isolation_mode,submission_key,isolation_key FROM entry_execution_tasks').all() as Array<{active:number;released_at:number;payload:string;scope:string;isolation_mode:string;submission_key:string;isolation_key:string}>;
     const facts=rows.map(row=>{try{const order=JSON.parse(row.payload)?.order;return{...row,status:String(order?.status??''),historicalUnknown:Boolean(order)&&isHistoricalUnknownEntryOrder(order),effectiveActive:row.active===1||!order||durableEntryClaimActive(order,evaluatedAt)};}
       catch{return{...row,status:'UNREADABLE',historicalUnknown:false,effectiveActive:true};}});
     return{evaluatedAt,durableTasks:rows.length,activeClaims:facts.filter(row=>row.effectiveActive).length,
@@ -1094,7 +1164,16 @@ export class SettingsStore {
       storedActiveClaims:rows.filter(row=>row.active===1).length,reactivatedByProofValidation:facts.filter(row=>row.effectiveActive&&row.active!==1).length,
       claimSemantics:'CURRENT_STRICT_PROOF_OR_STORED_ACTIVE',releasedAtSemantics:'HISTORICAL_RELEASE_NOT_CURRENT_VALIDITY',
       releasedClaims:rows.filter(row=>row.released_at>0).length,
-      releasedUnknownClaims:facts.filter(row=>row.released_at>0&&row.status==='UNKNOWN').length};
+      releasedUnknownClaims:facts.filter(row=>row.released_at>0&&row.status==='UNKNOWN').length,
+      // P3: the split is the proof that a historical claim is no longer a cross-Intent veto. Rows under
+      // SUBMISSION_ONLY can only ever hold their own Intent's identity.
+      byIsolationMode:Object.fromEntries(['SUBMISSION_ONLY','UNDERLYING_LEGACY'].map(mode=>[mode,{
+        rows:rows.filter(row=>(row.isolation_mode||'UNDERLYING_LEGACY')===mode).length,
+        activeClaims:facts.filter(row=>(row.isolation_mode||'UNDERLYING_LEGACY')===mode&&row.effectiveActive).length,
+        distinctIsolationScopes:new Set(rows.filter(row=>(row.isolation_mode||'UNDERLYING_LEGACY')===mode).map(row=>row.isolation_key||row.scope)).size,
+      }])),
+      vetoEnforced:rows.some(row=>(row.isolation_mode||'UNDERLYING_LEGACY')==='UNDERLYING_LEGACY'&&(row.active===1||facts.find(f=>f.payload===row.payload)?.effectiveActive)),
+    };
   }
   recordTradeSyncHistory(value: unknown) {
     const row = value as any;

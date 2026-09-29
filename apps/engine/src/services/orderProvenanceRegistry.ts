@@ -30,16 +30,28 @@ const text=(value:unknown)=>{const s=String(value??'').trim();return s.length?s:
 
 export class OrderProvenanceRegistry {
   private db:DatabaseSync;
-  constructor(file:string){
+  /**
+   * The registry is a single shared ledger across entry, TP and manual orders, but the caller's
+   * environment/account is the engine's own identity. Passing it once as a fallback keeps every
+   * writer from having to re-derive it while still letting an offline repair tool scope rows
+   * explicitly - and an explicit identity always wins over the fallback.
+   */
+  constructor(file:string,private readonly identity?:()=>{environment:string;account:string}){
     this.db=new DatabaseSync(file);
     this.db.exec('PRAGMA busy_timeout=3000;');
     this.db.exec(DDL);
   }
 
+  private scoped(input:{environment?:string;accountId?:string}){
+    const fallback=this.identity?.()??{environment:'',account:''};
+    return{environment:text(input.environment)??fallback.environment,accountId:text(input.accountId)??fallback.account};
+  }
+
   /** Idempotent by identity. A second writer claiming a different symbol for one client id is a conflict, not an update. */
-  record(input:{environment:string;accountId:string;symbol:string;clientOrderId:string;exchangeOrderId?:string|null;
+  record(input:{environment?:string;accountId?:string;symbol:string;clientOrderId:string;exchangeOrderId?:string|null;
     role:OrderProvenanceRole;intentId?:string|null;orderId?:string|null;cycleId?:string|null;source:string;observedAt?:number}):{recorded:boolean;conflict:string|null}{
-    const environment=text(input.environment),accountId=text(input.accountId),symbol=(text(input.symbol)??'').toUpperCase(),clientOrderId=text(input.clientOrderId);
+    const identity=this.scoped(input);
+    const environment=identity.environment,accountId=identity.accountId,symbol=(text(input.symbol)??'').toUpperCase(),clientOrderId=text(input.clientOrderId);
     if(!environment||!accountId||!symbol||!clientOrderId)return{recorded:false,conflict:'PROVENANCE_IDENTITY_MISSING'};
     const at=Number.isSafeInteger(Number(input.observedAt))?Number(input.observedAt):Date.now();
     const row:OrderProvenanceRow={environment,accountId,symbol,clientOrderId,exchangeOrderId:text(input.exchangeOrderId),
@@ -67,13 +79,14 @@ export class OrderProvenanceRegistry {
    * which is what keeps a prefix from being mistaken for provenance.
    */
   resolve(input:{environment?:string;accountId?:string;symbol:string;clientOrderId?:string|null;exchangeOrderId?:string|null}):{status:'SYSTEM_PROVEN'|'UNRESOLVED';rows:OrderProvenanceRow[];proof:string[]}{
+    const identity=this.scoped(input);
     const symbol=(text(input.symbol)??'').toUpperCase();
     if(!symbol)return{status:'UNRESOLVED',rows:[],proof:[]};
     const clientOrderId=text(input.clientOrderId),exchangeOrderId=text(input.exchangeOrderId);
     if(!clientOrderId&&!exchangeOrderId)return{status:'UNRESOLVED',rows:[],proof:['NO_ORDER_IDENTITY']};
     const clauses:string[]=['symbol=?'];const params:unknown[]=[symbol];
-    if(input.environment){clauses.push('environment=?');params.push(text(input.environment));}
-    if(input.accountId){clauses.push('account_id=?');params.push(text(input.accountId));}
+    if(identity.environment){clauses.push('environment=?');params.push(identity.environment);}
+    if(identity.accountId){clauses.push('account_id=?');params.push(identity.accountId);}
     const rows=this.db.prepare(`SELECT payload FROM v396_order_provenance WHERE ${clauses.join(' AND ')}`).all(...params as never[])
       .map(row=>JSON.parse(String(row.payload)) as OrderProvenanceRow);
     const matched=rows.filter(row=>(clientOrderId&&row.clientOrderId===clientOrderId)||(exchangeOrderId&&row.exchangeOrderId===exchangeOrderId));

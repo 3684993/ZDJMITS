@@ -53,6 +53,85 @@ export function activeEntryOrdersForProjection(orders:Iterable<any>,now=Date.now
   return [...orders].filter(order=>entryOrderOccupiesRisk(order,now));
 }
 const directionalDecision=(decision:unknown)=>['PLACE_LONG','PLACE_SHORT','WAIT_FOR_PRICE'].includes(String(decision??''));
+
+/**
+ * P7: one section per question. `HEALTHY` used to be reported from a reconciliation pass whose checks
+ * were a different scope from the take-profit gap, the exit claim drift and the historical UNKNOWN
+ * rows, so a single label covered all of them. Each check below states its own evidence.
+ */
+export function executionTruthProjection(runtime: EngineRuntime, now = Date.now()) {
+  const s = runtime.state;
+  const services: any[] = (runtime.health?.() ?? []) as any[];
+  const service = (id: string) => services.find(row => row?.id === id) ?? null;
+  const market = service('market'), tpService = service('tp'), ai = service('ai');
+  const reconciliation = (runtime as any).reconciliation?.health?.() ?? null;
+  const convergence = (runtime as any).exitConvergenceHealth?.() ?? { available: false };
+  const tpMetrics = (runtime as any).tp?.metrics?.() ?? null;
+  const records = [...s.tradeRecords.values()] as any[];
+  const inconsistent = records.filter(record => record.ledgerConservation === 'LEDGER_INCONSISTENT' || (record.integrityFlags ?? []).includes('LEDGER_INCONSISTENT')).length;
+  const unconserved = records.filter(record => record.ledgerConservation === 'UNCONSERVED').length;
+  const fundingExact = records.filter(record => record.fundingAttributionStatus === 'EXACT').length;
+  const fundingUnknown = records.filter(record => record.fundingAttributionStatus !== 'EXACT').length;
+  const fundingLedger = (runtime as any).fundingIncome?.coverage?.() ?? null;
+  const coordination = (s.settings.riskGovernance as any)?.exitCoordination ?? {};
+  const aiActiveCycles = (runtime as any).exitRuntime ? [...s.positions.values()].filter((position: any) => {
+    const scope = (runtime as any).exitRuntime.scope({ symbol: position.symbol, side: position.side });
+    const owner = (runtime as any).exitRuntime.ownerOfScope(scope, position.cycleId);
+    return owner?.ownerState === 'AI_ACTIVE';
+  }).length : 0;
+  const reviewRunner = (runtime as any).positionReviewRunner;
+  const entryRows = [...s.entryOrders.values()] as any[], tpRows = [...s.tpOrders.values()] as any[], manualRows = [...s.manualOrders.values()] as any[];
+  const confirmed = (row: any) => String(row.factSource ?? '') === 'BINANCE_EXACT_ORDER' || String(row.factSource ?? '') === 'BINANCE_OPEN_ORDERS' || (String(row.status ?? '') === 'WORKING' && Boolean(row.exchangeOrderId));
+  const parse = (detail: unknown) => { try { return typeof detail === 'string' ? JSON.parse(detail) : detail; } catch { return null; } };
+  const statusFor = (row: any, degradedWhen: (value: any) => boolean) => {
+    if (!row) return { status: 'UNKNOWN' as const, detail: 'SERVICE_NOT_REPORTED' };
+    const value = parse(row.detail);
+    return { status: (degradedWhen(value) ? 'DEGRADED' : 'HEALTHY') as 'DEGRADED' | 'HEALTHY', detail: row.detail ? String(row.detail).slice(0, 400) : null };
+  };
+  const marketState = statusFor(market, (value: any) => (value?.gaps ?? 0) > 0 || value?.fresh !== value?.total);
+  const tpState = statusFor(tpService, (value: any) => Number(value?.missing ?? 0) > 0 || Number(value?.positionFactUnresolved ?? 0) > 0);
+  return {
+    evaluatedAt: now,
+    exchangeIngestion: {status: marketState.status, detail: marketState.detail},
+    orderTerminalParity: reconciliation
+      ? {status: Number(reconciliation.verifiedOrderFactMismatchCount ?? 0) > 0 ? 'DEGRADED' as const : 'HEALTHY' as const,
+         mismatchCount: Math.max(0, Number(reconciliation.verifiedOrderFactMismatchCount ?? 0)),
+         detail: `lastRunAt=${reconciliation.lastRun ?? 0};drift=${reconciliation.driftCount ?? 0};unresolved=${reconciliation.unresolvedDriftCount ?? 0}`}
+      : {status: 'UNKNOWN' as const, mismatchCount: 0, detail: 'RECONCILIATION_NOT_REPORTED'},
+    exitClaimConvergence: convergence.available
+      ? {status: Number(convergence.terminalUnreleasedClaims ?? 0) > 0 || Number(convergence.oldestUnpolledAgeMs ?? 0) > Number(convergence.maxServiceIntervalMs ?? 0) * 2 ? 'DEGRADED' as const : 'HEALTHY' as const,
+         openTasks: Number(convergence.openTasks ?? 0), terminalUnreleasedClaims: Number(convergence.terminalUnreleasedClaims ?? 0),
+         oldestUnpolledAgeMs: Number(convergence.oldestUnpolledAgeMs ?? 0),
+         detail: `queue=${convergence.openTasks};eligible=${convergence.eligibleNow};batch=${convergence.batchLimit};interval=${convergence.intervalMs};maxService=${convergence.maxServiceIntervalMs}`}
+      : {status: 'UNKNOWN' as const, openTasks: 0, terminalUnreleasedClaims: 0, oldestUnpolledAgeMs: 0, detail: convergence.reason ?? 'EXIT_RUNTIME_NOT_ATTACHED'},
+    takeProfitCoverage: tpMetrics
+      ? {status: Number(tpMetrics.missing ?? 0) > 0 || Number(tpMetrics.positionFactUnresolved ?? 0) > 0 ? 'DEGRADED' as const : 'HEALTHY' as const,
+         required: Number(tpMetrics.required ?? 0), protected: Number(tpMetrics.protected ?? 0), missing: Number(tpMetrics.missing ?? 0),
+         unresolved: Number(tpMetrics.positionFactUnresolved ?? 0), detail: tpService?.detail ? String(tpService.detail).slice(0, 400) : null}
+      : {status: 'UNKNOWN' as const, required: 0, protected: 0, missing: 0, unresolved: 0, detail: 'GUARDIAN_NOT_REPORTED'},
+    positionCoverage: {status: reconciliation ? 'HEALTHY' as const : 'UNKNOWN' as const, local: s.positions.size,
+      remote: Math.max(0, Number(reconciliation?.exchangePositions ?? s.positions.size)), detail: null},
+    fillCycleConservation: {status: inconsistent > 0 ? 'DEGRADED' as const : unconserved > 0 ? 'DEGRADED' as const : 'HEALTHY' as const,
+      ledgerInconsistent: inconsistent, unconserved, detail: `records=${records.length}`},
+    fundingCoverage: {status: fundingLedger?.complete ? 'HEALTHY' as const : fundingExact > 0 ? 'PARTIAL' as const : 'UNKNOWN' as const,
+      recordsWithExactFunding: fundingExact, recordsUnknown: fundingUnknown,
+      incomeRows: Math.max(0, Number(fundingLedger?.rows ?? 0)), coverageComplete: fundingLedger?.complete === true,
+      detail: fundingLedger ? `coverage=${fundingLedger.complete?'COMPLETE':'INCOMPLETE'};since=${fundingLedger.coveredSinceMs??'NONE'}` : 'FUNDING_LEDGER_NOT_ATTACHED'},
+    reviewAuthority: {status: coordination.positionReviewEnabled !== true ? 'DISABLED' as const : (reviewRunner ? 'HEALTHY' as const : 'UNKNOWN' as const),
+      enabled: coordination.positionReviewEnabled === true, aiActiveCycles,
+      scheduledDue: Math.max(0, Number((runtime as any).positionReviewScheduler?.dueCount?.() ?? 0)),
+      lastOutcome: reviewRunner?.lastOutcome?.() ?? null,
+      detail: ai?.detail ? String(ai.detail).slice(0, 200) : null},
+    activeCommissions: {
+      remoteConfirmedEntry: entryRows.filter(row => row.status === 'NEW' || row.status === 'WORKING' || row.status === 'PARTIALLY_FILLED').filter(confirmed).length,
+      remoteConfirmedTakeProfit: tpRows.filter(row => row.status === 'WORKING' || row.status === 'PARTIALLY_FILLED').length,
+      manual: manualRows.filter(row => ['NEW','WORKING','PARTIALLY_FILLED','SUBMITTING'].includes(String(row.status))).length,
+      // Historical UNKNOWN rows are a local accounting exposure, not orders the exchange says are live.
+      localUnresolvedUnknown: entryRows.filter(row => row.status === 'UNKNOWN').length + tpRows.filter(row => row.status === 'UNKNOWN').length + manualRows.filter(row => row.status === 'UNKNOWN').length,
+    },
+  };
+}
+
 function baseDashboardProjection(runtime: EngineRuntime): DashboardSnapshot {
   const s = runtime.state,
     now = Date.now(),
@@ -70,17 +149,25 @@ function baseDashboardProjection(runtime: EngineRuntime): DashboardSnapshot {
       0,
     ),
     fills = s.executionFills.filter((fill: any) => fill.executionTime >= since),
+    // P2/R5: the gap an operator must act on is a fill that references an order this engine owns but
+    // that the attribution pass could not prove. Provenance is now a recorded fact on the fill, so a
+    // `v396x...` take-profit fill is no longer counted as external merely because its id shape is new.
     systemOrderKeys = new Set(
       [...s.entryOrders.values(), ...s.tpOrders.values(), ...s.manualOrders.values()]
         .flatMap((order: any) => [order.id, order.exchangeOrderId, order.clientOrderId])
         .filter(Boolean)
         .map(String),
     ),
-    systemClientOrderId = /^(entry_|ml_|tp_|manual_|ma_|mr_|mc_|ec[0-9]*_)/i,
+    provenanceOf = (fill: any) => String(fill.provenanceSource ?? 'UNPROVEN'),
     referencesSystemOrder = (fill: any) =>
-      systemClientOrderId.test(String(fill.clientOrderId ?? '')) ||
+      provenanceOf(fill) !== 'UNPROVEN' ||
       systemOrderKeys.has(String(fill.orderId ?? '')) ||
       systemOrderKeys.has(String(fill.clientOrderId ?? '')),
+    fillsByProvenance = fills.reduce<Record<string, number>>((tally, fill: any) => {
+      const key = provenanceOf(fill);
+      tally[key] = (tally[key] ?? 0) + 1;
+      return tally;
+    }, {}),
     entryFills = fills.filter(
       (fill: any) => fill.side === (fill.direction === "LONG" ? "BUY" : "SELL"),
     ),
@@ -159,7 +246,21 @@ function baseDashboardProjection(runtime: EngineRuntime): DashboardSnapshot {
       externalFillsLast1h: unattributed,
       systemFillAttributionGapLast1h: systemFillAttributionGap,
       systemFillParityAlert: systemFillAttributionGap > 0,
+      // P2: raw exchange fills, provenance breakdown and closed-trade accounting are three different
+      // questions. Reporting only one of them is what made an external label look like a missing exit.
+      fillsByProvenanceLast1h: fillsByProvenance,
       tradeRecordLag: Math.max(0, attributed - closedHour.length),
+      positionCycleFacts: {
+        records: [...s.tradeRecords.values()].length,
+        lotsRecorded: [...s.tradeRecords.values()].reduce((sum, record) => sum + ((record as any).entryLots?.length ?? 0), 0),
+        ledgerInconsistent: [...s.tradeRecords.values()].filter(record => (record as any).ledgerConservation === 'LEDGER_INCONSISTENT' || record.integrityFlags.includes('LEDGER_INCONSISTENT')).length,
+        unconserved: [...s.tradeRecords.values()].filter(record => (record as any).ledgerConservation === 'UNCONSERVED').length,
+        lotAllocation: [...s.tradeRecords.values()].reduce<Record<string, number>>((tally, record) => {
+          const key = String((record as any).lotAllocationMethod ?? 'UNKNOWN');
+          tally[key] = (tally[key] ?? 0) + 1;
+          return tally;
+        }, {}),
+      },
     },
     portfolioIntelligence: {
       ...portfolio,
@@ -175,6 +276,8 @@ function baseDashboardProjection(runtime: EngineRuntime): DashboardSnapshot {
     },
     runtimeControl: s.runtimeControl,
     externalResearch: runtime.externalResearch?.metrics?.(),
+    exitConvergence: (runtime as any).exitConvergenceHealth?.() ?? {available:false,reason:'EXIT_RUNTIME_NOT_ATTACHED'},
+    executionTruth: executionTruthProjection(runtime, now),
     universe: {
       total: s.universe.length,
       eligible: s.universe.filter((x) => x.eligible && x.rank > 0).length,

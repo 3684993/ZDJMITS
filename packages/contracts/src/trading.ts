@@ -130,6 +130,16 @@ export type EntryOrder = z.infer<typeof EntryOrderSchema>;
 
 export const PositionSchema = z.object({
   cycleId:z.string().nullable().optional(),
+  /**
+   * P7: the continuous physical holding is identified by its own key and carries the moments the UI
+   * must show separately. Adding to a position must not reset `openedAt`, and a partial close must
+   * not reset it either; only a proven return to zero followed by a new open starts a new cycle.
+   */
+  physicalCycleKey:z.string().nullable().optional(),
+  lastAddAt:z.number().int().nullable().default(null),
+  addCount:z.number().int().nonnegative().default(0),
+  lastReviewAt:z.number().int().nullable().default(null),
+  nextReviewAt:z.number().int().nullable().default(null),
   id: z.string(),
   symbol: z.string(),
   side: SideSchema,
@@ -191,8 +201,42 @@ export type TakeProfitOrder = z.infer<typeof TakeProfitOrderSchema>;
 export const TradeRecordClassificationSchema = z.enum(['COMPLETE','PARTIAL','IMPORTED','EXTERNAL','DUPLICATE','CONFLICT','INVALID']);
 export type TradeRecordClassification = z.infer<typeof TradeRecordClassificationSchema>;
 
+export const EntryLotSchema = z.object({
+  /** One independent Entry intent/authorization/fill. Additions create a lot, not a new cycle. */
+  lotId:z.string(),
+  intentId:z.string().nullable().default(null),
+  orderId:z.string().nullable().default(null),
+  exchangeOrderId:z.string().nullable().default(null),
+  quantity:z.number().nonnegative(),
+  averagePrice:z.number().positive().nullable().default(null),
+  filledAt:z.number().int().nullable().default(null),
+  /** Deterministic accounting share of the exits attributed to this lot; never a copied fill record. */
+  exitAllocatedQuantity:z.number().nonnegative().default(0),
+  exitAllocatedNotional:z.number().nonnegative().default(0),
+  /**
+   * Fee and realised PnL apportioned onto this lot. The apportionment is exact: the sum across the
+   * lots of a cycle equals the cycle totals, so re-lotting a position cannot create or destroy value.
+   */
+  allocatedEntryFee:z.number().nullable().default(null),
+  allocatedExitFee:z.number().nullable().default(null),
+  allocatedGrossRealizedPnl:z.number().nullable().default(null),
+  allocationSource:z.enum(['FIFO','EXPLICIT','UNALLOCATED']).default('UNALLOCATED'),
+});
+export type EntryLot = z.infer<typeof EntryLotSchema>;
+
 export const TradeRecordSchema = z.object({
   positionId:z.string().nullable().optional(),
+  /**
+   * V3.9.7 splits the two identities the audit found conflated (R4). `positionCycleId` is the
+   * continuous physical holding of one environment/account/symbol/side: an aggregated take-profit
+   * reduces it, and the hold-duration readback measures it. `entryLots` are the individual Entry
+   * executions inside that physical cycle. `cycleId` stays the record key and carries the same
+   * physical cycle value, so every existing consumer keeps working.
+   */
+  positionCycleId:z.string().nullable().optional(),
+  entryLots:z.array(EntryLotSchema).default([]),
+  lotAllocationMethod:z.enum(['FIFO','EXPLICIT','UNKNOWN']).default('UNKNOWN'),
+  ledgerConservation:z.enum(['CONSERVED','UNCONSERVED','LEDGER_INCONSISTENT','UNKNOWN']).optional(),
   exitQty:z.number().nonnegative().optional(), remainingQty:z.number().nullable().optional(),
   observedClosedAt:z.number().int().nullable().optional(),
   tradingNetPnlExFunding:z.number().nullable().optional(),
@@ -226,6 +270,16 @@ export type ExperienceSample = z.infer<typeof ExperienceSampleSchema>;
 
 export const ExecutionFillSchema = z.object({
   cycleId:z.string().nullable().optional(),
+  /**
+   * The physical holding this fill belongs to, plus the individual Entry lot that produced it.
+   * Keeping them apart is what lets several add-ons and one aggregated take-profit conserve
+   * (R4): the cycle is the accounting unit, the lot is the execution identity.
+   */
+  positionCycleId:z.string().nullable().optional(),
+  entryLotId:z.string().nullable().optional(),
+  fillRole:z.enum(['ENTRY','EXIT']).optional(),
+  /** Where the system-origin conclusion came from. A client-id prefix alone is not proof (R5). */
+  provenanceSource:z.enum(['ORDER_REGISTRY','DURABLE_ORDER_TABLE','EXIT_TASK','LEGACY_PREFIX','UNPROVEN']).optional(),
   fillId:z.string(),symbol:z.string(),direction:SideSchema,side:z.enum(['BUY','SELL']),positionSide:z.enum(['LONG','SHORT','BOTH']),orderId:z.string(),clientOrderId:z.string(),tradeId:z.string(),
   executionTime:z.number().int(),qty:z.number().positive(),price:z.number().positive(),realizedPnl:z.number(),commission:z.number().nonnegative(),commissionAsset:z.string(),commissionUsd:z.number().nullable(),maker:z.boolean(),source:z.enum(['USER_DATA_WS','EXCHANGE_AUDIT','SIMULATION']),attributionStatus:z.enum(['SYSTEM_ATTRIBUTED','EXTERNAL_OR_UNLINKED','PENDING']).default('PENDING'),decisionChainId:z.string().nullable().optional(),allocationPlanId:z.string().nullable().optional()
 });

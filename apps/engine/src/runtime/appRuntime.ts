@@ -320,7 +320,7 @@ export class EngineRuntime {
       ai = new AiFabric(state, events, eip),
       positions = new PositionService(state, events),
       tp = new TpGuardian(state, trade, events, exitRuntime),
-      entry = new EntryCoordinator(state, eip, ai, trade, events,market,{claim:(scope,value,retry)=>store.claimEntryExecution(scope,value,retry),save:value=>store.saveEntryExecution(value)}),
+      entry = new EntryCoordinator(state, eip, ai, trade, events,market,{claim:(scope,value,retry,isolation)=>store.claimEntryExecution(scope,value,retry,isolation),save:value=>store.saveEntryExecution(value)}),
       exchangeLoop = new ExchangeLoop(
         trade,
         state,
@@ -485,6 +485,8 @@ export class EngineRuntime {
     );
     if (trade instanceof ExternalTradeAdapter) runtime.trade = trade;
     runtime.exitRuntime = exitRuntime;
+    // P2: fill attribution reads system origin from the durable registry instead of a client-id prefix.
+    state.orderProvenance = exitRuntime.provenance as any;
     runtime.aiExitAuthority = new AiExitAuthorityService(exitRuntime, () => {
       const coordination = (state.settings.riskGovernance as any)?.exitCoordination ?? {};
       return coordination.aiExitAuthority ?? 'OFF';

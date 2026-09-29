@@ -8,6 +8,7 @@ import {binanceEntryBlockReason} from '../adapters/binance/requestBudget.js';
 import {privateAccountFresh} from './privateAccountReadiness.js';
 import { nearMarketPrice } from './nearMarketPrice.js';
 import { activeOrderStatus, terminalOrderStatus, executionScope, type EntryExecutionJournal } from './executionLifecycle.js';
+import { entrySubmissionIsolation, portfolioScopeObservation } from './entrySubmissionIdentity.js';
 import { remoteFactAuditDeferred } from './entryRiskOccupancy.js';
 import { waitingContext, waitTrigger } from './entryWaiting.js';
 import { entryDataError } from './entryFacts.js';
@@ -316,7 +317,11 @@ export class EntryCoordinator {
     if(existing)return existing;
     const id=`entry_${intent.id}`;
     const order:EntryOrder={id,cycleId:`cycle_${id}`,clientOrderId:binanceClientOrderIdFactory.stable('ML',intent.id),exchangeOrderId:null,symbol:intent.symbol,side:intent.side,quantity,price,filledQuantity:0,leverage:intent.leverage,status:'NEW',createdAt:now,updatedAt:now,absoluteExpiresAt:intent.absoluteExpiresAt,repriceCount:0,intentId:intent.id,reachability,reservationId:intent.reservationId,decisionChainId:intent.decisionChainId??intent.brainRunId};
-    this.state.entryOrders.set(id,order);return order;
+    this.state.entryOrders.set(id,order);
+    // P2: the identity is registered the moment it is minted, so a fill that arrives over WS before
+    // the order ACK is still provable as system-generated rather than inferred from a prefix.
+    this.state.orderProvenance?.record({symbol:order.symbol,clientOrderId:order.clientOrderId!,role:'ENTRY',intentId:intent.id,orderId:id,cycleId:order.cycleId,source:'ENTRY_COORDINATOR',observedAt:now});
+    return order;
   }
   private async submitExactlyOnce(intent:EntryIntent,order:EntryOrder,resumedFrom?:string){
     if(order.status==='UNKNOWN'||order.status==='SUBMITTING'){
@@ -326,15 +331,51 @@ export class EntryCoordinator {
     const block=this.executionHardBlock(intent,order);if(block){if(order.status==='NEW'){const rejected={...order,status:'REJECTED' as const,factSource:'LOCAL_NOT_SUBMITTED',updatedAt:Date.now()};this.state.entryOrders.set(order.id,rejected);this.journal?.save({intent,order:rejected});}throw new Error(`JIT_BLOCKED:${block}`);}
     const submitting={...order,status:'SUBMITTING' as const,updatedAt:Date.now()};this.state.entryOrders.set(order.id,submitting);
     if(this.journal){
-      const scope=executionScope(this.state.settings.connections.exchange.environment,this.state.settings.connections.exchange.credentialRef,resolveUnderlying(order.symbol),'ENTRY');
-      const claim=this.journal.claim(scope,{intent,order:submitting,reservation:order.reservationId?this.state.entryReservations.get(order.reservationId):undefined},resumedFrom==='POST_ONLY_REPRICE');
+      const environment=String(this.state.settings.connections.exchange.environment),account=String(this.state.settings.connections.exchange.credentialRef);
+      const underlying=resolveUnderlying(order.symbol);
+      const scope=executionScope(environment,account,underlying,'ENTRY');
+      // P3: funds-only claims are keyed by this Intent's submission identity alone. The same rows that
+      // used to hold the underlying scope are still read, but only as an observation.
+      const isolation=entrySubmissionIsolation(this.state.settings,{environment,accountId:account,intentId:intent.id,underlying,kind:'ENTRY'});
+      const claim=this.journal.claim(scope,{intent,order:submitting,reservation:order.reservationId?this.state.entryReservations.get(order.reservationId):undefined},resumedFrom==='POST_ONLY_REPRICE',isolation);
       if(!claim.acquired){
+        const conflict=claim.conflict;
+        const holderIsSomeoneElse=String(claim.record?.intent?.id??'')!==intent.id;
+        this.events.publish('ENTRY_SUBMISSION_CLAIM_REFUSED',{brainRunId:intent.brainRunId,intentId:intent.id,orderId:order.id,clientOrderId:order.clientOrderId,
+          cause:claim.cause,maySubmit:claim.mustQueryFirst||claim.maySubmit,mustQueryFirst:claim.mustQueryFirst,
+          holderIntentId:conflict?.intentId??null,holderOrderId:conflict?.orderId??null,holderStatus:conflict?.status??null,isolationMode:isolation.mode,
+          portfolioScopeObservation:portfolioScopeObservation({settings:this.state.settings,environment,accountId:account,underlying,side:intent.side})},intent.symbol);
+        if(claim.mustQueryFirst){
+          // Own unacknowledged order: re-prove it by its own client order id. Never a second wire call.
+          const found=await this.exchange.findEntryByClientOrderId(claim.record.order).catch(()=>null);
+          if(found){this.journal.save({intent:claim.record.intent,order:found});return found;}
+          throw new Error(`ENTRY_SUBMISSION_UNKNOWN_QUERY_BY_CLIENT_ORDER_ID:${claim.cause}`);
+        }
+        if(claim.maySubmit){
+          // The same identity was already persisted and is submittable; continue with that order rather
+          // than minting a second one.
+          const carried=claim.record.order;
+          if(order.id!==carried.id){this.state.entryOrders.delete(order.id);if(order.reservationId&&order.reservationId!==carried.reservationId)this.state.releaseEntryReservation(order.reservationId);}
+          return this.placeAfterClaim(intent,carried,resumedFrom);
+        }
+        if(holderIsSomeoneElse&&isolation.mode==='SUBMISSION_ONLY'){
+          // A different Intent holds nothing under funds-only. Reaching here means the durable journal
+          // disagreed with the identity, which is a journal fault, not a risk veto: say so and do not
+          // release this Intent's own reservation as if the market had refused it.
+          throw new Error(`ENTRY_SUBMISSION_JOURNAL_CONFLICT:${claim.cause}:${conflict?.intentId??'UNKNOWN'}`);
+        }
+        // Legacy per-underlying exclusion (Production only): keep the existing conservative behaviour.
         this.state.entryOrders.set(claim.record.order.id,claim.record.order);
         if(claim.record.order.id!==order.id){this.state.entryOrders.delete(order.id);if(order.reservationId)this.state.releaseEntryReservation(order.reservationId);}
         this.state.entryIntents.set(claim.record.intent.id,claim.record.intent);
-        throw new Error('ENTRY_SUBMISSION_UNKNOWN_DURABLE_TASK_EXISTS');
+        throw new Error(`ENTRY_SUBMISSION_${claim.cause}`);
       }
     }
+    return this.placeAfterClaim(intent,submitting,resumedFrom);
+  }
+  /** The single wire submit for an intent whose durable claim this caller holds. */
+  private async placeAfterClaim(intent:EntryIntent,submitting:EntryOrder,resumedFrom?:string):Promise<EntryOrder>{
+    const order=submitting;
     try{this.events.publish('ENTRY_SUBMIT_ATTEMPTED',{brainRunId:intent.brainRunId,intentId:intent.id,orderId:order.id,clientOrderId:order.clientOrderId,environment:'TESTNET',resumedFrom:resumedFrom??null},intent.symbol);}catch(error){
       // No exchange call has occurred yet. Retire the durable claim as locally unsent instead of
       // leaving SUBMITTING to be mistaken for an exchange-UNKNOWN outcome.
@@ -377,7 +418,13 @@ export class EntryCoordinator {
       const pre=this.executionHardBlock(intent,order);if(pre){this.terminateExecutionWait(symbol,row,intent,reservation,pre);continue;}
       try{await this.exchange.setLeverage(symbol,intent.leverage);}catch(error){this.events.publish('ENTRY_EXECUTION_WAIT_RETRY_FAILED',{intentId:intent.id,message:error instanceof Error?error.message:String(error),stage:'SET_LEVERAGE'},symbol);continue;}
       const post=this.executionHardBlock(intent,order);if(post){this.terminateExecutionWait(symbol,row,intent,reservation,post);continue;}
-      try{const placed=await this.submitExactlyOnce(intent,order,'WAIT_EXECUTION_RANGE');this.completeExecutionWait(symbol,intent,reservation,placed);}catch(error){const hard=this.executionHardBlock(intent,order);if(hard){this.terminateExecutionWait(symbol,row,intent,reservation,hard);continue;}this.events.publish('ENTRY_EXECUTION_WAIT_RETRY_FAILED',{intentId:intent.id,message:error instanceof Error?error.message:String(error),stage:'SUBMIT'},symbol);}
+      try{const placed=await this.submitExactlyOnce(intent,order,'WAIT_EXECUTION_RANGE');this.completeExecutionWait(symbol,intent,reservation,placed);}catch(error){const message=error instanceof Error?error.message:String(error);
+        // P3/R6: a submission-identity refusal terminates with its own cause. Re-deriving the hard block
+        // first is what turned a journal conflict into RESERVATION_INVALID on the next tick, because the
+        // rejected claim had already released this intent's reservation by the time it was read again.
+        const submissionCause=/^ENTRY_SUBMISSION_/.test(message)?message.split(':')[0]:null;
+        if(submissionCause){this.terminateExecutionWait(symbol,row,intent,reservation,submissionCause);continue;}
+        const hard=this.executionHardBlock(intent,order);if(hard){this.terminateExecutionWait(symbol,row,intent,reservation,hard);continue;}this.events.publish('ENTRY_EXECUTION_WAIT_RETRY_FAILED',{intentId:intent.id,message,stage:'SUBMIT',submissionCauseRetained:true},symbol);}
     }
   }
   private async analyze(symbol: string) {

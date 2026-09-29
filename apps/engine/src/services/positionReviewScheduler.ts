@@ -18,7 +18,7 @@ export type ReviewTicket={budgetKey:string;triggerKey:string;reviewNumber:number
   ownerVersion:number;planRef:string;reservedAt:number;expiresAt:number;reasons:string[]};
 
 export type BudgetState={budgetKey:string;planRef:string;cycleId:string;scope:string;normal:number;exception:number;used:number;failures:number;
-  lastTriggerKey:string|null;lastFactsHash:string|null;runs:AiUsageRow[]};
+  lastTriggerKey:string|null;lastFactsHash:string|null;lastSkippedReason?:string|null;runs:AiUsageRow[]};
 
 const hash=(value:unknown)=>createHash('sha256').update(JSON.stringify(value)).digest('hex').slice(0,32);
 
@@ -46,6 +46,15 @@ export class PositionReviewScheduler {
 
   private key(input:{scope:string;planRef:string}){return `budget_${hash([input.scope,input.planRef])}`;}
 
+  /**
+   * A refusal is itself a fact the operator needs: "no review happened" has a different meaning when
+   * the budget is exhausted, when the facts never changed, and when the model is simply busy.
+   */
+  private refuse(budget:BudgetState,reason:string,extra:Record<string,unknown>={}){
+    budget.lastSkippedReason=reason;
+    return {granted:false,reason,budgetKey:budget.budgetKey,...extra} as const;
+  }
+
   budgetOf(scope:string,planRef:string,cycleId:string):BudgetState{
     const key=this.key({scope,planRef});
     const existing=this.budgets.get(key);
@@ -72,17 +81,18 @@ export class PositionReviewScheduler {
     const triggerKey=reviewTriggerKeyOf({scope:input.scope,cycleId:input.cycleId,versions:input.versions,now});
     const factsHash=reviewFactsHashOf(input.versions);
     const limit=Math.max(0,Math.trunc(settings.normalReviewsPerPlan))+(input.trigger==='PREDICATE'?Math.max(0,Math.trunc(settings.exceptionReviewsPerPlan)):0);
-    if(budget.failures>=Math.max(1,Math.trunc(settings.failureBudget)))return{granted:false,reason:'REVIEW_FAILURE_BUDGET_EXHAUSTED',budgetKey:budget.budgetKey} as const;
-    if(budget.used>=limit)return{granted:false,reason:budget.used>=limit?'REVIEW_BUDGET_EXHAUSTED':'REVIEW_BUDGET_INVALID',budgetKey:budget.budgetKey,limit} as const;
+    if(budget.failures>=Math.max(1,Math.trunc(settings.failureBudget)))return this.refuse(budget,'REVIEW_FAILURE_BUDGET_EXHAUSTED',{budgetKey:budget.budgetKey});
+    if(budget.used>=limit)return this.refuse(budget,budget.used>=limit?'REVIEW_BUDGET_EXHAUSTED':'REVIEW_BUDGET_INVALID',{budgetKey:budget.budgetKey,limit});
     if(triggerKey===budget.lastTriggerKey&&factsHash===budget.lastFactsHash)
-      return{granted:false,reason:'REVIEW_FACTS_UNCHANGED',budgetKey:budget.budgetKey,deduplicated:true} as const;
+      return this.refuse(budget,'REVIEW_FACTS_UNCHANGED',{budgetKey:budget.budgetKey,deduplicated:true});
     if(input.trigger!=='PREDICATE'&&budget.lastTriggerKey!==null&&triggerKey===budget.lastTriggerKey)
-      return{granted:false,reason:'REVIEW_TRIGGER_ALREADY_CONSUMED',budgetKey:budget.budgetKey,deduplicated:true} as const;
+      return this.refuse(budget,'REVIEW_TRIGGER_ALREADY_CONSUMED',{budgetKey:budget.budgetKey,deduplicated:true});
     if(triggerKey===budget.lastTriggerKey&&input.trigger==='PREDICATE'&&input.versions.predicateThresholdCrossed!==true)
-      return{granted:false,reason:'REVIEW_PREDICATE_UNCHANGED',budgetKey:budget.budgetKey,deduplicated:true} as const;
+      return this.refuse(budget,'REVIEW_PREDICATE_UNCHANGED',{budgetKey:budget.budgetKey,deduplicated:true});
     const last=budget.runs[budget.runs.length-1];
     if(last&&Number(last.startedAt??0)>0&&now-Number(last.startedAt)<Math.max(1_000,settings.minIntervalMs))
-      return{granted:false,reason:'REVIEW_MIN_INTERVAL_NOT_ELAPSED',budgetKey:budget.budgetKey} as const;
+      return this.refuse(budget,'REVIEW_MIN_INTERVAL_NOT_ELAPSED',{budgetKey:budget.budgetKey});
+    budget.lastSkippedReason=null;
     budget.used++;
     budget.lastTriggerKey=triggerKey;
     budget.lastFactsHash=factsHash;
@@ -127,6 +137,35 @@ export class PositionReviewScheduler {
 
   state(){return [...this.budgets.values()].map(row=>({budgetKey:row.budgetKey,cycleId:row.cycleId,planRef:row.planRef,used:row.used,failures:row.failures,
     lastTriggerKey:row.lastTriggerKey,runs:row.runs.length}));}
+
+  /**
+   * P6: the review authority has to be observable per cycle, not just "enabled". Last review, next
+   * due, failure count and the reason the last attempt was skipped are what tell an operator whether
+   * a long-held position is actually being reconsidered or merely waiting for its take-profit.
+   */
+  reviewReadback(now=Date.now()){
+    const settings=this.ports.settings();
+    const minIntervalMs=Math.max(1_000,settings.minIntervalMs);
+    const rows=[...this.budgets.values()].map(budget=>{
+      const runs=budget.runs;
+      const lastReviewAt=runs.length?Math.max(...runs.map(row=>Number(row.completedAt??row.startedAt??0)).filter(value=>Number.isFinite(value))):null;
+      const last=runs[runs.length-1]??null;
+      const limit=Math.max(0,Math.trunc(settings.normalReviewsPerPlan));
+      return{budgetKey:budget.budgetKey,cycleId:budget.cycleId,scope:budget.scope,planRef:budget.planRef,
+        used:budget.used,limit,failures:budget.failures,lastReviewAt,
+        nextDueAt:lastReviewAt==null?now:lastReviewAt+minIntervalMs,
+        lastOutcome:last?String(last.status??'UNKNOWN'):null,
+        skippedReason:budget.lastSkippedReason??null};
+    });
+    return{evaluatedAt:now,budgets:rows.length,
+      due:rows.filter(row=>row.used<row.limit&&row.failures<Math.max(1,Math.trunc(settings.failureBudget))&&row.nextDueAt<=now).length,
+      exhausted:rows.filter(row=>row.used>=row.limit).length,
+      failureBlocked:rows.filter(row=>row.failures>=Math.max(1,Math.trunc(settings.failureBudget))).length,
+      minIntervalMs,rows};
+  }
+
+  dueCount(now=Date.now()){return this.reviewReadback(now).due;}
+
   /** What a restart must remember: spent budget is never refunded by losing memory. */
   serialize(){return [...this.budgets.values()].map(row=>({...row,runs:row.runs.map(usage=>({eventId:usage.eventId,status:usage.status,startedAt:usage.startedAt}))}));}
   restore(rows:any[]){for(const row of rows??[]){if(!row?.budgetKey)continue;this.budgets.set(String(row.budgetKey),{...row,runs:Array.isArray(row.runs)?row.runs:[]});}}

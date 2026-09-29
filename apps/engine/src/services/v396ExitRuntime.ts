@@ -376,6 +376,38 @@ export class V396ExitRuntime {
   }
 
   /**
+   * A query gets the pass interval to answer, with a floor: a batch of eight hung reads must not take
+   * longer than the interval that bounds the whole walk.
+   */
+  private queryDeadlineMs(){
+    const authority=this.authority() as {queryTimeoutMs?:number;intervalMs?:number};
+    const configured=Number(authority.queryTimeoutMs??0);
+    if(Number.isFinite(configured)&&configured>0)return Math.min(600_000,Math.trunc(configured));
+    return Math.max(5_000,Math.min(120_000,Math.trunc(Number(authority.intervalMs??120_000))));
+  }
+
+  /**
+   * A query that never answers must not be able to park the whole walk. `converging` is only ever
+   * cleared by this method, so without a deadline one hung signed read stops convergence for the
+   * rest of the process' life - which is the same starvation this stage exists to remove, only quieter.
+   * A deadline is recorded as a failed attempt for that one order, so it backs off and the rest
+   * keep their turn.
+   */
+  private async answeredWithin<T>(work:Promise<T>,timeoutMs:number):
+    Promise<{status:'answered';value:T}|{status:'rejected';error:unknown}|{status:'timeout'}>{
+    // Settled before it is raced: a rejection that lost the race would otherwise surface as an
+    // unhandled promise, and a rejection that won must stay a rejection the caller can name.
+    const settled=work.then(value=>({status:'answered' as const,value}) as {status:'answered';value:T},
+      error=>({status:'rejected' as const,error}) as {status:'rejected';error:unknown});
+    let timer:NodeJS.Timeout|null=null;
+    try{
+      return await Promise.race([settled,new Promise<{status:'timeout'}>(resolve=>{
+        timer=setTimeout(()=>resolve({status:'timeout'}),Math.max(1,timeoutMs));timer.unref?.();
+      })]);
+    }finally{if(timer)clearTimeout(timer);}
+  }
+
+  /**
    * P1: bounded continuous convergence with a durable fair walk.
    *
    * The queue is drained by `next_eligible_at, last_attempt_at`, not by insertion order, so a head
@@ -451,8 +483,14 @@ export class V396ExitRuntime {
       const currentIdentity=this.exchangeIdentity();
       if(identity.environment!==currentIdentity.environment||identity.account!==currentIdentity.account){converged.push({clientOrderId:task.clientOrderId,outcome:'ACCOUNT_SCOPE_MISMATCH',state:task.state});schedule(entry,false);continue;}
       let fact:Awaited<ReturnType<typeof query>>;
-      try{fact=await query({symbol:identity.symbol,clientOrderId:task.clientOrderId});}
-      catch{converged.push({clientOrderId:task.clientOrderId,outcome:'QUERY_FAILED_STAYS_UNACKED',state:task.state});schedule(entry,true);continue;}
+      // The deadline is the point: one signed read that never answers used to hold `converging` true
+      // for the life of the process, and every later pass then reported CONVERGENCE_IN_FLIGHT while
+      // the queue silently stopped draining. Both a failure and a deadline count as a failed attempt
+      // for that one order, so it backs off on its own and the rest of the queue keeps its turn.
+      const answered=await this.answeredWithin(query({symbol:identity.symbol,clientOrderId:task.clientOrderId}),this.queryDeadlineMs());
+      if(answered.status==='timeout'){converged.push({clientOrderId:task.clientOrderId,outcome:'QUERY_DEADLINE_STAYS_UNACKED',state:task.state});schedule(entry,true);continue;}
+      if(answered.status==='rejected'){converged.push({clientOrderId:task.clientOrderId,outcome:'QUERY_FAILED_STAYS_UNACKED',state:task.state});schedule(entry,true);continue;}
+      fact=answered.value;
       if(fact?.state!=='FOUND'||!fact.order){
         if(task.state!=='UNKNOWN'&&task.state!=='SUBMITTING')this.recoveryCoordinator.markSubmitUncertain(task.taskId,now);
         converged.push({clientOrderId:task.clientOrderId,outcome:'EXCHANGE_ABSENT_STAYS_UNACKED',state:task.state==='PREPARED'?'PREPARED':'UNKNOWN'});

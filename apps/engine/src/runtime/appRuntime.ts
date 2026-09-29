@@ -133,6 +133,8 @@ export class EngineRuntime {
   private trade: ExternalTradeAdapter | null = null;
   /** The last funding-income pass, so an empty ledger can be told apart from a reader that never ran. */
   private lastFundingSync: {at:number|null;rows:number;failures:number;symbolsScanned:number;skipped:string|null} | null = null;
+  /** Why the continuous exit-convergence walk did or did not poll on its last turn. */
+  private convergenceGate: {at?:number;reason?:string;due?:boolean;attempted?:number} | null = null;
   private tradeRecordAutoSyncStartedAt: number | null = null;
   private tradeRecordAutoSyncLastEndAt: number | null = null;
   private tradeRecordAutoSyncFlight: Promise<void> | null = null;
@@ -1297,10 +1299,16 @@ export class EngineRuntime {
    */
   async convergeExitsPeriodically(now = Date.now()) {
     const adapter = this.trade as any;
-    if (!this.exitRuntime || !adapter?.findExitByClientOrderId) return null;
+    if (!this.exitRuntime || !adapter?.findExitByClientOrderId) {
+      // A silent early return here once hid a stopped convergence walk for hours: the reason belongs
+      // in the readback, next to the queue it is keeping from draining.
+      this.convergenceGate = { at: now, reason: !this.exitRuntime ? 'EXIT_RUNTIME_NOT_ATTACHED' : 'EXIT_ORDER_READER_UNAVAILABLE' };
+      return this.convergenceGate;
+    }
     const due = this.exitRuntime.convergenceDue(now);
-    if (!due.due) return due;
+    if (!due.due) { this.convergenceGate = { at: now, ...due }; return due; }
     const converged = await this.exitRuntime.convergePeriodically((input) => adapter.findExitByClientOrderId(input), now);
+    this.convergenceGate = { at: now, due: true as const, attempted: converged.attempted };
     for (const task of (converged.converged ?? []).filter((row: any) => String(row.outcome).startsWith('EXCHANGE_FACT_')||String(row.outcome).startsWith('OBSERVE_REFUSED'))) {
       this.events.publish('EXIT_TASK_CONVERGED', { clientOrderId: task.clientOrderId, outcome: task.outcome, state: task.state }, undefined);
     }
@@ -1314,7 +1322,9 @@ export class EngineRuntime {
   exitConvergenceHealth(){
     if(!this.exitRuntime)return {available:false,reason:'EXIT_RUNTIME_NOT_ATTACHED'};
     const stats=this.exitRuntime.convergenceStats();
-    return {available:true,...stats,unreleasedClaims:this.exitRuntime.recoveryPlan().mustQuery.length};
+    return {available:true,...stats,unreleasedClaims:this.exitRuntime.recoveryPlan().mustQuery.length,
+      // Why the walk is or is not running right now, in the operator's own words.
+      passGate:this.convergenceGate??{reason:'NOT_YET_ATTEMPTED'}};
   }
 
   /**

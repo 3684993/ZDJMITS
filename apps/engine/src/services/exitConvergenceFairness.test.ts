@@ -143,6 +143,31 @@ describe('P1 exit convergence fairness',()=>{
     // An identity this ledger never proved stays unresolved instead of being claimed as system work.
     expect(runtime.provenanceFor({symbol:target.symbol,clientOrderId:'ml_foreign'}).status).toBe('UNRESOLVED');
   });
+
+  it('one hung exact-order read cannot park the walk for the rest of the process',async()=>{
+    const now=Date.now();
+    const file=tempFile();
+    let passes=0;
+    const runtime=new V396ExitRuntime(file,()=>identity,async()=>CAPS,
+      ()=>({aiExitAuthority:'SHADOW' as const,intervalMs:INTERVAL,batchLimit:BATCH,continuousEnabled:true,queryTimeoutMs:40}));
+    const hung=await prepared(runtime,0,now),working=await prepared(runtime,1,now);
+    const result=await runtime.convergePeriodically(async(input)=>{
+      passes++;
+      // The audited stall shape: a signed read that the transport never answers.
+      if(input.clientOrderId===hung.clientOrderId)return new Promise<never>(()=>undefined);
+      return{state:'FOUND' as const,order:any(orderReport({symbol:input.symbol,clientOrderId:input.clientOrderId}))};
+    },now+1);
+    expect(passes).toBe(2);
+    expect(result.converged.find(row=>row.clientOrderId===hung.clientOrderId)?.outcome).toBe('QUERY_DEADLINE_STAYS_UNACKED');
+    expect(result.converged.find(row=>row.clientOrderId===working.clientOrderId)?.outcome).toBe('EXCHANGE_FACT_WORKING');
+    // The hung order backs off; the loop is still alive and takes the next turn.
+    const next=await runtime.convergePeriodically(async(input)=>({state:'FOUND' as const,order:any(orderReport({symbol:input.symbol,clientOrderId:input.clientOrderId}))}),now+1+INTERVAL);
+    expect(next.due).toBe(true);
+    expect(next.converged.length).toBe(2);
+    const stats=any(runtime.convergenceStats(now+1+INTERVAL));
+    expect(stats.terminalUnreleasedClaims).toBe(0);
+    runtime.close();
+  });
 });
 
 describe('P1 exit terminal propagation',()=>{

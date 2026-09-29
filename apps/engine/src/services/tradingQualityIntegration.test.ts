@@ -286,3 +286,5 @@ describe('prospective runtime evidence collection',()=>{
     }finally{collector.close();rmSync(dir,{recursive:true,force:true});}
   });
 });
+
+it('retains all legitimate plan evidence warnings through intent schema hydration',()=>{const base:any={id:'warnings',symbol:'BTCUSDT',side:'LONG',confidence:.8,idealPrice:100,acceptablePriceRange:{min:99,max:101},horizonMinutes:3,leverage:10,createdAt:1,absoluteExpiresAt:100000,packetId:'p',brainRunId:'b',planWarnings:Array.from({length:26},(_,i)=>'PLAN_EVIDENCE_BAR_NOT_CLOSED:ref'+i)};expect(EntryIntentSchema.parse(base).planWarnings).toHaveLength(26);});

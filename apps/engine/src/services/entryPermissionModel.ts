@@ -75,7 +75,7 @@ export type PortfolioRiskObservation={
   note:string;
 };
 
-const numberOrNull=(value:unknown)=>{const parsed=Number(value);return Number.isFinite(parsed)?parsed:null;};
+const numberOrNull=(value:unknown)=>{if(value==null||value==='')return null;const parsed=Number(value);return Number.isFinite(parsed)?parsed:null;};
 
 /**
  * Analysis eligibility is deliberately narrow. It never looks at money: a symbol that cannot be
@@ -88,7 +88,7 @@ export function candidateAnalysisEligibility(state:RuntimeState,symbol:string,no
   const marketFresh=!dataError&&!(input.dataNotReadyReasons?.length??false);
   const held=[...state.positions.values()].some(row=>row.symbol===symbol);
   const reasons=[...(!marketFresh?[dataError??'MARKET_DATA_STALE']:[]),...(input.modelAvailable===false?['AI_RESOURCE_UNAVAILABLE']:[])];
-  const disposition=held?'SKIP':reasons.length?'WAIT':'ANALYZE';
+  const disposition=held&&!testnetFundsOnlyEntry(state.settings)?'SKIP':reasons.length?'WAIT':'ANALYZE';
   return{eligible:disposition==='ANALYZE',reasons,disposition,evaluatedAt:now,
     facts:{marketFresh,modelAvailable:input.modelAvailable!==false,alreadyHeld:held,dataError:dataError??null}};
 }
@@ -104,7 +104,7 @@ export function evaluateEntryExecutionPermit(input:{
   authorization:{valid:boolean;expiresAt:number|null;identity:string|null};
   filtersComplete:boolean;durableStorageReady:boolean;
   pendingScopeObservations?:Array<ReturnType<typeof portfolioScopeObservation>>;
-  now?:number;
+  now?:number;excludeReservationId?:string;excludeLeaseId?:string;
 }):EntryExecutionPermit{
   const now=input.now??Date.now(),state=input.state;
   const environment=String(state.settings.connections?.exchange?.environment??''),executionMode=String(state.settings.connections?.executionMode??'');
@@ -112,14 +112,16 @@ export function evaluateEntryExecutionPermit(input:{
   const asset=(state.account.assets??[]).find((row:any)=>row.asset===input.quoteAsset);
   const available=numberOrNull(asset?.availableBalance);
   const committed=[...state.entryReservations.values()]
-    .filter((row:any)=>row.quoteAsset===input.quoteAsset&&reservationDebitsAvailableFunds(state,row,now))
+    .filter((row:any)=>row.id!==input.excludeReservationId&&row.quoteAsset===input.quoteAsset&&reservationDebitsAvailableFunds(state,row,now))
     .reduce((sum:number,row:any)=>sum+Math.max(0,numberOrNull(row.marginUsd)??0),0);
-  const earmark=activeExecutionLeaseMargin(state,input.quoteAsset,now);
+  const earmark=activeExecutionLeaseMargin(state,input.quoteAsset,now,input.excludeLeaseId);
   const executable=available==null?null:Math.max(0,available-committed-earmark);
   const privateFresh=privateAccountFresh(state.account,now);
   const observation=portfolioRiskObservation(state,now,input.pendingScopeObservations??[]);
   const blockers:string[]=[];
-  if(!fundsOnly&&environment!=='PRODUCTION')blockers.push('ENVIRONMENT_NOT_TESTNET');
+  if(environment!=='TESTNET')blockers.push('ENVIRONMENT_NOT_TESTNET');
+  if(executionMode!=='TESTNET_ENABLED')blockers.push('EXECUTION_WRITE_LOCKED');
+  if(!Number.isFinite(input.requiredMarginUsd)||input.requiredMarginUsd<=0)blockers.push('MARGIN_REQUIREMENT_INVALID');
   if(!privateFresh)blockers.push('PRIVATE_ACCOUNT_NOT_FRESH');
   if(available==null)blockers.push('CAPITAL_FACT_UNPROVEN');
   else if(executable+1e-8<input.requiredMarginUsd)blockers.push('INSUFFICIENT_AVAILABLE_MARGIN');

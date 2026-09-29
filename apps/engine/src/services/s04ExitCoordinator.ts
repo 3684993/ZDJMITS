@@ -294,7 +294,7 @@ export class PositionExitCoordinator {
    * many terminal orders still pin a claim, and the interval within which a healthy queue must be
    * fully walked. `terminalUnreleasedClaims` is the direct proof that convergence is not stalled.
    */
-  convergenceStats(now:number,batchLimit:number,intervalMs:number){
+  convergenceStats(now:number,batchLimit:number,intervalMs:number,queryDeadlineMs=30_000){
     const open=this.journal.query<{id:string;state:string;next_eligible_at:number;last_attempt_at:number;attempt_count:number;payload:string}>(
       `SELECT id,state,next_eligible_at,last_attempt_at,attempt_count,payload FROM v396_exit_tasks WHERE state IN ${OPEN_STATE_SQL}`);
     const neverPolled=open.filter(row=>Number(row.last_attempt_at)===0).length;
@@ -320,7 +320,9 @@ export class PositionExitCoordinator {
       evaluatedAt:now,openTasks:open.length,eligibleNow:open.filter(row=>Number(row.next_eligible_at)<=now).length,
       neverPolled,oldestUnpolledAgeMs,nextEligibleAt:nextDue.length?Math.min(...nextDue):null,
       terminalUnreleasedClaims:terminalUnreleased,batchLimit:batch,intervalMs,
-      maxServiceIntervalMs:fullWalkRounds*intervalMs,fullWalkRounds,
+      nominalServiceIntervalMs:fullWalkRounds*intervalMs,
+      maxServiceIntervalMs:fullWalkRounds*(intervalMs+batch*queryDeadlineMs+5_000),fullWalkRounds,
+      serviceBoundBasis:'FIXED_QUEUE_PER_QUERY_DEADLINE_PLUS_CADENCE_EXCLUDES_FAILURE_BACKOFF',queryDeadlineMs,
       fairness:'PERSISTED_ROUND_ROBIN_NEXT_ELIGIBLE_THEN_LAST_ATTEMPT',
       schedulingColumnsPresent:this.journal.query<{name:string}>('PRAGMA table_info(v396_exit_tasks)').map(row=>String(row.name)).filter(name=>(EXIT_TASK_SCHEDULING_COLUMNS as readonly string[]).includes(name)).length,
     };

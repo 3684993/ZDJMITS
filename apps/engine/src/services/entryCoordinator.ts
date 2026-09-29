@@ -1,3 +1,4 @@
+import { evaluateEntryExecutionPermit } from './entryPermissionModel.js';
 import {reservationDebitsAvailableFunds} from './entryFundingCommitment.js';
 import { testnetFundsOnlyEntry } from '@zdj/core';
 import { buildOpportunityEvidence, qualityPolicy } from './opportunityEvidence.js';
@@ -309,6 +310,12 @@ export class EntryCoordinator {
     }
     const pendingRiskExposures=collectPendingEntryRiskExposures(this.state,{now,excludeReservationId:reservation.id,excludeOrderId:order?.id??null,priorityReservationId:reservation.id}),actualNotional=order?order.quantity*order.price:Number(plan?.notionalUsd??0),minimumNotional=Math.max(1,Number(snapshot.quote.minNotional??0)),risk=computeExecutableRiskHeadroom({settings:this.state.settings,equity:Number(this.state.account.equityUsd??0),positions:[...this.state.positions.values()],pendingRiskExposures,symbol,side:intent.side,plannedNotional:actualNotional,expectedAdverseMovePct:Math.max(.001,snapshot.technical['15m'].atrPercent/100),dailyDrawdownPct:Number(this.state.account.riskBaseline?.riskDrawdownPct??0),capital:candidateCapitalCapacity({quoteAsset,availableBalanceUsd:available,reservedMarginUsd:otherReserved,executionLeaseMarginUsd:0,leverage:intent.leverage,leverageFact:leverageFactOf(intent.leverage),minimumNotionalUsd:minimumNotional,reserveMarginBufferPct:testnetFundsOnlyEntry(this.state.settings)?0:undefined}),minimumNotional});
     this.events.publish('FINAL_ORDER_RISK_EVALUATED',{stage:'FINAL_ORDER',factVersion:risk.factVersion,equity:risk.equity,clusterKey:risk.clusterKey,remaining:risk.remaining,plannedNotional:Number(plan?.notionalUsd??0),actualNotional,pendingRiskNotionalUsd:risk.pendingRiskNotional,blocker:risk.executable&&actualNotional<=risk.finalNotional+1e-8?'PASS':risk.reason==='PASS'?'FINAL_NOTIONAL_EXCEEDS_HEADROOM':risk.reason},symbol);
+    if(testnetFundsOnlyEntry(this.state.settings)){
+      const permit=evaluateEntryExecutionPermit({state:this.state,symbol,side:intent.side,quoteAsset,requiredMarginUsd:actualNotional/intent.leverage,excludeReservationId:reservation.id,
+        authorization:{valid:true,expiresAt:Math.min(Number(intent.aiAuthorizationExpiresAt??intent.absoluteExpiresAt),intent.absoluteExpiresAt),identity:order?.clientOrderId??intent.id},filtersComplete:true,durableStorageReady:true,now});
+      this.events.publish('ENTRY_EXECUTION_PERMIT_EVALUATED',{intentId:intent.id,brainRunId:intent.brainRunId,stage:'FINAL_JIT',permit},symbol);
+      return permit.firstCause;
+    }
     if(!risk.executable)return`RISK_${risk.reason}`;
     return actualNotional<=risk.finalNotional+1e-8?null:'RISK_FINAL_NOTIONAL_EXCEEDS_HEADROOM';
   }

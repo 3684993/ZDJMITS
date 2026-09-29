@@ -97,7 +97,7 @@ export function assembleTargetSelection(input:{
 }):TargetSelection{
   const economics=input.economics(input.chosen.price);
   const meetsFloor=economics?economics.expectedNetProfit>=economics.requiredNetProfit:null;
-  const warning=economics&&economics.expectedNetProfit<economics.requiredNetProfit&&input.chosen.authorized
+  const warning=economics&&economics.expectedNetProfit<economics.requiredNetProfit
     ?{expectedNetProfit:economics.expectedNetProfit,requiredNetProfit:economics.requiredNetProfit,shortfallUsd:economics.requiredNetProfit-economics.expectedNetProfit}
     :null;
   return{

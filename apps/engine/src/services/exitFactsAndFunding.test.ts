@@ -1,8 +1,9 @@
+import {DatabaseSync} from 'node:sqlite';
 import {mkdtemp,rm} from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import {afterEach,describe,expect,it} from 'vitest';
-import {FundingIncomeLedger} from './fundingIncomeLedger.js';
+import {FundingIncomeLedger,cycleFundingFact} from './fundingIncomeLedger.js';
 import {convertToBaseUnit} from './quoteFxPolicy.js';
 import {executableDepth} from './orderBookDepth.js';
 import {AiFabric} from './aiFabric.js';
@@ -169,6 +170,9 @@ describe('P6 bounded fairness on the shared Primary endpoint',()=>{
     const ai=makeFabric(),now=Date.now();
     ai.noteReviewOwed(now-1_000);
     expect(choose(ai).id).toBe('primary');
+    expect(ai.reviewFairness(now).reviewOwedSince).toBe(now-1000);
+    expect(choose(ai).id).toBe('primary');
+    expect(ai.reviewFairness(now+21000).heldForReview).toBe(true);
   });
   it('the reservation is spent once the review has taken its bounded share',()=>{
     const ai=makeFabric(),now=Date.now();
@@ -184,4 +188,34 @@ describe('P6 bounded fairness on the shared Primary endpoint',()=>{
     expect(()=>choose(ai)).toThrow(/AI_RESOURCE_BUSY/);
     expect(ai.hasCapacity('PRIMARY_BRAIN')).toBe(false);
   });
+});
+
+it('joins adjacent proven coverage windows but never bridges an unobserved gap',async()=>{
+  const ledger=await ledgerAt();
+  ledger.recordCoverage({asset:'USDT',sinceMs:1000,untilMs:2000,pages:1,rows:0,complete:true});
+  ledger.recordCoverage({asset:'USDT',sinceMs:2000,untilMs:3000,pages:1,rows:0,complete:true});
+  expect(ledger.attribution({asset:'USDT',symbol:'BRUSDT',fromMs:1100,toMs:2900}).status).toBe('EXACT');
+  expect(ledger.coverageSummary().coveredUntilMs).toBe(3000);
+  ledger.recordCoverage({asset:'USDT',sinceMs:4000,untilMs:5000,pages:1,rows:0,complete:true});
+  expect(ledger.attribution({asset:'USDT',symbol:'BRUSDT',fromMs:1100,toMs:4900}).status).toBe('UNKNOWN');ledger.close();
+});
+it('never synthesizes income identity or attributes one nonzero hedge income to two cycles',async()=>{
+  const ledger=await ledgerAt();
+  expect(ledger.recordRows([{asset:'USDT',time:1500,income:1}]).rejected).toHaveLength(1);
+  ledger.recordRows([{incomeId:'shared',asset:'USDT',symbol:'BRUSDT',incomeType:'FUNDING_FEE',income:1,time:1500}]);
+  ledger.recordCoverage({asset:'USDT',sinceMs:1000,untilMs:3000,pages:1,rows:1,complete:true});
+  const r={tradeId:'a',symbol:'BRUSDT',openedAt:1100,closedAt:2000};
+  expect(cycleFundingFact(ledger,r,[r],2500).status).toBe('EXACT');
+  expect(cycleFundingFact(ledger,r,[r,{...r,tradeId:'b'}],2500).reason).toBe('FUNDING_CYCLE_ALLOCATION_AMBIGUOUS');
+  expect(cycleFundingFact(ledger,{...r,closedAt:null,fundingAttributionStatus:'EXACT'},[r],4000).status).toBe('UNKNOWN');ledger.close();
+});
+
+it('migrates income identity transactionally, preserving rows across reopen and account scopes',async()=>{
+  const dir=await mkdtemp(path.join(os.tmpdir(),'zdj-funding-migration-'));dirs.push(dir);const file=path.join(dir,'ownership.sqlite');
+  const db=new DatabaseSync(file);db.exec('CREATE TABLE v396_funding_income(income_id TEXT PRIMARY KEY,environment TEXT NOT NULL,account_id TEXT NOT NULL,asset TEXT NOT NULL,symbol TEXT,income_type TEXT NOT NULL,income REAL NOT NULL,time INTEGER NOT NULL,source TEXT NOT NULL,observed_at INTEGER NOT NULL)');
+  db.prepare('INSERT INTO v396_funding_income VALUES(?,?,?,?,?,?,?,?,?,?)').run('same','TESTNET','a','USDT','BRUSDT','FUNDING_FEE',1,1500,'EXCHANGE',1600);db.close();
+  const row={incomeId:'same',asset:'USDT',symbol:'BRUSDT',incomeType:'FUNDING_FEE',income:2,time:1500};
+  const a=new FundingIncomeLedger(file,()=>({environment:'TESTNET',account:'a'}));expect(a.recordRows([row]).duplicates).toBe(1);a.close();
+  const b=new FundingIncomeLedger(file,()=>({environment:'TESTNET',account:'b'}));expect(b.recordRows([row]).inserted).toBe(1);b.close();
+  const reopened=new FundingIncomeLedger(file,()=>({environment:'TESTNET',account:'a'}));expect(reopened.rowsFor({asset:'USDT',fromMs:1000,toMs:2000})[0].income).toBe(1);reopened.close();
 });

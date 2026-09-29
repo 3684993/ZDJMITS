@@ -22,8 +22,8 @@ export type FundingCoverage={environment:string;accountId:string;asset:string;si
 
 const DDL=`
 CREATE TABLE IF NOT EXISTS v396_funding_income(
-  income_id TEXT PRIMARY KEY,environment TEXT NOT NULL,account_id TEXT NOT NULL,asset TEXT NOT NULL,symbol TEXT,
-  income_type TEXT NOT NULL,income REAL NOT NULL,time INTEGER NOT NULL,source TEXT NOT NULL,observed_at INTEGER NOT NULL);
+  income_id TEXT NOT NULL,environment TEXT NOT NULL,account_id TEXT NOT NULL,asset TEXT NOT NULL,symbol TEXT,
+  income_type TEXT NOT NULL,income REAL NOT NULL,time INTEGER NOT NULL,source TEXT NOT NULL,observed_at INTEGER NOT NULL,PRIMARY KEY(environment,account_id,income_type,income_id));
 CREATE INDEX IF NOT EXISTS v396_funding_income_symbol_time ON v396_funding_income(environment,account_id,symbol,time);
 CREATE INDEX IF NOT EXISTS v396_funding_income_time ON v396_funding_income(environment,account_id,asset,time);
 CREATE TABLE IF NOT EXISTS v396_funding_coverage(environment TEXT NOT NULL,account_id TEXT NOT NULL,asset TEXT NOT NULL,
@@ -43,6 +43,12 @@ export class FundingIncomeLedger {
     this.db=new DatabaseSync(file);
     this.db.exec('PRAGMA busy_timeout=3000;');
     this.db.exec(DDL);
+    const cols=this.db.prepare('PRAGMA table_info(v396_funding_income)').all() as Array<{name:string;pk:number}>;
+    if(cols.filter(c=>c.pk>0).length===1){
+      this.db.exec('BEGIN IMMEDIATE');
+      try{this.db.exec('ALTER TABLE v396_funding_income RENAME TO v396_funding_income_legacy_identity');this.db.exec(DDL);this.db.exec('INSERT INTO v396_funding_income SELECT * FROM v396_funding_income_legacy_identity; DROP TABLE v396_funding_income_legacy_identity;');this.db.exec(DDL);this.db.exec('COMMIT');}
+      catch(error){this.db.exec('ROLLBACK');throw error;}
+    }
   }
 
   /** Idempotent by the exchange's own income id, so a re-run of the same import changes nothing. */
@@ -53,10 +59,10 @@ export class FundingIncomeLedger {
     try{
       for(const row of rows){
         const asset=text(row.asset),time=Number(row.time??row.transactionTime),income=Number(row.income);
-        const incomeId=text(row.incomeId??row.tranId)??(asset&&Number.isFinite(time)?`synth:${asset}:${time}:${income}`:null);
+        const incomeId=text(row.incomeId??row.tranId);
         if(!environment||!accountId||!incomeId||!asset||!Number.isFinite(time)||!Number.isFinite(income)){rejected.push(String(row.incomeId??'ROW_IDENTITY_MISSING'));continue;}
         const statement=this.db.prepare(`INSERT INTO v396_funding_income(income_id,environment,account_id,asset,symbol,income_type,income,time,source,observed_at)
-          VALUES(?,?,?,?,?,?,?,?,?,?) ON CONFLICT(income_id) DO NOTHING`);
+          VALUES(?,?,?,?,?,?,?,?,?,?) ON CONFLICT(environment,account_id,income_type,income_id) DO NOTHING`);
         const result=statement.run(incomeId,environment,accountId,asset,text(row.symbol),numberType(row.incomeType),income,Math.trunc(time),String(row.source??'INCOME_READ'),Math.trunc(Number(row.observedAt??Date.now())));
         if(result.changes)inserted++;else duplicates++;
       }
@@ -97,14 +103,16 @@ export class FundingIncomeLedger {
     const funding=rows.filter(row=>String(row.income_type)==='FUNDING_FEE');
     const coverage=this.db.prepare('SELECT * FROM v396_funding_coverage WHERE environment=? AND account_id=? AND asset=? ORDER BY since_ms').all(this.identity().environment,this.identity().account,input.asset) as Array<Record<string,unknown>>;
     const enclosing=coverage.filter(row=>Number(row.since_ms)<=input.fromMs&&Number(row.until_ms)>=input.toMs&&Number(row.complete)===1);
-    const exact=enclosing.length>0;
+    let through=input.fromMs;const completeWindows=coverage.filter(row=>Number(row.complete)===1);
+    for(const row of completeWindows){if(Number(row.since_ms)>through)break;if(Number(row.until_ms)>=through)through=Math.max(through,Number(row.until_ms));}
+    const exact=Number.isFinite(input.fromMs)&&Number.isFinite(input.toMs)&&input.fromMs>0&&input.toMs>=input.fromMs&&through>=input.toMs;
     const total=funding.reduce((sum,row)=>sum+Number(row.income),0);
     return{
       status:exact?'EXACT':'UNKNOWN' as 'EXACT'|'UNKNOWN',
       fundingUsd:exact?total:null,
       observedFundingRows:funding.length,
       coverageComplete:exact,
-      coverage:enclosing.length?{sinceMs:Number(enclosing[0].since_ms),untilMs:Number(enclosing[0].until_ms),pages:Number(enclosing[0].pages),rows:Number(enclosing[0].rows)}:null,
+      coverage:exact?{sinceMs:input.fromMs,untilMs:through,pages:completeWindows.reduce((n,r)=>n+Number(r.pages),0),rows:funding.length}:null,
       // Reported separately so a partial import is never read as "there was no funding".
       partialCoverageRows:coverage.filter(row=>Number(row.complete)!==1).length,
       reason:exact?null:coverage.length?'COVERAGE_DOES_NOT_ENCLOSE_WINDOW':'COVERAGE_UNRECORDED',
@@ -114,13 +122,24 @@ export class FundingIncomeLedger {
   coverageSummary(){
     const identity=this.identity();
     const rows=this.db.prepare('SELECT asset,COUNT(*) c,MIN(time) mn,MAX(time) mx FROM v396_funding_income WHERE environment=? AND account_id=? GROUP BY asset').all(identity.environment,identity.account) as Array<{asset:string;c:number;mn:number;mx:number}>;
-    const coverage=this.db.prepare('SELECT asset,SUM(complete) complete_windows,COUNT(*) windows,MAX(until_ms) until_ms FROM v396_funding_coverage WHERE environment=? AND account_id=? GROUP BY asset').all(identity.environment,identity.account) as Array<{asset:string;complete_windows:number;windows:number;until_ms:number}>;
+    const coverage=this.db.prepare('SELECT asset,SUM(complete) complete_windows,COUNT(*) windows,MAX(CASE WHEN complete=1 THEN until_ms END) until_ms FROM v396_funding_coverage WHERE environment=? AND account_id=? GROUP BY asset').all(identity.environment,identity.account) as Array<{asset:string;complete_windows:number;windows:number;until_ms:number}>;
     const fundingRows=this.db.prepare("SELECT COUNT(*) c FROM v396_funding_income WHERE environment=? AND account_id=? AND income_type='FUNDING_FEE'").all(identity.environment,identity.account)[0] as {c:number};
     return{rows:rows.reduce((sum,row)=>sum+Number(row.c),0),fundingRows:Number(fundingRows.c??0),byAsset:rows,coverage,
       complete:coverage.length>0&&coverage.every(row=>Number(row.complete_windows)>0),
-      coveredSinceMs:rows.length?Math.min(...rows.map(row=>Number(row.mn))):null,
-      coveredUntilMs:rows.length?Math.max(...rows.map(row=>Number(row.mx))):null};
+      coveredSinceMs:coverage.length?Number((this.db.prepare('SELECT MIN(since_ms) n FROM v396_funding_coverage WHERE environment=? AND account_id=? AND complete=1').get(identity.environment,identity.account) as any)?.n??0)||null:null,
+      coveredUntilMs:coverage.length?Math.max(...coverage.map(row=>Number(row.until_ms))):null};
   }
 
   close(){this.db.close();}
+}
+
+/** Income lacks hedge-side identity. Nonzero overlapping cycles cannot each own the whole amount. */
+export function cycleFundingFact(ledger:FundingIncomeLedger,record:any,records:any[],now:number){
+  const asset=String(record.symbol).endsWith('USDC')?'USDC':String(record.symbol).endsWith('USDT')?'USDT':'UNKNOWN';
+  const fromMs=Number(record.openedAt??0),toMs=Number(record.closedAt??record.observedClosedAt??now);
+  const fact=ledger.attribution({asset,symbol:record.symbol,fromMs,toMs});
+  const overlaps=records.some(other=>other.tradeId!==record.tradeId&&!other.duplicateOf&&other.canonical!==false&&other.symbol===record.symbol&&
+    Number(other.openedAt??0)<=toMs&&Number(other.closedAt??other.observedClosedAt??now)>=fromMs);
+  const reason=asset!=='USDT'?'FUNDING_BASE_CONVERSION_UNPROVEN':overlaps&&fact.observedFundingRows>0?'FUNDING_CYCLE_ALLOCATION_AMBIGUOUS':fact.reason;
+  return {...fact,status:reason?'UNKNOWN' as const:fact.status,fundingUsd:reason?null:fact.fundingUsd,reason};
 }

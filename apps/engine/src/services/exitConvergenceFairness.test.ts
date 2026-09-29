@@ -98,7 +98,8 @@ describe('P1 exit convergence fairness',()=>{
     const stats=any(healthy);
     expect(stats.oldestUnpolledAgeMs).toBeGreaterThanOrEqual(0);
     expect(stats.batchLimit).toBe(BATCH);
-    expect(stats.maxServiceIntervalMs).toBe(Math.ceil(stats.openTasks/BATCH)*INTERVAL);
+    expect(stats.nominalServiceIntervalMs).toBe(Math.ceil(stats.openTasks/BATCH)*INTERVAL);
+    expect(stats.maxServiceIntervalMs).toBe(Math.ceil(stats.openTasks/BATCH)*(INTERVAL+BATCH*stats.queryDeadlineMs+5000));
   });
 
   it('readback reports queue length, oldest unpolled age and terminal-unreleased claims',async()=>{

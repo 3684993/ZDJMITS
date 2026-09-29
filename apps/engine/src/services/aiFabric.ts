@@ -175,6 +175,8 @@ export class AiFabric {
   private reviewReservationMs(){return Math.max(15_000,Number((this.state.settings.riskGovernance as any)?.exitCoordination?.reviewMinIntervalMs??300_000));}
   private reviewSharePercent(){const value=Number((this.state.settings.riskGovernance as any)?.exitCoordination?.reviewCapacitySharePercent??25);return Number.isFinite(value)?Math.min(50,Math.max(0,value)):25;}
   /** A review became owed at `at`; the first such call owns the reservation until it is served. */
+  clearReviewOwed(){this.reviewOwedSince=null;}
+  reviewAvailable(){try{this.choose('PRIMARY_BRAIN',undefined,'REVIEW');return true;}catch{return false;}}
   noteReviewOwed(at=Date.now()){if(this.reviewOwedSince==null)this.reviewOwedSince=at;}
   /** One rule, read by both the decision and the operator projection. */
   private reviewHeld(now=Date.now()){
@@ -202,7 +204,8 @@ export class AiFabric {
     if(role==='PRIMARY_BRAIN'&&waiter==='ENTRY'&&this.reviewOwedSince!=null){
       if(this.reviewHeld())throw new Error(`AI_PRIMARY_HELD_FOR_REVIEW:${Math.round(Date.now()-this.reviewOwedSince)}ms`);
       // Its bounded share has been served, so the reservation is spent and Entry proceeds.
-      this.reviewOwedSince=null;
+      const served=this.recentPrimaryServes(Date.now());
+      if(served.reviews>0&&served.reviews*100>=Math.max(1,served.total)*this.reviewSharePercent())this.reviewOwedSince=null;
     }
     return [...choices].sort((a,b)=>(this.load.get(a.id)?.active??0)-(this.load.get(b.id)?.active??0)||(this.load.get(a.id)?.lastLatencyMs??0)-(this.load.get(b.id)?.lastLatencyMs??0))[0]!;
   }

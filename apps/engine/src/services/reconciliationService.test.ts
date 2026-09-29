@@ -37,3 +37,5 @@ it('does not coerce missing claim facts or missing reduce-only evidence into zer
     manualUnknownDetails:[{id:'m',positionId:'p',intentId:'missing',reduceOnly:null}]});
   expect(state.manualOrders.get('m')?.status).toBe('UNKNOWN');
 });
+
+it('preserves BUY/SELL manual order side when generic open-order facts use LONG/SHORT',async()=>{const state=new RuntimeState(settings);const local:any={id:'manual-side',intentId:'mi',symbol:'BTCUSDT',side:'SELL',positionSide:'LONG',reduceOnly:true,clientOrderId:'manual-client',exchangeOrderId:'manual-exchange',quantity:1,filledQuantity:0,status:'WORKING'};state.manualOrders.set(local.id,local);const remote={...local,side:'SHORT',factSource:'BINANCE_OPEN_ORDERS'};const service=new ReconciliationService({fetchOpenOrders:vi.fn(async()=>[remote]),fetchPositions:vi.fn(async()=>[])} as never,state,new EventBus(),{ensure:vi.fn()} as never);await service.run();expect(state.manualOrders.get(local.id)).toMatchObject({side:'SELL',positionSide:'LONG',status:'WORKING'});});

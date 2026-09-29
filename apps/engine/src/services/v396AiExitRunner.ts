@@ -11,7 +11,7 @@ import {confirmedTpSubmissionRejection} from './tpSubmissionOutcome.js';
 import {executableDepth} from './orderBookDepth.js';
 import {convertToBaseUnit,type QuoteConversion} from './quoteFxPolicy.js';
 import {resolveQuoteAsset} from '@zdj/core';
-import type {FundingIncomeLedger} from './fundingIncomeLedger.js';
+import {cycleFundingFact, type FundingIncomeLedger} from './fundingIncomeLedger.js';
 
 /**
  * J1: the only production consumer of an AI-initiated exit. It decides from durable facts and may
@@ -57,8 +57,10 @@ export class V396AiExitRunner {
   private fees(){
     const tp=this.ports.state.settings.takeProfit as any;
     const takerRate=Number(tp?.takerFeeRate??NaN),makerRate=Number(tp?.makerFeeRate??NaN);
-    const slipBps=Number(tp?.slippageBufferPct??NaN)*100,safetyBps=Number(tp?.feeSafetyBufferPct??NaN)*100;
-    const uncertainty=Number.isFinite(slipBps)&&slipBps>0?slipBps:(Number.isFinite(safetyBps)&&safetyBps>0?safetyBps:NaN);
+    const slipBps=Number(tp?.slippageBufferPct??NaN)*100;
+    const exitRate=tp?.exitFeeAssumption==='MAKER'?makerRate:takerRate;
+    const safetyBps=(Number(tp?.entryFeeRate??NaN)+exitRate)*Number(tp?.feeSafetyBufferPct??NaN)/100*10_000;
+    const uncertainty=slipBps+safetyBps;
     return{takerRate,makerRate,assumption:(tp?.exitFeeAssumption==='MAKER'?'MAKER':'TAKER') as 'MAKER'|'TAKER',uncertaintyBufferBps:uncertainty};
   }
 
@@ -105,13 +107,12 @@ export class V396AiExitRunner {
       const quoteAsset=resolveQuoteAsset(position.symbol);
       const boundPrice=position.side==='LONG'?Number(quote.bid??NaN):Number(quote.ask??NaN);
       const depth=executableDepth({side:position.side,quantity:Number(position.quantity??0),boundPrice,book,now,maxAgeMs:Math.max(15_000,Number(coordination.reviewMinIntervalMs??300_000))});
-      const funding=this.ports.fundingLedger?.attribution({asset:quoteAsset,symbol:position.symbol,
-        fromMs:Number(position.openedAt??0)>0?Number(position.openedAt):0,toMs:now});
       const record=records.length===1?records[0]:null;
+      const funding=record&&this.ports.fundingLedger?cycleFundingFact(this.ports.fundingLedger,record,[...this.ports.state.tradeRecords.values()],now):null;
       // An exact ledger attribution updates the record it belongs to rather than replacing it in the
       // estimator input, so the accounting row and the exit fact cannot disagree silently.
-      if(record&&funding&&funding.status==='EXACT'&&record.fundingAttributionStatus!=='EXACT'){
-        this.ports.state.tradeRecords.set(record.tradeId,{...record,funding:funding.fundingUsd,fundingAttributionStatus:'EXACT',pnlBasis:'CANONICAL_NET_WITH_FUNDING_UNKNOWN'} as never);
+      if(record&&funding){
+        this.ports.state.tradeRecords.set(record.tradeId,{...record,funding:funding.fundingUsd,fundingAttributionStatus:funding.status,pnlBasis:'CANONICAL_NET_WITH_FUNDING_UNKNOWN'} as never);
       }
       const fxQuote=this.quoteConversion(quoteAsset,now,Number(coordination.rateMaxAgeMs??60_000));
       const facts=assembleExitCostFacts({
@@ -130,7 +131,7 @@ export class V396AiExitRunner {
       if(depth.reason)facts.blockers.push(`EXIT_DEPTH_UNPROVEN:${depth.reason}`);
       if(fxQuote.status==='RATE_ABSENT'||fxQuote.status==='RATE_STALE')facts.blockers.push(`FX_${fxQuote.status}:${quoteAsset}`);
       if(records.length>1)facts.blockers.push(`CYCLE_RECORD_AMBIGUOUS:${records.length}`);
-      if(!facts.ready||!facts.input){
+      if(!facts.ready||!facts.input||facts.blockers.length){
         report.blocked.push({cycleId,reasons:facts.blockers});
         this.ports.events.publish('AI_EXIT_FACTS_INCOMPLETE',{scope,cycleId,blockers:facts.blockers,authority},position.symbol);
         continue;

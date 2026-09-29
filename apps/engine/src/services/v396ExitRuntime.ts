@@ -362,7 +362,7 @@ export class V396ExitRuntime {
   convergenceStats(now=Date.now()){
     const authority=this.authority();
     const intervalMs=Number(authority.intervalMs??120_000),limit=Math.max(1,Math.min(20,Number(authority.batchLimit??8)));
-    return{...this.recoveryCoordinator.convergenceStats(now,limit,intervalMs),unreleasedClaims:this.recoveryCoordinator.unreleasedClaimInventory().length};
+    return{...this.recoveryCoordinator.convergenceStats(now,limit,intervalMs,this.queryDeadlineMs()),unreleasedClaims:this.recoveryCoordinator.unreleasedClaimInventory().length};
   }
 
   /** J1: is the bounded continuous convergence pass due yet? */
@@ -419,12 +419,12 @@ export class V396ExitRuntime {
    */
   async convergePeriodically(query:(input:{symbol:string;clientOrderId:string})=>Promise<{state:'FOUND';order:any}|{state:'ABSENT';reason:string}>,now=Date.now()){
     const gate=this.convergenceDue(now);
-    if(!gate.due)return{...gate,converged:[] as Array<{clientOrderId:string;outcome:string;state:ExitTaskState|null}>,attempted:0,stats:this.recoveryCoordinator.convergenceStats(now,gate.limit??8,120_000)};
+    if(!gate.due)return{...gate,converged:[] as Array<{clientOrderId:string;outcome:string;state:ExitTaskState|null}>,attempted:0,stats:this.recoveryCoordinator.convergenceStats(now,gate.limit??8,120_000,this.queryDeadlineMs())};
     this.converging=true;this.lastConvergenceAt=now;
     try{
       const pending=this.recoveryCoordinator.fairConvergenceQueue(now,gate.limit);
       const converged=await this.convergeTasks(pending,query,now,gate.intervalMs);
-      return{due:true,intervalMs:gate.intervalMs,limit:gate.limit,converged,attempted:pending.length,stats:this.recoveryCoordinator.convergenceStats(now,gate.limit,gate.intervalMs)};
+      return{due:true,intervalMs:gate.intervalMs,limit:gate.limit,converged,attempted:pending.length,stats:this.recoveryCoordinator.convergenceStats(Date.now(),gate.limit,gate.intervalMs,this.queryDeadlineMs())};
     }
     finally{this.converging=false;}
   }

@@ -55,7 +55,8 @@ import { authoritativePipelineVerdict } from '../services/pipelineVerdict.js';
 import { LossHandoffService } from '../services/lossHandoff.js';
 import { attachOwnershipRuntime, type OwnershipRuntime } from '../services/ownershipRuntime.js';
 import { V396ExitRuntime, exitSubjectFromPosition } from '../services/v396ExitRuntime.js';
-import { FundingIncomeLedger } from '../services/fundingIncomeLedger.js';
+import { accountCycle, cycleFills } from '../services/cycleAccounting.js';
+import { FundingIncomeLedger, cycleFundingFact } from '../services/fundingIncomeLedger.js';
 import { V396AiExitRunner } from '../services/v396AiExitRunner.js';
 import { AiExitAuthorityService } from '../services/aiExitAuthority.js';
 import { PortfolioRiskAdmission } from '../services/portfolioRiskLedger.js';
@@ -538,6 +539,8 @@ export class EngineRuntime {
       // P6: a review that is owed declares the debt so the shared Primary endpoint gives it its
       // bounded share instead of being permanently taken by a continuously queued Entry chain.
       noteOwed: (at: number) => ai.noteReviewOwed?.(at),
+      reviewAvailable: () => ai.reviewAvailable(),
+      clearOwed: () => ai.clearReviewOwed(),
     });
     // J1: the AI exit door has exactly one production consumer. Its plan port returns null until a
     // durable TradePlan exists for the cycle, so even ENFORCE refuses with AI_PLAN_UNPROVEN rather
@@ -1358,7 +1361,7 @@ export class EngineRuntime {
       complete=facts?.complete===true&&Number.isFinite(Number(facts?.coverageStart))&&Number(facts?.coverageStart)<=since&&Number(facts?.coverageEnd??0)>=now;
       pages=Math.max(0,Number(facts?.pages??0));
       symbols=new Set(income.map(row=>String(row.symbol??''))).size;
-      inserted=ledger.recordRows(income.map(row=>({...row,observedAt:now,source:'FUNDING_INCOME_READ'}))).inserted;
+      const imported=ledger.recordRows(income.map(row=>({...row,observedAt:now,source:'FUNDING_INCOME_READ'})));inserted=imported.inserted;if(imported.rejected.length)complete=false;
       const seen=new Set<string>();
       for(const row of income){const asset=String((row as any)?.asset??'').trim().toUpperCase();if(asset)seen.add(asset);}
       assets=[...seen];
@@ -1381,14 +1384,15 @@ export class EngineRuntime {
     if(!ledger)return {attributed:0,unknown:0};
     let attributed=0,unknown=0;
     for(const record of [...this.state.tradeRecords.values()] as any[]){
-      if(record.fundingAttributionStatus==='EXACT')continue;
+
       const openedAt=Number(record.openedAt??0);
       if(!(openedAt>0)){unknown++;continue;}
-      const fact=ledger.attribution({asset:resolveQuoteAsset(record.symbol),symbol:record.symbol,fromMs:openedAt,toMs:Number(record.closedAt??record.observedClosedAt??now)});
-      if(fact.status!=='EXACT'){unknown++;continue;}
-      this.state.tradeRecords.set(record.tradeId,{...record,funding:fact.fundingUsd,fundingAttributionStatus:'EXACT',
+      const fact=cycleFundingFact(ledger,record,[...this.state.tradeRecords.values()],now);
+      if(fact.status!=='EXACT'){unknown++;if(record.fundingAttributionStatus==='EXACT')this.state.tradeRecords.set(record.tradeId,accountCycle({...record,funding:null,fundingAttributionStatus:'UNKNOWN',fundingCoverage:null},cycleFills(this.state,record)));continue;}
+      if(record.fundingAttributionStatus==='EXACT'&&record.funding===fact.fundingUsd&&record.fundingCoverage?.untilMs===fact.coverage?.untilMs)continue;
+      this.state.tradeRecords.set(record.tradeId,accountCycle({...record,funding:fact.fundingUsd,fundingAttributionStatus:'EXACT',
         fundingCoverage:{sinceMs:fact.coverage?.sinceMs??null,untilMs:fact.coverage?.untilMs??null,observedRows:fact.observedFundingRows,attributedAt:now},
-        updatedAt:now} as never);
+        updatedAt:now},cycleFills(this.state,record)));
       attributed++;
       this.events.publish('TRADE_RECORD_FUNDING_ATTRIBUTED',{tradeId:record.tradeId,cycleId:record.cycleId,funding:fact.fundingUsd,observedRows:fact.observedFundingRows,coverage:fact.coverage},record.symbol);
     }

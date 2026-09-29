@@ -1085,6 +1085,11 @@ export class SettingsStore {
       const mode=isolation?.mode??'UNDERLYING_LEGACY';
       const submissionKey=isolation?.submissionKey??value.intent.id;
       const isolationKey=isolation?.isolationKey??scope;
+      const client=String(value.order.clientOrderId??'');
+      if(client){
+        const collision=this.db.prepare("SELECT payload FROM entry_execution_tasks WHERE (CASE WHEN json_valid(scope) AND json_valid(?) THEN json_extract(scope,'$[0]')=json_extract(?,'$[0]') AND json_extract(scope,'$[1]')=json_extract(?,'$[1]') ELSE scope=? END) AND (CASE WHEN json_valid(payload) THEN json_extract(payload,'$.order.clientOrderId') END)=? AND intent_id<>? LIMIT 1").get(scope,scope,scope,scope,client,value.intent.id) as {payload:string}|undefined;
+        if(collision){const record=JSON.parse(collision.payload);return{acquired:false,cause:'SUBMISSION_IDENTITY_CONFLICT',record,conflict:describeClaimConflict(record),maySubmit:false,mustQueryFirst:false};}
+      }
       const own=this.db.prepare('SELECT active,released_at,payload FROM entry_execution_tasks WHERE intent_id=?').get(value.intent.id) as {active:number;released_at:number;payload:string}|undefined;
       // A released identity is never re-armed, not even by the retry path: the exchange already proved
       // this client order id terminal, so reviving it would fork a second order under one identity.
@@ -1096,13 +1101,15 @@ export class SettingsStore {
         const record=JSON.parse(blocking[0].payload) as EntryExecutionRecord;
         const sameIntent=String(record?.intent?.id??'')===String(value.intent.id);
         const order=record?.order??{} as any;
-        const unacknowledged=['SUBMITTING','UNKNOWN'].includes(String(order.status??''));
+        const mismatched=['symbol','side','clientOrderId','quantity','price'].some(key=>String((order as any)[key]??'')!==String((value.order as any)[key]??''));
+        if(sameIntent&&mismatched)return{acquired:false,cause:'SUBMISSION_IDENTITY_CONFLICT',record,conflict:describeClaimConflict(record),maySubmit:false,mustQueryFirst:false};
+        const unacknowledged=['NEW','SUBMITTING','UNKNOWN','WORKING','PARTIALLY_FILLED'].includes(String(order.status??''));
         return{acquired:false,
           cause:(sameIntent?(unacknowledged?'SAME_INTENT_UNACKNOWLEDGED_RECOVER':'SAME_INTENT_REPLAY'):'SUBMISSION_IDENTITY_CONFLICT') as EntryClaimCause,
           record,conflict:describeClaimConflict(record),
           // Only the caller that owns the identity may re-submit; an unacknowledged order must be
           // queried by its own client order id, never sent a second time.
-          maySubmit:sameIntent&&!unacknowledged&&activeOrderStatus(String(order.status??'')),mustQueryFirst:sameIntent&&unacknowledged};
+          maySubmit:false,mustQueryFirst:sameIntent&&unacknowledged};
       }
       if(mode==='UNDERLYING_LEGACY'){
         // The stored active bit is only a materialized claim: an expired or malformed no-active-risk

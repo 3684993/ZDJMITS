@@ -290,3 +290,20 @@ describe('P2 lot attribution primitives',()=>{
     expect(twice.remainingQty).toBe(0);
   });
 });
+
+it('fractional contract fills preserve the exchange price, including duplicate delivery',()=>{
+  const h=harness();const order=h.addEntryLot('BRUSDT',0.2,100,1000);
+  expect(h.state.entryOrders.get(order.id)?.price).toBe(100);
+  const fill=h.state.executionFills[0];h.service.recordExchangeFill(fill as any);
+  expect(h.state.entryOrders.get(order.id)?.price).toBe(100);
+  expect(h.record().entryQty).toBeCloseTo(0.2);
+});
+
+it('one-way v396x exit uses durable order side instead of treating BUY as a new LONG',()=>{
+  const h=harness('SHORT');h.addEntryLot('BRUSDT',6,100,1000);
+  const record=h.record();h.state.tpOrders.set('exit',any({id:'exit',symbol:'BRUSDT',clientOrderId:'v396x_proven',exchangeOrderId:'x1',side:'BUY',positionId:'pos_BRUSDT_SHORT',cycleId:record.cycleId,quantity:6,price:99,status:'WORKING',createdAt:1500,updatedAt:1500}));
+  const result=h.service.recordExchangeFill(any({symbol:'BRUSDT',clientOrderId:'v396x_proven',orderId:'x1',positionSide:'BOTH',side:'BUY',fillId:'oneway',tradeId:'oneway',qty:6,price:99,executionTime:2000,realizedPnl:6,commission:.1,commissionAsset:'USDT',maker:true}));
+  expect(result.fill.direction).toBe('SHORT');expect(result.stage).toBe('EXIT');expect(h.record().status).toBe('CLOSED');
+});
+
+it('manual ADD is an entry lot and never creates an entry-order row from a manual order',()=>{const h=harness();h.addEntryLot('BRUSDT',6,100,1000);const cycleId=h.record().cycleId;h.state.manualOrders.set('add',any({id:'add',intentId:'mi',symbol:'BRUSDT',clientOrderId:'manual_add',exchangeOrderId:'ma1',side:'BUY',positionSide:'LONG',reduceOnly:false,cycleId,quantity:2,status:'WORKING'}));const result=h.service.recordExchangeFill(any({symbol:'BRUSDT',clientOrderId:'manual_add',orderId:'ma1',positionSide:'BOTH',side:'BUY',fillId:'add-fill',tradeId:'add-fill',qty:2,price:101,executionTime:2000,realizedPnl:0,commission:.1,commissionAsset:'USDT',maker:true}));expect(result.stage).toBe('ENTRY');expect(result.fill.direction).toBe('LONG');expect(h.state.entryOrders.has('add')).toBe(false);expect(h.record().entryQty).toBe(8);});

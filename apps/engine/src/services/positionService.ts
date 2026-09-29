@@ -63,7 +63,7 @@ export class PositionService {
         this.state.tradeRecords.set(linked.tradeId,linked);
       }}
     const intent=entryOrder?this.state.entryIntents.get(entryOrder.intentId):undefined;
-    if(entryOrder&&record.status!=='CLOSED'&&!record.observedClosedAt){const linked=TradeRecordSchema.parse({...record,status:'OPEN',source:'SYSTEM',classification:'PARTIAL',entryIntentId:entryOrder.intentId,entryRunId:intent?.brainRunId??record.entryRunId,cycleId:transition.lifecycle.cycleId,entryOrderIds:[...new Set([...record.entryOrderIds,entryOrder.id,...(entryOrder.exchangeOrderId&&this.state.executionFills.some(f=>f.symbol===remote.symbol&&f.orderId===entryOrder.exchangeOrderId)?[entryOrder.exchangeOrderId]:[])])],linkedFillIds:[...new Set([...record.linkedFillIds,...this.state.executionFills.filter(f=>f.symbol===remote.symbol&&f.direction===remote.side&&f.orderId===entryOrder.exchangeOrderId).map(f=>f.fillId)])],entryQty:record.entryQty,entryAveragePrice:record.entryAveragePrice,entryGrossNotional:record.entryGrossNotional,updatedAt:Date.now()});this.state.tradeRecords.set(linked.tradeId,linked);}
+    if(entryOrder&&record.status!=='CLOSED'&&!record.observedClosedAt){const linked=TradeRecordSchema.parse({...this.state.tradeRecords.get(record.tradeId)??record,status:'OPEN',source:'SYSTEM',classification:'PARTIAL',entryIntentId:entryOrder.intentId,entryRunId:intent?.brainRunId??record.entryRunId,cycleId:transition.lifecycle.cycleId,entryOrderIds:[...new Set([...record.entryOrderIds,entryOrder.id,...(entryOrder.exchangeOrderId&&this.state.executionFills.some(f=>f.symbol===remote.symbol&&f.orderId===entryOrder.exchangeOrderId)?[entryOrder.exchangeOrderId]:[])])],linkedFillIds:[...new Set([...record.linkedFillIds,...this.state.executionFills.filter(f=>f.symbol===remote.symbol&&f.direction===remote.side&&f.orderId===entryOrder.exchangeOrderId).map(f=>f.fillId)])],entryQty:record.entryQty,entryAveragePrice:record.entryAveragePrice,entryGrossNotional:record.entryGrossNotional,updatedAt:Date.now()});this.state.tradeRecords.set(linked.tradeId,linked);}
     if(transition.transition==='REDUCE'&&record.status!=='CLOSED'){const current=this.state.tradeRecords.get(record.tradeId)??record,next=TradeRecordSchema.parse({...current,status:'PARTIALLY_CLOSED',closedAt:null,updatedAt:Date.now()});this.state.tradeRecords.set(next.tradeId,next);}
     this.events.publish('POSITION_LIFECYCLE_TRANSITION',{positionId:remote.id,transition:transition.transition,previousQty:transition.lifecycle.previousQty,currentQty:remote.quantity},remote.symbol);return transition;
   }
@@ -76,7 +76,7 @@ export class PositionService {
    * second one - which is what made an aggregated take-profit overshoot its own Entry quantity (R4).
    */
   private cycleForFill(owner:TradeRecord|undefined,symbol:string,side:'LONG'|'SHORT',stage:'ENTRY'|'EXIT',position:Position|undefined,seedCycleId:string|null,quantity:number,at:number,lotId:string|null):{cycleId:string;openedAt:number;firstObservedAt:number}{
-    const ownerCycle=owner?.positionCycleId??owner?.cycleId;
+    const ownerCycle=owner?.cycleId??owner?.positionCycleId;
     // A replay of the same exchange fill must resolve to the cycle it was first booked against and
     // must not disturb the lifecycle: re-observing a closed cycle is how a duplicate report used to
     // silently open a second one.
@@ -91,8 +91,10 @@ export class PositionService {
   }
   recordExchangeFill(input:Omit<ExecutionFill,'direction'|'commissionUsd'|'source'> & {direction?:'LONG'|'SHORT';commissionUsd?:number|null;source?:'USER_DATA_WS'|'EXCHANGE_AUDIT'} & {entryLotId?:string|null}){
     const owner=exactCycleRecord(this.state,input);
-    const direction=owner?.direction??input.direction??(input.positionSide==='LONG'?'LONG':input.positionSide==='SHORT'?'SHORT':(/^(tp_|manual_|ma_|mr_|mc_|ec[0-9]*_)/i.test(input.clientOrderId)?(input.side==='SELL'?'LONG':'SHORT'):(input.side==='BUY'?'LONG':'SHORT')));
     const localOrder=this.findDurableOrder(input);
+    const manualEntry=localOrder?.kind==='MANUAL'&&localOrder.row.reduceOnly===false;
+    const durableDirection=localOrder?.kind==='ENTRY'?localOrder.row.side:localOrder?(manualEntry?(input.side==='BUY'?'LONG':'SHORT'):(input.side==='SELL'?'LONG':'SHORT')):undefined;
+    const direction=owner?.direction??durableDirection??input.direction??(input.positionSide==='LONG'?'LONG':input.positionSide==='SHORT'?'SHORT':(/^(tp_|manual_|ma_|mr_|mc_|ec[0-9]*_)/i.test(input.clientOrderId)?(input.side==='SELL'?'LONG':'SHORT'):(input.side==='BUY'?'LONG':'SHORT')));
     const localIntent=localOrder?.kind==='ENTRY'?this.state.entryIntents.get(localOrder.row.intentId):undefined;
     // P2/R5: system origin is proved from the durable order tables and the order registry, never from
     // the shape of a client id. A `v396x...` id that no durable record owns stays UNPROVEN, and an
@@ -101,7 +103,7 @@ export class PositionService {
     const provenanceSource=registry?.status==='SYSTEM_PROVEN'?'ORDER_REGISTRY':localOrder?'DURABLE_ORDER_TABLE':(/^(entry_|ml_|tp_|manual_|ma_|mr_|mc_|ec[0-9]*_)/i.test(input.clientOrderId)?'LEGACY_PREFIX':'UNPROVEN');
     const systemProven=provenanceSource==='ORDER_REGISTRY'||provenanceSource==='DURABLE_ORDER_TABLE';
     const entrySide=expectedEntrySide(direction);
-    const stage=(localOrder?.kind==='TP'||localOrder?.kind==='MANUAL'||input.side!==entrySide)?'EXIT':'ENTRY';
+    const stage=(localOrder?.kind==='TP'||(localOrder?.kind==='MANUAL'&&!manualEntry)||input.side!==entrySide)?'EXIT':'ENTRY';
     const pos=[...this.state.positions.values()].find(row=>row.symbol===input.symbol&&row.side===direction);
     const lotId=stage==='ENTRY'?(input.entryLotId??localOrder?.row.id??`lot_${input.orderId||input.tradeId}`):null;
     const cycle=this.cycleForFill(owner,input.symbol,direction,stage,pos,localOrder?.row.cycleId??null,stage==='ENTRY'?Math.max(pos?.quantity??0,input.qty):Math.max(0,(pos?.quantity??input.qty)-input.qty),input.executionTime,lotId);
@@ -110,7 +112,7 @@ export class PositionService {
     if(stage==='ENTRY'&&localOrder){
       // Add-ons keep one physical cycle while each Entry order keeps its own lot identity, so the
       // order row is re-pointed at the cycle and the lot is recorded on that cycle's TradeRecord.
-      if(localOrder.row.cycleId!==cycleId)this.state.entryOrders.set(localOrder.row.id,{...localOrder.row,cycleId} as EntryOrder);
+      if(localOrder.row.cycleId!==cycleId){if(localOrder.kind==='ENTRY')this.state.entryOrders.set(localOrder.row.id,{...localOrder.row,cycleId} as EntryOrder);else if(localOrder.kind==='MANUAL')this.state.manualOrders.set(localOrder.row.id,{...localOrder.row,cycleId} as any);}
       const record=this.ensureOpenRecord({...pos,symbol:input.symbol,side:direction,cycleId,quantity:input.qty,entryPrice:input.price,openedAt:cycle.openedAt,firstObservedAt:cycle.firstObservedAt,id:pos?.id??`pos_${input.symbol}_${direction}`} as Position,'SYSTEM');
       const lotId=String(entryLotId);
       if(!record.entryLots?.some(lot=>lot.lotId===lotId)){
@@ -123,7 +125,7 @@ export class PositionService {
       attributionStatus:systemProven?'SYSTEM_ATTRIBUTED':'EXTERNAL_OR_UNLINKED',provenanceSource,
       decisionChainId:localOrder?.decisionChainId??localIntent?.decisionChainId??localIntent?.brainRunId??null,
       allocationPlanId:(localIntent?.allocationPlan as any)?.planId??null});this.record(fill,stage);
-    if(localOrder?.kind==='ENTRY'){const order=localOrder.row;const fills=[...(order.fills??[]).filter(row=>row.tradeId!==fill.tradeId),{tradeId:fill.tradeId,qty:fill.qty,price:fill.price,commission:fill.commissionUsd,commissionAsset:fill.commissionAsset,executedAt:fill.executionTime}],filledQuantity=Math.max(order.filledQuantity,fills.reduce((n,row)=>n+row.qty,0)),avg=fills.reduce((n,row)=>n+row.price*row.qty,0)/Math.max(filledQuantity,1),status=filledQuantity>=order.quantity-1e-10?'FILLED':order.status==='CANCELED'?'CANCELED':'PARTIALLY_FILLED',decisionChainId=fill.decisionChainId??localIntent?.brainRunId??null;this.state.entryOrders.set(order.id,{...order,cycleId:fill.cycleId,filledQuantity,status,fillState:filledQuantity>=order.quantity-1e-10?'COMPLETE':'PARTIAL',fills,price:avg||order.price,updatedAt:Date.now()});this.events.publish('ORDER_FILL_RECONCILED',{decisionChainId,brainRunId:decisionChainId,intentId:order.intentId,orderId:order.id,exchangeOrderId:fill.orderId,clientOrderId:fill.clientOrderId,tradeId:fill.tradeId,filledQuantity,status,fillState:status==='CANCELED'?'PARTIALLY_FILLED_THEN_CANCELED':status},fill.symbol);if(status==='FILLED'&&order.status!=='FILLED')this.events.publish('ENTRY_FILLED',{decisionChainId,brainRunId:decisionChainId,intentId:order.intentId,orderId:order.id,exchangeOrderId:fill.orderId,clientOrderId:fill.clientOrderId,filledQuantity,fillCount:fills.length},fill.symbol);}
+    if(localOrder?.kind==='ENTRY'){const order=localOrder.row;const fills=[...(order.fills??[]).filter(row=>row.tradeId!==fill.tradeId),{tradeId:fill.tradeId,qty:fill.qty,price:fill.price,commission:fill.commissionUsd,commissionAsset:fill.commissionAsset,executedAt:fill.executionTime}],filledQuantity=Math.max(order.filledQuantity,fills.reduce((n,row)=>n+row.qty,0)),avg=fills.reduce((n,row)=>n+row.price*row.qty,0)/Math.max(fills.reduce((n,row)=>n+row.qty,0),Number.EPSILON),status=filledQuantity>=order.quantity-1e-10?'FILLED':order.status==='CANCELED'?'CANCELED':'PARTIALLY_FILLED',decisionChainId=fill.decisionChainId??localIntent?.brainRunId??null;this.state.entryOrders.set(order.id,{...order,cycleId:fill.cycleId,filledQuantity,status,fillState:filledQuantity>=order.quantity-1e-10?'COMPLETE':'PARTIAL',fills,price:avg||order.price,updatedAt:Date.now()});this.events.publish('ORDER_FILL_RECONCILED',{decisionChainId,brainRunId:decisionChainId,intentId:order.intentId,orderId:order.id,exchangeOrderId:fill.orderId,clientOrderId:fill.clientOrderId,tradeId:fill.tradeId,filledQuantity,status,fillState:status==='CANCELED'?'PARTIALLY_FILLED_THEN_CANCELED':status},fill.symbol);if(status==='FILLED'&&order.status!=='FILLED')this.events.publish('ENTRY_FILLED',{decisionChainId,brainRunId:decisionChainId,intentId:order.intentId,orderId:order.id,exchangeOrderId:fill.orderId,clientOrderId:fill.clientOrderId,filledQuantity,fillCount:fills.length},fill.symbol);}
     const target=exactCycleRecord(this.state,fill)??this.state.tradeRecords.get(`trade_${cycleId}`);
     if(target){const linked={...target,linkedFillIds:[...new Set([...target.linkedFillIds,fill.fillId])]},next=accountCycle(linked,cycleFills(this.state,linked));this.state.tradeRecords.set(next.tradeId,next);if(next.status==='CLOSED'&&this.state.lifecycles.get(this.lifecycle.key(next.symbol,next.direction))?.cycleId===next.cycleId)this.lifecycle.close(next.symbol,next.direction,'SYSTEM');this.events.publish('TRADE_RECORD_REPAIRED',next,fill.symbol);}
     this.events.publish(systemProven?'EXCHANGE_FILL_ATTRIBUTED':'EXCHANGE_FILL_UNATTRIBUTED',{decisionChainId:fill.decisionChainId??null,brainRunId:fill.decisionChainId??null,fill,stage,provenanceSource,localOrderId:localOrder?.row.id??null},fill.symbol);return{fill,stage};

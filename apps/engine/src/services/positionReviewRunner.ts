@@ -38,6 +38,8 @@ export class PositionReviewRunner {
     memoryVersion:()=>string;
     /** P6: declares that a review is owed, so the shared Primary endpoint can divide fairly. */
     noteOwed?:(at:number)=>void;
+    reviewAvailable?:()=>boolean;
+    clearOwed?:()=>void;
   }){}
 
   private versions(position:any,plan:TradePlan,scope:string,cycleId:string):ReviewVersions{
@@ -54,7 +56,7 @@ export class PositionReviewRunner {
   async tick(now=Date.now()):Promise<ReviewTickReport>{
     const coordination=this.ports.settings();
     const report:ReviewTickReport={enabled:coordination.positionReviewEnabled===true,considered:0,reserved:0,deduplicated:0,refused:[],completed:0,discarded:0,failed:0,zeroRoutineCalls:0};
-    if(!report.enabled)return report;
+    if(!report.enabled){this.ports.clearOwed?.();return report;}
     const plans=[...(this.ports.state as any).tradePlans.values()] as TradePlan[];
     for(const position of [...(this.ports.state as any).positions.values()]){
       const cycleId=String(position.cycleId??'').trim();
@@ -71,13 +73,15 @@ export class PositionReviewRunner {
       report.considered++;
       // P6: declaring the debt before the model call is what lets a continuously queued Entry chain
       // yield a bounded share of the Primary endpoint to this review.
-      (this.ports as any).noteOwed?.(now);
+      if(owner.deadline==null||owner.deadline<=now)continue;
+      if(this.ports.reviewAvailable?.()===false){this.ports.noteOwed?.(now);report.refused.push('REVIEW_RESOURCE_BUSY');continue;}
       const reserved=this.ports.scheduler.reserve({positionId:position.id,cycleId,scope,trigger:'SCHEDULED',versions:this.versions(position,plan,scope,cycleId),now});
       if(!reserved.granted){
         report.refused.push(reserved.reason);
         if((reserved as any).deduplicated)report.deduplicated++;
         continue;
       }
+      this.ports.noteOwed?.(now);
       report.reserved++;
       const ticket=reserved.ticket;
       // P7: the review moments belong to the cycle, not to a page's clock. Stamping them here means the
@@ -111,6 +115,7 @@ export class PositionReviewRunner {
     }
     // Spent budget is checkpointed with the rest of the runtime state: a restart must not refund a
     // review that already happened, or the bound would be a per-process suggestion.
+    if(!report.refused.includes('REVIEW_RESOURCE_BUSY'))this.ports.clearOwed?.();
     const budgets=(this.ports.state as any).reviewBudgets as Map<string,unknown>;
     budgets.clear();
     for(const row of this.ports.scheduler.serialize())budgets.set(row.budgetKey,row);

@@ -3,12 +3,12 @@ import { RuntimeState } from '../state/runtimeState.js';
 import { EventBus } from '../events/eventBus.js';
 import { MockExchangeAdapter } from '../adapters/exchange/MockExchangeAdapter.js';
 import { TpGuardian } from './tpGuardian.js';
-import { PositionSchema } from '@zdj/contracts';
+import { PositionSchema,TakeProfitOrderSchema } from '@zdj/contracts';
 import { exitRuntimeHarness, manualJournalHarness, coordinatedExchange } from './v396ExitTestHarness.js';
 
-const settings={takeProfit:{enabled:true,targetPriceMovePercent:.45,quantityPercent:100,tpEconomicsEnabled:true,minNetProfitUsd:5,minNetProfitRoiPct:0,feeSafetyBufferPct:10,exitFeeAssumption:'TAKER',slippageBufferPct:0,entryFeeRate:.0004,makerFeeRate:.0002,takerFeeRate:.0004}} as any;
+const settings={takeProfit:{authorizedTargetProfitFloorDisposition:'FALL_BACK',enabled:true,targetPriceMovePercent:.45,quantityPercent:100,tpEconomicsEnabled:true,minNetProfitUsd:5,minNetProfitRoiPct:0,feeSafetyBufferPct:10,exitFeeAssumption:'TAKER',slippageBufferPct:0,entryFeeRate:.0004,makerFeeRate:.0002,takerFeeRate:.0004}} as any;
 const position=(id:string,markPrice:number)=>({cycleId:'cycle_test_1',id,symbol:'BTCUSDT',side:'LONG' as const,quantity:1,entryPrice:100,markPrice,leverage:10,unrealizedPnl:0,unrealizedPnlPercent:0,openedAt:Date.now(),firstObservedAt:Date.now(),entryTimeSource:'SYSTEM_FILL' as const,managementStatus:'AUTO_MANAGED' as const,humanManagedAt:null,tpStatus:'MISSING' as const,tpOrderId:null,tpLastVerifiedAt:null,tpCoverageSource:'NONE' as const});
-describe('TP economics enforcement',()=>{
+describe('explicit FALL_BACK TP economics enforcement',()=>{
   it('rejects an AI target that cannot meet the net floor and falls through to deterministic protection without chasing',async()=>{const state=new RuntimeState(settings),exchange=Object.assign(new MockExchangeAdapter(),coordinatedExchange({liveQuantity:1e6})),place=vi.spyOn(exchange,'placeTakeProfit'),guardian=new TpGuardian(state,exchange,new EventBus(),exitRuntimeHarness()),pos:any={...position('ai',100),profitTakePlan:{targetPrice:102,acceptableTargetRange:{min:101,max:103},targetHorizonMinutes:30,targetReason:'closed structure',evidenceRefs:[]}};state.positions.set(pos.id,pos);const now=Date.now();state.snapshots.set(pos.symbol,{quote:{symbol:'BTCUSDT',last:100,mark:100,bid:99.9,ask:100.1,tickSize:.01,stepSize:.001,minQty:.001,minNotional:5,quoteVolumeUsd24h:1,priceChangePercent24h:0,tradeCount24h:1,ts:now},technical:{'15m':{isClosed:true,barCloseTime:now-1,lastClosedBar:{closeTime:now-1,close:100},atrPercent:.5,recentSwingHigh:102,recentSwingLow:98}}} as any);await guardian.ensure(pos);const first=state.tpOrders.get(state.positions.get(pos.id)!.tpOrderId!)!;await guardian.ensure(state.positions.get(pos.id)!);expect(first.price).toBeGreaterThanOrEqual(102);expect(place).toHaveBeenCalledTimes(1);expect(state.positions.get(pos.id)?.profitTakePlanSource).not.toBe('AI');});
   it('keeps a legal evidence-backed AI TP inside its range and never chases an existing working TP',async()=>{const validSettings={...settings,takeProfit:{...settings.takeProfit,mode:'PRICE_MOVE_PERCENT',structureMinMovePercent:.45,structureMaxMovePercent:3,minNetProfitUsd:.01}},state=new RuntimeState(validSettings as any),exchange=Object.assign(new MockExchangeAdapter(),coordinatedExchange({liveQuantity:1e6})),place=vi.spyOn(exchange,'placeTakeProfit'),guardian=new TpGuardian(state,exchange,new EventBus(),exitRuntimeHarness()),now=Date.now(),pos:any={...position('ai-valid',100),openedAt:now-1_000,profitTakePlan:{targetPrice:102,acceptableTargetRange:{min:101.5,max:102.5},targetHorizonMinutes:30,targetReason:'fresh closed 15m resistance',evidenceRefs:['15m:lastClosedBar']}};state.positions.set(pos.id,pos);state.snapshots.set(pos.symbol,{quote:{symbol:'BTCUSDT',last:100,mark:100,bid:99.9,ask:100.1,tickSize:.01,stepSize:.001,minQty:.001,minNotional:5,quoteVolumeUsd24h:1,priceChangePercent24h:0,tradeCount24h:1,ts:now},technical:{'15m':{isClosed:true,barCloseTime:now-1,lastClosedBar:{closeTime:now-1,close:100},atrPercent:.5,recentSwingHigh:102,recentSwingLow:98}}} as any);await guardian.ensure(pos);const protectedPos=state.positions.get(pos.id)!,order=state.tpOrders.get(protectedPos.tpOrderId!)!;expect(order.price).toBe(102);expect(protectedPos.profitTakePlanSource).toBe('AI');state.snapshots.get(pos.symbol)!.quote.mark=103;state.snapshots.get(pos.symbol)!.quote.ask=103.1;await guardian.ensure(protectedPos);expect(state.tpOrders.get(protectedPos.tpOrderId!)!.price).toBe(102);expect(place).toHaveBeenCalledTimes(1);});
   it('allows a V3.9.5 economically-admitted AI TP below the legacy 1.2% distance floor',async()=>{
@@ -24,7 +24,7 @@ describe('TP economics enforcement',()=>{
 
 
 describe('V3.9.5 legacy position isolation',()=>{
-  const shadowSettings={...settings,takeProfit:{...settings.takeProfit,mode:'PRICE_MOVE_PERCENT',structureMinMovePercent:.45,structureMaxMovePercent:3,minNetProfitUsd:1,minNetProfitRoiPct:0},tradeEconomics:{parameterProfile:'CUSTOM',admissionMode:'SHADOW',historicalTpReachabilityEnabled:true,minHistoricalReachProbability:.5,reachabilityLookbackBars:120,reachabilityMinSamples:30}} as any;
+  const shadowSettings={...settings,takeProfit:{...settings.takeProfit,authorizedTargetProfitFloorDisposition:'WARN_AND_KEEP',mode:'PRICE_MOVE_PERCENT',structureMinMovePercent:.45,structureMaxMovePercent:3,minNetProfitUsd:1,minNetProfitRoiPct:0},tradeEconomics:{parameterProfile:'CUSTOM',admissionMode:'SHADOW',historicalTpReachabilityEnabled:true,minHistoricalReachProbability:.5,reachabilityLookbackBars:120,reachabilityMinSamples:30}} as any;
   const protectedLegacy=(id:string,managementStatus:'AUTO_MANAGED'|'HUMAN_MANAGED',tpPrice:number)=>({cycleId:'cycle_test_1',id,symbol:'BTCUSDT',side:'LONG' as const,quantity:10,entryPrice:100,markPrice:100.1,leverage:8,unrealizedPnl:0,unrealizedPnlPercent:0,openedAt:Date.now()-3_600_000,firstObservedAt:Date.now()-3_600_000,entryTimeSource:'SYSTEM_FILL' as const,managementStatus,humanManagedAt:managementStatus==='HUMAN_MANAGED'?Date.now()-1_000:null,tpStatus:'PROTECTED' as const,tpOrderId:'tp-legacy-'+id,tpLastVerifiedAt:Date.now(),tpCoverageSource:'BINANCE_OPEN_ORDER' as const,profitTakePlan:{targetPrice:tpPrice,acceptableTargetRange:{min:tpPrice-1,max:tpPrice+1},targetHorizonMinutes:60,targetReason:'legacy target',evidenceRefs:[]}});
   const snapshotAt=(now:number)=>({quote:{symbol:'BTCUSDT',last:100,mark:100,bid:99.99,ask:100.01,tickSize:.01,stepSize:.01,minQty:.001,minNotional:5,quoteVolumeUsd24h:1,priceChangePercent24h:0,tradeCount24h:1,ts:now},technical:{'15m':{isClosed:true,barCloseTime:now-1,lastClosedBar:{closeTime:now-1,close:100},atrPercent:.5,recentSwingHigh:101,recentSwingLow:99}}}) as any;
   it('never cancels, moves or rebuilds a legacy protected TP whose net profit is below the $1 floor',async()=>{
@@ -113,4 +113,20 @@ describe('V3.9 unknown TP submission',()=>{
     const guardian=new TpGuardian(state,Object.assign(new MockExchangeAdapter(),coordinatedExchange({liveQuantity:1e6})),new EventBus(),exitRuntimeHarness());expect(guardian.metrics().protected).toBe(0);
     state.tpOrders.set('tp',{id:'tp',positionId:p.id,symbol:p.symbol,side:'SELL',quantity:.1,status:'WORKING'} as any);expect(guardian.metrics().protected).toBe(0);expect(guardian.metrics().qtyMismatch).toBe(1);
   });
+});
+
+it('terminal zero remaining TP hydrates, while live zero quantity is rejected',()=>{
+  const row={id:'tp',symbol:'BRUSDT',positionId:'p',exchangeOrderId:'ex',side:'BUY',quantity:0,filledQuantity:6,price:100,status:'FILLED',createdAt:1,updatedAt:2};
+  expect(TakeProfitOrderSchema.safeParse(row).success).toBe(true);
+  expect(TakeProfitOrderSchema.safeParse({...row,status:'WORKING'}).success).toBe(false);
+});
+it('WARN_AND_KEEP fallback uses configured move and reports the low net target without solving the dollar floor',async()=>{
+  const config={...settings,takeProfit:{...settings.takeProfit,authorizedTargetProfitFloorDisposition:'WARN_AND_KEEP',minNetProfitUsd:1}};
+  const state=new RuntimeState(config),exchange=Object.assign(new MockExchangeAdapter(),coordinatedExchange({liveQuantity:1e6})),now=Date.now();
+  const pos:any={...position('small-fallback',100),quantity:.05};state.positions.set(pos.id,pos);
+  state.snapshots.set(pos.symbol,{quote:{symbol:'BTCUSDT',last:100,mark:100,bid:99.99,ask:100.01,tickSize:.01,stepSize:.001,minQty:.001,minNotional:5,ts:now},technical:{}} as any);
+  await new TpGuardian(state,exchange,new EventBus(),exitRuntimeHarness()).ensure(pos);
+  const updated=state.positions.get(pos.id)!;
+  expect(updated.tpStatus).toBe('PROTECTED');expect(state.tpOrders.get(updated.tpOrderId!)!.price).toBeCloseTo(100.45,6);
+  expect(updated.tpEconomics?.economicWarning?.expectedNetProfit).toBeLessThan(.03);
 });

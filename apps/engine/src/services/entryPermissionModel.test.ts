@@ -100,11 +100,12 @@ describe('P4 analysis eligibility is not an order permission',()=>{
     expect(eligibility.facts.marketFresh).toBe(false);
   });
 
-  it('an existing holding is skipped, not blocked, and money never enters this layer',()=>{
+  it('funds-only does not skip a held symbol; incomplete market facts still wait',()=>{
     const state=stateWith({snapshots:new Map([['BTCUSDT',{symbol:'BTCUSDT',quote:{tickSize:.1,stepSize:.001,minQty:.001,minNotional:5,last:100,bid:99.9,ask:100.1,mark:100,ts:Date.now()}} as any]]),
       positions:new Map([['p',{symbol:'BTCUSDT',side:'LONG',quantity:1,entryPrice:100,markPrice:100,leverage:10,unrealizedPnl:0,unrealizedPnlPercent:0,openedAt:1} as any]]),account:{status:'READY',equityUsd:0,assets:[],asOf:Date.now()}});
     const eligibility=candidateAnalysisEligibility(state,'BTCUSDT',Date.now());
-    expect(eligibility.disposition).toBe('SKIP');
+    expect(eligibility.disposition).toBe('WAIT');
+    expect(eligibility.facts.alreadyHeld).toBe(true);
     expect(Object.keys(eligibility.facts)).toEqual(['marketFresh','modelAvailable','alreadyHeld','dataError']);
   });
 
@@ -181,3 +182,14 @@ function snapshotOf(symbol:string):MarketSymbolSnapshot{
   return {symbol,packet:{symbol},quote:{symbol,tickSize:.1,stepSize:.001,minQty:.001,minNotional:5,last:100,bid:99.9,ask:100.1,mark:100,ts:Date.now(),trades:[],depthNotionalUsd:0},
     technical:{'1m':{atr14:.2},'5m':{atr14:.5},'15m':{atrPercent:1.2,closed:true}},recentTradedPrices:[{price:100,lastSeenAt:Date.now()}],dataCompleteness:1} as any;
 }
+
+it('JIT permit excludes its own reservation but retains other money promises and production lock',()=>{
+  const now=Date.now(),state=stateWith({account:{status:'READY',equityUsd:100,assets:[{asset:'USDT',availableBalance:30}],asOf:now}});
+  state.entryReservations.set('own',any({id:'own',quoteAsset:'USDT',marginUsd:25,status:'RESERVED',expiresAt:now+60000}));
+  const input={state,symbol:'BTCUSDT',side:'LONG' as const,quoteAsset:'USDT',requiredMarginUsd:25,excludeReservationId:'own',authorization:{valid:true,expiresAt:now+60000,identity:'intent'},filtersComplete:true,durableStorageReady:true,now};
+  expect(evaluateEntryExecutionPermit(input).permitted).toBe(true);
+  state.entryReservations.set('other',any({id:'other',quoteAsset:'USDT',marginUsd:10,status:'RESERVED',expiresAt:now+60000}));
+  expect(evaluateEntryExecutionPermit(input).firstCause).toBe('INSUFFICIENT_AVAILABLE_MARGIN');
+  expect(evaluateEntryExecutionPermit({...input,state:stateWith({},production)}).firstCause).toBe('ENVIRONMENT_NOT_TESTNET');
+  expect(evaluateEntryExecutionPermit({...input,requiredMarginUsd:NaN}).firstCause).toBe('MARGIN_REQUIREMENT_INVALID');
+});

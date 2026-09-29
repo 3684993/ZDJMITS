@@ -28,7 +28,7 @@ const settingsFor=(authority:'OFF'|'SHADOW'|'ENFORCE')=>({
   settingsVersion:20,
   connections:{exchange:{...identity,recvWindowMs:5_000}},
   positionManagement:{humanHandoffAfterMinutes:60,lossHandoffBars:4},
-  takeProfit:{enabled:true,takerFeeRate:.0004,makerFeeRate:.0002,exitFeeAssumption:'TAKER',slippageBufferPct:.05,feeSafetyBufferPct:.02,minNetProfitUsd:.2,quantityPercent:100,structureMaxMovePercent:6},
+  takeProfit:{entryFeeRate:.0004,enabled:true,takerFeeRate:.0004,makerFeeRate:.0002,exitFeeAssumption:'TAKER',slippageBufferPct:.05,feeSafetyBufferPct:.02,minNetProfitUsd:.2,quantityPercent:100,structureMaxMovePercent:6},
   riskGovernance:{exitCoordination:{aiExitAuthority:authority,aiExitLossLimitUsd:10,aiExitMinNetProfitUsd:.2,aiExitAllowSmallLoss:true,aiExitAuthorizationTtlMs:15_000,
     continuousConvergenceEnabled:true,convergenceIntervalMs:120_000,convergenceBatchLimit:8}},
 });
@@ -247,4 +247,11 @@ describe('J1 runtime consumer',()=>{
       runtime.stop();
     }finally{await rm(dir,{recursive:true,force:true}).catch(()=>null);}
   },40_000);
+});
+
+it('fee safety percent is a fraction of fees, not notional; zero slippage remains valid',()=>{
+  const state=new RuntimeState(any(settingsFor('SHADOW')));
+  state.settings.takeProfit={...state.settings.takeProfit,entryFeeRate:.0004,takerFeeRate:.0004,feeSafetyBufferPct:10,slippageBufferPct:0};
+  const runner=new V396AiExitRunner(any({state}));
+  expect((runner as any).fees().uncertaintyBufferBps).toBeCloseTo(.8,9);
 });

@@ -149,7 +149,7 @@ export function executionTruthProjection(runtime: EngineRuntime, now = Date.now(
       : conservedRecords > 0 ? 'HEALTHY' as const : 'UNKNOWN' as const,
       ledgerInconsistent: inconsistent, unconserved, conserved: conservedRecords, openConserved, unproven: unprovenRecords,
       detail: `records=${records.length};conserved=${conservedRecords}(open ${openConserved}/closed ${conservedRecords - openConserved});inconsistent=${inconsistent};unconserved=${unconserved};unproven=${unprovenRecords}`},
-    fundingCoverage: {status: fundingLedger?.complete ? 'HEALTHY' as const : fundingExact > 0 ? 'PARTIAL' as const : 'UNKNOWN' as const,
+    fundingCoverage: {status: fundingLedger?.complete && fundingUnknown===0 ? 'HEALTHY' as const : fundingLedger?.complete||fundingExact > 0 ? 'PARTIAL' as const : 'UNKNOWN' as const,
       recordsWithExactFunding: fundingExact, recordsUnknown: fundingUnknown,
       incomeRows: Math.max(0, Number(fundingLedger?.rows ?? 0)), coverageComplete: fundingLedger?.complete === true,
       // Whether the income reader actually ran, and what it found: an empty ledger with a completed

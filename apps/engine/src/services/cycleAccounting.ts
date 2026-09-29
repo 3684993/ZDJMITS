@@ -40,7 +40,7 @@ export function allocateExitLotsFifo(lots:EntryLot[],exits:ExecutionFill[]):{lot
         // More exit quantity than any lot can account for is the audited R4 symptom. It stays on the
         // first lot so the difference is visible in the conservation check instead of vanishing.
         const fallback=shares.get(ordered[0].lotId)!;
-        addShare(fallback,{quantity:toPlace,notional:toPlace*exit.price,fee:exitFee,pnl:exitPnl});
+        addShare(fallback,{quantity:toPlace,notional:toPlace*exit.price,fee:exitFee==null?null:exitFee*toPlace/exit.qty,pnl:exitPnl==null?null:exitPnl*toPlace/exit.qty});
         break;
       }
       const take=Math.min(slot.left,toPlace);

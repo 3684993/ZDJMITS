@@ -234,3 +234,14 @@ it('restarting on a funds-only ledger does not resurrect the scope veto index',a
     expect(stats.vetoEnforced).toBe(false);
   }finally{reopened.close();}
 });
+
+it('WORKING replay cannot authorize another submit; client identity and payload cannot fork',async()=>{
+  const {store}=await openStore();try{
+    const order=orderOf('same','WORKING'),isolation=isolationFor(fundsOnlySettings,'same','BTC');
+    expect(store.claimEntryExecution(entryScope('BTC'),recordOf(order),false,isolation).acquired).toBe(true);
+    expect(store.claimEntryExecution(entryScope('BTC'),recordOf(order),false,isolation)).toMatchObject({acquired:false,maySubmit:false,mustQueryFirst:true});
+    expect(store.claimEntryExecution(entryScope('BTC'),recordOf({...order,quantity:2}),false,isolation).cause).toBe('SUBMISSION_IDENTITY_CONFLICT');
+    const other={...order,id:'other',intentId:'other'};
+    expect(store.claimEntryExecution(entryScope('BTC'),recordOf(other),false,isolationFor(fundsOnlySettings,'other','BTC')).cause).toBe('SUBMISSION_IDENTITY_CONFLICT');
+  }finally{store.close();}
+});

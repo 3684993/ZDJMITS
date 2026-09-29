@@ -87,7 +87,7 @@ export const EntryIntentSchema = z.object({
   planId:z.string().max(120).nullable().optional(),
   planVersion:z.number().int().positive().nullable().optional(),
   planCycleId:z.string().max(160).nullable().optional(),
-  planWarnings:z.array(z.string().max(160)).max(12).optional(),
+  planWarnings:z.array(z.string().max(160)).optional(),
   quantityUnits:z.number().int().positive().optional(),
   executionEnvelope:EntryExecutionEnvelopeSchema.optional(),
   reservationId: z.string().nullable().optional(),
@@ -205,14 +205,15 @@ export const TakeProfitOrderSchema = z.object({
   positionId: z.string(),
   symbol: z.string(),
   side: z.enum(['SELL','BUY']),
-  quantity: z.number().positive(),
+  // Adapter exposes remaining TP quantity; terminal facts legitimately reach zero.
+  quantity: z.number().nonnegative(),
   filledQuantity: z.number().nonnegative().optional(),
   price: z.number().positive(),
   status: z.enum(['UNKNOWN','WORKING','FILLED','CANCELED','EXPIRED','REJECTED']),
   createdAt: z.number().int(),
   updatedAt: z.number().int(),
   clientOrderId: z.string().max(35).nullable().optional(),
-});
+}).refine(row=>row.quantity>0||['FILLED','CANCELED','EXPIRED','REJECTED'].includes(row.status),{path:['quantity'],message:'LIVE_TP_REQUIRES_POSITIVE_REMAINING_QUANTITY'});
 export type TakeProfitOrder = z.infer<typeof TakeProfitOrderSchema>;
 
 export const TradeRecordClassificationSchema = z.enum(['COMPLETE','PARTIAL','IMPORTED','EXTERNAL','DUPLICATE','CONFLICT','INVALID']);
@@ -258,6 +259,7 @@ export const TradeRecordSchema = z.object({
   observedClosedAt:z.number().int().nullable().optional(),
   tradingNetPnlExFunding:z.number().nullable().optional(),
   fundingAttributionStatus:z.enum(['EXACT','UNKNOWN']).optional(),
+  fundingCoverage:z.object({sinceMs:z.number().nullable(),untilMs:z.number().nullable(),observedRows:z.number(),attributedAt:z.number()}).nullable().optional(),
   pnlBasis:z.enum(['TRADING_NET_EX_FUNDING','CANONICAL_NET_WITH_FUNDING_UNKNOWN','CANONICAL_NET_WITH_FUNDING']).optional(),
   tradeId: z.string(), symbol: z.string(), direction: SideSchema,
   openedAt: z.number().int().nullable(), closedAt: z.number().int().nullable(), durationMs: z.number().int().nonnegative().nullable(),

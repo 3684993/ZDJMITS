@@ -131,6 +131,8 @@ export class EngineRuntime {
   public tradingQuality: TradingQualityCollector | null = null;
   private persistTimer: NodeJS.Timeout | null = null;
   private trade: ExternalTradeAdapter | null = null;
+  /** The last funding-income pass, so an empty ledger can be told apart from a reader that never ran. */
+  private lastFundingSync: {at:number|null;rows:number;failures:number;symbolsScanned:number;skipped:string|null} | null = null;
   private tradeRecordAutoSyncStartedAt: number | null = null;
   private tradeRecordAutoSyncLastEndAt: number | null = null;
   private tradeRecordAutoSyncFlight: Promise<void> | null = null;
@@ -1324,32 +1326,39 @@ export class EngineRuntime {
    */
   async syncFundingIncome(now=Date.now()){
     const ledger=this.fundingIncome;
-    if(!ledger)return {skipped:'LEDGER_UNAVAILABLE'};
-    const reader=(this.trade as any)?.fetchSymbolTradeFacts;
-    if(typeof reader!=='function')return {skipped:'INCOME_READER_UNAVAILABLE'};
+    if(!ledger){this.lastFundingSync={at:now,rows:0,failures:0,symbolsScanned:0,skipped:'LEDGER_UNAVAILABLE'};return this.lastFundingSync;}
+    // The outcome is kept for the operator readback: a funding ledger that proves nothing must say
+    // whether it was read and found nothing, or never read at all. Silence is how an unattached
+    // reader hides behind "UNKNOWN".
+    const reader=(this.trade as any)?.fetchFundingIncome;
+    if(typeof reader!=='function'){this.lastFundingSync={at:now,rows:0,failures:0,symbolsScanned:0,skipped:'INCOME_READER_UNAVAILABLE'};return this.lastFundingSync;}
     // The window starts at what the ledger already proved, rolled back one funding interval so an
     // income row that straddles the boundary is still re-read (the insert is idempotent by income id).
     const covered=Number(ledger.coverageSummary().coveredUntilMs??0);
     const since=covered>0?covered-2*3600_000:Math.max(0,now-48*3600_000);
-    const openRecords=[...this.state.tradeRecords.values()].filter(record=>record.status!=='CLOSED'||!record.observedClosedAt);
-    const symbols=[...new Set([...this.state.positions.values(),...openRecords]
-      .map(row=>String((row as any).symbol??'')).filter(Boolean))].slice(0,40);
-    let rows=0,failures=0;const assets=new Set<string>();
-    for(const symbol of symbols){
-      try{
-        const facts=await reader.call(this.trade,symbol,since,now);
-        const income=Array.isArray(facts?.income)?facts.income:[];
-        const complete=facts?.coverageComplete===true&&Number.isFinite(Number(facts?.coverageStart))&&Number(facts?.coverageStart)<=since&&Number(facts?.coverageEnd??0)>=now;
-        if(!income.length&&!complete)continue;
-        const recorded=ledger.recordRows(income.map(row=>({...row,symbol:String(row.symbol??symbol),observedAt:now,source:'FUNDING_INCOME_READ'})));
-        rows+=recorded.inserted;
-        for(const row of income)assets.add(String(row.asset??''));
-        for(const asset of new Set(['USDT','USDC',...assets]))ledger.recordCoverage({asset,sinceMs:since,untilMs:now,pages:1,
-          rows:income.filter(row=>String(row.asset)===asset).length,complete,reason:complete?null:'INCOME_COVERAGE_INCOMPLETE'});
-      }catch(error){failures++;this.events.publish('FUNDING_INCOME_READ_FAILED',{symbol,reason:String(error instanceof Error?error.message:error)},symbol);}
+    // One account-level read per pass: /fapi/v1/income returns every symbol at once, so a 40-symbol
+    // book no longer costs 120 signed requests every ten minutes.
+    let inserted=0,failures=0,assets:string[]=[],pages=0,complete=false,symbols=0;
+    try{
+      const facts=await reader.call(this.trade,since,now);
+      const income=Array.isArray(facts?.rows)?facts.rows:[];
+      complete=facts?.complete===true&&Number.isFinite(Number(facts?.coverageStart))&&Number(facts?.coverageStart)<=since&&Number(facts?.coverageEnd??0)>=now;
+      pages=Math.max(0,Number(facts?.pages??0));
+      symbols=new Set(income.map(row=>String(row.symbol??''))).size;
+      inserted=ledger.recordRows(income.map(row=>({...row,observedAt:now,source:'FUNDING_INCOME_READ'}))).inserted;
+      const seen=new Set<string>();
+      for(const row of income){const asset=String((row as any)?.asset??'').trim().toUpperCase();if(asset)seen.add(asset);}
+      assets=[...seen];
+      for(const asset of new Set(['USDT','USDC',...assets]))ledger.recordCoverage({asset,sinceMs:since,untilMs:now,pages:Math.max(1,pages),
+        rows:income.filter(row=>String(row.asset)===asset).length,complete,reason:complete?null:'INCOME_COVERAGE_INCOMPLETE'});
+      if(!complete)this.events.publish('FUNDING_INCOME_COVERAGE_INCOMPLETE',{since,until:now,pages,rows:income.length},undefined);
+    }catch(error){
+      failures++;
+      this.events.publish('FUNDING_INCOME_READ_FAILED',{reason:String(error instanceof Error?error.message:error)},undefined);
     }
-    const summary={asOf:now,rows,assets:[...assets],failures,symbolsScanned:symbols.length,coverage:ledger.coverageSummary()};
-    if(rows||failures)this.events.publish('FUNDING_INCOME_SYNCED',{rows,assets:assets.size,failures,symbolsScanned:symbols.length},undefined);
+    const summary={asOf:now,rows:inserted,assets,failures,pages,complete,symbols,symbolsScanned:symbols,coverage:ledger.coverageSummary()};
+    this.lastFundingSync={at:now,rows:inserted,failures,symbolsScanned:symbols,skipped:null};
+    if(inserted||failures)this.events.publish('FUNDING_INCOME_SYNCED',{rows:inserted,assets:assets.length,failures,pages,complete,symbols},undefined);
     return summary;
   }
 
@@ -1373,7 +1382,8 @@ export class EngineRuntime {
     return {attributed,unknown};
   }
 
-  fundingIncomeCoverage(){return this.fundingIncome?.coverageSummary?.()??null;}
+  fundingIncomeCoverage(){const summary=this.fundingIncome?.coverageSummary?.()??null;
+    return summary?{...summary,lastSync:this.lastFundingSync??{at:null,rows:0,failures:0,symbolsScanned:0,skipped:'NEVER_RAN'}}:null;}
 
   /**
    * C3: startup convergence for non-terminal exit tasks. Query only - it never resubmits, and an

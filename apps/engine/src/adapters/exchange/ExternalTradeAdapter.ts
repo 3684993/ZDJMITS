@@ -145,6 +145,24 @@ export class ExternalTradeAdapter implements ExchangeTradeAdapter {
     return{facts:facts.sort((a,b)=>a.time-b.time),complete,windowStart:startTime,windowEnd:endTime};
   }
   /**
+   * Account-level funding income in one paged read. The income endpoint returns every symbol at once,
+   * so proving "no funding happened in this window" costs one budget line per page instead of one
+   * three-request fan-out per held symbol; a read that hits the page cap reports itself incomplete
+   * rather than recording a coverage window it did not actually cover.
+   */
+  async fetchFundingIncome(startTime:number,endTime=Date.now(),limit=20):Promise<{rows:ExchangeIncomeFact[];complete:boolean;coverageStart:number;coverageEnd:number;pages:number}>{
+    const raw:any[]=[];let pages=0,complete=true;
+    for(let page=1;page<=Math.max(1,limit);page++){
+      const rows=await this.signed<any[]>('GET','/fapi/v1/income',{incomeType:'FUNDING_FEE',startTime,endTime,page,limit:1000},'FUNDING_INCOME','BACKGROUND_AUDIT');
+      pages=page;raw.push(...rows);
+      if(rows.length<1000)break;
+      if(page===limit){complete=false;break;}
+    }
+    const rows=raw.filter(row=>Number(row.time??0)>=startTime&&Number(row.time??0)<=endTime&&String(row.incomeType??'').toUpperCase()==='FUNDING_FEE');
+    return{rows:rows.map(row=>({symbol:String(row.symbol??''),incomeType:String(row.incomeType??'FUNDING_FEE'),income:Number(row.income??0),asset:String(row.asset??''),time:Number(row.time??0),info:row.info==null?null:String(row.info),tradeId:row.tradeId==null?null:String(row.tradeId),transactionId:row.tranId==null?null:String(row.tranId)})),
+      complete:complete&&startTime>=Date.now()-80*86_400_000,coverageStart:startTime,coverageEnd:endTime,pages};
+  }
+  /**
    * The shared budget binds the per-Entry risk proof, which repeats every minute while any
    * UNKNOWN exists and fans out one request per sub-window over an old order's life. The
    * account trade audit runs once per sweep over a narrow window and is bounded by its own

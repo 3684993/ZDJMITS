@@ -77,7 +77,7 @@ export function executionTruthProjection(runtime: EngineRuntime, now = Date.now(
   const openConserved = records.filter(record => record.ledgerConservation === 'CONSERVED' && record.status !== 'CLOSED').length;
   const fundingExact = records.filter(record => record.fundingAttributionStatus === 'EXACT').length;
   const fundingUnknown = records.filter(record => record.fundingAttributionStatus !== 'EXACT').length;
-  const fundingLedger = (runtime as any).fundingIncome?.coverageSummary?.() ?? null;
+  const fundingLedger = (runtime as any).fundingIncomeCoverage?.() ?? (runtime as any).fundingIncome?.coverageSummary?.() ?? null;
   const coordination = (s.settings.riskGovernance as any)?.exitCoordination ?? {};
   const aiActiveCycles = (runtime as any).exitRuntime ? [...s.positions.values()].filter((position: any) => {
     const scope = (runtime as any).exitRuntime.scope({ symbol: position.symbol, side: position.side });
@@ -152,7 +152,10 @@ export function executionTruthProjection(runtime: EngineRuntime, now = Date.now(
     fundingCoverage: {status: fundingLedger?.complete ? 'HEALTHY' as const : fundingExact > 0 ? 'PARTIAL' as const : 'UNKNOWN' as const,
       recordsWithExactFunding: fundingExact, recordsUnknown: fundingUnknown,
       incomeRows: Math.max(0, Number(fundingLedger?.rows ?? 0)), coverageComplete: fundingLedger?.complete === true,
-      detail: fundingLedger ? `coverage=${fundingLedger.complete?'COMPLETE':'INCOMPLETE'};since=${fundingLedger.coveredSinceMs??'NONE'}` : 'FUNDING_LEDGER_NOT_ATTACHED'},
+      // Whether the income reader actually ran, and what it found: an empty ledger with a completed
+      // read is a fact, an empty ledger that was never read is only UNKNOWN.
+      lastSync: fundingLedger?.lastSync ?? null,
+      detail: fundingLedger ? `coverage=${fundingLedger.complete?'COMPLETE':'INCOMPLETE'};since=${fundingLedger.coveredSinceMs??'NONE'};lastSync=${fundingLedger.lastSync?.skipped??(fundingLedger.lastSync?`rows ${fundingLedger.lastSync.rows}/failures ${fundingLedger.lastSync.failures}/symbols ${fundingLedger.lastSync.symbolsScanned}`:'NEVER_RAN')}` : 'FUNDING_LEDGER_NOT_ATTACHED'},
     reviewAuthority: {status: coordination.positionReviewEnabled !== true ? 'DISABLED' as const : (reviewRunner ? 'HEALTHY' as const : 'UNKNOWN' as const),
       enabled: coordination.positionReviewEnabled === true, aiActiveCycles,
       scheduledDue: Math.max(0, Number((runtime as any).positionReviewScheduler?.dueCount?.() ?? 0)),

@@ -79,7 +79,9 @@ describe('P1 exit convergence fairness',()=>{
     // ceil(55/8)=7 full walks bound the worst case; the walk must not need dozens of rounds.
     expect(rounds).toBeLessThanOrEqual(8);
     expect(runtime.task(tail.clientOrderId)!.state).toBe('FILLED');
-  });
+    // 55 durable tasks are prepared through the real ledger; under a full-suite run that alone
+    // exceeds the ambient five-second budget, so this test names the budget it needs.
+  },20_000);
 
   it('a failed query backs off only the order that failed',async()=>{
     const now=Date.now();

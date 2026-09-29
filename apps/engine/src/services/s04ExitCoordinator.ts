@@ -399,6 +399,16 @@ export class PositionExitCoordinator {
   }
 
 
+  /** Local non-send evidence is distinct from an exchange REJECTED response. */
+  abortProvenNotSent(clientOrderId:string,proofRef:string,now:number){
+    return this.journal.transact(()=>{
+      const task=this.findTaskByClientOrderId(clientOrderId);
+      if(!task||!['PREPARED','SUBMITTING','UNKNOWN'].includes(task.state)||task.filledUnits!==0||!proofRef||now<task.updatedAt)return null;
+      const next:ExitTask={...task,state:'REJECTED',version:task.version+1,updatedAt:now,reasons:[...task.reasons,`LOCAL_NOT_SENT:${proofRef}`]};
+      this.persist(next);this.settleClaim(next,['LOCAL_NOT_SENT',proofRef]);return next;
+    });
+  }
+
   /** S04-T02/T06: ack lost keeps the identity and refuses a second submit path. */
   markSubmitUncertain(taskId:string,now:number){return this.transition(taskId,'UNKNOWN',now,'SUBMIT_ACK_LOST_MUST_QUERY_BY_CLIENT_ORDER_ID');}
 

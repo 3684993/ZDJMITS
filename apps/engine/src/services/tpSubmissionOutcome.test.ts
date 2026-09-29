@@ -19,3 +19,21 @@ it('confirmed rejected TP may be repaired as a new intent while uncertainty may 
  expect(f.exchange.placeTakeProfit).toHaveBeenCalledTimes(2);
  const ids=f.exchange.placeTakeProfit.mock.calls.map((call:any[])=>call[0].clientOrderId);expect(new Set(ids).size).toBe(2);
 });
+
+it('releases a proven pre-wire egress refusal without fabricating an exchange rejection',async()=>{
+ const f=fixture('TESTNET_WRITE_EGRESS_NOT_VERIFIED:UNAVAILABLE');
+ await f.guardian.ensure(f.position);
+ expect([...f.state.tpOrders.values()][0]!.status).toBe('REJECTED');
+ expect(f.seen.some(e=>e.type==='TP_SUBMISSION_NOT_SENT'&&e.payload.exchangeRequestSent===false)).toBe(true);
+ await f.guardian.ensure(f.state.positions.get('p')!,true);
+ expect(f.exchange.placeTakeProfit).toHaveBeenCalledTimes(2);
+});
+
+it('finds and cancels an under-sized working TP after a failed repair cleared the position pointer',async()=>{
+ const f=fixture('TESTNET_WRITE_EGRESS_NOT_VERIFIED:UNAVAILABLE');
+ f.state.tpOrders.set('old',{id:'old',positionId:'p',symbol:'BTCUSDT',side:'SELL',quantity:.5,price:101,status:'WORKING',exchangeOrderId:'123',createdAt:1,updatedAt:1});
+ f.exchange.cancelTakeProfit=vi.fn(async(order:any)=>({...order,status:'CANCELED',updatedAt:Date.now()}));
+ await f.guardian.ensure(f.position,true);
+ expect(f.exchange.cancelTakeProfit).toHaveBeenCalledTimes(1);
+ expect(f.state.tpOrders.get('old')?.status).toBe('CANCELED');
+});

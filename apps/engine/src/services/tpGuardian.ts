@@ -4,7 +4,7 @@ import type { RuntimeState } from '../state/runtimeState.js';
 import type { EventBus } from '../events/eventBus.js';
 import type { ExchangeTradeAdapter } from '../types.js';
 import { binanceClientOrderIdFactory } from './binanceClientOrderIdFactory.js';
-import { confirmedTpSubmissionRejection } from './tpSubmissionOutcome.js';
+import { confirmedTpSubmissionRejection, confirmedTpNotSent } from './tpSubmissionOutcome.js';
 import { V396ExitRuntime, exitSubjectFromPosition } from './v396ExitRuntime.js';
 import { assembleTargetSelection, authorizedTargetFacts } from './tpTargetContract.js';
 
@@ -63,13 +63,18 @@ export class TpGuardian {
     this.state.tpOrders.set(order.id,{...submitted,status:'UNKNOWN'});
     this.events.publish('TP_SUBMISSION_PREPARED',{positionId:order.positionId,order:{...submitted,status:'UNKNOWN'}},order.symbol);
     if(!this.exitRuntime.transitionByClientOrderId(prepared.clientOrderId,'SUBMITTING',Date.now(),'TP_SUBMIT_SENT'))throw new Error('TP_EXIT_PREPARED_STATE_LOST');
-    const jit=this.exitRuntime.jitBeforeSubmit({subject,clientOrderId:prepared.clientOrderId,proofCheckedAt:proof.checkedAt,now:Date.now()});
-    if(!jit.allowed)throw new Error(`TP_EXIT_JIT_RECHECK_FAILED: ${jit.blockers.join('|')}`);
     try{
+      const jit=this.exitRuntime.jitBeforeSubmit({subject,clientOrderId:prepared.clientOrderId,proofCheckedAt:proof.checkedAt,now:Date.now()});
+      if(!jit.allowed)throw new Error(`TP_EXIT_JIT_RECHECK_FAILED: ${jit.blockers.join('|')}`);
       const placed=await this.exchange.placeTakeProfit(submitted);
       this.converge(prepared.clientOrderId,placed,stepSize);
       return placed;
     }catch(error){
+      if(confirmedTpNotSent(error)&&this.exitRuntime.abortTpNotSent(prepared.clientOrderId,error,String(error))){
+        this.state.tpOrders.set(order.id,{...submitted,status:'REJECTED',updatedAt:Date.now()});
+        this.events.publish('TP_SUBMISSION_NOT_SENT',{positionId:order.positionId,clientOrderId:prepared.clientOrderId,reason:String(error),exchangeRequestSent:false},order.symbol);
+        throw error;
+      }
       if(confirmedTpSubmissionRejection(error)){
         this.exitRuntime.observe({eventId:`TP_REJECTED:${prepared.clientOrderId}`,clientOrderId:prepared.clientOrderId,state:'REJECTED',filledUnits:0,positionVersion:this.exitRuntime.task(prepared.clientOrderId)!.positionVersion});
         throw error;
@@ -127,6 +132,8 @@ export class TpGuardian {
     let existing=current.tpOrderId?this.state.tpOrders.get(current.tpOrderId):undefined;
     existing=[...this.state.tpOrders.values()].find(o=>o.positionId===current.id&&o.symbol===current.symbol&&o.status==='WORKING'&&o.side===(current.side==='LONG'?'SELL':'BUY')&&Math.abs(o.quantity-current.quantity)<=Math.max(1e-10,current.quantity*1e-6))??existing;
     existing??=[...this.state.tpOrders.values()].find(o=>o.positionId===current.id&&o.status==='UNKNOWN');
+    // A failed repair clears the pointer; still cancel the old under-sized TP before replacing it.
+    if(!existing||!['UNKNOWN','WORKING','PARTIALLY_FILLED'].includes(existing.status))existing=[...this.state.tpOrders.values()].find(o=>o.positionId===current.id&&['WORKING','PARTIALLY_FILLED'].includes(o.status))??existing;
     if(existing?.status==='UNKNOWN'){
       const proof=this.unknownAbsenceProof.get(existing.id),now=Date.now();
       if(proof&&now-proof.lastAt<15_000)return;
@@ -137,10 +144,11 @@ export class TpGuardian {
           const next={firstAt:proof?.firstAt??now,lastAt:now,observations:(proof?.observations??0)+1};this.unknownAbsenceProof.set(existing.id,next);
           this.events.publish('TP_UNKNOWN_ABSENCE_OBSERVED',{positionId:current.id,orderId:existing.id,clientOrderId:existing.clientOrderId??null,observations:next.observations,firstAt:next.firstAt,checkedAt:now,source:'BINANCE_EXACT_ORDER_NOT_FOUND',repairReleased:false},current.symbol);
           if(next.observations<2||now-next.firstAt<15_000)return;
-          const terminal={...existing,status:'REJECTED' as const,updatedAt:now};this.state.tpOrders.set(existing.id,terminal);this.unknownAbsenceProof.delete(existing.id);existing=terminal;
-          this.events.publish('TP_UNKNOWN_CONFIRMED_ABSENT',{positionId:current.id,orderId:terminal.id,clientOrderId:terminal.clientOrderId??null,compatibilityTerminalStatus:'REJECTED',evidence:['BINANCE_EXACT_ORDER_NOT_FOUND_TWICE'],firstObservedAt:next.firstAt,confirmedAt:now,repairReleased:true},current.symbol);
+          // Absence alone cannot prove a timed-out write never happened. Keep both durable claim
+          // and projection UNKNOWN; only explicit non-send or a positive terminal fact may free it.
+          return;
         }else{
-          this.unknownAbsenceProof.delete(existing.id);const retained={...verified,id:existing.id,cycleId:existing.cycleId,positionId:existing.positionId};this.state.tpOrders.set(existing.id,retained);existing=retained;if(verified.status==='FILLED')return;
+          this.unknownAbsenceProof.delete(existing.id);const retained={...verified,id:existing.id,cycleId:existing.cycleId,positionId:existing.positionId};this.state.tpOrders.set(existing.id,retained);if(retained.clientOrderId)this.converge(retained.clientOrderId,retained,Number(this.state.snapshots.get(current.symbol)?.quote.stepSize));existing=retained;if(verified.status==='FILLED')return;
         }
       }catch(error){this.events.publish('TP_UNKNOWN_VERIFY_FAILED',{positionId:current.id,orderId:existing.id,clientOrderId:existing.clientOrderId??null,message:error instanceof Error?error.message:String(error),repairReleased:false,failClosed:true},current.symbol);return;}
     }
@@ -204,7 +212,7 @@ export class TpGuardian {
     if(!finalValid||!economics){status=economics&&economics.expectedNetProfit<economics.requiredNetProfit?'TP_TARGET_BELOW_NET_FLOOR':'TP_TARGET_UNREALISTIC';const exhausted=attempt>=5,delay=Math.min(15*60_000,60_000*2**Math.min(attempt-1,4)),nextAt=Date.now()+delay,fallbackEconomics=economics??fixedEconomics;if(!fallbackEconomics){this.state.positions.set(current.id,{...current,tpStatus:'MANUAL_REVIEW_REQUIRED',tpOrderId:null,tpLastVerifiedAt:Date.now(),tpCoverageSource:'NONE'});this.retry.set(current.id,{attempt,nextAt:Date.now()+15*60_000,lastError:'TP_ECONOMICS_UNAVAILABLE'});this.events.publish('TP_MANUAL_REVIEW_REQUIRED',{positionId:current.id,attempt,price,markPrice:liveMark,reason:'TP_ECONOMICS_UNAVAILABLE'},current.symbol);this.repairing.delete(current.id);return;}const blocked={...current,tpStatus:exhausted?'MANUAL_REVIEW_REQUIRED' as const:'REPAIR_FAILED' as const,tpOrderId:null,tpLastVerifiedAt:Date.now(),tpCoverageSource:'NONE' as const,tpEconomics:{currentTpPrice:Number.isFinite(price)&&price>0?price:null,expectedGrossProfit:fallbackEconomics.expectedGrossProfit,expectedFees:fallbackEconomics.estimatedTotalFee+fallbackEconomics.slippageBuffer+fallbackEconomics.feeSafetyBuffer,expectedNetProfit:fallbackEconomics.expectedNetProfit,requiredNetProfit:fallbackEconomics.requiredNetProfit,breakEvenPrice:fallbackEconomics.breakEvenPrice,minProfitableExitPrice:fallbackEconomics.minProfitableExitPrice,status}};this.state.positions.set(current.id,blocked);this.retry.set(current.id,{attempt,nextAt:exhausted?Date.now()+15*60_000:nextAt,lastError:status});this.events.publish(exhausted?'TP_MANUAL_REVIEW_REQUIRED':'TP_TARGET_UNREALISTIC',{positionId:current.id,attempt,price,markPrice:liveMark,reason:status,source:selection.source,requiredNetProfit:fallbackEconomics.requiredNetProfit,expectedNetProfit:fallbackEconomics.expectedNetProfit,nextRetryAt:exhausted?Date.now()+15*60_000:nextAt},current.symbol);this.repairing.delete(current.id);return;}
 
     const tpEconomics={currentTpPrice:price,expectedGrossProfit:economics.expectedGrossProfit,expectedFees:economics.estimatedTotalFee+economics.slippageBuffer+economics.feeSafetyBuffer,expectedNetProfit:economics.expectedNetProfit,requiredNetProfit:economics.requiredNetProfit,breakEvenPrice:economics.breakEvenPrice,minProfitableExitPrice:economics.minProfitableExitPrice,status:(selection.economicWarning?'TP_LOW_NET_TARGET_KEPT':'TP_OK') as any,economicWarning:selection.economicWarning,targetProvenance:selection.provenance};this.state.positions.set(current.id,{...current,tpEconomics,profitTakePlanSource:selection.source});const order:TakeProfitOrder={id:uid('tp'),clientOrderId:null,exchangeOrderId:null,cycleId:current.cycleId,positionId:current.id,symbol:current.symbol,side:current.side==='LONG'?'SELL':'BUY',quantity:Math.max(market.quote.minQty,qty),price,status:'WORKING',createdAt:now,updatedAt:now};
-    try{if(existing?.status==='WORKING'){const canceled=await this.cancel(existing);if(!['CANCELED','EXPIRED','REJECTED'].includes(canceled.status))throw new Error('TP_REPLACEMENT_CANCEL_UNVERIFIED');this.state.tpOrders.set(existing.id,canceled);}const placed=await this.place(order,{stepSize:Number(market.quote.stepSize),tickSize:Number(market.quote.tickSize)});this.state.tpOrders.set(placed.id,placed);this.state.positions.set(current.id,{...this.state.positions.get(current.id)!,tpStatus:placed.status==='WORKING'?'PROTECTED':'PENDING',tpOrderId:placed.id,tpLastVerifiedAt:Date.now(),tpCoverageSource:'SYSTEM_CREATED'});this.retry.delete(current.id);this.events.publish('TP_PROTECTED',{positionId:current.id,order:placed,repairAttempt:attempt,tpEconomics},current.symbol);}
+    try{if(existing&&['WORKING','PARTIALLY_FILLED'].includes(existing.status)){const canceled=await this.cancel(existing);if(!['CANCELED','EXPIRED','REJECTED'].includes(canceled.status))throw new Error('TP_REPLACEMENT_CANCEL_UNVERIFIED');this.state.tpOrders.set(existing.id,canceled);}const placed=await this.place(order,{stepSize:Number(market.quote.stepSize),tickSize:Number(market.quote.tickSize)});this.state.tpOrders.set(placed.id,placed);this.state.positions.set(current.id,{...this.state.positions.get(current.id)!,tpStatus:placed.status==='WORKING'?'PROTECTED':'PENDING',tpOrderId:placed.id,tpLastVerifiedAt:Date.now(),tpCoverageSource:'SYSTEM_CREATED'});this.retry.delete(current.id);this.events.publish('TP_PROTECTED',{positionId:current.id,order:placed,repairAttempt:attempt,tpEconomics},current.symbol);}
     catch(error){const message=error instanceof Error?error.message:String(error);const submitted=this.state.tpOrders.get(order.id),rejected=submitted?.status==='UNKNOWN'&&confirmedTpSubmissionRejection(error);if(rejected){this.state.tpOrders.set(order.id,{...submitted,status:'REJECTED',updatedAt:Date.now()});this.events.publish('TP_ORDER_REJECTED',{positionId:current.id,orderId:order.id,clientOrderId:submitted?.clientOrderId??order.clientOrderId,exchangeCode:-2022,message},current.symbol);}
       // A row the authoritative position book still holds, but whose reduction proof says there is
       // nothing to reduce, is a contradiction about the fact — not a proven absence and not a missing

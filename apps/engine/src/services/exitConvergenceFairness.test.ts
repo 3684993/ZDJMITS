@@ -30,6 +30,20 @@ const INTERVAL=120_000,BATCH=8;
 const runtimeAt=(file:string,now:()=>number)=>new V396ExitRuntime(file,()=>identity,async()=>CAPS,
   ()=>({aiExitAuthority:'SHADOW' as const,intervalMs:INTERVAL,batchLimit:BATCH,continuousEnabled:true,now:now()}));
 
+it('recovers only bound pre-wire non-sends, never a generic timeout or a known working order',async()=>{
+ const now=Date.now(),file=tempFile(),runtime=runtimeAt(file,()=>now);
+ const a=await prepared(runtime,100,now),b=await prepared(runtime,101,now);
+ runtime.transitionByClientOrderId(a.clientOrderId,'SUBMITTING',now,'TP_SUBMIT_SENT');runtime.markSubmitUncertain(a.clientOrderId,now+1);
+ runtime.transitionByClientOrderId(b.clientOrderId,'SUBMITTING',now,'TP_SUBMIT_SENT');
+ runtime.observe({eventId:'working-proof',clientOrderId:b.clientOrderId,state:'WORKING',filledUnits:0,positionVersion:102});
+ expect(runtime.abortTpNotSent(a.clientOrderId,'ETIMEDOUT','event:bad',now+2)).toBeNull();
+ expect(runtime.abortTpNotSent(b.clientOrderId,'TESTNET_WRITE_EGRESS_NOT_VERIFIED:UNAVAILABLE','event:bad',now+2)).toBeNull();
+ expect(runtime.abortTpNotSent(a.clientOrderId,'TESTNET_WRITE_EGRESS_NOT_VERIFIED:UNAVAILABLE','event:verified',now+2)?.state).toBe('REJECTED');
+ const reopened=runtimeAt(file,()=>now+3);
+ expect(reopened.task(a.clientOrderId)?.reasons).toContain('LOCAL_NOT_SENT:event:verified');
+ expect(reopened.claimFor(a.clientOrderId)?.status).toBe('RELEASED');
+});
+
 /** One prepared take-profit task for its own symbol, so every task owns a distinct scope. */
 async function prepared(runtime:V396ExitRuntime,index:number,now:number){
   const symbol=`SYM${String(index).padStart(3,'0')}USDT`;

@@ -13,14 +13,14 @@ const unknownTp=(now:number)=>({id:'tp_old',clientOrderId:'tp_old_client',exchan
 afterEach(()=>{vi.useRealTimers();});
 
 describe('UNKNOWN TP recovery',()=>{
-  it('requires repeated exact not-found proof before releasing a stale UNKNOWN identity and repairing',async()=>{
+  it('does not turn repeated absence into terminal proof for an uncertain write',async()=>{
     vi.useFakeTimers();const now=1_800_000_000_000;vi.setSystemTime(now);
     const state=new RuntimeState(settings()),bus=new EventBus(),events:any[]=[];bus.on('event',event=>events.push(event));const pos=position(now);state.positions.set(pos.id,pos);state.tpOrders.set('tp_old',unknownTp(now));
     state.snapshots.set('TESTUSDT',{symbol:'TESTUSDT',timestamp:now,quote:{bid:100,ask:100.1,mark:100,tickSize:.1,stepSize:.001,minQty:.001},technical:{}} as any);
     const exchange:any={...coordinatedExchange({liveQuantity:1e6}),findTakeProfitByClientOrderId:vi.fn(async()=>null),placeTakeProfit:vi.fn(async(order:any)=>({...order,exchangeOrderId:'new-exchange-id',status:'WORKING',updatedAt:Date.now()})),cancelTakeProfit:vi.fn()};
     const guardian=new TpGuardian(state,exchange,bus,exitRuntimeHarness());
     await guardian.ensure(pos);expect(exchange.findTakeProfitByClientOrderId).toHaveBeenCalledTimes(1);expect(exchange.placeTakeProfit).not.toHaveBeenCalled();expect(state.tpOrders.get('tp_old')?.status).toBe('UNKNOWN');expect(events.some(event=>event.type==='TP_UNKNOWN_ABSENCE_OBSERVED')).toBe(true);
-    vi.setSystemTime(now+16_000);await guardian.ensure(state.positions.get(pos.id)!);expect(exchange.findTakeProfitByClientOrderId).toHaveBeenCalledTimes(2);expect(state.tpOrders.get('tp_old')?.status).toBe('REJECTED');expect(exchange.placeTakeProfit).toHaveBeenCalledTimes(1);expect(state.positions.get(pos.id)?.tpStatus).toBe('PROTECTED');expect(events.some(event=>event.type==='TP_UNKNOWN_CONFIRMED_ABSENT')).toBe(true);
+    vi.setSystemTime(now+16_000);await guardian.ensure(state.positions.get(pos.id)!);expect(exchange.findTakeProfitByClientOrderId).toHaveBeenCalledTimes(2);expect(state.tpOrders.get('tp_old')?.status).toBe('UNKNOWN');expect(exchange.placeTakeProfit).not.toHaveBeenCalled();expect(events.some(event=>event.type==='TP_UNKNOWN_CONFIRMED_ABSENT')).toBe(false);
   });
   it('keeps UNKNOWN fail-closed when exact verification throws',async()=>{
     vi.useFakeTimers();const now=1_800_000_000_000;vi.setSystemTime(now);const state=new RuntimeState(settings()),bus=new EventBus(),events:any[]=[];bus.on('event',event=>events.push(event));const pos=position(now);state.positions.set(pos.id,pos);state.tpOrders.set('tp_old',unknownTp(now));

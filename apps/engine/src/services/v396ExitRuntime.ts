@@ -8,6 +8,7 @@ import type {AiExitVerdict} from './s03AiExitPolicy.js';
 import type {ExitFactSource,VerifiedExitOrderFact} from './exitOrderFact.js';
 import {normalizeExitOrderFact} from './exitOrderFact.js';
 import {OrderProvenanceRegistry} from './orderProvenanceRegistry.js';
+import {confirmedTpNotSent} from './tpSubmissionOutcome.js';
 
 export type V396ExitSubject={symbol:string;side:'LONG'|'SHORT';cycleId:string|null;openedAt?:number|null};
 export type V396ReductionProof={kind:'ONE_WAY_REDUCE_ONLY'|'HEDGE_POSITION_SIDE';checkedAt:number;positionSide:'LONG'|'SHORT'};
@@ -510,6 +511,15 @@ export class V396ExitRuntime {
       schedule(entry,false);
     }
     return converged;
+  }
+
+  abortTpNotSent(clientOrderId:string,error:unknown,proofRef:string,now=Date.now()){
+    const task=this.task(clientOrderId),identity=this.exchangeIdentity();
+    if(!task||task.source!=='TP'||identity.environment!=='TESTNET'||!confirmedTpNotSent(error))return null;
+    const scope=V396ExitRuntime.parseScope(task.scope);
+    if(scope?.environment!==identity.environment||scope?.account!==identity.account)return null;
+    if(task.reasons.some(reason=>/EXCHANGE_FACT|_CONVERGED|TP_SUBMIT_RESULT/.test(reason)))return null;
+    return this.recoveryCoordinator.abortProvenNotSent(clientOrderId,proofRef,now);
   }
 
   transitionByClientOrderId(clientOrderId:string,next:ExitTaskState,now:number,reason:string){

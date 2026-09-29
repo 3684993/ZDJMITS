@@ -1412,6 +1412,19 @@ export class EngineRuntime {
     if(!adapter?.findExitByClientOrderId){this.events.publish('EXIT_RECOVERY_QUERY_UNAVAILABLE',{tasks:this.exitRuntime.tasksNeedingQuery().length},undefined);return [];}
     try{
       const converged=await exitRuntime.convergeRecoveredTasks((input)=>adapter.findExitByClientOrderId(input));
+      // Legacy TP rows classified a known pre-wire egress refusal as ACK loss. Require both the
+      // durable original error bound to this exact identity and today's authoritative ABSENT query.
+      const absent=new Set(converged.filter(row=>row.outcome==='EXCHANGE_ABSENT_STAYS_UNACKED').map(row=>row.clientOrderId));
+      if(absent.size){
+        const evidence=this.settingsStore.runtimeEvents(0,['TP_SUBMIT_UNACKED_QUERY_BY_CLIENT_ID'],20000);
+        for(const row of evidence){
+          const payload=row.payload as any,clientOrderId=String(payload?.clientOrderId??''),task=exitRuntime.task(clientOrderId);
+          if(!absent.has(clientOrderId)||!task||row.ts<task.createdAt||row.symbol!==V396ExitRuntime.parseScope(task.scope)?.symbol)continue;
+          if(!exitRuntime.abortTpNotSent(clientOrderId,payload.reason,`runtime_events:${row.id}`))continue;
+          for(const [id,order] of this.state.tpOrders)if(order.clientOrderId===clientOrderId&&!order.exchangeOrderId&&['UNKNOWN','REJECTED'].includes(order.status))this.state.tpOrders.set(id,{...order,status:'REJECTED',updatedAt:Date.now()});
+          this.events.publish('TP_NOT_SENT_RECOVERY',{clientOrderId,evidenceId:row.id,reason:payload.reason,exactOrder:'ABSENT',exchangeWrites:0},row.symbol??undefined);
+        }
+      }
       if(converged.length)this.events.publish('EXIT_RECOVERY_CONVERGED',{tasks:converged},undefined);
       return converged;
     }catch(error){this.events.publish('EXIT_RECOVERY_FAILED',{reason:String(error instanceof Error?error.message:error)},undefined);return [];}

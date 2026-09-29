@@ -25,6 +25,7 @@ it('releases a proven pre-wire egress refusal without fabricating an exchange re
  await f.guardian.ensure(f.position);
  expect([...f.state.tpOrders.values()][0]!.status).toBe('REJECTED');
  expect(f.seen.some(e=>e.type==='TP_SUBMISSION_NOT_SENT'&&e.payload.exchangeRequestSent===false)).toBe(true);
+ expect(f.seen.find(e=>e.type==='TP_REPAIR_FAILED')?.payload.submissionOutcome).toBe('NOT_ATTEMPTED');
  await f.guardian.ensure(f.state.positions.get('p')!,true);
  expect(f.exchange.placeTakeProfit).toHaveBeenCalledTimes(2);
 });

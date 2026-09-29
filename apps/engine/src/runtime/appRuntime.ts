@@ -336,6 +336,7 @@ export class EngineRuntime {
         tp,
         positions,
         ()=>store.entryExecutionClaimStats(),
+        exitRuntime,
       ),
       runtimeControl = new RuntimeControlService(state, events);
     let runtime!: EngineRuntime;
@@ -1271,10 +1272,20 @@ export class EngineRuntime {
     const due = this.exitRuntime.convergenceDue(now);
     if (!due.due) return due;
     const converged = await this.exitRuntime.convergePeriodically((input) => adapter.findExitByClientOrderId(input), now);
-    for (const task of (converged.converged ?? []).filter((row: any) => String(row.outcome).startsWith('EXCHANGE_FACT_'))) {
+    for (const task of (converged.converged ?? []).filter((row: any) => String(row.outcome).startsWith('EXCHANGE_FACT_')||String(row.outcome).startsWith('OBSERVE_REFUSED'))) {
       this.events.publish('EXIT_TASK_CONVERGED', { clientOrderId: task.clientOrderId, outcome: task.outcome, state: task.state }, undefined);
     }
+    // P1 fairness readback: the queue depth and the age of the least-serviced order are published on
+    // every pass, so starvation is a number an operator can watch rather than a guess.
+    if ((converged as any).stats) this.events.publish('EXIT_CONVERGENCE_QUEUE', { ...((converged as any).stats), attempted: converged.attempted }, undefined);
     return converged;
+  }
+
+  /** P1: the exit-convergence projection used by the diagnostics readback. */
+  exitConvergenceHealth(){
+    if(!this.exitRuntime)return {available:false,reason:'EXIT_RUNTIME_NOT_ATTACHED'};
+    const stats=this.exitRuntime.convergenceStats();
+    return {available:true,...stats,unreleasedClaims:this.exitRuntime.recoveryPlan().mustQuery.length};
   }
 
   /**
@@ -1829,6 +1840,15 @@ export class EngineRuntime {
     if (raw?.e === "ORDER_TRADE_UPDATE" && raw.o) {
       const o = raw.o;
       this.trade?.invalidateOrderFact?.(String(o.s??""),o.i==null?null:String(o.i),o.c==null?null:String(o.c));
+      // P1: an order state change is an exit-order fact whether or not it carried a fill this tick.
+      // WS used to update only the order projections, which is how a FILLED take-profit left its
+      // durable task and quantity claim at WORKING/ACTIVE.
+      const updateAt=Number(o.T ?? raw.T ?? Date.now());
+      this.exitRuntime?.recordExitOrderReport('USER_DATA_WS',{
+        symbol:String(o.s??''),clientOrderId:String(o.c??''),exchangeOrderId:String(o.i??''),
+        positionSide:['LONG','SHORT'].includes(String(o.ps)) ? String(o.ps) : 'BOTH',
+        status:String(o.X??''),originalQuantity:Number(o.o??0),executedQuantity:Number(o.z??0),updateTime:updateAt,
+      },Number.isFinite(updateAt)?updateAt:Date.now());
       const
         qty = Number(o.l ?? 0);
       if (qty > 0) {

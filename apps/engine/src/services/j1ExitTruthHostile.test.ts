@@ -167,9 +167,12 @@ describe('J1 continuous convergence and claim release',()=>{
   it('a fabricated or mismatched exchange fact cannot terminalise the claim',async()=>{
     const {exitRuntime,clientOrderId}=await preparedTask();
     const bad=await exitRuntime.convergeRecoveredTasks(async()=>({state:'FOUND',order:{symbol:'ETHUSDT',clientOrderId,exchangeOrderId:'x',status:'CANCELED',originalQuantity:10,executedQuantity:0,positionSide:'BOTH'}} as const));
-    expect(bad[0].outcome).toBe('EXCHANGE_FACT_UNVERIFIED');
+    // P1 names the refusal instead of collapsing every contradiction into one label; the guarantee the
+    // test carries is that the fact is refused and the claim is not terminalised.
+    expect(String(bad[0].outcome).startsWith('OBSERVE_REFUSED:')).toBe(true);
+    expect(String(bad[0].outcome)).toContain('IDENTITY');
     const wrongAccount=await exitRuntime.convergeRecoveredTasks(async()=>({state:'FOUND',order:{symbol:'BTCUSDT',clientOrderId:'v396xother',exchangeOrderId:'x',status:'FILLED',originalQuantity:10,executedQuantity:10,positionSide:'BOTH'}} as const));
-    expect(wrongAccount[0].outcome).toBe('EXCHANGE_FACT_UNVERIFIED');
+    expect(String(wrongAccount[0].outcome).startsWith('OBSERVE_REFUSED:')).toBe(true);
     expect(any(exitRuntime.task(clientOrderId)).state).toBe('PREPARED');
   });
 });

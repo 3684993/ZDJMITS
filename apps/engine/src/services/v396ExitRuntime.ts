@@ -1,10 +1,13 @@
 import type {Position} from '@zdj/contracts';
-import type {AdapterCapabilities,CoordinatorResult,ExitTaskState} from './s04ExitCoordinator.js';
+import type {AdapterCapabilities,CoordinatorResult,ExitTask,ExitTaskState} from './s04ExitCoordinator.js';
 import {PositionExitCoordinator,OPEN_STATES} from './s04ExitCoordinator.js';
 import {OwnershipJournal} from './ownershipJournal.js';
 import {OwnershipService,type ProtectionMandate} from './ownershipService.js';
 import {executionScope} from './executionLifecycle.js';
 import type {AiExitVerdict} from './s03AiExitPolicy.js';
+import type {ExitFactSource,VerifiedExitOrderFact} from './exitOrderFact.js';
+import {normalizeExitOrderFact} from './exitOrderFact.js';
+import {OrderProvenanceRegistry} from './orderProvenanceRegistry.js';
 
 export type V396ExitSubject={symbol:string;side:'LONG'|'SHORT';cycleId:string|null;openedAt?:number|null};
 export type V396ReductionProof={kind:'ONE_WAY_REDUCE_ONLY'|'HEDGE_POSITION_SIDE';checkedAt:number;positionSide:'LONG'|'SHORT'};
@@ -45,8 +48,9 @@ export class V396ExitRuntime {
   private readonly journal:OwnershipJournal;
   private readonly ownership:OwnershipService;
   private readonly recoveryCoordinator:PositionExitCoordinator;
+  readonly provenance:OrderProvenanceRegistry;
 
-  private lastConvergenceAt=0;private converging=false;private readonly convergenceAttempts=new Map<string,number>();
+  private lastConvergenceAt=0;private converging=false;
   constructor(
     dbFile:string,
     private readonly exchangeIdentity:()=>{environment:string;account:string},
@@ -57,6 +61,9 @@ export class V396ExitRuntime {
     this.ownership=new OwnershipService(this.journal);
     // Constructor creates v396_exit_tasks / v396_exit_observed in the runtime database.
     this.recoveryCoordinator=new PositionExitCoordinator(this.journal,RECOVERY_CAPABILITIES);
+    // The durable order registry lives beside the exit ledger so identity and quantity budget are
+    // written by the same process against the same file.
+    this.provenance=new OrderProvenanceRegistry(dbFile);
   }
 
   scope(subject:Pick<V396ExitSubject,'symbol'|'side'>){
@@ -210,6 +217,18 @@ export class V396ExitRuntime {
     });
   }
 
+  /**
+   * P2: the clientOrderId minted here is the identity a later fill will be judged against, so it is
+   * registered at the moment of preparation rather than inferred from a prefix afterwards.
+   */
+  registerExitProvenance(input:{subject:V396ExitSubject;clientOrderId:string|null;role:'TP'|'EXIT';source:string;intentId?:string|null}){
+    const clientOrderId=String(input.clientOrderId??'').trim();
+    if(!clientOrderId)return{recorded:false,conflict:'CLIENT_ORDER_ID_MISSING'};
+    const identity=this.exchangeIdentity();
+    return this.provenance.record({environment:identity.environment,accountId:identity.account,symbol:input.subject.symbol,
+      clientOrderId,role:input.role,intentId:input.intentId??null,cycleId:input.subject.cycleId??null,source:input.source});
+  }
+
   async prepareManual(input:V396PrepareExitInput){return this.prepare('MANUAL',input,null);}
 
   /**
@@ -312,6 +331,40 @@ export class V396ExitRuntime {
     return{allowed:blockers.length===0,blockers,task};
   }
 
+  /**
+   * P1: every reader of an exit order ends up here. A WS order report, an exact-order read, the
+   * open-order reconciliation sweep, a cancel/replace result and startup recovery all produce the
+   * same fact, so a TP that the exchange says is FILLED cannot update one projection while the
+   * durable task and its quantity claim keep their previous state.
+   */
+  recordVerifiedExitOrderFacts(facts:Array<VerifiedExitOrderFact|null|undefined>,now=Date.now()){
+    const usable=facts.filter((fact):fact is VerifiedExitOrderFact=>Boolean(fact));
+    if(!usable.length)return{applied:[],skipped:[]};
+    const result=this.recoveryCoordinator.applyVerifiedFacts(usable,now);
+    // Only an identity this ledger actually owns is registered as a system exit order. An entry-order
+    // report arrives through the same reader and must not be recorded with an exit role.
+    for(const fact of usable){
+      if(!this.recoveryCoordinator.findTaskByClientOrderId(fact.clientOrderId))continue;
+      this.provenance.record({environment:fact.environment,accountId:fact.accountId,symbol:fact.symbol,
+        clientOrderId:fact.clientOrderId,exchangeOrderId:fact.exchangeOrderId,role:'EXIT',source:fact.source,observedAt:fact.observedAt});
+    }
+    return result;
+  }
+
+  /** Builds and applies the single fact from one raw exchange order report. */
+  recordExitOrderReport(source:ExitFactSource,order:Parameters<typeof normalizeExitOrderFact>[0]['order'],observedAt=Date.now()){
+    const identity=this.exchangeIdentity();
+    const fact=normalizeExitOrderFact({source,environment:identity.environment,accountId:identity.account,order,observedAt});
+    return this.recordVerifiedExitOrderFacts([fact],observedAt);
+  }
+
+  /** Bounded-convergence operator readback: queue depth, oldest unpolled age, terminal unreleased. */
+  convergenceStats(now=Date.now()){
+    const authority=this.authority();
+    const intervalMs=Number(authority.intervalMs??120_000),limit=Math.max(1,Math.min(20,Number(authority.batchLimit??8)));
+    return{...this.recoveryCoordinator.convergenceStats(now,limit,intervalMs),unreleasedClaims:this.recoveryCoordinator.unreleasedClaimInventory().length};
+  }
+
   /** J1: is the bounded continuous convergence pass due yet? */
   convergenceDue(now=Date.now()){
     const authority=this.authority();
@@ -323,19 +376,21 @@ export class V396ExitRuntime {
   }
 
   /**
-   * J1: low-frequency, bounded, deduplicated continuous convergence. It only ever reads; a claim
-   * becomes terminal exclusively through a verified exchange fact, so an unreachable query keeps
-   * the quantity pinned instead of freeing capacity.
+   * P1: bounded continuous convergence with a durable fair walk.
+   *
+   * The queue is drained by `next_eligible_at, last_attempt_at`, not by insertion order, so a head
+   * of long-running WORKING orders can no longer hold the whole batch and starve the tail. The
+   * worst case for any single order is the published `ceil(open/limit) x interval`, and backoff
+   * after a failed query applies only to the order that failed.
    */
   async convergePeriodically(query:(input:{symbol:string;clientOrderId:string})=>Promise<{state:'FOUND';order:any}|{state:'ABSENT';reason:string}>,now=Date.now()){
     const gate=this.convergenceDue(now);
-    if(!gate.due)return{...gate,converged:[] as Array<{clientOrderId:string;outcome:string;state:ExitTaskState|null}>,attempted:0};
+    if(!gate.due)return{...gate,converged:[] as Array<{clientOrderId:string;outcome:string;state:ExitTaskState|null}>,attempted:0,stats:this.recoveryCoordinator.convergenceStats(now,gate.limit??8,120_000)};
     this.converging=true;this.lastConvergenceAt=now;
     try{
-      const pending=this.tasksNeedingQuery(now).filter((entry:any)=>(this.convergenceAttempts.get(entry.clientOrderId)??0)<=now).slice(0,gate.limit);
-      const converged=await this.convergeTasks(pending,query,now);
-      for(const entry of pending)this.convergenceAttempts.set(entry.clientOrderId,now+Math.max(60_000,Math.floor(gate.intervalMs/2)));
-      return{due:true,intervalMs:gate.intervalMs,limit:gate.limit,converged,attempted:pending.length};
+      const pending=this.recoveryCoordinator.fairConvergenceQueue(now,gate.limit);
+      const converged=await this.convergeTasks(pending,query,now,gate.intervalMs);
+      return{due:true,intervalMs:gate.intervalMs,limit:gate.limit,converged,attempted:pending.length,stats:this.recoveryCoordinator.convergenceStats(now,gate.limit,gate.intervalMs)};
     }
     finally{this.converging=false;}
   }
@@ -372,33 +427,43 @@ export class V396ExitRuntime {
    * FOUND converges the task, ABSENT or a failed query keeps it unacked - nothing here may submit.
    */
   async convergeRecoveredTasks(query:(input:{symbol:string;clientOrderId:string})=>Promise<{state:'FOUND';order:any}|{state:'ABSENT';reason:string}>,now=Date.now()){
-    return this.convergeTasks(this.tasksNeedingQuery(now),query,now);
+    const entries=this.tasksNeedingQuery(now).map((entry:any)=>({task:this.recoveryCoordinator.findTaskByClientOrderId(String(entry.clientOrderId??'')),attemptCount:0}))
+      .filter(entry=>Boolean(entry.task));
+    return this.convergeTasks(entries,query,now,0);
   }
 
-  private async convergeTasks(entries:Array<{clientOrderId:string}>,query:(input:{symbol:string;clientOrderId:string})=>Promise<{state:'FOUND';order:any}|{state:'ABSENT';reason:string}>,now:number){
+  /**
+   * P1: one query loop for both startup and continuous convergence. Each entry is turned into a
+   * verified fact and pushed through the single reducer; the scheduling bookkeeping is written even
+   * when the query failed, because a task that could not be polled must still come round again.
+   */
+  private async convergeTasks(entries:Array<{task:ExitTask|null;attemptCount:number}>,query:(input:{symbol:string;clientOrderId:string})=>Promise<{state:'FOUND';order:any}|{state:'ABSENT';reason:string}>,now:number,intervalMs:number){
     const converged:Array<{clientOrderId:string;outcome:string;state:ExitTaskState|null}>=[];
+    const schedule=(entry:{task:ExitTask|null},failed:boolean)=>{
+      if(!entry.task||!intervalMs)return;
+      this.recoveryCoordinator.recordAttempt(entry.task.taskId,now,{failed,intervalMs,attemptCount:Math.trunc(Number((entry as any).attemptCount??0))});
+    };
     for(const entry of entries){
-      const task=this.recoveryCoordinator.findTaskByClientOrderId(entry.clientOrderId);
-      if(!task){converged.push({clientOrderId:entry.clientOrderId,outcome:'TASK_MISSING',state:null});continue;}
+      const task=entry.task;
+      if(!task){continue;}
       const identity=V396ExitRuntime.parseScope(task.scope);
       if(!identity||!['LONG','SHORT','BOTH'].includes(identity.side)){converged.push({clientOrderId:task.clientOrderId,outcome:'SCOPE_UNPARSEABLE',state:task.state});continue;}
       const currentIdentity=this.exchangeIdentity();
-      if(identity.environment!==currentIdentity.environment||identity.account!==currentIdentity.account){converged.push({clientOrderId:task.clientOrderId,outcome:'ACCOUNT_SCOPE_MISMATCH',state:task.state});continue;}
+      if(identity.environment!==currentIdentity.environment||identity.account!==currentIdentity.account){converged.push({clientOrderId:task.clientOrderId,outcome:'ACCOUNT_SCOPE_MISMATCH',state:task.state});schedule(entry,false);continue;}
       let fact:Awaited<ReturnType<typeof query>>;
       try{fact=await query({symbol:identity.symbol,clientOrderId:task.clientOrderId});}
-      catch{converged.push({clientOrderId:task.clientOrderId,outcome:'QUERY_FAILED_STAYS_UNACKED',state:task.state});continue;}
+      catch{converged.push({clientOrderId:task.clientOrderId,outcome:'QUERY_FAILED_STAYS_UNACKED',state:task.state});schedule(entry,true);continue;}
       if(fact?.state!=='FOUND'||!fact.order){
         if(task.state!=='UNKNOWN'&&task.state!=='SUBMITTING')this.recoveryCoordinator.markSubmitUncertain(task.taskId,now);
         converged.push({clientOrderId:task.clientOrderId,outcome:'EXCHANGE_ABSENT_STAYS_UNACKED',state:task.state==='PREPARED'?'PREPARED':'UNKNOWN'});
-        continue;
+        schedule(entry,false);continue;
       }
-      const raw=String(fact.order.status??'').toUpperCase(),executed=Number(fact.order.executedQuantity??0),original=Number(fact.order.originalQuantity??0);
-      const units=(quantity:number)=>V396ExitRuntime.quantityUnitsOf(quantity,task.stepSize);
-      if(fact.order.symbol!==identity.symbol||fact.order.clientOrderId!==task.clientOrderId||!['BOTH',identity.side].includes(fact.order.positionSide)||!Number.isFinite(executed)||executed<0||!Number.isFinite(original)||units(original)!==task.quantityUnits||executed>original||executed>0&&units(executed)===0||!['NEW','WORKING','PARTIALLY_FILLED','FILLED','CANCELED','EXPIRED','REJECTED'].includes(raw)||raw==='FILLED'&&units(executed)!==task.quantityUnits){converged.push({clientOrderId:task.clientOrderId,outcome:'EXCHANGE_FACT_UNVERIFIED',state:task.state});continue;}
-      const filledUnits=units(executed);
-      const state:ExitTaskState=executed>0&&original>0&&executed>=original-1e-12?'FILLED':raw==='CANCELED'?'CANCELED':raw==='EXPIRED'?'EXPIRED':raw==='REJECTED'?'REJECTED':executed>0?'PARTIALLY_FILLED':'WORKING';
-      const applied=this.recoveryCoordinator.observe([{eventId:`RECOVERY:${task.clientOrderId}:${state}:${filledUnits}:${task.version}`,clientOrderId:task.clientOrderId,state,filledUnits,positionVersion:task.positionVersion}],now);
-      converged.push({clientOrderId:task.clientOrderId,outcome:applied.applied.length?`EXCHANGE_FACT_${state}`:'OBSERVE_REFUSED',state});
+      const verified=normalizeExitOrderFact({source:'EXACT_ORDER',environment:identity.environment,accountId:identity.account,order:fact.order,observedAt:now,reportId:`RECOVERY:${task.clientOrderId}:${String(fact.order.status??'').toUpperCase()}:${Math.round(Number(fact.order.executedQty??fact.order.executedQuantity??0)*1e8)}:${task.version}`});
+      if(!verified){converged.push({clientOrderId:task.clientOrderId,outcome:'EXCHANGE_FACT_UNVERIFIED',state:task.state});schedule(entry,false);continue;}
+      const applied=this.recoveryCoordinator.applyVerifiedFacts([verified],now);
+      if(applied.skipped.length&&applied.applied.length===0)converged.push({clientOrderId:task.clientOrderId,outcome:`OBSERVE_REFUSED:${applied.skipped[0].reason}`,state:task.state});
+      else converged.push({clientOrderId:task.clientOrderId,outcome:`EXCHANGE_FACT_${verified.state}`,state:verified.state});
+      schedule(entry,false);
     }
     return converged;
   }
@@ -416,7 +481,18 @@ export class V396ExitRuntime {
   }
   recoveryPlan(now=Date.now()){return this.recoveryCoordinator.recoveryPlan(now);}
   task(clientOrderId:string){return this.recoveryCoordinator.findTaskByClientOrderId(clientOrderId);}
-  close(){this.journal.close();}
+  /** The durable quantity claim behind one exit order: ACTIVE still pins units, RELEASED does not. */
+  claimFor(clientOrderId:string){
+    const task=this.recoveryCoordinator.findTaskByClientOrderId(clientOrderId);
+    return task?this.recoveryCoordinator.claimFor(task.taskId):null;
+  }
+  openQueueLength(){return this.recoveryCoordinator.openQueueLength();}
+  /** P2 read-side: has the durable registry proven that this order identity is ours? */
+  provenanceFor(input:{symbol:string;clientOrderId?:string|null;exchangeOrderId?:string|null}){
+    const identity=this.exchangeIdentity();
+    return this.provenance.resolve({environment:identity.environment,accountId:identity.account,...input});
+  }
+  close(){this.provenance.close();this.journal.close();}
 }
 
 export function exitSubjectFromPosition(position:Position):V396ExitSubject{

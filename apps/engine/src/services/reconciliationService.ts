@@ -3,6 +3,7 @@ import type { RuntimeState } from '../state/runtimeState.js';
 import type { EventBus } from '../events/eventBus.js';
 import type { EntryOrder,Position,TakeProfitOrder } from '@zdj/contracts';
 import type { TpGuardian } from './tpGuardian.js';
+import type { V396ExitRuntime } from './v396ExitRuntime.js';
 import type { PositionService } from './positionService.js';
 import { manualIntentFromOrder } from './executionLifecycle.js';
 import { validPositionLeverage } from './positionRiskFacts.js';
@@ -24,7 +25,27 @@ export class ReconciliationService {
   private terminalVerificationAttempts=new Map<string,number>();private verifiedOrderFactMismatchCount=0;
   private running=false;private waiters:Array<()=>void>=[];
   private lastFullOrderScanAt=0;private lastUnknownRiskScanAt=0;private cachedOpenOrders:Array<EntryOrder|TakeProfitOrder>=[];private readonly fullOrderScanIntervalMs=5*60_000;private readonly unknownRiskScanIntervalMs=60_000;private readonly targetedTpScanIntervalMs=60_000;private targetedTpScanAt=new Map<string,number>();private lastUnknownAuditSummaryAt=0;
-  constructor(private adapter:ExchangeTradeAdapter,private state:RuntimeState,private events:EventBus,private tp:TpGuardian,private positions?:PositionService,private readEntryClaims?:()=>any){}
+  constructor(private adapter:ExchangeTradeAdapter,private state:RuntimeState,private events:EventBus,private tp:TpGuardian,private positions?:PositionService,private readEntryClaims?:()=>any,private exitRuntime?:V396ExitRuntime|null){}
+  /**
+   * P1: the open-order sweep is one more reader of the same exit facts. Feeding it into the shared
+   * reducer means a task cannot stay WORKING because the one path that happened to look at the
+   * exchange owned a different projection.
+   */
+  private reportOpenOrderExitFacts(rows:Array<EntryOrder|TakeProfitOrder>,now:number){
+    if(!this.exitRuntime)return;
+    for(const row of rows){
+      if(!isTakeProfitOrder(row))continue;
+      const clientOrderId=nonEmpty(row.clientOrderId)?String(row.clientOrderId):null;
+      if(!clientOrderId)continue;
+      const position=this.state.positions.get(row.positionId);
+      const executedQuantity=Math.max(0,Number((row as any).filledQuantity??0));
+      this.exitRuntime.recordExitOrderReport('OPEN_ORDERS',{
+        symbol:row.symbol,clientOrderId,exchangeOrderId:row.exchangeOrderId,
+        positionSide:(row as any).positionSide??position?.side??'BOTH',
+        status:row.status,originalQuantity:Number(row.quantity)+executedQuantity,executedQuantity,updateTime:Number(row.updatedAt??now),
+      },now);
+    }
+  }
   async whenSettled(){if(!this.running)return;await new Promise<void>(resolve=>this.waiters.push(resolve));}
   private fullOrderScanDue(now:number){const unknown=[...this.state.entryOrders.values(),...this.state.manualOrders.values(),...this.state.tpOrders.values()].some(order=>order.status==='UNKNOWN')||[...this.state.entryOrders.values()].some(order=>entryHasUnresolvedExchangeTerminalRisk(order,now));return this.lastFullOrderScanAt===0||now-this.lastFullOrderScanAt>=this.fullOrderScanIntervalMs||(unknown&&now-this.lastUnknownRiskScanAt>=this.unknownRiskScanIntervalMs);}
   private targetedTpSymbolsDue(now:number){return[...new Set([...this.state.positions.values()].filter(position=>['MISSING','REPAIRING','REPAIR_FAILED'].includes(String(position.tpStatus))).map(position=>position.symbol))].filter(symbol=>now-(this.targetedTpScanAt.get(symbol)??0)>=this.targetedTpScanIntervalMs).slice(0,8);}
@@ -65,6 +86,7 @@ export class ReconciliationService {
       if(fullOrderScan){orders=scannedOrders!;this.cachedOpenOrders=orders.slice();this.lastFullOrderScanAt=Date.now();this.lastUnknownRiskScanAt=this.lastFullOrderScanAt;}
       else if(targetedTpSymbols.length){const targeted=targetedOrderRows.flat(),targetedSet=new Set(targetedTpSymbols);orders=[...this.cachedOpenOrders.filter(row=>!targetedSet.has(row.symbol)&&this.cachedOrderUsable(row)),...targeted];for(const symbol of targetedTpSymbols)this.targetedTpScanAt.set(symbol,Date.now());}
       else orders=this.cachedOpenOrders.filter(row=>this.cachedOrderUsable(row));
+      this.reportOpenOrderExitFacts(orders,Date.now());
       let drift=0;let deferredUnknownAudits=0,suppressedNoRiskEvents=0,deferredTerminalAudits=0,suppressedTerminalEvents=0;
       const ordersByChain=new Map<string,EntryOrder>();for(const order of this.state.entryOrders.values())if(nonEmpty(order.decisionChainId))ordersByChain.set(order.decisionChainId,order);
       this.state.executionFills=this.state.executionFills.map((fill:any)=>{const attributed=nonEmpty(fill.decisionChainId)?ordersByChain.get(fill.decisionChainId):undefined;if(!attributed||attributed.symbol===fill.symbol)return fill;drift++;this.events.publish('EXCHANGE_FILL_ATTRIBUTION_REVISED',{fillId:fill.fillId,tradeId:fill.tradeId,orderId:fill.orderId,fillSymbol:fill.symbol,previousDecisionChainId:fill.decisionChainId,previousOrderSymbol:attributed.symbol,attributionStatus:'EXTERNAL_OR_UNLINKED',reason:'CROSS_SYMBOL_ATTRIBUTION_INVALID'},fill.symbol);return{...fill,decisionChainId:null,allocationPlanId:null,attributionStatus:'EXTERNAL_OR_UNLINKED'};});

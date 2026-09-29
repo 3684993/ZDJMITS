@@ -519,7 +519,11 @@ describe('final audit exact recovery boundaries',()=>{
       const row:any={symbol:'BTCUSDT',clientOrderId:client,status:'CANCELED',originalQuantity:1,executedQuantity:0,positionSide:'LONG'};
       if(defect==='wrong-client')row.clientOrderId='other';if(defect==='wrong-symbol')row.symbol='ETHUSDT';if(defect==='bad-quantity')row.executedQuantity=-1;if(defect==='unknown-status')row.status='MADE_UP';
       const result=await h.exitRuntime.convergeRecoveredTasks(async()=>({state:'FOUND',order:row}));
-      expect(result[0].outcome).toBe('EXCHANGE_FACT_UNVERIFIED');expect(h.exitRuntime.task(client)?.state).toBe('WORKING');
+      // P1 names the reason a fact was refused instead of collapsing four different contradictions
+      // into one label. The guarantee under test is unchanged: nothing is applied, so the claim stays.
+      expect(['EXCHANGE_FACT_UNVERIFIED','OBSERVE_REFUSED:UNBOUND_ORDER:other','OBSERVE_REFUSED:FACT_IDENTITY_MISMATCH']).toContain(result[0].outcome);
+      expect(h.exitRuntime.task(client)?.state).toBe('WORKING');
+      expect(String(result[0].outcome)).not.toMatch(/^EXCHANGE_FACT_(FILLED|CANCELED|EXPIRED|REJECTED|PARTIALLY_FILLED|WORKING)/);
     }finally{h.exitRuntime.close();}
   });
 });

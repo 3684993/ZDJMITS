@@ -54,6 +54,9 @@ export class TpGuardian {
       availableReduceUnits:Math.min(liveUnits,quantityUnits),remainingUnits:positionUnits,minNotional:Number(position?.minNotional??0),tickSize,stepSize,
       proof:{kind:proof.kind,checkedAt:proof.checkedAt,positionSide:proof.positionSide},});
     if(!prepared.clientOrderId)throw new Error(`TP_EXIT_CLIENT_ORDER_ID_MISSING: ${prepared.reasons.join('|')}`);
+    // P2: record the identity before the wire call. A TP that fills over WS must be provable as
+    // system-generated from the durable registry, not from the shape of its client order id.
+    this.exitRuntime.registerExitProvenance({subject,clientOrderId:prepared.clientOrderId,role:'TP',source:'TP_GUARDIAN'});
     if(!prepared.accepted&&!prepared.submitRequired)throw new Error(`TP_EXIT_PREPARE_REFUSED: ${prepared.reasons.join('|')}`);
     const submitted:TakeProfitOrder={...order,clientOrderId:prepared.clientOrderId};
     this.state.tpOrders.set(order.id,{...submitted,status:'UNKNOWN'});
@@ -101,9 +104,14 @@ export class TpGuardian {
   }
 
   private converge(clientOrderId:string,order:TakeProfitOrder,stepSize:number){
-    const filledUnits=V396ExitRuntime.quantityUnitsOf(Number((order as any).filledQuantity??0),stepSize);
-    const state=order.status==='FILLED'?'FILLED':order.status==='CANCELED'?'CANCELED':order.status==='REJECTED'?'REJECTED':order.status==='EXPIRED'?'EXPIRED':filledUnits>0?'PARTIALLY_FILLED':'WORKING';
-    return this.exitRuntime.observe({eventId:`TP:${clientOrderId}:${state}:${filledUnits}`,clientOrderId,state,filledUnits,positionVersion:Math.trunc(Number(order.updatedAt??Date.now()))||1});
+    // P1: the TP submit/cancel result is an exit-order fact like any other. Sending it through the
+    // same reducer keeps the durable task, the quantity claim and this order row agreeing, instead
+    // of the guardian advancing only the projection it owns.
+    this.exitRuntime.recordExitOrderReport(order.status==='CANCELED'||order.status==='EXPIRED'||order.status==='REJECTED'?'CANCEL_RESULT':'TP_SUBMIT_RESULT',{
+      symbol:order.symbol,clientOrderId,exchangeOrderId:order.exchangeOrderId??'',
+      positionSide:(order as any).positionSide??(order.side==='SELL'?'LONG':'SHORT'),
+      status:order.status,originalQuantity:order.quantity,executedQuantity:Number((order as any).filledQuantity??0),updateTime:order.updatedAt??Date.now(),
+    },Date.now());
   }
   economicsFor(position:Position,exitPrice:number){const settings=this.state.settings.takeProfit,exitRate=settings.exitFeeAssumption==='MAKER'?settings.makerFeeRate:settings.takerFeeRate;return estimateTradingCost({entryPrice:position.entryPrice,qty:position.quantity,direction:position.side,leverage:position.leverage,entryFeeRate:settings.entryFeeRate,expectedExitFeeRate:exitRate,expectedSlippagePct:settings.slippageBufferPct,feeSafetyBufferPct:settings.feeSafetyBufferPct,minNetProfitUsd:settings.minNetProfitUsd,minNetProfitRoiPct:settings.minNetProfitRoiPct},exitPrice);}
   constructor(private state:RuntimeState,private exchange:ExchangeTradeAdapter,private events:EventBus,private readonly exitRuntime:V396ExitRuntime){}

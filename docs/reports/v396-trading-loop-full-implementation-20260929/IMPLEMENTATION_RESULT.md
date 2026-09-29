@@ -14,9 +14,9 @@
 | 最后一段代码提交 | `2a64977`（见 §14 完整提交链） |
 | 本报告提交与最终 `main` HEAD | 见 §14 |
 
-本轮全部提交（`git log --oneline 19cf609..HEAD`）：`67a7932` P1 → `dcf8aab` P2/P3 → `4566d12` P4/P5 → `6b62ce2` P6 → `c9c286e` P0 repair + P7 UI → `ee80625` readback 失真修正 → `e6e04c0` 守恒标签 → `efe59c1` 迁移索引复活崩溃 → `aa9c6de` repair 双份持久 + 收敛登记出处 → `d8bb19c` 资金费整账户读取 + lastSync → `e949d27` tpEconomics 枚举/出处声明 → `b489865` 挂死查询不得冻结收敛 → `2a64977` passGate 轮内可见。
+本轮全部提交（`git log --oneline 19cf609..HEAD`，14 个提交，含本报告提交；§14 的记录提交为其后一个纯文档提交）：`67a7932` P1 → `dcf8aab` P2/P3 → `4566d12` P4/P5 → `6b62ce2` P6 → `c9c286e` P0 repair + P7 UI → `ee80625` readback 失真修正 → `e6e04c0` 守恒标签 → `efe59c1` 迁移索引复活崩溃 → `aa9c6de` repair 双份持久 + 收敛登记出处 → `d8bb19c` 资金费整账户读取 + lastSync → `e949d27` tpEconomics 枚举/出处声明 → `b489865` 挂死查询不得冻结收敛 → `2a64977` passGate 轮内可见 → `61cc97d` 本报告。
 
-规模：`git diff --shortstat 19cf609..HEAD` = **70 files changed, 6087 insertions(+), 201 deletions(-)**（含测试与 S00 证据文件）。
+规模：`git diff --shortstat 19cf609..61cc97d` = **83 files changed, 7048 insertions(+), 204 deletions(-)**（含测试、压缩后的 repair 决策摘要与本报告）。
 
 ## 2. 实际修改文件清单（按区域）
 
@@ -134,7 +134,7 @@ apply 前留一份全量备份：`data/backups/v397-trading-loop-20260929T022759
 - 最终运行实例：`pid=37624`，`buildId=3.9.6-6f186489834dfa4acc73`，`restartCount=204`（会话开始时为 194，本轮 +10 次进程启动），`startReason=MANUAL_START`
 - 全部为人工 `scripts/stop-zdj-lan.ps1` + `scripts/start-zdj-lan.ps1`；未安装 watchdog/autostart/守护进程，未出现自动重启（今日 10 次 PROCESS_START 中含 1 次因 §11 所述枚举缺失导致的启动失败，修复后重新加载）
 - 备份：`data/backups/v397-trading-loop-20260929T022759Z/`（stop 之后复制，含两份 SQLite + 实例身份文件）
-- 本轮结束时执行 `node scripts/v396-g1-g4-identity-closure.mjs`：remote HEAD == local HEAD == 已提交源码树 hash == 运行时 sourceHash，且 buildId 前缀 == 实际加载 dist 的哈希（结果与判定写入 §11 末行）
+- push 后执行 `node scripts/v396-g1-g4-identity-closure.mjs` → **verdict `IDENTITY_CLOSED`**，六项全 true：`remoteHeadEqualsLocalHead`、`committedSourceTreeMatchesRuntimeSourceHash`（sourceHash `35021327184b6753…`）、`workingDistMatchesRuntimeArtifactHash`（artifactHash `6f186489834dfa4a…`）、`buildIdDerivedFromArtifactHash`、`runtimeApiMatchesInstanceFile`、`sourceTreeCleanForHashedFolders` —— 正在运行的 TESTNET 实例就是已推送的这份源码。
 
 ## 11. 运行 readback 与自然证据
 
@@ -199,10 +199,6 @@ repair readback    见 §6（幂等、0 交易所写）
 
 ## 14. 最终 GitHub commit SHA
 
-- 最后一段代码提交：`2a64977`（本报告之前的 HEAD）
-- 本报告提交：`docs(v396): 记录交易闭环一次性完整实施结果` → 记为 `R`
-- push 后 `origin/main` HEAD 与本地 HEAD 一致，由 `node scripts/v396-g1-g4-identity-closure.mjs` 判定 `IDENTITY_CLOSED`；具体 SHA 与判定输出：
-
-```
-（push 后执行 git rev-parse HEAD 与 identity-closure，逐字记录于下）
-```
+- 代码链最后一个提交：`2a64977` fix(v396): 收敛轮次状态在轮询前后都可见，单次查询截止取间隔一半
+- 本报告提交：`61cc97d86e53c5501e4e7824ce15f4152939133a`，已 push，push 时 `origin/main == HEAD == 61cc97d8…`
+- 记录本节的纯文档提交（`docs(v396): 记录最终 SHA 与身份闭合判定`）是本轮最后一次提交；其 SHA 由 `git log -1` / `git rev-parse HEAD origin/main` 现场核对。文档提交不改动参与身份哈希的源码目录（`apps/*/src`、`packages/*/src`），因此 §10 的 `IDENTITY_CLOSED` 判定继续成立。

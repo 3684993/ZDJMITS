@@ -317,6 +317,7 @@ export const ManualIntentSchema = z.object({
 export type ManualIntent = z.infer<typeof ManualIntentSchema>;
 
 export const ManualOrderSchema = z.object({
+  sideRecovery:z.object({originalSide:z.enum(['LONG','SHORT']),intentId:z.string(),basis:z.literal('MATCHED_DURABLE_INTENT'),fillTradeIds:z.array(z.string())}).optional(),
   cycleId:z.string().nullable().optional(),
   id: z.string(), intentId: z.string(), exchangeOrderId: z.string().nullable(), positionId: z.string(), symbol: z.string(),
   side: z.enum(['BUY','SELL']), positionSide: z.enum(['LONG','SHORT','BOTH']).nullable(), type: z.enum(['LIMIT','MARKET']),

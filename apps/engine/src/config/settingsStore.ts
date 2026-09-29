@@ -880,6 +880,20 @@ export class SettingsStore {
     if(value._entityLists){const entities=this.db.prepare('SELECT kind,entity_id,payload FROM runtime_entities').all() as Array<{kind:string;entity_id:string;payload:string}>;this.runtimeEntityCache=new Map(entities.map(r=>[`${r.kind}:${r.entity_id}`,r.payload]));
       for(const [kind,info] of Object.entries(value._entityLists) as Array<[string,{ids:string[];tuple:boolean}]>){value[kind]=info.ids.map(id=>{const raw=this.runtimeEntityCache!.get(`${kind}:${id}`);if(raw===undefined){if(kind==='executionFills'&&!info.tuple)return this.replayMissingFill(id);throw new Error(`RUNTIME_ENTITY_MISSING:${kind}:${id}`);}const entity=JSON.parse(raw);return info.tuple?[id,entity]:entity;});}delete value._entityLists;
     }
+    // Recover only the known generic-open-order vocabulary corruption, with a matching durable
+    // intent and no contradictory fills. Keep the original value and proof on the returned record.
+    const manualIntents=new Map<string,any>(value.manualIntents??[]);
+    for(const [,order] of (value.manualOrders??[]) as Array<[string,any]>){
+      if(!['LONG','SHORT'].includes(order.side)||!['FILLED','CANCELED','EXPIRED','REJECTED'].includes(order.status))continue;
+      const intent=manualIntents.get(order.intentId);
+      if(!intent||intent.symbol!==order.symbol||intent.positionId!==order.positionId||intent.side!==order.positionSide||typeof intent.reduceOnly!=='boolean'||intent.reduceOnly!==order.reduceOnly)continue;
+      if(!((order.clientOrderId&&order.clientOrderId===intent.clientOrderId)||(order.exchangeOrderId&&order.exchangeOrderId===intent.exchangeOrderId)))continue;
+      const expected=intent.reduceOnly?(intent.side==='LONG'?'SELL':'BUY'):(intent.side==='LONG'?'BUY':'SELL');
+      const projected=order.side==='LONG'?'BUY':'SELL';
+      const fills=(value.executionFills??[]).filter((f:any)=>f.symbol===order.symbol&&((order.clientOrderId&&f.clientOrderId===order.clientOrderId)||(order.exchangeOrderId&&f.orderId===order.exchangeOrderId)));
+      if(expected!==projected||fills.some((f:any)=>f.side!==expected))continue;
+      order.sideRecovery={originalSide:order.side,intentId:intent.id,basis:'MATCHED_DURABLE_INTENT',fillTradeIds:fills.map((f:any)=>String(f.tradeId))};order.side=expected;
+    }
     return value as T;
   }
   /** One existing runtime ledger, synchronously locked through fact check and persistence. */

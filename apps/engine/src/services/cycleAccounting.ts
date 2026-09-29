@@ -127,6 +127,26 @@ export function cycleFills(state:RuntimeState, record:TradeRecord):ExecutionFill
 }
 
 /**
+ * The conservation judgement on its own, so a durable row can be re-labelled by the same arithmetic
+ * the accounting path uses - and so an old row written under a wrong rule is correctable without
+ * rewriting any money field.
+ *
+ * Conservation is an agreement test, not a "must be flat" test. An OPEN cycle legitimately still
+ * holds quantity, and labelling every open record UNCONSERVED would bury a genuinely broken ledger in
+ * healthy rows. UNCONSERVED is reserved for a trade that says it is closed while its fills never
+ * reached zero; a negative remainder is the stronger LEDGER_INCONSISTENT anomaly.
+ */
+export function conservationOf(record:Pick<TradeRecord,'direction'|'status'|'observedClosedAt'>,fills:ExecutionFill[]):NonNullable<TradeRecord['ledgerConservation']>{
+  const entries=fills.filter(f=>f.side===(record.direction==='LONG'?'BUY':'SELL'));
+  const remaining=entries.reduce((n,f)=>n+Number(f.qty),0)-fills.filter(f=>!entries.includes(f)).reduce((n,f)=>n+Number(f.qty),0);
+  const eps=quantityTolerance(entries.reduce((n,f)=>n+Number(f.qty),0));
+  if(!entries.length)return 'UNKNOWN';
+  if(remaining<-eps)return 'LEDGER_INCONSISTENT';
+  const expectsFlat=record.status==='CLOSED'||Boolean(record.observedClosedAt);
+  return expectsFlat&&Math.abs(remaining)>eps?'UNCONSERVED':'CONSERVED';
+}
+
+/**
  * Pure accounting projection; callers explicitly persist on command/event paths.
  *
  * P2: the unit of accounting is the physical cycle, and every Entry execution inside it is a lot.
@@ -139,14 +159,8 @@ export function accountCycle(record:TradeRecord, fills:ExecutionFill[]):TradeRec
   const entryQty=sum(entries,f=>f.qty),exitQty=sum(exits,f=>f.qty),remaining=entryQty-exitQty,eps=quantityTolerance(entryQty);
   const conserved=entries.length>0&&exits.length>0&&Math.abs(remaining)<=eps;
   const ledgerInconsistent=entries.length>0&&remaining<-eps;
-  // Conservation is an agreement test, not a "must be flat" test. An OPEN cycle legitimately still
-  // holds quantity, and labelling all 133 live open records UNCONSERVED would bury a genuinely broken
-  // ledger in healthy rows. UNCONSERVED is reserved for a trade that says it is closed while its fills
-  // never reached zero; a negative remainder is the stronger LEDGER_INCONSISTENT anomaly.
-  const expectsFlat=record.status==='CLOSED'||Boolean(record.observedClosedAt);
-  const conservation:NonNullable<TradeRecord['ledgerConservation']>=entries.length===0?'UNKNOWN'
-    :ledgerInconsistent?'LEDGER_INCONSISTENT'
-      :expectsFlat&&Math.abs(remaining)>eps?'UNCONSERVED':'CONSERVED';
+  // One rule for the label, shared with the durable re-label path.
+  const conservation:NonNullable<TradeRecord['ledgerConservation']>=conservationOf(record,fills);
   const entryFee=entries.length&&entries.every(f=>f.commissionUsd!=null)?sum(entries,f=>f.commissionUsd!):null;
   const exitFee=exits.length&&exits.every(f=>f.commissionUsd!=null)?sum(exits,f=>f.commissionUsd!):null;
   const fees=entryFee!=null&&exitFee!=null,gross=exits.length?sum(exits,f=>f.realizedPnl):null;

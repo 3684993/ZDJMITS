@@ -1,6 +1,7 @@
 import type {TradeRecord, ExecutionFill} from '@zdj/contracts';
 import {exitQuantityUnits, parseExitScope, type ExitTask} from './s04ExitCoordinator.js';
 import {normalizeExitOrderFact, type VerifiedExitOrderFact} from './exitOrderFact.js';
+import {conservationOf} from './cycleAccounting.js';
 
 /**
  * P0/P1/P2 data repair, as two deterministic plans and one rule: a row changes only when a durable
@@ -179,6 +180,35 @@ export function planCycleBackfill(input:{fills:ExecutionFill[];records:TradeReco
     `${a.symbol??''}|${a.side??''}|${a.tradeId??a.oldTradeId??a.fillId??''}|${a.reason??''}`.localeCompare(`${b.symbol??''}|${b.side??''}|${b.tradeId??b.oldTradeId??b.fillId??''}|${b.reason??''}`);
   return{assignments,superseded:superseded.sort(order),unproven:unproven.sort(order),inconsistent:inconsistent.sort(order),
     summary:{fills:input.fills.length,assigned:assignments.length,cycles,unproven:unproven.length,inconsistent:inconsistent.length}};
+}
+
+/** The fill rows an accounting path treats as one record's cycle, rebuilt from raw durable rows. */
+export function recordFillRows(record:TradeRecord,fills:ExecutionFill[]):ExecutionFill[]{
+  const matched=fills.filter(fill=>fill.symbol===record.symbol&&(
+    fill.cycleId?fill.cycleId===record.cycleId:record.linkedFillIds.includes(fill.fillId)||
+      [...record.entryOrderIds,...record.exitOrderIds].includes(fill.orderId)));
+  return [...new Map(matched.map(fill=>[`${fill.symbol}:${fill.tradeId}`,fill])).values()];
+}
+
+/**
+ * Re-labels only `ledgerConservation`. The judgement is the same `conservationOf` the live accounting
+ * path uses, so a row written under an earlier rule is corrected by re-deriving it, and no money field,
+ * quantity or status is touched. A record whose Entry fills cannot be found is reported, not guessed.
+ */
+export function planConservationRelabel(input:{records:TradeRecord[];fills:ExecutionFill[]}):
+  {rows:Array<{tradeId:string;from:string|null;to:'CONSERVED'|'UNCONSERVED'|'LEDGER_INCONSISTENT'|'UNKNOWN';reason:string}>;
+   summary:{records:number;relabelled:number;alreadyCorrect:number;unproven:number}}{
+  const rows:Array<{tradeId:string;from:string|null;to:ReturnType<typeof conservationOf>;reason:string}>=[];
+  let alreadyCorrect=0,unproven=0;
+  for(const record of [...input.records].sort((a,b)=>String(a.tradeId).localeCompare(String(b.tradeId)))){
+    const fills=recordFillRows(record,input.fills);
+    const to=conservationOf(record,fills);
+    if(to==='UNKNOWN'&&!fills.length){unproven++;continue;}
+    if((record.ledgerConservation??null)===to){alreadyCorrect++;continue;}
+    rows.push({tradeId:record.tradeId,from:record.ledgerConservation??null,to,
+      reason:fills.length?`REDERIVED_FROM_${fills.length}_FILLS`:'NO_CYCLE_FILL_EVIDENCE'});
+  }
+  return{rows,summary:{records:input.records.length,relabelled:rows.length,alreadyCorrect,unproven}};
 }
 
 /** The audit record a repair apply writes: what changed, on what evidence, and what was left alone. */

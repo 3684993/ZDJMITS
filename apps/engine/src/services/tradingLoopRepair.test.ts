@@ -3,7 +3,7 @@ import type {ExecutionFill,TradeRecord} from '@zdj/contracts';
 import type {ExitTask} from './s04ExitCoordinator.js';
 import {exitQuantityUnits} from './s04ExitCoordinator.js';
 import {
-  ACCEPTED_EXIT_EVIDENCE,exitFactsForRepair,planCycleBackfill,planExitClaimConvergence,repairAuditRecord,
+  ACCEPTED_EXIT_EVIDENCE,exitFactsForRepair,planConservationRelabel,planCycleBackfill,planExitClaimConvergence,repairAuditRecord,
   type ExitEvidence,type ExitRepairRow,
 } from './tradingLoopRepair.js';
 
@@ -265,6 +265,51 @@ describe('P2 physical-cycle backfill plan',()=>{
     ],records:[]});
     expect(plan.assignments[0]).toMatchObject({fillId:'n1',physicalCycleId:'pcycle_ADAUSDT_LONG_',tradeId:''});
     expect(plan.unproven).toEqual([{symbol:'ADAUSDT',side:'LONG',tradeId:null,reason:'HOLDING_STILL_OPEN_AT_LAST_FILL'}]);
+  });
+});
+
+describe('P2 conservation re-label plan',()=>{
+  const cycleFills=(symbol:string,cycleId:string,rows:Array<{fillId:string;side:'BUY'|'SELL';qty:number}>):ExecutionFill[]=>rows.map(row=>fill(any({
+    fillId:row.fillId,tradeId:`t_${row.fillId}`,symbol,side:row.side,qty:row.qty,executionTime:now,cycleId,
+  })));
+  const openRecord=over=>record(any({tradeId:'rec_open',symbol:'ETHUSDT',direction:'LONG',status:'OPEN',cycleId:'cyc_1',
+    entryOrderIds:['o1'],linkedFillIds:['e1'],remainingQty:6,ledgerConservation:null,...over}));
+
+  it('re-labels an open holding that the old rule wrongly called UNCONSERVED',()=>{
+    const fills=cycleFills('ETHUSDT','cyc_1',[{fillId:'e1',side:'BUY',qty:6}]);
+    const plan=planConservationRelabel({records:[openRecord({ledgerConservation:'UNCONSERVED'})],fills});
+    expect(plan.rows).toEqual([{tradeId:'rec_open',from:'UNCONSERVED',to:'CONSERVED',reason:'REDERIVED_FROM_1_FILLS'}]);
+    expect(plan.summary).toEqual({records:1,relabelled:1,alreadyCorrect:0,unproven:0});
+  });
+
+  it('leaves a correct label alone so a re-run is a no-op',()=>{
+    const fills=cycleFills('ETHUSDT','cyc_1',[{fillId:'e1',side:'BUY',qty:6}]);
+    const once=planConservationRelabel({records:[openRecord({ledgerConservation:'UNCONSERVED'})],fills});
+    const relabelled=[openRecord({ledgerConservation:once.rows[0].to})];
+    expect(planConservationRelabel({records:relabelled,fills})).toEqual({rows:[],summary:{records:1,relabelled:0,alreadyCorrect:1,unproven:0}});
+  });
+
+  it('reports a trade that says CLOSED without a flat ledger, and a negative ledger as inconsistent',()=>{
+    const partFilled=cycleFills('ETHUSDT','cyc_1',[{fillId:'e1',side:'BUY',qty:6},{fillId:'x1',side:'SELL',qty:4}]);
+    expect(planConservationRelabel({records:[openRecord({status:'CLOSED'})],fills:partFilled}).rows[0]).toMatchObject({to:'UNCONSERVED'});
+    const overshoot=cycleFills('ETHUSDT','cyc_1',[{fillId:'e1',side:'BUY',qty:6},{fillId:'x1',side:'SELL',qty:9}]);
+    expect(planConservationRelabel({records:[openRecord({status:'PARTIALLY_CLOSED'})],fills:overshoot}).rows[0]).toMatchObject({to:'LEDGER_INCONSISTENT'});
+  });
+
+  it('does not invent a label when no fill belongs to the cycle',()=>{
+    const plan=planConservationRelabel({records:[openRecord({ledgerConservation:'CONSERVED'})],fills:cycleFills('SOLUSDT','other',[{fillId:'e9',side:'BUY',qty:1}])});
+    expect(plan.rows).toEqual([]);
+    expect(plan.summary).toEqual({records:1,relabelled:0,alreadyCorrect:0,unproven:1});
+  });
+
+  it('is order-stable and only ever reports the label as the thing it changes',()=>{
+    const fills=cycleFills('ETHUSDT','cyc_1',[{fillId:'e1',side:'BUY',qty:6}]);
+    const records=[openRecord({tradeId:'rec_b',ledgerConservation:'UNCONSERVED'}),openRecord({tradeId:'rec_a',ledgerConservation:'UNCONSERVED'})];
+    const plan=planConservationRelabel({records,fills});
+    expect(plan.rows.map(row=>row.tradeId)).toEqual(['rec_a','rec_b']);
+    expect(JSON.stringify(planConservationRelabel({records:[...records].reverse(),fills:[...fills].reverse()})))
+      .toBe(JSON.stringify(plan));
+    expect(Object.keys(plan.rows[0]).sort()).toEqual(['from','reason','to','tradeId']);
   });
 });
 

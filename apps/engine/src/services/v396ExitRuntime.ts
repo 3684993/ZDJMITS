@@ -460,7 +460,11 @@ export class V396ExitRuntime {
       }
       const verified=normalizeExitOrderFact({source:'EXACT_ORDER',environment:identity.environment,accountId:identity.account,order:fact.order,observedAt:now,reportId:`RECOVERY:${task.clientOrderId}:${String(fact.order.status??'').toUpperCase()}:${Math.round(Number(fact.order.executedQty??fact.order.executedQuantity??0)*1e8)}:${task.version}`});
       if(!verified){converged.push({clientOrderId:task.clientOrderId,outcome:'EXCHANGE_FACT_UNVERIFIED',state:task.state});schedule(entry,false);continue;}
-      const applied=this.recoveryCoordinator.applyVerifiedFacts([verified],now);
+      // Through the runtime's own entry point, not straight to the reducer: applying a verified
+      // exchange answer is also the moment the order's provenance becomes a durable fact. Going to
+      // the reducer here converged the task but left the registry empty, so the fill it produced
+      // still read as UNPROVEN origin.
+      const applied=this.recordVerifiedExitOrderFacts([verified],now);
       if(applied.skipped.length&&applied.applied.length===0)converged.push({clientOrderId:task.clientOrderId,outcome:`OBSERVE_REFUSED:${applied.skipped[0].reason}`,state:task.state});
       else converged.push({clientOrderId:task.clientOrderId,outcome:`EXCHANGE_FACT_${verified.state}`,state:verified.state});
       schedule(entry,false);

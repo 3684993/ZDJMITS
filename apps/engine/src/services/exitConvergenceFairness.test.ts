@@ -125,6 +125,22 @@ describe('P1 exit convergence fairness',()=>{
     // A bound the epoch-based arithmetic could never satisfy.
     expect(waiting.oldestUnpolledAgeMs).toBeLessThan(24*60*60_000);
   });
+  it('a converged order also becomes durable provenance, not only a state change',async()=>{
+    const now=Date.now();
+    const {runtime,tasks}=await prepareMany(2,now);
+    const target=tasks[1];
+    const result=await runtime.convergePeriodically(async(input)=>{
+      if(input.clientOrderId===target.clientOrderId)return{state:'FOUND' as const,order:any(orderReport(target,{status:'FILLED',executedQuantity:10}))};
+      return{state:'FOUND' as const,order:any(orderReport({symbol:input.symbol,clientOrderId:input.clientOrderId}))};
+    },now+INTERVAL);
+    expect(result.converged.find(row=>row.clientOrderId===target.clientOrderId)?.outcome).toBe('EXCHANGE_FACT_FILLED');
+    const proof=runtime.provenanceFor({symbol:target.symbol,clientOrderId:target.clientOrderId});
+    expect(proof.status).toBe('SYSTEM_PROVEN');
+    expect(proof.rows.filter(row=>row.role==='EXIT').length).toBeGreaterThan(0);
+    expect(proof.rows.every(row=>row.environment==='TESTNET'&&row.accountId==='binance-primary')).toBe(true);
+    // An identity this ledger never proved stays unresolved instead of being claimed as system work.
+    expect(runtime.provenanceFor({symbol:target.symbol,clientOrderId:'ml_foreign'}).status).toBe('UNRESOLVED');
+  });
 });
 
 describe('P1 exit terminal propagation',()=>{

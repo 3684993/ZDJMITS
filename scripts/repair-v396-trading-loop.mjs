@@ -31,7 +31,7 @@ const has = (name) => process.argv.slice(2).includes(`--${name}`);
 
 const dataDir = path.resolve(root, arg('data-dir', 'data'));
 const job = arg('job', 'all');
-if (!['all', 'exit-claims', 'cycle-backfill'].includes(job)) throw new Error(`UNKNOWN_JOB:${job}`);
+if (!['all', 'exit-claims', 'cycle-backfill', 'conservation-label'].includes(job)) throw new Error(`UNKNOWN_JOB:${job}`);
 const apply = has('apply');
 const evidenceFile = arg('evidence');
 const evidenceMaxAgeMs = Number(arg('evidence-max-age-ms', 60 * 60_000));
@@ -63,6 +63,18 @@ if (identity.environment !== 'TESTNET' || !identity.accountId) {
 const rowsOf = (kind) => source.prepare('SELECT payload FROM runtime_entities WHERE kind=?').all(kind).map((row) => JSON.parse(String(row.payload)));
 const fills = rowsOf('executionFills');
 const records = rowsOf('tradeRecords');
+// Two durable copies of the same record have to agree before either is written; this is reported so
+// the operator sees a divergence instead of silently repairing one copy.
+const tableCopies = new Map(source.prepare('SELECT trade_id,payload FROM trade_records').all()
+  .map((row) => [String(row.trade_id), JSON.parse(String(row.payload))]));
+const copyDivergence = records.reduce((all, record) => {
+  const table = tableCopies.get(record.tradeId);
+  if (!table) return {...all, missingTableRow: (all.missingTableRow ?? 0) + 1};
+  const differs = ['cycleId', 'positionCycleId', 'ledgerConservation', 'status'].filter(field => String(record[field] ?? '') !== String(table[field] ?? ''));
+  if (!differs.length) return {...all, agreed: (all.agreed ?? 0) + 1};
+  const key = differs.sort().join('+');
+  return {...all, [key]: (all[key] ?? 0) + 1};
+}, {});
 source.close();
 
 const engineStatus = () => {
@@ -106,7 +118,7 @@ if (evidenceFile) {
       observedAt: Number(row.observedAt ?? row.updateTime ?? capturedAt ?? 0),
     });
   }
-} else if (job !== 'cycle-backfill') evidenceIssues.push('EVIDENCE_BUNDLE_ABSENT:every_open_task_stays_UNKNOWN');
+} else if (job !== 'cycle-backfill' && job !== 'conservation-label') evidenceIssues.push('EVIDENCE_BUNDLE_ABSENT:every_open_task_stays_UNKNOWN');
 
 // ---- plans (read-only) -----------------------------------------------------------------------
 const ledger = new DatabaseSync(ownershipFile, {readOnly: true});
@@ -120,9 +132,10 @@ const exitPlan = job === 'all' || job === 'exit-claims'
   ? repair.planExitClaimConvergence({tasks, claims, evidence: evidenceRows, environment: identity.environment, accountId: identity.accountId})
   : null;
 const cyclePlan = job === 'all' || job === 'cycle-backfill' ? repair.planCycleBackfill({fills, records}) : null;
+const relabelPlan = job === 'all' || job === 'conservation-label' ? repair.planConservationRelabel({records, fills}) : null;
 
 // ---- apply -----------------------------------------------------------------------------------
-const applied = {exitFacts: null, cycles: [], transactions: 0, exchangeWrites: 0};
+const applied = {exitFacts: null, cycles: [], relabels: [], transactions: 0, exchangeWrites: 0};
 
 if (apply && exitPlan) {
   const facts = repair.exitFactsForRepair(exitPlan.rows, tasks, evidenceRows, identity);
@@ -142,28 +155,78 @@ if (apply && exitPlan) {
   } else applied.exitFacts = {applied: [], skipped: [], reason: 'NO_PROVEN_FACT_TO_WRITE'};
 }
 
+// The Engine keeps a TradeRecord in two durable places: the runtime entity row the checkpoint writes
+// and the trade_records table `upsertTradeRecord` writes. Patching only one lets the other overwrite
+// the repair on the next start, so both are read and written together, and a pair that disagrees is
+// refused instead of guessed at.
+const readPair = (db, tradeId) => {
+  const entity = db.prepare("SELECT payload FROM runtime_entities WHERE kind='tradeRecords' AND entity_id=?").get(tradeId);
+  const table = db.prepare('SELECT payload,status FROM trade_records WHERE trade_id=?').get(tradeId);
+  return {entity: entity ? JSON.parse(String(entity.payload)) : null, table: table ? JSON.parse(String(table.payload)) : null, tableStatus: table ? String(table.status) : null};
+};
+const writePair = (db, tradeId, payload, status) => {
+  const json = JSON.stringify(payload);
+  const at = Date.now();
+  const entity = db.prepare("UPDATE runtime_entities SET payload=? WHERE kind='tradeRecords' AND entity_id=?").run(json, tradeId);
+  const table = db.prepare('UPDATE trade_records SET payload=?,status=?,updated_at=? WHERE trade_id=?').run(json, status ?? String(payload.status ?? ''), at, tradeId);
+  return {entityRows: Number(entity.changes), tableRows: Number(table.changes)};
+};
+
 if (apply && cyclePlan) {
   const db = new DatabaseSync(settingsFile);
   db.exec('BEGIN IMMEDIATE');
   try {
     for (const superseded of cyclePlan.superseded) {
-      const found = db.prepare("SELECT payload FROM runtime_entities WHERE kind='tradeRecords' AND entity_id=?").get(superseded.oldTradeId);
-      if (!found) { applied.cycles.push({tradeId: superseded.oldTradeId, status: 'SKIPPED_ROW_MISSING'}); continue; }
-      const current = JSON.parse(String(found.payload));
+      const pair = readPair(db, superseded.oldTradeId);
+      if (!pair.entity || !pair.table) { applied.cycles.push({tradeId: superseded.oldTradeId, status: pair.entity ? 'SKIPPED_TABLE_ROW_MISSING' : 'SKIPPED_ENTITY_ROW_MISSING'}); continue; }
+      const current = pair.entity;
       if (String(current.cycleId ?? '') !== String(superseded.oldCycleId ?? '')) {
         applied.cycles.push({tradeId: superseded.oldTradeId, status: 'SKIPPED_ROW_CHANGED', cycleId: current.cycleId ?? null});
+        continue;
+      }
+      if (String(pair.table.cycleId ?? '') !== String(current.cycleId ?? '') || String(pair.table.positionCycleId ?? '') !== String(current.positionCycleId ?? '')) {
+        applied.cycles.push({tradeId: superseded.oldTradeId, status: 'SKIPPED_DIVERGED_COPIES'});
         continue;
       }
       // Additive re-key only: the tradeId, the money fields and the old cycle label all stay readable
       // (repairSource names it), because deleting the previous accounting is never a repair.
       const next = {...current, positionCycleId: superseded.newPhysicalCycleId,
         repairSource: `V397_CYCLE_BACKFILL:${String(superseded.oldCycleId ?? 'null')}`, updatedAt: Date.now()};
-      db.prepare("UPDATE runtime_entities SET payload=? WHERE kind='tradeRecords' AND entity_id=?").run(JSON.stringify(next), superseded.oldTradeId);
+      const written = writePair(db, superseded.oldTradeId, next, pair.tableStatus ?? String(next.status ?? ''));
       db.prepare('INSERT INTO runtime_events(id,type,ts,symbol,payload) VALUES(?,?,?,?,?) ON CONFLICT(id) DO NOTHING').run(
         `v397-cycle-repair:${superseded.oldTradeId}`, 'TRADE_RECORD_POSITION_CYCLE_ASSIGNED', Date.now(), String(current.symbol ?? ''),
         JSON.stringify({tradeId: superseded.oldTradeId, previousCycleId: current.cycleId ?? null, positionCycleId: superseded.newPhysicalCycleId,
-          reason: superseded.reason, exchangeWrites: 0, mode: 'APPLY'}));
-      applied.cycles.push({tradeId: superseded.oldTradeId, status: 'POSITION_CYCLE_ASSIGNED', positionCycleId: superseded.newPhysicalCycleId});
+          reason: superseded.reason, exchangeWrites: 0, mode: 'APPLY', written}));
+      applied.cycles.push({tradeId: superseded.oldTradeId, status: 'POSITION_CYCLE_ASSIGNED', positionCycleId: superseded.newPhysicalCycleId, written});
+    }
+    db.exec('COMMIT');
+    applied.transactions += 1;
+  } catch (error) { db.exec('ROLLBACK'); throw error; } finally { db.close(); }
+}
+
+if (apply && relabelPlan) {
+  const db = new DatabaseSync(settingsFile);
+  db.exec('BEGIN IMMEDIATE');
+  try {
+    for (const row of relabelPlan.rows) {
+      const pair = readPair(db, row.tradeId);
+      if (!pair.entity || !pair.table) { applied.relabels.push({tradeId: row.tradeId, status: pair.entity ? 'SKIPPED_TABLE_ROW_MISSING' : 'SKIPPED_ENTITY_ROW_MISSING'}); continue; }
+      const current = pair.entity;
+      if ((current.ledgerConservation ?? null) !== row.from) {
+        applied.relabels.push({tradeId: row.tradeId, status: 'SKIPPED_ROW_CHANGED', from: current.ledgerConservation ?? null});
+        continue;
+      }
+      if ((pair.table.ledgerConservation ?? null) !== row.from) {
+        applied.relabels.push({tradeId: row.tradeId, status: 'SKIPPED_DIVERGED_COPIES', entity: current.ledgerConservation ?? null, table: pair.table.ledgerConservation ?? null});
+        continue;
+      }
+      // The only field written is the derived label. Quantity, fees, PnL and status stay untouched.
+      const next = {...current, ledgerConservation: row.to, updatedAt: Date.now()};
+      const written = writePair(db, row.tradeId, next, pair.tableStatus ?? String(next.status ?? ''));
+      db.prepare('INSERT INTO runtime_events(id,type,ts,symbol,payload) VALUES(?,?,?,?,?) ON CONFLICT(id) DO NOTHING').run(
+        `v397-conservation-relabel:${row.tradeId}`, 'TRADE_RECORD_CONSERVATION_RELABELLED', Date.now(), String(current.symbol ?? ''),
+        JSON.stringify({tradeId: row.tradeId, from: row.from, to: row.to, reason: row.reason, exchangeWrites: 0, mode: 'APPLY', written}));
+      applied.relabels.push({tradeId: row.tradeId, status: 'RELABELLED', from: row.from, to: row.to, written});
     }
     db.exec('COMMIT');
     applied.transactions += 1;
@@ -177,20 +240,24 @@ if (cyclePlan) {
   for (const row of cyclePlan.unproven) leftUnknown.push(`${row.symbol}:${row.side}:${row.tradeId ?? 'OPEN'}:${row.reason}`);
   for (const row of cyclePlan.inconsistent) leftUnknown.push(`${row.symbol}:${row.side}:${row.fillId}:NEGATIVE_RUNNING_QUANTITY`);
 }
+if (relabelPlan) for (const row of relabelPlan.rows) if (row.to === 'UNKNOWN') leftUnknown.push(`${row.tradeId}:${row.reason}:CONSERVATION_UNPROVEN`);
+if (relabelPlan) for (const row of relabelPlan.rows) if (row.to === 'LEDGER_INCONSISTENT') leftUnknown.push(`${row.tradeId}:${row.reason}:CONSERVATION_LEDGER_INCONSISTENT`);
 
 const document = repair.repairAuditRecord({
   job, preview: !apply, environment: identity.environment, accountId: identity.accountId,
   plan: {
     evidenceFile: evidenceFile ?? null, evidenceRows: evidenceRows.length, evidenceIssues,
-    ledger: {exitTasks: tasks.length, activeClaims: claims.length, fills: fills.length, tradeRecords: records.length},
+    ledger: {exitTasks: tasks.length, activeClaims: claims.length, fills: fills.length, tradeRecords: records.length, copyDivergence},
     exitClaims: exitPlan,
     // The full assignment table is what makes the plan auditable, so it is kept in the log file but
     // summarised in the console readback.
     cycleBackfill: cyclePlan,
+    conservationRelabel: relabelPlan,
   },
   applied: apply ? applied : null,
   identityKeys: [...(exitPlan?.rows ?? []).filter((row) => row.action.startsWith('CONVERGE')).map((row) => row.clientOrderId),
-    ...(cyclePlan?.superseded ?? []).map((row) => row.oldTradeId)],
+    ...(cyclePlan?.superseded ?? []).map((row) => row.oldTradeId),
+    ...(relabelPlan?.rows ?? []).map((row) => row.tradeId)],
   leftUnknown,
 });
 const outDir = path.resolve(root, arg('out-dir', 'docs/reports/v396-trading-loop-full-implementation-20260929/repair'));
@@ -202,10 +269,14 @@ console.log(JSON.stringify({
   mode: apply ? 'APPLY' : 'PREVIEW', job, environment: identity.environment, account: identity.accountId,
   engine: engineStatus(), evidence: {file: evidenceFile ?? null, rows: evidenceRows.length, issues: evidenceIssues},
   exitClaims: exitPlan ? exitPlan.summary : 'NOT_IN_SCOPE',
+  durableCopies: copyDivergence,
   cycleBackfill: cyclePlan ? {...cyclePlan.summary, superseded: cyclePlan.superseded.length} : 'NOT_IN_SCOPE',
+  conservationRelabel: relabelPlan ? relabelPlan.summary : 'NOT_IN_SCOPE',
   applied: apply ? {
     exitFacts: applied.exitFacts ? {applied: applied.exitFacts.applied.length, skipped: applied.exitFacts.skipped.length, reason: applied.exitFacts.reason ?? null} : null,
     cycles: Object.entries(applied.cycles.reduce((all, row) => ({...all, [row.status]: (all[row.status] ?? 0) + 1}), {}))
+      .map(([status, count]) => `${status}:${count}`),
+    relabels: Object.entries(applied.relabels.reduce((all, row) => ({...all, [row.status]: (all[row.status] ?? 0) + 1}), {}))
       .map(([status, count]) => `${status}:${count}`),
     transactions: applied.transactions, exchangeWrites: applied.exchangeWrites,
   } : null,

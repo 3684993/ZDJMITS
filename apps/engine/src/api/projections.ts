@@ -72,7 +72,7 @@ export function executionTruthProjection(runtime: EngineRuntime, now = Date.now(
   const unconserved = records.filter(record => record.ledgerConservation === 'UNCONSERVED').length;
   const fundingExact = records.filter(record => record.fundingAttributionStatus === 'EXACT').length;
   const fundingUnknown = records.filter(record => record.fundingAttributionStatus !== 'EXACT').length;
-  const fundingLedger = (runtime as any).fundingIncome?.coverage?.() ?? null;
+  const fundingLedger = (runtime as any).fundingIncome?.coverageSummary?.() ?? null;
   const coordination = (s.settings.riskGovernance as any)?.exitCoordination ?? {};
   const aiActiveCycles = (runtime as any).exitRuntime ? [...s.positions.values()].filter((position: any) => {
     const scope = (runtime as any).exitRuntime.scope({ symbol: position.symbol, side: position.side });
@@ -150,6 +150,7 @@ export function executionTruthProjection(runtime: EngineRuntime, now = Date.now(
       enabled: coordination.positionReviewEnabled === true, aiActiveCycles,
       scheduledDue: Math.max(0, Number((runtime as any).positionReviewScheduler?.dueCount?.() ?? 0)),
       lastOutcome: reviewOutcome ?? null,
+      reviewFairness: (runtime as any).ai?.reviewFairness?.(now) ?? null,
       detail: ai?.detail ? String(ai.detail).slice(0, 200) : null},
     reviewCycles: reviewReadback?.rows?.slice(0, 50) ?? [],
     activeCommissions: {

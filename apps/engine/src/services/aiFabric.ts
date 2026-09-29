@@ -165,12 +165,51 @@ export class AiFabric {
     if(role==='PRIMARY_BRAIN'&&this.primaryCircuitState==='HALF_OPEN'&&this.load.get(this.state.aiResources.find(r=>r.role==='PRIMARY_BRAIN')?.id??'')?.active)return false;
     return this.state.aiResources.some(r=>r.role===role&&r.status!=='OFFLINE'&&this.endpointAvailable(r.id)&&(this.load.get(r.id)?.active??0)<r.maxConcurrency);
   }
-  private choose(role:'SCOUT'|'PRIMARY_BRAIN',excludeId?:string):AiResource{
+  /**
+   * P6: Entry and position Review share one Primary endpoint, and a continuously queued Entry chain
+   * would otherwise take every slot for ever. A review that is owed one reserves its next slot after
+   * `reviewMinIntervalMs`; an Entry yields to it, but only until the review has taken its configured
+   * share of the current window, so neither side can hold the endpoint. The per-resource concurrency
+   * ceiling is untouched - this decides who waits, not how many run at once.
+   */
+  private reviewReservationMs(){return Math.max(15_000,Number((this.state.settings.riskGovernance as any)?.exitCoordination?.reviewMinIntervalMs??300_000));}
+  private reviewSharePercent(){const value=Number((this.state.settings.riskGovernance as any)?.exitCoordination?.reviewCapacitySharePercent??25);return Number.isFinite(value)?Math.min(50,Math.max(0,value)):25;}
+  /** A review became owed at `at`; the first such call owns the reservation until it is served. */
+  noteReviewOwed(at=Date.now()){if(this.reviewOwedSince==null)this.reviewOwedSince=at;}
+  /** One rule, read by both the decision and the operator projection. */
+  private reviewHeld(now=Date.now()){
+    if(this.reviewOwedSince==null)return false;
+    if(now-this.reviewOwedSince<this.reviewReservationMs())return false;
+    const window=this.recentPrimaryServes(now);
+    return window.reviews*100<Math.max(1,window.total)*this.reviewSharePercent();
+  }
+  reviewFairness(now=Date.now()){
+    const window=this.recentPrimaryServes(now);
+    return{reservationMs:this.reviewReservationMs(),reviewCapacitySharePercent:this.reviewSharePercent(),
+      reviewOwedSince:this.reviewOwedSince,reviewOwedWaitMs:this.reviewOwedSince==null?0:Math.max(0,now-this.reviewOwedSince),
+      windowServes:window.total,windowReviews:window.reviews,
+      reviewShareUsedPercent:window.total?Math.round(window.reviews/window.total*100):0,
+      heldForReview:this.reviewHeld(now)};
+  }
+  private recentPrimaryServes(now:number){
+    const horizon=this.reviewReservationMs();
+    this.primaryServes=this.primaryServes.filter(row=>now-row.at<=horizon);
+    const reviews=this.primaryServes.filter(row=>row.role==='REVIEW').length;
+    return{reviews,total:this.primaryServes.length};
+  }
+  private choose(role:'SCOUT'|'PRIMARY_BRAIN',excludeId?:string,waiter:'ENTRY'|'REVIEW'='ENTRY'):AiResource{
     const choices=this.state.aiResources.filter(r=>r.role===role&&r.status!=='OFFLINE'&&this.endpointAvailable(r.id)&&r.id!==excludeId&&(this.load.get(r.id)?.active??0)<r.maxConcurrency);if(!choices.length)throw new Error(`AI_RESOURCE_BUSY:${role}`);
+    if(role==='PRIMARY_BRAIN'&&waiter==='ENTRY'&&this.reviewOwedSince!=null){
+      if(this.reviewHeld())throw new Error(`AI_PRIMARY_HELD_FOR_REVIEW:${Math.round(Date.now()-this.reviewOwedSince)}ms`);
+      // Its bounded share has been served, so the reservation is spent and Entry proceeds.
+      this.reviewOwedSince=null;
+    }
     return [...choices].sort((a,b)=>(this.load.get(a.id)?.active??0)-(this.load.get(b.id)?.active??0)||(this.load.get(a.id)?.lastLatencyMs??0)-(this.load.get(b.id)?.lastLatencyMs??0))[0]!;
   }
+  private primaryServes:Array<{role:'ENTRY'|'REVIEW';at:number}>=[];
+  private reviewOwedSince:number|null=null;
   private async run<T>(args:{resource:AiResource;symbol:string;packet:EntryIntelligencePacket;role:'SCOUT'|'PRIMARY_BRAIN'|'REVIEW_BRAIN';prompt:string;schemaName:string;parse:(v:unknown)=>T;queueMs?:number;triggerReason?:string}):Promise<{value:T;run:AiRun}>{
-    const startedAt=Date.now(),runId=uid('airun'),load=this.load.get(args.resource.id)!;load.active++;load.currentSymbol=args.symbol;load.currentRunId=runId;load.currentStartedAt=startedAt;args.resource.status='BUSY';
+    const startedAt=Date.now(),runId=uid('airun'),load=this.load.get(args.resource.id)!;if(args.resource.role==='PRIMARY_BRAIN')this.primaryServes.push({role:args.role==='REVIEW_BRAIN'?'REVIEW':'ENTRY',at:startedAt});if(args.role==='REVIEW_BRAIN')this.reviewOwedSince=null;load.active++;load.currentSymbol=args.symbol;load.currentRunId=runId;load.currentStartedAt=startedAt;args.resource.status='BUSY';
     let run:AiRun=AiRunSchema.parse({id:runId,symbol:args.symbol,resourceId:args.resource.id,model:args.resource.model,role:args.role,startedAt,completedAt:null,latencyMs:null,inputTokens:null,outputTokens:null,finishReason:null,status:'RUNNING',direction:null,decision:null,packetId:args.packet.packetId,error:null,inputPreview:redactAudit({prompt:args.prompt,packet:args.packet},Infinity),requestSource:args.role==='REVIEW_BRAIN'?'REVIEW':'ENTRY',inputContractHash:createHash('sha256').update(JSON.stringify(args.packet)).digest('hex'),promptHash:createHash('sha256').update(args.prompt).digest('hex'),outputContractVersion:'V3.9.3',timing:{queueMs:args.queueMs??0,promptBuildMs:0,requestMs:0,retryMs:0,parseMs:0,totalMs:0},failure:null});const lifecycle=this.state.candidateLifecycle.get(args.symbol);Object.assign(run,{triggerReason:args.triggerReason??lifecycle?.confirmation?.trigger??lifecycle?.triggerReason??'FIRST_REVIEW',previousRunId:lifecycle?.previousRunId??null,runKind:args.role==='SCOUT'?'SCOUT_ENTRY_INFERENCE':args.role==='REVIEW_BRAIN'?'POSITION_REVIEW_RUN':'PRIMARY_INFERENCE_RUN',recordKind:args.role==='REVIEW_BRAIN'?'POSITION_REVIEW_RUN':'PRIMARY_INFERENCE_RUN',marketOpportunityEpisodeId:args.packet.opportunityEvidence?.opportunityId??null,opportunityVersion:args.packet.opportunityEvidence?.version??null});this.state.addAiRun(run);this.events.publish('AI_RUN_STARTED',run,args.symbol);
     try{
     const isEntry=args.schemaName==='EntryDecisionV392';
@@ -217,7 +256,7 @@ export class AiFabric {
    * cannot reach the model costs review budget rather than tripping the entry circuit breaker.
    */
   async review(packet:EntryIntelligencePacket,request:PositionReviewRequest):Promise<{verdict:PositionReviewVerdict;run:AiRun;promptHash:string}>{
-    const prompt=buildPositionReviewPrompt(packet,request),resource=this.choose('PRIMARY_BRAIN');
+    const prompt=buildPositionReviewPrompt(packet,request),resource=this.choose('PRIMARY_BRAIN',undefined,'REVIEW');
     const {value,run}=await this.run({resource,symbol:packet.symbol,packet,role:'REVIEW_BRAIN',prompt,schemaName:'PositionReviewV396',
       parse:parsePositionReview,triggerReason:`POSITION_REVIEW:${request.triggerKey}:n${request.reviewNumber}`});
     return{verdict:value,run,promptHash:run.promptHash??'missing-prompt-hash'};

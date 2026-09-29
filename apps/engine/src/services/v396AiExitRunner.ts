@@ -8,6 +8,10 @@ import {buildExitEstimate,exitPriceBound} from './s03ExitCostEstimator.js';
 import {assembleExitCostFacts} from './s03ExitCostFacts.js';
 import type {PolicyInput} from './s03AiExitPolicy.js';
 import {confirmedTpSubmissionRejection} from './tpSubmissionOutcome.js';
+import {executableDepth} from './orderBookDepth.js';
+import {convertToBaseUnit,type QuoteConversion} from './quoteFxPolicy.js';
+import {resolveQuoteAsset} from '@zdj/core';
+import type {FundingIncomeLedger} from './fundingIncomeLedger.js';
 
 /**
  * J1: the only production consumer of an AI-initiated exit. It decides from durable facts and may
@@ -32,7 +36,18 @@ export class V396AiExitRunner {
     /** J3 supplies the durable TradePlan reader; until then no cycle can be AI-managed. */
     planOf:(position:Position,scope:string,cycleId:string)=>AiExitPlanFacts|null;
     identity:()=>{environment:string;account:string};
+    /** P6: the durable funding ledger and an optional non-base quote rate source. Absent means UNKNOWN. */
+    fundingLedger?:FundingIncomeLedger|null;
+    fxRateProvider?:null|((asset:string,at:number)=>{rate:number;observedAt:number;source:string}|null);
   }){}
+
+  /**
+   * P6: the quote the contract settles in, converted under an explicit rule. A base asset is
+   * `NOT_APPLICABLE`; anything else without a timestamped rate is a refusal, never a silent 1.
+   */
+  private quoteConversion(asset:string,now:number,maxAgeMs:number):QuoteConversion&{amountBase:number|null}{
+    return convertToBaseUnit({amount:1,fromAsset:asset,now,maxAgeMs,rateProvider:this.ports.fxRateProvider??null});
+  }
 
   private coordination(){
     const governance=this.ports.state.settings.riskGovernance as any;
@@ -80,22 +95,40 @@ export class V396AiExitRunner {
       }
       report.evaluated++;
       const quote=(this.ports.state.snapshots.get(position.symbol) as any)?.quote??{};
+      const book=(this.ports.state.snapshots.get(position.symbol) as any)?.orderBook??null;
       const stepSize=Number(quote.stepSize??NaN),tickSize=Number(quote.tickSize??NaN);
       const units=V396ExitRuntime.quantityUnitsOf(Number(position.quantity??0),stepSize);
       const records=[...this.ports.state.tradeRecords.values()].filter(record=>String(record.cycleId??'')===cycleId);
       const policyVersion=`s03:${identity.environment}:${identity.account}:${Number(this.ports.state.settings.settingsVersion??0)}`;
+      // P6: the contract's own quote asset, a depth walked from the real book, and funding taken from
+      // the income ledger with its coverage. None of the three may be defaulted.
+      const quoteAsset=resolveQuoteAsset(position.symbol);
+      const boundPrice=position.side==='LONG'?Number(quote.bid??NaN):Number(quote.ask??NaN);
+      const depth=executableDepth({side:position.side,quantity:Number(position.quantity??0),boundPrice,book,now,maxAgeMs:Math.max(15_000,Number(coordination.reviewMinIntervalMs??300_000))});
+      const funding=this.ports.fundingLedger?.attribution({asset:quoteAsset,symbol:position.symbol,
+        fromMs:Number(position.openedAt??0)>0?Number(position.openedAt):0,toMs:now});
+      const record=records.length===1?records[0]:null;
+      // An exact ledger attribution updates the record it belongs to rather than replacing it in the
+      // estimator input, so the accounting row and the exit fact cannot disagree silently.
+      if(record&&funding&&funding.status==='EXACT'&&record.fundingAttributionStatus!=='EXACT'){
+        this.ports.state.tradeRecords.set(record.tradeId,{...record,funding:funding.fundingUsd,fundingAttributionStatus:'EXACT',pnlBasis:'CANONICAL_NET_WITH_FUNDING_UNKNOWN'} as never);
+      }
+      const fxQuote=this.quoteConversion(quoteAsset,now,Number(coordination.rateMaxAgeMs??60_000));
       const facts=assembleExitCostFacts({
         now,scope,cycleId,symbol:position.symbol,side:position.side==='SHORT'?'SHORT':'LONG',
         positionVersion:Math.trunc(Number((position as any).firstObservedAt??position.openedAt??0))||1,
         remainingQuantityUnits:units,stepSize,tickSize,minNotional:Number(quote.minNotional??NaN),
         entryPrice:Number(position.entryPrice??NaN),bid:Number(quote.bid??NaN),ask:Number(quote.ask??NaN),
         quoteAt:Number(quote.ts??NaN),expiresAt:Math.min(now+Number(coordination.aiExitAuthorizationTtlMs??15_000),Number(owner.deadline)),
-        rateMaxAgeMs:60_000,costVersion:policyVersion,quoteAsset:'USDT',fx:null,
-        record:records.length===1?records[0]:null,
+        rateMaxAgeMs:60_000,costVersion:policyVersion,quoteAsset,
+        fx:fxQuote.status==='PROVEN'?{rateToQuote:fxQuote.rate!,rateAt:fxQuote.rateAt!}:fxQuote.status==='NOT_APPLICABLE'?null:{rateToQuote:null,rateAt:null},
+        record:records.length===1?this.ports.state.tradeRecords.get(record!.tradeId)??record:null,
         fills:this.ports.state.executionFills.filter(fill=>String(fill.cycleId??'')===cycleId),
         fees:this.fees(),
-        depthNotionalUsd:Number.isFinite(Number(quote.depthNotionalUsd))?Number(quote.depthNotionalUsd):null,
+        depthNotionalUsd:depth.executableNotionalUsd,
       });
+      if(depth.reason)facts.blockers.push(`EXIT_DEPTH_UNPROVEN:${depth.reason}`);
+      if(fxQuote.status==='RATE_ABSENT'||fxQuote.status==='RATE_STALE')facts.blockers.push(`FX_${fxQuote.status}:${quoteAsset}`);
       if(records.length>1)facts.blockers.push(`CYCLE_RECORD_AMBIGUOUS:${records.length}`);
       if(!facts.ready||!facts.input){
         report.blocked.push({cycleId,reasons:facts.blockers});

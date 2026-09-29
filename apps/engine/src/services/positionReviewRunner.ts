@@ -36,6 +36,8 @@ export class PositionReviewRunner {
      * by itself look like new evidence, or the deduplication the stage is graded on never binds. */
     evidenceVersion:(symbol:string)=>string;
     memoryVersion:()=>string;
+    /** P6: declares that a review is owed, so the shared Primary endpoint can divide fairly. */
+    noteOwed?:(at:number)=>void;
   }){}
 
   private versions(position:any,plan:TradePlan,scope:string,cycleId:string):ReviewVersions{
@@ -67,6 +69,9 @@ export class PositionReviewRunner {
       const plan=plans.filter(row=>row.cycleId===cycleId&&row.scope===scope&&row.side!=='WAIT').at(-1);
       if(!plan)continue;
       report.considered++;
+      // P6: declaring the debt before the model call is what lets a continuously queued Entry chain
+      // yield a bounded share of the Primary endpoint to this review.
+      (this.ports as any).noteOwed?.(now);
       const reserved=this.ports.scheduler.reserve({positionId:position.id,cycleId,scope,trigger:'SCHEDULED',versions:this.versions(position,plan,scope,cycleId),now});
       if(!reserved.granted){
         report.refused.push(reserved.reason);

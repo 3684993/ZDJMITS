@@ -1,4 +1,4 @@
-import { testnetFundsOnlyEntry } from '@zdj/core';
+import { resolveQuoteAsset, testnetFundsOnlyEntry } from '@zdj/core';
 import type {TradingQualityRuntimeObserver} from '../services/tradingQualityRuntimeObserver.js';
 import { TradingQualityCollector } from '../services/tradingQualityCollector.js';
 import { privateAccountFresh } from '../services/privateAccountReadiness.js';
@@ -55,6 +55,7 @@ import { authoritativePipelineVerdict } from '../services/pipelineVerdict.js';
 import { LossHandoffService } from '../services/lossHandoff.js';
 import { attachOwnershipRuntime, type OwnershipRuntime } from '../services/ownershipRuntime.js';
 import { V396ExitRuntime, exitSubjectFromPosition } from '../services/v396ExitRuntime.js';
+import { FundingIncomeLedger } from '../services/fundingIncomeLedger.js';
 import { V396AiExitRunner } from '../services/v396AiExitRunner.js';
 import { AiExitAuthorityService } from '../services/aiExitAuthority.js';
 import { PortfolioRiskAdmission } from '../services/portfolioRiskLedger.js';
@@ -104,7 +105,7 @@ export class EngineRuntime {
   assetGovernance!: AssetGovernanceCoordinator;
   cohort!: MarketCohort;
   lossHandoff!: LossHandoffService
-  ownership?: OwnershipRuntime;  exitRuntime?: V396ExitRuntime;  aiExitAuthority?: AiExitAuthorityService;  aiExitRunner?: V396AiExitRunner;
+  ownership?: OwnershipRuntime;  exitRuntime?: V396ExitRuntime;  fundingIncome?: FundingIncomeLedger | null;  aiExitAuthority?: AiExitAuthorityService;  aiExitRunner?: V396AiExitRunner;
   portfolioRisk?: PortfolioRiskAdmission;
   aiUsage?: AiUsageLedger;
   positionReviewScheduler?: PositionReviewScheduler;
@@ -484,6 +485,12 @@ export class EngineRuntime {
       store,
     );
     if (trade instanceof ExternalTradeAdapter) runtime.trade = trade;
+    // P6: the funding income ledger shares the ownership file so an income row and the cycle it
+    // settles cannot be committed in two databases that may disagree.
+    let fundingIncome: FundingIncomeLedger | null = null;
+    try { fundingIncome = new FundingIncomeLedger(path.join(store.dataDirectory(), 'v396-ownership.sqlite'), () => ({ environment: String(settings.connections.exchange.environment), account: String(settings.connections.exchange.credentialRef) })); }
+    catch (error) { events.publish('FUNDING_LEDGER_UNAVAILABLE', { reason: String(error instanceof Error ? error.message : error) }, 'V396'); }
+    runtime.fundingIncome = fundingIncome;
     runtime.exitRuntime = exitRuntime;
     // P2: fill attribution reads system origin from the durable registry instead of a client-id prefix.
     state.orderProvenance = exitRuntime.provenance as any;
@@ -524,6 +531,9 @@ export class EngineRuntime {
       evidenceVersion: symbol => String((state.snapshots.get(symbol) as any)?.technical?.['15m']?.asOf ?? 0),
       memoryVersion: () => tradeMemoryVersionOf([...state.tradeRecords.values()]),
       review: input => runtime.reviewPosition(input),
+      // P6: a review that is owed declares the debt so the shared Primary endpoint gives it its
+      // bounded share instead of being permanently taken by a continuously queued Entry chain.
+      noteOwed: (at: number) => ai.noteReviewOwed?.(at),
     });
     // J1: the AI exit door has exactly one production consumer. Its plan port returns null until a
     // durable TradePlan exists for the cycle, so even ENFORCE refuses with AI_PLAN_UNPROVEN rather
@@ -562,6 +572,16 @@ export class EngineRuntime {
         }));
       },
       identity: () => ({ environment: String(settings.connections.exchange.environment), account: String(settings.connections.exchange.credentialRef) }),
+      // P6: the funding ledger and the non-base quote conversion are both optional inputs to the exit
+      // facts. Without a ledger row plus enclosing coverage, funding stays UNKNOWN; without a
+      // timestamped rate, a USDC contract's costs stay UNKNOWN rather than being read as USDT.
+      fundingLedger: fundingIncome,
+      fxRateProvider: (asset, at) => {
+        const quote = asset === 'USDC' ? state.snapshots.get('USDCUSDT') : undefined;
+        const rate = Number((quote as any)?.quote?.last ?? Number.NaN);
+        const observedAt = Number((quote as any)?.quote?.ts ?? 0);
+        return Number.isFinite(rate) && rate > 0 && observedAt > 0 ? { rate, observedAt, source: 'USDCUSDT_QUOTE_LAST' } : null;
+      },
     });
     // C3: restart re-proves stored exits by their original clientOrderId before anything else. This
     // path is read-only by construction; a failed or absent answer leaves the task unacked.
@@ -852,6 +872,11 @@ export class EngineRuntime {
     this.every(2_000,async()=>this.externalResearch.tick());
     this.every(30_000,()=>{this.externalResearch.enqueueMarketChanges();});
     this.every(1_000,()=>{this.settingsStore.backfillAiRunSummaries(25,8);});
+    // P6: funding is a scheduled income event, so the ledger is pulled on a slow cadence with an
+    // explicit coverage window. A failed pull records nothing, which leaves attribution UNKNOWN rather
+    // than implying "no funding happened".
+    this.every(10*60_000,()=>{void this.syncFundingIncome();},{allowOverlap:true});
+    this.every(45_000,()=>{void this.attributeCycleFunding();});
     this.every(5_000,()=>{this.writes.apply('storage-retention',()=>{this.settingsStore.maintainRetention();});});
     // Do not await long research in the scheduler: coordinator single-flight owns
     // publication while every tick still observes expiry during a hung request.
@@ -886,7 +911,7 @@ export class EngineRuntime {
     this.persistTimer = null;
     this.market.stop();
     try{this.settingsStore.persistRuntime(this.state.serialize());this.events.publish("RUNTIME_STOPPED");this.settingsStore.checkpoint();}
-    finally{this.persistenceClosed=true;this.qualityObserver?.close();this.tradingQuality?.close();this.exitRuntime?.close();this.ownership?.close();this.settingsStore.close();}
+    finally{this.persistenceClosed=true;this.qualityObserver?.close();this.tradingQuality?.close();this.exitRuntime?.close();this.fundingIncome?.close();this.ownership?.close();this.settingsStore.close();}
   }
   private async applySavedSettings(next:any) {
     this.state.setSettings(next);
@@ -1289,6 +1314,66 @@ export class EngineRuntime {
     const stats=this.exitRuntime.convergenceStats();
     return {available:true,...stats,unreleasedClaims:this.exitRuntime.recoveryPlan().mustQuery.length};
   }
+
+  /**
+   * P6: pull funding income into the durable ledger with its coverage window.
+   *
+   * The reader is the same paged income audit the trade-record sync uses. A row is only recorded for
+   * a window whose pages all arrived, and a failed or short read records nothing at all: an empty
+   * ledger is honest, a "zero funding" row invented from a missing read is not.
+   */
+  async syncFundingIncome(now=Date.now()){
+    const ledger=this.fundingIncome;
+    if(!ledger)return {skipped:'LEDGER_UNAVAILABLE'};
+    const reader=(this.trade as any)?.fetchSymbolTradeFacts;
+    if(typeof reader!=='function')return {skipped:'INCOME_READER_UNAVAILABLE'};
+    // The window starts at what the ledger already proved, rolled back one funding interval so an
+    // income row that straddles the boundary is still re-read (the insert is idempotent by income id).
+    const covered=Number(ledger.coverageSummary().coveredUntilMs??0);
+    const since=covered>0?covered-2*3600_000:Math.max(0,now-48*3600_000);
+    const openRecords=[...this.state.tradeRecords.values()].filter(record=>record.status!=='CLOSED'||!record.observedClosedAt);
+    const symbols=[...new Set([...this.state.positions.values(),...openRecords]
+      .map(row=>String((row as any).symbol??'')).filter(Boolean))].slice(0,40);
+    let rows=0,failures=0;const assets=new Set<string>();
+    for(const symbol of symbols){
+      try{
+        const facts=await reader.call(this.trade,symbol,since,now);
+        const income=Array.isArray(facts?.income)?facts.income:[];
+        const complete=facts?.coverageComplete===true&&Number.isFinite(Number(facts?.coverageStart))&&Number(facts?.coverageStart)<=since&&Number(facts?.coverageEnd??0)>=now;
+        if(!income.length&&!complete)continue;
+        const recorded=ledger.recordRows(income.map(row=>({...row,symbol:String(row.symbol??symbol),observedAt:now,source:'FUNDING_INCOME_READ'})));
+        rows+=recorded.inserted;
+        for(const row of income)assets.add(String(row.asset??''));
+        for(const asset of new Set(['USDT','USDC',...assets]))ledger.recordCoverage({asset,sinceMs:since,untilMs:now,pages:1,
+          rows:income.filter(row=>String(row.asset)===asset).length,complete,reason:complete?null:'INCOME_COVERAGE_INCOMPLETE'});
+      }catch(error){failures++;this.events.publish('FUNDING_INCOME_READ_FAILED',{symbol,reason:String(error instanceof Error?error.message:error)},symbol);}
+    }
+    const summary={asOf:now,rows,assets:[...assets],failures,symbolsScanned:symbols.length,coverage:ledger.coverageSummary()};
+    if(rows||failures)this.events.publish('FUNDING_INCOME_SYNCED',{rows,assets:assets.size,failures,symbolsScanned:symbols.length},undefined);
+    return summary;
+  }
+
+  /** P6: fund cycles the ledger can prove, and leave the rest UNKNOWN. */
+  attributeCycleFunding(now=Date.now()){
+    const ledger=this.fundingIncome;
+    if(!ledger)return {attributed:0,unknown:0};
+    let attributed=0,unknown=0;
+    for(const record of [...this.state.tradeRecords.values()] as any[]){
+      if(record.fundingAttributionStatus==='EXACT')continue;
+      const openedAt=Number(record.openedAt??0);
+      if(!(openedAt>0)){unknown++;continue;}
+      const fact=ledger.attribution({asset:resolveQuoteAsset(record.symbol),symbol:record.symbol,fromMs:openedAt,toMs:Number(record.closedAt??record.observedClosedAt??now)});
+      if(fact.status!=='EXACT'){unknown++;continue;}
+      this.state.tradeRecords.set(record.tradeId,{...record,funding:fact.fundingUsd,fundingAttributionStatus:'EXACT',
+        fundingCoverage:{sinceMs:fact.coverage?.sinceMs??null,untilMs:fact.coverage?.untilMs??null,observedRows:fact.observedFundingRows,attributedAt:now},
+        updatedAt:now} as never);
+      attributed++;
+      this.events.publish('TRADE_RECORD_FUNDING_ATTRIBUTED',{tradeId:record.tradeId,cycleId:record.cycleId,funding:fact.fundingUsd,observedRows:fact.observedFundingRows,coverage:fact.coverage},record.symbol);
+    }
+    return {attributed,unknown};
+  }
+
+  fundingIncomeCoverage(){return this.fundingIncome?.coverageSummary?.()??null;}
 
   /**
    * C3: startup convergence for non-terminal exit tasks. Query only - it never resubmits, and an

@@ -40,8 +40,11 @@ function fixture(authority:'OFF'|'SHADOW'|'ENFORCE',over:{plan?:AiExitPlanFacts|
   const position=any({id:'p1',symbol:'BTCUSDT',side:'LONG',quantity:10,entryPrice:100,markPrice:99.9,leverage:5,openedAt:now-600_000,firstObservedAt:now-600_000,
     cycleId:CYCLE,managementStatus:'AUTO_MANAGED',humanManagedAt:null,tpStatus:'PROTECTED',profitTakePlan:null});
   state.positions.set('p1',position);
-  state.snapshots.set('BTCUSDT',{symbol:'BTCUSDT',quote:{symbol:'BTCUSDT',last:99.95,mark:99.9,bid:99.9,ask:100.1,tickSize:.1,stepSize:1,minQty:1,minNotional:5,ts:now-500,
-    depthNotionalUsd:over.depth===null?undefined:over.depth??50_000}} as never);
+  // P6: depth is now walked from the real order book, so the fixture supplies one instead of the
+  // `quote.depthNotionalUsd` field no production path ever filled.
+  const bookQuantity=over.depth===null?0:Number(over.depth??50_000)/99.9;
+  state.snapshots.set('BTCUSDT',{symbol:'BTCUSDT',quote:{symbol:'BTCUSDT',last:99.95,mark:99.9,bid:99.9,ask:100.1,tickSize:.1,stepSize:1,minQty:1,minNotional:5,ts:now-500},
+    orderBook:{symbol:'BTCUSDT',ts:now-400,sequence:1,bids:[[99.9,bookQuantity],[99.8,bookQuantity]],asks:[[100.1,bookQuantity],[100.2,bookQuantity]]}} as never);
   state.executionFills.push(any({fillId:'f1',tradeId:'t1',orderId:'eo1',clientOrderId:'ec1',cycleId:CYCLE,symbol:'BTCUSDT',direction:'LONG',side:'BUY',positionSide:'LONG',
     executionTime:now-600_000,qty:10,price:100,realizedPnl:0,commission:.4,commissionAsset:'USDT',commissionUsd:over.commissionUsd===undefined?.4:over.commissionUsd,maker:true,source:'EXCHANGE_AUDIT',attributionStatus:'SYSTEM_ATTRIBUTED'}));
   state.tradeRecords.set('tr1',any({tradeId:'tr1',symbol:'BTCUSDT',cycleId:CYCLE,status:'OPEN',direction:'LONG',quantity:10,entryAveragePrice:100,

@@ -70,7 +70,12 @@ export const DashboardSnapshotSchema = z.object({
         usable:z.boolean(),enabled:z.boolean(),considered:z.number().int().nonnegative(),reserved:z.number().int().nonnegative(),completed:z.number().int().nonnegative(),
         discarded:z.number().int().nonnegative(),failed:z.number().int().nonnegative(),due:z.number().int().nonnegative(),exhausted:z.number().int().nonnegative(),
         failureBlocked:z.number().int().nonnegative(),skippedReason:z.string().nullable()}).nullable().optional(),
-      detail:z.string().nullable()}),
+      detail:z.string().nullable(),
+      /** P6: how the shared Primary endpoint is being divided between Entry and Review. */
+      reviewFairness:z.object({reservationMs:z.number().int().positive(),reviewCapacitySharePercent:z.number().min(0).max(50),
+        reviewOwedSince:z.number().nullable(),reviewOwedWaitMs:z.number().nonnegative(),
+        windowServes:z.number().int().nonnegative(),windowReviews:z.number().int().nonnegative(),
+        reviewShareUsedPercent:z.number().nonnegative(),heldForReview:z.boolean()}).nullable().optional()}),
     /** P6: per-cycle review obligation, stated as last review / next due / failures / why skipped. */
     reviewCycles:z.array(z.object({cycleId:z.string(),scope:z.string(),used:z.number().int().nonnegative(),limit:z.number().int().nonnegative(),failures:z.number().int().nonnegative(),
       lastReviewAt:z.number().nullable(),nextDueAt:z.number().nullable(),lastOutcome:z.string().nullable(),skippedReason:z.string().nullable()})).optional(),

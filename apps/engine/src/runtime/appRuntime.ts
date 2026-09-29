@@ -134,7 +134,7 @@ export class EngineRuntime {
   /** The last funding-income pass, so an empty ledger can be told apart from a reader that never ran. */
   private lastFundingSync: {at:number|null;rows:number;failures:number;symbolsScanned:number;skipped:string|null} | null = null;
   /** Why the continuous exit-convergence walk did or did not poll on its last turn. */
-  private convergenceGate: {at?:number;reason?:string;due?:boolean;attempted?:number} | null = null;
+  private convergenceGate: {at?:number;reason?:string;due?:boolean;attempted?:number;inFlight?:boolean} | null = null;
   private tradeRecordAutoSyncStartedAt: number | null = null;
   private tradeRecordAutoSyncLastEndAt: number | null = null;
   private tradeRecordAutoSyncFlight: Promise<void> | null = null;
@@ -1307,6 +1307,9 @@ export class EngineRuntime {
     }
     const due = this.exitRuntime.convergenceDue(now);
     if (!due.due) { this.convergenceGate = { at: now, ...due }; return due; }
+    // Marked before the await as well: a pass that is still running is a different fact from one that
+    // never started, and the operator should be able to tell them apart without waiting for it to end.
+    this.convergenceGate = { at: now, due: true as const, inFlight: true as const };
     const converged = await this.exitRuntime.convergePeriodically((input) => adapter.findExitByClientOrderId(input), now);
     this.convergenceGate = { at: now, due: true as const, attempted: converged.attempted };
     for (const task of (converged.converged ?? []).filter((row: any) => String(row.outcome).startsWith('EXCHANGE_FACT_')||String(row.outcome).startsWith('OBSERVE_REFUSED'))) {

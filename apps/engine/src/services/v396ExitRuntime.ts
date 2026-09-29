@@ -383,7 +383,9 @@ export class V396ExitRuntime {
     const authority=this.authority() as {queryTimeoutMs?:number;intervalMs?:number};
     const configured=Number(authority.queryTimeoutMs??0);
     if(Number.isFinite(configured)&&configured>0)return Math.min(600_000,Math.trunc(configured));
-    return Math.max(5_000,Math.min(120_000,Math.trunc(Number(authority.intervalMs??120_000))));
+    // Half the cadence, floored at five seconds: eight hung reads must not make one pass outlast the
+    // interval that bounds the whole walk, or the published service bound stops meaning anything.
+    return Math.max(5_000,Math.min(30_000,Math.trunc(Number(authority.intervalMs??120_000))/2));
   }
 
   /**

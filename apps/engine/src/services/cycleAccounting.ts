@@ -139,7 +139,14 @@ export function accountCycle(record:TradeRecord, fills:ExecutionFill[]):TradeRec
   const entryQty=sum(entries,f=>f.qty),exitQty=sum(exits,f=>f.qty),remaining=entryQty-exitQty,eps=quantityTolerance(entryQty);
   const conserved=entries.length>0&&exits.length>0&&Math.abs(remaining)<=eps;
   const ledgerInconsistent=entries.length>0&&remaining<-eps;
-  const conservation=entries.length===0?'UNKNOWN':Math.abs(remaining)<=eps?'CONSERVED':ledgerInconsistent?'LEDGER_INCONSISTENT':'UNCONSERVED';
+  // Conservation is an agreement test, not a "must be flat" test. An OPEN cycle legitimately still
+  // holds quantity, and labelling all 133 live open records UNCONSERVED would bury a genuinely broken
+  // ledger in healthy rows. UNCONSERVED is reserved for a trade that says it is closed while its fills
+  // never reached zero; a negative remainder is the stronger LEDGER_INCONSISTENT anomaly.
+  const expectsFlat=record.status==='CLOSED'||Boolean(record.observedClosedAt);
+  const conservation:NonNullable<TradeRecord['ledgerConservation']>=entries.length===0?'UNKNOWN'
+    :ledgerInconsistent?'LEDGER_INCONSISTENT'
+      :expectsFlat&&Math.abs(remaining)>eps?'UNCONSERVED':'CONSERVED';
   const entryFee=entries.length&&entries.every(f=>f.commissionUsd!=null)?sum(entries,f=>f.commissionUsd!):null;
   const exitFee=exits.length&&exits.every(f=>f.commissionUsd!=null)?sum(exits,f=>f.commissionUsd!):null;
   const fees=entryFee!=null&&exitFee!=null,gross=exits.length?sum(exits,f=>f.realizedPnl):null;
@@ -163,7 +170,7 @@ export function accountCycle(record:TradeRecord, fills:ExecutionFill[]):TradeRec
     status:closed?'CLOSED':ledgerInconsistent?'INCOMPLETE':exits.length?'PARTIALLY_CLOSED':record.observedClosedAt?'INCOMPLETE':'OPEN',closedAt,
     durationMs:closedAt!=null&&record.openedAt!=null?Math.max(0,closedAt-record.openedAt):null,
     feeCompleteness:fees?'COMPLETE':'PARTIAL',recordCompleteness:conserved&&fees?'COMPLETE':'PARTIAL',classification:conserved&&fees?'COMPLETE':'PARTIAL',
-    missingFacts:missing,integrityFlags:[...new Set([...record.integrityFlags.filter(f=>!['FILL_CONSERVATION_FAILED','CLOSED_NO_EXIT_FACT','LEDGER_INCONSISTENT'].includes(f)),...(ledgerInconsistent?['LEDGER_INCONSISTENT']:[]),...(!conserved&&exits.length&&!ledgerInconsistent?['FILL_CONSERVATION_FAILED']:[])])],
+    missingFacts:missing,integrityFlags:[...new Set([...record.integrityFlags.filter(f=>!['FILL_CONSERVATION_FAILED','CLOSED_NO_EXIT_FACT','LEDGER_INCONSISTENT'].includes(f)),...(ledgerInconsistent?['LEDGER_INCONSISTENT']:[]),...(conservation==='UNCONSERVED'?['FILL_CONSERVATION_FAILED']:[])])],
     entryOrderIds:[...new Set([...record.entryOrderIds,...entries.map(f=>f.orderId)])],exitOrderIds:[...new Set([...record.exitOrderIds,...exits.map(f=>f.orderId)])],
     linkedFillIds:fills.map(f=>f.fillId),feeBreakdown:fills.map(f=>({stage:entries.includes(f)?'ENTRY':'EXIT',asset:f.commissionAsset,amount:f.commission,usd:f.commissionUsd,conversionSource:f.commissionUsd==null?null:'EXCHANGE_COMMISSION'}))});
 }

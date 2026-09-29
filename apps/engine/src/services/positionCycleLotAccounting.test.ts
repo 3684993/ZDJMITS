@@ -174,6 +174,27 @@ describe('P2 physical cycle with multiple entry lots',()=>{
     expect(after.remainingQty).toBe(0);
     expect(h.state.executionFills.filter(fill=>fill.tradeId==='trade_tp_agg')).toHaveLength(1);
   });
+
+  it('an open holding that agrees with its fills conserves; only a contradiction is UNCONSERVED',()=>{
+    const h=harness();
+    const first=h.addEntryLot('BRUSDT',6,100,1_000);
+    h.addEntryLot('BRUSDT',6,100,2_000);
+    // Still open: 12 in, nothing out. That is a healthy ledger, not a conservation failure.
+    expect(h.record()).toMatchObject({status:'OPEN',entryQty:12,exitQty:0,remainingQty:12,ledgerConservation:'CONSERVED'});
+    // A partial close that leaves the declared remainder is still conserved.
+    h.exitAll('BRUSDT',4,101,3_000,'tp_part');
+    expect(h.record()).toMatchObject({status:'PARTIALLY_CLOSED',entryQty:12,exitQty:4,remainingQty:8,ledgerConservation:'CONSERVED'});
+    expect(h.record().integrityFlags).not.toContain('FILL_CONSERVATION_FAILED');
+    // A record that claims to be CLOSED while its fills never reached zero is the contradiction.
+    const closed=h.state.executionFills.filter(fill=>fill.symbol==='BRUSDT');
+    expect(accountCycle(any({...h.record(),tradeId:'rec_stale',status:'CLOSED'}),closed).ledgerConservation).toBe('UNCONSERVED');
+    // The same anomaly expressed as an observed close time instead of a status label.
+    expect(accountCycle(any({...h.record(),tradeId:'rec_observed',observedClosedAt:4_500}),closed).ledgerConservation).toBe('UNCONSERVED');
+    // Closing the rest makes the cycle flat, and a flat CLOSED trade is conserved.
+    h.exitAll('BRUSDT',8,102,4_000,'tp_rest');
+    expect(h.record()).toMatchObject({status:'CLOSED',entryQty:12,exitQty:12,remainingQty:0,ledgerConservation:'CONSERVED'});
+    expect(first.symbol).toBe('BRUSDT');
+  });
 });
 
 describe('P2 system exit fill provenance',()=>{

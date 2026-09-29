@@ -70,6 +70,11 @@ export function executionTruthProjection(runtime: EngineRuntime, now = Date.now(
   const records = [...s.tradeRecords.values()] as any[];
   const inconsistent = records.filter(record => record.ledgerConservation === 'LEDGER_INCONSISTENT' || (record.integrityFlags ?? []).includes('LEDGER_INCONSISTENT')).length;
   const unconserved = records.filter(record => record.ledgerConservation === 'UNCONSERVED').length;
+  // An open holding is not a conservation failure, and a record with no Entry fill proves nothing. Both
+  // are counted so DEGRADED means only "the ledger contradicts itself".
+  const conservedRecords = records.filter(record => record.ledgerConservation === 'CONSERVED').length;
+  const unprovenRecords = records.filter(record => !record.ledgerConservation || record.ledgerConservation === 'UNKNOWN').length;
+  const openConserved = records.filter(record => record.ledgerConservation === 'CONSERVED' && record.status !== 'CLOSED').length;
   const fundingExact = records.filter(record => record.fundingAttributionStatus === 'EXACT').length;
   const fundingUnknown = records.filter(record => record.fundingAttributionStatus !== 'EXACT').length;
   const fundingLedger = (runtime as any).fundingIncome?.coverageSummary?.() ?? null;
@@ -140,8 +145,10 @@ export function executionTruthProjection(runtime: EngineRuntime, now = Date.now(
         local, remote: compared ? Math.max(0, remote) : 0,
         detail: compared ? `local=${local};remote=${remote}` : 'RECONCILIATION_HAS_NOT_REPORTED_POSITION_COUNT'};
     })(),
-    fillCycleConservation: {status: inconsistent > 0 ? 'DEGRADED' as const : unconserved > 0 ? 'DEGRADED' as const : 'HEALTHY' as const,
-      ledgerInconsistent: inconsistent, unconserved, detail: `records=${records.length}`},
+    fillCycleConservation: {status: inconsistent + unconserved > 0 ? 'DEGRADED' as const
+      : conservedRecords > 0 ? 'HEALTHY' as const : 'UNKNOWN' as const,
+      ledgerInconsistent: inconsistent, unconserved, conserved: conservedRecords, openConserved, unproven: unprovenRecords,
+      detail: `records=${records.length};conserved=${conservedRecords}(open ${openConserved}/closed ${conservedRecords - openConserved});inconsistent=${inconsistent};unconserved=${unconserved};unproven=${unprovenRecords}`},
     fundingCoverage: {status: fundingLedger?.complete ? 'HEALTHY' as const : fundingExact > 0 ? 'PARTIAL' as const : 'UNKNOWN' as const,
       recordsWithExactFunding: fundingExact, recordsUnknown: fundingUnknown,
       incomeRows: Math.max(0, Number(fundingLedger?.rows ?? 0)), coverageComplete: fundingLedger?.complete === true,

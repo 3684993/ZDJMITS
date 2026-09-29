@@ -175,7 +175,7 @@ const checkFacts = (key: string, row: any): Array<[string, string]> => {
   if (key === "takeProfitCoverage")
     return [["需要", String(row.required ?? 0)], ["已保护", String(row.protected ?? 0)], ["缺失", String(row.missing ?? 0)], ["仓位事实未决", String(row.unresolved ?? 0)]];
   if (key === "positionCoverage") return [["本地持仓", String(row.local ?? 0)], ["交易所持仓", String(row.remote ?? 0)]];
-  if (key === "fillCycleConservation") return [["账本不一致", String(row.ledgerInconsistent ?? 0)], ["不守恒", String(row.unconserved ?? 0)]];
+  if (key === "fillCycleConservation") return [["账本不一致", String(row.ledgerInconsistent ?? 0)], ["不守恒", String(row.unconserved ?? 0)], ["守恒", `${String(row.conserved ?? 0)}（含在持仓 ${String(row.openConserved ?? 0)}）`], ["未证明", String(row.unproven ?? 0)]];
   if (key === "fundingCoverage")
     return [["资金费精确", String(row.recordsWithExactFunding ?? 0)], ["资金费未知", String(row.recordsUnknown ?? 0)], ["资金费流水", String(row.incomeRows ?? 0)], ["覆盖完整", row.coverageComplete ? "是" : "否"]];
   if (key === "reviewAuthority")

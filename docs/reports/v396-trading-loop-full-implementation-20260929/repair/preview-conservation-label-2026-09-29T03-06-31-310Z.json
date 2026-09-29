@@ -1,0 +1,29 @@
+{
+ "kind": "V396_TRADING_LOOP_REPAIR",
+ "job": "conservation-label",
+ "mode": "PREVIEW",
+ "at": 1790651191310,
+ "environment": "TESTNET",
+ "account": "binance-primary",
+ "idempotencyKey": "conservation-label:TESTNET:binance-primary:",
+ "ledger": {
+  "exitTasks": 163,
+  "activeClaims": 45,
+  "fills": 4206,
+  "tradeRecords": 385
+ },
+ "exitClaims": null,
+ "cycleBackfill": null,
+ "conservationRelabel": {
+  "summary": {
+   "records": 385,
+   "relabelled": 0,
+   "alreadyCorrect": 385,
+   "unproven": 0
+  },
+  "transitions": {}
+ },
+ "applied": null,
+ "leftUnknownCount": 0,
+ "leftUnknownCategories": {}
+}

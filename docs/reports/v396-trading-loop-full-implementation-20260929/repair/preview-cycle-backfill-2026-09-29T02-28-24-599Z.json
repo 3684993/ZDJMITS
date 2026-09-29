@@ -1,0 +1,35 @@
+{
+ "kind": "V396_TRADING_LOOP_REPAIR",
+ "job": "cycle-backfill",
+ "mode": "PREVIEW",
+ "at": 1790648904598,
+ "environment": "TESTNET",
+ "account": "binance-primary",
+ "idempotencyKey": "cycle-backfill:TESTNET:binance-primary:",
+ "ledger": {
+  "exitTasks": 163,
+  "activeClaims": 52,
+  "fills": 4206,
+  "tradeRecords": 385
+ },
+ "exitClaims": null,
+ "cycleBackfill": {
+  "summary": {
+   "fills": 4206,
+   "assigned": 4206,
+   "cycles": 278,
+   "unproven": 53,
+   "inconsistent": 0
+  },
+  "reasonCategories": {
+   "HOLDING_STILL_OPEN_AT_LAST_FILL": 53
+  },
+  "supersededReasons": {},
+  "supersededSample": []
+ },
+ "applied": null,
+ "leftUnknownCount": 53,
+ "leftUnknownCategories": {
+  "HOLDING_STILL_OPEN_AT_LAST_FILL": 53
+ }
+}

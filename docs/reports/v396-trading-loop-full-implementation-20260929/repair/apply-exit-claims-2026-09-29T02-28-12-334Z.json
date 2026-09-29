@@ -1,0 +1,43 @@
+{
+ "kind": "V396_TRADING_LOOP_REPAIR",
+ "job": "exit-claims",
+ "mode": "APPLY",
+ "at": 1790648892334,
+ "environment": "TESTNET",
+ "account": "binance-primary",
+ "idempotencyKey": "exit-claims:TESTNET:binance-primary:",
+ "ledger": {
+  "exitTasks": 163,
+  "activeClaims": 52,
+  "fills": 4206,
+  "tradeRecords": 385
+ },
+ "exitClaims": {
+  "summary": {
+   "CONVERGE_TERMINAL": 0,
+   "CONVERGE_NON_TERMINAL": 0,
+   "KEEP_UNKNOWN": 52,
+   "NO_OP": 111,
+   "total": 163
+  },
+  "keepUnknownCategories": [
+   "NO_ACCEPTED_EXCHANGE_EVIDENCE"
+  ],
+  "converge": []
+ },
+ "cycleBackfill": null,
+ "applied": {
+  "exitFacts": {
+   "applied": 0,
+   "skipped": 0,
+   "reason": "NO_PROVEN_FACT_TO_WRITE"
+  },
+  "cycles": {},
+  "transactions": 0,
+  "exchangeWrites": 0
+ },
+ "leftUnknownCount": 52,
+ "leftUnknownCategories": {
+  "NO_ACCEPTED_EXCHANGE_EVIDENCE": 52
+ }
+}

@@ -1,0 +1,60 @@
+{
+ "kind": "V396_TRADING_LOOP_REPAIR",
+ "job": "all",
+ "mode": "PREVIEW",
+ "at": 1790651789100,
+ "environment": "TESTNET",
+ "account": "binance-primary",
+ "idempotencyKey": "all:TESTNET:binance-primary:",
+ "ledger": {
+  "exitTasks": 163,
+  "activeClaims": 45,
+  "fills": 4206,
+  "tradeRecords": 385,
+  "copyDivergence": {
+   "agreed": 385
+  }
+ },
+ "exitClaims": {
+  "summary": {
+   "CONVERGE_TERMINAL": 0,
+   "CONVERGE_NON_TERMINAL": 0,
+   "KEEP_UNKNOWN": 45,
+   "NO_OP": 118,
+   "total": 163
+  },
+  "keepUnknownCategories": [
+   "NO_ACCEPTED_EXCHANGE_EVIDENCE"
+  ],
+  "converge": []
+ },
+ "cycleBackfill": {
+  "summary": {
+   "fills": 4206,
+   "assigned": 4206,
+   "cycles": 278,
+   "unproven": 53,
+   "inconsistent": 0
+  },
+  "reasonCategories": {
+   "HOLDING_STILL_OPEN_AT_LAST_FILL": 53
+  },
+  "supersededReasons": {},
+  "supersededSample": []
+ },
+ "conservationRelabel": {
+  "summary": {
+   "records": 385,
+   "relabelled": 0,
+   "alreadyCorrect": 385,
+   "unproven": 0
+  },
+  "transitions": {}
+ },
+ "applied": null,
+ "leftUnknownCount": 98,
+ "leftUnknownCategories": {
+  "NO_ACCEPTED_EXCHANGE_EVIDENCE": 45,
+  "HOLDING_STILL_OPEN_AT_LAST_FILL": 53
+ }
+}

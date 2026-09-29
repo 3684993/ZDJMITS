@@ -73,16 +73,26 @@ const capacityEntry = computed(() => {
   const view = capacityVisibility.value;
   if (!view) return null;
   const admission=view.admission??{},blocked=admission.status==='UNAVAILABLE'||admission.exhausted===true;
+  // Which authority produced the number the side line shows. The page never picks the bigger of two
+  // numbers: a BOOK ceiling is named as such, a funds-only run says the risk side is not applicable
+  // and the funding fact is what binds, and an unavailable book stays PRE-RISK.
+  const ceilingOf = (name: 'LONG' | 'SHORT') => admission.ceilingUsdBySide?.[name] ?? null;
+  const sourceOf = (name: 'LONG' | 'SHORT') => blocked
+    ? "PRE-RISK / NOT EXECUTABLE"
+    : ceilingOf(name) !== null ? "来源 风险权威上限（BOOK admission）"
+      : admission.status === 'NOT_APPLICABLE' ? "来源 资金与交易所事实（风险侧 NOT_APPLICABLE）"
+        : `来源 资金与交易所事实（风险权威 ${admission.status ?? 'NOT_EVALUATED'}）`;
   const side = (name: 'LONG' | 'SHORT') => {
     const row = view.entryCapacity?.[name] ?? {};
     const route = row.symbol && row.quoteAsset ? ` via ${row.symbol}/${row.quoteAsset}` : "";
-    return blocked
-      ? `${name} 候选估算 ${fmt(row.executableNotionalUsd)}${route} · PRE-RISK / NOT EXECUTABLE · 首因 ${row.firstBindingConstraint ?? "NOT_EVALUATED"}`
-      : `${name} 可执行新增名义 ${fmt(admission.ceilingUsdBySide?.[name] ?? row.executableNotionalUsd)}${route} · 首因 ${row.firstBindingConstraint ?? "NOT_EVALUATED"}`;
+    const amount = blocked || ceilingOf(name) === null ? row.executableNotionalUsd : ceilingOf(name);
+    return `${name} ${blocked ? "候选估算" : "可执行新增名义"} ${fmt(amount)}${route} · 首因 ${row.firstBindingConstraint ?? "NOT_EVALUATED"} · ${sourceOf(name)}`;
   };
   const finalStatus=admission.status??'NOT_EVALUATED',finalLine=blocked
     ? `权威最终 Entry 容量：LONG $0.00 / ${finalStatus}；SHORT $0.00 / ${finalStatus} · ${admission.code??admission.detail??'BOOK admission unavailable'}`
-    : `权威最终 Entry 容量：LONG ${fmt(admission.ceilingUsdBySide?.LONG??view.entryCapacity?.LONG?.executableNotionalUsd)} / ${finalStatus}；SHORT ${fmt(admission.ceilingUsdBySide?.SHORT??view.entryCapacity?.SHORT?.executableNotionalUsd)} / ${finalStatus}`;
+    : ceilingOf('LONG') === null && ceilingOf('SHORT') === null
+      ? `权威最终 Entry 容量：风险权威未给出上限（${finalStatus}），两侧由资金与交易所事实决定：LONG ${fmt(view.entryCapacity?.LONG?.executableNotionalUsd)} / SHORT ${fmt(view.entryCapacity?.SHORT?.executableNotionalUsd)}`
+      : `权威最终 Entry 容量：LONG ${fmt(ceilingOf('LONG') ?? view.entryCapacity?.LONG?.executableNotionalUsd)} / ${finalStatus}；SHORT ${fmt(ceilingOf('SHORT') ?? view.entryCapacity?.SHORT?.executableNotionalUsd)} / ${finalStatus}`;
   return { LONG: side('LONG'), SHORT: side('SHORT'), finalLine, constraint: view.entryCapacity?.LONG?.firstBindingConstraint ?? view.entryCapacity?.SHORT?.firstBindingConstraint ?? "NOT_EVALUATED" };
 });
 // Which balances the Engine counted as Entry funding, read back from its ledger rather than re-listed here.
@@ -94,7 +104,12 @@ const capacitySides = ['LONG', 'SHORT'] as const;
 const capacityRoomText = (row: any) => {
   const room = row?.plan?.capacityRoom;
   if (!room) return "";
-  return `｜容量上限 ${fmt(room.ceilingUsd)}（已用 ${fmt(room.usedUsd)}，剩余 ${fmt(room.roomUsd)}）来自 ${room.source}`;
+  // A ceiling the Engine did not prove stays unnamed: no number is substituted for it.
+  if (room.ceilingUsd == null) return `｜容量上限未提供（来自 ${room.source}）`;
+  // Whether this room may veto at all is part of the fact, so an observational room is never read
+  // as a rejection.
+  const disposition = room.enforced === undefined ? "" : room.enforced ? " · ENFORCE 可否决" : " · OBSERVE 仅展示不否决";
+  return `｜容量上限 ${fmt(room.ceilingUsd)}（已用 ${fmt(room.usedUsd)}，剩余 ${fmt(room.roomUsd)}）来自 ${room.source}${disposition}`;
 };
 const sideCandidateRows = (side: 'LONG' | 'SHORT') =>
   (capacityVisibility.value?.entryCapacity?.[side]?.candidates ?? []).map((row: any) =>

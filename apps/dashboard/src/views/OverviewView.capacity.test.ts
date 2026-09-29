@@ -191,6 +191,35 @@ it('renders the one authoritative blocker the Engine declared and its matching n
   expect(secondary).toContain('SUPPLY_DIAGNOSTIC:ELIGIBILITY');
 });
 
+it('names which authority produced each side capacity instead of blending the two numbers',async()=>{
+  const booked=structuredClone(marginDrivenBook);
+  booked.capacityVisibility.admission={status:'AVAILABLE',scope:'BOOK',evaluatedAt:1,ceilingUsdBySide:{LONG:1200,SHORT:900},enforced:true};
+  const bookedEntry=(await open(booked)).find('[data-capital-block="entry"]').text();
+  expect(bookedEntry).toContain('LONG 可执行新增名义 $1,200.00 via LINKUSDT/USDT · 首因 CLUSTER · 来源 风险权威上限（BOOK admission）');
+  expect(bookedEntry).toContain('权威最终 Entry 容量：LONG $1,200.00 / AVAILABLE；SHORT $900.00 / AVAILABLE');
+  // The candidate estimate stays where it belongs - the per-candidate trace - and is never shown as
+  // the BOOK capacity once the authority has given a number.
+  expect(bookedEntry).not.toContain('LONG 可执行新增名义 $3,680.06');
+  // The funds-only run: the risk side is explicitly not applicable, so the funding fact is what binds.
+  const fundsOnly=structuredClone(marginDrivenBook);
+  fundsOnly.capacityVisibility.admission={status:'NOT_APPLICABLE',scope:'BOOK',evaluatedAt:1,ceilingUsdBySide:null,enforced:false};
+  const fundsEntry=(await open(fundsOnly)).find('[data-capital-block="entry"]').text();
+  expect(fundsEntry).toContain('来源 资金与交易所事实（风险侧 NOT_APPLICABLE）');
+  expect(fundsEntry).toContain('权威最终 Entry 容量：风险权威未给出上限（NOT_APPLICABLE），两侧由资金与交易所事实决定：LONG $3,680.06 / SHORT $3,680.06');
+  expect(fundsEntry).not.toContain('来源 风险权威上限');
+});
+
+it('labels an observational sizing room as non-vetoing and an enforced one as a veto',async()=>{
+  const rooms=structuredClone(marginDrivenBook);
+  const candidate=(rooms.capacityVisibility as any).entryCapacity.SHORT.candidates[0];
+  candidate.plan.capacityRoom={source:'SHORT_EXPOSURE',ceilingUsd:5248.68,usedUsd:7438.39,roomUsd:0,limitPct:.5,usedPct:1.16,equityUsd:10494.31,authority:'riskGovernance.maxDirectionExposurePct',enforced:false};
+  expect((await open(rooms)).findAll('[data-capacity-trace]')[1].text()).toContain('剩余 $0.00）来自 SHORT_EXPOSURE · OBSERVE 仅展示不否决');
+  candidate.plan.capacityRoom.enforced=true;
+  expect((await open(rooms)).findAll('[data-capacity-trace]')[1].text()).toContain('来自 SHORT_EXPOSURE · ENFORCE 可否决');
+  candidate.plan.capacityRoom.ceilingUsd=null;
+  expect((await open(rooms)).findAll('[data-capacity-trace]')[1].text()).toContain('容量上限未提供（来自 SHORT_EXPOSURE）');
+});
+
 it('renders scheduler liveness separately from Primary dispatch age and suppression cause',async()=>{
   const wrapper=await open({...marginDrivenBook,analysis:{mode:'EXECUTION_ENABLED',text:'RUNNING · WAITING_EXECUTION_CAPACITY',reason:'WAITING_EXECUTION_CAPACITY',schedulerStatus:'RUNNING',heartbeatAt:1_800_000_000_000,
     lastAttemptAt:null,lastSuccessAt:null,primarySuccessAgeMs:257*60_000,capitalExecutableCount:13,nextEvaluationAt:1_800_000_002_500,

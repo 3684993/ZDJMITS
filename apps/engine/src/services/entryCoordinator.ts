@@ -762,7 +762,7 @@ export class EntryCoordinator {
     const level=input.side==='LONG'?Number(input.d.acceptablePriceRange?.min??0):Number(input.d.acceptablePriceRange?.max??0);
     const outcome=assembleTradePlan({
       selection:{decision:input.d.decision,side:input.side,quantityUnits:Number(input.d.quantityUnits??0),
-        targetPrice:Number(input.d.profitTakePlan?.targetPrice??Number.NaN),targetHorizonMinutes:Number(input.d.profitTakePlan?.targetHorizonMinutes??0),
+        targetPrice:Number(input.d.profitTakePlan?.targetPrice??Number.NaN),acceptableTargetRange:input.d.profitTakePlan?.acceptableTargetRange,targetHorizonMinutes:Number(input.d.profitTakePlan?.targetHorizonMinutes??0),
         horizonMinutes:Number(input.d.horizonMinutes??0),thesis:[input.d.directionReason,input.d.reason].filter(Boolean).join(' / ')||null,
         invalidationPredicate:level>0&&usable.length?'CLOSED_BAR_BREAKS_LEVEL':'NO_PREDICATE',
         predicateLevel:level>0?level:null,predicateEvidenceRefs:usable,counterEvidenceRefs:(input.d.missingEvidence??[]).map(String),

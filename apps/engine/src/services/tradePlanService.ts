@@ -115,6 +115,8 @@ export function assembleTradePlan(input:{
   if(finite(statedHorizon)&&statedHorizon>0&&statedHorizon!==chosen.targetHorizonMinutes)
     refusals.push(`PLAN_PARAMETER_OUTSIDE_CANDIDATE:targetHorizonMinutes=${statedHorizon}!=${chosen.targetHorizonMinutes}`);
   if(refusals.length)return{plan:null,refusals:[...new Set(refusals)],warnings,candidate:chosen};
+  const authorizedRange=selection.acceptableTargetRange??chosen.acceptableTargetRange;
+  if(!finite(authorizedRange?.min)||!finite(authorizedRange?.max)||authorizedRange.min<=0||authorizedRange.min>chosen.targetPrice||authorizedRange.max<chosen.targetPrice)refusals.push('PLAN_AUTHORIZED_TARGET_RANGE_INVALID');
   if(!selection.thesis)refusals.push('PLAN_THESIS_MISSING');
   if(selection.invalidationPredicate&&selection.invalidationPredicate!=='NO_PREDICATE'&&!Array.isArray(selection.predicateEvidenceRefs))
     refusals.push('PLAN_PREDICATE_EVIDENCE_MALFORMED');
@@ -126,7 +128,7 @@ export function assembleTradePlan(input:{
     planId:planIdOf({scope:input.scope,cycleId:input.cycleId,factVersion:input.factVersion,candidateSetHash:candidateSet.candidateSetHash,side,selectedCandidateId:chosen.candidateId,planVersion:input.planVersion??1}),
     planVersion:input.planVersion??1,supersedesPlanId:input.supersedesPlanId??null,cycleId:input.cycleId,scope:input.scope,symbol:input.symbol,side,
     selectedCandidateId:chosen.candidateId,quantityUnits:chosen.quantityUnits,notionalUsd:chosen.notionalUsd,marginUsd:chosen.marginUsd,leverage:input.leverage,
-    entryReferencePrice:chosen.entryReferencePrice,targetPrice:chosen.targetPrice,acceptableTargetRange:chosen.acceptableTargetRange,
+    entryReferencePrice:chosen.entryReferencePrice,targetPrice:chosen.targetPrice,acceptableTargetRange:authorizedRange,
     entryTtlMinutes:chosen.entryTtlMinutes,targetHorizonMinutes:chosen.targetHorizonMinutes,managementDurationMs:chosen.managementDurationMs,
     thesis:String(selection.thesis).slice(0,600),
     invalidationPredicate:selection.invalidationPredicate??'NO_PREDICATE',predicateLevel:finite(selection.predicateLevel)?selection.predicateLevel:null,

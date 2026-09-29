@@ -421,3 +421,7 @@ describe('S06 plan is the only source of AI exit authority',()=>{
       latestClosedBar:null,firstFillAt:plan.persistedAt})!.thesisInvalid).toBe(false);
   });
 });
+
+it('SHADOW economics records the profit shortfall without vetoing or rewriting the frozen model target',()=>{const settings=baseSettings();settings.tradeEconomics.admissionMode='SHADOW';const set=candidates({settings});const r=set.compute({quantityUnits:25,targetHorizonMinutes:60,targetPrice:100.2});expect(r.refusals).toEqual([]);expect(r.candidate).toMatchObject({quantityUnits:25,targetPrice:100.2});expect(r.candidate!.economics.targetConditionalNetProfitUsd).toBeLessThan(1);});
+
+it('persists the model authorized target range rather than the generator profit-floor range',()=>{const set=candidates(),chosen=set.compute({quantityUnits:25,targetHorizonMinutes:60,targetPrice:104}).candidate!;const input:any=planInput(set,chosen);input.selection={...input.selection,acceptableTargetRange:{min:103.5,max:104.5}};const result=assembleTradePlan(input as any);expect(result.refusals).toEqual([]);expect(result.plan?.acceptableTargetRange).toEqual({min:103.5,max:104.5});input.selection={...input.selection,acceptableTargetRange:{min:105,max:106}};expect(assembleTradePlan(input as any).refusals).toContain('PLAN_AUTHORIZED_TARGET_RANGE_INVALID');});

@@ -214,7 +214,7 @@ export class EngineRuntime {
     // request can be made and comes back from a restart already holding the rows it wrote.
     const aiUsage = new AiUsageLedger(state as any);
     state.entryReservationTransaction=(revision:number,work:()=>unknown)=>store.mutateEntryReservations(revision,()=>{const result=work();store.persistRuntime(state.serialize());return result;});
-    for(const saved of store.loadManualExecutions()) {
+    for(const saved of store.loadManualExecutions(state.executionFills)) {
       const existing=state.manualOrders.get(saved.order.id);if(existing&&existing.updatedAt>saved.order.updatedAt){store.saveManualExecution({intent:state.manualIntents.get(saved.intent.id)??saved.intent,order:existing});continue;}
       state.manualIntents.set(saved.intent.id,saved.intent);
       state.manualOrders.set(saved.order.id,saved.order);

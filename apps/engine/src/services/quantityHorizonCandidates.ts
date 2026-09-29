@@ -284,8 +284,10 @@ export function buildQuantityHorizonCandidates(input:{
       if(priced.floorBeyondCeiling===true&&enforceEconomics)refusals.push(`NO_FEASIBLE_TARGET_WITHIN_STATISTICAL_BOUND:floor=${priced.floorTarget},ceiling=${priced.statisticalTarget}`);
       else{
         if(priced.floorBeyondCeiling===true)statisticalEvidence.push(`SELECTION_TARGET_BEYOND_STATISTICAL_CEILING:units=${units},horizon=${horizon},floor=${priced.floorTarget},ceiling=${priced.statisticalTarget}`);
-        else if(side==='LONG'?target+1e-12<priced.floorTarget:target-1e-12>priced.floorTarget)
-          refusals.push(`CANDIDATE_TARGET_BELOW_PROFIT_FLOOR:target=${target},${side==='LONG'?'<':'>'}floor=${priced.floorTarget}`);
+        else if(side==='LONG'?target+1e-12<priced.floorTarget:target-1e-12>priced.floorTarget){
+          const reason=`CANDIDATE_TARGET_BELOW_PROFIT_FLOOR:target=${target},${side==='LONG'?'<':'>'}floor=${priced.floorTarget}`;
+          if(enforceEconomics)refusals.push(reason);else statisticalEvidence.push(reason);
+        }
         else if(priced.statisticalTarget!=null&&(side==='LONG'?target>priced.statisticalTarget+1e-12:target<priced.statisticalTarget-1e-12)){
           if(enforceEconomics)refusals.push(`CANDIDATE_TARGET_BEYOND_STATISTICAL_BOUND:target=${target},bound=${priced.statisticalTarget}`);
           else statisticalEvidence.push(`CANDIDATE_TARGET_BEYOND_STATISTICAL_BOUND:target=${target},bound=${priced.statisticalTarget}`);

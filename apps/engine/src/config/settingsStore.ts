@@ -16,6 +16,18 @@ import {
   type PortfolioRiskAuthorityFacts, type PortfolioRiskAuthorityRow,
 } from '../services/portfolioRiskAuthority.js';
 
+
+/** Recover the known vocabulary corruption only with matching durable intent and consistent fills. */
+function recoverLegacyManualSide(order:any,intent:any,allFills:any[]){
+  if(!['LONG','SHORT'].includes(order.side)||!['FILLED','CANCELED','EXPIRED','REJECTED'].includes(order.status))return order;
+  if(!intent||intent.symbol!==order.symbol||intent.positionId!==order.positionId||intent.side!==order.positionSide||typeof intent.reduceOnly!=='boolean'||intent.reduceOnly!==order.reduceOnly)return order;
+  if(!((order.clientOrderId&&order.clientOrderId===intent.clientOrderId)||(order.exchangeOrderId&&order.exchangeOrderId===intent.exchangeOrderId)))return order;
+  const expected=intent.reduceOnly?(intent.side==='LONG'?'SELL':'BUY'):(intent.side==='LONG'?'BUY':'SELL'),projected=order.side==='LONG'?'BUY':'SELL';
+  const fills=allFills.filter((f:any)=>f.symbol===order.symbol&&((order.clientOrderId&&f.clientOrderId===order.clientOrderId)||(order.exchangeOrderId&&f.orderId===order.exchangeOrderId)));
+  if(expected!==projected||fills.some((f:any)=>f.side!==expected))return order;
+  return{...order,side:expected,sideRecovery:{originalSide:order.side,intentId:intent.id,basis:'MATCHED_DURABLE_INTENT',fillTradeIds:fills.map((f:any)=>String(f.tradeId))}};
+}
+
 function record(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
@@ -880,20 +892,8 @@ export class SettingsStore {
     if(value._entityLists){const entities=this.db.prepare('SELECT kind,entity_id,payload FROM runtime_entities').all() as Array<{kind:string;entity_id:string;payload:string}>;this.runtimeEntityCache=new Map(entities.map(r=>[`${r.kind}:${r.entity_id}`,r.payload]));
       for(const [kind,info] of Object.entries(value._entityLists) as Array<[string,{ids:string[];tuple:boolean}]>){value[kind]=info.ids.map(id=>{const raw=this.runtimeEntityCache!.get(`${kind}:${id}`);if(raw===undefined){if(kind==='executionFills'&&!info.tuple)return this.replayMissingFill(id);throw new Error(`RUNTIME_ENTITY_MISSING:${kind}:${id}`);}const entity=JSON.parse(raw);return info.tuple?[id,entity]:entity;});}delete value._entityLists;
     }
-    // Recover only the known generic-open-order vocabulary corruption, with a matching durable
-    // intent and no contradictory fills. Keep the original value and proof on the returned record.
     const manualIntents=new Map<string,any>(value.manualIntents??[]);
-    for(const [,order] of (value.manualOrders??[]) as Array<[string,any]>){
-      if(!['LONG','SHORT'].includes(order.side)||!['FILLED','CANCELED','EXPIRED','REJECTED'].includes(order.status))continue;
-      const intent=manualIntents.get(order.intentId);
-      if(!intent||intent.symbol!==order.symbol||intent.positionId!==order.positionId||intent.side!==order.positionSide||typeof intent.reduceOnly!=='boolean'||intent.reduceOnly!==order.reduceOnly)continue;
-      if(!((order.clientOrderId&&order.clientOrderId===intent.clientOrderId)||(order.exchangeOrderId&&order.exchangeOrderId===intent.exchangeOrderId)))continue;
-      const expected=intent.reduceOnly?(intent.side==='LONG'?'SELL':'BUY'):(intent.side==='LONG'?'BUY':'SELL');
-      const projected=order.side==='LONG'?'BUY':'SELL';
-      const fills=(value.executionFills??[]).filter((f:any)=>f.symbol===order.symbol&&((order.clientOrderId&&f.clientOrderId===order.clientOrderId)||(order.exchangeOrderId&&f.orderId===order.exchangeOrderId)));
-      if(expected!==projected||fills.some((f:any)=>f.side!==expected))continue;
-      order.sideRecovery={originalSide:order.side,intentId:intent.id,basis:'MATCHED_DURABLE_INTENT',fillTradeIds:fills.map((f:any)=>String(f.tradeId))};order.side=expected;
-    }
+    if(Array.isArray(value.manualOrders))value.manualOrders=value.manualOrders.map(([id,order]:[string,any])=>[id,recoverLegacyManualSide(order,manualIntents.get(order.intentId),value.executionFills??[])]);
     return value as T;
   }
   /** One existing runtime ledger, synchronously locked through fact check and persistence. */
@@ -1078,9 +1078,9 @@ export class SettingsStore {
     this.db.prepare('UPDATE execution_tasks SET active=?,payload=?,updated_at=? WHERE intent_id=?')
       .run(activeOrderStatus(value.order.status) ? 1 : 0, JSON.stringify(value), Date.now(), value.intent.id);
   }
-  loadManualExecutions(): ManualExecutionRecord[] {
+  loadManualExecutions(fills:any[]=[]): ManualExecutionRecord[] {
     return (this.db.prepare('SELECT payload FROM execution_tasks').all() as Array<{payload:string}>)
-      .map(row => JSON.parse(row.payload) as ManualExecutionRecord);
+      .map(row => {const saved=JSON.parse(row.payload) as ManualExecutionRecord;return{...saved,order:recoverLegacyManualSide(saved.order,saved.intent,fills)};});
   }
   /**
    * P3: the submission claim, keyed by one Intent, not by an underlying's risk history.

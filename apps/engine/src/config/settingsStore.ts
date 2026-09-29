@@ -444,8 +444,11 @@ export class SettingsStore {
     this.db.exec(`CREATE TABLE IF NOT EXISTS execution_tasks (
       intent_id TEXT PRIMARY KEY, scope TEXT NOT NULL, active INTEGER NOT NULL, payload TEXT NOT NULL, updated_at INTEGER NOT NULL
     ); CREATE UNIQUE INDEX IF NOT EXISTS execution_tasks_active_scope ON execution_tasks(scope) WHERE active=1;`);
-    this.db.exec(`CREATE TABLE IF NOT EXISTS entry_execution_tasks(intent_id TEXT PRIMARY KEY,scope TEXT NOT NULL,active INTEGER NOT NULL,payload TEXT NOT NULL,updated_at INTEGER NOT NULL,released_at INTEGER NOT NULL DEFAULT 0);
-      CREATE UNIQUE INDEX IF NOT EXISTS entry_execution_scope ON entry_execution_tasks(scope) WHERE active=1;`);
+    this.db.exec(`CREATE TABLE IF NOT EXISTS entry_execution_tasks(intent_id TEXT PRIMARY KEY,scope TEXT NOT NULL,active INTEGER NOT NULL,payload TEXT NOT NULL,updated_at INTEGER NOT NULL,released_at INTEGER NOT NULL DEFAULT 0);`);
+    // The legacy `entry_execution_scope` partial unique index is deliberately NOT created here. It was
+    // dropped by migration 11 because funds-only submission identity legitimately keeps more than one
+    // ACTIVE row per underlying; recreating it on the next open would fail on that very data and stop
+    // the Engine from starting. The DROP below stays for databases migrated by an earlier build.
     const entryTaskColumns=new Set((this.db.prepare('PRAGMA table_info(entry_execution_tasks)').all() as Array<{name:string}>).map(row=>row.name));
     if(!entryTaskColumns.has('released_at'))try{this.db.exec('ALTER TABLE entry_execution_tasks ADD COLUMN released_at INTEGER NOT NULL DEFAULT 0');}catch(error){if(!String(error).includes('duplicate column name'))throw error;}
     // P3: submission identity and portfolio-scope exclusion are two different controls, so they get two

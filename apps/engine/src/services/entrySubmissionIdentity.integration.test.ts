@@ -207,3 +207,30 @@ it('funds-only rows never participate in the legacy unique index',async()=>{
     expect(store.entryExecutionClaimStats().activeClaims).toBe(3);
   }finally{store.close();}
 });
+
+it('restarting on a funds-only ledger does not resurrect the scope veto index',async()=>{
+  const {store,dataDir}=await openStore();
+  const underlying='DOGE';
+  for(const id of ['DOGE_1','DOGE_2']){
+    const o=orderOf(id,'UNKNOWN');
+    expect(store.claimEntryExecution(entryScope(underlying),recordOf(o),false,isolationFor(fundsOnlySettings,o.intentId,underlying)).acquired).toBe(true);
+    store.saveEntryExecution(recordOf(o));
+  }
+  store.close();
+  // The audited control regrew exactly here: open() used to re-create the legacy partial unique index
+  // before dropping it, and creating it over two ACTIVE rows in one ENTRY scope threw
+  // `UNIQUE constraint failed: entry_execution_tasks.scope` - the Engine could no longer start.
+  const reopened=await (async()=>{const second=new SettingsStore(path.resolve(process.cwd(),'../../config'),dataDir);await second.load();return second;})().catch(error=>{throw new Error(`REOPEN_FAILED:${error instanceof Error?error.message:String(error)}`);});
+  try{
+    const db=new DatabaseSync(path.join(dataDir,'zdj-settings.sqlite'),{readOnly:true});
+    const names=(db.prepare("SELECT name FROM sqlite_master WHERE type='index' AND tbl_name='entry_execution_tasks'").all() as Array<{name:string}>).map(row=>row.name);
+    const active=(db.prepare('SELECT COUNT(*) c FROM entry_execution_tasks WHERE scope=? AND active=1').get(entryScope(underlying)) as {c:number}).c;
+    db.close();
+    expect(names).not.toContain('entry_execution_scope');
+    expect(Number(active)).toBe(2);
+    // Both submissions still claim the same underlying, and neither is a cross-Intent veto.
+    const stats=reopened.entryExecutionClaimStats();
+    expect(stats.byIsolationMode.SUBMISSION_ONLY.rows).toBeGreaterThanOrEqual(2);
+    expect(stats.vetoEnforced).toBe(false);
+  }finally{reopened.close();}
+});

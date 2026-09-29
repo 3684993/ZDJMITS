@@ -80,6 +80,27 @@ export function executionTruthProjection(runtime: EngineRuntime, now = Date.now(
     return owner?.ownerState === 'AI_ACTIVE';
   }).length : 0;
   const reviewRunner = (runtime as any).positionReviewRunner;
+  const reviewReadback = (runtime as any).positionReviewScheduler?.reviewReadback?.(now) ?? null;
+  // The runner reports the last tick and the last verdict; the scheduler reports the per-cycle
+  // obligation. Both are normalised here so a page never has to guess which one it is looking at.
+  const rawOutcome = reviewRunner?.lastOutcome?.() ?? null;
+  const reviewOutcome = rawOutcome ? {
+    lastTickAt: Number.isFinite(Number(rawOutcome.lastTickAt)) ? Number(rawOutcome.lastTickAt) : null,
+    lastVerdictAt: Number.isFinite(Number(rawOutcome.lastVerdictAt)) ? Number(rawOutcome.lastVerdictAt) : null,
+    lastDecision: rawOutcome.lastDecision == null ? null : String(rawOutcome.lastDecision),
+    lastReason: rawOutcome.lastReason == null ? null : String(rawOutcome.lastReason),
+    usable: rawOutcome.usable === true,
+    enabled: rawOutcome.enabled === true,
+    considered: Math.max(0, Math.trunc(Number(rawOutcome.considered ?? 0))),
+    reserved: Math.max(0, Math.trunc(Number(rawOutcome.reserved ?? 0))),
+    completed: Math.max(0, Math.trunc(Number(rawOutcome.completed ?? 0))),
+    discarded: Math.max(0, Math.trunc(Number(rawOutcome.discarded ?? 0))),
+    failed: Math.max(0, Math.trunc(Number(rawOutcome.failed ?? 0))),
+    due: Math.max(0, Math.trunc(Number(reviewReadback?.due ?? 0))),
+    exhausted: Math.max(0, Math.trunc(Number(reviewReadback?.exhausted ?? 0))),
+    failureBlocked: Math.max(0, Math.trunc(Number(reviewReadback?.failureBlocked ?? 0))),
+    skippedReason: rawOutcome.skippedReason == null ? null : String(rawOutcome.skippedReason),
+  } : null;
   const entryRows = [...s.entryOrders.values()] as any[], tpRows = [...s.tpOrders.values()] as any[], manualRows = [...s.manualOrders.values()] as any[];
   const confirmed = (row: any) => String(row.factSource ?? '') === 'BINANCE_EXACT_ORDER' || String(row.factSource ?? '') === 'BINANCE_OPEN_ORDERS' || (String(row.status ?? '') === 'WORKING' && Boolean(row.exchangeOrderId));
   const parse = (detail: unknown) => { try { return typeof detail === 'string' ? JSON.parse(detail) : detail; } catch { return null; } };
@@ -109,8 +130,16 @@ export function executionTruthProjection(runtime: EngineRuntime, now = Date.now(
          required: Number(tpMetrics.required ?? 0), protected: Number(tpMetrics.protected ?? 0), missing: Number(tpMetrics.missing ?? 0),
          unresolved: Number(tpMetrics.positionFactUnresolved ?? 0), detail: tpService?.detail ? String(tpService.detail).slice(0, 400) : null}
       : {status: 'UNKNOWN' as const, required: 0, protected: 0, missing: 0, unresolved: 0, detail: 'GUARDIAN_NOT_REPORTED'},
-    positionCoverage: {status: reconciliation ? 'HEALTHY' as const : 'UNKNOWN' as const, local: s.positions.size,
-      remote: Math.max(0, Number(reconciliation?.exchangePositions ?? s.positions.size)), detail: null},
+    positionCoverage: (() => {
+      // The two counts have to come from the same reconciliation pass, otherwise "local == remote" is
+      // true by construction. `exchangePositions` is what that pass last saw at the exchange.
+      const remote = reconciliation ? Number(reconciliation.exchangePositions ?? Number.NaN) : Number.NaN;
+      const local = s.positions.size;
+      const compared = Number.isFinite(remote);
+      return {status: !compared ? 'UNKNOWN' as const : remote === local ? 'HEALTHY' as const : 'DEGRADED' as const,
+        local, remote: compared ? Math.max(0, remote) : 0,
+        detail: compared ? `local=${local};remote=${remote}` : 'RECONCILIATION_HAS_NOT_REPORTED_POSITION_COUNT'};
+    })(),
     fillCycleConservation: {status: inconsistent > 0 ? 'DEGRADED' as const : unconserved > 0 ? 'DEGRADED' as const : 'HEALTHY' as const,
       ledgerInconsistent: inconsistent, unconserved, detail: `records=${records.length}`},
     fundingCoverage: {status: fundingLedger?.complete ? 'HEALTHY' as const : fundingExact > 0 ? 'PARTIAL' as const : 'UNKNOWN' as const,
@@ -120,11 +149,16 @@ export function executionTruthProjection(runtime: EngineRuntime, now = Date.now(
     reviewAuthority: {status: coordination.positionReviewEnabled !== true ? 'DISABLED' as const : (reviewRunner ? 'HEALTHY' as const : 'UNKNOWN' as const),
       enabled: coordination.positionReviewEnabled === true, aiActiveCycles,
       scheduledDue: Math.max(0, Number((runtime as any).positionReviewScheduler?.dueCount?.() ?? 0)),
-      lastOutcome: reviewRunner?.lastOutcome?.() ?? null,
+      lastOutcome: reviewOutcome ?? null,
       detail: ai?.detail ? String(ai.detail).slice(0, 200) : null},
+    reviewCycles: reviewReadback?.rows?.slice(0, 50) ?? [],
     activeCommissions: {
-      remoteConfirmedEntry: entryRows.filter(row => row.status === 'NEW' || row.status === 'WORKING' || row.status === 'PARTIALLY_FILLED').filter(confirmed).length,
-      remoteConfirmedTakeProfit: tpRows.filter(row => row.status === 'WORKING' || row.status === 'PARTIALLY_FILLED').length,
+      remoteConfirmedEntry: entryRows.filter(row => ['NEW','WORKING','PARTIALLY_FILLED'].includes(String(row.status))).filter(confirmed).length,
+      // P7: a take-profit the engine's own order row calls WORKING is not the same claim as one the
+      // exchange has answered for. Applying the entry-side confirmation rule here keeps "TP orders"
+      // meaning "the exchange says these are live" instead of "we last wrote WORKING".
+      remoteConfirmedTakeProfit: tpRows.filter(row => row.status === 'WORKING' || row.status === 'PARTIALLY_FILLED').filter(confirmed).length,
+      takeProfitRowsHeldLocally: tpRows.filter(row => row.status === 'WORKING' || row.status === 'PARTIALLY_FILLED').length,
       manual: manualRows.filter(row => ['NEW','WORKING','PARTIALLY_FILLED','SUBMITTING'].includes(String(row.status))).length,
       // Historical UNKNOWN rows are a local accounting exposure, not orders the exchange says are live.
       localUnresolvedUnknown: entryRows.filter(row => row.status === 'UNKNOWN').length + tpRows.filter(row => row.status === 'UNKNOWN').length + manualRows.filter(row => row.status === 'UNKNOWN').length,

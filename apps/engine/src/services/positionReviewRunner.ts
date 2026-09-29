@@ -75,6 +75,9 @@ export class PositionReviewRunner {
       }
       report.reserved++;
       const ticket=reserved.ticket;
+      // P7: the review moments belong to the cycle, not to a page's clock. Stamping them here means the
+      // "last review / next due" a human reads is what the engine actually did.
+      (this.ports.state as any).positions.set(position.id,{...position,lastReviewAt:now,nextReviewAt:now+Math.max(1_000,Number(coordination.reviewMinIntervalMs??300_000))});
       try{
         const answer=await this.ports.review({ticket,position,plan});
         const applied=this.ports.scheduler.accept(ticket,{
@@ -106,6 +109,7 @@ export class PositionReviewRunner {
     const budgets=(this.ports.state as any).reviewBudgets as Map<string,unknown>;
     budgets.clear();
     for(const row of this.ports.scheduler.serialize())budgets.set(row.budgetKey,row);
+    this.lastReport={...report,lastTickAt:now,lastVerdictAt:this.lastReport.lastVerdictAt,lastDecision:this.lastReport.lastDecision,lastReason:this.lastReport.lastReason,usable:this.lastReport.usable};
     return report;
   }
 
@@ -114,7 +118,19 @@ export class PositionReviewRunner {
     const prior=store.get(verdict.cycleId);
     if(!prior||verdict.at>=prior.latest.at)store.set(verdict.cycleId,{latest:verdict,history:[...(prior?.history??[]),verdict].slice(-12)});
     else store.set(verdict.cycleId,{...prior,history:[...prior.history,verdict].slice(-12)});
+    this.lastReport={...this.lastReport,lastVerdictAt:verdict.at,lastDecision:verdict.decision,lastReason:verdict.reason,usable:verdict.usable};
   }
+
+  /** P6/P7: the most recent review attempt, stated as a fact rather than inferred from a chart. */
+  lastOutcome(){
+    const report=this.lastReport;
+    const scheduled=this.ports.scheduler.reviewReadback();
+    return{...report,considered:scheduled.budgets,due:scheduled.due,exhausted:scheduled.exhausted,failureBlocked:scheduled.failureBlocked,
+      skippedReason:scheduled.rows.find(row=>row.skippedReason)?.skippedReason??null};
+  }
+
+  private lastReport:{lastTickAt:number|null;lastVerdictAt:number|null;lastDecision:string|null;lastReason:string|null;usable:boolean;enabled:boolean;considered:number;reserved:number;completed:number;discarded:number;failed:number}={
+    lastTickAt:null,lastVerdictAt:null,lastDecision:null,lastReason:null,usable:false,enabled:false,considered:0,reserved:0,completed:0,discarded:0,failed:0};
 
   /** The only review fact an exit may read: usable, current, and for this exact plan version. */
   static usableVerdict(state:RuntimeState,input:{cycleId:string;planRef:string;planVersion:number;maxAgeMs:number;now:number}){

@@ -46,16 +46,46 @@ describe('V3.9.5 legacy position isolation',()=>{
     expect(state.positions.get('below-floor-HUMAN_MANAGED')!.managementStatus).toBe('HUMAN_MANAGED');
     expect(guardianMetricsUnchanged(state)).toBe(true);
   });
-  it('keeps the legacy 1.2% distance floor for a position without V3.9.5 ENFORCE admission evidence',async()=>{
+  it('P5: without a configured move floor a position keeps the 0.45% target instead of a hidden 1.2%',async()=>{
     const state=new RuntimeState(shadowSettings),exchange=Object.assign(new MockExchangeAdapter(),coordinatedExchange({liveQuantity:1e6})),now=Date.now();
     const pos:any={...protectedLegacy('no-evidence','AUTO_MANAGED',100.8),tpStatus:'MISSING' as const,tpOrderId:null};
     state.positions.set(pos.id,pos);state.snapshots.set(pos.symbol,snapshotAt(now));
     await new TpGuardian(state,exchange,new EventBus(),exitRuntimeHarness()).ensure(pos);
     const next=state.positions.get(pos.id)!;
-    expect(next.profitTakePlanSource).not.toBe('AI');expect(next.tpStatus).toBe('PROTECTED');
-    expect(next.tpOrderId).not.toBe('tp-legacy-no-evidence');
+    expect(next.tpStatus).toBe('PROTECTED');
+    const placed=state.tpOrders.get(next.tpOrderId!)!;
+    // The old build pushed any full position out to a 1.2% move; P5 made that a configured number and
+    // the default is zero, so the deterministic fallback lands on the published 0.45% target move.
+    expect(placed.price).toBeCloseTo(100.45,6);
+    expect(placed.price).toBeLessThan(101.2);
+    expect(next.tpEconomics?.targetProvenance?.minMoveFloorSource).toBe('DEFAULT_ZERO');
+    expect(next.tpEconomics?.targetProvenance?.fellBackFrom).toBe('AI');
+  });
+
+  it('P5: an explicitly configured move floor is still honoured and is reported',async()=>{
+    const state=new RuntimeState({...shadowSettings,takeProfit:{...shadowSettings.takeProfit,fullPositionMinMovePercent:1.2}}),exchange=Object.assign(new MockExchangeAdapter(),coordinatedExchange({liveQuantity:1e6})),now=Date.now();
+    const pos:any={...protectedLegacy('no-evidence','AUTO_MANAGED',100.8),tpStatus:'MISSING' as const,tpOrderId:null};
+    state.positions.set(pos.id,pos);state.snapshots.set(pos.symbol,snapshotAt(now));
+    await new TpGuardian(state,exchange,new EventBus(),exitRuntimeHarness()).ensure(pos);
+    const next=state.positions.get(pos.id)!;
     expect(state.tpOrders.get(next.tpOrderId!)!.price).toBeGreaterThanOrEqual(101.2);
-    expect(state.tpOrders.get(next.tpOrderId!)!.price).toBeGreaterThan(100.8);
+    expect(next.tpEconomics?.targetProvenance?.minMoveFloorSource).toBe('CONFIGURED');
+  });
+
+  it('P5: an authorized model target is not pushed away by the profit floor, and the shortfall is reported',async()=>{
+    const state=new RuntimeState(shadowSettings),exchange=Object.assign(new MockExchangeAdapter(),coordinatedExchange({liveQuantity:1e6})),now=Date.now();
+    // A $5 notional position cannot net the configured $1 floor at its authorized 0.45% target.
+    const pos:any={...protectedLegacy('authorized','AUTO_MANAGED',100.45),quantity:0.05,tpStatus:'MISSING' as const,tpOrderId:null,
+      profitTakePlan:{targetPrice:100.45,acceptableTargetRange:{min:100.4,max:100.6},targetHorizonMinutes:120,targetReason:'STRUCTURE_MEASURED',evidenceRefs:['15m:closed']}};
+    state.positions.set(pos.id,pos);state.snapshots.set(pos.symbol,snapshotAt(now));
+    await new TpGuardian(state,exchange,new EventBus(),exitRuntimeHarness()).ensure(pos);
+    const next=state.positions.get(pos.id)!;
+    expect(next.profitTakePlanSource).toBe('AI');
+    const economics=next.tpEconomics as any;
+    expect(economics.expectedNetProfit).toBeLessThan(economics.requiredNetProfit);
+    expect(economics.status).toBe('TP_LOW_NET_TARGET_KEPT');
+    expect(economics.economicWarning).toMatchObject({shortfallUsd:expect.any(Number)});
+    expect(economics.targetProvenance).toMatchObject({authorizedPresent:true,authorizedValid:true,authorizedPrice:100.45,finalPrice:100.45,fellBackFrom:null,profitFloorDisposition:'WARN_AND_KEEP'});
   });
   const guardianMetricsUnchanged=(state:RuntimeState)=>{const active=[...state.tpOrders.values()].filter(o=>o.status==='WORKING');return active.length===state.positions.size;};
 });

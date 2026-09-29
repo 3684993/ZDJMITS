@@ -430,6 +430,13 @@ export interface EntryConversionWindow {
   /** Alert-only: the chain is converting nothing for a reason that is not money or a full book. */
   degraded: boolean;
   degradedReason: string | null;
+  /**
+   * P4: which funnel rows are gates and which are only observations. `riskAllowed: 0` next to a
+   * successful submission is not a contradiction once the stage is labelled - under funds-only the risk
+   * and economic admissions are shadow readings, not serial steps. The counts stay exactly as the
+   * events say; only their authority is stated.
+   */
+  stageSemantics: Record<string, 'REQUIRED' | 'OBSERVED' | 'NOT_REQUIRED'>;
 }
 
 /** Stage names whose blocker is an intended gate: capital, capacity, or the frozen profit floor. */
@@ -440,7 +447,7 @@ export const ENTRY_CONVERSION_EVENT_TYPES = [...ENTRY_EXECUTION_LINEAGE_EVENT_TY
 
 export function entryConversionWindow(
   events: LineageEvent[],
-  input: { since: number; until: number },
+  input: { since: number; until: number; fundsOnly?: boolean; economicAdmissionMode?: 'OFF'|'SHADOW'|'ENFORCE' },
 ): EntryConversionWindow {
   const byRun = new Map<string, Set<string>>();
   const add = (stage: string, runId: string) => {
@@ -566,6 +573,21 @@ export function entryConversionWindow(
     topDropCount: top?.count ?? 0,
     degraded,
     degradedReason: degraded ? `ENTRY_CONVERSION_DEGRADED:${top!.stage}:${top!.reason}` : null,
+    // P4: the funnel used to render risk and economic admission as mandatory steps whose pass count
+    // could be 0 while submissions still succeeded. Under funds-only those stages are observations.
+    stageSemantics: {
+      primaryCompleted: 'REQUIRED',
+      place: 'REQUIRED',
+      riskAllowed: input.fundsOnly ? 'NOT_REQUIRED' : 'REQUIRED',
+      economicAdmissionPassed: input.fundsOnly ? (input.economicAdmissionMode === 'ENFORCE' ? 'REQUIRED' : 'OBSERVED') : (input.economicAdmissionMode === 'ENFORCE' ? 'REQUIRED' : 'OBSERVED'),
+      tradePlanReady: 'REQUIRED',
+      reservationCreated: 'REQUIRED',
+      intentCreated: 'REQUIRED',
+      waitingPrice: 'OBSERVED',
+      submitAttempted: 'REQUIRED',
+      orderSubmitted: 'REQUIRED',
+      entryFilled: 'OBSERVED',
+    },
   };
 }
 
@@ -573,11 +595,12 @@ export function entryConversionWindow(
  * Both cockpit windows from a single event read. `readEvents` is given the earliest timestamp the
  * report covers, so the caller decides how far the journal is scanned and this stays pure.
  */
-export function entryConversionReport(readEvents: (since: number) => LineageEvent[], now = Date.now()) {
+export function entryConversionReport(readEvents: (since: number) => LineageEvent[], now = Date.now(), mode: { fundsOnly?: boolean; economicAdmissionMode?: 'OFF'|'SHADOW'|'ENFORCE' } = {}) {
   const oneHourEvents = readEvents(now - 60 * 60_000);
   return {
     generatedAt: now,
-    thirtyMinutes: entryConversionWindow(oneHourEvents.filter((event) => Number(event.ts) >= now - 30 * 60_000), {since: now - 30 * 60_000, until: now}),
-    oneHour: entryConversionWindow(oneHourEvents, {since: now - 60 * 60_000, until: now}),
+    mode,
+    thirtyMinutes: entryConversionWindow(oneHourEvents.filter((event) => Number(event.ts) >= now - 30 * 60_000), {since: now - 30 * 60_000, until: now, ...mode}),
+    oneHour: entryConversionWindow(oneHourEvents, {since: now - 60 * 60_000, until: now, ...mode}),
   };
 }

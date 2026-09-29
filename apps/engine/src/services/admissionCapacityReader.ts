@@ -64,7 +64,13 @@ export function inputsFor(facts:AdmissionCapacityView|null,side:'LONG'|'SHORT'):
 
 /** The book-level answer a display page needs: is there any size this gate would accept at all, and if not, what number says so. */
 export type AdmissionBookSummary={status:'AVAILABLE'|'ZERO'|'UNAVAILABLE'|'NOT_APPLICABLE';hasVerdict:boolean;exhausted:boolean;code:string|null;gate:string|null;detail:string|null;
-  ceilingUsdBySide:{LONG:number;SHORT:number};reasons:string[];evaluatedAt:number;overdueHandoffs:number;oldestOverdueHours:number|null;
+  /**
+   * P4/R8: a ceiling that the gate never issued is `null`, not `0`. Zero is a real answer ("no positive
+   * notional would be admitted"); NOT_APPLICABLE and UNAVAILABLE are the absence of an answer, and
+   * publishing them as 0 is what made the cockpit show "$0 capacity" beside nine executable routes.
+   * `enforced` says whether this gate is an Entry veto at all in the current mode.
+   */
+  ceilingUsdBySide:{LONG:number|null;SHORT:number|null}|null;enforced:boolean;reasons:string[];evaluatedAt:number;overdueHandoffs:number;oldestOverdueHours:number|null;
   scope?:'BOOK'|'CANDIDATE_CONTEXT';snapshotHash?:string;profileVersion?:string;settingsVersion?:string|null;riskGeneration?:number;authorityVersions?:Record<string,unknown>;coverage?:Record<string,string>;gates?:AdmissionCapacityView['gates'];firstBinding?:AdmissionCapacityView['firstBinding'];pendingLineage?:AdmissionCapacityView['pendingLineage'];
   quoteAsset?:string|null;leverage?:number|null;leverageFact?:string|null};
 
@@ -75,9 +81,9 @@ export type AdmissionBookSummary={status:'AVAILABLE'|'ZERO'|'UNAVAILABLE'|'NOT_A
  */
 export function bookAdmissionSummary(state:any,now=Date.now()):AdmissionBookSummary{
   const ledger=state?.riskAdmission;
-  const none:AdmissionBookSummary={status:'NOT_APPLICABLE',hasVerdict:false,exhausted:false,code:null,gate:null,detail:null,ceilingUsdBySide:{LONG:0,SHORT:0},reasons:[],evaluatedAt:0,overdueHandoffs:0,oldestOverdueHours:null};
+  const none:AdmissionBookSummary={status:'NOT_APPLICABLE',hasVerdict:false,exhausted:false,code:null,gate:null,detail:null,ceilingUsdBySide:null,enforced:false,reasons:[],evaluatedAt:0,overdueHandoffs:0,oldestOverdueHours:null};
   const unavailable:AdmissionBookSummary={status:'UNAVAILABLE',hasVerdict:false,exhausted:false,code:'RISK_ADMISSION_UNAVAILABLE',gate:null,
-    detail:'Portfolio risk admission did not return a valid capacity result; new Entry capacity is unavailable',ceilingUsdBySide:{LONG:0,SHORT:0},
+    detail:'Portfolio risk admission did not return a valid capacity result; new Entry capacity is unavailable',ceilingUsdBySide:null,enforced:true,
     reasons:['RISK_ADMISSION_UNAVAILABLE'],evaluatedAt:now,overdueHandoffs:0,oldestOverdueHours:null};
   // Analysis-only writes nothing, so there is no new risk for the gate to deny: its book verdict must not
   // silence the market evidence this mode exists to produce, exactly as the dispatch path must not.
@@ -93,7 +99,7 @@ export function bookAdmissionSummary(state:any,now=Date.now()):AdmissionBookSumm
   const reasons=[...new Set([...facts.evidenceBlockers,...facts.sizeIndependentRefusals])];
   const ceilingUsdBySide={LONG:Math.max(0,Number(facts.maxNewRiskNotionalUsdBySide?.LONG??0)),SHORT:Math.max(0,Number(facts.maxNewRiskNotionalUsdBySide?.SHORT??0))};
   const status=facts.complete===false||facts.evidenceBlockers.length>0?'UNAVAILABLE':Math.max(ceilingUsdBySide.LONG,ceilingUsdBySide.SHORT)>0?'AVAILABLE':'ZERO';
-  return{status,hasVerdict:true,exhausted:facts.admitsAnyPositiveNotional===false,evaluatedAt:Number(facts.evaluatedAt)||now,
+  return{status,hasVerdict:true,enforced:true,exhausted:facts.admitsAnyPositiveNotional===false,evaluatedAt:Number(facts.evaluatedAt)||now,
     code:facts.firstBinding?.code??reasons[0]??null,gate:facts.firstBinding?.gate??null,detail:facts.firstBinding?.detail??null,
     ceilingUsdBySide,reasons,
     overdueHandoffs:Number(facts.overdueHandoffs??0),oldestOverdueHours:facts.oldestOverdueHours??null,scope:facts.scope,snapshotHash:facts.snapshotHash,

@@ -1,4 +1,4 @@
-import { resolveUnderlying } from '@zdj/core';
+import { resolveUnderlying, testnetFundsOnlyEntry } from '@zdj/core';
 import type { RuntimeState } from '../state/runtimeState.js';
 import {portfolioRiskSnapshot} from './v396OfflineStages.js';
 
@@ -36,6 +36,12 @@ export function projectHumanManaged(state:RuntimeState){
       positionId:p.id,symbol:p.symbol,side:p.side,qty:p.quantity,entry:p.entryPrice,mark:p.markPrice,
       unrealizedPnl:p.unrealizedPnl,unrealizedPnlPercent:p.unrealizedPnlPercent,notional,margin,leverage:p.leverage,
       openedAt:p.openedAt,humanManagedSince:p.humanManagedAt,tpStatus:p.tpStatus,tpPrice,distanceToTpPct,tpSource:p.tpCoverageSource,
+      // P7: the physical cycle facts travel with the row. A page that has to join the snapshot by
+      // position id in order to show a hold duration ends up inventing its own provenance rule, and the
+      // engine already owns the one that distinguishes a proven first fill from a first observation.
+      cycleId:p.cycleId??null,physicalCycleKey:p.physicalCycleKey??`${p.symbol}:${p.side}`,firstObservedAt:p.firstObservedAt??null,
+      entryTimeSource:p.entryTimeSource??null,lastAddAt:p.lastAddAt??null,addCount:Math.max(0,Number(p.addCount??0)),
+      lastReviewAt:p.lastReviewAt??null,nextReviewAt:p.nextReviewAt??null,
       fundingImpact,fundingAttributionStatus,severity:riskSeverity.level,severityScore:riskSeverity.score,
       portfolioExposureContributionPct:safePct(notional,grossNotional),equityNotionalPct:safePct(notional,equity),
       underlyingExposureContributionPct:safePct(underlyingNotional,grossNotional),
@@ -43,11 +49,19 @@ export function projectHumanManaged(state:RuntimeState){
     };
   }).sort((a,b)=>b.severityScore-a.severityScore||a.symbol.localeCompare(b.symbol));
   const hmNotional=items.reduce((n,row)=>n+row.notional,0),settings=state.settings.positionManagement;
+  const capsBreached=Boolean(settings.humanManagedAdmissionCapsEnabled&&(items.length>=settings.maxHumanManagedPositions||hmNotional>=equity*settings.maxHumanManagedNotionalPctEquity-1e-8));
+  // P4/R8: this used to publish `newEntryBlockedByCaps` as if it were an Entry authority. Under the
+  // precise funds-only mode the human-managed caps are an observation, and the high-level admission
+  // chain already ignores them - so reporting them as a block was a wrong fact, not a conservative one.
+  // The raw counts stay; only the authority claim changes, and only where the mode says so.
+  const fundsOnly=testnetFundsOnlyEntry(state.settings);
   return{
     asOf:Date.now(),items,
     summary:{count:items.length,notionalUsd:hmNotional,unrealizedPnl:items.reduce((n,row)=>n+Number(row.unrealizedPnl??0),0),equityUsd:equity,
       caps:{enabled:settings.humanManagedAdmissionCapsEnabled,maxPositions:settings.maxHumanManagedPositions,maxNotionalPctEquity:settings.maxHumanManagedNotionalPctEquity,maxNotionalUsd:equity*settings.maxHumanManagedNotionalPctEquity},
-      newEntryBlockedByCaps:settings.humanManagedAdmissionCapsEnabled&&(items.length>=settings.maxHumanManagedPositions||hmNotional>=equity*settings.maxHumanManagedNotionalPctEquity-1e-8)},
+      newEntryBlockedByCaps:!fundsOnly&&capsBreached,
+      humanCapsDisposition:fundsOnly?(capsBreached?'OBSERVE_OVER_CAPS':'OBSERVE_WITHIN_CAPS'):(capsBreached?'BLOCKING':'WITHIN_CAPS'),
+      humanCapsEnforced:!fundsOnly},
     policy:{humanHandoffMeansManualHold:true,automaticStopLoss:false,timeoutClose:false,panicClose:false,severityMayAutoExit:false},
     riskSnapshot:portfolioRiskSnapshot({equity,positions:positions.map((p:any)=>({scope:`${p.symbol}:${p.side}`,notional:Number(p.quantity)*Number(p.markPrice??p.entryPrice),unrealizedPnl:Number(p.unrealizedPnl??0),human:p.managementStatus==='HUMAN_MANAGED'})),claims:[],unknownClaims:positions.filter((p:any)=>p.entryTimeSource==='UNKNOWN').length,stressLoss:null,coverage:'UNKNOWN'})
   };

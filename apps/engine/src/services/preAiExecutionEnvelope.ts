@@ -60,7 +60,11 @@ export interface PreAiExecutionEnvelope {
   /** Stated in words because a nested number is not an instruction: the model must not choose a side it cannot submit. */
   sideAuthorization:Record<ExecutionEnvelopeSide,string>;
   leaseRequiredMarginUsd:number;
+  /** P4: what the earmark asked for, what capped it and to what, so a lease is never read as a debit. */
+  leaseBudget?:{requestedUsd:number;cappedBy:LeaseBudgetSource;budgetUsd:number};
 }
+
+export type LeaseBudgetSource='ROUTED_PLAN_MARGIN'|'CONFIGURED_PER_POSITION_MARGIN'|'EXCHANGE_MINIMUM_MARGIN';
 
 const roundDownUnits=(quantity:number,step:number)=>step>0?Math.max(0,Math.floor(quantity/step+1e-9)):0;
 
@@ -138,5 +142,30 @@ export function buildPreAiExecutionEnvelope(state:RuntimeState,symbol:string,now
     sideAuthorization={LONG:LONG.authorization??'NOT_EXECUTABLE:UNCLASSIFIED',SHORT:SHORT.authorization??'NOT_EXECUTABLE:UNCLASSIFIED'} as Record<ExecutionEnvelopeSide,string>;
   const makerFeeBps=state.settings.takeProfit.makerFeeRate*10_000,takerFeeBps=state.settings.takeProfit.takerFeeRate*10_000,safetyMarginBps=(makerFeeBps+(state.settings.takeProfit.exitFeeAssumption==='TAKER'?takerFeeBps:makerFeeBps))*state.settings.takeProfit.feeSafetyBufferPct/100;
   const economics={version:'V3.9.5' as const,minNetProfitUsd:state.settings.takeProfit.minNetProfitUsd,minNetProfitRoiPct:state.settings.takeProfit.minNetProfitRoiPct,admissionMode:state.settings.tradeEconomics.admissionMode,historicalTpReachabilityEnabled:state.settings.tradeEconomics.historicalTpReachabilityEnabled,minHistoricalReachProbability:state.settings.tradeEconomics.minHistoricalReachProbability,reachabilityLookbackBars:state.settings.tradeEconomics.reachabilityLookbackBars,reachabilityMinSamples:state.settings.tradeEconomics.reachabilityMinSamples,targetHorizonMinutes:legalTargetHorizonMinutes(state.settings),humanManagedExposure:{positions:human.positions,notionalUsd:human.notionalUsd,maxPositions:human.maxPositions,maxNotionalUsd:human.maxNotionalUsd,withinLimits:human.withinLimits}};
-  return {version:'V3.9.3_PRE_AI_EXECUTION_ENVELOPE',resourcePolicy:testnetFundsOnlyEntry(state.settings)?'TESTNET_FUNDS_ONLY':'LEGACY_RISK_ENFORCED',symbol,underlying,quoteAsset,executableSides,noExecutableSide:executableSides.length===0,sideAuthorization,createdAt:now,expiresAt:now+Math.max(45_000,Number(state.settings.ai.decisionTimeoutMs??30_000)+15_000),notice:'EXECUTION FACTS ARE NOT MARKET SIGNALS.',account:{status:String(state.account.status),equityUsd,availableMarginUsd:availableBalance,reservedMarginUsd,executionLeaseMarginUsd,freeMarginUsd},positionCapacity:{used:capacity.used,max:state.settings.portfolio.maxPositions,slotAvailable,sameUnderlyingOccupied},leverage,exchange:{tickSize:q.tickSize,stepSize:q.stepSize,minQty:q.minQty,minNotional:q.minNotional},makerReachableBand:{min:bandMin,max:bandMax},recentTradedPrices:market.recentTradedPrices??[],fees:{makerFeeBps,takerFeeBps,roundTripCostBps:makerFeeBps+(state.settings.takeProfit.exitFeeAssumption==='TAKER'?takerFeeBps:makerFeeBps),safetyMarginBps},economics,...(reachability?{reachability}:{}),LONG,SHORT,leaseRequiredMarginUsd:Math.max(LONG.maxMarginUsd,SHORT.maxMarginUsd)};
+  // P4/R9: an analysis lease is a pre-model earmark, not a debit of the account. It used to be
+  // max(LONG.maxMarginUsd, SHORT.maxMarginUsd), and because the probe sized the side with
+  // plannedNotional=MAX_SAFE_INTEGER that number was essentially the whole quote balance - which made
+  // every other route on the same asset read zero capacity while one candidate was being analysed.
+  // The lease is now bounded by the candidate's own budget: enough margin that the largest *legal*
+  // order this symbol could be sized at still fits after the earmark.
+  const marginBudget=entryCandidateMarginBudgetUsd(state,symbol,{leverage,minimumLegalNotionalUsd:Math.max(LONG.minimumLegalNotionalUsd??0,SHORT.minimumLegalNotionalUsd??0)});
+  const leaseRequiredMarginUsd=Math.min(Math.max(LONG.maxMarginUsd,SHORT.maxMarginUsd),marginBudget.budgetUsd);
+  return {version:'V3.9.3_PRE_AI_EXECUTION_ENVELOPE',resourcePolicy:testnetFundsOnlyEntry(state.settings)?'TESTNET_FUNDS_ONLY':'LEGACY_RISK_ENFORCED',symbol,underlying,quoteAsset,executableSides,noExecutableSide:executableSides.length===0,sideAuthorization,createdAt:now,expiresAt:now+Math.max(45_000,Number(state.settings.ai.decisionTimeoutMs??30_000)+15_000),notice:'EXECUTION FACTS ARE NOT MARKET SIGNALS.',account:{status:String(state.account.status),equityUsd,availableMarginUsd:availableBalance,reservedMarginUsd,executionLeaseMarginUsd,freeMarginUsd},positionCapacity:{used:capacity.used,max:state.settings.portfolio.maxPositions,slotAvailable,sameUnderlyingOccupied},leverage,exchange:{tickSize:q.tickSize,stepSize:q.stepSize,minQty:q.minQty,minNotional:q.minNotional},makerReachableBand:{min:bandMin,max:bandMax},recentTradedPrices:market.recentTradedPrices??[],fees:{makerFeeBps,takerFeeBps,roundTripCostBps:makerFeeBps+(state.settings.takeProfit.exitFeeAssumption==='TAKER'?takerFeeBps:makerFeeBps),safetyMarginBps},economics,...(reachability?{reachability}:{}),LONG,SHORT,leaseRequiredMarginUsd,leaseBudget:{requestedUsd:Math.max(LONG.maxMarginUsd,SHORT.maxMarginUsd),cappedBy:marginBudget.source,budgetUsd:marginBudget.budgetUsd}};
+}
+
+/**
+ * The margin one Entry on this symbol may be sized at. The routed plan's own margin wins when it
+ * exists, because that is the allocation this candidate was actually given; otherwise the published
+ * per-position cap applies. A symbol whose budget falls under the exchange minimum still gets the
+ * minimum, so an earmark is never rounded down into an artificial denial.
+ */
+export function entryCandidateMarginBudgetUsd(state:RuntimeState,symbol:string,input:{leverage:number;minimumLegalNotionalUsd:number}):{budgetUsd:number;source:LeaseBudgetSource}{
+  const p=state.settings.portfolioIntelligence??{},portfolio=state.settings.portfolio??{};
+  const route=(state.runtimeControl?.capital?.routedCandidates??[]).find((row:any)=>String(row?.symbol??'').toUpperCase()===String(symbol).toUpperCase());
+  const planned=Math.max(Number(route?.longPlanFacts?.marginUsd??0),Number(route?.shortPlanFacts?.marginUsd??0),Number(route?.marginUsd??0));
+  const configured=Math.max(0,Number(p.maxMarginPerPositionUsd??0),Number(portfolio.entryMarginUsd??0));
+  const floor=input.minimumLegalNotionalUsd/Math.max(1,input.leverage);
+  const source:LeaseBudgetSource=planned>0?'ROUTED_PLAN_MARGIN':configured>0?'CONFIGURED_PER_POSITION_MARGIN':'EXCHANGE_MINIMUM_MARGIN';
+  const budget=planned>0?planned:configured>0?configured:floor;
+  return{budgetUsd:Math.max(budget,floor),source};
 }

@@ -58,6 +58,11 @@ export const EntryExecutionEnvelopeSchema=z.object({
   LONG:EntryExecutionCapacitySchema,
   SHORT:EntryExecutionCapacitySchema,
   leaseRequiredMarginUsd:z.number().nonnegative(),
+  /**
+   * P4: the analysis earmark is a budget, not a debit, and the envelope now says what it asked for and
+   * what capped it. Optional because an intent journalled before this field existed still round-trips.
+   */
+  leaseBudget:z.object({requestedUsd:z.number().nonnegative(),cappedBy:z.enum(['ROUTED_PLAN_MARGIN','CONFIGURED_PER_POSITION_MARGIN','EXCHANGE_MINIMUM_MARGIN']),budgetUsd:z.number().nonnegative()}).strict().optional(),
 }).strict();
 export type EntryExecutionEnvelope = z.infer<typeof EntryExecutionEnvelopeSchema>;
 

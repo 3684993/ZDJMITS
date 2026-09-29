@@ -5,6 +5,8 @@ export const WaitConditionSchema=z.object({operator:z.enum(['LTE','GTE']),price:
 export const OpportunityTypeSchema=z.enum(['TREND_PULLBACK','TREND_RESUMPTION','BREAKOUT_CONFIRMATION','RANGE_BOUNDARY_REVERSAL','NONE']);
 export const MarketRegimeSchema=z.enum(['TREND','RANGE','TRANSITION','EXTREME','UNKNOWN']);
 export const ProfitTakePlanSchema=z.object({targetPrice:z.number().finite().positive(),acceptableTargetRange:z.object({min:z.number().finite().positive(),max:z.number().finite().positive()}).strict(),targetHorizonMinutes:z.number().int().min(1).max(1440),targetReason:z.string().min(1).max(240),evidenceRefs:z.array(z.string().max(120)).max(4).default([])}).strict().superRefine((p,c)=>{if(p.acceptableTargetRange.min>p.acceptableTargetRange.max||p.targetPrice<p.acceptableTargetRange.min||p.targetPrice>p.acceptableTargetRange.max)c.addIssue({code:'custom',path:['acceptableTargetRange'],message:'target must be inside range'});});
+/** P5: the authorized take-profit target, named so the guardian and the plan share one contract type. */
+export type ProfitTakePlan=z.infer<typeof ProfitTakePlanSchema>;
 
 export const EntryDecisionV370Schema=z.object({
   action:z.literal('FINAL'),schemaVersion:z.enum(['V3.9.2','V3.9.3']).default('V3.9.3'),decision:EntryDispositionSchema,

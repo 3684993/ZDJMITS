@@ -19,6 +19,11 @@ import { byClosedAtDesc, byOpenedAtDesc } from './chronologicalSort.js';
 import { entryObservation } from '../services/entryObservation.js';
 import { ENTRY_CONVERSION_EVENT_TYPES, EXECUTION_LINEAGE_GRACE_MS, projectRunExecutionOutcomes } from '../services/runExecutionOutcome.js';
 import { projectHumanManaged } from '../services/humanManagedProjection.js';
+import { candidateAnalysisEligibility, entryPermissionReadback } from '../services/entryPermissionModel.js';
+import { portfolioScopeObservation } from '../services/entrySubmissionIdentity.js';
+import { activeExecutionLeaseMargin } from '../services/executionLease.js';
+import { bookAdmissionSummary } from '../services/admissionCapacityReader.js';
+import { testnetFundsOnlyEntry } from '@zdj/core';
 import { exitSubjectFromPosition } from '../services/v396ExitRuntime.js';
 
 /**
@@ -312,6 +317,31 @@ export function createApiRouter(runtime: EngineRuntime) {
   r.get('/diagnostics/binance-governance',(_q,res)=>res.json({asOf:Date.now(),routes:binanceTransportGovernance(),budgets:binanceRequestBudgetsHealth()}));
   r.get('/diagnostics/logging',(_q,res)=>res.json((runtime as any).operationalLogHealth?.()??{status:'NOT_ATTACHED'}));
   r.get('/diagnostics/supply',(_q,res)=>res.json({health:runtime.supplyHealth(),residentTarget:runtime.state.settings.selection.poolTarget,residents:runtime.state.pool.list(),capacity:runtime.runtimeControl.capacityDiagnostics(),reserve:runtime.state.universe.filter(c=>(c.residentEligible??c.eligible)&&!runtime.state.pool.has(c.symbol)).slice(0,40).map(c=>({symbol:c.symbol,rank:c.rank,components:c.components,assetAdmission:c.assetAdmission,pipelineEligible:c.pipelineEligible}))}));
+  // P4: the three layers the Entry chain now answers with, side by side, plus the fund/lease facts the
+  // cockpit was previously inventing its own version of.
+  r.get('/diagnostics/entry-permission',(req,res)=>{
+    const now=Date.now(),symbol=String(req.query.symbol??'').trim().toUpperCase();
+    const pool=runtime.state.pool.list(),target=symbol||(pool[0]?.symbol??'');
+    const underlying=target?target.replace(/(USDT|USDC|BUSD)$/,''):null;
+    res.json({
+      asOf:now,
+      mode:{environment:runtime.state.settings.connections.exchange.environment,executionMode:runtime.state.settings.connections.executionMode,
+        fundsOnly:testnetFundsOnlyEntry(runtime.state.settings)},
+      // One source of fund truth per asset, with the four numbers that used to be conflated separated.
+      capital:runtime.state.account.assets.map((asset:any)=>({asset:asset.asset,exchangeAvailableUsd:asset.availableBalance??null,
+        uncommittedReservationUsd:[...runtime.state.entryReservations.values()].filter((row:any)=>row.quoteAsset===asset.asset&&['RESERVED','WORKING'].includes(row.status)&&Number(row.expiresAt)>now).reduce((sum:number,row:any)=>sum+Number(row.marginUsd??0),0),
+        analysisEarmarkUsd:activeExecutionLeaseMargin(runtime.state,asset.asset,now),
+        executableForNewReservationUsd:Math.max(0,Number(asset.availableBalance??0)-activeExecutionLeaseMargin(runtime.state,asset.asset,now))})),
+      admission:bookAdmissionSummary(runtime.state,now),
+      observation:entryPermissionReadback(runtime.state,target??'--',underlying??'--',now),
+      eligibility:target?candidateAnalysisEligibility(runtime.state,target,now,{modelAvailable:runtime.ai.resourceMetrics().length>0,dataNotReadyReasons:runtime.market.primaryReadyReasons(target,now)}):null,
+      scopeObservation:underlying?portfolioScopeObservation({settings:runtime.state.settings,environment:runtime.state.settings.connections.exchange.environment,
+        accountId:runtime.state.settings.connections.exchange.credentialRef,underlying,side:'BOTH',
+        historicalUnknownRows:runtime.state.entryOrders? [...runtime.state.entryOrders.values()].filter((row:any)=>row.status==='UNKNOWN').length:0,
+        activeClaimRows:runtime.settingsStore.entryExecutionClaimStats().activeClaims}):null,
+      exitConvergence:runtime.exitConvergenceHealth(),
+    });
+  });
   r.post("/market-intelligence/rebuild", (_q, res) =>
     res.status(202).json({
       accepted: runtime.temporal.request("API_REQUEST"),

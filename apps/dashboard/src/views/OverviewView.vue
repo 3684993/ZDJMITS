@@ -101,6 +101,102 @@ const sideCandidateRows = (side: 'LONG' | 'SHORT') =>
     `${row.symbol} ${row.side}：资金容量 ${fmt(row.funding?.executableNotionalUsd)}｜风险后 ${fmt(row.finalNotionalBeforeRoundingUsd)}｜交易所最小合法名义 ${row.minimumLegalNotionalUsd == null ? "未验证" : fmt(row.minimumLegalNotionalUsd)}｜计划 ${row.plan?.admission ?? "未生成"}${capacityRoomText(row)}｜${row.executable ? "可执行" : `首因 ${row.firstBindingConstraint}`}`);
 const capacitySideStatusText = computed(() => capacityVisibility.value?.sideStatus?.text ?? "Engine 尚未投影两侧状态");
 
+// P7: an active commission is only live when the exchange says so. These four numbers answer four
+// different questions and are never summed into one "活动委托" figure; a local UNKNOWN row is an
+// accounting exposure, not an order the exchange is working.
+const truth = computed(() => (s.snapshot as any)?.executionTruth ?? null);
+const commissions = computed(() => truth.value?.activeCommissions ?? null);
+const COMMISSION_ROWS: Array<[string, string, string]> = [
+  ["remoteConfirmedEntry", "交易所确认 · 建仓委托", "交易所在 open orders / exact order 中确认仍存活"],
+  ["remoteConfirmedTakeProfit", "交易所确认 · 止盈委托", "交易所确认仍存活的 reduce-only 止盈委托"],
+  ["manual", "人工委托", "人工控制台提交且仍未进入终态的委托"],
+  ["localUnresolvedUnknown", "本地未决 UNKNOWN", "账面敞口：交易所并未确认其存活"],
+];
+const commissionRows = computed(() =>
+  COMMISSION_ROWS.map(([key, label, hint]) => ({ key, label, hint, count: Number(commissions.value?.[key] ?? 0) })),
+);
+// An older Engine does not project executionTruth: show its two numbers, labelled as unclassified
+// instead of pretending the split exists.
+const legacyActiveOrders = computed(() => ({
+  entry: account()?.activeEntryOrders ?? account()?.pendingEntries ?? null,
+  tp: account()?.activeTpOrders ?? null,
+}));
+
+const STATUS_LABELS: Record<string, string> = {
+  HEALTHY: "健康",
+  DEGRADED: "降级",
+  OFFLINE: "离线",
+  UNKNOWN: "未知",
+  PARTIAL: "部分覆盖",
+  DISABLED: "未启用",
+};
+const statusLabel = (value: string) => STATUS_LABELS[String(value ?? "").toUpperCase()] ?? "未知";
+
+// Eight separate checks. None of them may stand in for another one, and a missing projection renders as
+// unknown rather than inheriting a settled/healthy impression from elsewhere on the page.
+const TRUTH_CHECKS: Array<{ key: string; label: string; question: string }> = [
+  { key: "exchangeIngestion", label: "交易所数据摄取", question: "行情与私有数据是否真的在进来" },
+  { key: "orderTerminalParity", label: "订单终态一致性", question: "本地订单终态与交易所是否逐单一致" },
+  { key: "exitClaimConvergence", label: "退出声明收敛", question: "退出意图是否被持续轮询并释放" },
+  { key: "takeProfitCoverage", label: "止盈覆盖", question: "每个应受保护的持仓是否真的有 TP" },
+  { key: "positionCoverage", label: "持仓覆盖", question: "本地持仓集合与交易所是否一致" },
+  { key: "fillCycleConservation", label: "成交周期守恒", question: "成交是否都归入周期且不重复计数" },
+  { key: "fundingCoverage", label: "资金费覆盖", question: "已平仓交易的资金费是否都已确认" },
+  { key: "reviewAuthority", label: "复核授权", question: "周期复核是否被授权并在运行" },
+];
+const msText = (value: unknown) => {
+  const ms = Math.max(0, Number(value ?? 0));
+  const totalMinutes = Math.floor(ms / 60_000);
+  if (totalMinutes < 1) return `${Math.floor(ms / 1000)} 秒`;
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  return hours ? `${hours} 小时 ${minutes} 分` : `${minutes} 分`;
+};
+const checkFacts = (key: string, row: any): Array<[string, string]> => {
+  if (!row) return [];
+  if (key === "orderTerminalParity") return [["不一致订单", String(row.mismatchCount ?? 0)]];
+  if (key === "exitClaimConvergence")
+    return [["未收敛任务", String(row.openTasks ?? 0)], ["终态未释放", String(row.terminalUnreleasedClaims ?? 0)], ["最久未轮询", msText(row.oldestUnpolledAgeMs)]];
+  if (key === "takeProfitCoverage")
+    return [["需要", String(row.required ?? 0)], ["已保护", String(row.protected ?? 0)], ["缺失", String(row.missing ?? 0)], ["仓位事实未决", String(row.unresolved ?? 0)]];
+  if (key === "positionCoverage") return [["本地持仓", String(row.local ?? 0)], ["交易所持仓", String(row.remote ?? 0)]];
+  if (key === "fillCycleConservation") return [["账本不一致", String(row.ledgerInconsistent ?? 0)], ["不守恒", String(row.unconserved ?? 0)]];
+  if (key === "fundingCoverage")
+    return [["资金费精确", String(row.recordsWithExactFunding ?? 0)], ["资金费未知", String(row.recordsUnknown ?? 0)], ["资金费流水", String(row.incomeRows ?? 0)], ["覆盖完整", row.coverageComplete ? "是" : "否"]];
+  if (key === "reviewAuthority")
+    return [["已启用", row.enabled ? "是" : "否"], ["AI 活跃周期", String(row.aiActiveCycles ?? 0)], ["待复核", String(row.scheduledDue ?? 0)], ["最近结果", row.lastOutcome ?? "—"]];
+  return [];
+};
+const truthChecks = computed(() =>
+  TRUTH_CHECKS.map(({ key, label, question }) => {
+    const row: any = truth.value?.[key] ?? null;
+    return {
+      key,
+      label,
+      question,
+      status: String(row?.status ?? "UNKNOWN"),
+      detail: row?.detail ?? (truth.value ? null : "EXECUTION_TRUTH_NOT_PROJECTED"),
+      facts: checkFacts(key, row),
+    };
+  }),
+);
+const convergence = computed(() => (s.snapshot as any)?.exitConvergence ?? null);
+const convergenceFacts = computed<Array<[string, string, string]>>(() => {
+  const row: any = convergence.value;
+  if (!row?.available) return [];
+  return [
+    ["openTasks", "排队中的退出任务", String(row.openTasks ?? 0)],
+    ["oldestUnpolledAgeMs", "最久未轮询", msText(row.oldestUnpolledAgeMs)],
+    ["terminalUnreleasedClaims", "终态未释放声明", String(row.terminalUnreleasedClaims ?? 0)],
+    ["maxServiceIntervalMs", "最大服务间隔阈值", msText(row.maxServiceIntervalMs)],
+  ];
+});
+// Raw exchange fills by provenance: attribution, external and unproven are different answers.
+const fillProvenanceRows = computed(() => {
+  const tally: Record<string, number> = (s.snapshot as any)?.exchangeFillFacts?.fillsByProvenanceLast1h ?? {};
+  return Object.entries(tally).map(([key, count]) => ({ key, count }));
+});
+
 const capacityPolicyText = computed(() => {
   const policy = capacityVisibility.value?.exposure?.gross?.mode === undefined ? null : capacityVisibility.value;
   if (!policy) return "政策未投影";
@@ -219,15 +315,45 @@ onUnmounted(() => {
         >
         <small>正式净收益 {{ money(s.snapshot?.tradeNetPnl ?? 0) }} · {{ s.snapshot?.tradeCompletedExFundingCount ?? 0 }} 个完整周期<span v-if="(s.snapshot?.tradeFundingUnknownCount ?? 0) > 0"> · {{ s.snapshot?.tradeFundingUnknownCount }} 笔资金费未确认</span></small>
       </div>
-      <div class="kpi">
-        <span>活动委托</span
-        ><strong>{{
-          (account()?.activeEntryOrders ?? account()?.pendingEntries ?? 0) +
-          (account()?.activeTpOrders ?? 0)
-        }}</strong>
+      <div class="kpi" data-active-commissions>
+        <span>{{ commissions ? "活动委托 · 按证明来源分列（不相加）" : "活动委托 · 分类不可用" }}</span>
+        <ul v-if="commissions" class="commission-list">
+          <li v-for="row in commissionRows" :key="row.key" :data-commission="row.key">
+            <span>{{ row.label }}</span
+            ><strong :class="row.key === 'localUnresolvedUnknown' && row.count > 0 ? 'negative' : ''">{{ row.count }}</strong>
+            <small>{{ row.hint }}</small>
+          </li>
+        </ul>
+        <template v-else>
+          <ul class="commission-list" data-commissions-unavailable>
+            <li data-commission="legacyEntry"><span>建仓委托（旧口径，未区分证明来源）</span><strong>{{ legacyActiveOrders.entry ?? "—" }}</strong></li>
+            <li data-commission="legacyTp"><span>止盈委托（旧口径，未区分证明来源）</span><strong>{{ legacyActiveOrders.tp ?? "—" }}</strong></li>
+          </ul>
+          <small>本实例 Engine 未提供 executionTruth：无法区分交易所确认与本地未决，以上两项不构成委托分类。</small>
+        </template>
       </div>
     </div>
-    <Panel title="最近 1 小时交易事实" subtitle="Binance 成交按系统归因与外部成交分开统计；外部成交只进入审计，不触发建仓循环。"><div class="facts wide"><div><dt>Entry fills</dt><dd>{{s.snapshot?.exchangeFillFacts?.entryFillsLast1h??0}}</dd></div><div><dt>Exit fills</dt><dd>{{s.snapshot?.exchangeFillFacts?.exitFillsLast1h??0}}</dd></div><div><dt>Closed trades</dt><dd>{{s.snapshot?.exchangeFillFacts?.closedTradesLast1h??0}}</dd></div><div><dt>Net PnL</dt><dd>{{money(s.snapshot?.exchangeFillFacts?.netPnlLast1h??0)}}</dd></div><div><dt>External / unlinked fills</dt><dd :class="(s.snapshot?.exchangeFillFacts?.externalFillsLast1h??s.snapshot?.exchangeFillFacts?.unattributedFillsLast1h??0)>0?'negative':''">{{s.snapshot?.exchangeFillFacts?.externalFillsLast1h??s.snapshot?.exchangeFillFacts?.unattributedFillsLast1h??0}}</dd></div></div><div v-if="s.snapshot?.exchangeFillFacts?.systemFillParityAlert && (s.snapshot?.exchangeFillFacts?.systemFillAttributionGapLast1h??0)>0" class="policy-card danger-lite"><strong>EXCHANGE_FILL_ATTRIBUTION_GAP</strong><span>疑似 Engine 成交未完成本地归因，请在交易记录页面执行事实审计。</span></div></Panel>
+    <Panel title="最近 1 小时交易事实" subtitle="Binance 成交按系统归因与外部成交分开统计；外部成交只进入审计，不触发建仓循环。"><div class="facts wide"><div><dt>Entry fills</dt><dd>{{s.snapshot?.exchangeFillFacts?.entryFillsLast1h??0}}</dd></div><div><dt>Exit fills</dt><dd>{{s.snapshot?.exchangeFillFacts?.exitFillsLast1h??0}}</dd></div><div><dt>Closed trades</dt><dd>{{s.snapshot?.exchangeFillFacts?.closedTradesLast1h??0}}</dd></div><div><dt>Net PnL</dt><dd>{{money(s.snapshot?.exchangeFillFacts?.netPnlLast1h??0)}}</dd></div><div><dt>External / unlinked fills</dt><dd :class="(s.snapshot?.exchangeFillFacts?.externalFillsLast1h??s.snapshot?.exchangeFillFacts?.unattributedFillsLast1h??0)>0?'negative':''">{{s.snapshot?.exchangeFillFacts?.externalFillsLast1h??s.snapshot?.exchangeFillFacts?.unattributedFillsLast1h??0}}</dd></div></div><div v-if="s.snapshot?.exchangeFillFacts?.systemFillParityAlert && (s.snapshot?.exchangeFillFacts?.systemFillAttributionGapLast1h??0)>0" class="policy-card danger-lite"><strong>EXCHANGE_FILL_ATTRIBUTION_GAP</strong><span>疑似 Engine 成交未完成本地归因，请在交易记录页面执行事实审计。</span></div><div v-if="fillProvenanceRows.length" class="facts wide" data-fill-provenance><div v-for="row in fillProvenanceRows" :key="row.key" :data-fill-provenance-row="row.key"><dt>证明来源 {{row.key}}</dt><dd>{{row.count}} 笔</dd></div></div><p v-else class="muted" data-fill-provenance-unavailable>本实例未投影按证明来源分列的成交事实：归因成交与外部成交无法逐项核对。</p></Panel>
+    <Panel title="执行真相 · 八项独立检查" subtitle="每一项只回答自己的问题，任何一项都不代替其它项；未投影或 UNKNOWN 一律显示为未知，不显示为健康">
+      <div class="facts wide" data-execution-truth>
+        <div v-for="check in truthChecks" :key="check.key" class="truth-card" :data-truth-check="check.key">
+          <dt>{{ check.label }} · <StatusBadge :value="check.status" /><span class="truth-status">{{ statusLabel(check.status) }}</span></dt>
+          <dd>
+            <small class="truth-question">{{ check.question }}</small>
+            <ul v-if="check.facts.length" class="truth-facts"><li v-for="fact in check.facts" :key="fact[0]">{{ fact[0] }} {{ fact[1] }}</li></ul>
+            <small v-if="check.detail" class="truth-detail">{{ check.detail }}</small>
+            <small v-else class="truth-detail">本项未提供文字说明</small>
+          </dd>
+        </div>
+      </div>
+      <p v-if="!truth" class="policy-card danger-lite" data-truth-unavailable><strong>EXECUTION_TRUTH_NOT_PROJECTED</strong><span>本实例 Engine 未投影执行真相：以上八项均为未知，不以管线聚合状态或“已对账”标签代替。</span></p>
+      <div class="facts wide" data-exit-convergence>
+        <template v-if="convergenceFacts.length">
+          <div v-for="row in convergenceFacts" :key="row[0]" :data-convergence="row[0]"><dt>{{ row[1] }}</dt><dd>{{ row[2] }}</dd></div>
+        </template>
+        <p v-else data-exit-convergence-unavailable><strong>退出收敛队列未投影</strong><span>{{ convergence?.available === false ? (convergence?.reason ?? "EXIT_RUNTIME_NOT_ATTACHED") : "EXIT_CONVERGENCE_NOT_PROJECTED" }}；未知不等于已收敛，不据此判定退出链正常。</span></p>
+      </div>
+    </Panel>
     <Panel
       title="新建仓执行权限"
       subtitle="自动流程、可执行容量与交易所数据分别显示；9B 事实抽取与 Primary 独立调度，写入限于 Testnet"

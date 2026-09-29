@@ -30,11 +30,12 @@ describe('holdingDuration', () => {
 
   it('does not reset continuous holding when the position was added to', () => {
     const before = holdingDuration(proven(), NOW);
-    const afterAdd = holdingDuration(proven({ lastAddAt: NOW - 2 * HOUR, addCount: 3, lastReviewAt: NOW - HOUR }), NOW);
+    const added = proven({ lastAddAt: NOW - 2 * HOUR, addCount: 3, lastReviewAt: NOW - HOUR });
+    const afterAdd = holdingDuration(added, NOW);
     expect(afterAdd.text).toBe(before.text);
     expect(afterAdd.provenance).toBe('CONTINUOUS');
     // the add is a separate moment, never a new cycle start
-    expect(cycleMoments(afterAdd).map((row) => row.key)).toContain('lastAdd');
+    expect(cycleMoments(added).map((row) => row.key)).toContain('lastAdd');
   });
 
   it('does not reset continuous holding after a partial close', () => {
@@ -44,11 +45,12 @@ describe('holdingDuration', () => {
   });
 
   it('starts a fresh duration when the cycle returns to zero and re-opens under a new cycle id', () => {
-    const reopened = holdingDuration(proven({
+    const reopenedFacts = proven({
       cycleId: 'cycle_2', openedAt: NOW - 2 * HOUR, firstObservedAt: NOW - 2 * HOUR, lastAddAt: null, addCount: 0,
-    }), NOW);
+    });
+    const reopened = holdingDuration(reopenedFacts, NOW);
     expect(reopened.text).toBe('连续持有 2小时');
-    expect(positionCycleKey(reopened, 'TESTNET', 'acct')).not.toBe(positionCycleKey(proven(), 'TESTNET', 'acct'));
+    expect(positionCycleKey(reopenedFacts, 'TESTNET', 'acct')).not.toBe(positionCycleKey(proven(), 'TESTNET', 'acct'));
   });
 
   it('reports a lower bound when only the first observation is available', () => {
@@ -97,8 +99,10 @@ describe('cycleMoments', () => {
   });
 
   it('labels the human handoff moment separately from the cycle start', () => {
-    const moments = cycleMoments(proven({ managementStatus: 'HUMAN_MANAGED' as never, humanManagedAt: NOW - HOUR }));
+    const moments = cycleMoments(proven({ humanManagedAt: NOW - HOUR }));
     expect(moments.some((row) => row.key === 'humanManaged' && row.text.includes('进入人工处置'))).toBe(true);
+    // the hand-off is a moment of its own, never the cycle start
+    expect(moments.map((row) => row.key)).toEqual(['opened', 'firstObserved', 'humanManaged']);
   });
 });
 

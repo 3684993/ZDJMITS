@@ -2076,7 +2076,7 @@ export class EngineRuntime {
         consecutiveFailures:consecutiveAiFailures,
         alert:consecutiveAiFailures>=3?"AI_CONSECUTIVE_FAILURE":null,
       },
-      entryConversion = entryConversionReport((since) => this.settingsStore.runtimeEvents(since, [...ENTRY_CONVERSION_EVENT_TYPES], 20_000), now),
+      entryConversion = entryConversionReport((since) => this.settingsStore.runtimeEvents(since, [...ENTRY_CONVERSION_EVENT_TYPES], 20_000), now, {fundsOnly: testnetFundsOnlyEntry(this.state.settings), economicAdmissionMode: this.state.settings.tradeEconomics?.admissionMode ?? 'OFF'}),
       stagnated = Boolean(
         this.ready &&
         eligible > 0 && this.state.runtimeControl.capital.executableCandidateCount>0 &&

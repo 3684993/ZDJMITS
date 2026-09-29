@@ -64,7 +64,16 @@ export const DashboardSnapshotSchema = z.object({
     positionCoverage:z.object({status:z.enum(['HEALTHY','DEGRADED','UNKNOWN']),local:z.number().int().nonnegative(),remote:z.number().int().nonnegative(),detail:z.string().nullable()}),
     fillCycleConservation:z.object({status:z.enum(['HEALTHY','DEGRADED','UNKNOWN']),ledgerInconsistent:z.number().int().nonnegative(),unconserved:z.number().int().nonnegative(),detail:z.string().nullable()}),
     fundingCoverage:z.object({status:z.enum(['HEALTHY','PARTIAL','UNKNOWN']),recordsWithExactFunding:z.number().int().nonnegative(),recordsUnknown:z.number().int().nonnegative(),incomeRows:z.number().int().nonnegative(),coverageComplete:z.boolean(),detail:z.string().nullable()}),
-    reviewAuthority:z.object({status:z.enum(['HEALTHY','DISABLED','DEGRADED','UNKNOWN']),enabled:z.boolean(),aiActiveCycles:z.number().int().nonnegative(),scheduledDue:z.number().int().nonnegative(),lastOutcome:z.string().nullable(),detail:z.string().nullable()}),
+    reviewAuthority:z.object({status:z.enum(['HEALTHY','DISABLED','DEGRADED','UNKNOWN']),enabled:z.boolean(),aiActiveCycles:z.number().int().nonnegative(),scheduledDue:z.number().int().nonnegative(),
+      /** The last review attempt as facts, not as a label: when, what it decided, and why it stopped. */
+      lastOutcome:z.object({lastTickAt:z.number().nullable(),lastVerdictAt:z.number().nullable(),lastDecision:z.string().nullable(),lastReason:z.string().nullable(),
+        usable:z.boolean(),enabled:z.boolean(),considered:z.number().int().nonnegative(),reserved:z.number().int().nonnegative(),completed:z.number().int().nonnegative(),
+        discarded:z.number().int().nonnegative(),failed:z.number().int().nonnegative(),due:z.number().int().nonnegative(),exhausted:z.number().int().nonnegative(),
+        failureBlocked:z.number().int().nonnegative(),skippedReason:z.string().nullable()}).nullable().optional(),
+      detail:z.string().nullable()}),
+    /** P6: per-cycle review obligation, stated as last review / next due / failures / why skipped. */
+    reviewCycles:z.array(z.object({cycleId:z.string(),scope:z.string(),used:z.number().int().nonnegative(),limit:z.number().int().nonnegative(),failures:z.number().int().nonnegative(),
+      lastReviewAt:z.number().nullable(),nextDueAt:z.number().nullable(),lastOutcome:z.string().nullable(),skippedReason:z.string().nullable()})).optional(),
     /** Active commissions are split by what actually proves them, never summed into one number. */
     activeCommissions:z.object({remoteConfirmedEntry:z.number().int().nonnegative(),remoteConfirmedTakeProfit:z.number().int().nonnegative(),manual:z.number().int().nonnegative(),localUnresolvedUnknown:z.number().int().nonnegative()}),
   }).optional(),

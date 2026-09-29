@@ -42,7 +42,7 @@ const isPlainObject = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value);
 
 function merge<T>(base: T, overrides: unknown): T {
-  if (!isPlainObject(base) || !isPlainObject(overrides)) return (overrides === undefined ? base : overrides) as T;
+  if (!isPlainObject(base) || !isPlainObject(overrides)) return overrides as T;
   const out: Record<string, unknown> = { ...base };
   for (const [key, value] of Object.entries(overrides)) out[key] = merge(out[key] as never, value);
   return out as T;

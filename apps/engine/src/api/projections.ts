@@ -285,17 +285,20 @@ function baseDashboardProjection(runtime: EngineRuntime): DashboardSnapshot {
       // questions. Reporting only one of them is what made an external label look like a missing exit.
       fillsByProvenanceLast1h: fillsByProvenance,
       tradeRecordLag: Math.max(0, attributed - closedHour.length),
-      positionCycleFacts: {
-        records: [...s.tradeRecords.values()].length,
-        lotsRecorded: [...s.tradeRecords.values()].reduce((sum, record) => sum + ((record as any).entryLots?.length ?? 0), 0),
-        ledgerInconsistent: [...s.tradeRecords.values()].filter(record => (record as any).ledgerConservation === 'LEDGER_INCONSISTENT' || record.integrityFlags.includes('LEDGER_INCONSISTENT')).length,
-        unconserved: [...s.tradeRecords.values()].filter(record => (record as any).ledgerConservation === 'UNCONSERVED').length,
-        lotAllocation: [...s.tradeRecords.values()].reduce<Record<string, number>>((tally, record) => {
-          const key = String((record as any).lotAllocationMethod ?? 'UNKNOWN');
-          tally[key] = (tally[key] ?? 0) + 1;
-          return tally;
-        }, {}),
-      },
+    },
+    // P2: the physical-cycle accounting readback. The contract declares this at the top level, and a
+    // key the snapshot schema does not declare is dropped on parse - which is exactly how a projected
+    // fact can exist in code and never reach the page.
+    positionCycleFacts: {
+      records: [...s.tradeRecords.values()].length,
+      lotsRecorded: [...s.tradeRecords.values()].reduce((sum, record) => sum + ((record as any).entryLots?.length ?? 0), 0),
+      ledgerInconsistent: [...s.tradeRecords.values()].filter(record => (record as any).ledgerConservation === 'LEDGER_INCONSISTENT' || record.integrityFlags.includes('LEDGER_INCONSISTENT')).length,
+      unconserved: [...s.tradeRecords.values()].filter(record => (record as any).ledgerConservation === 'UNCONSERVED').length,
+      lotAllocation: [...s.tradeRecords.values()].reduce<Record<string, number>>((tally, record) => {
+        const key = String((record as any).lotAllocationMethod ?? 'UNKNOWN');
+        tally[key] = (tally[key] ?? 0) + 1;
+        return tally;
+      }, {}),
     },
     portfolioIntelligence: {
       ...portfolio,

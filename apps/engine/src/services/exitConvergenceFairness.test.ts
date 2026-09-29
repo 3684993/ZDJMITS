@@ -113,6 +113,18 @@ describe('P1 exit convergence fairness',()=>{
     expect(after.oldestUnpolledAgeMs).toBeGreaterThanOrEqual(INTERVAL);
     expect(tasks.length).toBe(12);
   });
+
+  it('reports a never-polled waiting age from the durable creation time, not from the epoch',async()=>{
+    const now=Date.now();
+    const {runtime}=await prepareMany(3,now);
+    // Ten minutes of an idle operator window: the queue has not been walked at all.
+    const waiting=runtime.convergenceStats(now+10*60_000);
+    expect(waiting.neverPolled).toBe(3);
+    expect(waiting.oldestUnpolledAgeMs).toBeGreaterThanOrEqual(10*60_000-1_000);
+    expect(waiting.oldestUnpolledAgeMs).toBeLessThanOrEqual(10*60_000+1_000);
+    // A bound the epoch-based arithmetic could never satisfy.
+    expect(waiting.oldestUnpolledAgeMs).toBeLessThan(24*60*60_000);
+  });
 });
 
 describe('P1 exit terminal propagation',()=>{

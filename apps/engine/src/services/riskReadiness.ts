@@ -125,7 +125,11 @@ export function portfolioCapacityVisibility(capacity:PositionCapacity,budget:Gro
   const gate=facts.admission??null,admissionUnavailable=gate?.status==='UNAVAILABLE',admissionExhausted=gate?.exhausted===true,
     admissionDenied=admissionUnavailable||admissionExhausted;
   const admission={...(gate??{}),status:gate?.status??(gate?.hasVerdict?'AVAILABLE':'NOT_APPLICABLE'),exhausted:admissionExhausted,hasVerdict:gate?.hasVerdict===true,code:gate?.code??null,gate:gate?.gate??null,
-    detail:gate?.detail??null,evaluatedAt:Number(gate?.evaluatedAt)||0,ceilingUsdBySide:gate?.ceilingUsdBySide??{LONG:0,SHORT:0},
+    detail:gate?.detail??null,evaluatedAt:Number(gate?.evaluatedAt)||0,
+    // A gate that gave no per-side number is reported as none. Substituting $0 here was the
+    // "0 alongside NOT_APPLICABLE" contradiction the projection exists to prevent: $0 is a verdict
+    // ("no room"), null is the absence of one, and only the first may refuse an order.
+    ceilingUsdBySide:gate?.ceilingUsdBySide??null,
     overdueHandoffs:Number(gate?.overdueHandoffs??0),oldestOverdueHours:gate?.oldestOverdueHours??null};
   const firstBlocker:CapacityBlocker=!evaluated?'NOT_EVALUATED':slotsFull?'POSITION_CAPACITY':admissionUnavailable?'RISK_ADMISSION_UNAVAILABLE':admissionExhausted?'RISK_ADMISSION':grossFull?'GROSS':longFull?'DIRECTION_LONG':shortFull?'DIRECTION_SHORT':'NONE';
   const blockingDimensions=[slotsFull&&evaluated?'POSITION_CAPACITY':null,admissionUnavailable?'RISK_ADMISSION_UNAVAILABLE':null,admissionExhausted?'RISK_ADMISSION':null,grossFull&&evaluated?'GROSS':null,longFull&&evaluated?'DIRECTION_LONG':null,shortFull&&evaluated?'DIRECTION_SHORT':null].filter(Boolean) as Exclude<CapacityBlocker,'NONE'|'NOT_EVALUATED'>[];

@@ -295,10 +295,20 @@ export class PositionExitCoordinator {
    * fully walked. `terminalUnreleasedClaims` is the direct proof that convergence is not stalled.
    */
   convergenceStats(now:number,batchLimit:number,intervalMs:number){
-    const open=this.journal.query<{id:string;state:string;next_eligible_at:number;last_attempt_at:number;attempt_count:number}>(
-      `SELECT id,state,next_eligible_at,last_attempt_at,attempt_count FROM v396_exit_tasks WHERE state IN ${OPEN_STATE_SQL}`);
+    const open=this.journal.query<{id:string;state:string;next_eligible_at:number;last_attempt_at:number;attempt_count:number;payload:string}>(
+      `SELECT id,state,next_eligible_at,last_attempt_at,attempt_count,payload FROM v396_exit_tasks WHERE state IN ${OPEN_STATE_SQL}`);
     const neverPolled=open.filter(row=>Number(row.last_attempt_at)===0).length;
-    const ages=open.map(row=>Math.max(0,now-Number(row.last_attempt_at)));
+    // A waiting age has to be a real age. A task this process never polled is measured from its
+    // durable creation time, otherwise the readback would report "since the epoch" (1.7e12 ms) and
+    // an operator could not tell a fresh queue from a starved one.
+    const ageOf=(row:{last_attempt_at:number;payload:string})=>{
+      const attempted=Number(row.last_attempt_at);
+      if(attempted>0)return Math.max(0,now-attempted);
+      let created=0;
+      try{created=Math.trunc(Number((JSON.parse(String(row.payload)) as {createdAt?:number}).createdAt??0));}catch{created=0;}
+      return Math.max(0,now-(created>0?created:now));
+    };
+    const ages=open.map(ageOf);
     const oldestUnpolledAgeMs=ages.length?Math.max(...ages):0;
     const nextDue=open.map(row=>Number(row.next_eligible_at)).filter(value=>value>now);
     const terminalUnreleased=this.journal.query<{c:number}>(

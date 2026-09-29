@@ -138,34 +138,42 @@ apply 前留一份全量备份：`data/backups/v397-trading-loop-20260929T022759
 
 ## 11. 运行 readback 与自然证据
 
-**加载新代码后的权威 readback（`/snapshot`、`/pipeline`、`/diagnostics/entry-permission`）**
+**加载新代码后的权威 readback（`/snapshot`、`/pipeline`、`/diagnostics/entry-permission`、`/diagnostics/closeout`）**
+采样点 `2026-09-29T04:40:51.972Z`（`asOf`，实例已运行 20.4 分钟、`pid=37624`、`buildId=3.9.6-6f186489834dfa4acc73`）；这是 push 之后、本轮最后一次读回的当前值。
 
 ```
-exitConvergence  openTasks 47 eligibleNow 39 neverPolled 0 terminalUnreleasedClaims 0
+exitConvergence  openTasks 48 eligibleNow 40 neverPolled 0 terminalUnreleasedClaims 0
                  batch 8 interval 120000 maxService 720000 rounds 6
                  fairness PERSISTED_ROUND_ROBIN_NEXT_ELIGIBLE_THEN_LAST_ATTEMPT
-                 passGate {due:false,reason:"CONVERGENCE_NOT_DUE"}  最近一次轮询 = 32s 前
+                 passGate {due:false,reason:"CONVERGENCE_NOT_DUE",at:04:40:27.669Z}
+                 oldestUnpolled 767869 ms（约 12.8 分钟，仍在 720000×ceil 的公平上界内轮转）
 executionTruth   exchangeIngestion HEALTHY · orderTerminalParity HEALTHY(mismatch 0)
-                 exitClaimConvergence 见上 · takeProfitCoverage required 52 / protected 51 / missing 1 / unresolved 0
+                 exitClaimConvergence 见上 · takeProfitCoverage required 52 / protected 52 / missing 0 / unresolved 0
                  positionCoverage local 52 = remote 52（实例内首轮对账后）
                  fillCycleConservation conserved 350（open 158 / closed 192）inconsistent 10 unconserved 26 unproven 0
-                 fundingCoverage HEALTHY incomeRows 310 coverageComplete true · 9 EXACT / 377 UNKNOWN
+                 fundingCoverage HEALTHY incomeRows 312 coverageComplete true · 9 EXACT / 377 UNKNOWN
+                 lastSync {at:04:33:36.993Z, rows:2, failures:0, symbolsScanned:2, skipped:null}（10 分钟账户级单次读取）
                  reviewAuthority DISABLED（positionReviewEnabled=false，见 §13）
-activeCommissions remoteEntry 0 · remoteTP 51 · manual 0 · localUnresolvedUnknown 83
+positionCycleFacts records 386 · lotsRecorded 137 · ledgerInconsistent 10 · unconserved 26
+                 lotAllocation {UNKNOWN:252, FIFO:134}
+activeCommissions remoteEntry 0 · remoteTP 52（经 exchange 确认） · manual 0 · localUnresolvedUnknown 83
 admission         status NOT_APPLICABLE · ceilingUsdBySide null · enforced false
 entry-permission  mode {TESTNET, TESTNET_ENABLED, fundsOnly true}; USDT 可执行 4007.10 / USDC 4963.35
                   observation {riskStage OBSERVED, basis TESTNET_FUNDS_ONLY_OBSERVATION, enforced false}
                   positionCount {used 55, max 50, enforced false}
 capacityVisibility policy {gross OBSERVE, direction OBSERVE, cluster OBSERVE}（OBSERVE 仅展示，不否决）
+writeBoundary     {TESTNET, TESTNET_ENABLED, lockedToTestnet true, testnetWrites 11, productionWrites 0,
+                   blockedProductionWriteAttempts 0, lastWritePath "/fapi/v1/leverage"}
 tp 目标 provenance 实例：1 条仓位带 `TP_LOW_NET_TARGET_KEPT` + economicWarning + targetProvenance
 order provenance  `v396_order_provenance` 0 → 48 行（EXIT 45 / TP 3），退出成交出处不再是 UNPROVEN 前缀推断
 repair readback    见 §6（幂等、0 交易所写）
 ```
 
 **自然 TESTNET 证据（本轮真实发生的）**
-- 收敛轮转（今日 00:00Z 起累计，含本轮各次加载前后）：`EXIT_TASK_CONVERGED` 808 次（`EXCHANGE_FACT_WORKING` 806、`EXCHANGE_FACT_FILLED` 2）、`EXIT_CONVERGENCE_QUEUE` 28 次、`EXIT_RECOVERY_CONVERGED` 8 次；连续 20 分钟窗口内即有 160 次收敛。
-- 队列健康度轨迹：首次加载时 46 条任务 `neverPolled`、最久未轮询按纪元计（1.79e12 ms，读数无意义）；修正后 `neverPolled=0`、最近一轮轮询距今 32 s，最久等待回落到 0.95M ms（约 16 分钟，受本窗口私有请求超时影响，见 §13.5）；`terminalUnreleasedClaims` 全程为 0，open 任务 52 → 45/47。
-- TP 保护：`required 52 / protected 49 → 51 / missing 3 → 1`，`retryQueue` 归零；审计点名的 BR/NEAR/WLD 中，NEAR/WLD 的 `TP_MANUAL_REVIEW_REQUIRED: TP_EXIT_CLIENT_ORDER_ID_MISSING: QUANTITY_BUDGET_EXCEEDED`（attempt 25）正是陈旧 ACTIVE claim 的形状，claim 随终态事实释放后可重新维护。
+- 收敛轮转（今日 00:00Z 起累计，含本轮各次加载前后）：`EXIT_TASK_CONVERGED` 808 次（`EXCHANGE_FACT_WORKING` 806、`EXCHANGE_FACT_FILLED` 2）、`EXIT_CONVERGENCE_QUEUE` 29 次、`EXIT_RECOVERY_CONVERGED` 8 次；连续 20 分钟窗口内即有 160 次收敛。
+- 队列健康度轨迹：首次加载时 46 条任务 `neverPolled`、最久未轮询按纪元计（1.79e12 ms，读数无意义）；修正后 `neverPolled=0`。当前 48 条 WORKING 任务的实测轮转（每轮 `attempted 8`、`eligibleNow 40`）：`oldestUnpolledAgeMs` 在相邻轮次间为 779824 → 609227 → 609347 → 729844 → 733503 → 733077，即队尾被服务后立即回落约 170 s，然后随轮次推进重新增长——这是队尾在走，不是饿死。`terminalUnreleasedClaims` 全程为 0，open 任务 52 → 45/47/48（随新退出任务登记与终态释放上下波动）。
+- 公平性的诚实读数：实测队尾最大等待约 780 s，比发布上界 `maxServiceIntervalMs=ceil(48/8)×120000=720000` 高约 8%，原因是该公式只计“间隔”，未计每轮 8 条签名查询自身的耗时与定时器重排（实测轮间隔 112.8–129.4 s）。本轮不为了把数字做漂亮去改上界公式（见 §13.11），只把它变成运维可见的量。
+- TP 保护：`required 52 / protected 49 → 51 → 52 / missing 3 → 1 → 0 / unresolved 0`，`retryQueue` 归零；审计点名的 BR/NEAR/WLD 中，NEAR/WLD 的 `TP_MANUAL_REVIEW_REQUIRED: TP_EXIT_CLIENT_ORDER_ID_MISSING: QUANTITY_BUDGET_EXCEEDED`（attempt 25）正是陈旧 ACTIVE claim 的形状，claim 随终态事实释放后可重新维护，当前 `remoteConfirmedTakeProfit=52` 与 `required=52` 一致。
 - `NEARUSDT SHORT / WLDUSDT SHORT` 保持 `HUMAN_MANAGED`、`BTCUSDT SHORT` 为 `AUTO_MANAGED + PENDING`：AI 未自动接管任何人工处置位（`reviewAuthority.aiActiveCycles` 与 ownership 读回一致）。
 - Entry 真实链路（30 分钟窗口）：primaryCompleted 16 → place 16 → tradePlanReady 15 → reservation 15 → intent 15 → submitAttempted 5 → orderSubmitted 4 → entryFilled 2；`riskAllowed` 阶段语义 `NOT_REQUIRED`、经济地板 `OBSERVED`（funds-only 正确降级）。
 - 真实拒绝仍然生效（未被本轮放宽）：`CANDIDATE_QUANTITY_BELOW_LEGAL_MINIMUM:units=258<259`（交易所最小名义）、`JIT_BLOCKED:MARKET_DATA_STALE`、`JIT_BLOCKED:MARKET_QUALITY_NOT_ADMITTED`、`AI_AUTHORIZATION_EXPIRED`、`RESERVATION_INVALID`、`eligibility DATA_ERROR: QUOTE_STALE → disposition WAIT`。
@@ -179,7 +187,7 @@ repair readback    见 §6（幂等、0 交易所写）
 
 ## 12. Production writes = 0 的确认
 
-- 全程 `productionWriteBoundary`：`{environment TESTNET, executionMode TESTNET_ENABLED, lockedToTestnet true, testnetWrites ≤ 自然建仓, productionWrites 0, blockedProductionWriteAttempts 0}`；`/diagnostics/closeout` 与本轮所有 readback 采样均为 **productionWrites: 0**。
+- 全程 `productionWriteBoundary`：最后一次采样（`2026-09-29T04:40:51.972Z`）为 `{environment TESTNET, executionMode TESTNET_ENABLED, lockedToTestnet true, testnetWrites 11, productionWrites 0, blockedProductionWriteAttempts 0, lastWritePath "/fapi/v1/leverage"}`；`/diagnostics/closeout` 与本轮所有 readback 采样均为 **productionWrites: 0**、**blockedProductionWriteAttempts: 0**（`testnetWrites` 随实例内的自然杠杆/TP 维护累加，不是本轮引入的额外下单）。
 - 没有对 Production 数据目录、Production store 或 Production 凭证做过任何读写；repair/preview/apply 全部指向 `data/`（TESTNET 实例目录），并在环境不为 `TESTNET` 时以 `PRODUCTION_OR_UNKNOWN_ENVIRONMENT_IS_NEVER_REPAIRED` 拒绝（`repair-v396-trading-loop.mjs`）。
 - repair 与只读脚本的 `exchangeWrites: 0` 字段由审计日志逐条记录；repair apply 只写本地两份持久副本 + `runtime_events` 审计行。
 - 本轮未安装任何 autostart/watchdog/服务/启动项；引擎仅在人工许可的 TESTNET 加载窗口被 stop/start。
@@ -196,9 +204,10 @@ repair readback    见 §6（幂等、0 交易所写）
 8. **`v396_order_provenance` 只覆盖本轮之后被证明的订单**：历史 4211 条 fills 的 `provenanceSource/fillRole` 仍为空（诚实为空，不回填伪造出处）。
 9. **遗留持久行不合规**（§7.6）与 `Position.openedAt=0` 语义未做破坏性迁移。
 10. **版本标签**：`package.json` 仍为 `3.9.6`，本轮按任务书命名（v396 trading-loop）实施，未改版本号以免扰动 buildId 身份链。
+11. **`maxServiceIntervalMs` 是下界而非严格上界**：`ceil(open/batch)×interval` 只计轮间隔，未计每轮自身耗时。48 条 WORKING、batch 8、interval 120 s 的名义上界 720 s，实测队尾最大约 780 s（轮间隔 112.8–129.4 s）。公平性本身已由 `next_eligible_at, last_attempt_at` 排序证明成立（队尾每 6 轮被服务一次，见 §11），因此本轮**不把这条改成“达标”的数字**：加大 batch 会提高私有请求通道的超时率（§13.5），缩短 interval 会提高请求总量（R17 的结论是请求数不是值得优化的对象）；正确做法是让运维按 `oldestUnpolledAgeMs` 对 `maxServiceIntervalMs` 的比值告警，而不是拟合公式。
 
 ## 14. 最终 GitHub commit SHA
 
 - 代码链最后一个提交：`2a64977` fix(v396): 收敛轮次状态在轮询前后都可见，单次查询截止取间隔一半
-- 本报告提交：`61cc97d86e53c5501e4e7824ce15f4152939133a`，已 push，push 时 `origin/main == HEAD == 61cc97d8…`
-- 记录本节的纯文档提交（`docs(v396): 记录最终 SHA 与身份闭合判定`）是本轮最后一次提交；其 SHA 由 `git log -1` / `git rev-parse HEAD origin/main` 现场核对。文档提交不改动参与身份哈希的源码目录（`apps/*/src`、`packages/*/src`），因此 §10 的 `IDENTITY_CLOSED` 判定继续成立。
+- 报告首次提交：`61cc97d86e53c5501e4e7824ce15f4152939133a`；随后的文档提交 `f0093a2b26e0deb10a67110ce127ebd7979b903f` 把 push 后的 `IDENTITY_CLOSED` 判定与运行 readback 写入本报告，push 时 `origin/main == HEAD == f0093a2b…`。
+- 记录本节的纯文档提交（本轮最后一次，用 `git log -1` / `git rev-parse HEAD origin/main` 现场核对 SHA）只刷新 §11–§14 的实测读数与残留说明，不改动参与身份哈希的源码目录（`apps/*/src`、`packages/*/src`），因此 §10 的 `IDENTITY_CLOSED` 判定继续成立。

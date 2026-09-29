@@ -3,6 +3,7 @@ import { RuntimeState } from '../state/runtimeState.js';
 import { EventBus } from '../events/eventBus.js';
 import { MockExchangeAdapter } from '../adapters/exchange/MockExchangeAdapter.js';
 import { TpGuardian } from './tpGuardian.js';
+import { PositionSchema } from '@zdj/contracts';
 import { exitRuntimeHarness, manualJournalHarness, coordinatedExchange } from './v396ExitTestHarness.js';
 
 const settings={takeProfit:{enabled:true,targetPriceMovePercent:.45,quantityPercent:100,tpEconomicsEnabled:true,minNetProfitUsd:5,minNetProfitRoiPct:0,feeSafetyBufferPct:10,exitFeeAssumption:'TAKER',slippageBufferPct:0,entryFeeRate:.0004,makerFeeRate:.0002,takerFeeRate:.0004}} as any;
@@ -86,6 +87,13 @@ describe('V3.9.5 legacy position isolation',()=>{
     expect(economics.status).toBe('TP_LOW_NET_TARGET_KEPT');
     expect(economics.economicWarning).toMatchObject({shortfallUsd:expect.any(Number)});
     expect(economics.targetProvenance).toMatchObject({authorizedPresent:true,authorizedValid:true,authorizedPrice:100.45,finalPrice:100.45,fellBackFrom:null,profitFloorDisposition:'WARN_AND_KEEP'});
+    // The row the guardian just wrote has to survive the durable schema. Positions are parsed on
+    // startup, so an undeclared status or key here does not lose a field - it stops the Engine boot.
+    const roundTrip=PositionSchema.parse(next);
+    expect(roundTrip.tpEconomics?.status).toBe('TP_LOW_NET_TARGET_KEPT');
+    expect(roundTrip.tpEconomics?.targetProvenance?.profitFloorDisposition).toBe('WARN_AND_KEEP');
+    expect(roundTrip.tpEconomics?.targetProvenance?.authorizedPrice).toBe(100.45);
+    expect(roundTrip.tpEconomics?.economicWarning).not.toBeNull();
   });
   const guardianMetricsUnchanged=(state:RuntimeState)=>{const active=[...state.tpOrders.values()].filter(o=>o.status==='WORKING');return active.length===state.positions.size;};
 });

@@ -177,7 +177,19 @@ export const PositionSchema = z.object({
   tpEconomics: z.object({
     currentTpPrice:z.number().positive().nullable(), expectedGrossProfit:z.number(), expectedFees:z.number().nonnegative(), expectedNetProfit:z.number(),
     requiredNetProfit:z.number().nonnegative(), breakEvenPrice:z.number().positive().nullable(), minProfitableExitPrice:z.number().positive().nullable(),
-    status:z.enum(['TP_OK','TP_LOW_NET','TP_NET_NEGATIVE','TP_DATA_INCOMPLETE','TP_TARGET_BELOW_NET_FLOOR','TP_TARGET_UNREALISTIC'])
+    // TP_LOW_NET_TARGET_KEPT is P5: an authorized target whose profit floor is short is kept and
+    // warned about, not silently rewritten. An undeclared status here would be rejected on the next
+    // durable load, which is how a written position becomes unreadable.
+    status:z.enum(['TP_OK','TP_LOW_NET','TP_NET_NEGATIVE','TP_DATA_INCOMPLETE','TP_TARGET_BELOW_NET_FLOOR','TP_TARGET_UNREALISTIC','TP_LOW_NET_TARGET_KEPT']),
+    economicWarning:z.object({expectedNetProfit:z.number(),requiredNetProfit:z.number(),shortfallUsd:z.number()}).nullable().optional(),
+    targetProvenance:z.object({
+      authorizedPresent:z.boolean(),authorizedPrice:z.number().nullable(),authorizedReason:z.string().nullable(),
+      authorizedHorizonExpiresAt:z.number().nullable(),authorizedValid:z.boolean(),finalPrice:z.number(),
+      fellBackFrom:z.enum(['AI','STRUCTURE_15M','FIXED_PROFITABLE','HUMAN']).nullable(),refusals:z.array(z.string()),
+      economics:z.object({expectedNetProfit:z.number().nullable(),requiredNetProfit:z.number().nullable(),meetsProfitFloor:z.boolean().nullable()}),
+      profitFloorDisposition:z.enum(['WARN_AND_KEEP','FALL_BACK']),minMoveFloorPercent:z.number(),
+      minMoveFloorSource:z.enum(['CONFIGURED','DEFAULT_ZERO']),parameterVersion:z.string(),
+    }).nullable().optional(),
   }).nullable().optional(),
   profitTakePlan: ProfitTakePlanSchema.nullable().optional(),
   profitTakePlanSource:z.enum(['AI','STRUCTURE_15M','FIXED_PROFITABLE','HUMAN']).nullable().optional(),

@@ -499,6 +499,7 @@ export class EngineRuntime {
     runtime.exitRuntime = exitRuntime;
     // P2: fill attribution reads system origin from the durable registry instead of a client-id prefix.
     state.orderProvenance = exitRuntime.provenance as any;
+    positions.rebuildProvenCycleAccounting();
     runtime.aiExitAuthority = new AiExitAuthorityService(exitRuntime, () => {
       const coordination = (state.settings.riskGovernance as any)?.exitCoordination ?? {};
       return coordination.aiExitAuthority ?? 'OFF';

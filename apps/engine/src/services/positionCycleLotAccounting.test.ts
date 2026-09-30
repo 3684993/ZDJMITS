@@ -3,6 +3,7 @@ import type {EntryOrder, ExecutionFill} from '@zdj/contracts';
 import {RuntimeState} from '../state/runtimeState.js';
 import {EventBus} from '../events/eventBus.js';
 import {PositionService} from './positionService.js';
+import {PositionLifecycleTracker} from './positionLifecycleTracker.js';
 import {accountCycle,allocateExitLotsFifo,cycleFills,exactCycleRecord} from './cycleAccounting.js';
 
 /**
@@ -307,3 +308,49 @@ it('one-way v396x exit uses durable order side instead of treating BUY as a new 
 });
 
 it('manual ADD is an entry lot and never creates an entry-order row from a manual order',()=>{const h=harness();h.addEntryLot('BRUSDT',6,100,1000);const cycleId=h.record().cycleId;h.state.manualOrders.set('add',any({id:'add',intentId:'mi',symbol:'BRUSDT',clientOrderId:'manual_add',exchangeOrderId:'ma1',side:'BUY',positionSide:'LONG',reduceOnly:false,cycleId,quantity:2,status:'WORKING'}));const result=h.service.recordExchangeFill(any({symbol:'BRUSDT',clientOrderId:'manual_add',orderId:'ma1',positionSide:'BOTH',side:'BUY',fillId:'add-fill',tradeId:'add-fill',qty:2,price:101,executionTime:2000,realizedPnl:0,commission:.1,commissionAsset:'USDT',maker:true}));expect(result.stage).toBe('ENTRY');expect(result.fill.direction).toBe('LONG');expect(h.state.entryOrders.has('add')).toBe(false);expect(h.record().entryQty).toBe(8);});
+
+it('coalesces fallback and explicit lot aliases by exact exchange order without duplicating quantity or fees',()=>{
+ const h=harness();const order=h.addEntryLot('BRUSDT',6,100,1000),record=h.record();
+ const fallback={...record.entryLots[0],lotId:'fallback_cycle',intentId:null,orderId:order.exchangeOrderId,allocationSource:'FIFO'};
+ const polluted={...record,entryLots:[fallback,...record.entryLots]};
+ const next=accountCycle(polluted as any,cycleFills(h.state,record));
+ expect(next.entryLots).toHaveLength(1);expect(next.entryLots[0].lotId).toBe(order.id);
+ expect(next.entryLots[0].quantity).toBe(6);expect(next.entryLots[0].allocatedEntryFee).toBeCloseTo(next.entryFee!);
+});
+
+it('registered historical exits cannot migrate to a new live cycle when record aliases conflict',()=>{
+ const h=harness();h.addEntryLot('BRUSDT',6,100,1000);h.exitAll('BRUSDT',6,101,2000,'old_exit');
+ const old=h.record(),oldFill=h.state.executionFills.find(f=>f.tradeId==='trade_old_exit')!;
+ h.addEntryLot('BRUSDT',2,100,3000);const fresh=h.records().find(r=>r.cycleId!==old.cycleId)!;
+ h.state.tradeRecords.set(fresh.tradeId,{...fresh,exitOrderIds:[oldFill.orderId]});
+ h.state.recordExecutionFill({...oldFill,cycleId:fresh.cycleId,positionCycleId:fresh.cycleId});
+ h.state.orderProvenance=any({resolve:({exchangeOrderId}:any)=>exchangeOrderId===oldFill.orderId?{status:'SYSTEM_PROVEN',rows:[{role:'TP',cycleId:old.cycleId}],proof:['exact-order-registry']}:{status:'UNRESOLVED',rows:[],proof:[]}});
+ const repaired=h.service.rebuildProvenCycleAccounting();
+ expect(repaired.rebound).toBe(1);
+ expect(h.state.executionFills.find(f=>f.tradeId===oldFill.tradeId)?.cycleId).toBe(old.cycleId);
+ expect(h.state.tradeRecords.get(fresh.tradeId)?.exitQty).toBe(0);
+ expect(h.state.tradeRecords.get(old.tradeId)?.remainingQty).toBe(0);
+ expect(h.service.rebuildProvenCycleAccounting().rebound).toBe(0);
+});
+
+it('replaying a bound fill resolves its cycle before broad order aliases in another record',()=>{
+ const h=harness();h.addEntryLot('BRUSDT',6,100,1000);const original=h.state.executionFills[0],old=h.record();h.exitAll('BRUSDT',6,101,2000);h.addEntryLot('BRUSDT',2,100,3000);
+ const fresh=h.records().find(r=>r.cycleId!==old.cycleId)!;h.state.tradeRecords.set(fresh.tradeId,{...fresh,entryOrderIds:[...fresh.entryOrderIds,original.orderId]});
+ expect(exactCycleRecord(h.state,original)?.cycleId).toBe(old.cycleId);
+ h.service.recordExchangeFill(original as any);
+ expect(h.state.executionFills.find(f=>f.tradeId===original.tradeId)?.cycleId).toBe(old.cycleId);
+});
+
+it('an external exit delivered after the zero-position update closes the old cycle and never creates a new one',()=>{
+ const h=harness();h.addEntryLot('BRUSDT',6,100,1000);const old=h.record();
+ new PositionLifecycleTracker(h.state).close('BRUSDT','LONG','RECONCILIATION');
+ const result=h.service.recordExchangeFill(any({symbol:'BRUSDT',orderId:'external-close',clientOrderId:'external-close',tradeId:'late-exit',fillId:'late-exit',positionSide:'LONG',side:'SELL',executionTime:2000,qty:6,price:101,realizedPnl:6,commission:.1,commissionAsset:'USDT',maker:false}));
+ expect(result.fill.cycleId).toBe(old.cycleId);expect(h.records()).toHaveLength(1);
+ expect(h.record().remainingQty).toBe(0);
+ h.addEntryLot('BRUSDT',2,100,Date.now()+1);expect(h.records()).toHaveLength(2);
+});
+
+it('an exit with no physical interval or order identity stays unassigned instead of inventing a holding',()=>{
+ const h=harness();const result=h.service.recordExchangeFill(any({symbol:'BRUSDT',orderId:'unknown',clientOrderId:'unknown',tradeId:'unknown-exit',fillId:'unknown-exit',positionSide:'LONG',side:'SELL',executionTime:2000,qty:6,price:101,realizedPnl:6,commission:.1,commissionAsset:'USDT',maker:false}));
+ expect(result.fill.cycleId).toBeNull();expect(h.records()).toHaveLength(0);expect(h.state.lifecycles.size).toBe(0);
+});

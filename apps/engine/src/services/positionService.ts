@@ -36,8 +36,8 @@ export class PositionService {
     return [...this.state.tradeRecords.values()].find(r=>r.symbol===pos.symbol&&r.direction===pos.side&&r.cycleId===cycleId);
   }
   private ensureOpenRecord(pos:Position,source:'SYSTEM'|'IMPORTED_AT_STARTUP'|'RECONCILIATION'='SYSTEM'){
-    const cycle=this.state.lifecycles.get(this.lifecycle.key(pos.symbol,pos.side)),existing=this.currentRecord(pos);if(existing){if(!existing.positionId){const linked={...existing,positionId:pos.id};this.state.tradeRecords.set(linked.tradeId,linked);return linked;}return existing;}const now=Date.now(),tradeId=`trade_${cycle?.cycleId??pos.id}`;
-    const record=TradeRecordSchema.parse({tradeId,positionId:pos.id,symbol:pos.symbol,direction:pos.side,openedAt:pos.openedAt,closedAt:null,durationMs:null,entryQty:pos.quantity,entryAveragePrice:pos.entryPrice,exitAveragePrice:null,entryFee:null,exitFee:null,totalFee:null,funding:null,entryGrossNotional:pos.quantity*pos.entryPrice,exitGrossNotional:0,marginUsed:null,netRoiOnMargin:null,netReturnOnNotional:null,entryFillCount:0,exitFillCount:0,feeBreakdown:[],grossRealizedPnl:null,netPnl:null,closeReason:null,status:source==='SYSTEM'?'OPEN':'IMPORTED_OPEN_POSITION',entryRunId:null,entryIntentId:null,entryOrderIds:[],exitOrderIds:[],source,regime:this.state.eips.get(pos.symbol)?.globalRegime.regime??null,feeCompleteness:'UNKNOWN',recordCompleteness:'PARTIAL',classification:source==='IMPORTED_AT_STARTUP'?'IMPORTED':'PARTIAL',canonical:true,duplicateOf:null,cycleId:this.state.lifecycles.get(this.lifecycle.key(pos.symbol,pos.side))?.cycleId??null,positionCycleId:this.state.lifecycles.get(this.lifecycle.key(pos.symbol,pos.side))?.cycleId??null,entryLots:[],lotAllocationMethod:'UNKNOWN',repairSource:null,linkedFillIds:[],missingFacts:['EXIT_FACT','FEE_FACT'],integrityFlags:[],createdAt:pos.firstObservedAt??now,updatedAt:now,firstObservedAt:pos.firstObservedAt??pos.openedAt});
+    const cycle=this.state.lifecycles.get(this.lifecycle.key(pos.symbol,pos.side)),existing=this.currentRecord(pos);if(existing){if(!existing.positionId){const linked={...existing,positionId:pos.id};this.state.tradeRecords.set(linked.tradeId,linked);return linked;}return existing;}const now=Date.now(),physicalCycle=pos.cycleId??cycle?.cycleId??null,tradeId=`trade_${physicalCycle??pos.id}`;
+    const record=TradeRecordSchema.parse({tradeId,positionId:pos.id,symbol:pos.symbol,direction:pos.side,openedAt:pos.openedAt,closedAt:null,durationMs:null,entryQty:pos.quantity,entryAveragePrice:pos.entryPrice,exitAveragePrice:null,entryFee:null,exitFee:null,totalFee:null,funding:null,entryGrossNotional:pos.quantity*pos.entryPrice,exitGrossNotional:0,marginUsed:null,netRoiOnMargin:null,netReturnOnNotional:null,entryFillCount:0,exitFillCount:0,feeBreakdown:[],grossRealizedPnl:null,netPnl:null,closeReason:null,status:source==='SYSTEM'?'OPEN':'IMPORTED_OPEN_POSITION',entryRunId:null,entryIntentId:null,entryOrderIds:[],exitOrderIds:[],source,regime:this.state.eips.get(pos.symbol)?.globalRegime.regime??null,feeCompleteness:'UNKNOWN',recordCompleteness:'PARTIAL',classification:source==='IMPORTED_AT_STARTUP'?'IMPORTED':'PARTIAL',canonical:true,duplicateOf:null,cycleId:physicalCycle,positionCycleId:physicalCycle,entryLots:[],lotAllocationMethod:'UNKNOWN',repairSource:null,linkedFillIds:[],missingFacts:['EXIT_FACT','FEE_FACT'],integrityFlags:[],createdAt:pos.firstObservedAt??now,updatedAt:now,firstObservedAt:pos.firstObservedAt??pos.openedAt});
     this.state.tradeRecords.set(tradeId,record);this.events.publish('TRADE_RECORD_OPENED',record,pos.symbol);return record;
   }
   onEntryFilled(order:EntryOrder):Position{
@@ -75,13 +75,20 @@ export class PositionService {
    * Entry order. An add-on has no record of its own, so it joins the live cycle instead of opening a
    * second one - which is what made an aggregated take-profit overshoot its own Entry quantity (R4).
    */
-  private cycleForFill(owner:TradeRecord|undefined,symbol:string,side:'LONG'|'SHORT',stage:'ENTRY'|'EXIT',position:Position|undefined,seedCycleId:string|null,quantity:number,at:number,lotId:string|null):{cycleId:string;openedAt:number;firstObservedAt:number}{
+  private cycleForFill(owner:TradeRecord|undefined,symbol:string,side:'LONG'|'SHORT',stage:'ENTRY'|'EXIT',position:Position|undefined,seedCycleId:string|null,quantity:number,at:number,lotId:string|null):{cycleId:string|null;openedAt:number;firstObservedAt:number}{
     const ownerCycle=owner?.cycleId??owner?.positionCycleId;
     // A replay of the same exchange fill must resolve to the cycle it was first booked against and
     // must not disturb the lifecycle: re-observing a closed cycle is how a duplicate report used to
     // silently open a second one.
     if(present(ownerCycle))return{cycleId:String(ownerCycle),openedAt:position?.openedAt??at,firstObservedAt:position?.firstObservedAt??position?.openedAt??at};
+    if(stage==='EXIT'&&present(seedCycleId))return{cycleId:seedCycleId,openedAt:at,firstObservedAt:at};
     const live=this.state.lifecycles.get(this.lifecycle.key(symbol,side));
+    // ACCOUNT_UPDATE zero may precede its TRADE update. An exit never starts a new holding.
+    // Only an execution inside the known physical interval may join it without order identity.
+    if(stage==='EXIT'){
+      const inside=live&&at>=live.openedAt&&(live.status!=='CLOSED'||at<=Number(live.closedAt??0));
+      return{cycleId:inside?live.cycleId:null,openedAt:inside?live.openedAt:at,firstObservedAt:inside?live.firstObservedAt:at};
+    }
     if(live&&live.status!=='CLOSED'){
       const observed=this.lifecycle.observe({symbol,side,quantity:Math.max(quantity,Number(live.currentQty)||quantity),cycleId:live.cycleId,openedAt:position?.openedAt??live.openedAt,firstObservedAt:position?.firstObservedAt??live.firstObservedAt,source:position?'RECONCILIATION':'SYSTEM',lotId,at}).lifecycle;
       return{cycleId:observed.cycleId,openedAt:observed.openedAt,firstObservedAt:observed.firstObservedAt};
@@ -90,7 +97,7 @@ export class PositionService {
     return{cycleId:created.cycleId,openedAt:created.openedAt,firstObservedAt:created.firstObservedAt};
   }
   recordExchangeFill(input:Omit<ExecutionFill,'direction'|'commissionUsd'|'source'> & {direction?:'LONG'|'SHORT';commissionUsd?:number|null;source?:'USER_DATA_WS'|'EXCHANGE_AUDIT'} & {entryLotId?:string|null}){
-    const owner=exactCycleRecord(this.state,input);
+    let owner=exactCycleRecord(this.state,input);
     const localOrder=this.findDurableOrder(input);
     const manualEntry=localOrder?.kind==='MANUAL'&&localOrder.row.reduceOnly===false;
     const durableDirection=localOrder?.kind==='ENTRY'?localOrder.row.side:localOrder?(manualEntry?(input.side==='BUY'?'LONG':'SHORT'):(input.side==='SELL'?'LONG':'SHORT')):undefined;
@@ -100,13 +107,16 @@ export class PositionService {
     // the shape of a client id. A `v396x...` id that no durable record owns stays UNPROVEN, and an
     // exit fill this engine did place is no longer mislabelled EXTERNAL_OR_UNLINKED.
     const registry=this.state.orderProvenance?.resolve?.({symbol:input.symbol,clientOrderId:present(input.clientOrderId)?input.clientOrderId:null,exchangeOrderId:present(input.orderId)?input.orderId:null});
+    const registryCycles=[...new Set((registry?.rows??[]).filter((row:any)=>['TP','EXIT','MANUAL_EXIT'].includes(row.role)).map((row:any)=>row.cycleId).filter(present))] as string[];
+    const registeredExitCycle=registry?.status==='SYSTEM_PROVEN'&&registryCycles.length===1?registryCycles[0]:null;
+    if(registeredExitCycle)owner=[...this.state.tradeRecords.values()].find(row=>row.symbol===input.symbol&&row.cycleId===registeredExitCycle&&!row.duplicateOf);
     const provenanceSource=registry?.status==='SYSTEM_PROVEN'?'ORDER_REGISTRY':localOrder?'DURABLE_ORDER_TABLE':(/^(entry_|ml_|tp_|manual_|ma_|mr_|mc_|ec[0-9]*_)/i.test(input.clientOrderId)?'LEGACY_PREFIX':'UNPROVEN');
     const systemProven=provenanceSource==='ORDER_REGISTRY'||provenanceSource==='DURABLE_ORDER_TABLE';
     const entrySide=expectedEntrySide(direction);
     const stage=(localOrder?.kind==='TP'||(localOrder?.kind==='MANUAL'&&!manualEntry)||input.side!==entrySide)?'EXIT':'ENTRY';
     const pos=[...this.state.positions.values()].find(row=>row.symbol===input.symbol&&row.side===direction);
     const lotId=stage==='ENTRY'?(input.entryLotId??localOrder?.row.id??`lot_${input.orderId||input.tradeId}`):null;
-    const cycle=this.cycleForFill(owner,input.symbol,direction,stage,pos,localOrder?.row.cycleId??null,stage==='ENTRY'?Math.max(pos?.quantity??0,input.qty):Math.max(0,(pos?.quantity??input.qty)-input.qty),input.executionTime,lotId);
+    const cycle=this.cycleForFill(owner,input.symbol,direction,stage,pos,registeredExitCycle??localOrder?.row.cycleId??null,stage==='ENTRY'?Math.max(pos?.quantity??0,input.qty):Math.max(0,(pos?.quantity??input.qty)-input.qty),input.executionTime,lotId);
     const cycleId=cycle.cycleId as string;
     const entryLotId=lotId;
     if(stage==='ENTRY'&&localOrder){
@@ -146,6 +156,27 @@ export class PositionService {
     const manual=[...this.state.manualOrders.values()].find(matches);
     if(manual)return{kind:'MANUAL' as const,row:manual,decisionChainId:null};
     return null;
+  }
+  /** Rebuild only projections with an exact registered exit identity or duplicate order aliases. */
+  rebuildProvenCycleAccounting(){
+    const affected=new Set<string>();let rebound=0,rebuilt=0;
+    for(const fill of [...this.state.executionFills]){
+      const proof=this.state.orderProvenance?.resolve?.({symbol:fill.symbol,clientOrderId:fill.clientOrderId,exchangeOrderId:fill.orderId});
+      const cycles=[...new Set((proof?.rows??[]).filter((row:any)=>['TP','EXIT','MANUAL_EXIT'].includes(row.role)).map((row:any)=>row.cycleId).filter(present))] as string[];
+      if(proof?.status!=='SYSTEM_PROVEN'||cycles.length!==1||cycles[0]===fill.cycleId)continue;
+      if(![...this.state.tradeRecords.values()].some(row=>row.symbol===fill.symbol&&row.cycleId===cycles[0]&&!row.duplicateOf))continue;
+      if(fill.cycleId)affected.add(fill.cycleId);affected.add(cycles[0]!);
+      this.recordExchangeFill(fill as any);rebound++;
+      this.events.publish('FILL_CYCLE_BINDING_RESTORED',{fillId:fill.fillId,tradeId:fill.tradeId,orderId:fill.orderId,fromCycleId:fill.cycleId,toCycleId:cycles[0],proof:proof.proof,exchangeWrites:0},fill.symbol);
+    }
+    for(const row of [...this.state.tradeRecords.values()]){
+      const ids=(row.entryLots??[]).map(lot=>lot.exchangeOrderId).filter(present),aliasDuplicate=new Set(ids).size<ids.length;
+      if(!affected.has(row.cycleId??'')&&!aliasDuplicate)continue;
+      const fills=cycleFills(this.state,row);if(!fills.length)continue;
+      const next=accountCycle(row,fills);this.state.tradeRecords.set(next.tradeId,next);rebuilt++;
+      this.events.publish('CYCLE_ACCOUNTING_REBUILT_FROM_EXACT_IDENTITIES',{tradeId:row.tradeId,cycleId:row.cycleId,priorLots:row.entryLots,lots:next.entryLots,ledgerConservation:next.ledgerConservation,exchangeWrites:0},row.symbol);
+    }
+    return{rebound,rebuilt};
   }
   onReconciledClose(position:Position,reason:CloseReason='RECONCILIATION',source:'RECONCILIATION'|'LOCAL_LIFECYCLE_REPAIR_FROM_EXCHANGE_FACT'='RECONCILIATION'){this.lifecycle.close(position.symbol,position.side,source);this.finalizeSafe(position,reason,source);}
   onTakeProfitFilled(order:TakeProfitOrder){

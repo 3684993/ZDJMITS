@@ -75,7 +75,11 @@ export function entryLotsFromFills(record:TradeRecord,entries:ExecutionFill[]):E
   const existing=new Map((record.entryLots??[]).map(lot=>[lot.lotId,lot]));
   const byLot=new Map<string,{fills:ExecutionFill[]}>();
   for(const fill of entries){
-    const lotId=fill.entryLotId??fill.cycleId??`lot_${fill.orderId}`;
+    // A fallback WS lot and a later explicit Entry lot can name the same exchange order. Their
+    // aliases are not additional quantity. Prefer the explicit identity before grouping partials.
+    const aliases=[...existing.values()].filter(lot=>present(fill.orderId)&&(lot.exchangeOrderId===fill.orderId||lot.orderId===fill.orderId));
+    const preferred=aliases.find(lot=>lot.allocationSource==='EXPLICIT')??aliases[0];
+    const lotId=preferred?.lotId??fill.entryLotId??`lot_${fill.orderId}`;
     const bucket=byLot.get(lotId)??{fills:[]};bucket.fills.push(fill);byLot.set(lotId,bucket);
   }
   const built:[string,EntryLot][]=[];
@@ -102,13 +106,16 @@ export function entryLotsFromFills(record:TradeRecord,entries:ExecutionFill[]):E
   }
   // A lot that existed before but has no fill any more keeps its identity: dropping it would rewrite
   // history rather than account for it.
-  for(const [lotId,lot] of existing)if(!byLot.has(lotId))built.push([lotId,lot]);
+  for(const [lotId,lot] of existing)if(!byLot.has(lotId)&&!built.some(([,value])=>present(lot.exchangeOrderId)&&value.exchangeOrderId===lot.exchangeOrderId))built.push([lotId,lot]);
   return built.sort((a,b)=>(a[1].filledAt??0)-(b[1].filledAt??0)).map(([,lot])=>lot);
 }
 
 /** Only durable identifiers are evidence. Conflicting exact evidence fails closed. */
 export function exactCycleRecord(state:RuntimeState, fill:IdentityFill):TradeRecord|undefined {
   const records=[...state.tradeRecords.values()].filter(r=>r.symbol===fill.symbol&&!r.duplicateOf);
+  const identical=state.executionFills.filter(f=>f.symbol===fill.symbol&&present(fill.tradeId)&&f.tradeId===fill.tradeId);
+  const exactCycles=new Set(identical.map(f=>f.cycleId).filter(present));
+  if(exactCycles.size===1){const owned=records.filter(r=>exactCycles.has(r.cycleId??''));if(owned.length===1)return owned[0];}
   const known=state.executionFills.filter(f=>f.symbol===fill.symbol&&(f.tradeId===fill.tradeId||(present(fill.orderId)&&f.orderId===fill.orderId)||(present(fill.clientOrderId)&&f.clientOrderId===fill.clientOrderId)));
   const orders=[...state.entryOrders.values(),...state.tpOrders.values(),...state.manualOrders.values()].filter(o=>o.symbol===fill.symbol&&(
     present(fill.orderId)&&(o.exchangeOrderId===fill.orderId||o.id===fill.orderId)||present(fill.clientOrderId)&&(o.clientOrderId===fill.clientOrderId||o.id===fill.clientOrderId)));

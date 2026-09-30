@@ -1658,8 +1658,13 @@ export class EngineRuntime {
     this.syncLiveMarketSymbols();
     const missing = [...this.state.positionSymbols()].filter(
       (symbol) => !this.state.snapshots.has(symbol),
-    ).slice(0,1);
+    );
     if (missing.length) {
+      // Reconciliation can legitimately take many minutes when it has a large historical claim
+      // inventory. Loading a single symbol before that serialized pass leaves every later position
+      // without the quote/filter facts that TP repair needs for the whole reconciliation duration.
+      // The market hub already bounds request concurrency and defers the remainder when the shared
+      // request budget is pressured, so hand it the complete currently-missing position set here.
       await this.market.refreshSymbols(missing);
       this.universe.refresh();
       this.events.publish("POSITION_MARKETS_REFRESHED", {

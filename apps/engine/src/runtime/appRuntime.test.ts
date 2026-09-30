@@ -44,6 +44,20 @@ describe('mock V3 runtime',()=>{
     }finally{release();runtime.stop();await rm(dir,{recursive:true,force:true});}
   },30_000);
 
+  it('loads every missing position market before a serialized reconciliation pass',async()=>{
+    const {mkdtemp,rm}=await import('node:fs/promises'),{tmpdir}=await import('node:os'),dir=await mkdtemp(path.join(tmpdir(),'zdj-position-market-batch-')),root=path.resolve(process.cwd(),'../..');
+    const runtime=await EngineRuntime.createTestHarness({configDir:path.join(root,'config'),dataDir:dir});
+    const symbols=['AAAUSDT','BBBUSDT','CCCUSDT'];
+    (runtime.state as any).positionSymbols=()=>new Set(symbols);
+    for(const symbol of symbols)runtime.state.snapshots.delete(symbol);
+    const refresh=vi.spyOn(runtime.market,'refreshSymbols').mockResolvedValue(symbols.length);
+    try{
+      await (runtime as any).refreshPositionMarkets();
+      expect(refresh).toHaveBeenCalledOnce();
+      expect(refresh).toHaveBeenCalledWith(symbols);
+    }finally{runtime.stop();await rm(dir,{recursive:true,force:true});}
+  },30_000);
+
   it('starts critical runtime loops without awaiting risk baseline I/O',async()=>{
     const root=path.resolve(process.cwd(),'../..');
     const runtime=await EngineRuntime.createTestHarness({configDir:path.join(root,'config'),dataDir:path.join(root,'data-test')});

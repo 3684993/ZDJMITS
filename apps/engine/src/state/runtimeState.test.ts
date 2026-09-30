@@ -18,6 +18,10 @@ describe('RuntimeState entry reservations',()=>{
   });
   it('releases expired WORKING reservations only when no live exchange order owns them',()=>{const state=new RuntimeState(settings),now=Date.now();state.entryReservations.set('stale',{id:'stale',underlying:'BTC',status:'WORKING',expiresAt:now-1});state.entryReservations.set('live',{id:'live',underlying:'ETH',status:'WORKING',expiresAt:now-1});state.entryOrders.set('o',{reservationId:'live',status:'WORKING'});state.cleanupReservations(now);expect(state.entryReservations.get('stale').status).toBe('RELEASED');expect(state.entryReservations.get('live').status).toBe('WORKING');});
 });
+it('quarantines a persisted TP-only phantom position during restore',()=>{
+ const state=new RuntimeState(settings);state.restore({runtimeControl:{},positions:[['phantom',{tpStatus:'PROTECTED',tpOrderId:'tp-only'}]]});
+ expect(state.positions.has('phantom')).toBe(false);expect([...state.positionSymbols()]).toEqual([]);
+});
 it('counts unresolved submissions, deduplicates quotes/reservations, and keeps partial fills in one slot',()=>{
  const state=new RuntimeState(settings);state.positions.set('p',{symbol:'BTCUSDT'});
  state.entryOrders.set('a',{id:'a',symbol:'BTCUSDT',status:'PARTIALLY_FILLED'});

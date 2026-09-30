@@ -80,6 +80,7 @@ export function executionTruthProjection(runtime: EngineRuntime, now = Date.now(
   const fundingLedger = (runtime as any).fundingIncomeCoverage?.() ?? (runtime as any).fundingIncome?.coverageSummary?.() ?? null;
   const coordination = (s.settings.riskGovernance as any)?.exitCoordination ?? {};
   const aiActiveCycles = (runtime as any).exitRuntime ? [...s.positions.values()].filter((position: any) => {
+    if (!position || typeof position.symbol !== 'string' || !['LONG', 'SHORT'].includes(String(position.side))) return false;
     const scope = (runtime as any).exitRuntime.scope({ symbol: position.symbol, side: position.side });
     const owner = (runtime as any).exitRuntime.ownerOfScope(scope, position.cycleId);
     return owner?.ownerState === 'AI_ACTIVE';

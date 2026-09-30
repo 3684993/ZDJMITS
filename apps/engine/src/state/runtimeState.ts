@@ -16,6 +16,8 @@ const RESERVATION_KNOWN_STATUS=new Set(['RESERVED','WORKING','RELEASED','COMMITT
  * sign in place would fail PositionSchema again on the next snapshot projection.
  */
 function normalizeRestoredPosition(row: any) {
+    if (!row || typeof row.symbol !== 'string' || !row.symbol.trim() || !['LONG', 'SHORT'].includes(String(row.side)) ||
+        typeof row.quantity !== 'number' || !Number.isFinite(row.quantity) || row.quantity <= 0) return null;
     const magnitude = (value: unknown) => (typeof value === 'number' && Number.isFinite(value) ? Math.abs(value) : value);
     return { ...row, notionalUsd: magnitude(row.notionalUsd), maintenanceMarginUsd: magnitude(row.maintenanceMarginUsd) };
 }
@@ -287,6 +289,7 @@ restore(value) { if (!value || typeof value !== 'object')
         if (Array.isArray(value[key]))
             for (const [id, source] of value[key]) {
                 const row = key === 'positions' ? normalizeRestoredPosition({ entryTimeSource: 'UNKNOWN', managementStatus: 'AUTO_MANAGED', humanManagedAt: null, tpLastVerifiedAt: null, tpCoverageSource: 'NONE', firstObservedAt: null, ...source }) : source;
+                if (key === 'positions' && !row) continue;
                 target.set(id, row);
             } for(const [symbol,row] of this.candidateLifecycle){if(['SCOUT_QUEUED','SCOUT_RUNNING','SCOUT_DONE','PRIMARY_QUEUED','PRIMARY_RUNNING','PRIMARY_COMPLETED','PLACE_READY'].includes(row?.status)){this.candidateLifecycle.set(symbol,{...row,status:'READY',reason:'ENGINE_RESTART_RECOVERY',nextEligibleAt:null,updatedAt:Date.now()});}} if (value.runtimeControl && typeof value.runtimeControl.mode === 'string')
         if (Array.isArray(value.directionDecisionStates)) for (const [id,row] of value.directionDecisionStates) this.directionDecisionStates.set(id,row); this.runtimeControl = { ...this.runtimeControl, ...value.runtimeControl, entrySafetyMode: value.runtimeControl.entrySafetyMode ?? this.runtimeControl.entrySafetyMode, manualRiskOverride: value.runtimeControl.manualRiskOverride ?? null, capital: { ...this.runtimeControl.capital, ...value.runtimeControl.capital } }; if (value.executionGovernance && typeof value.executionGovernance.mode === 'string') this.executionGovernance = value.executionGovernance; if (value.shadowRunner && typeof value.shadowRunner === 'object')

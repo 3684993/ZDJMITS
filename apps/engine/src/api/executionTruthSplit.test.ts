@@ -79,4 +79,12 @@ describe('P7 execution truth split',()=>{
     expect(review.lastOutcome).toMatchObject({enabled:true,considered:4,completed:3,due:2});
     expect(review.lastOutcome.lastOutcome).toBeUndefined();
   });
+
+  it('does not let a malformed transient position crash dashboard projection',()=>{
+    const runtime=stub();
+    runtime.state.positions.set('partial',{tpStatus:'PROTECTED',tpOrderId:'tp-only'} as never);
+    runtime.exitRuntime={scope:()=>{throw new Error('invalid scope must not be called');},ownerOfScope:()=>null};
+    expect(()=>executionTruthProjection(runtime,1_000)).not.toThrow();
+    expect((executionTruthProjection(runtime,1_000) as any).reviewAuthority.aiActiveCycles).toBe(0);
+  });
 });

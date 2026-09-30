@@ -499,7 +499,6 @@ export class EngineRuntime {
     runtime.exitRuntime = exitRuntime;
     // P2: fill attribution reads system origin from the durable registry instead of a client-id prefix.
     state.orderProvenance = exitRuntime.provenance as any;
-    positions.rebuildProvenCycleAccounting();
     runtime.aiExitAuthority = new AiExitAuthorityService(exitRuntime, () => {
       const coordination = (state.settings.riskGovernance as any)?.exitCoordination ?? {};
       return coordination.aiExitAuthority ?? 'OFF';
@@ -686,6 +685,11 @@ export class EngineRuntime {
         runtime.persistTimer = null;
       }, 1000);
     });
+    // Recovery must run after the durable event/checkpoint consumers are attached. Persist the
+    // rebuilt trade-record projection as one batch as well as the runtime checkpoint.
+    const cycleRecovery = positions.rebuildProvenCycleAccounting();
+    if (cycleRecovery.rebound || cycleRecovery.rebuilt)
+      events.publish('TRADE_RECORD_REPAIRED', {source: 'PROVEN_CYCLE_ACCOUNTING_REBUILD', ...cycleRecovery});
     if (trade instanceof ExternalTradeAdapter) {
       events.once("RUNTIME_STOPPED", () => trade.stopUserData());
       runtime.startUserDataIfConfigured();

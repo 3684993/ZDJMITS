@@ -18,7 +18,7 @@ export class ExternalTradeAdapter implements ExchangeTradeAdapter {
   private creds(){if(!this.credentials)throw new Error('TRADING_BLOCKED: credentials unavailable from SecretStore');if(this.transport.environment()!=='TESTNET'){this.writeStats.blockedProductionWriteAttempts++;throw new Error('TESTNET_ONLY_WRITE_LOCK: production private writes disabled');}return this.credentials;}
   private serverTimeFlight:Promise<void>|null=null;
   private async refreshServerTime(){if(this.serverTime&&Date.now()-this.serverTime.fetchedAt<=30_000)return;if(!this.serverTimeFlight)this.serverTimeFlight=this.transport.json<{serverTime:number}>('/fapi/v1/time').then(server=>{if(!Number.isFinite(server.serverTime))throw new Error('BINANCE_CLOCK_INVALID');this.serverTime={offset:server.serverTime-Date.now(),fetchedAt:Date.now()};}).finally(()=>{this.serverTimeFlight=null;});await this.serverTimeFlight;}
-  private async signed<T>(method:string,path:string,params:Record<string,string|number|boolean>={},purpose?:string,source?:string){const write=method!=='GET';if(write){try{this.transport.assertTestnetExchangeWrite();this.writeStats.testnetWrites++;this.writeStats.lastWriteAt=Date.now();this.writeStats.lastWritePath=path;}catch(error){this.writeStats.blockedProductionWriteAttempts++;throw error;}}const c=this.creds();await this.refreshServerTime();const timestamp=Date.now()+(this.serverTime?.offset??0),q=new URLSearchParams();for(const[k,v]of Object.entries({...params,recvWindow:Math.min(60_000,Math.max(this.recvWindowMs,60_000)),timestamp}))q.set(k,String(v));const payload=q.toString();q.set('signature',createHmac('sha256',c.apiSecret).update(payload).digest('hex'));return this.transport.json<T>(`${path}?${q}`,{method,purpose,source,headers:{'X-MBX-APIKEY':c.apiKey}});}
+  private async signed<T>(method:string,path:string,params:Record<string,string|number|boolean>={},purpose?:string,source?:string){const write=method!=='GET';if(write){try{this.transport.assertTestnetExchangeWrite();this.writeStats.testnetWrites++;this.writeStats.lastWriteAt=Date.now();this.writeStats.lastWritePath=path;}catch(error){this.writeStats.blockedProductionWriteAttempts++;throw error;}}const c=this.creds();await this.refreshServerTime();const timestamp=Date.now()+(this.serverTime?.offset??0),q=new URLSearchParams();for(const[k,v]of Object.entries({...params,recvWindow:Math.min(60_000,Math.max(this.recvWindowMs,60_000)),timestamp}))q.set(k,typeof v==='number'&&BINANCE_DECIMAL_PARAMS.has(k)?binanceDecimal(v):String(v));const payload=q.toString();q.set('signature',createHmac('sha256',c.apiSecret).update(payload).digest('hex'));return this.transport.json<T>(`${path}?${q}`,{method,purpose,source,headers:{'X-MBX-APIKEY':c.apiKey}});}
   /** Shared rolling allowance for exhaustive history reads; exhaustion is fail-closed, never partial. */
   private readonly historyReadCap=24;
   private readonly historyBudget=createHistoryReadBudget({capacity:45,intervalMs:60_000});
@@ -312,4 +312,13 @@ export class ExternalTradeAdapter implements ExchangeTradeAdapter {
   startUserData(onEvent:(event:any)=>void){if(!this.credentials||this.transport.environment()!=='TESTNET')return null;this.userStream=new BinanceUserDataStream(this.transport,this.credentials.apiKey,onEvent);this.userStream.start();return this.userStream;}
   stopUserData(){this.userStream?.stop();this.userStream=null;}
   userDataMetrics(){return this.userStream?.metrics()??{state:'GATED'};}
+}
+const BINANCE_DECIMAL_PARAMS=new Set(['quantity','price','stopPrice','activationPrice','callbackRate']);
+function binanceDecimal(value:number){
+  if(!Number.isFinite(value))throw new Error('BINANCE_ORDER_DECIMAL_NON_FINITE');
+  const normalized=Number(value.toPrecision(15)).toString();
+  if(!/[eE]/.test(normalized))return normalized;
+  const negative=normalized.startsWith('-'),unsigned=negative?normalized.slice(1):normalized,[mantissa,exponentText]=unsigned.toLowerCase().split('e'),exponent=Number(exponentText),[whole,fraction='']=mantissa!.split('.'),digits=`${whole}${fraction}`,decimalIndex=whole!.length+exponent;
+  const plain=decimalIndex<=0?`0.${'0'.repeat(-decimalIndex)}${digits}`:decimalIndex>=digits.length?`${digits}${'0'.repeat(decimalIndex-digits.length)}`:`${digits.slice(0,decimalIndex)}.${digits.slice(decimalIndex)}`;
+  return negative?`-${plain}`:plain;
 }

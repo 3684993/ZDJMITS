@@ -11,7 +11,7 @@ Implementation basis: `docs/reports/v397-current-instance-differential-optimizat
 - TESTNET was stopped once, backed up, built locally, and started once with `MANUAL_START`. Do not infer an automatic retry authorization from this record.
 - Build identity loaded by PID `18280`: `3.9.6-7ff5216ea54a69481cda`, artifact SHA-256 `7ff5216ea54a69481cdafa680691d629e064d07d47016ccde54826d85d86f835`, source SHA-256 `783d10ba892d8111a66e4c8b4d9a1fb2f2b28aa22f21f5ef7172229c4992739d`.
 - Identity closure: `IDENTITY_CLOSED`, all six checks true (remote/local HEAD; committed source/runtime sourceHash; dist/runtime artifactHash; artifact-derived buildId; runtime API/instance file; source tree clean).
-- **Runtime acceptance is incomplete.** At last readback, `/health` remained `STARTING`, first reconciliation had not completed, and the analysis scheduler remained `STOPPED` while bootstrap continued verifying historical Entry orders. A single `POSITION_MARKETS_REFRESHED` event reported 26 requested and 26 loaded. TESTNET market stream was `LIVE`; private account was `READY`.
+- **Natural runtime acceptance is partial.** After about 22 minutes of bootstrap and historical order verification, `/health` reached `READY`, reconciliation ran, and the scheduler became `RUNNING`. Identity closure is complete, but unresolved historical risk and TP coverage are still degraded, and no natural post-build Entry or completed Exit was observed.
 
 ## Implemented
 
@@ -44,15 +44,17 @@ Implementation basis: `docs/reports/v397-current-instance-differential-optimizat
 ## Natural TESTNET readback
 
 - Startup reason was `MANUAL_START`; market stream connected with 208 subscriptions and no reported gaps in the readback. Private account status was `READY`.
-- Runtime boundary readback: environment `TESTNET`, execution mode `TESTNET_ENABLED`, `lockedToTestnet=true`, `productionWrites=0`, `blockedProductionWriteAttempts=0`, and `testnetWrites=0` at the captured checkpoints.
-- Runtime events showed exit recovery convergence and existing remote orders read as `WORKING`; this is recovery/readback evidence, not proof that a new TP or Exit was naturally created/filled by this build.
-- No post-build natural Entry, fill, TP placement/fill, or Exit completion was verified. At capture, scheduler status was `STOPPED` because bootstrap/reconciliation was still processing historical order facts. Do not report natural trades as passed.
-- With both new minimum margin quote fields null, new TESTNET Entry is intentionally fail-closed. No Entry sample was manufactured, and the legacy 200 was not used to force activity. A product-defined per-quote minimum is still needed before natural Entry validation can proceed.
+- Runtime boundary readback after natural TP maintenance: environment `TESTNET`, execution mode `TESTNET_ENABLED`, `lockedToTestnet=true`, `productionWrites=0`, `blockedProductionWriteAttempts=0`, `testnetWrites=4`; last path `/fapi/v1/order`.
+- Final health readback: `/health=READY`, market stream `LIVE`, private account `READY`, scheduler `RUNNING`; first reconciliation completed with 38 exchange positions and 35 exchange orders. Reconciliation remains `DEGRADED` with 161 active-risk unresolved, 173 historical Entry unknowns, and one manual unknown; these remain fail-closed.
+- TP protection readback after the retry: status `READY`, 38 positions required and 38 protected, zero missing/unverified, zero retry queue. Three natural runtime events confirmed `TP_PROTECTED`. One initial replacement was refused because cancellation could not be verified (`TP_REPLACEMENT_CANCEL_UNVERIFIED`); later deterministic retry obtained exchange confirmation. Current target economics were separately reported, including `TP_LOW_NET_TARGET_KEPT` with expected net profit about `$0.019` against the `$1` floor; protection does not imply economic quality.
+- Exit recovery read back eight existing remote exit orders as `EXCHANGE_FACT_WORKING`. This is order-state convergence, not evidence of a completed natural Exit/fill or post-exit review.
+- No post-build `PRIMARY_DECISION_NORMALIZED` or `ENTRY_SUBMIT_ATTEMPTED` runtime event was present at the final query. The rolling 30-minute conversion window contained older pre-start fills, so those are not counted as post-build natural Entries. No natural Entry/fill is claimed.
+- At final readback the pool was `WAITING_CANDIDATE` and the scheduler `RUNNING`. With both new minimum margin quote fields null, a product-defined per-quote minimum is still needed before natural Entry validation can be completed. No Entry sample was manufactured and legacy `200` was not used to force activity.
 
 ## Remaining UNKNOWN / incomplete evidence
 
-1. Runtime health after load, first full reconciliation, scheduler heartbeat, and next evaluation time: `UNKNOWN` until bootstrap exits `STARTING`.
-2. Natural post-build Entry → fill → TP protection/economic result → Review/Exit chain: `UNKNOWN` (no new natural trade observed in this capture).
+1. Continued scheduler heartbeat and natural run beyond this readback: `UNKNOWN` (this was a bounded observation, not a long-run soak).
+2. Natural post-build Entry → fill → TP protection/economic result → Review/Exit chain: `UNKNOWN` (TP protection reached 38/38, but no new Entry or completed Exit was observed in the bounded capture).
 3. Per-quote minimum initial margin and any optional business notional: not supplied/configured; no safe value can be inferred from legacy `200` or exchange minimums.
 4. Raw adapter wire bytes / full exchange response payload: unavailable in historical and current retained telemetry; exact structured request/response identity is implemented, raw bytes remain `UNKNOWN`.
 5. Timestamped funding coverage and USDC/USD conversion coverage for any specific future mandate: remain fact-dependent; absent coverage remains `UNPROVEN`.

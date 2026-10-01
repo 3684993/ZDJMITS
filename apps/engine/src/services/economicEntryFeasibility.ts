@@ -51,16 +51,23 @@ export function evaluateEconomicEntryFeasibility(input:{
   }
   const step=snapshot.quote.stepSize,units=Number(input.quantityUnits),qty=units*step,sideEnvelope=input.envelope?.[input.side],
     entryPrice=Number(input.actualEntryPrice??(input.side==='LONG'?input.acceptablePriceRange.max:input.acceptablePriceRange.min)),
-    target=Number(input.profitTakePlan.targetPrice),notionalUsd=qty*entryPrice;
+    target=Number(input.profitTakePlan.targetPrice),notionalQuote=qty*entryPrice,
+    minimumInitialMarginQuote=Number(sideEnvelope?.minimumInitialMarginQuote??0),
+    minimumOrderNotionalQuote=Number(sideEnvelope?.minimumOrderNotionalQuote??0),
+    minimumExchangeQty=Number(snapshot.quote.minQty??0),minimumExchangeNotionalQuote=Number(snapshot.quote.minNotional??0);
+  const fx=quoteUsdConversion(state,input.symbol,now),quoteToUsd=Number(fx.rate??1),notionalUsd=notionalQuote*quoteToUsd;
   if(!Number.isInteger(units)||units<=0||!Number.isFinite(qty)||qty<=0)blockers.push('AI_QUANTITY_UNITS_INVALID');
   if(!sideEnvelope?.executable||units>Number(sideEnvelope?.maxQuantityUnits??0)||notionalUsd>Number(sideEnvelope?.maxNotionalUsd??0)+1e-8)blockers.push('AI_QUANTITY_EXCEEDS_ENVELOPE');
+  if(qty+1e-10<minimumExchangeQty)blockers.push('EXCHANGE_MIN_QTY_UNMET');
+  if(notionalQuote+1e-8<minimumExchangeNotionalQuote)blockers.push('EXCHANGE_MIN_NOTIONAL_UNMET');
+  if(minimumOrderNotionalQuote>0&&notionalQuote+1e-8<minimumOrderNotionalQuote)blockers.push('BUSINESS_MIN_ORDER_NOTIONAL_UNMET');
+  if(minimumInitialMarginQuote>0&&notionalQuote/Math.max(1,Number(input.envelope?.leverage??1))+1e-8<minimumInitialMarginQuote)blockers.push('BUSINESS_MIN_INITIAL_MARGIN_UNMET');
   if(target<input.profitTakePlan.acceptableTargetRange.min||target>input.profitTakePlan.acceptableTargetRange.max)blockers.push('TP_TARGET_OUTSIDE_AI_RANGE');
   const directionValid=input.side==='LONG'?target>entryPrice:target<entryPrice;
   if(!directionValid)blockers.push('TP_TARGET_WRONG_SIDE');
   const exitRate=settings.takeProfit.exitFeeAssumption==='MAKER'?settings.takeProfit.makerFeeRate:settings.takeProfit.takerFeeRate;
-  const fx=quoteUsdConversion(state,input.symbol,now);
   if(!fx.rate)blockers.push(`QUOTE_USD_${fx.status}`);
-  const quoteToUsd=Number(fx.rate??1),minimumNetProfitQuote=settings.takeProfit.minNetProfitUsd/quoteToUsd;
+  const minimumNetProfitQuote=settings.takeProfit.minNetProfitUsd/quoteToUsd;
   let expectedNetProfit=Number.NEGATIVE_INFINITY,requiredNetProfit=settings.takeProfit.minNetProfitUsd;
   if(Number.isFinite(entryPrice)&&entryPrice>0&&qty>0&&Number.isFinite(target)&&target>0){
     const e=estimateTradingCost({entryPrice,qty,direction:input.side,leverage:Number(input.envelope?.leverage??1),entryFeeRate:settings.takeProfit.entryFeeRate,expectedExitFeeRate:exitRate,expectedSlippagePct:settings.takeProfit.slippageBufferPct,feeSafetyBufferPct:settings.takeProfit.feeSafetyBufferPct,minNetProfitUsd:minimumNetProfitQuote,minNetProfitRoiPct:settings.takeProfit.minNetProfitRoiPct},target);

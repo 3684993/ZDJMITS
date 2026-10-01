@@ -32,6 +32,18 @@ describe('economic entry feasibility',()=>{
     expect(result.blockers).toContain('ECONOMIC_MIN_NET_PROFIT_UNMET');
     expect(result.notionalUsd).toBeCloseTo(10,8);
   });
+  it('rejects a final price move that takes notional below the configured business floor',()=>{
+    const e={...envelope,LONG:{...envelope.LONG,minimumInitialMarginQuote:1,minimumOrderNotionalQuote:200}};
+    const result=evaluateEconomicEntryFeasibility({state:state(),market,symbol:'BTCUSDT',side:'LONG',quantityUnits:19,acceptablePriceRange:{min:99.9,max:100},profitTakePlan:plan,envelope:e,actualEntryPrice:100,now});
+    expect(result.notionalUsd).toBeCloseTo(190,8);
+    expect(result.blockers).toContain('BUSINESS_MIN_ORDER_NOTIONAL_UNMET');
+  });
+  it('rejects a final margin below the configured initial-margin floor',()=>{
+    const e={...envelope,LONG:{...envelope.LONG,minimumInitialMarginQuote:21,minimumOrderNotionalQuote:200}};
+    const result=evaluateEconomicEntryFeasibility({state:state(),market,symbol:'BTCUSDT',side:'LONG',quantityUnits:20,acceptablePriceRange:{min:99.9,max:100},profitTakePlan:plan,envelope:e,actualEntryPrice:100,now});
+    expect(result.notionalUsd).toBeCloseTo(200,8);
+    expect(result.blockers).toContain('BUSINESS_MIN_INITIAL_MARGIN_UNMET');
+  });
   it('rejects a target outside observed historical reachability',()=>{
     const far={...plan,targetPrice:105,acceptableTargetRange:{min:104.9,max:105.1}};
     const result=evaluateEconomicEntryFeasibility({state:state(),market,symbol:'BTCUSDT',side:'LONG',quantityUnits:100,acceptablePriceRange:{min:99.9,max:100},profitTakePlan:far,envelope,now});

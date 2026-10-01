@@ -247,9 +247,11 @@ export const planEvidenceTimeframe=(plan:TradePlan)=>reachabilityTimeframe(plan.
  * WAIT plan, or a plan whose scope does not match the position gets nothing, so the AI inherits
  * authority from no label of any kind.
  */
+export type AiExitPlanFacts={planRef:string;planVersion:number;thesisInvalid:boolean;invalidationPredicate:string|null;invalidationEvidenceRefs:string[];
+  exitConditionMet:boolean;minNetProfitUsd:number;managementDeadline:number;horizonElapsed:boolean;economicMandate?:TradePlan['economicMandate']|null};
 export function aiExitPlanFactsOf(plans:TradePlan[],input:{scope:string;cycleId:string;now:number;
   latestClosedBar:{timeframe:string;closeTime:number;close:number}|null;markPrice:number|null;
-  externalFactFresh?:boolean;evidenceStillValid?:boolean;firstFillAt:number|null}){
+  externalFactFresh?:boolean;evidenceStillValid?:boolean;firstFillAt:number|null}):AiExitPlanFacts|null{
   const forCycle=plans.filter(plan=>plan.cycleId===input.cycleId&&plan.scope===input.scope&&plan.side!=='WAIT');
   const plan=forCycle[forCycle.length-1]??null;
   if(!plan)return null;
@@ -261,5 +263,5 @@ export function aiExitPlanFactsOf(plans:TradePlan[],input:{scope:string;cycleId:
   return{planRef:plan.planId,planVersion:plan.planVersion,thesisInvalid:invalidation.thesisInvalid,
     invalidationPredicate:invalidation.reason??plan.invalidationPredicate,invalidationEvidenceRefs:[...plan.predicateEvidenceRefs],
     exitConditionMet:reached,minNetProfitUsd:Number(plan.minNetProfitUsd),managementDeadline:plan.managementDurationMs,
-    horizonElapsed:invalidation.reason==='PLAN_TARGET_HORIZON_ELAPSED'};
+    horizonElapsed:invalidation.reason==='PLAN_TARGET_HORIZON_ELAPSED',economicMandate:plan.economicMandate??null};
 }

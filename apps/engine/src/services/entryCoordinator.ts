@@ -43,6 +43,7 @@ import { acquireExecutionLease, releaseExecutionLease, validateExecutionLease } 
 import { materializeAiQuantityAllocation } from './aiQuantityAllocation.js';
 import { buildHistoricalTpReachability } from './historicalTpReachability.js';
 import { evaluateEconomicEntryFeasibility } from './economicEntryFeasibility.js';
+import { buildEntryEconomicMandate, entryThesisFactsStillCurrent } from './entryEconomicMandate.js';
 
 /** How long the latest deterministic admission refusal may still be called the current first cause. */
 export const RISK_ADMISSION_VERDICT_TTL_MS = 5 * 60_000;
@@ -279,6 +280,12 @@ export class EntryCoordinator {
     const budgetBlock=this.writeAdmissionBlock();if(budgetBlock)return budgetBlock;
     if(!testnetFundsOnlyEntry(this.state.settings)&&[...this.state.manualExitGoals.values()].some(g=>resolveUnderlying(g.symbol)===resolveUnderlying(intent.symbol)))return 'HUMAN_EXIT_GOAL_ACTIVE';
     const now=Date.now(),symbol=intent.symbol,reservation=intent.reservationId?this.state.entryReservations.get(intent.reservationId):null,candidate=this.state.universe.find((x:any)=>x.symbol===symbol),snapshot=this.state.snapshots.get(symbol),plan=intent.allocationPlan;
+    if(testnetFundsOnlyEntry(this.state.settings)){
+      const mandate=intent.economicMandate;
+      if(!mandate)return'ENTRY_ECONOMIC_MANDATE_MISSING';
+      if(mandate.side!==intent.side||mandate.sizing.quantityUnits!==Number(intent.quantityUnits)||mandate.sizing.leverage!==intent.leverage)return'ENTRY_ECONOMIC_MANDATE_IDENTITY_MISMATCH';
+      if(!snapshot||!entryThesisFactsStillCurrent(mandate,snapshot,now))return'MARKET_THESIS_FACTS_CHANGED_REQUIRES_NEW_MANDATE';
+    }
     if(now>=Number(intent.aiAuthorizationExpiresAt??intent.absoluteExpiresAt)||now>=intent.absoluteExpiresAt)return'AI_AUTHORIZATION_EXPIRED';
     if(!reservation||!['RESERVED','WORKING'].includes(reservation.status)||now>=reservation.expiresAt)return'RESERVATION_INVALID';
     if(this.state.runtimeControl.mode!=='RUNNING'||this.state.executionGovernance?.mode!=='AUTO_RUNNING'||this.state.settings.connections.executionMode!=='TESTNET_ENABLED'||!privateAccountFresh(this.state.account))return'EXECUTION_PERMISSION_CHANGED';
@@ -300,10 +307,10 @@ export class EntryCoordinator {
     if(order){const q=snapshot.quote,frozenUnits=Number(intent.quantityUnits),frozenEnvelope=intent.executionEnvelope,expectedQuantity=frozenUnits*q.stepSize;
       // The frozen authorization is re-verified at execution against the same published interval: outside
       // either bound the order is refused, and a mutated quantity is never accepted as "close enough".
-      if(!Number.isInteger(frozenUnits)||frozenUnits<=0||!frozenEnvelope)return'AI_QUANTITY_EXCEEDS_ENVELOPE';
+    if(!Number.isInteger(frozenUnits)||frozenUnits<=0||!frozenEnvelope)return'AI_QUANTITY_EXCEEDS_ENVELOPE';
       if(frozenUnits>Number(frozenEnvelope[intent.side].maxQuantityUnits))return'AI_QUANTITY_EXCEEDS_ENVELOPE';
       if(frozenUnits<Number(frozenEnvelope[intent.side].minQuantityUnits??1))return'AI_QUANTITY_BELOW_ENVELOPE';
-      if(Math.abs(order.quantity-expectedQuantity)>Math.max(1e-12,q.stepSize*1e-9))return'AI_QUANTITY_MUTATED_AFTER_DECISION';if(order.quantity*order.price>Number(frozenEnvelope[intent.side].maxNotionalUsd)+1e-8)return'AI_QUANTITY_EXCEEDS_ENVELOPE';const tickUnits=order.price/q.tickSize,stepUnits=order.quantity/q.stepSize,rangeEpsilon=Math.max(Number.EPSILON*Math.max(1,Math.abs(intent.acceptablePriceRange.min),Math.abs(intent.acceptablePriceRange.max))*8,q.tickSize*1e-9);if(order.price+rangeEpsilon<intent.acceptablePriceRange.min||order.price-rangeEpsilon>intent.acceptablePriceRange.max)return'ORDER_PRICE_OUTSIDE_AUTHORIZATION';if(order.quantity+1e-12<q.minQty||order.quantity*order.price+1e-9<q.minNotional)return'EXCHANGE_MINIMUM_NOT_MET';if(!Number.isFinite(tickUnits)||Math.abs(tickUnits-Math.round(tickUnits))>1e-7||!Number.isFinite(stepUnits)||Math.abs(stepUnits-Math.round(stepUnits))>1e-7)return'EXCHANGE_PRECISION_INVALID';}
+      if(Math.abs(order.quantity-expectedQuantity)>Math.max(1e-12,q.stepSize*1e-9))return'AI_QUANTITY_MUTATED_AFTER_DECISION';if(order.quantity*order.price>Number(frozenEnvelope[intent.side].maxNotionalUsd)+1e-8)return'AI_QUANTITY_EXCEEDS_ENVELOPE';const tickUnits=order.price/q.tickSize,stepUnits=order.quantity/q.stepSize,rangeEpsilon=Math.max(Number.EPSILON*Math.max(1,Math.abs(intent.acceptablePriceRange.min),Math.abs(intent.acceptablePriceRange.max))*8,q.tickSize*1e-9);if(order.price+rangeEpsilon<intent.acceptablePriceRange.min||order.price-rangeEpsilon>intent.acceptablePriceRange.max)return'ORDER_PRICE_OUTSIDE_AUTHORIZATION';if(order.quantity+1e-12<q.minQty||order.quantity*order.price+1e-9<q.minNotional)return'EXCHANGE_MINIMUM_NOT_MET';const floor=frozenEnvelope[intent.side],requiredBusinessNotional=Math.max(Number(frozenEnvelope.economics?.minimumOrderNotionalQuote??0),Number(floor.minimumInitialMarginQuote??0)*intent.leverage);if(floor.businessMinimumConfigured!==false&&requiredBusinessNotional>0&&order.quantity*order.price+1e-8<requiredBusinessNotional)return'BUSINESS_MINIMUM_NOTIONAL_NOT_MET_AFTER_REPRICE';if(floor.businessMinimumConfigured===false)return'BUSINESS_MINIMUM_INITIAL_MARGIN_UNCONFIGURED';if(!Number.isFinite(tickUnits)||Math.abs(tickUnits-Math.round(tickUnits))>1e-7||!Number.isFinite(stepUnits)||Math.abs(stepUnits-Math.round(stepUnits))>1e-7)return'EXCHANGE_PRECISION_INVALID';}
     if(order&&intent.profitTakePlan&&intent.executionEnvelope&&this.state.settings.tradeEconomics.admissionMode==='ENFORCE'){
       const economic=evaluateEconomicEntryFeasibility({state:this.state,market:this.market,symbol,side:intent.side,quantityUnits:Number(intent.quantityUnits),acceptablePriceRange:{min:Number(intent.acceptablePriceRange.min),max:Number(intent.acceptablePriceRange.max)},profitTakePlan:intent.profitTakePlan,envelope:intent.executionEnvelope,actualEntryPrice:order.price,now});
       if(!economic.passed)return economic.blockers[0]??'ECONOMIC_ADMISSION_FAILED';
@@ -390,7 +397,7 @@ export class EntryCoordinator {
       this.state.entryOrders.set(order.id,rejected);this.journal?.save({intent,order:rejected});
       throw new Error(`ENTRY_SUBMISSION_ABORTED_BEFORE_EXCHANGE:${error instanceof Error?error.message:String(error)}`);
     }
-    try{const placed=await this.exchange.placeEntry(submitting);const accepted={...placed,submittedAt:placed.submittedAt??Date.now()};this.journal?.save({intent,order:accepted});return accepted;}catch(error){
+    try{const mandate=intent.economicMandate,requestFacts={schemaVersion:'V397-ENTRY-ADAPTER-REQUEST-1',intentId:intent.id,mandateId:mandate?.mandateId??null,orderId:submitting.id,clientOrderId:submitting.clientOrderId,symbol:submitting.symbol,side:submitting.side==='LONG'?'BUY':'SELL',positionSide:submitting.side,type:'LIMIT',timeInForce:'GTX',quantity:submitting.quantity,price:submitting.price,notionalQuote:submitting.quantity*submitting.price,initialMarginQuote:submitting.quantity*submitting.price/submitting.leverage,leverage:submitting.leverage,wireBytesAvailable:false,observedAt:Date.now()};this.events.publish('ENTRY_ADAPTER_REQUEST_FACTS',requestFacts,intent.symbol);const placed=await this.exchange.placeEntry(submitting);const accepted={...placed,submittedAt:placed.submittedAt??Date.now()};this.events.publish('ENTRY_ADAPTER_RESPONSE_FACTS',{schemaVersion:'V397-ENTRY-ADAPTER-RESPONSE-1',intentId:intent.id,mandateId:mandate?.mandateId??null,orderId:accepted.id,clientOrderId:accepted.clientOrderId,exchangeOrderId:accepted.exchangeOrderId,remoteQuantity:accepted.quantity,remotePrice:accepted.price,filledQuantity:accepted.filledQuantity,side:accepted.side,submittedAt:accepted.submittedAt,wireBytesAvailable:false,observedAt:Date.now()},intent.symbol);this.journal?.save({intent,order:accepted});return accepted;}catch(error){
       try{const found=await this.exchange.findEntryByClientOrderId(submitting);if(found){const recoveredOrder={...found,submittedAt:found.submittedAt??submitting.updatedAt};this.journal?.save({intent,order:recoveredOrder});this.events.publish('ENTRY_SUBMIT_RESPONSE_RECOVERED',{brainRunId:intent.brainRunId,intentId:intent.id,orderId:order.id,clientOrderId:order.clientOrderId,submittedAt:recoveredOrder.submittedAt},intent.symbol);return recoveredOrder;}}catch(queryError){this.events.publish('ENTRY_SUBMIT_QUERY_FAILED',{intentId:intent.id,message:queryError instanceof Error?queryError.message:String(queryError)},intent.symbol);}
       const reason=error instanceof Error?error.message:String(error);
       if(reason.includes('-5022')){this.journal?.save({intent,order:{...order,status:'REJECTED'}});this.state.entryOrders.set(order.id,{...order,status:'NEW',updatedAt:Date.now()});throw error;}
@@ -512,9 +519,14 @@ export class EntryCoordinator {
       if(opportunity){
         this.events.publish('TRADING_QUALITY_OPPORTUNITY',{opportunity,packetId:packet.packetId,stage:'BEFORE_PRIMARY',candidate:this.state.universe.find(x=>x.symbol===symbol)},symbol);
         }
-      const scout = this.state.settings.ai.scoutEnabled ? await this.ai.scout(packet) : null;
+      // Scout is measured as an independent observer; Primary sees the same market packet immediately.
+      // Do not serialize a required Primary authorization behind an unproven Scout quality gain.
+      if(this.state.settings.ai.scoutEnabled){const scoutStartedAt=Date.now(),traceId=String(packet.packetId??`${symbol}:${scoutStartedAt}`);this.events.publish('SCOUT_OBSERVATION_STARTED',{traceId,packetId:packet.packetId,startedAt:scoutStartedAt,blocksPrimary:false},symbol);
+        void this.ai.scout(packet).then(annotation=>this.events.publish('SCOUT_OBSERVATION_COMPLETED',{traceId,packetId:packet.packetId,completedAt:Date.now(),elapsedMs:Date.now()-scoutStartedAt,
+          disposition:annotation?'ANNOTATION_AVAILABLE':'NO_ANNOTATION',keyEvidenceCount:annotation?.keyEvidence?.length??0,contradictionCount:annotation?.contradictions?.length??0,blocksPrimary:false},symbol))
+          .catch(error=>this.events.publish('SCOUT_OBSERVATION_FAILED',{traceId,packetId:packet.packetId,completedAt:Date.now(),elapsedMs:Date.now()-scoutStartedAt,reason:error instanceof Error?error.message:String(error),blocksPrimary:false},symbol));}
       this.analysisFacts.lastRequestAt=Date.now();
-      const result = await this.ai.decide(packet, scout, Date.now()-primaryQueuedAt, confirmation);
+      const result = await this.ai.decide(packet, null, Date.now()-primaryQueuedAt, confirmation);
       // A new decision may add to inventory; replaying one decision cannot create another intent.
       if(result.runId&&[...this.state.entryIntents.values()].some(intent=>intent.brainRunId===result.runId)){
         this.events.publish('ENTRY_DECISION_ALREADY_CONSUMED',{brainRunId:result.runId},symbol);return;
@@ -623,7 +635,7 @@ export class EntryCoordinator {
       // lineage in one event: without it the funnel could only infer that a plan became a booking.
       this.events.publish('ENTRY_RESERVATION_CREATED',{brainRunId:result.runId,decisionChainId:result.runId,planId:tradePlan.planId,planVersion:tradePlan.planVersion,cycleId:tradePlan.cycleId,
         intentId,reservationId,quoteAsset:plan.quoteAsset,marginUsd:plan.marginUsd,notionalUsd:plan.notionalUsd,riskGeneration:riskTicket?.riskGeneration},symbol);
-      const intent: EntryIntent = {id:intentId,symbol,side,planId:tradePlan.planId,planVersion:tradePlan.planVersion,planCycleId:tradePlan.cycleId,planWarnings:planOutcome.warnings,confidence:d.confidence,idealPrice:d.idealPrice,acceptablePriceRange:d.acceptablePriceRange,horizonMinutes:d.horizonMinutes,leverage,createdAt:now,aiAuthorizationExpiresAt:now+d.horizonMinutes*60_000,configuredOrderTtlExpiresAt:now+(this.state.settings.entry.nearMarket?.enabled?this.state.settings.entry.nearMarket.ttlSeconds*1000:this.state.settings.entry.absoluteTtlMinutes*60_000),absoluteExpiresAt:Math.min(now+d.horizonMinutes*60_000,now+(this.state.settings.entry.nearMarket?.enabled?this.state.settings.entry.nearMarket.ttlSeconds*1000:this.state.settings.entry.absoluteTtlMinutes*60_000)),packetId:packet.packetId,brainRunId:result.runId,decisionChainId:result.runId,allocationPlan:plan,reservationId,protectionMode:this.state.settings.riskGovernance.protectionMode,profitTakePlan:d.profitTakePlan,economicAdmission:economicAdmission.mode==='OFF'?null:{version:'V3.9.5',mode:economicAdmission.mode,passed:economicAdmission.passed,validatedAt:economicAdmission.validatedAt,expectedNetProfit:economicAdmission.expectedNetProfit,requiredNetProfit:economicAdmission.requiredNetProfit,reachProbability:economicAdmission.reachProbability,historicalHardMaxMovePercent:economicAdmission.historicalHardMaxMovePercent,blockers:economicAdmission.blockers},};
+      const intent: EntryIntent = {id:intentId,symbol,side,planId:tradePlan.planId,planVersion:tradePlan.planVersion,planCycleId:tradePlan.cycleId,planWarnings:planOutcome.warnings,economicMandate:tradePlan.economicMandate,confidence:d.confidence,idealPrice:d.idealPrice,acceptablePriceRange:d.acceptablePriceRange,horizonMinutes:d.horizonMinutes,leverage,createdAt:now,aiAuthorizationExpiresAt:now+d.horizonMinutes*60_000,configuredOrderTtlExpiresAt:now+(this.state.settings.entry.nearMarket?.enabled?this.state.settings.entry.nearMarket.ttlSeconds*1000:this.state.settings.entry.absoluteTtlMinutes*60_000),absoluteExpiresAt:Math.min(now+d.horizonMinutes*60_000,now+(this.state.settings.entry.nearMarket?.enabled?this.state.settings.entry.nearMarket.ttlSeconds*1000:this.state.settings.entry.absoluteTtlMinutes*60_000)),packetId:packet.packetId,brainRunId:result.runId,decisionChainId:result.runId,allocationPlan:plan,reservationId,protectionMode:this.state.settings.riskGovernance.protectionMode,profitTakePlan:d.profitTakePlan,economicAdmission:economicAdmission.mode==='OFF'?null:{version:'V3.9.5',mode:economicAdmission.mode,passed:economicAdmission.passed,validatedAt:economicAdmission.validatedAt,expectedNetProfit:economicAdmission.expectedNetProfit,requiredNetProfit:economicAdmission.requiredNetProfit,reachProbability:economicAdmission.reachProbability,historicalHardMaxMovePercent:economicAdmission.historicalHardMaxMovePercent,blockers:economicAdmission.blockers},};
       intent.quantityUnits=Number(d.quantityUnits);intent.executionEnvelope=executionEnvelope;
       const reservationRisk=computeExecutableRiskHeadroom({settings:this.state.settings,equity:Number(this.state.account.equityUsd??0),positions:[...this.state.positions.values()],pendingRiskExposures:collectPendingEntryRiskExposures(this.state,{now,excludeReservationId:reservationId,priorityReservationId:reservationId}),symbol,side,...readAdmissionCapacity(this.state,symbol,side,now,{leverage,leverageFact:leverageFactOf(leverage),quoteAsset:plan.quoteAsset}),plannedNotional:plan.notionalUsd,expectedAdverseMovePct:Math.max(.001,market.technical['15m'].atrPercent/100),dailyDrawdownPct:Number(this.state.account.riskBaseline?.riskDrawdownPct??0),capital:candidateCapitalFromState(this.state,{symbol,quoteAsset:plan.quoteAsset,leverage,leverageFact:leverageFactOf(leverage),minimumNotionalUsd:Math.max(1,market.quote.minNotional),now,excludeReservationId:reservationId}),minimumNotional:Math.max(1,market.quote.minNotional)});
       this.events.publish("LIVE_RISK_ENVELOPE_EVALUATED",{brainRunId:result.runId,allocationPlanId:plan.planId,riskEnvelope:{...reservationRisk,status:reservationRisk.executable&&plan.notionalUsd<=reservationRisk.finalNotional+1e-8?'PASS':reservationRisk.reason,reasons:reservationRisk.blockers}},symbol);
@@ -773,11 +785,21 @@ export class EntryCoordinator {
       planVersion:this.state.plansForCycle(input.cycleId).length+1,source:'AI',
     });
     if(!outcome.plan){recordConversion('REFUSED');return{plan:null,refusals:outcome.refusals,warnings:[...warnings,...outcome.warnings]};}
-    const stored=this.state.putTradePlan(outcome.plan);
+    const fundsOnly=testnetFundsOnlyEntry(settings),configuredMargin=Number(sideEnvelope.minimumInitialMarginQuote??0),configuredOrderNotional=Number(sideEnvelope.minimumOrderNotionalQuote??0);
+    if(fundsOnly&&!(configuredMargin>0)){recordConversion('REFUSED');return{plan:null,refusals:['BUSINESS_MINIMUM_INITIAL_MARGIN_UNCONFIGURED'],warnings};}
+    const exchangeMinimum=Math.max(Number(quote.minNotional??0),Number(quote.minQty??0)*Number(quote.last??0));
+    const economicMandate=fundsOnly?buildEntryEconomicMandate({plan:outcome.plan,environment:String(settings.connections.exchange.environment),quoteAsset:String(input.executionEnvelope.quoteAsset),
+      minimumInitialMarginQuote:configuredMargin,minimumOrderNotionalQuote:configuredOrderNotional,exchangeMinimumNotionalQuote:exchangeMinimum,
+      settingsVersion:Number(settings.settingsVersion),entryFeeRate:Number(settings.takeProfit.entryFeeRate),
+      exitFeeRate:Number(settings.takeProfit.exitFeeAssumption==='MAKER'?settings.takeProfit.makerFeeRate:settings.takeProfit.takerFeeRate),
+      slippageBufferPct:Number(settings.takeProfit.slippageBufferPct),market:input.market,
+      candles:(timeframe,count)=>(this.market?.cachedCandles?.(input.symbol,timeframe as never,count)??[]) as never,now}):null;
+    const frozenPlan={...outcome.plan,economicMandate};
+    const stored=this.state.putTradePlan(frozenPlan);
     if(!stored.written&&!stored.identical){recordConversion('REFUSED');return{plan:null,refusals:[String(stored.reason??'PLAN_PERSISTENCE_FAILED')],warnings};}
     recordConversion('CONVERTED');
     if(stored.identical)warnings.push('PLAN_ALREADY_PERSISTED_FOR_IDENTICAL_FACTS');
-    return{plan:outcome.plan,refusals:[] as string[],warnings:[...warnings,...outcome.warnings]};
+    return{plan:frozenPlan,refusals:[] as string[],warnings:[...warnings,...outcome.warnings]};
   }
 
   /** A WAIT leaves an auditable plan behind and nothing else: no reservation, no intent, no order. */

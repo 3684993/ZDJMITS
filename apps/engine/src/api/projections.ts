@@ -338,7 +338,7 @@ function baseDashboardProjection(runtime: EngineRuntime): DashboardSnapshot {
     supply: runtime.supplyHealth(),
     candidateSupply: candidateSupplyHealth(s),
     pool: s.pool.list(),
-    positions: [...s.positions.values()],
+    positions: [...s.positions.values()].map(position=>({...position,economicMandate:(position as any).economicMandate??null})),
     entryOrders: activeEntries.sort((a, b) => b.updatedAt - a.updatedAt),
     tpOrders: activeTps.sort((a, b) => b.updatedAt - a.updatedAt),
     aiResources,

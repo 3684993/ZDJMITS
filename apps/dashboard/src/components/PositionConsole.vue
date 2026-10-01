@@ -160,6 +160,17 @@ onMounted(load);
           </dd>
         </div>
       </div>
+      <div v-if="detail.position.economicMandate" class="facts wide console-facts" data-entry-economic-mandate>
+        <div><dt>Entry 最低初始保证金</dt><dd>{{ detail.position.economicMandate.sizing.minimumInitialMarginQuote }} {{ detail.position.economicMandate.quoteAsset }}</dd></div>
+        <div><dt>Entry 实际保证金 / notional</dt><dd>{{ detail.position.economicMandate.sizing.selectedInitialMarginQuote }} / {{ detail.position.economicMandate.sizing.selectedNotionalQuote }} {{ detail.position.economicMandate.quoteAsset }}</dd></div>
+        <div><dt>数量 / 杠杆 / 目标期限</dt><dd>{{ detail.position.economicMandate.sizing.quantity }} / {{ detail.position.economicMandate.sizing.leverage }}x / {{ detail.position.economicMandate.economics.targetHorizonMinutes }}m</dd></div>
+        <div><dt>1h 可达 / FX / Funding</dt><dd>{{ detail.position.economicMandate.economics.oneHourReachabilityStatus }} / {{ detail.position.economicMandate.economics.fxStatus }} / {{ detail.position.economicMandate.economics.fundingStatus }}</dd></div>
+        <div><dt>方向事实 1D / 4H / 15m</dt><dd>{{ detail.position.economicMandate.directionFacts.map(fact => fact.timeframe + ':' + fact.direction + '/' + fact.status).join(' · ') }}</dd></div>
+      </div>
+      <div v-if="detail.position.tpEconomics" class="policy-callout" data-tp-economics>
+        <strong>TP 经济性 · {{ detail.position.tpEconomics.status }}</strong>
+        <span>保护状态与经济结果分开读取。目标净收益 {{ money(detail.position.tpEconomics.expectedNetProfit) }}，最低要求 {{ money(detail.position.tpEconomics.requiredNetProfit) }}。</span>
+      </div>
       <div class="cycle-moments" data-cycle-moments>
         <small v-for="m in moments()" :key="m.key" data-cycle-moment>{{ m.text }}</small>
       </div>

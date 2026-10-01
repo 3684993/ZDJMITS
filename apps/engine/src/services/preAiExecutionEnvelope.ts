@@ -28,6 +28,9 @@ export interface SideExecutionCapacity {
   firstBindingConstraint?: string;
   /** max(exchange minNotional, minQty x reference price), computed from the real filters. */
   minimumLegalNotionalUsd?: number;
+  minimumInitialMarginQuote?: number | null;
+  minimumOrderNotionalQuote?: number | null;
+  businessMinimumConfigured?: boolean;
   /** The admission ledger's own verdict for this side, carried so the pre-model refusal can state numbers. */
   admission?: {ceilingUsd: number | null; refusal: string | null; gate: string | null; detail: string | null} | null;
   /** [floor, ceiling] of a notional this side could legally be submitted at, or null when it cannot. */
@@ -107,6 +110,13 @@ export function buildPreAiExecutionEnvelope(state:RuntimeState,symbol:string,now
     const risk=computeExecutableRiskHeadroom({settings:state.settings,equity:equityUsd,positions:[...state.positions.values()],pendingRiskExposures,symbol,side,...admission,plannedNotional:Number.MAX_SAFE_INTEGER,expectedAdverseMovePct,dailyDrawdownPct,capital,minimumNotional});
     const filtersComplete=[q.tickSize,q.stepSize,q.minQty,q.minNotional,q.last].every((value:number)=>Number.isFinite(Number(value))&&Number(value)>0);
     const minimumLegalNotionalUsd=filtersComplete?Math.max(Number(q.minNotional),Number(q.minQty)*Number(q.last)):0;
+    const configuredMargin=state.settings.entry.minimumInitialMarginByQuote?.[quoteAsset];
+    const configuredOrderNotional=state.settings.entry.minimumOrderNotionalByQuote?.[quoteAsset];
+    const minimumInitialMarginQuote=Number.isFinite(Number(configuredMargin))&&Number(configuredMargin)>0?Number(configuredMargin):null;
+    const minimumOrderNotionalQuote=Number.isFinite(Number(configuredOrderNotional))&&Number(configuredOrderNotional)>0?Number(configuredOrderNotional):null;
+    const fundsOnly=testnetFundsOnlyEntry(state.settings);
+    const businessMinimumConfigured=!fundsOnly||minimumInitialMarginQuote!==null;
+    const businessMinimumNotional=Math.max(minimumLegalNotionalUsd,fundsOnly?(minimumOrderNotionalQuote??0):0,fundsOnly?(minimumInitialMarginQuote??0)*leverage:0);
     const maxNotionalUsd=slotAvailable&&risk.executable&&!planRejects?Math.max(0,Math.min(quoteNotionalCapacity,risk.finalNotional)):0,maxMarginUsd=maxNotionalUsd/Math.max(1,leverage);
     // A whole-step quantity that is affordable at the reachable price band and still clears the exchange
     // floor. Both bounds are published: a lower one the order cannot legally be placed under, and an upper
@@ -115,9 +125,9 @@ export function buildPreAiExecutionEnvelope(state:RuntimeState,symbol:string,now
       capacityUnits=roundDownUnits(maxNotionalUsd/Math.max(q.last,q.tickSize),q.stepSize),
       bandLimitedUnits=roundDownUnits(maxNotionalUsd/bandCeilingPrice,q.stepSize),
       legalMaxQuantityUnits=Math.min(capacityUnits,bandLimitedUnits),
-      minQuantityUnits=filtersComplete?Math.max(1,Math.ceil(Number(q.minQty)/Number(q.stepSize)-1e-9),Math.ceil(minimumLegalNotionalUsd/(Math.max(q.last,q.tickSize)*Number(q.stepSize))-1e-9)):0;
-    const executable=marginTierProven&&privateReady&&slotAvailable&&!humanHardBlock&&!planRejects&&maxNotionalUsd+1e-8>=minimumNotional&&legalMaxQuantityUnits>=minQuantityUnits;
-    const blockers=[...risk.blockers,...(planRejects?[`SIDE_PLAN_${planFacts.admission}`]:[]),...(humanHardBlock?['HUMAN_MANAGED_EXPOSURE_LIMIT']:[]),...(marginTierProven?[]:[`MARGIN_TIER_SYMBOL_UNPROVEN:${symbol}`])];
+      minQuantityUnits=filtersComplete?Math.max(1,Math.ceil(Number(q.minQty)/Number(q.stepSize)-1e-9),Math.ceil(businessMinimumNotional/(bandCeilingPrice*Number(q.stepSize))-1e-9)):0;
+    const executable=businessMinimumConfigured&&marginTierProven&&privateReady&&slotAvailable&&!humanHardBlock&&!planRejects&&maxNotionalUsd+1e-8>=Math.max(minimumNotional,businessMinimumNotional)&&legalMaxQuantityUnits>=minQuantityUnits;
+    const blockers=[...risk.blockers,...(planRejects?[`SIDE_PLAN_${planFacts.admission}`]:[]),...(humanHardBlock?['HUMAN_MANAGED_EXPOSURE_LIMIT']:[]),...(marginTierProven?[]:[`MARGIN_TIER_SYMBOL_UNPROVEN:${symbol}`]),...(!businessMinimumConfigured?['BUSINESS_MINIMUM_INITIAL_MARGIN_UNCONFIGURED']:[]),...(fundsOnly&&businessMinimumConfigured&&maxNotionalUsd+1e-8<businessMinimumNotional?['BUSINESS_MINIMUM_EXCEEDS_AVAILABLE_FUNDS']:[])];
     const binding=classifySideCapacityBinding({symbol,side,executable,blockers,
       // The probe asked "how much room is there", so its own constraint name is not a denial. When the gate
       // raised no blocker but sizing already refused this side, the refusal is the nearer cause.
@@ -128,20 +138,22 @@ export function buildPreAiExecutionEnvelope(state:RuntimeState,symbol:string,now
       // The admission ledger's own words, so the envelope refuses with the number that binds.
       riskAdmission:{ceilingUsd:admission.riskAdmissionCeilingUsd,refusal:admission.riskAdmissionRefusal,
         gate:admission.capacity?.firstBinding?.gate??null,detail:admission.capacity?.firstBinding?.detail??null}});
+    const firstBindingConstraint=fundsOnly?(!businessMinimumConfigured?'BUSINESS_MINIMUM_INITIAL_MARGIN_UNCONFIGURED':planRejects&&!risk.blockers?.length?binding.constraint:businessMinimumNotional>maxNotionalUsd?'BUSINESS_MINIMUM_EXCEEDS_AVAILABLE_FUNDS':binding.constraint):binding.constraint;
     return {executable,maxMarginUsd,maxNotionalUsd,maxQuantityUnits:legalMaxQuantityUnits,minQuantityUnits,
       legalQuantityRangeUnits:executable?[minQuantityUnits,legalMaxQuantityUnits]:null,
-      firstBindingConstraint:binding.constraint,minimumLegalNotionalUsd,
+      firstBindingConstraint,minimumLegalNotionalUsd,
+      minimumInitialMarginQuote,minimumOrderNotionalQuote,businessMinimumConfigured,
       admission:{ceilingUsd:admission.riskAdmissionCeilingUsd,refusal:admission.riskAdmissionRefusal,
         gate:admission.capacity?.firstBinding?.gate??null,detail:admission.capacity?.firstBinding?.detail??null},
-      legalNotionalRangeUsd:executable?[minimumLegalNotionalUsd,Math.min(maxNotionalUsd,legalMaxQuantityUnits*Number(q.stepSize)*bandCeilingPrice)]:null,
-      authorization:executable?'EXECUTABLE':`NOT_EXECUTABLE:${binding.constraint}`,
+      legalNotionalRangeUsd:executable?[businessMinimumNotional,Math.min(maxNotionalUsd,legalMaxQuantityUnits*Number(q.stepSize)*bandCeilingPrice)]:null,
+      authorization:executable?'EXECUTABLE':`NOT_EXECUTABLE:${firstBindingConstraint}`,
       riskHeadroom:{factVersion:risk.factVersion,remaining:risk.remaining,blockers,reason:humanHardBlock?'HUMAN_MANAGED_EXPOSURE_LIMIT':risk.reason}};
   };
   const LONG=sideCapacity('LONG'),SHORT=sideCapacity('SHORT'),
     executableSides=([['LONG',LONG],['SHORT',SHORT]] as const).filter(([,capacity])=>capacity.executable).map(([side])=>side),
     sideAuthorization={LONG:LONG.authorization??'NOT_EXECUTABLE:UNCLASSIFIED',SHORT:SHORT.authorization??'NOT_EXECUTABLE:UNCLASSIFIED'} as Record<ExecutionEnvelopeSide,string>;
   const makerFeeBps=state.settings.takeProfit.makerFeeRate*10_000,takerFeeBps=state.settings.takeProfit.takerFeeRate*10_000,safetyMarginBps=(makerFeeBps+(state.settings.takeProfit.exitFeeAssumption==='TAKER'?takerFeeBps:makerFeeBps))*state.settings.takeProfit.feeSafetyBufferPct/100;
-  const economics={version:'V3.9.5' as const,minNetProfitUsd:state.settings.takeProfit.minNetProfitUsd,minNetProfitRoiPct:state.settings.takeProfit.minNetProfitRoiPct,admissionMode:state.settings.tradeEconomics.admissionMode,historicalTpReachabilityEnabled:state.settings.tradeEconomics.historicalTpReachabilityEnabled,minHistoricalReachProbability:state.settings.tradeEconomics.minHistoricalReachProbability,reachabilityLookbackBars:state.settings.tradeEconomics.reachabilityLookbackBars,reachabilityMinSamples:state.settings.tradeEconomics.reachabilityMinSamples,targetHorizonMinutes:legalTargetHorizonMinutes(state.settings),humanManagedExposure:{positions:human.positions,notionalUsd:human.notionalUsd,maxPositions:human.maxPositions,maxNotionalUsd:human.maxNotionalUsd,withinLimits:human.withinLimits}};
+  const economics={version:'V3.9.5' as const,minNetProfitUsd:state.settings.takeProfit.minNetProfitUsd,minNetProfitRoiPct:state.settings.takeProfit.minNetProfitRoiPct,admissionMode:state.settings.tradeEconomics.admissionMode,historicalTpReachabilityEnabled:state.settings.tradeEconomics.historicalTpReachabilityEnabled,minHistoricalReachProbability:state.settings.tradeEconomics.minHistoricalReachProbability,reachabilityLookbackBars:state.settings.tradeEconomics.reachabilityLookbackBars,reachabilityMinSamples:state.settings.tradeEconomics.reachabilityMinSamples,targetHorizonMinutes:legalTargetHorizonMinutes(state.settings),humanManagedExposure:{positions:human.positions,notionalUsd:human.notionalUsd,maxPositions:human.maxPositions,maxNotionalUsd:human.maxNotionalUsd,withinLimits:human.withinLimits},businessMinimumPolicyVersion:'V397-ENTRY-FLOOR-1' as const,minimumInitialMarginQuote:LONG.minimumInitialMarginQuote??SHORT.minimumInitialMarginQuote??null,minimumOrderNotionalQuote:LONG.minimumOrderNotionalQuote??SHORT.minimumOrderNotionalQuote??null};
   // P4/R9: an analysis lease is a pre-model earmark, not a debit of the account. It used to be
   // max(LONG.maxMarginUsd, SHORT.maxMarginUsd), and because the probe sized the side with
   // plannedNotional=MAX_SAFE_INTEGER that number was essentially the whole quote balance - which made

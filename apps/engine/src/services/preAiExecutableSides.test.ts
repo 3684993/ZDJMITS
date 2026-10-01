@@ -134,7 +134,9 @@ describe('the pre-AI envelope publishes which sides are actually executable', ()
     const floor = Math.max(q.minNotional, q.minQty * q.last);
     for (const side of ['LONG', 'SHORT'] as const) {
       const capacity = envelope[side];
-      expect(capacity.minQuantityUnits).toBe(Math.max(1, Math.ceil(q.minQty / q.stepSize - 1e-9), Math.ceil(floor / (q.last * q.stepSize) - 1e-9)));
+      const businessFloor=Math.max(floor,Number(capacity.minimumInitialMarginQuote??0)*envelope.leverage,Number(capacity.minimumOrderNotionalQuote??0));
+      const conservativeBand=Math.max(envelope.makerReachableBand.max,q.ask,q.last,q.tickSize);
+      expect(capacity.minQuantityUnits).toBe(Math.max(1, Math.ceil(q.minQty / q.stepSize - 1e-9), Math.ceil(businessFloor / (conservativeBand * q.stepSize) - 1e-9)));
       expect(capacity.maxQuantityUnits % 1).toBe(0);
       if (capacity.executable) {
         expect(capacity.legalQuantityRangeUnits).toEqual([capacity.minQuantityUnits, capacity.maxQuantityUnits]);
@@ -159,9 +161,9 @@ describe('the pre-AI envelope publishes which sides are actually executable', ()
     expect(envelope.LONG.legalQuantityRangeUnits).toBeNull();
     expect(envelope.LONG.minQuantityUnits).toBeGreaterThan(0);
     expect(envelope.LONG.maxQuantityUnits).toBeLessThan(envelope.LONG.minQuantityUnits!);
-    // The named cause is the funding shortfall, not a fabricated floor problem.
-    expect(envelope.LONG.firstBindingConstraint).toBe('AVAILABLE_MARGIN');
-    expect(String(envelope.LONG.authorization)).toBe('NOT_EXECUTABLE:AVAILABLE_MARGIN');
+    // The binding cause distinguishes a configured business floor that current funds cannot reach.
+    expect(envelope.LONG.firstBindingConstraint).toBe('BUSINESS_MINIMUM_EXCEEDS_AVAILABLE_FUNDS');
+    expect(String(envelope.LONG.authorization)).toBe('NOT_EXECUTABLE:BUSINESS_MINIMUM_EXCEEDS_AVAILABLE_FUNDS');
   });
 });
 

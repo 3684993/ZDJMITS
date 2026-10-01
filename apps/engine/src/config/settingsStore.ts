@@ -102,6 +102,10 @@ function merge(defaults: unknown, override: unknown): unknown {
 function migrate(value: unknown): unknown {
   if (!record(value)) return value;
   const next = structuredClone(value) as Record<string, unknown>;
+  // V3.9.7 expands SHADOW path evidence through the 4h window. Upgrade only the prior default;
+  // an operator-selected non-default observation horizon remains authoritative.
+  if (record(next.tradingQuality) && Number((next.tradingQuality as any).positionObservationHorizonMs) === 900_000)
+    (next.tradingQuality as any).positionObservationHorizonMs = 14_400_000;
   if (record(next.connections)) {
     const c = next.connections as Record<string, unknown>;
     c.marketDataMode = "BINANCE";
@@ -189,6 +193,12 @@ function migrate(value: unknown): unknown {
   economics.minHistoricalReachProbability=economics.minHistoricalReachProbability??.5;
   economics.reachabilityLookbackBars=economics.reachabilityLookbackBars??120;
   economics.reachabilityMinSamples=economics.reachabilityMinSamples??30;
+  // V3.9.7 separates business initial margin and business notional by quote asset. Leave both
+  // explicitly unset on migration: the legacy 200-valued fields are not evidence for either floor.
+  const entry=(next.entry??={}) as Record<string,unknown>;
+  const quotePolicy=(value:unknown)=>{const row=record(value)?value as Record<string,unknown>:{};return{USDT:row.USDT??null,USDC:row.USDC??null};};
+  entry.minimumInitialMarginByQuote=quotePolicy(entry.minimumInitialMarginByQuote);
+  entry.minimumOrderNotionalByQuote=quotePolicy(entry.minimumOrderNotionalByQuote);
   const management=(next.positionManagement??={}) as Record<string,unknown>;
   management.humanManagedAdmissionCapsEnabled=management.humanManagedAdmissionCapsEnabled??true;
   management.maxHumanManagedPositions=management.maxHumanManagedPositions??4;
@@ -496,6 +506,8 @@ export class SettingsStore {
         observed_at INTEGER NOT NULL, committed_at INTEGER NOT NULL, settings_version INTEGER NOT NULL,
         provenance TEXT NOT NULL
       ); INSERT OR IGNORE INTO schema_migrations(version,applied_at) VALUES(10,${Date.now()});`);
+    this.db.exec(`INSERT OR IGNORE INTO schema_migrations(version,applied_at) VALUES(12,${Date.now()});`);
+    this.db.exec(`INSERT OR IGNORE INTO schema_migrations(version,applied_at) VALUES(13,${Date.now()});`);
     const secretColumns = new Set(
       (
         this.db.prepare("PRAGMA table_info(secrets)").all() as Array<{
@@ -1427,7 +1439,7 @@ export class SettingsStore {
     ).map((row) => JSON.parse(row.payload));
   }
   listEntryObservationRuns(since:number,until:number,limit=10001):any[] {
-    return this.db.prepare("SELECT run_id AS id,symbol,role,status,decision,direction,started_at AS startedAt,completed_at AS completedAt,json_extract(payload,'$.error') AS error,json_extract(payload,'$.normalizedPreview') AS normalizedPreview FROM ai_runs_archive WHERE role='PRIMARY_BRAIN' AND started_at BETWEEN ? AND ? ORDER BY started_at DESC LIMIT ?").all(since,until,Math.max(1,Math.min(10001,limit)));
+    return this.db.prepare("SELECT run_id AS id,symbol,role,status,decision,direction,started_at AS startedAt,completed_at AS completedAt,json_extract(payload,'$.error') AS error,json_extract(payload,'$.normalizedPreview') AS normalizedPreview,json_extract(payload,'$.outputPreview') AS outputPreview FROM ai_runs_archive WHERE role='PRIMARY_BRAIN' AND started_at BETWEEN ? AND ? ORDER BY started_at DESC LIMIT ?").all(since,until,Math.max(1,Math.min(10001,limit)));
   }
   getAiRun(runId: string) {
     const row = this.db

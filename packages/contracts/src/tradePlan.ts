@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { EntryEconomicMandateSchema } from './entryEconomicMandate.js';
 
 /**
  * S06/J3: the immutable trade plan.
@@ -32,7 +33,7 @@ export const TradePlanCostsSchema = z.object({
   exitFeeUsd: money,
   slippageUsd: money,
   uncertaintyBufferUsd: money,
-  fundingEstimateUsd: money,
+  fundingEstimateUsd: money.nullable(),
   fundingStatus: PlanEvidenceStatusSchema,
   fxRateToQuote: z.number().finite().nullable(),
   costVersion: z.string().min(1).max(120),
@@ -147,6 +148,8 @@ export const TradePlanSchema = z.object({
   releaseCondition: z.string().max(600).nullable(),
   costs: TradePlanCostsSchema.nullable(),
   economics: TradePlanEconomicsSchema.nullable(),
+  /** New V3.9.7 plans freeze the unit-safe Entry contract; absent means legacy/unknown. */
+  economicMandate: EntryEconomicMandateSchema.nullable().optional().default(null),
   risk: TradePlanRiskSchema.nullable(),
   minNetProfitUsd: money,
   maxRealizedLossUsd: money.nonnegative(),

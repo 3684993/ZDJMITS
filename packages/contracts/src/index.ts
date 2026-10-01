@@ -14,3 +14,4 @@ export * from './tradingQuality.js';
 
 export * from './opportunity.js';
 export * from './tradePlan.js';
+export * from './entryEconomicMandate.js';

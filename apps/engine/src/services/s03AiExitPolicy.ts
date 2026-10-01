@@ -18,7 +18,7 @@ export type AiExitVerdict={
 
 export type PolicyInput={
   owner:{ownerState:OwnerState;ownerVersion:number;cycleId:string;scope:string;deadline:number|null};
-  plan:{planVersion:number;cycleId:string;scope:string;thesisInvalid:boolean;invalidationPredicate:string|null;invalidationEvidenceRefs:string[];exitConditionMet:boolean;minNetProfitUsd:number};
+  plan:{planVersion:number;cycleId:string;scope:string;thesisInvalid:boolean;invalidationPredicate:string|null;invalidationEvidenceRefs:string[];exitConditionMet:boolean;minNetProfitUsd:number;economicMandate?:unknown|null};
   estimate:ExitEstimate;
   bound:PriceBoundResult;
   policy:{lossLimit:number;allowSmallLoss:boolean;authorizationTtlMs:number;minNetProfitUsd:number};
@@ -42,7 +42,7 @@ const verdict=(input:PolicyInput,outcome:VerdictOutcome,codes:string[],extra:Par
   const decisionHash=stableHash({
     ...base,now,
     owner:{state:owner.ownerState,version:owner.ownerVersion,cycleId:owner.cycleId,scope:owner.scope,deadline:owner.deadline},
-    plan:{version:plan.planVersion,cycleId:plan.cycleId,scope:plan.scope,thesisInvalid:plan.thesisInvalid,predicate:plan.invalidationPredicate,exitConditionMet:plan.exitConditionMet,minNetProfitUsd:plan.minNetProfitUsd},
+    plan:{version:plan.planVersion,cycleId:plan.cycleId,scope:plan.scope,thesisInvalid:plan.thesisInvalid,predicate:plan.invalidationPredicate,exitConditionMet:plan.exitConditionMet,minNetProfitUsd:plan.minNetProfitUsd,economicMandate:plan.economicMandate??null},
     policy:{lossLimit:policy.lossLimit,allowSmallLoss:policy.allowSmallLoss,authorizationTtlMs:policy.authorizationTtlMs,minNetProfitUsd:policy.minNetProfitUsd},
     boundPrice:bound?.limitPrice??null,
   });

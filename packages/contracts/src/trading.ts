@@ -1,6 +1,7 @@
 import { OpportunityEvidenceSchema, TradingQualityPolicySchema } from './opportunity.js';
 import { z } from 'zod';
 import { ProfitTakePlanSchema } from './ai.js';
+import { EntryEconomicMandateSchema } from './entryEconomicMandate.js';
 
 export const SideSchema = z.enum(['LONG','SHORT']);
 export type Side = z.infer<typeof SideSchema>;
@@ -22,6 +23,9 @@ const EntryExecutionCapacitySchema=z.object({
   legalQuantityRangeUnits:z.tuple([z.number().int().nonnegative(),z.number().int().nonnegative()]).nullable().optional(),
   firstBindingConstraint:z.string().optional(),
   minimumLegalNotionalUsd:z.number().nonnegative().optional(),
+  minimumInitialMarginQuote:z.number().nonnegative().nullable().optional(),
+  minimumOrderNotionalQuote:z.number().nonnegative().nullable().optional(),
+  businessMinimumConfigured:z.boolean().optional(),
   legalNotionalRangeUsd:z.tuple([z.number().nonnegative(),z.number().nonnegative()]).nullable().optional(),
   authorization:z.string().optional(),
   // The committing gate's own verdict for this side, persisted with the envelope so a restart resumes the
@@ -53,7 +57,7 @@ export const EntryExecutionEnvelopeSchema=z.object({
   economics:z.object({version:z.literal('V3.9.5'),minNetProfitUsd:z.number().min(1).max(20),minNetProfitRoiPct:z.number().nonnegative(),admissionMode:z.enum(['OFF','SHADOW','ENFORCE']),historicalTpReachabilityEnabled:z.boolean(),minHistoricalReachProbability:z.number().min(0).max(1),reachabilityLookbackBars:z.number().int().positive(),reachabilityMinSamples:z.number().int().positive(),
     // The horizons the plan layer can actually write a plan for, published to the model as an
     // execution fact. Defaulted so an intent journalled before it existed still round-trips.
-    targetHorizonMinutes:z.array(z.number().int().min(5).max(1440)).min(1).max(3).default([15,60,240]),humanManagedExposure:z.object({positions:z.number().int().nonnegative(),notionalUsd:z.number().nonnegative(),maxPositions:z.number().int().positive(),maxNotionalUsd:z.number().nonnegative(),withinLimits:z.boolean()}).strict()}).strict().optional(),
+    targetHorizonMinutes:z.array(z.number().int().min(5).max(1440)).min(1).max(3).default([15,60,240]),humanManagedExposure:z.object({positions:z.number().int().nonnegative(),notionalUsd:z.number().nonnegative(),maxPositions:z.number().int().positive(),maxNotionalUsd:z.number().nonnegative(),withinLimits:z.boolean()}).strict(),businessMinimumPolicyVersion:z.literal('V397-ENTRY-FLOOR-1').optional(),minimumInitialMarginQuote:z.number().nonnegative().nullable().optional(),minimumOrderNotionalQuote:z.number().nonnegative().nullable().optional()}).strict().optional(),
   reachability:z.object({version:z.literal('V3.9.5'),source:z.literal('CLOSED_CANDLE_CACHE'),generatedAt:z.number().int(),horizons:z.array(z.object({horizonMinutes:z.number().int().positive(),timeframe:z.enum(['1m','5m','15m']),sampleCount:z.number().int().nonnegative(),status:z.enum(['READY','INSUFFICIENT_DATA','STALE']),LONG:z.object({hardMaxMovePercent:z.number().nonnegative(),p50:z.number().nonnegative(),p75:z.number().nonnegative(),p90:z.number().nonnegative()}).strict(),SHORT:z.object({hardMaxMovePercent:z.number().nonnegative(),p50:z.number().nonnegative(),p75:z.number().nonnegative(),p90:z.number().nonnegative()}).strict()}).strict())}).strict().optional(),
   LONG:EntryExecutionCapacitySchema,
   SHORT:EntryExecutionCapacitySchema,
@@ -97,6 +101,7 @@ export const EntryIntentSchema = z.object({
   structuredInvalidationId: z.string().nullable().optional(),
   profitTakePlan: ProfitTakePlanSchema.nullable().optional(),
   economicAdmission:z.object({version:z.literal('V3.9.5'),mode:z.enum(['SHADOW','ENFORCE']),passed:z.boolean(),validatedAt:z.number().int(),expectedNetProfit:z.number(),requiredNetProfit:z.number().nonnegative(),reachProbability:z.number().min(0).max(1).nullable(),historicalHardMaxMovePercent:z.number().nonnegative().nullable(),blockers:z.array(z.string())}).strict().nullable().optional(),
+  economicMandate:EntryEconomicMandateSchema.nullable().optional(),
 });
 export type EntryIntent = z.infer<typeof EntryIntentSchema>;
 
@@ -195,6 +200,7 @@ export const PositionSchema = z.object({
   profitTakePlanSource:z.enum(['AI','STRUCTURE_15M','FIXED_PROFITABLE','HUMAN']).nullable().optional(),
   lossHandoff:z.object({cycleId:z.string(),lastClosedBarAt:z.number().int().nullable(),consecutiveLossBars:z.number().int().nonnegative(),status:z.enum(['ACTIVE','UNKNOWN','HUMAN_HANDOFF'])}).nullable().optional(),
   economicAdmission:z.object({version:z.literal('V3.9.5'),mode:z.enum(['SHADOW','ENFORCE']),passed:z.boolean(),validatedAt:z.number().int(),expectedNetProfit:z.number(),requiredNetProfit:z.number().nonnegative(),reachProbability:z.number().min(0).max(1).nullable(),historicalHardMaxMovePercent:z.number().nonnegative().nullable(),blockers:z.array(z.string())}).strict().nullable().optional(),
+  economicMandate:EntryEconomicMandateSchema.nullable().optional(),
 });
 export type Position = z.infer<typeof PositionSchema>;
 

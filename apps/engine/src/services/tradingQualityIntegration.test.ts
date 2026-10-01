@@ -51,7 +51,10 @@ describe('real EntryCoordinator opportunity authorization',()=>{
       if(kind==='price')Object.assign(h.m.quote,{last:100.005,mark:100.005});
       if(kind==='expiry')h.state.settings.tradingQuality!.policyVersion='expired-observation-sim';
     });
-    await h.run();expect(h.exchange.placeEntry).toHaveBeenCalledOnce();expect([...h.state.entryIntents.values()][0]?.side).toBe('LONG');
+    await h.run();
+    if(kind==='structure'){expect(h.exchange.placeEntry).not.toHaveBeenCalled();expect(h.events.some(e=>String(e.payload?.reason??'').includes('MARKET_THESIS_FACTS_CHANGED_REQUIRES_NEW_MANDATE'))).toBe(true);}
+    else expect(h.exchange.placeEntry).toHaveBeenCalledOnce();
+    if(h.state.entryIntents.size)expect([...h.state.entryIntents.values()][0]?.side).toBe('LONG');
   });
   it('WAIT creates no intent and fresh evaluation creates new authorization',async()=>{
     const h=ready(),place=h.ai.decide.getMockImplementation()!;

@@ -5,7 +5,7 @@ export const TradingQualityPolicySchema = z.object({
   policyVersion: z.string().min(1).default('TQ-V3-1'),
   eventTtlMs: z.number().int().min(1000).max(300000).default(120000),
   authorizationTtlMs: z.number().int().min(1000).max(300000).default(90000),
-  positionObservationHorizonMs: z.number().int().min(60000).default(900000),
+  positionObservationHorizonMs: z.number().int().min(60000).default(14400000),
   maxLocationAtr: z.number().positive().default(1),
   minNetSpaceBps: z.number().nonnegative().default(0),
   adverseBoundaryBps: z.number().positive().default(10),

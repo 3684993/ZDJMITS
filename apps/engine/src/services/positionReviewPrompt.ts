@@ -45,6 +45,7 @@ export type PositionReviewRequest = {
     predicateEvidenceRefs: string[];
     minNetProfitUsd: number | null;
     maxRealizedLossUsd: number | null;
+    economicMandate?: unknown | null;
   };
   budget: { normalReviewsPerPlan: number; exceptionReviewsPerPlan: number; used: number };
   memory: unknown;

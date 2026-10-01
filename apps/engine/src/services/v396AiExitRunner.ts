@@ -22,7 +22,7 @@ import {cycleFundingFact, type FundingIncomeLedger} from './fundingIncomeLedger.
  */
 
 /** A plan is proven by its durable identity, never inferred from a position label. */
-export type AiExitPlanFacts={planRef:string;planVersion:number;thesisInvalid:boolean;invalidationPredicate:string|null;invalidationEvidenceRefs:string[];exitConditionMet:boolean;minNetProfitUsd:number};
+export type AiExitPlanFacts={planRef:string;planVersion:number;thesisInvalid:boolean;invalidationPredicate:string|null;invalidationEvidenceRefs:string[];exitConditionMet:boolean;minNetProfitUsd:number;economicMandate?:unknown|null};
 
 export type AiExitTickReport={authority:'OFF'|'SHADOW'|'ENFORCE';considered:number;evaluated:number;shadow:number;prepared:number;submitted:number;blocked:Array<{cycleId:string;reasons:string[]}>};
 
@@ -147,7 +147,7 @@ export class V396AiExitRunner {
       const policyInput:Omit<PolicyInput,'now'>={
         owner:{ownerState:'AI_ACTIVE',ownerVersion:owner.ownerVersion,cycleId,scope,deadline:Number(owner.deadline)},
         plan:{planVersion:plan.planVersion,cycleId,scope,thesisInvalid:plan.thesisInvalid,invalidationPredicate:plan.invalidationPredicate,
-          invalidationEvidenceRefs:plan.invalidationEvidenceRefs,exitConditionMet:plan.exitConditionMet,minNetProfitUsd:plan.minNetProfitUsd},
+          invalidationEvidenceRefs:plan.invalidationEvidenceRefs,exitConditionMet:plan.exitConditionMet,minNetProfitUsd:plan.minNetProfitUsd,economicMandate:plan.economicMandate??null},
         estimate,bound,
         policy:{lossLimit,allowSmallLoss:coordination.aiExitAllowSmallLoss!==false,authorizationTtlMs:Number(coordination.aiExitAuthorizationTtlMs??15_000),
           minNetProfitUsd:Number(coordination.aiExitMinNetProfitUsd??0.2)},

@@ -113,7 +113,7 @@ export function buildQuantityHorizonCandidates(input:{
   now:number;
   quote:{bid:number;ask:number;tickSize:number;stepSize:number;minQty:number;minNotional:number};
   leverage:number;
-  envelope:{maxQuantityUnits:number;maxNotionalUsd:number;maxMarginUsd:number;executable:boolean;riskHeadroom?:{reason?:string;blockers?:string[]}};
+  envelope:{maxQuantityUnits:number;maxNotionalUsd:number;maxMarginUsd:number;executable:boolean;minQuantityUnits?:number;minimumInitialMarginQuote?:number|null;minimumOrderNotionalQuote?:number|null;riskHeadroom?:{reason?:string;blockers?:string[]}};
   envelopeExpiresAt:number;
   factVersion:string;
   risk:CandidateRiskFacts|null;
@@ -140,7 +140,7 @@ export function buildQuantityHorizonCandidates(input:{
   if(!(entryPrice>0))return rejectAll('CANDIDATE_ENTRY_PRICE_UNPROVEN');
   const quantityCeiling=Math.min(Number(envelope.maxQuantityUnits??0),Number(envelope.maxNotionalUsd??0)/(quote.stepSize*entryPrice),
     Number(envelope.maxMarginUsd??Number.POSITIVE_INFINITY)*leverage/(quote.stepSize*entryPrice));
-  const quantities=quantityLadder(1,quantityCeiling,quote.stepSize,entryPrice,quote.minNotional);
+  const quantities=quantityLadder(Math.max(1,Number(envelope.minQuantityUnits??1)),quantityCeiling,quote.stepSize,entryPrice,Math.max(quote.minNotional,Number(envelope.minimumOrderNotionalQuote??0),(Number(envelope.minimumInitialMarginQuote??0))*leverage));
   if(!quantities.length)return rejectAll('NO_LEGAL_QUANTITY_WITHIN_ENVELOPE');
   const horizons=horizonLadder(settings,input.targetHorizons);
   if(!horizons.length)return rejectAll('NO_LEGAL_TARGET_HORIZON');
@@ -237,8 +237,9 @@ export function buildQuantityHorizonCandidates(input:{
       entryTtlMinutes,
       targetHorizonMinutes:horizon,managementDurationMs:input.managementDurationMs,
       costs:{entryFeeUsd:round(cost.estimatedEntryFee,6),exitFeeUsd:round(cost.estimatedExitFee,6),slippageUsd:round(cost.slippageBuffer,6),
-        uncertaintyBufferUsd:round(cost.feeSafetyBuffer,6),fundingEstimateUsd:funding.amountUsd??0,fundingStatus:funding.status,
-        fxRateToQuote:1,costVersion:`fees:${settings.takeProfit.entryFeeRate}:${exitFeeRate}:${settings.takeProfit.slippageBufferPct}:${settings.takeProfit.feeSafetyBufferPct}`},
+        uncertaintyBufferUsd:round(cost.feeSafetyBuffer,6),fundingEstimateUsd:funding.amountUsd,fundingStatus:funding.status,
+        // No quote/USD conversion is asserted without a timestamped FX fact.
+        fxRateToQuote:null,costVersion:`fees:${settings.takeProfit.entryFeeRate}:${exitFeeRate}:${settings.takeProfit.slippageBufferPct}:${settings.takeProfit.feeSafetyBufferPct}:fx=UNPROVEN`},
       economics,risk,evidenceRefs:[],executable:blockers.length===0,blockers:[...new Set(blockers)].slice(0,24),createdAt:now} as TradePlanCandidate;
   };
   for(const units of quantities){

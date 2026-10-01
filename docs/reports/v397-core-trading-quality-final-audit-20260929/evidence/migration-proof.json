@@ -1,0 +1,60 @@
+{
+  "before": {
+    "funding": {
+      "n": 374,
+      "total": 25.91113508
+    },
+    "pk": [
+      [
+        "income_id",
+        1
+      ]
+    ],
+    "indexes": [
+      {
+        "name": "sqlite_autoindex_v396_funding_income_1"
+      },
+      {
+        "name": "v396_funding_income_symbol_time"
+      },
+      {
+        "name": "v396_funding_income_time"
+      }
+    ]
+  },
+  "after": {
+    "funding": {
+      "n": 374,
+      "total": 25.91113508
+    },
+    "pk": [
+      [
+        "income_id",
+        4
+      ],
+      [
+        "environment",
+        1
+      ],
+      [
+        "account_id",
+        2
+      ],
+      [
+        "income_type",
+        3
+      ]
+    ],
+    "indexes": [
+      {
+        "name": "sqlite_autoindex_v396_funding_income_1"
+      },
+      {
+        "name": "v396_funding_income_symbol_time"
+      },
+      {
+        "name": "v396_funding_income_time"
+      }
+    ]
+  }
+}

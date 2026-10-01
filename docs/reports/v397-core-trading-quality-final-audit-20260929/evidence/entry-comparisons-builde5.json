@@ -1,0 +1,929 @@
+[
+  {
+    "runId": "airun_mun9sx9n_6hxgwhiq",
+    "symbol": "AAVEUSDT",
+    "min": 1,
+    "raw": 1,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_mun9ux39_rd90mqx7",
+    "symbol": "BTCUSDT",
+    "min": 6,
+    "raw": 6,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_mun9x4k3_yeqn6hyt",
+    "symbol": "ETHUSDT",
+    "min": 8,
+    "raw": 8,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_mun9z4yj_1rxv4xs4",
+    "symbol": "FETUSDT",
+    "min": 23,
+    "raw": 23,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_muna1996_b1gceve2",
+    "symbol": "ENAUSDT",
+    "min": 20,
+    "raw": 20,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_muna3oht_vhz4up46",
+    "symbol": "HBARUSDC",
+    "min": 49,
+    "raw": 49,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_muna5qza_y594nq2h",
+    "symbol": "CRVUSDC",
+    "min": 132,
+    "raw": 132,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_muna80ov_5qju768q",
+    "symbol": "CRVUSDT",
+    "min": 132,
+    "raw": 132,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munaga91_f6dshpt7",
+    "symbol": "ONDOUSDT",
+    "min": 10,
+    "raw": 10,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munaiibr_r96bbb59",
+    "symbol": "NEARUSDT",
+    "min": 1,
+    "raw": 100,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munaosez_qwdwkdzv",
+    "symbol": "XRPUSDC",
+    "min": 34,
+    "raw": 34,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munaqvmg_8hf1ugt4",
+    "symbol": "APTUSDT",
+    "min": 63,
+    "raw": 63,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munav6ci_1vewsgxq",
+    "symbol": "AAVEUSDT",
+    "min": 1,
+    "raw": 1,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munax0po_bnlwebhl",
+    "symbol": "OPUSDT",
+    "min": 386,
+    "raw": 386,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munaz6a6_pix87rsy",
+    "symbol": "ETHFIUSDT",
+    "min": 65,
+    "raw": 65,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munb1g0t_lilkxjgv",
+    "symbol": "INJUSDT",
+    "min": 7,
+    "raw": 7,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munb3uee_7t8ewdqe",
+    "symbol": "DOGEUSDC",
+    "min": 54,
+    "raw": 54,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munbgcac_67s2522t",
+    "symbol": "TIAUSDC",
+    "min": 12,
+    "raw": 12,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munbimfo_bvzk16eq",
+    "symbol": "POLUSDT",
+    "min": 43,
+    "raw": 43,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munbktzk_6n1tqwfm",
+    "symbol": "ARBUSDT",
+    "min": 248,
+    "raw": 248,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munbp2bq_lzp5ngj0",
+    "symbol": "ADAUSDT",
+    "min": 21,
+    "raw": 21,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munbt06y_jc7b9nim",
+    "symbol": "AVAXUSDT",
+    "min": 1,
+    "raw": 1,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munbvel4_dag5ysw2",
+    "symbol": "ETHUSDT",
+    "min": 8,
+    "raw": 8,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munbxlvq_2idf4o75",
+    "symbol": "BNBUSDC",
+    "min": 1,
+    "raw": 1,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munbzypc_dep4tjsi",
+    "symbol": "FETUSDT",
+    "min": 23,
+    "raw": 23,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munc3x1m_6wjxuvrl",
+    "symbol": "ENAUSDT",
+    "min": 21,
+    "raw": 21,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munc5vpu_62a46hxa",
+    "symbol": "HBARUSDT",
+    "min": 49,
+    "raw": 49,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_muncahw7_pk3swp6f",
+    "symbol": "CRVUSDC",
+    "min": 132,
+    "raw": 132,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_muncehfk_ai6ib9vm",
+    "symbol": "VIRTUALUSDT",
+    "min": 65,
+    "raw": 65,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_muncgo75_3r88r487",
+    "symbol": "AAVEUSDT",
+    "min": 1,
+    "raw": 1,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_muncksbs_ey3osobm",
+    "symbol": "NEARUSDT",
+    "min": 2,
+    "raw": 2,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_muncpdyo_wnh7zv50",
+    "symbol": "ZROUSDT",
+    "min": 31,
+    "raw": 31,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_muncxdmd_687pqrdz",
+    "symbol": "ARBUSDC",
+    "min": 247,
+    "raw": 247,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munczklk_hkcp8xji",
+    "symbol": "TIAUSDC",
+    "min": 12,
+    "raw": 12,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_mund1x16_8hcjd52e",
+    "symbol": "TAOUSDT",
+    "min": 17,
+    "raw": 17,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_mund420x_f56lfaxs",
+    "symbol": "POLUSDT",
+    "min": 43,
+    "raw": 43,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_mund64ip_fevu4yf4",
+    "symbol": "ARBUSDT",
+    "min": 247,
+    "raw": 247,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_mund850d_j37xw3zx",
+    "symbol": "ADAUSDT",
+    "min": 21,
+    "raw": 21,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munde7i9_rx9x6754",
+    "symbol": "WIFUSDT",
+    "min": 208,
+    "raw": 208,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_mundgdbi_j5s1pvhp",
+    "symbol": "AVAXUSDT",
+    "min": 1,
+    "raw": 1,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_mundih1n_3vzn835y",
+    "symbol": "ETHUSDT",
+    "min": 8,
+    "raw": 8,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_mundmbfu_3mtm09av",
+    "symbol": "FETUSDT",
+    "min": 23,
+    "raw": 23,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_mundodap_wzjx8g6m",
+    "symbol": "VVVUSDT",
+    "min": 19,
+    "raw": 19,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_mundqg1r_24xcnzwj",
+    "symbol": "ONDOUSDT",
+    "min": 10,
+    "raw": 10,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_mundsj54_l9dcyya8",
+    "symbol": "ENAUSDT",
+    "min": 21,
+    "raw": 21,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munduhvc_ky1om77r",
+    "symbol": "WLDUSDC",
+    "min": 103,
+    "raw": 103,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_mundwpob_0h09azv5",
+    "symbol": "CRVUSDC",
+    "min": 133,
+    "raw": 133,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_mune0omd_xc1jxer1",
+    "symbol": "OPUSDT",
+    "min": 389,
+    "raw": 389,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_mune2ya6_q7b7qnzo",
+    "symbol": "DOGEUSDC",
+    "min": 54,
+    "raw": 54,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_mune76yx_mns3xo97",
+    "symbol": "AAVEUSDT",
+    "min": 1,
+    "raw": 1,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munebiwu_bfdos16o",
+    "symbol": "ZECUSDT",
+    "min": 4,
+    "raw": 4,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munehi5g_zicwr5yp",
+    "symbol": "HBARUSDT",
+    "min": 50,
+    "raw": 50,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munejtvz_csgmw1p1",
+    "symbol": "INJUSDT",
+    "min": 7,
+    "raw": 7,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munelyw7_1r1wjzft",
+    "symbol": "DOTUSDT",
+    "min": 42,
+    "raw": 42,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munenx3s_sd7z9qfm",
+    "symbol": "ARBUSDC",
+    "min": 245,
+    "raw": 245,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_muneq4mc_3ts0n87j",
+    "symbol": "TIAUSDC",
+    "min": 12,
+    "raw": 12,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munes65d_fglexo9u",
+    "symbol": "ARBUSDT",
+    "min": 244,
+    "raw": 244,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munew8fu_q1sxmpds",
+    "symbol": "ADAUSDT",
+    "min": 21,
+    "raw": 21,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_muneyoms_xgsgyy1w",
+    "symbol": "WIFUSDT",
+    "min": 206,
+    "raw": 206,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munf372x_uwtxpnzi",
+    "symbol": "AVAXUSDT",
+    "min": 1,
+    "raw": 1,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munf7iqa_imh6nlgj",
+    "symbol": "VVVUSDT",
+    "min": 19,
+    "raw": 19,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munfc6nd_ano5g60s",
+    "symbol": "DOGEUSDC",
+    "min": 54,
+    "raw": 54,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munfe5c4_ewofrvu4",
+    "symbol": "TAOUSDT",
+    "min": 17,
+    "raw": 17,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munfk7yd_lpr74mk0",
+    "symbol": "ETHFIUSDT",
+    "min": 64,
+    "raw": 64,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munfm8tr_ccsucjqb",
+    "symbol": "TIAUSDC",
+    "min": 12,
+    "raw": 12,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munfohyb_y3gd6jed",
+    "symbol": "HBARUSDT",
+    "min": 49,
+    "raw": 49,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munfqgvo_naw8yl8n",
+    "symbol": "NEARUSDT",
+    "min": 1,
+    "raw": 100,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munfuh7t_v0yhx1kw",
+    "symbol": "AAVEUSDT",
+    "min": 1,
+    "raw": 1,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_mung32mp_ghjr2r9a",
+    "symbol": "INJUSDT",
+    "min": 7,
+    "raw": 7,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_mung5313_me6od6ud",
+    "symbol": "ADAUSDT",
+    "min": 21,
+    "raw": 21,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_mung79px_6lj4pv59",
+    "symbol": "RAYSOLUSDT",
+    "min": 27,
+    "raw": 27,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_mung9j10_dh3wx88h",
+    "symbol": "VIRTUALUSDT",
+    "min": 64,
+    "raw": 64,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_mungby26_wa4jkpte",
+    "symbol": "HBARUSDC",
+    "min": 49,
+    "raw": 49,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munge10q_9xmlbuvy",
+    "symbol": "ARBUSDC",
+    "min": 245,
+    "raw": 245,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munggbv4_4srf2aff",
+    "symbol": "ZROUSDT",
+    "min": 29,
+    "raw": 29,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_mungihpt_4574qq0a",
+    "symbol": "DOTUSDT",
+    "min": 42,
+    "raw": 42,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_mungxjqp_gvgbcdiy",
+    "symbol": "ENAUSDT",
+    "min": 21,
+    "raw": 21,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_mungzt52_k3017xxs",
+    "symbol": "FETUSDT",
+    "min": 23,
+    "raw": 23,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munh4893_10xng9yx",
+    "symbol": "FETUSDT",
+    "min": 23,
+    "raw": 23,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munha7bk_bd6tt9wr",
+    "symbol": "TIAUSDC",
+    "min": 12,
+    "raw": 12,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munheehy_h81z8r7g",
+    "symbol": "ETHFIUSDT",
+    "min": 65,
+    "raw": 65,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munhgq8a_2g8p7zmf",
+    "symbol": "CRVUSDC",
+    "min": 129,
+    "raw": 129,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munhjign_5yro721f",
+    "symbol": "VVVUSDT",
+    "min": 19,
+    "raw": 19,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munhlgdo_8cxpgkah",
+    "symbol": "OPUSDT",
+    "min": 386,
+    "raw": 386,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munho6xq_22gimzoz",
+    "symbol": "ARBUSDC",
+    "min": 247,
+    "raw": 247,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munhsjns_s2hgh18v",
+    "symbol": "ARBUSDT",
+    "min": 247,
+    "raw": 247,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munhuvbr_2f96e427",
+    "symbol": "WIFUSDT",
+    "min": 206,
+    "raw": 206,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munhwzo7_4tdzdhgq",
+    "symbol": "POLUSDT",
+    "min": 43,
+    "raw": 43,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_muni350i_6byzvvj8",
+    "symbol": "ZECUSDT",
+    "min": 4,
+    "raw": 4,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_muni5bzk_ghjbb9bp",
+    "symbol": "ADAUSDT",
+    "min": 21,
+    "raw": 21,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_muni7h62_bgpoli57",
+    "symbol": "FETUSDT",
+    "min": 23,
+    "raw": 23,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_muni9rxj_gv0xtl94",
+    "symbol": "SUIUSDC",
+    "min": 43,
+    "raw": 43,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munidv8r_wvhse4sk",
+    "symbol": "INJUSDT",
+    "min": 7,
+    "raw": 7,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munighx5_tu7s1not",
+    "symbol": "ENAUSDT",
+    "min": 20,
+    "raw": 20,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_muniisfl_ynms999y",
+    "symbol": "ETHFIUSDT",
+    "min": 65,
+    "raw": 65,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munimxrx_47b5y48q",
+    "symbol": "ARBUSDT",
+    "min": 246,
+    "raw": 246,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munipa6d_vrvfc38q",
+    "symbol": "VIRTUALUSDT",
+    "min": 65,
+    "raw": 65,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munizu8k_9424ekor",
+    "symbol": "VVVUSDT",
+    "min": 19,
+    "raw": 19,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munj205y_l1c9tatp",
+    "symbol": "BCHUSDT",
+    "min": 17,
+    "raw": 17,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munj968z_m9xb2po8",
+    "symbol": "AVAXUSDT",
+    "min": 1,
+    "raw": 1,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munjfd6p_z5yfx241",
+    "symbol": "BNBUSDC",
+    "min": 1,
+    "raw": 1,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munjhed7_kjge1l22",
+    "symbol": "ADAUSDT",
+    "min": 21,
+    "raw": 21,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  },
+  {
+    "runId": "airun_munjk2do_1bdch0qe",
+    "symbol": "ENAUSDT",
+    "min": 21,
+    "raw": 21,
+    "unitsUnchanged": true,
+    "qtyUnchanged": true,
+    "sideUnchanged": true
+  }
+]

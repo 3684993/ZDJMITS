@@ -1,0 +1,270 @@
+{
+  "asOf": 1790821844493,
+  "identity": {
+    "instanceId": "f708a5cc-2faa-4628-890e-69e90960f474",
+    "pid": 36164,
+    "startedAt": 1790813061802,
+    "host": "0.0.0.0",
+    "port": 8080,
+    "version": "3.9.6",
+    "buildId": "3.9.6-cb7ee5240691050a5370",
+    "artifactHash": "cb7ee5240691050a5370ff3955bd55796f33663c0415e1f527a5cc5559e1e527",
+    "sourceHash": "4d09a29cc66f48f2f7bf3ec56937092b948ac73a1594efb7308c706a7489b257",
+    "startReason": "MANUAL_START",
+    "lanIps": [
+      "192.168.1.50"
+    ],
+    "restartCount": 215
+  },
+  "cohorts": {
+    "h1": {
+      "orders": 13,
+      "notional": {
+        "n": 13,
+        "sum": 588.1534200000001,
+        "min": 5.009600000000001,
+        "p10": 5.0098400000000005,
+        "p50": 5.05008,
+        "p90": 5.164600000000001,
+        "max": 526.7
+      },
+      "notionalBuckets": {
+        ">=200": 1,
+        "4.9-5.5": 11,
+        "5.5-20": 1
+      },
+      "bySide": {
+        "SHORT": 8,
+        "LONG": 5
+      },
+      "byQuote": {
+        "USDT": 10,
+        "USDC": 3
+      },
+      "byStatus": {
+        "REJECTED": 7,
+        "FILLED": 6
+      },
+      "entryFillCount": 7,
+      "exitFillCount": 7,
+      "closedCyclesConserved": 2,
+      "closedCycles": 2
+    },
+    "h6": {
+      "orders": 68,
+      "notional": {
+        "n": 68,
+        "sum": 1596.03152,
+        "min": 4.99842,
+        "p10": 5.0088799999999996,
+        "p50": 5.05612,
+        "p90": 21.44528,
+        "max": 531
+      },
+      "notionalBuckets": {
+        "4.9-5.5": 52,
+        "20-200": 6,
+        "5.5-20": 8,
+        ">=200": 2
+      },
+      "bySide": {
+        "SHORT": 40,
+        "LONG": 28
+      },
+      "byQuote": {
+        "USDT": 49,
+        "USDC": 19
+      },
+      "byStatus": {
+        "FILLED": 40,
+        "REJECTED": 25,
+        "CANCELED": 3
+      },
+      "entryFillCount": 45,
+      "exitFillCount": 10,
+      "closedCyclesConserved": 4,
+      "closedCycles": 4
+    },
+    "h24": {
+      "orders": 259,
+      "notional": {
+        "n": 259,
+        "sum": 48015.220762,
+        "min": 4.99704,
+        "p10": 5.00761,
+        "p50": 5.071440000000001,
+        "p90": 16.023,
+        "max": 42416.36
+      },
+      "notionalBuckets": {
+        "4.9-5.5": 204,
+        "5.5-20": 33,
+        "20-200": 14,
+        ">=200": 8
+      },
+      "bySide": {
+        "SHORT": 151,
+        "LONG": 108
+      },
+      "byQuote": {
+        "USDC": 57,
+        "USDT": 202
+      },
+      "byStatus": {
+        "UNKNOWN": 40,
+        "CANCELED": 17,
+        "FILLED": 125,
+        "REJECTED": 77
+      },
+      "entryFillCount": 172,
+      "exitFillCount": 99,
+      "closedCyclesConserved": 30,
+      "closedCycles": 30
+    },
+    "currentBuild": {
+      "orders": 38,
+      "notional": {
+        "n": 38,
+        "sum": 1352.5501100000001,
+        "min": 4.99842,
+        "p10": 5.009600000000001,
+        "p50": 5.05008,
+        "p90": 21.44528,
+        "max": 531
+      },
+      "notionalBuckets": {
+        "20-200": 3,
+        "4.9-5.5": 29,
+        "5.5-20": 4,
+        ">=200": 2
+      },
+      "bySide": {
+        "SHORT": 20,
+        "LONG": 18
+      },
+      "byQuote": {
+        "USDT": 28,
+        "USDC": 10
+      },
+      "byStatus": {
+        "FILLED": 21,
+        "REJECTED": 16,
+        "CANCELED": 1
+      },
+      "entryFillCount": 22,
+      "exitFillCount": 10,
+      "closedCyclesConserved": 4,
+      "closedCycles": 4
+    }
+  },
+  "positions": {
+    "count": 31,
+    "notional": {
+      "n": 31,
+      "sum": 10881.069237081803,
+      "min": 5.015999999999999,
+      "p10": 5.02929,
+      "p50": 10.298070000000001,
+      "p90": 93.56400000000001,
+      "max": 6626.619
+    },
+    "margin": {
+      "n": 31,
+      "sum": 799.6654223276654,
+      "min": 0.41953333333333337,
+      "p10": 0.6269999999999999,
+      "p50": 1.1947698880266668,
+      "p90": 11.695500000000001,
+      "max": 552.21825
+    },
+    "agesHours": {
+      "n": 31,
+      "sum": 1647.3611730555558,
+      "min": 0.7324430555555556,
+      "p10": 1.51172,
+      "p50": 14.672255833333333,
+      "p90": 221.80510222222222,
+      "max": 285.5319891666667
+    },
+    "unknownOpenedAt": 0,
+    "bySide": {
+      "LONG": 10,
+      "SHORT": 21
+    }
+  },
+  "runs": {
+    "PLACE_SHORT": 269,
+    "PLACE_LONG": 174,
+    "null": 9
+  },
+  "newRuns": {
+    "PLACE_SHORT": 36,
+    "PLACE_LONG": 25,
+    "FAILED": 1,
+    "RUNNING": 1
+  },
+  "newOrders": 38,
+  "events": {
+    "ENTRY_ORDER_HISTORICAL_VERIFY_FAILED": 24,
+    "ENTRY_ORDER_NO_ACTIVE_RISK_EVIDENCE_FAILED": 7,
+    "ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED": 804,
+    "ENTRY_ORDER_POSITION_ATTRIBUTION_UNRESOLVED": 36,
+    "TP_REPAIR_STARTED": 25,
+    "TP_TARGET_SELECTED": 25,
+    "TP_SUBMISSION_PREPARED": 24,
+    "TP_PROTECTED": 20,
+    "AI_EXIT_FACTS_INCOMPLETE": 11735,
+    "ENTRY_ECONOMIC_ADMISSION_EVALUATED": 59,
+    "PORTFOLIO_RISK_ADMISSION_EVALUATED": 59,
+    "TRADE_PLAN_PERSISTED": 54,
+    "ENTRY_RESERVATION_CREATED": 54,
+    "ENTRY_INTENT_CREATED": 54,
+    "FINAL_ORDER_RISK_EVALUATED": 141,
+    "ENTRY_EXECUTION_PERMIT_EVALUATED": 141,
+    "ENTRY_SUBMIT_ATTEMPTED": 24,
+    "ENTRY_ORDER_CREATED": 22,
+    "ENTRY_FILLED": 21,
+    "ENTRY_ORDER_BLOCKED": 16,
+    "ENTRY_EXECUTION_WAITING": 16,
+    "ENTRY_EXECUTION_WAIT_TERMINATED": 13,
+    "ENTRY_ORDER_FILL_ATTRIBUTION_REVISED": 1,
+    "ENTRY_DECISION_BLOCKED": 3,
+    "CANDIDATE_REJECTED": 5,
+    "ENTRY_ANALYSIS_FAILED": 6,
+    "ENTRY_ORDER_TTL_CLOSED": 2,
+    "ENTRY_DATA_ERROR": 2,
+    "ENTRY_ORDER_ACTIVE_RESTORED": 1,
+    "TP_REPAIR_FAILED": 5,
+    "ENTRY_ORDER_MANAGEMENT_UNVERIFIED": 1,
+    "AI_EXIT_PLAN_UNPROVEN": 184,
+    "ENTRY_ADMISSION_BLOCKED": 1,
+    "TP_SUBMISSION_NOT_SENT": 4,
+    "ENTRY_ADMISSION_RESUMED": 1
+  },
+  "blockers": {
+    "JIT_BLOCKED:MARKET_QUALITY_NOT_ADMITTED": 8,
+    "[\"CANDIDATE_QUANTITY_BELOW_LEGAL_MINIMUM:units=384<385\"]": 1,
+    "CANDIDATE_QUANTITY_BELOW_LEGAL_MINIMUM:units=384<385": 1,
+    "JIT_BLOCKED:ORDER_BOOK_STALE": 1,
+    "JIT_BLOCKED:MARKET_DATA_STALE": 3,
+    "JIT_BLOCKED:EXCHANGE_MINIMUM_NOT_MET": 1,
+    "DATA_ERROR: QUOTE_STALE": 2,
+    "[\"CANDIDATE_QUANTITY_BELOW_LEGAL_MINIMUM:units=245<246\"]": 1,
+    "CANDIDATE_QUANTITY_BELOW_LEGAL_MINIMUM:units=245<246": 1,
+    "POST_ONLY_RETRY_BLOCKED:DATA_ERROR: QUOTE_STALE": 1,
+    "[\"CANDIDATE_QUANTITY_BELOW_LEGAL_MINIMUM:units=389<390\"]": 1,
+    "CANDIDATE_QUANTITY_BELOW_LEGAL_MINIMUM:units=389<390": 1,
+    "POST_ONLY_RETRY_BLOCKED:QUOTE_NOT_REFRESHED_OR_OUTSIDE_AUTHORIZATION": 1,
+    "BINANCE_EGRESS_UNAVAILABLE": 1,
+    "JIT_BLOCKED:BINANCE_EGRESS_UNAVAILABLE": 1
+  },
+  "closedNet": {
+    "n": 0,
+    "sum": 0,
+    "min": null,
+    "p10": null,
+    "p50": null,
+    "p90": null,
+    "max": null
+  }
+}

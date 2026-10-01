@@ -1,0 +1,4959 @@
+{
+  "asOf": 1790721171425,
+  "shortFlipDefinition": "ADJACENT_SAME_SYMBOL_DECISIONS_WITHIN_30_MINUTES",
+  "eligiblePairs": 8,
+  "flipCount": 1,
+  "flips": [
+    {
+      "symbol": "ENAUSDT",
+      "fromRun": "airun_mulbcmrn_egcgayzg",
+      "toRun": "airun_mulbgbth_09gmyc3y",
+      "minutes": 2.8095666666666665,
+      "from": "LONG",
+      "to": "SHORT"
+    }
+  ],
+  "regimes": {
+    "UNKNOWN": {
+      "count": 998,
+      "returns": {
+        "15m": {
+          "n": 170,
+          "p50": -0.09226843688108222,
+          "p90": 0.7018298743057594,
+          "mean": -0.07623943572816719,
+          "hitRate": 0.4647058823529412
+        },
+        "1h": {
+          "n": 31,
+          "p50": -0.2721297709923576,
+          "p90": 0.8797910510764062,
+          "mean": -0.42137293204956655,
+          "hitRate": 0.25806451612903225
+        },
+        "4h": {
+          "n": 14,
+          "p50": 0.0778030396021645,
+          "p90": 2.6544899507985553,
+          "mean": -0.21385312376415694,
+          "hitRate": 0.6428571428571429
+        },
+        "12h": {
+          "n": 18,
+          "p50": -0.0727842457567629,
+          "p90": 4.450959488272943,
+          "mean": 1.0354640116104763,
+          "hitRate": 0.5
+        },
+        "24h": {
+          "n": 26,
+          "p50": 0.4250085043554841,
+          "p90": 4.304320806453122,
+          "mean": -0.18982312860012676,
+          "hitRate": 0.5769230769230769
+        }
+      }
+    },
+    "TREND": {
+      "count": 198,
+      "returns": {
+        "15m": {
+          "n": 53,
+          "p50": -0.10291957924581929,
+          "p90": 0.409434858458968,
+          "mean": -0.16265536676359668,
+          "hitRate": 0.37735849056603776
+        },
+        "1h": {
+          "n": 28,
+          "p50": -0.06772445820433237,
+          "p90": 0.9078208383575981,
+          "mean": -0.106141608446387,
+          "hitRate": 0.5
+        },
+        "4h": {
+          "n": 5,
+          "p50": 0.30565047121229316,
+          "p90": 0.5106794603495723,
+          "mean": 0.2923177878186699,
+          "hitRate": 0.6
+        },
+        "12h": {
+          "n": 10,
+          "p50": -3.025382922477038,
+          "p90": -1.0833415622404363,
+          "mean": -3.439423779008962,
+          "hitRate": 0.1
+        },
+        "24h": {
+          "n": 0,
+          "p50": null,
+          "p90": null,
+          "mean": null,
+          "hitRate": null
+        }
+      }
+    },
+    "RANGE": {
+      "count": 293,
+      "returns": {
+        "15m": {
+          "n": 103,
+          "p50": -0.0064789918688523684,
+          "p90": 0.6684670721802233,
+          "mean": 0.00039531279642643764,
+          "hitRate": 0.49514563106796117
+        },
+        "1h": {
+          "n": 49,
+          "p50": -0.0011793305304097501,
+          "p90": 1.0973206200394103,
+          "mean": 0.026714999976202577,
+          "hitRate": 0.4897959183673469
+        },
+        "4h": {
+          "n": 11,
+          "p50": -1.183701343045751,
+          "p90": 0.9383931437620285,
+          "mean": -1.306986852544323,
+          "hitRate": 0.2727272727272727
+        },
+        "12h": {
+          "n": 7,
+          "p50": -0.7055059952038256,
+          "p90": 0.5545559080095019,
+          "mean": -0.6180558337733376,
+          "hitRate": 0.42857142857142855
+        },
+        "24h": {
+          "n": 0,
+          "p50": null,
+          "p90": null,
+          "mean": null,
+          "hitRate": null
+        }
+      }
+    }
+  },
+  "scoutHandoffCounts": {
+    "false": 212,
+    "undefined": 4
+  },
+  "newBuildHoldingHours": {
+    "n": 6,
+    "p50": 3.0815538888888887,
+    "p90": 3.9664966666666666,
+    "mean": 3.36744875,
+    "hitRate": 1
+  },
+  "newOpenSources": {
+    "STRUCTURE_15M": 1,
+    "AI": 2,
+    "FIXED_PROFITABLE": 3
+  },
+  "perRunCycleLinks": [
+    {
+      "runId": "airun_mumvpqsp_nesvaqmt",
+      "symbol": "ETHUSDT",
+      "entryIntentId": "intent_mumvrayw_t929emhk",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mumvtsap_1ozt17io",
+      "symbol": "ZECUSDT",
+      "entryIntentId": "intent_mumvvezl_6dgwpxha",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mumvvy6e_ie6pqqio",
+      "symbol": "NEARUSDT",
+      "entryIntentId": "intent_mumvxhp7_jm3vgoma",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mumvxzhw_rpu9mdl7",
+      "symbol": "HBARUSDC",
+      "entryIntentId": "intent_mumvzj2d_gszye5wy",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mumw05u2_hk46qi2n",
+      "symbol": "CRVUSDC",
+      "entryIntentId": "intent_mumw1o0t_4klpniev",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mumw425j_ldjpy6ce",
+      "symbol": "BCHUSDT",
+      "entryIntentId": "intent_mumw5n1w_4zuvm4iu",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mumw6bws_nf0yrsh9",
+      "symbol": "DOGEUSDC",
+      "entryIntentId": "intent_mumw7u1m_k661zeon",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mumwa3s1_1iu9fuju",
+      "symbol": "FETUSDT",
+      "entryIntentId": "intent_mumwblqm_ypwmduif",
+      "records": [
+        {
+          "tradeId": "trade_cycle_entry_intent_mu95o9o8_c4nzb3h3",
+          "cycleId": "cycle_entry_intent_mu95o9o8_c4nzb3h3",
+          "entryIntentId": "intent_mu95o9o8_c4nzb3h3",
+          "entryRunId": "airun_mu95n0q7_l2fe30l7",
+          "entryLots": [
+            {
+              "lotId": "cycle_entry_intent_mu95o9o8_c4nzb3h3",
+              "intentId": null,
+              "orderId": "334197090",
+              "exchangeOrderId": "334197090",
+              "quantity": 99,
+              "averagePrice": 0.1870494949494949,
+              "filledAt": 1789868823704,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00370358,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "FIFO"
+            },
+            {
+              "lotId": "entry_intent_mu95o9o8_c4nzb3h3",
+              "intentId": "intent_mu95o9o8_c4nzb3h3",
+              "orderId": "entry_intent_mu95o9o8_c4nzb3h3",
+              "exchangeOrderId": "334197090",
+              "quantity": 76,
+              "averagePrice": 0.1762,
+              "filledAt": 1789868823704,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": null,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mumwblqm_ypwmduif",
+              "intentId": "intent_mumwblqm_ypwmduif",
+              "orderId": "entry_intent_mumwblqm_ypwmduif",
+              "exchangeOrderId": "338007100",
+              "quantity": 23,
+              "averagePrice": 0.2229,
+              "filledAt": 1790699740956,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00102534,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            }
+          ],
+          "status": "OPEN",
+          "openedAt": 1789868823704,
+          "closedAt": null,
+          "durationMs": null,
+          "tradingNetPnlExFunding": null,
+          "netPnl": null,
+          "fundingStatus": "UNKNOWN",
+          "ledger": "CONSERVED"
+        }
+      ],
+      "attribution": "CYCLE_MATCH_NOT_PER_LOT_PNL"
+    },
+    {
+      "runId": "airun_mumwe3jf_hy0t9m8l",
+      "symbol": "ZROUSDT",
+      "entryIntentId": "intent_mumwfobt_m1ca9x41",
+      "records": [
+        {
+          "tradeId": "trade_cycle_entry_intent_mumteqnz_rfjx4q0z",
+          "cycleId": "cycle_entry_intent_mumteqnz_rfjx4q0z",
+          "entryIntentId": "intent_mumteqnz_rfjx4q0z",
+          "entryRunId": "airun_mumtd2jo_lz9vr9hu",
+          "entryLots": [
+            {
+              "lotId": "cycle_entry_intent_mumteqnz_rfjx4q0z",
+              "intentId": null,
+              "orderId": "258987351",
+              "exchangeOrderId": "258987351",
+              "quantity": 9.3,
+              "averagePrice": 1.6526817204301076,
+              "filledAt": 1790694772686,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00307397,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "FIFO"
+            },
+            {
+              "lotId": "entry_intent_mumteqnz_rfjx4q0z",
+              "intentId": "intent_mumteqnz_rfjx4q0z",
+              "orderId": "entry_intent_mumteqnz_rfjx4q0z",
+              "exchangeOrderId": "258987351",
+              "quantity": 3,
+              "averagePrice": 1.7058,
+              "filledAt": 1790694772686,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00102348,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mumwfobt_m1ca9x41",
+              "intentId": "intent_mumwfobt_m1ca9x41",
+              "orderId": "entry_intent_mumwfobt_m1ca9x41",
+              "exchangeOrderId": "259010806",
+              "quantity": 3.1,
+              "averagePrice": 1.6474,
+              "filledAt": 1790699956272,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00102138,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun7m49n_ji51x7bh",
+              "intentId": "intent_mun7m49n_ji51x7bh",
+              "orderId": "entry_intent_mun7m49n_ji51x7bh",
+              "exchangeOrderId": "259096770",
+              "quantity": 3.2,
+              "averagePrice": 1.608,
+              "filledAt": 1790718612457,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00102911,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            }
+          ],
+          "status": "OPEN",
+          "openedAt": 1790694772686,
+          "closedAt": null,
+          "durationMs": null,
+          "tradingNetPnlExFunding": null,
+          "netPnl": null,
+          "fundingStatus": "UNKNOWN",
+          "ledger": "CONSERVED"
+        }
+      ],
+      "attribution": "CYCLE_MATCH_NOT_PER_LOT_PNL"
+    },
+    {
+      "runId": "airun_mumwg7yc_xxe47she",
+      "symbol": "APTUSDT",
+      "entryIntentId": "intent_mumwhqx0_jap8269o",
+      "records": [
+        {
+          "tradeId": "trade_cycle_entry_intent_mugfaltp_ddydvxsb",
+          "cycleId": "cycle_entry_intent_mugfaltp_ddydvxsb",
+          "entryIntentId": "intent_mugfaltp_ddydvxsb",
+          "entryRunId": "airun_mugf9f44_3fap6jvx",
+          "entryLots": [
+            {
+              "lotId": "cycle_entry_intent_mugfaltp_ddydvxsb",
+              "intentId": null,
+              "orderId": "479266088",
+              "exchangeOrderId": "479266088",
+              "quantity": 10,
+              "averagePrice": 0.7952,
+              "filledAt": 1790308238629,
+              "exitAllocatedQuantity": 24.6,
+              "exitAllocatedNotional": 19.92354,
+              "allocatedEntryFee": 0.00159039,
+              "allocatedExitFee": 0.003984691063,
+              "allocatedGrossRealizedPnl": 0.11202645,
+              "allocationSource": "FIFO"
+            },
+            {
+              "lotId": "entry_intent_mugfaltp_ddydvxsb",
+              "intentId": "intent_mugfaltp_ddydvxsb",
+              "orderId": "entry_intent_mugfaltp_ddydvxsb",
+              "exchangeOrderId": "479266088",
+              "quantity": 10,
+              "averagePrice": 0.7952,
+              "filledAt": 1790308238824,
+              "exitAllocatedQuantity": 10,
+              "exitAllocatedNotional": 8.099,
+              "allocatedEntryFee": null,
+              "allocatedExitFee": 0.001619793027,
+              "allocatedGrossRealizedPnl": 0.045539207,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mumwhqx0_jap8269o",
+              "intentId": "intent_mumwhqx0_jap8269o",
+              "orderId": "entry_intent_mumwhqx0_jap8269o",
+              "exchangeOrderId": "480996837",
+              "quantity": 6.2,
+              "averagePrice": 0.8154,
+              "filledAt": 1790699930585,
+              "exitAllocatedQuantity": 6.2,
+              "exitAllocatedNotional": 5.02138,
+              "allocatedEntryFee": 0.00101109,
+              "allocatedExitFee": 0.00100427591,
+              "allocatedGrossRealizedPnl": 0.028234313,
+              "allocationSource": "EXPLICIT"
+            }
+          ],
+          "status": "INCOMPLETE",
+          "openedAt": 1790308238629,
+          "closedAt": null,
+          "durationMs": null,
+          "tradingNetPnlExFunding": 0.17658973000000003,
+          "netPnl": null,
+          "fundingStatus": "UNKNOWN",
+          "ledger": "LEDGER_INCONSISTENT"
+        }
+      ],
+      "attribution": "CYCLE_MATCH_NOT_PER_LOT_PNL"
+    },
+    {
+      "runId": "airun_mumwm3t6_58unbef0",
+      "symbol": "HBARUSDT",
+      "entryIntentId": "intent_mumwno1s_mbzu4s5q",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mumwo3qn_1cynq559",
+      "symbol": "POLUSDT",
+      "entryIntentId": "intent_mumwpnyt_z8823xqe",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mumwqjvd_tc3x9k3u",
+      "symbol": "WLDUSDC",
+      "entryIntentId": "intent_mumws1fb_uju0wu3b",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mumwu7zg_23exhbul",
+      "symbol": "TIAUSDC",
+      "entryIntentId": "intent_mumwvs3f_qus906fe",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mumwwau7_hfvu6dbt",
+      "symbol": "VVVUSDT",
+      "entryIntentId": "intent_mumwxv6y_dm51vge3",
+      "records": [
+        {
+          "tradeId": "trade_cycle_entry_intent_mumtlbqy_xazp2js8",
+          "cycleId": "cycle_entry_intent_mumtlbqy_xazp2js8",
+          "entryIntentId": "intent_mumtlbqy_xazp2js8",
+          "entryRunId": "airun_mumtjo6c_0skdc794",
+          "entryLots": [
+            {
+              "lotId": "cycle_entry_intent_mumtlbqy_xazp2js8",
+              "intentId": null,
+              "orderId": "771960537",
+              "exchangeOrderId": "771960537",
+              "quantity": 0.19,
+              "averagePrice": 26.995,
+              "filledAt": 1790695270898,
+              "exitAllocatedQuantity": 0.19,
+              "exitAllocatedNotional": 5.08972,
+              "allocatedEntryFee": 0.00102581,
+              "allocatedExitFee": 0.001017939615,
+              "allocatedGrossRealizedPnl": 0.032395,
+              "allocationSource": "FIFO"
+            },
+            {
+              "lotId": "entry_intent_mumtlbqy_xazp2js8",
+              "intentId": "intent_mumtlbqy_xazp2js8",
+              "orderId": "entry_intent_mumtlbqy_xazp2js8",
+              "exchangeOrderId": "771960537",
+              "quantity": 0.19,
+              "averagePrice": 26.995,
+              "filledAt": 1790695270898,
+              "exitAllocatedQuantity": 0.19,
+              "exitAllocatedNotional": 5.08972,
+              "allocatedEntryFee": 0.00102581,
+              "allocatedExitFee": 0.001017940385,
+              "allocatedGrossRealizedPnl": 0.032395,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mumwxv6y_dm51vge3",
+              "intentId": "intent_mumwxv6y_dm51vge3",
+              "orderId": "entry_intent_mumwxv6y_dm51vge3",
+              "exchangeOrderId": "771985332",
+              "quantity": 0.19,
+              "averagePrice": 26.922,
+              "filledAt": 1790700680255,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00102303,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            }
+          ],
+          "status": "CLOSED",
+          "openedAt": 1790695270898,
+          "closedAt": 1790700982215,
+          "durationMs": 5711317,
+          "tradingNetPnlExFunding": 0.06070528,
+          "netPnl": null,
+          "fundingStatus": "UNKNOWN",
+          "ledger": "CONSERVED"
+        }
+      ],
+      "attribution": "CYCLE_MATCH_NOT_PER_LOT_PNL"
+    },
+    {
+      "runId": "airun_mumwyis2_ksaegt67",
+      "symbol": "XLMUSDT",
+      "entryIntentId": "intent_mumx02rq_9gyjf00z",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mumx2gd9_lkyyxnmt",
+      "symbol": "XRPUSDC",
+      "entryIntentId": "intent_mumx3zwe_fc48zdns",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mumx4rta_tuvdtvkb",
+      "symbol": "SUIUSDC",
+      "entryIntentId": "intent_mumx6cjl_do592nbt",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mumx8jjy_d51mnc5j",
+      "symbol": "OPUSDT",
+      "entryIntentId": "intent_mumx9yu4_8kgd5rzr",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mumxhx5n_9c9y7sa0",
+      "symbol": "BRUSDT",
+      "entryIntentId": "intent_mumxjilx_y08ew6gn",
+      "records": [
+        {
+          "tradeId": "trade_cycle_entry_intent_mulmutef_szwua37l",
+          "cycleId": "cycle_entry_intent_mulmutef_szwua37l",
+          "entryIntentId": "intent_mulmutef_szwua37l",
+          "entryRunId": "airun_mulmtg3e_g8bnmlvq",
+          "entryLots": [
+            {
+              "lotId": "cycle_entry_intent_mulmutef_szwua37l",
+              "intentId": null,
+              "orderId": "309752346",
+              "exchangeOrderId": "309752346",
+              "quantity": 6,
+              "averagePrice": 0.89626,
+              "filledAt": 1790623307692,
+              "exitAllocatedQuantity": 6,
+              "exitAllocatedNotional": 5.04,
+              "allocatedEntryFee": 0.00107551,
+              "allocatedExitFee": 0.001008,
+              "allocatedGrossRealizedPnl": 0.17205,
+              "allocationSource": "FIFO"
+            },
+            {
+              "lotId": "entry_intent_mulmutef_szwua37l",
+              "intentId": "intent_mulmutef_szwua37l",
+              "orderId": "entry_intent_mulmutef_szwua37l",
+              "exchangeOrderId": "309752346",
+              "quantity": 6,
+              "averagePrice": 0.89626,
+              "filledAt": 1790623307692,
+              "exitAllocatedQuantity": 6,
+              "exitAllocatedNotional": 5.04,
+              "allocatedEntryFee": null,
+              "allocatedExitFee": 0.001008,
+              "allocatedGrossRealizedPnl": 0.17205,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mumxjilx_y08ew6gn",
+              "intentId": "intent_mumxjilx_y08ew6gn",
+              "orderId": "entry_intent_mumxjilx_y08ew6gn",
+              "exchangeOrderId": "310098470",
+              "quantity": 6,
+              "averagePrice": 0.84109,
+              "filledAt": 1790701711155,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.0010093,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            }
+          ],
+          "status": "CLOSED",
+          "openedAt": 1790623307692,
+          "closedAt": 1790701757242,
+          "durationMs": 78449550,
+          "tradingNetPnlExFunding": 0.33999918999999995,
+          "netPnl": null,
+          "fundingStatus": "UNKNOWN",
+          "ledger": "CONSERVED"
+        }
+      ],
+      "attribution": "CYCLE_MATCH_NOT_PER_LOT_PNL"
+    },
+    {
+      "runId": "airun_mumxk7l4_6cy2ktwp",
+      "symbol": "PENGUUSDT",
+      "entryIntentId": "intent_mumxltr9_fe1fair1",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mumxmcdx_fc0l9aj7",
+      "symbol": "ARBUSDC",
+      "entryIntentId": "intent_mumxnwjk_2c40zk4b",
+      "records": [
+        {
+          "tradeId": "trade_cycle_entry_intent_mum9dga4_4ijsxn0p",
+          "cycleId": "cycle_entry_intent_mum9dga4_4ijsxn0p",
+          "entryIntentId": "intent_mum9dga4_4ijsxn0p",
+          "entryRunId": "airun_mum9c4y0_qotyykyo",
+          "entryLots": [
+            {
+              "lotId": "cycle_entry_intent_mum9dga4_4ijsxn0p",
+              "intentId": null,
+              "orderId": "174428424",
+              "exchangeOrderId": "174428424",
+              "quantity": 73.8,
+              "averagePrice": 0.20397466124661248,
+              "filledAt": 1790661160261,
+              "exitAllocatedQuantity": 73.8,
+              "exitAllocatedNotional": 14.9814,
+              "allocatedEntryFee": 0,
+              "allocatedExitFee": 0,
+              "allocatedGrossRealizedPnl": 0.07192999,
+              "allocationSource": "FIFO"
+            },
+            {
+              "lotId": "entry_intent_mum9dga4_4ijsxn0p",
+              "intentId": "intent_mum9dga4_4ijsxn0p",
+              "orderId": "entry_intent_mum9dga4_4ijsxn0p",
+              "exchangeOrderId": "174428424",
+              "quantity": 25.3,
+              "averagePrice": 0.1986,
+              "filledAt": 1790661160261,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mumt7jdk_7glm7u5f",
+              "intentId": "intent_mumt7jdk_7glm7u5f",
+              "orderId": "entry_intent_mumt7jdk_7glm7u5f",
+              "exchangeOrderId": "174592037",
+              "quantity": 24,
+              "averagePrice": 0.2089,
+              "filledAt": 1790694412471,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mumxnwjk_2c40zk4b",
+              "intentId": "intent_mumxnwjk_2c40zk4b",
+              "orderId": "entry_intent_mumxnwjk_2c40zk4b",
+              "exchangeOrderId": "174625447",
+              "quantity": 24.5,
+              "averagePrice": 0.20470000000000002,
+              "filledAt": 1790701895330,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            }
+          ],
+          "status": "CLOSED",
+          "openedAt": 1790661160261,
+          "closedAt": 1790704361090,
+          "durationMs": 43200829,
+          "tradingNetPnlExFunding": 0.07192999,
+          "netPnl": null,
+          "fundingStatus": "UNKNOWN",
+          "ledger": "CONSERVED"
+        }
+      ],
+      "attribution": "CYCLE_MATCH_NOT_PER_LOT_PNL"
+    },
+    {
+      "runId": "airun_mumxoflh_epigob5l",
+      "symbol": "ETHUSDT",
+      "entryIntentId": "intent_mumxq26q_z1lnt5tm",
+      "records": [
+        {
+          "tradeId": "trade_cycle_entry_intent_mumxq26q_z1lnt5tm",
+          "cycleId": "cycle_entry_intent_mumxq26q_z1lnt5tm",
+          "entryIntentId": "intent_mumxq26q_z1lnt5tm",
+          "entryRunId": "airun_mumxoflh_epigob5l",
+          "entryLots": [
+            {
+              "lotId": "cycle_entry_intent_mumxq26q_z1lnt5tm",
+              "intentId": null,
+              "orderId": "16810164584",
+              "exchangeOrderId": "16810164584",
+              "quantity": 0.008,
+              "averagePrice": 2676.87,
+              "filledAt": 1790702020006,
+              "exitAllocatedQuantity": 0.008,
+              "exitAllocatedNotional": 21.35968,
+              "allocatedEntryFee": 0.00428299,
+              "allocatedExitFee": 0.00427193,
+              "allocatedGrossRealizedPnl": 0.05528,
+              "allocationSource": "FIFO"
+            },
+            {
+              "lotId": "entry_intent_mumxq26q_z1lnt5tm",
+              "intentId": "intent_mumxq26q_z1lnt5tm",
+              "orderId": "entry_intent_mumxq26q_z1lnt5tm",
+              "exchangeOrderId": "16810164584",
+              "quantity": 0.008,
+              "averagePrice": 2676.87,
+              "filledAt": 1790702020006,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00428299,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            }
+          ],
+          "status": "CLOSED",
+          "openedAt": 1790702020006,
+          "closedAt": 1790704269249,
+          "durationMs": 2249243,
+          "tradingNetPnlExFunding": 0.04672508,
+          "netPnl": null,
+          "fundingStatus": "UNKNOWN",
+          "ledger": "CONSERVED"
+        }
+      ],
+      "attribution": "CYCLE_MATCH_NOT_PER_LOT_PNL"
+    },
+    {
+      "runId": "airun_mumxs985_e5og1ft3",
+      "symbol": "NEARUSDT",
+      "entryIntentId": "intent_mumxttqb_iu7obay9",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mumxy20d_3f9npgmd",
+      "symbol": "CRVUSDT",
+      "entryIntentId": "intent_mumxzl9c_h98ascoy",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mumy5kvp_rso6eiab",
+      "symbol": "FETUSDT",
+      "entryIntentId": "intent_mumy75dv_4ekxqrbd",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mumy9crs_akqaubj0",
+      "symbol": "AVAXUSDT",
+      "entryIntentId": "intent_mumyax4w_9pj3v4py",
+      "records": [
+        {
+          "tradeId": "trade_cycle_entry_intent_mu8l1mm0_rcobpxad",
+          "cycleId": "cycle_entry_intent_mu8l1mm0_rcobpxad",
+          "entryIntentId": "intent_mu8l1mm0_rcobpxad",
+          "entryRunId": "airun_mu8l0eu9_cwq1x4s0",
+          "entryLots": [
+            {
+              "lotId": "cycle_entry_intent_mu8l1mm0_rcobpxad",
+              "intentId": null,
+              "orderId": "532553883",
+              "exchangeOrderId": "532553883",
+              "quantity": 501,
+              "averagePrice": 9.809231536926147,
+              "filledAt": 1789834245678,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.982885,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "FIFO"
+            },
+            {
+              "lotId": "entry_intent_mu8l1mm0_rcobpxad",
+              "intentId": "intent_mu8l1mm0_rcobpxad",
+              "orderId": "entry_intent_mu8l1mm0_rcobpxad",
+              "exchangeOrderId": "532553883",
+              "quantity": 400,
+              "averagePrice": 9.483,
+              "filledAt": 1789834249640,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": null,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mumyax4w_9pj3v4py",
+              "intentId": "intent_mumyax4w_9pj3v4py",
+              "orderId": "entry_intent_mumyax4w_9pj3v4py",
+              "exchangeOrderId": "536861793",
+              "quantity": 100,
+              "averagePrice": 11.1,
+              "filledAt": 1790702995400,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.222,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun0mzfv_7cppnra4",
+              "intentId": "intent_mun0mzfv_7cppnra4",
+              "orderId": "entry_intent_mun0mzfv_7cppnra4",
+              "exchangeOrderId": "536881041",
+              "quantity": 1,
+              "averagePrice": 11.225,
+              "filledAt": 1790707032121,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.002245,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            }
+          ],
+          "status": "OPEN",
+          "openedAt": 1789834245678,
+          "closedAt": null,
+          "durationMs": null,
+          "tradingNetPnlExFunding": null,
+          "netPnl": null,
+          "fundingStatus": "UNKNOWN",
+          "ledger": "CONSERVED"
+        }
+      ],
+      "attribution": "CYCLE_MATCH_NOT_PER_LOT_PNL"
+    },
+    {
+      "runId": "airun_mumyirjx_ywkkxrbu",
+      "symbol": "RAYSOLUSDT",
+      "entryIntentId": "intent_mumyk9td_zenx154d",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mumykzcw_g8ssmk7o",
+      "symbol": "ZROUSDT",
+      "entryIntentId": "intent_mumymh2w_v6c3puey",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mumymx0b_p2gj5uwr",
+      "symbol": "ENAUSDT",
+      "entryIntentId": "intent_mumyobtl_2khpckh3",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mumyoxgi_2ar7c3fr",
+      "symbol": "TIAUSDC",
+      "entryIntentId": "intent_mumyqg0u_6aykfjpp",
+      "records": [
+        {
+          "tradeId": "trade_cycle_entry_intent_mumaz868_e9vl16qz",
+          "cycleId": "cycle_entry_intent_mumaz868_e9vl16qz",
+          "entryIntentId": "intent_mumaz868_e9vl16qz",
+          "entryRunId": "airun_mumaxqtr_918f0a1p",
+          "entryLots": [
+            {
+              "lotId": "cycle_entry_intent_mumaz868_e9vl16qz",
+              "intentId": null,
+              "orderId": "138414900",
+              "exchangeOrderId": "138414900",
+              "quantity": 12,
+              "averagePrice": 0.4368,
+              "filledAt": 1790663922813,
+              "exitAllocatedQuantity": 12,
+              "exitAllocatedNotional": 5.2308,
+              "allocatedEntryFee": 0,
+              "allocatedExitFee": 0,
+              "allocatedGrossRealizedPnl": 0.024,
+              "allocationSource": "FIFO"
+            },
+            {
+              "lotId": "entry_intent_mumaz868_e9vl16qz",
+              "intentId": "intent_mumaz868_e9vl16qz",
+              "orderId": "entry_intent_mumaz868_e9vl16qz",
+              "exchangeOrderId": "138414900",
+              "quantity": 12,
+              "averagePrice": 0.4368,
+              "filledAt": 1790663922813,
+              "exitAllocatedQuantity": 12,
+              "exitAllocatedNotional": 5.2308,
+              "allocatedEntryFee": 0,
+              "allocatedExitFee": 0,
+              "allocatedGrossRealizedPnl": 0.024,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mumyqg0u_6aykfjpp",
+              "intentId": "intent_mumyqg0u_6aykfjpp",
+              "orderId": "entry_intent_mumyqg0u_6aykfjpp",
+              "exchangeOrderId": "138570940",
+              "quantity": 12,
+              "averagePrice": 0.439,
+              "filledAt": 1790703690270,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            }
+          ],
+          "status": "CLOSED",
+          "openedAt": 1790663922813,
+          "closedAt": 1790704345233,
+          "durationMs": 40422420,
+          "tradingNetPnlExFunding": 0.048,
+          "netPnl": null,
+          "fundingStatus": "UNKNOWN",
+          "ledger": "CONSERVED"
+        }
+      ],
+      "attribution": "CYCLE_MATCH_NOT_PER_LOT_PNL"
+    },
+    {
+      "runId": "airun_mumyvyl5_0cssit2c",
+      "symbol": "AAVEUSDT",
+      "entryIntentId": "intent_mumyxjgo_vyyoovwd",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mumyy4gt_o7nq99ox",
+      "symbol": "XRPUSDC",
+      "entryIntentId": "intent_mumyznlu_r13arb1g",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mumz0cn2_2mjpilho",
+      "symbol": "WIFUSDT",
+      "entryIntentId": "intent_mumz1x7c_0f6wlvb6",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mumz8233_sspzkkrd",
+      "symbol": "VVVUSDT",
+      "entryIntentId": "intent_mumz9lbr_a51afgpo",
+      "records": [
+        {
+          "tradeId": "trade_cycle_entry_intent_mumz9lbr_a51afgpo",
+          "cycleId": "cycle_entry_intent_mumz9lbr_a51afgpo",
+          "entryIntentId": "intent_mumz9lbr_a51afgpo",
+          "entryRunId": "airun_mumz8233_sspzkkrd",
+          "entryLots": [
+            {
+              "lotId": "cycle_entry_intent_mumz9lbr_a51afgpo",
+              "intentId": null,
+              "orderId": "772006181",
+              "exchangeOrderId": "772006181",
+              "quantity": 0.19,
+              "averagePrice": 26.516999999999996,
+              "filledAt": 1790704586630,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00100764,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "FIFO"
+            },
+            {
+              "lotId": "entry_intent_mumz9lbr_a51afgpo",
+              "intentId": "intent_mumz9lbr_a51afgpo",
+              "orderId": "entry_intent_mumz9lbr_a51afgpo",
+              "exchangeOrderId": "772006181",
+              "quantity": 0.19,
+              "averagePrice": 26.516999999999996,
+              "filledAt": 1790704586630,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00100764,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun1ha8q_xaskswl7",
+              "intentId": "intent_mun1ha8q_xaskswl7",
+              "orderId": "entry_intent_mun1ha8q_xaskswl7",
+              "exchangeOrderId": "772024428",
+              "quantity": 0.19,
+              "averagePrice": 27.353,
+              "filledAt": 1790708355433,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.0010394,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun50dvs_ukquwgcd",
+              "intentId": "intent_mun50dvs_ukquwgcd",
+              "orderId": "entry_intent_mun50dvs_ukquwgcd",
+              "exchangeOrderId": "772048657",
+              "quantity": 0.19,
+              "averagePrice": 27.132000000000005,
+              "filledAt": 1790714230225,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00103101,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun6tlz8_ptx6dvxa",
+              "intentId": "intent_mun6tlz8_ptx6dvxa",
+              "orderId": "entry_intent_mun6tlz8_ptx6dvxa",
+              "exchangeOrderId": "772061827",
+              "quantity": 0.19,
+              "averagePrice": 27.020999999999997,
+              "filledAt": 1790717330238,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00102679,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            }
+          ],
+          "status": "OPEN",
+          "openedAt": 1790704586630,
+          "closedAt": null,
+          "durationMs": null,
+          "tradingNetPnlExFunding": null,
+          "netPnl": null,
+          "fundingStatus": "UNKNOWN",
+          "ledger": "CONSERVED"
+        }
+      ],
+      "attribution": "CYCLE_MATCH_NOT_PER_LOT_PNL"
+    },
+    {
+      "runId": "airun_mumza4yc_lofofutq",
+      "symbol": "SUIUSDC",
+      "entryIntentId": "intent_mumzbox4_3j1i5xri",
+      "records": [
+        {
+          "tradeId": "trade_cycle_entry_intent_mugedgac_xpkclvga",
+          "cycleId": "cycle_entry_intent_mugedgac_xpkclvga",
+          "entryIntentId": "intent_mugedgac_xpkclvga",
+          "entryRunId": "airun_mugec98t_isyz4bqx",
+          "entryLots": [
+            {
+              "lotId": "cycle_entry_intent_mugedgac_xpkclvga",
+              "intentId": null,
+              "orderId": "185737183",
+              "exchangeOrderId": "185737183",
+              "quantity": 19,
+              "averagePrice": 1.0661684210526314,
+              "filledAt": 1790306695095,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00364627,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "FIFO"
+            },
+            {
+              "lotId": "entry_intent_mugedgac_xpkclvga",
+              "intentId": "intent_mugedgac_xpkclvga",
+              "orderId": "entry_intent_mugedgac_xpkclvga",
+              "exchangeOrderId": "185737183",
+              "quantity": 10,
+              "averagePrice": 1.0089,
+              "filledAt": 1790306695224,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": null,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mumapzaa_xma1kzsq",
+              "intentId": "intent_mumapzaa_xma1kzsq",
+              "orderId": "entry_intent_mumapzaa_xma1kzsq",
+              "exchangeOrderId": "187290404",
+              "quantity": 4.5,
+              "averagePrice": 1.1289,
+              "filledAt": 1790663421108,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.0009144,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mumzbox4_3j1i5xri",
+              "intentId": "intent_mumzbox4_3j1i5xri",
+              "orderId": "entry_intent_mumzbox4_3j1i5xri",
+              "exchangeOrderId": "187462971",
+              "quantity": 4.5,
+              "averagePrice": 1.1307,
+              "filledAt": 1790704785071,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00091586,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun6zix4_4vnwv3je",
+              "intentId": "intent_mun6zix4_4vnwv3je",
+              "orderId": "entry_intent_mun6zix4_4vnwv3je",
+              "exchangeOrderId": "187517182",
+              "quantity": 4.4,
+              "averagePrice": 1.1506,
+              "filledAt": 1790717601343,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00091127,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            }
+          ],
+          "status": "OPEN",
+          "openedAt": 1790306695095,
+          "closedAt": null,
+          "durationMs": null,
+          "tradingNetPnlExFunding": null,
+          "netPnl": null,
+          "fundingStatus": "UNKNOWN",
+          "ledger": "CONSERVED"
+        }
+      ],
+      "attribution": "CYCLE_MATCH_NOT_PER_LOT_PNL"
+    },
+    {
+      "runId": "airun_mumzhwwq_6m2t9gd8",
+      "symbol": "ONDOUSDT",
+      "entryIntentId": "intent_mumzjgsq_p3j5pvua",
+      "records": [
+        {
+          "tradeId": "trade_cycle_entry_intent_mu83d7ho_tpicfrwf",
+          "cycleId": "cycle_entry_intent_mu83d7ho_tpicfrwf",
+          "entryIntentId": "intent_mu83d7ho_tpicfrwf",
+          "entryRunId": "airun_mu83c1z1_y5v7unir",
+          "entryLots": [
+            {
+              "lotId": "cycle_entry_intent_mu83d7ho_tpicfrwf",
+              "intentId": null,
+              "orderId": "364160254",
+              "exchangeOrderId": "364160254",
+              "quantity": 35,
+              "averagePrice": 0.46248571428571433,
+              "filledAt": 1789804482840,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.0032374,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "FIFO"
+            },
+            {
+              "lotId": "entry_intent_mu83d7ho_tpicfrwf",
+              "intentId": "intent_mu83d7ho_tpicfrwf",
+              "orderId": "entry_intent_mu83d7ho_tpicfrwf",
+              "exchangeOrderId": "364160254",
+              "quantity": 15,
+              "averagePrice": 0.395,
+              "filledAt": 1789804482840,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": null,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mump75bf_jon0qh58",
+              "intentId": "intent_mump75bf_jon0qh58",
+              "orderId": "entry_intent_mump75bf_jon0qh58",
+              "exchangeOrderId": "368243515",
+              "quantity": 10,
+              "averagePrice": 0.5178,
+              "filledAt": 1790687781186,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.0010356,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mumzjgsq_p3j5pvua",
+              "intentId": "intent_mumzjgsq_p3j5pvua",
+              "orderId": "entry_intent_mumzjgsq_p3j5pvua",
+              "exchangeOrderId": "368315033",
+              "quantity": 10,
+              "averagePrice": 0.5033,
+              "filledAt": 1790705139526,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00100659,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun1lbdm_mtaacjkf",
+              "intentId": "intent_mun1lbdm_mtaacjkf",
+              "orderId": "entry_intent_mun1lbdm_mtaacjkf",
+              "exchangeOrderId": "368331786",
+              "quantity": 10,
+              "averagePrice": 0.51,
+              "filledAt": 1790708492341,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00102,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun5aivr_lubwzol1",
+              "intentId": "intent_mun5aivr_lubwzol1",
+              "orderId": "entry_intent_mun5aivr_lubwzol1",
+              "exchangeOrderId": "368355685",
+              "quantity": 10,
+              "averagePrice": 0.5084,
+              "filledAt": 1790714761652,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.0010168,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            }
+          ],
+          "status": "OPEN",
+          "openedAt": 1789804482840,
+          "closedAt": null,
+          "durationMs": null,
+          "tradingNetPnlExFunding": null,
+          "netPnl": null,
+          "fundingStatus": "UNKNOWN",
+          "ledger": "CONSERVED"
+        }
+      ],
+      "attribution": "CYCLE_MATCH_NOT_PER_LOT_PNL"
+    },
+    {
+      "runId": "airun_mun075hj_cst1t2vt",
+      "symbol": "ETHUSDT",
+      "entryIntentId": "intent_mun08qko_bb3qf8wu",
+      "records": [
+        {
+          "tradeId": "trade_cycle_entry_intent_mun08qko_bb3qf8wu",
+          "cycleId": "cycle_entry_intent_mun08qko_bb3qf8wu",
+          "entryIntentId": "intent_mun08qko_bb3qf8wu",
+          "entryRunId": "airun_mun075hj_cst1t2vt",
+          "entryLots": [
+            {
+              "lotId": "cycle_entry_intent_mun08qko_bb3qf8wu",
+              "intentId": null,
+              "orderId": "16810212927",
+              "exchangeOrderId": "16810212927",
+              "quantity": 0.008,
+              "averagePrice": 2683.73,
+              "filledAt": 1790706226194,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00429396,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "FIFO"
+            },
+            {
+              "lotId": "entry_intent_mun08qko_bb3qf8wu",
+              "intentId": "intent_mun08qko_bb3qf8wu",
+              "orderId": "entry_intent_mun08qko_bb3qf8wu",
+              "exchangeOrderId": "16810212927",
+              "quantity": 0.008,
+              "averagePrice": 2683.73,
+              "filledAt": 1790706226194,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00429396,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            }
+          ],
+          "status": "OPEN",
+          "openedAt": 1790706226194,
+          "closedAt": null,
+          "durationMs": null,
+          "tradingNetPnlExFunding": null,
+          "netPnl": null,
+          "fundingStatus": "UNKNOWN",
+          "ledger": "CONSERVED"
+        }
+      ],
+      "attribution": "CYCLE_MATCH_NOT_PER_LOT_PNL"
+    },
+    {
+      "runId": "airun_mun09aa9_c4vdb263",
+      "symbol": "ZECUSDT",
+      "entryIntentId": "intent_mun0autc_jbl0cazc",
+      "records": [
+        {
+          "tradeId": "trade_cycle_entry_intent_mun0autc_jbl0cazc",
+          "cycleId": "cycle_entry_intent_mun0autc_jbl0cazc",
+          "entryIntentId": "intent_mun0autc_jbl0cazc",
+          "entryRunId": "airun_mun09aa9_c4vdb263",
+          "entryLots": [
+            {
+              "lotId": "cycle_entry_intent_mun0autc_jbl0cazc",
+              "intentId": null,
+              "orderId": "2975318220",
+              "exchangeOrderId": "2975318220",
+              "quantity": 0.004,
+              "averagePrice": 1417.2,
+              "filledAt": 1790706352603,
+              "exitAllocatedQuantity": 0.004,
+              "exitAllocatedNotional": 5.6,
+              "allocatedEntryFee": 0.00113376,
+              "allocatedExitFee": 0.00111999,
+              "allocatedGrossRealizedPnl": 0.0688,
+              "allocationSource": "FIFO"
+            },
+            {
+              "lotId": "entry_intent_mun0autc_jbl0cazc",
+              "intentId": "intent_mun0autc_jbl0cazc",
+              "orderId": "entry_intent_mun0autc_jbl0cazc",
+              "exchangeOrderId": "2975318220",
+              "quantity": 0.004,
+              "averagePrice": 1417.2,
+              "filledAt": 1790706352603,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00113376,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            }
+          ],
+          "status": "CLOSED",
+          "openedAt": 1790706352603,
+          "closedAt": 1790711318696,
+          "durationMs": 4966093,
+          "tradingNetPnlExFunding": 0.06654625,
+          "netPnl": null,
+          "fundingStatus": "UNKNOWN",
+          "ledger": "CONSERVED"
+        }
+      ],
+      "attribution": "CYCLE_MATCH_NOT_PER_LOT_PNL"
+    },
+    {
+      "runId": "airun_mun0bbcw_mepzhqyt",
+      "symbol": "NEARUSDT",
+      "entryIntentId": "intent_mun0cvcu_w6ho07r1",
+      "records": [
+        {
+          "tradeId": "trade_cycle_entry_intent_mulq88tp_b8d3im6x",
+          "cycleId": "cycle_entry_intent_mulq88tp_b8d3im6x",
+          "entryIntentId": "intent_mulq88tp_b8d3im6x",
+          "entryRunId": "airun_mulq6xkd_mjq0xz04",
+          "entryLots": [
+            {
+              "lotId": "cycle_entry_intent_mulq88tp_b8d3im6x",
+              "intentId": null,
+              "orderId": "636196692",
+              "exchangeOrderId": "636196692",
+              "quantity": 10,
+              "averagePrice": 4.8208,
+              "filledAt": 1790628932947,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00964159,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "FIFO"
+            },
+            {
+              "lotId": "entry_intent_mulq88tp_b8d3im6x",
+              "intentId": "intent_mulq88tp_b8d3im6x",
+              "orderId": "entry_intent_mulq88tp_b8d3im6x",
+              "exchangeOrderId": "636196692",
+              "quantity": 2,
+              "averagePrice": 4.765,
+              "filledAt": 1790628932947,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": null,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mum6pnvj_iat79nuz",
+              "intentId": "intent_mum6pnvj_iat79nuz",
+              "orderId": "entry_intent_mum6pnvj_iat79nuz",
+              "exchangeOrderId": "636328260",
+              "quantity": 2,
+              "averagePrice": 4.643,
+              "filledAt": 1790656637216,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.0018572,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mumilo2m_7uzbn7ti",
+              "intentId": "intent_mumilo2m_7uzbn7ti",
+              "orderId": "entry_intent_mumilo2m_7uzbn7ti",
+              "exchangeOrderId": "636419235",
+              "quantity": 2,
+              "averagePrice": 4.757,
+              "filledAt": 1790676669641,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.0019028,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun0cvcu_w6ho07r1",
+              "intentId": "intent_mun0cvcu_w6ho07r1",
+              "orderId": "entry_intent_mun0cvcu_w6ho07r1",
+              "exchangeOrderId": "636563637",
+              "quantity": 2,
+              "averagePrice": 5.009,
+              "filledAt": 1790706508513,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.0020036,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun5of1k_xllyp7xk",
+              "intentId": "intent_mun5of1k_xllyp7xk",
+              "orderId": "entry_intent_mun5of1k_xllyp7xk",
+              "exchangeOrderId": "636609630",
+              "quantity": 2,
+              "averagePrice": 4.987,
+              "filledAt": 1790715373443,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.0019948,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun7ftvy_9wq3esti",
+              "intentId": "intent_mun7ftvy_9wq3esti",
+              "orderId": "entry_intent_mun7ftvy_9wq3esti",
+              "exchangeOrderId": "636625487",
+              "quantity": 2,
+              "averagePrice": 4.93,
+              "filledAt": 1790718520828,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00197199,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            }
+          ],
+          "status": "OPEN",
+          "openedAt": 1790628932947,
+          "closedAt": null,
+          "durationMs": null,
+          "tradingNetPnlExFunding": null,
+          "netPnl": null,
+          "fundingStatus": "UNKNOWN",
+          "ledger": "CONSERVED"
+        }
+      ],
+      "attribution": "CYCLE_MATCH_NOT_PER_LOT_PNL"
+    },
+    {
+      "runId": "airun_mun0dghv_m4m9dhr4",
+      "symbol": "BCHUSDT",
+      "entryIntentId": "intent_mun0f0wy_qn6s9mss",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mun0faxc_3drqui9b",
+      "symbol": "VIRTUALUSDT",
+      "entryIntentId": "intent_mun0gun3_7i0b614v",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mun0hpma_fz476x6c",
+      "symbol": "FETUSDT",
+      "entryIntentId": "intent_mun0j7y9_j96mfpfv",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mun0lf2o_fvit3nhg",
+      "symbol": "AVAXUSDT",
+      "entryIntentId": "intent_mun0mzfv_7cppnra4",
+      "records": [
+        {
+          "tradeId": "trade_cycle_entry_intent_mu8l1mm0_rcobpxad",
+          "cycleId": "cycle_entry_intent_mu8l1mm0_rcobpxad",
+          "entryIntentId": "intent_mu8l1mm0_rcobpxad",
+          "entryRunId": "airun_mu8l0eu9_cwq1x4s0",
+          "entryLots": [
+            {
+              "lotId": "cycle_entry_intent_mu8l1mm0_rcobpxad",
+              "intentId": null,
+              "orderId": "532553883",
+              "exchangeOrderId": "532553883",
+              "quantity": 501,
+              "averagePrice": 9.809231536926147,
+              "filledAt": 1789834245678,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.982885,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "FIFO"
+            },
+            {
+              "lotId": "entry_intent_mu8l1mm0_rcobpxad",
+              "intentId": "intent_mu8l1mm0_rcobpxad",
+              "orderId": "entry_intent_mu8l1mm0_rcobpxad",
+              "exchangeOrderId": "532553883",
+              "quantity": 400,
+              "averagePrice": 9.483,
+              "filledAt": 1789834249640,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": null,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mumyax4w_9pj3v4py",
+              "intentId": "intent_mumyax4w_9pj3v4py",
+              "orderId": "entry_intent_mumyax4w_9pj3v4py",
+              "exchangeOrderId": "536861793",
+              "quantity": 100,
+              "averagePrice": 11.1,
+              "filledAt": 1790702995400,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.222,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun0mzfv_7cppnra4",
+              "intentId": "intent_mun0mzfv_7cppnra4",
+              "orderId": "entry_intent_mun0mzfv_7cppnra4",
+              "exchangeOrderId": "536881041",
+              "quantity": 1,
+              "averagePrice": 11.225,
+              "filledAt": 1790707032121,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.002245,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            }
+          ],
+          "status": "OPEN",
+          "openedAt": 1789834245678,
+          "closedAt": null,
+          "durationMs": null,
+          "tradingNetPnlExFunding": null,
+          "netPnl": null,
+          "fundingStatus": "UNKNOWN",
+          "ledger": "CONSERVED"
+        }
+      ],
+      "attribution": "CYCLE_MATCH_NOT_PER_LOT_PNL"
+    },
+    {
+      "runId": "airun_mun0nj4r_f6vfs636",
+      "symbol": "UNIUSDT",
+      "entryIntentId": "intent_mun0p2v9_9m9qaxb0",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mun0pj24_f6xlq8hp",
+      "symbol": "CRVUSDT",
+      "entryIntentId": "intent_mun0r2as_5n1b9tfg",
+      "records": [
+        {
+          "tradeId": "trade_cycle_entry_intent_mulfnnax_r11qb3hb",
+          "cycleId": "cycle_entry_intent_mulfnnax_r11qb3hb",
+          "entryIntentId": "intent_mulfnnax_r11qb3hb",
+          "entryRunId": "airun_mulfm9r8_5knz5ymx",
+          "entryLots": [
+            {
+              "lotId": "cycle_entry_intent_mulfnnax_r11qb3hb",
+              "intentId": null,
+              "orderId": "310230070",
+              "exchangeOrderId": "310230070",
+              "quantity": 41.2,
+              "averagePrice": 0.36627281553398056,
+              "filledAt": 1790611197503,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00301808,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "FIFO"
+            },
+            {
+              "lotId": "entry_intent_mulfnnax_r11qb3hb",
+              "intentId": "intent_mulfnnax_r11qb3hb",
+              "orderId": "entry_intent_mulfnnax_r11qb3hb",
+              "exchangeOrderId": "310230070",
+              "quantity": 15.3,
+              "averagePrice": 0.329,
+              "filledAt": 1790611199931,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": null,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mummxqm8_4ayzrgay",
+              "intentId": "intent_mummxqm8_4ayzrgay",
+              "orderId": "entry_intent_mummxqm8_4ayzrgay",
+              "exchangeOrderId": "310591166",
+              "quantity": 12.9,
+              "averagePrice": 0.39059999999999995,
+              "filledAt": 1790683878705,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00100774,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun0r2as_5n1b9tfg",
+              "intentId": "intent_mun0r2as_5n1b9tfg",
+              "orderId": "entry_intent_mun0r2as_5n1b9tfg",
+              "exchangeOrderId": "310708394",
+              "quantity": 13,
+              "averagePrice": 0.386,
+              "filledAt": 1790707095438,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.0010036,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun3uyoz_9klyywci",
+              "intentId": "intent_mun3uyoz_9klyywci",
+              "orderId": "entry_intent_mun3uyoz_9klyywci",
+              "exchangeOrderId": "310731114",
+              "quantity": 13,
+              "averagePrice": 0.3864,
+              "filledAt": 1790712366566,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00100464,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            }
+          ],
+          "status": "OPEN",
+          "openedAt": 1790611197503,
+          "closedAt": null,
+          "durationMs": null,
+          "tradingNetPnlExFunding": null,
+          "netPnl": null,
+          "fundingStatus": "UNKNOWN",
+          "ledger": "CONSERVED"
+        }
+      ],
+      "attribution": "CYCLE_MATCH_NOT_PER_LOT_PNL"
+    },
+    {
+      "runId": "airun_mun0rmme_ck3nnz7q",
+      "symbol": "CRVUSDC",
+      "entryIntentId": "intent_mun0t4zb_kltwdi8r",
+      "records": [
+        {
+          "tradeId": "trade_cycle_entry_intent_mun0t4zb_kltwdi8r",
+          "cycleId": "cycle_entry_intent_mun0t4zb_kltwdi8r",
+          "entryIntentId": "intent_mun0t4zb_kltwdi8r",
+          "entryRunId": "airun_mun0rmme_ck3nnz7q",
+          "entryLots": [
+            {
+              "lotId": "cycle_entry_intent_mun0t4zb_kltwdi8r",
+              "intentId": null,
+              "orderId": "141474709",
+              "exchangeOrderId": "141474709",
+              "quantity": 13,
+              "averagePrice": 0.3859,
+              "filledAt": 1790707177314,
+              "exitAllocatedQuantity": 13,
+              "exitAllocatedNotional": 4.9699,
+              "allocatedEntryFee": 0.00100333,
+              "allocatedExitFee": 0.000993978102,
+              "allocatedGrossRealizedPnl": 0.063178662,
+              "allocationSource": "FIFO"
+            },
+            {
+              "lotId": "entry_intent_mun0t4zb_kltwdi8r",
+              "intentId": "intent_mun0t4zb_kltwdi8r",
+              "orderId": "entry_intent_mun0t4zb_kltwdi8r",
+              "exchangeOrderId": "141474709",
+              "quantity": 13,
+              "averagePrice": 0.3859,
+              "filledAt": 1790707177314,
+              "exitAllocatedQuantity": 13,
+              "exitAllocatedNotional": 4.9699,
+              "allocatedEntryFee": 0.00100333,
+              "allocatedExitFee": 0.000993978034,
+              "allocatedGrossRealizedPnl": 0.063178661,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun4jabe_3timnv88",
+              "intentId": "intent_mun4jabe_3timnv88",
+              "orderId": "entry_intent_mun4jabe_3timnv88",
+              "exchangeOrderId": "141499090",
+              "quantity": 12.9,
+              "averagePrice": 0.3898,
+              "filledAt": 1790713512242,
+              "exitAllocatedQuantity": 12.9,
+              "exitAllocatedNotional": 4.93167,
+              "allocatedEntryFee": 0.00100568,
+              "allocatedExitFee": 0.000986333864,
+              "allocatedGrossRealizedPnl": 0.062692667,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun694fe_928945lm",
+              "intentId": "intent_mun694fe_928945lm",
+              "orderId": "entry_intent_mun694fe_928945lm",
+              "exchangeOrderId": "141510971",
+              "quantity": 13,
+              "averagePrice": 0.3858,
+              "filledAt": 1790716315886,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00100308,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            }
+          ],
+          "status": "CLOSED",
+          "openedAt": 1790707177314,
+          "closedAt": 1790717216530,
+          "durationMs": 10039216,
+          "tradingNetPnlExFunding": 0.18306361000000002,
+          "netPnl": null,
+          "fundingStatus": "UNKNOWN",
+          "ledger": "CONSERVED"
+        }
+      ],
+      "attribution": "CYCLE_MATCH_NOT_PER_LOT_PNL"
+    },
+    {
+      "runId": "airun_mun0xi4w_ln46g8cc",
+      "symbol": "APTUSDT",
+      "entryIntentId": "intent_mun0z2m1_by2mq6bt",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mun13ptt_ab18p7bi",
+      "symbol": "RAYSOLUSDT",
+      "entryIntentId": "intent_mun15avx_oj1ku3bm",
+      "records": [
+        {
+          "tradeId": "trade_cycle_entry_intent_mun15avx_oj1ku3bm",
+          "cycleId": "cycle_entry_intent_mun15avx_oj1ku3bm",
+          "entryIntentId": "intent_mun15avx_oj1ku3bm",
+          "entryRunId": "airun_mun13ptt_ab18p7bi",
+          "entryLots": [
+            {
+              "lotId": "entry_intent_mun15avx_oj1ku3bm",
+              "intentId": "intent_mun15avx_oj1ku3bm",
+              "orderId": "entry_intent_mun15avx_oj1ku3bm",
+              "exchangeOrderId": "274152298",
+              "quantity": 2.7,
+              "averagePrice": 1.8867,
+              "filledAt": 1790707892875,
+              "exitAllocatedQuantity": 2.7,
+              "exitAllocatedNotional": 5.02281,
+              "allocatedEntryFee": 0.00101881,
+              "allocatedExitFee": 0.00100456,
+              "allocatedGrossRealizedPnl": 0.05589,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "cycle_entry_intent_mun15avx_oj1ku3bm",
+              "intentId": null,
+              "orderId": "274152298",
+              "exchangeOrderId": "274152298",
+              "quantity": 2.6,
+              "averagePrice": 1.8867,
+              "filledAt": 1790707893021,
+              "exitAllocatedQuantity": 2.6,
+              "exitAllocatedNotional": 4.83678,
+              "allocatedEntryFee": 0.00098108,
+              "allocatedExitFee": 0.000967354074,
+              "allocatedGrossRealizedPnl": 0.05382,
+              "allocationSource": "FIFO"
+            },
+            {
+              "lotId": "entry_intent_mun6b8fv_c5wg0pp9",
+              "intentId": "intent_mun6b8fv_c5wg0pp9",
+              "orderId": "entry_intent_mun6b8fv_c5wg0pp9",
+              "exchangeOrderId": "274190756",
+              "quantity": 2.7,
+              "averagePrice": 1.8753,
+              "filledAt": 1790716481383,
+              "exitAllocatedQuantity": 0.1,
+              "exitAllocatedNotional": 0.18603,
+              "allocatedEntryFee": 0.00101266,
+              "allocatedExitFee": 0.000037205926,
+              "allocatedGrossRealizedPnl": 0.00207,
+              "allocationSource": "EXPLICIT"
+            }
+          ],
+          "status": "CLOSED",
+          "openedAt": 1790707892875,
+          "closedAt": 1790717085669,
+          "durationMs": 9192794,
+          "tradingNetPnlExFunding": 0.10773941000000001,
+          "netPnl": null,
+          "fundingStatus": "UNKNOWN",
+          "ledger": "CONSERVED"
+        }
+      ],
+      "attribution": "CYCLE_MATCH_NOT_PER_LOT_PNL"
+    },
+    {
+      "runId": "airun_mun15sfb_108y3vmd",
+      "symbol": "XRPUSDC",
+      "entryIntentId": "intent_mun17cr2_wi239apj",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mun1dotp_nicsduwg",
+      "symbol": "WIFUSDT",
+      "entryIntentId": "intent_mun1fc6k_io7hydv0",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mun1fpdc_dgyweqja",
+      "symbol": "VVVUSDT",
+      "entryIntentId": "intent_mun1ha8q_xaskswl7",
+      "records": [
+        {
+          "tradeId": "trade_cycle_entry_intent_mumz9lbr_a51afgpo",
+          "cycleId": "cycle_entry_intent_mumz9lbr_a51afgpo",
+          "entryIntentId": "intent_mumz9lbr_a51afgpo",
+          "entryRunId": "airun_mumz8233_sspzkkrd",
+          "entryLots": [
+            {
+              "lotId": "cycle_entry_intent_mumz9lbr_a51afgpo",
+              "intentId": null,
+              "orderId": "772006181",
+              "exchangeOrderId": "772006181",
+              "quantity": 0.19,
+              "averagePrice": 26.516999999999996,
+              "filledAt": 1790704586630,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00100764,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "FIFO"
+            },
+            {
+              "lotId": "entry_intent_mumz9lbr_a51afgpo",
+              "intentId": "intent_mumz9lbr_a51afgpo",
+              "orderId": "entry_intent_mumz9lbr_a51afgpo",
+              "exchangeOrderId": "772006181",
+              "quantity": 0.19,
+              "averagePrice": 26.516999999999996,
+              "filledAt": 1790704586630,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00100764,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun1ha8q_xaskswl7",
+              "intentId": "intent_mun1ha8q_xaskswl7",
+              "orderId": "entry_intent_mun1ha8q_xaskswl7",
+              "exchangeOrderId": "772024428",
+              "quantity": 0.19,
+              "averagePrice": 27.353,
+              "filledAt": 1790708355433,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.0010394,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun50dvs_ukquwgcd",
+              "intentId": "intent_mun50dvs_ukquwgcd",
+              "orderId": "entry_intent_mun50dvs_ukquwgcd",
+              "exchangeOrderId": "772048657",
+              "quantity": 0.19,
+              "averagePrice": 27.132000000000005,
+              "filledAt": 1790714230225,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00103101,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun6tlz8_ptx6dvxa",
+              "intentId": "intent_mun6tlz8_ptx6dvxa",
+              "orderId": "entry_intent_mun6tlz8_ptx6dvxa",
+              "exchangeOrderId": "772061827",
+              "quantity": 0.19,
+              "averagePrice": 27.020999999999997,
+              "filledAt": 1790717330238,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00102679,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            }
+          ],
+          "status": "OPEN",
+          "openedAt": 1790704586630,
+          "closedAt": null,
+          "durationMs": null,
+          "tradingNetPnlExFunding": null,
+          "netPnl": null,
+          "fundingStatus": "UNKNOWN",
+          "ledger": "CONSERVED"
+        }
+      ],
+      "attribution": "CYCLE_MATCH_NOT_PER_LOT_PNL"
+    },
+    {
+      "runId": "airun_mun1jqzu_0wg1v2az",
+      "symbol": "ONDOUSDT",
+      "entryIntentId": "intent_mun1lbdm_mtaacjkf",
+      "records": [
+        {
+          "tradeId": "trade_cycle_entry_intent_mu83d7ho_tpicfrwf",
+          "cycleId": "cycle_entry_intent_mu83d7ho_tpicfrwf",
+          "entryIntentId": "intent_mu83d7ho_tpicfrwf",
+          "entryRunId": "airun_mu83c1z1_y5v7unir",
+          "entryLots": [
+            {
+              "lotId": "cycle_entry_intent_mu83d7ho_tpicfrwf",
+              "intentId": null,
+              "orderId": "364160254",
+              "exchangeOrderId": "364160254",
+              "quantity": 35,
+              "averagePrice": 0.46248571428571433,
+              "filledAt": 1789804482840,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.0032374,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "FIFO"
+            },
+            {
+              "lotId": "entry_intent_mu83d7ho_tpicfrwf",
+              "intentId": "intent_mu83d7ho_tpicfrwf",
+              "orderId": "entry_intent_mu83d7ho_tpicfrwf",
+              "exchangeOrderId": "364160254",
+              "quantity": 15,
+              "averagePrice": 0.395,
+              "filledAt": 1789804482840,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": null,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mump75bf_jon0qh58",
+              "intentId": "intent_mump75bf_jon0qh58",
+              "orderId": "entry_intent_mump75bf_jon0qh58",
+              "exchangeOrderId": "368243515",
+              "quantity": 10,
+              "averagePrice": 0.5178,
+              "filledAt": 1790687781186,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.0010356,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mumzjgsq_p3j5pvua",
+              "intentId": "intent_mumzjgsq_p3j5pvua",
+              "orderId": "entry_intent_mumzjgsq_p3j5pvua",
+              "exchangeOrderId": "368315033",
+              "quantity": 10,
+              "averagePrice": 0.5033,
+              "filledAt": 1790705139526,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00100659,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun1lbdm_mtaacjkf",
+              "intentId": "intent_mun1lbdm_mtaacjkf",
+              "orderId": "entry_intent_mun1lbdm_mtaacjkf",
+              "exchangeOrderId": "368331786",
+              "quantity": 10,
+              "averagePrice": 0.51,
+              "filledAt": 1790708492341,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00102,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun5aivr_lubwzol1",
+              "intentId": "intent_mun5aivr_lubwzol1",
+              "orderId": "entry_intent_mun5aivr_lubwzol1",
+              "exchangeOrderId": "368355685",
+              "quantity": 10,
+              "averagePrice": 0.5084,
+              "filledAt": 1790714761652,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.0010168,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            }
+          ],
+          "status": "OPEN",
+          "openedAt": 1789804482840,
+          "closedAt": null,
+          "durationMs": null,
+          "tradingNetPnlExFunding": null,
+          "netPnl": null,
+          "fundingStatus": "UNKNOWN",
+          "ledger": "CONSERVED"
+        }
+      ],
+      "attribution": "CYCLE_MATCH_NOT_PER_LOT_PNL"
+    },
+    {
+      "runId": "airun_mun1tfll_psbt5u4v",
+      "symbol": "OPUSDT",
+      "entryIntentId": "intent_mun1ux5t_lfqwlafc",
+      "records": [
+        {
+          "tradeId": "trade_cycle_entry_intent_mun1ux5t_lfqwlafc",
+          "cycleId": "cycle_entry_intent_mun1ux5t_lfqwlafc",
+          "entryIntentId": "intent_mun1ux5t_lfqwlafc",
+          "entryRunId": "airun_mun1tfll_psbt5u4v",
+          "entryLots": [
+            {
+              "lotId": "entry_intent_mun1ux5t_lfqwlafc",
+              "intentId": "intent_mun1ux5t_lfqwlafc",
+              "orderId": "entry_intent_mun1ux5t_lfqwlafc",
+              "exchangeOrderId": "343771198",
+              "quantity": 38,
+              "averagePrice": 0.1316,
+              "filledAt": 1790709291845,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00100016,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            }
+          ],
+          "status": "OPEN",
+          "openedAt": 1790709291845,
+          "closedAt": null,
+          "durationMs": null,
+          "tradingNetPnlExFunding": null,
+          "netPnl": null,
+          "fundingStatus": "UNKNOWN",
+          "ledger": "CONSERVED"
+        }
+      ],
+      "attribution": "CYCLE_MATCH_NOT_PER_LOT_PNL"
+    },
+    {
+      "runId": "airun_mun1xgjg_qxchcrb8",
+      "symbol": "ETHUSDT",
+      "entryIntentId": "intent_mun1z1to_9zhjpwv7",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mun21is8_vkr0f9g8",
+      "symbol": "NEARUSDT",
+      "entryIntentId": "intent_mun235p3_wrim2eaf",
+      "records": [
+        {
+          "tradeId": "trade_cycle_entry_intent_mun235p3_wrim2eaf",
+          "cycleId": "cycle_entry_intent_mun235p3_wrim2eaf",
+          "entryIntentId": "intent_mun235p3_wrim2eaf",
+          "entryRunId": "airun_mun21is8_vkr0f9g8",
+          "entryLots": [
+            {
+              "lotId": "cycle_entry_intent_mun235p3_wrim2eaf",
+              "intentId": null,
+              "orderId": "636579357",
+              "exchangeOrderId": "636579357",
+              "quantity": 100,
+              "averagePrice": 5.107,
+              "filledAt": 1790709411988,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.10214,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "FIFO"
+            },
+            {
+              "lotId": "entry_intent_mun235p3_wrim2eaf",
+              "intentId": "intent_mun235p3_wrim2eaf",
+              "orderId": "entry_intent_mun235p3_wrim2eaf",
+              "exchangeOrderId": "636579357",
+              "quantity": 100,
+              "averagePrice": 5.107,
+              "filledAt": 1790709411988,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.10214,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            }
+          ],
+          "status": "OPEN",
+          "openedAt": 1790709411988,
+          "closedAt": null,
+          "durationMs": null,
+          "tradingNetPnlExFunding": null,
+          "netPnl": null,
+          "fundingStatus": "UNKNOWN",
+          "ledger": "CONSERVED"
+        }
+      ],
+      "attribution": "CYCLE_MATCH_NOT_PER_LOT_PNL"
+    },
+    {
+      "runId": "airun_mun25mgv_ugjzk9si",
+      "symbol": "AVAXUSDT",
+      "entryIntentId": "intent_mun279vu_tgljunw6",
+      "records": [
+        {
+          "tradeId": "trade_cycle_entry_intent_mun279vu_tgljunw6",
+          "cycleId": "cycle_entry_intent_mun279vu_tgljunw6",
+          "entryIntentId": "intent_mun279vu_tgljunw6",
+          "entryRunId": "airun_mun25mgv_ugjzk9si",
+          "entryLots": [
+            {
+              "lotId": "entry_intent_mun279vu_tgljunw6",
+              "intentId": "intent_mun279vu_tgljunw6",
+              "orderId": "entry_intent_mun279vu_tgljunw6",
+              "exchangeOrderId": "536894279",
+              "quantity": 1,
+              "averagePrice": 11.329,
+              "filledAt": 1790709512683,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.0022658,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun5ugjh_xnx714as",
+              "intentId": "intent_mun5ugjh_xnx714as",
+              "orderId": "entry_intent_mun5ugjh_xnx714as",
+              "exchangeOrderId": "536922702",
+              "quantity": 1,
+              "averagePrice": 11.452,
+              "filledAt": 1790715643088,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.0022904,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "cycle_entry_intent_mun279vu_tgljunw6",
+              "intentId": null,
+              "orderId": "536894279",
+              "exchangeOrderId": "536894279",
+              "quantity": 1,
+              "averagePrice": 11.422,
+              "filledAt": 1790718135683,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00228439,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "FIFO"
+            },
+            {
+              "lotId": "entry_intent_mun79b7z_w9abj217",
+              "intentId": "intent_mun79b7z_w9abj217",
+              "orderId": "entry_intent_mun79b7z_w9abj217",
+              "exchangeOrderId": "536936769",
+              "quantity": 1,
+              "averagePrice": 11.422,
+              "filledAt": 1790718135683,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00228439,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            }
+          ],
+          "status": "OPEN",
+          "openedAt": 1790709512683,
+          "closedAt": null,
+          "durationMs": null,
+          "tradingNetPnlExFunding": null,
+          "netPnl": null,
+          "fundingStatus": "UNKNOWN",
+          "ledger": "CONSERVED"
+        }
+      ],
+      "attribution": "CYCLE_MATCH_NOT_PER_LOT_PNL"
+    },
+    {
+      "runId": "airun_mun27tpe_0qdqp61v",
+      "symbol": "ENAUSDT",
+      "entryIntentId": "intent_mun29i8u_yzre7esn",
+      "records": [
+        {
+          "tradeId": "trade_cycle_entry_intent_mu992hw3_fj637bez",
+          "cycleId": "cycle_entry_intent_mu992hw3_fj637bez",
+          "entryIntentId": "intent_mu992hw3_fj637bez",
+          "entryRunId": "airun_mu99179o_ugk1s6ih",
+          "entryLots": [
+            {
+              "lotId": "cycle_entry_intent_mu992hw3_fj637bez",
+              "intentId": null,
+              "orderId": "511525086",
+              "exchangeOrderId": "511525086",
+              "quantity": 1080,
+              "averagePrice": 0.19862962962962963,
+              "filledAt": 1789874540054,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.04290399,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "FIFO"
+            },
+            {
+              "lotId": "entry_intent_mu992hw3_fj637bez",
+              "intentId": "intent_mu992hw3_fj637bez",
+              "orderId": "entry_intent_mu992hw3_fj637bez",
+              "exchangeOrderId": "511525086",
+              "quantity": 1000,
+              "averagePrice": 0.1944,
+              "filledAt": 1789874543320,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": null,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mum9h0xa_5611kbrn",
+              "intentId": "intent_mum9h0xa_5611kbrn",
+              "orderId": "entry_intent_mum9h0xa_5611kbrn",
+              "exchangeOrderId": "515727932",
+              "quantity": 20,
+              "averagePrice": 0.2522,
+              "filledAt": 1790661266614,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.0010088,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mumhv38b_ac0emd3v",
+              "intentId": "intent_mumhv38b_ac0emd3v",
+              "orderId": "entry_intent_mumhv38b_ac0emd3v",
+              "exchangeOrderId": "515801200",
+              "quantity": 20,
+              "averagePrice": 0.2513,
+              "filledAt": 1790675441006,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.0010052,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mumjekjo_54vi9xhl",
+              "intentId": "intent_mumjekjo_54vi9xhl",
+              "orderId": "entry_intent_mumjekjo_54vi9xhl",
+              "exchangeOrderId": "515816202",
+              "quantity": 20,
+              "averagePrice": 0.2519,
+              "filledAt": 1790677944791,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.0010076,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun29i8u_yzre7esn",
+              "intentId": "intent_mun29i8u_yzre7esn",
+              "orderId": "entry_intent_mun29i8u_yzre7esn",
+              "exchangeOrderId": "515982552",
+              "quantity": 20,
+              "averagePrice": 0.2516,
+              "filledAt": 1790709902667,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.0010064,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun4h714_zk42937q",
+              "intentId": "intent_mun4h714_zk42937q",
+              "orderId": "entry_intent_mun4h714_zk42937q",
+              "exchangeOrderId": "516004190",
+              "quantity": 20,
+              "averagePrice": 0.2506,
+              "filledAt": 1790713336645,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.0010024,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            }
+          ],
+          "status": "OPEN",
+          "openedAt": 1789874540054,
+          "closedAt": null,
+          "durationMs": null,
+          "tradingNetPnlExFunding": null,
+          "netPnl": null,
+          "fundingStatus": "UNKNOWN",
+          "ledger": "CONSERVED"
+        }
+      ],
+      "attribution": "CYCLE_MATCH_NOT_PER_LOT_PNL"
+    },
+    {
+      "runId": "airun_mun2tq31_lnk81m0o",
+      "symbol": "FETUSDT",
+      "entryIntentId": "intent_mun2v9mg_mz0ryw96",
+      "records": [
+        {
+          "tradeId": "trade_cycle_entry_intent_mumnjomk_13mribvi",
+          "cycleId": "cycle_entry_intent_mumnjomk_13mribvi",
+          "entryIntentId": "intent_mumnjomk_13mribvi",
+          "entryRunId": "airun_mumni7k7_3eei3sjj",
+          "entryLots": [
+            {
+              "lotId": "cycle_entry_intent_mumnjomk_13mribvi",
+              "intentId": null,
+              "orderId": "337943395",
+              "exchangeOrderId": "337943395",
+              "quantity": 22,
+              "averagePrice": 0.233,
+              "filledAt": 1790685159588,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.0010252,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "FIFO"
+            },
+            {
+              "lotId": "entry_intent_mumnjomk_13mribvi",
+              "intentId": "intent_mumnjomk_13mribvi",
+              "orderId": "entry_intent_mumnjomk_13mribvi",
+              "exchangeOrderId": "337943395",
+              "quantity": 22,
+              "averagePrice": 0.233,
+              "filledAt": 1790685159588,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.0010252,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun2v9mg_mz0ryw96",
+              "intentId": "intent_mun2v9mg_mz0ryw96",
+              "orderId": "entry_intent_mun2v9mg_mz0ryw96",
+              "exchangeOrderId": "338057386",
+              "quantity": 22,
+              "averagePrice": 0.2275,
+              "filledAt": 1790710659363,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.001001,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun7vzwf_1l9cm82s",
+              "intentId": "intent_mun7vzwf_1l9cm82s",
+              "orderId": "entry_intent_mun7vzwf_1l9cm82s",
+              "exchangeOrderId": "338099448",
+              "quantity": 23,
+              "averagePrice": 0.22690000000000002,
+              "filledAt": 1790719060447,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00104374,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            }
+          ],
+          "status": "OPEN",
+          "openedAt": 1790685159588,
+          "closedAt": null,
+          "durationMs": null,
+          "tradingNetPnlExFunding": null,
+          "netPnl": null,
+          "fundingStatus": "UNKNOWN",
+          "ledger": "CONSERVED"
+        }
+      ],
+      "attribution": "CYCLE_MATCH_NOT_PER_LOT_PNL"
+    },
+    {
+      "runId": "airun_mun2vjba_043daj5z",
+      "symbol": "UNIUSDT",
+      "entryIntentId": "intent_mun2x2yz_fputcjzh",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mun2zbz2_cl4sptp4",
+      "symbol": "APTUSDT",
+      "entryIntentId": "intent_mun30wi4_fc4otnje",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mun31c81_fi2ri5lp",
+      "symbol": "RAYSOLUSDT",
+      "entryIntentId": "intent_mun32w5h_wenqggyb",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mun35cl5_299zqmzv",
+      "symbol": "POLUSDT",
+      "entryIntentId": "intent_mun36wy5_dgu80d0n",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mun37cj7_xafvvx8h",
+      "symbol": "TIAUSDC",
+      "entryIntentId": "intent_mun38wrf_f5lyaexv",
+      "records": [
+        {
+          "tradeId": "trade_cycle_entry_intent_mun38wrf_f5lyaexv",
+          "cycleId": "cycle_entry_intent_mun38wrf_f5lyaexv",
+          "entryIntentId": "intent_mun38wrf_f5lyaexv",
+          "entryRunId": "airun_mun37cj7_xafvvx8h",
+          "entryLots": [
+            {
+              "lotId": "cycle_entry_intent_mun38wrf_f5lyaexv",
+              "intentId": null,
+              "orderId": "138605198",
+              "exchangeOrderId": "138605198",
+              "quantity": 12,
+              "averagePrice": 0.4449,
+              "filledAt": 1790711267259,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "FIFO"
+            },
+            {
+              "lotId": "entry_intent_mun38wrf_f5lyaexv",
+              "intentId": "intent_mun38wrf_f5lyaexv",
+              "orderId": "entry_intent_mun38wrf_f5lyaexv",
+              "exchangeOrderId": "138605198",
+              "quantity": 12,
+              "averagePrice": 0.4449,
+              "filledAt": 1790711267259,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            }
+          ],
+          "status": "OPEN",
+          "openedAt": 1790711267259,
+          "closedAt": null,
+          "durationMs": null,
+          "tradingNetPnlExFunding": null,
+          "netPnl": null,
+          "fundingStatus": "UNKNOWN",
+          "ledger": "CONSERVED"
+        }
+      ],
+      "attribution": "CYCLE_MATCH_NOT_PER_LOT_PNL"
+    },
+    {
+      "runId": "airun_mun39fnl_d8sj3me3",
+      "symbol": "WLDUSDC",
+      "entryIntentId": "intent_mun3azn2_m7cds4hv",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mun3bcb8_f2meponn",
+      "symbol": "ONDOUSDT",
+      "entryIntentId": "intent_mun3cuz0_vzi5gj13",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mun3d8yo_ebjyd5q5",
+      "symbol": "BCHUSDT",
+      "entryIntentId": "intent_mun3ew98_qp0nee3k",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mun3phs8_1c2chopd",
+      "symbol": "ETHUSDT",
+      "entryIntentId": "intent_mun3r3lq_otmfzb8d",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mun3tdyp_g6tk8uw0",
+      "symbol": "CRVUSDT",
+      "entryIntentId": "intent_mun3uyoz_9klyywci",
+      "records": [
+        {
+          "tradeId": "trade_cycle_entry_intent_mulfnnax_r11qb3hb",
+          "cycleId": "cycle_entry_intent_mulfnnax_r11qb3hb",
+          "entryIntentId": "intent_mulfnnax_r11qb3hb",
+          "entryRunId": "airun_mulfm9r8_5knz5ymx",
+          "entryLots": [
+            {
+              "lotId": "cycle_entry_intent_mulfnnax_r11qb3hb",
+              "intentId": null,
+              "orderId": "310230070",
+              "exchangeOrderId": "310230070",
+              "quantity": 41.2,
+              "averagePrice": 0.36627281553398056,
+              "filledAt": 1790611197503,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00301808,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "FIFO"
+            },
+            {
+              "lotId": "entry_intent_mulfnnax_r11qb3hb",
+              "intentId": "intent_mulfnnax_r11qb3hb",
+              "orderId": "entry_intent_mulfnnax_r11qb3hb",
+              "exchangeOrderId": "310230070",
+              "quantity": 15.3,
+              "averagePrice": 0.329,
+              "filledAt": 1790611199931,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": null,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mummxqm8_4ayzrgay",
+              "intentId": "intent_mummxqm8_4ayzrgay",
+              "orderId": "entry_intent_mummxqm8_4ayzrgay",
+              "exchangeOrderId": "310591166",
+              "quantity": 12.9,
+              "averagePrice": 0.39059999999999995,
+              "filledAt": 1790683878705,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00100774,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun0r2as_5n1b9tfg",
+              "intentId": "intent_mun0r2as_5n1b9tfg",
+              "orderId": "entry_intent_mun0r2as_5n1b9tfg",
+              "exchangeOrderId": "310708394",
+              "quantity": 13,
+              "averagePrice": 0.386,
+              "filledAt": 1790707095438,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.0010036,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun3uyoz_9klyywci",
+              "intentId": "intent_mun3uyoz_9klyywci",
+              "orderId": "entry_intent_mun3uyoz_9klyywci",
+              "exchangeOrderId": "310731114",
+              "quantity": 13,
+              "averagePrice": 0.3864,
+              "filledAt": 1790712366566,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00100464,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            }
+          ],
+          "status": "OPEN",
+          "openedAt": 1790611197503,
+          "closedAt": null,
+          "durationMs": null,
+          "tradingNetPnlExFunding": null,
+          "netPnl": null,
+          "fundingStatus": "UNKNOWN",
+          "ledger": "CONSERVED"
+        }
+      ],
+      "attribution": "CYCLE_MATCH_NOT_PER_LOT_PNL"
+    },
+    {
+      "runId": "airun_mun3zie4_cyjg54pj",
+      "symbol": "ZROUSDT",
+      "entryIntentId": "intent_mun41289_2agtetox",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mun47l4s_wi8bz4dd",
+      "symbol": "AVAXUSDT",
+      "entryIntentId": "intent_mun495y1_yon65sia",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mun49llj_1o23g4ny",
+      "symbol": "ETHFIUSDT",
+      "entryIntentId": "intent_mun4b6vu_vyg0lhw4",
+      "records": [
+        {
+          "tradeId": "trade_cycle_entry_intent_mumsf0m8_obndzb3o",
+          "cycleId": "cycle_entry_intent_mumsf0m8_obndzb3o",
+          "entryIntentId": "intent_mumsf0m8_obndzb3o",
+          "entryRunId": "airun_mumsde15_ekjqgeml",
+          "entryLots": [
+            {
+              "lotId": "cycle_entry_intent_mumsf0m8_obndzb3o",
+              "intentId": null,
+              "orderId": "216967634",
+              "exchangeOrderId": "216967634",
+              "quantity": 6.2,
+              "averagePrice": 0.8093,
+              "filledAt": 1790693611571,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "FIFO"
+            },
+            {
+              "lotId": "entry_intent_mumsf0m8_obndzb3o",
+              "intentId": "intent_mumsf0m8_obndzb3o",
+              "orderId": "entry_intent_mumsf0m8_obndzb3o",
+              "exchangeOrderId": "216967634",
+              "quantity": 6.2,
+              "averagePrice": 0.8093,
+              "filledAt": 1790693611571,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun4b6vu_vyg0lhw4",
+              "intentId": "intent_mun4b6vu_vyg0lhw4",
+              "orderId": "entry_intent_mun4b6vu_vyg0lhw4",
+              "exchangeOrderId": "217059525",
+              "quantity": 6.4,
+              "averagePrice": 0.786,
+              "filledAt": 1790713060389,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun5wk08_ww9cywxa",
+              "intentId": "intent_mun5wk08_ww9cywxa",
+              "orderId": "entry_intent_mun5wk08_ww9cywxa",
+              "exchangeOrderId": "217071385",
+              "quantity": 6.4,
+              "averagePrice": 0.7832,
+              "filledAt": 1790715742001,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            }
+          ],
+          "status": "OPEN",
+          "openedAt": 1790693611571,
+          "closedAt": null,
+          "durationMs": null,
+          "tradingNetPnlExFunding": null,
+          "netPnl": null,
+          "fundingStatus": "UNKNOWN",
+          "ledger": "CONSERVED"
+        }
+      ],
+      "attribution": "CYCLE_MATCH_NOT_PER_LOT_PNL"
+    },
+    {
+      "runId": "airun_mun4fmqz_2y5hu4au",
+      "symbol": "ENAUSDT",
+      "entryIntentId": "intent_mun4h714_zk42937q",
+      "records": [
+        {
+          "tradeId": "trade_cycle_entry_intent_mu992hw3_fj637bez",
+          "cycleId": "cycle_entry_intent_mu992hw3_fj637bez",
+          "entryIntentId": "intent_mu992hw3_fj637bez",
+          "entryRunId": "airun_mu99179o_ugk1s6ih",
+          "entryLots": [
+            {
+              "lotId": "cycle_entry_intent_mu992hw3_fj637bez",
+              "intentId": null,
+              "orderId": "511525086",
+              "exchangeOrderId": "511525086",
+              "quantity": 1080,
+              "averagePrice": 0.19862962962962963,
+              "filledAt": 1789874540054,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.04290399,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "FIFO"
+            },
+            {
+              "lotId": "entry_intent_mu992hw3_fj637bez",
+              "intentId": "intent_mu992hw3_fj637bez",
+              "orderId": "entry_intent_mu992hw3_fj637bez",
+              "exchangeOrderId": "511525086",
+              "quantity": 1000,
+              "averagePrice": 0.1944,
+              "filledAt": 1789874543320,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": null,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mum9h0xa_5611kbrn",
+              "intentId": "intent_mum9h0xa_5611kbrn",
+              "orderId": "entry_intent_mum9h0xa_5611kbrn",
+              "exchangeOrderId": "515727932",
+              "quantity": 20,
+              "averagePrice": 0.2522,
+              "filledAt": 1790661266614,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.0010088,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mumhv38b_ac0emd3v",
+              "intentId": "intent_mumhv38b_ac0emd3v",
+              "orderId": "entry_intent_mumhv38b_ac0emd3v",
+              "exchangeOrderId": "515801200",
+              "quantity": 20,
+              "averagePrice": 0.2513,
+              "filledAt": 1790675441006,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.0010052,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mumjekjo_54vi9xhl",
+              "intentId": "intent_mumjekjo_54vi9xhl",
+              "orderId": "entry_intent_mumjekjo_54vi9xhl",
+              "exchangeOrderId": "515816202",
+              "quantity": 20,
+              "averagePrice": 0.2519,
+              "filledAt": 1790677944791,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.0010076,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun29i8u_yzre7esn",
+              "intentId": "intent_mun29i8u_yzre7esn",
+              "orderId": "entry_intent_mun29i8u_yzre7esn",
+              "exchangeOrderId": "515982552",
+              "quantity": 20,
+              "averagePrice": 0.2516,
+              "filledAt": 1790709902667,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.0010064,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun4h714_zk42937q",
+              "intentId": "intent_mun4h714_zk42937q",
+              "orderId": "entry_intent_mun4h714_zk42937q",
+              "exchangeOrderId": "516004190",
+              "quantity": 20,
+              "averagePrice": 0.2506,
+              "filledAt": 1790713336645,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.0010024,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            }
+          ],
+          "status": "OPEN",
+          "openedAt": 1789874540054,
+          "closedAt": null,
+          "durationMs": null,
+          "tradingNetPnlExFunding": null,
+          "netPnl": null,
+          "fundingStatus": "UNKNOWN",
+          "ledger": "CONSERVED"
+        }
+      ],
+      "attribution": "CYCLE_MATCH_NOT_PER_LOT_PNL"
+    },
+    {
+      "runId": "airun_mun4hpds_ph37qs1j",
+      "symbol": "CRVUSDC",
+      "entryIntentId": "intent_mun4jabe_3timnv88",
+      "records": [
+        {
+          "tradeId": "trade_cycle_entry_intent_mun0t4zb_kltwdi8r",
+          "cycleId": "cycle_entry_intent_mun0t4zb_kltwdi8r",
+          "entryIntentId": "intent_mun0t4zb_kltwdi8r",
+          "entryRunId": "airun_mun0rmme_ck3nnz7q",
+          "entryLots": [
+            {
+              "lotId": "cycle_entry_intent_mun0t4zb_kltwdi8r",
+              "intentId": null,
+              "orderId": "141474709",
+              "exchangeOrderId": "141474709",
+              "quantity": 13,
+              "averagePrice": 0.3859,
+              "filledAt": 1790707177314,
+              "exitAllocatedQuantity": 13,
+              "exitAllocatedNotional": 4.9699,
+              "allocatedEntryFee": 0.00100333,
+              "allocatedExitFee": 0.000993978102,
+              "allocatedGrossRealizedPnl": 0.063178662,
+              "allocationSource": "FIFO"
+            },
+            {
+              "lotId": "entry_intent_mun0t4zb_kltwdi8r",
+              "intentId": "intent_mun0t4zb_kltwdi8r",
+              "orderId": "entry_intent_mun0t4zb_kltwdi8r",
+              "exchangeOrderId": "141474709",
+              "quantity": 13,
+              "averagePrice": 0.3859,
+              "filledAt": 1790707177314,
+              "exitAllocatedQuantity": 13,
+              "exitAllocatedNotional": 4.9699,
+              "allocatedEntryFee": 0.00100333,
+              "allocatedExitFee": 0.000993978034,
+              "allocatedGrossRealizedPnl": 0.063178661,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun4jabe_3timnv88",
+              "intentId": "intent_mun4jabe_3timnv88",
+              "orderId": "entry_intent_mun4jabe_3timnv88",
+              "exchangeOrderId": "141499090",
+              "quantity": 12.9,
+              "averagePrice": 0.3898,
+              "filledAt": 1790713512242,
+              "exitAllocatedQuantity": 12.9,
+              "exitAllocatedNotional": 4.93167,
+              "allocatedEntryFee": 0.00100568,
+              "allocatedExitFee": 0.000986333864,
+              "allocatedGrossRealizedPnl": 0.062692667,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun694fe_928945lm",
+              "intentId": "intent_mun694fe_928945lm",
+              "orderId": "entry_intent_mun694fe_928945lm",
+              "exchangeOrderId": "141510971",
+              "quantity": 13,
+              "averagePrice": 0.3858,
+              "filledAt": 1790716315886,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00100308,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            }
+          ],
+          "status": "CLOSED",
+          "openedAt": 1790707177314,
+          "closedAt": 1790717216530,
+          "durationMs": 10039216,
+          "tradingNetPnlExFunding": 0.18306361000000002,
+          "netPnl": null,
+          "fundingStatus": "UNKNOWN",
+          "ledger": "CONSERVED"
+        }
+      ],
+      "attribution": "CYCLE_MATCH_NOT_PER_LOT_PNL"
+    },
+    {
+      "runId": "airun_mun4jve4_7krjg0cx",
+      "symbol": "APTUSDT",
+      "entryIntentId": "intent_mun4lgdi_7hbdy8lx",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mun4o1a9_w30b3yv0",
+      "symbol": "COTIUSDT",
+      "entryIntentId": "intent_mun4plj8_upa3xzu4",
+      "records": [
+        {
+          "tradeId": "trade_cycle_entry_intent_mul2j6ir_4xi26yhk",
+          "cycleId": "cycle_entry_intent_mul2j6ir_4xi26yhk",
+          "entryIntentId": "intent_mul2j6ir_4xi26yhk",
+          "entryRunId": "airun_mul2hwpf_4ykte9yo",
+          "entryLots": [
+            {
+              "lotId": "cycle_entry_intent_mul2j6ir_4xi26yhk",
+              "intentId": null,
+              "orderId": "251468936",
+              "exchangeOrderId": "251468936",
+              "quantity": 370,
+              "averagePrice": 0.013527,
+              "filledAt": 1790589153209,
+              "exitAllocatedQuantity": 757,
+              "exitAllocatedNotional": 9.794066,
+              "allocatedEntryFee": 0.00100099,
+              "allocatedExitFee": 0.001958801797,
+              "allocatedGrossRealizedPnl": 0.225175225,
+              "allocationSource": "FIFO"
+            },
+            {
+              "lotId": "entry_intent_mul2j6ir_4xi26yhk",
+              "intentId": "intent_mul2j6ir_4xi26yhk",
+              "orderId": "entry_intent_mul2j6ir_4xi26yhk",
+              "exchangeOrderId": "251468936",
+              "quantity": 370,
+              "averagePrice": 0.013527,
+              "filledAt": 1790589153209,
+              "exitAllocatedQuantity": 370,
+              "exitAllocatedNotional": 4.78706,
+              "allocatedEntryFee": null,
+              "allocatedExitFee": 0.000957403663,
+              "allocatedGrossRealizedPnl": 0.110059219,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun4plj8_upa3xzu4",
+              "intentId": "intent_mun4plj8_upa3xzu4",
+              "orderId": "entry_intent_mun4plj8_upa3xzu4",
+              "exchangeOrderId": "251992996",
+              "quantity": 386,
+              "averagePrice": 0.012972,
+              "filledAt": 1790713800179,
+              "exitAllocatedQuantity": 386,
+              "exitAllocatedNotional": 4.994068,
+              "allocatedEntryFee": 0.00100143,
+              "allocatedExitFee": 0.000998804541,
+              "allocatedGrossRealizedPnl": 0.114818536,
+              "allocationSource": "EXPLICIT"
+            }
+          ],
+          "status": "INCOMPLETE",
+          "openedAt": 1790589153209,
+          "closedAt": null,
+          "durationMs": null,
+          "tradingNetPnlExFunding": 0.44413555000000005,
+          "netPnl": null,
+          "fundingStatus": "UNKNOWN",
+          "ledger": "LEDGER_INCONSISTENT"
+        }
+      ],
+      "attribution": "CYCLE_MATCH_NOT_PER_LOT_PNL"
+    },
+    {
+      "runId": "airun_mun4qaem_s5u7d25m",
+      "symbol": "TIAUSDC",
+      "entryIntentId": "intent_mun4rvy4_79wjlfr0",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mun4slob_y5b110pj",
+      "symbol": "POLUSDT",
+      "entryIntentId": "intent_mun4u86s_4dlfjpf7",
+      "records": [
+        {
+          "tradeId": "trade_cycle_entry_intent_mukzjcp6_s6d2jw3f",
+          "cycleId": "cycle_entry_intent_mukzjcp6_s6d2jw3f",
+          "entryIntentId": "intent_mukzjcp6_s6d2jw3f",
+          "entryRunId": "airun_mukzi1qr_7flm8310",
+          "entryLots": [
+            {
+              "lotId": "cycle_entry_intent_mukzjcp6_s6d2jw3f",
+              "intentId": null,
+              "orderId": "252857257",
+              "exchangeOrderId": "252857257",
+              "quantity": 45,
+              "averagePrice": 0.11213,
+              "filledAt": 1790584105943,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00100917,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "FIFO"
+            },
+            {
+              "lotId": "entry_intent_mukzjcp6_s6d2jw3f",
+              "intentId": "intent_mukzjcp6_s6d2jw3f",
+              "orderId": "entry_intent_mukzjcp6_s6d2jw3f",
+              "exchangeOrderId": "252857257",
+              "quantity": 45,
+              "averagePrice": 0.11213,
+              "filledAt": 1790584105943,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": null,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun4u86s_4dlfjpf7",
+              "intentId": "intent_mun4u86s_4dlfjpf7",
+              "orderId": "entry_intent_mun4u86s_4dlfjpf7",
+              "exchangeOrderId": "253407513",
+              "quantity": 43,
+              "averagePrice": 0.11818,
+              "filledAt": 1790714256001,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00101634,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            }
+          ],
+          "status": "OPEN",
+          "openedAt": 1790584105943,
+          "closedAt": null,
+          "durationMs": null,
+          "tradingNetPnlExFunding": null,
+          "netPnl": null,
+          "fundingStatus": "UNKNOWN",
+          "ledger": "CONSERVED"
+        }
+      ],
+      "attribution": "CYCLE_MATCH_NOT_PER_LOT_PNL"
+    },
+    {
+      "runId": "airun_mun4urn2_wrbzckwh",
+      "symbol": "BCHUSDT",
+      "entryIntentId": "intent_mun4wazq_ss32fbje",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mun4ytlr_d145yhmx",
+      "symbol": "VVVUSDT",
+      "entryIntentId": "intent_mun50dvs_ukquwgcd",
+      "records": [
+        {
+          "tradeId": "trade_cycle_entry_intent_mumz9lbr_a51afgpo",
+          "cycleId": "cycle_entry_intent_mumz9lbr_a51afgpo",
+          "entryIntentId": "intent_mumz9lbr_a51afgpo",
+          "entryRunId": "airun_mumz8233_sspzkkrd",
+          "entryLots": [
+            {
+              "lotId": "cycle_entry_intent_mumz9lbr_a51afgpo",
+              "intentId": null,
+              "orderId": "772006181",
+              "exchangeOrderId": "772006181",
+              "quantity": 0.19,
+              "averagePrice": 26.516999999999996,
+              "filledAt": 1790704586630,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00100764,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "FIFO"
+            },
+            {
+              "lotId": "entry_intent_mumz9lbr_a51afgpo",
+              "intentId": "intent_mumz9lbr_a51afgpo",
+              "orderId": "entry_intent_mumz9lbr_a51afgpo",
+              "exchangeOrderId": "772006181",
+              "quantity": 0.19,
+              "averagePrice": 26.516999999999996,
+              "filledAt": 1790704586630,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00100764,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun1ha8q_xaskswl7",
+              "intentId": "intent_mun1ha8q_xaskswl7",
+              "orderId": "entry_intent_mun1ha8q_xaskswl7",
+              "exchangeOrderId": "772024428",
+              "quantity": 0.19,
+              "averagePrice": 27.353,
+              "filledAt": 1790708355433,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.0010394,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun50dvs_ukquwgcd",
+              "intentId": "intent_mun50dvs_ukquwgcd",
+              "orderId": "entry_intent_mun50dvs_ukquwgcd",
+              "exchangeOrderId": "772048657",
+              "quantity": 0.19,
+              "averagePrice": 27.132000000000005,
+              "filledAt": 1790714230225,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00103101,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun6tlz8_ptx6dvxa",
+              "intentId": "intent_mun6tlz8_ptx6dvxa",
+              "orderId": "entry_intent_mun6tlz8_ptx6dvxa",
+              "exchangeOrderId": "772061827",
+              "quantity": 0.19,
+              "averagePrice": 27.020999999999997,
+              "filledAt": 1790717330238,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00102679,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            }
+          ],
+          "status": "OPEN",
+          "openedAt": 1790704586630,
+          "closedAt": null,
+          "durationMs": null,
+          "tradingNetPnlExFunding": null,
+          "netPnl": null,
+          "fundingStatus": "UNKNOWN",
+          "ledger": "CONSERVED"
+        }
+      ],
+      "attribution": "CYCLE_MATCH_NOT_PER_LOT_PNL"
+    },
+    {
+      "runId": "airun_mun50wdw_3ehsrgml",
+      "symbol": "UNIUSDT",
+      "entryIntentId": "intent_mun52fjn_2qd3k92a",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mun52qlw_ene7rdww",
+      "symbol": "HBARUSDC",
+      "entryIntentId": "intent_mun54bpb_kug18k3j",
+      "records": [
+        {
+          "tradeId": "trade_cycle_entry_intent_mun54bpb_kug18k3j",
+          "cycleId": "cycle_entry_intent_mun54bpb_kug18k3j",
+          "entryIntentId": "intent_mun54bpb_kug18k3j",
+          "entryRunId": "airun_mun52qlw_ene7rdww",
+          "entryLots": [
+            {
+              "lotId": "cycle_entry_intent_mun54bpb_kug18k3j",
+              "intentId": null,
+              "orderId": "133617320",
+              "exchangeOrderId": "133617320",
+              "quantity": 49,
+              "averagePrice": 0.10336,
+              "filledAt": 1790714430544,
+              "exitAllocatedQuantity": 49,
+              "exitAllocatedNotional": 5.04161,
+              "allocatedEntryFee": 0,
+              "allocatedExitFee": 0,
+              "allocatedGrossRealizedPnl": 0.02303,
+              "allocationSource": "FIFO"
+            },
+            {
+              "lotId": "entry_intent_mun54bpb_kug18k3j",
+              "intentId": "intent_mun54bpb_kug18k3j",
+              "orderId": "entry_intent_mun54bpb_kug18k3j",
+              "exchangeOrderId": "133617320",
+              "quantity": 49,
+              "averagePrice": 0.10336,
+              "filledAt": 1790714430544,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            }
+          ],
+          "status": "CLOSED",
+          "openedAt": 1790714430544,
+          "closedAt": 1790720260897,
+          "durationMs": 5830353,
+          "tradingNetPnlExFunding": 0.023030000000000002,
+          "netPnl": null,
+          "fundingStatus": "UNKNOWN",
+          "ledger": "CONSERVED"
+        }
+      ],
+      "attribution": "CYCLE_MATCH_NOT_PER_LOT_PNL"
+    },
+    {
+      "runId": "airun_mun54xnd_c8mv8759",
+      "symbol": "SUIUSDC",
+      "entryIntentId": "intent_mun56ilu_5ilh22ah",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mun58xeq_b861yqqe",
+      "symbol": "ONDOUSDT",
+      "entryIntentId": "intent_mun5aivr_lubwzol1",
+      "records": [
+        {
+          "tradeId": "trade_cycle_entry_intent_mu83d7ho_tpicfrwf",
+          "cycleId": "cycle_entry_intent_mu83d7ho_tpicfrwf",
+          "entryIntentId": "intent_mu83d7ho_tpicfrwf",
+          "entryRunId": "airun_mu83c1z1_y5v7unir",
+          "entryLots": [
+            {
+              "lotId": "cycle_entry_intent_mu83d7ho_tpicfrwf",
+              "intentId": null,
+              "orderId": "364160254",
+              "exchangeOrderId": "364160254",
+              "quantity": 35,
+              "averagePrice": 0.46248571428571433,
+              "filledAt": 1789804482840,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.0032374,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "FIFO"
+            },
+            {
+              "lotId": "entry_intent_mu83d7ho_tpicfrwf",
+              "intentId": "intent_mu83d7ho_tpicfrwf",
+              "orderId": "entry_intent_mu83d7ho_tpicfrwf",
+              "exchangeOrderId": "364160254",
+              "quantity": 15,
+              "averagePrice": 0.395,
+              "filledAt": 1789804482840,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": null,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mump75bf_jon0qh58",
+              "intentId": "intent_mump75bf_jon0qh58",
+              "orderId": "entry_intent_mump75bf_jon0qh58",
+              "exchangeOrderId": "368243515",
+              "quantity": 10,
+              "averagePrice": 0.5178,
+              "filledAt": 1790687781186,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.0010356,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mumzjgsq_p3j5pvua",
+              "intentId": "intent_mumzjgsq_p3j5pvua",
+              "orderId": "entry_intent_mumzjgsq_p3j5pvua",
+              "exchangeOrderId": "368315033",
+              "quantity": 10,
+              "averagePrice": 0.5033,
+              "filledAt": 1790705139526,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00100659,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun1lbdm_mtaacjkf",
+              "intentId": "intent_mun1lbdm_mtaacjkf",
+              "orderId": "entry_intent_mun1lbdm_mtaacjkf",
+              "exchangeOrderId": "368331786",
+              "quantity": 10,
+              "averagePrice": 0.51,
+              "filledAt": 1790708492341,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00102,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun5aivr_lubwzol1",
+              "intentId": "intent_mun5aivr_lubwzol1",
+              "orderId": "entry_intent_mun5aivr_lubwzol1",
+              "exchangeOrderId": "368355685",
+              "quantity": 10,
+              "averagePrice": 0.5084,
+              "filledAt": 1790714761652,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.0010168,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            }
+          ],
+          "status": "OPEN",
+          "openedAt": 1789804482840,
+          "closedAt": null,
+          "durationMs": null,
+          "tradingNetPnlExFunding": null,
+          "netPnl": null,
+          "fundingStatus": "UNKNOWN",
+          "ledger": "CONSERVED"
+        }
+      ],
+      "attribution": "CYCLE_MATCH_NOT_PER_LOT_PNL"
+    },
+    {
+      "runId": "airun_mun5cyp3_nj9n153y",
+      "symbol": "ETHUSDT",
+      "entryIntentId": "intent_mun5eld5_f9og9duy",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mun5ey1p_vh7w3xws",
+      "symbol": "INJUSDT",
+      "entryIntentId": "intent_mun5ggtw_hqjr6zye",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mun5mvf8_d38l95tb",
+      "symbol": "NEARUSDT",
+      "entryIntentId": "intent_mun5of1k_xllyp7xk",
+      "records": [
+        {
+          "tradeId": "trade_cycle_entry_intent_mulq88tp_b8d3im6x",
+          "cycleId": "cycle_entry_intent_mulq88tp_b8d3im6x",
+          "entryIntentId": "intent_mulq88tp_b8d3im6x",
+          "entryRunId": "airun_mulq6xkd_mjq0xz04",
+          "entryLots": [
+            {
+              "lotId": "cycle_entry_intent_mulq88tp_b8d3im6x",
+              "intentId": null,
+              "orderId": "636196692",
+              "exchangeOrderId": "636196692",
+              "quantity": 10,
+              "averagePrice": 4.8208,
+              "filledAt": 1790628932947,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00964159,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "FIFO"
+            },
+            {
+              "lotId": "entry_intent_mulq88tp_b8d3im6x",
+              "intentId": "intent_mulq88tp_b8d3im6x",
+              "orderId": "entry_intent_mulq88tp_b8d3im6x",
+              "exchangeOrderId": "636196692",
+              "quantity": 2,
+              "averagePrice": 4.765,
+              "filledAt": 1790628932947,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": null,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mum6pnvj_iat79nuz",
+              "intentId": "intent_mum6pnvj_iat79nuz",
+              "orderId": "entry_intent_mum6pnvj_iat79nuz",
+              "exchangeOrderId": "636328260",
+              "quantity": 2,
+              "averagePrice": 4.643,
+              "filledAt": 1790656637216,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.0018572,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mumilo2m_7uzbn7ti",
+              "intentId": "intent_mumilo2m_7uzbn7ti",
+              "orderId": "entry_intent_mumilo2m_7uzbn7ti",
+              "exchangeOrderId": "636419235",
+              "quantity": 2,
+              "averagePrice": 4.757,
+              "filledAt": 1790676669641,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.0019028,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun0cvcu_w6ho07r1",
+              "intentId": "intent_mun0cvcu_w6ho07r1",
+              "orderId": "entry_intent_mun0cvcu_w6ho07r1",
+              "exchangeOrderId": "636563637",
+              "quantity": 2,
+              "averagePrice": 5.009,
+              "filledAt": 1790706508513,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.0020036,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun5of1k_xllyp7xk",
+              "intentId": "intent_mun5of1k_xllyp7xk",
+              "orderId": "entry_intent_mun5of1k_xllyp7xk",
+              "exchangeOrderId": "636609630",
+              "quantity": 2,
+              "averagePrice": 4.987,
+              "filledAt": 1790715373443,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.0019948,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun7ftvy_9wq3esti",
+              "intentId": "intent_mun7ftvy_9wq3esti",
+              "orderId": "entry_intent_mun7ftvy_9wq3esti",
+              "exchangeOrderId": "636625487",
+              "quantity": 2,
+              "averagePrice": 4.93,
+              "filledAt": 1790718520828,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00197199,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            }
+          ],
+          "status": "OPEN",
+          "openedAt": 1790628932947,
+          "closedAt": null,
+          "durationMs": null,
+          "tradingNetPnlExFunding": null,
+          "netPnl": null,
+          "fundingStatus": "UNKNOWN",
+          "ledger": "CONSERVED"
+        }
+      ],
+      "attribution": "CYCLE_MATCH_NOT_PER_LOT_PNL"
+    },
+    {
+      "runId": "airun_mun5oyv2_c2wd45la",
+      "symbol": "CRVUSDT",
+      "entryIntentId": "intent_mun5qkeb_sc874f6q",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mun5suju_troptj5e",
+      "symbol": "AVAXUSDT",
+      "entryIntentId": "intent_mun5ugjh_xnx714as",
+      "records": [
+        {
+          "tradeId": "trade_cycle_entry_intent_mun279vu_tgljunw6",
+          "cycleId": "cycle_entry_intent_mun279vu_tgljunw6",
+          "entryIntentId": "intent_mun279vu_tgljunw6",
+          "entryRunId": "airun_mun25mgv_ugjzk9si",
+          "entryLots": [
+            {
+              "lotId": "entry_intent_mun279vu_tgljunw6",
+              "intentId": "intent_mun279vu_tgljunw6",
+              "orderId": "entry_intent_mun279vu_tgljunw6",
+              "exchangeOrderId": "536894279",
+              "quantity": 1,
+              "averagePrice": 11.329,
+              "filledAt": 1790709512683,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.0022658,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun5ugjh_xnx714as",
+              "intentId": "intent_mun5ugjh_xnx714as",
+              "orderId": "entry_intent_mun5ugjh_xnx714as",
+              "exchangeOrderId": "536922702",
+              "quantity": 1,
+              "averagePrice": 11.452,
+              "filledAt": 1790715643088,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.0022904,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "cycle_entry_intent_mun279vu_tgljunw6",
+              "intentId": null,
+              "orderId": "536894279",
+              "exchangeOrderId": "536894279",
+              "quantity": 1,
+              "averagePrice": 11.422,
+              "filledAt": 1790718135683,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00228439,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "FIFO"
+            },
+            {
+              "lotId": "entry_intent_mun79b7z_w9abj217",
+              "intentId": "intent_mun79b7z_w9abj217",
+              "orderId": "entry_intent_mun79b7z_w9abj217",
+              "exchangeOrderId": "536936769",
+              "quantity": 1,
+              "averagePrice": 11.422,
+              "filledAt": 1790718135683,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00228439,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            }
+          ],
+          "status": "OPEN",
+          "openedAt": 1790709512683,
+          "closedAt": null,
+          "durationMs": null,
+          "tradingNetPnlExFunding": null,
+          "netPnl": null,
+          "fundingStatus": "UNKNOWN",
+          "ledger": "CONSERVED"
+        }
+      ],
+      "attribution": "CYCLE_MATCH_NOT_PER_LOT_PNL"
+    },
+    {
+      "runId": "airun_mun5uzzu_at794ijj",
+      "symbol": "ETHFIUSDT",
+      "entryIntentId": "intent_mun5wk08_ww9cywxa",
+      "records": [
+        {
+          "tradeId": "trade_cycle_entry_intent_mumsf0m8_obndzb3o",
+          "cycleId": "cycle_entry_intent_mumsf0m8_obndzb3o",
+          "entryIntentId": "intent_mumsf0m8_obndzb3o",
+          "entryRunId": "airun_mumsde15_ekjqgeml",
+          "entryLots": [
+            {
+              "lotId": "cycle_entry_intent_mumsf0m8_obndzb3o",
+              "intentId": null,
+              "orderId": "216967634",
+              "exchangeOrderId": "216967634",
+              "quantity": 6.2,
+              "averagePrice": 0.8093,
+              "filledAt": 1790693611571,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "FIFO"
+            },
+            {
+              "lotId": "entry_intent_mumsf0m8_obndzb3o",
+              "intentId": "intent_mumsf0m8_obndzb3o",
+              "orderId": "entry_intent_mumsf0m8_obndzb3o",
+              "exchangeOrderId": "216967634",
+              "quantity": 6.2,
+              "averagePrice": 0.8093,
+              "filledAt": 1790693611571,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun4b6vu_vyg0lhw4",
+              "intentId": "intent_mun4b6vu_vyg0lhw4",
+              "orderId": "entry_intent_mun4b6vu_vyg0lhw4",
+              "exchangeOrderId": "217059525",
+              "quantity": 6.4,
+              "averagePrice": 0.786,
+              "filledAt": 1790713060389,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun5wk08_ww9cywxa",
+              "intentId": "intent_mun5wk08_ww9cywxa",
+              "orderId": "entry_intent_mun5wk08_ww9cywxa",
+              "exchangeOrderId": "217071385",
+              "quantity": 6.4,
+              "averagePrice": 0.7832,
+              "filledAt": 1790715742001,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            }
+          ],
+          "status": "OPEN",
+          "openedAt": 1790693611571,
+          "closedAt": null,
+          "durationMs": null,
+          "tradingNetPnlExFunding": null,
+          "netPnl": null,
+          "fundingStatus": "UNKNOWN",
+          "ledger": "CONSERVED"
+        }
+      ],
+      "attribution": "CYCLE_MATCH_NOT_PER_LOT_PNL"
+    },
+    {
+      "runId": "airun_mun5z4mp_28kc6j15",
+      "symbol": "WLDUSDC",
+      "entryIntentId": "intent_mun60pm7_ulmtnthc",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mun61di1_jgp2vhau",
+      "symbol": "FETUSDT",
+      "entryIntentId": "intent_mun63054_sp959n9x",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mun65gqt_qas0hh67",
+      "symbol": "ARBUSDT",
+      "entryIntentId": "intent_mun672l3_szfygyvs",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mun67lz0_qr4tc3jw",
+      "symbol": "CRVUSDC",
+      "entryIntentId": "intent_mun694fe_928945lm",
+      "records": [
+        {
+          "tradeId": "trade_cycle_entry_intent_mun0t4zb_kltwdi8r",
+          "cycleId": "cycle_entry_intent_mun0t4zb_kltwdi8r",
+          "entryIntentId": "intent_mun0t4zb_kltwdi8r",
+          "entryRunId": "airun_mun0rmme_ck3nnz7q",
+          "entryLots": [
+            {
+              "lotId": "cycle_entry_intent_mun0t4zb_kltwdi8r",
+              "intentId": null,
+              "orderId": "141474709",
+              "exchangeOrderId": "141474709",
+              "quantity": 13,
+              "averagePrice": 0.3859,
+              "filledAt": 1790707177314,
+              "exitAllocatedQuantity": 13,
+              "exitAllocatedNotional": 4.9699,
+              "allocatedEntryFee": 0.00100333,
+              "allocatedExitFee": 0.000993978102,
+              "allocatedGrossRealizedPnl": 0.063178662,
+              "allocationSource": "FIFO"
+            },
+            {
+              "lotId": "entry_intent_mun0t4zb_kltwdi8r",
+              "intentId": "intent_mun0t4zb_kltwdi8r",
+              "orderId": "entry_intent_mun0t4zb_kltwdi8r",
+              "exchangeOrderId": "141474709",
+              "quantity": 13,
+              "averagePrice": 0.3859,
+              "filledAt": 1790707177314,
+              "exitAllocatedQuantity": 13,
+              "exitAllocatedNotional": 4.9699,
+              "allocatedEntryFee": 0.00100333,
+              "allocatedExitFee": 0.000993978034,
+              "allocatedGrossRealizedPnl": 0.063178661,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun4jabe_3timnv88",
+              "intentId": "intent_mun4jabe_3timnv88",
+              "orderId": "entry_intent_mun4jabe_3timnv88",
+              "exchangeOrderId": "141499090",
+              "quantity": 12.9,
+              "averagePrice": 0.3898,
+              "filledAt": 1790713512242,
+              "exitAllocatedQuantity": 12.9,
+              "exitAllocatedNotional": 4.93167,
+              "allocatedEntryFee": 0.00100568,
+              "allocatedExitFee": 0.000986333864,
+              "allocatedGrossRealizedPnl": 0.062692667,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun694fe_928945lm",
+              "intentId": "intent_mun694fe_928945lm",
+              "orderId": "entry_intent_mun694fe_928945lm",
+              "exchangeOrderId": "141510971",
+              "quantity": 13,
+              "averagePrice": 0.3858,
+              "filledAt": 1790716315886,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00100308,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            }
+          ],
+          "status": "CLOSED",
+          "openedAt": 1790707177314,
+          "closedAt": 1790717216530,
+          "durationMs": 10039216,
+          "tradingNetPnlExFunding": 0.18306361000000002,
+          "netPnl": null,
+          "fundingStatus": "UNKNOWN",
+          "ledger": "CONSERVED"
+        }
+      ],
+      "attribution": "CYCLE_MATCH_NOT_PER_LOT_PNL"
+    },
+    {
+      "runId": "airun_mun69onv_e845ojy4",
+      "symbol": "RAYSOLUSDT",
+      "entryIntentId": "intent_mun6b8fv_c5wg0pp9",
+      "records": [
+        {
+          "tradeId": "trade_cycle_entry_intent_mun15avx_oj1ku3bm",
+          "cycleId": "cycle_entry_intent_mun15avx_oj1ku3bm",
+          "entryIntentId": "intent_mun15avx_oj1ku3bm",
+          "entryRunId": "airun_mun13ptt_ab18p7bi",
+          "entryLots": [
+            {
+              "lotId": "entry_intent_mun15avx_oj1ku3bm",
+              "intentId": "intent_mun15avx_oj1ku3bm",
+              "orderId": "entry_intent_mun15avx_oj1ku3bm",
+              "exchangeOrderId": "274152298",
+              "quantity": 2.7,
+              "averagePrice": 1.8867,
+              "filledAt": 1790707892875,
+              "exitAllocatedQuantity": 2.7,
+              "exitAllocatedNotional": 5.02281,
+              "allocatedEntryFee": 0.00101881,
+              "allocatedExitFee": 0.00100456,
+              "allocatedGrossRealizedPnl": 0.05589,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "cycle_entry_intent_mun15avx_oj1ku3bm",
+              "intentId": null,
+              "orderId": "274152298",
+              "exchangeOrderId": "274152298",
+              "quantity": 2.6,
+              "averagePrice": 1.8867,
+              "filledAt": 1790707893021,
+              "exitAllocatedQuantity": 2.6,
+              "exitAllocatedNotional": 4.83678,
+              "allocatedEntryFee": 0.00098108,
+              "allocatedExitFee": 0.000967354074,
+              "allocatedGrossRealizedPnl": 0.05382,
+              "allocationSource": "FIFO"
+            },
+            {
+              "lotId": "entry_intent_mun6b8fv_c5wg0pp9",
+              "intentId": "intent_mun6b8fv_c5wg0pp9",
+              "orderId": "entry_intent_mun6b8fv_c5wg0pp9",
+              "exchangeOrderId": "274190756",
+              "quantity": 2.7,
+              "averagePrice": 1.8753,
+              "filledAt": 1790716481383,
+              "exitAllocatedQuantity": 0.1,
+              "exitAllocatedNotional": 0.18603,
+              "allocatedEntryFee": 0.00101266,
+              "allocatedExitFee": 0.000037205926,
+              "allocatedGrossRealizedPnl": 0.00207,
+              "allocationSource": "EXPLICIT"
+            }
+          ],
+          "status": "CLOSED",
+          "openedAt": 1790707892875,
+          "closedAt": 1790717085669,
+          "durationMs": 9192794,
+          "tradingNetPnlExFunding": 0.10773941000000001,
+          "netPnl": null,
+          "fundingStatus": "UNKNOWN",
+          "ledger": "CONSERVED"
+        }
+      ],
+      "attribution": "CYCLE_MATCH_NOT_PER_LOT_PNL"
+    },
+    {
+      "runId": "airun_mun6bq4f_ln00q8l6",
+      "symbol": "BCHUSDT",
+      "entryIntentId": "intent_mun6d9yp_3z3cmhkl",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mun6dvii_gr8g2cbg",
+      "symbol": "APTUSDT",
+      "entryIntentId": "intent_mun6fhcj_i3cbr556",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mun6fvtt_bgdu2wp9",
+      "symbol": "TIAUSDC",
+      "entryIntentId": "intent_mun6hf77_yfuixhpm",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mun6hw1z_xhc8mgyt",
+      "symbol": "POLUSDT",
+      "entryIntentId": "intent_mun6jfp2_2hpqxyxo",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mun6jqpv_39ocgtez",
+      "symbol": "WIFUSDT",
+      "entryIntentId": "intent_mun6lbks_2e0fcyty",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mun6nxp9_jtcq6avn",
+      "symbol": "ONDOUSDT",
+      "entryIntentId": "intent_mun6pjwp_wz6fb21j",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mun6s1d2_n7zucfhn",
+      "symbol": "VVVUSDT",
+      "entryIntentId": "intent_mun6tlz8_ptx6dvxa",
+      "records": [
+        {
+          "tradeId": "trade_cycle_entry_intent_mumz9lbr_a51afgpo",
+          "cycleId": "cycle_entry_intent_mumz9lbr_a51afgpo",
+          "entryIntentId": "intent_mumz9lbr_a51afgpo",
+          "entryRunId": "airun_mumz8233_sspzkkrd",
+          "entryLots": [
+            {
+              "lotId": "cycle_entry_intent_mumz9lbr_a51afgpo",
+              "intentId": null,
+              "orderId": "772006181",
+              "exchangeOrderId": "772006181",
+              "quantity": 0.19,
+              "averagePrice": 26.516999999999996,
+              "filledAt": 1790704586630,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00100764,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "FIFO"
+            },
+            {
+              "lotId": "entry_intent_mumz9lbr_a51afgpo",
+              "intentId": "intent_mumz9lbr_a51afgpo",
+              "orderId": "entry_intent_mumz9lbr_a51afgpo",
+              "exchangeOrderId": "772006181",
+              "quantity": 0.19,
+              "averagePrice": 26.516999999999996,
+              "filledAt": 1790704586630,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00100764,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun1ha8q_xaskswl7",
+              "intentId": "intent_mun1ha8q_xaskswl7",
+              "orderId": "entry_intent_mun1ha8q_xaskswl7",
+              "exchangeOrderId": "772024428",
+              "quantity": 0.19,
+              "averagePrice": 27.353,
+              "filledAt": 1790708355433,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.0010394,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun50dvs_ukquwgcd",
+              "intentId": "intent_mun50dvs_ukquwgcd",
+              "orderId": "entry_intent_mun50dvs_ukquwgcd",
+              "exchangeOrderId": "772048657",
+              "quantity": 0.19,
+              "averagePrice": 27.132000000000005,
+              "filledAt": 1790714230225,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00103101,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun6tlz8_ptx6dvxa",
+              "intentId": "intent_mun6tlz8_ptx6dvxa",
+              "orderId": "entry_intent_mun6tlz8_ptx6dvxa",
+              "exchangeOrderId": "772061827",
+              "quantity": 0.19,
+              "averagePrice": 27.020999999999997,
+              "filledAt": 1790717330238,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00102679,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            }
+          ],
+          "status": "OPEN",
+          "openedAt": 1790704586630,
+          "closedAt": null,
+          "durationMs": null,
+          "tradingNetPnlExFunding": null,
+          "netPnl": null,
+          "fundingStatus": "UNKNOWN",
+          "ledger": "CONSERVED"
+        }
+      ],
+      "attribution": "CYCLE_MATCH_NOT_PER_LOT_PNL"
+    },
+    {
+      "runId": "airun_mun6xx0k_znkoq5oe",
+      "symbol": "SUIUSDC",
+      "entryIntentId": "intent_mun6zix4_4vnwv3je",
+      "records": [
+        {
+          "tradeId": "trade_cycle_entry_intent_mugedgac_xpkclvga",
+          "cycleId": "cycle_entry_intent_mugedgac_xpkclvga",
+          "entryIntentId": "intent_mugedgac_xpkclvga",
+          "entryRunId": "airun_mugec98t_isyz4bqx",
+          "entryLots": [
+            {
+              "lotId": "cycle_entry_intent_mugedgac_xpkclvga",
+              "intentId": null,
+              "orderId": "185737183",
+              "exchangeOrderId": "185737183",
+              "quantity": 19,
+              "averagePrice": 1.0661684210526314,
+              "filledAt": 1790306695095,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00364627,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "FIFO"
+            },
+            {
+              "lotId": "entry_intent_mugedgac_xpkclvga",
+              "intentId": "intent_mugedgac_xpkclvga",
+              "orderId": "entry_intent_mugedgac_xpkclvga",
+              "exchangeOrderId": "185737183",
+              "quantity": 10,
+              "averagePrice": 1.0089,
+              "filledAt": 1790306695224,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": null,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mumapzaa_xma1kzsq",
+              "intentId": "intent_mumapzaa_xma1kzsq",
+              "orderId": "entry_intent_mumapzaa_xma1kzsq",
+              "exchangeOrderId": "187290404",
+              "quantity": 4.5,
+              "averagePrice": 1.1289,
+              "filledAt": 1790663421108,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.0009144,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mumzbox4_3j1i5xri",
+              "intentId": "intent_mumzbox4_3j1i5xri",
+              "orderId": "entry_intent_mumzbox4_3j1i5xri",
+              "exchangeOrderId": "187462971",
+              "quantity": 4.5,
+              "averagePrice": 1.1307,
+              "filledAt": 1790704785071,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00091586,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun6zix4_4vnwv3je",
+              "intentId": "intent_mun6zix4_4vnwv3je",
+              "orderId": "entry_intent_mun6zix4_4vnwv3je",
+              "exchangeOrderId": "187517182",
+              "quantity": 4.4,
+              "averagePrice": 1.1506,
+              "filledAt": 1790717601343,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00091127,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            }
+          ],
+          "status": "OPEN",
+          "openedAt": 1790306695095,
+          "closedAt": null,
+          "durationMs": null,
+          "tradingNetPnlExFunding": null,
+          "netPnl": null,
+          "fundingStatus": "UNKNOWN",
+          "ledger": "CONSERVED"
+        }
+      ],
+      "attribution": "CYCLE_MATCH_NOT_PER_LOT_PNL"
+    },
+    {
+      "runId": "airun_mun73uv7_pw5tht82",
+      "symbol": "INJUSDT",
+      "entryIntentId": "intent_mun75dbc_xfm30o9v",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mun77p2w_vpkcq9os",
+      "symbol": "AVAXUSDT",
+      "entryIntentId": "intent_mun79b7z_w9abj217",
+      "records": [
+        {
+          "tradeId": "trade_cycle_entry_intent_mun279vu_tgljunw6",
+          "cycleId": "cycle_entry_intent_mun279vu_tgljunw6",
+          "entryIntentId": "intent_mun279vu_tgljunw6",
+          "entryRunId": "airun_mun25mgv_ugjzk9si",
+          "entryLots": [
+            {
+              "lotId": "entry_intent_mun279vu_tgljunw6",
+              "intentId": "intent_mun279vu_tgljunw6",
+              "orderId": "entry_intent_mun279vu_tgljunw6",
+              "exchangeOrderId": "536894279",
+              "quantity": 1,
+              "averagePrice": 11.329,
+              "filledAt": 1790709512683,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.0022658,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun5ugjh_xnx714as",
+              "intentId": "intent_mun5ugjh_xnx714as",
+              "orderId": "entry_intent_mun5ugjh_xnx714as",
+              "exchangeOrderId": "536922702",
+              "quantity": 1,
+              "averagePrice": 11.452,
+              "filledAt": 1790715643088,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.0022904,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "cycle_entry_intent_mun279vu_tgljunw6",
+              "intentId": null,
+              "orderId": "536894279",
+              "exchangeOrderId": "536894279",
+              "quantity": 1,
+              "averagePrice": 11.422,
+              "filledAt": 1790718135683,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00228439,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "FIFO"
+            },
+            {
+              "lotId": "entry_intent_mun79b7z_w9abj217",
+              "intentId": "intent_mun79b7z_w9abj217",
+              "orderId": "entry_intent_mun79b7z_w9abj217",
+              "exchangeOrderId": "536936769",
+              "quantity": 1,
+              "averagePrice": 11.422,
+              "filledAt": 1790718135683,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00228439,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            }
+          ],
+          "status": "OPEN",
+          "openedAt": 1790709512683,
+          "closedAt": null,
+          "durationMs": null,
+          "tradingNetPnlExFunding": null,
+          "netPnl": null,
+          "fundingStatus": "UNKNOWN",
+          "ledger": "CONSERVED"
+        }
+      ],
+      "attribution": "CYCLE_MATCH_NOT_PER_LOT_PNL"
+    },
+    {
+      "runId": "airun_mun79t7m_vapvwo3r",
+      "symbol": "HBARUSDC",
+      "entryIntentId": "intent_mun7begj_hfp3a3ol",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mun7bxdf_pc1lk5qm",
+      "symbol": "TAOUSDT",
+      "entryIntentId": "intent_mun7di5e_qy5e7u0z",
+      "records": [
+        {
+          "tradeId": "trade_cycle_entry_intent_mukxlmzj_6z9zq42b",
+          "cycleId": "cycle_entry_intent_mukxlmzj_6z9zq42b",
+          "entryIntentId": "intent_mukxlmzj_6z9zq42b",
+          "entryRunId": "airun_mukxkf9r_17vs25s8",
+          "entryLots": [
+            {
+              "lotId": "cycle_entry_intent_mukxlmzj_6z9zq42b",
+              "intentId": null,
+              "orderId": "675637386",
+              "exchangeOrderId": "675637386",
+              "quantity": 0.017,
+              "averagePrice": 301.94,
+              "filledAt": 1790580883565,
+              "exitAllocatedQuantity": 0.068,
+              "exitAllocatedNotional": 20.49452,
+              "allocatedEntryFee": 0.00102659,
+              "allocatedExitFee": 0.004098884107,
+              "allocatedGrossRealizedPnl": 0.182126653,
+              "allocationSource": "FIFO"
+            },
+            {
+              "lotId": "entry_intent_mukxlmzj_6z9zq42b",
+              "intentId": "intent_mukxlmzj_6z9zq42b",
+              "orderId": "entry_intent_mukxlmzj_6z9zq42b",
+              "exchangeOrderId": "675637386",
+              "quantity": 0.017,
+              "averagePrice": 301.94,
+              "filledAt": 1790580883565,
+              "exitAllocatedQuantity": 0.017,
+              "exitAllocatedNotional": 5.12363,
+              "allocatedEntryFee": null,
+              "allocatedExitFee": 0.001024723678,
+              "allocatedGrossRealizedPnl": 0.045531664,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun7di5e_qy5e7u0z",
+              "intentId": "intent_mun7di5e_qy5e7u0z",
+              "orderId": "entry_intent_mun7di5e_qy5e7u0z",
+              "exchangeOrderId": "676295781",
+              "quantity": 0.017,
+              "averagePrice": 301.99,
+              "filledAt": 1790718328155,
+              "exitAllocatedQuantity": 0.017,
+              "exitAllocatedNotional": 5.12363,
+              "allocatedEntryFee": 0.00102676,
+              "allocatedExitFee": 0.001024722215,
+              "allocatedGrossRealizedPnl": 0.045531663,
+              "allocationSource": "EXPLICIT"
+            }
+          ],
+          "status": "INCOMPLETE",
+          "openedAt": 1790580883565,
+          "closedAt": null,
+          "durationMs": null,
+          "tradingNetPnlExFunding": 0.2649883,
+          "netPnl": null,
+          "fundingStatus": "UNKNOWN",
+          "ledger": "LEDGER_INCONSISTENT"
+        }
+      ],
+      "attribution": "CYCLE_MATCH_NOT_PER_LOT_PNL"
+    },
+    {
+      "runId": "airun_mun7e87o_qbzbwo56",
+      "symbol": "NEARUSDT",
+      "entryIntentId": "intent_mun7ftvy_9wq3esti",
+      "records": [
+        {
+          "tradeId": "trade_cycle_entry_intent_mulq88tp_b8d3im6x",
+          "cycleId": "cycle_entry_intent_mulq88tp_b8d3im6x",
+          "entryIntentId": "intent_mulq88tp_b8d3im6x",
+          "entryRunId": "airun_mulq6xkd_mjq0xz04",
+          "entryLots": [
+            {
+              "lotId": "cycle_entry_intent_mulq88tp_b8d3im6x",
+              "intentId": null,
+              "orderId": "636196692",
+              "exchangeOrderId": "636196692",
+              "quantity": 10,
+              "averagePrice": 4.8208,
+              "filledAt": 1790628932947,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00964159,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "FIFO"
+            },
+            {
+              "lotId": "entry_intent_mulq88tp_b8d3im6x",
+              "intentId": "intent_mulq88tp_b8d3im6x",
+              "orderId": "entry_intent_mulq88tp_b8d3im6x",
+              "exchangeOrderId": "636196692",
+              "quantity": 2,
+              "averagePrice": 4.765,
+              "filledAt": 1790628932947,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": null,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mum6pnvj_iat79nuz",
+              "intentId": "intent_mum6pnvj_iat79nuz",
+              "orderId": "entry_intent_mum6pnvj_iat79nuz",
+              "exchangeOrderId": "636328260",
+              "quantity": 2,
+              "averagePrice": 4.643,
+              "filledAt": 1790656637216,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.0018572,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mumilo2m_7uzbn7ti",
+              "intentId": "intent_mumilo2m_7uzbn7ti",
+              "orderId": "entry_intent_mumilo2m_7uzbn7ti",
+              "exchangeOrderId": "636419235",
+              "quantity": 2,
+              "averagePrice": 4.757,
+              "filledAt": 1790676669641,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.0019028,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun0cvcu_w6ho07r1",
+              "intentId": "intent_mun0cvcu_w6ho07r1",
+              "orderId": "entry_intent_mun0cvcu_w6ho07r1",
+              "exchangeOrderId": "636563637",
+              "quantity": 2,
+              "averagePrice": 5.009,
+              "filledAt": 1790706508513,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.0020036,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun5of1k_xllyp7xk",
+              "intentId": "intent_mun5of1k_xllyp7xk",
+              "orderId": "entry_intent_mun5of1k_xllyp7xk",
+              "exchangeOrderId": "636609630",
+              "quantity": 2,
+              "averagePrice": 4.987,
+              "filledAt": 1790715373443,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.0019948,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun7ftvy_9wq3esti",
+              "intentId": "intent_mun7ftvy_9wq3esti",
+              "orderId": "entry_intent_mun7ftvy_9wq3esti",
+              "exchangeOrderId": "636625487",
+              "quantity": 2,
+              "averagePrice": 4.93,
+              "filledAt": 1790718520828,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00197199,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            }
+          ],
+          "status": "OPEN",
+          "openedAt": 1790628932947,
+          "closedAt": null,
+          "durationMs": null,
+          "tradingNetPnlExFunding": null,
+          "netPnl": null,
+          "fundingStatus": "UNKNOWN",
+          "ledger": "CONSERVED"
+        }
+      ],
+      "attribution": "CYCLE_MATCH_NOT_PER_LOT_PNL"
+    },
+    {
+      "runId": "airun_mun7gedi_q3bi77wf",
+      "symbol": "CRVUSDT",
+      "entryIntentId": "intent_mun7hzyr_pd3hiw64",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mun7igx9_zi0ettlg",
+      "symbol": "ETHFIUSDT",
+      "entryIntentId": "intent_mun7k2uk_d0sqzznu",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mun7kihe_t3vx5xhj",
+      "symbol": "ZROUSDT",
+      "entryIntentId": "intent_mun7m49n_ji51x7bh",
+      "records": [
+        {
+          "tradeId": "trade_cycle_entry_intent_mumteqnz_rfjx4q0z",
+          "cycleId": "cycle_entry_intent_mumteqnz_rfjx4q0z",
+          "entryIntentId": "intent_mumteqnz_rfjx4q0z",
+          "entryRunId": "airun_mumtd2jo_lz9vr9hu",
+          "entryLots": [
+            {
+              "lotId": "cycle_entry_intent_mumteqnz_rfjx4q0z",
+              "intentId": null,
+              "orderId": "258987351",
+              "exchangeOrderId": "258987351",
+              "quantity": 9.3,
+              "averagePrice": 1.6526817204301076,
+              "filledAt": 1790694772686,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00307397,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "FIFO"
+            },
+            {
+              "lotId": "entry_intent_mumteqnz_rfjx4q0z",
+              "intentId": "intent_mumteqnz_rfjx4q0z",
+              "orderId": "entry_intent_mumteqnz_rfjx4q0z",
+              "exchangeOrderId": "258987351",
+              "quantity": 3,
+              "averagePrice": 1.7058,
+              "filledAt": 1790694772686,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00102348,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mumwfobt_m1ca9x41",
+              "intentId": "intent_mumwfobt_m1ca9x41",
+              "orderId": "entry_intent_mumwfobt_m1ca9x41",
+              "exchangeOrderId": "259010806",
+              "quantity": 3.1,
+              "averagePrice": 1.6474,
+              "filledAt": 1790699956272,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00102138,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun7m49n_ji51x7bh",
+              "intentId": "intent_mun7m49n_ji51x7bh",
+              "orderId": "entry_intent_mun7m49n_ji51x7bh",
+              "exchangeOrderId": "259096770",
+              "quantity": 3.2,
+              "averagePrice": 1.608,
+              "filledAt": 1790718612457,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00102911,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            }
+          ],
+          "status": "OPEN",
+          "openedAt": 1790694772686,
+          "closedAt": null,
+          "durationMs": null,
+          "tradingNetPnlExFunding": null,
+          "netPnl": null,
+          "fundingStatus": "UNKNOWN",
+          "ledger": "CONSERVED"
+        }
+      ],
+      "attribution": "CYCLE_MATCH_NOT_PER_LOT_PNL"
+    },
+    {
+      "runId": "airun_mun7ml9s_x0lkbps5",
+      "symbol": "ENAUSDT",
+      "entryIntentId": "intent_mun7o4up_u4bhtjd4",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mun7scuk_n41a44uq",
+      "symbol": "RAYSOLUSDT",
+      "entryIntentId": "intent_mun7tyg2_1yn1j9fr",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mun7uf87_04yf79gj",
+      "symbol": "FETUSDT",
+      "entryIntentId": "intent_mun7vzwf_1l9cm82s",
+      "records": [
+        {
+          "tradeId": "trade_cycle_entry_intent_mumnjomk_13mribvi",
+          "cycleId": "cycle_entry_intent_mumnjomk_13mribvi",
+          "entryIntentId": "intent_mumnjomk_13mribvi",
+          "entryRunId": "airun_mumni7k7_3eei3sjj",
+          "entryLots": [
+            {
+              "lotId": "cycle_entry_intent_mumnjomk_13mribvi",
+              "intentId": null,
+              "orderId": "337943395",
+              "exchangeOrderId": "337943395",
+              "quantity": 22,
+              "averagePrice": 0.233,
+              "filledAt": 1790685159588,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.0010252,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "FIFO"
+            },
+            {
+              "lotId": "entry_intent_mumnjomk_13mribvi",
+              "intentId": "intent_mumnjomk_13mribvi",
+              "orderId": "entry_intent_mumnjomk_13mribvi",
+              "exchangeOrderId": "337943395",
+              "quantity": 22,
+              "averagePrice": 0.233,
+              "filledAt": 1790685159588,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.0010252,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun2v9mg_mz0ryw96",
+              "intentId": "intent_mun2v9mg_mz0ryw96",
+              "orderId": "entry_intent_mun2v9mg_mz0ryw96",
+              "exchangeOrderId": "338057386",
+              "quantity": 22,
+              "averagePrice": 0.2275,
+              "filledAt": 1790710659363,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.001001,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun7vzwf_1l9cm82s",
+              "intentId": "intent_mun7vzwf_1l9cm82s",
+              "orderId": "entry_intent_mun7vzwf_1l9cm82s",
+              "exchangeOrderId": "338099448",
+              "quantity": 23,
+              "averagePrice": 0.22690000000000002,
+              "filledAt": 1790719060447,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00104374,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            }
+          ],
+          "status": "OPEN",
+          "openedAt": 1790685159588,
+          "closedAt": null,
+          "durationMs": null,
+          "tradingNetPnlExFunding": null,
+          "netPnl": null,
+          "fundingStatus": "UNKNOWN",
+          "ledger": "CONSERVED"
+        }
+      ],
+      "attribution": "CYCLE_MATCH_NOT_PER_LOT_PNL"
+    },
+    {
+      "runId": "airun_mun7wi75_anwxl7cz",
+      "symbol": "BCHUSDT",
+      "entryIntentId": "intent_mun7y56v_miuioz12",
+      "records": [
+        {
+          "tradeId": "trade_cycle_entry_intent_mud27kh7_wdfh3ake",
+          "cycleId": "cycle_entry_intent_mud27kh7_wdfh3ake",
+          "entryIntentId": "intent_mud27kh7_wdfh3ake",
+          "entryRunId": "airun_mud269un_fi3hp6i4",
+          "entryLots": [
+            {
+              "lotId": "cycle_entry_intent_mud27kh7_wdfh3ake",
+              "intentId": null,
+              "orderId": "2582518750",
+              "exchangeOrderId": "2582518750",
+              "quantity": 0.068,
+              "averagePrice": 319.645,
+              "filledAt": 1790104932489,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00434714,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "FIFO"
+            },
+            {
+              "lotId": "entry_intent_mud27kh7_wdfh3ake",
+              "intentId": "intent_mud27kh7_wdfh3ake",
+              "orderId": "entry_intent_mud27kh7_wdfh3ake",
+              "exchangeOrderId": "2582518750",
+              "quantity": 0.017,
+              "averagePrice": 346.38,
+              "filledAt": 1790104933144,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": null,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mumda0ea_k7g5tfr0",
+              "intentId": "intent_mumda0ea_k7g5tfr0",
+              "orderId": "entry_intent_mumda0ea_k7g5tfr0",
+              "exchangeOrderId": "2585762094",
+              "quantity": 0.017,
+              "averagePrice": 310.97,
+              "filledAt": 1790667761880,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00105729,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mumqnevt_vihrpnq0",
+              "intentId": "intent_mumqnevt_vihrpnq0",
+              "orderId": "entry_intent_mumqnevt_vihrpnq0",
+              "exchangeOrderId": "2585900080",
+              "quantity": 0.017,
+              "averagePrice": 311.97,
+              "filledAt": 1790690210968,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00106069,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun7y56v_miuioz12",
+              "intentId": "intent_mun7y56v_miuioz12",
+              "orderId": "entry_intent_mun7y56v_miuioz12",
+              "exchangeOrderId": "2586070312",
+              "quantity": 0.017,
+              "averagePrice": 309.26,
+              "filledAt": 1790719217021,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00105148,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            }
+          ],
+          "status": "OPEN",
+          "openedAt": 1790104932489,
+          "closedAt": null,
+          "durationMs": null,
+          "tradingNetPnlExFunding": null,
+          "netPnl": null,
+          "fundingStatus": "UNKNOWN",
+          "ledger": "CONSERVED"
+        }
+      ],
+      "attribution": "CYCLE_MATCH_NOT_PER_LOT_PNL"
+    },
+    {
+      "runId": "airun_mun80nt8_gc43ggyd",
+      "symbol": "OPUSDT",
+      "entryIntentId": "intent_mun828vp_07uz7hm3",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mun82zlp_vv8dlsud",
+      "symbol": "ARBUSDC",
+      "entryIntentId": "intent_mun84l8g_tw5uc5nx",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mun85bx7_4z95gv9z",
+      "symbol": "VIRTUALUSDT",
+      "entryIntentId": "intent_mun86xht_daoqnepk",
+      "records": [
+        {
+          "tradeId": "trade_cycle_entry_intent_mul2rjga_lnj8jso9",
+          "cycleId": "cycle_entry_intent_mul2rjga_lnj8jso9",
+          "entryIntentId": "intent_mul2rjga_lnj8jso9",
+          "entryRunId": "airun_mul2q9tg_1lz3z364",
+          "entryLots": [
+            {
+              "lotId": "cycle_entry_intent_mul2rjga_lnj8jso9",
+              "intentId": null,
+              "orderId": "243413088",
+              "exchangeOrderId": "243413088",
+              "quantity": 6.5,
+              "averagePrice": 0.7732,
+              "filledAt": 1790589522259,
+              "exitAllocatedQuantity": 12.6,
+              "exitAllocatedNotional": 9.76878,
+              "allocatedEntryFee": 0.00100516,
+              "allocatedExitFee": 0.001953736857,
+              "allocatedGrossRealizedPnl": 0.177915929,
+              "allocationSource": "FIFO"
+            },
+            {
+              "lotId": "entry_intent_mul2rjga_lnj8jso9",
+              "intentId": "intent_mul2rjga_lnj8jso9",
+              "orderId": "entry_intent_mul2rjga_lnj8jso9",
+              "exchangeOrderId": "243413088",
+              "quantity": 6.5,
+              "averagePrice": 0.7732,
+              "filledAt": 1790589522259,
+              "exitAllocatedQuantity": 6.5,
+              "exitAllocatedNotional": 5.03945,
+              "allocatedEntryFee": null,
+              "allocatedExitFee": 0.001007882227,
+              "allocatedGrossRealizedPnl": 0.091782026,
+              "allocationSource": "EXPLICIT"
+            },
+            {
+              "lotId": "entry_intent_mun86xht_daoqnepk",
+              "intentId": "intent_mun86xht_daoqnepk",
+              "orderId": "entry_intent_mun86xht_daoqnepk",
+              "exchangeOrderId": "243978458",
+              "quantity": 6.5,
+              "averagePrice": 0.7774,
+              "filledAt": 1790720027996,
+              "exitAllocatedQuantity": 6.5,
+              "exitAllocatedNotional": 5.03945,
+              "allocatedEntryFee": 0.00101061,
+              "allocatedExitFee": 0.001007880916,
+              "allocatedGrossRealizedPnl": 0.091782025,
+              "allocationSource": "EXPLICIT"
+            }
+          ],
+          "status": "INCOMPLETE",
+          "openedAt": 1790589522259,
+          "closedAt": null,
+          "durationMs": null,
+          "tradingNetPnlExFunding": 0.35549470999999994,
+          "netPnl": null,
+          "fundingStatus": "UNKNOWN",
+          "ledger": "LEDGER_INCONSISTENT"
+        }
+      ],
+      "attribution": "CYCLE_MATCH_NOT_PER_LOT_PNL"
+    },
+    {
+      "runId": "airun_mun87g8d_r7uvpw3b",
+      "symbol": "POLUSDT",
+      "entryIntentId": "intent_mun892xp_p94xat3z",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mun8dex0_4i0awolv",
+      "symbol": "UNIUSDT",
+      "entryIntentId": "intent_mun8f0hr_380wboki",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mun8jgs8_gbqw0r09",
+      "symbol": "ARBUSDT",
+      "entryIntentId": "intent_mun8l3u9_j8082boh",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mun8lx9q_h2l89214",
+      "symbol": "WIFUSDT",
+      "entryIntentId": "intent_mun8nibv_4edl0b9f",
+      "records": [],
+      "attribution": "UNKNOWN_OR_MULTIPLE_CYCLES"
+    },
+    {
+      "runId": "airun_mun8nw7t_498t9rls",
+      "symbol": "PENGUUSDT",
+      "entryIntentId": "intent_mun8phkd_c55zie7o",
+      "records": [
+        {
+          "tradeId": "trade_cycle_entry_intent_mun8phkd_c55zie7o",
+          "cycleId": "cycle_entry_intent_mun8phkd_c55zie7o",
+          "entryIntentId": null,
+          "entryRunId": null,
+          "entryLots": [
+            {
+              "lotId": "entry_intent_mun8phkd_c55zie7o",
+              "intentId": "intent_mun8phkd_c55zie7o",
+              "orderId": "entry_intent_mun8phkd_c55zie7o",
+              "exchangeOrderId": "347327799",
+              "quantity": 502,
+              "averagePrice": 0.009969,
+              "filledAt": 1790720436790,
+              "exitAllocatedQuantity": 0,
+              "exitAllocatedNotional": 0,
+              "allocatedEntryFee": 0.00100088,
+              "allocatedExitFee": null,
+              "allocatedGrossRealizedPnl": null,
+              "allocationSource": "EXPLICIT"
+            }
+          ],
+          "status": "OPEN",
+          "openedAt": 1790720436790,
+          "closedAt": null,
+          "durationMs": null,
+          "tradingNetPnlExFunding": null,
+          "netPnl": null,
+          "fundingStatus": "UNKNOWN",
+          "ledger": "CONSERVED"
+        }
+      ],
+      "attribution": "CYCLE_MATCH_NOT_PER_LOT_PNL"
+    }
+  ]
+}

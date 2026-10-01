@@ -1,0 +1,5871 @@
+[
+  {
+    "runId": "airun_muosnykm_u3zm7c7w",
+    "symbol": "ZECUSDT",
+    "startedAt": 1790814415558,
+    "completedAt": 1790814494491,
+    "input": {
+      "packetId": "eip_muosnpp6_1fdor63l",
+      "createdAt": 1790814404058,
+      "quoteAt": 1790814399609,
+      "quote": {
+        "symbol": "ZECUSDT",
+        "last": 1424.89,
+        "mark": 1425.20740204,
+        "bid": 1424.89,
+        "ask": 1425.9,
+        "tickSize": 0.01,
+        "stepSize": 0.001,
+        "minQty": 0.001,
+        "minNotional": 5,
+        "quoteVolumeUsd24h": 850467439.48,
+        "priceChangePercent24h": 0.417,
+        "tradeCount24h": 199455,
+        "ts": 1790814399609
+      },
+      "account": {
+        "status": "READY",
+        "equityUsd": 10545.65267256,
+        "availableMarginUsd": 3941.04784265,
+        "reservedMarginUsd": 0,
+        "executionLeaseMarginUsd": 0,
+        "freeMarginUsd": 3941.04784265
+      },
+      "exchange": {
+        "tickSize": 0.01,
+        "stepSize": 0.001,
+        "minQty": 0.001,
+        "minNotional": 5
+      },
+      "leverage": 8,
+      "sideEnvelope": {
+        "executable": true,
+        "maxMarginUsd": 3941.04784265,
+        "maxNotionalUsd": 31528.3827412,
+        "maxQuantityUnits": 22095,
+        "minQuantityUnits": 4,
+        "legalQuantityRangeUnits": [
+          4,
+          22095
+        ],
+        "firstBindingConstraint": "AVAILABLE_MARGIN",
+        "minimumLegalNotionalUsd": 5,
+        "admission": {
+          "ceilingUsd": null,
+          "refusal": null,
+          "gate": null,
+          "detail": null
+        },
+        "legalNotionalRangeUsd": [
+          5,
+          31527.5566698546
+        ]
+      },
+      "leaseBudget": {
+        "requestedUsd": 3941.04784265,
+        "cappedBy": "ROUTED_PLAN_MARGIN",
+        "budgetUsd": 49.14593969600924
+      }
+    },
+    "raw": {
+      "action": "FINAL",
+      "schemaVersion": "V3.9.3",
+      "structureDirection": "LONG",
+      "tradeSide": "LONG",
+      "quantityUnits": 4,
+      "opportunityType": "TREND_RESUMPTION",
+      "marketRegime": "TREND",
+      "confidence": 0.65,
+      "directionReason": "15m structure shows strong bullish momentum (trend strength 0.89, MACD bullish cross, higher highs/lows) while 1m/5m pullback has stabilized near support (1420-",
+      "timingReason": "Price is currently testing the lower Bollinger Band on 1m and 5m, providing a favorable risk/reward entry point for a long position aligned with the 15m uptrend",
+      "entryLocationReason": "Entry at 1424.89 is within the maker reachable band and near recent swing lows, minimizing slippage risk",
+      "reason": "The 15m timeframe exhibits a clear bullish trend with strong momentum indicators, while the 1m and 5m timeframes show a pullback that has reached a support zone",
+      "entryInvalidation": "Price closes below 1420.41 (1m swing low) or 1417.89 (1m BB lower)",
+      "supportingEvidenceRefs": [
+        "technical.15m.confirmed",
+        "technical.1m.confirmed",
+        "technical.5m.confirmed",
+        "quote.top",
+        "microstructure.book5"
+      ],
+      "profitTakePlan": {
+        "targetPrice": 1435,
+        "acceptableTargetRange": {
+          "min": 1430,
+          "max": 1440
+        },
+        "targetHorizonMinutes": 60,
+        "targetReason": "Target is set at the 15m Bollinger Middle Band (1426.39) and 5m Bollinger Upper Band (1446.24) confluence zone, which is historically reachable within 60 minutes based on ATR and volatility metrics",
+        "evidenceRefs": [
+          "technical.15m.confirmed",
+          "technical.5m.confirmed",
+          "economics.entry"
+        ]
+      },
+      "rejectLayer": "NONE",
+      "blockingCondition": "NONE",
+      "releaseCondition": "NONE",
+      "timingEvent": {
+        "id": "ZECUSDT_15m_trend_resumption",
+        "status": "PENDING",
+        "time": 1790814404058,
+        "anchorPrice": 1424.89,
+        "timeframe": "15m",
+        "provenance": "SYSTEM_SETTINGS+CONFIRMED_15M_SWINGS"
+      },
+      "decision": "PLACE_LONG",
+      "idealPrice": 1424.89,
+      "acceptablePriceRange": {
+        "min": 1422.87,
+        "max": 1426.91
+      },
+      "horizonMinutes": 1,
+      "waitCondition": null
+    },
+    "normalized": {
+      "decision": "PLACE_LONG",
+      "direction": "LONG",
+      "quantityUnits": 4,
+      "profitTakePlan": {
+        "targetPrice": 1435,
+        "acceptableTargetRange": {
+          "min": 1430,
+          "max": 1440
+        },
+        "targetHorizonMinutes": 60,
+        "targetReason": "Target is set at the 15m Bollinger Middle Band (1426.39) and 5m Bollinger Upper Band (1446.24) confluence zone, which is historically reachable within 60 minutes based on ATR and volatility metrics",
+        "evidenceRefs": [
+          "technical.15m.confirmed",
+          "technical.5m.confirmed",
+          "economics.entry"
+        ]
+      }
+    },
+    "plan": {
+      "schemaVersion": "V396-TRADE-PLAN-1",
+      "planId": "plan_bf896576d1977d50cbad82e12e281a30",
+      "planVersion": 1,
+      "supersedesPlanId": null,
+      "cycleId": "cycle_entry_intent_muospo1f_rwky48wu",
+      "scope": "[\"TESTNET\",\"binance-primary\",\"ZECUSDT\",\"LONG\"]",
+      "symbol": "ZECUSDT",
+      "side": "LONG",
+      "selectedCandidateId": "cand_c2ed133408b6070a5152103b",
+      "quantityUnits": 4,
+      "notionalUsd": 5.7036,
+      "marginUsd": 0.71295,
+      "leverage": 8,
+      "entryReferencePrice": 1425.9,
+      "targetPrice": 1435,
+      "acceptableTargetRange": {
+        "min": 1430,
+        "max": 1440
+      },
+      "entryTtlMinutes": 1,
+      "targetHorizonMinutes": 60,
+      "managementDurationMs": 86400000,
+      "thesis": "The 15m timeframe exhibits a clear bullish trend with strong momentum indicators, while the 1m and 5m timeframes show a pullback that has reached a support zone",
+      "invalidationPredicate": "NO_PREDICATE",
+      "predicateLevel": 1422.87,
+      "predicateEvidenceRefs": [],
+      "counterEvidenceRefs": [],
+      "releaseCondition": null,
+      "costs": {
+        "entryFeeUsd": 0.002281,
+        "exitFeeUsd": 0.002296,
+        "slippageUsd": 0,
+        "uncertaintyBufferUsd": 0.000458,
+        "fundingEstimateUsd": 0,
+        "fundingStatus": "UNPROVEN",
+        "fxRateToQuote": 1,
+        "costVersion": "fees:0.0004:0.0004:0:10"
+      },
+      "economics": {
+        "targetConditionalNetProfitUsd": 0.031365,
+        "targetConditionalNetProfitStatus": "VERIFIED",
+        "expectedNetPnlAtHorizonUsd": -0.584589,
+        "expectedNetPnlAtHorizonStatus": "VERIFIED",
+        "reachProbability": 0.4027777777777778,
+        "reachProbabilityStatus": "VERIFIED",
+        "reachSampleCount": 72,
+        "historicalHardMaxMovePercent": 2.4264873165737777,
+        "targetMovePercent": 0.638193,
+        "statisticalSource": "CLOSED_CANDLE_CACHE:5m:72",
+        "targetVsStatisticalCeiling": "WITHIN",
+        "modelConfidence": 0.65,
+        "modelConfidenceIsAuthority": false
+      },
+      "risk": null,
+      "minNetProfitUsd": 1,
+      "maxRealizedLossUsd": 10,
+      "provenance": {
+        "modelRunId": "airun_muosnykm_u3zm7c7w",
+        "promptVersion": null,
+        "factVersion": "v396p60f8d0f0b4563d0c520b3ef48e1c6b4cfd4e29c1",
+        "envelopeExpiresAt": 1790814539046,
+        "candidateSetHash": "cand_e653ccebabb2236a72fee7d9",
+        "createdAt": 1790814495219,
+        "source": "AI"
+      },
+      "persistedAt": 1790814495219,
+      "immutable": true
+    },
+    "intent": {
+      "id": "intent_muospo1f_rwky48wu",
+      "quantityUnits": 4,
+      "leverage": 8,
+      "planId": "plan_bf896576d1977d50cbad82e12e281a30",
+      "reservationId": "reserve_1790814495243_y3ogqj"
+    },
+    "reservation": {
+      "id": "reserve_1790814495243_y3ogqj",
+      "marginUsd": 0.7134550000000001,
+      "notionalUsd": 5.7076400000000005,
+      "status": "RELEASED",
+      "quoteAsset": "USDT"
+    },
+    "orders": [
+      {
+        "id": "entry_intent_muospo1f_rwky48wu",
+        "clientOrderId": "ml_11337a0596933c0b1ebf2142ef96",
+        "exchangeOrderId": "2975965720",
+        "side": "LONG",
+        "quantity": 0.004,
+        "price": 1424.89,
+        "status": "FILLED",
+        "filledQuantity": 0.004,
+        "factSource": "BINANCE_EXACT_ORDER",
+        "verifiedAt": 1790816504510,
+        "submittedAt": 1790814515455,
+        "fills": [
+          {
+            "tradeId": "100689604",
+            "qty": 0.004,
+            "price": 1424.89,
+            "commission": 0.00113991,
+            "commissionAsset": "USDT",
+            "executedAt": 1790814520843
+          }
+        ]
+      }
+    ],
+    "events": [
+      {
+        "type": "ENTRY_EXECUTION_PERMIT_EVALUATED",
+        "ts": 1790814507221,
+        "permit": {
+          "permitted": true,
+          "firstCause": null,
+          "facts": {
+            "privateFresh": true,
+            "quoteAsset": "USDT",
+            "exchangeAvailableUsd": 3946.97240336,
+            "uncommittedReservationUsd": 0,
+            "analysisEarmarkUsd": 0,
+            "executableForNewReservationUsd": 3946.97240336,
+            "requiredMarginUsd": 0.7124450000000001,
+            "filtersComplete": true,
+            "authorizationValid": true,
+            "submissionIdentity": "ml_11337a0596933c0b1ebf2142ef96",
+            "durableStorageReady": true
+          }
+        }
+      },
+      {
+        "type": "ENTRY_SUBMIT_ATTEMPTED",
+        "ts": 1790814507470,
+        "permit": null
+      }
+    ],
+    "comparison": {
+      "rawUnits": 4,
+      "normalizedUnits": 4,
+      "stepSize": 0.001,
+      "rawQty": 0.004,
+      "planUnits": 4,
+      "intentUnits": 4,
+      "finalQty": [
+        0.004
+      ],
+      "rawSide": "LONG",
+      "normalizedSide": "LONG",
+      "finalSide": [
+        "LONG"
+      ]
+    }
+  },
+  {
+    "runId": "airun_muosyxjc_gorwh661",
+    "symbol": "CRVUSDC",
+    "startedAt": 1790814927432,
+    "completedAt": 1790815007823,
+    "input": {
+      "packetId": "eip_muosyows_7tpzp33v",
+      "createdAt": 1790814916252,
+      "quoteAt": 1790814909071,
+      "quote": {
+        "symbol": "CRVUSDC",
+        "last": 0.3947,
+        "mark": 0.3947,
+        "bid": 0.3947,
+        "ask": 0.3949,
+        "tickSize": 0.0001,
+        "stepSize": 0.1,
+        "minQty": 0.1,
+        "minNotional": 5,
+        "quoteVolumeUsd24h": 735716050.76535,
+        "priceChangePercent24h": 4.225,
+        "tradeCount24h": 177352,
+        "ts": 1790814909071
+      },
+      "account": {
+        "status": "READY",
+        "equityUsd": 10580.469250790398,
+        "availableMarginUsd": 4975.61628635,
+        "reservedMarginUsd": 0,
+        "executionLeaseMarginUsd": 0,
+        "freeMarginUsd": 4975.61628635
+      },
+      "exchange": {
+        "tickSize": 0.0001,
+        "stepSize": 0.1,
+        "minQty": 0.1,
+        "minNotional": 5
+      },
+      "leverage": 8,
+      "sideEnvelope": {
+        "executable": true,
+        "maxMarginUsd": 4975.61628635,
+        "maxNotionalUsd": 39804.9302908,
+        "maxQuantityUnits": 1007758,
+        "minQuantityUnits": 127,
+        "legalQuantityRangeUnits": [
+          127,
+          1007758
+        ],
+        "firstBindingConstraint": "AVAILABLE_MARGIN",
+        "minimumLegalNotionalUsd": 5,
+        "admission": {
+          "ceilingUsd": null,
+          "refusal": null,
+          "gate": null,
+          "detail": null
+        },
+        "legalNotionalRangeUsd": [
+          5,
+          39804.91529533721
+        ]
+      },
+      "leaseBudget": {
+        "requestedUsd": 4975.61628635,
+        "cappedBy": "ROUTED_PLAN_MARGIN",
+        "budgetUsd": 48.75255095907856
+      }
+    },
+    "raw": {
+      "action": "FINAL",
+      "schemaVersion": "V3.9.3",
+      "structureDirection": "LONG",
+      "tradeSide": "LONG",
+      "quantityUnits": 127,
+      "opportunityType": "TREND_RESUMPTION",
+      "marketRegime": "TREND",
+      "confidence": 0.62,
+      "directionReason": "15m and 1h timeframes show strong bullish momentum with price above EMAs and MACD bullish crossovers. 1m/5m confirm short-term upward pressure. Higher timeframs",
+      "timingReason": "1m volume Z-score elevated (1.78) and MACD histogram positive indicate active buying. Price near upper Bollinger Band suggests potential breakout continuation. ",
+      "entryLocationReason": "Entry at bid 0.3947 aligns with recent trade cluster and maker reachable band. Tight spread (5bps) supports efficient execution. ",
+      "reason": "Bullish momentum confirmed across 1m, 5m, 15m, 1h, 4h, 1d timeframes with MACD bullish crossovers and price trending above EMAs. Order book shows tight spread (",
+      "entryInvalidation": "Price closes below 0.3940 (1m swing low) or 15m EMA21 (0.3925) on a 1m bar close.",
+      "supportingEvidenceRefs": [
+        "technical.15m.confirmed",
+        "technical.1h.confirmed",
+        "technical.1m.confirmed",
+        "technical.5m.confirmed",
+        "microstructure.book5",
+        "economics.entry"
+      ],
+      "profitTakePlan": {
+        "targetPrice": 0.3965,
+        "acceptableTargetRange": {
+          "min": 0.396,
+          "max": 0.397
+        },
+        "targetHorizonMinutes": 60,
+        "targetReason": "Target aligns with 15m Bollinger Upper Band (0.3966) and 1h swing high (0.3946) extension. Historical reachability for 60m LONG shows p75 move of 1.64%, which covers the ~0.46% move to target. Minimum net profit of $1 is achievable with 127",
+        "evidenceRefs": [
+          "technical.15m.confirmed",
+          "technical.1h.confirmed",
+          "economics.entry"
+        ]
+      },
+      "rejectLayer": "NONE",
+      "blockingCondition": "NONE",
+      "releaseCondition": "NONE",
+      "timingEvent": {
+        "id": "CRVUSDC_LONG_1790814916252",
+        "status": "PENDING",
+        "time": 1790814916252,
+        "anchorPrice": 0.3947,
+        "timeframe": "15m",
+        "provenance": "AUTONOMOUS_ENTRY_PRIMARY"
+      },
+      "decision": "PLACE_LONG",
+      "idealPrice": 0.3947,
+      "acceptablePriceRange": {
+        "min": 0.3944,
+        "max": 0.3949
+      },
+      "horizonMinutes": 1,
+      "waitCondition": null
+    },
+    "normalized": {
+      "decision": "PLACE_LONG",
+      "direction": "LONG",
+      "quantityUnits": 127,
+      "profitTakePlan": {
+        "targetPrice": 0.3965,
+        "acceptableTargetRange": {
+          "min": 0.396,
+          "max": 0.397
+        },
+        "targetHorizonMinutes": 60,
+        "targetReason": "Target aligns with 15m Bollinger Upper Band (0.3966) and 1h swing high (0.3946) extension. Historical reachability for 60m LONG shows p75 move of 1.64%, which covers the ~0.46% move to target. Minimum net profit of $1 is achievable with 127",
+        "evidenceRefs": [
+          "technical.15m.confirmed",
+          "technical.1h.confirmed",
+          "economics.entry"
+        ]
+      }
+    },
+    "plan": {
+      "schemaVersion": "V396-TRADE-PLAN-1",
+      "planId": "plan_e30c557dcb71d0481207701bb6e9d5f3",
+      "planVersion": 1,
+      "supersedesPlanId": null,
+      "cycleId": "cycle_entry_intent_muot0o6c_o0i7rnxv",
+      "scope": "[\"TESTNET\",\"binance-primary\",\"CRVUSDC\",\"LONG\"]",
+      "symbol": "CRVUSDC",
+      "side": "LONG",
+      "selectedCandidateId": "cand_1da29346b3096d63c685d934",
+      "quantityUnits": 127,
+      "notionalUsd": 5.01523,
+      "marginUsd": 0.626904,
+      "leverage": 8,
+      "entryReferencePrice": 0.3949,
+      "targetPrice": 0.3965,
+      "acceptableTargetRange": {
+        "min": 0.396,
+        "max": 0.397
+      },
+      "entryTtlMinutes": 1,
+      "targetHorizonMinutes": 60,
+      "managementDurationMs": 86400000,
+      "thesis": "Bullish momentum confirmed across 1m, 5m, 15m, 1h, 4h, 1d timeframes with MACD bullish crossovers and price trending above EMAs. Order book shows tight spread (",
+      "invalidationPredicate": "NO_PREDICATE",
+      "predicateLevel": 0.3944,
+      "predicateEvidenceRefs": [],
+      "counterEvidenceRefs": [],
+      "releaseCondition": null,
+      "costs": {
+        "entryFeeUsd": 0.002006,
+        "exitFeeUsd": 0.002014,
+        "slippageUsd": 0,
+        "uncertaintyBufferUsd": 0.000402,
+        "fundingEstimateUsd": 0,
+        "fundingStatus": "UNPROVEN",
+        "fxRateToQuote": 1,
+        "costVersion": "fees:0.0004:0.0004:0:10"
+      },
+      "economics": {
+        "targetConditionalNetProfitUsd": 0.015898,
+        "targetConditionalNetProfitStatus": "VERIFIED",
+        "expectedNetPnlAtHorizonUsd": -0.470589,
+        "expectedNetPnlAtHorizonStatus": "VERIFIED",
+        "reachProbability": 0.5211267605633803,
+        "reachProbabilityStatus": "VERIFIED",
+        "reachSampleCount": 71,
+        "historicalHardMaxMovePercent": 2.676715176715194,
+        "targetMovePercent": 0.405166,
+        "statisticalSource": "CLOSED_CANDLE_CACHE:5m:71",
+        "targetVsStatisticalCeiling": "WITHIN",
+        "modelConfidence": 0.62,
+        "modelConfidenceIsAuthority": false
+      },
+      "risk": null,
+      "minNetProfitUsd": 1,
+      "maxRealizedLossUsd": 10,
+      "provenance": {
+        "modelRunId": "airun_muosyxjc_gorwh661",
+        "promptVersion": null,
+        "factVersion": "v396p71b1827634599f3fa08b93712ca35b0ea6fb0414",
+        "envelopeExpiresAt": 1790815051246,
+        "candidateSetHash": "cand_061b90ba7f0953344ddd7df1",
+        "createdAt": 1790815008612,
+        "source": "AI"
+      },
+      "persistedAt": 1790815008612,
+      "immutable": true
+    },
+    "intent": {
+      "id": "intent_muot0o6c_o0i7rnxv",
+      "quantityUnits": 127,
+      "leverage": 8,
+      "planId": "plan_e30c557dcb71d0481207701bb6e9d5f3",
+      "reservationId": "reserve_1790815008646_m3stz1"
+    },
+    "reservation": {
+      "id": "reserve_1790815008646_m3stz1",
+      "marginUsd": 0.62690375,
+      "notionalUsd": 5.01523,
+      "status": "RELEASED",
+      "quoteAsset": "USDC"
+    },
+    "orders": [
+      {
+        "id": "entry_intent_muot0o6c_o0i7rnxv",
+        "clientOrderId": "ml_21e5f068288aa61982d11dcb5475",
+        "exchangeOrderId": "141945920",
+        "side": "LONG",
+        "quantity": 12.7,
+        "price": 0.3944,
+        "status": "FILLED",
+        "filledQuantity": 12.7,
+        "factSource": "BINANCE_EXACT_ORDER",
+        "verifiedAt": 1790816511808,
+        "submittedAt": 1790815026743,
+        "fills": [
+          {
+            "tradeId": "61405592",
+            "qty": 12.7,
+            "price": 0.3944,
+            "commission": 0.00100177,
+            "commissionAsset": "USDC",
+            "executedAt": 1790815049003
+          }
+        ]
+      }
+    ],
+    "events": [
+      {
+        "type": "ENTRY_EXECUTION_PERMIT_EVALUATED",
+        "ts": 1790815019351,
+        "permit": {
+          "permitted": true,
+          "firstCause": null,
+          "facts": {
+            "privateFresh": true,
+            "quoteAsset": "USDC",
+            "exchangeAvailableUsd": 4975.57769742,
+            "uncommittedReservationUsd": 0,
+            "analysisEarmarkUsd": 0,
+            "executableForNewReservationUsd": 4975.57769742,
+            "requiredMarginUsd": 0.62611,
+            "filtersComplete": true,
+            "authorizationValid": true,
+            "submissionIdentity": "ml_21e5f068288aa61982d11dcb5475",
+            "durableStorageReady": true
+          }
+        }
+      },
+      {
+        "type": "ENTRY_SUBMIT_ATTEMPTED",
+        "ts": 1790815019597,
+        "permit": null
+      }
+    ],
+    "comparison": {
+      "rawUnits": 127,
+      "normalizedUnits": 127,
+      "stepSize": 0.1,
+      "rawQty": 12.700000000000001,
+      "planUnits": 127,
+      "intentUnits": 127,
+      "finalQty": [
+        12.7
+      ],
+      "rawSide": "LONG",
+      "normalizedSide": "LONG",
+      "finalSide": [
+        "LONG"
+      ]
+    }
+  },
+  {
+    "runId": "airun_muot3hxa_5nxd6s2q",
+    "symbol": "ARBUSDT",
+    "startedAt": 1790815140478,
+    "completedAt": 1790815224012,
+    "input": {
+      "packetId": "eip_muot38rf_kqav5kgi",
+      "createdAt": 1790815128603,
+      "quoteAt": 1790815124001,
+      "quote": {
+        "symbol": "ARBUSDT",
+        "last": 0.2022,
+        "mark": 0.20226616,
+        "bid": 0.2022,
+        "ask": 0.2023,
+        "tickSize": 0.0001,
+        "stepSize": 0.1,
+        "minQty": 0.1,
+        "minNotional": 5,
+        "quoteVolumeUsd24h": 719098066.48437,
+        "priceChangePercent24h": -0.785,
+        "tradeCount24h": 204594,
+        "ts": 1790815124001
+      },
+      "account": {
+        "status": "READY",
+        "equityUsd": 10581.01278089,
+        "availableMarginUsd": 3978.75302702,
+        "reservedMarginUsd": 0,
+        "executionLeaseMarginUsd": 0,
+        "freeMarginUsd": 3978.75302702
+      },
+      "exchange": {
+        "tickSize": 0.0001,
+        "stepSize": 0.1,
+        "minQty": 0.1,
+        "minNotional": 5
+      },
+      "leverage": 12,
+      "sideEnvelope": {
+        "executable": true,
+        "maxMarginUsd": 3978.75302702,
+        "maxNotionalUsd": 47745.03632424,
+        "maxQuantityUnits": 2356690,
+        "minQuantityUnits": 248,
+        "legalQuantityRangeUnits": [
+          248,
+          2356690
+        ],
+        "firstBindingConstraint": "AVAILABLE_MARGIN",
+        "minimumLegalNotionalUsd": 5,
+        "admission": {
+          "ceilingUsd": null,
+          "refusal": null,
+          "gate": null,
+          "detail": null
+        },
+        "legalNotionalRangeUsd": [
+          5,
+          47745.0327915867
+        ]
+      },
+      "leaseBudget": {
+        "requestedUsd": 3978.75302702,
+        "cappedBy": "ROUTED_PLAN_MARGIN",
+        "budgetUsd": 48.297904454376216
+      }
+    },
+    "raw": {
+      "action": "FINAL",
+      "schemaVersion": "V3.9.3",
+      "structureDirection": "SHORT",
+      "tradeSide": "SHORT",
+      "quantityUnits": 248,
+      "opportunityType": "TREND_RESUMPTION",
+      "marketRegime": "TREND",
+      "confidence": 0.65,
+      "directionReason": "Price is trading below all key EMAs (8, 21, 55) on 1m, 5m, 15m, and 1h timeframes. MACD is bearish on 5m and 15m with negative histogram slope, indicating decel",
+      "timingReason": "1m MACD shows a fresh bullish cross (age 1) but price remains below EMA8/21, suggesting a weak bounce within a downtrend. 5m trend strength is high (0.69) and D",
+      "entryLocationReason": "Entry at 0.2022 is near the current bid and within the maker reachable band (0.2018-0.2026). It is below the 15m EMA8 (0.2029) and 5m EMA8 (0.2025), aligning",
+      "reason": "Bearish momentum persists across 1m, 5m, and 15m timeframes with price below key EMAs. Contradictory signals emerge between higher-timeframe trends and immedi",
+      "entryInvalidation": "Price closes above 0.2030 (15m EMA8) or 0.2026 (1m swing high) on a 1m candle.",
+      "supportingEvidenceRefs": [
+        "technical.15m.confirmed",
+        "technical.5m.confirmed",
+        "technical.1m.confirmed",
+        "microstructure.book5",
+        "quote.top"
+      ],
+      "profitTakePlan": {
+        "targetPrice": 0.1992,
+        "acceptableTargetRange": {
+          "min": 0.1985,
+          "max": 0.2
+        },
+        "targetHorizonMinutes": 60,
+        "targetReason": "Target is set at 0.1992, which is approximately 1.5% below entry. This aligns with the 60-minute historical reachability p75 for SHORT (0.88%) and p90 (1.17%) being conservative, but the 15m ATR (0.67%) suggests a 1.5% move is achievable in",
+        "evidenceRefs": [
+          "technical.15m.confirmed",
+          "economics.entry"
+        ]
+      },
+      "rejectLayer": "NONE",
+      "blockingCondition": "NONE",
+      "releaseCondition": "NONE",
+      "timingEvent": {
+        "id": "ARB_SHORT_ENTRY",
+        "status": "PENDING",
+        "time": 1790815128603,
+        "anchorPrice": 0.2022,
+        "timeframe": "15m",
+        "provenance": "ENTRY_PLAN"
+      },
+      "decision": "PLACE_SHORT",
+      "idealPrice": 0.2022,
+      "acceptablePriceRange": {
+        "min": 0.2018,
+        "max": 0.2026
+      },
+      "horizonMinutes": 1,
+      "waitCondition": null
+    },
+    "normalized": {
+      "decision": "PLACE_SHORT",
+      "direction": "SHORT",
+      "quantityUnits": 248,
+      "profitTakePlan": {
+        "targetPrice": 0.1992,
+        "acceptableTargetRange": {
+          "min": 0.1985,
+          "max": 0.2
+        },
+        "targetHorizonMinutes": 60,
+        "targetReason": "Target is set at 0.1992, which is approximately 1.5% below entry. This aligns with the 60-minute historical reachability p75 for SHORT (0.88%) and p90 (1.17%) being conservative, but the 15m ATR (0.67%) suggests a 1.5% move is achievable in",
+        "evidenceRefs": [
+          "technical.15m.confirmed",
+          "economics.entry"
+        ]
+      }
+    },
+    "plan": {
+      "schemaVersion": "V396-TRADE-PLAN-1",
+      "planId": "plan_7f5804460268a90d53c4bb1a46084cd7",
+      "planVersion": 1,
+      "supersedesPlanId": null,
+      "cycleId": "cycle_entry_intent_muot5b0f_b4gpykyd",
+      "scope": "[\"TESTNET\",\"binance-primary\",\"ARBUSDT\",\"SHORT\"]",
+      "symbol": "ARBUSDT",
+      "side": "SHORT",
+      "selectedCandidateId": "cand_6138f1d53907c1243035763a",
+      "quantityUnits": 248,
+      "notionalUsd": 5.022,
+      "marginUsd": 0.4185,
+      "leverage": 12,
+      "entryReferencePrice": 0.2025,
+      "targetPrice": 0.1992,
+      "acceptableTargetRange": {
+        "min": 0.1985,
+        "max": 0.2
+      },
+      "entryTtlMinutes": 1,
+      "targetHorizonMinutes": 60,
+      "managementDurationMs": 86400000,
+      "thesis": "Bearish momentum persists across 1m, 5m, and 15m timeframes with price below key EMAs. Contradictory signals emerge between higher-timeframe trends and immedi",
+      "invalidationPredicate": "NO_PREDICATE",
+      "predicateLevel": 0.2026,
+      "predicateEvidenceRefs": [],
+      "counterEvidenceRefs": [],
+      "releaseCondition": null,
+      "costs": {
+        "entryFeeUsd": 0.002009,
+        "exitFeeUsd": 0.001976,
+        "slippageUsd": 0,
+        "uncertaintyBufferUsd": 0.000398,
+        "fundingEstimateUsd": 0,
+        "fundingStatus": "UNPROVEN",
+        "fxRateToQuote": 1,
+        "costVersion": "fees:0.0004:0.0004:0:10"
+      },
+      "economics": {
+        "targetConditionalNetProfitUsd": 0.077457,
+        "targetConditionalNetProfitStatus": "VERIFIED",
+        "expectedNetPnlAtHorizonUsd": -1,
+        "expectedNetPnlAtHorizonStatus": "VERIFIED",
+        "reachProbability": 0,
+        "reachProbabilityStatus": "VERIFIED",
+        "reachSampleCount": 72,
+        "historicalHardMaxMovePercent": 1.4662756598240456,
+        "targetMovePercent": 1.62963,
+        "statisticalSource": "CLOSED_CANDLE_CACHE:5m:72",
+        "targetVsStatisticalCeiling": "BEYOND",
+        "modelConfidence": 0.65,
+        "modelConfidenceIsAuthority": false
+      },
+      "risk": null,
+      "minNetProfitUsd": 1,
+      "maxRealizedLossUsd": 10,
+      "provenance": {
+        "modelRunId": "airun_muot3hxa_5nxd6s2q",
+        "promptVersion": null,
+        "factVersion": "v396pd7618571b4df3e96b84e16146e7c3bb353299dfd",
+        "envelopeExpiresAt": 1790815263595,
+        "candidateSetHash": "cand_440d181aaf57d2136bb549b5",
+        "createdAt": 1790815224831,
+        "source": "AI"
+      },
+      "persistedAt": 1790815224831,
+      "immutable": true
+    },
+    "intent": {
+      "id": "intent_muot5b0f_b4gpykyd",
+      "quantityUnits": 248,
+      "leverage": 12,
+      "planId": "plan_7f5804460268a90d53c4bb1a46084cd7",
+      "reservationId": "reserve_1790815224854_xn75vo"
+    },
+    "reservation": {
+      "id": "reserve_1790815224854_xn75vo",
+      "marginUsd": 0.4187066666666667,
+      "notionalUsd": 5.0244800000000005,
+      "status": "RELEASED",
+      "quoteAsset": "USDT"
+    },
+    "orders": [
+      {
+        "id": "entry_intent_muot5b0f_b4gpykyd",
+        "clientOrderId": "ml_89e233c5f3a85c717a8c4a453ae2",
+        "exchangeOrderId": "339778610",
+        "side": "SHORT",
+        "quantity": 24.8,
+        "price": 0.2026,
+        "status": "FILLED",
+        "filledQuantity": 24.8,
+        "factSource": "BINANCE_EXACT_ORDER",
+        "verifiedAt": 1790818155788,
+        "submittedAt": 1790815246547,
+        "fills": [
+          {
+            "tradeId": "68636500",
+            "qty": 24.8,
+            "price": 0.2026,
+            "commission": 0.00100489,
+            "commissionAsset": "USDT",
+            "executedAt": 1790815252524
+          }
+        ]
+      }
+    ],
+    "events": [
+      {
+        "type": "ENTRY_EXECUTION_PERMIT_EVALUATED",
+        "ts": 1790815236807,
+        "permit": {
+          "permitted": true,
+          "firstCause": null,
+          "facts": {
+            "privateFresh": true,
+            "quoteAsset": "USDT",
+            "exchangeAvailableUsd": 3973.74058466,
+            "uncommittedReservationUsd": 0,
+            "analysisEarmarkUsd": 0,
+            "executableForNewReservationUsd": 3973.74058466,
+            "requiredMarginUsd": 0.4187066666666667,
+            "filtersComplete": true,
+            "authorizationValid": true,
+            "submissionIdentity": "ml_89e233c5f3a85c717a8c4a453ae2",
+            "durableStorageReady": true
+          }
+        }
+      },
+      {
+        "type": "ENTRY_SUBMIT_ATTEMPTED",
+        "ts": 1790815237057,
+        "permit": null
+      }
+    ],
+    "comparison": {
+      "rawUnits": 248,
+      "normalizedUnits": 248,
+      "stepSize": 0.1,
+      "rawQty": 24.8,
+      "planUnits": 248,
+      "intentUnits": 248,
+      "finalQty": [
+        24.8
+      ],
+      "rawSide": "SHORT",
+      "normalizedSide": "SHORT",
+      "finalSide": [
+        "SHORT"
+      ]
+    }
+  },
+  {
+    "runId": "airun_muot62kx_x952lz52",
+    "symbol": "WLDUSDC",
+    "startedAt": 1790815260561,
+    "completedAt": 1790815339769,
+    "input": {
+      "packetId": "eip_muot5sxp_n0oa8i0i",
+      "createdAt": 1790815248061,
+      "quoteAt": 1790815243001,
+      "quote": {
+        "symbol": "WLDUSDC",
+        "last": 0.5418,
+        "mark": 0.5418,
+        "bid": 0.5418,
+        "ask": 0.5422,
+        "tickSize": 0.0001,
+        "stepSize": 0.1,
+        "minQty": 0.1,
+        "minNotional": 5,
+        "quoteVolumeUsd24h": 1311214201.86182,
+        "priceChangePercent24h": 11.619,
+        "tradeCount24h": 196424,
+        "ts": 1790815243001
+      },
+      "account": {
+        "status": "READY",
+        "equityUsd": 10576.2981667851,
+        "availableMarginUsd": 4974.9125536,
+        "reservedMarginUsd": 0,
+        "executionLeaseMarginUsd": 0,
+        "freeMarginUsd": 4974.9125536
+      },
+      "exchange": {
+        "tickSize": 0.0001,
+        "stepSize": 0.1,
+        "minQty": 0.1,
+        "minNotional": 5
+      },
+      "leverage": 8,
+      "sideEnvelope": {
+        "executable": true,
+        "maxMarginUsd": 4974.9125536,
+        "maxNotionalUsd": 39799.3004288,
+        "maxQuantityUnits": 733262,
+        "minQuantityUnits": 93,
+        "legalQuantityRangeUnits": [
+          93,
+          733262
+        ],
+        "firstBindingConstraint": "AVAILABLE_MARGIN",
+        "minimumLegalNotionalUsd": 5,
+        "admission": {
+          "ceilingUsd": null,
+          "refusal": null,
+          "gate": null,
+          "detail": null
+        },
+        "legalNotionalRangeUsd": [
+          5,
+          39799.292385969195
+        ]
+      },
+      "leaseBudget": {
+        "requestedUsd": 4974.9125536,
+        "cappedBy": "ROUTED_PLAN_MARGIN",
+        "budgetUsd": 49.134861956514285
+      }
+    },
+    "raw": {
+      "action": "FINAL",
+      "schemaVersion": "V3.9.3",
+      "structureDirection": "LONG",
+      "tradeSide": "LONG",
+      "quantityUnits": 93,
+      "opportunityType": "TREND_RESUMPTION",
+      "marketRegime": "TREND",
+      "confidence": 0.65,
+      "directionReason": "Multi-timeframe alignment (1m, 5m, 15m, 1h, 4h, 1d) shows consistent bullish momentum with higher highs/lows and positive MACD crossovers. Price is trading near",
+      "timingReason": "1m and 5m timeframes show fresh bullish MACD crossovers and price closing at bar highs, indicating immediate strength. 15m structure supports continuation.",
+      "entryLocationReason": "Entry near current bid/ask spread (0.5418-0.5422) aligns with recent trade activity and maker reachable band.",
+      "reason": "Strong bullish momentum across multiple timeframes with technical indicators supporting continuation. Price is at multi-timeframe highs with consistent fractal",
+      "entryInvalidation": "Price closes below 0.5380 (15m EMA21) or breaks below 0.5360 (15m swing low)",
+      "supportingEvidenceRefs": [
+        "technical.1m.confirmed",
+        "technical.5m.confirmed",
+        "technical.15m.confirmed",
+        "technical.1h.confirmed",
+        "technical.4h.confirmed",
+        "technical.1d.confirmed",
+        "quote.top",
+        "microstructure.book5",
+        "execution.recentTrades"
+      ],
+      "profitTakePlan": {
+        "targetPrice": 0.545,
+        "acceptableTargetRange": {
+          "min": 0.544,
+          "max": 0.546
+        },
+        "targetHorizonMinutes": 15,
+        "targetReason": "Target is set at 15m ATR multiple above entry, within historical reachability for 15m horizon (p75=0.49%, p90=0.78%).",
+        "evidenceRefs": [
+          "technical.15m.confirmed",
+          "economics.entry"
+        ]
+      },
+      "rejectLayer": "NONE",
+      "blockingCondition": "NONE",
+      "releaseCondition": "NONE",
+      "timingEvent": {
+        "id": "NONE",
+        "status": "NONE",
+        "time": null,
+        "anchorPrice": null,
+        "timeframe": null,
+        "provenance": "NONE"
+      },
+      "decision": "PLACE_LONG",
+      "idealPrice": 0.542,
+      "acceptablePriceRange": {
+        "min": 0.5415,
+        "max": 0.5425
+      },
+      "horizonMinutes": 1,
+      "waitCondition": null
+    },
+    "normalized": {
+      "decision": "PLACE_LONG",
+      "direction": "LONG",
+      "quantityUnits": 93,
+      "profitTakePlan": {
+        "targetPrice": 0.545,
+        "acceptableTargetRange": {
+          "min": 0.544,
+          "max": 0.546
+        },
+        "targetHorizonMinutes": 15,
+        "targetReason": "Target is set at 15m ATR multiple above entry, within historical reachability for 15m horizon (p75=0.49%, p90=0.78%).",
+        "evidenceRefs": [
+          "technical.15m.confirmed",
+          "economics.entry"
+        ]
+      }
+    },
+    "plan": {
+      "schemaVersion": "V396-TRADE-PLAN-1",
+      "planId": "plan_6f974c8ac5a825a85ca330071eacd111",
+      "planVersion": 1,
+      "supersedesPlanId": null,
+      "cycleId": "cycle_entry_intent_muot7sbi_i7mzldgm",
+      "scope": "[\"TESTNET\",\"binance-primary\",\"WLDUSDC\",\"LONG\"]",
+      "symbol": "WLDUSDC",
+      "side": "LONG",
+      "selectedCandidateId": "cand_a142f840cd47efb035cb8f17",
+      "quantityUnits": 93,
+      "notionalUsd": 5.0406,
+      "marginUsd": 0.630075,
+      "leverage": 8,
+      "entryReferencePrice": 0.542,
+      "targetPrice": 0.545,
+      "acceptableTargetRange": {
+        "min": 0.544,
+        "max": 0.546
+      },
+      "entryTtlMinutes": 1,
+      "targetHorizonMinutes": 15,
+      "managementDurationMs": 86400000,
+      "thesis": "Strong bullish momentum across multiple timeframes with technical indicators supporting continuation. Price is at multi-timeframe highs with consistent fractal",
+      "invalidationPredicate": "NO_PREDICATE",
+      "predicateLevel": 0.5415,
+      "predicateEvidenceRefs": [],
+      "counterEvidenceRefs": [],
+      "releaseCondition": null,
+      "costs": {
+        "entryFeeUsd": 0.002016,
+        "exitFeeUsd": 0.002027,
+        "slippageUsd": 0,
+        "uncertaintyBufferUsd": 0.000404,
+        "fundingEstimateUsd": 0,
+        "fundingStatus": "UNPROVEN",
+        "fxRateToQuote": 1,
+        "costVersion": "fees:0.0004:0.0004:0:10"
+      },
+      "economics": {
+        "targetConditionalNetProfitUsd": 0.023452,
+        "targetConditionalNetProfitStatus": "VERIFIED",
+        "expectedNetPnlAtHorizonUsd": -0.773889,
+        "expectedNetPnlAtHorizonStatus": "VERIFIED",
+        "reachProbability": 0.22093023255813954,
+        "reachProbabilityStatus": "VERIFIED",
+        "reachSampleCount": 86,
+        "historicalHardMaxMovePercent": 1.3683223992502214,
+        "targetMovePercent": 0.553506,
+        "statisticalSource": "CLOSED_CANDLE_CACHE:1m:86",
+        "targetVsStatisticalCeiling": "WITHIN",
+        "modelConfidence": 0.65,
+        "modelConfidenceIsAuthority": false
+      },
+      "risk": null,
+      "minNetProfitUsd": 1,
+      "maxRealizedLossUsd": 10,
+      "provenance": {
+        "modelRunId": "airun_muot62kx_x952lz52",
+        "promptVersion": null,
+        "factVersion": "v396p798c6e2fb5a7187c6df2fe2db793a40a5f56c115",
+        "envelopeExpiresAt": 1790815383056,
+        "candidateSetHash": "cand_2a358b80ffa61a93940ff317",
+        "createdAt": 1790815340574,
+        "source": "AI"
+      },
+      "persistedAt": 1790815340574,
+      "immutable": true
+    },
+    "intent": {
+      "id": "intent_muot7sbi_i7mzldgm",
+      "quantityUnits": 93,
+      "leverage": 8,
+      "planId": "plan_6f974c8ac5a825a85ca330071eacd111",
+      "reservationId": "reserve_1790815340610_pf34gc"
+    },
+    "reservation": {
+      "id": "reserve_1790815340610_pf34gc",
+      "marginUsd": 0.63065625,
+      "notionalUsd": 5.04525,
+      "status": "RELEASED",
+      "quoteAsset": "USDC"
+    },
+    "orders": [
+      {
+        "id": "entry_intent_muot7sbi_i7mzldgm",
+        "clientOrderId": "ml_be7066632edcacaa2ad6f66c99a3",
+        "exchangeOrderId": "167300269",
+        "side": "LONG",
+        "quantity": 9.3,
+        "price": 0.5418,
+        "status": "FILLED",
+        "filledQuantity": 9.3,
+        "factSource": "BINANCE_EXACT_ORDER",
+        "verifiedAt": 1790818164322,
+        "submittedAt": 1790815362842,
+        "fills": [
+          {
+            "tradeId": "62618665",
+            "qty": 9.3,
+            "price": 0.5418,
+            "commission": 0.00090697,
+            "commissionAsset": "USDC",
+            "executedAt": 1790815901546
+          }
+        ]
+      }
+    ],
+    "events": [
+      {
+        "type": "ENTRY_EXECUTION_PERMIT_EVALUATED",
+        "ts": 1790815353799,
+        "permit": {
+          "permitted": true,
+          "firstCause": null,
+          "facts": {
+            "privateFresh": true,
+            "quoteAsset": "USDC",
+            "exchangeAvailableUsd": 4974.90027528,
+            "uncommittedReservationUsd": 0,
+            "analysisEarmarkUsd": 0,
+            "executableForNewReservationUsd": 4974.90027528,
+            "requiredMarginUsd": 0.6298425,
+            "filtersComplete": true,
+            "authorizationValid": true,
+            "submissionIdentity": "ml_be7066632edcacaa2ad6f66c99a3",
+            "durableStorageReady": true
+          }
+        }
+      },
+      {
+        "type": "ENTRY_SUBMIT_ATTEMPTED",
+        "ts": 1790815354040,
+        "permit": null
+      }
+    ],
+    "comparison": {
+      "rawUnits": 93,
+      "normalizedUnits": 93,
+      "stepSize": 0.1,
+      "rawQty": 9.3,
+      "planUnits": 93,
+      "intentUnits": 93,
+      "finalQty": [
+        9.3
+      ],
+      "rawSide": "LONG",
+      "normalizedSide": "LONG",
+      "finalSide": [
+        "LONG"
+      ]
+    }
+  },
+  {
+    "runId": "airun_muotas93_3h5uaubi",
+    "symbol": "ETHFIUSDT",
+    "startedAt": 1790815480455,
+    "completedAt": 1790815558053,
+    "input": {
+      "packetId": "eip_muotaiyn_eqge8fb5",
+      "createdAt": 1790815468415,
+      "quoteAt": 1790815464000,
+      "quote": {
+        "symbol": "ETHFIUSDT",
+        "last": 0.7773,
+        "mark": 0.7773,
+        "bid": 0.7764,
+        "ask": 0.7773,
+        "tickSize": 0.0001,
+        "stepSize": 0.1,
+        "minQty": 0.1,
+        "minNotional": 5,
+        "quoteVolumeUsd24h": 617169448.19077,
+        "priceChangePercent24h": 0.362,
+        "tradeCount24h": 175133,
+        "ts": 1790815464000
+      },
+      "account": {
+        "status": "READY",
+        "equityUsd": 10573.659508050001,
+        "availableMarginUsd": 3969.5654596,
+        "reservedMarginUsd": 0,
+        "executionLeaseMarginUsd": 0,
+        "freeMarginUsd": 3969.5654596
+      },
+      "exchange": {
+        "tickSize": 0.0001,
+        "stepSize": 0.1,
+        "minQty": 0.1,
+        "minNotional": 5
+      },
+      "leverage": 8,
+      "sideEnvelope": {
+        "executable": true,
+        "maxMarginUsd": 3969.5654596,
+        "maxNotionalUsd": 31756.5236768,
+        "maxQuantityUnits": 407895,
+        "minQuantityUnits": 65,
+        "legalQuantityRangeUnits": [
+          65,
+          407895
+        ],
+        "firstBindingConstraint": "AVAILABLE_MARGIN",
+        "minimumLegalNotionalUsd": 5,
+        "admission": {
+          "ceilingUsd": null,
+          "refusal": null,
+          "gate": null,
+          "detail": null
+        },
+        "legalNotionalRangeUsd": [
+          5,
+          31756.45546871473
+        ]
+      },
+      "leaseBudget": {
+        "requestedUsd": 3969.5654596,
+        "cappedBy": "ROUTED_PLAN_MARGIN",
+        "budgetUsd": 47.338812273040006
+      }
+    },
+    "raw": {
+      "action": "FINAL",
+      "schemaVersion": "V3.9.3",
+      "structureDirection": "LONG",
+      "tradeSide": "LONG",
+      "quantityUnits": 65,
+      "opportunityType": "TREND_RESUMPTION",
+      "marketRegime": "TREND",
+      "confidence": 0.65,
+      "directionReason": "15m and 4h timeframes show strong bullish momentum with MACD bullish crosses and higher highs/lows. 1m/5m pullback provides a tactical entry point near support.",
+      "timingReason": "Price is consolidating near 1m swing lows with bullish MACD cross on 1m, suggesting a potential bounce. Order book shows ask pressure, but recent trades are bid",
+      "entryLocationReason": "Entry at 0.7765 is within the maker reachable band and near the 1m swing low of 0.7741, offering a favorable risk/reward ratio.",
+      "reason": "Bullish trend on higher timeframes with tactical pullback on lower timeframes. Entry near support with bullish momentum indicators.",
+      "entryInvalidation": "Price closes below 0.7740 on 1m timeframe",
+      "supportingEvidenceRefs": [
+        "technical.15m.confirmed",
+        "technical.4h.confirmed",
+        "technical.1m.confirmed",
+        "microstructure.book5",
+        "execution.recentTrades"
+      ],
+      "profitTakePlan": {
+        "targetPrice": 0.785,
+        "acceptableTargetRange": {
+          "min": 0.78,
+          "max": 0.79
+        },
+        "targetHorizonMinutes": 60,
+        "targetReason": "Target is near the 15m swing high of 0.7851 and 1h resistance level, within the historical reachability domain for 60 minutes.",
+        "evidenceRefs": [
+          "technical.15m.confirmed",
+          "technical.1h.confirmed"
+        ]
+      },
+      "rejectLayer": "NONE",
+      "blockingCondition": "NONE",
+      "releaseCondition": "NONE",
+      "timingEvent": {
+        "id": "ETHFIUSDT_15m_bullish_cross",
+        "status": "PENDING",
+        "time": 1790815468415,
+        "anchorPrice": 0.7773,
+        "timeframe": "15m",
+        "provenance": "technical.15m.confirmed"
+      },
+      "decision": "PLACE_LONG",
+      "idealPrice": 0.7765,
+      "acceptablePriceRange": {
+        "min": 0.776,
+        "max": 0.777
+      },
+      "horizonMinutes": 1,
+      "waitCondition": null
+    },
+    "normalized": {
+      "decision": "PLACE_LONG",
+      "direction": "LONG",
+      "quantityUnits": 65,
+      "profitTakePlan": {
+        "targetPrice": 0.785,
+        "acceptableTargetRange": {
+          "min": 0.78,
+          "max": 0.79
+        },
+        "targetHorizonMinutes": 60,
+        "targetReason": "Target is near the 15m swing high of 0.7851 and 1h resistance level, within the historical reachability domain for 60 minutes.",
+        "evidenceRefs": [
+          "technical.15m.confirmed",
+          "technical.1h.confirmed"
+        ]
+      }
+    },
+    "plan": {
+      "schemaVersion": "V396-TRADE-PLAN-1",
+      "planId": "plan_b3a4dd0a04d086b5bba2f75f137cf6b6",
+      "planVersion": 1,
+      "supersedesPlanId": null,
+      "cycleId": "cycle_entry_intent_muotcgo5_sq320h8v",
+      "scope": "[\"TESTNET\",\"binance-primary\",\"ETHFIUSDT\",\"LONG\"]",
+      "symbol": "ETHFIUSDT",
+      "side": "LONG",
+      "selectedCandidateId": "cand_4549f77614bece9d45708365",
+      "quantityUnits": 65,
+      "notionalUsd": 5.0544,
+      "marginUsd": 0.6318,
+      "leverage": 8,
+      "entryReferencePrice": 0.7776,
+      "targetPrice": 0.785,
+      "acceptableTargetRange": {
+        "min": 0.78,
+        "max": 0.79
+      },
+      "entryTtlMinutes": 1,
+      "targetHorizonMinutes": 60,
+      "managementDurationMs": 86400000,
+      "thesis": "Bullish trend on higher timeframes with tactical pullback on lower timeframes. Entry near support with bullish momentum indicators.",
+      "invalidationPredicate": "NO_PREDICATE",
+      "predicateLevel": 0.776,
+      "predicateEvidenceRefs": [],
+      "counterEvidenceRefs": [],
+      "releaseCondition": null,
+      "costs": {
+        "entryFeeUsd": 0.002022,
+        "exitFeeUsd": 0.002041,
+        "slippageUsd": 0,
+        "uncertaintyBufferUsd": 0.000406,
+        "fundingEstimateUsd": 0,
+        "fundingStatus": "UNPROVEN",
+        "fxRateToQuote": 1,
+        "costVersion": "fees:0.0004:0.0004:0:10"
+      },
+      "economics": {
+        "targetConditionalNetProfitUsd": 0.043631,
+        "targetConditionalNetProfitStatus": "VERIFIED",
+        "expectedNetPnlAtHorizonUsd": -0.656888,
+        "expectedNetPnlAtHorizonStatus": "VERIFIED",
+        "reachProbability": 0.3287671232876712,
+        "reachProbabilityStatus": "VERIFIED",
+        "reachSampleCount": 73,
+        "historicalHardMaxMovePercent": 2.6098535286284807,
+        "targetMovePercent": 0.951646,
+        "statisticalSource": "CLOSED_CANDLE_CACHE:5m:73",
+        "targetVsStatisticalCeiling": "WITHIN",
+        "modelConfidence": 0.65,
+        "modelConfidenceIsAuthority": false
+      },
+      "risk": null,
+      "minNetProfitUsd": 1,
+      "maxRealizedLossUsd": 10,
+      "provenance": {
+        "modelRunId": "airun_muotas93_3h5uaubi",
+        "promptVersion": null,
+        "factVersion": "v396p2f224d9af1f55f45e5df8171347845c944d19fa3",
+        "envelopeExpiresAt": 1790815603410,
+        "candidateSetHash": "cand_f291e40404181878338cab35",
+        "createdAt": 1790815558757,
+        "source": "AI"
+      },
+      "persistedAt": 1790815558757,
+      "immutable": true
+    },
+    "intent": {
+      "id": "intent_muotcgo5_sq320h8v",
+      "quantityUnits": 65,
+      "leverage": 8,
+      "planId": "plan_b3a4dd0a04d086b5bba2f75f137cf6b6",
+      "reservationId": "reserve_1790815558781_dndwou"
+    },
+    "reservation": {
+      "id": "reserve_1790815558781_dndwou",
+      "marginUsd": 0.6313125,
+      "notionalUsd": 5.0505,
+      "status": "RELEASED",
+      "quoteAsset": "USDT"
+    },
+    "orders": [
+      {
+        "id": "entry_intent_muotcgo5_sq320h8v",
+        "clientOrderId": "ml_c44b80f39c8f8fc036a5bafc0111",
+        "exchangeOrderId": "217502712",
+        "side": "LONG",
+        "quantity": 6.5,
+        "price": 0.7765,
+        "status": "FILLED",
+        "filledQuantity": 6.5,
+        "factSource": "BINANCE_EXACT_ORDER",
+        "verifiedAt": 1790818174614,
+        "submittedAt": 1790815580587,
+        "fills": [
+          {
+            "tradeId": "62971342",
+            "qty": 6.5,
+            "price": 0.7765,
+            "commission": 0,
+            "commissionAsset": "USDT",
+            "executedAt": 1790815581227
+          }
+        ]
+      }
+    ],
+    "events": [
+      {
+        "type": "ENTRY_EXECUTION_PERMIT_EVALUATED",
+        "ts": 1790815571202,
+        "permit": {
+          "permitted": true,
+          "firstCause": null,
+          "facts": {
+            "privateFresh": true,
+            "quoteAsset": "USDT",
+            "exchangeAvailableUsd": 3969.65866293,
+            "uncommittedReservationUsd": 0,
+            "analysisEarmarkUsd": 0,
+            "executableForNewReservationUsd": 3969.65866293,
+            "requiredMarginUsd": 0.63090625,
+            "filtersComplete": true,
+            "authorizationValid": true,
+            "submissionIdentity": "ml_c44b80f39c8f8fc036a5bafc0111",
+            "durableStorageReady": true
+          }
+        }
+      },
+      {
+        "type": "ENTRY_SUBMIT_ATTEMPTED",
+        "ts": 1790815571476,
+        "permit": null
+      }
+    ],
+    "comparison": {
+      "rawUnits": 65,
+      "normalizedUnits": 65,
+      "stepSize": 0.1,
+      "rawQty": 6.5,
+      "planUnits": 65,
+      "intentUnits": 65,
+      "finalQty": [
+        6.5
+      ],
+      "rawSide": "LONG",
+      "normalizedSide": "LONG",
+      "finalSide": [
+        "LONG"
+      ]
+    }
+  },
+  {
+    "runId": "airun_muothcqb_t9lhvem3",
+    "symbol": "FILUSDT",
+    "startedAt": 1790815786931,
+    "completedAt": 1790815862653,
+    "input": {
+      "packetId": "eip_muoth3pn_n853j1ga",
+      "createdAt": 1790815775243,
+      "quoteAt": 1790815765000,
+      "quote": {
+        "symbol": "FILUSDT",
+        "last": 1.0482,
+        "mark": 1.0482,
+        "bid": 1.0482,
+        "ask": 1.0483,
+        "tickSize": 0.0001,
+        "stepSize": 0.1,
+        "minQty": 0.1,
+        "minNotional": 5,
+        "quoteVolumeUsd24h": 490792513.81347,
+        "priceChangePercent24h": -0.739,
+        "tradeCount24h": 172190,
+        "ts": 1790815765000
+      },
+      "account": {
+        "status": "READY",
+        "equityUsd": 10578.618131935802,
+        "availableMarginUsd": 3973.25850028,
+        "reservedMarginUsd": 0,
+        "executionLeaseMarginUsd": 0,
+        "freeMarginUsd": 3973.25850028
+      },
+      "exchange": {
+        "tickSize": 0.0001,
+        "stepSize": 0.1,
+        "minQty": 0.1,
+        "minNotional": 5
+      },
+      "leverage": 8,
+      "sideEnvelope": {
+        "executable": true,
+        "maxMarginUsd": 3973.25850028,
+        "maxNotionalUsd": 31786.06800224,
+        "maxQuantityUnits": 303021,
+        "minQuantityUnits": 48,
+        "legalQuantityRangeUnits": [
+          48,
+          303021
+        ],
+        "firstBindingConstraint": "AVAILABLE_MARGIN",
+        "minimumLegalNotionalUsd": 5,
+        "admission": {
+          "ceilingUsd": null,
+          "refusal": null,
+          "gate": null,
+          "detail": null
+        },
+        "legalNotionalRangeUsd": [
+          5,
+          31786.0641270439
+        ]
+      },
+      "leaseBudget": {
+        "requestedUsd": 3973.25850028,
+        "cappedBy": "ROUTED_PLAN_MARGIN",
+        "budgetUsd": 47.907814574789064
+      }
+    },
+    "raw": {
+      "action": "FINAL",
+      "schemaVersion": "V3.9.3",
+      "structureDirection": "LONG",
+      "tradeSide": "LONG",
+      "quantityUnits": 48,
+      "opportunityType": "TREND_RESUMPTION",
+      "marketRegime": "RANGE",
+      "confidence": 0.65,
+      "directionReason": "15m and 5m timeframes exhibit bullish momentum with positive MACD histograms and higher highs/lows, while 1m shows a minor pullback creating a potential entry. ",
+      "timingReason": "1m MACD histogram is negative but slope is improving, suggesting the pullback may be ending. 5m volume Z-score is positive, supporting the move.",
+      "entryLocationReason": "Price is near the lower Bollinger Band on 1m and 5m, offering a favorable risk/reward for a long entry.",
+      "reason": "Bullish structure on 5m/15m with a tactical pullback on 1m suggests a long entry opportunity. The order book shows some ask-side imbalance, but the overall uptř",
+      "entryInvalidation": "Price closes below 1.0444 (1m BB Lower) or 1.0436 (15m swing low)",
+      "supportingEvidenceRefs": [
+        "technical.5m.confirmed",
+        "technical.15m.confirmed",
+        "technical.1m.confirmed",
+        "microstructure.book5"
+      ],
+      "profitTakePlan": {
+        "targetPrice": 1.055,
+        "acceptableTargetRange": {
+          "min": 1.052,
+          "max": 1.058
+        },
+        "targetHorizonMinutes": 60,
+        "targetReason": "Target is set at the 1h Bollinger Middle band, a reasonable resistance level within the 60-minute horizon.",
+        "evidenceRefs": [
+          "technical.1h.confirmed"
+        ]
+      },
+      "rejectLayer": "NONE",
+      "blockingCondition": "NONE",
+      "releaseCondition": "NONE",
+      "timingEvent": {
+        "id": "none",
+        "status": "NONE",
+        "time": null,
+        "anchorPrice": null,
+        "timeframe": null,
+        "provenance": "NONE"
+      },
+      "decision": "PLACE_LONG",
+      "idealPrice": 1.0475,
+      "acceptablePriceRange": {
+        "min": 1.0465,
+        "max": 1.0485
+      },
+      "horizonMinutes": 1,
+      "waitCondition": null
+    },
+    "normalized": {
+      "decision": "PLACE_LONG",
+      "direction": "LONG",
+      "quantityUnits": 48,
+      "profitTakePlan": {
+        "targetPrice": 1.055,
+        "acceptableTargetRange": {
+          "min": 1.052,
+          "max": 1.058
+        },
+        "targetHorizonMinutes": 60,
+        "targetReason": "Target is set at the 1h Bollinger Middle band, a reasonable resistance level within the 60-minute horizon.",
+        "evidenceRefs": [
+          "technical.1h.confirmed"
+        ]
+      }
+    },
+    "plan": {
+      "schemaVersion": "V396-TRADE-PLAN-1",
+      "planId": "plan_29a8ed6883273fa069f62053bf78a2f7",
+      "planVersion": 1,
+      "supersedesPlanId": null,
+      "cycleId": "cycle_entry_intent_muotizrv_6ktud80z",
+      "scope": "[\"TESTNET\",\"binance-primary\",\"FILUSDT\",\"LONG\"]",
+      "symbol": "FILUSDT",
+      "side": "LONG",
+      "selectedCandidateId": "cand_bf9884bc2e7318368722a904",
+      "quantityUnits": 48,
+      "notionalUsd": 5.03088,
+      "marginUsd": 0.62886,
+      "leverage": 8,
+      "entryReferencePrice": 1.0481,
+      "targetPrice": 1.055,
+      "acceptableTargetRange": {
+        "min": 1.052,
+        "max": 1.058
+      },
+      "entryTtlMinutes": 1,
+      "targetHorizonMinutes": 60,
+      "managementDurationMs": 86400000,
+      "thesis": "Bullish structure on 5m/15m with a tactical pullback on 1m suggests a long entry opportunity. The order book shows some ask-side imbalance, but the overall uptř",
+      "invalidationPredicate": "NO_PREDICATE",
+      "predicateLevel": 1.0465,
+      "predicateEvidenceRefs": [],
+      "counterEvidenceRefs": [],
+      "releaseCondition": null,
+      "costs": {
+        "entryFeeUsd": 0.002012,
+        "exitFeeUsd": 0.002026,
+        "slippageUsd": 0,
+        "uncertaintyBufferUsd": 0.000404,
+        "fundingEstimateUsd": 0,
+        "fundingStatus": "UNPROVEN",
+        "fxRateToQuote": 1,
+        "costVersion": "fees:0.0004:0.0004:0:10"
+      },
+      "economics": {
+        "targetConditionalNetProfitUsd": 0.028678,
+        "targetConditionalNetProfitStatus": "VERIFIED",
+        "expectedNetPnlAtHorizonUsd": -0.719451,
+        "expectedNetPnlAtHorizonStatus": "VERIFIED",
+        "reachProbability": 0.2727272727272727,
+        "reachProbabilityStatus": "VERIFIED",
+        "reachSampleCount": 77,
+        "historicalHardMaxMovePercent": 1.916715314263473,
+        "targetMovePercent": 0.658334,
+        "statisticalSource": "CLOSED_CANDLE_CACHE:5m:77",
+        "targetVsStatisticalCeiling": "WITHIN",
+        "modelConfidence": 0.65,
+        "modelConfidenceIsAuthority": false
+      },
+      "risk": null,
+      "minNetProfitUsd": 1,
+      "maxRealizedLossUsd": 10,
+      "provenance": {
+        "modelRunId": "airun_muothcqb_t9lhvem3",
+        "promptVersion": null,
+        "factVersion": "v396pc940c21751f122308521e5445b45ee7cc12e69d5",
+        "envelopeExpiresAt": 1790815910237,
+        "candidateSetHash": "cand_168275a2432ca6f1b56f3c97",
+        "createdAt": 1790815863451,
+        "source": "AI"
+      },
+      "persistedAt": 1790815863451,
+      "immutable": true
+    },
+    "intent": {
+      "id": "intent_muotizrv_6ktud80z",
+      "quantityUnits": 48,
+      "leverage": 8,
+      "planId": "plan_29a8ed6883273fa069f62053bf78a2f7",
+      "reservationId": "reserve_1790815863486_205b5f"
+    },
+    "reservation": {
+      "id": "reserve_1790815863486_205b5f",
+      "marginUsd": 0.6291000000000001,
+      "notionalUsd": 5.032800000000001,
+      "status": "RELEASED",
+      "quoteAsset": "USDT"
+    },
+    "orders": [
+      {
+        "id": "entry_intent_muotizrv_6ktud80z",
+        "clientOrderId": "ml_4fcadfb203b42ff8f4e2556b761e",
+        "exchangeOrderId": "336209160",
+        "side": "LONG",
+        "quantity": 4.8,
+        "price": 1.047,
+        "status": "FILLED",
+        "filledQuantity": 4.8,
+        "factSource": "BINANCE_EXACT_ORDER",
+        "verifiedAt": 1790818182527,
+        "submittedAt": 1790815881547,
+        "fills": [
+          {
+            "tradeId": "67268353",
+            "qty": 4.8,
+            "price": 1.047,
+            "commission": 0.00100512,
+            "commissionAsset": "USDT",
+            "executedAt": 1790815887614
+          }
+        ]
+      }
+    ],
+    "events": [
+      {
+        "type": "ENTRY_EXECUTION_PERMIT_EVALUATED",
+        "ts": 1790815874047,
+        "permit": {
+          "permitted": true,
+          "firstCause": null,
+          "facts": {
+            "privateFresh": true,
+            "quoteAsset": "USDT",
+            "exchangeAvailableUsd": 3976.09100364,
+            "uncommittedReservationUsd": 0,
+            "analysisEarmarkUsd": 0,
+            "executableForNewReservationUsd": 3976.09100364,
+            "requiredMarginUsd": 0.6282000000000001,
+            "filtersComplete": true,
+            "authorizationValid": true,
+            "submissionIdentity": "ml_4fcadfb203b42ff8f4e2556b761e",
+            "durableStorageReady": true
+          }
+        }
+      },
+      {
+        "type": "ENTRY_SUBMIT_ATTEMPTED",
+        "ts": 1790815874315,
+        "permit": null
+      }
+    ],
+    "comparison": {
+      "rawUnits": 48,
+      "normalizedUnits": 48,
+      "stepSize": 0.1,
+      "rawQty": 4.800000000000001,
+      "planUnits": 48,
+      "intentUnits": 48,
+      "finalQty": [
+        4.8
+      ],
+      "rawSide": "LONG",
+      "normalizedSide": "LONG",
+      "finalSide": [
+        "LONG"
+      ]
+    }
+  },
+  {
+    "runId": "airun_muotpx08_fulsdlar",
+    "symbol": "VIRTUALUSDT",
+    "startedAt": 1790816186456,
+    "completedAt": 1790816267691,
+    "input": {
+      "packetId": "eip_muotpo2a_pwklqi89",
+      "createdAt": 1790816174866,
+      "quoteAt": 1790816168000,
+      "quote": {
+        "symbol": "VIRTUALUSDT",
+        "last": 0.8015,
+        "mark": 0.8015,
+        "bid": 0.7997,
+        "ask": 0.8015,
+        "tickSize": 0.0001,
+        "stepSize": 0.1,
+        "minQty": 0.1,
+        "minNotional": 5,
+        "quoteVolumeUsd24h": 551635413.06273,
+        "priceChangePercent24h": 4.675,
+        "tradeCount24h": 169588,
+        "ts": 1790816168000
+      },
+      "account": {
+        "status": "READY",
+        "equityUsd": 10586.1212486942,
+        "availableMarginUsd": 3980.40075766,
+        "reservedMarginUsd": 0,
+        "executionLeaseMarginUsd": 0,
+        "freeMarginUsd": 3980.40075766
+      },
+      "exchange": {
+        "tickSize": 0.0001,
+        "stepSize": 0.1,
+        "minQty": 0.1,
+        "minNotional": 5
+      },
+      "leverage": 8,
+      "sideEnvelope": {
+        "executable": true,
+        "maxMarginUsd": 3980.40075766,
+        "maxNotionalUsd": 31843.20606128,
+        "maxQuantityUnits": 396840,
+        "minQuantityUnits": 63,
+        "legalQuantityRangeUnits": [
+          63,
+          396840
+        ],
+        "firstBindingConstraint": "AVAILABLE_MARGIN",
+        "minimumLegalNotionalUsd": 5,
+        "admission": {
+          "ceilingUsd": null,
+          "refusal": null,
+          "gate": null,
+          "detail": null
+        },
+        "legalNotionalRangeUsd": [
+          5,
+          31843.197808118126
+        ]
+      },
+      "leaseBudget": {
+        "requestedUsd": 3980.40075766,
+        "cappedBy": "ROUTED_PLAN_MARGIN",
+        "budgetUsd": 46.85745380552478
+      }
+    },
+    "raw": {
+      "action": "FINAL",
+      "schemaVersion": "V3.9.3",
+      "structureDirection": "LONG",
+      "tradeSide": "LONG",
+      "quantityUnits": 63,
+      "opportunityType": "TREND_RESUMPTION",
+      "marketRegime": "TREND",
+      "confidence": 0.65,
+      "directionReason": "15m and 1h timeframes exhibit bullish structure with higher highs/lows and positive MACD, while 1m bearish pressure appears to be exhausting (positive MACD hist",
+      "timingReason": "Price is near the lower Bollinger Band on 1m with elevated volume Z-score, suggesting a potential bounce within the broader 15m uptrend.",
+      "entryLocationReason": "Entry is placed near the current bid to capture the potential 1m reversal while respecting the maker reachable band.",
+      "reason": "The 15m and 1h timeframes show a clear bullish trend with higher highs and lows, supported by positive MACD and EMA alignment. The 1m timeframe shows bearish",
+      "entryInvalidation": "Price closes below 0.7990 on the 1m timeframe, breaking the recent swing low and invalidating the bullish structure.",
+      "supportingEvidenceRefs": [
+        "technical.15m.confirmed",
+        "technical.1h.confirmed",
+        "technical.1m.confirmed",
+        "quote.top",
+        "microstructure.book5"
+      ],
+      "profitTakePlan": {
+        "targetPrice": 0.815,
+        "acceptableTargetRange": {
+          "min": 0.81,
+          "max": 0.82
+        },
+        "targetHorizonMinutes": 60,
+        "targetReason": "Target is set at the 1h Bollinger Upper Band, which aligns with the 15m swing high and provides a reasonable risk-reward ratio within the 60-minute horizon.",
+        "evidenceRefs": [
+          "technical.1h.confirmed",
+          "technical.15m.confirmed"
+        ]
+      },
+      "rejectLayer": "NONE",
+      "blockingCondition": "NONE",
+      "releaseCondition": "NONE",
+      "timingEvent": {
+        "id": "VIRTUALUSDT_15m_bullish_structure",
+        "status": "PENDING",
+        "time": 1790816174866,
+        "anchorPrice": 0.8015,
+        "timeframe": "15m",
+        "provenance": "technical.15m.confirmed"
+      },
+      "decision": "PLACE_LONG",
+      "idealPrice": 0.8005,
+      "acceptablePriceRange": {
+        "min": 0.8005,
+        "max": 0.8015
+      },
+      "horizonMinutes": 1,
+      "waitCondition": null
+    },
+    "normalized": {
+      "decision": "PLACE_LONG",
+      "direction": "LONG",
+      "quantityUnits": 63,
+      "profitTakePlan": {
+        "targetPrice": 0.815,
+        "acceptableTargetRange": {
+          "min": 0.81,
+          "max": 0.82
+        },
+        "targetHorizonMinutes": 60,
+        "targetReason": "Target is set at the 1h Bollinger Upper Band, which aligns with the 15m swing high and provides a reasonable risk-reward ratio within the 60-minute horizon.",
+        "evidenceRefs": [
+          "technical.1h.confirmed",
+          "technical.15m.confirmed"
+        ]
+      }
+    },
+    "plan": {
+      "schemaVersion": "V396-TRADE-PLAN-1",
+      "planId": "plan_b8143de531001649dffd7e0d16a7194e",
+      "planVersion": 1,
+      "supersedesPlanId": null,
+      "cycleId": "cycle_entry_intent_muotroar_rr283kna",
+      "scope": "[\"TESTNET\",\"binance-primary\",\"VIRTUALUSDT\",\"LONG\"]",
+      "symbol": "VIRTUALUSDT",
+      "side": "LONG",
+      "selectedCandidateId": "cand_4123370969ff3bdaf4062ee3",
+      "quantityUnits": 63,
+      "notionalUsd": 5.04441,
+      "marginUsd": 0.630551,
+      "leverage": 8,
+      "entryReferencePrice": 0.8007,
+      "targetPrice": 0.815,
+      "acceptableTargetRange": {
+        "min": 0.81,
+        "max": 0.82
+      },
+      "entryTtlMinutes": 1,
+      "targetHorizonMinutes": 60,
+      "managementDurationMs": 86400000,
+      "thesis": "The 15m and 1h timeframes show a clear bullish trend with higher highs and lows, supported by positive MACD and EMA alignment. The 1m timeframe shows bearish",
+      "invalidationPredicate": "NO_PREDICATE",
+      "predicateLevel": 0.8005,
+      "predicateEvidenceRefs": [],
+      "counterEvidenceRefs": [],
+      "releaseCondition": null,
+      "costs": {
+        "entryFeeUsd": 0.002018,
+        "exitFeeUsd": 0.002054,
+        "slippageUsd": 0,
+        "uncertaintyBufferUsd": 0.000407,
+        "fundingEstimateUsd": 0,
+        "fundingStatus": "UNPROVEN",
+        "fxRateToQuote": 1,
+        "costVersion": "fees:0.0004:0.0004:0:10"
+      },
+      "economics": {
+        "targetConditionalNetProfitUsd": 0.085611,
+        "targetConditionalNetProfitStatus": "VERIFIED",
+        "expectedNetPnlAtHorizonUsd": -0.832983,
+        "expectedNetPnlAtHorizonStatus": "VERIFIED",
+        "reachProbability": 0.15384615384615385,
+        "reachProbabilityStatus": "VERIFIED",
+        "reachSampleCount": 78,
+        "historicalHardMaxMovePercent": 2.882062950322317,
+        "targetMovePercent": 1.785937,
+        "statisticalSource": "CLOSED_CANDLE_CACHE:5m:78",
+        "targetVsStatisticalCeiling": "WITHIN",
+        "modelConfidence": 0.65,
+        "modelConfidenceIsAuthority": false
+      },
+      "risk": null,
+      "minNetProfitUsd": 1,
+      "maxRealizedLossUsd": 10,
+      "provenance": {
+        "modelRunId": "airun_muotpx08_fulsdlar",
+        "promptVersion": null,
+        "factVersion": "v396pfc883ca03bb3be6d88872ab444e17586b17358dd",
+        "envelopeExpiresAt": 1790816309861,
+        "candidateSetHash": "cand_1f993721f809b7e478518b77",
+        "createdAt": 1790816268483,
+        "source": "AI"
+      },
+      "persistedAt": 1790816268483,
+      "immutable": true
+    },
+    "intent": {
+      "id": "intent_muotroar_rr283kna",
+      "quantityUnits": 63,
+      "leverage": 8,
+      "planId": "plan_b8143de531001649dffd7e0d16a7194e",
+      "reservationId": "reserve_1790816268520_4mh6d1"
+    },
+    "reservation": {
+      "id": "reserve_1790816268520_4mh6d1",
+      "marginUsd": 0.63118125,
+      "notionalUsd": 5.04945,
+      "status": "RELEASED",
+      "quoteAsset": "USDT"
+    },
+    "orders": [
+      {
+        "id": "entry_intent_muotroar_rr283kna",
+        "clientOrderId": "ml_d8c69512dc268b4a1d947b8141a4",
+        "exchangeOrderId": "244394444",
+        "side": "LONG",
+        "quantity": 6.3,
+        "price": 0.8005,
+        "status": "FILLED",
+        "filledQuantity": 6.3,
+        "factSource": "BINANCE_EXACT_ORDER",
+        "verifiedAt": 1790818193390,
+        "submittedAt": 1790816291441,
+        "fills": [
+          {
+            "tradeId": "64398308",
+            "qty": 6.3,
+            "price": 0.8005,
+            "commission": 0.00100863,
+            "commissionAsset": "USDT",
+            "executedAt": 1790816402301
+          }
+        ]
+      }
+    ],
+    "events": [
+      {
+        "type": "ENTRY_EXECUTION_PERMIT_EVALUATED",
+        "ts": 1790816284121,
+        "permit": {
+          "permitted": true,
+          "firstCause": null,
+          "facts": {
+            "privateFresh": true,
+            "quoteAsset": "USDT",
+            "exchangeAvailableUsd": 3977.48278094,
+            "uncommittedReservationUsd": 0,
+            "analysisEarmarkUsd": 0,
+            "executableForNewReservationUsd": 3977.48278094,
+            "requiredMarginUsd": 0.6303937500000001,
+            "filtersComplete": true,
+            "authorizationValid": true,
+            "submissionIdentity": "ml_d8c69512dc268b4a1d947b8141a4",
+            "durableStorageReady": true
+          }
+        }
+      },
+      {
+        "type": "ENTRY_SUBMIT_ATTEMPTED",
+        "ts": 1790816284387,
+        "permit": null
+      }
+    ],
+    "comparison": {
+      "rawUnits": 63,
+      "normalizedUnits": 63,
+      "stepSize": 0.1,
+      "rawQty": 6.300000000000001,
+      "planUnits": 63,
+      "intentUnits": 63,
+      "finalQty": [
+        6.3
+      ],
+      "rawSide": "LONG",
+      "normalizedSide": "LONG",
+      "finalSide": [
+        "LONG"
+      ]
+    }
+  },
+  {
+    "runId": "airun_muotsj3v_hdo6lwv0",
+    "symbol": "DOGEUSDC",
+    "startedAt": 1790816308411,
+    "completedAt": 1790816388917,
+    "input": {
+      "packetId": "eip_muots8ys_t8tefeoc",
+      "createdAt": 1790816295267,
+      "quoteAt": 1790816290904,
+      "quote": {
+        "symbol": "DOGEUSDC",
+        "last": 0.09442,
+        "mark": 0.09441,
+        "bid": 0.09441,
+        "ask": 0.09442,
+        "tickSize": 0.00001,
+        "stepSize": 1,
+        "minQty": 1,
+        "minNotional": 5,
+        "quoteVolumeUsd24h": 120994751978.49432,
+        "priceChangePercent24h": 0.973,
+        "tradeCount24h": 354554,
+        "ts": 1790816290904
+      },
+      "account": {
+        "status": "READY",
+        "equityUsd": 10582.8884134567,
+        "availableMarginUsd": 4974.24032579,
+        "reservedMarginUsd": 0,
+        "executionLeaseMarginUsd": 0,
+        "freeMarginUsd": 4974.24032579
+      },
+      "exchange": {
+        "tickSize": 0.00001,
+        "stepSize": 1,
+        "minQty": 1,
+        "minNotional": 5
+      },
+      "leverage": 8,
+      "sideEnvelope": {
+        "executable": true,
+        "maxMarginUsd": 4974.24032579,
+        "maxNotionalUsd": 39793.92260632,
+        "maxQuantityUnits": 421315,
+        "minQuantityUnits": 53,
+        "legalQuantityRangeUnits": [
+          53,
+          421315
+        ],
+        "firstBindingConstraint": "AVAILABLE_MARGIN",
+        "minimumLegalNotionalUsd": 5,
+        "admission": {
+          "ceilingUsd": null,
+          "refusal": null,
+          "gate": null,
+          "detail": null
+        },
+        "legalNotionalRangeUsd": [
+          5,
+          39793.897236652076
+        ]
+      },
+      "leaseBudget": {
+        "requestedUsd": 4974.24032579,
+        "cappedBy": "ROUTED_PLAN_MARGIN",
+        "budgetUsd": 62.73038232629825
+      }
+    },
+    "raw": {
+      "action": "FINAL",
+      "schemaVersion": "V3.9.3",
+      "structureDirection": "LONG",
+      "tradeSide": "LONG",
+      "quantityUnits": 53,
+      "opportunityType": "TREND_RESUMPTION",
+      "marketRegime": "RANGE",
+      "confidence": 0.55,
+      "directionReason": "15m MACD bullish cross with positive histogram slope and higher highs/lows structure suggest upward momentum, supported by 4h/1d bullish trends. 1m/5m bearish c",
+      "timingReason": "1m/5m bearish MACD crosses indicate short-term pullback, providing a potential entry point for a long position before the 15m bullish trend resumes. Volume Z-s",
+      "entryLocationReason": "Entry near the 1m swing low of 0.09435, within the maker reachable band, to capture the potential upward move from the 15m bullish structure.",
+      "reason": "The 15m timeframe shows a bullish MACD cross and higher highs/lows, indicating a potential upward trend. The 1m and 5m timeframes show bearish MACD crosses, but",
+      "entryInvalidation": "Price closes below 0.09430 on the 1m timeframe, invalidating the 15m bullish structure and the entry thesis.",
+      "supportingEvidenceRefs": [
+        "technical.15m.confirmed",
+        "technical.1m.confirmed",
+        "technical.5m.confirmed",
+        "technical.4h.confirmed",
+        "technical.1d.confirmed",
+        "microstructure.book5",
+        "execution.recentTrades"
+      ],
+      "profitTakePlan": {
+        "targetPrice": 0.09465,
+        "acceptableTargetRange": {
+          "min": 0.09455,
+          "max": 0.09475
+        },
+        "targetHorizonMinutes": 15,
+        "targetReason": "Target is set at the 15m Bollinger Band upper level, which is a reasonable resistance level for the short-term upward move. The 15m ATR of 0.000296 sugg",
+        "evidenceRefs": [
+          "technical.15m.confirmed",
+          "technical.1m.confirmed"
+        ]
+      },
+      "rejectLayer": "NONE",
+      "blockingCondition": "NONE",
+      "releaseCondition": "NONE",
+      "timingEvent": {
+        "id": "15m_bullish_macd_cross",
+        "status": "PENDING",
+        "time": 1790816295267,
+        "anchorPrice": 0.09441,
+        "timeframe": "15m",
+        "provenance": "technical.15m.confirmed"
+      },
+      "decision": "PLACE_LONG",
+      "idealPrice": 0.09441,
+      "acceptablePriceRange": {
+        "min": 0.09438,
+        "max": 0.09445
+      },
+      "horizonMinutes": 1,
+      "waitCondition": null
+    },
+    "normalized": {
+      "decision": "PLACE_LONG",
+      "direction": "LONG",
+      "quantityUnits": 53,
+      "profitTakePlan": {
+        "targetPrice": 0.09465,
+        "acceptableTargetRange": {
+          "min": 0.09455,
+          "max": 0.09475
+        },
+        "targetHorizonMinutes": 15,
+        "targetReason": "Target is set at the 15m Bollinger Band upper level, which is a reasonable resistance level for the short-term upward move. The 15m ATR of 0.000296 sugg",
+        "evidenceRefs": [
+          "technical.15m.confirmed",
+          "technical.1m.confirmed"
+        ]
+      }
+    },
+    "plan": {
+      "schemaVersion": "V396-TRADE-PLAN-1",
+      "planId": "plan_af5ea1acb008618b4c51c99830f1d673",
+      "planVersion": 1,
+      "supersedesPlanId": null,
+      "cycleId": "cycle_entry_intent_muotu9s2_qat0dxek",
+      "scope": "[\"TESTNET\",\"binance-primary\",\"DOGEUSDC\",\"LONG\"]",
+      "symbol": "DOGEUSDC",
+      "side": "LONG",
+      "selectedCandidateId": "cand_f37a57e26467104778f0dd72",
+      "quantityUnits": 53,
+      "notionalUsd": 5.00638,
+      "marginUsd": 0.625798,
+      "leverage": 8,
+      "entryReferencePrice": 0.09446,
+      "targetPrice": 0.09465,
+      "acceptableTargetRange": {
+        "min": 0.09455,
+        "max": 0.09475
+      },
+      "entryTtlMinutes": 1,
+      "targetHorizonMinutes": 15,
+      "managementDurationMs": 86400000,
+      "thesis": "The 15m timeframe shows a bullish MACD cross and higher highs/lows, indicating a potential upward trend. The 1m and 5m timeframes show bearish MACD crosses, but",
+      "invalidationPredicate": "NO_PREDICATE",
+      "predicateLevel": 0.09438,
+      "predicateEvidenceRefs": [],
+      "counterEvidenceRefs": [],
+      "releaseCondition": null,
+      "costs": {
+        "entryFeeUsd": 0.002003,
+        "exitFeeUsd": 0.002007,
+        "slippageUsd": 0,
+        "uncertaintyBufferUsd": 0.000401,
+        "fundingEstimateUsd": 0,
+        "fundingStatus": "UNPROVEN",
+        "fxRateToQuote": 1,
+        "costVersion": "fees:0.0004:0.0004:0:10"
+      },
+      "economics": {
+        "targetConditionalNetProfitUsd": 0.00566,
+        "targetConditionalNetProfitStatus": "VERIFIED",
+        "expectedNetPnlAtHorizonUsd": -0.684666,
+        "expectedNetPnlAtHorizonStatus": "VERIFIED",
+        "reachProbability": 0.3135593220338983,
+        "reachProbabilityStatus": "VERIFIED",
+        "reachSampleCount": 118,
+        "historicalHardMaxMovePercent": 0.43552156362862693,
+        "targetMovePercent": 0.201143,
+        "statisticalSource": "CLOSED_CANDLE_CACHE:1m:118",
+        "targetVsStatisticalCeiling": "WITHIN",
+        "modelConfidence": 0.55,
+        "modelConfidenceIsAuthority": false
+      },
+      "risk": null,
+      "minNetProfitUsd": 1,
+      "maxRealizedLossUsd": 10,
+      "provenance": {
+        "modelRunId": "airun_muotsj3v_hdo6lwv0",
+        "promptVersion": null,
+        "factVersion": "v396pc5da2ea2fcf8f23515216312635ba7b0147b24d8",
+        "envelopeExpiresAt": 1790816430258,
+        "candidateSetHash": "cand_0394d26cd41d6f5be45420e8",
+        "createdAt": 1790816389634,
+        "source": "AI"
+      },
+      "persistedAt": 1790816389634,
+      "immutable": true
+    },
+    "intent": {
+      "id": "intent_muotu9s2_qat0dxek",
+      "quantityUnits": 53,
+      "leverage": 8,
+      "planId": "plan_af5ea1acb008618b4c51c99830f1d673",
+      "reservationId": "reserve_1790816389661_56carp"
+    },
+    "reservation": {
+      "id": "reserve_1790816389661_56carp",
+      "marginUsd": 0.6257312500000001,
+      "notionalUsd": 5.005850000000001,
+      "status": "RELEASED",
+      "quoteAsset": "USDC"
+    },
+    "orders": [
+      {
+        "id": "entry_intent_muotu9s2_qat0dxek",
+        "clientOrderId": "ml_c0ace980e08275d8a935f687fd9f",
+        "exchangeOrderId": "370421149",
+        "side": "LONG",
+        "quantity": 53,
+        "price": 0.09442,
+        "status": "CANCELED",
+        "filledQuantity": 0,
+        "factSource": "BINANCE_EXACT_ORDER",
+        "verifiedAt": 1790818404200,
+        "submittedAt": 1790816418256,
+        "fills": []
+      }
+    ],
+    "events": [
+      {
+        "type": "ENTRY_EXECUTION_PERMIT_EVALUATED",
+        "ts": 1790816402586,
+        "permit": {
+          "permitted": true,
+          "firstCause": null,
+          "facts": {
+            "privateFresh": true,
+            "quoteAsset": "USDC",
+            "exchangeAvailableUsd": 4974.24366352,
+            "uncommittedReservationUsd": 0,
+            "analysisEarmarkUsd": 0,
+            "executableForNewReservationUsd": 4974.24366352,
+            "requiredMarginUsd": 0.6255325,
+            "filtersComplete": true,
+            "authorizationValid": true,
+            "submissionIdentity": "ml_c0ace980e08275d8a935f687fd9f",
+            "durableStorageReady": true
+          }
+        }
+      },
+      {
+        "type": "ENTRY_SUBMIT_ATTEMPTED",
+        "ts": 1790816402830,
+        "permit": null
+      }
+    ],
+    "comparison": {
+      "rawUnits": 53,
+      "normalizedUnits": 53,
+      "stepSize": 1,
+      "rawQty": 53,
+      "planUnits": 53,
+      "intentUnits": 53,
+      "finalQty": [
+        53
+      ],
+      "rawSide": "LONG",
+      "normalizedSide": "LONG",
+      "finalSide": [
+        "LONG"
+      ]
+    }
+  },
+  {
+    "runId": "airun_muotvef5_3r6xb35l",
+    "symbol": "VVVUSDT",
+    "startedAt": 1790816442305,
+    "completedAt": 1790816522983,
+    "input": {
+      "packetId": "eip_muotv4zv_huyyehac",
+      "createdAt": 1790816430091,
+      "quoteAt": 1790816425227,
+      "quote": {
+        "symbol": "VVVUSDT",
+        "last": 27.351,
+        "mark": 27.34000344,
+        "bid": 27.351,
+        "ask": 27.355,
+        "tickSize": 0.001,
+        "stepSize": 0.01,
+        "minQty": 0.01,
+        "minNotional": 5,
+        "quoteVolumeUsd24h": 527193971.6969,
+        "priceChangePercent24h": 0.441,
+        "tradeCount24h": 175976,
+        "ts": 1790816425227
+      },
+      "account": {
+        "status": "READY",
+        "equityUsd": 10581.8572925154,
+        "availableMarginUsd": 3976.57918736,
+        "reservedMarginUsd": 0,
+        "executionLeaseMarginUsd": 0,
+        "freeMarginUsd": 3976.57918736
+      },
+      "exchange": {
+        "tickSize": 0.001,
+        "stepSize": 0.01,
+        "minQty": 0.01,
+        "minNotional": 5
+      },
+      "leverage": 8,
+      "sideEnvelope": {
+        "executable": true,
+        "maxMarginUsd": 3976.57918736,
+        "maxNotionalUsd": 31812.63349888,
+        "maxQuantityUnits": 116205,
+        "minQuantityUnits": 19,
+        "legalQuantityRangeUnits": [
+          19,
+          116205
+        ],
+        "firstBindingConstraint": "AVAILABLE_MARGIN",
+        "minimumLegalNotionalUsd": 5,
+        "admission": {
+          "ceilingUsd": null,
+          "refusal": null,
+          "gate": null,
+          "detail": null
+        },
+        "legalNotionalRangeUsd": [
+          5,
+          31812.493584334738
+        ]
+      },
+      "leaseBudget": {
+        "requestedUsd": 3976.57918736,
+        "cappedBy": "ROUTED_PLAN_MARGIN",
+        "budgetUsd": 47.47337138127643
+      }
+    },
+    "raw": {
+      "action": "FINAL",
+      "schemaVersion": "V3.9.3",
+      "structureDirection": "SHORT",
+      "tradeSide": "SHORT",
+      "quantityUnits": 19,
+      "opportunityType": "TREND_RESUMPTION",
+      "marketRegime": "RANGE",
+      "confidence": 0.65,
+      "directionReason": "Short-term momentum (1m/5m) is bearish with price below key EMAs and near lower Bollinger Bands, while higher timeframes (15m/1h) show range-bound behavior with",
+      "timingReason": "1m MACD shows a bullish cross but with weakening histogram slope, suggesting potential exhaustion of the bounce. 5m and 15m MACD remain bearish. Volume Z-score",
+      "entryLocationReason": "Price is currently at 27.351, near the lower Bollinger Band (27.329) and below the 5m EMA8 (27.454). The order book shows a slight bid imbalance (0.397), but",
+      "reason": "The market exhibits a short-term downtrend within a larger range. The 1m timeframe shows a potential bounce (bullish MACD cross), but the 5m and 15m timeframes",
+      "entryInvalidation": "Price closes above 27.45 (5m EMA8) on the 1m timeframe with increasing volume, indicating a stronger bounce than expected.",
+      "supportingEvidenceRefs": [
+        "technical.1m.confirmed",
+        "technical.5m.confirmed",
+        "technical.15m.confirmed",
+        "microstructure.book5",
+        "quote.top"
+      ],
+      "profitTakePlan": {
+        "targetPrice": 27.15,
+        "acceptableTargetRange": {
+          "min": 27.1,
+          "max": 27.2
+        },
+        "targetHorizonMinutes": 60,
+        "targetReason": "Target is set at a level below the current price, considering the 15m ATR (0.187) and the 1h ATR (0.431). The 60-minute horizon is chosen based on the",
+        "evidenceRefs": [
+          "technical.15m.confirmed",
+          "technical.1h.confirmed",
+          "economics.entry"
+        ]
+      },
+      "rejectLayer": "NONE",
+      "blockingCondition": "NONE",
+      "releaseCondition": "NONE",
+      "timingEvent": {
+        "id": "timing.1",
+        "status": "PENDING",
+        "time": 1790816430091,
+        "anchorPrice": 27.351,
+        "timeframe": "1m",
+        "provenance": "technical.1m.confirmed"
+      },
+      "decision": "PLACE_SHORT",
+      "idealPrice": 27.351,
+      "acceptablePriceRange": {
+        "min": 27.325816888830307,
+        "max": 27.37618311116969
+      },
+      "horizonMinutes": 1,
+      "waitCondition": null
+    },
+    "normalized": {
+      "decision": "PLACE_SHORT",
+      "direction": "SHORT",
+      "quantityUnits": 19,
+      "profitTakePlan": {
+        "targetPrice": 27.15,
+        "acceptableTargetRange": {
+          "min": 27.1,
+          "max": 27.2
+        },
+        "targetHorizonMinutes": 60,
+        "targetReason": "Target is set at a level below the current price, considering the 15m ATR (0.187) and the 1h ATR (0.431). The 60-minute horizon is chosen based on the",
+        "evidenceRefs": [
+          "technical.15m.confirmed",
+          "technical.1h.confirmed",
+          "economics.entry"
+        ]
+      }
+    },
+    "plan": {
+      "schemaVersion": "V396-TRADE-PLAN-1",
+      "planId": "plan_4de9436c8711ef2c891b0464b1ca078c",
+      "planVersion": 1,
+      "supersedesPlanId": null,
+      "cycleId": "cycle_entry_intent_muotx58r_ed79n4ub",
+      "scope": "[\"TESTNET\",\"binance-primary\",\"VVVUSDT\",\"SHORT\"]",
+      "symbol": "VVVUSDT",
+      "side": "SHORT",
+      "selectedCandidateId": "cand_94a102e8d34a5c8854d8d2ec",
+      "quantityUnits": 19,
+      "notionalUsd": 5.19422,
+      "marginUsd": 0.649278,
+      "leverage": 8,
+      "entryReferencePrice": 27.338,
+      "targetPrice": 27.15,
+      "acceptableTargetRange": {
+        "min": 27.1,
+        "max": 27.2
+      },
+      "entryTtlMinutes": 1,
+      "targetHorizonMinutes": 60,
+      "managementDurationMs": 86400000,
+      "thesis": "The market exhibits a short-term downtrend within a larger range. The 1m timeframe shows a potential bounce (bullish MACD cross), but the 5m and 15m timeframes",
+      "invalidationPredicate": "NO_PREDICATE",
+      "predicateLevel": 27.37618311116969,
+      "predicateEvidenceRefs": [],
+      "counterEvidenceRefs": [],
+      "releaseCondition": null,
+      "costs": {
+        "entryFeeUsd": 0.002078,
+        "exitFeeUsd": 0.002063,
+        "slippageUsd": 0,
+        "uncertaintyBufferUsd": 0.000414,
+        "fundingEstimateUsd": 0,
+        "fundingStatus": "UNPROVEN",
+        "fxRateToQuote": 1,
+        "costVersion": "fees:0.0004:0.0004:0:10"
+      },
+      "economics": {
+        "targetConditionalNetProfitUsd": 0.031165,
+        "targetConditionalNetProfitStatus": "VERIFIED",
+        "expectedNetPnlAtHorizonUsd": -0.572803,
+        "expectedNetPnlAtHorizonStatus": "VERIFIED",
+        "reachProbability": 0.4142857142857143,
+        "reachProbabilityStatus": "VERIFIED",
+        "reachSampleCount": 70,
+        "historicalHardMaxMovePercent": 1.7054487642722882,
+        "targetMovePercent": 0.687687,
+        "statisticalSource": "CLOSED_CANDLE_CACHE:5m:70",
+        "targetVsStatisticalCeiling": "WITHIN",
+        "modelConfidence": 0.65,
+        "modelConfidenceIsAuthority": false
+      },
+      "risk": null,
+      "minNetProfitUsd": 1,
+      "maxRealizedLossUsd": 10,
+      "provenance": {
+        "modelRunId": "airun_muotvef5_3r6xb35l",
+        "promptVersion": null,
+        "factVersion": "v396p3fdb4e39283c27b4000af61dbc1da3698c283742",
+        "envelopeExpiresAt": 1790816565086,
+        "candidateSetHash": "cand_fa2012180ffc1cd834c50293",
+        "createdAt": 1790816523723,
+        "source": "AI"
+      },
+      "persistedAt": 1790816523723,
+      "immutable": true
+    },
+    "intent": {
+      "id": "intent_muotx58r_ed79n4ub",
+      "quantityUnits": 19,
+      "leverage": 8,
+      "planId": "plan_4de9436c8711ef2c891b0464b1ca078c",
+      "reservationId": "reserve_1790816523749_abc3tm"
+    },
+    "reservation": {
+      "id": "reserve_1790816523749_abc3tm",
+      "marginUsd": 0.6501843488902802,
+      "notionalUsd": 5.201474791122242,
+      "status": "RELEASED",
+      "quoteAsset": "USDT"
+    },
+    "orders": [
+      {
+        "id": "entry_intent_muotx58r_ed79n4ub",
+        "clientOrderId": "ml_86d8c27def0234851bfec6501f7d",
+        "exchangeOrderId": "772484950",
+        "side": "SHORT",
+        "quantity": 0.19,
+        "price": 27.341,
+        "status": "FILLED",
+        "filledQuantity": 0.19,
+        "factSource": "BINANCE_EXACT_ORDER",
+        "verifiedAt": 1790818212281,
+        "submittedAt": 1790816541449,
+        "fills": [
+          {
+            "tradeId": "68665013",
+            "qty": 0.19,
+            "price": 27.341,
+            "commission": 0.00103895,
+            "commissionAsset": "USDT",
+            "executedAt": 1790816541246
+          }
+        ]
+      }
+    ],
+    "events": [
+      {
+        "type": "ENTRY_EXECUTION_PERMIT_EVALUATED",
+        "ts": 1790816534782,
+        "permit": {
+          "permitted": true,
+          "firstCause": null,
+          "facts": {
+            "privateFresh": true,
+            "quoteAsset": "USDT",
+            "exchangeAvailableUsd": 3976.94242416,
+            "uncommittedReservationUsd": 0,
+            "analysisEarmarkUsd": 0,
+            "executableForNewReservationUsd": 3976.94242416,
+            "requiredMarginUsd": 0.64934875,
+            "filtersComplete": true,
+            "authorizationValid": true,
+            "submissionIdentity": "ml_86d8c27def0234851bfec6501f7d",
+            "durableStorageReady": true
+          }
+        }
+      },
+      {
+        "type": "ENTRY_SUBMIT_ATTEMPTED",
+        "ts": 1790816535026,
+        "permit": null
+      }
+    ],
+    "comparison": {
+      "rawUnits": 19,
+      "normalizedUnits": 19,
+      "stepSize": 0.01,
+      "rawQty": 0.19,
+      "planUnits": 19,
+      "intentUnits": 19,
+      "finalQty": [
+        0.19
+      ],
+      "rawSide": "SHORT",
+      "normalizedSide": "SHORT",
+      "finalSide": [
+        "SHORT"
+      ]
+    }
+  },
+  {
+    "runId": "airun_muotxwxe_ioll7ao9",
+    "symbol": "INJUSDT",
+    "startedAt": 1790816559602,
+    "completedAt": 1790816637654,
+    "input": {
+      "packetId": "eip_muotxmii_lc4jr7g1",
+      "createdAt": 1790816546106,
+      "quoteAt": 1790816540271,
+      "quote": {
+        "symbol": "INJUSDT",
+        "last": 7.435,
+        "mark": 7.435,
+        "bid": 7.409,
+        "ask": 7.435,
+        "tickSize": 0.001,
+        "stepSize": 0.1,
+        "minQty": 0.1,
+        "minNotional": 5,
+        "quoteVolumeUsd24h": 456282120.1373,
+        "priceChangePercent24h": -3.329,
+        "tradeCount24h": 166420,
+        "ts": 1790816540271
+      },
+      "account": {
+        "status": "READY",
+        "equityUsd": 10583.5619268213,
+        "availableMarginUsd": 3976.94242416,
+        "reservedMarginUsd": 0,
+        "executionLeaseMarginUsd": 0,
+        "freeMarginUsd": 3976.94242416
+      },
+      "exchange": {
+        "tickSize": 0.001,
+        "stepSize": 0.1,
+        "minQty": 0.1,
+        "minNotional": 5
+      },
+      "leverage": 8,
+      "sideEnvelope": {
+        "executable": true,
+        "maxMarginUsd": 3976.94242416,
+        "maxNotionalUsd": 31815.53939328,
+        "maxQuantityUnits": 42730,
+        "minQuantityUnits": 7,
+        "legalQuantityRangeUnits": [
+          7,
+          42730
+        ],
+        "firstBindingConstraint": "AVAILABLE_MARGIN",
+        "minimumLegalNotionalUsd": 5,
+        "admission": {
+          "ceilingUsd": null,
+          "refusal": null,
+          "gate": null,
+          "detail": null
+        },
+        "legalNotionalRangeUsd": [
+          5,
+          31814.8106506809
+        ]
+      },
+      "leaseBudget": {
+        "requestedUsd": 3976.94242416,
+        "cappedBy": "ROUTED_PLAN_MARGIN",
+        "budgetUsd": 47.66995216550385
+      }
+    },
+    "raw": {
+      "action": "FINAL",
+      "schemaVersion": "V3.9.3",
+      "structureDirection": "LONG",
+      "tradeSide": "LONG",
+      "quantityUnits": 7,
+      "opportunityType": "TREND_RESUMPTION",
+      "marketRegime": "RANGE",
+      "confidence": 0.65,
+      "directionReason": "15m and 5m timeframes show bullish momentum with higher highs/lows and positive MACD, while 1m shows a minor pullback (bearish MACD) creating a potential entry.",
+      "timingReason": "1m pullback to support area (7.409-7.420) aligns with 5m/15m uptrend, offering a tactical entry point.",
+      "entryLocationReason": "Entry near 1m swing low (7.409) and 5m BB lower band (7.380) provides a favorable risk-reward ratio.",
+      "reason": "Bullish structure on 5m/15m with 1m pullback offers a high-probability long entry.",
+      "entryInvalidation": "Close below 7.400",
+      "supportingEvidenceRefs": [
+        "technical.15m.confirmed",
+        "technical.5m.confirmed",
+        "technical.1m.confirmed",
+        "quote.top"
+      ],
+      "profitTakePlan": {
+        "targetPrice": 7.45,
+        "acceptableTargetRange": {
+          "min": 7.44,
+          "max": 7.46
+        },
+        "targetHorizonMinutes": 15,
+        "targetReason": "Target aligns with 15m BB upper band (7.450) and recent swing high (7.438).",
+        "evidenceRefs": [
+          "technical.15m.confirmed",
+          "technical.5m.confirmed"
+        ]
+      },
+      "rejectLayer": "NONE",
+      "blockingCondition": "NONE",
+      "releaseCondition": "NONE",
+      "timingEvent": {
+        "id": "NONE",
+        "status": "NONE",
+        "time": null,
+        "anchorPrice": null,
+        "timeframe": null,
+        "provenance": "NONE"
+      },
+      "decision": "PLACE_LONG",
+      "idealPrice": 7.415,
+      "acceptablePriceRange": {
+        "min": 7.405,
+        "max": 7.425
+      },
+      "horizonMinutes": 1,
+      "waitCondition": null
+    },
+    "normalized": {
+      "decision": "PLACE_LONG",
+      "direction": "LONG",
+      "quantityUnits": 7,
+      "profitTakePlan": {
+        "targetPrice": 7.45,
+        "acceptableTargetRange": {
+          "min": 7.44,
+          "max": 7.46
+        },
+        "targetHorizonMinutes": 15,
+        "targetReason": "Target aligns with 15m BB upper band (7.450) and recent swing high (7.438).",
+        "evidenceRefs": [
+          "technical.15m.confirmed",
+          "technical.5m.confirmed"
+        ]
+      }
+    },
+    "plan": {
+      "schemaVersion": "V396-TRADE-PLAN-1",
+      "planId": "plan_d8f5d31962e67a756ac5af9faf7561a5",
+      "planVersion": 1,
+      "supersedesPlanId": null,
+      "cycleId": "cycle_entry_intent_muotzlpk_vf0ufi08",
+      "scope": "[\"TESTNET\",\"binance-primary\",\"INJUSDT\",\"LONG\"]",
+      "symbol": "INJUSDT",
+      "side": "LONG",
+      "selectedCandidateId": "cand_688d706e7b54b3b647b57096",
+      "quantityUnits": 7,
+      "notionalUsd": 5.2059,
+      "marginUsd": 0.650738,
+      "leverage": 8,
+      "entryReferencePrice": 7.437,
+      "targetPrice": 7.45,
+      "acceptableTargetRange": {
+        "min": 7.44,
+        "max": 7.46
+      },
+      "entryTtlMinutes": 1,
+      "targetHorizonMinutes": 15,
+      "managementDurationMs": 86400000,
+      "thesis": "Bullish structure on 5m/15m with 1m pullback offers a high-probability long entry.",
+      "invalidationPredicate": "NO_PREDICATE",
+      "predicateLevel": 7.405,
+      "predicateEvidenceRefs": [],
+      "counterEvidenceRefs": [],
+      "releaseCondition": null,
+      "costs": {
+        "entryFeeUsd": 0.002082,
+        "exitFeeUsd": 0.002086,
+        "slippageUsd": 0,
+        "uncertaintyBufferUsd": 0.000417,
+        "fundingEstimateUsd": 0,
+        "fundingStatus": "UNPROVEN",
+        "fxRateToQuote": 1,
+        "costVersion": "fees:0.0004:0.0004:0:10"
+      },
+      "economics": {
+        "targetConditionalNetProfitUsd": 0.004515,
+        "targetConditionalNetProfitStatus": "VERIFIED",
+        "expectedNetPnlAtHorizonUsd": -0.288469,
+        "expectedNetPnlAtHorizonStatus": "VERIFIED",
+        "reachProbability": 0.7083333333333334,
+        "reachProbabilityStatus": "VERIFIED",
+        "reachSampleCount": 120,
+        "historicalHardMaxMovePercent": 0.7176709546377724,
+        "targetMovePercent": 0.174802,
+        "statisticalSource": "CLOSED_CANDLE_CACHE:1m:120",
+        "targetVsStatisticalCeiling": "WITHIN",
+        "modelConfidence": 0.65,
+        "modelConfidenceIsAuthority": false
+      },
+      "risk": null,
+      "minNetProfitUsd": 1,
+      "maxRealizedLossUsd": 10,
+      "provenance": {
+        "modelRunId": "airun_muotxwxe_ioll7ao9",
+        "promptVersion": null,
+        "factVersion": "v396pa06147e786e5a3a4e0448db1330acc71e58e7c5d",
+        "envelopeExpiresAt": 1790816681100,
+        "candidateSetHash": "cand_491eab869cd31a753020100f",
+        "createdAt": 1790816638376,
+        "source": "AI"
+      },
+      "persistedAt": 1790816638376,
+      "immutable": true
+    },
+    "intent": {
+      "id": "intent_muotzlpk_vf0ufi08",
+      "quantityUnits": 7,
+      "leverage": 8,
+      "planId": "plan_d8f5d31962e67a756ac5af9faf7561a5",
+      "reservationId": "reserve_1790816638398_xt9zip"
+    },
+    "reservation": {
+      "id": "reserve_1790816638398_xt9zip",
+      "marginUsd": 0.6496875000000001,
+      "notionalUsd": 5.197500000000001,
+      "status": "RELEASED",
+      "quoteAsset": "USDT"
+    },
+    "orders": [
+      {
+        "id": "entry_intent_muotzlpk_vf0ufi08",
+        "clientOrderId": "ml_a16e80848f8c0cd75dd9f7a77ddb",
+        "exchangeOrderId": "310814945",
+        "side": "LONG",
+        "quantity": 0.7000000000000001,
+        "price": 7.420000000000001,
+        "status": "FILLED",
+        "filledQuantity": 0.7,
+        "submittedAt": 1790816666084,
+        "fills": [
+          {
+            "tradeId": "64706290",
+            "qty": 0.7,
+            "price": 7.42,
+            "commission": 0.0010388,
+            "commissionAsset": "USDT",
+            "executedAt": 1790816667251
+          }
+        ]
+      }
+    ],
+    "events": [
+      {
+        "type": "ENTRY_EXECUTION_PERMIT_EVALUATED",
+        "ts": 1790816653827,
+        "permit": {
+          "permitted": true,
+          "firstCause": null,
+          "facts": {
+            "privateFresh": true,
+            "quoteAsset": "USDT",
+            "exchangeAvailableUsd": 3981.18992985,
+            "uncommittedReservationUsd": 0,
+            "analysisEarmarkUsd": 0,
+            "executableForNewReservationUsd": 3981.18992985,
+            "requiredMarginUsd": 0.6492500000000001,
+            "filtersComplete": true,
+            "authorizationValid": true,
+            "submissionIdentity": "ml_a16e80848f8c0cd75dd9f7a77ddb",
+            "durableStorageReady": true
+          }
+        }
+      },
+      {
+        "type": "ENTRY_SUBMIT_ATTEMPTED",
+        "ts": 1790816654095,
+        "permit": null
+      }
+    ],
+    "comparison": {
+      "rawUnits": 7,
+      "normalizedUnits": 7,
+      "stepSize": 0.1,
+      "rawQty": 0.7000000000000001,
+      "planUnits": 7,
+      "intentUnits": 7,
+      "finalQty": [
+        0.7000000000000001
+      ],
+      "rawSide": "LONG",
+      "normalizedSide": "LONG",
+      "finalSide": [
+        "LONG"
+      ]
+    }
+  },
+  {
+    "runId": "airun_muou50fc_fr0zj5v3",
+    "symbol": "SOLUSDT",
+    "startedAt": 1790816890728,
+    "completedAt": 1790816969354,
+    "input": {
+      "packetId": "eip_muou4qe9_o3gdvh87",
+      "createdAt": 1790816877729,
+      "quoteAt": 1790816872000,
+      "quote": {
+        "symbol": "SOLUSDT",
+        "last": 118,
+        "mark": 118.02084675,
+        "bid": 118,
+        "ask": 118.05,
+        "tickSize": 0.01,
+        "stepSize": 0.01,
+        "minQty": 0.01,
+        "minNotional": 5,
+        "quoteVolumeUsd24h": 508321152.9069,
+        "priceChangePercent24h": -0.849,
+        "tradeCount24h": 193854,
+        "ts": 1790816872000
+      },
+      "account": {
+        "status": "READY",
+        "equityUsd": 10580.79024857,
+        "availableMarginUsd": 3973.75563812,
+        "reservedMarginUsd": 0,
+        "executionLeaseMarginUsd": 0,
+        "freeMarginUsd": 3973.75563812
+      },
+      "exchange": {
+        "tickSize": 0.01,
+        "stepSize": 0.01,
+        "minQty": 0.01,
+        "minNotional": 5
+      },
+      "leverage": 12,
+      "sideEnvelope": {
+        "executable": true,
+        "maxMarginUsd": 3973.7556381199997,
+        "maxNotionalUsd": 47685.06765744,
+        "maxQuantityUnits": 40393,
+        "minQuantityUnits": 5,
+        "legalQuantityRangeUnits": [
+          5,
+          40393
+        ],
+        "firstBindingConstraint": "AVAILABLE_MARGIN",
+        "minimumLegalNotionalUsd": 5,
+        "admission": {
+          "ceilingUsd": null,
+          "refusal": null,
+          "gate": null,
+          "detail": null
+        },
+        "legalNotionalRangeUsd": [
+          5,
+          47683.936499999996
+        ]
+      },
+      "leaseBudget": {
+        "requestedUsd": 3973.7556381199997,
+        "cappedBy": "ROUTED_PLAN_MARGIN",
+        "budgetUsd": 49.389802564046256
+      }
+    },
+    "raw": {
+      "action": "FINAL",
+      "schemaVersion": "V3.9.3",
+      "structureDirection": "SHORT",
+      "tradeSide": "SHORT",
+      "quantityUnits": 5,
+      "opportunityType": "TREND_RESUMPTION",
+      "marketRegime": "RANGE",
+      "confidence": 0.65,
+      "directionReason": "Short-term momentum (1m/5m) and order book imbalance favor downside continuation, while higher timeframe (1h) trend is down. The 15m MACD bullish cross is a lag",
+      "timingReason": "1m MACD histogram is positive but slope is decelerating. 5m MACD is bearish. Order book shows significant ask depth (imbalance -0.24), suggesting resistance at ",
+      "entryLocationReason": "Entry near current ask (118.05) to capture immediate downside move. Acceptable range set to capture potential slippage or slight pullback before entry.",
+      "reason": "Short-term technicals (1m/5m) and order book structure support a short-term downside move. The 15m bullish MACD cross is likely a lagging indicator in a broader",
+      "entryInvalidation": "Price closes above 118.10 on 1m timeframe or 15m MACD histogram turns negative.",
+      "supportingEvidenceRefs": [
+        "technical.1m.confirmed",
+        "technical.5m.confirmed",
+        "technical.15m.confirmed",
+        "microstructure.book5",
+        "economics.entry"
+      ],
+      "profitTakePlan": {
+        "targetPrice": 117.9,
+        "acceptableTargetRange": {
+          "min": 117.85,
+          "max": 117.95
+        },
+        "targetHorizonMinutes": 15,
+        "targetReason": "Target set at 15m swing low (117.86) and 1m swing low (117.92) confluence. Historical reachability for 15m horizon shows p50 move of 0.11% (approx 0.13 USDT), which is consistent with the target distance of 0.15 USDT (0.127%).",
+        "evidenceRefs": [
+          "technical.15m.confirmed",
+          "technical.1m.confirmed",
+          "reachability.15m"
+        ]
+      },
+      "rejectLayer": "NONE",
+      "blockingCondition": "NONE",
+      "releaseCondition": "NONE",
+      "timingEvent": {
+        "id": "SOLUSDT_SHORT_15M",
+        "status": "PENDING",
+        "time": 1790816877729,
+        "anchorPrice": 118.05,
+        "timeframe": "15m",
+        "provenance": "AUTONOMOUS_ENTRY"
+      },
+      "decision": "PLACE_SHORT",
+      "idealPrice": 118.05,
+      "acceptablePriceRange": {
+        "min": 118,
+        "max": 118.1
+      },
+      "horizonMinutes": 1,
+      "waitCondition": null
+    },
+    "normalized": {
+      "decision": "PLACE_SHORT",
+      "direction": "SHORT",
+      "quantityUnits": 5,
+      "profitTakePlan": {
+        "targetPrice": 117.9,
+        "acceptableTargetRange": {
+          "min": 117.85,
+          "max": 117.95
+        },
+        "targetHorizonMinutes": 15,
+        "targetReason": "Target set at 15m swing low (117.86) and 1m swing low (117.92) confluence. Historical reachability for 15m horizon shows p50 move of 0.11% (approx 0.13 USDT), which is consistent with the target distance of 0.15 USDT (0.127%).",
+        "evidenceRefs": [
+          "technical.15m.confirmed",
+          "technical.1m.confirmed",
+          "reachability.15m"
+        ]
+      }
+    },
+    "plan": {
+      "schemaVersion": "V396-TRADE-PLAN-1",
+      "planId": "plan_7e019757452e2ef2f6eaaf68d211638f",
+      "planVersion": 1,
+      "supersedesPlanId": null,
+      "cycleId": "cycle_entry_intent_muou6poe_id8vurbj",
+      "scope": "[\"TESTNET\",\"binance-primary\",\"SOLUSDT\",\"SHORT\"]",
+      "symbol": "SOLUSDT",
+      "side": "SHORT",
+      "selectedCandidateId": "cand_c5b85b826112802d07445297",
+      "quantityUnits": 5,
+      "notionalUsd": 5.902,
+      "marginUsd": 0.491833,
+      "leverage": 12,
+      "entryReferencePrice": 118.04,
+      "targetPrice": 117.9,
+      "acceptableTargetRange": {
+        "min": 117.85,
+        "max": 117.95
+      },
+      "entryTtlMinutes": 1,
+      "targetHorizonMinutes": 15,
+      "managementDurationMs": 86400000,
+      "thesis": "Short-term technicals (1m/5m) and order book structure support a short-term downside move. The 15m bullish MACD cross is likely a lagging indicator in a broader",
+      "invalidationPredicate": "NO_PREDICATE",
+      "predicateLevel": 118.1,
+      "predicateEvidenceRefs": [],
+      "counterEvidenceRefs": [],
+      "releaseCondition": null,
+      "costs": {
+        "entryFeeUsd": 0.002361,
+        "exitFeeUsd": 0.002358,
+        "slippageUsd": 0,
+        "uncertaintyBufferUsd": 0.000472,
+        "fundingEstimateUsd": 0,
+        "fundingStatus": "UNPROVEN",
+        "fxRateToQuote": 1,
+        "costVersion": "fees:0.0004:0.0004:0:10"
+      },
+      "economics": {
+        "targetConditionalNetProfitUsd": 0.001809,
+        "targetConditionalNetProfitStatus": "VERIFIED",
+        "expectedNetPnlAtHorizonUsd": -0.565883,
+        "expectedNetPnlAtHorizonStatus": "VERIFIED",
+        "reachProbability": 0.43333333333333335,
+        "reachProbabilityStatus": "VERIFIED",
+        "reachSampleCount": 120,
+        "historicalHardMaxMovePercent": 0.24542992552470944,
+        "targetMovePercent": 0.118604,
+        "statisticalSource": "CLOSED_CANDLE_CACHE:1m:120",
+        "targetVsStatisticalCeiling": "WITHIN",
+        "modelConfidence": 0.65,
+        "modelConfidenceIsAuthority": false
+      },
+      "risk": null,
+      "minNetProfitUsd": 1,
+      "maxRealizedLossUsd": 10,
+      "provenance": {
+        "modelRunId": "airun_muou50fc_fr0zj5v3",
+        "promptVersion": null,
+        "factVersion": "v396p2add44d552276e38cfcfca47b75a1ded3d9a380a",
+        "envelopeExpiresAt": 1790817012716,
+        "candidateSetHash": "cand_554eba536ce4a797dcd4481b",
+        "createdAt": 1790816970110,
+        "source": "AI"
+      },
+      "persistedAt": 1790816970110,
+      "immutable": true
+    },
+    "intent": {
+      "id": "intent_muou6poe_id8vurbj",
+      "quantityUnits": 5,
+      "leverage": 12,
+      "planId": "plan_7e019757452e2ef2f6eaaf68d211638f",
+      "reservationId": "reserve_1790816970134_5bx3pd"
+    },
+    "reservation": {
+      "id": "reserve_1790816970134_5bx3pd",
+      "marginUsd": 0.4920833333333334,
+      "notionalUsd": 5.905,
+      "status": "RELEASED",
+      "quoteAsset": "USDT"
+    },
+    "orders": [
+      {
+        "id": "entry_intent_muou6poe_id8vurbj",
+        "clientOrderId": "ml_7cbf6e5e809a6df5d4c63edb84de",
+        "exchangeOrderId": "4214557831",
+        "side": "SHORT",
+        "quantity": 0.05,
+        "price": 118.05,
+        "status": "FILLED",
+        "filledQuantity": 0.05,
+        "factSource": "BINANCE_EXACT_ORDER",
+        "verifiedAt": 1790819910378,
+        "submittedAt": 1790816989185,
+        "fills": [
+          {
+            "tradeId": "95472332",
+            "qty": 0.05,
+            "price": 118.05,
+            "commission": 0.00118049,
+            "commissionAsset": "USDT",
+            "executedAt": 1790817467061
+          }
+        ]
+      }
+    ],
+    "events": [
+      {
+        "type": "ENTRY_EXECUTION_PERMIT_EVALUATED",
+        "ts": 1790816981209,
+        "permit": {
+          "permitted": true,
+          "firstCause": null,
+          "facts": {
+            "privateFresh": true,
+            "quoteAsset": "USDT",
+            "exchangeAvailableUsd": 3969.03228699,
+            "uncommittedReservationUsd": 0,
+            "analysisEarmarkUsd": 0,
+            "executableForNewReservationUsd": 3969.03228699,
+            "requiredMarginUsd": 0.491875,
+            "filtersComplete": true,
+            "authorizationValid": true,
+            "submissionIdentity": "ml_7cbf6e5e809a6df5d4c63edb84de",
+            "durableStorageReady": true
+          }
+        }
+      },
+      {
+        "type": "ENTRY_SUBMIT_ATTEMPTED",
+        "ts": 1790816981461,
+        "permit": null
+      }
+    ],
+    "comparison": {
+      "rawUnits": 5,
+      "normalizedUnits": 5,
+      "stepSize": 0.01,
+      "rawQty": 0.05,
+      "planUnits": 5,
+      "intentUnits": 5,
+      "finalQty": [
+        0.05
+      ],
+      "rawSide": "SHORT",
+      "normalizedSide": "SHORT",
+      "finalSide": [
+        "SHORT"
+      ]
+    }
+  },
+  {
+    "runId": "airun_muou7gw8_zsf0ghc0",
+    "symbol": "TAOUSDT",
+    "startedAt": 1790817005384,
+    "completedAt": 1790817089446,
+    "input": {
+      "packetId": "eip_muou785p_7hztzuuk",
+      "createdAt": 1790816994061,
+      "quoteAt": 1790816990000,
+      "quote": {
+        "symbol": "TAOUSDT",
+        "last": 301.77,
+        "mark": 301.75,
+        "bid": 301.17,
+        "ask": 301.74,
+        "tickSize": 0.01,
+        "stepSize": 0.001,
+        "minQty": 0.001,
+        "minNotional": 5,
+        "quoteVolumeUsd24h": 363578468.63,
+        "priceChangePercent24h": -0.119,
+        "tradeCount24h": 170140,
+        "ts": 1790816990000
+      },
+      "account": {
+        "status": "READY",
+        "equityUsd": 10576.7091697993,
+        "availableMarginUsd": 3969.40010623,
+        "reservedMarginUsd": 0,
+        "executionLeaseMarginUsd": 0,
+        "freeMarginUsd": 3969.40010623
+      },
+      "exchange": {
+        "tickSize": 0.01,
+        "stepSize": 0.001,
+        "minQty": 0.001,
+        "minNotional": 5
+      },
+      "leverage": 12,
+      "sideEnvelope": {
+        "executable": true,
+        "maxMarginUsd": 3969.40010623,
+        "maxNotionalUsd": 47632.80127476,
+        "maxQuantityUnits": 157661,
+        "minQuantityUnits": 17,
+        "legalQuantityRangeUnits": [
+          17,
+          157661
+        ],
+        "firstBindingConstraint": "AVAILABLE_MARGIN",
+        "minimumLegalNotionalUsd": 5,
+        "admission": {
+          "ceilingUsd": null,
+          "refusal": null,
+          "gate": null,
+          "detail": null
+        },
+        "legalNotionalRangeUsd": [
+          5,
+          47632.53230003785
+        ]
+      },
+      "leaseBudget": {
+        "requestedUsd": 3969.40010623,
+        "cappedBy": "ROUTED_PLAN_MARGIN",
+        "budgetUsd": 46.696179015252724
+      }
+    },
+    "raw": {
+      "action": "FINAL",
+      "schemaVersion": "V3.9.3",
+      "structureDirection": "SHORT",
+      "tradeSide": "SHORT",
+      "quantityUnits": 17,
+      "opportunityType": "TREND_RESUMPTION",
+      "marketRegime": "RANGE",
+      "confidence": 0.65,
+      "directionReason": "15m and 1h timeframes show established downtrends with negative EMA slopes and bearish MACD histograms. Price is currently testing resistance at 301.77-301.80, ",
+      "timingReason": "1m and 5m show short-term bullish momentum, but this is likely a pullback within the larger downtrend. The 15m trend is DOWN with trendStrength 0.308, and the 1",
+      "entryLocationReason": "Entry at 301.75 is near the current ask price and within the maker reachable band. This allows for a maker order with better fill probability while staying near",
+      "reason": "The 15m and 1h timeframes show a clear downtrend with negative EMA slopes and bearish MACD. The 1m and 5m show short-term bullish momentum, but this is likely a",
+      "entryInvalidation": "Price closes above 302.12 (upper maker reachable band) or 15m EMA8 (301.22) with volume, indicating trend reversal.",
+      "supportingEvidenceRefs": [
+        "technical.15m.confirmed",
+        "technical.1h.confirmed",
+        "technical.5m.confirmed",
+        "technical.1m.confirmed",
+        "microstructure.book5",
+        "execution.recentTrades",
+        "economics.entry"
+      ],
+      "profitTakePlan": {
+        "targetPrice": 300.55,
+        "acceptableTargetRange": {
+          "min": 300.5,
+          "max": 300.6
+        },
+        "targetHorizonMinutes": 15,
+        "targetReason": "Target is at the 5m swing low (300.57) and 15m lower Bollinger Band (298.97) area. The 15m ATR is 1.95, so a move of 1.2 USDT (0.4%) is within 1 ATR. The 15m reachability data shows p50 move of 0.25% and p75 of 0.36%, so a 0.4% move is at p",
+        "evidenceRefs": [
+          "technical.15m.confirmed",
+          "technical.5m.confirmed",
+          "economics.entry"
+        ]
+      },
+      "rejectLayer": "NONE",
+      "blockingCondition": "NONE",
+      "releaseCondition": "NONE",
+      "timingEvent": {
+        "id": "TAO_15m_trend_resumption",
+        "status": "PENDING",
+        "time": 1790817299999,
+        "anchorPrice": 301.75,
+        "timeframe": "15m",
+        "provenance": "technical.15m.confirmed"
+      },
+      "decision": "PLACE_SHORT",
+      "idealPrice": 301.75,
+      "acceptablePriceRange": {
+        "min": 301.42,
+        "max": 302.12
+      },
+      "horizonMinutes": 1,
+      "waitCondition": null
+    },
+    "normalized": {
+      "decision": "PLACE_SHORT",
+      "direction": "SHORT",
+      "quantityUnits": 17,
+      "profitTakePlan": {
+        "targetPrice": 300.55,
+        "acceptableTargetRange": {
+          "min": 300.5,
+          "max": 300.6
+        },
+        "targetHorizonMinutes": 15,
+        "targetReason": "Target is at the 5m swing low (300.57) and 15m lower Bollinger Band (298.97) area. The 15m ATR is 1.95, so a move of 1.2 USDT (0.4%) is within 1 ATR. The 15m reachability data shows p50 move of 0.25% and p75 of 0.36%, so a 0.4% move is at p",
+        "evidenceRefs": [
+          "technical.15m.confirmed",
+          "technical.5m.confirmed",
+          "economics.entry"
+        ]
+      }
+    },
+    "plan": {
+      "schemaVersion": "V396-TRADE-PLAN-1",
+      "planId": "plan_a0a73923d431b3c840bc3c05a7cb31cf",
+      "planVersion": 1,
+      "supersedesPlanId": null,
+      "cycleId": "cycle_entry_intent_muou9aec_e5ab0mzy",
+      "scope": "[\"TESTNET\",\"binance-primary\",\"TAOUSDT\",\"SHORT\"]",
+      "symbol": "TAOUSDT",
+      "side": "SHORT",
+      "selectedCandidateId": "cand_d80a69f4e0eb0fdd9db9e323",
+      "quantityUnits": 17,
+      "notionalUsd": 5.12992,
+      "marginUsd": 0.427493,
+      "leverage": 12,
+      "entryReferencePrice": 301.76,
+      "targetPrice": 300.55,
+      "acceptableTargetRange": {
+        "min": 300.5,
+        "max": 300.6
+      },
+      "entryTtlMinutes": 1,
+      "targetHorizonMinutes": 15,
+      "managementDurationMs": 86400000,
+      "thesis": "The 15m and 1h timeframes show a clear downtrend with negative EMA slopes and bearish MACD. The 1m and 5m show short-term bullish momentum, but this is likely a",
+      "invalidationPredicate": "NO_PREDICATE",
+      "predicateLevel": 302.12,
+      "predicateEvidenceRefs": [],
+      "counterEvidenceRefs": [],
+      "releaseCondition": null,
+      "costs": {
+        "entryFeeUsd": 0.002052,
+        "exitFeeUsd": 0.002044,
+        "slippageUsd": 0,
+        "uncertaintyBufferUsd": 0.00041,
+        "fundingEstimateUsd": 0,
+        "fundingStatus": "UNPROVEN",
+        "fxRateToQuote": 1,
+        "costVersion": "fees:0.0004:0.0004:0:10"
+      },
+      "economics": {
+        "targetConditionalNetProfitUsd": 0.016065,
+        "targetConditionalNetProfitStatus": "VERIFIED",
+        "expectedNetPnlAtHorizonUsd": -0.864525,
+        "expectedNetPnlAtHorizonStatus": "VERIFIED",
+        "reachProbability": 0.13333333333333333,
+        "reachProbabilityStatus": "VERIFIED",
+        "reachSampleCount": 120,
+        "historicalHardMaxMovePercent": 0.677988414955244,
+        "targetMovePercent": 0.400981,
+        "statisticalSource": "CLOSED_CANDLE_CACHE:1m:120",
+        "targetVsStatisticalCeiling": "WITHIN",
+        "modelConfidence": 0.65,
+        "modelConfidenceIsAuthority": false
+      },
+      "risk": null,
+      "minNetProfitUsd": 1,
+      "maxRealizedLossUsd": 10,
+      "provenance": {
+        "modelRunId": "airun_muou7gw8_zsf0ghc0",
+        "promptVersion": null,
+        "factVersion": "v396p2a8a7351a1a8ab4c69a8402b1000e2b40aa023a1",
+        "envelopeExpiresAt": 1790817129056,
+        "candidateSetHash": "cand_3d3934593366ce82ea8220c5",
+        "createdAt": 1790817090276,
+        "source": "AI"
+      },
+      "persistedAt": 1790817090276,
+      "immutable": true
+    },
+    "intent": {
+      "id": "intent_muou9aec_e5ab0mzy",
+      "quantityUnits": 17,
+      "leverage": 12,
+      "planId": "plan_a0a73923d431b3c840bc3c05a7cb31cf",
+      "reservationId": "reserve_1790817090312_gzymew"
+    },
+    "reservation": {
+      "id": "reserve_1790817090312_gzymew",
+      "marginUsd": 0.42800333333333335,
+      "notionalUsd": 5.13604,
+      "status": "RELEASED",
+      "quoteAsset": "USDT"
+    },
+    "orders": [
+      {
+        "id": "entry_intent_muou9aec_e5ab0mzy",
+        "clientOrderId": "ml_03b5456636b626fc70a7608c5c2e",
+        "exchangeOrderId": "676740027",
+        "side": "SHORT",
+        "quantity": 0.017,
+        "price": 301.88,
+        "status": "FILLED",
+        "filledQuantity": 0.017,
+        "factSource": "BINANCE_EXACT_ORDER",
+        "verifiedAt": 1790819921152,
+        "submittedAt": 1790817108919,
+        "fills": [
+          {
+            "tradeId": "69163160",
+            "qty": 0.017,
+            "price": 301.88,
+            "commission": 0.00102639,
+            "commissionAsset": "USDT",
+            "executedAt": 1790817170734
+          }
+        ]
+      }
+    ],
+    "events": [
+      {
+        "type": "ENTRY_EXECUTION_PERMIT_EVALUATED",
+        "ts": 1790817100663,
+        "permit": {
+          "permitted": true,
+          "firstCause": null,
+          "facts": {
+            "privateFresh": true,
+            "quoteAsset": "USDT",
+            "exchangeAvailableUsd": 3963.8086997,
+            "uncommittedReservationUsd": 0,
+            "analysisEarmarkUsd": 0,
+            "executableForNewReservationUsd": 3963.8086997,
+            "requiredMarginUsd": 0.42766333333333334,
+            "filtersComplete": true,
+            "authorizationValid": true,
+            "submissionIdentity": "ml_03b5456636b626fc70a7608c5c2e",
+            "durableStorageReady": true
+          }
+        }
+      },
+      {
+        "type": "ENTRY_SUBMIT_ATTEMPTED",
+        "ts": 1790817100959,
+        "permit": null
+      }
+    ],
+    "comparison": {
+      "rawUnits": 17,
+      "normalizedUnits": 17,
+      "stepSize": 0.001,
+      "rawQty": 0.017,
+      "planUnits": 17,
+      "intentUnits": 17,
+      "finalQty": [
+        0.017
+      ],
+      "rawSide": "SHORT",
+      "normalizedSide": "SHORT",
+      "finalSide": [
+        "SHORT"
+      ]
+    }
+  },
+  {
+    "runId": "airun_muou9yrf_lqmc60d8",
+    "symbol": "ADAUSDC",
+    "startedAt": 1790817121851,
+    "completedAt": 1790817199522,
+    "input": {
+      "packetId": "eip_muou9s0i_83jjew1k",
+      "createdAt": 1790817113106,
+      "quoteAt": 1790817107391,
+      "quote": {
+        "symbol": "ADAUSDC",
+        "last": 0.2473,
+        "mark": 0.2473,
+        "bid": 0.2473,
+        "ask": 0.2474,
+        "tickSize": 0.0001,
+        "stepSize": 0.1,
+        "minQty": 0.1,
+        "minNotional": 5,
+        "quoteVolumeUsd24h": 550734659.23227,
+        "priceChangePercent24h": 0.939,
+        "tradeCount24h": 167219,
+        "ts": 1790817107391
+      },
+      "account": {
+        "status": "READY",
+        "equityUsd": 10573.228463349998,
+        "availableMarginUsd": 4972.45526474,
+        "reservedMarginUsd": 0,
+        "executionLeaseMarginUsd": 0,
+        "freeMarginUsd": 4972.45526474
+      },
+      "exchange": {
+        "tickSize": 0.0001,
+        "stepSize": 0.1,
+        "minQty": 0.1,
+        "minNotional": 5
+      },
+      "leverage": 8,
+      "sideEnvelope": {
+        "executable": true,
+        "maxMarginUsd": 4972.45526474,
+        "maxNotionalUsd": 39779.64211792,
+        "maxQuantityUnits": 1607739,
+        "minQuantityUnits": 203,
+        "legalQuantityRangeUnits": [
+          203,
+          1607739
+        ],
+        "firstBindingConstraint": "AVAILABLE_MARGIN",
+        "minimumLegalNotionalUsd": 5,
+        "admission": {
+          "ceilingUsd": null,
+          "refusal": null,
+          "gate": null,
+          "detail": null
+        },
+        "legalNotionalRangeUsd": [
+          5,
+          39779.63530254715
+        ]
+      },
+      "leaseBudget": {
+        "requestedUsd": 4972.45526474,
+        "cappedBy": "ROUTED_PLAN_MARGIN",
+        "budgetUsd": 48.49556922186895
+      }
+    },
+    "raw": {
+      "action": "FINAL",
+      "schemaVersion": "V3.9.3",
+      "structureDirection": "LONG",
+      "tradeSide": "LONG",
+      "quantityUnits": 203,
+      "opportunityType": "TREND_RESUMPTION",
+      "marketRegime": "RANGE",
+      "confidence": 0.65,
+      "directionReason": "Short-term momentum (1m/5m) is bullish with higher highs/lows and MACD bullish cross, supported by bid-heavy order book imbalance. While 15m is range-bound and ",
+      "timingReason": "1m and 5m timeframes show active uptrend with elevated volume Z-score on 5m, indicating immediate tactical entry opportunity within the 15m range.",
+      "entryLocationReason": "Price is near the upper Bollinger Band on 1m but still within the maker-reachable band. Entering at the current ask (0.2474) captures the momentum while staying",
+      "reason": "Bullish momentum on 1m/5m with higher highs and MACD bullish cross supports a long entry. Order book shows bid-heavy imbalance (0.20), providing support. 15m is",
+      "entryInvalidation": "Price closes below 0.2465 (1m EMA21) or breaks below the 15m swing low of 0.2430.",
+      "supportingEvidenceRefs": [
+        "technical.1m.confirmed",
+        "technical.5m.confirmed",
+        "microstructure.book5",
+        "quote.top"
+      ],
+      "profitTakePlan": {
+        "targetPrice": 0.2485,
+        "acceptableTargetRange": {
+          "min": 0.248,
+          "max": 0.249
+        },
+        "targetHorizonMinutes": 15,
+        "targetReason": "Target is set at the 15m swing high (0.2484) and upper Bollinger Band area, which is historically reachable within 15 minutes based on reachability data (p75 move ~0.44%).",
+        "evidenceRefs": [
+          "technical.15m.confirmed",
+          "reachability.15m"
+        ]
+      },
+      "rejectLayer": "NONE",
+      "blockingCondition": "NONE",
+      "releaseCondition": "NONE",
+      "timingEvent": {
+        "id": "none",
+        "status": "NONE",
+        "time": null,
+        "anchorPrice": null,
+        "timeframe": null,
+        "provenance": "NONE"
+      },
+      "decision": "PLACE_LONG",
+      "idealPrice": 0.2474,
+      "acceptablePriceRange": {
+        "min": 0.2472,
+        "max": 0.2475
+      },
+      "horizonMinutes": 1,
+      "waitCondition": null
+    },
+    "normalized": {
+      "decision": "PLACE_LONG",
+      "direction": "LONG",
+      "quantityUnits": 203,
+      "profitTakePlan": {
+        "targetPrice": 0.2485,
+        "acceptableTargetRange": {
+          "min": 0.248,
+          "max": 0.249
+        },
+        "targetHorizonMinutes": 15,
+        "targetReason": "Target is set at the 15m swing high (0.2484) and upper Bollinger Band area, which is historically reachable within 15 minutes based on reachability data (p75 move ~0.44%).",
+        "evidenceRefs": [
+          "technical.15m.confirmed",
+          "reachability.15m"
+        ]
+      }
+    },
+    "plan": {
+      "schemaVersion": "V396-TRADE-PLAN-1",
+      "planId": "plan_5a873a7489c0e791c4df0bb4137dd240",
+      "planVersion": 1,
+      "supersedesPlanId": null,
+      "cycleId": "cycle_entry_intent_muoubn9w_m84ew6zy",
+      "scope": "[\"TESTNET\",\"binance-primary\",\"ADAUSDC\",\"LONG\"]",
+      "symbol": "ADAUSDC",
+      "side": "LONG",
+      "selectedCandidateId": "cand_19cfc911605e75286125c472",
+      "quantityUnits": 203,
+      "notionalUsd": 5.02628,
+      "marginUsd": 0.628285,
+      "leverage": 8,
+      "entryReferencePrice": 0.2476,
+      "targetPrice": 0.2485,
+      "acceptableTargetRange": {
+        "min": 0.248,
+        "max": 0.249
+      },
+      "entryTtlMinutes": 1,
+      "targetHorizonMinutes": 15,
+      "managementDurationMs": 86400000,
+      "thesis": "Bullish momentum on 1m/5m with higher highs and MACD bullish cross supports a long entry. Order book shows bid-heavy imbalance (0.20), providing support. 15m is",
+      "invalidationPredicate": "NO_PREDICATE",
+      "predicateLevel": 0.2472,
+      "predicateEvidenceRefs": [],
+      "counterEvidenceRefs": [],
+      "releaseCondition": null,
+      "costs": {
+        "entryFeeUsd": 0.002011,
+        "exitFeeUsd": 0.002018,
+        "slippageUsd": 0,
+        "uncertaintyBufferUsd": 0.000403,
+        "fundingEstimateUsd": 0,
+        "fundingStatus": "UNPROVEN",
+        "fxRateToQuote": 1,
+        "costVersion": "fees:0.0004:0.0004:0:10"
+      },
+      "economics": {
+        "targetConditionalNetProfitUsd": 0.013839,
+        "targetConditionalNetProfitStatus": "VERIFIED",
+        "expectedNetPnlAtHorizonUsd": -0.60328,
+        "expectedNetPnlAtHorizonStatus": "VERIFIED",
+        "reachProbability": 0.391304347826087,
+        "reachProbabilityStatus": "VERIFIED",
+        "reachSampleCount": 115,
+        "historicalHardMaxMovePercent": 0.7299270072992581,
+        "targetMovePercent": 0.363489,
+        "statisticalSource": "CLOSED_CANDLE_CACHE:1m:115",
+        "targetVsStatisticalCeiling": "WITHIN",
+        "modelConfidence": 0.65,
+        "modelConfidenceIsAuthority": false
+      },
+      "risk": null,
+      "minNetProfitUsd": 1,
+      "maxRealizedLossUsd": 10,
+      "provenance": {
+        "modelRunId": "airun_muou9yrf_lqmc60d8",
+        "promptVersion": null,
+        "factVersion": "v396p8b81edd19e7010dee2c843a6654f020ee5c57995",
+        "envelopeExpiresAt": 1790817248092,
+        "candidateSetHash": "cand_ae0867646d694b1ad8694bf7",
+        "createdAt": 1790817200276,
+        "source": "AI"
+      },
+      "persistedAt": 1790817200276,
+      "immutable": true
+    },
+    "intent": {
+      "id": "intent_muoubn9w_m84ew6zy",
+      "quantityUnits": 203,
+      "leverage": 8,
+      "planId": "plan_5a873a7489c0e791c4df0bb4137dd240",
+      "reservationId": "reserve_1790817200301_m4dqft"
+    },
+    "reservation": {
+      "id": "reserve_1790817200301_m4dqft",
+      "marginUsd": 0.62803125,
+      "notionalUsd": 5.02425,
+      "status": "RELEASED",
+      "quoteAsset": "USDC"
+    },
+    "orders": [
+      {
+        "id": "entry_intent_muoubn9w_m84ew6zy",
+        "clientOrderId": "ml_7a33da2c1a1aa790bf1b29758673",
+        "exchangeOrderId": "181757302",
+        "side": "LONG",
+        "quantity": 20.3,
+        "price": 0.2474,
+        "status": "FILLED",
+        "filledQuantity": 20.3,
+        "factSource": "BINANCE_EXACT_ORDER",
+        "verifiedAt": 1790819928469,
+        "submittedAt": 1790817218829,
+        "fills": [
+          {
+            "tradeId": "59053006",
+            "qty": 20.3,
+            "price": 0.2474,
+            "commission": 0,
+            "commissionAsset": "USDC",
+            "executedAt": 1790817322049
+          }
+        ]
+      }
+    ],
+    "events": [
+      {
+        "type": "ENTRY_EXECUTION_PERMIT_EVALUATED",
+        "ts": 1790817212897,
+        "permit": {
+          "permitted": true,
+          "firstCause": null,
+          "facts": {
+            "privateFresh": true,
+            "quoteAsset": "USDC",
+            "exchangeAvailableUsd": 4972.44492982,
+            "uncommittedReservationUsd": 0,
+            "analysisEarmarkUsd": 0,
+            "executableForNewReservationUsd": 4972.44492982,
+            "requiredMarginUsd": 0.6277775000000001,
+            "filtersComplete": true,
+            "authorizationValid": true,
+            "submissionIdentity": "ml_7a33da2c1a1aa790bf1b29758673",
+            "durableStorageReady": true
+          }
+        }
+      },
+      {
+        "type": "ENTRY_SUBMIT_ATTEMPTED",
+        "ts": 1790817213150,
+        "permit": null
+      }
+    ],
+    "comparison": {
+      "rawUnits": 203,
+      "normalizedUnits": 203,
+      "stepSize": 0.1,
+      "rawQty": 20.3,
+      "planUnits": 203,
+      "intentUnits": 203,
+      "finalQty": [
+        20.3
+      ],
+      "rawSide": "LONG",
+      "normalizedSide": "LONG",
+      "finalSide": [
+        "LONG"
+      ]
+    }
+  },
+  {
+    "runId": "airun_muoum3tp_e7qksvml",
+    "symbol": "RAYSOLUSDT",
+    "startedAt": 1790817688285,
+    "completedAt": 1790817769330,
+    "input": {
+      "packetId": "eip_muoultsv_30gq90tu",
+      "createdAt": 1790817675295,
+      "quoteAt": 1790817672000,
+      "quote": {
+        "symbol": "RAYSOLUSDT",
+        "last": 1.9443,
+        "mark": 1.94356146,
+        "bid": 1.94,
+        "ask": 1.9443,
+        "tickSize": 0.0001,
+        "stepSize": 0.1,
+        "minQty": 0.1,
+        "minNotional": 5,
+        "quoteVolumeUsd24h": 875644754.79657,
+        "priceChangePercent24h": 0.418,
+        "tradeCount24h": 187617,
+        "ts": 1790817672000
+      },
+      "account": {
+        "status": "READY",
+        "equityUsd": 10559.04031202,
+        "availableMarginUsd": 3948.8499239,
+        "reservedMarginUsd": 0,
+        "executionLeaseMarginUsd": 0,
+        "freeMarginUsd": 3948.8499239
+      },
+      "exchange": {
+        "tickSize": 0.0001,
+        "stepSize": 0.1,
+        "minQty": 0.1,
+        "minNotional": 5
+      },
+      "leverage": 12,
+      "sideEnvelope": {
+        "executable": true,
+        "maxMarginUsd": 3948.8499239,
+        "maxNotionalUsd": 47386.1990868,
+        "maxQuantityUnits": 243427,
+        "minQuantityUnits": 26,
+        "legalQuantityRangeUnits": [
+          26,
+          243427
+        ],
+        "firstBindingConstraint": "AVAILABLE_MARGIN",
+        "minimumLegalNotionalUsd": 5,
+        "admission": {
+          "ceilingUsd": null,
+          "refusal": null,
+          "gate": null,
+          "detail": null
+        },
+        "legalNotionalRangeUsd": [
+          5,
+          47386.169439641315
+        ]
+      },
+      "leaseBudget": {
+        "requestedUsd": 3948.8499239,
+        "cappedBy": "ROUTED_PLAN_MARGIN",
+        "budgetUsd": 48.668440088744966
+      }
+    },
+    "raw": {
+      "action": "FINAL",
+      "schemaVersion": "V3.9.3",
+      "structureDirection": "SHORT",
+      "tradeSide": "SHORT",
+      "quantityUnits": 26,
+      "opportunityType": "TREND_RESUMPTION",
+      "marketRegime": "RANGE",
+      "confidence": 0.65,
+      "directionReason": "15m and 1h trends are DOWN with bearish MACD crosses. Price is below the 15m EMA21 and 1h EMA21. The 1m uptrend is weak (strength 0.19) and faces significantask",
+      "timingReason": "1m MACD histogram is negative but slope is positive, suggesting momentum may be stabilizing. 5m MACD is bullish but price is below the 5m EMA21. Waiting for a 1",
+      "entryLocationReason": "Entry near the current ask of 1.9443 is within the maker reachable band and aligns with the 15m bearish structure. The order book shows heavy ask depth at 1.946",
+      "reason": "The 15m and 1h timeframes show a clear downtrend with bearish MACD crosses. The 1m timeframe shows a weak uptrend that is likely a pullback within the larger 15",
+      "entryInvalidation": "Price closes above 1.9462 (15m swing high) on the 1m timeframe.",
+      "supportingEvidenceRefs": [
+        "technical.15m.confirmed",
+        "technical.1h.confirmed",
+        "technical.1m.confirmed",
+        "microstructure.book5",
+        "quote.top"
+      ],
+      "profitTakePlan": {
+        "targetPrice": 1.9308,
+        "acceptableTargetRange": {
+          "min": 1.9294,
+          "max": 1.9321
+        },
+        "targetHorizonMinutes": 60,
+        "targetReason": "Target is the 15m swing low at 1.9308, which is a key support level. The 60-minute horizon is supported by the 5m reachability data showing a p75 move of 1.23% for shorts, which is sufficient to reach the target from the entry price of 1.94",
+        "evidenceRefs": [
+          "technical.15m.confirmed",
+          "reachability.60m.SHORT"
+        ]
+      },
+      "rejectLayer": "NONE",
+      "blockingCondition": "NONE",
+      "releaseCondition": "NONE",
+      "timingEvent": {
+        "id": "15m_bar_close",
+        "status": "PENDING",
+        "time": 1790818199999,
+        "anchorPrice": 1.9443,
+        "timeframe": "15m",
+        "provenance": "technical.15m.confirmed"
+      },
+      "decision": "PLACE_SHORT",
+      "idealPrice": 1.9443,
+      "acceptablePriceRange": {
+        "min": 1.9419,
+        "max": 1.9466
+      },
+      "horizonMinutes": 1,
+      "waitCondition": null
+    },
+    "normalized": {
+      "decision": "PLACE_SHORT",
+      "direction": "SHORT",
+      "quantityUnits": 26,
+      "profitTakePlan": {
+        "targetPrice": 1.9308,
+        "acceptableTargetRange": {
+          "min": 1.9294,
+          "max": 1.9321
+        },
+        "targetHorizonMinutes": 60,
+        "targetReason": "Target is the 15m swing low at 1.9308, which is a key support level. The 60-minute horizon is supported by the 5m reachability data showing a p75 move of 1.23% for shorts, which is sufficient to reach the target from the entry price of 1.94",
+        "evidenceRefs": [
+          "technical.15m.confirmed",
+          "reachability.60m.SHORT"
+        ]
+      }
+    },
+    "plan": {
+      "schemaVersion": "V396-TRADE-PLAN-1",
+      "planId": "plan_2af4392fca68a2ed6fbff2fd6932270f",
+      "planVersion": 1,
+      "supersedesPlanId": null,
+      "cycleId": "cycle_entry_intent_muounuyi_u1cgwauk",
+      "scope": "[\"TESTNET\",\"binance-primary\",\"RAYSOLUSDT\",\"SHORT\"]",
+      "symbol": "RAYSOLUSDT",
+      "side": "SHORT",
+      "selectedCandidateId": "cand_015c88386245cfaf1d252eb4",
+      "quantityUnits": 26,
+      "notionalUsd": 5.05102,
+      "marginUsd": 0.420918,
+      "leverage": 12,
+      "entryReferencePrice": 1.9427,
+      "targetPrice": 1.9308,
+      "acceptableTargetRange": {
+        "min": 1.9294,
+        "max": 1.9321
+      },
+      "entryTtlMinutes": 1,
+      "targetHorizonMinutes": 60,
+      "managementDurationMs": 86400000,
+      "thesis": "The 15m and 1h timeframes show a clear downtrend with bearish MACD crosses. The 1m timeframe shows a weak uptrend that is likely a pullback within the larger 15",
+      "invalidationPredicate": "NO_PREDICATE",
+      "predicateLevel": 1.9466,
+      "predicateEvidenceRefs": [],
+      "counterEvidenceRefs": [],
+      "releaseCondition": null,
+      "costs": {
+        "entryFeeUsd": 0.00202,
+        "exitFeeUsd": 0.002008,
+        "slippageUsd": 0,
+        "uncertaintyBufferUsd": 0.000403,
+        "fundingEstimateUsd": 0,
+        "fundingStatus": "UNPROVEN",
+        "fxRateToQuote": 1,
+        "costVersion": "fees:0.0004:0.0004:0:10"
+      },
+      "economics": {
+        "targetConditionalNetProfitUsd": 0.026509,
+        "targetConditionalNetProfitStatus": "VERIFIED",
+        "expectedNetPnlAtHorizonUsd": -0.282681,
+        "expectedNetPnlAtHorizonStatus": "VERIFIED",
+        "reachProbability": 0.6987951807228916,
+        "reachProbabilityStatus": "VERIFIED",
+        "reachSampleCount": 83,
+        "historicalHardMaxMovePercent": 3.880494505494514,
+        "targetMovePercent": 0.61255,
+        "statisticalSource": "CLOSED_CANDLE_CACHE:5m:83",
+        "targetVsStatisticalCeiling": "WITHIN",
+        "modelConfidence": 0.65,
+        "modelConfidenceIsAuthority": false
+      },
+      "risk": null,
+      "minNetProfitUsd": 1,
+      "maxRealizedLossUsd": 10,
+      "provenance": {
+        "modelRunId": "airun_muoum3tp_e7qksvml",
+        "promptVersion": null,
+        "factVersion": "v396p383cc0a945793b52a374f655125fb4229e4bf286",
+        "envelopeExpiresAt": 1790817810289,
+        "candidateSetHash": "cand_1d201719ea1ea15f7a9abb68",
+        "createdAt": 1790817770106,
+        "source": "AI"
+      },
+      "persistedAt": 1790817770106,
+      "immutable": true
+    },
+    "intent": {
+      "id": "intent_muounuyi_u1cgwauk",
+      "quantityUnits": 26,
+      "leverage": 12,
+      "planId": "plan_2af4392fca68a2ed6fbff2fd6932270f",
+      "reservationId": "reserve_1790817770128_nteuwu"
+    },
+    "reservation": {
+      "id": "reserve_1790817770128_nteuwu",
+      "marginUsd": 0.4217633333333333,
+      "notionalUsd": 5.06116,
+      "status": "RELEASED",
+      "quoteAsset": "USDT"
+    },
+    "orders": [
+      {
+        "id": "entry_intent_muounuyi_u1cgwauk",
+        "clientOrderId": "ml_0ee7a325be5dff04635bb4fcb90c",
+        "exchangeOrderId": "274641231",
+        "side": "SHORT",
+        "quantity": 2.6,
+        "price": 1.9437,
+        "status": "FILLED",
+        "filledQuantity": 2.6,
+        "factSource": "BINANCE_EXACT_ORDER",
+        "verifiedAt": 1790819941239,
+        "submittedAt": 1790817788535,
+        "fills": [
+          {
+            "tradeId": "62358904",
+            "qty": 2.6,
+            "price": 1.9437,
+            "commission": 0.00101072,
+            "commissionAsset": "USDT",
+            "executedAt": 1790817797634
+          }
+        ]
+      }
+    ],
+    "events": [
+      {
+        "type": "ENTRY_EXECUTION_PERMIT_EVALUATED",
+        "ts": 1790817776985,
+        "permit": {
+          "permitted": true,
+          "firstCause": null,
+          "facts": {
+            "privateFresh": true,
+            "quoteAsset": "USDT",
+            "exchangeAvailableUsd": 3950.22190365,
+            "uncommittedReservationUsd": 0,
+            "analysisEarmarkUsd": 0,
+            "executableForNewReservationUsd": 3950.22190365,
+            "requiredMarginUsd": 0.42113500000000004,
+            "filtersComplete": true,
+            "authorizationValid": true,
+            "submissionIdentity": "ml_0ee7a325be5dff04635bb4fcb90c",
+            "durableStorageReady": true
+          }
+        }
+      },
+      {
+        "type": "ENTRY_SUBMIT_ATTEMPTED",
+        "ts": 1790817777231,
+        "permit": null
+      }
+    ],
+    "comparison": {
+      "rawUnits": 26,
+      "normalizedUnits": 26,
+      "stepSize": 0.1,
+      "rawQty": 2.6,
+      "planUnits": 26,
+      "intentUnits": 26,
+      "finalQty": [
+        2.6
+      ],
+      "rawSide": "SHORT",
+      "normalizedSide": "SHORT",
+      "finalSide": [
+        "SHORT"
+      ]
+    }
+  },
+  {
+    "runId": "airun_muov7lok_4tbktkrq",
+    "symbol": "WIFUSDT",
+    "startedAt": 1790818691204,
+    "completedAt": 1790818770258,
+    "input": {
+      "packetId": "eip_muov796z_3ov327sv",
+      "createdAt": 1790818675019,
+      "quoteAt": 1790818674632,
+      "quote": {
+        "symbol": "WIFUSDT",
+        "last": 0.2485,
+        "mark": 0.24855667,
+        "bid": 0.2484,
+        "ask": 0.2485,
+        "tickSize": 0.0001,
+        "stepSize": 0.1,
+        "minQty": 0.1,
+        "minNotional": 5,
+        "quoteVolumeUsd24h": 804977003.81698,
+        "priceChangePercent24h": 2.011,
+        "tradeCount24h": 184209,
+        "ts": 1790818674632
+      },
+      "account": {
+        "status": "READY",
+        "equityUsd": 10587.6240187042,
+        "availableMarginUsd": 3983.01692935,
+        "reservedMarginUsd": 0,
+        "executionLeaseMarginUsd": 0,
+        "freeMarginUsd": 3983.01692935
+      },
+      "exchange": {
+        "tickSize": 0.0001,
+        "stepSize": 0.1,
+        "minQty": 0.1,
+        "minNotional": 5
+      },
+      "leverage": 8,
+      "sideEnvelope": {
+        "executable": true,
+        "maxMarginUsd": 3983.01692935,
+        "maxNotionalUsd": 31864.1354348,
+        "maxQuantityUnits": 1279596,
+        "minQuantityUnits": 202,
+        "legalQuantityRangeUnits": [
+          202,
+          1279596
+        ],
+        "firstBindingConstraint": "AVAILABLE_MARGIN",
+        "minimumLegalNotionalUsd": 5,
+        "admission": {
+          "ceilingUsd": null,
+          "refusal": null,
+          "gate": null,
+          "detail": null
+        },
+        "legalNotionalRangeUsd": [
+          5,
+          31864.126944978183
+        ]
+      },
+      "leaseBudget": {
+        "requestedUsd": 3983.01692935,
+        "cappedBy": "ROUTED_PLAN_MARGIN",
+        "budgetUsd": 48.636413914955355
+      }
+    },
+    "raw": {
+      "action": "FINAL",
+      "schemaVersion": "V3.9.3",
+      "structureDirection": "LONG",
+      "tradeSide": "LONG",
+      "quantityUnits": 202,
+      "opportunityType": "TREND_RESUMPTION",
+      "marketRegime": "TREND",
+      "confidence": 0.65,
+      "directionReason": "15m and 5m timeframes show bullish MACD crosses and higher highs/lows, while 1m bearishness is treated as tactical noise. Order book imbalance favors bids. LONG",
+      "timingReason": "5m volume Z-score of 2.68 indicates significant activity supporting the move. 1m is currently correcting but 5m/15m structure remains intact. Entry is timed to ",
+      "entryLocationReason": "Price is near the lower Bollinger Band on 1m (0.2485) and 5m (0.2470), offering a favorable risk/reward entry relative to the 15m trend. Bid depth is strong at ",
+      "reason": "The 15m and 5m timeframes exhibit a clear bullish structure with higher highs and higher lows, supported by positive MACD histograms and volume spikes (5m Z=2.6",
+      "entryInvalidation": "Price closes below 0.2475 on the 5m timeframe, breaking the recent swing low and invalidating the bullish structure.",
+      "supportingEvidenceRefs": [
+        "technical.15m.confirmed",
+        "technical.5m.confirmed",
+        "microstructure.book5",
+        "economics.entry"
+      ],
+      "profitTakePlan": {
+        "targetPrice": 0.2515,
+        "acceptableTargetRange": {
+          "min": 0.2505,
+          "max": 0.2525
+        },
+        "targetHorizonMinutes": 60,
+        "targetReason": "Target is set at the 15m Bollinger Upper Band (0.2508) and recent swing high (0.2513), representing a 1.2% move which is within the 60m p75 reachability (0.81%) and p90 (1.25%) historical domain.",
+        "evidenceRefs": [
+          "technical.15m.confirmed",
+          "economics.entry"
+        ]
+      },
+      "rejectLayer": "NONE",
+      "blockingCondition": "NONE",
+      "releaseCondition": "NONE",
+      "timingEvent": {
+        "id": "5m_volume_spike",
+        "status": "COMPLETED",
+        "time": 1790818500000,
+        "anchorPrice": 0.2494,
+        "timeframe": "5m",
+        "provenance": "technical.5m.confirmed"
+      },
+      "decision": "PLACE_LONG",
+      "idealPrice": 0.2484,
+      "acceptablePriceRange": {
+        "min": 0.2479,
+        "max": 0.2489
+      },
+      "horizonMinutes": 1,
+      "waitCondition": null
+    },
+    "normalized": {
+      "decision": "PLACE_LONG",
+      "direction": "LONG",
+      "quantityUnits": 202,
+      "profitTakePlan": {
+        "targetPrice": 0.2515,
+        "acceptableTargetRange": {
+          "min": 0.2505,
+          "max": 0.2525
+        },
+        "targetHorizonMinutes": 60,
+        "targetReason": "Target is set at the 15m Bollinger Upper Band (0.2508) and recent swing high (0.2513), representing a 1.2% move which is within the 60m p75 reachability (0.81%) and p90 (1.25%) historical domain.",
+        "evidenceRefs": [
+          "technical.15m.confirmed",
+          "economics.entry"
+        ]
+      }
+    },
+    "plan": {
+      "schemaVersion": "V396-TRADE-PLAN-1",
+      "planId": "plan_23b62bc3dd634cbdb59ec8486f3ff8c2",
+      "planVersion": 1,
+      "supersedesPlanId": null,
+      "cycleId": "cycle_entry_intent_muov9bd1_kgog9uf7",
+      "scope": "[\"TESTNET\",\"binance-primary\",\"WIFUSDT\",\"LONG\"]",
+      "symbol": "WIFUSDT",
+      "side": "LONG",
+      "selectedCandidateId": "cand_ca05d4c6bef1549b4d1daef5",
+      "quantityUnits": 202,
+      "notionalUsd": 5.02374,
+      "marginUsd": 0.627968,
+      "leverage": 8,
+      "entryReferencePrice": 0.2487,
+      "targetPrice": 0.2515,
+      "acceptableTargetRange": {
+        "min": 0.2505,
+        "max": 0.2525
+      },
+      "entryTtlMinutes": 1,
+      "targetHorizonMinutes": 60,
+      "managementDurationMs": 86400000,
+      "thesis": "The 15m and 5m timeframes exhibit a clear bullish structure with higher highs and higher lows, supported by positive MACD histograms and volume spikes (5m Z=2.6",
+      "invalidationPredicate": "NO_PREDICATE",
+      "predicateLevel": 0.2479,
+      "predicateEvidenceRefs": [],
+      "counterEvidenceRefs": [],
+      "releaseCondition": null,
+      "costs": {
+        "entryFeeUsd": 0.002009,
+        "exitFeeUsd": 0.002032,
+        "slippageUsd": 0,
+        "uncertaintyBufferUsd": 0.000404,
+        "fundingEstimateUsd": 0,
+        "fundingStatus": "UNPROVEN",
+        "fxRateToQuote": 1,
+        "costVersion": "fees:0.0004:0.0004:0:10"
+      },
+      "economics": {
+        "targetConditionalNetProfitUsd": 0.052114,
+        "targetConditionalNetProfitStatus": "VERIFIED",
+        "expectedNetPnlAtHorizonUsd": -0.809859,
+        "expectedNetPnlAtHorizonStatus": "VERIFIED",
+        "reachProbability": 0.18072289156626506,
+        "reachProbabilityStatus": "VERIFIED",
+        "reachSampleCount": 83,
+        "historicalHardMaxMovePercent": 2.2058823529411686,
+        "targetMovePercent": 1.125854,
+        "statisticalSource": "CLOSED_CANDLE_CACHE:5m:83",
+        "targetVsStatisticalCeiling": "WITHIN",
+        "modelConfidence": 0.65,
+        "modelConfidenceIsAuthority": false
+      },
+      "risk": null,
+      "minNetProfitUsd": 1,
+      "maxRealizedLossUsd": 10,
+      "provenance": {
+        "modelRunId": "airun_muov7lok_4tbktkrq",
+        "promptVersion": null,
+        "factVersion": "v396p2d3b40a101e74902952e61a711460ad1b5cec28a",
+        "envelopeExpiresAt": 1790818810007,
+        "candidateSetHash": "cand_be1df8721965c44ea168f939",
+        "createdAt": 1790818771141,
+        "source": "AI"
+      },
+      "persistedAt": 1790818771141,
+      "immutable": true
+    },
+    "intent": {
+      "id": "intent_muov9bd1_kgog9uf7",
+      "quantityUnits": 202,
+      "leverage": 8,
+      "planId": "plan_23b62bc3dd634cbdb59ec8486f3ff8c2",
+      "reservationId": "reserve_1790818771175_agp3s7"
+    },
+    "reservation": {
+      "id": "reserve_1790818771175_agp3s7",
+      "marginUsd": 0.6284725000000001,
+      "notionalUsd": 5.027780000000001,
+      "status": "RELEASED",
+      "quoteAsset": "USDT"
+    },
+    "orders": [
+      {
+        "id": "entry_intent_muov9bd1_kgog9uf7",
+        "clientOrderId": "ml_769331ac6621c802d5c06a8e04e4",
+        "exchangeOrderId": "330011065",
+        "side": "LONG",
+        "quantity": 20.2,
+        "price": 0.2484,
+        "status": "FILLED",
+        "filledQuantity": 20.2,
+        "factSource": "BINANCE_EXACT_ORDER",
+        "verifiedAt": 1790820703445,
+        "submittedAt": 1790818789166,
+        "fills": [
+          {
+            "tradeId": "63331005",
+            "qty": 20.2,
+            "price": 0.2484,
+            "commission": 0.00100353,
+            "commissionAsset": "USDT",
+            "executedAt": 1790819207698
+          }
+        ]
+      }
+    ],
+    "events": [
+      {
+        "type": "ENTRY_EXECUTION_PERMIT_EVALUATED",
+        "ts": 1790818782109,
+        "permit": {
+          "permitted": true,
+          "firstCause": null,
+          "facts": {
+            "privateFresh": true,
+            "quoteAsset": "USDT",
+            "exchangeAvailableUsd": 3975.81572231,
+            "uncommittedReservationUsd": 0,
+            "analysisEarmarkUsd": 0,
+            "executableForNewReservationUsd": 3975.81572231,
+            "requiredMarginUsd": 0.6272100000000002,
+            "filtersComplete": true,
+            "authorizationValid": true,
+            "submissionIdentity": "ml_769331ac6621c802d5c06a8e04e4",
+            "durableStorageReady": true
+          }
+        }
+      },
+      {
+        "type": "ENTRY_SUBMIT_ATTEMPTED",
+        "ts": 1790818782370,
+        "permit": null
+      }
+    ],
+    "comparison": {
+      "rawUnits": 202,
+      "normalizedUnits": 202,
+      "stepSize": 0.1,
+      "rawQty": 20.200000000000003,
+      "planUnits": 202,
+      "intentUnits": 202,
+      "finalQty": [
+        20.2
+      ],
+      "rawSide": "LONG",
+      "normalizedSide": "LONG",
+      "finalSide": [
+        "LONG"
+      ]
+    }
+  },
+  {
+    "runId": "airun_muova24c_bt0hdhi7",
+    "symbol": "ETHFIUSDT",
+    "startedAt": 1790818805820,
+    "completedAt": 1790818887481,
+    "input": {
+      "packetId": "eip_muov9ryk_fiikv7x9",
+      "createdAt": 1790818792652,
+      "quoteAt": 1790818788000,
+      "quote": {
+        "symbol": "ETHFIUSDT",
+        "last": 0.7787,
+        "mark": 0.7787,
+        "bid": 0.7786,
+        "ask": 0.7787,
+        "tickSize": 0.0001,
+        "stepSize": 0.1,
+        "minQty": 0.1,
+        "minNotional": 5,
+        "quoteVolumeUsd24h": 609733410.77246,
+        "priceChangePercent24h": -0.154,
+        "tradeCount24h": 174514,
+        "ts": 1790818788000
+      },
+      "account": {
+        "status": "READY",
+        "equityUsd": 10581.3393916178,
+        "availableMarginUsd": 3975.81572231,
+        "reservedMarginUsd": 0,
+        "executionLeaseMarginUsd": 0,
+        "freeMarginUsd": 3975.81572231
+      },
+      "exchange": {
+        "tickSize": 0.0001,
+        "stepSize": 0.1,
+        "minQty": 0.1,
+        "minNotional": 5
+      },
+      "leverage": 8,
+      "sideEnvelope": {
+        "executable": true,
+        "maxMarginUsd": 3975.81572231,
+        "maxNotionalUsd": 31806.52577848,
+        "maxQuantityUnits": 407703,
+        "minQuantityUnits": 65,
+        "legalQuantityRangeUnits": [
+          65,
+          407703
+        ],
+        "firstBindingConstraint": "AVAILABLE_MARGIN",
+        "minimumLegalNotionalUsd": 5,
+        "admission": {
+          "ceilingUsd": null,
+          "refusal": null,
+          "gate": null,
+          "detail": null
+        },
+        "legalNotionalRangeUsd": [
+          5,
+          31806.503566488158
+        ]
+      },
+      "leaseBudget": {
+        "requestedUsd": 3975.81572231,
+        "cappedBy": "ROUTED_PLAN_MARGIN",
+        "budgetUsd": 46.97434120641262
+      }
+    },
+    "raw": {
+      "action": "FINAL",
+      "schemaVersion": "V3.9.3",
+      "structureDirection": "LONG",
+      "tradeSide": "LONG",
+      "quantityUnits": 65,
+      "opportunityType": "TREND_RESUMPTION",
+      "marketRegime": "TREND",
+      "confidence": 0.65,
+      "directionReason": "15m and 5m timeframes exhibit strong bullish momentum with MACD bullish crossovers and price holding above key EMAs. The 1m timeframe shows a short-term pull/cr",
+      "timingReason": "The 1m timeframe indicates a range-bound correction with a bearish MACD cross, suggesting a potential short-term dip. However, the 5m and 15m trends are firmly",
+      "entryLocationReason": "The current bid price of 0.7786 is within the maker reachable band and aligns with the recent swing low on the 1m timeframe (0.7805) and the 5m swing low (0.771",
+      "reason": "The market structure on the 15m and 5m timeframes strongly supports a long position, with bullish MACD crossovers and price above EMAs. The 1m timeframe shows a",
+      "entryInvalidation": "Price closes below the 15m EMA21 (0.7738) or the 5m swing low (0.7716) on a 1m candle.",
+      "supportingEvidenceRefs": [
+        "technical.15m.confirmed",
+        "technical.5m.confirmed",
+        "technical.1m.confirmed",
+        "quote.top",
+        "microstructure.book5"
+      ],
+      "profitTakePlan": {
+        "targetPrice": 0.785,
+        "acceptableTargetRange": {
+          "min": 0.783,
+          "max": 0.787
+        },
+        "targetHorizonMinutes": 15,
+        "targetReason": "The 15m timeframe shows a strong uptrend with a swing high at 0.7851. The 5m timeframe has a swing high at 0.7776, but the 15m structure suggests a move towards the 15m swing high is likely. The 15m ATR is 0.0065, which supports a move of ~",
+        "evidenceRefs": [
+          "technical.15m.confirmed",
+          "technical.5m.confirmed"
+        ]
+      },
+      "rejectLayer": "NONE",
+      "blockingCondition": "NONE",
+      "releaseCondition": "NONE",
+      "timingEvent": {
+        "id": "timing.15m.bullish",
+        "status": "PENDING",
+        "time": 1790818792652,
+        "anchorPrice": 0.7787,
+        "timeframe": "15m",
+        "provenance": "technical.15m.confirmed"
+      },
+      "decision": "PLACE_LONG",
+      "idealPrice": 0.7786,
+      "acceptablePriceRange": {
+        "min": 0.7772,
+        "max": 0.7801
+      },
+      "horizonMinutes": 1,
+      "waitCondition": null
+    },
+    "normalized": {
+      "decision": "PLACE_LONG",
+      "direction": "LONG",
+      "quantityUnits": 65,
+      "profitTakePlan": {
+        "targetPrice": 0.785,
+        "acceptableTargetRange": {
+          "min": 0.783,
+          "max": 0.787
+        },
+        "targetHorizonMinutes": 15,
+        "targetReason": "The 15m timeframe shows a strong uptrend with a swing high at 0.7851. The 5m timeframe has a swing high at 0.7776, but the 15m structure suggests a move towards the 15m swing high is likely. The 15m ATR is 0.0065, which supports a move of ~",
+        "evidenceRefs": [
+          "technical.15m.confirmed",
+          "technical.5m.confirmed"
+        ]
+      }
+    },
+    "plan": {
+      "schemaVersion": "V396-TRADE-PLAN-1",
+      "planId": "plan_ff340a4d94b2de75a4914264c9346c2f",
+      "planVersion": 1,
+      "supersedesPlanId": null,
+      "cycleId": "cycle_entry_intent_muovbtrp_rv6e3z3h",
+      "scope": "[\"TESTNET\",\"binance-primary\",\"ETHFIUSDT\",\"LONG\"]",
+      "symbol": "ETHFIUSDT",
+      "side": "LONG",
+      "selectedCandidateId": "cand_38c952592e9c2011194c8b64",
+      "quantityUnits": 65,
+      "notionalUsd": 5.07,
+      "marginUsd": 0.63375,
+      "leverage": 8,
+      "entryReferencePrice": 0.78,
+      "targetPrice": 0.785,
+      "acceptableTargetRange": {
+        "min": 0.783,
+        "max": 0.787
+      },
+      "entryTtlMinutes": 1,
+      "targetHorizonMinutes": 15,
+      "managementDurationMs": 86400000,
+      "thesis": "The market structure on the 15m and 5m timeframes strongly supports a long position, with bullish MACD crossovers and price above EMAs. The 1m timeframe shows a",
+      "invalidationPredicate": "NO_PREDICATE",
+      "predicateLevel": 0.7772,
+      "predicateEvidenceRefs": [],
+      "counterEvidenceRefs": [],
+      "releaseCondition": null,
+      "costs": {
+        "entryFeeUsd": 0.002028,
+        "exitFeeUsd": 0.002041,
+        "slippageUsd": 0,
+        "uncertaintyBufferUsd": 0.000407,
+        "fundingEstimateUsd": 0,
+        "fundingStatus": "UNPROVEN",
+        "fxRateToQuote": 1,
+        "costVersion": "fees:0.0004:0.0004:0:10"
+      },
+      "economics": {
+        "targetConditionalNetProfitUsd": 0.028024,
+        "targetConditionalNetProfitStatus": "VERIFIED",
+        "expectedNetPnlAtHorizonUsd": -0.734427,
+        "expectedNetPnlAtHorizonStatus": "VERIFIED",
+        "reachProbability": 0.25833333333333336,
+        "reachProbabilityStatus": "VERIFIED",
+        "reachSampleCount": 120,
+        "historicalHardMaxMovePercent": 1.2904890953671533,
+        "targetMovePercent": 0.641026,
+        "statisticalSource": "CLOSED_CANDLE_CACHE:1m:120",
+        "targetVsStatisticalCeiling": "WITHIN",
+        "modelConfidence": 0.65,
+        "modelConfidenceIsAuthority": false
+      },
+      "risk": null,
+      "minNetProfitUsd": 1,
+      "maxRealizedLossUsd": 10,
+      "provenance": {
+        "modelRunId": "airun_muova24c_bt0hdhi7",
+        "promptVersion": null,
+        "factVersion": "v396p753a24e793b6e72d4824ef922e07b8a030986e91",
+        "envelopeExpiresAt": 1790818927640,
+        "candidateSetHash": "cand_d8798606560c723257c2117f",
+        "createdAt": 1790818888309,
+        "source": "AI"
+      },
+      "persistedAt": 1790818888309,
+      "immutable": true
+    },
+    "intent": {
+      "id": "intent_muovbtrp_rv6e3z3h",
+      "quantityUnits": 65,
+      "leverage": 8,
+      "planId": "plan_ff340a4d94b2de75a4914264c9346c2f",
+      "reservationId": "reserve_1790818888347_uy53zt"
+    },
+    "reservation": {
+      "id": "reserve_1790818888347_uy53zt",
+      "marginUsd": 0.6338312500000001,
+      "notionalUsd": 5.0706500000000005,
+      "status": "RELEASED",
+      "quoteAsset": "USDT"
+    },
+    "orders": [
+      {
+        "id": "entry_intent_muovbtrp_rv6e3z3h",
+        "clientOrderId": "ml_923f401dca78d764005f479b5dd6",
+        "exchangeOrderId": "217516477",
+        "side": "LONG",
+        "quantity": 6.5,
+        "price": 0.779,
+        "status": "FILLED",
+        "filledQuantity": 6.5,
+        "factSource": "BINANCE_EXACT_ORDER",
+        "verifiedAt": 1790820714856,
+        "submittedAt": 1790818906002,
+        "fills": [
+          {
+            "tradeId": "62977842",
+            "qty": 6.5,
+            "price": 0.779,
+            "commission": 0,
+            "commissionAsset": "USDT",
+            "executedAt": 1790818906848
+          }
+        ]
+      }
+    ],
+    "events": [
+      {
+        "type": "ENTRY_EXECUTION_PERMIT_EVALUATED",
+        "ts": 1790818896254,
+        "permit": {
+          "permitted": true,
+          "firstCause": null,
+          "facts": {
+            "privateFresh": true,
+            "quoteAsset": "USDT",
+            "exchangeAvailableUsd": 3973.82839474,
+            "uncommittedReservationUsd": 0,
+            "analysisEarmarkUsd": 0,
+            "executableForNewReservationUsd": 3973.82839474,
+            "requiredMarginUsd": 0.6329375,
+            "filtersComplete": true,
+            "authorizationValid": true,
+            "submissionIdentity": "ml_923f401dca78d764005f479b5dd6",
+            "durableStorageReady": true
+          }
+        }
+      },
+      {
+        "type": "ENTRY_SUBMIT_ATTEMPTED",
+        "ts": 1790818896519,
+        "permit": null
+      }
+    ],
+    "comparison": {
+      "rawUnits": 65,
+      "normalizedUnits": 65,
+      "stepSize": 0.1,
+      "rawQty": 6.5,
+      "planUnits": 65,
+      "intentUnits": 65,
+      "finalQty": [
+        6.5
+      ],
+      "rawSide": "LONG",
+      "normalizedSide": "LONG",
+      "finalSide": [
+        "LONG"
+      ]
+    }
+  },
+  {
+    "runId": "airun_muovcn3x_yptn9k9y",
+    "symbol": "CRVUSDT",
+    "startedAt": 1790818926333,
+    "completedAt": 1790819006185,
+    "input": {
+      "packetId": "eip_muovccwx_f0ip4b7i",
+      "createdAt": 1790818913121,
+      "quoteAt": 1790818902000,
+      "quote": {
+        "symbol": "CRVUSDT",
+        "last": 0.3965,
+        "mark": 0.3965,
+        "bid": 0.3965,
+        "ask": 0.3966,
+        "tickSize": 0.0001,
+        "stepSize": 0.1,
+        "minQty": 0.1,
+        "minNotional": 5,
+        "quoteVolumeUsd24h": 634580819.98618,
+        "priceChangePercent24h": 2.217,
+        "tradeCount24h": 174178,
+        "ts": 1790818902000
+      },
+      "account": {
+        "status": "READY",
+        "equityUsd": 10583.28759928,
+        "availableMarginUsd": 3977.37866622,
+        "reservedMarginUsd": 0,
+        "executionLeaseMarginUsd": 0,
+        "freeMarginUsd": 3977.37866622
+      },
+      "exchange": {
+        "tickSize": 0.0001,
+        "stepSize": 0.1,
+        "minQty": 0.1,
+        "minNotional": 5
+      },
+      "leverage": 8,
+      "sideEnvelope": {
+        "executable": true,
+        "maxMarginUsd": 3977.37866622,
+        "maxNotionalUsd": 31819.02932976,
+        "maxQuantityUnits": 801220,
+        "minQuantityUnits": 127,
+        "legalQuantityRangeUnits": [
+          127,
+          801220
+        ],
+        "firstBindingConstraint": "AVAILABLE_MARGIN",
+        "minimumLegalNotionalUsd": 5,
+        "admission": {
+          "ceilingUsd": null,
+          "refusal": null,
+          "gate": null,
+          "detail": null
+        },
+        "legalNotionalRangeUsd": [
+          5,
+          31819.010300376478
+        ]
+      },
+      "leaseBudget": {
+        "requestedUsd": 3977.37866622,
+        "cappedBy": "ROUTED_PLAN_MARGIN",
+        "budgetUsd": 47.964679695186845
+      }
+    },
+    "raw": {
+      "action": "FINAL",
+      "schemaVersion": "V3.9.3",
+      "structureDirection": "LONG",
+      "tradeSide": "LONG",
+      "quantityUnits": 127,
+      "opportunityType": "TREND_RESUMPTION",
+      "marketRegime": "TREND",
+      "confidence": 0.65,
+      "directionReason": "15m and 5m timeframes exhibit strong bullish momentum with positive MACD crossovers and higher highs/lows. 1m consolidation near support (0.3965) offers a high-",
+      "timingReason": "1m trend is ranging with negative EMA slope, indicating a short-term pullback or consolidation phase that aligns with the higher timeframe uptrend. Entry at the",
+      "entryLocationReason": "Price is currently at 0.3965, near the 1m Bollinger Middle band and above the 1m EMA8/EMA21. The order book shows positive imbalance (0.182), suggesting bid",
+      "reason": "The market structure on 15m and 5m is strongly bullish (trend strength 0.847 and 0.374 respectively). The 1m timeframe shows a consolidation/range with price h",
+      "entryInvalidation": "Price closes below 0.3951 (1m swing low and significant bid support) on a 1m candle.",
+      "supportingEvidenceRefs": [
+        "technical.15m.confirmed",
+        "technical.5m.confirmed",
+        "technical.1m.confirmed",
+        "microstructure.book5",
+        "economics.entry"
+      ],
+      "profitTakePlan": {
+        "targetPrice": 0.3985,
+        "acceptableTargetRange": {
+          "min": 0.398,
+          "max": 0.399
+        },
+        "targetHorizonMinutes": 15,
+        "targetReason": "Target is set at 0.3985, which is approximately 50 bps above entry. This aligns with the 15m ATR (0.00257) and the 15m Bollinger Upper Band (0.3973) as a first resistance level, with room for a slight breakout. The 15-minute horizon is the ",
+        "evidenceRefs": [
+          "technical.15m.confirmed",
+          "economics.entry"
+        ]
+      },
+      "rejectLayer": "NONE",
+      "blockingCondition": "NONE",
+      "releaseCondition": "NONE",
+      "timingEvent": {
+        "id": "15m_bullish_momentum",
+        "status": "PENDING",
+        "time": 1790818913121,
+        "anchorPrice": 0.3965,
+        "timeframe": "15m",
+        "provenance": "SYSTEM_SETTINGS+CONFIRMED_15M_SWINGS"
+      },
+      "decision": "PLACE_LONG",
+      "idealPrice": 0.3965,
+      "acceptablePriceRange": {
+        "min": 0.3958,
+        "max": 0.3971
+      },
+      "horizonMinutes": 1,
+      "waitCondition": null
+    },
+    "normalized": {
+      "decision": "PLACE_LONG",
+      "direction": "LONG",
+      "quantityUnits": 127,
+      "profitTakePlan": {
+        "targetPrice": 0.3985,
+        "acceptableTargetRange": {
+          "min": 0.398,
+          "max": 0.399
+        },
+        "targetHorizonMinutes": 15,
+        "targetReason": "Target is set at 0.3985, which is approximately 50 bps above entry. This aligns with the 15m ATR (0.00257) and the 15m Bollinger Upper Band (0.3973) as a first resistance level, with room for a slight breakout. The 15-minute horizon is the ",
+        "evidenceRefs": [
+          "technical.15m.confirmed",
+          "economics.entry"
+        ]
+      }
+    },
+    "plan": {
+      "schemaVersion": "V396-TRADE-PLAN-1",
+      "planId": "plan_d65876ff5c1f4f71d51940c11bfea250",
+      "planVersion": 1,
+      "supersedesPlanId": null,
+      "cycleId": "cycle_entry_intent_muovedar_rkpf0pcf",
+      "scope": "[\"TESTNET\",\"binance-primary\",\"CRVUSDT\",\"LONG\"]",
+      "symbol": "CRVUSDT",
+      "side": "LONG",
+      "selectedCandidateId": "cand_8fc6f274d93e25f1ee16e356",
+      "quantityUnits": 127,
+      "notionalUsd": 5.03936,
+      "marginUsd": 0.62992,
+      "leverage": 8,
+      "entryReferencePrice": 0.3968,
+      "targetPrice": 0.3985,
+      "acceptableTargetRange": {
+        "min": 0.398,
+        "max": 0.399
+      },
+      "entryTtlMinutes": 1,
+      "targetHorizonMinutes": 15,
+      "managementDurationMs": 86400000,
+      "thesis": "The market structure on 15m and 5m is strongly bullish (trend strength 0.847 and 0.374 respectively). The 1m timeframe shows a consolidation/range with price h",
+      "invalidationPredicate": "NO_PREDICATE",
+      "predicateLevel": 0.3958,
+      "predicateEvidenceRefs": [],
+      "counterEvidenceRefs": [],
+      "releaseCondition": null,
+      "costs": {
+        "entryFeeUsd": 0.002016,
+        "exitFeeUsd": 0.002024,
+        "slippageUsd": 0,
+        "uncertaintyBufferUsd": 0.000404,
+        "fundingEstimateUsd": 0,
+        "fundingStatus": "UNPROVEN",
+        "fxRateToQuote": 1,
+        "costVersion": "fees:0.0004:0.0004:0:10"
+      },
+      "economics": {
+        "targetConditionalNetProfitUsd": 0.017146,
+        "targetConditionalNetProfitStatus": "VERIFIED",
+        "expectedNetPnlAtHorizonUsd": -0.75419,
+        "expectedNetPnlAtHorizonStatus": "VERIFIED",
+        "reachProbability": 0.24166666666666667,
+        "reachProbabilityStatus": "VERIFIED",
+        "reachSampleCount": 120,
+        "historicalHardMaxMovePercent": 1.0437881873726962,
+        "targetMovePercent": 0.428427,
+        "statisticalSource": "CLOSED_CANDLE_CACHE:1m:120",
+        "targetVsStatisticalCeiling": "WITHIN",
+        "modelConfidence": 0.65,
+        "modelConfidenceIsAuthority": false
+      },
+      "risk": null,
+      "minNetProfitUsd": 1,
+      "maxRealizedLossUsd": 10,
+      "provenance": {
+        "modelRunId": "airun_muovcn3x_yptn9k9y",
+        "promptVersion": null,
+        "factVersion": "v396pdcfec957661205cfec24ab7e35a4675c93e69c0e",
+        "envelopeExpiresAt": 1790819048115,
+        "candidateSetHash": "cand_d2a91055fe6d584ecd4f73ce",
+        "createdAt": 1790819006931,
+        "source": "AI"
+      },
+      "persistedAt": 1790819006931,
+      "immutable": true
+    },
+    "intent": {
+      "id": "intent_muovedar_rkpf0pcf",
+      "quantityUnits": 127,
+      "leverage": 8,
+      "planId": "plan_d65876ff5c1f4f71d51940c11bfea250",
+      "reservationId": "reserve_1790819006957_dfiqyk"
+    },
+    "reservation": {
+      "id": "reserve_1790819006957_dfiqyk",
+      "marginUsd": 0.6303962500000001,
+      "notionalUsd": 5.043170000000001,
+      "status": "RELEASED",
+      "quoteAsset": "USDT"
+    },
+    "orders": [
+      {
+        "id": "entry_intent_muovedar_rkpf0pcf",
+        "clientOrderId": "ml_d6267c3442997fe49a3e14541701",
+        "exchangeOrderId": "311222622",
+        "side": "LONG",
+        "quantity": 12.7,
+        "price": 0.3961,
+        "status": "FILLED",
+        "filledQuantity": 12.7,
+        "factSource": "BINANCE_EXACT_ORDER",
+        "verifiedAt": 1790820723139,
+        "submittedAt": 1790819024344,
+        "fills": [
+          {
+            "tradeId": "74887326",
+            "qty": 12.7,
+            "price": 0.3961,
+            "commission": 0.00100609,
+            "commissionAsset": "USDT",
+            "executedAt": 1790819399218
+          }
+        ]
+      }
+    ],
+    "events": [
+      {
+        "type": "ENTRY_EXECUTION_PERMIT_EVALUATED",
+        "ts": 1790819014540,
+        "permit": {
+          "permitted": true,
+          "firstCause": null,
+          "facts": {
+            "privateFresh": true,
+            "quoteAsset": "USDT",
+            "exchangeAvailableUsd": 3967.01218352,
+            "uncommittedReservationUsd": 0,
+            "analysisEarmarkUsd": 0,
+            "executableForNewReservationUsd": 3967.01218352,
+            "requiredMarginUsd": 0.62880875,
+            "filtersComplete": true,
+            "authorizationValid": true,
+            "submissionIdentity": "ml_d6267c3442997fe49a3e14541701",
+            "durableStorageReady": true
+          }
+        }
+      },
+      {
+        "type": "ENTRY_SUBMIT_ATTEMPTED",
+        "ts": 1790819014831,
+        "permit": null
+      }
+    ],
+    "comparison": {
+      "rawUnits": 127,
+      "normalizedUnits": 127,
+      "stepSize": 0.1,
+      "rawQty": 12.700000000000001,
+      "planUnits": 127,
+      "intentUnits": 127,
+      "finalQty": [
+        12.7
+      ],
+      "rawSide": "LONG",
+      "normalizedSide": "LONG",
+      "finalSide": [
+        "LONG"
+      ]
+    }
+  },
+  {
+    "runId": "airun_muowua6c_qlxwu83q",
+    "symbol": "ZROUSDT",
+    "startedAt": 1790821428996,
+    "completedAt": 1790821507350,
+    "input": {
+      "packetId": "eip_muowu098_y5icg77o",
+      "createdAt": 1790821416140,
+      "quoteAt": 1790821412000,
+      "quote": {
+        "symbol": "ZROUSDT",
+        "last": 1.6896,
+        "mark": 1.6896,
+        "bid": 1.6896,
+        "ask": 1.6899,
+        "tickSize": 0.0001,
+        "stepSize": 0.1,
+        "minQty": 0.1,
+        "minNotional": 5,
+        "quoteVolumeUsd24h": 1230854077.13181,
+        "priceChangePercent24h": -2.874,
+        "tradeCount24h": 211164,
+        "ts": 1790821412000
+      },
+      "account": {
+        "status": "READY",
+        "equityUsd": 10571.5900897148,
+        "availableMarginUsd": 3965.04515528,
+        "reservedMarginUsd": 0,
+        "executionLeaseMarginUsd": 0,
+        "freeMarginUsd": 3965.04515528
+      },
+      "exchange": {
+        "tickSize": 0.0001,
+        "stepSize": 0.1,
+        "minQty": 0.1,
+        "minNotional": 5
+      },
+      "leverage": 12,
+      "sideEnvelope": {
+        "executable": true,
+        "maxMarginUsd": 3965.04515528,
+        "maxNotionalUsd": 47580.54186336,
+        "maxQuantityUnits": 281135,
+        "minQuantityUnits": 30,
+        "legalQuantityRangeUnits": [
+          30,
+          281135
+        ],
+        "firstBindingConstraint": "AVAILABLE_MARGIN",
+        "minimumLegalNotionalUsd": 5,
+        "admission": {
+          "ceilingUsd": null,
+          "refusal": null,
+          "gate": null,
+          "detail": null
+        },
+        "legalNotionalRangeUsd": [
+          5,
+          47580.49039861134
+        ]
+      },
+      "leaseBudget": {
+        "requestedUsd": 3965.04515528,
+        "cappedBy": "ROUTED_PLAN_MARGIN",
+        "budgetUsd": 48.26725635900285
+      }
+    },
+    "raw": {
+      "action": "FINAL",
+      "schemaVersion": "V3.9.3",
+      "structureDirection": "SHORT",
+      "tradeSide": "SHORT",
+      "quantityUnits": 30,
+      "opportunityType": "TREND_RESUMPTION",
+      "marketRegime": "RANGE",
+      "confidence": 0.65,
+      "directionReason": "Short-term momentum (1m/5m/15m) is consistently bearish with price below key EMAs and MACD in bearish territory. While higher timeframes (4h/1d) show a broader,",
+      "timingReason": "Entry is timed to the current pullback within the 15m structure, supported by elevated volume on shorter timeframes and a positive order book imbalance that may",
+      "entryLocationReason": "Ideal entry is near the current bid/ask spread, targeting a fill within the maker-reachable band to minimize slippage while capturing the short-term downtrend.",
+      "reason": "The 15m tactical focus shows a clear downtrend with bearish MACD and price below EMAs. The 1m and 5m timeframes confirm this momentum with elevated volume,",
+      "entryInvalidation": "Price closes above 1.7050 on the 15m timeframe, invalidating the short-term bearish structure.",
+      "supportingEvidenceRefs": [
+        "technical.15m.confirmed",
+        "technical.5m.confirmed",
+        "technical.1m.confirmed",
+        "microstructure.book5",
+        "economics.entry"
+      ],
+      "profitTakePlan": {
+        "targetPrice": 1.65,
+        "acceptableTargetRange": {
+          "min": 1.64,
+          "max": 1.66
+        },
+        "targetHorizonMinutes": 60,
+        "targetReason": "Target is set at a recent swing low and below the 15m lower Bollinger Band, representing a reasonable profit target within the 60-minute horizon based on historical reachability.",
+        "evidenceRefs": [
+          "technical.15m.confirmed",
+          "economics.entry"
+        ]
+      },
+      "rejectLayer": "NONE",
+      "blockingCondition": "NONE",
+      "releaseCondition": "NONE",
+      "timingEvent": {
+        "id": "ZROUSDT_SHORT_1790821416140",
+        "status": "PENDING",
+        "time": 1790821416140,
+        "anchorPrice": 1.6896,
+        "timeframe": "15m",
+        "provenance": "AUTONOMOUS_ENTRY_PRIMARY"
+      },
+      "decision": "PLACE_SHORT",
+      "idealPrice": 1.6896,
+      "acceptablePriceRange": {
+        "min": 1.6867572092193663,
+        "max": 1.6924427907806336
+      },
+      "horizonMinutes": 1,
+      "waitCondition": null
+    },
+    "normalized": {
+      "decision": "PLACE_SHORT",
+      "direction": "SHORT",
+      "quantityUnits": 30,
+      "profitTakePlan": {
+        "targetPrice": 1.65,
+        "acceptableTargetRange": {
+          "min": 1.64,
+          "max": 1.66
+        },
+        "targetHorizonMinutes": 60,
+        "targetReason": "Target is set at a recent swing low and below the 15m lower Bollinger Band, representing a reasonable profit target within the 60-minute horizon based on historical reachability.",
+        "evidenceRefs": [
+          "technical.15m.confirmed",
+          "economics.entry"
+        ]
+      }
+    },
+    "plan": {
+      "schemaVersion": "V396-TRADE-PLAN-1",
+      "planId": "plan_b80e263a5eaf8aef80678dedd81fa311",
+      "planVersion": 1,
+      "supersedesPlanId": null,
+      "cycleId": "cycle_entry_intent_muowvz76_8tiz9viw",
+      "scope": "[\"TESTNET\",\"binance-primary\",\"ZROUSDT\",\"SHORT\"]",
+      "symbol": "ZROUSDT",
+      "side": "SHORT",
+      "selectedCandidateId": "cand_134260cf370e27d3ef5230fa",
+      "quantityUnits": 30,
+      "notionalUsd": 5.0697,
+      "marginUsd": 0.422475,
+      "leverage": 12,
+      "entryReferencePrice": 1.6899,
+      "targetPrice": 1.65,
+      "acceptableTargetRange": {
+        "min": 1.64,
+        "max": 1.66
+      },
+      "entryTtlMinutes": 1,
+      "targetHorizonMinutes": 60,
+      "managementDurationMs": 86400000,
+      "thesis": "The 15m tactical focus shows a clear downtrend with bearish MACD and price below EMAs. The 1m and 5m timeframes confirm this momentum with elevated volume,",
+      "invalidationPredicate": "NO_PREDICATE",
+      "predicateLevel": 1.6924427907806336,
+      "predicateEvidenceRefs": [],
+      "counterEvidenceRefs": [],
+      "releaseCondition": null,
+      "costs": {
+        "entryFeeUsd": 0.002028,
+        "exitFeeUsd": 0.00198,
+        "slippageUsd": 0,
+        "uncertaintyBufferUsd": 0.000401,
+        "fundingEstimateUsd": 0,
+        "fundingStatus": "UNPROVEN",
+        "fxRateToQuote": 1,
+        "costVersion": "fees:0.0004:0.0004:0:10"
+      },
+      "economics": {
+        "targetConditionalNetProfitUsd": 0.115291,
+        "targetConditionalNetProfitStatus": "VERIFIED",
+        "expectedNetPnlAtHorizonUsd": -0.95203,
+        "expectedNetPnlAtHorizonStatus": "VERIFIED",
+        "reachProbability": 0.043010752688172046,
+        "reachProbabilityStatus": "VERIFIED",
+        "reachSampleCount": 93,
+        "historicalHardMaxMovePercent": 2.502653483045636,
+        "targetMovePercent": 2.361086,
+        "statisticalSource": "CLOSED_CANDLE_CACHE:5m:93",
+        "targetVsStatisticalCeiling": "WITHIN",
+        "modelConfidence": 0.65,
+        "modelConfidenceIsAuthority": false
+      },
+      "risk": null,
+      "minNetProfitUsd": 1,
+      "maxRealizedLossUsd": 10,
+      "provenance": {
+        "modelRunId": "airun_muowua6c_qlxwu83q",
+        "promptVersion": null,
+        "factVersion": "v396pe0cf8e32ed247fcaf7cfc163c28d51dc870d314f",
+        "envelopeExpiresAt": 1790821551128,
+        "candidateSetHash": "cand_5b92592d194aec81a7e3da40",
+        "createdAt": 1790821508082,
+        "source": "AI"
+      },
+      "persistedAt": 1790821508082,
+      "immutable": true
+    },
+    "intent": {
+      "id": "intent_muowvz76_8tiz9viw",
+      "quantityUnits": 30,
+      "leverage": 12,
+      "planId": "plan_b80e263a5eaf8aef80678dedd81fa311",
+      "reservationId": "reserve_1790821508107_zyukri"
+    },
+    "reservation": {
+      "id": "reserve_1790821508107_zyukri",
+      "marginUsd": 0.4231106976951584,
+      "notionalUsd": 5.077328372341901,
+      "status": "RELEASED",
+      "quoteAsset": "USDT"
+    },
+    "orders": [
+      {
+        "id": "entry_intent_muowvz76_8tiz9viw",
+        "clientOrderId": "ml_5033b8f77b339eb867bb89b95863",
+        "exchangeOrderId": "259608173",
+        "side": "SHORT",
+        "quantity": 3,
+        "price": 1.6903,
+        "status": "FILLED",
+        "filledQuantity": 3,
+        "submittedAt": 1790821526024,
+        "fills": [
+          {
+            "tradeId": "74537081",
+            "qty": 0.8,
+            "price": 1.6903,
+            "commission": 0.00027044,
+            "commissionAsset": "USDT",
+            "executedAt": 1790821590256
+          },
+          {
+            "tradeId": "74537082",
+            "qty": 2.2,
+            "price": 1.6903,
+            "commission": 0.00074373,
+            "commissionAsset": "USDT",
+            "executedAt": 1790821590279
+          }
+        ]
+      }
+    ],
+    "events": [
+      {
+        "type": "ENTRY_EXECUTION_PERMIT_EVALUATED",
+        "ts": 1790821515148,
+        "permit": {
+          "permitted": true,
+          "firstCause": null,
+          "facts": {
+            "privateFresh": true,
+            "quoteAsset": "USDT",
+            "exchangeAvailableUsd": 3943.46048706,
+            "uncommittedReservationUsd": 0,
+            "analysisEarmarkUsd": 0,
+            "executableForNewReservationUsd": 3943.46048706,
+            "requiredMarginUsd": 0.422575,
+            "filtersComplete": true,
+            "authorizationValid": true,
+            "submissionIdentity": "ml_5033b8f77b339eb867bb89b95863",
+            "durableStorageReady": true
+          }
+        }
+      },
+      {
+        "type": "ENTRY_SUBMIT_ATTEMPTED",
+        "ts": 1790821515417,
+        "permit": null
+      }
+    ],
+    "comparison": {
+      "rawUnits": 30,
+      "normalizedUnits": 30,
+      "stepSize": 0.1,
+      "rawQty": 3,
+      "planUnits": 30,
+      "intentUnits": 30,
+      "finalQty": [
+        3
+      ],
+      "rawSide": "SHORT",
+      "normalizedSide": "SHORT",
+      "finalSide": [
+        "SHORT"
+      ]
+    }
+  },
+  {
+    "runId": "airun_muowwook_q6asxpfy",
+    "symbol": "CRVUSDC",
+    "startedAt": 1790821541108,
+    "completedAt": 1790821620777,
+    "input": {
+      "packetId": "eip_muowwg2a_4habglvg",
+      "createdAt": 1790821529938,
+      "quoteAt": 1790821525000,
+      "quote": {
+        "symbol": "CRVUSDC",
+        "last": 0.3948,
+        "mark": 0.39503095,
+        "bid": 0.3948,
+        "ask": 0.3955,
+        "tickSize": 0.0001,
+        "stepSize": 0.1,
+        "minQty": 0.1,
+        "minNotional": 5,
+        "quoteVolumeUsd24h": 726659997.96981,
+        "priceChangePercent24h": 1.569,
+        "tradeCount24h": 176410,
+        "ts": 1790821525000
+      },
+      "account": {
+        "status": "READY",
+        "equityUsd": 10551.11730974,
+        "availableMarginUsd": 4973.79766592,
+        "reservedMarginUsd": 0,
+        "executionLeaseMarginUsd": 0,
+        "freeMarginUsd": 4973.79766592
+      },
+      "exchange": {
+        "tickSize": 0.0001,
+        "stepSize": 0.1,
+        "minQty": 0.1,
+        "minNotional": 5
+      },
+      "leverage": 8,
+      "sideEnvelope": {
+        "executable": true,
+        "maxMarginUsd": 4973.79766592,
+        "maxNotionalUsd": 39790.38132736,
+        "maxQuantityUnits": 1006077,
+        "minQuantityUnits": 127,
+        "legalQuantityRangeUnits": [
+          127,
+          1006077
+        ],
+        "firstBindingConstraint": "AVAILABLE_MARGIN",
+        "minimumLegalNotionalUsd": 5,
+        "admission": {
+          "ceilingUsd": null,
+          "refusal": null,
+          "gate": null,
+          "detail": null
+        },
+        "legalNotionalRangeUsd": [
+          5,
+          39790.34535
+        ]
+      },
+      "leaseBudget": {
+        "requestedUsd": 4973.79766592,
+        "cappedBy": "ROUTED_PLAN_MARGIN",
+        "budgetUsd": 48.07927013351075
+      }
+    },
+    "raw": {
+      "action": "FINAL",
+      "schemaVersion": "V3.9.3",
+      "structureDirection": "LONG",
+      "tradeSide": "LONG",
+      "quantityUnits": 127,
+      "opportunityType": "TREND_RESUMPTION",
+      "marketRegime": "TREND",
+      "confidence": 0.65,
+      "directionReason": "15m and 4h structures show strong bullish momentum with higher highs/lows and positive MACD. 1m/5m pullback provides a tactical entry point aligned with the 15m",
+      "timingReason": "1m trend is DOWN with bearish MACD, indicating a short-term pullback within the 15m uptrend. Entry is timed to catch the resumption of the 15m bullish move.",
+      "entryLocationReason": "Price is near the 15m EMA21 and lower Bollinger Band, offering a favorable risk-reward entry relative to the 15m swing high.",
+      "reason": "The 15m timeframe exhibits a strong bullish trend (strength 0.899) with a recent bullish MACD cross. The 1m and 5m timeframes show a pullback (1m DOWN, 5m UP/BE",
+      "entryInvalidation": "Price closes below 0.3940 on the 1m timeframe, breaking the recent swing low and 15m support.",
+      "supportingEvidenceRefs": [
+        "technical.15m.confirmed",
+        "technical.1m.confirmed",
+        "technical.5m.confirmed",
+        "technical.4h.confirmed",
+        "quote.top"
+      ],
+      "profitTakePlan": {
+        "targetPrice": 0.397,
+        "acceptableTargetRange": {
+          "min": 0.3965,
+          "max": 0.3975
+        },
+        "targetHorizonMinutes": 60,
+        "targetReason": "Target is set at the 15m swing high (0.397) and 1h resistance level. Historical reachability for 60m horizon supports this move (p75 ~1.5%).",
+        "evidenceRefs": [
+          "technical.15m.confirmed",
+          "technical.1h.confirmed",
+          "economics.entry"
+        ]
+      },
+      "rejectLayer": "NONE",
+      "blockingCondition": "NONE",
+      "releaseCondition": "NONE",
+      "timingEvent": {
+        "id": "15m_bar_close",
+        "status": "PENDING",
+        "time": 1790821799999,
+        "anchorPrice": 0.395,
+        "timeframe": "15m",
+        "provenance": "technical.15m.confirmed"
+      },
+      "decision": "PLACE_LONG",
+      "idealPrice": 0.3948,
+      "acceptablePriceRange": {
+        "min": 0.3943,
+        "max": 0.3952
+      },
+      "horizonMinutes": 1,
+      "waitCondition": null
+    },
+    "normalized": {
+      "decision": "PLACE_LONG",
+      "direction": "LONG",
+      "quantityUnits": 127,
+      "profitTakePlan": {
+        "targetPrice": 0.397,
+        "acceptableTargetRange": {
+          "min": 0.3965,
+          "max": 0.3975
+        },
+        "targetHorizonMinutes": 60,
+        "targetReason": "Target is set at the 15m swing high (0.397) and 1h resistance level. Historical reachability for 60m horizon supports this move (p75 ~1.5%).",
+        "evidenceRefs": [
+          "technical.15m.confirmed",
+          "technical.1h.confirmed",
+          "economics.entry"
+        ]
+      }
+    },
+    "plan": {
+      "schemaVersion": "V396-TRADE-PLAN-1",
+      "planId": "plan_ad3cdf9bbb73bc5a2df2279811334d54",
+      "planVersion": 1,
+      "supersedesPlanId": null,
+      "cycleId": "cycle_entry_intent_muowyeq0_dlnq3bza",
+      "scope": "[\"TESTNET\",\"binance-primary\",\"CRVUSDC\",\"LONG\"]",
+      "symbol": "CRVUSDC",
+      "side": "LONG",
+      "selectedCandidateId": "cand_e2cbdb567b6a72dd07beab0a",
+      "quantityUnits": 127,
+      "notionalUsd": 5.02285,
+      "marginUsd": 0.627856,
+      "leverage": 8,
+      "entryReferencePrice": 0.3955,
+      "targetPrice": 0.397,
+      "acceptableTargetRange": {
+        "min": 0.3965,
+        "max": 0.3975
+      },
+      "entryTtlMinutes": 1,
+      "targetHorizonMinutes": 60,
+      "managementDurationMs": 86400000,
+      "thesis": "The 15m timeframe exhibits a strong bullish trend (strength 0.899) with a recent bullish MACD cross. The 1m and 5m timeframes show a pullback (1m DOWN, 5m UP/BE",
+      "invalidationPredicate": "CLOSED_BAR_BREAKS_LEVEL",
+      "predicateLevel": 0.3943,
+      "predicateEvidenceRefs": [
+        "technical.1m.confirmed"
+      ],
+      "counterEvidenceRefs": [],
+      "releaseCondition": null,
+      "costs": {
+        "entryFeeUsd": 0.002009,
+        "exitFeeUsd": 0.002017,
+        "slippageUsd": 0,
+        "uncertaintyBufferUsd": 0.000403,
+        "fundingEstimateUsd": 0,
+        "fundingStatus": "UNPROVEN",
+        "fxRateToQuote": 1,
+        "costVersion": "fees:0.0004:0.0004:0:10"
+      },
+      "economics": {
+        "targetConditionalNetProfitUsd": 0.014622,
+        "targetConditionalNetProfitStatus": "VERIFIED",
+        "expectedNetPnlAtHorizonUsd": -0.367225,
+        "expectedNetPnlAtHorizonStatus": "VERIFIED",
+        "reachProbability": 0.6236559139784946,
+        "reachProbabilityStatus": "VERIFIED",
+        "reachSampleCount": 93,
+        "historicalHardMaxMovePercent": 2.676715176715194,
+        "targetMovePercent": 0.379267,
+        "statisticalSource": "CLOSED_CANDLE_CACHE:5m:93",
+        "targetVsStatisticalCeiling": "WITHIN",
+        "modelConfidence": 0.65,
+        "modelConfidenceIsAuthority": false
+      },
+      "risk": null,
+      "minNetProfitUsd": 1,
+      "maxRealizedLossUsd": 10,
+      "provenance": {
+        "modelRunId": "airun_muowwook_q6asxpfy",
+        "promptVersion": null,
+        "factVersion": "v396pe8b23ed6542a5007f09c965ca2e4ab77b3094db0",
+        "envelopeExpiresAt": 1790821664928,
+        "candidateSetHash": "cand_01912c55bd70f395374ec9a8",
+        "createdAt": 1790821621512,
+        "source": "AI"
+      },
+      "persistedAt": 1790821621512,
+      "immutable": true
+    },
+    "intent": {
+      "id": "intent_muowyeq0_dlnq3bza",
+      "quantityUnits": 127,
+      "leverage": 8,
+      "planId": "plan_ad3cdf9bbb73bc5a2df2279811334d54",
+      "reservationId": "reserve_1790821621536_7q4gik"
+    },
+    "reservation": {
+      "id": "reserve_1790821621536_7q4gik",
+      "marginUsd": 0.62738,
+      "notionalUsd": 5.01904,
+      "status": "WORKING",
+      "quoteAsset": "USDC"
+    },
+    "orders": [
+      {
+        "id": "entry_intent_muowyeq0_dlnq3bza",
+        "clientOrderId": "ml_e43cfc5ba2a3194d6dc60525918b",
+        "exchangeOrderId": "141973601",
+        "side": "LONG",
+        "quantity": 12.700000000000001,
+        "price": 0.3951,
+        "status": "FILLED",
+        "filledQuantity": 12.7,
+        "submittedAt": 1790821639990,
+        "fills": [
+          {
+            "tradeId": "61418513",
+            "qty": 12.7,
+            "price": 0.3951,
+            "commission": 0.00100355,
+            "commissionAsset": "USDC",
+            "executedAt": 1790821643557
+          }
+        ]
+      }
+    ],
+    "events": [
+      {
+        "type": "ENTRY_EXECUTION_PERMIT_EVALUATED",
+        "ts": 1790821628434,
+        "permit": {
+          "permitted": true,
+          "firstCause": null,
+          "facts": {
+            "privateFresh": true,
+            "quoteAsset": "USDC",
+            "exchangeAvailableUsd": 4973.83070395,
+            "uncommittedReservationUsd": 0,
+            "analysisEarmarkUsd": 0,
+            "executableForNewReservationUsd": 4973.83070395,
+            "requiredMarginUsd": 0.6272212500000001,
+            "filtersComplete": true,
+            "authorizationValid": true,
+            "submissionIdentity": "ml_e43cfc5ba2a3194d6dc60525918b",
+            "durableStorageReady": true
+          }
+        }
+      },
+      {
+        "type": "ENTRY_SUBMIT_ATTEMPTED",
+        "ts": 1790821628698,
+        "permit": null
+      }
+    ],
+    "comparison": {
+      "rawUnits": 127,
+      "normalizedUnits": 127,
+      "stepSize": 0.1,
+      "rawQty": 12.700000000000001,
+      "planUnits": 127,
+      "intentUnits": 127,
+      "finalQty": [
+        12.700000000000001
+      ],
+      "rawSide": "LONG",
+      "normalizedSide": "LONG",
+      "finalSide": [
+        "LONG"
+      ]
+    }
+  },
+  {
+    "runId": "airun_muowz2t2_pnafykcm",
+    "symbol": "HBARUSDT",
+    "startedAt": 1790821652726,
+    "completedAt": 1790821732320,
+    "input": {
+      "packetId": "eip_muowyvt3_bctqw1wa",
+      "createdAt": 1790821643655,
+      "quoteAt": 1790821639487,
+      "quote": {
+        "symbol": "HBARUSDT",
+        "last": 0.10395,
+        "mark": 0.10396201,
+        "bid": 0.10393,
+        "ask": 0.10395,
+        "tickSize": 0.00001,
+        "stepSize": 1,
+        "minQty": 1,
+        "minNotional": 5,
+        "quoteVolumeUsd24h": 520108866.42807,
+        "priceChangePercent24h": 1.119,
+        "tradeCount24h": 174753,
+        "ts": 1790821639487
+      },
+      "account": {
+        "status": "READY",
+        "equityUsd": 10559.5426052705,
+        "availableMarginUsd": 3951.33258218,
+        "reservedMarginUsd": 0,
+        "executionLeaseMarginUsd": 0,
+        "freeMarginUsd": 3951.33258218
+      },
+      "exchange": {
+        "tickSize": 0.00001,
+        "stepSize": 1,
+        "minQty": 1,
+        "minNotional": 5
+      },
+      "leverage": 12,
+      "sideEnvelope": {
+        "executable": true,
+        "maxMarginUsd": 3951.3325821800004,
+        "maxNotionalUsd": 47415.99098616,
+        "maxQuantityUnits": 455383,
+        "minQuantityUnits": 49,
+        "legalQuantityRangeUnits": [
+          49,
+          455383
+        ],
+        "firstBindingConstraint": "AVAILABLE_MARGIN",
+        "minimumLegalNotionalUsd": 5,
+        "admission": {
+          "ceilingUsd": null,
+          "refusal": null,
+          "gate": null,
+          "detail": null
+        },
+        "legalNotionalRangeUsd": [
+          5,
+          47415.91632249006
+        ]
+      },
+      "leaseBudget": {
+        "requestedUsd": 3951.3325821800004,
+        "cappedBy": "ROUTED_PLAN_MARGIN",
+        "budgetUsd": 47.03268396876798
+      }
+    },
+    "raw": {
+      "action": "FINAL",
+      "schemaVersion": "V3.9.3",
+      "structureDirection": "SHORT",
+      "tradeSide": "SHORT",
+      "quantityUnits": 49,
+      "opportunityType": "TREND_RESUMPTION",
+      "marketRegime": "TREND",
+      "confidence": 0.72,
+      "directionReason": "15m and 1h technicals show strong bearish momentum with price below key EMAs and bearish MACD crossovers. The 15m trend strength is 1.0, and the 1h trend is 0.7",
+      "timingReason": "1m and 5m timeframes confirm immediate downward pressure with bearish MACD histograms and price trading below the 21-period EMA. Recent trades show a slight dip",
+      "entryLocationReason": "Entry is set near the current ask price of 0.10395, within the maker reachable band. The acceptable range accounts for the spread and recent volatility",
+      "reason": "Bearish momentum dominates across 1m, 5m, and 15m timeframes. Price is below key EMAs, and MACD indicates bearish crossovers. The 15m trend strength is 1.0, and",
+      "entryInvalidation": "Price closes above 0.10420 on the 15m timeframe, indicating a potential reversal of the bearish trend",
+      "supportingEvidenceRefs": [
+        "technical.15m.confirmed",
+        "technical.1h.confirmed",
+        "technical.5m.confirmed",
+        "technical.1m.confirmed",
+        "quote.top",
+        "microstructure.book5"
+      ],
+      "profitTakePlan": {
+        "targetPrice": 0.10345,
+        "acceptableTargetRange": {
+          "min": 0.1033,
+          "max": 0.1036
+        },
+        "targetHorizonMinutes": 15,
+        "targetReason": "Target is set at the 15m swing low of 0.10357, adjusted for the 15m ATR of 0.000768. This level represents a significant support zone where a bounce is likely",
+        "evidenceRefs": [
+          "technical.15m.confirmed",
+          "economics.entry"
+        ]
+      },
+      "rejectLayer": "NONE",
+      "blockingCondition": "NONE",
+      "releaseCondition": "NONE",
+      "timingEvent": {
+        "id": "none",
+        "status": "NONE",
+        "time": null,
+        "anchorPrice": null,
+        "timeframe": null,
+        "provenance": "NONE"
+      },
+      "decision": "PLACE_SHORT",
+      "idealPrice": 0.10395,
+      "acceptablePriceRange": {
+        "min": 0.1038,
+        "max": 0.1041
+      },
+      "horizonMinutes": 1,
+      "waitCondition": null
+    },
+    "normalized": {
+      "decision": "PLACE_SHORT",
+      "direction": "SHORT",
+      "quantityUnits": 49,
+      "profitTakePlan": {
+        "targetPrice": 0.10345,
+        "acceptableTargetRange": {
+          "min": 0.1033,
+          "max": 0.1036
+        },
+        "targetHorizonMinutes": 15,
+        "targetReason": "Target is set at the 15m swing low of 0.10357, adjusted for the 15m ATR of 0.000768. This level represents a significant support zone where a bounce is likely",
+        "evidenceRefs": [
+          "technical.15m.confirmed",
+          "economics.entry"
+        ]
+      }
+    },
+    "plan": {
+      "schemaVersion": "V396-TRADE-PLAN-1",
+      "planId": "plan_bff66773d63188edd731fa1b047e347e",
+      "planVersion": 1,
+      "supersedesPlanId": null,
+      "cycleId": "cycle_entry_intent_muox0srg_2c6bw1yz",
+      "scope": "[\"TESTNET\",\"binance-primary\",\"HBARUSDT\",\"SHORT\"]",
+      "symbol": "HBARUSDT",
+      "side": "SHORT",
+      "selectedCandidateId": "cand_569ef636afce25239cdb9d3c",
+      "quantityUnits": 49,
+      "notionalUsd": 5.09698,
+      "marginUsd": 0.424748,
+      "leverage": 12,
+      "entryReferencePrice": 0.10402,
+      "targetPrice": 0.10345,
+      "acceptableTargetRange": {
+        "min": 0.1033,
+        "max": 0.1036
+      },
+      "entryTtlMinutes": 1,
+      "targetHorizonMinutes": 15,
+      "managementDurationMs": 86400000,
+      "thesis": "Bearish momentum dominates across 1m, 5m, and 15m timeframes. Price is below key EMAs, and MACD indicates bearish crossovers. The 15m trend strength is 1.0, and",
+      "invalidationPredicate": "NO_PREDICATE",
+      "predicateLevel": 0.1041,
+      "predicateEvidenceRefs": [],
+      "counterEvidenceRefs": [],
+      "releaseCondition": null,
+      "costs": {
+        "entryFeeUsd": 0.002039,
+        "exitFeeUsd": 0.002028,
+        "slippageUsd": 0,
+        "uncertaintyBufferUsd": 0.000407,
+        "fundingEstimateUsd": 0,
+        "fundingStatus": "UNPROVEN",
+        "fxRateToQuote": 1,
+        "costVersion": "fees:0.0004:0.0004:0:10"
+      },
+      "economics": {
+        "targetConditionalNetProfitUsd": 0.023457,
+        "targetConditionalNetProfitStatus": "VERIFIED",
+        "expectedNetPnlAtHorizonUsd": -0.812366,
+        "expectedNetPnlAtHorizonStatus": "VERIFIED",
+        "reachProbability": 0.18333333333333332,
+        "reachProbabilityStatus": "VERIFIED",
+        "reachSampleCount": 120,
+        "historicalHardMaxMovePercent": 0.956297217175095,
+        "targetMovePercent": 0.547972,
+        "statisticalSource": "CLOSED_CANDLE_CACHE:1m:120",
+        "targetVsStatisticalCeiling": "WITHIN",
+        "modelConfidence": 0.72,
+        "modelConfidenceIsAuthority": false
+      },
+      "risk": null,
+      "minNetProfitUsd": 1,
+      "maxRealizedLossUsd": 10,
+      "provenance": {
+        "modelRunId": "airun_muowz2t2_pnafykcm",
+        "promptVersion": null,
+        "factVersion": "v396pd5df542afe1f0ccca135f2be441bb895d9f76af6",
+        "envelopeExpiresAt": 1790821778642,
+        "candidateSetHash": "cand_5709d9bd495213dd2e18089f",
+        "createdAt": 1790821733020,
+        "source": "AI"
+      },
+      "persistedAt": 1790821733020,
+      "immutable": true
+    },
+    "intent": {
+      "id": "intent_muox0srg_2c6bw1yz",
+      "quantityUnits": 49,
+      "leverage": 12,
+      "planId": "plan_bff66773d63188edd731fa1b047e347e",
+      "reservationId": "reserve_1790821733043_cv44mk"
+    },
+    "reservation": {
+      "id": "reserve_1790821733043_cv44mk",
+      "marginUsd": 0.42507500000000004,
+      "notionalUsd": 5.1009,
+      "status": "WORKING",
+      "quoteAsset": "USDT"
+    },
+    "orders": [
+      {
+        "id": "entry_intent_muox0srg_2c6bw1yz",
+        "clientOrderId": "ml_7054f271d341696bde15c8f42239",
+        "exchangeOrderId": "317521557",
+        "side": "SHORT",
+        "quantity": 49,
+        "price": 0.10402999999999998,
+        "status": "FILLED",
+        "filledQuantity": 49,
+        "submittedAt": 1790821751229,
+        "fills": [
+          {
+            "tradeId": "61218082",
+            "qty": 49,
+            "price": 0.10403,
+            "commission": 0.00101949,
+            "commissionAsset": "USDT",
+            "executedAt": 1790821753726
+          }
+        ]
+      }
+    ],
+    "events": [
+      {
+        "type": "ENTRY_EXECUTION_PERMIT_EVALUATED",
+        "ts": 1790821744049,
+        "permit": {
+          "permitted": true,
+          "firstCause": null,
+          "facts": {
+            "privateFresh": true,
+            "quoteAsset": "USDT",
+            "exchangeAvailableUsd": 3940.5971922,
+            "uncommittedReservationUsd": 0,
+            "analysisEarmarkUsd": 0,
+            "executableForNewReservationUsd": 3940.5971922,
+            "requiredMarginUsd": 0.4247891666666666,
+            "filtersComplete": true,
+            "authorizationValid": true,
+            "submissionIdentity": "ml_7054f271d341696bde15c8f42239",
+            "durableStorageReady": true
+          }
+        }
+      },
+      {
+        "type": "ENTRY_SUBMIT_ATTEMPTED",
+        "ts": 1790821744294,
+        "permit": null
+      }
+    ],
+    "comparison": {
+      "rawUnits": 49,
+      "normalizedUnits": 49,
+      "stepSize": 1,
+      "rawQty": 49,
+      "planUnits": 49,
+      "intentUnits": 49,
+      "finalQty": [
+        49
+      ],
+      "rawSide": "SHORT",
+      "normalizedSide": "SHORT",
+      "finalSide": [
+        "SHORT"
+      ]
+    }
+  }
+]

@@ -157,8 +157,8 @@ async function load() {
     ]);
     draft.value = structuredClone(settings);
     draft.value.entry ??= {} as any;
-    draft.value.entry.minimumInitialMarginByQuote ??= { USDT: null, USDC: null };
-    draft.value.entry.minimumOrderNotionalByQuote ??= { USDT: null, USDC: null };
+    draft.value.entry.minimumInitialMarginByQuote ??= { USDT: 1, USDC: 1 };
+    draft.value.entry.minimumOrderNotionalByQuote ??= { USDT: 200, USDC: 200 };
     credentialStatus.value = connections.credentials;
     resources.value = {
       exchange: loaded[0].items ?? [],
@@ -338,8 +338,8 @@ onMounted(load);
           <label><span>连续失败隔离阈值 / 隔离时长（秒）</span><input v-model.number="draft.ai.highFrequency.quarantineAfterFailures" type="number" min="2" max="10" /><input v-model.number="draft.ai.highFrequency.quarantineSeconds" type="number" min="30" max="3600" /></label>
           <label><span>TESTNET 单笔最低初始保证金 USDT</span><input v-model.number="draft.entry.minimumInitialMarginByQuote.USDT" type="number" min="0.01" step="0.01" /></label>
           <label><span>TESTNET 单笔最低初始保证金 USDC</span><input v-model.number="draft.entry.minimumInitialMarginByQuote.USDC" type="number" min="0.01" step="0.01" /></label>
-          <label><span>可选最低订单 notional USDT</span><input v-model.number="draft.entry.minimumOrderNotionalByQuote.USDT" type="number" min="0" step="0.01" /></label>
-          <label><span>可选最低订单 notional USDC</span><input v-model.number="draft.entry.minimumOrderNotionalByQuote.USDC" type="number" min="0" step="0.01" /></label>
+          <label><span>最低订单金额 USDT</span><input v-model.number="draft.entry.minimumOrderNotionalByQuote.USDT" type="number" min="0.01" step="0.01" required /></label>
+          <label><span>最低订单金额 USDC</span><input v-model.number="draft.entry.minimumOrderNotionalByQuote.USDC" type="number" min="0.01" step="0.01" required /></label>
           <p class="muted">新单最低初始保证金必须逐资产显式填写；未配置时 TESTNET 不会回退到交易所最小单。业务订单 notional 与交易所 minQty/minNotional 独立校验。留空的可选订单 notional 不增加门槛。下方旧字段只用于资本配置，不会自动迁移为业务下限。</p>
           <label
             ><span>资本配置目标保证金 USD（非最低下限）</span

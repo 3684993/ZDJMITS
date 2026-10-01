@@ -189,16 +189,31 @@ function migrate(value: unknown): unknown {
   const economics=(next.tradeEconomics??={}) as Record<string,unknown>;
   economics.parameterProfile=economics.parameterProfile??'CUSTOM';
   economics.admissionMode=economics.admissionMode??'SHADOW';
+  // Historical reachability is reported as evidence, but missing samples must not hold the
+  // deterministic fee/size contract in SHADOW or turn a newly enabled policy into a sample gate.
   economics.historicalTpReachabilityEnabled=economics.historicalTpReachabilityEnabled??true;
   economics.minHistoricalReachProbability=economics.minHistoricalReachProbability??.5;
   economics.reachabilityLookbackBars=economics.reachabilityLookbackBars??120;
   economics.reachabilityMinSamples=economics.reachabilityMinSamples??30;
-  // V3.9.7 separates business initial margin and business notional by quote asset. Leave both
-  // explicitly unset on migration: the legacy 200-valued fields are not evidence for either floor.
+  // V3.9.7 makes TESTNET's existing user budget effective. The configured $200 entry margin is a
+  // planning budget, not a minimum margin; use it only as the business order-notional floor. The
+  // separately named $1 minMarginUsd remains the initial-margin floor. USDC is expressed in USDC
+  // units and its live USD conversion is bound into each mandate by the timestamped FX feed.
   const entry=(next.entry??={}) as Record<string,unknown>;
-  const quotePolicy=(value:unknown)=>{const row=record(value)?value as Record<string,unknown>:{};return{USDT:row.USDT??null,USDC:row.USDC??null};};
-  entry.minimumInitialMarginByQuote=quotePolicy(entry.minimumInitialMarginByQuote);
-  entry.minimumOrderNotionalByQuote=quotePolicy(entry.minimumOrderNotionalByQuote);
+  const configuredMargin=Number((next.portfolioIntelligence as any)?.minMarginUsd??1);
+  const configuredNotional=Number((next.portfolio as any)?.entryMarginUsd??200);
+  const quotePolicy=(value:unknown,fallback:number)=>{const row=record(value)?value as Record<string,unknown>:{};return{USDT:row.USDT??fallback,USDC:row.USDC??fallback};};
+  entry.minimumInitialMarginByQuote=quotePolicy(entry.minimumInitialMarginByQuote,configuredMargin);
+  entry.minimumOrderNotionalByQuote=quotePolicy(entry.minimumOrderNotionalByQuote,configuredNotional);
+  if(next.connections && record(next.connections) && (next.connections as any).exchange?.environment==='TESTNET'&&Number(next.economicPolicyVersion??0)<1){
+    economics.admissionMode='ENFORCE';
+    economics.historicalTpReachabilityEnabled=false;
+    const coordination=((((next.riskGovernance??={}) as any).exitCoordination??={}) as Record<string,unknown>);
+    coordination.positionReviewEnabled=true;
+    coordination.aiExitAuthority='ENFORCE';
+    coordination.aiExitAllowSmallLoss=true;
+    next.economicPolicyVersion=1;
+  }
   const management=(next.positionManagement??={}) as Record<string,unknown>;
   management.humanManagedAdmissionCapsEnabled=management.humanManagedAdmissionCapsEnabled??true;
   management.maxHumanManagedPositions=management.maxHumanManagedPositions??4;
@@ -508,6 +523,7 @@ export class SettingsStore {
       ); INSERT OR IGNORE INTO schema_migrations(version,applied_at) VALUES(10,${Date.now()});`);
     this.db.exec(`INSERT OR IGNORE INTO schema_migrations(version,applied_at) VALUES(12,${Date.now()});`);
     this.db.exec(`INSERT OR IGNORE INTO schema_migrations(version,applied_at) VALUES(13,${Date.now()});`);
+    this.db.exec(`INSERT OR IGNORE INTO schema_migrations(version,applied_at) VALUES(14,${Date.now()});`);
     const secretColumns = new Set(
       (
         this.db.prepare("PRAGMA table_info(secrets)").all() as Array<{

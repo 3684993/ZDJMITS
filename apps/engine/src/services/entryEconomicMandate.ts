@@ -12,6 +12,7 @@ export function buildEntryEconomicMandate(input: {
   quoteAsset: string;
   minimumInitialMarginQuote: number;
   minimumOrderNotionalQuote: number;
+  quoteFxToUsd: {rate:number;observedAt:number;source:string}|null;
   exchangeMinimumNotionalQuote: number;
   settingsVersion: number;
   entryFeeRate: number;
@@ -33,6 +34,7 @@ export function buildEntryEconomicMandate(input: {
   });
   if(timeframeFacts.some(fact=>fact.status!=='FRESH'))throw new Error('ENTRY_DIRECTION_FACTS_NOT_FRESH');
   const plan = input.plan;
+  if(input.quoteAsset==='USDC'&&(!input.quoteFxToUsd||input.now-input.quoteFxToUsd.observedAt>60_000||input.quoteFxToUsd.observedAt>input.now))throw new Error('ENTRY_USDC_FX_NOT_PROVEN');
   const sizing = { minimumInitialMarginQuote: input.minimumInitialMarginQuote, minimumOrderNotionalQuote: input.minimumOrderNotionalQuote,
     exchangeMinimumNotionalQuote: input.exchangeMinimumNotionalQuote, selectedInitialMarginQuote: plan.marginUsd,
     selectedNotionalQuote: plan.notionalUsd, quantityUnits: plan.quantityUnits,
@@ -43,19 +45,19 @@ export function buildEntryEconomicMandate(input: {
     targetMovePercent, lookbackBars: 120, minSamples: 30, now: input.now });
   const factsHash = hash({ schemaVersion: 'V397-ENTRY-ECONOMIC-MANDATE-1', planId: plan.planId, quoteAsset: input.quoteAsset,
     settingsVersion: input.settingsVersion, directionFacts: timeframeFacts, sizing, targetPrice: plan.targetPrice,
-    targetHorizonMinutes: plan.targetHorizonMinutes, fees: [input.entryFeeRate,input.exitFeeRate,input.slippageBufferPct], costVersion: plan.costs?.costVersion });
-  const fx = plan.costs?.fxRateToQuote ?? null;
+    targetHorizonMinutes: plan.targetHorizonMinutes, fees: [input.entryFeeRate,input.exitFeeRate,input.slippageBufferPct], quoteFxToUsd:input.quoteFxToUsd, costVersion: plan.costs?.costVersion });
+  const fx = input.quoteFxToUsd?.rate ?? (input.quoteAsset==='USDT'?1:null);
   return EntryEconomicMandateSchema.parse({ schemaVersion:'V397-ENTRY-ECONOMIC-MANDATE-1',
     mandateId:`mandate_${hash({planId:plan.planId,factsHash}).slice(0,32)}`, environment:'TESTNET', quoteAsset:input.quoteAsset,
     settingsVersion:input.settingsVersion, factsHash, createdAt:input.now, expiresAt:Math.min(plan.provenance.envelopeExpiresAt,input.now+plan.entryTtlMinutes*60_000),
     side:plan.side, directionFacts:timeframeFacts, sizing,
     economics:{ entryFeeQuote:plan.costs?.entryFeeUsd??0, expectedExitFeeQuote:plan.costs?.exitFeeUsd??0,
-      slippageBufferQuote:plan.costs?.slippageUsd??0, fundingQuote:plan.costs?.fundingEstimateUsd??null,
+      slippageBufferQuote:plan.costs?.slippageUsd??0, fundingQuote:plan.costs?.fundingEstimateUsd==null?null:plan.costs.fundingEstimateUsd/Number(fx??1),
       fundingStatus:plan.costs?.fundingStatus??'UNPROVEN', fxToUsd:fx,
-      fxStatus:fx===null?'UNPROVEN':'VERIFIED', minimumNetProfitQuote:plan.minNetProfitUsd,
+      fxStatus:input.quoteAsset==='USDT'?'NOT_REQUIRED':fx===null?'UNPROVEN':'VERIFIED', minimumNetProfitQuote:plan.minNetProfitUsd/Number(fx??1),
       targetPrice:Number(plan.targetPrice), targetHorizonMinutes:plan.targetHorizonMinutes,
-      targetConditionalNetQuote:plan.economics?.targetConditionalNetProfitUsd??null,
-      expectedNetQuote:plan.economics?.expectedNetPnlAtHorizonUsd??null,
+      targetConditionalNetQuote:plan.economics?.targetConditionalNetProfitUsd==null?null:plan.economics.targetConditionalNetProfitUsd/Number(fx??1),
+      expectedNetQuote:plan.economics?.expectedNetPnlAtHorizonUsd==null?null:plan.economics.expectedNetPnlAtHorizonUsd/Number(fx??1),
       oneHourReachability:oneHour.reachProbability,
       oneHourReachabilityStatus:oneHour.status==='READY'?'VERIFIED':oneHour.status==='STALE'?'STALE':'INSUFFICIENT_SAMPLE',
       costVersion:plan.costs?.costVersion??'UNPROVEN' }, rationale:plan.thesis });

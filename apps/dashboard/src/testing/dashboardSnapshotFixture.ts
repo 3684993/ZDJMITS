@@ -34,7 +34,7 @@ const MINIMAL_SETTINGS = {
   leverage: { mode: 'DEFAULT' },
   portfolio: { maxPositions: 10, maxPendingEntries: 5, entryMarginUsd: 100 },
   ai: { scoutEnabled: true, secondBrainReview: 'SELECTIVE', maxEvidenceToolRounds: 1, maxEvidenceToolsPerRound: 2, minEvidenceCompleteness: 0.6, decisionTimeoutMs: 30_000 },
-  entry: { absoluteTtlMinutes: 60, reviewIntervalSeconds: 30, maxReprices: 3, minReachability: 0.3, makerOffsetTicks: 1, minimumInitialMarginByQuote:{USDT:null,USDC:null}, minimumOrderNotionalByQuote:{USDT:null,USDC:null} },
+  entry: { absoluteTtlMinutes: 60, reviewIntervalSeconds: 30, maxReprices: 3, minReachability: 0.3, makerOffsetTicks: 1, minimumInitialMarginByQuote:{USDT:1,USDC:1}, minimumOrderNotionalByQuote:{USDT:200,USDC:200} },
   takeProfit: { enabled: true, mode: 'PRICE_MOVE_PERCENT', targetPriceMovePercent: 0.6, quantityPercent: 100 },
 };
 

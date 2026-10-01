@@ -38,6 +38,10 @@ describe('TESTNET funds-only Entry resource authority',()=>{
     const envelope=buildPreAiExecutionEnvelope(s,h.packet.symbol),floor=envelope.LONG.minQuantityUnits!;
     expect(envelope.LONG.businessMinimumConfigured).toBe(true);
     expect(floor*quote.stepSize*Math.max(quote.last,quote.ask,envelope.makerReachableBand.max)/envelope.leverage+1e-8).toBeGreaterThanOrEqual(25);
+    s.settings.entry.minimumOrderNotionalByQuote.USDT=200;
+    const businessNotional=buildPreAiExecutionEnvelope(s,h.packet.symbol);
+    expect(businessNotional.LONG.businessMinimumConfigured).toBe(true);
+    expect(businessNotional.LONG.minQuantityUnits!*quote.stepSize*Math.max(quote.last,quote.ask,businessNotional.makerReachableBand.max)+1e-8).toBeGreaterThanOrEqual(200);
     s.settings.entry.minimumInitialMarginByQuote.USDT=null;
     const missing=buildPreAiExecutionEnvelope(s,h.packet.symbol);
     expect(missing.LONG.executable).toBe(false);expect(missing.SHORT.executable).toBe(false);

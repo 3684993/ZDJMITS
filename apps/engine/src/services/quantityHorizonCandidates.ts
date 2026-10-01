@@ -6,10 +6,9 @@ import {estimateTradingCost} from '@zdj/core';
 /**
  * S06-B/C: the system, not the model, enumerates the legal (quantity, horizon, target) combinations.
  *
- * Every candidate is a full cost, risk and statistical statement about itself, so a later reviewer
- * can recompute why it was offered. Two rules are the point of this file: a size is only ever grown
- * because the risk envelope allows it, never to make a thin trade clear the profit floor; and a
- * missing statistical sample stays missing rather than becoming a fifty-fifty guess.
+ * Every candidate is a full cost, risk and statistical statement about itself. The configured
+ * business minimum is the starting point; bounded larger sizes may be considered to satisfy net
+ * economics, but only inside the existing executable funds envelope. Missing history remains unknown.
  */
 
 export type CandidateRiskFacts={capitalAtRiskUsd:number;grossNotionalAfterUsd:number;longNotionalAfterUsd:number;shortNotionalAfterUsd:number;
@@ -166,22 +165,17 @@ export function buildQuantityHorizonCandidates(input:{
     const floorBeyondCeiling=statisticalTarget!=null&&(side==='LONG'?profitFloor.floorTargetPrice>statisticalTarget+1e-12:profitFloor.floorTargetPrice<statisticalTarget-1e-12);
     return{floorTarget:profitFloor.floorTargetPrice,statisticalTarget,minProfitableExit:profitFloor.minProfitableExitPrice,statistical,reach,floorBeyondCeiling,profitFloor};
   };
-  // The smallest size decides whether a trade exists at all. If it cannot clear the profit floor the
-  // answer is NO_TRADE; offering a bigger size that clears the floor would be sizing to the outcome.
+  // A larger size may satisfy the user's absolute net-profit floor when the minimum business size
+  // cannot. This is bounded by the same pre-AI funds envelope and the target is still computed from
+  // the selected size's fee-adjusted floor, so the solver cannot use an infeasible distant TP.
   const smallest=targetFor(quantities[0],horizons[0]);
-  const smallestEconomics=smallest.profitFloor;
+  const ceilingExceededAtMinimum=smallest.floorBeyondCeiling===true;
+  const statisticalEvidence:string[]=[];
   // Two questions that were previously answered with one message. Whether the smallest legal size can
   // clear its own profit floor is arithmetic and binds in every mode (S06-T02). Whether the closed
   // candle sample has ever moved that far is statistics, and statistics only bind in ENFORCE — under
   // SHADOW it is recorded, because refusing here would let an unenforced sample act as a hard gate.
-  if(!smallestEconomics.met)
-    return rejectAll('MIN_PROFIT_FLOOR_UNMET_AT_MINIMUM_QUANTITY',`MIN_NET_PROFIT_USD=${round(smallestEconomics.requiredNetProfitUsd,6)}`,
-      `ATTAINED_NET_PROFIT_USD=${round(smallestEconomics.expectedNetProfitUsd,6)}`);
-  const ceilingExceededAtMinimum=smallest.floorBeyondCeiling===true;
-  if(ceilingExceededAtMinimum&&enforceEconomics)
-    return rejectAll('HISTORICAL_TARGET_CEILING_EXCEEDED_AT_MINIMUM_QUANTITY',
-      `FLOOR_TARGET=${round(smallest.floorTarget,10)}`,`STATISTICAL_CEILING=${smallest.statisticalTarget==null?'UNPROVEN':round(smallest.statisticalTarget,10)}`);
-  const statisticalEvidence=ceilingExceededAtMinimum?['HISTORICAL_TARGET_CEILING_EXCEEDED_AT_MINIMUM_QUANTITY']:[];
+  if(ceilingExceededAtMinimum)statisticalEvidence.push('HISTORICAL_TARGET_CEILING_EXCEEDED_AT_MINIMUM_QUANTITY');
 
   const buildCandidate=(units:number,horizon:number,targetPrice:number,rangeTargets:number[]=[])=>{
     const notional=units*quote.stepSize*entryPrice, margin=notional/leverage;
@@ -198,6 +192,7 @@ export function buildQuantityHorizonCandidates(input:{
     const reach=evaluateTargetReachability({rows:input.candles(reachabilityTimeframe(horizon),300) as never,side,horizonMinutes:horizon,
       targetMovePercent,lookbackBars:settings.tradeEconomics.reachabilityLookbackBars??180,minSamples:settings.tradeEconomics.reachabilityMinSamples??30,now});
     const probabilityKnown=reach.status==='READY'&&finite(reach.reachProbability);
+    if(enforceEconomics&&settings.tradeEconomics.historicalTpReachabilityEnabled&&probabilityKnown&&finite(reach.hardMaxMovePercent)&&targetMovePercent>(reach.hardMaxMovePercent as number)+1e-9)blockers.push('TP_HISTORICAL_REACHABILITY_UNMET');
     // A stale or missing sample is recorded in the economics as what it is; it refuses a candidate
     //    only where the account actually enforces the economic gate.
     if(enforceEconomics&&settings.tradeEconomics.historicalTpReachabilityEnabled&&reach.status==='STALE')blockers.push('TP_REACHABILITY_DATA_STALE');

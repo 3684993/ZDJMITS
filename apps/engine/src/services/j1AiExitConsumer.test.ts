@@ -243,7 +243,7 @@ describe('J1 runtime consumer',()=>{
       expect(runtime.fixFirstFillDeadlines().fixed).toBe(0);
       expect(runtime.exitRuntime!.owner(subject)!.deadline).toBe(openedAt+minutes*60_000);
       const report=await runtime.aiExitRunner!.tick();
-      expect(report).toMatchObject({authority:'OFF',considered:0,evaluated:0,submitted:0});
+      expect(report).toMatchObject({authority:'ENFORCE',considered:0,evaluated:0,submitted:0});
       runtime.stop();
     }finally{await rm(dir,{recursive:true,force:true}).catch(()=>null);}
   },40_000);

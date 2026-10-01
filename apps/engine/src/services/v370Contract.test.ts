@@ -20,6 +20,7 @@ export function harness(raw?:any) {
   const settings=SystemSettingsSchema.parse({...defaults,appearance:{...defaults.appearance,theme:'BINANCE_NOIR'}});settings.connections.executionMode='TESTNET_ENABLED';
   // TESTNET fixtures opt into a deliberately tiny positive margin and provide closed thesis bars.
   settings.entry.minimumInitialMarginByQuote.USDT=.01;
+  settings.entry.minimumOrderNotionalByQuote.USDT=.01;
   for(const timeframe of ['1d','4h','15m'] as const){const card=(packet.market.technical as any)[timeframe];if(card)card.lastClosedBar={openTime:now-60_000,closeTime:now-1_000,open:packet.market.quote.last,high:packet.market.quote.last,low:packet.market.quote.last,close:packet.market.quote.last,volume:1};}
   settings.entry.nearMarket.enabled=false; // Archived V3.7 fixtures have no trade-tick stream; V3.9 has separate evidence tests.
   settings.selection.assetDirectory={...settings.selection.assetDirectory,version:'V3.9.1-fixture',methodVersion:'V3.9.1-LIQUIDITY-30D-V4',reviewedAt:now-1,nextReviewAt:now+86_400_000,evidenceHash:'fixture-evidence',approvedLiquid:[...new Set([...settings.selection.assetDirectory.approvedLiquid,'4'])],approvals:{...settings.selection.assetDirectory.approvals,'4':{symbol:'4USDT',reason:'FIXTURE_V4_APPROVAL',reviewedAt:now,quoteVolumeUsd24h:100_000_000,medianDailyQuoteVolumeUsd30d:100_000_000,tradeCount24h:100_000,openInterestUsd:10_000_000,listingAgeDays:400,liquidityComposite:.9}}};

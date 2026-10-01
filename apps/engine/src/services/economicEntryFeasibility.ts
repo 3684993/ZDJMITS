@@ -5,6 +5,7 @@ type ProfitTakePlan=BrainDecision['profitTakePlan'];
 import type { RuntimeState } from '../state/runtimeState.js';
 import type { MarketDataHub } from './marketDataHub.js';
 import { evaluateTargetReachability, reachabilityTimeframe } from './historicalTpReachability.js';
+import { quoteUsdConversion } from './quoteUsdConversion.js';
 
 export interface EconomicAdmissionResult {
   version:'V3.9.5';
@@ -57,10 +58,13 @@ export function evaluateEconomicEntryFeasibility(input:{
   const directionValid=input.side==='LONG'?target>entryPrice:target<entryPrice;
   if(!directionValid)blockers.push('TP_TARGET_WRONG_SIDE');
   const exitRate=settings.takeProfit.exitFeeAssumption==='MAKER'?settings.takeProfit.makerFeeRate:settings.takeProfit.takerFeeRate;
+  const fx=quoteUsdConversion(state,input.symbol,now);
+  if(!fx.rate)blockers.push(`QUOTE_USD_${fx.status}`);
+  const quoteToUsd=Number(fx.rate??1),minimumNetProfitQuote=settings.takeProfit.minNetProfitUsd/quoteToUsd;
   let expectedNetProfit=Number.NEGATIVE_INFINITY,requiredNetProfit=settings.takeProfit.minNetProfitUsd;
   if(Number.isFinite(entryPrice)&&entryPrice>0&&qty>0&&Number.isFinite(target)&&target>0){
-    const e=estimateTradingCost({entryPrice,qty,direction:input.side,leverage:Number(input.envelope?.leverage??1),entryFeeRate:settings.takeProfit.entryFeeRate,expectedExitFeeRate:exitRate,expectedSlippagePct:settings.takeProfit.slippageBufferPct,feeSafetyBufferPct:settings.takeProfit.feeSafetyBufferPct,minNetProfitUsd:settings.takeProfit.minNetProfitUsd,minNetProfitRoiPct:settings.takeProfit.minNetProfitRoiPct},target);
-    expectedNetProfit=e.expectedNetProfit;requiredNetProfit=e.requiredNetProfit;
+    const e=estimateTradingCost({entryPrice,qty,direction:input.side,leverage:Number(input.envelope?.leverage??1),entryFeeRate:settings.takeProfit.entryFeeRate,expectedExitFeeRate:exitRate,expectedSlippagePct:settings.takeProfit.slippageBufferPct,feeSafetyBufferPct:settings.takeProfit.feeSafetyBufferPct,minNetProfitUsd:minimumNetProfitQuote,minNetProfitRoiPct:settings.takeProfit.minNetProfitRoiPct},target);
+    expectedNetProfit=e.expectedNetProfit*quoteToUsd;requiredNetProfit=e.requiredNetProfit*quoteToUsd;
     if(e.expectedNetProfit+1e-8<e.requiredNetProfit)blockers.push('ECONOMIC_MIN_NET_PROFIT_UNMET');
   }else blockers.push('ECONOMIC_INPUT_INVALID');
   const targetMovePercent=Number.isFinite(entryPrice)&&entryPrice>0?Math.abs(target/entryPrice-1)*100:0;

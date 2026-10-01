@@ -44,6 +44,7 @@ import { materializeAiQuantityAllocation } from './aiQuantityAllocation.js';
 import { buildHistoricalTpReachability } from './historicalTpReachability.js';
 import { evaluateEconomicEntryFeasibility } from './economicEntryFeasibility.js';
 import { buildEntryEconomicMandate, entryThesisFactsStillCurrent } from './entryEconomicMandate.js';
+import { quoteUsdConversion } from './quoteUsdConversion.js';
 
 /** How long the latest deterministic admission refusal may still be called the current first cause. */
 export const RISK_ADMISSION_VERDICT_TTL_MS = 5 * 60_000;
@@ -788,8 +789,10 @@ export class EntryCoordinator {
     const fundsOnly=testnetFundsOnlyEntry(settings),configuredMargin=Number(sideEnvelope.minimumInitialMarginQuote??0),configuredOrderNotional=Number(sideEnvelope.minimumOrderNotionalQuote??0);
     if(fundsOnly&&!(configuredMargin>0)){recordConversion('REFUSED');return{plan:null,refusals:['BUSINESS_MINIMUM_INITIAL_MARGIN_UNCONFIGURED'],warnings};}
     const exchangeMinimum=Math.max(Number(quote.minNotional??0),Number(quote.minQty??0)*Number(quote.last??0));
+    const quoteFx=quoteUsdConversion(this.state,input.symbol,now);
     const economicMandate=fundsOnly?buildEntryEconomicMandate({plan:outcome.plan,environment:String(settings.connections.exchange.environment),quoteAsset:String(input.executionEnvelope.quoteAsset),
       minimumInitialMarginQuote:configuredMargin,minimumOrderNotionalQuote:configuredOrderNotional,exchangeMinimumNotionalQuote:exchangeMinimum,
+      quoteFxToUsd:quoteFx.status==='VERIFIED'&&quoteFx.rate&&quoteFx.observedAt?{rate:quoteFx.rate,observedAt:quoteFx.observedAt,source:String(quoteFx.source)}:null,
       settingsVersion:Number(settings.settingsVersion),entryFeeRate:Number(settings.takeProfit.entryFeeRate),
       exitFeeRate:Number(settings.takeProfit.exitFeeAssumption==='MAKER'?settings.takeProfit.makerFeeRate:settings.takeProfit.takerFeeRate),
       slippageBufferPct:Number(settings.takeProfit.slippageBufferPct),market:input.market,

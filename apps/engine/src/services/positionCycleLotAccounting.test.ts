@@ -117,6 +117,17 @@ describe('P2 physical cycle with multiple entry lots',()=>{
     expect(reopened.find(row=>row.cycleId===first.cycleId)!.status).toBe('CLOSED');
   });
 
+  it('a legacy zero-quantity non-closed lifecycle cannot absorb a later Entry',()=>{
+    const h=harness(),legacyCycle='cycle_BRUSDT_LONG_legacy_exit_only';
+    h.state.lifecycles.set('BRUSDT:LONG',any({cycleId:legacyCycle,key:'BRUSDT:LONG',symbol:'BRUSDT',side:'LONG',previousQty:6,currentQty:0,openedAt:1_000,firstObservedAt:1_000,lastAddAt:null,addCount:0,entryOrderIds:[],entryTradeIds:[],exitOrderIds:['old-exit'],exitTradeIds:['old-trade'],entryLotIds:[],source:'SYSTEM',lastReconciledAt:2_000,status:'REDUCED'}));
+    h.state.recordExecutionFill(any({cycleId:legacyCycle,positionCycleId:legacyCycle,entryLotId:null,fillRole:'EXIT',provenanceSource:'UNPROVEN',fillId:'old-exit-fill',symbol:'BRUSDT',direction:'LONG',side:'SELL',positionSide:'LONG',orderId:'old-exit',clientOrderId:'external-old',tradeId:'old-trade',executionTime:2_000,qty:6,price:99,realizedPnl:-6,commission:.1,commissionAsset:'USDT',commissionUsd:.1,maker:false,source:'USER_DATA_WS',attributionStatus:'EXTERNAL_OR_UNLINKED'}));
+    const order=h.addEntryLot('BRUSDT',6,100,10_000),record=h.record();
+    expect(record.cycleId).not.toBe(legacyCycle);
+    expect(h.state.entryOrders.get(order.id)?.cycleId).toBe(record.cycleId);
+    expect(record).toMatchObject({status:'OPEN',entryQty:6,exitQty:0,remainingQty:6});
+    expect(record.linkedFillIds).not.toContain('old-exit-fill');
+  });
+
   it('long and short on the same symbol stay separate cycles',()=>{
     const longs=harness('LONG'),shorts=harness('SHORT');
     longs.addEntryLot('BRUSDT',6,100,1_000);shorts.addEntryLot('BRUSDT',4,100,1_500);

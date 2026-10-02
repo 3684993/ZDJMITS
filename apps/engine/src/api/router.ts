@@ -1,5 +1,22 @@
 import { filterFormalOutcome, projectTradeRecordRow, projectTradeRecordSummary } from '../services/tradeRecordReadModel.js';
-const closedAt=(row:any)=>Number.isFinite(row.closedAt)?Number(row.closedAt):Number.isFinite(row.observedClosedAt)?Number(row.observedClosedAt):-Infinity;
+function tradeCloseProvenance(record:any,runtime:EngineRuntime){
+  if(!Number.isFinite(record.closedAt))return'OPEN';
+  const ids=new Set((record.exitOrderIds??[]).map((id:unknown)=>String(id)));
+  const fills=runtime.state.executionFills.filter((fill:any)=>fill.symbol===record.symbol&&
+    (ids.has(String(fill.orderId??''))||ids.has(String(fill.clientOrderId??''))));
+  const roles=new Set<string>();let externalExchangeFact=false;
+  for(const fill of fills){
+    const proof=runtime.state.orderProvenance?.resolve?.({symbol:fill.symbol,clientOrderId:fill.clientOrderId,exchangeOrderId:fill.orderId});
+    for(const item of proof?.rows??[])roles.add(String(item.role));
+    if(fill.attributionStatus==='EXTERNAL_OR_UNLINKED'&&['EXCHANGE_AUDIT','USER_DATA_WS'].includes(String(fill.source)))externalExchangeFact=true;
+  }
+  if(roles.has('TP')&&roles.size===1)return'TP';
+  if(roles.has('EXIT')&&roles.size===1)return'SYSTEM_EXIT';
+  if(roles.has('MANUAL')&&roles.size===1)return'SYSTEM_MANUAL';
+  if(roles.size>0)return'CONFLICT';
+  if(externalExchangeFact||record.source==='EXTERNAL')return'EXCHANGE_CLOSE';
+  return'UNKNOWN';
+}
 import { binanceRequestBudgetsHealth } from '../adapters/binance/requestBudget.js';
 import { Router } from "express";
 import { mkdir } from "node:fs/promises";
@@ -25,6 +42,7 @@ import { activeExecutionLeaseMargin } from '../services/executionLease.js';
 import { bookAdmissionSummary } from '../services/admissionCapacityReader.js';
 import { testnetFundsOnlyEntry } from '@zdj/core';
 import { exitSubjectFromPosition } from '../services/v396ExitRuntime.js';
+import { entryCancelEligibility } from './entryCancelEligibility.js';
 
 /**
  * Attach the Engine's execution answer to one page of run rows.
@@ -633,13 +651,13 @@ export function createApiRouter(runtime: EngineRuntime) {
       next(e);
     }
   });
-  r.get("/orders", (_q, res) =>
-    res.json({
-      entry: [...runtime.state.entryOrders.values()],
-      takeProfit: [...runtime.state.tpOrders.values()],
-      manual: [...runtime.state.manualOrders.values()],
-    }),
-  );
+  r.get("/orders", (_q, res) => {
+    const current=runtime.reconciliation?.currentOpenEntryOrders?.()??{status:'UNAVAILABLE',verifiedAt:null,items:[]};
+    const manualCurrent=runtime.reconciliation?.currentOpenManualOrders?.()??{status:'UNAVAILABLE',verifiedAt:null,items:[]};
+    const historicalUnknown=[...runtime.state.entryOrders.values()].filter(order=>order.status==='UNKNOWN'||( ['FILLED','CANCELED','EXPIRED','REJECTED'].includes(order.status)&&(order as any).exchangeTerminalStatus==='UNKNOWN'));
+    res.json({entry:current.items,entryReadback:{status:current.status,verifiedAt:current.verifiedAt,count:current.items.length},historicalUnknown,
+      takeProfit:[...runtime.state.tpOrders.values()],manual:manualCurrent.items,manualReadback:{status:manualCurrent.status,verifiedAt:manualCurrent.verifiedAt,count:manualCurrent.items.length}});
+  });
   r.get("/eip/:symbol", (req, res) => {
     const symbol = req.params.symbol.toUpperCase();
     try {
@@ -1037,7 +1055,7 @@ export function createApiRouter(runtime: EngineRuntime) {
   r.get('/trade-records',(req,res)=>{
     const q=req.query as Record<string,string|undefined>,page=Math.max(1,Number(q.page??1)),limit=Math.min(100,Math.max(1,Number(q.limit??20)));
     const records=[...runtime.state.tradeRecords.values()],summary=projectTradeRecordSummary({records,...runtime.qualityObserver?.readContext()}),integrity=new TradeRecordIntegrityService(runtime.state).summary();
-    let rows=records.map(record=>projectTradeRecordRow(record,runtime.qualityObserver?.readContext())).sort((a,b)=>closedAt(b)-closedAt(a)||a.tradeId.localeCompare(b.tradeId));
+    let rows=records.map(record=>projectTradeRecordRow(record,runtime.qualityObserver?.readContext())).sort((a,b)=>byClosedAtDesc(a,b)||a.tradeId.localeCompare(b.tradeId));
     const category=q.category??'COMPLETE';
     rows=category==='ISSUES'?rows.filter(row=>['DUPLICATE','CONFLICT','INVALID'].includes(row.classification)):rows.filter(row=>row.classification===category);
     if(q.symbol)rows=rows.filter(row=>row.symbol.toUpperCase().includes(q.symbol!.toUpperCase()));
@@ -1047,7 +1065,8 @@ export function createApiRouter(runtime: EngineRuntime) {
     rows=filterFormalOutcome(rows,q.outcome);
     if(q.search)rows=rows.filter(row=>JSON.stringify(row).toLowerCase().includes(q.search!.toLowerCase()));
     const total=rows.length;
-    res.json({page,limit,total,items:rows.slice((page-1)*limit,page*limit),autoSync:runtime.tradeRecordAutoSyncStatus(),summary:{...summary,
+    const items=rows.slice((page-1)*limit,page*limit).map(row=>({...row,closeProvenance:tradeCloseProvenance(row,runtime)}));
+    res.json({page,limit,total,items,autoSync:runtime.tradeRecordAutoSyncStatus(),summary:{...summary,
       partiallyClosed:records.filter(row=>row.status==='PARTIALLY_CLOSED').length,
       unknownCount:records.filter(row=>row.classification!=='COMPLETE'||row.fundingAttributionStatus!=='EXACT').length,
       grossIncome:null,lossExpense:null,totalFees:null,floatingPnl:runtime.state.account.unrealizedPnlUsd??0,
@@ -1076,12 +1095,12 @@ export function createApiRouter(runtime: EngineRuntime) {
   r.post("/entry/:id/cancel", async (req, res, next) => {
     try {
       const order = runtime.state.entryOrders.get(req.params.id);
-      if (!order)
-        return res.status(404).json({ error: "entry order not found" });
-      if (!["NEW", "SUBMITTING", "UNKNOWN", "WORKING", "PARTIALLY_FILLED"].includes(order.status))
-        return res.status(409).json({ error: "entry order is not active" });
+      const current=(runtime.reconciliation as any)?.currentOpenEntryOrders?.();
+      const eligibility=entryCancelEligibility(order,current);
+      if(!eligibility.allowed)return res.status(eligibility.status).json({error:{code:eligibility.code,message:eligibility.message}});
       const adapter = (runtime as any).entry["exchange"];
       const canceled = await adapter.cancelEntry(order);
+      if(!['CANCELED','EXPIRED','REJECTED','FILLED'].includes(String(canceled?.status)))return res.status(502).json({error:{code:'ENTRY_CANCEL_RESULT_UNVERIFIED',message:`交易所取消结果未确认（${String(canceled?.status??'UNKNOWN')}）；该订单保持待核验状态。`}});
       runtime.state.entryOrders.set(order.id, canceled);
       if (order.reservationId)
         runtime.state.releaseEntryReservation(order.reservationId);

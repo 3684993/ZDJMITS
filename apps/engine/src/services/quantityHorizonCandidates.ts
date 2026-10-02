@@ -110,7 +110,7 @@ export function buildQuantityHorizonCandidates(input:{
   symbol:string;
   side:'LONG'|'SHORT';
   now:number;
-  quote:{bid:number;ask:number;tickSize:number;stepSize:number;minQty:number;minNotional:number};
+  quote:{bid:number;ask:number;tickSize:number;stepSize:number;minQty:number;minNotional:number;minEntryPrice?:number};
   leverage:number;
   envelope:{maxQuantityUnits:number;maxNotionalUsd:number;maxMarginUsd:number;executable:boolean;minQuantityUnits?:number;minimumInitialMarginQuote?:number|null;minimumOrderNotionalQuote?:number|null;riskHeadroom?:{reason?:string;blockers?:string[]}};
   envelopeExpiresAt:number;
@@ -139,7 +139,10 @@ export function buildQuantityHorizonCandidates(input:{
   if(!(entryPrice>0))return rejectAll('CANDIDATE_ENTRY_PRICE_UNPROVEN');
   const quantityCeiling=Math.min(Number(envelope.maxQuantityUnits??0),Number(envelope.maxNotionalUsd??0)/(quote.stepSize*entryPrice),
     Number(envelope.maxMarginUsd??Number.POSITIVE_INFINITY)*leverage/(quote.stepSize*entryPrice));
-  const quantities=quantityLadder(Math.max(1,Number(envelope.minQuantityUnits??1)),quantityCeiling,quote.stepSize,entryPrice,Math.max(quote.minNotional,Number(envelope.minimumOrderNotionalQuote??0),(Number(envelope.minimumInitialMarginQuote??0))*leverage));
+  // Orders may be repriced anywhere in the authorized bid/ask interval. Size the floor against
+  // the lowest current authorized quote so legal repricing cannot turn a $200 mandate into $199.
+  const floorEntryPrice=Math.min(entryPrice,quote.bid,quote.ask,Number(quote.minEntryPrice??Number.POSITIVE_INFINITY));
+  const quantities=quantityLadder(Math.max(1,Number(envelope.minQuantityUnits??1)),quantityCeiling,quote.stepSize,floorEntryPrice,Math.max(quote.minNotional,Number(envelope.minimumOrderNotionalQuote??0),(Number(envelope.minimumInitialMarginQuote??0))*leverage));
   if(!quantities.length)return rejectAll('NO_LEGAL_QUANTITY_WITHIN_ENVELOPE');
   const horizons=horizonLadder(settings,input.targetHorizons);
   if(!horizons.length)return rejectAll('NO_LEGAL_TARGET_HORIZON');

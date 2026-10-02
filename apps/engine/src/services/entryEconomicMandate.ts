@@ -35,9 +35,11 @@ export function buildEntryEconomicMandate(input: {
   if(timeframeFacts.some(fact=>fact.status!=='FRESH'))throw new Error('ENTRY_DIRECTION_FACTS_NOT_FRESH');
   const plan = input.plan;
   if(input.quoteAsset==='USDC'&&(!input.quoteFxToUsd||input.now-input.quoteFxToUsd.observedAt>60_000||input.quoteFxToUsd.observedAt>input.now))throw new Error('ENTRY_USDC_FX_NOT_PROVEN');
+  const fx = input.quoteFxToUsd?.rate ?? (input.quoteAsset==='USDT'?1:null);
+  const selectedNotionalQuote=plan.quantityUnits*Number(input.market.quote.stepSize)*Number(plan.entryReferencePrice);
   const sizing = { minimumInitialMarginQuote: input.minimumInitialMarginQuote, minimumOrderNotionalQuote: input.minimumOrderNotionalQuote,
-    exchangeMinimumNotionalQuote: input.exchangeMinimumNotionalQuote, selectedInitialMarginQuote: plan.marginUsd,
-    selectedNotionalQuote: plan.notionalUsd, quantityUnits: plan.quantityUnits,
+    exchangeMinimumNotionalQuote: input.exchangeMinimumNotionalQuote,
+    selectedInitialMarginQuote: selectedNotionalQuote/Number(plan.leverage), selectedNotionalQuote, quantityUnits: plan.quantityUnits,
     quantity: plan.quantityUnits*Number(input.market.quote.stepSize), leverage: plan.leverage,
     entryPrice: Number(plan.entryReferencePrice), stepSize: Number(input.market.quote.stepSize), priceTick: Number(input.market.quote.tickSize) };
   const targetMovePercent = Math.abs(Number(plan.targetPrice)/Number(plan.entryReferencePrice)-1)*100;
@@ -46,13 +48,12 @@ export function buildEntryEconomicMandate(input: {
   const factsHash = hash({ schemaVersion: 'V397-ENTRY-ECONOMIC-MANDATE-1', planId: plan.planId, quoteAsset: input.quoteAsset,
     settingsVersion: input.settingsVersion, directionFacts: timeframeFacts, sizing, targetPrice: plan.targetPrice,
     targetHorizonMinutes: plan.targetHorizonMinutes, fees: [input.entryFeeRate,input.exitFeeRate,input.slippageBufferPct], quoteFxToUsd:input.quoteFxToUsd, costVersion: plan.costs?.costVersion });
-  const fx = input.quoteFxToUsd?.rate ?? (input.quoteAsset==='USDT'?1:null);
   return EntryEconomicMandateSchema.parse({ schemaVersion:'V397-ENTRY-ECONOMIC-MANDATE-1',
     mandateId:`mandate_${hash({planId:plan.planId,factsHash}).slice(0,32)}`, environment:'TESTNET', quoteAsset:input.quoteAsset,
     settingsVersion:input.settingsVersion, factsHash, createdAt:input.now, expiresAt:Math.min(plan.provenance.envelopeExpiresAt,input.now+plan.entryTtlMinutes*60_000),
     side:plan.side, directionFacts:timeframeFacts, sizing,
-    economics:{ entryFeeQuote:plan.costs?.entryFeeUsd??0, expectedExitFeeQuote:plan.costs?.exitFeeUsd??0,
-      slippageBufferQuote:plan.costs?.slippageUsd??0, fundingQuote:plan.costs?.fundingEstimateUsd==null?null:plan.costs.fundingEstimateUsd/Number(fx??1),
+    economics:{ entryFeeQuote:Number(plan.costs?.entryFeeUsd??0)/Number(fx??1), expectedExitFeeQuote:Number(plan.costs?.exitFeeUsd??0)/Number(fx??1),
+      slippageBufferQuote:Number(plan.costs?.slippageUsd??0)/Number(fx??1), fundingQuote:plan.costs?.fundingEstimateUsd==null?null:plan.costs.fundingEstimateUsd/Number(fx??1),
       fundingStatus:plan.costs?.fundingStatus??'UNPROVEN', fxToUsd:fx,
       fxStatus:input.quoteAsset==='USDT'?'NOT_REQUIRED':fx===null?'UNPROVEN':'VERIFIED', minimumNetProfitQuote:plan.minNetProfitUsd/Number(fx??1),
       targetPrice:Number(plan.targetPrice), targetHorizonMinutes:plan.targetHorizonMinutes,

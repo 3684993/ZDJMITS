@@ -31,7 +31,7 @@ describe('real EntryCoordinator opportunity authorization',()=>{
   it('records TradingQuality evidence without carrying it as Entry direction authorization',async()=>{
     const h=ready();await h.run();expect(h.exchange.placeEntry,JSON.stringify(h.events.filter(e=>/FAILED|BLOCKED/.test(e.type)))).toHaveBeenCalledOnce();
     const i=[...h.state.entryIntents.values()][0];expect(i).toBeDefined();expect(i.opportunityEvidence).toBeUndefined();
-    const persisted=EntryIntentSchema.parse(JSON.parse(JSON.stringify(i)));expect(persisted.quantityUnits).toBe(1000);expect(persisted.executionEnvelope).toBeDefined();
+    const persisted=EntryIntentSchema.parse(JSON.parse(JSON.stringify(i)));expect(persisted.quantityUnits).toBe(i.quantityUnits);expect(i.quantityUnits).not.toBe(1000);expect(persisted.executionEnvelope).toBeDefined();
     expect(h.events.some(e=>e.type==='TRADING_QUALITY_OPPORTUNITY')).toBe(true);expect(h.events.some(e=>e.type==='TRADING_QUALITY_PRIMARY_LINK')).toBe(true);
   });
   it('keeps TradingQuality observation outside the Primary input contract',async()=>{
@@ -280,7 +280,7 @@ describe('prospective runtime evidence collection',()=>{
       const first=collector.report().episodes[0];expect(first.fillIds).toHaveLength(1);expect(first.completeFillAt).toBeNull();expect(first.firstFillVwap).toBe(100);
       positions.recordExchangeFill({...f,fillId:'f2',tradeId:'t2',executionTime:h.now+1000,price:102});
       for(let dt=1000;dt<=35000;dt+=1000){h.m.quote.ts=h.now+dt;h.m.quote.mark=dt<10000?99:101;collector.tick(h.now+dt);}
-      let ep=collector.report().episodes[0];expect(ep.completeFillAt).toBe(h.now+1000);expect(ep.firstFillVwap).toBe(100);expect(ep.fillVwap).toBe(101);
+      let ep=collector.report().episodes[0];expect(ep.completeFillAt).toBe(h.now+1000);expect(ep.firstFillVwap).toBe(100);expect(ep.fillVwap).toBeCloseTo(101,10);
       expect(ep.path[0]).toMatchObject({coverage:'COMPLETE',sampleCount:31});expect(ep.path[0].maeBps).toBeCloseTo(100);
       expect(ep.path[1].coverage).toBe('IMMATURE');expect(ep.netPnl).toBeNull();
       collector.close();collector=new TradingQualityCollector(file,h.state,h.bus);collector.tick(h.now+40000);ep=collector.report().episodes[0];

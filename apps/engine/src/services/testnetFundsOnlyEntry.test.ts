@@ -12,6 +12,8 @@ import {reservationDebitsAvailableFunds} from './entryFundingCommitment.js';
 function hostileBook(){
   const h=harness(),s=h.state,symbol=h.packet.symbol,now=Date.now();
   h.supplied.quantityUnits=1000;
+  s.settings.entry.minimumInitialMarginByQuote.USDT=1;
+  s.settings.entry.minimumOrderNotionalByQuote.USDT=200;
   s.settings.portfolio.maxPositions=1;s.settings.portfolio.maxPendingEntries=1;
   s.settings.riskGovernance.maxConcurrentReservations=1;
   Object.assign(s.settings.riskGovernance,{maxGrossExposurePct:0,maxDirectionExposurePct:0,maxClusterExposurePct:0,maxClusterDirectionExposurePct:0,perTradeRiskPctEquity:0,maxDailyDrawdownPct:0,maxDailyLossUsd:1,circuitBreakerEnabled:true});
@@ -78,7 +80,10 @@ describe('TESTNET funds-only Entry resource authority',()=>{
     const plan=[...h.state.tradePlans.values()][0],intent=[...h.state.entryIntents.values()][0],order=[...h.state.entryOrders.values()].find(x=>x.intentId===intent.id)!;
     const rawUnits=Number(h.supplied.quantityUnits),request=h.events.find(e=>e.type==='ENTRY_ADAPTER_REQUEST_FACTS')?.payload,response=h.events.find(e=>e.type==='ENTRY_ADAPTER_RESPONSE_FACTS')?.payload;
     expect(plan.economicMandate?.mandateId).toBe(intent.economicMandate?.mandateId);
-    expect(intent.quantityUnits).toBe(rawUnits);expect(order.quantity).toBe(rawUnits*h.packet.market.quote.stepSize);
+    expect(intent.quantityUnits).not.toBe(rawUnits);
+    expect(plan.economicMandate?.sizing.selectedInitialMarginQuote).toBeGreaterThanOrEqual(1);
+    expect(plan.economicMandate?.sizing.selectedNotionalQuote).toBeGreaterThanOrEqual(200);
+    expect(order.quantity).toBe(intent.quantityUnits*h.packet.market.quote.stepSize);
     expect(request).toMatchObject({quantity:order.quantity,price:order.price,positionSide:intent.side,mandateId:intent.economicMandate?.mandateId});
     expect(response).toMatchObject({remoteQuantity:order.quantity,remotePrice:order.price,side:intent.side,mandateId:intent.economicMandate?.mandateId,wireBytesAvailable:false});
     expect([...h.state.tradePlans.values()][0]?.risk).toBeNull();

@@ -65,6 +65,8 @@ describe('V3.9.6 published target-horizon contract', () => {
     const published = (buildPreAiExecutionEnvelope(h.state, fixtureSymbol).economics as {targetHorizonMinutes: number[]}).targetHorizonMinutes;
     const run = async (targetHorizonMinutes: number) => {
       const local = harness();
+      local.state.settings.entry.minimumInitialMarginByQuote.USDT = 1;
+      local.state.settings.entry.minimumOrderNotionalByQuote.USDT = 200;
       (local.ai as any).decide.mockImplementation(async () => ({
         runId: `horizon-${targetHorizonMinutes}`,
         decision: {...local.supplied, decision: 'PLACE_LONG', tradeSide: 'LONG', direction: 'LONG', structureDirection: 'LONG',
@@ -77,12 +79,16 @@ describe('V3.9.6 published target-horizon contract', () => {
       }));
       await local.run();
       const blocked = local.events.find((event: any) => event.type === 'ENTRY_DECISION_BLOCKED' && event.payload?.stage === 'TRADE_PLAN');
-      return {plan: local.events.some((event: any) => event.type === 'TRADE_PLAN_PERSISTED'), refusal: (blocked?.payload as any)?.reasons?.join('|') ?? null};
+      const resolved = local.events.find((event: any) => event.type === 'ENTRY_ECONOMIC_SIZE_RESOLVED');
+      return {plan: local.events.some((event: any) => event.type === 'TRADE_PLAN_PERSISTED'), refusal: (blocked?.payload as any)?.reasons?.join('|') ?? null, resolved: resolved?.payload as any};
     };
     const legal = await run(published[0]);
     expect(legal.refusal ?? '', `a published horizon must be writable: ${legal.refusal}`).not.toMatch(/CANDIDATE_HORIZON_UNSUPPORTED/);
-    const illegal = await run(30);
-    expect(illegal.plan).toBe(false);
-    expect(illegal.refusal ?? '').toMatch(/CANDIDATE_HORIZON_UNSUPPORTED:30/);
+    expect(legal.resolved, 'the system must resolve an economic size before persisting Entry').toBeTruthy();
+    expect(legal.resolved.notionalQuote).toBeGreaterThanOrEqual(200);
+    expect(legal.resolved.quantityUnits).toBeGreaterThan(1000);
+    const nonLadderPreference = await run(30);
+    expect(nonLadderPreference.plan).toBe(true);
+    expect(published).toContain(nonLadderPreference.resolved.targetHorizonMinutes);
   });
 });

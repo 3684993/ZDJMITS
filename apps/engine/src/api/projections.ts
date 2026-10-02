@@ -183,7 +183,9 @@ function baseDashboardProjection(runtime: EngineRuntime): DashboardSnapshot {
     now = Date.now(),
     since = now - 3600000,
     unreal = s.account.unrealizedPnlUsd ?? null,
-    activeEntries = activeEntryOrdersForProjection(s.entryOrders.values(), now),
+    // Activity is exchange truth. Local UNKNOWN remains available to reconciliation/risk
+    // admission, but never appears as an exchange open order without a matching openOrders fact.
+    activeEntries = runtime.reconciliation?.currentOpenEntryOrders?.().items ?? [],
     activeTps = [...s.tpOrders.values()].filter(
       (order) => order.status === "WORKING",
     ),

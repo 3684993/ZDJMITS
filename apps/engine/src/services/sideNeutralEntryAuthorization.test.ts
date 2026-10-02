@@ -94,7 +94,7 @@ describe('V3.9.4 side-neutral Entry authorization', () => {
     const intent = [...h.state.entryIntents.values()][0] as any;
     expect(intent).toBeDefined();
     expect(intent.side).toBe('LONG');
-    expect(intent.quantityUnits, 'legacy policy must not clamp AI quantityUnits').toBe(quantityUnits);
+    expect(intent.quantityUnits, 'the economic solver, not the AI quantity, owns executable size').not.toBe(quantityUnits);
     expect(intent.acceptablePriceRange).toEqual(acceptablePriceRange);
     expect(intent.directionPolicy ?? 'ABSENT').not.toBe('SHORT_ONLY');
     const plan = [...h.state.allocationPlans.values()][0] as any;
@@ -102,7 +102,7 @@ describe('V3.9.4 side-neutral Entry authorization', () => {
     expect(plan.direction, 'allocation must materialize the AI side, not the legacy preference').toBe('LONG');
   });
 
-  it('still rejects an over-envelope AI quantity instead of clamping it under legacy bias', async () => {
+  it('ignores an over-envelope AI quantity and solves a legal economic size without a legacy side veto', async () => {
     const h = harness();
     armLegacyShortBias(h.state);
     const envelope = buildPreAiExecutionEnvelope(h.state, fixtureSymbol);
@@ -117,8 +117,11 @@ describe('V3.9.4 side-neutral Entry authorization', () => {
       },
     }));
     await h.run();
-    expect(h.exchange.placeEntry).not.toHaveBeenCalled();
-    expect(h.events.some((e: any) => e.type === 'AI_SIZING_ERROR' && JSON.stringify(e.payload).includes('AI_QUANTITY_EXCEEDS_ENVELOPE'))).toBe(true);
-    expect([...h.state.entryIntents.values()][0]).toBeUndefined();
+    expect(h.exchange.placeEntry).toHaveBeenCalledOnce();
+    const intent=[...h.state.entryIntents.values()][0] as any,plan=[...h.state.tradePlans.values()][0] as any;
+    expect(intent.side).toBe('LONG');
+    expect(intent.quantityUnits).toBeLessThanOrEqual(envelope.LONG.maxQuantityUnits);
+    expect(plan.economicMandate?.sizing.selectedNotionalQuote).toBeGreaterThanOrEqual(h.state.settings.entry.minimumOrderNotionalByQuote.USDT);
+    expect(h.events.some((e: any) => e.type === 'ENTRY_ECONOMIC_SIZE_RESOLVED' && e.payload?.authority === 'SYSTEM_ECONOMIC_CANDIDATE_SOLVER')).toBe(true);
   });
 });

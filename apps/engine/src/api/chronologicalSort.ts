@@ -6,4 +6,4 @@ export const byOpenedAtDesc = <T extends Timed>(a: T, b: T) =>
   descending(a.openedAt, b.openedAt) || String(a.id ?? a.tradeId ?? '').localeCompare(String(b.id ?? b.tradeId ?? ''));
 /** Recently closed first; records without a close fact stay last. */
 export const byClosedAtDesc = <T extends Timed>(a: T, b: T) =>
-  descending(a.closedAt, b.closedAt) || String(a.id ?? '').localeCompare(String(b.id ?? ''));
+  descending(a.closedAt, b.closedAt) || String(a.tradeId ?? a.id ?? '').localeCompare(String(b.tradeId ?? b.id ?? ''));

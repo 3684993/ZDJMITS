@@ -13,6 +13,7 @@
 - GPU2 Position Review 使用不含入场 sizing/capacity authority 的市场事实和原 TradePlan。上线读回发现原实现复用 Entry EIP 压缩器、在模型调用前因缺 Entry execution envelope 而失败；已改为 Review 专用、带来源 ID 的市场/Plan facts 并新增回归测试。
 - Pending Entry Review 只输出 `KEEP/CANCEL/REPLAN`，Position Review 只输出 `HOLD/REDUCE_PROPOSAL/EXIT_PROPOSAL/HANDOFF`。取消、改价及退出仍由确定性 coordinator 和原有 authority 检查执行。
 - USDT/USDC 新订单 notional 下限在 contracts 与执行层至少为 100 quote units；当前两个 quote policy 均沿用现有用户设置 `portfolio.entryMarginUsd=200`，故实际下限为 USDT 200 / USDC 200。BTCUSDT/BTCUSDC 硬下限为 200。交易所 filter minimum 只可提高门槛；可执行额度不足时拒绝，不再 fallback 到 exchange-minimum 微小单。最低初始保证金语义独立保留：当前 USDT/USDC 各 1，来源为现有 `portfolioIntelligence.minMarginUsd`。
+- 在线 TP economic floor：`takeProfit.minNetProfitUsd=1 USDT`，`minNetProfitRoiPct=0.15%`，entry/taker fee assumptions 各 `0.0004`（0.04%），fee safety buffer `10%`，exit fee assumption `TAKER`。这些字段与订单 notional、初始保证金是独立语义；预期净收益不达 $1 floor 不作为正常可提交 Entry。
 - Entry mandate 将 notional、initial margin、fee、funding/FX 已知状态、最低净收益、TP 目标/期限与一小时可达性一并冻结并校验。现有低收益历史仓不会因设置变更而被重新定价或伪装成新的经济 mandate。
 - 自动 Entry 期限不超过 1 小时，Near Market TTL 可更短；期限到达后重新 exact lookup，确认远端活动身份后由 coordinator 撤单并确认，远端查询不确定时 fail closed。历史 UNKNOWN 在普通订单页只呈现 24 小时窗口；旧 UNKNOWN 单列为历史，不作为远端活动委托。
 - Human-managed 仓可以进入证据型 Position Review；模型不能改变所有权、quantity、side 或直接发交易指令。Review 失败预算与生命周期仍保持持久化，不在 restart 时重置。

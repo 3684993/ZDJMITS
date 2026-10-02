@@ -1,7 +1,9 @@
 import { createHash } from 'node:crypto';
-import { AiRunSchema, EntryDecisionV370Schema, EntryDecisionJsonSchema, ScoutAnnotationJsonSchema, BrainDecisionSchema, ScoutAnnotationSchema, type AiResource, type AiRun, type BrainDecision, type EntryIntelligencePacket, type ScoutAnnotation } from '@zdj/contracts';
+import { AiRunSchema, EntryDecisionV370Schema, EntryDecisionFactBoundJsonSchema, ENTRY_CANDIDATE_REFERENCE_PROTOCOL, ENTRY_FACT_BOUND_REFERENCE_PROTOCOL, isEntryReferenceProtocol, ScoutAnnotationJsonSchema, BrainDecisionSchema, ScoutAnnotationSchema, type AiResource, type AiRun, type BrainDecision, type EntryIntelligencePacket, type ScoutAnnotation } from '@zdj/contracts';
 import { buildCompactBrainPrompt, buildScoutPrompt, compactFactIds, clamp, uid } from '@zdj/core';
-import { AiRequestError, OpenAiCompatibleClient, parseSingleJsonDecision } from '../adapters/ai/OpenAiCompatibleClient.js';
+import { AiRequestError, OpenAiCompatibleClient, parseSingleJsonDecision, cancelledAiCall, type AiCallContext } from '../adapters/ai/OpenAiCompatibleClient.js';
+import {resolveCandidateReference} from './resolveCandidateReference.js';
+import {resolveFactBoundReference} from './resolveFactBoundReference.js';
 import type { RuntimeState } from '../state/runtimeState.js';
 import type { EventBus } from '../events/eventBus.js';
 import type { EipService } from './eipService.js';
@@ -18,10 +20,15 @@ interface ResourceLoad {
   lastDecision:BrainDecision['decision'];
   idleReason:string|null; nextStep:string; queueDepth:number;
 }
-type AiDuty='SCOUT_RESEARCH'|'ENTRY_PRIMARY'|'PENDING_ENTRY_REVIEW'|'POSITION_REVIEW';
-type ReviewQueueItem={duty:'PENDING_ENTRY_REVIEW'|'POSITION_REVIEW';sequence:number;run:(resource:AiResource)=>Promise<unknown>;resolve:(value:unknown)=>void;reject:(reason:unknown)=>void};
 const textList=(value:unknown)=>Array.isArray(value)?value.map(item=>typeof item==='string'?item:typeof item==='object'&&item!==null?String((item as any).text??(item as any).value??(item as any).evidence??JSON.stringify(item)):String(item)):[];
 const finite=(value:unknown,fallback:number)=>Number.isFinite(Number(value))?Number(value):fallback;
+export function canonicalAiBackend(baseUrl:string):string|null {
+  try{const url=new URL(baseUrl),host=['localhost','127.0.0.1','[::1]','::1','0.0.0.0'].includes(url.hostname.toLowerCase())?'loopback':url.hostname.toLowerCase();
+    // API prefixes are not proof of separate serving capacity. Treat every path on one origin
+    // as shared; a different origin still requires deployment evidence of hardware isolation.
+    return `${url.protocol}//${host}:${url.port||({ 'http:':'80','https:':'443' }[url.protocol]??'')}`;
+  }catch{return null;}
+}
 const scoutParse=(value:unknown)=>{const normalized=normalizeAiProtocol(value,['attentionScore']),v=normalized.value as any;return ScoutAnnotationSchema.parse({...v,keyEvidence:textList(v?.keyEvidence).slice(0,6),contradictions:textList(v?.contradictions).slice(0,4),missingEvidence:textList(v?.missingEvidence).slice(0,4)});};
 export type ExternalResearchFact={field:string;value:string|number|boolean|null;unit:string|null;observedAt:number;evidenceLocation:string;conflict:string|null};
 export type ExternalResearchResult={sourceId:string;entities:string[];facts:ExternalResearchFact[];conflicts:string[]};
@@ -37,13 +44,17 @@ export function fifteenMinuteDirection(packet:EntryIntelligencePacket):'LONG'|'S
   const trend=packet.market.technical['15m'].trend;return trend==='UP'?'LONG':trend==='DOWN'?'SHORT':null;
 }
 
-export function entryDecisionParse(value:unknown,packet:EntryIntelligencePacket):BrainDecision {
+export function entryDecisionParse(value:unknown,packet:EntryIntelligencePacket,expectedProtocol?:string):BrainDecision {
+  if(expectedProtocol&&(value as any)?.schemaVersion!==expectedProtocol)throw new Error('AI_OUTPUT_INVALID: response protocol does not match request');
   const normalized=normalizeAiProtocol(value,['confidence']);
-  const raw:any={...(normalized.value as any)}, legacyDirection=raw.direction, place=String(raw.decision??'').startsWith('PLACE_');
+  const protocol=(normalized.value as any)?.schemaVersion;
+  const bound=protocol===ENTRY_FACT_BOUND_REFERENCE_PROTOCOL?resolveFactBoundReference(normalized.value,packet):null;
+  const reference=bound??(protocol===ENTRY_CANDIDATE_REFERENCE_PROTOCOL?resolveCandidateReference(normalized.value,packet):null);
+  const raw:any={...(reference?.decision??normalized.value as any)}, legacyDirection=raw.direction, place=String(raw.decision??'').startsWith('PLACE_');
   raw.tradeSide=raw.tradeSide??(place?(legacyDirection??String(raw.decision).replace('PLACE_','')):null);
   // structureDirection is model-owned compatibility metadata. Never inject 15m as an answer key.
-  raw.structureDirection=raw.structureDirection??(place?raw.tradeSide:null);
-  raw.profitTakePlan=place?(raw.profitTakePlan??null):null;
+  if(!bound)raw.structureDirection=raw.structureDirection??(place?raw.tradeSide:null);
+  raw.profitTakePlan=place?(raw.profitTakePlan??null):null;raw.selectedCandidateId=place?(raw.selectedCandidateId??null):null;
   raw.rejectLayer=raw.rejectLayer??(raw.decision==='WAIT_FOR_PRICE'?'TIMING':raw.decision==='NO_DIRECTION_EDGE'?'TIMING':'NONE');
   raw.blockingCondition=raw.blockingCondition??(place?'':String(raw.reason??''));raw.releaseCondition=raw.releaseCondition??'';raw.timingEvent=raw.timingEvent??null;
   raw.direction=place?raw.tradeSide:null; const d=EntryDecisionV370Schema.parse(raw);
@@ -55,7 +66,7 @@ export function entryDecisionParse(value:unknown,packet:EntryIntelligencePacket)
   const prose=`${d.directionReason} ${d.timingReason} ${(d as any).entryLocationReason??''} ${d.reason}`;
   if(packet.microstructure.imbalance<-.05&&/bid (?:dominance|imbalance)|buyer(?:s)? dominant/i.test(prose))throw new Error('AI_OUTPUT_INVALID: order-book imbalance sign misread');
   if(packet.microstructure.imbalance>.05&&/ask (?:dominance|imbalance)|seller(?:s)? dominant/i.test(prose))throw new Error('AI_OUTPUT_INVALID: order-book imbalance sign misread');
-  const result=BrainDecisionSchema.parse({...d,direction:place?d.tradeSide:null,protocolVersion:'V3.9.3',reachability:0,
+  const result=BrainDecisionSchema.parse({...d,...(reference?{schemaVersion:protocol,candidateSetHash:reference.candidateSetHash,candidateSetFactVersion:reference.candidateSetFactVersion,candidateReferenceResolution:reference.proof,...(bound?{directionResolution:bound.directionResolution}:{})}:{}),direction:place?d.tradeSide:null,protocolVersion:reference?protocol:d.schemaVersion,reachability:0,
     directionAnalysis:{trend1m:d.timingReason,trend5m:d.timingReason,trend15m:d.directionReason,trend4h:d.directionReason,trend1d:d.directionReason,trend1w:d.directionReason,weightedConclusion:d.directionReason},
     supportingEvidence:[],contradictions:[],missingEvidence:[],evidenceRefs:d.supportingEvidenceRefs,evidenceRequests:[]});
   (result as any).__protocolNormalization=normalized.normalization;
@@ -84,7 +95,7 @@ export function brainParse(value:unknown,packet?:EntryIntelligencePacket):BrainD
   v.tradeSide=v.tradeSide??(isPlace?(v.direction??String(v.decision).replace('PLACE_','')):null);
   v.structureDirection=v.structureDirection??(isPlace?v.tradeSide:null);
   v.direction=isPlace?v.tradeSide:null;
-  if(!isPlace){v.profitTakePlan=null;v.idealPrice=null;v.acceptablePriceRange=null;v.horizonMinutes=null;}
+  if(!isPlace){v.selectedCandidateId=null;v.quantityUnits=null;v.profitTakePlan=null;v.idealPrice=null;v.acceptablePriceRange=null;v.horizonMinutes=null;}
   v.rejectLayer=v.rejectLayer??(v.decision==='WAIT_FOR_PRICE'?'TIMING':v.decision==='NO_DIRECTION_EDGE'||v.decision==='REJECT_CANDIDATE'?'TIMING':'NONE');
   v.blockingCondition=v.blockingCondition??String(v.reason??'');v.releaseCondition=v.releaseCondition??'';v.timingEvent=v.timingEvent??null;
   if(v.action==='FINAL'&&(v.decision==='PLACE_LONG'||v.decision==='PLACE_SHORT')){
@@ -113,9 +124,6 @@ export class AiFabric {
   private primaryCircuitReason:string|null=null;
   private primaryCircuitState: 'AVAILABLE' | 'OPEN' | 'PROBING' | 'HALF_OPEN' = 'AVAILABLE';
   private primaryProbe:Promise<boolean>|null=null;
-  private reviewQueues=new Map<string,ReviewQueueItem[]>();
-  private reviewActive=new Set<string>();
-  private reviewSequence=0;
   constructor(private state:RuntimeState,private events:EventBus,private eipService:EipService){
     for(const r of state.aiResources)this.load.set(r.id,{active:0,totalRuns:0,failures:0,lastLatencyMs:null,currentSymbol:null,currentRunId:null,currentStartedAt:null,lastCompletedAt:null,lastDirection:null,lastDecision:null,idleReason:'WAITING_CANDIDATE',nextStep:'等待动态交易池候选',queueDepth:0});
   }
@@ -125,7 +133,7 @@ export class AiFabric {
   async probeResources(){
     if(this.healthFlight)return this.healthFlight;
     this.healthFlight=Promise.all(this.state.aiResources.map(async r=>{
-      const result=await this.openAi.probe(r.baseUrl,2000).catch(error=>({ok:false,reason:String(error)}));
+      const result=await this.openAi.probe(r.baseUrl,2000,r.model).catch(error=>({ok:false,reason:String(error)}));
       const previous=this.endpointHealth.get(r.id),next={available:result.ok,checkedAt:Date.now(),reason:result.reason};this.endpointHealth.set(r.id,next);
       if(previous?.available!==next.available)this.events.publish('AI_RESOURCE_HEALTH_CHANGED',{resourceId:r.id,role:r.role,...next,entryRequired:r.role==='PRIMARY_BRAIN'});
     })).then(()=>{}).finally(()=>{this.healthFlight=null;});return this.healthFlight;
@@ -133,9 +141,7 @@ export class AiFabric {
   private resourceHealth(r:any):any{
     const h=this.endpointHealth.get(r.id),fresh=h&&Date.now()-h.checkedAt<60000;
     const connectionStatus=!fresh?'UNKNOWN':h.available?'ONLINE':'OFFLINE';
-    const configuredRoutes=this.state.settings.aiDutyRoutes??[];
-    const entryPrimary=configuredRoutes.some(route=>route.enabled&&route.duty==='ENTRY_PRIMARY'&&route.resourceId===r.id)||(!configuredRoutes.some(route=>route.enabled&&route.duty==='ENTRY_PRIMARY')&&r.role==='PRIMARY_BRAIN');
-    return {connectionStatus,healthCheckedAt:h?.checkedAt??null,healthReason:h?.reason??null,...(connectionStatus==='ONLINE'?{}:{status:connectionStatus==='OFFLINE'?'OFFLINE':'DEGRADED'}),...(connectionStatus==='OFFLINE'?{currentStatus:'DEGRADED',idleReason:entryPrimary?'PRIMARY_MODEL_OFFLINE':'OPTIONAL_DUTY_OFFLINE',nextStep:entryPrimary?'Entry Primary 模型离线；订单与持仓维护继续':'可选 AI 职责离线；不回退占用 Entry Primary'}:{})};
+    return {connectionStatus,healthCheckedAt:h?.checkedAt??null,healthReason:h?.reason??null,...(connectionStatus==='ONLINE'?{}:{status:connectionStatus==='OFFLINE'?'OFFLINE':'DEGRADED'}),...(connectionStatus==='OFFLINE'?{currentStatus:'DEGRADED',idleReason:r.role==='PRIMARY_BRAIN'?'PRIMARY_MODEL_OFFLINE':'OPTIONAL_RESEARCH_OFFLINE',nextStep:r.role==='PRIMARY_BRAIN'?'Primary 模型离线；新建仓等待，订单与持仓维护继续':'研究模型离线；单 Primary 可独立建仓'}:{})};
   }
   private endpointAvailable(id:string){const h=this.endpointHealth.get(id);return !h||h.available&&Date.now()-h.checkedAt<60000;}
   resourceMetrics(){const now=Date.now(),paused=this.state.runtimeControl.mode!=='RUNNING';return this.state.aiResources.map(r=>{const m=this.load.get(r.id)!;if(r.role==='SCOUT'){const enabled=this.state.settings.externalIntelligence.researchEnabled,dutyStatus=!enabled?'DISABLED':m.active?'RUNNING':m.idleReason==='RESEARCH_FAILED'?'FAILED':m.queueDepth>0?'QUEUED':'WAITING_SHARED_EVENT';return{...r,active:m.active,totalRuns:m.totalRuns,failures:m.failures,lastLatencyMs:m.lastLatencyMs,currentStatus:dutyStatus,currentSymbol:m.currentSymbol,currentRunId:m.currentRunId,currentRunSeconds:m.currentStartedAt?Math.max(0,Math.floor((now-m.currentStartedAt)/1000)):0,lastCompletedAt:m.lastCompletedAt,lastDirection:null,lastDecision:null,idleReason:dutyStatus,nextStep:!enabled?'研究职责未启用':dutyStatus==='RUNNING'?`正在抽取 ${m.currentSymbol}`:dutyStatus==='QUEUED'?'等待共享事件研究队列':'等待新的共享外部事件',queueDepth:enabled?m.queueDepth:0};}return{...r,active:m.active,totalRuns:m.totalRuns,failures:m.failures,lastLatencyMs:m.lastLatencyMs,currentStatus:m.active?'ANALYZING':paused?'PAUSED':m.failures&&m.lastCompletedAt&&now-m.lastCompletedAt<60_000?'DEGRADED':'IDLE',currentSymbol:m.currentSymbol,currentRunId:m.currentRunId,currentRunSeconds:m.currentStartedAt?Math.max(0,Math.floor((now-m.currentStartedAt)/1000)):0,lastCompletedAt:m.lastCompletedAt,lastDirection:m.lastDirection,lastDecision:m.lastDecision,idleReason:m.active?null:paused?this.state.runtimeControl.reasonText:m.idleReason,nextStep:m.active?`正在处理 ${m.currentSymbol}`:paused?'等待运行恢复':m.nextStep,queueDepth:m.queueDepth};}).map(row=>({...row,...this.resourceHealth(row)}));}
@@ -145,16 +151,16 @@ export class AiFabric {
     return role === 'PRIMARY_BRAIN' && (this.primaryCircuitState === 'OPEN' || this.primaryCircuitState === 'PROBING' || this.primaryCircuitOpenUntil > Date.now());
   }
   circuitStatus(){return{state:this.primaryCircuitState,failureStreak:this.primaryFailureStreak,nextProbeAt:this.primaryCircuitOpenUntil,reason:this.primaryCircuitReason};}
-  /** Performs at most one bounded GET /health probe when the circuit is due.
+  /** Performs at most one bounded backend-compatible probe when the circuit is due.
    * It does not create an authorization, completion, or Engine lifecycle action. */
   async probePrimaryIfDue(now=Date.now()):Promise<boolean>{
     if(this.primaryCircuitState==='AVAILABLE'||this.primaryCircuitState==='HALF_OPEN')return this.primaryCircuitState==='HALF_OPEN';
     if(this.primaryCircuitState==='OPEN'&&now<this.primaryCircuitOpenUntil)return false;
     if(this.primaryProbe)return this.primaryProbe;
-    const resource=this.dutyResource('ENTRY_PRIMARY');
+    const resource=this.state.aiResources.find(r=>r.role==='PRIMARY_BRAIN'&&r.status!=='OFFLINE');
     if(!resource)return false;
     this.primaryCircuitState='PROBING';
-    this.primaryProbe=this.openAi.probe(resource.baseUrl,2_000).then(result=>{
+    this.primaryProbe=this.openAi.probe(resource.baseUrl,2_000,resource.model).then(result=>{
       if(result.ok){this.primaryCircuitState='HALF_OPEN';this.events.publish('AI_PRIMARY_CIRCUIT_HALF_OPEN',{resourceId:resource.id,identity:result.identity,nextStep:'one fresh Primary only'});return true;}
       this.recordPrimaryFailure(result.reason??'AI health probe failed',true);return false;
     }).finally(()=>{this.primaryProbe=null;});
@@ -169,9 +175,8 @@ export class AiFabric {
   }
   hasCapacity(role:'SCOUT'|'PRIMARY_BRAIN'){
     if(this.isCircuitOpen(role))return false;
-    const duty=role==='SCOUT'?'SCOUT_RESEARCH':'ENTRY_PRIMARY';
-    if(role==='PRIMARY_BRAIN'&&this.primaryCircuitState==='HALF_OPEN'&&this.load.get(this.dutyResource('ENTRY_PRIMARY')?.id??'')?.active)return false;
-    return this.dutyResources(duty).some(r=>r.status!=='OFFLINE'&&this.endpointAvailable(r.id)&&(this.load.get(r.id)?.active??0)<r.maxConcurrency);
+    if(role==='PRIMARY_BRAIN'&&this.primaryCircuitState==='HALF_OPEN'&&this.load.get(this.state.aiResources.find(r=>r.role==='PRIMARY_BRAIN')?.id??'')?.active)return false;
+    return this.state.aiResources.some(r=>r.role===role&&r.status!=='OFFLINE'&&this.endpointAvailable(r.id)&&(this.load.get(r.id)?.active??0)<r.maxConcurrency);
   }
   /**
    * P6: Entry and position Review share one Primary endpoint, and a continuously queued Entry chain
@@ -184,7 +189,7 @@ export class AiFabric {
   private reviewSharePercent(){const value=Number((this.state.settings.riskGovernance as any)?.exitCoordination?.reviewCapacitySharePercent??25);return Number.isFinite(value)?Math.min(50,Math.max(0,value)):25;}
   /** A review became owed at `at`; the first such call owns the reservation until it is served. */
   clearReviewOwed(){this.reviewOwedSince=null;}
-  reviewAvailable(duty:'PENDING_ENTRY_REVIEW'|'POSITION_REVIEW'='POSITION_REVIEW'){const resource=this.dutyResource(duty);return Boolean(resource&&resource.status!=='OFFLINE'&&this.endpointAvailable(resource.id));}
+  reviewAvailable(){try{this.choose('PRIMARY_BRAIN',undefined,'REVIEW');return true;}catch{return false;}}
   noteReviewOwed(at=Date.now()){if(this.reviewOwedSince==null)this.reviewOwedSince=at;}
   /** One rule, read by both the decision and the operator projection. */
   private reviewHeld(now=Date.now()){
@@ -207,18 +212,8 @@ export class AiFabric {
     const reviews=this.primaryServes.filter(row=>row.role==='REVIEW').length;
     return{reviews,total:this.primaryServes.length};
   }
-  private dutyResources(duty:AiDuty):AiResource[]{
-    const configuredRoutes=this.state.settings.aiDutyRoutes??[];
-    const routes=configuredRoutes.filter(route=>route.enabled&&route.duty===duty).sort((a,b)=>b.priority-a.priority);
-    if(configuredRoutes.length)return routes.flatMap(route=>{const resource=this.state.aiResources.find(item=>item.id===route.resourceId&&item.status!=='OFFLINE');return resource?[resource]:[];});
-    const role=duty==='SCOUT_RESEARCH'?'SCOUT':duty==='ENTRY_PRIMARY'?'PRIMARY_BRAIN':duty==='PENDING_ENTRY_REVIEW'||duty==='POSITION_REVIEW'?'REVIEW_BRAIN':'PRIMARY_BRAIN';
-    const legacy=this.state.aiResources.filter(resource=>resource.role===role&&resource.status!=='OFFLINE');
-    return legacy.length?legacy:(role==='REVIEW_BRAIN'?this.state.aiResources.filter(resource=>resource.role==='PRIMARY_BRAIN'&&resource.status!=='OFFLINE'):[]);
-  }
-  private dutyResource(duty:AiDuty):AiResource|undefined{return this.dutyResources(duty).find(resource=>this.endpointAvailable(resource.id));}
   private choose(role:'SCOUT'|'PRIMARY_BRAIN',excludeId?:string,waiter:'ENTRY'|'REVIEW'='ENTRY'):AiResource{
-    const duty=role==='SCOUT'?'SCOUT_RESEARCH':waiter==='REVIEW'?'POSITION_REVIEW':'ENTRY_PRIMARY';
-    const choices=this.dutyResources(duty).filter(r=>this.endpointAvailable(r.id)&&r.id!==excludeId&&(this.load.get(r.id)?.active??0)<r.maxConcurrency);if(!choices.length)throw new Error(`AI_RESOURCE_BUSY:${duty}`);
+    const choices=this.state.aiResources.filter(r=>r.role===role&&r.status!=='OFFLINE'&&this.endpointAvailable(r.id)&&r.id!==excludeId&&(this.load.get(r.id)?.active??0)<r.maxConcurrency);if(!choices.length)throw new Error(`AI_RESOURCE_BUSY:${role}`);
     if(role==='PRIMARY_BRAIN'&&waiter==='ENTRY'&&this.reviewOwedSince!=null){
       if(this.reviewHeld())throw new Error(`AI_PRIMARY_HELD_FOR_REVIEW:${Math.round(Date.now()-this.reviewOwedSince)}ms`);
       // Its bounded share has been served, so the reservation is spent and Entry proceeds.
@@ -227,46 +222,63 @@ export class AiFabric {
     }
     return [...choices].sort((a,b)=>(this.load.get(a.id)?.active??0)-(this.load.get(b.id)?.active??0)||(this.load.get(a.id)?.lastLatencyMs??0)-(this.load.get(b.id)?.lastLatencyMs??0))[0]!;
   }
-  /** The two review duties share one bounded physical resource. Position work is always dequeued first. */
-  private queueReview<T>(duty:'PENDING_ENTRY_REVIEW'|'POSITION_REVIEW',work:(resource:AiResource,queueMs:number)=>Promise<T>):Promise<T>{
-    const resource=this.dutyResource(duty);if(!resource)return Promise.reject(new Error(`AI_DUTY_UNAVAILABLE:${duty}`));
-    const queue=this.reviewQueues.get(resource.id)??[];if(queue.length>=128&&duty==='PENDING_ENTRY_REVIEW')return Promise.reject(new Error('AI_REVIEW_QUEUE_FULL'));
-    this.reviewQueues.set(resource.id,queue);const enqueuedAt=Date.now();
-    return new Promise<T>((resolve,reject)=>{queue.push({duty,sequence:this.reviewSequence++,run:target=>work(target,Math.max(0,Date.now()-enqueuedAt)),resolve:resolve as (value:unknown)=>void,reject});
-      const load=this.load.get(resource.id);if(load)load.queueDepth=queue.length+(this.reviewActive.has(resource.id)?1:0);this.pumpReviewQueue(resource.id);});
-  }
-  private pumpReviewQueue(resourceId:string){
-    if(this.reviewActive.has(resourceId))return;const queue=this.reviewQueues.get(resourceId);if(!queue?.length)return;
-    queue.sort((a,b)=>(a.duty==='POSITION_REVIEW'?0:1)-(b.duty==='POSITION_REVIEW'?0:1)||a.sequence-b.sequence);
-    const item=queue.shift()!,resource=this.state.aiResources.find(row=>row.id===resourceId);const load=this.load.get(resourceId);
-    if(load)load.queueDepth=queue.length+1;if(!resource){item.reject(new Error('AI_DUTY_RESOURCE_REMOVED'));if(load)load.queueDepth=queue.length;this.pumpReviewQueue(resourceId);return;}
-    this.reviewActive.add(resourceId);void item.run(resource).then(item.resolve,item.reject).finally(()=>{this.reviewActive.delete(resourceId);if(load)load.queueDepth=queue.length;this.pumpReviewQueue(resourceId);});
-  }
   private primaryServes:Array<{role:'ENTRY'|'REVIEW';at:number}>=[];
   private reviewOwedSince:number|null=null;
-  private async run<T>(args:{resource:AiResource;symbol:string;packet:EntryIntelligencePacket;role:'SCOUT'|'PRIMARY_BRAIN'|'REVIEW_BRAIN';prompt:string;schemaName:string;parse:(v:unknown)=>T;queueMs?:number;triggerReason?:string;runKind?:string;jsonSchema?:Record<string,unknown>}):Promise<{value:T;run:AiRun}>{
+  private async run<T>(args:{resource:AiResource;symbol:string;packet:EntryIntelligencePacket;role:'SCOUT'|'PRIMARY_BRAIN'|'REVIEW_BRAIN';prompt:string;schemaName:string;parse:(v:unknown)=>T;queueMs?:number;triggerReason?:string;requestSource?:AiRun['requestSource'];timeoutMs?:number;context?:AiCallContext;promptBuildMs?:number}):Promise<{value:T;run:AiRun}>{
     const startedAt=Date.now(),runId=uid('airun'),load=this.load.get(args.resource.id)!;if(args.resource.role==='PRIMARY_BRAIN')this.primaryServes.push({role:args.role==='REVIEW_BRAIN'?'REVIEW':'ENTRY',at:startedAt});if(args.role==='REVIEW_BRAIN')this.reviewOwedSince=null;load.active++;load.currentSymbol=args.symbol;load.currentRunId=runId;load.currentStartedAt=startedAt;args.resource.status='BUSY';
-    let run:AiRun=AiRunSchema.parse({id:runId,symbol:args.symbol,resourceId:args.resource.id,model:args.resource.model,role:args.role,startedAt,completedAt:null,latencyMs:null,inputTokens:null,outputTokens:null,finishReason:null,status:'RUNNING',direction:null,decision:null,packetId:args.packet.packetId,error:null,inputPreview:redactAudit({prompt:args.prompt,packet:args.packet},Infinity),requestSource:args.role==='REVIEW_BRAIN'?'REVIEW':'ENTRY',inputContractHash:createHash('sha256').update(JSON.stringify(args.packet)).digest('hex'),promptHash:createHash('sha256').update(args.prompt).digest('hex'),outputContractVersion:'V3.9.3',timing:{queueMs:args.queueMs??0,promptBuildMs:0,requestMs:0,retryMs:0,parseMs:0,totalMs:0},failure:null});const lifecycle=this.state.candidateLifecycle.get(args.symbol);Object.assign(run,{triggerReason:args.triggerReason??lifecycle?.confirmation?.trigger??lifecycle?.triggerReason??'FIRST_REVIEW',previousRunId:lifecycle?.previousRunId??null,runKind:args.runKind??(args.role==='SCOUT'?'SCOUT_ENTRY_INFERENCE':args.role==='REVIEW_BRAIN'?'POSITION_REVIEW_RUN':'PRIMARY_INFERENCE_RUN'),recordKind:args.runKind??(args.role==='REVIEW_BRAIN'?'POSITION_REVIEW_RUN':'PRIMARY_INFERENCE_RUN'),marketOpportunityEpisodeId:args.packet.opportunityEvidence?.opportunityId??null,opportunityVersion:args.packet.opportunityEvidence?.version??null});this.state.addAiRun(run);this.events.publish('AI_RUN_STARTED',run,args.symbol);
+    const context={...args.context,requestId:args.context?.requestId??runId};
+    const initialTiming={queueMs:args.queueMs??null,promptBuildMs:args.promptBuildMs??null,slotWaitMs:context.preRequestTiming?.slotWaitMs??null,scoutMs:context.preRequestTiming?.scoutMs??null,prepareMs:context.preRequestTiming?.prepareMs??null,requestMs:null,retryMs:null,parseMs:null,responseHeadersMs:null,responseBodyMs:null,clientElapsedMs:null,responseBytes:null,firstTokenMs:null,serverQueueMs:null,prefillMs:null,decodeMs:null,totalMs:0};
+    let run:AiRun=AiRunSchema.parse({id:runId,symbol:args.symbol,resourceId:args.resource.id,model:args.resource.model,role:args.role,startedAt,completedAt:null,latencyMs:null,inputTokens:null,outputTokens:null,finishReason:null,status:'RUNNING',direction:null,decision:null,packetId:args.packet.packetId,error:null,inputPreview:redactAudit({prompt:args.prompt,packet:args.packet},Infinity),requestSource:args.requestSource??(args.role==='REVIEW_BRAIN'?'REVIEW':'ENTRY'),requestContextId:context.requestId,settingsVersion:this.state.settings.settingsVersion,scoutMode:this.state.settings.ai.scoutEnabled?(this.state.settings.ai.scoutExperimentMode??'DIRECT'):'DIRECT',inputContractHash:createHash('sha256').update(JSON.stringify(args.packet)).digest('hex'),promptHash:createHash('sha256').update(args.prompt).digest('hex'),outputContractVersion:args.schemaName==='EntryDecisionV392'?ENTRY_FACT_BOUND_REFERENCE_PROTOCOL:args.schemaName,timing:initialTiming,failure:null});const lifecycle=this.state.candidateLifecycle.get(args.symbol);Object.assign(run,{triggerReason:args.triggerReason??lifecycle?.confirmation?.trigger??lifecycle?.triggerReason??'FIRST_REVIEW',previousRunId:lifecycle?.previousRunId??null,runKind:args.role==='SCOUT'?(args.requestSource==='SHADOW'?'SCOUT_OBSERVATION_RUN':'SCOUT_ENTRY_INFERENCE'):args.role==='REVIEW_BRAIN'?'POSITION_REVIEW_RUN':'PRIMARY_INFERENCE_RUN',recordKind:args.requestSource==='SHADOW'?'SCOUT_OBSERVATION_RUN':args.role==='REVIEW_BRAIN'?'POSITION_REVIEW_RUN':'PRIMARY_INFERENCE_RUN',marketOpportunityEpisodeId:args.packet.opportunityEvidence?.opportunityId??null,opportunityVersion:args.packet.opportunityEvidence?.version??null});this.state.addAiRun(run);this.events.publish('AI_RUN_STARTED',run,args.symbol);
     try{
     const isEntry=args.schemaName==='EntryDecisionV392';
-      const result=await this.openAi.runJson({baseUrl:args.resource.baseUrl,model:args.resource.model,prompt:args.prompt,schemaName:args.schemaName,timeoutMs:this.state.settings.ai.decisionTimeoutMs,jsonSchema:args.jsonSchema??(isEntry?EntryDecisionJsonSchema as unknown as Record<string,unknown>:args.role==='SCOUT'?ScoutAnnotationJsonSchema as unknown as Record<string,unknown>:undefined),maxOutputTokens:isEntry?900:600,parse:args.parse});const completedAt=Date.now();
+      const result=await this.openAi.runJson({baseUrl:args.resource.baseUrl,model:args.resource.model,prompt:args.prompt,schemaName:args.schemaName,timeoutMs:args.timeoutMs??this.state.settings.ai.decisionTimeoutMs,context,jsonSchema:isEntry?EntryDecisionFactBoundJsonSchema as unknown as Record<string,unknown>:args.role==='SCOUT'?ScoutAnnotationJsonSchema as unknown as Record<string,unknown>:undefined,maxOutputTokens:isEntry?900:600,parse:args.parse});const completedAt=Date.now();
+      const cancelled=cancelledAiCall(context);if(cancelled){Object.assign(cancelled,{timing:result.timing,usage:{inputTokens:result.inputTokens,outputTokens:result.outputTokens}});throw cancelled;}
       if(args.role==='PRIMARY_BRAIN'){this.primaryFailureStreak=0;this.primaryCircuitOpenUntil=0;this.primaryCircuitReason=null;this.primaryCircuitState='AVAILABLE';}
       const protocolNormalization=(result.value as any)?.__protocolNormalization as ProtocolNormalization|undefined;
       if((result.value as any)?.__protocolNormalization)delete (result.value as any).__protocolNormalization;
       const raw=rawIntent(JSON.stringify(result.raw));
-      run={...run,rawDirection:raw?.direction??null,rawDecision:raw?.decision??raw?.action??null,terminalStage:'SCHEMA_VALID',completedAt,latencyMs:completedAt-startedAt,inputTokens:result.inputTokens,outputTokens:result.outputTokens,finishReason:result.finishReason,modelIdentity:result.modelIdentity,status:'COMPLETED',decision:(result.value as any)?.decision??null,direction:(result.value as any)?.direction??null,outputPreview:redactAudit(result.raw,Infinity),normalizedPreview:redactAudit(result.value,50000),protocolNormalization,scoutHandoff:args.role==='SCOUT',timing:{queueMs:args.queueMs??0,promptBuildMs:0,...result.timing,totalMs:completedAt-startedAt}};Object.assign(this.state.aiRuns.find(x=>x.id===runId)!,run);load.totalRuns++;load.lastLatencyMs=run.latencyMs;load.lastCompletedAt=completedAt;this.events.publish('AI_RUN_COMPLETED',run,args.symbol);if(protocolNormalization?.applied)this.events.publish('AI_PROTOCOL_NORMALIZED',{runId,normalization:protocolNormalization},args.symbol);return{value:result.value,run};
+      run={...run,rawDirection:(isEntryReferenceProtocol(raw?.schemaVersion)?raw?.tradeSide:raw?.direction)??null,rawDecision:raw?.decision??raw?.action??null,terminalStage:'SCHEMA_VALID',completedAt,latencyMs:completedAt-startedAt,inputTokens:result.inputTokens,outputTokens:result.outputTokens,finishReason:result.finishReason,modelIdentity:result.modelIdentity,status:'COMPLETED',decision:(result.value as any)?.decision??null,direction:(result.value as any)?.direction??null,outputPreview:redactAudit(result.raw,Infinity),normalizedPreview:redactAudit(result.value,50000),protocolNormalization,scoutHandoff:args.role==='SCOUT'&&args.requestSource!=='SHADOW',timing:{...initialTiming,...result.timing,totalMs:completedAt-startedAt}};Object.assign(this.state.aiRuns.find(x=>x.id===runId)!,run);load.totalRuns++;load.lastLatencyMs=run.latencyMs;load.lastCompletedAt=completedAt;this.events.publish('AI_RUN_COMPLETED',run,args.symbol);if(protocolNormalization?.applied)this.events.publish('AI_PROTOCOL_NORMALIZED',{runId,normalization:protocolNormalization},args.symbol);return{value:result.value,run};
     }catch(error){
-      const completedAt=Date.now(),message=error instanceof Error?error.message:String(error),known=error instanceof AiRequestError,http=known?error.httpStatus:Number(message.match(/AI HTTP (\d+)/)?.[1]??0)||null,schema=known?error.stage==='PARSE':/valid JSON|Zod|expected|required/i.test(message);
+      const completedAt=Date.now(),message=error instanceof Error?error.message:String(error),known=error instanceof AiRequestError,http=known?error.httpStatus:Number(message.match(/AI HTTP (\d+)/)?.[1]??0)||null,schema=known?error.stage==='PARSE'&&!error.cancelled&&!error.timeout:/valid JSON|Zod|expected|required/i.test(message);
+      const cancelled=known&&error.cancelled,timeout=known?error.timeout:/abort|timeout/i.test(message),errorCode=known?error.errorCode:http?`AI_HTTP_${http}`:timeout?'AI_TIMEOUT':schema?'AI_SCHEMA_INVALID':'AI_RUN_FAILED';
       const raw=known?rawIntent(error.rawOutput??undefined):null;
-      run={...run,rawDirection:raw?.direction??null,rawDecision:raw?.decision??raw?.action??null,terminalStage:schema?'AI_OUTPUT_INVALID':'AI_FAILED',inputTokens:known?error.usage?.inputTokens??null:null,outputTokens:known?error.usage?.outputTokens??null:null,completedAt,latencyMs:completedAt-startedAt,status:'FAILED',error:message,timing:{queueMs:args.queueMs??0,promptBuildMs:0,requestMs:0,retryMs:0,parseMs:0,totalMs:completedAt-startedAt},failure:{failureStage:schema?'SCHEMA_VALIDATION':'MODEL_REQUEST',errorCode:http?`AI_HTTP_${http}`:/abort|timeout/i.test(message)?'AI_TIMEOUT':schema?'AI_SCHEMA_INVALID':'AI_RUN_FAILED',errorMessage:message,httpStatus:http,timeout:/abort|timeout/i.test(message),schemaValidation:schema,retryCount:0,rawOutput:known?redactAudit(error.rawOutput,Infinity):null}};Object.assign(this.state.aiRuns.find(x=>x.id===runId)!,run);load.failures++;load.lastCompletedAt=completedAt;
-      if(args.role==='PRIMARY_BRAIN'){
+      run={...run,rawDirection:(isEntryReferenceProtocol(raw?.schemaVersion)?raw?.tradeSide:raw?.direction)??null,rawDecision:raw?.decision??raw?.action??null,terminalStage:cancelled?'AI_CANCELLED':schema?'AI_OUTPUT_INVALID':'AI_FAILED',finishReason:known?error.responseDiagnostics?.finishReason??null:null,outputPreview:known&&error.responseDiagnostics?JSON.stringify({responseDiagnostics:error.responseDiagnostics}):undefined,inputTokens:known?error.usage?.inputTokens??null:null,outputTokens:known?error.usage?.outputTokens??null:null,completedAt,latencyMs:completedAt-startedAt,status:'FAILED',error:message,timing:{...initialTiming,...(known?error.timing??{}:{}),totalMs:completedAt-startedAt},failure:{failureStage:schema?'SCHEMA_VALIDATION':known&&error.stage!=='REQUEST'?error.stage:'MODEL_REQUEST',errorCode,errorMessage:message,httpStatus:http,timeout,schemaValidation:schema,retryCount:known&&error.timing?.transportAttempts!=null?Math.max(0,error.timing.transportAttempts-1):null,rawOutput:known?redactAudit(error.rawOutput,Infinity):null,cancelled,cancellation:known?error.cancellation:null}};Object.assign(this.state.aiRuns.find(x=>x.id===runId)!,run);if(!cancelled)load.failures++;load.lastCompletedAt=completedAt;
+      if(args.role==='PRIMARY_BRAIN'&&!cancelled){
         if(schema)this.primaryFailureStreak=0;
         else this.recordPrimaryFailure(message);
       }
       this.events.publish('AI_RUN_FAILED',run,args.symbol);if(error&&typeof error==='object')Object.assign(error,{runId});throw error;
     }finally{load.active=Math.max(0,load.active-1);if(!load.active){load.currentSymbol=null;load.currentRunId=null;load.currentStartedAt=null;}args.resource.status=load.active?'BUSY':'ONLINE';}
   }
-  async scout(packet:EntryIntelligencePacket):Promise<ScoutAnnotation|null>{if(!this.state.settings.ai.scoutEnabled)return null;const resource=this.choose('SCOUT');const {value}=await this.run({resource,symbol:packet.symbol,packet,role:'SCOUT',prompt:buildScoutPrompt(packet),schemaName:'ScoutAnnotation',parse:scoutParse});return value;}
+  async scout(packet:EntryIntelligencePacket,context?:AiCallContext):Promise<ScoutAnnotation|null>{
+    const cancelled=cancelledAiCall(context);if(cancelled)throw cancelled;
+    if(!this.state.settings.ai.scoutEnabled)return null;
+    const resource=this.choose('SCOUT'),started=Date.now(),prompt=buildScoutPrompt(packet),promptBuildMs=Date.now()-started;
+    const {value}=await this.run({resource,symbol:packet.symbol,packet,role:'SCOUT',prompt,promptBuildMs,context,schemaName:'ScoutAnnotation',parse:scoutParse});
+    const lateCancellation=cancelledAiCall(context);if(lateCancellation)throw lateCancellation;return value;
+  }
+  /** Optional observation skips known shared backends and never waits for or authorizes Entry. */
+  async observeScout(packet:EntryIntelligencePacket,context?:AiCallContext):Promise<{status:'SKIPPED'|'COMPLETED';reason?:string;annotation?:ScoutAnnotation|null}> {
+    const skip=(reason:string)=>({status:'SKIPPED' as const,reason});
+    if(cancelledAiCall(context))return skip('SKIPPED_CONTEXT_CANCELLED');
+    if(!this.state.settings.ai.scoutEnabled)return skip('SKIPPED_SCOUT_DISABLED');
+    const primaryBackends=new Set([...this.state.aiResources,...this.state.settings.aiResources]
+      .filter(resource=>resource.role==='PRIMARY_BRAIN').map(resource=>canonicalAiBackend(resource.baseUrl)).filter(Boolean));
+    const scouts=this.state.aiResources.filter(resource=>resource.role==='SCOUT');
+    const independent=scouts.filter(resource=>{const backend=canonicalAiBackend(resource.baseUrl);return backend&&!primaryBackends.has(backend);});
+    if(!independent.length)return skip(scouts.some(resource=>primaryBackends.has(canonicalAiBackend(resource.baseUrl)))?'SKIPPED_SHARED_BACKEND':'SKIPPED_SCOUT_UNAVAILABLE');
+    if(this.reviewOwedSince!==null)return skip('SKIPPED_REVIEW_OWED');
+    if(this.state.aiResources.some(resource=>resource.role==='PRIMARY_BRAIN'&&(this.load.get(resource.id)?.active??0)>0))return skip('SKIPPED_PRIMARY_ACTIVE');
+    if(scouts.some(resource=>(this.load.get(resource.id)?.active??0)>0))return skip('SKIPPED_SCOUT_BUSY');
+    const resource=independent.find(resource=>resource.status!=='OFFLINE'&&this.endpointAvailable(resource.id)&&this.load.has(resource.id));
+    if(!resource)return skip('SKIPPED_SCOUT_UNAVAILABLE');
+    const snapshot=structuredClone(packet),started=Date.now(),prompt=buildScoutPrompt(snapshot),promptBuildMs=Date.now()-started;
+    const {value}=await this.run({resource,symbol:snapshot.symbol,packet:snapshot,role:'SCOUT',prompt,promptBuildMs,context,
+      schemaName:'ScoutAnnotation',parse:scoutParse,requestSource:'SHADOW',triggerReason:'SAMPLED_SCOUT_OBSERVATION',
+      timeoutMs:Math.min(30_000,this.state.settings.ai.decisionTimeoutMs)});
+    const lateCancellation=cancelledAiCall(context);if(lateCancellation)throw lateCancellation;
+    return {status:'COMPLETED',annotation:value};
+  }
   async researchExternal(snapshot:ExternalIntelligenceSnapshot):Promise<ExternalResearchResult>{
     if(!this.state.settings.externalIntelligence.researchEnabled)throw new Error('EXTERNAL_RESEARCH_DISABLED');
     const resource=this.choose('SCOUT'),load=this.load.get(resource.id)!,startedAt=Date.now(),runId=`research_${snapshot.contentHash.slice(0,20)}`;
@@ -276,10 +288,15 @@ export class AiFabric {
     catch(error){load.failures++;load.lastLatencyMs=Date.now()-startedAt;load.lastCompletedAt=Date.now();load.idleReason='RESEARCH_FAILED';this.events.publish('EXTERNAL_RESEARCH_FAILED',{runId,sourceId:snapshot.sourceId,contentHash:snapshot.contentHash,model:resource.model,latencyMs:load.lastLatencyMs,reason:error instanceof Error?error.message:String(error),entryPermission:false});throw error;}
     finally{load.active=Math.max(0,load.active-1);if(!load.active){load.currentSymbol=null;load.currentRunId=null;load.currentStartedAt=null;}resource.status=load.active?'BUSY':'ONLINE';}
   }
-  private async primaryOnce(packet:EntryIntelligencePacket,scout:ScoutAnnotation|null,excludeId?:string,role:'PRIMARY_BRAIN'|'REVIEW_BRAIN'='PRIMARY_BRAIN',extra:Record<string,unknown>={},queueMs=0):Promise<{decision:BrainDecision;run:AiRun;resource:AiResource}>{
-    const resource=this.choose('PRIMARY_BRAIN',excludeId);if(this.primaryCircuitState==='OPEN'||this.primaryCircuitState==='PROBING')throw new Error('AI_PRIMARY_CIRCUIT_OPEN');let result=await this.run({resource,symbol:packet.symbol,packet,role,prompt:buildCompactBrainPrompt(packet,extra.confirmation,(packet as any).externalContext,scout),schemaName:'EntryDecisionV392',parse:value=>entryDecisionParse(value,packet),queueMs}),decision=result.value;
+  private async primaryOnce(packet:EntryIntelligencePacket,scout:ScoutAnnotation|null,excludeId?:string,role:'PRIMARY_BRAIN'|'REVIEW_BRAIN'='PRIMARY_BRAIN',extra:Record<string,unknown>={},queueMs=0,context?:AiCallContext):Promise<{decision:BrainDecision;run:AiRun;resource:AiResource}>{
+    const cancelled=cancelledAiCall(context);if(cancelled)throw cancelled;
+    const resource=this.choose('PRIMARY_BRAIN',excludeId);if(this.primaryCircuitState==='OPEN'||this.primaryCircuitState==='PROBING')throw new Error('AI_PRIMARY_CIRCUIT_OPEN');
+    // Prompt and parser own one snapshot; later caller mutations cannot change the offered authorization.
+    const requestPacket=structuredClone(packet),promptStarted=Date.now(),prompt=buildCompactBrainPrompt(requestPacket,extra.confirmation,(requestPacket as any).externalContext,scout),promptBuildMs=Date.now()-promptStarted;
+    let result=await this.run({resource,symbol:requestPacket.symbol,packet:requestPacket,role,prompt,promptBuildMs,context,schemaName:'EntryDecisionV392',parse:value=>entryDecisionParse(value,requestPacket,ENTRY_FACT_BOUND_REFERENCE_PROTOCOL),queueMs}),decision=result.value;
+    const lateCancellation=cancelledAiCall(context);if(lateCancellation){Object.assign(lateCancellation,{runId:result.run.id});throw lateCancellation;}
     if(decision.action!=='FINAL')throw new Error('AI_PROTOCOL_INCOMPLETE: evidence request did not converge to FINAL');
-    const raw=rawIntent(result.run.outputPreview),stored=this.state.aiRuns.find(x=>x.id===result.run.id),rawDirection=typeof raw?.direction==='string'?raw.direction.toUpperCase():null,rawAction=typeof raw?.action==='string'?raw.action:null,rawDecision=typeof raw?.decision==='string'?raw.decision:['PLACE_LONG','PLACE_SHORT','REJECT_CANDIDATE'].includes(rawAction??'')?rawAction:null,parserRepaired=rawDirection!==decision.direction||rawDecision!==decision.decision;
+    const raw=rawIntent(result.run.outputPreview),stored=this.state.aiRuns.find(x=>x.id===result.run.id),rawDirectionValue=isEntryReferenceProtocol(raw?.schemaVersion)?raw?.tradeSide:raw?.direction,rawDirection=typeof rawDirectionValue==='string'?rawDirectionValue.toUpperCase():null,rawAction=typeof raw?.action==='string'?raw.action:null,rawDecision=typeof raw?.decision==='string'?raw.decision:['PLACE_LONG','PLACE_SHORT','REJECT_CANDIDATE'].includes(rawAction??'')?rawAction:null,parserRepaired=rawDirection!==decision.direction||rawDecision!==decision.decision;
     Object.assign(result.run,{direction:decision.direction,decision:decision.decision,rawDirection,rawDecision,normalizedPreview:redactAudit(decision,50000),parserRepaired});if(stored)Object.assign(stored,result.run);
     const load=this.load.get(resource.id)!;load.lastDirection=decision.direction;load.lastDecision=decision.decision;load.nextStep=decision.decision==='REJECT_CANDIDATE'?'候选进入单币冷却，继续下一候选':'等待 Entry Manager 校验';
     this.events.publish('PRIMARY_DECISION_NORMALIZED',{runId:result.run.id,rawDirection,rawDecision,normalizedDirection:decision.direction,normalizedDecision:decision.decision,parserRepaired,reason:decision.reason},packet.symbol);
@@ -292,31 +309,13 @@ export class AiFabric {
    * cannot reach the model costs review budget rather than tripping the entry circuit breaker.
    */
   async review(packet:EntryIntelligencePacket,request:PositionReviewRequest):Promise<{verdict:PositionReviewVerdict;run:AiRun;promptHash:string}>{
-    const prompt=buildPositionReviewPrompt(packet,request);
-    return this.queueReview('POSITION_REVIEW',async(resource,queueMs)=>{
-      const {value,run}=await this.run({resource,symbol:packet.symbol,packet,role:'REVIEW_BRAIN',prompt,schemaName:'PositionReviewV396',
-        parse:parsePositionReview,queueMs,runKind:'POSITION_REVIEW_RUN',triggerReason:`POSITION_REVIEW:${request.triggerKey}:n${request.reviewNumber}`});
-      return{verdict:value,run,promptHash:run.promptHash??'missing-prompt-hash'};
-    });
+    const prompt=buildPositionReviewPrompt(packet,request),resource=this.choose('PRIMARY_BRAIN',undefined,'REVIEW');
+    const {value,run}=await this.run({resource,symbol:packet.symbol,packet,role:'REVIEW_BRAIN',prompt,schemaName:'PositionReviewV396',
+      parse:parsePositionReview,triggerReason:`POSITION_REVIEW:${request.triggerKey}:n${request.reviewNumber}`});
+    return{verdict:value,run,promptHash:run.promptHash??'missing-prompt-hash'};
   }
-  async reviewPendingEntry(packet:EntryIntelligencePacket,input:Record<string,unknown>):Promise<{decision:'KEEP'|'CANCEL'|'REPLAN';run:AiRun}>{
-    const identity={orderId:String(input.orderId??''),clientOrderId:String(input.clientOrderId??'')};
-    if(!identity.orderId||!identity.clientOrderId)throw new Error('PENDING_ENTRY_REVIEW_IDENTITY_REQUIRED');
-    const jsonSchema={type:'object',additionalProperties:false,required:['orderId','clientOrderId','decision','reason'],properties:{orderId:{type:'string'},clientOrderId:{type:'string'},decision:{type:'string',enum:['KEEP','CANCEL','REPLAN']},reason:{type:'string',maxLength:500}}};
-    const prompt=['You are the pending-entry order reviewer. Return exactly one JSON object matching the schema.',
-      'You only decide KEEP, CANCEL, or REPLAN. You cannot place, cancel, amend, or otherwise call an exchange. The deterministic coordinator verifies exact order identity and performs any action.',
-      'REPLAN means terminate this exact order identity first; a fresh plan must later receive a new identity and authorization. Prefer CANCEL when direction, reachability, or fee-adjusted economics no longer hold. Never invent missing facts.',
-      `Expected exact identity: ${JSON.stringify(identity)}`,'Evidence (unknown values remain unknown):',JSON.stringify(input)].join('\n');
-    return this.queueReview('PENDING_ENTRY_REVIEW',async(resource,queueMs)=>{
-      const {value,run}=await this.run({resource,symbol:packet.symbol,packet,role:'REVIEW_BRAIN',prompt,schemaName:'PendingEntryReviewV397',jsonSchema,queueMs,
-        runKind:'PENDING_ENTRY_REVIEW_RUN',triggerReason:`PENDING_ENTRY_REVIEW:${identity.orderId}`,
-        parse:value=>{const row=value as any;if(!row||row.orderId!==identity.orderId||row.clientOrderId!==identity.clientOrderId||!['KEEP','CANCEL','REPLAN'].includes(row.decision)||typeof row.reason!=='string')throw new Error('PENDING_ENTRY_REVIEW_OUTPUT_IDENTITY_OR_SCHEMA_INVALID');return{decision:row.decision as 'KEEP'|'CANCEL'|'REPLAN',reason:row.reason.slice(0,500)};}});
-      this.events.publish('PENDING_ENTRY_REVIEW_COMPLETED',{orderId:identity.orderId,clientOrderId:identity.clientOrderId,decision:value.decision,resourceId:resource.id,model:resource.model,runId:run.id,queueMs},packet.symbol);
-      return{decision:value.decision,run};
-    });
-  }
-  async decide(packet:EntryIntelligencePacket,_scout:ScoutAnnotation|null=null,queueMs=0,confirmation?:unknown):Promise<{decision:BrainDecision;runId:string}> {
-    try {const first=await this.primaryOnce(packet,_scout,undefined,'PRIMARY_BRAIN',{confirmation},queueMs);return {decision:first.decision,runId:first.run.id};}
+  async decide(packet:EntryIntelligencePacket,_scout:ScoutAnnotation|null=null,queueMs=0,confirmation?:unknown,context?:AiCallContext):Promise<{decision:BrainDecision;runId:string;latencyMs:number|null;decisionCompletedAt:number|null}> {
+    try {const first=await this.primaryOnce(packet,_scout,undefined,'PRIMARY_BRAIN',{confirmation},queueMs,context);const cancelled=cancelledAiCall(context);if(cancelled){Object.assign(cancelled,{runId:first.run.id});throw cancelled;}return {decision:first.decision,runId:first.run.id,latencyMs:first.run.latencyMs,decisionCompletedAt:first.run.completedAt};}
     catch(error){this.events.publish('AI_FAILED_NO_INTENT',{stage:'PRIMARY_BRAIN',message:error instanceof Error?error.message:String(error),policy:'FAIL_CLOSED'},packet.symbol);throw error;}
   }
 }

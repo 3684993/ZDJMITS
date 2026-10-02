@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
+import { EventEmitter } from 'node:events';
 import { SystemSettingsSchema } from '@zdj/contracts';
 import defaults from '../../../../config/settings.default.json' with { type: 'json' };
 import { RuntimeState } from '../state/runtimeState.js';
@@ -25,22 +26,39 @@ const transportSettings = (expectedStaticEgressIp: string | null) => ({
 
 function stubEgressEcho(body: string, options: { error?: string; status?: number } = {}) {
   harness.request = ((_url: any, _opts: any, onResponse: any) => {
-    const handlers: Record<string, () => void> = {};
-    return {
-      once(event: string, handler: () => void) { handlers[event] = handler; return this; },
-      end() {
-        if (options.error) { setTimeout(() => handlers.error?.(), 0); return; }
-        const response = {
-          statusCode: options.status ?? 200, setEncoding() { },
-          on(event: string, handler: (chunk?: string) => void) {
-            if (event === 'data') setTimeout(() => handler(body), 0);
-            if (event === 'end') setTimeout(() => handler(), 5);
-          },
-        };
-        setTimeout(() => onResponse(response), 0);
+    const request = Object.assign(new EventEmitter(), {
+      destroyed: false,
+      end(): EventEmitter {
+        queueMicrotask(() => {
+          if (request.destroyed) return;
+          if (options.error) { request.emit('error', new Error(options.error)); return; }
+          const bytes = Buffer.from(body, 'utf8');
+          const response = Object.assign(new EventEmitter(), {
+            statusCode: options.status ?? 200,
+            headers: { 'content-type': 'text/plain', 'content-length': String(bytes.length) },
+            complete: false,
+            destroyed: false,
+            destroy(): EventEmitter {
+              if (!response.destroyed) { response.destroyed = true; queueMicrotask(() => response.emit('close')); }
+              return response;
+            },
+          });
+          onResponse(response);
+          if (response.destroyed) return;
+          response.emit('data', bytes);
+          if (response.destroyed) return;
+          response.complete = true;
+          response.emit('end');
+          response.emit('close');
+        });
+        return request;
       },
-      destroy() { return this; },
-    };
+      destroy(): EventEmitter {
+        if (!request.destroyed) { request.destroyed = true; queueMicrotask(() => request.emit('close')); }
+        return request;
+      },
+    });
+    return request;
   }) as any;
 }
 

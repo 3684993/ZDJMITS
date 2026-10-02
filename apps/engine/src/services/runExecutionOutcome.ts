@@ -87,6 +87,7 @@ export const ENTRY_EXECUTION_LINEAGE_EVENT_TYPES = [
   'ENTRY_ECONOMIC_ADMISSION_EVALUATED',
   'PORTFOLIO_RISK_ADMISSION_EVALUATED',
   'ENTRY_DECISION_BLOCKED',
+  'ENTRY_DATA_ERROR',
   'CANDIDATE_REJECTED',
   'TRADE_PLAN_PERSISTED',
   'ENTRY_RESERVATION_CREATED',
@@ -108,9 +109,11 @@ export const EXECUTION_LINEAGE_GRACE_MS = 5 * 60_000;
 const BLOCK_STAGE: Record<string, ExecutionBlockStage> = {
   EIP: 'EVIDENCE',
   EVIDENCE: 'EVIDENCE',
+  EIP_DEPENDENCY_PREFLIGHT: 'EVIDENCE',
   EXECUTION_LEASE: 'EXECUTION_LEASE',
   POST_AI_EXECUTION_LEASE: 'EXECUTION_LEASE',
   POST_AI_VERIFY: 'AI_VERIFY',
+  POST_AI_DIRECTION_CONTRACT: 'AI_VERIFY',
   POST_PRIMARY_EXECUTION_ENVELOPE: 'AI_VERIFY',
   ECONOMIC_ADMISSION: 'ECONOMICS',
   ECONOMICS: 'ECONOMICS',
@@ -119,6 +122,7 @@ const BLOCK_STAGE: Record<string, ExecutionBlockStage> = {
   TRADE_PLAN: 'TRADE_PLAN',
   RESERVATION: 'RESERVATION',
   LIVE_RISK_ENVELOPE: 'JIT',
+  POST_AI_THESIS_FRESHNESS: 'JIT',
   EXECUTION_PERMISSION: 'JIT',
   ORDER: 'ORDER',
   SET_LEVERAGE: 'ORDER',
@@ -142,8 +146,25 @@ export const EXECUTION_LABELS: Record<ExecutionState, string> = {
 const isPlace = (decision: string | null | undefined) => String(decision ?? '').startsWith('PLACE_');
 const stageOf = (event: LineageEvent, reason: string): ExecutionBlockStage | null => {
   const raw = String((event.payload as any)?.stage ?? '');
+  if (event.type === 'ENTRY_DATA_ERROR') return 'EVIDENCE';
   if (reason.startsWith('JIT_BLOCKED:') || raw === 'JIT') return 'JIT';
   return BLOCK_STAGE[raw] ?? null;
+};
+/** Older terminal rejections carry their exact cause but omit the preceding layer event. */
+const rejectionStageOf = (reason: string): ExecutionBlockStage | null => {
+  const code = reason.replace(/^DATA_ERROR:\s*/, '');
+  if (['QUOTE_STALE', 'ORDER_BOOK_STALE', 'KEY_MARKET_FACT_MISSING', 'INVALID_QUOTE_FILTER'].includes(code)) return 'EVIDENCE';
+  if (code === 'JIT_MARKET_THESIS_DRIFT' || code.startsWith('JIT_BLOCKED:')) return 'JIT';
+  if (['DIRECTION_TIMEFRAME_ROLE_MISMATCH', 'DIRECTION_ALIGNMENT_CLASS_MISMATCH', 'COUNTER_TREND_EXCEPTION_REQUIRED',
+    'COUNTER_TREND_EXCEPTION_NOT_APPLICABLE', 'COUNTER_TREND_REQUIRES_MINIMUM_CANDIDATE'].includes(code)) return 'AI_VERIFY';
+  return null;
+};
+/** Coordinator terminal events wrap some layer causes; only that same layer may unwrap them. */
+const repeatsBlockCause = (reason: string, stage: ExecutionBlockStage | null, prior: string[]): boolean => {
+  if (prior.includes(reason)) return true;
+  const prefix = stage === 'RESERVATION' ? 'RESERVATION_' : stage === 'PORTFOLIO_RISK' || stage === 'JIT' ? 'RISK_' : null;
+  if (prefix == null) return false;
+  return prior.some(cause => reason === `${prefix}${cause}` || (stage === 'JIT' && reason.startsWith(`${prefix}${cause}:`)));
 };
 const reasonsOf = (payload: any, fallback: string | null): string[] => {
   const list: string[] = Array.isArray(payload?.reasons) ? payload.reasons.map((row: unknown) => String(row)) : [];
@@ -174,6 +195,7 @@ interface Mutable {
   portfolioRiskAllowed: boolean | null;
   blockStage: ExecutionBlockStage | null;
   blockReasons: string[];
+  terminalRejected: boolean;
   lineageProven: boolean;
   inconsistent: string[];
   updatedAt: number;
@@ -209,6 +231,7 @@ export function projectRunExecutionOutcomes(
       clientOrderId: null, exchangeOrderId: null, submittedAt: null,
       firstFillAt: null, partialFillAt: null, waitingSince: null,
       portfolioRiskAllowed: null, blockStage: null, blockReasons: [],
+      terminalRejected: false,
       lineageProven: false, inconsistent: [], updatedAt: Number(run.decidedAt ?? now),
       submittedIntentId: null,
     });
@@ -249,7 +272,7 @@ export function projectRunExecutionOutcomes(
         }
         return owner;
       }
-      if (direct != null && rows.has(String(direct))) return String(direct);
+      if (direct != null) return rows.has(String(direct)) ? String(direct) : null;
       return fallbackRunId != null && rows.has(fallbackRunId) ? fallbackRunId : null;
     };
     const brainRunId = runIdOf();
@@ -336,15 +359,26 @@ export function projectRunExecutionOutcomes(
       case 'ENTRY_DECISION_BLOCKED':
       case 'ENTRY_ORDER_BLOCKED':
       case 'ENTRY_EXECUTION_WAIT_TERMINATED':
+      case 'ENTRY_DATA_ERROR':
       case 'CANDIDATE_REJECTED': {
+        const terminalRejection = event.type === 'CANDIDATE_REJECTED' || event.type === 'ENTRY_DATA_ERROR';
+        // The durable Primary decision decides whether this is an execution refusal. The
+        // coordinator's CANDIDATE_REJECTED payload always says REJECT_CANDIDATE, including after PLACE.
+        if (terminalRejection && !isPlace(row.decision)) break;
         note(orderOwner, payload.orderId, brainRunId, 'order');
         const reason = payload.reason == null ? null : String(payload.reason);
-        const stage = stageOf(event, reason ?? '');
-        // A rejection the model itself issued is a decision, not a system block: `REJECT_CANDIDATE`
-        // and `WAIT_*` carry no stage, and the run's own decision already says what happened.
-        if (stage == null) break;
+        const repeatedCause = reason != null && repeatsBlockCause(reason, row.blockStage, row.blockReasons);
+        const stage = stageOf(event, reason ?? '') ?? (terminalRejection
+          ? (repeatedCause ? row.blockStage : null) ?? rejectionStageOf(reason ?? '') : null);
+        if (stage == null && !terminalRejection) break;
+        if (terminalRejection) {
+          row.terminalRejected = true;
+          row.waitingSince = null;
+        }
         row.blockStage = stage;
-        row.blockReasons = reasonsOf(payload, reason);
+        row.blockReasons = reasonsOf(terminalRejection && repeatedCause
+          ? {...payload, reasons: [...(Array.isArray(payload.reasons) ? payload.reasons : []), ...row.blockReasons]}
+          : payload, reason ?? (terminalRejection ? event.type : null));
         if (stage === 'EXECUTION_WAIT') row.waitingSince = null;
         break;
       }
@@ -361,7 +395,7 @@ export function projectRunExecutionOutcomes(
     else if (row.partialFillAt != null) state = 'PARTIALLY_FILLED';
     else if (row.orderId != null) state = 'SUBMITTED';
     else if (row.waitingSince != null) state = 'WAITING_PRICE';
-    else if (row.blockStage != null) state = 'NOT_SUBMITTED';
+    else if (row.blockStage != null || row.terminalRejected) state = 'NOT_SUBMITTED';
     else if (!isPlace(row.decision)) state = 'DECISION_ONLY';
     else if (unproven) state = 'NOT_SUBMITTED';
     else state = 'EXECUTING';
@@ -369,7 +403,7 @@ export function projectRunExecutionOutcomes(
       ? (row.blockReasons.length ? row.blockReasons : unproven ? ['EXECUTION_LINEAGE_UNPROVEN'] : [])
       : [];
     const label = state === 'NOT_SUBMITTED'
-      ? `${EXECUTION_LABELS.NOT_SUBMITTED} · ${row.blockStage ?? '链路未记录'} · ${blockReasons[0] ?? 'UNPROVEN'}`
+      ? `${EXECUTION_LABELS.NOT_SUBMITTED} · ${row.blockStage ?? (row.terminalRejected ? '阶段未记录' : '链路未记录')} · ${blockReasons[0] ?? 'UNPROVEN'}`
       : EXECUTION_LABELS[state];
     outcomes.set(brainRunId, {
       brainRunId,
@@ -525,6 +559,7 @@ export function entryConversionWindow(
         add('entryFilled', runId);
         break;
       case 'ENTRY_DECISION_BLOCKED':
+      case 'ENTRY_DATA_ERROR':
       case 'ENTRY_ORDER_BLOCKED':
       case 'ENTRY_EXECUTION_WAIT_TERMINATED': {
         const reason = reasonsOf(payload, null)[0] ?? 'UNSPECIFIED';

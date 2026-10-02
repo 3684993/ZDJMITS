@@ -1,6 +1,0 @@
-
-warning: in the working copy of 'apps/dashboard/src/views/OverviewView.vue', LF will be replaced by CRLF the next time Git touches it
-warning: in the working copy of 'apps/engine/src/services/entryCoordinator.ts', LF will be replaced by CRLF the next time Git touches it
-warning: in the working copy of 'apps/engine/src/services/frozenChoiceTelemetry.ts', LF will be replaced by CRLF the next time Git touches it
-warning: in the working copy of 'apps/engine/src/services/pipelineVerdict.ts', LF will be replaced by CRLF the next time Git touches it
-warning: in the working copy of 'docs/evidence/v396/S00/20260921T145000Z/entrypoint-review.json', LF will be replaced by CRLF the next time Git touches it

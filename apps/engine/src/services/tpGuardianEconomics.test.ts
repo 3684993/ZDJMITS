@@ -4,6 +4,7 @@ import { EventBus } from '../events/eventBus.js';
 import { MockExchangeAdapter } from '../adapters/exchange/MockExchangeAdapter.js';
 import { TpGuardian } from './tpGuardian.js';
 import { PositionSchema,TakeProfitOrderSchema } from '@zdj/contracts';
+import { tradingCostSnapshot } from '@zdj/core';
 import { exitRuntimeHarness, manualJournalHarness, coordinatedExchange } from './v396ExitTestHarness.js';
 
 const settings={takeProfit:{authorizedTargetProfitFloorDisposition:'FALL_BACK',enabled:true,targetPriceMovePercent:.45,quantityPercent:100,tpEconomicsEnabled:true,minNetProfitUsd:5,minNetProfitRoiPct:0,feeSafetyBufferPct:10,exitFeeAssumption:'TAKER',slippageBufferPct:0,entryFeeRate:.0004,makerFeeRate:.0002,takerFeeRate:.0004}} as any;
@@ -20,7 +21,6 @@ describe('explicit FALL_BACK TP economics enforcement',()=>{
   it('recalculates a crossed target to a legal profitable maker TP',async()=>{const state=new RuntimeState(settings),exchange=Object.assign(new MockExchangeAdapter(),coordinatedExchange({liveQuantity:1e6})),guardian=new TpGuardian(state,exchange,new EventBus(),exitRuntimeHarness()),pos=position('p',106);state.positions.set(pos.id,pos);state.snapshots.set(pos.symbol,{quote:{symbol:'BTCUSDT',last:106,mark:106,bid:105.9,ask:106.1,tickSize:.01,stepSize:.001,minQty:.001,minNotional:5,quoteVolumeUsd24h:1,priceChangePercent24h:0,tradeCount24h:1,ts:Date.now()}} as any);await guardian.ensure(pos);const next=state.positions.get(pos.id)!;expect(next.tpStatus).toBe('PROTECTED');expect(state.tpOrders.get(next.tpOrderId!)!.price).toBeGreaterThan(106.1);expect(next.tpEconomics!.expectedNetProfit).toBeGreaterThanOrEqual(next.tpEconomics!.requiredNetProfit);});
   it('recomputes the cost floor when quantity changes',()=>{const state=new RuntimeState(settings),guardian=new TpGuardian(state,Object.assign(new MockExchangeAdapter(),coordinatedExchange({liveQuantity:1e6})),new EventBus(),exitRuntimeHarness()),one=guardian.economicsFor(position('p',100),105),two=guardian.economicsFor({...position('p',100),quantity:2},105);expect(two.requiredNetProfit).toBe(one.requiredNetProfit);expect(two.expectedNetProfit).toBeGreaterThan(one.expectedNetProfit);});
   it('deduplicates repair failures behind bounded backoff',async()=>{const state=new RuntimeState(settings),exchange=Object.assign(new MockExchangeAdapter(),coordinatedExchange({liveQuantity:1e6})),guardian=new TpGuardian(state,exchange,new EventBus(),exitRuntimeHarness()),pos=position('p',100);state.positions.set(pos.id,pos);state.snapshots.set(pos.symbol,{quote:{symbol:'BTCUSDT',last:100,mark:100,bid:99.9,ask:100.1,tickSize:.01,stepSize:.001,minQty:.001,minNotional:5,quoteVolumeUsd24h:1,priceChangePercent24h:0,tradeCount24h:1,ts:Date.now()}} as any);const place=vi.spyOn(exchange,'placeTakeProfit').mockRejectedValue(new Error('exchange unavailable'));await guardian.ensure(pos);await guardian.ensure(state.positions.get(pos.id)!);expect(place).toHaveBeenCalledTimes(1);expect(guardian.metrics().retryQueue).toBe(1);});
-  it('does not recreate a position that closes while TP submission is in flight',async()=>{const state=new RuntimeState(settings),exchange=Object.assign(new MockExchangeAdapter(),coordinatedExchange({liveQuantity:1e6})),events=new EventBus(),guardian=new TpGuardian(state,exchange,events,exitRuntimeHarness()),pos=position('closing',100),seen:any[]=[];events.on('event',event=>seen.push(event));state.positions.set(pos.id,pos);state.snapshots.set(pos.symbol,{quote:{symbol:'BTCUSDT',last:100,mark:100,bid:99.9,ask:100.1,tickSize:.01,stepSize:.001,minQty:.001,minNotional:5,quoteVolumeUsd24h:1,priceChangePercent24h:0,tradeCount24h:1,ts:Date.now()}} as any);vi.spyOn(exchange,'placeTakeProfit').mockImplementation(async order=>{state.positions.delete(pos.id);return{...order,status:'WORKING',exchangeOrderId:'remote-tp',updatedAt:Date.now()} as any;});const cancel=vi.spyOn(exchange,'cancelTakeProfit');await guardian.ensure(pos);expect(state.positions.has(pos.id)).toBe(false);expect(cancel).toHaveBeenCalledOnce();expect([...state.tpOrders.values()].some(order=>order.status==='CANCELED')).toBe(true);expect(seen.some(event=>event.type==='TP_POSITION_GONE_AFTER_SUBMIT')).toBe(true);});
 });
 
 
@@ -95,6 +95,24 @@ describe('V3.9.5 legacy position isolation',()=>{
     expect(roundTrip.tpEconomics?.targetProvenance?.profitFloorDisposition).toBe('WARN_AND_KEEP');
     expect(roundTrip.tpEconomics?.targetProvenance?.authorizedPrice).toBe(100.45);
     expect(roundTrip.tpEconomics?.economicWarning).not.toBeNull();
+  });
+  it('V3.9.7: a versioned system Entry cannot retain a low-net AI target under the legacy warning policy',async()=>{
+    const state=new RuntimeState(shadowSettings),exchange=Object.assign(new MockExchangeAdapter(),coordinatedExchange({liveQuantity:1e6})),now=Date.now();
+    const costVersion=tradingCostSnapshot(shadowSettings.takeProfit).costVersion;
+    const pos:any={...protectedLegacy('v397-cost-authority','AUTO_MANAGED',100.45),quantity:0.05,tpStatus:'MISSING' as const,tpOrderId:null,
+      economicAdmission:{version:'V3.9.5',costVersion,mode:'SHADOW',passed:false,validatedAt:now-1_000,expectedNetProfit:0,requiredNetProfit:1,reachProbability:.6,historicalHardMaxMovePercent:1.5,blockers:['EXPECTED_NET_PROFIT_BELOW_MINIMUM']},
+      profitTakePlan:{targetPrice:100.45,acceptableTargetRange:{min:100.4,max:100.6},targetHorizonMinutes:120,targetReason:'STRUCTURE_MEASURED',evidenceRefs:['15m:closed']}};
+    state.positions.set(pos.id,pos);state.snapshots.set(pos.symbol,snapshotAt(now));
+    await new TpGuardian(state,exchange,new EventBus(),exitRuntimeHarness()).ensure(pos);
+    const next=state.positions.get(pos.id)!;
+    expect(next.tpStatus).toBe('PROTECTED');
+    expect(next.profitTakePlanSource).not.toBe('AI');
+    expect(next.tpEconomics?.status).toBe('TP_OK');
+    expect(next.tpEconomics?.economicWarning).toBeNull();
+    expect(next.tpEconomics?.expectedNetProfit).toBeGreaterThanOrEqual(next.tpEconomics?.requiredNetProfit??Infinity);
+    expect(next.tpEconomics?.costVersion).toBe(costVersion);
+    expect(next.tpEconomics?.targetProvenance?.profitFloorDisposition).toBe('FALL_BACK');
+    expect(state.tpOrders.get(next.tpOrderId!)!.price).toBeGreaterThan(100.6);
   });
   const guardianMetricsUnchanged=(state:RuntimeState)=>{const active=[...state.tpOrders.values()].filter(o=>o.status==='WORKING');return active.length===state.positions.size;};
 });

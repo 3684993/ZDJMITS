@@ -1,4 +1,0 @@
-### 23-storage-coverage-after-fix : node scripts/v396-storage-coverage.mjs --check (after the leverage P0 fix)
-STORAGE_COVERAGE_CHECK_PASS gate=S08_STORAGE_COVERAGE_PASS
-
-[exit=0]

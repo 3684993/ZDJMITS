@@ -1,3 +1,0 @@
-P1-mitigation CAS READ_ONLY -> HTTP 200
-changed paths = ["settingsVersion 200 -> 201","connections.executionMode \"TESTNET_ENABLED\" -> \"READ_ONLY\""]
-authority/profile kept: configured=true rate=0.025 marginTierVersion=TESTNET_BINANCE_LEVERAGE_BRACKET_V1_SHA256_c8ac0070d479834cf…

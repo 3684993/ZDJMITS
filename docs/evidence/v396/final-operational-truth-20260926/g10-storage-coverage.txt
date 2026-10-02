@@ -1,1 +1,0 @@
-STORAGE_COVERAGE_WRITTEN docs\evidence\v396\final-convergence-20260922\J5\storage-coverage.json gate=S08_STORAGE_COVERAGE_PASS

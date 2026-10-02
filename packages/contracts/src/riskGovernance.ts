@@ -37,8 +37,12 @@ export const ExitCoordinationSettingsSchema = z.object({
   /** Small-loss exits are refused until a human enables them explicitly. */
   aiExitAllowSmallLoss: z.boolean().default(false),
   aiExitAuthorizationTtlMs: z.number().int().min(1_000).max(30_000).default(15_000),
-  /** Bounded review is opt-in: with this off the Engine makes no routine review call at all. */
-  positionReviewEnabled: z.boolean().default(false),
+  /** Bounded review is advisory only. Enabling it never grants exit/order authority. */
+  positionReviewEnabled: z.boolean().default(true),
+  /** First-fill-relative point at which the original thesis must be reconsidered. */
+  thesisReviewAfterMinutes: z.number().int().min(5).max(1_440).default(60),
+  /** Bounded decision point; this requests evidence and never means an unconditional market exit. */
+  timeStopDecisionAfterMinutes: z.number().int().min(10).max(1_440).default(90),
   normalReviewsPerPlan: z.number().int().min(0).max(6).default(2),
   exceptionReviewsPerPlan: z.number().int().min(0).max(3).default(1),
   reviewFailureBudget: z.number().int().min(1).max(6).default(2),
@@ -48,6 +52,11 @@ export const ExitCoordinationSettingsSchema = z.object({
   continuousConvergenceEnabled: z.boolean().default(true),
   convergenceIntervalMs: z.number().int().min(30_000).max(3_600_000).default(120_000),
   convergenceBatchLimit: z.number().int().min(1).max(20).default(8),
+}).superRefine((value,ctx)=>{
+  if(value.timeStopDecisionAfterMinutes<=value.thesisReviewAfterMinutes)ctx.addIssue({
+    code:z.ZodIssueCode.custom,path:['timeStopDecisionAfterMinutes'],
+    message:'timeStopDecisionAfterMinutes must be greater than thesisReviewAfterMinutes',
+  });
 }).default({});
 export type ExitCoordinationSettings = z.infer<typeof ExitCoordinationSettingsSchema>;
 

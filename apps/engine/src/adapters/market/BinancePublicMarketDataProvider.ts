@@ -11,16 +11,19 @@ import { buildTechnicalCard, clamp, CANDLE_PERIOD_MS, closedCandleGap } from "@z
 import type { CandleContinuity } from "@zdj/core";
 import type { MarketDataProvider } from "../../types.js";
 import { BinanceTransport } from "../binance/BinanceTransport.js";
-import { BinanceMarketStream } from "./BinanceMarketStream.js";
+import { BinanceMarketStream, LIVE_CANDLE_LIMIT } from "./BinanceMarketStream.js";
 
 const INTERVAL: Record<Timeframe, string> = {
   "1m": "1m", "5m": "5m", "15m": "15m", "1h": "1h", "4h": "4h", "1d": "1d", "1w": "1w",
 };
 const DERIVATIVES_TTL_MS=5*60_000;
+const EXCHANGE_INFO_TTL_MS=15*60_000;
+const EXCHANGE_INFO_FAILURE_COOLDOWN_MS=60_000;
 
 export class BinancePublicMarketDataProvider implements MarketDataProvider {
   private exchangeInfo: {value:any;fetchedAt:number} | null = null;
   private exchangeInfoFlight: Promise<any> | null = null;
+  private exchangeInfoFailure: {error:unknown;retryAt:number} | null = null;
   private discoveryTicker: {value:any[];fetchedAt:number} | null = null;
   private discoveryTickerFlight: Promise<any[]> | null = null;
   private hourlyCache=new Map<string,{until:number;rows:Candle[]}>();
@@ -36,7 +39,24 @@ export class BinancePublicMarketDataProvider implements MarketDataProvider {
 
   private async hourlyCandles(symbol:string){const cached=this.hourlyCache.get(symbol),now=Date.now();if(cached&&now<cached.until)return cached.rows;try{const rows=await this.getCandles(symbol,'1h',80);this.hourlyCache.set(symbol,{rows,until:(Math.floor(now/3600000)+1)*3600000+1000});return rows;}catch{return cached?.rows??[];}}
   private async json<T>(path: string) {return this.transport.json<T>(path);}
-  private async info(){const now=Date.now();if(this.exchangeInfo&&now-this.exchangeInfo.fetchedAt<15*60_000)return this.exchangeInfo.value;if(this.exchangeInfoFlight)return this.exchangeInfoFlight;const flight=this.json<any>("/fapi/v1/exchangeInfo").then(value=>{this.exchangeInfo={value,fetchedAt:Date.now()};return value;}).finally(()=>{this.exchangeInfoFlight=null;});this.exchangeInfoFlight=flight;return flight;}
+  private async info(){
+    const now=Date.now();
+    if(this.exchangeInfo&&now-this.exchangeInfo.fetchedAt<EXCHANGE_INFO_TTL_MS)return this.exchangeInfo.value;
+    if(this.exchangeInfoFlight)return this.exchangeInfoFlight;
+    // Freeze the backoff at the failed request's completion. Repeated retention/discovery reads
+    // neither issue another request nor extend the cooldown or the successful cache's lifetime.
+    if(this.exchangeInfoFailure&&now<this.exchangeInfoFailure.retryAt)throw this.exchangeInfoFailure.error;
+    const flight=this.json<any>("/fapi/v1/exchangeInfo").then(value=>{
+      this.exchangeInfo={value,fetchedAt:Date.now()};
+      this.exchangeInfoFailure=null;
+      return value;
+    }).catch((error:unknown)=>{
+      this.exchangeInfoFailure={error,retryAt:Date.now()+EXCHANGE_INFO_FAILURE_COOLDOWN_MS};
+      throw error;
+    }).finally(()=>{this.exchangeInfoFlight=null;});
+    this.exchangeInfoFlight=flight;
+    return flight;
+  }
   private async ticker24hForDiscovery(){const now=Date.now();if(this.discoveryTicker&&now-this.discoveryTicker.fetchedAt<60_000)return this.discoveryTicker.value;if(this.discoveryTickerFlight)return this.discoveryTickerFlight;const flight=this.json<any[]>("/fapi/v1/ticker/24hr").then(value=>{this.discoveryTicker={value,fetchedAt:Date.now()};return value;}).finally(()=>{this.discoveryTickerFlight=null;});this.discoveryTickerFlight=flight;return flight;}
 
   async discoverSymbols(limit:number,prioritySymbols:string[]=[]){
@@ -52,8 +72,17 @@ export class BinancePublicMarketDataProvider implements MarketDataProvider {
   async listSymbols(limit:number,prioritySymbols:string[]=[]){return this.discoverSymbols(limit,prioritySymbols);}
   collectionCoverage(){return this.coverage.map(row=>({...row}));}
   setLiveSymbols(symbols:string[]){this.stream.start([...new Set(symbols.map(x=>x.toUpperCase()))]);void this.info().catch(()=>{});}
+  /** Zero-I/O execution filters, including when a manual REST quote has no WS snapshot yet. */
+  cachedOrderPrecisionRules(symbol:string):{stepSize:number;tickSize:number}|undefined{
+    if(!this.exchangeInfo||Date.now()-this.exchangeInfo.fetchedAt>=EXCHANGE_INFO_TTL_MS)return undefined;
+    const row=this.exchangeInfo.value.symbols?.find((entry:any)=>entry.symbol===symbol);
+    const stepSize=Number(row?.filters?.find((filter:any)=>filter.filterType==='LOT_SIZE')?.stepSize);
+    const tickSize=Number(row?.filters?.find((filter:any)=>filter.filterType==='PRICE_FILTER')?.tickSize);
+    return Number.isFinite(stepSize)&&stepSize>0&&Number.isFinite(tickSize)&&tickSize>0?{stepSize,tickSize}:undefined;
+  }
   /** Never performs I/O. Manual/dashboard reads may use this without spending REST budget. */
   cachedQuote(symbol:string):Quote|undefined{
+    if(!this.exchangeInfo||Date.now()-this.exchangeInfo.fetchedAt>=EXCHANGE_INFO_TTL_MS)return undefined;
     const q=this.stream.quote(symbol),info=this.exchangeInfo?.value,s=info?.symbols?.find((row:any)=>row.symbol===symbol);
     if(!q||!s)return undefined;
     const pf=s.filters?.find((x:any)=>x.filterType==='PRICE_FILTER'),lf=s.filters?.find((x:any)=>x.filterType==='LOT_SIZE'),nf=s.filters?.find((x:any)=>x.filterType==='MIN_NOTIONAL');
@@ -89,7 +118,9 @@ export class BinancePublicMarketDataProvider implements MarketDataProvider {
   repairCandles(symbol:string,timeframe:Timeframe):Promise<CandleContinuity>{
     if(!['1m','5m','15m'].includes(timeframe))return Promise.reject(new Error(`CANDLE_REPAIR_UNSUPPORTED_TIMEFRAME:${timeframe}`));
     const key=`${symbol}:${timeframe}`,pending=this.repairFlights.get(key);if(pending)return pending;
-    const limit=timeframe==='15m'?241:120;
+    // Continuity is checked across the whole retained stream window. A shorter
+    // request cannot reach an older hole and would repeat forever until it ages out.
+    const limit=LIVE_CANDLE_LIMIT;
     const flight=this.loadCandles(symbol,timeframe,limit).then(()=>closedCandleGap(this.stream.candleSeries(symbol,CANDLE_PERIOD_MS[timeframe]*2,timeframe)??[],timeframe)).finally(()=>this.repairFlights.delete(key));
     this.repairFlights.set(key,flight);return flight;
   }
@@ -97,7 +128,16 @@ export class BinancePublicMarketDataProvider implements MarketDataProvider {
   private async restOrderBook(symbol:string):Promise<OrderBook>{const d=await this.json<any>(`/fapi/v1/depth?symbol=${symbol}&limit=20`);return{symbol,bids:d.bids.map((x:any)=>[Number(x[0]),Number(x[1])] as [number,number]),asks:d.asks.map((x:any)=>[Number(x[0]),Number(x[1])] as [number,number]),ts:Date.now()};}
   async getOrderBook(symbol:string):Promise<OrderBook>{return this.stream.book(symbol)??this.restOrderBook(symbol);}
 
-  hydrateLiveMarket(snapshot:MarketSymbolSnapshot):MarketSymbolSnapshot{const quote=this.stream.quote(snapshot.symbol),book=this.stream.book(snapshot.symbol);if(!quote&&!book)return snapshot;const now=Date.now();return{...snapshot,recentTradedPrices:this.stream.tradedPrices.near(snapshot.symbol,quote?.bid??snapshot.quote.bid,quote?.ask??snapshot.quote.ask,snapshot.quote.tickSize),quote:quote?{...snapshot.quote,last:quote.last??snapshot.quote.last,mark:quote.mark??snapshot.quote.mark,bid:quote.bid??snapshot.quote.bid,ask:quote.ask??snapshot.quote.ask,quoteVolumeUsd24h:quote.quoteVolumeUsd24h??snapshot.quote.quoteVolumeUsd24h,priceChangePercent24h:quote.priceChangePercent24h??snapshot.quote.priceChangePercent24h,tradeCount24h:quote.tradeCount24h??snapshot.quote.tradeCount24h,ts:quote.ts??now}:snapshot.quote,orderBook:book??snapshot.orderBook};}
+  hydrateLiveMarket(snapshot:MarketSymbolSnapshot):MarketSymbolSnapshot{
+    const patch=this.stream.quote(snapshot.symbol),book=this.stream.book(snapshot.symbol);
+    // Receiving some other stream frame cannot make an old quote current. Preserve
+    // real event timestamps and never overwrite a newer REST/WS snapshot with old cache.
+    const quote=patch&&Number.isFinite(patch.ts)&&Number(patch.ts)>=snapshot.quote.ts?patch:undefined;
+    const orderBook=book&&book.ts>=snapshot.orderBook.ts?book:snapshot.orderBook;
+    if(!quote&&orderBook===snapshot.orderBook)return snapshot;
+    return{...snapshot,recentTradedPrices:this.stream.tradedPrices.near(snapshot.symbol,quote?.bid??snapshot.quote.bid,quote?.ask??snapshot.quote.ask,snapshot.quote.tickSize),
+      quote:quote?{...snapshot.quote,last:quote.last??snapshot.quote.last,mark:quote.mark??snapshot.quote.mark,bid:quote.bid??snapshot.quote.bid,ask:quote.ask??snapshot.quote.ask,quoteVolumeUsd24h:quote.quoteVolumeUsd24h??snapshot.quote.quoteVolumeUsd24h,priceChangePercent24h:quote.priceChangePercent24h??snapshot.quote.priceChangePercent24h,tradeCount24h:quote.tradeCount24h??snapshot.quote.tradeCount24h,ts:quote.ts!}:snapshot.quote,orderBook};
+  }
   hydrateLiveTechnical(snapshot:MarketSymbolSnapshot):MarketSymbolSnapshot{const now=Date.now();for(const tf of ['1m','5m','15m'] as const){const period=tf==='1m'?60000:tf==='5m'?300000:900000,candles=this.stream.candleSeries(snapshot.symbol,period*2,tf);if(!candles)continue;const closed=candles.filter(c=>c.isClosed===true&&c.closeTime<now);if(closed.length<(tf==='15m'?240:20))continue;const sequence=closed.map(c=>`${c.openTime}:${c.closeTime}:${c.open}:${c.high}:${c.low}:${c.close}:${c.volume}`).join('|'),key=`${snapshot.symbol}:${tf}`;if(this.liveTechnicalFingerprint.get(key)===sequence)continue;this.liveTechnicalFingerprint.set(key,sequence);try{return{...snapshot,technical:{...snapshot.technical,[tf]:buildTechnicalCard(tf,candles)}};}catch(error){if(error&&typeof error==='object')Object.assign(error,{technicalTimeframe:tf,technicalSequence:sequence});throw error;}}return snapshot;}
   hydrateLive(snapshot:MarketSymbolSnapshot):MarketSymbolSnapshot{return this.hydrateLiveTechnical(this.hydrateLiveMarket(snapshot));}
   streamMetrics(){return this.stream.metrics();}stop(){this.stream.stop();}

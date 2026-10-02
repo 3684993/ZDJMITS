@@ -9,6 +9,7 @@ import {V396ExitRuntime,exitSubjectFromPosition} from './v396ExitRuntime.js';
 import {AiExitAuthorityService} from './aiExitAuthority.js';
 import {V396AiExitRunner,type AiExitPlanFacts} from './v396AiExitRunner.js';
 import {assembleExitCostFacts} from './s03ExitCostFacts.js';
+import {OrderPrecisionError} from '../adapters/binance/orderPrecision.js';
 import {ONE_WAY_CAPABILITIES} from './v396ExitTestHarness.js';
 import type {AdapterCapabilities} from './s04ExitCoordinator.js';
 
@@ -187,6 +188,29 @@ describe('J1 AI exit consumer',()=>{
     expect(x.authorityService.shadowEntries()).toHaveLength(1);
   });
 
+  it('releases only the AI exit claim proven unsent by a typed precision refusal',async()=>{
+    const x=fixture('ENFORCE');
+    x.placeManualOrder.mockRejectedValueOnce(new OrderPrecisionError('BTCUSDT','quantity','OFF_GRID'));
+    const report=await x.runner.tick();
+    expect(report.submitted).toBe(0);expect(report.blocked[0].reasons).toContain('AI_EXIT_SUBMIT_REFUSED');
+    const clientOrderId=x.placeManualOrder.mock.calls[0][0].clientOrderId;
+    expect(x.exitRuntime.task(clientOrderId)?.state).toBe('REJECTED');
+    expect(x.exitRuntime.claimFor(clientOrderId)?.status).toBe('RELEASED');
+    expect(x.exitRuntime.task(clientOrderId)?.reasons.join('|')).toContain('LOCAL_NOT_SENT:AI:');
+    expect(x.published).toContain('AI_EXIT_SUBMISSION_NOT_SENT');expect(x.published).not.toContain('AI_EXIT_SUBMIT_UNACKED_QUERY_BY_CLIENT_ID');
+    expect(x.findExitByClientOrderId).not.toHaveBeenCalled();
+    x.exitRuntime.close();
+  });
+  it.each(['message','flag'])('does not release an AI exit for an untyped precision %s error',async(kind)=>{
+    const x=fixture('ENFORCE');
+    const typed=new OrderPrecisionError('BTCUSDT','quantity','OFF_GRID');
+    x.placeManualOrder.mockRejectedValueOnce(Object.assign(new Error(typed.message),kind==='flag'?{wireAttempted:false}:{}));
+    const report=await x.runner.tick(),clientOrderId=x.placeManualOrder.mock.calls[0][0].clientOrderId;
+    expect(report.submitted).toBe(0);expect(report.blocked[0].reasons).toContain('AI_EXIT_SUBMIT_UNACKED');
+    expect(x.exitRuntime.task(clientOrderId)?.state).toBe('UNKNOWN');expect(x.exitRuntime.claimFor(clientOrderId)?.status).toBe('ACTIVE');
+    expect(x.published).not.toContain('AI_EXIT_SUBMISSION_NOT_SENT');
+    x.exitRuntime.close();
+  });
   it('a lost acknowledgement keeps the order identity and never sends a second time',async()=>{
     const x=fixture('ENFORCE');
     x.placeManualOrder.mockRejectedValueOnce(new Error('ETIMEDOUT on the wire'));
@@ -243,7 +267,7 @@ describe('J1 runtime consumer',()=>{
       expect(runtime.fixFirstFillDeadlines().fixed).toBe(0);
       expect(runtime.exitRuntime!.owner(subject)!.deadline).toBe(openedAt+minutes*60_000);
       const report=await runtime.aiExitRunner!.tick();
-      expect(report).toMatchObject({authority:'ENFORCE',considered:0,evaluated:0,submitted:0});
+      expect(report).toMatchObject({authority:'OFF',considered:0,evaluated:0,submitted:0});
       runtime.stop();
     }finally{await rm(dir,{recursive:true,force:true}).catch(()=>null);}
   },40_000);

@@ -1,7 +1,0 @@
-writeBoundary = {"environment":"TESTNET","executionMode":"READ_ONLY","lockedToTestnet":true,"testnetWrites":6,"productionWrites":0,"blockedProductionWriteAttempts":0,"lastWriteAt":1790249456650,"lastWritePath":"/fapi/v1/order"}
-persistence = {}
-readiness = {"intent":true,"ready":false,"modelSpendPermitted":false,"blockers":["EXECUTION_WRITE_LOCKED","MARGIN_TIER_NO_COVERED_CANDIDATE"],"firstBlocker":"EXECUTION_WRITE_LOCKED","profileStatus":"READY","privateFresh":true,"writeLocked":true,"executableCandidateCount":8,"mode":"EXECUTION_BLOCKED","text":"执行事实未齐：EXECUTION_WRITE_LOCKED · MARGIN_TIER_NO_COVERED_CANDIDATE；已停止调用模型，避免产生无法执行的决策"}
-profile = {"status":"READY","configured":true,"authorityStatus":"MATCHED","coverage":14,"missing":[],"rate":0.025,"derivation":"ENTRY_BOUND_TIERS","blockers":[]}
-positions = 12 protected = 12 humanManaged = 12 aiOwned = 0
-recon = {"historical":47,"activeRisk":1,"verifiedNoActive":46}
-fatal-ish health = READY equity=10820.55784522

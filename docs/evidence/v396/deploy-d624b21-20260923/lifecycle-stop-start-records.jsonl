@@ -1,6 +1,0 @@
-{"ts":1790140932804,"event":"CHILD_EXITED","launchId":"195fb08e45474558b01e3645fb61f037","hostPid":46188,"payload":{"exitCode":-1,"pid":26896,"exitedAt":1790140932802}}
-{"ts":1790140938844,"event":"HOST_STARTED","launchId":"1799570b45364ef69da10fffb95a6b59","hostPid":5308,"payload":{"workingDirectory":"D:\\MITS-WORKTREES\\v396-final-convergence-20260922","enginePath":"D:\\MITS-WORKTREES\\v396-final-convergence-20260922\\apps\\engine\\dist\\main.js"}}
-{"ts":1790140938978,"event":"CHILD_STARTED","launchId":"1799570b45364ef69da10fffb95a6b59","hostPid":5308,"payload":{"handleCaptured":true,"pid":31776}}
-{"ts":1790154894147,"event":"CHILD_EXITED","launchId":"1799570b45364ef69da10fffb95a6b59","hostPid":5308,"payload":{"exitCode":-1,"pid":31776,"exitedAt":1790154894145}}
-{"ts":1790154942429,"event":"HOST_STARTED","launchId":"20536eae751645aeb7fde2855e0e3a20","hostPid":8592,"payload":{"workingDirectory":"D:\\MITS-WORKTREES\\v396-final-convergence-20260922","enginePath":"D:\\MITS-WORKTREES\\v396-final-convergence-20260922\\apps\\engine\\dist\\main.js"}}
-{"ts":1790154942566,"event":"CHILD_STARTED","launchId":"20536eae751645aeb7fde2855e0e3a20","hostPid":8592,"payload":{"handleCaptured":true,"pid":26784}}

@@ -1,8 +1,10 @@
 import {createHistoryReadBudget, readHistoryWindows} from './historyWindow.js';
 import { createHmac } from 'node:crypto';
+import { orderDecimalParameters, type OrderPrecisionRulesReader } from '../binance/orderPrecision.js';
 import type { EntryOrder, ManualOrder, Position, TakeProfitOrder } from '@zdj/contracts';
 import type { ExchangeTradeAdapter, TradeAuditSnapshot, ExchangeTradeFill, ExchangeIncomeFact, ExchangeOrderFact } from '../../types.js';
 import { BinanceTransport } from '../binance/BinanceTransport.js';
+import { assertEntryDispatchDeadline, assertEntryDispatchGuard, entryDispatchDeadline, isEntryOrderWrite, type EntryDispatchGuard } from '../binance/entryDispatchDeadline.js';
 import { BinanceUserDataStream } from '../binance/BinanceUserDataStream.js';
 import { binanceClientOrderIdFactory } from '../../services/binanceClientOrderIdFactory.js';
 import { positionLeverageFact } from '../../services/positionRiskFacts.js';
@@ -12,13 +14,46 @@ const numberOrNull=(value:unknown)=>Number.isFinite(Number(value))&&value!=null&
 
 export class ExternalTradeAdapter implements ExchangeTradeAdapter {
   private userStream:BinanceUserDataStream|null=null;private positionMode:{hedge:boolean;checkedAt:number}|null=null;private openTimeCache=new Map<string,{openedAt:number;source:Position['entryTimeSource'];checkedAt:number}>();private leverageCache=new Map<string,number>();private leverageFlights=new Map<string,Promise<number>>();private serverTime:{offset:number;fetchedAt:number}|null=null;private exactOrderCache=new Map<string,{expiresAt:number;row:any}>();private exactOrderFlights=new Map<string,Promise<any>>();private writeStats={testnetWrites:0,productionWrites:0,blockedProductionWriteAttempts:0,lastWriteAt:null as number|null,lastWritePath:null as string|null};
-  constructor(private transport:BinanceTransport,private credentials:Credentials,private recvWindowMs=5000){}
+  constructor(private transport:BinanceTransport,private credentials:Credentials,private recvWindowMs=5000,private orderPrecisionRules?:OrderPrecisionRulesReader){}
   hasCredentials(){return Boolean(this.credentials);}
   setCredentials(credentials:Credentials){this.stopUserData();this.credentials=credentials;this.enrichmentGeneration++;this.enrichmentFlight=null;this.enrichment={income:null,incomeAsOf:null,prices:new Map(),pricesAsOf:null,lastAttempt:0,lastError:null};this.positionMode=null;this.openTimeCache.clear();this.leverageCache.clear();this.leverageFlights.clear();this.exactOrderCache.clear();this.exactOrderFlights.clear();this.serverTime=null;}
   private creds(){if(!this.credentials)throw new Error('TRADING_BLOCKED: credentials unavailable from SecretStore');if(this.transport.environment()!=='TESTNET'){this.writeStats.blockedProductionWriteAttempts++;throw new Error('TESTNET_ONLY_WRITE_LOCK: production private writes disabled');}return this.credentials;}
   private serverTimeFlight:Promise<void>|null=null;
-  private async refreshServerTime(){if(this.serverTime&&Date.now()-this.serverTime.fetchedAt<=30_000)return;if(!this.serverTimeFlight)this.serverTimeFlight=this.transport.json<{serverTime:number}>('/fapi/v1/time').then(server=>{if(!Number.isFinite(server.serverTime))throw new Error('BINANCE_CLOCK_INVALID');this.serverTime={offset:server.serverTime-Date.now(),fetchedAt:Date.now()};}).finally(()=>{this.serverTimeFlight=null;});await this.serverTimeFlight;}
-  private async signed<T>(method:string,path:string,params:Record<string,string|number|boolean>={},purpose?:string,source?:string){const write=method!=='GET';if(write){try{this.transport.assertTestnetExchangeWrite();this.writeStats.testnetWrites++;this.writeStats.lastWriteAt=Date.now();this.writeStats.lastWritePath=path;}catch(error){this.writeStats.blockedProductionWriteAttempts++;throw error;}}const c=this.creds();await this.refreshServerTime();const timestamp=Date.now()+(this.serverTime?.offset??0),q=new URLSearchParams();for(const[k,v]of Object.entries({...params,recvWindow:Math.min(60_000,Math.max(this.recvWindowMs,60_000)),timestamp}))q.set(k,typeof v==='number'&&BINANCE_DECIMAL_PARAMS.has(k)?binanceDecimal(v):String(v));const payload=q.toString();q.set('signature',createHmac('sha256',c.apiSecret).update(payload).digest('hex'));return this.transport.json<T>(`${path}?${q}`,{method,purpose,source,headers:{'X-MBX-APIKEY':c.apiKey}});}
+  // Public-clock failures survive credential changes; changing an API key cannot repair this read.
+  private serverTimeFailure:{error:unknown;retryDelayMs:number;retryAt:number}|null=null;
+  private async refreshServerTime(){
+    if(this.serverTime&&Date.now()-this.serverTime.fetchedAt<=30_000)return;
+    if(this.serverTimeFlight)return this.serverTimeFlight;
+    // A failed clock is shared by every private caller. Keep its original reason
+    // while probing at 5/10/20/30-second intervals, never signing with a stale offset.
+    if(this.serverTimeFailure&&Date.now()<this.serverTimeFailure.retryAt)throw this.serverTimeFailure.error;
+    this.serverTimeFlight=this.transport.json<{serverTime:number}>('/fapi/v1/time').then(server=>{
+      if(!Number.isFinite(server.serverTime))throw new Error('BINANCE_CLOCK_INVALID');
+      this.serverTime={offset:server.serverTime-Date.now(),fetchedAt:Date.now()};
+      this.serverTimeFailure=null;
+    }).catch(error=>{
+      const retryDelayMs=Math.min(30_000,(this.serverTimeFailure?.retryDelayMs??2500)*2);
+      this.serverTime=null;
+      this.serverTimeFailure={error,retryDelayMs,retryAt:Date.now()+retryDelayMs};
+      throw error;
+    }).finally(()=>{this.serverTimeFlight=null;});
+    await this.serverTimeFlight;
+  }
+  private async signed<T>(method:string,path:string,params:Record<string,string|number|boolean>={},purpose?:string,source?:string,entryExecutionExpiresAt?:number,entryDispatchGuard?:EntryDispatchGuard){
+    const entryWrite=isEntryOrderWrite(method,purpose);
+    if(entryWrite){assertEntryDispatchDeadline(entryExecutionExpiresAt);assertEntryDispatchGuard(entryDispatchGuard);}
+    const write=method!=='GET';
+    if(path==='/fapi/v1/order'&&(method==='POST'||method==='PUT'))params=orderDecimalParameters(params,this.orderPrecisionRules);
+    if(write){try{this.transport.assertTestnetExchangeWrite();this.writeStats.testnetWrites++;this.writeStats.lastWriteAt=Date.now();this.writeStats.lastWritePath=path;}catch(error){this.writeStats.blockedProductionWriteAttempts++;throw error;}}
+    const c=this.creds();await this.refreshServerTime();
+    if(entryWrite){assertEntryDispatchDeadline(entryExecutionExpiresAt);assertEntryDispatchGuard(entryDispatchGuard);}
+    const timestamp=Date.now()+(this.serverTime?.offset??0),q=new URLSearchParams();
+    for(const[k,v]of Object.entries({...params,recvWindow:Math.min(60_000,Math.max(this.recvWindowMs,60_000)),timestamp}))q.set(k,String(v));
+    const payload=q.toString();q.set('signature',createHmac('sha256',c.apiSecret).update(payload).digest('hex'));
+    return this.transport.json<T>(`${path}?${q}`,{method,purpose,source,
+      ...(entryWrite&&entryExecutionExpiresAt!==undefined?{entryExecutionExpiresAt}:{}),
+      ...(entryWrite&&entryDispatchGuard?{entryDispatchGuard}:{}),headers:{'X-MBX-APIKEY':c.apiKey}});
+  }
   /** Shared rolling allowance for exhaustive history reads; exhaustion is fail-closed, never partial. */
   private readonly historyReadCap=24;
   private readonly historyBudget=createHistoryReadBudget({capacity:45,intervalMs:60_000});
@@ -85,7 +120,7 @@ export class ExternalTradeAdapter implements ExchangeTradeAdapter {
       throw error;
     }
   }
-  async placeEntry(order:EntryOrder){const hedge=await this.hedgeMode(),clientOrderId=binanceClientOrderIdFactory.assert(order.clientOrderId??binanceClientOrderIdFactory.create('ML',order.id)),params:Record<string,string|number|boolean>={symbol:order.symbol,side:order.side==='LONG'?'BUY':'SELL',type:'LIMIT',timeInForce:'GTX',quantity:order.quantity,price:order.price,newClientOrderId:clientOrderId};if(hedge)params.positionSide=order.side;const result=await this.signed<any>('POST','/fapi/v1/order',params,'NEW_ENTRY');return{...order,clientOrderId,exchangeOrderId:String(result.orderId),status:'WORKING' as const,updatedAt:Date.now()};}
+  async placeEntry(order:EntryOrder,beforeDispatch?:EntryDispatchGuard){const entryExecutionExpiresAt=entryDispatchDeadline(order);assertEntryDispatchDeadline(entryExecutionExpiresAt);assertEntryDispatchGuard(beforeDispatch);const hedge=await this.hedgeMode();assertEntryDispatchGuard(beforeDispatch);const clientOrderId=binanceClientOrderIdFactory.assert(order.clientOrderId??binanceClientOrderIdFactory.create('ML',order.id)),params:Record<string,string|number|boolean>={symbol:order.symbol,side:order.side==='LONG'?'BUY':'SELL',type:'LIMIT',timeInForce:'GTX',quantity:order.quantity,price:order.price,newClientOrderId:clientOrderId};if(hedge)params.positionSide=order.side;const result=await this.signed<any>('POST','/fapi/v1/order',params,'NEW_ENTRY',undefined,entryExecutionExpiresAt,beforeDispatch);return{...order,clientOrderId,exchangeOrderId:String(result.orderId),status:'WORKING' as const,updatedAt:Date.now()};}
   async findEntryByClientOrderId(order:EntryOrder){try{const clientOrderId=String(order.clientOrderId??'').trim(),exchangeOrderId=String(order.exchangeOrderId??'').trim();if(!clientOrderId&&!exchangeOrderId)return null;const query=clientOrderId?{symbol:order.symbol,origClientOrderId:binanceClientOrderIdFactory.assert(clientOrderId)}:{symbol:order.symbol,orderId:exchangeOrderId};const row=await this.exactOrderFact(query);const executed=Number(row.executedQty??0),status=executed>=order.quantity-1e-10?'FILLED':executed>0&&['NEW','PARTIALLY_FILLED'].includes(String(row.status))?'PARTIALLY_FILLED':String(row.status)==='NEW'?'WORKING':String(row.status);let verifiedExchangeFills:any[]=[];if(executed>0){try{const rows=await this.signed<any[]>('GET','/fapi/v1/userTrades',{symbol:order.symbol,orderId:String(row.orderId),limit:1000});verifiedExchangeFills=rows.filter(fill=>String(fill.orderId)===String(row.orderId)).map(fill=>({symbol:String(fill.symbol??order.symbol),side:String(fill.side)==='BUY'?'BUY':'SELL',positionSide:['LONG','SHORT'].includes(String(fill.positionSide))?String(fill.positionSide):'BOTH',orderId:String(fill.orderId),clientOrderId:String(fill.clientOrderId??row.clientOrderId??clientOrderId),tradeId:String(fill.id??fill.tradeId),executionTime:Number(fill.time??row.updateTime??Date.now()),qty:Number(fill.qty??0),price:Number(fill.price??0),realizedPnl:Number(fill.realizedPnl??0),commission:Number(fill.commission??0),commissionAsset:String(fill.commissionAsset??''),maker:Boolean(fill.maker)})).filter(fill=>fill.qty>0&&fill.price>0);}catch{/* Exact order truth remains authoritative; fill detail is retried by the audit/sync path. */}}return{...order,clientOrderId:String(row.clientOrderId??order.clientOrderId??''),exchangeOrderId:String(row.orderId),quantity:Number(row.origQty??order.quantity),price:Number(row.price??order.price),filledQuantity:executed,status,statusSource:'BINANCE_EXACT_ORDER',updatedAt:Number(row.updateTime??Date.now()),orderType:String(row.type??'LIMIT'),timeInForce:String(row.timeInForce??'UNKNOWN'),maker:String(row.timeInForce??'')==='GTX',factSource:'BINANCE_EXACT_ORDER',verifiedAt:Date.now(),verifiedExchangeFills} as EntryOrder;}catch(error){if(String(error).includes('-2013')||String(error).includes('-2011'))return null;throw error;}}
   async cancelEntry(order:EntryOrder){
     try{await this.signed('DELETE','/fapi/v1/order',{symbol:order.symbol,origClientOrderId:order.clientOrderId??order.id});this.invalidateOrderFact(order.symbol,order.exchangeOrderId,order.clientOrderId);}
@@ -93,9 +128,10 @@ export class ExternalTradeAdapter implements ExchangeTradeAdapter {
     const verified=await this.findEntryByClientOrderId(order);
     return verified??{...order,status:'UNKNOWN' as const,updatedAt:Date.now()};
   }
-  async replaceEntry(order:EntryOrder,price:number){
+  async replaceEntry(order:EntryOrder,price:number,beforeDispatch?:EntryDispatchGuard){
+    const entryExecutionExpiresAt=entryDispatchDeadline(order);assertEntryDispatchDeadline(entryExecutionExpiresAt);assertEntryDispatchGuard(beforeDispatch);
     // Native amend preserves exchange identity and cumulative fills; cancel/recreate could duplicate filled quantity.
-    await this.signed('PUT','/fapi/v1/order',{symbol:order.symbol,origClientOrderId:order.clientOrderId??order.id,side:order.side==='LONG'?'BUY':'SELL',quantity:order.quantity,price},'NEW_ENTRY');this.invalidateOrderFact(order.symbol,order.exchangeOrderId,order.clientOrderId);
+    await this.signed('PUT','/fapi/v1/order',{symbol:order.symbol,origClientOrderId:order.clientOrderId??order.id,side:order.side==='LONG'?'BUY':'SELL',quantity:order.quantity,price},'NEW_ENTRY',undefined,entryExecutionExpiresAt,beforeDispatch);this.invalidateOrderFact(order.symbol,order.exchangeOrderId,order.clientOrderId);
     const verified=await this.findEntryByClientOrderId(order);
     if(!verified)return{...order,status:'UNKNOWN' as const,updatedAt:Date.now()};
     return{...verified,repriceCount:order.repriceCount+1,absoluteExpiresAt:order.absoluteExpiresAt,createdAt:order.createdAt};
@@ -312,13 +348,4 @@ export class ExternalTradeAdapter implements ExchangeTradeAdapter {
   startUserData(onEvent:(event:any)=>void){if(!this.credentials||this.transport.environment()!=='TESTNET')return null;this.userStream=new BinanceUserDataStream(this.transport,this.credentials.apiKey,onEvent);this.userStream.start();return this.userStream;}
   stopUserData(){this.userStream?.stop();this.userStream=null;}
   userDataMetrics(){return this.userStream?.metrics()??{state:'GATED'};}
-}
-const BINANCE_DECIMAL_PARAMS=new Set(['quantity','price','stopPrice','activationPrice','callbackRate']);
-function binanceDecimal(value:number){
-  if(!Number.isFinite(value))throw new Error('BINANCE_ORDER_DECIMAL_NON_FINITE');
-  const normalized=Number(value.toPrecision(15)).toString();
-  if(!/[eE]/.test(normalized))return normalized;
-  const negative=normalized.startsWith('-'),unsigned=negative?normalized.slice(1):normalized,[mantissa,exponentText]=unsigned.toLowerCase().split('e'),exponent=Number(exponentText),[whole,fraction='']=mantissa!.split('.'),digits=`${whole}${fraction}`,decimalIndex=whole!.length+exponent;
-  const plain=decimalIndex<=0?`0.${'0'.repeat(-decimalIndex)}${digits}`:decimalIndex>=digits.length?`${digits}${'0'.repeat(decimalIndex-digits.length)}`:`${digits.slice(0,decimalIndex)}.${digits.slice(decimalIndex)}`;
-  return negative?`-${plain}`:plain;
 }

@@ -34,6 +34,10 @@ describe('P4 portfolio risk is an observation, not a permission',()=>{
     expect(observation.enforced).toBe(false);
     expect(observation.basis).toBe('TESTNET_FUNDS_ONLY_OBSERVATION');
     expect(observation.positionCount.enforced).toBe(false);
+    expect(Object.values(observation.gateDecisions)).toEqual(expect.arrayContaining([
+      expect.objectContaining({category:'STRATEGY_OBSERVATION',disposition:'OBSERVE',canVeto:false,mutatesQuantity:false}),
+    ]));
+    expect(Object.values(observation.gateDecisions).every(row=>row.disposition==='OBSERVE'&&!row.mutatesQuantity)).toBe(true);
     // Slot overrun is stated, and it is not a veto.
     const crowded=portfolioRiskObservation(stateWith({positions:new Map(Array.from({length:80},(_,index)=>[`p${index}`,{symbol:`SYM${index}USDT`,side:'LONG',quantity:1,entryPrice:10,markPrice:10,leverage:10,unrealizedPnl:0,unrealizedPnlPercent:0,openedAt:1,notionalUsd:10} as any])),account:{status:'READY',equityUsd:10_000,assets:[],asOf:Date.now()}}),Date.now());
     expect(crowded.positionCount.used).toBe(80);
@@ -72,10 +76,14 @@ describe('P4 portfolio risk is an observation, not a permission',()=>{
   it('insufficient margin, stale private facts and missing filters still refuse',()=>{
     const now=Date.now();
     const base={account:{status:'READY',equityUsd:10_000,assets:[{asset:'USDT',availableBalance:10,asOf:now}],asOf:now},entryReservations:new Map(),lifecycles:new Map(),positions:new Map(),riskAdmission:null};
-    expect(evaluateEntryExecutionPermit({state:stateWith(base),symbol:'BTCUSDT',side:'LONG',quoteAsset:'USDT',requiredMarginUsd:20,
-      authorization:{valid:true,expiresAt:now+60_000,identity:'i'},filtersComplete:true,durableStorageReady:true,now}).firstCause).toBe('INSUFFICIENT_AVAILABLE_MARGIN');
-    expect(evaluateEntryExecutionPermit({state:stateWith({...base,account:{...base.account,status:'STALE'}}),symbol:'BTCUSDT',side:'LONG',quoteAsset:'USDT',requiredMarginUsd:5,
-      authorization:{valid:true,expiresAt:now+60_000,identity:'i'},filtersComplete:true,durableStorageReady:true,now}).firstCause).toBe('PRIVATE_ACCOUNT_NOT_FRESH');
+    const insufficient=evaluateEntryExecutionPermit({state:stateWith(base),symbol:'BTCUSDT',side:'LONG',quoteAsset:'USDT',requiredMarginUsd:20,
+      authorization:{valid:true,expiresAt:now+60_000,identity:'i'},filtersComplete:true,durableStorageReady:true,now});
+    expect(insufficient.firstCause).toBe('INSUFFICIENT_AVAILABLE_MARGIN');
+    expect(insufficient.firstCauseDecision).toMatchObject({category:'CAPITAL_AUTHORITY',disposition:'ENFORCE',canVeto:true,mutatesQuantity:false});
+    const stale=evaluateEntryExecutionPermit({state:stateWith({...base,account:{...base.account,status:'STALE'}}),symbol:'BTCUSDT',side:'LONG',quoteAsset:'USDT',requiredMarginUsd:5,
+      authorization:{valid:true,expiresAt:now+60_000,identity:'i'},filtersComplete:true,durableStorageReady:true,now});
+    expect(stale.firstCause).toBe('PRIVATE_ACCOUNT_NOT_FRESH');
+    expect(stale.firstCauseDecision).toMatchObject({category:'CORRECTNESS',mutatesQuantity:false});
     expect(evaluateEntryExecutionPermit({state:stateWith(base),symbol:'BTCUSDT',side:'LONG',quoteAsset:'USDT',requiredMarginUsd:5,
       authorization:{valid:true,expiresAt:now+60_000,identity:'i'},filtersComplete:false,durableStorageReady:true,now}).firstCause).toBe('EXCHANGE_FILTERS_UNPROVEN');
     expect(evaluateEntryExecutionPermit({state:stateWith(base),symbol:'BTCUSDT',side:'LONG',quoteAsset:'USDT',requiredMarginUsd:5,
@@ -137,17 +145,17 @@ describe('P4 analysis lease is an earmark, not the whole balance',()=>{
 
   it('a routed plan margin wins over the generic per-position cap',()=>{
     const state=new RuntimeState(fundsOnly);
-    state.runtimeControl.capital.routedCandidates=[any({symbol:'ETHUSDT',longPlanFacts:{marginUsd:42.5},shortPlanFacts:{marginUsd:42.5}})];
+    state.runtimeControl.capital.routedCandidates=[any({symbol:'ETHUSDT',longPlanFacts:{marginUsd:142.5},shortPlanFacts:{marginUsd:142.5}})];
     const budget=entryCandidateMarginBudgetUsd(state,'ETHUSDT',{leverage:10,minimumLegalNotionalUsd:5});
     expect(budget.source).toBe('ROUTED_PLAN_MARGIN');
-    expect(budget.budgetUsd).toBeGreaterThanOrEqual(42.5);
+    expect(budget.budgetUsd).toBeGreaterThanOrEqual(142.5);
   });
 
-  it('the floor is the exchange minimum, so a tiny budget never earmarks zero',()=>{
+  it('the fallback is the business floor, never the exchange minimum',()=>{
     const state=new RuntimeState({...fundsOnly,portfolioIntelligence:{...fundsOnly.portfolioIntelligence,maxMarginPerPositionUsd:0},portfolio:{...fundsOnly.portfolio,entryMarginUsd:0}});
     const budget=entryCandidateMarginBudgetUsd(state,'XUSDT',{leverage:10,minimumLegalNotionalUsd:50});
-    expect(budget.source).toBe('EXCHANGE_MINIMUM_MARGIN');
-    expect(budget.budgetUsd).toBeCloseTo(5,10);
+    expect(budget.source).toBe('BUSINESS_MINIMUM_MARGIN');
+    expect(budget.budgetUsd).toBeCloseTo(100,10);
   });
 
   it('one owner, one debit: the same intent cannot lease twice against itself',()=>{

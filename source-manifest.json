@@ -1,0 +1,4532 @@
+{
+  "schemaVersion": 1,
+  "kind": "SOURCE_SNAPSHOT_NOT_MAIN_MERGE_CANDIDATE",
+  "sourceCommit": "2a6b8647d3c8359d3235ac40a0831c18664bdbac",
+  "originalBranch": "release/v3.9.7",
+  "sourceExtraction": "git cat-file from tracked blobs only; no working-tree/untracked content",
+  "files": [
+    {
+      "path": ".gitignore",
+      "mode": "100644",
+      "gitBlob": "09700a5b7b1f51edfce9a970880a46f7af28a55e",
+      "sha256": "2fcd9c6639bab28a21ad94cd6e03302acc9ee92ba621fb737c0d81e46d2fc18b",
+      "bytes": 5972
+    },
+    {
+      "path": "AGENTS.md",
+      "mode": "100644",
+      "gitBlob": "210caa051ffdea6318511e35816f7eae1c197751",
+      "sha256": "014994cb913dee4a3a5ac599f74e328c72128f1ad1e7c3061b826e15acd73ec3",
+      "bytes": 964
+    },
+    {
+      "path": "apps/dashboard/index.html",
+      "mode": "100644",
+      "gitBlob": "6ab4fabf35762f0db4e74e2f05f3b85dcb45a9b5",
+      "sha256": "5d715d939f4ebbf4de638cbaab1d4efbff31b7be992cc288a638f4a72fd78e4d",
+      "bytes": 324
+    },
+    {
+      "path": "apps/dashboard/package.json",
+      "mode": "100644",
+      "gitBlob": "1d0b1f1e5e6ce80a5215160883dd45a362144153",
+      "sha256": "01b4f606f532b967fd0e7f5db4842fd5792df8c522fd51f6aa5ece860b783185",
+      "bytes": 631
+    },
+    {
+      "path": "apps/dashboard/src/App.vue",
+      "mode": "100644",
+      "gitBlob": "43587d5bcce21c5cb0902fa97813a0e39e0c4542",
+      "sha256": "8a209fad57a7ca95a48fdab1eda30ea4bf299aee0acf46136c91cb1b1c5d123d",
+      "bytes": 34
+    },
+    {
+      "path": "apps/dashboard/src/api/client.ts",
+      "mode": "100644",
+      "gitBlob": "5fa36dfb958ceda6941c77f8bbe91c19bf68cfab",
+      "sha256": "df83c11648e8532f667d4f2d315ddec61b344414969e2e5debc0d025a06a7fea",
+      "bytes": 5308
+    },
+    {
+      "path": "apps/dashboard/src/api/realtime.ts",
+      "mode": "100644",
+      "gitBlob": "94f8255c6557aa1d981bc77d2f93076c4c268f3c",
+      "sha256": "4b0bda1a0b71817fed6f6f218c2450142ff4f608547aaf3f0823a108443e3da6",
+      "bytes": 633
+    },
+    {
+      "path": "apps/dashboard/src/blacklistInput.test.ts",
+      "mode": "100644",
+      "gitBlob": "d65b1b05cb25f15fd65e2e5f29816d9c8bbeebfa",
+      "sha256": "43ba0ba405218de4a841fa61c1ffc1b91c5789920830282ad1feab8a76ee8055",
+      "bytes": 704
+    },
+    {
+      "path": "apps/dashboard/src/blacklistInput.ts",
+      "mode": "100644",
+      "gitBlob": "8b89d66a41102c7eb4c93ca3fee374bece828379",
+      "sha256": "e72bc988d40a2ddfeddbd0d6bc232c58683a5681d7ffe54da7d78ceb314b89e4",
+      "bytes": 718
+    },
+    {
+      "path": "apps/dashboard/src/candidateBlacklistDto.test.ts",
+      "mode": "100644",
+      "gitBlob": "f5b57c62dbdc283e3a5ea2b36c2e8eb7507588fb",
+      "sha256": "f8f1a8ece8c52201e5fd4df190a2801c5ba87e4ddea9beab2d89ce72e19a7f75",
+      "bytes": 788
+    },
+    {
+      "path": "apps/dashboard/src/candidateBlacklistDto.ts",
+      "mode": "100644",
+      "gitBlob": "044885713c0d63a1f3db6106e22164b9421f44f6",
+      "sha256": "05e6540f6fa21552ef03fca60bef1518ff70e6b6663cb6db47485c267dd4729e",
+      "bytes": 377
+    },
+    {
+      "path": "apps/dashboard/src/components/EmptyState.vue",
+      "mode": "100644",
+      "gitBlob": "245699b5a226e17d70125f81735d151ffcacc38c",
+      "sha256": "dceb40be6873a19b09a529172c5c1a6b1d0b2f7f8217ea7dd4fb290cab7b6417",
+      "bytes": 201
+    },
+    {
+      "path": "apps/dashboard/src/components/EquityChart.vue",
+      "mode": "100644",
+      "gitBlob": "7b2aec0051407fee925718e309daa99b71d9e42c",
+      "sha256": "0fa26896c2eff4e692b6354dc46fdef6f61326cfbe2d5d875fac3f38e926a76f",
+      "bytes": 1758
+    },
+    {
+      "path": "apps/dashboard/src/components/KpiCard.vue",
+      "mode": "100644",
+      "gitBlob": "5dd35b141295785d2c450006393488745fdb26a6",
+      "sha256": "ffacf2631c0d863f52fe95f12b90586af927e1f8f5eced98c0ae77e7c4516fb8",
+      "bytes": 308
+    },
+    {
+      "path": "apps/dashboard/src/components/Panel.vue",
+      "mode": "100644",
+      "gitBlob": "daa32d562baea8f7a889748e28008648dab0c2ea",
+      "sha256": "f8126b1a4a4ce7d00d16c6116281e40e230c9d59aca7d9567c96b0c58301ee3f",
+      "bytes": 382
+    },
+    {
+      "path": "apps/dashboard/src/components/PositionConsole.vue",
+      "mode": "100644",
+      "gitBlob": "f91b5521ab6de8304888cfd1e140816e2f2c6a0d",
+      "sha256": "63c72f000d35c543e030925af30c24aa1406e5fb66645799aa58e4843bb59fb0",
+      "bytes": 9376
+    },
+    {
+      "path": "apps/dashboard/src/components/ScoreBar.vue",
+      "mode": "100644",
+      "gitBlob": "ab6fade2f7ef08f58b8dc8f50ff670ca5b5409bc",
+      "sha256": "fc9fa8701712764f6aaa3bd01062ef6c84e3ef4953e7824b4366d470a7b72b39",
+      "bytes": 308
+    },
+    {
+      "path": "apps/dashboard/src/components/StatusBadge.vue",
+      "mode": "100644",
+      "gitBlob": "f55fd46bd402e0bd1b0a872e9eee1071368a7837",
+      "sha256": "a01563b994c7893fab3818e9bfc316ae1ad5d8d183d0a5e0538dc72d4feaf766",
+      "bytes": 652
+    },
+    {
+      "path": "apps/dashboard/src/financial-semantics.css",
+      "mode": "100644",
+      "gitBlob": "f0eb4928dda26ed3ab56540de226076f53743728",
+      "sha256": "004d4a0fc54262c0db7ba51e257e8324748d4ebc0b5accd415bd21653b600c6c",
+      "bytes": 463
+    },
+    {
+      "path": "apps/dashboard/src/format.ts",
+      "mode": "100644",
+      "gitBlob": "827f50407c675f53b9c80f4fab80aaee78f68447",
+      "sha256": "7c5b50637e36580aeb252d5c6fe89394cc75c4d1c3379d3a3a8dfc062293fd47",
+      "bytes": 541
+    },
+    {
+      "path": "apps/dashboard/src/layouts/AppShell.vue",
+      "mode": "100644",
+      "gitBlob": "1fc4797ca10f1adc3fdae269956d0b214eb8757e",
+      "sha256": "8418468b1762ab7c5a03770f73a9e5df2255ad03e0a0f850a0a0f1b5594c29cf",
+      "bytes": 5265
+    },
+    {
+      "path": "apps/dashboard/src/main.ts",
+      "mode": "100644",
+      "gitBlob": "f3f7e1155669d5943edee03bfe5abc89c56c5803",
+      "sha256": "f0a2b693e0782afd2dec00db3fa0c43d2998cab0d6f79b00adffd5d947da11cb",
+      "bytes": 516
+    },
+    {
+      "path": "apps/dashboard/src/navigation.test.ts",
+      "mode": "100644",
+      "gitBlob": "8dce7778b8d923994649101530eb92bdbcfd4a20",
+      "sha256": "96b40be82eea6ac6217af84df930e51edeaed3d394c87af0047db9bff1d98d23",
+      "bytes": 781
+    },
+    {
+      "path": "apps/dashboard/src/navigation.ts",
+      "mode": "100644",
+      "gitBlob": "750911f18eadf79c7cdf18453a42d1c2e4a881f9",
+      "sha256": "83ddd5f77824bf1ab2020bfb9cad4b6bff2ef27bde54a203e5baeaa6af7d08e1",
+      "bytes": 531
+    },
+    {
+      "path": "apps/dashboard/src/position-console.css",
+      "mode": "100644",
+      "gitBlob": "92e8773c43edb49e170aba245e2400779412d3cd",
+      "sha256": "84b9d31c36e96aac5a6074c4f79920428f1b8380cf2a9c5d3bcce6e02f9b8051",
+      "bytes": 2004
+    },
+    {
+      "path": "apps/dashboard/src/positionModel.test.ts",
+      "mode": "100644",
+      "gitBlob": "277ad15d165814cc91d3b71b2d8f8df73718ae11",
+      "sha256": "c23b7f762fe7b7a7fc2741b3214e8d70a55d2c256ad179091c51373e44b630a9",
+      "bytes": 1379
+    },
+    {
+      "path": "apps/dashboard/src/positionModel.ts",
+      "mode": "100644",
+      "gitBlob": "65aec2f05d2e0a6c99d48490bc9013d93a981662",
+      "sha256": "b6b2bd438a569f64a60c648d3929e42911ff27e10823caf71113f7cb6f2b053f",
+      "bytes": 570
+    },
+    {
+      "path": "apps/dashboard/src/requestId.test.ts",
+      "mode": "100644",
+      "gitBlob": "ad5514ea8ea1935a7f443bbe4851a3f047879a07",
+      "sha256": "3f214f25bca8a765c6ebb25726725e3cc9fe5b4b805480a1f3d7038105554eb7",
+      "bytes": 956
+    },
+    {
+      "path": "apps/dashboard/src/requestId.ts",
+      "mode": "100644",
+      "gitBlob": "71b6a111144437f2be5eece46dc95bcb7ecd2736",
+      "sha256": "b81f3cc9606604fb5f6c74b76d11a3fed5b911bc5c7b1cff71df3ef86978e4ea",
+      "bytes": 1157
+    },
+    {
+      "path": "apps/dashboard/src/router.ts",
+      "mode": "100644",
+      "gitBlob": "e92c7be4c803f80f9d5131981eaabf28dd67cb7f",
+      "sha256": "f5a87fbb5484196ce06fc11fc95615c2e311904055e37c0a288d4c66c7c3c0ca",
+      "bytes": 1154
+    },
+    {
+      "path": "apps/dashboard/src/settings-closeout.css",
+      "mode": "100644",
+      "gitBlob": "ad0fb11ddc66568e89e5132d5282e4d560a0b36e",
+      "sha256": "d34bf30cfa556749722bc53e9de12abe13c54045858f100ea3dcc102a4da5f73",
+      "bytes": 633
+    },
+    {
+      "path": "apps/dashboard/src/stores/system.test.ts",
+      "mode": "100644",
+      "gitBlob": "9f2af835f17792627a3145da306dc9f6431c9303",
+      "sha256": "ccc4976fc212c1da4ce398064d9841abca76ad1327c57b5ed5dadef3e4ac404d",
+      "bytes": 245
+    },
+    {
+      "path": "apps/dashboard/src/stores/system.ts",
+      "mode": "100644",
+      "gitBlob": "937c014b831c3488a0910c59b9feeb0566ca9e38",
+      "sha256": "1d961b8a0465d3b0275529dc8675e2ad0539c4e954ce74e70d61bbfd9806bcdf",
+      "bytes": 5063
+    },
+    {
+      "path": "apps/dashboard/src/styles.css",
+      "mode": "100644",
+      "gitBlob": "8cfe17ee6058ab39543abe6312152a4440a30a5a",
+      "sha256": "b49d8a04f73e6609cc3c351874f90d83aa605298cc628ab0ae9afe02315ebfb2",
+      "bytes": 26789
+    },
+    {
+      "path": "apps/dashboard/src/theme-tokens.css",
+      "mode": "100644",
+      "gitBlob": "1d09ef9cb4a99c53c2c3e403962ca8bc7efa9f3b",
+      "sha256": "0d88b6cad6a55ba94d389337036b0ca2658a1c785a854c77de4424a9b6eb63f1",
+      "bytes": 6122
+    },
+    {
+      "path": "apps/dashboard/src/views/BrainView.vue",
+      "mode": "100644",
+      "gitBlob": "216710ae9ded5a80e9a0925d894e9d00e84c0a2d",
+      "sha256": "8a8916add1bb37595b4051a4eb31a938fa49c77c532d23c83485fe7a18e80c26",
+      "bytes": 11629
+    },
+    {
+      "path": "apps/dashboard/src/views/IntelligenceView.vue",
+      "mode": "100644",
+      "gitBlob": "549e3e1a92e19762dd085a3b1c1f58a7a759900a",
+      "sha256": "940b1660ff274c13f884189e77ff9a98ce0edc7e9dc28bd58f5ad6b99de63a46",
+      "bytes": 6198
+    },
+    {
+      "path": "apps/dashboard/src/views/MemoryView.vue",
+      "mode": "100644",
+      "gitBlob": "deb64d6e308bce8f01d5162d1754f2a9e8d94bc7",
+      "sha256": "369783091339cd9618a7029ba77e08a85dbb870dcf95d244b86e497d90062c82",
+      "bytes": 1908
+    },
+    {
+      "path": "apps/dashboard/src/views/OperationsView.vue",
+      "mode": "100644",
+      "gitBlob": "8162c4a3394a797f129a1bf830d09f1e1ea44be6",
+      "sha256": "78e0927cc0a5bff83e440054f9d2b0b49f4806a59859cb6cd65e18e89524911b",
+      "bytes": 5277
+    },
+    {
+      "path": "apps/dashboard/src/views/OrdersView.vue",
+      "mode": "100644",
+      "gitBlob": "ad93a391f137085316d05fd98441e4228bb7ebfd",
+      "sha256": "f56c6a86deaccb3ebc2d1e56a636133fe673ee03a3f1d0fe91e89bf7fea38114",
+      "bytes": 7251
+    },
+    {
+      "path": "apps/dashboard/src/views/OverviewView.test.ts",
+      "mode": "100644",
+      "gitBlob": "feea73aa6cbe0ef94ccbc780b100a5877349c8db",
+      "sha256": "dd56c2733706296befb5b2d7e0bac5e5b43e990339dc5581a0b7b4feb68f12b6",
+      "bytes": 1477
+    },
+    {
+      "path": "apps/dashboard/src/views/OverviewView.vue",
+      "mode": "100644",
+      "gitBlob": "90709dcf8a1f70952f8c82a394ab1574ae23b7e8",
+      "sha256": "67fd7bc280cf08997cbdb3c491ac175f59e7a72c64af68117afbe51d9d62d754",
+      "bytes": 20396
+    },
+    {
+      "path": "apps/dashboard/src/views/PositionsView.vue",
+      "mode": "100644",
+      "gitBlob": "b375d03958e2b0c18b81da01ecb7e8cfba2a63c8",
+      "sha256": "475a397e144cce9cc58ffb08aed105a1021265db24b4e32dbf93127d51b8514b",
+      "bytes": 5700
+    },
+    {
+      "path": "apps/dashboard/src/views/SettingsView.vue",
+      "mode": "100644",
+      "gitBlob": "4c793492d07af8b6ac788dfaf7a43d7b862b4ecb",
+      "sha256": "4dc159313515d5d5827f8037ba480b3cdc2e236561c155b90bc1932bd8e6c7ae",
+      "bytes": 32213
+    },
+    {
+      "path": "apps/dashboard/src/views/TemporalIntelligenceView.vue",
+      "mode": "100644",
+      "gitBlob": "629b01000fc53b1e1f1e681d57af03b74eedec46",
+      "sha256": "c03e202b2d6513c77cbb6b5e04e0590cbdc12156ac3d904dd726edd17940e2a3",
+      "bytes": 7251
+    },
+    {
+      "path": "apps/dashboard/src/views/TradeRecordsView.vue",
+      "mode": "100644",
+      "gitBlob": "6c69645da7bf6b4ecf6aa0cb68923e4753b0f9f8",
+      "sha256": "e7b9c4c6660b151ed465538fe6e464ea213005f9534a87253fe4f303cecaa8f2",
+      "bytes": 14124
+    },
+    {
+      "path": "apps/dashboard/src/views/UniverseView.vue",
+      "mode": "100644",
+      "gitBlob": "e5e854c730d0cb33a888fbf5c1e3b9704f8829f7",
+      "sha256": "c3d759cc93fd1f72ef981ac0068914756a751828739f2849720fb148c647b64e",
+      "bytes": 4116
+    },
+    {
+      "path": "apps/dashboard/tsconfig.json",
+      "mode": "100644",
+      "gitBlob": "2f49884c9d5ce855132bcedfdf64efd1e417c0a4",
+      "sha256": "491cec2ad40f5a778f51fa27e922d0b661e0cfbd76c5d58d5b029b52a94df8f3",
+      "bytes": 182
+    },
+    {
+      "path": "apps/dashboard/vite.config.js",
+      "mode": "100644",
+      "gitBlob": "92f8a7b95c399082cf0cb67399987ac3ef3e11cd",
+      "sha256": "f4bd4af37ff7920444784002291d0ac20cdea443ae23567a77096e2e35b9dc63",
+      "bytes": 287
+    },
+    {
+      "path": "apps/dashboard/vite.config.ts",
+      "mode": "100644",
+      "gitBlob": "128a9d611d26ab6d395de7eb386face2712b1adc",
+      "sha256": "cdd180362d3d23740aaec0263f7e3d912a2dd179757fe773fbed44f1f0ee3fde",
+      "bytes": 258
+    },
+    {
+      "path": "apps/engine/package.json",
+      "mode": "100644",
+      "gitBlob": "323fd086021e9fcddbdf337de79b1d1300de9a30",
+      "sha256": "bb4670b446de0be8c87c654374ba24eaa6afd1e231c20639a60ce7dc8be8cb57",
+      "bytes": 667
+    },
+    {
+      "path": "apps/engine/src/adapters/ai/MockAiClient.ts",
+      "mode": "100644",
+      "gitBlob": "c9d42b866870f59563994fe95bf16b1f0e3273d3",
+      "sha256": "61afbd6756bb162a0af785f6970136ca6fe80e387cac7f71d107168589bd1c4f",
+      "bytes": 3752
+    },
+    {
+      "path": "apps/engine/src/adapters/ai/OpenAiCompatibleClient.test.ts",
+      "mode": "100644",
+      "gitBlob": "98de5156e192b51954ff70f722c1dab1c33a8ec2",
+      "sha256": "854aad0bf67d59d843860968d0321a8870d6434dc727b949e06953f6b9af0eae",
+      "bytes": 18358
+    },
+    {
+      "path": "apps/engine/src/adapters/ai/OpenAiCompatibleClient.ts",
+      "mode": "100644",
+      "gitBlob": "8488b34ccb0d2aa1544a7a20f9c2373aa930820f",
+      "sha256": "802b2e06f8d1eef8139a6ca0f94b20f3606a26bf8be45ef6c48dff2cb8dc2bac",
+      "bytes": 18494
+    },
+    {
+      "path": "apps/engine/src/adapters/ai/OpenAiCompatibleClientProbe.test.ts",
+      "mode": "100644",
+      "gitBlob": "49c9d2b273c1098dc0d4cf52b6d634fee3a97dca",
+      "sha256": "0b2b75d646dbfd80201c6f146fd116398698e16495bc63ca23ec5b88ba5466b2",
+      "bytes": 9024
+    },
+    {
+      "path": "apps/engine/src/adapters/ai/OpenAiCompatibleClientProviderTiming.test.ts",
+      "mode": "100644",
+      "gitBlob": "6bb1a1d4e551ac474accfaf0c9f6d10b0817b84e",
+      "sha256": "7d20ac4ed42b555f5477540cd0b23385eef3a73f15065254cfc4cc334b9f47fd",
+      "bytes": 6654
+    },
+    {
+      "path": "apps/engine/src/adapters/ai/OpenAiCompatibleClientTiming.test.ts",
+      "mode": "100644",
+      "gitBlob": "5aba98e53a14ca59a203ba69c79b6b34919cc4cc",
+      "sha256": "00da4488d800396f5ff23ce81d9ac5b72784facb0b0018b7389002fe5998962e",
+      "bytes": 12067
+    },
+    {
+      "path": "apps/engine/src/adapters/ai/fixtures/scout-empty-final-20261001.json",
+      "mode": "100644",
+      "gitBlob": "416e78c0425b27cb45a5f529411ec3fbea1aacdb",
+      "sha256": "2f31c51cc413c5111d243a5955c36c311274bed0fc552f8892fadae139a7364e",
+      "bytes": 733
+    },
+    {
+      "path": "apps/engine/src/adapters/binance/BinanceBudgetFailureTelemetry.test.ts",
+      "mode": "100644",
+      "gitBlob": "c67c6fb50f44fa40879f71471895245ef95405ca",
+      "sha256": "e35aaa4dfbd1a6e5e6eb0a3486c7310ebda1f652656a21184e9809838c61e645",
+      "bytes": 769
+    },
+    {
+      "path": "apps/engine/src/adapters/binance/BinanceTransport.test.ts",
+      "mode": "100644",
+      "gitBlob": "6d2b7fc760bde70c34500a78cc8d1c71fdb730c6",
+      "sha256": "74ef383feb8381eec80fa849e63eec7c353366091888116310d2b4fe9bbfc19a",
+      "bytes": 8820
+    },
+    {
+      "path": "apps/engine/src/adapters/binance/BinanceTransport.ts",
+      "mode": "100644",
+      "gitBlob": "ffbab0e687ea05e7f8d5862f686f37f7bfe4594a",
+      "sha256": "360b441fc4c52b21b0ecacf0f98bfc40340cfe2e655a55b8f876e7b4ad49d249",
+      "bytes": 21908
+    },
+    {
+      "path": "apps/engine/src/adapters/binance/BinanceTransportCompression.test.ts",
+      "mode": "100644",
+      "gitBlob": "6a6e78ad615bc4c63ebf6bf2b6e71c4871b97d5a",
+      "sha256": "063b3f7dff21d0f60917c884eb8f95f5435f9e50602578f5959cb2532451fc55",
+      "bytes": 17987
+    },
+    {
+      "path": "apps/engine/src/adapters/binance/BinanceTransportLanes.test.ts",
+      "mode": "100644",
+      "gitBlob": "eddcb126dba2ffc92ba53e6c3c66d61e5d6f3bc0",
+      "sha256": "8e4d73d2d881cb45a61f9bf753cd95ea4ee6cb330ccf5ed954316e2aad576951",
+      "bytes": 2454
+    },
+    {
+      "path": "apps/engine/src/adapters/binance/BinanceUserDataStream.test.ts",
+      "mode": "100644",
+      "gitBlob": "9ac0f3d83ba23068969175ab8b48ae4ed026a719",
+      "sha256": "490f20ad2d619ecd9175beda015980009239074a10161606ee368d82ca8bb318",
+      "bytes": 1474
+    },
+    {
+      "path": "apps/engine/src/adapters/binance/BinanceUserDataStream.ts",
+      "mode": "100644",
+      "gitBlob": "6e2598d56b3b1a7e80fc6d2fa0624e56e3059759",
+      "sha256": "365d03342b4e019b81fc5d6a184b8680060c86793cd2cecd43f990bdc97e83f7",
+      "bytes": 2857
+    },
+    {
+      "path": "apps/engine/src/adapters/binance/binanceJsonResponse.test.ts",
+      "mode": "100644",
+      "gitBlob": "8823ed4059d584a2fcd7c3adae3ba667c55ddff0",
+      "sha256": "3aaa9caa8cafd30db8739912da0f9287a7b1818db808482c52be5c30687f9070",
+      "bytes": 5059
+    },
+    {
+      "path": "apps/engine/src/adapters/binance/binanceJsonResponse.ts",
+      "mode": "100644",
+      "gitBlob": "2181264dee972d64ec5a10bd01da3bfad4f5aa42",
+      "sha256": "5b2a9cc0be711b244ba733f96791c4bd0824c1f1f0bd02f118d0a7c16527a28a",
+      "bytes": 3868
+    },
+    {
+      "path": "apps/engine/src/adapters/binance/entryDispatchDeadline.test.ts",
+      "mode": "100644",
+      "gitBlob": "1111b0f5b0af30e14d4be0ecda7a12910af7f61e",
+      "sha256": "d9714e113ca3c72b6da790cc16c500bcf934bbff0ca29eb49ddfc927a6ea3958",
+      "bytes": 16507
+    },
+    {
+      "path": "apps/engine/src/adapters/binance/entryDispatchDeadline.ts",
+      "mode": "100644",
+      "gitBlob": "756dad6f8fea540cf05d9c760d808a9ee6c447d6",
+      "sha256": "2377ba84b993122a9d145d774e07f14f55d16f6164364b4f9e7f065985ec7e7b",
+      "bytes": 2931
+    },
+    {
+      "path": "apps/engine/src/adapters/binance/orderPrecision.ts",
+      "mode": "100644",
+      "gitBlob": "69524e407bc49d8ba1dcb257c20aa161dea88d69",
+      "sha256": "62fed8365daf3f93c30829dd1d462f5851ed21d8ca342046ae6a17b89d54318c",
+      "bytes": 1866
+    },
+    {
+      "path": "apps/engine/src/adapters/binance/requestBudget.test.ts",
+      "mode": "100644",
+      "gitBlob": "f410b6bcc04e9a71d421d15b8e6e5099e0190b62",
+      "sha256": "4f5507be0ca51d50b12ed14abd092d27b9e5e01736f328b1096f0b285cde934e",
+      "bytes": 16004
+    },
+    {
+      "path": "apps/engine/src/adapters/binance/requestBudget.ts",
+      "mode": "100644",
+      "gitBlob": "5cec9ef61de01cc74f9d0da7ae10b36cc56daa97",
+      "sha256": "7b5140e4397946097ffb8ac78008a102e11705dc579c1545d8c2fa77c1fe827c",
+      "bytes": 28616
+    },
+    {
+      "path": "apps/engine/src/adapters/binance/requestBudgetAnomaly.test.ts",
+      "mode": "100644",
+      "gitBlob": "fd6073259c2813993155ed7f5e0ca894d87127b0",
+      "sha256": "cb3e5f5fbaa16ca28e0f811f7b9b14398e3cb5f2c0808a8f0cc1a77ab1435047",
+      "bytes": 1486
+    },
+    {
+      "path": "apps/engine/src/adapters/binance/requestBudgetEntryGate.test.ts",
+      "mode": "100644",
+      "gitBlob": "d853468a5f4320897687e4fee24df3df47000e00",
+      "sha256": "fd6b3b607f579605fb0a15881a768437abe486c82536fb60816cb0177631605b",
+      "bytes": 1622
+    },
+    {
+      "path": "apps/engine/src/adapters/binance/requestBudgetPrivateTruth.test.ts",
+      "mode": "100644",
+      "gitBlob": "2c273d0ac658dc746f717496ee1ed2cbb66d87aa",
+      "sha256": "e441c6a6ca330549dc9e7634b3f6b31647db2774d151b37a4667995c00f1dffd",
+      "bytes": 2645
+    },
+    {
+      "path": "apps/engine/src/adapters/binance/requestBudgetProxyTruth.test.ts",
+      "mode": "100644",
+      "gitBlob": "ca57e43ba113247f3cd623c82cf624d240eafaaa",
+      "sha256": "5395afed53eeee834440e95f93416cc0168e21052324be625ae4c59c21bb245f",
+      "bytes": 1079
+    },
+    {
+      "path": "apps/engine/src/adapters/exchange/ExternalTradeAdapter.test.ts",
+      "mode": "100644",
+      "gitBlob": "d3df6946ba1774258bc14a7b498fecea069d0e5d",
+      "sha256": "51d29022a4d9f707b9639f5ef0ccd2947c6576e904759d6c925237f8cb2f27b6",
+      "bytes": 7400
+    },
+    {
+      "path": "apps/engine/src/adapters/exchange/ExternalTradeAdapter.ts",
+      "mode": "100644",
+      "gitBlob": "d5f49a206d59cf703c952be5a31e7def7a8e4dc7",
+      "sha256": "f034927a1789d0978fda4176168539f768970a6497633ea826c316ba33d80bc9",
+      "bytes": 48534
+    },
+    {
+      "path": "apps/engine/src/adapters/exchange/ExternalTradeAdapterClock.test.ts",
+      "mode": "100644",
+      "gitBlob": "e3b49de92c72a3cd4469563e87e4ebad26ff91c9",
+      "sha256": "a5e198cda2a55f8c2e1e89cef237ca3d44b9e888404e0ab172cf19b7eab2090e",
+      "bytes": 5383
+    },
+    {
+      "path": "apps/engine/src/adapters/exchange/ExternalTradeAdapterFunding.test.ts",
+      "mode": "100644",
+      "gitBlob": "724bb0bca7017406ea0bccdf436f2f01d946a1b2",
+      "sha256": "3e03c7d6d106caeb3944fa18746f1906dbb911414d470f9eedcfeec040b81e7c",
+      "bytes": 4454
+    },
+    {
+      "path": "apps/engine/src/adapters/exchange/ExternalTradeAdapterPrecision.test.ts",
+      "mode": "100644",
+      "gitBlob": "92d6a1106bcda97b9a55b32d10b5afb968083369",
+      "sha256": "c7fac46117ab1f0c5485563b14d2fce6257214443e38feb4bb488ae6597ea150",
+      "bytes": 11193
+    },
+    {
+      "path": "apps/engine/src/adapters/exchange/ExternalTradeAdapterPrivateLoad.test.ts",
+      "mode": "100644",
+      "gitBlob": "1d1570d6219ea36f71ac323de858f6cde13a4554",
+      "sha256": "43feeea5da91102b436685575c9042521f2ef8a45a5713b8d53abb5708d2eb8a",
+      "bytes": 5620
+    },
+    {
+      "path": "apps/engine/src/adapters/exchange/MockExchangeAdapter.ts",
+      "mode": "100644",
+      "gitBlob": "ad97bd4094b29f94301412fae11041973ea40003",
+      "sha256": "cc0862a5b6c6b94422eba27a7aeb1c031ca9470cbc642a428e75011823734f08",
+      "bytes": 4554
+    },
+    {
+      "path": "apps/engine/src/adapters/exchange/historyWindow.test.ts",
+      "mode": "100644",
+      "gitBlob": "37ce2263a977a3faef17160d0895e4848e10f077",
+      "sha256": "eb067f746bc8e41afed0ff07eb862008405750bc9e4b06b1a67650865db37a0f",
+      "bytes": 1768
+    },
+    {
+      "path": "apps/engine/src/adapters/exchange/historyWindow.ts",
+      "mode": "100644",
+      "gitBlob": "1ffd1e064846d5d39802dfd33ccc10ac4047a6ff",
+      "sha256": "21b6a5121da95236bba3f894a3e1945a73c3752cebbdbae50179213940728693",
+      "bytes": 2939
+    },
+    {
+      "path": "apps/engine/src/adapters/market/BinanceExchangeInfoSingleFlight.test.ts",
+      "mode": "100644",
+      "gitBlob": "288538faaa32bb0590b43b358efdc2da205ddcee",
+      "sha256": "064ec966f5999d83d846ab587e3c982e07d9dd4ca18da1e1f61dc8856e01d8e0",
+      "bytes": 4912
+    },
+    {
+      "path": "apps/engine/src/adapters/market/BinanceMarketStream.test.ts",
+      "mode": "100644",
+      "gitBlob": "75675653e8f9e04411f58025e62b89ab2f0283fa",
+      "sha256": "7fcd59e3669f4117d1d25f999997324502f99d4e58faec8b79c42a774972e5b0",
+      "bytes": 7200
+    },
+    {
+      "path": "apps/engine/src/adapters/market/BinanceMarketStream.ts",
+      "mode": "100644",
+      "gitBlob": "4175c40e421efeb2ba20db5b534f16c22597e2c2",
+      "sha256": "0f256cfcd7e528c2b3285b11bb580ffc4d2fd77723beb9962adf72edc39a01db",
+      "bytes": 12820
+    },
+    {
+      "path": "apps/engine/src/adapters/market/BinancePublicMarketDataProvider.test.ts",
+      "mode": "100644",
+      "gitBlob": "e35d7e8b3083c26622b1206038bf3cbbd782a157",
+      "sha256": "b84a3a1625632e9331eefb99a71a6d603c07608ea8c9af5099e0823016f60037",
+      "bytes": 11068
+    },
+    {
+      "path": "apps/engine/src/adapters/market/BinancePublicMarketDataProvider.ts",
+      "mode": "100644",
+      "gitBlob": "0ebe122b56f47b3d0b5303f365f4ea76eec7ef55",
+      "sha256": "e4b34e7daf42f19b09bd49655624db0a0975d39165767a1277e67583a15727c4",
+      "bytes": 19680
+    },
+    {
+      "path": "apps/engine/src/adapters/market/MockMarketDataProvider.ts",
+      "mode": "100644",
+      "gitBlob": "ddf4c249a6771d17215e255bb8c02364bf8fb7a1",
+      "sha256": "22e41ca5de30015b9465dc3b08db47f2b56638cf89103d80880f448141252af6",
+      "bytes": 5768
+    },
+    {
+      "path": "apps/engine/src/adapters/market/klineContinuity.test.ts",
+      "mode": "100644",
+      "gitBlob": "69c3aaa498f2523b23b7443009f2c83f5fee419d",
+      "sha256": "7a4be64e3c1f6ab3e882dcc021e62b3e26ccae81af0883f8eb34acd64186ab0f",
+      "bytes": 10059
+    },
+    {
+      "path": "apps/engine/src/adapters/market/klineRecoverySimulation.test.ts",
+      "mode": "100644",
+      "gitBlob": "7af7a88474d67a3f6a1c512776253d6a34fc3a0a",
+      "sha256": "9b08317af5eb81b7e167ebc6845b6c7aa1b39d3c361277bfe7b4e3885a4d98ea",
+      "bytes": 6992
+    },
+    {
+      "path": "apps/engine/src/adapters/market/klineTargetedRepair.test.ts",
+      "mode": "100644",
+      "gitBlob": "bbc4adf8ce0124b11da15a5fabc946bc15cf8986",
+      "sha256": "a0f98fc05adc0b1343a1ada5c84276856da72ed481cc9e2727cc826e34108d50",
+      "bytes": 20706
+    },
+    {
+      "path": "apps/engine/src/adapters/market/recentTradePrices.ts",
+      "mode": "100644",
+      "gitBlob": "88c1b0eafef6e7c3d896963775c732057de73d60",
+      "sha256": "44239fe38170f2165c5c8eac1e67d74576ce74796afcbb7066f6c397208ce836",
+      "bytes": 1147
+    },
+    {
+      "path": "apps/engine/src/api/activeEntryProjection.test.ts",
+      "mode": "100644",
+      "gitBlob": "c6cd9f7de37b23eb53723826764cd35e5256b198",
+      "sha256": "9eb82d1cca5618019d574424f6a8331bf6465fa108e73deea71a63446837baf1",
+      "bytes": 1736
+    },
+    {
+      "path": "apps/engine/src/api/assetDirectoryReview.test.ts",
+      "mode": "100644",
+      "gitBlob": "8835754cdbc38955a90d56a047ade512a5c8e0f5",
+      "sha256": "bd0c811165ce65750995941b5c9538a1502277e336dd1957d6fc605b62d84174",
+      "bytes": 2407
+    },
+    {
+      "path": "apps/engine/src/api/brainRunExecution.test.ts",
+      "mode": "100644",
+      "gitBlob": "e8eb5103b7705299357b1d6af834a96e7bfa1f11",
+      "sha256": "f2c808f7a787e9f9bea897903e83a7b2ff262bbb390b34a12391c6182e93ce33",
+      "bytes": 5801
+    },
+    {
+      "path": "apps/engine/src/api/brainRunRelatedArtifacts.test.ts",
+      "mode": "100644",
+      "gitBlob": "b0d94f9b1f97a9707c40fd46578eaeb7251b4dcb",
+      "sha256": "8d75a7970f422ad867389c86ad1ee45f0de7dbb84aa854190239e82ee71eed7f",
+      "bytes": 2142
+    },
+    {
+      "path": "apps/engine/src/api/chronologicalSort.test.ts",
+      "mode": "100644",
+      "gitBlob": "0dc6ede0b2f0fd679ce8b6ca72195d3fa1a62dc0",
+      "sha256": "cd8d16bfe46231ff70c14023700e744c4ad89e3d42822cb4dc1622db59e99a70",
+      "bytes": 755
+    },
+    {
+      "path": "apps/engine/src/api/chronologicalSort.ts",
+      "mode": "100644",
+      "gitBlob": "0011495cb153b61aff7e822133e79cb9241e95bb",
+      "sha256": "1a64f986ffdace2b58fdc3eba57b2a079a5a879189bab7047d05f2839848a86d",
+      "bytes": 757
+    },
+    {
+      "path": "apps/engine/src/api/entryCancelEligibility.ts",
+      "mode": "100644",
+      "gitBlob": "9f32249e58dcef0ba23970023b85a66ed9e4d987",
+      "sha256": "dc456a547f14078a710cf0018244854d3b6bf0fa6bf357cf5767de10cde175e1",
+      "bytes": 1596
+    },
+    {
+      "path": "apps/engine/src/api/entryCancellation.test.ts",
+      "mode": "100644",
+      "gitBlob": "6d6461ef95760cd93bbf05cd6f4294bcd6e0e577",
+      "sha256": "e7b920830b6bc30b7798461b7e49359e9e9fa189c763c88659cb5a1fbf5c495f",
+      "bytes": 6908
+    },
+    {
+      "path": "apps/engine/src/api/entryCancellation.ts",
+      "mode": "100644",
+      "gitBlob": "4bdd88ea9b2651b6e209011499b90f766a5c6c87",
+      "sha256": "5fd7d56fdbb482a987b6d55660eed8bc0cbd59cce21542aba4f94f81c1056530",
+      "bytes": 4057
+    },
+    {
+      "path": "apps/engine/src/api/exchangeFillProjection.test.ts",
+      "mode": "100644",
+      "gitBlob": "9f3db9f5e481e65748e1eba302e31939663bf65c",
+      "sha256": "432a0710c00028d545c9c951fa9ce9067324cbe48198ea3d80398e5392500e99",
+      "bytes": 1389
+    },
+    {
+      "path": "apps/engine/src/api/executionTruthSplit.test.ts",
+      "mode": "100644",
+      "gitBlob": "5401edbfb5b4fc45dc384f6cc7301085dc19dc41",
+      "sha256": "c6b043f89b4aceba002bb1d650df5f1934dae40517fc5040967c4e0745407e86",
+      "bytes": 7407
+    },
+    {
+      "path": "apps/engine/src/api/ordersReadback.integration.test.ts",
+      "mode": "100644",
+      "gitBlob": "a588563bb2085f99063161535dc5f98990a8be90",
+      "sha256": "c869a0998b0d374c657ad7d3a9f55af6ac845159e99d83275f73db47befb6365",
+      "bytes": 4834
+    },
+    {
+      "path": "apps/engine/src/api/positionCycleSnapshot.test.ts",
+      "mode": "100644",
+      "gitBlob": "b67b46b299e7913059db39b6235072d8cafe2f67",
+      "sha256": "4ad918e66373a22e8f40a4c7d88459d0bfdf5fcc1494829ef7c9e3f7a4e8a095",
+      "bytes": 2684
+    },
+    {
+      "path": "apps/engine/src/api/projections.test.ts",
+      "mode": "100644",
+      "gitBlob": "dcb54245538eabaa0338e0a905a6a6a2d487c110",
+      "sha256": "929cd86600ed108fac8b8c13100704d931bea08a89a64a6cad12530ea6c210b6",
+      "bytes": 3017
+    },
+    {
+      "path": "apps/engine/src/api/projections.ts",
+      "mode": "100644",
+      "gitBlob": "d0629f646d27fb061a8307bc8a0025a2578f5bf0",
+      "sha256": "53c246c0eb0352818ec650eb13aa2dcbfd6876764c8144855dee42bc9dc99564",
+      "bytes": 24661
+    },
+    {
+      "path": "apps/engine/src/api/router.ts",
+      "mode": "100644",
+      "gitBlob": "3bc96efd228fb186e2365af26ac02ea9df9f3e36",
+      "sha256": "d39e05b5a7160160a380e48fd6bc672018377c02788d3323cbd52626b43f5da0",
+      "bytes": 58658
+    },
+    {
+      "path": "apps/engine/src/api/runtimeSettingsResources.test.ts",
+      "mode": "100644",
+      "gitBlob": "f8776c7c2e1f9afbc1049fec44853841758a44b4",
+      "sha256": "7d55b65f609b8e7118d3bf0816177f6a460e54b150ff8309b3d71be4f665d6bf",
+      "bytes": 18023
+    },
+    {
+      "path": "apps/engine/src/api/runtimeSettingsResources.ts",
+      "mode": "100644",
+      "gitBlob": "15496ad3afdefe2e4ccf2db0953fdf0b40a055bb",
+      "sha256": "c3a4ed94f57f1c6208781141278c80a60a1da76e286de2dc57ec199910fef8d4",
+      "bytes": 20555
+    },
+    {
+      "path": "apps/engine/src/api/snapshotReadOnly.test.ts",
+      "mode": "100644",
+      "gitBlob": "9f40cc42edc82840f30b155869b1bd6325346724",
+      "sha256": "001dfb9a5ea5789e3a5292b69b7b42e39bb176485184ca69cdd451e24dc03371",
+      "bytes": 6214
+    },
+    {
+      "path": "apps/engine/src/config/aiResourceLoader.test.ts",
+      "mode": "100644",
+      "gitBlob": "c79af219162b51ee0ff0d8160ec652d77a1262ce",
+      "sha256": "b6172be5ef5f56b7000b120ea165ec7377a6ca8b9d0f3a197f591ffc8ea3cbe5",
+      "bytes": 1282
+    },
+    {
+      "path": "apps/engine/src/config/aiResourceLoader.ts",
+      "mode": "100644",
+      "gitBlob": "b421fe3dfad379ae25f88f1403e4dbe777761eb7",
+      "sha256": "df8b3e5857e5da4105e6d5f9e061c6a09102ee0da9a02574d02fa7a66c033148",
+      "bytes": 294
+    },
+    {
+      "path": "apps/engine/src/config/aiRunTerminalConsistency.test.ts",
+      "mode": "100644",
+      "gitBlob": "e509092b4e9eebe04bae67b187828a240515e8a6",
+      "sha256": "8d13a45c759e7418e7f755289bca843a19f9d0d786f2a04e446d25f51c22fa69",
+      "bytes": 9533
+    },
+    {
+      "path": "apps/engine/src/config/assetAdmissionIntegration.test.ts",
+      "mode": "100644",
+      "gitBlob": "0c798da98e80051f46505a77455a72400e79f8c0",
+      "sha256": "238830c39bb169558bdb1c844be11fe0409703890b760fde16c51c2ce4b2d96c",
+      "bytes": 2111
+    },
+    {
+      "path": "apps/engine/src/config/engineTestTimeout.test.ts",
+      "mode": "100644",
+      "gitBlob": "4c1bd0080aea97796c30776ba1fa310eb8999174",
+      "sha256": "f7a1825197f4d666668cb35c998d2a00c85595510a6ea47e474386baa904fead",
+      "bytes": 508
+    },
+    {
+      "path": "apps/engine/src/config/exposureCapacityPolicyMigration.test.ts",
+      "mode": "100644",
+      "gitBlob": "067c25fb32f5beb3aff2eb8ce83e54a79edd6ed5",
+      "sha256": "5006ae943b2b831eeda171e90a1421ea562d0ef7035e27afd1de56d7cff2b562",
+      "bytes": 2772
+    },
+    {
+      "path": "apps/engine/src/config/governanceSettingsMatrix.ts",
+      "mode": "100644",
+      "gitBlob": "d4b11e2e6b65aff679781db5a3a48f5954f87985",
+      "sha256": "461bc381104a536d4eed229f77b9b91f247f3b87746b3613015386ca7017ec5d",
+      "bytes": 35417
+    },
+    {
+      "path": "apps/engine/src/config/portfolioRiskAuthorityStore.test.ts",
+      "mode": "100644",
+      "gitBlob": "c169041bc0973fb6149a41f665ff5b035e9f1c3e",
+      "sha256": "2b78526fa205bca2c8bdf1a87e9816cf5dd3ab24d75aded740d19df1d31c0011",
+      "bytes": 14524
+    },
+    {
+      "path": "apps/engine/src/config/settingsCloseoutInvariant.test.ts",
+      "mode": "100644",
+      "gitBlob": "9cc4bd77c2739f4d38b7508a65ecd7ff53bee889",
+      "sha256": "66a1f3be4f599b3e2ac6395dfb443abaa5bdb20b32bb87fdf42f25257e1483cf",
+      "bytes": 706
+    },
+    {
+      "path": "apps/engine/src/config/settingsStore.test.ts",
+      "mode": "100644",
+      "gitBlob": "308497763a2aa020370603d5a2401d6a147788e3",
+      "sha256": "321d2b77d2b1f83ccb661bb0b575f06af5217699d0e78653afb66059003ed95b",
+      "bytes": 29568
+    },
+    {
+      "path": "apps/engine/src/config/settingsStore.ts",
+      "mode": "100644",
+      "gitBlob": "d00159fd1a3a46f4900a02b5886c45eb10ea6296",
+      "sha256": "798503d7c94c2390ba292b1ba373864568a2846f21ef23d94d4a0388962eb585",
+      "bytes": 112765
+    },
+    {
+      "path": "apps/engine/src/config/testTimeoutBudget.ts",
+      "mode": "100644",
+      "gitBlob": "1a4832dc6f2a926399e63c2aab1d8b11874c1c6b",
+      "sha256": "cbdb629f67461b173f5817e7a00be1aa5a6dbafa5614a07bb66208c0ff494a4a",
+      "bytes": 507
+    },
+    {
+      "path": "apps/engine/src/config/v397SettingsMigration.test.ts",
+      "mode": "100644",
+      "gitBlob": "be56fdd70348e550e5635088056fcf7c371cc338",
+      "sha256": "fd3f376d4b8e472dbdba4f9862a80f05e2f4d56d3ae6a70871ec2543c05c2034",
+      "bytes": 2587
+    },
+    {
+      "path": "apps/engine/src/config/v397SettingsMigration.ts",
+      "mode": "100644",
+      "gitBlob": "23a38486bdec6680aea21133f1e0353ee33c2c04",
+      "sha256": "52b8e36a44a0223131377893bf71ac84a8ad0f989a26c6666f5bb33a1e1d9faf",
+      "bytes": 2105
+    },
+    {
+      "path": "apps/engine/src/config/windowsCredentialManagerSecretStore.test.ts",
+      "mode": "100644",
+      "gitBlob": "811523bcb3ff1201d44a60ef31653e3d0cdeaf99",
+      "sha256": "3660276dbe18a98369c06d33e0f6e28b6186bf73681cd1ac89a7c588428dc2a0",
+      "bytes": 2826
+    },
+    {
+      "path": "apps/engine/src/config/windowsCredentialManagerSecretStore.ts",
+      "mode": "100644",
+      "gitBlob": "ce6a6d6eed66afe9de0ca120aac669bd0874f8ac",
+      "sha256": "5baf77eab1abcdf4882e34c2b676b9f7d01fb87c3fff6845adfd83c6ca226246",
+      "bytes": 1960
+    },
+    {
+      "path": "apps/engine/src/config/windowsDpapiSecretStore.ts",
+      "mode": "100644",
+      "gitBlob": "38126d7df327beea557ac65c4320385e56d618a8",
+      "sha256": "74ca125479f744338f8622cb623d68bb6a69511a6f2d0a8d266275c748d25a3a",
+      "bytes": 1715
+    },
+    {
+      "path": "apps/engine/src/events/eventBus.test.ts",
+      "mode": "100644",
+      "gitBlob": "95d9030361e96ceae5c084de664324c991ec93b2",
+      "sha256": "0d45d361bd0686586b1da1ae32b9e66803b713b4805172c2ff45c64d0e7ea751",
+      "bytes": 485
+    },
+    {
+      "path": "apps/engine/src/events/eventBus.ts",
+      "mode": "100644",
+      "gitBlob": "09ca9541d6769b82dce9e24c47c65cc41d08f1d9",
+      "sha256": "5bc42fc1187eb8be6f3ed39c8d5e0ada0d4a6a61c1173667c9177e89f7558ec7",
+      "bytes": 446
+    },
+    {
+      "path": "apps/engine/src/main.ts",
+      "mode": "100644",
+      "gitBlob": "eb8fa94b27078d41f204146a2c3604fdefb17487",
+      "sha256": "3056cc40315986e8b58d7c8510f8d569fc1b933b1e29ce67dd39bee4dca89593",
+      "bytes": 6286
+    },
+    {
+      "path": "apps/engine/src/realtime/wsServer.ts",
+      "mode": "100644",
+      "gitBlob": "c361d40ccdcd93f4e84ff0fd39f1f3207af2b843",
+      "sha256": "52e7ad9df638a9ed7fc8dff5c7db748235aa1dff5fc6fdd9eed15d3ba2558c6b",
+      "bytes": 1862
+    },
+    {
+      "path": "apps/engine/src/runtime/appRuntime.test.ts",
+      "mode": "100644",
+      "gitBlob": "d51323048f93d7efa133b5c9f765ed095753f54e",
+      "sha256": "4055621fb39f39e054eb0b80663f078aec5b21ce95b3a32fc90414b9a8a09b14",
+      "bytes": 7742
+    },
+    {
+      "path": "apps/engine/src/runtime/appRuntime.ts",
+      "mode": "100644",
+      "gitBlob": "c1222c375013780883421b306b184648bb53af36",
+      "sha256": "7adfc163d86daaa31b9153276d582030b25fc46bd53f228024b188a4b9fa11f6",
+      "bytes": 141812
+    },
+    {
+      "path": "apps/engine/src/runtime/bootstrapReconciliationInvariant.test.ts",
+      "mode": "100644",
+      "gitBlob": "43771856731298a71a81e5a0cda4082276046d3b",
+      "sha256": "0ab33c9db8cd96a6e2fd636f0c481c199ae27e240539659a9616a9fbdb2be047",
+      "bytes": 629
+    },
+    {
+      "path": "apps/engine/src/runtime/marketPublicationIsolation.test.ts",
+      "mode": "100644",
+      "gitBlob": "18f58af2481157aac6ce28f86baa66d264a8a37a",
+      "sha256": "72ef77180615e9fa6311f517faeb6c6f10364b439d5ef95aafa6bc87ba9108dd",
+      "bytes": 1962
+    },
+    {
+      "path": "apps/engine/src/runtime/processLifecycleTelemetry.test.ts",
+      "mode": "100644",
+      "gitBlob": "6804a64de7712fd478dec14da46a64bc205b9af2",
+      "sha256": "53e22ddc4fb0742a9955d702575d330a8794850b58ab71f1fa6d1be87381da3e",
+      "bytes": 1294
+    },
+    {
+      "path": "apps/engine/src/runtime/processLifecycleTelemetry.ts",
+      "mode": "100644",
+      "gitBlob": "4cc4304f30cd3e2f8cc7f4d87a01ac466a300756",
+      "sha256": "4e750b1a1cf26fc0a0aff0145335cd9c84cb2526f364e5db3a0980ddafd53e09",
+      "bytes": 1900
+    },
+    {
+      "path": "apps/engine/src/runtime/processOwnership.ts",
+      "mode": "100644",
+      "gitBlob": "8ea0909c2ea8e534a901cf3b67b7f110db56f318",
+      "sha256": "8d5d96919b181beb73a098afe410be0dfa006ee5d61642adb794389b170126b4",
+      "bytes": 1027
+    },
+    {
+      "path": "apps/engine/src/runtime/restartRecovery.test.ts",
+      "mode": "100644",
+      "gitBlob": "d6d986017fab9b074e351441120060d0a9ba8a4c",
+      "sha256": "92e51a766ba4580ffca3778759d1248a69d7fa8915824a4407a8096d1539d373",
+      "bytes": 1619
+    },
+    {
+      "path": "apps/engine/src/runtime/riskPauseOverride.test.ts",
+      "mode": "100644",
+      "gitBlob": "f508dd05f3fa7b3cfce1b4cd19dbd513ffd05bd0",
+      "sha256": "16baf250b782aa9433f81d7fd586907d3f5a41129b3f1c8cf92f950bee5a5f64",
+      "bytes": 3834
+    },
+    {
+      "path": "apps/engine/src/runtime/runtimeIdentity.test.ts",
+      "mode": "100644",
+      "gitBlob": "6aaf176fb4e0e2936ae4206098e2930a87fbf907",
+      "sha256": "b8cb09ec5c268be8e70a9ddcee3155910f4864aa97e664cefbda9583e89a052c",
+      "bytes": 1974
+    },
+    {
+      "path": "apps/engine/src/runtime/runtimeIdentity.ts",
+      "mode": "100644",
+      "gitBlob": "c0c42010e4ee62cdedd8c9314136fc81a989bda6",
+      "sha256": "5aa1c4303cbbcdfe630d008b225d940750d6624798706845206561968a7bfa05",
+      "bytes": 6571
+    },
+    {
+      "path": "apps/engine/src/runtime/tradeRecordAutoSync.test.ts",
+      "mode": "100644",
+      "gitBlob": "192d500b7e3f86bc1efb057ee9ab8e796de68624",
+      "sha256": "10ccf626c8c971023ccde945766c558cae5cfe375e447ab95cbad5a2909cdadb",
+      "bytes": 3705
+    },
+    {
+      "path": "apps/engine/src/runtime/userPositionFacts.test.ts",
+      "mode": "100644",
+      "gitBlob": "e5aec0b66591e65e9dc910a8ccfeb0142d694d7a",
+      "sha256": "ea7c8736f6853faec6c81edd8690c74cc95c79885611a247e6fe85e3b66b5728",
+      "bytes": 2722
+    },
+    {
+      "path": "apps/engine/src/runtime/v393FrozenEntryRestart.test.ts",
+      "mode": "100644",
+      "gitBlob": "db153ff19951740fd6d7f9752b087e490587c37a",
+      "sha256": "75276ee9655642322b28f763e2a0f583050c5de7de3eea6fb2578ff4c8ff6220",
+      "bytes": 4943
+    },
+    {
+      "path": "apps/engine/src/server.ts",
+      "mode": "100644",
+      "gitBlob": "6f925c240773ce8b9ce0e196ccea3417efca5fe9",
+      "sha256": "7006a9387803faa1be4dc72c8756f8e3f6e4640a163f767966bf7f42a6b95923",
+      "bytes": 4505
+    },
+    {
+      "path": "apps/engine/src/services/TemporalIntelligenceService.test.ts",
+      "mode": "100644",
+      "gitBlob": "80f9daf59856cfa50b140c8b8a680f38cc17222b",
+      "sha256": "4333eb578e44e9c9acc7190b2e4efb73eb83ca4ea6d325161ca003731def58b6",
+      "bytes": 706
+    },
+    {
+      "path": "apps/engine/src/services/accountExecutor.ts",
+      "mode": "100644",
+      "gitBlob": "c54fe42fdeff99f5b449b705e8935ec9d82b6bb5",
+      "sha256": "8eac6e0449a69d78fc371fd4c6b47c1a0c8a6add0d765a204909d74af061fdc4",
+      "bytes": 413
+    },
+    {
+      "path": "apps/engine/src/services/admissionCapacityReader.ts",
+      "mode": "100644",
+      "gitBlob": "cd55b1a5744517c1eb6aa913611bbf28375a2a43",
+      "sha256": "e31648737d019922a7f1f785c148b60b7b38247471e08a30433e3b716aee4943",
+      "bytes": 9615
+    },
+    {
+      "path": "apps/engine/src/services/aiExitAuthority.ts",
+      "mode": "100644",
+      "gitBlob": "67be8ef38c69fd719c819a67f03d7e341ca975ba",
+      "sha256": "87a6be3c8cd30431acf45fdaf271a5545bc7cafdfcb85a3a802b07d39e87599e",
+      "bytes": 3122
+    },
+    {
+      "path": "apps/engine/src/services/aiFabric.test.ts",
+      "mode": "100644",
+      "gitBlob": "5eeb12379a2d6e2c23eb49dd95db93add4d6b653",
+      "sha256": "a43554c9afc36cd521aba95d9ebf4f5711c066bc0845b050648895da8397fd82",
+      "bytes": 6593
+    },
+    {
+      "path": "apps/engine/src/services/aiFabric.ts",
+      "mode": "100644",
+      "gitBlob": "f3f32bd0dedff9fc752d29cc2d4cbc02a07c774d",
+      "sha256": "857055f08828db3e10dd40a15163ef9b665e2010c4ebc66dbc60a3589f1880ce",
+      "bytes": 40638
+    },
+    {
+      "path": "apps/engine/src/services/aiFabricCandidateReference.test.ts",
+      "mode": "100644",
+      "gitBlob": "ce369f3658c0f85389adbcb66d628ae7e955a515",
+      "sha256": "4a2fcde84c14b22d1b908e79ec3c41ef7928e16c35d3d4b45c530ac51b12f7de",
+      "bytes": 3744
+    },
+    {
+      "path": "apps/engine/src/services/aiFabricDecisionClock.test.ts",
+      "mode": "100644",
+      "gitBlob": "58d4959a5bf68103c1b8f437b1959b9f541032c5",
+      "sha256": "e6485731ab55364e68279d2ab7e46e5e79acde5c627631d04d870eda48d845a8",
+      "bytes": 3438
+    },
+    {
+      "path": "apps/engine/src/services/aiFabricResourceState.test.ts",
+      "mode": "100644",
+      "gitBlob": "7e769db29ce42d62ba44736fc40a53ddc62eb19b",
+      "sha256": "a0b5693d0cf5714f78ecbce6a45dae59c8aab564d397a54e43f8272750300e3a",
+      "bytes": 5050
+    },
+    {
+      "path": "apps/engine/src/services/aiFabricScoutCompatibility.test.ts",
+      "mode": "100644",
+      "gitBlob": "f0784e5d942d83f1d7f5dd8be7f8e49d103cd10d",
+      "sha256": "f871cb9d2a1d82aa64514dd46a3f8e696d510ea9828e07597081b1393b32cf70",
+      "bytes": 7902
+    },
+    {
+      "path": "apps/engine/src/services/aiFabricScoutObservation.test.ts",
+      "mode": "100644",
+      "gitBlob": "2423f1219f93532a549486bb7dae5a022f9b150a",
+      "sha256": "7adecef4fbb5d2e29a02040fbe7b357a884fb058ca2005b3e0b340c9f3e67541",
+      "bytes": 3365
+    },
+    {
+      "path": "apps/engine/src/services/aiFabricTiming.test.ts",
+      "mode": "100644",
+      "gitBlob": "8d5e0ce934c7dec4519da754b1201793eddfe768",
+      "sha256": "b1d3319ec2e49ad66e18696532bda2dd2902cf29b7b38f45e5a70bf0d2a9e4df",
+      "bytes": 11603
+    },
+    {
+      "path": "apps/engine/src/services/aiProtocolNormalizer.ts",
+      "mode": "100644",
+      "gitBlob": "ce11e43130fbacb589da8d3fc79781e9d0c9445c",
+      "sha256": "fa59de0f3960825e93b38840bf24c8541f4c0b1295a7f6ba6af0c3f197a84638",
+      "bytes": 1413
+    },
+    {
+      "path": "apps/engine/src/services/aiQuantityAllocation.test.ts",
+      "mode": "100644",
+      "gitBlob": "de27d003c33d9c647605275a6594db6ee4d233ef",
+      "sha256": "d6de2e8e13188785b3b34f960519b663d1e579d4f65486c9e3b094e13579cbb1",
+      "bytes": 6549
+    },
+    {
+      "path": "apps/engine/src/services/aiQuantityAllocation.ts",
+      "mode": "100644",
+      "gitBlob": "d3d758590173a1288171e176eac94049478f41ad",
+      "sha256": "6d18df15c08aa978a9e28ae595bffc4f0ea7c3cd0a4f161d74ecc2af2d995044",
+      "bytes": 3665
+    },
+    {
+      "path": "apps/engine/src/services/aiResourceHealth.ts",
+      "mode": "100644",
+      "gitBlob": "a1a1ac2177f77a86ebf2af9ce8cd4892f59c057f",
+      "sha256": "a056362bb4a2593ddfe49a20b2f1dfacc2a0654ddcd7a1f79979aacf074898ea",
+      "bytes": 1923
+    },
+    {
+      "path": "apps/engine/src/services/aiUsageLedger.ts",
+      "mode": "100644",
+      "gitBlob": "73e167db7a9ee7b9ad30d2a26e580bd69134fe31",
+      "sha256": "c113b68236af4346f8fcb9f85ae06725a33cc970010d4decf735030d7ef31e09",
+      "bytes": 11022
+    },
+    {
+      "path": "apps/engine/src/services/assetGovernanceCoordinator.test.ts",
+      "mode": "100644",
+      "gitBlob": "20c28095c959ffd5b63c7fe9ed32f37e80102eac",
+      "sha256": "993d5d0b6d777a7de09c7efb709d83eba2277646d33865a365dc98817fa17f45",
+      "bytes": 7195
+    },
+    {
+      "path": "apps/engine/src/services/assetGovernanceCoordinator.ts",
+      "mode": "100644",
+      "gitBlob": "dd75fd750d09c81a7d559cc7f76cf7a9cd7247bc",
+      "sha256": "f63b5403f6f8cb5f29eebde5cc4dbaa5a03c1f0f10de7a052d18a44c88ded924",
+      "bytes": 6011
+    },
+    {
+      "path": "apps/engine/src/services/binanceClientOrderIdFactory.test.ts",
+      "mode": "100644",
+      "gitBlob": "b7ff51702dfe808ba3447737afe0dfed95827580",
+      "sha256": "ef0c9b4baeb5cefa5a22895065d96b400b47e50903696b3365bb3f0f848f2ac2",
+      "bytes": 931
+    },
+    {
+      "path": "apps/engine/src/services/binanceClientOrderIdFactory.ts",
+      "mode": "100644",
+      "gitBlob": "65ed63f534d536c62020d9aeeb3d2d3944aca2d5",
+      "sha256": "37b8ae5774525fa0a2a48e0a9e6c8d6bd273efb4ed52a8a9c0a8c25914b793e8",
+      "bytes": 1119
+    },
+    {
+      "path": "apps/engine/src/services/brainRunArchive.test.ts",
+      "mode": "100644",
+      "gitBlob": "2729bc80feb9140576646f1d1c39a59a4e13b4ad",
+      "sha256": "69c9b6f5a47ce9af48175aa92f77a9be6cf5e500819bffa6db7402c16c606a77",
+      "bytes": 2604
+    },
+    {
+      "path": "apps/engine/src/services/brainRunArchive.ts",
+      "mode": "100644",
+      "gitBlob": "81faf543aae6548dd0752ffa02c14ee4ac85fe0a",
+      "sha256": "69aa4c28e22f1250ee39af36961382d35c1089c8e8cc9b04a9868abce2d8c4b1",
+      "bytes": 5679
+    },
+    {
+      "path": "apps/engine/src/services/c3RuntimeWiringHostile.test.ts",
+      "mode": "100644",
+      "gitBlob": "820a52ed36040fde11796b107f0f3299c7716a1f",
+      "sha256": "d1c532b32e6020c218a90c82633ff6f8bc29543629134d862fae7ff16ba05a05",
+      "bytes": 38455
+    },
+    {
+      "path": "apps/engine/src/services/candidateLifecycleDeriver.test.ts",
+      "mode": "100644",
+      "gitBlob": "cb9832dbfe4899a11587f002d4be3df0ae426214",
+      "sha256": "5b02c791c4ff4c67fcd36e044cf887f3d970678ebc80901c67aa7382f7391ae4",
+      "bytes": 3391
+    },
+    {
+      "path": "apps/engine/src/services/candidateLifecycleDeriver.ts",
+      "mode": "100644",
+      "gitBlob": "ebc9d0c2d1b674ee78b57e328674b4707fd9525c",
+      "sha256": "6de3142172c48439491e7d17e70887f7f61ad46e4f56bb2adc699ae7d096a11f",
+      "bytes": 5308
+    },
+    {
+      "path": "apps/engine/src/services/candidateSupplyHealth.test.ts",
+      "mode": "100644",
+      "gitBlob": "a30a58fa3a7fcb5cd20c3fc2036c17a91d0d598d",
+      "sha256": "312d4cbf83d67f256120beb29c2900ae9b8d84050ed1125d31ae480a0e618b1b",
+      "bytes": 2557
+    },
+    {
+      "path": "apps/engine/src/services/candidateSupplyHealth.ts",
+      "mode": "100644",
+      "gitBlob": "175921954f89bb38da7507af81a5e46e9be2baa5",
+      "sha256": "bca2e844405e60ff46ceda3c760c38c568725df67ebd51c5b44131193d33aea0",
+      "bytes": 4812
+    },
+    {
+      "path": "apps/engine/src/services/capitalCapacity.ts",
+      "mode": "100644",
+      "gitBlob": "0513e9f4582f48264e9929b80818703f7112a38f",
+      "sha256": "593bb277a502455c55af631768db4f73aaaed4adabe505266bbb11d1c3ccbfa1",
+      "bytes": 11476
+    },
+    {
+      "path": "apps/engine/src/services/capitalCapacityModel.test.ts",
+      "mode": "100644",
+      "gitBlob": "9abfffba469ea364e84b1f954dd1b49c696d7964",
+      "sha256": "d37d5e40e04d70feb6653975b98f095280638fe50c5a3c82b51217044dfa73a4",
+      "bytes": 9456
+    },
+    {
+      "path": "apps/engine/src/services/collectorRecovery.test.ts",
+      "mode": "100644",
+      "gitBlob": "ea0656171b0c466a7aa5adc16b1d5404562027c5",
+      "sha256": "4635e9409aa5aa0d56e6389d03267a90184b9fff64d8f1747b5519ae6c9e5874",
+      "bytes": 1382
+    },
+    {
+      "path": "apps/engine/src/services/currentOpenOrders.test.ts",
+      "mode": "100644",
+      "gitBlob": "b59fcdeb79b130159558161621b8bcd8dd2e3290",
+      "sha256": "e70806485d25825dde97907103d2f753a325f78caacb51a57a7e8f7b26e039b9",
+      "bytes": 4628
+    },
+    {
+      "path": "apps/engine/src/services/currentOpenOrders.ts",
+      "mode": "100644",
+      "gitBlob": "e4cf296ff5b811b2a37e05165109fef79bb5e393",
+      "sha256": "2a742074c16d5c7fa26bbebfda8dd453245527239bad35e55b060550f86edcec",
+      "bytes": 4357
+    },
+    {
+      "path": "apps/engine/src/services/cycleAccounting.test.ts",
+      "mode": "100644",
+      "gitBlob": "a752a367c9a8d082668b67fe2c1593ac845b8dbe",
+      "sha256": "ed2d50b32674a25fcc69f8d60b1db6b542887feddcd7eb6efff001eb3bf24819",
+      "bytes": 6990
+    },
+    {
+      "path": "apps/engine/src/services/cycleAccounting.ts",
+      "mode": "100644",
+      "gitBlob": "b123d0122f362a852f23ea9b9f61dd3c577b90dd",
+      "sha256": "413ad4b74f51844545a72495cf7a348de08516fa54ba2e51a413966f7d426149",
+      "bytes": 14502
+    },
+    {
+      "path": "apps/engine/src/services/decisionContext.test.ts",
+      "mode": "100644",
+      "gitBlob": "8400d6b72807e3a829d79a17f1642fab233ee9eb",
+      "sha256": "dda38ac643a0f9e6ca95e0ca57dc45569b545c3ddbc4d0b765784b004dc654c2",
+      "bytes": 1159
+    },
+    {
+      "path": "apps/engine/src/services/decisionContext.ts",
+      "mode": "100644",
+      "gitBlob": "3000d87b8ef78add2ad144de085adcab87d7d5f5",
+      "sha256": "66ca53f0f5b3b02fc434176f94db03a7309933b70be7b0d30a52268048674e60",
+      "bytes": 3883
+    },
+    {
+      "path": "apps/engine/src/services/decisionEpisodeFacts.ts",
+      "mode": "100644",
+      "gitBlob": "151020b8c96e7822c67dffaff5a422309f320dab",
+      "sha256": "7ce18d89207034e9e81086a6f5f972477911fec076834570e0770a99e684cb1e",
+      "bytes": 4349
+    },
+    {
+      "path": "apps/engine/src/services/directionPolicyService.test.ts",
+      "mode": "100644",
+      "gitBlob": "d0a82b570f92380fcb113fcec0aac98e095f046b",
+      "sha256": "40a9605b65c2263d805753ea9fd9e44c5a7e7b377b521a420b28fadfa7b34aef",
+      "bytes": 1617
+    },
+    {
+      "path": "apps/engine/src/services/directionPolicyService.ts",
+      "mode": "100644",
+      "gitBlob": "f7d080da4705e402e2abdb93432ff917541974b6",
+      "sha256": "5833ae2c9d96954d2b41ac0b6a2a90d2e6ef584770c8e4e7ca28aab108de5905",
+      "bytes": 3437
+    },
+    {
+      "path": "apps/engine/src/services/economicEntryFeasibility.test.ts",
+      "mode": "100644",
+      "gitBlob": "eb9d790e66f4d626c109ee9226496e019ebabe0e",
+      "sha256": "03511fae6b2b04e35e9cb600604ce86038227b700dafa7870bb77f5ce7a62782",
+      "bytes": 3321
+    },
+    {
+      "path": "apps/engine/src/services/economicEntryFeasibility.ts",
+      "mode": "100644",
+      "gitBlob": "2c0fc50cda53ecbea06056ee9ad24d42b4cc4031",
+      "sha256": "6a9bdc41d99e07394095c54c5efb60c6dc0997a27bab6a8c21cfb299cd1b5c4d",
+      "bytes": 6489
+    },
+    {
+      "path": "apps/engine/src/services/egressFailClosed.test.ts",
+      "mode": "100644",
+      "gitBlob": "b5136a0ea6f81f21c99891edc87c78b008b654c5",
+      "sha256": "081a46a4d9d06346ff5fa2b0b3d81e3a1b5ab8c17104990f8bcde341fac34e4f",
+      "bytes": 11682
+    },
+    {
+      "path": "apps/engine/src/services/eipDependencies.ts",
+      "mode": "100644",
+      "gitBlob": "bb9fb0ae6ee23111a91ba9013de60e0e6b76b513",
+      "sha256": "0f9a0380b509f0e57ae27b7b609c86f6de7677f744a8038e92b11314727cb1f5",
+      "bytes": 2176
+    },
+    {
+      "path": "apps/engine/src/services/eipResidentInspection.test.ts",
+      "mode": "100644",
+      "gitBlob": "53aa2aa3a64c4f8895884c5270d5498f56ead1be",
+      "sha256": "7b29530f80943909a046df1d9c7839a298f807ba5d156dc89d2af32181213dd8",
+      "bytes": 1056
+    },
+    {
+      "path": "apps/engine/src/services/eipService.test.ts",
+      "mode": "100644",
+      "gitBlob": "6a14429831523a6909b13428011cb8043c26a080",
+      "sha256": "182e644fdc8643c996896267ec081cdd9459d0379603a01039db857bcb24f893",
+      "bytes": 3705
+    },
+    {
+      "path": "apps/engine/src/services/eipService.ts",
+      "mode": "100644",
+      "gitBlob": "be44f83e3ebf6c1ed91be78585990ca32c33b7db",
+      "sha256": "869e02f6314e76178fc30b5385d3d4b62e17e08cab5e82b3f7ba5094309d2214",
+      "bytes": 8163
+    },
+    {
+      "path": "apps/engine/src/services/entryAnalysisContext.test.ts",
+      "mode": "100644",
+      "gitBlob": "7b593fc5c8b54e072a41a38d5f4bb9c9ee001845",
+      "sha256": "1ae86b773333aa0d5cfaf983ee89ee9d34a4b12343652f6f802aacc792bf8c82",
+      "bytes": 10343
+    },
+    {
+      "path": "apps/engine/src/services/entryAnalysisContext.ts",
+      "mode": "100644",
+      "gitBlob": "c579acedb6ab36a7a1d11508bfc8af6f4c426e1c",
+      "sha256": "44cf30c6b1ce396afd025392146213825b6dcea1969e4cf37b2a5a40c67a3f86",
+      "bytes": 2244
+    },
+    {
+      "path": "apps/engine/src/services/entryCandidateReferenceIntegration.test.ts",
+      "mode": "100644",
+      "gitBlob": "3d84a6e8070772f3812538dd1ad34cd9817de13c",
+      "sha256": "b557dfb8389adc81c6bccfd76894ef3c08cf63960474346f1cbaacabe263104a",
+      "bytes": 4655
+    },
+    {
+      "path": "apps/engine/src/services/entryCapacityTrace.test.ts",
+      "mode": "100644",
+      "gitBlob": "cb177abb6d7d7b8577df0744ac6ed5ddbd523abe",
+      "sha256": "54f9154de7b578cf9ead0ae630a3488a3cca0770c339a37ec60f231b15017b85",
+      "bytes": 13772
+    },
+    {
+      "path": "apps/engine/src/services/entryCapacityTrace.ts",
+      "mode": "100644",
+      "gitBlob": "10156ba4c7c77a16959f269bc6c2359f11b4c75c",
+      "sha256": "c4534c3f7c7c309fa62865cc6ae72947a467e4c5a65ae0c9248d51c4fe0f5097",
+      "bytes": 21059
+    },
+    {
+      "path": "apps/engine/src/services/entryCoordinator.test.ts",
+      "mode": "100644",
+      "gitBlob": "303375c919af8fa2e5a204d46fb4c6ac0b1bfa90",
+      "sha256": "933a563938df6ea2a7247099c88f0d1cf27ee8a86279dec6fa01827ad86a1122",
+      "bytes": 13620
+    },
+    {
+      "path": "apps/engine/src/services/entryCoordinator.ts",
+      "mode": "100644",
+      "gitBlob": "31d9969852d3f2cc20ea90578dbd424569e72519",
+      "sha256": "78df04593acd4799f330031ef538cf7f4f5cca8163761599b6835059e92bf2d1",
+      "bytes": 140500
+    },
+    {
+      "path": "apps/engine/src/services/entryDecisionClock.test.ts",
+      "mode": "100644",
+      "gitBlob": "10ac28fa3e45cba60b16c5e1b5a783dda6acaeda",
+      "sha256": "919bdd7a320365c2d08896c5fd06800c1e4269899096e8cc81c0fe6a012cdda3",
+      "bytes": 15476
+    },
+    {
+      "path": "apps/engine/src/services/entryDecisionClock.ts",
+      "mode": "100644",
+      "gitBlob": "67395c51ea6f5a229286572eed7de2be4f7d104f",
+      "sha256": "1e6ef420c1a175fcc88d7c38cdf682c6e78624e0d61007cfca907575fb58559b",
+      "bytes": 891
+    },
+    {
+      "path": "apps/engine/src/services/entryDependencyPreflight.test.ts",
+      "mode": "100644",
+      "gitBlob": "856a0cb74dbb75cadab2b50f8809f48451bf470f",
+      "sha256": "6e836688cd8d1ac7a85466b4d3ddb25e7ca383e941dce9dc1b147f890aab75b7",
+      "bytes": 9313
+    },
+    {
+      "path": "apps/engine/src/services/entryDirectionContract.test.ts",
+      "mode": "100644",
+      "gitBlob": "62238c26203012d106c87cb955df0e0f87a5dfcd",
+      "sha256": "de4c70da5f11eaac9fc31122a246c86d6b7e44acc2136c96d327c180142d7877",
+      "bytes": 6978
+    },
+    {
+      "path": "apps/engine/src/services/entryDirectionContract.ts",
+      "mode": "100644",
+      "gitBlob": "a90fd610ce8f682d10065ae39d1b3be3b5097c2e",
+      "sha256": "0a419b285a5845bbdd691041048982cdce665f313fa464d79983a3475b9e4f8a",
+      "bytes": 6498
+    },
+    {
+      "path": "apps/engine/src/services/entryExecutionChain.test.ts",
+      "mode": "100644",
+      "gitBlob": "dae162b3b934c6941bb3494ce053da0f24f9042f",
+      "sha256": "5d764930b07cff0242ee1d23719b098c9116af202e2012a0a8ad510631939d94",
+      "bytes": 6869
+    },
+    {
+      "path": "apps/engine/src/services/entryFactBoundExecution.test.ts",
+      "mode": "100644",
+      "gitBlob": "a17050b35d71a0ce06e11ab603944655bac9f444",
+      "sha256": "0b0a873bd8bcb16e16f49138296a7d9dbc2b7f8685d970c5ed64ef5cc0727085",
+      "bytes": 3541
+    },
+    {
+      "path": "apps/engine/src/services/entryFacts.ts",
+      "mode": "100644",
+      "gitBlob": "b2ef73f60dc116717cabe5beb0a60bf27baddd7b",
+      "sha256": "c0362e7f52683a282e273bfb5b161dbf8a468ad26529597d12403e474f1127d0",
+      "bytes": 772
+    },
+    {
+      "path": "apps/engine/src/services/entryFundingCommitment.ts",
+      "mode": "100644",
+      "gitBlob": "f2a3295a3d95316d4d177a83011953d411d0f9ca",
+      "sha256": "17a4b1cc24630e813963b1f86dede32f344c78249930513bb9ca27a2a8d41e6e",
+      "bytes": 863
+    },
+    {
+      "path": "apps/engine/src/services/entryFundingUniverse.test.ts",
+      "mode": "100644",
+      "gitBlob": "3f796816c4e145320571365c78d07aa0dda28219",
+      "sha256": "78b62a2d4ac8d5d4b746ef733b8d3b00e7c43dfe752fdfdc26a11fe5df23f3fa",
+      "bytes": 7800
+    },
+    {
+      "path": "apps/engine/src/services/entryGateTaxonomy.ts",
+      "mode": "100644",
+      "gitBlob": "bb16e98905ee03cf2e3af28edecb390060a5b803",
+      "sha256": "0d77eec3650726695c3162670504b577787b2f4303669f4dc3279c2d6bd2a3f1",
+      "bytes": 2599
+    },
+    {
+      "path": "apps/engine/src/services/entryObservation.test.ts",
+      "mode": "100644",
+      "gitBlob": "04184d6b6ab4542ea65e7b8dd637f7b4da59c4a7",
+      "sha256": "e3d22cb8b984a0f4e6e6e12ef1099cd067c3a799539b374cee1e7be39af40931",
+      "bytes": 1683
+    },
+    {
+      "path": "apps/engine/src/services/entryObservation.ts",
+      "mode": "100644",
+      "gitBlob": "acf7e3e247f2794a67a0c474d80d7997d4152e4d",
+      "sha256": "a14ceebcf682dcbdd17aae21ff39b40c88df7d0163376472dadadb83d5fb29f3",
+      "bytes": 3888
+    },
+    {
+      "path": "apps/engine/src/services/entryOpportunityAuthorization.test.ts",
+      "mode": "100644",
+      "gitBlob": "3f1edeb2c33bb285b4443c8bc8b71c65b726ffdf",
+      "sha256": "589046a34424f3a2017446b0b0776f7e824438c8c7e8005c16a2f0360f3e9a16",
+      "bytes": 7401
+    },
+    {
+      "path": "apps/engine/src/services/entryOpportunityAuthorization.ts",
+      "mode": "100644",
+      "gitBlob": "b2144101fbd857ed78c779aadaff9bce1939ada6",
+      "sha256": "c8d2b8def8af5fea31829f2e473d455b2854bdf9c3452e87becc484501d5df2d",
+      "bytes": 5434
+    },
+    {
+      "path": "apps/engine/src/services/entryOpportunityIntegration.test.ts",
+      "mode": "100644",
+      "gitBlob": "a1998602d82870411a9840ea5bda4a7bfc87e5a4",
+      "sha256": "77889bdd77f21c21817bfc7353a43bd80083c3d2fbb4b7f0642d71cf6022d43c",
+      "bytes": 3705
+    },
+    {
+      "path": "apps/engine/src/services/entryOrderPrecision.test.ts",
+      "mode": "100644",
+      "gitBlob": "78381707f8541106143c759eb5d5f6fbe61a83a4",
+      "sha256": "65493d00290874e83b8a60627a27639117c24c1a08107b92c5cff2e9095543c3",
+      "bytes": 5493
+    },
+    {
+      "path": "apps/engine/src/services/entryPermissionModel.test.ts",
+      "mode": "100644",
+      "gitBlob": "6a90c325103536f3a360d6e0fd7ffd8db3e53ee1",
+      "sha256": "d9033307396bc1f992405a93cca3cb4a1c56c3217fc19200715fb43be1936266",
+      "bytes": 15967
+    },
+    {
+      "path": "apps/engine/src/services/entryPermissionModel.ts",
+      "mode": "100644",
+      "gitBlob": "247f4ecf4167c0efb33dbdaecef9a007b7939e29",
+      "sha256": "89a5e0ae506a279be144008301c3dbc45dc40dacaf1804af82737907efbfd395",
+      "bytes": 12485
+    },
+    {
+      "path": "apps/engine/src/services/entryRiskOccupancy.ts",
+      "mode": "100644",
+      "gitBlob": "3e65bdbe6614b811ee43712cbbd56a6ea6bc86e1",
+      "sha256": "892cb66483d3fbb981ba66e7d4086fc434ea27f1ff24783870b4c86a4e418f65",
+      "bytes": 21792
+    },
+    {
+      "path": "apps/engine/src/services/entrySubmissionIdentity.integration.test.ts",
+      "mode": "100644",
+      "gitBlob": "24fbff162cf5a1768d48c0b429cf66299f5146d9",
+      "sha256": "11e42ac92bd029b31a8d01679324d60d1175ff06c7d24261d281a0d6cb397c19",
+      "bytes": 15567
+    },
+    {
+      "path": "apps/engine/src/services/entrySubmissionIdentity.ts",
+      "mode": "100644",
+      "gitBlob": "257ac07c29262ffa170726c1bfdc0ab6d81d6cd5",
+      "sha256": "417253f3f21796b9fedf1b4c836a4d6490a1f65dd665a331df496ded5492c19d",
+      "bytes": 5544
+    },
+    {
+      "path": "apps/engine/src/services/entryWaiting.test.ts",
+      "mode": "100644",
+      "gitBlob": "ec88ff691a9860166e34f2e77ecf997d360d15cf",
+      "sha256": "ca6fe7c3d65de34d1d415827148ebaaf3ccde5d985180f48c2ea9345074d6972",
+      "bytes": 1762
+    },
+    {
+      "path": "apps/engine/src/services/entryWaiting.ts",
+      "mode": "100644",
+      "gitBlob": "e2de49f600c821eb271db3fc9760bd8544b8b020",
+      "sha256": "85e5b30566a23d32b5563077bd565d53dca65c23f7a104e1f1a1739e4a36e89e",
+      "bytes": 1482
+    },
+    {
+      "path": "apps/engine/src/services/exchangeLoop.ts",
+      "mode": "100644",
+      "gitBlob": "883dca099cbbd9a0fae42a95b28baeafc0c77f06",
+      "sha256": "eb44a3c1528607e52474b156cb97c4c0c443e44ee161f33fb08ec52f322c07cd",
+      "bytes": 1340
+    },
+    {
+      "path": "apps/engine/src/services/executableRiskHeadroom.test.ts",
+      "mode": "100644",
+      "gitBlob": "cd75ef8b7d00cda3eb1bf435ff3e03969ee22570",
+      "sha256": "c7bd4ab39dedb808ac119d805a86f6f84d4c8bdf177e9e9a842546bbf9349588",
+      "bytes": 4197
+    },
+    {
+      "path": "apps/engine/src/services/executableRiskHeadroom.ts",
+      "mode": "100644",
+      "gitBlob": "c92f8a507032e5db2f09d51018c7415123abca79",
+      "sha256": "260ce697eda30733e3fd9156f0fd1f9dba8bed8717abd92d471a1283f752d4a8",
+      "bytes": 15443
+    },
+    {
+      "path": "apps/engine/src/services/executionLease.ts",
+      "mode": "100644",
+      "gitBlob": "3b5e4bc9bdc2d6000a5b17a2f66f063c1dd2fae6",
+      "sha256": "4abf82c623ff1db9a34d5e08854ed0b834666e431adbdb3c26a4f23c89e9c7e1",
+      "bytes": 2628
+    },
+    {
+      "path": "apps/engine/src/services/executionLifecycle.integration.test.ts",
+      "mode": "100644",
+      "gitBlob": "c454b9d340c294ce1ace6baf443ff194fcd27482",
+      "sha256": "8789461355ea8707213720eaede9cbb1463af923d77551b0d61e341c0d9941fa",
+      "bytes": 15595
+    },
+    {
+      "path": "apps/engine/src/services/executionLifecycle.ts",
+      "mode": "100644",
+      "gitBlob": "41d019eaa42bd185645c6ca053c0310f35a2a8ab",
+      "sha256": "8dd3e7dbc685fa8125527ab7bab70f1690d370286c805ce8e63a0b9232a1c8d6",
+      "bytes": 3581
+    },
+    {
+      "path": "apps/engine/src/services/executionReadiness.test.ts",
+      "mode": "100644",
+      "gitBlob": "6609bc6708d09902bb86ccb2262c7e4051f469f0",
+      "sha256": "95a2384db34131b280a9ab4a65d0a2f2ce8e4629505014fd7229d604c43303d0",
+      "bytes": 24398
+    },
+    {
+      "path": "apps/engine/src/services/executionReadiness.ts",
+      "mode": "100644",
+      "gitBlob": "3aa7e769992b641d9e2d8f5e1c5f1d2ed5418f34",
+      "sha256": "a6d133a43d4d00ed6d9462ab3302ea35a1a2babffc15e13b1974c96402e0e463",
+      "bytes": 6194
+    },
+    {
+      "path": "apps/engine/src/services/exitConvergenceFairness.test.ts",
+      "mode": "100644",
+      "gitBlob": "54ce9a507f91f0138f38afac2b99222363995530",
+      "sha256": "f5ca3f258d31e47f116703ba8490d10f8453217e47b2fe3e19c25e3fe0efe867",
+      "bytes": 22532
+    },
+    {
+      "path": "apps/engine/src/services/exitFactsAndFunding.test.ts",
+      "mode": "100644",
+      "gitBlob": "e77bbc99abe70a613b187adeec041cbd21b74b50",
+      "sha256": "61d5c52bff8a81f4d2122e8ae4d17404d848c9e9b0249acb485b0d6b544f06c0",
+      "bytes": 13993
+    },
+    {
+      "path": "apps/engine/src/services/exitOrderFact.ts",
+      "mode": "100644",
+      "gitBlob": "52523b04f3a5b4033c243740c1e1fc563db26298",
+      "sha256": "03a9a7610f6f849f55b5c4a0faa2a198020c009846c8127244364ba9e413857a",
+      "bytes": 5240
+    },
+    {
+      "path": "apps/engine/src/services/exitOrderPrecisionOutcome.test.ts",
+      "mode": "100644",
+      "gitBlob": "1b9eeec5bb2203eb6e542b7ebfa41eead651ff17",
+      "sha256": "74b925c6676c86ecb004f06eb5613287b9562395fa0934bf113d15a8dff4d450",
+      "bytes": 3895
+    },
+    {
+      "path": "apps/engine/src/services/experienceService.test.ts",
+      "mode": "100644",
+      "gitBlob": "3edd7a196131904178492c5f5a72d26a4efd6186",
+      "sha256": "0079fcbdd5bfad58e1706bc439404405b30b10d428d89a9a9a22f04abdfcec14",
+      "bytes": 854
+    },
+    {
+      "path": "apps/engine/src/services/experienceService.ts",
+      "mode": "100644",
+      "gitBlob": "e016c4375e9376a8fcd624a9cfffb52df89b0dd6",
+      "sha256": "bed8693fe204597cd1483d4c70da283799ca04aca89efbc616c9f963e91d5f64",
+      "bytes": 1392
+    },
+    {
+      "path": "apps/engine/src/services/externalIntelligenceService.test.ts",
+      "mode": "100644",
+      "gitBlob": "58fc61d63601248dbefb427794f39eda5b8bf590",
+      "sha256": "cb7dd279f4a0a2fb087ff4b84b778217f1188eeeb0ea865ea16cb93c7d3e50c5",
+      "bytes": 4563
+    },
+    {
+      "path": "apps/engine/src/services/externalIntelligenceService.ts",
+      "mode": "100644",
+      "gitBlob": "4ffbff4ee23b5435faf2c1e452e0ef4f357485eb",
+      "sha256": "5dc5db03d71ebe7dde57c77a46a1e6207b52fb3300df4bbac5b61f74ff6a63bc",
+      "bytes": 8629
+    },
+    {
+      "path": "apps/engine/src/services/externalResearchQuality.test.ts",
+      "mode": "100644",
+      "gitBlob": "d41b405d0024aae14cdca525b9944935525d3fd5",
+      "sha256": "360234201d78f67406686e55fbaf9b2cd7203a14d1e6f34ffe942418e29eaccf",
+      "bytes": 2250
+    },
+    {
+      "path": "apps/engine/src/services/externalResearchQuality.ts",
+      "mode": "100644",
+      "gitBlob": "492ee60dcf20e3694c5c36b0c623d5199e3f5328",
+      "sha256": "e491cf04e50b5302a4449311440b6c7f868d7c03f2a384c93f7cf0bba5ac89ee",
+      "bytes": 5600
+    },
+    {
+      "path": "apps/engine/src/services/externalResearchService.test.ts",
+      "mode": "100644",
+      "gitBlob": "44c134559f89fd8fb152ff29295571c4990c0c9d",
+      "sha256": "a48fdc45165be46c282a8dc45f619e4ea65645568a91e2b49653acb0f5d43c14",
+      "bytes": 3338
+    },
+    {
+      "path": "apps/engine/src/services/externalResearchService.ts",
+      "mode": "100644",
+      "gitBlob": "07f93c71d83eb8fc8754486264f98730a5453fbb",
+      "sha256": "94030f1c542ade301d8d6655c97fa70d2afabff631386d0936b8ac40c0da3d46",
+      "bytes": 3909
+    },
+    {
+      "path": "apps/engine/src/services/finalActivation.test.ts",
+      "mode": "100644",
+      "gitBlob": "5ba8bfaa12b79b3a823b95b38e29ef0e840d1bfc",
+      "sha256": "802f090ed185ca0f1b6e3e0ed81613f23a5f970083b3351152fac8927cc1e4ed",
+      "bytes": 7166
+    },
+    {
+      "path": "apps/engine/src/services/finalRiskConvergence.test.ts",
+      "mode": "100644",
+      "gitBlob": "ab82c201f3ea262892e0d4c49d27da999a8eb1ff",
+      "sha256": "7139e33fad637327a7513b164d423bc43051262419aea6095540cd837c46d41c",
+      "bytes": 4435
+    },
+    {
+      "path": "apps/engine/src/services/frozenChoiceTelemetry.test.ts",
+      "mode": "100644",
+      "gitBlob": "41980b508d5a9e793a7954863d58106c5146f132",
+      "sha256": "75b4f3f6c32df84e63b67db85cbc8c040d7679493f5da4be0472837ee30fd861",
+      "bytes": 6109
+    },
+    {
+      "path": "apps/engine/src/services/frozenChoiceTelemetry.ts",
+      "mode": "100644",
+      "gitBlob": "2ba7f6ff4c658c237006d0aebd38d4422570ff80",
+      "sha256": "b5cc1c9b78d3d9b35fc991d1a5596444a39c61204f5dc32814fbc3d33bbb16ae",
+      "bytes": 4452
+    },
+    {
+      "path": "apps/engine/src/services/fundingIncomeLedger.ts",
+      "mode": "100644",
+      "gitBlob": "ca8678710601810ff2e1e72f04561e935a4713bf",
+      "sha256": "0389841d78da452a91ed599509f8ec1585882d3f0770b92158083be13f732aee",
+      "bytes": 11128
+    },
+    {
+      "path": "apps/engine/src/services/grossRiskCapacityVisibility.test.ts",
+      "mode": "100644",
+      "gitBlob": "ae3d0286b08856d73f8ebb09809b582bc47fe6dc",
+      "sha256": "946fb5b5e22b4395847b6db6b849d42925d786035d4df76d5b6c86d58b383b56",
+      "bytes": 22226
+    },
+    {
+      "path": "apps/engine/src/services/historicalTpReachability.test.ts",
+      "mode": "100644",
+      "gitBlob": "6e74e1a805c9a19962a9ee9ec78e9c2e1bf206bd",
+      "sha256": "cf94bead7fc7f241ac30c40789e5393f7f42d7b44877224a68f27ed6bf545bee",
+      "bytes": 1664
+    },
+    {
+      "path": "apps/engine/src/services/historicalTpReachability.ts",
+      "mode": "100644",
+      "gitBlob": "e3ddeecf1b861f50f705be39b902abd79095c98c",
+      "sha256": "a82fe16650f8c801eaa72b24fb015d0b979a12ccc0731511b81cbce95e2691aa",
+      "bytes": 5713
+    },
+    {
+      "path": "apps/engine/src/services/humanCapacityPolicy.ts",
+      "mode": "100644",
+      "gitBlob": "2a608a4a9b70a810c3b80f5abe2b9283290f34ca",
+      "sha256": "962b75dddabfbb30d5b038feec5096d23bcec87940f932905b5163fd548bdc98",
+      "bytes": 3753
+    },
+    {
+      "path": "apps/engine/src/services/humanManagedProjection.test.ts",
+      "mode": "100644",
+      "gitBlob": "d6bce5254cbbf127b825ceedb05b42b63feaecc0",
+      "sha256": "705030edd866c77812e425e35c377da72b8d42731492dfb4db34843d5a3ae8a7",
+      "bytes": 1572
+    },
+    {
+      "path": "apps/engine/src/services/humanManagedProjection.ts",
+      "mode": "100644",
+      "gitBlob": "c46628c18eebdd410ecc5bd9dc31f9aeabfc0aa2",
+      "sha256": "b8ac5c6589ae36e5b7604a793c246aa5359a917d6605808fa20f0079895c97d0",
+      "bytes": 6081
+    },
+    {
+      "path": "apps/engine/src/services/j1AiExitConsumer.test.ts",
+      "mode": "100644",
+      "gitBlob": "b3bcca466c37d22fe4d1ac2ec3e8193015b975b4",
+      "sha256": "ef56f7b0f5f21701d8966f03595425c522deb843d584b1c5e5f1d32232d3348d",
+      "bytes": 18645
+    },
+    {
+      "path": "apps/engine/src/services/j1ExitTruthHostile.test.ts",
+      "mode": "100644",
+      "gitBlob": "8260122c3b14e5205ede8593e25f5e418503582f",
+      "sha256": "3795b68f0df3e049f4fe6d8080b3ddd835c00724dd2dad607d77796843496050",
+      "bytes": 17577
+    },
+    {
+      "path": "apps/engine/src/services/j2PortfolioAdmissionHostile.test.ts",
+      "mode": "100644",
+      "gitBlob": "1f3e748f9ebb88a33ca7a109c35fb261df70059b",
+      "sha256": "327055643101ca3f96d89039cfe37b09194f954d9166e3eae47dcc92c7eaf6f3",
+      "bytes": 19187
+    },
+    {
+      "path": "apps/engine/src/services/j3TradePlanHostile.test.ts",
+      "mode": "100644",
+      "gitBlob": "d9e146160a5f532351bb20d59b84e7923ba151ca",
+      "sha256": "2d18810b3d264c9ab5e925bec3670759e2ecc5d72ce8ad3e64554a87d23dda2e",
+      "bytes": 33044
+    },
+    {
+      "path": "apps/engine/src/services/j4ReviewMemoryHostile.test.ts",
+      "mode": "100644",
+      "gitBlob": "203336e1a2230906b4d6e74f368853ed0e7de6e4",
+      "sha256": "8587efb13f6acf82bc0dbfc9d7ae56a8e81ff226ddd1f829e29aee902eb1d3d0",
+      "bytes": 36872
+    },
+    {
+      "path": "apps/engine/src/services/j5SettingsGovernanceHostile.test.ts",
+      "mode": "100644",
+      "gitBlob": "b725ade7bba8cf1a1b4aa6a59f3448de6f3bf03f",
+      "sha256": "862031a3795b411f4b2c9f46303d5da87486d0d402f85a7183aef49cde7d67b3",
+      "bytes": 26056
+    },
+    {
+      "path": "apps/engine/src/services/liveValidationObservation.test.ts",
+      "mode": "100644",
+      "gitBlob": "385d993eb41edc8598abbe47359b2ec731ef16bb",
+      "sha256": "bf8a964ab70fafa490799695ab42b961093f473f9295fe375d1d13583909b8fd",
+      "bytes": 1958
+    },
+    {
+      "path": "apps/engine/src/services/liveValidationService.ts",
+      "mode": "100644",
+      "gitBlob": "c793c8b78efd6b33b5ab49c1d27b93ca6ad7d1fd",
+      "sha256": "130ab68854188e3ed7753644b89ea9ba3bce7b941dbe81d960b6802119f9a327",
+      "bytes": 20385
+    },
+    {
+      "path": "apps/engine/src/services/lossHandoff.test.ts",
+      "mode": "100644",
+      "gitBlob": "521b808e6cd7a3abc1df33bfd3fb79982e229440",
+      "sha256": "a8ccc35d723278c70f33065cae1dbdaa5087b047b6301d3cfe9a92a8bd809095",
+      "bytes": 3800
+    },
+    {
+      "path": "apps/engine/src/services/lossHandoff.ts",
+      "mode": "100644",
+      "gitBlob": "369dc59abd1737cf20b4df2ac1fe535922e5cba8",
+      "sha256": "23564211013a8db49886ed193f16129f0ccc3c3c90807e677e4df93b5cdeb044",
+      "bytes": 3347
+    },
+    {
+      "path": "apps/engine/src/services/manualPositionService.test.ts",
+      "mode": "100644",
+      "gitBlob": "bbcf725473d65bdc51f52a301029f1b34f0b0f51",
+      "sha256": "5a259ce5fc7f03cabf1edbce2901eba1fa18ff6373f6eeee9b8f7041b8222990",
+      "bytes": 20206
+    },
+    {
+      "path": "apps/engine/src/services/manualPositionService.ts",
+      "mode": "100644",
+      "gitBlob": "22c128195d7f2cfaeff215a0b3e01a2d227e204e",
+      "sha256": "9c6bb923ceddb7f268b470034ed2aedaa6dde357f293bed37977e9c7e00d039a",
+      "bytes": 28772
+    },
+    {
+      "path": "apps/engine/src/services/marketCohort.test.ts",
+      "mode": "100644",
+      "gitBlob": "015358c9fdd5b2c319250895467e0473455e84c7",
+      "sha256": "ce26985860f4d3d1d36342d875d2858b80b0e84c6f142457b21a865e55226b4c",
+      "bytes": 8685
+    },
+    {
+      "path": "apps/engine/src/services/marketCohort.ts",
+      "mode": "100644",
+      "gitBlob": "c1848eea8b22dbe6e39fb779890a860dfd8420ea",
+      "sha256": "9c43f41cf788b2298c21e343b46c679760a025ea498acedd81af7a85f7dd9696",
+      "bytes": 8139
+    },
+    {
+      "path": "apps/engine/src/services/marketDataHub.test.ts",
+      "mode": "100644",
+      "gitBlob": "e42f1cc4b00b5108df9c3f863021f2e0e8eb9107",
+      "sha256": "d7b658e57c3e9dbf13be53d70e3bb7c7f8c5bb2717ea669e923c4ba70d41524c",
+      "bytes": 8121
+    },
+    {
+      "path": "apps/engine/src/services/marketDataHub.ts",
+      "mode": "100644",
+      "gitBlob": "70c6faf4d26c010f808bd7fc49e495b165bb5cab",
+      "sha256": "d0aaf861219a863d1a2cd6539cbf14761d8b5d8486ed0c6dd1bb3b9d7712d83d",
+      "bytes": 32572
+    },
+    {
+      "path": "apps/engine/src/services/marketDataHubSlowFields.test.ts",
+      "mode": "100644",
+      "gitBlob": "c95cafdb49ce526fbdb3d350c2f24c4975ca6f2d",
+      "sha256": "e18707e03e6907d9a74b6eeabafb460807a725aa82f362b0ce3b73a3d885bad6",
+      "bytes": 5682
+    },
+    {
+      "path": "apps/engine/src/services/marketDataReadiness.test.ts",
+      "mode": "100644",
+      "gitBlob": "ade2b283c78caf0a224d8f1f747345cc112a6c6a",
+      "sha256": "d3ce340b606889d3a1cbfd657c20ddcb8d1e59ea244f58995f2489efd59657cc",
+      "bytes": 1898
+    },
+    {
+      "path": "apps/engine/src/services/marketDataStaleness.test.ts",
+      "mode": "100644",
+      "gitBlob": "1d181bf61e110d4baf8a3cb2d75c63a0efaaa171",
+      "sha256": "e0625101dc02395887e11b12fb5d903fb682cad5e6880af392a86ec389b9113e",
+      "bytes": 5550
+    },
+    {
+      "path": "apps/engine/src/services/marketDataStaleness.ts",
+      "mode": "100644",
+      "gitBlob": "e2d5c40e2a2dc850c88bb56ed01aa9767aef8e0f",
+      "sha256": "f04bd2384108a4eec15c2833463907addf224e3c70129ddc1b7579bdaeb71398",
+      "bytes": 3155
+    },
+    {
+      "path": "apps/engine/src/services/marketDependencyRefresh.test.ts",
+      "mode": "100644",
+      "gitBlob": "18adc0af5c3c7073b03bf29422a4174472c2510a",
+      "sha256": "90c5401c39aaa2688a87dd1d35215a42e126c1f8f3d5e32623ccd0415d59bf45",
+      "bytes": 7845
+    },
+    {
+      "path": "apps/engine/src/services/marketDependencySafety.test.ts",
+      "mode": "100644",
+      "gitBlob": "fa23235d673a478733825ee351fcc0320563e602",
+      "sha256": "52dc00c062707cae7fed24f4c7ca60fdf387561f69ceb00ba1b75fc8011e1586",
+      "bytes": 6284
+    },
+    {
+      "path": "apps/engine/src/services/nearMarketPrice.test.ts",
+      "mode": "100644",
+      "gitBlob": "e6a23055c1fdc48f80854f569a557bc9e0c05743",
+      "sha256": "62cfebce9271fd7112311f4b9b4f40816238308d2e43a5ded48545ef332e453a",
+      "bytes": 2549
+    },
+    {
+      "path": "apps/engine/src/services/nearMarketPrice.ts",
+      "mode": "100644",
+      "gitBlob": "20526e411eb6c19f112dc1a30a200055184f1f9c",
+      "sha256": "0dd60d378d3e3c20bfa812f443c1bfc81d026472a7765a509d14393095aba0a4",
+      "bytes": 1608
+    },
+    {
+      "path": "apps/engine/src/services/operationalLogger.test.ts",
+      "mode": "100644",
+      "gitBlob": "b34d0c14d28d78f5d6f5beaea653015460733170",
+      "sha256": "4843ad3aa77597c4870c48216311d79ebb5eace0a3441b224eaf72d62c876daf",
+      "bytes": 2127
+    },
+    {
+      "path": "apps/engine/src/services/operationalLogger.ts",
+      "mode": "100644",
+      "gitBlob": "7e4a9881d0d2faf848ec864787d0046e14008981",
+      "sha256": "fad2d707a6784c605b8299c2139691e44079690d068731bce438e54ddf0da814",
+      "bytes": 5990
+    },
+    {
+      "path": "apps/engine/src/services/opportunityEvidence.test.ts",
+      "mode": "100644",
+      "gitBlob": "7ef0f6cf05886c9ccc6587371d48b9483d59ef69",
+      "sha256": "6c03b0c12d25aba52c0339fd13c52ca19f870f57bc0540338bb66ccda288c935",
+      "bytes": 1857
+    },
+    {
+      "path": "apps/engine/src/services/opportunityEvidence.ts",
+      "mode": "100644",
+      "gitBlob": "f60f615c5b516ed03a70263d6c394c6d6476922e",
+      "sha256": "e275664388b89bb7786197cfad6e04618cb5229e098ed8445329dbbfaa193c29",
+      "bytes": 7663
+    },
+    {
+      "path": "apps/engine/src/services/orderBookDepth.ts",
+      "mode": "100644",
+      "gitBlob": "cbaf3a6a34b8e18bb98ae1f1cd6ad74c6703ea08",
+      "sha256": "84e45213349c8c44adfce098f7e4a6ad86b3daf0e1fe712e175f15a0c389db7b",
+      "bytes": 4935
+    },
+    {
+      "path": "apps/engine/src/services/orderProvenanceRegistry.ts",
+      "mode": "100644",
+      "gitBlob": "57e2caec81e18f3f1decb331661f5bf29ad6eef2",
+      "sha256": "1c161c6a15e1e7ba21bf18b9d2f48234a845953dc27bc8afa254913852becc9a",
+      "bytes": 8633
+    },
+    {
+      "path": "apps/engine/src/services/ownershipJournal.test.ts",
+      "mode": "100644",
+      "gitBlob": "e177c953a8a31f63bd98048ff7374f864798c691",
+      "sha256": "6c3e0c9e7fc115bd20b449996e61f4198d7e12b56eac36e797ea7125bb0ddba2",
+      "bytes": 5745
+    },
+    {
+      "path": "apps/engine/src/services/ownershipJournal.ts",
+      "mode": "100644",
+      "gitBlob": "e308a8743a90bc089269b396015716bdd85dc807",
+      "sha256": "e4f43dbf383bf9fc383c9c97cfd06540b9c608bde98f03b2e03ce63e232c02e0",
+      "bytes": 9700
+    },
+    {
+      "path": "apps/engine/src/services/ownershipMigration.ts",
+      "mode": "100644",
+      "gitBlob": "ccd0e82161c60ff41455d3be0d4324a295e5bc79",
+      "sha256": "267c2429afa531644bf4dcca4fddfef492ca653bf77eb0b02a4fe274c7fc10d5",
+      "bytes": 7617
+    },
+    {
+      "path": "apps/engine/src/services/ownershipRuntime.test.ts",
+      "mode": "100644",
+      "gitBlob": "d4034e2eca61af7f3e868e96c50992027503cf17",
+      "sha256": "f16b994c6288de4b2228b40782850a09381ae7fcb3befb43d069430731922769",
+      "bytes": 5209
+    },
+    {
+      "path": "apps/engine/src/services/ownershipRuntime.ts",
+      "mode": "100644",
+      "gitBlob": "b6785b1612186d6f49de2477c00d56b35d24a03a",
+      "sha256": "1909a785cadd46e1b048f5b9a61675d39de9e56e273584e0da7772192a9f1f77",
+      "bytes": 5890
+    },
+    {
+      "path": "apps/engine/src/services/ownershipS02Acceptance.test.ts",
+      "mode": "100644",
+      "gitBlob": "1f67fc04c46605670762557ddbc165bee241c7d7",
+      "sha256": "a32a4997b433b2884ab334b39df188972eaf4467b8fddad5af161deec78a5d44",
+      "bytes": 16070
+    },
+    {
+      "path": "apps/engine/src/services/ownershipScopeIdentity.test.ts",
+      "mode": "100644",
+      "gitBlob": "1ab42687a78420e3a08d0e8ffba767c89a7bdc5e",
+      "sha256": "47fbfa626f544f0e089afd8b124bf8ff9e43fa6afa599717662e428a71d3ce72",
+      "bytes": 6797
+    },
+    {
+      "path": "apps/engine/src/services/ownershipService.ts",
+      "mode": "100644",
+      "gitBlob": "c19f13b989ad3743938380857c51b2c8f938a9ef",
+      "sha256": "eab749d5ba426404ef693d54b0eaeb2acf452fa5355d035e5daa9ea976a9bf22",
+      "bytes": 12220
+    },
+    {
+      "path": "apps/engine/src/services/ownershipStorageCoverage.test.ts",
+      "mode": "100644",
+      "gitBlob": "a90103ebe258f41576b0ffcf409d42fe1f37e323",
+      "sha256": "2b4cadefb15c3b671fd8d2be68253562dd74d7f1e6ff6fed91655c24ca195e06",
+      "bytes": 5030
+    },
+    {
+      "path": "apps/engine/src/services/p0EntryIntegrity.test.ts",
+      "mode": "100644",
+      "gitBlob": "2ba0fba9901c399f7219a111210e147127a01447",
+      "sha256": "8b5223c55453a8249758aaef3b9ca4e4e5cc4e3751250175316dec133a8cc3ae",
+      "bytes": 3895
+    },
+    {
+      "path": "apps/engine/src/services/p0EntryIntegrity.ts",
+      "mode": "100644",
+      "gitBlob": "ef1b48a877698019a6c1d2ce4e995093272297aa",
+      "sha256": "8428173ee46ada7dfc0ba47284870aaa77160709d0a365c7de8e35c4965f8d2d",
+      "bytes": 3181
+    },
+    {
+      "path": "apps/engine/src/services/p0RiskConvergence.test.ts",
+      "mode": "100644",
+      "gitBlob": "1db3e62487453586348441e4970c416ccb007d15",
+      "sha256": "47ca2e29c23c1540c3c7299bb0268e915becb3fe71c7ce2e288f60087c775af1",
+      "bytes": 1116
+    },
+    {
+      "path": "apps/engine/src/services/p0RiskConvergence.ts",
+      "mode": "100644",
+      "gitBlob": "ddd89c3d92684478530130af62f5cbc28a78744c",
+      "sha256": "c498f7b7f2644f187d41c013ffc252424d5d54817cbfefe9aa5d07c9bd9b2713",
+      "bytes": 1751
+    },
+    {
+      "path": "apps/engine/src/services/pendingRiskOccupancyConvergence.test.ts",
+      "mode": "100644",
+      "gitBlob": "755a98b7f229e7a993645737f8cb4a3cce77baa5",
+      "sha256": "0facc5e677df14e96a1adfb4ac0a2403b24e822f4bf80bd5a26c0a3e85c4f39c",
+      "bytes": 13041
+    },
+    {
+      "path": "apps/engine/src/services/pipelineVerdict.test.ts",
+      "mode": "100644",
+      "gitBlob": "42280a30ea1d09244748ea368383a81a7ba9b4c5",
+      "sha256": "dc18991fa2d7ca3b5bd9814729e0effc91e1c10f6b12363b1792fa5cb97af09a",
+      "bytes": 13151
+    },
+    {
+      "path": "apps/engine/src/services/pipelineVerdict.ts",
+      "mode": "100644",
+      "gitBlob": "1aa4f7db000351b646c2f70dfb13a8852a1f00a9",
+      "sha256": "fb422cc5d71529d93598aedc076a65b170a92d66125f641e1f72ec268cb0c52d",
+      "bytes": 15867
+    },
+    {
+      "path": "apps/engine/src/services/placeToSubmitCapacityTruth.test.ts",
+      "mode": "100644",
+      "gitBlob": "13098846715a3b058b6e8f71bd7d5d8e041cb797",
+      "sha256": "db7b0ceb471ae253c37bb1f067e03cfc8c2b23ca28d85295eaed03daff694453",
+      "bytes": 30309
+    },
+    {
+      "path": "apps/engine/src/services/portfolioRiskAuthority.ts",
+      "mode": "100644",
+      "gitBlob": "a8c68b1a7e5e1c5afc6c0253ace69e4dd105fab9",
+      "sha256": "2cb1ac405b8388d52895a96e9f9b782f24a8eb3d2c92b12a5f51304da25f0e05",
+      "bytes": 30468
+    },
+    {
+      "path": "apps/engine/src/services/portfolioRiskLedger.ts",
+      "mode": "100644",
+      "gitBlob": "39553950d6c5bb1a6f3eece13df2686ed45df08d",
+      "sha256": "703d04b4a1011b1558ab55ad7a9aa12cd61840dfa92928e479926383b2d7b0ad",
+      "bytes": 57341
+    },
+    {
+      "path": "apps/engine/src/services/portfolioRiskSnapshot.ts",
+      "mode": "100644",
+      "gitBlob": "44da0296e54ea4bcdbb2d921ba3947421bfd8981",
+      "sha256": "cd0bffc0ce89385d14753fcbc8c1c8d589a90f5cc398c545db665ca10bdfefcc",
+      "bytes": 16182
+    },
+    {
+      "path": "apps/engine/src/services/portfolioStress.ts",
+      "mode": "100644",
+      "gitBlob": "67b592f2a136775946b3e051e6ffeb8941e6f946",
+      "sha256": "a6bddc680cc6b8f8a2a5d390e5ba7ac99ea1c08ed2c6c077f1446bfdcac34252",
+      "bytes": 7160
+    },
+    {
+      "path": "apps/engine/src/services/positionCycleLotAccounting.test.ts",
+      "mode": "100644",
+      "gitBlob": "20a6b849291156cbdf46b2423a75db4a55b7bbf9",
+      "sha256": "1223eaaf89ee56dfa3c050db28ac3d4477ce2ecb0c9db3117657bbfaa11826b1",
+      "bytes": 26137
+    },
+    {
+      "path": "apps/engine/src/services/positionLeverageV3.test.ts",
+      "mode": "100644",
+      "gitBlob": "83328b6a64c76d9a05e4e6a49cc3afa4b51c2bec",
+      "sha256": "e903da503feff885cc1bf141372cfb5cf73cf330b314b5d3ca782659ddabf31a",
+      "bytes": 11965
+    },
+    {
+      "path": "apps/engine/src/services/positionLifecycleIntegrity.test.ts",
+      "mode": "100644",
+      "gitBlob": "bec5666cd5f7aafcac33c2b6e6f859b2983d2e9c",
+      "sha256": "466c1ec4d3faf32d52d19ce2f3eb3e60835f2df6c1e3740c365b7970b35b3a94",
+      "bytes": 4391
+    },
+    {
+      "path": "apps/engine/src/services/positionLifecycleTracker.ts",
+      "mode": "100644",
+      "gitBlob": "82c5f2fac9c41717c98b914d5d53050877e7f817",
+      "sha256": "4b34e315cddcd72c5d0c812b495df67e4bb4abc9261544b806e0eed53d86ef00",
+      "bytes": 4868
+    },
+    {
+      "path": "apps/engine/src/services/positionNotionalSemantics.test.ts",
+      "mode": "100644",
+      "gitBlob": "e6281eae42f03cd09700dffe2f6c8683b1bd1569",
+      "sha256": "6178d5536acf17a49fb2976a7a2e8326aed4bd106459fafb44e8baddec0ca1f7",
+      "bytes": 7112
+    },
+    {
+      "path": "apps/engine/src/services/positionReviewPrompt.ts",
+      "mode": "100644",
+      "gitBlob": "70ac8a35b661835fb448395a088665aed8145119",
+      "sha256": "f3f66814cd110e5fc80c6d915e44ac9d24459dc278b889a6023d985d78ea9293",
+      "bytes": 6049
+    },
+    {
+      "path": "apps/engine/src/services/positionReviewRunner.ts",
+      "mode": "100644",
+      "gitBlob": "e013f283e5128ebdc134b2350d327ab2e74d12ee",
+      "sha256": "98ccd5ea9693f8225b017bf34f338d3b30930b5acd785abe62e63e989a6cc19f",
+      "bytes": 16911
+    },
+    {
+      "path": "apps/engine/src/services/positionReviewScheduler.ts",
+      "mode": "100644",
+      "gitBlob": "4190e53a88e55becac5edc41acfdd18f5c2170e2",
+      "sha256": "4531f125c29fd9df0bfb9debdf0d599730827dce13ff55fa5df409b312783ca3",
+      "bytes": 13733
+    },
+    {
+      "path": "apps/engine/src/services/positionRiskFacts.ts",
+      "mode": "100644",
+      "gitBlob": "8879eaf5cdb41aff21cce12d81484e0dc3e6be72",
+      "sha256": "5bac38b079fcabba6d4b14a1fa6d002b888bd98e6904c73b0e589cc19263967d",
+      "bytes": 4842
+    },
+    {
+      "path": "apps/engine/src/services/positionRiskV3Facts.test.ts",
+      "mode": "100644",
+      "gitBlob": "c0bce7a9aedf52307555879eeab542ff7662f758",
+      "sha256": "a491cdb12f7057d45bb2cd28dda80b79227364512af6eefce2e5ea6ca2a77c87",
+      "bytes": 18556
+    },
+    {
+      "path": "apps/engine/src/services/positionService.test.ts",
+      "mode": "100644",
+      "gitBlob": "852de130a4c54daffee10d21030ce4c12ed5f821",
+      "sha256": "d46a6440f1afc2aec81aa3f5c26f1ad0a28bd7a170f00357e9f1169d97f202b1",
+      "bytes": 2262
+    },
+    {
+      "path": "apps/engine/src/services/positionService.ts",
+      "mode": "100644",
+      "gitBlob": "af647f47e337799e4fade010ded6fea373238f7b",
+      "sha256": "0d47040308388aa334720f6fc09b10f27a0254c4499e6a43465cba83cc22fd38",
+      "bytes": 27652
+    },
+    {
+      "path": "apps/engine/src/services/preAiExecutableSides.test.ts",
+      "mode": "100644",
+      "gitBlob": "c6b6bb14e12a105bd1f6ffe6a9f53364233e0811",
+      "sha256": "42ee2ec81e2bb739ce033b086057365a042b4f1f830a87903c292f89a3d95923",
+      "bytes": 11932
+    },
+    {
+      "path": "apps/engine/src/services/preAiExecutionEnvelope.ts",
+      "mode": "100644",
+      "gitBlob": "f800d07c5aac50188082d092aaf20f1edbc747c3",
+      "sha256": "eff47b07861df5d324be415dae5ca7c9a2e2550d1c3353eef2a2ece9f50fc415",
+      "bytes": 21332
+    },
+    {
+      "path": "apps/engine/src/services/preAiPlanFeasibility.test.ts",
+      "mode": "100644",
+      "gitBlob": "4959fe503752a57d208c373edb36f0308d2d0f31",
+      "sha256": "90395f18bc3fcf62afe9bf02d088b4b277b78b8b0f7f209dc47751aef2be605e",
+      "bytes": 11718
+    },
+    {
+      "path": "apps/engine/src/services/preAiPlanFeasibility.ts",
+      "mode": "100644",
+      "gitBlob": "6282374cb9aa7ea2e5f142ba38b5fcec1b7c3f8e",
+      "sha256": "f33ecc9e7d9ef5631fc9eac54803a9818072bcb966967d1f907f5eab2f4561f5",
+      "bytes": 4810
+    },
+    {
+      "path": "apps/engine/src/services/preflightFeasibility.test.ts",
+      "mode": "100644",
+      "gitBlob": "b1e4614c1b08dd96adbad6fed1fb6612feabb3ae",
+      "sha256": "bf27827fe131123459030dc6ecdb51447d1845cc2d60539c045ef2bc96e8992f",
+      "bytes": 4297
+    },
+    {
+      "path": "apps/engine/src/services/preflightFeasibility.ts",
+      "mode": "100644",
+      "gitBlob": "273966d71241452aedd0d7abb2ee479bff927af0",
+      "sha256": "ea73671c44bfaa9e92e578d9798f932392b5b227b72102db73496e43e3ce7834",
+      "bytes": 7298
+    },
+    {
+      "path": "apps/engine/src/services/privateAccountReadiness.test.ts",
+      "mode": "100644",
+      "gitBlob": "6aa9a5df25e85b01ad228a118a840d16fc1300f4",
+      "sha256": "4e927fe97795f577a787349954999831f3fde49ae00d9ff9446d97c828e5908e",
+      "bytes": 448
+    },
+    {
+      "path": "apps/engine/src/services/privateAccountReadiness.ts",
+      "mode": "100644",
+      "gitBlob": "98a22fb71f9898294e51b3c0383b7f911c276c51",
+      "sha256": "9b5aae00e076ece64e63ef57ab2803a290228b664a29635f1d295d565632f7b1",
+      "bytes": 243
+    },
+    {
+      "path": "apps/engine/src/services/privateAccountSync.test.ts",
+      "mode": "100644",
+      "gitBlob": "277cbefd4bf8e77b50753dc3cee0315989c271cb",
+      "sha256": "da9c740837aa6e37ce1e3e426e6da7159334498121cb2e6428aea77e8590f261",
+      "bytes": 9046
+    },
+    {
+      "path": "apps/engine/src/services/privateAccountSync.ts",
+      "mode": "100644",
+      "gitBlob": "65d9250faa5acb1f22bee616df1227492141b408",
+      "sha256": "1912ebfeeee3681c5a4df55ae46376e2ce984ad8802eac45a189df2b4b3ca952",
+      "bytes": 5201
+    },
+    {
+      "path": "apps/engine/src/services/productionAssetResearch.test.ts",
+      "mode": "100644",
+      "gitBlob": "b05a42af5d71f06ad6b903b68fcfeedc8c860b1c",
+      "sha256": "375f5ec8ebcb39b0c20637a5574e558de74b04c58d4710e8cb8dc8caf9b3fff9",
+      "bytes": 5093
+    },
+    {
+      "path": "apps/engine/src/services/productionAssetResearch.ts",
+      "mode": "100644",
+      "gitBlob": "3e688966cfddf5f16d1c17679881969bffb26fa9",
+      "sha256": "3fb6502610d896426c5f4f0335644be237785d4cdeb08438998c832723bc6561",
+      "bytes": 9460
+    },
+    {
+      "path": "apps/engine/src/services/productionReadOnlyPreflight.test.ts",
+      "mode": "100644",
+      "gitBlob": "9d2b1501de7bbfc8b827aa2eb6f730cfbe5cc164",
+      "sha256": "fc51eeb5a68d65695bca8d8771da6e711906db513c291687b0cc406aa11a340f",
+      "bytes": 2140
+    },
+    {
+      "path": "apps/engine/src/services/productionReadOnlyPreflight.ts",
+      "mode": "100644",
+      "gitBlob": "d6aa703568f0f7fc48d7fa826ae78ed96c90856b",
+      "sha256": "184fbfb40bd69d9f9ea4c1baad815f838c4ad762dc4528eef4613ea85d82891f",
+      "bytes": 4721
+    },
+    {
+      "path": "apps/engine/src/services/quantityHorizonCandidateIdentity.test.ts",
+      "mode": "100644",
+      "gitBlob": "5df35918d1a5fad7a70772a5923736118edcc9d1",
+      "sha256": "bb78c087ea3fbc511ac1246b7944c28e86deaa29a30e422c171c9ac389daf814",
+      "bytes": 9422
+    },
+    {
+      "path": "apps/engine/src/services/quantityHorizonCandidates.ts",
+      "mode": "100644",
+      "gitBlob": "2b23db90ff2092531b8d18caad6051f8e9c79a08",
+      "sha256": "9396b6908ea1519a6562d8597363e77de8a9a7c5cec2e26e9dd58fd63bd98e91",
+      "bytes": 32534
+    },
+    {
+      "path": "apps/engine/src/services/quoteFxPolicy.ts",
+      "mode": "100644",
+      "gitBlob": "04b1f75ec19381aa92634edc5d4a359a7931107b",
+      "sha256": "6481b3f72b988050c3611d7513166ff608a0f32cb6d17ca405989416bc814dd5",
+      "bytes": 3235
+    },
+    {
+      "path": "apps/engine/src/services/reconciliationCoverageContract.test.ts",
+      "mode": "100644",
+      "gitBlob": "604bf8f06eebc8edbc702417a7ca4c255e9f166d",
+      "sha256": "cb6a997ab3dbe99ffbd0b4027f87b4d5501c18e9df3db1aa1f01e96fa4584f61",
+      "bytes": 4861
+    },
+    {
+      "path": "apps/engine/src/services/reconciliationRequestBudget.test.ts",
+      "mode": "100644",
+      "gitBlob": "6ffd4060530fef61a8f0b525eddde265f209e12a",
+      "sha256": "b2552b98df641656d3a176f7bb38136175a84d1e98cb37f626e40f96584d5574",
+      "bytes": 1863
+    },
+    {
+      "path": "apps/engine/src/services/reconciliationService.test.ts",
+      "mode": "100644",
+      "gitBlob": "58ebee68f71400eed5bbf9a285971c63c5756e03",
+      "sha256": "2cf065b8929b2295ca1c889ed145b2a4804ab6248510ad2b9cf6f3f6235b1c73",
+      "bytes": 18857
+    },
+    {
+      "path": "apps/engine/src/services/reconciliationService.ts",
+      "mode": "100644",
+      "gitBlob": "4e651c185cd56030fc2ad8078f5e637481135fc2",
+      "sha256": "6dd430bd52ab3fb174019feb82c84089c216e94368c7e74592d497444961666d",
+      "bytes": 50971
+    },
+    {
+      "path": "apps/engine/src/services/reconciliationUnknownRisk.test.ts",
+      "mode": "100644",
+      "gitBlob": "d0cbc3379e8e3b81ffa5dcf923736d57c70e35dd",
+      "sha256": "985bd4959cd628f922b02cdf3a7e0d3433e9d1915cd7867c00d8c86da3bcebd5",
+      "bytes": 10843
+    },
+    {
+      "path": "apps/engine/src/services/remoteFactAuditIntegration.test.ts",
+      "mode": "100644",
+      "gitBlob": "9ad98198e8123690eedecc49354444fb87dd1f64",
+      "sha256": "be9b58dc8dc8c0c92f263ccb46d03e73379233df931c79e310ff183bb438ae5a",
+      "bytes": 9575
+    },
+    {
+      "path": "apps/engine/src/services/remoteFactAuditPolicy.test.ts",
+      "mode": "100644",
+      "gitBlob": "f509507f1c1481521c6eaf095795e7eacbee19c4",
+      "sha256": "9326c3d3b2d634144e14e89104b18deb62153c9257877f7b0068c4857fb6c9a1",
+      "bytes": 5736
+    },
+    {
+      "path": "apps/engine/src/services/researchBrainPolicy.ts",
+      "mode": "100644",
+      "gitBlob": "062d0ceade9fdb1da7aea88a524406035cefcac6",
+      "sha256": "343dfdfe7f49f19a000d9ae234714db397908d6654dcfb6bec59fdb8ee713eda",
+      "bytes": 1120
+    },
+    {
+      "path": "apps/engine/src/services/resolveCandidateReference.test.ts",
+      "mode": "100644",
+      "gitBlob": "fdb7cc6bb00c79de6e8192524db2b768c570f5fb",
+      "sha256": "b1079b389f6a97d40a82c8b9b9c6ee114d1e403d8e597d64239c8117996c8410",
+      "bytes": 6199
+    },
+    {
+      "path": "apps/engine/src/services/resolveCandidateReference.ts",
+      "mode": "100644",
+      "gitBlob": "a58120fb667512cc8df5a0cbd28cc3f5e31489c1",
+      "sha256": "2ce4f610cf945dc2d72f511faadcb5ccacfa5f153102f6d665df291010edf61e",
+      "bytes": 4019
+    },
+    {
+      "path": "apps/engine/src/services/resolveFactBoundReference.test.ts",
+      "mode": "100644",
+      "gitBlob": "d7931b098da10ecf31176e6fad4bd6da5d407c1f",
+      "sha256": "8474761dcb28aa626dcb3c9c99c7435144986580a7f7cf8febc0943eb8898a55",
+      "bytes": 10638
+    },
+    {
+      "path": "apps/engine/src/services/resolveFactBoundReference.ts",
+      "mode": "100644",
+      "gitBlob": "8d1cc305a9492fa35647e960e5ea9a8873dc8c3b",
+      "sha256": "297179fc46b0c146319676bb58df51957ffa8258b990b3baa9c0673479fe78c3",
+      "bytes": 4573
+    },
+    {
+      "path": "apps/engine/src/services/riskReadiness.test.ts",
+      "mode": "100644",
+      "gitBlob": "caf658b70f2ec2a247ef2bfd21bb5d3854e13176",
+      "sha256": "523ae8bdefe89aa61e991230a7b0c34fc15ea5e5b055f61e38a4ca907c0ea3d9",
+      "bytes": 1849
+    },
+    {
+      "path": "apps/engine/src/services/riskReadiness.ts",
+      "mode": "100644",
+      "gitBlob": "25e3df4f8514a2cf1e04746705288b035544e60b",
+      "sha256": "a9dda5c27afaa0406d2df4ae55474996bed9325b90898942a32c6ac5120e6f81",
+      "bytes": 18816
+    },
+    {
+      "path": "apps/engine/src/services/runExecutionOutcome.test.ts",
+      "mode": "100644",
+      "gitBlob": "0b35018b3afb692707b7b0d40c3e56a7fe6480c8",
+      "sha256": "a96e56a2bb2fecc849fe722617ee306202ed206fc16630a20794047598732024",
+      "bytes": 29928
+    },
+    {
+      "path": "apps/engine/src/services/runExecutionOutcome.ts",
+      "mode": "100644",
+      "gitBlob": "20911de42d70348f76ec23ae3379617c5b785e39",
+      "sha256": "abfbb1dbdc7cb20b608c6d4c791b050545ff3c9be1a5124e13a5fdf26aa63a8b",
+      "bytes": 29618
+    },
+    {
+      "path": "apps/engine/src/services/runtimeControlService.test.ts",
+      "mode": "100644",
+      "gitBlob": "2c0ee11e3935d80188077986a96bd9ed6da75175",
+      "sha256": "e200cc683c9195ade62e40ed212d729f8203fb6d8fa088e2edd66306ff2b0297",
+      "bytes": 12875
+    },
+    {
+      "path": "apps/engine/src/services/runtimeControlService.ts",
+      "mode": "100644",
+      "gitBlob": "bcd30a755486eefa8657ed89d6285aa627d93f4b",
+      "sha256": "a885e015510ec046675dbe60566417718989c959770af00b7c83b19145f5d4a5",
+      "bytes": 17651
+    },
+    {
+      "path": "apps/engine/src/services/runtimeWriteBuffer.test.ts",
+      "mode": "100644",
+      "gitBlob": "fa38c078fe17e0160b18ad3a792467edb8b9e37a",
+      "sha256": "9389c9bd1c2417cbd1078896c5f794705475eb4714093703822786b7624a2f1e",
+      "bytes": 1268
+    },
+    {
+      "path": "apps/engine/src/services/runtimeWriteBuffer.ts",
+      "mode": "100644",
+      "gitBlob": "678477958b46c83ecbd1ba7e3e6f3bb1b62967cf",
+      "sha256": "2e0aa238c2c1965e987a0611d7467e96a5f6f83c19e170eb87ea28450a929d14",
+      "bytes": 898
+    },
+    {
+      "path": "apps/engine/src/services/s01TruthAccountingObservability.test.ts",
+      "mode": "100644",
+      "gitBlob": "af22fde778fa31e47143b0a965f9616a81cf5d27",
+      "sha256": "52de382eb621227ab508164b8320014d938c8da45eb64f9e3743306b232743e4",
+      "bytes": 2577
+    },
+    {
+      "path": "apps/engine/src/services/s01TruthAccountingObservability.ts",
+      "mode": "100644",
+      "gitBlob": "002f0c50bdf0555ef8972497740dd27e20ea22c2",
+      "sha256": "1a5960ca8b225874cba6065459c2831044f793fe050e92da2ecb9b6d141aaf54",
+      "bytes": 5194
+    },
+    {
+      "path": "apps/engine/src/services/s03AiExitPolicy.ts",
+      "mode": "100644",
+      "gitBlob": "113ce003d166dfd0a716dbe32d00af4aff9ac889",
+      "sha256": "42fe5a46e29bcd0b7edc838f7776c9de9523e93fb7197fde6154d2c8c46deaff",
+      "bytes": 8993
+    },
+    {
+      "path": "apps/engine/src/services/s03ExitCostEstimator.ts",
+      "mode": "100644",
+      "gitBlob": "23fe932868baae540a164aaa9487be62666ca216",
+      "sha256": "ff1c477bcffc79239579ff01a89186f65fc1782870c61a7caa627a09ce533c3f",
+      "bytes": 18410
+    },
+    {
+      "path": "apps/engine/src/services/s03ExitCostFacts.ts",
+      "mode": "100644",
+      "gitBlob": "11475522295c193a32319095934b9595da0f5cfc",
+      "sha256": "4db0c7de8ef6465c0a5eae776424e5bdb146cce5fdf807ae42b4333e305f3dd3",
+      "bytes": 9940
+    },
+    {
+      "path": "apps/engine/src/services/s03ExitCostPolicy.test.ts",
+      "mode": "100644",
+      "gitBlob": "e2b87c494239ecb03a64eadf51526b61f0d89de2",
+      "sha256": "e4aec2e1d915641e0ac80d8fa03db82aec53ecc0bdaeb9f5875aa63e4dc19d21",
+      "bytes": 31369
+    },
+    {
+      "path": "apps/engine/src/services/s04ExitCoordination.test.ts",
+      "mode": "100644",
+      "gitBlob": "238eee35913786ee67ebddbb4cb3f28928a7f62e",
+      "sha256": "d078f161864b2155f3a91ad791c944241d2a583cfd59ecf01dc56399c9bf1a34",
+      "bytes": 23556
+    },
+    {
+      "path": "apps/engine/src/services/s04ExitCoordinator.ts",
+      "mode": "100644",
+      "gitBlob": "6f9ca9871fc4d37c1d21b97c4feffd5023ad0cb8",
+      "sha256": "b05027a39406dd6f6645064c855746c38d157ba4302e397a828f98a912b95ba4",
+      "bytes": 36560
+    },
+    {
+      "path": "apps/engine/src/services/s05ConsumerBoundary.test.ts",
+      "mode": "100644",
+      "gitBlob": "730eff814154eaf4934b3662803765695ef1d31d",
+      "sha256": "0d065d2818d3d44a37187892a22f4875029eac893aa4bf69d4b67ac118dabf1f",
+      "bytes": 4073
+    },
+    {
+      "path": "apps/engine/src/services/s05ConvergenceHostile.test.ts",
+      "mode": "100644",
+      "gitBlob": "fc63bb73893e45c94393c7ee59448cd45acf4eb3",
+      "sha256": "08c063dbd2712c8e3409de87462ab0f297830f6b1b343fc7bd6d2f3bf49f63e4",
+      "bytes": 3068
+    },
+    {
+      "path": "apps/engine/src/services/s05PortfolioTailRisk.test.ts",
+      "mode": "100644",
+      "gitBlob": "294d0151b113763b822dc4cb941667e2b269f6bb",
+      "sha256": "41a673e00e39516bda068eba17484c62b1b64b39d723507dcbd3d2d115572956",
+      "bytes": 37279
+    },
+    {
+      "path": "apps/engine/src/services/s07ConsumerBoundary.test.ts",
+      "mode": "100644",
+      "gitBlob": "486c16857c0de86f2d68c939ecad5be1c638e234",
+      "sha256": "0627ffecf0955e392fb9d6f60d90cde7bd445a40ffaad114df46dd8b0f15d146",
+      "bytes": 5106
+    },
+    {
+      "path": "apps/engine/src/services/s09ExperimentManifest.ts",
+      "mode": "100644",
+      "gitBlob": "a96eabba150bd77aa0dd6b9e048e4d44fa5e7d30",
+      "sha256": "d17feee8166f5aa9a7a019d3bd7b5bb1813f6fca7694f284de4b3e0084909742",
+      "bytes": 8816
+    },
+    {
+      "path": "apps/engine/src/services/s09ReplayEngine.ts",
+      "mode": "100644",
+      "gitBlob": "d943ea4f43b39e09d4e643ab1ac89298d2a8e4f4",
+      "sha256": "9f5d5460d6fccbbf6bdb188b2484ad26b4a4eaa2bc3ef114c39d1bd5a934fee8",
+      "bytes": 18342
+    },
+    {
+      "path": "apps/engine/src/services/s09ReplayStressHostile.test.ts",
+      "mode": "100644",
+      "gitBlob": "93a2ab7b2d019fa8bde4bbd1ea692705b32746ef",
+      "sha256": "3dd90af32141d68c1dce548b92f4d91fb4c32de69fcf6bd6a6be979bda602b7b",
+      "bytes": 20098
+    },
+    {
+      "path": "apps/engine/src/services/s09Statistics.ts",
+      "mode": "100644",
+      "gitBlob": "76243926d0963987240f19552b922363ae51656b",
+      "sha256": "8411ba45f30977beac8fdeff5adce1be5a49fa33e0e72a8ccd6281c60c9206b4",
+      "bytes": 8750
+    },
+    {
+      "path": "apps/engine/src/services/scoutObservationPolicy.test.ts",
+      "mode": "100644",
+      "gitBlob": "c33699d12ed301420e24c0a52c7e40fcefcb7cb5",
+      "sha256": "bde77f37d81817cae2e19254b67b84befeb80dfe07426a0d59cbade514c71fc1",
+      "bytes": 4069
+    },
+    {
+      "path": "apps/engine/src/services/scoutObservationPolicy.ts",
+      "mode": "100644",
+      "gitBlob": "2d5b12d16efeedd50d6f40b114ea54b9794cd857",
+      "sha256": "f9df0b0fd53cd885584a8f4a4406b967971b129e3722520bcd6a3539af8de774",
+      "bytes": 1190
+    },
+    {
+      "path": "apps/engine/src/services/shadowObservation.test.ts",
+      "mode": "100644",
+      "gitBlob": "921e38aab6cdd2a78e28cc75d756d6aa2b1b9b0a",
+      "sha256": "b0d19ec90f4a13e8413afcde168dab6761550f32a1eff6150a75b1959ec35791",
+      "bytes": 1371
+    },
+    {
+      "path": "apps/engine/src/services/shadowObservation.ts",
+      "mode": "100644",
+      "gitBlob": "fdc6ebe721f986ecce473fa50eeeab58f330183e",
+      "sha256": "a49b98039d5f3c5a6159ddd843cccbf735002c76f35b06b6cb0a45034d96e0f6",
+      "bytes": 3163
+    },
+    {
+      "path": "apps/engine/src/services/shadowObservationEvaluator.ts",
+      "mode": "100644",
+      "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "apps/engine/src/services/shadowOutcomeCollection.test.ts",
+      "mode": "100644",
+      "gitBlob": "8b702562efeb7a13e85f2c4cfe45ac79bb5c4d59",
+      "sha256": "2b157de09eb47fdab74a86d93199bf4df18ea9160a392a5f4dfc5e137fa7dbd1",
+      "bytes": 2745
+    },
+    {
+      "path": "apps/engine/src/services/shadowReadiness.test.ts",
+      "mode": "100644",
+      "gitBlob": "133e39927f85821ee0130e9672ddd0f8ef8e0dec",
+      "sha256": "23c20b22a556d9e129e30135735a35ec03ee939f8659fa7ce26b588b5d9e67f6",
+      "bytes": 1677
+    },
+    {
+      "path": "apps/engine/src/services/shadowReadiness.ts",
+      "mode": "100644",
+      "gitBlob": "ec47029bd3cbd6c9936d197c7fb48e6f5b4d3f05",
+      "sha256": "5f2601752fc32d1673e19ab509b3d5f63bc96ff781c9306075357d97295b341b",
+      "bytes": 11498
+    },
+    {
+      "path": "apps/engine/src/services/shadowRunner.ts",
+      "mode": "100644",
+      "gitBlob": "6114a60ab2e8f6b463b5e5047a501f600166b784",
+      "sha256": "f6becc9956a53a58dbee1a76f0bf0c73d4bc72c25d09add50af302ef3be9d11a",
+      "bytes": 6316
+    },
+    {
+      "path": "apps/engine/src/services/sideNeutralEntryAuthorization.test.ts",
+      "mode": "100644",
+      "gitBlob": "9729f228702b0c8790890bac7475d546c4a5d554",
+      "sha256": "e39810ac2f90c092c595ed915c5ddce5759546b08b417eac3b58eb7a75d82ee2",
+      "bytes": 6320
+    },
+    {
+      "path": "apps/engine/src/services/storageCapacityGuard.test.ts",
+      "mode": "100644",
+      "gitBlob": "46e1bb2e0ed751b35c09dfad49303a69ee2e7210",
+      "sha256": "24272d4e941b4358934909ba63db60e28d82b72c91e7347245e4daeb78e3be5c",
+      "bytes": 2871
+    },
+    {
+      "path": "apps/engine/src/services/storageCapacityGuard.ts",
+      "mode": "100644",
+      "gitBlob": "e9966b7d439b2bdd9036ef78e078b5bec1210e75",
+      "sha256": "0068001106c5a4209e78f977c116528a7a96f586630d0744f598f5861f1c5228",
+      "bytes": 7073
+    },
+    {
+      "path": "apps/engine/src/services/supplyHealth.test.ts",
+      "mode": "100644",
+      "gitBlob": "fae5032ef532a5fb32d8c8a8eb06057846db909d",
+      "sha256": "7da3b971500ecec1e92b04729a14cf03aeddc75eb0bdce69a38e146876c7438e",
+      "bytes": 2709
+    },
+    {
+      "path": "apps/engine/src/services/supplyHealth.ts",
+      "mode": "100644",
+      "gitBlob": "43ba342554a85381bb37959bf16e79a679b15832",
+      "sha256": "62d3becf09ae2d52840d44a831c024fe627564f4b33926ec2cefe605cdf059e5",
+      "bytes": 5000
+    },
+    {
+      "path": "apps/engine/src/services/targetHorizonContract.test.ts",
+      "mode": "100644",
+      "gitBlob": "0c5aafc28e53fa162d8e9456ed0f6585f1411a4c",
+      "sha256": "abe80569109440521ae0d54f1667b6d5d9ae57c0011b3f18dc58d5ba37ed3374",
+      "bytes": 5789
+    },
+    {
+      "path": "apps/engine/src/services/temporalAlgorithms.test.ts",
+      "mode": "100644",
+      "gitBlob": "0919ff83f0c24b40fb04f49f621987403ec4573b",
+      "sha256": "54bdd7adb3020ee54c0d924098699b570a35fc5a64dbe9491c23ac12e150444a",
+      "bytes": 4013
+    },
+    {
+      "path": "apps/engine/src/services/temporalAlgorithms.ts",
+      "mode": "100644",
+      "gitBlob": "8ba7ebf1d571da54afbe001a54c1d57f2aa5f6f4",
+      "sha256": "5f22c379486fa9cd269c4249dc5bea01d8d2fc0eed18642a50bcb6420f173a27",
+      "bytes": 6960
+    },
+    {
+      "path": "apps/engine/src/services/temporalIntelligenceService.ts",
+      "mode": "100644",
+      "gitBlob": "75de24053047713224d9855d6ca8cdf1821cdefe",
+      "sha256": "0c20ea1aa0b36e0f0f79668be3db0ffea0571c92a7fb9ff1cde6d5f11f08ead8",
+      "bytes": 3472
+    },
+    {
+      "path": "apps/engine/src/services/testnetFundsOnlyEntry.test.ts",
+      "mode": "100644",
+      "gitBlob": "db16dc3141fc5aa9916ae0d3be37021c798a981d",
+      "sha256": "ca509059308f4f0fed533c30db63aa59a120fdfa356d0da2895bb782cd2d9a5b",
+      "bytes": 9299
+    },
+    {
+      "path": "apps/engine/src/services/testnetLowLossCleanupService.test.ts",
+      "mode": "100644",
+      "gitBlob": "c6d9ab1395be39ed6133dbe59b32d7b854953ac7",
+      "sha256": "03ea39ef381a6a86d49798ca35708f75d0d5cf8f0f307cf7592c4bb45969fd63",
+      "bytes": 712
+    },
+    {
+      "path": "apps/engine/src/services/testnetLowLossCleanupService.ts",
+      "mode": "100644",
+      "gitBlob": "54185c6cbdc1cd248016ed4f787ba0da428cab89",
+      "sha256": "41ac63f9e6e6dc7fe2d27b89e4dc809577560a2ff29ef43537547d6cf8d05725",
+      "bytes": 17124
+    },
+    {
+      "path": "apps/engine/src/services/testnetRiskAuthority.test.ts",
+      "mode": "100644",
+      "gitBlob": "19af24801890e70094defc00300c53f96a913383",
+      "sha256": "b0030140ed497c3794c5b541518e992fc411f1da5dc444bfee1fda39ad4fffd6",
+      "bytes": 42879
+    },
+    {
+      "path": "apps/engine/src/services/tpGuardian.ts",
+      "mode": "100644",
+      "gitBlob": "875eac638c0fb5dcc897f9484971c03b6dcb1df8",
+      "sha256": "51e246c86dc5e822d78ce1643b4554ba7c3f4d6f3285bbf85b65ba2936dcf30d",
+      "bytes": 32654
+    },
+    {
+      "path": "apps/engine/src/services/tpGuardianCrossedTruth.test.ts",
+      "mode": "100644",
+      "gitBlob": "a3af2d3281c47c45308d1388cfe152240d96e07d",
+      "sha256": "ebf36563f6471a2f31f34ddddaf5f9f94998dc6958005dc9573d61541e86b3c3",
+      "bytes": 2736
+    },
+    {
+      "path": "apps/engine/src/services/tpGuardianEconomics.test.ts",
+      "mode": "100644",
+      "gitBlob": "10060b9b4ab4c4f1d0b26b783847e766b4d832d4",
+      "sha256": "e1ddc83a2c15b47f6d6aa75a4b82325d925cfb0d20c603cf1ee804ce1c54daec",
+      "bytes": 21335
+    },
+    {
+      "path": "apps/engine/src/services/tpPositionFactTruth.test.ts",
+      "mode": "100644",
+      "gitBlob": "753ee6741954c8a75560dff8357ba4c9d91b9278",
+      "sha256": "3fe547d643f2ea7510a53cb3e344d8ccd4df6ca9f9ee954f2953bf0edf2be012",
+      "bytes": 5257
+    },
+    {
+      "path": "apps/engine/src/services/tpSubmissionOutcome.test.ts",
+      "mode": "100644",
+      "gitBlob": "821017836817fbd248a9706e48e915ceb143f03c",
+      "sha256": "9d987660aa2a164704afbab885e16f061995ac6c6ed04ad6fd605e3348661203",
+      "bytes": 5831
+    },
+    {
+      "path": "apps/engine/src/services/tpSubmissionOutcome.ts",
+      "mode": "100644",
+      "gitBlob": "a03d76bfbb37ff5fe4e853431ab1df17c9243c55",
+      "sha256": "04fbd108f96f208d6604d2d6d04bd8c31a982c6fb3bd6fc6cb59a450b14ac8f0",
+      "bytes": 878
+    },
+    {
+      "path": "apps/engine/src/services/tpTargetContract.ts",
+      "mode": "100644",
+      "gitBlob": "ca31b3c051ae3fe38ea26a884c66ae6cfd7f6487",
+      "sha256": "54fa2a402b028fc57f508a1d38ecc00508dc18044ca553a466c4eb4946f26563",
+      "bytes": 7877
+    },
+    {
+      "path": "apps/engine/src/services/tpUnknownRecovery.test.ts",
+      "mode": "100644",
+      "gitBlob": "d73070b4d3b4af756ae6f5309327248260855ffa",
+      "sha256": "d09113140fda51a08cad8c58f17b757b7298f224f1bb9af837bde4db794937a5",
+      "bytes": 3789
+    },
+    {
+      "path": "apps/engine/src/services/tradeCloseProvenance.test.ts",
+      "mode": "100644",
+      "gitBlob": "afc24580b6aa689ceb83da521e4ebea774cea692",
+      "sha256": "a8f33a84285e55fdb889e05992da5180ea38b9e0adfa6c3fdfa7c9ab4771f408",
+      "bytes": 2812
+    },
+    {
+      "path": "apps/engine/src/services/tradeCloseProvenance.ts",
+      "mode": "100644",
+      "gitBlob": "e122269848de6397c7a265e9ea06ba9d6df57812",
+      "sha256": "16420c4f01eff869447227b1b2b01106fd53a1e643829d29453432287076e643",
+      "bytes": 3103
+    },
+    {
+      "path": "apps/engine/src/services/tradeMemoryRetriever.ts",
+      "mode": "100644",
+      "gitBlob": "0ccc6a6147617007c0d897abed7edff7fec2fbd4",
+      "sha256": "959a4cc268b0635d72acb6872521a3f6c14af07198f41d97d246bdc7abf616d4",
+      "bytes": 9729
+    },
+    {
+      "path": "apps/engine/src/services/tradeMemoryService.ts",
+      "mode": "100644",
+      "gitBlob": "c8bda99a6fedca1e565da0970709e8d764d92256",
+      "sha256": "a695d00e1f293cc2095512fb2e735082c5cf123b24eb107a22cd6a4153d07677",
+      "bytes": 3385
+    },
+    {
+      "path": "apps/engine/src/services/tradePlanService.ts",
+      "mode": "100644",
+      "gitBlob": "e7c90ea87671d46d58f6652a4f6192778511598a",
+      "sha256": "275d18b4937a1d484db3456e12b01fa5dfed28eb7294d7f24d8c01f24483c457",
+      "bytes": 20824
+    },
+    {
+      "path": "apps/engine/src/services/tradeRecordIntegrity.test.ts",
+      "mode": "100644",
+      "gitBlob": "9c7937bf1d842c04d3ea90420408b568978f9c94",
+      "sha256": "9ebe68d819420bde5f8ff97fcc513a220b8ea6bfe551cb6f6ef11275f448a198",
+      "bytes": 6054
+    },
+    {
+      "path": "apps/engine/src/services/tradeRecordIntegrityService.ts",
+      "mode": "100644",
+      "gitBlob": "002f745d53b8dfdbf841467e9090e67802511f95",
+      "sha256": "eb095bef7748770f5a241e8a78eeeed3f13635c643429ff14b1c427104448386",
+      "bytes": 7467
+    },
+    {
+      "path": "apps/engine/src/services/tradeRecordReadModel.test.ts",
+      "mode": "100644",
+      "gitBlob": "c46614c4a5d0170fea5c9e103e02cde727d04b44",
+      "sha256": "688f3be5c8359e45489cb6004c0e0e759ec46d7fe38f7ebbf1a8f9f2d1c9c1c5",
+      "bytes": 2828
+    },
+    {
+      "path": "apps/engine/src/services/tradeRecordReadModel.ts",
+      "mode": "100644",
+      "gitBlob": "8790177c045df6d6d5ee7ea92153e3481bfd6410",
+      "sha256": "eee5922d2a47c763a877c3697829530cf1bad4181c13d30e711b8d206a8c68e3",
+      "bytes": 4881
+    },
+    {
+      "path": "apps/engine/src/services/tradeRecordSyncService.test.ts",
+      "mode": "100644",
+      "gitBlob": "8498fa0ceb555d41c4f29ec3b0217e6cdbb03164",
+      "sha256": "942cd5c4486a1ba311b69e6ca2c862c6e55dd5f326e9ea5030138aebe05f69f6",
+      "bytes": 5315
+    },
+    {
+      "path": "apps/engine/src/services/tradeRecordSyncService.ts",
+      "mode": "100644",
+      "gitBlob": "0006c05371775752e64ff2101c0051c0e3b57543",
+      "sha256": "529ab9989625f528ff7f0240f7a22bca05dcd90bd6640c7114a83bf57702acbb",
+      "bytes": 13766
+    },
+    {
+      "path": "apps/engine/src/services/tradingEpisodeEvidence.test.ts",
+      "mode": "100644",
+      "gitBlob": "83e7579c0acf774c911e8bb4ed5463536843b051",
+      "sha256": "d8f1c519685cba75f4b1e9db1b70b9f26d94f1bcfcbcd554e91e8610520d5563",
+      "bytes": 6724
+    },
+    {
+      "path": "apps/engine/src/services/tradingEpisodeEvidence.ts",
+      "mode": "100644",
+      "gitBlob": "c4946f73169864e628ca5a4b99a424e9e6489d75",
+      "sha256": "c449179fd69474fe3237dd49e6986fa03843915c124367da76ba96ccf2d67373",
+      "bytes": 12615
+    },
+    {
+      "path": "apps/engine/src/services/tradingLoopRepair.test.ts",
+      "mode": "100644",
+      "gitBlob": "02ff7b85cf5bb472e0f04616062a6c8cb875882e",
+      "sha256": "60bcbff187c4327d087d74ab2411a990866ec725f389566c89e9b9b308580765",
+      "bytes": 23224
+    },
+    {
+      "path": "apps/engine/src/services/tradingLoopRepair.ts",
+      "mode": "100644",
+      "gitBlob": "1a2ee6b5fc8d6400ff643f08ec366ea0dc8bdf40",
+      "sha256": "819f400e81daf405351b3bfebf6064cdd580ae4c7a09186c3e6b778b49ac3c6f",
+      "bytes": 16210
+    },
+    {
+      "path": "apps/engine/src/services/tradingQualityBaseline.test.ts",
+      "mode": "100644",
+      "gitBlob": "88d66f33a6b8e4244b716a6c60c017c64b402a7c",
+      "sha256": "7fcfd5b2d1fabb5a48c4b94517c0848bd5158db0cebac71584f2d8d8566436f5",
+      "bytes": 2384
+    },
+    {
+      "path": "apps/engine/src/services/tradingQualityBaseline.ts",
+      "mode": "100644",
+      "gitBlob": "35b6f7578650faaff12025a7f9b447dbd3fab816",
+      "sha256": "ac8cc353e71d0173dddb626742ffbdc9fc415514f9c2968338cc9f997ed0f50a",
+      "bytes": 5731
+    },
+    {
+      "path": "apps/engine/src/services/tradingQualityCollector.ts",
+      "mode": "100644",
+      "gitBlob": "5672fad66d9e3506f1b8851cafadf46996389d33",
+      "sha256": "a8bd388dfd494be5de583090cb91f4b25919b8b655fe63dd65d6a225c6a33658",
+      "bytes": 22975
+    },
+    {
+      "path": "apps/engine/src/services/tradingQualityEligibility.test.ts",
+      "mode": "100644",
+      "gitBlob": "e4f08182ccefb9eb9dddbb4a787f24080b9e1624",
+      "sha256": "a83dbc077423ce61974b0f6aa66ba2caadcec675d317ed0c5d1b7aee1adc4d48",
+      "bytes": 5216
+    },
+    {
+      "path": "apps/engine/src/services/tradingQualityEligibility.ts",
+      "mode": "100644",
+      "gitBlob": "b5eabff0873db57280b982a74995728b45a3d63a",
+      "sha256": "572faeb000d83a60bd19b76fbfa30dd32ef65479eb5274c49208e201b29b9978",
+      "bytes": 7807
+    },
+    {
+      "path": "apps/engine/src/services/tradingQualityIntegration.test.ts",
+      "mode": "100644",
+      "gitBlob": "b315585c90971bc98dde3588599542bc2b0f537a",
+      "sha256": "7be6859b62095f4177d5fe89436947505d5cdf0172891d01c81ef064889d801f",
+      "bytes": 26957
+    },
+    {
+      "path": "apps/engine/src/services/tradingQualityObservationPlan.test.ts",
+      "mode": "100644",
+      "gitBlob": "798fbe07eca8b2d2d21c9b5635637dbda7bf2774",
+      "sha256": "a8ce1968b5dee0fa8a742f50239b767d7c823d794522fb8b2cce115665821390",
+      "bytes": 1367
+    },
+    {
+      "path": "apps/engine/src/services/tradingQualityObservationPlan.ts",
+      "mode": "100644",
+      "gitBlob": "a91f3534b982016e22082a29135f4c345247111f",
+      "sha256": "c8f3db2205e5faa1d06e2fa6e113670b2fbe4d8f64c0bf0bb94e20044bd855dc",
+      "bytes": 2929
+    },
+    {
+      "path": "apps/engine/src/services/tradingQualityObserverWorker.test.ts",
+      "mode": "100644",
+      "gitBlob": "341f7a698f47bb732fe78ec11d5e6be8f923576d",
+      "sha256": "9d49332dc59dfa02e9a054fc76db9b162f55a39d26682c185abf8601b3aeed6d",
+      "bytes": 2070
+    },
+    {
+      "path": "apps/engine/src/services/tradingQualityReleaseGate.test.ts",
+      "mode": "100644",
+      "gitBlob": "7265b52ca363e2f7d6b3d871fd7f5d622759af51",
+      "sha256": "fb640b4a85d5d4e0492755cefe1723a385d387dad537f3de9f153e7b12ba53a8",
+      "bytes": 2269
+    },
+    {
+      "path": "apps/engine/src/services/tradingQualityReleaseGate.ts",
+      "mode": "100644",
+      "gitBlob": "2d199f522d6a4da4a7b32102037d6971b8405311",
+      "sha256": "45e733f87f24d216a5c1bed00d852bf205b83ce91b978e76fd117eaa278a77fd",
+      "bytes": 3016
+    },
+    {
+      "path": "apps/engine/src/services/tradingQualityRuntimeObserver.ts",
+      "mode": "100644",
+      "gitBlob": "b98ca4e21451aca90abaa2c796cc293851189e7e",
+      "sha256": "3928dbb4d69a2b4646dd14b3bb170720eb675d63adf299320f845afafeb8df8b",
+      "bytes": 5727
+    },
+    {
+      "path": "apps/engine/src/services/tradingQualityTestHarness.ts",
+      "mode": "100644",
+      "gitBlob": "9a0a343168a1cdab3602d3758aa9e4dced44895f",
+      "sha256": "a44f57a71191253178dc83495dfac258d1c741f32729f1ebe826ab506e8c7804",
+      "bytes": 7291
+    },
+    {
+      "path": "apps/engine/src/services/tradingQualityV393.test.ts",
+      "mode": "100644",
+      "gitBlob": "f2bc6a26928454c720858306253d99e631d0c23c",
+      "sha256": "ca99bfa3210ad3d11ed6bee57d807da0e39b57d37350a1934229ce421f2ea03e",
+      "bytes": 4551
+    },
+    {
+      "path": "apps/engine/src/services/tradingQualityV393.ts",
+      "mode": "100644",
+      "gitBlob": "c471bffd02d836ba47eee1d0a53ae2b824fe427d",
+      "sha256": "9e59b1fb402fe21ef72df60e3115333e55006260bc88cc895c24e32f09cb47ae",
+      "bytes": 10994
+    },
+    {
+      "path": "apps/engine/src/services/tradingQualityV393EvidenceStore.test.ts",
+      "mode": "100644",
+      "gitBlob": "b90cf22aae1e85b54464d20b451f8904b64212bc",
+      "sha256": "0a9fe8bf8261d98b06150a46db55e27719abd7bf7b985fd3c39d96cd16b19342",
+      "bytes": 5585
+    },
+    {
+      "path": "apps/engine/src/services/tradingQualityV393EvidenceStore.ts",
+      "mode": "100644",
+      "gitBlob": "f6f094d3ebdf6385fd91a0dfbb941cb29d50c1b8",
+      "sha256": "3e5436097a3037a22967c964020099b0e3096103afcb2268acbf2ef06fee1db2",
+      "bytes": 10882
+    },
+    {
+      "path": "apps/engine/src/services/universeCoordinator.ts",
+      "mode": "100644",
+      "gitBlob": "18adcaff0101e6c777883bb7ba7402d1146b8e03",
+      "sha256": "82439d0cfb11a0cb210efb3721c864f8ff9beea765d678df0d5eedcff8a450e7",
+      "bytes": 11752
+    },
+    {
+      "path": "apps/engine/src/services/unknownNoActiveRiskProofRenewal.test.ts",
+      "mode": "100644",
+      "gitBlob": "1759900684d90939ec206a5aff92f6d34adfd545",
+      "sha256": "d5544a0869a321ab0c4c675b06e3f4bcd80a85c506bfa59b7a7133b6b74879cf",
+      "bytes": 13377
+    },
+    {
+      "path": "apps/engine/src/services/unknownProofHydration.test.ts",
+      "mode": "100644",
+      "gitBlob": "35c1bda1f52a05f3d5a5e02438701201def66294",
+      "sha256": "72d6d325045e67683b75233779612b8b146d895f2fde505afd9fb14a92778981",
+      "bytes": 11702
+    },
+    {
+      "path": "apps/engine/src/services/unknownProofValidation.test.ts",
+      "mode": "100644",
+      "gitBlob": "e567e2956061cb2ebfa063ac33c1af33d808f0da",
+      "sha256": "4a40daa5dc4969a3be1407e17b8021fc851dfbd25350b7f196654424dfb45ccc",
+      "bytes": 5629
+    },
+    {
+      "path": "apps/engine/src/services/unknownRiskAuditTiering.test.ts",
+      "mode": "100644",
+      "gitBlob": "52d36281a052870623fe81a55d53a7883b81597e",
+      "sha256": "38f72ee785d7ef053d163361cc0c7eab9809cedb541bf6221ba44fa6a162d763",
+      "bytes": 18302
+    },
+    {
+      "path": "apps/engine/src/services/unsubmittedEntryRecovery.test.ts",
+      "mode": "100644",
+      "gitBlob": "745a7dcf0bc9afca471ab50d632e97900353617d",
+      "sha256": "14e30f1babd3a021c6af5798646f126b63e279baad4382c009dffe22ccf4c662",
+      "bytes": 980
+    },
+    {
+      "path": "apps/engine/src/services/unsubmittedEntryRecovery.ts",
+      "mode": "100644",
+      "gitBlob": "4993238ed06389b89ca6fd919e11910a9a98ae72",
+      "sha256": "71352c2d3de6e19bb640332c1fd80bb316de2c6f04a3db262c7df483f813a860",
+      "bytes": 850
+    },
+    {
+      "path": "apps/engine/src/services/v370Contract.test.ts",
+      "mode": "100644",
+      "gitBlob": "b55df5b1eecb40224a7af86648f35e3f755bda77",
+      "sha256": "7033c6c9636597b56bcec4b02416b4a1fb43ca5b0b115081494039a24ce9c621",
+      "bytes": 24170
+    },
+    {
+      "path": "apps/engine/src/services/v370Decision.test.ts",
+      "mode": "100644",
+      "gitBlob": "561554ec95eae44bff44cd4a3e2a2b84ba41bbbc",
+      "sha256": "a8d465d4155d4a9ea11d5495053c8e88393c86435d4c943ff29f477d10df99b3",
+      "bytes": 5894
+    },
+    {
+      "path": "apps/engine/src/services/v392HistoricalDecisionRegression.test.ts",
+      "mode": "100644",
+      "gitBlob": "77dc099d84c3f8a4979f16e6dc887832349d8c24",
+      "sha256": "e93d54c4cdd20d2d938d90d6c616f5b61e937ef027302aba3ebba113ba80e8e8",
+      "bytes": 2355
+    },
+    {
+      "path": "apps/engine/src/services/v396AiExitRunner.ts",
+      "mode": "100644",
+      "gitBlob": "8f5e0eda336874f71488edfa05f620c013dc55fd",
+      "sha256": "eebe9844bdb0b52db0e98a211de0b42563e7610764fdf67cb0436aa79e961e02",
+      "bytes": 16100
+    },
+    {
+      "path": "apps/engine/src/services/v396AuditBoundaries.test.ts",
+      "mode": "100644",
+      "gitBlob": "aa72cf766b3e0756f70c2a9d704756584eb610cc",
+      "sha256": "05bb9f2e7b85358bc47bd1553c1f0ff8c83db55052c02daf590d0ad474b797d6",
+      "bytes": 5090
+    },
+    {
+      "path": "apps/engine/src/services/v396AuditFollowup.test.ts",
+      "mode": "100644",
+      "gitBlob": "ecf037eefb52c93f83582bc5dc3f516b445aa1bb",
+      "sha256": "52d6939dd2d799ea93c1ddc80e809f08b69cd07930aaace91e223bea1f59b6f4",
+      "bytes": 5150
+    },
+    {
+      "path": "apps/engine/src/services/v396ExitRuntime.ts",
+      "mode": "100644",
+      "gitBlob": "7caba3e681c61db18c1977c16f361fea468628b8",
+      "sha256": "4c573a721368df52bdd11decccaff094b54861af396fb0ecfdb30ad95cedc143",
+      "bytes": 35862
+    },
+    {
+      "path": "apps/engine/src/services/v396ExitTestHarness.ts",
+      "mode": "100644",
+      "gitBlob": "95c5ae90e0c4555472e5193ef177d9a70d1081ac",
+      "sha256": "cddf78fdb0b208e60d15b2e68e5e123f20f38fe848d2a8c98526e59437d33fed",
+      "bytes": 1904
+    },
+    {
+      "path": "apps/engine/src/services/v396OfflineStages.test.ts",
+      "mode": "100644",
+      "gitBlob": "0c354a7662fcedf027b0c6827697ba0a17c72da5",
+      "sha256": "ed673baf320291eefb0988025f7c30d977fb2d24b7e3aba02037039dd4492c36",
+      "bytes": 5734
+    },
+    {
+      "path": "apps/engine/src/services/v396OfflineStages.ts",
+      "mode": "100644",
+      "gitBlob": "89f6c8e242429cbca98040c9a04496ef2a77db03",
+      "sha256": "6c55a135dd06d8de3f6cf0149530d64dc9ad0f8b475833da3991937de7ebdbd7",
+      "bytes": 11501
+    },
+    {
+      "path": "apps/engine/src/services/v397EconomicAuthority.test.ts",
+      "mode": "100644",
+      "gitBlob": "2e643cb1f039e0fa5f4e28e44349123e404f1a40",
+      "sha256": "620f00ad9410c8c669c2cf960bbfbca36ea5f27b285e9cde0fa82f27501ed142",
+      "bytes": 3804
+    },
+    {
+      "path": "apps/engine/src/state/c2ReservationAtomicityHostile.test.ts",
+      "mode": "100644",
+      "gitBlob": "12034ba8c594aad0a41e25911715e4acb707d18d",
+      "sha256": "644f72ba2d26fc150048490fda425db83b009155529a25f28f1261bd9bfbf59a",
+      "bytes": 26291
+    },
+    {
+      "path": "apps/engine/src/state/reservationConvergence.test.ts",
+      "mode": "100644",
+      "gitBlob": "bd8084ee5ad180f3d65a8ea456b8a35879a9e044",
+      "sha256": "3d6e39d5b9306503c38fe4be3792cf5518a794f0c6a8e9f02a8d11a6ff2c401e",
+      "bytes": 7827
+    },
+    {
+      "path": "apps/engine/src/state/runtimeState.test.ts",
+      "mode": "100644",
+      "gitBlob": "1ae499e843955f79e8c33e4a8bc40015b09eade4",
+      "sha256": "078a71a26a285535fc7a64ac0bca65a5e5ac6775e9293c8bb5401e1a7933301f",
+      "bytes": 3370
+    },
+    {
+      "path": "apps/engine/src/state/runtimeState.ts",
+      "mode": "100644",
+      "gitBlob": "b67bddfe35e9880d4a51a4fa944ea6d123394e9d",
+      "sha256": "e3ba7295fb14e0b6c837f438f18c0fa3e6ceb05bc394f911ef860e4b40d8ddba",
+      "bytes": 31182
+    },
+    {
+      "path": "apps/engine/src/testing/candidateReferenceFixture.ts",
+      "mode": "100644",
+      "gitBlob": "94dff5a163c50f01a9850df1fdf29f9ed5309ced",
+      "sha256": "a5fb1bc0685ea71b76e73c51ffcbd56aafcad1d38e0015a9c55be039dcbefc46",
+      "bytes": 1992
+    },
+    {
+      "path": "apps/engine/src/testing/createTestAdapters.ts",
+      "mode": "100644",
+      "gitBlob": "8183c5f9577a520ccfd1f36395d54a69280e8ff6",
+      "sha256": "854f7d7eedbb2f4f145660f1526da71188957c0c107acd7a39a41b1db08c6b7d",
+      "bytes": 322
+    },
+    {
+      "path": "apps/engine/src/testing/deterministicRiskAdmission.ts",
+      "mode": "100644",
+      "gitBlob": "6453fb239bffe0a66f76a2ad9a5fac0d73b6a417",
+      "sha256": "7f81754b68b04c7ceb52d6d5f6ae2281a682cef7ddc67edfd5de39887206f390",
+      "bytes": 3753
+    },
+    {
+      "path": "apps/engine/src/testing/factBoundReferenceFixture.ts",
+      "mode": "100644",
+      "gitBlob": "c99d92b2b0fb87f6ab8399bb74069887799e9e97",
+      "sha256": "db3e340ff398f0002db4359c0fdb4f83219dda6adcc7514fc163fb08734b47d2",
+      "bytes": 1547
+    },
+    {
+      "path": "apps/engine/src/types.ts",
+      "mode": "100644",
+      "gitBlob": "721baea96e27ab4dfbc76e013a3ad0347d92b6b2",
+      "sha256": "d387d878de6fc472a3bebdf2f5a912ed413a16833ac63d3a89f4c87de515d5b2",
+      "bytes": 8192
+    },
+    {
+      "path": "apps/engine/src/workers/sqliteHealthWorker.ts",
+      "mode": "100644",
+      "gitBlob": "a3cdcd7af66289cb5236c9a585716f895c6b802a",
+      "sha256": "5307eb8ab94befc9f2042364d14b68d6977266660c01700a28c6f0aef415378c",
+      "bytes": 1238
+    },
+    {
+      "path": "apps/engine/src/workers/temporalResearchWorker.ts",
+      "mode": "100644",
+      "gitBlob": "4320ec1dd5a94d4ba02c96c96514e498f538c41e",
+      "sha256": "822de06edfb70ff9f2644e3ec4433ea9c45fc2e9812562876c7f9393136fb92d",
+      "bytes": 22030
+    },
+    {
+      "path": "apps/engine/src/workers/tradingQualityObserverWorker.ts",
+      "mode": "100644",
+      "gitBlob": "7914f1c5c1f4d62650a9c90f91ddeb31f6d0827c",
+      "sha256": "8606fad6d2ea069d02d96f2c27f04911c41e4e445325ff7652bdfc6f8967433c",
+      "bytes": 6510
+    },
+    {
+      "path": "apps/engine/tsconfig.json",
+      "mode": "100644",
+      "gitBlob": "5c2d7e93c428f0d414cd1055bcadfb21adb952c5",
+      "sha256": "2d584da062255602d5cd469a002f5d5b70e0fcbd632a865b7a5dd5d90b70f2f4",
+      "bytes": 185
+    },
+    {
+      "path": "apps/engine/vitest.config.ts",
+      "mode": "100644",
+      "gitBlob": "2c431f29d8565bf11c09c4399f29b4b2c9ab375e",
+      "sha256": "3e82406c443b6f84cc185cd1fe8b1b1a5704c3d63c411095615ff3e30b2e079d",
+      "bytes": 452
+    },
+    {
+      "path": "config/ai-resources.default.json",
+      "mode": "100644",
+      "gitBlob": "b4ad54bd625804b0264ff93c28a2b719062974ba",
+      "sha256": "d9121300dba2f60adf8006c9dddb0f95a1ee22b1dc9874c0320f778fde660604",
+      "bytes": 319
+    },
+    {
+      "path": "config/settings.default.json",
+      "mode": "100644",
+      "gitBlob": "5f4fe7360b53526c82adb58510956e75646ceefa",
+      "sha256": "a513e9f6cceab422db2f149c3704b1e390fa19dd280002457a9bd4cdd543e9b5",
+      "bytes": 6022
+    },
+    {
+      "path": "package-lock.json",
+      "mode": "100644",
+      "gitBlob": "8855cceea6f9e5e4610ed9974c24aa015d9b96ef",
+      "sha256": "ead0b96f33362a9fef8e0503a74bbf9bd630e25422f0f197d4d9fb4f9586cf21",
+      "bytes": 152462
+    },
+    {
+      "path": "package.json",
+      "mode": "100644",
+      "gitBlob": "76dca2d2658c504365a4c3433515c45815c0c367",
+      "sha256": "4e2d1126b4581bdc818754334064a3d9c6d913c8567d25956e9943a7bac18fbe",
+      "bytes": 3221
+    },
+    {
+      "path": "packages/contracts/package.json",
+      "mode": "100644",
+      "gitBlob": "5405c16560ade57b723d2b97c786c4856527d3a6",
+      "sha256": "55abf3f802b015d87eadb99b4d7296dba2b4339c32c47928e54949d8d85ed13b",
+      "bytes": 396
+    },
+    {
+      "path": "packages/contracts/src/ai.ts",
+      "mode": "100644",
+      "gitBlob": "6eb059add80a3869435286e767c22eadadb8b753",
+      "sha256": "65f4d67a49ffa2db5311a2999ecf17d1cf53cb5d49b13c9998f3f058f0ec3ecb",
+      "bytes": 31914
+    },
+    {
+      "path": "packages/contracts/src/api.ts",
+      "mode": "100644",
+      "gitBlob": "4e4156a292f6abce540d28384ffdba8920d2ec5d",
+      "sha256": "f81709f1fbc655e9f3a256bb5065c9f3de9a669eddf558b699dc4ed49e186109",
+      "bytes": 13093
+    },
+    {
+      "path": "packages/contracts/src/eip.ts",
+      "mode": "100644",
+      "gitBlob": "3150abbf2156d0c2dd57af4512b41bceb45e4acc",
+      "sha256": "c48ac08e188392269855d517170d6a2eac1eb892099cae93330dccdbb5e62339",
+      "bytes": 5441
+    },
+    {
+      "path": "packages/contracts/src/index.ts",
+      "mode": "100644",
+      "gitBlob": "305d7f4c4cbc7f9040f0e95188cf5fa81b12abc0",
+      "sha256": "90888e0728c579e0bcc025785cf84630844197f498b48243c032aeab1a1c5bf7",
+      "bytes": 475
+    },
+    {
+      "path": "packages/contracts/src/liveValidation.ts",
+      "mode": "100644",
+      "gitBlob": "f5a3975dce08686c976dec5d8a247cc6304a33a1",
+      "sha256": "9ee9b307d3aaf64921a5daa402427a82d63f56268c58683911e01c23e92dc06e",
+      "bytes": 1952
+    },
+    {
+      "path": "packages/contracts/src/market.ts",
+      "mode": "100644",
+      "gitBlob": "a1e22192ab775330f3b77aa435f7ca8a0e19033f",
+      "sha256": "d5d1c06b28dca97eab4a71bcd117c4f01fc302edb9da53e6eb4651044f764d3c",
+      "bytes": 4734
+    },
+    {
+      "path": "packages/contracts/src/opportunity.ts",
+      "mode": "100644",
+      "gitBlob": "a800451496a85bd6899c6901733ca15c042a2ba9",
+      "sha256": "b6cf0e9a4d3c5194c73071f7807b645e50d36ae4e9735839adad83815ce56456",
+      "bytes": 3247
+    },
+    {
+      "path": "packages/contracts/src/portfolio.ts",
+      "mode": "100644",
+      "gitBlob": "05ae19d84e25c10fbfb8a8952161028e6ac3520a",
+      "sha256": "7391b557ddbc74cae29c0d133f76e5e735c056a6a031a3928449c0d067551e58",
+      "bytes": 9860
+    },
+    {
+      "path": "packages/contracts/src/riskGovernance.ts",
+      "mode": "100644",
+      "gitBlob": "19668f16c63389530f87f6eb82428243c10876de",
+      "sha256": "a25c27d6ec97c6ae6447f6d3220acd24ad9a9915a0b164e2c7d42942bdfd703b",
+      "bytes": 8664
+    },
+    {
+      "path": "packages/contracts/src/runtimeControl.ts",
+      "mode": "100644",
+      "gitBlob": "e53630c023de84558abb220bc9b063165a551655",
+      "sha256": "8f701dd0a03c30161c3bdc7be58a75342ea557c8dc710bc07f6c9c72374f7293",
+      "bytes": 5374
+    },
+    {
+      "path": "packages/contracts/src/settings.ts",
+      "mode": "100644",
+      "gitBlob": "0fa85ea50d9f5c8674ca279c0c38e9437f3389a2",
+      "sha256": "997f1ab7657bb7beb1812253342b24607e31ca366862bb0ccd3ce0b028d1aba3",
+      "bytes": 12207
+    },
+    {
+      "path": "packages/contracts/src/tradePlan.ts",
+      "mode": "100644",
+      "gitBlob": "cac0e55eca13913ea92e972fdad41b9ba3217a32",
+      "sha256": "7301316bee32406d509b6541e25bd580807922bdd5954f9a61a0565f9e38ea21",
+      "bytes": 12030
+    },
+    {
+      "path": "packages/contracts/src/trading.ts",
+      "mode": "100644",
+      "gitBlob": "dad0ab03305d3f6ff65a95fee530b3ce869a3af9",
+      "sha256": "a4340f93e5a73de4280b5a37516201e0b82561983766f50dbb3720fad7fdb217",
+      "bytes": 27859
+    },
+    {
+      "path": "packages/contracts/src/tradingQuality.ts",
+      "mode": "100644",
+      "gitBlob": "a2bdc7ded7d2f41dd790d6001facf8e1b9e173dd",
+      "sha256": "498475fb7a67ec634b9520afc087aac60271e4d2b3942aa939b51cda9743f2f3",
+      "bytes": 3601
+    },
+    {
+      "path": "packages/contracts/src/universe.ts",
+      "mode": "100644",
+      "gitBlob": "b3ce8abe264c0ba68350621db2a47030b2263e2b",
+      "sha256": "b66bbc5817804d99ea15a990a28acbc8ddd846a9fc0bd800a4b61e748d072c71",
+      "bytes": 4870
+    },
+    {
+      "path": "packages/contracts/src/version.ts",
+      "mode": "100644",
+      "gitBlob": "09b63c403b4dfcda8b67e732aa2b358f40be1c80",
+      "sha256": "5f1b282140327df9c0be0485cbcad1fa879fcfda5e9bec1a85b7c43bc748e977",
+      "bytes": 951
+    },
+    {
+      "path": "packages/contracts/tsconfig.json",
+      "mode": "100644",
+      "gitBlob": "f2620043e855073ac7b366b75f911de033ec5146",
+      "sha256": "95f00196c0ff65627fa6bc6368355a906eca7468c7550f534c5f996b2c3bb18d",
+      "bytes": 168
+    },
+    {
+      "path": "packages/core/package.json",
+      "mode": "100644",
+      "gitBlob": "c2eb8746362aee42c88c3e47fc285585c7e36359",
+      "sha256": "3d91d5e402bc178a633233b7c25c51e94fb4ce0989f9ed8be3516a4ba9590695",
+      "bytes": 382
+    },
+    {
+      "path": "packages/core/src/__fixtures__/entry-readable-sol-native.json",
+      "mode": "100644",
+      "gitBlob": "c38e94d19e2f1b62033229541104e6a85f162533",
+      "sha256": "b18c77d2565198e62ef71e5a044a09e8e50b313f6bd24e23a4372e6745a2acbc",
+      "bytes": 22650
+    },
+    {
+      "path": "packages/core/src/aiPrompts.ts",
+      "mode": "100644",
+      "gitBlob": "1f3497bce85cc5b2c1284f1ef15e9d0c575ccb34",
+      "sha256": "cd150ada5f6907174173cf861975feb9ab9f9f2317e7a42f791072dd1064f1c8",
+      "bytes": 1486
+    },
+    {
+      "path": "packages/core/src/assetAdmission.test.ts",
+      "mode": "100644",
+      "gitBlob": "b5174d2ee00bae71edba64245be649f95b0945ec",
+      "sha256": "221e6ed93ed65290c61aff0ab78a085e0e4be83a1095f0884e11d974ed79fb66",
+      "bytes": 1571
+    },
+    {
+      "path": "packages/core/src/assetAdmission.ts",
+      "mode": "100644",
+      "gitBlob": "b2430171f067d43995811865685ca60428c95986",
+      "sha256": "2e0a5523793333faf241d852d599c49c03d04c1f19f1d58f7d0cf1a696b3dffd",
+      "bytes": 2542
+    },
+    {
+      "path": "packages/core/src/capitalAdmission.test.ts",
+      "mode": "100644",
+      "gitBlob": "eb2eeccee63ea16e342d5c2679155bcba35ba4df",
+      "sha256": "e02cd1ae48d43abe5fb75bf2d0fcc87b606ee06800302844e7eb77bd60788f9b",
+      "bytes": 6413
+    },
+    {
+      "path": "packages/core/src/capitalAdmission.ts",
+      "mode": "100644",
+      "gitBlob": "36f24f8defb90c97df4b6e179e4152448ddcb602",
+      "sha256": "38dcb963951c972da421793e229621b399f1562b26a576a22e845419346fceb8",
+      "bytes": 10310
+    },
+    {
+      "path": "packages/core/src/compactEntry.test.ts",
+      "mode": "100644",
+      "gitBlob": "702197721a3f2ec3c64b157df139cad06aa68773",
+      "sha256": "6cd4529ed713f9bdccfb8a476c59aff0a83bc3070fd5667c19d41d36a37f7b02",
+      "bytes": 13820
+    },
+    {
+      "path": "packages/core/src/compactEntry.ts",
+      "mode": "100644",
+      "gitBlob": "89b4fe2fd9e8ef475fb9050240eedb0234f6ea83",
+      "sha256": "1b2e9582646a03b0227182be5905e5a4ebf99a9ffb2d158574afba145acc1215",
+      "bytes": 8831
+    },
+    {
+      "path": "packages/core/src/eip.ts",
+      "mode": "100644",
+      "gitBlob": "159c368e37259a6d54f7a37020b3353f82a8ac75",
+      "sha256": "319316955e0c79b9155337bd5945dc5a4361d9d883e1fd7a1a3e2b283f30a06f",
+      "bytes": 8336
+    },
+    {
+      "path": "packages/core/src/entryDirectionFacts.ts",
+      "mode": "100644",
+      "gitBlob": "8ae45a47000ad340241c8546757eea180b2021fb",
+      "sha256": "f44c0671415b9233bece49c21ded591fef1e3c0caaf3bba5859c545c370850c3",
+      "bytes": 1496
+    },
+    {
+      "path": "packages/core/src/entryFactEncoding.test.ts",
+      "mode": "100644",
+      "gitBlob": "dba03049121c2536b6bf04237d5d6998f2e85fe5",
+      "sha256": "1b08596847592d234882371deec6a09a8b7a7af3b076cf7591034063df9277ae",
+      "bytes": 15998
+    },
+    {
+      "path": "packages/core/src/entryFactEncoding.ts",
+      "mode": "100644",
+      "gitBlob": "ca44b4032ffbfc6598df2490a00a3e79a6bd00d0",
+      "sha256": "7647469ef8588a9967726d442261143eaa49f32ff31ee6f5b4ffe61b884b7d10",
+      "bytes": 27006
+    },
+    {
+      "path": "packages/core/src/entryPrimaryArchive.test.ts",
+      "mode": "100644",
+      "gitBlob": "dde61e830a95360fd17ff73a8a9eaad45d477a6e",
+      "sha256": "6645ff94e330577d55fd83cb8aaf625fdc04c9fa2892aa8bdedb21d04cc795af",
+      "bytes": 3206
+    },
+    {
+      "path": "packages/core/src/entryReadableFacts.test.ts",
+      "mode": "100644",
+      "gitBlob": "da4c8d0ff3534ca8ed24c85f3ff80d1ab3212159",
+      "sha256": "c0a7532ecbdb89bfceaf88749cb3162958a4233e7105116eb63281df5bb340f7",
+      "bytes": 13807
+    },
+    {
+      "path": "packages/core/src/entryRecordTables.test.ts",
+      "mode": "100644",
+      "gitBlob": "d11e2c7078b0400907b51fc4fb59cb3ecfa92a17",
+      "sha256": "5f8fe43b2f6bc6653689147f050a23b7b667eb72706768087e905d2fd512e403",
+      "bytes": 7720
+    },
+    {
+      "path": "packages/core/src/entryRecordTables.ts",
+      "mode": "100644",
+      "gitBlob": "4e74331f6ff07c4a68599040500830a17157b537",
+      "sha256": "d63e8ee8d8debf4d30bfef734292b31caaa0cbbf0349e34ee3955cd9c8f8ef7e",
+      "bytes": 7573
+    },
+    {
+      "path": "packages/core/src/entryResourcePolicy.ts",
+      "mode": "100644",
+      "gitBlob": "ddf16b00e9c0591f1b94f26f714bfc91966ef574",
+      "sha256": "663dd0e94ae41d36579d678853a439389fe843563fc68049680300a3c61bb3f5",
+      "bytes": 494
+    },
+    {
+      "path": "packages/core/src/entryTableDedup.test.ts",
+      "mode": "100644",
+      "gitBlob": "3e950df9f15515943c9b6cfddf9091846b03458a",
+      "sha256": "3043b9765df5d73d0e33c480e89be9fd9a56930963b65c1d576c3f61f878bf20",
+      "bytes": 4763
+    },
+    {
+      "path": "packages/core/src/entryTableDedup.ts",
+      "mode": "100644",
+      "gitBlob": "cced6b139b6a678752ec33e9431b6332835ab3c4",
+      "sha256": "be57958c0fd1b63b1ae4d18d343c1429dd141b2d3438d262814baf41f7c499c8",
+      "bytes": 9170
+    },
+    {
+      "path": "packages/core/src/fixtures/entry-primary-r1-instructions.ts",
+      "mode": "100644",
+      "gitBlob": "61164e93fe496af33574350666968dd31e748a0f",
+      "sha256": "0a6ca357897e989fdc70c065d4bb2cb5511610287bcaa6f74c5bc611842542c3",
+      "bytes": 4375
+    },
+    {
+      "path": "packages/core/src/index.ts",
+      "mode": "100644",
+      "gitBlob": "ae4215c7bcb515c941c32f5b484d1a6567d011ee",
+      "sha256": "dfd91977ce2f97c8555a57a3e9d138b3683faeef2011df25454b644fa89d4c11",
+      "bytes": 603
+    },
+    {
+      "path": "packages/core/src/indicators.ts",
+      "mode": "100644",
+      "gitBlob": "e116d1009a3c4402937e14cc8c0a1d11733f5f11",
+      "sha256": "48820eff66961a23805c9fe3b13240c98ac36436ec6defcdde0e5c06b3a0b26d",
+      "bytes": 8467
+    },
+    {
+      "path": "packages/core/src/makerPricing.test.ts",
+      "mode": "100644",
+      "gitBlob": "323f8d95b22baf4b6c6b214bb4d87addd8c532de",
+      "sha256": "87bb7eb9f810baf98fb9e3db1ea25346bca49a8634c71bba357a7d0332f51ecc",
+      "bytes": 3150
+    },
+    {
+      "path": "packages/core/src/makerPricing.ts",
+      "mode": "100644",
+      "gitBlob": "6c8a99dc10b14396d6090eabc98d3f8271f5cfc6",
+      "sha256": "4093220ee42c17eab51603f60250b21c4e2fc2fe988cbbc51bd02ec4f5dea1b6",
+      "bytes": 2349
+    },
+    {
+      "path": "packages/core/src/marketQuality.ts",
+      "mode": "100644",
+      "gitBlob": "c67912f194260dae1a571e43c34fd9a6b527cd0c",
+      "sha256": "54a1fc343b76119628b4b2638361eb9622d43a1329232ed36bf4d0d43006c91f",
+      "bytes": 5227
+    },
+    {
+      "path": "packages/core/src/math.ts",
+      "mode": "100644",
+      "gitBlob": "2e03315187791b6175e0b4b4b0feb063c7c13788",
+      "sha256": "4a195a7e5afd37dde13bbe2c3d506a7f03d137cd1a3b1f729a0918eb474dd6ef",
+      "bytes": 1405
+    },
+    {
+      "path": "packages/core/src/orderDecimals.test.ts",
+      "mode": "100644",
+      "gitBlob": "5edc89100e97559584cf5017a2bb4f466fc3764d",
+      "sha256": "8560846ed4c70bc8ee4a7a7bf412b0d601d526c7374a50fc351978b6aa12b79d",
+      "bytes": 3780
+    },
+    {
+      "path": "packages/core/src/orderDecimals.ts",
+      "mode": "100644",
+      "gitBlob": "153b3a4f86c23966c6ab714fb74bef1a592fab89",
+      "sha256": "22ebadf076bf65548d2b392cc3331175223e8ae163cd1b33c99c9282ecd40e11",
+      "bytes": 3292
+    },
+    {
+      "path": "packages/core/src/pool.test.ts",
+      "mode": "100644",
+      "gitBlob": "6a1c0693eb3fa31ad519a2bd29d447c20a83568f",
+      "sha256": "8f6b9ab29f3c095cf94728d94b4f05e7866e19f286092543478c41e8c5ae2775",
+      "bytes": 5047
+    },
+    {
+      "path": "packages/core/src/pool.ts",
+      "mode": "100644",
+      "gitBlob": "4ad5c2399eba8c3bb9aa350a67a78ff6d8f09dc5",
+      "sha256": "c8e88af813d1ce1d1dd272ad9efb09aad6d35a7b7c4b85fa80beacf9eed6bc99",
+      "bytes": 5215
+    },
+    {
+      "path": "packages/core/src/portfolio.test.ts",
+      "mode": "100644",
+      "gitBlob": "6c9d4bdc631d91d86cc268f438333494e49f70a9",
+      "sha256": "4d850d775d085c1aa6b9503c0a1060e507f1231a69ad517e2087dfea4159cb2f",
+      "bytes": 15162
+    },
+    {
+      "path": "packages/core/src/portfolio.ts",
+      "mode": "100644",
+      "gitBlob": "bdfd1ef35f1fc9c4dbd7582b92e42749c0e764ea",
+      "sha256": "96818f3465a857e0776cb44b6d6aa52c228c49e3cddf00b3d11efb72c72d1618",
+      "bytes": 23814
+    },
+    {
+      "path": "packages/core/src/profiles.ts",
+      "mode": "100644",
+      "gitBlob": "71b29e9550881d93d2f9f646479f9ee931f0441a",
+      "sha256": "1ea5931564fb5368c4d25f4eb2285654b4edadcdb070b7dd0f4ea1ad23cb1196",
+      "bytes": 2645
+    },
+    {
+      "path": "packages/core/src/selection.test.ts",
+      "mode": "100644",
+      "gitBlob": "fac717c835e241ba2cbf65ef637de86222e2cd7b",
+      "sha256": "4146c0ad25f6cf44f4301e39c3c0d5b63f8382fb5e9d2cfec7bb6496ca586120",
+      "bytes": 8201
+    },
+    {
+      "path": "packages/core/src/selection.ts",
+      "mode": "100644",
+      "gitBlob": "78155bbeda9ebbb32d5708c1d4dc9e5daa389ea9",
+      "sha256": "94ceaff9106d1d3df24191accc0d9025814e97cca1797858434e067d9c276633",
+      "bytes": 5797
+    },
+    {
+      "path": "packages/core/src/tp.ts",
+      "mode": "100644",
+      "gitBlob": "980eda8ac40bb99853ea2d498d800ee570260314",
+      "sha256": "0d3af93181416ab4c0c07d12d6778105df660746b6577a5e0348c67c0b69eb1e",
+      "bytes": 2077
+    },
+    {
+      "path": "packages/core/src/tpStructure.test.ts",
+      "mode": "100644",
+      "gitBlob": "99904824ee0f01fbabd6c89e92a27e99707d46db",
+      "sha256": "f58b0e85f51a2d2053fba38bb2118687402931ea4775be30e606eb2649455bd2",
+      "bytes": 1506
+    },
+    {
+      "path": "packages/core/src/tradingCost.test.ts",
+      "mode": "100644",
+      "gitBlob": "e25ef020ebd685e5ceb1bdcfab19eac60df11545",
+      "sha256": "5e7ec712a5ca8ad4c3a58d41e6e208529e51bb356a8a2d76d0ca97b56f76e016",
+      "bytes": 1359
+    },
+    {
+      "path": "packages/core/src/tradingCost.ts",
+      "mode": "100644",
+      "gitBlob": "f62438e3074ab7abee305bb9a221d64797992b6b",
+      "sha256": "d31425deb2f5f839ed8a264ca279a01cccb68434a78e9e55c3394fc03ef5fe68",
+      "bytes": 4738
+    },
+    {
+      "path": "packages/core/tsconfig.json",
+      "mode": "100644",
+      "gitBlob": "f2620043e855073ac7b366b75f911de033ec5146",
+      "sha256": "95f00196c0ff65627fa6bc6368355a906eca7468c7550f534c5f996b2c3bb18d",
+      "bytes": 168
+    },
+    {
+      "path": "scripts/1/start-qwen3.5-9b-vulkan.ps1",
+      "mode": "100644",
+      "gitBlob": "e6eda8dd442d13b8c2512198ead3784151736bfe",
+      "sha256": "e6432a7bf22faaecf429b39463e7c979baca2b2d3e8192930d3425e9c0c48523",
+      "bytes": 36699
+    },
+    {
+      "path": "scripts/1/start-qwen3.8-27b-harness-vulkan1.ps1",
+      "mode": "100644",
+      "gitBlob": "ed881cca124c97861a85596183820321485fcee4",
+      "sha256": "0d60f7018d4cf0c76dd031f04a83d8f7070f93ac741b91f5cba1fe39c4e513a5",
+      "bytes": 40985
+    },
+    {
+      "path": "scripts/1/start-qwen3.8-27b-zdj-vulkan1.ps1",
+      "mode": "100644",
+      "gitBlob": "ba4c63e50eef287de0e891e919a320bb0cde0830",
+      "sha256": "2ac06791efda10575f58a281484e6c3e814632f6d1003f90a3b9bf80496deb6d",
+      "bytes": 40159
+    },
+    {
+      "path": "scripts/acceptance-static.ps1",
+      "mode": "100644",
+      "gitBlob": "98086a4f0f743e43ecc7eceaa117f72e9b5d918f",
+      "sha256": "e0f71b87f7e7ce292d6ef445bef7159708318efb552ea087052586df4e6509b5",
+      "bytes": 2166
+    },
+    {
+      "path": "scripts/archive-runtime-telemetry.mjs",
+      "mode": "100644",
+      "gitBlob": "f465144ed7c0c53c38f1944906bc9ade614467ee",
+      "sha256": "a98dc9aa062fd39a7460c01ca8b5bdb9a6f1c3f1112c0be6304a263c7630eaba",
+      "bytes": 2793
+    },
+    {
+      "path": "scripts/audit-ai-entry-quality.mjs",
+      "mode": "100644",
+      "gitBlob": "f6fc47cf0a6ad3c090ed22bc58aec57a6bce831e",
+      "sha256": "9ac85edcd8bfcb05e6e863e7f522242ac4c0f1f853aa0c03d09095347e1f1b33",
+      "bytes": 3440
+    },
+    {
+      "path": "scripts/audit-node-runtime.ps1",
+      "mode": "100644",
+      "gitBlob": "0a5adc1abb4f674a472db281afd0702f7399880a",
+      "sha256": "83aa055610aa52e0372a9503b57d8b730dd4e26e6dd5f651b5816579f062c433",
+      "bytes": 3144
+    },
+    {
+      "path": "scripts/audit-trading-quality-baseline.mjs",
+      "mode": "100644",
+      "gitBlob": "792f5f92708b49c5f59bf9949be57f6154c2798a",
+      "sha256": "bfea52cfa2e636cea81779b36d9e76a423fe01bb10f396f3f2a9c2174c00689a",
+      "bytes": 1124
+    },
+    {
+      "path": "scripts/audit-v312-entry-window.mjs",
+      "mode": "100644",
+      "gitBlob": "30f9e14cbe5694bdee84d72ac97eb99055d995e3",
+      "sha256": "d4c000df55aab65d1658c869c8d1f9d1c7db5a35264ce62547792f9b8987ebb2",
+      "bytes": 2017
+    },
+    {
+      "path": "scripts/audit-v392-closeout.mjs",
+      "mode": "100644",
+      "gitBlob": "ad9e9b1d20242284d7931e20baac36be2803dee2",
+      "sha256": "047ac66ef5a2b64381f57d0701879fe90731172828f82de808db6339c0b23b70",
+      "bytes": 8409
+    },
+    {
+      "path": "scripts/benchmark-v380-web.mjs",
+      "mode": "100644",
+      "gitBlob": "dac6b8491b384f7b3617e86b3779fe0f003dfa5b",
+      "sha256": "de65bf1c5755031bf9dce677f01044c3696796a42145af37ceba1f2eaec8dd5e",
+      "bytes": 3455
+    },
+    {
+      "path": "scripts/check-v390-btr-readonly.mjs",
+      "mode": "100644",
+      "gitBlob": "e4d82c1dad720fd76016fee1981ecb5b8a1fedce",
+      "sha256": "ea09e91de8b0655ff161db339f79340d7a21711985c2b5541b6ef355ac4cf258",
+      "bytes": 2593
+    },
+    {
+      "path": "scripts/check-v390-powerloss.mjs",
+      "mode": "100644",
+      "gitBlob": "6cef7e3e4957c458022a3099da0bdabb1ed10e82",
+      "sha256": "53611e0221430c5377c58f0f69bec4fea09a83237d29c10271d2a1da24f15fc9",
+      "bytes": 2129
+    },
+    {
+      "path": "scripts/check-v390-restore-parity.mjs",
+      "mode": "100644",
+      "gitBlob": "2f9b286aceb89bc985beb23007c16899dcb66803",
+      "sha256": "9092abb63e57ff51566e8e4e88b34b061516a85b5810529b3003025bfb8fd702",
+      "bytes": 2288
+    },
+    {
+      "path": "scripts/check-v391-tp-legacy-readonly.mjs",
+      "mode": "100644",
+      "gitBlob": "72b5307eaa5bf164facbf307aa955437a5870d67",
+      "sha256": "d898ecae1f710afab66a657590fad502d582516598a0d71404f48cf59c877b24",
+      "bytes": 2933
+    },
+    {
+      "path": "scripts/dev.mjs",
+      "mode": "100644",
+      "gitBlob": "6fa8d7931ed9077f45a8f5b6d0ad1330e60772e3",
+      "sha256": "e0549d10e4f442cd9ac426dfdf5c0f8d40127582566343618707c5b5c80fcb44",
+      "bytes": 495
+    },
+    {
+      "path": "scripts/durable-storage-inventory.mjs",
+      "mode": "100644",
+      "gitBlob": "68298ee8934d33a43ac103cb495e0faf2cc4e19f",
+      "sha256": "70207cb68d97deb19785db098e3a238659fc37240505ac17b18cfaeb4ef56b5f",
+      "bytes": 459
+    },
+    {
+      "path": "scripts/finalize-v320-acceptance.mjs",
+      "mode": "100644",
+      "gitBlob": "8700614b888e81e4291f54e76ddc4b015ae80b79",
+      "sha256": "b3d2f6e1d0f1bab5dfbabd3df4f03cddac7dbf2d90e9df0214f624cdb50280d8",
+      "bytes": 5365
+    },
+    {
+      "path": "scripts/inspect-sqlite-capacity.mjs",
+      "mode": "100644",
+      "gitBlob": "f2918ee60fbaea75325741ad04d0fb11c7bc755f",
+      "sha256": "fd525ba2abdd100452ec76391b3febf899e7bf6d622b97c6b7583653013ca4e5",
+      "bytes": 6868
+    },
+    {
+      "path": "scripts/install-fresh-testnet-db.ps1",
+      "mode": "100644",
+      "gitBlob": "5ad99f1cd1659bb759e86c3318fa876a572cfece",
+      "sha256": "aa3b39c3ff1e884abed1f0220915001c8b86e65399541eab108eae456155a5c7",
+      "bytes": 3035
+    },
+    {
+      "path": "scripts/install-storage-retention.mjs",
+      "mode": "100644",
+      "gitBlob": "3e7099b7b2aa4e37ef041bada2d51bddc683aa1d",
+      "sha256": "7a8e8f0713a9e899e5e43ca00a8c2705c65795dc09bf25eae0629f8953eceeac",
+      "bytes": 454
+    },
+    {
+      "path": "scripts/install-zdj-new.ps1",
+      "mode": "100644",
+      "gitBlob": "f9760aba161c36fca33f6468486b18e4eb7fc76f",
+      "sha256": "656a144cef0c25f74b84fda3c632c08153d225fd55c4ecb42c9992a541c45dbe",
+      "bytes": 940
+    },
+    {
+      "path": "scripts/maintain-storage.mjs",
+      "mode": "100644",
+      "gitBlob": "cea4d1cbbf3c2b3c49aa5ccddefe7f97f186de2a",
+      "sha256": "b1a98ba22ea7e68debf1c09f53b6185576995a05b588019e4e555222925d12dc",
+      "bytes": 10633
+    },
+    {
+      "path": "scripts/maintain-storage.test.mjs",
+      "mode": "100644",
+      "gitBlob": "15fae1110b0615f4685d496bafed5385f3ec835e",
+      "sha256": "6a9e7d80cf53cf415a59fa54ac72726940bb7db38f9fd57d64f72348aa91407c",
+      "bytes": 7736
+    },
+    {
+      "path": "scripts/market-health-parser.mjs",
+      "mode": "100644",
+      "gitBlob": "bb4dfa01e279baed48dd01edcf7d9537625c9ba1",
+      "sha256": "1b8355025629ebcaf34f2be3560c84de318712fd1414dcb434228da0873b04ec",
+      "bytes": 2129
+    },
+    {
+      "path": "scripts/observe-v390-closeout.mjs",
+      "mode": "100644",
+      "gitBlob": "899a57127d52ff6f9f87c34f56f3da4bd65d7b95",
+      "sha256": "26aa6efbd42af6cd2010f4258b460eec7fb4ed799887cc45f79a42ce96790627",
+      "bytes": 2604
+    },
+    {
+      "path": "scripts/observe-v391-admission.mjs",
+      "mode": "100644",
+      "gitBlob": "4a34676a54765c9b4299ab515d414f6d947840de",
+      "sha256": "5791e743446dd1b6073426295c78e0ad9aab1f9e8e220d21d16045d60be30daa",
+      "bytes": 2328
+    },
+    {
+      "path": "scripts/package-zdj-deploy.ps1",
+      "mode": "100644",
+      "gitBlob": "2b4bee123eef353b0dabbd42ee402b5115cce85c",
+      "sha256": "8513b98ab2e6d9b441c94de3a580dec4aaacb766bb654fd0936a568fd950493b",
+      "bytes": 1150
+    },
+    {
+      "path": "scripts/prune-zdj-backups.mjs",
+      "mode": "100644",
+      "gitBlob": "58ec542cd502384fede2ac463421283c204351f5",
+      "sha256": "ea62127fbd35a3bee048760a8fce5b4585edfd801599f8b946af90378bf4e042",
+      "bytes": 2471
+    },
+    {
+      "path": "scripts/recompute-v320-acceptance-summary.ps1",
+      "mode": "100644",
+      "gitBlob": "aae089b023d765f8df8378bb2ce451a5415235c2",
+      "sha256": "0098b1392335bc8f108bfbd19a58d5e7bf52579e0cd2e0a166d472876c1f286b",
+      "bytes": 3249
+    },
+    {
+      "path": "scripts/repair-v391-rejected-tp.mjs",
+      "mode": "100644",
+      "gitBlob": "3efca1bed2a0640879d86a5dff03f63d3d873d2f",
+      "sha256": "a91384a2992d6f3c46b83e1e2220a1231c3c9becaf23b1072d0aaf7b0a8f5f4c",
+      "bytes": 2981
+    },
+    {
+      "path": "scripts/repair-v392-storage.ps1",
+      "mode": "100644",
+      "gitBlob": "f019d471166c5a8146e823e6c0aec906482f378d",
+      "sha256": "72504047583a6d3140a5d64cf690e851d736772512f067cdb0d34cdf8e25caf5",
+      "bytes": 791
+    },
+    {
+      "path": "scripts/replay-cycle-accounting.ts",
+      "mode": "100644",
+      "gitBlob": "b24dd0e742b32dad7fdc4c0634cc3c05518521f6",
+      "sha256": "8856562c0f65af85f69df89019e117806b972ac1aa9b43d7a052be57cf85c451",
+      "bytes": 3297
+    },
+    {
+      "path": "scripts/research/audit-entry-quality-phases.py",
+      "mode": "100644",
+      "gitBlob": "8d19621017b8a0ba362279c38bef152629f352ed",
+      "sha256": "69166903e0a8f48cb55396f01d8eaa4a410f42b2e15e6112f6dd8b1bd07d03e4",
+      "bytes": 24254
+    },
+    {
+      "path": "scripts/research/replay-primary-prompt-compression.mjs",
+      "mode": "100644",
+      "gitBlob": "a96f73bddc2855a758caab999b6a24018dfb4b17",
+      "sha256": "c5ad91e43d0505d07923cbbf86c4affece03f1dd0e3617d38825dca7e11639db",
+      "bytes": 5535
+    },
+    {
+      "path": "scripts/research/replay-primary-prompt-factoring.mjs",
+      "mode": "100644",
+      "gitBlob": "4be499abf65a227e2381add5800fbf18658c4d91",
+      "sha256": "062d250d8742371cf8ce7e79edc157b9a02e83c1c64b4ec0825e20afec389295",
+      "bytes": 6139
+    },
+    {
+      "path": "scripts/research/test_audit_entry_quality_phases.py",
+      "mode": "100644",
+      "gitBlob": "3a78fbd87c5436275be26a9c3a2733a7ffa8b9cf",
+      "sha256": "12528b02f5b33224794a5b11f6bafba5fce63230d26c8ab826ee090a79229dd4",
+      "bytes": 10661
+    },
+    {
+      "path": "scripts/reset-testnet-runtime-db.mjs",
+      "mode": "100644",
+      "gitBlob": "38f5926e7531a3a725a90d6c5c842a25b76c3afa",
+      "sha256": "799d480c968e886accd7d1ec6bc4811e1b39324829d2132fb73b514912befa45",
+      "bytes": 7257
+    },
+    {
+      "path": "scripts/reset-testnet-runtime-db.test.mjs",
+      "mode": "100644",
+      "gitBlob": "8993d20f3b498a0db8e5b510cb44730790181a70",
+      "sha256": "f96d75dee762a12f53e2eb81fbb25c0116b3255dd4e8fe3bd80f7560bccf813f",
+      "bytes": 4337
+    },
+    {
+      "path": "scripts/run-3h-endurance.ps1",
+      "mode": "100644",
+      "gitBlob": "a93643d65b715d89b70e87fa5dd823ff497aa87c",
+      "sha256": "cc4356c1027051aa1a3850374cc710f6581f334c8447b4b99286380036a0c255",
+      "bytes": 4958
+    },
+    {
+      "path": "scripts/run-acceptance.ps1",
+      "mode": "100644",
+      "gitBlob": "65d72e2e0160e57fe21415b257cd7390656f6f3d",
+      "sha256": "0d6384b3697cbb4d96575abe1dcea47127b81d27d2869e6950adfc424911208f",
+      "bytes": 471
+    },
+    {
+      "path": "scripts/run-lan-availability-smoke.ps1",
+      "mode": "100644",
+      "gitBlob": "8be4ea2473f83bef27c99735f749ce71c2083873",
+      "sha256": "b900e0fa9a0147c20d6ad8c7f9dc2811a90506a6fd01b3e33d7d3a11ada8094a",
+      "bytes": 4590
+    },
+    {
+      "path": "scripts/run-v312-30m-acceptance.ps1",
+      "mode": "100644",
+      "gitBlob": "54e302456cb3f245562c103427aad38c4c23091a",
+      "sha256": "c7be06477ec134304323550098461fbe46e315381eb671019340558d02943a93",
+      "bytes": 12938
+    },
+    {
+      "path": "scripts/run-v320-final-60m-acceptance.ps1",
+      "mode": "100644",
+      "gitBlob": "70d89128ca604adc3fde929258f004f27a7d80db",
+      "sha256": "2f3c2f18823724fb64c55658a953f09c3021637e29e5b0bc66db3042c7774ccd",
+      "bytes": 258
+    },
+    {
+      "path": "scripts/run-v331-position-smoke.ps1",
+      "mode": "100644",
+      "gitBlob": "f7c4f2a7c4fd02c75a03a4a60ded9cfbea278e4a",
+      "sha256": "3faf38199f0eb231a1ca0f5eeeee1452e69f973d7a4bb5e67ed84a114699253d",
+      "bytes": 2552
+    },
+    {
+      "path": "scripts/run-v332-position-smoke.ps1",
+      "mode": "100644",
+      "gitBlob": "2e4e536d903d0be72d8d36fe85ceaee11866dad8",
+      "sha256": "1b8145aca6738eac673340f8e7b3478061246e26bcabd3f26c124372c2234230",
+      "bytes": 2837
+    },
+    {
+      "path": "scripts/run-v333-testnet-acceptance.ps1",
+      "mode": "100644",
+      "gitBlob": "28c518023951c79c0e3d9a967e3bec252792e96e",
+      "sha256": "7f614e274936112040f641ac7f792fab0b2c7c4c41db4bad0cc1d521a5171422",
+      "bytes": 3861
+    },
+    {
+      "path": "scripts/run-v333-trade-audit.ps1",
+      "mode": "100644",
+      "gitBlob": "6fabd4c144833da838dfa7e79627dafd4f920828",
+      "sha256": "6936bcaff1858747cf58d4a37b09d4a5b5bff4808aaf54caff522e739d004353",
+      "bytes": 870
+    },
+    {
+      "path": "scripts/run-v333-trade-repair.ps1",
+      "mode": "100644",
+      "gitBlob": "bea4458037bac0e1a3edaca1c42736d5e600e475",
+      "sha256": "3dafb83dcf780d0be3127978357555d86659824d8c01a2e6f4f8ac9116f1ee12",
+      "bytes": 874
+    },
+    {
+      "path": "scripts/run-v334-traderecord-smoke.ps1",
+      "mode": "100644",
+      "gitBlob": "838e3c90aea76bb78325bfe61bc3ff9348bbe900",
+      "sha256": "34f9613b254468d0649ff0bc4c55caf152c4eea97d8025d8b222188ef1982b48",
+      "bytes": 1208
+    },
+    {
+      "path": "scripts/run-v340-portfolio-smoke.ps1",
+      "mode": "100644",
+      "gitBlob": "e8e7934adabc5715ad380bd7cc303f481c6069f2",
+      "sha256": "0c1c760152a05d981f291ef71715e20d80f516a3d9bccebe3df56a3b65386c23",
+      "bytes": 2284
+    },
+    {
+      "path": "scripts/run-v360-runtime-acceptance.ps1",
+      "mode": "100644",
+      "gitBlob": "a8db760047c9631bc460258916d3d80065eb4241",
+      "sha256": "9c9926cf27bc2b204b8049e66aa3f0edff4a89d946c837d1b575241eb63ec259",
+      "bytes": 4752
+    },
+    {
+      "path": "scripts/run-v363-testnet-acceptance.ps1",
+      "mode": "100644",
+      "gitBlob": "676a38cde69ef36d6e20918dcf9c70881914d952",
+      "sha256": "343b95bed94be6a8cae3fbd11500e7c8f3715c035277a3c4b1a8e4c4e6647251",
+      "bytes": 3899
+    },
+    {
+      "path": "scripts/run-v380-model-ab.mjs",
+      "mode": "100644",
+      "gitBlob": "2dce6f0520cef51bf68b8e5cdafadf1892621bd9",
+      "sha256": "ed74f3a32349f4776e08128bd1f2a2619de737c0e24569dd67eebea90dca680c",
+      "bytes": 5215
+    },
+    {
+      "path": "scripts/run-v392-natural-acceptance.ps1",
+      "mode": "100644",
+      "gitBlob": "b539b3fcf5bfe9ba230bcc041b8bcb9f8c4b363e",
+      "sha256": "a4128b35bb36878537357d22493c3e6c9e68004a150d47669e72dad28a5ffaec",
+      "bytes": 7068
+    },
+    {
+      "path": "scripts/serve-v380-dashboard-fixture.mjs",
+      "mode": "100644",
+      "gitBlob": "85d669a99ab8978b2a4c2f111c4ee19149b35398",
+      "sha256": "16f56883580968c9be6c55912ee48e2956097cb0db5934a21286d666859061c8",
+      "bytes": 1578
+    },
+    {
+      "path": "scripts/serve-v390-dashboard-fixture.mjs",
+      "mode": "100644",
+      "gitBlob": "52b3a93aa4baa37abd6826627a167a834c51eac4",
+      "sha256": "ec0f6321e2a765a03908759ad27e07239c511318ad417eca0abad33db84a801e",
+      "bytes": 1600
+    },
+    {
+      "path": "scripts/smoke.mjs",
+      "mode": "100644",
+      "gitBlob": "1b5747fde1b2880489d0659dcb6716009f27a02f",
+      "sha256": "dcb2ddc3019c954559408bb850d023f2eec71b25b80d35908f3145eafa3877b3",
+      "bytes": 494
+    },
+    {
+      "path": "scripts/start-v3-3h-fixed.ps1",
+      "mode": "100644",
+      "gitBlob": "febc9a61d1269561ce00522fe74b2ff2dac600b9",
+      "sha256": "968ddae4655826dbf46dc9e0f46f47c8422ba1acd34cc022fd505b6a0360c014",
+      "bytes": 2878
+    },
+    {
+      "path": "scripts/start-v3-3h.ps1",
+      "mode": "100644",
+      "gitBlob": "febc9a61d1269561ce00522fe74b2ff2dac600b9",
+      "sha256": "968ddae4655826dbf46dc9e0f46f47c8422ba1acd34cc022fd505b6a0360c014",
+      "bytes": 2878
+    },
+    {
+      "path": "scripts/start-v3.ps1",
+      "mode": "100644",
+      "gitBlob": "e12e660d2670432e6ecb64f9689f45cd7e0757be",
+      "sha256": "133b1b197f00d950c4d0c996dad5ddb80f0c28d731f942fa79bca3cae84db685",
+      "bytes": 1608
+    },
+    {
+      "path": "scripts/start-zdj-engine-host.ps1",
+      "mode": "100644",
+      "gitBlob": "46ee2dc3159d6f224878a03c26ebb633d45cfd9c",
+      "sha256": "065145fd94d5738a26163866040d50ad55ac2fa58f0f70fdaddad3001e303c07",
+      "bytes": 2494
+    },
+    {
+      "path": "scripts/start-zdj-engine-host.test.ps1",
+      "mode": "100644",
+      "gitBlob": "ef4629cd9bf21d8209e19f90ac4b94383d1c980a",
+      "sha256": "e6cdc51b259b409383a3456bc9b1cf6cb06b3337d84b598dba653e337c701f05",
+      "bytes": 2791
+    },
+    {
+      "path": "scripts/start-zdj-lan.ps1",
+      "mode": "100644",
+      "gitBlob": "0178cdf3e983939fc484f047413a606a4ebc595e",
+      "sha256": "e9fd05553dfadcb85b03f8f6e80cc40703bbf4291b7f32e525e78eee09b95b00",
+      "bytes": 6245
+    },
+    {
+      "path": "scripts/status-v3.ps1",
+      "mode": "100644",
+      "gitBlob": "b92233776cecd7d9e190bf3c757ec1772bf536ee",
+      "sha256": "9b276bd4ddf60b45455ca13305c2cc14b2c7778b1c7a7d575d9e754f04a02515",
+      "bytes": 403
+    },
+    {
+      "path": "scripts/status-zdj-lan.ps1",
+      "mode": "100644",
+      "gitBlob": "e7f1c232ff3373e3539968f9479dca6a443168e4",
+      "sha256": "ee25b34d85d24ce91a3ce80992cac42248d12179ff67ae8cc1ceab71e7a4bae0",
+      "bytes": 2410
+    },
+    {
+      "path": "scripts/stop-v3.ps1",
+      "mode": "100644",
+      "gitBlob": "9240b8527efbcb8ef83864a9ff2ca19ead84e5c2",
+      "sha256": "2b678cc534bf988fe7c17d668471b1c591962428cc24eab4b1f6f8e366759e77",
+      "bytes": 351
+    },
+    {
+      "path": "scripts/stop-zdj-lan.ps1",
+      "mode": "100644",
+      "gitBlob": "6c69a78a9b5fbb1fbfaf3e3e3e0a6f5457741365",
+      "sha256": "4ae8a34fe312985d48290285f298fdf81de887ee3d636a962f1050298d645519",
+      "bytes": 1384
+    },
+    {
+      "path": "scripts/summarize-v392-trajectories.mjs",
+      "mode": "100644",
+      "gitBlob": "42bc631ceb8b86fcae418476fc92a54b67dd1b70",
+      "sha256": "c78f81bba5e445afa71bbd5052f57c9ad7ae00c1aedbb78b8ea68420f8dadec3",
+      "bytes": 2782
+    },
+    {
+      "path": "scripts/summarize-v392-trajectories.test.mjs",
+      "mode": "100644",
+      "gitBlob": "44bb9a917bdf0c5e2a1e450cca309227d37368a7",
+      "sha256": "811c7d6317006c4861f9e1a5a38dcf17f4f0ebe07f292ac9ca8aef429004925d",
+      "bytes": 801
+    },
+    {
+      "path": "scripts/v382-research-quality.ts",
+      "mode": "100644",
+      "gitBlob": "05e7d948fbaef135eb883ebd0ef2fb4c982e8e07",
+      "sha256": "f7af98af0ca62730ad541bee20665adfef53be93aa28a4df9fb5aeae523a23c7",
+      "bytes": 3758
+    },
+    {
+      "path": "scripts/v390-admission-soak.ts",
+      "mode": "100644",
+      "gitBlob": "8b8dbe41d7af1ea61d02d4b7ff3a2ace0833e9d5",
+      "sha256": "d2950d63f50c5b811e3ffb50742a2e8629d0f0dffaafb4c7778ce0f1a6d70121",
+      "bytes": 3424
+    },
+    {
+      "path": "scripts/v390-primary-evaluation.ts",
+      "mode": "100644",
+      "gitBlob": "bde0b52b32e5f02b563778a48192134a1ac21360",
+      "sha256": "51922ce802d5fa3be31474089c4f94dd891a873793af3b38a3810ff98aa09e6d",
+      "bytes": 3720
+    },
+    {
+      "path": "scripts/v390-research-evaluation.ts",
+      "mode": "100644",
+      "gitBlob": "33514a330ecd01c5bbe729b8c302d070aeb645d2",
+      "sha256": "22356053605fa50d14a5d99dc4ca6ab6a69dd0ab09363ab6e8507fa69905a280",
+      "bytes": 3747
+    },
+    {
+      "path": "scripts/v394-stage6-preflight.mjs",
+      "mode": "100644",
+      "gitBlob": "831644a169f45291d345871204aaab318306661d",
+      "sha256": "5e2b7eca23429f0da861d435db1da3b1e868545484233d316f0074690ec12f04",
+      "bytes": 11130
+    },
+    {
+      "path": "scripts/verify-entry-quality.mjs",
+      "mode": "100644",
+      "gitBlob": "7b766423a165bccc97e22e52a99f263fa2d0796d",
+      "sha256": "f1cdb68f1e70a535b3d8b5bef82e2fe84d4e50b56c3230747d5c32476cfb16bc",
+      "bytes": 2999
+    },
+    {
+      "path": "scripts/watch-zdj-lan.ps1",
+      "mode": "100644",
+      "gitBlob": "091e37d6bb21086fb333d067c26cf158f2c32f17",
+      "sha256": "a626f006eaceb7fc63eaf6f0a2c84b8aa22c42303b97fd04924502b56b2b9840",
+      "bytes": 5449
+    },
+    {
+      "path": "scripts/windows/credential-manager.ps1",
+      "mode": "100644",
+      "gitBlob": "3b57219b6ff5a2d45357f17a4c6c523720819905",
+      "sha256": "c689d2bb2a8295498bffa04183bcae617272a819fdad8fe84dada7a392618ab2",
+      "bytes": 3031
+    },
+    {
+      "path": "scripts/windows/install.ps1",
+      "mode": "100644",
+      "gitBlob": "7449e78233c9626269c6b5d552f4b5dd70249afb",
+      "sha256": "ae6aeaa822901336c28d66cea2c66f5c57b444d200364ad7d9647048ad2c77d5",
+      "bytes": 214
+    },
+    {
+      "path": "scripts/windows/run-engine-guardian.ps1",
+      "mode": "100644",
+      "gitBlob": "9e69d945488d835591e01ed485e275fb74753e10",
+      "sha256": "46bacdc4ea40542574a5b1adb91aadd4888d19ed7d062ab13b46288cc67ad44d",
+      "bytes": 1010
+    },
+    {
+      "path": "scripts/windows/start-dashboard.ps1",
+      "mode": "100644",
+      "gitBlob": "3c2ed2051591705f78e34ca46460eade1bc556a5",
+      "sha256": "f92dbfd95962a7cfc23e66d159c872cb8b6e397eb131dcc1d7f68c8a37d6a55f",
+      "bytes": 104
+    },
+    {
+      "path": "scripts/windows/start-dev.ps1",
+      "mode": "100644",
+      "gitBlob": "2e062539f0ea7234fc515b9cc6f24b3ee909e4fe",
+      "sha256": "c688eb2069293e32feae2d4705a6ede4fc0be017fb23495cce7eeac04f626d26",
+      "bytes": 94
+    },
+    {
+      "path": "scripts/windows/start-engine.ps1",
+      "mode": "100644",
+      "gitBlob": "fc4e0981c324365e06bb14f054486d30d5fef4c6",
+      "sha256": "6d5d6a5b5fad4fcd47ecba6167dd825b590788bb4477a0fa6bfe73967042e2a0",
+      "bytes": 139
+    },
+    {
+      "path": "scripts/windows/verify.ps1",
+      "mode": "100644",
+      "gitBlob": "69cf2c75a12f50f7440316c9e0dc7e6a180a9475",
+      "sha256": "b20447408b4707b93babe394ea8e8446fa7e17bff7b94570f5b762d02a1fdd17",
+      "bytes": 97
+    },
+    {
+      "path": "tsconfig.base.json",
+      "mode": "100644",
+      "gitBlob": "fe5a587f0992e63cf7cb9088a6efcab0462129a4",
+      "sha256": "098b6cfd215e46ef39f63608db84ef19bb514db86ec70a7f06792e0516cd086f",
+      "bytes": 366
+    }
+  ],
+  "excluded": [
+    {
+      "path": ".github/workflows/entry-quality.yml",
+      "mode": "100644",
+      "gitBlob": "ad29988522ee15866779634338a767d65bd2c900",
+      "reason": "No workflows or automatic migration on snapshot branch"
+    },
+    {
+      "path": "docs/deployment/collaborative-integration-preparation-20261002.json",
+      "mode": "100644",
+      "gitBlob": "9070b82f78558ea6ff5863be518fce23dc73ed28",
+      "reason": "Deployment/research documentation not included; may contain private runtime evidence"
+    },
+    {
+      "path": "docs/deployment/entry-optimization-first-batch-preparation-20261003-evidence/final-independent-review.json",
+      "mode": "100644",
+      "gitBlob": "3003ede37ca1ff2f1754d7cbae0b43747fdd128e",
+      "reason": "Deployment/research documentation not included; may contain private runtime evidence"
+    },
+    {
+      "path": "docs/deployment/entry-optimization-first-batch-preparation-20261003-evidence/final-independent-schema-source-check.json",
+      "mode": "100644",
+      "gitBlob": "217cdcdfe4bd436d2a0f6bbfb5ec0a82e628e405",
+      "reason": "Deployment/research documentation not included; may contain private runtime evidence"
+    },
+    {
+      "path": "docs/deployment/entry-optimization-first-batch-preparation-20261003-evidence/fixture-content-review.json",
+      "mode": "100644",
+      "gitBlob": "c265bab0eea0ca18164539c9bdc54f6f74a26b3b",
+      "reason": "Deployment/research documentation not included; may contain private runtime evidence"
+    },
+    {
+      "path": "docs/deployment/entry-optimization-first-batch-preparation-20261003-evidence/grammar-semantic-validation.json",
+      "mode": "100644",
+      "gitBlob": "effdda5a2528524d67588b97140d8f3b0ac54d1d",
+      "reason": "Deployment/research documentation not included; may contain private runtime evidence"
+    },
+    {
+      "path": "docs/deployment/entry-optimization-first-batch-preparation-20261003-evidence/readable-input-replay.json",
+      "mode": "100644",
+      "gitBlob": "693e75857834b60f99dfbf26a4e22a66b945efc3",
+      "reason": "Deployment/research documentation not included; may contain private runtime evidence"
+    },
+    {
+      "path": "docs/deployment/entry-optimization-first-batch-preparation-20261003-evidence/tokenizer-cost-comparison.json",
+      "mode": "100644",
+      "gitBlob": "f47b12e7edf1866f19fdba892696671f2560d5e2",
+      "reason": "Deployment/research documentation not included; may contain private runtime evidence"
+    },
+    {
+      "path": "docs/deployment/entry-optimization-first-batch-preparation-20261003.json",
+      "mode": "100644",
+      "gitBlob": "3332875fc5a5bb8641abd5f9fc477bd74d494be8",
+      "reason": "Deployment/research documentation not included; may contain private runtime evidence"
+    },
+    {
+      "path": "docs/deployment/entry-quality-preparation-20261002.json",
+      "mode": "100644",
+      "gitBlob": "7020c0f00f83c00efb397e5844914fd5ec50d86f",
+      "reason": "Deployment/research documentation not included; may contain private runtime evidence"
+    },
+    {
+      "path": "docs/deployment/entry-throughput-fix-preparation-20261001.json",
+      "mode": "100644",
+      "gitBlob": "2a857f827bc447d8cf252fb5dbff85fe76359c41",
+      "reason": "Deployment/research documentation not included; may contain private runtime evidence"
+    },
+    {
+      "path": "docs/deployment/exchange-info-fix-preparation-20261001.json",
+      "mode": "100644",
+      "gitBlob": "57e5fdd2f8ec1df97200247dcd8a88718c65a89a",
+      "reason": "Deployment/research documentation not included; may contain private runtime evidence"
+    },
+    {
+      "path": "docs/deployment/exchange-info-fix-report-20261001.md",
+      "mode": "100644",
+      "gitBlob": "30677837a6995538d7b8cb3a2f2f523126f9d48c",
+      "reason": "Deployment/research documentation not included; may contain private runtime evidence"
+    },
+    {
+      "path": "docs/deployment/scout-json-fix-evidence-20261001.json",
+      "mode": "100644",
+      "gitBlob": "115e7d6398e9eefcf868b417ecbbb107ef3a32af",
+      "reason": "Deployment/research documentation not included; may contain private runtime evidence"
+    },
+    {
+      "path": "docs/deployment/scout-json-fix-preparation-20261001.json",
+      "mode": "100644",
+      "gitBlob": "43a0f28808b9c4940571070be61910e86b7fe4b3",
+      "reason": "Deployment/research documentation not included; may contain private runtime evidence"
+    },
+    {
+      "path": "docs/deployment/scout-json-fix-preparation-20261001.md",
+      "mode": "100644",
+      "gitBlob": "1c73de82c8265c318be790201d878d5e78cb0624",
+      "reason": "Deployment/research documentation not included; may contain private runtime evidence"
+    },
+    {
+      "path": "docs/deployment/v397-upgrade-preparation-20261001.json",
+      "mode": "100644",
+      "gitBlob": "05bd07fab33367df66234e3ad390de0c2070272a",
+      "reason": "Deployment/research documentation not included; may contain private runtime evidence"
+    },
+    {
+      "path": "docs/evidence/order-lifecycle-integration-20261002.md",
+      "mode": "100644",
+      "gitBlob": "370d56e93f5db95f2dfdc2cf11c60333c541bfd9",
+      "reason": "Deployment/research documentation not included; may contain private runtime evidence"
+    },
+    {
+      "path": "docs/evidence/v396/S02/20260921T190000Z/storage-coverage.json",
+      "mode": "100644",
+      "gitBlob": "dc330d1d2b6f5f1761ad3481bdffc459da5b2982",
+      "reason": "Deployment/research documentation not included; may contain private runtime evidence"
+    },
+    {
+      "path": "docs/evidence/v396/final-convergence-20260922/J5/storage-coverage.json",
+      "mode": "100644",
+      "gitBlob": "09af08fb6ea6ecd62faf5b138263d6f13062e0d8",
+      "reason": "Deployment/research documentation not included; may contain private runtime evidence"
+    },
+    {
+      "path": "docs/plans/2026-10-02-collaborative-integration-delivery.md",
+      "mode": "100644",
+      "gitBlob": "bc8f1ef4ab073fc52cf2dad6a96a6475f6950855",
+      "reason": "Deployment/research documentation not included; may contain private runtime evidence"
+    },
+    {
+      "path": "docs/plans/2026-10-02-entry-quality-implementation.md",
+      "mode": "100644",
+      "gitBlob": "e958258c5aaadd1c83dad9410a62472558a4ca4d",
+      "reason": "Deployment/research documentation not included; may contain private runtime evidence"
+    },
+    {
+      "path": "docs/plans/2026-10-02-main-convergence-matrix.md",
+      "mode": "100644",
+      "gitBlob": "8bde9073665d4fbf75dfead98aa1ccd6e82bc5ec",
+      "reason": "Deployment/research documentation not included; may contain private runtime evidence"
+    },
+    {
+      "path": "docs/plans/storage-ci-restoration-20261002.md",
+      "mode": "100644",
+      "gitBlob": "86777532e29b9ef5a72e68068a6e1dd7de35657a",
+      "reason": "Deployment/research documentation not included; may contain private runtime evidence"
+    },
+    {
+      "path": "docs/reports/v397-high-quality-entry-sizing-replan-20260930/IMPLEMENTATION_RESULT.md",
+      "mode": "100644",
+      "gitBlob": "ba374beb832faabcb7815de0396781d30ec2763a",
+      "reason": "Deployment/research documentation not included; may contain private runtime evidence"
+    }
+  ],
+  "privateFixturesExcluded": [
+    "packages/core/src/fixtures/entry-primary-native-20261001.json",
+    "apps/engine/src/services/fixtures/v363-entry.json"
+  ],
+  "syntheticDerivatives": [
+    {
+      "path": "packages/core/src/fixtures/entry-primary-native-20261001.json",
+      "sourceGitBlob": "b899c6bc5f682d5d216e22c7b4e9e21470c0edd9",
+      "sourceMode": "100644",
+      "sha256": "fd25ffb4141983e0be9a91741beda71f9f556470ed7c88f76b82bb986824792d",
+      "mode": "100644",
+      "bytes": 207214,
+      "reason": "Private historical account/portfolio fixture replaced with public synthetic derivative. Original blob is not published."
+    },
+    {
+      "path": "apps/engine/src/services/fixtures/v363-entry.json",
+      "sourceGitBlob": "8e860d6c36633d759b3e0fa243c1845ad4ed4d9c",
+      "sourceMode": "100644",
+      "sha256": "8ee51224bfefd06a3e9756c1e7be36cb0be0a47508eca95b7cb995dba1fbdee3",
+      "mode": "100644",
+      "bytes": 49963,
+      "reason": "Private historical account/portfolio fixture replaced with public synthetic derivative. Original blob is not published."
+    }
+  ],
+  "knownLimitations": {
+    "legacyVerifyMissingTrackedScripts": [
+      "scripts/audit-v394-entry-authorization.mjs",
+      "scripts/init-local-runtime.mjs",
+      "scripts/init-local-runtime.test.mjs",
+      "scripts/run-v394-local-rollout.ps1",
+      "scripts/run-v394-local-rollout.test.ps1",
+      "scripts/run-v394-readonly-canary.ps1",
+      "scripts/run-v394-readonly-canary.test.ps1",
+      "scripts/run-v394-stage7-to-stage9.test.ps1",
+      "scripts/v394-stage6-set-readonly.mjs"
+    ],
+    "allHistoricalTestsRerunThisSync": false,
+    "workflowsIncluded": false,
+    "runtimeSettingsIncluded": false
+  },
+  "publicDocumentationDerivatives": [
+    {
+      "path": "scripts/research/audit-entry-quality-phases.md",
+      "sourceGitBlob": "1450fbf5806d2b84c96993dbf7fd42bd2bd72b79",
+      "sourceMode": "100644",
+      "sha256": "365620c0b815e1ffe6492a3c8b14b692cb0df4c7b7c4e0c1cb5a6f25cdc403a5",
+      "mode": "100644",
+      "bytes": 4981,
+      "reason": "Replace machine-specific absolute checkout path with <checkout> example; no production source changes.",
+      "replacements": 1
+    }
+  ]
+}

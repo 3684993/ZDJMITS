@@ -1,3 +1,0 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/><meta name="theme-color" content="#0f2340"/><title>ZDJ-MITS</title>  <script type="module" crossorigin src="/assets/index-CU7z55JE.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-Br433fbO.css">
-</head><body><div id="app"></div></body></html>

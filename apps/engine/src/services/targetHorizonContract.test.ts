@@ -1,7 +1,7 @@
 import {describe, expect, it} from 'vitest';
 import {readFileSync} from 'node:fs';
 import {buildCompactBrainPrompt} from '@zdj/core';
-import {harness} from './tradingQualityTestHarness.js';
+import {harness,systemCandidateDecision} from './tradingQualityTestHarness.js';
 import {buildPreAiExecutionEnvelope} from './preAiExecutionEnvelope.js';
 import {buildQuantityHorizonCandidates, legalTargetHorizonMinutes} from './quantityHorizonCandidates.js';
 
@@ -10,11 +10,8 @@ const fixtureSymbol: string = JSON.parse(
 )[0].packet.symbol;
 
 /**
- * The model is invited to choose a take-profit horizon, but the plan layer only ever writes a plan for
- * the horizons its own ladder accepts. Before this contract existed the two disagreed in silence: live
- * runs were refused with `CANDIDATE_HORIZON_UNSUPPORTED:30` because nothing had ever told the model
- * that 30 is not a legal answer. Publishing the ladder in the execution envelope - the same object the
- * plan is computed from - is what makes the invitation and the acceptance the same set.
+ * The model chooses a system candidate, and therefore chooses only a horizon already priced by that
+ * candidate. It may restate the candidate horizon, but it may not author a replacement horizon.
  */
 describe('V3.9.6 published target-horizon contract', () => {
   it('TH-01 the envelope publishes exactly the horizons the plan layer accepts', () => {
@@ -48,47 +45,41 @@ describe('V3.9.6 published target-horizon contract', () => {
     expect(legalTargetHorizonMinutes(h.state.settings, [30, 120])).toEqual([30, 120]);
   });
 
-  it('TH-03 the prompt tells the model which horizon values are legal, in the envelope it is already given', () => {
+  it('TH-03 the prompt makes the candidate menu the only target-horizon authority', () => {
     const h = harness();
     const packet: any = structuredClone(h.packet);
     packet.executionEnvelope = buildPreAiExecutionEnvelope(h.state, fixtureSymbol);
     const prompt = buildCompactBrainPrompt(packet);
-    expect(prompt).toContain('profitTakePlan.targetHorizonMinutes');
-    expect(prompt).toContain('EXECUTION_ENVELOPE.economics.targetHorizonMinutes');
-    expect(prompt, 'the published list is data, not an instruction to prefer one horizon over another')
-      .toMatch(/one of EXECUTION_ENVELOPE\.economics\.targetHorizonMinutes/i);
+    expect(prompt).toContain('selectedCandidateId');
+    expect(prompt).toContain('planCandidates');
+    expect(prompt).toContain('targetHorizonMinutes');
+    expect(prompt).toMatch(/engine resolves exact frozen values, never another row or a fresh recomputation/i);
+    expect(prompt).toContain('copy candidateSetHash and candidateSetFactVersion');
+    expect(prompt).toContain('Do not output quantityUnits or profitTakePlan');
   });
 
-  it('TH-04 a horizon in the published set is writable; one outside it is refused by name', async () => {
+  it('TH-04 a candidate horizon is writable; a model-authored replacement is refused by name', async () => {
     const h = harness();
     const quote = h.state.snapshots.get(fixtureSymbol)!.quote;
     const published = (buildPreAiExecutionEnvelope(h.state, fixtureSymbol).economics as {targetHorizonMinutes: number[]}).targetHorizonMinutes;
     const run = async (targetHorizonMinutes: number) => {
       const local = harness();
-      local.state.settings.entry.minimumInitialMarginByQuote.USDT = 1;
-      local.state.settings.entry.minimumOrderNotionalByQuote.USDT = 200;
-      (local.ai as any).decide.mockImplementation(async () => ({
-        runId: `horizon-${targetHorizonMinutes}`,
-        decision: {...local.supplied, decision: 'PLACE_LONG', tradeSide: 'LONG', direction: 'LONG', structureDirection: 'LONG',
-          quantityUnits: 1000, idealPrice: Number(quote.bid),
-          acceptablePriceRange: {min: Number(quote.bid), max: Number(quote.ask) + Number(quote.tickSize) * 10},
-          horizonMinutes: 3,
-          profitTakePlan: {targetPrice: Number(quote.ask) + Number(quote.tickSize) * 20,
-            acceptableTargetRange: {min: Number(quote.ask), max: Number(quote.ask) + Number(quote.tickSize) * 40},
-            targetHorizonMinutes, targetReason: 'contract test', evidenceRefs: []}},
-      }));
+      (local.ai as any).decide.mockImplementation(async(packet:any)=>{
+        const offered=packet.executionEnvelope.LONG.planCandidates as any[];
+        const candidate=offered.find(row=>row.targetHorizonMinutes===targetHorizonMinutes)??offered[0];
+        const decision=systemCandidateDecision(packet,local.supplied,'LONG',{selectedCandidateId:candidate.candidateId,
+          idealPrice:Number(quote.bid),acceptablePriceRange:{min:Number(quote.bid),max:Number(quote.ask)+Number(quote.tickSize)*10},horizonMinutes:3});
+        if(targetHorizonMinutes===30)decision.profitTakePlan={...decision.profitTakePlan,targetHorizonMinutes};
+        return{runId:`horizon-${targetHorizonMinutes}`,decision};
+      });
       await local.run();
-      const blocked = local.events.find((event: any) => event.type === 'ENTRY_DECISION_BLOCKED' && event.payload?.stage === 'TRADE_PLAN');
-      const resolved = local.events.find((event: any) => event.type === 'ENTRY_ECONOMIC_SIZE_RESOLVED');
-      return {plan: local.events.some((event: any) => event.type === 'TRADE_PLAN_PERSISTED'), refusal: (blocked?.payload as any)?.reasons?.join('|') ?? null, resolved: resolved?.payload as any};
+      const blocked=local.events.find((event:any)=>event.type==='ENTRY_DECISION_BLOCKED'&&event.payload?.stage==='POST_AI_CANDIDATE_VERIFY');
+      return{plan:local.events.some((event:any)=>event.type==='TRADE_PLAN_PERSISTED'),refusal:String((blocked?.payload as any)?.reason??'')};
     };
     const legal = await run(published[0]);
-    expect(legal.refusal ?? '', `a published horizon must be writable: ${legal.refusal}`).not.toMatch(/CANDIDATE_HORIZON_UNSUPPORTED/);
-    expect(legal.resolved, 'the system must resolve an economic size before persisting Entry').toBeTruthy();
-    expect(legal.resolved.notionalQuote).toBeGreaterThanOrEqual(200);
-    expect(legal.resolved.quantityUnits).toBeGreaterThan(1000);
-    const nonLadderPreference = await run(30);
-    expect(nonLadderPreference.plan).toBe(true);
-    expect(published).toContain(nonLadderPreference.resolved.targetHorizonMinutes);
+    expect(legal.plan,`a published candidate horizon must be writable: ${legal.refusal}`).toBe(true);
+    const illegal = await run(30);
+    expect(illegal.plan).toBe(false);
+    expect(illegal.refusal ?? '').toBe('AI_CANDIDATE_TARGET_RESTATEMENT_MISMATCH');
   });
 });

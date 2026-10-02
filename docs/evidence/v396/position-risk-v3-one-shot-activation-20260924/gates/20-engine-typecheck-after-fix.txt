@@ -1,3 +1,0 @@
-### 20-engine-typecheck-after-fix : bash -c cd apps/engine && npx tsc --noEmit -p tsconfig.json (after the leverage P0 fix)
-
-[exit=0]

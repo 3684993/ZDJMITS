@@ -1,7 +1,8 @@
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { MarketDataHub } from '../../services/marketDataHub.js';
 
 const HoleyError = '1m closed candle gap';
+afterEach(() => vi.useRealTimers());
 
 /** A snapshot that is fully fresh apart from a blocked closed sequence. */
 function snapshotWithFreshFrames(symbol: string, now = Date.now()) {
@@ -133,5 +134,216 @@ describe('V3.9.5 freshness facts behind the pipeline diagnosis', () => {
     expect(facts.quoteFreshRatio).toBe(1);
     expect(facts.klineFreshRatio).toBe(1);
     expect(facts.stale).toContain('BADUSDT');
+  });
+});
+
+describe('targeted REST recovery preserves failure evidence independently of WebSocket health', () => {
+  const restricted = 'Binance HTTP 451: Service unavailable from a restricted location';
+
+  function restrictedHub(repairCandles: any) {
+    const getSnapshot = vi.fn(async () => { throw new Error('SHOULD_NOT_RELOAD'); });
+    const provider = { getSnapshot, repairCandles, streamMetrics: () => ({ state: 'LIVE', lastError: null, backfills: 0 }) };
+    const result = hubWith(provider, ['BTCUSDT', 'ETHUSDT']);
+    result.hub.technicalBlocked.delete('ETHUSDT:1m');
+    result.hub.freshness.mockReturnValue({ stale: ['BTCUSDT'], fresh: 1, total: 2 });
+    return { ...result, getSnapshot };
+  }
+
+  function dependencySnapshot(symbol: string) {
+    const snapshot = snapshotWithFreshFrames(symbol);
+    snapshot.dataCompleteness = 1;
+    for (const tf of ['1m', '5m', '15m']) snapshot.technical[tf].sampleSize = 240;
+    for (const tf of ['1h', '4h', '1d', '1w']) snapshot.technical[tf] = { asOf: Date.now(), sampleSize: 240, isClosed: true };
+    return snapshot;
+  }
+
+  async function failedRecoveryForDependencies() {
+    vi.useFakeTimers();
+    vi.setSystemTime(1_800_000_020_000);
+    const repairCandles = vi.fn().mockRejectedValueOnce(new Error(restricted));
+    const result = restrictedHub(repairCandles);
+    result.hub.freshness.mockRestore();
+    result.hub.setRetentionSymbols(['BTCUSDT', 'ETHUSDT']);
+    for (const symbol of ['BTCUSDT', 'ETHUSDT']) result.state.snapshots.set(symbol, dependencySnapshot(symbol));
+    await result.hub.recoverStale();
+    vi.advanceTimersByTime(60_000);
+    for (const symbol of ['BTCUSDT', 'ETHUSDT']) result.state.snapshots.set(symbol, dependencySnapshot(symbol));
+    return { ...result, repairCandles };
+  }
+
+  it('retains HTTP 451 and the sequence block during cooldown while quotes stay LIVE', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(1_800_000_020_000);
+    const repairCandles = vi.fn(async () => { throw new Error(restricted); });
+    const { hub, getSnapshot } = restrictedHub(repairCandles);
+    await hub.recoverStale();
+    const nextRetryAt = Date.now() + 60_000;
+    expect(hub.metrics()).toMatchObject({ state: 'LIVE', lastError: null, backfills: 0,
+      recoveryFailures: [{ symbol: 'BTCUSDT', reason: restricted, nextRetryAt }],
+      klineRecovery: { attempts: 1, successes: 0, failures: 1, pendingFrames: 1,
+        lastFailure: { symbol: 'BTCUSDT', timeframe: '1m', reason: restricted, httpStatus: 451 },
+        frames: [{ symbol: 'BTCUSDT', lastError: restricted, httpStatus: 451, nextRetryAt }] } });
+    await hub.recoverStale();
+    // Entry dependency recovery shares the same cooldown and must retain its cause.
+    await hub.repairSequence('BTCUSDT', ['1m']);
+    expect(hub.metrics().klineRecovery.frames[0]).toMatchObject({ lastError: restricted, nextRetryAt });
+    expect(hub.primaryReadyReasons('BTCUSDT')).toContain('TECHNICAL_1m_SEQUENCE_INVALID');
+    expect(repairCandles).toHaveBeenCalledOnce();
+    expect(getSnapshot).not.toHaveBeenCalled();
+  });
+
+  it('records a partial frame repair without clearing the failed frame or its error', async () => {
+    const repairCandles = vi.fn(async (_symbol: string, timeframe: string) => {
+      if (timeframe === '15m') throw new Error(restricted);
+      return healedFacts;
+    });
+    const { hub, state, events } = restrictedHub(repairCandles);
+    hub.technicalBlocked.set('BTCUSDT:15m', { timeframe: '15m', sequence: 'holey', at: Date.now() });
+    // The provider can rebuild only the successful frame; the 15m card stays unchanged.
+    hub.provider.hydrateLiveTechnical = (snapshot: any) => ({ ...snapshot, technical: {
+      ...snapshot.technical, '1m': { ...snapshot.technical['1m'] },
+    } });
+    const previous15m = state.snapshots.get('BTCUSDT').technical['15m'];
+    await hub.recoverStale();
+    expect(hub.metrics()).toMatchObject({ recoveryFailures: [{ symbol: 'BTCUSDT', reason: restricted }],
+      klineRecovery: { attempts: 2, successes: 1, failures: 1, pendingFrames: 1,
+        frames: [{ timeframe: '15m', lastError: restricted, httpStatus: 451 }] } });
+    expect(state.snapshots.get('BTCUSDT').technical['15m']).toBe(previous15m);
+    expect(hub.primaryReadyReasons('BTCUSDT')).toContain('TECHNICAL_15m_SEQUENCE_INVALID');
+    expect(events.find(event => event.type === 'MARKET_KLINE_SEQUENCE_REPAIRED')?.payload.complete).toBe(false);
+    expect(events.find(event => event.type === 'MARKET_KLINE_SEQUENCE_REPAIR_FAILED')?.payload.complete).toBe(false);
+  });
+
+  it('retries after cooldown and clears the current error only after real repair', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(1_800_000_020_000);
+    const repairCandles = vi.fn().mockRejectedValueOnce(new Error(restricted)).mockResolvedValue(healedFacts);
+    const { hub, state, getSnapshot } = restrictedHub(repairCandles);
+    await hub.recoverStale();
+    vi.advanceTimersByTime(60_000);
+    state.snapshots.set('BTCUSDT', snapshotWithFreshFrames('BTCUSDT'));
+    hub.provider.hydrateLiveTechnical = (snapshot: any) => ({ ...snapshot, technical: {
+      ...snapshot.technical, '1m': { ...snapshot.technical['1m'] },
+    } });
+    await hub.recoverStale();
+    expect(repairCandles).toHaveBeenCalledTimes(2);
+    expect(getSnapshot).not.toHaveBeenCalled();
+    expect(hub.primaryReadyReasons('BTCUSDT')).not.toContain('TECHNICAL_1m_SEQUENCE_INVALID');
+    expect(hub.metrics()).toMatchObject({ recoveryFailures: [],
+      klineRecovery: { attempts: 2, successes: 1, failures: 1, pendingFrames: 0, frames: [],
+        lastFailure: { reason: restricted, httpStatus: 451 } } });
+  });
+
+  it('clears a stale-recovery failure when the entry dependency path restores every dependency', async () => {
+    const { hub, repairCandles, getSnapshot } = await failedRecoveryForDependencies();
+    repairCandles.mockImplementationOnce(async () => {
+      hub.provider.hydrateLiveTechnical = (snapshot: any) => ({ ...snapshot, technical: {
+        ...snapshot.technical, '1m': { ...snapshot.technical['1m'] },
+      } });
+      return healedFacts;
+    });
+    expect(await hub.refreshEntryDependencies(['BTCUSDT'], 'BTCUSDT')).toBe(1);
+    expect(hub.freshness()).toMatchObject({ fresh: 2, total: 2, sequenceInvalid: 0, stale: [] });
+    expect(hub.metrics()).toMatchObject({ recoveryFailures: [], klineRecovery: {
+      pendingFrames: 0, successes: 1, lastFailure: { reason: restricted, httpStatus: 451 },
+    } });
+    expect(hub.recovery.get('BTCUSDT')).toMatchObject({ attempt: 0, reason: null, lastSuccessAt: Date.now() });
+    await hub.recoverStale();
+    expect(repairCandles).toHaveBeenCalledTimes(2);
+    expect(getSnapshot).not.toHaveBeenCalled();
+  });
+
+  it.each(['tick', 'refreshSymbols'])('settles current recovery failure after %s publishes fully healthy facts', async (entrypoint) => {
+    const { hub, getSnapshot, repairCandles } = await failedRecoveryForDependencies();
+    if (entrypoint === 'tick') {
+      hub.provider.hydrateLiveTechnical = (snapshot: any) => ({ ...snapshot, technical: {
+        ...snapshot.technical, '1m': { ...snapshot.technical['1m'] },
+      } });
+      await hub.tick();
+    } else {
+      getSnapshot.mockResolvedValueOnce(dependencySnapshot('BTCUSDT') as never);
+      expect(await hub.refreshSymbols(['BTCUSDT'])).toBe(1);
+    }
+    expect(hub.freshness()).toMatchObject({ fresh: 2, total: 2, sequenceInvalid: 0, stale: [] });
+    expect(hub.metrics()).toMatchObject({ recoveryFailures: [], klineRecovery: {
+      pendingFrames: 0, lastFailure: { reason: restricted, httpStatus: 451 },
+    } });
+    expect(hub.recovery.get('BTCUSDT')).toMatchObject({ attempt: 0, reason: null, lastSuccessAt: Date.now() });
+    await hub.recoverStale();
+    expect(repairCandles).toHaveBeenCalledOnce();
+    expect(getSnapshot).toHaveBeenCalledTimes(entrypoint === 'tick' ? 0 : 1);
+  });
+
+  it('does not settle a new ownership failure when an old snapshot refresh completes', async () => {
+    const { hub, state, getSnapshot } = await failedRecoveryForDependencies();
+    let finish!: (snapshot: any) => void;
+    getSnapshot.mockImplementationOnce(() => new Promise(resolve => { finish = resolve; }) as never);
+    const pending = hub.refreshSymbols(['BTCUSDT']);
+    hub.setRetentionSymbols(['ETHUSDT']);
+    hub.setRetentionSymbols(['BTCUSDT', 'ETHUSDT']);
+    const current = dependencySnapshot('BTCUSDT');
+    state.snapshots.set('BTCUSDT', current);
+    hub.technicalBlocked.delete('BTCUSDT:1m');
+    const replacementFailure = { attempt: 1, nextRetryAt: Date.now() + 60_000, lastSuccessAt: null, reason: 'NEW_OWNERSHIP_FAILURE' };
+    hub.recovery.set('BTCUSDT', replacementFailure);
+    finish(dependencySnapshot('BTCUSDT'));
+    expect(await pending).toBe(0);
+    expect(state.snapshots.get('BTCUSDT')).toBe(current);
+    expect(hub.recovery.get('BTCUSDT')).toBe(replacementFailure);
+    expect(hub.metrics().klineRecovery.lastFailure).toMatchObject({ reason: restricted, httpStatus: 451 });
+  });
+
+  it.each(['15m sequence', 'quote', 'slow frame'])('retains the failure while another %s dependency remains unusable', async (remaining) => {
+    const { hub, state, repairCandles } = await failedRecoveryForDependencies();
+    if (remaining === '15m sequence') hub.technicalBlocked.set('BTCUSDT:15m', { timeframe: '15m', sequence: 'other-hole', at: Date.now() });
+    repairCandles.mockImplementation(async (_symbol: string, timeframe: string) => {
+      if (timeframe === '15m') throw new Error(restricted);
+      if (remaining === 'quote') state.snapshots.get('BTCUSDT').quote.ts -= 60_000;
+      if (remaining === 'slow frame') state.snapshots.get('BTCUSDT').technical['1h'].asOf -= 8_000_000;
+      hub.provider.hydrateLiveTechnical = (snapshot: any) => ({ ...snapshot, technical: {
+        ...snapshot.technical, '1m': { ...snapshot.technical['1m'] },
+      } });
+      return healedFacts;
+    });
+    expect(await hub.refreshEntryDependencies(['BTCUSDT'], 'BTCUSDT')).toBe(0);
+    expect(hub.metrics().recoveryFailures).toEqual([expect.objectContaining({ symbol: 'BTCUSDT', reason: restricted, lastSuccessAt: null })]);
+    expect(hub.metrics().klineRecovery.lastFailure).toMatchObject({ reason: restricted, httpStatus: 451 });
+  });
+
+  it.each(['1m sequence', 'order book'])('does not equate a healthy reference refresh with recovery of its failed %s', async (remaining) => {
+    const { hub, state, repairCandles } = await failedRecoveryForDependencies();
+    hub.technicalBlocked.set('BTCUSDT:15m', { timeframe: '15m', sequence: 'reference-hole', at: Date.now() });
+    if (remaining === 'order book') {
+      hub.technicalBlocked.delete('BTCUSDT:1m');
+      state.snapshots.get('BTCUSDT').orderBook.ts -= 60_000;
+    }
+    repairCandles.mockImplementationOnce(async () => {
+      hub.provider.hydrateLiveTechnical = (snapshot: any) => ({ ...snapshot, technical: {
+        ...snapshot.technical, '15m': { ...snapshot.technical['15m'] },
+      } });
+      return healedFacts;
+    });
+    expect(await hub.refreshEntryDependencies(['BTCUSDT'], 'SOLUSDT')).toBe(1);
+    expect(hub.referenceReadyReasons('BTCUSDT')).toEqual([]);
+    expect(hub.primaryReadyReasons('BTCUSDT')).not.toEqual([]);
+    expect(hub.metrics().recoveryFailures).toEqual([expect.objectContaining({ symbol: 'BTCUSDT', reason: restricted, lastSuccessAt: null })]);
+  });
+
+  it('cannot clear a new ownership failure when an old dependency repair completes', async () => {
+    const { hub, state, repairCandles } = await failedRecoveryForDependencies();
+    let finish!: (facts: typeof healedFacts) => void;
+    repairCandles.mockImplementationOnce(() => new Promise(resolve => { finish = resolve; }));
+    const pending = hub.refreshEntryDependencies(['BTCUSDT'], 'BTCUSDT');
+    hub.setRetentionSymbols(['ETHUSDT']);
+    hub.setRetentionSymbols(['BTCUSDT', 'ETHUSDT']);
+    state.snapshots.set('BTCUSDT', dependencySnapshot('BTCUSDT'));
+    hub.technicalBlocked.delete('BTCUSDT:1m');
+    const replacementFailure = { attempt: 1, nextRetryAt: Date.now() + 60_000, lastSuccessAt: null, reason: 'NEW_OWNERSHIP_FAILURE' };
+    hub.recovery.set('BTCUSDT', replacementFailure);
+    finish(healedFacts);
+    await pending;
+    expect(hub.primaryReadyReasons('BTCUSDT')).toEqual([]);
+    expect(hub.recovery.get('BTCUSDT')).toBe(replacementFailure);
+    expect(hub.metrics().klineRecovery.lastFailure).toMatchObject({ reason: restricted, httpStatus: 451 });
   });
 });

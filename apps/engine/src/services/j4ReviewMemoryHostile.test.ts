@@ -65,8 +65,8 @@ function fixture(settings:Partial<{normal:number;exception:number;failures:numbe
 }
 
 /** A cycle genuinely under AI management, holding the durable deadline its plan was written with. */
-function aiManaged(x:ReturnType<typeof fixture>,now=NOW){
-  const owner=x.exitRuntime.fixManagementDeadline(SUBJECT,3_600_000,now-60_000,'plan_j4_v1')??x.exitRuntime.owner(SUBJECT);
+function aiManaged(x:ReturnType<typeof fixture>,now=NOW,durationMs=3_600_000){
+  const owner=x.exitRuntime.fixManagementDeadline(SUBJECT,durationMs,now-60_000,'plan_j4_v1')??x.exitRuntime.owner(SUBJECT);
   expect(owner.ownerState).toBe('AI_ACTIVE');
   return owner;
 }
@@ -86,20 +86,19 @@ describe('S07-T01 human-managed cycles get zero routine model calls',()=>{
     expect(handoffPending(x).ownerState).toBe('HANDOFF_PENDING');
     const result=reserve(x);
     expect(result.granted).toBe(false);
-    expect(result.reason).toBe('OWNER_NOT_REVIEWABLE:HANDOFF_PENDING');
+    expect(result.reason).toBe('OWNER_NOT_AI:HANDOFF_PENDING');
     expect(any(result).zeroRoutineCall).toBe(true);
     expect(x.ledger.rows()).toHaveLength(0);
     expect(x.scheduler.state()).toHaveLength(0);
   });
 
-  it('permits evidence-only review after human takeover without restoring execution authority',()=>{
+  it('refuses a human takeover the moment the human owns it, at any budget',()=>{
     const x=fixture();aiManaged(x);
     expect(reserve(x,{},NOW).granted).toBe(true);
     x.exitRuntime.recordHumanTakeover(SUBJECT,'OPERATOR_TOOK_OVER',NOW+1_000);
-    const owner=x.exitRuntime.owner(SUBJECT)!;
-    const after=reserve(x,{positionVersion:2,ownerVersion:owner.ownerVersion},NOW+400_000);
-    expect(after.granted).toBe(true);
-    expect(any(after).ticket).toMatchObject({reviewOnly:true,ownerVersion:owner.ownerVersion});
+    const after=reserve(x,{positionVersion:2},NOW+400_000);
+    expect(after.reason).toBe('OWNER_NOT_AI:HUMAN_MANAGED');
+    expect(any(after).zeroRoutineCall).toBe(true);
   });
 
   it('treats an untracked cycle as not AI-owned rather than as a default authority',()=>{
@@ -196,7 +195,7 @@ describe('S07-T02 an answer that arrives after the authority moved is archived, 
     const applied=x.scheduler.accept(ticket,{now:ticket.reservedAt+5_000,
       usage:{inputTokens:1_200,outputTokens:80},status:'COMPLETED',promptHash:'ph'});
     expect(applied.usable).toBe(false);
-    expect(applied.reason).toBe('OWNER_AUTHORITY_CHANGED:HUMAN_MANAGED');
+    expect(applied.reason).toBe('OWNER_NO_LONGER_AI:HUMAN_MANAGED');
   });
 
   it('re-reads ownership from the journal instead of believing what the caller reports',()=>{
@@ -291,7 +290,6 @@ describe('S07-T08 usage is either reported or UNKNOWN, and an answer cannot carr
     expect(()=>parsePositionReview({decision:'REVERSE_NOW',reason:'x'})).toThrow(/REVIEW_DECISION_UNSUPPORTED/);
     expect(()=>parsePositionReview({decision:'HOLD'})).toThrow(/REVIEW_REASON_MISSING/);
     expect(parsePositionReview({decision:'HOLD',reason:'plan intact',evidenceRefs:[]})).toMatchObject({decision:'HOLD'});
-    expect(parsePositionReview({decision:'REDUCE_PROPOSAL',reason:'depth deteriorated',evidenceRefs:['depth.fact']})).toMatchObject({decision:'REDUCE_PROPOSAL'});
   });
 
   it('keeps the review prompt explicit about what the model may not do',()=>{
@@ -307,7 +305,7 @@ describe('S07-T08 usage is either reported or UNKNOWN, and an answer cannot carr
       executionEnvelope:{side:'LONG',maxQuantityUnits:3}});
     const prompt=buildPositionReviewPrompt(packet,request);
     expect(prompt).toContain('no order permission, no sizing permission');
-    expect(prompt).toContain('"decision":"HOLD|REDUCE_PROPOSAL|EXIT_PROPOSAL|HANDOFF"');
+    expect(prompt).toContain('"decision":"HOLD|EXIT_PROPOSAL|HANDOFF"');
     expect(prompt).toContain('not a review trigger');
     expect(prompt).toContain('plan_j4_v1');
   });
@@ -463,28 +461,52 @@ describe('S07-T05/T06/T07 memory counts what happened and names what it does not
 });
 
 describe('S07-A/B production consumer: the review tick',()=>{
-  function runnerFixture(over:Partial<{normal:number;failures:number;ttl:number;enabled:boolean}>={}){
+  function runnerFixture(over:Partial<{normal:number;failures:number;ttl:number;enabled:boolean;staged:boolean;openedAt:number}>={}){
     const x=fixture({normal:over.normal,failures:over.failures,ttl:over.ttl});
-    aiManaged(x);
-    x.state.positions.set('pos_j4',{id:'pos_j4',symbol:SUBJECT.symbol,side:SUBJECT.side,cycleId:SUBJECT.cycleId,openedAt:SUBJECT.openedAt,
-      quantity:1,entryPrice:100,markPrice:99,unrealizedPnl:-1,firstObservedAt:SUBJECT.openedAt});
+    aiManaged(x,NOW,over.staged?4*3_600_000:3_600_000);
+    const openedAt=over.openedAt??SUBJECT.openedAt;
+    x.state.positions.set('pos_j4',{id:'pos_j4',symbol:SUBJECT.symbol,side:SUBJECT.side,cycleId:SUBJECT.cycleId,openedAt,
+      quantity:1,entryPrice:100,markPrice:99,unrealizedPnl:-1,firstObservedAt:openedAt});
     const plan={planId:'plan_j4_v1',planVersion:1,cycleId:SUBJECT.cycleId,scope:SCOPE,symbol:SUBJECT.symbol,side:'LONG',quantityUnits:1,
       entryReferencePrice:100,targetPrice:110,targetHorizonMinutes:60,managementDurationMs:3_600_000,thesis:'structure holds above 95',
       invalidationPredicate:'CLOSED_BAR_BREAKS_LEVEL',predicateEvidenceRefs:['ev-1'],minNetProfitUsd:1,maxRealizedLossUsd:10};
     x.state.tradePlans.set(plan.planId,plan);
-    const review=vi.fn(async()=>({decision:'HOLD',runId:'airun_1',usage:{inputTokens:1_400,outputTokens:60},promptHash:'ph',latencyMs:900}));
+    const review=vi.fn(async(_input:{ticket:any;position:any;plan:any})=>({decision:'HOLD',runId:'airun_1',usage:{inputTokens:1_400,outputTokens:60},promptHash:'ph',latencyMs:900}));
     const runner=new PositionReviewRunner({state:x.state,events:x.events,exitRuntime:x.exitRuntime,scheduler:x.scheduler,
       settings:()=>({positionReviewEnabled:over.enabled!==false,normalReviewsPerPlan:over.normal??2,exceptionReviewsPerPlan:1,
-        reviewFailureBudget:over.failures??2,reviewMinIntervalMs:300_000,reviewAuthorityTtlMs:20_000}),
+        reviewFailureBudget:over.failures??2,reviewMinIntervalMs:300_000,reviewAuthorityTtlMs:20_000,
+        ...(over.staged?{thesisReviewAfterMinutes:60,timeStopDecisionAfterMinutes:90}:{}),}),
       evidenceVersion:()=>'bar-1',memoryVersion:()=>'mem-1',review});
     return{...x,runner,review,plan};
   }
 
-  it('does nothing at all when the switch is off, which is the shipped default',async()=>{
+  it('does nothing at all when the advisory review switch is explicitly off',async()=>{
     const x=runnerFixture({enabled:false});
     expect(await x.runner.tick(NOW)).toMatchObject({enabled:false,considered:0,reserved:0});
     expect(x.review).not.toHaveBeenCalled();
     expect(x.ledger.rows()).toHaveLength(0);
+  });
+
+  it('V3.9.7 runs once at 60m and once at 90m, with distinct durable milestones and no order authority',async()=>{
+    const openedAt=NOW-60*60_000,x=runnerFixture({staged:true,openedAt});
+    expect(await x.runner.tick(NOW-1)).toMatchObject({considered:1,reserved:0,thesisDue:0,timeStopDue:0});
+    expect(x.state.positions.get('pos_j4').reviewTimeline).toMatchObject({thesisDueAt:NOW,thesisStatus:'PENDING',timeStopDueAt:NOW+30*60_000,timeStopStatus:'PENDING'});
+    expect(await x.runner.tick(NOW)).toMatchObject({reserved:1,completed:1,thesisDue:1,timeStopDue:0});
+    expect(x.state.positions.get('pos_j4')).toMatchObject({nextReviewAt:NOW+30*60_000,reviewTimeline:{thesisStatus:'APPLIED',timeStopStatus:'PENDING'}});
+    expect(await x.runner.tick(NOW+30*60_000)).toMatchObject({reserved:1,completed:1,thesisDue:0,timeStopDue:1});
+    expect(x.review).toHaveBeenCalledTimes(2);
+    expect(x.review.mock.calls.map(call=>call[0].ticket.reviewMilestone)).toEqual(['THESIS_REVIEW','TIME_STOP_DECISION']);
+    expect(x.state.positions.get('pos_j4')).toMatchObject({nextReviewAt:null,reviewTimeline:{thesisStatus:'APPLIED',timeStopStatus:'APPLIED',timeStopDecision:'HOLD'}});
+    expect(x.seen.find(event=>event.type==='POSITION_TIME_STOP_DECISION_DUE')?.payload).toMatchObject({automaticMarketExit:false,orderAuthority:false});
+  });
+
+  it('labels a missed 60m review honestly and goes directly to the bounded 90m decision',async()=>{
+    const x=runnerFixture({staged:true,openedAt:NOW-95*60_000});
+    expect(await x.runner.tick(NOW)).toMatchObject({reserved:1,completed:1,thesisMissed:1,timeStopDue:1});
+    expect(x.review).toHaveBeenCalledTimes(1);
+    expect(x.review.mock.calls[0][0].ticket.reviewMilestone).toBe('TIME_STOP_DECISION');
+    expect(x.state.positions.get('pos_j4').reviewTimeline).toMatchObject({thesisStatus:'MISSED',thesisAttemptedAt:null,timeStopStatus:'APPLIED'});
+    expect(x.seen.filter(event=>event.type==='POSITION_THESIS_REVIEW_MISSED')).toHaveLength(1);
   });
 
   it('makes exactly one call for one fact set and deduplicates the next pass',async()=>{
@@ -498,14 +520,12 @@ describe('S07-A/B production consumer: the review tick',()=>{
       writableAuthority:'REVIEW_EVIDENCE_ONLY'});
   });
 
-  it('reviews a HUMAN-managed cycle as evidence only, without execution authority',async()=>{
+  it('counts a HUMAN-managed cycle as a deliberate zero call rather than as a failure',async()=>{
     const x=runnerFixture();
     x.exitRuntime.recordHumanTakeover(SUBJECT,'OPERATOR_TOOK_OVER',NOW);
-    expect(await x.runner.tick(NOW)).toMatchObject({enabled:true,considered:1,reserved:1,zeroRoutineCalls:0,completed:1,failed:0});
-    expect(x.review).toHaveBeenCalledOnce();
-    expect(x.ledger.rows()).toHaveLength(1);
-    expect(x.seen.find(event=>event.type==='POSITION_REVIEW_ONLY_AUTHORITY')?.payload).toMatchObject({executionAuthority:false,reason:'HUMAN_MANAGED_REVIEW_EVIDENCE_ONLY'});
-    expect(x.seen.find(event=>event.type==='POSITION_REVIEW_APPLIED')?.payload).toMatchObject({writableAuthority:'REVIEW_EVIDENCE_ONLY'});
+    expect(await x.runner.tick(NOW)).toMatchObject({enabled:true,considered:0,reserved:0,zeroRoutineCalls:1,failed:0});
+    expect(x.review).not.toHaveBeenCalled();
+    expect(x.ledger.rows()).toHaveLength(0);
   });
 
   it('S07-T09: a dead endpoint spends review budget, records the failure and changes no order or deadline',async()=>{

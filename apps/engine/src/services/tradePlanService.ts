@@ -86,11 +86,14 @@ export function assembleTradePlan(input:{
   // The chosen side must have candidates. A side with no capacity is reported as unexecutable; it is
   // never quietly switched to the side that happens to have more room (S06-T01).
   const available=candidateSet.candidates.filter(row=>row.side===side);
+  if(candidateSet.factVersion!==input.factVersion)
+    return{plan:null,refusals:['PLAN_FACT_VERSION_MISMATCH'],warnings:[],candidate:null};
   if(!available.length){
     return{plan:null,refusals:[`PLAN_SIDE_NOT_EXECUTABLE:${side}`,...candidateSet.noTradeReasons.map(reason=>`CANDIDATE_SET_${reason}`)],warnings:[],candidate:null};
   }
-  // The candidate set validated the caller's triple and resolved any parameter the model left unset.
-  // An unoffered choice is refused with the reason the system computed, never rewritten to fit.
+  // V3.9.7 selects a candidate that already existed before Primary. Legacy selection resolution is
+  // retained only so archived V3.9.3 decisions remain auditable; a current plan never derives a new
+  // candidate from model-authored numbers.
   const offered=candidateSet.selection??null;
   // An unoffered selection must arrive with the reason it was computed; a plan layer that refused
   // with an empty list would leave the operator with a blocked decision and nothing to read.
@@ -99,10 +102,10 @@ export function assembleTradePlan(input:{
   // is refused rather than quietly remapped onto whatever was offered.
   if(offered?.resolved&&selection.selectedCandidateId&&selection.selectedCandidateId!==offered.resolved.candidateId)
     return{plan:null,refusals:[`PLAN_CANDIDATE_ID_FORGED:${selection.selectedCandidateId}`],warnings:[],candidate:null};
-  const chosen=offered?.resolved
-    ?available.find(row=>row.candidateId===offered.resolved!.candidateId)??null
-    :available.find(row=>row.quantityUnits===Number(selection.quantityUnits??0)
-      &&(selection.selectedCandidateId==null||row.candidateId===selection.selectedCandidateId))??null;
+  const chosen=selection.selectedCandidateId
+    ?available.find(row=>row.candidateId===selection.selectedCandidateId)??null
+    :offered?.resolved?available.find(row=>row.candidateId===offered.resolved!.candidateId)??null
+    :available.find(row=>row.quantityUnits===Number(selection.quantityUnits??0))??null;
   if(!chosen)return{plan:null,refusals:['PLAN_SELECTION_NOT_IN_CANDIDATE_SET'],warnings:[],candidate:null};
   if(!chosen.executable)return{plan:null,refusals:chosen.blockers.map(blocker=>`CANDIDATE_NOT_EXECUTABLE:${blocker}`),warnings:[],candidate:chosen};
   // Any parameter the model restates differently from the offered candidate is an attempt to widen
@@ -114,8 +117,11 @@ export function assembleTradePlan(input:{
     refusals.push(`PLAN_PARAMETER_OUTSIDE_CANDIDATE:targetPrice=${selection.targetPrice}!=${chosen.targetPrice}`);
   if(finite(statedHorizon)&&statedHorizon>0&&statedHorizon!==chosen.targetHorizonMinutes)
     refusals.push(`PLAN_PARAMETER_OUTSIDE_CANDIDATE:targetHorizonMinutes=${statedHorizon}!=${chosen.targetHorizonMinutes}`);
+  if(selection.acceptableTargetRange&&(Math.abs(selection.acceptableTargetRange.min-chosen.acceptableTargetRange.min)>1e-9
+    ||Math.abs(selection.acceptableTargetRange.max-chosen.acceptableTargetRange.max)>1e-9))
+    refusals.push('PLAN_PARAMETER_OUTSIDE_CANDIDATE:acceptableTargetRange');
   if(refusals.length)return{plan:null,refusals:[...new Set(refusals)],warnings,candidate:chosen};
-  const authorizedRange=selection.acceptableTargetRange??chosen.acceptableTargetRange;
+  const authorizedRange=chosen.acceptableTargetRange;
   if(!finite(authorizedRange?.min)||!finite(authorizedRange?.max)||authorizedRange.min<=0||authorizedRange.min>chosen.targetPrice||authorizedRange.max<chosen.targetPrice)refusals.push('PLAN_AUTHORIZED_TARGET_RANGE_INVALID');
   if(!selection.thesis)refusals.push('PLAN_THESIS_MISSING');
   if(selection.invalidationPredicate&&selection.invalidationPredicate!=='NO_PREDICATE'&&!Array.isArray(selection.predicateEvidenceRefs))
@@ -247,11 +253,9 @@ export const planEvidenceTimeframe=(plan:TradePlan)=>reachabilityTimeframe(plan.
  * WAIT plan, or a plan whose scope does not match the position gets nothing, so the AI inherits
  * authority from no label of any kind.
  */
-export type AiExitPlanFacts={planRef:string;planVersion:number;thesisInvalid:boolean;invalidationPredicate:string|null;invalidationEvidenceRefs:string[];
-  exitConditionMet:boolean;minNetProfitUsd:number;managementDeadline:number;horizonElapsed:boolean;economicMandate?:TradePlan['economicMandate']|null};
 export function aiExitPlanFactsOf(plans:TradePlan[],input:{scope:string;cycleId:string;now:number;
   latestClosedBar:{timeframe:string;closeTime:number;close:number}|null;markPrice:number|null;
-  externalFactFresh?:boolean;evidenceStillValid?:boolean;firstFillAt:number|null}):AiExitPlanFacts|null{
+  externalFactFresh?:boolean;evidenceStillValid?:boolean;firstFillAt:number|null}){
   const forCycle=plans.filter(plan=>plan.cycleId===input.cycleId&&plan.scope===input.scope&&plan.side!=='WAIT');
   const plan=forCycle[forCycle.length-1]??null;
   if(!plan)return null;
@@ -263,5 +267,5 @@ export function aiExitPlanFactsOf(plans:TradePlan[],input:{scope:string;cycleId:
   return{planRef:plan.planId,planVersion:plan.planVersion,thesisInvalid:invalidation.thesisInvalid,
     invalidationPredicate:invalidation.reason??plan.invalidationPredicate,invalidationEvidenceRefs:[...plan.predicateEvidenceRefs],
     exitConditionMet:reached,minNetProfitUsd:Number(plan.minNetProfitUsd),managementDeadline:plan.managementDurationMs,
-    horizonElapsed:invalidation.reason==='PLAN_TARGET_HORIZON_ELAPSED',economicMandate:plan.economicMandate??null};
+    horizonElapsed:invalidation.reason==='PLAN_TARGET_HORIZON_ELAPSED'};
 }

@@ -15,13 +15,15 @@ import type {TradePlan} from '@zdj/contracts';
  * handoff are owned elsewhere and are never gated on it.
  */
 
+export type ReviewMilestone='THESIS_REVIEW'|'TIME_STOP_DECISION';
 export type ReviewVerdict={cycleId:string;scope:string;planRef:string;planVersion:number;decision:string;usable:boolean;reason:string;
-  at:number;runId:string|null;ownerVersion:number;triggerKey:string};
+  at:number;runId:string|null;ownerVersion:number;triggerKey:string;reviewMilestone?:ReviewMilestone};
 
 export type ReviewAnswer={decision:string;runId:string|null;usage:{inputTokens:number|null;outputTokens:number|null};
   finishReason?:string|null;modelIdentity?:string|null;promptHash:string;latencyMs?:number|null;transportAttempts?:number|null};
 
-export type ReviewTickReport={enabled:boolean;considered:number;reserved:number;deduplicated:number;refused:string[];completed:number;discarded:number;failed:number;zeroRoutineCalls:number};
+export type ReviewTickReport={enabled:boolean;considered:number;reserved:number;deduplicated:number;refused:string[];completed:number;discarded:number;failed:number;zeroRoutineCalls:number;
+  thesisDue:number;timeStopDue:number;thesisMissed:number};
 
 export class PositionReviewRunner {
   constructor(private readonly ports:{
@@ -42,42 +44,101 @@ export class PositionReviewRunner {
     clearOwed?:()=>void;
   }){}
 
-  private versions(position:any,plan:TradePlan,scope:string,cycleId:string):ReviewVersions{
+  private versions(position:any,plan:TradePlan,scope:string,cycleId:string,reviewMilestone?:ReviewMilestone):ReviewVersions{
     const state=this.ports.state as any;
     return{planVersion:plan.planVersion,planRef:plan.planId,ownerVersion:Number(this.ports.exitRuntime.owner({symbol:position.symbol,side:position.side,cycleId,openedAt:position.openedAt})?.ownerVersion??0),
       positionVersion:Math.trunc(Number((position as any).firstObservedAt??position.openedAt??0))||1,settingsVersion:Number(state.settings?.settingsVersion??0),
       riskGeneration:Number(state.runtimeControl?.capital?.generation??0),
-      snapshotHash:String(state.riskLedger?.snapshotHash??'unbound'),evidenceVersion:this.ports.evidenceVersion(position.symbol),memoryVersion:this.ports.memoryVersion()};
+      snapshotHash:String(state.riskLedger?.snapshotHash??'unbound'),evidenceVersion:this.ports.evidenceVersion(position.symbol),memoryVersion:this.ports.memoryVersion(),
+      ...(reviewMilestone?{reviewMilestone}:{}),};
   }
 
   private subject(position:any,cycleId:string){return{symbol:position.symbol,side:position.side,cycleId,openedAt:position.openedAt};}
 
-  /** One bounded pass over AI-managed cycles and review-only HUMAN_MANAGED evidence subjects. */
+  /**
+   * V3.9.7 freezes the 60/90 minute schedule on the first observed fill. Settings changed later only
+   * affect a new cycle. A missed 60-minute review is labelled MISSED; it is never backfilled after
+   * the 90-minute decision point and reported as if it happened on time.
+   */
+  private scheduledMilestone(position:any,coordination:Record<string,any>,now:number,report:ReviewTickReport){
+    const thesisMinutes=Number(coordination.thesisReviewAfterMinutes),timeStopMinutes=Number(coordination.timeStopDecisionAfterMinutes);
+    const staged=Number.isSafeInteger(thesisMinutes)&&thesisMinutes>0&&Number.isSafeInteger(timeStopMinutes)&&timeStopMinutes>thesisMinutes;
+    if(!staged)return{position,milestone:undefined as ReviewMilestone|undefined,dueAt:null as number|null,staged:false};
+    const openedAt=Number(position.openedAt??0);
+    if(!Number.isFinite(openedAt)||openedAt<=0||openedAt>now)return{position,milestone:null,dueAt:null,staged:true};
+    let timeline=position.reviewTimeline as any;
+    if(!timeline||timeline.version!=='V3.9.7_REVIEW_TIMELINE'){
+      timeline={version:'V3.9.7_REVIEW_TIMELINE',thesisDueAt:openedAt+thesisMinutes*60_000,thesisAttemptedAt:null,thesisStatus:'PENDING',
+        timeStopDueAt:openedAt+timeStopMinutes*60_000,timeStopAttemptedAt:null,timeStopStatus:'PENDING',timeStopDecision:null};
+      position={...position,reviewTimeline:timeline,nextReviewAt:timeline.thesisDueAt};
+      (this.ports.state as any).positions.set(position.id,position);
+      this.ports.events.publish('POSITION_REVIEW_TIMELINE_FIXED',{positionId:position.id,cycleId:position.cycleId,thesisDueAt:timeline.thesisDueAt,
+        timeStopDueAt:timeline.timeStopDueAt,source:'FIRST_FILL',orderAuthority:false},position.symbol);
+    }
+    const terminal=(status:string)=>['APPLIED','DISCARDED','MISSED'].includes(status);
+    if(now>=timeline.timeStopDueAt&&!terminal(String(timeline.timeStopStatus))){
+      if(timeline.thesisAttemptedAt==null&&!terminal(String(timeline.thesisStatus))){
+        timeline={...timeline,thesisStatus:'MISSED'};report.thesisMissed++;
+        this.ports.events.publish('POSITION_THESIS_REVIEW_MISSED',{positionId:position.id,cycleId:position.cycleId,dueAt:timeline.thesisDueAt,
+          observedAt:now,timeStopDueAt:timeline.timeStopDueAt,backfilled:false},position.symbol);
+      }
+      if(timeline.timeStopStatus==='PENDING'){
+        timeline={...timeline,timeStopStatus:'DUE'};
+        this.ports.events.publish('POSITION_TIME_STOP_DECISION_DUE',{positionId:position.id,cycleId:position.cycleId,dueAt:timeline.timeStopDueAt,
+          observedAt:now,automaticMarketExit:false,orderAuthority:false},position.symbol);
+      }
+      position={...position,reviewTimeline:timeline,nextReviewAt:timeline.timeStopDueAt};
+      (this.ports.state as any).positions.set(position.id,position);report.timeStopDue++;
+      return{position,milestone:'TIME_STOP_DECISION' as const,dueAt:timeline.timeStopDueAt,staged:true};
+    }
+    if(now>=timeline.thesisDueAt&&now<timeline.timeStopDueAt&&!terminal(String(timeline.thesisStatus))){
+      if(timeline.thesisStatus==='PENDING')timeline={...timeline,thesisStatus:'DUE'};
+      position={...position,reviewTimeline:timeline,nextReviewAt:timeline.thesisDueAt};
+      (this.ports.state as any).positions.set(position.id,position);report.thesisDue++;
+      return{position,milestone:'THESIS_REVIEW' as const,dueAt:timeline.thesisDueAt,staged:true};
+    }
+    return{position,milestone:null,dueAt:null,staged:true};
+  }
+
+  private markMilestone(positionId:string,milestone:ReviewMilestone,status:'RUNNING'|'APPLIED'|'DISCARDED'|'FAILED',at:number,decision:string|null=null){
+    const current=(this.ports.state as any).positions.get(positionId);
+    const timeline=current?.reviewTimeline;
+    if(!current||!timeline)return;
+    const next=milestone==='THESIS_REVIEW'
+      ?{...timeline,thesisAttemptedAt:at,thesisStatus:status}
+      :{...timeline,timeStopAttemptedAt:at,timeStopStatus:status,timeStopDecision:['HOLD','EXIT_PROPOSAL','HANDOFF'].includes(String(decision))?decision:null};
+    (this.ports.state as any).positions.set(positionId,{...current,lastReviewAt:at,
+      nextReviewAt:milestone==='THESIS_REVIEW'?Number(next.timeStopDueAt):null,reviewTimeline:next});
+  }
+
+  /** One bounded pass over the cycles that are actually under AI management. */
   async tick(now=Date.now()):Promise<ReviewTickReport>{
     const coordination=this.ports.settings();
-    const report:ReviewTickReport={enabled:coordination.positionReviewEnabled===true,considered:0,reserved:0,deduplicated:0,refused:[],completed:0,discarded:0,failed:0,zeroRoutineCalls:0};
+    const report:ReviewTickReport={enabled:coordination.positionReviewEnabled===true,considered:0,reserved:0,deduplicated:0,refused:[],completed:0,discarded:0,failed:0,zeroRoutineCalls:0,
+      thesisDue:0,timeStopDue:0,thesisMissed:0};
     if(!report.enabled){this.ports.clearOwed?.();return report;}
     const plans=[...(this.ports.state as any).tradePlans.values()] as TradePlan[];
-    for(const position of [...(this.ports.state as any).positions.values()]){
+    for(const observedPosition of [...(this.ports.state as any).positions.values()]){
+      let position=observedPosition as any;
       const cycleId=String(position.cycleId??'').trim();
       if(!cycleId)continue;
       const scope=(this.ports.exitRuntime as any).scope({symbol:position.symbol,side:position.side,cycleId,openedAt:position.openedAt});
       const owner=this.ports.exitRuntime.owner(this.subject(position,cycleId));
-      const reviewOnly=owner?.ownerState==='HUMAN_MANAGED';
-      if(!owner||(owner.ownerState!=='AI_ACTIVE'&&!reviewOnly)){
-        // Handoff-pending/closed/untracked cycles are non-reviewable. Human-managed cycles are
-        // reviewed as evidence only; execution remains blocked by the ownership journal.
+      if(!owner||owner.ownerState!=='AI_ACTIVE'){
+        // A human-owned or pending cycle is counted as deliberately un-called, not as a failure.
         if(owner&&owner.ownerState!=='CLOSED')report.zeroRoutineCalls++;
         continue;
       }
       const plan=plans.filter(row=>row.cycleId===cycleId&&row.scope===scope&&row.side!=='WAIT').at(-1);
       if(!plan)continue;
       report.considered++;
+      const scheduled=this.scheduledMilestone(position,coordination,now,report);position=scheduled.position;
+      if(scheduled.staged&&scheduled.milestone==null)continue;
       // P6: declaring the debt before the model call is what lets a continuously queued Entry chain
       // yield a bounded share of the Primary endpoint to this review.
-      if(!reviewOnly&&(owner.deadline==null||owner.deadline<=now))continue;
+      if(owner.deadline==null||owner.deadline<=now)continue;
       if(this.ports.reviewAvailable?.()===false){this.ports.noteOwed?.(now);report.refused.push('REVIEW_RESOURCE_BUSY');continue;}
-      const reserved=this.ports.scheduler.reserve({positionId:position.id,cycleId,scope,trigger:'SCHEDULED',versions:this.versions(position,plan,scope,cycleId),now});
+      const reserved=this.ports.scheduler.reserve({positionId:position.id,cycleId,scope,trigger:'SCHEDULED',versions:this.versions(position,plan,scope,cycleId,scheduled.milestone),now});
       if(!reserved.granted){
         report.refused.push(reserved.reason);
         if((reserved as any).deduplicated)report.deduplicated++;
@@ -85,11 +146,11 @@ export class PositionReviewRunner {
       }
       this.ports.noteOwed?.(now);
       report.reserved++;
-        const ticket=reserved.ticket;
-      if(reviewOnly)this.ports.events.publish('POSITION_REVIEW_ONLY_AUTHORITY',{cycleId,scope,ownerVersion:ticket.ownerVersion,executionAuthority:false,reason:'HUMAN_MANAGED_REVIEW_EVIDENCE_ONLY'},position.symbol);
+      const ticket=reserved.ticket;
       // P7: the review moments belong to the cycle, not to a page's clock. Stamping them here means the
       // "last review / next due" a human reads is what the engine actually did.
-      (this.ports.state as any).positions.set(position.id,{...position,lastReviewAt:now,nextReviewAt:now+Math.max(1_000,Number(coordination.reviewMinIntervalMs??300_000))});
+      if(scheduled.milestone)this.markMilestone(position.id,scheduled.milestone,'RUNNING',now);
+      else (this.ports.state as any).positions.set(position.id,{...position,lastReviewAt:now,nextReviewAt:now+Math.max(1_000,Number(coordination.reviewMinIntervalMs??300_000))});
       try{
         const answer=await this.ports.review({ticket,position,plan});
         const applied=this.ports.scheduler.accept(ticket,{
@@ -97,8 +158,10 @@ export class PositionReviewRunner {
           modelIdentity:answer.modelIdentity??null,promptHash:answer.promptHash,latencyMs:answer.latencyMs??null,
           transportAttempts:answer.transportAttempts??null});
         const verdict:ReviewVerdict={cycleId,scope,planRef:plan.planId,planVersion:plan.planVersion,decision:answer.decision,usable:applied.usable,
-          reason:applied.reason,at:Date.now(),runId:answer.runId,ownerVersion:ticket.ownerVersion,triggerKey:ticket.triggerKey};
+          reason:applied.reason,at:Date.now(),runId:answer.runId,ownerVersion:ticket.ownerVersion,triggerKey:ticket.triggerKey,
+          ...(scheduled.milestone?{reviewMilestone:scheduled.milestone}:{}),};
         this.addVerdict(verdict);
+        if(scheduled.milestone)this.markMilestone(position.id,scheduled.milestone,applied.usable?'APPLIED':'DISCARDED',verdict.at,answer.decision);
         if(applied.usable)report.completed++;else report.discarded++;
         this.ports.events.publish(applied.usable?'POSITION_REVIEW_APPLIED':'POSITION_REVIEW_DISCARDED',{...verdict,archived:applied.archived,rowEventId:applied.row.eventId,
           usageStatus:applied.row.usageStatus,writableAuthority:applied.usable?'REVIEW_EVIDENCE_ONLY':'NONE'},position.symbol);
@@ -110,7 +173,9 @@ export class PositionReviewRunner {
           now:Date.now(),usage:{inputTokens:null,outputTokens:null},status:'FAILED',finishReason:null,promptHash:'missing-prompt-hash'});
         report.failed++;
         this.addVerdict({cycleId,scope,planRef:plan.planId,planVersion:plan.planVersion,decision:'REVIEW_FAILED',usable:false,
-          reason:'REVIEW_CALL_FAILED',at:Date.now(),runId:null,ownerVersion:ticket.ownerVersion,triggerKey:ticket.triggerKey});
+          reason:'REVIEW_CALL_FAILED',at:Date.now(),runId:null,ownerVersion:ticket.ownerVersion,triggerKey:ticket.triggerKey,
+          ...(scheduled.milestone?{reviewMilestone:scheduled.milestone}:{}),});
+        if(scheduled.milestone)this.markMilestone(position.id,scheduled.milestone,'FAILED',Date.now());
         this.ports.events.publish('POSITION_REVIEW_FAILED',{cycleId,scope,planRef:plan.planId,reason:message,rowEventId:applied.row.eventId,
           reviewFailures:(this.ports.scheduler.state().find(row=>row.budgetKey===ticket.budgetKey)?.failures??0),
           engineRestartTriggered:false,orderSent:false},position.symbol);

@@ -1,8 +1,0 @@
-### 12-git-diff-check : git diff --check
-warning: in the working copy of 'apps/engine/src/config/governanceSettingsMatrix.ts', LF will be replaced by CRLF the next time Git touches it
-warning: in the working copy of 'apps/engine/src/runtime/appRuntime.ts', LF will be replaced by CRLF the next time Git touches it
-warning: in the working copy of 'apps/engine/src/services/executionReadiness.test.ts', LF will be replaced by CRLF the next time Git touches it
-warning: in the working copy of 'apps/engine/src/services/executionReadiness.ts', LF will be replaced by CRLF the next time Git touches it
-warning: in the working copy of 'apps/engine/src/services/portfolioRiskLedger.ts', LF will be replaced by CRLF the next time Git touches it
-warning: in the working copy of 'apps/engine/src/types.ts', LF will be replaced by CRLF the next time Git touches it
-EXIT=0

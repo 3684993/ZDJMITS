@@ -22,8 +22,8 @@ describe('bounded near-market execution',()=>{
   });
   it.each(['UNKNOWN','FILLED'])('does not fabricate EXPIRED when cancellation returns %s',async status=>{
     const state=new RuntimeState(settings),now=Date.now();const o:any={id:'o',intentId:'i',symbol:'BTCUSDT',side:'LONG',quantity:1,price:100,filledQuantity:0,status:'WORKING',createdAt:now-91000,updatedAt:now-10000,absoluteExpiresAt:now+100000,reservationId:'r',repriceCount:0};
-    state.entryIntents.set('i',{id:'i',symbol:'BTCUSDT',side:'LONG',createdAt:now-91000,absoluteExpiresAt:now+100000} as any);state.entryOrders.set('o',o);const release=vi.spyOn(state,'releaseEntryReservation');
-    const exchange:any={findEntryByClientOrderId:vi.fn(async()=>o),cancelEntry:vi.fn(async()=>({...o,status,filledQuantity:status==='FILLED'?1:0}))};
+    state.entryOrders.set('o',o);const release=vi.spyOn(state,'releaseEntryReservation');
+    const exchange:any={cancelEntry:vi.fn(async()=>({...o,status,filledQuantity:status==='FILLED'?1:0}))};
     await new EntryCoordinator(state,{} as any,{} as any,exchange,new EventBus()).reviewPending();
     expect(state.entryOrders.get('o')?.status).toBe(status);expect(release).toHaveBeenCalledTimes(status==='UNKNOWN'?0:1);
   });

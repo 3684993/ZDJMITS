@@ -1,1 +1,0 @@
-{"status":"UNAVAILABLE","symbol":"BTCUSDC","reason":"Cannot build EIP for BTCUSDC: evidence missing","recovering":false}

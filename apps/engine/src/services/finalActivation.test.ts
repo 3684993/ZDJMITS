@@ -58,7 +58,7 @@ describe('real coordinator analysis-only terminal path',()=>{
   (h.state as any).riskAdmission=service;
   h.ai.decide.mockResolvedValue({runId:'readonly-natural-fixture',decision:{...h.supplied,decision,tradeSide:'LONG',reason:'fixture thesis'}} as any);
   await h.run();
-  expect(h.ai.decide).toHaveBeenCalledOnce();
+  expect(h.ai.decide,JSON.stringify(h.events.filter(e=>/BLOCKED|FAILED|REJECTED/.test(e.type)))).toHaveBeenCalledOnce();
   expect(h.events.some(e=>e.type==='ANALYSIS_ONLY_COMPLETED'),JSON.stringify(h.events.filter(e=>e.type==='ENTRY_ANALYSIS_FAILED'))).toBe(true);
   expect(h.events.find(e=>e.type==='PORTFOLIO_RISK_ADMISSION_EVALUATED')?.payload).toMatchObject({allowed:false,analysisOnly:true,scope:'CURRENT_BOOK'});
   expect(h.state.tradePlans.size).toBe(1);const plan=[...h.state.tradePlans.values()][0]!;

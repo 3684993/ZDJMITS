@@ -2,6 +2,7 @@ import { testnetFundsOnlyEntry } from '@zdj/core';
 import type { Position, Side, SystemSettings } from '@zdj/contracts';
 import type { PendingEntryRiskExposureList } from './entryRiskOccupancy.js';
 import type { CapitalCapacityFact } from './capitalCapacity.js';
+import {ENTRY_GATE_TAXONOMY_VERSION,entryGateDecision} from './entryGateTaxonomy.js';
 
 // OTHER describes missing classification, not a shared correlation factor.
 export function riskUnderlying(symbol:string){return symbol.toUpperCase().replace(/(USDT|USDC|BUSD|FDUSD)$/,'').replace(/^1000(?=[A-Z])/,'');}
@@ -102,8 +103,19 @@ export function computeExecutableRiskHeadroom(input:HeadroomInput){
     // reconstruct it. Null means this calculation ran without the gate's verdict, not that room is infinite.
     admission:{ceilingUsd:admission,refusal:input.riskAdmissionRefusal??null,gate:input.riskAdmissionNote?.gate??null,detail:input.riskAdmissionNote?.detail??null},
   };
-  const factVersion=JSON.stringify({equity,side:input.side,symbol:input.symbol,exposures:exposures.map(p=>[p.id,p.symbol,p.side,Number(p.notionalUsd.toFixed(8))]).sort((a,b)=>String(a[0]).localeCompare(String(b[0]))),limits,exposureCapacityPolicy:policy,capital:capital?[capital.quoteAsset,Number(capital.availableBalanceUsd.toFixed(8)),Number(capital.reservedMarginUsd.toFixed(8)),Number(capital.executionLeaseMarginUsd.toFixed(8)),Number(capital.leverage.toFixed(4)),capital.leverageFact,Number(capital.executableNotionalUsd.toFixed(8))]:null,dailyDrawdownPct:input.dailyDrawdownPct,expectedAdverseMovePct:move,riskAdmission:[admission==null?null:Number(admission.toFixed(8)),input.riskAdmissionRefusal??null]});
-  return {factVersion,equity,cluster,clusterKey,gross,long,short,clusterNow,clusterDirectionNow,pendingRiskNotional:pending.reduce((n,p)=>n+Math.max(0,p.notionalUsd),0),limits,remaining,observed,exposureCapacityPolicy:policy,capital:capital??null,firstBindingConstraint,perTradeRiskUsd,expectedAdverseMovePct:move,plannedNotional:input.plannedNotional,finalNotional:blockers.length?0:finalNotional,minimumNotional:minimum,executable:!blockers.length,reason:blockers[0]??'PASS',blockers};
+  const gateDecisions={
+    gross:entryGateDecision('REJECT_GROSS_EXPOSURE',{disposition:enforced.gross?'ENFORCE':'OBSERVE',mutatesQuantity:enforced.gross}),
+    direction:entryGateDecision('REJECT_DIRECTION_EXPOSURE',{disposition:enforced.direction?'ENFORCE':'OBSERVE',mutatesQuantity:enforced.direction}),
+    cluster:entryGateDecision('REJECT_CORRELATED_CLUSTER',{disposition:enforced.cluster?'ENFORCE':'OBSERVE',mutatesQuantity:enforced.cluster}),
+    clusterDirection:entryGateDecision('REJECT_CLUSTER_DIRECTION_EXPOSURE',{disposition:enforced.cluster?'ENFORCE':'OBSERVE',mutatesQuantity:enforced.cluster}),
+    stress:entryGateDecision('STRESS_LIMIT',{disposition:fundsOnly?'OBSERVE':'ENFORCE',mutatesQuantity:false}),
+    positionCap:entryGateDecision('POSITION_CAPACITY_FULL',{disposition:fundsOnly?'OBSERVE':'ENFORCE',mutatesQuantity:false}),
+    perTradeRisk:entryGateDecision('REJECT_RISK_PER_TRADE',{disposition:fundsOnly?'OBSERVE':'ENFORCE',mutatesQuantity:!fundsOnly}),
+    availableMargin:entryGateDecision(quoteReason,{disposition:'ENFORCE',mutatesQuantity:true}),
+    admission:entryGateDecision('REJECT_RISK_ADMISSION_CEILING',{disposition:fundsOnly?'OBSERVE':'ENFORCE',mutatesQuantity:!fundsOnly}),
+  };
+  const factVersion=JSON.stringify({gateTaxonomyVersion:ENTRY_GATE_TAXONOMY_VERSION,equity,side:input.side,symbol:input.symbol,exposures:exposures.map(p=>[p.id,p.symbol,p.side,Number(p.notionalUsd.toFixed(8))]).sort((a,b)=>String(a[0]).localeCompare(String(b[0]))),limits,exposureCapacityPolicy:policy,capital:capital?[capital.quoteAsset,Number(capital.availableBalanceUsd.toFixed(8)),Number(capital.reservedMarginUsd.toFixed(8)),Number(capital.executionLeaseMarginUsd.toFixed(8)),Number(capital.leverage.toFixed(4)),capital.leverageFact,Number(capital.executableNotionalUsd.toFixed(8))]:null,dailyDrawdownPct:input.dailyDrawdownPct,expectedAdverseMovePct:move,riskAdmission:[admission==null?null:Number(admission.toFixed(8)),input.riskAdmissionRefusal??null]});
+  return {factVersion,equity,cluster,clusterKey,gross,long,short,clusterNow,clusterDirectionNow,pendingRiskNotional:pending.reduce((n,p)=>n+Math.max(0,p.notionalUsd),0),limits,remaining,observed,gateDecisions,exposureCapacityPolicy:policy,capital:capital??null,firstBindingConstraint,perTradeRiskUsd,expectedAdverseMovePct:move,plannedNotional:input.plannedNotional,finalNotional:blockers.length?0:finalNotional,minimumNotional:minimum,executable:!blockers.length,reason:blockers[0]??'PASS',blockers};
 }
 
 /**

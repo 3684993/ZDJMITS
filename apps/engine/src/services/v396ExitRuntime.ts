@@ -9,6 +9,7 @@ import type {ExitFactSource,VerifiedExitOrderFact} from './exitOrderFact.js';
 import {normalizeExitOrderFact} from './exitOrderFact.js';
 import {OrderProvenanceRegistry} from './orderProvenanceRegistry.js';
 import {confirmedTpNotSent} from './tpSubmissionOutcome.js';
+import {OrderPrecisionError} from '../adapters/binance/orderPrecision.js';
 
 export type V396ExitSubject={symbol:string;side:'LONG'|'SHORT';cycleId:string|null;openedAt?:number|null};
 export type V396ReductionProof={kind:'ONE_WAY_REDUCE_ONLY'|'HEDGE_POSITION_SIDE';checkedAt:number;positionSide:'LONG'|'SHORT'};
@@ -519,6 +520,17 @@ export class V396ExitRuntime {
     const scope=V396ExitRuntime.parseScope(task.scope);
     if(scope?.environment!==identity.environment||scope?.account!==identity.account)return null;
     if(task.reasons.some(reason=>/EXCHANGE_FACT|_CONVERGED|TP_SUBMIT_RESULT/.test(reason)))return null;
+    return this.recoveryCoordinator.abortProvenNotSent(clientOrderId,proofRef,now);
+  }
+
+  /** A typed adapter refusal can settle only the current unsent AI/manual attempt. */
+  abortExitPrecisionNotSent(clientOrderId:string,error:unknown,proofRef:string,now=Date.now()){
+    if(!(error instanceof OrderPrecisionError))return null;
+    const task=this.task(clientOrderId),identity=this.exchangeIdentity();
+    if(!task||!['AI','MANUAL'].includes(task.source)||identity.environment!=='TESTNET'||!['PREPARED','SUBMITTING'].includes(task.state))return null;
+    const scope=V396ExitRuntime.parseScope(task.scope);
+    if(scope?.environment!==identity.environment||scope?.account!==identity.account||scope?.symbol!==error.symbol)return null;
+    if(task.reasons.some(reason=>/EXCHANGE_FACT|_CONVERGED|SUBMIT_RESULT/.test(reason)))return null;
     return this.recoveryCoordinator.abortProvenNotSent(clientOrderId,proofRef,now);
   }
 

@@ -1,6 +1,7 @@
 import type { EntryIntelligencePacket, MarketSymbolSnapshot, Position, SystemSettings, UniverseCandidate, EntryOrder, Timeframe } from '@zdj/contracts';
 import { directionWeights } from './profiles.js';
 import { safeDiv, clamp, uid } from './math.js';
+import { tradingCostSnapshot } from './tradingCost.js';
 
 export interface ExperienceSummary {
   sampleSize:number;
@@ -44,8 +45,10 @@ export function buildEip(ctx:EipContext):EntryIntelligencePacket {
   add('derivatives.oi15','DERIVATIVES','OI change 15m',s.derivatives.openInterestChange15m??'missing',s.derivatives.ts); add('derivatives.taker','DERIVATIVES','Taker buy/sell 5m',s.derivatives.takerBuySellRatio5m??'missing',s.derivatives.ts);
   const contradictions:string[]=[]; const t15=s.technical['15m']; const higher=[s.technical['4h'],s.technical['1d'],s.technical['1w']]; if(higher.some(t=>t.trend!==t15.trend&&t.trend!=='RANGE')) contradictions.push('Higher-timeframe trend conflicts with 15m direction.'); if(t15.trend==='UP'&&imbalance<-0.25) contradictions.push('Order-book imbalance opposes 15m bullish structure.'); if(t15.trend==='DOWN'&&imbalance>0.25) contradictions.push('Order-book imbalance opposes 15m bearish structure.');
   const weights=directionWeights(ctx.settings.directionReference);
-  const tp=ctx.settings.takeProfit, makerFeeBps=tp.makerFeeRate*10_000, takerFeeBps=tp.takerFeeRate*10_000, safetyMarginBps=(makerFeeBps+(tp.exitFeeAssumption==='TAKER'?takerFeeBps:makerFeeBps))*tp.feeSafetyBufferPct/100;
-  const configuredTargetMoveBps=tp.targetPriceMovePercent*100, roundTripCostBps=makerFeeBps+(tp.exitFeeAssumption==='TAKER'?takerFeeBps:makerFeeBps), px=s.quote.last;
+  const tp=ctx.settings.takeProfit,cost=tradingCostSnapshot({entryFeeRate:Number(tp.entryFeeRate??0),makerFeeRate:Number(tp.makerFeeRate??0),
+    takerFeeRate:Number(tp.takerFeeRate??0),exitFeeAssumption:tp.exitFeeAssumption??'TAKER',slippageBufferPct:Number(tp.slippageBufferPct??0),
+    feeSafetyBufferPct:Number(tp.feeSafetyBufferPct??0)}),makerFeeBps=Number(tp.makerFeeRate??0)*10_000,takerFeeBps=Number(tp.takerFeeRate??0)*10_000;
+  const configuredTargetMoveBps=tp.targetPriceMovePercent*100,px=s.quote.last;
   const longSpace=t15.recentSwingHigh>px?(t15.recentSwingHigh/px-1)*10_000:null, shortSpace=t15.recentSwingLow>0&&t15.recentSwingLow<px?(1-t15.recentSwingLow/px)*10_000:null;
   return {
     version:'3.0',packetId:uid('eip'),symbol:s.symbol,createdAt:now,expiresAt:now+90_000,
@@ -53,11 +56,15 @@ export function buildEip(ctx:EipContext):EntryIntelligencePacket {
     market:{quote:s.quote,technical:s.technical,derivatives:s.derivatives,orderBook:s.orderBook,recentTradedPrices:s.recentTradedPrices},
     referenceMarkets:{btc:referenceMarket(ctx.btc),eth:referenceMarket(ctx.eth)},
     microstructure:{spreadBps,bidDepthUsd5:bidDepth,askDepthUsd5:askDepth,microPrice:microPrice(s),imbalance,reachableBand1m:band1,reachableBand5m:band5,reachabilityScore:reach},
-    economic:{makerFeeBps,takerFeeBps,roundTripCostBps,safetyMarginBps,configuredTargetMoveBps,minimumEconomicEdgeBps:configuredTargetMoveBps+roundTripCostBps+safetyMarginBps,longSpaceToResistanceBps:longSpace,shortSpaceToSupportBps:shortSpace,provenance:'SYSTEM_SETTINGS+CONFIRMED_15M_SWINGS'},
+    economic:{costVersion:cost.costVersion,entryFeeBps:cost.entryFeeBps,expectedExitFeeBps:cost.expectedExitFeeBps,makerFeeBps,takerFeeBps,
+      roundTripCostBps:cost.feeRoundTripBps,slippageBufferBps:cost.slippageBufferBps,safetyMarginBps:cost.uncertaintyBufferBps,
+      allInCostBps:cost.allInCostBps,configuredTargetMoveBps,minimumEconomicEdgeBps:cost.allInCostBps,
+      minimumEconomicEdgeDefinition:'ALL_IN_BREAK_EVEN_COST_ONLY',longSpaceToResistanceBps:longSpace,shortSpaceToSupportBps:shortSpace,
+      provenance:'V3.9.7_CANONICAL_COST_SNAPSHOT+CONFIRMED_15M_SWINGS'},
     globalRegime:{btc:{symbol:ctx.btc.symbol,trend15m:ctx.btc.technical['15m'].trend,trend4h:ctx.btc.technical['4h'].trend,trend1d:ctx.btc.technical['1d'].trend,trend1w:ctx.btc.technical['1w'].trend,change24hPercent:ctx.btc.quote.priceChangePercent24h},eth:{symbol:ctx.eth.symbol,trend15m:ctx.eth.technical['15m'].trend,trend4h:ctx.eth.technical['4h'].trend,trend1d:ctx.eth.technical['1d'].trend,trend1w:ctx.eth.technical['1w'].trend,change24hPercent:ctx.eth.quote.priceChangePercent24h},regime:globalRegime(ctx.btc,ctx.eth)},
     portfolio:{activePositions:ctx.positions.length,pendingEntries:ctx.pendingEntries.filter(o=>['NEW','SUBMITTING','UNKNOWN','WORKING','PARTIALLY_FILLED'].includes(o.status)).length,longPositions:ctx.positions.filter(p=>p.side==='LONG').length,shortPositions:ctx.positions.filter(p=>p.side==='SHORT').length,longProfitableRatio:profitableRatio(ctx.positions,'LONG'),shortProfitableRatio:profitableRatio(ctx.positions,'SHORT'),longNotionalUsd:notional(ctx.positions,'LONG'),shortNotionalUsd:notional(ctx.positions,'SHORT')},
     experience:ctx.experience,
-    directionPolicy:{reference:ctx.settings.directionReference,weights,hardConstraints:['No timeframe is a hard direction veto.','15m remains tactical market evidence, never a side permission.','1m/5m are primarily entry timing and reachability evidence.']},
+    directionPolicy:{reference:ctx.settings.directionReference,weights,hardConstraints:['1D is strategic regime; 4H is setup direction; 15m is tactical trigger.','A side opposing same-direction 1D+4H consensus requires an explicit counter-trend reversal exception.','1m/5m are execution timing evidence only.','SHORT bias may break a mixed tie but is never a direction command.']},
     evidenceCompleteness:clamp(s.dataCompleteness*.84+(s.orderBook.bids.length&&s.orderBook.asks.length ? .16 : 0),0,1),contradictions,evidence,
   };
 }

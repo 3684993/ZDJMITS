@@ -3,7 +3,7 @@ import {mkdtempSync,rmSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import path from 'node:path';
 import {EntryIntentSchema,TradingQualityPolicySchema} from '@zdj/contracts';
-import {harness} from './tradingQualityTestHarness.js';
+import {harness,systemCandidateDecision} from './tradingQualityTestHarness.js';
 import {buildOpportunityEvidence,revalidateOpportunity,validateOpportunityDecision} from './opportunityEvidence.js';
 import {TradingQualityCollector} from './tradingQualityCollector.js';
 import {PositionService} from './positionService.js';
@@ -20,9 +20,9 @@ function ready(){
       isClosed:true,asOf:now-1000,barCloseTime:now-1000,receivedAt:now,lastClosedBar:{openTime:now-1000-period+1,closeTime:now-1000,open:99.5,high:101,low:99,close:100.5,volume:100}});
   }
   h.packet.market={...h.packet.market,...m};
-  h.ai.decide.mockImplementation(async(_packet:any)=>{
-    return {runId:'quality-run',decision:{...h.supplied,decision:'PLACE_LONG',tradeSide:'LONG',direction:'LONG',quantityUnits:1000,opportunityType:'TREND_RESUMPTION',timingEvent:null,
-      idealPrice:100,acceptablePriceRange:{min:99.99,max:100.01},horizonMinutes:1}};
+  h.ai.decide.mockImplementation(async(packet:any)=>{
+    return{runId:'quality-run',decision:systemCandidateDecision(packet,h.supplied,'LONG',{opportunityType:'TREND_RESUMPTION',timingEvent:null,
+      idealPrice:100,acceptablePriceRange:{min:99.99,max:100.01},horizonMinutes:1})};
   });
   return {...h,m,now};
 }
@@ -31,17 +31,17 @@ describe('real EntryCoordinator opportunity authorization',()=>{
   it('records TradingQuality evidence without carrying it as Entry direction authorization',async()=>{
     const h=ready();await h.run();expect(h.exchange.placeEntry,JSON.stringify(h.events.filter(e=>/FAILED|BLOCKED/.test(e.type)))).toHaveBeenCalledOnce();
     const i=[...h.state.entryIntents.values()][0];expect(i).toBeDefined();expect(i.opportunityEvidence).toBeUndefined();
-    const persisted=EntryIntentSchema.parse(JSON.parse(JSON.stringify(i)));expect(persisted.quantityUnits).toBe(i.quantityUnits);expect(i.quantityUnits).not.toBe(1000);expect(persisted.executionEnvelope).toBeDefined();
+    const persisted=EntryIntentSchema.parse(JSON.parse(JSON.stringify(i)));expect(persisted.quantityUnits).toBeGreaterThan(0);expect(persisted.selectedCandidateId).toBeTruthy();expect(persisted.executionEnvelope).toBeDefined();
     expect(h.events.some(e=>e.type==='TRADING_QUALITY_OPPORTUNITY')).toBe(true);expect(h.events.some(e=>e.type==='TRADING_QUALITY_PRIMARY_LINK')).toBe(true);
   });
-  it('keeps TradingQuality observation outside the Primary input contract',async()=>{
+  it('supplies frozen opportunity facts without granting deterministic direction authority',async()=>{
     const h=ready();await h.run();const primaryPacket=h.ai.decide.mock.calls[0]?.[0] as any;
-    expect(primaryPacket?.opportunityEvidence).toBeUndefined();expect(h.exchange.placeEntry).toHaveBeenCalledOnce();
+    expect(primaryPacket?.opportunityEvidence).toMatchObject({opportunityId:expect.any(String),timingEvent:{status:"COMPLETED"}});expect(h.exchange.placeEntry).toHaveBeenCalledOnce();expect([...h.state.entryIntents.values()][0].opportunityAuthorization?.eventApplicable).toBe(false);
   });
-  it('does not treat legacy timingEvent evidence as post-AI direction authorization',async()=>{
+  it('rejects an unidentifiable explicitly referenced event without inventing its identity',async()=>{
     const h=ready(),original=h.ai.decide.getMockImplementation()!;
     h.ai.decide.mockImplementation(async(...args:any[])=>{const r:any=await (original as any)(...args);r.decision.timingEvent={status:'COMPLETED',time:1};return r;});
-    await h.run();expect(h.exchange.placeEntry).toHaveBeenCalledOnce();expect([...h.state.entryIntents.values()][0]?.side).toBe('LONG');
+    await h.run();expect(h.exchange.placeEntry).not.toHaveBeenCalled();expect(h.state.entryIntents.size).toBe(0);expect(JSON.stringify(h.events)).toContain('ENTRY_OPPORTUNITY_EVENT_UNKNOWN');
   });
   it.each(['expiry','price','structure','payoff','policy'] as const)('keeps TradingQuality %s perturbation observational after autonomous Primary',async(kind)=>{
     const h=ready();h.exchange.setLeverage.mockImplementation(async()=>{
@@ -51,10 +51,7 @@ describe('real EntryCoordinator opportunity authorization',()=>{
       if(kind==='price')Object.assign(h.m.quote,{last:100.005,mark:100.005});
       if(kind==='expiry')h.state.settings.tradingQuality!.policyVersion='expired-observation-sim';
     });
-    await h.run();
-    if(kind==='structure'){expect(h.exchange.placeEntry).not.toHaveBeenCalled();expect(h.events.some(e=>String(e.payload?.reason??'').includes('MARKET_THESIS_FACTS_CHANGED_REQUIRES_NEW_MANDATE'))).toBe(true);}
-    else expect(h.exchange.placeEntry).toHaveBeenCalledOnce();
-    if(h.state.entryIntents.size)expect([...h.state.entryIntents.values()][0]?.side).toBe('LONG');
+    await h.run();expect(h.exchange.placeEntry).toHaveBeenCalledOnce();expect([...h.state.entryIntents.values()][0]?.side).toBe('LONG');
   });
   it('WAIT creates no intent and fresh evaluation creates new authorization',async()=>{
     const h=ready(),place=h.ai.decide.getMockImplementation()!;
@@ -76,11 +73,11 @@ describe('real EntryCoordinator opportunity authorization',()=>{
     expect(validateOpportunityDecision({decision:'PLACE_LONG',tradeSide:'LONG',opportunityType:e.setupType,timingEvent:null},e)).toBe('PRIMARY_EVENT_NOT_VERIFIED');
   });
   it.each([101,102.44])('reviewPending preserves frozen AI authorization at proposed reprice %s',async(nextPrice)=>{
-    const h=ready();h.m.technical['15m'].recentSwingHigh=102.45;
+    const h=ready();h.m.technical['15m'].recentSwingHigh=102.45;h.state.settings.entry.nearMarket.enabled=true;h.m.recentTradedPrices=[{price:100,lastSeenAt:Date.now()}];
     const original=h.ai.decide.getMockImplementation()!;
     h.ai.decide.mockImplementation(async(...args:any[])=>{const r:any=await original(...args);r.decision.acceptablePriceRange={min:98.5,max:102.5};return r;});
     await h.run();expect(h.exchange.placeEntry).toHaveBeenCalledOnce();
-    const o=[...h.state.entryOrders.values()][0];o.updatedAt=Date.now()-10000;h.state.settings.entry.nearMarket.enabled=true;h.m.recentTradedPrices=[{price:nextPrice,lastSeenAt:Date.now()}];
+    const o=[...h.state.entryOrders.values()][0];o.updatedAt=Date.now()-10000;h.m.recentTradedPrices=[{price:nextPrice,lastSeenAt:Date.now()}];
     Object.assign(h.m.quote,{bid:nextPrice,ask:nextPrice+.01,last:nextPrice,mark:nextPrice,ts:Date.now()});
     h.m.orderBook={...h.m.orderBook,ts:Date.now(),bids:[[nextPrice,10000]],asks:[[nextPrice+.01,10000]]};
     const replace=vi.fn(async(order:any,price:number)=>({...order,price,status:'WORKING'}));(h.exchange as any).replaceEntry=replace;
@@ -106,7 +103,7 @@ describe('real EntryCoordinator opportunity authorization',()=>{
   });
   it('evidence storage failure blocks ENFORCE before Primary but does not block OFF',async()=>{
     const h=ready();(h.state as any).tradingQualityEvidenceReady=false;await h.run();expect(h.ai.decide).not.toHaveBeenCalled();expect(h.exchange.placeEntry).not.toHaveBeenCalled();
-    const off=harness();(off.supplied as any).quantityUnits=1000;(off.state as any).tradingQualityEvidenceReady=false;await off.run();expect(off.exchange.placeEntry).toHaveBeenCalledOnce();
+    const off=harness();(off.state as any).tradingQualityEvidenceReady=false;await off.run();expect(off.exchange.placeEntry).toHaveBeenCalledOnce();
   });
   it('processPool wakes WAIT on a fresh event and obtains a new Primary decision',async()=>{
     const h=ready();h.ai.decide.mockResolvedValueOnce({runId:'waiting',decision:{...h.supplied,decision:'WAIT_FOR_PRICE',structureDirection:'LONG',tradeSide:null,waitCondition:{operator:'LTE',price:100,validForMinutes:1},reason:'wait'}} as any);
@@ -118,7 +115,7 @@ describe('real EntryCoordinator opportunity authorization',()=>{
     expect(h.ai.decide).toHaveBeenCalledTimes(2);expect(h.exchange.placeEntry).toHaveBeenCalledOnce();
   });
   it('OFF keeps accepted baseline authorization unchanged',async()=>{
-    const h=harness();(h.supplied as any).quantityUnits=1000;await h.run();expect(h.exchange.placeEntry).toHaveBeenCalledOnce();expect([...h.state.entryIntents.values()][0].opportunityEvidence).toBeUndefined();
+    const h=harness();await h.run();expect(h.exchange.placeEntry).toHaveBeenCalledOnce();expect([...h.state.entryIntents.values()][0].opportunityEvidence).toBeUndefined();
   });
 });
 
@@ -280,7 +277,7 @@ describe('prospective runtime evidence collection',()=>{
       const first=collector.report().episodes[0];expect(first.fillIds).toHaveLength(1);expect(first.completeFillAt).toBeNull();expect(first.firstFillVwap).toBe(100);
       positions.recordExchangeFill({...f,fillId:'f2',tradeId:'t2',executionTime:h.now+1000,price:102});
       for(let dt=1000;dt<=35000;dt+=1000){h.m.quote.ts=h.now+dt;h.m.quote.mark=dt<10000?99:101;collector.tick(h.now+dt);}
-      let ep=collector.report().episodes[0];expect(ep.completeFillAt).toBe(h.now+1000);expect(ep.firstFillVwap).toBe(100);expect(ep.fillVwap).toBeCloseTo(101,10);
+      let ep=collector.report().episodes[0];expect(ep.completeFillAt).toBe(h.now+1000);expect(ep.firstFillVwap).toBe(100);expect(ep.fillVwap).toBe(101);
       expect(ep.path[0]).toMatchObject({coverage:'COMPLETE',sampleCount:31});expect(ep.path[0].maeBps).toBeCloseTo(100);
       expect(ep.path[1].coverage).toBe('IMMATURE');expect(ep.netPnl).toBeNull();
       collector.close();collector=new TradingQualityCollector(file,h.state,h.bus);collector.tick(h.now+40000);ep=collector.report().episodes[0];

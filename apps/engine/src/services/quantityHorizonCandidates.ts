@@ -1,20 +1,21 @@
 import {createHash} from 'node:crypto';
-import type {TradePlanCandidate, TradePlanEconomics, TradePlanRisk} from '@zdj/contracts';
-import {STANDARD_TP_HORIZONS, reachabilityTimeframe, evaluateTargetReachability} from './historicalTpReachability.js';
-import {estimateTradingCost} from '@zdj/core';
+import {TradePlanCandidateTargetSchema, type TradePlanCandidate, type TradePlanEconomics, type TradePlanRisk} from '@zdj/contracts';
+import {STANDARD_TP_HORIZONS, reachabilityTimeframe, evaluateTargetReachability, summarizeReachability} from './historicalTpReachability.js';
+import {estimateTradingCost,tradingCostSnapshot} from '@zdj/core';
 
 /**
  * S06-B/C: the system, not the model, enumerates the legal (quantity, horizon, target) combinations.
  *
- * Every candidate is a full cost, risk and statistical statement about itself. The configured
- * business minimum is the starting point; bounded larger sizes may be considered to satisfy net
- * economics, but only inside the existing executable funds envelope. Missing history remains unknown.
+ * Every candidate is a full cost, risk and statistical statement about itself, so a later reviewer
+ * can recompute why it was offered. Two rules are the point of this file: a size is only ever grown
+ * because the risk envelope allows it, never to make a thin trade clear the profit floor; and a
+ * missing statistical sample stays missing rather than becoming a fifty-fifty guess.
  */
 
 export type CandidateRiskFacts={capitalAtRiskUsd:number;grossNotionalAfterUsd:number;longNotionalAfterUsd:number;shortNotionalAfterUsd:number;
   clusterNotionalAfterUsd:number;limitingConstraints:string[];riskGeneration:number;snapshotHash:string;profileVersion:string;humanSlotsAfter:number};
 
-export type CandidateSet={schemaVersion:'V396-PLAN-CANDIDATE-SET-1';symbol:string;side:'LONG'|'SHORT';createdAt:number;expiresAt:number;
+export type CandidateSet={schemaVersion:'V396-PLAN-CANDIDATE-SET-1'|'V397-PLAN-CANDIDATE-SET-2';symbol:string;side:'LONG'|'SHORT';createdAt:number;expiresAt:number;
   factVersion:string;candidateSetHash:string;candidates:TradePlanCandidate[];noTradeReasons:string[];
   /**
    * Statistical statements the account is not currently entitled to enforce. They are reported here so
@@ -32,19 +33,27 @@ export type CandidateSet={schemaVersion:'V396-PLAN-CANDIDATE-SET-1';symbol:strin
 
 export type CandleRow={high:number;low:number;close:number;closeTime:number};
 
-const stableId=(value:unknown)=>`cand_${createHash('sha256').update(JSON.stringify(value)).digest('hex').slice(0,24)}`;
+// Versioned domains keep new authority disjoint from historical candidate ids. Sort object keys so
+// equivalent fact objects have one identity; array order remains part of the published menu.
+const canonicalJson=(value:unknown):string=>JSON.stringify(value,(_key,item)=>
+  item&&typeof item==='object'&&!Array.isArray(item)?Object.fromEntries(Object.entries(item).sort(([a],[b])=>a<b?-1:a>b?1:0)):item);
+const stableId=(domain:'cand_v2'|'cset_v2',value:unknown)=>`${domain}_${createHash('sha256').update(canonicalJson(value)).digest('hex').slice(0,24)}`;
 const finite=(value:unknown):value is number=>typeof value==='number'&&Number.isFinite(value);
 const round=(value:number,digits:number)=>Number(value.toFixed(digits));
 /** Prices are expressed in whole ticks, always on the conservative side of the bound they state. */
 const alignTick=(price:number,tick:number,up:boolean)=>Number(Number((up?Math.ceil(price/tick-1e-9):Math.floor(price/tick+1e-9))*tick).toFixed(Math.max(0,(String(tick).split('.')[1]??'').length)));
 
-export function quantityLadder(minUnits:number,maxUnits:number,stepSize:number,entryPrice:number,minNotional:number){
+export type BusinessSizingPolicy={leverage:number;businessMinInitialMarginUsd:number;preferredInitialMarginUsd:number};
+export function quantityLadder(minUnits:number,maxUnits:number,stepSize:number,entryPrice:number,minNotional:number,policy?:BusinessSizingPolicy){
   // A step of 1 at a sub-cent price needs hundreds of units before the exchange minimum notional is
   // met, so the ladder starts at the smallest size that is legal, not at one step.
   const smallestLegal=Math.max(1,Math.ceil((minNotional*(1+1e-9))/(stepSize*entryPrice)));
-  const floor=Math.max(1,Math.ceil(minUnits),smallestLegal),ceiling=Math.floor(maxUnits);
+  const businessFloor=policy?Math.ceil((policy.businessMinInitialMarginUsd*policy.leverage)/(stepSize*entryPrice)-1e-9):1;
+  const preferred=policy?Math.ceil((policy.preferredInitialMarginUsd*policy.leverage)/(stepSize*entryPrice)-1e-9):null;
+  const floor=Math.max(1,Math.ceil(minUnits),smallestLegal,businessFloor),ceiling=Math.floor(maxUnits);
   if(!Number.isSafeInteger(floor)||!Number.isSafeInteger(ceiling)||ceiling<floor)return[];
-  const wanted=[floor,Math.ceil(floor+(ceiling-floor)*.25),Math.ceil(floor+(ceiling-floor)*.5),ceiling]
+  const wanted=[floor,preferred,Math.ceil(floor+(ceiling-floor)*.5),ceiling]
+    .filter((units):units is number=>units!==null)
     .filter(units=>units>=floor&&units<=ceiling&&units*stepSize*entryPrice+1e-9>=minNotional);
   return [...new Set(wanted)].sort((a,b)=>a-b).slice(0,4);
 }
@@ -110,14 +119,15 @@ export function buildQuantityHorizonCandidates(input:{
   symbol:string;
   side:'LONG'|'SHORT';
   now:number;
-  quote:{bid:number;ask:number;tickSize:number;stepSize:number;minQty:number;minNotional:number;minEntryPrice?:number};
+  quote:{bid:number;ask:number;tickSize:number;stepSize:number;minQty:number;minNotional:number};
   leverage:number;
-  envelope:{maxQuantityUnits:number;maxNotionalUsd:number;maxMarginUsd:number;executable:boolean;minQuantityUnits?:number;minimumInitialMarginQuote?:number|null;minimumOrderNotionalQuote?:number|null;riskHeadroom?:{reason?:string;blockers?:string[]}};
+  envelope:{maxQuantityUnits:number;maxNotionalUsd:number;maxMarginUsd:number;minQuantityUnits?:number;executable:boolean;riskHeadroom?:{reason?:string;blockers?:string[]}};
   envelopeExpiresAt:number;
   factVersion:string;
   risk:CandidateRiskFacts|null;
   settings:{takeProfit:{entryFeeRate:number;takerFeeRate:number;makerFeeRate:number;exitFeeAssumption:string;slippageBufferPct:number;feeSafetyBufferPct:number;minNetProfitUsd:number;minNetProfitRoiPct:number};
-    tradeEconomics:{admissionMode:string;historicalTpReachabilityEnabled?:boolean;reachabilityLookbackBars?:number;reachabilityMinSamples?:number;minHistoricalReachProbability?:number}};
+    tradeEconomics:{admissionMode:string;historicalTpReachabilityEnabled?:boolean;reachabilityLookbackBars?:number;reachabilityMinSamples?:number;minHistoricalReachProbability?:number};
+    portfolioIntelligence?:{businessMinInitialMarginUsd?:number;preferredInitialMarginUsd?:number}};
   candles:(timeframe:string,count:number)=>CandleRow[];
   targetHorizons?:number[];
   managementDurationMs:number;
@@ -127,26 +137,34 @@ export function buildQuantityHorizonCandidates(input:{
   selection?:{quantityUnits:number;targetPrice:number;targetHorizonMinutes:number};
 }):CandidateSet{
   const {symbol,side,now,quote,leverage,envelope,settings}=input;
+  const identityFacts={factVersion:input.factVersion,envelopeExpiresAt:input.envelopeExpiresAt,
+    exchange:{tickSize:quote.tickSize,stepSize:quote.stepSize,minQty:quote.minQty,minNotional:quote.minNotional},
+    envelope:{executable:envelope.executable,minQuantityUnits:envelope.minQuantityUnits??1,maxQuantityUnits:envelope.maxQuantityUnits,
+      maxNotionalUsd:envelope.maxNotionalUsd,maxMarginUsd:envelope.maxMarginUsd,riskHeadroom:envelope.riskHeadroom??null},
+    policy:{takeProfit:settings.takeProfit,tradeEconomics:settings.tradeEconomics,
+      businessMinInitialMarginUsd:settings.portfolioIntelligence?.businessMinInitialMarginUsd??100,
+      preferredInitialMarginUsd:settings.portfolioIntelligence?.preferredInitialMarginUsd??200}};
   // A rejected set still answers every field a consumer reads: the caller's own selection is refused
   // with the same reasons, instead of the caller having to guess whether an absent field means no.
-  const rejectAll=(...reasons:string[]):CandidateSet=>({schemaVersion:'V396-PLAN-CANDIDATE-SET-1',symbol,side,createdAt:now,expiresAt:input.envelopeExpiresAt,
-    factVersion:input.factVersion,candidateSetHash:'empty',candidates:[],noTradeReasons:[...new Set(reasons)],statisticalEvidence:[],quantityLadder:[],horizonLadder:[],
+  const rejectAll=(...reasons:string[]):CandidateSet=>({schemaVersion:'V397-PLAN-CANDIDATE-SET-2',symbol,side,createdAt:now,expiresAt:input.envelopeExpiresAt,
+    factVersion:input.factVersion,candidateSetHash:stableId('cset_v2',{schemaVersion:'V397-PLAN-CANDIDATE-SET-2',symbol,side,identityFacts,reasons:[...new Set(reasons)]}),candidates:[],noTradeReasons:[...new Set(reasons)],statisticalEvidence:[],quantityLadder:[],horizonLadder:[],
     rejectedCombinations:0,feasibleQuantityUnits:{min:0,max:0},bounds:[],entryTtlMinutes:1,managementDurationMs:input.managementDurationMs,
     selection:input.selection?{...input.selection,offered:false,refusals:[...new Set(reasons)],fallbacks:[]}:undefined});
   if(!envelope.executable)return rejectAll('SIDE_NOT_EXECUTABLE',...(envelope.riskHeadroom?.blockers??[]));
-  if(!(quote.stepSize>0)||!(quote.tickSize>0)||!(leverage>0))return rejectAll('CANDIDATE_MARKET_FACT_INVALID');
+  if(![quote.stepSize,quote.tickSize,leverage].every(value=>finite(value)&&value>0))return rejectAll('CANDIDATE_MARKET_FACT_INVALID');
   const entryPrice=side==='LONG'?quote.ask:quote.bid;
-  if(!(entryPrice>0))return rejectAll('CANDIDATE_ENTRY_PRICE_UNPROVEN');
+  if(!finite(entryPrice)||entryPrice<=0)return rejectAll('CANDIDATE_ENTRY_PRICE_UNPROVEN');
+  const businessMinInitialMarginUsd=Math.max(0,Number(settings.portfolioIntelligence?.businessMinInitialMarginUsd??100));
+  const preferredInitialMarginUsd=Math.max(businessMinInitialMarginUsd,Number(settings.portfolioIntelligence?.preferredInitialMarginUsd??200));
   const quantityCeiling=Math.min(Number(envelope.maxQuantityUnits??0),Number(envelope.maxNotionalUsd??0)/(quote.stepSize*entryPrice),
     Number(envelope.maxMarginUsd??Number.POSITIVE_INFINITY)*leverage/(quote.stepSize*entryPrice));
-  // Orders may be repriced anywhere in the authorized bid/ask interval. Size the floor against
-  // the lowest current authorized quote so legal repricing cannot turn a $200 mandate into $199.
-  const floorEntryPrice=Math.min(entryPrice,quote.bid,quote.ask,Number(quote.minEntryPrice??Number.POSITIVE_INFINITY));
-  const quantities=quantityLadder(Math.max(1,Number(envelope.minQuantityUnits??1)),quantityCeiling,quote.stepSize,floorEntryPrice,Math.max(quote.minNotional,Number(envelope.minimumOrderNotionalQuote??0),(Number(envelope.minimumInitialMarginQuote??0))*leverage));
-  if(!quantities.length)return rejectAll('NO_LEGAL_QUANTITY_WITHIN_ENVELOPE');
+  const quantities=quantityLadder(Number(envelope.minQuantityUnits??1),quantityCeiling,quote.stepSize,entryPrice,quote.minNotional,
+    {leverage,businessMinInitialMarginUsd,preferredInitialMarginUsd});
+  if(!quantities.length)return rejectAll('BUSINESS_MIN_INITIAL_MARGIN_UNAVAILABLE',`BUSINESS_MIN_INITIAL_MARGIN_USD=${round(businessMinInitialMarginUsd,6)}`,
+    `AVAILABLE_INITIAL_MARGIN_USD=${round(Number(envelope.maxMarginUsd??0),6)}`);
   const horizons=horizonLadder(settings,input.targetHorizons);
   if(!horizons.length)return rejectAll('NO_LEGAL_TARGET_HORIZON');
-  const exitFeeRate=settings.takeProfit.exitFeeAssumption==='MAKER'?settings.takeProfit.makerFeeRate:settings.takeProfit.takerFeeRate;
+  const costPolicy=tradingCostSnapshot({...settings.takeProfit,exitFeeAssumption:settings.takeProfit.exitFeeAssumption==='MAKER'?'MAKER':'TAKER'}),exitFeeRate=costPolicy.expectedExitFeeRate;
   // Mechanical legality (envelope, filters, tick, side) always binds. The economic and statistical
   // gates bind only when the account runs them in ENFORCE; otherwise they are recorded, not assumed.
   const enforceEconomics=settings.tradeEconomics?.admissionMode==='ENFORCE';
@@ -156,31 +174,38 @@ export function buildQuantityHorizonCandidates(input:{
   let rejected=0;
   const targetFor=(units:number,horizonMinutes:number)=>{
     const profitFloor=minimumQuantityProfitFloor({entryPrice,quantityUnits:units,stepSize:quote.stepSize,direction:side,leverage,tickSize:quote.tickSize,takeProfit:settings.takeProfit});
-    const reach=evaluateTargetReachability({rows:input.candles(reachabilityTimeframe(horizonMinutes),300) as never,side,horizonMinutes,
-      targetMovePercent:0,lookbackBars:settings.tradeEconomics.reachabilityLookbackBars??180,minSamples:settings.tradeEconomics.reachabilityMinSamples??30,now});
-    const statistical=reach.status==='READY'&&finite(reach.hardMaxMovePercent)&&reach.hardMaxMovePercent>0?reach.hardMaxMovePercent:null;
-    // The ceiling is the largest move the closed-candle sample has actually produced over this
-    // horizon. With no sample there is no ceiling to offer, only the profit floor to hold.
-    const statisticalTarget=statistical===null?null:alignTick(side==='LONG'?entryPrice*(1+statistical/100):entryPrice*(1-statistical/100),quote.tickSize,side==='SHORT');
-    // A floor that sits beyond the ceiling is not a target the data supports at all, so the
-    // combination is statistically unfavourable rather than merely expensive - and statistics are only
-    // a veto where the account says so.
+    const rows=input.candles(reachabilityTimeframe(horizonMinutes),300) as never;
+    const summary=summarizeReachability({rows,horizonMinutes,lookbackBars:settings.tradeEconomics.reachabilityLookbackBars??180,
+      minSamples:settings.tradeEconomics.reachabilityMinSamples??30,now}),statistics=summary[side];
+    const reach={status:summary.status,sampleCount:summary.sampleCount,timeframe:summary.timeframe,
+      hardMaxMovePercent:summary.status==='READY'?statistics.hardMaxMovePercent:null,reachProbability:null,targetMovePercent:0};
+    const targetAt=(move:number)=>move>0?alignTick(side==='LONG'?entryPrice*(1+move/100):entryPrice*(1-move/100),quote.tickSize,side==='SHORT'):null;
+    const p50Target=summary.status==='READY'?targetAt(statistics.p50):null,p75Target=summary.status==='READY'?targetAt(statistics.p75):null;
+    // p75 is the ordinary statistical ceiling. hard-max remains tail evidence and is never offered as
+    // a normal TP candidate; otherwise one outlier candle becomes an executable objective.
+    const statistical=summary.status==='READY'&&statistics.p75>0?statistics.p75:null,statisticalTarget=p75Target;
     const floorBeyondCeiling=statisticalTarget!=null&&(side==='LONG'?profitFloor.floorTargetPrice>statisticalTarget+1e-12:profitFloor.floorTargetPrice<statisticalTarget-1e-12);
-    return{floorTarget:profitFloor.floorTargetPrice,statisticalTarget,minProfitableExit:profitFloor.minProfitableExitPrice,statistical,reach,floorBeyondCeiling,profitFloor};
+    return{floorTarget:profitFloor.floorTargetPrice,statisticalTarget,p50Target,p75Target,p50Move:summary.status==='READY'?statistics.p50:null,
+      p75Move:summary.status==='READY'?statistics.p75:null,minProfitableExit:profitFloor.minProfitableExitPrice,statistical,reach,floorBeyondCeiling,profitFloor};
   };
-  // A larger size may satisfy the user's absolute net-profit floor when the minimum business size
-  // cannot. This is bounded by the same pre-AI funds envelope and the target is still computed from
-  // the selected size's fee-adjusted floor, so the solver cannot use an infeasible distant TP.
+  // The smallest size decides whether a trade exists at all. If it cannot clear the profit floor the
+  // answer is NO_TRADE; offering a bigger size that clears the floor would be sizing to the outcome.
   const smallest=targetFor(quantities[0],horizons[0]);
-  const ceilingExceededAtMinimum=smallest.floorBeyondCeiling===true;
-  const statisticalEvidence:string[]=[];
+  const smallestEconomics=smallest.profitFloor;
   // Two questions that were previously answered with one message. Whether the smallest legal size can
-  // clear its own profit floor is arithmetic and binds in every mode (S06-T02). Whether the closed
-  // candle sample has ever moved that far is statistics, and statistics only bind in ENFORCE — under
-  // SHADOW it is recorded, because refusing here would let an unenforced sample act as a hard gate.
-  if(ceilingExceededAtMinimum)statisticalEvidence.push('HISTORICAL_TARGET_CEILING_EXCEEDED_AT_MINIMUM_QUANTITY');
+  // clear its own profit floor is arithmetic and binds in every mode (S06-T02). The calibrated reach
+  // probability remains SHADOW-able, but p50/p75 define the ordinary candidate domain: a floor beyond
+  // p75 is not silently promoted to a tail objective merely because probability enforcement is off.
+  if(!smallestEconomics.met)
+    return rejectAll('MIN_PROFIT_FLOOR_UNMET_AT_MINIMUM_QUANTITY',`MIN_NET_PROFIT_USD=${round(smallestEconomics.requiredNetProfitUsd,6)}`,
+      `ATTAINED_NET_PROFIT_USD=${round(smallestEconomics.expectedNetProfitUsd,6)}`);
+  const ceilingExceededAtMinimum=smallest.floorBeyondCeiling===true;
+  if(ceilingExceededAtMinimum&&enforceEconomics)
+    return rejectAll('HISTORICAL_TARGET_CEILING_EXCEEDED_AT_MINIMUM_QUANTITY',
+      `FLOOR_TARGET=${round(smallest.floorTarget,10)}`,`STATISTICAL_CEILING=${smallest.statisticalTarget==null?'UNPROVEN':round(smallest.statisticalTarget,10)}`);
+  const statisticalEvidence=ceilingExceededAtMinimum?['HISTORICAL_TARGET_CEILING_EXCEEDED_AT_MINIMUM_QUANTITY']:[];
 
-  const buildCandidate=(units:number,horizon:number,targetPrice:number,rangeTargets:number[]=[])=>{
+  const buildCandidate=(units:number,horizon:number,targetPrice:number,rangeTargets:number[]=[],targetBasis:TradePlanEconomics['targetBasis']='PROFIT_FLOOR_UNPROVEN',reachabilityBand?:{p50:number|null;p75:number|null})=>{
     const notional=units*quote.stepSize*entryPrice, margin=notional/leverage;
     const cost=estimateTradingCost({entryPrice,qty:units*quote.stepSize,direction:side,leverage,entryFeeRate:settings.takeProfit.entryFeeRate,
       expectedExitFeeRate:exitFeeRate,expectedSlippagePct:settings.takeProfit.slippageBufferPct,feeSafetyBufferPct:settings.takeProfit.feeSafetyBufferPct,
@@ -189,13 +214,16 @@ export function buildQuantityHorizonCandidates(input:{
     if(margin>Number(envelope.maxMarginUsd??0)+1e-8||notional>Number(envelope.maxNotionalUsd??0)+1e-8)blockers.push('QUANTITY_EXCEEDS_ENVELOPE');
     if(!(units*quote.stepSize>=quote.minQty-1e-12))blockers.push('QUANTITY_BELOW_MIN_QTY');
     if(notional+1e-9<quote.minNotional)blockers.push('NOTIONAL_BELOW_MIN');
-    if(enforceEconomics&&cost.expectedNetProfit+1e-8<cost.requiredNetProfit)blockers.push('ECONOMIC_MIN_NET_PROFIT_UNMET');
+    // Dollar economics is deterministic and belongs to the executable candidate contract in every
+    // mode. SHADOW applies to uncalibrated probability evidence, not to a target already known to miss
+    // its fee-adjusted minimum-net requirement.
+    if(cost.expectedNetProfit+1e-8<cost.requiredNetProfit)blockers.push('ECONOMIC_MIN_NET_PROFIT_UNMET');
+    if(targetBasis==='PROFIT_FLOOR_BEYOND_P75')blockers.push('TARGET_BEYOND_P75_REACHABILITY_BAND');
     if(side==='LONG'?targetPrice<=entryPrice:targetPrice>=entryPrice)blockers.push('TARGET_ON_WRONG_SIDE_OF_ENTRY');
     const targetMovePercent=entryPrice>0?Math.abs(targetPrice/entryPrice-1)*100:0;
     const reach=evaluateTargetReachability({rows:input.candles(reachabilityTimeframe(horizon),300) as never,side,horizonMinutes:horizon,
       targetMovePercent,lookbackBars:settings.tradeEconomics.reachabilityLookbackBars??180,minSamples:settings.tradeEconomics.reachabilityMinSamples??30,now});
     const probabilityKnown=reach.status==='READY'&&finite(reach.reachProbability);
-    if(enforceEconomics&&settings.tradeEconomics.historicalTpReachabilityEnabled&&probabilityKnown&&finite(reach.hardMaxMovePercent)&&targetMovePercent>(reach.hardMaxMovePercent as number)+1e-9)blockers.push('TP_HISTORICAL_REACHABILITY_UNMET');
     // A stale or missing sample is recorded in the economics as what it is; it refuses a candidate
     //    only where the account actually enforces the economic gate.
     if(enforceEconomics&&settings.tradeEconomics.historicalTpReachabilityEnabled&&reach.status==='STALE')blockers.push('TP_REACHABILITY_DATA_STALE');
@@ -214,6 +242,7 @@ export function buildQuantityHorizonCandidates(input:{
       reachSampleCount:reach.sampleCount,historicalHardMaxMovePercent:finite(reach.hardMaxMovePercent)?reach.hardMaxMovePercent:null,
       targetMovePercent:round(targetMovePercent,6),
       statisticalSource:probabilityKnown?`CLOSED_CANDLE_CACHE:${reach.timeframe}:${reach.sampleCount}`:null,
+      targetBasis,reachabilityP50MovePercent:reachabilityBand?.p50??null,reachabilityP75MovePercent:reachabilityBand?.p75??null,
       // The same comparison the ENFORCE gate above uses, stated as evidence in every mode: an operator
       // must be able to see "the sample never moved this far" without it being either a veto or a pass.
       targetVsStatisticalCeiling:!probabilityKnown||!finite(reach.hardMaxMovePercent)?'UNPROVEN'
@@ -226,25 +255,32 @@ export function buildQuantityHorizonCandidates(input:{
       clusterNotionalAfterUsd:round(input.risk.clusterNotionalAfterUsd+notional,6),
       limitingConstraints:[...new Set(input.risk.limitingConstraints)].slice(0,24),riskGeneration:input.risk.riskGeneration,
       snapshotHash:input.risk.snapshotHash,profileVersion:input.risk.profileVersion,humanSlotsAfter:input.risk.humanSlotsAfter+1}:null;
-    const payload={symbol,side,units,horizon,targetPrice:round(targetPrice,10),entryPrice:round(entryPrice,10),snapshotHash:risk?.snapshotHash??null};
     const range=rangeTargets.filter(value=>finite(value));
-    return {schemaVersion:'V396-PLAN-CANDIDATE-1',candidateId:stableId(payload),symbol,side,quantityUnits:units,quantitySteps:units,
-      notionalUsd:round(notional,6),marginUsd:round(margin,6),leverage,entryReferencePrice:round(entryPrice,10),targetPrice:round(targetPrice,10),
-      acceptableTargetRange:{min:round(side==='LONG'?Math.min(targetPrice,...range):Math.max(targetPrice,...range),10),
-        max:round(side==='LONG'?Math.max(targetPrice,...range):Math.min(targetPrice,...range),10)},
+    const target=TradePlanCandidateTargetSchema.parse({targetPrice:round(targetPrice,10),
+      acceptableTargetRange:{min:round(Math.min(targetPrice,...range),10),max:round(Math.max(targetPrice,...range),10)}});
+    const authorization:Omit<TradePlanCandidate,'candidateId'|'createdAt'>={schemaVersion:'V397-PLAN-CANDIDATE-2',symbol,side,quantityUnits:units,quantitySteps:units,
+      notionalUsd:round(notional,6),marginUsd:round(margin,6),leverage,entryReferencePrice:round(entryPrice,10),...target,
       entryTtlMinutes,
       targetHorizonMinutes:horizon,managementDurationMs:input.managementDurationMs,
       costs:{entryFeeUsd:round(cost.estimatedEntryFee,6),exitFeeUsd:round(cost.estimatedExitFee,6),slippageUsd:round(cost.slippageBuffer,6),
-        uncertaintyBufferUsd:round(cost.feeSafetyBuffer,6),fundingEstimateUsd:funding.amountUsd,fundingStatus:funding.status,
-        // No quote/USD conversion is asserted without a timestamped FX fact.
-        fxRateToQuote:null,costVersion:`fees:${settings.takeProfit.entryFeeRate}:${exitFeeRate}:${settings.takeProfit.slippageBufferPct}:${settings.takeProfit.feeSafetyBufferPct}:fx=UNPROVEN`},
-      economics,risk,evidenceRefs:[],executable:blockers.length===0,blockers:[...new Set(blockers)].slice(0,24),createdAt:now} as TradePlanCandidate;
+        uncertaintyBufferUsd:round(cost.feeSafetyBuffer,6),fundingEstimateUsd:funding.amountUsd??0,fundingStatus:funding.status,
+        fxRateToQuote:1,costVersion:costPolicy.costVersion},
+      economics,risk,evidenceRefs:[],executable:blockers.length===0,blockers:[...new Set(blockers)].slice(0,24)};
+    return{...authorization,candidateId:stableId('cand_v2',{identityFacts,authorization}),createdAt:now};
   };
+  const primaryHorizon=horizons.reduce((best,horizon)=>Math.abs(horizon-60)<Math.abs(best-60)?horizon:best,horizons[0]!);
+  const orderedHorizons=[...horizons].sort((a,b)=>(a===primaryHorizon?-1:b===primaryHorizon?1:Math.abs(a-60)-Math.abs(b-60)));
   for(const units of quantities){
-    for(const horizon of horizons){
+    for(const horizon of orderedHorizons){
       const priced=targetFor(units,horizon);
-      const targets=[priced.floorTarget,priced.statisticalTarget].filter((value,index,row):value is number=>finite(value)&&(row.indexOf(value)===index));
-      for(const targetPrice of targets)candidates.push(buildCandidate(units,horizon,targetPrice,targets));
+      const band=[priced.p50Target,priced.p75Target].filter((value,index,row):value is number=>finite(value)&&(row.indexOf(value)===index));
+      if(priced.reach.status==='READY'){
+        if(priced.floorBeyondCeiling)candidates.push(buildCandidate(units,horizon,priced.floorTarget,band,'PROFIT_FLOOR_BEYOND_P75',{p50:priced.p50Move,p75:priced.p75Move}));
+        else{
+          const ordinary=[{price:priced.p50Target,basis:'P50' as const},...(horizon===primaryHorizon?[{price:priced.p75Target,basis:'P75' as const}]:[])];
+          for(const target of ordinary)if(finite(target.price))candidates.push(buildCandidate(units,horizon,target.price,band,target.basis,{p50:priced.p50Move,p75:priced.p75Move}));
+        }
+      }else candidates.push(buildCandidate(units,horizon,priced.floorTarget,[priced.floorTarget],'PROFIT_FLOOR_UNPROVEN',{p50:null,p75:null}));
     }
   }
   const executable=candidates.filter(row=>row.executable);
@@ -278,22 +314,26 @@ export function buildQuantityHorizonCandidates(input:{
     }
     let computed:TradePlanCandidate|null=null;
     if(refusals.length===0&&priced){
-      // Statistics refuse a selection only where they are enforced; elsewhere they are recorded, so a
-      // SHADOW account cannot silently be running an ENFORCE policy through the selection path.
-      if(priced.floorBeyondCeiling===true&&enforceEconomics)refusals.push(`NO_FEASIBLE_TARGET_WITHIN_STATISTICAL_BOUND:floor=${priced.floorTarget},ceiling=${priced.statisticalTarget}`);
+      // SHADOW applies to uncalibrated reach probability, not to the system-owned ordinary target menu.
+      // A model-selected target may not turn p90/hard-max/tail evidence into executable authority.
+      if(priced.floorBeyondCeiling===true){
+        statisticalEvidence.push(`SELECTION_TARGET_BEYOND_STATISTICAL_CEILING:units=${units},horizon=${horizon},floor=${priced.floorTarget},ceiling=${priced.statisticalTarget}`);
+        refusals.push(`NO_FEASIBLE_TARGET_WITHIN_P75_REACHABILITY_BAND:floor=${priced.floorTarget},p75=${priced.statisticalTarget}`);
+      }
       else{
-        if(priced.floorBeyondCeiling===true)statisticalEvidence.push(`SELECTION_TARGET_BEYOND_STATISTICAL_CEILING:units=${units},horizon=${horizon},floor=${priced.floorTarget},ceiling=${priced.statisticalTarget}`);
-        else if(side==='LONG'?target+1e-12<priced.floorTarget:target-1e-12>priced.floorTarget){
+        if(side==='LONG'?target+1e-12<priced.floorTarget:target-1e-12>priced.floorTarget){
           const reason=`CANDIDATE_TARGET_BELOW_PROFIT_FLOOR:target=${target},${side==='LONG'?'<':'>'}floor=${priced.floorTarget}`;
-          if(enforceEconomics)refusals.push(reason);else statisticalEvidence.push(reason);
+          refusals.push(reason);
         }
         else if(priced.statisticalTarget!=null&&(side==='LONG'?target>priced.statisticalTarget+1e-12:target<priced.statisticalTarget-1e-12)){
-          if(enforceEconomics)refusals.push(`CANDIDATE_TARGET_BEYOND_STATISTICAL_BOUND:target=${target},bound=${priced.statisticalTarget}`);
-          else statisticalEvidence.push(`CANDIDATE_TARGET_BEYOND_STATISTICAL_BOUND:target=${target},bound=${priced.statisticalTarget}`);
+          statisticalEvidence.push(`CANDIDATE_TARGET_BEYOND_STATISTICAL_BOUND:target=${target},bound=${priced.statisticalTarget}`);
+          refusals.push(`CANDIDATE_TARGET_BEYOND_P75_REACHABILITY_BAND:target=${target},p75=${priced.statisticalTarget}`);
         }
-        if(refusals.length===0)computed=buildCandidate(units,horizon,target,[priced.floorTarget,priced.statisticalTarget].filter(finite) as number[]);
+        if(refusals.length===0)computed=buildCandidate(units,horizon,target,[priced.p50Target,priced.p75Target].filter(finite) as number[],
+          priced.reach.status==='READY'?'LEGACY_SELECTED_WITHIN_P75':'PROFIT_FLOOR_UNPROVEN',{p50:priced.p50Move,p75:priced.p75Move});
       }
     }
+    if(computed&&!computed.executable)refusals.push(...computed.blockers);
     if(computed&&refusals.length===0){
       if(!kept.some(row=>row.candidateId===computed!.candidateId))kept.push(computed);
       selectionOutcome={offered:true,refusals:[],fallbacks,resolved:{quantityUnits:units,targetPrice:target,targetHorizonMinutes:horizon,candidateId:computed.candidateId}};
@@ -303,9 +343,11 @@ export function buildQuantityHorizonCandidates(input:{
   }
   const bounds=horizons.map(horizon=>{const priced=targetFor(quantities[0],horizon);
     return{horizonMinutes:horizon,minTargetPrice:priced.floorTarget,maxTargetPrice:priced.statisticalTarget??null,status:priced.reach.status,sampleCount:priced.reach.sampleCount};});
-  return{schemaVersion:'V396-PLAN-CANDIDATE-SET-1',symbol,side,createdAt:now,expiresAt:input.envelopeExpiresAt,factVersion:input.factVersion,
-    candidateSetHash:stableId([...kept.map(row=>row.candidateId),selection?`${input.selection?.quantityUnits}:${input.selection?.targetHorizonMinutes}:${input.selection?.targetPrice}`:'']),
-    candidates:selected?[...kept.filter(row=>row.candidateId!==selected!.candidateId),selected]:kept.slice(0,18),
+  const published=selected?[...kept.filter(row=>row.candidateId!==selected!.candidateId),selected]:kept.slice(0,18);
+  return{schemaVersion:'V397-PLAN-CANDIDATE-SET-2',symbol,side,createdAt:now,expiresAt:input.envelopeExpiresAt,factVersion:input.factVersion,
+    candidateSetHash:stableId('cset_v2',{schemaVersion:'V397-PLAN-CANDIDATE-SET-2',symbol,side,identityFacts,
+      candidates:published.map(({createdAt,...authorization})=>authorization),selection:selection?{...selectionRequest,...selectionOutcome}:null}),
+    candidates:published,
     noTradeReasons:reasons,statisticalEvidence:[...new Set(statisticalEvidence)],quantityLadder:quantities,horizonLadder:horizons,rejectedCombinations:rejected,
     selection:selection?{...selectionRequest,...selectionOutcome}:undefined,feasibleQuantityUnits:{min:quantities[0],max:quantities[quantities.length-1]},
     bounds,entryTtlMinutes,managementDurationMs:input.managementDurationMs};

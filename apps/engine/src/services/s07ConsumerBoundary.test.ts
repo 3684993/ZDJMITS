@@ -60,9 +60,7 @@ describe('S07 production consumer boundary',()=>{
 
   it('the routine-call bound is enforced by the scheduler, not by a caller that means well',()=>{
     const scheduler=sourceOf('services/positionReviewScheduler.ts');
-    expect(scheduler).toContain("const reviewOnly=owner.ownerState==='HUMAN_MANAGED'");
-    expect(scheduler).toContain("reviewOnly&&owner.reviewEligible!==false");
-    expect(scheduler).toContain("ownerVersion:input.versions.ownerVersion,reviewOnly,planRef");
+    expect(scheduler).toContain("if(owner.ownerState!=='AI_ACTIVE')return{granted:false,reason:`OWNER_NOT_AI:${owner.ownerState}`,zeroRoutineCall:true}");
     expect(scheduler).toContain("'REVIEW_BUDGET_EXHAUSTED'");
     expect(scheduler).toContain("'REVIEW_FAILURE_BUDGET_EXHAUSTED'");
     expect(scheduler).toContain("'REVIEW_FACTS_UNCHANGED'");

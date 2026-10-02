@@ -1,6 +1,7 @@
 import {describe, expect, it} from 'vitest';
 import {
   ENTRY_CONVERSION_EVENT_TYPES,
+  ENTRY_EXECUTION_LINEAGE_EVENT_TYPES,
   EXECUTION_LABELS,
   EXECUTION_LINEAGE_GRACE_MS,
   entryConversionWindow,
@@ -207,6 +208,126 @@ describe('V3.9.6 Run -> execution outcome projection', () => {
     expect(late.lineageProven).toBe(false);
   });
 
+  it.each([
+    ['ENTRY_DATA_ERROR', undefined, 'DATA_ERROR: QUOTE_STALE', 'EVIDENCE'],
+    ['ENTRY_DECISION_BLOCKED', 'POST_AI_THESIS_FRESHNESS', 'JIT_MARKET_THESIS_DRIFT', 'JIT'],
+    ['ENTRY_DECISION_BLOCKED', 'POST_AI_DIRECTION_CONTRACT', 'DIRECTION_TIMEFRAME_ROLE_MISMATCH', 'AI_VERIFY'],
+  ])('projects %s / %s as a terminal refusal of the recorded PLACE', (type, stage, reason, expectedStage) => {
+    const events = [
+      ev(type, {brainRunId: undefined, runId: 'run-a', ...(stage ? {stage} : {}), reason}, 1),
+      ev('CANDIDATE_REJECTED', {reason, decision: 'REJECT_CANDIDATE', entryIntentCreated: false}, 2),
+    ];
+    for (const now of [at(3), T0 + EXECUTION_LINEAGE_GRACE_MS + 60_000]) {
+      const outcome = outcomeOf(events, [run({brainRunId: 'run-a'})], now);
+      expect(outcome).toMatchObject({executionState: 'NOT_SUBMITTED', decision: 'PLACE_LONG',
+        blockStage: expectedStage, blockReasons: [reason], lineageProven: true, submittedAt: null, orderId: null});
+      expect(outcome.executionLabel).toContain(reason!);
+    }
+  });
+
+  it.each([
+    ['QUOTE_STALE', 'EVIDENCE'],
+    ['DATA_ERROR: QUOTE_STALE', 'EVIDENCE'],
+    ['JIT_MARKET_THESIS_DRIFT', 'JIT'],
+    ['DIRECTION_TIMEFRAME_ROLE_MISMATCH', 'AI_VERIFY'],
+    ['UNMAPPED_DETERMINISTIC_REFUSAL', null],
+  ])('uses a terminal rejection alone without waiting for absent lineage: %s', (reason, blockStage) => {
+    const outcome = outcomeOf([ev('CANDIDATE_REJECTED', {reason, decision: 'REJECT_CANDIDATE'}, 1)], [run({brainRunId: 'run-a'})]);
+    expect(outcome).toMatchObject({executionState: 'NOT_SUBMITTED', blockStage, blockReasons: [reason], lineageProven: true});
+    expect(outcome.executionLabel).toContain(reason!);
+    expect(outcome.blockReasons).not.toContain('EXECUTION_LINEAGE_UNPROVEN');
+  });
+
+  it('retains the detailed thesis reasons after the coordinator writes its generic terminal rejection', () => {
+    const reason = 'JIT_MARKET_THESIS_DRIFT', reasons = ['MATERIAL_CLOSED_BAR_CHANGED', 'ENTRY_LOCATION_DRIFT_GT_0_35_ATR'];
+    const outcome = outcomeOf([
+      ev('ENTRY_DECISION_BLOCKED', {stage: 'POST_AI_THESIS_FRESHNESS', reason, reasons}, 1),
+      ev('CANDIDATE_REJECTED', {reason, decision: 'REJECT_CANDIDATE'}, 2),
+    ], [run({brainRunId: 'run-a'})]);
+    expect(outcome).toMatchObject({executionState: 'NOT_SUBMITTED', blockStage: 'JIT', blockReasons: [reason, ...reasons]});
+  });
+
+  it.each([
+    ['RESERVATION', 'RESERVED_QUOTE_MARGIN', 'RESERVATION_RESERVED_QUOTE_MARGIN', 'RESERVATION'],
+    ['PORTFOLIO_RISK_ADMISSION', 'MAX_GROSS_EXPOSURE', 'RISK_MAX_GROSS_EXPOSURE', 'PORTFOLIO_RISK'],
+    ['LIVE_RISK_ENVELOPE', 'FINAL_NOTIONAL_EXCEEDS_HEADROOM', 'RISK_FINAL_NOTIONAL_EXCEEDS_HEADROOM:MAX_GROSS_EXPOSURE,MAX_DIRECTION_EXPOSURE', 'JIT'],
+  ])('retains %s stage and detailed reasons through the coordinator terminal reason wrapper', (stage, reason, terminalReason, blockStage) => {
+    const details = ['LIMIT_ARITHMETIC_CONFIRMED', 'CURRENT_BOOK_OCCUPANCY'];
+    const outcome = outcomeOf([
+      ev('ENTRY_DECISION_BLOCKED', {stage, reason, reasons: details}, 1),
+      ev('CANDIDATE_REJECTED', {reason: terminalReason, decision: 'REJECT_CANDIDATE'}, 2),
+    ], [run({brainRunId: 'run-a'})]);
+    expect(outcome).toMatchObject({executionState: 'NOT_SUBMITTED', blockStage,
+      blockReasons: [terminalReason, reason, ...details]});
+  });
+
+  it('keeps an explicit stage authoritative over the generic classification of a repeated cause', () => {
+    const outcome = outcomeOf([
+      ev('ENTRY_DECISION_BLOCKED', {stage: 'LIVE_RISK_ENVELOPE', reason: 'QUOTE_STALE'}, 1),
+      ev('CANDIDATE_REJECTED', {reason: 'QUOTE_STALE'}, 2),
+    ], [run({brainRunId: 'run-a'})]);
+    expect(outcome).toMatchObject({executionState: 'NOT_SUBMITTED', blockStage: 'JIT', blockReasons: ['QUOTE_STALE']});
+  });
+
+  it.each([
+    ['RESERVATION', 'MAX_POSITIONS_REACHED', 'RISK_MAX_POSITIONS_REACHED'],
+    ['PORTFOLIO_RISK_ADMISSION', 'MAX_GROSS_EXPOSURE', 'RISK_MAX_GROSS_EXPOSURE_OTHER'],
+    ['LIVE_RISK_ENVELOPE', 'MAX_GROSS_EXPOSURE', 'RISK_MAX_DIRECTION_EXPOSURE:MAX_GROSS_EXPOSURE'],
+  ])('does not mislabel an unrelated terminal refusal with a prior %s stage', (stage, reason, terminalReason) => {
+    const outcome = outcomeOf([
+      ev('ENTRY_DECISION_BLOCKED', {stage, reason, reasons: ['PRIOR_DETAIL']}, 1),
+      ev('CANDIDATE_REJECTED', {reason: terminalReason}, 2),
+    ], [run({brainRunId: 'run-a'})]);
+    expect(outcome).toMatchObject({executionState: 'NOT_SUBMITTED', blockStage: null, blockReasons: [terminalReason]});
+  });
+
+  it.each(['RESERVATION_RESERVED_QUOTE_MARGIN', 'RISK_MAX_GROSS_EXPOSURE', 'RISK_FINAL_NOTIONAL_EXCEEDS_HEADROOM:MAX_GROSS_EXPOSURE'])(
+    'does not invent an explicit layer from a first terminal wrapper alone: %s', reason => {
+      const outcome = outcomeOf([ev('CANDIDATE_REJECTED', {reason}, 1)], [run({brainRunId: 'run-a'})]);
+      expect(outcome).toMatchObject({executionState: 'NOT_SUBMITTED', blockStage: null, blockReasons: [reason]});
+    });
+
+  it('keeps native model rejections decision-only even when their text matches a system refusal', () => {
+    for (const reason of ['QUOTE_STALE', 'JIT_MARKET_THESIS_DRIFT', 'DIRECTION_TIMEFRAME_ROLE_MISMATCH']) {
+      const outcome = outcomeOf([ev('CANDIDATE_REJECTED', {reason}, 1)], [run({brainRunId: 'run-a', decision: 'REJECT_CANDIDATE'})]);
+      expect(outcome).toMatchObject({executionState: 'DECISION_ONLY', blockStage: null, blockReasons: []});
+    }
+  });
+
+  it('never assigns an unrelated explicit run id to the single-run fallback or another run on the same symbol', () => {
+    const events = [
+      ev('ENTRY_DATA_ERROR', {brainRunId: 'unrelated', reason: 'QUOTE_STALE'}, 1),
+      ev('CANDIDATE_REJECTED', {brainRunId: 'unrelated', reason: 'JIT_MARKET_THESIS_DRIFT'}, 2),
+      ev('CANDIDATE_REJECTED', {brainRunId: 'run-b', reason: 'DIRECTION_TIMEFRAME_ROLE_MISMATCH'}, 3),
+    ];
+    const outcomes = projectRunExecutionOutcomes(events, [run({brainRunId: 'run-a'}), run({brainRunId: 'run-b'})], at(60), 'run-a');
+    expect(outcomes.get('run-a')).toMatchObject({executionState: 'EXECUTING', blockReasons: [], lineageProven: false});
+    expect(outcomes.get('run-b')).toMatchObject({executionState: 'NOT_SUBMITTED', blockStage: 'AI_VERIFY',
+      blockReasons: ['DIRECTION_TIMEFRAME_ROLE_MISMATCH']});
+  });
+
+  it.each([['submit', 'SUBMITTED'], ['partial', 'PARTIALLY_FILLED'], ['fill', 'FILLED']] as const)(
+    'preserves verified %s facts over a later rejection', (until, executionState) => {
+      const outcome = outcomeOf([
+        ...chain({until}),
+        ev('ENTRY_DATA_ERROR', {reason: 'DATA_ERROR: QUOTE_STALE'}, 11),
+        ev('CANDIDATE_REJECTED', {reason: 'JIT_MARKET_THESIS_DRIFT'}, 12),
+      ], [run({brainRunId: 'run-a'})]);
+      expect(outcome).toMatchObject({executionState, orderId: 'entry_intent_1', exchangeOrderId: '9001', blockStage: null, blockReasons: []});
+    });
+
+  it('allows an identified fill to supersede a prior terminal rejection without crediting another run', () => {
+    const events = [
+      ...chain({until: 'intent'}),
+      ev('CANDIDATE_REJECTED', {reason: 'JIT_MARKET_THESIS_DRIFT'}, 6),
+      ev('ENTRY_FILLED', {brainRunId: 'run-b', intentId: 'intent_1', orderId: 'entry_intent_1', exchangeOrderId: '9001'}, 7),
+    ];
+    const outcomes = projectRunExecutionOutcomes(events, [run({brainRunId: 'run-a'}), run({brainRunId: 'run-b'})], at(60));
+    expect(outcomes.get('run-a')).toMatchObject({executionState: 'FILLED', firstFillAt: at(7), blockStage: null, blockReasons: []});
+    expect(outcomes.get('run-b')).toMatchObject({executionState: 'EXECUTING', firstFillAt: null, orderId: null});
+    expect(outcomes.get('run-a')!.inconsistentFacts.join('|')).toContain('does not own intent_1');
+  });
+
   it('EO-09a a symptom headline never hides the cause the layer computed', () => {
     const outcome = outcomeOf([
       ev('ENTRY_DECISION_BLOCKED', {stage: 'TRADE_PLAN', reasons: ['PLAN_SIDE_NOT_EXECUTABLE:SHORT', 'CANDIDATE_SET_MIN_PROFIT_FLOOR_UNMET_AT_MINIMUM_QUANTITY']}, 1),
@@ -325,6 +446,18 @@ describe('V3.9.6 entry conversion funnel', () => {
   it('EO-14 the funnel reads exactly the event types the projection is built from', () => {
     const produced = new Set(chain().map((event) => event.type));
     for (const type of produced) expect(ENTRY_CONVERSION_EVENT_TYPES, `chain event ${type} must be readable by the funnel`).toContain(type);
+    expect(ENTRY_EXECUTION_LINEAGE_EVENT_TYPES).toContain('ENTRY_DATA_ERROR');
+    expect(ENTRY_CONVERSION_EVENT_TYPES).toContain('ENTRY_DATA_ERROR');
+  });
+
+  it('counts explicit Entry data errors once at the evidence stage alongside their terminal rejection event', () => {
+    const window = entryConversionWindow([
+      primary('run-a', 'PLACE_LONG', 1),
+      ev('ENTRY_DATA_ERROR', {reason: 'DATA_ERROR: QUOTE_STALE'}, 2),
+      ev('CANDIDATE_REJECTED', {reason: 'DATA_ERROR: QUOTE_STALE'}, 3),
+    ], {since: T0, until: at(60)});
+    expect(window.blocked).toEqual([{stage: 'EVIDENCE', reason: 'DATA_ERROR: QUOTE_STALE', count: 1}]);
+    expect(window).toMatchObject({place: 1, orderSubmitted: 0, topDropStage: 'EVIDENCE', topDropReason: 'DATA_ERROR: QUOTE_STALE'});
   });
 
   it('EO-15 a fill written without a run id still counts for the run that created the order', () => {

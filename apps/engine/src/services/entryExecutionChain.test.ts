@@ -1,5 +1,5 @@
 import {describe, expect, it} from 'vitest';
-import {harness} from './tradingQualityTestHarness.js';
+import {harness,systemCandidateDecision} from './tradingQualityTestHarness.js';
 import {projectRunExecutionOutcomes} from './runExecutionOutcome.js';
 
 const fixtureSymbol = '4USDT';
@@ -8,15 +8,9 @@ const RUN = 'chain-run';
 /** A Primary answer that passes every hard gate, so the only variable left is the chain itself. */
 function armed(over: Record<string, unknown> = {}) {
   const h = harness();
-  const quote = h.state.snapshots.get(fixtureSymbol)!.quote;
-  (h.ai as any).decide.mockImplementation(async () => ({
+  (h.ai as any).decide.mockImplementation(async (packet:any) => ({
     runId: RUN,
-    decision: {
-      ...h.supplied, decision: 'PLACE_LONG', tradeSide: 'LONG', direction: 'LONG', structureDirection: 'LONG',
-      quantityUnits: 1000, idealPrice: Number(quote.bid),
-      acceptablePriceRange: {min: Number(quote.bid), max: Number(quote.ask) + Number(quote.tickSize) * 10},
-      horizonMinutes: 3, ...over,
-    },
+    decision: systemCandidateDecision(packet,h.supplied,'LONG',over),
   }));
   return h;
 }
@@ -106,6 +100,8 @@ it('a throwing telemetry subscriber cannot alter the real conversion/submit chai
   await h.run();expect(h.ai.decide).toHaveBeenCalledOnce();expect(h.exchange.placeEntry).toHaveBeenCalledOnce();
   expect(h.state.entryReservations.size).toBe(1);expect(h.state.entryIntents.size).toBe(1);expect(h.state.entryOrders.size).toBe(1);
   const observation=h.events.find((row:any)=>row.type==='FROZEN_CHOICE_CONVERSION_OBSERVED')!.payload as any;
-  expect(observation).toMatchObject({side:'LONG',selectedQuantityUnits:1000,selectedHorizonMinutes:3,conversion:'CONVERTED'});
+  const intent=[...h.state.entryIntents.values()][0] as any;
+  expect(observation).toMatchObject({side:'LONG',selectedQuantityUnits:intent.quantityUnits,
+    selectedHorizonMinutes:3,conversion:'CONVERTED'});
   expect(outcome(h.events).executionState).toBe('SUBMITTED');
 });

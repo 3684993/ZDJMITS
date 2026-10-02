@@ -55,13 +55,23 @@ export const PortfolioIntelligenceSettingsSchema=z.object({
   /** Long-only risk reductions, independently auditable from generic tier sizing. */
   altLongMarginFactors:z.record(z.string(),z.number().positive().max(1)).default({CORE:1,LIQUID_ALT:.65,SPECULATIVE:.35,NEW_LISTING:.1}),
   altLongLeverageCaps:z.record(z.string(),z.number().int().positive().max(125)).default({CORE:20,LIQUID_ALT:8,SPECULATIVE:3,NEW_LISTING:1}),
-  dynamicMarginEnabled:z.boolean().default(true),baseMarginUsd:z.number().positive().default(200),minMarginUsd:z.number().min(.01).default(1),maxMarginPerPositionUsd:z.number().positive().default(500),maxEquityPct:z.number().positive().max(1).default(.1),
+  dynamicMarginEnabled:z.boolean().default(true),baseMarginUsd:z.number().positive().default(200),minMarginUsd:z.number().min(.01).default(1),
+  /**
+   * V3.9.7 sizing authority. These are initial-margin amounts, never notional amounts. A new Entry
+   * below the business floor is not a smaller trade; it is NO_TRADE. The preferred amount is only
+   * offered when the live capacity can fund it without weakening any risk limit.
+   */
+  businessMinInitialMarginUsd:z.number().positive().default(100),preferredInitialMarginUsd:z.number().positive().default(200),
+  maxMarginPerPositionUsd:z.number().positive().default(500),maxEquityPct:z.number().positive().max(1).default(.1),
   tierMarginFactors:z.record(z.string(),z.number().nonnegative()).default({CORE:1,LIQUID_ALT:.8,SPECULATIVE:.45,NEW_LISTING:.3,RESTRICTED:0}),
   dynamicLeverageEnabled:z.boolean().default(true),globalMaxLeverage:z.number().int().positive().max(125).default(20),tierMaxLeverage:z.record(z.string(),z.number().int().positive().max(125)).default({CORE:20,LIQUID_ALT:12,SPECULATIVE:5,NEW_LISTING:3,RESTRICTED:1}),
   marginMode:MarginModeSchema.default('AUTO'),tierMarginModes:z.record(z.string(),MarginModeSchema).default({}),symbolMarginModes:z.record(z.string(),MarginModeSchema).default({}),
   locationProtectionEnabled:z.boolean().default(true),minLocationScore:z.number().min(0).max(100).default(45),maxEma21DistanceAtr:z.number().positive().default(2),maxBbLong:z.number().default(.9),minBbShort:z.number().default(.1),maxImpulseAtr:z.number().positive().default(2),
   maxSameUnderlyingPositions:z.number().int().positive().default(1),maxLongExposurePct:z.number().positive().max(1).default(.5),maxShortExposurePct:z.number().positive().max(1).default(.5),maxSpeculativeExposurePct:z.number().positive().max(1).default(.2),maxSpeculativePositions:z.number().int().positive().default(2),maxQuoteAssetMarginUsagePct:z.number().positive().max(1).default(.8),
   symbolOverrides:z.record(z.string(),z.object({riskTier:AssetRiskTierSchema.optional(),directionPolicy:DirectionPolicySchema.optional(),maxMarginUsd:z.number().positive().optional(),maxLeverage:z.number().int().positive().max(125).optional(),quoteAssetPolicy:QuoteAssetPolicySchema.optional(),marginMode:MarginModeSchema.optional()}).partial()).default({}),
+}).superRefine((value,ctx)=>{
+  if(value.preferredInitialMarginUsd<value.businessMinInitialMarginUsd)ctx.addIssue({code:z.ZodIssueCode.custom,path:['preferredInitialMarginUsd'],message:'preferredInitialMarginUsd must be >= businessMinInitialMarginUsd'});
+  if(value.maxMarginPerPositionUsd<value.businessMinInitialMarginUsd)ctx.addIssue({code:z.ZodIssueCode.custom,path:['maxMarginPerPositionUsd'],message:'maxMarginPerPositionUsd must fund businessMinInitialMarginUsd'});
 });
 export type PortfolioIntelligenceSettings=z.infer<typeof PortfolioIntelligenceSettingsSchema>;
 

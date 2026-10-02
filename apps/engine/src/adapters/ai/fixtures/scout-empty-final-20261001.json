@@ -1,0 +1,28 @@
+{
+  "redactionNote": "Reasoning payload deliberately omitted. Envelope fields and token counts are original; placeholder is not model output.",
+  "response": {
+    "id": "chatcmpl-vcw0vducn7n2w8pqzrmfso",
+    "object": "chat.completion",
+    "model": "qwen/qwen3.5-9b",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "",
+          "reasoning_content": "[REDACTED_REASONING_PAYLOAD]",
+          "tool_calls": []
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 3633,
+      "completion_tokens": 361,
+      "total_tokens": 3994,
+      "completion_tokens_details": {
+        "reasoning_tokens": 360
+      }
+    }
+  }
+}

@@ -20,7 +20,8 @@ export type PreAiPlanFeasibility={symbol:string;checkedAt:number;noHardExecutabl
   sides:{LONG:PreAiPlanFeasibilitySide;SHORT:PreAiPlanFeasibilitySide}};
 
 export function evaluatePreAiPlanFeasibility(input:{symbol:string;now:number;envelope:PreAiExecutionEnvelope;
-  settings:{takeProfit:Parameters<typeof minimumQuantityProfitFloor>[0]['takeProfit'];tradeEconomics?:{admissionMode?:string}}}):PreAiPlanFeasibility{
+  settings:{takeProfit:Parameters<typeof minimumQuantityProfitFloor>[0]['takeProfit'];tradeEconomics?:{admissionMode?:string};
+    portfolioIntelligence?:{businessMinInitialMarginUsd?:number;preferredInitialMarginUsd?:number}}}):PreAiPlanFeasibility{
   const {symbol,now,envelope,settings}=input;
   const quote={tickSize:Number(envelope.exchange.tickSize),stepSize:Number(envelope.exchange.stepSize),minQty:Number(envelope.exchange.minQty),minNotional:Number(envelope.exchange.minNotional)};
   const probe=(side:'LONG'|'SHORT'):PreAiPlanFeasibilitySide=>{
@@ -37,8 +38,10 @@ export function evaluatePreAiPlanFeasibility(input:{symbol:string;now:number;env
       Number(capacity.maxMarginUsd??Number.POSITIVE_INFINITY)*envelope.leverage/(quote.stepSize*entryPrice));
     // The probe sizes at the same legal minimum the plan would use. It never grows a quantity to make
     // the answer come out yes - that would be sizing to the outcome, which S06-T02 forbids.
-    const ladder=quantityLadder(1,quantityCeiling,quote.stepSize,entryPrice,quote.minNotional);
-    if(!ladder.length)return{executable:false,reasons:['NO_LEGAL_QUANTITY_WITHIN_ENVELOPE'],statisticalEvidence:[],quantityUnits:0,floorTargetPrice:null};
+    const ladder=quantityLadder(Number(capacity.minQuantityUnits??1),quantityCeiling,quote.stepSize,entryPrice,quote.minNotional,{leverage:envelope.leverage,
+      businessMinInitialMarginUsd:Number(settings.portfolioIntelligence?.businessMinInitialMarginUsd??100),
+      preferredInitialMarginUsd:Number(settings.portfolioIntelligence?.preferredInitialMarginUsd??200)});
+    if(!ladder.length)return{executable:false,reasons:['BUSINESS_MIN_INITIAL_MARGIN_UNAVAILABLE'],statisticalEvidence:[],quantityUnits:0,floorTargetPrice:null};
     const floor=minimumQuantityProfitFloor({entryPrice,quantityUnits:ladder[0],stepSize:quote.stepSize,direction:side,leverage:envelope.leverage,tickSize:quote.tickSize,takeProfit:settings.takeProfit});
     if(!floor.met)return{executable:false,reasons:['MIN_PROFIT_FLOOR_UNMET_AT_MINIMUM_QUANTITY',`MIN_NET_PROFIT_USD=${floor.requiredNetProfitUsd}`,`ATTAINED_NET_PROFIT_USD=${floor.expectedNetProfitUsd}`],
       statisticalEvidence:[],quantityUnits:ladder[0],floorTargetPrice:floor.floorTargetPrice};

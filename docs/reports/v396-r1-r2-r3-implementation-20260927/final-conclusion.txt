@@ -1,3 +1,0 @@
-V396_R1_R2_R3_IMPLEMENTED_LOCAL_PASS
-
-R1/R2 remain implemented from 902d83d. The accepted R3 timing contract and focused follow-up verification are documented in ../v396-r3-human-decision-20260927/REPORT.md. No runtime acceptance, deployment, or lifecycle action was performed.

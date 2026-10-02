@@ -1,9 +1,10 @@
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { closedCandleGap } from '@zdj/core';
 import { BinancePublicMarketDataProvider } from './BinancePublicMarketDataProvider.js';
 
 const PERIODS = { '1m': 60_000, '5m': 300_000, '15m': 900_000 } as const;
 type Frame = keyof typeof PERIODS;
+afterEach(() => vi.useRealTimers());
 
 /** Builds a WS-shaped closed series ending on the boundary before `now`, optionally punching holes. */
 function series(timeframe: Frame, count: number, now: number, skipOffsets: number[] = []) {
@@ -141,5 +142,45 @@ describe('V3.9.5 live technical hydration cannot pin a broken sequence', () => {
     expect(healed.technical['1m']).toBeDefined();
     expect(healed.technical['1m'].barCloseTime).toBe(Math.floor(now / 60_000) * 60_000 - 1);
     vi.useRealTimers();
+  });
+});
+
+describe('targeted repair covers the whole retained candle window', () => {
+  it.each(['1m', '5m', '15m'] as Frame[])('%s fills an old retained hole with one bounded REST request', async (timeframe) => {
+    vi.useFakeTimers();
+    const now = 1_800_000_020_000, period = PERIODS[timeframe], end = Math.floor(now / period) * period;
+    vi.setSystemTime(now);
+    const hole = end - 280 * period;
+    const json = vi.fn(async (path: string) => {
+      const limit = Number(new URLSearchParams(path.split('?')[1]).get('limit'));
+      // Binance's latest window includes the candle still in progress.
+      return [...restRows(timeframe, limit - 1, now), [end, '100', '101', '99', '100', '10', end + period - 1, '1000', 10]];
+    });
+    const provider = providerWith(json), stream = (provider as any).stream;
+    const current = { ...series(timeframe, 1, now)[0], openTime: end, closeTime: end + period - 1, isClosed: false };
+    stream.seedCandles('BTCUSDT', timeframe, [...series(timeframe, 300, now, [hole]), current]);
+    expect(closedCandleGap(stream.candleSeries('BTCUSDT', period * 2, timeframe), timeframe, now).missing).toBe(1);
+
+    expect(await provider.repairCandles('BTCUSDT', timeframe)).toMatchObject({ ok: true, missing: 0, latestClosedAtBoundary: true });
+    expect(json).toHaveBeenCalledExactlyOnceWith(`/fapi/v1/klines?symbol=BTCUSDT&interval=${timeframe}&limit=300`);
+    const repaired = stream.candleSeries('BTCUSDT', period * 2, timeframe);
+    expect(repaired).toHaveLength(300);
+    expect(repaired.find((row: any) => row.openTime === hole)).toMatchObject({ source: 'BINANCE_REST', isClosed: true });
+    expect(repaired.at(-1)).toMatchObject({ openTime: end, isClosed: false });
+  });
+
+  it('preserves the missing history when the REST route returns HTTP 451', async () => {
+    vi.useFakeTimers();
+    const now = 1_800_000_020_000;
+    vi.setSystemTime(now);
+    const json = vi.fn(async () => { throw new Error('Binance HTTP 451: Service unavailable from a restricted location'); });
+    const provider = providerWith(json), stream = (provider as any).stream;
+    stream.seedCandles('BTCUSDT', '1m', series('1m', 300, now, [Math.floor(now / 60_000) * 60_000 - 280 * 60_000]));
+    const before = stream.candleSeries('BTCUSDT', 120_000, '1m').map((row: any) => ({ ...row }));
+    await expect(provider.repairCandles('BTCUSDT', '1m')).rejects.toThrow('HTTP 451');
+    const after = stream.candleSeries('BTCUSDT', 120_000, '1m');
+    expect(after).toEqual(before);
+    expect(closedCandleGap(after, '1m', now)).toMatchObject({ ok: false, missing: 1, latestClosedAtBoundary: true });
+    expect(() => provider.hydrateLiveTechnical({ symbol: 'BTCUSDT', technical: {} } as any)).toThrow('1m closed candle gap');
   });
 });

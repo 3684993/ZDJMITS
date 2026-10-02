@@ -1,6 +1,6 @@
 {
   "name": "@zdj/core",
-  "version": "3.9.6",
+  "version": "3.9.7",
   "private": true,
   "type": "module",
   "main": "dist/index.js",
@@ -11,7 +11,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@zdj/contracts": "3.9.4"
+    "@zdj/contracts": "3.9.7"
   },
   "devDependencies": {
     "vitest": "^3.2.4"

@@ -3,6 +3,7 @@ import type { MarketDataProvider } from '../types.js';
 import type { RuntimeState } from '../state/runtimeState.js';
 import type { EventBus } from '../events/eventBus.js';
 import { buildTechnicalCard, resolveUnderlying } from '@zdj/core';
+import { eipEvidenceError, EIP_REFERENCE_SYMBOLS } from './eipDependencies.js';
 
 async function mapLimit<T,R>(items:T[],limit:number,fn:(item:T)=>Promise<R>):Promise<R[]>{
   const out=new Array<R>(items.length); let cursor=0;
@@ -10,6 +11,8 @@ async function mapLimit<T,R>(items:T[],limit:number,fn:(item:T)=>Promise<R>):Pro
   await Promise.all(Array.from({length:Math.min(limit,items.length)},()=>worker())); return out;
 }
 const budgetDeferred=(error:unknown)=>String(error instanceof Error?error.message:error).startsWith('BINANCE_REQUEST_BUDGET_DEFERRED:');
+type KlineRepairState={symbol:string;timeframe:Timeframe;attempt:number;nextRetryAt:number;lastAttemptAt:number;lastSuccessAt:number|null;lastError:string|null;httpStatus:number|null};
+type KlineRepairFailure={symbol:string;timeframe:Timeframe;at:number;reason:string;httpStatus:number|null};
 export class MarketDataHub {
   private snapshotFlights=new Map<string,Promise<MarketSymbolSnapshot>>();
   private rulesUpdatedAt=new Map<string,number>();
@@ -19,22 +22,25 @@ export class MarketDataHub {
   private liveTechnicalFailures=new Set<string>();
   private technicalBlocked=new Map<string,{timeframe:string;sequence:string;at:number}>();
   private targetedRefreshDeferredUntil=0;
+  private dependencyFlights=new Map<string,Promise<boolean>>();
+  private dependencyRetryAt=new Map<string,number>();
   private rememberFailure(key:string,symbol:string,timeframe:string,sequence:string){this.liveTechnicalFailures.add(key);this.technicalBlocked.set(`${symbol}:${timeframe}`,{timeframe,sequence,at:Date.now()});while(this.liveTechnicalFailures.size>512)this.liveTechnicalFailures.delete(this.liveTechnicalFailures.values().next().value!);while(this.technicalBlocked.size>128)this.technicalBlocked.delete(this.technicalBlocked.keys().next().value!);}
   private loadSnapshot(symbol:string,epoch=this.epoch(symbol)){const key=`${symbol}:${epoch}`,existing=this.snapshotFlights.get(key);if(existing)return existing;const flight=this.provider.getSnapshot(symbol).finally(()=>this.snapshotFlights.delete(key));this.snapshotFlights.set(key,flight);return flight;}
   private recovery=new Map<string,{attempt:number;nextRetryAt:number;lastSuccessAt:number|null;reason:string|null}>();
-  private klineRepairAt=new Map<string,number>();
+  private klineRepairState=new Map<string,KlineRepairState>();
+  private klineRecovery={attempts:0,successes:0,failures:0,lastFailure:null as KlineRepairFailure|null};
   /**
    * Frames that a candle-only reload can fix. A stale technical card is the expected
    * *consequence* of a WebSocket hole, so it must not disqualify the targeted path - that
    * is exactly when a whole-symbol snapshot reload per symbol would become a request storm.
    * A missing snapshot or a stale quote/book still needs the normal full reload.
    */
-  private repairableSequenceFrames(symbol:string,now=Date.now()):Timeframe[]{
-    const frames=[...new Set([...this.technicalBlocked.keys()].filter(key=>key.startsWith(`${symbol}:`)).map(key=>key.slice(symbol.length+1) as Timeframe))];
+  private repairableSequenceFrames(symbol:string,now=Date.now(),regimeOnly=false):Timeframe[]{
+    const frames=[...new Set([...this.technicalBlocked.keys()].filter(key=>key.startsWith(`${symbol}:`)).map(key=>key.slice(symbol.length+1) as Timeframe))].filter(tf=>!regimeOnly||tf==='15m');
     if(!frames.length)return [];
     const snapshot=this.state.snapshots.get(symbol);
     if(!snapshot)return [];
-    if(now-Number(snapshot.quote?.ts??0)>15_000||now-Number(snapshot.orderBook?.ts??0)>15_000)return [];
+    if(now-Number(snapshot.quote?.ts??0)>15_000||(!regimeOnly&&now-Number(snapshot.orderBook?.ts??0)>15_000))return [];
     return frames;
   }
   /** A frame is only released when a rebuilt card has actually been written for it. */
@@ -49,26 +55,39 @@ export class MarketDataHub {
   private async repairSequence(symbol:string,frames:Timeframe[]){
     const outcome:Array<{timeframe:Timeframe;ok:boolean;missing:number;reason:string|null}>=[];
     for(const timeframe of frames){
-      const key=`${symbol}:${timeframe}`,now=Date.now(),last=this.klineRepairAt.get(key);
-      if(last&&now-last<60_000){outcome.push({timeframe,ok:false,missing:0,reason:'REPAIR_COOLDOWN'});continue;}
-      this.klineRepairAt.set(key,now);
+      const key=`${symbol}:${timeframe}`,now=Date.now(),prior=this.klineRepairState.get(key);
+      if(prior&&now<prior.nextRetryAt){outcome.push({timeframe,ok:false,missing:0,reason:prior.lastError??'REPAIR_COOLDOWN'});continue;}
+      const repair:KlineRepairState={symbol,timeframe,attempt:(prior?.attempt??0)+1,nextRetryAt:now+60_000,lastAttemptAt:now,lastSuccessAt:prior?.lastSuccessAt??null,lastError:prior?.lastError??null,httpStatus:prior?.httpStatus??null};
+      this.klineRepairState.set(key,repair);
+      while(this.klineRepairState.size>512)this.klineRepairState.delete(this.klineRepairState.keys().next().value!);
+      this.klineRecovery.attempts++;
+      const failed=(reason:string)=>{
+        repair.lastError=reason;repair.httpStatus=Number(reason.match(/HTTP (\d+)/)?.[1]??0)||null;
+        this.klineRecovery.failures++;this.klineRecovery.lastFailure={symbol,timeframe,at:Date.now(),reason,httpStatus:repair.httpStatus};
+      };
       try{
         const facts=await this.provider.repairCandles?.(symbol,timeframe),ok=Boolean(facts?.ok&&facts.latestClosedAtBoundary);
+        if(ok){repair.attempt=0;repair.lastSuccessAt=Date.now();repair.lastError=null;repair.httpStatus=null;this.klineRecovery.successes++;}
+        else failed('STILL_DISCONTINUOUS');
         outcome.push({timeframe,ok,missing:facts?.missing??0,reason:ok?null:'STILL_DISCONTINUOUS'});
       }catch(error){
         const message=error instanceof Error?error.message:String(error);
+        failed(message);
         outcome.push({timeframe,ok:false,missing:0,reason:message});
-        if(budgetDeferred(error))this.klineRepairAt.set(key,now+120_000);
         break;
+      }finally{
+        // Freeze cooldown at completion, retaining the failure evidence while waiting.
+        repair.nextRetryAt=Date.now()+(budgetDeferred(repair.lastError)?180_000:60_000);
       }
     }
-    const repaired=outcome.filter(row=>row.ok).map(row=>row.timeframe);
+    const repaired=outcome.filter(row=>row.ok).map(row=>row.timeframe),complete=repaired.length===frames.length;
     if(repaired.length){
       const snapshot=this.state.snapshots.get(symbol),epoch=this.epoch(symbol);
       if(snapshot){try{this.writeTechnical(symbol,epoch,this.provider.hydrateLiveTechnical?.(snapshot),snapshot);}catch{/* still blocked; the next tick reports it again */}}
-      this.events.publish('MARKET_KLINE_SEQUENCE_REPAIRED',{symbol,frames:frames.map(String),repaired,outcome},symbol);
-    }else this.events.publish('MARKET_KLINE_SEQUENCE_REPAIR_FAILED',{symbol,frames:frames.map(String),outcome},symbol);
-    return repaired.length>0;
+      this.events.publish('MARKET_KLINE_SEQUENCE_REPAIRED',{symbol,frames:frames.map(String),repaired,complete,outcome},symbol);
+    }
+    if(!complete)this.events.publish('MARKET_KLINE_SEQUENCE_REPAIR_FAILED',{symbol,frames:frames.map(String),repaired,complete,outcome},symbol);
+    return{complete,reason:outcome.find(row=>!row.ok)?.reason??null,nextRetryAt:Math.max(0,...frames.map(tf=>this.klineRepairState.get(`${symbol}:${tf}`)?.nextRetryAt??0))};
   }
   constructor(private provider:MarketDataProvider,private state:RuntimeState,private events:EventBus){}
   /** Membership ownership is explicit; stale async responses may only write their captured epoch. */
@@ -77,6 +96,8 @@ export class MarketDataHub {
     for(const symbol of new Set([...this.retained,...next]))if(this.retained.has(symbol)!==next.has(symbol))this.ownershipEpoch.set(symbol,(this.ownershipEpoch.get(symbol)??0)+1);
     this.retained=next;this.retentionManaged=true;this.provider.setLiveSymbols?.([...next]);
     for(const symbol of [...this.state.snapshots.keys()])if(!next.has(symbol)){this.state.snapshots.delete(symbol);this.recovery.delete(symbol);this.rulesUpdatedAt.delete(symbol);}
+    for(const [key,repair] of this.klineRepairState)if(!next.has(repair.symbol))this.klineRepairState.delete(key);
+    for(const key of this.dependencyRetryAt.keys()){const separator=key.lastIndexOf(':'),symbol=key.slice(0,separator),epoch=Number(key.slice(separator+1));if(!this.canWrite(symbol,epoch))this.dependencyRetryAt.delete(key);}
   }
   retentionSymbols(){return new Set(this.retained);}
   /** Discovery is deliberately light-weight: it must not alter retention or hydrate cards. */
@@ -88,35 +109,112 @@ export class MarketDataHub {
   async hydrateSymbols(symbols:string[]){return this.refreshSymbols(symbols);}
   private epoch(symbol:string){return this.ownershipEpoch.get(symbol)??0;}
   private canWrite(symbol:string,epoch:number){return !this.retentionManaged||(this.retained.has(symbol)&&this.epoch(symbol)===epoch);}
-  async tick(){
-    await this.provider.tick?.();
-    for(const [symbol,snapshot] of this.state.snapshots){
-      const epoch=this.epoch(symbol);if(!this.canWrite(symbol,epoch))continue;
-      let live=snapshot;
-      try{
-        // Quote/book facts feed management independently of strict Entry cards.
-        live=this.provider.hydrateLiveMarket?.(snapshot)??this.provider.hydrateLive?.(snapshot)??snapshot;
-        if(live&&this.canWrite(symbol,epoch))this.state.snapshots.set(symbol,live);
-      }catch(error){
-        // One malformed/gapped stream must not abort the global market tick.
-        // Keep the strict symbol-level readiness failure visible and let the
-        // normal recovery loop refresh that symbol independently.
-        this.events.publish('MARKET_SYMBOL_ERROR',{message:error instanceof Error?error.message:String(error),scope:'LIVE_HYDRATE'},symbol);
-        continue;
-      }
-      if(!this.provider.hydrateLiveTechnical)continue;
-      try{
-        const technical=this.provider.hydrateLiveTechnical(live);
-        this.writeTechnical(symbol,epoch,technical,live);
-      }catch(error){
-        // Keep the new quote/book; the bad closed sequence remains unusable
-        // for Entry and is reported once per symbol/timeframe/sequence.
+  /** A different refresh entrypoint may finish the repair before recoverStale runs again. */
+  private completeRecoveryWhenReady(symbol:string,epoch:number){
+    const recovery=this.recovery.get(symbol),snapshot=this.state.snapshots.get(symbol);
+    if(!recovery?.reason||!snapshot||!this.canWrite(symbol,epoch)||this.primaryReadyReasons(symbol).length)return;
+    // A reference-only refresh can be ready while other frames/book facts still fail.
+    if(eipEvidenceError(snapshot,this.state.settings.selection?.minDataCompleteness??0))return;
+    const now=Date.now();
+    this.recovery.set(symbol,{attempt:0,nextRetryAt:now+15_000,lastSuccessAt:now,reason:null});
+  }
+  /** Publish one received WS snapshot without waiting for REST, models, or private orders. */
+  private hydrateSymbol(symbol:string,snapshot:MarketSymbolSnapshot){
+    const epoch=this.epoch(symbol);if(!this.canWrite(symbol,epoch))return;
+    let live=snapshot;
+    try{
+      live=this.provider.hydrateLiveMarket?.(snapshot)??this.provider.hydrateLive?.(snapshot)??snapshot;
+      if(live&&this.canWrite(symbol,epoch))this.state.snapshots.set(symbol,live);
+    }catch(error){
+      this.events.publish('MARKET_SYMBOL_ERROR',{message:error instanceof Error?error.message:String(error),scope:'LIVE_HYDRATE'},symbol);
+      return;
+    }
+    if(this.provider.hydrateLiveTechnical){
+      try{this.writeTechnical(symbol,epoch,this.provider.hydrateLiveTechnical(live),live);}
+      catch(error){
         const card=live.technical?.['1m'],detail=error&&typeof error==='object'?error as {technicalTimeframe?:string;technicalSequence?:string}:null,message=error instanceof Error?error.message:String(error),timeframe=detail?.technicalTimeframe??'1m',sequence=detail?.technicalSequence??String(card?.barCloseTime??card?.asOf??'unknown'),key=`${symbol}:${timeframe}:${sequence}:${message}`;
-        if(this.liveTechnicalFailures.has(key))continue;
+        if(this.liveTechnicalFailures.has(key))return;
         this.rememberFailure(key,symbol,timeframe,sequence);
         this.events.publish('MARKET_SYMBOL_ERROR',{message,scope:'LIVE_HYDRATE_TECHNICAL',timeframe,sequence:sequence==='unknown'?null:sequence},symbol);
+        return;
       }
     }
+    this.completeRecoveryWhenReady(symbol,epoch);
+  }
+  async tick(){
+    await this.provider.tick?.();
+    for(const [symbol,snapshot] of this.state.snapshots)this.hydrateSymbol(symbol,snapshot);
+  }
+  /** A slow snapshot response must not roll back newer WS facts published while it awaited REST. */
+  private publishSnapshot(symbol:string,epoch:number,snapshot:MarketSymbolSnapshot){
+    if(!this.canWrite(symbol,epoch))return false;
+    const current=this.state.snapshots.get(symbol);
+    const newer=<T extends {ts?:number}>(incoming:T,latest:T|undefined)=>
+      latest&&Number.isFinite(latest.ts)&&Number(latest.ts)>Number(incoming?.ts??0)?latest:incoming;
+    const technical={...snapshot.technical};
+    for(const [tf,card] of Object.entries(current?.technical??{}) as Array<[Timeframe,MarketSymbolSnapshot['technical'][Timeframe]]>){
+      const frame=tf as Timeframe,incoming=technical[frame];
+      if(card&&Number.isFinite(card.asOf)&&Number(card.asOf)>Number(incoming?.asOf??0))technical[frame]=card;
+    }
+    // Exchange filters have a separate refresh clock from bid/ask. Keep refreshed
+    // filters even when WS prices arrived after the REST quote was captured.
+    const quote=snapshot.quote?{...newer(snapshot.quote,current?.quote),tickSize:snapshot.quote.tickSize,
+      stepSize:snapshot.quote.stepSize,minQty:snapshot.quote.minQty,minNotional:snapshot.quote.minNotional}:current?.quote??snapshot.quote;
+    const merged={...snapshot,quote,orderBook:newer(snapshot.orderBook,current?.orderBook),
+      derivatives:newer(snapshot.derivatives,current?.derivatives),technical};
+    this.state.snapshots.set(symbol,merged);
+    for(const tf of ['1m','5m','15m'] as const)if(technical[tf]===snapshot.technical?.[tf]&&technical[tf]!==current?.technical?.[tf]&&technical[tf]?.isClosed===true)this.technicalBlocked.delete(`${symbol}:${tf}`);
+    this.hydrateSymbol(symbol,merged);
+    return true;
+  }
+  /** Repair only EIP dependencies that are still unusable after publishing the live cache. */
+  async refreshEntryDependencies(symbols:string[],candidateSymbol?:string):Promise<number>{
+    const selected=[...new Set(symbols.map(s=>s.toUpperCase()))].slice(0,3);
+    const results=await mapLimit(selected,2,async symbol=>{
+      const epoch=this.epoch(symbol),key=`${symbol}:${epoch}`,snapshot=this.state.snapshots.get(symbol);
+      if(!this.canWrite(symbol,epoch))return false;
+      if(snapshot)this.hydrateSymbol(symbol,snapshot);
+      const regimeOnly=symbol!==candidateSymbol&&(EIP_REFERENCE_SYMBOLS as readonly string[]).includes(symbol);
+      const error=()=>{const current=this.state.snapshots.get(symbol);if(!current)return'SNAPSHOT_MISSING';return eipEvidenceError(current,this.state.settings.selection?.minDataCompleteness??0,regimeOnly)??(regimeOnly?this.referenceReadyReasons(symbol)[0]??null:symbol===candidateSymbol?this.primaryReadyReasons(symbol)[0]??null:null);};
+      const ready=()=>{if(error())return false;this.completeRecoveryWhenReady(symbol,epoch);return true;};
+      if(ready())return true;
+      const existing=this.dependencyFlights.get(key);if(existing)return existing;
+      const now=Date.now();if(now<(this.dependencyRetryAt.get(key)??0)||now<this.targetedRefreshDeferredUntil)return false;
+      const flight=(async()=>{
+        try{
+          const current=this.state.snapshots.get(symbol),reason=error()??'';
+          if(current&&/ (quote|orderBook) age=/.test(reason)){
+            // Quote/book repair does not need seven candle histories or derivatives.
+            const quoteDue=!Number.isFinite(current.quote?.ts)||Date.now()-current.quote.ts>15_000;
+            const bookDue=!regimeOnly&&(!Number.isFinite(current.orderBook?.ts)||Date.now()-current.orderBook.ts>15_000);
+            const [quote,book]=await Promise.all([quoteDue?this.provider.getQuote(symbol):current.quote,bookDue?this.provider.getOrderBook(symbol):current.orderBook]);
+            if(!this.canWrite(symbol,epoch))return false;
+            const latest=this.state.snapshots.get(symbol);if(!latest)return false;
+            this.publishSnapshot(symbol,epoch,{...latest,quote:quoteDue?quote:latest.quote,orderBook:bookDue?book:latest.orderBook});
+            // A failed/stale quote read cannot be cured by repeating it inside a
+            // full snapshot request in the same attempt.
+            if(/ (quote|orderBook) age=/.test(error()??''))return false;
+          }
+          const frames=this.provider.repairCandles?this.repairableSequenceFrames(symbol,Date.now(),regimeOnly):[];
+          if(error()&&frames.length){await this.repairSequence(symbol,frames);return ready();}
+          if(error()){
+            const fresh=await this.loadSnapshot(symbol,epoch);
+            if(!this.publishSnapshot(symbol,epoch,fresh))return false;
+            this.rulesUpdatedAt.set(symbol,Date.now());
+          }
+          return ready();
+        }catch(error){
+          if(budgetDeferred(error))this.targetedRefreshDeferredUntil=Date.now()+60_000;
+          this.events.publish('MARKET_SYMBOL_ERROR',{scope:'ENTRY_DEPENDENCY_REFRESH',message:error instanceof Error?error.message:String(error)},symbol);
+          return false;
+        }finally{
+          if(this.canWrite(symbol,epoch))this.dependencyRetryAt.set(key,Date.now()+5_000);
+          this.dependencyFlights.delete(key);
+        }
+      })();
+      this.dependencyFlights.set(key,flight);return flight;
+    });
+    return results.filter(Boolean).length;
   }
   async refresh(limit:number){
     const generation=++this.state.marketGeneration;
@@ -130,13 +228,13 @@ export class MarketDataHub {
     const snapshots=await mapLimit(requested,this.state.settings.connections.marketDataMode==='BINANCE'?4:16,async symbol=>{
       const epoch=this.epoch(symbol);try{return{symbol,epoch,snapshot:await this.loadSnapshot(symbol,epoch)};}catch(error){this.events.publish('MARKET_SYMBOL_ERROR',{message:error instanceof Error?error.message:String(error)},symbol);return null;}
     });
-    let loaded=0; for(const result of snapshots){if(!result||!this.canWrite(result.symbol,result.epoch))continue;this.state.snapshots.set(result.symbol,result.snapshot);this.rulesUpdatedAt.set(result.symbol,Date.now());loaded++;}
+    let loaded=0; for(const result of snapshots){if(!result||!this.canWrite(result.symbol,result.epoch))continue;this.publishSnapshot(result.symbol,result.epoch,result.snapshot);this.rulesUpdatedAt.set(result.symbol,Date.now());loaded++;}
     const planned=this.provider.collectionCoverage?.()??priority.map(requested=>{const exact=/USD[TC]$/.test(requested),found=symbols.find(symbol=>exact?symbol===requested:resolveUnderlying(symbol)===requested);return{requested,symbol:found??null,status:found?'COLLECTED' as const:'UNAVAILABLE' as const,reason:found?null:'NO_EXECUTION_MARKET_DATA'};});
     const coverage=planned.map(row=>row.symbol&&!this.state.snapshots.has(row.symbol)?{...row,status:'UNAVAILABLE' as const,reason:'SNAPSHOT_REFRESH_FAILED'}:row),directory=this.state.settings.selection?.assetDirectory??{version:'UNCONFIGURED',approvedLiquid:[]},approved=new Set(directory.approvedLiquid.map((x:string)=>String(x).toUpperCase())),approvedCoverage=coverage.filter(row=>approved.has(resolveUnderlying(row.symbol??row.requested))||approved.has(row.requested));
     this.events.publish('APPROVED_ASSET_COLLECTION_COVERAGE',{directoryVersion:directory.version,total:approvedCoverage.length,collected:approvedCoverage.filter(x=>x.status==='COLLECTED').length,unavailable:approvedCoverage.filter(x=>x.status==='UNAVAILABLE').length,coverage:approvedCoverage,occupiedCoverage:coverage.filter(row=>!approvedCoverage.includes(row))});
     this.events.publish('MARKET_REFRESHED',{requested:symbols.length,loaded,generation}); return loaded;
   }
-  async refreshSymbols(symbols:string[]){const unique=[...new Set(symbols.map(x=>x.toUpperCase()))],now=Date.now();if(now<this.targetedRefreshDeferredUntil)return 0;let deferred:string|null=null;const snapshots=await mapLimit(unique,2,async symbol=>{if(deferred)return null;const epoch=this.epoch(symbol);try{return{symbol,epoch,snapshot:await this.loadSnapshot(symbol,epoch)};}catch(error){const message=error instanceof Error?error.message:String(error);if(budgetDeferred(error)){if(!deferred){deferred=message;this.targetedRefreshDeferredUntil=Date.now()+60_000;this.events.publish('MARKET_REFRESH_DEFERRED',{scope:'TARGETED_REFRESH',message,requested:unique.length,symbol,retryAt:this.targetedRefreshDeferredUntil});}return null;}this.events.publish('MARKET_SYMBOL_ERROR',{message,scope:'TARGETED_REFRESH'},symbol);return null;}});let loaded=0;for(const result of snapshots)if(result&&this.canWrite(result.symbol,result.epoch)){this.state.snapshots.set(result.symbol,result.snapshot);this.rulesUpdatedAt.set(result.symbol,Date.now());loaded++;}if(loaded)this.targetedRefreshDeferredUntil=0;this.events.publish('MARKET_TARGETED_REFRESHED',{requested:unique.length,loaded,deferred:deferred!==null});return loaded;}
+  async refreshSymbols(symbols:string[]){const unique=[...new Set(symbols.map(x=>x.toUpperCase()))],now=Date.now();if(now<this.targetedRefreshDeferredUntil)return 0;let deferred:string|null=null;const snapshots=await mapLimit(unique,2,async symbol=>{if(deferred)return null;const epoch=this.epoch(symbol);try{return{symbol,epoch,snapshot:await this.loadSnapshot(symbol,epoch)};}catch(error){const message=error instanceof Error?error.message:String(error);if(budgetDeferred(error)){if(!deferred){deferred=message;this.targetedRefreshDeferredUntil=Date.now()+60_000;this.events.publish('MARKET_REFRESH_DEFERRED',{scope:'TARGETED_REFRESH',message,requested:unique.length,symbol,retryAt:this.targetedRefreshDeferredUntil});}return null;}this.events.publish('MARKET_SYMBOL_ERROR',{message,scope:'TARGETED_REFRESH'},symbol);return null;}});let loaded=0;for(const result of snapshots)if(result&&this.canWrite(result.symbol,result.epoch)){this.publishSnapshot(result.symbol,result.epoch,result.snapshot);this.rulesUpdatedAt.set(result.symbol,Date.now());loaded++;}if(loaded)this.targetedRefreshDeferredUntil=0;this.events.publish('MARKET_TARGETED_REFRESHED',{requested:unique.length,loaded,deferred:deferred!==null});return loaded;}
   /** Slow cards, derivatives and contract rules refresh independently when their own facts are due. */
   async refreshSlowFields(symbols:Iterable<string>){
     const unique=[...new Set([...symbols].map(s=>s.toUpperCase()))],frames:[Timeframe,number,number][]=[['1h',80,3_600_000],['4h',80,14_400_000],['1d',80,86_400_000],['1w',80,604_800_000]];let updated=0;
@@ -181,7 +279,17 @@ export class MarketDataHub {
   candles(symbol:string,timeframe:Timeframe,limit=120):Promise<Candle[]>{return this.provider.getCandles(symbol,timeframe,limit);}
   cachedCandles(symbol:string,timeframe:Timeframe,limit=120):Candle[]{return this.provider.cachedCandles?.(symbol,timeframe,limit)??[];}
   quotes(){return new Map([...this.state.snapshots].map(([s,v])=>[s,v.quote]));}
-  metrics(){const stream=this.provider.streamMetrics?.()??{state:'REST_ONLY'};return{...(stream as object),recoveryQueue:[...this.recovery.values()].filter(x=>x.nextRetryAt>Date.now()).length};}
+  metrics(){
+    const stream=this.provider.streamMetrics?.()??{state:'REST_ONLY'};
+    return{...(stream as object),recoveryQueue:[...this.recovery.values()].filter(x=>x.nextRetryAt>Date.now()).length,
+      recoveryFailures:[...this.recovery].filter(([,value])=>value.reason!==null).map(([symbol,value])=>({symbol,...value})),
+      // WS backfills/lastError describe the depth recovery path. Keep closed-kline
+      // REST results separate so a LIVE socket cannot hide an unavailable history route.
+      klineRecovery:{...this.klineRecovery,lastFailure:this.klineRecovery.lastFailure?{...this.klineRecovery.lastFailure}:null,
+        pendingFrames:this.technicalBlocked.size,frames:[...this.klineRepairState].filter(([key])=>this.technicalBlocked.has(key)).map(([,value])=>({...value}))}};
+  }
+  /** Regime references consume 15m and slow frames, not candidate entry book/1m/5m. */
+  referenceReadyReasons(symbol:string):string[]{return this.technicalBlocked.has(`${symbol}:15m`)?['TECHNICAL_15m_SEQUENCE_INVALID']:[];}
   primaryReadyReasons(symbol:string,now=Date.now()){
     const s=this.state.snapshots.get(symbol),reasons:string[]=[];if(!s)return['SNAPSHOT_MISSING'];
     for(const blocked of this.technicalBlocked.values())if(this.technicalBlocked.get(`${symbol}:${blocked.timeframe}`)===blocked)reasons.push(`TECHNICAL_${blocked.timeframe}_SEQUENCE_INVALID`);
@@ -205,6 +313,6 @@ export class MarketDataHub {
     return this.state.pool.list().map(item=>{const s=this.state.snapshots.get(item.symbol);if(!s)return{symbol:item.symbol,state:item.state,status:'MISSING',reasons:['SNAPSHOT_MISSING']};const frames=Object.fromEntries(Object.entries(periods).map(([tf,period])=>{const boundary=Math.floor(now/period)*period,expectedClose=now-boundary<=graceMs?boundary-period-1:boundary-1,card=s.technical?.[tf as keyof typeof s.technical],actualClose=Number(card?.barCloseTime??card?.asOf),finite=Number.isFinite(actualClose),gapCount=finite?Math.max(0,Math.floor((expectedClose-actualClose)/period)):null;return[tf,{expectedClose,actualClose:finite?actualClose:null,isClosed:card?.isClosed===true,receivedAt:Number.isFinite(card?.receivedAt)?card!.receivedAt:null,gapCount,followingBoundary:finite&&card?.isClosed===true&&actualClose>=expectedClose}];}));const reasons=this.primaryReadyReasons(item.symbol,now);return{symbol:item.symbol,state:item.state,status:reasons.length?'DEGRADED':'READY',quoteAgeMs:Number.isFinite(s.quote.ts)?now-s.quote.ts:null,bookAgeMs:Number.isFinite(s.orderBook.ts)?now-s.orderBook.ts:null,frames,reasons};});
   }
   freshness(){const now=Date.now();let quoteFresh=0,orderBookFresh=0,klineFresh=0,sequenceInvalid=0;const stale:string[]=[];const poolSymbols=new Set(this.state.pool.list().map(x=>x.symbol));let poolBooks=0;for(const s of this.state.snapshots.values()){const q=now-s.quote.ts<=15_000,b=now-s.orderBook.ts<=15_000,k=now-s.technical['1m'].asOf<=125_000&&now-s.technical['5m'].asOf<=605_000&&now-s.technical['15m'].asOf<=1_805_000;if(q)quoteFresh++;if(b)orderBookFresh++;if(k)klineFresh++;if(poolSymbols.has(s.symbol)&&b)poolBooks++;const reasons=this.primaryReadyReasons(s.symbol,now);if(reasons.some(reason=>reason.endsWith('_SEQUENCE_INVALID')))sequenceInvalid++;if(reasons.length)stale.push(s.symbol);}const total=this.state.snapshots.size;return{fresh:total-stale.length,total,quoteFresh,orderBookFresh,klineFresh,sequenceInvalid,quoteFreshRatio:total?quoteFresh/total:0,klineFreshRatio:total?klineFresh/total:0,poolBookFreshRatio:poolSymbols.size?poolBooks/poolSymbols.size:1,stale};}
-  async recoverStale(){const now=Date.now();const priority=new Set([...this.state.positionSymbols(),...this.state.activeEntrySymbols(),...[...this.state.candidateLifecycle??[]].filter(([,row]:any)=>['SCOUT_QUEUED','SCOUT_RUNNING','PRIMARY_QUEUED','PRIMARY_RUNNING','WAIT_FOR_PRICE','WAIT_EXECUTION_RANGE'].includes(row?.status)).map(([symbol])=>String(symbol).toUpperCase()),'BTCUSDT','ETHUSDT',...this.state.pool.list().map(x=>x.symbol)]);const stale=[...new Set([...this.freshness().stale,...[...priority].filter(symbol=>!this.state.snapshots.has(symbol))])].filter(symbol=>(this.recovery.get(symbol)?.nextRetryAt??0)<=now).sort((a,b)=>Number(priority.has(b))-Number(priority.has(a))||(this.recovery.get(a)?.lastSuccessAt??0)-(this.recovery.get(b)?.lastSuccessAt??0)).slice(0,4);if(!stale.length)return 0;const snapshots=await mapLimit(stale,2,async symbol=>{const epoch=this.epoch(symbol),prior=this.recovery.get(symbol)??{attempt:0,nextRetryAt:0,lastSuccessAt:null,reason:null};const frames=this.provider.repairCandles?this.repairableSequenceFrames(symbol,now):[];if(frames.length){const repaired=await this.repairSequence(symbol,frames);this.recovery.set(symbol,{attempt:repaired?0:prior.attempt+1,nextRetryAt:now+(repaired?15_000:60_000),lastSuccessAt:repaired?Date.now():prior.lastSuccessAt,reason:repaired?null:prior.reason});return null;}try{const snapshot=await this.loadSnapshot(symbol,epoch);this.recovery.set(symbol,{attempt:0,nextRetryAt:now+60_000,lastSuccessAt:Date.now(),reason:null});return {symbol,epoch,snapshot};}catch(error){const message=error instanceof Error?error.message:String(error),attempt=prior.attempt+1;const banned=Number(message.match(/banned until (\d+)/i)?.[1]??0);const delay=banned>Date.now()?banned-Date.now()+5_000:Math.min(priority.has(symbol)?30_000:15*60_000,5_000*2**Math.min(attempt-1,8));const nextRetryAt=Date.now()+delay;this.recovery.set(symbol,{attempt,nextRetryAt,lastSuccessAt:prior.lastSuccessAt,reason:message});this.events.publish('MARKET_RECOVERY_FAILED',{dataType:'QUOTE_KLINE',reason:message,httpStatus:Number(message.match(/HTTP (\d+)/)?.[1]??0)||null,attempt,lastSuccessAt:prior.lastSuccessAt,nextRetryAt},symbol);return null;}});let recovered=0;for(const result of snapshots)if(result&&this.canWrite(result.symbol,result.epoch)){this.state.snapshots.set(result.symbol,result.snapshot);this.rulesUpdatedAt.set(result.symbol,Date.now());recovered++;}this.events.publish('MARKET_FRESHNESS_RECOVERED',{requested:stale.length,recovered,pending:[...this.recovery.values()].filter(x=>x.nextRetryAt>Date.now()).length});return recovered;}
+  async recoverStale(){const now=Date.now();const priority=new Set([...this.state.positionSymbols(),...this.state.activeEntrySymbols(),...[...this.state.candidateLifecycle??[]].filter(([,row]:any)=>['SCOUT_QUEUED','SCOUT_RUNNING','PRIMARY_QUEUED','PRIMARY_RUNNING','WAIT_FOR_PRICE','WAIT_EXECUTION_RANGE'].includes(row?.status)).map(([symbol])=>String(symbol).toUpperCase()),'BTCUSDT','ETHUSDT',...this.state.pool.list().map(x=>x.symbol)]);const stale=[...new Set([...this.freshness().stale,...[...priority].filter(symbol=>!this.state.snapshots.has(symbol))])].filter(symbol=>(this.recovery.get(symbol)?.nextRetryAt??0)<=now).sort((a,b)=>Number(priority.has(b))-Number(priority.has(a))||(this.recovery.get(a)?.lastSuccessAt??0)-(this.recovery.get(b)?.lastSuccessAt??0)).slice(0,4);if(!stale.length)return 0;const snapshots=await mapLimit(stale,2,async symbol=>{const epoch=this.epoch(symbol),prior=this.recovery.get(symbol)??{attempt:0,nextRetryAt:0,lastSuccessAt:null,reason:null};const frames=this.provider.repairCandles?this.repairableSequenceFrames(symbol,now):[];if(frames.length){const repair=await this.repairSequence(symbol,frames);this.recovery.set(symbol,{attempt:repair.complete?0:prior.attempt+1,nextRetryAt:repair.complete?Date.now()+15_000:Math.max(Date.now()+60_000,repair.nextRetryAt),lastSuccessAt:repair.complete?Date.now():prior.lastSuccessAt,reason:repair.complete?null:repair.reason});return null;}try{const snapshot=await this.loadSnapshot(symbol,epoch);this.recovery.set(symbol,{attempt:0,nextRetryAt:now+60_000,lastSuccessAt:Date.now(),reason:null});return {symbol,epoch,snapshot};}catch(error){const message=error instanceof Error?error.message:String(error),attempt=prior.attempt+1;const banned=Number(message.match(/banned until (\d+)/i)?.[1]??0);const delay=banned>Date.now()?banned-Date.now()+5_000:Math.min(priority.has(symbol)?30_000:15*60_000,5_000*2**Math.min(attempt-1,8));const nextRetryAt=Date.now()+delay;this.recovery.set(symbol,{attempt,nextRetryAt,lastSuccessAt:prior.lastSuccessAt,reason:message});this.events.publish('MARKET_RECOVERY_FAILED',{dataType:'QUOTE_KLINE',reason:message,httpStatus:Number(message.match(/HTTP (\d+)/)?.[1]??0)||null,attempt,lastSuccessAt:prior.lastSuccessAt,nextRetryAt},symbol);return null;}});let recovered=0;for(const result of snapshots)if(result&&this.canWrite(result.symbol,result.epoch)){this.publishSnapshot(result.symbol,result.epoch,result.snapshot);this.rulesUpdatedAt.set(result.symbol,Date.now());recovered++;}this.events.publish('MARKET_FRESHNESS_RECOVERED',{requested:stale.length,recovered,pending:[...this.recovery.values()].filter(x=>x.nextRetryAt>Date.now()).length});return recovered;}
   stop(){this.provider.stop?.();}
 }

@@ -1,6 +1,0 @@
-== isolated engine build-check (scratch outDir, live dist untouched) ==
-build-check-exit=0
-../../build-check/engine/main.js
-artifact present
-scratch removed: exit=0
-ls: cannot access '../../build-check': No such file or directory

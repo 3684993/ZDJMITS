@@ -1,7 +1,6 @@
-import { OpportunityEvidenceSchema, TradingQualityPolicySchema } from './opportunity.js';
+import { EntryOpportunityAuthorizationSchema, OpportunityEvidenceSchema, TradingQualityPolicySchema } from './opportunity.js';
 import { z } from 'zod';
 import { ProfitTakePlanSchema } from './ai.js';
-import { EntryEconomicMandateSchema } from './entryEconomicMandate.js';
 
 export const SideSchema = z.enum(['LONG','SHORT']);
 export type Side = z.infer<typeof SideSchema>;
@@ -23,11 +22,20 @@ const EntryExecutionCapacitySchema=z.object({
   legalQuantityRangeUnits:z.tuple([z.number().int().nonnegative(),z.number().int().nonnegative()]).nullable().optional(),
   firstBindingConstraint:z.string().optional(),
   minimumLegalNotionalUsd:z.number().nonnegative().optional(),
-  minimumInitialMarginQuote:z.number().nonnegative().nullable().optional(),
-  minimumOrderNotionalQuote:z.number().nonnegative().nullable().optional(),
-  businessMinimumConfigured:z.boolean().optional(),
   legalNotionalRangeUsd:z.tuple([z.number().nonnegative(),z.number().nonnegative()]).nullable().optional(),
   authorization:z.string().optional(),
+  businessMinInitialMarginUsd:z.number().positive().optional(),
+  preferredInitialMarginUsd:z.number().positive().optional(),
+  availableInitialMarginUsd:z.number().nonnegative().optional(),
+  sizingStatus:z.enum(['FLOOR_AVAILABLE','FLOOR_UNAVAILABLE']).optional(),
+  candidateSetHash:z.string().optional(),
+  candidateSetFactVersion:z.string().optional(),
+  planCandidates:z.array(z.object({candidateId:z.string(),side:SideSchema,quantityUnits:z.number().int().positive(),notionalUsd:z.number().positive(),
+    marginUsd:z.number().positive(),leverage:z.number().int().positive(),entryReferencePrice:z.number().positive(),targetPrice:z.number().positive(),
+    acceptableTargetRange:z.object({min:z.number().positive(),max:z.number().positive()}).strict(),targetHorizonMinutes:z.number().int().positive(),
+    targetConditionalNetProfitUsd:z.number(),expectedNetPnlAtHorizonUsd:z.number().nullable(),reachProbability:z.number().min(0).max(1).nullable(),
+    reachProbabilityStatus:z.string(),targetVsStatisticalCeiling:z.string(),targetBasis:z.enum(['P50','P75','PROFIT_FLOOR_UNPROVEN','LEGACY_SELECTED_WITHIN_P75','PROFIT_FLOOR_BEYOND_P75']).optional(),
+    reachabilityP50MovePercent:z.number().nonnegative().nullable().optional(),reachabilityP75MovePercent:z.number().nonnegative().nullable().optional(),costVersion:z.string()}).strict()).max(18).optional(),
   // The committing gate's own verdict for this side, persisted with the envelope so a restart resumes the
   // same refusal instead of re-deriving it — and a page cannot claim room the gate already denied.
   admission:z.object({ceilingUsd:z.number().nonnegative().nullable(),refusal:z.string().nullable(),
@@ -53,11 +61,12 @@ export const EntryExecutionEnvelopeSchema=z.object({
   exchange:z.object({tickSize:z.number().positive(),stepSize:z.number().positive(),minQty:z.number().positive(),minNotional:z.number().nonnegative()}).strict(),
   makerReachableBand:z.object({min:z.number().positive(),max:z.number().positive()}).strict(),
   recentTradedPrices:z.array(z.object({price:z.number().positive(),lastSeenAt:z.number().int()}).strict()),
-  fees:z.object({makerFeeBps:z.number(),takerFeeBps:z.number(),roundTripCostBps:z.number(),safetyMarginBps:z.number()}).strict(),
-  economics:z.object({version:z.literal('V3.9.5'),minNetProfitUsd:z.number().min(1).max(20),minNetProfitRoiPct:z.number().nonnegative(),admissionMode:z.enum(['OFF','SHADOW','ENFORCE']),historicalTpReachabilityEnabled:z.boolean(),minHistoricalReachProbability:z.number().min(0).max(1),reachabilityLookbackBars:z.number().int().positive(),reachabilityMinSamples:z.number().int().positive(),
+  fees:z.object({makerFeeBps:z.number(),takerFeeBps:z.number(),roundTripCostBps:z.number(),safetyMarginBps:z.number(),
+    entryFeeBps:z.number().optional(),expectedExitFeeBps:z.number().optional(),feeRoundTripBps:z.number().optional(),slippageBufferBps:z.number().optional(),allInCostBps:z.number().optional(),costVersion:z.string().optional()}).strict(),
+  economics:z.object({version:z.literal('V3.9.5'),costVersion:z.string().optional(),minNetProfitUsd:z.number().min(1).max(20),minNetProfitRoiPct:z.number().nonnegative(),admissionMode:z.enum(['OFF','SHADOW','ENFORCE']),historicalTpReachabilityEnabled:z.boolean(),minHistoricalReachProbability:z.number().min(0).max(1),reachabilityLookbackBars:z.number().int().positive(),reachabilityMinSamples:z.number().int().positive(),
     // The horizons the plan layer can actually write a plan for, published to the model as an
     // execution fact. Defaulted so an intent journalled before it existed still round-trips.
-    targetHorizonMinutes:z.array(z.number().int().min(5).max(1440)).min(1).max(3).default([15,60,240]),humanManagedExposure:z.object({positions:z.number().int().nonnegative(),notionalUsd:z.number().nonnegative(),maxPositions:z.number().int().positive(),maxNotionalUsd:z.number().nonnegative(),withinLimits:z.boolean()}).strict(),businessMinimumPolicyVersion:z.literal('V397-ENTRY-FLOOR-1').optional(),minimumInitialMarginQuote:z.number().nonnegative().nullable().optional(),minimumOrderNotionalQuote:z.number().nonnegative().nullable().optional()}).strict().optional(),
+    targetHorizonMinutes:z.array(z.number().int().min(5).max(1440)).min(1).max(3).default([15,60,240]),humanManagedExposure:z.object({positions:z.number().int().nonnegative(),notionalUsd:z.number().nonnegative(),maxPositions:z.number().int().positive(),maxNotionalUsd:z.number().nonnegative(),withinLimits:z.boolean()}).strict()}).strict().optional(),
   reachability:z.object({version:z.literal('V3.9.5'),source:z.literal('CLOSED_CANDLE_CACHE'),generatedAt:z.number().int(),horizons:z.array(z.object({horizonMinutes:z.number().int().positive(),timeframe:z.enum(['1m','5m','15m']),sampleCount:z.number().int().nonnegative(),status:z.enum(['READY','INSUFFICIENT_DATA','STALE']),LONG:z.object({hardMaxMovePercent:z.number().nonnegative(),p50:z.number().nonnegative(),p75:z.number().nonnegative(),p90:z.number().nonnegative()}).strict(),SHORT:z.object({hardMaxMovePercent:z.number().nonnegative(),p50:z.number().nonnegative(),p75:z.number().nonnegative(),p90:z.number().nonnegative()}).strict()}).strict())}).strict().optional(),
   LONG:EntryExecutionCapacitySchema,
   SHORT:EntryExecutionCapacitySchema,
@@ -66,12 +75,15 @@ export const EntryExecutionEnvelopeSchema=z.object({
    * P4: the analysis earmark is a budget, not a debit, and the envelope now says what it asked for and
    * what capped it. Optional because an intent journalled before this field existed still round-trips.
    */
-  leaseBudget:z.object({requestedUsd:z.number().nonnegative(),cappedBy:z.enum(['ROUTED_PLAN_MARGIN','CONFIGURED_PER_POSITION_MARGIN','EXCHANGE_MINIMUM_MARGIN']),budgetUsd:z.number().nonnegative()}).strict().optional(),
+  leaseBudget:z.object({requestedUsd:z.number().nonnegative(),cappedBy:z.enum(['ROUTED_PLAN_MARGIN','CONFIGURED_PER_POSITION_MARGIN','BUSINESS_MINIMUM_MARGIN','EXCHANGE_MINIMUM_MARGIN']),budgetUsd:z.number().nonnegative()}).strict().optional(),
 }).strict();
 export type EntryExecutionEnvelope = z.infer<typeof EntryExecutionEnvelopeSchema>;
 
 export const EntryIntentSchema = z.object({
+  /** Frozen configuration/execution scope; absent on legacy intents. */
+  analysisContextKey:z.string().min(1).optional(),
   opportunityEvidence:OpportunityEvidenceSchema.optional(),
+  opportunityAuthorization:EntryOpportunityAuthorizationSchema.optional(),
   id: z.string(),
   symbol: z.string(),
   side: SideSchema,
@@ -81,6 +93,9 @@ export const EntryIntentSchema = z.object({
   horizonMinutes: z.number().int().min(1).max(5),
   leverage: z.number().int().positive(),
   createdAt: z.number().int(),
+  /** Fixed at the validated PLACE response, never at retry/recovery. Absent on legacy records. */
+  decisionCompletedAt: z.number().int().positive().optional(),
+  decisionExecutionExpiresAt: z.number().int().positive().optional(),
   absoluteExpiresAt: z.number().int(),
   aiAuthorizationExpiresAt:z.number().int().optional(),
   configuredOrderTtlExpiresAt:z.number().int().optional(),
@@ -91,6 +106,9 @@ export const EntryIntentSchema = z.object({
   planId:z.string().max(120).nullable().optional(),
   planVersion:z.number().int().positive().nullable().optional(),
   planCycleId:z.string().max(160).nullable().optional(),
+  /** Direct, immutable lineage from the final intent to the one system-authored candidate. */
+  selectedCandidateId:z.string().max(120).nullable().optional(),
+  candidateSetHash:z.string().max(120).nullable().optional(),
   planWarnings:z.array(z.string().max(160)).optional(),
   quantityUnits:z.number().int().positive().optional(),
   executionEnvelope:EntryExecutionEnvelopeSchema.optional(),
@@ -100,12 +118,12 @@ export const EntryIntentSchema = z.object({
   snapshotId: z.string().nullable().optional(),
   structuredInvalidationId: z.string().nullable().optional(),
   profitTakePlan: ProfitTakePlanSchema.nullable().optional(),
-  economicAdmission:z.object({version:z.literal('V3.9.5'),mode:z.enum(['SHADOW','ENFORCE']),passed:z.boolean(),validatedAt:z.number().int(),expectedNetProfit:z.number(),requiredNetProfit:z.number().nonnegative(),reachProbability:z.number().min(0).max(1).nullable(),historicalHardMaxMovePercent:z.number().nonnegative().nullable(),blockers:z.array(z.string())}).strict().nullable().optional(),
-  economicMandate:EntryEconomicMandateSchema.nullable().optional(),
+  economicAdmission:z.object({version:z.literal('V3.9.5'),costVersion:z.string().optional(),mode:z.enum(['SHADOW','ENFORCE']),passed:z.boolean(),validatedAt:z.number().int(),expectedNetProfit:z.number(),requiredNetProfit:z.number().nonnegative(),reachProbability:z.number().min(0).max(1).nullable(),historicalHardMaxMovePercent:z.number().nonnegative().nullable(),blockers:z.array(z.string())}).strict().nullable().optional(),
 });
 export type EntryIntent = z.infer<typeof EntryIntentSchema>;
 
 export const EntryOrderSchema = z.object({
+  opportunityAuthorization:EntryOpportunityAuthorizationSchema.optional(),
   cycleId:z.string().nullable().optional(),
   id: z.string(),
   exchangeOrderId: z.string().nullable(),
@@ -121,12 +139,18 @@ export const EntryOrderSchema = z.object({
   /** When the exchange accepted the order. `createdAt` is when the Engine prepared it, so a submit
    * that was retried or resumed from a waiting state has no other honest submission timestamp. */
   submittedAt: z.number().int().nullable().optional(),
+  /** Fixed at the validated PLACE response, never at retry/recovery. Absent on legacy records. */
+  decisionCompletedAt: z.number().int().positive().optional(),
+  decisionExecutionExpiresAt: z.number().int().positive().optional(),
   absoluteExpiresAt: z.number().int(),
   repriceCount: z.number().int().nonnegative(),
   intentId: z.string(),
   reachability: z.number().min(0).max(1),
   reservationId: z.string().nullable().optional(),
   decisionChainId: z.string().nullable().optional(),
+  /** Copied from the immutable plan; a reprice may change price but never candidate identity. */
+  selectedCandidateId:z.string().max(120).nullable().optional(),
+  candidateSetHash:z.string().max(120).nullable().optional(),
   clientOrderId: z.string().max(35).nullable().optional(),
   orderType:z.string().nullable().optional(),
   timeInForce:z.string().nullable().optional(),
@@ -150,6 +174,18 @@ export const PositionSchema = z.object({
   addCount:z.number().int().nonnegative().default(0),
   lastReviewAt:z.number().int().nullable().default(null),
   nextReviewAt:z.number().int().nullable().default(null),
+  /** First-fill-relative, durable review milestones. They record attempts/outcomes only and carry no
+   * order authority; a time-stop decision still has to pass the independent exit/JIT contract. */
+  reviewTimeline:z.object({
+    version:z.literal('V3.9.7_REVIEW_TIMELINE'),
+    thesisDueAt:z.number().int(),
+    thesisAttemptedAt:z.number().int().nullable(),
+    thesisStatus:z.enum(['PENDING','DUE','RUNNING','APPLIED','DISCARDED','FAILED','MISSED']),
+    timeStopDueAt:z.number().int(),
+    timeStopAttemptedAt:z.number().int().nullable(),
+    timeStopStatus:z.enum(['PENDING','DUE','RUNNING','APPLIED','DISCARDED','FAILED']),
+    timeStopDecision:z.enum(['HOLD','EXIT_PROPOSAL','HANDOFF']).nullable(),
+  }).strict().nullable().optional(),
   id: z.string(),
   symbol: z.string(),
   side: SideSchema,
@@ -182,6 +218,7 @@ export const PositionSchema = z.object({
   tpEconomics: z.object({
     currentTpPrice:z.number().positive().nullable(), expectedGrossProfit:z.number(), expectedFees:z.number().nonnegative(), expectedNetProfit:z.number(),
     requiredNetProfit:z.number().nonnegative(), breakEvenPrice:z.number().positive().nullable(), minProfitableExitPrice:z.number().positive().nullable(),
+    costVersion:z.string().optional(),
     // TP_LOW_NET_TARGET_KEPT is P5: an authorized target whose profit floor is short is kept and
     // warned about, not silently rewritten. An undeclared status here would be rejected on the next
     // durable load, which is how a written position becomes unreadable.
@@ -199,8 +236,7 @@ export const PositionSchema = z.object({
   profitTakePlan: ProfitTakePlanSchema.nullable().optional(),
   profitTakePlanSource:z.enum(['AI','STRUCTURE_15M','FIXED_PROFITABLE','HUMAN']).nullable().optional(),
   lossHandoff:z.object({cycleId:z.string(),lastClosedBarAt:z.number().int().nullable(),consecutiveLossBars:z.number().int().nonnegative(),status:z.enum(['ACTIVE','UNKNOWN','HUMAN_HANDOFF'])}).nullable().optional(),
-  economicAdmission:z.object({version:z.literal('V3.9.5'),mode:z.enum(['SHADOW','ENFORCE']),passed:z.boolean(),validatedAt:z.number().int(),expectedNetProfit:z.number(),requiredNetProfit:z.number().nonnegative(),reachProbability:z.number().min(0).max(1).nullable(),historicalHardMaxMovePercent:z.number().nonnegative().nullable(),blockers:z.array(z.string())}).strict().nullable().optional(),
-  economicMandate:EntryEconomicMandateSchema.nullable().optional(),
+  economicAdmission:z.object({version:z.literal('V3.9.5'),costVersion:z.string().optional(),mode:z.enum(['SHADOW','ENFORCE']),passed:z.boolean(),validatedAt:z.number().int(),expectedNetProfit:z.number(),requiredNetProfit:z.number().nonnegative(),reachProbability:z.number().min(0).max(1).nullable(),historicalHardMaxMovePercent:z.number().nonnegative().nullable(),blockers:z.array(z.string())}).strict().nullable().optional(),
 });
 export type Position = z.infer<typeof PositionSchema>;
 

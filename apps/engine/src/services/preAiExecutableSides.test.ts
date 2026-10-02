@@ -1,7 +1,7 @@
 import {describe, expect, it, vi} from 'vitest';
 import {readFileSync} from 'node:fs';
 import {compactEntryFacts} from '@zdj/core';
-import {harness} from './tradingQualityTestHarness.js';
+import {harness,systemCandidateDecision} from './tradingQualityTestHarness.js';
 import {buildPreAiExecutionEnvelope} from './preAiExecutionEnvelope.js';
 import {evaluatePreAiPlanFeasibility} from './preAiPlanFeasibility.js';
 
@@ -17,11 +17,10 @@ function armedHarness(decideSide: 'LONG' | 'SHORT', tune?: (state: any) => void)
   tune?.(h.state);
   const quote = h.state.snapshots.get(fixtureSymbol)!.quote;
   (h.ai as any).probePrimaryIfDue = vi.fn(async () => {});
-  (h.ai as any).decide.mockImplementation(async () => ({
+  (h.ai as any).decide.mockImplementation(async (packet:any) => ({
     runId: 'envelope-side-run',
-    decision: {...h.supplied, decision: `PLACE_${decideSide}`, tradeSide: decideSide, direction: decideSide, structureDirection: decideSide,
-      quantityUnits: 1000, idealPrice: decideSide === 'LONG' ? Number(quote.bid) : Number(quote.ask),
-      acceptablePriceRange: {min: Number(quote.bid), max: Number(quote.ask) + Number(quote.tickSize) * 10}, horizonMinutes: 3},
+    decision: systemCandidateDecision(packet,h.supplied,decideSide,{idealPrice:decideSide==='LONG'?Number(quote.bid):Number(quote.ask),
+      acceptablePriceRange:{min:Number(quote.bid),max:Number(quote.ask)+Number(quote.tickSize)*10},horizonMinutes:3}),
   }));
   return h;
 }
@@ -48,7 +47,8 @@ describe('the pre-AI envelope publishes which sides are actually executable', ()
       expect(capacity.minimumLegalNotionalUsd).toBeCloseTo(floor, 8);
       // The stated ceiling is the notional the published maximum quantity can actually cost, so it never
       // exceeds the authorized notional and still covers the whole-step maximum at the reference price.
-      expect(capacity.legalNotionalRangeUsd![0]).toBeGreaterThanOrEqual(Math.max(floor,capacity.minimumOrderNotionalQuote??0));
+      const businessFloorNotional=capacity.minQuantityUnits*Number(quote.stepSize)*(side==='LONG'?Number(quote.ask):Number(quote.bid));
+      expect(capacity.legalNotionalRangeUsd).toEqual([businessFloorNotional, expect.any(Number)]);
       expect(capacity.legalNotionalRangeUsd![1]).toBeLessThanOrEqual(capacity.maxNotionalUsd + 1e-8);
       expect(capacity.legalNotionalRangeUsd![1]).toBeGreaterThanOrEqual(capacity.maxQuantityUnits * Number(quote.stepSize) * Number(quote.last) - 1e-8);
       expect(capacity.firstBindingConstraint).toBeTruthy();
@@ -134,14 +134,14 @@ describe('the pre-AI envelope publishes which sides are actually executable', ()
     const floor = Math.max(q.minNotional, q.minQty * q.last);
     for (const side of ['LONG', 'SHORT'] as const) {
       const capacity = envelope[side];
-      const businessFloor=Math.max(floor,Number(capacity.minimumInitialMarginQuote??0)*envelope.leverage,Number(capacity.minimumOrderNotionalQuote??0));
-      const conservativeBand=Math.max(envelope.makerReachableBand.max,q.ask,q.last,q.tickSize);
-      expect(capacity.minQuantityUnits).toBe(Math.max(1, Math.ceil(q.minQty / q.stepSize - 1e-9), Math.ceil(businessFloor / (conservativeBand * q.stepSize) - 1e-9)));
+      const exchangeFloorUnits=Math.max(1,Math.ceil(q.minQty/q.stepSize-1e-9),Math.ceil(floor/((side==='LONG'?q.ask:q.bid)*q.stepSize)-1e-9));
+      const businessFloorUnits=Math.ceil((Number(capacity.businessMinInitialMarginUsd)*Number(envelope.leverage))/(Number(envelope.makerReachableBand.min)*q.stepSize)-1e-9);
+      expect(capacity.minQuantityUnits).toBe(Math.max(exchangeFloorUnits,businessFloorUnits));
       expect(capacity.maxQuantityUnits % 1).toBe(0);
       if (capacity.executable) {
         expect(capacity.legalQuantityRangeUnits).toEqual([capacity.minQuantityUnits, capacity.maxQuantityUnits]);
         expect(capacity.maxQuantityUnits).toBeGreaterThanOrEqual(capacity.minQuantityUnits);
-        expect(capacity.legalNotionalRangeUsd![0]).toBeGreaterThanOrEqual(businessFloor-1e-8);
+        expect(capacity.legalNotionalRangeUsd![0]).toBeCloseTo(capacity.minQuantityUnits*q.stepSize*(side==='LONG'?q.ask:q.bid),8);
       } else {
         expect(capacity.legalQuantityRangeUnits).toBeNull();
       }
@@ -161,23 +161,9 @@ describe('the pre-AI envelope publishes which sides are actually executable', ()
     expect(envelope.LONG.legalQuantityRangeUnits).toBeNull();
     expect(envelope.LONG.minQuantityUnits).toBeGreaterThan(0);
     expect(envelope.LONG.maxQuantityUnits).toBeLessThan(envelope.LONG.minQuantityUnits!);
-    // The binding cause distinguishes a configured business floor that current funds cannot reach.
-    expect(envelope.LONG.firstBindingConstraint).toBe('BUSINESS_MINIMUM_EXCEEDS_AVAILABLE_FUNDS');
-    expect(String(envelope.LONG.authorization)).toBe('NOT_EXECUTABLE:BUSINESS_MINIMUM_EXCEEDS_AVAILABLE_FUNDS');
-  });
-
-  it('EP-12 enforces business notional floors independently of exchange minimums and user reductions', () => {
-    const h=harness(),sample=h.state.snapshots.get(fixtureSymbol)!;
-    h.state.snapshots.set('BTCUSDT',{...sample,symbol:'BTCUSDT',quote:{...sample.quote,last:60_000,bid:59_999,ask:60_001,minNotional:5,minQty:.001,stepSize:.001}} as any);
-    h.state.snapshots.set('ETHUSDT',{...sample,symbol:'ETHUSDT',quote:{...sample.quote,last:3_000,bid:2_999,ask:3_001,minNotional:5,minQty:.001,stepSize:.001}} as any);
-    h.state.settings.entry.minimumOrderNotionalByQuote.USDT=100;
-    const envelope=buildPreAiExecutionEnvelope(h.state,'BTCUSDT');
-    expect(envelope.LONG.minimumOrderNotionalQuote).toBe(200);
-    expect(envelope.SHORT.minimumOrderNotionalQuote).toBe(200);
-    expect(envelope.LONG.minQuantityUnits*Number(h.state.snapshots.get('BTCUSDT')!.quote.stepSize)*Number(h.state.snapshots.get('BTCUSDT')!.quote.last)).toBeGreaterThanOrEqual(200);
-    const other=buildPreAiExecutionEnvelope(h.state,'ETHUSDT');
-    expect(other.LONG.minimumOrderNotionalQuote).toBe(100);
-    expect(other.SHORT.minimumOrderNotionalQuote).toBe(100);
+    // The named cause is the funding shortfall, not a fabricated floor problem.
+    expect(envelope.LONG.firstBindingConstraint).toBe('AVAILABLE_MARGIN');
+    expect(String(envelope.LONG.authorization)).toBe('NOT_EXECUTABLE:AVAILABLE_MARGIN');
   });
 });
 

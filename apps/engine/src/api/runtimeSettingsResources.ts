@@ -1,6 +1,6 @@
 import { Router, type NextFunction, type Request, type Response } from 'express';
 import { isIP } from 'node:net';
-import { SystemSettingsSchema, type SystemSettings } from '@zdj/contracts';
+import type { SystemSettings } from '@zdj/contracts';
 import { loadAiResources } from '../config/aiResourceLoader.js';
 import { BinanceTransport, reconfigureBinanceTransports } from '../adapters/binance/BinanceTransport.js';
 import type { EngineRuntime } from '../runtime/appRuntime.js';
@@ -27,18 +27,14 @@ function canonicalExchange(settings:SystemSettings,item:any):SystemSettings{
   return next;
 }
 function aiResource(item:any){
-  const role=String(item?.role??'REVIEW_BRAIN');if(!['SCOUT','PRIMARY_BRAIN','REVIEW_BRAIN'].includes(role))throw new Error('AI_RESOURCE_LEGACY_ROLE_UNSUPPORTED');
-  return{id:String(item.id??''),name:String(item.name??item.id??''),role,enabled:item.enabled!==false,baseUrl:String(item.baseUrl??''),model:String(item.model??''),maxConcurrency:Number(item.maxConcurrency??1),gpu:String(item.gpu??'未指定')};
+  const role=String(item?.role??'');if(role!=='SCOUT'&&role!=='PRIMARY_BRAIN')throw new Error('AI_RESOURCE_ROLE_UNSUPPORTED');
+  return{id:String(item.id??''),role,enabled:item.enabled!==false,baseUrl:String(item.baseUrl??''),model:String(item.model??''),maxConcurrency:Number(item.maxConcurrency??1),gpu:String(item.gpu??'未指定')};
 }
 function rejectSecretFields(item:any){if(item&&['apiKey','apiSecret','secret','password','token'].some(key=>Object.prototype.hasOwnProperty.call(item,key)))throw new Error('RESOURCE_SECRET_FIELD_FORBIDDEN');}
-function resourceView(settings:SystemSettings,kind:RuntimeResourceKind,runtime?:EngineRuntime){
+function resourceView(settings:SystemSettings,kind:RuntimeResourceKind){
   if(kind==='exchange'){const x=settings.connections.exchange as any;return[{id:'binance-usdm',name:'Binance USD-M',type:'BINANCE_USDM',environment:x.environment,restBaseUrl:x.environment==='TESTNET'?(x.testnetRestBaseUrl??x.testnetBaseUrl):(x.productionRestBaseUrl??x.productionBaseUrl),wsBaseUrl:x.environment==='TESTNET'?(x.testnetWsBaseUrl??'wss://stream.binancefuture.com/ws'):(x.productionWsBaseUrl??'wss://fstream.binance.com/ws'),credentialRef:x.credentialRef,enabled:true,active:true,status:'READY'}];}
   if(kind==='proxy')return[{id:'binance-proxy',name:'SOCKS5H',type:'SOCKS5H',url:settings.connections.proxy.url,expectedStaticEgressIp:(settings.connections.proxy as any).expectedStaticEgressIp??'',enabled:settings.connections.proxy.enabled,active:true,status:settings.connections.proxy.enabled?'READY':'DISABLED'}];
-  const metrics=new Map((runtime?.ai?.resourceMetrics?.()??[]).map((row:any)=>[row.id,row]));
-  return settings.aiResources.map(item=>{const metric:any=metrics.get(item.id);return{...item,name:item.name??item.id,
-    duties:(settings.aiDutyRoutes??[]).filter(route=>route.enabled&&route.resourceId===item.id).map(route=>route.duty),
-    activeRequests:Number(metric?.active??0),queueDepth:Number(metric?.queueDepth??0),status:item.enabled?(metric?.connectionStatus==='OFFLINE'?'OFFLINE':metric?.connectionStatus==='UNKNOWN'?'UNKNOWN':metric?.active?'BUSY':'ONLINE'):'DISABLED',
-    healthCheckedAt:metric?.healthCheckedAt??null,latencyMs:metric?.lastLatencyMs??null,lastError:metric?.healthReason??null,totalRuns:metric?.totalRuns??0,failures:metric?.failures??0};});
+  return settings.aiResources.map(item=>({...item,active:item.enabled,status:item.enabled?'READY':'DISABLED'}));
 }
 function syncAiRuntime(runtime:EngineRuntime,settings:SystemSettings){
   runtime.state.aiResources=loadAiResources(settings);const load=(runtime.ai as any).load as Map<string,any>,ids=new Set(runtime.state.aiResources.map(item=>item.id));
@@ -84,7 +80,7 @@ export function createRuntimeSettingsResourcesRouter(runtime:EngineRuntime){
   router.put('/settings',async(req,res,next)=>{try{
     if(governanceGuard(req,res))return;
     const requested=req.body as SystemSettings,current=runtime.state.settings;
-    const candidate=canonicalProxy({...requested,connections:{...requested.connections,exchange:current.connections.exchange,proxy:current.connections.proxy},aiResources:current.aiResources,aiDutyRoutes:current.aiDutyRoutes});
+    const candidate=canonicalProxy({...requested,connections:{...requested.connections,exchange:current.connections.exchange,proxy:current.connections.proxy},aiResources:current.aiResources});
     res.json(await saveRuntimeSettings(runtime,candidate));
   }catch(error){if(conflict(res,error,runtime.state.settings.settingsVersion))return;next(error);}});
   router.get('/settings/governance',(_req,res)=>{res.json({settingsVersion:runtime.state.settings.settingsVersion,
@@ -157,17 +153,7 @@ export function createRuntimeSettingsResourcesRouter(runtime:EngineRuntime){
       res.status(423).json({error:{code:'PORTFOLIO_RISK_AUTHORITY_UNPROVEN',blockers:(error as unknown as {blockers?:string[]}).blockers??[message.slice(0,400)],
         explanation:'组合风险权威数据集未能从真实 Testnet 事实证明，未写入任何 Settings。'}});return;}
     next(error);}});
-  router.get('/settings/resources/:kind',(req,res,next)=>{try{const kind=kindOf(req);res.json({settingsVersion:runtime.state.settings.settingsVersion,items:resourceView(runtime.state.settings,kind,runtime)});}catch(error){next(error);}});
-  router.get('/settings/ai-duty-routes',(_req,res)=>res.json({settingsVersion:runtime.state.settings.settingsVersion,routes:runtime.state.settings.aiDutyRoutes??[],resources:runtime.state.settings.aiResources.map(({id,name,enabled,model})=>({id,name:name??id,enabled,model}))}));
-  router.put('/settings/ai-duty-routes',async(req,res,next)=>{try{
-    const expected=expectedVersion(req),routes=Array.isArray(req.body?.routes)?req.body.routes:[],before=runtime.state.settings,candidate=structuredClone(before);
-    candidate.aiDutyRoutes=routes;
-    // Validate uniqueness, target existence/enabled state, and the required sole Entry Primary before commit.
-    const parsed=SystemSettingsSchema.parse(candidate);
-    if(parsed.aiDutyRoutes.filter(route=>route.enabled).some(route=>!['SCOUT_RESEARCH','ENTRY_PRIMARY','PENDING_ENTRY_REVIEW','POSITION_REVIEW'].includes(route.duty)))throw new Error('AI_DUTY_UNSUPPORTED');
-    const saved=await runtime.updateSettingsIfVersion(parsed,expected);hotApply(runtime,before,saved);
-    res.json({settingsVersion:saved.settingsVersion,routes:saved.aiDutyRoutes});
-  }catch(error){if(conflict(res,error,runtime.state.settings.settingsVersion))return;next(error);}});
+  router.get('/settings/resources/:kind',(req,res,next)=>{try{const kind=kindOf(req);res.json({settingsVersion:runtime.state.settings.settingsVersion,items:resourceView(runtime.state.settings,kind)});}catch(error){next(error);}});
   const save=async(req:Request,res:Response,next:NextFunction)=>{try{
     const kind=kindOf(req),expected=expectedVersion(req),before=runtime.state.settings;rejectSecretFields(req.body);
     const id=kind==='proxy'?'binance-proxy':kind==='exchange'?'binance-usdm':String(req.params.id??req.body?.id??'');
@@ -177,7 +163,7 @@ export function createRuntimeSettingsResourcesRouter(runtime:EngineRuntime){
     else if(kind==='exchange'){item={id,name:req.body?.name??'Binance USD-M',type:'BINANCE_USDM',environment:req.body?.environment??before.connections.exchange.environment,restBaseUrl:req.body?.restBaseUrl,wsBaseUrl:req.body?.wsBaseUrl,credentialRef:req.body?.credentialRef??before.connections.exchange.credentialRef,enabled:true};nextSettings=canonicalExchange(before,item);}
     else{item=aiResource({...req.body,id});nextSettings=structuredClone(before);nextSettings.aiResources=[...nextSettings.aiResources.filter(existing=>existing.id!==item.id),item];}
     const saved=await runtime.updateResourceSettings(nextSettings,expected,{kind,operation:'SAVE',id,value:item});hotApply(runtime,before,saved);
-    res.json({...resourceView(saved,kind,runtime).find(row=>row.id===id)??item,settingsVersion:saved.settingsVersion});
+    res.json({...resourceView(saved,kind).find(row=>row.id===id)??item,settingsVersion:saved.settingsVersion});
   }catch(error){if(conflict(res,error,runtime.state.settings.settingsVersion))return;next(error);}};
   router.post('/settings/resources/:kind',save);router.put('/settings/resources/:kind/:id',save);
   router.post('/settings/resources/:kind/:id/test',async(req,res,next)=>{try{
@@ -198,11 +184,7 @@ export function createRuntimeSettingsResourcesRouter(runtime:EngineRuntime){
     if(kind==='exchange')return res.status(409).json({error:{message:'ACTIVE_EXCHANGE_DELETE_REQUIRES_REPLACEMENT'},currentSettingsVersion:before.settingsVersion});
     const nextSettings=structuredClone(before);
     if(kind==='proxy')nextSettings.connections.proxy={...nextSettings.connections.proxy,enabled:false,forceBinanceRest:true,forceBinanceWs:true,proxyDns:true,binanceRestRoute:'CONFIGURED',failClosed:true};
-    else {
-      const duties=(nextSettings.aiDutyRoutes??[]).filter(route=>route.enabled&&route.resourceId===id).map(route=>route.duty);
-      if(duties.length)return res.status(409).json({error:{code:'AI_RESOURCE_IN_USE',resourceId:id,duties},currentSettingsVersion:before.settingsVersion});
-      nextSettings.aiResources=nextSettings.aiResources.filter(item=>item.id!==id);
-    }
+    else nextSettings.aiResources=nextSettings.aiResources.filter(item=>item.id!==id);
     const saved=await runtime.updateResourceSettings(nextSettings,expected,{kind,operation:'DELETE',id:kind==='proxy'?'binance-proxy':id});hotApply(runtime,before,saved);
     res.status(204).setHeader('x-settings-version',String(saved.settingsVersion)).end();
   }catch(error){if(conflict(res,error,runtime.state.settings.settingsVersion))return;next(error);}});

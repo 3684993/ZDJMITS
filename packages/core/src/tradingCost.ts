@@ -11,6 +11,43 @@ export interface TradingCostEstimate {
   requiredNetProfit:number; expectedGrossProfit:number; expectedNetProfit:number; expectedExitPrice:number;
 }
 
+export interface TradingCostSnapshotInput {
+  entryFeeRate:number;
+  makerFeeRate:number;
+  takerFeeRate:number;
+  exitFeeAssumption:FeeAssumption;
+  slippageBufferPct:number;
+  feeSafetyBufferPct:number;
+}
+export interface TradingCostSnapshot {
+  version:'V3.9.7_COST_SNAPSHOT_1';
+  entryFeeRate:number;
+  expectedExitFeeRate:number;
+  entryFeeBps:number;
+  expectedExitFeeBps:number;
+  feeRoundTripBps:number;
+  slippageBufferBps:number;
+  uncertaintyBufferBps:number;
+  allInCostBps:number;
+  costVersion:string;
+}
+
+/**
+ * One canonical cost statement for EIP, candidate construction, admission and TP verification.
+ * Percent settings are converted once here; consumers do not get to reinterpret 0.05% as either
+ * 0.05 bps or 5 bps. `allInCostBps` includes entry, expected exit, slippage and the declared fee
+ * uncertainty buffer.
+ */
+export function tradingCostSnapshot(input:TradingCostSnapshotInput):TradingCostSnapshot{
+  const expectedExitFeeRate=input.exitFeeAssumption==='MAKER'?input.makerFeeRate:input.takerFeeRate;
+  const entryFeeBps=input.entryFeeRate*10_000,expectedExitFeeBps=expectedExitFeeRate*10_000;
+  const feeRoundTripBps=entryFeeBps+expectedExitFeeBps,slippageBufferBps=input.slippageBufferPct*100;
+  const uncertaintyBufferBps=feeRoundTripBps*input.feeSafetyBufferPct/100;
+  const costVersion=['v397c1',input.entryFeeRate,expectedExitFeeRate,input.slippageBufferPct,input.feeSafetyBufferPct].join(':');
+  return{version:'V3.9.7_COST_SNAPSHOT_1',entryFeeRate:input.entryFeeRate,expectedExitFeeRate,entryFeeBps,expectedExitFeeBps,
+    feeRoundTripBps,slippageBufferBps,uncertaintyBufferBps,allInCostBps:feeRoundTripBps+slippageBufferBps+uncertaintyBufferBps,costVersion};
+}
+
 const finite=(value:number)=>Number.isFinite(value)&&value>=0;
 const gross=(input:TradingCostInput,exitPrice:number)=>input.direction==='LONG'?(exitPrice-input.entryPrice)*input.qty:(input.entryPrice-exitPrice)*input.qty;
 const costs=(input:TradingCostInput,exitPrice:number)=>{

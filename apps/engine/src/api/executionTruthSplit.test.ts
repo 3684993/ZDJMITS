@@ -80,11 +80,19 @@ describe('P7 execution truth split',()=>{
     expect(review.lastOutcome.lastOutcome).toBeUndefined();
   });
 
-  it('does not let a malformed transient position crash dashboard projection',()=>{
+  it('counts only actionable 60/90 minute milestones as scheduled due',()=>{
     const runtime=stub();
-    runtime.state.positions.set('partial',{tpStatus:'PROTECTED',tpOrderId:'tp-only'} as never);
-    runtime.exitRuntime={scope:()=>{throw new Error('invalid scope must not be called');},ownerOfScope:()=>null};
-    expect(()=>executionTruthProjection(runtime,1_000)).not.toThrow();
-    expect((executionTruthProjection(runtime,1_000) as any).reviewAuthority.aiActiveCycles).toBe(0);
+    runtime.state.settings.riskGovernance.exitCoordination={positionReviewEnabled:true};
+    runtime.positionReviewRunner={lastOutcome:()=>null};
+    runtime.positionReviewScheduler={reviewReadback:()=>({due:9,exhausted:0,failureBlocked:0,rows:[]}),dueCount:()=>9};
+    runtime.state.positions.set('before60',{id:'before60',symbol:'BTCUSDT',cycleId:'c1',reviewTimeline:{
+      thesisDueAt:2_000,thesisAttemptedAt:null,thesisStatus:'PENDING',timeStopDueAt:3_000,timeStopAttemptedAt:null,timeStopStatus:'PENDING',timeStopDecision:null}} as never);
+    expect((executionTruthProjection(runtime,1_999) as any).reviewAuthority.scheduledDue).toBe(0);
+    expect((executionTruthProjection(runtime,2_000) as any).reviewAuthority.scheduledDue).toBe(1);
+    // At 90m the time-stop decision replaces the unattempted thesis review; it is one obligation.
+    expect((executionTruthProjection(runtime,3_000) as any).reviewAuthority.scheduledDue).toBe(1);
+    runtime.state.positions.set('before60',{...(runtime.state.positions.get('before60') as any),reviewTimeline:{
+      ...(runtime.state.positions.get('before60') as any).reviewTimeline,thesisStatus:'MISSED',timeStopStatus:'APPLIED',timeStopDecision:'HOLD'}} as never);
+    expect((executionTruthProjection(runtime,3_001) as any).reviewAuthority.scheduledDue).toBe(0);
   });
 });

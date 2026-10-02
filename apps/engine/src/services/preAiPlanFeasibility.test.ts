@@ -22,15 +22,16 @@ const envelopeOf = () => buildPreAiExecutionEnvelope(harness().state, fixtureSym
 function armedHarness() {
   const h = harness();
   const quote = h.state.snapshots.get(fixtureSymbol)!.quote;
-  (h.ai as any).decide.mockImplementation(async () => ({
-    runId: 'pre-ai-feasibility-run',
-    decision: {
-      ...h.supplied, decision: 'PLACE_LONG', tradeSide: 'LONG', direction: 'LONG', structureDirection: 'LONG',
-      quantityUnits: 1000, idealPrice: Number(quote.bid),
-      acceptablePriceRange: {min: Number(quote.bid), max: Number(quote.ask) + Number(quote.tickSize) * 10},
-      horizonMinutes: 3,
-    },
-  }));
+  (h.ai as any).decide.mockImplementation(async (packet: any) => {
+    const selected=packet.executionEnvelope.LONG.planCandidates[0];
+    return {runId: 'pre-ai-feasibility-run',decision: {
+      ...h.supplied, action:'FINAL',schemaVersion:'V3.9.7',decision: 'PLACE_LONG', tradeSide: 'LONG', direction: 'LONG', structureDirection: 'LONG',
+      selectedCandidateId:selected.candidateId,quantityUnits:null,idealPrice: Number(quote.bid),
+      acceptablePriceRange: {min: Number(quote.bid), max: Number(quote.ask) + Number(quote.tickSize) * 10},horizonMinutes: 3,
+      profitTakePlan:{targetPrice:selected.targetPrice,acceptableTargetRange:{...selected.acceptableTargetRange},targetHorizonMinutes:selected.targetHorizonMinutes,
+        targetReason:'Exact pre-Primary candidate',evidenceRefs:[]},
+    }};
+  });
   return h;
 }
 
@@ -88,7 +89,9 @@ describe('V3.9.6 pre-AI hard plan feasibility', () => {
       // Sizing to the outcome is forbidden: the probe tests exactly the smallest legal quantity,
       // priced at the favourable edge of the maker band it is allowed to hope for.
       const entryPrice = side === 'LONG' ? envelope.makerReachableBand.min : envelope.makerReachableBand.max;
-      const ladder = quantityLadder(1, envelope[side].maxQuantityUnits, quote.stepSize, entryPrice, quote.minNotional);
+      const ladder = quantityLadder(Number(envelope[side].minQuantityUnits??1), envelope[side].maxQuantityUnits, quote.stepSize, entryPrice, quote.minNotional,{leverage:envelope.leverage,
+        businessMinInitialMarginUsd:Number(settingsWith({}).portfolioIntelligence.businessMinInitialMarginUsd),
+        preferredInitialMarginUsd:Number(settingsWith({}).portfolioIntelligence.preferredInitialMarginUsd)});
       expect(row.quantityUnits).toBe(ladder[0]);
     }
   });

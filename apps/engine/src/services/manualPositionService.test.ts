@@ -5,6 +5,7 @@ import { SystemSettingsSchema } from '@zdj/contracts';
 import { RuntimeState } from '../state/runtimeState.js';
 import { EventBus } from '../events/eventBus.js';
 import { ManualPositionService } from './manualPositionService.js';
+import { OrderPrecisionError } from '../adapters/binance/orderPrecision.js';
 import { exitRuntimeHarness, manualJournalHarness, coordinatedExchange } from './v396ExitTestHarness.js';
 
 async function fixture(){
@@ -75,6 +76,53 @@ describe('Manual emergency close',()=>{
   });
   it('records UNKNOWN on an unprovable timeout and never retries that key',async()=>{
     const x=await fixture();x.exchange.placeManualOrder.mockRejectedValue(new Error('timeout'));x.exchange.findManualByClientOrderId=vi.fn(async()=>null);const service=new ManualPositionService(x.state,x.market,x.exchange,x.tp,new EventBus(),x.reconcile,manualJournalHarness() as any,exitRuntimeHarness()),input={action:'EMERGENCY_CLOSE' as const,confirm:true,idempotencyKey:'unknown-submit'};const first=await service.execute(x.position.id,input),replay=await service.execute(x.position.id,input);expect(first.intent.status).toBe('UNKNOWN');expect(first.order.status).toBe('UNKNOWN');expect(replay.replayed).toBe(true);expect(x.exchange.placeManualOrder).toHaveBeenCalledOnce();expect(x.tp.ensure).toHaveBeenCalled();
+  });
+  it('settles a typed local precision refusal without an exact query and restores TP protection',async()=>{
+    const x=await fixture(),exitRuntime=exitRuntimeHarness(),journal=manualJournalHarness(),events=new EventBus(),published:string[]=[];
+    events.on('event',event=>published.push(event.type));
+    x.exchange.placeManualOrder.mockRejectedValueOnce(new OrderPrecisionError(x.position.symbol,'price','OFF_GRID'));
+    x.exchange.findManualByClientOrderId=vi.fn(async()=>null);
+    const service=new ManualPositionService(x.state,x.market,x.exchange,x.tp,events,x.reconcile,journal as any,exitRuntime);
+    const input={action:'EMERGENCY_CLOSE' as const,confirm:true,idempotencyKey:'local-precision'};
+    await expect(service.execute(x.position.id,input)).rejects.toThrow('ORDER_DECIMAL_INVALID');
+    const order=[...x.state.manualOrders.values()][0]!;
+    expect(order.status).toBe('REJECTED');expect(order.exchangeOrderId).toBeNull();
+    expect(exitRuntime.task(order.clientOrderId!)?.state).toBe('REJECTED');
+    expect(exitRuntime.claimFor(order.clientOrderId!)?.status).toBe('RELEASED');
+    expect(exitRuntime.task(order.clientOrderId!)?.reasons.join('|')).toContain('LOCAL_NOT_SENT:MANUAL:');
+    expect([...x.state.manualIntents.values()][0]!.status).toBe('REJECTED');
+    expect([...x.state.manualIntents.values()][0]!.reason).toContain('LOCAL_NOT_SUBMITTED:');
+    expect(x.exchange.findManualByClientOrderId).not.toHaveBeenCalled();
+    expect(x.tp.resume).toHaveBeenCalled();expect(x.tp.ensure).toHaveBeenCalledWith(expect.objectContaining({id:x.position.id}),true);
+    expect(published).toContain('MANUAL_ORDER_NOT_SENT');expect(published).not.toContain('MANUAL_ORDER_SUBMIT_UNKNOWN');
+    expect((await service.execute(x.position.id,input)).replayed).toBe(true);
+    expect(x.exchange.placeManualOrder).toHaveBeenCalledOnce();
+    expect(journal.save).toHaveBeenCalledWith(expect.objectContaining({order:expect.objectContaining({status:'REJECTED'})}));
+    exitRuntime.close();
+  });
+  it('rejects an unsent manual add without canceling existing protection',async()=>{
+    const x=await fixture(),exitRuntime=exitRuntimeHarness();
+    x.exchange.placeManualOrder.mockRejectedValue(new OrderPrecisionError(x.position.symbol,'quantity','OFF_GRID'));
+    x.exchange.findManualByClientOrderId=vi.fn(async()=>null);
+    const service=new ManualPositionService(x.state,x.market,x.exchange,x.tp,new EventBus(),x.reconcile,manualJournalHarness() as any,exitRuntime);
+    await expect(service.execute(x.position.id,{action:'ADD',quantity:100,idempotencyKey:'add-local-precision'})).rejects.toThrow('LOCAL_NOT_SUBMITTED:');
+    expect([...x.state.manualOrders.values()][0]!.status).toBe('REJECTED');
+    expect(x.exchange.findManualByClientOrderId).not.toHaveBeenCalled();expect(x.tp.cancel).not.toHaveBeenCalled();
+    expect(exitRuntime.tasksNeedingQuery()).toHaveLength(0);
+    exitRuntime.close();
+  });
+  it.each(['message','flag'])('keeps an untyped precision %s error unknown and its claim occupied',async(kind)=>{
+    const x=await fixture(),exitRuntime=exitRuntimeHarness();
+    const typed=new OrderPrecisionError(x.position.symbol,'price','OFF_GRID');
+    x.exchange.placeManualOrder.mockRejectedValue(Object.assign(new Error(typed.message),kind==='flag'?{wireAttempted:false}:{}));
+    x.exchange.findManualByClientOrderId=vi.fn(async()=>null);
+    const service=new ManualPositionService(x.state,x.market,x.exchange,x.tp,new EventBus(),x.reconcile,manualJournalHarness() as any,exitRuntime);
+    const result=await service.execute(x.position.id,{action:'EMERGENCY_CLOSE',confirm:true,idempotencyKey:`untyped-${kind}`});
+    expect(result.intent.status).toBe('UNKNOWN');expect(result.order.status).toBe('UNKNOWN');
+    expect(exitRuntime.task(result.order.clientOrderId!)?.state).toBe('UNKNOWN');
+    expect(exitRuntime.claimFor(result.order.clientOrderId!)?.status).toBe('ACTIVE');
+    expect(x.exchange.findManualByClientOrderId).toHaveBeenCalledOnce();
+    exitRuntime.close();
   });
   it('restores TP protection after a definite exchange rejection',async()=>{
     const x=await fixture();x.exchange.placeManualOrder.mockRejectedValue(new Error('rejected'));x.exchange.findManualByClientOrderId=vi.fn(async(request:any)=>({id:request.internalOrderId,intentId:'',clientOrderId:request.clientOrderId,exchangeOrderId:'rejected',positionId:x.position.id,symbol:request.symbol,side:request.side,positionSide:request.positionSide,type:'LIMIT',quantity:request.quantity,price:request.price,reduceOnly:true,postOnly:false,status:'REJECTED',filledQuantity:0,createdAt:Date.now(),updatedAt:Date.now()}));const service=new ManualPositionService(x.state,x.market,x.exchange,x.tp,new EventBus(),x.reconcile,manualJournalHarness() as any,exitRuntimeHarness());await expect(service.execute(x.position.id,{action:'EMERGENCY_CLOSE',confirm:true,idempotencyKey:'rejected-submit'})).rejects.toThrow('EXCHANGE_ORDER_REJECTED');expect(x.tp.resume).toHaveBeenCalled();expect(x.tp.ensure).toHaveBeenCalledWith(expect.objectContaining({id:x.position.id}),true);

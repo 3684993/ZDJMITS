@@ -1,9 +1,0 @@
-## D 段预检（只读）
-private status=READY  asOf=1790248333240  ageMs=904  fresh<=60s=true
-equityUsd=10814.616998322601  availableUsd=4101.37186307  assets=BTC:0.01, USDT:4101.37186307, USDC:4974.89023197
-persistence integrity=true status=HEALTHY error=null
-marketStream=LIVE lastMessageAgeMs=87
-UNKNOWN historical=46 activeUnresolved=0 verifiedNoActive=46 driftUnresolved=0
-writeBoundary={"environment":"TESTNET","executionMode":"READ_ONLY","lockedToTestnet":true,"testnetWrites":0,"productionWrites":0,"blockedProductionWriteAttempts":0,"lastWriteAt":null,"lastWritePath":null}
-binance-governance HTTP 200 = {"asOf":1790248334159,"routes":[{"environment":"TESTNET","rest":{"mode":"CONFIGURED","throughProxy":true,"host":"demo-fapi.binance.com","routeIdentity":"proxy-a087cc91667b","proxyUrl":"socks5h://127.0.0.1:20081","expectedStaticEgressIp":"172.104.186.174","failClosed":true,"deprecatedTestnetRestHost":false},"ws":{"url":"wss://stream.binancefuture.com/ws","throughProxy":true,"proxyUrl":"socks5h://127.0.0.1:20081","tlsServername":"stream.binancefuture.com","routeIdentity":"proxy-a087cc91667b","failClosed":true},"egress":{"routeIdentity":"proxy-a087cc91667b","expectedEgressIp":"172.104.186.174","lastVerifiedEgressIp":"172.104.186.174","lastVerifiedAt":1790248159432,"status":"VERIFIED","lastError
-private-sync HTTP 200 = {"sync":{"requestId":"3326768b-27cd-4e04-af93-9a0696688388","lastSuccessAt":1790248333240,"lastFailureAt":null,"consecutiveFailures":0,"coalesced":0,"lastError":null,"durationMs":9878,"inFlight":false,"snapshotAgeMs":924},"requests":{"TESTNET:default":{"scope":"TESTNET:default","active":0,"publicActive":0,"queued":0,"queuedWeight":0,"activeWeight":0,"observedWeightAnomaly":false,"observationTrust":"PENDING","rateLimits":[],"laneStats":{"EXECUTION":{"queued":0,"queuedWeight":0,"admitted":0,"defer

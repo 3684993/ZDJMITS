@@ -15,6 +15,7 @@ import {
   portfolioRiskAuthorityVerifyRows,
   type PortfolioRiskAuthorityFacts, type PortfolioRiskAuthorityRow,
 } from '../services/portfolioRiskAuthority.js';
+import { migrateV397BusinessSizing } from './v397SettingsMigration.js';
 
 
 /** Recover the known vocabulary corruption only with matching durable intent and consistent fills. */
@@ -102,23 +103,6 @@ function merge(defaults: unknown, override: unknown): unknown {
 function migrate(value: unknown): unknown {
   if (!record(value)) return value;
   const next = structuredClone(value) as Record<string, unknown>;
-  // V397 separates physical endpoints from logical duties. Preserve the exact legacy Primary
-  // endpoint; duties are backfilled only when the new route map is absent.
-  if (!Array.isArray(next.aiDutyRoutes) || next.aiDutyRoutes.length === 0) {
-    const resources=Array.isArray(next.aiResources)?next.aiResources.filter(record):[];
-    const scout=resources.find(resource=>resource.role==='SCOUT');
-    const primary=resources.find(resource=>resource.role==='PRIMARY_BRAIN'&&resource.enabled!==false);
-    const review=resources.find(resource=>resource.role==='REVIEW_BRAIN'&&resource.enabled!==false)??primary;
-    next.aiDutyRoutes=[
-      ...(scout?[{duty:'SCOUT_RESEARCH',resourceId:String(scout.id),enabled:scout.enabled!==false,priority:10}]:[]),
-      ...(primary?[{duty:'ENTRY_PRIMARY',resourceId:String(primary.id),enabled:true,priority:100}]:[]),
-      ...(review?[{duty:'PENDING_ENTRY_REVIEW',resourceId:String(review.id),enabled:true,priority:20},{duty:'POSITION_REVIEW',resourceId:String(review.id),enabled:true,priority:90}]:[]),
-    ];
-  }
-  // V3.9.7 expands SHADOW path evidence through the 4h window. Upgrade only the prior default;
-  // an operator-selected non-default observation horizon remains authoritative.
-  if (record(next.tradingQuality) && Number((next.tradingQuality as any).positionObservationHorizonMs) === 900_000)
-    (next.tradingQuality as any).positionObservationHorizonMs = 14_400_000;
   if (record(next.connections)) {
     const c = next.connections as Record<string, unknown>;
     c.marketDataMode = "BINANCE";
@@ -193,6 +177,7 @@ function migrate(value: unknown): unknown {
     if (!record(governance.exposureCapacityPolicy))
       governance.exposureCapacityPolicy = { gross: "ENFORCE", direction: "ENFORCE", cluster: "ENFORCE" };
   }
+  migrateV397BusinessSizing(next);
   // V3.9.5 migrates by field facts, because settingsVersion is a revision counter that is already
   // 100+ on a healthy V3.9.4 runtime. Only a pre-V3.9.5 document gets its sub-$1 floor raised once;
   // after that the stored value is authoritative and an out-of-range one fails closed in the schema.
@@ -202,32 +187,10 @@ function migrate(value: unknown): unknown {
   const economics=(next.tradeEconomics??={}) as Record<string,unknown>;
   economics.parameterProfile=economics.parameterProfile??'CUSTOM';
   economics.admissionMode=economics.admissionMode??'SHADOW';
-  // Historical reachability is reported as evidence, but missing samples must not hold the
-  // deterministic fee/size contract in SHADOW or turn a newly enabled policy into a sample gate.
   economics.historicalTpReachabilityEnabled=economics.historicalTpReachabilityEnabled??true;
   economics.minHistoricalReachProbability=economics.minHistoricalReachProbability??.5;
   economics.reachabilityLookbackBars=economics.reachabilityLookbackBars??120;
   economics.reachabilityMinSamples=economics.reachabilityMinSamples??30;
-  // V3.9.7 makes TESTNET's existing user budget effective. The configured $200 entry margin is a
-  // planning budget, not a minimum margin; use it only as the business order-notional floor. The
-  // separately named $1 minMarginUsd remains the initial-margin floor. USDC is expressed in USDC
-  // units and its live USD conversion is bound into each mandate by the timestamped FX feed.
-  const entry=(next.entry??={}) as Record<string,unknown>;
-  const configuredMargin=Number((next.portfolioIntelligence as any)?.minMarginUsd??1);
-  const configuredNotional=Number((next.portfolio as any)?.entryMarginUsd??200);
-  const quotePolicy=(value:unknown,fallback:number)=>{const row=record(value)?value as Record<string,unknown>:{};return{USDT:row.USDT??fallback,USDC:row.USDC??fallback};};
-  entry.minimumInitialMarginByQuote=quotePolicy(entry.minimumInitialMarginByQuote,configuredMargin);
-  const orderNotional=quotePolicy(entry.minimumOrderNotionalByQuote,configuredNotional);
-  entry.minimumOrderNotionalByQuote={USDT:Math.max(100,Number(orderNotional.USDT)||100),USDC:Math.max(100,Number(orderNotional.USDC)||100)};
-  if(next.connections && record(next.connections) && (next.connections as any).exchange?.environment==='TESTNET'&&Number(next.economicPolicyVersion??0)<1){
-    economics.admissionMode='ENFORCE';
-    economics.historicalTpReachabilityEnabled=false;
-    const coordination=((((next.riskGovernance??={}) as any).exitCoordination??={}) as Record<string,unknown>);
-    coordination.positionReviewEnabled=true;
-    coordination.aiExitAuthority='ENFORCE';
-    coordination.aiExitAllowSmallLoss=true;
-    next.economicPolicyVersion=1;
-  }
   const management=(next.positionManagement??={}) as Record<string,unknown>;
   management.humanManagedAdmissionCapsEnabled=management.humanManagedAdmissionCapsEnabled??true;
   management.maxHumanManagedPositions=management.maxHumanManagedPositions??4;
@@ -535,9 +498,6 @@ export class SettingsStore {
         observed_at INTEGER NOT NULL, committed_at INTEGER NOT NULL, settings_version INTEGER NOT NULL,
         provenance TEXT NOT NULL
       ); INSERT OR IGNORE INTO schema_migrations(version,applied_at) VALUES(10,${Date.now()});`);
-    this.db.exec(`INSERT OR IGNORE INTO schema_migrations(version,applied_at) VALUES(12,${Date.now()});`);
-    this.db.exec(`INSERT OR IGNORE INTO schema_migrations(version,applied_at) VALUES(13,${Date.now()});`);
-    this.db.exec(`INSERT OR IGNORE INTO schema_migrations(version,applied_at) VALUES(14,${Date.now()});`);
     const secretColumns = new Set(
       (
         this.db.prepare("PRAGMA table_info(secrets)").all() as Array<{
@@ -672,7 +632,6 @@ export class SettingsStore {
           JSON.stringify({
             connections: next.connections,
             aiResources: next.aiResources,
-            aiDutyRoutes: next.aiDutyRoutes,
           }),
           now,
         );
@@ -1320,7 +1279,7 @@ export class SettingsStore {
       const previousCapacity=old?JSON.parse(old.payload).portfolio?.maxPositions??null:null;
       this.db.prepare("INSERT INTO settings(id,version,payload,updated_at) VALUES(1,?,?,?) ON CONFLICT(id) DO UPDATE SET version=excluded.version,payload=excluded.payload,updated_at=excluded.updated_at").run(updated.settingsVersion,JSON.stringify(updated),now);
       this.db.prepare("INSERT INTO settings_audit(changed_at,source,old_version,new_version,summary) VALUES(?,?,?,?,?)").run(now,`resource-${mutation.kind.toLowerCase()}`,expectedVersion,updated.settingsVersion,JSON.stringify({message:"resource and active settings updated atomically",operation:mutation.operation,resourceId:mutation.id,maxPositions:{before:previousCapacity,after:updated.portfolio.maxPositions}}));
-      this.db.prepare("INSERT INTO connection_profiles(id,profile,updated_at) VALUES(?,?,?) ON CONFLICT(id) DO UPDATE SET profile=excluded.profile,updated_at=excluded.updated_at").run("active",JSON.stringify({connections:updated.connections,aiResources:updated.aiResources,aiDutyRoutes:updated.aiDutyRoutes}),now);
+      this.db.prepare("INSERT INTO connection_profiles(id,profile,updated_at) VALUES(?,?,?) ON CONFLICT(id) DO UPDATE SET profile=excluded.profile,updated_at=excluded.updated_at").run("active",JSON.stringify({connections:updated.connections,aiResources:updated.aiResources}),now);
       if(mutation.operation==="DELETE")this.db.prepare(`DELETE FROM ${table} WHERE id=?`).run(mutation.id);
       else this.db.prepare(`INSERT INTO ${table}(id,payload,updated_at) VALUES(?,?,?) ON CONFLICT(id) DO UPDATE SET payload=excluded.payload,updated_at=excluded.updated_at`).run(mutation.id,JSON.stringify(mutation.value??{}),now);
       this.db.exec("COMMIT");this.current=updated;return updated;
@@ -1402,9 +1361,11 @@ export class SettingsStore {
   upsertAiRun(value: unknown) {
     const row = value as any;
     if (!row?.id) return;
+    // Terminal updates may enrich the same outcome, but stale RUNNING/recovery events
+    // cannot resurrect a finished run or replace its completion time and failure identity.
     this.db
       .prepare(
-        "INSERT INTO ai_runs_archive(run_id,symbol,started_at,status,payload,updated_at,role,model,decision,direction,completed_at,latency_ms,input_tokens,output_tokens,short_reason) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT(run_id) DO UPDATE SET status=excluded.status,payload=excluded.payload,updated_at=excluded.updated_at,role=excluded.role,model=excluded.model,decision=excluded.decision,direction=excluded.direction,completed_at=excluded.completed_at,latency_ms=excluded.latency_ms,input_tokens=excluded.input_tokens,output_tokens=excluded.output_tokens,short_reason=excluded.short_reason",
+        "INSERT INTO ai_runs_archive(run_id,symbol,started_at,status,payload,updated_at,role,model,decision,direction,completed_at,latency_ms,input_tokens,output_tokens,short_reason) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT(run_id) DO UPDATE SET status=excluded.status,payload=excluded.payload,updated_at=excluded.updated_at,role=excluded.role,model=excluded.model,decision=excluded.decision,direction=excluded.direction,completed_at=excluded.completed_at,latency_ms=excluded.latency_ms,input_tokens=excluded.input_tokens,output_tokens=excluded.output_tokens,short_reason=excluded.short_reason WHERE ai_runs_archive.status NOT IN ('COMPLETED','FAILED','CANCELED') OR (excluded.status=ai_runs_archive.status AND excluded.completed_at IS ai_runs_archive.completed_at AND COALESCE(json_extract(excluded.payload,'$.failure.errorCode'),'')=COALESCE(json_extract(ai_runs_archive.payload,'$.failure.errorCode'),''))",
       )
       .run(
         row.id,
@@ -1423,6 +1384,45 @@ export class SettingsStore {
         row.outputTokens ?? null,
         String(row.reason ?? row.error ?? row.failure?.errorMessage ?? '').slice(0,500) || null,
       );
+  }
+  /** Reconcile only the bounded restored run set, before the runtime exposes its API.
+   * A durable terminal artifact outranks a checkpoint-derived restart interruption.
+   * Do not emit a new model/exchange event or revise the original request/output facts.
+   */
+  reconcileRestoredAiRuns<T extends {id: string; status: string}>(runs: T[]): T[] {
+    this.db.exec('SAVEPOINT restored_ai_runs');
+    try {
+      const resolved = runs.map(run => {
+        const archived = this.getAiRun(run.id);
+        if (archived && ['COMPLETED', 'FAILED', 'CANCELED'].includes(archived.status)) {
+          if (archived.rawArtifactStatus !== 'COMPACTED') return archived as T;
+          const restored = run as any;
+          if (archived.id !== restored.id || archived.symbol !== restored.symbol || archived.startedAt !== restored.startedAt)
+            throw new Error(`AI_RESTORE_ARCHIVE_IDENTITY_CONFLICT:${run.id}`);
+          // The checkpoint still proves request identity. It cannot supply a terminal
+          // output or recovery timing that contradicts the retained archive outcome.
+          const {timing: _timing, failure: _failure, terminalStage: _stage, rawDecision: _rawDecision,
+            rawDirection: _rawDirection, outputPreview: _output, normalizedPreview: _normalized,
+            parserRepaired: _repaired, protocolNormalization: _normalization, finishReason: _finish,
+            modelIdentity: _modelIdentity, ...request} = restored;
+          return {...request, ...archived, model: archived.model ?? restored.model, role: archived.role ?? restored.role,
+            error: archived.status === 'FAILED' ? archived.reason ?? null : null} as T;
+        }
+        if (['COMPLETED', 'FAILED', 'CANCELED'].includes(run.status)) this.upsertAiRun(run);
+        return run;
+      });
+      this.db.exec('RELEASE restored_ai_runs');
+      return resolved;
+    } catch (error) {
+      this.db.exec('ROLLBACK TO restored_ai_runs; RELEASE restored_ai_runs');
+      throw error;
+    }
+  }
+  /** The list and detail use the same durable terminal authority; reads never repair data. */
+  resolveAiRun(runId: string, liveRun?: any) {
+    const archived = this.getAiRun(runId);
+    if (archived && ['COMPLETED', 'FAILED', 'CANCELED'].includes(archived.status)) return archived;
+    return liveRun ?? archived;
   }
   private upsertLiveDecisionEpisode(run:any,event:any){
     let input:any=null,decision:any=null;try{input=JSON.parse(run.inputPreview??'{}').packet??null;}catch{}try{decision=JSON.parse(run.normalizedPreview??'{}');}catch{}
@@ -1470,13 +1470,18 @@ export class SettingsStore {
     ).map((row) => JSON.parse(row.payload));
   }
   listEntryObservationRuns(since:number,until:number,limit=10001):any[] {
-    return this.db.prepare("SELECT run_id AS id,symbol,role,status,decision,direction,started_at AS startedAt,completed_at AS completedAt,json_extract(payload,'$.error') AS error,json_extract(payload,'$.normalizedPreview') AS normalizedPreview,json_extract(payload,'$.outputPreview') AS outputPreview FROM ai_runs_archive WHERE role='PRIMARY_BRAIN' AND started_at BETWEEN ? AND ? ORDER BY started_at DESC LIMIT ?").all(since,until,Math.max(1,Math.min(10001,limit)));
+    return this.db.prepare("SELECT run_id AS id,symbol,role,status,decision,direction,started_at AS startedAt,completed_at AS completedAt,json_extract(payload,'$.error') AS error,json_extract(payload,'$.normalizedPreview') AS normalizedPreview FROM ai_runs_archive WHERE role='PRIMARY_BRAIN' AND started_at BETWEEN ? AND ? ORDER BY started_at DESC LIMIT ?").all(since,until,Math.max(1,Math.min(10001,limit)));
   }
   getAiRun(runId: string) {
     const row = this.db
-      .prepare("SELECT payload FROM ai_runs_archive WHERE run_id=?")
-      .get(runId) as { payload: string } | undefined;
-    return row ? JSON.parse(row.payload) : null;
+      .prepare("SELECT payload,run_id id,symbol,role,model,status,decision,direction,started_at startedAt,completed_at completedAt,latency_ms latencyMs,input_tokens inputTokens,output_tokens outputTokens,short_reason reason FROM ai_runs_archive WHERE run_id=?")
+      .get(runId) as ({payload: string} & Record<string, any>) | undefined;
+    if (!row) return null;
+    if (row.payload !== '{}') return JSON.parse(row.payload);
+    // Retention removes raw artifacts, not the terminal outcome or its indexed identity.
+    // A compacted record cannot be treated as an absent outcome during recovery.
+    const {payload: _payload, ...summary} = row;
+    return {...summary, rawArtifactStatus: 'COMPACTED'};
   }
   appendDecisionChain(
     chainId: string,
@@ -1663,6 +1668,27 @@ export class SettingsStore {
     this.db.exec(
       "CREATE TABLE IF NOT EXISTS shadow_mark_series (id TEXT PRIMARY KEY, ts INTEGER NOT NULL, symbol TEXT NOT NULL, mark REAL NOT NULL, bid REAL, ask REAL, snapshot_id TEXT)",
     );
+  }
+  /** Symbols whose Primary decision still needs a fixed-horizon mark path.
+   *
+   * This deliberately reads the durable episode ledger rather than only the
+   * in-memory position set: rejected, waiting, and never-filled decisions are
+   * precisely the counterfactual observations needed to evaluate direction
+   * and entry timing.  The caller supplies a bounded horizon so this cannot
+   * turn the mark recorder into an unbounded market-data subscription.
+   */
+  listOutcomeTrackingSymbols(
+    since = Date.now() - 4 * 60 * 60_000,
+    limit = 100,
+  ) {
+    const safe = Math.max(1, Math.min(500, Math.trunc(limit)));
+    return (
+      this.db
+        .prepare(
+          "SELECT symbol,MAX(decided_at) AS latestAt FROM decision_episodes WHERE decided_at>=? AND (return_4h IS NULL OR outcome_status!='OBSERVED') GROUP BY symbol ORDER BY latestAt DESC LIMIT ?",
+        )
+        .all(since, safe) as Array<{ symbol: string; latestAt: number }>
+    ).map((row) => String(row.symbol).toUpperCase());
   }
   listShadowMarkSeries(
     since = Date.now() - 24 * 60 * 60_000,

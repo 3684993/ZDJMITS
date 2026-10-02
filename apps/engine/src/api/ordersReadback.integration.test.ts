@@ -1,0 +1,40 @@
+import {afterEach,expect,it,vi} from 'vitest';
+import express from 'express';
+import {mkdtemp,rm} from 'node:fs/promises';
+import path from 'node:path';
+import os from 'node:os';
+import {EngineRuntime} from '../runtime/appRuntime.js';
+import {createApiRouter} from './router.js';
+import {TradeRecordSchema} from '@zdj/contracts';
+let runtime:EngineRuntime|null=null,server:any=null,dir='';
+afterEach(async()=>{if(server)await new Promise<void>(resolve=>server.close(()=>resolve()));runtime?.stop();if(dir)await rm(dir,{recursive:true,force:true});server=null;runtime=null;dir='';});
+it('HTTP orders separate historical facts, expose cancellation proof, retain FILLED and never touch TP',async()=>{
+  dir=await mkdtemp(path.join(os.tmpdir(),'zdj-order-readback-'));runtime=await EngineRuntime.createTestHarness({configDir:'../../config',dataDir:dir});
+  const now=Date.now(),order:any={id:'local',intentId:'intent',clientOrderId:'client',exchangeOrderId:'remote',symbol:'BTCUSDT',side:'LONG',quantity:1,price:100,filledQuantity:0,leverage:10,status:'WORKING',createdAt:now-1000,updatedAt:now-1000,absoluteExpiresAt:now+60000,repriceCount:0,reachability:1};
+  runtime.state.entryOrders.set('local',order);runtime.state.entryOrders.set('old',{...order,id:'old',intentId:'old-intent',clientOrderId:'old-client',exchangeOrderId:null,status:'UNKNOWN'});
+  runtime.state.tpOrders.set('tp',{id:'tp',positionId:'p',clientOrderId:'v396xopaque',exchangeOrderId:'remote-tp',symbol:'BTCUSDT',side:'SELL',quantity:1,price:110,status:'WORKING',createdAt:now,updatedAt:now} as any);
+  const reconciliation=runtime.reconciliation as any;reconciliation.lastFullOrderScanAt=now;reconciliation.cachedOpenOrders=[{...order,id:'client',factSource:'BINANCE_OPEN_ORDERS',verifiedAt:now},{...order,id:'v396xopaque',clientOrderId:'v396xopaque',exchangeOrderId:'remote-tp'}];
+  const cancel=vi.spyOn((runtime.entry as any).exchange,'cancelEntry').mockImplementation(async()=>{
+    const filled={...order,status:'FILLED',filledQuantity:1,updatedAt:Date.now()};runtime!.state.entryOrders.set('local',filled);return{...order,status:'CANCELED'};
+  });
+  const persist=vi.spyOn(runtime.settingsStore,'saveEntryExecution').mockImplementation(()=>{});
+  runtime.state.entryIntents.set('intent',{id:'intent'} as any);
+  const app=express();app.use('/api/v3',createApiRouter(runtime));server=app.listen(0,'127.0.0.1');await new Promise(resolve=>server.once('listening',resolve));
+  const base=`http://127.0.0.1:${server.address().port}/api/v3`;
+  const initial=await (await fetch(base+'/orders')).json() as any;
+  expect(initial.entry).toHaveLength(1);expect(initial.entry[0]).toMatchObject({id:'local',cancelEligibility:{allowed:true}});
+  expect(initial.historicalUnknown.map((row:any)=>row.id)).toEqual(['old']);expect(initial.entryReadback.status).toBe('READY');
+  expect((await fetch(base+'/entry/old/cancel',{method:'POST'})).status).toBe(409);expect(cancel).not.toHaveBeenCalled();
+  const response=await fetch(base+'/entry/local/cancel',{method:'POST'});expect(response.status).toBe(200);expect(await response.json()).toMatchObject({status:'FILLED'});
+  expect(persist).toHaveBeenCalledOnce();expect(runtime.state.tpOrders.get('tp')?.status).toBe('WORKING');
+  expect((await fetch(base+'/entry/local/cancel',{method:'POST'})).status).toBe(409);expect(cancel).toHaveBeenCalledOnce();
+  expect((await (await fetch(base+'/orders')).json() as any).entry).toEqual([]);
+});
+it('list and detail expose UNKNOWN closure provenance without rewriting a legacy MANUAL record',async()=>{
+  dir=await mkdtemp(path.join(os.tmpdir(),'zdj-close-source-'));runtime=await EngineRuntime.createTestHarness({configDir:'../../config',dataDir:dir});
+  const record=TradeRecordSchema.parse({tradeId:'legacy',symbol:'BTCUSDT',direction:'LONG',openedAt:1,closedAt:2,durationMs:1,entryQty:1,entryAveragePrice:100,exitAveragePrice:110,funding:null,grossRealizedPnl:10,netPnl:null,closeReason:'MANUAL',status:'CLOSED',entryRunId:null,entryIntentId:null,entryOrderIds:['entry'],exitOrderIds:['exit'],source:'SYSTEM',regime:null,createdAt:1,updatedAt:2,firstObservedAt:1});
+  runtime.state.tradeRecords.set('legacy',record);const before=JSON.stringify(record);
+  const app=express();app.use('/api/v3',createApiRouter(runtime));server=app.listen(0,'127.0.0.1');await new Promise(resolve=>server.once('listening',resolve));const base=`http://127.0.0.1:${server.address().port}/api/v3`;
+  const detail=await (await fetch(base+'/trade-records/legacy')).json() as any;expect(detail.record.closeProvenance).toBe('UNKNOWN');expect(detail.rawRecord.closeReason).toBe('MANUAL');
+  const list=await (await fetch(base+'/trade-records?category=PARTIAL')).json() as any;expect(list.items[0].closeProvenance).toBe('UNKNOWN');expect(JSON.stringify(runtime.state.tradeRecords.get('legacy'))).toBe(before);
+});

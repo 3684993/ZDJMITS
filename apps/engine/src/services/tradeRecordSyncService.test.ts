@@ -13,6 +13,15 @@ const seed=(state:RuntimeState,symbol='BTCUSDT',direction='LONG',entryOrder='ent
  const row=TradeRecordSchema.parse({tradeId:'durable',cycleId:'cycle-durable',symbol,direction,openedAt:1,closedAt:null,durationMs:null,entryQty:1,entryAveragePrice:100,exitAveragePrice:null,funding:null,grossRealizedPnl:null,netPnl:null,closeReason:null,status:'OPEN',entryRunId:null,entryIntentId:'entry',entryOrderIds:[entryOrder],exitOrderIds:[exitOrder],source:'SYSTEM',regime:null,createdAt:1,updatedAt:1,firstObservedAt:1});state.tradeRecords.set(row.tradeId,row);
 };
 describe('TradeRecord manual sync',()=>{
+ it('does not turn an unproven closing fill or a TP-shaped client id into MANUAL/TP',()=>{
+  const state=new RuntimeState(settings);seed(state);const service=new TradeRecordSyncService(state,new PositionService(state,new EventBus()));
+  const result=service.apply(audit,500,{repairPartial:true});expect(result.records[0].closeReason).toBe('UNKNOWN');
+ });
+ it('keeps a proven TP closing source independently of maker/taker execution',()=>{
+  const state=new RuntimeState(settings);seed(state);state.orderProvenance={resolve:()=>({status:'SYSTEM_PROVEN',rows:[{role:'TP',cycleId:'cycle-durable'}],proof:[]})} as any;
+  const service=new TradeRecordSyncService(state,new PositionService(state,new EventBus()));
+  const result=service.apply({...audit,fills:audit.fills.map(fill=>({...fill,maker:false}))},500,{repairPartial:true});expect(result.records[0].closeReason).toBe('TP');
+ });
  it('previews without mutation and repeats explicit apply idempotently with durable identity',()=>{
   const state=new RuntimeState(settings);seed(state);const service=new TradeRecordSyncService(state,new PositionService(state,new EventBus())),before=JSON.stringify(state.serialize());
   expect(service.preview(audit,500,{repairPartial:true}).repairablePartial).toBe(1);expect(JSON.stringify(state.serialize())).toBe(before);

@@ -8,6 +8,7 @@ import {buildExitEstimate,exitPriceBound} from './s03ExitCostEstimator.js';
 import {assembleExitCostFacts} from './s03ExitCostFacts.js';
 import type {PolicyInput} from './s03AiExitPolicy.js';
 import {confirmedTpSubmissionRejection} from './tpSubmissionOutcome.js';
+import {OrderPrecisionError} from '../adapters/binance/orderPrecision.js';
 import {executableDepth} from './orderBookDepth.js';
 import {convertToBaseUnit,type QuoteConversion} from './quoteFxPolicy.js';
 import {resolveQuoteAsset} from '@zdj/core';
@@ -22,7 +23,7 @@ import {cycleFundingFact, type FundingIncomeLedger} from './fundingIncomeLedger.
  */
 
 /** A plan is proven by its durable identity, never inferred from a position label. */
-export type AiExitPlanFacts={planRef:string;planVersion:number;thesisInvalid:boolean;invalidationPredicate:string|null;invalidationEvidenceRefs:string[];exitConditionMet:boolean;minNetProfitUsd:number;economicMandate?:unknown|null};
+export type AiExitPlanFacts={planRef:string;planVersion:number;thesisInvalid:boolean;invalidationPredicate:string|null;invalidationEvidenceRefs:string[];exitConditionMet:boolean;minNetProfitUsd:number};
 
 export type AiExitTickReport={authority:'OFF'|'SHADOW'|'ENFORCE';considered:number;evaluated:number;shadow:number;prepared:number;submitted:number;blocked:Array<{cycleId:string;reasons:string[]}>};
 
@@ -147,7 +148,7 @@ export class V396AiExitRunner {
       const policyInput:Omit<PolicyInput,'now'>={
         owner:{ownerState:'AI_ACTIVE',ownerVersion:owner.ownerVersion,cycleId,scope,deadline:Number(owner.deadline)},
         plan:{planVersion:plan.planVersion,cycleId,scope,thesisInvalid:plan.thesisInvalid,invalidationPredicate:plan.invalidationPredicate,
-          invalidationEvidenceRefs:plan.invalidationEvidenceRefs,exitConditionMet:plan.exitConditionMet,minNetProfitUsd:plan.minNetProfitUsd,economicMandate:plan.economicMandate??null},
+          invalidationEvidenceRefs:plan.invalidationEvidenceRefs,exitConditionMet:plan.exitConditionMet,minNetProfitUsd:plan.minNetProfitUsd},
         estimate,bound,
         policy:{lossLimit,allowSmallLoss:coordination.aiExitAllowSmallLoss!==false,authorizationTtlMs:Number(coordination.aiExitAuthorizationTtlMs??15_000),
           minNetProfitUsd:Number(coordination.aiExitMinNetProfitUsd??0.2)},
@@ -209,6 +210,10 @@ export class V396AiExitRunner {
       this.ports.events.publish('AI_EXIT_SUBMITTED',{positionId:position.id,clientOrderId,status:raw,limitPrice,quantity},position.symbol);
       return true;
     }catch(error){
+      if(error instanceof OrderPrecisionError&&this.ports.exitRuntime.abortExitPrecisionNotSent(clientOrderId,error,`AI:${position.id}:${error.code}`)){
+        this.ports.events.publish('AI_EXIT_SUBMISSION_NOT_SENT',{positionId:position.id,clientOrderId,reason:error.message,exchangeRequestSent:false},position.symbol);
+        return false;
+      }
       if(confirmedTpSubmissionRejection(error)){
         this.ports.exitRuntime.observe({eventId:`AI_REJECTED:${clientOrderId}`,clientOrderId,state:'REJECTED',filledUnits:0,positionVersion:facts.positionVersion},Date.now());
         return false;

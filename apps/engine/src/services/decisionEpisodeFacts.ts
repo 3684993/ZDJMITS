@@ -9,6 +9,7 @@ export function terminalDecision(run:any, previous:any=null) {
   const anchorValid=anchorPrice!=null&&anchorPriceAt!=null;
   return {factVersion:FACT_SCHEMA_VERSION,status:run.status,direction:run.direction??null,decision:run.decision??null,
     confidence:normalized?.confidence??null,reason:normalized?.reason??run.error??null,
+    selectedCandidateId:normalized?.selectedCandidateId??null,targetPrice:finitePositive(normalized?.profitTakePlan?.targetPrice),targetHorizonMinutes:finitePositive(normalized?.profitTakePlan?.targetHorizonMinutes),
     normalizedAvailable:normalized!==null,rawDirection:run.rawDirection??null,rawDecision:run.rawDecision??null,
     terminalStage:run.terminalStage??(run.status==='FAILED'?'AI_FAILED':'SCHEMA_VALID'),
     inputTokens:run.inputTokens??null,outputTokens:run.outputTokens??null,
@@ -18,8 +19,10 @@ export function terminalDecision(run:any, previous:any=null) {
     shadowOnly:true,groundTruth:false};
 }
 
+const finitePositive=(value:unknown):number|null=>typeof value==='number'&&Number.isFinite(value)&&value>0?value:null;
+
 /** Fixed horizons, sampled mark excursions, never a fill or candle-path claim. */
-export function observedOutcome(db:DatabaseSync,symbol:string,at:number,initial:number|null,direction:string|null,now=Date.now()) {
+export function observedOutcome(db:DatabaseSync,symbol:string,at:number,initial:number|null,direction:string|null,now=Date.now(),targetPrice:number|null=null) {
   const initialRow=db.prepare('SELECT mark,ts FROM shadow_mark_series WHERE symbol=? AND ts<=? AND ts>=? ORDER BY ts DESC LIMIT 1').get(symbol,at,at-60_000) as any;
   const first=initial??initialRow?.mark??null;
   const definitions={m15:15,h1:60,h4:240,h24:1440,d3:4320,d7:10080};
@@ -35,10 +38,13 @@ export function observedOutcome(db:DatabaseSync,symbol:string,at:number,initial:
     for(let i=1;i<rows.length;i++)maxGap=Math.max(maxGap,rows[i]!.ts-rows[i-1]!.ts);
     const covered=maxGap<=120_000;
     const path=sign===null?[]:rows.map(x=>sign*(x.mark/first-1));
+    const targetHit=targetPrice!=null&&sign!==null?rows.find(row=>direction==='LONG'?row.mark>=targetPrice:row.mark<=targetPrice):null;
     horizons[key]={value:marketReturn,marketReturn,directionReturn:sign===null?null:sign*marketReturn,
       mfe:covered&&path.length?Math.max(0,...path):null,mae:covered&&path.length?(Math.min(0,...path)||0):null,
       at:last.ts,factAsOf:at,horizonMinutes:minutes,maturedAt:end,observedThrough:last.ts,
       source:'SHADOW_MARK_SERIES',coverage:covered?'SAMPLED_CONTIGUOUS':'SPARSE',maxGapMs:maxGap,
+      targetPrice,targetHit:targetPrice==null?null:Boolean(targetHit),targetHitAt:targetHit?.ts??null,
+      censorReason:targetPrice==null?'TARGET_NOT_AUTHORIZED':targetHit?'TARGET_HIT':'TARGET_NOT_HIT',
       executionAssumption:'NO_FILL_ASSUMED'};
   }
   return {factVersion:FACT_SCHEMA_VERSION,marketAt:at,anchorPrice:first,anchorPriceAt:at,firstMark:first,factAsOf:at,horizons,mfe:horizons.h24?.mfe??null,mae:horizons.h24?.mae??null,

@@ -1,8 +1,9 @@
+import {OrderPrecisionError} from '../adapters/binance/orderPrecision.js';
 import {describe,it,expect,vi} from 'vitest';
 import {RuntimeState} from '../state/runtimeState.js';
 import {EventBus} from '../events/eventBus.js';
 import {TpGuardian} from './tpGuardian.js';
-import {confirmedTpSubmissionRejection} from './tpSubmissionOutcome.js';
+import {confirmedTpSubmissionRejection,confirmedTpNotSent} from './tpSubmissionOutcome.js';
 import { exitRuntimeHarness, manualJournalHarness, coordinatedExchange } from './v396ExitTestHarness.js';
 const settings:any={takeProfit:{enabled:true,targetPriceMovePercent:.45,quantityPercent:100,tpEconomicsEnabled:false,minNetProfitUsd:.01,minNetProfitRoiPct:0,feeSafetyBufferPct:0,exitFeeAssumption:'TAKER',slippageBufferPct:0,entryFeeRate:.0004,makerFeeRate:.0002,takerFeeRate:.0004}};
 function fixture(message:string){const state=new RuntimeState(settings),position:any={id:'p',cycleId:'cycle_test_1',symbol:'BTCUSDT',side:'LONG',quantity:1,entryPrice:100,markPrice:100,leverage:1,tpStatus:'MISSING',tpOrderId:null},events=new EventBus(),seen:any[]=[];events.on('event',e=>seen.push(e));state.positions.set('p',position);state.snapshots.set('BTCUSDT',{quote:{mark:100,bid:99.9,ask:100.1,tickSize:.01,stepSize:.001,minQty:.001}} as any);const exchange:any={...coordinatedExchange({liveQuantity:1e6}),placeTakeProfit:vi.fn().mockRejectedValue(new Error(message)),findTakeProfitByClientOrderId:vi.fn().mockResolvedValue(null)};return{state,position,exchange,seen,guardian:new TpGuardian(state,exchange,events,exitRuntimeHarness())};}
@@ -37,4 +38,15 @@ it('finds and cancels an under-sized working TP after a failed repair cleared th
  await f.guardian.ensure(f.position,true);
  expect(f.exchange.cancelTakeProfit).toHaveBeenCalledTimes(1);
  expect(f.state.tpOrders.get('old')?.status).toBe('CANCELED');
+});
+
+
+it('treats a typed decimal refusal as proven unsent and preserves uncertainty for a copied message',async()=>{
+ const error=new OrderPrecisionError('BTCUSDT','quantity','OFF_GRID');
+ expect(confirmedTpNotSent(error)).toBe(true);
+ expect(confirmedTpNotSent(new Error(error.message))).toBe(false);
+ const f=fixture('unused');f.exchange.placeTakeProfit.mockRejectedValue(error);
+ await f.guardian.ensure(f.position);
+ expect([...f.state.tpOrders.values()][0]!.status).toBe('REJECTED');
+ expect(f.seen.some(e=>e.type==='TP_SUBMISSION_NOT_SENT'&&e.payload.exchangeRequestSent===false)).toBe(true);
 });

@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { EngineRuntime } from './runtime/appRuntime.js';
 import { createHttpServer } from './server.js';
 import { redactAudit } from './api/projections.js';
-import { createRuntimeIdentity } from './runtime/runtimeIdentity.js';
+import { createRuntimeIdentity, persistRuntimeIdentity, runtimeIdentityExecutionRefusal } from './runtime/runtimeIdentity.js';
 import { installProcessLifecycleTelemetry,processErrorFact } from './runtime/processLifecycleTelemetry.js';
 import { RELEASE_VERSION } from '@zdj/contracts';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../../..');
@@ -16,6 +16,9 @@ let identityRecord:Awaited<ReturnType<typeof createRuntimeIdentity>>,runtime:Eng
 try{
   identityRecord=await createRuntimeIdentity(dataDir,host,port,RELEASE_VERSION);
   runtime=await EngineRuntime.create({configDir,dataDir});
+  identityRecord.identity=await persistRuntimeIdentity(identityRecord.identityPath,identityRecord.identity,runtime.state.settings);
+  const identityRefusal=runtimeIdentityExecutionRefusal(identityRecord.identity,runtime.state.settings.connections.executionMode);
+  if(identityRefusal)throw new Error(identityRefusal);
   lifecycle.record('BOOTSTRAP_RUNTIME_CREATED',{instanceId:identityRecord.identity.instanceId,recoveredRuntimeEntities:runtime.settingsStore.runtimeLoadRecoveries});
 }catch(error){lifecycle.record('BOOTSTRAP_FAILED',{error:processErrorFact(error)});throw error;}
 runtime.setRuntimeIdentity(identityRecord.identity);

@@ -1,9 +1,0 @@
-{
-  "scannedAt": "2026-09-23T10:32:34.062Z",
-  "pid": 33432,
-  "buildId": "3.9.6-50d14dbd22d1ea5ed7d2",
-  "stderrBytes": 338,
-  "stdoutBytes": 247,
-  "fatalOrUncaughtLines": [],
-  "stderrOtherThanExperimentalWarnings": []
-}

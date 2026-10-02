@@ -80,7 +80,6 @@ export function executionTruthProjection(runtime: EngineRuntime, now = Date.now(
   const fundingLedger = (runtime as any).fundingIncomeCoverage?.() ?? (runtime as any).fundingIncome?.coverageSummary?.() ?? null;
   const coordination = (s.settings.riskGovernance as any)?.exitCoordination ?? {};
   const aiActiveCycles = (runtime as any).exitRuntime ? [...s.positions.values()].filter((position: any) => {
-    if (!position || typeof position.symbol !== 'string' || !['LONG', 'SHORT'].includes(String(position.side))) return false;
     const scope = (runtime as any).exitRuntime.scope({ symbol: position.symbol, side: position.side });
     const owner = (runtime as any).exitRuntime.ownerOfScope(scope, position.cycleId);
     return owner?.ownerState === 'AI_ACTIVE';
@@ -107,6 +106,21 @@ export function executionTruthProjection(runtime: EngineRuntime, now = Date.now(
     failureBlocked: Math.max(0, Math.trunc(Number(reviewReadback?.failureBlocked ?? 0))),
     skippedReason: rawOutcome.skippedReason == null ? null : String(rawOutcome.skippedReason),
   } : null;
+  const reviewMilestones=[...s.positions.values()].filter((position:any)=>position.reviewTimeline).map((position:any)=>({
+    positionId:String(position.id),cycleId:String(position.cycleId??''),symbol:String(position.symbol),
+    thesisDueAt:Number(position.reviewTimeline.thesisDueAt),thesisAttemptedAt:position.reviewTimeline.thesisAttemptedAt??null,
+    thesisStatus:String(position.reviewTimeline.thesisStatus),timeStopDueAt:Number(position.reviewTimeline.timeStopDueAt),
+    timeStopAttemptedAt:position.reviewTimeline.timeStopAttemptedAt??null,timeStopStatus:String(position.reviewTimeline.timeStopStatus),
+    timeStopDecision:position.reviewTimeline.timeStopDecision??null,
+  })).slice(0,50);
+  const reviewTerminal=new Set(['APPLIED','DISCARDED','MISSED']);
+  // A position has at most one actionable review milestone. Once the 90-minute point is due it
+  // supersedes an unattempted 60-minute review, which the runner records as MISSED. This count must
+  // not inherit the legacy scheduler's "review now" semantics and advertise a review before 60m.
+  const scheduledMilestoneDue=reviewMilestones.filter(row=>
+    (now>=row.timeStopDueAt&&!reviewTerminal.has(row.timeStopStatus))||
+    (now>=row.thesisDueAt&&now<row.timeStopDueAt&&!reviewTerminal.has(row.thesisStatus)),
+  ).length;
   const entryRows = [...s.entryOrders.values()] as any[], tpRows = [...s.tpOrders.values()] as any[], manualRows = [...s.manualOrders.values()] as any[];
   const confirmed = (row: any) => String(row.factSource ?? '') === 'BINANCE_EXACT_ORDER' || String(row.factSource ?? '') === 'BINANCE_OPEN_ORDERS' || (String(row.status ?? '') === 'WORKING' && Boolean(row.exchangeOrderId));
   const parse = (detail: unknown) => { try { return typeof detail === 'string' ? JSON.parse(detail) : detail; } catch { return null; } };
@@ -159,9 +173,10 @@ export function executionTruthProjection(runtime: EngineRuntime, now = Date.now(
       detail: fundingLedger ? `coverage=${fundingLedger.complete?'COMPLETE':'INCOMPLETE'};since=${fundingLedger.coveredSinceMs??'NONE'};lastSync=${fundingLedger.lastSync?.skipped??(fundingLedger.lastSync?`rows ${fundingLedger.lastSync.rows}/failures ${fundingLedger.lastSync.failures}/symbols ${fundingLedger.lastSync.symbolsScanned}`:'NEVER_RAN')}` : 'FUNDING_LEDGER_NOT_ATTACHED'},
     reviewAuthority: {status: coordination.positionReviewEnabled !== true ? 'DISABLED' as const : (reviewRunner ? 'HEALTHY' as const : 'UNKNOWN' as const),
       enabled: coordination.positionReviewEnabled === true, aiActiveCycles,
-      scheduledDue: Math.max(0, Number((runtime as any).positionReviewScheduler?.dueCount?.() ?? 0)),
+      scheduledDue: scheduledMilestoneDue,
       lastOutcome: reviewOutcome ?? null,
       reviewFairness: (runtime as any).ai?.reviewFairness?.(now) ?? null,
+      milestones:reviewMilestones,
       detail: ai?.detail ? String(ai.detail).slice(0, 200) : null},
     reviewCycles: reviewReadback?.rows?.slice(0, 50) ?? [],
     activeCommissions: {
@@ -183,9 +198,8 @@ function baseDashboardProjection(runtime: EngineRuntime): DashboardSnapshot {
     now = Date.now(),
     since = now - 3600000,
     unreal = s.account.unrealizedPnlUsd ?? null,
-    // Activity is exchange truth. Local UNKNOWN remains available to reconciliation/risk
-    // admission, but never appears as an exchange open order without a matching openOrders fact.
-    activeEntries = runtime.reconciliation?.currentOpenEntryOrders?.().items ?? [],
+    entryReadback=runtime.reconciliation?.currentOpenEntryOrders?.()??{status:'UNAVAILABLE' as const,verifiedAt:null,validUntil:null,items:[]},
+    activeEntries = entryReadback.items,
     activeTps = [...s.tpOrders.values()].filter(
       (order) => order.status === "WORKING",
     ),
@@ -340,8 +354,9 @@ function baseDashboardProjection(runtime: EngineRuntime): DashboardSnapshot {
     supply: runtime.supplyHealth(),
     candidateSupply: candidateSupplyHealth(s),
     pool: s.pool.list(),
-    positions: [...s.positions.values()].map(position=>({...position,economicMandate:(position as any).economicMandate??null})),
+    positions: [...s.positions.values()],
     entryOrders: activeEntries.sort((a, b) => b.updatedAt - a.updatedAt),
+    entryOrderReadback:{status:entryReadback.status,verifiedAt:entryReadback.verifiedAt,validUntil:entryReadback.validUntil},
     tpOrders: activeTps.sort((a, b) => b.updatedAt - a.updatedAt),
     aiResources,
     recentAiRuns,

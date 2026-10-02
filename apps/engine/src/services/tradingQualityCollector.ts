@@ -35,10 +35,7 @@ export class TradingQualityCollector {
       CREATE TABLE IF NOT EXISTS tq_episode_work(scope TEXT NOT NULL,intent_id TEXT NOT NULL,symbol TEXT NOT NULL,dirty INTEGER NOT NULL DEFAULT 1,first_fill_at INTEGER,observation_until INTEGER,matured INTEGER NOT NULL DEFAULT 0,updated_at INTEGER NOT NULL,PRIMARY KEY(scope,intent_id));
       CREATE TABLE IF NOT EXISTS tq_candidate_state(scope TEXT NOT NULL,candidate_id TEXT NOT NULL,fingerprint TEXT NOT NULL,revision INTEGER NOT NULL,updated_at INTEGER NOT NULL,PRIMARY KEY(scope,candidate_id));
       CREATE TABLE IF NOT EXISTS tq_collector_samples(scope TEXT NOT NULL,identity TEXT NOT NULL,at INTEGER NOT NULL,event_count INTEGER NOT NULL,PRIMARY KEY(scope,identity,at));
-      CREATE TABLE IF NOT EXISTS tq_entry_mandates(scope TEXT NOT NULL,mandate_id TEXT NOT NULL,intent_id TEXT NOT NULL,plan_id TEXT,quote_asset TEXT NOT NULL,side TEXT NOT NULL,settings_version INTEGER NOT NULL,facts_hash TEXT NOT NULL,persisted_at INTEGER NOT NULL,payload TEXT NOT NULL,PRIMARY KEY(scope,mandate_id));
-      CREATE UNIQUE INDEX IF NOT EXISTS tq_entry_mandates_intent ON tq_entry_mandates(scope,intent_id);
       INSERT OR IGNORE INTO tq_migrations VALUES(1,${Date.now()});`);
-    this.db.prepare('INSERT OR IGNORE INTO tq_migrations VALUES(2,?)').run(Date.now());
     (this.state as any).tradingQualityEvidenceReady=true;
     this.listener=e=>{try{this.onEvent(e);}catch(error){this.error=String(error);(this.state as any).tradingQualityEvidenceReady=false;if(qualityPolicy(this.state.settings).mode==='ENFORCE'&&['TRADING_QUALITY_OPPORTUNITY','TRADING_QUALITY_PRIMARY_LINK','ENTRY_SUBMIT_ATTEMPTED'].includes(e.type))throw error;}};
     events.on('event',this.listener);
@@ -87,15 +84,6 @@ export class TradingQualityCollector {
     this.observedEvents++;
     const p=e.payload as any;
     if(e.type==='TRADING_QUALITY_FUNDING_FACT')this.put('fundingFacts',hash(p),p,e.ts);
-    if(e.type==='ENTRY_INTENT_CREATED'){
-      const intent=p?.intent,mandate=intent?.economicMandate;
-      if(mandate?.schemaVersion==='V397-ENTRY-ECONOMIC-MANDATE-1'){
-        this.db.prepare(`INSERT INTO tq_entry_mandates(scope,mandate_id,intent_id,plan_id,quote_asset,side,settings_version,facts_hash,persisted_at,payload)
-          VALUES(?,?,?,?,?,?,?,?,?,?) ON CONFLICT(scope,mandate_id) DO UPDATE SET payload=excluded.payload
-          WHERE tq_entry_mandates.intent_id=excluded.intent_id AND tq_entry_mandates.facts_hash=excluded.facts_hash`).run(
-          this.scope(),mandate.mandateId,intent.id,intent.planId??null,mandate.quoteAsset,mandate.side,mandate.settingsVersion,mandate.factsHash,e.ts,JSON.stringify(mandate));
-      }
-    }
     if(e.type==='TRADING_QUALITY_OPPORTUNITY'){this.put('opportunities',p.opportunity.opportunityId+':'+p.opportunity.version,p,e.ts);this.put('opportunityObservations',`${p.opportunity.opportunityId}:${p.packetId}`,p,e.ts);}
     if(e.type==='TRADING_QUALITY_PRIMARY_LINK')this.put('primaryLinks',p.runId,p,e.ts);
     if(e.type.startsWith('AI_RUN_')&&p?.id&&p.role==='PRIMARY_BRAIN')this.put('runs',p.id,{id:p.id,symbol:p.symbol,decision:p.decision,status:p.status,startedAt:p.startedAt,completedAt:p.completedAt,normalizedPreview:p.normalizedPreview},e.ts);

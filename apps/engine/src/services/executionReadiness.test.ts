@@ -3,7 +3,7 @@ import { executionReadiness } from './executionReadiness.js';
 import { portfolioRiskProfileBlockers, portfolioRiskProfileStatus } from './portfolioRiskLedger.js';
 import { portfolioRiskAuthorityCompile } from './portfolioRiskAuthority.js';
 import { EngineRuntime } from '../runtime/appRuntime.js';
-import { harness } from './tradingQualityTestHarness.js';
+import { harness, systemCandidateDecision } from './tradingQualityTestHarness.js';
 
 /**
  * A model call is only paid for when the book could act on its answer. These tests pin the gate that
@@ -125,10 +125,10 @@ async function equipped(side: 'LONG' | 'SHORT') {
   h.state.executionGovernance = { ...h.state.executionGovernance, mode: 'AUTO_RUNNING' };
   h.state.snapshots.set('BTCUSDT', { ...h.state.snapshots.get(h.packet.symbol)!, symbol: 'BTCUSDT' });
   h.state.snapshots.set('ETHUSDT', { ...h.state.snapshots.get(h.packet.symbol)!, symbol: 'ETHUSDT' });
-  (h.supplied as { quantityUnits?: number }).quantityUnits = 1000;
   const market = h.state.snapshots.get(h.packet.symbol)!;
   const tickSize = market.quote.tickSize, price = side === 'LONG' ? market.quote.bid : market.quote.ask;
-  h.ai.decide.mockResolvedValue({ runId: `chain-${side}`, decision: { ...h.supplied, decision: `PLACE_${side}`, direction: side, tradeSide: side, quantityUnits: 1000, idealPrice: price, acceptablePriceRange: { min: price - tickSize * 20, max: price + tickSize * 20 }, horizonMinutes: 3, reachability: 0.9, reason: 'NATURAL_PLACE_CHAIN' } } as never);
+  h.ai.decide.mockImplementation(async(packet:any)=>({ runId: `chain-${side}`, decision: systemCandidateDecision(packet,h.supplied,side,{idealPrice:price,
+    acceptablePriceRange:{min:price-tickSize*20,max:price+tickSize*20},horizonMinutes:3,reachability:.9,reason:'NATURAL_PLACE_CHAIN'}) }) as never);
   const settle = async (ms = 120) => { await new Promise(resolve => setTimeout(resolve, ms)); };
   const cycle = async () => {
     h.coordinator.noteExecutionReadiness(executionReadiness({
@@ -329,7 +329,8 @@ describe('a PLACE with every fact present walks the real entry chain', () => {
     // unexplained silence: the deterministic post-AI verifier must refuse it, with a stage and a
     // reason, and the same facts must not buy a second model call.
     const market = h.state.snapshots.get(h.packet.symbol)!;
-    h.ai.decide.mockResolvedValue({ runId: 'chain-invalid', decision: { ...h.supplied, decision: 'PLACE_LONG', direction: 'LONG', tradeSide: 'LONG', quantityUnits: 1000, idealPrice: market.quote.ask * 1.05, acceptablePriceRange: { min: market.quote.bid, max: market.quote.ask }, horizonMinutes: 3, reachability: 0.9, reason: 'POST_AI_VERIFY_FAIL' } } as never);
+    h.ai.decide.mockImplementation(async(packet:any)=>({runId:'chain-invalid',decision:systemCandidateDecision(packet,h.supplied,'LONG',{
+      idealPrice:market.quote.ask*1.05,acceptablePriceRange:{min:market.quote.bid,max:market.quote.ask},horizonMinutes:3,reachability:.9,reason:'POST_AI_VERIFY_FAIL'})}) as never);
     await cycle();
     expect(h.ai.decide).toHaveBeenCalledOnce();
     expect(h.state.entryIntents.size).toBe(0);

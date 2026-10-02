@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { EntryEconomicMandateSchema } from './entryEconomicMandate.js';
 
 /**
  * S06/J3: the immutable trade plan.
@@ -33,7 +32,7 @@ export const TradePlanCostsSchema = z.object({
   exitFeeUsd: money,
   slippageUsd: money,
   uncertaintyBufferUsd: money,
-  fundingEstimateUsd: money.nullable(),
+  fundingEstimateUsd: money,
   fundingStatus: PlanEvidenceStatusSchema,
   fxRateToQuote: z.number().finite().nullable(),
   costVersion: z.string().min(1).max(120),
@@ -56,6 +55,10 @@ export const TradePlanEconomicsSchema = z.object({
   historicalHardMaxMovePercent: z.number().finite().nullable(),
   targetMovePercent: z.number().finite().nonnegative(),
   statisticalSource: z.string().max(160).nullable(),
+  /** Ordinary targets use robust reachability bands; hard-max remains tail evidence only. */
+  targetBasis: z.enum(['P50','P75','PROFIT_FLOOR_UNPROVEN','LEGACY_SELECTED_WITHIN_P75','PROFIT_FLOOR_BEYOND_P75']).optional(),
+  reachabilityP50MovePercent: z.number().finite().nonnegative().nullable().optional(),
+  reachabilityP75MovePercent: z.number().finite().nonnegative().nullable().optional(),
   /**
    * Where this target sits against the largest move the closed-candle sample has ever produced for the
    * same side and horizon. It is a statement about evidence, not a probability: `BEYOND` is recorded
@@ -82,8 +85,22 @@ export const TradePlanRiskSchema = z.object({
 }).strict();
 export type TradePlanRisk = z.infer<typeof TradePlanRiskSchema>;
 
+const validateCandidateTargetRange = (candidate:{targetPrice:number;acceptableTargetRange:{min:number;max:number}}, ctx:z.RefinementCtx) => {
+  const {min,max}=candidate.acceptableTargetRange;
+  if(min>max||candidate.targetPrice<min||candidate.targetPrice>max)
+    ctx.addIssue({code:z.ZodIssueCode.custom,path:['acceptableTargetRange'],message:'CANDIDATE_TARGET_RANGE_INVALID'});
+};
+
+/** Shared by new candidate generation and the versioned archive parser. Equal endpoints are legal. */
+export const TradePlanCandidateTargetSchema = z.object({
+  targetPrice:price,
+  acceptableTargetRange:z.object({min:price,max:price}).strict(),
+}).strict().superRefine(validateCandidateTargetRange);
+
 export const TradePlanCandidateSchema = z.object({
-  schemaVersion: z.literal('V396-PLAN-CANDIDATE-1').default('V396-PLAN-CANDIDATE-1'),
+  // An absent version belongs to the historical contract. Reading an old archive must not sort its
+  // range or turn its original values into a new executable authorization.
+  schemaVersion: z.enum(['V396-PLAN-CANDIDATE-1','V397-PLAN-CANDIDATE-2']).default('V396-PLAN-CANDIDATE-1'),
   candidateId: z.string().min(8).max(120),
   symbol: z.string().min(1).max(40),
   side: z.enum(['LONG', 'SHORT']),
@@ -105,7 +122,10 @@ export const TradePlanCandidateSchema = z.object({
   executable: z.boolean(),
   blockers: z.array(z.string().max(160)).max(24),
   createdAt: z.number().int().nonnegative(),
-}).strict();
+}).strict().superRefine((candidate,ctx)=>{
+  if(candidate.schemaVersion==='V397-PLAN-CANDIDATE-2')validateCandidateTargetRange({targetPrice:candidate.targetPrice,
+    acceptableTargetRange:{min:candidate.acceptableTargetRange.min,max:candidate.acceptableTargetRange.max}},ctx);
+});
 export type TradePlanCandidate = z.infer<typeof TradePlanCandidateSchema>;
 
 export const TradePlanProvenanceSchema = z.object({
@@ -148,8 +168,6 @@ export const TradePlanSchema = z.object({
   releaseCondition: z.string().max(600).nullable(),
   costs: TradePlanCostsSchema.nullable(),
   economics: TradePlanEconomicsSchema.nullable(),
-  /** New V3.9.7 plans freeze the unit-safe Entry contract; absent means legacy/unknown. */
-  economicMandate: EntryEconomicMandateSchema.nullable().optional().default(null),
   risk: TradePlanRiskSchema.nullable(),
   minNetProfitUsd: money,
   maxRealizedLossUsd: money.nonnegative(),

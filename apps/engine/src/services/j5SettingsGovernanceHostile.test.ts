@@ -63,8 +63,10 @@ describe('S08 field matrix: an editable setting must name the code that reads it
 
   it('lists every governance leaf of the exit-coordination block, so no new knob hides off-matrix', () => {
     const schema = readFileSync(join(repoRoot, 'packages/contracts/src/riskGovernance.ts'), 'utf8');
-    const declared = [...schema.matchAll(/export const ExitCoordinationSettingsSchema[\s\S]*?\n\}\)\.default\(\{\}\);/g)]
-      .flatMap(block => [...block[0].matchAll(/^\s{2}([a-zA-Z0-9_]+):/gm)]).map(match => match[1]);
+    const start=schema.indexOf('export const ExitCoordinationSettingsSchema');
+    const end=schema.indexOf('export type ExitCoordinationSettings',start);
+    const block=start>=0&&end>start?schema.slice(start,end):'';
+    const declared=[...block.matchAll(/^\s{2}([a-zA-Z0-9_]+):/gm)].map(match=>match[1]);
     expect(declared.length).toBeGreaterThanOrEqual(14);
     for (const key of declared) expect(governanceFieldOf(`riskGovernance.exitCoordination.${key}`), key).toBeTruthy();
   });
@@ -122,7 +124,7 @@ describe('S08 units: 0.15 is 0.15%, and the handoff minutes reach a real deadlin
 
 describe('S08 governance patch: refusals are the product, not an error path', () => {
   const base = () => any({ settingsVersion: 3, riskGovernance: { exitCoordination: { aiExitAuthority: 'OFF', aiExitLossLimitUsd: 10, aiExitMinNetProfitUsd: 0.2,
-    positionReviewEnabled: false, normalReviewsPerPlan: 2, reviewFailureBudget: 2, reviewMinIntervalMs: 300_000, reviewAuthorityTtlMs: 20_000,
+    positionReviewEnabled: false, thesisReviewAfterMinutes:60, timeStopDecisionAfterMinutes:90, normalReviewsPerPlan: 2, reviewFailureBudget: 2, reviewMinIntervalMs: 300_000, reviewAuthorityTtlMs: 20_000,
     convergenceIntervalMs: 120_000, convergenceBatchLimit: 8, continuousConvergenceEnabled: true }, portfolioRisk: { configured: false, maxCapitalAtRiskUsd: 0 } },
   positionManagement: { humanHandoffAfterMinutes: 1440 }, takeProfit: { minNetProfitRoiPct: 0.15 } });
 
@@ -145,6 +147,17 @@ describe('S08 governance patch: refusals are the product, not an error path', ()
     expect(applyGovernancePatch(settings, { 'riskGovernance.exitCoordination.normalReviewsPerPlan': 1.5 }).refusals[0].code).toBe('GOVERNANCE_INTEGER_REQUIRED');
     expect(applyGovernancePatch(settings, { 'riskGovernance.exitCoordination.positionReviewEnabled': 'yes' }).refusals[0].code).toBe('GOVERNANCE_TYPE_BOOLEAN_REQUIRED');
     expect(applyGovernancePatch(settings, { 'riskGovernance.exitCoordination.aiExitAuthority': 'ENFORCE_SOFTLY' }).refusals[0].code).toBe('GOVERNANCE_ENUM_UNSUPPORTED');
+  });
+
+  it('refuses a 60/90 review timeline that is reversed, atomically',()=>{
+    const settings=base();
+    const result=applyGovernancePatch(settings,{
+      'riskGovernance.exitCoordination.thesisReviewAfterMinutes':95,
+      'riskGovernance.exitCoordination.timeStopDecisionAfterMinutes':90,
+    });
+    expect(result).toMatchObject({applied:[],refusals:[{code:'GOVERNANCE_REVIEW_TIMELINE_INVALID'}]});
+    expect(result.settings).toBe(settings);
+    expect(settings.riskGovernance.exitCoordination).toMatchObject({thesisReviewAfterMinutes:60,timeStopDecisionAfterMinutes:90});
   });
 
   it('refuses to grant the AI close authority without an explicit acknowledgement', () => {

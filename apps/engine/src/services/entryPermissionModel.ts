@@ -6,6 +6,7 @@ import { reservationDebitsAvailableFunds } from './entryFundingCommitment.js';
 import { activeExecutionLeaseMargin } from './executionLease.js';
 import { portfolioScopeObservation } from './entrySubmissionIdentity.js';
 import { resolveUnderlying } from '@zdj/core';
+import {entryGateDecision,type EntryGateDecision} from './entryGateTaxonomy.js';
 
 /**
  * P4: one shared vocabulary for the three different questions the Entry chain kept asking each other.
@@ -31,6 +32,7 @@ export type CandidateAnalysisEligibility={
   disposition:'ANALYZE'|'WAIT'|'SKIP';
   evaluatedAt:number;
   facts:{marketFresh:boolean;dataError:string|null;modelAvailable:boolean;alreadyHeld:boolean};
+  gateDecisions:EntryGateDecision[];
 };
 
 export type EntryExecutionPermit={
@@ -56,6 +58,8 @@ export type EntryExecutionPermit={
   factVersions:{capitalGeneration:number|null;marketFilterVersion:string|null;settingsVersion:number|null;portfolioObservationVersion:number|null};
   /** Portfolio facts travel with the permit for the record; they are not inputs to it. */
   observation:PortfolioRiskObservation;
+  gateDecisions:EntryGateDecision[];
+  firstCauseDecision:EntryGateDecision|null;
 };
 
 export type PortfolioRiskObservation={
@@ -73,6 +77,7 @@ export type PortfolioRiskObservation={
   scopeObservations:Array<ReturnType<typeof portfolioScopeObservation>>;
   evaluatedAt:number;
   note:string;
+  gateDecisions:Record<'gross'|'direction'|'cluster'|'stress'|'positionCap'|'historicalRisk',EntryGateDecision>;
 };
 
 const numberOrNull=(value:unknown)=>{if(value==null||value==='')return null;const parsed=Number(value);return Number.isFinite(parsed)?parsed:null;};
@@ -90,7 +95,8 @@ export function candidateAnalysisEligibility(state:RuntimeState,symbol:string,no
   const reasons=[...(!marketFresh?[dataError??'MARKET_DATA_STALE']:[]),...(input.modelAvailable===false?['AI_RESOURCE_UNAVAILABLE']:[])];
   const disposition=held&&!testnetFundsOnlyEntry(state.settings)?'SKIP':reasons.length?'WAIT':'ANALYZE';
   return{eligible:disposition==='ANALYZE',reasons,disposition,evaluatedAt:now,
-    facts:{marketFresh,modelAvailable:input.modelAvailable!==false,alreadyHeld:held,dataError:dataError??null}};
+    facts:{marketFresh,modelAvailable:input.modelAvailable!==false,alreadyHeld:held,dataError:dataError??null},
+    gateDecisions:reasons.map(reason=>entryGateDecision(reason))};
 }
 
 /**
@@ -130,6 +136,9 @@ export function evaluateEntryExecutionPermit(input:{
   if(input.authorization.expiresAt!=null&&now>=input.authorization.expiresAt)blockers.push('AI_AUTHORIZATION_EXPIRED');
   if(!input.authorization.identity)blockers.push('SUBMISSION_IDENTITY_MISSING');
   if(!input.durableStorageReady)blockers.push('DURABILITY_UNPROVEN');
+  // Final JIT is a verifier, never a fallback sizer. Even a capital failure refuses the frozen
+  // candidate; it does not manufacture a smaller order.
+  const gateDecisions=blockers.map(reason=>entryGateDecision(reason));
   return{
     permitted:blockers.length===0,firstCause:blockers[0]??null,
     mode:{environment,executionMode,fundsOnly},
@@ -141,6 +150,7 @@ export function evaluateEntryExecutionPermit(input:{
     factVersions:{capitalGeneration:numberOrNull(state.runtimeControl?.capital?.generation),marketFilterVersion:String((state.snapshots.get(input.symbol) as any)?.quote?.filterVersion??'UNSTAMPED')??'UNSTAMPED',
       settingsVersion:numberOrNull((state.settings as any).settingsVersion),portfolioObservationVersion:numberOrNull(observation.evaluatedAt)},
     observation,
+    gateDecisions,firstCauseDecision:gateDecisions[0]??null,
   };
 }
 
@@ -157,6 +167,7 @@ export function portfolioRiskObservation(state:RuntimeState,now:number,scopeObse
   for(const row of positions){const sign=row.side==='SHORT'?-1:1;const value=Math.abs(numberOrNull(row.notionalUsd)??0);bySide[row.side==='SHORT'?'SHORT':'LONG']=(bySide[row.side==='SHORT'?'SHORT':'LONG']??0)+sign*value;}
   const capacity=state.entryCapacity?.() as any;
   const profile=state.settings.portfolioIntelligence;
+  const disposition=fundsOnly?'OBSERVE' as const:'ENFORCE' as const;
   return{
     enforced:!fundsOnly,
     basis:fundsOnly?'TESTNET_FUNDS_ONLY_OBSERVATION':'PORTFOLIO_RISK_ENFORCED',
@@ -175,6 +186,14 @@ export function portfolioRiskObservation(state:RuntimeState,now:number,scopeObse
     note:fundsOnly
       ?'Gross/Direction/Cluster/Slot/历史风险在本模式仅作观察，不构成 Entry 执行许可输入'
       :'非 funds-only 模式：组合风险仍然是执行输入',
+    gateDecisions:{
+      gross:entryGateDecision('REJECT_GROSS_EXPOSURE',{disposition,mutatesQuantity:!fundsOnly}),
+      direction:entryGateDecision('REJECT_DIRECTION_EXPOSURE',{disposition,mutatesQuantity:!fundsOnly}),
+      cluster:entryGateDecision('REJECT_CORRELATED_CLUSTER',{disposition,mutatesQuantity:!fundsOnly}),
+      stress:entryGateDecision('STRESS_LIMIT',{disposition,mutatesQuantity:!fundsOnly}),
+      positionCap:entryGateDecision('POSITION_CAPACITY_FULL',{disposition,mutatesQuantity:false}),
+      historicalRisk:entryGateDecision('HISTORICAL_PENDING_RISK',{disposition,mutatesQuantity:false}),
+    },
   };
 }
 

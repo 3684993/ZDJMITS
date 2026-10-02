@@ -1,7 +1,0 @@
-### 28-git-diff-check-after-fix : git diff --check (after the leverage P0 fix)
-warning: in the working copy of 'apps/engine/src/adapters/exchange/ExternalTradeAdapter.ts', LF will be replaced by CRLF the next time Git touches it
-warning: in the working copy of 'apps/engine/src/services/manualPositionService.ts', LF will be replaced by CRLF the next time Git touches it
-warning: in the working copy of 'apps/engine/src/services/positionRiskFacts.ts', LF will be replaced by CRLF the next time Git touches it
-warning: in the working copy of 'apps/engine/src/services/reconciliationService.ts', LF will be replaced by CRLF the next time Git touches it
-
-[exit=0]

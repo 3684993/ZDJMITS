@@ -1,4 +1,4 @@
-import {describe,expect,it,vi} from 'vitest';
+import {afterEach,describe,expect,it,vi} from 'vitest';
 import {readFile} from 'node:fs/promises';
 import path from 'node:path';
 import {SystemSettingsSchema} from '@zdj/contracts';
@@ -7,13 +7,14 @@ import {EventBus} from '../events/eventBus.js';
 import {AiFabric} from './aiFabric.js';
 import {loadAiResources} from '../config/aiResourceLoader.js';
 
+afterEach(()=>{vi.unstubAllGlobals();vi.restoreAllMocks();});
+
 async function harness(){
   const raw=JSON.parse(await readFile(path.resolve(process.cwd(),'../..','config/settings.default.json'),'utf8'));
   raw.appearance={...raw.appearance,theme:'BINANCE_NOIR'};
   raw.externalIntelligence={...raw.externalIntelligence,researchEnabled:false};
   raw.ai={...raw.ai,scoutEnabled:true};
   raw.aiResources=raw.aiResources.map((resource:any)=>resource.role==='SCOUT'?{...resource,enabled:true}:resource);
-  raw.aiDutyRoutes=(raw.aiDutyRoutes??[]).map((route:any)=>route.duty==='SCOUT_RESEARCH'?{...route,enabled:true}:route);
   const state=new RuntimeState(SystemSettingsSchema.parse(raw));state.aiResources=loadAiResources(state.settings);
   const ai=new AiFabric(state,new EventBus(),{} as any);
   return{state,ai};
@@ -27,6 +28,8 @@ describe('dual-model runtime state',()=>{
     expect(state.aiResources.filter(r=>r.role==='SCOUT')).toHaveLength(1);
     expect(ai.resourceMetrics().filter(r=>r.role==='SCOUT')).toHaveLength(1);
     expect(probe.mock.calls.map(([url]:any[])=>url)).toEqual([scout.baseUrl,primary.baseUrl]);
+    expect(probe).toHaveBeenCalledWith(scout.baseUrl,2000,scout.model);
+    expect(probe).toHaveBeenCalledWith(primary.baseUrl,2000,primary.model);
     probe.mockResolvedValue({ok:false,reason:'offline'});await ai.probeResources();expect(ai.hasCapacity('PRIMARY_BRAIN')).toBe(false);
     expect(ai.resourceMetrics().find(r=>r.role==='PRIMARY_BRAIN')).toMatchObject({idleReason:'PRIMARY_MODEL_OFFLINE'});
     probe.mockResolvedValue({ok:true,reason:null});await ai.probeResources();expect(ai.hasCapacity('PRIMARY_BRAIN')).toBe(true);
@@ -37,23 +40,39 @@ describe('dual-model runtime state',()=>{
     expect(state.aiResources.filter(r=>r.role==='SCOUT')).toHaveLength(1);
     expect(ai.resourceMetrics().filter(r=>r.role==='SCOUT')).toHaveLength(1);
   });
-  it('keeps GPU2 review duties isolated from GPU1 Entry Primary when the reviewer is offline',async()=>{
-    const {state,ai}=await harness(),primary=state.settings.aiResources.find((r:any)=>r.role==='PRIMARY_BRAIN')!;
-    const review={id:'review-gpu2',name:'GPU2 27B Reviewer',role:'REVIEW_BRAIN',enabled:true,baseUrl:'http://127.0.0.1:8083/v1',model:'qwen/qwen3.8-27b',maxConcurrency:1,gpu:'RX 7900 XTX #2'};
-    state.settings.aiResources.push(review as any);state.aiResources=loadAiResources(state.settings);(ai as any).load.set(review.id,{active:0,totalRuns:0,failures:0,lastLatencyMs:null,currentSymbol:null,currentRunId:null,currentStartedAt:null,lastCompletedAt:null,lastDirection:null,lastDecision:null,idleReason:'WAITING_CANDIDATE',nextStep:'wait',queueDepth:0});
-    state.settings.aiDutyRoutes=[{duty:'ENTRY_PRIMARY',resourceId:primary.id,enabled:true,priority:100},{duty:'PENDING_ENTRY_REVIEW',resourceId:review.id,enabled:true,priority:20},{duty:'POSITION_REVIEW',resourceId:review.id,enabled:true,priority:90}] as any;
-    (ai as any).endpointHealth.set(review.id,{available:false,checkedAt:Date.now(),reason:'offline'});
-    expect(ai.reviewAvailable('PENDING_ENTRY_REVIEW')).toBe(false);
-    expect(ai.reviewAvailable('POSITION_REVIEW')).toBe(false);
+
+  it('uses model-list health for the idle LM Studio Scout while preserving oMLX Primary probing',async()=>{
+    const {state,ai}=await harness();
+    const scout=state.aiResources.find(r=>r.role==='SCOUT')!,primary=state.aiResources.find(r=>r.role==='PRIMARY_BRAIN')!;
+    scout.baseUrl='http://127.0.0.1:1234/v1';scout.model='qwen/qwen3.5-9b';
+    primary.baseUrl='http://127.0.0.1:8083/v1';primary.model='Qwen3.8-27B-4bit';
+    let listed=true;
+    const fetch=vi.fn(async(input:RequestInfo|URL)=>{
+      const url=String(input);
+      if(url==='http://127.0.0.1:1234/v1/models')return new Response(JSON.stringify({object:'list',data:listed?[{id:scout.model,object:'model'}]:[]}));
+      if(url==='http://127.0.0.1:8083/health')return new Response('ok');
+      if(url==='http://127.0.0.1:8083/props')return new Response(JSON.stringify({model_alias:primary.model}));
+      throw new Error(`UNEXPECTED_REQUEST:${url}`);
+    });
+    vi.stubGlobal('fetch',fetch);
+    await ai.probeResources();
+    expect(ai.resourceMetrics().find(r=>r.id===scout.id)).toMatchObject({connectionStatus:'ONLINE',totalRuns:0,active:0});
     expect(ai.hasCapacity('PRIMARY_BRAIN')).toBe(true);
-    expect((ai as any).dutyResource('ENTRY_PRIMARY')?.id).toBe(primary.id);
-    expect((ai as any).dutyResource('POSITION_REVIEW')).toBeUndefined();
-    (ai as any).endpointHealth.set(review.id,{available:true,checkedAt:Date.now(),reason:null});
-    (ai as any).reviewActive.add(review.id);const order:string[]=[];
-    const pending=(ai as any).queueReview('PENDING_ENTRY_REVIEW',async()=>{order.push('PENDING_ENTRY_REVIEW');return'pending';});
-    const position=(ai as any).queueReview('POSITION_REVIEW',async()=>{order.push('POSITION_REVIEW');return'position';});
-    (ai as any).reviewActive.delete(review.id);(ai as any).pumpReviewQueue(review.id);
-    await expect(position).resolves.toBe('position');await expect(pending).resolves.toBe('pending');
-    expect(order).toEqual(['POSITION_REVIEW','PENDING_ENTRY_REVIEW']);
+    listed=false;await ai.probeResources();
+    expect(ai.hasCapacity('SCOUT')).toBe(false);
+    expect(ai.hasCapacity('PRIMARY_BRAIN')).toBe(true);
+    expect(ai.resourceMetrics().find(r=>r.id===scout.id)?.healthReason).toContain(scout.model);
+    expect(fetch.mock.calls.map(([url])=>String(url))).not.toContain('http://127.0.0.1:1234/health');
+    expect(fetch.mock.calls.map(([url])=>String(url))).not.toContain('http://127.0.0.1:1234/props');
+    expect(fetch.mock.calls.every(([url])=>!String(url).includes('/chat/completions'))).toBe(true);
+  });
+
+  it('passes the current Primary model into the circuit recovery probe',async()=>{
+    const {state,ai}=await harness(),primary=state.aiResources.find(r=>r.role==='PRIMARY_BRAIN')!;
+    const probe=vi.spyOn((ai as any).openAi,'probe').mockResolvedValue({ok:true,identity:null,reason:null});
+    for(let i=0;i<3;i++)(ai as any).recordPrimaryFailure('AI_TIMEOUT');
+    expect(await ai.probePrimaryIfDue(Date.now()+31_000)).toBe(true);
+    expect(probe).toHaveBeenCalledExactlyOnceWith(primary.baseUrl,2000,primary.model);
+    expect(ai.circuitStatus().state).toBe('HALF_OPEN');
   });
 });

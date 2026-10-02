@@ -1,13 +1,11 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { onMounted, ref } from "vue";
 import { useSystemStore } from "../stores/system";
 import { api } from "../api/client";
 import Panel from "./Panel.vue";
 import StatusBadge from "./StatusBadge.vue";
-import { money, pct } from "../format";
-import { cycleMoments, holdingDuration, positionCycleKey } from "../utils/holdingDuration";
+import { money, pct, age } from "../format";
 import { createUiRequestId } from "../requestId";
-import { useNow } from "../utils/useNow";
 const props = defineProps<{ positionId: string }>(),
   emit = defineEmits<{ close: [] }>(),
   s = useSystemStore();
@@ -19,14 +17,6 @@ const detail = ref<any>(null),
   reason = ref(""),
   busy = ref(false),
   feedback = ref("");
-// The console ages against a ticking clock and states which moment the age came from, so an operator
-// never reads a first-observed position as a cycle whose first fill is proven.
-const now = useNow(30_000);
-const holding = () => holdingDuration(detail.value?.position, now.value);
-const moments = () => cycleMoments(detail.value?.position);
-const environment = computed(() => s.settings?.connections?.exchange?.environment ?? null);
-const accountSource = computed(() => s.snapshot?.account?.source ?? null);
-const cycleKey = () => positionCycleKey(detail.value?.position, environment.value, accountSource.value);
 const requestKeys = new Map<string,string>();
 async function load() {
   try {
@@ -141,16 +131,13 @@ onMounted(load);
             {{ detail.position.entryPrice }} / {{ detail.position.markPrice }}
           </dd>
         </div>
-        <div data-holding-duration-block>
+        <div>
           <dt>持仓时间</dt>
           <dd>
-            <strong data-holding-duration="">{{ holding().text }}</strong>
-            <small data-holding-provenance="">{{ holding().detail }}</small>
+            {{
+              detail.position.openedAt ? age(detail.position.openedAt) : "未知"
+            }}
           </dd>
-        </div>
-        <div data-position-cycle-key>
-          <dt>物理周期标识</dt>
-          <dd class="mono">{{ cycleKey() }}</dd>
         </div>
         <div>
           <dt>TP</dt>
@@ -159,20 +146,6 @@ onMounted(load);
             {{ detail.tp?.quantity ?? "—" }} @ {{ detail.tp?.price ?? "—" }}
           </dd>
         </div>
-      </div>
-      <div v-if="detail.position.economicMandate" class="facts wide console-facts" data-entry-economic-mandate>
-        <div><dt>Entry 最低初始保证金</dt><dd>{{ detail.position.economicMandate.sizing.minimumInitialMarginQuote }} {{ detail.position.economicMandate.quoteAsset }}</dd></div>
-        <div><dt>Entry 实际保证金 / notional</dt><dd>{{ detail.position.economicMandate.sizing.selectedInitialMarginQuote }} / {{ detail.position.economicMandate.sizing.selectedNotionalQuote }} {{ detail.position.economicMandate.quoteAsset }}</dd></div>
-        <div><dt>数量 / 杠杆 / 目标期限</dt><dd>{{ detail.position.economicMandate.sizing.quantity }} / {{ detail.position.economicMandate.sizing.leverage }}x / {{ detail.position.economicMandate.economics.targetHorizonMinutes }}m</dd></div>
-        <div><dt>1h 可达 / FX / Funding</dt><dd>{{ detail.position.economicMandate.economics.oneHourReachabilityStatus }} / {{ detail.position.economicMandate.economics.fxStatus }} / {{ detail.position.economicMandate.economics.fundingStatus }}</dd></div>
-        <div><dt>方向事实 1D / 4H / 15m</dt><dd>{{ detail.position.economicMandate.directionFacts.map(fact => fact.timeframe + ':' + fact.direction + '/' + fact.status).join(' · ') }}</dd></div>
-      </div>
-      <div v-if="detail.position.tpEconomics" class="policy-callout" data-tp-economics>
-        <strong>TP 经济性 · {{ detail.position.tpEconomics.status }}</strong>
-        <span>保护状态与经济结果分开读取。目标净收益 {{ money(detail.position.tpEconomics.expectedNetProfit) }}，最低要求 {{ money(detail.position.tpEconomics.requiredNetProfit) }}。</span>
-      </div>
-      <div class="cycle-moments" data-cycle-moments>
-        <small v-for="m in moments()" :key="m.key" data-cycle-moment>{{ m.text }}</small>
       </div>
       <div class="management-card">
         <strong>人工交易控制台 · HUMAN ONLY · TESTNET</strong

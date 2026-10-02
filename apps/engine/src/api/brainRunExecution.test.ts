@@ -3,7 +3,7 @@ import {mkdtempSync, rmSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import path from 'node:path';
 import {SettingsStore} from '../config/settingsStore.js';
-import {harness} from '../services/tradingQualityTestHarness.js';
+import {harness,systemCandidateDecision} from '../services/tradingQualityTestHarness.js';
 import {withExecutionOutcomes} from './router.js';
 
 const fixtureSymbol: string = '4USDT';
@@ -28,15 +28,9 @@ afterEach(() => {
 function armed(store: SettingsStore) {
   const h = harness();
   h.bus.on('event', (event: any) => store.recordRuntimeEvent(event));
-  const quote = h.state.snapshots.get(fixtureSymbol)!.quote;
   (h.ai as any).decide.mockImplementation(async (packet: any) => ({
     runId: 'durable-run',
-    decision: {
-      ...h.supplied, packetId: packet?.packetId, decision: 'PLACE_LONG', tradeSide: 'LONG', direction: 'LONG', structureDirection: 'LONG',
-      quantityUnits: 1000, idealPrice: Number(quote.bid),
-      acceptablePriceRange: {min: Number(quote.bid), max: Number(quote.ask) + Number(quote.tickSize) * 10},
-      horizonMinutes: 3,
-    },
+    decision: systemCandidateDecision(packet,h.supplied,'LONG',{packetId:packet?.packetId}),
   }));
   return h;
 }

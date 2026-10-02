@@ -1,5 +1,5 @@
 import type { Position, TakeProfitOrder } from '@zdj/contracts';
-import { estimateTradingCost, takeProfitTarget, uid, roundToTick } from '@zdj/core';
+import { estimateTradingCost, tradingCostSnapshot, takeProfitTarget, uid, roundToTick } from '@zdj/core';
 import type { RuntimeState } from '../state/runtimeState.js';
 import type { EventBus } from '../events/eventBus.js';
 import type { ExchangeTradeAdapter } from '../types.js';
@@ -119,7 +119,7 @@ export class TpGuardian {
       status:order.status,originalQuantity:order.quantity,executedQuantity:Number((order as any).filledQuantity??0),updateTime:order.updatedAt??Date.now(),
     },Date.now());
   }
-  economicsFor(position:Position,exitPrice:number){const settings=this.state.settings.takeProfit,exitRate=settings.exitFeeAssumption==='MAKER'?settings.makerFeeRate:settings.takerFeeRate;return estimateTradingCost({entryPrice:position.entryPrice,qty:position.quantity,direction:position.side,leverage:position.leverage,entryFeeRate:settings.entryFeeRate,expectedExitFeeRate:exitRate,expectedSlippagePct:settings.slippageBufferPct,feeSafetyBufferPct:settings.feeSafetyBufferPct,minNetProfitUsd:settings.minNetProfitUsd,minNetProfitRoiPct:settings.minNetProfitRoiPct},exitPrice);}
+  economicsFor(position:Position,exitPrice:number){const settings=this.state.settings.takeProfit,cost=tradingCostSnapshot(settings);return{...estimateTradingCost({entryPrice:position.entryPrice,qty:position.quantity,direction:position.side,leverage:position.leverage,entryFeeRate:cost.entryFeeRate,expectedExitFeeRate:cost.expectedExitFeeRate,expectedSlippagePct:settings.slippageBufferPct,feeSafetyBufferPct:settings.feeSafetyBufferPct,minNetProfitUsd:settings.minNetProfitUsd,minNetProfitRoiPct:settings.minNetProfitRoiPct},exitPrice),costVersion:cost.costVersion};}
   constructor(private state:RuntimeState,private exchange:ExchangeTradeAdapter,private events:EventBus,private readonly exitRuntime:V396ExitRuntime){}
   metrics(){const positions=[...this.state.positions.values()],active=[...this.state.tpOrders.values()].filter(order=>order.status==='WORKING'),byPosition=new Map<string,number>();for(const order of active)byPosition.set(order.positionId,(byPosition.get(order.positionId)??0)+1);const orphanTp=active.filter(order=>!this.state.positions.has(order.positionId)).length,duplicateTp=[...byPosition.values()].filter(count=>count>1).reduce((sum,count)=>sum+count-1,0),qtyMismatch=active.filter(order=>{const pos=this.state.positions.get(order.positionId);return Boolean(pos&&Math.abs(order.quantity-pos.quantity)>Math.max(1e-10,pos.quantity*.000001));}).length,wrongSide=active.filter(order=>{const pos=this.state.positions.get(order.positionId);return Boolean(pos&&order.side!==(pos.side==='LONG'?'SELL':'BUY'));}).length;const covered=(p:Position)=>active.some(o=>o.positionId===p.id&&o.symbol===p.symbol&&o.side===(p.side==='LONG'?'SELL':'BUY')&&Math.abs(o.quantity-p.quantity)<=Math.max(1e-10,p.quantity*1e-6));
     // A row whose existence the exchange has not settled is counted as unresolved, never as a position
@@ -182,8 +182,13 @@ export class TpGuardian {
     // P5: the minimum move is a configured number, not a hidden 1.2%. Default zero means the guardian
     // may no longer push an authorized target further away than the model asked for.
     const minMoveFloorPercent=Math.max(0,Number(settingsTp.fullPositionMinMovePercent??0)),minMoveFloorSource=minMoveFloorPercent>0?'CONFIGURED' as const:'DEFAULT_ZERO' as const;
-    const profitFloorDisposition=settingsTp.authorizedTargetProfitFloorDisposition==='FALL_BACK'?'FALL_BACK' as const:'WARN_AND_KEEP' as const;
-    const parameterVersion=`TP-CONTRACT-V1:minMove=${minMoveFloorPercent}:target=${settingsTp.targetPriceMovePercent}:floor=${settingsTp.minNetProfitUsd}/${settingsTp.minNetProfitRoiPct}%`;
+    const canonicalEntryCostVersion=String(current.economicAdmission?.costVersion??''),configuredProfitFloorDisposition=settingsTp.authorizedTargetProfitFloorDisposition==='FALL_BACK'?'FALL_BACK' as const:'WARN_AND_KEEP' as const;
+    // WARN_AND_KEEP protects legacy/external holdings without silently rewriting their target. A
+    // versioned system Entry already selected a fee-valid candidate, so a post-fill shortfall is cost
+    // drift to repair and may not become the normal low-net path for a new position.
+    const profitFloorDisposition=canonicalEntryCostVersion?'FALL_BACK' as const:configuredProfitFloorDisposition;
+    const guardianCostVersion=tradingCostSnapshot(settingsTp).costVersion;
+    const parameterVersion=`TP-CONTRACT-V397:cost=${guardianCostVersion}:entryCost=${canonicalEntryCostVersion||'LEGACY_UNKNOWN'}:minMove=${minMoveFloorPercent}:target=${settingsTp.targetPriceMovePercent}:floor=${settingsTp.minNetProfitUsd}/${settingsTp.minNetProfitRoiPct}%`;
     const ai=current.profitTakePlan,card:any=market.technical?.['15m'];
     const authorizedFacts=authorizedTargetFacts({position:current,plan:ai,tickSize:tick,now,card,sideReachable,movePct,
       maxMovePercent:Number(settingsTp.structureMaxMovePercent??0),economicsFor:price=>economic(price),profitFloorDisposition,minMoveFloorPercent,minMoveFloorSource,parameterVersion});
@@ -202,22 +207,55 @@ export class TpGuardian {
         :{price:fixedPrice,source:'FIXED_PROFITABLE' as const,reason:structurePrice?'STRUCTURE_BELOW_NET_OR_MARKET_FLOOR':authorizedFacts.refusals[0]??structureRaw.reason,authorized:false,horizonExpiresAt:null,range:null});
     const selection=assembleTargetSelection({chosen,authorized:{present:Boolean(ai),price:ai?roundToTick(ai.targetPrice,tick,current.side==='LONG'?'ceil':'floor'):null,reason:ai?.targetReason??null,horizonExpiresAt:ai&&current.openedAt>0?current.openedAt+ai.targetHorizonMinutes*60_000:null,refusals:authorizedFacts.refusals},
       economics:price=>economic(price),profitFloorDisposition,minMoveFloorPercent,minMoveFloorSource,parameterVersion});
-    this.events.publish('TP_TARGET_SELECTED',{positionId:current.id,price:selection.price,source:selection.source,reason:selection.reason,authorizedTargetUsed:selection.provenance.authorizedValid,...selection.provenance,economicWarning:selection.economicWarning,structureValid,fixedValid,aiPlanPresent:Boolean(ai)},current.symbol);
+    this.events.publish('TP_TARGET_SELECTED',{positionId:current.id,price:selection.price,source:selection.source,reason:selection.reason,authorizedTargetUsed:selection.provenance.authorizedValid,...selection.provenance,economicWarning:selection.economicWarning,guardianCostVersion,entryCostVersion:canonicalEntryCostVersion||null,costVersionMatch:!canonicalEntryCostVersion||canonicalEntryCostVersion===guardianCostVersion,structureValid,fixedValid,aiPlanPresent:Boolean(ai)},current.symbol);
     let price=selection.price,economics=economic(price),status:'TP_OK'|'TP_TARGET_BELOW_NET_FLOOR'|'TP_TARGET_UNREALISTIC'='TP_OK';
     const finalAiRangeValid=selection.source!=='AI'||Boolean(ai&&price>=ai.acceptableTargetRange.min&&price<=ai.acceptableTargetRange.max);
     // An authorised target under WARN_AND_KEEP is validated on legality, reachability and range. The
     // profit floor is reported beside it as a warning; it is not a reason to refuse the protection.
     const profitFloorRequired=profitFloorDisposition==='FALL_BACK';
     const finalValid=Boolean(fixedValid||selection.source!=='FIXED_PROFITABLE')&&Number.isFinite(price)&&price>0&&Math.abs(price/tick-Math.round(price/tick))<1e-7&&movePct(price)>=minMoveFloorPercent&&sideReachable(price)&&finalAiRangeValid&&economics&&(!profitFloorRequired||economics.expectedNetProfit>=economics.requiredNetProfit);
-    if(!finalValid||!economics){status=economics&&economics.expectedNetProfit<economics.requiredNetProfit?'TP_TARGET_BELOW_NET_FLOOR':'TP_TARGET_UNREALISTIC';const exhausted=attempt>=5,delay=Math.min(15*60_000,60_000*2**Math.min(attempt-1,4)),nextAt=Date.now()+delay,fallbackEconomics=economics??fixedEconomics;if(!fallbackEconomics){this.state.positions.set(current.id,{...current,tpStatus:'MANUAL_REVIEW_REQUIRED',tpOrderId:null,tpLastVerifiedAt:Date.now(),tpCoverageSource:'NONE'});this.retry.set(current.id,{attempt,nextAt:Date.now()+15*60_000,lastError:'TP_ECONOMICS_UNAVAILABLE'});this.events.publish('TP_MANUAL_REVIEW_REQUIRED',{positionId:current.id,attempt,price,markPrice:liveMark,reason:'TP_ECONOMICS_UNAVAILABLE'},current.symbol);this.repairing.delete(current.id);return;}const blocked={...current,tpStatus:exhausted?'MANUAL_REVIEW_REQUIRED' as const:'REPAIR_FAILED' as const,tpOrderId:null,tpLastVerifiedAt:Date.now(),tpCoverageSource:'NONE' as const,tpEconomics:{currentTpPrice:Number.isFinite(price)&&price>0?price:null,expectedGrossProfit:fallbackEconomics.expectedGrossProfit,expectedFees:fallbackEconomics.estimatedTotalFee+fallbackEconomics.slippageBuffer+fallbackEconomics.feeSafetyBuffer,expectedNetProfit:fallbackEconomics.expectedNetProfit,requiredNetProfit:fallbackEconomics.requiredNetProfit,breakEvenPrice:fallbackEconomics.breakEvenPrice,minProfitableExitPrice:fallbackEconomics.minProfitableExitPrice,status}};this.state.positions.set(current.id,blocked);this.retry.set(current.id,{attempt,nextAt:exhausted?Date.now()+15*60_000:nextAt,lastError:status});this.events.publish(exhausted?'TP_MANUAL_REVIEW_REQUIRED':'TP_TARGET_UNREALISTIC',{positionId:current.id,attempt,price,markPrice:liveMark,reason:status,source:selection.source,requiredNetProfit:fallbackEconomics.requiredNetProfit,expectedNetProfit:fallbackEconomics.expectedNetProfit,nextRetryAt:exhausted?Date.now()+15*60_000:nextAt},current.symbol);this.repairing.delete(current.id);return;}
+    if(!finalValid||!economics){
+      status=economics&&economics.expectedNetProfit<economics.requiredNetProfit?'TP_TARGET_BELOW_NET_FLOOR':'TP_TARGET_UNREALISTIC';
+      const exhausted=attempt>=5,delay=Math.min(15*60_000,60_000*2**Math.min(attempt-1,4)),nextAt=Date.now()+delay,fallbackEconomics=economics??fixedEconomics;
+      if(!fallbackEconomics){
+        this.state.positions.set(current.id,{...current,tpStatus:'MANUAL_REVIEW_REQUIRED',tpOrderId:null,tpLastVerifiedAt:Date.now(),tpCoverageSource:'NONE'});
+        this.retry.set(current.id,{attempt,nextAt:Date.now()+15*60_000,lastError:'TP_ECONOMICS_UNAVAILABLE'});
+        this.events.publish('TP_MANUAL_REVIEW_REQUIRED',{positionId:current.id,attempt,price,markPrice:liveMark,reason:'TP_ECONOMICS_UNAVAILABLE'},current.symbol);
+        this.repairing.delete(current.id);return;
+      }
+      const blocked={...current,tpStatus:exhausted?'MANUAL_REVIEW_REQUIRED' as const:'REPAIR_FAILED' as const,tpOrderId:null,tpLastVerifiedAt:Date.now(),tpCoverageSource:'NONE' as const,tpEconomics:{
+        currentTpPrice:Number.isFinite(price)&&price>0?price:null,
+        expectedGrossProfit:fallbackEconomics.expectedGrossProfit,
+        expectedFees:fallbackEconomics.estimatedTotalFee+fallbackEconomics.slippageBuffer+fallbackEconomics.feeSafetyBuffer,
+        expectedNetProfit:fallbackEconomics.expectedNetProfit,
+        requiredNetProfit:fallbackEconomics.requiredNetProfit,
+        breakEvenPrice:fallbackEconomics.breakEvenPrice,
+        minProfitableExitPrice:fallbackEconomics.minProfitableExitPrice,
+        costVersion:fallbackEconomics.costVersion,
+        status,
+      }};
+      this.state.positions.set(current.id,blocked);
+      this.retry.set(current.id,{attempt,nextAt:exhausted?Date.now()+15*60_000:nextAt,lastError:status});
+      this.events.publish(exhausted?'TP_MANUAL_REVIEW_REQUIRED':'TP_TARGET_UNREALISTIC',{positionId:current.id,attempt,price,markPrice:liveMark,reason:status,source:selection.source,requiredNetProfit:fallbackEconomics.requiredNetProfit,expectedNetProfit:fallbackEconomics.expectedNetProfit,nextRetryAt:exhausted?Date.now()+15*60_000:nextAt},current.symbol);
+      this.repairing.delete(current.id);return;
+    }
 
-    const tpEconomics={currentTpPrice:price,expectedGrossProfit:economics.expectedGrossProfit,expectedFees:economics.estimatedTotalFee+economics.slippageBuffer+economics.feeSafetyBuffer,expectedNetProfit:economics.expectedNetProfit,requiredNetProfit:economics.requiredNetProfit,breakEvenPrice:economics.breakEvenPrice,minProfitableExitPrice:economics.minProfitableExitPrice,status:(selection.economicWarning?'TP_LOW_NET_TARGET_KEPT':'TP_OK') as any,economicWarning:selection.economicWarning,targetProvenance:selection.provenance};this.state.positions.set(current.id,{...current,tpEconomics,profitTakePlanSource:selection.source});const order:TakeProfitOrder={id:uid('tp'),clientOrderId:null,exchangeOrderId:null,cycleId:current.cycleId,positionId:current.id,symbol:current.symbol,side:current.side==='LONG'?'SELL':'BUY',quantity:Math.max(market.quote.minQty,qty),price,status:'WORKING',createdAt:now,updatedAt:now};
-    try{if(existing&&['WORKING','PARTIALLY_FILLED'].includes(existing.status)){const canceled=await this.cancel(existing);if(!['CANCELED','EXPIRED','REJECTED'].includes(canceled.status))throw new Error('TP_REPLACEMENT_CANCEL_UNVERIFIED');this.state.tpOrders.set(existing.id,canceled);}const placed=await this.place(order,{stepSize:Number(market.quote.stepSize),tickSize:Number(market.quote.tickSize)});this.state.tpOrders.set(placed.id,placed);const latestPosition=this.state.positions.get(current.id);
-      // A position may close while the exchange is acknowledging the reduce-only TP. Never recreate
-      // it from TP-only fields: that produces a schema-invalid phantom holding and can crash snapshot
-      // projection. Settle the now-orphaned order and leave position ownership to reconciliation.
-      if(!latestPosition){let settled=placed;try{settled=await this.cancel(placed);}catch(error){this.events.publish('TP_ORPHAN_CANCEL_FAILED',{positionId:current.id,orderId:placed.id,clientOrderId:placed.clientOrderId??null,message:error instanceof Error?error.message:String(error)},current.symbol);}this.state.tpOrders.set(settled.id,settled);this.retry.delete(current.id);this.events.publish('TP_POSITION_GONE_AFTER_SUBMIT',{positionId:current.id,orderId:placed.id,clientOrderId:placed.clientOrderId??null,settledStatus:settled.status},current.symbol);return;}
-      this.state.positions.set(current.id,{...latestPosition,tpStatus:placed.status==='WORKING'?'PROTECTED':'PENDING',tpOrderId:placed.id,tpLastVerifiedAt:Date.now(),tpCoverageSource:'SYSTEM_CREATED'});this.retry.delete(current.id);this.events.publish('TP_PROTECTED',{positionId:current.id,order:placed,repairAttempt:attempt,tpEconomics},current.symbol);}
+    const tpEconomics={
+      currentTpPrice:price,
+      expectedGrossProfit:economics.expectedGrossProfit,
+      expectedFees:economics.estimatedTotalFee+economics.slippageBuffer+economics.feeSafetyBuffer,
+      expectedNetProfit:economics.expectedNetProfit,
+      requiredNetProfit:economics.requiredNetProfit,
+      breakEvenPrice:economics.breakEvenPrice,
+      minProfitableExitPrice:economics.minProfitableExitPrice,
+      costVersion:economics.costVersion,
+      status:(selection.economicWarning?'TP_LOW_NET_TARGET_KEPT':'TP_OK') as any,
+      economicWarning:selection.economicWarning,
+      targetProvenance:selection.provenance,
+    };
+    this.state.positions.set(current.id,{...current,tpEconomics,profitTakePlanSource:selection.source});
+    const order:TakeProfitOrder={id:uid('tp'),clientOrderId:null,exchangeOrderId:null,cycleId:current.cycleId,positionId:current.id,symbol:current.symbol,side:current.side==='LONG'?'SELL':'BUY',quantity:Math.max(market.quote.minQty,qty),price,status:'WORKING',createdAt:now,updatedAt:now};
+    try{if(existing&&['WORKING','PARTIALLY_FILLED'].includes(existing.status)){const canceled=await this.cancel(existing);if(!['CANCELED','EXPIRED','REJECTED'].includes(canceled.status))throw new Error('TP_REPLACEMENT_CANCEL_UNVERIFIED');this.state.tpOrders.set(existing.id,canceled);}const placed=await this.place(order,{stepSize:Number(market.quote.stepSize),tickSize:Number(market.quote.tickSize)});this.state.tpOrders.set(placed.id,placed);this.state.positions.set(current.id,{...this.state.positions.get(current.id)!,tpStatus:placed.status==='WORKING'?'PROTECTED':'PENDING',tpOrderId:placed.id,tpLastVerifiedAt:Date.now(),tpCoverageSource:'SYSTEM_CREATED'});this.retry.delete(current.id);this.events.publish('TP_PROTECTED',{positionId:current.id,order:placed,repairAttempt:attempt,tpEconomics},current.symbol);}
     catch(error){const message=error instanceof Error?error.message:String(error);const submitted=this.state.tpOrders.get(order.id),rejected=submitted?.status==='UNKNOWN'&&confirmedTpSubmissionRejection(error);if(rejected){this.state.tpOrders.set(order.id,{...submitted,status:'REJECTED',updatedAt:Date.now()});this.events.publish('TP_ORDER_REJECTED',{positionId:current.id,orderId:order.id,clientOrderId:submitted?.clientOrderId??order.clientOrderId,exchangeCode:-2022,message},current.symbol);}
       // A row the authoritative position book still holds, but whose reduction proof says there is
       // nothing to reduce, is a contradiction about the fact — not a proven absence and not a missing

@@ -1,6 +1,6 @@
 import {describe,expect,it,vi} from 'vitest';
 import {TradePlanSchema, type TradePlan} from '@zdj/contracts';
-import {createQuantityHorizonCandidates} from './quantityHorizonCandidates.js';
+import {buildQuantityHorizonCandidates,createQuantityHorizonCandidates} from './quantityHorizonCandidates.js';
 import {aiExitPlanFactsOf,assembleTradePlan,assertPlanSupersede,cycleLossBudget,evaluatePlanEvidence,executedPlanRecord,planIdOf} from './tradePlanService.js';
 import {RuntimeState} from '../state/runtimeState.js';
 import {harness} from './tradingQualityTestHarness.js';
@@ -32,32 +32,35 @@ function candles(moves:number[]){
 }
 const sample=()=>candles(new Array(300).fill(4));
 
-function candidates(over:{settings?:any;quote?:any;envelope?:any;selection?:any;candles?:any;side?:'LONG'|'SHORT'}={}){
+function candidates(over:{settings?:any;quote?:any;envelope?:any;selection?:any;candles?:any;side?:'LONG'|'SHORT';factVersion?:string}={}){
   const candleSource=over.candles;
   const quote={bid:99.9,ask:100.1,tickSize:.1,stepSize:1,minQty:1,minNotional:5,...over.quote};
   const envelope={maxQuantityUnits:50,maxNotionalUsd:5_000,maxMarginUsd:500,executable:true,...over.envelope};
-  return createQuantityHorizonCandidates({symbol:'BTCUSDT',side:over.side??'LONG',now:NOW,quote,leverage:10,envelope,envelopeExpiresAt:NOW+120_000,
-    factVersion:`facts-${Object.keys(over).join(',')}`,risk:riskFacts,settings:over.settings??baseSettings(),
+  const input={symbol:'BTCUSDT',side:over.side??'LONG',now:NOW,quote,leverage:10,envelope,envelopeExpiresAt:NOW+120_000,
+    factVersion:over.factVersion??`facts-${Object.keys(over).join(',')}`,risk:riskFacts,settings:over.settings??baseSettings(),
     candles:candleSource??sample(),managementDurationMs:24*3_600_000,selection:over.selection,
     // echoed so a follow-up set can be rebuilt with the same inputs
-    ...{quote,settings:over.settings??baseSettings(),candleSource},} as any);
+    ...{quote,settings:over.settings??baseSettings(),candleSource},} as any;
+  return{...createQuantityHorizonCandidates(input),input};
 }
 
 const selectionFor=(candidate:any,over:Record<string,any>={})=>({decision:candidate.side==='LONG'?'PLACE_LONG':'PLACE_SHORT',side:candidate.side,
-  quantityUnits:candidate.quantityUnits,targetPrice:candidate.targetPrice,targetHorizonMinutes:candidate.targetHorizonMinutes,
+  selectedCandidateId:candidate.candidateId,quantityUnits:null,targetPrice:candidate.targetPrice,targetHorizonMinutes:candidate.targetHorizonMinutes,
+  acceptableTargetRange:{...candidate.acceptableTargetRange},
   thesis:'15m structure holds above the reclaimed level',invalidationPredicate:'CLOSED_BAR_BREAKS_LEVEL',predicateLevel:95,
-  predicateEvidenceRefs:['bar:BTCUSDT:15m'],counterEvidenceRefs:[],releaseCondition:null,modelRunId:'run_1',promptVersion:'V3.9.3',
+  predicateEvidenceRefs:['bar:BTCUSDT:15m'],counterEvidenceRefs:[],releaseCondition:null,modelRunId:'run_1',promptVersion:'V3.9.7',
   modelConfidence:.9,horizonMinutes:3,...over});
 
-/** The realistic path: the caller's triple goes into the generator, which offers it or refuses it. */
-const setWithSelection=(resolver:any,candidate:any,over:Record<string,any>={})=>candidates({
-  quote:resolver.quote,settings:resolver.settings??baseSettings(),candles:resolver.candleSource,
-  side:candidate.side,selection:{quantityUnits:candidate.quantityUnits,targetPrice:candidate.targetPrice,
-    targetHorizonMinutes:candidate.targetHorizonMinutes,...(over.setSelection??{})}}).set;
+/** Current plans consume the frozen offered menu. A legacy compute result uses its exact original
+ * facts, never a newly invented factVersion with the previously selected id carried across. */
+const setWithSelection=(resolver:any,candidate:any)=>resolver.set.candidates.some((row:any)=>row.candidateId===candidate.candidateId)
+  ?resolver.set
+  :buildQuantityHorizonCandidates({...resolver.input,selection:{quantityUnits:candidate.quantityUnits,targetPrice:candidate.targetPrice,
+    targetHorizonMinutes:candidate.targetHorizonMinutes}});
 
-const planInput=(set:any,candidate:any,over:Record<string,any>={})=>({selection:selectionFor(candidate,over.selection??{}),candidateSet:setWithSelection(set,candidate,over.selection??{}),
-  scope:JSON.stringify(['TESTNET','binance-primary','BTCUSDT','LONG']),cycleId:'cycle_j3',symbol:'BTCUSDT',leverage:10,
-  minNetProfitUsd:1,maxRealizedLossUsd:10,factVersion:'facts-j3',now:NOW,...over});
+const planInput=(set:any,candidate:any,over:Record<string,any>={})=>{const candidateSet=setWithSelection(set,candidate);return{
+  selection:selectionFor(candidate,over.selection??{}),candidateSet,scope:JSON.stringify(['TESTNET','binance-primary','BTCUSDT','LONG']),cycleId:'cycle_j3',symbol:'BTCUSDT',leverage:10,
+  minNetProfitUsd:1,maxRealizedLossUsd:10,factVersion:candidateSet.factVersion,now:NOW,...over};};
 
 describe('S06 candidate generation',()=>{
   it('S06-T01 a side without capacity is refused, never switched to the side with more room',()=>{
@@ -69,66 +72,64 @@ describe('S06 candidate generation',()=>{
     expect(computed.refusals.join('|')).toMatch(/SIDE_NOT_EXECUTABLE/);
   });
 
-  it('S06-T02 bounded sizing may grow inside the executable envelope to clear the net floor',()=>{
+  it('S06-T02 the minimum size either clears its own profit floor or the answer is NO_TRADE',()=>{
     const rich=candidates();
     expect(rich.set.candidates.length).toBeGreaterThan(0);
-    // A hard profit floor that even the maximum authorized size cannot reach is NO_TRADE. The
-    // quantity ladder may grow within this envelope, but never beyond its funds/capacity ceiling.
+    // A hard profit floor the arithmetic itself cannot reach (the whole 1x-3x price band still fails
+    // it) is NO_TRADE, and the refused set offers no quantity at all: sizing is never grown to chase
+    // the floor (S06-T02). A requirement that is only beyond what the sample ever moved is the
+    // statistical ceiling, and is named that way instead - see S06-T06.
     const unreachable=candidates({settings:baseSettings({takeProfit:{...baseSettings().takeProfit,minNetProfitUsd:1e9}})});
     expect(unreachable.set.candidates).toEqual([]);
-    expect(unreachable.set.noTradeReasons).toContain('ECONOMIC_MIN_NET_PROFIT_UNMET');
-    expect(unreachable.set.feasibleQuantityUnits?.min).toBeGreaterThan(0);
-    expect(unreachable.set.feasibleQuantityUnits?.max).toBeLessThanOrEqual(50);
-    expect((unreachable.set.statisticalEvidence??[]).join('|')).not.toMatch(/MIN_NET_PROFIT/);
+    expect(unreachable.set.noTradeReasons).toContain('MIN_PROFIT_FLOOR_UNMET_AT_MINIMUM_QUANTITY');
+    expect(unreachable.set.noTradeReasons.join('|')).toMatch(/MIN_NET_PROFIT_USD=.*ATTAINED_NET_PROFIT_USD=/);
+    expect(unreachable.set.feasibleQuantityUnits).toEqual({min:0,max:0});
+    expect(unreachable.set.statisticalEvidence??[]).toEqual([]);
     // A generous sample and a reachable floor keep the smallest legal size offered.
     expect(rich.set.candidates[0].quantityUnits).toBe(rich.set.feasibleQuantityUnits.min);
   });
 
-  it('S06-T04 a SHADOW statistical ceiling is evidence, never a silent hard veto',()=>{
+  it('S06-T04 SHADOW probability does not promote a beyond-p75 target into the ordinary executable domain',()=>{
     // The tight sample makes the historical ceiling smaller than the price the profit floor needs,
     // while the profit floor itself is satisfied: exactly the case the account lost 26 PLACE decisions to.
-    const tight=candles(new Array(300).fill(.02));
+    const tight=candles(new Array(300).fill(.001));
     const shadow=candidates({settings:baseSettings({tradeEconomics:{...baseSettings().tradeEconomics,admissionMode:'SHADOW'}}),candles:tight});
     const refused=shadow.set.noTradeReasons.join('|');
-    expect(refused).not.toMatch(/NO_PROFITABLE_COMBINATION_AT_MINIMUM_QUANTITY|NO_EXECUTABLE_CANDIDATE/);
-    expect(refused).not.toMatch(/HISTORICAL_TARGET_CEILING_EXCEEDED/);
-    // The candidate survives, is still the smallest legal size, and says out loud that the sample
-    // does not support its target. Recording it is not the same as claiming the sample supports it.
-    const row=shadow.set.candidates[0];
-    expect(row).toBeTruthy();
-    expect(row.quantityUnits).toBe(shadow.set.feasibleQuantityUnits.min);
-    expect(row.executable).toBe(true);
-    expect(row.economics.targetVsStatisticalCeiling).toBe('BEYOND');
+    expect(shadow.set.candidates).toEqual([]);
+    expect(refused).toMatch(/NO_EXECUTABLE_CANDIDATE/);
+    expect(refused).toMatch(/TARGET_BEYOND_P75_REACHABILITY_BAND/);
+    // Probability calibration is still SHADOW evidence, while the p75 candidate-domain breach is
+    // explicit and cannot be mistaken for either a valid candidate or an unexplained refusal.
     expect(shadow.set.statisticalEvidence??[]).toContain('HISTORICAL_TARGET_CEILING_EXCEEDED_AT_MINIMUM_QUANTITY');
     const bounds=shadow.set.bounds?.[0];
     expect(bounds && bounds.maxTargetPrice!=null && bounds.minTargetPrice>bounds.maxTargetPrice).toBe(true);
-    // A SHADOW refusal is never smuggled in as a blocker either, so no consumer can read it as a veto.
-    expect(row.blockers).toEqual([]);
   });
 
-  it('S06-T05 ENFORCE only offers sizes whose target stays inside the observed ceiling',()=>{
-    const tight=candles(new Array(300).fill(.02));
+  it('S06-T05 the same ceiling still refuses outright once the account runs ENFORCE',()=>{
+    const tight=candles(new Array(300).fill(.001));
     const enforced=candidates({candles:tight});
-    expect(enforced.set.candidates.length).toBeGreaterThan(0);
-    expect(enforced.set.candidates.every(row=>row.executable&&row.economics.targetVsStatisticalCeiling==='WITHIN')).toBe(true);
-    expect(enforced.set.candidates.some(row=>row.quantityUnits>enforced.set.feasibleQuantityUnits.min)).toBe(true);
+    expect(enforced.set.candidates).toEqual([]);
+    expect(enforced.set.noTradeReasons.join('|')).toMatch(/HISTORICAL_TARGET_CEILING_EXCEEDED_AT_MINIMUM_QUANTITY/);
+    // The profit numbers are not printed as if they had failed: they belong to the other reason.
+    expect(enforced.set.noTradeReasons.join('|')).not.toMatch(/MIN_PROFIT_FLOOR_UNMET/);
     // And the model's own choice on that side is refused for the same named reason, not another.
     const selection=enforced.compute({quantityUnits:1,targetHorizonMinutes:15,targetPrice:100.2});
     expect(selection.candidate).toBeNull();
     expect(selection.refusals.join('|')).toMatch(/STATISTICAL_BOUND|CEILING/);
   });
 
-  it('S06-T06 profitable size selection stays separate from reachability and impossible profit',()=>{
-    // A tight sample may still admit a bounded larger size with a reachable target.
-    const ceiling=candidates({candles:candles(new Array(300).fill(.02)),
+  it('S06-T06 the two refusals are never conflated: profit floor and statistical ceiling are named apart',()=>{
+    // Ceiling exceeded, profit satisfied.
+    const ceiling=candidates({candles:candles(new Array(300).fill(.001)),
       settings:baseSettings({tradeEconomics:{...baseSettings().tradeEconomics,admissionMode:'ENFORCE'}})});
     const ceilingText=ceiling.set.noTradeReasons.join('|');
-    expect(ceiling.set.candidates.some(row=>row.economics.targetVsStatisticalCeiling==='WITHIN')).toBe(true);
+    expect(ceilingText).toMatch(/HISTORICAL_TARGET_CEILING_EXCEEDED/);
     expect(ceilingText).not.toMatch(/MIN_PROFIT_FLOOR_UNMET|NO_PROFITABLE_COMBINATION/);
-    // An impossible floor is refused after exhausting the bounded size ladder.
+    // Profit unmet in arithmetic, ceiling irrelevant: the only case allowed to quote the profit numbers.
     const profit=candidates({settings:baseSettings({takeProfit:{...baseSettings().takeProfit,minNetProfitUsd:1e9}})});
     const profitText=profit.set.noTradeReasons.join('|');
-    expect(profitText).toMatch(/ECONOMIC_MIN_NET_PROFIT_UNMET/);
+    expect(profitText).toMatch(/MIN_PROFIT_FLOOR_UNMET_AT_MINIMUM_QUANTITY/);
+    expect(profitText).toMatch(/MIN_NET_PROFIT_USD=.*ATTAINED_NET_PROFIT_USD=/);
     expect(profitText).not.toMatch(/CEILING/);
     // Nothing in either case is a message of the shape "attained >= minimum, therefore no trade".
     for(const set of [ceiling.set,profit.set]){
@@ -141,35 +142,35 @@ describe('S06 candidate generation',()=>{
     }
   });
 
-  it('S06-T07 a SHADOW selection the sample does not support is offered, with the evidence named',()=>{
-    // Live 2026-09-25 00:23: a PLACE_SHORT was refused at TRADE_PLAN with an empty reason list. This is
-    // that path: the model asked for the smallest legal size at a target the historical sample does
-    // not support, the profit floor itself is satisfied, and the account runs SHADOW.
-    const tight=candles(new Array(300).fill(.02));
+  it('S06-T07 SHADOW offers an ordinary candidate but refuses a model-selected tail target with a named reason',()=>{
+    const tight=candles(new Array(300).fill(.001));
     const shadowSettings=baseSettings({tradeEconomics:{...baseSettings().tradeEconomics,admissionMode:'SHADOW'}});
-    const offered=candidates({settings:shadowSettings,candles:tight}).set;
-    const row=offered.candidates[0];
+    const ordinary=candidates({settings:shadowSettings}).set;
+    const row=ordinary.candidates[0];
     expect(row).toBeTruthy();
     const selection={quantityUnits:row.quantityUnits,targetHorizonMinutes:row.targetHorizonMinutes,targetPrice:row.targetPrice};
-    const asked=candidates({settings:shadowSettings,candles:tight,selection}).set;
-    expect(asked.selection?.offered, 'a SHADOW ceiling is evidence; it may not veto the model triple silently').toBe(true);
-    expect(asked.selection?.refusals).toEqual([]);
-    expect(asked.statisticalEvidence?.join('|')).toMatch(/SELECTION_TARGET_BEYOND_STATISTICAL_CEILING|BEYOND_STATISTICAL/i);
-    expect(asked.selection?.resolved?.candidateId).toBeTruthy();
-    // ENFORCE keeps its authority over exactly this selection, named as the ceiling it is.
-    const enforced=candidates({settings:baseSettings(),candles:tight,selection}).set;
-    expect(enforced.selection?.offered).toBe(false);
-    expect(enforced.selection?.refusals.join('|')).toMatch(/STATISTICAL_BOUND|CEILING/);
-    expect(enforced.selection?.refusals.length).toBeGreaterThan(0);
+    const accepted=candidates({settings:shadowSettings,selection}).set;
+    expect(accepted.selection?.offered).toBe(true);
+    expect(accepted.selection?.refusals).toEqual([]);
+    expect(accepted.selection?.resolved?.candidateId).toBeTruthy();
+
+    const diagnostic=candidates({settings:shadowSettings,candles:tight}).set;
+    const bound=diagnostic.bounds?.[0];
+    expect(bound?.minTargetPrice).toBeGreaterThan(bound?.maxTargetPrice as number);
+    const tailSelection={quantityUnits:diagnostic.feasibleQuantityUnits.min,targetHorizonMinutes:bound!.horizonMinutes,targetPrice:bound!.minTargetPrice};
+    const refused=candidates({settings:shadowSettings,candles:tight,selection:tailSelection}).set;
+    expect(refused.selection?.offered).toBe(false);
+    expect(refused.selection?.refusals.join('|')).toMatch(/P75_REACHABILITY_BAND/);
+    expect(refused.statisticalEvidence?.join('|')).toMatch(/SELECTION_TARGET_BEYOND_STATISTICAL_CEILING/);
   });
 
   it('S06-T08 a selection is never refused without a reason that can be shown to an operator',()=>{
-    const tight=candles(new Array(300).fill(.02));
+    const tight=candles(new Array(300).fill(.001));
     const shadowSettings=baseSettings({tradeEconomics:{...baseSettings().tradeEconomics,admissionMode:'SHADOW'}});
-    const row=candidates({settings:shadowSettings,candles:tight}).set.candidates[0];
+    const row=candidates({settings:shadowSettings}).set.candidates[0];
     const cases:Array<Record<string,any>>=[
       // The triple the generator itself offered is the case that must never come back unexplained.
-      {selection:{quantityUnits:row.quantityUnits,targetHorizonMinutes:row.targetHorizonMinutes,targetPrice:row.targetPrice},candles:tight},
+      {selection:{quantityUnits:row.quantityUnits,targetHorizonMinutes:row.targetHorizonMinutes,targetPrice:row.targetPrice}},
       {selection:{quantityUnits:0,targetHorizonMinutes:15,targetPrice:104}},
       {selection:{quantityUnits:1,targetHorizonMinutes:15,targetPrice:104}},
       {selection:{quantityUnits:25,targetHorizonMinutes:7,targetPrice:104}},
@@ -212,17 +213,22 @@ describe('S06 candidate generation',()=>{
     const tooBig=set.compute({quantityUnits:5_000,targetHorizonMinutes:60,targetPrice:104});
     expect(tooBig.refusals.join('|')).toMatch(/CANDIDATE_QUANTITY_EXCEEDS_ENVELOPE|CANDIDATE_QUANTITY_OUTSIDE_ENVELOPE/);
     const outOfRange=set.compute({quantityUnits:25,targetHorizonMinutes:60,targetPrice:400});
-    expect(outOfRange.refusals.join('|')).toMatch(/CANDIDATE_TARGET_BEYOND_STATISTICAL_BOUND/);
+    expect(outOfRange.refusals.join('|')).toMatch(/CANDIDATE_TARGET_BEYOND_P75_REACHABILITY_BAND/);
     const belowFloor=set.compute({quantityUnits:25,targetHorizonMinutes:60,targetPrice:100.2});
     expect(belowFloor.refusals.join('|')).toMatch(/CANDIDATE_TARGET_BELOW_PROFIT_FLOOR|ECONOMIC_MIN_NET_PROFIT_UNMET/);
     expect(set.compute({quantityUnits:25,targetHorizonMinutes:37,targetPrice:104}).refusals).toContain('CANDIDATE_HORIZON_UNSUPPORTED:37');
   });
 
-  it('the ladder starts at the smallest size the exchange minimum notional allows',()=>{
+  it('the ladder starts at the 100 USDT initial-margin floor, not the exchange dust minimum',()=>{
     const tiny=candidates({quote:{bid:.026_16,ask:.026_17,tickSize:.000_01,stepSize:1,minQty:1,minNotional:5},
       envelope:{maxQuantityUnits:100_000,maxNotionalUsd:5_000,maxMarginUsd:500,executable:true}});
     expect(tiny.set.feasibleQuantityUnits.min).toBeGreaterThan(1);
     expect(tiny.set.candidates.every(row=>row.notionalUsd>=5-1e-9)).toBe(true);
+    expect(tiny.set.candidates.every(row=>row.marginUsd>=100-1e-8)).toBe(true);
+    expect(tiny.set.candidates.some(row=>row.marginUsd>=200-1e-8)).toBe(true);
+    const underfunded=candidates({envelope:{maxQuantityUnits:50,maxNotionalUsd:990,maxMarginUsd:99,executable:true}});
+    expect(underfunded.set.candidates).toEqual([]);
+    expect(underfunded.set.noTradeReasons).toContain('BUSINESS_MIN_INITIAL_MARGIN_UNAVAILABLE');
   });
 });
 
@@ -283,16 +289,17 @@ describe('S06 plan assembly and verification',()=>{
     const again=assembleTradePlan(planInput(set,candidate));
     expect(again.plan!.planId).toBe(first.plan!.planId);
     expect(JSON.stringify(again.plan!.economics)).toBe(JSON.stringify(first.plan!.economics));
-    const moved=candidates({settings:baseSettings({takeProfit:{...baseSettings().takeProfit,minNetProfitUsd:1.5}})});
+    const moved=candidates({settings:baseSettings({takeProfit:{...baseSettings().takeProfit,minNetProfitUsd:1.5}}),factVersion:'facts-j3-moved'});
     const movedCandidate=pickExecutable(moved);
-    const other=assembleTradePlan(planInput(moved,movedCandidate));
+    const movedSet=setWithSelection(moved,movedCandidate);
+    const other=assembleTradePlan({...planInput(moved,movedCandidate),candidateSet:movedSet,factVersion:'facts-j3-moved'});
     expect(other.plan).toBeTruthy();
     expect(other.plan!.planId).not.toBe(first.plan!.planId);
     expect(planIdOf({scope:'s',cycleId:'c',factVersion:'f1',candidateSetHash:'h',side:'LONG',selectedCandidateId:'x',planVersion:1}))
       .toBe(planIdOf({scope:'s',cycleId:'c',factVersion:'f1',candidateSetHash:'h',side:'LONG',selectedCandidateId:'x',planVersion:1}));
   });
 
-  it('S06-T05 a target beyond what the sample ever moved is not offered, and hardMax is recorded',()=>{
+  it('S06-T05 a target beyond p75 is not offered, while hard-max remains evidence only',()=>{
     const set=candidates(),candidate=pickExecutable(set);
     expect(candidate.economics.targetMovePercent).toBeLessThanOrEqual((candidate.economics.historicalHardMaxMovePercent??10)+1e-9);
     expect(candidate.economics.statisticalSource).not.toMatch(/confidence|model/i);
@@ -300,7 +307,7 @@ describe('S06 plan assembly and verification',()=>{
     const computed=set.compute({quantityUnits:candidate.quantityUnits,targetHorizonMinutes:shortBound.horizonMinutes,targetPrice:(shortBound.maxTargetPrice??0)*1.05});
     expect(shortBound.maxTargetPrice).toBeTruthy();
     expect(computed.candidate).toBeNull();
-    expect(computed.refusals.join('|')).toMatch(/CANDIDATE_TARGET_BEYOND_STATISTICAL_BOUND|CANDIDATE_TARGET_BELOW_PROFIT_FLOOR/);
+    expect(computed.refusals.join('|')).toMatch(/CANDIDATE_TARGET_BEYOND_P75_REACHABILITY_BAND|CANDIDATE_TARGET_BELOW_PROFIT_FLOOR/);
   });
 });
 
@@ -365,8 +372,11 @@ describe('S06 plan durability and the executed diff',()=>{
       Object.assign(snapshot.technical[tf],{trend:'UP',ema8:100,ema21:99,ema55:98,emaSlope21:1,atr14:2,atrPercent:2,recentSwingHigh:110,recentSwingLow:95,
         isClosed:true,asOf:now-1_000,barCloseTime:now-1_000,receivedAt:now,lastClosedBar:{openTime:now-1_000-period+1,closeTime:now-1_000,open:99.5,high:101,low:99,close:100.5,volume:100}});
     }
-    h.ai.decide.mockImplementation(async()=>({runId:'j3-run',decision:{...h.supplied,decision:'PLACE_LONG',tradeSide:'LONG',direction:'LONG',quantityUnits:1_000,
-      opportunityType:'TREND_RESUMPTION',timingEvent:null,idealPrice:100,acceptablePriceRange:{min:99.99,max:100.01},horizonMinutes:1}}));
+    h.ai.decide.mockImplementation(async(packet:any)=>{const selected=packet.executionEnvelope.LONG.planCandidates[0];return{runId:'j3-run',decision:{...h.supplied,
+      action:'FINAL',schemaVersion:'V3.9.7',decision:'PLACE_LONG',tradeSide:'LONG',direction:'LONG',structureDirection:'LONG',selectedCandidateId:selected.candidateId,quantityUnits:null,
+      opportunityType:'TREND_RESUMPTION',timingEvent:null,idealPrice:100,acceptablePriceRange:{min:99.99,max:100.01},horizonMinutes:1,
+      profitTakePlan:{targetPrice:selected.targetPrice,acceptableTargetRange:{...selected.acceptableTargetRange},targetHorizonMinutes:selected.targetHorizonMinutes,
+        targetReason:'Exact pre-Primary candidate',evidenceRefs:[]}}};});
     const plansAtSubmit:number[]=[];
     h.exchange.placeEntry=vi.fn(async(order:any)=>{plansAtSubmit.push(h.state.tradePlans?.size??0);return{...order,status:'NEW',exchangeOrderId:'ex_1',filledQuantity:0,updatedAt:Date.now()};});
     await h.run();
@@ -418,6 +428,6 @@ describe('S06 plan is the only source of AI exit authority',()=>{
   });
 });
 
-it('SHADOW economics records the profit shortfall without vetoing or rewriting the frozen model target',()=>{const settings=baseSettings();settings.tradeEconomics.admissionMode='SHADOW';const set=candidates({settings});const r=set.compute({quantityUnits:25,targetHorizonMinutes:60,targetPrice:100.2});expect(r.refusals).toEqual([]);expect(r.candidate).toMatchObject({quantityUnits:25,targetPrice:100.2});expect(r.candidate!.economics.targetConditionalNetProfitUsd).toBeLessThan(1);});
+it('SHADOW probability never overrides the deterministic fee-adjusted minimum-net contract',()=>{const settings=baseSettings();settings.tradeEconomics.admissionMode='SHADOW';const resolver=candidates({settings});const valid=resolver.set.candidates[0];expect(valid.economics.targetConditionalNetProfitUsd).toBeGreaterThanOrEqual(1);const r=resolver.compute({quantityUnits:25,targetHorizonMinutes:60,targetPrice:100.2});expect(r.candidate).toBeNull();expect(r.refusals.join('|')).toMatch(/CANDIDATE_TARGET_BELOW_PROFIT_FLOOR|ECONOMIC_MIN_NET_PROFIT_UNMET/);});
 
-it('persists the model authorized target range rather than the generator profit-floor range',()=>{const set=candidates(),chosen=set.compute({quantityUnits:25,targetHorizonMinutes:60,targetPrice:104}).candidate!;const input:any=planInput(set,chosen);input.selection={...input.selection,acceptableTargetRange:{min:103.5,max:104.5}};const result=assembleTradePlan(input as any);expect(result.refusals).toEqual([]);expect(result.plan?.acceptableTargetRange).toEqual({min:103.5,max:104.5});input.selection={...input.selection,acceptableTargetRange:{min:105,max:106}};expect(assembleTradePlan(input as any).refusals).toContain('PLAN_AUTHORIZED_TARGET_RANGE_INVALID');});
+it('persists the system candidate target range and refuses a model-authored replacement',()=>{const set=candidates(),chosen=set.compute({quantityUnits:25,targetHorizonMinutes:60,targetPrice:104}).candidate!;const input:any=planInput(set,chosen);const exact=assembleTradePlan(input as any);expect(exact.refusals).toEqual([]);expect(exact.plan?.acceptableTargetRange).toEqual(chosen.acceptableTargetRange);input.selection={...input.selection,acceptableTargetRange:{min:103.5,max:104.5}};const forged=assembleTradePlan(input as any);expect(forged.plan).toBeNull();expect(forged.refusals).toContain('PLAN_PARAMETER_OUTSIDE_CANDIDATE:acceptableTargetRange');});

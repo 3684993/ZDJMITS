@@ -277,3 +277,8 @@ models/
 # to .env and commit only a safe example/template.
 # ============================================================
 /data-replay/
+
+# Machine-local release configuration and credentials
+/.local-config/
+/.local-deploy/
+/.local-runtime/

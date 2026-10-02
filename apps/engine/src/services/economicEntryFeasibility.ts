@@ -1,14 +1,14 @@
 import { testnetFundsOnlyEntry } from '@zdj/core';
-import { estimateTradingCost } from '@zdj/core';
+import { estimateTradingCost, tradingCostSnapshot } from '@zdj/core';
 import type { BrainDecision, EntryExecutionEnvelope, Side } from '@zdj/contracts';
 type ProfitTakePlan=BrainDecision['profitTakePlan'];
 import type { RuntimeState } from '../state/runtimeState.js';
 import type { MarketDataHub } from './marketDataHub.js';
 import { evaluateTargetReachability, reachabilityTimeframe } from './historicalTpReachability.js';
-import { quoteUsdConversion } from './quoteUsdConversion.js';
 
 export interface EconomicAdmissionResult {
   version:'V3.9.5';
+  costVersion:string;
   mode:'OFF'|'SHADOW'|'ENFORCE';
   passed:boolean;
   validatedAt:number;
@@ -43,35 +43,26 @@ export function evaluateEconomicEntryFeasibility(input:{
   now?:number;
 }):EconomicAdmissionResult{
   const {state}=input,settings=state.settings,mode=settings.tradeEconomics.admissionMode,now=input.now??Date.now(),snapshot=state.snapshots.get(input.symbol);
-  const blockers:string[]=[];
+  const blockers:string[]=[],costPolicy=tradingCostSnapshot(settings.takeProfit);
+  const envelopeCostVersion=String(input.envelope?.fees?.costVersion??input.envelope?.economics?.costVersion??'');
+  if(envelopeCostVersion&&envelopeCostVersion!==costPolicy.costVersion)blockers.push('COST_SNAPSHOT_MISMATCH');
   if(mode==='OFF'||!snapshot||!input.profitTakePlan){
     if(!snapshot)blockers.push('ECONOMIC_MARKET_FACT_MISSING');
     if(!input.profitTakePlan)blockers.push('ECONOMIC_TP_PLAN_MISSING');
-    return{version:'V3.9.5',mode,passed:mode==='OFF',validatedAt:now,expectedNetProfit:0,requiredNetProfit:settings.takeProfit.minNetProfitUsd,reachProbability:null,historicalHardMaxMovePercent:null,targetMovePercent:0,notionalUsd:0,blockers};
+    return{version:'V3.9.5',costVersion:costPolicy.costVersion,mode,passed:mode==='OFF'&&blockers.length===0,validatedAt:now,expectedNetProfit:0,requiredNetProfit:settings.takeProfit.minNetProfitUsd,reachProbability:null,historicalHardMaxMovePercent:null,targetMovePercent:0,notionalUsd:0,blockers};
   }
   const step=snapshot.quote.stepSize,units=Number(input.quantityUnits),qty=units*step,sideEnvelope=input.envelope?.[input.side],
     entryPrice=Number(input.actualEntryPrice??(input.side==='LONG'?input.acceptablePriceRange.max:input.acceptablePriceRange.min)),
-    target=Number(input.profitTakePlan.targetPrice),notionalQuote=qty*entryPrice,
-    minimumInitialMarginQuote=Number(sideEnvelope?.minimumInitialMarginQuote??0),
-    minimumOrderNotionalQuote=Number(sideEnvelope?.minimumOrderNotionalQuote??0),
-    minimumExchangeQty=Number(snapshot.quote.minQty??0),minimumExchangeNotionalQuote=Number(snapshot.quote.minNotional??0);
-  const fx=quoteUsdConversion(state,input.symbol,now),quoteToUsd=Number(fx.rate??1),notionalUsd=notionalQuote*quoteToUsd;
+    target=Number(input.profitTakePlan.targetPrice),notionalUsd=qty*entryPrice;
   if(!Number.isInteger(units)||units<=0||!Number.isFinite(qty)||qty<=0)blockers.push('AI_QUANTITY_UNITS_INVALID');
   if(!sideEnvelope?.executable||units>Number(sideEnvelope?.maxQuantityUnits??0)||notionalUsd>Number(sideEnvelope?.maxNotionalUsd??0)+1e-8)blockers.push('AI_QUANTITY_EXCEEDS_ENVELOPE');
-  if(qty+1e-10<minimumExchangeQty)blockers.push('EXCHANGE_MIN_QTY_UNMET');
-  if(notionalQuote+1e-8<minimumExchangeNotionalQuote)blockers.push('EXCHANGE_MIN_NOTIONAL_UNMET');
-  if(minimumOrderNotionalQuote>0&&notionalQuote+1e-8<minimumOrderNotionalQuote)blockers.push('BUSINESS_MIN_ORDER_NOTIONAL_UNMET');
-  if(minimumInitialMarginQuote>0&&notionalQuote/Math.max(1,Number(input.envelope?.leverage??1))+1e-8<minimumInitialMarginQuote)blockers.push('BUSINESS_MIN_INITIAL_MARGIN_UNMET');
   if(target<input.profitTakePlan.acceptableTargetRange.min||target>input.profitTakePlan.acceptableTargetRange.max)blockers.push('TP_TARGET_OUTSIDE_AI_RANGE');
   const directionValid=input.side==='LONG'?target>entryPrice:target<entryPrice;
   if(!directionValid)blockers.push('TP_TARGET_WRONG_SIDE');
-  const exitRate=settings.takeProfit.exitFeeAssumption==='MAKER'?settings.takeProfit.makerFeeRate:settings.takeProfit.takerFeeRate;
-  if(!fx.rate)blockers.push(`QUOTE_USD_${fx.status}`);
-  const minimumNetProfitQuote=settings.takeProfit.minNetProfitUsd/quoteToUsd;
   let expectedNetProfit=Number.NEGATIVE_INFINITY,requiredNetProfit=settings.takeProfit.minNetProfitUsd;
   if(Number.isFinite(entryPrice)&&entryPrice>0&&qty>0&&Number.isFinite(target)&&target>0){
-    const e=estimateTradingCost({entryPrice,qty,direction:input.side,leverage:Number(input.envelope?.leverage??1),entryFeeRate:settings.takeProfit.entryFeeRate,expectedExitFeeRate:exitRate,expectedSlippagePct:settings.takeProfit.slippageBufferPct,feeSafetyBufferPct:settings.takeProfit.feeSafetyBufferPct,minNetProfitUsd:minimumNetProfitQuote,minNetProfitRoiPct:settings.takeProfit.minNetProfitRoiPct},target);
-    expectedNetProfit=e.expectedNetProfit*quoteToUsd;requiredNetProfit=e.requiredNetProfit*quoteToUsd;
+    const e=estimateTradingCost({entryPrice,qty,direction:input.side,leverage:Number(input.envelope?.leverage??1),entryFeeRate:costPolicy.entryFeeRate,expectedExitFeeRate:costPolicy.expectedExitFeeRate,expectedSlippagePct:settings.takeProfit.slippageBufferPct,feeSafetyBufferPct:settings.takeProfit.feeSafetyBufferPct,minNetProfitUsd:settings.takeProfit.minNetProfitUsd,minNetProfitRoiPct:settings.takeProfit.minNetProfitRoiPct},target);
+    expectedNetProfit=e.expectedNetProfit;requiredNetProfit=e.requiredNetProfit;
     if(e.expectedNetProfit+1e-8<e.requiredNetProfit)blockers.push('ECONOMIC_MIN_NET_PROFIT_UNMET');
   }else blockers.push('ECONOMIC_INPUT_INVALID');
   const targetMovePercent=Number.isFinite(entryPrice)&&entryPrice>0?Math.abs(target/entryPrice-1)*100:0;
@@ -90,5 +81,5 @@ export function evaluateEconomicEntryFeasibility(input:{
   }
   const human=humanManagedExposure(state);
   if(!testnetFundsOnlyEntry(settings)&&settings.positionManagement.humanManagedAdmissionCapsEnabled&&!human.withinLimits)blockers.push('HUMAN_MANAGED_EXPOSURE_LIMIT');
-  return{version:'V3.9.5',mode,passed:blockers.length===0,validatedAt:now,expectedNetProfit,requiredNetProfit,reachProbability,historicalHardMaxMovePercent,targetMovePercent,notionalUsd,blockers};
+  return{version:'V3.9.5',costVersion:costPolicy.costVersion,mode,passed:blockers.length===0,validatedAt:now,expectedNetProfit,requiredNetProfit,reachProbability,historicalHardMaxMovePercent,targetMovePercent,notionalUsd,blockers};
 }

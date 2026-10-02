@@ -210,6 +210,7 @@ export class EngineRuntime {
       : loadedSettings;
     const state = new RuntimeState(settings);
     state.restore(store.loadRuntime());
+    state.aiRuns = store.reconcileRestoredAiRuns(state.aiRuns);
     // J4: the usage ledger is a view over the durable RuntimeState rows, so it exists before the first
     // request can be made and comes back from a restart already holding the rows it wrote.
     const aiUsage = new AiUsageLedger(state as any);
@@ -296,6 +297,9 @@ export class EngineRuntime {
           transport,
           apiKey && apiSecret ? { apiKey, apiSecret } : null,
           settings.connections.exchange.recvWindowMs,
+          // Reuse the same execution-market filters already checked by entry/exit JIT.
+          // Formatting must not add an exchangeInfo request to the dispatch critical path.
+          symbol => ('cachedOrderPrecisionRules' in provider ? provider.cachedOrderPrecisionRules(symbol) : undefined) ?? state.snapshots.get(symbol)?.quote,
         );
     // C3: one durable exit-coordination store, sharing v396-ownership.sqlite with OwnershipRuntime.
     // It owns scope/cycle/ownerVersion/mandate/quantity truth for MANUAL, TP and future AI exits, and
@@ -499,6 +503,7 @@ export class EngineRuntime {
     runtime.exitRuntime = exitRuntime;
     // P2: fill attribution reads system origin from the durable registry instead of a client-id prefix.
     state.orderProvenance = exitRuntime.provenance as any;
+    positions.rebuildProvenCycleAccounting();
     runtime.aiExitAuthority = new AiExitAuthorityService(exitRuntime, () => {
       const coordination = (state.settings.riskGovernance as any)?.exitCoordination ?? {};
       return coordination.aiExitAuthority ?? 'OFF';
@@ -685,11 +690,6 @@ export class EngineRuntime {
         runtime.persistTimer = null;
       }, 1000);
     });
-    // Recovery must run after the durable event/checkpoint consumers are attached. Persist the
-    // rebuilt trade-record projection as one batch as well as the runtime checkpoint.
-    const cycleRecovery = positions.rebuildProvenCycleAccounting();
-    if (cycleRecovery.rebound || cycleRecovery.rebuilt)
-      events.publish('TRADE_RECORD_REPAIRED', {source: 'PROVEN_CYCLE_ACCOUNTING_REBUILD', ...cycleRecovery});
     if (trade instanceof ExternalTradeAdapter) {
       events.once("RUNTIME_STOPPED", () => trade.stopUserData());
       runtime.startUserDataIfConfigured();
@@ -716,6 +716,15 @@ export class EngineRuntime {
       }
     }, ms);
     this.timers.push(t);
+  }
+  private startMarketAndExchangeTicks() {
+    // Each task keeps its own non-overlap guard. Slow private reconciliation must
+    // never hold the next publication of already-received public market facts.
+    this.every(1_000, () => this.market.tick());
+    this.every(1_000, async () => {
+      if (this.state.settings.connections.executionMode === "TESTNET_ENABLED")
+        await this.exchangeLoop.tick();
+    });
   }
   private marketSymbolLimit() {
     const occupied = new Set([
@@ -838,11 +847,7 @@ export class EngineRuntime {
         this.universe.refresh();
       }
     });
-    this.every(1_000, async () => {
-      await this.market.tick();
-      if (this.state.settings.connections.executionMode === "TESTNET_ENABLED")
-        await this.exchangeLoop.tick();
-    });
+    this.startMarketAndExchangeTicks();
     this.every(2_500, async () => {
       this.runtimeControl.evaluate(true);
       await this.dispatchAnalysisTick();
@@ -866,7 +871,8 @@ export class EngineRuntime {
       const runner=this.positionReviewRunner;
       if(!runner)return;
       try{this.reviewTickReport=await runner.tick();}
-      catch(error){this.reviewTickReport={enabled:true,considered:0,reserved:0,deduplicated:0,refused:['REVIEW_TICK_FAILED'],completed:0,discarded:0,failed:1,zeroRoutineCalls:0};
+      catch(error){this.reviewTickReport={enabled:true,considered:0,reserved:0,deduplicated:0,refused:['REVIEW_TICK_FAILED'],completed:0,discarded:0,failed:1,zeroRoutineCalls:0,
+        thesisDue:0,timeStopDue:0,thesisMissed:0};
         this.events.publish('POSITION_REVIEW_TICK_FAILED',{reason:error instanceof Error?error.message:String(error),orderSent:false});}
     });
     this.every(1_000,()=>this.tradingQuality?.tick());
@@ -1188,30 +1194,50 @@ export class EngineRuntime {
    */
   private async reviewPosition(input:{ticket:ReviewTicket;position:any;plan:TradePlan}):Promise<ReviewAnswer>{
     const owner=this.exitRuntime?.ownerOfScope(input.ticket.scope,input.ticket.cycleId);
-    const reviewOnly=input.ticket.reviewOnly===true;
-    if(!owner||(reviewOnly?owner.ownerState!=='HUMAN_MANAGED':owner.ownerState!=='AI_ACTIVE'))throw new Error(`REVIEW_OWNER_NOT_REVIEWABLE_AT_CALL:${String(owner?.ownerState??'UNTRACKED')}`);
+    if(!owner||owner.ownerState!=='AI_ACTIVE')throw new Error(`REVIEW_OWNER_NOT_AI_AT_CALL:${String(owner?.ownerState??'UNTRACKED')}`);
     if(Number(owner.ownerVersion)!==Number(input.ticket.ownerVersion))throw new Error('REVIEW_OWNER_VERSION_DRIFT_AT_CALL');
     const num=(value:unknown)=>Number.isFinite(Number(value))?Number(value):null;
     const coordination=(this.state.settings.riskGovernance as any)?.exitCoordination??{};
-    const snapshot=this.state.snapshots.get(input.position.symbol) as any;
+    const snapshot=this.state.snapshots.get(input.position.symbol) as any,reviewAt=Date.now();
     const memory=reviewMemoryFor([...this.state.tradeRecords.values()],{
       direction:input.plan.side==='SHORT'?'SHORT':'LONG',excludeCycleId:input.ticket.cycleId});
+    const markPrice=num(snapshot?.quote?.mark??input.position.markPrice),targetPrice=num(input.plan.targetPrice),openedAt=num(input.position.openedAt)??0;
+    const latestCard=snapshot?.technical?.['15m'],latestClosedBar=latestCard?.isClosed===true&&num(latestCard?.barCloseTime)!=null
+      ?{timeframe:'15m',closeTime:num(latestCard.barCloseTime)!,close:num(latestCard?.lastClosedBar?.close??latestCard?.close)??Number.NaN}:null;
+    const exitFacts=aiExitPlanFactsOf([...this.state.tradePlans.values()],{scope:input.ticket.scope,cycleId:input.ticket.cycleId,now:reviewAt,
+      latestClosedBar,markPrice,firstFillAt:openedAt>0?openedAt:null});
+    const remainingMovePercent=markPrice!=null&&targetPrice!=null&&markPrice>0?Math.abs(targetPrice-markPrice)/markPrice*100:null;
+    const p75=num(input.plan.economics?.reachabilityP75MovePercent),p50=num(input.plan.economics?.reachabilityP50MovePercent);
+    const tpEconomics=input.position.tpEconomics as any,expectedNet=num(tpEconomics?.expectedNetProfit??input.plan.economics?.targetConditionalNetProfitUsd),
+      requiredNet=num(tpEconomics?.requiredNetProfit??input.plan.minNetProfitUsd);
+    const horizonExpiresAt=openedAt+Number(input.plan.targetHorizonMinutes??0)*60_000;
     const request:PositionReviewRequest={
+      ...(input.ticket.reviewMilestone?{reviewMilestone:input.ticket.reviewMilestone}:{}),
       symbol:input.position.symbol,cycleId:input.ticket.cycleId,positionId:input.position.id,
       planRef:input.plan.planId,planVersion:input.plan.planVersion,reviewNumber:input.ticket.reviewNumber,
-      at:Date.now(),ownerVersion:input.ticket.ownerVersion,triggerKey:input.ticket.triggerKey,
+      at:reviewAt,ownerVersion:input.ticket.ownerVersion,triggerKey:input.ticket.triggerKey,
       factsHash:String(snapshot?.technical?.['15m']?.asOf??0),
       position:{side:String(input.position.side),entryPrice:num(input.position.entryPrice)??0,quantity:num(input.position.quantity)??0,
         markPrice:num(snapshot?.quote?.mark??input.position.markPrice),unrealizedPnlUsd:num(input.position.unrealizedPnl),
-        openedAt:num(input.position.openedAt)??0,managementDeadlineAt:reviewOnly?null:num(owner.deadline),
-        remainingMs:reviewOnly||num(owner.deadline)==null?null:Math.max(0,Number(owner.deadline)-Date.now())},
+        openedAt,managementDeadlineAt:num(owner.deadline)??0,
+        remainingMs:Math.max(0,(num(owner.deadline)??0)-reviewAt)},
       plan:{side:input.plan.side,quantityUnits:input.plan.quantityUnits,entryReferencePrice:input.plan.entryReferencePrice,
         targetPrice:input.plan.targetPrice,targetHorizonMinutes:input.plan.targetHorizonMinutes,thesis:input.plan.thesis,
         invalidationPredicate:input.plan.invalidationPredicate,predicateEvidenceRefs:[...input.plan.predicateEvidenceRefs],
-        minNetProfitUsd:input.plan.minNetProfitUsd,maxRealizedLossUsd:input.plan.maxRealizedLossUsd,
-        economicMandate:input.plan.economicMandate??null},
+        minNetProfitUsd:input.plan.minNetProfitUsd,maxRealizedLossUsd:input.plan.maxRealizedLossUsd},
       budget:{normalReviewsPerPlan:Number(coordination.normalReviewsPerPlan??2),exceptionReviewsPerPlan:Number(coordination.exceptionReviewsPerPlan??1),
         used:Math.max(0,input.ticket.reviewNumber-1)},
+      decisionFacts:{
+        thesis:{invalid:exitFacts?exitFacts.thesisInvalid:null,predicate:exitFacts?.invalidationPredicate??input.plan.invalidationPredicate??null,
+          evidenceRefs:exitFacts?.invalidationEvidenceRefs??[]},
+        reachability:{targetBasis:input.plan.economics?.targetBasis??null,p50MovePercent:p50,p75MovePercent:p75,remainingMovePercent,
+          withinP75Band:remainingMovePercent==null||p75==null?null:remainingMovePercent<=p75,horizonRemainingMs:Math.max(0,horizonExpiresAt-reviewAt)},
+        economics:{costVersion:String(tpEconomics?.costVersion??input.plan.costs?.costVersion??'')||null,expectedNetProfitUsd:expectedNet,
+          requiredNetProfitUsd:requiredNet,remainingEdgeUsd:expectedNet==null||requiredNet==null?null:expectedNet-requiredNet,
+          status:String(tpEconomics?.status??input.plan.economics?.targetConditionalNetProfitStatus??'UNKNOWN')},
+        opportunityCost:{positionAgeMinutes:Math.max(0,(reviewAt-openedAt)/60_000),marginUsd:num(input.plan.marginUsd),slotOccupied:true,
+          timeStopDue:input.ticket.reviewMilestone==='TIME_STOP_DECISION'},
+      },
       memory:memory.status==='READY'?memory.entries:{status:memory.status,reasons:memory.reasons},
     };
     const startedAt=Date.now();
@@ -1488,6 +1514,13 @@ export class EngineRuntime {
       port: identity?.port ?? 8080,
       version: identity?.version ?? RELEASE_VERSION,
       buildId: identity?.buildId ?? null,
+      gitCommit: identity?.gitCommit ?? null,
+      gitWorktreeState: identity?.gitWorktreeState ?? "UNAVAILABLE",
+      sourceHash: identity?.sourceHash ?? null,
+      artifactHash: identity?.artifactHash ?? null,
+      settingsVersion: identity?.settingsVersion ?? this.state.settings.settingsVersion,
+      settingsHash: identity?.settingsHash ?? null,
+      databaseEpoch: identity?.databaseEpoch ?? null,
       lanIps,
       lanUrls: lanIps.map((ip) => `http://${ip}:${identity?.port ?? 8080}`),
       listener: {
@@ -1660,13 +1693,8 @@ export class EngineRuntime {
     this.syncLiveMarketSymbols();
     const missing = [...this.state.positionSymbols()].filter(
       (symbol) => !this.state.snapshots.has(symbol),
-    );
+    ).slice(0,1);
     if (missing.length) {
-      // Reconciliation can legitimately take many minutes when it has a large historical claim
-      // inventory. Loading a single symbol before that serialized pass leaves every later position
-      // without the quote/filter facts that TP repair needs for the whole reconciliation duration.
-      // The market hub already bounds request concurrency and defers the remainder when the shared
-      // request budget is pressured, so hand it the complete currently-missing position set here.
       await this.market.refreshSymbols(missing);
       this.universe.refresh();
       this.events.publish("POSITION_MARKETS_REFRESHED", {
@@ -1695,7 +1723,7 @@ export class EngineRuntime {
       throw new Error("Saved credentials are unavailable from SecretStore");
     this.trade.setCredentials({ apiKey, apiSecret });
     this.startUserDataIfConfigured();
-    await this.syncPrivate();
+    await this.syncPrivate('CREDENTIALS_CHANGED');
     if (this.state.account.status === "READY") await this.reconciliation.run();
   }
   private privateAccountSync:PrivateAccountSync|null=null;

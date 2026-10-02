@@ -1,7 +1,0 @@
-root=D:/MITS-WORKTREES/v396-final-convergence-20260922
-HEAD=7020f34f3bef91da369f8b5dabe48e5b33d8b2cd
-artifactHash(own)=cbdb0b3dd9a3150342d51df63ebfb1afefaa646ebf3702de9bfbe2dbe8ba17f0
-artifactHash(runtime helper)=cbdb0b3dd9a3150342d51df63ebfb1afefaa646ebf3702de9bfbe2dbe8ba17f0 same=true
-sourceHash(own)=5ca74a6017024829dc33502ac66eacea536606c035e1e9db7434c790e30fcfea
-sourceHash(runtime helper)=5ca74a6017024829dc33502ac66eacea536606c035e1e9db7434c790e30fcfea same=true
-expected buildId=3.9.6-cbdb0b3dd9a3150342d5

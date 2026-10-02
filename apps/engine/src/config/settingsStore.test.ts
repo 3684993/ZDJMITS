@@ -30,11 +30,11 @@ describe('SettingsStore', () => {
   it('migrates V3.9.4 economics by field facts while preserving a high optimistic settings revision',async()=>{
     const dataDir=await mkdtemp(path.join(os.tmpdir(),'zdj-v395-settings-migration-'));paths.push(dataDir);
     const configDir=path.resolve(process.cwd(),'../../config'),first=new SettingsStore(configDir,dataDir),initial=await first.load();
-    const legacy:any=structuredClone(initial);legacy.settingsVersion=177;legacy.takeProfit.minNetProfitUsd=.01;legacy.tradingQuality={...(legacy.tradingQuality??{}),positionObservationHorizonMs:900_000};delete legacy.tradeEconomics;delete legacy.economicPolicyVersion;delete legacy.aiDutyRoutes;legacy.entry.minimumInitialMarginByQuote={USDT:null,USDC:null};legacy.entry.minimumOrderNotionalByQuote={USDT:null,USDC:null};
+    const legacy:any=structuredClone(initial);legacy.settingsVersion=177;legacy.takeProfit.minNetProfitUsd=.01;delete legacy.tradeEconomics;
     delete legacy.positionManagement.humanManagedAdmissionCapsEnabled;delete legacy.positionManagement.maxHumanManagedPositions;delete legacy.positionManagement.maxHumanManagedNotionalPctEquity;
     (first as any).db.prepare('UPDATE settings SET version=?,payload=? WHERE id=1').run(177,JSON.stringify(legacy));first.close();
     const reopened=new SettingsStore(configDir,dataDir);
-    try{const migrated=await reopened.load();expect(migrated.settingsVersion).toBe(177);expect(migrated.takeProfit.minNetProfitUsd).toBe(1);expect(migrated.tradeEconomics.admissionMode).toBe('ENFORCE');expect(migrated.tradeEconomics.historicalTpReachabilityEnabled).toBe(false);expect(migrated.positionManagement.maxHumanManagedPositions).toBe(4);expect(migrated.tradingQuality.positionObservationHorizonMs).toBe(14_400_000);expect(migrated.entry.minimumInitialMarginByQuote).toEqual({USDT:1,USDC:1});expect(migrated.entry.minimumOrderNotionalByQuote).toEqual({USDT:200,USDC:200});const primary=migrated.aiResources.find(resource=>resource.role==='PRIMARY_BRAIN');expect(migrated.aiDutyRoutes.find(route=>route.duty==='ENTRY_PRIMARY')?.resourceId).toBe(primary?.id);expect(migrated.aiDutyRoutes.map(route=>route.duty)).toEqual(expect.arrayContaining(['ENTRY_PRIMARY','PENDING_ENTRY_REVIEW','POSITION_REVIEW']));if(migrated.aiResources.some(resource=>resource.role==='SCOUT'&&resource.enabled))expect(migrated.aiDutyRoutes.map(route=>route.duty)).toContain('SCOUT_RESEARCH');expect((reopened as any).db.prepare('SELECT version FROM schema_migrations WHERE version=14').get()).toBeTruthy();}
+    try{const migrated=await reopened.load();expect(migrated.settingsVersion).toBe(177);expect(migrated.takeProfit.minNetProfitUsd).toBe(1);expect(migrated.tradeEconomics.admissionMode).toBe('SHADOW');expect(migrated.positionManagement.maxHumanManagedPositions).toBe(4);}
     finally{reopened.close();}
   });
   it('rejects a migrated minNetProfitUsd below the floor instead of rewriting it on boot',async()=>{
@@ -66,11 +66,11 @@ describe('SettingsStore', () => {
     }
     const dir=await mkdtemp(path.join(os.tmpdir(),'zdj-v395-once-'));paths.push(dir);
     const boot=new SettingsStore(configDir,dir);const base:any=await boot.load();
-    const legacy:any=structuredClone(base);legacy.settingsVersion=177;legacy.takeProfit.minNetProfitUsd=.01;delete legacy.tradeEconomics;delete legacy.economicPolicyVersion;
+    const legacy:any=structuredClone(base);legacy.settingsVersion=177;legacy.takeProfit.minNetProfitUsd=.01;delete legacy.tradeEconomics;
     delete legacy.positionManagement.humanManagedAdmissionCapsEnabled;delete legacy.positionManagement.maxHumanManagedPositions;delete legacy.positionManagement.maxHumanManagedNotionalPctEquity;
     (boot as any).db.prepare('UPDATE settings SET version=?,payload=? WHERE id=1').run(177,JSON.stringify(legacy));boot.close();
     const migratedStore=new SettingsStore(configDir,dir);const migrated=await migratedStore.load();migratedStore.close();
-    expect(migrated.takeProfit.minNetProfitUsd).toBe(1);expect(migrated.tradeEconomics.admissionMode).toBe('ENFORCE');expect(migrated.economicPolicyVersion).toBe(1);expect(migrated.tradeEconomics.parameterProfile).toBe('CUSTOM');expect(migrated.positionManagement.maxHumanManagedPositions).toBe(4);
+    expect(migrated.takeProfit.minNetProfitUsd).toBe(1);expect(migrated.tradeEconomics.admissionMode).toBe('SHADOW');expect(migrated.tradeEconomics.parameterProfile).toBe('CUSTOM');expect(migrated.positionManagement.maxHumanManagedPositions).toBe(4);
     const stored=JSON.stringify(migrated);
     const againStore=new SettingsStore(configDir,dir);const again=await againStore.load();againStore.close();
     const thirdStore=new SettingsStore(configDir,dir);const third=await thirdStore.load();thirdStore.close();

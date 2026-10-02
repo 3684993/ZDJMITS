@@ -1,6 +1,0 @@
-### 46-git-diff-check-routing-demand : git diff --check
-warning: in the working copy of 'apps/engine/src/runtime/appRuntime.ts', LF will be replaced by CRLF the next time Git touches it
-warning: in the working copy of 'apps/engine/src/services/entryCoordinator.ts', LF will be replaced by CRLF the next time Git touches it
-warning: in the working copy of 'apps/engine/src/services/testnetRiskAuthority.test.ts', LF will be replaced by CRLF the next time Git touches it
-
-[exit=0]

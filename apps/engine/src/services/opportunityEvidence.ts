@@ -50,7 +50,8 @@ export function buildOpportunityEvidence(m:MarketSymbolSnapshot,settings:SystemS
     positionObservationHorizonMs:p.positionObservationHorizonMs,locationFacts:{distanceAtr:anchor&&atr?sign*(px-anchor)/atr:null,atr},
     executablePriceBand,structuralTarget:target,payoffSpaceBps,costs,disposition:blockers.length?(direction&&freshStructure?'WAIT':'REJECT'):'ALLOW',blockers,
     releaseCondition:'FRESH_CLOSED_RECLAIM_AND_PRICE_IN_BAND_WITH_POSITIVE_NET_SPACE',observedAt:now,
-    expiresAt:Math.min(now+p.authorizationTtlMs,(timingEvent.time??now)+p.eventTtlMs),materialFactFingerprint};
+    expiresAt:Math.min(now+p.authorizationTtlMs,(timingEvent.time??now)+p.eventTtlMs),
+    eventExpiresAt:timingEvent.time===null?null:timingEvent.time+p.eventTtlMs,materialFactFingerprint};
 }
 
 /** Shared by first submit, execution waiting and every replacement. Never renews an old TTL. */

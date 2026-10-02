@@ -1,7 +1,0 @@
-{
-  "manifestPolicy": "Whitelist only; no credential material, account balances, order ids, API keys, or live payloads.",
-  "included": ["environment", "executionMode", "settingsVersion", "credentialRef", "schema names", "source paths", "sha256"],
-  "redacted": ["apiKey", "apiSecret", "secretValue", "credential contents", "live data directory contents", "live runtime identity"],
-  "credentialRef": "binance-primary",
-  "credentialValue": "REDACTED"
-}

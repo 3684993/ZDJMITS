@@ -1,0 +1,35 @@
+{
+  "sourceCommit": "2a6b8647d3c8359d3235ac40a0831c18664bdbac",
+  "sourceFileCount": 617,
+  "syntheticFixtureCount": 2,
+  "exactSourceHashMismatches": [],
+  "currentChecks": {
+    "contractsBuild": "PASS",
+    "coreBuild": "PASS",
+    "engineBuild": "PASS",
+    "syntheticPromptReplay": {
+      "passed": 7,
+      "failed": 0
+    },
+    "syntheticEngineFixtures": {
+      "files": 9,
+      "passed": 99,
+      "failed": 0
+    }
+  },
+  "historicalFullSuiteNotRerun": true,
+  "noEngineLifecycleOrModelCalls": true,
+  "securityReview": {
+    "actualCredentialOrPersonalProxyLiteralMatches": 0,
+    "knownPersonalIdentifierMatches": 0,
+    "privateRawFixtureOriginalsPublished": false,
+    "defaultProxy": "Loopback template only; no proxy credential or remote endpoint",
+    "fixtureTransformations": "public-fixture-transformations.json",
+    "scope": "Reviewed exported source allowlist and structured historical fixture fields; not a guarantee that arbitrary future files are safe."
+  },
+  "historicalWhitespaceCheck": {
+    "result": "EXISTING_SOURCE_WHITESPACE_PRESERVED",
+    "fileCount": 9,
+    "note": "An initial-tree diff check reports legacy blank EOF/trailing whitespace in unchanged source blobs; production bytes are intentionally preserved."
+  }
+}

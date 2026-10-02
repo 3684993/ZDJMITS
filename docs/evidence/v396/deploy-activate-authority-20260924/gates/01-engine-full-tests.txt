@@ -1,4 +1,0 @@
-### 01-engine-full-tests : npx vitest run
-[2m Test Files [22m [1m[32m157 passed[39m[22m[90m (157)[39m
-[2m      Tests [22m [1m[32m1239 passed[39m[22m[90m (1239)[39m
-EXIT=0

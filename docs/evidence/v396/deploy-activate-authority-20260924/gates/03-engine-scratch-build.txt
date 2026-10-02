@@ -1,5 +1,0 @@
-### 03-engine-scratch-build : npx tsc -p tsconfig.json --outDir build-check (live apps/engine/dist must stay at the deployed buildId)
-EXIT=0
-scratch contains the new module: 3 file(s)
-live dist still has NO positionRisk probe:
-0

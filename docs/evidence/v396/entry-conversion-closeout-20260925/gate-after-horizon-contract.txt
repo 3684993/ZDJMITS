@@ -1,7 +1,0 @@
-== gates after horizon contract (retry) ==
- Test Files  8 passed (8)
-      Tests  46 passed (46)
- Test Files  14 passed (14)
-      Tests  52 passed (52)
- Test Files  164 passed (164)
-      Tests  1305 passed (1305)

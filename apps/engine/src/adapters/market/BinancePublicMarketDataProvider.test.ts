@@ -1,6 +1,28 @@
 import { describe, expect, it, vi } from "vitest";
 import { BinancePublicMarketDataProvider } from "./BinancePublicMarketDataProvider.js";
 
+it('exposes cached order filters after a REST quote without requiring any WebSocket quote or extra request',async()=>{
+ const json=vi.fn(async(path:string)=>{
+  if(path==='/fapi/v1/exchangeInfo')return{symbols:[{symbol:'BTCUSDT',filters:[{filterType:'PRICE_FILTER',tickSize:'0.10'},{filterType:'LOT_SIZE',stepSize:'0.0001',minQty:'0.0001'},{filterType:'MIN_NOTIONAL',notional:'50'}]}]};
+  if(path.includes('/ticker/24hr'))return{lastPrice:'83623.5',quoteVolume:'100000',priceChangePercent:'0',count:100};
+  if(path.includes('/premiumIndex'))return{markPrice:'83623.5'};
+  if(path.includes('/bookTicker'))return{bidPrice:'83623.5',askPrice:'83623.6'};
+  throw new Error(`unexpected request ${path}`);
+ });
+ const provider=new BinancePublicMarketDataProvider({json} as any);
+ expect(provider.cachedOrderPrecisionRules('BTCUSDT')).toBeUndefined();
+ expect(json).not.toHaveBeenCalled();
+ await provider.getQuote('BTCUSDT');
+ expect(provider.cachedQuote('BTCUSDT')).toBeUndefined();
+ const calls=json.mock.calls.length;
+ expect(provider.cachedOrderPrecisionRules('BTCUSDT')).toEqual({stepSize:.0001,tickSize:.1});
+ expect(provider.cachedOrderPrecisionRules('MISSING')).toBeUndefined();
+ expect(json).toHaveBeenCalledTimes(calls);
+ (provider as any).exchangeInfo.fetchedAt=Date.now()-15*60_000;
+ expect(provider.cachedOrderPrecisionRules('BTCUSDT')).toBeUndefined();
+ expect(json).toHaveBeenCalledTimes(calls);
+});
+
 it('advances all three closed frames during a REST outage without crossing frame histories',()=>{
  const provider=new BinancePublicMarketDataProvider({json:vi.fn(()=>Promise.reject(new Error('418')))} as any),stream=(provider as any).stream,now=Date.now();
  let snapshot:any={symbol:'BTCUSDT',technical:{}};

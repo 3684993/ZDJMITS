@@ -12,7 +12,7 @@ import type { SystemSettings } from '@zdj/contracts';
  */
 
 export type GovernanceKind = 'boolean' | 'integer' | 'number' | 'enum';
-export type GovernanceUnit = 'USD' | 'USDT' | 'USDC' | 'MS' | 'MINUTES' | 'SECONDS' | 'COUNT' | 'PERCENT' | 'PERCENT_OF_MARGIN' | 'RATIO' | 'FLAG' | 'ENUM' | 'VERSION';
+export type GovernanceUnit = 'USD' | 'MS' | 'MINUTES' | 'SECONDS' | 'COUNT' | 'PERCENT' | 'PERCENT_OF_MARGIN' | 'RATIO' | 'FLAG' | 'ENUM' | 'VERSION';
 /** When a saved value is actually observable in behaviour. Never "eventually". */
 export type GovernanceEffectiveAt = 'NEXT_MODEL_DECISION' | 'NEXT_ENTRY_CYCLE' | 'NEXT_TICK' | 'NEXT_EXIT_ATTEMPT' | 'IMMEDIATE' | 'RUNTIME_RESTART_REQUIRED';
 
@@ -71,9 +71,15 @@ export const V396_GOVERNANCE_FIELDS: readonly GovernanceField[] = [
   { path: `${EXIT}.convergenceBatchLimit`, kind: 'integer', unit: 'COUNT', min: 1, max: 20, defaultValue: 8, editable: true, effectiveAt: 'NEXT_TICK',
     meaning: '一轮收敛最多查询多少笔在途退出，限制私有请求配额。',
     consumers: ['services/v396ExitRuntime.ts#convergePeriodically'] },
-  { path: `${EXIT}.positionReviewEnabled`, kind: 'boolean', unit: 'FLAG', defaultValue: false, editable: true, effectiveAt: 'NEXT_TICK',
-    meaning: 'AI 管理周期的例行复核总开关。默认关闭时 tick 不读任何状态、不发任何模型请求。',
+  { path: `${EXIT}.positionReviewEnabled`, kind: 'boolean', unit: 'FLAG', defaultValue: true, editable: true, effectiveAt: 'NEXT_TICK',
+    meaning: 'AI 管理周期的有界证据复核开关；开启不授予平仓或订单权限。',
     consumers: ['services/positionReviewRunner.ts#tick'] },
+  { path: `${EXIT}.thesisReviewAfterMinutes`, kind: 'integer', unit: 'MINUTES', min: 5, max: 1440, defaultValue: 60, editable: true, effectiveAt: 'NEXT_ENTRY_CYCLE',
+    meaning: '从首笔成交起计算的 thesis 复核时点。每个周期只消费一次，改变设置不改写已冻结的周期时间线。',
+    consumers: ['services/positionReviewRunner.ts#tick'] },
+  { path: `${EXIT}.timeStopDecisionAfterMinutes`, kind: 'integer', unit: 'MINUTES', min: 10, max: 1440, defaultValue: 90, editable: true, effectiveAt: 'NEXT_ENTRY_CYCLE',
+    meaning: '从首笔成交起计算的有界 time-stop 决策时点；只形成复核证据，绝不等于无条件市价平仓。',
+    consumers: ['services/positionReviewRunner.ts#tick', 'runtime/appRuntime.ts#reviewPosition'] },
   { path: `${EXIT}.normalReviewsPerPlan`, kind: 'integer', unit: 'COUNT', min: 0, max: 6, defaultValue: 2, editable: true, effectiveAt: 'NEXT_TICK',
     meaning: '每份计划例行的模型复核次数上限（不含谓词触发的例外复核）。',
     consumers: ['services/positionReviewScheduler.ts#reserve'] },
@@ -197,10 +203,6 @@ export const V396_GOVERNANCE_FIELDS: readonly GovernanceField[] = [
   { path: 'takeProfit.minNetProfitUsd', kind: 'number', unit: 'USD', min: 1, max: 20, defaultValue: 1, editable: true, effectiveAt: 'NEXT_MODEL_DECISION',
     meaning: 'TP 经济地板的绝对下限（USDT）。这是计划侧利润地板，不是 AI 的平仓许可；两者在退出时取更高者。',
     consumers: ['packages/core/src/tradingCost.ts#requiredNetProfit', 'services/quantityHorizonCandidates.ts#requiredNetProfit'] },
-  { path: 'entry.minimumInitialMarginByQuote.USDT', kind: 'number', unit: 'USDT', min: 0.01, defaultValue: 1, editable: true, effectiveAt: 'NEXT_ENTRY_CYCLE', meaning: '最低初始保证金，USDT quote 单位；独立于单笔预算和订单 notional。', consumers: ['services/preAiExecutionEnvelope.ts#minimumInitialMarginQuote', 'services/entryCoordinator.ts#economicMandate'] },
-  { path: 'entry.minimumInitialMarginByQuote.USDC', kind: 'number', unit: 'USDC', min: 0.01, defaultValue: 1, editable: true, effectiveAt: 'NEXT_ENTRY_CYCLE', meaning: '最低初始保证金，USDC quote 单位；USD 等值必须使用带时间戳 FX。', consumers: ['services/preAiExecutionEnvelope.ts#minimumInitialMarginQuote', 'services/entryCoordinator.ts#economicMandate'] },
-  { path: 'entry.minimumOrderNotionalByQuote.USDT', kind: 'number', unit: 'USDT', min: 0.01, defaultValue: 200, editable: true, effectiveAt: 'NEXT_ENTRY_CYCLE', meaning: '最低业务订单金额；来源为既有 portfolio.entryMarginUsd 单笔预算。', consumers: ['services/preAiExecutionEnvelope.ts#minimumOrderNotionalQuote', 'services/entryCoordinator.ts#economicMandate'] },
-  { path: 'entry.minimumOrderNotionalByQuote.USDC', kind: 'number', unit: 'USDC', min: 0.01, defaultValue: 200, editable: true, effectiveAt: 'NEXT_ENTRY_CYCLE', meaning: '最低业务订单金额，USDC quote 单位；USD 等值必须使用带时间戳 FX。', consumers: ['services/preAiExecutionEnvelope.ts#minimumOrderNotionalQuote', 'services/entryCoordinator.ts#economicMandate'] },
   { path: 'takeProfit.minNetProfitRoiPct', kind: 'number', unit: 'PERCENT_OF_MARGIN', min: 0, max: 100, defaultValue: 0.15, editable: true, effectiveAt: 'NEXT_MODEL_DECISION',
     meaning: 'TP 经济地板按保证金计的收益率下限，单位是百分数本身：0.15 表示 0.15%，不是 15%。计算里除以 100。',
     consumers: ['packages/core/src/tradingCost.ts#minNetProfitRoiPct'] },
@@ -208,7 +210,7 @@ export const V396_GOVERNANCE_FIELDS: readonly GovernanceField[] = [
     consumers: [], readOnlyReason: '生产代码里没有读取这个开关的位置（只有页面与默认值文件带着它）：TP 经济地板目前无条件参与计算，关掉它的开关不存在。',
     meaning: '是否按经济地板计算 TP 目标（当前无消费者）。' },
   { path: 'takeProfit.exitFeeAssumption', kind: 'enum', enum: ['MAKER', 'TAKER'], unit: 'ENUM', defaultValue: 'TAKER', editable: true, effectiveAt: 'NEXT_MODEL_DECISION',
-    meaning: '经济地板计算采用的平仓费率假设。', consumers: ['services/tpGuardian.ts#exitFeeAssumption', 'services/v396AiExitRunner.ts#exitFeeAssumption'] },
+    meaning: '经济地板计算采用的平仓费率假设。', consumers: ['packages/core/src/tradingCost.ts#exitFeeAssumption', 'services/v396AiExitRunner.ts#exitFeeAssumption'] },
   { path: 'takeProfit.feeSafetyBufferPct', kind: 'number', unit: 'PERCENT', min: 0, max: 100, defaultValue: 10, editable: true, effectiveAt: 'NEXT_MODEL_DECISION',
     meaning: '费用安全缓冲百分比。', consumers: ['packages/core/src/tradingCost.ts#feeSafetyBufferPct'] },
   { path: 'takeProfit.slippageBufferPct', kind: 'number', unit: 'PERCENT', min: 0, max: 100, defaultValue: 0, editable: true, effectiveAt: 'NEXT_MODEL_DECISION',
@@ -314,6 +316,12 @@ export function applyGovernancePatch(settings: SystemSettings, patch: Record<str
     }
     writePath(next, path, value);
     applied.push(path);
+  }
+  const thesisMinutes=Number(readPath(next,'riskGovernance.exitCoordination.thesisReviewAfterMinutes')),
+    timeStopMinutes=Number(readPath(next,'riskGovernance.exitCoordination.timeStopDecisionAfterMinutes'));
+  if(Number.isFinite(thesisMinutes)&&Number.isFinite(timeStopMinutes)&&timeStopMinutes<=thesisMinutes){
+    refusals.push({path:'riskGovernance.exitCoordination.timeStopDecisionAfterMinutes',code:'GOVERNANCE_REVIEW_TIMELINE_INVALID',
+      detail:'time-stop 决策时点必须晚于 thesis 复核时点；该补丁不会部分写入。'});
   }
   if (refusals.length) return { settings, applied: [], refusals };
   return { settings: next as SystemSettings, applied, refusals };

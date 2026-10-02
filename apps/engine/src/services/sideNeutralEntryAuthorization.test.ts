@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { buildCompactBrainPrompt } from '@zdj/core';
-import { harness } from './tradingQualityTestHarness.js';
+import { harness, systemCandidateDecision } from './tradingQualityTestHarness.js';
 import { buildPreAiExecutionEnvelope } from './preAiExecutionEnvelope.js';
 
 const fixtureSymbol: string = JSON.parse(
@@ -42,12 +42,11 @@ describe('V3.9.4 side-neutral Entry authorization', () => {
     for (const key of legacyDirectionKeys) {
       expect(prompt.includes(key), `Primary prompt must not carry legacy direction answer key ${key}`).toBe(false);
     }
-    expect(prompt).toContain('Independently test BOTH LONG and SHORT');
+    expect(prompt).toContain('Compare BOTH LONG and SHORT');
     expect(packet.portfolioIntelligence.preferredDirection).toBe('SHORT');
   });
 
-  it('submits the AI LONG with AI quantity and AI range while legacy policy bans LONG outright', async () => {
-    const quantityUnits = 1000;
+  it('submits the AI LONG with an exact system candidate while legacy policy bans LONG outright', async () => {
     const h = harness();
     armLegacyShortBias(h.state);
     const quote = h.state.snapshots.get(fixtureSymbol)!.quote;
@@ -58,20 +57,13 @@ describe('V3.9.4 side-neutral Entry authorization', () => {
     expect(before.LONG.executable, 'fresh envelope must offer LONG objectively executable').toBe(true);
     expect(before.SHORT.executable, 'fresh envelope must offer SHORT objectively executable').toBe(true);
 
-    (h.ai as any).decide.mockImplementation(async () => ({
+    let selectedCandidate:any=null;
+    (h.ai as any).decide.mockImplementation(async (packet:any) => {
+      selectedCandidate=packet.executionEnvelope.LONG.planCandidates[0];
+      return{
       runId: 'side-neutral-run',
-      decision: {
-        ...h.supplied,
-        decision: 'PLACE_LONG',
-        tradeSide: 'LONG',
-        direction: 'LONG',
-        structureDirection: 'LONG',
-        quantityUnits,
-        idealPrice,
-        acceptablePriceRange,
-        horizonMinutes: 3,
-      },
-    }));
+      decision:systemCandidateDecision(packet,h.supplied,'LONG',{idealPrice,acceptablePriceRange,horizonMinutes:3}),
+    }});
 
     await h.run();
 
@@ -94,7 +86,8 @@ describe('V3.9.4 side-neutral Entry authorization', () => {
     const intent = [...h.state.entryIntents.values()][0] as any;
     expect(intent).toBeDefined();
     expect(intent.side).toBe('LONG');
-    expect(intent.quantityUnits, 'the economic solver, not the AI quantity, owns executable size').not.toBe(quantityUnits);
+    expect(intent.quantityUnits, 'legacy policy must not alter the system candidate quantity').toBe(selectedCandidate.quantityUnits);
+    expect(intent.selectedCandidateId).toBe(selectedCandidate.candidateId);
     expect(intent.acceptablePriceRange).toEqual(acceptablePriceRange);
     expect(intent.directionPolicy ?? 'ABSENT').not.toBe('SHORT_ONLY');
     const plan = [...h.state.allocationPlans.values()][0] as any;
@@ -102,26 +95,19 @@ describe('V3.9.4 side-neutral Entry authorization', () => {
     expect(plan.direction, 'allocation must materialize the AI side, not the legacy preference').toBe('LONG');
   });
 
-  it('ignores an over-envelope AI quantity and solves a legal economic size without a legacy side veto', async () => {
+  it('rejects any attempt to restore raw AI quantity authority instead of clamping it under legacy bias', async () => {
     const h = harness();
     armLegacyShortBias(h.state);
     const envelope = buildPreAiExecutionEnvelope(h.state, fixtureSymbol);
     const quote = h.state.snapshots.get(fixtureSymbol)!.quote;
     const oversized = envelope.LONG.maxQuantityUnits + 1;
-    (h.ai as any).decide.mockImplementation(async () => ({
-      runId: 'over-envelope-run',
-      decision: {
-        ...h.supplied, decision: 'PLACE_LONG', tradeSide: 'LONG', direction: 'LONG',
-        quantityUnits: oversized, idealPrice: Number(quote.bid),
-        acceptablePriceRange: { min: Number(quote.bid), max: Number(quote.ask) }, horizonMinutes: 3,
-      },
-    }));
+    (h.ai as any).decide.mockImplementation(async(packet:any)=>({runId:'over-envelope-run',decision:{
+      ...systemCandidateDecision(packet,h.supplied,'LONG',{idealPrice:Number(quote.bid),acceptablePriceRange:{min:Number(quote.bid),max:Number(quote.ask)},horizonMinutes:3}),
+      quantityUnits:oversized,
+    }}));
     await h.run();
-    expect(h.exchange.placeEntry).toHaveBeenCalledOnce();
-    const intent=[...h.state.entryIntents.values()][0] as any,plan=[...h.state.tradePlans.values()][0] as any;
-    expect(intent.side).toBe('LONG');
-    expect(intent.quantityUnits).toBeLessThanOrEqual(envelope.LONG.maxQuantityUnits);
-    expect(plan.economicMandate?.sizing.selectedNotionalQuote).toBeGreaterThanOrEqual(h.state.settings.entry.minimumOrderNotionalByQuote.USDT);
-    expect(h.events.some((e: any) => e.type === 'ENTRY_ECONOMIC_SIZE_RESOLVED' && e.payload?.authority === 'SYSTEM_ECONOMIC_CANDIDATE_SOLVER')).toBe(true);
+    expect(h.exchange.placeEntry).not.toHaveBeenCalled();
+    expect(h.events.some((e:any)=>e.type==='CANDIDATE_REJECTED'&&JSON.stringify(e.payload).includes('AI_RAW_QUANTITY_AUTHORITY_FORBIDDEN'))).toBe(true);
+    expect([...h.state.entryIntents.values()][0]).toBeUndefined();
   });
 });

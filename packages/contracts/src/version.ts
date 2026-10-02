@@ -1,11 +1,11 @@
-export const RELEASE_VERSION = "3.9.6" as const;
+export const RELEASE_VERSION = "3.9.7" as const;
 export const RELEASE_NAME =
-  "Economic TP + Human Managed" as const;
+  "High-Quality Entry + Sizing Authority" as const;
 export const PRODUCT_NAME = "ZDJ-MITS" as const;
 export const RELEASE_LABEL = `${PRODUCT_NAME} V${RELEASE_VERSION}` as const;
 export const PROMPT_SCHEMA_VERSION = "V3.9.2" as const;
 export const FACT_SCHEMA_VERSION = "V3.9.2" as const;
-export const API_VERSION = "V3.9.6" as const;
+export const API_VERSION = "V3.9.7" as const;
 
 export type BuildVersion = {
   releaseVersion: typeof RELEASE_VERSION;

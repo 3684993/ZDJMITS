@@ -23,9 +23,9 @@ export class PositionLifecycleTracker {
   key(symbol:string,side:'LONG'|'SHORT'){return `${symbol}:${side}`;}
   observe(input:{symbol:string;side:'LONG'|'SHORT';quantity:number;cycleId?:string|null;openedAt?:number;firstObservedAt?:number;source:PositionLifecycleState['source'];lotId?:string|null;at?:number}):{transition:LifecycleTransition;lifecycle:PositionLifecycleState}{
     const key=this.key(input.symbol,input.side),now=Number(input.at??Date.now()),previous=this.state.lifecycles.get(key);
-    // Legacy builds could leave an EXIT-only lifecycle in a non-CLOSED state with zero quantity.
-    // It is a proven flat boundary, not a live holding that a later Entry may join.
-    const flatLegacyBoundary=Boolean(previous)&&Math.abs(Number(previous!.currentQty))<=1e-10&&input.quantity>1e-10;
+    // A retained EXIT-only legacy row may be flat without having reached the CLOSED label.
+    // A later non-zero holding must not inherit its exits, openedAt, or economic history.
+    const flatLegacyBoundary=previous&&Number.isFinite(previous.currentQty)&&Math.abs(previous.currentQty)<=1e-10&&input.quantity>1e-10;
     if(!previous||previous.status==='CLOSED'||flatLegacyBoundary){
       const lifecycle:PositionLifecycleState={cycleId:(input.cycleId!==previous?.cycleId?input.cycleId:null)??`cycle_${input.symbol}_${input.side}_${randomUUID()}`,key,symbol:input.symbol,side:input.side,
         previousQty:0,currentQty:input.quantity,openedAt:input.openedAt??now,firstObservedAt:input.firstObservedAt??now,

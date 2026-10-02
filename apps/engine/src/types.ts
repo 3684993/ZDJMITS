@@ -1,4 +1,5 @@
 import type { BrainDecision, Candle, DerivativesSnapshot, EntryOrder, ManualOrder, MarketSymbolSnapshot, OrderBook, Position, Quote, TakeProfitOrder, Timeframe } from '@zdj/contracts';
+import type { EntryDispatchGuard } from './adapters/binance/entryDispatchDeadline.js';
 
 export interface MarketDataProvider {
   listSymbols(limit:number, prioritySymbols?:string[]):Promise<string[]>;
@@ -26,12 +27,12 @@ export interface MarketDataProvider {
 }
 
 export interface ExchangeTradeAdapter {
-  placeEntry(order:EntryOrder):Promise<EntryOrder>;
+  placeEntry(order:EntryOrder,beforeDispatch?:EntryDispatchGuard):Promise<EntryOrder>;
   /** Layer A egress/budget admission truth, read from the transport that will actually carry the write. */
   entryAdmissionBlockReason?():string|null;
   findEntryByClientOrderId(order:EntryOrder):Promise<EntryOrder|null>;
   cancelEntry(order:EntryOrder):Promise<EntryOrder>;
-  replaceEntry(order:EntryOrder,newPrice:number):Promise<EntryOrder>;
+  replaceEntry(order:EntryOrder,newPrice:number,beforeDispatch?:EntryDispatchGuard):Promise<EntryOrder>;
   placeTakeProfit(order:TakeProfitOrder):Promise<TakeProfitOrder>;
   findTakeProfitByClientOrderId?(order:TakeProfitOrder):Promise<TakeProfitOrder|null>;
   cancelTakeProfit(order:TakeProfitOrder):Promise<TakeProfitOrder>;
@@ -76,9 +77,9 @@ export interface TradeAuditSnapshot {
   fills:ExchangeTradeFill[]; income:ExchangeIncomeFact[]; orders:ExchangeOrderFact[]; positions:Position[]; openOrders:Array<EntryOrder|TakeProfitOrder>;
 }
 
-export interface ModelRunResult<T> { value:T; inputTokens:number|null; outputTokens:number|null; finishReason:string|null; modelIdentity:Record<string,unknown>|null; raw:unknown; timing:{requestMs:number;parseMs:number;retryMs:number;transportAttempts?:number}; }
+export interface ModelRunResult<T> { value:T; inputTokens:number|null; outputTokens:number|null; finishReason:string|null; modelIdentity:Record<string,unknown>|null; raw:unknown; timing:{requestMs:number|null;parseMs:number|null;retryMs:number|null;transportAttempts?:number;responseHeadersMs?:number|null;responseBodyMs?:number|null;clientElapsedMs?:number|null;responseBytes?:number|null;cachedInputTokens?:number|null;providerTimingSource?:'OMLX_USAGE_SECONDS'|null;firstTokenMs?:number|null;serverQueueMs?:number|null;prefillMs?:number|null;decodeMs?:number|null}; }
 export interface AiModelClient {
-  runJson<T>(args:{baseUrl:string;model:string;prompt:string;schemaName:string;timeoutMs:number;jsonSchema?:Record<string,unknown>;maxOutputTokens?:number;parse:(value:unknown)=>T}):Promise<ModelRunResult<T>>;
+  runJson<T>(args:{baseUrl:string;model:string;prompt:string;schemaName:string;timeoutMs:number;jsonSchema?:Record<string,unknown>;maxOutputTokens?:number;context?:import('./adapters/ai/OpenAiCompatibleClient.js').AiCallContext;parse:(value:unknown)=>T}):Promise<ModelRunResult<T>>;
 }
 
 export interface EvidenceToolContext { symbol:string; }

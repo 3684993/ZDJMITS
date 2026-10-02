@@ -10,7 +10,7 @@ import Settings from './SettingsView.vue';
 import { api } from '../api/client';
 
 vi.mock('../api/client', () => ({
-  api: { settings: vi.fn(), connections: vi.fn(), resources: vi.fn(), governanceSettings: vi.fn(), saveSettings: vi.fn() },
+  api: { settings: vi.fn(), connections: vi.fn(), resources: vi.fn(), governanceSettings: vi.fn(), aiDutyRoutes: vi.fn(), saveSettings: vi.fn() },
   saveExchangeCredentials: vi.fn(),
   testPrivateCredentials: vi.fn(),
 }));
@@ -39,6 +39,12 @@ beforeEach(() => {
   vi.mocked(api.connections).mockResolvedValue({ credentials: { configured: false } } as never);
   vi.mocked(api.resources).mockResolvedValue({ items: [], settingsVersion: 190 } as never);
   vi.mocked(api.governanceSettings).mockResolvedValue({ fields: [], settingsVersion: 190 } as never);
+  // Settings also loads this read-only route catalog before rendering the exposure controls.
+  vi.mocked(api.aiDutyRoutes).mockResolvedValue({
+    settingsVersion: 190,
+    routes: structuredClone(defaults.aiDutyRoutes ?? []),
+    resources: defaults.aiResources.map(({ id, name, enabled, model }: any) => ({ id, name: name ?? id, enabled, model })),
+  });
   vi.mocked(api.saveSettings).mockImplementation(async (body: any) => body);
 });
 

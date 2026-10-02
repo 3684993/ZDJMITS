@@ -55,6 +55,8 @@ export class EntryCoordinator {
   private active = new Set<string>();
   private primaryWaiters = new Set<string>();
   private lastReview = 0;
+  private pendingReviewInFlight=new Set<string>();
+  private pendingReviewLastAt=new Map<string,number>();
   private lastDispatched=new Map<string,number>();
   constructor(
     private state: RuntimeState,
@@ -870,6 +872,76 @@ export class EntryCoordinator {
   private reviewBusy=false;
   async reviewPending() {
     const now=Date.now(),policy=this.state.settings.entry.nearMarket,interval=(policy?.enabled?policy.reviewSeconds:this.state.settings.entry.reviewIntervalSeconds)*1000;if(this.reviewBusy||now-this.lastReview<interval)return;this.reviewBusy=true;this.lastReview=now;
-     try{for(const [id,initial] of this.state.entryOrders){if(!activeOrderStatus(initial.status))continue;let order=initial;try{if(['UNKNOWN','NEW','SUBMITTING'].includes(order.status)){if(remoteFactAuditDeferred(order,now))continue;const verified=await this.exchange.findEntryByClientOrderId(order);if(!verified){this.state.entryOrders.set(id,{...order,status:'UNKNOWN'});continue;}order={...order,...verified,id:order.id,intentId:order.intentId,createdAt:order.createdAt,absoluteExpiresAt:order.absoluteExpiresAt,exchangeTerminalStatus:terminalOrderStatus(verified.status)?verified.status:'UNKNOWN',activeRiskExposure:!terminalOrderStatus(verified.status),activeRiskEvidence:null} as EntryOrder;this.state.entryOrders.set(id,order);if(terminalOrderStatus(order.status)){if(order.reservationId)this.state.releaseEntryReservation(order.reservationId);reconcileCandidateLifecycles(this.state,this.events,'EXACT_ORDER_TERMINAL');continue;}}const deadline=policy?.enabled?Math.min(order.absoluteExpiresAt,order.createdAt+Math.min(120,policy.ttlSeconds)*1000):order.absoluteExpiresAt;if(now>=deadline){const canceled=await this.exchange.cancelEntry(order),confirmed=terminalOrderStatus(canceled.status),saved:EntryOrder={...order,...canceled,status:confirmed?canceled.status:'UNKNOWN',exchangeTerminalStatus:confirmed?canceled.status:'UNKNOWN',activeRiskExposure:!confirmed,activeRiskEvidence:null,createdAt:order.createdAt,absoluteExpiresAt:order.absoluteExpiresAt} as any;this.state.entryOrders.set(id,saved);if(order.reservationId){if(confirmed)this.state.releaseEntryReservation(order.reservationId);else{this.state.markEntryReservationWorking(order.reservationId);}}if(confirmed)reconcileCandidateLifecycles(this.state,this.events,'ENTRY_TTL_TERMINAL_CONFIRMED');this.events.publish(confirmed?'ENTRY_ORDER_TTL_CLOSED':'ENTRY_CANCEL_UNVERIFIED',{orderId:id,status:saved.status,exchangeTerminalStatus:confirmed?canceled.status:'UNKNOWN',filledQuantity:canceled.filledQuantity,occupancyReleased:confirmed,reason:'ABSOLUTE_TTL'},order.symbol);continue;}const intent=this.state.entryIntents.get(order.intentId),market=this.state.snapshots.get(order.symbol);if(!intent)continue;if(!market||entryDataError(market))continue;const max=policy?.enabled?policy.maxReprices:this.state.settings.entry.maxReprices;if(order.repriceCount>=max||now-order.updatedAt<(policy?.repriceIntervalSeconds??5)*1000)continue;const next=nearMarketPrice(intent,market,this.state.settings.entry,now);if(!next.reachable)continue;if(Math.abs(next.price-order.price)>=market.quote.tickSize*2){const nextQuantity=Number(intent.quantityUnits)*market.quote.stepSize,candidateOrder={...order,quantity:nextQuantity,price:next.price};if(nextQuantity<=0||this.executionHardBlock(intent,candidateOrder)){this.events.publish('ENTRY_ORDER_REPRICE_BLOCKED',{orderId:id,from:order.price,to:next.price,reason:'FINAL_ORDER_RISK_OR_EXCHANGE_FILTER'},order.symbol);continue;}const replaced=await this.exchange.replaceEntry(candidateOrder,next.price);this.state.entryOrders.set(id,{...replaced,id:order.id,intentId:order.intentId,reservationId:order.reservationId,createdAt:order.createdAt,absoluteExpiresAt:order.absoluteExpiresAt,repriceCount:Math.max(order.repriceCount+1,replaced.repriceCount),reachability:next.reachability});this.events.publish('ENTRY_ORDER_REPRICED',{orderId:id,from:order.price,to:next.price,reason:next.reason},order.symbol);}}catch(error){this.state.entryOrders.set(id,{...order,status:'UNKNOWN',updatedAt:Date.now()});this.events.publish('ENTRY_ORDER_MANAGEMENT_UNVERIFIED',{orderId:id,reason:String(error),occupancyReleased:false},order.symbol);}}}finally{this.reviewBusy=false;}
+     try{
+      for(const[id,initial]of this.state.entryOrders){
+       if(!activeOrderStatus(initial.status))continue;let order=initial;
+       try{
+        const autoEntry=order.intentId!=='exchange-recovered'&&this.state.entryIntents.has(order.intentId);
+        const nearMarketDeadline=policy?.enabled?order.createdAt+Math.min(120,policy.ttlSeconds)*1000:Number.POSITIVE_INFINITY;
+        const deadline=autoEntry?Math.min(Number(order.absoluteExpiresAt)||order.createdAt+3_600_000,order.createdAt+3_600_000,nearMarketDeadline):order.absoluteExpiresAt;
+        if(['UNKNOWN','NEW','SUBMITTING'].includes(order.status)){
+          if(remoteFactAuditDeferred(order,now)&&now<deadline)continue;
+          const verified=await this.exchange.findEntryByClientOrderId(order);
+          if(!verified){
+            if(autoEntry&&now>=deadline){const reason=now>=order.createdAt+3_600_000?'ONE_HOUR_HARD_TTL':'NEAR_MARKET_TTL',saved={...order,status:'EXPIRED' as const,exchangeTerminalStatus:'UNKNOWN',activeRiskExposure:false,activeRiskEvidence:null,updatedAt:now} as EntryOrder;this.state.entryOrders.set(id,saved);if(order.reservationId)this.state.releaseEntryReservation(order.reservationId);reconcileCandidateLifecycles(this.state,this.events,'ENTRY_TTL_REMOTE_ABSENT');this.events.publish('ENTRY_ORDER_TTL_CLOSED',{orderId:id,clientOrderId:order.clientOrderId,status:'EXPIRED',remoteExactLookup:'ABSENT',exchangeWrite:false,occupancyReleased:true,reason},order.symbol);continue;}
+            this.state.entryOrders.set(id,{...order,status:'UNKNOWN'});continue;
+          }
+          order={...order,...verified,id:order.id,intentId:order.intentId,createdAt:order.createdAt,absoluteExpiresAt:order.absoluteExpiresAt,
+            exchangeTerminalStatus:terminalOrderStatus(verified.status)?verified.status:'UNKNOWN',activeRiskExposure:!terminalOrderStatus(verified.status),activeRiskEvidence:null} as EntryOrder;
+          this.state.entryOrders.set(id,order);
+          if(terminalOrderStatus(order.status)){if(order.reservationId)this.state.releaseEntryReservation(order.reservationId);reconcileCandidateLifecycles(this.state,this.events,'EXACT_ORDER_TERMINAL');continue;}
+        }
+        // Never keep a system Entry identity alive beyond an hour, regardless of a malformed old TTL.
+        if(autoEntry&&now>=deadline){
+          const exact=await this.exchange.findEntryByClientOrderId(order);
+          if(!exact){const reason=now>=order.createdAt+3_600_000?'ONE_HOUR_HARD_TTL':'NEAR_MARKET_TTL',saved={...order,status:'EXPIRED' as const,exchangeTerminalStatus:'UNKNOWN',activeRiskExposure:false,activeRiskEvidence:null,updatedAt:Date.now()} as EntryOrder;this.state.entryOrders.set(id,saved);if(order.reservationId)this.state.releaseEntryReservation(order.reservationId);reconcileCandidateLifecycles(this.state,this.events,'ENTRY_TTL_REMOTE_ABSENT');this.events.publish('ENTRY_ORDER_TTL_CLOSED',{orderId:id,clientOrderId:order.clientOrderId,status:'EXPIRED',remoteExactLookup:'ABSENT',exchangeWrite:false,occupancyReleased:true,reason},order.symbol);continue;}
+          if(terminalOrderStatus(exact.status)){this.state.entryOrders.set(id,{...order,...exact,id:order.id,intentId:order.intentId});if(order.reservationId)this.state.releaseEntryReservation(order.reservationId);reconcileCandidateLifecycles(this.state,this.events,'TTL_FINAL_CHECK_TERMINAL');continue;}
+          const canceled=await this.exchange.cancelEntry({...order,...exact,id:order.id,intentId:order.intentId}),confirmed=terminalOrderStatus(canceled.status),saved:EntryOrder={...order,...canceled,status:confirmed?canceled.status:'UNKNOWN',exchangeTerminalStatus:confirmed?canceled.status:'UNKNOWN',activeRiskExposure:!confirmed,activeRiskEvidence:null,createdAt:order.createdAt,absoluteExpiresAt:order.absoluteExpiresAt} as any;
+          this.state.entryOrders.set(id,saved);if(order.reservationId){if(confirmed)this.state.releaseEntryReservation(order.reservationId);else this.state.markEntryReservationWorking(order.reservationId);}
+          if(confirmed)reconcileCandidateLifecycles(this.state,this.events,'ENTRY_TTL_TERMINAL_CONFIRMED');
+          this.events.publish(confirmed?'ENTRY_ORDER_TTL_CLOSED':'ENTRY_CANCEL_UNVERIFIED',{orderId:id,clientOrderId:order.clientOrderId,status:saved.status,exchangeTerminalStatus:confirmed?canceled.status:'UNKNOWN',filledQuantity:canceled.filledQuantity,occupancyReleased:confirmed,reason:now>=order.createdAt+3_600_000?'ONE_HOUR_HARD_TTL':'NEAR_MARKET_TTL'},order.symbol);continue;
+        }
+        const intent=this.state.entryIntents.get(order.intentId),market=this.state.snapshots.get(order.symbol);if(!intent)continue;if(!market||entryDataError(market))continue;
+        this.schedulePendingEntryReview(order,intent,market,now);
+        const max=policy?.enabled?policy.maxReprices:this.state.settings.entry.maxReprices;
+        if(order.repriceCount>=max||now-order.updatedAt<(policy?.repriceIntervalSeconds??5)*1000)continue;
+        const next=nearMarketPrice(intent,market,this.state.settings.entry,now);if(!next.reachable)continue;
+        if(Math.abs(next.price-order.price)>=market.quote.tickSize*2){const nextQuantity=Number(intent.quantityUnits)*market.quote.stepSize,candidateOrder={...order,quantity:nextQuantity,price:next.price};if(nextQuantity<=0||this.executionHardBlock(intent,candidateOrder)){this.events.publish('ENTRY_ORDER_REPRICE_BLOCKED',{orderId:id,from:order.price,to:next.price,reason:'FINAL_ORDER_RISK_OR_EXCHANGE_FILTER'},order.symbol);continue;}const replaced=await this.exchange.replaceEntry(candidateOrder,next.price);this.state.entryOrders.set(id,{...replaced,id:order.id,intentId:order.intentId,reservationId:order.reservationId,createdAt:order.createdAt,absoluteExpiresAt:order.absoluteExpiresAt,repriceCount:Math.max(order.repriceCount+1,replaced.repriceCount),reachability:next.reachability});this.events.publish('ENTRY_ORDER_REPRICED',{orderId:id,from:order.price,to:next.price,reason:next.reason},order.symbol);}
+       }catch(error){this.state.entryOrders.set(id,{...order,status:'UNKNOWN',updatedAt:Date.now()});this.events.publish('ENTRY_ORDER_MANAGEMENT_UNVERIFIED',{orderId:id,reason:String(error),occupancyReleased:false},order.symbol);}
+      }
+     }finally{this.reviewBusy=false;}
+  }
+  private schedulePendingEntryReview(order:EntryOrder,intent:EntryIntent,market:any,now:number){
+    const intervalMs=5*60_000,last=this.pendingReviewLastAt.get(order.id)??0,packet=this.state.eips.get(order.symbol);
+    if(!packet||now-order.createdAt<30_000||now-last<intervalMs||this.pendingReviewInFlight.has(order.id))return;
+    this.pendingReviewLastAt.set(order.id,now);this.pendingReviewInFlight.add(order.id);
+    const facts={orderId:order.id,clientOrderId:order.clientOrderId,exchangeOrderId:order.exchangeOrderId??null,symbol:order.symbol,side:order.side,
+      originalPrice:order.price,originalQuantity:order.quantity,filledQuantity:order.filledQuantity,unfilledQuantity:Math.max(0,order.quantity-order.filledQuantity),
+      orderAgeMs:Math.max(0,now-order.createdAt),remoteOrderStatus:order.status,remoteVerifiedAt:(order as any).verifiedAt??null,
+      originalEconomicMandate:(intent as any).economicMandate??null,originalPrimaryThesis:{brainRunId:intent.brainRunId,decisionChainId:intent.decisionChainId,acceptablePriceRange:intent.acceptablePriceRange,
+        profitTakePlan:intent.profitTakePlan,horizonMinutes:intent.horizonMinutes,authorizationExpiresAt:intent.aiAuthorizationExpiresAt,invalidation:(intent as any).entryInvalidation??null},
+      currentFacts:{last:market.quote.last,bid:market.quote.bid,ask:market.quote.ask,book:market.microstructure??null,bars:Object.fromEntries(['1d','4h','15m','5m','1m'].map(tf=>[tf,market.technical?.[tf]??null]))},
+      currentEconomics:{expectedNetProfit:(intent as any).economicAdmission?.expectedNetProfit??(intent as any).economicMandate?.economics?.expectedNetProfit??null,
+        minimumNetProfit:(intent as any).economicAdmission?.requiredNetProfit??(intent as any).economicMandate?.economics?.minimumNetProfit??null,
+        expectedReachability:(intent as any).economicAdmission?.reachProbability??order.reachability??null,feeAndFunding:(intent as any).economicMandate?.economics??null}};
+    void (async()=>{
+      const exact=await this.exchange.findEntryByClientOrderId(order);
+      if(!exact||terminalOrderStatus(exact.status)||exact.clientOrderId!==order.clientOrderId)return;
+      const remote={...order,...exact,id:order.id,intentId:order.intentId,createdAt:order.createdAt,absoluteExpiresAt:order.absoluteExpiresAt};
+      const result=await this.ai.reviewPendingEntry(packet,{...facts,remoteOrderStatus:exact.status,remoteVerifiedAt:Date.now(),currentUnfilledQuantity:Math.max(0,Number(exact.quantity)-Number(exact.filledQuantity??0))});
+      if(result.decision==='KEEP')return;
+      // The reviewer has no exchange capability. Re-check this exact identity after inference, then
+      // let the deterministic coordinator cancel it. REPLAN only releases a fresh scheduling opportunity.
+      const final=await this.exchange.findEntryByClientOrderId(remote);
+      if(!final||terminalOrderStatus(final.status)||final.clientOrderId!==remote.clientOrderId){
+        this.events.publish('PENDING_ENTRY_REVIEW_IDENTITY_ENDED',{orderId:remote.id,clientOrderId:remote.clientOrderId,decision:result.decision},remote.symbol);return;
+      }
+      const canceled=await this.exchange.cancelEntry({...remote,...final,id:remote.id,intentId:remote.intentId}),confirmed=terminalOrderStatus(canceled.status);
+      const saved={...remote,...canceled,status:confirmed?canceled.status:'UNKNOWN',exchangeTerminalStatus:confirmed?canceled.status:'UNKNOWN',activeRiskExposure:!confirmed,updatedAt:Date.now()} as EntryOrder;
+      this.state.entryOrders.set(remote.id,saved);if(confirmed&&remote.reservationId)this.state.releaseEntryReservation(remote.reservationId);
+      if(confirmed)reconcileCandidateLifecycles(this.state,this.events,`PENDING_ENTRY_REVIEW_${result.decision}`);
+      this.events.publish(confirmed?'PENDING_ENTRY_REVIEW_ACTION_CONVERGED':'PENDING_ENTRY_REVIEW_ACTION_UNVERIFIED',{orderId:remote.id,clientOrderId:remote.clientOrderId,decision:result.decision,exchangeStatus:canceled.status,confirmed,oldIdentityTerminated:confirmed,newPlanSubmitted:false,reason:'DETERMINISTIC_COORDINATOR_ACTION'},remote.symbol);
+    })().catch(error=>this.events.publish('PENDING_ENTRY_REVIEW_FAILED',{orderId:order.id,clientOrderId:order.clientOrderId,reason:error instanceof Error?error.message:String(error),exchangeAction:false},order.symbol))
+      .finally(()=>this.pendingReviewInFlight.delete(order.id));
   }
 }

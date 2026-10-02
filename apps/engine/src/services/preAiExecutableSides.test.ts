@@ -48,7 +48,7 @@ describe('the pre-AI envelope publishes which sides are actually executable', ()
       expect(capacity.minimumLegalNotionalUsd).toBeCloseTo(floor, 8);
       // The stated ceiling is the notional the published maximum quantity can actually cost, so it never
       // exceeds the authorized notional and still covers the whole-step maximum at the reference price.
-      expect(capacity.legalNotionalRangeUsd).toEqual([floor, expect.any(Number)]);
+      expect(capacity.legalNotionalRangeUsd![0]).toBeGreaterThanOrEqual(Math.max(floor,capacity.minimumOrderNotionalQuote??0));
       expect(capacity.legalNotionalRangeUsd![1]).toBeLessThanOrEqual(capacity.maxNotionalUsd + 1e-8);
       expect(capacity.legalNotionalRangeUsd![1]).toBeGreaterThanOrEqual(capacity.maxQuantityUnits * Number(quote.stepSize) * Number(quote.last) - 1e-8);
       expect(capacity.firstBindingConstraint).toBeTruthy();
@@ -141,7 +141,7 @@ describe('the pre-AI envelope publishes which sides are actually executable', ()
       if (capacity.executable) {
         expect(capacity.legalQuantityRangeUnits).toEqual([capacity.minQuantityUnits, capacity.maxQuantityUnits]);
         expect(capacity.maxQuantityUnits).toBeGreaterThanOrEqual(capacity.minQuantityUnits);
-        expect(capacity.legalNotionalRangeUsd![0]).toBeCloseTo(floor, 8);
+        expect(capacity.legalNotionalRangeUsd![0]).toBeGreaterThanOrEqual(businessFloor-1e-8);
       } else {
         expect(capacity.legalQuantityRangeUnits).toBeNull();
       }
@@ -164,6 +164,20 @@ describe('the pre-AI envelope publishes which sides are actually executable', ()
     // The binding cause distinguishes a configured business floor that current funds cannot reach.
     expect(envelope.LONG.firstBindingConstraint).toBe('BUSINESS_MINIMUM_EXCEEDS_AVAILABLE_FUNDS');
     expect(String(envelope.LONG.authorization)).toBe('NOT_EXECUTABLE:BUSINESS_MINIMUM_EXCEEDS_AVAILABLE_FUNDS');
+  });
+
+  it('EP-12 enforces business notional floors independently of exchange minimums and user reductions', () => {
+    const h=harness(),sample=h.state.snapshots.get(fixtureSymbol)!;
+    h.state.snapshots.set('BTCUSDT',{...sample,symbol:'BTCUSDT',quote:{...sample.quote,last:60_000,bid:59_999,ask:60_001,minNotional:5,minQty:.001,stepSize:.001}} as any);
+    h.state.snapshots.set('ETHUSDT',{...sample,symbol:'ETHUSDT',quote:{...sample.quote,last:3_000,bid:2_999,ask:3_001,minNotional:5,minQty:.001,stepSize:.001}} as any);
+    h.state.settings.entry.minimumOrderNotionalByQuote.USDT=100;
+    const envelope=buildPreAiExecutionEnvelope(h.state,'BTCUSDT');
+    expect(envelope.LONG.minimumOrderNotionalQuote).toBe(200);
+    expect(envelope.SHORT.minimumOrderNotionalQuote).toBe(200);
+    expect(envelope.LONG.minQuantityUnits*Number(h.state.snapshots.get('BTCUSDT')!.quote.stepSize)*Number(h.state.snapshots.get('BTCUSDT')!.quote.last)).toBeGreaterThanOrEqual(200);
+    const other=buildPreAiExecutionEnvelope(h.state,'ETHUSDT');
+    expect(other.LONG.minimumOrderNotionalQuote).toBe(100);
+    expect(other.SHORT.minimumOrderNotionalQuote).toBe(100);
   });
 });
 

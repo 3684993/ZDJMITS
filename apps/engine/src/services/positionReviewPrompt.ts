@@ -10,7 +10,7 @@ import type { EntryIntelligencePacket } from '@zdj/contracts';
  * plan's own invalidation has been satisfied.
  */
 
-export const POSITION_REVIEW_DECISIONS = ['HOLD', 'EXIT_PROPOSAL', 'HANDOFF'] as const;
+export const POSITION_REVIEW_DECISIONS = ['HOLD', 'REDUCE_PROPOSAL', 'EXIT_PROPOSAL', 'HANDOFF'] as const;
 export type PositionReviewDecision = (typeof POSITION_REVIEW_DECISIONS)[number];
 
 export type PositionReviewRequest = {
@@ -31,8 +31,8 @@ export type PositionReviewRequest = {
     markPrice: number | null;
     unrealizedPnlUsd: number | null;
     openedAt: number;
-    managementDeadlineAt: number;
-    remainingMs: number;
+    managementDeadlineAt: number | null;
+    remainingMs: number | null;
   };
   plan: {
     side: string;
@@ -58,13 +58,14 @@ export function buildPositionReviewPrompt(packet: EntryIntelligencePacket, reque
 You are advisory only. You have no order permission, no sizing permission and no authority to change ownership, deadlines, risk limits or the plan itself.
 Answer exactly one of:
 HOLD - the plan's thesis still stands and no cited fact satisfies its invalidation predicate.
+REDUCE_PROPOSAL - evidence supports reducing exposure; this is advisory and cannot change quantity or submit an order.
 EXIT_PROPOSAL - a supplied fact ID satisfies the plan's own invalidation predicate; a human decision gate will still run after you.
 HANDOFF - the facts needed to judge this plan are no longer available or the situation is outside the plan; a human takes over management.
 Never propose a new entry, a reversal, a side, a quantity, a limit price or a take-profit level; a response containing any of those fields is rejected as an authority violation.
 An unresolved loss is not by itself an invalidation: the loss ceiling is a human-owned permission line, not a review trigger.
 Cite only supplied MARKET_FACTS, PLAN_FACTS or MEMORY ids in evidenceRefs. Never invent evidence, prices, fills, probabilities or future outcomes.
 The plan's stated net-profit floor and realized-loss permission are constraints you read, not numbers you may revise.
-Return exactly one unfenced JSON object: {"decision":"HOLD|EXIT_PROPOSAL|HANDOFF","reason":"<short factual reason>","evidenceRefs":["<supplied id>"]}
+Return exactly one unfenced JSON object: {"decision":"HOLD|REDUCE_PROPOSAL|EXIT_PROPOSAL|HANDOFF","reason":"<short factual reason>","evidenceRefs":["<supplied id>"]}
 REVIEW_ENVELOPE:${JSON.stringify(request)}
 INPUT:${JSON.stringify(facts)}`;
 }

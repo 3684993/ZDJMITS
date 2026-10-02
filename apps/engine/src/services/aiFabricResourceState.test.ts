@@ -13,6 +13,7 @@ async function harness(){
   raw.externalIntelligence={...raw.externalIntelligence,researchEnabled:false};
   raw.ai={...raw.ai,scoutEnabled:true};
   raw.aiResources=raw.aiResources.map((resource:any)=>resource.role==='SCOUT'?{...resource,enabled:true}:resource);
+  raw.aiDutyRoutes=(raw.aiDutyRoutes??[]).map((route:any)=>route.duty==='SCOUT_RESEARCH'?{...route,enabled:true}:route);
   const state=new RuntimeState(SystemSettingsSchema.parse(raw));state.aiResources=loadAiResources(state.settings);
   const ai=new AiFabric(state,new EventBus(),{} as any);
   return{state,ai};
@@ -35,5 +36,24 @@ describe('dual-model runtime state',()=>{
     ai.setResearchQueue(3);
     expect(state.aiResources.filter(r=>r.role==='SCOUT')).toHaveLength(1);
     expect(ai.resourceMetrics().filter(r=>r.role==='SCOUT')).toHaveLength(1);
+  });
+  it('keeps GPU2 review duties isolated from GPU1 Entry Primary when the reviewer is offline',async()=>{
+    const {state,ai}=await harness(),primary=state.settings.aiResources.find((r:any)=>r.role==='PRIMARY_BRAIN')!;
+    const review={id:'review-gpu2',name:'GPU2 27B Reviewer',role:'REVIEW_BRAIN',enabled:true,baseUrl:'http://127.0.0.1:8083/v1',model:'qwen/qwen3.8-27b',maxConcurrency:1,gpu:'RX 7900 XTX #2'};
+    state.settings.aiResources.push(review as any);state.aiResources=loadAiResources(state.settings);(ai as any).load.set(review.id,{active:0,totalRuns:0,failures:0,lastLatencyMs:null,currentSymbol:null,currentRunId:null,currentStartedAt:null,lastCompletedAt:null,lastDirection:null,lastDecision:null,idleReason:'WAITING_CANDIDATE',nextStep:'wait',queueDepth:0});
+    state.settings.aiDutyRoutes=[{duty:'ENTRY_PRIMARY',resourceId:primary.id,enabled:true,priority:100},{duty:'PENDING_ENTRY_REVIEW',resourceId:review.id,enabled:true,priority:20},{duty:'POSITION_REVIEW',resourceId:review.id,enabled:true,priority:90}] as any;
+    (ai as any).endpointHealth.set(review.id,{available:false,checkedAt:Date.now(),reason:'offline'});
+    expect(ai.reviewAvailable('PENDING_ENTRY_REVIEW')).toBe(false);
+    expect(ai.reviewAvailable('POSITION_REVIEW')).toBe(false);
+    expect(ai.hasCapacity('PRIMARY_BRAIN')).toBe(true);
+    expect((ai as any).dutyResource('ENTRY_PRIMARY')?.id).toBe(primary.id);
+    expect((ai as any).dutyResource('POSITION_REVIEW')).toBeUndefined();
+    (ai as any).endpointHealth.set(review.id,{available:true,checkedAt:Date.now(),reason:null});
+    (ai as any).reviewActive.add(review.id);const order:string[]=[];
+    const pending=(ai as any).queueReview('PENDING_ENTRY_REVIEW',async()=>{order.push('PENDING_ENTRY_REVIEW');return'pending';});
+    const position=(ai as any).queueReview('POSITION_REVIEW',async()=>{order.push('POSITION_REVIEW');return'position';});
+    (ai as any).reviewActive.delete(review.id);(ai as any).pumpReviewQueue(review.id);
+    await expect(position).resolves.toBe('position');await expect(pending).resolves.toBe('pending');
+    expect(order).toEqual(['POSITION_REVIEW','PENDING_ENTRY_REVIEW']);
   });
 });

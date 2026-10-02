@@ -7,10 +7,10 @@ import StatusBadge from '../components/StatusBadge.vue';
 import EmptyState from '../components/EmptyState.vue';
 import { age } from '../format';
 
-const s=useSystemStore(),tab=ref<'entry'|'tp'|'manual'|'history'>('entry'),tps=computed(()=>s.snapshot?.tpOrders??[]),manual=ref<any[]>([]),entries=ref<any[]>([]),history=ref<any[]>([]),readback=ref<any>({status:'UNAVAILABLE'}),busyId=ref(''),message=ref(''),messageKind=ref<'success'|'error'|''>('');
+const s=useSystemStore(),tab=ref<'entry'|'tp'|'manual'|'history'>('entry'),tps=computed(()=>s.snapshot?.tpOrders??[]),manual=ref<any[]>([]),entries=ref<any[]>([]),history=ref<any[]>([]),historyWindow=ref<any>({visibleCount:0,olderHiddenCount:0}),readback=ref<any>({status:'UNAVAILABLE'}),busyId=ref(''),message=ref(''),messageKind=ref<'success'|'error'|''>('');
 const ttl=(ts:number)=>Math.max(0,Math.ceil((ts-Date.now())/60000));
 const historicalCount=computed(()=>history.value.length);
-async function loadOrders(){try{const result=await api.orders();entries.value=result.entry??[];history.value=result.historicalUnknown??[];readback.value=result.entryReadback??{status:'UNAVAILABLE'};manual.value=(result.manual??[]).filter((row:any)=>['NEW','WORKING','PARTIALLY_FILLED','SUBMITTING'].includes(row.status));}catch(error){message.value=error instanceof Error?error.message:String(error);messageKind.value='error';}}
+async function loadOrders(){try{const result=await api.orders();entries.value=result.entry??[];history.value=result.historicalUnknown??[];historyWindow.value=result.historicalUnknownWindow??{visibleCount:history.value.length,olderHiddenCount:0};readback.value=result.entryReadback??{status:'UNAVAILABLE'};manual.value=(result.manual??[]).filter((row:any)=>['NEW','WORKING','PARTIALLY_FILLED','SUBMITTING'].includes(row.status));}catch(error){message.value=error instanceof Error?error.message:String(error);messageKind.value='error';}}
 async function cancelOrder(order:any){if(busyId.value)return;busyId.value=order.id;message.value='';messageKind.value='';try{const result:any=await api.cancelEntry(order.id);message.value=result.status==='FILLED'?'取消前订单已成交，已读回 FILLED。':`交易所已确认 ${result.status}。`;messageKind.value='success';await Promise.all([loadOrders(),s.refresh(['SNAPSHOT'])]);}catch(error){message.value=error instanceof Error?error.message:String(error);messageKind.value='error';await loadOrders();}finally{busyId.value='';}}
 async function loadManual(){await loadOrders();}
 onMounted(()=>{void loadOrders();});
@@ -37,7 +37,7 @@ onMounted(()=>{void loadOrders();});
     <Panel v-else-if="tab==='manual'" title="交易所活动人工委托" subtitle="只显示当前 open-orders 快照中的人工订单。">
       <table v-if="manual.length" class="data-table"><thead><tr><th>创建时间</th><th>Symbol</th><th>Position</th><th>类型</th><th>方向</th><th>Qty</th><th>价格</th><th>状态</th></tr></thead><tbody><tr v-for="o in manual" :key="o.id"><td>{{new Date(o.createdAt).toLocaleString()}}</td><td class="symbol">{{o.symbol}}</td><td class="mono">{{o.positionId}}</td><td>{{o.type}}</td><td>{{o.side}}</td><td>{{o.quantity}}</td><td>{{o.price??'市价'}}</td><td><StatusBadge :value="o.status"/></td></tr></tbody></table><EmptyState v-else title="当前没有活动人工委托"/>
     </Panel>
-    <Panel v-else title="历史未确认建仓记录" subtitle="保留原始身份和风险证据用于对账；这些记录不是交易所当前 open orders，也不能盲目调用取消接口。">
+    <Panel v-else title="历史未确认建仓记录" :subtitle="`普通界面只显示最近24小时（${historyWindow.visibleCount}）；更早隐藏 ${historyWindow.olderHiddenCount} 条。保留原始身份和风险证据用于对账；这些记录不是交易所当前 open orders，也不能盲目调用取消接口。`">
       <table v-if="history.length" class="data-table"><thead><tr><th>记录时间</th><th>Symbol</th><th>Direction</th><th>Qty</th><th>交易所单号</th><th>状态</th><th>操作</th></tr></thead><tbody><tr v-for="o in history" :key="o.id"><td>{{new Date(o.updatedAt??o.createdAt).toLocaleString()}}</td><td class="symbol">{{o.symbol}}</td><td>{{o.side}}</td><td>{{o.quantity}}</td><td class="mono">{{o.exchangeOrderId??'未知'}}</td><td><StatusBadge :value="o.status"/></td><td><span class="muted">非活动单 · 不可取消</span></td></tr></tbody></table><EmptyState v-else title="没有历史未确认记录"/>
     </Panel>
   </div>

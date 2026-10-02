@@ -5,7 +5,7 @@ import {aiUsageRowOf,reviewOpeningRowOf,reviewRequestKeyOf,type AiUsageLedger,ty
  * S07-A/B: bounded review of positions that are already under AI management.
  *
  * Three things are enforced here and nowhere else: the same facts never trigger a second model call,
- * a human-owned or handoff-pending cycle never gets a routine call at all, and a model answer that
+ * handoff-pending cycles never get a routine call, HUMAN_MANAGED cycles get review-only tickets, and a model answer that
  * arrives after the authority moved is archived rather than acted on. The budget is spent before the
  * request, so a timeout still costs what it cost, and exhausting it stops inference - it never stops
  * a deadline, a take-profit sweep or a handoff.
@@ -15,7 +15,7 @@ export type ReviewVersions={planVersion:number;planRef:string;ownerVersion:numbe
   riskGeneration:number;snapshotHash:string;evidenceVersion:string;memoryVersion:string;predicateThresholdCrossed?:boolean};
 
 export type ReviewTicket={budgetKey:string;triggerKey:string;reviewNumber:number;role:AiUsageRole;positionId:string;cycleId:string;scope:string;
-  ownerVersion:number;planRef:string;reservedAt:number;expiresAt:number;reasons:string[]};
+  ownerVersion:number;reviewOnly:boolean;planRef:string;reservedAt:number;expiresAt:number;reasons:string[]};
 
 export type BudgetState={budgetKey:string;planRef:string;cycleId:string;scope:string;normal:number;exception:number;used:number;failures:number;
   lastTriggerKey:string|null;lastFactsHash:string|null;lastSkippedReason?:string|null;runs:AiUsageRow[]};
@@ -40,7 +40,7 @@ export class PositionReviewScheduler {
     ledger:AiUsageLedger;
     settings:()=>{normalReviewsPerPlan:number;exceptionReviewsPerPlan:number;failureBudget:number;minIntervalMs:number;authorityTtlMs:number};
     /** Who owns the cycle right now. A journal or read model miss is treated as not AI-owned. */
-    ownerOf:(scope:string,cycleId:string)=>{ownerState:string;ownerVersion:number;deadline:number|null}|null;
+    ownerOf:(scope:string,cycleId:string)=>{ownerState:string;ownerVersion:number;deadline:number|null;reviewEligible?:boolean}|null;
     now?:()=>number;
   }){}
 
@@ -73,10 +73,12 @@ export class PositionReviewScheduler {
     const settings=this.ports.settings();
     const owner=this.ports.ownerOf(input.scope,input.cycleId);
     if(!owner)return{granted:false,reason:'OWNER_UNTRACKED'} as const;
-    // S07-T01: a human-owned or pending cycle gets no routine inference, at any budget, ever.
-    if(owner.ownerState!=='AI_ACTIVE')return{granted:false,reason:`OWNER_NOT_AI:${owner.ownerState}`,zeroRoutineCall:true} as const;
+    // Human-owned positions remain reviewable evidence subjects, but their review never receives
+    // execution authority. HANDOFF_PENDING/CLOSED/untracked positions remain non-reviewable.
+    const reviewOnly=owner.ownerState==='HUMAN_MANAGED';
+    if(owner.ownerState!=='AI_ACTIVE'&&!(reviewOnly&&owner.reviewEligible!==false))return{granted:false,reason:`OWNER_NOT_REVIEWABLE:${owner.ownerState}`,zeroRoutineCall:true} as const;
     if(owner.ownerVersion!==input.versions.ownerVersion)return{granted:false,reason:'OWNER_VERSION_DRIFT'} as const;
-    if(!(finite(owner.deadline)&&owner.deadline>now))return{granted:false,reason:'AI_MANAGEMENT_DEADLINE_ELAPSED'} as const;
+    if(!reviewOnly&&!(finite(owner.deadline)&&owner.deadline>now))return{granted:false,reason:'AI_MANAGEMENT_DEADLINE_ELAPSED'} as const;
     const budget=this.budgetOf(input.scope,input.versions.planRef,input.cycleId);
     const triggerKey=reviewTriggerKeyOf({scope:input.scope,cycleId:input.cycleId,versions:input.versions,now});
     const factsHash=reviewFactsHashOf(input.versions);
@@ -97,7 +99,7 @@ export class PositionReviewScheduler {
     budget.lastTriggerKey=triggerKey;
     budget.lastFactsHash=factsHash;
     const ticket:ReviewTicket={budgetKey:budget.budgetKey,triggerKey,reviewNumber:budget.used,role:'REVIEW',positionId:input.positionId,
-      scope:input.scope,cycleId:input.cycleId,ownerVersion:input.versions.ownerVersion,planRef:input.versions.planRef,
+      scope:input.scope,cycleId:input.cycleId,ownerVersion:input.versions.ownerVersion,reviewOnly,planRef:input.versions.planRef,
       reservedAt:now,expiresAt:now+Math.max(1_000,settings.authorityTtlMs),reasons:[`TRIGGER_${input.trigger}`]};
     // The reservation opens the ledger row before the request exists, so a call that dies with the
     // process is still visible as an unanswered request rather than as a call that never happened.
@@ -124,14 +126,14 @@ export class PositionReviewScheduler {
     const budget=this.budgets.get(ticket.budgetKey);
     if(input.status==='FAILED'||input.status==='TIMEOUT'||input.status==='TRUNCATED'){if(budget)budget.failures++;}
     if(!owner)return{usable:false,reason:'OWNER_UNTRACKED_AT_CALLBACK',archived:true,row:usage.row};
-    if(owner.ownerState!=='AI_ACTIVE')return{usable:false,reason:`OWNER_NO_LONGER_AI:${owner.ownerState}`,archived:true,row:usage.row};
+    if(ticket.reviewOnly?owner.ownerState!=='HUMAN_MANAGED':owner.ownerState!=='AI_ACTIVE')return{usable:false,reason:`OWNER_AUTHORITY_CHANGED:${owner.ownerState}`,archived:true,row:usage.row};
     if(owner.ownerVersion!==ticket.ownerVersion)return{usable:false,reason:'OWNER_VERSION_CHANGED_DURING_MODEL_CALL',archived:true,row:usage.row};
     // The spent budget is refunded by a call that never reached a model, so a dead endpoint cannot
     // silently starve the reviews that a recovered endpoint still owes. A call that did answer is
     // never refunded, however late it arrived.
     if(input.status==='FAILED'&&budget&&usage.written){budget.used=Math.max(0,budget.used-1);budget.lastTriggerKey=null;budget.lastFactsHash=null;}
     if(input.now>=ticket.expiresAt)return{usable:false,reason:'REVIEW_AUTHORITY_WINDOW_CLOSED',archived:true,row:usage.row};
-    if(input.now>=Number(owner.deadline??0))return{usable:false,reason:'AI_MANAGEMENT_DEADLINE_ELAPSED_DURING_MODEL_CALL',archived:true,row:usage.row};
+    if(!ticket.reviewOnly&&input.now>=Number(owner.deadline??0))return{usable:false,reason:'AI_MANAGEMENT_DEADLINE_ELAPSED_DURING_MODEL_CALL',archived:true,row:usage.row};
     return{usable:true,reason:'REVIEW_RESULT_APPLICABLE',archived:true,row:usage.row};
   }
 

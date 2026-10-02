@@ -113,10 +113,13 @@ export function buildPreAiExecutionEnvelope(state:RuntimeState,symbol:string,now
     const configuredMargin=state.settings.entry.minimumInitialMarginByQuote?.[quoteAsset];
     const configuredOrderNotional=state.settings.entry.minimumOrderNotionalByQuote?.[quoteAsset];
     const minimumInitialMarginQuote=Number.isFinite(Number(configuredMargin))&&Number(configuredMargin)>0?Number(configuredMargin):null;
-    const minimumOrderNotionalQuote=Number.isFinite(Number(configuredOrderNotional))&&Number(configuredOrderNotional)>0?Number(configuredOrderNotional):null;
+    const symbolKey=String(symbol).toUpperCase(),configuredOrderFloor=Number.isFinite(Number(configuredOrderNotional))&&Number(configuredOrderNotional)>0?Number(configuredOrderNotional):0;
+    // A legal exchange minimum is never the business sizing authority. Every supported quote pair
+    // needs at least 100 quote units; BTCUSDT/BTCUSDC require 200, even if Settings is lower.
+    const minimumOrderNotionalQuote=Math.max(configuredOrderFloor,symbolKey==='BTCUSDT'||symbolKey==='BTCUSDC'?200:100);
     const fundsOnly=testnetFundsOnlyEntry(state.settings);
-    const businessMinimumConfigured=!fundsOnly||minimumInitialMarginQuote!==null;
-    const businessMinimumNotional=Math.max(minimumLegalNotionalUsd,fundsOnly?(minimumOrderNotionalQuote??0):0,fundsOnly?(minimumInitialMarginQuote??0)*leverage:0);
+    const businessMinimumConfigured=minimumInitialMarginQuote!==null&&minimumOrderNotionalQuote>=100;
+    const businessMinimumNotional=Math.max(minimumLegalNotionalUsd,minimumOrderNotionalQuote,(minimumInitialMarginQuote??0)*leverage);
     const maxNotionalUsd=slotAvailable&&risk.executable&&!planRejects?Math.max(0,Math.min(quoteNotionalCapacity,risk.finalNotional)):0,maxMarginUsd=maxNotionalUsd/Math.max(1,leverage);
     // A whole-step quantity that is affordable at the reachable price band and still clears the exchange
     // floor. Both bounds are published: a lower one the order cannot legally be placed under, and an upper

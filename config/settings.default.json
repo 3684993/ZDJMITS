@@ -33,6 +33,12 @@
     {"id":"scout-b580","role":"SCOUT","enabled":false,"baseUrl":"http://127.0.0.1:8081/v1","model":"qwen3.5:9b","maxConcurrency":1,"gpu":"Intel Arc B580 12GB"},
     {"id":"brain-7900-primary","role":"PRIMARY_BRAIN","enabled":true,"baseUrl":"http://127.0.0.1:8084/v1","model":"qwen/qwen3.8-27b","maxConcurrency":1,"gpu":"AMD Radeon RX 7900 XTX 24GB"}
   ],
+  "aiDutyRoutes": [
+    {"duty":"SCOUT_RESEARCH","resourceId":"scout-b580","enabled":false,"priority":10},
+    {"duty":"ENTRY_PRIMARY","resourceId":"brain-7900-primary","enabled":true,"priority":100},
+    {"duty":"PENDING_ENTRY_REVIEW","resourceId":"brain-7900-primary","enabled":true,"priority":20},
+    {"duty":"POSITION_REVIEW","resourceId":"brain-7900-primary","enabled":true,"priority":90}
+  ],
   "appearance": {"theme":"BURGUNDY_EDITORIAL","density":"COMFORTABLE","numberFont":"TABULAR"},
   "selection": {
     "mode":"COMPREHENSIVE_MAINSTREAM","universeTopN":100,"poolTarget":20,"poolMax":24,"replacementDelta":4,

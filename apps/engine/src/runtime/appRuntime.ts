@@ -1188,7 +1188,8 @@ export class EngineRuntime {
    */
   private async reviewPosition(input:{ticket:ReviewTicket;position:any;plan:TradePlan}):Promise<ReviewAnswer>{
     const owner=this.exitRuntime?.ownerOfScope(input.ticket.scope,input.ticket.cycleId);
-    if(!owner||owner.ownerState!=='AI_ACTIVE')throw new Error(`REVIEW_OWNER_NOT_AI_AT_CALL:${String(owner?.ownerState??'UNTRACKED')}`);
+    const reviewOnly=input.ticket.reviewOnly===true;
+    if(!owner||(reviewOnly?owner.ownerState!=='HUMAN_MANAGED':owner.ownerState!=='AI_ACTIVE'))throw new Error(`REVIEW_OWNER_NOT_REVIEWABLE_AT_CALL:${String(owner?.ownerState??'UNTRACKED')}`);
     if(Number(owner.ownerVersion)!==Number(input.ticket.ownerVersion))throw new Error('REVIEW_OWNER_VERSION_DRIFT_AT_CALL');
     const num=(value:unknown)=>Number.isFinite(Number(value))?Number(value):null;
     const coordination=(this.state.settings.riskGovernance as any)?.exitCoordination??{};
@@ -1202,8 +1203,8 @@ export class EngineRuntime {
       factsHash:String(snapshot?.technical?.['15m']?.asOf??0),
       position:{side:String(input.position.side),entryPrice:num(input.position.entryPrice)??0,quantity:num(input.position.quantity)??0,
         markPrice:num(snapshot?.quote?.mark??input.position.markPrice),unrealizedPnlUsd:num(input.position.unrealizedPnl),
-        openedAt:num(input.position.openedAt)??0,managementDeadlineAt:num(owner.deadline)??0,
-        remainingMs:Math.max(0,(num(owner.deadline)??0)-Date.now())},
+        openedAt:num(input.position.openedAt)??0,managementDeadlineAt:reviewOnly?null:num(owner.deadline),
+        remainingMs:reviewOnly||num(owner.deadline)==null?null:Math.max(0,Number(owner.deadline)-Date.now())},
       plan:{side:input.plan.side,quantityUnits:input.plan.quantityUnits,entryReferencePrice:input.plan.entryReferencePrice,
         targetPrice:input.plan.targetPrice,targetHorizonMinutes:input.plan.targetHorizonMinutes,thesis:input.plan.thesis,
         invalidationPredicate:input.plan.invalidationPredicate,predicateEvidenceRefs:[...input.plan.predicateEvidenceRefs],

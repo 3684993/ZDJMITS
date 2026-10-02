@@ -52,7 +52,7 @@ export class PositionReviewRunner {
 
   private subject(position:any,cycleId:string){return{symbol:position.symbol,side:position.side,cycleId,openedAt:position.openedAt};}
 
-  /** One bounded pass over the cycles that are actually under AI management. */
+  /** One bounded pass over AI-managed cycles and review-only HUMAN_MANAGED evidence subjects. */
   async tick(now=Date.now()):Promise<ReviewTickReport>{
     const coordination=this.ports.settings();
     const report:ReviewTickReport={enabled:coordination.positionReviewEnabled===true,considered:0,reserved:0,deduplicated:0,refused:[],completed:0,discarded:0,failed:0,zeroRoutineCalls:0};
@@ -63,8 +63,10 @@ export class PositionReviewRunner {
       if(!cycleId)continue;
       const scope=(this.ports.exitRuntime as any).scope({symbol:position.symbol,side:position.side,cycleId,openedAt:position.openedAt});
       const owner=this.ports.exitRuntime.owner(this.subject(position,cycleId));
-      if(!owner||owner.ownerState!=='AI_ACTIVE'){
-        // A human-owned or pending cycle is counted as deliberately un-called, not as a failure.
+      const reviewOnly=owner?.ownerState==='HUMAN_MANAGED';
+      if(!owner||(owner.ownerState!=='AI_ACTIVE'&&!reviewOnly)){
+        // Handoff-pending/closed/untracked cycles are non-reviewable. Human-managed cycles are
+        // reviewed as evidence only; execution remains blocked by the ownership journal.
         if(owner&&owner.ownerState!=='CLOSED')report.zeroRoutineCalls++;
         continue;
       }
@@ -73,7 +75,7 @@ export class PositionReviewRunner {
       report.considered++;
       // P6: declaring the debt before the model call is what lets a continuously queued Entry chain
       // yield a bounded share of the Primary endpoint to this review.
-      if(owner.deadline==null||owner.deadline<=now)continue;
+      if(!reviewOnly&&(owner.deadline==null||owner.deadline<=now))continue;
       if(this.ports.reviewAvailable?.()===false){this.ports.noteOwed?.(now);report.refused.push('REVIEW_RESOURCE_BUSY');continue;}
       const reserved=this.ports.scheduler.reserve({positionId:position.id,cycleId,scope,trigger:'SCHEDULED',versions:this.versions(position,plan,scope,cycleId),now});
       if(!reserved.granted){
@@ -83,7 +85,8 @@ export class PositionReviewRunner {
       }
       this.ports.noteOwed?.(now);
       report.reserved++;
-      const ticket=reserved.ticket;
+        const ticket=reserved.ticket;
+      if(reviewOnly)this.ports.events.publish('POSITION_REVIEW_ONLY_AUTHORITY',{cycleId,scope,ownerVersion:ticket.ownerVersion,executionAuthority:false,reason:'HUMAN_MANAGED_REVIEW_EVIDENCE_ONLY'},position.symbol);
       // P7: the review moments belong to the cycle, not to a page's clock. Stamping them here means the
       // "last review / next due" a human reads is what the engine actually did.
       (this.ports.state as any).positions.set(position.id,{...position,lastReviewAt:now,nextReviewAt:now+Math.max(1_000,Number(coordination.reviewMinIntervalMs??300_000))});

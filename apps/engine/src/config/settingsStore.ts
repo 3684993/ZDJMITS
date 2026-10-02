@@ -102,6 +102,19 @@ function merge(defaults: unknown, override: unknown): unknown {
 function migrate(value: unknown): unknown {
   if (!record(value)) return value;
   const next = structuredClone(value) as Record<string, unknown>;
+  // V397 separates physical endpoints from logical duties. Preserve the exact legacy Primary
+  // endpoint; duties are backfilled only when the new route map is absent.
+  if (!Array.isArray(next.aiDutyRoutes) || next.aiDutyRoutes.length === 0) {
+    const resources=Array.isArray(next.aiResources)?next.aiResources.filter(record):[];
+    const scout=resources.find(resource=>resource.role==='SCOUT');
+    const primary=resources.find(resource=>resource.role==='PRIMARY_BRAIN'&&resource.enabled!==false);
+    const review=resources.find(resource=>resource.role==='REVIEW_BRAIN'&&resource.enabled!==false)??primary;
+    next.aiDutyRoutes=[
+      ...(scout?[{duty:'SCOUT_RESEARCH',resourceId:String(scout.id),enabled:scout.enabled!==false,priority:10}]:[]),
+      ...(primary?[{duty:'ENTRY_PRIMARY',resourceId:String(primary.id),enabled:true,priority:100}]:[]),
+      ...(review?[{duty:'PENDING_ENTRY_REVIEW',resourceId:String(review.id),enabled:true,priority:20},{duty:'POSITION_REVIEW',resourceId:String(review.id),enabled:true,priority:90}]:[]),
+    ];
+  }
   // V3.9.7 expands SHADOW path evidence through the 4h window. Upgrade only the prior default;
   // an operator-selected non-default observation horizon remains authoritative.
   if (record(next.tradingQuality) && Number((next.tradingQuality as any).positionObservationHorizonMs) === 900_000)
@@ -204,7 +217,8 @@ function migrate(value: unknown): unknown {
   const configuredNotional=Number((next.portfolio as any)?.entryMarginUsd??200);
   const quotePolicy=(value:unknown,fallback:number)=>{const row=record(value)?value as Record<string,unknown>:{};return{USDT:row.USDT??fallback,USDC:row.USDC??fallback};};
   entry.minimumInitialMarginByQuote=quotePolicy(entry.minimumInitialMarginByQuote,configuredMargin);
-  entry.minimumOrderNotionalByQuote=quotePolicy(entry.minimumOrderNotionalByQuote,configuredNotional);
+  const orderNotional=quotePolicy(entry.minimumOrderNotionalByQuote,configuredNotional);
+  entry.minimumOrderNotionalByQuote={USDT:Math.max(100,Number(orderNotional.USDT)||100),USDC:Math.max(100,Number(orderNotional.USDC)||100)};
   if(next.connections && record(next.connections) && (next.connections as any).exchange?.environment==='TESTNET'&&Number(next.economicPolicyVersion??0)<1){
     economics.admissionMode='ENFORCE';
     economics.historicalTpReachabilityEnabled=false;
@@ -658,6 +672,7 @@ export class SettingsStore {
           JSON.stringify({
             connections: next.connections,
             aiResources: next.aiResources,
+            aiDutyRoutes: next.aiDutyRoutes,
           }),
           now,
         );
@@ -1305,7 +1320,7 @@ export class SettingsStore {
       const previousCapacity=old?JSON.parse(old.payload).portfolio?.maxPositions??null:null;
       this.db.prepare("INSERT INTO settings(id,version,payload,updated_at) VALUES(1,?,?,?) ON CONFLICT(id) DO UPDATE SET version=excluded.version,payload=excluded.payload,updated_at=excluded.updated_at").run(updated.settingsVersion,JSON.stringify(updated),now);
       this.db.prepare("INSERT INTO settings_audit(changed_at,source,old_version,new_version,summary) VALUES(?,?,?,?,?)").run(now,`resource-${mutation.kind.toLowerCase()}`,expectedVersion,updated.settingsVersion,JSON.stringify({message:"resource and active settings updated atomically",operation:mutation.operation,resourceId:mutation.id,maxPositions:{before:previousCapacity,after:updated.portfolio.maxPositions}}));
-      this.db.prepare("INSERT INTO connection_profiles(id,profile,updated_at) VALUES(?,?,?) ON CONFLICT(id) DO UPDATE SET profile=excluded.profile,updated_at=excluded.updated_at").run("active",JSON.stringify({connections:updated.connections,aiResources:updated.aiResources}),now);
+      this.db.prepare("INSERT INTO connection_profiles(id,profile,updated_at) VALUES(?,?,?) ON CONFLICT(id) DO UPDATE SET profile=excluded.profile,updated_at=excluded.updated_at").run("active",JSON.stringify({connections:updated.connections,aiResources:updated.aiResources,aiDutyRoutes:updated.aiDutyRoutes}),now);
       if(mutation.operation==="DELETE")this.db.prepare(`DELETE FROM ${table} WHERE id=?`).run(mutation.id);
       else this.db.prepare(`INSERT INTO ${table}(id,payload,updated_at) VALUES(?,?,?) ON CONFLICT(id) DO UPDATE SET payload=excluded.payload,updated_at=excluded.updated_at`).run(mutation.id,JSON.stringify(mutation.value??{}),now);
       this.db.exec("COMMIT");this.current=updated;return updated;

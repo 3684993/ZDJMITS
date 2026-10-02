@@ -86,19 +86,20 @@ describe('S07-T01 human-managed cycles get zero routine model calls',()=>{
     expect(handoffPending(x).ownerState).toBe('HANDOFF_PENDING');
     const result=reserve(x);
     expect(result.granted).toBe(false);
-    expect(result.reason).toBe('OWNER_NOT_AI:HANDOFF_PENDING');
+    expect(result.reason).toBe('OWNER_NOT_REVIEWABLE:HANDOFF_PENDING');
     expect(any(result).zeroRoutineCall).toBe(true);
     expect(x.ledger.rows()).toHaveLength(0);
     expect(x.scheduler.state()).toHaveLength(0);
   });
 
-  it('refuses a human takeover the moment the human owns it, at any budget',()=>{
+  it('permits evidence-only review after human takeover without restoring execution authority',()=>{
     const x=fixture();aiManaged(x);
     expect(reserve(x,{},NOW).granted).toBe(true);
     x.exitRuntime.recordHumanTakeover(SUBJECT,'OPERATOR_TOOK_OVER',NOW+1_000);
-    const after=reserve(x,{positionVersion:2},NOW+400_000);
-    expect(after.reason).toBe('OWNER_NOT_AI:HUMAN_MANAGED');
-    expect(any(after).zeroRoutineCall).toBe(true);
+    const owner=x.exitRuntime.owner(SUBJECT)!;
+    const after=reserve(x,{positionVersion:2,ownerVersion:owner.ownerVersion},NOW+400_000);
+    expect(after.granted).toBe(true);
+    expect(any(after).ticket).toMatchObject({reviewOnly:true,ownerVersion:owner.ownerVersion});
   });
 
   it('treats an untracked cycle as not AI-owned rather than as a default authority',()=>{
@@ -195,7 +196,7 @@ describe('S07-T02 an answer that arrives after the authority moved is archived, 
     const applied=x.scheduler.accept(ticket,{now:ticket.reservedAt+5_000,
       usage:{inputTokens:1_200,outputTokens:80},status:'COMPLETED',promptHash:'ph'});
     expect(applied.usable).toBe(false);
-    expect(applied.reason).toBe('OWNER_NO_LONGER_AI:HUMAN_MANAGED');
+    expect(applied.reason).toBe('OWNER_AUTHORITY_CHANGED:HUMAN_MANAGED');
   });
 
   it('re-reads ownership from the journal instead of believing what the caller reports',()=>{
@@ -290,6 +291,7 @@ describe('S07-T08 usage is either reported or UNKNOWN, and an answer cannot carr
     expect(()=>parsePositionReview({decision:'REVERSE_NOW',reason:'x'})).toThrow(/REVIEW_DECISION_UNSUPPORTED/);
     expect(()=>parsePositionReview({decision:'HOLD'})).toThrow(/REVIEW_REASON_MISSING/);
     expect(parsePositionReview({decision:'HOLD',reason:'plan intact',evidenceRefs:[]})).toMatchObject({decision:'HOLD'});
+    expect(parsePositionReview({decision:'REDUCE_PROPOSAL',reason:'depth deteriorated',evidenceRefs:['depth.fact']})).toMatchObject({decision:'REDUCE_PROPOSAL'});
   });
 
   it('keeps the review prompt explicit about what the model may not do',()=>{
@@ -305,7 +307,7 @@ describe('S07-T08 usage is either reported or UNKNOWN, and an answer cannot carr
       executionEnvelope:{side:'LONG',maxQuantityUnits:3}});
     const prompt=buildPositionReviewPrompt(packet,request);
     expect(prompt).toContain('no order permission, no sizing permission');
-    expect(prompt).toContain('"decision":"HOLD|EXIT_PROPOSAL|HANDOFF"');
+    expect(prompt).toContain('"decision":"HOLD|REDUCE_PROPOSAL|EXIT_PROPOSAL|HANDOFF"');
     expect(prompt).toContain('not a review trigger');
     expect(prompt).toContain('plan_j4_v1');
   });
@@ -496,12 +498,14 @@ describe('S07-A/B production consumer: the review tick',()=>{
       writableAuthority:'REVIEW_EVIDENCE_ONLY'});
   });
 
-  it('counts a HUMAN-managed cycle as a deliberate zero call rather than as a failure',async()=>{
+  it('reviews a HUMAN-managed cycle as evidence only, without execution authority',async()=>{
     const x=runnerFixture();
     x.exitRuntime.recordHumanTakeover(SUBJECT,'OPERATOR_TOOK_OVER',NOW);
-    expect(await x.runner.tick(NOW)).toMatchObject({enabled:true,considered:0,reserved:0,zeroRoutineCalls:1,failed:0});
-    expect(x.review).not.toHaveBeenCalled();
-    expect(x.ledger.rows()).toHaveLength(0);
+    expect(await x.runner.tick(NOW)).toMatchObject({enabled:true,considered:1,reserved:1,zeroRoutineCalls:0,completed:1,failed:0});
+    expect(x.review).toHaveBeenCalledOnce();
+    expect(x.ledger.rows()).toHaveLength(1);
+    expect(x.seen.find(event=>event.type==='POSITION_REVIEW_ONLY_AUTHORITY')?.payload).toMatchObject({executionAuthority:false,reason:'HUMAN_MANAGED_REVIEW_EVIDENCE_ONLY'});
+    expect(x.seen.find(event=>event.type==='POSITION_REVIEW_APPLIED')?.payload).toMatchObject({writableAuthority:'REVIEW_EVIDENCE_ONLY'});
   });
 
   it('S07-T09: a dead endpoint spends review budget, records the failure and changes no order or deadline',async()=>{

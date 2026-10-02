@@ -652,10 +652,13 @@ export function createApiRouter(runtime: EngineRuntime) {
     }
   });
   r.get("/orders", (_q, res) => {
+    const now=Date.now(),historyCutoff=now-24*60*60_000;
     const current=runtime.reconciliation?.currentOpenEntryOrders?.()??{status:'UNAVAILABLE',verifiedAt:null,items:[]};
     const manualCurrent=runtime.reconciliation?.currentOpenManualOrders?.()??{status:'UNAVAILABLE',verifiedAt:null,items:[]};
-    const historicalUnknown=[...runtime.state.entryOrders.values()].filter(order=>order.status==='UNKNOWN'||( ['FILLED','CANCELED','EXPIRED','REJECTED'].includes(order.status)&&(order as any).exchangeTerminalStatus==='UNKNOWN'));
+    const allHistoricalUnknown=[...runtime.state.entryOrders.values()].filter(order=>order.status==='UNKNOWN'||( ['FILLED','CANCELED','EXPIRED','REJECTED'].includes(order.status)&&(order as any).exchangeTerminalStatus==='UNKNOWN'));
+    const historicalUnknown=allHistoricalUnknown.filter(order=>Number(order.createdAt??0)>=historyCutoff);
     res.json({entry:current.items,entryReadback:{status:current.status,verifiedAt:current.verifiedAt,count:current.items.length},historicalUnknown,
+      historicalUnknownWindow:{since:historyCutoff,until:now,visibleCount:historicalUnknown.length,olderHiddenCount:allHistoricalUnknown.length-historicalUnknown.length},
       takeProfit:[...runtime.state.tpOrders.values()],manual:manualCurrent.items,manualReadback:{status:manualCurrent.status,verifiedAt:manualCurrent.verifiedAt,count:manualCurrent.items.length}});
   });
   r.get("/eip/:symbol", (req, res) => {

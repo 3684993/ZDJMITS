@@ -1,0 +1,52 @@
+{
+  "sourceCommit": "2a6b8647d3c8359d3235ac40a0831c18664bdbac",
+  "mainBase": "221e7cd50d876d33d12570746ffbb765223cc68a",
+  "localIntegrationCodeCommit": "d4b291252c494e4cd8a6ecd28134724a68f0c92d",
+  "snapshotBranch": "snapshot/8096-2a6b864-20261003",
+  "snapshotRemoteCommit": "b3e692dae0d993c345639e2ecafeebf3e49b3ba7",
+  "snapshotTree": "3f64084f97499dc506184257a2b2a93aa5e41271",
+  "snapshotPublishedFiles": 624,
+  "mainVerification": {
+    "node": "22.23.3",
+    "host": "macOS",
+    "builds": "PASS",
+    "typechecks": "PASS",
+    "temporaryStoragePreflight": "PASS",
+    "contracts": 2,
+    "core": 58,
+    "engine": 1709,
+    "dashboard": 123,
+    "total": 1892,
+    "excludedSuites": [],
+    "sequence": "Full isolated verification passed builds/typechecks/contracts/core/engine; existing main Settings mock omission caused seven dashboard failures. Added the missing API mock and reran the complete dashboard suite: 123 passed. No behavior assertion removed.",
+    "initialVerificationLogSha256": "bc60e1706a695a57df79e1fb2d8ca428144d649d5fd5fee64fbe78b7f2a9ff9f",
+    "dashboardRerunEvidence": "Complete suite observed by integration agent after commit d4b2912; hosted CI remains separate.",
+    "warnings": [
+      "Pre-existing Overview test stub extra slot warnings",
+      "SettingsView unresolved EmptyState component warning, not changed by this batch"
+    ],
+    "hostedCi": "CHECK_PR_STATUS_NOT_LOCAL_PROOF"
+  },
+  "snapshotVerification": {
+    "exactSourceFiles": 617,
+    "syntheticFixtures": 2,
+    "documentationDerivatives": 1,
+    "builds": [
+      "contracts",
+      "core",
+      "engine"
+    ],
+    "affectedTests": 106,
+    "historicalFullSuiteRerun": false,
+    "nativePerformanceClaim": false
+  },
+  "independentReviews": {
+    "mainOrdersAndCi": "PASS",
+    "publicSourceAndFixtures": "PASS"
+  },
+  "liveRuntimeActions": 0,
+  "liveConfigurationChanges": 0,
+  "exchangeInstructions": 0,
+  "mainUpdated": false,
+  "fullReleaseContractConvergence": "NOT_COMPLETE_SNAPSHOT_IS_NOT_A_MERGE_CANDIDATE"
+}

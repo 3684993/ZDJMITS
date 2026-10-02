@@ -1,3 +1,4 @@
+import {projectCurrentOpenOrders} from './currentOpenOrders.js';
 import type { ExchangeTradeAdapter } from '../types.js';
 import type { RuntimeState } from '../state/runtimeState.js';
 import type { EventBus } from '../events/eventBus.js';
@@ -49,28 +50,9 @@ export class ReconciliationService {
     }
   }
   async whenSettled(){if(!this.running)return;await new Promise<void>(resolve=>this.waiters.push(resolve));}
-  /** Last successfully fetched exchange open-order snapshot. Historical local UNKNOWN rows are
-   * intentionally excluded: they remain risk-bearing for admission, but are not open orders. */
-  currentOpenEntryOrders(){
-    if(!this.lastFullOrderScanAt)return{status:'UNAVAILABLE' as const,verifiedAt:null as number|null,items:[] as EntryOrder[]};
-    const manualMatch=(remote:EntryOrder|TakeProfitOrder)=>!isTakeProfitOrder(remote)?[...this.state.manualOrders.values()].find(local=>local.symbol===remote.symbol&&
-      ((nonEmpty(local.clientOrderId)&&local.clientOrderId===remote.clientOrderId)||(nonEmpty(local.exchangeOrderId)&&local.exchangeOrderId===remote.exchangeOrderId))):undefined;
-    const items=this.cachedOpenOrders.filter((row):row is EntryOrder=>!isTakeProfitOrder(row)&&!manualMatch(row)&&active(row.status)).map(remote=>{
-      const local=[...this.state.entryOrders.values()].find(row=>entryOrderIdentityMatch(row,remote));
-      const mandate=(local?this.state.entryIntents.get(local.intentId)?.economicMandate:null)??null;
-      return local?{...remote,id:local.id,intentId:local.intentId,cycleId:local.cycleId,reservationId:local.reservationId,economicMandate:mandate}:remote;
-    });
-    return{status:Date.now()-this.lastFullOrderScanAt<=this.fullOrderScanIntervalMs?'READY' as const:'STALE' as const,verifiedAt:this.lastFullOrderScanAt,items};
-  }
-  currentOpenManualOrders(){
-    if(!this.lastFullOrderScanAt)return{status:'UNAVAILABLE' as const,verifiedAt:null as number|null,items:[] as any[]};
-    const items=this.cachedOpenOrders.filter((row):row is EntryOrder=>!isTakeProfitOrder(row)&&active(row.status)).flatMap(remote=>{
-      const local=[...this.state.manualOrders.values()].find(order=>order.symbol===remote.symbol&&
-        ((nonEmpty(order.clientOrderId)&&order.clientOrderId===remote.clientOrderId)||(nonEmpty(order.exchangeOrderId)&&order.exchangeOrderId===remote.exchangeOrderId)));
-      return local?[{...local,...remote,id:local.id,intentId:local.intentId}]:[];
-    });
-    return{status:Date.now()-this.lastFullOrderScanAt<=this.fullOrderScanIntervalMs?'READY' as const:'STALE' as const,verifiedAt:this.lastFullOrderScanAt,items};
-  }
+  /** Readback only: no exchange request, UNKNOWN mutation, or claim release. */
+  currentOpenEntryOrders(){return projectCurrentOpenOrders(this.state,this.cachedOpenOrders,this.lastFullOrderScanAt,this.fullOrderScanIntervalMs,Date.now(),this.lastError).entry;}
+  currentOpenManualOrders(){return projectCurrentOpenOrders(this.state,this.cachedOpenOrders,this.lastFullOrderScanAt,this.fullOrderScanIntervalMs,Date.now(),this.lastError).manual;}
   private fullOrderScanDue(now:number){const unknown=[...this.state.entryOrders.values(),...this.state.manualOrders.values(),...this.state.tpOrders.values()].some(order=>order.status==='UNKNOWN')||[...this.state.entryOrders.values()].some(order=>entryHasUnresolvedExchangeTerminalRisk(order,now));return this.lastFullOrderScanAt===0||now-this.lastFullOrderScanAt>=this.fullOrderScanIntervalMs||(unknown&&now-this.lastUnknownRiskScanAt>=this.unknownRiskScanIntervalMs);}
   private targetedTpSymbolsDue(now:number){return[...new Set([...this.state.positions.values()].filter(position=>['MISSING','REPAIRING','REPAIR_FAILED'].includes(String(position.tpStatus))).map(position=>position.symbol))].filter(symbol=>now-(this.targetedTpScanAt.get(symbol)??0)>=this.targetedTpScanIntervalMs).slice(0,8);}
   private cachedOrderUsable(row:EntryOrder|TakeProfitOrder){const verifiedAt=Number((row as any).verifiedAt??0),newer=(candidate:any)=>candidate&&Number(candidate.updatedAt??candidate.createdAt??0)>verifiedAt;if(isTakeProfitOrder(row)){const local=[...this.state.tpOrders.values()].find(tp=>(nonEmpty(tp.clientOrderId)&&tp.clientOrderId===row.clientOrderId)||(nonEmpty(tp.exchangeOrderId)&&tp.exchangeOrderId===row.exchangeOrderId));return!newer(local);}const entry=[...this.state.entryOrders.values()].find(local=>entryOrderIdentityMatch(local,row)),manual=[...this.state.manualOrders.values()].find(local=>local.symbol===row.symbol&&((nonEmpty(local.clientOrderId)&&local.clientOrderId===row.clientOrderId)||(nonEmpty(local.exchangeOrderId)&&local.exchangeOrderId===row.exchangeOrderId)));return!newer(entry)&&!newer(manual);}

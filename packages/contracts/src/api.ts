@@ -40,6 +40,7 @@ export const DashboardSnapshotSchema = z.object({
   pool: z.array(PoolItemSchema),
   positions: z.array(PositionSchema),
   entryOrders: z.array(EntryOrderSchema),
+  entryOrderReadback:z.object({status:z.enum(['READY','STALE','UNAVAILABLE']),verifiedAt:z.number().nullable(),validUntil:z.number().nullable()}).optional(),
   tpOrders: z.array(TakeProfitOrderSchema),
   aiResources: z.array(AiResourceSchema),
   recentAiRuns: z.array(AiRunSchema),

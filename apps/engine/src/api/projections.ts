@@ -185,7 +185,8 @@ function baseDashboardProjection(runtime: EngineRuntime): DashboardSnapshot {
     unreal = s.account.unrealizedPnlUsd ?? null,
     // Activity is exchange truth. Local UNKNOWN remains available to reconciliation/risk
     // admission, but never appears as an exchange open order without a matching openOrders fact.
-    activeEntries = runtime.reconciliation?.currentOpenEntryOrders?.().items ?? [],
+    entryReadback=runtime.reconciliation?.currentOpenEntryOrders?.()??{status:'UNAVAILABLE' as const,verifiedAt:null,validUntil:null,items:[]},
+    activeEntries = entryReadback.items,
     activeTps = [...s.tpOrders.values()].filter(
       (order) => order.status === "WORKING",
     ),
@@ -342,6 +343,7 @@ function baseDashboardProjection(runtime: EngineRuntime): DashboardSnapshot {
     pool: s.pool.list(),
     positions: [...s.positions.values()].map(position=>({...position,economicMandate:(position as any).economicMandate??null})),
     entryOrders: activeEntries.sort((a, b) => b.updatedAt - a.updatedAt),
+    entryOrderReadback:{status:entryReadback.status,verifiedAt:entryReadback.verifiedAt,validUntil:entryReadback.validUntil},
     tpOrders: activeTps.sort((a, b) => b.updatedAt - a.updatedAt),
     aiResources,
     recentAiRuns,

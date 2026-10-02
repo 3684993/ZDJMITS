@@ -1,22 +1,7 @@
 import { filterFormalOutcome, projectTradeRecordRow, projectTradeRecordSummary } from '../services/tradeRecordReadModel.js';
-function tradeCloseProvenance(record:any,runtime:EngineRuntime){
-  if(!Number.isFinite(record.closedAt))return'OPEN';
-  const ids=new Set((record.exitOrderIds??[]).map((id:unknown)=>String(id)));
-  const fills=runtime.state.executionFills.filter((fill:any)=>fill.symbol===record.symbol&&
-    (ids.has(String(fill.orderId??''))||ids.has(String(fill.clientOrderId??''))));
-  const roles=new Set<string>();let externalExchangeFact=false;
-  for(const fill of fills){
-    const proof=runtime.state.orderProvenance?.resolve?.({symbol:fill.symbol,clientOrderId:fill.clientOrderId,exchangeOrderId:fill.orderId});
-    for(const item of proof?.rows??[])roles.add(String(item.role));
-    if(fill.attributionStatus==='EXTERNAL_OR_UNLINKED'&&['EXCHANGE_AUDIT','USER_DATA_WS'].includes(String(fill.source)))externalExchangeFact=true;
-  }
-  if(roles.has('TP')&&roles.size===1)return'TP';
-  if(roles.has('EXIT')&&roles.size===1)return'SYSTEM_EXIT';
-  if(roles.has('MANUAL')&&roles.size===1)return'SYSTEM_MANUAL';
-  if(roles.size>0)return'CONFLICT';
-  if(externalExchangeFact||record.source==='EXTERNAL')return'EXCHANGE_CLOSE';
-  return'UNKNOWN';
-}
+import {tradeCloseProvenance} from '../services/tradeCloseProvenance.js';
+import {exchangeOrderIdentityMatch} from '../services/currentOpenOrders.js';
+import {EntryCancellation} from './entryCancellation.js';
 import { binanceRequestBudgetsHealth } from '../adapters/binance/requestBudget.js';
 import { Router } from "express";
 import { mkdir } from "node:fs/promises";
@@ -76,6 +61,11 @@ export function withExecutionOutcomes(runtime: EngineRuntime, items: any[]) {
 
 export function createApiRouter(runtime: EngineRuntime) {
   const r = Router();
+  const entryCancellation=new EntryCancellation(runtime.state,runtime.events,()=>runtime.reconciliation?.currentOpenEntryOrders?.(),
+    order=>(runtime as any).entry.exchange.cancelEntry(order),order=>{
+      const intent=runtime.state.entryIntents.get(order.intentId);
+      if(intent)runtime.settingsStore.saveEntryExecution({intent,order,reservation:order.reservationId?runtime.state.entryReservations.get(order.reservationId):undefined});
+    });
   r.get('/observability/trading-quality',(_req,res)=>res.json({health:runtime.tradingQuality?.health()??{status:'UNAVAILABLE'},policy:runtime.state.settings.tradingQuality??{mode:'OFF'},report:runtime.tradingQuality?.report()??null,v393:runtime.qualityObserver?.report()??{status:'UNAVAILABLE'}}));
   r.get('/observability/entry',(req,res)=>{const identity=runtime.runtimeStatus(),start=Number(identity.lastRestartAt??Date.now()),requested=Number(req.query.since??start),since=Number.isFinite(requested)?Math.max(start,requested):start,untilValue=Number(req.query.until??Date.now()),until=Number.isFinite(untilValue)?Math.min(Date.now(),Math.max(since,untilValue)):Date.now(),archived=runtime.settingsStore.listEntryObservationRuns(since,until,10001),runs=[...new Map([...archived,...runtime.state.aiRuns].filter(r=>r.startedAt>=since&&r.startedAt<=until&&r.role==='PRIMARY_BRAIN').map(r=>[r.id,r])).values()].map(r=>r.completedAt&&r.completedAt>until?{...r,status:'RUNNING',decision:null}:r),adapterEvents=runtime.settingsStore.runtimeEvents(since,['ENTRY_ADAPTER_REQUEST_FACTS','ENTRY_ADAPTER_RESPONSE_FACTS'],100000).filter((event:any)=>event.ts<=until);res.json({...entryObservation({runs,intents:[...runtime.state.entryIntents.values()],orders:[...runtime.state.entryOrders.values()],fills:runtime.state.executionFills.filter(f=>f.executionTime<=until),adapterEvents,runtime:identity}),window:{since,until,truncated:archived.length>=10001,source:'DURABLE_PRIMARY_ARCHIVE'}});});
   let snapshotVersion=0,publishTimer:NodeJS.Timeout|null=null,stopping=false;
@@ -653,13 +643,17 @@ export function createApiRouter(runtime: EngineRuntime) {
   });
   r.get("/orders", (_q, res) => {
     const now=Date.now(),historyCutoff=now-24*60*60_000;
-    const current=runtime.reconciliation?.currentOpenEntryOrders?.()??{status:'UNAVAILABLE',verifiedAt:null,items:[]};
-    const manualCurrent=runtime.reconciliation?.currentOpenManualOrders?.()??{status:'UNAVAILABLE',verifiedAt:null,items:[]};
-    const allHistoricalUnknown=[...runtime.state.entryOrders.values()].filter(order=>order.status==='UNKNOWN'||( ['FILLED','CANCELED','EXPIRED','REJECTED'].includes(order.status)&&(order as any).exchangeTerminalStatus==='UNKNOWN'));
+    const absent={status:'UNAVAILABLE' as const,verifiedAt:null,validUntil:null,items:[]};
+    const current=runtime.reconciliation?.currentOpenEntryOrders?.()??absent,manualCurrent=runtime.reconciliation?.currentOpenManualOrders?.()??absent;
+    const allHistoricalUnknown=[...runtime.state.entryOrders.values()].filter(order=>
+      (order.status==='UNKNOWN'||(['FILLED','CANCELED','EXPIRED','REJECTED'].includes(order.status)&&(order as any).exchangeTerminalStatus==='UNKNOWN'))&&
+      !current.items.some(remote=>exchangeOrderIdentityMatch(order,remote)));
     const historicalUnknown=allHistoricalUnknown.filter(order=>Number(order.createdAt??0)>=historyCutoff);
-    res.json({entry:current.items,entryReadback:{status:current.status,verifiedAt:current.verifiedAt,count:current.items.length},historicalUnknown,
+    const {items,...entryReadback}=current,{items:manual,...manualReadback}=manualCurrent;
+    res.json({entry:items.map(order=>({...order,cancelEligibility:entryCancelEligibility(runtime.state.entryOrders.get(order.id),current)})),
+      entryReadback:{...entryReadback,count:items.length},historicalUnknown,
       historicalUnknownWindow:{since:historyCutoff,until:now,visibleCount:historicalUnknown.length,olderHiddenCount:allHistoricalUnknown.length-historicalUnknown.length},
-      takeProfit:[...runtime.state.tpOrders.values()],manual:manualCurrent.items,manualReadback:{status:manualCurrent.status,verifiedAt:manualCurrent.verifiedAt,count:manualCurrent.items.length}});
+      takeProfit:[...runtime.state.tpOrders.values()],manual,manualReadback:{...manualReadback,count:manual.length}});
   });
   r.get("/eip/:symbol", (req, res) => {
     const symbol = req.params.symbol.toUpperCase();
@@ -1068,7 +1062,7 @@ export function createApiRouter(runtime: EngineRuntime) {
     rows=filterFormalOutcome(rows,q.outcome);
     if(q.search)rows=rows.filter(row=>JSON.stringify(row).toLowerCase().includes(q.search!.toLowerCase()));
     const total=rows.length;
-    const items=rows.slice((page-1)*limit,page*limit).map(row=>({...row,closeProvenance:tradeCloseProvenance(row,runtime)}));
+    const items=rows.slice((page-1)*limit,page*limit).map(row=>({...row,closeProvenance:tradeCloseProvenance(row,runtime.state)}));
     res.json({page,limit,total,items,autoSync:runtime.tradeRecordAutoSyncStatus(),summary:{...summary,
       partiallyClosed:records.filter(row=>row.status==='PARTIALLY_CLOSED').length,
       unknownCount:records.filter(row=>row.classification!=='COMPLETE'||row.fundingAttributionStatus!=='EXACT').length,
@@ -1079,7 +1073,7 @@ export function createApiRouter(runtime: EngineRuntime) {
   r.get('/trade-records/:id',(req,res)=>{
     const raw=runtime.state.tradeRecords.get(req.params.id);if(!raw)return res.status(404).json({error:{message:'trade record not found'}});
     const record=projectTradeRecordRow(raw,runtime.qualityObserver?.readContext()),entryRuns=raw.entryRunId?runtime.state.aiRuns.filter(run=>run.id===raw.entryRunId):[];
-    res.json({record,rawRecord:raw,experience:record.economicEligibility.canonicalPnlEligible?([...runtime.state.experienceSamples.values()].find(sample=>sample.tradeId===raw.tradeId)??null):null,
+    res.json({record:{...record,closeProvenance:tradeCloseProvenance(raw,runtime.state)},rawRecord:raw,experience:record.economicEligibility.canonicalPnlEligible?([...runtime.state.experienceSamples.values()].find(sample=>sample.tradeId===raw.tradeId)??null):null,
       linkedFills:runtime.state.executionFills.filter(fill=>fill.symbol===raw.symbol&&(raw.linkedFillIds.includes(fill.fillId)||raw.entryOrderIds.includes(fill.orderId)||raw.exitOrderIds.includes(fill.orderId))),entryRuns,
       entryOrders:raw.entryOrderIds.map(id=>runtime.state.entryOrders.get(id)).filter(Boolean),exitOrders:raw.exitOrderIds.map(id=>runtime.state.tpOrders.get(id)).filter(Boolean),
       rawAudit:runtime.settingsStore.runtimeEvents(raw.createdAt,['TRADE_RECORD_OPENED','TRADE_RECORD_CLOSED','TRADE_RECORD_REPAIRED','EXPERIENCE_SAMPLE_CREATED'],500)});
@@ -1096,26 +1090,8 @@ export function createApiRouter(runtime: EngineRuntime) {
     }),
   );
   r.post("/entry/:id/cancel", async (req, res, next) => {
-    try {
-      const order = runtime.state.entryOrders.get(req.params.id);
-      const current=(runtime.reconciliation as any)?.currentOpenEntryOrders?.();
-      const eligibility=entryCancelEligibility(order,current);
-      if(!eligibility.allowed)return res.status(eligibility.status).json({error:{code:eligibility.code,message:eligibility.message}});
-      const adapter = (runtime as any).entry["exchange"];
-      const canceled = await adapter.cancelEntry(order);
-      if(!['CANCELED','EXPIRED','REJECTED','FILLED'].includes(String(canceled?.status)))return res.status(502).json({error:{code:'ENTRY_CANCEL_RESULT_UNVERIFIED',message:`交易所取消结果未确认（${String(canceled?.status??'UNKNOWN')}）；该订单保持待核验状态。`}});
-      runtime.state.entryOrders.set(order.id, canceled);
-      if (order.reservationId)
-        runtime.state.releaseEntryReservation(order.reservationId);
-      runtime.events.publish(
-        "ENTRY_ORDER_CANCELED_MANUAL",
-        { orderId: order.id },
-        order.symbol,
-      );
-      res.json(canceled);
-    } catch (e) {
-      next(e);
-    }
+    try {const result=await entryCancellation.execute(req.params.id);res.status(result.status).json(result.body);}
+    catch(error){next(error);}
   });
   r.post("/tp/:positionId/repair", async (req, res, next) => {
     try {

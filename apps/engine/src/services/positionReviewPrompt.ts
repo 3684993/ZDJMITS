@@ -1,4 +1,3 @@
-import { compactEntryFacts } from '@zdj/core';
 import type { EntryIntelligencePacket } from '@zdj/contracts';
 
 /**
@@ -53,7 +52,38 @@ export type PositionReviewRequest = {
 
 /** Bounded, fact-only. Nothing here quotes a label as an answer or repeats raw candle series. */
 export function buildPositionReviewPrompt(packet: EntryIntelligencePacket, request: PositionReviewRequest): string {
-  const facts = compactEntryFacts(packet);
+  // Position review has no entry execution envelope: synthesizing one here would make current
+  // capacity/sizing facts look like authority over an already-open position. Keep this contract
+  // strictly market + existing-plan facts and give each source a stable citation id.
+  const frameNames=['1m','5m','15m','1h','4h','1d','1w'] as const;
+  const referenceFrameNames=['15m','1h','4h','1d','1w'] as const;
+  const technical=(rows:any,frames:readonly string[],prefix:string)=>Object.fromEntries(frames.flatMap(tf=>{
+    const row=rows?.[tf];if(!row)return [];
+    return [[tf,{factId:`${prefix}.${tf}.confirmed`,asOf:row.asOf,barCloseTime:row.barCloseTime??row.asOf,
+      isClosed:row.isClosed!==false,source:row.source??'UNKNOWN',trend:row.trend,trendStrength:row.trendStrength,
+      ema8:row.ema8,ema21:row.ema21,ema55:row.ema55,emaSlope21:row.emaSlope21,macdLine:row.macdLine,
+      macdSignal:row.macdSignal,macdHistogram:row.macdHistogram,macdHistogramSlope:row.macdHistogramSlope,
+      atr14:row.atr14,atrPercent:row.atrPercent,volumeZScore:row.volumeZScore,
+      recentSwingLow:row.recentSwingLow,recentSwingHigh:row.recentSwingHigh,
+      ...(row.lastClosedBar?{lastClosedBar:row.lastClosedBar}:{missingClosedBarAnchor:true})}]];
+  }));
+  const market=(name:string,source:any,frames:readonly string[],prefix:string)=>source?{
+    symbol:source.symbol??(name==='symbol'?packet.symbol:name.toUpperCase()+'USDT'),
+    quote:{factId:`${prefix}.quote`,source:'BINANCE_MARKET',ts:source.quote?.ts,bid:source.quote?.bid,ask:source.quote?.ask,
+      last:source.quote?.last,mark:source.quote?.mark},
+    technical:technical(source.technical,frames,prefix),
+    ...(source.orderBook?{orderBook:{factId:`${prefix}.orderbook`,source:'BINANCE_ORDERBOOK',ts:source.orderBook.ts,
+      bids:source.orderBook.bids?.slice(0,5),asks:source.orderBook.asks?.slice(0,5)}}:{}),
+  }:{missing:true};
+  const references=(packet as any).referenceMarkets??{};
+  const facts={MARKET_FACTS:{symbol:market('symbol',packet.market,frameNames,'symbol'),
+      btc:market('btc',references.btc,referenceFrameNames,'btc'),eth:market('eth',references.eth,referenceFrameNames,'eth')},
+    PLAN_FACTS:{factId:'plan.current',planRef:request.planRef,planVersion:request.planVersion,side:request.plan.side,
+      entryReferencePrice:request.plan.entryReferencePrice,targetPrice:request.plan.targetPrice,
+      targetHorizonMinutes:request.plan.targetHorizonMinutes,thesis:request.plan.thesis,
+      invalidationPredicate:request.plan.invalidationPredicate,predicateEvidenceRefs:request.plan.predicateEvidenceRefs,
+      minNetProfitUsd:request.plan.minNetProfitUsd,maxRealizedLossUsd:request.plan.maxRealizedLossUsd,
+      economicMandate:request.plan.economicMandate??null}};
   return `You are the independent Position Review brain under protocol V3.9.6. Question: is the TradePlan this position was opened under still intact?
 You are advisory only. You have no order permission, no sizing permission and no authority to change ownership, deadlines, risk limits or the plan itself.
 Answer exactly one of:

@@ -19,6 +19,9 @@ const MINIMAL_SETTINGS = {
     },
   },
   aiResources: [{ id: 'primary-1', role: 'PRIMARY_BRAIN', baseUrl: 'http://127.0.0.1:8081/v1', model: 'qwen27b', maxConcurrency: 1, gpu: 'RTX4090' }],
+  aiDutyRoutes: [
+    { duty: 'ENTRY_PRIMARY', resourceId: 'primary-1', enabled: true, priority: 100 },
+  ],
   selection: {
     mode: 'COMPREHENSIVE_MAINSTREAM',
     universeTopN: 120,

@@ -12,8 +12,8 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@zdj/contracts": "3.9.4",
-    "@zdj/core": "3.9.4",
+    "@zdj/contracts": "3.9.6",
+    "@zdj/core": "3.9.6",
     "express": "^5.1.0",
     "socks-proxy-agent": "^10.1.0",
     "ws": "^8.18.2",

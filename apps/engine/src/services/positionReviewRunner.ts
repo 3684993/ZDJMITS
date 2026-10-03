@@ -152,6 +152,10 @@ export class PositionReviewRunner {
     const verdict=row?.latest;
     if(!verdict||!verdict.usable)return null;
     if(verdict.planRef!==input.planRef||verdict.planVersion!==input.planVersion)return null;
+    if(verdict.decision==='EXIT_PROPOSAL'){
+      const plan=[...(state as any).tradePlans.values()].find((row:TradePlan)=>row.planId===input.planRef&&row.cycleId===input.cycleId&&row.planVersion===input.planVersion);
+      if(!plan||!plan.invalidationPredicate?.trim()||plan.invalidationPredicate==='NO_PREDICATE')return null;
+    }
     if(input.now-verdict.at>Math.max(1_000,input.maxAgeMs))return null;
     return verdict;
   }

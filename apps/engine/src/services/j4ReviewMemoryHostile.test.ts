@@ -572,4 +572,12 @@ describe('S07-A/B production consumer: the review tick',()=>{
     expect(read(1,'another_cycle')).toBeNull();
     expect(read(1)?.decision).toBe('EXIT_PROPOSAL');
   });
+  it('refuses a persisted exit proposal when the exact plan has no invalidation predicate',()=>{
+    const x=runnerFixture(),at=Date.now();
+    const plan=[...(x.state as any).tradePlans.values()].find((row:any)=>row.planId==='plan_j4_v1');
+    (x.state as any).tradePlans.set(plan.planId,{...plan,invalidationPredicate:'NO_PREDICATE'});
+    x.runner.addVerdict({cycleId:SUBJECT.cycleId,scope:SCOPE,planRef:'plan_j4_v1',planVersion:1,decision:'EXIT_PROPOSAL',usable:true,
+      reason:'REVIEW_RESULT_APPLICABLE',at,runId:'airun_invalid',ownerVersion:1,triggerKey:'trg_invalid'});
+    expect(PositionReviewRunner.usableVerdict(x.state,{cycleId:SUBJECT.cycleId,planRef:'plan_j4_v1',planVersion:1,maxAgeMs:600_000,now:at+1})).toBeNull();
+  });
 });

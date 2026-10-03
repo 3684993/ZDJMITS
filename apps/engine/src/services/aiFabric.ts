@@ -295,7 +295,10 @@ export class AiFabric {
     const prompt=buildPositionReviewPrompt(packet,request);
     return this.queueReview('POSITION_REVIEW',async(resource,queueMs)=>{
       const {value,run}=await this.run({resource,symbol:packet.symbol,packet,role:'REVIEW_BRAIN',prompt,schemaName:'PositionReviewV396',
-        parse:parsePositionReview,queueMs,runKind:'POSITION_REVIEW_RUN',triggerReason:`POSITION_REVIEW:${request.triggerKey}:n${request.reviewNumber}`});
+        parse:value=>{const verdict=parsePositionReview(value);
+          if(verdict.decision==='EXIT_PROPOSAL'&&(!request.plan.invalidationPredicate.trim()||request.plan.invalidationPredicate==='NO_PREDICATE'))
+            throw new Error('REVIEW_EXIT_WITHOUT_PLAN_PREDICATE');
+          return verdict;},queueMs,runKind:'POSITION_REVIEW_RUN',triggerReason:`POSITION_REVIEW:${request.triggerKey}:n${request.reviewNumber}`});
       return{verdict:value,run,promptHash:run.promptHash??'missing-prompt-hash'};
     });
   }

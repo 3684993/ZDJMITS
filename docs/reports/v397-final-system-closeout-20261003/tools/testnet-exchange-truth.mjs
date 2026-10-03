@@ -43,6 +43,7 @@ try{
   }
   const classified=orders.map(row=>({symbol:String(row.symbol),orderId:String(row.orderId),
     clientOrderId:String(row.clientOrderId),type:String(row.type),status:String(row.status),
+    reduceOnly:row.reduceOnly===true,closePosition:row.closePosition===true,positionSide:String(row.positionSide??''),
     localKind:identities.get(`${row.symbol}:${row.orderId}`)??identities.get(`${row.symbol}:${row.clientOrderId}`)??'UNMATCHED'}));
   const counts=Object.fromEntries(['entryOrders','tpOrders','manualOrders','UNMATCHED'].map(kind=>[kind,classified.filter(row=>row.localKind===kind).length]));
   const nonzero=positions.filter(row=>Number(row.positionAmt)!==0).map(row=>({symbol:String(row.symbol),side:String(row.positionSide),quantity:String(row.positionAmt)}));

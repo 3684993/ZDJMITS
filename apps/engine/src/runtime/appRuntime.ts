@@ -1215,7 +1215,12 @@ export class EngineRuntime {
       memory:memory.status==='READY'?memory.entries:{status:memory.status,reasons:memory.reasons},
     };
     const startedAt=Date.now();
-    const {verdict,run,promptHash}=await this.ai.review(this.eip.build(input.position.symbol),request);
+    // Existing positions can outlive the current entry universe. Review needs the durable plan
+    // and observed market facts, not an entry candidate or entry execution envelope.
+    const reviewPacket={packetId:`position-review:${input.ticket.triggerKey}`,symbol:input.position.symbol,
+      createdAt:Date.now(),market:snapshot??null,referenceMarkets:{btc:this.state.snapshots.get('BTCUSDT')??null,
+        eth:this.state.snapshots.get('ETHUSDT')??null}} as unknown as import('@zdj/contracts').EntryIntelligencePacket;
+    const {verdict,run,promptHash}=await this.ai.review(reviewPacket,request);
     return{decision:verdict.decision,runId:run.id,usage:{inputTokens:num(run.inputTokens),outputTokens:num(run.outputTokens)},
       finishReason:run.finishReason??null,modelIdentity:run.modelIdentity?JSON.stringify(run.modelIdentity):String(run.model??''),
       promptHash,latencyMs:num(run.latencyMs)??Math.max(0,Date.now()-startedAt),transportAttempts:num((run.timing as any)?.transportAttempts)};

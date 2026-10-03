@@ -74,6 +74,15 @@ export class ReconciliationService {
   private fullOrderScanDue(now:number){const unknown=[...this.state.entryOrders.values(),...this.state.manualOrders.values(),...this.state.tpOrders.values()].some(order=>order.status==='UNKNOWN')||[...this.state.entryOrders.values()].some(order=>entryHasUnresolvedExchangeTerminalRisk(order,now));return this.lastFullOrderScanAt===0||now-this.lastFullOrderScanAt>=this.fullOrderScanIntervalMs||(unknown&&now-this.lastUnknownRiskScanAt>=this.unknownRiskScanIntervalMs);}
   private targetedTpSymbolsDue(now:number){return[...new Set([...this.state.positions.values()].filter(position=>['MISSING','REPAIRING','REPAIR_FAILED'].includes(String(position.tpStatus))).map(position=>position.symbol))].filter(symbol=>now-(this.targetedTpScanAt.get(symbol)??0)>=this.targetedTpScanIntervalMs).slice(0,8);}
   private cachedOrderUsable(row:EntryOrder|TakeProfitOrder){const verifiedAt=Number((row as any).verifiedAt??0),newer=(candidate:any)=>candidate&&Number(candidate.updatedAt??candidate.createdAt??0)>verifiedAt;if(isTakeProfitOrder(row)){const local=[...this.state.tpOrders.values()].find(tp=>(nonEmpty(tp.clientOrderId)&&tp.clientOrderId===row.clientOrderId)||(nonEmpty(tp.exchangeOrderId)&&tp.exchangeOrderId===row.exchangeOrderId));return!newer(local);}const entry=[...this.state.entryOrders.values()].find(local=>entryOrderIdentityMatch(local,row)),manual=[...this.state.manualOrders.values()].find(local=>local.symbol===row.symbol&&((nonEmpty(local.clientOrderId)&&local.clientOrderId===row.clientOrderId)||(nonEmpty(local.exchangeOrderId)&&local.exchangeOrderId===row.exchangeOrderId)));return!newer(entry)&&!newer(manual);}
+  private classifyDurableTp(row:EntryOrder|TakeProfitOrder):EntryOrder|TakeProfitOrder{
+    if(isTakeProfitOrder(row))return row;
+    const local=[...this.state.tpOrders.values()].find(tp=>tp.symbol===row.symbol&&
+      ((nonEmpty(tp.clientOrderId)&&tp.clientOrderId===row.clientOrderId)||
+        (nonEmpty(tp.exchangeOrderId)&&tp.exchangeOrderId===row.exchangeOrderId)));
+    if(!local)return row;
+    return {...row,side:local.side,positionId:local.positionId,positionSide:local.positionSide,
+      cycleId:local.cycleId,quantity:Math.max(0,Number(row.quantity)-Number(row.filledQuantity??0))} as TakeProfitOrder;
+  }
   private entryPositionRelation(local:EntryOrder,positions:Position[]):EntryPositionRelation{
     const remote=positions.filter(position=>position.symbol===local.symbol&&position.side===local.side&&Number(position.quantity)>0);if(!remote.length)return'ABSENT';
     const ids=new Set([local.id,local.clientOrderId,local.exchangeOrderId].filter(nonEmpty)),localCycle=nonEmpty(local.cycleId)?local.cycleId:null,intent=this.state.entryIntents.get(local.intentId),decision=nonEmpty(local.decisionChainId)?local.decisionChainId:nonEmpty(intent?.brainRunId)?intent!.brainRunId:null,statePositions=[...this.state.positions.values()].filter(position=>position.symbol===local.symbol&&position.side===local.side&&Number(position.quantity)>0);
@@ -107,9 +116,11 @@ export class ReconciliationService {
       this.state.cleanupReservations();
       const fullOrderScan=this.fullOrderScanDue(requestedAt),targetedTpSymbols=fullOrderScan?[]:this.targetedTpSymbolsDue(requestedAt),[positions,scannedOrders,...targetedOrderRows]=await Promise.all([this.adapter.fetchPositions(),fullOrderScan?this.adapter.fetchOpenOrders():Promise.resolve(null),...targetedTpSymbols.map(symbol=>this.adapter.fetchOpenOrders(symbol))]);
       let orders:Array<EntryOrder|TakeProfitOrder>;
-      if(fullOrderScan){orders=scannedOrders!;this.cachedOpenOrders=orders.slice();this.lastFullOrderScanAt=Date.now();this.lastUnknownRiskScanAt=this.lastFullOrderScanAt;}
+      if(fullOrderScan){orders=scannedOrders!;this.lastFullOrderScanAt=Date.now();this.lastUnknownRiskScanAt=this.lastFullOrderScanAt;}
       else if(targetedTpSymbols.length){const targeted=targetedOrderRows.flat(),targetedSet=new Set(targetedTpSymbols);orders=[...this.cachedOpenOrders.filter(row=>!targetedSet.has(row.symbol)&&this.cachedOrderUsable(row)),...targeted];for(const symbol of targetedTpSymbols)this.targetedTpScanAt.set(symbol,Date.now());}
       else orders=this.cachedOpenOrders.filter(row=>this.cachedOrderUsable(row));
+      orders=orders.map(row=>this.classifyDurableTp(row));
+      if(fullOrderScan)this.cachedOpenOrders=orders.slice();
       this.reportOpenOrderExitFacts(orders,Date.now());
       let drift=0;let deferredUnknownAudits=0,suppressedNoRiskEvents=0,deferredTerminalAudits=0,suppressedTerminalEvents=0;
       const ordersByChain=new Map<string,EntryOrder>();for(const order of this.state.entryOrders.values())if(nonEmpty(order.decisionChainId))ordersByChain.set(order.decisionChainId,order);

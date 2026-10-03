@@ -81,5 +81,39 @@
       "macos": "SUCCESS",
       "windows": "FAILURE_FOUR_FAIRNESS_FIXTURE_PREPARATIONS"
     }
+  },
+  "followupWindowsCi": {
+    "runId": 37080822362,
+    "macos": {
+      "result": "SUCCESS",
+      "contracts": 2,
+      "core": 58,
+      "engine": 1710,
+      "dashboard": 123,
+      "total": 1893
+    },
+    "windows": {
+      "result": "FAILED_TESTS",
+      "enginePassed": 1708,
+      "engineFailed": 2,
+      "dashboardRun": false,
+      "findings": [
+        "55-task real SQLite fairness case consumed42198ms against a20000ms test-only budget",
+        "J1 setup acceptance failed before JIT checks; helper sampled input.now and proof.checkedAt separately, allowing future-proof rejection across a clock tick. Exact historical reasons were not printed."
+      ]
+    },
+    "productionFreshnessChanges": false,
+    "newHeadResult": "READ_LATEST_PR_CHECKS",
+    "repair": {
+      "commit": "ace1b6166506e29930b80c3ac6e9907251f55f1f",
+      "targetedTestsPassed": 27,
+      "engineTypecheck": "PASS",
+      "coherentProofClockRegression": true,
+      "futureProofStillRejected": true,
+      "sqlite55TaskTestBudgetMs": 60000,
+      "queryDeadlineAndRoundBoundUnchanged": true,
+      "productionChanges": false,
+      "expectedUpdatedTotal": 1894
+    }
   }
 }

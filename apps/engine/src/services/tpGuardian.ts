@@ -10,7 +10,7 @@ import { assembleTargetSelection, authorizedTargetFacts } from './tpTargetContra
 
 export class TpGuardian {
   private retry=new Map<string,{attempt:number;nextAt:number;lastError:string}>();private repairing=new Set<string>();private suspendedPositions=new Set<string>();
-  private unknownAbsenceProof=new Map<string,{firstAt:number;lastAt:number;observations:number}>();private crossedVerificationAt=new Map<string,number>();
+  private unknownAbsenceProof=new Map<string,{firstAt:number;lastAt:number;observations:number}>();private crossedVerificationAt=new Map<string,number>();private orphanTerminalVerifyAt=new Map<string,number>();
   suspend(positionId:string){this.suspendedPositions.add(positionId);}
   resume(positionId:string){this.suspendedPositions.delete(positionId);}
   async cancel(order:TakeProfitOrder){
@@ -227,5 +227,29 @@ export class TpGuardian {
       const exhausted=attempt>=5,delay=Math.min(15*60_000,60_000*2**Math.min(attempt-1,4)),nextAt=Date.now()+delay;this.retry.set(current.id,{attempt,nextAt:exhausted&&!contradiction?Date.now()+15*60_000:nextAt,lastError:message});const latest=this.state.positions.get(current.id);if(latest)this.state.positions.set(current.id,{...latest,tpStatus:contradiction?'POSITION_FACT_UNRESOLVED':exhausted?'MANUAL_REVIEW_REQUIRED':'REPAIR_FAILED',tpOrderId:null,tpLastVerifiedAt:Date.now(),tpCoverageSource:'NONE'});this.events.publish(contradiction?'TP_POSITION_FACT_UNRESOLVED':exhausted?'TP_MANUAL_REVIEW_REQUIRED':'TP_REPAIR_FAILED',{positionId:current.id,orderId:order.id,clientOrderId:submitted?.clientOrderId??order.clientOrderId,submissionOutcome:confirmedTpNotSent(error)?'NOT_ATTEMPTED':rejected?'REJECTED':submitted?'UNKNOWN':'NOT_ATTEMPTED',message,attempt,nextRetryAt:contradiction?nextAt:exhausted?Date.now()+15*60_000:nextAt,durableQuantity:current.quantity,durableSide:current.side,reduceOnlySubmitted:false},current.symbol);}
     finally{this.repairing.delete(current.id);}
   }
-  async sweep(){for(const position of this.state.positions.values())await this.ensure(position);}
+  async sweep(){
+    for(const position of this.state.positions.values())await this.ensure(position);
+    // A position can close while its submitted TP is UNKNOWN. The position loop can no longer
+    // settle that row, so retain it until an exact exchange identity proves a terminal state.
+    for(const order of this.state.tpOrders.values()){
+      if(order.status!=='UNKNOWN'||this.state.positions.has(order.positionId)||!order.clientOrderId||!this.exchange.findTakeProfitByClientOrderId)continue;
+      const now=Date.now(),last=this.orphanTerminalVerifyAt.get(order.id)??0;
+      if(now-last<60_000)continue;
+      this.orphanTerminalVerifyAt.set(order.id,now);
+      try{
+        const verified=await this.exchange.findTakeProfitByClientOrderId(order);
+        if(!verified||!['FILLED','CANCELED','EXPIRED','REJECTED'].includes(verified.status))continue;
+        const retained={...verified,id:order.id,cycleId:order.cycleId,positionId:order.positionId};
+        this.state.tpOrders.set(order.id,retained);
+        this.exitRuntime.recordExitOrderReport('EXACT_ORDER',{
+          symbol:order.symbol,clientOrderId:order.clientOrderId,exchangeOrderId:retained.exchangeOrderId??'',
+          positionSide:order.side==='SELL'?'LONG':'SHORT',status:retained.status,
+          originalQuantity:Math.max(order.quantity,retained.quantity+Number(retained.filledQuantity??0)),
+          executedQuantity:Number(retained.filledQuantity??0),updateTime:retained.updatedAt,
+        },now);
+        this.orphanTerminalVerifyAt.delete(order.id);
+        this.events.publish('TP_ORPHAN_TERMINAL_CONVERGED',{positionId:order.positionId,orderId:order.id,clientOrderId:order.clientOrderId,exchangeOrderId:retained.exchangeOrderId??null,status:retained.status,filledQuantity:retained.filledQuantity??0,source:'BINANCE_EXACT_ORDER'},order.symbol);
+      }catch(error){this.events.publish('TP_ORPHAN_TERMINAL_VERIFY_FAILED',{positionId:order.positionId,orderId:order.id,clientOrderId:order.clientOrderId,message:error instanceof Error?error.message:String(error),failClosed:true},order.symbol);}
+    }
+  }
 }

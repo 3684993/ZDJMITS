@@ -36,11 +36,14 @@ function runtime(authority:'OFF'|'SHADOW'|'ENFORCE'='OFF',extra:Partial<V396Prep
   }));
   return {exitRuntime,state};
 }
-const exitInput=(over:Partial<V396PrepareExitInput>={}):V396PrepareExitInput=>({
-  requestKey:'intent_j1',subject:SUBJECT,quantityUnits:10,limitPrice:95,now:Date.now(),positionVersion:7,settingsVersion:20,riskGeneration:11,
+const exitInput=(over:Partial<V396PrepareExitInput>={}):V396PrepareExitInput=>{
+  // This is one proof snapshot: a second clock read could put checkedAt after input.now.
+  const now=Date.now();
+  return{
+  requestKey:'intent_j1',subject:SUBJECT,quantityUnits:10,limitPrice:95,now,positionVersion:7,settingsVersion:20,riskGeneration:11,
   availableReduceUnits:10,remainingUnits:10,minNotional:5,tickSize:.1,stepSize:1,
-  proof:{kind:'ONE_WAY_REDUCE_ONLY',checkedAt:Date.now(),positionSide:'LONG'},...over,
-});
+  proof:{kind:'ONE_WAY_REDUCE_ONLY',checkedAt:now,positionSide:'LONG'},...over,
+};};
 const NOW=1_800_000_000_000;
 const item=(id:string,kind:CostItem['kind'],amount:number,extra:Partial<CostItem>={}):CostItem=>({id,kind,cycleId:SUBJECT.cycleId,scope:SCOPE,settled:!kind.startsWith('PROJECTED'),amount,status:'EXACT',asset:'USDT',sourceId:`src_${id}`,...extra});
 const modelEstimate=(over:Partial<EstimateInput>={})=>buildExitEstimate({scope:SCOPE,cycleId:SUBJECT.cycleId,positionVersion:7,costVersion:'cost-v1',remainingQuantityUnits:10,side:'LONG',
@@ -178,6 +181,20 @@ describe('J1 continuous convergence and claim release',()=>{
 });
 
 describe('J1 adoption, deadline and JIT',()=>{
+  it('prepares one coherent proof snapshot across clock ticks but still rejects a future proof',async()=>{
+    const {exitRuntime}=runtime('OFF');
+    let tick=Date.now();
+    const clock=vi.spyOn(Date,'now').mockImplementation(()=>tick++);
+    try{
+      const input=exitInput({requestKey:'ticking-clock'});
+      const future=await exitRuntime.prepareManual({...input,proof:{...input.proof,checkedAt:input.now+1}});
+      expect(future).toMatchObject({accepted:false,clientOrderId:null,reasons:['REDUCTION_PROOF_UNPROVEN']});
+      const prepared=await exitRuntime.prepareManual(input);
+      expect(prepared.accepted,prepared.reasons.join('|')).toBe(true);
+      expect(prepared.clientOrderId).toBeTruthy();
+    }finally{clock.mockRestore();exitRuntime.close();}
+  });
+
   it('an exit row without a complete identity is adopted conservatively and blocks a new TP',async()=>{
     const state=new RuntimeState(any({portfolio:{maxPositions:10},riskGovernance:{}}));
     const position=any({id:'p1',symbol:'BTCUSDT',side:'LONG',quantity:1,entryPrice:90,markPrice:100,leverage:5,openedAt:Date.now(),firstObservedAt:Date.now(),cycleId:'cycle_j1',tpStatus:'MISSING',tpOrderId:null});
@@ -218,7 +235,7 @@ describe('J1 adoption, deadline and JIT',()=>{
     const {exitRuntime}=runtime('OFF');
     exitRuntime.recordHumanTakeover(SUBJECT,'MANUAL_SUBMISSION',Date.now());
     const prepared=await exitRuntime.prepareManual(exitInput({requestKey:'jit_intent'}));
-    expect(prepared.accepted).toBe(true);
+    expect(prepared.accepted,prepared.reasons.join('|')).toBe(true);
     const clientOrderId=String(prepared.clientOrderId);
     expect(exitRuntime.jitBeforeSubmit({subject:SUBJECT,clientOrderId,proofCheckedAt:Date.now(),now:Date.now()}).allowed).toBe(true);
     expect(exitRuntime.jitBeforeSubmit({subject:SUBJECT,clientOrderId,proofCheckedAt:Date.now()-60_000,now:Date.now()}).blockers).toContain('REDUCTION_PROOF_EXPIRED');

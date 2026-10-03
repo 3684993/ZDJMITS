@@ -1,0 +1,119 @@
+{
+  "sourceCommit": "2a6b8647d3c8359d3235ac40a0831c18664bdbac",
+  "mainBase": "221e7cd50d876d33d12570746ffbb765223cc68a",
+  "localIntegrationCodeCommit": "422f4ea11b8fabcd754f2ebcfbe9bf5493e7f3f6",
+  "snapshotBranch": "snapshot/8096-2a6b864-20261003",
+  "snapshotRemoteCommit": "b3e692dae0d993c345639e2ecafeebf3e49b3ba7",
+  "snapshotTree": "3f64084f97499dc506184257a2b2a93aa5e41271",
+  "snapshotPublishedFiles": 624,
+  "mainVerification": {
+    "node": "22.23.3",
+    "host": "macOS",
+    "builds": "PASS",
+    "typechecks": "PASS",
+    "temporaryStoragePreflight": "PASS",
+    "contracts": 2,
+    "core": 58,
+    "engine": 1709,
+    "dashboard": 123,
+    "total": 1892,
+    "excludedSuites": [],
+    "sequence": "Full isolated verification passed builds/typechecks/contracts/core/engine; existing main Settings mock omission caused seven dashboard failures. Added the missing API mock and reran the complete dashboard suite: 123 passed. No behavior assertion removed.",
+    "initialVerificationLogSha256": "bc60e1706a695a57df79e1fb2d8ca428144d649d5fd5fee64fbe78b7f2a9ff9f",
+    "dashboardRerunEvidence": "Complete suite observed by integration agent after commit d4b2912; hosted CI remains separate.",
+    "warnings": [
+      "Pre-existing Overview test stub extra slot warnings",
+      "SettingsView unresolved EmptyState component warning, not changed by this batch"
+    ],
+    "hostedCi": "CHECK_PR_STATUS_NOT_LOCAL_PROOF"
+  },
+  "snapshotVerification": {
+    "exactSourceFiles": 617,
+    "syntheticFixtures": 2,
+    "documentationDerivatives": 1,
+    "builds": [
+      "contracts",
+      "core",
+      "engine"
+    ],
+    "affectedTests": 106,
+    "historicalFullSuiteRerun": false,
+    "nativePerformanceClaim": false
+  },
+  "independentReviews": {
+    "mainOrdersAndCi": "PASS",
+    "publicSourceAndFixtures": "PASS"
+  },
+  "liveRuntimeActions": 0,
+  "liveConfigurationChanges": 0,
+  "exchangeInstructions": 0,
+  "mainUpdated": false,
+  "fullReleaseContractConvergence": "NOT_COMPLETE_SNAPSHOT_IS_NOT_A_MERGE_CANDIDATE",
+  "cleanInstallation": {
+    "reason": "Initial hosted CI exposed main internal @zdj dependencies at3.9.4 while workspace packages are3.9.6",
+    "repair": "Align internal dependency references and workspace lock metadata with existing3.9.6 versions",
+    "externalDependencyChanges": false,
+    "freshNpmCi": "PASS",
+    "packageCount": 279,
+    "workspaceSymlinks": 4,
+    "contractsCoreEngineDashboardBuilds": "PASS",
+    "node": "22.23.3",
+    "npm": "10.9.2",
+    "logSha256": "d5ffcb24f271014f3f350fc906c0c0a1cc32c6833fa528f95e206bba285a9cfc"
+  },
+  "windowsClockRepair": {
+    "localCommit": "b5b613d827516bde9cb1232aa1b1019c7a6643d5",
+    "cause": "Batch SQLite setup reused an initial proof time; on slower Windows hosts the production 5000ms proof freshness limit elapsed before preparation completed.",
+    "fix": "Pin Date.now within the fairness tests while keeping real setTimeout deadlines. No product code or freshness threshold changed.",
+    "fairnessTestsPassed": 16,
+    "engineTypecheck": "PASS",
+    "newRegression": "Advance logical time by5001ms while awaiting capabilities; REDUCTION_PROOF_EXPIRED, no order identity or queued task.",
+    "expectedUpdatedSuiteCount": {
+      "contracts": 2,
+      "core": 58,
+      "engine": 1710,
+      "dashboard": 123,
+      "total": 1893
+    },
+    "fullUpdatedSuiteStatus": "CHECK_HOSTED_CI_FOR_THIS_PR_HEAD",
+    "previousHostedRun": {
+      "id": 37079921994,
+      "macos": "SUCCESS",
+      "windows": "FAILURE_FOUR_FAIRNESS_FIXTURE_PREPARATIONS"
+    }
+  },
+  "followupWindowsCi": {
+    "runId": 37080822362,
+    "macos": {
+      "result": "SUCCESS",
+      "contracts": 2,
+      "core": 58,
+      "engine": 1710,
+      "dashboard": 123,
+      "total": 1893
+    },
+    "windows": {
+      "result": "FAILED_TESTS",
+      "enginePassed": 1708,
+      "engineFailed": 2,
+      "dashboardRun": false,
+      "findings": [
+        "55-task real SQLite fairness case consumed42198ms against a20000ms test-only budget",
+        "J1 setup acceptance failed before JIT checks; helper sampled input.now and proof.checkedAt separately, allowing future-proof rejection across a clock tick. Exact historical reasons were not printed."
+      ]
+    },
+    "productionFreshnessChanges": false,
+    "newHeadResult": "READ_LATEST_PR_CHECKS",
+    "repair": {
+      "commit": "ace1b6166506e29930b80c3ac6e9907251f55f1f",
+      "targetedTestsPassed": 27,
+      "engineTypecheck": "PASS",
+      "coherentProofClockRegression": true,
+      "futureProofStillRejected": true,
+      "sqlite55TaskTestBudgetMs": 60000,
+      "queryDeadlineAndRoundBoundUnchanged": true,
+      "productionChanges": false,
+      "expectedUpdatedTotal": 1894
+    }
+  }
+}

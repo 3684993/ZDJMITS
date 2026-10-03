@@ -171,6 +171,15 @@ export class ExternalTradeAdapter implements ExchangeTradeAdapter {
   private historyWindowBudget(source:string){return source==='ORDER_VERIFICATION'?{cap:this.historyReadCap,budget:this.historyBudget}:{cap:200,budget:undefined};}
   private async pagedUserTrades(symbol:string,startTime:number,endTime:number,source='BACKGROUND_AUDIT'){const allowance=this.historyWindowBudget(source);return readHistoryWindows<any>(startTime,endTime,(start,end)=>this.signed<any[]>('GET','/fapi/v1/userTrades',{symbol,startTime:start,endTime:end,limit:1000},'TRADE_AUDIT_USER_TRADES',source),row=>String(row.id??''),allowance.cap,allowance.budget);}
   private async pagedAllOrders(symbol:string,startTime:number,endTime:number,source='BACKGROUND_AUDIT'){const allowance=this.historyWindowBudget(source);return readHistoryWindows<any>(startTime,endTime,(start,end)=>this.signed<any[]>('GET','/fapi/v1/allOrders',{symbol,startTime:start,endTime:end,limit:1000},'TRADE_AUDIT_ALL_ORDERS',source),row=>String(row.orderId??''),allowance.cap,allowance.budget);}
+  private async retryBackgroundHistory<T>(read:()=>Promise<T>):Promise<T>{
+    for(let attempt=0;attempt<3;attempt++){
+      try{return await read();}catch(error){
+        if(attempt===2||!/BINANCE_REQUEST_QUEUE_TIMEOUT|BINANCE_REQUEST_BUDGET_DEFERRED/.test(String(error)))throw error;
+        await new Promise(resolve=>setTimeout(resolve,30_000));
+      }
+    }
+    throw new Error('BACKGROUND_HISTORY_RETRY_EXHAUSTED');
+  }
   async fetchRecentTradeAudit(startTime:number,endTime:number,maxFills=500,additionalSymbols:string[]=[]):Promise<TradeAuditSnapshot>{
     const [incomeRows,positions,openOrders]=await Promise.all([
       this.pagedIncome(startTime,endTime),
@@ -181,8 +190,8 @@ export class ExternalTradeAdapter implements ExchangeTradeAdapter {
     const fills:TradeAuditSnapshot['fills']=[],orders:TradeAuditSnapshot['orders']=[];
     for(const symbol of symbols){
       const [trades,allOrders]=await Promise.all([
-        this.pagedUserTrades(symbol,startTime,endTime),
-        this.pagedAllOrders(symbol,startTime,endTime),
+        this.retryBackgroundHistory(()=>this.pagedUserTrades(symbol,startTime,endTime)),
+        this.retryBackgroundHistory(()=>this.pagedAllOrders(symbol,startTime,endTime)),
       ]);
       for(const row of trades)fills.push({symbol:String(row.symbol),side:String(row.side)==='BUY'?'BUY':'SELL',positionSide:['LONG','SHORT'].includes(String(row.positionSide))?String(row.positionSide) as 'LONG'|'SHORT':'BOTH',orderId:String(row.orderId),clientOrderId:String(row.clientOrderId??''),tradeId:String(row.id??row.tradeId??''),executionTime:Number(row.time??0),qty:Number(row.qty??0),price:Number(row.price??0),realizedPnl:Number(row.realizedPnl??0),commission:Number(row.commission??0),commissionAsset:String(row.commissionAsset??''),maker:Boolean(row.maker)});
       for(const row of allOrders)orders.push({symbol:String(row.symbol),orderId:String(row.orderId),clientOrderId:String(row.clientOrderId??''),side:String(row.side),positionSide:String(row.positionSide??'BOTH'),status:String(row.status),type:String(row.type),origQty:Number(row.origQty??0),executedQty:Number(row.executedQty??0),avgPrice:Number(row.avgPrice??row.price??0),updateTime:Number(row.updateTime??row.time??0)});

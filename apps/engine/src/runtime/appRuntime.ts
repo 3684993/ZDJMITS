@@ -37,6 +37,7 @@ import type { ExchangeTradeAdapter, TradeAuditSnapshot } from "../types.js";
 import { ManualPositionService } from "../services/manualPositionService.js";
 import { TradeRecordIntegrityService } from "../services/tradeRecordIntegrityService.js";
 import { TradeRecordSyncService } from "../services/tradeRecordSyncService.js";
+import { tradeAuditProvenanceSymbols } from "../services/tradeAuditProvenance.js";
 import { RuntimeControlService } from "../services/runtimeControlService.js";
 import { ShadowRunner } from "../services/shadowRunner.js";
 import { ShadowReadinessService } from "../services/shadowReadiness.js";
@@ -1918,14 +1919,7 @@ export class EngineRuntime {
     const safeHours = Math.min(24, Math.max(1, Number(hours) || 5)),
       end = endTime ?? Date.now(),
       start = startTime ?? end - safeHours * 60 * 60_000,
-      provenanceSymbols = [
-        ...new Set(
-          [...this.state.entryOrders.values()]
-            .filter((order) => order.createdAt <= end && order.updatedAt >= start)
-            .map((order) => String(order.symbol).toUpperCase())
-            .filter((symbol) => /^[A-Z0-9]{3,20}(USDT|USDC|BUSD)$/.test(symbol)),
-        ),
-      ];
+      provenanceSymbols = tradeAuditProvenanceSymbols(this.state.entryOrders.values(),this.state.executionFills,start,end);
     // V3.9.4: the adapter owns the complete union and reads income globally plus
     // userTrades/allOrders once per symbol. Do not run a second per-symbol pass.
     return this.trade.fetchRecentTradeAudit(

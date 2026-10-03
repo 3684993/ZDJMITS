@@ -37,6 +37,20 @@ it('collects each audit symbol once without a second income/userTrades/allOrders
   expect(h.calls.filter(url=>url.startsWith('/fapi/v2/positionRisk'))).toHaveLength(0);
 });
 
+it('retries a background history queue deferral without retrying an exchange rejection',async()=>{
+  vi.useFakeTimers();
+  try{
+    const h=adapterHarness(),read=vi.fn().mockRejectedValueOnce(new Error('BINANCE_REQUEST_QUEUE_TIMEOUT')).mockResolvedValueOnce(['ok']);
+    const result=(h.adapter as any).retryBackgroundHistory(read);
+    await vi.advanceTimersByTimeAsync(30_000);
+    expect(await result).toEqual(['ok']);
+    expect(read).toHaveBeenCalledTimes(2);
+    const rejected=vi.fn().mockRejectedValue(new Error('Binance HTTP 429'));
+    await expect((h.adapter as any).retryBackgroundHistory(rejected)).rejects.toThrow('429');
+    expect(rejected).toHaveBeenCalledTimes(1);
+  }finally{vi.useRealTimers();}
+});
+
 
 it('single-flights three concurrent exact-order readers and reuses the short cache',async()=>{
  const h=adapterHarness(),order:any={id:'entry_1',clientOrderId:'ML_TEST',exchangeOrderId:'7',symbol:'BTCUSDT',side:'LONG',quantity:1,price:100,filledQuantity:0,leverage:20,status:'WORKING',createdAt:1,updatedAt:1,absoluteExpiresAt:9999999999999,repriceCount:0,intentId:'intent_1',reachability:1};

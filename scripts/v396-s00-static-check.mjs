@@ -199,13 +199,27 @@ for (const path of evidenceFiles) {
 // S00-T03: experiment identity changes when one byte of a fixture or a bound input
 // changes, so an old experiment identity cannot be reused.
 const identitySources = baseline.identityHashSources;
+// The September S00 experiment binds the September default. V3.9.7 changed
+// that source in 3fb24ec, so verify the preserved baseline and current default
+// as separate identities; never rewrite the original manifest.
+const historicalSettingsPath = 'docs/reports/v397-final-system-closeout-20261003/v396-settings.default.json';
+const currentSettingsIdentity = JSON.parse(read('docs/reports/v397-final-system-closeout-20261003/current-settings-identity.json'));
+assert(currentSettingsIdentity.historicalCommit === baseline.actualBaseSha,
+  'historical settings snapshot is not tied to the S00 baseline commit');
+assert(currentSettingsIdentity.currentSource === identitySources.settingsDefault,
+  'current settings identity names a different source');
+assert(sha256Identity(read(historicalSettingsPath)) === baseline.identityHashes.settingsDefault,
+  'historical settings snapshot differs from the original S00 hash');
+assert(sha256Identity(read(currentSettingsIdentity.currentSource)) === currentSettingsIdentity.currentSha256,
+  'current settings default differs from its V3.9.7 identity');
 assert(identitySources && Object.keys(identitySources).length >= 5, 'baseline identity hashes are not bound to files');
 assert(baseline.identityHashNormalisation === 'sha256 over the file text with CRLF normalised to LF',
   'the identity hash rule is not declared');
 assert(sha256Identity('a\r\nb') === sha256Identity('a\nb'), 'line-ending normalisation does not stabilise the identity');
 assert(baseline.fixtureSchemaVersion === fixture.schemaVersion, 'the declared fixture schema does not match the delivered fixture');
 for (const [key, path] of Object.entries(identitySources)) {
-  assert(baseline.identityHashes[key] === sha256Identity(read(path)), `baseline identity hash no longer matches its source: ${key} -> ${path}`);
+  const boundPath = key === 'settingsDefault' ? historicalSettingsPath : path;
+  assert(baseline.identityHashes[key] === sha256Identity(read(boundPath)), `baseline identity hash no longer matches its source: ${key} -> ${boundPath}`);
 }
 const temp = mkdtempSync(join(tmpdir(), 'zdj-v396-s00-'));
 try {
@@ -217,7 +231,7 @@ try {
   assert(readFileSync(join(temp, 'fixture-mutated.json'), 'utf8') === changed, 'mutated fixture was not written to isolated temp storage');
   assert(sha256Identity(changed) !== baseline.identityHashes.fixtureFile, 'mutated fixture would reuse the declared experiment identity');
   for (const key of ['settingsDefault', 's00Specification', 'contracts', 'packageLock']) {
-    const source = identitySources[key];
+    const source = key === 'settingsDefault' ? historicalSettingsPath : identitySources[key];
     const bytes = read(source);
     assert(sha256Identity(`${bytes} mutated`) !== baseline.identityHashes[key], `one-byte drift in ${source} would reuse the declared identity`);
     writeFileSync(join(temp, `${key}.baseline`), bytes);

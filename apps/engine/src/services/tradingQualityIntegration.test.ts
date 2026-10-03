@@ -20,9 +20,9 @@ function ready(){
       isClosed:true,asOf:now-1000,barCloseTime:now-1000,receivedAt:now,lastClosedBar:{openTime:now-1000-period+1,closeTime:now-1000,open:99.5,high:101,low:99,close:100.5,volume:100}});
   }
   h.packet.market={...h.packet.market,...m};
-  h.ai.decide.mockImplementation(async(_packet:any)=>{
-    return {runId:'quality-run',decision:{...h.supplied,decision:'PLACE_LONG',tradeSide:'LONG',direction:'LONG',quantityUnits:1000,opportunityType:'TREND_RESUMPTION',timingEvent:null,
-      idealPrice:100,acceptablePriceRange:{min:99.99,max:100.01},horizonMinutes:1}};
+  h.ai.decide.mockImplementation(async(decisionPacket:any)=>{
+    return {runId:'quality-run',decision:h.candidateDecision(decisionPacket,'LONG',0,{opportunityType:'TREND_RESUMPTION',timingEvent:null,
+      idealPrice:100,acceptablePriceRange:{min:99.99,max:100.01},horizonMinutes:1})};
   });
   return {...h,m,now};
 }
@@ -78,7 +78,7 @@ describe('real EntryCoordinator opportunity authorization',()=>{
   it.each([101,102.44])('reviewPending preserves frozen AI authorization at proposed reprice %s',async(nextPrice)=>{
     const h=ready();h.m.technical['15m'].recentSwingHigh=102.45;
     const original=h.ai.decide.getMockImplementation()!;
-    h.ai.decide.mockImplementation(async(...args:any[])=>{const r:any=await original(...args);r.decision.acceptablePriceRange={min:98.5,max:102.5};return r;});
+    h.ai.decide.mockImplementation(async(...args:any[])=>{const r:any=await (original as any)(...args);r.decision.acceptablePriceRange={min:98.5,max:102.5};return r;});
     await h.run();expect(h.exchange.placeEntry).toHaveBeenCalledOnce();
     const o=[...h.state.entryOrders.values()][0];o.updatedAt=Date.now()-10000;h.state.settings.entry.nearMarket.enabled=true;h.m.recentTradedPrices=[{price:nextPrice,lastSeenAt:Date.now()}];
     Object.assign(h.m.quote,{bid:nextPrice,ask:nextPrice+.01,last:nextPrice,mark:nextPrice,ts:Date.now()});

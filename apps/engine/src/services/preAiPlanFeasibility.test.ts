@@ -22,14 +22,13 @@ const envelopeOf = () => buildPreAiExecutionEnvelope(harness().state, fixtureSym
 function armedHarness() {
   const h = harness();
   const quote = h.state.snapshots.get(fixtureSymbol)!.quote;
-  (h.ai as any).decide.mockImplementation(async () => ({
+  (h.ai as any).decide.mockImplementation(async (decisionPacket:any) => ({
     runId: 'pre-ai-feasibility-run',
-    decision: {
-      ...h.supplied, decision: 'PLACE_LONG', tradeSide: 'LONG', direction: 'LONG', structureDirection: 'LONG',
-      quantityUnits: 1000, idealPrice: Number(quote.bid),
+    decision: h.candidateDecision(decisionPacket,'LONG',0,{
+      idealPrice: Number(quote.bid),
       acceptablePriceRange: {min: Number(quote.bid), max: Number(quote.ask) + Number(quote.tickSize) * 10},
       horizonMinutes: 3,
-    },
+    }),
   }));
   return h;
 }

@@ -67,28 +67,27 @@ describe('V3.9.6 published target-horizon contract', () => {
       const local = harness();
       local.state.settings.entry.minimumInitialMarginByQuote.USDT = 1;
       local.state.settings.entry.minimumOrderNotionalByQuote.USDT = 200;
-      (local.ai as any).decide.mockImplementation(async () => ({
-        runId: `horizon-${targetHorizonMinutes}`,
-        decision: {...local.supplied, decision: 'PLACE_LONG', tradeSide: 'LONG', direction: 'LONG', structureDirection: 'LONG',
-          quantityUnits: 1000, idealPrice: Number(quote.bid),
-          acceptablePriceRange: {min: Number(quote.bid), max: Number(quote.ask) + Number(quote.tickSize) * 10},
-          horizonMinutes: 3,
-          profitTakePlan: {targetPrice: Number(quote.ask) + Number(quote.tickSize) * 20,
-            acceptableTargetRange: {min: Number(quote.ask), max: Number(quote.ask) + Number(quote.tickSize) * 40},
-            targetHorizonMinutes, targetReason: 'contract test', evidenceRefs: []}},
-      }));
+      (local.ai as any).decide.mockImplementation(async (decisionPacket:any) => {
+        const rows=decisionPacket.executionEnvelope.LONG.planCandidates as any[],index=rows.findIndex(row=>row.targetHorizonMinutes===targetHorizonMinutes),chosenIndex=index>=0?index:0;
+        const exact=local.candidateDecision(decisionPacket,'LONG',chosenIndex,{idealPrice:Number(quote.bid),
+          acceptablePriceRange:{min:Number(quote.bid),max:Number(quote.ask)+Number(quote.tickSize)*10},horizonMinutes:3});
+        const decision=index>=0?exact:{...exact,profitTakePlan:{...exact.profitTakePlan,targetHorizonMinutes}};
+        return{runId:`horizon-${targetHorizonMinutes}`,decision};
+      });
       await local.run();
-      const blocked = local.events.find((event: any) => event.type === 'ENTRY_DECISION_BLOCKED' && event.payload?.stage === 'TRADE_PLAN');
-      const resolved = local.events.find((event: any) => event.type === 'ENTRY_ECONOMIC_SIZE_RESOLVED');
-      return {plan: local.events.some((event: any) => event.type === 'TRADE_PLAN_PERSISTED'), refusal: (blocked?.payload as any)?.reasons?.join('|') ?? null, resolved: resolved?.payload as any};
+      const blocked = local.events.find((event: any) => event.type === 'ENTRY_DECISION_BLOCKED');
+      const selected = local.events.find((event: any) => event.type === 'AI_CANDIDATE_SELECTED');
+      const plan=[...local.state.tradePlans.values()][0] as any;
+      return {plan, refusal: String((blocked?.payload as any)?.reason??(blocked?.payload as any)?.reasons?.join('|')??''), selected:selected?.payload as any};
     };
     const legal = await run(published[0]);
     expect(legal.refusal ?? '', `a published horizon must be writable: ${legal.refusal}`).not.toMatch(/CANDIDATE_HORIZON_UNSUPPORTED/);
-    expect(legal.resolved, 'the system must resolve an economic size before persisting Entry').toBeTruthy();
-    expect(legal.resolved.notionalQuote).toBeGreaterThanOrEqual(200);
-    expect(legal.resolved.quantityUnits).toBeGreaterThan(1000);
+    expect(legal.plan, 'the exact selected candidate must persist before Entry').toBeTruthy();
+    expect(legal.selected).toMatchObject({selectedCandidateId:legal.plan.selectedCandidateId,targetHorizonMinutes:published[0],selectionAuthority:'PRIMARY'});
+    expect(legal.plan.notionalUsd).toBeGreaterThanOrEqual(200);
+    expect(legal.plan.quantityUnits).toBeGreaterThan(1000);
     const nonLadderPreference = await run(30);
-    expect(nonLadderPreference.plan).toBe(true);
-    expect(published).toContain(nonLadderPreference.resolved.targetHorizonMinutes);
+    expect(nonLadderPreference.plan).toBeFalsy();
+    expect(nonLadderPreference.refusal).toBe('AI_CANDIDATE_TARGET_RESTATEMENT_MISMATCH');
   });
 });

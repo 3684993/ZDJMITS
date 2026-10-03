@@ -1760,7 +1760,7 @@ export class SettingsStore {
     if(this.operationalWorker)return;
     const worker=new Worker(new URL('../workers/sqliteHealthWorker.js',import.meta.url),{workerData:{dbPath:path.join(this.dataDir,'zdj-settings.sqlite'),intervalMs}});
     worker.on('message',(value:any)=>{this.operationalCache={at:Date.now(),value:{integrity:value.integrity===true?true:value.integrity===false?false:null,status:value.integrity===true?'HEALTHY':value.integrity===false?'OFFLINE':'UNKNOWN',auditEvents:Number(value.auditEvents??0),runtimePersistedAt:Number.isFinite(value.runtimePersistedAt)?Number(value.runtimePersistedAt):null,checkedAt:Number.isFinite(value.checkedAt)?Number(value.checkedAt):null,error:value.error?String(value.error):null}};});
-    worker.on('error',(error)=>{this.operationalCache={at:Date.now(),value:{integrity:null,status:'UNKNOWN',auditEvents:this.operationalCache?.value.auditEvents??0,runtimePersistedAt:this.operationalCache?.value.runtimePersistedAt??null,checkedAt:Date.now(),error:error.message}};});
+    worker.on('error',(error)=>{this.operationalCache={at:Date.now(),value:{integrity:null,status:'UNKNOWN',auditEvents:this.operationalCache?.value.auditEvents??0,runtimePersistedAt:this.operationalCache?.value.runtimePersistedAt??null,checkedAt:Date.now(),error:error instanceof Error?error.message:String(error)}};});
     this.operationalWorker=worker;
   }
   /** A single verified baseline, shared by both manual sync paths, never one whole DB per sync. */

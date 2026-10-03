@@ -9,14 +9,13 @@ const RUN = 'chain-run';
 function armed(over: Record<string, unknown> = {}) {
   const h = harness();
   const quote = h.state.snapshots.get(fixtureSymbol)!.quote;
-  (h.ai as any).decide.mockImplementation(async () => ({
+  (h.ai as any).decide.mockImplementation(async (decisionPacket:any) => ({
     runId: RUN,
-    decision: {
-      ...h.supplied, decision: 'PLACE_LONG', tradeSide: 'LONG', direction: 'LONG', structureDirection: 'LONG',
-      quantityUnits: 1000, idealPrice: Number(quote.bid),
+    decision: h.candidateDecision(decisionPacket,'LONG',0,{
+      idealPrice: Number(quote.bid),
       acceptablePriceRange: {min: Number(quote.bid), max: Number(quote.ask) + Number(quote.tickSize) * 10},
       horizonMinutes: 3, ...over,
-    },
+    }),
   }));
   return h;
 }
@@ -106,6 +105,7 @@ it('a throwing telemetry subscriber cannot alter the real conversion/submit chai
   await h.run();expect(h.ai.decide).toHaveBeenCalledOnce();expect(h.exchange.placeEntry).toHaveBeenCalledOnce();
   expect(h.state.entryReservations.size).toBe(1);expect(h.state.entryIntents.size).toBe(1);expect(h.state.entryOrders.size).toBe(1);
   const observation=h.events.find((row:any)=>row.type==='FROZEN_CHOICE_CONVERSION_OBSERVED')!.payload as any;
-  expect(observation).toMatchObject({side:'LONG',selectedQuantityUnits:1000,selectedHorizonMinutes:3,conversion:'CONVERTED'});
+  expect(observation).toMatchObject({side:'LONG',selectedCandidateId:expect.any(String),selectedQuantityUnits:expect.any(Number),selectedHorizonMinutes:3,conversion:'CONVERTED'});
+  expect(observation.selectedQuantityUnits).toBeGreaterThan(0);
   expect(outcome(h.events).executionState).toBe('SUBMITTED');
 });

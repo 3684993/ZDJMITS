@@ -120,11 +120,15 @@ export class PositionReviewScheduler {
    */
   accept(ticket:ReviewTicket,input:{now:number;usage:{inputTokens:number|null;outputTokens:number|null};
     status:AiUsageRow['status'];finishReason?:string|null;modelIdentity?:string|null;promptHash:string;latencyMs?:number|null;
-    transportAttempts?:number|null;proposal?:unknown}){
+    transportAttempts?:number|null;proposal?:unknown;failureBudgetExempt?:boolean}){
     const owner=this.ports.ownerOf(ticket.scope,ticket.cycleId);
     const usage=this.ports.ledger.record(usageRowOf(ticket,input));
     const budget=this.budgets.get(ticket.budgetKey);
-    if(input.status==='FAILED'||input.status==='TIMEOUT'||input.status==='TRUNCATED'){if(budget)budget.failures++;}
+    // A proven implementation defect before inference is archived, but does not exhaust
+    // the model failure budget. Endpoint and model failures still count as before.
+    if(input.status==='FAILED'||input.status==='TIMEOUT'||input.status==='TRUNCATED'){
+      if(budget&&input.failureBudgetExempt!==true)budget.failures++;
+    }
     if(!owner)return{usable:false,reason:'OWNER_UNTRACKED_AT_CALLBACK',archived:true,row:usage.row};
     if(ticket.reviewOnly?owner.ownerState!=='HUMAN_MANAGED':owner.ownerState!=='AI_ACTIVE')return{usable:false,reason:`OWNER_AUTHORITY_CHANGED:${owner.ownerState}`,archived:true,row:usage.row};
     if(owner.ownerVersion!==ticket.ownerVersion)return{usable:false,reason:'OWNER_VERSION_CHANGED_DURING_MODEL_CALL',archived:true,row:usage.row};

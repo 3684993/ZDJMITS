@@ -6,4 +6,6 @@ const testTimeout = engineTestTimeoutMs(process.env.CI);
 // misread as "the config never applied".
 console.log(`VITEST_TEST_TIMEOUT=${testTimeout} CI=${process.env.CI ?? ''}`);
 
-export default defineConfig({ test: { testTimeout } });
+// Keep the local full-suite gate within a bounded process footprint when the
+// three model services are loaded; the default worker count exhausted memory.
+export default defineConfig({ test: { testTimeout, maxWorkers: 4 } });

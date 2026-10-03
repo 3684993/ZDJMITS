@@ -107,7 +107,8 @@ export class PositionReviewRunner {
         // A failed call still goes through the scheduler: the row is what proves a request was made
         // and failed, and the failure budget is what stops a dead endpoint from being retried forever.
         const applied=this.ports.scheduler.accept(ticket,{
-          now:Date.now(),usage:{inputTokens:null,outputTokens:null},status:'FAILED',finishReason:null,promptHash:'missing-prompt-hash'});
+          now:Date.now(),usage:{inputTokens:null,outputTokens:null},status:'FAILED',finishReason:null,promptHash:'missing-prompt-hash',
+          failureBudgetExempt:message==='PRE_AI_EXECUTION_ENVELOPE_MISSING'});
         report.failed++;
         this.addVerdict({cycleId,scope,planRef:plan.planId,planVersion:plan.planVersion,decision:'REVIEW_FAILED',usable:false,
           reason:'REVIEW_CALL_FAILED',at:Date.now(),runId:null,ownerVersion:ticket.ownerVersion,triggerKey:ticket.triggerKey});

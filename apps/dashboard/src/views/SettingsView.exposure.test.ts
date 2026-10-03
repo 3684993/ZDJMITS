@@ -10,7 +10,7 @@ import Settings from './SettingsView.vue';
 import { api } from '../api/client';
 
 vi.mock('../api/client', () => ({
-  api: { settings: vi.fn(), connections: vi.fn(), resources: vi.fn(), governanceSettings: vi.fn(), saveSettings: vi.fn() },
+  api: { settings: vi.fn(), connections: vi.fn(), resources: vi.fn(), aiDutyRoutes: vi.fn(), governanceSettings: vi.fn(), saveSettings: vi.fn() },
   saveExchangeCredentials: vi.fn(),
   testPrivateCredentials: vi.fn(),
 }));
@@ -38,6 +38,7 @@ beforeEach(() => {
   vi.clearAllMocks();
   vi.mocked(api.connections).mockResolvedValue({ credentials: { configured: false } } as never);
   vi.mocked(api.resources).mockResolvedValue({ items: [], settingsVersion: 190 } as never);
+  vi.mocked(api.aiDutyRoutes).mockResolvedValue({ routes: [], resources: [], settingsVersion: 190 } as never);
   vi.mocked(api.governanceSettings).mockResolvedValue({ fields: [], settingsVersion: 190 } as never);
   vi.mocked(api.saveSettings).mockImplementation(async (body: any) => body);
 });

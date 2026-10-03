@@ -18,4 +18,17 @@ describe('human-managed position review evidence',()=>{
       modelIdentity:'qwen-review',promptHash:'hash'});
     expect(accepted).toMatchObject({usable:true,reason:'REVIEW_RESULT_APPLICABLE'});
   });
+  it('archives a pre-model failure without exhausting the model failure budget',()=>{
+    const recorded:any[]=[];
+    const scheduler=new PositionReviewScheduler({ledger:{record:vi.fn((row:any)=>{recorded.push(row);return{written:true,row};})} as any,
+      settings:()=>({normalReviewsPerPlan:2,exceptionReviewsPerPlan:1,failureBudget:1,minIntervalMs:1_000,authorityTtlMs:30_000}),
+      ownerOf:()=>({ownerState:'HUMAN_MANAGED',ownerVersion:7,deadline:null,reviewEligible:true})});
+    const first=scheduler.reserve({positionId:'pos-1',cycleId:'cycle-1',scope:'scope-1',versions,trigger:'SCHEDULED',now:100_000});
+    expect(first.granted).toBe(true);
+    if(!first.granted)return;
+    scheduler.accept(first.ticket,{now:100_010,usage:{inputTokens:null,outputTokens:null},status:'FAILED',promptHash:'missing-prompt-hash',failureBudgetExempt:true});
+    expect(recorded.at(-1)).toMatchObject({status:'FAILED',errorCode:'REVIEW_CALL_FAILED'});
+    expect(scheduler.state()[0]).toMatchObject({used:0,failures:0});
+    expect(scheduler.reserve({positionId:'pos-1',cycleId:'cycle-1',scope:'scope-1',versions,trigger:'SCHEDULED',now:101_001}).granted).toBe(true);
+  });
 });

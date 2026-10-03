@@ -522,6 +522,15 @@ describe('S07-A/B production consumer: the review tick',()=>{
     expect(x.scheduler.state()[0].failures).toBe(1);
   });
 
+  it('does not poison a review budget for the known pre-inference envelope defect',async()=>{
+    const x=runnerFixture();
+    x.review.mockRejectedValueOnce(new Error('PRE_AI_EXECUTION_ENVELOPE_MISSING'));
+    expect(await x.runner.tick(NOW)).toMatchObject({reserved:1,failed:1});
+    expect(x.scheduler.state()[0]).toMatchObject({used:0,failures:0});
+    expect(x.seen.find(event=>event.type==='POSITION_REVIEW_FAILED')?.payload)
+      .toMatchObject({reason:'PRE_AI_EXECUTION_ENVELOPE_MISSING',reviewFailures:0,orderSent:false});
+  });
+
   it('checkpoints the spent budget into the runtime state the writer serializes',async()=>{
     const x=runnerFixture();
     await x.runner.tick(NOW);

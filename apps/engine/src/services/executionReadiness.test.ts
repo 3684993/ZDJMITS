@@ -125,10 +125,9 @@ async function equipped(side: 'LONG' | 'SHORT') {
   h.state.executionGovernance = { ...h.state.executionGovernance, mode: 'AUTO_RUNNING' };
   h.state.snapshots.set('BTCUSDT', { ...h.state.snapshots.get(h.packet.symbol)!, symbol: 'BTCUSDT' });
   h.state.snapshots.set('ETHUSDT', { ...h.state.snapshots.get(h.packet.symbol)!, symbol: 'ETHUSDT' });
-  (h.supplied as { quantityUnits?: number }).quantityUnits = 1000;
   const market = h.state.snapshots.get(h.packet.symbol)!;
   const tickSize = market.quote.tickSize, price = side === 'LONG' ? market.quote.bid : market.quote.ask;
-  h.ai.decide.mockResolvedValue({ runId: `chain-${side}`, decision: { ...h.supplied, decision: `PLACE_${side}`, direction: side, tradeSide: side, quantityUnits: 1000, idealPrice: price, acceptablePriceRange: { min: price - tickSize * 20, max: price + tickSize * 20 }, horizonMinutes: 3, reachability: 0.9, reason: 'NATURAL_PLACE_CHAIN' } } as never);
+  h.ai.decide.mockImplementation(async (decisionPacket: any) => ({ runId: `chain-${side}`, decision: h.candidateDecision(decisionPacket, side, 0, { idealPrice: price, acceptablePriceRange: { min: price - tickSize * 20, max: price + tickSize * 20 }, horizonMinutes: 3, reachability: 0.9, reason: 'NATURAL_PLACE_CHAIN' }) }) as never);
   const settle = async (ms = 120) => { await new Promise(resolve => setTimeout(resolve, ms)); };
   const cycle = async () => {
     h.coordinator.noteExecutionReadiness(executionReadiness({

@@ -15,13 +15,10 @@ const settingsWith = (over: Record<string, any>) => ({...structuredClone(harness
 function armedHarness(decideSide: 'LONG' | 'SHORT', tune?: (state: any) => void) {
   const h = harness();
   tune?.(h.state);
-  const quote = h.state.snapshots.get(fixtureSymbol)!.quote;
   (h.ai as any).probePrimaryIfDue = vi.fn(async () => {});
-  (h.ai as any).decide.mockImplementation(async () => ({
+  (h.ai as any).decide.mockImplementation(async (decisionPacket:any) => ({
     runId: 'envelope-side-run',
-    decision: {...h.supplied, decision: `PLACE_${decideSide}`, tradeSide: decideSide, direction: decideSide, structureDirection: decideSide,
-      quantityUnits: 1000, idealPrice: decideSide === 'LONG' ? Number(quote.bid) : Number(quote.ask),
-      acceptablePriceRange: {min: Number(quote.bid), max: Number(quote.ask) + Number(quote.tickSize) * 10}, horizonMinutes: 3},
+    decision: h.candidateDecision(decisionPacket,decideSide,0),
   }));
   return h;
 }
@@ -94,7 +91,7 @@ describe('the pre-AI envelope publishes which sides are actually executable', ()
     expect(h.ai.decide).toHaveBeenCalled();
   });
 
-  /** The sizing plan is the layer that will produce the order size, so its own verdict is a pre-AI fact. */
+  /** Legacy route sizing remains observable state, but it is not an Entry sizing authority. */
   const routed = (shortFacts: any, longFacts: any) => (state: any) => {
     state.runtimeControl.capital.routedCandidates = [{symbol: fixtureSymbol, underlying: 'FIX', quoteAsset: 'USDT', leverage: 8, admission: 'ALLOW', reason: 'EXECUTABLE',
       longPlanFacts: longFacts, shortPlanFacts: shortFacts}] as never;
@@ -103,16 +100,19 @@ describe('the pre-AI envelope publishes which sides are actually executable', ()
     capacityRoom: {source: 'SHORT_EXPOSURE', ceilingUsd: 5_248.68, usedUsd: 7_438.39, roomUsd: 0}};
   const allowed = {present: true, admission: 'ALLOW_REDUCED_SIZE', reasons: ['EXPOSURE_REDUCED_SIZE'], minExecutableMarginUsd: 1, notionalUsd: 197.01, marginUsd: 24.63, leverage: 8};
 
-  it('EP-06 a side the sizing plan already refused is named before the model spends a run on it', () => {
+  it('EP-06 a legacy routed sizing refusal cannot delete a funded side or narrow its candidate budget', () => {
     const h = harness();
+    const baseline=buildPreAiExecutionEnvelope(h.state,fixtureSymbol);
     routed(refused, allowed)(h.state);
     const envelope = buildPreAiExecutionEnvelope(h.state, fixtureSymbol);
     expect(envelope.LONG.executable).toBe(true);
-    expect(envelope.SHORT.executable).toBe(false);
-    expect(envelope.executableSides).toEqual(['LONG']);
-    expect(envelope.SHORT.authorization).toBe('NOT_EXECUTABLE:SIDE_PLAN_REJECT_EXPOSURE_LIMIT');
+    expect(envelope.SHORT.executable).toBe(true);
+    expect(envelope.executableSides).toEqual(['LONG','SHORT']);
+    expect(envelope.SHORT.authorization).toBe('EXECUTABLE');
+    expect(envelope.SHORT.maxNotionalUsd).toBe(baseline.SHORT.maxNotionalUsd);
+    expect(envelope.entryCapitalBudget).toEqual(baseline.entryCapitalBudget);
     const facts: any = compactEntryFacts({...h.packet, executionEnvelope: envelope} as never);
-    expect(facts.EXECUTION_ENVELOPE.sideAuthorization.SHORT).toContain('SIDE_PLAN_REJECT_EXPOSURE_LIMIT');
+    expect(facts.EXECUTION_ENVELOPE.sideAuthorization.SHORT).toBe('EXECUTABLE');
     expect(facts.EXECUTION_ENVELOPE.sideAuthorization.LONG).toBe('EXECUTABLE');
   });
 
@@ -166,15 +166,15 @@ describe('the pre-AI envelope publishes which sides are actually executable', ()
     expect(String(envelope.LONG.authorization)).toBe('NOT_EXECUTABLE:BUSINESS_MINIMUM_EXCEEDS_AVAILABLE_FUNDS');
   });
 
-  it('EP-12 enforces business notional floors independently of exchange minimums and user reductions', () => {
+  it('EP-12 uses Settings as the sole business notional authority for every symbol', () => {
     const h=harness(),sample=h.state.snapshots.get(fixtureSymbol)!;
     h.state.snapshots.set('BTCUSDT',{...sample,symbol:'BTCUSDT',quote:{...sample.quote,last:60_000,bid:59_999,ask:60_001,minNotional:5,minQty:.001,stepSize:.001}} as any);
     h.state.snapshots.set('ETHUSDT',{...sample,symbol:'ETHUSDT',quote:{...sample.quote,last:3_000,bid:2_999,ask:3_001,minNotional:5,minQty:.001,stepSize:.001}} as any);
     h.state.settings.entry.minimumOrderNotionalByQuote.USDT=100;
     const envelope=buildPreAiExecutionEnvelope(h.state,'BTCUSDT');
-    expect(envelope.LONG.minimumOrderNotionalQuote).toBe(200);
-    expect(envelope.SHORT.minimumOrderNotionalQuote).toBe(200);
-    expect(envelope.LONG.minQuantityUnits*Number(h.state.snapshots.get('BTCUSDT')!.quote.stepSize)*Number(h.state.snapshots.get('BTCUSDT')!.quote.last)).toBeGreaterThanOrEqual(200);
+    expect(envelope.LONG.minimumOrderNotionalQuote).toBe(100);
+    expect(envelope.SHORT.minimumOrderNotionalQuote).toBe(100);
+    expect(envelope.LONG.minQuantityUnits*Number(h.state.snapshots.get('BTCUSDT')!.quote.stepSize)*Number(h.state.snapshots.get('BTCUSDT')!.quote.last)).toBeGreaterThanOrEqual(100);
     const other=buildPreAiExecutionEnvelope(h.state,'ETHUSDT');
     expect(other.LONG.minimumOrderNotionalQuote).toBe(100);
     expect(other.SHORT.minimumOrderNotionalQuote).toBe(100);

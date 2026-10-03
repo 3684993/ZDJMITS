@@ -3,7 +3,7 @@ import {readFileSync} from 'node:fs';
 import {RuntimeState} from '../state/runtimeState.js';
 import {SystemSettingsSchema,type MarketSymbolSnapshot} from '@zdj/contracts';
 import {candidateAnalysisEligibility,evaluateEntryExecutionPermit,portfolioRiskObservation} from './entryPermissionModel.js';
-import {buildPreAiExecutionEnvelope,entryCandidateMarginBudgetUsd} from './preAiExecutionEnvelope.js';
+import {buildPreAiExecutionEnvelope} from './preAiExecutionEnvelope.js';
 import {acquireExecutionLease,activeExecutionLeaseMargin} from './executionLease.js';
 import {bookAdmissionSummary} from './admissionCapacityReader.js';
 import {projectHumanManaged} from './humanManagedProjection.js';
@@ -116,15 +116,15 @@ describe('P4 analysis eligibility is not an order permission',()=>{
 });
 
 describe('P4 analysis lease is an earmark, not the whole balance',()=>{
-  it('the lease is capped by the candidate budget and leaves room for another route',()=>{
+  it('the lease protects only the minimum executable candidate and leaves room for another route',()=>{
     const now=Date.now();
     const state=new RuntimeState(fundsOnly);
     state.account={status:'READY',equityUsd:20_000,assets:[{asset:'USDT',availableBalance:4_000,asOf:now}],asOf:now} as any;
     state.snapshots.set('BTCUSDT',any(snapshotOf('BTCUSDT')));
     state.universe.push(any({symbol:'BTCUSDT',eligible:true,rank:1,recommendedLeverage:10}));
     const envelope=buildPreAiExecutionEnvelope(state,'BTCUSDT',now);
-    expect(envelope.leaseBudget?.cappedBy).toBe('CONFIGURED_PER_POSITION_MARGIN');
-    expect(envelope.leaseRequiredMarginUsd).toBeLessThanOrEqual(envelope.leaseBudget!.budgetUsd);
+    expect(envelope.leaseBudget?.cappedBy).toBe('MINIMUM_EXECUTABLE_CANDIDATE');
+    expect(envelope.leaseRequiredMarginUsd).toBe(envelope.leaseBudget!.budgetUsd);
     expect(envelope.leaseRequiredMarginUsd).toBeLessThan(4_000);
     const lease=acquireExecutionLease(state,{symbol:'BTCUSDT',quoteAsset:'USDT',reservedMarginUsd:envelope.leaseRequiredMarginUsd,ttlMs:135_000},now);
     expect(lease.ok).toBe(true);
@@ -135,19 +135,19 @@ describe('P4 analysis lease is an earmark, not the whole balance',()=>{
     expect(remaining).toBeGreaterThan(3_000);
   });
 
-  it('a routed plan margin wins over the generic per-position cap',()=>{
-    const state=new RuntimeState(fundsOnly);
-    state.runtimeControl.capital.routedCandidates=[any({symbol:'ETHUSDT',longPlanFacts:{marginUsd:42.5},shortPlanFacts:{marginUsd:42.5}})];
-    const budget=entryCandidateMarginBudgetUsd(state,'ETHUSDT',{leverage:10,minimumLegalNotionalUsd:5});
-    expect(budget.source).toBe('ROUTED_PLAN_MARGIN');
-    expect(budget.budgetUsd).toBeGreaterThanOrEqual(42.5);
-  });
-
-  it('the floor is the exchange minimum, so a tiny budget never earmarks zero',()=>{
-    const state=new RuntimeState({...fundsOnly,portfolioIntelligence:{...fundsOnly.portfolioIntelligence,maxMarginPerPositionUsd:0},portfolio:{...fundsOnly.portfolio,entryMarginUsd:0}});
-    const budget=entryCandidateMarginBudgetUsd(state,'XUSDT',{leverage:10,minimumLegalNotionalUsd:50});
-    expect(budget.source).toBe('EXCHANGE_MINIMUM_MARGIN');
-    expect(budget.budgetUsd).toBeCloseTo(5,10);
+  it('publishes the candidate capital budget and ignores legacy route sizing facts under TESTNET funds-only',()=>{
+    const now=Date.now(),state=new RuntimeState(fundsOnly);
+    state.account={status:'READY',equityUsd:20_000,assets:[{asset:'USDT',availableBalance:4_000,asOf:now}],asOf:now} as any;
+    state.snapshots.set('BTCUSDT',any(snapshotOf('BTCUSDT')));
+    state.universe.push(any({symbol:'BTCUSDT',eligible:true,rank:1,recommendedLeverage:10}));
+    const baseline=buildPreAiExecutionEnvelope(state,'BTCUSDT',now);
+    state.runtimeControl.capital.routedCandidates=[any({symbol:'BTCUSDT',longPlanFacts:{admission:'REJECT_EXPOSURE_LIMIT',marginUsd:42.5},shortPlanFacts:{admission:'REJECT_QUOTE_MARGIN',marginUsd:1}})];
+    const routed=buildPreAiExecutionEnvelope(state,'BTCUSDT',now);
+    expect(routed.entryCapitalBudget).toEqual(baseline.entryCapitalBudget);
+    expect(routed.entryCapitalBudget).toMatchObject({source:'AVAILABLE_QUOTE_BALANCE',availableInitialMarginQuote:4_000,
+      maxInitialMarginQuote:4_000,operatorMaxInitialMarginQuote:null,operatorMaxEquityPct:null,operatorCapApplied:false,mutatesQuantity:false});
+    expect(routed.leaseRequiredMarginUsd).toBe(baseline.leaseRequiredMarginUsd);
+    expect(routed.executableSides).toEqual(baseline.executableSides);
   });
 
   it('one owner, one debit: the same intent cannot lease twice against itself',()=>{

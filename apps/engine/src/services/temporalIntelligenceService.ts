@@ -17,7 +17,7 @@ export class TemporalIntelligenceService {
     const workerUrl=new URL('../workers/temporalResearchWorker.js',import.meta.url);
     this.worker=new Worker(workerUrl,{workerData:{dbPath:path.resolve(process.env.ZDJ_RESEARCH_DB)}});
     this.worker.on('message',(message:any)=>{if(message?.type==='ready'){this.request('STARTUP_BACKFILL');return;}if(message?.type==='summary'){this.active=0;this.longestJobMs=Math.max(this.longestJobMs,Number(message.value?.workerDurationMs??0));this.summaryValue={...message.value,status:'READY'};this.events.publish('TEMPORAL_RESEARCH_REFRESHED',{durationMs:message.value?.workerDurationMs,coverage:message.value?.coverage,mode:'READ_ONLY_SHADOW_RESEARCH'});if(this.queued){this.queued=0;this.request('COALESCED');}return;}if(message?.type==='error'){this.active=0;this.errors++;this.summaryValue={...this.summaryValue,status:'DEGRADED',lastError:message.message};this.events.publish('TEMPORAL_RESEARCH_FAILED',{message:message.message});}});
-    this.worker.on('error',error=>{this.active=0;this.errors++;this.summaryValue={...this.summaryValue,status:'DEGRADED',lastError:error.message};});
+    this.worker.on('error',error=>{this.active=0;this.errors++;this.summaryValue={...this.summaryValue,status:'DEGRADED',lastError:error instanceof Error?error.message:String(error)};});
     this.worker.on('exit',code=>{this.active=0;this.worker=null;if(code!==0&&!this.summaryValue.stopped)this.errors++;});
     this.timer=setInterval(()=>this.request('INCREMENTAL'),5*60_000);this.timer.unref();
   }

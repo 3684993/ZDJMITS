@@ -12,6 +12,15 @@ const EntryRiskHeadroomSchema=z.object({
   blockers:z.array(z.string()),
   reason:z.string(),
 }).strict();
+const EntryPlanCandidateProjectionSchema=z.object({
+  candidateId:z.string().min(1).max(120),side:SideSchema,quantityUnits:z.number().int().positive(),
+  notionalUsd:z.number().positive(),marginUsd:z.number().positive(),leverage:z.number().int().positive(),
+  entryReferencePrice:z.number().positive(),targetPrice:z.number().positive(),
+  acceptableTargetRange:z.object({min:z.number().positive(),max:z.number().positive()}).strict(),
+  targetHorizonMinutes:z.number().int().positive(),targetConditionalNetProfitUsd:z.number(),
+  expectedNetPnlAtHorizonUsd:z.number().nullable(),reachProbability:z.number().min(0).max(1).nullable(),
+  reachProbabilityStatus:z.string(),targetVsStatisticalCeiling:z.string(),costVersion:z.string(),
+}).strict();
 const EntryExecutionCapacitySchema=z.object({
   executable:z.boolean(),
   maxMarginUsd:z.number().nonnegative(),
@@ -32,6 +41,10 @@ const EntryExecutionCapacitySchema=z.object({
   // same refusal instead of re-deriving it — and a page cannot claim room the gate already denied.
   admission:z.object({ceilingUsd:z.number().nonnegative().nullable(),refusal:z.string().nullable(),
     gate:z.string().nullable(),detail:z.string().nullable()}).strict().nullable().optional(),
+  /** Frozen before Primary. The model may choose one id; later layers may only verify it. */
+  candidateSetHash:z.string().min(1).optional(),
+  candidateSetFactVersion:z.string().min(1).optional(),
+  planCandidates:z.array(EntryPlanCandidateProjectionSchema).max(24).optional(),
   riskHeadroom:EntryRiskHeadroomSchema,
 }).strict();
 /** Frozen pre-AI execution facts carried with an EntryIntent for restart-safe authorization. */
@@ -48,6 +61,12 @@ export const EntryExecutionEnvelopeSchema=z.object({
   executableSides:z.array(z.enum(['LONG','SHORT'])).optional(),
   noExecutableSide:z.boolean().optional(),
   sideAuthorization:z.record(z.enum(['LONG','SHORT']),z.string()).optional(),
+  entryCapitalBudget:z.object({version:z.literal('V397-ENTRY-CAPITAL-BUDGET-1'),quoteAsset:z.string(),
+    source:z.enum(['AVAILABLE_QUOTE_BALANCE','AVAILABLE_QUOTE_BALANCE_AND_OPERATOR_POLICY']),
+    availableInitialMarginQuote:z.number().nonnegative(),committedInitialMarginQuote:z.number().nonnegative(),
+    maxInitialMarginQuote:z.number().nonnegative(),maxOrderNotionalQuote:z.number().nonnegative(),
+    operatorMaxInitialMarginQuote:z.number().nonnegative().nullable(),operatorMaxEquityPct:z.number().nonnegative().nullable(),
+    operatorCapApplied:z.boolean(),canVeto:z.literal(true),mutatesQuantity:z.literal(false)}).strict().optional(),
   positionCapacity:z.object({used:z.number().int().nonnegative(),max:z.number().int().nonnegative(),slotAvailable:z.boolean(),sameUnderlyingOccupied:z.boolean()}).strict(),
   leverage:z.number().int().positive(),
   exchange:z.object({tickSize:z.number().positive(),stepSize:z.number().positive(),minQty:z.number().positive(),minNotional:z.number().nonnegative()}).strict(),
@@ -66,7 +85,7 @@ export const EntryExecutionEnvelopeSchema=z.object({
    * P4: the analysis earmark is a budget, not a debit, and the envelope now says what it asked for and
    * what capped it. Optional because an intent journalled before this field existed still round-trips.
    */
-  leaseBudget:z.object({requestedUsd:z.number().nonnegative(),cappedBy:z.enum(['ROUTED_PLAN_MARGIN','CONFIGURED_PER_POSITION_MARGIN','EXCHANGE_MINIMUM_MARGIN']),budgetUsd:z.number().nonnegative()}).strict().optional(),
+  leaseBudget:z.object({requestedUsd:z.number().nonnegative(),cappedBy:z.literal('MINIMUM_EXECUTABLE_CANDIDATE'),budgetUsd:z.number().nonnegative()}).strict().optional(),
 }).strict();
 export type EntryExecutionEnvelope = z.infer<typeof EntryExecutionEnvelopeSchema>;
 
@@ -91,6 +110,8 @@ export const EntryIntentSchema = z.object({
   planId:z.string().max(120).nullable().optional(),
   planVersion:z.number().int().positive().nullable().optional(),
   planCycleId:z.string().max(160).nullable().optional(),
+  selectedCandidateId:z.string().max(120).nullable().optional(),
+  candidateSetHash:z.string().max(120).nullable().optional(),
   planWarnings:z.array(z.string().max(160)).optional(),
   quantityUnits:z.number().int().positive().optional(),
   executionEnvelope:EntryExecutionEnvelopeSchema.optional(),
@@ -127,6 +148,8 @@ export const EntryOrderSchema = z.object({
   reachability: z.number().min(0).max(1),
   reservationId: z.string().nullable().optional(),
   decisionChainId: z.string().nullable().optional(),
+  selectedCandidateId:z.string().max(120).nullable().optional(),
+  candidateSetHash:z.string().max(120).nullable().optional(),
   clientOrderId: z.string().max(35).nullable().optional(),
   orderType:z.string().nullable().optional(),
   timeInForce:z.string().nullable().optional(),

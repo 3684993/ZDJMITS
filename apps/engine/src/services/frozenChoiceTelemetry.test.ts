@@ -2,15 +2,15 @@ import {describe,expect,it} from 'vitest';
 import {frozenChoiceConversionTelemetry,publishFrozenChoiceConversionTelemetry} from './frozenChoiceTelemetry.js';
 
 describe('frozen choice conversion telemetry',()=>{
-  it('records bounded generated choices and model selection without presenting post-response IDs as prompt inputs',()=>{
+  it('records the bounded pre-Primary menu and exact candidate selected from it',()=>{
     const data=frozenChoiceConversionTelemetry({evaluatedAt:10,prePrimaryFactIdentity:'pre-fact',snapshotHash:'snapshot',side:'LONG',executionEnvelopeIdentity:{version:'v1',symbol:'BTCUSDT',createdAt:8,expiresAt:50,side:'LONG'},
-      modelSelection:{quantityUnits:20,targetPrice:101,targetHorizonMinutes:15,horizonMinutes:60},
+      modelSelection:{selectedCandidateId:'two',quantityUnits:20,targetPrice:101,targetHorizonMinutes:15,horizonMinutes:60},
       modelVisibleQuantityRange:{min:10,max:100},candidateSet:{candidateSetHash:'set',selection:{offered:true},candidates:[
         {candidateId:'one',quantityUnits:10,targetPrice:101,targetHorizonMinutes:15},{candidateId:'two',quantityUnits:20,targetPrice:101,targetHorizonMinutes:15}]},conversion:'CONVERTED'});
-    expect(data).toMatchObject({schemaVersion:'V396-FROZEN-CHOICE-TELEMETRY-2',offerTiming:'POST_PRIMARY_VALIDATION',timingScopes:{prePrimaryVisible:'PRE_PRIMARY_VISIBLE',postPrimaryGenerated:'POST_PRIMARY_GENERATED'},
+    expect(data).toMatchObject({schemaVersion:'V397-FROZEN-CANDIDATE-AUTHORITY-1',offerTiming:'PRE_PRIMARY_FROZEN',timingScopes:{prePrimaryVisible:'CANDIDATE_SET_FROZEN_PRE_PRIMARY',postPrimaryGenerated:'NOT_APPLICABLE'},
       executionEnvelopeIdentity:{version:'v1',symbol:'BTCUSDT',createdAt:8,expiresAt:50,side:'LONG'},prePrimaryVisibleAt:8,prePrimaryFactIdentity:'pre-fact',
-      postPrimaryGeneratedAt:10,candidateIdsPresentedToPrimary:[],
-      candidateIdsPresentedToPrimaryStatus:'NOT_APPLICABLE',candidateIdsPresentedToPrimaryReason:'IDS_NOT_YET_EXISTING',generatedLegalCandidateCount:2,
+      postPrimaryValidatedAt:10,candidateIdsPresentedToPrimary:['one','two'],
+      candidateIdsPresentedToPrimaryStatus:'PRESENT',candidateIdsPresentedToPrimaryReason:'FROZEN_CANDIDATE_SET_IN_EXECUTION_ENVELOPE',generatedLegalCandidateCount:2,
       modelVisibleQuantityRange:{min:10,max:100},selectedCandidateId:'two',selectedTargetPrice:101,selectedTargetHorizonMinutes:15,selectedHorizonMinutes:60,
       selectionInGeneratedSet:true,alternativeGeneratedCandidates:1,refusalHasAlternativeLegalCandidate:false,postPrimaryAlternativeExistsOnRefusal:false,conversion:'CONVERTED'});
     expect(data.generatedQuantityIntervals).toContainEqual({candidateId:'two',quantityUnits:{min:20,max:20},targetPrice:101,targetHorizonMinutes:15});
@@ -20,7 +20,7 @@ describe('frozen choice conversion telemetry',()=>{
     const data=frozenChoiceConversionTelemetry({evaluatedAt:10,prePrimaryFactIdentity:'pre-fact',snapshotHash:'x',side:'SHORT',executionEnvelopeIdentity:{version:'v1',symbol:'ETHUSDT',createdAt:8,expiresAt:50,side:'SHORT'},
       modelSelection:{quantityUnits:100,targetPrice:10,targetHorizonMinutes:15,horizonMinutes:30},
       modelVisibleQuantityRange:{min:1,max:100},candidateSet:{candidateSetHash:'x',candidates},conversion:'REFUSED'});
-    expect(data).toMatchObject({timingScopes:{prePrimaryVisible:'PRE_PRIMARY_VISIBLE',postPrimaryGenerated:'POST_PRIMARY_GENERATED'},
+    expect(data).toMatchObject({timingScopes:{prePrimaryVisible:'CANDIDATE_SET_FROZEN_PRE_PRIMARY',postPrimaryGenerated:'NOT_APPLICABLE'},
       generatedLegalCandidateCount:25,selectionInGeneratedSet:false,selectedCandidateId:null,refusalHasAlternativeLegalCandidate:true,
       postPrimaryAlternativeExistsOnRefusal:true,conversion:'REFUSED'});
     expect((data.generatedLegalCandidateIds as unknown[])).toHaveLength(18);

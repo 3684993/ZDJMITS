@@ -14,6 +14,16 @@ import {redactAudit} from '../api/projections.js';
 import {terminalDecision,observedOutcome} from './decisionEpisodeFacts.js';
 const fixtures=JSON.parse(readFileSync(new URL('./fixtures/v363-entry.json',import.meta.url),'utf8'));
 afterEach(()=>vi.restoreAllMocks());
+function candidateDecision(packet:any,base:any,side:'LONG'|'SHORT'='LONG',candidateIndex=0,overrides:Record<string,unknown>={}){
+  const rows=packet?.executionEnvelope?.[side]?.planCandidates??[],row=rows[Math.max(0,Math.min(rows.length-1,candidateIndex))];
+  if(!row)throw new Error(`TEST_CANDIDATE_MISSING:${side}`);
+  const quote=packet.market.quote,idealPrice=side==='LONG'?Number(quote.bid):Number(quote.ask);
+  return brainParse({...base,schemaVersion:'V3.9.7',protocolVersion:'V3.9.7',decision:`PLACE_${side}`,tradeSide:side,direction:side,structureDirection:side,
+    selectedCandidateId:row.candidateId,quantityUnits:null,idealPrice,
+    acceptablePriceRange:{min:Number(quote.bid)-Number(quote.tickSize)*10,max:Number(quote.ask)+Number(quote.tickSize)*10},horizonMinutes:3,
+    profitTakePlan:{targetPrice:row.targetPrice,acceptableTargetRange:{...row.acceptableTargetRange},targetHorizonMinutes:row.targetHorizonMinutes,
+      targetReason:'selected exact frozen candidate economics',evidenceRefs:['technical.15m.confirmed']},...overrides},packet);
+}
 export function harness(raw?:any) {
   const f=structuredClone(fixtures[0]),packet=EntryIntelligencePacketSchema.parse(f.packet),now=Date.now();
   packet.market.quote.ts=now;packet.market.orderBook.ts=now;packet.createdAt=now;packet.expiresAt=now+300_000;
@@ -29,16 +39,16 @@ export function harness(raw?:any) {
   state.snapshots.set(packet.symbol,MarketSymbolSnapshotSchema.parse({...packet.market,symbol:packet.symbol,dataCompleteness:packet.evidenceCompleteness}));
   state.universe=[UniverseCandidateSchema.parse({...packet.selection,symbol:packet.symbol,lifecycle:'READY',eligible:true,exclusionReasons:[],quoteVolumeUsd24h:packet.market.quote.quoteVolumeUsd24h,spreadBps:1,lastPrice:packet.market.quote.last,change24hPercent:0,dataCompleteness:1,selectionGeneration:1,updatedAt:now})];
   const q=packet.market.quote;
-  const supplied=raw??{...f.normalized,decision:'PLACE_LONG',direction:'LONG',confidence:.8,quantityUnits:1000,idealPrice:q.bid,acceptablePriceRange:{min:q.bid-q.tickSize*10,max:q.ask+q.tickSize*10},horizonMinutes:3,reachability:.8,reason:'ISOLATED_CONTRACT_PLACE'};
+  const supplied=raw??{...f.normalized,decision:'PLACE_LONG',direction:'LONG',confidence:.8,idealPrice:q.bid,acceptablePriceRange:{min:q.bid-q.tickSize*10,max:q.ask+q.tickSize*10},horizonMinutes:3,reachability:.8,reason:'ISOLATED_CONTRACT_PLACE'};
   const bus=new EventBus(),events:any[]=[];bus.on('event',e=>events.push(e));
-  const ai={scout:vi.fn(async()=>null),hasCapacity:()=>true,decide:vi.fn(async()=>({decision:brainParse(supplied,packet),runId:'fixture-run'}))};
+  const ai={scout:vi.fn(async()=>null),hasCapacity:()=>true,decide:vi.fn(async(decisionPacket:any)=>({decision:raw?brainParse(supplied,decisionPacket):candidateDecision(decisionPacket,supplied,'LONG',0),runId:'fixture-run'}))};
   const exchange={setLeverage:vi.fn(async()=>{}),placeEntry:vi.fn(async(order:any)=>({...order,status:'WORKING'})),findEntryByClientOrderId:vi.fn(async(_order?:any)=>null),cancelEntry:vi.fn(async(order:any)=>({...order,status:'CANCELED'}))};
-  const coordinator=new EntryCoordinator(state,{build:()=>packet} as never,ai as never,exchange as never,bus);
-  return {state,packet,ai,exchange,events,coordinator,supplied,run:()=> (coordinator as any).analyze(packet.symbol)};
+  const coordinator=new EntryCoordinator(state,{build:(_symbol:string,executionEnvelope:any)=>({...packet,executionEnvelope})} as never,ai as never,exchange as never,bus);
+  return {state,packet,ai,exchange,events,coordinator,supplied,candidateDecision:(decisionPacket:any,side:'LONG'|'SHORT'='LONG',candidateIndex=0,overrides:Record<string,unknown>={})=>candidateDecision(decisionPacket,supplied,side,candidateIndex,overrides),run:()=> (coordinator as any).analyze(packet.symbol)};
 }
 async function authorizedExecutionWait(){
   const h=harness(),market=h.state.snapshots.get(h.packet.symbol)!,tick=market.quote.tickSize,target=Math.ceil((market.quote.bid*1.02)/tick)*tick;
-  h.ai.decide.mockResolvedValue({decision:{...fixtures[0].normalized,decision:'PLACE_LONG',direction:'LONG',confidence:.8,quantityUnits:1000,idealPrice:target,acceptablePriceRange:{min:target,max:target+tick*4},horizonMinutes:3,reachability:.8,reason:'WAIT_EXECUTION_RANGE_REGRESSION'},runId:'wait-execution-run'});
+  h.ai.decide.mockImplementation(async(decisionPacket:any)=>({decision:h.candidateDecision(decisionPacket,'LONG',0,{idealPrice:target,acceptablePriceRange:{min:target,max:target+tick*4},horizonMinutes:3,reachability:.8,reason:'WAIT_EXECUTION_RANGE_REGRESSION'}),runId:'wait-execution-run'}));
   await h.run();
   expect(h.state.candidateLifecycle.get(h.packet.symbol)).toMatchObject({status:'WAIT_EXECUTION_RANGE'});
   expect(h.state.universe.find(x=>x.symbol===h.packet.symbol)?.pipelineEligible).toBe(false);
@@ -82,7 +92,7 @@ describe('V3.9 near-quote Primary to Entry contract',()=>{
     h.state.settings.entry.nearMarket.enabled=true;
     h.packet.market.technical['15m'].trend=side==='LONG'?'UP':'DOWN';market.technical['15m'].trend=h.packet.market.technical['15m'].trend;
     const trades=[{price:q.bid,lastSeenAt:Date.now()},{price:q.ask,lastSeenAt:Date.now()}];market.recentTradedPrices=trades;h.packet.market.recentTradedPrices=trades;
-    h.ai.decide.mockResolvedValue({decision:brainParse({...h.supplied,decision:`PLACE_${side}`,direction:side},h.packet),runId:`near-${side}`});
+    h.ai.decide.mockImplementation(async(decisionPacket:any)=>({decision:h.candidateDecision(decisionPacket,side as 'LONG'|'SHORT'),runId:`near-${side}`}));
     await h.run();expect(h.exchange.placeEntry,JSON.stringify(h.events.filter(e=>e.type.includes('REJECT')))).toHaveBeenCalledOnce();
     const order=[...h.state.entryOrders.values()][0]!;expect(order.side).toBe(side);expect(order.price).toBe(side==='LONG'?q.bid:q.ask);expect(order.absoluteExpiresAt-order.createdAt).toBeLessThanOrEqual(90000);
     await h.run();expect(h.exchange.placeEntry).toHaveBeenCalledOnce();

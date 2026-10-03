@@ -101,8 +101,9 @@ export function assembleTradePlan(input:{
     return{plan:null,refusals:[`PLAN_CANDIDATE_ID_FORGED:${selection.selectedCandidateId}`],warnings:[],candidate:null};
   const chosen=offered?.resolved
     ?available.find(row=>row.candidateId===offered.resolved!.candidateId)??null
-    :available.find(row=>row.quantityUnits===Number(selection.quantityUnits??0)
-      &&(selection.selectedCandidateId==null||row.candidateId===selection.selectedCandidateId))??null;
+    :selection.selectedCandidateId
+      ?available.find(row=>row.candidateId===selection.selectedCandidateId)??null
+      :available.find(row=>row.quantityUnits===Number(selection.quantityUnits??0))??null;
   if(!chosen)return{plan:null,refusals:['PLAN_SELECTION_NOT_IN_CANDIDATE_SET'],warnings:[],candidate:null};
   if(!chosen.executable)return{plan:null,refusals:chosen.blockers.map(blocker=>`CANDIDATE_NOT_EXECUTABLE:${blocker}`),warnings:[],candidate:chosen};
   // Any parameter the model restates differently from the offered candidate is an attempt to widen

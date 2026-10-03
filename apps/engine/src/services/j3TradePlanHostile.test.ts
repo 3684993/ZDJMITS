@@ -365,8 +365,8 @@ describe('S06 plan durability and the executed diff',()=>{
       Object.assign(snapshot.technical[tf],{trend:'UP',ema8:100,ema21:99,ema55:98,emaSlope21:1,atr14:2,atrPercent:2,recentSwingHigh:110,recentSwingLow:95,
         isClosed:true,asOf:now-1_000,barCloseTime:now-1_000,receivedAt:now,lastClosedBar:{openTime:now-1_000-period+1,closeTime:now-1_000,open:99.5,high:101,low:99,close:100.5,volume:100}});
     }
-    h.ai.decide.mockImplementation(async()=>({runId:'j3-run',decision:{...h.supplied,decision:'PLACE_LONG',tradeSide:'LONG',direction:'LONG',quantityUnits:1_000,
-      opportunityType:'TREND_RESUMPTION',timingEvent:null,idealPrice:100,acceptablePriceRange:{min:99.99,max:100.01},horizonMinutes:1}}));
+    h.ai.decide.mockImplementation(async(decisionPacket:any)=>({runId:'j3-run',decision:h.candidateDecision(decisionPacket,'LONG',0,
+      {opportunityType:'TREND_RESUMPTION',timingEvent:null,idealPrice:100,acceptablePriceRange:{min:99.99,max:100.01},horizonMinutes:1})}));
     const plansAtSubmit:number[]=[];
     h.exchange.placeEntry=vi.fn(async(order:any)=>{plansAtSubmit.push(h.state.tradePlans?.size??0);return{...order,status:'NEW',exchangeOrderId:'ex_1',filledQuantity:0,updatedAt:Date.now()};});
     await h.run();

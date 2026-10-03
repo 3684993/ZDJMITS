@@ -31,12 +31,11 @@ function armed(store: SettingsStore) {
   const quote = h.state.snapshots.get(fixtureSymbol)!.quote;
   (h.ai as any).decide.mockImplementation(async (packet: any) => ({
     runId: 'durable-run',
-    decision: {
-      ...h.supplied, packetId: packet?.packetId, decision: 'PLACE_LONG', tradeSide: 'LONG', direction: 'LONG', structureDirection: 'LONG',
-      quantityUnits: 1000, idealPrice: Number(quote.bid),
+    decision: h.candidateDecision(packet, 'LONG', 0, {
+      packetId: packet?.packetId, idealPrice: Number(quote.bid),
       acceptablePriceRange: {min: Number(quote.bid), max: Number(quote.ask) + Number(quote.tickSize) * 10},
       horizonMinutes: 3,
-    },
+    }),
   }));
   return h;
 }

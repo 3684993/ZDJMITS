@@ -36,6 +36,13 @@ export interface SideExecutionCapacity {
   /** [floor, ceiling] of a notional this side could legally be submitted at, or null when it cannot. */
   legalNotionalRangeUsd?: [number, number] | null;
   authorization?: 'EXECUTABLE' | string;
+  /** Frozen before Primary. The model selects one candidate id; execution may only verify it. */
+  candidateSetHash?:string;
+  candidateSetFactVersion?:string;
+  planCandidates?:Array<{candidateId:string;side:ExecutionEnvelopeSide;quantityUnits:number;notionalUsd:number;marginUsd:number;
+    leverage:number;entryReferencePrice:number;targetPrice:number;acceptableTargetRange:{min:number;max:number};targetHorizonMinutes:number;
+    targetConditionalNetProfitUsd:number;expectedNetPnlAtHorizonUsd:number|null;reachProbability:number|null;
+    reachProbabilityStatus:string;targetVsStatisticalCeiling:string;costVersion:string}>;
 }
 export interface PreAiExecutionEnvelope {
   version:'V3.9.3_PRE_AI_EXECUTION_ENVELOPE';
@@ -62,23 +69,20 @@ export interface PreAiExecutionEnvelope {
   noExecutableSide:boolean;
   /** Stated in words because a nested number is not an instruction: the model must not choose a side it cannot submit. */
   sideAuthorization:Record<ExecutionEnvelopeSide,string>;
+  /** The only pre-Primary capital ceiling. Route sizing and model confidence never participate. */
+  entryCapitalBudget:{version:'V397-ENTRY-CAPITAL-BUDGET-1';quoteAsset:string;
+    source:'AVAILABLE_QUOTE_BALANCE'|'AVAILABLE_QUOTE_BALANCE_AND_OPERATOR_POLICY';
+    availableInitialMarginQuote:number;committedInitialMarginQuote:number;maxInitialMarginQuote:number;maxOrderNotionalQuote:number;
+    operatorMaxInitialMarginQuote:number|null;operatorMaxEquityPct:number|null;operatorCapApplied:boolean;
+    canVeto:true;mutatesQuantity:false};
   leaseRequiredMarginUsd:number;
   /** P4: what the earmark asked for, what capped it and to what, so a lease is never read as a debit. */
   leaseBudget?:{requestedUsd:number;cappedBy:LeaseBudgetSource;budgetUsd:number};
 }
 
-export type LeaseBudgetSource='ROUTED_PLAN_MARGIN'|'CONFIGURED_PER_POSITION_MARGIN'|'EXCHANGE_MINIMUM_MARGIN';
+export type LeaseBudgetSource='MINIMUM_EXECUTABLE_CANDIDATE';
 
 const roundDownUnits=(quantity:number,step:number)=>step>0?Math.max(0,Math.floor(quantity/step+1e-9)):0;
-
-/**
- * The allocation plan this route's own side was sized with, read back from the capital admission that
- * produced the route. Absent facts (no sample for this symbol yet) mean "no verdict", never a refusal.
- */
-function routedSidePlanFacts(state:RuntimeState,symbol:string,side:ExecutionEnvelopeSide){
-  const route=(state.runtimeControl?.capital?.routedCandidates??[]).find((row:any)=>String(row?.symbol??'').toUpperCase()===symbol.toUpperCase());
-  return (side==='LONG'?route?.longPlanFacts:route?.shortPlanFacts)??null;
-}
 
 /** Objective execution capacity computed before Primary. It contains no market-direction recommendation. */
 export function buildPreAiExecutionEnvelope(state:RuntimeState,symbol:string,now=Date.now(),reachability?:HistoricalTpReachabilityEnvelope):PreAiExecutionEnvelope {
@@ -101,9 +105,6 @@ export function buildPreAiExecutionEnvelope(state:RuntimeState,symbol:string,now
   const coverage=state.marginTierCoverage as {symbols?:string[]}|null;
   const marginTierProven=testnetFundsOnlyEntry(state.settings)||(Array.isArray(coverage?.symbols)?coverage!.symbols!.includes(String(symbol).trim().toUpperCase()):true);
   const sideCapacity=(side:ExecutionEnvelopeSide):SideExecutionCapacity=>{
-    // Sizing has already refused some sides for a bounded capacity. That verdict is a pre-AI fact: the
-    // envelope must not present a side as selectable when the layer that produces the order size said no.
-    const planFacts=routedSidePlanFacts(state,symbol,side),planRejects=String(planFacts?.admission??'').startsWith('REJECT_');
     // The gate this candidate will actually be judged by, read before the model is asked: a side that no
     // positive notional can pass is not offered to the model as an executable choice.
     const admission=readAdmissionCapacity(state,symbol,side,now,{leverage,leverageFact:capital?.leverageFact??'UNPROVEN',quoteAsset});
@@ -113,14 +114,13 @@ export function buildPreAiExecutionEnvelope(state:RuntimeState,symbol:string,now
     const configuredMargin=state.settings.entry.minimumInitialMarginByQuote?.[quoteAsset];
     const configuredOrderNotional=state.settings.entry.minimumOrderNotionalByQuote?.[quoteAsset];
     const minimumInitialMarginQuote=Number.isFinite(Number(configuredMargin))&&Number(configuredMargin)>0?Number(configuredMargin):null;
-    const symbolKey=String(symbol).toUpperCase(),configuredOrderFloor=Number.isFinite(Number(configuredOrderNotional))&&Number(configuredOrderNotional)>0?Number(configuredOrderNotional):0;
-    // A legal exchange minimum is never the business sizing authority. Every supported quote pair
-    // needs at least 100 quote units; BTCUSDT/BTCUSDC require 200, even if Settings is lower.
-    const minimumOrderNotionalQuote=Math.max(configuredOrderFloor,symbolKey==='BTCUSDT'||symbolKey==='BTCUSDC'?200:100);
+    const minimumOrderNotionalQuote=Number.isFinite(Number(configuredOrderNotional))&&Number(configuredOrderNotional)>0?Number(configuredOrderNotional):null;
     const fundsOnly=testnetFundsOnlyEntry(state.settings);
-    const businessMinimumConfigured=minimumInitialMarginQuote!==null&&minimumOrderNotionalQuote>=100;
-    const businessMinimumNotional=Math.max(minimumLegalNotionalUsd,minimumOrderNotionalQuote,(minimumInitialMarginQuote??0)*leverage);
-    const maxNotionalUsd=slotAvailable&&risk.executable&&!planRejects?Math.max(0,Math.min(quoteNotionalCapacity,risk.finalNotional)):0,maxMarginUsd=maxNotionalUsd/Math.max(1,leverage);
+    // Settings is the sole business-floor authority. The exchange minimum remains a legality check,
+    // and no symbol-specific 100/200 override is injected behind the operator's configuration.
+    const businessMinimumConfigured=minimumInitialMarginQuote!==null&&minimumOrderNotionalQuote!==null;
+    const businessMinimumNotional=Math.max(minimumLegalNotionalUsd,minimumOrderNotionalQuote??0,(minimumInitialMarginQuote??0)*leverage);
+    const maxNotionalUsd=slotAvailable&&risk.executable?Math.max(0,Math.min(quoteNotionalCapacity,risk.finalNotional)):0,maxMarginUsd=maxNotionalUsd/Math.max(1,leverage);
     // A whole-step quantity that is affordable at the reachable price band and still clears the exchange
     // floor. Both bounds are published: a lower one the order cannot legally be placed under, and an upper
     // one the authorized capacity cannot cover. Neither is a suggestion — both come from real filters.
@@ -129,19 +129,20 @@ export function buildPreAiExecutionEnvelope(state:RuntimeState,symbol:string,now
       bandLimitedUnits=roundDownUnits(maxNotionalUsd/bandCeilingPrice,q.stepSize),
       legalMaxQuantityUnits=Math.min(capacityUnits,bandLimitedUnits),
       minQuantityUnits=filtersComplete?Math.max(1,Math.ceil(Number(q.minQty)/Number(q.stepSize)-1e-9),Math.ceil(businessMinimumNotional/(bandCeilingPrice*Number(q.stepSize))-1e-9)):0;
-    const executable=businessMinimumConfigured&&marginTierProven&&privateReady&&slotAvailable&&!humanHardBlock&&!planRejects&&maxNotionalUsd+1e-8>=Math.max(minimumNotional,businessMinimumNotional)&&legalMaxQuantityUnits>=minQuantityUnits;
-    const blockers=[...risk.blockers,...(planRejects?[`SIDE_PLAN_${planFacts.admission}`]:[]),...(humanHardBlock?['HUMAN_MANAGED_EXPOSURE_LIMIT']:[]),...(marginTierProven?[]:[`MARGIN_TIER_SYMBOL_UNPROVEN:${symbol}`]),...(!businessMinimumConfigured?['BUSINESS_MINIMUM_INITIAL_MARGIN_UNCONFIGURED']:[]),...(fundsOnly&&businessMinimumConfigured&&maxNotionalUsd+1e-8<businessMinimumNotional?['BUSINESS_MINIMUM_EXCEEDS_AVAILABLE_FUNDS']:[])];
+    const executable=businessMinimumConfigured&&marginTierProven&&privateReady&&slotAvailable&&!humanHardBlock&&maxNotionalUsd+1e-8>=Math.max(minimumNotional,businessMinimumNotional)&&legalMaxQuantityUnits>=minQuantityUnits;
+    const blockers=[...risk.blockers,...(humanHardBlock?['HUMAN_MANAGED_EXPOSURE_LIMIT']:[]),...(marginTierProven?[]:[`MARGIN_TIER_SYMBOL_UNPROVEN:${symbol}`]),...(minimumInitialMarginQuote===null?['BUSINESS_MINIMUM_INITIAL_MARGIN_UNCONFIGURED']:[]),...(minimumOrderNotionalQuote===null?['BUSINESS_MINIMUM_ORDER_NOTIONAL_UNCONFIGURED']:[]),...(fundsOnly&&businessMinimumConfigured&&maxNotionalUsd+1e-8<businessMinimumNotional?['BUSINESS_MINIMUM_EXCEEDS_AVAILABLE_FUNDS']:[])];
     const binding=classifySideCapacityBinding({symbol,side,executable,blockers,
-      // The probe asked "how much room is there", so its own constraint name is not a denial. When the gate
-      // raised no blocker but sizing already refused this side, the refusal is the nearer cause.
-      firstBindingConstraint:planRejects&&!risk.blockers?.length?null:risk.firstBindingConstraint??null,
+      // The probe asked "how much room is there", so its own constraint name is not a denial. A routed
+      // AllocationPlan is deliberately absent here: route sizing has no candidate-menu authority.
+      firstBindingConstraint:risk.firstBindingConstraint??null,
       plannedNotionalUsd:Number(risk.plannedNotional??0),finalNotionalUsd:maxNotionalUsd,minimumLegalNotionalUsd:filtersComplete?minimumLegalNotionalUsd:null,exchangeFiltersComplete:filtersComplete,
       planPresent:true,routePresent:true,marginTierProven,portfolioRiskAllowed:!admission.riskAdmissionRefusal&&!risk.blockers.includes('REJECT_RISK_ADMISSION_CEILING'),capitalBindingConstraint:capital?.bindingConstraint??null,capitalExecutableNotionalUsd:capital?.executableNotionalUsd??null,
-      planAdmission:planFacts?.admission??null,capacityRoom:planFacts?.capacityRoom??null,
+      planAdmission:null,capacityRoom:null,
       // The admission ledger's own words, so the envelope refuses with the number that binds.
       riskAdmission:{ceilingUsd:admission.riskAdmissionCeilingUsd,refusal:admission.riskAdmissionRefusal,
         gate:admission.capacity?.firstBinding?.gate??null,detail:admission.capacity?.firstBinding?.detail??null}});
-    const firstBindingConstraint=fundsOnly?(!businessMinimumConfigured?'BUSINESS_MINIMUM_INITIAL_MARGIN_UNCONFIGURED':planRejects&&!risk.blockers?.length?binding.constraint:businessMinimumNotional>maxNotionalUsd?'BUSINESS_MINIMUM_EXCEEDS_AVAILABLE_FUNDS':binding.constraint):binding.constraint;
+    const missingBusinessSetting=minimumInitialMarginQuote===null?'BUSINESS_MINIMUM_INITIAL_MARGIN_UNCONFIGURED':minimumOrderNotionalQuote===null?'BUSINESS_MINIMUM_ORDER_NOTIONAL_UNCONFIGURED':null;
+    const firstBindingConstraint=fundsOnly?(missingBusinessSetting??(businessMinimumNotional>maxNotionalUsd?'BUSINESS_MINIMUM_EXCEEDS_AVAILABLE_FUNDS':binding.constraint)):binding.constraint;
     return {executable,maxMarginUsd,maxNotionalUsd,maxQuantityUnits:legalMaxQuantityUnits,minQuantityUnits,
       legalQuantityRangeUnits:executable?[minQuantityUnits,legalMaxQuantityUnits]:null,
       firstBindingConstraint,minimumLegalNotionalUsd,
@@ -157,30 +158,20 @@ export function buildPreAiExecutionEnvelope(state:RuntimeState,symbol:string,now
     sideAuthorization={LONG:LONG.authorization??'NOT_EXECUTABLE:UNCLASSIFIED',SHORT:SHORT.authorization??'NOT_EXECUTABLE:UNCLASSIFIED'} as Record<ExecutionEnvelopeSide,string>;
   const makerFeeBps=state.settings.takeProfit.makerFeeRate*10_000,takerFeeBps=state.settings.takeProfit.takerFeeRate*10_000,safetyMarginBps=(makerFeeBps+(state.settings.takeProfit.exitFeeAssumption==='TAKER'?takerFeeBps:makerFeeBps))*state.settings.takeProfit.feeSafetyBufferPct/100;
   const economics={version:'V3.9.5' as const,minNetProfitUsd:state.settings.takeProfit.minNetProfitUsd,minNetProfitRoiPct:state.settings.takeProfit.minNetProfitRoiPct,admissionMode:state.settings.tradeEconomics.admissionMode,historicalTpReachabilityEnabled:state.settings.tradeEconomics.historicalTpReachabilityEnabled,minHistoricalReachProbability:state.settings.tradeEconomics.minHistoricalReachProbability,reachabilityLookbackBars:state.settings.tradeEconomics.reachabilityLookbackBars,reachabilityMinSamples:state.settings.tradeEconomics.reachabilityMinSamples,targetHorizonMinutes:legalTargetHorizonMinutes(state.settings),humanManagedExposure:{positions:human.positions,notionalUsd:human.notionalUsd,maxPositions:human.maxPositions,maxNotionalUsd:human.maxNotionalUsd,withinLimits:human.withinLimits},businessMinimumPolicyVersion:'V397-ENTRY-FLOOR-1' as const,minimumInitialMarginQuote:LONG.minimumInitialMarginQuote??SHORT.minimumInitialMarginQuote??null,minimumOrderNotionalQuote:LONG.minimumOrderNotionalQuote??SHORT.minimumOrderNotionalQuote??null};
-  // P4/R9: an analysis lease is a pre-model earmark, not a debit of the account. It used to be
-  // max(LONG.maxMarginUsd, SHORT.maxMarginUsd), and because the probe sized the side with
-  // plannedNotional=MAX_SAFE_INTEGER that number was essentially the whole quote balance - which made
-  // every other route on the same asset read zero capacity while one candidate was being analysed.
-  // The lease is now bounded by the candidate's own budget: enough margin that the largest *legal*
-  // order this symbol could be sized at still fits after the earmark.
-  const marginBudget=entryCandidateMarginBudgetUsd(state,symbol,{leverage,minimumLegalNotionalUsd:Math.max(LONG.minimumLegalNotionalUsd??0,SHORT.minimumLegalNotionalUsd??0)});
-  const leaseRequiredMarginUsd=Math.min(Math.max(LONG.maxMarginUsd,SHORT.maxMarginUsd),marginBudget.budgetUsd);
-  return {version:'V3.9.3_PRE_AI_EXECUTION_ENVELOPE',resourcePolicy:testnetFundsOnlyEntry(state.settings)?'TESTNET_FUNDS_ONLY':'LEGACY_RISK_ENFORCED',symbol,underlying,quoteAsset,executableSides,noExecutableSide:executableSides.length===0,sideAuthorization,createdAt:now,expiresAt:now+Math.max(45_000,Number(state.settings.ai.decisionTimeoutMs??30_000)+15_000),notice:'EXECUTION FACTS ARE NOT MARKET SIGNALS.',account:{status:String(state.account.status),equityUsd,availableMarginUsd:availableBalance,reservedMarginUsd,executionLeaseMarginUsd,freeMarginUsd},positionCapacity:{used:capacity.used,max:state.settings.portfolio.maxPositions,slotAvailable,sameUnderlyingOccupied},leverage,exchange:{tickSize:q.tickSize,stepSize:q.stepSize,minQty:q.minQty,minNotional:q.minNotional},makerReachableBand:{min:bandMin,max:bandMax},recentTradedPrices:market.recentTradedPrices??[],fees:{makerFeeBps,takerFeeBps,roundTripCostBps:makerFeeBps+(state.settings.takeProfit.exitFeeAssumption==='TAKER'?takerFeeBps:makerFeeBps),safetyMarginBps},economics,...(reachability?{reachability}:{}),LONG,SHORT,leaseRequiredMarginUsd,leaseBudget:{requestedUsd:Math.max(LONG.maxMarginUsd,SHORT.maxMarginUsd),cappedBy:marginBudget.source,budgetUsd:marginBudget.budgetUsd}};
-}
-
-/**
- * The margin one Entry on this symbol may be sized at. The routed plan's own margin wins when it
- * exists, because that is the allocation this candidate was actually given; otherwise the published
- * per-position cap applies. A symbol whose budget falls under the exchange minimum still gets the
- * minimum, so an earmark is never rounded down into an artificial denial.
- */
-export function entryCandidateMarginBudgetUsd(state:RuntimeState,symbol:string,input:{leverage:number;minimumLegalNotionalUsd:number}):{budgetUsd:number;source:LeaseBudgetSource}{
-  const p=state.settings.portfolioIntelligence??{},portfolio=state.settings.portfolio??{};
-  const route=(state.runtimeControl?.capital?.routedCandidates??[]).find((row:any)=>String(row?.symbol??'').toUpperCase()===String(symbol).toUpperCase());
-  const planned=Math.max(Number(route?.longPlanFacts?.marginUsd??0),Number(route?.shortPlanFacts?.marginUsd??0),Number(route?.marginUsd??0));
-  const configured=Math.max(0,Number(p.maxMarginPerPositionUsd??0),Number(portfolio.entryMarginUsd??0));
-  const floor=input.minimumLegalNotionalUsd/Math.max(1,input.leverage);
-  const source:LeaseBudgetSource=planned>0?'ROUTED_PLAN_MARGIN':configured>0?'CONFIGURED_PER_POSITION_MARGIN':'EXCHANGE_MINIMUM_MARGIN';
-  const budget=planned>0?planned:configured>0?configured:floor;
-  return{budgetUsd:Math.max(budget,floor),source};
+  // The analysis lease only protects the smallest executable candidate while Primary decides. It is
+  // not a route budget and cannot shrink the candidate menu or pre-commit the largest offered size.
+  const minimumCandidateMargins=([LONG,SHORT] as SideExecutionCapacity[]).filter(side=>side.executable)
+    .map(side=>Math.max(0,Number(side.legalNotionalRangeUsd?.[0]??side.minimumLegalNotionalUsd??0))/Math.max(1,leverage))
+    .filter(value=>Number.isFinite(value)&&value>0);
+  const leaseRequiredMarginUsd=minimumCandidateMargins.length?Math.min(...minimumCandidateMargins):0;
+  const fundsOnly=testnetFundsOnlyEntry(state.settings),operatorMaxInitialMarginQuote=fundsOnly?null:Number.isFinite(Number(p.maxMarginPerPositionUsd))&&Number(p.maxMarginPerPositionUsd)>=0?Number(p.maxMarginPerPositionUsd):null,
+    operatorMaxEquityPct=fundsOnly?null:Number.isFinite(Number(p.maxEquityPct))&&Number(p.maxEquityPct)>=0?Number(p.maxEquityPct):null,
+    maxInitialMarginQuote=Math.max(0,Math.min(Number(capital.executableMarginUsd??0),Number(capital.policyMarginCapUsd??capital.executableMarginUsd??0))),
+    operatorCapApplied=!fundsOnly&&maxInitialMarginQuote+1e-8<Number(capital.executableMarginUsd??0),
+    entryCapitalBudget={version:'V397-ENTRY-CAPITAL-BUDGET-1' as const,quoteAsset,
+      source:operatorCapApplied?'AVAILABLE_QUOTE_BALANCE_AND_OPERATOR_POLICY' as const:'AVAILABLE_QUOTE_BALANCE' as const,
+      availableInitialMarginQuote:Number(capital.availableBalanceUsd??0),committedInitialMarginQuote:Number(reservedMarginUsd)+Number(executionLeaseMarginUsd),
+      maxInitialMarginQuote,maxOrderNotionalQuote:Number(capital.executableNotionalUsd??0),operatorMaxInitialMarginQuote,operatorMaxEquityPct,
+      operatorCapApplied,canVeto:true as const,mutatesQuantity:false as const};
+  return {version:'V3.9.3_PRE_AI_EXECUTION_ENVELOPE',resourcePolicy:fundsOnly?'TESTNET_FUNDS_ONLY':'LEGACY_RISK_ENFORCED',symbol,underlying,quoteAsset,executableSides,noExecutableSide:executableSides.length===0,sideAuthorization,entryCapitalBudget,createdAt:now,expiresAt:now+Math.max(45_000,Number(state.settings.ai.decisionTimeoutMs??30_000)+15_000),notice:'EXECUTION FACTS ARE NOT MARKET SIGNALS.',account:{status:String(state.account.status),equityUsd,availableMarginUsd:availableBalance,reservedMarginUsd,executionLeaseMarginUsd,freeMarginUsd},positionCapacity:{used:capacity.used,max:state.settings.portfolio.maxPositions,slotAvailable,sameUnderlyingOccupied},leverage,exchange:{tickSize:q.tickSize,stepSize:q.stepSize,minQty:q.minQty,minNotional:q.minNotional},makerReachableBand:{min:bandMin,max:bandMax},recentTradedPrices:market.recentTradedPrices??[],fees:{makerFeeBps,takerFeeBps,roundTripCostBps:makerFeeBps+(state.settings.takeProfit.exitFeeAssumption==='TAKER'?takerFeeBps:makerFeeBps),safetyMarginBps},economics,...(reachability?{reachability}:{}),LONG,SHORT,leaseRequiredMarginUsd,leaseBudget:{requestedUsd:leaseRequiredMarginUsd,cappedBy:'MINIMUM_EXECUTABLE_CANDIDATE',budgetUsd:leaseRequiredMarginUsd}};
 }

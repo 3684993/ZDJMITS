@@ -1,7 +1,7 @@
 import {mkdtempSync, rmSync} from 'node:fs';
 import {join} from 'node:path';
 import {tmpdir} from 'node:os';
-import {afterEach,describe,expect,it} from 'vitest';
+import {afterEach,beforeEach,describe,expect,it,vi} from 'vitest';
 import {V396ExitRuntime,type V396PrepareExitInput} from './v396ExitRuntime.js';
 import type {AdapterCapabilities} from './s04ExitCoordinator.js';
 import {OPEN_STATES} from './s04ExitCoordinator.js';
@@ -19,7 +19,10 @@ import {normalizeExitOrderFact} from './exitOrderFact.js';
  */
 
 const dirs:string[]=[];
-afterEach(()=>{while(dirs.length){const dir=dirs.pop()!;try{rmSync(dir,{recursive:true,force:true});}catch{/* busy handle */}}});
+// Queue fixtures describe one logical snapshot, independent of platform SQLite preparation time.
+// Mock Date.now only: the hung-query test must still exercise the real setTimeout deadline.
+beforeEach(()=>{const now=Date.now();vi.spyOn(Date,'now').mockReturnValue(now);});
+afterEach(()=>{vi.restoreAllMocks();while(dirs.length){const dir=dirs.pop()!;try{rmSync(dir,{recursive:true,force:true});}catch{/* busy handle */}}});
 const tempFile=(name='v396-ownership.sqlite')=>{const dir=mkdtempSync(join(tmpdir(),'zdj-v396-fair-'));dirs.push(dir);return join(dir,name);};
 const any=(value:unknown)=>value as any;
 
@@ -54,6 +57,7 @@ async function prepared(runtime:V396ExitRuntime,index:number,now:number){
     proof:{kind:'ONE_WAY_REDUCE_ONLY',checkedAt:now-1_000,positionSide:'LONG'},
   };
   const preparedResult=await runtime.prepareTakeProfit(input);
+  expect(preparedResult.accepted,preparedResult.reasons.join('|')).toBe(true);
   expect(preparedResult.clientOrderId).toBeTruthy();
   return {symbol,subject,clientOrderId:String(preparedResult.clientOrderId)};
 }
@@ -72,6 +76,21 @@ const orderReport=(task:{symbol:string;clientOrderId:string},over:Record<string,
 });
 
 describe('P1 exit convergence fairness',()=>{
+  it('still rejects a reduction proof that expires while capabilities are awaited',async()=>{
+    const now=Date.now(),runtime=new V396ExitRuntime(tempFile(),()=>identity,async()=>{
+      vi.mocked(Date.now).mockReturnValue(now+5_001);
+      return CAPS;
+    });
+    try{
+      const result=await runtime.prepareTakeProfit({requestKey:'expired-proof',subject:{symbol:'BTCUSDT',side:'LONG',cycleId:'expired-cycle'},
+        quantityUnits:10,limitPrice:95,now,positionVersion:1,settingsVersion:219,riskGeneration:1,
+        availableReduceUnits:10,remainingUnits:10,minNotional:5,tickSize:.1,stepSize:1,
+        proof:{kind:'ONE_WAY_REDUCE_ONLY',checkedAt:now,positionSide:'LONG'}});
+      expect(result).toMatchObject({accepted:false,clientOrderId:null,submitRequired:false,reasons:['REDUCTION_PROOF_EXPIRED']});
+      expect(runtime.openQueueLength()).toBe(0);
+    }finally{runtime.close();}
+  });
+
   it('a terminal order at the tail is serviced even while the head stays WORKING',async()=>{
     const now=Date.now();
     const {runtime,tasks}=await prepareMany(55,now);

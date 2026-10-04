@@ -36,9 +36,7 @@ import { candidateCapitalFromState } from './capitalCapacity.js';
 import { isPipelineRoutableLifecycle, reconcileCandidateLifecycles } from './candidateLifecycleDeriver.js';
 import type { MarketDataHub } from './marketDataHub.js';
 import { decisionContextKey, decisionContextPermissions, decisionSettingsContext, nextClosedFiveMinute, noEdgeReleaseReason, noEdgeReviewFacts } from './decisionContext.js';
-import { evaluatePreflightFeasibility } from './preflightFeasibility.js';
 import { buildPreAiExecutionEnvelope } from './preAiExecutionEnvelope.js';
-import { evaluatePreAiPlanFeasibility } from './preAiPlanFeasibility.js';
 import { acquireExecutionLease, releaseExecutionLease, validateExecutionLease } from './executionLease.js';
 import { materializeCandidateQuantityAllocation } from './aiQuantityAllocation.js';
 import { buildHistoricalTpReachability } from './historicalTpReachability.js';
@@ -257,8 +255,6 @@ export class EntryCoordinator {
   private primaryReadinessScore(symbol:string,fallback:number){const candidate:any=this.state.universe.find((x:any)=>x.symbol===symbol),card:any=this.state.snapshots.get(symbol)?.technical?.['15m'],now=Date.now();if(card?.isClosed!==true||!Number.isFinite(card?.barCloseTime)||card.barCloseTime>now)return Number(candidate?.schedulerPriority??fallback);const trend=Number(card.trendStrength??0),momentum=Math.abs(Number(card.macdHistogramSlope??0)),volume=Math.max(0,Number(card.volumeZScore??0));return Number(candidate?.schedulerPriority??fallback)+Math.min(1,Math.max(0,trend*.6+Math.min(.25,momentum)+Math.min(.15,volume*.05)));}
   /** EIP consumes the candidate plus BTC/ETH regime facts; do not spend a Primary lease before all three exist. */
   private eipDependenciesPresent(symbol:string){return [symbol,'BTCUSDT','ETHUSDT'].every(required=>this.state.snapshots.has(required));}
-  /** Read-only feasibility before Primary. Post-AI allocation/reservation/final guards remain authoritative. */
-  private preflight(symbol:string){return evaluatePreflightFeasibility(this.state,symbol,this.market?.primaryReadyReasons(symbol,Date.now())??[]);}
   private objectiveCapacity(symbol:string){try{const envelope=buildPreAiExecutionEnvelope(this.state,symbol);return envelope.LONG.executable||envelope.SHORT.executable;}catch{return false;}}
   private primaryOccupancyBlock(symbol:string){
     if(testnetFundsOnlyEntry(this.state.settings))return null;
@@ -505,18 +501,6 @@ export class EntryCoordinator {
           {kind:admissionSide.admission.refusal?'SIZE_INDEPENDENT':'NOTIONAL',code:String(admissionSide.admission.refusal??'RISK_ADMISSION_CEILING'),
             gate:admissionSide.admission.gate,limitUsd:null,usedUsd:null,headroomUsd:admissionSide.admission.ceilingUsd,shortfallUsd:null,detail:admissionSide.admission.detail});
         this.reject(symbol,constraint);return;}
-      // The envelope says a side has capital; it does not say a plan can be written for it. This probe
-      // answers the plan question - does any exchange-legal quantity on this side clear its own hard
-      // profit floor - with the same functions the plan layer uses, so a refusal here is a refusal the
-      // plan would have made anyway, settled without spending a model run. Statistics are excluded:
-      // in SHADOW they must not veto, and they are the model's judgement to argue with.
-      const planFeasibility=evaluatePreAiPlanFeasibility({symbol,now:Date.now(),envelope:executionEnvelope,settings:this.state.settings});
-      this.events.publish('PRE_AI_TRADE_PLAN_FEASIBILITY',{checkedAt:planFeasibility.checkedAt,noHardExecutableSide:planFeasibility.noHardExecutableSide,sides:planFeasibility.sides},symbol);
-      if(planFeasibility.noHardExecutableSide){
-        this.events.publish('ENTRY_DECISION_BLOCKED',{stage:'PRE_AI_TRADE_PLAN',reason:'PRE_AI_TRADE_PLAN_NO_HARD_EXECUTABLE_SIDE',
-          reasons:[...new Set(['LONG','SHORT'].flatMap((side:'LONG'|'SHORT')=>planFeasibility.sides[side].reasons))],sides:planFeasibility.sides},symbol);
-        this.reject(symbol,'PRE_AI_TRADE_PLAN_NO_HARD_EXECUTABLE_SIDE');return;
-      }
       const candidateBuild=this.buildPreAiCandidateSets(symbol,executionEnvelope);
       candidateSets=candidateBuild.sets;
       this.events.publish('PRE_AI_TRADE_PLAN_CANDIDATES_CREATED',{createdAt:Date.now(),blockers:candidateBuild.blockers,

@@ -6,6 +6,7 @@ import { BinanceTransport } from '../binance/BinanceTransport.js';
 import { BinanceUserDataStream } from '../binance/BinanceUserDataStream.js';
 import { binanceClientOrderIdFactory } from '../../services/binanceClientOrderIdFactory.js';
 import { positionLeverageFact } from '../../services/positionRiskFacts.js';
+import { reconcileAccountValuation } from '../../services/accountValuation.js';
 type Credentials={apiKey:string;apiSecret:string}|null;
 /** An exchange field that is absent, empty or non-numeric stays null; a reported zero stays zero. */
 const numberOrNull=(value:unknown)=>Number.isFinite(Number(value))&&value!=null&&String(value)!==''?Number(value):null;
@@ -261,7 +262,7 @@ export class ExternalTradeAdapter implements ExchangeTradeAdapter {
     }
     const assets=nonzero.map((row:any)=>{const asset=String(row.asset),wallet=Number(row.walletBalance??0),stable=['USDT','USDC','BUSD'].includes(asset),price=stable?1:prices.get(asset);return{asset,walletBalance:wallet,availableBalance:Number(row.availableBalance??0),crossWalletBalance:row.crossWalletBalance==null?null:Number(row.crossWalletBalance),unrealizedPnl:Number(row.unrealizedProfit??0),usdValue:Number.isFinite(price)?wallet*price!:null,marginEligible:Boolean(row.marginAvailable??asset==='USDT')};});
     const usdt=assets.find(row=>row.asset==='USDT'),equity=assets.reduce((sum,row)=>sum+(row.usdValue??0),0)+Number(account.totalUnrealizedProfit??0);
-    return{walletBalanceUsd:assets.reduce((sum,row)=>sum+(row.usdValue??0),0),availableUsd:Number(usdt?.availableBalance??account.availableBalance),equityUsd:assets.some(row=>row.usdValue===null)&&account.totalMarginBalance!=null&&Number.isFinite(Number(account.totalMarginBalance))?Number(account.totalMarginBalance):equity,unrealizedPnlUsd:Number(account.totalUnrealizedProfit??0),realizedPnlUsd24h:Date.now()-(this.enrichment.incomeAsOf??0)<120_000?this.enrichment.income:null,assets,enrichment:{incomeAsOf:this.enrichment.incomeAsOf,valuationAsOf:this.enrichment.pricesAsOf,error:this.enrichment.lastError,pending:Boolean(this.enrichmentFlight)},asOf:Date.now()};
+    return{walletBalanceUsd:assets.reduce((sum,row)=>sum+(row.usdValue??0),0),availableUsd:Number(usdt?.availableBalance??account.availableBalance),equityUsd:assets.some(row=>row.usdValue===null)&&account.totalMarginBalance!=null&&Number.isFinite(Number(account.totalMarginBalance))?Number(account.totalMarginBalance):equity,unrealizedPnlUsd:Number(account.totalUnrealizedProfit??0),realizedPnlUsd24h:Date.now()-(this.enrichment.incomeAsOf??0)<120_000?this.enrichment.income:null,assets,valuation:reconcileAccountValuation(account,assets),enrichment:{incomeAsOf:this.enrichment.incomeAsOf,valuationAsOf:this.enrichment.pricesAsOf,error:this.enrichment.lastError,pending:Boolean(this.enrichmentFlight)},asOf:Date.now()};
   }
   async validatePrivate(){const account=await this.fetchAccountSnapshot(),orders=await this.fetchOpenOrders(),positions=await this.fetchPositions();return{status:'BINANCE DEMO PRIVATE READY',endpoint:this.transport.effectiveBaseUrl(),accountAvailable:Number.isFinite(account.walletBalanceUsd),openOrders:orders.length,positions:positions.length};}
   /**
@@ -334,7 +335,7 @@ export class ExternalTradeAdapter implements ExchangeTradeAdapter {
       maximum=await flight;
     }
     if(requested>maximum)throw new Error(`SET_LEVERAGE_EXCEEDS_EXCHANGE_MAX:${symbol}:requested=${requested}:maximum=${maximum}`);
-    await this.signed('POST','/fapi/v1/leverage',{symbol,leverage:requested});
+    await this.signed('POST','/fapi/v1/leverage',{symbol,leverage:requested},'SET_ENTRY_LEVERAGE','EXECUTION_CRITICAL');
   }
   startUserData(onEvent:(event:any)=>void){if(!this.credentials||this.transport.environment()!=='TESTNET')return null;this.userStream=new BinanceUserDataStream(this.transport,this.credentials.apiKey,onEvent);this.userStream.start();return this.userStream;}
   stopUserData(){this.userStream?.stop();this.userStream=null;}

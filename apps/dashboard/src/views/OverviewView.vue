@@ -128,7 +128,7 @@ const COMMISSION_ROWS: Array<[string, string, string]> = [
   ["localUnresolvedUnknown", "本地未决 UNKNOWN", "账面敞口：交易所并未确认其存活"],
 ];
 const commissionRows = computed(() =>
-  COMMISSION_ROWS.map(([key, label, hint]) => ({ key, label, hint, count: Number(commissions.value?.[key] ?? 0) })),
+  COMMISSION_ROWS.map(([key, label, hint]) => ({ key, label, hint, count: key==='remoteConfirmedEntry'&&pipeline.value?.pendingEntries?.status==='READY'?Number(pipeline.value.pendingEntries.count):Number(commissions.value?.[key] ?? 0) })),
 );
 // An older Engine does not project executionTruth: show its two numbers, labelled as unclassified
 // instead of pretending the split exists.
@@ -169,7 +169,7 @@ const msText = (value: unknown) => {
 };
 const checkFacts = (key: string, row: any): Array<[string, string]> => {
   if (!row) return [];
-  if (key === "orderTerminalParity") return [["不一致订单", String(row.mismatchCount ?? 0)]];
+  if (key === "orderTerminalParity") return [["当前订单终态不一致", String(row.mismatchCount ?? 0)],["最近扫描差异",String(row.scanDriftCount??'—')],["混合风险声明（另项）",String(row.mixedRiskClaimCount??'—')]];
   if (key === "exitClaimConvergence")
     return [["未收敛任务", String(row.openTasks ?? 0)], ["终态未释放", String(row.terminalUnreleasedClaims ?? 0)], ["最久未轮询", msText(row.oldestUnpolledAgeMs)]];
   if (key === "takeProfitCoverage")
@@ -177,7 +177,7 @@ const checkFacts = (key: string, row: any): Array<[string, string]> => {
   if (key === "positionCoverage") return [["本地持仓", String(row.local ?? 0)], ["交易所持仓", String(row.remote ?? 0)]];
   if (key === "fillCycleConservation") return [["账本不一致", String(row.ledgerInconsistent ?? 0)], ["不守恒", String(row.unconserved ?? 0)], ["守恒", `${String(row.conserved ?? 0)}（含在持仓 ${String(row.openConserved ?? 0)}）`], ["未证明", String(row.unproven ?? 0)]];
   if (key === "fundingCoverage")
-    return [["资金费精确", String(row.recordsWithExactFunding ?? 0)], ["资金费未知", String(row.recordsUnknown ?? 0)], ["资金费流水", String(row.incomeRows ?? 0)], ["覆盖完整", row.coverageComplete ? "是" : "否"]];
+    return [["周期资金费归因精确", String(row.recordsWithExactFunding ?? 0)], ["周期归因未知", String(row.recordsUnknown ?? 0)], ["交易所资金费流水", String(row.incomeRows ?? 0)], ["交易所查询时间窗口完整", row.coverageComplete ? "是（不代表周期归因完整）" : "否"]];
   if (key === "reviewAuthority")
     return [["已启用", row.enabled ? "是" : "否"], ["AI 活跃周期", String(row.aiActiveCycles ?? 0)], ["待复核", String(row.scheduledDue ?? 0)], ["最近结果", row.lastOutcome ?? "—"]];
   return [];
@@ -224,7 +224,7 @@ const FUNNEL_STAGES: Array<[string, string]> = [
   ["primaryCompleted", "Primary 完成"],
   ["place", "PLACE"],
   ["authorizedPlace", "已授权 Primary PLACE"],
-  ["riskAllowed", "风险准入通过"],
+  ["riskAllowed", "组合风险准入（TESTNET 可不适用）"],
   ["tradePlanReady", "TradePlan 就绪"],
   ["reservationCreated", "Reservation 建立"],
   ["intentCreated", "Intent 建立"],
@@ -312,14 +312,14 @@ onUnmounted(() => {
     <div v-if="refreshError" class="policy-card danger-lite">{{ refreshError }}</div>
     <div class="kpi-grid five">
       <div class="kpi">
-        <span>总资产估值</span
+        <span>交易所 USDT 保证金权益</span
         ><strong>{{
-          account()?.equityUsd == null ? "—" : money(account().equityUsd)
+          account()?.valuation?.exchangeUsdtMargin == null ? "—" : money(account().valuation.exchangeUsdtMargin)
         }}</strong
-        ><small>真实资产 USD 估值</small>
+        ><small>Binance totalMarginBalance（USDT 口径）；不含 USDC/BTC</small>
       </div>
       <div class="kpi">
-        <span>浮动盈亏</span
+        <span>USDT 浮动盈亏</span
         ><strong
           :class="
             (account()?.unrealizedPnlUsd ?? 0) >= 0 ? 'positive' : 'negative'
@@ -341,7 +341,7 @@ onUnmounted(() => {
           :class="(s.snapshot?.tradeTradingNetExFunding ?? 0) >= 0 ? 'positive' : 'negative'"
           >{{ money(s.snapshot?.tradeTradingNetExFunding ?? 0) }}</strong
         >
-        <small>正式净收益 {{ money(s.snapshot?.tradeNetPnl ?? 0) }} · {{ s.snapshot?.tradeCompletedExFundingCount ?? 0 }} 个完整周期<span v-if="(s.snapshot?.tradeFundingUnknownCount ?? 0) > 0"> · {{ s.snapshot?.tradeFundingUnknownCount }} 笔资金费未确认</span></small>
+        <small>正式净收益 {{ s.snapshot?.tradeNetPnl == null ? '未证明 · 待资金费确认' : money(s.snapshot.tradeNetPnl) }} · {{ s.snapshot?.tradeCompletedExFundingCount ?? 0 }} 个完整周期<span v-if="(s.snapshot?.tradeFundingUnknownCount ?? 0) > 0"> · {{ s.snapshot?.tradeFundingUnknownCount }} 笔资金费未确认</span></small>
       </div>
       <div class="kpi" data-active-commissions>
         <span>{{ commissions ? "活动委托 · 按证明来源分列（不相加）" : "活动委托 · 分类不可用" }}</span>
@@ -361,8 +361,10 @@ onUnmounted(() => {
         </template>
       </div>
     </div>
-    <Panel title="最近 1 小时交易事实" subtitle="Binance 成交按系统归因与外部成交分开统计；外部成交只进入审计，不触发建仓循环。"><div class="facts wide"><div><dt>Entry fills</dt><dd>{{s.snapshot?.exchangeFillFacts?.entryFillsLast1h??0}}</dd></div><div><dt>Exit fills</dt><dd>{{s.snapshot?.exchangeFillFacts?.exitFillsLast1h??0}}</dd></div><div><dt>Closed trades</dt><dd>{{s.snapshot?.exchangeFillFacts?.closedTradesLast1h??0}}</dd></div><div><dt>Net PnL</dt><dd>{{money(s.snapshot?.exchangeFillFacts?.netPnlLast1h??0)}}</dd></div><div><dt>External / unlinked fills</dt><dd :class="(s.snapshot?.exchangeFillFacts?.externalFillsLast1h??s.snapshot?.exchangeFillFacts?.unattributedFillsLast1h??0)>0?'negative':''">{{s.snapshot?.exchangeFillFacts?.externalFillsLast1h??s.snapshot?.exchangeFillFacts?.unattributedFillsLast1h??0}}</dd></div></div><div v-if="s.snapshot?.exchangeFillFacts?.systemFillParityAlert && (s.snapshot?.exchangeFillFacts?.systemFillAttributionGapLast1h??0)>0" class="policy-card danger-lite"><strong>EXCHANGE_FILL_ATTRIBUTION_GAP</strong><span>疑似 Engine 成交未完成本地归因，请在交易记录页面执行事实审计。</span></div><div v-if="fillProvenanceRows.length" class="facts wide" data-fill-provenance><div v-for="row in fillProvenanceRows" :key="row.key" :data-fill-provenance-row="row.key"><dt>证明来源 {{row.key}}</dt><dd>{{row.count}} 笔</dd></div></div><p v-else class="muted" data-fill-provenance-unavailable>本实例未投影按证明来源分列的成交事实：归因成交与外部成交无法逐项核对。</p></Panel>
+    <div v-if="account()?.valuation" class="policy-card" :class="account().valuation.status==='ACCOUNT_VALUATION_INCONSISTENT'?'danger-lite':''" data-account-valuation><strong>{{account().valuation.status==='ACCOUNT_VALUATION_INCONSISTENT'?'ACCOUNT_VALUATION_INCONSISTENT':'同一 Binance 快照的账户口径'}}</strong><span>USDT 钱包 {{money(account().valuation.exchangeUsdtWallet)}} + USDT 浮盈亏 {{money(account().valuation.exchangeUsdtUnrealized)}} = USDT 保证金权益 {{money(account().valuation.exchangeUsdtMargin)}}；USDT/USDC 钱包估值小计 {{money(account().valuation.stablecoinWalletUsd)}}，稳定币保证金权益小计 {{money(account().valuation.stablecoinMarginUsd)}}。Entry 可执行保证金另按交易所 availableBalance 计算；{{account().valuation.unknownAssets.length?'未估值资产 '+account().valuation.unknownAssets.join('、')+'，全部资产 USD 总值未证明。':'资产 USD 估值已覆盖。'}}</span></div>
+    <Panel title="最近 1 小时交易事实" subtitle="Binance 成交按系统归因、外部成交和 UNPROVEN 分列；总 Entry fills 不等于已证明的系统成交。"><div class="facts wide"><div><dt>交易所 Entry 方向 fills（含 UNPROVEN）</dt><dd>{{s.snapshot?.exchangeFillFacts?.entryFillsLast1h??0}}</dd></div><div><dt>Exit fills</dt><dd>{{s.snapshot?.exchangeFillFacts?.exitFillsLast1h??0}}</dd></div><div><dt>Closed trades</dt><dd>{{s.snapshot?.exchangeFillFacts?.closedTradesLast1h??0}}</dd></div><div><dt>Net PnL</dt><dd>{{money(s.snapshot?.exchangeFillFacts?.netPnlLast1h??0)}}</dd></div><div><dt>External / unlinked fills</dt><dd :class="(s.snapshot?.exchangeFillFacts?.externalFillsLast1h??s.snapshot?.exchangeFillFacts?.unattributedFillsLast1h??0)>0?'negative':''">{{s.snapshot?.exchangeFillFacts?.externalFillsLast1h??s.snapshot?.exchangeFillFacts?.unattributedFillsLast1h??0}}</dd></div></div><div v-if="s.snapshot?.exchangeFillFacts?.systemFillParityAlert && (s.snapshot?.exchangeFillFacts?.systemFillAttributionGapLast1h??0)>0" class="policy-card danger-lite"><strong>EXCHANGE_FILL_ATTRIBUTION_GAP</strong><span>疑似 Engine 成交未完成本地归因，请在交易记录页面执行事实审计。</span></div><div v-if="fillProvenanceRows.length" class="facts wide" data-fill-provenance><div v-for="row in fillProvenanceRows" :key="row.key" :data-fill-provenance-row="row.key"><dt>证明来源 {{row.key}}</dt><dd>{{row.count}} 笔</dd></div></div><p v-else class="muted" data-fill-provenance-unavailable>本实例未投影按证明来源分列的成交事实：归因成交与外部成交无法逐项核对。</p></Panel>
     <Panel title="执行真相 · 八项独立检查" subtitle="每一项只回答自己的问题，任何一项都不代替其它项；未投影或 UNKNOWN 一律显示为未知，不显示为健康">
+      <div class="compact-summary">{{ truthChecks.filter(check=>check.status==='HEALTHY').length }} / 8 项健康 · {{ truthChecks.filter(check=>check.status!=='HEALTHY').length }} 项需关注</div><details class="compact-details"><summary>查看八项明细</summary>
       <div class="facts wide" data-execution-truth>
         <div v-for="check in truthChecks" :key="check.key" class="truth-card" :data-truth-check="check.key">
           <dt>{{ check.label }} · <StatusBadge :value="check.status" /><span class="truth-status">{{ statusLabel(check.status) }}</span></dt>
@@ -380,12 +382,12 @@ onUnmounted(() => {
           <div v-for="row in convergenceFacts" :key="row[0]" :data-convergence="row[0]"><dt>{{ row[1] }}</dt><dd>{{ row[2] }}</dd></div>
         </template>
         <p v-else data-exit-convergence-unavailable><strong>退出收敛队列未投影</strong><span>{{ convergence?.available === false ? (convergence?.reason ?? "EXIT_RUNTIME_NOT_ATTACHED") : "EXIT_CONVERGENCE_NOT_PROJECTED" }}；未知不等于已收敛，不据此判定退出链正常。</span></p>
-      </div>
+      </div></details>
     </Panel>
     <Panel
       title="新建仓执行权限"
       subtitle="自动流程、可执行容量与交易所数据分别显示；9B 事实抽取与 Primary 独立调度，写入限于 Testnet"
-      ><div class="facts wide">
+      ><div class="compact-summary"><StatusBadge :value="autoMode()"/> {{entryEnabled()?'TESTNET 自动建仓已启用':'新建仓受限'}} · {{control()?.capital?.executableCandidateCount??0}} 个可执行候选 · {{authoritative?.code??'待评估'}}</div><details class="compact-details"><summary>查看执行权限明细</summary><div class="facts wide">
         <div>
           <dt>自动执行模式</dt>
           <dd>
@@ -575,7 +577,7 @@ onUnmounted(() => {
           {{ control()?.capital?.noUsdcContract ?? 0 }} 个 USDC
           合约不可执行</span
         >
-      </div></Panel
+      </div></details></Panel
     ><div v-if="riskOverrideOpen&&riskOverridePreview" class="modal-backdrop" @click.self="riskOverrideOpen=false"><div class="modal"><div class="toolbar"><h2>人工复核并恢复自动建仓</h2><button class="button secondary" @click="riskOverrideOpen=false">关闭</button></div><p class="muted">仅 Testnet 有效。风险指标不会清零，当前上海交易日结束时自动失效。</p><div class="facts wide"><div><dt>暂停原因</dt><dd>{{riskOverridePreview.pauseReason}}</dd></div><div><dt>周期收益 / 回撤</dt><dd>{{money(riskOverridePreview.riskMetrics.capitalEpochRealizedPnlUsd)}} / {{(riskOverridePreview.riskMetrics.riskDrawdownPct*100).toFixed(2)}}%</dd></div><div><dt>可用资金</dt><dd>USDT {{money(riskOverridePreview.availableCapital.usdt)}} · USDC {{money(riskOverridePreview.availableCapital.usdc)}}</dd></div><div><dt>可执行候选</dt><dd>{{riskOverridePreview.executableCandidates}}</dd></div><div><dt>当前持仓</dt><dd>{{riskOverridePreview.currentPositions.map((p:any)=>`${p.symbol} ${p.side}`).join(' · ')||'无'}}</dd></div><div><dt>活动委托</dt><dd>{{riskOverridePreview.workingOrders.length}}</dd></div><div><dt>下一次周期重置</dt><dd>{{new Date(riskOverridePreview.override.nextRiskCycleAt).toLocaleString()}}</dd></div></div><label>复核说明<input v-model="riskOverrideReason" maxlength="240"/></label><div class="toolbar"><button class="button primary" :disabled="riskOverrideBusy||!riskOverrideReason.trim()" @click="confirmRiskOverride">{{riskOverrideBusy?'处理中…':'确认恢复 Testnet AUTO'}}</button><button class="button secondary" :disabled="riskOverrideBusy" @click="riskOverrideOpen=false">取消</button></div><p v-if="riskOverrideError" class="error-text">{{riskOverrideError}}</p></div></div>
     ><Panel
       title="Portfolio Intelligence"
@@ -709,7 +711,7 @@ onUnmounted(() => {
           </div>
         </div></Panel
       ><Panel title="建仓转化漏斗"
-        ><div class="toolbar">
+        ><div class="compact-summary">30 分钟：已授权 PLACE {{pipeline?.entryConversion?.thirtyMinutes?.authorizedPlace??0}} · 提交 {{pipeline?.entryConversion?.thirtyMinutes?.orderSubmitted??0}} · 成交 {{pipeline?.entryConversion?.thirtyMinutes?.entryFilled??0}}</div><details class="compact-details"><summary>查看转化与首因</summary><div class="toolbar">
           <button
             class="button"
             :class="conversionWindowKey === 'thirtyMinutes' ? 'primary' : 'secondary'"
@@ -726,7 +728,7 @@ onUnmounted(() => {
           <div class="facts wide" data-entry-conversion>
             <div v-for="[key, label] in FUNNEL_STAGES" :key="key">
               <dt>{{ label }}</dt>
-              <dd>{{ stageCount(key) }}</dd>
+              <dd>{{ conversionWindow.stageSemantics?.[key]==='NOT_REQUIRED'?'不适用（N/A）':stageCount(key) }}</dd>
             </div>
             <div>
               <dt>等待价格</dt>
@@ -769,7 +771,7 @@ onUnmounted(() => {
           <p class="muted">
             执行就绪只说明有权进入链路；“已挂单”必须是交易所已接受订单，成交另计。
           </p>
-        </template>
+        </template></details>
       </Panel>
     </div>
     <Panel title="真实资产"

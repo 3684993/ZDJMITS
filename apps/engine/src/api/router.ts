@@ -43,6 +43,7 @@ import { bookAdmissionSummary } from '../services/admissionCapacityReader.js';
 import { testnetFundsOnlyEntry } from '@zdj/core';
 import { exitSubjectFromPosition } from '../services/v396ExitRuntime.js';
 import { entryCancelEligibility } from './entryCancelEligibility.js';
+import {OperationalIncidentTracker,operationalCandidates} from '../services/operationalIncidents.js';
 
 /**
  * Attach the Engine's execution answer to one page of run rows.
@@ -76,6 +77,19 @@ export function withExecutionOutcomes(runtime: EngineRuntime, items: any[]) {
 
 export function createApiRouter(runtime: EngineRuntime) {
   const r = Router();
+  const incidentTracker=new OperationalIncidentTracker();
+  const updateIncidents=()=>{
+    const before=new Set(incidentTracker.read().active.map(row=>row.incidentId));
+    const result=incidentTracker.observe(operationalCandidates({pipeline:runtime.pipelineStatus(),routes:binanceTransportGovernance(),account:runtime.state.account,marketStream:runtime.market.metrics(),valuation:(runtime.state.account as any).valuation,orders:[...runtime.state.entryOrders.values()]}));
+    const after=new Set(result.active.map(row=>row.incidentId));
+    for(const row of result.active)if(!before.has(row.incidentId))runtime.events.publish('OPERATIONAL_INCIDENT_ACTIVATED',row,row.subsystem);
+    for(const row of result.history)if(before.has(row.incidentId)&&!after.has(row.incidentId))runtime.events.publish('OPERATIONAL_INCIDENT_RECOVERED',row,row.subsystem);
+    return result;
+  };
+  updateIncidents();
+  const incidentTimer=setInterval(updateIncidents,5000);incidentTimer.unref();
+  runtime.events.on('event',event=>{if(event.type==='RUNTIME_STOPPING'||event.type==='RUNTIME_STOPPED')clearInterval(incidentTimer);});
+  r.get('/operational-incidents',(_req,res)=>res.json(incidentTracker.read()));
   r.get('/observability/trading-quality',(_req,res)=>res.json({health:runtime.tradingQuality?.health()??{status:'UNAVAILABLE'},policy:runtime.state.settings.tradingQuality??{mode:'OFF'},report:runtime.tradingQuality?.report()??null,v393:runtime.qualityObserver?.report()??{status:'UNAVAILABLE'}}));
   r.get('/observability/entry',(req,res)=>{const identity=runtime.runtimeStatus(),start=Number(identity.lastRestartAt??Date.now()),requested=Number(req.query.since??start),since=Number.isFinite(requested)?Math.max(start,requested):start,untilValue=Number(req.query.until??Date.now()),until=Number.isFinite(untilValue)?Math.min(Date.now(),Math.max(since,untilValue)):Date.now(),archived=runtime.settingsStore.listEntryObservationRuns(since,until,10001),runs=[...new Map([...archived,...runtime.state.aiRuns].filter(r=>r.startedAt>=since&&r.startedAt<=until&&r.role==='PRIMARY_BRAIN').map(r=>[r.id,r])).values()].map(r=>r.completedAt&&r.completedAt>until?{...r,status:'RUNNING',decision:null}:r),adapterEvents=runtime.settingsStore.runtimeEvents(since,['ENTRY_ADAPTER_REQUEST_FACTS','ENTRY_ADAPTER_RESPONSE_FACTS'],100000).filter((event:any)=>event.ts<=until);res.json({...entryObservation({runs,intents:[...runtime.state.entryIntents.values()],orders:[...runtime.state.entryOrders.values()],fills:runtime.state.executionFills.filter(f=>f.executionTime<=until),adapterEvents,runtime:identity}),window:{since,until,truncated:archived.length>=10001,source:'DURABLE_PRIMARY_ARCHIVE'}});});
   let snapshotVersion=0,publishTimer:NodeJS.Timeout|null=null,stopping=false;

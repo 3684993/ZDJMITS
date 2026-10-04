@@ -89,7 +89,7 @@ describe('health decomposition', () => {
     expect(byKey.get('fundingCoverage')).toContain('部分覆盖');
     expect(byKey.get('reviewAuthority')).toContain('[DISABLED]');
     expect(byKey.get('reviewAuthority')).toContain('未启用');
-    expect(byKey.get('orderTerminalParity')).toContain('不一致订单 0');
+    expect(byKey.get('orderTerminalParity')).toContain('当前订单终态不一致 0');
   });
 
   it('renders a degraded check without touching any other check verdict', async () => {

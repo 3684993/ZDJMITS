@@ -19,7 +19,7 @@ type BudgetOptions={scope?:string;persistKey?:string;softPublicWeight?:number;so
 const EXECUTION_SOURCES=new Set(['EXECUTION_CRITICAL']);
 const CONTROL_SOURCES=new Set(['CLOCK','HEALTH_PROBE','RATE_LIMIT_CONTROL']);
 const PRIVATE_TRUTH_SOURCES=new Set(['ORDER_VERIFICATION','PRIVATE_STATE','USER_DATA_STREAM','RECONCILIATION']);
-const BACKGROUND_SOURCES=new Set(['BACKGROUND_AUDIT','RESEARCH_AUDIT','HISTORICAL_REPAIR']);
+const BACKGROUND_SOURCES=new Set(['BACKGROUND_AUDIT','RESEARCH_AUDIT','HISTORICAL_REPAIR','PORTFOLIO_RISK_CASH_FLOW']);
 export function binanceBudgetLane(source:unknown){const value=String(source??'UNKNOWN');return EXECUTION_SOURCES.has(value)?'EXECUTION':PRIVATE_TRUTH_SOURCES.has(value)?'PRIVATE_TRUTH':CONTROL_SOURCES.has(value)?'CONTROL':BACKGROUND_SOURCES.has(value)?'BACKGROUND':'MARKET_PUBLIC';}
 function intervalMs(interval:RateLimitInterval,intervalNum:number){const unit=interval==='SECOND'?1000:interval==='MINUTE'?60_000:interval==='HOUR'?3_600_000:86_400_000;return unit*Math.max(1,intervalNum);}
 function intervalFromToken(token:string):{interval:RateLimitInterval;intervalNum:number}|null{const m=String(token).toUpperCase().match(/^(\d+)([SMHD])$/);if(!m)return null;return{interval:m[2]==='S'?'SECOND':m[2]==='M'?'MINUTE':m[2]==='H'?'HOUR':'DAY',intervalNum:Number(m[1])};}

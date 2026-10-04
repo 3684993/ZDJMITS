@@ -1,0 +1,254 @@
+{
+  "basis": "current code mapping; no exchange write",
+  "rows": [
+    {
+      "method": "GET",
+      "path": "/fapi/v1/time",
+      "source": "CLOCK",
+      "lane": "CONTROL",
+      "purpose": "READ_TIME",
+      "weight": 1
+    },
+    {
+      "method": "GET",
+      "path": "/fapi/v1/exchangeInfo",
+      "source": "RATE_LIMIT_CONTROL",
+      "lane": "CONTROL",
+      "purpose": "READ_EXCHANGEINFO",
+      "weight": 1
+    },
+    {
+      "method": "GET",
+      "path": "/fapi/v1/klines",
+      "source": "MARKET_DATA",
+      "lane": "MARKET_PUBLIC",
+      "purpose": "READ_KLINES",
+      "weight": 5
+    },
+    {
+      "method": "GET",
+      "path": "/fapi/v1/depth",
+      "source": "MARKET_DATA",
+      "lane": "MARKET_PUBLIC",
+      "purpose": "READ_DEPTH",
+      "weight": 10
+    },
+    {
+      "method": "GET",
+      "path": "/fapi/v1/ticker/24hr",
+      "source": "MARKET_DATA",
+      "lane": "MARKET_PUBLIC",
+      "purpose": "READ_24HR",
+      "weight": 40
+    },
+    {
+      "method": "GET",
+      "path": "/fapi/v1/ticker/bookTicker",
+      "source": "MARKET_DATA",
+      "lane": "MARKET_PUBLIC",
+      "purpose": "READ_BOOKTICKER",
+      "weight": 5
+    },
+    {
+      "method": "GET",
+      "path": "/fapi/v1/premiumIndex",
+      "source": "MARKET_DATA",
+      "lane": "MARKET_PUBLIC",
+      "purpose": "READ_PREMIUMINDEX",
+      "weight": 10
+    },
+    {
+      "method": "GET",
+      "path": "/fapi/v1/openInterest",
+      "source": "MARKET_DATA",
+      "lane": "MARKET_PUBLIC",
+      "purpose": "READ_OPENINTEREST",
+      "weight": 1
+    },
+    {
+      "method": "GET",
+      "path": "/fapi/v1/fundingRate",
+      "source": "MARKET_DATA",
+      "lane": "MARKET_PUBLIC",
+      "purpose": "READ_FUNDINGRATE",
+      "weight": 1
+    },
+    {
+      "method": "GET",
+      "path": "/fapi/v2/account",
+      "source": "PRIVATE_STATE",
+      "lane": "PRIVATE_TRUTH",
+      "purpose": "READ_ACCOUNT",
+      "weight": 5
+    },
+    {
+      "method": "GET",
+      "path": "/fapi/v3/account",
+      "source": "PRIVATE_STATE",
+      "lane": "PRIVATE_TRUTH",
+      "purpose": "READ_ACCOUNT",
+      "weight": 5
+    },
+    {
+      "method": "GET",
+      "path": "/fapi/v1/balance",
+      "source": "PRIVATE_STATE",
+      "lane": "PRIVATE_TRUTH",
+      "purpose": "READ_BALANCE",
+      "weight": 5
+    },
+    {
+      "method": "GET",
+      "path": "/fapi/v2/positionRisk",
+      "source": "PRIVATE_STATE",
+      "lane": "PRIVATE_TRUTH",
+      "purpose": "READ_POSITIONRISK",
+      "weight": 5
+    },
+    {
+      "method": "GET",
+      "path": "/fapi/v3/positionRisk",
+      "source": "PRIVATE_STATE",
+      "lane": "PRIVATE_TRUTH",
+      "purpose": "READ_POSITIONRISK",
+      "weight": 5
+    },
+    {
+      "method": "GET",
+      "path": "/fapi/v1/openOrders",
+      "source": "RECONCILIATION",
+      "lane": "PRIVATE_TRUTH",
+      "purpose": "READ_OPENORDERS",
+      "weight": 40
+    },
+    {
+      "method": "GET",
+      "path": "/fapi/v1/openAlgoOrders",
+      "source": "RECONCILIATION",
+      "lane": "PRIVATE_TRUTH",
+      "purpose": "READ_OPENALGOORDERS",
+      "weight": 40
+    },
+    {
+      "method": "GET",
+      "path": "/fapi/v1/allOrders",
+      "source": "RECONCILIATION",
+      "lane": "PRIVATE_TRUTH",
+      "purpose": "READ_ALLORDERS",
+      "weight": 5
+    },
+    {
+      "method": "GET",
+      "path": "/fapi/v1/userTrades",
+      "source": "ORDER_VERIFICATION",
+      "lane": "PRIVATE_TRUTH",
+      "purpose": "READ_USERTRADES",
+      "weight": 5
+    },
+    {
+      "method": "GET",
+      "path": "/fapi/v1/income",
+      "source": "BACKGROUND_AUDIT",
+      "lane": "BACKGROUND",
+      "purpose": "READ_INCOME",
+      "weight": 30
+    },
+    {
+      "method": "GET",
+      "path": "/fapi/v1/commissionRate",
+      "source": "PRIVATE_STATE",
+      "lane": "PRIVATE_TRUTH",
+      "purpose": "READ_COMMISSIONRATE",
+      "weight": 30
+    },
+    {
+      "method": "GET",
+      "path": "/fapi/v1/multiAssetsMargin",
+      "source": "PRIVATE_STATE",
+      "lane": "PRIVATE_TRUTH",
+      "purpose": "READ_MULTIASSETSMARGIN",
+      "weight": 30
+    },
+    {
+      "method": "GET",
+      "path": "/fapi/v1/leverageBracket",
+      "source": "PRIVATE_STATE",
+      "lane": "PRIVATE_TRUTH",
+      "purpose": "READ_LEVERAGEBRACKET",
+      "weight": 30
+    },
+    {
+      "method": "GET",
+      "path": "/fapi/v1/positionSide/dual",
+      "source": "PRIVATE_STATE",
+      "lane": "PRIVATE_TRUTH",
+      "purpose": "READ_DUAL",
+      "weight": 30
+    },
+    {
+      "method": "POST",
+      "path": "/fapi/v1/leverage",
+      "source": "EXECUTION_CRITICAL",
+      "lane": "EXECUTION",
+      "purpose": "SET_ENTRY_LEVERAGE",
+      "weight": 1
+    },
+    {
+      "method": "POST",
+      "path": "/fapi/v1/order",
+      "source": "EXECUTION_CRITICAL",
+      "lane": "EXECUTION",
+      "purpose": "SUBMIT_ORDER",
+      "weight": 0
+    },
+    {
+      "method": "PUT",
+      "path": "/fapi/v1/order",
+      "source": "EXECUTION_CRITICAL",
+      "lane": "EXECUTION",
+      "purpose": "AMEND_ORDER",
+      "weight": 1
+    },
+    {
+      "method": "DELETE",
+      "path": "/fapi/v1/order",
+      "source": "EXECUTION_CRITICAL",
+      "lane": "EXECUTION",
+      "purpose": "CANCEL_ORDER",
+      "weight": 1
+    },
+    {
+      "method": "GET",
+      "path": "/fapi/v1/order",
+      "source": "ORDER_VERIFICATION",
+      "lane": "PRIVATE_TRUTH",
+      "purpose": "EXACT_ORDER_FACT",
+      "weight": 1
+    },
+    {
+      "method": "POST",
+      "path": "/fapi/v1/listenKey",
+      "source": "USER_DATA_STREAM",
+      "lane": "PRIVATE_TRUTH",
+      "purpose": "CREATE_LISTEN_KEY",
+      "weight": 1
+    },
+    {
+      "method": "PUT",
+      "path": "/fapi/v1/listenKey",
+      "source": "USER_DATA_STREAM",
+      "lane": "PRIVATE_TRUTH",
+      "purpose": "KEEPALIVE_LISTEN_KEY",
+      "weight": 1
+    },
+    {
+      "method": "DELETE",
+      "path": "/fapi/v1/listenKey",
+      "source": "USER_DATA_STREAM",
+      "lane": "PRIVATE_TRUTH",
+      "purpose": "DELETE_LISTEN_KEY",
+      "weight": 1
+    }
+  ],
+  "unknownCount": 0
+}

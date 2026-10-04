@@ -12,6 +12,14 @@ export const ServiceHealthSchema = z.object({
 });
 export type ServiceHealth = z.infer<typeof ServiceHealthSchema>;
 
+export const OperationalIncidentSchema=z.object({
+  incidentId:z.string(),active:z.boolean(),category:z.enum(['NETWORK','MARKET_DATA','EXCHANGE','SUBMIT_UNKNOWN','ACCOUNT']),
+  severity:z.enum(['WARN','ERROR','CRITICAL']),publicCode:z.string(),titleZh:z.string(),messageZh:z.string(),remediationZh:z.string(),subsystem:z.string(),blockingScopes:z.array(z.string()),
+  sourceCode:z.string(),sourceMessage:z.string(),firstSeenAt:z.number(),lastSeenAt:z.number(),recoveredAt:z.number().nullable(),count:z.number().int().positive(),
+  requestId:z.string().nullable().optional(),endpoint:z.string().nullable().optional(),method:z.string().nullable().optional(),routeIdentity:z.string().nullable().optional(),httpStatus:z.number().nullable().optional(),binanceCode:z.number().nullable().optional(),expectedEgressIp:z.string().nullable().optional(),observedEgressIp:z.string().nullable().optional(),retryAfter:z.string().nullable().optional(),blockedUntil:z.number().nullable().optional(),
+});
+export type OperationalIncident=z.infer<typeof OperationalIncidentSchema>;
+
 const CandidateBlockerCategorySchema=z.enum(['SUPPLY','CAPITAL','CAPACITY','RISK','MARKET','GOVERNANCE','AI']);
 export const CandidateSupplyHealthSchema=z.object({
   semanticVersion:z.string(),activeCohortCount:z.number().int().nonnegative(),activeCohortSemantic:z.string(),residentCount:z.number().int().nonnegative(),pipelineReadyCount:z.number().int().nonnegative(),executionReadyCount:z.number().int().nonnegative(),capitalExecutableCount:z.number().int().nonnegative(),poolResidentCount:z.number().int().nonnegative(),poolReadyCount:z.number().int().nonnegative(),poolWaitingCount:z.number().int().nonnegative(),consumedCount:z.number().int().nonnegative(),zombieSnapshotCount:z.number().int().nonnegative(),zombieSnapshots:z.array(z.string()),readyZeroReason:CandidateBlockerCategorySchema.nullable(),blockerCategories:z.record(CandidateBlockerCategorySchema,z.number().int().nonnegative()),topBlockers:z.array(z.object({reason:z.string(),count:z.number().int().nonnegative(),category:CandidateBlockerCategorySchema})),
@@ -26,6 +34,7 @@ export const DashboardSnapshotSchema = z.object({
   account: z.object({
     status: z.enum(['NOT_CONFIGURED','SYNCING','READY','STALE','UNAVAILABLE']), source: z.string(), asOf: z.number().int().nullable(), reason: z.string().nullable(),
     equityUsd: z.number().nullable(), availableUsd: z.number().nullable(), walletBalanceUsd: z.number().nullable(), unrealizedPnlUsd: z.number().nullable(), realizedPnlUsd24h: z.number().nullable(),
+    valuation:z.object({status:z.enum(['RECONCILED','PARTIAL','ACCOUNT_VALUATION_INCONSISTENT']),scope:z.string(),exchangeUsdtWallet:z.number().nullable(),exchangeUsdtUnrealized:z.number().nullable(),exchangeUsdtMargin:z.number().nullable(),stablecoinWalletUsd:z.number(),stablecoinMarginUsd:z.number(),unknownAssets:z.array(z.string()),toleranceUsd:z.number(),assetValuationComplete:z.boolean()}).optional(),
     assets:z.array(z.object({asset:z.string(),walletBalance:z.number(),availableBalance:z.number(),crossWalletBalance:z.number().nullable(),unrealizedPnl:z.number(),usdValue:z.number().nullable(),marginEligible:z.boolean()})),
     activePositions: z.number().int(), pendingEntries: z.number().int(), activeEntryOrders:z.number().int().optional(), activeTpOrders:z.number().int().optional(),
   }),
@@ -60,7 +69,7 @@ export const DashboardSnapshotSchema = z.object({
     evaluatedAt:z.number().int(),
     /** Each check answers one question; none of them may stand in for the others. */
     exchangeIngestion:z.object({status:z.enum(['HEALTHY','DEGRADED','UNKNOWN']),detail:z.string().nullable()}),
-    orderTerminalParity:z.object({status:z.enum(['HEALTHY','DEGRADED','UNKNOWN']),mismatchCount:z.number().int().nonnegative(),detail:z.string().nullable()}),
+    orderTerminalParity:z.object({status:z.enum(['HEALTHY','DEGRADED','UNKNOWN']),mismatchCount:z.number().int().nonnegative(),scanDriftCount:z.number().int().nonnegative().optional(),mixedRiskClaimCount:z.number().int().nonnegative().optional(),historicalUnknownCount:z.number().int().nonnegative().optional(),detail:z.string().nullable()}),
     exitClaimConvergence:z.object({status:z.enum(['HEALTHY','DEGRADED','UNKNOWN']),openTasks:z.number().int().nonnegative(),terminalUnreleasedClaims:z.number().int().nonnegative(),oldestUnpolledAgeMs:z.number().nonnegative(),detail:z.string().nullable()}),
     takeProfitCoverage:z.object({status:z.enum(['HEALTHY','DEGRADED','UNKNOWN']),required:z.number().int().nonnegative(),protected:z.number().int().nonnegative(),missing:z.number().int().nonnegative(),unresolved:z.number().int().nonnegative(),detail:z.string().nullable()}),
     positionCoverage:z.object({status:z.enum(['HEALTHY','DEGRADED','UNKNOWN']),local:z.number().int().nonnegative(),remote:z.number().int().nonnegative(),detail:z.string().nullable()}),

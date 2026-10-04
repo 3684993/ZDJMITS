@@ -1,0 +1,20 @@
+{
+  "capturedAt": "2026-10-04T22:09:03.126Z",
+  "accountMode": false,
+  "exchangeUsdtWallet": 5658.45448302,
+  "exchangeUsdtUnrealized": -816.45706319,
+  "exchangeUsdtMargin": 4841.99741983,
+  "usdtWallet": 5658.45448302,
+  "usdtUnrealized": -816.45706319,
+  "usdcWallet": 4988.78170767,
+  "usdcUnrealized": 0.0,
+  "stablecoinWalletSubtotal": 10647.23619069,
+  "stablecoinMarginSubtotal": 9830.7791275,
+  "entryAvailableUsdt": 1919.78035029,
+  "entryAvailableUsdc": 4988.78170767,
+  "entryAvailableSubtotal": 6908.56205796,
+  "btcWallet": "0.01000000",
+  "allAssetUsdTotal": "UNPROVEN_BTC_CONVERSION",
+  "accountInvariantDelta": -0.0,
+  "productionWrites": 0
+}

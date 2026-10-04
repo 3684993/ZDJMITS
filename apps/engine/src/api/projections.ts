@@ -124,9 +124,10 @@ export function executionTruthProjection(runtime: EngineRuntime, now = Date.now(
     evaluatedAt: now,
     exchangeIngestion: {status: marketState.status, detail: marketState.detail},
     orderTerminalParity: reconciliation
-      ? {status: Number(reconciliation.verifiedOrderFactMismatchCount ?? 0) > 0 ? 'DEGRADED' as const : 'HEALTHY' as const,
+      ? {status: reconciliation.lastError||Number(reconciliation.verifiedOrderFactMismatchCount ?? 0)>0?'DEGRADED' as const:Number(reconciliation.lastRun??0)>0?'HEALTHY' as const:'UNKNOWN' as const,
          mismatchCount: Math.max(0, Number(reconciliation.verifiedOrderFactMismatchCount ?? 0)),
-         detail: `lastRunAt=${reconciliation.lastRun ?? 0};drift=${reconciliation.driftCount ?? 0};unresolved=${reconciliation.unresolvedDriftCount ?? 0}`}
+         scanDriftCount:Math.max(0,Number(reconciliation.driftCount??0)),mixedRiskClaimCount:Math.max(0,Number(reconciliation.unresolvedDriftCount??0)),historicalUnknownCount:Math.max(0,Number(reconciliation.historicalUnknownCount??0)),
+         detail: `当前订单终态字段不一致=${reconciliation.verifiedOrderFactMismatchCount ?? 0}; 最近扫描差异=${reconciliation.driftCount ?? 0}; 另有历史/当前混合风险声明=${reconciliation.unresolvedDriftCount ?? 0}（不属于本检查的终态不一致）; lastRunAt=${reconciliation.lastRun ?? 0}`}
       : {status: 'UNKNOWN' as const, mismatchCount: 0, detail: 'RECONCILIATION_NOT_REPORTED'},
     exitClaimConvergence: convergence.available
       ? {status: Number(convergence.terminalUnreleasedClaims ?? 0) > 0 || Number(convergence.oldestUnpolledAgeMs ?? 0) > Number(convergence.maxServiceIntervalMs ?? 0) * 2 ? 'DEGRADED' as const : 'HEALTHY' as const,
@@ -359,7 +360,7 @@ function baseDashboardProjection(runtime: EngineRuntime): DashboardSnapshot {
 export function dashboardProjection(runtime:EngineRuntime):DashboardSnapshot{
   const base=baseDashboardProjection(runtime),economics=projectTradeRecordSummary({records:[...runtime.state.tradeRecords.values()],asOf:Date.now(),...runtime.qualityObserver?.readContext()});
   return {...base,
-    tradeNetPnl:economics.canonicalNetPnl??0,
+    tradeNetPnl:economics.fundingUnknownCount>0?null:economics.canonicalNetPnl,
     tradeCompletedCount:economics.canonicalPnlEligibleCount,
     tradeTradingNetExFunding:economics.tradingNetExFunding,
     tradeCompletedExFundingCount:economics.tradingNetExFundingEligibleCount,

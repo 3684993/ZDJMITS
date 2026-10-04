@@ -42,7 +42,7 @@ beforeEach(() => vi.clearAllMocks());
 it('renders the whole conversion chain from the Engine projection, in order, without counting anything itself', async () => {
   const wrapper = await open(pipeline({thirtyMinutes: windowOf(), oneHour: windowOf({place: 52, primaryCompleted: 52})}));
   const funnel = wrapper.find('[data-entry-conversion]').text();
-  const order = ['Primary 完成', 'PLACE', '风险准入通过', 'TradePlan 就绪', 'Reservation 建立', 'Intent 建立', '订单已提交', '建仓成交'];
+  const order = ['Primary 完成', 'PLACE', '组合风险准入（TESTNET 可不适用）', 'TradePlan 就绪', 'Reservation 建立', 'Intent 建立', '订单已提交', '建仓成交'];
   for (const label of order) expect(funnel.indexOf(label), `${label} must be present`).toBeGreaterThan(-1);
   expect(order.every((label, index, all) => index === 0 || funnel.indexOf(label) > funnel.indexOf(all[index - 1])), 'the stages must read top-down as the chain runs').toBe(true);
   expect(funnel).toContain('TradePlan 就绪0');

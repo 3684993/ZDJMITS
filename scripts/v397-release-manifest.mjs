@@ -11,7 +11,7 @@ const files=[
   'packages/contracts/src/settings.ts','packages/contracts/src/trading.ts','packages/contracts/src/tradePlan.ts',
   'apps/engine/src/services/v397FrozenSizing.ts','apps/engine/src/services/quantityHorizonCandidates.ts',
   'apps/engine/src/services/preAiExecutionEnvelope.ts','apps/engine/src/services/entryCoordinator.ts',
-  'apps/engine/src/services/aiQuantityAllocation.ts',
+  'apps/engine/src/services/aiQuantityAllocation.ts','apps/engine/src/services/marketDataStaleness.ts',
   'apps/engine/src/adapters/exchange/ExternalTradeAdapter.ts','apps/engine/src/services/runExecutionOutcome.ts',
   'apps/dashboard/src/views/OverviewView.vue','apps/dashboard/src/views/SettingsView.vue',
 ];

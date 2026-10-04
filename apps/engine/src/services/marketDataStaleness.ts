@@ -53,6 +53,9 @@ export function marketDataStaleReason(input: {
       : 'MARKET_WS_BACKOFF';
   }
   if(!input.marketInsufficient)return null;
+  // A low book-wide ratio can be caused by irrelevant stale symbols. A live source with an
+  // executable fresh candidate keeps the pipeline running; the stale rows stay isolated.
+  if(input.isolation && input.isolation.healthyCandidates > 0)return null;
   // Quotes really are the problem: the source itself is stale for the whole book, not for one symbol.
   if((input.freshness.quoteFreshRatio ?? 1) < 0.5)return 'MARKET_QUOTES_STALE';
   const isolation = input.isolation;

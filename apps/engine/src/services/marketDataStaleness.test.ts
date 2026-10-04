@@ -15,6 +15,13 @@ describe('V3.9.5 market data staleness diagnosis', () => {
       marketInsufficient: true, streamState: 'LIVE' })).toBe('MARKET_QUOTES_STALE');
   });
 
+  it('does not pause healthy dispatch candidates for stale quotes elsewhere in the book', () => {
+    const isolation = marketDataIsolation({candidateSymbols: ['BTCUSDT', 'ETHUSDT'],
+      readinessReasons: symbol => symbol === 'BTCUSDT' ? [] : ['QUOTE_STALE']});
+    expect(marketDataStaleReason({freshness: {fresh: 4, total: 100, quoteFreshRatio: 0.1, sequenceInvalid: 0},
+      marketInsufficient: true, streamState: 'LIVE', isolation})).toBeNull();
+  });
+
   it('labels a stale-card-only outage separately from a sequence block', () => {
     expect(marketDataStaleReason({ freshness: { fresh: 4, total: 100, quoteFreshRatio: 1, sequenceInvalid: 0 },
       marketInsufficient: true, streamState: 'LIVE' })).toBe('MARKET_TECHNICAL_STALE');

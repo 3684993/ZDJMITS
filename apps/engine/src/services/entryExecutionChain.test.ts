@@ -56,29 +56,23 @@ describe('V3.9.6 PLACE -> submit chain closure', () => {
     expect(outcome(h.events).executionState).toBe('SUBMITTED');
   });
 
-  it('EC-02 (T6) a fact that changes between the plan and the wire stops the submit and says so', async () => {
+  it('EC-02 (T6) post-Primary quote drift is observed but does not revoke a frozen TESTNET PLACE', async () => {
     const h = armed();
     const snapshot = h.state.snapshots.get(fixtureSymbol)!;
     h.exchange.setLeverage.mockImplementation(async () => {
-      // The quote goes stale while the order is being prepared: exactly the race JIT exists for.
       h.state.snapshots.set(fixtureSymbol, {...snapshot, quote: {...snapshot.quote, ts: Date.now() - 60_000}});
     });
     await h.run();
-    expect(h.exchange.placeEntry, 'a stale fact may not be traded on').not.toHaveBeenCalled();
-    const blocked = h.events.filter((event: any) => event.type === 'ENTRY_ORDER_BLOCKED');
-    expect(blocked).toHaveLength(1);
-    expect(blocked[0].payload).toMatchObject({brainRunId: RUN, stage: 'JIT', intentId: expect.any(String)});
-    expect(String(blocked[0].payload.reason)).toBe('JIT_BLOCKED:QUOTE_STALE');
+    expect(h.exchange.placeEntry, 'post-Primary freshness drift must not become a second strategy veto').toHaveBeenCalledOnce();
+    expect(h.events.some((event: any) => event.type === 'POST_AI_OBSERVATION_ONLY'
+      && event.payload?.kind === 'JIT_MARKET_DATA_STATUS' && event.payload?.postAiVeto === false)).toBe(true);
+    expect(h.events.some((event: any) => event.type === 'ENTRY_ORDER_BLOCKED' && event.payload?.stage === 'JIT')).toBe(false);
     const plan = h.events.find((event: any) => event.type === 'TRADE_PLAN_PERSISTED')!.payload as any;
     const types = h.events.map((event: any) => event.type);
-    expect(plan.planId, 'the plan was written before the booking, so the refusal has a plan to point at').toBeTruthy();
+    expect(plan.planId).toBeTruthy();
     expect(types.indexOf('TRADE_PLAN_PERSISTED')).toBeLessThan(types.indexOf('ENTRY_RESERVATION_CREATED'));
-    expect([...h.state.entryReservations.values()][0].status, 'the refused booking is released, not left holding margin').toBe('RELEASED');
-    const row = outcome(h.events);
-    expect(row).toMatchObject({executionState: 'NOT_SUBMITTED', blockStage: 'JIT', orderId: null, submittedAt: null});
-    expect(row.blockReasons[0]).toContain('JIT_BLOCKED:');
-    expect(row.executionLabel).toContain('未挂单 · JIT');
-    expect(row.tradePlanId).toBeTruthy();
+    expect([...h.state.entryReservations.values()][0].status).not.toBe('RELEASED');
+    expect(outcome(h.events).executionState).toBe('SUBMITTED');
   });
 
   it('EC-03 a human exit goal remains intact and cannot veto a separate TESTNET Entry', async () => {

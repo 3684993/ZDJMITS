@@ -475,6 +475,10 @@ export class EntryCoordinator {
       if(this.stopPrimaryForOccupancy(symbol,'AFTER_PRIMARY_SLOT'))return;
       this.transition(symbol,"PRIMARY_RUNNING","PRIMARY_START");
       if(this.market?.primaryReadyReasons(symbol).length){await this.market.refreshSymbols([symbol]);const remaining=this.market.primaryReadyReasons(symbol);if(remaining.length)throw new Error(`MARKET_DATA_STALE: ${remaining.join(',')}`);}
+      // Market freshness is a decision-time prerequisite, not a post-decision veto. Even lightweight
+      // test/runtime adapters without MarketDataHub must prove the snapshot is fresh before Primary.
+      const prePrimaryMarket=this.state.snapshots.get(symbol),prePrimaryDataError=entryDataError(prePrimaryMarket);
+      if(prePrimaryDataError)throw new Error(prePrimaryDataError);
       if(this.stopPrimaryForOccupancy(symbol,'AFTER_MARKET_REFRESH'))return;
       const reachability=this.market?buildHistoricalTpReachability({candles:(timeframe,limit)=>this.market!.cachedCandles(symbol,timeframe,limit),lookbackBars:this.state.settings.tradeEconomics.reachabilityLookbackBars,minSamples:this.state.settings.tradeEconomics.reachabilityMinSamples}):undefined;
       executionEnvelope=buildPreAiExecutionEnvelope(this.state,symbol,Date.now(),reachability);
@@ -583,9 +587,10 @@ export class EntryCoordinator {
       const fallbackRange={min:Number(executionEnvelope?.makerReachableBand.min??marketForPolicy.quote.bid),max:Number(executionEnvelope?.makerReachableBand.max??marketForPolicy.quote.ask)};
       const rawRange=d.acceptablePriceRange as any;
       const rawMin=Number(rawRange?.min),rawMax=Number(rawRange?.max);
-      const intersectMin=Math.max(fallbackRange.min,Number.isFinite(rawMin)?rawMin:fallbackRange.min);
-      const intersectMax=Math.min(fallbackRange.max,Number.isFinite(rawMax)?rawMax:fallbackRange.max);
-      const range=intersectMin<=intersectMax?{min:intersectMin,max:intersectMax}:fallbackRange;
+      const rawRangeValid=Number.isFinite(rawMin)&&Number.isFinite(rawMax)&&rawMin>0&&rawMax>0&&rawMin<=rawMax;
+      // A valid Primary price range is authorization, even when price has not reached it yet. That
+      // becomes WAIT_EXECUTION_RANGE, not a rejection and not an implicit rewrite back to market.
+      const range=rawRangeValid?{min:rawMin,max:rawMax}:fallbackRange;
       const rawIdeal=Number(d.idealPrice),idealPrice=Number.isFinite(rawIdeal)&&rawIdeal>=range.min&&rawIdeal<=range.max?rawIdeal:Math.min(range.max,Math.max(range.min,Number(marketForPolicy.quote.last)));
       const rawHorizon=Number(d.horizonMinutes),horizonMinutes=Number.isInteger(rawHorizon)&&rawHorizon>=1&&rawHorizon<=5?rawHorizon:5;
       if(!rawRange||rawMin!==range.min||rawMax!==range.max||rawIdeal!==idealPrice||rawHorizon!==horizonMinutes)

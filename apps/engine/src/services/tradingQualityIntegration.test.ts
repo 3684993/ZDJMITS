@@ -75,7 +75,7 @@ describe('real EntryCoordinator opportunity authorization',()=>{
     expect(revalidateOpportunity(wider,h.m,h.state.settings,109.99,h.now,1)).toBe('OPPORTUNITY_PAYOFF_INSUFFICIENT');
     expect(validateOpportunityDecision({decision:'PLACE_LONG',tradeSide:'LONG',opportunityType:e.setupType,timingEvent:null},e)).toBe('PRIMARY_EVENT_NOT_VERIFIED');
   });
-  it.each([101,102.44])('reviewPending preserves frozen AI authorization at proposed reprice %s',async(nextPrice)=>{
+  it.each([101,102.44])('reviewPending keeps proposed reprice %s inside the frozen candidate range',async(nextPrice)=>{
     const h=ready();h.m.technical['15m'].recentSwingHigh=102.45;
     const original=h.ai.decide.getMockImplementation()!;
     h.ai.decide.mockImplementation(async(...args:any[])=>{const r:any=await (original as any)(...args);r.decision.acceptablePriceRange={min:98.5,max:102.5};return r;});
@@ -85,7 +85,7 @@ describe('real EntryCoordinator opportunity authorization',()=>{
     h.m.orderBook={...h.m.orderBook,ts:Date.now(),bids:[[nextPrice,10000]],asks:[[nextPrice+.01,10000]]};
     const replace=vi.fn(async(order:any,price:number)=>({...order,price,status:'WORKING'}));(h.exchange as any).replaceEntry=replace;
     await h.coordinator.reviewPending();
-    expect(replace).toHaveBeenCalledOnce();
+    expect(replace).toHaveBeenCalledTimes(nextPrice===101?1:0);
   });
   it('restored legacy execution wait treats authorization age as audit-only and missing intent cannot release UNKNOWN',async()=>{
     const h=ready();await h.run();const i=[...h.state.entryIntents.values()][0],o=[...h.state.entryOrders.values()][0];

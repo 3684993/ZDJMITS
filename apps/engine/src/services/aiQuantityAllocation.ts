@@ -3,6 +3,20 @@ import { exposure, locationScore, resolveQuoteAsset, resolveUnderlying, riskTier
 import type { RuntimeState } from '../state/runtimeState.js';
 import type { PreAiExecutionEnvelope, ExecutionEnvelopeSide } from './preAiExecutionEnvelope.js';
 
+/** Keep the frozen quantity inside its pre-Primary price and capital interval, without resizing it. */
+export function frozenAllocationPrice(input:{desiredPrice:number;quantity:number;tickSize:number;
+  entryRange:{min:number;max:number};maxNotionalUsd:number}):number|null{
+  const {desiredPrice,quantity,tickSize,entryRange,maxNotionalUsd}=input;
+  if(![desiredPrice,quantity,tickSize,entryRange.min,entryRange.max,maxNotionalUsd].every(Number.isFinite)||
+    quantity<=0||tickSize<=0||entryRange.min<=0||entryRange.max<entryRange.min||maxNotionalUsd<=0)return null;
+  const low=Math.ceil(entryRange.min/tickSize-1e-9),
+    high=Math.floor(Math.min(entryRange.max,maxNotionalUsd/quantity)/tickSize+1e-9);
+  if(!Number.isSafeInteger(low)||!Number.isSafeInteger(high)||high<low)return null;
+  const units=Math.max(low,Math.min(high,Math.round(desiredPrice/tickSize)));
+  const price=Number((units*tickSize).toPrecision(15));
+  return price*quantity<=maxNotionalUsd+1e-8?price:null;
+}
+
 /** Materializes one frozen system candidate exactly. It has zero sizing or candidate-switch authority. */
 export function materializeCandidateQuantityAllocation(input:{state:RuntimeState;candidate:UniverseCandidate;snapshot:MarketSymbolSnapshot;side:ExecutionEnvelopeSide;quantityUnits:number;authorizationMaxPrice:number;envelope:PreAiExecutionEnvelope}):AllocationPlan {
   const {state,candidate,snapshot,side,envelope}=input,units=Number(input.quantityUnits),step=snapshot.quote.stepSize;

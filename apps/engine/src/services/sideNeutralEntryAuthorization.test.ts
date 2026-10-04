@@ -87,7 +87,9 @@ describe('V3.9.4 side-neutral Entry authorization', () => {
     expect(intent.side).toBe('LONG');
     expect(intent.quantityUnits, 'the Primary-selected candidate must survive unchanged').toBe(chosen.quantityUnits);
     expect(intent.selectedCandidateId).toBe(chosen.candidateId);
-    expect(intent.acceptablePriceRange).toEqual(acceptablePriceRange);
+    expect(intent.acceptablePriceRange.min).toBeLessThanOrEqual(submitted.price);
+    expect(intent.acceptablePriceRange.max).toBeGreaterThanOrEqual(submitted.price);
+    expect(intent.acceptablePriceRange, 'the frozen candidate range supersedes redundant AI entry fields').not.toEqual(acceptablePriceRange);
     expect(intent.directionPolicy ?? 'ABSENT').not.toBe('SHORT_ONLY');
     const plan = [...h.state.allocationPlans.values()][0] as any;
     expect(plan.reasons).toContain('NO_DIRECTION_POLICY_RESIZING');

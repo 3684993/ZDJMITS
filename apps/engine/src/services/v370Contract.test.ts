@@ -101,6 +101,24 @@ describe('V3.7.0 isolated real-EIP contracts; production write=0',()=>{
     expect([...h.state.entryOrders.values()][0]?.clientOrderId).toMatch(/^ml_/);
   });
 
+  it('uses the frozen candidate price ceiling when the maker quote rises during Primary',async()=>{
+    const h=harness();
+    h.ai.decide.mockImplementation(async(packet:any)=>{
+      const decision=h.candidateDecision(packet,'SHORT');
+      const quote=h.state.snapshots.get(h.packet.symbol)!.quote;
+      quote.bid+=quote.tickSize*20;
+      quote.ask+=quote.tickSize*20;
+      return{runId:'maker-drift-fixture',decision};
+    });
+    await h.run();
+    expect(h.events.some((event:any)=>event.type==='ENTRY_ORDER_BLOCKED'&&event.payload?.reason==='MINIMUM_SIZE_EXCEEDS_ALLOCATION')).toBe(false);
+    expect(h.exchange.placeEntry).toHaveBeenCalledOnce();
+    const order=h.exchange.placeEntry.mock.calls[0]![0] as any;
+    const intent=[...h.state.entryIntents.values()][0] as any;
+    expect(order.quantity*order.price).toBeLessThanOrEqual(intent.allocationPlan.notionalUsd+1e-8);
+    expect(order.quantity*order.price/order.leverage).toBeGreaterThanOrEqual(100);
+  });
+
   it('keeps real insufficient funds as a pre-execution hard fact',async()=>{
     const h=harness();h.state.account.assets[0].availableBalance=0;
     await h.run();

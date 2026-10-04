@@ -10,7 +10,7 @@
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
-    "test:ci": "vitest run --pool=forks --maxWorkers=1 --fileParallelism=false"
+    "test:ci": "vitest run --pool=forks --maxWorkers=2 --shard=1/4 && vitest run --pool=forks --maxWorkers=2 --shard=2/4 && vitest run --pool=forks --maxWorkers=2 --shard=3/4 && vitest run --pool=forks --maxWorkers=2 --shard=4/4"
   },
   "dependencies": {
     "@zdj/contracts": "3.9.6",

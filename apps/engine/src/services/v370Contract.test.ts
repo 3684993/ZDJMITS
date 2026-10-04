@@ -142,10 +142,6 @@ describe('V3.7.0 isolated real-EIP contracts; production write=0',()=>{
 });
 
 
-describe('V3.9 near-quote Primary to Entry contract'
-});
-
-
 describe('V3.9 near-quote Primary to Entry contract',()=>{
   it.each(['LONG','SHORT'])('executes authorized %s once with actual recent trade evidence',async side=>{
     const h=harness(),q=h.packet.market.quote,market=h.state.snapshots.get(h.packet.symbol)!;

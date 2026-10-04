@@ -179,7 +179,9 @@ describe('V3.9.6 pre-AI hard plan feasibility', () => {
     expect(refusals[0].symbol).toBe(fixtureSymbol);
     expect(refusals[0].brainRunId ?? null).toBe(null);
     const next=armedHarness();
-    next.state.settings.takeProfit.minNetProfitUsd=1;
+    // A fresh harness already carries the fixture's known-good economic baseline. Do not hard-code
+    // a dollar profit floor here: this test is about symbol-scoped refusal state, not about whether
+    // this archived market fixture can economically clear an arbitrary $1 target.
     next.state.settings.tradeEconomics.admissionMode='ENFORCE';
     await next.run();
     expect(next.ai.decide).toHaveBeenCalledOnce();

@@ -1,0 +1,211 @@
+{
+  "capturedAt": "2026-10-04T13:35:15.111Z",
+  "environment": "TESTNET",
+  "host": "demo-fapi.binance.com",
+  "methods": [
+    "GET"
+  ],
+  "exchangeWrites": 0,
+  "positions": [
+    {
+      "symbol": "BTCUSDT",
+      "positionSide": "LONG",
+      "positionAmt": "0.1229",
+      "entryPrice": "85753.53604556552",
+      "updateTime": 1791120272562
+    },
+    {
+      "symbol": "BTCUSDT",
+      "positionSide": "SHORT",
+      "positionAmt": "-0.0039",
+      "entryPrice": "83331.61538461539",
+      "updateTime": 1790827639774
+    },
+    {
+      "symbol": "ETHUSDT",
+      "positionSide": "LONG",
+      "positionAmt": "2.076",
+      "entryPrice": "2700.183111753371",
+      "updateTime": 1791118054997
+    },
+    {
+      "symbol": "BCHUSDT",
+      "positionSide": "LONG",
+      "positionAmt": "15.397",
+      "entryPrice": "318.3351334675587",
+      "updateTime": 1791118860286
+    },
+    {
+      "symbol": "LTCUSDT",
+      "positionSide": "SHORT",
+      "positionAmt": "-0.360",
+      "entryPrice": "56.84000000000001",
+      "updateTime": 1789804135377
+    },
+    {
+      "symbol": "VIRTUALUSDT",
+      "positionSide": "LONG",
+      "positionAmt": "488.3",
+      "entryPrice": "0.8199367601884086",
+      "updateTime": 1790952779165
+    },
+    {
+      "symbol": "ZECUSDT",
+      "positionSide": "LONG",
+      "positionAmt": "0.752",
+      "entryPrice": "1332.78",
+      "updateTime": 1791114663210
+    },
+    {
+      "symbol": "PENGUUSDT",
+      "positionSide": "LONG",
+      "positionAmt": "85030",
+      "entryPrice": "0.009422858732212144",
+      "updateTime": 1791114987285
+    },
+    {
+      "symbol": "PENGUUSDT",
+      "positionSide": "SHORT",
+      "positionAmt": "-76021",
+      "entryPrice": "0.009223999999999994",
+      "updateTime": 1791117049802
+    },
+    {
+      "symbol": "TAOUSDT",
+      "positionSide": "SHORT",
+      "positionAmt": "-1.745",
+      "entryPrice": "301.8400000000001",
+      "updateTime": 1791117148507
+    },
+    {
+      "symbol": "AVAXUSDT",
+      "positionSide": "SHORT",
+      "positionAmt": "-607",
+      "entryPrice": "9.943835255354202",
+      "updateTime": 1790768321473
+    }
+  ],
+  "openOrders": [
+    {
+      "symbol": "BTCUSDT",
+      "side": "SELL",
+      "positionSide": "LONG",
+      "type": "LIMIT",
+      "reduceOnly": true,
+      "closePosition": false,
+      "status": "NEW",
+      "orderId": 28617186563,
+      "clientOrderId": "v396xba43647f9025c3264f4b459e91804e"
+    },
+    {
+      "symbol": "BTCUSDT",
+      "side": "BUY",
+      "positionSide": "SHORT",
+      "type": "LIMIT",
+      "reduceOnly": true,
+      "closePosition": false,
+      "status": "NEW",
+      "orderId": 28612480298,
+      "clientOrderId": "v396x0b41e192d27196543471ade231b383"
+    },
+    {
+      "symbol": "ETHUSDT",
+      "side": "SELL",
+      "positionSide": "LONG",
+      "type": "LIMIT",
+      "reduceOnly": true,
+      "closePosition": false,
+      "status": "NEW",
+      "orderId": 16814343203,
+      "clientOrderId": "v396x357b388256557bf1be7ed6802d6a4a"
+    },
+    {
+      "symbol": "BCHUSDT",
+      "side": "SELL",
+      "positionSide": "LONG",
+      "type": "LIMIT",
+      "reduceOnly": true,
+      "closePosition": false,
+      "status": "NEW",
+      "orderId": 2588465836,
+      "clientOrderId": "v396x6df46d8bdaa13e9bbc8a1008a775c4"
+    },
+    {
+      "symbol": "LTCUSDT",
+      "side": "BUY",
+      "positionSide": "SHORT",
+      "type": "LIMIT",
+      "reduceOnly": true,
+      "closePosition": false,
+      "status": "NEW",
+      "orderId": 1585881904,
+      "clientOrderId": "tp_mu838cfp_00bfe3e"
+    },
+    {
+      "symbol": "VIRTUALUSDT",
+      "side": "SELL",
+      "positionSide": "LONG",
+      "type": "LIMIT",
+      "reduceOnly": true,
+      "closePosition": false,
+      "status": "NEW",
+      "orderId": 244970904,
+      "clientOrderId": "v396x23430647ba2f4cf1b2fe7fbb534aa4"
+    },
+    {
+      "symbol": "ZECUSDT",
+      "side": "SELL",
+      "positionSide": "LONG",
+      "type": "LIMIT",
+      "reduceOnly": true,
+      "closePosition": false,
+      "status": "NEW",
+      "orderId": 2977659222,
+      "clientOrderId": "v396xedb824071533dd70f8627d46273078"
+    },
+    {
+      "symbol": "PENGUUSDT",
+      "side": "SELL",
+      "positionSide": "LONG",
+      "type": "LIMIT",
+      "reduceOnly": true,
+      "closePosition": false,
+      "status": "NEW",
+      "orderId": 349049508,
+      "clientOrderId": "v396x1144827004a45c4da807ae89137308"
+    },
+    {
+      "symbol": "PENGUUSDT",
+      "side": "BUY",
+      "positionSide": "SHORT",
+      "type": "LIMIT",
+      "reduceOnly": true,
+      "closePosition": false,
+      "status": "NEW",
+      "orderId": 349059249,
+      "clientOrderId": "v396x0c9e031fbbefdfb935a6e4089d4f5f"
+    },
+    {
+      "symbol": "TAOUSDT",
+      "side": "BUY",
+      "positionSide": "SHORT",
+      "type": "LIMIT",
+      "reduceOnly": true,
+      "closePosition": false,
+      "status": "NEW",
+      "orderId": 678172568,
+      "clientOrderId": "v396x1a5be7de200456332d26563bb15a35"
+    },
+    {
+      "symbol": "AVAXUSDT",
+      "side": "BUY",
+      "positionSide": "SHORT",
+      "type": "LIMIT",
+      "reduceOnly": true,
+      "closePosition": false,
+      "status": "NEW",
+      "orderId": 537168136,
+      "clientOrderId": "v396x21fe722c9f0e6c65123689081dff88"
+    }
+  ]
+}

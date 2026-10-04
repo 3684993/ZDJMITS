@@ -1,0 +1,606 @@
+{
+  "capturedAt": "2026-10-04T13:36:43.310Z",
+  "scope": "TESTNET V3.9.7 previous and current instances",
+  "since": 1791111581580,
+  "priorInstanceStart": 1791118232030,
+  "latestInstanceStart": 1791119920261,
+  "counts": {
+    "POSITION_REVIEW_APPLIED": 11,
+    "PENDING_ENTRY_REVIEW_COMPLETED": 15,
+    "PENDING_ENTRY_REVIEW_ACTION_CONVERGED": 9
+  },
+  "latestInstanceCounts": {
+    "POSITION_REVIEW_APPLIED": 1,
+    "PENDING_ENTRY_REVIEW_COMPLETED": 3,
+    "PENDING_ENTRY_REVIEW_ACTION_CONVERGED": 1
+  },
+  "events": [
+    {
+      "type": "POSITION_REVIEW_APPLIED",
+      "ts": 1791112123291,
+      "symbol": "BTCUSDT",
+      "payload": {
+        "cycleId": "cycle_entry_intent_mum4ffiw_3q6bn53k",
+        "scope": "[\"TESTNET\",\"binance-primary\",\"BTCUSDT\",\"SHORT\"]",
+        "planRef": "plan_f955bd088eb402f379f8cbca5fd23c79",
+        "planVersion": 1,
+        "decision": "HANDOFF",
+        "usable": true,
+        "reason": "REVIEW_RESULT_APPLICABLE",
+        "at": 1791112123291,
+        "runId": "airun_mutpwsxw_q8q780du",
+        "ownerVersion": 3,
+        "triggerKey": "trg_a5a3f6fa9cbd36248e97a87f7fabe499",
+        "archived": true,
+        "rowEventId": "usage_1ba2ed4e490c0b0f0b62b93eaf1012a9",
+        "usageStatus": "EXACT",
+        "writableAuthority": "REVIEW_EVIDENCE_ONLY"
+      }
+    },
+    {
+      "type": "POSITION_REVIEW_APPLIED",
+      "ts": 1791112188564,
+      "symbol": "PENGUUSDT",
+      "payload": {
+        "cycleId": "cycle_entry_intent_muqppx8c_tjvomscs",
+        "scope": "[\"TESTNET\",\"binance-primary\",\"PENGUUSDT\",\"LONG\"]",
+        "planRef": "plan_109a6f73dc3a0c8b3ce6b0cc6c542915",
+        "planVersion": 1,
+        "decision": "HANDOFF",
+        "usable": true,
+        "reason": "REVIEW_RESULT_APPLICABLE",
+        "at": 1791112188564,
+        "runId": "airun_mutpy38z_lzbku5tq",
+        "ownerVersion": 3,
+        "triggerKey": "trg_97bf9dabc9fdc9f25c295b1c100e8c19",
+        "archived": true,
+        "rowEventId": "usage_b37af838643f359d94b45205737730ad",
+        "usageStatus": "EXACT",
+        "writableAuthority": "REVIEW_EVIDENCE_ONLY"
+      }
+    },
+    {
+      "type": "POSITION_REVIEW_APPLIED",
+      "ts": 1791112246569,
+      "symbol": "VIRTUALUSDT",
+      "payload": {
+        "cycleId": "cycle_entry_intent_muqrd2xl_3ccj3ufd",
+        "scope": "[\"TESTNET\",\"binance-primary\",\"VIRTUALUSDT\",\"LONG\"]",
+        "planRef": "plan_62c9981c412100f8a3f25ffd903a2b9c",
+        "planVersion": 1,
+        "decision": "HANDOFF",
+        "usable": true,
+        "reason": "REVIEW_RESULT_APPLICABLE",
+        "at": 1791112246569,
+        "runId": "airun_mutpzdjk_7yscxk70",
+        "ownerVersion": 3,
+        "triggerKey": "trg_213306e4b0cd779091b37bde7fce080b",
+        "archived": true,
+        "rowEventId": "usage_298ff7879f3fdc6ba7583ce777dbe7ac",
+        "usageStatus": "EXACT",
+        "writableAuthority": "REVIEW_EVIDENCE_ONLY"
+      }
+    },
+    {
+      "type": "PENDING_ENTRY_REVIEW_COMPLETED",
+      "ts": 1791113745654,
+      "symbol": "BTCUSDT",
+      "payload": {
+        "orderId": "entry_intent_mutquj8w_zj3erum0",
+        "clientOrderId": "ml_53bb5e18cf6f1b7a857a5b7baaf8",
+        "decision": "CANCEL",
+        "resourceId": "review-7900-gpu2",
+        "model": "qwen/qwen3.8-27b",
+        "runId": "airun_mutqvb0d_s8hzopfm",
+        "queueMs": 0
+      }
+    },
+    {
+      "type": "PENDING_ENTRY_REVIEW_COMPLETED",
+      "ts": 1791113885016,
+      "symbol": "ETHUSDT",
+      "payload": {
+        "orderId": "entry_intent_mutqxhav_x0lgjwhh",
+        "clientOrderId": "ml_a2ca28a4d7c80c1d6438545851bc",
+        "decision": "KEEP",
+        "resourceId": "review-7900-gpu2",
+        "model": "qwen/qwen3.8-27b",
+        "runId": "airun_mutqycqa_hgr23yfm",
+        "queueMs": 0
+      }
+    },
+    {
+      "type": "POSITION_REVIEW_APPLIED",
+      "ts": 1791114277241,
+      "symbol": "SOLUSDT",
+      "payload": {
+        "cycleId": "cycle_entry_intent_mutr0ehz_6mok8phg",
+        "scope": "[\"TESTNET\",\"binance-primary\",\"SOLUSDT\",\"LONG\"]",
+        "planRef": "plan_1d25f37d6a486a195784893ab1a5f8de",
+        "planVersion": 1,
+        "decision": "HOLD",
+        "usable": true,
+        "reason": "REVIEW_RESULT_APPLICABLE",
+        "at": 1791114277241,
+        "runId": "airun_mutr6kz6_owxhzb4b",
+        "ownerVersion": 1,
+        "triggerKey": "trg_f49ed475e57bbaaf5537c2fc663de146",
+        "archived": true,
+        "rowEventId": "usage_2f95581bd5f005408a9e20184feb7636",
+        "usageStatus": "EXACT",
+        "writableAuthority": "REVIEW_EVIDENCE_ONLY"
+      }
+    },
+    {
+      "type": "PENDING_ENTRY_REVIEW_COMPLETED",
+      "ts": 1791114289835,
+      "symbol": "BTCUSDT",
+      "payload": {
+        "orderId": "entry_intent_mutr5tly_a3ve8i77",
+        "clientOrderId": "ml_570886c58e862addd20cfb4a7f56",
+        "decision": "CANCEL",
+        "resourceId": "review-7900-gpu2",
+        "model": "qwen/qwen3.8-27b",
+        "runId": "airun_mutr71bm_bsyqzxlk",
+        "queueMs": 11897
+      }
+    },
+    {
+      "type": "PENDING_ENTRY_REVIEW_ACTION_CONVERGED",
+      "ts": 1791114351572,
+      "symbol": "BTCUSDT",
+      "payload": {
+        "orderId": "entry_intent_mutr5tly_a3ve8i77",
+        "clientOrderId": "ml_570886c58e862addd20cfb4a7f56",
+        "decision": "CANCEL",
+        "exchangeStatus": "CANCELED",
+        "confirmed": true,
+        "oldIdentityTerminated": true,
+        "newPlanSubmitted": false,
+        "reason": "DETERMINISTIC_COORDINATOR_ACTION"
+      }
+    },
+    {
+      "type": "POSITION_REVIEW_APPLIED",
+      "ts": 1791114466088,
+      "symbol": "NEARUSDT",
+      "payload": {
+        "cycleId": "cycle_entry_intent_mutr32jh_3mmcjfoh",
+        "scope": "[\"TESTNET\",\"binance-primary\",\"NEARUSDT\",\"LONG\"]",
+        "planRef": "plan_3c39c29117420f49ca5e9f30464c2211",
+        "planVersion": 1,
+        "decision": "HOLD",
+        "usable": true,
+        "reason": "REVIEW_RESULT_APPLICABLE",
+        "at": 1791114466088,
+        "runId": "airun_mutrak7f_8h62tgs8",
+        "ownerVersion": 1,
+        "triggerKey": "trg_38d1955cfeffe27995c3e38c26544dfc",
+        "archived": true,
+        "rowEventId": "usage_c67b378ff626547caa059b2a09d60a9d",
+        "usageStatus": "EXACT",
+        "writableAuthority": "REVIEW_EVIDENCE_ONLY"
+      }
+    },
+    {
+      "type": "POSITION_REVIEW_APPLIED",
+      "ts": 1791114584439,
+      "symbol": "SOLUSDT",
+      "payload": {
+        "cycleId": "cycle_entry_intent_mutr0ehz_6mok8phg",
+        "scope": "[\"TESTNET\",\"binance-primary\",\"SOLUSDT\",\"LONG\"]",
+        "planRef": "plan_1d25f37d6a486a195784893ab1a5f8de",
+        "planVersion": 1,
+        "decision": "HOLD",
+        "usable": true,
+        "reason": "REVIEW_RESULT_APPLICABLE",
+        "at": 1791114584439,
+        "runId": "airun_mutrd7co_94phw4dg",
+        "ownerVersion": 1,
+        "triggerKey": "trg_f65d01dfd14cc854e0e0c8208e209ea0",
+        "archived": true,
+        "rowEventId": "usage_1ec4842f7456c062b62cb4027e6f2a96",
+        "usageStatus": "EXACT",
+        "writableAuthority": "REVIEW_EVIDENCE_ONLY"
+      }
+    },
+    {
+      "type": "POSITION_REVIEW_APPLIED",
+      "ts": 1791114770448,
+      "symbol": "NEARUSDT",
+      "payload": {
+        "cycleId": "cycle_entry_intent_mutr32jh_3mmcjfoh",
+        "scope": "[\"TESTNET\",\"binance-primary\",\"NEARUSDT\",\"LONG\"]",
+        "planRef": "plan_3c39c29117420f49ca5e9f30464c2211",
+        "planVersion": 1,
+        "decision": "HOLD",
+        "usable": true,
+        "reason": "REVIEW_RESULT_APPLICABLE",
+        "at": 1791114770448,
+        "runId": "airun_mutrh4mw_qsd6phba",
+        "ownerVersion": 1,
+        "triggerKey": "trg_12e2e390f0dfdf14d4f880c30b084343",
+        "archived": true,
+        "rowEventId": "usage_9274f3c50048a3e08fb24cab5d78f1c6",
+        "usageStatus": "EXACT",
+        "writableAuthority": "REVIEW_EVIDENCE_ONLY"
+      }
+    },
+    {
+      "type": "PENDING_ENTRY_REVIEW_COMPLETED",
+      "ts": 1791114810189,
+      "symbol": "AAVEUSDT",
+      "payload": {
+        "orderId": "entry_intent_mutrhb87_pe6zgjq0",
+        "clientOrderId": "ml_09efaf412e61bfbd00cca8e35ed7",
+        "decision": "CANCEL",
+        "resourceId": "review-7900-gpu2",
+        "model": "qwen/qwen3.8-27b",
+        "runId": "airun_mutri2pq_dxdh6fv4",
+        "queueMs": 0
+      }
+    },
+    {
+      "type": "PENDING_ENTRY_REVIEW_ACTION_CONVERGED",
+      "ts": 1791114822215,
+      "symbol": "AAVEUSDT",
+      "payload": {
+        "orderId": "entry_intent_mutrhb87_pe6zgjq0",
+        "clientOrderId": "ml_09efaf412e61bfbd00cca8e35ed7",
+        "decision": "CANCEL",
+        "exchangeStatus": "CANCELED",
+        "confirmed": true,
+        "oldIdentityTerminated": true,
+        "newPlanSubmitted": false,
+        "reason": "DETERMINISTIC_COORDINATOR_ACTION"
+      }
+    },
+    {
+      "type": "POSITION_REVIEW_APPLIED",
+      "ts": 1791115015027,
+      "symbol": "ZECUSDT",
+      "payload": {
+        "cycleId": "cycle_entry_intent_mutren0u_y76qbq4q",
+        "scope": "[\"TESTNET\",\"binance-primary\",\"ZECUSDT\",\"LONG\"]",
+        "planRef": "plan_3738afffb295703c168b02cbc98e9fe5",
+        "planVersion": 1,
+        "decision": "HOLD",
+        "usable": true,
+        "reason": "REVIEW_RESULT_APPLICABLE",
+        "at": 1791115015027,
+        "runId": "airun_mutrmfa9_y1x1kcav",
+        "ownerVersion": 1,
+        "triggerKey": "trg_98af69228362f2ae157581599c51b23b",
+        "archived": true,
+        "rowEventId": "usage_8374817f4a138f2d775b1f7277a42b76",
+        "usageStatus": "EXACT",
+        "writableAuthority": "REVIEW_EVIDENCE_ONLY"
+      }
+    },
+    {
+      "type": "POSITION_REVIEW_APPLIED",
+      "ts": 1791115381216,
+      "symbol": "AAVEUSDT",
+      "payload": {
+        "cycleId": "cycle_entry_intent_mutrhb87_pe6zgjq0",
+        "scope": "[\"TESTNET\",\"binance-primary\",\"AAVEUSDT\",\"SHORT\"]",
+        "planRef": "plan_410f47966f8434b7489d98d62839a69e",
+        "planVersion": 1,
+        "decision": "HANDOFF",
+        "usable": true,
+        "reason": "REVIEW_RESULT_APPLICABLE",
+        "at": 1791115381216,
+        "runId": "airun_mutrufm5_j1m7pv8t",
+        "ownerVersion": 1,
+        "triggerKey": "trg_1fe2022d944525279a9dff6e8a75cdfb",
+        "archived": true,
+        "rowEventId": "usage_208f70793ae586ccb32de414be923fa3",
+        "usageStatus": "EXACT",
+        "writableAuthority": "REVIEW_EVIDENCE_ONLY"
+      }
+    },
+    {
+      "type": "POSITION_REVIEW_APPLIED",
+      "ts": 1791115447579,
+      "symbol": "ZECUSDT",
+      "payload": {
+        "cycleId": "cycle_entry_intent_mutren0u_y76qbq4q",
+        "scope": "[\"TESTNET\",\"binance-primary\",\"ZECUSDT\",\"LONG\"]",
+        "planRef": "plan_3738afffb295703c168b02cbc98e9fe5",
+        "planVersion": 1,
+        "decision": "HOLD",
+        "usable": true,
+        "reason": "REVIEW_RESULT_APPLICABLE",
+        "at": 1791115447579,
+        "runId": "airun_mutrvpwz_xky7uejq",
+        "ownerVersion": 1,
+        "triggerKey": "trg_2f8262a213219bfe48358159b3077ee1",
+        "archived": true,
+        "rowEventId": "usage_de4f60b9abf520ce50fb0e25b6c1c8df",
+        "usageStatus": "EXACT",
+        "writableAuthority": "REVIEW_EVIDENCE_ONLY"
+      }
+    },
+    {
+      "type": "PENDING_ENTRY_REVIEW_COMPLETED",
+      "ts": 1791116278203,
+      "symbol": "BTCUSDT",
+      "payload": {
+        "orderId": "entry_intent_mutscv6a_zikh2w86",
+        "clientOrderId": "ml_70a11a479ec2a34e042c2a39fbd6",
+        "decision": "CANCEL",
+        "resourceId": "review-7900-gpu2",
+        "model": "qwen/qwen3.8-27b",
+        "runId": "airun_mutsdnvz_vpjvu7fz",
+        "queueMs": 0
+      }
+    },
+    {
+      "type": "PENDING_ENTRY_REVIEW_ACTION_CONVERGED",
+      "ts": 1791116284013,
+      "symbol": "BTCUSDT",
+      "payload": {
+        "orderId": "entry_intent_mutscv6a_zikh2w86",
+        "clientOrderId": "ml_70a11a479ec2a34e042c2a39fbd6",
+        "decision": "CANCEL",
+        "exchangeStatus": "CANCELED",
+        "confirmed": true,
+        "oldIdentityTerminated": true,
+        "newPlanSubmitted": false,
+        "reason": "DETERMINISTIC_COORDINATOR_ACTION"
+      }
+    },
+    {
+      "type": "PENDING_ENTRY_REVIEW_COMPLETED",
+      "ts": 1791116407328,
+      "symbol": "NEARUSDC",
+      "payload": {
+        "orderId": "entry_intent_mutsfmo5_qeen1no9",
+        "clientOrderId": "ml_cecbbca74f15ab3f87524d30a31e",
+        "decision": "CANCEL",
+        "resourceId": "review-7900-gpu2",
+        "model": "qwen/qwen3.8-27b",
+        "runId": "airun_mutsgegz_rr8g9pt1",
+        "queueMs": 0
+      }
+    },
+    {
+      "type": "PENDING_ENTRY_REVIEW_ACTION_CONVERGED",
+      "ts": 1791116417650,
+      "symbol": "NEARUSDC",
+      "payload": {
+        "orderId": "entry_intent_mutsfmo5_qeen1no9",
+        "clientOrderId": "ml_cecbbca74f15ab3f87524d30a31e",
+        "decision": "CANCEL",
+        "exchangeStatus": "CANCELED",
+        "confirmed": true,
+        "oldIdentityTerminated": true,
+        "newPlanSubmitted": false,
+        "reason": "DETERMINISTIC_COORDINATOR_ACTION"
+      }
+    },
+    {
+      "type": "PENDING_ENTRY_REVIEW_COMPLETED",
+      "ts": 1791118878692,
+      "symbol": "BCHUSDT",
+      "payload": {
+        "orderId": "entry_intent_muttwb72_adg10g6l",
+        "clientOrderId": "ml_e6559b88c9f60c12ae868d6f64b9",
+        "decision": "KEEP",
+        "resourceId": "review-7900-gpu2",
+        "model": "qwen/qwen3.8-27b",
+        "runId": "airun_muttx566_w4milfxs",
+        "queueMs": 0
+      }
+    },
+    {
+      "type": "PENDING_ENTRY_REVIEW_COMPLETED",
+      "ts": 1791118990742,
+      "symbol": "NEARUSDT",
+      "payload": {
+        "orderId": "entry_intent_muttyxvr_3uvlclw3",
+        "clientOrderId": "ml_08eabdf9ec1ab12287427b43147d",
+        "decision": "CANCEL",
+        "resourceId": "review-7900-gpu2",
+        "model": "qwen/qwen3.8-27b",
+        "runId": "airun_muttzr14_x215ew1w",
+        "queueMs": 0
+      }
+    },
+    {
+      "type": "PENDING_ENTRY_REVIEW_ACTION_CONVERGED",
+      "ts": 1791118997705,
+      "symbol": "NEARUSDT",
+      "payload": {
+        "orderId": "entry_intent_muttyxvr_3uvlclw3",
+        "clientOrderId": "ml_08eabdf9ec1ab12287427b43147d",
+        "decision": "CANCEL",
+        "exchangeStatus": "CANCELED",
+        "confirmed": true,
+        "oldIdentityTerminated": true,
+        "newPlanSubmitted": false,
+        "reason": "DETERMINISTIC_COORDINATOR_ACTION"
+      }
+    },
+    {
+      "type": "PENDING_ENTRY_REVIEW_COMPLETED",
+      "ts": 1791119107188,
+      "symbol": "SOLUSDT",
+      "payload": {
+        "orderId": "entry_intent_mutu1jct_r7qf2j3k",
+        "clientOrderId": "ml_5d775b334169a08226037fd7bd55",
+        "decision": "CANCEL",
+        "resourceId": "review-7900-gpu2",
+        "model": "qwen/qwen3.8-27b",
+        "runId": "airun_mutu2935_tauwv2e4",
+        "queueMs": 0
+      }
+    },
+    {
+      "type": "PENDING_ENTRY_REVIEW_ACTION_CONVERGED",
+      "ts": 1791119121241,
+      "symbol": "SOLUSDT",
+      "payload": {
+        "orderId": "entry_intent_mutu1jct_r7qf2j3k",
+        "clientOrderId": "ml_5d775b334169a08226037fd7bd55",
+        "decision": "CANCEL",
+        "exchangeStatus": "CANCELED",
+        "confirmed": true,
+        "oldIdentityTerminated": true,
+        "newPlanSubmitted": false,
+        "reason": "DETERMINISTIC_COORDINATOR_ACTION"
+      }
+    },
+    {
+      "type": "PENDING_ENTRY_REVIEW_COMPLETED",
+      "ts": 1791119238553,
+      "symbol": "AAVEUSDT",
+      "payload": {
+        "orderId": "entry_intent_mutu460j_a6gswz42",
+        "clientOrderId": "ml_86deb5d9e109382e7ee2bcf80f9b",
+        "decision": "CANCEL",
+        "resourceId": "review-7900-gpu2",
+        "model": "qwen/qwen3.8-27b",
+        "runId": "airun_mutu558v_py3g52c4",
+        "queueMs": 0
+      }
+    },
+    {
+      "type": "PENDING_ENTRY_REVIEW_ACTION_CONVERGED",
+      "ts": 1791119255960,
+      "symbol": "AAVEUSDT",
+      "payload": {
+        "orderId": "entry_intent_mutu460j_a6gswz42",
+        "clientOrderId": "ml_86deb5d9e109382e7ee2bcf80f9b",
+        "decision": "CANCEL",
+        "exchangeStatus": "CANCELED",
+        "confirmed": true,
+        "oldIdentityTerminated": true,
+        "newPlanSubmitted": false,
+        "reason": "DETERMINISTIC_COORDINATOR_ACTION"
+      }
+    },
+    {
+      "type": "PENDING_ENTRY_REVIEW_COMPLETED",
+      "ts": 1791119604813,
+      "symbol": "TAOUSDT",
+      "payload": {
+        "orderId": "entry_intent_mutuc7w6_d3e6dw93",
+        "clientOrderId": "ml_fc23580b8170a31dd5d15ca6db5a",
+        "decision": "CANCEL",
+        "resourceId": "review-7900-gpu2",
+        "model": "qwen/qwen3.8-27b",
+        "runId": "airun_mutucz5h_5119dpqe",
+        "queueMs": 0
+      }
+    },
+    {
+      "type": "PENDING_ENTRY_REVIEW_ACTION_CONVERGED",
+      "ts": 1791119622816,
+      "symbol": "TAOUSDT",
+      "payload": {
+        "orderId": "entry_intent_mutuc7w6_d3e6dw93",
+        "clientOrderId": "ml_fc23580b8170a31dd5d15ca6db5a",
+        "decision": "CANCEL",
+        "exchangeStatus": "CANCELED",
+        "confirmed": true,
+        "oldIdentityTerminated": true,
+        "newPlanSubmitted": false,
+        "reason": "DETERMINISTIC_COORDINATOR_ACTION"
+      }
+    },
+    {
+      "type": "PENDING_ENTRY_REVIEW_COMPLETED",
+      "ts": 1791119870274,
+      "symbol": "BNBUSDC",
+      "payload": {
+        "orderId": "entry_intent_mutuho7p_vrhplsw2",
+        "clientOrderId": "ml_aec4efe5dabe90f9ad1693146d69",
+        "decision": "CANCEL",
+        "resourceId": "review-7900-gpu2",
+        "model": "qwen/qwen3.8-27b",
+        "runId": "airun_mutuimeq_8wfa19qs",
+        "queueMs": 0
+      }
+    },
+    {
+      "type": "PENDING_ENTRY_REVIEW_COMPLETED",
+      "ts": 1791120275722,
+      "symbol": "BTCUSDT",
+      "payload": {
+        "orderId": "entry_intent_mutuq6qc_v7xsftbh",
+        "clientOrderId": "ml_077fcb5722d978a35f6a6475ece1",
+        "decision": "CANCEL",
+        "resourceId": "review-7900-gpu2",
+        "model": "qwen/qwen3.8-27b",
+        "runId": "airun_mutur8te_o9v4pasu",
+        "queueMs": 0
+      }
+    },
+    {
+      "type": "PENDING_ENTRY_REVIEW_COMPLETED",
+      "ts": 1791120381824,
+      "symbol": "ETHUSDT",
+      "payload": {
+        "orderId": "entry_intent_mutusvzy_4awj965n",
+        "clientOrderId": "ml_2ba5247dca884b1f1e1984c02e0d",
+        "decision": "CANCEL",
+        "resourceId": "review-7900-gpu2",
+        "model": "qwen/qwen3.8-27b",
+        "runId": "airun_mututmbe_98yeo4iv",
+        "queueMs": 0
+      }
+    },
+    {
+      "type": "PENDING_ENTRY_REVIEW_ACTION_CONVERGED",
+      "ts": 1791120392638,
+      "symbol": "ETHUSDT",
+      "payload": {
+        "orderId": "entry_intent_mutusvzy_4awj965n",
+        "clientOrderId": "ml_2ba5247dca884b1f1e1984c02e0d",
+        "decision": "CANCEL",
+        "exchangeStatus": "CANCELED",
+        "confirmed": true,
+        "oldIdentityTerminated": true,
+        "newPlanSubmitted": false,
+        "reason": "DETERMINISTIC_COORDINATOR_ACTION"
+      }
+    },
+    {
+      "type": "PENDING_ENTRY_REVIEW_COMPLETED",
+      "ts": 1791120647032,
+      "symbol": "BCHUSDT",
+      "payload": {
+        "orderId": "entry_intent_mutuy9d1_6kpq0ls4",
+        "clientOrderId": "ml_29b69414cf44d04fe752bf26b827",
+        "decision": "KEEP",
+        "resourceId": "review-7900-gpu2",
+        "model": "qwen/qwen3.8-27b",
+        "runId": "airun_mutuzb1e_dz8pymfb",
+        "queueMs": 0
+      }
+    },
+    {
+      "type": "POSITION_REVIEW_APPLIED",
+      "ts": 1791120732878,
+      "symbol": "ETHUSDT",
+      "payload": {
+        "cycleId": "cycle_entry_intent_mutqxhav_x0lgjwhh",
+        "scope": "[\"TESTNET\",\"binance-primary\",\"ETHUSDT\",\"LONG\"]",
+        "planRef": "plan_9d9e9d2f88e0372514d410f48dcd2326",
+        "planVersion": 1,
+        "decision": "HOLD",
+        "usable": true,
+        "reason": "REVIEW_RESULT_APPLICABLE",
+        "at": 1791120732878,
+        "runId": "airun_mutv0ye5_d08v2vvo",
+        "ownerVersion": 2,
+        "triggerKey": "trg_7b5444083c589c383dd903db4559960f",
+        "archived": true,
+        "rowEventId": "usage_c026419c2c8e2640351fa0347a020e56",
+        "usageStatus": "EXACT",
+        "writableAuthority": "REVIEW_EVIDENCE_ONLY"
+      }
+    }
+  ]
+}

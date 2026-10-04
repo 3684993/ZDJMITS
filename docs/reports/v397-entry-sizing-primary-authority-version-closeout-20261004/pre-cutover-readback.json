@@ -1,0 +1,198 @@
+{
+  "capturedAt": "2026-10-04T14:55:02.0048921+08:00",
+  "runtime": {
+    "pid": 35056,
+    "instanceId": "a5d196de-afd0-464f-a290-c9ac72353044",
+    "uptimeMs": 25163591,
+    "host": "0.0.0.0",
+    "port": 8080,
+    "version": "3.9.6",
+    "buildId": "3.9.6-0a36a5467ac87ebf2508",
+    "lanIps": [
+      "192.168.1.50"
+    ],
+    "lanUrls": [
+      "http://192.168.1.50:8080"
+    ],
+    "listener": {
+      "alive": true,
+      "host": "0.0.0.0",
+      "port": 8080,
+      "ownerPid": 35056
+    },
+    "lastRestartAt": 1791071739119,
+    "lastRestartReason": "MANUAL_START",
+    "restartCount": 236,
+    "runtimeDataDir": "D:\\MITS\\data",
+    "supervisorProbePath": "D:\\MITS\\data\\runtime\\lan-supervisor-state.json",
+    "networkProfile": null,
+    "firewallRuleState": null,
+    "loopbackProbe": null,
+    "lanProbe": null,
+    "supervisor": {
+      "status": "NOT_RUNNING"
+    },
+    "shadow": {
+      "status": {
+        "status": "RUNNING",
+        "startAt": 1789597616507,
+        "requiredUntil": null,
+        "samples": 1091007,
+        "violations": 653332,
+        "dataQualityBlocks": 122918,
+        "exposureBlocks": 627135,
+        "reviewBlocks": 1091007,
+        "wouldStops": 215621,
+        "duplicateUnderlyingAttempts": 0,
+        "reservationConflicts": 0,
+        "snapshotInvalidations": 0,
+        "lastSampleAt": 1791096881480,
+        "validityEpochAt": 1789597616507,
+        "validObservationStartedAt": 1789597826548,
+        "validObservationRequiredUntil": 1790202626548,
+        "validObservationStreak": 0,
+        "shadowOnlyRuns": 0,
+        "shadowOnlyPlaceDecisions": 0,
+        "shadowOnlyErrors": 0,
+        "elapsedMs": 1499285473,
+        "validObservationElapsedMs": 1499075432,
+        "remainingMs": 0,
+        "autoResume": false,
+        "automaticExitCount": 0,
+        "automaticStopMarketCount": 0
+      },
+      "validObservationStartedAt": 1789597826548,
+      "validObservationRequiredUntil": 1790202626548
+    },
+    "autoResume": true,
+    "autoFrozen": false
+  },
+  "productionWriteBoundary": {
+    "environment": "TESTNET",
+    "executionMode": "TESTNET_ENABLED",
+    "lockedToTestnet": true,
+    "testnetWrites": 6,
+    "productionWrites": 0,
+    "blockedProductionWriteAttempts": 1,
+    "lastWriteAt": 1791088026917,
+    "lastWritePath": "/fapi/v1/order"
+  },
+  "runtimeControl": {
+    "mode": "RUNNING",
+    "reasonCode": "PRIVATE_NOT_READY",
+    "reasonText": "私有账户事实待刷新；仅新增建仓等待，行情/订单/持仓维护继续：Binance HTTP 451: {\n  \"code\": 0,\n  \"msg\": \"Service unavailable from a restricted location according to 'b. Eligibility' in https://www.binance.com/en/terms. Please contact customer service if you believe you received this message in error.\"\n}",
+    "pausedAt": null,
+    "pauseSource": "NONE",
+    "autoResume": true,
+    "lastTransitionAt": 1789831520254,
+    "nextCapitalCheckAt": 1791096930454,
+    "entrySafetyMode": "AUTO",
+    "manualRiskOverride": null,
+    "capital": {
+      "generation": 1,
+      "capitalVersion": "{\"assets\":[[\"BTC\",0.01,0.01,848.1359871377],[\"USDC\",4980.04130718,4980.04130718,4980.04130718],[\"USDT\",3855.48900554,5529.14444719,5529.14444719]],\"positions\":[[\"AVAXUSDT\",\"SHORT\",607,11.0547009,12],[\"BTCUSDT\",\"LONG\",0.0461,85024.87807971,19],[\"BTCUSDT\",\"SHORT\",0.0039,85024.87807971,19],[\"LTCUSDT\",\"SHORT\",0.36,70.58652504,8],[\"PENGUUSDT\",\"LONG\",19937,0.00925292,8],[\"VIRTUALUSDT\",\"LONG\",488.3,0.79260263,8]],\"reservations\":[],\"orders\":[[\"1000PEPEUSDC\",\"EXPIRED\",401950,0,false,null],[\"1000PEPEUSDC\",\"EXPIRED\",16361,0,false,null],[\"ADAUSDC\",\"EXPIRED\",20.700000000000003,0,false,null],[\"APTUSDT\",\"EXPIRED\",64.10000000000001,0,false,null],[\"APTUSDT\",\"EXPIRED\",6.1000000000000005,0,false,null],[\"APTUSDT\",\"EXPIRED\",6.1000000000000005,0,false,null],[\"APTUSDT\",\"EXPIRED\",6.1000000000000005,0,false,null],[\"APTUSDT\",\"EXPIRED\",6.1000000000000005,0,false,null],[\"APTUSDT\",\"EXPIRED\",6.300000000000001,0,false,null],[\"APTUSDT\",\"EXPIRED\",6.300000000000001,0,false,null],[\"APTUSDT\",\"EXPIRED\",6.300000000000001,0,false,null],[\"ARBUSDC\",\"EXPIRED\",193.10000000000002,0,false,null],[\"ARBUSDC\",\"EXPIRED\",24.400000000000002,0,false,null],[\"ARBUSDC\",\"EXPIRED\",24.700000000000003,0,false,null],[\"ARBUSDC\",\"EXPIRED\",23.900000000000002,0,false,null],[\"ARBUSDC\",\"EXPIRED\",24.200000000000003,0,false,null],[\"ARBUSDC\",\"EXPIRED\",24.700000000000003,0,false,null],[\"ARBUSDC\",\"EXPIRED\",24.700000000000003,0,false,null],[\"ARBUSDC\",\"EXPIRED\",24.700000000000003,0,false,null],[\"ARBUSDC\",\"EXPIRED\",24.900000000000002,0,false,null],[\"ARBUSDC\",\"EXPIRED\",24.700000000000003,0,false,null],[\"ARBUSDT\",\"EXPIRED\",797.8000000000001,0,false,null],[\"ARBUSDT\",\"EXPIRED\",24.200000000000003,0,false,null],[\"ARBUSDT\",\"EXPIRED\",23.900000000000002,0,false,null],[\"ARBUSDT\",\"EXPIRED\",24.400000000000002,0,false,null],[\"ARBUSDT\",\"EXPIRED\",24.700000000000003,0,false,null],[\"ARBUSDT\",\"EXPIRED\",24.700000000000003,0,false,null],[\"ARBUSDT\",\"EXPIRED\",24.900000000000002,0,false,null],[\"ARBUSDT\",\"FILLED\",979,979,true,null],[\"AVAXUSDT\",\"EXPIRED\",19,0,false,null],[\"AVAXUSDT\",\"EXPIRED\",3752,0,false,null],[\"BCHUSDT\",\"EXPIRED\",0.17300000000000001,0,false,null],[\"BCHUSDT\",\"EXPIRED\",0.11900000000000001,0,false,null],[\"BNBUSDC\",\"EXPIRED\",4.89,0,false,null],[\"BTCUSDT\",\"EXPIRED\",0.0009000000000000001,0,false,null],[\"BTCUSDT\",\"EXPIRED\",0.042100000000000005,0,false,null],[\"BTCUSDT\",\"EXPIRED\",0.038400000000000004,0,false,null],[\"BTCUSDT\",\"EXPIRED\",0.0006000000000000001,0,false,null],[\"BTCUSDT\",\"EXPIRED\",0.0006000000000000001,0,false,null],[\"BTCUSDT\",\"EXPIRED\",0.0006000000000000001,0,false,null],[\"BTCUSDT\",\"EXPIRED\",0.0006000000000000001,0,false,null],[\"BTCUSDT\",\"EXPIRED\",0.0006000000000000001,0,false,null],[\"BTCUSDT\",\"EXPIRED\",0.0006000000000000001,0,false,null],[\"BTCUSDT\",\"EXPIRED\",0.0006000000000000001,0,false,null],[\"CRVUSDC\",\"EXPIRED\",15.200000000000001,0,false,null],[\"CRVUSDC\",\"EXPIRED\",12.600000000000001,0,false,null],[\"CRVUSDC\",\"EXPIRED\",12.600000000000001,0,false,null],[\"CRVUSDC\",\"EXPIRED\",12.200000000000001,0,false,null],[\"CRVUSDC\",\"EXPIRED\",13.200000000000001,0,false,null],[\"CRVUSDC\",\"EXPIRED\",13.200000000000001,0,false,null],[\"CRVUSDC\",\"EXPIRED\",12.700000000000001,0,false,null],[\"CRVUSDC\",\"EXPIRED\",12.600000000000001,0,false,null],[\"CRVUSDT\",\"EXPIRED\",32.800000000000004,0,false,null],[\"CRVUSDT\",\"EXPIRED\",14.200000000000001,0,false,null],[\"CRVUSDT\",\"EXPIRED\",13.200000000000001,0,false,null],[\"DASHUSDT\",\"EXPIRED\",0.28800000000000003,0,false,null],[\"DASHUSDT\",\"EXPIRED\",0.10300000000000001,0,false,null],[\"DASHUSDT\",\"EXPIRED\",0.11900000000000001,0,false,null],[\"DOTUSDT\",\"EXPIRED\",4.1000000000000005,0,false,null],[\"DOTUSDT\",\"EXPIRED\",4.1000000000000005,0,false,null],[\"ENAUSDT\",\"EXPIRED\",10264,0,false,null],[\"ETHFIUSDT\",\"EXPIRED\",7.6000000000000005,0,false,null],[\"ETHFIUSDT\",\"EXPIRED\",7.1000000000000005,0,false,null],[\"ETHFIUSDT\",\"EXPIRED\",7.300000000000001,0,false,null],[\"ETHFIUSDT\",\"EXPIRED\",6.800000000000001,0,false,null],[\"ETHFIUSDT\",\"EXPIRED\",6.6000000000000005,0,false,null],[\"ETHFIUSDT\",\"EXPIRED\",6.6000000000000005,0,false,null],[\"ETHFIUSDT\",\"EXPIRED\",6.6000000000000005,0,false,null],[\"ETHFIUSDT\",\"EXPIRED\",6.6000000000000005,0,false,null],[\"ETHFIUSDT\",\"EXPIRED\",6.6000000000000005,0,false,null],[\"ETHUSDT\",\"EXPIRED\",0.47900000000000004,0,false,null],[\"ETHUSDT\",\"EXPIRED\",0.008,0,false,null],[\"ETHUSDT\",\"EXPIRED\",0.008,0,false,null],[\"FILUSDT\",\"EXPIRED\",622.3000000000001,0,false,null],[\"FILUSDT\",\"EXPIRED\",4.800000000000001,0,false,null],[\"FILUSDT\",\"EXPIRED\",4.800000000000001,0,false,null],[\"FILUSDT\",\"EXPIRED\",4.6000000000000005,0,false,null],[\"FILUSDT\",\"EXPIRED\",4.800000000000001,0,false,null],[\"FILUSDT\",\"EXPIRED\",4.800000000000001,0,false,null],[\"INJUSDT\",\"EXPIRED\",3.4000000000000004,0,false,null],[\"INJUSDT\",\"EXPIRED\",220.10000000000002,0,false,null],[\"INJUSDT\",\"EXPIRED\",227.10000000000002,0,false,null],[\"INJUSDT\",\"EXPIRED\",0.7000000000000001,0,false,null],[\"INJUSDT\",\"EXPIRED\",0.7000000000000001,0,false,null],[\"INJUSDT\",\"EXPIRED\",0.7000000000000001,0,false,null],[\"INJUSDT\",\"EXPIRED\",0.7000000000000001,0,false,null],[\"INJUSDT\",\"EXPIRED\",0.7000000000000001,0,false,null],[\"INJUSDT\",\"EXPIRED\",0.7000000000000001,0,false,null],[\"INJUSDT\",\"EXPIRED\",0.7000000000000001,0,false,null],[\"INJUSDT\",\"EXPIRED\",0.7000000000000001,0,false,null],[\"INJUSDT\",\"EXPIRED\",0.7000000000000001,0,false,null],[\"INJUSDT\",\"EXPIRED\",0.7000000000000001,0,false,null],[\"INJUSDT\",\"EXPIRED\",0.7000000000000001,0,false,null],[\"INJUSDT\",\"EXPIRED\",0.7000000000000001,0,false,null],[\"INJUSDT\",\"EXPIRED\",0.7000000000000001,0,false,null],[\"INJUSDT\",\"EXPIRED\",0.7000000000000001,0,false,null],[\"INJUSDT\",\"EXPIRED\",0.7000000000000001,0,false,null],[\"INJUSDT\",\"EXPIRED\",0.7000000000000001,0,false,null],[\"INJUSDT\",\"EXPIRED\",0.7000000000000001,0,false,null],[\"INJUSDT\",\"EXPIRED\",0.7000000000000001,0,false,null],[\"INJUSDT\",\"EXPIRED\",0.7000000000000001,0,false,null],[\"LINKUSDT\",\"EXPIRED\",0.35000000000000003,0,false,null],[\"LTCUSDT\",\"EXPIRED\",0.20700000000000002,0,false,null],[\"NEARUSDT\",\"EXPIRED\",53,0,false,null],[\"OPUSDT\",\"EXPIRED\",26513.600000000002,0,false,null],[\"OPUSDT\",\"EXPIRED\",36.800000000000004,0,false,null],[\"OPUSDT\",\"EXPIRED\",38.400000000000006,0,false,null],[\"OPUSDT\",\"EXPIRED\",38.900000000000006,0,false,null],[\"OPUSDT\",\"EXPIRED\",38.7,0,false,null],[\"OPUSDT\",\"EXPIRED\",38.400000000000006,0,false,null],[\"OPUSDT\",\"EXPIRED\",38.300000000000004,0,false,null],[\"OPUSDT\",\"EXPIRED\",37.800000000000004,0,false,null],[\"PENGUUSDT\",\"FILLED\",19937,19937,true,null],[\"POLUSDT\",\"EXPIRED\",43,0,false,null],[\"RAYSOLUSDT\",\"EXPIRED\",2.8000000000000003,0,false,null],[\"RAYSOLUSDT\",\"EXPIRED\",2.8000000000000003,0,false,null],[\"SUIUSDC\",\"EXPIRED\",97.30000000000001,0,false,null],[\"TIAUSDC\",\"EXPIRED\",11,0,false,null],[\"TUTUSDT\",\"EXPIRED\",334.40000000000003,0,false,null],[\"TUTUSDT\",\"EXPIRED\",388.70000000000005,0,false,null],[\"TUTUSDT\",\"EXPIRED\",1901.3000000000002,0,false,null],[\"TUTUSDT\",\"EXPIRED\",2787.6000000000004,0,false,null],[\"TUTUSDT\",\"EXPIRED\",3184.6000000000004,0,false,null],[\"TUTUSDT\",\"EXPIRED\",6562.700000000001,0,false,null],[\"TUTUSDT\",\"EXPIRED\",3072.2000000000003,0,false,null],[\"TUTUSDT\",\"EXPIRED\",7210.200000000001,0,false,null],[\"UNIUSDT\",\"EXPIRED\",1,0,false,null],[\"VIRTUALUSDT\",\"EXPIRED\",6.1000000000000005,0,false,null],[\"VIRTUALUSDT\",\"EXPIRED\",6.300000000000001,0,false,null],[\"VIRTUALUSDT\",\"EXPIRED\",6.1000000000000005,0,false,null],[\"VIRTUALUSDT\",\"EXPIRED\",6.300000000000001,0,false,null],[\"VIRTUALUSDT\",\"EXPIRED\",6.300000000000001,0,false,null],[\"VIRTUALUSDT\",\"EXPIRED\",6.1000000000000005,0,false,null],[\"VIRTUALUSDT\",\"EXPIRED\",6.300000000000001,0,false,null],[\"VIRTUALUSDT\",\"FILLED\",245.1,245.1,true,null],[\"VVVUSDT\",\"EXPIRED\",19.240000000000002,0,false,null],[\"WIFUSDT\",\"EXPIRED\",21.900000000000002,0,false,null],[\"WIFUSDT\",\"EXPIRED\",21.700000000000003,0,false,null],[\"WIFUSDT\",\"EXPIRED\",21.700000000000003,0,false,null],[\"WIFUSDT\",\"EXPIRED\",21.700000000000003,0,false,null],[\"WIFUSDT\",\"EXPIRED\",21.200000000000003,0,false,null],[\"WIFUSDT\",\"EXPIRED\",20.400000000000002,0,false,null],[\"WIFUSDT\",\"EXPIRED\",20.200000000000003,0,false,null],[\"WLDUSDC\",\"EXPIRED\",9.700000000000001,0,false,null],[\"WLDUSDC\",\"EXPIRED\",10.100000000000001,0,false,null],[\"WLDUSDC\",\"EXPIRED\",10.100000000000001,0,false,null],[\"WLDUSDC\",\"EXPIRED\",10.100000000000001,0,false,null],[\"WLDUSDC\",\"EXPIRED\",10.200000000000001,0,false,null],[\"WLDUSDC\",\"EXPIRED\",10.100000000000001,0,false,null],[\"WLDUSDC\",\"EXPIRED\",9.700000000000001,0,false,null],[\"XRPUSDC\",\"EXPIRED\",139,0,false,null],[\"XRPUSDC\",\"EXPIRED\",138.3,0,false,null],[\"XRPUSDC\",\"EXPIRED\",27.700000000000003,0,false,null],[\"XRPUSDC\",\"EXPIRED\",73.60000000000001,0,false,null],[\"XRPUSDC\",\"EXPIRED\",7.800000000000001,0,false,null],[\"XRPUSDC\",\"EXPIRED\",23.900000000000002,0,false,null],[\"XRPUSDC\",\"EXPIRED\",3.4000000000000004,0,false,null],[\"XRPUSDC\",\"EXPIRED\",3.4000000000000004,0,false,null],[\"XRPUSDC\",\"EXPIRED\",3.4000000000000004,0,false,null],[\"XRPUSDC\",\"EXPIRED\",3.4000000000000004,0,false,null],[\"XRPUSDC\",\"EXPIRED\",3.4000000000000004,0,false,null],[\"XRPUSDC\",\"EXPIRED\",3.4000000000000004,0,false,null],[\"XRPUSDC\",\"EXPIRED\",3.4000000000000004,0,false,null],[\"ZECUSDT\",\"EXPIRED\",2.7800000000000002,0,false,null],[\"ZECUSDT\",\"EXPIRED\",0.051000000000000004,0,false,null],[\"ZECUSDT\",\"EXPIRED\",0.11900000000000001,0,false,null],[\"ZECUSDT\",\"EXPIRED\",0.14400000000000002,0,false,null],[\"ZECUSDT\",\"EXPIRED\",0.8170000000000001,0,false,null],[\"ZROUSDT\",\"EXPIRED\",3.3000000000000003,0,false,null],[\"ZROUSDT\",\"EXPIRED\",3.3000000000000003,0,false,null],[\"ZROUSDT\",\"EXPIRED\",3.3000000000000003,0,false,null],[\"ZROUSDT\",\"EXPIRED\",3.3000000000000003,0,false,null],[\"ZROUSDT\",\"EXPIRED\",3.3000000000000003,0,false,null],[\"ZROUSDT\",\"EXPIRED\",2.8000000000000003,0,false,null],[\"ZROUSDT\",\"EXPIRED\",2.9000000000000004,0,false,null],[\"ZROUSDT\",\"EXPIRED\",2.9000000000000004,0,false,null],[\"ZROUSDT\",\"FILLED\",112.9,112.9,true,null]],\"equity\":10542.573942027702,\"risk\":null,\"limits\":{\"portfolio\":{\"maxPositions\":50,\"maxPendingEntries\":6,\"entryMarginUsd\":200},\"portfolioIntelligence\":{\"enabled\":true,\"quoteAssetPolicy\":\"AUTO\",\"underlyingExposurePolicy\":\"BLOCK_SAME_DIRECTION\",\"riskTierMode\":\"AUTO\",\"globalDirectionPolicy\":\"BOTH\",\"tierDirectionPolicies\":{},\"symbolDirectionPolicies\":{},\"globalDirectionPreference\":\"BALANCED\",\"tierDirectionPreferences\":{\"CORE\":\"BALANCED\",\"LIQUID_ALT\":\"INTELLIGENT_SHORT_BIAS\",\"SPECULATIVE\":\"STRICT_SHORT_BIAS\",\"NEW_LISTING\":\"SHORT_ONLY\"},\"symbolDirectionPreferences\":{},\"altLongMarginFactors\":{\"CORE\":1,\"LIQUID_ALT\":0.65,\"SPECULATIVE\":0.35,\"NEW_LISTING\":0.1},\"altLongLeverageCaps\":{\"CORE\":20,\"LIQUID_ALT\":8,\"SPECULATIVE\":3,\"NEW_LISTING\":1},\"dynamicMarginEnabled\":true,\"baseMarginUsd\":200,\"minMarginUsd\":1,\"maxMarginPerPositionUsd\":500,\"maxEquityPct\":0.1,\"tierMarginFactors\":{\"CORE\":1,\"LIQUID_ALT\":0.8,\"SPECULATIVE\":0.45,\"NEW_LISTING\":0.3,\"RESTRICTED\":0},\"dynamicLeverageEnabled\":true,\"globalMaxLeverage\":20,\"tierMaxLeverage\":{\"CORE\":20,\"LIQUID_ALT\":12,\"SPECULATIVE\":5,\"NEW_LISTING\":3,\"RESTRICTED\":1},\"marginMode\":\"AUTO\",\"tierMarginModes\":{},\"symbolMarginModes\":{},\"locationProtectionEnabled\":true,\"minLocationScore\":45,\"maxEma21DistanceAtr\":2,\"maxBbLong\":0.9,\"minBbShort\":0.1,\"maxImpulseAtr\":2,\"maxSameUnderlyingPositions\":1,\"maxLongExposurePct\":0.5,\"maxShortExposurePct\":0.5,\"maxSpeculativeExposurePct\":0.2,\"maxSpeculativePositions\":2,\"maxQuoteAssetMarginUsagePct\":0.8,\"symbolOverrides\":{}},\"riskGovernance\":{\"entrySafetyMode\":\"AUTO\",\"protectionMode\":\"SHADOW\",\"requirePostAiVerification\":true,\"failClosedOnMissingEvidence\":true,\"requiredEvidenceCompleteness\":0.92,\"maxDailyLossUsd\":0,\"maxDailyLossPct\":0,\"maxConcurrentReservations\":6,\"reservationTtlSeconds\":300,\"lockLeaseSeconds\":120,\"circuitBreakerEnabled\":true,\"perTradeRiskPctEquity\":0.01,\"maxGrossExposurePct\":1,\"maxDirectionExposurePct\":1,\"maxClusterExposurePct\":0.35,\"maxClusterDirectionExposurePct\":0.35,\"exposureCapacityPolicy\":{\"gross\":\"OBSERVE\",\"direction\":\"OBSERVE\",\"cluster\":\"ENFORCE\"},\"maxDailyDrawdownPct\":0.05,\"highRiskReviewEnabled\":true,\"highRiskEvidenceThreshold\":0.95,\"shadowDurationDays\":7,\"protectionShadowEnabled\":true,\"shadow\":{\"quoteTtlMs\":20000,\"bookTtlMs\":20000,\"klineTtlMs\":125000,\"accountTtlMs\":45000,\"reconnectGraceMs\":30000,\"aiEnabled\":true,\"aiMaxRunsPerMinute\":2,\"aiQueueLimit\":8,\"aiSamplingRatio\":0.25,\"markRetentionDays\":30,\"posteriorMinSamples\":1},\"exitCoordination\":{\"aiExitAuthority\":\"ENFORCE\",\"aiExitLossLimitUsd\":10,\"aiExitMinNetProfitUsd\":0.2,\"aiExitAllowSmallLoss\":true,\"aiExitAuthorizationTtlMs\":15000,\"positionReviewEnabled\":true,\"normalReviewsPerPlan\":2,\"exceptionReviewsPerPlan\":1,\"reviewFailureBudget\":2,\"reviewMinIntervalMs\":300000,\"reviewAuthorityTtlMs\":90000,\"continuousConvergenceEnabled\":true,\"convergenceIntervalMs\":120000,\"convergenceBatchLimit\":8},\"portfolioRisk\":{\"configured\":true,\"maxCapitalAtRiskUsd\":10811.957,\"maxDrawdownPct\":1,\"maxStressLossUsd\":5405.978,\"maxGrossNotionalUsd\":10811.957,\"maxDirectionNotionalUsd\":8649.565,\"maxClusterNotionalUsd\":10811.957,\"minMarginBufferPct\":0,\"minLiquidationBufferPct\":0,\"maxHumanPositions\":50,\"maxHumanNotionalUsd\":10811.957,\"maxPendingHandoffs\":50,\"maxAckAgeMs\":86400000,\"correlationVersion\":\"TESTNET_CORRELATION_CLUSTERS_V1_SHA256_d7ada0f6ba5cb950105a69439c409177748e1c87b164fa0872e845271d2bff65\",\"clusters\":{},\"scenarioVersion\":\"TESTNET_STRESS_SCENARIO_SET_V1_SHA256_3b9c016189e3b2cb2c2bad5f7bc761e7ae25181eadfa03b574be2ec9d1a0749c\",\"snapshotTtlMs\":20000,\"marginTierVersion\":\"TESTNET_BINANCE_LEVERAGE_BRACKET_V1_SHA256_67dee0aca734d82f8718c7b6ad995ba6afb50be4a10798cba5071c9a08bb0fa9\",\"maintenanceMarginRatePct\":0.167,\"cashFlowWindowMs\":86400000,\"cashFlowMaxAgeMs\":900000,\"scenarios\":[{\"id\":\"DOWN_10_LIQUIDITY\",\"priceShockPct\":-0.1,\"spreadWidenPct\":0.01,\"fundingShockPct\":0.005,\"markBasisShockPct\":-0.01,\"depthPenaltyPct\":0.02,\"exchangeUnavailable\":false,\"unavailablePenaltyPct\":0,\"clusterConvergencePct\":0.5},{\"id\":\"EXCHANGE_GAP_15\",\"priceShockPct\":-0.15,\"spreadWidenPct\":0.02,\"fundingShockPct\":0.005,\"markBasisShockPct\":-0.02,\"depthPenaltyPct\":0.03,\"exchangeUnavailable\":true,\"unavailablePenaltyPct\":0.03,\"clusterConvergencePct\":0.75},{\"id\":\"UP_10_LIQUIDITY\",\"priceShockPct\":0.1,\"spreadWidenPct\":0.01,\"fundingShockPct\":0.005,\"markBasisShockPct\":0.01,\"depthPenaltyPct\":0.02,\"exchangeUnavailable\":false,\"unavailablePenaltyPct\":0,\"clusterConvergencePct\":0.5}]}}}}",
+      "directionBudget": {
+        "equityUsd": 10542.573942027702,
+        "grossLimitUsd": 10542.573942027702,
+        "directionLimitUsd": 10542.573942027702,
+        "grossNotionalUsd": 11558.3618295689,
+        "longNotionalUsd": 4491.150209743631,
+        "shortNotionalUsd": 7067.211619825269,
+        "remainingGrossUsd": 0,
+        "grossUsedPct": 1.0963510327863848,
+        "longAvailableNotionalUsd": 6051.423732284071,
+        "shortAvailableNotionalUsd": 3475.3623222024335,
+        "longUsedPct": 0.42600130048315576,
+        "shortUsedPct": 0.6703497323032291,
+        "grossAvailableNotionalUsd": 0,
+        "policy": {
+          "gross": "OBSERVE",
+          "direction": "OBSERVE",
+          "cluster": "OBSERVE"
+        },
+        "positionLimitsEnforced": false,
+        "evaluatedAt": 1791096900454
+      },
+      "evaluatedAt": 1791096900454,
+      "executableCandidateCount": 0,
+      "usdtAvailable": 3855.48900554,
+      "usdcAvailable": 4980.04130718,
+      "usdtExecutableUnderlyings": 0,
+      "usdcExecutableUnderlyings": 0,
+      "noUsdtMargin": 0,
+      "noUsdcMargin": 0,
+      "noUsdcContract": 0,
+      "liquidityRejected": 0,
+      "exposureRejected": 0,
+      "minMarginRejected": 0,
+      "marketNotFresh": 0,
+      "underlyingBlocked": 0,
+      "reasonCounts": {},
+      "routedCandidates": [],
+      "nextRecheckAt": 1791096930454,
+      "funding": {
+        "quoteAssets": [
+          {
+            "quoteAsset": "USDT",
+            "entryFundingEligible": true,
+            "availableBalanceUsd": 3855.48900554,
+            "walletBalanceUsd": 5529.14444719,
+            "reservedMarginUsd": 0,
+            "executionLeaseMarginUsd": 0,
+            "executableMarginUsd": 3855.48900554,
+            "factsComplete": true,
+            "reasons": []
+          },
+          {
+            "quoteAsset": "USDC",
+            "entryFundingEligible": true,
+            "availableBalanceUsd": 4980.04130718,
+            "walletBalanceUsd": 4980.04130718,
+            "reservedMarginUsd": 0,
+            "executionLeaseMarginUsd": 0,
+            "executableMarginUsd": 4980.04130718,
+            "factsComplete": true,
+            "reasons": []
+          }
+        ],
+        "totalExecutableMarginUsd": 8835.53031272,
+        "proven": true,
+        "excludedAssets": [
+          {
+            "asset": "BTC",
+            "usdValue": 848.1359871377,
+            "reason": "NOT_IN_ENTRY_FUNDING_UNIVERSE"
+          }
+        ],
+        "accountEquityUsd": 10542.573942027702
+      },
+      "firstBindingConstraint": {
+        "LONG": {
+          "executableNotionalUsd": 0,
+          "quoteAsset": null,
+          "symbol": null,
+          "firstBindingConstraint": "NO_CAPITAL_ROUTE",
+          "executableRoutes": 0,
+          "minimumLegalNotionalUsd": null,
+          "candidates": []
+        },
+        "SHORT": {
+          "executableNotionalUsd": 0,
+          "quoteAsset": null,
+          "symbol": null,
+          "firstBindingConstraint": "NO_CAPITAL_ROUTE",
+          "executableRoutes": 0,
+          "minimumLegalNotionalUsd": null,
+          "candidates": []
+        }
+      }
+    }
+  },
+  "candidate": null,
+  "market": [
+    null,
+    null,
+    null,
+    null
+  ]
+}

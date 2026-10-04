@@ -1,0 +1,1222 @@
+{
+  "capturedAt": "2026-10-04T13:38:55.1542603Z",
+  "gitHead": "5784ad44b48c4fff84400542946925d5416381b6",
+  "health": {
+    "http": 200,
+    "status": "READY",
+    "ready": true,
+    "marketSnapshots": 16,
+    "privateStatus": "READY",
+    "marketStream": "LIVE",
+    "remotePositions": 11,
+    "remoteOrders": 11,
+    "reconciliationAt": 1791121007963
+  },
+  "runtime": {
+    "pid": 33780,
+    "instanceId": "e21e3f20-ca16-443c-af0d-a23f02f5ad5a",
+    "uptimeMs": 1205174,
+    "host": "0.0.0.0",
+    "port": 8080,
+    "version": "3.9.7",
+    "buildId": "3.9.7-9595059d6d268a8981ce",
+    "lanIps": [
+      "192.168.1.50"
+    ],
+    "lanUrls": [
+      "http://192.168.1.50:8080"
+    ],
+    "listener": {
+      "alive": true,
+      "host": "0.0.0.0",
+      "port": 8080,
+      "ownerPid": 33780
+    },
+    "lastRestartAt": 1791119920261,
+    "lastRestartReason": "MANUAL_START",
+    "restartCount": 241,
+    "runtimeDataDir": "D:\\MITS\\data",
+    "supervisorProbePath": "D:\\MITS\\data\\runtime\\lan-supervisor-state.json",
+    "networkProfile": null,
+    "firewallRuleState": null,
+    "loopbackProbe": null,
+    "lanProbe": null,
+    "supervisor": {
+      "status": "NOT_RUNNING"
+    },
+    "shadow": {
+      "status": {
+        "status": "RUNNING",
+        "startAt": 1789597616507,
+        "requiredUntil": null,
+        "samples": 1093314,
+        "violations": 655639,
+        "dataQualityBlocks": 123564,
+        "exposureBlocks": 629442,
+        "reviewBlocks": 1093314,
+        "wouldStops": 216302,
+        "duplicateUnderlyingAttempts": 0,
+        "reservationConflicts": 0,
+        "snapshotInvalidations": 0,
+        "lastSampleAt": 1791121111797,
+        "validityEpochAt": 1789597616507,
+        "validObservationStartedAt": 1789597826548,
+        "validObservationRequiredUntil": 1790202626548,
+        "validObservationStreak": 0,
+        "shadowOnlyRuns": 0,
+        "shadowOnlyPlaceDecisions": 0,
+        "shadowOnlyErrors": 0,
+        "elapsedMs": 1523507877,
+        "validObservationElapsedMs": 1523297836,
+        "remainingMs": 0,
+        "autoResume": false,
+        "automaticExitCount": 0,
+        "automaticStopMarketCount": 0
+      },
+      "validObservationStartedAt": 1789597826548,
+      "validObservationRequiredUntil": 1790202626548
+    },
+    "autoResume": true,
+    "autoFrozen": false
+  },
+  "boundary": {
+    "environment": "TESTNET",
+    "executionMode": "TESTNET_ENABLED",
+    "lockedToTestnet": true,
+    "testnetWrites": 25,
+    "productionWrites": 0,
+    "blockedProductionWriteAttempts": 0,
+    "lastWriteAt": 1791121118318,
+    "lastWritePath": "/fapi/v1/order"
+  },
+  "market": {
+    "pipelineState": "PAUSED_MARKET_DATA_UNAVAILABLE",
+    "authoritativeBlocker": "PAUSED_MARKET_DATA_UNAVAILABLE",
+    "universe": 15,
+    "eligible": 0,
+    "poolReady": 0,
+    "marketDataReason": "MARKET_QUOTES_STALE",
+    "fresh": {
+      "status": "DEGRADED",
+      "count": 0,
+      "stale": [
+        "NEARUSDT",
+        "NEARUSDC",
+        "LTCUSDT",
+        "AVAXUSDT",
+        "BTCUSDT",
+        "PENGUUSDT",
+        "VIRTUALUSDT",
+        "ETHUSDT",
+        "ZECUSDT",
+        "BCHUSDT",
+        "TAOUSDT",
+        "HYPEUSDT",
+        "1000PEPEUSDT",
+        "BNBUSDC",
+        "AAVEUSDT",
+        "AAVEUSDC"
+      ],
+      "quoteFreshRatio": 0,
+      "klineFreshRatio": 0.25,
+      "sequenceInvalid": 0
+    },
+    "isolation": {
+      "candidateCount": 7,
+      "isolatedCount": 7,
+      "healthyCandidates": 0,
+      "isolated": [
+        {
+          "symbol": "BNBUSDC",
+          "reasons": [
+            "QUOTE_STALE",
+            "ORDER_BOOK_STALE",
+            "TECHNICAL_1m_STALE",
+            "TECHNICAL_1m_MISSING_LATEST_CLOSED"
+          ]
+        },
+        {
+          "symbol": "BCHUSDT",
+          "reasons": [
+            "QUOTE_STALE",
+            "ORDER_BOOK_STALE",
+            "TECHNICAL_1m_MISSING_LATEST_CLOSED"
+          ]
+        },
+        {
+          "symbol": "ZECUSDT",
+          "reasons": [
+            "QUOTE_STALE",
+            "ORDER_BOOK_STALE",
+            "TECHNICAL_1m_STALE",
+            "TECHNICAL_1m_MISSING_LATEST_CLOSED"
+          ]
+        },
+        {
+          "symbol": "BTCUSDT",
+          "reasons": [
+            "QUOTE_STALE",
+            "ORDER_BOOK_STALE",
+            "TECHNICAL_1m_STALE",
+            "TECHNICAL_1m_MISSING_LATEST_CLOSED"
+          ]
+        },
+        {
+          "symbol": "TAOUSDT",
+          "reasons": [
+            "QUOTE_STALE",
+            "ORDER_BOOK_STALE",
+            "TECHNICAL_1m_MISSING_LATEST_CLOSED"
+          ]
+        },
+        {
+          "symbol": "PENGUUSDT",
+          "reasons": [
+            "QUOTE_STALE",
+            "ORDER_BOOK_STALE",
+            "TECHNICAL_1m_STALE",
+            "TECHNICAL_1m_MISSING_LATEST_CLOSED"
+          ]
+        },
+        {
+          "symbol": "VIRTUALUSDT",
+          "reasons": [
+            "QUOTE_STALE",
+            "ORDER_BOOK_STALE",
+            "TECHNICAL_1m_STALE",
+            "TECHNICAL_1m_MISSING_LATEST_CLOSED"
+          ]
+        }
+      ]
+    },
+    "stream": {
+      "state": "LIVE",
+      "connectedAt": 1791119954280,
+      "lastMessageAt": 1791121118604,
+      "lastTickerMessageAt": 1791120981820,
+      "lastBookTickerMessageAt": 1791121118604,
+      "lastPongAt": 1791120981339,
+      "reconnects": 0,
+      "gaps": 0,
+      "gapsByType": {
+        "websocketConnection": 0,
+        "quote": 0,
+        "bookTicker": 0,
+        "depthSequence": 0,
+        "kline": 0,
+        "eventTimestamp": 0,
+        "subscription": 0
+      },
+      "backfills": 0,
+      "subscriptions": 83,
+      "cumulativeSubscriptions": 88,
+      "recoverySuccess": 0,
+      "recoveryFailure": 0,
+      "lastError": null,
+      "lastKlineGap": null,
+      "klineRepairAttempts": 0,
+      "klineRepairSuccess": 0,
+      "recoveryQueue": 0
+    }
+  },
+  "account": {
+    "status": "READY",
+    "availableUsd": 2706.58751951,
+    "walletUsd": 10515.59731958
+  },
+  "settings": {
+    "executionMode": "TESTNET_ENABLED",
+    "environment": "TESTNET",
+    "minimumInitialMarginByQuote": {
+      "USDT": 100,
+      "USDC": 100
+    },
+    "minimumOrderNotionalBySymbol": {
+      "BTCUSDT": 150
+    }
+  },
+  "pendingEntries": {
+    "status": "READY",
+    "count": 1,
+    "historicalRiskClaimSymbols": 37,
+    "max": 6
+  },
+  "orders": {
+    "entryReadback": {
+      "status": "READY",
+      "verifiedAt": 1791121030844,
+      "count": 1
+    },
+    "manualReadback": {
+      "status": "READY",
+      "verifiedAt": 1791121030844,
+      "count": 0
+    },
+    "workingTp": 11,
+    "historicalUnknownWindow": {
+      "since": 1791034729419,
+      "until": 1791121129419,
+      "visibleCount": 12,
+      "olderHiddenCount": 177
+    }
+  },
+  "positions": {
+    "local": 11,
+    "coverage": {
+      "status": "HEALTHY",
+      "local": 11,
+      "remote": 11,
+      "detail": "local=11;remote=11"
+    },
+    "takeProfitCoverage": {
+      "status": "HEALTHY",
+      "required": 11,
+      "protected": 11,
+      "missing": 0,
+      "unresolved": 0,
+      "detail": "{\"unverifiedTp\":0,\"required\":11,\"protected\":11,\"missing\":0,\"repairing\":0,\"repairFailed\":0,\"manualReviewRequired\":0,\"positionFactUnresolved\":0,\"positionFactUnresolvedSymbols\":[],\"orphanTp\":0,\"duplicateTp\":0,\"qtyMismatch\":0,\"wrongSide\":0,\"tpMissing\":0,\"retryQueue\":0}"
+    }
+  },
+  "review": {
+    "authority": {
+      "status": "HEALTHY",
+      "enabled": true,
+      "aiActiveCycles": 0,
+      "scheduledDue": 0,
+      "lastOutcome": {
+        "lastTickAt": 1791121083989,
+        "lastVerdictAt": 1791121041087,
+        "lastDecision": "HOLD",
+        "lastReason": "REVIEW_RESULT_APPLICABLE",
+        "usable": true,
+        "enabled": true,
+        "considered": 5,
+        "reserved": 0,
+        "completed": 0,
+        "discarded": 0,
+        "failed": 0,
+        "due": 0,
+        "exhausted": 7,
+        "failureBlocked": 1,
+        "skippedReason": "REVIEW_BUDGET_EXHAUSTED"
+      },
+      "detail": "3 resources",
+      "reviewFairness": {
+        "reservationMs": 300000,
+        "reviewCapacitySharePercent": 25,
+        "reviewOwedSince": null,
+        "reviewOwedWaitMs": 0,
+        "windowServes": 2,
+        "windowReviews": 0,
+        "reviewShareUsedPercent": 0,
+        "heldForReview": false
+      }
+    },
+    "cycles": [
+      {
+        "cycleId": "cycle_entry_intent_mupwgx2p_ceek5n71",
+        "scope": "[\"TESTNET\",\"binance-primary\",\"ZECUSDT\",\"SHORT\"]",
+        "used": 0,
+        "limit": 2,
+        "failures": 0,
+        "lastReviewAt": 1790882049018,
+        "nextDueAt": 1790882349018,
+        "lastOutcome": "FAILED",
+        "skippedReason": null
+      },
+      {
+        "cycleId": "cycle_entry_intent_mupylaiu_qm1b66ex",
+        "scope": "[\"TESTNET\",\"binance-primary\",\"AAVEUSDT\",\"LONG\"]",
+        "used": 0,
+        "limit": 2,
+        "failures": 0,
+        "lastReviewAt": 1790885349012,
+        "nextDueAt": 1790885649012,
+        "lastOutcome": "FAILED",
+        "skippedReason": null
+      },
+      {
+        "cycleId": "cycle_entry_intent_muq6sc89_znx6cjij",
+        "scope": "[\"TESTNET\",\"binance-primary\",\"NEARUSDT\",\"SHORT\"]",
+        "used": 0,
+        "limit": 2,
+        "failures": 0,
+        "lastReviewAt": 1790899578393,
+        "nextDueAt": 1790899878393,
+        "lastOutcome": "FAILED",
+        "skippedReason": null
+      },
+      {
+        "cycleId": "cycle_entry_intent_muqe8rgx_g31do5bf",
+        "scope": "[\"TESTNET\",\"binance-primary\",\"WIFUSDT\",\"LONG\"]",
+        "used": 0,
+        "limit": 2,
+        "failures": 0,
+        "lastReviewAt": 1790912074323,
+        "nextDueAt": 1790912374323,
+        "lastOutcome": "FAILED",
+        "skippedReason": null
+      },
+      {
+        "cycleId": "cycle_entry_intent_muqmxlru_gy3dft77",
+        "scope": "[\"TESTNET\",\"binance-primary\",\"ARBUSDT\",\"LONG\"]",
+        "used": 0,
+        "limit": 2,
+        "failures": 0,
+        "lastReviewAt": 1790927202546,
+        "nextDueAt": 1790927502546,
+        "lastOutcome": "FAILED",
+        "skippedReason": null
+      },
+      {
+        "cycleId": "cycle_entry_intent_muqppx8c_tjvomscs",
+        "scope": "[\"TESTNET\",\"binance-primary\",\"PENGUUSDT\",\"LONG\"]",
+        "used": 4,
+        "limit": 4,
+        "failures": 1,
+        "lastReviewAt": 1791112188564,
+        "nextDueAt": 1791155388564,
+        "lastOutcome": "COMPLETED",
+        "skippedReason": "REVIEW_BUDGET_EXHAUSTED"
+      },
+      {
+        "cycleId": "cycle_entry_intent_muqrd2xl_3ccj3ufd",
+        "scope": "[\"TESTNET\",\"binance-primary\",\"VIRTUALUSDT\",\"LONG\"]",
+        "used": 4,
+        "limit": 4,
+        "failures": 1,
+        "lastReviewAt": 1791112246568,
+        "nextDueAt": 1791155446568,
+        "lastOutcome": "COMPLETED",
+        "skippedReason": "REVIEW_BUDGET_EXHAUSTED"
+      },
+      {
+        "cycleId": "cycle_entry_intent_muqslzde_yim5kj9g",
+        "scope": "[\"TESTNET\",\"binance-primary\",\"ARBUSDT\",\"LONG\"]",
+        "used": 0,
+        "limit": 2,
+        "failures": 0,
+        "lastReviewAt": 1790936356736,
+        "nextDueAt": 1790936656736,
+        "lastOutcome": "FAILED",
+        "skippedReason": null
+      },
+      {
+        "cycleId": "cycle_entry_intent_mugkidet_8lh0blpk",
+        "scope": "[\"TESTNET\",\"binance-primary\",\"DASHUSDT\",\"SHORT\"]",
+        "used": 0,
+        "limit": 2,
+        "failures": 0,
+        "lastReviewAt": 1790949479774,
+        "nextDueAt": 1790949779774,
+        "lastOutcome": "FAILED",
+        "skippedReason": null
+      },
+      {
+        "cycleId": "cycle_entry_intent_mum4ffiw_3q6bn53k",
+        "scope": "[\"TESTNET\",\"binance-primary\",\"BTCUSDT\",\"SHORT\"]",
+        "used": 4,
+        "limit": 4,
+        "failures": 1,
+        "lastReviewAt": 1791112123290,
+        "nextDueAt": 1791155323290,
+        "lastOutcome": "COMPLETED",
+        "skippedReason": "REVIEW_BUDGET_EXHAUSTED"
+      },
+      {
+        "cycleId": "cycle_entry_intent_muoohnib_bofwch4z",
+        "scope": "[\"TESTNET\",\"binance-primary\",\"ETHUSDT\",\"SHORT\"]",
+        "used": 0,
+        "limit": 2,
+        "failures": 0,
+        "lastReviewAt": 1790949479785,
+        "nextDueAt": 1790949779785,
+        "lastOutcome": "FAILED",
+        "skippedReason": null
+      },
+      {
+        "cycleId": "cycle_entry_intent_muotizrv_6ktud80z",
+        "scope": "[\"TESTNET\",\"binance-primary\",\"FILUSDT\",\"LONG\"]",
+        "used": 2,
+        "limit": 3,
+        "failures": 1,
+        "lastReviewAt": 1790991124653,
+        "nextDueAt": 1791034324653,
+        "lastOutcome": "COMPLETED",
+        "skippedReason": "REVIEW_BUDGET_EXHAUSTED"
+      },
+      {
+        "cycleId": "cycle_entry_intent_mup4nuvf_kpn1iyxf",
+        "scope": "[\"TESTNET\",\"binance-primary\",\"ARBUSDC\",\"LONG\"]",
+        "used": 3,
+        "limit": 4,
+        "failures": 1,
+        "lastReviewAt": 1791068894152,
+        "nextDueAt": 1791112094152,
+        "lastOutcome": "COMPLETED",
+        "skippedReason": "REVIEW_BUDGET_EXHAUSTED"
+      },
+      {
+        "cycleId": "cycle_entry_intent_mup5m47x_bgl3ojhx",
+        "scope": "[\"TESTNET\",\"binance-primary\",\"INJUSDT\",\"LONG\"]",
+        "used": 1,
+        "limit": 2,
+        "failures": 2,
+        "lastReviewAt": 1790991170026,
+        "nextDueAt": 1790991470026,
+        "lastOutcome": "FAILED",
+        "skippedReason": "REVIEW_FAILURE_BUDGET_EXHAUSTED"
+      },
+      {
+        "cycleId": "cycle_entry_intent_mup6qos1_mo9u9umx",
+        "scope": "[\"TESTNET\",\"binance-primary\",\"NEARUSDT\",\"LONG\"]",
+        "used": 3,
+        "limit": 4,
+        "failures": 1,
+        "lastReviewAt": 1791068915830,
+        "nextDueAt": 1791112115830,
+        "lastOutcome": "COMPLETED",
+        "skippedReason": "REVIEW_BUDGET_EXHAUSTED"
+      },
+      {
+        "cycleId": "cycle_entry_intent_mup6en2k_2skcdy0d",
+        "scope": "[\"TESTNET\",\"binance-primary\",\"ETHFIUSDT\",\"LONG\"]",
+        "used": 3,
+        "limit": 4,
+        "failures": 1,
+        "lastReviewAt": 1791068941374,
+        "nextDueAt": 1791112141374,
+        "lastOutcome": "COMPLETED",
+        "skippedReason": "REVIEW_BUDGET_EXHAUSTED"
+      },
+      {
+        "cycleId": "cycle_entry_intent_mupe1rv3_x6sjdc46",
+        "scope": "[\"TESTNET\",\"binance-primary\",\"SOLUSDT\",\"SHORT\"]",
+        "used": 2,
+        "limit": 3,
+        "failures": 1,
+        "lastReviewAt": 1790991266428,
+        "nextDueAt": 1791034466428,
+        "lastOutcome": "COMPLETED",
+        "skippedReason": "REVIEW_BUDGET_EXHAUSTED"
+      },
+      {
+        "cycleId": "cycle_entry_intent_murqvsny_1stqisfp",
+        "scope": "[\"TESTNET\",\"binance-primary\",\"ZROUSDT\",\"LONG\"]",
+        "used": 2,
+        "limit": 3,
+        "failures": 0,
+        "lastReviewAt": 1790999135203,
+        "nextDueAt": 1791042335203,
+        "lastOutcome": "COMPLETED",
+        "skippedReason": "REVIEW_BUDGET_EXHAUSTED"
+      },
+      {
+        "cycleId": "cycle_entry_intent_mutr0ehz_6mok8phg",
+        "scope": "[\"TESTNET\",\"binance-primary\",\"SOLUSDT\",\"LONG\"]",
+        "used": 2,
+        "limit": 2,
+        "failures": 0,
+        "lastReviewAt": 1791114584439,
+        "nextDueAt": 1791157784439,
+        "lastOutcome": "COMPLETED",
+        "skippedReason": "REVIEW_BUDGET_EXHAUSTED"
+      },
+      {
+        "cycleId": "cycle_entry_intent_mutr32jh_3mmcjfoh",
+        "scope": "[\"TESTNET\",\"binance-primary\",\"NEARUSDT\",\"LONG\"]",
+        "used": 2,
+        "limit": 2,
+        "failures": 0,
+        "lastReviewAt": 1791114770447,
+        "nextDueAt": 1791157970447,
+        "lastOutcome": "COMPLETED",
+        "skippedReason": "REVIEW_BUDGET_EXHAUSTED"
+      },
+      {
+        "cycleId": "cycle_entry_intent_mutren0u_y76qbq4q",
+        "scope": "[\"TESTNET\",\"binance-primary\",\"ZECUSDT\",\"LONG\"]",
+        "used": 2,
+        "limit": 2,
+        "failures": 0,
+        "lastReviewAt": 1791115447579,
+        "nextDueAt": 1791158647579,
+        "lastOutcome": "COMPLETED",
+        "skippedReason": "REVIEW_BUDGET_EXHAUSTED"
+      },
+      {
+        "cycleId": "cycle_entry_intent_mutrhb87_pe6zgjq0",
+        "scope": "[\"TESTNET\",\"binance-primary\",\"AAVEUSDT\",\"SHORT\"]",
+        "used": 1,
+        "limit": 2,
+        "failures": 0,
+        "lastReviewAt": 1791115381216,
+        "nextDueAt": 1791115681216,
+        "lastOutcome": "COMPLETED",
+        "skippedReason": "REVIEW_MIN_INTERVAL_NOT_ELAPSED"
+      },
+      {
+        "cycleId": "cycle_entry_intent_mutqxhav_x0lgjwhh",
+        "scope": "[\"TESTNET\",\"binance-primary\",\"ETHUSDT\",\"LONG\"]",
+        "used": 2,
+        "limit": 2,
+        "failures": 0,
+        "lastReviewAt": 1791121041087,
+        "nextDueAt": 1791164241087,
+        "lastOutcome": "COMPLETED",
+        "skippedReason": "REVIEW_BUDGET_EXHAUSTED"
+      }
+    ],
+    "finalInstanceArchive": [
+      {
+        "id": "airun_mutv7lfi_vwd157jv",
+        "role": "REVIEW_BRAIN",
+        "status": "COMPLETED",
+        "decision": "HOLD",
+        "symbol": "ETHUSDT",
+        "startedAt": 1791121021758,
+        "completedAt": 1791121041083
+      },
+      {
+        "id": "airun_mutv0ye5_d08v2vvo",
+        "role": "REVIEW_BRAIN",
+        "status": "COMPLETED",
+        "decision": "HOLD",
+        "symbol": "ETHUSDT",
+        "startedAt": 1791120711965,
+        "completedAt": 1791120732874
+      },
+      {
+        "id": "airun_mutuzb1e_dz8pymfb",
+        "role": "REVIEW_BRAIN",
+        "status": "COMPLETED",
+        "decision": "KEEP",
+        "symbol": "BCHUSDT",
+        "startedAt": 1791120635042,
+        "completedAt": 1791120647028
+      },
+      {
+        "id": "airun_mututmbe_98yeo4iv",
+        "role": "REVIEW_BRAIN",
+        "status": "COMPLETED",
+        "decision": "CANCEL",
+        "symbol": "ETHUSDT",
+        "startedAt": 1791120369722,
+        "completedAt": 1791120381810
+      },
+      {
+        "id": "airun_mutur8te_o9v4pasu",
+        "role": "REVIEW_BRAIN",
+        "status": "COMPLETED",
+        "decision": "CANCEL",
+        "symbol": "BTCUSDT",
+        "startedAt": 1791120258914,
+        "completedAt": 1791120275716
+      }
+    ]
+  },
+  "instanceAiRuns": [
+    {
+      "id": "airun_mutv7lfi_vwd157jv",
+      "role": "REVIEW_BRAIN",
+      "status": "COMPLETED",
+      "decision": "HOLD",
+      "symbol": "ETHUSDT",
+      "startedAt": 1791121021758,
+      "completedAt": 1791121041083,
+      "latencyMs": 19325,
+      "execution": null
+    },
+    {
+      "id": "airun_mutv6v22_ep039iyk",
+      "role": "PRIMARY_BRAIN",
+      "status": "COMPLETED",
+      "decision": "PLACE_SHORT",
+      "symbol": "PENGUUSDT",
+      "startedAt": 1791120987578,
+      "completedAt": 1791121086888,
+      "latencyMs": 99310,
+      "execution": {
+        "brainRunId": "airun_mutv6v22_ep039iyk",
+        "symbol": "PENGUUSDT",
+        "decision": "PLACE_SHORT",
+        "direction": "SHORT",
+        "decisionAt": 1791121086888,
+        "executionState": "SUBMITTED",
+        "executionLabel": "已挂单",
+        "blockStage": null,
+        "blockReasons": [],
+        "portfolioRiskAllowed": false,
+        "tradePlanId": "plan_37c9494b4d763b5a8a248bf19d3bf818",
+        "tradePlanReady": true,
+        "reservationId": "reserve_1791121087747_0629cd",
+        "intentId": "intent_mutv90c1_4cj28yaj",
+        "orderId": "entry_intent_mutv90c1_4cj28yaj",
+        "clientOrderId": "ml_c68b22b389704690460b8403732b",
+        "exchangeOrderId": "349073203",
+        "submittedAt": 1791121124700,
+        "firstFillAt": null,
+        "updatedAt": 1791121125116,
+        "lineageProven": true,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "id": "airun_mutv6v1d_qfxnxk5a",
+      "role": "SCOUT",
+      "status": "COMPLETED",
+      "decision": null,
+      "symbol": "PENGUUSDT",
+      "startedAt": 1791120987553,
+      "completedAt": 1791121001528,
+      "latencyMs": 13975,
+      "execution": null
+    },
+    {
+      "id": "airun_mutv4agr_cloykel1",
+      "role": "PRIMARY_BRAIN",
+      "status": "COMPLETED",
+      "decision": "PLACE_SHORT",
+      "symbol": "ZECUSDT",
+      "startedAt": 1791120867579,
+      "completedAt": 1791120966492,
+      "latencyMs": 98913,
+      "execution": {
+        "brainRunId": "airun_mutv4agr_cloykel1",
+        "symbol": "ZECUSDT",
+        "decision": "PLACE_SHORT",
+        "direction": "SHORT",
+        "decisionAt": 1791120966492,
+        "executionState": "FILLED",
+        "executionLabel": "已成交",
+        "blockStage": null,
+        "blockReasons": [],
+        "portfolioRiskAllowed": false,
+        "tradePlanId": "plan_3ba7d28a589d90e9540fb8253c2a14c1",
+        "tradePlanReady": true,
+        "reservationId": "reserve_1791120967338_lik6ep",
+        "intentId": "intent_mutv6ffd_3thrft32",
+        "orderId": "entry_intent_mutv6ffd_3thrft32",
+        "clientOrderId": "ml_30ff2d43cb095ff89d048497db4d",
+        "exchangeOrderId": "2977689890",
+        "submittedAt": 1791120982900,
+        "firstFillAt": 1791121074506,
+        "updatedAt": 1791121120715,
+        "lineageProven": true,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "id": "airun_mutv4ag0_7vu21s15",
+      "role": "SCOUT",
+      "status": "COMPLETED",
+      "decision": null,
+      "symbol": "ZECUSDT",
+      "startedAt": 1791120867552,
+      "completedAt": 1791120878895,
+      "latencyMs": 11343,
+      "execution": null
+    },
+    {
+      "id": "airun_mutv1e9q_q5wmtw3g",
+      "role": "PRIMARY_BRAIN",
+      "status": "COMPLETED",
+      "decision": "PLACE_LONG",
+      "symbol": "BNBUSDC",
+      "startedAt": 1791120732542,
+      "completedAt": 1791120830461,
+      "latencyMs": 97919,
+      "execution": {
+        "brainRunId": "airun_mutv1e9q_q5wmtw3g",
+        "symbol": "BNBUSDC",
+        "decision": "PLACE_LONG",
+        "direction": "LONG",
+        "decisionAt": 1791120830461,
+        "executionState": "NOT_SUBMITTED",
+        "executionLabel": "未挂单 · SUBMIT · Binance HTTP 400: {\"code\":-5022,\"msg\":\"Due to the order could not be executed as maker, the Post Only order will be rejected. The order will not be recorded in the order history\"}",
+        "blockStage": "SUBMIT",
+        "blockReasons": [
+          "Binance HTTP 400: {\"code\":-5022,\"msg\":\"Due to the order could not be executed as maker, the Post Only order will be rejected. The order will not be recorded in the order history\"}"
+        ],
+        "portfolioRiskAllowed": false,
+        "tradePlanId": "plan_d4002463778ff211a2f964b25053e136",
+        "tradePlanReady": true,
+        "reservationId": "reserve_1791120831288_9bkokd",
+        "intentId": "intent_mutv3ig6_2q91jv3b",
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "updatedAt": 1791120864232,
+        "lineageProven": true,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "id": "airun_mutv1e90_zjk5pa4a",
+      "role": "SCOUT",
+      "status": "COMPLETED",
+      "decision": null,
+      "symbol": "BNBUSDC",
+      "startedAt": 1791120732516,
+      "completedAt": 1791120741989,
+      "latencyMs": 9473,
+      "execution": null
+    },
+    {
+      "id": "airun_mutv0ye5_d08v2vvo",
+      "role": "REVIEW_BRAIN",
+      "status": "COMPLETED",
+      "decision": "HOLD",
+      "symbol": "ETHUSDT",
+      "startedAt": 1791120711965,
+      "completedAt": 1791120732874,
+      "latencyMs": 20909,
+      "execution": null
+    },
+    {
+      "id": "airun_mutuzb1e_dz8pymfb",
+      "role": "REVIEW_BRAIN",
+      "status": "COMPLETED",
+      "decision": "KEEP",
+      "symbol": "BCHUSDT",
+      "startedAt": 1791120635042,
+      "completedAt": 1791120647028,
+      "latencyMs": 11986,
+      "execution": null
+    },
+    {
+      "id": "airun_mutuyzuk_zu402c7s",
+      "role": "PRIMARY_BRAIN",
+      "status": "COMPLETED",
+      "decision": "PLACE_LONG",
+      "symbol": "SOLUSDT",
+      "startedAt": 1791120620540,
+      "completedAt": 1791120719798,
+      "latencyMs": 99258,
+      "execution": {
+        "brainRunId": "airun_mutuyzuk_zu402c7s",
+        "symbol": "SOLUSDT",
+        "decision": "PLACE_LONG",
+        "direction": "LONG",
+        "decisionAt": 1791120719798,
+        "executionState": "EXECUTING",
+        "executionLabel": "正在执行",
+        "blockStage": null,
+        "blockReasons": [],
+        "portfolioRiskAllowed": null,
+        "tradePlanId": null,
+        "tradePlanReady": false,
+        "reservationId": null,
+        "intentId": null,
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "updatedAt": 1791120719805,
+        "lineageProven": true,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "id": "airun_mutuyztn_r4nrzt2g",
+      "role": "SCOUT",
+      "status": "COMPLETED",
+      "decision": null,
+      "symbol": "SOLUSDT",
+      "startedAt": 1791120620507,
+      "completedAt": 1791120633937,
+      "latencyMs": 13430,
+      "execution": null
+    },
+    {
+      "id": "airun_mutuw4yn_uxw4u24z",
+      "role": "PRIMARY_BRAIN",
+      "status": "COMPLETED",
+      "decision": "PLACE_LONG",
+      "symbol": "BCHUSDT",
+      "startedAt": 1791120487199,
+      "completedAt": 1791120585379,
+      "latencyMs": 98180,
+      "execution": {
+        "brainRunId": "airun_mutuw4yn_uxw4u24z",
+        "symbol": "BCHUSDT",
+        "decision": "PLACE_LONG",
+        "direction": "LONG",
+        "decisionAt": 1791120585379,
+        "executionState": "SUBMITTED",
+        "executionLabel": "已挂单",
+        "blockStage": null,
+        "blockReasons": [],
+        "portfolioRiskAllowed": false,
+        "tradePlanId": "plan_7382ecc878e06b79252c9b0e278ed22b",
+        "tradePlanReady": true,
+        "reservationId": "reserve_1791120586231_r3ukib",
+        "intentId": "intent_mutuy9d1_6kpq0ls4",
+        "orderId": "entry_intent_mutuy9d1_6kpq0ls4",
+        "clientOrderId": "ml_29b69414cf44d04fe752bf26b827",
+        "exchangeOrderId": "2588476534",
+        "submittedAt": 1791120608502,
+        "firstFillAt": null,
+        "updatedAt": 1791120608909,
+        "lineageProven": true,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "id": "airun_mutuw4yh_t2umunww",
+      "role": "SCOUT",
+      "status": "COMPLETED",
+      "decision": null,
+      "symbol": "BCHUSDT",
+      "startedAt": 1791120487193,
+      "completedAt": 1791120497950,
+      "latencyMs": 10757,
+      "execution": null
+    },
+    {
+      "id": "airun_mututmbe_98yeo4iv",
+      "role": "REVIEW_BRAIN",
+      "status": "COMPLETED",
+      "decision": "CANCEL",
+      "symbol": "ETHUSDT",
+      "startedAt": 1791120369722,
+      "completedAt": 1791120381810,
+      "latencyMs": 12088,
+      "execution": null
+    },
+    {
+      "id": "airun_mututg3a_ut1sa03q",
+      "role": "PRIMARY_BRAIN",
+      "status": "COMPLETED",
+      "decision": "PLACE_SHORT",
+      "symbol": "NEARUSDT",
+      "startedAt": 1791120361654,
+      "completedAt": 1791120457773,
+      "latencyMs": 96119,
+      "execution": {
+        "brainRunId": "airun_mututg3a_ut1sa03q",
+        "symbol": "NEARUSDT",
+        "decision": "PLACE_SHORT",
+        "direction": "SHORT",
+        "decisionAt": 1791120457773,
+        "executionState": "NOT_SUBMITTED",
+        "executionLabel": "未挂单 · ORDER · BINANCE_TRANSPORT_BLOCKED: Binance request timed out",
+        "blockStage": "ORDER",
+        "blockReasons": [
+          "BINANCE_TRANSPORT_BLOCKED: Binance request timed out"
+        ],
+        "portfolioRiskAllowed": false,
+        "tradePlanId": "plan_4eb41ddd57e8b9d4557900c7bf26da46",
+        "tradePlanReady": true,
+        "reservationId": "reserve_1791120458738_riklw1",
+        "intentId": "intent_mutuviz8_ystd58pu",
+        "orderId": null,
+        "clientOrderId": null,
+        "exchangeOrderId": null,
+        "submittedAt": null,
+        "firstFillAt": null,
+        "updatedAt": 1791120475810,
+        "lineageProven": true,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "id": "airun_mututg1s_y9xs2fzs",
+      "role": "SCOUT",
+      "status": "COMPLETED",
+      "decision": null,
+      "symbol": "NEARUSDT",
+      "startedAt": 1791120361600,
+      "completedAt": 1791120372457,
+      "latencyMs": 10857,
+      "execution": null
+    },
+    {
+      "id": "airun_mutur8te_o9v4pasu",
+      "role": "REVIEW_BRAIN",
+      "status": "COMPLETED",
+      "decision": "CANCEL",
+      "symbol": "BTCUSDT",
+      "startedAt": 1791120258914,
+      "completedAt": 1791120275716,
+      "latencyMs": 16802,
+      "execution": null
+    },
+    {
+      "id": "airun_mutuqrty_9be5li8i",
+      "role": "PRIMARY_BRAIN",
+      "status": "COMPLETED",
+      "decision": "PLACE_LONG",
+      "symbol": "ETHUSDT",
+      "startedAt": 1791120236902,
+      "completedAt": 1791120334775,
+      "latencyMs": 97873,
+      "execution": {
+        "brainRunId": "airun_mutuqrty_9be5li8i",
+        "symbol": "ETHUSDT",
+        "decision": "PLACE_LONG",
+        "direction": "LONG",
+        "decisionAt": 1791120334775,
+        "executionState": "SUBMITTED",
+        "executionLabel": "已挂单",
+        "blockStage": null,
+        "blockReasons": [],
+        "portfolioRiskAllowed": false,
+        "tradePlanId": "plan_8c52f7c3860fb1d98fb3de1c42e0286b",
+        "tradePlanReady": true,
+        "reservationId": "reserve_1791120335634_xdbtjn",
+        "intentId": "intent_mutusvzy_4awj965n",
+        "orderId": "entry_intent_mutusvzy_4awj965n",
+        "clientOrderId": "ml_2ba5247dca884b1f1e1984c02e0d",
+        "exchangeOrderId": "16814363131",
+        "submittedAt": 1791120353804,
+        "firstFillAt": null,
+        "updatedAt": 1791120354257,
+        "lineageProven": true,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "id": "airun_mutuqrts_i6m8fi9f",
+      "role": "SCOUT",
+      "status": "COMPLETED",
+      "decision": null,
+      "symbol": "ETHUSDT",
+      "startedAt": 1791120236896,
+      "completedAt": 1791120248766,
+      "latencyMs": 11870,
+      "execution": null
+    },
+    {
+      "id": "airun_mutuo1xb_5k8sj8m0",
+      "role": "PRIMARY_BRAIN",
+      "status": "COMPLETED",
+      "decision": "PLACE_LONG",
+      "symbol": "BTCUSDT",
+      "startedAt": 1791120110015,
+      "completedAt": 1791120208714,
+      "latencyMs": 98699,
+      "execution": {
+        "brainRunId": "airun_mutuo1xb_5k8sj8m0",
+        "symbol": "BTCUSDT",
+        "decision": "PLACE_LONG",
+        "direction": "LONG",
+        "decisionAt": 1791120208714,
+        "executionState": "PARTIALLY_FILLED",
+        "executionLabel": "部分成交",
+        "blockStage": null,
+        "blockReasons": [],
+        "portfolioRiskAllowed": false,
+        "tradePlanId": "plan_8c1d7434191351217ed4a76cb14c4f47",
+        "tradePlanReady": true,
+        "reservationId": "reserve_1791120209578_8jj2mr",
+        "intentId": "intent_mutuq6qc_v7xsftbh",
+        "orderId": "entry_intent_mutuq6qc_v7xsftbh",
+        "clientOrderId": "ml_077fcb5722d978a35f6a6475ece1",
+        "exchangeOrderId": "28617185741",
+        "submittedAt": 1791120233255,
+        "firstFillAt": null,
+        "updatedAt": 1791120277228,
+        "lineageProven": true,
+        "inconsistentFacts": []
+      }
+    },
+    {
+      "id": "airun_mutuo1x2_frgfusg5",
+      "role": "SCOUT",
+      "status": "COMPLETED",
+      "decision": null,
+      "symbol": "BTCUSDT",
+      "startedAt": 1791120110006,
+      "completedAt": 1791120123193,
+      "latencyMs": 13187,
+      "execution": null
+    }
+  ],
+  "entryConversion": {
+    "generatedAt": 1791121124384,
+    "mode": {
+      "fundsOnly": true,
+      "economicAdmissionMode": "ENFORCE"
+    },
+    "thirtyMinutes": {
+      "since": 1791119324384,
+      "until": 1791121124384,
+      "primaryCompleted": 12,
+      "place": 12,
+      "authorizedPlace": 11,
+      "riskAllowed": 0,
+      "economicAdmissionPassed": 11,
+      "tradePlanReady": 11,
+      "reservationCreated": 11,
+      "intentCreated": 11,
+      "submitAttempted": 9,
+      "orderSubmitted": 7,
+      "entryFilled": 1,
+      "waitingPrice": 0,
+      "blocked": [
+        {
+          "stage": "ORDER",
+          "reason": "BINANCE_TRANSPORT_BLOCKED: Binance request timed out",
+          "count": 2
+        },
+        {
+          "stage": "SUBMIT",
+          "reason": "Binance HTTP 400: {\"code\":-5022,\"msg\":\"Due to the order could not be executed as maker, the Post Only order will be rejected. The order will not be recorded in the order history\"}",
+          "count": 1
+        }
+      ],
+      "authorizedNoSubmit": [
+        {
+          "stage": "ORDER",
+          "reason": "BINANCE_TRANSPORT_BLOCKED: Binance request timed out",
+          "count": 2
+        },
+        {
+          "stage": "SUBMIT",
+          "reason": "Binance HTTP 400: {\"code\":-5022,\"msg\":\"Due to the order could not be executed as maker, the Post Only order will be rejected. The order will not be recorded in the order history\"}",
+          "count": 1
+        },
+        {
+          "stage": "UNKNOWN",
+          "reason": "EXECUTION_LINEAGE_UNPROVEN",
+          "count": 1
+        }
+      ],
+      "ratios": {
+        "placeToTradePlan": 91.7,
+        "tradePlanToSubmit": 63.6,
+        "placeToSubmit": 58.3,
+        "submitToFill": 14.3,
+        "authorizedPlaceToSubmit": 63.6
+      },
+      "topDropStage": "ORDER",
+      "topDropReason": "BINANCE_TRANSPORT_BLOCKED: Binance request timed out",
+      "topDropCount": 2,
+      "degraded": false,
+      "degradedReason": null,
+      "stageSemantics": {
+        "primaryCompleted": "REQUIRED",
+        "place": "REQUIRED",
+        "authorizedPlace": "REQUIRED",
+        "riskAllowed": "NOT_REQUIRED",
+        "economicAdmissionPassed": "REQUIRED",
+        "tradePlanReady": "REQUIRED",
+        "reservationCreated": "REQUIRED",
+        "intentCreated": "REQUIRED",
+        "waitingPrice": "OBSERVED",
+        "submitAttempted": "REQUIRED",
+        "orderSubmitted": "REQUIRED",
+        "entryFilled": "OBSERVED"
+      }
+    },
+    "oneHour": {
+      "since": 1791117524384,
+      "until": 1791121124384,
+      "primaryCompleted": 21,
+      "place": 21,
+      "authorizedPlace": 20,
+      "riskAllowed": 0,
+      "economicAdmissionPassed": 20,
+      "tradePlanReady": 20,
+      "reservationCreated": 20,
+      "intentCreated": 20,
+      "submitAttempted": 17,
+      "orderSubmitted": 14,
+      "entryFilled": 5,
+      "waitingPrice": 0,
+      "blocked": [
+        {
+          "stage": "ORDER",
+          "reason": "BINANCE_TRANSPORT_BLOCKED: Binance request timed out",
+          "count": 2
+        },
+        {
+          "stage": "ORDER",
+          "reason": "TESTNET_WRITE_EGRESS_NOT_VERIFIED:UNAVAILABLE",
+          "count": 1
+        },
+        {
+          "stage": "SUBMIT",
+          "reason": "Binance HTTP 400: {\"code\":-5022,\"msg\":\"Due to the order could not be executed as maker, the Post Only order will be rejected. The order will not be recorded in the order history\"}",
+          "count": 1
+        }
+      ],
+      "authorizedNoSubmit": [
+        {
+          "stage": "UNKNOWN",
+          "reason": "EXECUTION_LINEAGE_UNPROVEN",
+          "count": 2
+        },
+        {
+          "stage": "ORDER",
+          "reason": "BINANCE_TRANSPORT_BLOCKED: Binance request timed out",
+          "count": 2
+        },
+        {
+          "stage": "ORDER",
+          "reason": "TESTNET_WRITE_EGRESS_NOT_VERIFIED:UNAVAILABLE",
+          "count": 1
+        },
+        {
+          "stage": "SUBMIT",
+          "reason": "Binance HTTP 400: {\"code\":-5022,\"msg\":\"Due to the order could not be executed as maker, the Post Only order will be rejected. The order will not be recorded in the order history\"}",
+          "count": 1
+        }
+      ],
+      "ratios": {
+        "placeToTradePlan": 95.2,
+        "tradePlanToSubmit": 70,
+        "placeToSubmit": 66.7,
+        "submitToFill": 35.7,
+        "authorizedPlaceToSubmit": 70
+      },
+      "topDropStage": "ORDER",
+      "topDropReason": "BINANCE_TRANSPORT_BLOCKED: Binance request timed out",
+      "topDropCount": 2,
+      "degraded": false,
+      "degradedReason": null,
+      "stageSemantics": {
+        "primaryCompleted": "REQUIRED",
+        "place": "REQUIRED",
+        "authorizedPlace": "REQUIRED",
+        "riskAllowed": "NOT_REQUIRED",
+        "economicAdmissionPassed": "REQUIRED",
+        "tradePlanReady": "REQUIRED",
+        "reservationCreated": "REQUIRED",
+        "intentCreated": "REQUIRED",
+        "waitingPrice": "OBSERVED",
+        "submitAttempted": "REQUIRED",
+        "orderSubmitted": "REQUIRED",
+        "entryFilled": "OBSERVED"
+      }
+    }
+  },
+  "fillCycleConservation": {
+    "status": "DEGRADED",
+    "ledgerInconsistent": 46,
+    "unconserved": 72,
+    "conserved": 475,
+    "openConserved": 117,
+    "unproven": 5,
+    "detail": "records=598;conserved=475(open 117/closed 358);inconsistent=46;unconserved=72;unproven=5"
+  },
+  "fundingCoverage": {
+    "status": "PARTIAL",
+    "recordsWithExactFunding": 14,
+    "recordsUnknown": 584,
+    "incomeRows": 374,
+    "coverageComplete": true,
+    "lastSync": {
+      "at": 1791120691007,
+      "rows": 0,
+      "failures": 0,
+      "symbolsScanned": 48,
+      "skipped": null
+    },
+    "detail": "coverage=COMPLETE;since=1790479848405;lastSync=rows 0/failures 0/symbols 48"
+  }
+}

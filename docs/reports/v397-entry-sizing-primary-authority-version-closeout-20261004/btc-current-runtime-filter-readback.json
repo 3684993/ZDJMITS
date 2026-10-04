@@ -1,0 +1,106 @@
+{
+  "capturedAt": "2026-10-04T12:55:21.101Z",
+  "environment": "TESTNET",
+  "host": "demo-fapi.binance.com",
+  "symbol": "BTCUSDT",
+  "status": "TRADING",
+  "contractType": "PERPETUAL",
+  "pricePrecision": 2,
+  "quantityPrecision": 4,
+  "filters": [
+    {
+      "tickSize": "0.10",
+      "maxPrice": "809484",
+      "minPrice": "261.10",
+      "filterType": "PRICE_FILTER"
+    },
+    {
+      "maxQty": "1000",
+      "filterType": "LOT_SIZE",
+      "stepSize": "0.0001",
+      "minQty": "0.0001"
+    },
+    {
+      "filterType": "MARKET_LOT_SIZE",
+      "minQty": "0.0001",
+      "stepSize": "0.0001",
+      "maxQty": "120"
+    },
+    {
+      "filterType": "MIN_NOTIONAL",
+      "notional": "50"
+    },
+    {
+      "filterType": "PERCENT_PRICE",
+      "multiplierUp": "1.0500",
+      "multiplierDown": "0.9500",
+      "multiplierDecimal": "4"
+    }
+  ],
+  "leverageBrackets": [
+    {
+      "bracket": 1,
+      "initialLeverage": 125,
+      "notionalFloor": 0,
+      "notionalCap": 50000
+    },
+    {
+      "bracket": 2,
+      "initialLeverage": 100,
+      "notionalFloor": 50000,
+      "notionalCap": 250000
+    },
+    {
+      "bracket": 3,
+      "initialLeverage": 50,
+      "notionalFloor": 250000,
+      "notionalCap": 3000000
+    },
+    {
+      "bracket": 4,
+      "initialLeverage": 20,
+      "notionalFloor": 3000000,
+      "notionalCap": 20000000
+    },
+    {
+      "bracket": 5,
+      "initialLeverage": 10,
+      "notionalFloor": 20000000,
+      "notionalCap": 40000000
+    },
+    {
+      "bracket": 6,
+      "initialLeverage": 5,
+      "notionalFloor": 40000000,
+      "notionalCap": 100000000
+    },
+    {
+      "bracket": 7,
+      "initialLeverage": 4,
+      "notionalFloor": 100000000,
+      "notionalCap": 120000000
+    },
+    {
+      "bracket": 8,
+      "initialLeverage": 3,
+      "notionalFloor": 120000000,
+      "notionalCap": 200000000
+    },
+    {
+      "bracket": 9,
+      "initialLeverage": 2,
+      "notionalFloor": 200000000,
+      "notionalCap": 300000000
+    },
+    {
+      "bracket": 10,
+      "initialLeverage": 1,
+      "notionalFloor": 300000000,
+      "notionalCap": 500000000
+    }
+  ],
+  "methods": [
+    "GET"
+  ],
+  "exchangeWrites": 0
+}

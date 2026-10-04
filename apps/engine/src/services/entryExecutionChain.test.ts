@@ -81,6 +81,18 @@ describe('V3.9.6 PLACE -> submit chain closure', () => {
     expect(h.state.manualExitGoals.has('goal_1')).toBe(true);expect(outcome(h.events).executionState).toBe('SUBMITTED');
   });
 
+  it('EC-03B a post-Primary authorization-age change is audit-only in TESTNET funds-only', async () => {
+    const h=armed();
+    h.exchange.setLeverage.mockImplementation(async()=>{
+      const intent=[...h.state.entryIntents.values()][0] as any;
+      if(intent){intent.aiAuthorizationExpiresAt=Date.now()-1;intent.absoluteExpiresAt=Date.now()-1;}
+    });
+    await h.run();
+    expect(h.exchange.placeEntry).toHaveBeenCalledOnce();
+    expect(h.events.some((event:any)=>event.type==='POST_AI_OBSERVATION_ONLY'&&['AI_AUTHORIZATION_EXPIRED','JIT_AUTHORIZATION_AGE'].includes(event.payload?.kind)&&event.payload?.postAiVeto===false)).toBe(true);
+    expect(outcome(h.events).executionState).toBe('SUBMITTED');
+  });
+
   it('EC-04 (T5) an unknown submission is reconciled, never re-sent', async () => {
     const h = armed();
     h.exchange.placeEntry.mockImplementation(async () => { throw new Error('ETIMEDOUT'); });

@@ -79,13 +79,15 @@ describe('TESTNET funds-only Entry resource authority',()=>{
     for(const type of ['TRADE_PLAN_PERSISTED','ENTRY_RESERVATION_CREATED','ENTRY_INTENT_CREATED','ENTRY_SUBMIT_ATTEMPTED','ENTRY_ORDER_CREATED'])expect(h.events.filter(e=>e.type===type),type).toHaveLength(1);
     const plan=[...h.state.tradePlans.values()][0],intent=[...h.state.entryIntents.values()][0],order=[...h.state.entryOrders.values()].find(x=>x.intentId===intent.id)!;
     const rawUnits=Number(h.supplied.quantityUnits),request=h.events.find(e=>e.type==='ENTRY_ADAPTER_REQUEST_FACTS')?.payload,response=h.events.find(e=>e.type==='ENTRY_ADAPTER_RESPONSE_FACTS')?.payload;
-    expect(plan.economicMandate?.mandateId).toBe(intent.economicMandate?.mandateId);
+    // The pre-AI frozen candidate is the mandate. No mutable post-Primary economic mandate may
+    // acquire veto authority or require a second FX/candle proof.
+    expect(plan.economicMandate).toBeNull();expect(intent.economicMandate).toBeNull();
     expect(intent.quantityUnits).not.toBe(rawUnits);
-    expect(plan.economicMandate?.sizing.selectedInitialMarginQuote).toBeGreaterThanOrEqual(1);
-    expect(plan.economicMandate?.sizing.selectedNotionalQuote).toBeGreaterThanOrEqual(200);
+    expect(plan.marginUsd).toBeGreaterThanOrEqual(1);
+    expect(plan.notionalUsd).toBeGreaterThanOrEqual(200);
     expect(order.quantity).toBe(intent.quantityUnits*h.packet.market.quote.stepSize);
-    expect(request).toMatchObject({quantity:order.quantity,price:order.price,positionSide:intent.side,mandateId:intent.economicMandate?.mandateId});
-    expect(response).toMatchObject({remoteQuantity:order.quantity,remotePrice:order.price,side:intent.side,mandateId:intent.economicMandate?.mandateId,wireBytesAvailable:false});
+    expect(request).toMatchObject({quantity:order.quantity,price:order.price,positionSide:intent.side});
+    expect(response).toMatchObject({remoteQuantity:order.quantity,remotePrice:order.price,side:intent.side,wireBytesAvailable:false});
     expect([...h.state.tradePlans.values()][0]?.risk).toBeNull();
     expect(h.state.entryOrders.get('unknown')?.status).toBe('UNKNOWN');
     expect(h.state.positions.has('held')).toBe(true);

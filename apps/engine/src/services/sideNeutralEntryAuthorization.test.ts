@@ -97,6 +97,19 @@ describe('V3.9.4 side-neutral Entry authorization', () => {
     expect(h.events.some((e: any) => e.payload?.authority === 'SYSTEM_ECONOMIC_CANDIDATE_SOLVER')).toBe(false);
   });
 
+  it('does not let a Universe refresh revoke the candidate that was frozen before Primary', async () => {
+    const h=harness(),quote=h.state.snapshots.get(fixtureSymbol)!.quote;
+    (h.ai as any).decide.mockImplementation(async(decisionPacket:any)=>{
+      const decision=h.candidateDecision(decisionPacket,'LONG',0,{idealPrice:Number(quote.bid),acceptablePriceRange:{min:Number(quote.bid),max:Number(quote.ask)}});
+      h.state.universe=[];
+      return{runId:'universe-refresh-during-primary',decision};
+    });
+    await h.run();
+    expect(h.exchange.placeEntry).toHaveBeenCalledOnce();
+    expect(h.state.entryIntents.size).toBe(1);
+    expect(h.events.some((e:any)=>e.type==='CANDIDATE_REJECTED'&&e.payload?.reason==='PORTFOLIO_CANDIDATE_MISSING')).toBe(false);
+  });
+
   it('ignores redundant raw quantity and executes the frozen candidate quantity chosen by Primary', async () => {
     const h = harness();
     armLegacyShortBias(h.state);

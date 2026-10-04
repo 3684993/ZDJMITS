@@ -446,7 +446,7 @@ export class EntryCoordinator {
   private async analyze(symbol: string) {
     if(this.stopPrimaryForOccupancy(symbol,'BEFORE_ANALYSIS'))return;
     let terminalRunId:string|undefined,executionLeaseId:string|undefined,executionEnvelope:ReturnType<typeof buildPreAiExecutionEnvelope>|null=null,
-      candidateSets:{LONG:CandidateSet;SHORT:CandidateSet}|null=null;
+      candidateSets:{LONG:CandidateSet;SHORT:CandidateSet}|null=null,frozenUniverseCandidate:any=null;
     this.active.add(symbol);
     this.state.pool.markAnalyzing(symbol);
     this.events.publish("POOL_ANALYSIS_STARTED", { lifecycle:"PRIMARY_QUEUED" }, symbol);
@@ -479,6 +479,8 @@ export class EntryCoordinator {
       // test/runtime adapters without MarketDataHub must prove the snapshot is fresh before Primary.
       const prePrimaryMarket=this.state.snapshots.get(symbol),prePrimaryDataError=entryDataError(prePrimaryMarket);
       if(prePrimaryDataError)throw new Error(prePrimaryDataError);
+      frozenUniverseCandidate=this.state.universe.find((row:any)=>row.symbol===symbol)??null;
+      if(!frozenUniverseCandidate)throw new Error('PRE_AI_UNIVERSE_CANDIDATE_MISSING');
       if(this.stopPrimaryForOccupancy(symbol,'AFTER_MARKET_REFRESH'))return;
       const reachability=this.market?buildHistoricalTpReachability({candles:(timeframe,limit)=>this.market!.cachedCandles(symbol,timeframe,limit),lookbackBars:this.state.settings.tradeEconomics.reachabilityLookbackBars,minSamples:this.state.settings.tradeEconomics.reachabilityMinSamples}):undefined;
       executionEnvelope=buildPreAiExecutionEnvelope(this.state,symbol,Date.now(),reachability);
@@ -598,8 +600,8 @@ export class EntryCoordinator {
       d.acceptablePriceRange=range;d.idealPrice=idealPrice;d.horizonMinutes=horizonMinutes;
       if (d.missingEvidence.length > 0 || d.contradictions.length > 3)this.events.publish("ENTRY_PROTECTION_SHADOW",{decision:d.decision,confidence:d.confidence,missingEvidence:d.missingEvidence.length,contradictions:d.contradictions.length,postAiVeto:false},symbol);
       this.transition(symbol,"PLACE_READY","PRIMARY_PLACE_READY",{runId:result.runId});
-      const side = decisionSide,market = this.state.snapshots.get(symbol)!,candidate = this.state.universe.find((x) => x.symbol === symbol);
-      if (!candidate) {this.reject(symbol,"PORTFOLIO_CANDIDATE_MISSING",result.runId,d.tradeSide??undefined);return;}
+      const side = decisionSide,market = this.state.snapshots.get(symbol)!,candidate = frozenUniverseCandidate;
+      if (!candidate) throw new Error('PRE_AI_UNIVERSE_CANDIDATE_MISSING');
       if (this.state.executionGovernance?.mode !== "AUTO_RUNNING" || this.state.runtimeControl.mode !== "RUNNING" || !this.state.runtimeControl.entrySafetyMode || this.state.runtimeControl.entrySafetyMode !== "AUTO") {this.events.publish("ENTRY_ANALYSIS_PAUSED",{stage:"AFTER_PRIMARY",reason:this.state.executionGovernance?.reason ?? this.state.runtimeControl.reasonText,runId: result.runId,executionMode:this.state.executionGovernance?.mode},symbol);return;}
       if(!executionEnvelope)throw new Error('PRE_AI_EXECUTION_ENVELOPE_MISSING');
       const leaseCheck=validateExecutionLease(this.state,executionLeaseId,symbol);
@@ -911,7 +913,7 @@ export class EntryCoordinator {
       selection:{decision:input.d.decision,side:input.side,selectedCandidateId:input.d.selectedCandidateId??null,quantityUnits:null,
         targetPrice:Number(input.d.profitTakePlan?.targetPrice??Number.NaN),acceptableTargetRange:input.d.profitTakePlan?.acceptableTargetRange,
         targetHorizonMinutes:Number(input.d.profitTakePlan?.targetHorizonMinutes??0),horizonMinutes:Number(input.d.horizonMinutes??0),
-        thesis:[input.d.directionReason,input.d.reason].filter(Boolean).join(' / ')||null,
+        thesis:[input.d.directionReason,input.d.reason].filter(Boolean).join(' / ')||'PRIMARY_PLACE',
         invalidationPredicate:'NO_PREDICATE',
         predicateLevel:level>0?level:null,predicateEvidenceRefs:usable,counterEvidenceRefs:(input.d.missingEvidence??[]).map(String),
         releaseCondition:null,modelRunId:input.result?.runId??null,promptVersion:input.result?.promptVersion??null,modelConfidence:Number(input.d.confidence??Number.NaN)},

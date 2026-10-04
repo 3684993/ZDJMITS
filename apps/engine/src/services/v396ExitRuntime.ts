@@ -194,11 +194,12 @@ export class V396ExitRuntime {
       if(Math.abs(mandate.allowedPrice-input.limitPrice)>tolerance)return this.reject('MANDATE_PRICE_MISMATCH');
       if(input.quantityUnits!==input.remainingUnits)return this.reject('MANDATE_FULL_REMAINING_REQUIRED');
     }
-    const verdict=this.syntheticVerdict(owner.ownerVersion,input.limitPrice,input.now,source);
+    const verdict=this.syntheticVerdict(owner.ownerVersion,input.limitPrice,input.now,source),prepareStartedWallAt=Date.now();
     let coordinator:PositionExitCoordinator;
     try{coordinator=new PositionExitCoordinator(this.journal,await this.capabilities());}
     catch{return this.reject('ADAPTER_CAPABILITIES_UNPROVEN');}
-    const checkedNow=Date.now(),latestOwner=this.ownership.ownership(scope,cycleId);
+    // input.now is the authoritative fact clock. Charge only wall time spent in this preparation.
+    const checkedNow=input.now+Math.max(0,Date.now()-prepareStartedWallAt),latestOwner=this.ownership.ownership(scope,cycleId);
     if(!this.proofValid({...input,now:checkedNow}))return this.reject('REDUCTION_PROOF_EXPIRED');
     if(!latestOwner||latestOwner.ownerVersion!==owner.ownerVersion||latestOwner.ownerState==='CLOSED')return this.reject('OWNER_CHANGED_DURING_PREPARE');
     if(source==='TP'){

@@ -74,18 +74,17 @@ describe('V3.9.6 durable run -> execution result', () => {
     expect(row.execution.inconsistentFacts).toEqual([]);
   });
 
-  it('RX-02 a legal wait for price says 等待价格 and never borrows 已挂单', async () => {
+  it('RX-02 a frozen TESTNET PLACE reaches the wire even when recent-trade reachability is absent', async () => {
     const store = await openStore();
     const h = armed(store);
-    // Reachability-by-recent-trade is the policy the live account runs, and the archived fixture
-    // carries no trade ticks - turning the policy on is what makes the wait honest here.
     h.state.settings.entry.nearMarket = {...h.state.settings.entry.nearMarket, enabled: true};
     await h.run();
-    expect(h.exchange.placeEntry, 'no recent trade sits in the authorized band, so nothing may be sent').not.toHaveBeenCalled();
+    expect(h.exchange.placeEntry, 'reachability after Primary is observation-only; the maker anchor is submitted').toHaveBeenCalledOnce();
+    expect(h.events.some((event: any) => event.type === 'POST_AI_OBSERVATION_ONLY' && event.payload?.kind === 'MAKER_REACHABILITY' && event.payload?.postAiVeto === false)).toBe(true);
     recordRun(store);
     const row = await firstRow(store);
-    expect(row.execution).toMatchObject({executionState: 'WAITING_PRICE', executionLabel: '等待价格', blockStage: null, orderId: null, submittedAt: null, firstFillAt: null});
-    expect(row.execution.intentId, 'the intent that owns the reservation is still reported').toBeTruthy();
+    expect(row.execution).toMatchObject({executionState: 'SUBMITTED', executionLabel: '已挂单', blockStage: null, firstFillAt: null});
+    expect(row.execution.intentId).toBeTruthy();
     expect(row.execution.tradePlanId).toBeTruthy();
   });
 

@@ -9,11 +9,12 @@
     "start": "node dist/main.js",
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:ci": "vitest run --pool=forks --maxWorkers=2 --shard=1/4 && vitest run --pool=forks --maxWorkers=2 --shard=2/4 && vitest run --pool=forks --maxWorkers=2 --shard=3/4 && vitest run --pool=forks --maxWorkers=2 --shard=4/4"
   },
   "dependencies": {
-    "@zdj/contracts": "3.9.4",
-    "@zdj/core": "3.9.4",
+    "@zdj/contracts": "3.9.6",
+    "@zdj/core": "3.9.6",
     "express": "^5.1.0",
     "socks-proxy-agent": "^10.1.0",
     "ws": "^8.18.2",

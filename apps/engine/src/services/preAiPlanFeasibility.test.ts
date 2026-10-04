@@ -153,35 +153,38 @@ describe('V3.9.6 pre-AI hard plan feasibility', () => {
   it('PF-07 a hard profit floor on both sides is settled before Primary, so the model is not spent', async () => {
     const h = armedHarness();
     h.state.settings.takeProfit.minNetProfitUsd = 1e9;
-    // Nothing mechanical changed: the envelope still offers both sides, so the only possible
-    // pre-AI refusal is the plan-feasibility probe reading the same arithmetic as the plan layer.
+    h.state.settings.tradeEconomics.admissionMode = 'ENFORCE';
+    // Economics is proved once in the frozen candidate set before Primary; there is no later
+    // TradePlan economic veto.
     const envelope = buildPreAiExecutionEnvelope(h.state, fixtureSymbol);
     expect(envelope.LONG.executable && envelope.SHORT.executable).toBe(true);
     await h.run();
     expect(h.ai.decide, 'a refusal the deterministic layer can prove must not cost a model run').not.toHaveBeenCalled();
-    const blocked = h.events.filter((e: any) => e.type === 'ENTRY_DECISION_BLOCKED' && e.payload?.stage === 'PRE_AI_TRADE_PLAN');
+    const blocked = h.events.filter((e: any) => e.type === 'ENTRY_DECISION_BLOCKED' && e.payload?.stage === 'PRE_AI_CANDIDATE_SET');
     expect(blocked.length).toBe(1);
-    expect(blocked[0].payload.reason).toBe('PRE_AI_TRADE_PLAN_NO_HARD_EXECUTABLE_SIDE');
-    const sides = blocked[0].payload.sides as Record<Side, {reasons: string[]}>;
-    expect(sides.LONG.reasons).toContain('MIN_PROFIT_FLOOR_UNMET_AT_MINIMUM_QUANTITY');
-    expect(sides.SHORT.reasons).toContain('MIN_PROFIT_FLOOR_UNMET_AT_MINIMUM_QUANTITY');
+    expect(blocked[0].payload.reason).toBe('NO_PRE_AI_EXECUTABLE_CANDIDATE');
+    expect(blocked[0].payload.reasons).toContain('ECONOMIC_MIN_NET_PROFIT_UNMET');
     const rejected = h.events.filter((e: any) => e.type === 'CANDIDATE_REJECTED');
-    expect(rejected.map((e: any) => e.payload.reason)).toEqual(['PRE_AI_TRADE_PLAN_NO_HARD_EXECUTABLE_SIDE']);
+    expect(rejected.map((e: any) => e.payload.reason)).toEqual(['NO_PRE_AI_EXECUTABLE_CANDIDATE']);
     expect(rejected[0].payload.entryIntentCreated).toBe(false);
     expect(h.exchange.placeEntry).not.toHaveBeenCalled();
   });
 
-  it('PF-08 a refusal is written with the symbol and never leaks into the next run', async () => {
+  it('PF-08 a refusal is symbol-scoped and does not leak into a fresh healthy coordinator run', async () => {
     const h = armedHarness();
     h.state.settings.takeProfit.minNetProfitUsd = 1e9;
+    h.state.settings.tradeEconomics.admissionMode = 'ENFORCE';
     await h.run();
-    const refusals = () => h.events.filter((e: any) => e.type === 'ENTRY_DECISION_BLOCKED' && e.payload?.stage === 'PRE_AI_TRADE_PLAN');
-    expect(refusals()[0].symbol).toBe(fixtureSymbol);
-    expect(refusals()[0].brainRunId ?? null).toBe(null);
-    const first = h.events.length;
-    h.state.settings.takeProfit.minNetProfitUsd = 1;
-    await h.run();
-    expect(h.ai.decide).toHaveBeenCalledOnce();
-    expect(h.events.slice(first).filter((e: any) => e.payload?.stage === 'PRE_AI_TRADE_PLAN').length).toBe(0);
+    const refusals = h.events.filter((e: any) => e.type === 'ENTRY_DECISION_BLOCKED' && e.payload?.stage === 'PRE_AI_CANDIDATE_SET');
+    expect(refusals[0].symbol).toBe(fixtureSymbol);
+    expect(refusals[0].brainRunId ?? null).toBe(null);
+    const next=armedHarness();
+    // PF-06 already proves this default fixture is a healthy executable baseline. PF-08 is only
+    // about refusal isolation: do not add ENFORCE semantics here, because that would turn a fresh
+    // coordinator into a different economic-policy test and make a legitimate pre-AI refusal look
+    // like leaked state from the previous harness.
+    await next.run();
+    expect(next.ai.decide).toHaveBeenCalledOnce();
+    expect(next.events.filter((e:any)=>e.type==='ENTRY_DECISION_BLOCKED'&&e.payload?.stage==='PRE_AI_CANDIDATE_SET')).toHaveLength(0);
   });
 });

@@ -209,8 +209,12 @@ export class RuntimeState {
         const available=this.account.assets.find(x=>x.asset===input.quoteAsset)?.availableBalance;
         const committed=reserved.filter(x=>x.quoteAsset===input.quoteAsset&&(!testnetFundsOnlyEntry(this.settings)||reservationDebitsAvailableFunds(this,x,now))).reduce((n,x)=>n+Math.max(0,Number(x.marginUsd)),0);
         if(!Number.isFinite(available)||!Number.isFinite(committed)||available-committed<input.marginUsd)return {ok:false,reason:'RESERVED_QUOTE_MARGIN'};
-        // C2/D1: the authoritative facts are re-read and enforced inside this BEGIN IMMEDIATE window.
+        // The commit-time facts are intentionally smaller in TESTNET funds-only: re-read the real
+        // quote balance and private account, then commit. Scheduler capital generations and portfolio
+        // risk snapshots are observations there; expiring during a long Primary run must not revoke it.
         if(!privateAccountFresh(this.account,now))return {ok:false,reason:`PRIVATE_ACCOUNT_${this.account?.status==='READY'?'STALE':String(this.account?.status??'UNKNOWN')}`};
+        let binding=null;
+        if(!testnetFundsOnlyEntry(this.settings)){
         const capital=this.runtimeControl?.capital;
         if(!Number.isSafeInteger(capital?.generation)||capital.generation<=0)return {ok:false,reason:'CAPITAL_GENERATION_REQUIRED'};
         if(!Number.isFinite(capital?.evaluatedAt)||capital.evaluatedAt>now)return {ok:false,reason:'CAPITAL_EVALUATION_UNPROVEN'};
@@ -218,11 +222,7 @@ export class RuntimeState {
         if(!capitalVersion||capitalVersion==='0')return {ok:false,reason:'CAPITAL_VERSION_REQUIRED'};
         if(!Number.isFinite(capital?.nextRecheckAt)||capital.nextRecheckAt<=now)return {ok:false,reason:'CAPITAL_FACTS_EXPIRED'};
         if(input.riskCapitalVersion!==undefined&&input.riskCapitalVersion!==null&&String(input.riskCapitalVersion).trim()!==capitalVersion)return {ok:false,reason:'CAPITAL_VERSION_STALE'};
-        // J2: the portfolio admission is the only source of a risk binding. There is no default
-        // binding computed from the capital route, and no selection generation standing in for a
-        // risk generation - without a snapshot of what the account actually holds, no new risk.
-        let binding=null;
-        if(!testnetFundsOnlyEntry(this.settings)){
+        // J2: outside funds-only, portfolio admission remains authoritative.
         if(typeof this.entryRiskGate!=='function')return {ok:false,reason:'RISK_ADMISSION_UNPROVEN'};
         const risk=this.entryRiskGate({...input,now,riskGeneration:capital.generation,capitalVersion});
         if(!risk||risk.allowed!==true)return {ok:false,reason:risk?.reason??'PORTFOLIO_ADMISSION_BLOCKED'};

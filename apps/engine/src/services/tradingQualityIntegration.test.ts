@@ -52,8 +52,8 @@ describe('real EntryCoordinator opportunity authorization',()=>{
       if(kind==='expiry')h.state.settings.tradingQuality!.policyVersion='expired-observation-sim';
     });
     await h.run();
-    if(kind==='structure'){expect(h.exchange.placeEntry).not.toHaveBeenCalled();expect(h.events.some(e=>String(e.payload?.reason??'').includes('MARKET_THESIS_FACTS_CHANGED_REQUIRES_NEW_MANDATE'))).toBe(true);}
-    else expect(h.exchange.placeEntry).toHaveBeenCalledOnce();
+    expect(h.exchange.placeEntry, `post-Primary TradingQuality ${kind} drift is observation-only`).toHaveBeenCalledOnce();
+    expect(h.events.some(e=>String(e.payload?.reason??'').includes('MARKET_THESIS_FACTS_CHANGED_REQUIRES_NEW_MANDATE'))).toBe(false);
     if(h.state.entryIntents.size)expect([...h.state.entryIntents.values()][0]?.side).toBe('LONG');
   });
   it('WAIT creates no intent and fresh evaluation creates new authorization',async()=>{
@@ -87,14 +87,15 @@ describe('real EntryCoordinator opportunity authorization',()=>{
     await h.coordinator.reviewPending();
     expect(replace).toHaveBeenCalledOnce();
   });
-  it('restored execution wait cannot reuse an expired PLACE and missing intent cannot release UNKNOWN',async()=>{
+  it('restored legacy execution wait treats authorization age as audit-only and missing intent cannot release UNKNOWN',async()=>{
     const h=ready();await h.run();const i=[...h.state.entryIntents.values()][0],o=[...h.state.entryOrders.values()][0];
     o.status='NEW';o.exchangeOrderId=null;i.aiAuthorizationExpiresAt=Date.now()-1;i.absoluteExpiresAt=Date.now()-1;
     h.state.candidateLifecycle.set(i.symbol,{status:'WAIT_EXECUTION_RANGE',executionWait:{intentId:i.id,reservationId:i.reservationId}});
-    await (h.coordinator as any).resumeExecutionWaits(Date.now());expect(h.exchange.placeEntry).toHaveBeenCalledTimes(1);expect(o.clientOrderId).toBeTruthy();
+    await (h.coordinator as any).resumeExecutionWaits(Date.now());expect(h.exchange.placeEntry).toHaveBeenCalledTimes(2);expect(o.clientOrderId).toBeTruthy();
+    const calls=h.exchange.placeEntry.mock.calls.length;
     o.status='UNKNOWN';h.state.entryOrders.set(o.id,o);h.state.entryReservations.get(i.reservationId).status='WORKING';h.state.entryIntents.delete(i.id);
     h.state.candidateLifecycle.set(i.symbol,{status:'WAIT_EXECUTION_RANGE',executionWait:{intentId:i.id,reservationId:i.reservationId}});
-    await (h.coordinator as any).resumeExecutionWaits(Date.now());expect(h.state.entryReservations.get(i.reservationId).status).toBe('WORKING');
+    await (h.coordinator as any).resumeExecutionWaits(Date.now());expect(h.exchange.placeEntry).toHaveBeenCalledTimes(calls);expect(h.state.entryReservations.get(i.reservationId).status).toBe('WORKING');
   });
   it('recovers UNKNOWN with same identity even after opportunity expiry without a new submit',async()=>{
     const h=ready();await h.run();const i=[...h.state.entryIntents.values()][0],o=[...h.state.entryOrders.values()][0];
@@ -104,8 +105,9 @@ describe('real EntryCoordinator opportunity authorization',()=>{
     const result=await (restarted as any).submitExactlyOnce(EntryIntentSchema.parse(JSON.parse(JSON.stringify(i))),o);
     expect(result.clientOrderId).toBe(o.clientOrderId);expect(h.exchange.placeEntry).toHaveBeenCalledTimes(1);
   });
-  it('evidence storage failure blocks ENFORCE before Primary but does not block OFF',async()=>{
-    const h=ready();(h.state as any).tradingQualityEvidenceReady=false;await h.run();expect(h.ai.decide).not.toHaveBeenCalled();expect(h.exchange.placeEntry).not.toHaveBeenCalled();
+  it('TradingQuality evidence storage is observational in TESTNET funds-only and cannot suppress Primary',async()=>{
+    const h=ready();(h.state as any).tradingQualityEvidenceReady=false;await h.run();
+    expect(h.ai.decide).toHaveBeenCalledOnce();expect(h.exchange.placeEntry).toHaveBeenCalledOnce();
     const off=harness();(off.supplied as any).quantityUnits=1000;(off.state as any).tradingQualityEvidenceReady=false;await off.run();expect(off.exchange.placeEntry).toHaveBeenCalledOnce();
   });
   it('processPool wakes WAIT on a fresh event and obtains a new Primary decision',async()=>{

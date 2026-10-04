@@ -97,20 +97,39 @@ describe('V3.9.4 side-neutral Entry authorization', () => {
     expect(h.events.some((e: any) => e.payload?.authority === 'SYSTEM_ECONOMIC_CANDIDATE_SOLVER')).toBe(false);
   });
 
-  it('rejects raw quantity authority instead of clamping or replacing it with a legal size', async () => {
+  it('does not let a Universe refresh revoke the candidate that was frozen before Primary', async () => {
+    const h=harness(),quote=h.state.snapshots.get(fixtureSymbol)!.quote;
+    (h.ai as any).decide.mockImplementation(async(decisionPacket:any)=>{
+      const decision=h.candidateDecision(decisionPacket,'LONG',0,{idealPrice:Number(quote.bid),acceptablePriceRange:{min:Number(quote.bid),max:Number(quote.ask)}});
+      h.state.universe=[];
+      return{runId:'universe-refresh-during-primary',decision};
+    });
+    await h.run();
+    expect(h.exchange.placeEntry).toHaveBeenCalledOnce();
+    expect(h.state.entryIntents.size).toBe(1);
+    expect(h.events.some((e:any)=>e.type==='CANDIDATE_REJECTED'&&e.payload?.reason==='PORTFOLIO_CANDIDATE_MISSING')).toBe(false);
+  });
+
+  it('ignores redundant raw quantity and executes the frozen candidate quantity chosen by Primary', async () => {
     const h = harness();
     armLegacyShortBias(h.state);
     const envelope = buildPreAiExecutionEnvelope(h.state, fixtureSymbol);
     const quote = h.state.snapshots.get(fixtureSymbol)!.quote;
     const oversized = envelope.LONG.maxQuantityUnits + 1;
+    let chosen:any=null;
     (h.ai as any).decide.mockImplementation(async (decisionPacket:any) => {
       const valid=h.candidateDecision(decisionPacket,'LONG',0,{idealPrice:Number(quote.bid),acceptablePriceRange:{min:Number(quote.bid),max:Number(quote.ask)}});
+      chosen=decisionPacket.executionEnvelope.LONG.planCandidates.find((row:any)=>row.candidateId===valid.selectedCandidateId);
       return {runId:'over-envelope-run',decision:{...valid,quantityUnits:oversized}};
     });
     await h.run();
-    expect(h.exchange.placeEntry).not.toHaveBeenCalled();
-    expect(h.state.entryIntents.size).toBe(0);
-    expect(h.events.some((e: any) => e.type === 'CANDIDATE_REJECTED' && e.payload?.reason === 'AI_RAW_QUANTITY_AUTHORITY_FORBIDDEN')).toBe(true);
-    expect(h.events.some((e: any) => e.type === 'ENTRY_ECONOMIC_SIZE_RESOLVED')).toBe(false);
+    expect(h.exchange.placeEntry).toHaveBeenCalledOnce();
+    expect(h.state.entryIntents.size).toBe(1);
+    const intent=[...h.state.entryIntents.values()][0] as any;
+    expect(intent.quantityUnits).toBe(chosen.quantityUnits);
+    expect(intent.quantityUnits).not.toBe(oversized);
+    expect(h.events.some((e: any) => e.type === 'POST_AI_REDUNDANT_FIELD_NORMALIZED'
+      && e.payload?.field === 'quantityUnits' && e.payload?.postAiVeto === false)).toBe(true);
+    expect(h.events.some((e:any)=>e.type==='CANDIDATE_REJECTED'&&e.payload?.reason==='AI_RAW_QUANTITY_AUTHORITY_FORBIDDEN')).toBe(false);
   });
 });

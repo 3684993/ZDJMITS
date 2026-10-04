@@ -3,6 +3,8 @@ name: V3.9.x Verify
 on:
   push:
     branches:
+      - main
+      - 'online/v397-*'
       - fix/v392-astra-final-fixes
       - gpt56-closeout-20260912
       - gpt56-optimize-v392-20260912
@@ -13,8 +15,6 @@ on:
       - v393-p0-tp-risk-recovery-20260915
       - v393-private-truth-tp-canary-20260916
       - v394-binance-governance-settings-20260918
-      # V3.9.5 work continues across dated branches; the glob keeps CI honest without
-      # hand-editing this list per branch, and it still cannot match anything outside v395-*.
       - v395-*
   workflow_dispatch:
 
@@ -42,7 +42,7 @@ jobs:
       - name: Install exact dependencies
         run: npm ci
       - name: Apply V3.9.3 autonomous Entry migration
-        if: github.ref_name != 'v394-binance-governance-settings-20260918' && !startsWith(github.ref_name, 'v395-')
+        if: github.ref_name != 'main' && !startsWith(github.ref_name, 'online/v397-') && github.ref_name != 'v394-binance-governance-settings-20260918' && !startsWith(github.ref_name, 'v395-')
         shell: pwsh
         run: |
           node scripts/v393-apply-autonomous-entry-patch.mjs
@@ -52,7 +52,7 @@ jobs:
           node scripts/v393-contract-cleanup.mjs
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Persist migration patch
-        if: github.ref_name != 'v394-binance-governance-settings-20260918' && !startsWith(github.ref_name, 'v395-')
+        if: github.ref_name != 'main' && !startsWith(github.ref_name, 'online/v397-') && github.ref_name != 'v394-binance-governance-settings-20260918' && !startsWith(github.ref_name, 'v395-')
         shell: pwsh
         run: |
           git config user.name "github-actions[bot]"
@@ -64,10 +64,17 @@ jobs:
             git push origin HEAD:${{ github.ref_name }}
             if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           }
-      - name: Diff check from V3.9.3 frozen baseline
+      - name: Diff check for current change set
         shell: pwsh
         run: |
-          git diff --check 08487ca9f0e9e389cc9de783c2b914630b6e54b9..HEAD
+          if ("${{ github.ref_name }}" -eq "main") {
+            $base = "${{ github.event.before }}"
+          } else {
+            $base = (git merge-base origin/main HEAD)
+          }
+          if (-not $base -or $base -match '^0+$') { $base = "HEAD^" }
+          Write-Host "git diff --check $base..HEAD"
+          git diff --check "$base..HEAD"
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Build workspace type prerequisites
         shell: pwsh
@@ -80,7 +87,16 @@ jobs:
         run: npm run verify:scripts
       - name: Typecheck
         run: npm run typecheck
-      - name: Test
-        run: npm test
       - name: Build
         run: npm run build
+      - name: Test
+        shell: pwsh
+        run: |
+          npm run test --workspace @zdj/contracts
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          npm run test --workspace @zdj/core
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          npm run test --workspace @zdj/dashboard
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          npm run test:ci --workspace @zdj/engine
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }

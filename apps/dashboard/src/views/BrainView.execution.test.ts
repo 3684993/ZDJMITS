@@ -54,7 +54,8 @@ it('every primary run row states whether an order exists, in the Engine\'s own w
   const body = wrapper.findAll('tbody tr');
   expect(body).toHaveLength(3);
   expect(body[0].text()).toContain('已挂单');
-  expect(body[1].text()).toContain('未挂单 · JIT · JIT_BLOCKED:QUOTE_STALE');
+  expect(body[1].text()).toContain('未挂单：行情事实不可执行');
+  expect(body[1].text()).not.toContain('JIT_BLOCKED:QUOTE_STALE');
   expect(body[1].text()).not.toContain('已挂单');
   expect(body[1].findAll('td').filter((cell: any) => cell.text() === '已挂单')).toHaveLength(0);
 });
@@ -76,7 +77,7 @@ it('the detail drawer expands the outcome into the full id chain with its timest
   await trigger.trigger('click');
   await flushPromises();
   const drawer = wrapper.find('.audit-drawer').text();
-  expect(drawer).toContain('执行结果 / 阻断层');
+  expect(drawer).toContain('执行结果 / 不执行主因');
   expect(drawer).toContain('已挂单');
   expect(drawer).toContain('plan_1');
   expect(drawer).toContain('res_1');

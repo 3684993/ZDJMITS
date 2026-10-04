@@ -11,7 +11,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@zdj/contracts": "3.9.4"
+    "@zdj/contracts": "3.9.6"
   },
   "devDependencies": {
     "vitest": "^3.2.4"

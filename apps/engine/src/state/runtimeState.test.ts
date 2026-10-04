@@ -17,6 +17,13 @@ describe('RuntimeState entry reservations',()=>{
     const args={underlying:'BTC',quoteAsset:'USDT' as const,marginUsd:100,notionalUsd:2000,planId:'p1',maxPositions:1,ttlSeconds:300,leaseSeconds:120,maxConcurrentReservations:8};const first=state.reserveEntry(args);expect(first.ok).toBe(true);const second=state.reserveEntry({...args,underlying:'SOL',planId:'p2'});expect(second).toMatchObject({ok:false,reason:'MAX_POSITIONS_REACHED'});if(first.ok)state.releaseEntryReservation(first.reservationId);expect(state.reserveEntry({...args,underlying:'SOL',planId:'p2'}).ok).toBe(true);
   });
   it('releases expired WORKING reservations only when no live exchange order owns them',()=>{const state=new RuntimeState(settings),now=Date.now();state.entryReservations.set('stale',{id:'stale',underlying:'BTC',status:'WORKING',expiresAt:now-1});state.entryReservations.set('live',{id:'live',underlying:'ETH',status:'WORKING',expiresAt:now-1});state.entryOrders.set('o',{reservationId:'live',status:'WORKING'});state.cleanupReservations(now);expect(state.entryReservations.get('stale').status).toBe('RELEASED');expect(state.entryReservations.get('live').status).toBe('WORKING');});
+  it('funds-only reservation commits from fresh real balance even when scheduler capital generation expired during Primary',()=>{
+    const fundsOnlySettings:any={...settings,connections:{exchange:{environment:'TESTNET'},executionMode:'TESTNET_ENABLED'}};
+    const state=fresh(new RuntimeState(fundsOnlySettings));
+    state.runtimeControl={...state.runtimeControl,capital:{...state.runtimeControl.capital,generation:0,evaluatedAt:0,capitalVersion:'0',nextRecheckAt:0}};
+    const result=state.reserveEntry({underlying:'ETH',quoteAsset:'USDT',marginUsd:25,notionalUsd:200,planId:'frozen-plan',maxPositions:2,ttlSeconds:300,leaseSeconds:120,maxConcurrentReservations:8,riskCapitalVersion:'expired-before-primary-return'});
+    expect(result.ok).toBe(true);
+  });
 });
 it('quarantines a persisted TP-only phantom position during restore',()=>{
  const state=new RuntimeState(settings);state.restore({runtimeControl:{},positions:[['phantom',{tpStatus:'PROTECTED',tpOrderId:'tp-only'}]]});

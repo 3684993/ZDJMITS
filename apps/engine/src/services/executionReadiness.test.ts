@@ -322,23 +322,28 @@ describe('a PLACE with every fact present walks the real entry chain', () => {
     expect(h.events.some(event => event.type === 'ENTRY_DECISION_BLOCKED'), JSON.stringify(h.events.filter(e => e.type === 'ENTRY_DECISION_BLOCKED'))).toBe(false);
   });
 
-  it('reports a post-AI refusal with its stage and reason instead of a vague WAIT, and spends no second call', async () => {
+  it('normalizes redundant post-AI entry-location fields and executes the frozen candidate once', async () => {
     const { h, cycle, settle } = await equipped('LONG');
-    // A PLACE whose own price triple is self-contradictory is the case that used to end as an
-    // unexplained silence: the deterministic post-AI verifier must refuse it, with a stage and a
-    // reason, and the same facts must not buy a second model call.
     const market = h.state.snapshots.get(h.packet.symbol)!;
-    h.ai.decide.mockResolvedValue({ runId: 'chain-invalid', decision: { ...h.supplied, decision: 'PLACE_LONG', direction: 'LONG', tradeSide: 'LONG', quantityUnits: 1000, idealPrice: market.quote.ask * 1.05, acceptablePriceRange: { min: market.quote.bid, max: market.quote.ask }, horizonMinutes: 3, reachability: 0.9, reason: 'POST_AI_VERIFY_FAIL' } } as never);
+    h.ai.decide.mockImplementation(async (decisionPacket: any) => ({
+      runId: 'chain-normalized',
+      decision: h.candidateDecision(decisionPacket, 'LONG', 0, {
+        idealPrice: market.quote.ask * 1.05,
+        acceptablePriceRange: { min: market.quote.bid, max: market.quote.ask },
+        horizonMinutes: 3,
+        reachability: 0.9,
+        reason: 'POST_AI_REDUNDANT_FIELD_NORMALIZATION',
+      }),
+    }) as never);
     await cycle();
     expect(h.ai.decide).toHaveBeenCalledOnce();
-    expect(h.state.entryIntents.size).toBe(0);
-    expect(h.exchange.placeEntry).not.toHaveBeenCalled();
-    const blocked = h.events.filter(event => event.type === 'ENTRY_DECISION_BLOCKED');
-    expect(blocked.length, JSON.stringify(h.events.filter(e => /REJECT|FAILED/.test(e.type)).slice(0, 6))).toBeGreaterThan(0);
-    expect(blocked.at(-1)!.payload?.stage).toBe('POST_AI_VERIFY');
-    expect(String(blocked.at(-1)!.payload?.reason)).toBe('DETERMINISTIC_POST_AI_VERIFY_FAILED');
+    expect(h.state.entryIntents.size).toBe(1);
+    expect(h.exchange.placeEntry).toHaveBeenCalledOnce();
+    expect(h.events.some(event => event.type === 'POST_AI_REDUNDANT_FIELD_NORMALIZED'
+      && event.payload?.field === 'entryLocation' && event.payload?.postAiVeto === false)).toBe(true);
+    expect(h.events.some(event => event.type === 'ENTRY_DECISION_BLOCKED' && String(event.payload?.stage ?? '').startsWith('POST_AI'))).toBe(false);
     await h.coordinator.processPool();
     await settle(60);
-    expect(h.ai.decide, 'the refused facts must not re-burn the model').toHaveBeenCalledOnce();
+    expect(h.ai.decide, 'one Primary decision may create at most one intent').toHaveBeenCalledOnce();
   });
 });

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { nextTick, onMounted, onUnmounted, ref, watch } from "vue";
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
 import { brainRun, brainRuns } from "../api/client";
 import { useSystemStore } from "../stores/system";
 import Panel from "../components/Panel.vue";
@@ -27,8 +27,37 @@ const printable = (v: any) =>
   v == null ? "—" : typeof v === "string" ? v : JSON.stringify(v, null, 2);
 // The wording comes from the Engine's own projection; the page only picks a colour for it.
 const executionTone = (execution: any) =>
-  execution?.executionState === "FILLED" || execution?.executionState === "SUBMITTED" ? "positive"
+  ["FILLED","PARTIALLY_FILLED","SUBMITTED"].includes(execution?.executionState) ? "positive"
     : execution?.executionState === "NOT_SUBMITTED" ? "negative" : "muted";
+const reasonLabel=(reason:unknown)=>{
+  const code=String(reason??"");
+  if(!code)return"未记录";
+  if(code.includes("ECONOMIC_MIN_NET_PROFIT_UNMET"))return"预计净收益不足";
+  if(code.includes("PLAN_EVIDENCE_UNRESOLVED"))return"计划证据引用无法解析";
+  if(code.includes("TP_TARGET_WRONG_SIDE"))return"止盈价与允许成交价方向冲突";
+  if(code.includes("QUOTE_USD_MISSING")||code.includes("QUOTE_USD_STALE"))return"USDC/USD 换算事实不可用";
+  if(code.includes("AI_CANDIDATE_TARGET_RESTATEMENT_MISMATCH"))return"AI候选字段重复表述不一致";
+  if(code.includes("INSUFFICIENT_AVAILABLE_MARGIN")||code.includes("RESERVED_QUOTE_MARGIN"))return"真实可用保证金不足";
+  if(code.includes("EXCHANGE_")||code.includes("PRECISION")||code.includes("MINIMUM_NOTIONAL"))return"交易所价量规则不满足";
+  if(code.includes("AUTHORIZATION_EXPIRED"))return"AI执行授权已过期";
+  if(code.includes("MARKET_DATA")||code.includes("QUOTE_STALE"))return"行情事实不可执行";
+  if(code.includes("DURABILITY")||code.includes("PERSISTENCE"))return"持久化失败";
+  if(code.startsWith("PRE_AI_"))return"决策前已确认不可执行";
+  return code;
+};
+const executionDisplay=(execution:any)=>{
+  if(!execution)return"不适用";
+  if(execution.executionState!=="NOT_SUBMITTED")return execution.executionLabel;
+  return `未挂单：${reasonLabel(execution.blockReasons?.[0])}`;
+};
+const placeSummary=computed(()=>{
+  const place=rows.value.filter(r=>r.role==="PRIMARY_BRAIN"&&["PLACE_LONG","PLACE_SHORT"].includes(r.decision));
+  const submitted=place.filter(r=>["SUBMITTED","PARTIALLY_FILLED","FILLED"].includes(r.execution?.executionState)).length;
+  const blocked=place.filter(r=>r.execution?.executionState==="NOT_SUBMITTED");
+  const reasons=new Map<string,number>();
+  for(const row of blocked){const label=reasonLabel(row.execution?.blockReasons?.[0]);reasons.set(label,(reasons.get(label)??0)+1);}
+  return{place:place.length,submitted,blocked:blocked.length,reasons:[...reasons.entries()].sort((a,b)=>b[1]-a[1])};
+});
 const stamp = (value: unknown) => (typeof value === "number" && value > 0 ? new Date(value).toLocaleString() : null);
 const executionChain = (e: any) => (e ? {
   brainRunId: e.brainRunId, tradePlanId: e.tradePlanId, reservationId: e.reservationId, intentId: e.intentId,
@@ -141,7 +170,12 @@ onUnmounted(()=>{listController?.abort();detailController?.abort();window.remove
     <Panel
       title="AI Run 完整审计"
       subtitle="Input → Raw Output → Normalized Decision → Error；拒绝与失败永不自动转 PLACE"
-      ><div class="toolbar">
+      ><div class="facts wide" v-if="placeSummary.place">
+        <div><dt>本页 Primary PLACE</dt><dd>{{placeSummary.place}}</dd></div>
+        <div><dt>已进入订单链</dt><dd>{{placeSummary.submitted}}</dd></div>
+        <div><dt>未挂单</dt><dd>{{placeSummary.blocked}}</dd></div>
+        <div><dt>不挂单主因</dt><dd>{{placeSummary.reasons.map(([reason,count])=>`${reason} ${count}`).join(" · ")||"—"}}</dd></div>
+      </div><div class="toolbar">
         <input v-model="symbol" class="input" placeholder="Symbol" /><select
           v-model="role"
           class="select"
@@ -200,7 +234,7 @@ onUnmounted(()=>{listController?.abort();detailController?.abort();window.remove
             <td v-if="r.role === 'SCOUT'" colspan="3">该次 9B Run：{{ r.status }}（不代表在线职责已启用）</td>
             <template v-else><td><StatusBadge :value="r.direction ?? '—'" /></td>
             <td>{{ r.decision === 'NO_DIRECTION_EDGE' ? '不交易' : (r.decision ?? "—") }}</td>
-            <td :class="executionTone(r.execution)">{{ r.execution ? r.execution.executionLabel : "不适用" }}</td></template>
+            <td :class="executionTone(r.execution)">{{ executionDisplay(r.execution) }}</td></template>
             <td>{{ r.timing?.totalMs ?? r.latencyMs ?? "—" }}ms</td>
             <td>{{ r.inputTokens ?? "—" }} / {{ r.outputTokens ?? "—" }}</td>
             <td><button class="button secondary" @click.stop="show(r.id)">查看决策/未执行原因</button></td>
@@ -286,7 +320,7 @@ onUnmounted(()=>{listController?.abort();detailController?.abort();window.remove
         <div><dt>最终阶段 / 未执行原因</dt><dd>{{detail.summary?.finalStage??'—'}} / {{detail.summary?.reason??'—'}}</dd></div>
         <div><dt>Actual / Limit</dt><dd>{{printable({actual:detail.summary?.actual,limit:detail.summary?.limit})}}</dd></div>
         <div><dt>交易所订单事实</dt><dd>{{printable(detail.orderFact)}}</dd></div>
-        <div><dt>执行结果 / 阻断层</dt><dd>{{ detail.execution ? `${detail.execution.executionLabel}${detail.execution.blockStage ? ` · ${detail.execution.blockStage} · ${(detail.execution.blockReasons ?? []).join(' | ')}` : ''}` : '不适用（该 Run 不负责建仓）' }}</dd></div>
+        <div><dt>执行结果 / 不执行主因</dt><dd>{{ detail.execution ? `${executionDisplay(detail.execution)}${detail.execution.blockStage ? ` · 原始审计：${detail.execution.blockStage} · ${(detail.execution.blockReasons ?? []).join(' | ')}` : ''}` : '不适用（该 Run 不负责建仓）' }}</dd></div>
         <div><dt>执行链 ID 与时间</dt><dd>{{printable(executionChain(detail.execution))}}</dd></div>
         </template>
       </div>

@@ -179,10 +179,10 @@ describe('V3.9.6 pre-AI hard plan feasibility', () => {
     expect(refusals[0].symbol).toBe(fixtureSymbol);
     expect(refusals[0].brainRunId ?? null).toBe(null);
     const next=armedHarness();
-    // A fresh harness already carries the fixture's known-good economic baseline. Do not hard-code
-    // a dollar profit floor here: this test is about symbol-scoped refusal state, not about whether
-    // this archived market fixture can economically clear an arbitrary $1 target.
-    next.state.settings.tradeEconomics.admissionMode='ENFORCE';
+    // PF-06 already proves this default fixture is a healthy executable baseline. PF-08 is only
+    // about refusal isolation: do not add ENFORCE semantics here, because that would turn a fresh
+    // coordinator into a different economic-policy test and make a legitimate pre-AI refusal look
+    // like leaked state from the previous harness.
     await next.run();
     expect(next.ai.decide).toHaveBeenCalledOnce();
     expect(next.events.filter((e:any)=>e.type==='ENTRY_DECISION_BLOCKED'&&e.payload?.stage==='PRE_AI_CANDIDATE_SET')).toHaveLength(0);

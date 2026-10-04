@@ -3,6 +3,8 @@ name: V3.9.x Verify
 on:
   push:
     branches:
+      - main
+      - 'online/v397-*'
       - fix/v392-astra-final-fixes
       - gpt56-closeout-20260912
       - gpt56-optimize-v392-20260912
@@ -42,7 +44,7 @@ jobs:
       - name: Install exact dependencies
         run: npm ci
       - name: Apply V3.9.3 autonomous Entry migration
-        if: github.ref_name != 'v394-binance-governance-settings-20260918' && !startsWith(github.ref_name, 'v395-')
+        if: github.ref_name != 'main' && !startsWith(github.ref_name, 'online/v397-') && github.ref_name != 'v394-binance-governance-settings-20260918' && !startsWith(github.ref_name, 'v395-')
         shell: pwsh
         run: |
           node scripts/v393-apply-autonomous-entry-patch.mjs
@@ -52,7 +54,7 @@ jobs:
           node scripts/v393-contract-cleanup.mjs
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Persist migration patch
-        if: github.ref_name != 'v394-binance-governance-settings-20260918' && !startsWith(github.ref_name, 'v395-')
+        if: github.ref_name != 'main' && !startsWith(github.ref_name, 'online/v397-') && github.ref_name != 'v394-binance-governance-settings-20260918' && !startsWith(github.ref_name, 'v395-')
         shell: pwsh
         run: |
           git config user.name "github-actions[bot]"

@@ -23,6 +23,7 @@ const BUSINESS:Record<number,[string,string]>={
   [-1013]:['订单未通过交易所过滤规则','检查最小数量、名义价值及交易所过滤条件。'],
   [-4024]:['价格低于交易所当前允许下限','检查实时价格带，等待安全重定价或放弃订单。'],
   [-4025]:['价格高于交易所当前允许上限','检查实时价格带，等待安全重定价或放弃订单。'],
+  [-5022]:['Maker-only 订单若会立即成交，交易所会拒绝挂单','等待下一次冻结候选和合法 maker 价格；不要将拒单显示为已挂单。'],
 };
 export function classifyOperationalError(input:{message:unknown;subsystem?:string;budgetPressureProven?:boolean;transportEvidence?:boolean;retryAfter?:string|null;blockedUntil?:number|null;httpStatus?:number|null;requestId?:string|null;endpoint?:string|null;method?:string|null;routeIdentity?:string|null;expectedEgressIp?:string|null;observedEgressIp?:string|null}):Candidate|null{
   const raw=text(input.message),status=input.httpStatus??Number(raw.match(/Binance HTTP (\d{3})/)?.[1]??0),code=Number(raw.match(/"code"\s*:\s*(-?\d+)/)?.[1]??NaN);
@@ -57,6 +58,7 @@ export class OperationalIncidentTracker{
 export function operationalCandidates(facts:{pipeline:any;routes:any[];account:any;marketStream?:any;valuation?:any;orders?:any}):Candidate[]{
   const out:Candidate[]=[];
   for(const route of facts.routes){const egress=route.egress??{},budget=route.requestBudget??{},recent=budget.recentDispatches??[];
+    for(const failure of route.recentFailures??[]){const row=classifyOperationalError({message:failure.message,subsystem:'BINANCE_HTTP',requestId:failure.requestId,endpoint:failure.endpoint,method:failure.method,routeIdentity:failure.routeIdentity});if(row)out.push(row);}
     if(egress.status==='MISMATCH'||egress.status==='UNAVAILABLE'){const row=classifyOperationalError({message:egress.status==='MISMATCH'?'BINANCE_EGRESS_MISMATCH':'BINANCE_EGRESS_UNAVAILABLE',expectedEgressIp:egress.expectedEgressIp,observedEgressIp:egress.lastVerifiedEgressIp,routeIdentity:egress.routeIdentity});if(row)out.push(row);}
     const http=recent.filter((row:any)=>[418,429,451].includes(row.status)&&Date.now()-Number(row.completedAt??0)<120_000).at(-1);
     if(http){const row=classifyOperationalError({message:`Binance HTTP ${http.status}`,httpStatus:http.status,subsystem:'BINANCE_HTTP',endpoint:http.endpoint,method:http.method,requestId:http.requestId,routeIdentity:http.routeIdentity,retryAfter:http.retryAfter,blockedUntil:http.blockedUntil});if(row)out.push(row);}

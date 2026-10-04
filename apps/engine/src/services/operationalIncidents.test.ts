@@ -12,6 +12,7 @@ describe('user-facing operational incidents',()=>{
     expect(classify('Binance HTTP 429',{retryAfter:'10'})?.retryAfter).toBe('10');
     expect(classify('Binance HTTP 418',{blockedUntil:123})?.blockedUntil).toBe(123);
     expect(classify('Binance HTTP 400: {"code":-4024,"msg":"Price is lower"}')).toMatchObject({publicCode:'EX-BINANCE-4024',binanceCode:-4024,sourceMessage:expect.stringContaining('Price is lower')});
+    expect(classify('Binance HTTP 400: {"code":-5022,"msg":"Post Only"}')?.publicCode).toBe('EX-BINANCE-5022');
     expect(classify('ENTRY_SUBMIT_UNACKED')?.publicCode).toBe('EX-SUBMIT-UNKNOWN');
     expect(classify('BINANCE_REQUEST_QUEUE_TIMEOUT')).toBeNull();
     expect(classify('BINANCE_REQUEST_QUEUE_TIMEOUT',{transportEvidence:true})?.publicCode).toBe('NET-002');
@@ -34,5 +35,9 @@ describe('user-facing operational incidents',()=>{
     expect(operationalCandidates(facts)).toHaveLength(0);
     facts.orders[0]!.createdAt=Date.now();
     expect(operationalCandidates(facts)[0]?.publicCode).toBe('EX-SUBMIT-UNKNOWN');
+  });
+  it('projects a current Binance business rejection with request evidence',()=>{
+    const rows=operationalCandidates({pipeline:{pipelineState:'RUNNING'},routes:[{recentFailures:[{message:'Binance HTTP 400: {"code":-5022,"msg":"Post Only"}',requestId:'r1',endpoint:'/fapi/v1/order',method:'POST',routeIdentity:'proxy-test'}]}],account:{status:'READY'}});
+    expect(rows).toMatchObject([{publicCode:'EX-BINANCE-5022',requestId:'r1',endpoint:'/fapi/v1/order',method:'POST'}]);
   });
 });

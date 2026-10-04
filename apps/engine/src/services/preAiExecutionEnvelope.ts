@@ -120,7 +120,11 @@ export function buildPreAiExecutionEnvelope(state:RuntimeState,symbol:string,now
     // and no symbol-specific 100/200 override is injected behind the operator's configuration.
     const businessMinimumConfigured=minimumInitialMarginQuote!==null&&minimumOrderNotionalQuote!==null;
     const businessMinimumNotional=Math.max(minimumLegalNotionalUsd,minimumOrderNotionalQuote??0,(minimumInitialMarginQuote??0)*leverage);
-    const maxNotionalUsd=slotAvailable&&risk.executable?Math.max(0,Math.min(quoteNotionalCapacity,risk.finalNotional)):0,maxMarginUsd=maxNotionalUsd/Math.max(1,leverage);
+    // TESTNET funds-only has one capital authority: real quote balance. Portfolio risk is still
+    // calculated for learning/readback, but it cannot shrink or zero the executable candidate menu.
+    const maxNotionalUsd=slotAvailable&&(fundsOnly||risk.executable)
+      ?Math.max(0,fundsOnly?quoteNotionalCapacity:Math.min(quoteNotionalCapacity,risk.finalNotional)):0,
+      maxMarginUsd=maxNotionalUsd/Math.max(1,leverage);
     // A whole-step quantity that is affordable at the reachable price band and still clears the exchange
     // floor. Both bounds are published: a lower one the order cannot legally be placed under, and an upper
     // one the authorized capacity cannot cover. Neither is a suggestion — both come from real filters.
@@ -130,7 +134,7 @@ export function buildPreAiExecutionEnvelope(state:RuntimeState,symbol:string,now
       legalMaxQuantityUnits=Math.min(capacityUnits,bandLimitedUnits),
       minQuantityUnits=filtersComplete?Math.max(1,Math.ceil(Number(q.minQty)/Number(q.stepSize)-1e-9),Math.ceil(businessMinimumNotional/(bandCeilingPrice*Number(q.stepSize))-1e-9)):0;
     const executable=businessMinimumConfigured&&marginTierProven&&privateReady&&slotAvailable&&!humanHardBlock&&maxNotionalUsd+1e-8>=Math.max(minimumNotional,businessMinimumNotional)&&legalMaxQuantityUnits>=minQuantityUnits;
-    const blockers=[...risk.blockers,...(humanHardBlock?['HUMAN_MANAGED_EXPOSURE_LIMIT']:[]),...(marginTierProven?[]:[`MARGIN_TIER_SYMBOL_UNPROVEN:${symbol}`]),...(minimumInitialMarginQuote===null?['BUSINESS_MINIMUM_INITIAL_MARGIN_UNCONFIGURED']:[]),...(minimumOrderNotionalQuote===null?['BUSINESS_MINIMUM_ORDER_NOTIONAL_UNCONFIGURED']:[]),...(fundsOnly&&businessMinimumConfigured&&maxNotionalUsd+1e-8<businessMinimumNotional?['BUSINESS_MINIMUM_EXCEEDS_AVAILABLE_FUNDS']:[])];
+    const blockers=[...(fundsOnly?[]:risk.blockers),...(humanHardBlock?['HUMAN_MANAGED_EXPOSURE_LIMIT']:[]),...(marginTierProven?[]:[`MARGIN_TIER_SYMBOL_UNPROVEN:${symbol}`]),...(minimumInitialMarginQuote===null?['BUSINESS_MINIMUM_INITIAL_MARGIN_UNCONFIGURED']:[]),...(minimumOrderNotionalQuote===null?['BUSINESS_MINIMUM_ORDER_NOTIONAL_UNCONFIGURED']:[]),...(fundsOnly&&businessMinimumConfigured&&maxNotionalUsd+1e-8<businessMinimumNotional?['BUSINESS_MINIMUM_EXCEEDS_AVAILABLE_FUNDS']:[])];
     const binding=classifySideCapacityBinding({symbol,side,executable,blockers,
       // The probe asked "how much room is there", so its own constraint name is not a denial. A routed
       // AllocationPlan is deliberately absent here: route sizing has no candidate-menu authority.
@@ -142,7 +146,9 @@ export function buildPreAiExecutionEnvelope(state:RuntimeState,symbol:string,now
       riskAdmission:{ceilingUsd:admission.riskAdmissionCeilingUsd,refusal:admission.riskAdmissionRefusal,
         gate:admission.capacity?.firstBinding?.gate??null,detail:admission.capacity?.firstBinding?.detail??null}});
     const missingBusinessSetting=minimumInitialMarginQuote===null?'BUSINESS_MINIMUM_INITIAL_MARGIN_UNCONFIGURED':minimumOrderNotionalQuote===null?'BUSINESS_MINIMUM_ORDER_NOTIONAL_UNCONFIGURED':null;
-    const firstBindingConstraint=fundsOnly?(missingBusinessSetting??(businessMinimumNotional>maxNotionalUsd?'BUSINESS_MINIMUM_EXCEEDS_AVAILABLE_FUNDS':binding.constraint)):binding.constraint;
+    const firstBindingConstraint=fundsOnly
+      ?(missingBusinessSetting??(!privateReady?'PRIVATE_ACCOUNT_NOT_FRESH':!filtersComplete?'EXCHANGE_FILTERS_UNPROVEN':businessMinimumNotional>maxNotionalUsd?'BUSINESS_MINIMUM_EXCEEDS_AVAILABLE_FUNDS':'NONE'))
+      :binding.constraint;
     return {executable,maxMarginUsd,maxNotionalUsd,maxQuantityUnits:legalMaxQuantityUnits,minQuantityUnits,
       legalQuantityRangeUnits:executable?[minQuantityUnits,legalMaxQuantityUnits]:null,
       firstBindingConstraint,minimumLegalNotionalUsd,
@@ -173,5 +179,5 @@ export function buildPreAiExecutionEnvelope(state:RuntimeState,symbol:string,now
       availableInitialMarginQuote:Number(capital.availableBalanceUsd??0),committedInitialMarginQuote:Number(reservedMarginUsd)+Number(executionLeaseMarginUsd),
       maxInitialMarginQuote,maxOrderNotionalQuote:Number(capital.executableNotionalUsd??0),operatorMaxInitialMarginQuote,operatorMaxEquityPct,
       operatorCapApplied,canVeto:true as const,mutatesQuantity:false as const};
-  return {version:'V3.9.3_PRE_AI_EXECUTION_ENVELOPE',resourcePolicy:fundsOnly?'TESTNET_FUNDS_ONLY':'LEGACY_RISK_ENFORCED',symbol,underlying,quoteAsset,executableSides,noExecutableSide:executableSides.length===0,sideAuthorization,entryCapitalBudget,createdAt:now,expiresAt:now+Math.max(45_000,Number(state.settings.ai.decisionTimeoutMs??30_000)+15_000),notice:'EXECUTION FACTS ARE NOT MARKET SIGNALS.',account:{status:String(state.account.status),equityUsd,availableMarginUsd:availableBalance,reservedMarginUsd,executionLeaseMarginUsd,freeMarginUsd},positionCapacity:{used:capacity.used,max:state.settings.portfolio.maxPositions,slotAvailable,sameUnderlyingOccupied},leverage,exchange:{tickSize:q.tickSize,stepSize:q.stepSize,minQty:q.minQty,minNotional:q.minNotional},makerReachableBand:{min:bandMin,max:bandMax},recentTradedPrices:market.recentTradedPrices??[],fees:{makerFeeBps,takerFeeBps,roundTripCostBps:makerFeeBps+(state.settings.takeProfit.exitFeeAssumption==='TAKER'?takerFeeBps:makerFeeBps),safetyMarginBps},economics,...(reachability?{reachability}:{}),LONG,SHORT,leaseRequiredMarginUsd,leaseBudget:{requestedUsd:leaseRequiredMarginUsd,cappedBy:'MINIMUM_EXECUTABLE_CANDIDATE',budgetUsd:leaseRequiredMarginUsd}};
+  return {version:'V3.9.3_PRE_AI_EXECUTION_ENVELOPE',resourcePolicy:fundsOnly?'TESTNET_FUNDS_ONLY':'LEGACY_RISK_ENFORCED',symbol,underlying,quoteAsset,executableSides,noExecutableSide:executableSides.length===0,sideAuthorization,entryCapitalBudget,createdAt:now,expiresAt:now+Math.max(180_000,Number(state.settings.ai.decisionTimeoutMs??30_000)+120_000),notice:'EXECUTION FACTS ARE NOT MARKET SIGNALS.',account:{status:String(state.account.status),equityUsd,availableMarginUsd:availableBalance,reservedMarginUsd,executionLeaseMarginUsd,freeMarginUsd},positionCapacity:{used:capacity.used,max:state.settings.portfolio.maxPositions,slotAvailable,sameUnderlyingOccupied},leverage,exchange:{tickSize:q.tickSize,stepSize:q.stepSize,minQty:q.minQty,minNotional:q.minNotional},makerReachableBand:{min:bandMin,max:bandMax},recentTradedPrices:market.recentTradedPrices??[],fees:{makerFeeBps,takerFeeBps,roundTripCostBps:makerFeeBps+(state.settings.takeProfit.exitFeeAssumption==='TAKER'?takerFeeBps:makerFeeBps),safetyMarginBps},economics,...(reachability?{reachability}:{}),LONG,SHORT,leaseRequiredMarginUsd,leaseBudget:{requestedUsd:leaseRequiredMarginUsd,cappedBy:'MINIMUM_EXECUTABLE_CANDIDATE',budgetUsd:leaseRequiredMarginUsd}};
 }

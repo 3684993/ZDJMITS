@@ -59,7 +59,7 @@ describe('V3.9.6 published target-horizon contract', () => {
       .toMatch(/one of EXECUTION_ENVELOPE\.economics\.targetHorizonMinutes/i);
   });
 
-  it('TH-04 a horizon in the published set is writable; one outside it is refused by name', async () => {
+  it('TH-04 the selected candidate horizon is authoritative even when the model redundantly restates another value', async () => {
     const h = harness();
     const quote = h.state.snapshots.get(fixtureSymbol)!.quote;
     const published = (buildPreAiExecutionEnvelope(h.state, fixtureSymbol).economics as {targetHorizonMinutes: number[]}).targetHorizonMinutes;
@@ -87,7 +87,8 @@ describe('V3.9.6 published target-horizon contract', () => {
     expect(legal.plan.notionalUsd).toBeGreaterThanOrEqual(200);
     expect(legal.plan.quantityUnits).toBeGreaterThan(1000);
     const nonLadderPreference = await run(30);
-    expect(nonLadderPreference.plan).toBeFalsy();
-    expect(nonLadderPreference.refusal).toBe('AI_CANDIDATE_TARGET_RESTATEMENT_MISMATCH');
+    expect(nonLadderPreference.plan, 'a redundant unsupported restatement must not revoke the selected frozen candidate').toBeTruthy();
+    expect(nonLadderPreference.plan.targetHorizonMinutes).toBe(published[0]);
+    expect(nonLadderPreference.refusal).not.toBe('AI_CANDIDATE_TARGET_RESTATEMENT_MISMATCH');
   });
 });

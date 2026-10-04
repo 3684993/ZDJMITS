@@ -90,4 +90,13 @@ jobs:
       - name: Build
         run: npm run build
       - name: Test
-        run: npm test
+        shell: pwsh
+        run: |
+          npm run test --workspace @zdj/contracts
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          npm run test --workspace @zdj/core
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          npm run test --workspace @zdj/dashboard
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          npm run test:ci --workspace @zdj/engine
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }

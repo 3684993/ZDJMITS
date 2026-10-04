@@ -18,7 +18,7 @@
     "apps/engine/src/services/entryCoordinator.ts": "43a241ee41cdcbda4e001d8df0cb21f8ac753f10e38d5385556e01ca5f8f3ba4",
     "apps/engine/src/services/aiQuantityAllocation.ts": "7c71e7d24a6df4e0c392ce395a9bd9954838879545a8d0357d10bf8700be716c",
     "apps/engine/src/adapters/exchange/ExternalTradeAdapter.ts": "60345858bc60854e3ca92ad45445ec3bd6223703b669b4bf0ee263e9fe39ad7e",
-    "apps/engine/src/services/runExecutionOutcome.ts": "104a52b408733a1614b66d7beba3cdf1a3be15a92215d10e16b49dcd151b1bed",
+    "apps/engine/src/services/runExecutionOutcome.ts": "fdf30619cf253cc1b250694034de7b2f7eaa0a44bbe42fb3bd783d249dc0a95f",
     "apps/dashboard/src/views/OverviewView.vue": "8e893bf1b507f763e91d5e83dc6d2a17ee1fa3d0edf9c624aa99969cda54404b",
     "apps/dashboard/src/views/SettingsView.vue": "9b8412f09f76a6b1425b4a41a4dbacaa704bd3ce455f8eb0bc160198e9876098"
   },

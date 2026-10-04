@@ -265,7 +265,8 @@ export function projectRunExecutionOutcomes(
         break;
       case 'PORTFOLIO_RISK_ADMISSION_EVALUATED':
         row.portfolioRiskAllowed = payload.allowed === true;
-        if (row.portfolioRiskAllowed === false) {
+        // Funds-only TESTNET records the risk verdict for audit, but does not enforce it.
+        if (row.portfolioRiskAllowed === false && payload.entryVetoEnforced !== false) {
           row.blockStage = 'PORTFOLIO_RISK';
           row.blockReasons = reasonsOf(payload, 'PORTFOLIO_RISK_NOT_ALLOWED');
         }

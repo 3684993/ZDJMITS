@@ -147,6 +147,13 @@ describe('V3.9.6 Run -> execution outcome projection', () => {
     ], [run({brainRunId: 'run-a'})]);
     expect(denied).toMatchObject({executionState: 'NOT_SUBMITTED', blockStage: 'PORTFOLIO_RISK', portfolioRiskAllowed: false});
     expect(denied.blockReasons).toContain('MAX_DIRECTION_EXPOSURE');
+    const observed = outcomeOf([
+      ev('PORTFOLIO_RISK_ADMISSION_EVALUATED', {allowed: false, entryVetoEnforced: false, reasons: ['MAX_DIRECTION_EXPOSURE']}, 1),
+      ev('TRADE_PLAN_PERSISTED', {planId: 'plan_1'}, 2),
+      ev('ENTRY_INTENT_CREATED', {intent: {id: 'intent_1', planId: 'plan_1', side: 'LONG', brainRunId: 'run-a'}}, 3),
+      ev('ENTRY_SUBMIT_ATTEMPTED', {intentId: 'intent_1', orderId: 'order_1'}, 4),
+    ], [run({brainRunId: 'run-a'})]);
+    expect(observed).toMatchObject({executionState: 'EXECUTING', blockStage: null, portfolioRiskAllowed: false, intentId: 'intent_1'});
   });
 
   it('EO-05 (T7) two runs on one symbol never share an order, an intent or a fill', () => {

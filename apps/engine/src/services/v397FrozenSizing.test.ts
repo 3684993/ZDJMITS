@@ -1,5 +1,6 @@
 import {expect,it} from 'vitest';
 import {minimumQuantityForTarget, leverageChoices} from './v397FrozenSizing.js';
+import {buildQuantityHorizonCandidates} from './quantityHorizonCandidates.js';
 import {SystemSettingsSchema} from '@zdj/contracts';
 import defaults from '../../../../config/settings.default.json' with {type:'json'};
 
@@ -44,4 +45,23 @@ it('keeps BTCUSDT business 150 separate from exchange and rejects a lower saved 
   expect(settings.entry.minimumOrderNotionalByQuote.USDT).toBe(200);
   expect(SystemSettingsSchema.safeParse({...settings,entry:{...settings.entry,minimumOrderNotionalBySymbol:{BTCUSDT:149.99}}}).success).toBe(false);
   expect(SystemSettingsSchema.safeParse({...settings,entry:{...settings.entry,minimumOrderNotionalBySymbol:{}}}).success).toBe(false);
+});
+
+it('never offers a candidate whose frozen lowest executable price breaks the 100 margin floor',()=>{
+  const settings=SystemSettingsSchema.parse(defaults);
+  const now=Date.now();
+  const candles=Array.from({length:300},(_,index)=>({high:104,low:96,close:100,
+    closeTime:now-(299-index)*900000}));
+  const set=buildQuantityHorizonCandidates({symbol:'BTCUSDT',side:'LONG',now,
+    quote:{bid:50,ask:100,tickSize:.1,stepSize:.01,minQty:.01,minNotional:50,minEntryPrice:50,maxEntryPrice:100},
+    leverage:10,envelope:{executable:true,minQuantityUnits:1,maxQuantityUnits:10000,maxNotionalUsd:100000,maxMarginUsd:10000,
+      minimumInitialMarginQuote:100,minimumOrderNotionalQuote:150},envelopeExpiresAt:Date.now()+120000,
+    factVersion:'worst-price-floor',risk:null,
+    settings:{...settings,tradeEconomics:{...settings.tradeEconomics,admissionMode:'SHADOW'}},
+    candles:()=>candles,managementDurationMs:86400000} as never);
+  expect(set.candidates.length).toBeGreaterThan(0);
+  for(const row of set.candidates){
+    expect(row.quantityUnits*.01*50/row.leverage).toBeGreaterThanOrEqual(100);
+    expect(row.quantityUnits*.01*50).toBeGreaterThanOrEqual(150);
+  }
 });

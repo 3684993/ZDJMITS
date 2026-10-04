@@ -13,7 +13,7 @@
     "packages/contracts/src/trading.ts": "eb8892b19ff50c067c9e5e7d873c50a0d00eb46f997124947734a87adb98ff0e",
     "packages/contracts/src/tradePlan.ts": "db4707ed1d2a302fa0a51b91f36249b31fbbbde44ae51f855182df31b417af17",
     "apps/engine/src/services/v397FrozenSizing.ts": "516b9f73e28252741c4baac153c41e0d55b06b9e7905966b5c17e26b7d04a44f",
-    "apps/engine/src/services/quantityHorizonCandidates.ts": "585c195e0b1bc54f1ee6e00d842e89648f5bec53b4bf8eabd92cee233d243041",
+    "apps/engine/src/services/quantityHorizonCandidates.ts": "c187f9660b552adcc0e2765c088a01604cdd02fe35c44c4513aa8cb144b18f5d",
     "apps/engine/src/services/preAiExecutionEnvelope.ts": "a5902a5e5280e4e0711bd40b15bf3542863621ce61934a63bbdaab77c17ff921",
     "apps/engine/src/services/entryCoordinator.ts": "2743690afe8b5cb50800aafbdb43fcc57ffe752723993ceedd92233163f733c6",
     "apps/engine/src/adapters/exchange/ExternalTradeAdapter.ts": "60345858bc60854e3ca92ad45445ec3bd6223703b669b4bf0ee263e9fe39ad7e",

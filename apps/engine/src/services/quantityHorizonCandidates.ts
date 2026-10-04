@@ -212,7 +212,10 @@ export function buildQuantityHorizonCandidates(input:{
   const buildCandidate=(units:number,horizon:number,targetPrice:number,rangeTargets:number[]=[])=>{
     // Reserve the largest notional in the frozen executable entry band. A SHORT's
     // economic reference is the lower price, but its maker order may land higher.
-    const notional=units*quote.stepSize*Math.max(entryPrice,Number(quote.maxEntryPrice??entryPrice)), margin=notional/leverage;
+    const notional=units*quote.stepSize*Math.max(entryPrice,Number(quote.maxEntryPrice??entryPrice)), margin=notional/leverage,
+      worstExecutableNotional=units*quote.stepSize*floorEntryPrice,
+      minimumExecutableNotional=Math.max(quote.minNotional,Number(envelope.minimumOrderNotionalQuote??0),
+        Number(envelope.minimumInitialMarginQuote??0)*leverage);
     const cost=estimateTradingCost({entryPrice,qty:units*quote.stepSize,direction:side,leverage,entryFeeRate:settings.takeProfit.entryFeeRate,
       expectedExitFeeRate:exitFeeRate,expectedSlippagePct:settings.takeProfit.slippageBufferPct,feeSafetyBufferPct:settings.takeProfit.feeSafetyBufferPct,
       minNetProfitUsd:settings.takeProfit.minNetProfitUsd,minNetProfitRoiPct:settings.takeProfit.minNetProfitRoiPct},targetPrice);
@@ -220,6 +223,8 @@ export function buildQuantityHorizonCandidates(input:{
     if(margin>Number(envelope.maxMarginUsd??0)+1e-8||notional>Number(envelope.maxNotionalUsd??0)+1e-8)blockers.push('QUANTITY_EXCEEDS_ENVELOPE');
     if(!(units*quote.stepSize>=quote.minQty-1e-12))blockers.push('QUANTITY_BELOW_MIN_QTY');
     if(notional+1e-9<quote.minNotional)blockers.push('NOTIONAL_BELOW_MIN');
+    if(worstExecutableNotional+1e-8<minimumExecutableNotional)
+      blockers.push('WORST_EXECUTABLE_PRICE_FLOOR_UNMET');
     if(enforceEconomics&&cost.expectedNetProfit+1e-8<cost.requiredNetProfit)blockers.push('ECONOMIC_MIN_NET_PROFIT_UNMET');
     if(side==='LONG'?targetPrice<=entryPrice:targetPrice>=entryPrice)blockers.push('TARGET_ON_WRONG_SIDE_OF_ENTRY');
     const targetMovePercent=entryPrice>0?Math.abs(targetPrice/entryPrice-1)*100:0;

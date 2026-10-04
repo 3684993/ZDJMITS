@@ -85,6 +85,7 @@ export interface RunRow {
 /** Events the projection reads. Anything not listed here cannot change an execution outcome. */
 export const ENTRY_EXECUTION_LINEAGE_EVENT_TYPES = [
   'ENTRY_ECONOMIC_ADMISSION_EVALUATED',
+  'AI_CANDIDATE_SELECTED',
   'PORTFOLIO_RISK_ADMISSION_EVALUATED',
   'ENTRY_DECISION_BLOCKED',
   'CANDIDATE_REJECTED',
@@ -413,6 +414,8 @@ export interface EntryConversionWindow {
   until: number;
   primaryCompleted: number;
   place: number;
+  /** Only schema-valid, offered, frozen candidate selections count as authorized PLACE. */
+  authorizedPlace: number;
   riskAllowed: number;
   economicAdmissionPassed: number;
   tradePlanReady: number;
@@ -423,7 +426,8 @@ export interface EntryConversionWindow {
   entryFilled: number;
   waitingPrice: number;
   blocked: Array<{ stage: ExecutionBlockStage | 'UNKNOWN'; reason: string; count: number }>;
-  ratios: { placeToTradePlan: number | null; tradePlanToSubmit: number | null; placeToSubmit: number | null; submitToFill: number | null };
+  ratios: { placeToTradePlan: number | null; tradePlanToSubmit: number | null; placeToSubmit: number | null; submitToFill: number | null; authorizedPlaceToSubmit?: number | null };
+  authorizedNoSubmit: Array<{stage:ExecutionBlockStage|'UNKNOWN';reason:string;count:number}>;
   topDropStage: string | null;
   topDropReason: string | null;
   topDropCount: number;
@@ -458,6 +462,8 @@ export function entryConversionWindow(
   const counts = new Map<string, { stage: ExecutionBlockStage | 'UNKNOWN'; reason: string; count: number }>();
   const primaryRuns = new Set<string>();
   const placeRuns = new Set<string>();
+  const authorizedRuns=new Set<string>();
+  const firstBlockByRun=new Map<string,{stage:ExecutionBlockStage|'UNKNOWN';reason:string}>();
   // Same attribution rule as the run projection: the event that introduces an intent or an order owns
   // the identity, and a later event that names only that identity belongs to the same run. Without
   // this the fill written by the simulated path - which carries no run id at all - would leave the
@@ -483,6 +489,9 @@ export function entryConversionWindow(
         if (!runId) break;
         primaryRuns.add(runId);
         if (isPlace(payload.normalizedDecision ?? payload.decision)) placeRuns.add(runId);
+        break;
+      case 'AI_CANDIDATE_SELECTED':
+        if(runId&&payload.selectedCandidateId&&payload.candidateSetHash)authorizedRuns.add(runId);
         break;
       case 'ENTRY_ECONOMIC_ADMISSION_EVALUATED':
         if (payload.passed === true) add('economicAdmissionPassed', runId);
@@ -529,6 +538,7 @@ export function entryConversionWindow(
       case 'ENTRY_EXECUTION_WAIT_TERMINATED': {
         const reason = reasonsOf(payload, null)[0] ?? 'UNSPECIFIED';
         const stage = stageOf(event, reason) ?? 'UNKNOWN';
+        if(runId&&!firstBlockByRun.has(runId))firstBlockByRun.set(runId,{stage,reason});
         const key = `${stage}|${reason}`;
         const known = counts.get(key);
         counts.set(key, {stage, reason, count: (known?.count ?? 0) + 1});
@@ -544,6 +554,13 @@ export function entryConversionWindow(
   const top = blocked[0] ?? null;
   const ratio = (numerator: number, denominator: number) => (denominator > 0 ? Number(((numerator / denominator) * 100).toFixed(1)) : null);
   const place = placeRuns.size, orderSubmitted = stage('orderSubmitted');
+  const authorizedNoSubmitCounts=new Map<string,{stage:ExecutionBlockStage|'UNKNOWN';reason:string;count:number}>();
+  for(const runId of authorizedRuns){
+    if(byRun.get('orderSubmitted')?.has(runId))continue;
+    const first=firstBlockByRun.get(runId)??{stage:'UNKNOWN' as const,reason:'EXECUTION_LINEAGE_UNPROVEN'};
+    const key=`${first.stage}|${first.reason}`,prior=authorizedNoSubmitCounts.get(key);
+    authorizedNoSubmitCounts.set(key,{...first,count:(prior?.count??0)+1});
+  }
   const totalBlocked = blocked.reduce((sum, row) => sum + row.count, 0);
   const dominantIsIntendedGate = top == null || INTENDED_GATE.test(top.reason) || top.stage === 'PRE_AI';
   const degraded = place >= 5 && orderSubmitted === 0 && top != null && !dominantIsIntendedGate && top.count >= Math.max(1, Math.ceil(totalBlocked / 2));
@@ -552,6 +569,7 @@ export function entryConversionWindow(
     until: input.until,
     primaryCompleted: primaryRuns.size,
     place,
+    authorizedPlace:authorizedRuns.size,
     riskAllowed: stage('riskAllowed'),
     economicAdmissionPassed: stage('economicAdmissionPassed'),
     tradePlanReady: stage('tradePlanReady'),
@@ -562,11 +580,13 @@ export function entryConversionWindow(
     entryFilled: stage('entryFilled'),
     waitingPrice: stage('waitingPrice'),
     blocked,
+    authorizedNoSubmit:[...authorizedNoSubmitCounts.values()].sort((a,b)=>b.count-a.count),
     ratios: {
       placeToTradePlan: ratio(stage('tradePlanReady'), place),
       tradePlanToSubmit: ratio(orderSubmitted, stage('tradePlanReady')),
       placeToSubmit: ratio(orderSubmitted, place),
       submitToFill: ratio(stage('entryFilled'), orderSubmitted),
+      authorizedPlaceToSubmit:ratio([...authorizedRuns].filter(runId=>byRun.get('orderSubmitted')?.has(runId)).length,authorizedRuns.size),
     },
     topDropStage: top?.stage ?? null,
     topDropReason: top?.reason ?? null,
@@ -578,6 +598,7 @@ export function entryConversionWindow(
     stageSemantics: {
       primaryCompleted: 'REQUIRED',
       place: 'REQUIRED',
+      authorizedPlace:'REQUIRED',
       riskAllowed: input.fundsOnly ? 'NOT_REQUIRED' : 'REQUIRED',
       economicAdmissionPassed: input.fundsOnly ? (input.economicAdmissionMode === 'ENFORCE' ? 'REQUIRED' : 'OBSERVED') : (input.economicAdmissionMode === 'ENFORCE' ? 'REQUIRED' : 'OBSERVED'),
       tradePlanReady: 'REQUIRED',

@@ -166,27 +166,27 @@ describe('the pre-AI envelope publishes which sides are actually executable', ()
     expect(String(envelope.LONG.authorization)).toBe('NOT_EXECUTABLE:BUSINESS_MINIMUM_EXCEEDS_AVAILABLE_FUNDS');
   });
 
-  it('EP-12 uses Settings as the sole business notional authority for every symbol', () => {
+  it('EP-12 separates the BTC business minimum from the retired quote-wide floor', () => {
     const h=harness(),sample=h.state.snapshots.get(fixtureSymbol)!;
     h.state.snapshots.set('BTCUSDT',{...sample,symbol:'BTCUSDT',quote:{...sample.quote,last:60_000,bid:59_999,ask:60_001,minNotional:5,minQty:.001,stepSize:.001}} as any);
     h.state.snapshots.set('ETHUSDT',{...sample,symbol:'ETHUSDT',quote:{...sample.quote,last:3_000,bid:2_999,ask:3_001,minNotional:5,minQty:.001,stepSize:.001}} as any);
     h.state.settings.entry.minimumOrderNotionalByQuote.USDT=100;
     const envelope=buildPreAiExecutionEnvelope(h.state,'BTCUSDT');
-    expect(envelope.LONG.minimumOrderNotionalQuote).toBe(100);
-    expect(envelope.SHORT.minimumOrderNotionalQuote).toBe(100);
+    expect(envelope.LONG.minimumOrderNotionalQuote).toBe(150);
+    expect(envelope.SHORT.minimumOrderNotionalQuote).toBe(150);
     expect(envelope.LONG.minQuantityUnits*Number(h.state.snapshots.get('BTCUSDT')!.quote.stepSize)*Number(h.state.snapshots.get('BTCUSDT')!.quote.last)).toBeGreaterThanOrEqual(100);
     const other=buildPreAiExecutionEnvelope(h.state,'ETHUSDT');
-    expect(other.LONG.minimumOrderNotionalQuote).toBe(100);
-    expect(other.SHORT.minimumOrderNotionalQuote).toBe(100);
+    expect(other.LONG.minimumOrderNotionalQuote).toBe(0);
+    expect(other.SHORT.minimumOrderNotionalQuote).toBe(0);
   });
 });
 
 describe('B: an uncovered symbol is refused before the model, and only that symbol', () => {
-  it('EP-10 missing committed margin risk coverage does not deny either funded TESTNET side', () => {
+  it('EP-10 missing exchange leverage proof refuses the TESTNET side before Primary', () => {
     const h=harness();h.state.marginTierCoverage={symbols:[]} as any;
     const envelope=buildPreAiExecutionEnvelope(h.state,fixtureSymbol);
-    expect(envelope.executableSides).toEqual(['LONG','SHORT']);
-    expect(envelope.LONG.legalQuantityRangeUnits).not.toBeNull();
+    expect(envelope.executableSides).toEqual([]);
+    expect(envelope.LONG.firstBindingConstraint).toBe('EXCHANGE_LEVERAGE_UNPROVEN_OR_BELOW_10');
   });
 
   it('EP-11 no committed authority mirror changes nothing (the profile gate owns that case)', () => {

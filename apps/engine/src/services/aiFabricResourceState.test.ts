@@ -27,7 +27,9 @@ describe('dual-model runtime state',()=>{
     expect(state.aiResources.filter(r=>r.role==='SCOUT')).toHaveLength(1);
     expect(ai.resourceMetrics().filter(r=>r.role==='SCOUT')).toHaveLength(1);
     expect(probe.mock.calls.map(([url]:any[])=>url)).toEqual([scout.baseUrl,primary.baseUrl]);
-    probe.mockResolvedValue({ok:false,reason:'offline'});await ai.probeResources();expect(ai.hasCapacity('PRIMARY_BRAIN')).toBe(false);
+    probe.mockResolvedValue({ok:false,reason:'offline'});await ai.probeResources();expect(ai.hasCapacity('PRIMARY_BRAIN')).toBe(true);
+    await ai.probeResources();expect(ai.hasCapacity('PRIMARY_BRAIN')).toBe(true);
+    await ai.probeResources();expect(ai.hasCapacity('PRIMARY_BRAIN')).toBe(false);
     expect(ai.resourceMetrics().find(r=>r.role==='PRIMARY_BRAIN')).toMatchObject({idleReason:'PRIMARY_MODEL_OFFLINE'});
     probe.mockResolvedValue({ok:true,reason:null});await ai.probeResources();expect(ai.hasCapacity('PRIMARY_BRAIN')).toBe(true);
   });

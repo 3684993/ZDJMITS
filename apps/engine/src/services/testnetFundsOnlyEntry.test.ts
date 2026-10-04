@@ -22,7 +22,7 @@ function hostileBook(){
   s.positions.set('held',{id:'held',symbol,side:'LONG',quantity:1e9,markPrice:1,leverage:1,managementStatus:'HUMAN_MANAGED',cycleId:'historical'} as any);
   s.entryOrders.set('unknown',{id:'unknown',intentId:'old-intent',reservationId:'old-reserve',symbol,side:'SHORT',quantity:1e9,price:1,filledQuantity:0,status:'UNKNOWN',createdAt:1,updatedAt:1,absoluteExpiresAt:2} as any);
   s.entryReservations.set('old-reserve',{id:'old-reserve',intentId:'old-intent',planId:'old-plan',underlying:symbol.replace(/USD[TC]$/,''),quoteAsset:'USDT',marginUsd:1e9,notionalUsd:1e9,status:'WORKING',createdAt:1,expiresAt:now+60000});
-  s.marginTierCoverage={symbols:[]} as any;
+  // Historical risk may be absent, while the physical exchange leverage proof stays present.
   s.manualExitGoals.set('old-goal',{symbol} as any);
   (s as any).riskAdmission={capacityFacts:()=>{throw Error('RISK_ADMISSION_UNAVAILABLE');},admit:()=>({allowed:false,reasons:['PENDING_RISK_UNVERIFIED','UNKNOWN','STRESS_LIMIT:MAX_GROSS_NOTIONAL','HUMAN_POTENTIAL_SLOT_LIMIT'],limits:['MAX_CLUSTER_NOTIONAL'],snapshot:{complete:false},ticket:null}),preTradeFacts:()=>({complete:false,blockers:['UNKNOWN'],snapshotHash:'unproven'})};
   s.entryRiskGate=(()=>{throw Error('RISK_GATE_MUST_NOT_VETO');}) as any;
@@ -83,8 +83,8 @@ describe('TESTNET funds-only Entry resource authority',()=>{
     // acquire veto authority or require a second FX/candle proof.
     expect(plan.economicMandate).toBeNull();expect(intent.economicMandate).toBeNull();
     expect(intent.quantityUnits).not.toBe(rawUnits);
-    expect(plan.marginUsd).toBeGreaterThanOrEqual(1);
-    expect(plan.notionalUsd).toBeGreaterThanOrEqual(200);
+    expect(plan.marginUsd).toBeGreaterThanOrEqual(100);
+    expect(plan.notionalUsd).toBeGreaterThanOrEqual(100*intent.leverage);
     expect(order.quantity).toBe(intent.quantityUnits*h.packet.market.quote.stepSize);
     expect(request).toMatchObject({quantity:order.quantity,price:order.price,positionSide:intent.side});
     expect(response).toMatchObject({remoteQuantity:order.quantity,remotePrice:order.price,side:intent.side,wireBytesAvailable:false});

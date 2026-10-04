@@ -25,6 +25,7 @@ const walk = dir => readdirSync(dir, { withFileTypes: true }).flatMap(item => {
   return item.isDirectory() ? walk(path) : [path];
 });
 const evidenceRoot = 'docs/evidence/v396/S00/20260921T145000Z';
+const argument = prefix => process.argv.find(value => value.startsWith(prefix))?.slice(prefix.length);
 const evidenceFiles = walk(join(root, evidenceRoot));
 const rel = path => path.slice(root.length + 1).replaceAll('\\', '/');
 
@@ -35,7 +36,7 @@ const fixtureRaw = read(fixturePath);
 const fixture = JSON.parse(fixtureRaw);
 const baseline = JSON.parse(read(`${evidenceRoot}/baseline-manifest.json`));
 const entryIndex = JSON.parse(read(`${evidenceRoot}/entrypoint-index.json`));
-const entryReviewPath = `${evidenceRoot}/entrypoint-review.json`;
+const entryReviewPath = argument('--review=') ?? `${evidenceRoot}/entrypoint-review.json`;
 const entryReview = JSON.parse(read(entryReviewPath));
 const entry = read('apps/engine/src/services/entryCoordinator.ts');
 const manual = read('apps/engine/src/services/manualPositionService.ts');
@@ -203,7 +204,8 @@ const identitySources = baseline.identityHashSources;
 // that source in 3fb24ec, so verify the preserved baseline and current default
 // as separate identities; never rewrite the original manifest.
 const historicalSettingsPath = 'docs/reports/v397-final-system-closeout-20261003/v396-settings.default.json';
-const currentSettingsIdentity = JSON.parse(read('docs/reports/v397-final-system-closeout-20261003/current-settings-identity.json'));
+const currentSettingsIdentity = JSON.parse(read(argument('--current-identity=') ?? 'docs/reports/v397-final-system-closeout-20261003/current-settings-identity.json'));
+const historicalPackageLockPath = argument('--historical-lock=') ?? identitySources.packageLock;
 assert(currentSettingsIdentity.historicalCommit === baseline.actualBaseSha,
   'historical settings snapshot is not tied to the S00 baseline commit');
 assert(currentSettingsIdentity.currentSource === identitySources.settingsDefault,
@@ -212,13 +214,16 @@ assert(sha256Identity(read(historicalSettingsPath)) === baseline.identityHashes.
   'historical settings snapshot differs from the original S00 hash');
 assert(sha256Identity(read(currentSettingsIdentity.currentSource)) === currentSettingsIdentity.currentSha256,
   'current settings default differs from its V3.9.7 identity');
+if(currentSettingsIdentity.currentPackageLockSha256)
+  assert(sha256Identity(read(identitySources.packageLock))===currentSettingsIdentity.currentPackageLockSha256,
+    'current package lock differs from its V3.9.7 identity');
 assert(identitySources && Object.keys(identitySources).length >= 5, 'baseline identity hashes are not bound to files');
 assert(baseline.identityHashNormalisation === 'sha256 over the file text with CRLF normalised to LF',
   'the identity hash rule is not declared');
 assert(sha256Identity('a\r\nb') === sha256Identity('a\nb'), 'line-ending normalisation does not stabilise the identity');
 assert(baseline.fixtureSchemaVersion === fixture.schemaVersion, 'the declared fixture schema does not match the delivered fixture');
 for (const [key, path] of Object.entries(identitySources)) {
-  const boundPath = key === 'settingsDefault' ? historicalSettingsPath : path;
+  const boundPath = key === 'settingsDefault' ? historicalSettingsPath : key==='packageLock'?historicalPackageLockPath:path;
   assert(baseline.identityHashes[key] === sha256Identity(read(boundPath)), `baseline identity hash no longer matches its source: ${key} -> ${boundPath}`);
 }
 const temp = mkdtempSync(join(tmpdir(), 'zdj-v396-s00-'));
@@ -231,7 +236,7 @@ try {
   assert(readFileSync(join(temp, 'fixture-mutated.json'), 'utf8') === changed, 'mutated fixture was not written to isolated temp storage');
   assert(sha256Identity(changed) !== baseline.identityHashes.fixtureFile, 'mutated fixture would reuse the declared experiment identity');
   for (const key of ['settingsDefault', 's00Specification', 'contracts', 'packageLock']) {
-    const source = key === 'settingsDefault' ? historicalSettingsPath : identitySources[key];
+    const source = key === 'settingsDefault' ? historicalSettingsPath : key==='packageLock'?historicalPackageLockPath:identitySources[key];
     const bytes = read(source);
     assert(sha256Identity(`${bytes} mutated`) !== baseline.identityHashes[key], `one-byte drift in ${source} would reuse the declared identity`);
     writeFileSync(join(temp, `${key}.baseline`), bytes);

@@ -6,6 +6,14 @@ it('recovers missing held/core/pool snapshots before unrelated stale assets with
  expect(await hub.recoverStale()).toBe(4);expect(calls).toEqual(['HELDUSDT','ORDERUSDT','BTCUSDT','ETHUSDT']);expect(max).toBeLessThanOrEqual(2);expect(state.snapshots.has('HELDUSDT')).toBe(true);
 });
 
+it('does not prioritize historical UNKNOWN claims over current TESTNET market candidates',async()=>{
+ const calls:string[]=[];const state:any={positionSymbols:()=>['HELDUSDT'],activeEntrySymbols:()=>['OLDUSDT'],entryOrders:new Map([['old',{symbol:'OLDUSDT',status:'EXPIRED'}]]),pool:{list:()=>[{symbol:'POOLUSDT'}]},candidateLifecycle:new Map(),snapshots:new Map(),settings:{connections:{exchange:{environment:'TESTNET'},executionMode:'TESTNET_ENABLED'}}};
+ const provider:any={getSnapshot:async(symbol:string)=>{calls.push(symbol);return{symbol};}};
+ const hub=new MarketDataHub(provider,state,{publish:vi.fn()} as any);vi.spyOn(hub,'freshness').mockReturnValue({stale:['OLDUSDT','POOLUSDT']} as any);
+ await hub.recoverStale();
+ expect(calls).toContain('POOLUSDT');expect(calls).not.toContain('OLDUSDT');
+});
+
 it('isolates a live candle-gap failure to one symbol',async()=>{
  const first={symbol:'BADUSDT'},second={symbol:'GOODUSDT'},state:any={snapshots:new Map([['BADUSDT',first],['GOODUSDT',second]])};
  const publish=vi.fn(),provider:any={tick:vi.fn(),hydrateLive:(snapshot:any)=>{if(snapshot.symbol==='BADUSDT')throw new Error('1m closed candle gap');return{...snapshot,hydrated:true};}};

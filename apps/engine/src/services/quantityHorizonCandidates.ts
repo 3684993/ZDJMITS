@@ -2,6 +2,7 @@ import {createHash} from 'node:crypto';
 import type {TradePlanCandidate, TradePlanEconomics, TradePlanRisk} from '@zdj/contracts';
 import {STANDARD_TP_HORIZONS, reachabilityTimeframe, evaluateTargetReachability} from './historicalTpReachability.js';
 import {estimateTradingCost} from '@zdj/core';
+import {minimumQuantityForTarget} from './v397FrozenSizing.js';
 
 /**
  * S06-B/C: the system, not the model, enumerates the legal (quantity, horizon, target) combinations.
@@ -14,7 +15,7 @@ import {estimateTradingCost} from '@zdj/core';
 export type CandidateRiskFacts={capitalAtRiskUsd:number;grossNotionalAfterUsd:number;longNotionalAfterUsd:number;shortNotionalAfterUsd:number;
   clusterNotionalAfterUsd:number;limitingConstraints:string[];riskGeneration:number;snapshotHash:string;profileVersion:string;humanSlotsAfter:number};
 
-export type CandidateSet={schemaVersion:'V396-PLAN-CANDIDATE-SET-1';symbol:string;side:'LONG'|'SHORT';createdAt:number;expiresAt:number;
+export type CandidateSet={schemaVersion:'V396-PLAN-CANDIDATE-SET-1'|'V397-PLAN-CANDIDATE-SET-1';symbol:string;side:'LONG'|'SHORT';createdAt:number;expiresAt:number;
   factVersion:string;candidateSetHash:string;candidates:TradePlanCandidate[];noTradeReasons:string[];
   /**
    * Statistical statements the account is not currently entitled to enforce. They are reported here so
@@ -33,6 +34,14 @@ export type CandidateSet={schemaVersion:'V396-PLAN-CANDIDATE-SET-1';symbol:strin
 export type CandleRow={high:number;low:number;close:number;closeTime:number};
 
 const stableId=(value:unknown)=>`cand_${createHash('sha256').update(JSON.stringify(value)).digest('hex').slice(0,24)}`;
+export function v397CandidateSetHash(input:{symbol:string;side:'LONG'|'SHORT';factVersion:string;candidates:TradePlanCandidate[]}){
+  return stableId({version:'V397-PLAN-CANDIDATE-SET-1',symbol:input.symbol,side:input.side,factVersion:input.factVersion,
+    candidates:input.candidates.map(row=>({candidateId:row.candidateId,side:row.side,leverage:row.leverage,
+      quantityUnits:row.quantityUnits,notionalUsd:row.notionalUsd,marginUsd:row.marginUsd,
+      entryReferencePrice:row.entryReferencePrice,targetPrice:row.targetPrice,
+      acceptableTargetRange:row.acceptableTargetRange,targetHorizonMinutes:row.targetHorizonMinutes,sizingProof:row.sizingProof,
+      costs:row.costs,economics:row.economics,executable:row.executable,blockers:row.blockers}))});
+}
 const finite=(value:unknown):value is number=>typeof value==='number'&&Number.isFinite(value);
 const round=(value:number,digits:number)=>Number(value.toFixed(digits));
 /** Prices are expressed in whole ticks, always on the conservative side of the bound they state. */
@@ -112,6 +121,7 @@ export function buildQuantityHorizonCandidates(input:{
   now:number;
   quote:{bid:number;ask:number;tickSize:number;stepSize:number;minQty:number;minNotional:number;minEntryPrice?:number;maxEntryPrice?:number};
   leverage:number;
+  candidateSchemaVersion?:'V396-PLAN-CANDIDATE-1'|'V397-PLAN-CANDIDATE-1';
   envelope:{maxQuantityUnits:number;maxNotionalUsd:number;maxMarginUsd:number;executable:boolean;minQuantityUnits?:number;minimumInitialMarginQuote?:number|null;minimumOrderNotionalQuote?:number|null;riskHeadroom?:{reason?:string;blockers?:string[]}};
   envelopeExpiresAt:number;
   factVersion:string;
@@ -148,7 +158,7 @@ export function buildQuantityHorizonCandidates(input:{
   // Orders may be repriced anywhere in the authorized bid/ask interval. Size the floor against
   // the lowest current authorized quote so legal repricing cannot turn a $200 mandate into $199.
   const floorEntryPrice=Math.min(entryPrice,quote.bid,quote.ask,Number(quote.minEntryPrice??Number.POSITIVE_INFINITY));
-  const quantities=quantityLadder(Math.max(1,Number(envelope.minQuantityUnits??1)),quantityCeiling,quote.stepSize,floorEntryPrice,Math.max(quote.minNotional,Number(envelope.minimumOrderNotionalQuote??0),(Number(envelope.minimumInitialMarginQuote??0))*leverage));
+  let quantities=quantityLadder(Math.max(1,Number(envelope.minQuantityUnits??1)),quantityCeiling,quote.stepSize,floorEntryPrice,Math.max(quote.minNotional,Number(envelope.minimumOrderNotionalQuote??0),(Number(envelope.minimumInitialMarginQuote??0))*leverage));
   if(!quantities.length)return rejectAll('NO_LEGAL_QUANTITY_WITHIN_ENVELOPE');
   const horizons=horizonLadder(settings,input.targetHorizons);
   if(!horizons.length)return rejectAll('NO_LEGAL_TARGET_HORIZON');
@@ -174,6 +184,19 @@ export function buildQuantityHorizonCandidates(input:{
     const floorBeyondCeiling=statisticalTarget!=null&&(side==='LONG'?profitFloor.floorTargetPrice>statisticalTarget+1e-12:profitFloor.floorTargetPrice<statisticalTarget-1e-12);
     return{floorTarget:profitFloor.floorTargetPrice,statisticalTarget,minProfitableExit:profitFloor.minProfitableExitPrice,statistical,reach,floorBeyondCeiling,profitFloor};
   };
+  // When a closed-candle target is available, invert the net-profit inequality before Primary.
+  // A small first rung must not hide a profitable larger size inside the same funds envelope.
+  const quoteAsset=symbol.endsWith('USDC')?'USDC':'USDT';
+  for(const horizon of horizons){
+    const target=targetFor(quantities[0],horizon).statisticalTarget;
+    if(target===null)continue;
+    const solved=minimumQuantityForTarget({quoteAsset,side,entryPrice,targetPrice:target,stepSize:quote.stepSize,minQty:quote.minQty,
+      exchangeMinimumNotional:quote.minNotional,businessMinimumNotional:Number(envelope.minimumOrderNotionalQuote??0),
+      minimumInitialMarginQuote:Math.max(100,Number(envelope.minimumInitialMarginQuote??100)),
+      availableMarginQuote:Number(envelope.maxMarginUsd??0),leverage,takeProfit:settings.takeProfit});
+    if(solved&&solved.quantityUnits<=quantityCeiling)quantities.push(solved.quantityUnits);
+  }
+  quantities=[...new Set(quantities)].sort((a,b)=>a-b);
   // A larger size may satisfy the user's absolute net-profit floor when the minimum business size
   // cannot. This is bounded by the same pre-AI funds envelope and the target is still computed from
   // the selected size's fee-adjusted floor, so the solver cannot use an infeasible distant TP.
@@ -187,7 +210,9 @@ export function buildQuantityHorizonCandidates(input:{
   if(ceilingExceededAtMinimum)statisticalEvidence.push('HISTORICAL_TARGET_CEILING_EXCEEDED_AT_MINIMUM_QUANTITY');
 
   const buildCandidate=(units:number,horizon:number,targetPrice:number,rangeTargets:number[]=[])=>{
-    const notional=units*quote.stepSize*entryPrice, margin=notional/leverage;
+    // Reserve the largest notional in the frozen executable entry band. A SHORT's
+    // economic reference is the lower price, but its maker order may land higher.
+    const notional=units*quote.stepSize*Math.max(entryPrice,Number(quote.maxEntryPrice??entryPrice)), margin=notional/leverage;
     const cost=estimateTradingCost({entryPrice,qty:units*quote.stepSize,direction:side,leverage,entryFeeRate:settings.takeProfit.entryFeeRate,
       expectedExitFeeRate:exitFeeRate,expectedSlippagePct:settings.takeProfit.slippageBufferPct,feeSafetyBufferPct:settings.takeProfit.feeSafetyBufferPct,
       minNetProfitUsd:settings.takeProfit.minNetProfitUsd,minNetProfitRoiPct:settings.takeProfit.minNetProfitRoiPct},targetPrice);
@@ -232,12 +257,21 @@ export function buildQuantityHorizonCandidates(input:{
       clusterNotionalAfterUsd:round(input.risk.clusterNotionalAfterUsd+notional,6),
       limitingConstraints:[...new Set(input.risk.limitingConstraints)].slice(0,24),riskGeneration:input.risk.riskGeneration,
       snapshotHash:input.risk.snapshotHash,profileVersion:input.risk.profileVersion,humanSlotsAfter:input.risk.humanSlotsAfter+1}:null;
-    const payload={symbol,side,units,horizon,targetPrice:round(targetPrice,10),entryPrice:round(entryPrice,10),snapshotHash:risk?.snapshotHash??null};
+    const sizingProof=input.candidateSchemaVersion==='V397-PLAN-CANDIDATE-1'?{
+      executableEntryRange:{min:round(authorizedMin,10),max:round(authorizedMax,10)},
+      exchangeMinimumNotionalQuote:Number(quote.minNotional),
+      businessMinimumNotionalQuote:Number(envelope.minimumOrderNotionalQuote??0),
+      minimumInitialMarginQuote:Number(envelope.minimumInitialMarginQuote??100),
+      requiredNetProfitQuote:round(cost.requiredNetProfit,6),
+      fundingPolicy:'TARGET_CONDITIONAL_EX_FUNDING_WHEN_UNPROVEN' as const}:undefined;
+    const payload={symbol,side,leverage,units,margin:round(margin,6),horizon,targetPrice:round(targetPrice,10),entryPrice:round(entryPrice,10),
+      sizingProof,snapshotHash:risk?.snapshotHash??null};
     const range=rangeTargets.filter(value=>finite(value));
-    return {schemaVersion:'V396-PLAN-CANDIDATE-1',candidateId:stableId(payload),symbol,side,quantityUnits:units,quantitySteps:units,
+    return {schemaVersion:input.candidateSchemaVersion??'V396-PLAN-CANDIDATE-1',candidateId:stableId(payload),symbol,side,quantityUnits:units,quantitySteps:units,
       notionalUsd:round(notional,6),marginUsd:round(margin,6),leverage,entryReferencePrice:round(entryPrice,10),targetPrice:round(targetPrice,10),
-      acceptableTargetRange:{min:round(side==='LONG'?Math.min(targetPrice,...range):Math.max(targetPrice,...range),10),
-        max:round(side==='LONG'?Math.max(targetPrice,...range):Math.min(targetPrice,...range),10)},
+      sizingProof,
+      acceptableTargetRange:{min:round(Math.min(targetPrice,...range),10),
+        max:round(Math.max(targetPrice,...range),10)},
       entryTtlMinutes,
       targetHorizonMinutes:horizon,managementDurationMs:input.managementDurationMs,
       costs:{entryFeeUsd:round(cost.estimatedEntryFee,6),exitFeeUsd:round(cost.estimatedExitFee,6),slippageUsd:round(cost.slippageBuffer,6),

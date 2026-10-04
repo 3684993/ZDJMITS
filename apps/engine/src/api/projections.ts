@@ -87,12 +87,15 @@ export function executionTruthProjection(runtime: EngineRuntime, now = Date.now(
   }).length : 0;
   const reviewRunner = (runtime as any).positionReviewRunner;
   const reviewReadback = (runtime as any).positionReviewScheduler?.reviewReadback?.(now) ?? null;
+  const currentReviewCycleIds = new Set([...s.positions.values()].map((position:any)=>String(position.cycleId??'')));
+  const currentReviewRows = (reviewReadback?.rows??[]).filter((row:any)=>currentReviewCycleIds.has(String(row.cycleId)));
+  const currentReviewDue = reviewReadback?.rows?.length ? currentReviewRows.filter((row:any)=>row.used<row.limit&&row.failures<Math.max(1,Number(coordination.reviewFailureBudget??2))&&row.nextDueAt<=now).length : Math.max(0,Number(reviewReadback?.due??0));
   // The runner reports the last tick and the last verdict; the scheduler reports the per-cycle
   // obligation. Both are normalised here so a page never has to guess which one it is looking at.
   const rawOutcome = reviewRunner?.lastOutcome?.() ?? null;
   const reviewOutcome = rawOutcome ? {
-    lastTickAt: Number.isFinite(Number(rawOutcome.lastTickAt)) ? Number(rawOutcome.lastTickAt) : null,
-    lastVerdictAt: Number.isFinite(Number(rawOutcome.lastVerdictAt)) ? Number(rawOutcome.lastVerdictAt) : null,
+    lastTickAt: rawOutcome.lastTickAt != null && Number.isFinite(Number(rawOutcome.lastTickAt)) ? Number(rawOutcome.lastTickAt) : null,
+    lastVerdictAt: rawOutcome.lastVerdictAt != null && Number.isFinite(Number(rawOutcome.lastVerdictAt)) ? Number(rawOutcome.lastVerdictAt) : null,
     lastDecision: rawOutcome.lastDecision == null ? null : String(rawOutcome.lastDecision),
     lastReason: rawOutcome.lastReason == null ? null : String(rawOutcome.lastReason),
     usable: rawOutcome.usable === true,
@@ -102,7 +105,7 @@ export function executionTruthProjection(runtime: EngineRuntime, now = Date.now(
     completed: Math.max(0, Math.trunc(Number(rawOutcome.completed ?? 0))),
     discarded: Math.max(0, Math.trunc(Number(rawOutcome.discarded ?? 0))),
     failed: Math.max(0, Math.trunc(Number(rawOutcome.failed ?? 0))),
-    due: Math.max(0, Math.trunc(Number(reviewReadback?.due ?? 0))),
+    due: currentReviewDue,
     exhausted: Math.max(0, Math.trunc(Number(reviewReadback?.exhausted ?? 0))),
     failureBlocked: Math.max(0, Math.trunc(Number(reviewReadback?.failureBlocked ?? 0))),
     skippedReason: rawOutcome.skippedReason == null ? null : String(rawOutcome.skippedReason),
@@ -159,7 +162,8 @@ export function executionTruthProjection(runtime: EngineRuntime, now = Date.now(
       detail: fundingLedger ? `coverage=${fundingLedger.complete?'COMPLETE':'INCOMPLETE'};since=${fundingLedger.coveredSinceMs??'NONE'};lastSync=${fundingLedger.lastSync?.skipped??(fundingLedger.lastSync?`rows ${fundingLedger.lastSync.rows}/failures ${fundingLedger.lastSync.failures}/symbols ${fundingLedger.lastSync.symbolsScanned}`:'NEVER_RAN')}` : 'FUNDING_LEDGER_NOT_ATTACHED'},
     reviewAuthority: {status: coordination.positionReviewEnabled !== true ? 'DISABLED' as const : (reviewRunner ? 'HEALTHY' as const : 'UNKNOWN' as const),
       enabled: coordination.positionReviewEnabled === true, aiActiveCycles,
-      scheduledDue: Math.max(0, Number((runtime as any).positionReviewScheduler?.dueCount?.() ?? 0)),
+      scheduledDue: currentReviewDue,
+      historicalBudgetDue: Math.max(0, Number(reviewReadback?.due??0)-currentReviewDue),
       lastOutcome: reviewOutcome ?? null,
       reviewFairness: (runtime as any).ai?.reviewFairness?.(now) ?? null,
       detail: ai?.detail ? String(ai.detail).slice(0, 200) : null},

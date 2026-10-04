@@ -317,7 +317,25 @@ export class ExternalTradeAdapter implements ExchangeTradeAdapter {
       symbols:collected.sort((a,b)=>a.symbol.localeCompare(b.symbol)),
       failures:failures.sort((a,b)=>a.symbol.localeCompare(b.symbol))};
   }
-  async setLeverage(symbol:string,requested:number){let maximum=this.leverageCache.get(symbol);if(!maximum){let flight=this.leverageFlights.get(symbol);if(!flight){flight=this.signed<any[]>('GET','/fapi/v1/leverageBracket',{symbol}).then(rows=>{const bracket=Array.isArray(rows)?rows[0]:rows,value=Math.max(1,Number(bracket?.brackets?.[0]?.initialLeverage??requested));this.leverageCache.set(symbol,value);return value;}).finally(()=>this.leverageFlights.delete(symbol));this.leverageFlights.set(symbol,flight);}maximum=await flight;}const leverage=Math.min(requested,maximum);await this.signed('POST','/fapi/v1/leverage',{symbol,leverage});}
+  async setLeverage(symbol:string,requested:number){
+    if(!Number.isInteger(requested)||requested<1)throw new Error(`SET_LEVERAGE_INVALID_REQUEST:${symbol}:${requested}`);
+    let maximum=this.leverageCache.get(symbol);
+    if(!maximum){
+      let flight=this.leverageFlights.get(symbol);
+      if(!flight){
+        flight=this.signed<any[]>('GET','/fapi/v1/leverageBracket',{symbol}).then(rows=>{
+          const bracket=Array.isArray(rows)?rows.find(row=>row?.symbol===symbol)??rows[0]:rows;
+          const value=Number(bracket?.brackets?.[0]?.initialLeverage);
+          if(!Number.isInteger(value)||value<1)throw new Error(`SET_LEVERAGE_BRACKET_UNPROVEN:${symbol}`);
+          this.leverageCache.set(symbol,value);return value;
+        }).finally(()=>this.leverageFlights.delete(symbol));
+        this.leverageFlights.set(symbol,flight);
+      }
+      maximum=await flight;
+    }
+    if(requested>maximum)throw new Error(`SET_LEVERAGE_EXCEEDS_EXCHANGE_MAX:${symbol}:requested=${requested}:maximum=${maximum}`);
+    await this.signed('POST','/fapi/v1/leverage',{symbol,leverage:requested});
+  }
   startUserData(onEvent:(event:any)=>void){if(!this.credentials||this.transport.environment()!=='TESTNET')return null;this.userStream=new BinanceUserDataStream(this.transport,this.credentials.apiKey,onEvent);this.userStream.start();return this.userStream;}
   stopUserData(){this.userStream?.stop();this.userStream=null;}
   userDataMetrics(){return this.userStream?.metrics()??{state:'GATED'};}

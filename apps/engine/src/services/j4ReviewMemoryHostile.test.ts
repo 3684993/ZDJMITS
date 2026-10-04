@@ -130,6 +130,20 @@ describe('S07-T03 identical facts never cost a second request',()=>{
     expect(x.scheduler.state()[0].used).toBe(2);
   });
 
+  it('renews one advisory review after twelve hours without erasing the spent budget',()=>{
+    const x=fixture({normal:2});aiManaged(x);
+    expect(reserve(x,{},NOW).granted).toBe(true);
+    expect(reserve(x,{positionVersion:2},NOW+400_000).granted).toBe(true);
+    x.exitRuntime.recordHumanTakeover(SUBJECT,'LONG_HELD_POSITION',NOW+500_000);
+    const owner=x.exitRuntime.owner(SUBJECT)!;
+    const at=NOW+400_000+12*60*60_000+1;
+    const renewed=reserve(x,{positionVersion:3,ownerVersion:owner.ownerVersion},at);
+    expect(renewed.granted).toBe(true);
+    expect(any(renewed).ticket.reviewOnly).toBe(true);
+    expect(x.scheduler.state()[0].used).toBe(3);
+    expect(reserve(x,{positionVersion:4,ownerVersion:owner.ownerVersion},at+400_000).reason).toBe('REVIEW_BUDGET_EXHAUSTED');
+  });
+
   it('refuses to compress two requests inside the minimum interval',()=>{
     const x=fixture({minInterval:300_000});aiManaged(x);
     expect(reserve(x,{},NOW).granted).toBe(true);
@@ -177,6 +191,13 @@ describe('S07-T04 any fact that could change the answer invalidates the previous
 });
 
 describe('S07-T02 an answer that arrives after the authority moved is archived, not applied',()=>{
+  it('keeps a 26-second reviewer answer inside the configured 90-second authority window',()=>{
+    const x=fixture({ttl:90_000});aiManaged(x);
+    const ticket=any(reserve(x)).ticket;
+    const applied=x.scheduler.accept(ticket,{now:ticket.reservedAt+26_000,usage:{inputTokens:100,outputTokens:50},status:'COMPLETED',promptHash:'review-prompt'});
+    expect(applied.usable).toBe(true);
+    expect(applied.reason).toBe('REVIEW_RESULT_APPLICABLE');
+  });
   const ticketOf=(x:ReturnType<typeof fixture>,at=NOW)=>any(reserve(x,{},at)).ticket;
 
   it('keeps the budget spent when the answer arrived late but real',()=>{

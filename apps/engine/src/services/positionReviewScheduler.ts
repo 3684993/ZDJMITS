@@ -21,6 +21,7 @@ export type BudgetState={budgetKey:string;planRef:string;cycleId:string;scope:st
   lastTriggerKey:string|null;lastFactsHash:string|null;lastSkippedReason?:string|null;runs:AiUsageRow[]};
 
 const hash=(value:unknown)=>createHash('sha256').update(JSON.stringify(value)).digest('hex').slice(0,32);
+const ROUTINE_REVIEW_RENEWAL_MS=12*60*60_000;
 
 /** Everything that could legitimately change the answer. Leaving one out would let a stale call pass. */
 export function reviewTriggerKeyOf(input:{scope:string;cycleId:string;versions:ReviewVersions;now:number}){
@@ -64,6 +65,15 @@ export class PositionReviewScheduler {
     return created;
   }
 
+  private routineLimit(budget:BudgetState,normal:number,now:number){
+    const base=Math.max(0,Math.trunc(normal));
+    if(budget.used<base)return base;
+    const last=budget.runs.at(-1),lastAt=Number(last?.completedAt??last?.startedAt??0);
+    // A long-held position earns one further advisory review only after a full day.
+    // Spent calls and the original budget remain durable; this never grants Exit authority.
+    return lastAt>0&&now-lastAt>=ROUTINE_REVIEW_RENEWAL_MS?budget.used+1:budget.used;
+  }
+
   /**
    * The decision and the budget spend happen in one synchronous step: there is no await between
    * "is there budget left" and "it is spent", so two events in one tick cannot both be granted.
@@ -82,7 +92,7 @@ export class PositionReviewScheduler {
     const budget=this.budgetOf(input.scope,input.versions.planRef,input.cycleId);
     const triggerKey=reviewTriggerKeyOf({scope:input.scope,cycleId:input.cycleId,versions:input.versions,now});
     const factsHash=reviewFactsHashOf(input.versions);
-    const limit=Math.max(0,Math.trunc(settings.normalReviewsPerPlan))+(input.trigger==='PREDICATE'?Math.max(0,Math.trunc(settings.exceptionReviewsPerPlan)):0);
+    const limit=this.routineLimit(budget,settings.normalReviewsPerPlan,now)+(input.trigger==='PREDICATE'?Math.max(0,Math.trunc(settings.exceptionReviewsPerPlan)):0);
     if(budget.failures>=Math.max(1,Math.trunc(settings.failureBudget)))return this.refuse(budget,'REVIEW_FAILURE_BUDGET_EXHAUSTED',{budgetKey:budget.budgetKey});
     if(budget.used>=limit)return this.refuse(budget,budget.used>=limit?'REVIEW_BUDGET_EXHAUSTED':'REVIEW_BUDGET_INVALID',{budgetKey:budget.budgetKey,limit});
     if(triggerKey===budget.lastTriggerKey&&factsHash===budget.lastFactsHash)
@@ -124,6 +134,7 @@ export class PositionReviewScheduler {
     const owner=this.ports.ownerOf(ticket.scope,ticket.cycleId);
     const usage=this.ports.ledger.record(usageRowOf(ticket,input));
     const budget=this.budgets.get(ticket.budgetKey);
+    if(budget){const index=budget.runs.findIndex(row=>row.eventId===usage.row.eventId);if(index>=0)budget.runs[index]=usage.row;}
     // A proven implementation defect before inference is archived, but does not exhaust
     // the model failure budget. Endpoint and model failures still count as before.
     if(input.status==='FAILED'||input.status==='TIMEOUT'||input.status==='TRUNCATED'){
@@ -156,10 +167,11 @@ export class PositionReviewScheduler {
       const runs=budget.runs;
       const lastReviewAt=runs.length?Math.max(...runs.map(row=>Number(row.completedAt??row.startedAt??0)).filter(value=>Number.isFinite(value))):null;
       const last=runs[runs.length-1]??null;
-      const limit=Math.max(0,Math.trunc(settings.normalReviewsPerPlan));
+      const limit=this.routineLimit(budget,settings.normalReviewsPerPlan,now);
+      const renewalDueAt=budget.used>=Math.max(0,Math.trunc(settings.normalReviewsPerPlan))&&lastReviewAt!=null?lastReviewAt+ROUTINE_REVIEW_RENEWAL_MS:0;
       return{budgetKey:budget.budgetKey,cycleId:budget.cycleId,scope:budget.scope,planRef:budget.planRef,
         used:budget.used,limit,failures:budget.failures,lastReviewAt,
-        nextDueAt:lastReviewAt==null?now:lastReviewAt+minIntervalMs,
+        nextDueAt:lastReviewAt==null?now:Math.max(lastReviewAt+minIntervalMs,renewalDueAt),
         lastOutcome:last?String(last.status??'UNKNOWN'):null,
         skippedReason:budget.lastSkippedReason??null};
     });
@@ -174,7 +186,7 @@ export class PositionReviewScheduler {
 
   /** What a restart must remember: spent budget is never refunded by losing memory. */
   serialize(){return [...this.budgets.values()].map(row=>({...row,runs:row.runs.map(usage=>({eventId:usage.eventId,status:usage.status,startedAt:usage.startedAt}))}));}
-  restore(rows:any[]){for(const row of rows??[]){if(!row?.budgetKey)continue;this.budgets.set(String(row.budgetKey),{...row,runs:Array.isArray(row.runs)?row.runs:[]});}}
+  restore(rows:any[]){for(const row of rows??[]){if(!row?.budgetKey)continue;const ledgerRows=new Map(this.ports.ledger.forBudget(String(row.budgetKey)).map(usage=>[usage.eventId,usage]));this.budgets.set(String(row.budgetKey),{...row,runs:Array.isArray(row.runs)?row.runs.map((usage:AiUsageRow)=>ledgerRows.get(usage.eventId)??usage):[]});}}
 }
 
 function finite(value:unknown):value is number{return typeof value==='number'&&Number.isFinite(value);}

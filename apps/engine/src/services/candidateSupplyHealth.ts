@@ -20,7 +20,7 @@ export function candidateSupplyHealth(state:RuntimeState){
   const routeBySymbol=new Map(capital.routedCandidates.map(route=>[route.symbol,route]));
   const executionReady=pipelineReady.filter(candidate=>{const route=routeBySymbol.get(candidate.symbol);return Boolean(route&&(route.longExecutable||route.shortExecutable));});
   const positions=new Set([...state.positions.values()].map(position=>String(position.symbol)));
-  const activeEntries=new Set([...state.entryOrders.values()].filter(order=>activeOrderStatuses.has(order.status)).map(order=>String(order.symbol)));
+  const activeEntries=state.operationalEntrySymbols?.()??new Set([...state.entryOrders.values()].filter(order=>activeOrderStatuses.has(order.status)).map(order=>String(order.symbol)));
   const protectedSymbols=new Set<string>(['BTCUSDT','ETHUSDT',...universe.map(candidate=>candidate.symbol),...positions,...activeEntries]);
   for(const [symbol,row] of state.candidateLifecycle)if(String(row?.status??'').includes('WAIT')||String(row?.status??'').includes('PRIMARY')||String(row?.status??'').includes('ANALYZ'))protectedSymbols.add(symbol);
   const zombieSnapshots=[...state.snapshots.keys()].filter(symbol=>!protectedSymbols.has(symbol));
@@ -35,7 +35,7 @@ export function candidateSupplyHealth(state:RuntimeState){
     if(candidate.pipelineEligible===false){const status=String(candidate.lifecycle??state.candidateLifecycle.get(candidate.symbol)?.status??'PIPELINE_BLOCKED');if(!runnableLifecycle.has(status))add(`LIFECYCLE_${status}`);}
     const route=routeBySymbol.get(candidate.symbol);if(!route)add('CAPITAL_NOT_ROUTED');else if(!route.longExecutable&&!route.shortExecutable)add('DIRECTION_CAPACITY_UNAVAILABLE');
   }
-  for(const [reason,count] of Object.entries(capital.reasonCounts??{})){const numericCount=Number(count);if(numericCount>0)add(`CAPITAL_${reason}`,numericCount);}
+  for(const [reason,count] of Object.entries(capital.reasonCounts??{})){const numericCount=Number(count);if(reason!=='EXECUTABLE'&&numericCount>0)add(`CAPITAL_${reason}`,numericCount);}
   const topBlockers=[...blockers.entries()].map(([reason,count])=>({reason,count,category:blockerCategory(reason)})).sort((a,b)=>b.count-a.count||a.reason.localeCompare(b.reason)).slice(0,12);
   const blockerCategories={SUPPLY:0,CAPITAL:0,CAPACITY:0,RISK:0,MARKET:0,GOVERNANCE:0,AI:0};for(const [reason,count] of blockers)blockerCategories[blockerCategory(reason)]+=count;
   const readyZeroReason=executionReady.length===0?[...Object.entries(blockerCategories)].sort((a,b)=>b[1]-a[1])[0]?.[0]??'SUPPLY':null;

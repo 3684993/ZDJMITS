@@ -235,6 +235,20 @@ describe('V3.9.6 entry conversion funnel', () => {
     payload: {runId, normalizedDecision: decision},
   });
 
+  it('counts only frozen candidate selections as authorized PLACE and one first cause per run',()=>{
+    const events:LineageEvent[]=[
+      primary('invalid','PLACE_LONG',1),primary('valid','PLACE_LONG',2),
+      {type:'AI_CANDIDATE_SELECTED',ts:at(3),payload:{brainRunId:'valid',selectedCandidateId:'cand_1',candidateSetHash:'set_1'}},
+      {type:'ENTRY_DECISION_BLOCKED',ts:at(4),payload:{brainRunId:'valid',stage:'SET_LEVERAGE',reason:'SET_LEVERAGE_FAILED'}},
+      {type:'ENTRY_ORDER_BLOCKED',ts:at(5),payload:{brainRunId:'valid',stage:'SUBMIT',reason:'BINANCE_SUBMIT_REJECTED'}},
+    ];
+    const window=entryConversionWindow(events,{since:T0,until:at(60)});
+    expect(window.place).toBe(2);
+    expect(window.authorizedPlace).toBe(1);
+    expect(window.authorizedNoSubmit).toEqual([{stage:'ORDER',reason:'SET_LEVERAGE_FAILED',count:1}]);
+    expect(window.ratios.authorizedPlaceToSubmit).toBe(0);
+  });
+
   it('EO-10 (T8) counts each stage from the event that creates it, not from the last status', () => {
     const events: LineageEvent[] = [
       primary('r1', 'PLACE_LONG', 1), primary('r2', 'PLACE_SHORT', 2), primary('r3', 'PLACE_LONG', 3),
@@ -271,6 +285,7 @@ describe('V3.9.6 entry conversion funnel', () => {
       tradePlanToSubmit: Number(((2 / 3) * 100).toFixed(1)),
       placeToSubmit: Number(((2 / 6) * 100).toFixed(1)),
       submitToFill: Number(((1 / 2) * 100).toFixed(1)),
+      authorizedPlaceToSubmit: null,
     });
     expect(window.topDropStage).toBe('PORTFOLIO_RISK');
     expect(window.topDropReason).toBe('MAX_GROSS_EXPOSURE');
@@ -317,7 +332,7 @@ describe('V3.9.6 entry conversion funnel', () => {
   it('EO-13 an empty window reports nothing rather than a division by zero', () => {
     const window = entryConversionWindow([], {since: T0, until: at(60)});
     expect(window.primaryCompleted).toBe(0);
-    expect(window.ratios).toEqual({placeToTradePlan: null, tradePlanToSubmit: null, placeToSubmit: null, submitToFill: null});
+    expect(window.ratios).toEqual({placeToTradePlan: null, tradePlanToSubmit: null, placeToSubmit: null, submitToFill: null, authorizedPlaceToSubmit:null});
     expect(window.blocked).toEqual([]);
     expect(window.degraded).toBe(false);
   });

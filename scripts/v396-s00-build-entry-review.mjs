@@ -8,7 +8,8 @@ import { fileURLToPath } from 'node:url';
 import { buildEntrypointReview } from './v396-s00-isolation-rules.mjs';
 
 const root = join(fileURLToPath(new URL('.', import.meta.url)), '..').replaceAll('\\', '/');
-const target = 'docs/evidence/v396/S00/20260921T145000Z/entrypoint-review.json';
+const target = process.argv.find(argument=>argument.startsWith('--out='))?.slice('--out='.length)
+  ?? 'docs/evidence/v396/S00/20260921T145000Z/entrypoint-review.json';
 const document = buildEntrypointReview(root);
 
 writeFileSync(join(root, target), `${JSON.stringify(document, null, 2)}\n`);

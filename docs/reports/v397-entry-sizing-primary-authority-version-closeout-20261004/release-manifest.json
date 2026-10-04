@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "V397-RELEASE-MANIFEST-1",
+  "releaseVersion": "3.9.7",
+  "apiVersion": "V3.9.7",
+  "startMainSha": "fc95fe0fe64d36ccb961c6657eaedc7b48a99ab8",
+  "identityRule": "SHA-256 of LF-normalized UTF-8 source; manifest commit itself is excluded to avoid self-reference",
+  "files": {
+    "package.json": "198a5c4c291d0bfd2e2828c4b261e41815e6955abde362297f451a9ff8981fc7",
+    "package-lock.json": "ead0b96f33362a9fef8e0503a74bbf9bd630e25422f0f197d4d9fb4f9586cf21",
+    "config/settings.default.json": "8cf49c33995ad9194b9687c7e275b26e5560e17bf220fc3becb3bb7b086b8826",
+    "packages/contracts/src/version.ts": "f4657e58d913d87236927a650f1ab3a7f36938a069e665c8267a9a5a641b6d03",
+    "packages/contracts/src/settings.ts": "1500ef6c3bd74d27417903b1125b152c489bdd5a6af12916b1dca7d60b39733c",
+    "packages/contracts/src/trading.ts": "eb8892b19ff50c067c9e5e7d873c50a0d00eb46f997124947734a87adb98ff0e",
+    "packages/contracts/src/tradePlan.ts": "db4707ed1d2a302fa0a51b91f36249b31fbbbde44ae51f855182df31b417af17",
+    "apps/engine/src/services/v397FrozenSizing.ts": "516b9f73e28252741c4baac153c41e0d55b06b9e7905966b5c17e26b7d04a44f",
+    "apps/engine/src/services/quantityHorizonCandidates.ts": "585c195e0b1bc54f1ee6e00d842e89648f5bec53b4bf8eabd92cee233d243041",
+    "apps/engine/src/services/preAiExecutionEnvelope.ts": "a5902a5e5280e4e0711bd40b15bf3542863621ce61934a63bbdaab77c17ff921",
+    "apps/engine/src/services/entryCoordinator.ts": "2743690afe8b5cb50800aafbdb43fcc57ffe752723993ceedd92233163f733c6",
+    "apps/engine/src/adapters/exchange/ExternalTradeAdapter.ts": "60345858bc60854e3ca92ad45445ec3bd6223703b669b4bf0ee263e9fe39ad7e",
+    "apps/engine/src/services/runExecutionOutcome.ts": "104a52b408733a1614b66d7beba3cdf1a3be15a92215d10e16b49dcd151b1bed",
+    "apps/dashboard/src/views/OverviewView.vue": "8e893bf1b507f763e91d5e83dc6d2a17ee1fa3d0edf9c624aa99969cda54404b",
+    "apps/dashboard/src/views/SettingsView.vue": "9b8412f09f76a6b1425b4a41a4dbacaa704bd3ce455f8eb0bc160198e9876098"
+  },
+  "policy": {
+    "minimumInitialMarginByQuote": {
+      "USDT": 100,
+      "USDC": 100
+    },
+    "leverageRange": [
+      10,
+      20
+    ],
+    "BTCUSDT": {
+      "exchangeMinimumSource": "TESTNET exchangeInfo live readback required",
+      "businessMinimumNotionalQuote": 150
+    }
+  },
+  "runtimeAcceptance": "REQUIRES_FINAL_TESTNET_READBACK"
+}

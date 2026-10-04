@@ -160,7 +160,9 @@ async function load() {
     ]);
     draft.value = structuredClone(settings);
     draft.value.entry ??= {} as any;
-    draft.value.entry.minimumInitialMarginByQuote ??= { USDT: 1, USDC: 1 };
+    draft.value.entry.minimumInitialMarginByQuote ??= { USDT: 100, USDC: 100 };
+    draft.value.entry.minimumOrderNotionalBySymbol ??= {BTCUSDT:150};
+    draft.value.entry.minimumOrderNotionalBySymbol.BTCUSDT=Math.max(150,Number(draft.value.entry.minimumOrderNotionalBySymbol.BTCUSDT)||0);
     draft.value.entry.minimumOrderNotionalByQuote ??= { USDT: 200, USDC: 200 };
     credentialStatus.value = connections.credentials;
     resources.value = {
@@ -345,10 +347,11 @@ onMounted(load);
           <label><span>侦察模型预取数量</span><input v-model.number="draft.ai.highFrequency.scoutPrefetch" type="number" min="1" max="8" /></label>
           <label><span>单币重试 / 冷却（秒）</span><input v-model.number="draft.ai.highFrequency.retryCooldownSeconds" type="number" min="5" max="300" /></label>
           <label><span>连续失败隔离阈值 / 隔离时长（秒）</span><input v-model.number="draft.ai.highFrequency.quarantineAfterFailures" type="number" min="2" max="10" /><input v-model.number="draft.ai.highFrequency.quarantineSeconds" type="number" min="30" max="3600" /></label>
-          <label><span>TESTNET 单笔最低初始保证金 USDT</span><input v-model.number="draft.entry.minimumInitialMarginByQuote.USDT" type="number" min="0.01" step="0.01" /></label>
-          <label><span>TESTNET 单笔最低初始保证金 USDC</span><input v-model.number="draft.entry.minimumInitialMarginByQuote.USDC" type="number" min="0.01" step="0.01" /></label>
-          <label><span>最低订单金额 USDT</span><input v-model.number="draft.entry.minimumOrderNotionalByQuote.USDT" type="number" min="100" step="1" required /></label>
-          <label><span>最低订单金额 USDC</span><input v-model.number="draft.entry.minimumOrderNotionalByQuote.USDC" type="number" min="100" step="1" required /></label>
+          <label><span>TESTNET 单笔最低初始保证金 USDT</span><input v-model.number="draft.entry.minimumInitialMarginByQuote.USDT" type="number" min="100" step="0.01" /></label>
+          <label><span>TESTNET 单笔最低初始保证金 USDC</span><input v-model.number="draft.entry.minimumInitialMarginByQuote.USDC" type="number" min="100" step="0.01" /></label>
+          <label><span>BTCUSDT 业务最低名义金额</span><input v-model.number="draft.entry.minimumOrderNotionalBySymbol.BTCUSDT" type="number" min="150" step="0.01" /></label>
+          <label><span>历史 USDT 订单金额（兼容读回；不作自动 Entry 地板）</span><input v-model.number="draft.entry.minimumOrderNotionalByQuote.USDT" type="number" disabled /></label>
+          <label><span>历史 USDC 订单金额（兼容读回；不作自动 Entry 地板）</span><input v-model.number="draft.entry.minimumOrderNotionalByQuote.USDC" type="number" disabled /></label>
           <p class="muted">新单最低初始保证金必须逐资产显式填写；未配置时 TESTNET 不会回退到交易所最小单。业务订单 notional 与交易所 minQty/minNotional 独立校验。留空的可选订单 notional 不增加门槛。下方旧字段只用于资本配置，不会自动迁移为业务下限。</p>
           <label
             ><span>资本配置目标保证金 USD（非最低下限）</span

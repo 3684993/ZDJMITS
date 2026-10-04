@@ -83,7 +83,7 @@ export const TradePlanRiskSchema = z.object({
 export type TradePlanRisk = z.infer<typeof TradePlanRiskSchema>;
 
 export const TradePlanCandidateSchema = z.object({
-  schemaVersion: z.literal('V396-PLAN-CANDIDATE-1').default('V396-PLAN-CANDIDATE-1'),
+  schemaVersion: z.enum(['V396-PLAN-CANDIDATE-1','V397-PLAN-CANDIDATE-1']).default('V396-PLAN-CANDIDATE-1'),
   candidateId: z.string().min(8).max(120),
   symbol: z.string().min(1).max(40),
   side: z.enum(['LONG', 'SHORT']),
@@ -93,6 +93,15 @@ export const TradePlanCandidateSchema = z.object({
   marginUsd: money.nonnegative(),
   leverage: z.number().int().positive(),
   entryReferencePrice: price,
+  /** V3.9.7 frozen legality and sizing facts; absent only on historical V396 candidates. */
+  sizingProof: z.object({
+    executableEntryRange: z.object({min:price,max:price}).strict(),
+    exchangeMinimumNotionalQuote: money.nonnegative(),
+    businessMinimumNotionalQuote: money.nonnegative(),
+    minimumInitialMarginQuote: money.min(100),
+    requiredNetProfitQuote: money.nonnegative(),
+    fundingPolicy: z.literal('TARGET_CONDITIONAL_EX_FUNDING_WHEN_UNPROVEN'),
+  }).strict().optional(),
   targetPrice: price,
   acceptableTargetRange: z.object({ min: price, max: price }).strict(),
   entryTtlMinutes: z.number().int().min(1).max(60),
@@ -105,7 +114,10 @@ export const TradePlanCandidateSchema = z.object({
   executable: z.boolean(),
   blockers: z.array(z.string().max(160)).max(24),
   createdAt: z.number().int().nonnegative(),
-}).strict();
+}).strict().superRefine((candidate,ctx)=>{
+  if(candidate.schemaVersion==='V397-PLAN-CANDIDATE-1'&&!candidate.sizingProof)
+    ctx.addIssue({code:'custom',message:'V397_SIZING_PROOF_REQUIRED'});
+});
 export type TradePlanCandidate = z.infer<typeof TradePlanCandidateSchema>;
 
 export const TradePlanProvenanceSchema = z.object({

@@ -208,15 +208,17 @@ function migrate(value: unknown): unknown {
   economics.minHistoricalReachProbability=economics.minHistoricalReachProbability??.5;
   economics.reachabilityLookbackBars=economics.reachabilityLookbackBars??120;
   economics.reachabilityMinSamples=economics.reachabilityMinSamples??30;
-  // V3.9.7 makes TESTNET's existing user budget effective. The configured $200 entry margin is a
-  // planning budget, not a minimum margin; use it only as the business order-notional floor. The
-  // separately named $1 minMarginUsd remains the initial-margin floor. USDC is expressed in USDC
-  // units and its live USD conversion is bound into each mandate by the timestamped FX feed.
+  // V3.9.7 raises the automatic Entry initial-margin floor without carrying the old
+  // quote-wide 200 notional into each symbol's business minimum.
   const entry=(next.entry??={}) as Record<string,unknown>;
-  const configuredMargin=Number((next.portfolioIntelligence as any)?.minMarginUsd??1);
+  const configuredMargin=Number((next.portfolioIntelligence as any)?.minMarginUsd??100);
   const configuredNotional=Number((next.portfolio as any)?.entryMarginUsd??200);
   const quotePolicy=(value:unknown,fallback:number)=>{const row=record(value)?value as Record<string,unknown>:{};return{USDT:row.USDT??fallback,USDC:row.USDC??fallback};};
-  entry.minimumInitialMarginByQuote=quotePolicy(entry.minimumInitialMarginByQuote,configuredMargin);
+  const margin=quotePolicy(entry.minimumInitialMarginByQuote,configuredMargin);
+  entry.minimumInitialMarginByQuote={USDT:Math.max(100,Number(margin.USDT)||100),USDC:Math.max(100,Number(margin.USDC)||100)};
+  const bySymbol={BTCUSDT:150,...(record(entry.minimumOrderNotionalBySymbol)?entry.minimumOrderNotionalBySymbol:{})} as Record<string,unknown>;
+  bySymbol.BTCUSDT=Math.max(150,Number(bySymbol.BTCUSDT)||0);
+  entry.minimumOrderNotionalBySymbol=bySymbol;
   const orderNotional=quotePolicy(entry.minimumOrderNotionalByQuote,configuredNotional);
   entry.minimumOrderNotionalByQuote={USDT:Math.max(100,Number(orderNotional.USDT)||100),USDC:Math.max(100,Number(orderNotional.USDC)||100)};
   if(next.connections && record(next.connections) && (next.connections as any).exchange?.environment==='TESTNET'&&Number(next.economicPolicyVersion??0)<1){
@@ -584,7 +586,7 @@ export class SettingsStore {
       if (!sameSettingsSemantics(stored, this.current)) {
         this.persist(
           this.current,
-          "v3.2-migration",
+          "v3.9.7-compatible-migration",
           this.current.settingsVersion,
         );
       }

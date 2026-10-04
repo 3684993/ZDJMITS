@@ -721,7 +721,7 @@ export class EngineRuntime {
   private marketSymbolLimit() {
     const occupied = new Set([
         ...this.state.positionSymbols(),
-        ...this.state.activeEntrySymbols(),
+        ...(this.state.operationalEntrySymbols?.()??this.state.activeEntrySymbols()),
       ]).size,
       reserve = Math.max(32, this.state.settings.selection.poolTarget * 4);
     return Math.min(
@@ -808,7 +808,7 @@ export class EngineRuntime {
     await this.ai.probeResources();
     this.every(15_000, async () => this.ai.probeResources());
     await verifyBinanceTransportEgress();
-    this.every(15 * 60_000, async () => verifyBinanceTransportEgress());
+    this.every(60_000, async () => verifyBinanceTransportEgress());
     await this.bootstrap();
     this.startTradeRecordAutoSync(tradeRecordAutoSyncStartedAt);
     if (this.state.runtimeControl.entrySafetyMode === "SAFETY_REVIEW_PAUSED")
@@ -839,6 +839,9 @@ export class EngineRuntime {
         this.universe.refresh();
       }
     });
+    // Live quote and depth updates can clear stale exclusions without entering the REST
+    // recovery branch. Re-evaluate candidate eligibility from those new facts promptly.
+    this.every(15_000, () => { this.universe.refresh(); });
     this.every(1_000, async () => {
       await this.market.tick();
       if (this.state.settings.connections.executionMode === "TESTNET_ENABLED")
@@ -955,8 +958,10 @@ export class EngineRuntime {
    * "is this symbol inside it" — so a symbol that admission would refuse by name never reaches Primary.
    */
   private mirrorMarginTierCoverage(facts: PortfolioRiskAuthorityFacts | null){
+    const rows=((facts?.canonical.margin as {dataset?:Array<{symbol:string;tiers:Array<{notionalFloor:number;notionalCap:number|null;initialLeverage:number}>}>}|undefined)?.dataset??[]);
     this.state.marginTierCoverage=facts?{symbols:[...facts.margin.coverageSymbols].map(symbol=>String(symbol).trim().toUpperCase()).sort(),
-      version:facts.margin.version,contentHash:facts.margin.contentHash,loadedAt:Date.now()}:null;
+      version:facts.margin.version,contentHash:facts.margin.contentHash,loadedAt:Date.now(),
+      tiersBySymbol:Object.fromEntries(rows.map(row=>[String(row.symbol).toUpperCase(),row.tiers]))}:null;
   }
   /**
    * The symbols a committed margin dataset has to cover: what the account holds, what is already in
@@ -971,7 +976,7 @@ export class EngineRuntime {
     // §E: the coverage demand and the Entry funding universe are the same set of symbols, read from the
     // one contract constant. A BUSD/FDUSD contract can no longer both be unroutable and require a bracket.
     const quoteable=(symbol:string)=>entryFundingEligibleSymbol(symbol);
-    const held=[...this.state.positionSymbols(),...this.state.activeEntrySymbols()];
+    const held=[...this.state.positionSymbols(),...(this.state.operationalEntrySymbols?.()??this.state.activeEntrySymbols())];
     const symbols=new Set<string>(held);
     for(const row of Array.isArray(this.state.pool?.readyList?.())?this.state.pool.readyList():[])symbols.add(String(row?.symbol??'').toUpperCase());
     // The routing ledger, not the pool snapshot, is what "can be routed" means: a symbol whose
@@ -1654,7 +1659,7 @@ export class EngineRuntime {
       ...new Set([
         ...this.state.pool.list().map((x) => x.symbol),
         ...this.state.positionSymbols(),
-        ...this.state.activeEntrySymbols(),
+        ...(this.state.operationalEntrySymbols?.()??this.state.activeEntrySymbols()),
       ]),
     ];
   }
@@ -2057,6 +2062,7 @@ export class EngineRuntime {
       ).length,
       positions = this.state.positions.size,
       pending = this.state.activeEntrySymbols().size,
+      openEntryReadback = this.reconciliation.currentOpenEntryOrders(),
       poolItems = this.state.pool.list(),
       freshness = this.market.freshness(),
       stream:any = this.market.metrics(),
@@ -2314,11 +2320,13 @@ export class EngineRuntime {
       existingPositions: { status: "FACT", count: positions },
       excludedSymbols: {
         status: "FACT",
-        count: this.state.positionSymbols().size + pending,
+        count: this.state.universe.filter(candidate => candidate.residentEligible === false).length,
+        reasonHistogram: Object.fromEntries([...new Set(this.state.universe.flatMap(candidate => candidate.residentEligible === false ? candidate.exclusionReasons : []))].map(reason => [reason, this.state.universe.filter(candidate => candidate.residentEligible === false && candidate.exclusionReasons.includes(reason)).length])),
       },
       pendingEntries: {
-        status: "FACT",
-        count: pending,
+        status: openEntryReadback.status,
+        count: openEntryReadback.status === 'READY' ? openEntryReadback.items.length : null,
+        historicalRiskClaimSymbols: pending,
         max: this.state.settings.portfolio.maxPendingEntries,
       },
       entryPermission: {
@@ -2386,7 +2394,11 @@ export class EngineRuntime {
   }
   health() {
     const rec = this.reconciliation.health(),
-      persistence = this.settingsStore.operationalMetrics();
+      persistence = this.settingsStore.operationalMetrics(),
+      marketMetrics = this.market.metrics(),
+      marketFreshness = this.market.freshness(),
+      marketState = (marketMetrics as {state?:string}).state ?? 'REST_ONLY',
+      marketOnline = marketState === 'LIVE' || marketState === 'REST_ONLY';
     return [
       {
         id: "trading-network",
@@ -2405,8 +2417,8 @@ export class EngineRuntime {
       {
         id: "market",
         label: "Market Data Hub",
-        status: this.state.snapshots.size ? "HEALTHY" : "OFFLINE",
-        detail: `${this.state.snapshots.size} snapshots; stream=${JSON.stringify({ ...this.market.metrics(), ...this.market.freshness() })}`,
+        status: !this.state.snapshots.size ? "OFFLINE" : marketOnline && marketFreshness.fresh > 0 ? "HEALTHY" : "DEGRADED",
+        detail: `${this.state.snapshots.size} snapshots; stream=${JSON.stringify({ ...marketMetrics, ...marketFreshness })}`,
         updatedAt: Date.now(),
       },
       {

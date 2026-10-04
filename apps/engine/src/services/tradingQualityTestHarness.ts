@@ -33,7 +33,7 @@ export function harness(raw?:any) {
   for(const timeframe of ['1d','4h','15m'] as const){const card=(packet.market.technical as any)[timeframe];if(card)card.lastClosedBar={openTime:now-60_000,closeTime:now-1_000,open:packet.market.quote.last,high:packet.market.quote.last,low:packet.market.quote.last,close:packet.market.quote.last,volume:1};}
   const settings=SystemSettingsSchema.parse({...defaults,appearance:{...defaults.appearance,theme:'BINANCE_NOIR'}});settings.connections.executionMode='TESTNET_ENABLED';
   // Fixtures explicitly choose a small positive business margin; production values are never inferred.
-  settings.entry.minimumInitialMarginByQuote.USDT=.01;
+  settings.entry.minimumInitialMarginByQuote.USDT=100;
   settings.entry.minimumOrderNotionalByQuote.USDT=.01;
   settings.entry.nearMarket.enabled=false; // Archived V3.7 fixtures have no trade-tick stream; V3.9 has separate evidence tests.
   settings.selection.assetDirectory={...settings.selection.assetDirectory,version:'V3.9.1-fixture',methodVersion:'V3.9.1-LIQUIDITY-30D-V4',reviewedAt:now-1,nextReviewAt:now+86_400_000,evidenceHash:'fixture-evidence',approvedLiquid:[...new Set([...settings.selection.assetDirectory.approvedLiquid,'4'])],approvals:{...settings.selection.assetDirectory.approvals,'4':{symbol:'4USDT',reason:'FIXTURE_V4_APPROVAL',reviewedAt:now,quoteVolumeUsd24h:100_000_000,medianDailyQuoteVolumeUsd30d:100_000_000,tradeCount24h:100_000,openInterestUsd:10_000_000,listingAgeDays:400,liquidityComposite:.9}}};
@@ -41,6 +41,9 @@ export function harness(raw?:any) {
   state.account={...state.account,status:'READY',asOf:Date.now(),equityUsd:10000,assets:[{asset:'USDT',availableBalance:10000,usdValue:10000}]};
   state.snapshots.set(packet.symbol,MarketSymbolSnapshotSchema.parse({...packet.market,symbol:packet.symbol,dataCompleteness:packet.evidenceCompleteness}));
   state.universe=[UniverseCandidateSchema.parse({...packet.selection,symbol:packet.symbol,lifecycle:'READY',eligible:true,exclusionReasons:[],quoteVolumeUsd24h:packet.market.quote.quoteVolumeUsd24h,spreadBps:1,lastPrice:packet.market.quote.last,change24hPercent:0,dataCompleteness:1,selectionGeneration:1,updatedAt:now})];
+  // This isolated fixture explicitly supplies the signed leverage-bracket fact that the
+  // live TESTNET runtime must collect before offering a 10..20x frozen menu.
+  state.marginTierCoverage={symbols:[packet.symbol],tiersBySymbol:{[packet.symbol]:[{notionalFloor:0,notionalCap:null,initialLeverage:20}]}} as any;
   const q=packet.market.quote;
   const supplied=raw??{...f.normalized,decision:'PLACE_LONG',direction:'LONG',confidence:.8,idealPrice:q.bid,acceptablePriceRange:{min:q.bid-q.tickSize*10,max:q.ask+q.tickSize*10},horizonMinutes:3,reachability:.8,reason:'ISOLATED_CONTRACT_PLACE'};
   const bus=new EventBus(),events:any[]=[];bus.on('event',e=>events.push(e));

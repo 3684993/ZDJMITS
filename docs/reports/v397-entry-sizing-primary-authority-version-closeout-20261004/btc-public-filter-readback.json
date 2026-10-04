@@ -1,0 +1,41 @@
+{
+  "capturedAt": "2026-10-04T06:39:25.0837589Z",
+  "authorityScope": "ALTERNATE_PUBLIC_TESTNET_HOST_ONLY",
+  "host": "testnet.binancefuture.com",
+  "configuredRuntimeHost": "demo-fapi.binance.com",
+  "configuredRuntimeHostStatus": "HTTP_451",
+  "proxyEgressIp": "38.244.20.34",
+  "environment": "TESTNET",
+  "symbol": "BTCUSDT",
+  "status": "TRADING",
+  "pricePrecision": 2,
+  "quantityPrecision": 4,
+  "filters": [
+    {
+      "tickSize": "0.10",
+      "maxPrice": "809484",
+      "minPrice": "261.10",
+      "filterType": "PRICE_FILTER"
+    },
+    {
+      "maxQty": "1000",
+      "filterType": "LOT_SIZE",
+      "stepSize": "0.0001",
+      "minQty": "0.0001"
+    },
+    {
+      "filterType": "MARKET_LOT_SIZE",
+      "minQty": "0.0001",
+      "stepSize": "0.0001",
+      "maxQty": "120"
+    },
+    {
+      "filterType": "MIN_NOTIONAL",
+      "notional": "50"
+    }
+  ],
+  "methods": [
+    "GET"
+  ],
+  "exchangeWrites": 0
+}

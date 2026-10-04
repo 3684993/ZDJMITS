@@ -60,6 +60,14 @@ const planInput=(set:any,candidate:any,over:Record<string,any>={})=>({selection:
   minNetProfitUsd:1,maxRealizedLossUsd:10,factVersion:'facts-j3',now:NOW,...over});
 
 describe('S06 candidate generation',()=>{
+  it('SHORT candidates publish an ordered target range containing the selected target',()=>{
+    const offered=candidates({side:'SHORT'}).set.candidates;
+    expect(offered.length).toBeGreaterThan(0);
+    for(const row of offered){
+      expect(row.acceptableTargetRange.min).toBeLessThanOrEqual(row.targetPrice);
+      expect(row.acceptableTargetRange.max).toBeGreaterThanOrEqual(row.targetPrice);
+    }
+  });
   it('S06-T01 a side without capacity is refused, never switched to the side with more room',()=>{
     const blocked=candidates({envelope:{executable:false,riskHeadroom:{blockers:['MAX_DIRECTION_NOTIONAL']},maxQuantityUnits:0,maxNotionalUsd:0,maxMarginUsd:0}});
     expect(blocked.set.noTradeReasons).toContain('SIDE_NOT_EXECUTABLE');

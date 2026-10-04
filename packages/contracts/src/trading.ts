@@ -18,6 +18,11 @@ const EntryPlanCandidateProjectionSchema=z.object({
   entryReferencePrice:z.number().positive(),targetPrice:z.number().positive(),
   acceptableTargetRange:z.object({min:z.number().positive(),max:z.number().positive()}).strict(),
   targetHorizonMinutes:z.number().int().positive(),targetConditionalNetProfitUsd:z.number(),
+  sizingProof:z.object({executableEntryRange:z.object({min:z.number().positive(),max:z.number().positive()}).strict(),
+    exchangeMinimumNotionalQuote:z.number().nonnegative(),businessMinimumNotionalQuote:z.number().nonnegative(),
+    minimumInitialMarginQuote:z.number().min(100),requiredNetProfitQuote:z.number().nonnegative(),
+    fundingPolicy:z.literal('TARGET_CONDITIONAL_EX_FUNDING_WHEN_UNPROVEN')}).strict().optional(),
+  requiredNetProfitQuote:z.number().nonnegative().nullable().optional(),fundingStatus:z.string().optional(),
   expectedNetPnlAtHorizonUsd:z.number().nullable(),reachProbability:z.number().min(0).max(1).nullable(),
   reachProbabilityStatus:z.string(),targetVsStatisticalCeiling:z.string(),costVersion:z.string(),
 }).strict();
@@ -44,7 +49,7 @@ const EntryExecutionCapacitySchema=z.object({
   /** Frozen before Primary. The model may choose one id; later layers may only verify it. */
   candidateSetHash:z.string().min(1).optional(),
   candidateSetFactVersion:z.string().min(1).optional(),
-  planCandidates:z.array(EntryPlanCandidateProjectionSchema).max(24).optional(),
+  planCandidates:z.array(EntryPlanCandidateProjectionSchema).max(66).optional(),
   riskHeadroom:EntryRiskHeadroomSchema,
 }).strict();
 /** Frozen pre-AI execution facts carried with an EntryIntent for restart-safe authorization. */
@@ -69,6 +74,8 @@ export const EntryExecutionEnvelopeSchema=z.object({
     operatorCapApplied:z.boolean(),canVeto:z.literal(true),mutatesQuantity:z.literal(false)}).strict().optional(),
   positionCapacity:z.object({used:z.number().int().nonnegative(),max:z.number().int().nonnegative(),slotAvailable:z.boolean(),sameUnderlyingOccupied:z.boolean()}).strict(),
   leverage:z.number().int().positive(),
+  leverageOptions:z.array(z.number().int().min(10).max(20)).max(11).optional(),
+  leverageTiers:z.array(z.object({notionalFloor:z.number().nonnegative(),notionalCap:z.number().nonnegative().nullable(),initialLeverage:z.number().int().positive()}).strict()).optional(),
   exchange:z.object({tickSize:z.number().positive(),stepSize:z.number().positive(),minQty:z.number().positive(),minNotional:z.number().nonnegative()}).strict(),
   makerReachableBand:z.object({min:z.number().positive(),max:z.number().positive()}).strict(),
   recentTradedPrices:z.array(z.object({price:z.number().positive(),lastSeenAt:z.number().int()}).strict()),

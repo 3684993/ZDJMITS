@@ -119,6 +119,7 @@ describe('P4 analysis lease is an earmark, not the whole balance',()=>{
   it('the lease protects only the minimum executable candidate and leaves room for another route',()=>{
     const now=Date.now();
     const state=new RuntimeState(fundsOnly);
+    state.marginTierCoverage={symbols:['BTCUSDT'],tiersBySymbol:{BTCUSDT:[{notionalFloor:0,notionalCap:null,initialLeverage:20}]}} as any;
     state.account={status:'READY',equityUsd:20_000,assets:[{asset:'USDT',availableBalance:4_000,asOf:now}],asOf:now} as any;
     state.snapshots.set('BTCUSDT',any(snapshotOf('BTCUSDT')));
     state.universe.push(any({symbol:'BTCUSDT',eligible:true,rank:1,recommendedLeverage:10}));
@@ -137,6 +138,7 @@ describe('P4 analysis lease is an earmark, not the whole balance',()=>{
 
   it('publishes the candidate capital budget and ignores legacy route sizing facts under TESTNET funds-only',()=>{
     const now=Date.now(),state=new RuntimeState(fundsOnly);
+    state.marginTierCoverage={symbols:['BTCUSDT'],tiersBySymbol:{BTCUSDT:[{notionalFloor:0,notionalCap:null,initialLeverage:20}]}} as any;
     state.account={status:'READY',equityUsd:20_000,assets:[{asset:'USDT',availableBalance:4_000,asOf:now}],asOf:now} as any;
     state.snapshots.set('BTCUSDT',any(snapshotOf('BTCUSDT')));
     state.universe.push(any({symbol:'BTCUSDT',eligible:true,rank:1,recommendedLeverage:10}));

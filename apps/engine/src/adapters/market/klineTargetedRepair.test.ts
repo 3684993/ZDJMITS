@@ -45,6 +45,7 @@ describe('V3.9.5 targeted kline repair instead of a snapshot storm', () => {
     // BTC/ETH are always snapshot-loaded; the repaired symbol must not be.
     expect(getSnapshot.mock.calls.map(call => call[0])).not.toContain('BADUSDT');
     expect(events.some(event => event.type === 'MARKET_KLINE_SEQUENCE_REPAIRED')).toBe(true);
+    expect(hub.metrics()).toMatchObject({klineRepairAttempts:1,klineRepairSuccess:1});
   });
 
   it('keeps the normal full reload path when quote or book facts are the problem', async () => {

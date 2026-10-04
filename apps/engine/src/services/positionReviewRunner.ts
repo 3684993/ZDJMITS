@@ -139,8 +139,11 @@ export class PositionReviewRunner {
   lastOutcome(){
     const report=this.lastReport;
     const scheduled=this.ports.scheduler.reviewReadback();
-    return{...report,considered:scheduled.budgets,due:scheduled.due,exhausted:scheduled.exhausted,failureBlocked:scheduled.failureBlocked,
-      skippedReason:scheduled.rows.find(row=>row.skippedReason)?.skippedReason??null};
+    const currentCycles=new Set([...this.ports.state.positions.values()].map(position=>String(position.cycleId??'')));
+    const currentRows=scheduled.rows.filter(row=>currentCycles.has(row.cycleId));
+    const persisted=[...((this.ports.state as any).positionReviews?.values()??[])].map((row:any)=>row?.latest).filter((row:any)=>row&&Number.isFinite(Number(row.at))).sort((a:any,b:any)=>Number(b.at)-Number(a.at))[0];
+    return{...report,enabled:this.ports.settings().positionReviewEnabled===true,lastVerdictAt:report.lastVerdictAt??persisted?.at??null,lastDecision:report.lastDecision??persisted?.decision??null,lastReason:report.lastReason??persisted?.reason??null,usable:report.lastVerdictAt==null?persisted?.usable===true:report.usable,considered:report.lastTickAt==null?currentRows.length:report.considered,due:currentRows.filter(row=>row.used<row.limit&&row.failures<Math.max(1,Number(this.ports.settings().reviewFailureBudget??2))&&row.nextDueAt<=Date.now()).length,exhausted:currentRows.filter(row=>row.used>=row.limit).length,failureBlocked:currentRows.filter(row=>row.failures>=Math.max(1,Number(this.ports.settings().reviewFailureBudget??2))).length,
+      skippedReason:currentRows.find(row=>row.skippedReason)?.skippedReason??null};
   }
 
   private lastReport:{lastTickAt:number|null;lastVerdictAt:number|null;lastDecision:string|null;lastReason:string|null;usable:boolean;enabled:boolean;considered:number;reserved:number;completed:number;discarded:number;failed:number}={

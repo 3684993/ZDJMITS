@@ -223,6 +223,7 @@ const capacityPolicyText = computed(() => {
 const FUNNEL_STAGES: Array<[string, string]> = [
   ["primaryCompleted", "Primary 完成"],
   ["place", "PLACE"],
+  ["authorizedPlace", "已授权 Primary PLACE"],
   ["riskAllowed", "风险准入通过"],
   ["tradePlanReady", "TradePlan 就绪"],
   ["reservationCreated", "Reservation 建立"],
@@ -234,6 +235,18 @@ const conversionWindowKey = ref<"thirtyMinutes" | "oneHour">("thirtyMinutes");
 const conversionWindow = computed(() => pipeline.value?.entryConversion?.[conversionWindowKey.value] ?? null);
 const stageCount = (key: string) => Number(conversionWindow.value?.[key] ?? 0);
 const percent = (value: unknown) => (typeof value === "number" ? `${value}%` : "—");
+const physicalReasonLabel=(reason:string)=>{
+  if(/MARGIN|FUNDS|BALANCE/.test(reason))return '决策后真实资金不足';
+  if(/FILTER|PRECISION|MINIMUM_NOTIONAL|EXCHANGE_LEGALITY/.test(reason))return '交易所价量规则变化或不合法';
+  if(/FROZEN_IDENTITY|CANDIDATE_PROVENANCE/.test(reason))return '冻结候选身份损坏';
+  if(/PERSISTENCE|DURABILITY/.test(reason))return '持久化失败';
+  if(/PERMISSION|AUTO|TESTNET_ENABLED/.test(reason))return 'TESTNET 自动执行已关闭';
+  if(/PRIVATE_ACCOUNT/.test(reason))return '私有账户数据无法证明';
+  if(/SET_LEVERAGE/.test(reason))return '设置杠杆失败';
+  if(/BINANCE_SUBMIT|BINANCE.*REJECT/.test(reason))return 'Binance 提交拒绝';
+  if(/UNKNOWN|EXACT/.test(reason))return '提交结果未知，等待身份查询';
+  return '执行链事实未证明';
+};
 
 const labels: Record<string, string> = {
   market: "行情中心",
@@ -245,8 +258,8 @@ const labels: Record<string, string> = {
   scout: "9B 事实抽取",
   primaryBrain: "Primary 本次运行",
   existingPositions: "现有持仓",
-  excludedSymbols: "排除标的",
-  pendingEntries: "待成交建仓",
+  excludedSymbols: "非驻留标的",
+  pendingEntries: "交易所活动建仓",
   entryPermission: "下单许可",
   binancePrivate: "交易所私有数据",
   reconciliation: "交易所对账",
@@ -385,7 +398,7 @@ onUnmounted(() => {
           <dd>
             <StatusBadge :value="control()?.mode ?? 'RUNNING'" />
             {{ pipeline?.analysis?.text ?? control()?.reasonText ?? "运行中" }}
-            <small v-if="pipeline?.analysis">调度心跳 {{ pipeline.analysis.schedulerStatus ?? 'UNKNOWN' }}（{{ pipeline.analysis.heartbeatAt ? new Date(pipeline.analysis.heartbeatAt).toLocaleTimeString() : '尚未收到' }}）；最近 Primary dispatch：{{ pipeline.analysis.lastAttemptAt ? new Date(pipeline.analysis.lastAttemptAt).toLocaleString() : '本实例尚未派发' }}；距最近分析成功 {{ Math.floor((pipeline.analysis.primarySuccessAgeMs ?? pipeline.analysis.silenceMs ?? 0) / 60000) }} 分钟；抑制原因 {{ pipeline.analysis.suppression?.suppressionReason ?? pipeline.analysis.reason }}{{ pipeline.analysis.suppression?.authoritativeBlocker ? ` · 首因 ${pipeline.analysis.suppression.authoritativeBlocker}` : '' }}；下次评估 {{ pipeline.analysis.nextEvaluationAt ? new Date(pipeline.analysis.nextEvaluationAt).toLocaleTimeString() : '待定' }}；候选 {{ pipeline.analysis.capitalExecutableCount }}</small>
+            <small v-if="pipeline?.analysis">调度心跳 {{ pipeline.analysis.schedulerStatus ?? 'UNKNOWN' }}（{{ pipeline.analysis.heartbeatAt ? new Date(pipeline.analysis.heartbeatAt).toLocaleTimeString() : '尚未收到' }}）；最近派发意图：{{ pipeline.analysis.lastAttemptAt ? new Date(pipeline.analysis.lastAttemptAt).toLocaleString() : '本实例尚未派发' }}；最近模型请求：{{ pipeline.analysis.lastRequestAt ? new Date(pipeline.analysis.lastRequestAt).toLocaleString() : '本实例尚无' }}；距最近分析成功 {{ Math.floor((pipeline.analysis.primarySuccessAgeMs ?? pipeline.analysis.silenceMs ?? 0) / 60000) }} 分钟；抑制原因 {{ pipeline.analysis.suppression?.suppressionReason ?? pipeline.analysis.reason }}{{ pipeline.analysis.suppression?.authoritativeBlocker ? ` · 首因 ${pipeline.analysis.suppression.authoritativeBlocker}` : '' }}；下次评估 {{ pipeline.analysis.nextEvaluationAt ? new Date(pipeline.analysis.nextEvaluationAt).toLocaleTimeString() : '待定' }}；候选 {{ pipeline.analysis.capitalExecutableCount }}</small>
           </dd>
         </div>
         <div>
@@ -480,9 +493,9 @@ onUnmounted(() => {
         <div data-capital-block="limits">
           <dt>3 · 风险与安全限制</dt>
           <dd>
-            {{ capacityPolicyText }} · 槽位 {{ capacityVisibility.limits.slots.used }} /
-            {{ capacityVisibility.limits.slots.max }}（持仓 {{ capacityVisibility.limits.slots.positions }} / 在途
-            {{ capacityVisibility.limits.slots.inFlight }} / 预留 {{ capacityVisibility.limits.slots.reserved }}）·
+            {{ capacityPolicyText }} · {{ pipeline?.entryResourcePolicy?.mode === 'TESTNET_FUNDS_ONLY' ? '审计风险槽位（TESTNET 不执行）' : '槽位' }} {{ capacityVisibility.limits.slots.used }} /
+            {{ capacityVisibility.limits.slots.max }}（持仓 {{ capacityVisibility.limits.slots.positions }} / 在途风险身份
+            {{ capacityVisibility.limits.slots.inFlight }} / 预留 {{ capacityVisibility.limits.slots.reserved }}；交易所活动建仓 {{ pipeline?.pendingEntries?.count ?? '未核实' }}）·
             首个饱和硬维度 {{ capacityVisibility.firstBlocker }}
           </dd>
         </div>
@@ -737,11 +750,13 @@ onUnmounted(() => {
               <dt>PLACE→Submit</dt>
               <dd>{{ percent(conversionWindow.ratios?.placeToSubmit) }}</dd>
             </div>
+            <div><dt>已授权 PLACE→Submit</dt><dd>{{ percent(conversionWindow.ratios?.authorizedPlaceToSubmit) }}</dd></div>
             <div>
               <dt>Submit→Fill</dt>
               <dd>{{ percent(conversionWindow.ratios?.submitToFill) }}</dd>
             </div>
           </div>
+          <p class="permission-note">已授权但未提交的首因：{{ conversionWindow.authorizedNoSubmit?.map(row=>`${physicalReasonLabel(row.reason)} ${row.count}`).join("；")||"无" }}</p>
           <p class="permission-note" data-conversion-drop>
             最大流失：{{ conversionWindow.topDropStage ?? "无阻断事件" }}
             <template v-if="conversionWindow.topDropReason">

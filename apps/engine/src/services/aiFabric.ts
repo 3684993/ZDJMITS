@@ -46,6 +46,23 @@ export function entryDecisionParse(value:unknown,packet:EntryIntelligencePacket)
   // structureDirection is model-owned compatibility metadata. Never inject 15m as an answer key.
   raw.structureDirection=raw.structureDirection??(place?raw.tradeSide:null);
   raw.profitTakePlan=place?(raw.profitTakePlan??null):null;
+  if(place&&raw.profitTakePlan&&typeof raw.profitTakePlan==='object'){
+    const side=raw.decision==='PLACE_LONG'?'LONG':'SHORT';
+    const candidates=packet.executionEnvelope?.[side]?.planCandidates??[];
+    const selected=candidates.find(candidate=>candidate.candidateId===raw.selectedCandidateId);
+    const target=Number(raw.profitTakePlan.targetPrice),horizon=Number(raw.profitTakePlan.targetHorizonMinutes);
+    const range=raw.profitTakePlan.acceptableTargetRange;
+    if(selected&&Number.isFinite(target)&&target===selected.targetPrice&&horizon===selected.targetHorizonMinutes&&range&&typeof range==='object'){
+      const min=Number(range.min),max=Number(range.max);
+      if(Number.isFinite(min)&&Number.isFinite(max)&&(min>max||target<min||target>max)){
+        raw.profitTakePlan={...raw.profitTakePlan,acceptableTargetRange:{...selected.acceptableTargetRange}};
+        normalized.normalization.applied=true;normalized.normalization.repairAttempted=true;
+        normalized.normalization.fields.push(
+          {field:'profitTakePlan.acceptableTargetRange.min',raw:range.min,normalized:selected.acceptableTargetRange.min,rule:'FROZEN_CANDIDATE_TARGET_RANGE'},
+          {field:'profitTakePlan.acceptableTargetRange.max',raw:range.max,normalized:selected.acceptableTargetRange.max,rule:'FROZEN_CANDIDATE_TARGET_RANGE'});
+      }
+    }
+  }
   raw.rejectLayer=raw.rejectLayer??(raw.decision==='WAIT_FOR_PRICE'?'TIMING':raw.decision==='NO_DIRECTION_EDGE'?'TIMING':'NONE');
   raw.blockingCondition=raw.blockingCondition??(place?'':String(raw.reason??''));raw.releaseCondition=raw.releaseCondition??'';raw.timingEvent=raw.timingEvent??null;
   raw.direction=place?raw.tradeSide:null; const d=EntryDecisionV370Schema.parse(raw);
@@ -122,13 +139,14 @@ export class AiFabric {
     for(const r of state.aiResources)this.load.set(r.id,{active:0,totalRuns:0,failures:0,lastLatencyMs:null,currentSymbol:null,currentRunId:null,currentStartedAt:null,lastCompletedAt:null,lastDirection:null,lastDecision:null,idleReason:'WAITING_CANDIDATE',nextStep:'等待动态交易池候选',queueDepth:0});
   }
 
-  private endpointHealth=new Map<string,{available:boolean;checkedAt:number;reason:string|null}>();
+  private endpointHealth=new Map<string,{available:boolean;checkedAt:number;reason:string|null;consecutiveFailures:number}>();
   private healthFlight:Promise<void>|null=null;
   async probeResources(){
     if(this.healthFlight)return this.healthFlight;
     this.healthFlight=Promise.all(this.state.aiResources.map(async r=>{
-      const result=await this.openAi.probe(r.baseUrl,2000).catch(error=>({ok:false,reason:String(error)}));
-      const previous=this.endpointHealth.get(r.id),next={available:result.ok,checkedAt:Date.now(),reason:result.reason};this.endpointHealth.set(r.id,next);
+      const result=await this.openAi.probe(r.baseUrl,5_000).catch(error=>({ok:false,reason:String(error)}));
+      const previous=this.endpointHealth.get(r.id),consecutiveFailures=result.ok?0:(previous?.consecutiveFailures??0)+1;
+      const next={available:result.ok||(previous?.available===true&&consecutiveFailures<3),checkedAt:Date.now(),reason:result.reason,consecutiveFailures};this.endpointHealth.set(r.id,next);
       if(previous?.available!==next.available)this.events.publish('AI_RESOURCE_HEALTH_CHANGED',{resourceId:r.id,role:r.role,...next,entryRequired:r.role==='PRIMARY_BRAIN'});
     })).then(()=>{}).finally(()=>{this.healthFlight=null;});return this.healthFlight;
   }

@@ -1,10 +1,15 @@
 {
   "name": "zdj-mits-v3",
-  "version": "3.9.6",
+  "version": "3.9.7",
   "private": true,
   "type": "module",
-  "workspaces": ["packages/*", "apps/*"],
-  "engines": {"node": ">=22.12.0"},
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "scripts": {
     "dev": "node scripts/dev.mjs",
     "dev:engine": "npm run dev -w @zdj/engine",
@@ -15,7 +20,9 @@
     "build": "npm run build -ws --if-present",
     "verify:deps": "npm run build -w @zdj/contracts && npm run build -w @zdj/core",
     "verify:scripts": "node --check scripts/maintain-storage.mjs && node --check scripts/reset-testnet-runtime-db.mjs && node --check scripts/init-local-runtime.mjs && node --check scripts/prune-zdj-backups.mjs && node --check scripts/install-storage-retention.mjs && node --check scripts/v394-stage6-set-readonly.mjs && node scripts/v394-stage6-set-readonly.mjs --self-test && node --check scripts/v394-stage6-preflight.mjs && node scripts/v394-stage6-preflight.mjs --self-test && node --check scripts/audit-ai-entry-quality.mjs && node --check scripts/audit-trading-quality-baseline.mjs && node --check scripts/inspect-sqlite-capacity.mjs && node --check scripts/audit-v394-entry-authorization.mjs && node --test scripts/maintain-storage.test.mjs scripts/reset-testnet-runtime-db.test.mjs scripts/init-local-runtime.test.mjs && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/start-zdj-engine-host.test.ps1 && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/run-v394-readonly-canary.test.ps1 && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/run-v394-local-rollout.test.ps1 && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/run-v394-stage7-to-stage9.test.ps1",
-    "verify": "npm run verify:deps && npm run verify:scripts && npm run typecheck && npm run build && npm run test",
+    "verify:release": "node scripts/v397-release-identity.mjs",
+    "verify:s00": "node scripts/v396-s00-static-check.mjs --review=docs/reports/v397-entry-sizing-primary-authority-version-closeout-20261004/s00/entrypoint-review.json --current-identity=docs/reports/v397-entry-sizing-primary-authority-version-closeout-20261004/s00/current-identity.json --historical-lock=docs/reports/v397-entry-sizing-primary-authority-version-closeout-20261004/s00/historical-package-lock.json",
+    "verify": "npm run verify:deps && npm run verify:scripts && npm run verify:release && npm run verify:s00 && npm run typecheck && npm run build && npm run test",
     "acceptance": "powershell -ExecutionPolicy Bypass -File scripts/run-acceptance.ps1",
     "verify:isolated": "npm run build -w @zdj/contracts && npm run build -w @zdj/core && npm run typecheck && npm run build -w @zdj/engine && npm run build -w @zdj/dashboard -- --outDir ../../data-test/v390-build/dashboard && npm test",
     "storage:plan": "node scripts/maintain-storage.mjs",
@@ -30,5 +37,7 @@
     "audit:ai-quality": "node scripts/audit-ai-entry-quality.mjs",
     "audit:trading-quality": "node scripts/audit-trading-quality-baseline.mjs"
   },
-  "devDependencies": {"typescript": "^5.8.3"}
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  }
 }

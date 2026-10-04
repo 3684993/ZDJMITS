@@ -29,7 +29,7 @@ export function harness(raw?:any) {
   packet.market.quote.ts=now;packet.market.orderBook.ts=now;packet.createdAt=now;packet.expiresAt=now+300_000;
   const settings=SystemSettingsSchema.parse({...defaults,appearance:{...defaults.appearance,theme:'BINANCE_NOIR'}});settings.connections.executionMode='TESTNET_ENABLED';
   // TESTNET fixtures opt into a deliberately tiny positive margin and provide closed thesis bars.
-  settings.entry.minimumInitialMarginByQuote.USDT=.01;
+  settings.entry.minimumInitialMarginByQuote.USDT=100;
   settings.entry.minimumOrderNotionalByQuote.USDT=.01;
   for(const timeframe of ['1d','4h','15m'] as const){const card=(packet.market.technical as any)[timeframe];if(card)card.lastClosedBar={openTime:now-60_000,closeTime:now-1_000,open:packet.market.quote.last,high:packet.market.quote.last,low:packet.market.quote.last,close:packet.market.quote.last,volume:1};}
   settings.entry.nearMarket.enabled=false; // Archived V3.7 fixtures have no trade-tick stream; V3.9 has separate evidence tests.
@@ -38,6 +38,7 @@ export function harness(raw?:any) {
   state.account={...state.account,status:'READY',asOf:Date.now(),equityUsd:10000,assets:[{asset:'USDT',availableBalance:10000,usdValue:10000}]};
   state.snapshots.set(packet.symbol,MarketSymbolSnapshotSchema.parse({...packet.market,symbol:packet.symbol,dataCompleteness:packet.evidenceCompleteness}));
   state.universe=[UniverseCandidateSchema.parse({...packet.selection,symbol:packet.symbol,lifecycle:'READY',eligible:true,exclusionReasons:[],quoteVolumeUsd24h:packet.market.quote.quoteVolumeUsd24h,spreadBps:1,lastPrice:packet.market.quote.last,change24hPercent:0,dataCompleteness:1,selectionGeneration:1,updatedAt:now})];
+  state.marginTierCoverage={symbols:[packet.symbol],tiersBySymbol:{[packet.symbol]:[{notionalFloor:0,notionalCap:null,initialLeverage:20}]}} as any;
   const q=packet.market.quote;
   const supplied=raw??{...f.normalized,decision:'PLACE_LONG',direction:'LONG',confidence:.8,idealPrice:q.bid,acceptablePriceRange:{min:q.bid-q.tickSize*10,max:q.ask+q.tickSize*10},horizonMinutes:3,reachability:.8,reason:'ISOLATED_CONTRACT_PLACE'};
   const bus=new EventBus(),events:any[]=[];bus.on('event',e=>events.push(e));
@@ -65,6 +66,19 @@ describe('V3.7.0 isolated real-EIP contracts; production write=0',()=>{
   it('does not use an empty legacy routed-candidate list as a deterministic pre-Primary veto',async()=>{const h=harness();h.state.runtimeControl.capital.routedCandidates=[];await h.run();expect(h.ai.decide).toHaveBeenCalledOnce();expect(h.events.some(e=>e.type==='PRE_AI_EXECUTION_ENVELOPE_CREATED')).toBe(true);expect(h.events.some(e=>e.type==='ENTRY_PREFLIGHT_BLOCKED')).toBe(false);});
   it('consumes genuine six-timeframe evidence and preserves original REJECT',()=>{for(const f of fixtures){const p=EntryIntelligencePacketSchema.parse(f.packet);expect(Object.keys(p.market.technical)).not.toContain('1h');const h=harness();expect(()=>new DirectionPolicyService(h.state).evaluate(p.symbol,MarketSymbolSnapshotSchema.parse({...p.market,symbol:p.symbol,dataCompleteness:p.evidenceCompleteness}))).not.toThrow();expect(brainParse(f.raw,p).decision).toBe('REJECT_CANDIDATE');}});
   it('legal autonomous PLACE crosses allocation, reservation and Entry Manager exactly once',async()=>{const h=harness();await h.run();expect(h.events.filter(x=>x.type==='ENTRY_ANALYSIS_FAILED')).toEqual([]);expect(h.exchange.placeEntry,JSON.stringify(h.events.filter(x=>/BLOCKED|REJECTED/.test(x.type)))).toHaveBeenCalledOnce();expect(h.state.entryIntents.size).toBe(1);await h.run();expect(h.exchange.placeEntry).toHaveBeenCalledOnce();});
+  it('Primary chooses the frozen leverage through candidate id, with no post-PLACE resizer',async()=>{
+    const h=harness();
+    h.ai.decide.mockImplementation(async(packet:any)=>{
+      const choices=packet.executionEnvelope.LONG.planCandidates;
+      expect([...new Set(choices.map((row:any)=>row.leverage))]).toEqual([10,11,12,13,14,15,16,17,18,19,20]);
+      const index=choices.findIndex((row:any)=>row.leverage===15);
+      return{decision:h.candidateDecision(packet,'LONG',index),runId:'leverage-15-run'};
+    });
+    await h.run();
+    expect(h.exchange.setLeverage).toHaveBeenCalledWith(h.packet.symbol,15);
+    expect([...h.state.entryIntents.values()][0]?.leverage).toBe(15);
+    expect(h.exchange.placeEntry).toHaveBeenCalledOnce();
+  });
   it('runs Scout as an asynchronous observation without serially feeding its result to Primary',async()=>{const h=harness();h.state.settings.ai.scoutEnabled=true;const annotation={symbol:h.packet.symbol,summary:'fixture scout',keyEvidence:['technical.15m.confirmed'],contradictions:[],missingEvidence:[],attentionScore:.5};h.ai.scout.mockResolvedValue(annotation);await h.run();expect(h.ai.scout).toHaveBeenCalledOnce();expect(h.ai.decide).toHaveBeenCalledWith(expect.anything(),null,expect.any(Number),undefined);});
   it.each(['REJECT','AI_FAILED','INVALID_PLACE','NO_CAPITAL','STALE_QUOTE'])('does not submit %s',async(kind)=>{const h=harness(kind==='REJECT'?fixtures[0].raw:undefined);if(kind==='AI_FAILED')h.ai.decide.mockRejectedValue(new Error('AI_FAILED'));if(kind==='INVALID_PLACE')h.ai.decide.mockImplementation(async()=>({decision:brainParse({...fixtures[0].normalized,decision:'PLACE_LONG',reachability:'HIGH'},h.packet),runId:'invalid'}));if(kind==='NO_CAPITAL')h.state.account.assets[0].availableBalance=0;if(kind==='STALE_QUOTE')h.state.snapshots.get(h.packet.symbol)!.quote.ts=1;if(kind==='DUPLICATE_UNDERLYING')h.state.underlyingLocks.set(h.packet.symbol.replace('USDT',''),{leaseUntil:Date.now()+60_000});await h.run();expect(h.exchange.placeEntry).not.toHaveBeenCalled();});
   it('keeps AI LONG authorized even when legacy portfolio preference says SHORT_ONLY',async()=>{const h=harness();h.state.settings.portfolioIntelligence.symbolDirectionPreferences[h.packet.symbol]='SHORT_ONLY';await h.run();expect(h.ai.decide).toHaveBeenCalledOnce();expect(h.exchange.placeEntry).toHaveBeenCalledOnce();expect([...h.state.entryIntents.values()][0]?.side).toBe('LONG');});

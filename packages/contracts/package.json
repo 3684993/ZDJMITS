@@ -1,6 +1,6 @@
 {
   "name": "@zdj/contracts",
-  "version": "3.9.6",
+  "version": "3.9.7",
   "private": true,
   "type": "module",
   "main": "dist/index.js",

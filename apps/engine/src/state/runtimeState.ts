@@ -64,7 +64,8 @@ export class RuntimeState {
      * by the runtime that owns that authority. It lets the pipeline refuse a candidate it can already
      * prove will be refused by admission, instead of paying for a model call first.
      */
-    marginTierCoverage: {symbols:string[];version:string;contentHash:string;loadedAt:number} | null = null;
+    marginTierCoverage: {symbols:string[];version:string;contentHash:string;loadedAt:number;
+      tiersBySymbol:Record<string,Array<{notionalFloor:number;notionalCap:number|null;initialLeverage:number}>>} | null = null;
     manualIntents = new Map();
     manualOrders = new Map();
     experienceSamples = new Map();
@@ -157,6 +158,9 @@ export class RuntimeState {
     }
     setSettings(settings) { this.settings = settings; this.pool.updateSettings(settings); this.generation++; }
     activeEntrySymbols() { const now=Date.now();return new Set([...this.entryOrders.values()].filter(o => entryOrderOccupiesRisk(o,now)).map(o => o.symbol.toUpperCase())); }
+    operationalEntrySymbols() { return testnetFundsOnlyEntry(this.settings)
+        ? new Set([...this.entryOrders.values()].filter(o=>['NEW','SUBMITTING','WORKING','PARTIALLY_FILLED'].includes(o.status)).map(o=>o.symbol.toUpperCase()))
+        : this.activeEntrySymbols(); }
     positionSymbols() { return new Set([...this.positions.values()].map(p => p.symbol.toUpperCase())); }
     addAiRun(run) { this.aiRuns.unshift(run); if (this.aiRuns.length > 200)
         this.aiRuns.length = 200; }
@@ -187,7 +191,7 @@ export class RuntimeState {
         catch{return false;}
     }
     entryCapacity(ignoreOrderId=null,ignoreReservationId=null,now=Date.now()) {
-        const held=new Set([...this.positions.values()].map(p=>resolveUnderlying(p.symbol))),orders=[...this.entryOrders.values()].filter(o=>o.id!==ignoreOrderId&&entryOrderOccupiesRisk(o,now));
+        const held=new Set([...this.positions.values()].map(p=>resolveUnderlying(p.symbol))),orders=[...this.entryOrders.values()].filter(o=>o.id!==ignoreOrderId&&(testnetFundsOnlyEntry(this.settings)?['NEW','SUBMITTING','WORKING','PARTIALLY_FILLED'].includes(o.status):entryOrderOccupiesRisk(o,now)));
         const inFlight=new Set(orders.map(o=>resolveUnderlying(o.symbol)).filter(u=>!held.has(u))),reservations=[...this.entryReservations.values()].filter(r=>r.id!==ignoreReservationId&&this.reservationOccupiesRisk(r,now)&&!held.has(String(r.underlying).toUpperCase())&&!inFlight.has(String(r.underlying).toUpperCase()));
         const reserved=new Set(reservations.map(r=>String(r.underlying).toUpperCase()));return {positions:this.positions.size,inFlight:inFlight.size,reserved:reserved.size,used:this.positions.size+inFlight.size+reserved.size,max:this.settings.portfolio.maxPositions};
     }

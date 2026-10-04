@@ -2,7 +2,7 @@ import { evaluateEntryExecutionPermit } from './entryPermissionModel.js';
 import {reservationDebitsAvailableFunds} from './entryFundingCommitment.js';
 import { testnetFundsOnlyEntry } from '@zdj/core';
 import { buildOpportunityEvidence, qualityPolicy } from './opportunityEvidence.js';
-import { buildQuantityHorizonCandidates, type CandidateSet } from './quantityHorizonCandidates.js';
+import { buildQuantityHorizonCandidates, v397CandidateSetHash, type CandidateSet } from './quantityHorizonCandidates.js';
 import { assembleTradePlan, planFactVersionOf } from './tradePlanService.js';
 import { publishFrozenChoiceConversionTelemetry } from './frozenChoiceTelemetry.js';
 import {binanceEntryBlockReason} from '../adapters/binance/requestBudget.js';
@@ -126,7 +126,7 @@ export class EntryCoordinator {
     else if(capital===0)reason='WAITING_EXECUTION_CAPACITY';
     return{mode:this.analysisOnly()?'ANALYSIS_ONLY':'EXECUTION_ENABLED',...f,reason,schedulerStatus,schedulerCycle:this.schedulerCycle,instanceId:this.schedulerInstanceId,
       heartbeatAt:f.lastTickAt,heartbeatAgeMs,nextEvaluationAt:f.lastTickAt===null?null:f.lastTickAt+ANALYSIS_SCHEDULER_TICK_INTERVAL_MS,suppression:this.lastSuppression,capitalExecutableCount:capital,
-      active:this.active.size,primaryDispatchAgeMs:now-(f.lastAttemptAt??this.analysisStartedAt),primarySuccessAgeMs:now-(f.lastSuccessAt??this.analysisStartedAt),silenceMs:now-(f.lastSuccessAt??this.analysisStartedAt),observationStartedAt:this.analysisStartedAt,
+      active:this.active.size,primaryDispatchAgeMs:now-(f.lastRequestAt??this.analysisStartedAt),primarySuccessAgeMs:now-(f.lastSuccessAt??this.analysisStartedAt),silenceMs:now-(f.lastSuccessAt??this.analysisStartedAt),observationStartedAt:this.analysisStartedAt,
       execution:{intent:gate?.intent??false,ready:gate?.ready??true,blockers:gate?.blockers??[],firstBlocker:gate?.firstBlocker??null,lastReadyAt:gate?.lastReadyAt||null,readinessText:gate?.text??null},
       text:`${schedulerStatus==='RUNNING'?'RUNNING':'STALLED'} · ${reason}`};
   }
@@ -176,7 +176,7 @@ export class EntryCoordinator {
           this.transition(symbol, "READY", "DECISION_CONTEXT_CHANGED");
         }
       }
-    const pending = this.state.activeEntrySymbols().size,
+    const pending = this.state.operationalEntrySymbols().size,
       routes = new Map(this.state.runtimeControl.capital.routedCandidates.map(item=>[item.symbol,item]));
     this.state.pool.refreshReadyView(new Set(this.state.universe.filter((candidate:any)=>candidate.eligible&&candidate.pipelineEligible!==false&&this.objectiveCapacity(candidate.symbol)).map((candidate:any)=>candidate.symbol)));
     const ready = this.state.pool
@@ -602,12 +602,10 @@ export class EntryCoordinator {
         if(!testnetFundsOnlyEntry(this.state.settings)){this.reject(symbol,'PRE_AI_CANDIDATE_SET_EXPIRED',result.runId,d.tradeSide??undefined);return;}
         this.events.publish('POST_AI_OBSERVATION_ONLY',{brainRunId:result.runId,kind:'CANDIDATE_SET_EXPIRY',reason:'PRE_AI_CANDIDATE_SET_EXPIRED',postAiVeto:false},symbol);
       }
-      if(sideEnvelope.candidateSetHash!==candidateSet.candidateSetHash||sideEnvelope.candidateSetFactVersion!==candidateSet.factVersion){
-        if(!testnetFundsOnlyEntry(this.state.settings)){
-          this.events.publish('ENTRY_DECISION_BLOCKED',{stage:'POST_AI_CANDIDATE_VERIFY',reason:'PRE_AI_CANDIDATE_SET_IDENTITY_MISMATCH',brainRunId:result.runId,direction:side},symbol);
-          this.reject(symbol,'PRE_AI_CANDIDATE_SET_IDENTITY_MISMATCH',result.runId,d.tradeSide??undefined);return;
-        }
-        this.events.publish('POST_AI_OBSERVATION_ONLY',{brainRunId:result.runId,kind:'CANDIDATE_SET_IDENTITY',reason:'PRE_AI_CANDIDATE_SET_IDENTITY_MISMATCH',postAiVeto:false},symbol);
+      if(sideEnvelope.candidateSetHash!==candidateSet.candidateSetHash||sideEnvelope.candidateSetFactVersion!==candidateSet.factVersion||
+        (candidateSet.schemaVersion==='V397-PLAN-CANDIDATE-SET-1'&&v397CandidateSetHash(candidateSet)!==candidateSet.candidateSetHash)){
+        this.events.publish('ENTRY_DECISION_BLOCKED',{stage:'POST_AI_CANDIDATE_VERIFY',reason:'FROZEN_IDENTITY_CORRUPT',brainRunId:result.runId,direction:side},symbol);
+        this.reject(symbol,'FROZEN_IDENTITY_CORRUPT',result.runId,d.tradeSide??undefined);return;
       }
       if(candidateProtocol&&d.quantityUnits!==null)this.events.publish('POST_AI_REDUNDANT_FIELD_NORMALIZED',{brainRunId:result.runId,field:'quantityUnits',reported:d.quantityUnits,canonical:null,postAiVeto:false},symbol);
       const sameNumber=(left:unknown,right:unknown)=>Number.isFinite(Number(left))&&Number.isFinite(Number(right))&&Math.abs(Number(left)-Number(right))<=1e-9;
@@ -634,9 +632,14 @@ export class EntryCoordinator {
         targetPrice:selectedPlanCandidate.targetPrice,acceptableTargetRange:{...selectedPlanCandidate.acceptableTargetRange},targetHorizonMinutes:selectedPlanCandidate.targetHorizonMinutes}};
       const quantityUnits=selectedPlanCandidate.quantityUnits;
       this.events.publish('AI_CANDIDATE_SELECTED',{brainRunId:result.runId,protocol:candidateProtocol?'V3.9.7_CANDIDATE_ID':'LEGACY_EXACT_MATCH',candidateSetHash:candidateSet.candidateSetHash,
-        selectedCandidateId:selectedPlanCandidate.candidateId,quantityUnits,marginUsd:selectedPlanCandidate.marginUsd,targetPrice:selectedPlanCandidate.targetPrice,
+        selectedCandidateId:selectedPlanCandidate.candidateId,quantityUnits,leverage:selectedPlanCandidate.leverage,marginUsd:selectedPlanCandidate.marginUsd,targetPrice:selectedPlanCandidate.targetPrice,
         targetHorizonMinutes:selectedPlanCandidate.targetHorizonMinutes,costVersion:selectedPlanCandidate.costs.costVersion,selectionAuthority:'PRIMARY',quantityAuthoredBy:'SYSTEM_CANDIDATE_SET',exchangeWrites:0},symbol);
-      const plan=materializeCandidateQuantityAllocation({state:this.state,candidate,snapshot:market,side,quantityUnits,authorizationMaxPrice:authorizedDecision.acceptablePriceRange.max,envelope:executionEnvelope});
+      // The headline envelope's minimum was computed at its maximum offered leverage.
+      // The selected frozen candidate carries the exact legal lower bound for its own
+      // leverage; reusing the 20x floor for a 10x selection would invent a post-PLACE veto.
+      const selectedExecutionEnvelope={...executionEnvelope,leverage:selectedPlanCandidate.leverage,
+        [side]:{...sideEnvelope,minQuantityUnits:Math.min(Number(sideEnvelope.minQuantityUnits??quantityUnits),quantityUnits)}};
+      const plan=materializeCandidateQuantityAllocation({state:this.state,candidate,snapshot:market,side,quantityUnits,authorizationMaxPrice:authorizedDecision.acceptablePriceRange.max,envelope:selectedExecutionEnvelope});
       // Economics was already proven when this frozen candidate was created before Primary. Re-running
       // it after a 27B decision with a different/worst-case price created contradictory "PLACE then deny"
       // outcomes. The candidate is now the single economic authority; this event is a readback, not a gate.
@@ -692,7 +695,7 @@ export class EntryCoordinator {
       // Persist the exact Primary-selected frozen candidate before any reservation consumes capital.
       // The plan layer may validate the candidate, but it has no authority to switch or resize it.
       const intentId=uid('intent'),cycleIdOfIntent=`cycle_entry_${intentId}`;
-      const planOutcome=this.buildAndPersistTradePlan({symbol,side,market,d:authorizedDecision,result,executionEnvelope,admission,allocation:plan,cycleId:cycleIdOfIntent,candidateSet});
+      const planOutcome=this.buildAndPersistTradePlan({symbol,side,market,d:authorizedDecision,result,executionEnvelope:selectedExecutionEnvelope,admission,allocation:plan,cycleId:cycleIdOfIntent,candidateSet});
       if(!planOutcome.plan){
         this.events.publish('ENTRY_DECISION_BLOCKED',{stage:'TRADE_PLAN',reasons:planOutcome.refusals,warnings:planOutcome.warnings,brainRunId:result.runId},symbol);
         this.reject(symbol,planOutcome.refusals[0]??'TRADE_PLAN_UNPROVEN',result.runId,d.tradeSide??undefined);return;
@@ -723,7 +726,7 @@ export class EntryCoordinator {
           passed:economicAdmission.passed,validatedAt:economicAdmission.validatedAt,expectedNetProfit:economicAdmission.expectedNetProfit,
           requiredNetProfit:economicAdmission.requiredNetProfit,reachProbability:economicAdmission.reachProbability,
           historicalHardMaxMovePercent:economicAdmission.historicalHardMaxMovePercent,blockers:economicAdmission.blockers},};
-      intent.quantityUnits=quantityUnits;intent.executionEnvelope=executionEnvelope;
+      intent.quantityUnits=quantityUnits;intent.executionEnvelope=selectedExecutionEnvelope;
       const reservationRisk=computeExecutableRiskHeadroom({settings:this.state.settings,equity:Number(this.state.account.equityUsd??0),positions:[...this.state.positions.values()],pendingRiskExposures:collectPendingEntryRiskExposures(this.state,{now,excludeReservationId:reservationId,priorityReservationId:reservationId}),symbol,side,...readAdmissionCapacity(this.state,symbol,side,now,{leverage,leverageFact:leverageFactOf(leverage),quoteAsset:plan.quoteAsset}),plannedNotional:plan.notionalUsd,expectedAdverseMovePct:Math.max(.001,market.technical['15m'].atrPercent/100),dailyDrawdownPct:Number(this.state.account.riskBaseline?.riskDrawdownPct??0),capital:candidateCapitalFromState(this.state,{symbol,quoteAsset:plan.quoteAsset,leverage,leverageFact:leverageFactOf(leverage),minimumNotionalUsd:Math.max(1,market.quote.minNotional),now,excludeReservationId:reservationId}),minimumNotional:Math.max(1,market.quote.minNotional)});
       this.events.publish("LIVE_RISK_ENVELOPE_EVALUATED",{brainRunId:result.runId,allocationPlanId:plan.planId,riskEnvelope:{...reservationRisk,status:reservationRisk.executable&&plan.notionalUsd<=reservationRisk.finalNotional+1e-8?'PASS':reservationRisk.reason,reasons:reservationRisk.blockers}},symbol);
       if (!testnetFundsOnlyEntry(this.state.settings)&&(!reservationRisk.executable||plan.notionalUsd>reservationRisk.finalNotional+1e-8)) {this.state.releaseEntryReservation(reservationId);const reason=reservationRisk.reason==='PASS'?'FINAL_NOTIONAL_EXCEEDS_HEADROOM':reservationRisk.reason;this.events.publish("ENTRY_DECISION_BLOCKED",{stage:"LIVE_RISK_ENVELOPE",reason,reasons:reservationRisk.blockers,brainRunId:result.runId,decisionChainId:result.runId,allocationPlanId:plan.planId,planId:tradePlan.planId,intentId,reservationId},symbol);this.reject(symbol,`RISK_${reason}:${reservationRisk.blockers.join(",")}`,result.runId,d.direction);return;}
@@ -844,15 +847,50 @@ export class EntryCoordinator {
         longNotionalAfterUsd:Number(facts.longNotionalUsd),shortNotionalAfterUsd:Number(facts.shortNotionalUsd),clusterNotionalAfterUsd:Number(facts.clusterNotionalUsd),
         limitingConstraints:[...new Set(sideEnvelope.riskHeadroom?.blockers??[])],riskGeneration:Number(facts.riskGeneration),snapshotHash:String(facts.snapshotHash),
         profileVersion:String(facts.profileVersion),humanSlotsAfter:Number(facts.humanSlots)}:null;
-      return buildQuantityHorizonCandidates({symbol,side,now,
-        quote:{bid:Number(quote.bid),ask:Number(quote.ask),tickSize:Number(quote.tickSize),stepSize:Number(quote.stepSize),minQty:Number(quote.minQty),
-          minNotional:Number(quote.minNotional),minEntryPrice:Number(executionEnvelope.makerReachableBand.min),maxEntryPrice:Number(executionEnvelope.makerReachableBand.max)},
-        leverage:Number(executionEnvelope.leverage??0),envelope:sideEnvelope,envelopeExpiresAt:Number(executionEnvelope.expiresAt??now),
-        factVersion:String(this.planFactVersion(symbol,side,String(facts?.snapshotHash??'RISK_OBSERVATION_UNAVAILABLE'),Number(executionEnvelope.expiresAt??now))),
-        risk,settings:{takeProfit:settings.takeProfit,tradeEconomics:settings.tradeEconomics} as never,
-        candles:(timeframe:string,count:number)=>(this.market?.cachedCandles?.(symbol,timeframe as never,count)??[]) as never,
-        managementDurationMs:Math.max(60_000,Number(settings.positionManagement?.humanHandoffAfterMinutes??0)*60_000),
-        fundingEstimate:{amountUsd:null,status:'UNPROVEN' as const,sourceId:null}});
+      const options=testnetFundsOnlyEntry(settings)?executionEnvelope.leverageOptions??[]:[executionEnvelope.leverage],
+        factVersion=String(this.planFactVersion(symbol,side,String(facts?.snapshotHash??'RISK_OBSERVATION_UNAVAILABLE'),Number(executionEnvelope.expiresAt??now))),
+        step=Number(quote.stepSize),bandMax=Math.max(Number(executionEnvelope.makerReachableBand.max),Number(quote.ask),Number(quote.last));
+      const generated=options.map((leverage:number)=>{
+        const maxNotionalUsd=Math.min(sideEnvelope.maxNotionalUsd,sideEnvelope.maxMarginUsd*leverage),
+          minimum=Math.max(Number(quote.minNotional),Number(quote.minQty)*bandMax,Number(sideEnvelope.minimumOrderNotionalQuote??0),Number(sideEnvelope.minimumInitialMarginQuote??0)*leverage),
+          optionEnvelope={...sideEnvelope,maxNotionalUsd,maxQuantityUnits:Math.floor(maxNotionalUsd/(bandMax*step)+1e-9),
+            minQuantityUnits:Math.ceil(minimum/(bandMax*step)-1e-9)};
+        return buildQuantityHorizonCandidates({symbol,side,now,
+          quote:{bid:Number(quote.bid),ask:Number(quote.ask),tickSize:Number(quote.tickSize),stepSize:step,minQty:Number(quote.minQty),
+            minNotional:Number(quote.minNotional),minEntryPrice:Number(executionEnvelope.makerReachableBand.min),maxEntryPrice:Number(executionEnvelope.makerReachableBand.max)},
+          leverage,candidateSchemaVersion:testnetFundsOnlyEntry(settings)?'V397-PLAN-CANDIDATE-1':'V396-PLAN-CANDIDATE-1',
+          envelope:optionEnvelope,envelopeExpiresAt:Number(executionEnvelope.expiresAt??now),factVersion,risk,
+          settings:{takeProfit:settings.takeProfit,tradeEconomics:settings.tradeEconomics} as never,
+          candles:(timeframe:string,count:number)=>(this.market?.cachedCandles?.(symbol,timeframe as never,count)??[]) as never,
+          managementDurationMs:Math.max(60_000,Number(settings.positionManagement?.humanHandoffAfterMinutes??0)*60_000),
+          fundingEstimate:{amountUsd:null,status:'UNPROVEN' as const,sourceId:null}});
+      });
+      if(!testnetFundsOnlyEntry(settings))return generated[0]??buildQuantityHorizonCandidates({symbol,side,now,
+        quote:{bid:0,ask:0,tickSize:0,stepSize:0,minQty:0,minNotional:0},leverage:0,envelope:{...sideEnvelope,executable:false},
+        envelopeExpiresAt:now,factVersion,risk,settings:{takeProfit:settings.takeProfit,tradeEconomics:settings.tradeEconomics} as never,
+        candles:()=>[],managementDurationMs:60_000});
+      const tiers=executionEnvelope.leverageTiers??[];
+      const candidates=generated.flatMap(set=>{
+        const byHorizon=new Map<number,typeof set.candidates[number]>();
+        for(const row of set.candidates){
+          const tier=tiers.find((item:any)=>row.notionalUsd>=item.notionalFloor&&
+            (item.notionalCap===null||row.notionalUsd<item.notionalCap));
+          if(tiers.length&&(!tier||row.leverage>tier.initialLeverage))continue;
+          if(row.marginUsd+1e-8<Number(sideEnvelope.minimumInitialMarginQuote??100))continue;
+          const prior=byHorizon.get(row.targetHorizonMinutes);
+          if(!prior||row.marginUsd<prior.marginUsd)byHorizon.set(row.targetHorizonMinutes,row);
+        }
+        return [...byHorizon.values()];
+      });
+      const hash=v397CandidateSetHash({symbol,side,factVersion,candidates});
+      const first=generated[0];
+      return {schemaVersion:'V397-PLAN-CANDIDATE-SET-1' as const,symbol,side,createdAt:now,expiresAt:executionEnvelope.expiresAt,
+        factVersion,candidateSetHash:hash,candidates,noTradeReasons:candidates.length?[]:[...new Set(generated.flatMap(set=>set.noTradeReasons))],
+        statisticalEvidence:[...new Set(generated.flatMap(set=>set.statisticalEvidence??[]))],
+        quantityLadder:[...new Set(generated.flatMap(set=>set.quantityLadder))].sort((a,b)=>a-b),
+        horizonLadder:first?.horizonLadder??[],rejectedCombinations:generated.reduce((sum,set)=>sum+set.rejectedCombinations,0),
+        feasibleQuantityUnits:first?.feasibleQuantityUnits,bounds:first?.bounds,
+        entryTtlMinutes:first?.entryTtlMinutes,managementDurationMs:first?.managementDurationMs};
     };
     const sets={LONG:build('LONG'),SHORT:build('SHORT')};
     for(const side of ['LONG','SHORT'] as const){
@@ -865,7 +903,9 @@ export class EntryCoordinator {
         targetHorizonMinutes:candidate.targetHorizonMinutes,targetConditionalNetProfitUsd:candidate.economics.targetConditionalNetProfitUsd,
         expectedNetPnlAtHorizonUsd:candidate.economics.expectedNetPnlAtHorizonUsd,reachProbability:candidate.economics.reachProbability,
         reachProbabilityStatus:candidate.economics.reachProbabilityStatus,targetVsStatisticalCeiling:candidate.economics.targetVsStatisticalCeiling,
-        costVersion:candidate.costs.costVersion}));
+        costVersion:candidate.costs.costVersion,sizingProof:candidate.sizingProof,
+        requiredNetProfitQuote:candidate.sizingProof?.requiredNetProfitQuote??null,
+        fundingStatus:candidate.costs.fundingStatus}));
     }
     return{sets,blockers:[...new Set(blockers)]};
   }
@@ -879,9 +919,9 @@ export class EntryCoordinator {
       if(!fundsOnly)return{plan:null,refusals:['PRE_AI_CANDIDATE_SET_EXPIRED'],warnings};
       warnings.push('PRE_AI_CANDIDATE_SET_EXPIRED_POST_AI_AUDIT_ONLY');
     }
-    if(sideEnvelope.candidateSetHash!==candidateSet.candidateSetHash||sideEnvelope.candidateSetFactVersion!==candidateSet.factVersion){
-      if(!fundsOnly)return{plan:null,refusals:['PRE_AI_CANDIDATE_SET_IDENTITY_MISMATCH'],warnings};
-      warnings.push('PRE_AI_CANDIDATE_SET_IDENTITY_MISMATCH_POST_AI_AUDIT_ONLY');
+    if(sideEnvelope.candidateSetHash!==candidateSet.candidateSetHash||sideEnvelope.candidateSetFactVersion!==candidateSet.factVersion||
+      (candidateSet.schemaVersion==='V397-PLAN-CANDIDATE-SET-1'&&v397CandidateSetHash(candidateSet)!==candidateSet.candidateSetHash)){
+      return{plan:null,refusals:['FROZEN_IDENTITY_CORRUPT'],warnings};
     }
     const selected=candidateSet.candidates.find(row=>row.candidateId===input.d.selectedCandidateId)??null;
     const selectedChoice={selectedCandidateId:input.d.selectedCandidateId??null,quantityUnits:Number(selected?.quantityUnits??0),targetPrice:Number(input.d.profitTakePlan?.targetPrice??0),
@@ -907,7 +947,7 @@ export class EntryCoordinator {
         predicateLevel:level>0?level:null,predicateEvidenceRefs:usable,counterEvidenceRefs:(input.d.missingEvidence??[]).map(String),
         releaseCondition:null,modelRunId:input.result?.runId??null,promptVersion:input.result?.promptVersion??null,modelConfidence:Number(input.d.confidence??Number.NaN)},
       candidateSet,scope:this.planScopeOf(input.symbol,input.side),cycleId:input.cycleId,symbol:input.symbol,
-      leverage:Number(input.executionEnvelope.leverage??0),minNetProfitUsd:Number(settings.takeProfit.minNetProfitUsd??0),
+      leverage:selected.leverage,minNetProfitUsd:Number(settings.takeProfit.minNetProfitUsd??0),
       maxRealizedLossUsd:Number(settings.riskGovernance?.exitCoordination?.aiExitLossLimitUsd??0),factVersion:candidateSet.factVersion,now,
       planVersion:this.state.plansForCycle(input.cycleId).length+1,source:'AI',
     });

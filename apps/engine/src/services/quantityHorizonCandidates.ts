@@ -110,7 +110,7 @@ export function buildQuantityHorizonCandidates(input:{
   symbol:string;
   side:'LONG'|'SHORT';
   now:number;
-  quote:{bid:number;ask:number;tickSize:number;stepSize:number;minQty:number;minNotional:number;minEntryPrice?:number};
+  quote:{bid:number;ask:number;tickSize:number;stepSize:number;minQty:number;minNotional:number;minEntryPrice?:number;maxEntryPrice?:number};
   leverage:number;
   envelope:{maxQuantityUnits:number;maxNotionalUsd:number;maxMarginUsd:number;executable:boolean;minQuantityUnits?:number;minimumInitialMarginQuote?:number|null;minimumOrderNotionalQuote?:number|null;riskHeadroom?:{reason?:string;blockers?:string[]}};
   envelopeExpiresAt:number;
@@ -135,7 +135,13 @@ export function buildQuantityHorizonCandidates(input:{
     selection:input.selection?{...input.selection,offered:false,refusals:[...new Set(reasons)],fallbacks:[]}:undefined});
   if(!envelope.executable)return rejectAll('SIDE_NOT_EXECUTABLE',...(envelope.riskHeadroom?.blockers??[]));
   if(!(quote.stepSize>0)||!(quote.tickSize>0)||!(leverage>0))return rejectAll('CANDIDATE_MARKET_FACT_INVALID');
-  const entryPrice=side==='LONG'?quote.ask:quote.bid;
+  const currentEntryPrice=side==='LONG'?quote.ask:quote.bid,
+    authorizedMin=finite(quote.minEntryPrice)&&Number(quote.minEntryPrice)>0?Number(quote.minEntryPrice):Math.min(quote.bid,quote.ask),
+    authorizedMax=finite(quote.maxEntryPrice)&&Number(quote.maxEntryPrice)>0?Number(quote.maxEntryPrice):Math.max(quote.bid,quote.ask),
+    // Price, sizing and TP must remain valid for every maker price Primary is allowed to execute.
+    // Using the conservative edge here prevents a later reprice from turning the frozen target onto
+    // the wrong side or below the already-proven profit floor.
+    entryPrice=side==='LONG'?Math.max(currentEntryPrice,authorizedMax):Math.min(currentEntryPrice,authorizedMin);
   if(!(entryPrice>0))return rejectAll('CANDIDATE_ENTRY_PRICE_UNPROVEN');
   const quantityCeiling=Math.min(Number(envelope.maxQuantityUnits??0),Number(envelope.maxNotionalUsd??0)/(quote.stepSize*entryPrice),
     Number(envelope.maxMarginUsd??Number.POSITIVE_INFINITY)*leverage/(quote.stepSize*entryPrice));

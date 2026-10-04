@@ -52,8 +52,8 @@ describe('real EntryCoordinator opportunity authorization',()=>{
       if(kind==='expiry')h.state.settings.tradingQuality!.policyVersion='expired-observation-sim';
     });
     await h.run();
-    if(kind==='structure'){expect(h.exchange.placeEntry).not.toHaveBeenCalled();expect(h.events.some(e=>String(e.payload?.reason??'').includes('MARKET_THESIS_FACTS_CHANGED_REQUIRES_NEW_MANDATE'))).toBe(true);}
-    else expect(h.exchange.placeEntry).toHaveBeenCalledOnce();
+    expect(h.exchange.placeEntry, `post-Primary TradingQuality ${kind} drift is observation-only`).toHaveBeenCalledOnce();
+    expect(h.events.some(e=>String(e.payload?.reason??'').includes('MARKET_THESIS_FACTS_CHANGED_REQUIRES_NEW_MANDATE'))).toBe(false);
     if(h.state.entryIntents.size)expect([...h.state.entryIntents.values()][0]?.side).toBe('LONG');
   });
   it('WAIT creates no intent and fresh evaluation creates new authorization',async()=>{
@@ -104,8 +104,9 @@ describe('real EntryCoordinator opportunity authorization',()=>{
     const result=await (restarted as any).submitExactlyOnce(EntryIntentSchema.parse(JSON.parse(JSON.stringify(i))),o);
     expect(result.clientOrderId).toBe(o.clientOrderId);expect(h.exchange.placeEntry).toHaveBeenCalledTimes(1);
   });
-  it('evidence storage failure blocks ENFORCE before Primary but does not block OFF',async()=>{
-    const h=ready();(h.state as any).tradingQualityEvidenceReady=false;await h.run();expect(h.ai.decide).not.toHaveBeenCalled();expect(h.exchange.placeEntry).not.toHaveBeenCalled();
+  it('TradingQuality evidence storage is observational in TESTNET funds-only and cannot suppress Primary',async()=>{
+    const h=ready();(h.state as any).tradingQualityEvidenceReady=false;await h.run();
+    expect(h.ai.decide).toHaveBeenCalledOnce();expect(h.exchange.placeEntry).toHaveBeenCalledOnce();
     const off=harness();(off.supplied as any).quantityUnits=1000;(off.state as any).tradingQualityEvidenceReady=false;await off.run();expect(off.exchange.placeEntry).toHaveBeenCalledOnce();
   });
   it('processPool wakes WAIT on a fresh event and obtains a new Primary decision',async()=>{

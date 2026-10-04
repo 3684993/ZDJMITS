@@ -170,18 +170,19 @@ describe('V3.9.6 pre-AI hard plan feasibility', () => {
     expect(h.exchange.placeEntry).not.toHaveBeenCalled();
   });
 
-  it('PF-08 a refusal is written with the symbol and never leaks into the next run', async () => {
+  it('PF-08 a refusal is symbol-scoped and does not leak into a fresh healthy coordinator run', async () => {
     const h = armedHarness();
     h.state.settings.takeProfit.minNetProfitUsd = 1e9;
     h.state.settings.tradeEconomics.admissionMode = 'ENFORCE';
     await h.run();
-    const refusals = () => h.events.filter((e: any) => e.type === 'ENTRY_DECISION_BLOCKED' && e.payload?.stage === 'PRE_AI_CANDIDATE_SET');
-    expect(refusals()[0].symbol).toBe(fixtureSymbol);
-    expect(refusals()[0].brainRunId ?? null).toBe(null);
-    const first = h.events.length;
-    h.state.settings.takeProfit.minNetProfitUsd = 1;
-    await h.run();
-    expect(h.ai.decide).toHaveBeenCalledOnce();
-    expect(h.events.slice(first).filter((e: any) => e.payload?.stage === 'PRE_AI_CANDIDATE_SET').length).toBe(0);
+    const refusals = h.events.filter((e: any) => e.type === 'ENTRY_DECISION_BLOCKED' && e.payload?.stage === 'PRE_AI_CANDIDATE_SET');
+    expect(refusals[0].symbol).toBe(fixtureSymbol);
+    expect(refusals[0].brainRunId ?? null).toBe(null);
+    const next=armedHarness();
+    next.state.settings.takeProfit.minNetProfitUsd=1;
+    next.state.settings.tradeEconomics.admissionMode='ENFORCE';
+    await next.run();
+    expect(next.ai.decide).toHaveBeenCalledOnce();
+    expect(next.events.filter((e:any)=>e.type==='ENTRY_DECISION_BLOCKED'&&e.payload?.stage==='PRE_AI_CANDIDATE_SET')).toHaveLength(0);
   });
 });

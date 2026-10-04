@@ -46,15 +46,19 @@ export function harness(raw?:any) {
   const coordinator=new EntryCoordinator(state,{build:(_symbol:string,executionEnvelope:any)=>({...packet,executionEnvelope})} as never,ai as never,exchange as never,bus);
   return {state,packet,ai,exchange,events,coordinator,supplied,candidateDecision:(decisionPacket:any,side:'LONG'|'SHORT'='LONG',candidateIndex=0,overrides:Record<string,unknown>={})=>candidateDecision(decisionPacket,supplied,side,candidateIndex,overrides),run:()=> (coordinator as any).analyze(packet.symbol)};
 }
-async function authorizedExecutionWait(){
+async function frozenFarPricePlace(){
   const h=harness(),market=h.state.snapshots.get(h.packet.symbol)!,tick=market.quote.tickSize,target=Math.ceil((market.quote.bid*1.02)/tick)*tick;
-  h.ai.decide.mockImplementation(async(decisionPacket:any)=>({decision:h.candidateDecision(decisionPacket,'LONG',0,{idealPrice:target,acceptablePriceRange:{min:target,max:target+tick*4},horizonMinutes:3,reachability:.8,reason:'WAIT_EXECUTION_RANGE_REGRESSION'}),runId:'wait-execution-run'}));
+  h.state.settings.entry.nearMarket.enabled=true;
+  market.recentTradedPrices=[];
+  h.ai.decide.mockImplementation(async(decisionPacket:any)=>({decision:h.candidateDecision(decisionPacket,'LONG',0,{
+    idealPrice:target,acceptablePriceRange:{min:target,max:target+tick*4},horizonMinutes:3,reachability:.8,reason:'FROZEN_PLACE_POST_AI_NO_VETO'
+  }),runId:'frozen-place-run'}));
   await h.run();
-  expect(h.state.candidateLifecycle.get(h.packet.symbol)).toMatchObject({status:'WAIT_EXECUTION_RANGE'});
-  expect(h.state.universe.find(x=>x.symbol===h.packet.symbol)?.pipelineEligible).toBe(false);
-  expect(h.exchange.placeEntry).not.toHaveBeenCalled();
-  const now=Date.now(),snapshot=h.state.snapshots.get(h.packet.symbol)!;
-  snapshot.quote={...snapshot.quote,bid:target,ask:target+tick,last:target,mark:target,ts:now};snapshot.orderBook={...snapshot.orderBook,ts:now};
+  expect(h.ai.decide).toHaveBeenCalledOnce();
+  expect(h.exchange.placeEntry).toHaveBeenCalledOnce();
+  expect(h.state.candidateLifecycle.get(h.packet.symbol)).toMatchObject({status:'ENTRY_WORKING'});
+  expect(h.state.candidateLifecycle.get(h.packet.symbol)?.status).not.toBe('WAIT_EXECUTION_RANGE');
+  expect(h.events.some(e=>e.type==='POST_AI_OBSERVATION_ONLY'&&e.payload?.postAiVeto===false)).toBe(true);
   return h;
 }
 describe('V3.7.0 isolated real-EIP contracts; production write=0',()=>{
@@ -74,17 +78,71 @@ describe('V3.7.0 isolated real-EIP contracts; production write=0',()=>{
   it('does not clear cooldown when Entry and Universe inspect the same unchanged facts',()=>{const h=harness(),symbol=h.packet.symbol,context=(h.coordinator as any).currentDecisionContext(symbol);h.state.candidateLifecycle.set(symbol,{symbol,status:'REJECT_COOLDOWN',reason:'TEST',decisionContextKey:context,nextEligibleAt:Date.now()+60_000,updatedAt:Date.now()});h.state.rejectionCooldown.set(symbol,{until:Date.now()+60_000});new UniverseCoordinator(h.state,new EventBus()).refresh();expect(h.state.candidateLifecycle.get(symbol)).toMatchObject({status:'REJECT_COOLDOWN'});expect(h.state.rejectionCooldown.has(symbol)).toBe(true);});
   it('repairs Episode fields from normalized terminal facts with previous provenance',()=>{const d=terminalDecision({id:'r',status:'COMPLETED',startedAt:1,completedAt:2,normalizedPreview:JSON.stringify({confidence:.8,reason:'explicit'})},{status:'RUNNING'});expect(d).toMatchObject({confidence:.8,reason:'explicit',revision:{previous:{status:'RUNNING'}}});});
   it('fixed outcome rejects immature horizons and separates SHORT from market return',()=>{const db=new DatabaseSync(':memory:');try{db.exec('CREATE TABLE shadow_mark_series(symbol TEXT,ts INTEGER,mark REAL)');const s=db.prepare('INSERT INTO shadow_mark_series VALUES(?,?,?)');for(let i=0;i<=15;i++)s.run('X',1000+i*60000,100-i/15);expect(observedOutcome(db,'X',1000,100,'SHORT',1000+899999).horizons.m15).toBeNull();const o=observedOutcome(db,'X',1000,100,'SHORT',901000);expect(o.horizons.m15).toMatchObject({maturedAt:901000,coverage:'SAMPLED_CONTIGUOUS',mae:0});expect(o.horizons.m15.directionReturn).toBeCloseTo(.01);expect(o.horizons.m15.marketReturn).toBeCloseTo(-.01);expect(o.horizons.h1).toBeNull();}finally{db.close();}});
-  it('resumes one authorized WAIT_EXECUTION_RANGE intent despite pipelineEligible=false',async()=>{const h=await authorizedExecutionWait();await (h.coordinator as any).resumeExecutionWaits(Date.now());expect(h.ai.decide).toHaveBeenCalledOnce();expect(h.exchange.placeEntry,JSON.stringify(h.events.filter(x=>x.type.includes('EXECUTION')||x.type.includes('ORDER')))).toHaveBeenCalledOnce();expect(h.state.entryIntents.size).toBe(1);expect(h.state.entryOrders.size).toBe(1);const order=[...h.state.entryOrders.values()][0] as any;expect(order.clientOrderId).toMatch(/^ml_/);expect(h.state.candidateLifecycle.get(h.packet.symbol)).toMatchObject({status:'ENTRY_WORKING',executionWait:null});});
-  it.each([
-    ['insufficient funds',(h:any)=>{h.state.account.assets[0].availableBalance=0;},'INSUFFICIENT_AVAILABLE_MARGIN'],
-    ['authorization expired',(h:any)=>{const intent=[...h.state.entryIntents.values()][0] as any;intent.aiAuthorizationExpiresAt=Date.now()-1;intent.absoluteExpiresAt=Date.now()-1;},'AI_AUTHORIZATION_EXPIRED'],
-  ])('terminates authorized wait once when a physical execution fact becomes invalid: %s',async(_name,mutate,reason)=>{const h=await authorizedExecutionWait();mutate(h);await (h.coordinator as any).resumeExecutionWaits(Date.now());expect(h.exchange.placeEntry).not.toHaveBeenCalled();expect(h.state.candidateLifecycle.get(h.packet.symbol)).toMatchObject({status:'REJECT_COOLDOWN',executionWait:null});expect(h.events.filter(x=>x.type==='ENTRY_EXECUTION_WAIT_TERMINATED')).toHaveLength(1);expect(h.events.find(x=>x.type==='ENTRY_EXECUTION_WAIT_TERMINATED')?.payload.reason).toBe(reason);});
+  it('submits a frozen far-price PLACE immediately and never creates a post-Primary execution wait',async()=>{
+    const h=await frozenFarPricePlace();
+    await (h.coordinator as any).resumeExecutionWaits(Date.now());
+    expect(h.exchange.placeEntry).toHaveBeenCalledOnce();
+    expect(h.state.entryIntents.size).toBe(1);
+    expect(h.state.entryOrders.size).toBe(1);
+    expect([...h.state.entryOrders.values()][0]?.clientOrderId).toMatch(/^ml_/);
+  });
+
+  it('keeps real insufficient funds as a pre-execution hard fact',async()=>{
+    const h=harness();h.state.account.assets[0].availableBalance=0;
+    await h.run();
+    expect(h.exchange.placeEntry).not.toHaveBeenCalled();
+  });
+
+  it('treats post-Primary authorization age as observation-only in TESTNET funds-only',async()=>{
+    const h=harness();
+    h.exchange.setLeverage.mockImplementation(async()=>{
+      const intent=[...h.state.entryIntents.values()][0] as any;
+      if(intent){intent.aiAuthorizationExpiresAt=Date.now()-1;intent.absoluteExpiresAt=Date.now()-1;}
+    });
+    await h.run();
+    expect(h.exchange.placeEntry).toHaveBeenCalledOnce();
+    expect(h.events.some(e=>e.type==='POST_AI_OBSERVATION_ONLY'&&e.payload?.postAiVeto===false&&['AI_AUTHORIZATION_EXPIRED','JIT_AUTHORIZATION_AGE'].includes(e.payload?.kind))).toBe(true);
+  });
+
   it.each([
     ['symbol blacklist policy',(h:any)=>{h.state.settings.selection.marketQuality.symbolBlacklist=[h.packet.symbol];}],
     ['order-book freshness drift',(h:any)=>{h.state.snapshots.get(h.packet.symbol).orderBook.ts=1;}],
-  ])('does not let post-Primary %s revoke an already authorized PLACE',async(_name,mutate)=>{const h=await authorizedExecutionWait();mutate(h);await (h.coordinator as any).resumeExecutionWaits(Date.now());expect(h.exchange.placeEntry).toHaveBeenCalledOnce();expect(h.state.candidateLifecycle.get(h.packet.symbol)).toMatchObject({status:'ENTRY_WORKING',executionWait:null});});
-  it('recovers an exchange-accepted WAIT submit after response loss without a duplicate',async()=>{const h=await authorizedExecutionWait(),remote=new Map<string,any>();h.exchange.placeEntry.mockImplementation(async(order:any)=>{remote.set(order.clientOrderId,{...order,status:'WORKING',exchangeOrderId:'accepted-on-exchange'});throw new Error('response lost');});h.exchange.findEntryByClientOrderId.mockImplementation(async(order:any)=>remote.get(order.clientOrderId)??null);await (h.coordinator as any).resumeExecutionWaits(Date.now());expect(h.exchange.placeEntry).toHaveBeenCalledOnce();expect(h.state.entryOrders.size).toBe(1);expect([...h.state.entryOrders.values()][0]).toMatchObject({status:'WORKING',exchangeOrderId:'accepted-on-exchange'});});
-  it('recovers the same UNKNOWN WAIT order across restart by clientOrderId',async()=>{const h=await authorizedExecutionWait(),ids:string[]=[];h.exchange.placeEntry.mockImplementation(async(order:any)=>{ids.push(order.clientOrderId);throw new Error('timeout');});h.exchange.findEntryByClientOrderId.mockResolvedValue(null);await (h.coordinator as any).resumeExecutionWaits(Date.now());const unknown=[...h.state.entryOrders.values()][0] as any;expect(unknown.status).toBe('UNKNOWN');const remote={...unknown,status:'WORKING',exchangeOrderId:'restart-recovered'};const adapter={...h.exchange,placeEntry:vi.fn(),findEntryByClientOrderId:vi.fn(async(order:any)=>order.clientOrderId===unknown.clientOrderId?remote:null)};const restarted=new EntryCoordinator(h.state,{build:()=>h.packet} as never,h.ai as never,adapter as never,new EventBus());await (restarted as any).resumeExecutionWaits(Date.now()+2_000);expect(adapter.placeEntry).not.toHaveBeenCalled();expect(ids).toEqual([unknown.clientOrderId]);expect(h.state.entryOrders.size).toBe(1);expect(h.state.entryOrders.get(unknown.id)).toMatchObject({status:'WORKING',exchangeOrderId:'restart-recovered'});});
+  ])('does not let post-Primary %s revoke a frozen PLACE',async(_name,mutate)=>{
+    const h=harness();
+    h.exchange.setLeverage.mockImplementation(async()=>mutate(h));
+    await h.run();
+    expect(h.exchange.placeEntry).toHaveBeenCalledOnce();
+  });
+
+  it('recovers an exchange-accepted submit after response loss without a duplicate',async()=>{
+    const h=harness(),remote=new Map<string,any>();
+    h.exchange.placeEntry.mockImplementation(async(order:any)=>{remote.set(order.clientOrderId,{...order,status:'WORKING',exchangeOrderId:'accepted-on-exchange'});throw new Error('response lost');});
+    h.exchange.findEntryByClientOrderId.mockImplementation(async(order:any)=>remote.get(order.clientOrderId)??null);
+    await h.run();
+    expect(h.exchange.placeEntry).toHaveBeenCalledOnce();
+    expect(h.state.entryOrders.size).toBe(1);
+    expect([...h.state.entryOrders.values()][0]).toMatchObject({status:'WORKING',exchangeOrderId:'accepted-on-exchange'});
+  });
+
+  it('recovers the same UNKNOWN identity by clientOrderId without another wire submit',async()=>{
+    const h=harness(),ids:string[]=[];
+    h.exchange.placeEntry.mockImplementation(async(order:any)=>{ids.push(order.clientOrderId);throw new Error('timeout');});
+    h.exchange.findEntryByClientOrderId.mockResolvedValue(null);
+    await h.run();
+    const unknown=[...h.state.entryOrders.values()][0] as any,intent=[...h.state.entryIntents.values()][0] as any;
+    expect(unknown?.status).toBe('UNKNOWN');
+    const remote={...unknown,status:'WORKING',exchangeOrderId:'restart-recovered'};
+    h.exchange.findEntryByClientOrderId.mockImplementation(async(order:any)=>order.clientOrderId===unknown.clientOrderId?remote:null);
+    const recovered=await (h.coordinator as any).submitExactlyOnce(intent,unknown);
+    expect(recovered).toMatchObject({status:'WORKING',exchangeOrderId:'restart-recovered'});
+    expect(h.exchange.placeEntry).toHaveBeenCalledOnce();
+    expect(ids).toEqual([unknown.clientOrderId]);
+  });
+
+});
+
+
+describe('V3.9 near-quote Primary to Entry contract'
 });
 
 

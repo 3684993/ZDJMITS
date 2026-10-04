@@ -875,13 +875,18 @@ export class EntryCoordinator {
   }
 
   private buildAndPersistTradePlan(input:{symbol:string;side:'LONG'|'SHORT';market:any;d:any;result:any;executionEnvelope:any;admission:any;allocation:any;cycleId:string;candidateSet:CandidateSet}){
-    const now=Date.now(),warnings:string[]=[],settings=this.state.settings as any;
+    const now=Date.now(),warnings:string[]=[],settings=this.state.settings as any,fundsOnly=testnetFundsOnlyEntry(settings);
     const facts=(()=>{try{return input.admission?.preTradeFacts?.(now);}catch(error){if(!testnetFundsOnlyEntry(settings))throw error;return null;}})();
     if(!testnetFundsOnlyEntry(settings)&&(!facts||facts.complete!==true))return{plan:null,refusals:[...((facts?.blockers??['RISK_SNAPSHOT_UNPROVEN']) as string[])].slice(0,8),warnings};
     const sideEnvelope=input.executionEnvelope[input.side],candidateSet=input.candidateSet;
-    if(now>=candidateSet.expiresAt)return{plan:null,refusals:['PRE_AI_CANDIDATE_SET_EXPIRED'],warnings};
-    if(sideEnvelope.candidateSetHash!==candidateSet.candidateSetHash||sideEnvelope.candidateSetFactVersion!==candidateSet.factVersion)
-      return{plan:null,refusals:['PRE_AI_CANDIDATE_SET_IDENTITY_MISMATCH'],warnings};
+    if(now>=candidateSet.expiresAt){
+      if(!fundsOnly)return{plan:null,refusals:['PRE_AI_CANDIDATE_SET_EXPIRED'],warnings};
+      warnings.push('PRE_AI_CANDIDATE_SET_EXPIRED_POST_AI_AUDIT_ONLY');
+    }
+    if(sideEnvelope.candidateSetHash!==candidateSet.candidateSetHash||sideEnvelope.candidateSetFactVersion!==candidateSet.factVersion){
+      if(!fundsOnly)return{plan:null,refusals:['PRE_AI_CANDIDATE_SET_IDENTITY_MISMATCH'],warnings};
+      warnings.push('PRE_AI_CANDIDATE_SET_IDENTITY_MISMATCH_POST_AI_AUDIT_ONLY');
+    }
     const selected=candidateSet.candidates.find(row=>row.candidateId===input.d.selectedCandidateId)??null;
     const selectedChoice={selectedCandidateId:input.d.selectedCandidateId??null,quantityUnits:Number(selected?.quantityUnits??0),targetPrice:Number(input.d.profitTakePlan?.targetPrice??0),
       targetHorizonMinutes:Number(input.d.profitTakePlan?.targetHorizonMinutes??0),horizonMinutes:Number(input.d.horizonMinutes??0)};
@@ -911,7 +916,7 @@ export class EntryCoordinator {
       planVersion:this.state.plansForCycle(input.cycleId).length+1,source:'AI',
     });
     if(!outcome.plan){recordConversion('REFUSED');return{plan:null,refusals:outcome.refusals,warnings:[...warnings,...outcome.warnings]};}
-    const fundsOnly=testnetFundsOnlyEntry(settings),configuredMargin=Number(sideEnvelope.minimumInitialMarginQuote??0),configuredOrderNotional=Number(sideEnvelope.minimumOrderNotionalQuote??0);
+    const configuredMargin=Number(sideEnvelope.minimumInitialMarginQuote??0),configuredOrderNotional=Number(sideEnvelope.minimumOrderNotionalQuote??0);
     if(fundsOnly&&!(configuredMargin>0))warnings.push('BUSINESS_MINIMUM_INITIAL_MARGIN_UNCONFIGURED_POST_AI_AUDIT_ONLY');
     if(fundsOnly&&!(configuredOrderNotional>0))warnings.push('BUSINESS_MINIMUM_ORDER_NOTIONAL_UNCONFIGURED_POST_AI_AUDIT_ONLY');
     // The selected pre-AI candidate already froze sizing, target, fees and the business floors.

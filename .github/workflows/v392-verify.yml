@@ -66,10 +66,33 @@ jobs:
             git push origin HEAD:${{ github.ref_name }}
             if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           }
-      - name: Diff check from V3.9.3 frozen baseline
+      - name: Diff check for current change set
         shell: pwsh
         run: |
-          git diff --check 08487ca9f0e9e389cc9de783c2b914630b6e54b9..HEAD
+          if ("${{ github.ref_name }}" -eq "main") {
+            $base = "${{ github.event.before }}"
+          } else {
+            $base = (git merge-base origin/main HEAD)
+          }
+          if (-not $base -or $base -match '^0+
+      - name: Build workspace type prerequisites
+        shell: pwsh
+        run: |
+          npm run build --workspace @zdj/contracts
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          npm run build --workspace @zdj/core
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Verify scripts
+        run: npm run verify:scripts
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Test
+        run: npm test
+      - name: Build
+        run: npm run build
+) { $base = "HEAD^" }
+          Write-Host "git diff --check $base..HEAD"
+          git diff --check "$base..HEAD"
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Build workspace type prerequisites
         shell: pwsh

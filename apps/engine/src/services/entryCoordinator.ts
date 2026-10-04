@@ -850,7 +850,7 @@ export class EntryCoordinator {
         profileVersion:String(facts.profileVersion),humanSlotsAfter:Number(facts.humanSlots)}:null;
       return buildQuantityHorizonCandidates({symbol,side,now,
         quote:{bid:Number(quote.bid),ask:Number(quote.ask),tickSize:Number(quote.tickSize),stepSize:Number(quote.stepSize),minQty:Number(quote.minQty),
-          minNotional:Number(quote.minNotional),minEntryPrice:Number(executionEnvelope.makerReachableBand.min)},
+          minNotional:Number(quote.minNotional),minEntryPrice:Number(executionEnvelope.makerReachableBand.min),maxEntryPrice:Number(executionEnvelope.makerReachableBand.max)},
         leverage:Number(executionEnvelope.leverage??0),envelope:sideEnvelope,envelopeExpiresAt:Number(executionEnvelope.expiresAt??now),
         factVersion:String(this.planFactVersion(symbol,side,String(facts?.snapshotHash??'RISK_OBSERVATION_UNAVAILABLE'),Number(executionEnvelope.expiresAt??now))),
         risk,settings:{takeProfit:settings.takeProfit,tradeEconomics:settings.tradeEconomics} as never,
@@ -878,7 +878,7 @@ export class EntryCoordinator {
     const now=Date.now(),warnings:string[]=[],settings=this.state.settings as any;
     const facts=(()=>{try{return input.admission?.preTradeFacts?.(now);}catch(error){if(!testnetFundsOnlyEntry(settings))throw error;return null;}})();
     if(!testnetFundsOnlyEntry(settings)&&(!facts||facts.complete!==true))return{plan:null,refusals:[...((facts?.blockers??['RISK_SNAPSHOT_UNPROVEN']) as string[])].slice(0,8),warnings};
-    const sideEnvelope=input.executionEnvelope[input.side],quote=input.market?.quote??{},candidateSet=input.candidateSet;
+    const sideEnvelope=input.executionEnvelope[input.side],candidateSet=input.candidateSet;
     if(now>=candidateSet.expiresAt)return{plan:null,refusals:['PRE_AI_CANDIDATE_SET_EXPIRED'],warnings};
     if(sideEnvelope.candidateSetHash!==candidateSet.candidateSetHash||sideEnvelope.candidateSetFactVersion!==candidateSet.factVersion)
       return{plan:null,refusals:['PRE_AI_CANDIDATE_SET_IDENTITY_MISMATCH'],warnings};

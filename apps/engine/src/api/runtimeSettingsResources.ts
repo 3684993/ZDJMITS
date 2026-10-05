@@ -11,7 +11,7 @@ const aiLoadDefault=()=>({active:0,totalRuns:0,failures:0,lastLatencyMs:null,cur
 function canonicalProxy(settings:SystemSettings,item?:any):SystemSettings{
   const next=structuredClone(settings),current=next.connections.proxy as any,{expectedStaticEgressIp:_legacyEgress,...withoutLegacyEgress}=current;
   next.connections.proxy={...withoutLegacyEgress,...(item?{enabled:item.enabled!==false,protocol:'SOCKS5H' as const,url:String(item.url??current.url)}:{}),forceBinanceRest:true,forceBinanceWs:true,proxyDns:true,binanceRestRoute:'CONFIGURED',bypassLocalhost:true,failClosed:true};
-  return SystemSettingsSchema.parse(next);
+  return next;
 }
 function canonicalExchange(settings:SystemSettings,item:any):SystemSettings{
   const next=structuredClone(settings),current=next.connections.exchange,type=String(item?.type??item?.provider??current.provider);

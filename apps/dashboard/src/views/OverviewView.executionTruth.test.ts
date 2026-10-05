@@ -38,13 +38,15 @@ describe('active order classification', () => {
     expect(wrapper.text()).toContain('$10,534.51');
     expect(wrapper.text()).toContain('USDT + USDC 浮动盈亏');
     expect(wrapper.text()).toContain('$80.20');
-    expect(wrapper.text()).toContain('本地已实现净收益（不含资金费）');
+    expect(wrapper.text()).toContain('基线后账户钱包净增');
+    expect(wrapper.text()).toContain('本地累计不含资金费');
     expect(wrapper.text()).toContain('$80.10');
     expect(wrapper.find('[data-accounting-coverage]').text()).toContain('Fill attribution UNPROVEN');
   });
   it('does not label unknown funding as zero formal net profit',async()=>{
     const wrapper=await open({tradeNetPnl:null,tradeFundingUnknownCount:5});
-    expect(wrapper.text()).toContain('本地已实现净收益（不含资金费）');
+    expect(wrapper.text()).toContain('基线后账户钱包净增');
+    expect(wrapper.text()).toContain('本地累计不含资金费');
     expect(wrapper.text()).not.toContain('已确认全口径净收益 $0.00');
   });
   it('labels COMPLETE as an income query window, while cycle funding stays unknown',async()=>{

@@ -3,6 +3,7 @@ $root=Split-Path -Parent $PSScriptRoot
 $hostScript=Join-Path $PSScriptRoot 'start-zdj-engine-host.ps1'
 $launcherScript=Join-Path $PSScriptRoot 'start-zdj-lan.ps1'
 $collectorScript=Join-Path $PSScriptRoot 'collect-zdj-v397-runtime-handoff.ps1'
+$windowsLauncherScript=Join-Path $PSScriptRoot 'windows\start-engine.ps1'
 $tokens=$null;$errors=$null
 [void][Management.Automation.Language.Parser]::ParseFile($hostScript,[ref]$tokens,[ref]$errors)
 if($errors.Count){throw ('HOST_SCRIPT_PARSE_FAILED: '+(($errors|ForEach-Object Message)-join '; '))}
@@ -12,6 +13,14 @@ if($errors.Count){throw ('LAUNCHER_SCRIPT_PARSE_FAILED: '+(($errors|ForEach-Obje
 $tokens=$null;$errors=$null
 [void][Management.Automation.Language.Parser]::ParseFile($collectorScript,[ref]$tokens,[ref]$errors)
 if($errors.Count){throw ('COLLECTOR_SCRIPT_PARSE_FAILED: '+(($errors|ForEach-Object Message)-join '; '))}
+$tokens=$null;$errors=$null
+[void][Management.Automation.Language.Parser]::ParseFile($windowsLauncherScript,[ref]$tokens,[ref]$errors)
+if($errors.Count){throw ('WINDOWS_LAUNCHER_SCRIPT_PARSE_FAILED: '+(($errors|ForEach-Object Message)-join '; '))}
+$launcherText=Get-Content -LiteralPath $launcherScript -Raw
+$windowsLauncherText=Get-Content -LiteralPath $windowsLauncherScript -Raw
+if($launcherText -notmatch '\[switch\]\$Foreground' -or $launcherText -notmatch 'FOREGROUND OBSERVE MODE'){throw 'FOREGROUND_OBSERVE_MODE_MISSING'}
+if($launcherText -notmatch '8081/8083/8084 are not stopped or restarted'){throw 'FOREGROUND_AI_LIFECYCLE_BOUNDARY_MISSING'}
+if($windowsLauncherText -notmatch '\[switch\]\$Foreground' -or $windowsLauncherText -notmatch '\& \$launcher -Foreground'){throw 'WINDOWS_FOREGROUND_ENTRYPOINT_MISSING'}
 $collectorText=Get-Content -LiteralPath $collectorScript -Raw
 if($collectorText -match '(?i)-Method\s+(POST|PUT|PATCH|DELETE)' -or $collectorText -match '/trade-records/sync/apply|/testnet/cleanup/run'){throw 'COLLECTOR_MUST_REMAIN_READ_ONLY'}
 $temp=Join-Path ([IO.Path]::GetTempPath()) ('zdj-host-test-'+[guid]::NewGuid().ToString('N'))

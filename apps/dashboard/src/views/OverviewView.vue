@@ -341,7 +341,7 @@ onUnmounted(() => {
           :class="(s.snapshot?.tradeLocalConfirmedNetPnl ?? 0) >= 0 ? 'positive' : 'negative'"
           >{{ s.snapshot?.tradeLocalConfirmedNetPnl == null ? "—" : money(s.snapshot.tradeLocalConfirmedNetPnl) }}</strong
         >
-        <small>仅统计本系统 SYSTEM 周期：交易收益（不含资金费） {{ money(s.snapshot?.tradeLocalTradingNetExFunding ?? 0) }} · 已确认资金费 {{ money(s.snapshot?.tradeLocalConfirmedFunding ?? 0) }} · {{ s.snapshot?.tradeCompletedExFundingCount ?? 0 }} 个完整周期<span v-if="(s.snapshot?.tradeFundingUnknownCount ?? 0) > 0"> · {{ s.snapshot?.tradeFundingUnknownCount }} 笔资金费未确认，未计入上方数字</span><span v-else> · 资金费覆盖已闭合</span>；全量最终净收益 {{ s.snapshot?.tradeNetPnl == null ? '未证明' : money(s.snapshot.tradeNetPnl) }}</small>
+        <small>仅统计本系统 SYSTEM 周期：交易收益（不含资金费） {{ money(s.snapshot?.tradeLocalTradingNetExFunding ?? 0) }} · 已确认资金费 {{ money(s.snapshot?.tradeLocalConfirmedFunding ?? 0) }} · {{ s.snapshot?.tradeCompletedExFundingCount ?? 0 }} 个完整周期<span v-if="(s.snapshot?.tradeFundingUnknownCount ?? 0) > 0"> · {{ s.snapshot?.tradeFundingUnknownCount }} 笔资金费未确认，未计入上方数字</span><span v-else> · 资金费覆盖已闭合</span>；本地最终净收益 {{ s.snapshot?.tradeNetPnl == null ? '未证明' : money(s.snapshot.tradeNetPnl) }}</small>
       </div>
       <div class="kpi" data-active-commissions>
         <span>{{ commissions ? "活动委托 · 按证明来源分列（不相加）" : "活动委托 · 分类不可用" }}</span>

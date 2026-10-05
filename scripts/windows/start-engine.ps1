@@ -1,3 +1,12 @@
+[CmdletBinding()]
+param(
+  [switch]$Foreground
+)
 $ErrorActionPreference = 'Stop'
 Set-Location (Resolve-Path "$PSScriptRoot\..\..")
-& (Join-Path (Get-Location) 'scripts/start-zdj-lan.ps1')
+$launcher=Join-Path (Get-Location) 'scripts/start-zdj-lan.ps1'
+if($Foreground){
+  & $launcher -Foreground
+}else{
+  & $launcher
+}

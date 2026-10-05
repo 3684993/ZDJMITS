@@ -96,7 +96,8 @@ if($Foreground){
   Write-Host ('V8              : '+$v8Version)
   Write-Host ('PID             : current console will own node.exe directly')
   Write-Host ('Engine          : '+$enginePath)
-  Write-Host ('Node flags      : '+(($nodeFlags -join ' ') ?? '(none)'))
+  $flagText=if($nodeFlags.Count){$nodeFlags -join ' '}else{'(none)'}
+  Write-Host ('Node flags      : '+$flagText)
   Write-Host ('Console log     : '+$foregroundLog)
   Write-Host ('Crash reports   : '+$reportDir)
   Write-Host 'AI services     : untouched (8081/8083/8084 are not stopped or restarted)'

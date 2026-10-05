@@ -236,6 +236,20 @@ export class TradingQualityCollector {
     }
   }
   health(){return{status:this.error?'DEGRADED':'READY',error:this.error,scope:this.scope(),lastSampleAt:this.lastSample};}
+  /** HTTP-safe operational summary. The full report intentionally remains an offline/internal
+   * diagnostic because materialising every evidence payload on the Engine thread can be expensive. */
+  summary(){
+    const scope=this.scope(),scalar=(sql:string,...args:any[])=>Number((this.db.prepare(sql).get(...args) as any)?.count??0);
+    const factRows=this.db.prepare('SELECT kind,COUNT(*) AS count FROM tq_facts WHERE scope=? GROUP BY kind ORDER BY kind').all(scope) as any[];
+    return{schemaVersion:'TQ-HTTP-SUMMARY-1',scope,generatedAt:Date.now(),status:this.error?'DEGRADED':'READY',error:this.error,lastSampleAt:this.lastSample,
+      counts:{episodes:scalar('SELECT COUNT(*) AS count FROM tq_episodes WHERE scope=?',scope),
+        episodeWork:scalar('SELECT COUNT(*) AS count FROM tq_episode_work WHERE scope=?',scope),
+        dirtyEpisodeWork:scalar('SELECT COUNT(*) AS count FROM tq_episode_work WHERE scope=? AND dirty=1',scope),
+        marks:scalar('SELECT COUNT(*) AS count FROM tq_marks WHERE scope=?',scope),
+        collectorSamples:scalar('SELECT COUNT(*) AS count FROM tq_collector_samples WHERE scope=?',scope)},
+      factsByKind:Object.fromEntries(factRows.map(row=>[String(row.kind),Number(row.count??0)])),
+      fullReportAvailableOffline:true,authorization:'NONE' as const};
+  }
   report(){return tradingQualityReport(this.db,this.scope());}
   close(){this.events.off('event',this.listener);this.db.close();}
 }

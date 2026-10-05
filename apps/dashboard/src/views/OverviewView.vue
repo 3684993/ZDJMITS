@@ -312,14 +312,14 @@ onUnmounted(() => {
     <div v-if="refreshError" class="policy-card danger-lite">{{ refreshError }}</div>
     <div class="kpi-grid five">
       <div class="kpi">
-        <span>交易所 USDT 保证金权益</span
+        <span>总资产（USDT + USDC）</span
         ><strong>{{
-          account()?.valuation?.exchangeUsdtMargin == null ? "—" : money(account().valuation.exchangeUsdtMargin)
+          account()?.valuation?.totalEquityUsd == null ? (account()?.equityUsd == null ? "—" : money(account().equityUsd)) : money(account().valuation.totalEquityUsd)
         }}</strong
-        ><small>Binance totalMarginBalance（USDT 口径）；不含 USDC/BTC</small>
+        ><small>同一 Binance Futures 快照的 USDT + USDC 钱包与浮动盈亏；不包含 BTC/其它资产</small>
       </div>
       <div class="kpi">
-        <span>USDT 浮动盈亏</span
+        <span>USDT + USDC 浮动盈亏</span
         ><strong
           :class="
             (account()?.unrealizedPnlUsd ?? 0) >= 0 ? 'positive' : 'negative'
@@ -336,12 +336,12 @@ onUnmounted(() => {
         ><strong>{{ account()?.activePositions ?? "—" }}</strong>
       </div>
       <div class="kpi">
-        <span>已实现交易收益（不含资金费）</span
+        <span>本地已确认净收益</span
         ><strong
-          :class="(s.snapshot?.tradeTradingNetExFunding ?? 0) >= 0 ? 'positive' : 'negative'"
-          >{{ money(s.snapshot?.tradeTradingNetExFunding ?? 0) }}</strong
+          :class="(s.snapshot?.tradeLocalConfirmedNetPnl ?? 0) >= 0 ? 'positive' : 'negative'"
+          >{{ s.snapshot?.tradeLocalConfirmedNetPnl == null ? "—" : money(s.snapshot.tradeLocalConfirmedNetPnl) }}</strong
         >
-        <small>正式净收益 {{ s.snapshot?.tradeNetPnl == null ? '未证明 · 待资金费确认' : money(s.snapshot.tradeNetPnl) }} · {{ s.snapshot?.tradeCompletedExFundingCount ?? 0 }} 个完整周期<span v-if="(s.snapshot?.tradeFundingUnknownCount ?? 0) > 0"> · {{ s.snapshot?.tradeFundingUnknownCount }} 笔资金费未确认</span></small>
+        <small>仅统计本系统 SYSTEM 周期：交易收益（不含资金费） {{ money(s.snapshot?.tradeLocalTradingNetExFunding ?? 0) }} · 已确认资金费 {{ money(s.snapshot?.tradeLocalConfirmedFunding ?? 0) }} · {{ s.snapshot?.tradeCompletedExFundingCount ?? 0 }} 个完整周期<span v-if="(s.snapshot?.tradeFundingUnknownCount ?? 0) > 0"> · {{ s.snapshot?.tradeFundingUnknownCount }} 笔资金费未确认，未计入上方数字</span><span v-else> · 资金费覆盖已闭合</span>；全量最终净收益 {{ s.snapshot?.tradeNetPnl == null ? '未证明' : money(s.snapshot.tradeNetPnl) }}</small>
       </div>
       <div class="kpi" data-active-commissions>
         <span>{{ commissions ? "活动委托 · 按证明来源分列（不相加）" : "活动委托 · 分类不可用" }}</span>
@@ -361,7 +361,7 @@ onUnmounted(() => {
         </template>
       </div>
     </div>
-    <div v-if="account()?.valuation" class="policy-card" :class="account().valuation.status==='ACCOUNT_VALUATION_INCONSISTENT'?'danger-lite':''" data-account-valuation><strong>{{account().valuation.status==='ACCOUNT_VALUATION_INCONSISTENT'?'ACCOUNT_VALUATION_INCONSISTENT':'同一 Binance 快照的账户口径'}}</strong><span>USDT 钱包 {{money(account().valuation.exchangeUsdtWallet)}} + USDT 浮盈亏 {{money(account().valuation.exchangeUsdtUnrealized)}} = USDT 保证金权益 {{money(account().valuation.exchangeUsdtMargin)}}；USDT/USDC 钱包估值小计 {{money(account().valuation.stablecoinWalletUsd)}}，稳定币保证金权益小计 {{money(account().valuation.stablecoinMarginUsd)}}。Entry 可执行保证金另按交易所 availableBalance 计算；{{account().valuation.unknownAssets.length?'未估值资产 '+account().valuation.unknownAssets.join('、')+'，全部资产 USD 总值未证明。':'资产 USD 估值已覆盖。'}}</span></div>
+    <div v-if="account()?.valuation" class="policy-card" :class="account().valuation.status==='ACCOUNT_VALUATION_INCONSISTENT'?'danger-lite':''" data-account-valuation><strong>{{account().valuation.status==='ACCOUNT_VALUATION_INCONSISTENT'?'ACCOUNT_VALUATION_INCONSISTENT':'USDT + USDC 账户总资产口径'}}</strong><span>钱包合计 {{money(account().valuation.totalWalletUsd ?? account().valuation.stablecoinWalletUsd)}} + 浮动盈亏 {{money(account().valuation.totalUnrealizedPnlUsd ?? 0)}} = 总资产/保证金权益 {{money(account().valuation.totalEquityUsd ?? account().valuation.stablecoinMarginUsd)}}；可用余额合计 {{money(account().valuation.totalAvailableUsd ?? account()?.availableUsd ?? 0)}}。仅统计 USDT、USDC；{{(account().valuation.excludedAssets??[]).length?'以下资产只在明细展示、不计入总资产：'+account().valuation.excludedAssets.join('、'):'没有其它资产计入总额。'}} Entry 可执行保证金仍按 USDT/USDC 各自 availableBalance 分开路由。</span></div>
     <Panel title="最近 1 小时交易事实" subtitle="Binance 成交按系统归因、外部成交和 UNPROVEN 分列；总 Entry fills 不等于已证明的系统成交。"><div class="facts wide"><div><dt>交易所 Entry 方向 fills（含 UNPROVEN）</dt><dd>{{s.snapshot?.exchangeFillFacts?.entryFillsLast1h??0}}</dd></div><div><dt>Exit fills</dt><dd>{{s.snapshot?.exchangeFillFacts?.exitFillsLast1h??0}}</dd></div><div><dt>Closed trades</dt><dd>{{s.snapshot?.exchangeFillFacts?.closedTradesLast1h??0}}</dd></div><div><dt>Net PnL</dt><dd>{{money(s.snapshot?.exchangeFillFacts?.netPnlLast1h??0)}}</dd></div><div><dt>External / unlinked fills</dt><dd :class="(s.snapshot?.exchangeFillFacts?.externalFillsLast1h??s.snapshot?.exchangeFillFacts?.unattributedFillsLast1h??0)>0?'negative':''">{{s.snapshot?.exchangeFillFacts?.externalFillsLast1h??s.snapshot?.exchangeFillFacts?.unattributedFillsLast1h??0}}</dd></div></div><div v-if="s.snapshot?.exchangeFillFacts?.systemFillParityAlert && (s.snapshot?.exchangeFillFacts?.systemFillAttributionGapLast1h??0)>0" class="policy-card danger-lite"><strong>EXCHANGE_FILL_ATTRIBUTION_GAP</strong><span>疑似 Engine 成交未完成本地归因，请在交易记录页面执行事实审计。</span></div><div v-if="fillProvenanceRows.length" class="facts wide" data-fill-provenance><div v-for="row in fillProvenanceRows" :key="row.key" :data-fill-provenance-row="row.key"><dt>证明来源 {{row.key}}</dt><dd>{{row.count}} 笔</dd></div></div><p v-else class="muted" data-fill-provenance-unavailable>本实例未投影按证明来源分列的成交事实：归因成交与外部成交无法逐项核对。</p></Panel>
     <Panel title="执行真相 · 八项独立检查" subtitle="每一项只回答自己的问题，任何一项都不代替其它项；未投影或 UNKNOWN 一律显示为未知，不显示为健康">
       <div class="compact-summary">{{ truthChecks.filter(check=>check.status==='HEALTHY').length }} / 8 项健康 · {{ truthChecks.filter(check=>check.status!=='HEALTHY').length }} 项需关注</div><details class="compact-details"><summary>查看八项明细</summary>

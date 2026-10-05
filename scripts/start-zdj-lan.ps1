@@ -88,6 +88,7 @@ if($Foreground){
   $reportDir=Join-Path (Get-Location) ("docs\reports\crash\foreground-$stamp")
   New-Item -ItemType Directory -Path $reportDir -Force|Out-Null
   $nodeArgs=@($nodeFlags)+@('--report-on-fatalerror','--report-uncaught-exception',("--report-directory=$reportDir"),'--trace-exit',$enginePath)
+  $env:ZDJ_FOREGROUND_OBSERVE='1'
   Write-Host ''
   Write-Host '============================================================'
   Write-Host ' ZDJ-MITS ENGINE / FOREGROUND OBSERVE MODE'

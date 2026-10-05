@@ -358,7 +358,18 @@ function baseDashboardProjection(runtime: EngineRuntime): DashboardSnapshot {
 
 /** V3.9.3 economics overlay; no mutation/backfill/reconciliation is allowed here. */
 export function dashboardProjection(runtime:EngineRuntime):DashboardSnapshot{
-  const base=baseDashboardProjection(runtime),economics=projectTradeRecordSummary({records:[...runtime.state.tradeRecords.values()],asOf:Date.now(),...runtime.qualityObserver?.readContext()});
+  const now=Date.now(),records=[...runtime.state.tradeRecords.values()],
+    base=baseDashboardProjection(runtime),economics=projectTradeRecordSummary({records,asOf:now,...runtime.qualityObserver?.readContext()}),
+    tracking=(runtime.state.settings as any).performanceTracking??{enabled:true,baselineWalletByQuote:{USDT:5000,USDC:5000},rollingDays:7},
+    days=Math.max(1,Math.min(30,Number(tracking.rollingDays??7))),since=now-days*24*60*60_000,
+    recentRecords=records.filter((record:any)=>{const closed=Number(record.closedAt??record.observedClosedAt??0);return Number.isFinite(closed)&&closed>=since&&closed<=now;}),
+    rollingLocal=projectTradeRecordSummary({records:recentRecords,asOf:now,...runtime.qualityObserver?.readContext()}),
+    exchange=(runtime as any).exchangePerformanceStatus?.()??{status:'NOT_STARTED',source:'BINANCE_INCOME',fetchedAt:null,realizedPnl:null,commission:null,funding:null,tradingNetExFunding:null,allInNet:null,cashFlow:null,otherIncome:null,rowCount:0,realizedEvents:0,commissionEvents:0,fundingEvents:0,error:null},
+    usdt=runtime.state.account.assets.find((asset:any)=>asset.asset==='USDT'),usdc=runtime.state.account.assets.find((asset:any)=>asset.asset==='USDC'),
+    currentUsdt=Number.isFinite(Number(usdt?.walletBalance))?Number(usdt.walletBalance):null,currentUsdc=Number.isFinite(Number(usdc?.walletBalance))?Number(usdc.walletBalance):null,
+    configuredUsdt=Number(tracking.baselineWalletByQuote?.USDT??5000),configuredUsdc=Number(tracking.baselineWalletByQuote?.USDC??5000),
+    baselineReady=currentUsdt!==null&&currentUsdc!==null,currentCombined=baselineReady?currentUsdt!+currentUsdc!:null,
+    baselineEnabled=tracking.enabled!==false;
   const unprovenFills=runtime.state.executionFills.filter(fill=>fill.provenanceSource==='UNPROVEN'&&fill.attributionStatus!=='SYSTEM_ATTRIBUTED');
   return {...base,
     tradeNetPnl:economics.localAccounting.fundingUnknownCycles>0?null:economics.localAccounting.confirmedAllInNet,
@@ -368,5 +379,27 @@ export function dashboardProjection(runtime:EngineRuntime):DashboardSnapshot{
     tradeFundingUnknownCount:economics.localAccounting.fundingUnknownCycles,
     tradeQualityEconomics:economics,
     localAccounting:{...economics.localAccounting,currentOrderUnknown:base.executionTruth?.activeCommissions.localUnresolvedUnknown??0,fillUnproven:unprovenFills.length,fillUnprovenNotional:unprovenFills.reduce((sum,fill)=>sum+fill.qty*fill.price,0)},
+    performanceTracking:{
+      baseline:{
+        enabled:baselineEnabled,configuredUsdtWallet:configuredUsdt,configuredUsdcWallet:configuredUsdc,configuredCombinedWallet:configuredUsdt+configuredUsdc,
+        currentUsdtWallet:currentUsdt,currentUsdcWallet:currentUsdc,currentCombinedWallet:currentCombined,
+        usdtWalletGain:baselineEnabled&&currentUsdt!==null?currentUsdt-configuredUsdt:null,
+        usdcWalletGain:baselineEnabled&&currentUsdc!==null?currentUsdc-configuredUsdc:null,
+        combinedWalletGain:baselineEnabled&&currentCombined!==null?currentCombined-(configuredUsdt+configuredUsdc):null,
+        status:!baselineEnabled?'DISABLED':baselineReady?'READY':'PARTIAL',
+        note:'钱包基线净增包含已实现盈亏、手续费、资金费以及可能的划转；它不是纯交易 PnL。'
+      },
+      rolling:{days,since,until:now,
+        local:{completeCycles:rollingLocal.localAccounting.completeCycles,exFundingNet:rollingLocal.localAccounting.exFundingNet,
+          confirmedFunding:rollingLocal.localAccounting.confirmedFunding,confirmedAllInNet:rollingLocal.localAccounting.confirmedAllInNet,
+          fundingUnknownCycles:rollingLocal.localAccounting.fundingUnknownCycles,
+          allInUnconfirmedCycles:rollingLocal.localAccounting.allInUnconfirmedCycles??rollingLocal.localAccounting.fundingUnknownCycles},
+        exchange:{status:exchange.status,source:String(exchange.source??'BINANCE_INCOME'),fetchedAt:exchange.fetchedAt??null,
+          realizedPnl:exchange.realizedPnl??null,commission:exchange.commission??null,funding:exchange.funding??null,
+          tradingNetExFunding:exchange.tradingNetExFunding??null,allInNet:exchange.allInNet??null,cashFlow:exchange.cashFlow??null,otherIncome:exchange.otherIncome??null,
+          rowCount:Number(exchange.rowCount??0),realizedEvents:Number(exchange.realizedEvents??0),commissionEvents:Number(exchange.commissionEvents??0),
+          fundingEvents:Number(exchange.fundingEvents??0),error:exchange.error??null}
+      }
+    },
   } as DashboardSnapshot;
 }

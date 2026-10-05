@@ -3,11 +3,11 @@ import {classifyOperationalError,OperationalIncidentTracker,operationalCandidate
 
 describe('user-facing operational incidents',()=>{
   const classify=(message:string,extra:Record<string,unknown>={})=>classifyOperationalError({message,...extra});
-  it('classifies transport, egress and exchange errors without erasing raw facts',()=>{
+  it('classifies transport and exchange errors without fixed-egress alarms',()=>{
     expect(classify('BINANCE_TRANSPORT_BLOCKED: ECONNRESET')?.publicCode).toBe('NET-001');
     expect(classify('Binance request timed out')?.publicCode).toBe('NET-002');
-    expect(classify('TESTNET_WRITE_EGRESS_NOT_VERIFIED:UNAVAILABLE')?.publicCode).toBe('NET-003');
-    expect(classify('TESTNET_WRITE_EGRESS_NOT_VERIFIED:MISMATCH')?.publicCode).toBe('NET-004');
+    expect(classify('TESTNET_WRITE_EGRESS_NOT_VERIFIED:UNAVAILABLE')).toBeNull();
+    expect(classify('BINANCE_EGRESS_MISMATCH')).toBeNull();
     expect(classify('Binance HTTP 451: unavailable')?.publicCode).toBe('EX-HTTP-451');
     expect(classify('Binance HTTP 429',{retryAfter:'10'})?.retryAfter).toBe('10');
     expect(classify('Binance HTTP 418',{blockedUntil:123})?.blockedUntil).toBe(123);
@@ -39,5 +39,12 @@ describe('user-facing operational incidents',()=>{
   it('projects a current Binance business rejection with request evidence',()=>{
     const rows=operationalCandidates({pipeline:{pipelineState:'RUNNING'},routes:[{recentFailures:[{message:'Binance HTTP 400: {"code":-5022,"msg":"Post Only"}',requestId:'r1',endpoint:'/fapi/v1/order',method:'POST',routeIdentity:'proxy-test'}]}],account:{status:'READY'}});
     expect(rows).toMatchObject([{publicCode:'EX-BINANCE-5022',requestId:'r1',endpoint:'/fapi/v1/order',method:'POST'}]);
+  });
+  it('keeps exact-order absence audit-only without suppressing other methods',()=>{
+    const missing='Binance HTTP 400: {"code":-2013,"msg":"Order does not exist"}',absent='Binance HTTP 400: {"code":-2011,"msg":"Unknown order sent"}';
+    expect(classify(missing,{method:'GET',endpoint:'/fapi/v1/order'})).toBeNull();
+    expect(classify(absent,{method:'DELETE',endpoint:'/fapi/v1/order'})).toBeNull();
+    expect(classify(missing,{method:'DELETE',endpoint:'/fapi/v1/order'})?.publicCode).toBe('EX-BINANCE-2013');
+    expect(classify(missing,{method:'POST',endpoint:'/fapi/v1/order'})?.publicCode).toBe('EX-BINANCE-2013');
   });
 });

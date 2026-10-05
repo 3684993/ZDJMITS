@@ -32,6 +32,28 @@ const open = (overrides: Record<string, unknown> = {}) => openWith(makeDashboard
 beforeEach(() => vi.clearAllMocks());
 
 describe('active order classification', () => {
+  it('uses signed USDT plus USDC equity and PnL, and shows separate accounting coverage',async()=>{
+    const wrapper=await open();
+    expect(wrapper.text()).toContain('USDT + USDC 总资产');
+    expect(wrapper.text()).toContain('$10,534.51');
+    expect(wrapper.text()).toContain('USDT + USDC 浮动盈亏');
+    expect(wrapper.text()).toContain('$80.20');
+    expect(wrapper.text()).toContain('本地已实现净收益（不含资金费）');
+    expect(wrapper.text()).toContain('$80.10');
+    expect(wrapper.find('[data-accounting-coverage]').text()).toContain('Fill attribution UNPROVEN');
+  });
+  it('does not label unknown funding as zero formal net profit',async()=>{
+    const wrapper=await open({tradeNetPnl:null,tradeFundingUnknownCount:5});
+    expect(wrapper.text()).toContain('本地已实现净收益（不含资金费）');
+    expect(wrapper.text()).not.toContain('已确认全口径净收益 $0.00');
+  });
+  it('labels COMPLETE as an income query window, while cycle funding stays unknown',async()=>{
+    const snapshot=makeDashboardSnapshot();
+    snapshot.executionTruth!.fundingCoverage={status:'PARTIAL',recordsWithExactFunding:14,recordsUnknown:5,incomeRows:10,coverageComplete:true,detail:'coverage=COMPLETE'};
+    const wrapper=await openWith(snapshot);
+    expect(wrapper.find('[data-truth-check="fundingCoverage"]').text()).toContain('交易所查询时间窗口完整 是（不代表周期归因完整）');
+    expect(wrapper.find('[data-truth-check="fundingCoverage"]').text()).toContain('周期归因未知 5');
+  });
   it('splits active commissions by what proves them and never sums them into one figure', async () => {
     const kpi = (await open()).find('[data-active-commissions]');
     const rows = kpi.findAll('[data-commission]');

@@ -35,10 +35,10 @@ onUnmounted(()=>{if(refreshTimer)clearInterval(refreshTimer)});
     <Panel title="V3.9.3 交易经济资格" subtitle="账本闭环、ex-funding 与正式含 funding 收益是独立资格；此区域只读，不触发回填或对账。">
       <div class="kpi-grid five">
         <div class="kpi"><span>CLOSED COMPLETE</span><strong>{{data.summary?.closedCompleteCount??'—'}}</strong><small>不要求 funding EXACT</small></div>
-        <div class="kpi"><span>Trading net ex-funding</span><strong>{{data.summary?money(data.summary.tradingNetExFunding??0):'—'}}</strong><small>{{data.summary?.tradingNetExFundingEligibleCount??'—'}} 条合格账本</small></div>
+        <div class="kpi"><span>本地已实现净收益（不含资金费）</span><strong>{{data.summary?.localAccounting?.exFundingNet==null?'—':money(data.summary.localAccounting.exFundingNet)}}</strong><small>{{data.summary?.localAccounting?.completeCycles??'—'}} 个本地完整周期；资金费未知不影响此项</small></div>
         <div class="kpi"><span>正式净收益合格交易数</span><strong>{{data.summary?.canonicalPnlEligibleCount??'—'}}</strong><small>{{data.summary?.canonicalNetPnlStatus??'—'}}</small></div>
-        <div class="kpi"><span>Canonical net PnL</span><strong :class="financialClass(data.summary?.canonicalNetPnl)">{{data.summary?.canonicalNetPnl==null?'—':money(data.summary.canonicalNetPnl)}}</strong><small>eligible=0 时不显示 0</small></div>
-        <div class="kpi"><span>Funding UNKNOWN / Legacy</span><strong>{{data.summary?.fundingUnknownCount??'—'}} / {{data.summary?.legacyEconomicInconsistentCount??'—'}}</strong><small>不等于账本缺失</small></div>
+        <div class="kpi"><span>本地已确认全口径净收益</span><strong :class="financialClass(data.summary?.localAccounting?.confirmedAllInNet)">{{data.summary?.localAccounting?.confirmedAllInNet==null?'—':money(data.summary.localAccounting.confirmedAllInNet)}}</strong><small>仅覆盖 {{data.summary?.localAccounting?.confirmedAllInCycles??'—'}}/{{data.summary?.localAccounting?.completeCycles??'—'}} 个本地完整周期</small></div>
+        <div class="kpi"><span>本地已确认资金费 / Funding UNKNOWN</span><strong>{{data.summary?.localAccounting?.confirmedFunding==null?'—':money(data.summary.localAccounting.confirmedFunding)}} / {{data.summary?.localAccounting?.fundingUnknownCycles??'—'}}</strong><small>UNKNOWN 不等于 0；不影响不含资金费收益</small></div>
       </div>
       <p class="muted">Prospective：{{data.summary?.prospective?.status??'—'}}；Entry {{data.summary?.prospective?.entryCycleCount??'—'}} / Closed {{data.summary?.prospective?.closedCycleCount??'—'}} / Canonical {{data.summary?.prospective?.canonicalPnlEligibleCount??'—'}}。缺 Manifest 时保持“—”，不会伪装成 0。</p>
     </Panel>

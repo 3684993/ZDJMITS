@@ -126,6 +126,7 @@ const BASE = {
     walletBalanceUsd: 10_444.31,
     unrealizedPnlUsd: 620.4,
     realizedPnlUsd24h: 88.1,
+    valuation:{status:'RECONCILED',scope:'BINANCE_V2_ACCOUNT_TOTALS_USDT_ONLY',exchangeUsdtWallet:5473.13,exchangeUsdtUnrealized:80.2,exchangeUsdtMargin:5553.33,usdtMarginEquityUsd:5553.33,usdcMarginEquityUsd:4981.18,combinedStablecoinMarginEquityUsd:10534.51,usdtWalletUsd:5473.13,usdcWalletUsd:4981.18,usdtAvailableUsd:3861.56,usdcAvailableUsd:4972.88,combinedStablecoinWalletUsd:10454.31,combinedStablecoinAvailableUsd:8834.44,combinedStablecoinUnrealizedPnlUsd:80.2,stablecoinWalletUsd:10454.31,stablecoinMarginUsd:10534.51,unknownAssets:[],excludedAssets:['BTC'],toleranceUsd:.02,assetValuationComplete:true},
     assets: [
       { asset: 'USDT', walletBalance: 5_473.13, availableBalance: 3_861.56, crossWalletBalance: 5_473.13, unrealizedPnl: 80.2, usdValue: 5_473.13, marginEligible: true },
       { asset: 'USDC', walletBalance: 4_981.18, availableBalance: 4_972.88, crossWalletBalance: 4_981.18, unrealizedPnl: 0, usdValue: 4_981.18, marginEligible: true },
@@ -173,6 +174,7 @@ const BASE = {
   tradeTradingNetExFunding: 80.1,
   tradeCompletedExFundingCount: 5,
   tradeFundingUnknownCount: 1,
+  localAccounting:{exFundingNet:80.1,completeCycles:5,confirmedFunding:3,confirmedAllInNet:60.1,confirmedAllInCycles:4,fundingUnknownCycles:1,currentOrderUnknown:2,fillUnproven:3,fillUnprovenNotional:100,coverage:{external:2,duplicate:1,noncanonical:1,feeMissing:1,cycleInconsistent:1,cycleUnconserved:0,cycleUnproven:2,cycleCollision:0,localFundingUnknown:1,excludedClosed:4}},
   exchangeFillFacts: {
     entryFillsLast1h: 2,
     exitFillsLast1h: 1,

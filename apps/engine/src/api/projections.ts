@@ -359,12 +359,14 @@ function baseDashboardProjection(runtime: EngineRuntime): DashboardSnapshot {
 /** V3.9.3 economics overlay; no mutation/backfill/reconciliation is allowed here. */
 export function dashboardProjection(runtime:EngineRuntime):DashboardSnapshot{
   const base=baseDashboardProjection(runtime),economics=projectTradeRecordSummary({records:[...runtime.state.tradeRecords.values()],asOf:Date.now(),...runtime.qualityObserver?.readContext()});
+  const unprovenFills=runtime.state.executionFills.filter(fill=>fill.provenanceSource==='UNPROVEN'&&fill.attributionStatus!=='SYSTEM_ATTRIBUTED');
   return {...base,
-    tradeNetPnl:economics.fundingUnknownCount>0?null:economics.canonicalNetPnl,
-    tradeCompletedCount:economics.canonicalPnlEligibleCount,
-    tradeTradingNetExFunding:economics.tradingNetExFunding,
+    tradeNetPnl:economics.localAccounting.fundingUnknownCycles>0?null:economics.localAccounting.confirmedAllInNet,
+    tradeCompletedCount:economics.localAccounting.confirmedAllInCycles,
+    tradeTradingNetExFunding:economics.localAccounting.exFundingNet,
     tradeCompletedExFundingCount:economics.tradingNetExFundingEligibleCount,
-    tradeFundingUnknownCount:economics.fundingUnknownCount,
+    tradeFundingUnknownCount:economics.localAccounting.fundingUnknownCycles,
     tradeQualityEconomics:economics,
+    localAccounting:{...economics.localAccounting,currentOrderUnknown:base.executionTruth?.activeCommissions.localUnresolvedUnknown??0,fillUnproven:unprovenFills.length,fillUnprovenNotional:unprovenFills.reduce((sum,fill)=>sum+fill.qty*fill.price,0)},
   } as DashboardSnapshot;
 }

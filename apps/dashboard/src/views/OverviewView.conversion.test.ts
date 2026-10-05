@@ -90,3 +90,7 @@ it('an older Engine that publishes no projection says so instead of showing zero
   expect(wrapper.text()).toContain('Engine 尚未提供转化投影');
   expect(wrapper.find('[data-entry-conversion]').exists()).toBe(false);
 });
+it('shows TESTNET risk observation as N/A instead of a zero-pass drop',async()=>{
+  const wrapper=await open(pipeline({thirtyMinutes:windowOf({riskAllowed:0,stageSemantics:{riskAllowed:'NOT_REQUIRED'}}),oneHour:windowOf()}));
+  expect(wrapper.find('[data-entry-conversion]').text()).toContain('组合风险准入（TESTNET 可不适用）不适用（N/A）');
+});

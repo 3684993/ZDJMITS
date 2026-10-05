@@ -805,7 +805,7 @@ onMounted(load);
       <Panel v-else-if="tab === 'proxy'" title="网络代理资源">
         <div class="toolbar"><span>Binance REST / WS 统一经 SOCKS5H；变更立即 hot-apply</span><button class="button primary" @click="addResource('proxy')">新增/重置</button></div>
         <div class="toolbar"><button v-for="choice in resources.proxy" :key="choice.id" class="button tiny secondary" @click="selectedResourceId.proxy=choice.id">{{ choice.name ?? choice.model ?? choice.id }}<span v-if="isResourceDirty('proxy',choice)"> *</span></button></div><div v-for="item in selectedResources('proxy')" :key="item.id" class="resource-row">
-          <div class="form-grid two"><label><span>Proxy URL</span><input v-model="item.url" /></label><label><span>期望固定出口 IP</span><input v-model="item.expectedStaticEgressIp" placeholder="例如 203.0.113.10" /></label><label class="switch-row"><span>启用</span><input v-model="item.enabled" type="checkbox" /></label></div>
+          <div class="form-grid two"><label><span>Proxy URL</span><input v-model="item.url" /></label><label class="switch-row"><span>启用</span><input v-model="item.enabled" type="checkbox" /></label></div>
           <div><span v-if="isResourceDirty('proxy',item)" class="muted">未保存</span><button class="button tiny primary" :disabled="!isResourceDirty('proxy',item)" @click="saveResource('proxy',item)">保存</button><button class="button tiny secondary" :disabled="!isResourceDirty('proxy',item)" @click="cancelResourceEdits('proxy')">取消</button><button class="button tiny secondary" @click="testResource('proxy',item)">测试</button><button class="button tiny secondary" @click="removeResource('proxy',item.id)">删除</button></div>
         </div>
       </Panel>

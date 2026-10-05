@@ -251,7 +251,7 @@ export class ExternalTradeAdapter implements ExchangeTradeAdapter {
   private enrichment={income:null as number|null,incomeAsOf:null as number|null,prices:new Map<string,number>(),pricesAsOf:null as number|null,lastAttempt:0,lastError:null as string|null};
   async fetchAccountSnapshot(){
     const account=await this.signed<any>('GET','/fapi/v2/account');
-    const nonzero=(account.assets??[]).filter((row:any)=>Math.abs(Number(row.walletBalance??0))>0||Math.abs(Number(row.availableBalance??0))>0),prices=new Map<string,number>();
+    const nonzero=(account.assets??[]).filter((row:any)=>['USDT','USDC'].includes(String(row.asset))||Math.abs(Number(row.walletBalance??0))>0||Math.abs(Number(row.availableBalance??0))>0),prices=new Map<string,number>();
     for(const [asset,price] of (Date.now()-(this.enrichment.pricesAsOf??0)<120_000?this.enrichment.prices:new Map<string,number>()))prices.set(asset,price);
     if(!this.enrichmentFlight&&Date.now()-this.enrichment.lastAttempt>=60_000){
       this.enrichment.lastAttempt=Date.now();const generation=this.enrichmentGeneration,cache=this.enrichment;
@@ -261,8 +261,9 @@ export class ExternalTradeAdapter implements ExchangeTradeAdapter {
       ]).then(results=>{cache.lastError=results.some(r=>r.status==='rejected')?'ENRICHMENT_PARTIAL_FAILURE':null;}).finally(()=>{if(generation===this.enrichmentGeneration)this.enrichmentFlight=null;});
     }
     const assets=nonzero.map((row:any)=>{const asset=String(row.asset),wallet=Number(row.walletBalance??0),stable=['USDT','USDC','BUSD'].includes(asset),price=stable?1:prices.get(asset);return{asset,walletBalance:wallet,availableBalance:Number(row.availableBalance??0),crossWalletBalance:row.crossWalletBalance==null?null:Number(row.crossWalletBalance),unrealizedPnl:Number(row.unrealizedProfit??0),usdValue:Number.isFinite(price)?wallet*price!:null,marginEligible:Boolean(row.marginAvailable??asset==='USDT')};});
-    const usdt=assets.find(row=>row.asset==='USDT'),equity=assets.reduce((sum,row)=>sum+(row.usdValue??0),0)+Number(account.totalUnrealizedProfit??0);
-    return{walletBalanceUsd:assets.reduce((sum,row)=>sum+(row.usdValue??0),0),availableUsd:Number(usdt?.availableBalance??account.availableBalance),equityUsd:assets.some(row=>row.usdValue===null)&&account.totalMarginBalance!=null&&Number.isFinite(Number(account.totalMarginBalance))?Number(account.totalMarginBalance):equity,unrealizedPnlUsd:Number(account.totalUnrealizedProfit??0),realizedPnlUsd24h:Date.now()-(this.enrichment.incomeAsOf??0)<120_000?this.enrichment.income:null,assets,valuation:reconcileAccountValuation(account,assets),enrichment:{incomeAsOf:this.enrichment.incomeAsOf,valuationAsOf:this.enrichment.pricesAsOf,error:this.enrichment.lastError,pending:Boolean(this.enrichmentFlight)},asOf:Date.now()};
+    const usdt=assets.find(row=>row.asset==='USDT');
+    const valuation=reconcileAccountValuation(account,(account.assets??[]).map((row:any)=>({asset:String(row.asset),walletBalance:row.walletBalance,availableBalance:row.availableBalance,unrealizedPnl:row.unrealizedProfit,marginBalance:row.marginBalance,usdValue:assets.find(asset=>asset.asset===String(row.asset))?.usdValue??null})));
+    return{walletBalanceUsd:valuation.combinedStablecoinWalletUsd,availableUsd:Number(usdt?.availableBalance??account.availableBalance),equityUsd:valuation.combinedStablecoinMarginEquityUsd,unrealizedPnlUsd:valuation.combinedStablecoinUnrealizedPnlUsd,realizedPnlUsd24h:Date.now()-(this.enrichment.incomeAsOf??0)<120_000?this.enrichment.income:null,assets,valuation,enrichment:{incomeAsOf:this.enrichment.incomeAsOf,valuationAsOf:this.enrichment.pricesAsOf,error:this.enrichment.lastError,pending:Boolean(this.enrichmentFlight)},asOf:Date.now()};
   }
   async validatePrivate(){const account=await this.fetchAccountSnapshot(),orders=await this.fetchOpenOrders(),positions=await this.fetchPositions();return{status:'BINANCE DEMO PRIVATE READY',endpoint:this.transport.effectiveBaseUrl(),accountAvailable:Number.isFinite(account.walletBalanceUsd),openOrders:orders.length,positions:positions.length};}
   /**

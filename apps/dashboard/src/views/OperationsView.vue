@@ -23,7 +23,7 @@ onMounted(loadShadow);
     <Panel title="Runtime & LAN" subtitle="同源 Web/API/WS 与 Supervisor 状态">
       <dl class="facts wide"><div><dt>PID / Uptime</dt><dd>{{runtime?.pid??'—'}} / {{runtime?.uptimeMs?Math.floor(runtime.uptimeMs/1000)+'s':'—'}}</dd></div><div><dt>Listener / LAN URL</dt><dd>{{runtime?.listener?.host??'—'}}:{{runtime?.listener?.port??'—'}} · {{runtime?.lanUrls?.join(' / ')??'—'}}</dd></div><div><dt>Local / LAN health</dt><dd>{{runtime?.loopbackProbe?.status??'—'}} / {{runtime?.lanProbe?.status??'—'}}</dd></div><div><dt>Network / Firewall</dt><dd>{{runtime?.networkProfile??'—'}} / {{runtime?.firewallRuleState??'—'}}</dd></div><div><dt>Last restart</dt><dd>{{runtime?.lastRestartAt??'—'}} · {{runtime?.lastRestartReason??'—'}}</dd></div><div><dt>Supervisor</dt><dd>{{runtime?.supervisor?.status??'NOT_RUNNING'}} · restarts={{runtime?.restartCount??0}}</dd></div></dl>
     </Panel>
-    <Panel title="Binance API Governance" subtitle="固定出口、真实 X-MBX counters、队列 lane 与限流事件；累计值不冒充最近12H">
+    <Panel title="Binance API Governance" subtitle="代理路由、真实 X-MBX counters、队列 lane 与限流事件；累计值不冒充最近12H">
       <template v-if="governance?.routes?.length">
         <div v-for="route in governance.routes" :key="route.rest?.routeIdentity" class="page-stack">
           <dl class="facts wide">
@@ -31,8 +31,6 @@ onMounted(loadShadow);
             <div><dt>WS Host</dt><dd>{{hostname(route.ws?.url)}}</dd></div>
             <div><dt>Route Identity</dt><dd>{{route.rest?.routeIdentity??'—'}}</dd></div>
             <div><dt>Proxy</dt><dd>{{route.rest?.throughProxy?'ACTIVE':'BLOCKED'}} · {{route.rest?.proxyUrl??'—'}}</dd></div>
-            <div><dt>Expected Egress</dt><dd>{{route.egress?.expectedEgressIp??'未配置'}}</dd></div>
-            <div><dt>Verified Egress</dt><dd>{{route.egress?.lastVerifiedEgressIp??'未验证'}} · {{route.egress?.status??'UNVERIFIED'}}</dd></div>
             <div><dt>429 / 418</dt><dd>{{route.requestBudget?.http429??0}} / {{route.requestBudget?.http418??0}}</dd></div>
             <div><dt>Governor</dt><dd>{{route.requestBudget?.status??'—'}} · trust={{route.requestBudget?.observationTrust??'—'}}</dd></div>
           </dl>

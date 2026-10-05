@@ -1,5 +1,5 @@
 import { DatabaseSync, backup as sqliteBackup } from 'node:sqlite';
-import { createConnection, isIP } from 'node:net';
+import { createConnection } from 'node:net';
 import { mkdtemp, mkdir, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
@@ -31,7 +31,6 @@ async function runPreflight({dataDir,outDir,port=8080,skipEngineCheck=false}){
     if(connections.executionMode!=='READ_ONLY')throw new Error('STAGE6_REQUIRES_READ_ONLY');
     if(new URL(rest).hostname!=='demo-fapi.binance.com')throw new Error(`STAGE6_REQUIRES_BINANCE_DEMO_REST:${rest}`);
     if(proxy.enabled!==true||String(proxy.protocol??'')!=='SOCKS5H'||!String(proxy.url??'')){let scheme='INVALID_OR_MISSING';try{scheme=new URL(String(proxy.url??'')).protocol;}catch{}throw new Error('STAGE6_REQUIRES_ENABLED_SOCKS5H_PROXY:enabled='+String(proxy.enabled===true)+',protocol='+String(proxy.protocol??'MISSING')+',urlScheme='+scheme);}
-    const expectedEgress=String(proxy.expectedStaticEgressIp??'').trim();if(!expectedEgress)throw new Error('STAGE6_REQUIRES_EXPECTED_STATIC_EGRESS_IP');if(!isIP(expectedEgress))throw new Error('STAGE6_EXPECTED_STATIC_EGRESS_IP_INVALID');
 
     const resources={exchange:rows(db,'exchange_resources'),proxy:rows(db,'proxy_resources'),ai:rows(db,'ai_resources')};assertNoSecretKeys(resources,'resources');
     let profile=null;try{const row=one(db,"SELECT profile,updated_at FROM connection_profiles WHERE id='active'");if(row)profile={updatedAt:Number(row.updated_at),profile:JSON.parse(String(row.profile))};}catch{}if(profile)assertNoSecretKeys(profile,'connectionProfile');
@@ -60,7 +59,7 @@ async function runPreflight({dataDir,outDir,port=8080,skipEngineCheck=false}){
       }finally{if(source!==dbPath)handle.close();}
     }
     await Promise.all([writeFile(path.join(outDir,'settings.json'),JSON.stringify(settings,null,2)),writeFile(path.join(outDir,'resource-profiles.json'),JSON.stringify(resources,null,2)),writeFile(path.join(outDir,'connection-profile.json'),JSON.stringify(profile,null,2)),writeFile(path.join(outDir,'secret-metadata.json'),JSON.stringify(secretMetadata,null,2))]);
-    const manifest={schema:'V3.9.6-STAGE6-PREFLIGHT-2',createdAt:new Date().toISOString(),sourceDb:dbPath,sqliteIntegrity:'ok',settingsVersion:settings.version,environment:exchange.environment,executionMode:connections.executionMode,restHost:new URL(rest).hostname,wsBaseUrl:exchange.testnetWsBaseUrl??null,proxyUrl:String(proxy.url),expectedStaticEgressIp:expectedEgress,secretMaterialExported:false,durableSqlite:durable,
+    const manifest={schema:'V3.9.6-STAGE6-PREFLIGHT-2',createdAt:new Date().toISOString(),sourceDb:dbPath,sqliteIntegrity:'ok',settingsVersion:settings.version,environment:exchange.environment,executionMode:connections.executionMode,restHost:new URL(rest).hostname,wsBaseUrl:exchange.testnetWsBaseUrl??null,proxyUrl:String(proxy.url),secretMaterialExported:false,durableSqlite:durable,
       files:[...new Set([...durable.filter(row=>row.backedUp).map(row=>row.name),'settings.json','resource-profiles.json','connection-profile.json','secret-metadata.json','manifest.json'])]};
     await writeFile(path.join(outDir,'manifest.json'),JSON.stringify(manifest,null,2));return manifest;
   }finally{db.close();}

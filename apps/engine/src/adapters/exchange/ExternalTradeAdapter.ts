@@ -31,6 +31,22 @@ export class ExternalTradeAdapter implements ExchangeTradeAdapter {
   /** Layer A of the egress fail-closed chain: the same truth the write boundary enforces, read before any AI, reservation, leverage or submit attempt. */
   entryAdmissionBlockReason(){return this.transport.entryBlockReason();}
   async fetchRealizedPnlSince(startTime:number,endTime=Date.now()){const rows=await this.signed<any[]>('GET','/fapi/v1/income',{incomeType:'REALIZED_PNL',startTime,endTime,limit:1000});return rows.reduce((sum,row)=>sum+Number(row.income??0),0);}
+  /** Account-level rolling performance from Binance income facts. This deliberately uses only USDT/USDC
+   * rows so it matches the dashboard's stablecoin account scope; transfers are reported separately and
+   * are never silently mixed into trading PnL. */
+  async fetchPerformanceIncomeSummary(startTime:number,endTime=Date.now()){
+    const rows=await this.pagedIncome(startTime,endTime),stable=new Set(['USDT','USDC']);
+    const scoped=rows.filter(row=>stable.has(String(row.asset??'').toUpperCase()));
+    const sum=(type:string)=>scoped.filter(row=>String(row.incomeType??'').toUpperCase()===type).reduce((total,row)=>total+Number(row.income??0),0);
+    const count=(type:string)=>scoped.filter(row=>String(row.incomeType??'').toUpperCase()===type).length;
+    const realizedPnl=sum('REALIZED_PNL'),commission=sum('COMMISSION'),funding=sum('FUNDING_FEE'),
+      cashFlow=scoped.filter(row=>['TRANSFER','WITHDRAW','DEPOSIT'].includes(String(row.incomeType??'').toUpperCase())).reduce((total,row)=>total+Number(row.income??0),0),
+      known=new Set(['REALIZED_PNL','COMMISSION','FUNDING_FEE','TRANSFER','WITHDRAW','DEPOSIT']),
+      otherIncome=scoped.filter(row=>!known.has(String(row.incomeType??'').toUpperCase())).reduce((total,row)=>total+Number(row.income??0),0);
+    return{source:'BINANCE_INCOME' as const,startTime,endTime,fetchedAt:Date.now(),rowCount:scoped.length,
+      realizedPnl,commission,funding,tradingNetExFunding:realizedPnl+commission,allInNet:realizedPnl+commission+funding,
+      cashFlow,otherIncome,realizedEvents:count('REALIZED_PNL'),commissionEvents:count('COMMISSION'),fundingEvents:count('FUNDING_FEE')};
+  }
   private async hedgeMode(){if(this.positionMode&&Date.now()-this.positionMode.checkedAt<60_000)return this.positionMode.hedge;const value=await this.signed<{dualSidePosition:boolean}>('GET','/fapi/v1/positionSide/dual');this.positionMode={hedge:Boolean(value.dualSidePosition),checkedAt:Date.now()};return this.positionMode.hedge;}
   /**
    * C3: the capability matrix a coordinated exit must trust is read from the exchange, never

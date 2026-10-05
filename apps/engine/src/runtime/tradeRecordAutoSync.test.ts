@@ -20,6 +20,8 @@ afterEach(async () => {
 });
 
 describe('automatic TradeRecord sync window', () => {
+  // This fixture opens and persists a full EngineRuntime twice. Shared Windows CI runners can
+  // exceed the generic 20s budget under concurrent suites; the assertions and work are unchanged.
   it('reads the full 24 hours before startup and caps the final read at startup plus 24 hours', async () => {
     dataDir = await mkdtemp(path.join(os.tmpdir(), 'zdj-auto-trade-sync-'));
     previousBackupDir = process.env.ZDJ_TRADE_SYNC_BACKUP_DIR;
@@ -84,5 +86,5 @@ describe('automatic TradeRecord sync window', () => {
       },
     ]);
     expect(runtime.tradeRecordAutoSyncStatus()).toMatchObject({ status: 'COMPLETE', windowEnd: finalStartAt + 24 * 60 * 60_000 });
-  });
+  }, 60_000);
 });

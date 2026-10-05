@@ -363,8 +363,13 @@ export function dashboardProjection(runtime:EngineRuntime):DashboardSnapshot{
     tradeNetPnl:economics.fundingUnknownCount>0?null:economics.canonicalNetPnl,
     tradeCompletedCount:economics.canonicalPnlEligibleCount,
     tradeTradingNetExFunding:economics.tradingNetExFunding,
-    tradeCompletedExFundingCount:economics.tradingNetExFundingEligibleCount,
-    tradeFundingUnknownCount:economics.fundingUnknownCount,
+    tradeLocalTradingNetExFunding:economics.localTradingNetExFunding,
+    tradeLocalConfirmedFunding:economics.localConfirmedFunding,
+    tradeLocalConfirmedNetPnl:economics.localConfirmedNetPnl,
+    tradeLocalProfitCoverageStatus:economics.localProfitCoverageStatus,
+    tradeFundingExactCount:economics.localFundingExactCount,
+    tradeCompletedExFundingCount:economics.localTradingNetExFundingEligibleCount,
+    tradeFundingUnknownCount:economics.localFundingUnknownCount,
     tradeQualityEconomics:economics,
   } as DashboardSnapshot;
 }

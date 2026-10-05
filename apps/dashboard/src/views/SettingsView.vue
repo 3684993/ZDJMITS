@@ -545,6 +545,12 @@ onMounted(load);
               v-model="draft.portfolioIntelligence.locationProtectionEnabled"
               type="checkbox"
           /></label>
+          <h3 class="form-section-title">收益基线与统计窗口</h3>
+          <label class="switch-row"><span>启用账户收益基线</span><input v-model="draft.performanceTracking.enabled" type="checkbox" /></label>
+          <label><span>期初 USDT 钱包余额</span><input v-model.number="draft.performanceTracking.baselineWalletByQuote.USDT" type="number" min="0" step="0.01" /></label>
+          <label><span>期初 USDC 钱包余额</span><input v-model.number="draft.performanceTracking.baselineWalletByQuote.USDC" type="number" min="0" step="0.01" /></label>
+          <label><span>滚动交易表现窗口（天）</span><input v-model.number="draft.performanceTracking.rollingDays" type="number" min="1" max="30" step="1" /></label>
+          <p class="muted">当前默认期初资金为 USDT 5000 + USDC 5000。基线后账户钱包净增 = 当前 USDT/USDC walletBalance − 期初余额；该数字包含已实现盈亏、手续费、资金费以及可能的划转，因此与“纯交易 PnL”分开显示。最近交易表现默认按 7 天统计，本地账本与 Binance 交易所收入事实并列，不相加。</p>
           <h3 class="form-section-title">运行控制与资金准入</h3>
           <label class="switch-row"
             ><span>无可执行资金时自动暂停</span

@@ -141,8 +141,9 @@ export class EngineRuntime {
   private tradeRecordAutoSyncLastEndAt: number | null = null;
   private tradeRecordAutoSyncFlight: Promise<void> | null = null;
   private tradeRecordAutoSync = {
-    status: "NOT_STARTED" as "NOT_STARTED" | "WAITING_FOR_PRIVATE_DATA" | "RUNNING" | "ACTIVE" | "COMPLETE" | "ERROR",
+    status: "NOT_STARTED" as "NOT_STARTED" | "WAITING_FOR_PRIVATE_DATA" | "RUNNING" | "BACKFILLING" | "ACTIVE" | "ERROR",
     startedAt: null as number | null,
+    rollingDays: 7,
     windowStart: null as number | null,
     windowEnd: null as number | null,
     lastAttemptAt: null as number | null,
@@ -150,6 +151,26 @@ export class EngineRuntime {
     lastWindow: null as { startTime: number; endTime: number } | null,
     lastResult: null as Record<string, number> | null,
     lastError: null as string | null,
+  };
+  private exchangePerformanceSyncFlight: Promise<void> | null = null;
+  private exchangePerformance = {
+    status: "NOT_STARTED" as "NOT_STARTED" | "WAITING_FOR_PRIVATE_DATA" | "READY" | "ERROR",
+    source: "BINANCE_INCOME",
+    fetchedAt: null as number | null,
+    windowStart: null as number | null,
+    windowEnd: null as number | null,
+    realizedPnl: null as number | null,
+    commission: null as number | null,
+    funding: null as number | null,
+    tradingNetExFunding: null as number | null,
+    allInNet: null as number | null,
+    cashFlow: null as number | null,
+    otherIncome: null as number | null,
+    rowCount: 0,
+    realizedEvents: 0,
+    commissionEvents: 0,
+    fundingEvents: 0,
+    error: null as string | null,
   };
   private runtimeIdentity: RuntimeIdentity | null = null;
   private constructor(
@@ -809,6 +830,7 @@ export class EngineRuntime {
     this.every(15_000, async () => this.ai.probeResources());
     await this.bootstrap();
     this.startTradeRecordAutoSync(tradeRecordAutoSyncStartedAt);
+    this.startExchangePerformanceSync();
     if (this.state.runtimeControl.entrySafetyMode === "SAFETY_REVIEW_PAUSED")
       this.state.runtimeControl.entrySafetyMode = "SHADOW_READY";
     this.shadow.start();
@@ -1713,23 +1735,75 @@ export class EngineRuntime {
     this.privateAccountSync??=new PrivateAccountSync({configured:()=>Boolean(this.trade?.hasCredentials()),generation:()=>this.state.settings.settingsVersion,read:()=>this.trade!.fetchAccountSnapshot(),get:()=>this.state.account,set:value=>{this.state.account=value;},emit:(type,payload)=>this.events.publish(type,payload)});
     await this.privateAccountSync.sync(trigger);
   }
+  private startExchangePerformanceSync() {
+    void this.runExchangePerformanceSync();
+    this.every(15 * 60_000, () => this.runExchangePerformanceSync());
+  }
+  exchangePerformanceStatus() {
+    return structuredClone(this.exchangePerformance);
+  }
+  private runExchangePerformanceSync(): Promise<void> {
+    if (this.exchangePerformanceSyncFlight) return this.exchangePerformanceSyncFlight;
+    const flight = this.performExchangePerformanceSync().finally(() => {
+      if (this.exchangePerformanceSyncFlight === flight) this.exchangePerformanceSyncFlight = null;
+    });
+    this.exchangePerformanceSyncFlight = flight;
+    return flight;
+  }
+  private async performExchangePerformanceSync() {
+    const trade = this.trade as (ExternalTradeAdapter & { hasCredentials?: () => boolean }) | null;
+    if (!trade?.hasCredentials?.()) {
+      this.exchangePerformance.status = "WAITING_FOR_PRIVATE_DATA";
+      return;
+    }
+    const days = Math.max(1, Math.min(30, Number((this.state.settings as any).performanceTracking?.rollingDays ?? 7))),
+      endTime = Date.now(),
+      startTime = endTime - days * 24 * 60 * 60_000;
+    try {
+      const summary = await trade.fetchPerformanceIncomeSummary(startTime, endTime);
+      this.exchangePerformance = {
+        status: "READY",
+        source: summary.source,
+        fetchedAt: summary.fetchedAt,
+        windowStart: summary.startTime,
+        windowEnd: summary.endTime,
+        realizedPnl: summary.realizedPnl,
+        commission: summary.commission,
+        funding: summary.funding,
+        tradingNetExFunding: summary.tradingNetExFunding,
+        allInNet: summary.allInNet,
+        cashFlow: summary.cashFlow,
+        otherIncome: summary.otherIncome,
+        rowCount: summary.rowCount,
+        realizedEvents: summary.realizedEvents,
+        commissionEvents: summary.commissionEvents,
+        fundingEvents: summary.fundingEvents,
+        error: null,
+      };
+    } catch (error) {
+      this.exchangePerformance.status = "ERROR";
+      this.exchangePerformance.error = String(error).slice(0, 240);
+    }
+  }
   private startTradeRecordAutoSync(startedAt: number) {
-    const day = 24 * 60 * 60_000;
+    const day = 24 * 60 * 60_000,
+      rollingDays = Math.max(1, Math.min(30, Number((this.state.settings as any).performanceTracking?.rollingDays ?? 7)));
     this.tradeRecordAutoSyncStartedAt = startedAt;
-    this.tradeRecordAutoSyncLastEndAt = null;
+    this.tradeRecordAutoSyncLastEndAt = startedAt - rollingDays * day;
     this.tradeRecordAutoSync = {
       status: "WAITING_FOR_PRIVATE_DATA",
       startedAt,
-      windowStart: startedAt - day,
-      windowEnd: startedAt + day,
+      rollingDays,
+      windowStart: startedAt - rollingDays * day,
+      windowEnd: startedAt,
       lastAttemptAt: null,
       lastSuccessAt: null,
       lastWindow: null,
       lastResult: null,
       lastError: null,
     };
-    // The initial read covers the full 24 hours before startup, including the
-    // previous calendar day. Later reads overlap briefly to catch delayed facts.
+    // Backfill at most one day per pass, then stay continuously incremental.
+    // This gives the operator a rolling week without a seven-day request burst.
     void this.runTradeRecordAutoSync();
     this.every(5 * 60_000, () => this.runTradeRecordAutoSync());
   }
@@ -1749,17 +1823,14 @@ export class EngineRuntime {
     const startedAt = this.tradeRecordAutoSyncStartedAt,
       day = 24 * 60 * 60_000;
     if (startedAt == null || this.stopped) return;
-    const windowStart = startedAt - day,
-      windowEnd = startedAt + day,
-      now = Date.now();
-    if (
-      now >= windowEnd &&
-      this.tradeRecordAutoSyncLastEndAt != null &&
-      this.tradeRecordAutoSyncLastEndAt >= windowEnd
-    ) {
-      this.tradeRecordAutoSync.status = "COMPLETE";
-      return;
-    }
+    const now = Date.now(),
+      rollingDays = Math.max(1, Math.min(30, Number((this.state.settings as any).performanceTracking?.rollingDays ?? 7))),
+      rollingStart = now - rollingDays * day;
+    this.tradeRecordAutoSync.rollingDays = rollingDays;
+    this.tradeRecordAutoSync.windowStart = rollingStart;
+    this.tradeRecordAutoSync.windowEnd = now;
+    if (this.tradeRecordAutoSyncLastEndAt == null || this.tradeRecordAutoSyncLastEndAt < rollingStart)
+      this.tradeRecordAutoSyncLastEndAt = rollingStart;
     const trade = this.trade as (ExternalTradeAdapter & { hasCredentials?: () => boolean }) | null;
     if (
       this.state.settings.connections.exchange.environment !== "TESTNET" ||
@@ -1768,14 +1839,13 @@ export class EngineRuntime {
       this.tradeRecordAutoSync.status = "WAITING_FOR_PRIVATE_DATA";
       return;
     }
-    const finalAudit = now >= windowEnd,
-      endTime = finalAudit ? windowEnd : now,
-      fullAudit = finalAudit || this.tradeRecordAutoSyncLastEndAt == null,
-      startTime = fullAudit
-        ? windowStart
-        : Math.max(windowStart, this.tradeRecordAutoSyncLastEndAt! - 5 * 60_000);
+    const caughtUp = this.tradeRecordAutoSyncLastEndAt >= now - 10 * 60_000,
+      startTime = caughtUp
+        ? Math.max(rollingStart, this.tradeRecordAutoSyncLastEndAt - 5 * 60_000)
+        : Math.max(rollingStart, this.tradeRecordAutoSyncLastEndAt),
+      endTime = caughtUp ? now : Math.min(now, startTime + day);
     if (endTime <= startTime) return;
-    const maxFills = 1000,
+    const maxFills = 10_000,
       options = {
         includeExternal: false,
         repairPartial: true,
@@ -1787,7 +1857,7 @@ export class EngineRuntime {
     this.tradeRecordAutoSync.lastError = null;
     try {
       const audit = await this.auditTradeRecordWindow(startTime, endTime, maxFills),
-        syncFillLimit = maxFills * Math.max(1, Math.ceil((endTime - startTime) / day)),
+        syncFillLimit = maxFills,
         backupDir =
           process.env.ZDJ_TRADE_SYNC_BACKUP_DIR ??
           path.join(
@@ -1822,7 +1892,7 @@ export class EngineRuntime {
             status: "APPLIED",
             source: "RUNTIME_AUTO",
             createdAt: Date.now(),
-            options: { ...options, maxFills: syncFillLimit, window: audit.window, fullAudit },
+            options: { ...options, maxFills: syncFillLimit, window: audit.window, fullAudit: !caughtUp, rollingDays },
             preview: result.preview,
             result: {
               created: result.created,
@@ -1842,15 +1912,14 @@ export class EngineRuntime {
         this.state.generation = beforeGeneration;
         throw error;
       }
-      this.tradeRecordAutoSyncLastEndAt = Math.max(
-        this.tradeRecordAutoSyncLastEndAt ?? 0,
-        endTime,
-      );
-      this.tradeRecordAutoSync.status = finalAudit ? "COMPLETE" : "ACTIVE";
+      this.tradeRecordAutoSyncLastEndAt = Math.max(this.tradeRecordAutoSyncLastEndAt ?? 0, endTime);
+      const stillBackfilling = endTime < Date.now() - 10 * 60_000;
+      this.tradeRecordAutoSync.status = stillBackfilling ? "BACKFILLING" : "ACTIVE";
       this.tradeRecordAutoSync.lastSuccessAt = Date.now();
       this.tradeRecordAutoSync.lastWindow = { startTime, endTime };
       this.tradeRecordAutoSync.lastResult = {
         systemFills: result.preview.systemFills,
+        externalFills: result.preview.externalFills,
         cyclesDetected: result.preview.cyclesDetected,
         created: result.created,
         repaired: result.repaired,
@@ -1863,7 +1932,8 @@ export class EngineRuntime {
         {
           syncId,
           window: audit.window,
-          fullAudit,
+          backfilling: stillBackfilling,
+          rollingDays,
           ...this.tradeRecordAutoSync.lastResult,
         },
         "TRADE_RECORD",
@@ -1876,6 +1946,7 @@ export class EngineRuntime {
         {
           message: this.tradeRecordAutoSync.lastError,
           window: { startTime, endTime },
+          rollingDays,
         },
         "TRADE_RECORD",
       );
@@ -1928,7 +1999,7 @@ export class EngineRuntime {
     return this.trade.fetchRecentTradeAudit(
       start,
       end,
-      Math.min(1000, Math.max(100, Number(maxFills) || 500)),
+      Math.min(10_000, Math.max(100, Number(maxFills) || 500)),
       provenanceSymbols,
     );
   }

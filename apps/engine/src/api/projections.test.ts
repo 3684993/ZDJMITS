@@ -18,7 +18,8 @@ it('projects the configured 5000+5000 wallet baseline separately from rolling lo
   runtime.state.tradeRecords.set(record.tradeId,record);
   (runtime as any).exchangePerformance={status:'READY',source:'BINANCE_INCOME',fetchedAt:now,windowStart:now-7*86_400_000,windowEnd:now,realizedPnl:10,commission:-2,funding:1,tradingNetExFunding:8,allInNet:9,cashFlow:0,otherIncome:0,rowCount:13,realizedEvents:5,commissionEvents:5,fundingEvents:3,error:null};
   const view=dashboardProjection(runtime);
-  expect(view.performanceTracking?.baseline).toMatchObject({configuredCombinedWallet:10000,currentCombinedWallet:10808.93368463,combinedWalletGain:808.93368463,status:'READY'});
+  expect(view.performanceTracking?.baseline).toMatchObject({configuredCombinedWallet:10000,currentCombinedWallet:10808.93368463,status:'READY'});
+  expect(view.performanceTracking?.baseline.combinedWalletGain).toBeCloseTo(808.93368463,8);
   expect(view.performanceTracking?.rolling.local).toMatchObject({completeCycles:1,exFundingNet:.8,fundingUnknownCycles:1});
   expect(view.performanceTracking?.rolling.exchange).toMatchObject({tradingNetExFunding:8,funding:1,allInNet:9,cashFlow:0});
 });

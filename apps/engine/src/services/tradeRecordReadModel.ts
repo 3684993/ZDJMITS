@@ -34,7 +34,9 @@ export function projectTradeRecordSummary(input:TradeRecordReadModelInput){
     cycleInconsistent:rows.filter(row=>row.ledgerConservation==='LEDGER_INCONSISTENT'||row.integrityFlags.includes('LEDGER_INCONSISTENT')).length,
     cycleUnconserved:rows.filter(row=>row.ledgerConservation==='UNCONSERVED').length,
     cycleUnproven:rows.filter(row=>row.ledgerConservation==='UNKNOWN'||row.ledgerConservation==null).length,
-    localFundingUnknown:local.filter(row=>row.fundingAttributionStatus!=='EXACT'||!row.economicEligibility.canonicalPnlEligible).length,
+    localFundingUnknown:local.filter(row=>row.fundingAttributionStatus!=='EXACT').length,
+    localAllInUnconfirmed:local.filter(row=>!row.economicEligibility.canonicalPnlEligible).length,
+    localFundingExactEvidencePending:local.filter(row=>row.fundingAttributionStatus==='EXACT'&&!row.economicEligibility.canonicalPnlEligible).length,
     excludedClosed:rows.filter(row=>row.status==='CLOSED'&&!local.includes(row)).length,
     cycleCollision:[...cycleCounts.values()].filter(count=>count>1).reduce((sum,count)=>sum+count,0),
   };
@@ -44,7 +46,7 @@ export function projectTradeRecordSummary(input:TradeRecordReadModelInput){
     ledgerReconciliationPending:observedClosed.filter(row=>!row.economicEligibility.ledgerClosedComplete).length,awaitingReconciliation:observedClosed.filter(row=>!row.economicEligibility.ledgerClosedComplete).length,
     fundingUnknownCount:ledger.filter(row=>row.fundingAttributionStatus!=='EXACT').length,legacyEconomicInconsistentCount:rows.filter(row=>row.economicEligibility.legacyEconomicInconsistent).length,identityOrLedgerIssueCount:rows.filter(row=>!row.economicEligibility.ledgerClosedComplete&&row.status==='CLOSED').length,
     tradingNetExFundingEligibleCount:local.length,tradingNetExFunding:local.reduce((sum,row)=>sum+(row.tradingNetPnlExFunding??0),0),canonicalPnlEligibleCount:localExact.length,canonicalNetPnl:localExact.length?canonicalNet:null,canonicalNetPnlStatus:localExact.length?'ELIGIBLE':'NO_ELIGIBLE_SAMPLES',canonicalCoverage:{eligible:localExact.length,ledgerClosedComplete:local.length,ratio:local.length?localExact.length/local.length:null},
-    localAccounting:{exFundingNet:local.length?local.reduce((sum,row)=>sum+(row.tradingNetPnlExFunding??0),0):null,completeCycles:local.length,confirmedFunding:localExact.length?localExact.reduce((sum,row)=>sum+(row.funding??0),0):null,confirmedAllInNet:localExact.length?localExact.reduce((sum,row)=>sum+(row.formalNetPnl??0),0):null,confirmedAllInCycles:localExact.length,fundingUnknownCycles:accountingCoverage.localFundingUnknown,coverage:accountingCoverage},
+    localAccounting:{exFundingNet:local.length?local.reduce((sum,row)=>sum+(row.tradingNetPnlExFunding??0),0):null,completeCycles:local.length,confirmedFunding:localExact.length?localExact.reduce((sum,row)=>sum+(row.funding??0),0):null,confirmedAllInNet:localExact.length?localExact.reduce((sum,row)=>sum+(row.formalNetPnl??0),0):null,confirmedAllInCycles:localExact.length,fundingUnknownCycles:accountingCoverage.localFundingUnknown,allInUnconfirmedCycles:accountingCoverage.localAllInUnconfirmed,fundingExactEvidencePendingCycles:accountingCoverage.localFundingExactEvidencePending,coverage:accountingCoverage},
     prospective:input.experimentManifest?{status:'AVAILABLE',experimentId:input.experimentManifest.experimentId,entryCycleCount:prospective!.length,closedCycleCount:prospectiveClosed!.length,canonicalPnlEligibleCount:prospectiveCanonical!.length}:{status:'MANIFEST_UNAVAILABLE',experimentId:null,entryCycleCount:null,closedCycleCount:null,canonicalPnlEligibleCount:null},
     completed:localExact.length,netPnl:localExact.length?canonicalNet:0};
 }

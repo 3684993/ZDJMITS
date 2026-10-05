@@ -1,5 +1,4 @@
 import { Router, type NextFunction, type Request, type Response } from 'express';
-import { isIP } from 'node:net';
 import { SystemSettingsSchema, type SystemSettings } from '@zdj/contracts';
 import { loadAiResources } from '../config/aiResourceLoader.js';
 import { BinanceTransport, reconfigureBinanceTransports } from '../adapters/binance/BinanceTransport.js';
@@ -10,9 +9,9 @@ type RuntimeResourceKind='exchange'|'proxy'|'ai';
 const aiLoadDefault=()=>({active:0,totalRuns:0,failures:0,lastLatencyMs:null,currentSymbol:null,currentRunId:null,currentStartedAt:null,lastCompletedAt:null,lastDirection:null,lastDecision:null,idleReason:'WAITING_CANDIDATE',nextStep:'等待动态交易池候选',queueDepth:0});
 
 function canonicalProxy(settings:SystemSettings,item?:any):SystemSettings{
-  const next=structuredClone(settings),current=next.connections.proxy;
-  next.connections.proxy={...current,...(item?{enabled:item.enabled!==false,protocol:'SOCKS5H' as const,url:String(item.url??current.url),expectedStaticEgressIp:String(item.expectedStaticEgressIp??current.expectedStaticEgressIp??'').trim()||undefined}:{}),forceBinanceRest:true,forceBinanceWs:true,proxyDns:true,binanceRestRoute:'CONFIGURED',bypassLocalhost:true,failClosed:true};
-  return next;
+  const next=structuredClone(settings),current=next.connections.proxy as any,{expectedStaticEgressIp:_legacyEgress,...withoutLegacyEgress}=current;
+  next.connections.proxy={...withoutLegacyEgress,...(item?{enabled:item.enabled!==false,protocol:'SOCKS5H' as const,url:String(item.url??current.url)}:{}),forceBinanceRest:true,forceBinanceWs:true,proxyDns:true,binanceRestRoute:'CONFIGURED',bypassLocalhost:true,failClosed:true};
+  return SystemSettingsSchema.parse(next);
 }
 function canonicalExchange(settings:SystemSettings,item:any):SystemSettings{
   const next=structuredClone(settings),current=next.connections.exchange,type=String(item?.type??item?.provider??current.provider);
@@ -33,7 +32,7 @@ function aiResource(item:any){
 function rejectSecretFields(item:any){if(item&&['apiKey','apiSecret','secret','password','token'].some(key=>Object.prototype.hasOwnProperty.call(item,key)))throw new Error('RESOURCE_SECRET_FIELD_FORBIDDEN');}
 function resourceView(settings:SystemSettings,kind:RuntimeResourceKind,runtime?:EngineRuntime){
   if(kind==='exchange'){const x=settings.connections.exchange as any;return[{id:'binance-usdm',name:'Binance USD-M',type:'BINANCE_USDM',environment:x.environment,restBaseUrl:x.environment==='TESTNET'?(x.testnetRestBaseUrl??x.testnetBaseUrl):(x.productionRestBaseUrl??x.productionBaseUrl),wsBaseUrl:x.environment==='TESTNET'?(x.testnetWsBaseUrl??'wss://stream.binancefuture.com/ws'):(x.productionWsBaseUrl??'wss://fstream.binance.com/ws'),credentialRef:x.credentialRef,enabled:true,active:true,status:'READY'}];}
-  if(kind==='proxy')return[{id:'binance-proxy',name:'SOCKS5H',type:'SOCKS5H',url:settings.connections.proxy.url,expectedStaticEgressIp:(settings.connections.proxy as any).expectedStaticEgressIp??'',enabled:settings.connections.proxy.enabled,active:true,status:settings.connections.proxy.enabled?'READY':'DISABLED'}];
+  if(kind==='proxy')return[{id:'binance-proxy',name:'SOCKS5H',type:'SOCKS5H',url:settings.connections.proxy.url,enabled:settings.connections.proxy.enabled,active:true,status:settings.connections.proxy.enabled?'READY':'DISABLED'}];
   const metrics=new Map((runtime?.ai?.resourceMetrics?.()??[]).map((row:any)=>[row.id,row]));
   return settings.aiResources.map(item=>{const metric:any=metrics.get(item.id);return{...item,name:item.name??item.id,
     duties:(settings.aiDutyRoutes??[]).filter(route=>route.enabled&&route.resourceId===item.id).map(route=>route.duty),
@@ -173,7 +172,7 @@ export function createRuntimeSettingsResourcesRouter(runtime:EngineRuntime){
     const id=kind==='proxy'?'binance-proxy':kind==='exchange'?'binance-usdm':String(req.params.id??req.body?.id??'');
     if(!id)throw new Error('RESOURCE_ID_REQUIRED');
     let nextSettings:SystemSettings,item:any;
-    if(kind==='proxy'){const expected=String(req.body?.expectedStaticEgressIp??'').trim();if(expected&&!isIP(expected))throw new Error('PROXY_EXPECTED_EGRESS_IP_INVALID');item={id,name:req.body?.name??'SOCKS5H',type:'SOCKS5H',url:String(req.body?.url??before.connections.proxy.url),expectedStaticEgressIp:expected||undefined,enabled:req.body?.enabled!==false};nextSettings=canonicalProxy(before,item);}
+    if(kind==='proxy'){item={id,name:req.body?.name??'SOCKS5H',type:'SOCKS5H',url:String(req.body?.url??before.connections.proxy.url),enabled:req.body?.enabled!==false};nextSettings=canonicalProxy(before,item);}
     else if(kind==='exchange'){item={id,name:req.body?.name??'Binance USD-M',type:'BINANCE_USDM',environment:req.body?.environment??before.connections.exchange.environment,restBaseUrl:req.body?.restBaseUrl,wsBaseUrl:req.body?.wsBaseUrl,credentialRef:req.body?.credentialRef??before.connections.exchange.credentialRef,enabled:true};nextSettings=canonicalExchange(before,item);}
     else{item=aiResource({...req.body,id});nextSettings=structuredClone(before);nextSettings.aiResources=[...nextSettings.aiResources.filter(existing=>existing.id!==item.id),item];}
     const saved=await runtime.updateResourceSettings(nextSettings,expected,{kind,operation:'SAVE',id,value:item});hotApply(runtime,before,saved);
@@ -189,7 +188,7 @@ export function createRuntimeSettingsResourcesRouter(runtime:EngineRuntime){
       return res.json({id,status:'HEALTHY',latencyMs:Date.now()-startedAt,modelConfigured:models.includes(resource.model),models});
     }
     const transport=new BinanceTransport(runtime.state.settings.connections),health=await transport.health();
-    if(kind==='proxy')return res.json({id,status:health.status,transport:health,egress:health.egress});
+    if(kind==='proxy')return res.json({id,status:health.status,transport:health});
     const ref=runtime.state.settings.connections.exchange.credentialRef,[key,secret]=await Promise.all([runtime.settingsStore.secretStatus(`${ref}:apiKey`),runtime.settingsStore.secretStatus(`${ref}:apiSecret`)]);
     return res.json({id,status:health.status,transport:health,credentials:{configured:key.configured&&secret.configured,status:key.configured&&secret.configured?'READY':key.status},writeEnabled:runtime.state.settings.connections.executionMode==='TESTNET_ENABLED'&&runtime.state.settings.connections.exchange.environment==='TESTNET'&&key.configured&&secret.configured});
   }catch(error){next(error);}});

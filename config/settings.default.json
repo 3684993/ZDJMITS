@@ -58,5 +58,6 @@
   "entry":{"absoluteTtlMinutes":60,"reviewIntervalSeconds":20,"maxReprices":12,"minReachability":0.48,"makerOffsetTicks":0,"minimumInitialMarginByQuote":{"USDT":100,"USDC":100},"minimumOrderNotionalBySymbol":{"BTCUSDT":150},"minimumOrderNotionalByQuote":{"USDT":200,"USDC":200},"nearMarket":{"enabled":true,"maxDistanceBps":5,"maxOffsetTicks":2,"ttlSeconds":90,"reviewSeconds":2,"repriceIntervalSeconds":5,"maxReprices":6}},
   "takeProfit":{"enabled":true,"mode":"PRICE_MOVE_PERCENT","targetPriceMovePercent":1.20,"quantityPercent":100,"tpEconomicsEnabled":true,"minNetProfitUsd":1,"minNetProfitRoiPct":0.15,"feeSafetyBufferPct":10,"exitFeeAssumption":"TAKER","slippageBufferPct":0,"entryFeeRate":0.0004,"makerFeeRate":0.0002,"takerFeeRate":0.0004},
   "positionManagement":{"humanHandoffAfterMinutes":1440,"lossHandoffBars":4,"humanManagedAdmissionCapsEnabled":true,"maxHumanManagedPositions":4,"maxHumanManagedNotionalPctEquity":0.2},
+  "performanceTracking":{"enabled":true,"baselineWalletByQuote":{"USDT":5000,"USDC":5000},"rollingDays":7},
   "releasePolicy":{"lifecycleVersion":390}
 }

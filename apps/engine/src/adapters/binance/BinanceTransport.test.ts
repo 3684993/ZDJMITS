@@ -39,15 +39,10 @@ it('fails closed for an unregistered Binance endpoint weight',()=>{
  expect(()=>binanceRequestWeight(new URL('https://demo-fapi.binance.com/fapi/v1/unknown?signature=x'),'GET')).toThrow('BINANCE_ENDPOINT_WEIGHT_UNREGISTERED');
 });
 
-it('tracks configured static egress expectation separately from Binance rate-limit truth',()=>{
+it('does not bind Testnet writes to a fixed public egress IP',()=>{
  const cfg={...settings(),proxy:{...settings().proxy,expectedStaticEgressIp:'203.0.113.10'}},transport=new BinanceTransport(cfg as never);
- expect(transport.restRoute()).toMatchObject({expectedStaticEgressIp:'203.0.113.10'});
- expect(transport.egressStatus()).toMatchObject({expectedEgressIp:'203.0.113.10',lastVerifiedEgressIp:null,status:'UNVERIFIED'});
-});
-
-
-it('fails closed on Testnet writes when a configured static egress has not been verified',()=>{
- const cfg={...settings(),proxy:{...settings().proxy,expectedStaticEgressIp:'203.0.113.10'}},transport=new BinanceTransport(cfg as never);
- expect(transport.entryBlockReason()).toBe('BINANCE_EGRESS_UNVERIFIED');
- expect(()=>transport.assertTestnetExchangeWrite()).toThrow('TESTNET_WRITE_EGRESS_NOT_VERIFIED:UNVERIFIED');
+ expect(transport.restRoute()).toMatchObject({egressVerification:'DISABLED'});
+ expect(transport.egressStatus()).toMatchObject({expectedEgressIp:null,lastVerifiedEgressIp:null,status:'DISABLED'});
+ expect(transport.entryBlockReason()).not.toMatch(/EGRESS/);
+ expect(()=>transport.assertTestnetExchangeWrite()).not.toThrow();
 });

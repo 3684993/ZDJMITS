@@ -3,7 +3,7 @@
 export function reconcileAccountValuation(account:any,assets:Array<{asset:string;walletBalance:number;availableBalance?:number;unrealizedPnl:number;marginBalance?:number|null;usdValue:number|null}>){
   const usdt=assets.find(row=>row.asset==='USDT');
   const usdc=assets.find(row=>row.asset==='USDC');
-  const unknownAssets=assets.filter(row=>row.usdValue===null).map(row=>row.asset);
+  const unknownAssets=assets.filter(row=>row.usdValue===null&&(Number(row.walletBalance)!==0||Number(row.unrealizedPnl)!==0||Number(row.availableBalance??0)!==0)).map(row=>row.asset);
   const number=(value:unknown):number|null=>value===null||value===undefined||value===''?null:Number.isFinite(Number(value))?Number(value):null;
   const exchangeUsdtWallet=number(account.totalWalletBalance);
   const exchangeUsdtUnrealized=number(account.totalUnrealizedProfit);
@@ -26,6 +26,6 @@ export function reconcileAccountValuation(account:any,assets:Array<{asset:string
   return {status:!usdt||!usdc?'PARTIAL':consistent?(unknownAssets.length?'PARTIAL':'RECONCILED'):'ACCOUNT_VALUATION_INCONSISTENT',
     scope:'BINANCE_V2_ACCOUNT_TOTALS_USDT_ONLY',exchangeUsdtWallet,exchangeUsdtUnrealized,exchangeUsdtMargin,
     usdtMarginEquityUsd,usdcMarginEquityUsd,combinedStablecoinMarginEquityUsd,usdtWalletUsd:usdtWallet,usdcWalletUsd:usdcWallet,usdtAvailableUsd,usdcAvailableUsd,combinedStablecoinWalletUsd,combinedStablecoinAvailableUsd,combinedStablecoinUnrealizedPnlUsd,
-    stablecoinWalletUsd,stablecoinMarginUsd,unknownAssets,excludedAssets:assets.filter(row=>!['USDT','USDC'].includes(row.asset)).map(row=>row.asset),toleranceUsd,
+    stablecoinWalletUsd,stablecoinMarginUsd,unknownAssets,excludedAssets:assets.filter(row=>!['USDT','USDC'].includes(row.asset)&&(Number(row.walletBalance)!==0||Number(row.unrealizedPnl)!==0||Number(row.availableBalance??0)!==0)).map(row=>row.asset),toleranceUsd,
     assetValuationComplete:unknownAssets.length===0&&combinedStablecoinMarginEquityUsd!==null};
 }

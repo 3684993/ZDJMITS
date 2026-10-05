@@ -21,5 +21,6 @@ it('does not replace a missing USDT or USDC fact with the top-level USDT total',
   expect(reconcileAccountValuation(account,[usdt])).toMatchObject({status:'PARTIAL',combinedStablecoinMarginEquityUsd:null,assetValuationComplete:false});
   expect(reconcileAccountValuation(account,[usdc])).toMatchObject({status:'PARTIAL',combinedStablecoinMarginEquityUsd:null,assetValuationComplete:false});
   expect(reconcileAccountValuation(account,[usdt,usdc])).toMatchObject({status:'RECONCILED',combinedStablecoinMarginEquityUsd:150});
+  expect(reconcileAccountValuation(account,[usdt,usdc,{asset:'BNB',walletBalance:0,availableBalance:0,unrealizedPnl:0,usdValue:null}])).toMatchObject({status:'RECONCILED',unknownAssets:[],excludedAssets:[]});
   expect(reconcileAccountValuation(account,[{...usdt,unrealizedPnl:null as any},usdc])).toMatchObject({status:'ACCOUNT_VALUATION_INCONSISTENT',combinedStablecoinMarginEquityUsd:null});
 });

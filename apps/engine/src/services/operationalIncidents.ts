@@ -6,8 +6,6 @@ const text=(value:unknown)=>String(value??'').replace(/(apiKey|apiSecret|signatu
 const template=(publicCode:string,titleZh:string,messageZh:string,remediationZh:string,category:OperationalIncident['category'],blockingScopes:string[]):Pick<Candidate,'publicCode'|'titleZh'|'messageZh'|'remediationZh'|'category'|'severity'|'blockingScopes'>=>({publicCode,titleZh,messageZh,remediationZh,category,severity:'ERROR',blockingScopes});
 const NETWORK=template('NET-001','VPN或网络错误','无法连接 Binance，依赖交易所事实的操作已安全暂停。','检查 VPN、代理和网络，并使用符合交易所规则的可访问出口。','NETWORK',['MARKET_DATA','NEW_ENTRY','EXCHANGE_WRITE']);
 const TIMEOUT=template('NET-002','VPN或网络延迟过高','Binance 请求持续超时，依赖实时事实的新建仓已安全暂停。','检查网络质量或切换低延迟、可合法访问的出口。','NETWORK',['MARKET_DATA','NEW_ENTRY']);
-const EGRESS_UNAVAILABLE=template('NET-003','出口网络无法验证','系统无法确认当前出口 IP，交易写入已安全暂停。','检查 VPN/代理连接后重新检测出口。','NETWORK',['EXCHANGE_WRITE','NEW_ENTRY']);
-const EGRESS_MISMATCH=template('NET-004','出口 IP 与配置不一致','当前出口与预期出口不一致，交易写入已安全暂停。','切换到正确出口，或按 Settings 配置流程更新预期出口。','NETWORK',['EXCHANGE_WRITE','NEW_ENTRY']);
 const MARKET=template('MARKET-DATA-001','行情事实不可用','当前没有数据完整的可执行候选，新建仓分析已暂停。','等待行情自动恢复；若持续发生，请检查行情连接与交易所状态。','MARKET_DATA',['MARKET_DATA','NEW_ENTRY']);
 const SUBMIT=template('EX-SUBMIT-UNKNOWN','订单提交结果未知','系统正按原 clientOrderId 查询订单身份，确认前禁止重复提交。','查看订单身份查询结果；不要手动重复提交同一订单。','SUBMIT_UNKNOWN',['EXCHANGE_WRITE','NEW_ENTRY']);
 const HTTP:Record<number,ReturnType<typeof template>>={
@@ -28,9 +26,7 @@ const BUSINESS:Record<number,[string,string]>={
 export function classifyOperationalError(input:{message:unknown;subsystem?:string;budgetPressureProven?:boolean;transportEvidence?:boolean;retryAfter?:string|null;blockedUntil?:number|null;httpStatus?:number|null;requestId?:string|null;endpoint?:string|null;method?:string|null;routeIdentity?:string|null;expectedEgressIp?:string|null;observedEgressIp?:string|null}):Candidate|null{
   const raw=text(input.message),status=input.httpStatus??Number(raw.match(/Binance HTTP (\d{3})/)?.[1]??0),code=Number(raw.match(/"code"\s*:\s*(-?\d+)/)?.[1]??NaN);
   let base:ReturnType<typeof template>|null=null;
-  if(/TESTNET_WRITE_EGRESS_NOT_VERIFIED:MISMATCH|BINANCE_EGRESS_MISMATCH/.test(raw))base=EGRESS_MISMATCH;
-  else if(/TESTNET_WRITE_EGRESS_NOT_VERIFIED:UNAVAILABLE|BINANCE_EGRESS_UNAVAILABLE/.test(raw))base=EGRESS_UNAVAILABLE;
-  else if(HTTP[status])base=HTTP[status]!;
+  if(HTTP[status])base=HTTP[status]!;
   else if(/SUBMIT.*UNKNOWN|ACK.*UNKNOWN|ENTRY_SUBMIT_UNACKED/.test(raw))base=SUBMIT;
   else if(/BINANCE_REQUEST_QUEUE_TIMEOUT/.test(raw))base=input.budgetPressureProven?null:input.transportEvidence?TIMEOUT:null;
   else if(/timed out|ETIMEDOUT|TimeoutError/i.test(raw))base=TIMEOUT;
@@ -57,9 +53,8 @@ export class OperationalIncidentTracker{
 }
 export function operationalCandidates(facts:{pipeline:any;routes:any[];account:any;marketStream?:any;valuation?:any;orders?:any}):Candidate[]{
   const out:Candidate[]=[];
-  for(const route of facts.routes){const egress=route.egress??{},budget=route.requestBudget??{},recent=budget.recentDispatches??[];
+  for(const route of facts.routes){const budget=route.requestBudget??{},recent=budget.recentDispatches??[];
     for(const failure of route.recentFailures??[]){const row=classifyOperationalError({message:failure.message,subsystem:'BINANCE_HTTP',requestId:failure.requestId,endpoint:failure.endpoint,method:failure.method,routeIdentity:failure.routeIdentity});if(row)out.push(row);}
-    if(egress.status==='MISMATCH'||egress.status==='UNAVAILABLE'){const row=classifyOperationalError({message:egress.status==='MISMATCH'?'BINANCE_EGRESS_MISMATCH':'BINANCE_EGRESS_UNAVAILABLE',expectedEgressIp:egress.expectedEgressIp,observedEgressIp:egress.lastVerifiedEgressIp,routeIdentity:egress.routeIdentity});if(row)out.push(row);}
     const http=recent.filter((row:any)=>[418,429,451].includes(row.status)&&Date.now()-Number(row.completedAt??0)<120_000).at(-1);
     if(http){const row=classifyOperationalError({message:`Binance HTTP ${http.status}`,httpStatus:http.status,subsystem:'BINANCE_HTTP',endpoint:http.endpoint,method:http.method,requestId:http.requestId,routeIdentity:http.routeIdentity,retryAfter:http.retryAfter,blockedUntil:http.blockedUntil});if(row)out.push(row);}
     const stream=facts.marketStream??facts.pipeline?.marketDataDetail??{},timeout=recent.filter((row:any)=>row.decision==='TIMEOUT'&&Date.now()-Number(row.completedAt??0)<60_000).at(-1),lowPressure=Number(budget.admissionObservedWeight1m??budget.usedWeight1m??Infinity)<Number(budget.softBackgroundWeight??0),transportEvidence=Boolean(stream.lastError||stream.streamError||(facts.pipeline?.marketDataReason&&stream.connectedAt&&Date.now()-Number(stream.connectedAt)<60_000));

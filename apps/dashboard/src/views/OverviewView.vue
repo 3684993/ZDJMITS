@@ -336,12 +336,12 @@ onUnmounted(() => {
         ><strong>{{ account()?.activePositions ?? "—" }}</strong>
       </div>
       <div class="kpi">
-        <span>本地已实现净收益（不含资金费）</span
+        <span>基线后账户钱包净增</span
         ><strong
-          :class="(s.snapshot?.localAccounting?.exFundingNet ?? 0) >= 0 ? 'positive' : 'negative'"
-          >{{ s.snapshot?.localAccounting?.exFundingNet == null ? '—' : money(s.snapshot.localAccounting.exFundingNet) }}</strong
+          :class="(s.snapshot?.performanceTracking?.baseline?.combinedWalletGain ?? 0) >= 0 ? 'positive' : 'negative'"
+          >{{ s.snapshot?.performanceTracking?.baseline?.combinedWalletGain == null ? '—' : money(s.snapshot.performanceTracking.baseline.combinedWalletGain) }}</strong
         >
-        <small>本地完整周期 {{s.snapshot?.localAccounting?.completeCycles??'—'}} · 本地已确认资金费 {{s.snapshot?.localAccounting?.confirmedFunding==null?'—':money(s.snapshot.localAccounting.confirmedFunding)}} · Funding UNKNOWN {{s.snapshot?.localAccounting?.fundingUnknownCycles??'—'}} · 全口径未确认 {{s.snapshot?.localAccounting?.allInUnconfirmedCycles??'—'}}（其中 Funding EXACT 但权威证据未闭合 {{s.snapshot?.localAccounting?.fundingExactEvidencePendingCycles??'—'}}） · 已确认全口径净收益 {{s.snapshot?.localAccounting?.confirmedAllInNet==null?'—':money(s.snapshot.localAccounting.confirmedAllInNet)}}（覆盖 {{s.snapshot?.localAccounting?.confirmedAllInCycles??'—'}}/{{s.snapshot?.localAccounting?.completeCycles??'—'}}）</small>
+        <small>期初 USDT {{s.snapshot?.performanceTracking?money(s.snapshot.performanceTracking.baseline.configuredUsdtWallet):'—'}} + USDC {{s.snapshot?.performanceTracking?money(s.snapshot.performanceTracking.baseline.configuredUsdcWallet):'—'}}；包含已实现盈亏、手续费、资金费及可能的划转。纯交易账本另见下方，本地累计不含资金费 {{s.snapshot?.localAccounting?.exFundingNet==null?'—':money(s.snapshot.localAccounting.exFundingNet)}}。</small>
       </div>
       <div class="kpi" data-active-commissions>
         <span>{{ commissions ? "活动委托 · 按证明来源分列（不相加）" : "活动委托 · 分类不可用" }}</span>

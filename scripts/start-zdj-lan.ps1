@@ -1,7 +1,8 @@
 [CmdletBinding()]
 param(
   [string]$StartReason = 'MANUAL_START',
-  [switch]$SkipFirewall
+  [switch]$SkipFirewall,
+  [switch]$Foreground
 )
 $ErrorActionPreference = 'Stop'
 if ($StartReason -ne 'MANUAL_START') { throw 'MANUAL_START_ONLY: automatic start/restart is disabled.' }
@@ -68,6 +69,73 @@ $nodePath = (Get-Command node.exe -ErrorAction Stop).Source
 $enginePath = Join-Path (Get-Location) 'apps\engine\dist\main.js'
 $hostScript = Join-Path $PSScriptRoot 'start-zdj-engine-host.ps1'
 if (-not (Test-Path -LiteralPath $enginePath)) { throw 'ENGINE_BUILD_MISSING: build explicitly before starting.' }
+
+if($Foreground){
+  # Foreground observe mode uses the same runtime environment and the same conservative V8 guard as
+  # the detached launcher, but keeps node.exe attached to this console so the last live output before
+  # a native exit is visible immediately. It never starts or stops any AI service.
+  if($env:NODE_OPTIONS -match '(^|\s)--jitless(?:\s|$)'){
+    Write-Warning 'Removing inherited NODE_OPTIONS=--jitless because Node fetch/undici requires WebAssembly.'
+    Remove-Item Env:NODE_OPTIONS -ErrorAction SilentlyContinue
+  }
+  $nodeVersion=(& $nodePath --version 2>$null | Out-String).Trim()
+  $v8Version=(& $nodePath -p "process.versions.v8" 2>$null | Out-String).Trim()
+  $v8Options=(& $nodePath --v8-options 2>$null | Out-String)
+  $nodeFlags=@()
+  if($v8Options -match '(?m)(^|\s)--maglev(?:\s|$)'){$nodeFlags+='--no-maglev'}
+  $stamp=Get-Date -Format 'yyyyMMdd-HHmmss'
+  $foregroundLog=Join-Path $logDir ("engine.foreground.$stamp.log")
+  $reportDir=Join-Path (Get-Location) ("docs\reports\crash\foreground-$stamp")
+  New-Item -ItemType Directory -Path $reportDir -Force|Out-Null
+  $nodeArgs=@($nodeFlags)+@('--report-on-fatalerror','--report-uncaught-exception',("--report-directory=$reportDir"),'--trace-exit',$enginePath)
+  Write-Host ''
+  Write-Host '============================================================'
+  Write-Host ' ZDJ-MITS ENGINE / FOREGROUND OBSERVE MODE'
+  Write-Host '============================================================'
+  Write-Host ('Node            : '+$nodeVersion)
+  Write-Host ('V8              : '+$v8Version)
+  Write-Host ('PID             : current console will own node.exe directly')
+  Write-Host ('Engine          : '+$enginePath)
+  Write-Host ('Node flags      : '+(($nodeFlags -join ' ') ?? '(none)'))
+  Write-Host ('Console log     : '+$foregroundLog)
+  Write-Host ('Crash reports   : '+$reportDir)
+  Write-Host 'AI services     : untouched (8081/8083/8084 are not stopped or restarted)'
+  Write-Host 'Press Ctrl+C only if you intentionally want to stop the Engine.'
+  Write-Host '------------------------------------------------------------'
+  $startedAt=Get-Date
+  $header="[$($startedAt.ToString('yyyy-MM-dd HH:mm:ss.fff'))] FOREGROUND_START node=$nodeVersion v8=$v8Version flags=$($nodeFlags -join ' ') engine=$enginePath"
+  [IO.File]::WriteAllText($foregroundLog,$header+[Environment]::NewLine,[Text.UTF8Encoding]::new($false))
+  $previousErrorAction=$ErrorActionPreference
+  $ErrorActionPreference='Continue'
+  try{
+    & $nodePath @nodeArgs 2>&1 | ForEach-Object {
+      $line="[$((Get-Date).ToString('yyyy-MM-dd HH:mm:ss.fff'))] $($_.ToString())"
+      Write-Host $line
+      [IO.File]::AppendAllText($foregroundLog,$line+[Environment]::NewLine,[Text.UTF8Encoding]::new($false))
+    }
+    $exitCode=if($null -eq $LASTEXITCODE){0}else{[int]$LASTEXITCODE}
+  }finally{
+    $ErrorActionPreference=$previousErrorAction
+  }
+  $endedAt=Get-Date
+  $duration=[math]::Round(($endedAt-$startedAt).TotalSeconds,3)
+  $exitUnsigned=[BitConverter]::ToUInt32([BitConverter]::GetBytes([int]$exitCode),0)
+  $exitHex=('0x{0:X8}' -f $exitUnsigned)
+  $footer="[$($endedAt.ToString('yyyy-MM-dd HH:mm:ss.fff'))] FOREGROUND_EXIT exitCode=$exitCode exitHex=$exitHex durationSeconds=$duration"
+  [IO.File]::AppendAllText($foregroundLog,$footer+[Environment]::NewLine,[Text.UTF8Encoding]::new($false))
+  Write-Host '------------------------------------------------------------'
+  Write-Host ('ENGINE EXITED    : '+$endedAt.ToString('yyyy-MM-dd HH:mm:ss.fff'))
+  Write-Host ('Duration seconds : '+$duration)
+  Write-Host ('Exit code        : '+$exitCode)
+  Write-Host ('Exit hex         : '+$exitHex)
+  Write-Host ('Console log      : '+$foregroundLog)
+  Write-Host ('Crash reports    : '+$reportDir)
+  if($exitCode -eq -1073740791){Write-Host 'Detected Windows native fail-fast: 0xC0000409' -ForegroundColor Red}
+  Write-Host 'Last 40 log lines:'
+  Get-Content -LiteralPath $foregroundLog -Tail 40 -ErrorAction SilentlyContinue|ForEach-Object {Write-Host $_}
+  exit $exitCode
+}
+
 if (-not (Test-Path -LiteralPath $hostScript)) { throw 'ENGINE_HOST_SCRIPT_MISSING' }
 $launchId=[guid]::NewGuid().ToString('N')
 $hostExe=(Get-Process -Id $PID -ErrorAction Stop).Path

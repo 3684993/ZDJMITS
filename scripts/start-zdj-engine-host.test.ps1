@@ -2,12 +2,18 @@ $ErrorActionPreference='Stop'
 $root=Split-Path -Parent $PSScriptRoot
 $hostScript=Join-Path $PSScriptRoot 'start-zdj-engine-host.ps1'
 $launcherScript=Join-Path $PSScriptRoot 'start-zdj-lan.ps1'
+$collectorScript=Join-Path $PSScriptRoot 'collect-zdj-v397-runtime-handoff.ps1'
 $tokens=$null;$errors=$null
 [void][Management.Automation.Language.Parser]::ParseFile($hostScript,[ref]$tokens,[ref]$errors)
 if($errors.Count){throw ('HOST_SCRIPT_PARSE_FAILED: '+(($errors|ForEach-Object Message)-join '; '))}
 $tokens=$null;$errors=$null
 [void][Management.Automation.Language.Parser]::ParseFile($launcherScript,[ref]$tokens,[ref]$errors)
 if($errors.Count){throw ('LAUNCHER_SCRIPT_PARSE_FAILED: '+(($errors|ForEach-Object Message)-join '; '))}
+$tokens=$null;$errors=$null
+[void][Management.Automation.Language.Parser]::ParseFile($collectorScript,[ref]$tokens,[ref]$errors)
+if($errors.Count){throw ('COLLECTOR_SCRIPT_PARSE_FAILED: '+(($errors|ForEach-Object Message)-join '; '))}
+$collectorText=Get-Content -LiteralPath $collectorScript -Raw
+if($collectorText -match '(?i)-Method\s+(POST|PUT|PATCH|DELETE)' -or $collectorText -match '/trade-records/sync/apply|/testnet/cleanup/run'){throw 'COLLECTOR_MUST_REMAIN_READ_ONLY'}
 $temp=Join-Path ([IO.Path]::GetTempPath()) ('zdj-host-test-'+[guid]::NewGuid().ToString('N'))
 New-Item -ItemType Directory -Path $temp -Force|Out-Null
 try{

@@ -3,11 +3,11 @@ import {classifyOperationalError,OperationalIncidentTracker,operationalCandidate
 
 describe('user-facing operational incidents',()=>{
   const classify=(message:string,extra:Record<string,unknown>={})=>classifyOperationalError({message,...extra});
-  it('classifies transport, egress and exchange errors without erasing raw facts',()=>{
+  it('classifies transport and exchange errors without fixed-egress incidents',()=>{
     expect(classify('BINANCE_TRANSPORT_BLOCKED: ECONNRESET')?.publicCode).toBe('NET-001');
     expect(classify('Binance request timed out')?.publicCode).toBe('NET-002');
-    expect(classify('TESTNET_WRITE_EGRESS_NOT_VERIFIED:UNAVAILABLE')?.publicCode).toBe('NET-003');
-    expect(classify('TESTNET_WRITE_EGRESS_NOT_VERIFIED:MISMATCH')?.publicCode).toBe('NET-004');
+    expect(classify('TESTNET_WRITE_EGRESS_NOT_VERIFIED:UNAVAILABLE')).toBeNull();
+    expect(classify('TESTNET_WRITE_EGRESS_NOT_VERIFIED:MISMATCH')).toBeNull();
     expect(classify('Binance HTTP 451: unavailable')?.publicCode).toBe('EX-HTTP-451');
     expect(classify('Binance HTTP 429',{retryAfter:'10'})?.retryAfter).toBe('10');
     expect(classify('Binance HTTP 418',{blockedUntil:123})?.blockedUntil).toBe(123);

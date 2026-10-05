@@ -360,8 +360,8 @@ function baseDashboardProjection(runtime: EngineRuntime): DashboardSnapshot {
 export function dashboardProjection(runtime:EngineRuntime):DashboardSnapshot{
   const base=baseDashboardProjection(runtime),economics=projectTradeRecordSummary({records:[...runtime.state.tradeRecords.values()],asOf:Date.now(),...runtime.qualityObserver?.readContext()});
   return {...base,
-    tradeNetPnl:economics.fundingUnknownCount>0?null:economics.canonicalNetPnl,
-    tradeCompletedCount:economics.canonicalPnlEligibleCount,
+    tradeNetPnl:economics.localFundingUnknownCount>0?null:economics.localCanonicalNetPnl,
+    tradeCompletedCount:economics.localCanonicalPnlEligibleCount,
     tradeTradingNetExFunding:economics.tradingNetExFunding,
     tradeLocalTradingNetExFunding:economics.localTradingNetExFunding,
     tradeLocalConfirmedFunding:economics.localConfirmedFunding,

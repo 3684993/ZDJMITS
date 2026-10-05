@@ -8,8 +8,11 @@ import type { TradeAuditSnapshot } from '../types.js';
 let runtime: EngineRuntime | null = null;
 let dataDir = '';
 let previousBackupDir: string | undefined;
+let dateSpy: ReturnType<typeof vi.spyOn> | null = null;
 
 afterEach(async () => {
+  dateSpy?.mockRestore();
+  dateSpy = null;
   runtime?.stop();
   runtime = null;
   if (dataDir) await rm(dataDir, { recursive: true, force: true });
@@ -19,10 +22,8 @@ afterEach(async () => {
   previousBackupDir = undefined;
 });
 
-describe('automatic TradeRecord sync window', () => {
-  // This fixture opens and persists a full EngineRuntime twice. Shared Windows CI runners can
-  // exceed the generic 20s budget under concurrent suites; the assertions and work are unchanged.
-  it('reads the full 24 hours before startup and caps the final read at startup plus 24 hours', async () => {
+describe('automatic TradeRecord rolling sync window', () => {
+  it('backfills the last seven days one day per pass, then stays incremental', async () => {
     dataDir = await mkdtemp(path.join(os.tmpdir(), 'zdj-auto-trade-sync-'));
     previousBackupDir = process.env.ZDJ_TRADE_SYNC_BACKUP_DIR;
     process.env.ZDJ_TRADE_SYNC_BACKUP_DIR = path.join(dataDir, 'backups');
@@ -31,6 +32,7 @@ describe('automatic TradeRecord sync window', () => {
       dataDir: path.join(dataDir, 'runtime'),
     });
     runtime.state.settings.connections.exchange.environment = 'TESTNET';
+    runtime.state.settings.performanceTracking = {enabled:true,baselineWalletByQuote:{USDT:5000,USDC:5000},rollingDays:7};
     (runtime as any).trade = { hasCredentials: () => true };
     const windows: Array<{ startTime: number; endTime: number }> = [];
     vi.spyOn(runtime, 'auditRecentTrades').mockImplementation(async (_hours, _max, startTime, endTime) => {
@@ -48,43 +50,24 @@ describe('automatic TradeRecord sync window', () => {
       } satisfies TradeAuditSnapshot;
     });
 
-    const startAt = Date.now();
+    const day = 24 * 60 * 60_000, startAt = 1_800_000_000_000;
+    dateSpy = vi.spyOn(Date, 'now').mockReturnValue(startAt);
     (runtime as any).startTradeRecordAutoSync(startAt);
     await (runtime as any).tradeRecordAutoSyncFlight;
 
-    // The first audit always covers the complete 24 hours before startup. If
-    // Date.now() advances after startAt, auditTradeRecordWindow may legitimately
-    // add a tiny trailing chunk from startAt to the later clock value. Do not
-    // let that real-time millisecond boundary leak into the independent final
-    // window scenario below.
-    expect(windows[0]).toEqual({
-      startTime: startAt - 24 * 60 * 60_000,
-      endTime: startAt,
+    expect(windows).toEqual([{startTime:startAt-7*day,endTime:startAt-6*day}]);
+    expect(runtime.tradeRecordAutoSyncStatus()).toMatchObject({
+      status:'BACKFILLING',rollingDays:7,windowStart:startAt-7*day,windowEnd:startAt,
+      lastWindow:{startTime:startAt-7*day,endTime:startAt-6*day},
     });
-    expect(windows.at(-1)?.endTime).toBeGreaterThanOrEqual(startAt);
-    expect(runtime.tradeRecordAutoSyncStatus()).toMatchObject({ status: 'ACTIVE', windowStart: startAt - 24 * 60 * 60_000 });
     expect(runtime.settingsStore.listTradeSyncHistory(1)[0]).toMatchObject({ source: 'RUNTIME_AUTO', status: 'APPLIED' });
 
     windows.length = 0;
-    const finalStartAt = Date.now() - 24 * 60 * 60_000 - 1_000;
-    (runtime as any).tradeRecordAutoSyncStartedAt = finalStartAt;
-    (runtime as any).tradeRecordAutoSyncLastEndAt = null;
-    Object.assign((runtime as any).tradeRecordAutoSync, {
-      startedAt: finalStartAt,
-      windowStart: finalStartAt - 24 * 60 * 60_000,
-      windowEnd: finalStartAt + 24 * 60 * 60_000,
-    });
+    (runtime as any).tradeRecordAutoSyncLastEndAt = startAt - 2 * 60_000;
     await (runtime as any).performTradeRecordAutoSync();
-    expect(windows).toEqual([
-      {
-        startTime: finalStartAt - 24 * 60 * 60_000,
-        endTime: finalStartAt,
-      },
-      {
-        startTime: finalStartAt,
-        endTime: finalStartAt + 24 * 60 * 60_000,
-      },
-    ]);
-    expect(runtime.tradeRecordAutoSyncStatus()).toMatchObject({ status: 'COMPLETE', windowEnd: finalStartAt + 24 * 60 * 60_000 });
+    expect(windows).toEqual([{startTime:startAt-7*60_000,endTime:startAt}]);
+    expect(runtime.tradeRecordAutoSyncStatus()).toMatchObject({
+      status:'ACTIVE',rollingDays:7,lastWindow:{startTime:startAt-7*60_000,endTime:startAt},
+    });
   }, 60_000);
 });

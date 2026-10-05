@@ -12,7 +12,7 @@ describe('A2 trade record read model',()=>{
   it('sums only proven local closed cycles even while funding is unknown',()=>{
     const records=[row(),row({tradeId:'external',cycleId:'e',source:'EXTERNAL',tradingNetPnlExFunding:.92}),row({tradeId:'duplicate',cycleId:'d',canonical:false,duplicateOf:'t'}),row({tradeId:'open',cycleId:'o',status:'OPEN'}),row({tradeId:'fee',cycleId:'f',feeCompleteness:'UNKNOWN',totalFee:null}),row({tradeId:'unlinked',cycleId:'u',linkedFillIds:[]})];
     const result=projectTradeRecordSummary({records});
-    expect(result.localAccounting).toMatchObject({exFundingNet:.92,completeCycles:1,confirmedFunding:null,confirmedAllInNet:null,confirmedAllInCycles:0,fundingUnknownCycles:1,coverage:{external:1,duplicate:1,feeMissing:1}});
+    expect(result.localAccounting).toMatchObject({exFundingNet:.92,completeCycles:1,confirmedFunding:null,confirmedAllInNet:null,confirmedAllInCycles:0,fundingUnknownCycles:1,allInUnconfirmedCycles:1,fundingExactEvidencePendingCycles:0,coverage:{external:1,duplicate:1,feeMissing:1}});
   });
   it('quarantines ambiguous canonical cycle collisions and unconserved rows',()=>{
     const records=[row(),row({tradeId:'t2'}),row({tradeId:'u',cycleId:'u',ledgerConservation:'UNCONSERVED'})];
@@ -22,7 +22,7 @@ describe('A2 trade record read model',()=>{
     const exact=row({funding:.1,fundingAttributionStatus:'EXACT',pnlBasis:'CANONICAL_NET_WITH_FUNDING',netPnl:1.02});
     const evidence={attributionStatus:'EXACT' as const,factIds:['income-1'],coverageStartAt:0,coverageEndAt:2,verifiedAt:3,cycleId:'cy',accountScope:'testnet-account'};
     const result=projectTradeRecordSummary({records:[exact],accountScope:'testnet-account',fundingEvidenceByCycle:{cy:evidence}});
-    expect(result.localAccounting).toMatchObject({exFundingNet:.92,confirmedFunding:.1,confirmedAllInNet:1.02,confirmedAllInCycles:1,fundingUnknownCycles:0});
-    expect(projectTradeRecordSummary({records:[exact]}).localAccounting).toMatchObject({confirmedFunding:null,confirmedAllInNet:null,fundingUnknownCycles:1});
+    expect(result.localAccounting).toMatchObject({exFundingNet:.92,confirmedFunding:.1,confirmedAllInNet:1.02,confirmedAllInCycles:1,fundingUnknownCycles:0,allInUnconfirmedCycles:0,fundingExactEvidencePendingCycles:0});
+    expect(projectTradeRecordSummary({records:[exact]}).localAccounting).toMatchObject({confirmedFunding:null,confirmedAllInNet:null,fundingUnknownCycles:0,allInUnconfirmedCycles:1,fundingExactEvidencePendingCycles:1});
   });
 });

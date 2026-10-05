@@ -14,8 +14,10 @@ export function processErrorFact(error:unknown){
 export function appendProcessLifecycleFact(dataDir:string,event:string,payload:Record<string,unknown>={}){
   const dir=path.join(dataDir,'runtime-logs'),file=path.join(dir,'engine-process-lifecycle.jsonl');
   try{
+    const row={ts:Date.now(),event,pid:process.pid,ppid:process.ppid,uptimeMs:Math.round(process.uptime()*1000),exitCode:process.exitCode??null,payload};
     mkdirSync(dir,{recursive:true});
-    appendFileSync(file,JSON.stringify({ts:Date.now(),event,pid:process.pid,ppid:process.ppid,uptimeMs:Math.round(process.uptime()*1000),exitCode:process.exitCode??null,payload})+'\n','utf8');
+    appendFileSync(file,JSON.stringify(row)+'\n','utf8');
+    if(process.env.ZDJ_FOREGROUND_OBSERVE==='1')console.log(JSON.stringify({source:'PROCESS_LIFECYCLE',...row}));
     return true;
   }catch{return false;}
 }

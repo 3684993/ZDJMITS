@@ -65,6 +65,8 @@ it('hydrates a cold snapshot in bounded REST phases with 15m candles first',asyn
   const provider=new BinancePublicMarketDataProvider({json,environment:()=> 'TESTNET',streamUrl:()=>'',proxyAgent:()=>undefined,restRoute:()=>({routeIdentity:'test'})} as any),stream=(provider as any).stream;
   vi.spyOn(stream,'quote').mockReturnValue(null);vi.spyOn(stream,'book').mockReturnValue(null);vi.spyOn(stream,'candleSeries').mockReturnValue(null);vi.spyOn(stream,'seedCandles').mockImplementation(()=>{});vi.spyOn(stream,'seed').mockImplementation(()=>{});
   const snapshot=await provider.getSnapshot('BTCUSDT');
-  expect(snapshot.technical['15m']).toBeDefined();expect(maxInFlight).toBe(1);
+  expect(snapshot.technical['15m']).toBeDefined();expect(maxInFlight).toBeGreaterThan(1);
+  expect(snapshot.derivatives.openInterest).toBeNull();expect(snapshot.dataCompleteness).toBeGreaterThanOrEqual(.86);
+  expect(calls.some(path=>path.includes('/openInterest?'))).toBe(false);
   const klines=calls.filter(path=>path.includes('/klines?'));expect(klines[0]).toContain('interval=15m');
 });

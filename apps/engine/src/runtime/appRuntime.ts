@@ -795,12 +795,13 @@ export class EngineRuntime {
       // Historical identity audits resume on the normal reconciliation scheduler after RUNNING.
       await this.reconciliation.run({startupCurrentOnly:true});
     }
-    // Reconcile may expose protected owners after the first cohort pass.
-    // Refresh membership without expanding it to the discovery universe.
-    await this.cohort.tick("POST_RECONCILIATION_BOOTSTRAP");
+    // Current positions/open orders are now reconciled. Do not hold RUNNING behind another cold
+    // cohort refill: it is supply maintenance, not an execution-correctness prerequisite.
     this.universe.refresh();
     this.ready = true;
     this.runtimeControl.evaluate(true);
+    void this.cohort.tick("POST_RECONCILIATION_BOOTSTRAP").then(()=>this.universe.refresh()).catch((error)=>
+      this.events.publish("MARKET_COHORT_FAILED",{reason:"POST_RECONCILIATION_BOOTSTRAP",message:error instanceof Error?error.message:String(error)}));
     if (
       this.state.settings.connections.exchange.environment === "TESTNET" &&
       this.runtimeControl.canDispatch()

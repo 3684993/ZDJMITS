@@ -10,6 +10,7 @@ import { executionReadiness } from '../services/executionReadiness.js';
 import { PrivateAccountSync } from '../services/privateAccountSync.js';
 import { recoverUnsubmittedEntry } from '../services/unsubmittedEntryRecovery.js';
 import {RuntimeWriteBuffer} from '../services/runtimeWriteBuffer.js';
+import { appendProcessLifecycleFact } from "./processLifecycleTelemetry.js";
 import path from "node:path";
 import { readFileSync } from "node:fs";
 import { mkdir } from "node:fs/promises";
@@ -718,18 +719,32 @@ export class EngineRuntime {
     }
     return runtime;
   }
-  private every(ms: number, fn: () => Promise<void> | void, options: { allowOverlap?: boolean } = {}) {
-    let running = false;
+  private foregroundTrace(event:string,payload:Record<string,unknown>={}){
+    if(process.env.ZDJ_FOREGROUND_OBSERVE!=='1')return;
+    appendProcessLifecycleFact(this.settingsStore.dataDirectory(),event,payload);
+  }
+  private every(ms: number, fn: () => Promise<void> | void, options: { allowOverlap?: boolean; name?: string } = {}) {
+    let running = false, runNumber = 0;
     const t = setInterval(async () => {
       if (this.stopped || (!options.allowOverlap && running)) return;
+      const currentRun=++runNumber,startedAt=Date.now();
+      if(options.name)this.foregroundTrace('SCHEDULED_TASK_BEGIN',{task:options.name,intervalMs:ms,runNumber:currentRun});
       if (options.allowOverlap) {
-        try { await fn(); } catch (error) { this.events.publish("RUNTIME_TASK_FAILED", { message: error instanceof Error ? error.message : String(error) }); }
+        try {
+          await fn();
+          if(options.name)this.foregroundTrace('SCHEDULED_TASK_END',{task:options.name,intervalMs:ms,runNumber:currentRun,durationMs:Date.now()-startedAt});
+        } catch (error) {
+          if(options.name)this.foregroundTrace('SCHEDULED_TASK_FAILED',{task:options.name,intervalMs:ms,runNumber:currentRun,durationMs:Date.now()-startedAt,message:error instanceof Error?error.message:String(error)});
+          this.events.publish("RUNTIME_TASK_FAILED", { message: error instanceof Error ? error.message : String(error) });
+        }
         return;
       }
       running = true;
       try {
         await fn();
+        if(options.name)this.foregroundTrace('SCHEDULED_TASK_END',{task:options.name,intervalMs:ms,runNumber:currentRun,durationMs:Date.now()-startedAt});
       } catch (error) {
+        if(options.name)this.foregroundTrace('SCHEDULED_TASK_FAILED',{task:options.name,intervalMs:ms,runNumber:currentRun,durationMs:Date.now()-startedAt,message:error instanceof Error?error.message:String(error)});
         this.events.publish("RUNTIME_TASK_FAILED", {
           message: error instanceof Error ? error.message : String(error),
         });
@@ -825,9 +840,9 @@ export class EngineRuntime {
   async start() {
     this.stopped = false;
     const tradeRecordAutoSyncStartedAt = Date.now();
-    this.every(15_000, async () => this.syncPrivate());
+    this.every(15_000, async () => this.syncPrivate(), {name:'PRIVATE_SYNC'});
     await this.ai.probeResources();
-    this.every(15_000, async () => this.ai.probeResources());
+    this.every(15_000, async () => this.ai.probeResources(), {name:'AI_RESOURCE_PROBE'});
     await this.bootstrap();
     this.startTradeRecordAutoSync(tradeRecordAutoSyncStartedAt);
     this.startExchangePerformanceSync();
@@ -866,7 +881,7 @@ export class EngineRuntime {
       await this.market.tick();
       if (this.state.settings.connections.executionMode === "TESTNET_ENABLED")
         await this.exchangeLoop.tick();
-    });
+    }, {name:'MARKET_EXCHANGE_TICK'});
     this.every(2_500, async () => {
       this.runtimeControl.evaluate(true);
       await this.dispatchAnalysisTick();
@@ -874,10 +889,10 @@ export class EngineRuntime {
     // Model latency must never delay order TTL, cancellation or repricing.
     this.every(2_000,async()=>{
       if(this.state.settings.connections.executionMode==='TESTNET_ENABLED')await this.entry.reviewPending();
-    });
-    this.every(2_000,async()=>{if(this.state.settings.connections.executionMode==='TESTNET_ENABLED')await this.manual.resumeExitGoals();});
-    this.every(1_000,()=>this.writes.flush());
-    this.every(5_000,()=>{this.ownership?.pump();this.fixFirstFillDeadlines();void this.convergeExitsPeriodically();void this.aiExitRunner?.tick();});
+    }, {name:'ENTRY_PENDING_REVIEW'});
+    this.every(2_000,async()=>{if(this.state.settings.connections.executionMode==='TESTNET_ENABLED')await this.manual.resumeExitGoals();}, {name:'MANUAL_EXIT_RESUME'});
+    this.every(1_000,()=>this.writes.flush(), {name:'WRITE_BUFFER_FLUSH'});
+    this.every(5_000,()=>{this.ownership?.pump();this.fixFirstFillDeadlines();void this.convergeExitsPeriodically();void this.aiExitRunner?.tick();}, {name:'EXIT_OWNERSHIP_CONVERGENCE'});
     // J2: the external-transfer coverage read is only attempted when a human configured the
     // portfolio profile and the adapter can answer it; otherwise it costs no request at all.
     this.every(60_000,async()=>{
@@ -893,9 +908,9 @@ export class EngineRuntime {
       catch(error){this.reviewTickReport={enabled:true,considered:0,reserved:0,deduplicated:0,refused:['REVIEW_TICK_FAILED'],completed:0,discarded:0,failed:1,zeroRoutineCalls:0};
         this.events.publish('POSITION_REVIEW_TICK_FAILED',{reason:error instanceof Error?error.message:String(error),orderSent:false});}
     });
-    this.every(1_000,()=>this.tradingQuality?.tick());
+    this.every(1_000,()=>this.tradingQuality?.tick(), {name:'TRADING_QUALITY_TICK'});
     this.every(5_000,()=>this.qualityObserver?.tick());
-    this.every(5_000, async () => this.tp.sweep());
+    this.every(5_000, async () => this.tp.sweep(), {name:'TP_SWEEP'});
     this.every(15_000, async () => {
       if (this.state.account.status === "READY") {
         await this.refreshPositionMarkets();
@@ -903,25 +918,25 @@ export class EngineRuntime {
       }
       this.runtimeControl.evaluate();
       (this.state as any).temporalSnapshot = this.temporal.snapshot();
-    });
+    }, {name:'POSITION_RECONCILIATION'});
     this.every(this.state.settings.externalIntelligence.refreshSeconds*1000,async()=>this.externalIntelligence.tick());
-    this.every(2_000,async()=>this.externalResearch.tick());
+    this.every(2_000,async()=>this.externalResearch.tick(), {name:'EXTERNAL_RESEARCH'});
     this.every(30_000,()=>{this.externalResearch.enqueueMarketChanges();});
-    this.every(1_000,()=>{this.settingsStore.backfillAiRunSummaries(25,8);});
+    this.every(1_000,()=>{this.settingsStore.backfillAiRunSummaries(25,8);}, {name:'AI_RUN_SUMMARY_BACKFILL'});
     // P6: funding is a scheduled income event, so the ledger is pulled on a slow cadence with an
     // explicit coverage window. A failed pull records nothing, which leaves attribution UNKNOWN rather
     // than implying "no funding happened".
     this.every(10*60_000,()=>{void this.syncFundingIncome();},{allowOverlap:true});
     this.every(45_000,()=>{void this.attributeCycleFunding();});
-    this.every(5_000,()=>{this.writes.apply('storage-retention',()=>{this.settingsStore.maintainRetention();});});
+    this.every(5_000,()=>{this.writes.apply('storage-retention',()=>{this.settingsStore.maintainRetention();});}, {name:'STORAGE_RETENTION'});
     // Do not await long research in the scheduler: coordinator single-flight owns
     // publication while every tick still observes expiry during a hung request.
-    this.every(1_000, () => this.assetGovernance.tick(), { allowOverlap: true });
+    this.every(1_000, () => this.assetGovernance.tick(), { allowOverlap: true, name:'ASSET_GOVERNANCE_TICK' });
     // Private account reconciliation must keep running even if the non-critical
     // validation/reporting work is delayed by storage or source inspection.
     this.every(15_000, async () => {
       await this.liveValidation.tick();
-    });
+    }, {name:'LIVE_VALIDATION'});
     this.every(
       this.state.settings.runtimeControl.capitalCheckIntervalSeconds * 1000,
       async () => {
@@ -1856,8 +1871,10 @@ export class EngineRuntime {
     this.tradeRecordAutoSync.lastAttemptAt = now;
     this.tradeRecordAutoSync.lastError = null;
     try {
-      const audit = await this.auditTradeRecordWindow(startTime, endTime, maxFills),
-        syncFillLimit = maxFills,
+      this.foregroundTrace('TRADE_RECORD_AUTO_SYNC_PHASE',{phase:'AUDIT_BEGIN',startTime,endTime,rollingDays});
+      const audit = await this.auditTradeRecordWindow(startTime, endTime, maxFills);
+      this.foregroundTrace('TRADE_RECORD_AUTO_SYNC_PHASE',{phase:'AUDIT_END',startTime,endTime,rollingDays,fills:audit.fills.length,orders:audit.orders.length,income:audit.income.length});
+      const syncFillLimit = maxFills,
         backupDir =
           process.env.ZDJ_TRADE_SYNC_BACKUP_DIR ??
           path.join(
@@ -1866,8 +1883,10 @@ export class EngineRuntime {
             "trade-sync-backups",
           );
       await mkdir(backupDir, { recursive: true });
-      const backupPath = await this.settingsStore.tradeSyncBaseline(backupDir),
-        service = new TradeRecordSyncService(this.state, this.positions),
+      this.foregroundTrace('TRADE_RECORD_AUTO_SYNC_PHASE',{phase:'BASELINE_BEGIN',startTime,endTime,rollingDays});
+      const backupPath = await this.settingsStore.tradeSyncBaseline(backupDir);
+      this.foregroundTrace('TRADE_RECORD_AUTO_SYNC_PHASE',{phase:'BASELINE_END',startTime,endTime,rollingDays,backupPath});
+      const service = new TradeRecordSyncService(this.state, this.positions),
         beforeRecords = new Map(this.state.tradeRecords),
         beforeSamples = new Map(this.state.experienceSamples),
         beforeFills = [...this.state.executionFills],
@@ -1875,6 +1894,7 @@ export class EngineRuntime {
         syncId = `auto_trade_sync_${startedAt}_${startTime}_${endTime}`;
       let result!: ReturnType<TradeRecordSyncService["apply"]>;
       try {
+        this.foregroundTrace('TRADE_RECORD_AUTO_SYNC_PHASE',{phase:'APPLY_BEGIN',startTime,endTime,rollingDays});
         await this.settingsStore.transaction(() => {
           result = service.apply(audit, syncFillLimit, options);
           for (const record of this.state.tradeRecords.values()) {
@@ -1905,6 +1925,7 @@ export class EngineRuntime {
             backupPath,
           });
         }, { timeoutMs: 5_000, label: "TRADE_RECORD_AUTO_SYNC" });
+        this.foregroundTrace('TRADE_RECORD_AUTO_SYNC_PHASE',{phase:'APPLY_END',startTime,endTime,rollingDays});
       } catch (error) {
         this.state.tradeRecords = beforeRecords;
         this.state.experienceSamples = beforeSamples;

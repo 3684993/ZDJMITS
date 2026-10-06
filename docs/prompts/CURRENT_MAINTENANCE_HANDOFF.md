@@ -400,6 +400,8 @@ The tracing uses the append-only process lifecycle path, not the SQLite operatio
 
 Full report:
 - `docs/reports/crash/ENGINE_NATIVE_CRASH_20261006_FOREGROUND_ANALYSIS.md`
+Next local capture prompt:
+- `docs/prompts/NEXT_ENGINE_FOREGROUND_CAPTURE.md`
 
 Next local reproduction must use the same normal `-Foreground` launch after pulling/building. If it crashes again, the missing matching END row identifies the exact task boundary to inspect before any isolation or storage change.
 

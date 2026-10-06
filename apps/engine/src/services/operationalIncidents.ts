@@ -55,11 +55,18 @@ export class OperationalIncidentTracker{
 }
 export function operationalCandidates(facts:{pipeline:any;routes:any[];account:any;marketStream?:any;valuation?:any;orders?:any}):Candidate[]{
   const out:Candidate[]=[];
+  const marketHealthy=facts.pipeline?.pipelineState==='RUNNING'&&facts.pipeline?.freshMarkets?.status==='FRESH';
+  const contextualMarketEndpoint=(endpoint:unknown)=>/\/fapi\/v1\/(openInterest|premiumIndex)$|\/futures\/data\//.test(String(endpoint??''));
   for(const route of facts.routes){const budget=route.requestBudget??{},recent=budget.recentDispatches??[];
-    for(const failure of route.recentFailures??[]){const row=classifyOperationalError({message:failure.message,subsystem:'BINANCE_HTTP',requestId:failure.requestId,endpoint:failure.endpoint,method:failure.method,routeIdentity:failure.routeIdentity});if(row)out.push(row);}
+    for(const failure of route.recentFailures??[]){
+      // Derivatives/context REST is intentionally advisory. When WS quote/book/kline facts are fresh,
+      // a timeout here is not a NEW_ENTRY outage and must not render the blocking NET-002 banner.
+      if(marketHealthy&&contextualMarketEndpoint(failure.endpoint))continue;
+      const row=classifyOperationalError({message:failure.message,subsystem:'BINANCE_HTTP',requestId:failure.requestId,endpoint:failure.endpoint,method:failure.method,routeIdentity:failure.routeIdentity});if(row)out.push(row);
+    }
     const http=recent.filter((row:any)=>[418,429,451].includes(row.status)&&Date.now()-Number(row.completedAt??0)<120_000).at(-1);
     if(http){const row=classifyOperationalError({message:`Binance HTTP ${http.status}`,httpStatus:http.status,subsystem:'BINANCE_HTTP',endpoint:http.endpoint,method:http.method,requestId:http.requestId,routeIdentity:http.routeIdentity,retryAfter:http.retryAfter,blockedUntil:http.blockedUntil});if(row)out.push(row);}
-    const stream=facts.marketStream??facts.pipeline?.marketDataDetail??{},timeout=recent.filter((row:any)=>row.decision==='TIMEOUT'&&Date.now()-Number(row.completedAt??0)<60_000).at(-1),lowPressure=Number(budget.admissionObservedWeight1m??budget.usedWeight1m??Infinity)<Number(budget.softBackgroundWeight??0),transportEvidence=Boolean(stream.lastError||stream.streamError||(facts.pipeline?.marketDataReason&&stream.connectedAt&&Date.now()-Number(stream.connectedAt)<60_000));
+    const stream=facts.marketStream??facts.pipeline?.marketDataDetail??{},timeout=recent.filter((row:any)=>row.decision==='TIMEOUT'&&Date.now()-Number(row.completedAt??0)<60_000&&!(marketHealthy&&contextualMarketEndpoint(row.endpoint))).at(-1),lowPressure=Number(budget.admissionObservedWeight1m??budget.usedWeight1m??Infinity)<Number(budget.softBackgroundWeight??0),transportEvidence=Boolean(stream.lastError||stream.streamError||(facts.pipeline?.marketDataReason&&stream.connectedAt&&Date.now()-Number(stream.connectedAt)<60_000));
     if(timeout&&lowPressure&&transportEvidence){const row=classifyOperationalError({message:'BINANCE_REQUEST_QUEUE_TIMEOUT',subsystem:'BINANCE_HTTP',transportEvidence:true,budgetPressureProven:false,endpoint:timeout.endpoint,method:timeout.method,requestId:timeout.requestId,routeIdentity:timeout.routeIdentity});if(row)out.push(row);}
   }
   if(facts.pipeline?.pipelineState==='PAUSED_MARKET_DATA_UNAVAILABLE'&&!out.some(row=>row.category==='NETWORK'))out.push({...MARKET,subsystem:'MARKET_DATA',sourceCode:String(facts.pipeline.marketDataReason??'MARKET_QUOTES_STALE'),sourceMessage:text(facts.pipeline.marketDataReason??'MARKET_QUOTES_STALE')});

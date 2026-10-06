@@ -5,6 +5,18 @@ import { ExternalTradeAdapter } from './ExternalTradeAdapter.js';
 function harness(hedge:boolean,environment:'TESTNET'|'PRODUCTION'='TESTNET'){const calls:Array<{url:string;method?:string}>=[];const transport={effectiveBaseUrl:()=>environment==='TESTNET'?'https://testnet.binancefuture.com':'https://fapi.binance.com',environment:()=>environment,executionMode:()=> 'TESTNET_ENABLED',assertTestnetExchangeWrite:()=>{if(environment!=='TESTNET')throw new Error('TESTNET_ONLY_WRITE_LOCK')},json:vi.fn(async(url:string,init?:{method?:string})=>{calls.push({url,method:init?.method});if(url==='/fapi/v1/time')return{serverTime:1};if(url.startsWith('/fapi/v1/positionSide/dual'))return{dualSidePosition:hedge};if(url.startsWith('/fapi/v1/order'))return{orderId:123};return{};})};return{adapter:new ExternalTradeAdapter(transport as never,{apiKey:'key',apiSecret:'secret'}),calls};}
 const entry={id:'entry_1',exchangeOrderId:null,symbol:'BTCUSDT',side:'SHORT',quantity:.01,price:100,filledQuantity:0,leverage:20,status:'NEW',createdAt:1,updatedAt:1,absoluteExpiresAt:2,repriceCount:0,intentId:'i',reachability:1} as EntryOrder;
 const tp={id:'tp_1',exchangeOrderId:null,positionId:'p',symbol:'BTCUSDT',side:'SELL',quantity:.01,price:110,status:'WORKING',createdAt:1,updatedAt:1} as TakeProfitOrder;
+it('retries Binance -1000 once when changing leverage because the target value is idempotent',async()=>{
+  const h=harness(false);let writes=0;
+  (h.adapter as any).transport.json.mockImplementation(async(url:string,init:any)=>{
+    h.calls.push({url,method:init?.method});
+    if(url==='/fapi/v1/time')return{serverTime:Date.now()};
+    if(url.startsWith('/fapi/v1/leverageBracket'))return[{symbol:'BTCUSDT',brackets:[{initialLeverage:20}]}];
+    if(url.startsWith('/fapi/v1/leverage')&&init?.method==='POST'){writes++;if(writes===1)throw new Error('Binance HTTP 400: {"code":-1000,"msg":"An unknown error occurred while processing the request."}');return{leverage:20,maxNotionalValue:'1000000',symbol:'BTCUSDT'};}
+    return{};
+  });
+  await expect(h.adapter.setLeverage('BTCUSDT',20)).resolves.toBeUndefined();
+  expect(h.calls.filter(call=>call.method==='POST'&&call.url.startsWith('/fapi/v1/leverage'))).toHaveLength(2);
+});
 it('never silently clamps a frozen leverage above the current exchange bracket',async()=>{
   const h=harness(false);
   (h.adapter as any).transport.json.mockImplementation(async(url:string,init:any)=>{

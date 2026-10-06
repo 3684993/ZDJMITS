@@ -6,7 +6,7 @@ const text=(value:unknown)=>String(value??'').replace(/(apiKey|apiSecret|signatu
 const template=(publicCode:string,titleZh:string,messageZh:string,remediationZh:string,category:OperationalIncident['category'],blockingScopes:string[]):Pick<Candidate,'publicCode'|'titleZh'|'messageZh'|'remediationZh'|'category'|'severity'|'blockingScopes'>=>({publicCode,titleZh,messageZh,remediationZh,category,severity:'ERROR',blockingScopes});
 const NETWORK=template('NET-001','VPN或网络错误','无法连接 Binance，依赖交易所事实的操作已安全暂停。','检查 VPN、代理和网络，并使用符合交易所规则的可访问出口。','NETWORK',['MARKET_DATA','NEW_ENTRY','EXCHANGE_WRITE']);
 const TIMEOUT=template('NET-002','VPN或网络延迟过高','Binance 请求持续超时，依赖实时事实的新建仓已安全暂停。','检查网络质量或切换低延迟、可合法访问的出口。','NETWORK',['MARKET_DATA','NEW_ENTRY']);
-const MARKET=template('MARKET-DATA-001','行情事实不可用','当前没有数据完整的可执行候选，新建仓分析已暂停。','等待行情自动恢复；若持续发生，请检查行情连接与交易所状态。','MARKET_DATA',['MARKET_DATA','NEW_ENTRY']);
+const MARKET=template('MARKET-DATA-001','行情数据链路暂不可执行','报价、订单簿或K线的新鲜度/连续性不足，当前没有数据完整的可执行候选，新建仓分析已暂停。','系统会自动恢复；若持续发生，请检查 Binance WebSocket/REST 行情连接与交易所行情服务。这不是行情涨跌趋势判断。','MARKET_DATA',['MARKET_DATA','NEW_ENTRY']);
 const SUBMIT=template('EX-SUBMIT-UNKNOWN','订单提交结果未知','系统正按原 clientOrderId 查询订单身份，确认前禁止重复提交。','查看订单身份查询结果；不要手动重复提交同一订单。','SUBMIT_UNKNOWN',['EXCHANGE_WRITE','NEW_ENTRY']);
 const HTTP:Record<number,ReturnType<typeof template>>={
   451:template('EX-HTTP-451','交易所拒绝当前网络出口','Binance 拒绝当前网络访问。','检查出口、区域和账户访问条件，使用符合交易所规则的可访问网络。','EXCHANGE',['MARKET_DATA','PRIVATE_DATA','EXCHANGE_WRITE']),
@@ -34,8 +34,8 @@ export function classifyOperationalError(input:{message:unknown;subsystem?:strin
   else if(/timed out|ETIMEDOUT|TimeoutError/i.test(raw))base=TIMEOUT;
   else if(/ECONNRESET|ECONNREFUSED|ENETUNREACH|EAI_AGAIN|SOCKS|PROXY_REQUIRED|socket|DNS|BINANCE_TRANSPORT_BLOCKED/i.test(raw))base=NETWORK;
   else if(Number.isFinite(code)){
-    const [meaning,action]=BUSINESS[code]??['交易所拒绝该请求，具体原因见原始返回','检查原始 Binance code/msg、账户与订单条件后处理。'];
-    base=template(`EX-BINANCE-${Math.abs(code)}`,`Binance 业务错误 ${code}`,meaning,action,'EXCHANGE',['EXCHANGE_WRITE','NEW_ENTRY']);
+    if(code===-1000)base=template('EX-BINANCE-1000','Binance 临时处理异常 -1000','Binance 未给出明确业务拒绝原因；该错误属于通用服务器/网络处理异常，不能据此判定账户或订单条件有误。','系统会保持 fail-closed 并安全重试；若持续发生，请检查 TESTNET/交易所服务与网络链路。','EXCHANGE',['EXCHANGE_WRITE','NEW_ENTRY']);
+    else{const [meaning,action]=BUSINESS[code]??['交易所拒绝该请求，具体原因见原始返回','检查原始 Binance code/msg、账户与订单条件后处理。'];base=template(`EX-BINANCE-${Math.abs(code)}`,`Binance 业务错误 ${code}`,meaning,action,'EXCHANGE',['EXCHANGE_WRITE','NEW_ENTRY']);}
   }
   if(!base)return null;
   return {...base,subsystem:input.subsystem??'BINANCE',sourceCode:Number.isFinite(code)?String(code):status?`HTTP_${status}`:raw.split(/[:|]/)[0]??'UNKNOWN',sourceMessage:raw,requestId:input.requestId??null,endpoint:input.endpoint??null,method:input.method??null,routeIdentity:input.routeIdentity??null,httpStatus:status||null,binanceCode:Number.isFinite(code)?code:null,expectedEgressIp:input.expectedEgressIp??null,observedEgressIp:input.observedEgressIp??null,retryAfter:input.retryAfter??null,blockedUntil:input.blockedUntil??null};

@@ -46,8 +46,14 @@ export class BinancePublicMarketDataProvider implements MarketDataProvider {
     const resolvePriority=(requested:string)=>{const value=String(requested).trim().toUpperCase().replace(/[\s/_-]+/g,''),exact=/USD[TC]$/.test(value)?value:null,options=exact?[exact]:[`${value}USDT`,`${value}USDC`];return options.find(symbol=>contracts.has(symbol)&&tickerSymbols.has(symbol))??null;};
     this.coverage=prioritySymbols.map(requested=>{const symbol=resolvePriority(requested);return{requested:String(requested).toUpperCase(),symbol,status:symbol?'COLLECTED' as const:'UNAVAILABLE' as const,reason:symbol?null:(/USD[TC]$/.test(String(requested).toUpperCase())&&!contracts.has(String(requested).toUpperCase())?'NO_EXECUTION_CONTRACT':'NO_EXECUTION_MARKET_DATA')};});
     const priority=this.coverage.flatMap(row=>{if(!row.symbol)return[];const requested=String(row.requested).replace(/USD[TC]$/,''),alternates=[`${requested}USDT`,`${requested}USDC`].filter(symbol=>contracts.has(symbol)&&tickerSymbols.has(symbol));return alternates.length?alternates:[row.symbol];});
+    const top=rows.slice(0,limit).map(x=>String(x.symbol).toUpperCase());
+    // Discovery must expose both funded quote contracts before portfolio routing can choose one.
+    // Keep this bounded: pair only the leading underlyings instead of doubling the whole cohort.
+    const pairBudget=Math.max(4,Math.min(8,Math.ceil(limit*.4)));
+    const paired=top.slice(0,pairBudget).flatMap(symbol=>{const underlying=symbol.replace(/USD[TC]$/,'');return [`${underlying}USDT`,`${underlying}USDC`].filter(candidate=>contracts.has(candidate)&&tickerSymbols.has(candidate));});
+    const corePairs=["BTCUSDT","BTCUSDC","ETHUSDT","ETHUSDC"].filter(symbol=>contracts.has(symbol)&&tickerSymbols.has(symbol));
     const usdc=rows.filter(x=>String(x.symbol).endsWith("USDC")).slice(0,Math.max(4,Math.ceil(limit*.2)));
-    return [...new Set(["BTCUSDT","ETHUSDT",...priority,...rows.slice(0,limit).map(x=>String(x.symbol)),...usdc.map(x=>String(x.symbol))])];
+    return [...new Set(["BTCUSDT","ETHUSDT",...corePairs,...priority,...top,...paired,...usdc.map(x=>String(x.symbol))])];
   }
   async listSymbols(limit:number,prioritySymbols:string[]=[]){return this.discoverSymbols(limit,prioritySymbols);}
   collectionCoverage(){return this.coverage.map(row=>({...row}));}

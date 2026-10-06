@@ -352,7 +352,14 @@ export class ExternalTradeAdapter implements ExchangeTradeAdapter {
       maximum=await flight;
     }
     if(requested>maximum)throw new Error(`SET_LEVERAGE_EXCEEDS_EXCHANGE_MAX:${symbol}:requested=${requested}:maximum=${maximum}`);
-    await this.signed('POST','/fapi/v1/leverage',{symbol,leverage:requested},'SET_ENTRY_LEVERAGE','EXECUTION_CRITICAL');
+    const params={symbol,leverage:requested};
+    try{await this.signed('POST','/fapi/v1/leverage',params,'SET_ENTRY_LEVERAGE','EXECUTION_CRITICAL');}
+    catch(error){const message=error instanceof Error?error.message:String(error);if(!/"code"\s*:\s*-1000\b/.test(message))throw error;
+      // Binance classifies -1000 as an unknown server/network processing error. Setting a target
+      // leverage is idempotent in effect, so one bounded same-value retry is safer than discarding
+      // an otherwise valid frozen PLACE decision on a transient TESTNET failure.
+      await this.signed('POST','/fapi/v1/leverage',params,'SET_ENTRY_LEVERAGE_RETRY','EXECUTION_CRITICAL');
+    }
   }
   startUserData(onEvent:(event:any)=>void){if(!this.credentials||this.transport.environment()!=='TESTNET')return null;this.userStream=new BinanceUserDataStream(this.transport,this.credentials.apiKey,onEvent);this.userStream.start();return this.userStream;}
   stopUserData(){this.userStream?.stop();this.userStream=null;}

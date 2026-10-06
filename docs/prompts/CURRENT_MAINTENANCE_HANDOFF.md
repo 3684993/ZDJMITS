@@ -3,9 +3,9 @@
 > Stable handoff entrypoint for a new ChatGPT maintenance conversation.
 > Last refreshed: 2026-10-06 (+08:00)
 > Repository: `3684993/ZDJMITS`
-> Current diagnostic code baseline: `bbc2a3d8382f3631a1a583a4d6eaf737cf686400`
+> Current main baseline: `38ad7684644eb9c6b3c65ae95930a469c46b7762`
 > Crash analysis report: `docs/reports/crash/ENGINE_NATIVE_CRASH_20261006_FOREGROUND_ANALYSIS.md`
-> Last previously confirmed GitHub Actions baseline: #495 SUCCESS (new diagnostic commit requires current CI confirmation)
+> GitHub Actions: V3.9.x Verify #501 SUCCESS
 
 ## 0. Instructions to the next ChatGPT conversation
 

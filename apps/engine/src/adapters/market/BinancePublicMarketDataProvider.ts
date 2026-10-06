@@ -107,15 +107,20 @@ export class BinancePublicMarketDataProvider implements MarketDataProvider {
   hydrateLiveTechnical(snapshot:MarketSymbolSnapshot):MarketSymbolSnapshot{const now=Date.now();for(const tf of ['1m','5m','15m'] as const){const period=tf==='1m'?60000:tf==='5m'?300000:900000,candles=this.stream.candleSeries(snapshot.symbol,period*2,tf);if(!candles)continue;const closed=candles.filter(c=>c.isClosed===true&&c.closeTime<now);if(closed.length<(tf==='15m'?240:20))continue;const sequence=closed.map(c=>`${c.openTime}:${c.closeTime}:${c.open}:${c.high}:${c.low}:${c.close}:${c.volume}`).join('|'),key=`${snapshot.symbol}:${tf}`;if(this.liveTechnicalFingerprint.get(key)===sequence)continue;this.liveTechnicalFingerprint.set(key,sequence);try{return{...snapshot,technical:{...snapshot.technical,[tf]:buildTechnicalCard(tf,candles)}};}catch(error){if(error&&typeof error==='object')Object.assign(error,{technicalTimeframe:tf,technicalSequence:sequence});throw error;}}return snapshot;}
   hydrateLive(snapshot:MarketSymbolSnapshot):MarketSymbolSnapshot{return this.hydrateLiveTechnical(this.hydrateLiveMarket(snapshot));}
   streamMetrics(){return this.stream.metrics();}stop(){this.stream.stop();}
-  private async optional<T>(url:string,fallback:T):Promise<T>{try{return await this.json<T>(url);}catch{return fallback;}}
+  private async optional<T>(url:string,fallback:T,init:{timeoutMs?:number;source?:string;purpose?:string}={}):Promise<T>{try{return await this.transport.json<T>(url,init);}catch{return fallback;}}
+  private neutralDerivatives(symbol:string):DerivativesSnapshot{return{symbol,openInterest:null,openInterestChange5m:null,openInterestChange15m:null,fundingRate:null,takerBuySellRatio5m:null,globalLongShortRatio:null,topTraderPositionRatio:null,ts:0};}
 
   async getDerivatives(symbol:string):Promise<DerivativesSnapshot>{
     const key=symbol.toUpperCase(),now=Date.now(),cached=this.derivativesCache.get(key);if(cached&&cached.until>now)return cached.value;
     const pending=this.derivativesFlights.get(key);if(pending)return pending;
     const flight=(async()=>{
       const testnet=this.transport.environment()==='TESTNET';
-      const oi=await this.optional<any>(`/fapi/v1/openInterest?symbol=${key}`,null);
-      const premium=await this.optional<any>(`/fapi/v1/premiumIndex?symbol=${key}`,null);
+      // Derivatives are contextual ranking evidence, never an Entry correctness fact. Keep these
+      // bounded and on the BACKGROUND lane so a slow Testnet REST endpoint cannot stall a snapshot.
+      const [oi,premium]=await Promise.all([
+        this.optional<any>(`/fapi/v1/openInterest?symbol=${key}`,null,{timeoutMs:3_000,source:'BACKGROUND',purpose:'DERIVATIVES_CONTEXT_OPEN_INTEREST'}),
+        this.optional<any>(`/fapi/v1/premiumIndex?symbol=${key}`,null,{timeoutMs:3_000,source:'BACKGROUND',purpose:'DERIVATIVES_CONTEXT_MARK_PRICE'}),
+      ]);
       let oiHist:any[]=[],taker:any[]=[],globalRatio:any[]=[],topPos:any[]=[];
       if(!testnet){
         oiHist=await this.optional<any[]>(`/futures/data/openInterestHist?symbol=${key}&period=5m&limit=4`,[]);
@@ -132,16 +137,20 @@ export class BinancePublicMarketDataProvider implements MarketDataProvider {
 
   async getSnapshot(symbol:string):Promise<MarketSymbolSnapshot>{
     const frames=["1m","5m","15m","1h","4h","1d","1w"] as Timeframe[],hydrateOrder=["15m","1m","5m","1h","4h","1d","1w"] as Timeframe[];
-    const quote=await this.getQuote(symbol);
-    const orderBook=await this.getOrderBook(symbol);
-    const byFrame=new Map<Timeframe,Candle[]>();
-    for(const tf of hydrateOrder){
-      const rows=tf==='1m'?await this.getCandles(symbol,tf,81):tf==='5m'?await this.getCandles(symbol,tf,81):tf==='15m'?await this.getCandles(symbol,tf,241):tf==='1h'?await this.hourlyCandles(symbol):await this.getCandles(symbol,tf,80);
-      byFrame.set(tf,rows);
-    }
-    const derivatives=await this.getDerivatives(symbol),candles=frames.map(tf=>byFrame.get(tf)??[]);
+    // The transport budget remains the concurrency governor. Parallelizing independent reads avoids
+    // multiplying proxy latency across seven serial calls while preserving Binance's request limits.
+    const [quote,orderBook,...loaded]=await Promise.all([
+      this.getQuote(symbol),
+      this.getOrderBook(symbol),
+      ...hydrateOrder.map(tf=>tf==='1m'?this.getCandles(symbol,tf,81):tf==='5m'?this.getCandles(symbol,tf,81):tf==='15m'?this.getCandles(symbol,tf,241):tf==='1h'?this.hourlyCandles(symbol):this.getCandles(symbol,tf,80)),
+    ]);
+    const byFrame=new Map<Timeframe,Candle[]>();hydrateOrder.forEach((tf,index)=>byFrame.set(tf,loaded[index]??[]));
+    // Open interest/funding context is refreshed on the slow-field cadence. Cold startup must not wait
+    // for it, and missing derivatives are neutral evidence rather than incomplete execution data.
+    const derivatives=this.derivativesCache.get(symbol)?.value??this.neutralDerivatives(symbol),candles=frames.map(tf=>byFrame.get(tf)??[]);
     const technical=Object.fromEntries(frames.flatMap((tf,i)=>candles[i]!.length?[[tf,buildTechnicalCard(tf,candles[i]!)]]:[])) as Record<Timeframe,TechnicalCard>;
-    this.stream.seed(symbol,orderBook,candles[0]!);let completeness=.72;if(orderBook.bids.length&&orderBook.asks.length)completeness+=.12;if(derivatives.openInterest!=null)completeness+=.08;if(derivatives.takerBuySellRatio5m!=null)completeness+=.08;
+    this.stream.seed(symbol,orderBook,candles[0]!);
+    const hotComplete=(['1m','5m','15m'] as const).every(tf=>(byFrame.get(tf)?.length??0)>0),completeness=.76+(orderBook.bids.length&&orderBook.asks.length?.12:0)+(hotComplete?.12:0);
     const contract=(await this.info()).symbols.find((row:any)=>row.symbol===symbol),onboard=Number(contract?.onboardDate??0),listingAgeDays=onboard>0?Math.max(0,(Date.now()-onboard)/86_400_000):null;
     return{symbol,quote,orderBook,derivatives,technical,dataCompleteness:clamp(completeness,0,1),listingAgeDays};
   }

@@ -19,6 +19,15 @@ describe("BinancePublicMarketDataProvider live symbols", () => {
     expect(start).not.toHaveBeenCalled();
   });
   it('collects both available quote contracts for an approved underlying before routing',async()=>{const transport={json:vi.fn(async(path:string)=>path==='/fapi/v1/ticker/24hr'?[{symbol:'BTCUSDT',quoteVolume:'100'},{symbol:'SOLUSDT',quoteVolume:'2'},{symbol:'SOLUSDC',quoteVolume:'1'}]:path==='/fapi/v1/exchangeInfo'?{symbols:[{symbol:'BTCUSDT',status:'TRADING',contractType:'PERPETUAL'},{symbol:'SOLUSDT',status:'TRADING',contractType:'PERPETUAL'},{symbol:'SOLUSDC',status:'TRADING',contractType:'PERPETUAL'}]}:[])} as any;const provider=new BinancePublicMarketDataProvider(transport);const symbols=await provider.listSymbols(1,['SOL']);expect(symbols).toContain('SOLUSDT');expect(symbols).toContain('SOLUSDC');});
+  it('retains bounded USDT/USDC alternates for leading underlyings so capital routing can see both',async()=>{
+    const tickers=[{symbol:'BTCUSDT',quoteVolume:'1000'},{symbol:'ETHUSDT',quoteVolume:'900'},{symbol:'SOLUSDT',quoteVolume:'800'},{symbol:'BNBUSDT',quoteVolume:'700'},
+      {symbol:'AAAUSDC',quoteVolume:'600'},{symbol:'BBBUSDC',quoteVolume:'500'},{symbol:'CCCUSDC',quoteVolume:'400'},{symbol:'DDDUSDC',quoteVolume:'300'},
+      {symbol:'BTCUSDC',quoteVolume:'2'},{symbol:'ETHUSDC',quoteVolume:'1'}];
+    const symbols=tickers.map(row=>({symbol:row.symbol,status:'TRADING',contractType:'PERPETUAL'}));
+    const provider=new BinancePublicMarketDataProvider({json:vi.fn(async(path:string)=>path==='/fapi/v1/ticker/24hr'?tickers:path==='/fapi/v1/exchangeInfo'?{symbols}:[])} as any);
+    const discovered=await provider.listSymbols(4);
+    expect(discovered).toContain('BTCUSDC');expect(discovered).toContain('ETHUSDC');
+  });
   it('does not return an expired WebSocket quote when an independent REST quote is required', async () => {
     const transport={json:vi.fn(async(path:string)=>{if(path==='/fapi/v1/exchangeInfo')return{symbols:[{symbol:'BTCUSDT',filters:[{filterType:'PRICE_FILTER',tickSize:'0.1'},{filterType:'LOT_SIZE',minQty:'0.001',stepSize:'0.001'},{filterType:'MIN_NOTIONAL',notional:'5'}]}]};if(path.includes('ticker/24hr'))return{lastPrice:'100',quoteVolume:'10',priceChangePercent:'0',count:1};if(path.includes('premiumIndex'))return{markPrice:'100'};if(path.includes('bookTicker'))return{bidPrice:'99.9',askPrice:'100.1'};return [];})} as any;
     const provider=new BinancePublicMarketDataProvider(transport),stream=(provider as any).stream;vi.spyOn(stream,'quote').mockReturnValue({last:90,mark:90,bid:89,ask:91,ts:Date.now()-15_001});const quote=await provider.getQuote('BTCUSDT');expect(quote).toMatchObject({last:100,mark:100,bid:99.9,ask:100.1});expect(transport.json).toHaveBeenCalledWith('/fapi/v1/ticker/24hr?symbol=BTCUSDT');

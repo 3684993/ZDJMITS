@@ -33,6 +33,10 @@ describe('user-facing operational incidents',()=>{
     expect(market?.publicCode).toBe('MARKET-DATA-001');
     expect(market?.remediationZh).toContain('不是行情涨跌趋势判断');
   });
+  it('does not turn optional derivatives REST timeout into a NEW_ENTRY outage while WS market facts are fresh',()=>{
+    const rows=operationalCandidates({pipeline:{pipelineState:'RUNNING',marketDataReason:null,freshMarkets:{status:'FRESH'}},marketStream:{state:'LIVE'},routes:[{recentFailures:[{message:'BINANCE_TRANSPORT_BLOCKED: Binance request timed out',requestId:'oi-1',endpoint:'/fapi/v1/openInterest',method:'GET',routeIdentity:'proxy-test'}],requestBudget:{recentDispatches:[{decision:'TIMEOUT',completedAt:Date.now(),endpoint:'/fapi/v1/openInterest',method:'GET',requestId:'oi-1',routeIdentity:'proxy-test'}],admissionObservedWeight1m:100,softBackgroundWeight:1000}}],account:{status:'READY'}});
+    expect(rows).toHaveLength(0);
+  });
   it('keeps historical UNKNOWN out of the current submit alarm',()=>{
     const facts={pipeline:{pipelineState:'RUNNING'},routes:[],account:{status:'READY'},orders:[{status:'UNKNOWN',activeRiskExposure:true,createdAt:Date.now()-86_400_000}]};
     expect(operationalCandidates(facts)).toHaveLength(0);

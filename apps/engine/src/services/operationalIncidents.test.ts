@@ -13,6 +13,7 @@ describe('user-facing operational incidents',()=>{
     expect(classify('Binance HTTP 418',{blockedUntil:123})?.blockedUntil).toBe(123);
     expect(classify('Binance HTTP 400: {"code":-4024,"msg":"Price is lower"}')).toMatchObject({publicCode:'EX-BINANCE-4024',binanceCode:-4024,sourceMessage:expect.stringContaining('Price is lower')});
     expect(classify('Binance HTTP 400: {"code":-5022,"msg":"Post Only"}')?.publicCode).toBe('EX-BINANCE-5022');
+    expect(classify('Binance HTTP 400: {"code":-1000,"msg":"An unknown error occurred while processing the request."}')).toMatchObject({publicCode:'EX-BINANCE-1000',titleZh:'Binance 临时处理异常 -1000',category:'EXCHANGE'});
     expect(classify('ENTRY_SUBMIT_UNACKED')?.publicCode).toBe('EX-SUBMIT-UNKNOWN');
     expect(classify('BINANCE_REQUEST_QUEUE_TIMEOUT')).toBeNull();
     expect(classify('BINANCE_REQUEST_QUEUE_TIMEOUT',{transportEvidence:true})?.publicCode).toBe('NET-002');
@@ -28,7 +29,9 @@ describe('user-facing operational incidents',()=>{
   it('does not call isolated symbols a global outage while a healthy candidate remains',()=>{
     const routes:any[]=[],account={status:'READY'};
     expect(operationalCandidates({pipeline:{pipelineState:'RUNNING',marketDataReason:null},routes,account})).toHaveLength(0);
-    expect(operationalCandidates({pipeline:{pipelineState:'PAUSED_MARKET_DATA_UNAVAILABLE',marketDataReason:'MARKET_QUOTES_STALE'},routes,account})[0]?.publicCode).toBe('MARKET-DATA-001');
+    const market=operationalCandidates({pipeline:{pipelineState:'PAUSED_MARKET_DATA_UNAVAILABLE',marketDataReason:'MARKET_QUOTES_STALE'},routes,account})[0];
+    expect(market?.publicCode).toBe('MARKET-DATA-001');
+    expect(market?.remediationZh).toContain('不是行情涨跌趋势判断');
   });
   it('keeps historical UNKNOWN out of the current submit alarm',()=>{
     const facts={pipeline:{pipelineState:'RUNNING'},routes:[],account:{status:'READY'},orders:[{status:'UNKNOWN',activeRiskExposure:true,createdAt:Date.now()-86_400_000}]};

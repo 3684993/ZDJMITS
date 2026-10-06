@@ -387,6 +387,16 @@ export class EntryCoordinator {
     }
     return this.placeAfterClaim(intent,submitting,resumedFrom);
   }
+  private userDataConfirmed(order:EntryOrder){
+    const current=this.state.entryOrders.get(order.id);
+    if(!current||current.clientOrderId!==order.clientOrderId||current.factSource!=='BINANCE_USER_DATA_WS'||!current.exchangeOrderId)return null;
+    return ['WORKING','PARTIALLY_FILLED','FILLED','CANCELED','EXPIRED','REJECTED'].includes(current.status)?current:null;
+  }
+  private async awaitUserDataConfirmation(order:EntryOrder,waitMs=1_000){
+    const deadline=Date.now()+waitMs;
+    do{const confirmed=this.userDataConfirmed(order);if(confirmed)return confirmed;if(Date.now()>=deadline)break;await new Promise(resolve=>setTimeout(resolve,100));}while(true);
+    return this.userDataConfirmed(order);
+  }
   /** The single wire submit for an intent whose durable claim this caller holds. */
   private async placeAfterClaim(intent:EntryIntent,submitting:EntryOrder,resumedFrom?:string):Promise<EntryOrder>{
     const order=submitting;
@@ -398,7 +408,13 @@ export class EntryCoordinator {
       throw new Error(`ENTRY_SUBMISSION_ABORTED_BEFORE_EXCHANGE:${error instanceof Error?error.message:String(error)}`);
     }
     try{const mandate=intent.economicMandate,requestFacts={schemaVersion:'V397-ENTRY-ADAPTER-REQUEST-1',intentId:intent.id,mandateId:mandate?.mandateId??null,orderId:submitting.id,clientOrderId:submitting.clientOrderId,symbol:submitting.symbol,side:submitting.side==='LONG'?'BUY':'SELL',positionSide:submitting.side,type:'LIMIT',timeInForce:'GTX',quantity:submitting.quantity,price:submitting.price,notionalQuote:submitting.quantity*submitting.price,initialMarginQuote:submitting.quantity*submitting.price/submitting.leverage,leverage:submitting.leverage,wireBytesAvailable:false,observedAt:Date.now()};this.events.publish('ENTRY_ADAPTER_REQUEST_FACTS',requestFacts,intent.symbol);const placed=await this.exchange.placeEntry(submitting);const accepted={...placed,submittedAt:placed.submittedAt??Date.now()};this.events.publish('ENTRY_ADAPTER_RESPONSE_FACTS',{schemaVersion:'V397-ENTRY-ADAPTER-RESPONSE-1',intentId:intent.id,mandateId:mandate?.mandateId??null,orderId:accepted.id,clientOrderId:accepted.clientOrderId,exchangeOrderId:accepted.exchangeOrderId,remoteQuantity:accepted.quantity,remotePrice:accepted.price,filledQuantity:accepted.filledQuantity,side:accepted.side,submittedAt:accepted.submittedAt,wireBytesAvailable:false,observedAt:Date.now()},intent.symbol);this.journal?.save({intent,order:accepted});return accepted;}catch(error){
-      try{const found=await this.exchange.findEntryByClientOrderId(submitting);if(found){const recoveredOrder={...found,submittedAt:found.submittedAt??submitting.updatedAt};this.journal?.save({intent,order:recoveredOrder});this.events.publish('ENTRY_SUBMIT_RESPONSE_RECOVERED',{brainRunId:intent.brainRunId,intentId:intent.id,orderId:order.id,clientOrderId:order.clientOrderId,submittedAt:recoveredOrder.submittedAt},intent.symbol);return recoveredOrder;}}catch(queryError){this.events.publish('ENTRY_SUBMIT_QUERY_FAILED',{intentId:intent.id,message:queryError instanceof Error?queryError.message:String(queryError)},intent.symbol);}
+      // Binance recommends user-data WebSocket for order state because REST queries can lag. If the
+      // POST acknowledgement was lost but ORDER_TRADE_UPDATE already proved the same clientOrderId,
+      // accept that fact first and spend an exact REST query only as a fallback.
+      const wsConfirmed=await this.awaitUserDataConfirmation(submitting);
+      if(wsConfirmed){this.journal?.save({intent,order:wsConfirmed});this.events.publish('ENTRY_SUBMIT_RESPONSE_RECOVERED',{brainRunId:intent.brainRunId,intentId:intent.id,orderId:order.id,clientOrderId:order.clientOrderId,submittedAt:wsConfirmed.submittedAt??wsConfirmed.updatedAt,source:'BINANCE_USER_DATA_WS'},intent.symbol);return wsConfirmed;}
+      try{const found=await this.exchange.findEntryByClientOrderId(submitting);if(found){const recoveredOrder={...found,submittedAt:found.submittedAt??submitting.updatedAt};this.journal?.save({intent,order:recoveredOrder});this.events.publish('ENTRY_SUBMIT_RESPONSE_RECOVERED',{brainRunId:intent.brainRunId,intentId:intent.id,orderId:order.id,clientOrderId:order.clientOrderId,submittedAt:recoveredOrder.submittedAt,source:'BINANCE_EXACT_ORDER'},intent.symbol);return recoveredOrder;}}catch(queryError){const raced=this.userDataConfirmed(submitting);if(raced){this.journal?.save({intent,order:raced});return raced;}this.events.publish('ENTRY_SUBMIT_QUERY_FAILED',{intentId:intent.id,message:queryError instanceof Error?queryError.message:String(queryError)},intent.symbol);}
+      const raced=this.userDataConfirmed(submitting);if(raced){this.journal?.save({intent,order:raced});return raced;}
       const reason=error instanceof Error?error.message:String(error);
       if(reason.includes('-5022')){this.journal?.save({intent,order:{...order,status:'REJECTED'}});this.state.entryOrders.set(order.id,{...order,status:'NEW',updatedAt:Date.now()});throw error;}
       this.state.entryOrders.set(order.id,{...submitting,status:'UNKNOWN',updatedAt:Date.now()});throw new Error(`ENTRY_SUBMISSION_UNKNOWN:${reason}`);

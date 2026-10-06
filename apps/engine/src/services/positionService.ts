@@ -107,7 +107,7 @@ export class PositionService {
     // the shape of a client id. A `v396x...` id that no durable record owns stays UNPROVEN, and an
     // exit fill this engine did place is no longer mislabelled EXTERNAL_OR_UNLINKED.
     const registry=this.state.orderProvenance?.resolve?.({symbol:input.symbol,clientOrderId:present(input.clientOrderId)?input.clientOrderId:null,exchangeOrderId:present(input.orderId)?input.orderId:null});
-    const registryCycles=[...new Set((registry?.rows??[]).filter((row:any)=>['TP','EXIT','MANUAL_EXIT'].includes(row.role)).map((row:any)=>row.cycleId).filter(present))] as string[];
+    const registryCycles=[...new Set((registry?.rows??[]).filter((row:any)=>['TP','EXIT','MANUAL'].includes(row.role)).map((row:any)=>row.cycleId).filter(present))] as string[];
     const registeredExitCycle=registry?.status==='SYSTEM_PROVEN'&&registryCycles.length===1?registryCycles[0]:null;
     if(registeredExitCycle)owner=[...this.state.tradeRecords.values()].find(row=>row.symbol===input.symbol&&row.cycleId===registeredExitCycle&&!row.duplicateOf);
     const provenanceSource=registry?.status==='SYSTEM_PROVEN'?'ORDER_REGISTRY':localOrder?'DURABLE_ORDER_TABLE':(/^(entry_|ml_|tp_|manual_|ma_|mr_|mc_|ec[0-9]*_)/i.test(input.clientOrderId)?'LEGACY_PREFIX':'UNPROVEN');
@@ -162,7 +162,7 @@ export class PositionService {
     const affected=new Set<string>();let rebound=0,rebuilt=0;
     for(const fill of [...this.state.executionFills]){
       const proof=this.state.orderProvenance?.resolve?.({symbol:fill.symbol,clientOrderId:fill.clientOrderId,exchangeOrderId:fill.orderId});
-      const cycles=[...new Set((proof?.rows??[]).filter((row:any)=>['TP','EXIT','MANUAL_EXIT'].includes(row.role)).map((row:any)=>row.cycleId).filter(present))] as string[];
+      const cycles=[...new Set((proof?.rows??[]).filter((row:any)=>['TP','EXIT','MANUAL'].includes(row.role)).map((row:any)=>row.cycleId).filter(present))] as string[];
       if(proof?.status!=='SYSTEM_PROVEN'||cycles.length!==1||cycles[0]===fill.cycleId)continue;
       if(![...this.state.tradeRecords.values()].some(row=>row.symbol===fill.symbol&&row.cycleId===cycles[0]&&!row.duplicateOf))continue;
       if(fill.cycleId)affected.add(fill.cycleId);affected.add(cycles[0]!);

@@ -71,6 +71,11 @@ $hostScript = Join-Path $PSScriptRoot 'start-zdj-engine-host.ps1'
 if (-not (Test-Path -LiteralPath $enginePath)) { throw 'ENGINE_BUILD_MISSING: build explicitly before starting.' }
 
 if($Foreground){
+  # Decode native Node stdout/stderr as UTF-8 before the foreground tee sees it.
+  $utf8=[Text.UTF8Encoding]::new($false)
+  [Console]::InputEncoding=$utf8
+  [Console]::OutputEncoding=$utf8
+  $OutputEncoding=$utf8
   # Foreground observe mode uses the same runtime environment and the same conservative V8 guard as
   # the detached launcher, but keeps node.exe attached to this console so the last live output before
   # a native exit is visible immediately. It never starts or stops any AI service.

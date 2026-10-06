@@ -5,9 +5,18 @@ function tradeCloseProvenance(record:any,runtime:EngineRuntime){
   const fills=runtime.state.executionFills.filter((fill:any)=>fill.symbol===record.symbol&&
     (ids.has(String(fill.orderId??''))||ids.has(String(fill.clientOrderId??''))));
   const roles=new Set<string>();let externalExchangeFact=false;
+  const matchesIdentity=(order:any,fill:any)=>order?.symbol===fill.symbol&&(
+    (order.exchangeOrderId&&String(order.exchangeOrderId)===String(fill.orderId??''))||
+    (order.clientOrderId&&String(order.clientOrderId)===String(fill.clientOrderId??''))||
+    String(order.id??'')===String(fill.orderId??'')||
+    String(order.id??'')===String(fill.clientOrderId??''));
   for(const fill of fills){
     const proof=runtime.state.orderProvenance?.resolve?.({symbol:fill.symbol,clientOrderId:fill.clientOrderId,exchangeOrderId:fill.orderId});
     for(const item of proof?.rows??[])roles.add(String(item.role));
+    // Compatibility repair for exits created before the provenance registry writer existed:
+    // an exact durable manual/TP order identity is recorded system provenance, not a guess.
+    if([...runtime.state.manualOrders.values()].some((order:any)=>order.reduceOnly!==false&&matchesIdentity(order,fill)))roles.add('MANUAL');
+    if([...runtime.state.tpOrders.values()].some((order:any)=>matchesIdentity(order,fill)))roles.add('TP');
     if(fill.attributionStatus==='EXTERNAL_OR_UNLINKED'&&['EXCHANGE_AUDIT','USER_DATA_WS'].includes(String(fill.source)))externalExchangeFact=true;
   }
   if(roles.has('TP')&&roles.size===1)return'TP';

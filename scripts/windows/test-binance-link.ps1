@@ -39,7 +39,25 @@ $signedScript = Join-Path $root 'scripts\v397-signed-account-readback.mjs'
 if (Test-Path -LiteralPath $signedScript) {
   $signedOut = Join-Path $outDir 'signed-account-readback.json'
   $signedErr = Join-Path $outDir 'signed-account-readback.stderr.txt'
-  & node $signedScript $root (Join-Path $root 'data') 1> $signedOut 2> $signedErr
+  $previousErrorAction = $ErrorActionPreference
+  $signedExit = 0
+  try {
+    # Native Node warnings are written to stderr. In Windows PowerShell with
+    # ErrorActionPreference=Stop they otherwise become NativeCommandError and abort
+    # this read-only capture even when node exits successfully.
+    $ErrorActionPreference = 'Continue'
+    & node $signedScript $root (Join-Path $root 'data') 1> $signedOut 2> $signedErr
+    $signedExit = if ($null -eq $LASTEXITCODE) { 0 } else { [int]$LASTEXITCODE }
+  } finally {
+    $ErrorActionPreference = $previousErrorAction
+  }
+  if ($signedExit -ne 0) {
+    [IO.File]::WriteAllText(
+      (Join-Path $outDir 'signed-account-readback.exit.txt'),
+      ("exitCode=" + $signedExit),
+      $utf8
+    )
+  }
 }
 
 $latestForeground = Get-ChildItem -LiteralPath (Join-Path $root 'data\runtime-logs') -Filter 'engine.foreground.*.log' -File -ErrorAction SilentlyContinue |

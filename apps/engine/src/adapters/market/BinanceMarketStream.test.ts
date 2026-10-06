@@ -5,10 +5,10 @@ const book=(ts=Date.now())=>({symbol:'BTCUSDT',bids:[[100,1] as [number,number]]
 const candle={openTime:1,closeTime:Date.now(),open:100,high:101,low:99,close:100,volume:1,quoteVolume:100,trades:1};
 
 describe('BinanceMarketStream cache and gap recovery',()=>{
-  it('treats Binance live-subscription {code,msg,id} errors as a real stream failure',()=>{
+  it('treats Binance live-subscription {code,msg} errors as a real stream failure',()=>{
     const stream=new BinanceMarketStream({} as never,vi.fn()),terminate=vi.fn(),close=vi.fn();
     (stream as any).socket={readyState:1,terminate,close};(stream as any).stopped=false;
-    (stream as any).onMessage(JSON.stringify({code:2,msg:'Invalid request: too many parameters',id:7}));
+    (stream as any).onMessage(JSON.stringify({code:2,msg:'Invalid request: too many parameters'}));
     expect(terminate).toHaveBeenCalledOnce();
     expect(stream.metrics()).toMatchObject({gaps:1,gapsByType:{subscription:1},lastError:expect.stringContaining('WS_CONTROL_ERROR')});
     stream.stop();

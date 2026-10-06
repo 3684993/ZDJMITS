@@ -74,9 +74,11 @@ export class BinancePublicMarketDataProvider implements MarketDataProvider {
   async getQuote(symbol:string):Promise<Quote>{
     const cached=this.stream.quote(symbol),rules=await this.rules(symbol);
     if(cached?.last&&cached.mark&&cached.bid&&cached.ask&&Date.now()-(cached.ts??0)<=15_000)return{symbol,last:cached.last,mark:cached.mark,bid:cached.bid,ask:cached.ask,...rules,quoteVolumeUsd24h:cached.quoteVolumeUsd24h??0,priceChangePercent24h:cached.priceChangePercent24h??0,tradeCount24h:cached.tradeCount24h??0,ts:cached.ts??Date.now()};
-    const t=await this.json<any>(`/fapi/v1/ticker/24hr?symbol=${symbol}`);
-    const p=await this.json<any>(`/fapi/v1/premiumIndex?symbol=${symbol}`);
-    const book=await this.json<any>(`/fapi/v1/ticker/bookTicker?symbol=${symbol}`);
+    const [t,p,book]=await Promise.all([
+      this.json<any>(`/fapi/v1/ticker/24hr?symbol=${symbol}`),
+      this.json<any>(`/fapi/v1/premiumIndex?symbol=${symbol}`),
+      this.json<any>(`/fapi/v1/ticker/bookTicker?symbol=${symbol}`),
+    ]);
     return{symbol,last:Number(t.lastPrice),mark:Number(p.markPrice),bid:Number(book.bidPrice),ask:Number(book.askPrice),...rules,quoteVolumeUsd24h:Number(t.quoteVolume),priceChangePercent24h:Number(t.priceChangePercent),tradeCount24h:Number(t.count??0),ts:Date.now()};
   }
 

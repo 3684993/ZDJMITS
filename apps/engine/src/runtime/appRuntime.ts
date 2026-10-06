@@ -791,7 +791,9 @@ export class EngineRuntime {
     this.universe.refresh();
     if (this.state.account.status === "READY") {
       await this.refreshPositionMarkets();
-      await this.reconciliation.run();
+      // Startup blocks only on current positions/open orders and recent unacknowledged submissions.
+      // Historical identity audits resume on the normal reconciliation scheduler after RUNNING.
+      await this.reconciliation.run({startupCurrentOnly:true});
     }
     // Reconcile may expose protected owners after the first cohort pass.
     // Refresh membership without expanding it to the discovery universe.

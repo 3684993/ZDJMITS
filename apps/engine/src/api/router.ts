@@ -1,5 +1,5 @@
 import { filterFormalOutcome, projectTradeRecordRow, projectTradeRecordSummary } from '../services/tradeRecordReadModel.js';
-function tradeCloseProvenance(record:any,runtime:EngineRuntime){
+export function tradeCloseProvenance(record:any,runtime:EngineRuntime){
   if(!Number.isFinite(record.closedAt))return'OPEN';
   const ids=new Set((record.exitOrderIds??[]).map((id:unknown)=>String(id)));
   const fills=runtime.state.executionFills.filter((fill:any)=>fill.symbol===record.symbol&&

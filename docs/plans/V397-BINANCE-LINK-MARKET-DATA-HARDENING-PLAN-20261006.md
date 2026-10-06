@@ -1,6 +1,6 @@
 # V3.9.7 Binance 链路 / 行情数据 / 私有接口全面诊断与加固计划
 
-> Status: **PROPOSED — WAITING FOR USER APPROVAL**
+> Status: **APPROVED — PHASE A DIAGNOSTIC CAPTURE ACTIVE**
 > Date: 2026-10-06
 > Scope: TESTNET only. 本文件仅制定计划；本次提交不实施运行时代码修改。
 
@@ -450,7 +450,7 @@ Dashboard/diagnostic 分开显示：
 
 ## 17. 批准闸门
 
-本计划提交后停止。未经用户明确批准，不实施上述诊断脚本或 Engine 运行时代码修改。
+用户已明确批准本计划。当前只进入 Phase A 诊断采集；Engine 运行时代码修复仍以诊断证据为输入。\n\n已加入：`scripts/windows/test-binance-link.ps1`，负责采集当前 8080 runtime / Binance governance / incidents / universe / EIP / signed account readback / 最新 foreground log，并自动打包 ZIP。
 
 用户批准后的推荐顺序：
 

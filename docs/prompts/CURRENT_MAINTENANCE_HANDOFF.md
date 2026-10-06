@@ -3,8 +3,9 @@
 > Stable handoff entrypoint for a new ChatGPT maintenance conversation.
 > Last refreshed: 2026-10-06 (+08:00)
 > Repository: `3684993/ZDJMITS`
-> Current baseline main: `e8d90808786efd095b6bc871412aa4a9b4d547d0`
-> GitHub Actions baseline: #495 SUCCESS
+> Current diagnostic code baseline: `bbc2a3d8382f3631a1a583a4d6eaf737cf686400`
+> Crash analysis report: `docs/reports/crash/ENGINE_NATIVE_CRASH_20261006_FOREGROUND_ANALYSIS.md`
+> Last previously confirmed GitHub Actions baseline: #495 SUCCESS (new diagnostic commit requires current CI confirmation)
 
 ## 0. Instructions to the next ChatGPT conversation
 
@@ -363,6 +364,44 @@ SQLite facts:
 If the log shows a repeatable subsystem immediately preceding native termination, prefer a small diagnostic isolation switch for that subsystem over more V8 flag experiments.
 
 Never “fix” the incident by auto-restarting the Engine. Auto restart would hide a native crash and invalidate soak evidence.
+
+---
+
+## 9A. Foreground crash 2026-10-06 — evidence now captured
+
+Uploaded evidence analyzed:
+- `engine.foreground.20261006-090715.log`
+
+Strict result:
+- foreground launch: 09:07:15.316
+- `RUNTIME_STARTED`: 09:10:23.264
+- last successfully mirrored Engine event: 09:11:02.076, `V396_OWNERSHIP_OUTBOX` for BTCUSDT LONG exit task
+- foreground native exit: 09:11:03.201
+- exit: `-1073740791 / 0xC0000409`
+- runtime-after-`RUNTIME_STARTED` lifetime: about **39.94s**
+- last-event-to-exit gap: about **1.125s**
+
+Important conclusions:
+1. This reproduction is not a bootstrap-only failure.
+2. The process survived the operational SQLite worker's creation/immediate first inspection by minutes, so the old evidence does not support blaming the worker's first `quick_check(1)`.
+3. Post-ready 45s/60s scheduled tasks had not reached their first boundary at the native exit. Priority shifts to 1s/2s recurring paths and work already in flight.
+4. Startup TradeRecord auto sync begins immediately after bootstrap. The foreground log shows a `/fapi/v1/userTrades` network incident recovering at 09:11:01.999, so historical audit work was plausibly still active, but the old log cannot prove whether it reached SQLite baseline backup/apply.
+5. The final V396 outbox event is the last successful publication, not proof that V396 caused the fail-fast.
+6. Do not change V8 flags again based on this evidence.
+
+Diagnostic commit:
+- `bbc2a3d8382f3631a1a583a4d6eaf737cf686400` — foreground-only scheduler/TradeRecord phase tracing.
+
+New foreground rows include:
+- `SCHEDULED_TASK_BEGIN/END/FAILED` for crash-relevant market, SQLite/write-buffer, trading-quality, reconciliation, exit, TP, research and governance paths.
+- `TRADE_RECORD_AUTO_SYNC_PHASE`: `AUDIT_BEGIN/END`, `BASELINE_BEGIN/END`, `APPLY_BEGIN/END`.
+
+The tracing uses the append-only process lifecycle path, not the SQLite operational event journal, and is active only when `ZDJ_FOREGROUND_OBSERVE=1`.
+
+Full report:
+- `docs/reports/crash/ENGINE_NATIVE_CRASH_20261006_FOREGROUND_ANALYSIS.md`
+
+Next local reproduction must use the same normal `-Foreground` launch after pulling/building. If it crashes again, the missing matching END row identifies the exact task boundary to inspect before any isolation or storage change.
 
 ---
 

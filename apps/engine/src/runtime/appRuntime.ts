@@ -2076,12 +2076,32 @@ export class EngineRuntime {
       // P1: an order state change is an exit-order fact whether or not it carried a fill this tick.
       // WS used to update only the order projections, which is how a FILLED take-profit left its
       // durable task and quantity claim at WORKING/ACTIVE.
-      const updateAt=Number(o.T ?? raw.T ?? Date.now());
+      const updateAt=Number(o.T ?? raw.T ?? Date.now()),symbol=String(o.s??''),clientOrderId=String(o.c??''),exchangeOrderId=String(o.i??'');
       this.exitRuntime?.recordExitOrderReport('USER_DATA_WS',{
-        symbol:String(o.s??''),clientOrderId:String(o.c??''),exchangeOrderId:String(o.i??''),
+        symbol,clientOrderId,exchangeOrderId,
         positionSide:['LONG','SHORT'].includes(String(o.ps)) ? String(o.ps) : 'BOTH',
-        status:String(o.X??''),originalQuantity:Number(o.o??0),executedQuantity:Number(o.z??0),updateTime:updateAt,
+        status:String(o.X??''),originalQuantity:Number(o.q??o.o??0),executedQuantity:Number(o.z??0),updateTime:updateAt,
       },Number.isFinite(updateAt)?updateAt:Date.now());
+      // Binance user-data is the primary order-state feed. A lost/slow REST acknowledgement must not
+      // leave a local Entry UNKNOWN when this ordered stream already proved the same clientOrderId.
+      const localEntry=[...this.state.entryOrders.values()].find((order:any)=>order.symbol===symbol&&(
+        (clientOrderId&&order.clientOrderId===clientOrderId)||(exchangeOrderId&&order.exchangeOrderId===exchangeOrderId)));
+      if(localEntry){
+        const rawStatus=String(o.X??''),filled=Math.max(Number(localEntry.filledQuantity??0),Number(o.z??0));
+        const mapped=rawStatus==='NEW'?'WORKING':rawStatus==='PARTIALLY_FILLED'?'PARTIALLY_FILLED':rawStatus==='FILLED'?'FILLED':
+          rawStatus==='CANCELED'?'CANCELED':rawStatus==='EXPIRED'||rawStatus==='EXPIRED_IN_MATCH'?'EXPIRED':rawStatus==='REJECTED'?'REJECTED':null;
+        const terminal=new Set(['FILLED','CANCELED','EXPIRED','REJECTED']),stale=Number.isFinite(updateAt)&&Number(localEntry.verifiedAt??0)>updateAt;
+        if(mapped&&!stale&&!(terminal.has(localEntry.status)&&!terminal.has(mapped))){
+          const confirmed={...localEntry,exchangeOrderId:exchangeOrderId||localEntry.exchangeOrderId,clientOrderId:clientOrderId||localEntry.clientOrderId,
+            status:mapped,filledQuantity:filled,submittedAt:localEntry.submittedAt??(Number.isFinite(updateAt)?updateAt:Date.now()),factSource:'BINANCE_USER_DATA_WS',
+            verifiedAt:Number.isFinite(updateAt)?updateAt:Date.now(),updatedAt:Number.isFinite(updateAt)?updateAt:Date.now()};
+          this.state.entryOrders.set(localEntry.id,confirmed);
+          if(localEntry.reservationId){if(['WORKING','PARTIALLY_FILLED'].includes(mapped))this.state.markEntryReservationWorking(localEntry.reservationId,localEntry.intentId,{orderId:localEntry.id,reason:'BINANCE_USER_DATA_WS'});else if(terminal.has(mapped))this.state.releaseEntryReservation(localEntry.reservationId);}
+          const intent=this.state.entryIntents.get(localEntry.intentId);
+          if(intent)this.writes.apply(`entry-user-data:${localEntry.id}:${confirmed.verifiedAt}`,()=>this.settingsStore.saveEntryExecution({intent,order:confirmed,reservation:confirmed.reservationId?this.state.entryReservations.get(confirmed.reservationId):undefined}));
+          this.events.publish('ENTRY_ORDER_USER_DATA_CONFIRMED',{orderId:localEntry.id,intentId:localEntry.intentId,clientOrderId:confirmed.clientOrderId,exchangeOrderId:confirmed.exchangeOrderId,status:confirmed.status,filledQuantity:confirmed.filledQuantity,source:'BINANCE_USER_DATA_WS'},symbol);
+        }
+      }
       const
         qty = Number(o.l ?? 0);
       if (qty > 0) {

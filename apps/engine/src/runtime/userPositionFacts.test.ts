@@ -23,3 +23,10 @@ it('a stale REST response cannot resurrect a position closed by a newer WS delta
  const service=new ReconciliationService({fetchPositions:()=>remote,fetchOpenOrders:async()=>[]} as any,r.state,r.events,{ensure:vi.fn()} as any,r.positions);
  const run=service.run();await Promise.resolve();const at=Date.now()+1;r.applyUserData({e:'ACCOUNT_UPDATE',T:at,a:{P:[{s:'ETHFIUSDC',ps:'LONG',pa:'0'}]}});release([{...position}]);await run;expect(r.state.positions.size).toBe(0);expect(service.health().lastError).toBeNull();
 });
+
+it('uses ORDER_TRADE_UPDATE as the primary acknowledgement for a submitted Entry',()=>{
+ const r=runtime(),at=Date.now(),order:any={id:'entry_i',clientOrderId:'ml_client',exchangeOrderId:null,symbol:'BTCUSDT',side:'LONG',quantity:.01,price:100,filledQuantity:0,leverage:10,status:'SUBMITTING',createdAt:at-1000,updatedAt:at-1000,absoluteExpiresAt:at+60_000,repriceCount:0,intentId:'i',reachability:1};
+ r.state.entryOrders.set(order.id,order);
+ r.applyUserData({e:'ORDER_TRADE_UPDATE',T:at,o:{s:'BTCUSDT',c:'ml_client',i:123,S:'BUY',ps:'LONG',X:'NEW',x:'NEW',q:'.01',z:'0',l:'0',T:at}});
+ expect(r.state.entryOrders.get(order.id)).toMatchObject({status:'WORKING',exchangeOrderId:'123',factSource:'BINANCE_USER_DATA_WS',verifiedAt:at});
+});

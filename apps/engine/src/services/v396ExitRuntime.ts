@@ -223,7 +223,7 @@ export class V396ExitRuntime {
    * P2: the clientOrderId minted here is the identity a later fill will be judged against, so it is
    * registered at the moment of preparation rather than inferred from a prefix afterwards.
    */
-  registerExitProvenance(input:{subject:V396ExitSubject;clientOrderId:string|null;role:'TP'|'EXIT';source:string;intentId?:string|null}){
+  registerExitProvenance(input:{subject:V396ExitSubject;clientOrderId:string|null;role:'TP'|'EXIT'|'MANUAL';source:string;intentId?:string|null}){
     const clientOrderId=String(input.clientOrderId??'').trim();
     if(!clientOrderId)return{recorded:false,conflict:'CLIENT_ORDER_ID_MISSING'};
     const identity=this.exchangeIdentity();
@@ -231,7 +231,11 @@ export class V396ExitRuntime {
       clientOrderId,role:input.role,intentId:input.intentId??null,cycleId:input.subject.cycleId??null,source:input.source});
   }
 
-  async prepareManual(input:V396PrepareExitInput){return this.prepare('MANUAL',input,null);}
+  async prepareManual(input:V396PrepareExitInput){
+    const result=await this.prepare('MANUAL',input,null);
+    if(result.clientOrderId)this.registerExitProvenance({subject:input.subject,clientOrderId:result.clientOrderId,role:'MANUAL',source:'MANUAL_PREPARED'});
+    return result;
+  }
 
   /**
    * J1: the only AI exit door. Unlike MANUAL/TP it never accepts a synthetic verdict - it needs the

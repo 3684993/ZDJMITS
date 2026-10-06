@@ -10,6 +10,13 @@ describe('BinanceTransport proxy-only boundary',()=>{
  it('ignores a legacy DIRECT flag and still uses the configured proxy',()=>{const cfg={...settings(),proxy:{...settings().proxy,binanceRestRoute:'DIRECT',forceBinanceRest:false,forceBinanceWs:false}};const transport=new BinanceTransport(cfg as never);expect(transport.restRoute()).toMatchObject({mode:'CONFIGURED',throughProxy:true});expect((transport as any).restAgent()).toBeDefined();expect(transport.websocketRoute().throughProxy).toBe(true);});
  it('fails closed when proxy is disabled instead of silently using DIRECT',async()=>{const transport=new BinanceTransport(settings(false) as never);expect(transport.restRoute()).toMatchObject({mode:'CONFIGURED',throughProxy:false,failClosed:true});expect(()=>transport.websocketOptions()).toThrow('PROXY_REQUIRED');await expect(transport.json('/fapi/v1/time')).rejects.toThrow('PROXY_REQUIRED');});
 });
+it('derives the 2026 split Public/Market WebSocket routes while preserving the legacy private-compatible URL',()=>{
+ const transport=new BinanceTransport(settings() as never);
+ expect(transport.effectiveWsUrl()).toBe('wss://stream.binancefuture.com/ws');
+ expect(transport.effectiveWsUrl('PUBLIC')).toBe('wss://fstream.binancefuture.com/public/stream');
+ expect(transport.effectiveWsUrl('MARKET')).toBe('wss://fstream.binancefuture.com/market/stream');
+ expect(transport.websocketRoute()).toMatchObject({publicUrl:'wss://fstream.binancefuture.com/public/stream',marketUrl:'wss://fstream.binancefuture.com/market/stream',tlsServername:'fstream.binancefuture.com'});
+});
 it('reserves the private-truth lane for listen-key maintenance without relying on signature heuristics',async()=>{const transport=new BinanceTransport(settings() as never),run=vi.spyOn((transport as any).budget,'run').mockResolvedValue({} as never);try{await transport.json('/fapi/v1/listenKey',{method:'PUT',headers:{'X-MBX-APIKEY':'isolated-test'}});expect(run.mock.calls[0]![0]).toBe(1);expect(run.mock.calls[0]![1]).toBe(1);expect(run.mock.calls[0]![3]).toMatchObject({source:'USER_DATA_STREAM',endpoint:'/fapi/v1/listenKey'});}finally{run.mockRestore();}});
 it.each([
  ['POST','/fapi/v1/leverage','EXECUTION'],['POST','/fapi/v1/order','EXECUTION'],['PUT','/fapi/v1/order','EXECUTION'],['DELETE','/fapi/v1/order','EXECUTION'],['GET','/fapi/v1/order','PRIVATE_TRUTH'],

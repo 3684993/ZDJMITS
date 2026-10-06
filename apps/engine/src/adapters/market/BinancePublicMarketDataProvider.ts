@@ -150,7 +150,7 @@ export class BinancePublicMarketDataProvider implements MarketDataProvider {
     const derivatives=this.derivativesCache.get(symbol)?.value??this.neutralDerivatives(symbol),candles=frames.map(tf=>byFrame.get(tf)??[]);
     const technical=Object.fromEntries(frames.flatMap((tf,i)=>candles[i]!.length?[[tf,buildTechnicalCard(tf,candles[i]!)]]:[])) as Record<Timeframe,TechnicalCard>;
     this.stream.seed(symbol,orderBook,candles[0]!);
-    const hotComplete=(['1m','5m','15m'] as const).every(tf=>(byFrame.get(tf)?.length??0)>0),completeness=.76+(orderBook.bids.length&&orderBook.asks.length?.12:0)+(hotComplete?.12:0);
+    const hotComplete=(['1m','5m','15m'] as const).every(tf=>(byFrame.get(tf)?.length??0)>0),completeness=.76+((orderBook.bids.length&&orderBook.asks.length) ? .12 : 0)+(hotComplete ? .12 : 0);
     const contract=(await this.info()).symbols.find((row:any)=>row.symbol===symbol),onboard=Number(contract?.onboardDate??0),listingAgeDays=onboard>0?Math.max(0,(Date.now()-onboard)/86_400_000):null;
     return{symbol,quote,orderBook,derivatives,technical,dataCompleteness:clamp(completeness,0,1),listingAgeDays};
   }

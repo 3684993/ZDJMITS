@@ -64,6 +64,138 @@ $stdout = Join-Path $logDir 'engine.stdout.log'
 $stderr = Join-Path $logDir 'engine.stderr.log'
 $launcherLifecycle = Join-Path $logDir 'engine-launch-lifecycle.jsonl'
 $receiptPath = Join-Path $runtimeDir 'engine-launch-receipt.json'
+
+# Disk exhaustion is an execution-safety fault: SQLite and durable runtime evidence both live under
+# ZDJ_DATA_DIR. Refuse a new Engine launch while the volume is critically low instead of starting a
+# process that cannot preserve state. The threshold is configurable but defaults to 2 GiB.
+$volumeRoot = [IO.Path]::GetPathRoot((Get-Location).Path)
+$driveInfo = [IO.DriveInfo]::new($volumeRoot)
+$minFreeBytes = if($env:ZDJ_MIN_FREE_DISK_BYTES -match '^\d+
+$nodePath = (Get-Command node.exe -ErrorAction Stop).Source
+$enginePath = Join-Path (Get-Location) 'apps\engine\dist\main.js'
+$hostScript = Join-Path $PSScriptRoot 'start-zdj-engine-host.ps1'
+if (-not (Test-Path -LiteralPath $enginePath)) { throw 'ENGINE_BUILD_MISSING: build explicitly before starting.' }
+
+if($Foreground){
+  # Decode native Node stdout/stderr as UTF-8 before the foreground tee sees it.
+  $utf8=[Text.UTF8Encoding]::new($false)
+  [Console]::InputEncoding=$utf8
+  [Console]::OutputEncoding=$utf8
+  $OutputEncoding=$utf8
+  # Foreground observe mode uses the same runtime environment and the same conservative V8 guard as
+  # the detached launcher, but keeps node.exe attached to this console so the last live output before
+  # a native exit is visible immediately. It never starts or stops any AI service.
+  if($env:NODE_OPTIONS -match '(^|\s)--jitless(?:\s|$)'){
+    Write-Warning 'Removing inherited NODE_OPTIONS=--jitless because Node fetch/undici requires WebAssembly.'
+    Remove-Item Env:NODE_OPTIONS -ErrorAction SilentlyContinue
+  }
+  $nodeVersion=(& $nodePath --version 2>$null | Out-String).Trim()
+  $v8Version=(& $nodePath -p "process.versions.v8" 2>$null | Out-String).Trim()
+  $v8Options=(& $nodePath --v8-options 2>$null | Out-String)
+  $nodeFlags=@()
+  if($v8Options -match '(?m)(^|\s)--maglev(?:\s|$)'){$nodeFlags+='--no-maglev'}
+  $stamp=Get-Date -Format 'yyyyMMdd-HHmmss'
+  $foregroundLog=Join-Path $logDir ("engine.foreground.$stamp.log")
+  $reportDir=Join-Path (Get-Location) ("docs\reports\crash\foreground-$stamp")
+  New-Item -ItemType Directory -Path $reportDir -Force|Out-Null
+  $nodeArgs=@($nodeFlags)+@('--report-on-fatalerror','--report-uncaught-exception',("--report-directory=$reportDir"),'--trace-exit',$enginePath)
+  $env:ZDJ_FOREGROUND_OBSERVE='1'
+  Write-Host ''
+  Write-Host '============================================================'
+  Write-Host ' ZDJ-MITS ENGINE / FOREGROUND OBSERVE MODE'
+  Write-Host '============================================================'
+  Write-Host ('Node            : '+$nodeVersion)
+  Write-Host ('V8              : '+$v8Version)
+  Write-Host ('PID             : current console will own node.exe directly')
+  Write-Host ('Engine          : '+$enginePath)
+  $flagText=if($nodeFlags.Count){$nodeFlags -join ' '}else{'(none)'}
+  Write-Host ('Node flags      : '+$flagText)
+  Write-Host ('Console log     : '+$foregroundLog)
+  Write-Host ('Crash reports   : '+$reportDir)
+  Write-Host 'AI services     : untouched (8081/8083/8084 are not stopped or restarted)'
+  Write-Host 'Press Ctrl+C only if you intentionally want to stop the Engine.'
+  Write-Host '------------------------------------------------------------'
+  $startedAt=Get-Date
+  $header="[$($startedAt.ToString('yyyy-MM-dd HH:mm:ss.fff'))] FOREGROUND_START node=$nodeVersion v8=$v8Version flags=$($nodeFlags -join ' ') engine=$enginePath"
+  $foregroundFileLogging=$true
+  try{
+    [IO.File]::WriteAllText($foregroundLog,$header+[Environment]::NewLine,[Text.UTF8Encoding]::new($false))
+  }catch{
+    $foregroundFileLogging=$false
+    Write-Warning ("FOREGROUND_LOG_DISABLED_AT_START: " + $_.Exception.Message)
+  }
+  $previousErrorAction=$ErrorActionPreference
+  $ErrorActionPreference='Continue'
+  try{
+    & $nodePath @nodeArgs 2>&1 | ForEach-Object {
+      $line="[$((Get-Date).ToString('yyyy-MM-dd HH:mm:ss.fff'))] $($_.ToString())"
+      Write-Host $line
+      if($foregroundFileLogging){
+        try{
+          [IO.File]::AppendAllText($foregroundLog,$line+[Environment]::NewLine,[Text.UTF8Encoding]::new($false))
+        }catch{
+          # Losing the diagnostic mirror must never terminate node.exe. Continue draining stdout so the
+          # foreground Engine remains attached and observable in the console.
+          $foregroundFileLogging=$false
+          Write-Warning ("FOREGROUND_LOG_DISABLED_DURING_RUN: " + $_.Exception.Message)
+        }
+      }
+    }
+    $exitCode=if($null -eq $LASTEXITCODE){0}else{[int]$LASTEXITCODE}
+  }finally{
+    $ErrorActionPreference=$previousErrorAction
+  }
+  $endedAt=Get-Date
+  $duration=[math]::Round(($endedAt-$startedAt).TotalSeconds,3)
+  $exitUnsigned=[BitConverter]::ToUInt32([BitConverter]::GetBytes([int]$exitCode),0)
+  $exitHex=('0x{0:X8}' -f $exitUnsigned)
+  $footer="[$($endedAt.ToString('yyyy-MM-dd HH:mm:ss.fff'))] FOREGROUND_EXIT exitCode=$exitCode exitHex=$exitHex durationSeconds=$duration"
+  if($foregroundFileLogging){
+    try{[IO.File]::AppendAllText($foregroundLog,$footer+[Environment]::NewLine,[Text.UTF8Encoding]::new($false))}
+    catch{Write-Warning ("FOREGROUND_EXIT_LOG_WRITE_FAILED: " + $_.Exception.Message)}
+  }
+  Write-Host '------------------------------------------------------------'
+  Write-Host ('ENGINE EXITED    : '+$endedAt.ToString('yyyy-MM-dd HH:mm:ss.fff'))
+  Write-Host ('Duration seconds : '+$duration)
+  Write-Host ('Exit code        : '+$exitCode)
+  Write-Host ('Exit hex         : '+$exitHex)
+  Write-Host ('Console log      : '+$foregroundLog)
+  Write-Host ('Crash reports    : '+$reportDir)
+  if($exitCode -eq -1073740791){Write-Host 'Detected Windows native fail-fast: 0xC0000409' -ForegroundColor Red}
+  Write-Host 'Last 40 log lines:'
+  if(Test-Path -LiteralPath $foregroundLog){Get-Content -LiteralPath $foregroundLog -Tail 40 -ErrorAction SilentlyContinue|ForEach-Object {Write-Host $_}}
+  exit $exitCode
+}
+
+if (-not (Test-Path -LiteralPath $hostScript)) { throw 'ENGINE_HOST_SCRIPT_MISSING' }
+$launchId=[guid]::NewGuid().ToString('N')
+$hostExe=(Get-Process -Id $PID -ErrorAction Stop).Path
+$dq=[char]34
+$hostArgs=@('-NoProfile','-ExecutionPolicy','Bypass','-File',($dq+$hostScript+$dq),'-NodePath',($dq+$nodePath+$dq),'-EnginePath',($dq+$enginePath+$dq),'-WorkingDirectory',($dq+(Get-Location).Path+$dq),'-StdoutPath',($dq+$stdout+$dq),'-StderrPath',($dq+$stderr+$dq),'-LifecyclePath',($dq+$launcherLifecycle+$dq),'-ReceiptPath',($dq+$receiptPath+$dq),'-LaunchId',$launchId)
+$hostProcess=Start-Process -FilePath $hostExe -ArgumentList $hostArgs -WorkingDirectory (Get-Location) -WindowStyle Hidden -PassThru
+$receipt=$null
+for($attempt=0;$attempt -lt 50;$attempt++){
+  if(Test-Path -LiteralPath $receiptPath){
+    try{$candidate=Get-Content -LiteralPath $receiptPath -Raw|ConvertFrom-Json;if($candidate.launchId -eq $launchId){$receipt=$candidate;break}}catch{}
+  }
+  $hostProcess.Refresh();if($hostProcess.HasExited){break};Start-Sleep -Milliseconds 100
+}
+if(-not $receipt){$hostProcess.Refresh();if($hostProcess.HasExited){throw "ENGINE_HOST_FAILED exit=$($hostProcess.ExitCode). See $launcherLifecycle"};throw "ENGINE_HOST_RECEIPT_TIMEOUT hostPid=$($hostProcess.Id). Manual review required; no automatic retry."}
+Write-Output ('ZDJ-MITS started in background. PID=' + $receipt.pid + ' HOST_PID=' + $hostProcess.Id + ' LAUNCH_ID=' + $launchId)
+Write-Output ('LAN URL(s): ' + ((Get-NetIPAddress -AddressFamily IPv4 -Type Unicast -ErrorAction SilentlyContinue | Where-Object {$_.IPAddress -notlike '127.*' -and $_.IPAddress -notlike '169.254.*' -and $_.AddressState -eq 'Preferred'} | ForEach-Object { 'http://' + $_.IPAddress + ':8080' }) -join ', '))
+Write-Output ('Logs: ' + $stdout + ' / ' + $stderr)
+Write-Output ('Process lifecycle: ' + (Join-Path $logDir 'engine-process-lifecycle.jsonl') + ' / ' + $launcherLifecycle)
+} finally {
+  $launchMutex.ReleaseMutex()
+  $launchMutex.Dispose()
+}
+){[int64]$env:ZDJ_MIN_FREE_DISK_BYTES}else{[int64](2GB)}
+$freeBytes = [int64]$driveInfo.AvailableFreeSpace
+$freeGiB = [math]::Round($freeBytes / 1GB, 2)
+if($freeBytes -lt $minFreeBytes){
+  throw ("ENGINE_START_REFUSED_LOW_DISK_SPACE volume={0} freeGiB={1} requiredGiB={2}" -f $volumeRoot,$freeGiB,[math]::Round($minFreeBytes/1GB,2))
+}
+
 $env:ZDJ_START_REASON = $StartReason
 $nodePath = (Get-Command node.exe -ErrorAction Stop).Source
 $enginePath = Join-Path (Get-Location) 'apps\engine\dist\main.js'

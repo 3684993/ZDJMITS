@@ -69,13 +69,19 @@ $receiptPath = Join-Path $runtimeDir 'engine-launch-receipt.json'
 # ZDJ_DATA_DIR. Refuse a new Engine launch while the volume is critically low instead of starting a
 # process that cannot preserve state. The threshold is configurable but defaults to 2 GiB.
 $volumeRoot = [IO.Path]::GetPathRoot((Get-Location).Path)
-$driveInfo = [IO.DriveInfo]::new($volumeRoot)
-$parsedMinFreeBytes = [int64]0
-$minFreeBytes = if([int64]::TryParse([string]$env:ZDJ_MIN_FREE_DISK_BYTES,[ref]$parsedMinFreeBytes) -and $parsedMinFreeBytes -gt 0){$parsedMinFreeBytes}else{[int64](2GB)}
+$driveInfo = New-Object System.IO.DriveInfo($volumeRoot)
+$minFreeBytes = [int64](2 * 1024 * 1024 * 1024)
+if (-not [string]::IsNullOrWhiteSpace([string]$env:ZDJ_MIN_FREE_DISK_BYTES)) {
+  $candidateMinFreeBytes = [int64]0
+  if ([int64]::TryParse([string]$env:ZDJ_MIN_FREE_DISK_BYTES, [ref]$candidateMinFreeBytes) -and $candidateMinFreeBytes -gt 0) {
+    $minFreeBytes = $candidateMinFreeBytes
+  }
+}
 $freeBytes = [int64]$driveInfo.AvailableFreeSpace
 $freeGiB = [math]::Round($freeBytes / 1GB, 2)
-if($freeBytes -lt $minFreeBytes){
-  throw ("ENGINE_START_REFUSED_LOW_DISK_SPACE volume={0} freeGiB={1} requiredGiB={2}" -f $volumeRoot,$freeGiB,[math]::Round($minFreeBytes/1GB,2))
+$requiredGiB = [math]::Round($minFreeBytes / 1GB, 2)
+if ($freeBytes -lt $minFreeBytes) {
+  throw ("ENGINE_START_REFUSED_LOW_DISK_SPACE volume={0} freeGiB={1} requiredGiB={2}" -f $volumeRoot,$freeGiB,$requiredGiB)
 }
 
 $env:ZDJ_START_REASON = $StartReason
@@ -125,17 +131,44 @@ if($Foreground){
   Write-Host '------------------------------------------------------------'
   $startedAt=Get-Date
   $header="[$($startedAt.ToString('yyyy-MM-dd HH:mm:ss.fff'))] FOREGROUND_START node=$nodeVersion v8=$v8Version flags=$($nodeFlags -join ' ') engine=$enginePath"
-  [IO.File]::WriteAllText($foregroundLog,$header+[Environment]::NewLine,[Text.UTF8Encoding]::new($false))
+  $foregroundFileLogging=$true
+  $foregroundLogMaxBytes=[int64](256 * 1024 * 1024)
+  if (-not [string]::IsNullOrWhiteSpace([string]$env:ZDJ_FOREGROUND_LOG_MAX_BYTES)) {
+    $candidateLogMaxBytes=[int64]0
+    if ([int64]::TryParse([string]$env:ZDJ_FOREGROUND_LOG_MAX_BYTES,[ref]$candidateLogMaxBytes) -and $candidateLogMaxBytes -gt 0) {
+      $foregroundLogMaxBytes=$candidateLogMaxBytes
+    }
+  }
+  $foregroundPreviousLog=$foregroundLog + '.previous'
+  try {
+    [IO.File]::WriteAllText($foregroundLog,$header+[Environment]::NewLine,[Text.UTF8Encoding]::new($false))
+  } catch {
+    $foregroundFileLogging=$false
+    Write-Warning ("FOREGROUND_LOG_DISABLED_AT_START: " + $_.Exception.Message)
+  }
   $previousErrorAction=$ErrorActionPreference
   $ErrorActionPreference='Continue'
-  try{
+  try {
     & $nodePath @nodeArgs 2>&1 | ForEach-Object {
       $line="[$((Get-Date).ToString('yyyy-MM-dd HH:mm:ss.fff'))] $($_.ToString())"
       Write-Host $line
-      [IO.File]::AppendAllText($foregroundLog,$line+[Environment]::NewLine,[Text.UTF8Encoding]::new($false))
+      if ($foregroundFileLogging) {
+        try {
+          if ((Test-Path -LiteralPath $foregroundLog) -and ((Get-Item -LiteralPath $foregroundLog).Length -ge $foregroundLogMaxBytes)) {
+            if (Test-Path -LiteralPath $foregroundPreviousLog) { Remove-Item -LiteralPath $foregroundPreviousLog -Force -ErrorAction SilentlyContinue }
+            Move-Item -LiteralPath $foregroundLog -Destination $foregroundPreviousLog -Force
+            $rotation="[$((Get-Date).ToString('yyyy-MM-dd HH:mm:ss.fff'))] FOREGROUND_LOG_ROTATED previous=$foregroundPreviousLog"
+            [IO.File]::WriteAllText($foregroundLog,$rotation+[Environment]::NewLine,[Text.UTF8Encoding]::new($false))
+          }
+          [IO.File]::AppendAllText($foregroundLog,$line+[Environment]::NewLine,[Text.UTF8Encoding]::new($false))
+        } catch {
+          $foregroundFileLogging=$false
+          Write-Warning ("FOREGROUND_LOG_DISABLED_DURING_RUN: " + $_.Exception.Message)
+        }
+      }
     }
     $exitCode=if($null -eq $LASTEXITCODE){0}else{[int]$LASTEXITCODE}
-  }finally{
+  } finally {
     $ErrorActionPreference=$previousErrorAction
   }
   $endedAt=Get-Date
@@ -143,7 +176,10 @@ if($Foreground){
   $exitUnsigned=[BitConverter]::ToUInt32([BitConverter]::GetBytes([int]$exitCode),0)
   $exitHex=('0x{0:X8}' -f $exitUnsigned)
   $footer="[$($endedAt.ToString('yyyy-MM-dd HH:mm:ss.fff'))] FOREGROUND_EXIT exitCode=$exitCode exitHex=$exitHex durationSeconds=$duration"
-  [IO.File]::AppendAllText($foregroundLog,$footer+[Environment]::NewLine,[Text.UTF8Encoding]::new($false))
+  if ($foregroundFileLogging) {
+    try { [IO.File]::AppendAllText($foregroundLog,$footer+[Environment]::NewLine,[Text.UTF8Encoding]::new($false)) }
+    catch { Write-Warning ("FOREGROUND_EXIT_LOG_WRITE_FAILED: " + $_.Exception.Message) }
+  }
   Write-Host '------------------------------------------------------------'
   Write-Host ('ENGINE EXITED    : '+$endedAt.ToString('yyyy-MM-dd HH:mm:ss.fff'))
   Write-Host ('Duration seconds : '+$duration)
@@ -153,7 +189,9 @@ if($Foreground){
   Write-Host ('Crash reports    : '+$reportDir)
   if($exitCode -eq -1073740791){Write-Host 'Detected Windows native fail-fast: 0xC0000409' -ForegroundColor Red}
   Write-Host 'Last 40 log lines:'
-  Get-Content -LiteralPath $foregroundLog -Tail 40 -ErrorAction SilentlyContinue|ForEach-Object {Write-Host $_}
+  if (Test-Path -LiteralPath $foregroundLog) {
+    Get-Content -LiteralPath $foregroundLog -Tail 40 -ErrorAction SilentlyContinue | ForEach-Object { Write-Host $_ }
+  }
   exit $exitCode
 }
 

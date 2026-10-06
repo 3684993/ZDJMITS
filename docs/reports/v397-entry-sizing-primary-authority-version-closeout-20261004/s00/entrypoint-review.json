@@ -2,7 +2,7 @@
   "inventoryVersion": "S00-T01-entry-review-2",
   "capturedAt": "2026-09-21",
   "derivation": "mechanical over-approximating static scan by scripts/v396-s00-isolation-rules.mjs; a match can only tighten a status, never relax it",
-  "entryCount": 149,
+  "entryCount": 150,
   "statusLegend": {
     "ALLOWED_STATIC": "executed by the S00 verification command",
     "CONDITIONAL_NOT_RUN": "not executed; a later stage may run it only after the required boundary is proven",
@@ -2025,6 +2025,18 @@
       "derivedFrom": "file-content-and-one-hop-target",
       "status": "FORBIDDEN_OR_NOT_RUN",
       "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; manual lifecycle entrypoint; excluded from automated verification; mock/no-network/no-exchange-write assertion with a write counter that throws; no process start of any kind; requires explicit user authorization per Engine lifecycle action; unique temp data dir plus unique loopback port; no credential read"
+    },
+    {
+      "path": "scripts/windows/test-binance-link.ps1",
+      "kind": "script",
+      "sideEffects": [
+        "host-or-data-mutation",
+        "network-or-exchange",
+        "runtime-data-or-credential-boundary"
+      ],
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; mock/no-network/no-exchange-write assertion with a write counter that throws; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/windows/verify.ps1",

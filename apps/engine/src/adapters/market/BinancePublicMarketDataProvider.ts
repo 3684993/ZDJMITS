@@ -58,6 +58,16 @@ export class BinancePublicMarketDataProvider implements MarketDataProvider {
   async listSymbols(limit:number,prioritySymbols:string[]=[]){return this.discoverSymbols(limit,prioritySymbols);}
   collectionCoverage(){return this.coverage.map(row=>({...row}));}
   setLiveSymbols(symbols:string[]){this.stream.start([...new Set(symbols.map(x=>x.toUpperCase()))]);void this.info().catch(()=>{});}
+  /** Static contract filters can be used even when the live quote is stale/missing. */
+  cachedContractRules(symbol:string){
+    const info=this.exchangeInfo?.value,s=info?.symbols?.find((row:any)=>row.symbol===symbol);
+    if(!s)return undefined;
+    const pf=s.filters?.find((x:any)=>x.filterType==='PRICE_FILTER'),lf=s.filters?.find((x:any)=>x.filterType==='LOT_SIZE'),nf=s.filters?.find((x:any)=>x.filterType==='MIN_NOTIONAL');
+    const rules={tickSize:Number(pf?.tickSize),stepSize:Number(lf?.stepSize),minQty:Number(lf?.minQty),minNotional:Number(nf?.notional)};
+    if(!pf||!lf||!nf||Object.values(rules).some(value=>!Number.isFinite(value)||value<=0))return undefined;
+    return rules;
+  }
+  async getContractRules(symbol:string){return this.rules(symbol);}
   /** Never performs I/O. Manual/dashboard reads may use this without spending REST budget. */
   cachedQuote(symbol:string):Quote|undefined{
     const q=this.stream.quote(symbol),info=this.exchangeInfo?.value,s=info?.symbols?.find((row:any)=>row.symbol===symbol);

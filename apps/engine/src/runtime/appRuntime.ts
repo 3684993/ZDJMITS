@@ -532,13 +532,15 @@ export class EngineRuntime {
     // endpoint but never share a budget.
     runtime.aiUsage = aiUsage;
     const reviewSettings = () => {
-      const coordination = (state.settings.riskGovernance as any)?.exitCoordination ?? {};
+      const coordination = (state.settings.riskGovernance as any)?.exitCoordination ?? {},
+        dedicated = ai.reviewDedicated?.('POSITION_REVIEW')===true;
       return {
-        normalReviewsPerPlan: Number(coordination.normalReviewsPerPlan ?? 2),
+        normalReviewsPerPlan: dedicated?Math.max(4,Number(coordination.normalReviewsPerPlan ?? 2)):Number(coordination.normalReviewsPerPlan ?? 2),
         exceptionReviewsPerPlan: Number(coordination.exceptionReviewsPerPlan ?? 1),
         failureBudget: Number(coordination.reviewFailureBudget ?? 2),
-        minIntervalMs: Number(coordination.reviewMinIntervalMs ?? 300_000),
+        minIntervalMs: dedicated?Math.min(120_000,Number(coordination.reviewMinIntervalMs ?? 300_000)):Number(coordination.reviewMinIntervalMs ?? 300_000),
         authorityTtlMs: Number(coordination.reviewAuthorityTtlMs ?? 20_000),
+        renewalMs: dedicated?30*60_000:12*60*60_000,
       };
     };
     runtime.positionReviewScheduler = new PositionReviewScheduler({
@@ -555,7 +557,11 @@ export class EngineRuntime {
       events,
       exitRuntime,
       scheduler: runtime.positionReviewScheduler,
-      settings: () => (state.settings.riskGovernance as any)?.exitCoordination ?? {},
+      settings: () => {
+        const coordination=(state.settings.riskGovernance as any)?.exitCoordination??{};
+        return {...coordination,positionReviewEnabled:coordination.positionReviewEnabled===true||ai.reviewDedicated?.('POSITION_REVIEW')===true,
+          normalReviewsPerPlan:reviewSettings().normalReviewsPerPlan,reviewMinIntervalMs:reviewSettings().minIntervalMs};
+      },
       evidenceVersion: symbol => String((state.snapshots.get(symbol) as any)?.technical?.['15m']?.asOf ?? 0),
       memoryVersion: () => tradeMemoryVersionOf([...state.tradeRecords.values()]),
       review: input => runtime.reviewPosition(input),

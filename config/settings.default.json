@@ -57,6 +57,16 @@
       "model": "qwen/qwen3.8-27b",
       "maxConcurrency": 1,
       "gpu": "AMD Radeon RX 7900 XTX 24GB"
+    },
+    {
+      "id": "brain-7900-review",
+      "name": "Review Brain",
+      "role": "REVIEW_BRAIN",
+      "enabled": true,
+      "baseUrl": "http://127.0.0.1:8083/v1",
+      "model": "qwen/qwen3.8-27b",
+      "maxConcurrency": 1,
+      "gpu": "AMD Radeon RX 7900 XTX 24GB #2"
     }
   ],
   "aiDutyRoutes": [
@@ -74,13 +84,13 @@
     },
     {
       "duty": "PENDING_ENTRY_REVIEW",
-      "resourceId": "brain-7900-primary",
+      "resourceId": "brain-7900-review",
       "enabled": true,
       "priority": 20
     },
     {
       "duty": "POSITION_REVIEW",
-      "resourceId": "brain-7900-primary",
+      "resourceId": "brain-7900-review",
       "enabled": true,
       "priority": 90
     }

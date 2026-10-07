@@ -1,0 +1,9 @@
+{
+  "automationId": "zdjmits-remediation-6-12h-stability-closeout",
+  "kind": "heartbeat",
+  "status": "ACTIVE",
+  "intervalMinutes": 60,
+  "purpose": "Read-only continuation; 6h checkpoint and 12h final reports/evidence to GitHub; no lifecycle/Settings/proxy/parameter/exchange writes",
+  "checkpoint6h": "2026-10-08T00:41:12+08:00",
+  "deadline12h": "2026-10-08T06:41:12+08:00"
+}

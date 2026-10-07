@@ -181,6 +181,16 @@ export class MarketDataHub {
     if(!live)return snapshot;
     return Number(live.ts)>=Number(snapshot.ts)?live:snapshot;
   }
+  cachedContractRules(symbol:string){
+    const q=this.cachedQuote(symbol);
+    if(q)return{tickSize:q.tickSize,stepSize:q.stepSize,minQty:q.minQty,minNotional:q.minNotional};
+    return this.provider.cachedContractRules?.(symbol);
+  }
+  async contractRules(symbol:string){
+    const cached=this.cachedContractRules(symbol);if(cached)return cached;
+    if(this.provider.getContractRules)return this.provider.getContractRules(symbol);
+    const q=await this.provider.getQuote(symbol);return{tickSize:q.tickSize,stepSize:q.stepSize,minQty:q.minQty,minNotional:q.minNotional};
+  }
   async freshQuote(symbol:string):Promise<Quote>{return this.provider.getQuote(symbol);}
   candles(symbol:string,timeframe:Timeframe,limit=120):Promise<Candle[]>{return this.provider.getCandles(symbol,timeframe,limit);}
   cachedCandles(symbol:string,timeframe:Timeframe,limit=120):Candle[]{return this.provider.cachedCandles?.(symbol,timeframe,limit)??[];}

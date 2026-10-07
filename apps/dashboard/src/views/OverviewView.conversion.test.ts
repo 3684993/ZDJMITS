@@ -32,7 +32,7 @@ const pipeline = (entryConversion: unknown, over: Record<string, unknown> = {}) 
 async function open(payload: any) {
   vi.mocked(api.pipeline).mockResolvedValue(payload);
   vi.mocked(api.accountAssets).mockResolvedValue({ assets: [] } as never);
-  const wrapper = mount(Overview, { global: { stubs: { Panel: { template: '<div><slot/></slot></div>' }, StatusBadge: { props: ['value'], template: '<span>{{ value }}</span>' } } } });
+  const wrapper = mount(Overview, { global: { stubs: { Panel: { template: '<div><slot/></div>' }, StatusBadge: { props: ['value'], template: '<span>{{ value }}</span>' } } } });
   await flushPromises();
   return wrapper;
 }

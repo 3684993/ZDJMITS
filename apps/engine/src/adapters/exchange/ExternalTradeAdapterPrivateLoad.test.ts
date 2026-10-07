@@ -4,7 +4,7 @@ import {ExternalTradeAdapter} from './ExternalTradeAdapter.js';
 function adapterHarness(){
   const calls:string[]=[];
   const transport:any={effectiveBaseUrl:()=> 'https://demo-fapi.binance.com',environment:()=> 'TESTNET',executionMode:()=> 'TESTNET_ENABLED',assertTestnetExchangeWrite:()=>{},json:vi.fn(async(url:string)=>{calls.push(url);if(url==='/fapi/v1/time')return{serverTime:Date.now()};if(url.startsWith('/fapi/v1/userTrades'))return[];if(url.startsWith('/fapi/v1/allOrders'))return[];if(url.startsWith('/fapi/v1/order'))return{symbol:'BTCUSDT',orderId:7,clientOrderId:'ML_TEST',executedQty:'0',origQty:'1',price:'100',status:'NEW',type:'LIMIT',timeInForce:'GTX',updateTime:Date.now()};if(url.startsWith('/fapi/v1/income'))return[];return[];})};
-  return{adapter:new ExternalTradeAdapter(transport,{apiKey:'key',apiSecret:'secret'}),calls};
+  return{adapter:new ExternalTradeAdapter(transport,{apiKey:'key',apiSecret:'secret'}),calls,transport};
 }
 
 it('uses no income request for UNKNOWN risk proof',async()=>{
@@ -59,6 +59,22 @@ it('single-flights three concurrent exact-order readers and reuses the short cac
  expect(h.calls.filter(url=>url.startsWith('/fapi/v1/order?'))).toHaveLength(1);
  await h.adapter.findEntryByClientOrderId(order);
  expect(h.calls.filter(url=>url.startsWith('/fapi/v1/order?'))).toHaveLength(1);
+});
+
+it('shares an explicit exact-order absence across callers but never caches an uncertain failure',async()=>{
+ vi.useFakeTimers();vi.setSystemTime(1_800_000_000_000);
+ try{
+  const h=adapterHarness(),order:any={id:'entry_absent',clientOrderId:'ML_ABSENT',exchangeOrderId:null,symbol:'BTCUSDT',side:'LONG',quantity:1,price:100,filledQuantity:0,leverage:20,status:'UNKNOWN',createdAt:1,updatedAt:1,absoluteExpiresAt:9999999999999,repriceCount:0,intentId:'intent_absent',reachability:1};
+  let result:'ABSENT'|'TIMEOUT'='ABSENT';
+  h.transport.json.mockImplementation(async(url:string)=>{h.calls.push(url);if(url==='/fapi/v1/time')return{serverTime:Date.now()};if(url.startsWith('/fapi/v1/order?')){if(result==='ABSENT')throw new Error('Binance HTTP 400: {"code":-2013,"msg":"Order does not exist."}');throw new Error('BINANCE_TRANSPORT_BLOCKED: Binance request timed out');}return[];});
+  await expect(h.adapter.findEntryByClientOrderId(order)).resolves.toBeNull();
+  await expect(h.adapter.findEntryByClientOrderId(order)).resolves.toBeNull();
+  expect(h.calls.filter(url=>url.startsWith('/fapi/v1/order?'))).toHaveLength(1);
+  vi.advanceTimersByTime(15_001);result='TIMEOUT';
+  await expect(h.adapter.findEntryByClientOrderId(order)).rejects.toThrow('timed out');
+  await expect(h.adapter.findEntryByClientOrderId(order)).rejects.toThrow('timed out');
+  expect(h.calls.filter(url=>url.startsWith('/fapi/v1/order?'))).toHaveLength(3);
+ }finally{vi.useRealTimers();}
 });
 
 

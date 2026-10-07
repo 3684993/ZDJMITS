@@ -165,7 +165,10 @@ describe('V3.7.0 isolated real-EIP contracts; production write=0',()=>{
     expect(unknown?.status).toBe('UNKNOWN');
     const remote={...unknown,status:'WORKING',exchangeOrderId:'restart-recovered'};
     h.exchange.findEntryByClientOrderId.mockImplementation(async(order:any)=>order.clientOrderId===unknown.clientOrderId?remote:null);
-    const recovered=await (h.coordinator as any).submitExactlyOnce(intent,unknown);
+    await expect((h.coordinator as any).submitExactlyOnce(intent,unknown)).rejects.toThrow('ENTRY_SUBMISSION_UNKNOWN_PENDING_RECONCILIATION');
+    const retryAt=Date.now()+15_001,now=vi.spyOn(Date,'now').mockReturnValue(retryAt);
+    let recovered:any;
+    try{recovered=await (h.coordinator as any).submitExactlyOnce(intent,unknown);}finally{now.mockRestore();}
     expect(recovered).toMatchObject({status:'WORKING',exchangeOrderId:'restart-recovered'});
     expect(h.exchange.placeEntry).toHaveBeenCalledOnce();
     expect(ids).toEqual([unknown.clientOrderId]);

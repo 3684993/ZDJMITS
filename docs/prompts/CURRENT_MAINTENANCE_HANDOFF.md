@@ -484,3 +484,9 @@ Requirements:
 - If a binary artifact cannot be uploaded directly through the available connector, store a lossless GitHub-hosted representation (for example split base64 plus SHA256 and reconstruction instructions) rather than leaving it only on disk.
 
 Current independent audit artifacts are archived under `docs/reports/system-audit-20261007/`.
+
+Archived files:
+- `docs/reports/system-audit-20261007/SYSTEM_AUDIT_20261007.md`
+- `docs/reports/system-audit-20261007/AUDIT_QUESTIONS_255_20261007.md`
+- `docs/reports/system-audit-20261007/AUDIT_EVIDENCE_20261007.zip`
+- ZIP SHA256: `956781234f105f383a0379537263e7dabd882ddd12924bb42c9f11e0fb3335ca`

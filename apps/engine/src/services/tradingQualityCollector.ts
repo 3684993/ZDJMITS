@@ -15,6 +15,8 @@ export class TradingQualityCollector {
   private db:DatabaseSync;
   private cache=new Map<string,string>();
   private lastSample=0;
+  private lastRetention=0;
+  private lastCheckpoint=0;
   private workHydrated=false;
   private session=randomUUID();
   private observedEvents=0;
@@ -22,7 +24,7 @@ export class TradingQualityCollector {
   private listener:(e:DomainEvent)=>void;
   constructor(file:string,private state:RuntimeState,private events:EventBus){
     this.db=new DatabaseSync(file);
-    this.db.exec(`PRAGMA journal_mode=WAL; PRAGMA busy_timeout=1000;
+    this.db.exec(`PRAGMA journal_mode=WAL; PRAGMA synchronous=NORMAL; PRAGMA busy_timeout=1000; PRAGMA journal_size_limit=33554432; PRAGMA wal_autocheckpoint=1000;
       CREATE TABLE IF NOT EXISTS tq_migrations(version INTEGER PRIMARY KEY,applied_at INTEGER NOT NULL);
       CREATE TABLE IF NOT EXISTS tq_facts(scope TEXT NOT NULL,kind TEXT NOT NULL,id TEXT NOT NULL,ts INTEGER NOT NULL,payload TEXT NOT NULL,PRIMARY KEY(scope,kind,id));
       CREATE INDEX IF NOT EXISTS tq_facts_time ON tq_facts(scope,kind,ts);
@@ -175,7 +177,7 @@ export class TradingQualityCollector {
         this.lastSample=now;
         const scope=this.scope(),eventCount=this.observedEvents;
         this.db.prepare('INSERT OR IGNORE INTO tq_collector_samples(scope,identity,at,event_count) VALUES(?,?,?,?)').run(scope,this.session,now,eventCount);
-        this.db.prepare('DELETE FROM tq_collector_samples WHERE at<?').run(now-30*86_400_000);
+        this.db.prepare('DELETE FROM tq_collector_samples WHERE at<?').run(now-7*86_400_000);
         for(const c of this.state.universe){
           const m=this.state.snapshots.get(c.symbol),opportunity=m&&p.mode!=='OFF'?buildOpportunityEvidence(m,this.state.settings,now):null;
           const candidateId=`${c.symbol}:${c.selectionGeneration}`,lifecycle=this.state.candidateLifecycle.get(c.symbol)??null;
@@ -183,6 +185,15 @@ export class TradingQualityCollector {
         }
         this.materialize(now);
       }
+      if(now-this.lastRetention>=60_000){
+        this.lastRetention=now;
+        const day=86_400_000,batch=2000;
+        this.db.prepare('DELETE FROM tq_marks WHERE rowid IN (SELECT rowid FROM tq_marks WHERE ts<? LIMIT ?)').run(now-2*day,batch);
+        this.db.prepare("DELETE FROM tq_facts WHERE rowid IN (SELECT rowid FROM tq_facts WHERE kind='opportunityObservations' AND ts<? LIMIT ?)").run(now-7*day,batch);
+        this.db.prepare("DELETE FROM tq_facts WHERE rowid IN (SELECT rowid FROM tq_facts WHERE kind='events' AND ts<? LIMIT ?)").run(now-14*day,batch);
+        this.db.prepare('DELETE FROM tq_candidate_state WHERE rowid IN (SELECT rowid FROM tq_candidate_state WHERE updated_at<? LIMIT ?)').run(now-7*day,batch);
+      }
+      if(now-this.lastCheckpoint>=5*60_000){this.lastCheckpoint=now;try{this.db.exec('PRAGMA wal_checkpoint(PASSIVE)');}catch{}}
       this.error=null;(this.state as any).tradingQualityEvidenceReady=true;
     }catch(error){this.error=String(error);(this.state as any).tradingQualityEvidenceReady=false;}
   }
@@ -251,7 +262,7 @@ export class TradingQualityCollector {
       fullReportAvailableOffline:true,authorization:'NONE' as const};
   }
   report(){return tradingQualityReport(this.db,this.scope());}
-  close(){this.events.off('event',this.listener);this.db.close();}
+  close(){this.events.off('event',this.listener);try{this.db.exec('PRAGMA wal_checkpoint(TRUNCATE)');}catch{}this.db.close();}
 }
 
 export function tradingQualityReport(db:DatabaseSync,scope:string){

@@ -2,7 +2,7 @@
   "historicalCommit": "d3f6d262f3bcc05dbd3d9b793f8a3f41da7e5fee",
   "historicalPackageLockSource": "d3f6d262f3bcc05dbd3d9b793f8a3f41da7e5fee:package-lock.json",
   "currentSource": "config/settings.default.json",
-  "currentSha256": "d5e5af0ea6b5a2e40267ed96331e85a183b3ff568f62c18a21165e728696f20e",
+  "currentSha256": "bf818ea7d5800d92fa63d26cbbb24c20c4ad841149f5128b168887857c397091",
   "currentPackageLockSha256": "ead0b96f33362a9fef8e0503a74bbf9bd630e25422f0f197d4d9fb4f9586cf21",
   "hashNormalization": "sha256 over LF-normalized UTF-8 text"
 }

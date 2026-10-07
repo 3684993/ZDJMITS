@@ -89,7 +89,8 @@ export function operationalCandidates(facts:{pipeline:any;routes:any[];account:a
     // inside 60s before NET-002 becomes visible. One or two isolated failures remain telemetry only.
     const transportTimeouts=relevantFailures.filter((row:any)=>timeoutLike(row.message)&&now-Number(row.completedAt??now)<60_000);
     const queueTimeouts=recent.filter((row:any)=>row.decision==='TIMEOUT'&&now-Number(row.completedAt??0)<60_000&&!controlEndpoint(row.endpoint)&&!(marketHealthy&&marketRestEndpoint(row.endpoint)));
-    const timeoutFacts=[...transportTimeouts,...queueTimeouts],latest=timeoutFacts.at(-1),lowPressure=Number(budget.admissionObservedWeight1m??budget.usedWeight1m??Infinity)<Number(budget.softBackgroundWeight??0);
+    const timeoutFacts=[...new Map([...transportTimeouts,...queueTimeouts].map((row:any)=>[String(row.requestId??`${row.endpoint}:${row.completedAt??''}`),row])).values()],
+      latest=timeoutFacts.at(-1),lowPressure=Number(budget.admissionObservedWeight1m??budget.usedWeight1m??Infinity)<Number(budget.softBackgroundWeight??0);
     if(latest&&timeoutFacts.length>=3&&lowPressure){
       const row=classifyOperationalError({message:'BINANCE_REQUEST_QUEUE_TIMEOUT',subsystem:'BINANCE_HTTP',transportEvidence:true,budgetPressureProven:false,endpoint:latest.endpoint,method:latest.method,requestId:latest.requestId,routeIdentity:latest.routeIdentity});if(row)out.push(row);
     }

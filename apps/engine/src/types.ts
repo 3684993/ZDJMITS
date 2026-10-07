@@ -12,6 +12,9 @@ export interface MarketDataProvider {
   getQuote(symbol:string):Promise<Quote>;
   /** Zero-I/O quote assembled only from already-cached live market facts and contract metadata. */
   cachedQuote?(symbol:string):Quote|undefined;
+  /** Static exchange filters do not require a live price. Used by explicit human limit actions. */
+  cachedContractRules?(symbol:string):Pick<Quote,'tickSize'|'stepSize'|'minQty'|'minNotional'>|undefined;
+  getContractRules?(symbol:string):Promise<Pick<Quote,'tickSize'|'stepSize'|'minQty'|'minNotional'>>;
   getOrderBook(symbol:string):Promise<OrderBook>;
   getDerivatives(symbol:string):Promise<DerivativesSnapshot>;
   tick?():Promise<void>|void;

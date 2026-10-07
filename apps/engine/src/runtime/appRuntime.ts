@@ -916,8 +916,14 @@ export class EngineRuntime {
     this.every(5_000, async () => this.tp.sweep(), {name:'TP_SWEEP'});
     this.every(15_000, async () => {
       if (this.state.account.status === "READY") {
+        const phaseStartedAt=Date.now();
+        this.foregroundTrace('POSITION_RECONCILIATION_PHASE',{phase:'POSITION_MARKETS_BEGIN'});
         await this.refreshPositionMarkets();
+        this.foregroundTrace('POSITION_RECONCILIATION_PHASE',{phase:'POSITION_MARKETS_END',durationMs:Date.now()-phaseStartedAt});
+        const reconciliationStartedAt=Date.now();
+        this.foregroundTrace('POSITION_RECONCILIATION_PHASE',{phase:'RECONCILIATION_BEGIN'});
         await this.reconciliation.run();
+        this.foregroundTrace('POSITION_RECONCILIATION_PHASE',{phase:'RECONCILIATION_END',durationMs:Date.now()-reconciliationStartedAt});
       }
       this.runtimeControl.evaluate();
       (this.state as any).temporalSnapshot = this.temporal.snapshot();

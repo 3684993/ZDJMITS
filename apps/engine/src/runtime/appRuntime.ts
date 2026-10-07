@@ -904,7 +904,7 @@ export class EngineRuntime {
     // J4: bounded review runs on its own slow cadence and never overlaps itself. When the switch is
     // off (the default) the tick costs nothing at all; when the model is unreachable it spends review
     // budget and stops, while the deadline, the TP sweep, reconciliation and the handoff keep running.
-    this.every(60_000,async()=>{
+    this.every(15_000,async()=>{
       const runner=this.positionReviewRunner;
       if(!runner)return;
       try{this.reviewTickReport=await runner.tick();}

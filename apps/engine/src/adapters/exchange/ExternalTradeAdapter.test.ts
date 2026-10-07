@@ -54,7 +54,14 @@ it('coalesces public clock requests needed by concurrent private reads',async()=
  const h=harness(false);await Promise.all(Array.from({length:20},()=>h.adapter.fetchRealizedPnlSince(1).catch(()=>0)));expect(h.calls.filter(c=>c.url==='/fapi/v1/time')).toHaveLength(1);
 });
 it('reuses a healthy Binance clock offset for five minutes instead of making every private read depend on /time',async()=>{
- const h=harness(false);await h.adapter.fetchRealizedPnlSince(1);await h.adapter.fetchRealizedPnlSince(2);await h.adapter.fetchRealizedPnlSince(3);
+ const h=harness(false);
+ (h.adapter as any).transport.json.mockImplementation(async(url:string)=>{
+   h.calls.push({url});
+   if(url==='/fapi/v1/time')return{serverTime:Date.now()};
+   if(url.startsWith('/fapi/v1/income'))return[];
+   return{};
+ });
+ await h.adapter.fetchRealizedPnlSince(1);await h.adapter.fetchRealizedPnlSince(2);await h.adapter.fetchRealizedPnlSince(3);
  expect(h.calls.filter(c=>c.url==='/fapi/v1/time')).toHaveLength(1);
 });
 it('keeps using recent last-known-good clock offset when a background resync times out',async()=>{

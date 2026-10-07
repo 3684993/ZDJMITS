@@ -104,16 +104,28 @@ function migrate(value: unknown): unknown {
   const next = structuredClone(value) as Record<string, unknown>;
   // V397 separates physical endpoints from logical duties. Preserve the exact legacy Primary
   // endpoint; duties are backfilled only when the new route map is absent.
-  if (!Array.isArray(next.aiDutyRoutes) || next.aiDutyRoutes.length === 0) {
+  {
     const resources=Array.isArray(next.aiResources)?next.aiResources.filter(record):[];
     const scout=resources.find(resource=>resource.role==='SCOUT');
     const primary=resources.find(resource=>resource.role==='PRIMARY_BRAIN'&&resource.enabled!==false);
-    const review=resources.find(resource=>resource.role==='REVIEW_BRAIN'&&resource.enabled!==false)??primary;
-    next.aiDutyRoutes=[
-      ...(scout?[{duty:'SCOUT_RESEARCH',resourceId:String(scout.id),enabled:scout.enabled!==false,priority:10}]:[]),
-      ...(primary?[{duty:'ENTRY_PRIMARY',resourceId:String(primary.id),enabled:true,priority:100}]:[]),
-      ...(review?[{duty:'PENDING_ENTRY_REVIEW',resourceId:String(review.id),enabled:true,priority:20},{duty:'POSITION_REVIEW',resourceId:String(review.id),enabled:true,priority:90}]:[]),
-    ];
+    const dedicatedReview=resources.find(resource=>resource.role==='REVIEW_BRAIN'&&resource.enabled!==false);
+    if (!Array.isArray(next.aiDutyRoutes) || next.aiDutyRoutes.length === 0) {
+      const review=dedicatedReview??primary;
+      next.aiDutyRoutes=[
+        ...(scout?[{duty:'SCOUT_RESEARCH',resourceId:String(scout.id),enabled:scout.enabled!==false,priority:10}]:[]),
+        ...(primary?[{duty:'ENTRY_PRIMARY',resourceId:String(primary.id),enabled:true,priority:100}]:[]),
+        ...(review?[{duty:'PENDING_ENTRY_REVIEW',resourceId:String(review.id),enabled:true,priority:20},{duty:'POSITION_REVIEW',resourceId:String(review.id),enabled:true,priority:90}]:[]),
+      ];
+    } else if(dedicatedReview){
+      // Earlier V3.9.7 builds created the new route map before a dedicated Review endpoint was added,
+      // so persisted review duties could remain pinned to Entry Primary forever. Once an enabled
+      // REVIEW_BRAIN exists, move only the two review duties to it; Entry Primary remains untouched.
+      const routes=(next.aiDutyRoutes as unknown[]).filter(record) as Record<string,unknown>[];
+      for(const duty of ['PENDING_ENTRY_REVIEW','POSITION_REVIEW']){
+        const route=routes.find(row=>row.duty===duty);
+        if(route&&primary&&String(route.resourceId)===String(primary.id))route.resourceId=String(dedicatedReview.id);
+      }
+    }
   }
   // V3.9.7 expands SHADOW path evidence through the 4h window. Upgrade only the prior default;
   // an operator-selected non-default observation horizon remains authoritative.

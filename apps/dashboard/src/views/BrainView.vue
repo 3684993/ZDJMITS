@@ -38,6 +38,10 @@ const reasonLabel=(reason:unknown)=>{
   if(code.includes("QUOTE_USD_MISSING")||code.includes("QUOTE_USD_STALE"))return"USDC/USD 换算事实不可用";
   if(code.includes("AI_CANDIDATE_TARGET_RESTATEMENT_MISMATCH"))return"AI候选字段重复表述不一致";
   if(code.includes("INSUFFICIENT_AVAILABLE_MARGIN")||code.includes("RESERVED_QUOTE_MARGIN"))return"真实可用保证金不足";
+  if(code.includes("ENTRY_SUBMISSION_UNKNOWN")||code.includes("SUBMIT_UNKNOWN")||code.includes("ENTRY_SUBMIT_UNKNOWN"))return"订单身份待确认（禁止重复提交）";
+  if(code.includes("BINANCE_TRANSPORT_BLOCKED")||code.includes("BINANCE_REQUEST_QUEUE_TIMEOUT")||code.includes("BINANCE_REQUEST_BUDGET_DEFERRED"))return"瞬时交易所网络/REST延迟（本次未提交）";
+  if(code.includes("PRIVATE_ACCOUNT_UNAVAILABLE")||code.includes("PRIVATE_DATA_UNAVAILABLE"))return"私有账户事实暂不可用";
+  if(code.includes("-5022")||code.includes("POST_ONLY")||code.includes("Post Only"))return"Post-only Maker 竞态（自动重定价）";
   if(code.includes("EXCHANGE_")||code.includes("PRECISION")||code.includes("MINIMUM_NOTIONAL"))return"交易所价量规则不满足";
   if(code.includes("AUTHORIZATION_EXPIRED"))return"AI执行授权已过期";
   if(code.includes("MARKET_DATA")||code.includes("QUOTE_STALE"))return"行情事实不可执行";

@@ -1,524 +1,449 @@
 # J-MITS V3.9.7 — CURRENT MAINTENANCE HANDOFF
 
 > Stable handoff entrypoint for a new ChatGPT maintenance conversation.
-> Last refreshed: 2026-10-06 (+08:00)
+> Last refreshed: 2026-10-07 (+08:00)
 > Repository: `3684993/ZDJMITS`
-> Current main baseline: `38ad7684644eb9c6b3c65ae95930a469c46b7762`
-> Crash analysis report: `docs/reports/crash/ENGINE_NATIVE_CRASH_20261006_FOREGROUND_ANALYSIS.md`
-> GitHub Actions: V3.9.x Verify #501 SUCCESS
+> Current main baseline: `53c70181cfef7e7ac98ce2757c80c3dcc0acb5a0`
+> GitHub Actions: **V3.9.x Verify #651 FAILED**
+> Failure is a stale test expectation, not a production runtime failure.
 
 ## 0. Instructions to the next ChatGPT conversation
 
-You are continuing maintenance of the user's real local J-MITS V3.9.7 TESTNET trading system.
+You are continuing maintenance of the user's real local J-MITS V3.9.7 Binance USDⓈ-M Futures TESTNET system.
 
-Do **not** ask the user to restate historical context that is already in this handoff or in GitHub.
+At the beginning:
 
-At the beginning of the new conversation:
+1. Read this file from GitHub first.
+2. Inspect current `main`, recent commits, and the latest GitHub Actions run.
+3. Do not ask the user to repeat history already documented here.
+4. Directly maintain GitHub when evidence supports a change.
+5. **Do not wait/poll GitHub Actions to completion.** The user explicitly asked to avoid message timeout. After pushing a fix, report the commit/run number and let the user notify you of the CI result.
+6. Keep responses concise and implementation-oriented.
+7. Local project root is `D:\MITS`.
+8. Local user prefers scripts/files committed to GitHub, then only sync/execute commands.
+9. If local evidence is needed, generate one file/ZIP rather than many manual commands.
+10. Never auto-restart Engine to hide a crash.
 
-1. Read this handoff from GitHub.
-2. Inspect current GitHub `main`, recent commits, current CI status, and any files referenced below.
-3. The user will upload the latest foreground Engine crash log, expected filename:
-   - `engine.foreground.20261006-090715.log`
-4. Read the uploaded log completely enough to reconstruct the startup/crash timeline. Prefer direct evidence over theories.
-5. Compare the crash timestamps/events with:
-   - `data/runtime-logs/engine-process-lifecycle.jsonl` if included in an uploaded handoff/log bundle,
-   - `data/runtime-logs/engine-launch-lifecycle.jsonl`,
-   - Engine source scheduling/runtime code on current GitHub main.
-6. Continue fixing/maintaining the GitHub project directly when evidence supports a change.
-7. Run/inspect GitHub Actions after edits and leave `main` green.
-8. Do not tell the user to wait for background work. Complete the current step in the same turn as far as tools allow.
-9. Prefer decisive, evidence-based changes over repeated diagnostic flag experiments.
+### Critical service rule
 
-### Critical operating rule
+Never stop/restart/reload 8083 or 8084 without explicitly informing the user first and obtaining awareness/approval.
 
-**Never stop, restart, reload, or otherwise disturb the user's 8083 and 8084 llama-server models without explicitly telling the user first and obtaining their awareness/approval for that lifecycle action.**
-
-Current logical services:
-- 8081: Scout
-- 8083: `HARNESS_ADVISOR` / review model, normally physical Vulkan1 / RX 7900 XTX
-- 8084: `ZDJ_PRIMARY_BRAIN`, normally physical Vulkan2 / RX 7900 XTX
+Logical services:
 - 8080: J-MITS Engine + Dashboard
+- 8081: Scout
+- 8083: HARNESS_ADVISOR / REVIEW_BRAIN
+- 8084: ZDJ_PRIMARY_BRAIN / PRIMARY_BRAIN
 
-Ordinary Engine maintenance/restart must touch **8080 only**.
+Ordinary maintenance may touch **8080 only**.
 
-Production writes must remain exactly **0** until the user explicitly transitions to real production.
-
----
-
-## 1. User preferences and working conventions
-
-- Language: Chinese preferred.
-- Be implementation-oriented and decisive.
-- Avoid repeatedly asking questions already answered by repository state or this handoff.
-- User prefers complete runnable scripts/files rather than fragmented diffs when local files are needed.
-- Local project root: `D:\MITS`.
-- Local helper scripts: preferably `D:\MITS\scripts\`.
-- Reports/evidence: preferably under `D:\MITS\docs\reports\...`.
-- TESTNET restart of Engine is allowed when needed.
-- 8083/8084 model lifecycle actions require explicit notice as stated above.
-- Do not reintroduce fixed/static expected egress-IP security gating.
+Production writes must remain **0**.
 
 ---
 
-## 2. Product/runtime baseline
+## 1. User working preferences
 
-Formal version: **J-MITS V3.9.7**
+- Chinese.
+- Extremely concise; avoid long explanations unless requested.
+- Prefer direct implementation over repeated diagnosis loops.
+- Do not repeatedly ask questions already answered by repository state/logs.
+- Do not tell the user to wait.
+- Do not sit polling Actions; user reports green/red.
+- When changing local scripts, commit complete files to GitHub.
+- When local output is needed, produce one report/ZIP for upload.
+- Do not reintroduce static egress-IP security checks.
 
-Environment:
-- Binance USDⓈ-M Futures TESTNET / Demo
-- REST target: `demo-fapi.binance.com`
-- Windows local Engine + web dashboard
-- Node currently observed locally: v22.23.1
-- V8: 12.4.254.21-node.56
+---
 
-Entry authority architecture:
-- Primary chooses from frozen executable candidates.
-- Once a valid Primary `PLACE_LONG/PLACE_SHORT` selects a legal frozen candidate, deterministic strategy/economics/history/risk observations must not re-judge or veto it afterward.
-- Post-PLACE blockers are physical/execution facts only: funds, exchange filters/precision, identity corruption, idempotency, persistence, TESTNET AUTO disabled, private data unavailable/stale, Binance rejection, submit UNKNOWN requiring exact clientOrderId recovery.
-- Initial margin floor >= 100 USDT/USDC.
-- Frozen Entry leverage authority is 10x–20x.
-- BTCUSDT business floor 150 quote.
-- No tiny fallback order merely to become exchange-legal.
+## 2. Hard project constraints
 
 Preserve:
-- proxy and TESTNET environment fail-closed,
-- exact clientOrderId recovery/idempotency,
-- private-data freshness,
-- production writes = 0.
+- TESTNET-only execution.
+- Production writes = 0.
+- proxy-only Binance route / fail-closed environment boundary.
+- private fact truth.
+- exact clientOrderId identity/idempotency.
+- exchange filters/precision.
+- durable persistence.
+- unresolved submit UNKNOWN must never duplicate-submit.
+
+Do **not** restore:
+- `expectedStaticEgressIp`
+- static egress authorization gates
+- checkip-style authorization
+- NET-003/NET-004 static IP authority
+
+Primary Entry authority:
+- Primary chooses from frozen executable candidates.
+- After valid Primary PLACE, deterministic observations do not re-judge the trade.
+- Post-PLACE blockers should be physical/execution facts only.
 
 ---
 
-## 3. Static egress rule already removed
+## 3. Current CI failure — fix this first
 
-User explicitly ordered:
-- 禁止验证出口IP安全性
-- 禁止绑定预期出口IP
+Latest main:
+`53c70181cfef7e7ac98ce2757c80c3dcc0acb5a0`
+
+GitHub Actions:
+**#651 FAILED**
+
+Commit:
+`test: dedupe exact-order timeout from network incident`
+
+CI result:
+- verify scripts: PASS
+- release identity: PASS
+- S00: PASS
+- typecheck: PASS
+- build: PASS
+- dashboard tests: PASS
+- engine: **1 test failed / 559 passed**
+
+Exact failure:
+
+`apps/engine/src/config/settingsStore.test.ts`
+
+Test:
+`moves persisted review duties off Entry Primary when a dedicated Review resource exists`
+
+Actual:
+`brain-7900-review`
+
+Old expected:
+`brain-review-test`
+
+This is a stale test fixture/expectation after resource-role migration changes. Inspect the test and current migration semantics. Fix the test only if current runtime behavior is intentionally selecting the configured dedicated Review resource. Do not change production routing merely to satisfy the stale literal.
+
+After the fix:
+- push to main,
+- tell the user the new commit and Actions number,
+- **do not wait for CI**; user will report the result.
+
+---
+
+## 4. Recent known-good milestones
+
+User explicitly reported:
+
+- #623 GREEN
+  - commit `4f3d823a389157aee0235906e78c758932fa7a01`
+  - `test: align private clock cache expectation to five minutes`
+
+- #633 GREEN
+  - commit `76438cae81ff92de440ecbcec1d81f74cd54642e`
+  - `ui: keep explicit manual limit form usable without preview quote`
+
+The latter matters because manual limit operations had been failing with:
+`MARKET_DATA_UNAVAILABLE: cached quote stale or missing`
+
+The intended UX is:
+- an explicit manual limit order should remain usable when the user supplies a legal explicit limit price,
+- stale preview quote must not be incorrectly treated as a hard prerequisite for an explicit user limit price,
+- exchange legality/risk facts still remain fail-closed.
+
+---
+
+## 5. Binance network architecture — current direction
+
+A dedicated Singapore SSH dynamic SOCKS proxy has been deployed by the user.
+
+Local proxy:
+`socks5://127.0.0.1:20091`
+
+A direct test through the tunnel succeeded against:
+`https://demo-fapi.binance.com/fapi/v1/time`
 
 Therefore:
-- no expectedStaticEgressIp authority,
-- no static egress proof write gate,
-- no NET-003/NET-004 active incidents,
-- no `BINANCE_EGRESS_*` / `TESTNET_WRITE_EGRESS_NOT_VERIFIED` blockers,
-- do not bring back `checkip.amazonaws.com` authorization logic.
+- do not keep treating ordinary latency as proof the VPN is broken,
+- design for normal Internet/Testnet latency,
+- WS should carry continuous market/order state,
+- REST should be necessary reads/recovery, not continuous duplicate truth polling.
 
-Still preserve proxy configuration, TESTNET host/environment isolation, transport failures, HTTP 418/429/451, Binance business rejects, and submit UNKNOWN handling.
+### NET-002 design direction
 
----
+User observed many warnings:
+- `BINANCE_TRANSPORT_BLOCKED: Binance request timed out`
+- `BINANCE_REQUEST_QUEUE_TIMEOUT`
+- `/fapi/v1/openInterest`
+- `/fapi/v1/premiumIndex`
+- `/fapi/v1/ticker/bookTicker`
+- `/fapi/v1/order`
+- `/fapi/v1/time`
 
-## 4. Account and PnL semantics already agreed
+Already implemented direction:
+- isolated one/two REST timeouts should be telemetry, not a global incident,
+- require sustained critical timeout evidence before NET-002,
+- if WS market facts are FRESH, REST market fallback timeouts should not globally block NEW_ENTRY,
+- derivatives/context endpoints such as openInterest/premiumIndex are advisory and should not be Entry-hard blockers,
+- private account LKG may tolerate a small number of transient failures while still within freshness TTL,
+- exact-order recovery should be deduplicated/throttled and not double-counted as multiple network incidents.
 
-### Total assets
+Do not weaken:
+- submit UNKNOWN identity recovery,
+- private fact staleness limits,
+- exchange reject handling.
 
-Top account total = **USDT + USDC only** from the same signed snapshot.
+### Official-interface principle
 
-Exclude BTC and BUSD unless the user later changes the requirement.
-
-Important fields include:
-- `usdtMarginEquityUsd`
-- `usdcMarginEquityUsd`
-- `combinedStablecoinMarginEquityUsd`
-- `usdtWalletUsd`
-- `usdcWalletUsd`
-- `combinedStablecoinWalletUsd`
-- `combinedStablecoinAvailableUsd`
-- `excludedAssets`
-
-Do not present Binance V2 top-level `totalMarginBalance` as account-wide combined equity when `multiAssetsMargin=false`.
-
-### Deterministic local accounting
-
-GPU AI is **not** accounting authority.
-
-Primary deterministic local realized metric:
-**本地已实现交易净收益（不含资金费）**
-
-Eligibility requires local/system-owned, canonical, nonduplicate, CLOSED, quantity conservation/ledger proof, locally attributable fills, complete fees, finite `tradingNetPnlExFunding`.
-
-Funding UNKNOWN:
-- must never be coerced to zero,
-- must not block exact ex-funding local realized PnL,
-- all-in confirmed PnL is shown only for exact coverage.
-
-The dashboard now distinguishes:
-- true Funding UNKNOWN,
-- all-in unconfirmed cycles,
-- Funding EXACT but other authoritative evidence still incomplete.
+Keep Binance architecture aligned with official semantics:
+- User Data WebSocket preferred for order status/state changes.
+- Market WebSocket preferred for live quote/book/kline state.
+- REST exact-order lookup is fallback/recovery.
+- REST context endpoints should not be treated as continuous mandatory execution facts.
 
 ---
 
-## 5. New performance tracking work already merged before current crash investigation
+## 6. WebSocket split routing work already done
 
-The user wants two complementary performance views rather than treating old local-accounting coverage as the only “profit” number.
+2026 Binance futures WebSocket routing was migrated from the legacy single endpoint model to split routes.
 
-User baseline after account reset:
-- initial USDT wallet = 5000
-- initial USDC wallet = 5000
+Current intended architecture:
+- PUBLIC socket: bookTicker + depth
+- MARKET socket: ticker + markPrice + kline + aggTrade
+- User Data socket remains private-order/account stream
 
-Example wallet values supplied by user:
-- USDT 5806.75955113
-- USDC 5002.1741335
+There were earlier URL corrections while matching Binance's split WS behavior. Do not re-open that work unless runtime evidence shows a current WS handshake/control failure.
 
-Therefore baseline wallet gain at that moment:
-`(5806.75955113 - 5000) + (5002.1741335 - 5000) = 808.93368463`
+At one point old routing produced:
+`Unexpected server response: 404`
 
-Architecture implemented on GitHub before the crash investigation:
-1. **Baseline wallet gain** from configurable initial USDT/USDC balances.
-2. **Rolling 7-day Binance trading performance** using exchange income facts.
-3. **Rolling 7-day local TradeRecord performance**, shown separately from Binance.
-4. Do not add local and Binance values together.
-5. Binance rolling view separates:
-   - REALIZED_PNL
-   - COMMISSION
-   - FUNDING_FEE
-   - cash flow / transfers separately
-6. Rolling window default = 7 days.
-7. Settings already have/now expose performance baseline and rolling-day configuration.
-8. TradeRecord exchange sync/backfill was extended toward rolling 7-day coverage.
-
-Relevant commits include the performance-tracking series ending at:
-- `d0144d1372c3f9c24d146e3c8cc2d2a1f35076db`
-
-When reviewing this area later, preserve distinction:
-- baseline wallet gain answers “account balance since reset/baseline”,
-- recent 7-day exchange/local performance answers recent trading attribution/reconciliation,
-- deposits/withdrawals/transfers must not silently masquerade as trading PnL.
+That was corrected.
 
 ---
 
-## 6. Dashboard first-navigation lag already fixed on GitHub
+## 7. Manual operations / provenance
 
-User reported first click of never-opened routes such as:
-`http://127.0.0.1:8080/brain`
-felt unresponsive, causing repeated clicks.
+A dashboard manual limit close previously appeared as “未知来源”.
 
-Root cause found:
-- every route component used lazy `()=>import(...)`,
-- Vue Router did not visibly switch until first chunk download/parse completed,
-- users saw the old page and interpreted the click as ignored.
+Root cause identified:
+- manual intent/order path existed,
+- but close-cycle provenance did not always inherit durable MANUAL order identity.
 
-Merged fixes:
-- cached dashboard route chunk loader,
-- idle background preload,
-- hover/focus/pointerdown preloading,
-- immediate route transition feedback/skeleton,
-- route pending state,
-- tests for immediate first-click feedback.
+Implemented direction:
+- Dashboard manual intent -> clientOrderId/exchangeOrderId -> fill -> physical cycle -> `SYSTEM_MANUAL`
+- historical manually-created exits may recover provenance only by exact durable identity, never maker/taker guessing.
 
-Commits:
-- `1a002b6...` add route preloader
-- `e049b76...` cached route chunks
-- `a470c8a...` immediate navigation feedback + warm routes
-- `55b4a41...` transition styles
-- `125928b...` regression test
-
-Actions #488 succeeded at `125928bf2f3e9234c657bcbc62cef40dacb3fc7b`.
+Preserve this.
 
 ---
 
-## 7. Critical current incident: Engine native crash
+## 8. USDC routing
 
-The prior 24h TESTNET soak is **FAILED / interrupted** because Engine stopped automatically.
+User has significant USDC capital and asked why USDC contracts are underused.
 
-Do not continue the old soak timer.
+Current agreed architecture:
+- USDT and USDC are both valid funded quote assets.
+- Entry funding must use real exchange availableBalance.
+- candidate discovery must expose USDT/USDC alternates for leading underlyings.
+- contract routing may use available quote capital when market quality is otherwise acceptable.
+- do not blindly prefer USDC; market quality/exchange legality still matter.
 
-Historical native failure evidence includes Windows process exit:
+---
+
+## 9. Native crash / 0xC0000409
+
+Native fail-fast remains a separate incident from network latency.
+
+Observed Windows exit:
 - decimal: `-1073740791`
 - hex: `0xC0000409`
 
-Known lifecycle examples:
-- PID 37632: `0xC0000409`
-- PID 2844: after `--no-maglev`, still `0xC0000409`
-- PID 10988: after start, about ~100 seconds, `0xC0000409`
-- PID 29748: after start, about ~95 seconds, `0xC0000409`
+Important findings from 2026-10-07 crash analysis:
+- `POSITION_RECONCILIATION` was frequently taking 5–9 minutes despite a 15s scheduling cadence.
+- one observed reconciliation run lasted ~521s.
+- the next reconciliation remained open until native fail-fast.
+- other named tasks around the crash were closing normally.
+- network timeout was an amplifier, not proof of native root cause.
 
-This proves:
-- `--no-maglev` did **not** solve the root cause.
-- Do not treat Maglev as the established cause.
-- Ordinary JS exceptions are not visible in stderr at the native-crash boundary.
+Mitigation already implemented:
+- reconciliation remote-audit per-run budget,
+- exact Entry remote queries bounded,
+- heavy no-active-risk proof bounded,
+- deferred items remain risk-bearing and are retried later,
+- no unsafe release just because a run budget expired,
+- phase tracing around position-market refresh and reconciliation.
 
-Observed stderr around the crash only contained:
-`ExperimentalWarning: SQLite is an experimental feature and might change at any time`
+Foreground launcher also captures Windows Application Error/WER information on future `0xC0000409`.
 
-That warning alone does **not** prove SQLite is the cause.
-
-### Prior diagnostic dead ends — do not repeat mechanically
-
-A manual `--jitless` run failed before meaningful Engine startup because Node 22's built-in undici/fetch needed WebAssembly:
-- `ReferenceError: WebAssembly is not defined`
-- ordinary code 1
-- therefore that result did NOT test the real crash.
-
-A later manual `--no-turbofan --no-maglev` attempt was started, but the user correctly objected that repeated flag experiments were becoming a diagnostic loop.
-
-The new strategy is:
-**run the normal Engine startup path in the foreground and capture the real last events before the crash.**
+Do not return to V8 flag guessing.
 
 ---
 
-## 8. New foreground observation mode — current baseline
+## 10. Disk/storage incident already addressed
 
-The project has now been changed so the normal Windows Engine startup path supports a foreground observation mode.
+One Engine stop was caused by disk exhaustion while PowerShell foreground logging called `AppendAllText`.
 
-Current latest main:
-`e8d90808786efd095b6bc871412aa4a9b4d547d0`
+That was distinct from native crash.
 
-GitHub Actions:
-**#495 SUCCESS**
+Storage work already implemented:
+- foreground log bounded/rotated,
+- foreground file-write failure does not kill Engine,
+- low disk guard before launch,
+- TradeRecord baseline sidecars cleaned,
+- runtime logs capped,
+- scheduler BEGIN/END disk amplification reduced,
+- Trading Quality/V393 WAL and retention bounded,
+- storage audit script added.
 
-Relevant commits:
-- `1cd5960...` add foreground observe startup mode
-- `def556e...` Windows PowerShell compatibility
-- `ae513c5...` expose `-Foreground` from `scripts/windows/start-engine.ps1`
-- `6a07982...` foreground startup contract tests
-- `26d3192...` foreground event mirroring enable
-- `9370b89...` mirror redacted operational events to foreground console
-- `e8d9080...` mirror process lifecycle milestones to foreground console
+The user later reported other disks recovered; large usage concentrated under:
+`D:\MITS\data`
 
-Expected local invocation after pull/build:
-
-```powershell
-Set-Location D:\MITS
-git fetch --all --prune
-git merge --ff-only origin/main
-npm run build
-
-powershell -NoProfile -ExecutionPolicy Bypass -File "D:\MITS\scripts\windows\start-engine.ps1" -Foreground
-```
-
-Foreground mode:
-- uses the formal Engine startup environment,
-- leaves node.exe attached to the current PowerShell,
-- uses the conservative normal runtime guard (`--no-maglev` if exposed),
-- does **not** use `--jitless`,
-- does not touch 8081/8083/8084,
-- mirrors redacted operational events to console,
-- mirrors process lifecycle milestones,
-- timestamps console lines,
-- writes a dedicated log such as:
-  `D:\MITS\data\runtime-logs\engine.foreground.YYYYMMDD-HHmmss.log`
-- writes crash-report output under:
-  `D:\MITS\docs\reports\crash\foreground-YYYYMMDD-HHmmss`
-- on exit prints decimal exit code, hex exit code, runtime duration, log/report locations, and last log lines.
-
-The user reports the important crash log to analyze next is expected to be:
-**`engine.foreground.20261006-090715.log`**
-
-The next conversation should treat this foreground log as the primary evidence for the incident.
+Do not manually delete live SQLite `-wal/-shm` files while Engine is running.
 
 ---
 
-## 9. How to analyze the foreground crash log
+## 11. Proxy resource/UI redesign — current active work
 
-Do not begin with another theory.
+User explicitly requested standard human-friendly CRUD UX for all Settings tabs.
 
-First reconstruct a strict timeline:
+Proxy requirements:
+- multiple saved proxy resources,
+- adding a new proxy must not silently overwrite/delete the old proxy,
+- resource fields: name/type/url/enabled,
+- save draft,
+- cancel edits,
+- test selected proxy,
+- explicitly set one proxy ACTIVE,
+- deleting inactive resources allowed,
+- deleting active/last required resource protected,
+- active proxy change hot-applies,
+- test should test the selected proxy itself.
 
-1. PROCESS_START
-2. BOOTSTRAP_STARTED
-3. runtime/database creation
-4. HTTP_LISTENING
-5. runtime.start phases
-6. private sync
-7. market/cohort refreshes
-8. reconciliation
-9. AI probe / AI runs
-10. storage retention/checkpoint events
-11. TradeRecord sync/performance sync if they start
-12. last successfully emitted event
-13. exact gap between last event and native exit
-14. foreground footer/exit code if present
+General Settings interaction rule:
+- ordinary settings: clear Save / Cancel.
+- managed resources: list -> select -> edit -> Save -> Test -> Activate (where applicable) -> Delete.
+- do not show ambiguous global Save simultaneously with resource-level Save.
+- Exchange, Proxy, AI resources, Governance should follow consistent edit boundaries.
 
-Then inspect source code for the exact subsystem(s) scheduled at the last timestamp.
+Recent work before #651 included:
+- multi-proxy resource registry,
+- explicit proxy activation endpoint/UI,
+- resource-manager layout,
+- proxy test against selected resource,
+- transient latency hysteresis,
+- private REST transient tolerance,
+- manual limit form improvement.
 
-Important scheduler facts in current source:
-- private sync: every 15s
-- AI resource probe: every 15s
-- market tick / exchange loop: every 1s
-- analysis dispatch: every 2.5s
-- pending review/manual exits: every 2s
-- ownership/exits/AI-exit: every 5s
-- cohort/market slow refresh: every 60s
-- position review: every 60s
-- trading quality tick: every 1s
-- quality observer: every 5s
-- TP sweep: every 5s
-- reconciliation: every 15s
-- external research: every 2s
-- AI-run summary backfill: every 1s
-- storage retention: every 5s
-- funding attribution: every 45s
-- SQLite operational health worker: every 30s
-- rolling exchange performance sync: every 15 min
-- TradeRecord auto sync: every 5 min
+There were Vue template warnings:
+`Template compilation error: Invalid end tag.`
 
-SQLite facts:
-- Engine heavily uses Node `node:sqlite` `DatabaseSync`.
-- Main SettingsStore uses `zdj-settings.sqlite`.
-- An operational health Worker opens the same DB read-only and periodically performs:
-  - event count,
-  - runtime_state read,
-  - periodic `PRAGMA quick_check(1)`.
-- Trading quality also has its own SQLite evidence stores.
-- Do not disable or rewrite these merely because they are suspicious; use foreground evidence to decide.
-
-If the log shows a repeatable subsystem immediately preceding native termination, prefer a small diagnostic isolation switch for that subsystem over more V8 flag experiments.
-
-Never “fix” the incident by auto-restarting the Engine. Auto restart would hide a native crash and invalidate soak evidence.
+Although tests still passed at that point, the next conversation should inspect current `SettingsView.vue` for malformed markup if not already fixed on current main.
 
 ---
 
-## 9A. Foreground crash 2026-10-06 — evidence now captured
+## 12. Three-model resource utilization
 
-Uploaded evidence analyzed:
-- `engine.foreground.20261006-090715.log`
+User reports:
+- PRIMARY_BRAIN is usually busy/analyzing.
+- REVIEW_BRAIN is often idle.
+- 9B RESEARCH often waits for shared event.
+- user wants the second GPU / Review model to provide more useful work without duplicating Primary authority.
 
-Strict result:
-- foreground launch: 09:07:15.316
-- `RUNTIME_STARTED`: 09:10:23.264
-- last successfully mirrored Engine event: 09:11:02.076, `V396_OWNERSHIP_OUTBOX` for BTCUSDT LONG exit task
-- foreground native exit: 09:11:03.201
-- exit: `-1073740791 / 0xC0000409`
-- runtime-after-`RUNTIME_STARTED` lifetime: about **39.94s**
-- last-event-to-exit gap: about **1.125s**
+Current roles:
+- Primary: trading decision authority.
+- Review: must not become a second Entry veto authority.
+- Research: external/shared-event research, currently sparse workload.
 
-Important conclusions:
-1. This reproduction is not a bootstrap-only failure.
-2. The process survived the operational SQLite worker's creation/immediate first inspection by minutes, so the old evidence does not support blaming the worker's first `quick_check(1)`.
-3. Post-ready 45s/60s scheduled tasks had not reached their first boundary at the native exit. Priority shifts to 1s/2s recurring paths and work already in flight.
-4. Startup TradeRecord auto sync begins immediately after bootstrap. The foreground log shows a `/fapi/v1/userTrades` network incident recovering at 09:11:01.999, so historical audit work was plausibly still active, but the old log cannot prove whether it reached SQLite baseline backup/apply.
-5. The final V396 outbox event is the last successful publication, not proof that V396 caused the fail-fast.
-6. Do not change V8 flags again based on this evidence.
+Optimization direction:
+- Review GPU can handle asynchronous/non-authoritative work:
+  - pending Entry review,
+  - position/exit review,
+  - trade-quality postmortem,
+  - candidate evidence compression,
+  - anomaly/execution-quality review,
+  - queued non-authoritative analysis.
+- Research can be fed bounded research/pre-analysis tasks when there are meaningful shared events/candidate needs.
+- Do not make Review a hidden second Entry Primary.
+- Do not let extra AI work delay live trading.
+- preserve explicit duty routing in settings.
 
-Diagnostic commit:
-- `bbc2a3d8382f3631a1a583a4d6eaf737cf686400` — foreground-only scheduler/TradeRecord phase tracing.
-
-New foreground rows include:
-- `SCHEDULED_TASK_BEGIN/END/FAILED` for crash-relevant market, SQLite/write-buffer, trading-quality, reconciliation, exit, TP, research and governance paths.
-- `TRADE_RECORD_AUTO_SYNC_PHASE`: `AUDIT_BEGIN/END`, `BASELINE_BEGIN/END`, `APPLY_BEGIN/END`.
-
-The tracing uses the append-only process lifecycle path, not the SQLite operational event journal, and is active only when `ZDJ_FOREGROUND_OBSERVE=1`.
-
-Full report:
-- `docs/reports/crash/ENGINE_NATIVE_CRASH_20261006_FOREGROUND_ANALYSIS.md`
-Next local capture prompt:
-- `docs/prompts/NEXT_ENGINE_FOREGROUND_CAPTURE.md`
-
-Next local reproduction must use the same normal `-Foreground` launch after pulling/building. If it crashes again, the missing matching END row identifies the exact task boundary to inspect before any isolation or storage change.
+This remains unfinished and should be planned after #651 and current network/UI regressions are green.
 
 ---
 
-## 10. Previous native-crash mitigation already present
+## 13. Common current warnings and how to classify them
 
-The Engine host inspects Node/V8 options and currently adds `--no-maglev` when exposed.
+### `MARKET-DATA-001 / MARKET_QUOTES_STALE`
+Real only if current WS/cached market truth is actually stale/missing.
+Do not trigger merely because optional REST context timed out while WS facts are fresh.
 
-Important new observation from the user's local `node --v8-options`:
-- Node reports `--maglev` default as `--no-maglev` on this runtime.
-- Therefore explicitly supplying `--no-maglev` may be redundant on this exact Node version.
-- Do not claim the flag itself was a meaningful mitigation without evidence.
+### `EX-SUBMIT-UNKNOWN / ENTRY_SUBMIT_UNKNOWN`
+Real execution-safety condition.
+Must not duplicate-submit.
+Prefer User Data WS identity/status confirmation; exact REST lookup is fallback.
 
-The crash still reproduced after the host recorded:
-- Node v22.23.1
-- V8 12.4.254.21-node.56
-- nodeFlags [`--no-maglev`]
+### `NET-002`
+Should represent sustained critical REST degradation, not one slow request.
+Deduplicate one physical timeout so it does not appear as both transport and queue incidents.
 
-Therefore the current root cause is still **unknown**.
+### Binance `-5022`
+Real exchange business reject:
+Post-Only/GTX would immediately execute, so Binance rejected it.
+This is not a network error.
+Correct handling is fresh maker price/reprice on the next legal attempt; do not display as WORKING.
 
----
+### `PRIVATE_ACCOUNT_UNAVAILABLE`
+Real only when private truth is stale/unavailable beyond allowed LKG freshness tolerance.
+Do not flip READY -> UNAVAILABLE on one transient timeout if a fresh signed private snapshot still exists.
 
-## 11. 8083 / 8084 model state rule
-
-The user manually started:
-
-8083:
-- role: HARNESS_ADVISOR
-- model: Qwen3.8-27B
-- API: `http://127.0.0.1:8083/v1`
-- normally Vulkan1 RX 7900 XTX
-
-8084:
-- role: ZDJ_PRIMARY_BRAIN
-- model: Qwen3.8-27B
-- API: `http://127.0.0.1:8084/v1`
-- normally Vulkan2 RX 7900 XTX
-
-The user explicitly complained that they were previously stopped without being told.
-
-From now on:
-**Do not stop/restart/reload 8083 or 8084 without explicitly notifying the user first.**
-
-Engine scripts should not manage those model processes.
+### manual `MARKET_DATA_UNAVAILABLE`
+Explicit manual LIMIT with a user-specified legal price should not require a live preview quote solely to render/submit the explicit limit.
+Do not bypass exchange/risk legality.
 
 ---
 
-## 12. Soak requirements after the crash is truly fixed
+## 14. Current test/CI workflow rule
 
-Do not restart the 24h soak until:
-- the native crash cause is fixed or a well-supported mitigation is in place,
-- Engine survives foreground/normal observation without native exit,
-- 8080/8081/8083/8084 are healthy,
-- Production writes = 0,
-- no static-egress gate returns,
-- proxy/TESTNET boundary remains intact,
-- positions/orders/TP reconcile,
-- signed/private facts recover after network/VPN errors,
-- accounting semantics remain correct.
+The user explicitly requested:
 
-Once a final code/build change is deployed, soak timer starts from the final READY runtime timestamp.
+**After pushing a GitHub change, do not keep waiting/polling Actions.**
 
-Soak hard failures include:
-- Engine native crash/restart,
-- duplicate submit,
-- Production write,
-- persistent missing TP,
-- persistent remote/local position mismatch,
-- submit UNKNOWN followed by duplicate order.
+Correct behavior:
+1. inspect code/logs,
+2. fix,
+3. push,
+4. state commit + Actions number,
+5. stop,
+6. user reports green/red later.
 
-Network/VPN timeout alone is not a soak failure if system safely pauses and recovers.
+This avoids chat/tool timeout.
 
 ---
 
-## 13. Expected next user action in the new conversation
+## 15. Immediate next task order
 
-The user will upload:
-**`engine.foreground.20261006-090715.log`**
-
-When it arrives:
-- acknowledge the upload,
-- inspect the file contents directly,
-- do not ask the user to reproduce already captured output,
-- identify the last successful Engine events before termination,
-- map them to source code,
-- determine whether the failure is during startup, periodic scheduling, DB/worker work, network work, AI work, or another subsystem,
-- patch GitHub only when evidence warrants it,
-- keep CI green,
-- then give the user a single simple restart/observe command.
-
-If additional evidence is truly needed, prefer extending the foreground logger/start script so the next normal run captures it automatically rather than asking the user to manually run a growing list of diagnostics.
+1. Fix #651 stale `settingsStore.test.ts` Review resource expectation.
+2. Push and tell user commit/run; do not wait.
+3. If green, continue current network incident dedupe/hysteresis validation.
+4. Verify SettingsView markup and resource CRUD UX.
+5. Verify manual LIMIT workflow no longer fails on stale preview quote.
+6. Verify NET-002 no longer appears from one isolated timeout.
+7. Verify exact-order timeout is represented once, without duplicate incident classification.
+8. Then optimize Review/Research GPU utilization without changing Primary Entry authority.
+9. Keep native crash and storage safeguards intact.
 
 ---
 
-## 14. Repository files likely relevant next
+## 16. Important files
 
-- `scripts/windows/start-engine.ps1`
-- `scripts/start-zdj-lan.ps1`
-- `scripts/start-zdj-engine-host.ps1`
-- `scripts/start-zdj-engine-host.test.ps1`
-- `apps/engine/src/main.ts`
-- `apps/engine/src/runtime/appRuntime.ts`
-- `apps/engine/src/runtime/processLifecycleTelemetry.ts`
-- `apps/engine/src/services/operationalLogger.ts`
+Likely relevant:
 - `apps/engine/src/config/settingsStore.ts`
-- `apps/engine/src/workers/sqliteHealthWorker.ts`
-- `apps/engine/src/services/tradingQualityCollector.ts`
-- `apps/engine/src/services/tradingQualityV393EvidenceStore.ts`
-- `apps/engine/src/services/tradeRecordSyncService.ts`
-- `apps/engine/src/adapters/exchange/ExternalTradeAdapter.ts`
+- `apps/engine/src/config/settingsStore.test.ts`
+- `apps/engine/src/services/operationalIncidents.ts`
+- `apps/engine/src/services/operationalIncidents.test.ts`
+- `apps/engine/src/services/privateAccountSync.ts`
+- `apps/engine/src/services/entryCoordinator.ts`
+- `apps/engine/src/services/reconciliationService.ts`
+- `apps/engine/src/adapters/binance/BinanceTransport.ts`
+- `apps/engine/src/adapters/binance/requestBudget.ts`
+- `apps/engine/src/api/runtimeSettingsResources.ts`
+- `apps/dashboard/src/views/SettingsView.vue`
+- `apps/dashboard/src/settings-closeout.css`
+- `packages/contracts/src/settings.ts`
+- `config/settings.default.json`
 
 ---
 
-## 15. Short prompt the user can paste into a new ChatGPT chat
+## 17. Short prompt for a new ChatGPT web conversation
 
-Use the following:
-
-> 继续维护我的 GitHub 项目 `3684993/ZDJMITS`。请先通过 GitHub 读取 `docs/prompts/CURRENT_MAINTENANCE_HANDOFF.md`，把它作为当前完整上下文和约束，不要让我重复之前的历史。我会上传最新的 Engine 前台崩溃日志 `engine.foreground.20261006-090715.log`。请以日志证据为主，继续定位 Engine 自动停止/0xC0000409 的真实触发路径，并直接维护、修复、优化 GitHub 项目；每次修改后检查 CI。不要再陷入反复更换 V8 参数猜原因。8083/8084 两个模型未经提前明确告知禁止停止、重启或重新加载；Production writes 必须保持 0。
-
+> 继续维护我的 GitHub 项目 `3684993/ZDJMITS`。先通过 GitHub 读取 `docs/prompts/CURRENT_MAINTENANCE_HANDOFF.md`，把它作为完整当前上下文，不要让我重复历史。当前 main 是 `53c70181cfef7e7ac98ce2757c80c3dcc0acb5a0`，V3.9.x Verify #651 失败；先按 handoff 中记录的精确失败修复，再继续网络延迟兼容、订单 UNKNOWN 去重、Settings 标准 CRUD UI、人工限价操作、三模型 GPU 利用率优化。每次改动后直接推 GitHub，但不要等待 Actions 结果，我会把绿/红结果反馈给你。8083/8084 未经提前明确告知禁止停止/重启；Production writes 必须保持 0；不要恢复静态出口 IP gate。

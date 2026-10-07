@@ -27,7 +27,7 @@ describe('user-facing operational incidents',()=>{
     tracker.observe([incident],400);expect(tracker.read().active).toHaveLength(1);expect(tracker.read().history).toHaveLength(2);expect(tracker.read().history.find(row=>!row.active)).toMatchObject({recoveredAt:300});
   });
   it('keeps one active network incident per proxy route while the failing endpoint changes',()=>{
-    const tracker=new OperationalIncidentTracker(),a=classify('Binance request timed out',{subsystem:'BINANCE_HTTP',endpoint:'/fapi/v2/account',routeIdentity:'proxy-x'})!,b=classify('Binance request timed out',{subsystem:'BINANCE_HTTP',endpoint:'/fapi/v1/openOrders',routeIdentity:'proxy-x'})!;
+    const tracker=new OperationalIncidentTracker(),a=classify('Binance request timed out',{subsystem:'BINANCE_HTTP',endpoint:'/fapi/v2/account',routeIdentity:'proxy-x',requestId:'a'})!,b=classify('Binance request timed out',{subsystem:'BINANCE_HTTP',endpoint:'/fapi/v1/openOrders',routeIdentity:'proxy-x',requestId:'b'})!;
     tracker.observe([a],100);tracker.observe([b],200);
     expect(tracker.read().active).toHaveLength(1);expect(tracker.read().active[0]).toMatchObject({publicCode:'NET-002',endpoint:'/fapi/v1/openOrders',routeIdentity:'proxy-x',count:2,firstSeenAt:100});
   });

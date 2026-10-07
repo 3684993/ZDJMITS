@@ -1,6 +1,6 @@
 # F01/F02/F03/F05/F06/F07/F08 remediation — 2026-10-07
 
-Status: **LOCAL_VERIFY_PASS / RUNTIME_OBSERVATION_PENDING**. This is a continuing remediation run, not long-duration acceptance.
+Status: **LOCAL_VERIFY_PASS / IDENTITY_CLOSED / RUNTIME_OBSERVATION_PENDING**. This is a continuing remediation run, not long-duration acceptance.
 
 Model verified from this conversation's session metadata: `gpt-6.1-sol`, reasoning `medium`.
 Baseline: `f7ffc9a6acd99c5974fcb65554d61440ee2f06e5` from current GitHub main.
@@ -32,7 +32,7 @@ Tests: Contracts 2 / Core 58 / Dashboard 123 / Engine 1776; 1959 total, 231 test
 
 Pre-restart snapshot: `before-restart.json`. At capture, old instance PID 50704 still had real transport timeouts and six occupied REST slots. Current private truth was READY in that sample with roughly 53–55s age; one sample does not prove sustained recovery.
 8081/8083/8084 initial PIDs: 12732 / 17468 / 51124. They are outside restart scope.
-The new verified checkout will use a junction to the existing `D:\MITS\data` only after local verification. No state/database reset, Settings change, proxy switching, strategy parameter change, or manufactured trade is part of this run.
+The new verified checkout uses a junction to the existing `D:\MITS\data`, created only after local verification. No state/database reset, Settings change, proxy switching, strategy parameter change, or manufactured trade is part of this run.
 
 `collect_stability.py` performs only localhost GET observations, once per minute for 12h, with 8s HTTP read deadlines and three workers. `stability-progress.json` is a checkpoint; `stability-final.json` is written only after the requested duration. Raw samples retain endpoint/request identities and bounded timing ledgers. Recovery/activation event frequency and natural TP cases require durable runtime-log analysis in addition to sampled incidents.
 
@@ -41,3 +41,14 @@ Acceptance requires actual source/artifact/API/instance identity closure, TESTNE
 External proxy/tunnel/exchange reliability is not established by these code fixes. Network timing separates socket acquisition, proxy/TLS, first byte, and response body; it cannot alone distinguish a failed proxy tunnel from remote exchange failure. Bounded dispatch ledgers are not a complete wire census. No finding here claims all future NET-002 incidents are impossible.
 
 F04/F10/F11 strategy/economic optimization is not performed. Progression to that work requires a separate evidence-based stability decision after this observation.
+
+## Authorized 8080 restart and observation start
+
+Implementation SHA: `0111ded325632f6d592ab572337fe35edd23befd`; pre-restart evidence/handoff SHA: `829abd5`.
+One stop of proven old PID 50704 and one MANUAL_START completed. New PID 37780 / instance `7a3b0f4a-b007-47a3-9bac-8e28d0c6365e`, start 2026-10-07 18:09:15 +08:00, restart counter 261→262.
+Build `3.9.7-d34e0ffd18d5088df556`, artifact SHA256 `d34e0ffd18d5088df55645beaf6d2ab66a98df5dbc34b422307ccb1369f07be9`, source SHA256 `b5088cb504e95a2dcd4c7849c52b35f4c23b3db08138173604f4399bb2304e57`.
+`identity-branch.json`: **IDENTITY_CLOSED, 6/6 true**. Initial HTTP refused during loading, then /health 503 STARTING, then /health 200 READY with ten snapshots. These transitions are retained in separate snapshots; there was no retry restart.
+`readiness-check.json`: current private truth READY, sync 1581ms, TP protection 9/9, zero duplicate/quantity/wrong-side/orphan/unknown TP, both WS lanes LIVE, TESTNET locked, Production writes 0. `readiness-check-2.json` proves READY/200, but also records a real cold-recovery local queue incident **BINANCE-QUEUE-001**. Do not describe this as already stable or suppress it. Last/mark/bid/ask freshness differences are now visible and can still legitimately block incomplete quotes.
+`settings-before.json` and `settings-after.json`: version 247 and Settings/resource payload hashes identical. `processes-before.json` and `processes-after.json`: 8081/8083/8084 PIDs and process creation times unchanged. The V8 --no-maglev guard is retained.
+
+Detached read-only collector PID 46716 started 2026-10-07 **18:13:08 +08:00**, 6h checkpoint **2026-10-08 00:13:08**, 12h endpoint **2026-10-08 06:13:08**. See `observer-launch.json`. It is an observer, not a service supervisor. It never restarts, changes Settings, or calls trading endpoints. Temporary growing files are gitignored; lossless compressed snapshots, final summaries, and event evidence must be committed to GitHub at checkpoints in this same run.

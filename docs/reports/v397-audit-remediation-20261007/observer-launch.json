@@ -1,0 +1,10 @@
+{
+  "pid": 46716,
+  "startedAt": "2026-10-07T10:13:08.2543441+00:00",
+  "checkpoint6h": "2026-10-07T16:13:08.2578820+00:00",
+  "deadline12h": "2026-10-07T22:13:08.2609795+00:00",
+  "command": "collect_stability.py --hours 12 --interval 60",
+  "mode": "LOCALHOST_GET_ONLY",
+  "enginePid": 37780,
+  "instanceId": "7a3b0f4a-b007-47a3-9bac-8e28d0c6365e"
+}

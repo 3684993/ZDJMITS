@@ -1,0 +1,30 @@
+[
+  {
+    "port": 8084,
+    "pid": 51124,
+    "startedAt": "2026-10-05T05:45:30.4119803Z",
+    "workingSetBytes": 16076230656,
+    "cpuSeconds": 18741.109375
+  },
+  {
+    "port": 8083,
+    "pid": 17468,
+    "startedAt": "2026-10-05T05:44:46.2086993Z",
+    "workingSetBytes": 19957592064,
+    "cpuSeconds": 1573.921875
+  },
+  {
+    "port": 8081,
+    "pid": 12732,
+    "startedAt": "2026-09-18T14:52:52.4843775Z",
+    "workingSetBytes": 2443309056,
+    "cpuSeconds": 43059.96875
+  },
+  {
+    "port": 8080,
+    "pid": 37780,
+    "startedAt": "2026-10-07T10:09:14.1829050Z",
+    "workingSetBytes": 1901793280,
+    "cpuSeconds": 184.875
+  }
+]

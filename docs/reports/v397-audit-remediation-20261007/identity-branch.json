@@ -1,0 +1,46 @@
+{
+ "branch": "codex/audit-remediation-20261007",
+ "localHead": "829abd554cb011baa93548baa315604b0df7b3ca",
+ "remoteHead": "829abd554cb011baa93548baa315604b0df7b3ca",
+ "gitHeadSubject": "docs: retain remediation gates and continuous observation handoff",
+ "computed": {
+  "sourceHash": "b5088cb504e95a2dcd4c7849c52b35f4c23b3db08138173604f4399bb2304e57",
+  "artifactHash": "d34e0ffd18d5088df55645beaf6d2ab66a98df5dbc34b422307ccb1369f07be9",
+  "buildId": "3.9.7-d34e0ffd18d5088df556"
+ },
+ "runtimeFile": {
+  "instanceId": "7a3b0f4a-b007-47a3-9bac-8e28d0c6365e",
+  "pid": 37780,
+  "startedAt": 1791367755469,
+  "host": "0.0.0.0",
+  "port": 8080,
+  "version": "3.9.7",
+  "buildId": "3.9.7-d34e0ffd18d5088df556",
+  "artifactHash": "d34e0ffd18d5088df55645beaf6d2ab66a98df5dbc34b422307ccb1369f07be9",
+  "sourceHash": "b5088cb504e95a2dcd4c7849c52b35f4c23b3db08138173604f4399bb2304e57",
+  "startReason": "MANUAL_START",
+  "lanIps": [
+   "192.168.1.50"
+  ],
+  "restartCount": 262
+ },
+ "runtimeApi": {
+  "buildId": "3.9.7-d34e0ffd18d5088df556",
+  "instanceId": "7a3b0f4a-b007-47a3-9bac-8e28d0c6365e",
+  "pid": 37780,
+  "version": "3.9.7",
+  "lastRestartReason": "MANUAL_START",
+  "restartCount": 262,
+  "lastRestartAt": 1791367755469
+ },
+ "dirtySourcePaths": "",
+ "checks": {
+  "remoteHeadEqualsLocalHead": true,
+  "committedSourceTreeMatchesRuntimeSourceHash": true,
+  "workingDistMatchesRuntimeArtifactHash": true,
+  "buildIdDerivedFromArtifactHash": true,
+  "runtimeApiMatchesInstanceFile": true,
+  "sourceTreeCleanForHashedFolders": true
+ },
+ "verdict": "IDENTITY_CLOSED"
+}

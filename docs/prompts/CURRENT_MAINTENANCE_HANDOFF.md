@@ -557,3 +557,14 @@ The initial collector summary default conflated a missing closeout endpoint with
 The old 6h/12h observation window is **no longer a deployment gate**. Hour 3 proved persistent failure: 60/60 new samples private UNAVAILABLE, current private snapshot ~81 minutes stale, 98 consecutive failures, NEW_ENTRY/model spend blocked, TP DEGRADED with two orphan items. Continue from `docs/prompts/CODEX_ACTIVE_REMEDIATION_NOW.md`.
 
 Immediate rule: integrate and verify candidate `0737e6649dd9c0754c4238bc3a860ec786487a0a`, then continue fixing confirmed F01/F02/F03/F05/F06/F07/F08 defects, deploy to main, restart 8080 only, and use a 10–30 minute feedback loop. If still unhealthy, fix again immediately; do not wait for the remainder of a 12-hour window. Strategy tuning F04/F10/F11 remains deferred until factual/runtime health is restored.
+
+
+## SSH/SOCKS remediation authorization — 2026-10-08
+
+The previous "8080 only" lifecycle limitation is superseded for the current network remediation. Read and follow `docs/prompts/CODEX_SSH_SOCKS_REMEDIATION_NOW.md`.
+
+The user explicitly authorizes Codex to operate the current Engine runtime and its networking dependencies, including restarting/rebuilding the SSH/SOCKS tunnel when necessary. Do not stay in passive 6h/12h observation while the route failure is reproducible.
+
+Two existing local proxy/VPN scripts are located under `D:\MITS\scripts\vpn`. They are currently **not present in GitHub**. Codex must inspect their real filenames/contents, use them as the starting point, repair them if needed, run/restart the tunnel as required, then commit the complete secret-free final scripts under `scripts/vpn/` and record their exact paths here. All generated diagnostics/reports/evidence must also be committed to GitHub.
+
+Do not change trading strategy parameters to hide network failure. Preserve TESTNET-only and Production writes=0. Avoid unnecessary model-service restarts; network remediation should operate only what evidence requires.

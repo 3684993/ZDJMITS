@@ -166,3 +166,8 @@ Completion of this remediation run requires:
 - final artifacts and evidence stored in GitHub.
 
 If an external proxy/SSH/Binance condition remains after local defects are fixed, prove that specifically with timing-phase evidence. Do not use "external cause unknown" as a reason to leave confirmed local defects undeployed.
+
+
+## Network lifecycle authority extension
+
+The current runtime remains NOT_HEALTHY after local F01/F02/F03/F05/F06/F07/F08 fixes. Do not stop at classification. Continue with `docs/prompts/CODEX_SSH_SOCKS_REMEDIATION_NOW.md`. The previous "restart 8080 only" restriction no longer applies to the SSH/SOCKS tunnel or proxy helper scripts. Local scripts exist at `D:\MITS\scripts\vpn`; inspect, repair, run/restart as needed, and commit both complete secret-free scripts to GitHub under `scripts/vpn/`.

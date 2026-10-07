@@ -1771,12 +1771,37 @@ export class SettingsStore {
     if(existing)return existing;
     const flight=(async()=>{
       await mkdir(directory,{recursive:true});
-      const verify=(file:string)=>{const db=new DatabaseSync(file,{readOnly:true});try{const rows=db.prepare('PRAGMA integrity_check').all();if(rows.length!==1||rows[0]?.integrity_check!=='ok')throw new Error('TRADE_SYNC_BASELINE_INVALID');}finally{db.close();}};
-      try{await stat(destination);verify(destination);return destination;}catch(error){if((error as NodeJS.ErrnoException).code!=='ENOENT')throw error;}
+      const sidecars=(file:string)=>[file+'-wal',file+'-shm',file+'-journal'];
+      const cleanupSidecars=async(file:string)=>{for(const sidecar of sidecars(file))await unlink(sidecar).catch(()=>{});};
+      const normalizeAndVerify=async(file:string)=>{
+        // A baseline is immutable recovery evidence, not a live WAL database. Convert it to DELETE
+        // journal mode so later integrity reads cannot grow persistent -wal/-shm sidecars.
+        const db=new DatabaseSync(file);
+        try{
+          try{db.exec('PRAGMA wal_checkpoint(TRUNCATE)');}catch{}
+          db.exec('PRAGMA journal_mode=DELETE');
+          const rows=db.prepare('PRAGMA integrity_check').all();
+          if(rows.length!==1||rows[0]?.integrity_check!=='ok')throw new Error('TRADE_SYNC_BASELINE_INVALID');
+        }finally{db.close();}
+        await cleanupSidecars(file);
+      };
+      try{
+        await stat(destination);
+        await normalizeAndVerify(destination);
+        return destination;
+      }catch(error){if((error as NodeJS.ErrnoException).code!=='ENOENT')throw error;}
       const size=Number((this.db.prepare('PRAGMA page_count').get() as any).page_count)*Number((this.db.prepare('PRAGMA page_size').get() as any).page_size);
       if(size>512*1024**2)throw new Error('TRADE_SYNC_BASELINE_TOO_LARGE: offline storage cleanup required');
       const temporary=destination+`.${process.pid}.${Date.now()}.tmp`;
-      try{await sqliteBackup(this.db,temporary);verify(temporary);await link(temporary,destination);return destination;}finally{await unlink(temporary).catch(()=>{});}
+      try{
+        await sqliteBackup(this.db,temporary);
+        await normalizeAndVerify(temporary);
+        await link(temporary,destination);
+        return destination;
+      }finally{
+        await unlink(temporary).catch(()=>{});
+        await cleanupSidecars(temporary);
+      }
     })();this.baselineFlights.set(destination,flight);void flight.catch(()=>this.baselineFlights.delete(destination));return flight;
   }
   async backup(destination: string) {

@@ -27,11 +27,24 @@ export function shouldPublishTransportFailure(method:string,endpoint:string,mess
 function currentTransportFailures(routeIdentity:string){const now=Date.now(),successes=recentSuccessByRoute.get(routeIdentity);return(recentFailuresByRoute.get(routeIdentity)??[]).filter(row=>now-row.completedAt<120_000&&Number(successes?.get(`${row.method}:${row.endpoint}`)??0)<row.completedAt).slice(-50);}
 export function reconfigureBinanceTransports(settings:ConnectionSettings){for(const ref of [...liveTransports]){const transport=ref.deref();if(transport)transport.reconfigure(settings);else liveTransports.delete(ref);}}
 
+const proxyConnectDeadlines=new WeakMap<Parameters<SocksProxyAgent['connect']>[0],number>();
+
+/** Bound the actual SOCKS negotiation, which otherwise ignores ClientRequest abort until it returns. */
+class BoundedSocksProxyAgent extends SocksProxyAgent {
+ override connect(req:Parameters<SocksProxyAgent['connect']>[0],opts:Parameters<SocksProxyAgent['connect']>[1]){
+  if(req.destroyed)return Promise.reject(new Error('Proxy request already aborted'));
+  const deadline=proxyConnectDeadlines.get(req);if(deadline===undefined)return super.connect(req,opts);
+  const timeout=Math.max(1,deadline-Date.now());
+  // A per-connect delegate avoids mutating one shared agent's timeout across concurrent requests.
+  return new SocksProxyAgent(this.proxyUrl,{timeout,socketOptions:this.socketOptions??undefined}).connect(req,opts);
+ }
+}
+
 /** Single Binance network boundary. Exchange traffic is proxy-only and fail-closed. */
 export class BinanceTransport {
  private agent:SocksProxyAgent|null=null;private budget!:ReturnType<typeof getBinanceRequestBudget>;private routeIdentity='proxy-unavailable';private settings:ConnectionSettings;private requestLimitFlight:Promise<void>|null=null;
  constructor(settings:ConnectionSettings){this.settings=settings;this.applyRoute();liveTransports.add(new WeakRef(this));}
- private applyRoute(){const retired=this.agent;if(this.settings.proxy.enabled&&this.settings.proxy.url)this.agent=new SocksProxyAgent(this.settings.proxy.url,{keepAlive:true,maxSockets:6,maxFreeSockets:6});else this.agent=null;
+ private applyRoute(){const retired=this.agent;if(this.settings.proxy.enabled&&this.settings.proxy.url)this.agent=new BoundedSocksProxyAgent(this.settings.proxy.url,{keepAlive:true,maxSockets:6,maxFreeSockets:6});else this.agent=null;
   // Preserve captured in-flight/queued requests, but leave no pooled idle socket on an old route.
   if(retired){retired.keepAlive=false;for(const sockets of Object.values(retired.freeSockets))for(const socket of sockets)socket.destroy();}
   const proxyHash=this.agent?createHash('sha256').update(this.settings.proxy.url).digest('hex').slice(0,12):'unavailable';this.routeIdentity=`proxy-${proxyHash}`;this.budget=getBinanceRequestBudget(this.settings.exchange.environment,this.routeIdentity);this.requestLimitFlight=null;}
@@ -67,21 +80,24 @@ export class BinanceTransport {
      return new Promise<T>((resolve,reject)=>{
        const timeoutMs=init.timeoutMs??15_000,deadline=AbortSignal.timeout(timeoutMs),requestSignal=signal?AbortSignal.any([signal,deadline]):deadline;
        const timing={startedAt:Date.now(),socketAssignedAt:null as number|null,secureConnectedAt:null as number|null,responseAt:null as number|null,completedAt:null as number|null,reusedSocket:false,failurePhase:null as string|null};
-       let removeSecureListener=()=>{};
-       const finish=(failed=false)=>{removeSecureListener();timing.completedAt=Date.now();if(failed)timing.failurePhase=signal?.aborted?'READ_BUDGET_ABORT':timing.responseAt?'RESPONSE_BODY':timing.secureConnectedAt?'FIRST_BYTE':timing.socketAssignedAt?'PROXY_OR_TLS':'AGENT_OR_SOCKET_ACQUISITION';budget.recordNetworkTiming(meta,timing);};
+       let removeSecureListener=()=>{},removeAbortListener=()=>{},settled=false;
+       const finish=(failed=false)=>{if(settled)return false;settled=true;removeSecureListener();removeAbortListener();timing.completedAt=Date.now();if(failed)timing.failurePhase=signal?.aborted?'READ_BUDGET_ABORT':timing.responseAt?'RESPONSE_BODY':timing.secureConnectedAt?'FIRST_BYTE':timing.socketAssignedAt?'PROXY_OR_TLS':'AGENT_OR_SOCKET_ACQUISITION';budget.recordNetworkTiming(meta,timing);return true;};
        const request=https.request(url,{method,headers:{'user-agent':'zdj-mits-v3/3.9',...init.headers},agent,timeout:timeoutMs,signal:requestSignal},response=>{
          timing.responseAt=Date.now();let body='';response.setEncoding('utf8');response.on('data',chunk=>{body+=chunk;});
-         response.once('error',error=>{finish(true);reject(error);});response.on('end',()=>{finish();
+         response.once('error',error=>{if(finish(true))reject(error);});response.on('end',()=>{if(!finish())return;
            const status=response.statusCode??500,observedIp=(status===418||status===429)?extractObservedIp(body):null;
            budget.observeResponse(status,response.headers as Record<string,string|string[]|undefined>,response.headers['retry-after'] as string|undefined,meta,observedIp,Number(body.match(/banned until (\d+)/i)?.[1]??0));
            if(status>=400)return reject(new Error(`Binance HTTP ${status}: ${body.slice(0,512)}`));recordTransportSuccess(meta);
            try{const parsed=JSON.parse(body) as T;if(url.pathname.endsWith('/exchangeInfo')){const limits=(parsed as any)?.rateLimits;if(Array.isArray(limits))budget.configureRateLimits(limits);}resolve(parsed);}catch{reject(new Error('Binance returned invalid JSON'));}
          });
        });
+       proxyConnectDeadlines.set(request,timing.startedAt+timeoutMs);
        request.once('socket',socket=>{timing.socketAssignedAt=Date.now();timing.reusedSocket=request.reusedSocket;if((socket as any).encrypted&&(socket as any).secureConnecting!==true)timing.secureConnectedAt=Date.now();else{const connected=()=>{timing.secureConnectedAt=Date.now();};socket.once('secureConnect',connected);removeSecureListener=()=>socket.removeListener('secureConnect',connected);}});
        request.once('timeout',()=>request.destroy(new Error('Binance request timed out')));
-       request.once('error',error=>{finish(true);reject(new Error(signal?.aborted?`BINANCE_READ_ABORTED:${String(signal.reason)}`:`BINANCE_TRANSPORT_BLOCKED: ${error.name==='AbortError'?'Binance request timed out':error.message}`));});
-       request.end(init.body);
+       request.once('error',error=>{if(!finish(true))return;reject(new Error(signal?.aborted?`BINANCE_READ_ABORTED:${String(signal.reason)}`:`BINANCE_TRANSPORT_BLOCKED: ${error.name==='AbortError'?'Binance request timed out':error.message}`));});
+       const aborted=()=>{request.destroy();if(finish(true))reject(new Error(signal?.aborted?`BINANCE_READ_ABORTED:${String(signal.reason)}`:'BINANCE_TRANSPORT_BLOCKED: Binance request timed out'));};
+       requestSignal.addEventListener('abort',aborted,{once:true});removeAbortListener=()=>requestSignal.removeEventListener('abort',aborted);
+       if(requestSignal.aborted)aborted();else request.end(init.body);
      });
    },meta,signal);}catch(error){
      const message=error instanceof Error?error.message:String(error);if(shouldPublishTransportFailure(method,url.pathname,message))recordTransportFailure(meta,message);

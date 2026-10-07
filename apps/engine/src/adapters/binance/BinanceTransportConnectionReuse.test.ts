@@ -4,6 +4,7 @@ import net from 'node:net';
 import {once} from 'node:events';
 import {SocksProxyAgent} from 'socks-proxy-agent';
 import {BinanceTransport} from './BinanceTransport.js';
+import {withBinanceReadContext} from './binanceReadContext.js';
 
 // The fixture accepts only the allocated loopback target. No exchange/network egress.
 async function fixture(handler:http.RequestListener=(_req,res)=>res.end('ok')){
@@ -59,4 +60,32 @@ it('lets a captured active request finish when retiring a route without keeping 
   transport.reconfigure(settings(second.url) as never);response!.end('ok');expect(await pending).toBe(false);await closed;
   expect(Object.values(old.freeSockets).flat()).toHaveLength(0);await read(second.targetPort,transport.websocketOptions().agent);expect(second.connects()).toBe(1);
  }finally{old.destroy();transport.dispose();await Promise.all([first.close(),second.close()]);}
+});
+
+async function stalledProxy(){
+ const sockets=new Set<net.Socket>();let accepted=0;
+ const server=net.createServer(socket=>{accepted++;sockets.add(socket);socket.on('close',()=>sockets.delete(socket));socket.on('error',()=>{});socket.resume();});
+ server.listen(0,'127.0.0.1');await once(server,'listening');
+ return{url:`socks5h://127.0.0.1:${(server.address() as net.AddressInfo).port}`,accepted:()=>accepted,sockets,
+  async close(){for(const socket of sockets)socket.destroy();await new Promise<void>(resolve=>server.close(()=>resolve()));}};
+}
+
+it('expires an admitted read and the underlying stalled SOCKS handshake within its actual budget',async()=>{
+ const f=await stalledProxy(),transport=new BinanceTransport(settings(f.url) as never),started=Date.now();
+ const safety=setTimeout(()=>{for(const socket of f.sockets)socket.destroy();},500);
+ try{
+  await expect(transport.json('/fapi/v2/account',{timeoutMs:100})).rejects.toThrow('timed out');
+  expect(Date.now()-started).toBeLessThan(400);expect(transport.requestBudgetHealth().active).toBe(0);
+  await new Promise(resolve=>setTimeout(resolve,150));expect(f.sockets.size).toBe(0);
+ }finally{clearTimeout(safety);transport.dispose();await f.close();}
+});
+
+it('releases a read context on cancellation during proxy negotiation while keeping pending sockets bounded',async()=>{
+ const f=await stalledProxy(),transport=new BinanceTransport(settings(f.url) as never),controller=new AbortController(),started=Date.now();
+ const cancel=setTimeout(()=>controller.abort('RECONCILIATION_READ_BUDGET_EXHAUSTED'),30),safety=setTimeout(()=>{for(const socket of f.sockets)socket.destroy();},500);
+ try{
+  await expect(withBinanceReadContext({signal:controller.signal},()=>transport.json('/fapi/v2/account',{timeoutMs:100}))).rejects.toThrow('BINANCE_READ_ABORTED:RECONCILIATION_READ_BUDGET_EXHAUSTED');
+  expect(Date.now()-started).toBeLessThan(400);expect(transport.requestBudgetHealth().active).toBe(0);
+  await new Promise(resolve=>setTimeout(resolve,150));expect(f.sockets.size).toBe(0);expect(f.accepted()).toBe(1);
+ }finally{clearTimeout(cancel);clearTimeout(safety);transport.dispose();await f.close();}
 });

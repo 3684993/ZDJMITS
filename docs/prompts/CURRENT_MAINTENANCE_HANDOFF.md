@@ -3,9 +3,9 @@
 > Stable handoff entrypoint for a new ChatGPT maintenance conversation.
 > Last refreshed: 2026-10-07 (+08:00)
 > Repository: `3684993/ZDJMITS`
-> Current main baseline: `53c70181cfef7e7ac98ce2757c80c3dcc0acb5a0`
-> GitHub Actions: **V3.9.x Verify #651 FAILED**
-> Failure is a stale test expectation, not a production runtime failure.
+> Current main baseline: `ae5e0c9e6ef6e03872d16aca9f0f9ea2dbd40194`
+> Last user-confirmed green verification: **V3.9.x Verify #655 GREEN**
+> Current implementation baseline after that green run: `ae5e0c9e6ef6e03872d16aca9f0f9ea2dbd40194` (`fix: throttle exact-order recovery and prefer user data`).
 
 ## 0. Instructions to the next ChatGPT conversation
 
@@ -79,45 +79,24 @@ Primary Entry authority:
 
 ---
 
-## 3. Current CI failure — fix this first
+## 3. Current baseline / resolved #651 regression
 
-Latest main:
-`53c70181cfef7e7ac98ce2757c80c3dcc0acb5a0`
+The old #651 failure is resolved.
 
-GitHub Actions:
-**#651 FAILED**
+- Fix commit: `f95c116d6679addaeed6b087c155c84e3b6ba662`
+- User-confirmed result: **V3.9.x Verify #655 GREEN**
+- Root cause was only a stale SettingsStore migration test fixture: it created `brain-review-test` even though the configured enabled Review resource was already `brain-7900-review`.
+- Production Review routing was not changed to satisfy the old literal.
 
-Commit:
-`test: dedupe exact-order timeout from network incident`
+Current implementation baseline:
+`ae5e0c9e6ef6e03872d16aca9f0f9ea2dbd40194`
 
-CI result:
-- verify scripts: PASS
-- release identity: PASS
-- S00: PASS
-- typecheck: PASS
-- build: PASS
-- dashboard tests: PASS
-- engine: **1 test failed / 559 passed**
+That commit makes UNKNOWN/SUBMITTING Entry recovery prefer Binance User Data WS and throttles exact `/fapi/v1/order` recovery for the same clientOrderId. It also applies the same discipline to the durable `mustQueryFirst` branch and post-ACK-loss recovery. Unresolved UNKNOWN remains non-resubmittable.
 
-Exact failure:
+For Codex/local continuation, use:
+`docs/prompts/CODEX_MAINTENANCE_CONTINUATION.md`
 
-`apps/engine/src/config/settingsStore.test.ts`
-
-Test:
-`moves persisted review duties off Entry Primary when a dedicated Review resource exists`
-
-Actual:
-`brain-7900-review`
-
-Old expected:
-`brain-review-test`
-
-This is a stale test fixture/expectation after resource-role migration changes. Inspect the test and current migration semantics. Fix the test only if current runtime behavior is intentionally selecting the configured dedicated Review resource. Do not change production routing merely to satisfy the stale literal.
-
-After the fix:
-- push to main,
-- tell the user the new commit and Actions number,
-- **do not wait for CI**; user will report the result.
+Codex should use the local checkout and local tests as the primary implementation loop rather than waiting on GitHub Actions.
 
 ---
 
@@ -412,15 +391,16 @@ This avoids chat/tool timeout.
 
 ## 15. Immediate next task order
 
-1. Fix #651 stale `settingsStore.test.ts` Review resource expectation.
-2. Push and tell user commit/run; do not wait.
-3. If green, continue current network incident dedupe/hysteresis validation.
-4. Verify SettingsView markup and resource CRUD UX.
-5. Verify manual LIMIT workflow no longer fails on stale preview quote.
-6. Verify NET-002 no longer appears from one isolated timeout.
-7. Verify exact-order timeout is represented once, without duplicate incident classification.
-8. Then optimize Review/Research GPU utilization without changing Primary Entry authority.
-9. Keep native crash and storage safeguards intact.
+1. Validate the `ae5e0c9...` UNKNOWN recovery changes locally and audit **all** exact-order lookup call sites for duplicate REST recovery.
+2. Finish Binance latency compatibility / NET-002 sustained-failure semantics without weakening private truth.
+3. Verify MARKET-DATA-001 is derived from real required WS/cache freshness and continuity, not optional REST context timeouts.
+4. Audit SettingsView markup and finish standard CRUD/save/cancel/test/activate/delete boundaries.
+5. Verify true multi-resource proxy persistence and explicit active-resource switching.
+6. Re-verify explicit manual LIMIT usability when preview quote is stale while preserving exchange/risk fail-closed facts.
+7. Improve Review/Research useful asynchronous utilization without creating a second Entry veto authority.
+8. Preserve reconciliation budgets, storage/I/O convergence and native crash protections.
+
+Codex may propose a different implementation when it is demonstrably better, but it must pair disagreement with a concrete safer/simpler replacement and tests; critique-only responses are not acceptable.
 
 ---
 

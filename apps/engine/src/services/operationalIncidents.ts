@@ -57,13 +57,16 @@ export function operationalCandidates(facts:{pipeline:any;routes:any[];account:a
   const out:Candidate[]=[];
   const now=Date.now(),marketHealthy=facts.pipeline?.pipelineState==='RUNNING'&&facts.pipeline?.freshMarkets?.status==='FRESH';
   const marketRestEndpoint=(endpoint:unknown)=>/\/fapi\/v1\/(openInterest|premiumIndex|ticker\/24hr|ticker\/bookTicker|depth|klines)$|\/futures\/data\//.test(String(endpoint??''));
+  const controlEndpoint=(endpoint:unknown)=>String(endpoint??'')==='/fapi/v1/time';
   const timeoutLike=(message:unknown)=>/timed out|ETIMEDOUT|TimeoutError|BINANCE_REQUEST_QUEUE_TIMEOUT/i.test(String(message??''));
   for(const route of facts.routes){const budget=route.requestBudget??{},recent=budget.recentDispatches??[],failures=route.recentFailures??[];
     // A healthy WS stream is the primary market truth. REST market timeouts are tolerated while that
     // truth remains fresh; they are recovery telemetry, not a global NEW_ENTRY outage.
-    const relevantFailures=failures.filter((failure:any)=>!(marketHealthy&&marketRestEndpoint(failure.endpoint)));
+    const relevantFailures=failures.filter((failure:any)=>!controlEndpoint(failure.endpoint)&&!(marketHealthy&&marketRestEndpoint(failure.endpoint)));
+    const makerRejects=relevantFailures.filter((failure:any)=>/"code"\s*:\s*-5022\b/.test(String(failure.message??''))&&now-Number(failure.completedAt??now)<60_000);
     for(const failure of relevantFailures){
       if(timeoutLike(failure.message))continue; // aggregated below with hysteresis
+      if(/"code"\s*:\s*-5022\b/.test(String(failure.message??''))){if(makerRejects.length<3||failure!==makerRejects.at(-1))continue;}
       const row=classifyOperationalError({message:failure.message,subsystem:'BINANCE_HTTP',requestId:failure.requestId,endpoint:failure.endpoint,method:failure.method,routeIdentity:failure.routeIdentity});if(row)out.push(row);
     }
     const http=recent.filter((row:any)=>[418,429,451].includes(row.status)&&now-Number(row.completedAt??0)<120_000).at(-1);

@@ -277,3 +277,7 @@ models/
 # to .env and commit only a safe example/template.
 # ============================================================
 /data-replay/
+
+/docs/reports/v397-active-remediation-20261007/stability-samples.jsonl
+/docs/reports/v397-active-remediation-20261007/stability-progress.json
+/docs/reports/v397-active-remediation-20261007/stability-final.json

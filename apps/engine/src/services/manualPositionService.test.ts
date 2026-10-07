@@ -15,7 +15,7 @@ async function fixture(){
   state.positions.set(position.id,position);
   const quote={symbol:'FXSUSDT',last:.3,mark:.3,bid:.299,ask:.301,tickSize:.001,stepSize:.1,minQty:.1,minNotional:5,quoteVolumeUsd24h:1_000_000,priceChangePercent24h:0,tradeCount24h:100,ts:Date.now()};
   const exchange:any={...coordinatedExchange({liveQuantity:1e6}),fetchPositions:vi.fn(async()=>[{...position,quantity:1572.1}]),placeManualOrder:vi.fn(async(request:any)=>({id:request.internalOrderId,intentId:request.internalOrderId,clientOrderId:request.clientOrderId,exchangeOrderId:'exchange-manual-1',positionId:'',symbol:request.symbol,side:request.side,positionSide:request.positionSide,type:request.type,quantity:request.quantity,price:request.price,reduceOnly:request.reduceOnly,postOnly:request.postOnly,status:'WORKING',filledQuantity:0,createdAt:Date.now(),updatedAt:Date.now()}))};
-  const market:any={snapshot:vi.fn(()=>undefined),cachedQuote:vi.fn(()=>undefined),freshQuote:vi.fn(async()=>quote)};
+  const market:any={snapshot:vi.fn(()=>undefined),cachedQuote:vi.fn(()=>undefined),freshQuote:vi.fn(async()=>quote),contractRules:vi.fn(async()=>({tickSize:quote.tickSize,stepSize:quote.stepSize,minQty:quote.minQty,minNotional:quote.minNotional}))};
   const tpOrder:any={id:'tp-existing',clientOrderId:'tp-existing',exchangeOrderId:'tp-exchange',positionId:position.id,symbol:position.symbol,side:'BUY',quantity:position.quantity,price:.29,status:'WORKING',createdAt:Date.now(),updatedAt:Date.now()};state.tpOrders.set(tpOrder.id,tpOrder);position.tpOrderId=tpOrder.id;
   const tp:any={suspend:vi.fn(),resume:vi.fn(),cancel:vi.fn(async(order:any)=>({...order,status:'CANCELED'})),place:vi.fn(),ensure:vi.fn(async()=>{})};
   return{state,position,quote,exchange,market,tp,reconcile:vi.fn(async()=>{})};
@@ -45,6 +45,13 @@ describe('Manual stale-market tolerance',()=>{
     const result=await service.execute(x.position.id,{action:'PLACE_LIMIT',quantity:100,price:.305,idempotencyKey:'stale-explicit-limit'});
     expect(result.intent.status).toBe('SUBMITTED');
     expect(x.exchange.placeManualOrder).toHaveBeenCalledWith(expect.objectContaining({symbol:'FXSUSDT',price:.305,quantity:100,reduceOnly:true}));
+  });
+  it('allows an explicit manual limit with no quote at all when authoritative contract filters are available',async()=>{
+    const x=await fixture();x.market.cachedQuote.mockReturnValue(undefined);x.market.freshQuote.mockRejectedValue(new Error('REST quote unavailable'));
+    const service=new ManualPositionService(x.state,x.market,x.exchange,x.tp,new EventBus(),x.reconcile,manualJournalHarness() as any,exitRuntimeHarness());
+    const result=await service.execute(x.position.id,{action:'PLACE_LIMIT',quantity:100,price:.305,idempotencyKey:'static-rules-explicit-limit'});
+    expect(result.intent.status).toBe('SUBMITTED');expect(x.market.contractRules).toHaveBeenCalledWith('FXSUSDT');
+    expect(x.exchange.placeManualOrder).toHaveBeenCalledWith(expect.objectContaining({price:.305,quantity:100,reduceOnly:true}));
   });
   it('still fails closed for an automatic-price emergency close when no live quote exists',async()=>{
     const x=await fixture(),stale={...x.quote,ts:Date.now()-60_000};x.market.cachedQuote.mockReturnValue(stale);x.market.freshQuote.mockRejectedValue(new Error('REST unavailable'));

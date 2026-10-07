@@ -73,7 +73,7 @@ export function operationalCandidates(facts:{pipeline:any;routes:any[];account:a
       Number(facts.pipeline?.marketDataIsolation?.healthyCandidates??0)>0||facts.pipeline?.freshMarkets?.status==='FRESH'
     ),
     recentUnresolved=Boolean((facts.orders??[]).some((order:any)=>order.status==='UNKNOWN'&&order.activeRiskExposure!==false&&Number.isFinite(Number(order.createdAt))&&now-Number(order.createdAt)<3_600_000));
-  const advisoryRestEndpoint=(endpoint:unknown)=>/\/fapi\/v1\/(openInterest|premiumIndex)$|\/futures\/data\//.test(String(endpoint??''));
+  const advisoryRestEndpoint=(endpoint:unknown)=>/\/fapi\/v1\/(openInterest|premiumIndex|income)$|\/futures\/data\//.test(String(endpoint??''));
   const marketFallbackEndpoint=(endpoint:unknown)=>/\/fapi\/v1\/(ticker\/24hr|ticker\/bookTicker|depth|klines)$/.test(String(endpoint??''));
   const controlEndpoint=(endpoint:unknown)=>String(endpoint??'')==='/fapi/v1/time';
   const identityLookup=(row:any)=>recentUnresolved&&String(row?.method??'GET')==='GET'&&String(row?.endpoint??'')==='/fapi/v1/order';

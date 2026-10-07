@@ -72,6 +72,11 @@ describe('user-facing operational incidents',()=>{
     expect(rows.filter(row=>row.publicCode==='NET-002')).toHaveLength(0);
     expect(rows.some(row=>row.publicCode==='MARKET-DATA-001')).toBe(true);
   });
+  it('keeps historical income enrichment latency out of NET-002 while current private truth is ready',()=>{
+    const now=Date.now(),failures=[0,1,2,3].map(i=>({message:'BINANCE_REQUEST_QUEUE_TIMEOUT',requestId:`income-${i}`,endpoint:'/fapi/v1/income',method:'GET',routeIdentity:'proxy-test',completedAt:now-i*1000}));
+    const rows=operationalCandidates({pipeline:{pipelineState:'RUNNING',freshMarkets:{status:'FRESH'}},routes:[{recentFailures:failures,requestBudget:{recentDispatches:failures.map(row=>({...row,decision:'TIMEOUT'})),admissionObservedWeight1m:100,softBackgroundWeight:1000}}],account:{status:'READY'}});
+    expect(rows).toHaveLength(0);
+  });
   it('represents exact-order timeout recovery as SUBMIT_UNKNOWN instead of a duplicate NET-002 incident',()=>{
     const now=Date.now(),failures=[0,1,2,3].map(i=>({message:'BINANCE_TRANSPORT_BLOCKED: Binance request timed out',requestId:`order-${i}`,endpoint:'/fapi/v1/order',method:'GET',routeIdentity:'proxy-test',completedAt:now-i*1000}));
     const rows=operationalCandidates({pipeline:{pipelineState:'RUNNING',freshMarkets:{status:'FRESH'}},routes:[{recentFailures:failures,requestBudget:{recentDispatches:failures.map(row=>({...row,decision:'TIMEOUT'})),admissionObservedWeight1m:100,softBackgroundWeight:1000}}],account:{status:'READY'},orders:[{status:'UNKNOWN',activeRiskExposure:true,createdAt:now}]});

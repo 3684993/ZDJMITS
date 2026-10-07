@@ -18,15 +18,16 @@ export function extractObservedIp(body:string){for(const match of body.matchAll(
 export function binanceBudgetFailureMessage(message:string,meta:RequestBudgetMeta){return `${message}|requestId=${String(meta.requestId??'UNKNOWN')}|endpoint=${String(meta.endpoint??'UNKNOWN')}|method=${String(meta.method??'GET')}|source=${String(meta.source??'UNKNOWN')}|purpose=${String(meta.purpose??'UNSPECIFIED')}|routeIdentity=${String(meta.routeIdentity??'UNKNOWN')}`;}
 
 const liveTransports=new Set<WeakRef<BinanceTransport>>();
-type TransportFailure={message:string;completedAt:number;requestId:string;endpoint:string;method:string;routeIdentity:string;source:string;purpose:string};
+type TransportFailure={message:string;completedAt:number;requestId:string;endpoint:string;method:string;routeIdentity:string;source:string;purpose:string;failurePhase:string|null};
 const recentFailuresByRoute=new Map<string,TransportFailure[]>();
 const recentSuccessByRoute=new Map<string,Map<string,number>>();
 function recordTransportSuccess(meta:RequestBudgetMeta){const key=`${meta.method}:${meta.endpoint}`,rows=recentSuccessByRoute.get(String(meta.routeIdentity))??new Map<string,number>();rows.set(key,Date.now());recentSuccessByRoute.set(String(meta.routeIdentity),rows);}
-function recordTransportFailure(meta:RequestBudgetMeta,message:string){const key=String(meta.routeIdentity),rows=recentFailuresByRoute.get(key)??[];rows.push({message:message.slice(0,600),completedAt:Date.now(),requestId:String(meta.requestId),endpoint:String(meta.endpoint),method:String(meta.method),routeIdentity:key,source:String(meta.source),purpose:String(meta.purpose)});recentFailuresByRoute.set(key,rows.slice(-100));}
+function recordTransportFailure(meta:RequestBudgetMeta,message:string,failurePhase:string|null=null){const key=String(meta.routeIdentity),rows=recentFailuresByRoute.get(key)??[];rows.push({message:(message+(failurePhase?'|failurePhase='+failurePhase:'')).slice(0,600),failurePhase,completedAt:Date.now(),requestId:String(meta.requestId),endpoint:String(meta.endpoint),method:String(meta.method),routeIdentity:key,source:String(meta.source),purpose:String(meta.purpose)});recentFailuresByRoute.set(key,rows.slice(-100));}
 export function shouldPublishTransportFailure(method:string,endpoint:string,message:string){if(!/^Binance HTTP|^BINANCE_TRANSPORT_BLOCKED/.test(message))return false;if(endpoint.endsWith('/order')&&((method==='GET'&&/"code"\s*:\s*-2013\b/.test(message))||(method==='DELETE'&&/"code"\s*:\s*-2011\b/.test(message))))return false;return true;}
 function currentTransportFailures(routeIdentity:string){const now=Date.now(),successes=recentSuccessByRoute.get(routeIdentity);return(recentFailuresByRoute.get(routeIdentity)??[]).filter(row=>now-row.completedAt<120_000&&Number(successes?.get(`${row.method}:${row.endpoint}`)??0)<row.completedAt).slice(-50);}
 export function reconfigureBinanceTransports(settings:ConnectionSettings){for(const ref of [...liveTransports]){const transport=ref.deref();if(transport)transport.reconfigure(settings);else liveTransports.delete(ref);}}
 
+const proxyConnectTiming=new WeakMap<Parameters<SocksProxyAgent['connect']>[0],{proxyConnectStartedAt:number|null;proxyConnectedAt:number|null}>();
 const proxyConnectDeadlines=new WeakMap<Parameters<SocksProxyAgent['connect']>[0],number>();
 
 /** Bound the actual SOCKS negotiation, which otherwise ignores ClientRequest abort until it returns. */
@@ -34,9 +35,9 @@ class BoundedSocksProxyAgent extends SocksProxyAgent {
  override connect(req:Parameters<SocksProxyAgent['connect']>[0],opts:Parameters<SocksProxyAgent['connect']>[1]){
   if(req.destroyed)return Promise.reject(new Error('Proxy request already aborted'));
   const deadline=proxyConnectDeadlines.get(req);if(deadline===undefined)return super.connect(req,opts);
-  const timeout=Math.max(1,deadline-Date.now());
+  const timeout=Math.max(1,deadline-Date.now()),timing=proxyConnectTiming.get(req);if(timing)timing.proxyConnectStartedAt=Date.now();
   // A per-connect delegate avoids mutating one shared agent's timeout across concurrent requests.
-  return new SocksProxyAgent(this.proxyUrl,{timeout,socketOptions:this.socketOptions??undefined}).connect(req,opts);
+  return new SocksProxyAgent(this.proxyUrl,{timeout,socketOptions:this.socketOptions??undefined}).connect(req,opts).then(socket=>{if(timing)timing.proxyConnectedAt=Date.now();return socket;});
  }
 }
 
@@ -79,9 +80,9 @@ export class BinanceTransport {
      if(init.purpose==='NEW_ENTRY'){const storageBlock=storageEntryBlockReason();if(storageBlock)throw new Error(`STORAGE_ENTRY_BLOCKED:${storageBlock}`);const health=budget.health();if(binanceHealthBlocksEntry(health.status))throw new Error(`BINANCE_ENTRY_BUDGET_BLOCKED:${health.status}`);}
      return new Promise<T>((resolve,reject)=>{
        const timeoutMs=init.timeoutMs??15_000,deadline=AbortSignal.timeout(timeoutMs),requestSignal=signal?AbortSignal.any([signal,deadline]):deadline;
-       const timing={startedAt:Date.now(),socketAssignedAt:null as number|null,secureConnectedAt:null as number|null,responseAt:null as number|null,completedAt:null as number|null,reusedSocket:false,failurePhase:null as string|null};
+       const timing={startedAt:Date.now(),proxyConnectStartedAt:null as number|null,proxyConnectedAt:null as number|null,socketAssignedAt:null as number|null,secureConnectedAt:null as number|null,responseAt:null as number|null,completedAt:null as number|null,reusedSocket:false,failurePhase:null as string|null};
        let removeSecureListener=()=>{},removeAbortListener=()=>{},settled=false;
-       const finish=(failed=false)=>{if(settled)return false;settled=true;removeSecureListener();removeAbortListener();timing.completedAt=Date.now();if(failed)timing.failurePhase=signal?.aborted?'READ_BUDGET_ABORT':timing.responseAt?'RESPONSE_BODY':timing.secureConnectedAt?'FIRST_BYTE':timing.socketAssignedAt?'PROXY_OR_TLS':'AGENT_OR_SOCKET_ACQUISITION';budget.recordNetworkTiming(meta,timing);return true;};
+       const finish=(failed=false)=>{if(settled)return false;settled=true;removeSecureListener();removeAbortListener();timing.completedAt=Date.now();if(failed)timing.failurePhase=signal?.aborted?'READ_BUDGET_ABORT':timing.responseAt?'RESPONSE_BODY':timing.secureConnectedAt?'FIRST_BYTE':timing.socketAssignedAt?'TLS_HANDSHAKE':timing.proxyConnectStartedAt?'SOCKS_NEGOTIATION':'AGENT_QUEUE';budget.recordNetworkTiming(meta,timing);return true;};
        const request=https.request(url,{method,headers:{'user-agent':'zdj-mits-v3/3.9',...init.headers},agent,timeout:timeoutMs,signal:requestSignal},response=>{
          timing.responseAt=Date.now();let body='';response.setEncoding('utf8');response.on('data',chunk=>{body+=chunk;});
          response.once('error',error=>{if(finish(true))reject(error);});response.on('end',()=>{if(!finish())return;
@@ -91,7 +92,7 @@ export class BinanceTransport {
            try{const parsed=JSON.parse(body) as T;if(url.pathname.endsWith('/exchangeInfo')){const limits=(parsed as any)?.rateLimits;if(Array.isArray(limits))budget.configureRateLimits(limits);}resolve(parsed);}catch{reject(new Error('Binance returned invalid JSON'));}
          });
        });
-       proxyConnectDeadlines.set(request,timing.startedAt+timeoutMs);
+       proxyConnectDeadlines.set(request,timing.startedAt+timeoutMs);proxyConnectTiming.set(request,timing);
        request.once('socket',socket=>{timing.socketAssignedAt=Date.now();timing.reusedSocket=request.reusedSocket;if((socket as any).encrypted&&(socket as any).secureConnecting!==true)timing.secureConnectedAt=Date.now();else{const connected=()=>{timing.secureConnectedAt=Date.now();};socket.once('secureConnect',connected);removeSecureListener=()=>socket.removeListener('secureConnect',connected);}});
        request.once('timeout',()=>request.destroy(new Error('Binance request timed out')));
        request.once('error',error=>{if(!finish(true))return;reject(new Error(signal?.aborted?`BINANCE_READ_ABORTED:${String(signal.reason)}`:`BINANCE_TRANSPORT_BLOCKED: ${error.name==='AbortError'?'Binance request timed out':error.message}`));});
@@ -100,7 +101,7 @@ export class BinanceTransport {
        if(requestSignal.aborted)aborted();else request.end(init.body);
      });
    },meta,signal);}catch(error){
-     const message=error instanceof Error?error.message:String(error);if(shouldPublishTransportFailure(method,url.pathname,message))recordTransportFailure(meta,message);
+     const message=error instanceof Error?error.message:String(error);if(shouldPublishTransportFailure(method,url.pathname,message))recordTransportFailure(meta,message,budget.dispatchLedger().find(row=>row.requestId===meta.requestId)?.networkTiming?.failurePhase??null);
      if(message.startsWith('BINANCE_REQUEST_QUEUE_TIMEOUT')||message.startsWith('BINANCE_REQUEST_QUEUE_FULL')||message.startsWith('BINANCE_RATE_LIMIT_UNTIL:')||message.startsWith('BINANCE_REQUEST_BUDGET_DEFERRED:')||message.startsWith('BINANCE_READ_ABORTED:'))throw new Error(binanceBudgetFailureMessage(message,meta));throw error;
    }
  }

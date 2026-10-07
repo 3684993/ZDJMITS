@@ -1,0 +1,46 @@
+{
+ "branch": "main",
+ "localHead": "8e9a26fcd1b6ee00454c46175bb20f08fd85c67d",
+ "remoteHead": "8e9a26fcd1b6ee00454c46175bb20f08fd85c67d",
+ "gitHeadSubject": "fix: propagate verified TP terminal facts and replay stale projections",
+ "computed": {
+  "sourceHash": "1c8fa219030125ab2832086d070986da622e7a52e918102536afcf0df0b40f76",
+  "artifactHash": "8b2d50435b599b6ad1d333dba338b680088648436e6b8488a5bd34e103464b07",
+  "buildId": "3.9.7-8b2d50435b599b6ad1d3"
+ },
+ "runtimeFile": {
+  "instanceId": "590ba547-55af-4f98-9108-b92cec42b9d6",
+  "pid": 36360,
+  "startedAt": 1791385153146,
+  "host": "0.0.0.0",
+  "port": 8080,
+  "version": "3.9.7",
+  "buildId": "3.9.7-8b2d50435b599b6ad1d3",
+  "artifactHash": "8b2d50435b599b6ad1d333dba338b680088648436e6b8488a5bd34e103464b07",
+  "sourceHash": "1c8fa219030125ab2832086d070986da622e7a52e918102536afcf0df0b40f76",
+  "startReason": "MANUAL_START",
+  "lanIps": [
+   "192.168.1.50"
+  ],
+  "restartCount": 265
+ },
+ "runtimeApi": {
+  "buildId": "3.9.7-8b2d50435b599b6ad1d3",
+  "instanceId": "590ba547-55af-4f98-9108-b92cec42b9d6",
+  "pid": 36360,
+  "version": "3.9.7",
+  "lastRestartReason": "MANUAL_START",
+  "restartCount": 265,
+  "lastRestartAt": 1791385153146
+ },
+ "dirtySourcePaths": "",
+ "checks": {
+  "remoteHeadEqualsLocalHead": true,
+  "committedSourceTreeMatchesRuntimeSourceHash": true,
+  "workingDistMatchesRuntimeArtifactHash": true,
+  "buildIdDerivedFromArtifactHash": true,
+  "runtimeApiMatchesInstanceFile": true,
+  "sourceTreeCleanForHashedFolders": true
+ },
+ "verdict": "IDENTITY_CLOSED"
+}

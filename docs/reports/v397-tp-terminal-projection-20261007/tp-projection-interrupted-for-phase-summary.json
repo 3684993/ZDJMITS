@@ -1,0 +1,119 @@
+{
+  "sampleCount": 18,
+  "elapsedHours": 0.14162555555555556,
+  "first": "2026-10-07T15:01:09.387912+00:00",
+  "last": "2026-10-07T15:09:39.239194+00:00",
+  "healthSampleStates": {
+    "OFFLINE": 18
+  },
+  "privateSampleStates": {
+    "UNAVAILABLE": 18
+  },
+  "activeIncidentSampleCounts": {
+    "PRIVATE-DATA-001": 18,
+    "NET-001": 3,
+    "NET-002": 18
+  },
+  "httpReadErrors": {},
+  "identities": [
+    {
+      "pid": 36360,
+      "instanceId": "590ba547-55af-4f98-9108-b92cec42b9d6"
+    }
+  ],
+  "privateSnapshotAgeMs": {
+    "observedSamples": 0,
+    "max": null,
+    "p95": null
+  },
+  "tpIssueSampleCounts": {},
+  "productionWriteSamples": {
+    "nonzero": 0,
+    "unknown": 0
+  },
+  "interpretation": "Sample prevalence is not incident frequency or duration. Missing samples and bounded ledgers cannot prove zero failures. OBSERVATION_UNAVAILABLE is a missing endpoint value, not proven private UNAVAILABLE. The original running collector progress uses the older conflated default; use this audited analyzer for acceptance.",
+  "acceptance": "SHORT_WINDOW_NOT_ACCEPTED",
+  "malformedSampleRows": 0,
+  "tpObservationSamples": {
+    "known": 18,
+    "unknown": 0
+  },
+  "samplingGaps": {
+    "maxMs": 33598,
+    "above90s": 0,
+    "endpointValuesAreNotAtomic": true
+  },
+  "workingSetBytes": {
+    "min": 645361664,
+    "max": 1033625600,
+    "last": 733949952
+  },
+  "distinctPrivateFailureTimestampsSeen": 16,
+  "staleQuoteFieldSampleCounts": {
+    "last": 18,
+    "mark": 18,
+    "bid": 18,
+    "ask": 18
+  },
+  "routeDecisionDeltas": {
+    "proxy-05d851d4af74": {
+      "admitted": 106,
+      "queued": 107,
+      "blocked": 1,
+      "queueTimeout": 1
+    }
+  },
+  "boundedRequestEvidence": {
+    "distinctIdsSeen": 127,
+    "completedInWindowSeen": 107,
+    "queueAgeMs": {
+      "n": 106,
+      "median": 0.0,
+      "p95": 1,
+      "max": 8156
+    },
+    "admittedNetworkMs": {
+      "n": 106,
+      "median": 15928.5,
+      "p95": 18277,
+      "max": 18504
+    },
+    "failurePhases": {
+      "AGENT_OR_SOCKET_ACQUISITION": 99,
+      "PROXY_OR_TLS": 4,
+      "RESPONSE_BODY": 1,
+      "FIRST_BYTE": 1
+    },
+    "coverage": "Bounded recent ledgers sampled once/minute; not a full request census. Admission counters provide separate aggregate deltas."
+  },
+  "durableEvents": {
+    "files": [
+      "D:\\MITS\\data\\runtime-logs\\engine-2026-10-07-590ba547-55af-4f98-9108-b92cec42b9d6-0.jsonl"
+    ],
+    "counts": {
+      "TELEMETRY_HEARTBEAT": 17,
+      "ANALYSIS_DISPATCH_HEARTBEAT": 17,
+      "ERROR_AGGREGATE": 3,
+      "PRIVATE_SYNC_FAILED": 14,
+      "CANDIDATE_SUPPLY_HEALTH": 35,
+      "MARKET_COHORT_FAILED": 4,
+      "MARKET_SYMBOL_ERROR": 32,
+      "EXIT_RECOVERY_CONVERGED": 1,
+      "OPERATIONAL_INCIDENT_RECOVERED": 1,
+      "EXIT_CONVERGENCE_QUEUE": 4,
+      "TRADE_SYNC_AUTO_FAILED": 1
+    },
+    "recoveryByIncidentId": {
+      "c76cffc3afdd6c3e": 1
+    },
+    "activationByIncidentId": {},
+    "distinctUnverifiedEntryIds": 0,
+    "terminalTpExactRecoveryEvents": {},
+    "coverage": "Only retained matching-instance JSONL files, within first/last actual sample timestamps. No natural terminal event means UNKNOWN, not a live PASS."
+  },
+  "evidence": {
+    "rawSha256": "2557833a2b24401510169ddd8b47264ae15f823cb0d8ef90c2632624f8a987f1",
+    "gzipSha256": "c5d6f5b8c63d4b7a2aa4cf398801243ac6b594a7ae37f0dee9bad421a21da571",
+    "compressedFile": "tp-projection-interrupted-for-phase-samples.jsonl.gz"
+  }
+}

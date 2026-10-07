@@ -5,7 +5,7 @@ type Candidate=Omit<OperationalIncident,'incidentId'|'active'|'firstSeenAt'|'las
 const text=(value:unknown)=>String(value??'').replace(/(apiKey|apiSecret|signature|authorization)=([^&\s]+)/gi,'$1=[REDACTED]').slice(0,600);
 const template=(publicCode:string,titleZh:string,messageZh:string,remediationZh:string,category:OperationalIncident['category'],blockingScopes:string[]):Pick<Candidate,'publicCode'|'titleZh'|'messageZh'|'remediationZh'|'category'|'severity'|'blockingScopes'>=>({publicCode,titleZh,messageZh,remediationZh,category,severity:'ERROR',blockingScopes});
 const NETWORK=template('NET-001','Binance 连接错误','无法连接 Binance；只有依赖该交易所事实的操作会安全暂停。','检查交易所服务、网络与已配置代理；系统不会把该错误解释为行情趋势。','NETWORK',['MARKET_DATA','NEW_ENTRY','EXCHANGE_WRITE']);
-const TIMEOUT=template('NET-002','Binance REST 连续响应延迟','60 秒内多次关键 Binance REST 请求超时；孤立慢请求只记遥测，不会触发此事故。只有确实缺少关键事实的操作会安全暂停。','系统优先使用 WebSocket 实时事实并自动恢复；连续发生时再检查交易所服务与当前活动代理。','NETWORK',['MARKET_DATA','NEW_ENTRY']);
+const TIMEOUT=template('NET-002','Binance 关键 REST 链路连续超时','60 秒内多次关键 Binance REST 请求超时；可能发生于代理握手、TLS 或等待 HTTP 响应，具体阶段见请求遥测。只有确实缺少关键事实的操作会安全暂停。','系统优先使用 WebSocket 实时事实并自动恢复；连续发生时再检查交易所服务与当前活动代理。','NETWORK',['MARKET_DATA','NEW_ENTRY']);
 const QUEUE=template('BINANCE-QUEUE-001','Binance REST 本地排队拥塞','关键事实请求在本地 admission 队列到期，不能据此判定交易所响应慢。缺失或过期事实仍安全暂停其依赖操作。','检查各请求 lane、排队年龄和恢复负载；系统保留当前私有事实容量并有界恢复。','NETWORK',['NEW_ENTRY']);
 const PRIVATE=template('PRIVATE-DATA-001','交易所私有事实暂不可用','账户或持仓事实未在允许的新鲜度内复核；显示最后已知状态，不代表交易所当前真值。','系统继续补取权威私有事实；不延长 TTL 或把行情更新视为仓位复核。','ACCOUNT',['NEW_ENTRY','PRIVATE_DATA']);
 const MARKET=template('MARKET-DATA-001','行情数据链路暂不可执行','报价、订单簿或K线的新鲜度/连续性不足，当前没有数据完整的可执行候选，新建仓分析已暂停。','系统会自动恢复；若持续发生，请检查 Binance WebSocket/REST 行情连接与交易所行情服务。这不是行情涨跌趋势判断。','MARKET_DATA',['MARKET_DATA','NEW_ENTRY']);
@@ -109,7 +109,8 @@ export function operationalCandidates(facts:{pipeline:any;routes:any[];account:a
 
   }
   if(facts.pipeline?.pipelineState==='PAUSED_MARKET_DATA_UNAVAILABLE'&&!out.some(row=>row.category==='NETWORK'))out.push({...MARKET,subsystem:'MARKET_DATA',sourceCode:String(facts.pipeline.marketDataReason??'MARKET_QUOTES_STALE'),sourceMessage:text(facts.pipeline.marketDataReason??'MARKET_QUOTES_STALE')});
-  if(facts.account?.status==='UNAVAILABLE'&&facts.account.reason){const reason=String(facts.account.reason),row=timeoutLike(reason)?null:classifyOperationalError({message:reason,subsystem:'PRIVATE_DATA'});if(row&&row.publicCode!=='NET-002')out.push(row);out.push({...PRIVATE,subsystem:'PRIVATE_DATA',sourceCode:'PRIVATE_DATA_UNAVAILABLE',sourceMessage:text(reason)});}
+  // Route telemetry owns network/exchange incidents; private staleness is a separate fact blocker.
+  if(facts.account?.status==='UNAVAILABLE'&&facts.account.reason)out.push({...PRIVATE,subsystem:'PRIVATE_DATA',sourceCode:'PRIVATE_DATA_UNAVAILABLE',sourceMessage:text(facts.account.reason)});
   if(facts.valuation?.status==='ACCOUNT_VALUATION_INCONSISTENT')out.push({...template('ACCOUNT_VALUATION_INCONSISTENT','账户估值无法对账','同一 Binance 快照的钱包、浮盈亏与账户权益不一致。','检查交易所账户字段与资产换算；暂勿将该数字视为总资产。','ACCOUNT',['PRIVATE_DATA']),subsystem:'ACCOUNT',sourceCode:'ACCOUNT_VALUATION_INCONSISTENT',sourceMessage:'same-snapshot invariant failed'});
   // Historical UNKNOWN rows remain in the audit and risk occupancy models.  A
   // submit incident describes a current submit acknowledgement gap only.

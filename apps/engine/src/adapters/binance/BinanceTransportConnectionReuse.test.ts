@@ -76,6 +76,7 @@ it('expires an admitted read and the underlying stalled SOCKS handshake within i
  try{
   await expect(transport.json('/fapi/v2/account',{timeoutMs:100})).rejects.toThrow('timed out');
   expect(Date.now()-started).toBeLessThan(400);expect(transport.requestBudgetHealth().active).toBe(0);
+  expect(transport.requestBudgetHealth().recentDispatches.at(-1)?.networkTiming).toMatchObject({failurePhase:'SOCKS_NEGOTIATION',proxyConnectStartedAt:expect.any(Number),proxyConnectedAt:null,socketAssignedAt:null,responseAt:null});
   await new Promise(resolve=>setTimeout(resolve,150));expect(f.sockets.size).toBe(0);
  }finally{clearTimeout(safety);transport.dispose();await f.close();}
 });

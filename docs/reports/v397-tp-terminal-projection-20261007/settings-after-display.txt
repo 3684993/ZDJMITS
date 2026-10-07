@@ -1,0 +1,55 @@
+{
+  "settingsVersion": 247,
+  "settingsSha256": "762941247f34ec1e94a19371ea8b79227a72cff594a814578c3a9d61897cbbb6",
+  "updatedAt": 1791349868282,
+  "environment": "TESTNET",
+  "executionMode": "TESTNET_ENABLED",
+  "resources": {
+    "ai_resources": [
+      {
+        "id": "brain-7900-primary",
+        "sha256": "99012bf6badbc8a4a346e3faef085fec9a43abd587269009a22f1e42e309bebc",
+        "updatedAt": 1787581312948
+      },
+      {
+        "id": "review-7900-gpu2",
+        "sha256": "93207983f0d0b69d3d4057b09fb258528f62355ac255552faddbb0f49019aa8f",
+        "updatedAt": 1790948828855
+      },
+      {
+        "id": "scout-b580",
+        "sha256": "c95304e3f9f8a0ab4573f552c52f2118fbf17ed17cd143da9efd8b0032bc1b5b",
+        "updatedAt": 1787581312903
+      }
+    ],
+    "exchange_resources": [
+      {
+        "id": "exchange_1787610224387",
+        "sha256": "2f5dfbe8033c06bcaa6c16ddd734bb3b87849607928e623473a11db14936a85d",
+        "updatedAt": 1787610224567
+      },
+      {
+        "id": "exchange_1789696768553",
+        "sha256": "1b7a9533c87746f542eeef1d278d22f2ae3dcdd3c5a3632821f13b031ad5dc63",
+        "updatedAt": 1789696768557
+      }
+    ],
+    "proxy_resources": [
+      {
+        "id": "binance-proxy",
+        "sha256": "534f100d0635670d5c5465297a94e740e791a087324cdccfa4f6af120e2a17fc",
+        "updatedAt": 1791335542483
+      },
+      {
+        "id": "proxy_1789696800729",
+        "sha256": "1f3b23cf802ab707cea8b38a041d7f1f81f6b2d5caa6df32221616bf8bf91455",
+        "updatedAt": 1789696800736
+      },
+      {
+        "id": "socks5h-default",
+        "sha256": "9bd20586bbe020fab6bbcaafb6dfac3f9622d5faf2b4c43519943107e0df0174",
+        "updatedAt": 1787581312952
+      }
+    ]
+  }
+}

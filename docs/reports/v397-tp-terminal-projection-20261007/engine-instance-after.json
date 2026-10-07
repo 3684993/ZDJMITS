@@ -1,0 +1,16 @@
+{
+  "instanceId": "590ba547-55af-4f98-9108-b92cec42b9d6",
+  "pid": 36360,
+  "startedAt": 1791385153146,
+  "host": "0.0.0.0",
+  "port": 8080,
+  "version": "3.9.7",
+  "buildId": "3.9.7-8b2d50435b599b6ad1d3",
+  "artifactHash": "8b2d50435b599b6ad1d333dba338b680088648436e6b8488a5bd34e103464b07",
+  "sourceHash": "1c8fa219030125ab2832086d070986da622e7a52e918102536afcf0df0b40f76",
+  "startReason": "MANUAL_START",
+  "lanIps": [
+    "192.168.1.50"
+  ],
+  "restartCount": 265
+}

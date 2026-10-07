@@ -131,3 +131,9 @@ it('keeps historical/backfill wire and queue failures telemetry but preserves re
  facts.routes[0].requestBudget.recentDispatches.push({...failures[0],status:429});
  expect(operationalCandidates(facts).map(row=>row.publicCode)).toEqual(['EX-HTTP-429']);
 });
+
+it('reports one physical network cause plus a separate private fact blocker',()=>{
+ const failure={message:'BINANCE_TRANSPORT_BLOCKED: ECONNRESET',requestId:'same-read',endpoint:'/fapi/v2/account',method:'GET',routeIdentity:'proxy-x',completedAt:Date.now()};
+ const rows=operationalCandidates({pipeline:{pipelineState:'RUNNING'},routes:[{recentFailures:[failure]}],account:{status:'UNAVAILABLE',reason:failure.message}});
+ expect(rows.map(row=>row.publicCode)).toEqual(['NET-001','PRIVATE-DATA-001']);expect(rows.filter(row=>row.category==='NETWORK')).toHaveLength(1);expect(rows[0]?.requestId).toBe('same-read');
+});

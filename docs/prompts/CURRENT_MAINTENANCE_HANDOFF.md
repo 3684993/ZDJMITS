@@ -1,3 +1,7 @@
+# Final active phase/dedup deployment — 2026-10-07
+
+Latest verified tree1982tests/233files PASS closes additional private non-timeout network duplication and adds explicit SOCKS_NEGOTIATION/AGENT_QUEUE/TLS_HANDSHAKE timing. NET-002 no longer alleges exchange HTTP response latency without phase facts. Source/report in docs/reports/v397-rest-phase-closeout-20261007/. F01/F02/F03/F05/F06/F07/F08 fixes and0737e66 retained. Two known TP orphan projections restored from matching retained Binance WS FILLED facts, executedETH0.39/BCH4.959, remaining0, identity6/6. Private/WS still unhealthy; independent SOCKS CONNECT blocker reproduced three times bypassing Engine. Latest only8080 cutover now authorized; final10–30min independentfeedback pending. No12h gate; old heartbeat paused. Models/Settings/proxy/strategy/DB remain unchanged. F04/F10/F11 remain deferred.
+
 # Active run followup: TP terminal projection — 2026-10-07
 
 First active deployment PID9112/instance0c050f74-fc64-43ea-af88-2e1728edfb93 passed identity6/6 but actual10.7954min feedback NOT_HEALTHY:23samples private READY1/explicit UNAVAILABLE21/gap1; REST queue drained but independent SOCKS CONNECT fails before TLS/HTTP. No12h gate. All evidence in docs/reports/v397-active-remediation-20261007/.

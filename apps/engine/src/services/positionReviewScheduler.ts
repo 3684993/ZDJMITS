@@ -39,7 +39,7 @@ export class PositionReviewScheduler {
   private budgets=new Map<string,BudgetState>();
   constructor(private readonly ports:{
     ledger:AiUsageLedger;
-    settings:()=>{normalReviewsPerPlan:number;exceptionReviewsPerPlan:number;failureBudget:number;minIntervalMs:number;authorityTtlMs:number};
+    settings:()=>{normalReviewsPerPlan:number;exceptionReviewsPerPlan:number;failureBudget:number;minIntervalMs:number;authorityTtlMs:number;renewalMs?:number};
     /** Who owns the cycle right now. A journal or read model miss is treated as not AI-owned. */
     ownerOf:(scope:string,cycleId:string)=>{ownerState:string;ownerVersion:number;deadline:number|null;reviewEligible?:boolean}|null;
     now?:()=>number;
@@ -68,10 +68,11 @@ export class PositionReviewScheduler {
   private routineLimit(budget:BudgetState,normal:number,now:number){
     const base=Math.max(0,Math.trunc(normal));
     if(budget.used<base)return base;
-    const last=budget.runs.at(-1),lastAt=Number(last?.completedAt??last?.startedAt??0);
-    // A long-held position earns one further advisory review only after a full day.
-    // Spent calls and the original budget remain durable; this never grants Exit authority.
-    return lastAt>0&&now-lastAt>=ROUTINE_REVIEW_RENEWAL_MS?budget.used+1:budget.used;
+    const last=budget.runs.at(-1),lastAt=Number(last?.completedAt??last?.startedAt??0),
+      renewalMs=Math.max(60_000,Number(this.ports.settings().renewalMs??ROUTINE_REVIEW_RENEWAL_MS));
+    // Dedicated Review hardware may renew advisory work more often; shared Primary keeps the
+    // conservative 12h fallback. Renewal never grants exchange authority.
+    return lastAt>0&&now-lastAt>=renewalMs?budget.used+1:budget.used;
   }
 
   /**
@@ -168,7 +169,8 @@ export class PositionReviewScheduler {
       const lastReviewAt=runs.length?Math.max(...runs.map(row=>Number(row.completedAt??row.startedAt??0)).filter(value=>Number.isFinite(value))):null;
       const last=runs[runs.length-1]??null;
       const limit=this.routineLimit(budget,settings.normalReviewsPerPlan,now);
-      const renewalDueAt=budget.used>=Math.max(0,Math.trunc(settings.normalReviewsPerPlan))&&lastReviewAt!=null?lastReviewAt+ROUTINE_REVIEW_RENEWAL_MS:0;
+      const renewalMs=Math.max(60_000,Number(settings.renewalMs??ROUTINE_REVIEW_RENEWAL_MS)),
+        renewalDueAt=budget.used>=Math.max(0,Math.trunc(settings.normalReviewsPerPlan))&&lastReviewAt!=null?lastReviewAt+renewalMs:0;
       return{budgetKey:budget.budgetKey,cycleId:budget.cycleId,scope:budget.scope,planRef:budget.planRef,
         used:budget.used,limit,failures:budget.failures,lastReviewAt,
         nextDueAt:lastReviewAt==null?now:Math.max(lastReviewAt+minIntervalMs,renewalDueAt),

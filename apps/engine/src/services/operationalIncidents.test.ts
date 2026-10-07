@@ -31,6 +31,17 @@ describe('user-facing operational incidents',()=>{
     tracker.observe([a],100);tracker.observe([b],200);
     expect(tracker.read().active).toHaveLength(1);expect(tracker.read().active[0]).toMatchObject({publicCode:'NET-002',endpoint:'/fapi/v1/openOrders',routeIdentity:'proxy-x',count:2,firstSeenAt:100});
   });
+  it('keeps a brief global market-data pause out of the incident banner until it persists across three observations',()=>{
+    const tracker=new OperationalIncidentTracker(),candidate=operationalCandidates({pipeline:{pipelineState:'PAUSED_MARKET_DATA_UNAVAILABLE',marketDataReason:'MARKET_QUOTES_STALE'},routes:[],account:{status:'READY'}})[0]!;
+    expect(tracker.observe([candidate],100).active).toHaveLength(0);
+    expect(tracker.observe([candidate],5_100).active).toHaveLength(0);
+    expect(tracker.observe([candidate],10_100).active[0]?.publicCode).toBe('MARKET-DATA-001');
+    expect(tracker.observe([],15_100).active).toHaveLength(0);
+  });
+  it('never turns /fapi/v1/time queue jitter into NET-002 by itself',()=>{
+    const now=Date.now(),rows=operationalCandidates({pipeline:{pipelineState:'RUNNING',freshMarkets:{status:'FRESH'}},routes:[{recentFailures:[0,1,2,3].map(i=>({message:'BINANCE_TRANSPORT_BLOCKED: Binance request timed out',requestId:`clock-${i}`,endpoint:'/fapi/v1/time',method:'GET',routeIdentity:'proxy-test',completedAt:now-i*1000})),requestBudget:{recentDispatches:[0,1,2,3].map(i=>({decision:'TIMEOUT',completedAt:now-i*1000,endpoint:'/fapi/v1/time',method:'GET',requestId:`clock-${i}`,routeIdentity:'proxy-test'}),),admissionObservedWeight1m:100,softBackgroundWeight:1000}}],account:{status:'READY'}});
+    expect(rows).toHaveLength(0);
+  });
   it('does not call isolated symbols a global outage while a healthy candidate remains',()=>{
     const routes:any[]=[],account={status:'READY'};
     expect(operationalCandidates({pipeline:{pipelineState:'RUNNING',marketDataReason:null},routes,account})).toHaveLength(0);
@@ -60,9 +71,12 @@ describe('user-facing operational incidents',()=>{
     facts.orders[0]!.createdAt=Date.now();
     expect(operationalCandidates(facts)[0]?.publicCode).toBe('EX-SUBMIT-UNKNOWN');
   });
-  it('projects a current Binance business rejection with request evidence',()=>{
-    const rows=operationalCandidates({pipeline:{pipelineState:'RUNNING'},routes:[{recentFailures:[{message:'Binance HTTP 400: {"code":-5022,"msg":"Post Only"}',requestId:'r1',endpoint:'/fapi/v1/order',method:'POST',routeIdentity:'proxy-test'}]}],account:{status:'READY'}});
-    expect(rows).toMatchObject([{publicCode:'EX-BINANCE-5022',requestId:'r1',endpoint:'/fapi/v1/order',method:'POST'}]);
+  it('treats one or two -5022 maker races as auto-recovery telemetry and surfaces only a repeated pricing problem',()=>{
+    const failure=(n:number)=>({message:'Binance HTTP 400: {"code":-5022,"msg":"Post Only"}',requestId:`r${n}`,endpoint:'/fapi/v1/order',method:'POST',routeIdentity:'proxy-test',completedAt:Date.now()-n*1000});
+    const facts=(count:number)=>({pipeline:{pipelineState:'RUNNING'},routes:[{recentFailures:Array.from({length:count},(_,i)=>failure(i))}],account:{status:'READY'}});
+    expect(operationalCandidates(facts(1))).toHaveLength(0);
+    expect(operationalCandidates(facts(2))).toHaveLength(0);
+    expect(operationalCandidates(facts(3))).toMatchObject([{publicCode:'EX-BINANCE-5022',endpoint:'/fapi/v1/order',method:'POST'}]);
   });
   it('keeps exact-order absence audit-only without suppressing other methods',()=>{
     const missing='Binance HTTP 400: {"code":-2013,"msg":"Order does not exist"}',absent='Binance HTTP 400: {"code":-2011,"msg":"Unknown order sent"}';

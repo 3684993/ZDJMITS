@@ -1,6 +1,12 @@
 # J-MITS V3.9.7 — CURRENT MAINTENANCE HANDOFF
 
 ## 2026-10-07 audit remediation followup — current authority
+## Followup deployment and new observation window
+
+Verified implementation e034c20 deployed manually to 8080 at 18:37:58 +08:00. Run lifecycle total: two deliberate stop/MANUAL_START deployments; no automatic retry. PID 37952, instance 285c4ece-93d9-4be8-9393-839cbf47fb9b, restart counter 263. Build 3.9.7-8b758a2b18ba8b6abe90; source d9626b0f51ae679283d93b7b2bb9c6355322d3f65cbd7010b40d9aec57c9565e; artifact 8b758a2b18ba8b6abe90eec9fef05d374d47192f7fbf98a4f226a2c5fcf393b2. Branch identity closes 6/6. Loading ECONNREFUSED and STARTING/503 evidence is preserved, followed by followup-readiness-ready.json READY/200. Private truth READY and TP protection 9/9; no TP mismatch/orphan/duplicate/unknown in readiness samples. Model PIDs/creation times match baseline. Settings version247 and every Settings/resource payload hash exactly match the pre-run fingerprint.
+
+New independent localhost observer PID 35268 started 2026-10-07T18:41:12.1564572+08:00; nominal 6h checkpoint 2026-10-08T00:41:12.1564572+08:00, 12h endpoint 2026-10-08T06:41:12.1564572+08:00. Use actual first/last samples for duration. The first failed window is excluded. Do not claim NET-002 eradication or stability before data review; natural TP terminal cases remain UNKNOWN absent events. All collected windows must be archived losslessly and pushed to GitHub. F04/F10/F11 remain deferred.
+
 
 This supersedes prior one-deployment and old observation deadline statements. The first deployment's 24 samples over 0.382815h failed stability: four private UNAVAILABLE samples, recurrent NET-002 and local queue congestion. The owned observer was stopped for a followup deployment; its lossless initial-window-final evidence is archived under docs/reports/v397-audit-remediation-20261007/.
 

@@ -1,0 +1,12 @@
+{
+  "pid": 35268,
+  "startedAt": "2026-10-07T18:41:12.1564572+08:00",
+  "checkpoint6h": "2026-10-08T00:41:12.1564572+08:00",
+  "deadline12h": "2026-10-08T06:41:12.1564572+08:00",
+  "command": "collect_stability.py --hours 12 --interval 60",
+  "mode": "LOCALHOST_GET_ONLY",
+  "enginePid": 37952,
+  "instanceId": "285c4ece-93d9-4be8-9393-839cbf47fb9b",
+  "supersedesObserver": 46716,
+  "firstWindowAccepted": false
+}

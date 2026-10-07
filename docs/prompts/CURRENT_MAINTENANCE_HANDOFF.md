@@ -528,3 +528,10 @@ The initial collector summary default conflated a missing closeout endpoint with
 ## First hourly checkpoint (19:43 +08:00)
 
 63 samples/1.036706h: private READY48, explicit UNAVAILABLE3, observation gaps12; max private age161302ms. NET-0029 active samples, queue60; TP missing10, mismatch1, orphan2, subsequently current TP8/8. Fact-layer runtime NOT_STABLE so far, final duration PENDING. Read FOLLOWUP_HOUR01.md and lossless/current-instance evidence under docs/reports/v397-audit-remediation-20261007/. Model/Engine/collector processes unchanged, identity6/6, no lifecycle/config/trading action by observer. F04/F10/F11 deferred. Investigate proven lack of REST socket reuse in isolation; not automatically deployed.
+
+
+## Active remediation override — 2026-10-07
+
+The old 6h/12h observation window is **no longer a deployment gate**. Hour 3 proved persistent failure: 60/60 new samples private UNAVAILABLE, current private snapshot ~81 minutes stale, 98 consecutive failures, NEW_ENTRY/model spend blocked, TP DEGRADED with two orphan items. Continue from `docs/prompts/CODEX_ACTIVE_REMEDIATION_NOW.md`.
+
+Immediate rule: integrate and verify candidate `0737e6649dd9c0754c4238bc3a860ec786487a0a`, then continue fixing confirmed F01/F02/F03/F05/F06/F07/F08 defects, deploy to main, restart 8080 only, and use a 10–30 minute feedback loop. If still unhealthy, fix again immediately; do not wait for the remainder of a 12-hour window. Strategy tuning F04/F10/F11 remains deferred until factual/runtime health is restored.

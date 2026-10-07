@@ -263,6 +263,16 @@ function updateAiRoute(duty:string,resourceId:string){const routes=structuredClo
 function routeResourceId(duty:string){return aiRouteDraft.value.find((row:any)=>row.duty===duty&&row.enabled)?.resourceId??"";}
 function onAiRouteChange(duty:string,event:Event){updateAiRoute(duty,(event.target as HTMLSelectElement).value);}
 async function saveAiRoutes(){try{const expected=resourceSettingsVersion.value??draft.value?.settingsVersion;if(!expected)throw new Error("资源版本尚未加载，请刷新设置");const saved=await api.saveAiDutyRoutes(aiRouteDraft.value,expected),readback=await api.aiDutyRoutes();aiRouteDraft.value=readback.routes??saved.routes??[];resourceSettingsVersion.value=Number(readback.settingsVersion??saved.settingsVersion);if(draft.value){draft.value.settingsVersion=resourceSettingsVersion.value;draft.value.aiDutyRoutes=structuredClone(aiRouteDraft.value);}notice.value="职责路由已保存并完成服务端读回";}catch(e){error.value=String(e);}}
+async function saveAiWorkloadPolicy(){
+  if(!draft.value)return;
+  saving.value=true;notice.value="";error.value="";
+  try{
+    draft.value=structuredClone(await api.saveSettings(draft.value));
+    resourceSettingsVersion.value=draft.value.settingsVersion;
+    notice.value="AI 工作负载策略已保存：Scout 仅提供非阻断观察，Primary 仍是唯一 Entry 决策者";
+  }catch(e){error.value=String(e);}finally{saving.value=false;}
+}
+async function cancelAiWorkloadPolicy(){await load();notice.value="AI 工作负载策略的未保存修改已取消";}
 async function saveCredentials() {
   try {
     const result = await saveExchangeCredentials(apiKey.value, apiSecret.value);
@@ -920,6 +930,14 @@ onMounted(load);
             <EmptyState v-if="!selectedResources('ai').length" title="选择一个 AI 资源" detail="资源详情会显示连接、健康和运行指标。" />
           </div>
         </div>
+        <section class="ai-workload-policy">
+          <div class="ai-duty-heading"><div><h3>工作负载策略</h3><p>把空闲算力用于有业务价值的非阻断任务，而不是为了“满载”制造无意义调用。</p></div></div>
+          <div class="form-grid two">
+            <label class="switch-row"><span>候选 Scout 异步观察</span><input v-model="draft.ai.scoutEnabled" type="checkbox" /><small>9B 对进入动态池的候选做异步摘要/矛盾检查；不阻断 Primary，不拥有下单权限。</small></label>
+            <label class="switch-row"><span>外部共享事件研究</span><input v-model="draft.externalIntelligence.researchEnabled" type="checkbox" /><small>有共享外部事件时交给 Scout/Research；没有事件时保持等待是正常状态。</small></label>
+          </div>
+          <div class="ai-resource-actions"><span class="muted">这两个开关只控制 AI 工作负载，不修改模型 endpoint 或职责路由。</span><div><button class="button secondary" :disabled="saving" @click="cancelAiWorkloadPolicy">取消修改</button><button class="button primary" :disabled="saving" @click="saveAiWorkloadPolicy">{{saving?'保存中…':'保存工作负载策略'}}</button></div></div>
+        </section>
         <section class="ai-duty-routes"><div class="ai-duty-heading"><div><h3>职责路由</h3><p>同一物理资源可以承担多个职责；Review 模型只输出判断，交易所动作由确定性 coordinator 执行。</p></div><button class="button primary" :disabled="JSON.stringify(aiRouteDraft)===JSON.stringify(draft?.aiDutyRoutes??[])" @click="saveAiRoutes">保存职责路由</button></div>
           <div class="ai-duty-grid"><label v-for="duty in Object.keys(aiDutyLabels)" :key="duty"><span>{{aiDutyLabels[duty]}}</span><select :value="routeResourceId(duty)" @change="onAiRouteChange(duty,$event)"><option value="">未配置</option><option v-for="resource in resources.ai.filter(row=>row.enabled)" :key="resource.id" :value="resource.id">{{resource.name||resource.model||resource.id}} · {{resource.model}}</option></select></label></div>
           <div class="route-notes"><span>POSITION_REVIEW 优先于 PENDING_ENTRY_REVIEW；GPU2 Review 并发为 1。</span><span>GPU2 故障不会回退占用 GPU1 Entry Primary。</span></div>
@@ -961,7 +979,7 @@ onMounted(load);
 .ai-health-grid strong{font-size:.82rem}.ai-health-grid small{margin:0}
 .ai-resource-actions{display:flex;justify-content:space-between;align-items:center;gap:.8rem;margin-top:1rem;padding-top:.9rem;border-top:1px solid var(--line)}
 .ai-resource-actions>div{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:.4rem}
-.ai-duty-routes{margin-top:1.25rem;padding:1rem;border:1px solid var(--line);border-radius:.75rem;background:var(--surface)}
+.ai-duty-routes,.ai-workload-policy{margin-top:1.25rem;padding:1rem;border:1px solid var(--line);border-radius:.75rem;background:var(--surface)}
 .ai-duty-heading{margin-bottom:.9rem}.ai-duty-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.8rem}
 .ai-duty-grid label{display:grid;gap:.4rem}.ai-duty-grid select{min-width:0;width:100%}
 .route-notes{display:flex;justify-content:space-between;gap:.8rem;flex-wrap:wrap;margin-top:.8rem;color:var(--text-muted);font-size:.78rem}

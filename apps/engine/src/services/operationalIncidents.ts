@@ -5,7 +5,7 @@ type Candidate=Omit<OperationalIncident,'incidentId'|'active'|'firstSeenAt'|'las
 const text=(value:unknown)=>String(value??'').replace(/(apiKey|apiSecret|signature|authorization)=([^&\s]+)/gi,'$1=[REDACTED]').slice(0,600);
 const template=(publicCode:string,titleZh:string,messageZh:string,remediationZh:string,category:OperationalIncident['category'],blockingScopes:string[]):Pick<Candidate,'publicCode'|'titleZh'|'messageZh'|'remediationZh'|'category'|'severity'|'blockingScopes'>=>({publicCode,titleZh,messageZh,remediationZh,category,severity:'ERROR',blockingScopes});
 const NETWORK=template('NET-001','Binance 连接错误','无法连接 Binance；只有依赖该交易所事实的操作会安全暂停。','检查交易所服务、网络与已配置代理；系统不会把该错误解释为行情趋势。','NETWORK',['MARKET_DATA','NEW_ENTRY','EXCHANGE_WRITE']);
-const TIMEOUT=template('NET-002','Binance REST 响应延迟','关键 Binance REST 请求超时；只有缺少该关键事实的操作会安全暂停。','系统优先使用 WebSocket 实时事实并自动恢复；持续发生时再检查交易所服务与已配置网络路径。','NETWORK',['MARKET_DATA','NEW_ENTRY']);
+const TIMEOUT=template('NET-002','Binance REST 连续响应延迟','60 秒内多次关键 Binance REST 请求超时；孤立慢请求只记遥测，不会触发此事故。只有确实缺少关键事实的操作会安全暂停。','系统优先使用 WebSocket 实时事实并自动恢复；连续发生时再检查交易所服务与当前活动代理。','NETWORK',['MARKET_DATA','NEW_ENTRY']);
 const MARKET=template('MARKET-DATA-001','行情数据链路暂不可执行','报价、订单簿或K线的新鲜度/连续性不足，当前没有数据完整的可执行候选，新建仓分析已暂停。','系统会自动恢复；若持续发生，请检查 Binance WebSocket/REST 行情连接与交易所行情服务。这不是行情涨跌趋势判断。','MARKET_DATA',['MARKET_DATA','NEW_ENTRY']);
 const SUBMIT=template('EX-SUBMIT-UNKNOWN','订单提交结果未知','系统正按原 clientOrderId 查询订单身份，确认前禁止重复提交。','查看订单身份查询结果；不要手动重复提交同一订单。','SUBMIT_UNKNOWN',['EXCHANGE_WRITE','NEW_ENTRY']);
 const HTTP:Record<number,ReturnType<typeof template>>={

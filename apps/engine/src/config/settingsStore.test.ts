@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { mkdtemp, rm, stat } from 'node:fs/promises';
+import { mkdtemp, readdir, rm, stat } from 'node:fs/promises';
 import path from 'node:path';
 import os from 'node:os';
 vi.mock('@zdj/contracts', async () => import(new URL('../../../../packages/contracts/src/index.js', import.meta.url).href));
@@ -76,6 +76,15 @@ describe('SettingsStore', () => {
     const thirdStore=new SettingsStore(configDir,dir);const third=await thirdStore.load();thirdStore.close();
     expect(JSON.stringify(again)).toBe(stored);expect(JSON.stringify(third)).toBe(stored);
     expect(again.settingsVersion).toBe(177);expect(third.takeProfit.minNetProfitUsd).toBe(1);
+  });
+  it('keeps the TradeRecord sync baseline standalone without WAL SHM or temp residue',async()=>{
+    const dataDir=await mkdtemp(path.join(os.tmpdir(),'zdj-baseline-main-'));paths.push(dataDir);
+    const backupDir=path.join(dataDir,'backups','trade-sync'),store=new SettingsStore(path.resolve(process.cwd(),'../../config'),dataDir);await store.load();
+    try{
+      const first=await store.tradeSyncBaseline(backupDir),second=await store.tradeSyncBaseline(backupDir);
+      expect(second).toBe(first);expect((await stat(first)).size).toBeGreaterThan(0);
+      expect((await readdir(backupDir)).sort()).toEqual(['trade-sync-baseline.sqlite']);
+    }finally{store.close();}
   });
   it('persists versioned settings in SQLite and creates an integrity-checked backup', async () => {
     const dataDir = await mkdtemp(path.join(os.tmpdir(), 'zdj-settings-')); paths.push(dataDir);

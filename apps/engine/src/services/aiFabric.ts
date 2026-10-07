@@ -133,7 +133,7 @@ export class AiFabric {
   private primaryCircuitState: 'AVAILABLE' | 'OPEN' | 'PROBING' | 'HALF_OPEN' = 'AVAILABLE';
   private primaryProbe:Promise<boolean>|null=null;
   private reviewQueues=new Map<string,ReviewQueueItem[]>();
-  private reviewActive=new Set<string>();
+  private reviewActive=new Map<string,number>();
   private reviewSequence=0;
   constructor(private state:RuntimeState,private events:EventBus,private eipService:EipService){
     for(const r of state.aiResources)this.load.set(r.id,{active:0,totalRuns:0,failures:0,lastLatencyMs:null,currentSymbol:null,currentRunId:null,currentStartedAt:null,lastCompletedAt:null,lastDirection:null,lastDecision:null,idleReason:'WAITING_CANDIDATE',nextStep:'等待动态交易池候选',queueDepth:0});
@@ -259,14 +259,27 @@ export class AiFabric {
     const queue=this.reviewQueues.get(resource.id)??[];if(queue.length>=128&&duty==='PENDING_ENTRY_REVIEW')return Promise.reject(new Error('AI_REVIEW_QUEUE_FULL'));
     this.reviewQueues.set(resource.id,queue);const enqueuedAt=Date.now();
     return new Promise<T>((resolve,reject)=>{queue.push({duty,sequence:this.reviewSequence++,run:target=>work(target,Math.max(0,Date.now()-enqueuedAt)),resolve:resolve as (value:unknown)=>void,reject});
-      const load=this.load.get(resource.id);if(load)load.queueDepth=queue.length+(this.reviewActive.has(resource.id)?1:0);this.pumpReviewQueue(resource.id);});
+      const load=this.load.get(resource.id);if(load)load.queueDepth=queue.length+(this.reviewActive.get(resource.id)??0);this.pumpReviewQueue(resource.id);});
   }
   private pumpReviewQueue(resourceId:string){
-    if(this.reviewActive.has(resourceId))return;const queue=this.reviewQueues.get(resourceId);if(!queue?.length)return;
+    const queue=this.reviewQueues.get(resourceId);if(!queue?.length)return;
+    const resource=this.state.aiResources.find(row=>row.id===resourceId),load=this.load.get(resourceId);
+    if(!resource){for(const item of queue.splice(0))item.reject(new Error('AI_DUTY_RESOURCE_REMOVED'));if(load)load.queueDepth=0;return;}
     queue.sort((a,b)=>(a.duty==='POSITION_REVIEW'?0:1)-(b.duty==='POSITION_REVIEW'?0:1)||a.sequence-b.sequence);
-    const item=queue.shift()!,resource=this.state.aiResources.find(row=>row.id===resourceId);const load=this.load.get(resourceId);
-    if(load)load.queueDepth=queue.length+1;if(!resource){item.reject(new Error('AI_DUTY_RESOURCE_REMOVED'));if(load)load.queueDepth=queue.length;this.pumpReviewQueue(resourceId);return;}
-    this.reviewActive.add(resourceId);void item.run(resource).then(item.resolve,item.reject).finally(()=>{this.reviewActive.delete(resourceId);if(load)load.queueDepth=queue.length;this.pumpReviewQueue(resourceId);});
+    const active=this.reviewActive.get(resourceId)??0,capacity=Math.max(1,Number(resource.maxConcurrency??1));
+    if(active>=capacity)return;
+    const launch=Math.min(capacity-active,queue.length);
+    for(let i=0;i<launch;i++){
+      const item=queue.shift()!;
+      this.reviewActive.set(resourceId,(this.reviewActive.get(resourceId)??0)+1);
+      if(load)load.queueDepth=queue.length+(this.reviewActive.get(resourceId)??0);
+      void item.run(resource).then(item.resolve,item.reject).finally(()=>{
+        const next=Math.max(0,(this.reviewActive.get(resourceId)??1)-1);
+        if(next)this.reviewActive.set(resourceId,next);else this.reviewActive.delete(resourceId);
+        if(load)load.queueDepth=queue.length+next;
+        this.pumpReviewQueue(resourceId);
+      });
+    }
   }
   private primaryServes:Array<{role:'ENTRY'|'REVIEW';at:number}>=[];
   private reviewOwedSince:number|null=null;

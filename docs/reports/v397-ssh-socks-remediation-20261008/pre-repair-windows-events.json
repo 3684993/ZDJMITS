@@ -1,0 +1,14 @@
+[
+  {
+    "TimeCreated": "2026-10-08T06:54:57.8200122+08:00",
+    "Id": 1001,
+    "ProviderName": "Windows Error Reporting",
+    "Message": "故障存储段 2165364594132697145，类型 5\r\n事件名称: BEX64\r\n响应: 不可用\r\nCab ID: 0\r\n\r\n问题签名:\r\nP1: codex.exe\r\nP2: 0.0.0.0\r\nP3: 6abe9ece\r\nP4: codex.exe\r\nP5: 0.0.0.0\r\nP6: 6abe9ece\r\nP7: 000000000e4a0e81\r\nP8: c0000409\r\nP9: 0000000000000007\r\nP10: \r\n\r\n附加文件:\r\n\\\\?\\C:\\ProgramData\\Microsoft\\Windows\\WER\\Temp\\WER.8018258f-ac28-4aea-8a2e-b7dcc3c660b2.tmp.dmp\r\n\\\\?\\C:\\ProgramData\\Microsoft\\Windows\\WER\\Temp\\WER.5baa5959-bbc9-4bc4-82c5-3de36a12b3d3.tmp.WERInternalMetadata.xml\r\n\\\\?\\C:\\ProgramData\\Microsoft\\Windows\\WER\\Temp\\WER.839ed260-d448-46a6-ad56-0053b7a6d41c.tmp.csv\r\n\\\\?\\C:\\ProgramData\\Microsoft\\Windows\\WER\\Temp\\WER.1081311b-d7cd-423a-ba55-629cd7e664a2.tmp.txt\r\n\\\\?\\C:\\ProgramData\\Microsoft\\Windows\\WER\\Temp\\WER.10f2dade-bd5f-4ae1-897e-159ee5189352.tmp.xml\r\n\r\n可在此处获取这些文件:\r\n\\\\?\\C:\\ProgramData\\Microsoft\\Windows\\WER\\ReportArchive\\AppCrash_codex.exe_55d8eb820ca7ffc332fa466d46e97488e45378e_c954797e_c5ee130a-d140-41ce-9a0e-00ce43fe122e\r\n\r\n分析符号: \r\n重新检查解决方案: 0\r\n报告 ID: 64c6f440-41c1-44dc-9455-a55a140a3816\r\n报告状态: 268435456\r\n哈希存储段: c229094fd32fdc437e0ceba0327cc039\r\nCab GUID: 0"
+  },
+  {
+    "TimeCreated": "2026-10-08T06:54:51.912894+08:00",
+    "Id": 1000,
+    "ProviderName": "Application Error",
+    "Message": "出错应用程序名称： codex.exe，版本： 0.0.0.0，时间戳： 0x6abe9ece\r\n出错模块名称： codex.exe， 版本： 0.0.0.0，时间戳： 0x6abe9ece\r\n异常代码： 0xc0000409\r\n错误偏移： 0x000000000e4a0e81\r\n出错进程 ID： 0xBDC8\r\n出错应用程序开始时间： 0x1DD56123F139C2B\r\nFaulting 应用程序路径： C:\\Users\\5700x\\AppData\\Local\\OpenAI\\Codex\\bin\\8aaf1547b825b104\\codex.exe\r\nFaulting 模块路径： C:\\Users\\5700x\\AppData\\Local\\OpenAI\\Codex\\bin\\8aaf1547b825b104\\codex.exe\r\nReport ID： 64c6f440-41c1-44dc-9455-a55a140a3816\r\nFaulting 包全名： \r\nFaulting 程序包相对应用程序 ID：  个"
+  }
+]

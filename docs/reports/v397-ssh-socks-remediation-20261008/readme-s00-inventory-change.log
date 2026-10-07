@@ -1,0 +1,23 @@
+(node:18440) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:31172) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> zdj-mits-v3@3.9.7 verify:s00
+> node scripts/v396-s00-static-check.mjs --review=docs/reports/v397-entry-sizing-primary-authority-version-closeout-20261004/s00/entrypoint-review.json --current-identity=docs/reports/v397-entry-sizing-primary-authority-version-closeout-20261004/s00/current-identity.json --historical-lock=docs/reports/v397-entry-sizing-primary-authority-version-closeout-20261004/s00/historical-package-lock.json
+
+(node:50272) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+file:///D:/MITS-WORKTREES/v397-ssh-socks-remediation-20261008/scripts/v396-s00-static-check.mjs:17
+const assert = (condition, message) => { if (!condition) throw new Error(`S00_CHECK_FAILED: ${message}`); };
+                                                               ^
+
+Error: S00_CHECK_FAILED: entrypoint review count 154 does not match the derived 155
+    at assert (file:///D:/MITS-WORKTREES/v397-ssh-socks-remediation-20261008/scripts/v396-s00-static-check.mjs:17:64)
+    at file:///D:/MITS-WORKTREES/v397-ssh-socks-remediation-20261008/scripts/v396-s00-static-check.mjs:113:1
+    at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+
+Node.js v22.23.1

@@ -1,0 +1,33 @@
+{
+  "capturedAt": "2026-10-07T23:10:11.089194+00:00",
+  "capturedAtMs": 1791414611089,
+  "endpoints": {
+    "health": {
+      "error": "<urlopen error [WinError 10061] 由于目标计算机积极拒绝，无法连接。>",
+      "durationMs": 2120
+    },
+    "closeout": {
+      "error": "<urlopen error [WinError 10061] 由于目标计算机积极拒绝，无法连接。>",
+      "durationMs": 2119
+    },
+    "governance": {
+      "error": "<urlopen error [WinError 10061] 由于目标计算机积极拒绝，无法连接。>",
+      "durationMs": 2119
+    },
+    "private": {
+      "error": "<urlopen error [WinError 10061] 由于目标计算机积极拒绝，无法连接。>",
+      "durationMs": 2099
+    },
+    "operations": {
+      "error": "<urlopen error [WinError 10061] 由于目标计算机积极拒绝，无法连接。>",
+      "durationMs": 2098
+    },
+    "incidents": {
+      "error": "<urlopen error [WinError 10061] 由于目标计算机积极拒绝，无法连接。>",
+      "durationMs": 2098
+    }
+  },
+  "engineMemory": {
+    "error": "No observed Engine PID"
+  }
+}

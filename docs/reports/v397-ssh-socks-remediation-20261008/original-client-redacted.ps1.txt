@@ -1,0 +1,113 @@
+[CmdletBinding()]
+param(
+  [switch]$Restart
+)
+
+$ErrorActionPreference = 'Stop'
+$ServerIp = '43.156.0.24'
+$ServerPort = 22091
+$LocalPort = 20091
+$ProxyUser = 'zdjproxy'
+
+$baseDir = Join-Path $env:LOCALAPPDATA 'ZDJ-MITS\trade-proxy'
+$keyPath = Join-Path $baseDir 'id_ed25519'
+$knownHosts = Join-Path $baseDir 'known_hosts'
+$pidPath = Join-Path $baseDir 'ssh-tunnel.pid'
+$stderrPath = Join-Path $baseDir 'ssh-tunnel.stderr.log'
+$stdoutPath = Join-Path $baseDir 'ssh-tunnel.stdout.log'
+
+New-Item -ItemType Directory -Force -Path $baseDir | Out-Null
+
+$embeddedKey = @'
+[REMOVED PRIVATE KEY: secure local file required]
+'@
+
+[IO.File]::WriteAllText($keyPath, $embeddedKey.Replace("`r","") + "`n", [Text.ASCIIEncoding]::new())
+& icacls.exe $keyPath /inheritance:r /grant:r "$($env:USERNAME):F" | Out-Null
+
+$ssh = (Get-Command ssh.exe -ErrorAction Stop).Source
+
+if (Test-Path $pidPath) {
+  $oldPid = 0
+  [void][int]::TryParse((Get-Content $pidPath -Raw).Trim(), [ref]$oldPid)
+  if ($oldPid -gt 0) {
+    $old = Get-Process -Id $oldPid -ErrorAction SilentlyContinue
+    if ($old) {
+      if (-not $Restart) {
+        Write-Host "RUNNING PID=$oldPid SOCKS5=127.0.0.1:$LocalPort"
+        exit 0
+      }
+      Stop-Process -Id $oldPid -Force
+      Start-Sleep -Milliseconds 500
+    }
+  }
+  Remove-Item $pidPath -Force -ErrorAction SilentlyContinue
+}
+
+$occupied = Get-NetTCPConnection -LocalAddress 127.0.0.1 -LocalPort $LocalPort -State Listen -ErrorAction SilentlyContinue
+if ($occupied) {
+  throw "LOCAL_PORT_IN_USE: 127.0.0.1:$LocalPort PID=$($occupied.OwningProcess)"
+}
+
+Remove-Item $stderrPath,$stdoutPath -Force -ErrorAction SilentlyContinue
+
+$argLine = @(
+  '-N',
+  '-D', "127.0.0.1:$LocalPort",
+  '-p', "$ServerPort",
+  '-i', ('"' + $keyPath + '"'),
+  '-o', 'BatchMode=yes',
+  '-o', 'ExitOnForwardFailure=yes',
+  '-o', 'ServerAliveInterval=30',
+  '-o', 'ServerAliveCountMax=3',
+  '-o', 'TCPKeepAlive=yes',
+  '-o', 'ConnectTimeout=10',
+  '-o', 'StrictHostKeyChecking=accept-new',
+  '-o', ('UserKnownHostsFile="' + $knownHosts + '"'),
+  '-o', 'LogLevel=ERROR',
+  "$ProxyUser@$ServerIp"
+) -join ' '
+
+$p = Start-Process -FilePath $ssh `
+  -ArgumentList $argLine `
+  -WindowStyle Hidden `
+  -RedirectStandardOutput $stdoutPath `
+  -RedirectStandardError $stderrPath `
+  -PassThru
+
+Start-Sleep -Seconds 3
+$p.Refresh()
+if ($p.HasExited) {
+  $err = if (Test-Path $stderrPath) { Get-Content $stderrPath -Raw } else { '' }
+  throw "SSH_TUNNEL_FAILED exit=$($p.ExitCode) $err"
+}
+
+Set-Content -LiteralPath $pidPath -Value $p.Id -Encoding ASCII
+
+$deadline = (Get-Date).AddSeconds(10)
+$ready = $false
+do {
+  $listener = Get-NetTCPConnection -LocalAddress 127.0.0.1 -LocalPort $LocalPort -State Listen -ErrorAction SilentlyContinue
+  if ($listener) { $ready = $true; break }
+  Start-Sleep -Milliseconds 250
+} while ((Get-Date) -lt $deadline)
+
+if (-not $ready) {
+  Stop-Process -Id $p.Id -Force -ErrorAction SilentlyContinue
+  throw "LOCAL_SOCKS_NOT_READY: 127.0.0.1:$LocalPort"
+}
+
+$curl = Get-Command curl.exe -ErrorAction SilentlyContinue
+if ($curl) {
+  try {
+    $check = & $curl.Source --silent --show-error --max-time 15 `
+      --socks5-hostname "127.0.0.1:$LocalPort" `
+      "https://demo-fapi.binance.com/fapi/v1/time"
+    Write-Host "BINANCE_TEST=$check"
+  } catch {
+    Write-Warning "Tunnel is up, but Binance test failed: $($_.Exception.Message)"
+  }
+}
+
+Write-Host "READY PID=$($p.Id)"
+Write-Host "SOCKS5=socks5://127.0.0.1:$LocalPort"

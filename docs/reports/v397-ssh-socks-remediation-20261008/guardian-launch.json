@@ -1,0 +1,8 @@
+{
+    "at":  "2026-10-07T23:17:30.5241988Z",
+    "script":  "D:\\MITS\\scripts\\vpn\\zdj-trade-proxy-client-windows.ps1",
+    "result":  "LAUNCHED_NOT_HEALTH_VERIFIED",
+    "detachedLauncherPid":  50044,
+    "mode":  "TunnelGuardian",
+    "log":  "C:\\Users\\5700x\\AppData\\Local\\ZDJ-MITS\\trade-proxy\\guardian-console.log"
+}

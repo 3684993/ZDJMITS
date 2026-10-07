@@ -1,0 +1,31 @@
+{
+  "capturedAt": "2026-10-07T23:10:11.184366+00:00",
+  "proxy": "127.0.0.1:20091",
+  "target": "demo-fapi.binance.com:443",
+  "stages": [
+    {
+      "phase": "LOCAL_TCP_CONNECT",
+      "elapsedMs": 4
+    },
+    {
+      "phase": "SOCKS_GREETING",
+      "elapsedMs": 4
+    },
+    {
+      "phase": "SOCKS_CONNECT_REPLY",
+      "elapsedMs": 368
+    },
+    {
+      "phase": "TLS_HANDSHAKE",
+      "elapsedMs": 1056
+    },
+    {
+      "phase": "HTTP_PUBLIC_TIME",
+      "elapsedMs": 1764
+    }
+  ],
+  "greetingHex": "0500",
+  "replyHex": "05000001",
+  "httpPrefix": "HTTP/1.1 200 OK\r\nDate: Wed, 07 Oct 2026 23:10:12 GMT\r\nContent-Type: application/json\r\nContent-Length: 28\r\nConnection: close\r\nServer: nginx\r\nx-mbx-used-weight-1m: 1\r\nx-request-id: 014b81a4-f25e-47f4-a31d-83fef8e4f4a0\r\nx-response-time: 0ms\r\nAccess-Control-Allow-Origin: *\r\nAccess-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS\r\nAccess-Control-Allow-Credentials: true\r\nAccess-Control-Allow-Headers: *\r\nContent-Security-Policy: default-src 'self'\r\ncache-control: no-cache, no-store, must-revalidate\r\nexpires: 0\r\npragma: no-cache\r\nstrict-transport-security: max-age=31536000; includeSubdomains\r\nx-content-type-options: nosniff\r\nx-frame-options: SAMEORIGIN\r\nx-xss-protection: 1; mode=block\r\n\r\n{\"serverTime\":1791414612394}",
+  "result": "RESPONSE"
+}

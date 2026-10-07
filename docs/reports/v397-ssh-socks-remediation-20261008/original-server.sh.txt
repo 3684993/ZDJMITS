@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+PORT=22091
+USER_NAME="zdjproxy"
+PUB_KEY='ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHoZeh9LOsXbUXRvSJLtotNdJb16fCIeQwBOLTblDllh zdj-trade-proxy'
+CONF="/etc/ssh/sshd_config.d/99-zdj-trade-proxy.conf"
+
+if [[ "${EUID}" -ne 0 ]]; then
+  echo "Run as root: sudo bash $0"
+  exit 1
+fi
+
+export DEBIAN_FRONTEND=noninteractive
+apt-get update -y
+apt-get install -y openssh-server
+
+if ! id "$USER_NAME" >/dev/null 2>&1; then
+  useradd -m -s /bin/bash "$USER_NAME"
+fi
+passwd -l "$USER_NAME" >/dev/null 2>&1 || true
+
+install -d -m 700 -o "$USER_NAME" -g "$USER_NAME" "/home/$USER_NAME/.ssh"
+printf '%s\n' "$PUB_KEY" > "/home/$USER_NAME/.ssh/authorized_keys"
+chown "$USER_NAME:$USER_NAME" "/home/$USER_NAME/.ssh/authorized_keys"
+chmod 600 "/home/$USER_NAME/.ssh/authorized_keys"
+
+cat > "$CONF" <<EOF
+Port 22
+Port $PORT
+
+Match User $USER_NAME
+    PubkeyAuthentication yes
+    PasswordAuthentication no
+    KbdInteractiveAuthentication no
+    AllowTcpForwarding yes
+    GatewayPorts no
+    PermitTTY no
+    X11Forwarding no
+    AllowAgentForwarding no
+    PermitTunnel no
+    MaxSessions 0
+EOF
+
+/usr/sbin/sshd -t
+
+if systemctl list-unit-files | grep -q '^ssh.service'; then
+  systemctl restart ssh
+else
+  systemctl restart sshd
+fi
+
+if command -v ufw >/dev/null 2>&1 && ufw status | grep -q '^Status: active'; then
+  ufw allow "$PORT/tcp" >/dev/null
+fi
+
+echo "READY"
+echo "SSH_PORT=$PORT"
+echo "USER=$USER_NAME"
+echo "Open TCP $PORT on the cloud firewall/security group for 43.156.0.24."
+ss -lntp | grep ":$PORT " || true

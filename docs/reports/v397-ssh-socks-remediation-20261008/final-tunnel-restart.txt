@@ -1,0 +1,31 @@
+{
+    "at":  "2026-10-07T23:18:27.5998713Z",
+    "proxy":  "127.0.0.1:20091",
+    "target":  "demo-fapi.binance.com:443",
+    "stages":  [
+                   {
+                       "phase":  "LOCAL_TCP_CONNECT",
+                       "elapsedMs":  886
+                   },
+                   {
+                       "phase":  "SOCKS_GREETING",
+                       "elapsedMs":  902
+                   },
+                   {
+                       "phase":  "SOCKS_CONNECT_REPLY",
+                       "elapsedMs":  1267
+                   },
+                   {
+                       "phase":  "TLS_HANDSHAKE",
+                       "elapsedMs":  1920
+                   },
+                   {
+                       "phase":  "HTTP_PUBLIC_TIME",
+                       "elapsedMs":  2606
+                   }
+               ],
+    "healthy":  true,
+    "pid":  29068,
+    "elapsedMs":  2610
+}
+READY SOCKS5H=socks5h://127.0.0.1:20091

@@ -1880,11 +1880,7 @@ export class EngineRuntime {
       const syncFillLimit = maxFills,
         backupDir =
           process.env.ZDJ_TRADE_SYNC_BACKUP_DIR ??
-          path.join(
-            process.env.LOCALAPPDATA ?? process.cwd(),
-            "ZDJ-MITS",
-            "trade-sync-backups",
-          );
+          path.join(this.settingsStore.dataDirectory(),"backups","trade-sync");
       await mkdir(backupDir, { recursive: true });
       this.foregroundTrace('TRADE_RECORD_AUTO_SYNC_PHASE',{phase:'BASELINE_BEGIN',startTime,endTime,rollingDays});
       const backupPath = await this.settingsStore.tradeSyncBaseline(backupDir);

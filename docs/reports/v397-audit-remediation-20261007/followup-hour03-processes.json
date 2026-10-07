@@ -1,0 +1,38 @@
+[
+  {
+    "ProcessId": 12732,
+    "CreationDate": "2026-09-18T22:52:52.484377+08:00",
+    "ExecutablePath": "D:\\llama-vulkan\\llama-server.exe",
+    "CommandLine": "\"D:\\llama-vulkan\\llama-server.exe\" -m D:\\.lmstudio\\models\\lmstudio-community\\Qwen3.5-9B-GGUF\\Qwen3.5-9B-Q4_K_M.gguf --alias qwen3.5:9b --device Vulkan0 --split-mode none -ngl all -c 32768 -np 1 -n 4096 -ctk f16 -ctv f16 -fa on -b 512 -ub 256 --jinja --reasoning off --no-reasoning-preserve --temp 0.70 --top-p 0.80 --top-k 20 --min-p 0.00 --presence-penalty 1.5 --repeat-penalty 1.0 --host 127.0.0.1 --port 8081 --metrics --slots --perf --no-ui -fit off --ctx-checkpoints 0 "
+  },
+  {
+    "ProcessId": 17468,
+    "CreationDate": "2026-10-05T13:44:46.208699+08:00",
+    "ExecutablePath": "D:\\llama-vulkan\\llama-server.exe",
+    "CommandLine": "\"D:\\llama-vulkan\\llama-server.exe\" -m D:\\.lmstudio\\models\\lmstudio-community\\Qwen3.8-27B-GGUF\\Qwen3.8-27B-Q4_K_M.gguf --alias qwen/qwen3.8-27b --device Vulkan0 --split-mode none -ngl all -fit off -c 16384 -np 1 -n 16384 -ctk q8_0 -ctv q8_0 -fa on -b 1024 -ub 256 --jinja --chat-template-file D:\\llama-vulkan\\templates\\qwen3.8-codex-stable.jinja --reasoning on --reasoning-format deepseek --reasoning-budget 4096 --no-reasoning-preserve --temp 0.10 --top-p 0.90 --top-k 20 --min-p 0.00 --no-context-shift --host 127.0.0.1 --port 8083 --metrics --slots --perf --no-ui --ctx-checkpoints 0 "
+  },
+  {
+    "ProcessId": 51124,
+    "CreationDate": "2026-10-05T13:45:30.41198+08:00",
+    "ExecutablePath": "D:\\llama-vulkan\\llama-server.exe",
+    "CommandLine": "\"D:\\llama-vulkan\\llama-server.exe\" -m D:\\.lmstudio\\models\\lmstudio-community\\Qwen3.8-27B-GGUF\\Qwen3.8-27B-Q4_K_M.gguf --alias qwen/qwen3.8-27b --device Vulkan0 --split-mode none -ngl all -fit off -c 65536 -np 1 -n 4096 -ctk q8_0 -ctv q8_0 -fa on -b 1024 -ub 256 --jinja --chat-template-file D:\\llama-vulkan\\templates\\qwen3.8-codex-stable.jinja --reasoning off --no-reasoning-preserve --temp 0.10 --top-p 0.90 --top-k 20 --min-p 0.00 --no-context-shift --host 127.0.0.1 --port 8084 --metrics --slots --perf --no-ui --ctx-checkpoints 0 "
+  },
+  {
+    "ProcessId": 40308,
+    "CreationDate": "2026-10-07T09:11:00.597358+08:00",
+    "ExecutablePath": "C:\\Windows\\System32\\OpenSSH\\ssh.exe",
+    "CommandLine": "\"C:\\Windows\\System32\\OpenSSH\\ssh.exe\" -N -D 127.0.0.1:20091 -p 22091 -i \"C:\\Users\\5700x\\AppData\\Local\\ZDJ-MITS\\trade-proxy\\id_ed25519\" -o BatchMode=yes -o ExitOnForwardFailure=yes -o ServerAliveInterval=30 -o ServerAliveCountMax=3 -o TCPKeepAlive=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=accept-new -o UserKnownHostsFile=\"C:\\Users\\5700x\\AppData\\Local\\ZDJ-MITS\\trade-proxy\\known_hosts\" -o LogLevel=ERROR zdjproxy@43.156.0.24 "
+  },
+  {
+    "ProcessId": 37952,
+    "CreationDate": "2026-10-07T18:37:57.64452+08:00",
+    "ExecutablePath": "C:\\Program Files\\nodejs\\node.exe",
+    "CommandLine": "\"C:\\Program Files\\nodejs\\node.exe\" --no-maglev \"D:\\MITS-WORKTREES\\v397-audit-remediation-final-20261007\\apps\\engine\\dist\\main.js\" "
+  },
+  {
+    "ProcessId": 35268,
+    "CreationDate": "2026-10-07T18:41:12.14621+08:00",
+    "ExecutablePath": "C:\\Users\\5700x\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+    "CommandLine": "\"C:\\Users\\5700x\\AppData\\Local\\Programs\\Python\\Python313\\python.exe\" \"D:\\MITS-WORKTREES\\v397-audit-remediation-final-20261007\\docs\\reports\\v397-audit-remediation-20261007\\collect_stability.py\" --hours 12 --interval 60"
+  }
+]

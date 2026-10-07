@@ -1,4 +1,8 @@
 # J-MITS V3.9.7 — CURRENT MAINTENANCE HANDOFF
+## Third hourly checkpoint — 21:43 +08:00
+
+183 samples/3.032489h: private READY75 / explicit UNAVAILABLE86 / observation gaps22; all60 added third-hour samples explicit UNAVAILABLE. Max age4832029ms; current extra snapshot4882496ms/98 consecutive failures, entry blocked/model spend disabled. NET-00296 active samples, queue147, TP orphan82 sample occurrences; current TP DEGRADED8/8 plus2orphans is not fresh exchange proof. No new natural TP lost-ACK terminal recovery sample. Runtime/model/collector identities unchanged, identity6/6; no lifecycle/proxy/config/parameter/exchange action. See docs/reports/v397-audit-remediation-20261007/FOLLOWUP_HOUR03.md and lossless hour03 evidence. Status NOT_STABLE, final12h duration PENDING. Candidate0737e66 remains NOT_DEPLOYED; do not repeat already completed1974-test candidate verification without changes, or automatically deploy during observation. F04/F10/F11 deferred.
+
 ## Second hourly checkpoint — 20:43 +08:00
 
 Current runtime is NOT_STABLE, original12h duration still pending. Frozen123samples/2.032296h: private READY75 / explicit UNAVAILABLE26 / observation gaps22, maxage1231684ms; NET-00236 active samples, queue105; TP missing12/orphan22/mismatch1. At20:44 current private UNAVAILABLE25 consecutive failures, age1283036ms, Proxy connection timed out; TP DEGRADED9/9 plusorphan1, not current exchange proof. Models/Engine/collector/SSH listener identities unchanged, Settings247/resource hashes identical, runtime identity6/6. No observer lifecycle/proxy/config/exchange action. Read FOLLOWUP_HOUR02.md and frozen raw gzip/events/detail/current/process evidence under docs/reports/v397-audit-remediation-20261007/.

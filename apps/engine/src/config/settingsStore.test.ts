@@ -37,6 +37,23 @@ describe('SettingsStore', () => {
     try{const migrated=await reopened.load();expect(migrated.settingsVersion).toBe(177);expect(migrated.takeProfit.minNetProfitUsd).toBe(1);expect(migrated.tradeEconomics.admissionMode).toBe('ENFORCE');expect(migrated.tradeEconomics.historicalTpReachabilityEnabled).toBe(false);expect(migrated.positionManagement.maxHumanManagedPositions).toBe(4);expect(migrated.tradingQuality.positionObservationHorizonMs).toBe(14_400_000);expect(migrated.entry.minimumInitialMarginByQuote).toEqual({USDT:100,USDC:100});expect(migrated.entry.minimumOrderNotionalBySymbol).toEqual({BTCUSDT:150});expect(migrated.entry.minimumOrderNotionalByQuote).toEqual({USDT:200,USDC:200});const primary=migrated.aiResources.find(resource=>resource.role==='PRIMARY_BRAIN');expect(migrated.aiDutyRoutes.find(route=>route.duty==='ENTRY_PRIMARY')?.resourceId).toBe(primary?.id);expect(migrated.aiDutyRoutes.map(route=>route.duty)).toEqual(expect.arrayContaining(['ENTRY_PRIMARY','PENDING_ENTRY_REVIEW','POSITION_REVIEW']));if(migrated.aiResources.some(resource=>resource.role==='SCOUT'&&resource.enabled))expect(migrated.aiDutyRoutes.map(route=>route.duty)).toContain('SCOUT_RESEARCH');expect((reopened as any).db.prepare('SELECT version FROM schema_migrations WHERE version=14').get()).toBeTruthy();}
     finally{reopened.close();}
   });
+  it('moves persisted review duties off Entry Primary when a dedicated Review resource exists',async()=>{
+    const dir=await mkdtemp(path.join(os.tmpdir(),'zdj-review-route-migration-'));paths.push(dir);const configDir=path.resolve(process.cwd(),'../../config');
+    const first=new SettingsStore(configDir,dir),base:any=await first.load(),primary=base.aiResources.find((row:any)=>row.role==='PRIMARY_BRAIN');
+    const review={id:'brain-review-test',name:'Review GPU',role:'REVIEW_BRAIN',enabled:true,baseUrl:'http://127.0.0.1:8083/v1',model:'review-model',maxConcurrency:1,gpu:'GPU2'};
+    base.aiResources=[...base.aiResources.filter((row:any)=>row.id!==review.id),review];
+    base.aiDutyRoutes=[
+      ...base.aiDutyRoutes.filter((row:any)=>!['PENDING_ENTRY_REVIEW','POSITION_REVIEW'].includes(row.duty)),
+      {duty:'PENDING_ENTRY_REVIEW',resourceId:primary.id,enabled:true,priority:20},
+      {duty:'POSITION_REVIEW',resourceId:primary.id,enabled:true,priority:90},
+    ];
+    (first as any).db.prepare('UPDATE settings SET payload=? WHERE id=1').run(JSON.stringify(base));first.close();
+    const reopened=new SettingsStore(configDir,dir);try{const migrated:any=await reopened.load();
+      expect(migrated.aiDutyRoutes.find((row:any)=>row.duty==='ENTRY_PRIMARY')?.resourceId).toBe(primary.id);
+      expect(migrated.aiDutyRoutes.find((row:any)=>row.duty==='PENDING_ENTRY_REVIEW')?.resourceId).toBe(review.id);
+      expect(migrated.aiDutyRoutes.find((row:any)=>row.duty==='POSITION_REVIEW')?.resourceId).toBe(review.id);
+    }finally{reopened.close();}
+  });
   it('rejects a migrated minNetProfitUsd below the floor instead of rewriting it on boot',async()=>{
     const dir=await mkdtemp(path.join(os.tmpdir(),'zdj-v395-clamp-low-'));paths.push(dir);const configDir=path.resolve(process.cwd(),'../../config');
     const boot=new SettingsStore(configDir,dir);const base:any=await boot.load();base.settingsVersion=177;

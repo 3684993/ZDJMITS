@@ -69,15 +69,17 @@ export class OperationalIncidentTracker{
 }
 export function operationalCandidates(facts:{pipeline:any;routes:any[];account:any;marketStream?:any;valuation?:any;orders?:any}):Candidate[]{
   const out:Candidate[]=[];
-  const now=Date.now(),marketHealthy=facts.pipeline?.pipelineState==='RUNNING'&&facts.pipeline?.freshMarkets?.status==='FRESH';
+  const now=Date.now(),marketHealthy=facts.pipeline?.pipelineState==='RUNNING'&&facts.pipeline?.freshMarkets?.status==='FRESH',
+    recentUnresolved=Boolean((facts.orders??[]).some((order:any)=>order.status==='UNKNOWN'&&order.activeRiskExposure!==false&&Number.isFinite(Number(order.createdAt))&&now-Number(order.createdAt)<3_600_000));
   const advisoryRestEndpoint=(endpoint:unknown)=>/\/fapi\/v1\/(openInterest|premiumIndex)$|\/futures\/data\//.test(String(endpoint??''));
   const marketFallbackEndpoint=(endpoint:unknown)=>/\/fapi\/v1\/(ticker\/24hr|ticker\/bookTicker|depth|klines)$/.test(String(endpoint??''));
   const controlEndpoint=(endpoint:unknown)=>String(endpoint??'')==='/fapi/v1/time';
+  const identityLookup=(row:any)=>recentUnresolved&&String(row?.method??'GET')==='GET'&&String(row?.endpoint??'')==='/fapi/v1/order';
   const timeoutLike=(message:unknown)=>/timed out|ETIMEDOUT|TimeoutError|BINANCE_REQUEST_QUEUE_TIMEOUT/i.test(String(message??''));
   for(const route of facts.routes){const budget=route.requestBudget??{},recent=budget.recentDispatches??[],failures=route.recentFailures??[];
     // A healthy WS stream is the primary market truth. REST market timeouts are tolerated while that
     // truth remains fresh; they are recovery telemetry, not a global NEW_ENTRY outage.
-    const relevantFailures=failures.filter((failure:any)=>!controlEndpoint(failure.endpoint)&&!advisoryRestEndpoint(failure.endpoint)&&!(marketHealthy&&marketFallbackEndpoint(failure.endpoint)));
+    const relevantFailures=failures.filter((failure:any)=>!controlEndpoint(failure.endpoint)&&!identityLookup(failure)&&!advisoryRestEndpoint(failure.endpoint)&&!(marketHealthy&&marketFallbackEndpoint(failure.endpoint)));
     const makerRejects=relevantFailures.filter((failure:any)=>/"code"\s*:\s*-5022\b/.test(String(failure.message??''))&&now-Number(failure.completedAt??now)<60_000);
     for(const failure of relevantFailures){
       if(timeoutLike(failure.message))continue; // aggregated below with hysteresis
@@ -89,7 +91,7 @@ export function operationalCandidates(facts:{pipeline:any;routes:any[];account:a
     // Normal Internet/Testnet jitter is not an incident. Require a burst of >=3 critical timeout facts
     // inside 60s before NET-002 becomes visible. One or two isolated failures remain telemetry only.
     const transportTimeouts=relevantFailures.filter((row:any)=>timeoutLike(row.message)&&now-Number(row.completedAt??now)<60_000);
-    const queueTimeouts=recent.filter((row:any)=>row.decision==='TIMEOUT'&&now-Number(row.completedAt??0)<60_000&&!controlEndpoint(row.endpoint)&&!advisoryRestEndpoint(row.endpoint)&&!(marketHealthy&&marketFallbackEndpoint(row.endpoint)));
+    const queueTimeouts=recent.filter((row:any)=>row.decision==='TIMEOUT'&&now-Number(row.completedAt??0)<60_000&&!controlEndpoint(row.endpoint)&&!identityLookup(row)&&!advisoryRestEndpoint(row.endpoint)&&!(marketHealthy&&marketFallbackEndpoint(row.endpoint)));
     const timeoutFacts=[...new Map([...transportTimeouts,...queueTimeouts].map((row:any)=>[String(row.requestId??`${row.endpoint}:${row.completedAt??''}`),row])).values()],
       latest=timeoutFacts.at(-1),lowPressure=Number(budget.admissionObservedWeight1m??budget.usedWeight1m??Infinity)<Number(budget.softBackgroundWeight??0);
     if(latest&&timeoutFacts.length>=3&&lowPressure){
@@ -101,6 +103,6 @@ export function operationalCandidates(facts:{pipeline:any;routes:any[];account:a
   if(facts.valuation?.status==='ACCOUNT_VALUATION_INCONSISTENT')out.push({...template('ACCOUNT_VALUATION_INCONSISTENT','账户估值无法对账','同一 Binance 快照的钱包、浮盈亏与账户权益不一致。','检查交易所账户字段与资产换算；暂勿将该数字视为总资产。','ACCOUNT',['PRIVATE_DATA']),subsystem:'ACCOUNT',sourceCode:'ACCOUNT_VALUATION_INCONSISTENT',sourceMessage:'same-snapshot invariant failed'});
   // Historical UNKNOWN rows remain in the audit and risk occupancy models.  A
   // submit incident describes a current submit acknowledgement gap only.
-  if((facts.orders??[]).some((order:any)=>order.status==='UNKNOWN'&&order.activeRiskExposure!==false&&Number.isFinite(Number(order.createdAt))&&Date.now()-Number(order.createdAt)<3_600_000))out.push({...SUBMIT,subsystem:'ENTRY_ORDER',sourceCode:'ENTRY_SUBMIT_UNKNOWN',sourceMessage:'recent unresolved order identity'});
+  if(recentUnresolved)out.push({...SUBMIT,subsystem:'ENTRY_ORDER',sourceCode:'ENTRY_SUBMIT_UNKNOWN',sourceMessage:'recent unresolved order identity'});
   return out;
 }

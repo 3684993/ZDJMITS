@@ -1,0 +1,20 @@
+{
+  "capturedAt": "2026-10-07T15:20:58.608438+00:00",
+  "proxy": "127.0.0.1:20091",
+  "target": "demo-fapi.binance.com:443",
+  "stages": [
+    {
+      "phase": "LOCAL_TCP_CONNECT",
+      "elapsedMs": 4
+    },
+    {
+      "phase": "SOCKS_GREETING",
+      "elapsedMs": 4
+    }
+  ],
+  "greetingHex": "0500",
+  "result": "FAILED",
+  "failurePhase": "SOCKS_CONNECT_REPLY",
+  "error": "TimeoutError: timed out",
+  "elapsedMs": 5017
+}

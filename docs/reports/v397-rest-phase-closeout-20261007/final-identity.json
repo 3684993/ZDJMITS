@@ -1,0 +1,46 @@
+{
+ "branch": "main",
+ "localHead": "b6397c0cbf39e9f0e27b2e7e57bc221322b36f94",
+ "remoteHead": "b6397c0cbf39e9f0e27b2e7e57bc221322b36f94",
+ "gitHeadSubject": "fix: identify SOCKS timeout phase and deduplicate private network incidents",
+ "computed": {
+  "sourceHash": "95da2cc767faf4f01e5982973757a4fcc4c717025d76d8c910f89599d7a954eb",
+  "artifactHash": "a48feec0d8fa4ab16c2ec2a4764b8b9ec2bbd89a6940a418a398b25399cb3bc9",
+  "buildId": "3.9.7-a48feec0d8fa4ab16c2e"
+ },
+ "runtimeFile": {
+  "instanceId": "9d3ff434-039d-4d0c-9771-6d99b35822b2",
+  "pid": 37136,
+  "startedAt": 1791386361709,
+  "host": "0.0.0.0",
+  "port": 8080,
+  "version": "3.9.7",
+  "buildId": "3.9.7-a48feec0d8fa4ab16c2e",
+  "artifactHash": "a48feec0d8fa4ab16c2ec2a4764b8b9ec2bbd89a6940a418a398b25399cb3bc9",
+  "sourceHash": "95da2cc767faf4f01e5982973757a4fcc4c717025d76d8c910f89599d7a954eb",
+  "startReason": "MANUAL_START",
+  "lanIps": [
+   "192.168.1.50"
+  ],
+  "restartCount": 266
+ },
+ "runtimeApi": {
+  "buildId": "3.9.7-a48feec0d8fa4ab16c2e",
+  "instanceId": "9d3ff434-039d-4d0c-9771-6d99b35822b2",
+  "pid": 37136,
+  "version": "3.9.7",
+  "lastRestartReason": "MANUAL_START",
+  "restartCount": 266,
+  "lastRestartAt": 1791386361709
+ },
+ "dirtySourcePaths": "",
+ "checks": {
+  "remoteHeadEqualsLocalHead": true,
+  "committedSourceTreeMatchesRuntimeSourceHash": true,
+  "workingDistMatchesRuntimeArtifactHash": true,
+  "buildIdDerivedFromArtifactHash": true,
+  "runtimeApiMatchesInstanceFile": true,
+  "sourceTreeCleanForHashedFolders": true
+ },
+ "verdict": "IDENTITY_CLOSED"
+}

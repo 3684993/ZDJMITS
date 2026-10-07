@@ -1,0 +1,10 @@
+{
+  "capturedAt": "2026-10-07T15:18:23.756311+00:00",
+  "scope": "new diagnostic client only; originalSSH PID40308 unchanged",
+  "remote": "43.156.0.24:22091",
+  "command": "date/getent/public time HEAD only",
+  "exitCode": 4294967295,
+  "stdout": "",
+  "stderr": "",
+  "elapsedMs": 4948
+}

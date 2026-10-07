@@ -1,0 +1,60 @@
+{
+  "capturedAt": "2026-10-07T23:27:17.4751719+08:00",
+  "entryReadback": {
+    "status": "UNAVAILABLE",
+    "verifiedAt": null,
+    "count": 0
+  },
+  "takeProfit": [
+    {
+      "id": "tp_muy1jxt8_quba37pu",
+      "clientOrderId": "v396x9adc0a332525592eeb7a86908f19cb",
+      "exchangeOrderId": "16816670645",
+      "symbol": "ETHUSDT",
+      "side": "BUY",
+      "quantity": 0,
+      "price": 2565.81,
+      "filledQuantity": 0.39,
+      "leverage": 1,
+      "status": "FILLED",
+      "createdAt": 1791373565916,
+      "updatedAt": 1791378148119,
+      "absoluteExpiresAt": 9007199254740991,
+      "repriceCount": 0,
+      "intentId": "exchange-recovered",
+      "reachability": 0,
+      "orderType": "LIMIT",
+      "timeInForce": "GTC",
+      "maker": false,
+      "factSource": "BINANCE_OPEN_ORDERS",
+      "verifiedAt": 1791375653972,
+      "positionId": "exchange_ETHUSDT_SHORT",
+      "cycleId": "cycle_entry_intent_muy1fn2q_ib4il59k"
+    },
+    {
+      "id": "tp_muy21qsq_16tn2lgo",
+      "clientOrderId": "v396x49c5ed4f88f215302661aee1eaf278",
+      "exchangeOrderId": "2589655935",
+      "symbol": "BCHUSDT",
+      "side": "BUY",
+      "quantity": 0,
+      "price": 302.01,
+      "filledQuantity": 4.959,
+      "leverage": 1,
+      "status": "FILLED",
+      "createdAt": 1791374405481,
+      "updatedAt": 1791375788015,
+      "absoluteExpiresAt": 9007199254740991,
+      "repriceCount": 0,
+      "intentId": "exchange-recovered",
+      "reachability": 0,
+      "orderType": "LIMIT",
+      "timeInForce": "GTC",
+      "maker": false,
+      "factSource": "BINANCE_OPEN_ORDERS",
+      "verifiedAt": 1791375653972,
+      "positionId": "exchange_BCHUSDT_SHORT",
+      "cycleId": "cycle_entry_intent_muy1wvtw_yk0fv560"
+    }
+  ]
+}

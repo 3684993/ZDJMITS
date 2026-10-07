@@ -1,0 +1,63 @@
+{
+  "verdict": "NOT_HEALTHY",
+  "actualMinutes": 10.8441,
+  "sampleCount": 23,
+  "privateStates": {
+    "READY": 9,
+    "UNAVAILABLE": 13,
+    "OBSERVATION_UNAVAILABLE": 1
+  },
+  "lastPrivate": {
+    "status": "UNAVAILABLE",
+    "asOf": 1791387035546,
+    "reason": "BINANCE_TRANSPORT_BLOCKED: Binance request timed out",
+    "requestId": "f9ef807d-9755-4d23-a35c-fb449ff883d8",
+    "lastSuccessAt": 1791387035546,
+    "lastFailureAt": 1791387107444,
+    "consecutiveFailures": 3,
+    "coalesced": 0,
+    "lastError": "BINANCE_TRANSPORT_BLOCKED: Binance request timed out",
+    "durationMs": 17760,
+    "inFlight": false,
+    "snapshotAgeMs": 85000
+  },
+  "accountAdmissionQueueMs": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "recoveryWithoutInterveningActivation": 0,
+  "firstRecoveryWithPreWindowActivationUnknown": [
+    "c76cffc3afdd6c3e"
+  ],
+  "evidence": {
+    "rawSha256": "24b57d6c8c88a6dedeca31b5b3053ea2cef1dfbfe8326cf12dc22cf79fd988a0",
+    "gzipSha256": "0de97f217c99ad504fd35b935a4821b00f97e0513c91569b285d1fe1735d823e",
+    "compressedFile": "final-active-short-feedback-samples.jsonl.gz"
+  }
+}

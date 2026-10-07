@@ -1,0 +1,18 @@
+[
+  {
+    "LocalPort": 8084,
+    "OwningProcess": 51124
+  },
+  {
+    "LocalPort": 8083,
+    "OwningProcess": 17468
+  },
+  {
+    "LocalPort": 8081,
+    "OwningProcess": 12732
+  },
+  {
+    "LocalPort": 8080,
+    "OwningProcess": 37136
+  }
+]

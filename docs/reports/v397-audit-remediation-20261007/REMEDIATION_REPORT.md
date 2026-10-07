@@ -1,3 +1,11 @@
+# Active remediation final closeout — 2026-10-07 23:32 +08:00
+
+Current result: LOCAL_VERIFY_PASS / IDENTITY_CLOSED6/6 / **NOT_HEALTHY**. Candidate0737e66 and all confirmedF01/F02/F03/F05/F06/F07/F08 fixes are integrated and deployed, latest source commitb6397c0. Final complete local verify1982tests/233files plus release/scripts/S00/typecheck/buildPASS; no Actions. Only8080 source cutovers; currentPID37136/instance9d3ff434-039d-4d0c-9771-6d99b35822b2/restart266. Final independent10.8441min window23samples: privateREADY9/explicitUNAVAILABLE13/observationgap1; maxage420584ms, NET-00217sampleoccurrences, queue21. Latest post-window privateUNAVAILABLE85s/3failures. Exact two historical TP projections restoredFILLED; local8/8orphan0 is not fresh exchange proof. Natural lost-ACK terminal recoveryUNKNOWN.
+
+Known currentaccount dispatches queue0–1ms; real public/otherprivate queue timeouts persist. Independent rawSOCKS CONNECT times out5s beforeTLS/HTTP, matching liveSOCKS_NEGOTIATION; additionalTLS/first-byte failures retained. Configured transport blocker outside Engine admission proven, remoteSSH/DNS/VPS/Binance rootcauseUNKNOWN. ReadonlySSHdiagnosis inconclusive. One localhost diagnostic gap remains an unresolved performance observation. Do not restartSSH or changeproxy under only8080 scope, widenTTL, manufactureorders or inferhealthy fromidentity. Models8081/8083/8084 and Settings247/resources unchanged; Production0in22knownsamples/unknown1gap. DirtyD:\MITS preserved.
+
+Old6h/12h gate cancelled and heartbeatPAUSED. No waiting remainder, no mixing builds/windows. Read docs/reports/v397-rest-phase-closeout-20261007/REST_PHASE_CLOSEOUT.md and its losslessgzip/events/summary/details/currentidentity/process/config/probes; preceding reportdirectories retain earlier gates/failures. All final evidence ordinaryFF-pushed toGitHub. F04/F10/F11 remain paused. The historical statements below are superseded by this current header.
+
 # F01/F02/F03/F05/F06/F07/F08 remediation — 2026-10-07
 
 Status: **LOCAL_VERIFY_PASS / IDENTITY_CLOSED / RUNTIME_OBSERVATION_PENDING**. This is a continuing remediation run, not long-duration acceptance.

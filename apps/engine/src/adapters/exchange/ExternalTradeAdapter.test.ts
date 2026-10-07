@@ -53,3 +53,18 @@ it('returns fresh account facts even while income and valuation requests never c
 it('coalesces public clock requests needed by concurrent private reads',async()=>{
  const h=harness(false);await Promise.all(Array.from({length:20},()=>h.adapter.fetchRealizedPnlSince(1).catch(()=>0)));expect(h.calls.filter(c=>c.url==='/fapi/v1/time')).toHaveLength(1);
 });
+it('reuses a healthy Binance clock offset for five minutes instead of making every private read depend on /time',async()=>{
+ const h=harness(false);await h.adapter.fetchRealizedPnlSince(1);await h.adapter.fetchRealizedPnlSince(2);await h.adapter.fetchRealizedPnlSince(3);
+ expect(h.calls.filter(c=>c.url==='/fapi/v1/time')).toHaveLength(1);
+});
+it('keeps using recent last-known-good clock offset when a background resync times out',async()=>{
+ const h=harness(false);(h.adapter as any).serverTime={offset:0,fetchedAt:Date.now()-6*60_000};
+ (h.adapter as any).transport.json.mockImplementation(async(url:string)=>{h.calls.push({url});if(url==='/fapi/v1/time')throw new Error('BINANCE_TRANSPORT_BLOCKED: Binance request timed out');if(url.startsWith('/fapi/v1/income'))return[];return{};});
+ await expect(h.adapter.fetchRealizedPnlSince(1)).resolves.toBe(0);
+ expect(h.calls.filter(c=>c.url==='/fapi/v1/time')).toHaveLength(1);expect(h.calls.some(c=>c.url.startsWith('/fapi/v1/income'))).toBe(true);
+});
+it('forces one clock resync and retries after explicit Binance -1021 timestamp rejection',async()=>{
+ const h=harness(false);let income=0,time=0;
+ (h.adapter as any).transport.json.mockImplementation(async(url:string)=>{h.calls.push({url});if(url==='/fapi/v1/time'){time++;return{serverTime:Date.now()+100};}if(url.startsWith('/fapi/v1/income')){income++;if(income===1)throw new Error('Binance HTTP 400: {"code":-1021,"msg":"Timestamp for this request was outside of the recvWindow."}');return[];}return{};});
+ await expect(h.adapter.fetchRealizedPnlSince(1)).resolves.toBe(0);expect(income).toBe(2);expect(time).toBe(2);
+});

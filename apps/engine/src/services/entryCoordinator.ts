@@ -1126,8 +1126,10 @@ export class EntryCoordinator {
      }finally{this.reviewBusy=false;}
   }
   private schedulePendingEntryReview(order:EntryOrder,intent:EntryIntent,market:any,now:number){
-    const intervalMs=30_000,last=this.pendingReviewLastAt.get(order.id)??0,packet=this.state.eips.get(order.symbol);
-    if(!packet||now-order.createdAt<15_000||now-last<intervalMs||this.pendingReviewInFlight.has(order.id))return;
+    const dedicated=this.ai.reviewDedicated?.('PENDING_ENTRY_REVIEW')===true,
+      intervalMs=dedicated?30_000:5*60_000,firstReviewAgeMs=dedicated?15_000:30_000,
+      last=this.pendingReviewLastAt.get(order.id)??0,packet=this.state.eips.get(order.symbol);
+    if(!packet||now-order.createdAt<firstReviewAgeMs||now-last<intervalMs||this.pendingReviewInFlight.has(order.id))return;
     this.pendingReviewLastAt.set(order.id,now);this.pendingReviewInFlight.add(order.id);
     const facts={orderId:order.id,clientOrderId:order.clientOrderId,exchangeOrderId:order.exchangeOrderId??null,symbol:order.symbol,side:order.side,
       originalPrice:order.price,originalQuantity:order.quantity,filledQuantity:order.filledQuantity,unfilledQuantity:Math.max(0,order.quantity-order.filledQuantity),

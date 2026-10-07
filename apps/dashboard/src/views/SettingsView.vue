@@ -45,6 +45,9 @@ const governance = ref<GovernancePanelState | null>(null),
   governanceAcks = ref<string[]>([]),
   governanceError = ref(""),
   governanceNotice = ref("");
+const globalSettingsTabs=new Set(["strategy","market-quality","direction","theme"]);
+const usesGlobalSettingsSave=computed(()=>globalSettingsTabs.has(tab.value));
+const activeTabLabel=computed(()=>tabs.find(([id])=>id===tab.value)?.[1]??"系统设置");
 const governanceRows = computed<GovernanceRow[]>(() => (governance.value ? exitCoordinationRows(governance.value) : []));
 const governancePatch = computed(() => buildGovernancePatch(governanceRows.value, governanceDraft.value));
 const governanceDirty = computed(() => changedPaths(governanceRows.value, governanceDraft.value).length);
@@ -180,6 +183,7 @@ async function load() {
     error.value = String(e);
   }
 }
+async function discardGlobalEdits(){notice.value="";error.value="";await load();notice.value="已取消未保存修改并重新读取服务端设置";}
 async function save() {
   if (!draft.value) return;
   saving.value = true;
@@ -240,6 +244,8 @@ async function activateResource(kind:"proxy",id:string){
 }
 async function removeResource(kind: string, id: string) {
   try{
+    if(!resourceBaseline.value[kind]?.[id]){resources.value[kind]=resources.value[kind].filter((x:any)=>x.id!==id);selectedResourceId.value[kind]=resources.value[kind][0]?.id??"";notice.value="未保存的新资源已移除";return;}
+    if(typeof window!=="undefined"&&!window.confirm("确认删除此资源？该操作会立即保存到服务端。"))return;
     const expected=resourceSettingsVersion.value ?? draft.value?.settingsVersion;if(!expected)throw new Error("资源版本尚未加载，请刷新设置");
     await api.deleteResource(kind,id,expected);
     const loaded=await api.resources(kind);resources.value[kind]=loaded.items??[];resourceSettingsVersion.value=Number(loaded.settingsVersion??expected+1);resourceBaseline.value[kind]=Object.fromEntries(resources.value[kind].map((x:any)=>[x.id,JSON.stringify(x)]));selectedResourceId.value[kind]=resources.value[kind][0]?.id??"";
@@ -298,12 +304,17 @@ onMounted(load);
   <div class="page-stack settings-page">
     <div class="settings-hero">
       <div>
-        <span class="eyebrow">RESOURCE MANAGER</span>
+        <span class="eyebrow">SYSTEM SETTINGS</span>
         <h2 class="page-title">系统设置</h2>
+        <p class="muted">当前：{{activeTabLabel}} · 普通参数与资源对象使用各自独立的保存边界。</p>
       </div>
-      <button class="button primary" @click="save">
-        {{ saving ? "保存中…" : "保存设置" }}
-      </button>
+      <div class="settings-hero-actions">
+        <template v-if="usesGlobalSettingsSave">
+          <button class="button secondary" :disabled="saving" @click="discardGlobalEdits">取消未保存修改</button>
+          <button class="button primary" :disabled="saving" @click="save">{{ saving ? "保存中…" : "保存当前参数" }}</button>
+        </template>
+        <span v-else class="muted">当前页使用独立的保存 / 取消 / 测试操作</span>
+      </div>
     </div>
     <p v-if="error" class="error-banner">{{ error }}</p>
     <p v-if="notice" class="muted">{{ notice }}</p>
@@ -806,18 +817,28 @@ onMounted(load);
         </template>
       </Panel>
       <Panel v-else-if="tab === 'exchange'" title="交易所资源">
-        <div class="toolbar"><span>活动 Testnet REST 仅允许 Binance Demo；REST / WS 独立配置</span><button class="button primary" @click="addResource('exchange')">重载当前资源</button></div>
-        <div class="toolbar"><button v-for="choice in resources.exchange" :key="choice.id" class="button tiny secondary" @click="selectedResourceId.exchange=choice.id">{{ choice.name ?? choice.model ?? choice.id }}<span v-if="isResourceDirty('exchange',choice)"> *</span></button></div><div v-for="item in selectedResources('exchange')" :key="item.id" class="resource-row">
-          <div class="form-grid two">
-            <label><span>环境</span><select v-model="item.environment"><option>TESTNET</option><option>PRODUCTION</option></select></label>
-            <label><span>REST Base URL</span><input v-model="item.restBaseUrl" /></label>
-            <label><span>WS Base URL</span><input v-model="item.wsBaseUrl" /></label>
-            <label><span>Credential Ref</span><input v-model="item.credentialRef" /></label>
+        <div class="resource-manager-heading"><div><strong>交易所连接</strong><p>活动 TESTNET REST 只允许 Binance Demo；REST / WS 地址独立保存。资源修改先保存，再执行连接测试。</p></div></div>
+        <div class="resource-manager-layout single-resource">
+          <aside class="resource-card-list">
+            <button v-for="choice in resources.exchange" :key="choice.id" class="resource-card selected">
+              <span class="resource-card-head"><strong>{{choice.name||choice.id}}</strong><span class="resource-state" data-state="ACTIVE">活动</span></span>
+              <span>{{choice.environment}}</span><span class="mono">{{choice.restBaseUrl}}</span>
+            </button>
+          </aside>
+          <div class="resource-detail">
+            <div v-for="item in selectedResources('exchange')" :key="item.id" class="resource-detail-body">
+              <div class="resource-detail-title"><div><h3>{{item.name||'Binance USD-M'}}</h3><span class="mono">{{item.id}}</span></div><span v-if="isResourceDirty('exchange',item)" class="dirty-label">有未保存修改</span></div>
+              <div class="form-grid two">
+                <label><span>环境</span><select v-model="item.environment"><option>TESTNET</option><option>PRODUCTION</option></select></label>
+                <label><span>Credential Ref</span><input v-model="item.credentialRef" /></label>
+                <label class="wide-field"><span>REST Base URL</span><input v-model="item.restBaseUrl" /></label>
+                <label class="wide-field"><span>WS Base URL</span><input v-model="item.wsBaseUrl" /></label>
+              </div>
+              <div class="resource-actions"><span class="muted">编辑 → 保存 → 测试。交易所资源不能直接删除。</span><div><button class="button primary" :disabled="!isResourceDirty('exchange',item)" @click="saveResource('exchange',item)">保存资源</button><button class="button secondary" :disabled="!isResourceDirty('exchange',item)" @click="cancelResourceEdits('exchange')">取消修改</button><button class="button secondary" :disabled="isResourceDirty('exchange',item)" @click="testResource('exchange',item)">测试连接</button></div></div>
+            </div>
           </div>
-          <div><span v-if="isResourceDirty('exchange',item)" class="muted">未保存</span><button class="button tiny primary" :disabled="!isResourceDirty('exchange',item)" @click="saveResource('exchange',item)">保存</button><button class="button tiny secondary" :disabled="!isResourceDirty('exchange',item)" @click="cancelResourceEdits('exchange')">取消</button><button class="button tiny secondary" @click="testResource('exchange',item)">测试</button></div>
         </div>
-        <div class="form-grid two"><label><span>执行模式</span><select v-model="draft.connections.executionMode"><option>READ_ONLY</option><option>TESTNET_ENABLED</option></select></label><label><span>凭证状态</span><input :value="credentialStatus?.configured ? 'READY' : 'NOT_CONFIGURED'" disabled /></label><label><span>API Key</span><input v-model="apiKey" type="password" /></label><label><span>API Secret</span><input v-model="apiSecret" type="password" /></label></div>
-        <div><button class="button secondary" @click="testCredentials">仅验证凭证</button><button class="button primary" @click="saveCredentials">验证并保存凭证</button></div>
+        <section class="settings-subsection"><h3>执行与凭证</h3><div class="form-grid two"><label><span>执行模式</span><select v-model="draft.connections.executionMode"><option>READ_ONLY</option><option>TESTNET_ENABLED</option></select><small>执行模式属于普通设置；修改后请切换到普通参数页使用“保存当前参数”。</small></label><label><span>凭证状态</span><input :value="credentialStatus?.configured ? 'READY' : 'NOT_CONFIGURED'" disabled /></label><label><span>API Key</span><input v-model="apiKey" type="password" autocomplete="off" /></label><label><span>API Secret</span><input v-model="apiSecret" type="password" autocomplete="off" /></label></div><div class="resource-actions"><span class="muted">凭证不会显示回页面；测试不保存，验证并保存才写入安全存储。</span><div><button class="button secondary" @click="testCredentials">仅验证凭证</button><button class="button primary" @click="saveCredentials">验证并保存凭证</button></div></div></section>
       </Panel>
       <Panel v-else-if="tab === 'proxy'" title="网络代理资源">
         <div class="resource-manager-heading">

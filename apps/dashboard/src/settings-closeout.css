@@ -94,3 +94,16 @@
   .settings-page .resource-health-grid { grid-template-columns:1fr; }
   .settings-page .resource-actions { align-items:flex-start; flex-direction:column; }
 }
+
+.settings-page .settings-hero-actions { display:flex; align-items:center; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
+.settings-page .settings-subsection {
+  margin-top:18px;
+  padding-top:18px;
+  border-top:1px solid var(--line-soft);
+}
+.settings-page .settings-subsection h3 { margin:0 0 12px; }
+.settings-page .resource-manager-layout.single-resource { grid-template-columns:minmax(220px,.7fr) minmax(0,2fr); }
+@media (max-width: 900px) {
+  .settings-page .settings-hero-actions { justify-content:flex-start; }
+  .settings-page .resource-manager-layout.single-resource { grid-template-columns:1fr; }
+}

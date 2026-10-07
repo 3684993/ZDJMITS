@@ -1,4 +1,10 @@
 # J-MITS V3.9.7 — CURRENT MAINTENANCE HANDOFF
+## 2026-10-07 19:52 +08:00 — additional isolated candidate (NOT DEPLOYED)
+
+First-hour runtime remains NOT_STABLE. Bounded account timing evidence and a real loopback SOCKS reproduction prove connections are reopened instead of reused. Minimal candidate a9e5b8819cbb1facc856dd766d5727718c5a1498 on codex/rest-connection-reuse-20261007 enables bounded keep-alive and retires old idle routes while preserving captured requests. Complete local verify passes1972 tests/232 files (Engine1789). Candidate source, reproduction failures, targeted77 tests and full verify logs are on GitHub at https://github.com/3684993/ZDJMITS/tree/codex/rest-connection-reuse-20261007/docs/reports/v397-rest-connection-reuse-20261007 . This is LOCAL_VERIFY_PASS / NOT_DEPLOYED / RUNTIME_ACCEPTANCE_UNKNOWN.
+
+No candidate code is in current main or live PID37952. Main still matches live source d9626b0f51ae679283d93b7b2bb9c6355322d3f65cbd7010b40d9aec57c9565e. Current heartbeat forbids lifecycle actions; do not automatically deploy/restart, infer runtime improvements from isolated tests, or silently count the ongoing window toward a future candidate deployment. Continue original collector35268 to the actual6h/12h checkpoints, report NOT_STABLE/INCOMPLETE honestly, preserve all evidence on GitHub. F04/F10/F11 remain deferred. Candidate checkout D:\MITS-WORKTREES\v397-rest-connection-reuse-20261007 has no live data junction; preserve its clean branch for subsequent authorized deployment context.
+
 
 ## 2026-10-07 audit remediation followup — current authority
 ## Followup deployment and new observation window

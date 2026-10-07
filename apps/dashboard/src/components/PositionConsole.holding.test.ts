@@ -74,4 +74,22 @@ describe('PositionConsole holding duration', () => {
     await vi.advanceTimersByTimeAsync(120_000);
     expect(wrapper.find('[data-holding-duration]').text()).toBe('连续持有 2小时6分');
   });
+
+  it('keeps explicit manual limit submission available when live preview is unavailable', async () => {
+    vi.mocked(api.manualPreview).mockRejectedValue(new Error('MARKET_DATA_UNAVAILABLE'));
+    vi.mocked(api.manualPosition).mockResolvedValue({ intent: { id: 'manual_limit_1', status: 'ACCEPTED' } } as never);
+    const wrapper = await open(makePosition({
+      id: 'pos_btc_long', cycleId: 'cycle_btc_long', symbol: 'BTCUSDT', side: 'LONG', quantity: 0.02,
+      openedAt: NOW - HOUR, firstObservedAt: NOW - HOUR, entryTimeSource: 'SYSTEM_FILL',
+    }));
+    await wrapper.findAll('button').find(node => node.text().includes('限价挂单'))!.trigger('click');
+    await flushPromises();
+    expect(wrapper.text()).toContain('仍可输入明确限价并提交');
+    const inputs = wrapper.findAll('.manual-form input');
+    await inputs[0]!.setValue('0.01');
+    await inputs[1]!.setValue('61500');
+    await wrapper.findAll('button').find(node => node.text().includes('确认提交'))!.trigger('click');
+    await flushPromises();
+    expect(api.manualPosition).toHaveBeenCalledWith('pos_btc_long', expect.objectContaining({action:'PLACE_LIMIT',quantity:0.01,price:61500,confirm:false,idempotencyKey:expect.stringMatching(/^ui_/)}));
+  });
 });

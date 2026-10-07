@@ -61,6 +61,11 @@ describe('user-facing operational incidents',()=>{
     const now=Date.now(),rows=operationalCandidates({pipeline:{pipelineState:'RUNNING',marketDataReason:null,freshMarkets:{status:'FRESH'}},marketStream:{state:'LIVE'},routes:[{recentFailures:[0,1,2,3].map(i=>({message:'BINANCE_TRANSPORT_BLOCKED: Binance request timed out',requestId:`m${i}`,endpoint:'/fapi/v1/ticker/24hr',method:'GET',routeIdentity:'proxy-test',completedAt:now-i*1000})),requestBudget:{recentDispatches:[],admissionObservedWeight1m:100,softBackgroundWeight:1000}}],account:{status:'READY'}});
     expect(rows).toHaveLength(0);
   });
+  it('uses candidate-local market health when unrelated retained symbols keep the global freshness view recovering',()=>{
+    const now=Date.now(),failures=[0,1,2,3].map(i=>({message:'BINANCE_TRANSPORT_BLOCKED: Binance request timed out',requestId:`isolated-${i}`,endpoint:'/fapi/v1/ticker/bookTicker',method:'GET',routeIdentity:'proxy-test',completedAt:now-i*1000}));
+    const rows=operationalCandidates({pipeline:{pipelineState:'RUNNING',marketDataReason:null,freshMarkets:{status:'RECOVERING'},marketDataIsolation:{healthyCandidates:1,blockedCandidates:4}},marketStream:{state:'LIVE'},routes:[{recentFailures:failures,requestBudget:{recentDispatches:failures.map(row=>({...row,decision:'TIMEOUT'})),admissionObservedWeight1m:100,softBackgroundWeight:1000}}],account:{status:'READY'}});
+    expect(rows).toHaveLength(0);
+  });
   it('never turns optional derivatives REST latency into NET-002, even while market execution is degraded',()=>{
     const now=Date.now(),failures=['/fapi/v1/openInterest','/fapi/v1/premiumIndex','/futures/data/openInterestHist'].flatMap((endpoint,j)=>[0,1,2].map(i=>({message:'BINANCE_TRANSPORT_BLOCKED: Binance request timed out',requestId:`adv-${j}-${i}`,endpoint,method:'GET',routeIdentity:'proxy-test',completedAt:now-i*1000})));
     const rows=operationalCandidates({pipeline:{pipelineState:'PAUSED_MARKET_DATA_UNAVAILABLE',marketDataReason:'MARKET_QUOTES_STALE',freshMarkets:{status:'STALE'}},marketStream:{state:'LIVE'},routes:[{recentFailures:failures,requestBudget:{recentDispatches:failures.map((row:any)=>({...row,decision:'TIMEOUT'})),admissionObservedWeight1m:100,softBackgroundWeight:1000}}],account:{status:'READY'}});

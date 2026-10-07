@@ -69,7 +69,9 @@ export class OperationalIncidentTracker{
 }
 export function operationalCandidates(facts:{pipeline:any;routes:any[];account:any;marketStream?:any;valuation?:any;orders?:any}):Candidate[]{
   const out:Candidate[]=[];
-  const now=Date.now(),marketHealthy=facts.pipeline?.pipelineState==='RUNNING'&&facts.pipeline?.freshMarkets?.status==='FRESH',
+  const now=Date.now(),marketHealthy=facts.pipeline?.pipelineState==='RUNNING'&&(
+      Number(facts.pipeline?.marketDataIsolation?.healthyCandidates??0)>0||facts.pipeline?.freshMarkets?.status==='FRESH'
+    ),
     recentUnresolved=Boolean((facts.orders??[]).some((order:any)=>order.status==='UNKNOWN'&&order.activeRiskExposure!==false&&Number.isFinite(Number(order.createdAt))&&now-Number(order.createdAt)<3_600_000));
   const advisoryRestEndpoint=(endpoint:unknown)=>/\/fapi\/v1\/(openInterest|premiumIndex)$|\/futures\/data\//.test(String(endpoint??''));
   const marketFallbackEndpoint=(endpoint:unknown)=>/\/fapi\/v1\/(ticker\/24hr|ticker\/bookTicker|depth|klines)$/.test(String(endpoint??''));

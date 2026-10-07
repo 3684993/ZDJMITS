@@ -225,7 +225,8 @@ export function createRuntimeSettingsResourcesRouter(runtime:EngineRuntime){
     if(kind==='proxy'){
       const current:any=nextSettings.connections.proxy,resources=proxyResources(nextSettings),remaining=resources.filter((row:any)=>row.id!==id);
       if(!remaining.length)return res.status(409).json({error:{code:'LAST_PROXY_RESOURCE_DELETE_FORBIDDEN'},currentSettingsVersion:before.settingsVersion});
-      const wasActive=String(current.activeResourceId??'binance-proxy')===id,nextActive=wasActive?(remaining.find((row:any)=>row.enabled!==false)??remaining[0]):remaining.find((row:any)=>row.id===current.activeResourceId)??remaining[0];
+      if(String(current.activeResourceId??'binance-proxy')===id)return res.status(409).json({error:{code:'ACTIVE_PROXY_DELETE_FORBIDDEN',hint:'Activate another saved proxy before deleting this resource.'},currentSettingsVersion:before.settingsVersion});
+      const nextActive=remaining.find((row:any)=>row.id===current.activeResourceId)??remaining[0];
       nextSettings.connections.proxy={...current,resources,activeResourceId:nextActive.id,url:nextActive.url,enabled:nextActive.enabled!==false,forceBinanceRest:true,forceBinanceWs:true,proxyDns:true,binanceRestRoute:'CONFIGURED',bypassLocalhost:true,failClosed:true};
       (nextSettings.connections.proxy as any).resources=remaining;
     } else {

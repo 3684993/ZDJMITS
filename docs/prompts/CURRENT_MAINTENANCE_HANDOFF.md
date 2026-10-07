@@ -5,8 +5,8 @@
 > Stable handoff entrypoint for a new ChatGPT maintenance conversation.
 > Last refreshed: 2026-10-07 (+08:00)
 > Repository: `3684993/ZDJMITS`
-> Current upstream `origin/main` baseline: `5784154367838266e630ceb0b2bcca9c30f82853`
-> Current local maintenance candidate: `7fdadad6a95fa6bfa658a1a1edb06e91dba8f38a`
+> Upstream `origin/main` baseline before this completion run: `5784154367838266e630ceb0b2bcca9c30f82853`
+> Final verified implementation candidate: `3a46408e2cecf2dbd6b404af29cbfe4703e208fb`
 > Last user-confirmed green verification: **V3.9.x Verify #655 GREEN**
 > Last upstream implementation baseline after that green run: `ae5e0c9e6ef6e03872d16aca9f0f9ea2dbd40194` (`fix: throttle exact-order recovery and prefer user data`).
 
@@ -108,6 +108,23 @@ Local evidence for that candidate:
 - Engine: 198 files / 1,760 tests PASS;
 - targeted Dashboard warning regression: 2 files / 27 tests PASS;
 - no Engine or auxiliary service restart; no runtime or exchange write was performed.
+
+### 2026-10-07 continuous completion result
+
+The remaining A-H maintenance scope was audited against current code and completed on top of the exact-order batch:
+- candidate-local executable market health now prevents optional REST market fallback latency from creating `NET-002` while at least one candidate remains healthy, even when unrelated retained symbols keep the aggregate freshness view in `RECOVERING`;
+- active proxy deletion is rejected by the API, so deletion cannot silently perform a live route switch; the operator must save/test and explicitly activate another proxy first;
+- the Dashboard-to-API explicit manual LIMIT path is regression-tested with preview market data unavailable and retains the user-entered price;
+- the Windows Engine host probes Node through `System.Diagnostics.Process`, so harmless inherited Node stderr warnings no longer abort the safe launcher under `ErrorActionPreference=Stop`;
+- exact-order/UNKNOWN, required market-data gating, Settings resource boundaries, bounded Review/Research, reconciliation budgets and storage/crash protections were re-audited and retained.
+
+Final local gate on implementation commit `3a46408e2cecf2dbd6b404af29cbfe4703e208fb`:
+- `npm run verify`: PASS;
+- release identity: `V397_RELEASE_IDENTITY_PASS`;
+- S00 T01-T06: PASS, network not used, exchange writes 0, lifecycle not used;
+- workspace typecheck and production build: PASS;
+- Contracts 1 file / 2 tests, Core 8 / 58, Dashboard 24 / 123, Engine 198 / 1,761: PASS;
+- GitHub Actions was not used as a decision or acceptance dependency.
 
 For Codex/local continuation, use:
 `docs/prompts/CODEX_MAINTENANCE_CONTINUATION.md`

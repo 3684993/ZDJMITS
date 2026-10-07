@@ -5,8 +5,8 @@
 > Repository: `3684993/ZDJMITS`
 > Local root: `D:\MITS`
 > Prepared: 2026-10-07 (+08:00)
-> Observed upstream baseline: `5784154367838266e630ceb0b2bcca9c30f82853`
-> Current local maintenance candidate: `7fdadad6a95fa6bfa658a1a1edb06e91dba8f38a`
+> Observed upstream baseline before the completion run: `5784154367838266e630ceb0b2bcca9c30f82853`
+> Final verified implementation candidate: `3a46408e2cecf2dbd6b404af29cbfe4703e208fb`
 > Last user-confirmed green verification: V3.9.x Verify #655.
 
 ## Mission
@@ -79,6 +79,16 @@ Intended semantics:
 - No second wire submit while the identity is unresolved.
 
 The first local continuation batch completed this audit at `7fdadad6a95fa6bfa658a1a1edb06e91dba8f38a`: explicit Binance `-2013` / `-2011` absence is shared for 15 seconds by the adapter-level exact-order cache, while timeouts and other uncertain failures are never cached. The recovery contract proves cooldown followed by same-identity recovery without a second submit. Workspace typecheck/build and Engine 198 files / 1,760 tests passed locally. Continue from current code rather than repeating that batch unless new evidence invalidates it.
+
+## Continuous completion record — 2026-10-07
+
+Implementation commit `3a46408e2cecf2dbd6b404af29cbfe4703e208fb` completes the remaining evidence-supported maintenance work:
+- optional market REST fallback timeouts use candidate-local executable health and no longer produce a false `NET-002` merely because the aggregate retained-symbol freshness view is `RECOVERING`;
+- the proxy API rejects deletion of the active resource, preserving the explicit save/test/activate boundary;
+- explicit manual LIMIT submission without a live preview is covered through the Dashboard/API boundary;
+- the safe Windows Engine host tolerates harmless Node probe stderr without weakening child-exit evidence capture.
+
+The final local `npm run verify` passed release identity, S00 T01-T06, all repository script self-tests, workspace typecheck, production build, Contracts 2 tests, Core 58 tests, Dashboard 123 tests and Engine 1,761 tests. The audit also retained exact-order single-flight/UNKNOWN non-resubmission, real required-market fail-closed behavior, bounded Review/Research, reconciliation budgets and storage/crash protections. No hosted CI result was used.
 
 ## Priority A — Binance latency / NET-002
 

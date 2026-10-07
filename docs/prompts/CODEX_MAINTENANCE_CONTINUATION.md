@@ -1,5 +1,7 @@
 # J-MITS V3.9.7 — CODEX MAINTENANCE CONTINUATION
 
+> **Current execution mode:** continuous completion. After reading this file, also read `docs/prompts/CODEX_FULL_COMPLETION_RUN.md` and follow it as the higher-priority run protocol. Do not stop after intermediate batches.
+
 > Repository: `3684993/ZDJMITS`
 > Local root: `D:\MITS`
 > Prepared: 2026-10-07 (+08:00)

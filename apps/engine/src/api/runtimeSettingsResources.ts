@@ -37,6 +37,7 @@ function canonicalExchange(settings:SystemSettings,item:any):SystemSettings{
   next.connections.exchange={...current,provider:'BINANCE_USDM',environment:environment as 'TESTNET'|'PRODUCTION',
     ...(environment==='TESTNET'?{testnetBaseUrl:rest||current.testnetBaseUrl,testnetRestBaseUrl:rest||current.testnetRestBaseUrl||current.testnetBaseUrl,testnetWsBaseUrl:String(item?.wsBaseUrl??item?.testnetWsBaseUrl??current.testnetWsBaseUrl??'wss://stream.binancefuture.com/ws')}:{productionBaseUrl:rest||current.productionBaseUrl,productionRestBaseUrl:rest||current.productionRestBaseUrl||current.productionBaseUrl,productionWsBaseUrl:String(item?.wsBaseUrl??item?.productionWsBaseUrl??current.productionWsBaseUrl??'wss://fstream.binance.com/ws')}),
     credentialRef:String(item?.credentialRef??current.credentialRef),recvWindowMs:Number(item?.recvWindowMs??current.recvWindowMs),autoTimeSync:item?.autoTimeSync??current.autoTimeSync};
+  if(item?.executionMode!==undefined){const mode=String(item.executionMode);if(mode!=='READ_ONLY'&&mode!=='TESTNET_ENABLED')throw new Error('EXECUTION_MODE_UNSUPPORTED');next.connections.executionMode=mode as 'READ_ONLY'|'TESTNET_ENABLED';}
   return next;
 }
 function aiResource(item:any){
@@ -45,7 +46,7 @@ function aiResource(item:any){
 }
 function rejectSecretFields(item:any){if(item&&['apiKey','apiSecret','secret','password','token'].some(key=>Object.prototype.hasOwnProperty.call(item,key)))throw new Error('RESOURCE_SECRET_FIELD_FORBIDDEN');}
 function resourceView(settings:SystemSettings,kind:RuntimeResourceKind,runtime?:EngineRuntime){
-  if(kind==='exchange'){const x=settings.connections.exchange as any;return[{id:'binance-usdm',name:'Binance USD-M',type:'BINANCE_USDM',environment:x.environment,restBaseUrl:x.environment==='TESTNET'?(x.testnetRestBaseUrl??x.testnetBaseUrl):(x.productionRestBaseUrl??x.productionBaseUrl),wsBaseUrl:x.environment==='TESTNET'?(x.testnetWsBaseUrl??'wss://stream.binancefuture.com/ws'):(x.productionWsBaseUrl??'wss://fstream.binance.com/ws'),credentialRef:x.credentialRef,enabled:true,active:true,status:'READY'}];}
+  if(kind==='exchange'){const x=settings.connections.exchange as any;return[{id:'binance-usdm',name:'Binance USD-M',type:'BINANCE_USDM',environment:x.environment,executionMode:settings.connections.executionMode,restBaseUrl:x.environment==='TESTNET'?(x.testnetRestBaseUrl??x.testnetBaseUrl):(x.productionRestBaseUrl??x.productionBaseUrl),wsBaseUrl:x.environment==='TESTNET'?(x.testnetWsBaseUrl??'wss://stream.binancefuture.com/ws'):(x.productionWsBaseUrl??'wss://fstream.binance.com/ws'),credentialRef:x.credentialRef,enabled:true,active:true,status:'READY'}];}
   if(kind==='proxy'){const activeId=(settings.connections.proxy as any).activeResourceId??'binance-proxy';return proxyResources(settings).map((row:any)=>({...row,active:row.id===activeId,status:row.enabled?(row.id===activeId?'ACTIVE':'READY'):'DISABLED'}));}
   const metrics=new Map((runtime?.ai?.resourceMetrics?.()??[]).map((row:any)=>[row.id,row]));
   return settings.aiResources.map(item=>{const metric:any=metrics.get(item.id);return{...item,name:item.name??item.id,
@@ -187,7 +188,7 @@ export function createRuntimeSettingsResourcesRouter(runtime:EngineRuntime){
     if(!id)throw new Error('RESOURCE_ID_REQUIRED');
     let nextSettings:SystemSettings,item:any;
     if(kind==='proxy'){item={id,name:req.body?.name??id,type:'SOCKS5H',url:String(req.body?.url??before.connections.proxy.url),enabled:req.body?.enabled!==false};nextSettings=canonicalProxy(before,item,req.body?.active===true);}
-    else if(kind==='exchange'){item={id,name:req.body?.name??'Binance USD-M',type:'BINANCE_USDM',environment:req.body?.environment??before.connections.exchange.environment,restBaseUrl:req.body?.restBaseUrl,wsBaseUrl:req.body?.wsBaseUrl,credentialRef:req.body?.credentialRef??before.connections.exchange.credentialRef,enabled:true};nextSettings=canonicalExchange(before,item);}
+    else if(kind==='exchange'){item={id,name:req.body?.name??'Binance USD-M',type:'BINANCE_USDM',environment:req.body?.environment??before.connections.exchange.environment,executionMode:req.body?.executionMode??before.connections.executionMode,restBaseUrl:req.body?.restBaseUrl,wsBaseUrl:req.body?.wsBaseUrl,credentialRef:req.body?.credentialRef??before.connections.exchange.credentialRef,enabled:true};nextSettings=canonicalExchange(before,item);}
     else{item=aiResource({...req.body,id});nextSettings=structuredClone(before);nextSettings.aiResources=[...nextSettings.aiResources.filter(existing=>existing.id!==item.id),item];}
     const saved=await runtime.updateResourceSettings(nextSettings,expected,{kind,operation:'SAVE',id,value:item});hotApply(runtime,before,saved);
     res.json({...resourceView(saved,kind,runtime).find(row=>row.id===id)??item,settingsVersion:saved.settingsVersion});

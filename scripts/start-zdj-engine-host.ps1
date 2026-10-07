@@ -10,10 +10,30 @@ param(
   [Parameter(Mandatory=$true)][string]$LaunchId
 )
 $ErrorActionPreference='Stop'
+function Invoke-NativeProbe([string]$Executable,[string]$Arguments){
+  $start=[Diagnostics.ProcessStartInfo]::new()
+  $start.FileName=$Executable
+  $start.Arguments=$Arguments
+  $start.UseShellExecute=$false
+  $start.CreateNoWindow=$true
+  $start.RedirectStandardOutput=$true
+  $start.RedirectStandardError=$true
+  $process=[Diagnostics.Process]::new()
+  $process.StartInfo=$start
+  if(-not $process.Start()){throw "NODE_PROBE_START_FAILED:$Arguments"}
+  $stdout=$process.StandardOutput.ReadToEnd()
+  $stderr=$process.StandardError.ReadToEnd()
+  $process.WaitForExit()
+  if($process.ExitCode -ne 0){throw "NODE_PROBE_FAILED:$Arguments exit=$($process.ExitCode) stderr=$($stderr.Trim())"}
+  return $stdout
+}
 function Get-NodeRuntimeGuard([string]$Executable){
-  $nodeVersion=(& $Executable --version 2>$null | Out-String).Trim()
-  $v8Version=(& $Executable -p "process.versions.v8" 2>$null | Out-String).Trim()
-  $v8Options=(& $Executable --v8-options 2>$null | Out-String)
+  # Probe through Process rather than PowerShell's native pipeline. Some managed Node installations
+  # emit a harmless preload warning on stderr; with ErrorActionPreference=Stop PowerShell promotes
+  # that warning to NativeCommandError and prevents the Engine child from starting.
+  $nodeVersion=(Invoke-NativeProbe $Executable '--version').Trim()
+  $v8Version=(Invoke-NativeProbe $Executable '-p "process.versions.v8"').Trim()
+  $v8Options=Invoke-NativeProbe $Executable '--v8-options'
   $flags=@()
   # Windows has had native fail-fast crashes in V8's Maglev tier. Disable it only when this
   # installed Node actually exposes the flag; no Node version upgrade/downgrade is implied.

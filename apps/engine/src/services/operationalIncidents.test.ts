@@ -67,6 +67,12 @@ describe('user-facing operational incidents',()=>{
     expect(rows.filter(row=>row.publicCode==='NET-002')).toHaveLength(0);
     expect(rows.some(row=>row.publicCode==='MARKET-DATA-001')).toBe(true);
   });
+  it('represents exact-order timeout recovery as SUBMIT_UNKNOWN instead of a duplicate NET-002 incident',()=>{
+    const now=Date.now(),failures=[0,1,2,3].map(i=>({message:'BINANCE_TRANSPORT_BLOCKED: Binance request timed out',requestId:`order-${i}`,endpoint:'/fapi/v1/order',method:'GET',routeIdentity:'proxy-test',completedAt:now-i*1000}));
+    const rows=operationalCandidates({pipeline:{pipelineState:'RUNNING',freshMarkets:{status:'FRESH'}},routes:[{recentFailures:failures,requestBudget:{recentDispatches:failures.map(row=>({...row,decision:'TIMEOUT'})),admissionObservedWeight1m:100,softBackgroundWeight:1000}}],account:{status:'READY'},orders:[{status:'UNKNOWN',activeRiskExposure:true,createdAt:now}]});
+    expect(rows.filter(row=>row.publicCode==='NET-002')).toHaveLength(0);
+    expect(rows.filter(row=>row.publicCode==='EX-SUBMIT-UNKNOWN')).toHaveLength(1);
+  });
   it('keeps historical UNKNOWN out of the current submit alarm',()=>{
     const facts={pipeline:{pipelineState:'RUNNING'},routes:[],account:{status:'READY'},orders:[{status:'UNKNOWN',activeRiskExposure:true,createdAt:Date.now()-86_400_000}]};
     expect(operationalCandidates(facts)).toHaveLength(0);

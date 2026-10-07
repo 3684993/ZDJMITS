@@ -21,12 +21,12 @@ async function harness(){
 
 describe('dual-model runtime state',()=>{
   it('probes enabled Scout and Primary resources',async()=>{
-    const {ai,state}=await harness();const primary=state.aiResources.find(r=>r.role==='PRIMARY_BRAIN')!;const scout=state.aiResources.find(r=>r.role==='SCOUT')!;
+    const {ai,state}=await harness();const primary=state.aiResources.find(r=>r.role==='PRIMARY_BRAIN')!;const scout=state.aiResources.find(r=>r.role==='SCOUT')!;const review=state.aiResources.find(r=>r.role==='REVIEW_BRAIN')!;
     const probe=vi.spyOn((ai as any).openAi,'probe').mockImplementation(async(..._args:any[])=>({ok:true,reason:null}));
     await ai.probeResources();expect(ai.hasCapacity('PRIMARY_BRAIN')).toBe(true);expect(ai.hasCapacity('SCOUT')).toBe(true);
     expect(state.aiResources.filter(r=>r.role==='SCOUT')).toHaveLength(1);
     expect(ai.resourceMetrics().filter(r=>r.role==='SCOUT')).toHaveLength(1);
-    expect(probe.mock.calls.map(([url]:any[])=>url)).toEqual([scout.baseUrl,primary.baseUrl]);
+    expect(probe.mock.calls.map(([url]:any[])=>url)).toEqual([scout.baseUrl,primary.baseUrl,review.baseUrl]);
     probe.mockResolvedValue({ok:false,reason:'offline'});await ai.probeResources();expect(ai.hasCapacity('PRIMARY_BRAIN')).toBe(true);
     await ai.probeResources();expect(ai.hasCapacity('PRIMARY_BRAIN')).toBe(true);
     await ai.probeResources();expect(ai.hasCapacity('PRIMARY_BRAIN')).toBe(false);
@@ -44,6 +44,12 @@ describe('dual-model runtime state',()=>{
     const a=(ai as any).queueReview('POSITION_REVIEW',work),b=(ai as any).queueReview('PENDING_ENTRY_REVIEW',work);
     await vi.waitFor(()=>expect(maxActive).toBe(2));release();await Promise.all([a,b]);
     expect(maxActive).toBe(2);
+  });
+  it('shows candidate Scout waiting truth instead of shared-event-only idle text',async()=>{
+    const {state,ai}=await harness();state.settings.externalIntelligence.researchEnabled=false;state.settings.ai.scoutEnabled=true;
+    expect(ai.resourceMetrics().find(r=>r.role==='SCOUT')).toMatchObject({currentStatus:'WAITING_CANDIDATE',nextStep:'等待动态交易池候选'});
+    state.settings.externalIntelligence.researchEnabled=true;
+    expect(ai.resourceMetrics().find(r=>r.role==='SCOUT')).toMatchObject({currentStatus:'WAITING_CANDIDATE_OR_SHARED_EVENT'});
   });
   it('surfaces Scout when shared research duties are enabled',async()=>{
     const {state,ai}=await harness();state.settings.externalIntelligence.researchEnabled=true;

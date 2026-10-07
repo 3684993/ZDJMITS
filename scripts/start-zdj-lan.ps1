@@ -186,7 +186,23 @@ if($Foreground){
   Write-Host ('Exit hex         : '+$exitHex)
   Write-Host ('Console log      : '+$foregroundLog)
   Write-Host ('Crash reports    : '+$reportDir)
-  if($exitCode -eq -1073740791){Write-Host 'Detected Windows native fail-fast: 0xC0000409' -ForegroundColor Red}
+  if($exitCode -eq -1073740791){
+    Write-Host 'Detected Windows native fail-fast: 0xC0000409' -ForegroundColor Red
+    $windowsEventReport=Join-Path $reportDir 'windows-application-events.txt'
+    try{
+      $eventStart=$endedAt.AddMinutes(-5)
+      $eventEnd=$endedAt.AddMinutes(1)
+      $events=Get-WinEvent -FilterHashtable @{LogName='Application';StartTime=$eventStart;EndTime=$eventEnd} -ErrorAction Stop |
+        Where-Object { $_.ProviderName -in @('Application Error','Windows Error Reporting') -or $_.Message -match 'node\.exe|0x[cC]0000409' } |
+        Select-Object TimeCreated,Id,ProviderName,LevelDisplayName,Message
+      if($events){
+        ($events | Format-List | Out-String -Width 4096) | Set-Content -LiteralPath $windowsEventReport -Encoding UTF8
+        Write-Host ('Windows events  : '+$windowsEventReport)
+      }
+    }catch{
+      Write-Warning ('WINDOWS_CRASH_EVENT_CAPTURE_FAILED: '+$_.Exception.Message)
+    }
+  }
   Write-Host 'Last 40 log lines:'
   if(Test-Path -LiteralPath $foregroundLog){Get-Content -LiteralPath $foregroundLog -Tail 40 -ErrorAction SilentlyContinue|ForEach-Object {Write-Host $_}}
   exit $exitCode

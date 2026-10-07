@@ -32,6 +32,7 @@ export class BinanceTransport {
  constructor(settings:ConnectionSettings){this.settings=settings;this.applyRoute();liveTransports.add(new WeakRef(this));}
  private applyRoute(){if(this.settings.proxy.enabled&&this.settings.proxy.url)this.agent=new SocksProxyAgent(this.settings.proxy.url);else this.agent=null;const proxyHash=this.agent?createHash('sha256').update(this.settings.proxy.url).digest('hex').slice(0,12):'unavailable';this.routeIdentity=`proxy-${proxyHash}`;this.budget=getBinanceRequestBudget(this.settings.exchange.environment,this.routeIdentity);this.requestLimitFlight=null;}
  reconfigure(settings:ConnectionSettings){this.settings=settings;this.applyRoute();}
+ dispose(){try{this.agent?.destroy();}catch{}this.agent=null;for(const ref of [...liveTransports]){const value=ref.deref();if(!value||value===this)liveTransports.delete(ref);}}
  effectiveBaseUrl(){const exchange=this.settings.exchange as typeof this.settings.exchange & {testnetRestBaseUrl?:string;productionRestBaseUrl?:string};return exchange.environment==='TESTNET'?(exchange.testnetRestBaseUrl??exchange.testnetBaseUrl):(exchange.productionRestBaseUrl??exchange.productionBaseUrl);}environment(){return this.settings.exchange.environment;}executionMode(){return this.settings.executionMode;}
  private assertProxy(){if(!this.settings.proxy.enabled||!this.agent)throw new Error('PROXY_REQUIRED: Binance exchange traffic is proxy-only and configured fail-closed');}
  requestBudgetHealth(){return{...this.budget.health(),routeIdentity:this.routeIdentity,route:this.restRoute()};}

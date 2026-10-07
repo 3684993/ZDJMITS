@@ -310,3 +310,7 @@ Return one concise final report only after the run is complete. Include:
 - remaining issue only if it is a genuine external/user-only blocker.
 
 Do not end with "shall I continue?". End with: **等待用户验收。**
+
+## Durable output storage
+
+Every generated report/evidence artifact must be committed to GitHub in the same run. Local-only artifact paths are not an acceptable final deliverable. Update the maintenance handoff with repository paths and commit identity before final reporting.

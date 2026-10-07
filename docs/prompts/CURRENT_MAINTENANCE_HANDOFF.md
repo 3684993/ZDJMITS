@@ -469,3 +469,18 @@ Likely relevant:
 ## 17. Short prompt for a new ChatGPT web conversation
 
 > 继续维护我的 GitHub 项目 `3684993/ZDJMITS`。先读取 `docs/prompts/CURRENT_MAINTENANCE_HANDOFF.md` 和 `docs/prompts/CODEX_MAINTENANCE_CONTINUATION.md`，以当前代码和本地测试为事实基线，不要让我重复历史。当前上游 `origin/main` 是 `5784154367838266e630ceb0b2bcca9c30f82853`；本地候选 `7fdadad6a95fa6bfa658a1a1edb06e91dba8f38a` 已完成首批 UNKNOWN/exact-order 去重并通过本地验证。继续网络延迟/NET-002、MARKET-DATA-001、Settings 标准 CRUD、人工限价与三模型异步利用率优化。不要依赖或等待 GitHub Actions。8083/8084 未经提前明确告知禁止停止/重启；Production writes 必须保持 0；不要恢复静态出口 IP gate。
+
+## Permanent artifact retention rule
+
+**All Codex/ChatGPT project-maintenance artifacts must be stored in GitHub, not left only in local paths.**
+
+This includes audit reports, question/answer reports, evidence bundles, diagnostic reports, generated scripts, reproduction outputs, manifests, handoff notes, and any other file that future maintainers may need.
+
+Requirements:
+- Commit durable artifacts into this repository under an appropriate `docs/reports/`, `docs/evidence/`, `docs/prompts/`, or `scripts/` path before declaring the work complete.
+- Do not report a local-only path such as `C:\\Users\\...\\outputs\\...` as the sole location of a deliverable.
+- When an artifact is generated locally, upload/commit it to GitHub during the same maintenance run.
+- Update this handoff with the GitHub paths and relevant commit SHA so the next maintainer can retrieve them without asking the user to re-upload or repeat history.
+- If a binary artifact cannot be uploaded directly through the available connector, store a lossless GitHub-hosted representation (for example split base64 plus SHA256 and reconstruction instructions) rather than leaving it only on disk.
+
+Current independent audit artifacts are archived under `docs/reports/system-audit-20261007/`.

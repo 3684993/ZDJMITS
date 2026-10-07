@@ -230,3 +230,7 @@ At the end of a coherent batch report concisely:
 8. update `docs/prompts/CURRENT_MAINTENANCE_HANDOFF.md` if repository state materially changed.
 
 Start now. Read both handoff files, inspect actual current main, validate the `ae5e0c9...` exact-order changes locally, then continue by evidence. Do not wait for Actions and do not stop at critique: improve the code.
+
+## Artifact persistence requirement
+
+Every maintenance deliverable produced by Codex must be committed to GitHub before completion. Never leave the only copy in a local `outputs` directory. Update `docs/prompts/CURRENT_MAINTENANCE_HANDOFF.md` with the repository paths and commit SHA. Binary outputs that cannot be uploaded directly must be preserved losslessly in GitHub (for example split base64 + checksum + reconstruction instructions).

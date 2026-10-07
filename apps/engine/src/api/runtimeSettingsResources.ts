@@ -8,9 +8,23 @@ import { applyGovernancePatch, changedGovernancePaths, governanceFieldOf, govern
 type RuntimeResourceKind='exchange'|'proxy'|'ai';
 const aiLoadDefault=()=>({active:0,totalRuns:0,failures:0,lastLatencyMs:null,currentSymbol:null,currentRunId:null,currentStartedAt:null,lastCompletedAt:null,lastDirection:null,lastDecision:null,idleReason:'WAITING_CANDIDATE',nextStep:'等待动态交易池候选',queueDepth:0});
 
-function canonicalProxy(settings:SystemSettings,item?:any):SystemSettings{
-  const next=structuredClone(settings),current=next.connections.proxy;
-  next.connections.proxy={...current,...(item?{enabled:item.enabled!==false,protocol:'SOCKS5H' as const,url:String(item.url??current.url)}:{}),forceBinanceRest:true,forceBinanceWs:true,proxyDns:true,binanceRestRoute:'CONFIGURED',bypassLocalhost:true,failClosed:true};
+function proxyResources(settings:SystemSettings){
+  const proxy:any=settings.connections.proxy,rows=Array.isArray(proxy.resources)?proxy.resources:[];
+  if(rows.length)return rows.map((row:any)=>({id:String(row.id),name:String(row.name??row.id),type:'SOCKS5H' as const,url:String(row.url),enabled:row.enabled!==false}));
+  return[{id:String(proxy.activeResourceId??'binance-proxy'),name:'默认 SOCKS5H',type:'SOCKS5H' as const,url:String(proxy.url),enabled:proxy.enabled!==false}];
+}
+function canonicalProxy(settings:SystemSettings,item?:any,activate=false):SystemSettings{
+  const next=structuredClone(settings),current:any=next.connections.proxy,existing=proxyResources(next);
+  let resources=existing,activeResourceId=String(current.activeResourceId??existing[0]?.id??'binance-proxy');
+  if(item){
+    const normalized={id:String(item.id??''),name:String(item.name??item.id??'SOCKS5H'),type:'SOCKS5H' as const,url:String(item.url??current.url),enabled:item.enabled!==false};
+    if(!normalized.id)throw new Error('RESOURCE_ID_REQUIRED');
+    resources=[...existing.filter((row:any)=>row.id!==normalized.id),normalized];
+    if(activate||!resources.some((row:any)=>row.id===activeResourceId))activeResourceId=normalized.id;
+  }
+  const active=resources.find((row:any)=>row.id===activeResourceId)??resources.find((row:any)=>row.enabled!==false)??resources[0];
+  next.connections.proxy={...current,enabled:Boolean(active?.enabled),protocol:'SOCKS5H',url:String(active?.url??current.url),activeResourceId:String(active?.id??activeResourceId),resources,forceBinanceRest:true,forceBinanceWs:true,proxyDns:true,binanceRestRoute:'CONFIGURED',bypassLocalhost:true,failClosed:true};
+  delete (next.connections.proxy as any).expectedStaticEgressIp;
   return next;
 }
 function canonicalExchange(settings:SystemSettings,item:any):SystemSettings{
@@ -32,7 +46,7 @@ function aiResource(item:any){
 function rejectSecretFields(item:any){if(item&&['apiKey','apiSecret','secret','password','token'].some(key=>Object.prototype.hasOwnProperty.call(item,key)))throw new Error('RESOURCE_SECRET_FIELD_FORBIDDEN');}
 function resourceView(settings:SystemSettings,kind:RuntimeResourceKind,runtime?:EngineRuntime){
   if(kind==='exchange'){const x=settings.connections.exchange as any;return[{id:'binance-usdm',name:'Binance USD-M',type:'BINANCE_USDM',environment:x.environment,restBaseUrl:x.environment==='TESTNET'?(x.testnetRestBaseUrl??x.testnetBaseUrl):(x.productionRestBaseUrl??x.productionBaseUrl),wsBaseUrl:x.environment==='TESTNET'?(x.testnetWsBaseUrl??'wss://stream.binancefuture.com/ws'):(x.productionWsBaseUrl??'wss://fstream.binance.com/ws'),credentialRef:x.credentialRef,enabled:true,active:true,status:'READY'}];}
-  if(kind==='proxy')return[{id:'binance-proxy',name:'SOCKS5H',type:'SOCKS5H',url:settings.connections.proxy.url,enabled:settings.connections.proxy.enabled,active:true,status:settings.connections.proxy.enabled?'READY':'DISABLED'}];
+  if(kind==='proxy'){const activeId=(settings.connections.proxy as any).activeResourceId??'binance-proxy';return proxyResources(settings).map((row:any)=>({...row,active:row.id===activeId,status:row.enabled?(row.id===activeId?'ACTIVE':'READY'):'DISABLED'}));}
   const metrics=new Map((runtime?.ai?.resourceMetrics?.()??[]).map((row:any)=>[row.id,row]));
   return settings.aiResources.map(item=>{const metric:any=metrics.get(item.id);return{...item,name:item.name??item.id,
     duties:(settings.aiDutyRoutes??[]).filter(route=>route.enabled&&route.resourceId===item.id).map(route=>route.duty),
@@ -169,16 +183,22 @@ export function createRuntimeSettingsResourcesRouter(runtime:EngineRuntime){
   }catch(error){if(conflict(res,error,runtime.state.settings.settingsVersion))return;next(error);}});
   const save=async(req:Request,res:Response,next:NextFunction)=>{try{
     const kind=kindOf(req),expected=expectedVersion(req),before=runtime.state.settings;rejectSecretFields(req.body);
-    const id=kind==='proxy'?'binance-proxy':kind==='exchange'?'binance-usdm':String(req.params.id??req.body?.id??'');
+    const id=kind==='exchange'?'binance-usdm':String(req.params.id??req.body?.id??'');
     if(!id)throw new Error('RESOURCE_ID_REQUIRED');
     let nextSettings:SystemSettings,item:any;
-    if(kind==='proxy'){item={id,name:req.body?.name??'SOCKS5H',type:'SOCKS5H',url:String(req.body?.url??before.connections.proxy.url),enabled:req.body?.enabled!==false};nextSettings=canonicalProxy(before,item);}
+    if(kind==='proxy'){item={id,name:req.body?.name??id,type:'SOCKS5H',url:String(req.body?.url??before.connections.proxy.url),enabled:req.body?.enabled!==false};nextSettings=canonicalProxy(before,item,req.body?.active===true);}
     else if(kind==='exchange'){item={id,name:req.body?.name??'Binance USD-M',type:'BINANCE_USDM',environment:req.body?.environment??before.connections.exchange.environment,restBaseUrl:req.body?.restBaseUrl,wsBaseUrl:req.body?.wsBaseUrl,credentialRef:req.body?.credentialRef??before.connections.exchange.credentialRef,enabled:true};nextSettings=canonicalExchange(before,item);}
     else{item=aiResource({...req.body,id});nextSettings=structuredClone(before);nextSettings.aiResources=[...nextSettings.aiResources.filter(existing=>existing.id!==item.id),item];}
     const saved=await runtime.updateResourceSettings(nextSettings,expected,{kind,operation:'SAVE',id,value:item});hotApply(runtime,before,saved);
     res.json({...resourceView(saved,kind,runtime).find(row=>row.id===id)??item,settingsVersion:saved.settingsVersion});
   }catch(error){if(conflict(res,error,runtime.state.settings.settingsVersion))return;next(error);}};
   router.post('/settings/resources/:kind',save);router.put('/settings/resources/:kind/:id',save);
+  router.post('/settings/resources/proxy/:id/activate',async(req,res,next)=>{try{
+    const expected=expectedVersion(req),before=runtime.state.settings,id=String(req.params.id),resource=proxyResources(before).find((row:any)=>row.id===id);
+    if(!resource)return res.status(404).json({error:{message:'PROXY_RESOURCE_NOT_FOUND'}});
+    const nextSettings=canonicalProxy(before,resource,true),saved=await runtime.updateResourceSettings(nextSettings,expected,{kind:'proxy',operation:'ACTIVATE',id,value:resource});
+    hotApply(runtime,before,saved);res.json({...resource,active:true,status:resource.enabled?'ACTIVE':'DISABLED',settingsVersion:saved.settingsVersion});
+  }catch(error){if(conflict(res,error,runtime.state.settings.settingsVersion))return;next(error);}});
   router.post('/settings/resources/:kind/:id/test',async(req,res,next)=>{try{
     const kind=kindOf(req),id=String(req.params.id);
     if(kind==='ai'){
@@ -187,8 +207,12 @@ export function createRuntimeSettingsResourcesRouter(runtime:EngineRuntime){
       const body=await response.json() as any,models=[...(body.data??[]).map((item:any)=>item.id),...(body.models??[]).map((item:any)=>item.model)].filter(Boolean);
       return res.json({id,status:'HEALTHY',latencyMs:Date.now()-startedAt,modelConfigured:models.includes(resource.model),models});
     }
+    if(kind==='proxy'){
+      const resource=proxyResources(runtime.state.settings).find((row:any)=>row.id===id);if(!resource)return res.status(404).json({error:{message:'PROXY_RESOURCE_NOT_FOUND'}});
+      const candidate=canonicalProxy(runtime.state.settings,resource,true),transport=new BinanceTransport(candidate.connections),startedAt=Date.now(),health=await transport.health();
+      return res.json({id,status:health.status,latencyMs:Date.now()-startedAt,active:id===(runtime.state.settings.connections.proxy as any).activeResourceId,transport:health});
+    }
     const transport=new BinanceTransport(runtime.state.settings.connections),health=await transport.health();
-    if(kind==='proxy')return res.json({id,status:health.status,transport:health});
     const ref=runtime.state.settings.connections.exchange.credentialRef,[key,secret]=await Promise.all([runtime.settingsStore.secretStatus(`${ref}:apiKey`),runtime.settingsStore.secretStatus(`${ref}:apiSecret`)]);
     return res.json({id,status:health.status,transport:health,credentials:{configured:key.configured&&secret.configured,status:key.configured&&secret.configured?'READY':key.status},writeEnabled:runtime.state.settings.connections.executionMode==='TESTNET_ENABLED'&&runtime.state.settings.connections.exchange.environment==='TESTNET'&&key.configured&&secret.configured});
   }catch(error){next(error);}});
@@ -196,13 +220,18 @@ export function createRuntimeSettingsResourcesRouter(runtime:EngineRuntime){
     const kind=kindOf(req),expected=expectedVersion(req),before=runtime.state.settings,id=String(req.params.id);
     if(kind==='exchange')return res.status(409).json({error:{message:'ACTIVE_EXCHANGE_DELETE_REQUIRES_REPLACEMENT'},currentSettingsVersion:before.settingsVersion});
     const nextSettings=structuredClone(before);
-    if(kind==='proxy')nextSettings.connections.proxy={...nextSettings.connections.proxy,enabled:false,forceBinanceRest:true,forceBinanceWs:true,proxyDns:true,binanceRestRoute:'CONFIGURED',failClosed:true};
-    else {
+    if(kind==='proxy'){
+      const current:any=nextSettings.connections.proxy,resources=proxyResources(nextSettings),remaining=resources.filter((row:any)=>row.id!==id);
+      if(!remaining.length)return res.status(409).json({error:{code:'LAST_PROXY_RESOURCE_DELETE_FORBIDDEN'},currentSettingsVersion:before.settingsVersion});
+      const wasActive=String(current.activeResourceId??'binance-proxy')===id,nextActive=wasActive?(remaining.find((row:any)=>row.enabled!==false)??remaining[0]):remaining.find((row:any)=>row.id===current.activeResourceId)??remaining[0];
+      nextSettings.connections.proxy={...current,resources,activeResourceId:nextActive.id,url:nextActive.url,enabled:nextActive.enabled!==false,forceBinanceRest:true,forceBinanceWs:true,proxyDns:true,binanceRestRoute:'CONFIGURED',bypassLocalhost:true,failClosed:true};
+      (nextSettings.connections.proxy as any).resources=remaining;
+    } else {
       const duties=(nextSettings.aiDutyRoutes??[]).filter(route=>route.enabled&&route.resourceId===id).map(route=>route.duty);
       if(duties.length)return res.status(409).json({error:{code:'AI_RESOURCE_IN_USE',resourceId:id,duties},currentSettingsVersion:before.settingsVersion});
       nextSettings.aiResources=nextSettings.aiResources.filter(item=>item.id!==id);
     }
-    const saved=await runtime.updateResourceSettings(nextSettings,expected,{kind,operation:'DELETE',id:kind==='proxy'?'binance-proxy':id});hotApply(runtime,before,saved);
+    const saved=await runtime.updateResourceSettings(nextSettings,expected,{kind,operation:'DELETE',id});hotApply(runtime,before,saved);
     res.status(204).setHeader('x-settings-version',String(saved.settingsVersion)).end();
   }catch(error){if(conflict(res,error,runtime.state.settings.settingsVersion))return;next(error);}});
   return router;

@@ -211,7 +211,7 @@ async function saveResource(kind: string, item: any) {
       draft.value.settingsVersion=Number(resourceSettingsVersion.value);
       if(kind==="ai")draft.value.aiResources=resources.value.ai.map((x:any)=>({id:x.id,name:x.name,role:x.role,enabled:x.enabled!==false,baseUrl:x.baseUrl,model:x.model,maxConcurrency:Number(x.maxConcurrency??1),gpu:x.gpu??"未指定"}));
       if(kind==="proxy"){const active=(readback.items??[]).find((x:any)=>x.active)??confirmed;draft.value.connections.proxy={...draft.value.connections.proxy,url:active.url,enabled:active.enabled!==false,activeResourceId:active.id,resources:(readback.items??[]).map((x:any)=>({id:x.id,name:x.name,type:"SOCKS5H",url:x.url,enabled:x.enabled!==false})),protocol:"SOCKS5H",forceBinanceRest:true,forceBinanceWs:true,proxyDns:true,binanceRestRoute:"CONFIGURED",bypassLocalhost:true,failClosed:true};delete (draft.value.connections.proxy as any).expectedStaticEgressIp;}
-      if(kind==="exchange"){const x:any=draft.value.connections.exchange;if(confirmed.environment==="TESTNET"){x.environment="TESTNET";x.testnetBaseUrl=confirmed.restBaseUrl;x.testnetRestBaseUrl=confirmed.restBaseUrl;x.testnetWsBaseUrl=confirmed.wsBaseUrl;}else{x.environment="PRODUCTION";x.productionBaseUrl=confirmed.restBaseUrl;x.productionRestBaseUrl=confirmed.restBaseUrl;x.productionWsBaseUrl=confirmed.wsBaseUrl;}x.credentialRef=confirmed.credentialRef??x.credentialRef;}
+      if(kind==="exchange"){const x:any=draft.value.connections.exchange;if(confirmed.environment==="TESTNET"){x.environment="TESTNET";x.testnetBaseUrl=confirmed.restBaseUrl;x.testnetRestBaseUrl=confirmed.restBaseUrl;x.testnetWsBaseUrl=confirmed.wsBaseUrl;}else{x.environment="PRODUCTION";x.productionBaseUrl=confirmed.restBaseUrl;x.productionRestBaseUrl=confirmed.restBaseUrl;x.productionWsBaseUrl=confirmed.wsBaseUrl;}x.credentialRef=confirmed.credentialRef??x.credentialRef;draft.value.connections.executionMode=confirmed.executionMode??draft.value.connections.executionMode;}
     }
     resourceBaseline.value[kind]=Object.fromEntries(resources.value[kind].map((x:any)=>[x.id,JSON.stringify(x)]));selectedResourceId.value[kind]=confirmed.id;
     notice.value = "资源已保存并已回读";
@@ -222,7 +222,7 @@ async function saveResource(kind: string, item: any) {
 async function addResource(kind: "exchange" | "proxy" | "ai") {
   if(kind==="exchange"){
     const x:any=draft.value?.connections?.exchange??{};
-    resources.value.exchange=[{id:"binance-usdm",name:"Binance USD-M",type:"BINANCE_USDM",environment:x.environment??"TESTNET",restBaseUrl:(x.environment??"TESTNET")==="TESTNET"?(x.testnetRestBaseUrl??x.testnetBaseUrl??"https://demo-fapi.binance.com"):(x.productionRestBaseUrl??x.productionBaseUrl??"https://fapi.binance.com"),wsBaseUrl:(x.environment??"TESTNET")==="TESTNET"?(x.testnetWsBaseUrl??"wss://stream.binancefuture.com/ws"):(x.productionWsBaseUrl??"wss://fstream.binance.com/ws"),credentialRef:x.credentialRef??"binance-primary",enabled:true,status:"READY"}];
+    resources.value.exchange=[{id:"binance-usdm",name:"Binance USD-M",type:"BINANCE_USDM",environment:x.environment??"TESTNET",executionMode:draft.value?.connections?.executionMode??"READ_ONLY",restBaseUrl:(x.environment??"TESTNET")==="TESTNET"?(x.testnetRestBaseUrl??x.testnetBaseUrl??"https://demo-fapi.binance.com"):(x.productionRestBaseUrl??x.productionBaseUrl??"https://fapi.binance.com"),wsBaseUrl:(x.environment??"TESTNET")==="TESTNET"?(x.testnetWsBaseUrl??"wss://stream.binancefuture.com/ws"):(x.productionWsBaseUrl??"wss://fstream.binance.com/ws"),credentialRef:x.credentialRef??"binance-primary",enabled:true,status:"READY"}];
     resourceBaseline.value.exchange={};selectedResourceId.value.exchange="binance-usdm";return;
   }
   if(kind==="proxy"){
@@ -808,6 +808,7 @@ onMounted(load);
             ><input v-model="governanceAcks" type="checkbox" :value="ack" /><span>{{ governanceAckLabel(ack) }}</span></label
           >
           <div class="toolbar">
+            <button class="button secondary" :disabled="!governanceDirty || saving" @click="loadGovernance">取消未保存修改</button>
             <button class="button" :disabled="!governanceDirty || saving || !governanceSubmit.ok" @click="saveGovernance">
               保存治理设置{{ governanceDirty ? `（${governanceDirty} 项）` : "" }}
             </button>
@@ -830,6 +831,7 @@ onMounted(load);
               <div class="resource-detail-title"><div><h3>{{item.name||'Binance USD-M'}}</h3><span class="mono">{{item.id}}</span></div><span v-if="isResourceDirty('exchange',item)" class="dirty-label">有未保存修改</span></div>
               <div class="form-grid two">
                 <label><span>环境</span><select v-model="item.environment"><option>TESTNET</option><option>PRODUCTION</option></select></label>
+                <label><span>执行模式</span><select v-model="item.executionMode"><option>READ_ONLY</option><option>TESTNET_ENABLED</option></select></label>
                 <label><span>Credential Ref</span><input v-model="item.credentialRef" /></label>
                 <label class="wide-field"><span>REST Base URL</span><input v-model="item.restBaseUrl" /></label>
                 <label class="wide-field"><span>WS Base URL</span><input v-model="item.wsBaseUrl" /></label>
@@ -838,7 +840,7 @@ onMounted(load);
             </div>
           </div>
         </div>
-        <section class="settings-subsection"><h3>执行与凭证</h3><div class="form-grid two"><label><span>执行模式</span><select v-model="draft.connections.executionMode"><option>READ_ONLY</option><option>TESTNET_ENABLED</option></select><small>执行模式属于普通设置；修改后请切换到普通参数页使用“保存当前参数”。</small></label><label><span>凭证状态</span><input :value="credentialStatus?.configured ? 'READY' : 'NOT_CONFIGURED'" disabled /></label><label><span>API Key</span><input v-model="apiKey" type="password" autocomplete="off" /></label><label><span>API Secret</span><input v-model="apiSecret" type="password" autocomplete="off" /></label></div><div class="resource-actions"><span class="muted">凭证不会显示回页面；测试不保存，验证并保存才写入安全存储。</span><div><button class="button secondary" @click="testCredentials">仅验证凭证</button><button class="button primary" @click="saveCredentials">验证并保存凭证</button></div></div></section>
+        <section class="settings-subsection"><h3>API 凭证</h3><div class="form-grid two"><label><span>凭证状态</span><input :value="credentialStatus?.configured ? 'READY' : 'NOT_CONFIGURED'" disabled /></label><span></span><label><span>API Key</span><input v-model="apiKey" type="password" autocomplete="off" /></label><label><span>API Secret</span><input v-model="apiSecret" type="password" autocomplete="off" /></label></div><div class="resource-actions"><span class="muted">凭证不会显示回页面；测试不保存，验证并保存才写入安全存储。</span><div><button class="button secondary" @click="testCredentials">仅验证凭证</button><button class="button primary" @click="saveCredentials">验证并保存凭证</button></div></div></section>
       </Panel>
       <Panel v-else-if="tab === 'proxy'" title="网络代理资源">
         <div class="resource-manager-heading">

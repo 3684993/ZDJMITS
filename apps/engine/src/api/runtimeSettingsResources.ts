@@ -197,7 +197,7 @@ export function createRuntimeSettingsResourcesRouter(runtime:EngineRuntime){
   router.post('/settings/resources/proxy/:id/activate',async(req,res,next)=>{try{
     const expected=expectedVersion(req),before=runtime.state.settings,id=String(req.params.id),resource=proxyResources(before).find((row:any)=>row.id===id);
     if(!resource)return res.status(404).json({error:{message:'PROXY_RESOURCE_NOT_FOUND'}});
-    const nextSettings=canonicalProxy(before,resource,true),saved=await runtime.updateResourceSettings(nextSettings,expected,{kind:'proxy',operation:'ACTIVATE',id,value:resource});
+    const nextSettings=canonicalProxy(before,resource,true),saved=await runtime.updateResourceSettings(nextSettings,expected,{kind:'proxy',operation:'SAVE',id,value:resource});
     hotApply(runtime,before,saved);res.json({...resource,active:true,status:resource.enabled?'ACTIVE':'DISABLED',settingsVersion:saved.settingsVersion});
   }catch(error){if(conflict(res,error,runtime.state.settings.settingsVersion))return;next(error);}});
   router.post('/settings/resources/:kind/:id/test',async(req,res,next)=>{try{

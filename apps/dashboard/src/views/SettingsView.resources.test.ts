@@ -53,4 +53,5 @@ it('uses global save only on ordinary parameter tabs and independent actions on 
   expect(w.text()).toContain('设为活动');expect(w.text()).toContain('删除');
   await tabButton(w,'AI 模型资源').trigger('click');await flushPromises();
   expect(w.text()).toContain('新增空白资源');expect(w.text()).toContain('保存资源');expect(w.text()).toContain('取消修改');
+  expect(w.text()).toContain('候选 Scout 异步观察');expect(w.text()).toContain('保存工作负载策略');
 });

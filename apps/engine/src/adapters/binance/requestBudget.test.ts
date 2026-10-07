@@ -1,4 +1,30 @@
 import {it,expect,vi} from 'vitest';import {RequestBudget} from './requestBudget.js';import {mkdirSync,mkdtempSync,rmSync,writeFileSync} from 'node:fs';import os from 'node:os';import path from 'node:path';
+
+it('limits background fanout to one slot while quote and account facts remain admissible',async()=>{
+ const budget=new RequestBudget(6,4,100),releases:Array<()=>void>=[],started=vi.fn();
+ const jobs=Array.from({length:8},(_,i)=>budget.run(4,1,()=>new Promise<void>(resolve=>{started(i);releases.push(resolve);}),{source:'BACKGROUND_AUDIT',endpoint:'/fapi/v1/premiumIndex',requestId:`optional-${i}`}));
+ await new Promise(r=>setImmediate(r));expect(started).toHaveBeenCalledOnce();expect(budget.health().queuePressure.backgroundActive).toBe(1);
+ const quote=vi.fn(async()=>{}),account=vi.fn(async()=>{});
+ await budget.run(2,1,quote,{source:'MARKET_DATA',purpose:'QUOTE_MARK_RECOVERY',endpoint:'/fapi/v1/premiumIndex'});
+ await budget.run(0,5,account,{source:'PRIVATE_STATE',endpoint:'/fapi/v2/account'});expect(quote).toHaveBeenCalledOnce();expect(account).toHaveBeenCalledOnce();
+ for(let i=0;i<8;i++){releases.shift()!();await new Promise(r=>setImmediate(r));}await Promise.all(jobs);expect(budget.health().queuePressure.backgroundActive).toBe(0);
+});
+it('reserves the fourth public slot for required quote facts instead of another candle hydration',async()=>{
+ const budget=new RequestBudget(6,4,100),releases:Array<()=>void>=[];
+ const candles=Array.from({length:2},()=>budget.run(3,1,()=>new Promise<void>(r=>releases.push(r)),{source:'MARKET_DATA',endpoint:'/fapi/v1/klines'}));
+ const background=budget.run(4,1,()=>new Promise<void>(r=>releases.push(r)),{source:'BACKGROUND_AUDIT',endpoint:'/fapi/v1/openInterest'});
+ await new Promise(r=>setImmediate(r));expect(releases).toHaveLength(3);
+ const extra=vi.fn(async()=>{}),waiting=budget.run(3,1,extra,{source:'MARKET_DATA',endpoint:'/fapi/v1/klines'}),quote=vi.fn(async()=>{});
+ await budget.run(2,1,quote,{source:'MARKET_DATA',purpose:'QUOTE_BOOK_RECOVERY',endpoint:'/fapi/v1/depth'});
+ expect(quote).toHaveBeenCalledOnce();expect(extra).not.toHaveBeenCalled();releases.forEach(r=>r());await Promise.all([...candles,background,waiting]);
+});
+it('uses FIFO within one priority so repeated cheaper requests cannot starve an older expensive fact',async()=>{
+ const budget=new RequestBudget(1,1,100);let release!:()=>void;const order:string[]=[];
+ const held=budget.run(0,1,()=>new Promise<void>(r=>release=r),{source:'EXECUTION_CRITICAL'});await new Promise(r=>setImmediate(r));
+ const older=budget.run(1,5,async()=>{order.push('older-account');},{source:'PRIVATE_STATE',endpoint:'/fapi/v2/account'});
+ const cheaper=budget.run(1,1,async()=>{order.push('newer-cheaper');},{source:'PRIVATE_STATE',endpoint:'/fapi/v1/positionSide/dual'});
+ release();await Promise.all([held,older,cheaper]);expect(order).toEqual(['older-account','newer-cheaper']);
+});
 it('reserves capacity for private work while public requests are saturated',async()=>{const budget=new RequestBudget(3,1,100);const release:Array<()=>void>=[];let publicStarted=0,privateStarted=0;const publicWork=Array.from({length:3},()=>budget.run(2,()=>new Promise<void>(resolve=>{publicStarted++;release.push(resolve);}),undefined,{source:'MARKET_DATA'}));await new Promise(r=>setImmediate(r));const urgent=budget.run(0,async()=>{privateStarted++;},undefined,{source:'PRIVATE_STATE'});await urgent;expect(publicStarted).toBe(1);expect(privateStarted).toBe(1);for(let i=0;i<3;i++){release.shift()!();await new Promise(r=>setImmediate(r));}await Promise.all(publicWork);expect(budget.health().active).toBe(0);});
 it('fails queued requests during a ban instead of holding sync flights until expiry',async()=>{const budget=new RequestBudget(1,1,100);let release!:()=>void;const active=budget.run(2,()=>new Promise<void>(r=>release=r),undefined,{source:'MARKET_DATA'});await new Promise(r=>setImmediate(r));const fn=vi.fn(),waiting=budget.run(0,fn,undefined,{source:'PRIVATE_STATE'});const rejected=expect(waiting).rejects.toThrow('BINANCE_RATE_LIMIT_UNTIL');budget.observe(418,'1200','3600');await rejected;await expect(budget.run(0,fn,undefined,{source:'PRIVATE_STATE'})).rejects.toThrow('BINANCE_RATE_LIMIT_UNTIL');expect(fn).not.toHaveBeenCalled();expect(budget.health().queued).toBe(0);release();await active;});
 it('bounds queue waits and reserves weight for private work',async()=>{vi.useFakeTimers();vi.setSystemTime(1800000000000);try{const budget=new RequestBudget(3,2,100,{softPublicWeight:700,softBackgroundWeight:1000,hardWeight:2200});budget.observe(200,'1000',undefined,{source:'MARKET_DATA'});const publicFn=vi.fn(),pending=budget.run(2,publicFn,undefined,{source:'MARKET_DATA'}),rejected=expect(pending).rejects.toThrow('QUEUE_TIMEOUT');await budget.run(0,async()=>{},undefined,{source:'PRIVATE_STATE'});await vi.advanceTimersByTimeAsync(5100);await rejected;expect(publicFn).not.toHaveBeenCalled();await vi.advanceTimersByTimeAsync(61000);await budget.run(2,publicFn,undefined,{source:'MARKET_DATA'});expect(publicFn).toHaveBeenCalledOnce();}finally{vi.useRealTimers();}});

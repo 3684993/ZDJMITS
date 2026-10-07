@@ -56,7 +56,7 @@ export class BinanceTransport {
    if(source==='UNKNOWN')throw new Error('BINANCE_ENDPOINT_SOURCE_UNREGISTERED:'+method+':'+url.pathname);
    if(signal?.aborted)throw new Error(`BINANCE_READ_ABORTED:${String(signal.reason)}`);
    if(source==='CLOCK'&&this.budget.health().limitSource==='CONSERVATIVE_DEFAULT')try{await this.ensureRequestWeightLimit();}catch{/* bounded clock recovery remains available */}
-   const budget=this.budget,agent=this.restAgent(),priority=priorityFor(source),weight=binanceRequestWeight(url,method),
+   const budget=this.budget,agent=this.restAgent(),priority=source==='PRIVATE_STATE'&&/\/(account|balance)$/.test(url.pathname)?0:source==='MARKET_DATA'&&/^QUOTE_/.test(String(init.purpose))?2:priorityFor(source),weight=binanceRequestWeight(url,method),
      meta:RequestBudgetMeta={requestId:randomUUID(),source,purpose:init.purpose??inferredBinancePurpose(url,method),endpoint:url.pathname,method,routeIdentity:this.routeIdentity,orderCount:url.pathname.endsWith('/order')&&(method==='POST'||method==='PUT')?1:0},budgetHealth=budget.health();
    if(shouldDeferAtTransport(source,budgetHealth,weight)){budget.recordDeferred(meta,weight);throw new Error(binanceBudgetFailureMessage(`BINANCE_REQUEST_BUDGET_DEFERRED:${budgetHealth.status}`,meta));}
    try{return await budget.run(priority,weight,()=>{

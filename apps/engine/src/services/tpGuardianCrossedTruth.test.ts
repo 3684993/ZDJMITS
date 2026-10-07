@@ -31,3 +31,11 @@ it.each(['CANCELED','EXPIRED','REJECTED'] as const)('retains exact remote %s aft
  expect(result).toMatchObject({status,filledQuantity:2});expect(runtime.task(result.clientOrderId!)?.state).toBe(status);
  expect(placeTakeProfit).toHaveBeenCalledOnce();expect(findExitByClientOrderId).toHaveBeenCalledOnce();
 });
+
+it.each([{symbol:'BTCUSDT'},{clientOrderId:'wrong_identity'},{originalQuantity:20},{executedQuantity:1.5},{exchangeOrderId:''},{positionSide:'LONG'}])('keeps mismatched exact recovery facts uncertain: %j',async(mismatch)=>{
+ const x=fixture(false);x.state.tpOrders.clear();const runtime=exitRuntimeHarness(),placeTakeProfit=vi.fn(async()=>{throw new Error('Binance request timed out');});
+ const findExitByClientOrderId=vi.fn(async(input:any)=>({state:'FOUND',order:{symbol:x.tp.symbol,clientOrderId:input.clientOrderId,exchangeOrderId:'terminal-1',status:'CANCELED',originalQuantity:10,executedQuantity:2,updateTime:Date.now(),...mismatch}}));
+ const guardian=new TpGuardian(x.state,{...coordinatedExchange({liveQuantity:10}),placeTakeProfit,findExitByClientOrderId} as any,new EventBus(),runtime);
+ await expect(guardian.place({...x.tp,status:'NEW'},{stepSize:1,tickSize:.001})).rejects.toThrow('TP_EXACT_RECOVERY_FACT_UNVERIFIED');
+ const clientId=findExitByClientOrderId.mock.calls[0]![0].clientOrderId;expect(runtime.task(clientId)?.state).toBe('UNKNOWN');expect(x.state.tpOrders.get(x.tp.id)?.status).toBe('UNKNOWN');expect(placeTakeProfit).toHaveBeenCalledOnce();
+});

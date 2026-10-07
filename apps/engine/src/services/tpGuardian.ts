@@ -82,12 +82,16 @@ export class TpGuardian {
       let fact:Awaited<ReturnType<NonNullable<ExchangeTradeAdapter['findExitByClientOrderId']>>>|null=null;
       try{fact=await this.exchange.findExitByClientOrderId({symbol:submitted.symbol,clientOrderId:prepared.clientOrderId});}catch{fact=null;}
       if(fact?.state==='FOUND'&&fact.order){
-        const executed=Number(fact.order.executedQuantity??0),original=Number(fact.order.originalQuantity??submitted.quantity),remoteStatus=String(fact.order.status??'');
-        const terminal=['CANCELED','EXPIRED','REJECTED'].includes(remoteStatus),valid=Number.isFinite(executed)&&Number.isFinite(original)&&original>0&&executed>=0&&executed<=original+1e-12;
+        const executed=Number(fact.order.executedQuantity),original=Number(fact.order.originalQuantity),remoteStatus=String(fact.order.status??'');
+        const identityMatches=fact.order.symbol===submitted.symbol&&fact.order.clientOrderId===prepared.clientOrderId&&String(fact.order.exchangeOrderId??'').trim().length>0&&['','BOTH',positionSide].includes(String(fact.order.positionSide??''))&&V396ExitRuntime.quantityUnitsOf(original,stepSize)===quantityUnits;
+        const fillUnits=executed===0?0:V396ExitRuntime.quantityUnitsOf(executed,stepSize);
+        const terminal=['CANCELED','EXPIRED','REJECTED'].includes(remoteStatus),valid=identityMatches&&Number.isFinite(executed)&&Number.isFinite(original)&&original>0&&executed>=0&&executed<=original+1e-12&&(executed===0||fillUnits>0);
         const status=valid&&terminal?remoteStatus:valid&&['NEW','WORKING','PARTIALLY_FILLED','FILLED'].includes(remoteStatus)?(executed>=original-1e-12?'FILLED':remoteStatus==='FILLED'?'UNKNOWN':executed>0?'PARTIALLY_FILLED':'WORKING'):'UNKNOWN';
         if(status==='UNKNOWN'){this.exitRuntime.markSubmitUncertain(prepared.clientOrderId,Date.now());throw new Error(`TP_EXACT_RECOVERY_FACT_UNVERIFIED:${remoteStatus}`);}
         const adopted={...submitted,exchangeOrderId:String(fact.order.exchangeOrderId??''),filledQuantity:executed,status:status as TakeProfitOrder['status'],updatedAt:Number(fact.order.updateTime)||Date.now()} as TakeProfitOrder;
         this.converge(prepared.clientOrderId,adopted,stepSize,'EXACT_ORDER');
+        const converged=this.exitRuntime.task(prepared.clientOrderId);
+        if(converged?.state!==adopted.status||converged.filledUnits!==fillUnits){this.exitRuntime.markSubmitUncertain(prepared.clientOrderId,Date.now());throw new Error('TP_EXACT_RECOVERY_REDUCER_UNVERIFIED');}
         this.events.publish('TP_ORDER_RECOVERED_BY_CLIENT_ID',{positionId:submitted.positionId,clientOrderId:prepared.clientOrderId,status:adopted.status},submitted.symbol);
         return adopted;
       }

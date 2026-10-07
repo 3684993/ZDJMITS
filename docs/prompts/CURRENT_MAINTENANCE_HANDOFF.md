@@ -1,17 +1,12 @@
 # J-MITS V3.9.7 — CURRENT MAINTENANCE HANDOFF
 
-## 2026-10-07 independent-audit remediation (current run)
+## 2026-10-07 audit remediation followup — current authority
 
-This section supersedes older completion/short-window acceptance claims below for the current run.
-Implementation commit: `0111ded325632f6d592ab572337fe35edd23befd`.
-F01/F02/F03/F05/F06/F07/F08 are implemented with local regression proof. Final local `npm run verify` passes: Contracts 2, Core 58, Dashboard 123, Engine 1776 tests; scripts/release/S00/typecheck/build green. Hosted Actions were not used.
-Reports and reproducible collector: `docs/reports/v397-audit-remediation-20261007/`; complete verify and preliminary failure logs are retained there.
-Runtime acceptance remains **OBSERVATION_PENDING**. Do not infer 6–12h stability from local tests.
-8080 completed its one manual restart at 18:09:15 +08:00: PID 37780, instance `7a3b0f4a-b007-47a3-9bac-8e28d0c6365e`, build `3.9.7-d34e0ffd18d5088df556`; /health became READY and identity closure is 6/6. Settings/resource fingerprints remain identical at version 247; model-service PIDs/creation times are unchanged. A cold-recovery BINANCE-QUEUE-001 was honestly retained, so this is not yet long-duration stability acceptance.
-Read-only collector PID 46716 runs from 2026-10-07 18:13:08 through 2026-10-08 06:13:08 +08:00; 6h checkpoint is 00:13:08. Inspect its progress, actual runtime logs, request phase evidence, and sampling gaps. Commit lossless evidence snapshots and reports directly to GitHub. Never auto-restart this Engine or change parameters during observation.
-The existing dirty `D:\MITS` checkout is preserved. Verified runtime checkout is `D:\MITS-WORKTREES\v397-audit-remediation-20261007`, using the same existing data directory through a junction created only after verification. Only 8080 is authorized for one manual restart; 8081/8083/8084 are excluded. No fabricated trade, Settings/strategy change, proxy switching, or state reset is authorized.
-Read-only collection will run once per minute for 12h, with GitHub checkpoints after 6h and final evidence after 12h. Collect real wire failures, local queue failures, private-fact ages, independent quote-field freshness, TP truth and identity/Production-write boundaries. Sampling gaps and bounded ledgers must be disclosed; natural terminal TP recovery stays UNKNOWN until observed.
-F04/F10/F11 parameter/economic optimization is deferred until the factual layer has a demonstrated stability decision. NET-002 is now distinct from BINANCE-QUEUE-001 and PRIVATE-DATA-001; no account TTL or required mark contract was relaxed.
+This supersedes prior one-deployment and old observation deadline statements. The first deployment's 24 samples over 0.382815h failed stability: four private UNAVAILABLE samples, recurrent NET-002 and local queue congestion. The owned observer was stopped for a followup deployment; its lossless initial-window-final evidence is archived under docs/reports/v397-audit-remediation-20261007/.
+
+The isolated followup checkout is D:\MITS-WORKTREES\v397-audit-remediation-final-20261007. Full local verify passes 1969 tests/231 files plus release/scripts/S00/typecheck/build. It adds background/hydration lane isolation, current account/quote admission priorities, FIFO, and exact TP identity/quantity/durable convergence checks. F01/F02/F03/F05/F06/F07/F08 code/regression work is implemented; 6–12h runtime acceptance is PENDING. Do not combine builds or treat tests as live acceptance.
+
+Only 8080 may be manually deployed in this continuous run. 8081/8083/8084, Settings, proxy, strategy parameters and databases must remain untouched. Preserve dirty D:\MITS. No automatic restart, manufactured order/sample or exchange write by observation tools. New observer identity and deadlines will be recorded after readiness/identity closure. All checkpoint reports and lossless evidence must go directly to GitHub by ordinary fast-forward, preserving unrelated changes. F04/F10/F11 are deferred pending the fact-layer stability decision. Natural terminal TP recovery remains UNKNOWN without a natural sample.
 
 > **Current Codex execution mode:** use `docs/prompts/CODEX_FULL_COMPLETION_RUN.md` for one continuous completion run through final 8080 restart and acceptance preparation; do not stop for staged approval.
 

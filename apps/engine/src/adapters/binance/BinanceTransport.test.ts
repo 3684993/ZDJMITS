@@ -19,6 +19,14 @@ it('inherits cancellation and historical priority only for reads, preserving exe
  }finally{run.mockRestore();}
 });
 
+it('assigns current account and required quote facts priority before generic reconstruction',async()=>{
+ const cfg={...settings(),proxy:{...settings().proxy,url:'socks5h://127.0.0.1:29877'}},transport=new BinanceTransport(cfg as never),run=vi.spyOn((transport as any).budget,'run').mockResolvedValue({} as never);
+ try{
+  await transport.json('/fapi/v2/account');await transport.json('/fapi/v1/depth?symbol=BTCUSDT',{source:'MARKET_DATA',purpose:'QUOTE_BOOK_RECOVERY'});
+  expect(run.mock.calls[0]![0]).toBe(0);expect(run.mock.calls[1]![0]).toBe(2);
+ }finally{run.mockRestore();}
+});
+
 it('records network phase evidence and removes pending TLS listeners when the response completes',async()=>{
  const cfg={...settings(),proxy:{...settings().proxy,url:'socks5h://127.0.0.1:29876'}},transport=new BinanceTransport(cfg as never),socket:any=new EventEmitter();socket.encrypted=true;socket.secureConnecting=true;
  const requestSpy=vi.spyOn(https,'request').mockImplementation((...args:any[])=>{

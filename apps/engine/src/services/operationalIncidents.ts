@@ -79,11 +79,16 @@ export function operationalCandidates(facts:{pipeline:any;routes:any[];account:a
   const marketFallbackEndpoint=(endpoint:unknown)=>/\/fapi\/v1\/(ticker\/24hr|ticker\/bookTicker|depth|klines)$/.test(String(endpoint??''));
   const controlEndpoint=(endpoint:unknown)=>String(endpoint??'')==='/fapi/v1/time';
   const identityLookup=(row:any)=>recentUnresolved&&String(row?.method??'GET')==='GET'&&String(row?.endpoint??'')==='/fapi/v1/order';
+  // Historical reads cannot diagnose current executable REST truth. Keep HTTP rate limits visible.
+  const historicalRead=(row:any)=>String(row.method??'GET')==='GET'&&(
+    ['BACKGROUND','BACKGROUND_AUDIT','HISTORICAL_REPAIR'].includes(String(row.source??''))||
+    /^(TRADE_AUDIT_|HISTORICAL_|RECONCILIATION_HISTORY)/.test(String(row.purpose??''))
+  );
   const timeoutLike=(message:unknown)=>/timed out|ETIMEDOUT|TimeoutError|BINANCE_REQUEST_QUEUE_TIMEOUT/i.test(String(message??''));
   for(const route of facts.routes){const budget=route.requestBudget??{},recent=budget.recentDispatches??[],failures=route.recentFailures??[];
     // A healthy WS stream is the primary market truth. REST market timeouts are tolerated while that
     // truth remains fresh; they are recovery telemetry, not a global NEW_ENTRY outage.
-    const relevantFailures=failures.filter((failure:any)=>!controlEndpoint(failure.endpoint)&&!identityLookup(failure)&&!advisoryRestEndpoint(failure)&&!(marketHealthy&&marketFallbackEndpoint(failure.endpoint)));
+    const relevantFailures=failures.filter((failure:any)=>!historicalRead(failure)&&!controlEndpoint(failure.endpoint)&&!identityLookup(failure)&&!advisoryRestEndpoint(failure)&&!(marketHealthy&&marketFallbackEndpoint(failure.endpoint)));
     const makerRejects=relevantFailures.filter((failure:any)=>/"code"\s*:\s*-5022\b/.test(String(failure.message??''))&&now-Number(failure.completedAt??now)<60_000);
     for(const failure of relevantFailures){
       if(timeoutLike(failure.message))continue; // aggregated below with hysteresis
@@ -97,7 +102,7 @@ export function operationalCandidates(facts:{pipeline:any;routes:any[];account:a
     const transportTimeouts=relevantFailures.filter((row:any)=>timeoutLike(row.message)&&!String(row.message).includes('BINANCE_REQUEST_QUEUE_TIMEOUT')&&now-Number(row.completedAt??now)<60_000);
     const wireFacts=[...new Map(transportTimeouts.map((row:any)=>[String(row.requestId??`${row.endpoint}:${row.completedAt??''}`),row])).values()] as any[];
     const wireIds=new Set(wireFacts.map(row=>row.requestId));
-    const queueTimeouts=recent.filter((row:any)=>row.decision==='TIMEOUT'&&!wireIds.has(row.requestId)&&now-Number(row.completedAt??0)<60_000&&!controlEndpoint(row.endpoint)&&!identityLookup(row)&&!advisoryRestEndpoint(row)&&!(marketHealthy&&marketFallbackEndpoint(row.endpoint)));
+    const queueTimeouts=recent.filter((row:any)=>row.decision==='TIMEOUT'&&!wireIds.has(row.requestId)&&now-Number(row.completedAt??0)<60_000&&!historicalRead(row)&&!controlEndpoint(row.endpoint)&&!identityLookup(row)&&!advisoryRestEndpoint(row)&&!(marketHealthy&&marketFallbackEndpoint(row.endpoint)));
     const queueFacts=[...new Map(queueTimeouts.map((row:any)=>[String(row.requestId??`${row.endpoint}:${row.completedAt??''}`),row])).values()] as any[];
     if(wireFacts.length>=3){const latest=wireFacts.at(-1);const row=classifyOperationalError({...latest,message:latest.message,subsystem:'BINANCE_HTTP'});if(row)out.push(row);}
     if(queueFacts.length>=3){const latest=queueFacts.at(-1);const row=classifyOperationalError({...latest,message:'BINANCE_REQUEST_QUEUE_TIMEOUT',subsystem:'BINANCE_HTTP',transportEvidence:true});if(row)out.push(row);}

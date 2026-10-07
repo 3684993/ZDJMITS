@@ -44,6 +44,7 @@ it('rotates failed historical exact identities rather than retrying the same fir
   await service.run();expect(exact).toHaveBeenCalledTimes(3);
   vi.advanceTimersByTime(15_000);await service.run();expect(exact).toHaveBeenCalledTimes(6);
   expect(new Set(exact.mock.calls.map((args:any)=>args[0].id)).size).toBe(6);
+  expect(service.health().remoteReadBudget).toMatchObject({uniqueIdentitiesAttempted:6,uniqueIdentitiesProgressed:0,oldestDeferredAgeMs:3_615_000,retryReasonsByClass:expect.arrayContaining([{class:'unknown',counts:{EXACT_QUERY_FAILED:3,BACKOFF_OR_PROOF_TTL:3}}])});
   expect([...state.entryOrders.values()].every(row=>row.status==='UNKNOWN')).toBe(true);
  }finally{vi.useRealTimers();}
 });

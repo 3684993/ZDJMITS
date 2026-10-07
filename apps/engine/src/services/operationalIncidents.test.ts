@@ -116,3 +116,18 @@ it('returns recovery transitions once rather than replaying historical recoverie
  for(let cycle=0;cycle<3;cycle++){tracker.observe([candidate],100+cycle*100);expect(tracker.observe([],110+cycle*100).recovered).toHaveLength(1);expect(tracker.observe([],120+cycle*100).recovered).toHaveLength(0);}
  expect(tracker.read().history).toHaveLength(3);
 });
+
+it('separates historical purpose from current critical reads on the same endpoint',()=>{
+ const now=Date.now(),failures=[0,1,2].map(i=>({message:'Binance request timed out',requestId:`history-${i}`,endpoint:'/fapi/v1/allOrders',method:'GET',source:'ORDER_VERIFICATION',purpose:'TRADE_AUDIT_ALL_ORDERS',completedAt:now-i}));
+ const facts:any={pipeline:{pipelineState:'RUNNING'},account:{status:'UNAVAILABLE',reason:'Binance request timed out'},routes:[{recentFailures:failures,requestBudget:{recentDispatches:failures.map(row=>({...row,decision:'TIMEOUT'}))}}]};
+ expect(operationalCandidates(facts).map(row=>row.publicCode)).toEqual(['PRIVATE-DATA-001']);
+ for(const row of failures){row.endpoint='/fapi/v2/account';row.source='PRIVATE_STATE';row.purpose='READ_ACCOUNT';}
+ expect(operationalCandidates(facts).some(row=>row.publicCode==='NET-002')).toBe(true);
+});
+it('keeps historical/backfill wire and queue failures telemetry but preserves real rate limiting',()=>{
+ const now=Date.now(),failures=['BACKGROUND','BACKGROUND_AUDIT','HISTORICAL_REPAIR'].map((source,i)=>({source,endpoint:'/fapi/v1/order',method:'GET',purpose:'READ_ORDER',requestId:`bg-${i}`,completedAt:now,message:'Proxy connection timed out'}));
+ const facts:any={pipeline:{pipelineState:'RUNNING'},account:{status:'READY'},routes:[{recentFailures:failures,requestBudget:{recentDispatches:failures.map(row=>({...row,decision:'TIMEOUT'}))}}]};
+ expect(operationalCandidates(facts)).toHaveLength(0);
+ facts.routes[0].requestBudget.recentDispatches.push({...failures[0],status:429});
+ expect(operationalCandidates(facts).map(row=>row.publicCode)).toEqual(['EX-HTTP-429']);
+});

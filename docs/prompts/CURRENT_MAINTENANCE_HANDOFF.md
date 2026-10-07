@@ -1,3 +1,7 @@
+# Active remediation deployment — 2026-10-07
+
+Latest human instruction supersedes all old passive6h/12h gates and no-deploy text below. Obsolete heartbeat PAUSED; owned collector35268 stopped and its failed240-sample3.983189h window archived independently in docs/reports/v397-active-remediation-20261007/. Main b92a488 and candidate0737e66 integrated with ordinary merge preserving all history. Additional history/source/purpose NET-002 filtering and F07 progress/deferred/retry readback implemented. Integrated full local verify1976tests/232files PASS. Only8080 cutover now authorized; models,Settings/proxy/parameters/DB remain unchanged. Use10–30min feedback and active diagnosis, not passive12h. See ACTIVE_REMEDIATION_REPORT.md under that report directory; postdeploy status PENDING. F04/F10/F11 deferred.
+
 # J-MITS V3.9.7 — CURRENT MAINTENANCE HANDOFF
 ## Third hourly checkpoint — 21:43 +08:00
 

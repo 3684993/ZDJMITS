@@ -1,0 +1,251 @@
+{
+  "sampleCount": 123,
+  "elapsedHours": 2.0322958333333334,
+  "first": "2026-10-07T10:41:16.397158+00:00",
+  "last": "2026-10-07T12:43:12.662536+00:00",
+  "healthSampleStates": {
+    "READY": 75,
+    "OBSERVATION_UNAVAILABLE": 22,
+    "DEGRADED": 26
+  },
+  "privateSampleStates": {
+    "READY": 75,
+    "OBSERVATION_UNAVAILABLE": 22,
+    "UNAVAILABLE": 26
+  },
+  "activeIncidentSampleCounts": {
+    "BINANCE-QUEUE-001": 105,
+    "NET-002": 36,
+    "PRIVATE-DATA-001": 26,
+    "EX-BINANCE-2013": 2,
+    "EX-SUBMIT-UNKNOWN": 2
+  },
+  "httpReadErrors": {
+    "health": 22,
+    "closeout": 22,
+    "governance": 22,
+    "private": 14,
+    "operations": 14,
+    "incidents": 12
+  },
+  "identities": [
+    {
+      "pid": null,
+      "instanceId": null
+    },
+    {
+      "pid": 37952,
+      "instanceId": "285c4ece-93d9-4be8-9393-839cbf47fb9b"
+    }
+  ],
+  "privateSnapshotAgeMs": {
+    "observedSamples": 101,
+    "max": 1231684,
+    "p95": 931655
+  },
+  "tpIssueSampleCounts": {
+    "missing": 12,
+    "qtyMismatch": 1,
+    "orphanTp": 22
+  },
+  "productionWriteSamples": {
+    "nonzero": 0,
+    "unknown": 22
+  },
+  "interpretation": "Sample prevalence is not incident frequency or duration. Missing samples and bounded ledgers cannot prove zero failures. OBSERVATION_UNAVAILABLE is a missing endpoint value, not proven private UNAVAILABLE. The original running collector progress uses the older conflated default; use this audited analyzer for acceptance.",
+  "acceptance": "SHORT_WINDOW_NOT_ACCEPTED",
+  "malformedSampleRows": 0,
+  "tpObservationSamples": {
+    "known": 101,
+    "unknown": 22
+  },
+  "samplingGaps": {
+    "maxMs": 74191,
+    "above90s": 0,
+    "endpointValuesAreNotAtomic": true
+  },
+  "workingSetBytes": {
+    "min": 735940608,
+    "max": 2286235648,
+    "last": 986722304
+  },
+  "distinctPrivateFailureTimestampsSeen": 40,
+  "staleQuoteFieldSampleCounts": {
+    "last": 91,
+    "bid": 101,
+    "ask": 101,
+    "mark": 83
+  },
+  "routeDecisionDeltas": {
+    "proxy-05d851d4af74": {
+      "admitted": 3616,
+      "queued": 6508,
+      "blocked": 2883,
+      "queueTimeout": 2883
+    }
+  },
+  "boundedRequestEvidence": {
+    "distinctIdsSeen": 5283,
+    "completedInWindowSeen": 4662,
+    "queueAgeMs": {
+      "n": 2513,
+      "median": 24,
+      "p95": 4911,
+      "max": 9970
+    },
+    "admittedNetworkMs": {
+      "n": 2513,
+      "median": 7044,
+      "p95": 30222,
+      "max": 303353
+    },
+    "failurePhases": {
+      "PROXY_OR_TLS": 94,
+      "READ_BUDGET_ABORT": 69,
+      "FIRST_BYTE": 79,
+      "AGENT_OR_SOCKET_ACQUISITION": 227,
+      "RESPONSE_BODY": 8
+    },
+    "coverage": "Bounded recent ledgers sampled once/minute; not a full request census. Admission counters provide separate aggregate deltas."
+  },
+  "durableEvents": {
+    "files": [
+      "D:\\MITS\\data\\runtime-logs\\engine-2026-10-07-285c4ece-93d9-4be8-9393-839cbf47fb9b-0.jsonl"
+    ],
+    "counts": {
+      "V396_OWNERSHIP_OUTBOX": 147,
+      "CANDIDATE_LIFECYCLE_CHANGED": 271,
+      "PRE_AI_EXECUTION_ENVELOPE_CREATED": 12,
+      "PRE_AI_TRADE_PLAN_CANDIDATES_CREATED": 12,
+      "TRADING_QUALITY_OPPORTUNITY": 12,
+      "SCOUT_OBSERVATION_STARTED": 12,
+      "MARKET_RECOVERY_FAILED": 726,
+      "CANDIDATE_SUPPLY_HEALTH": 706,
+      "ANALYSIS_DISPATCH_HEARTBEAT": 206,
+      "ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED": 182,
+      "OPERATIONAL_INCIDENT_RECOVERED": 378,
+      "ENTRY_ORDER_TTL_CLOSED": 174,
+      "OPERATIONAL_INCIDENT_ACTIVATED": 379,
+      "TELEMETRY_HEARTBEAT": 225,
+      "SCOUT_OBSERVATION_COMPLETED": 12,
+      "ENTRY_ORDER_HISTORICAL_VERIFY_FAILED": 17,
+      "MANUAL_ORDER_REMOTE_STATUS_UNVERIFIED": 224,
+      "MARKET_COHORT_DEFERRED": 22,
+      "PORTFOLIO_CASH_FLOW_READ_FAILED": 38,
+      "MARKET_SYMBOL_ERROR": 860,
+      "ERROR_AGGREGATE": 301,
+      "PRIMARY_DECISION_NORMALIZED": 12,
+      "AI_RUN_TERMINAL": 12,
+      "TRADING_QUALITY_PRIMARY_LINK": 12,
+      "MATERIAL_DECISION_CHANGE": 12,
+      "POST_AI_REDUNDANT_FIELD_NORMALIZED": 9,
+      "AI_CANDIDATE_SELECTED": 12,
+      "ENTRY_ECONOMIC_ADMISSION_EVALUATED": 12,
+      "PORTFOLIO_RISK_ADMISSION_EVALUATED": 12,
+      "FROZEN_CHOICE_CONVERSION_OBSERVED": 12,
+      "TRADE_PLAN_PERSISTED": 12,
+      "ENTRY_RESERVATION_CREATED": 12,
+      "LIVE_RISK_ENVELOPE_EVALUATED": 12,
+      "ENTRY_INTENT_CREATED": 12,
+      "CANDIDATE_LIFECYCLE_REDERIVED": 88,
+      "EXECUTION_READINESS_BLOCKED": 88,
+      "POST_AI_OBSERVATION_ONLY": 21,
+      "FINAL_ORDER_RISK_EVALUATED": 10,
+      "ENTRY_EXECUTION_PERMIT_EVALUATED": 10,
+      "ENTRY_SUBMIT_ATTEMPTED": 9,
+      "ENTRY_ADAPTER_REQUEST_FACTS": 9,
+      "RECONCILIATION_FAILED": 23,
+      "ENTRY_ORDER_USER_DATA_CONFIRMED": 21,
+      "BINANCE_USER_DATA": 49,
+      "EXECUTION_READINESS_RESUMED": 87,
+      "ENTRY_ADAPTER_RESPONSE_FACTS": 5,
+      "ENTRY_ORDER_CREATED": 5,
+      "ANALYSIS_DISPATCH_INTENT": 106,
+      "POOL_ANALYSIS_STARTED": 106,
+      "PRIMARY_DATA_ERROR": 3,
+      "EXIT_TASK_CONVERGED": 121,
+      "EXIT_CONVERGENCE_QUEUE": 55,
+      "PENDING_ENTRY_REVIEW_COMPLETED": 2,
+      "MARKET_COHORT_REFILLED": 19,
+      "ENTRY_ANALYSIS_FAILED": 86,
+      "ENTRY_ORDER_NO_ACTIVE_RISK_EVIDENCE_FAILED": 27,
+      "ENTRY_ORDER_MANAGEMENT_UNVERIFIED": 58,
+      "TRADE_SYNC_AUTO_FAILED": 24,
+      "PENDING_ENTRY_REVIEW_ACTION_CONVERGED": 1,
+      "UNKNOWN_RISK_AUDIT_SUMMARY": 13,
+      "MARKET_COHORT_FAILED": 31,
+      "MARKET_KLINE_SEQUENCE_REPAIR_FAILED": 116,
+      "PRIVATE_SYNC_TRANSIENT_TOLERATED": 24,
+      "PRIVATE_SYNC_RECOVERED": 18,
+      "ORDER_FILL_RECONCILED": 358,
+      "TRADE_RECORD_REPAIRED": 364,
+      "EXCHANGE_FILL_ATTRIBUTED": 361,
+      "POSITION_REVIEW_ONLY_AUTHORITY": 8,
+      "TP_REPAIR_STARTED": 10,
+      "TP_TARGET_SELECTED": 10,
+      "POSITION_REVIEW_APPLIED": 8,
+      "POSITION_LIFECYCLE_TRANSITION": 4,
+      "TP_REPAIR_FAILED": 6,
+      "ORPHAN_TP_CANCELED": 1,
+      "TP_SUBMISSION_PREPARED": 4,
+      "TP_PROTECTED": 4,
+      "POSITION_CLOSED_USER_DATA": 3,
+      "FUNDING_INCOME_READ_FAILED": 9,
+      "FUNDING_INCOME_SYNCED": 9,
+      "ORPHAN_TP_CANCEL_FAILED": 2,
+      "TP_ORPHAN_TERMINAL_CONVERGED": 2,
+      "ENTRY_ORDER_BLOCKED": 6,
+      "PRIVATE_SYNC_FAILED": 24,
+      "FUNDING_INCOME_COVERAGE_INCOMPLETE": 2,
+      "TRADE_RECORD_OPENED": 3,
+      "STARTUP_POSITION_REATTRIBUTED": 3,
+      "PENDING_ENTRY_REVIEW_IDENTITY_ENDED": 1,
+      "ENTRY_ORDER_SUBMISSION_UNKNOWN": 1,
+      "ENTRY_SUBMIT_QUERY_FAILED": 1,
+      "ENTRY_POST_ONLY_RETRY": 2,
+      "TP_UNKNOWN_VERIFY_FAILED": 1,
+      "ENTRY_ORDER_FILL_ATTRIBUTION_REVISED": 8,
+      "MARKET_COHORT_RETIRED": 2
+    },
+    "recoveryByIncidentId": {
+      "ff6dd1ef9ec6d550": 98,
+      "a8cda90da71b2f79": 115,
+      "4087aa0787a4d73a": 4,
+      "cbe8737e4cf6548c": 14,
+      "8ceb63c55e400af8": 63,
+      "bfe6ba0e7db07add": 19,
+      "81cfdaf8dba7a89c": 31,
+      "1f8f4d6e99db7892": 8,
+      "df31562d9dc8b9a5": 10,
+      "a52d53806b1188a1": 7,
+      "c5b862a7beba4b2f": 1,
+      "c76cffc3afdd6c3e": 1,
+      "308ff4af86a4057a": 1,
+      "1a8f2d760b6a90d3": 6
+    },
+    "activationByIncidentId": {
+      "ff6dd1ef9ec6d550": 97,
+      "a8cda90da71b2f79": 115,
+      "4087aa0787a4d73a": 4,
+      "cbe8737e4cf6548c": 14,
+      "8ceb63c55e400af8": 63,
+      "bfe6ba0e7db07add": 19,
+      "81cfdaf8dba7a89c": 32,
+      "1f8f4d6e99db7892": 8,
+      "df31562d9dc8b9a5": 10,
+      "a52d53806b1188a1": 8,
+      "c5b862a7beba4b2f": 1,
+      "c76cffc3afdd6c3e": 1,
+      "308ff4af86a4057a": 1,
+      "1a8f2d760b6a90d3": 6
+    },
+    "distinctUnverifiedEntryIds": 182,
+    "terminalTpExactRecoveryEvents": {},
+    "coverage": "Only retained matching-instance JSONL files, within first/last actual sample timestamps. No natural terminal event means UNKNOWN, not a live PASS."
+  },
+  "evidence": {
+    "rawSha256": "fdb3254bdbd015994692e0b95d50d0dea2e9aa823fd3bd14c9ae15f4e0c275e6",
+    "gzipSha256": "be1beb2c7fd436a46dd8b7b6256168fd45214bc3099065c9a7c04c5f1aae720f",
+    "compressedFile": "followup-hour02-samples.jsonl.gz"
+  }
+}

@@ -21,7 +21,7 @@ const stored = (gross: number, direction: number) => ({
   settingsVersion: 190,
 });
 
-const saveButton=(wrapper:any)=>wrapper.findAll('button').find(node=>node.text().includes('保存设置'))!;
+const saveButton=(wrapper:any)=>wrapper.findAll('button').find(node=>node.text().includes('保存当前参数'))!;
 function inputFor(wrapper: any, label: string) {
   const row = wrapper.findAll('label').find((node: any) => node.text().includes(label));
   return row?.find('input');

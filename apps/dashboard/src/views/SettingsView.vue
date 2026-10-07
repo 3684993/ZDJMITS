@@ -806,7 +806,7 @@ onMounted(load);
         </template>
       </Panel>
       <Panel v-else-if="tab === 'exchange'" title="交易所资源">
-        <div class="toolbar"><span>活动 Testnet REST 仅允许 Binance Demo；REST / WS 独立配置</span><button class="button primary" @click="addResource('exchange')">新增/重置</button></div>
+        <div class="toolbar"><span>活动 Testnet REST 仅允许 Binance Demo；REST / WS 独立配置</span><button class="button primary" @click="addResource('exchange')">重载当前资源</button></div>
         <div class="toolbar"><button v-for="choice in resources.exchange" :key="choice.id" class="button tiny secondary" @click="selectedResourceId.exchange=choice.id">{{ choice.name ?? choice.model ?? choice.id }}<span v-if="isResourceDirty('exchange',choice)"> *</span></button></div><div v-for="item in selectedResources('exchange')" :key="item.id" class="resource-row">
           <div class="form-grid two">
             <label><span>环境</span><select v-model="item.environment"><option>TESTNET</option><option>PRODUCTION</option></select></label>
@@ -820,10 +820,50 @@ onMounted(load);
         <div><button class="button secondary" @click="testCredentials">仅验证凭证</button><button class="button primary" @click="saveCredentials">验证并保存凭证</button></div>
       </Panel>
       <Panel v-else-if="tab === 'proxy'" title="网络代理资源">
-        <div class="toolbar"><span>Binance REST / WS 统一经 SOCKS5H；变更立即 hot-apply</span><button class="button primary" @click="addResource('proxy')">新增/重置</button></div>
-        <div class="toolbar"><button v-for="choice in resources.proxy" :key="choice.id" class="button tiny secondary" @click="selectedResourceId.proxy=choice.id">{{ choice.name ?? choice.model ?? choice.id }}<span v-if="isResourceDirty('proxy',choice)"> *</span></button></div><div v-for="item in selectedResources('proxy')" :key="item.id" class="resource-row">
-          <div class="form-grid two"><label><span>Proxy URL</span><input v-model="item.url" /></label><label class="switch-row"><span>启用</span><input v-model="item.enabled" type="checkbox" /></label></div>
-          <div><span v-if="isResourceDirty('proxy',item)" class="muted">未保存</span><button class="button tiny primary" :disabled="!isResourceDirty('proxy',item)" @click="saveResource('proxy',item)">保存</button><button class="button tiny secondary" :disabled="!isResourceDirty('proxy',item)" @click="cancelResourceEdits('proxy')">取消</button><button class="button tiny secondary" @click="testResource('proxy',item)">测试</button><button class="button tiny secondary" @click="removeResource('proxy',item.id)">删除</button></div>
+        <div class="resource-manager-heading">
+          <div><strong>代理资源与活动路由分开管理</strong><p>可保存多个 SOCKS5H 代理；只有标记为“活动”的资源承载 Binance REST / WS。保存资源不会自动替换当前活动代理。</p></div>
+          <button class="button primary" @click="addResource('proxy')">新增代理</button>
+        </div>
+        <div class="resource-manager-layout">
+          <aside class="resource-card-list" aria-label="网络代理资源列表">
+            <button v-for="choice in resources.proxy" :key="choice.id" class="resource-card" :class="{selected:selectedResourceId.proxy===choice.id,dirty:isResourceDirty('proxy',choice)}" @click="selectedResourceId.proxy=choice.id">
+              <span class="resource-card-head"><strong>{{choice.name||choice.id}}</strong><span class="resource-state" :data-state="choice.active?'ACTIVE':choice.status">{{choice.active?'活动':(choice.status??'READY')}}</span></span>
+              <span class="mono">{{choice.url}}</span>
+              <span>{{choice.enabled?'已启用':'已停用'}}<em v-if="isResourceDirty('proxy',choice)"> · 未保存</em></span>
+            </button>
+            <p v-if="!resources.proxy.length" class="muted">尚无代理资源。</p>
+          </aside>
+          <div class="resource-detail">
+            <div v-for="item in selectedResources('proxy')" :key="item.id" class="resource-detail-body">
+              <div class="resource-detail-title">
+                <div><h3>{{item.name||'新代理'}}</h3><span class="mono">{{item.id}}</span></div>
+                <span v-if="item.active" class="active-label">当前活动路由</span>
+                <span v-else-if="isResourceDirty('proxy',item)" class="dirty-label">有未保存修改</span>
+              </div>
+              <div class="form-grid two">
+                <label><span>资源名称</span><input v-model="item.name" placeholder="例如：新加坡专用交易代理" /></label>
+                <label><span>类型</span><input value="SOCKS5H" disabled /></label>
+                <label class="wide-field"><span>Proxy URL</span><input v-model="item.url" placeholder="socks5h://127.0.0.1:20091" /><small>建议使用 socks5h://，DNS 也由代理出口解析。</small></label>
+                <label class="switch-row"><span>启用资源</span><input v-model="item.enabled" type="checkbox" /></label>
+              </div>
+              <div class="resource-health-grid">
+                <div><small>状态</small><strong>{{item.active?'ACTIVE':(item.status??'READY')}}</strong></div>
+                <div><small>最近测试延迟</small><strong>{{resourceProbeResults[item.id]?.latencyMs==null?'—':resourceProbeResults[item.id].latencyMs+' ms'}}</strong></div>
+                <div><small>测试结果</small><strong>{{resourceProbeResults[item.id]?.status??'尚未测试'}}</strong></div>
+              </div>
+              <div class="resource-actions">
+                <span class="muted">标准流程：编辑 → 保存 → 测试 → 激活。活动代理变更会 hot-apply。</span>
+                <div>
+                  <button class="button primary" :disabled="!isResourceDirty('proxy',item)" @click="saveResource('proxy',item)">保存资源</button>
+                  <button class="button secondary" :disabled="!isResourceDirty('proxy',item)" @click="cancelResourceEdits('proxy')">取消修改</button>
+                  <button class="button secondary" :disabled="isResourceDirty('proxy',item)" @click="testResource('proxy',item)">测试连接</button>
+                  <button class="button secondary" :disabled="isResourceDirty('proxy',item)||item.active||!item.enabled" @click="activateResource('proxy',item.id)">设为活动</button>
+                  <button class="button danger" :disabled="item.active" @click="removeResource('proxy',item.id)">删除</button>
+                </div>
+              </div>
+            </div>
+            <EmptyState v-if="!selectedResources('proxy').length" title="选择一个代理资源" detail="右侧可编辑、测试并激活代理。" />
+          </div>
         </div>
       </Panel>
       <Panel v-else-if="tab === 'ai'" title="AI 模型资源">

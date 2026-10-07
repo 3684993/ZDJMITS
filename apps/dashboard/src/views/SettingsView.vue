@@ -26,6 +26,7 @@ const tab = ref("strategy"),
   resources = ref<any>({ exchange: [], proxy: [], ai: [] }),
   aiRouteDraft = ref<any[]>([]),
   aiProbeResults = ref<Record<string,any>>({}),
+  resourceProbeResults = ref<Record<string,any>>({}),
   resourceSettingsVersion = ref<number | null>(null),
   resourceBaseline = ref<Record<string, Record<string, string>>>({ exchange: {}, proxy: {}, ai: {} }),
   selectedResourceId = ref<Record<string,string>>({exchange:"",proxy:"",ai:""}),
@@ -205,7 +206,7 @@ async function saveResource(kind: string, item: any) {
     if(draft.value){
       draft.value.settingsVersion=Number(resourceSettingsVersion.value);
       if(kind==="ai")draft.value.aiResources=resources.value.ai.map((x:any)=>({id:x.id,name:x.name,role:x.role,enabled:x.enabled!==false,baseUrl:x.baseUrl,model:x.model,maxConcurrency:Number(x.maxConcurrency??1),gpu:x.gpu??"未指定"}));
-      if(kind==="proxy")draft.value.connections.proxy={...draft.value.connections.proxy,url:confirmed.url,expectedStaticEgressIp:confirmed.expectedStaticEgressIp||undefined,enabled:confirmed.enabled!==false,protocol:"SOCKS5H",forceBinanceRest:true,forceBinanceWs:true,proxyDns:true,binanceRestRoute:"CONFIGURED",bypassLocalhost:true,failClosed:true};
+      if(kind==="proxy"){const active=(readback.items??[]).find((x:any)=>x.active)??confirmed;draft.value.connections.proxy={...draft.value.connections.proxy,url:active.url,enabled:active.enabled!==false,activeResourceId:active.id,resources:(readback.items??[]).map((x:any)=>({id:x.id,name:x.name,type:"SOCKS5H",url:x.url,enabled:x.enabled!==false})),protocol:"SOCKS5H",forceBinanceRest:true,forceBinanceWs:true,proxyDns:true,binanceRestRoute:"CONFIGURED",bypassLocalhost:true,failClosed:true};delete (draft.value.connections.proxy as any).expectedStaticEgressIp;}
       if(kind==="exchange"){const x:any=draft.value.connections.exchange;if(confirmed.environment==="TESTNET"){x.environment="TESTNET";x.testnetBaseUrl=confirmed.restBaseUrl;x.testnetRestBaseUrl=confirmed.restBaseUrl;x.testnetWsBaseUrl=confirmed.wsBaseUrl;}else{x.environment="PRODUCTION";x.productionBaseUrl=confirmed.restBaseUrl;x.productionRestBaseUrl=confirmed.restBaseUrl;x.productionWsBaseUrl=confirmed.wsBaseUrl;}x.credentialRef=confirmed.credentialRef??x.credentialRef;}
     }
     resourceBaseline.value[kind]=Object.fromEntries(resources.value[kind].map((x:any)=>[x.id,JSON.stringify(x)]));selectedResourceId.value[kind]=confirmed.id;
@@ -221,25 +222,35 @@ async function addResource(kind: "exchange" | "proxy" | "ai") {
     resourceBaseline.value.exchange={};selectedResourceId.value.exchange="binance-usdm";return;
   }
   if(kind==="proxy"){
-    resources.value.proxy=[{id:"binance-proxy",name:"SOCKS5H",type:"SOCKS5H",url:"socks5h://127.0.0.1:20081",expectedStaticEgressIp:"",enabled:true,status:"READY"}];
-    resourceBaseline.value.proxy={};selectedResourceId.value.proxy="binance-proxy";return;
+    const id=`proxy_${Date.now()}`,current=(resources.value.proxy.find((x:any)=>x.active)??resources.value.proxy[0]);
+    const item={id,name:"新代理",type:"SOCKS5H",url:current?.url??"socks5h://127.0.0.1:20091",enabled:true,active:false,status:"UNSAVED"};
+    resources.value.proxy=[...resources.value.proxy,item];selectedResourceId.value.proxy=id;return;
   }
   const item={id:`ai_${Date.now()}`,name:"",role:"REVIEW_BRAIN",baseUrl:"",model:"",maxConcurrency:1,gpu:"未指定",enabled:true,status:"UNKNOWN",duties:[],activeRequests:0,queueDepth:0};
   resources.value.ai=[...resources.value.ai,item];selectedResourceId.value.ai=item.id;
+}
+async function activateResource(kind:"proxy",id:string){
+  try{
+    const expected=resourceSettingsVersion.value ?? draft.value?.settingsVersion;if(!expected)throw new Error("资源版本尚未加载，请刷新设置");
+    await api.activateResource(kind,id,expected);
+    const loaded=await api.resources(kind);resources.value[kind]=loaded.items??[];resourceSettingsVersion.value=Number(loaded.settingsVersion??expected+1);resourceBaseline.value[kind]=Object.fromEntries(resources.value[kind].map((x:any)=>[x.id,JSON.stringify(x)]));selectedResourceId.value[kind]=id;
+    if(draft.value){const active=resources.value.proxy.find((x:any)=>x.active);if(active){draft.value.settingsVersion=resourceSettingsVersion.value;draft.value.connections.proxy={...draft.value.connections.proxy,url:active.url,enabled:active.enabled!==false,activeResourceId:active.id,resources:resources.value.proxy.map((x:any)=>({id:x.id,name:x.name,type:"SOCKS5H",url:x.url,enabled:x.enabled!==false}))};}}
+    notice.value="代理已激活并 hot-apply";
+  }catch(e){error.value=String(e);}
 }
 async function removeResource(kind: string, id: string) {
   try{
     const expected=resourceSettingsVersion.value ?? draft.value?.settingsVersion;if(!expected)throw new Error("资源版本尚未加载，请刷新设置");
     await api.deleteResource(kind,id,expected);
     const loaded=await api.resources(kind);resources.value[kind]=loaded.items??[];resourceSettingsVersion.value=Number(loaded.settingsVersion??expected+1);resourceBaseline.value[kind]=Object.fromEntries(resources.value[kind].map((x:any)=>[x.id,JSON.stringify(x)]));selectedResourceId.value[kind]=resources.value[kind][0]?.id??"";
-    if(draft.value){draft.value.settingsVersion=resourceSettingsVersion.value;if(kind==="ai")draft.value.aiResources=resources.value.ai.map((x:any)=>({id:x.id,name:x.name,role:x.role,enabled:x.enabled!==false,baseUrl:x.baseUrl,model:x.model,maxConcurrency:Number(x.maxConcurrency??1),gpu:x.gpu??"未指定"}));if(kind==="proxy")draft.value.connections.proxy.enabled=Boolean(resources.value.proxy[0]?.enabled);}
+    if(draft.value){draft.value.settingsVersion=resourceSettingsVersion.value;if(kind==="ai")draft.value.aiResources=resources.value.ai.map((x:any)=>({id:x.id,name:x.name,role:x.role,enabled:x.enabled!==false,baseUrl:x.baseUrl,model:x.model,maxConcurrency:Number(x.maxConcurrency??1),gpu:x.gpu??"未指定"}));if(kind==="proxy"){const active=resources.value.proxy.find((x:any)=>x.active)??resources.value.proxy[0];if(active)draft.value.connections.proxy={...draft.value.connections.proxy,url:active.url,enabled:active.enabled!==false,activeResourceId:active.id,resources:resources.value.proxy.map((x:any)=>({id:x.id,name:x.name,type:"SOCKS5H",url:x.url,enabled:x.enabled!==false}))};}}
     notice.value="资源已删除并已回读";
   }catch(e){error.value=String(e);}
 }
 function isResourceDirty(kind:string,item:any){return resourceBaseline.value[kind]?.[item.id]!==JSON.stringify(item);}
 function selectedResources(kind:string){const id=selectedResourceId.value[kind];return id?resources.value[kind].filter((x:any)=>x.id===id):resources.value[kind].slice(0,1);}
 async function cancelResourceEdits(kind:string){try{const selected=selectedResourceId.value[kind],loaded=await api.resources(kind);resources.value[kind]=loaded.items??[];resourceSettingsVersion.value=Number(loaded.settingsVersion);resourceBaseline.value[kind]=Object.fromEntries(resources.value[kind].map((x:any)=>[x.id,JSON.stringify(x)]));selectedResourceId.value[kind]=resources.value[kind].some((x:any)=>x.id===selected)?selected:(resources.value[kind][0]?.id??"");notice.value="未保存修改已取消";}catch(e){error.value=String(e);}}
-async function testResource(kind:"exchange"|"proxy"|"ai",item:any){try{if(isResourceDirty(kind,item))throw new Error("请先保存当前资源修改，再执行真实连接测试");const result=await api.testResource(kind,item.id);if(kind==="ai"){aiProbeResults.value={...aiProbeResults.value,[item.id]:result};notice.value=`连接 ${result.status} · ${result.latencyMs}ms · 实际 model id: ${(result.models??[]).join(", ")||"未返回"}`;}else notice.value=`连接测试：${result.status??result.state??"PASS"}`;}catch(e){error.value=String(e);}}
+async function testResource(kind:"exchange"|"proxy"|"ai",item:any){try{if(isResourceDirty(kind,item))throw new Error("请先保存当前资源修改，再执行真实连接测试");const result=await api.testResource(kind,item.id);resourceProbeResults.value={...resourceProbeResults.value,[item.id]:result};if(kind==="ai"){aiProbeResults.value={...aiProbeResults.value,[item.id]:result};notice.value=`连接 ${result.status} · ${result.latencyMs}ms · 实际 model id: ${(result.models??[]).join(", ")||"未返回"}`;}else notice.value=`连接测试：${result.status??result.state??"PASS"}${result.latencyMs!=null?` · ${result.latencyMs}ms`:""}`;}catch(e){error.value=String(e);}}
 const aiDutyLabels:Record<string,string>={SCOUT_RESEARCH:"Scout / Research",ENTRY_PRIMARY:"Entry Primary",PENDING_ENTRY_REVIEW:"Pending Entry Review",POSITION_REVIEW:"Position Review"};
 function updateAiRoute(duty:string,resourceId:string){const routes=structuredClone(aiRouteDraft.value),found=routes.find((row:any)=>row.duty===duty);if(found){found.resourceId=resourceId;found.enabled=Boolean(resourceId);}else if(resourceId)routes.push({duty,resourceId,enabled:true,priority:duty==="ENTRY_PRIMARY"?100:duty==="POSITION_REVIEW"?90:duty==="PENDING_ENTRY_REVIEW"?20:10});aiRouteDraft.value=routes;}
 function routeResourceId(duty:string){return aiRouteDraft.value.find((row:any)=>row.duty===duty&&row.enabled)?.resourceId??"";}

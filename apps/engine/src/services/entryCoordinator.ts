@@ -341,8 +341,12 @@ export class EntryCoordinator {
   private async submitExactlyOnce(intent:EntryIntent,order:EntryOrder,resumedFrom?:string){
     if(order.status==='UNKNOWN'||order.status==='SUBMITTING'){
       const ws=this.userDataConfirmed(order);if(ws)return ws;
-      this.reserveExactOrderQuery(order,Date.now(),15_000,true);
-      const found=await this.exchange.findEntryByClientOrderId(order);if(found)return found;
+      // One identity gets at most one exact REST probe per recovery interval. Repeated scheduler/
+      // resume attempts stay fail-closed instead of amplifying a slow Binance route.
+      if(!this.reserveExactOrderQuery(order,Date.now(),15_000))throw new Error('ENTRY_SUBMISSION_UNKNOWN_PENDING_RECONCILIATION');
+      try{const found=await this.exchange.findEntryByClientOrderId(order);if(found)return found;}
+      catch(error){const raced=this.userDataConfirmed(order);if(raced)return raced;throw error;}
+      const raced=this.userDataConfirmed(order);if(raced)return raced;
       throw new Error('ENTRY_SUBMISSION_UNKNOWN_PENDING_RECONCILIATION');
     }
     const block=this.executionHardBlock(intent,order);if(block){if(order.status==='NEW'){const rejected={...order,status:'REJECTED' as const,factSource:'LOCAL_NOT_SUBMITTED',updatedAt:Date.now()};this.state.entryOrders.set(order.id,rejected);this.journal?.save({intent,order:rejected});}throw new Error(`JIT_BLOCKED:${block}`);}
@@ -363,9 +367,14 @@ export class EntryCoordinator {
           holderIntentId:conflict?.intentId??null,holderOrderId:conflict?.orderId??null,holderStatus:conflict?.status??null,isolationMode:isolation.mode,
           portfolioScopeObservation:portfolioScopeObservation({settings:this.state.settings,environment,accountId:account,underlying,side:intent.side})},intent.symbol);
         if(claim.mustQueryFirst){
-          // Own unacknowledged order: re-prove it by its own client order id. Never a second wire call.
-          const found=await this.exchange.findEntryByClientOrderId(claim.record.order).catch(()=>null);
+          // Own unacknowledged order: User Data WS is primary order-state truth. Exact REST is only a
+          // throttled fallback by the same clientOrderId, and never grants a second wire submit.
+          const pending=claim.record.order,ws=this.userDataConfirmed(pending);
+          if(ws){this.journal.save({intent:claim.record.intent,order:ws});return ws;}
+          if(!this.reserveExactOrderQuery(pending,Date.now(),15_000))throw new Error(`ENTRY_SUBMISSION_UNKNOWN_QUERY_BY_CLIENT_ORDER_ID:${claim.cause}`);
+          const found=await this.exchange.findEntryByClientOrderId(pending).catch(()=>null);
           if(found){this.journal.save({intent:claim.record.intent,order:found});return found;}
+          const raced=this.userDataConfirmed(pending);if(raced){this.journal.save({intent:claim.record.intent,order:raced});return raced;}
           throw new Error(`ENTRY_SUBMISSION_UNKNOWN_QUERY_BY_CLIENT_ORDER_ID:${claim.cause}`);
         }
         if(claim.maySubmit){
@@ -421,7 +430,9 @@ export class EntryCoordinator {
       // accept that fact first and spend an exact REST query only as a fallback.
       const wsConfirmed=await this.awaitUserDataConfirmation(submitting);
       if(wsConfirmed){this.journal?.save({intent,order:wsConfirmed});this.events.publish('ENTRY_SUBMIT_RESPONSE_RECOVERED',{brainRunId:intent.brainRunId,intentId:intent.id,orderId:order.id,clientOrderId:order.clientOrderId,submittedAt:wsConfirmed.submittedAt??wsConfirmed.updatedAt,source:'BINANCE_USER_DATA_WS'},intent.symbol);return wsConfirmed;}
-      try{const found=await this.exchange.findEntryByClientOrderId(submitting);if(found){const recoveredOrder={...found,submittedAt:found.submittedAt??submitting.updatedAt};this.journal?.save({intent,order:recoveredOrder});this.events.publish('ENTRY_SUBMIT_RESPONSE_RECOVERED',{brainRunId:intent.brainRunId,intentId:intent.id,orderId:order.id,clientOrderId:order.clientOrderId,submittedAt:recoveredOrder.submittedAt,source:'BINANCE_EXACT_ORDER'},intent.symbol);return recoveredOrder;}}catch(queryError){const raced=this.userDataConfirmed(submitting);if(raced){this.journal?.save({intent,order:raced});return raced;}this.events.publish('ENTRY_SUBMIT_QUERY_FAILED',{intentId:intent.id,message:queryError instanceof Error?queryError.message:String(queryError)},intent.symbol);}
+      if(this.reserveExactOrderQuery(submitting,Date.now(),15_000)){
+        try{const found=await this.exchange.findEntryByClientOrderId(submitting);if(found){const recoveredOrder={...found,submittedAt:found.submittedAt??submitting.updatedAt};this.journal?.save({intent,order:recoveredOrder});this.events.publish('ENTRY_SUBMIT_RESPONSE_RECOVERED',{brainRunId:intent.brainRunId,intentId:intent.id,orderId:order.id,clientOrderId:order.clientOrderId,submittedAt:recoveredOrder.submittedAt,source:'BINANCE_EXACT_ORDER'},intent.symbol);return recoveredOrder;}}catch(queryError){const raced=this.userDataConfirmed(submitting);if(raced){this.journal?.save({intent,order:raced});return raced;}this.events.publish('ENTRY_SUBMIT_QUERY_FAILED',{intentId:intent.id,message:queryError instanceof Error?queryError.message:String(queryError)},intent.symbol);}
+      }
       const raced=this.userDataConfirmed(submitting);if(raced){this.journal?.save({intent,order:raced});return raced;}
       const reason=error instanceof Error?error.message:String(error);
       if(reason.includes('-5022')){this.journal?.save({intent,order:{...order,status:'REJECTED'}});this.state.entryOrders.set(order.id,{...order,status:'NEW',updatedAt:Date.now()});throw error;}

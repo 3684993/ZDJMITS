@@ -30,6 +30,28 @@ describe('Manual cache-only preview',()=>{
     expect(x.market.freshQuote).not.toHaveBeenCalled();
   });
 });
+describe('Manual stale-market tolerance',()=>{
+  it('keeps preview available from stale cache and labels it as non-live',async()=>{
+    const x=await fixture(),stale={...x.quote,ts:Date.now()-60_000};x.market.cachedQuote.mockReturnValue(stale);
+    const service=new ManualPositionService(x.state,x.market,x.exchange,x.tp,new EventBus(),x.reconcile,manualJournalHarness() as any,exitRuntimeHarness());
+    const preview=await service.preview(x.position.id,true);
+    expect(preview).toMatchObject({quoteSource:'STALE_CACHE',quoteStale:true});
+    expect(preview.warnings.join(' ')).toContain('行情缓存已过期');
+    expect(x.market.freshQuote).not.toHaveBeenCalled();
+  });
+  it('allows an explicit manual limit to use recent cached contract filters when live quote REST fails',async()=>{
+    const x=await fixture(),stale={...x.quote,ts:Date.now()-60_000};x.market.cachedQuote.mockReturnValue(stale);x.market.freshQuote.mockRejectedValue(new Error('REST unavailable'));
+    const service=new ManualPositionService(x.state,x.market,x.exchange,x.tp,new EventBus(),x.reconcile,manualJournalHarness() as any,exitRuntimeHarness());
+    const result=await service.execute(x.position.id,{action:'PLACE_LIMIT',quantity:100,price:.305,idempotencyKey:'stale-explicit-limit'});
+    expect(result.intent.status).toBe('SUBMITTED');
+    expect(x.exchange.placeManualOrder).toHaveBeenCalledWith(expect.objectContaining({symbol:'FXSUSDT',price:.305,quantity:100,reduceOnly:true}));
+  });
+  it('still fails closed for an automatic-price emergency close when no live quote exists',async()=>{
+    const x=await fixture(),stale={...x.quote,ts:Date.now()-60_000};x.market.cachedQuote.mockReturnValue(stale);x.market.freshQuote.mockRejectedValue(new Error('REST unavailable'));
+    const service=new ManualPositionService(x.state,x.market,x.exchange,x.tp,new EventBus(),x.reconcile,manualJournalHarness() as any,exitRuntimeHarness());
+    await expect(service.execute(x.position.id,{action:'EMERGENCY_CLOSE',confirm:true,idempotencyKey:'needs-live-price'})).rejects.toThrow('MARKET_DATA_UNAVAILABLE');
+  });
+});
 describe('Manual emergency close',()=>{
   it('uses REST fresh quote when the WS snapshot is unavailable and produces a full-position short BUY preview',async()=>{
     const x=await fixture(),service=new ManualPositionService(x.state,x.market,x.exchange,x.tp,new EventBus(),x.reconcile,manualJournalHarness() as any,exitRuntimeHarness());

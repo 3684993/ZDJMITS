@@ -10,7 +10,17 @@
       "proxyDns": true,
       "binanceRestRoute": "CONFIGURED",
       "bypassLocalhost": true,
-      "failClosed": true
+      "failClosed": true,
+      "activeResourceId": "binance-proxy",
+      "resources": [
+        {
+          "id": "binance-proxy",
+          "name": "默认 SOCKS5H",
+          "type": "SOCKS5H",
+          "url": "socks5h://127.0.0.1:20081",
+          "enabled": true
+        }
+      ]
     },
     "exchange": {
       "provider": "BINANCE_USDM",
@@ -30,34 +40,275 @@
     "aiMode": "OPENAI_COMPATIBLE"
   },
   "aiResources": [
-    {"id":"scout-b580","role":"SCOUT","enabled":false,"baseUrl":"http://127.0.0.1:8081/v1","model":"qwen3.5:9b","maxConcurrency":1,"gpu":"Intel Arc B580 12GB"},
-    {"id":"brain-7900-primary","role":"PRIMARY_BRAIN","enabled":true,"baseUrl":"http://127.0.0.1:8084/v1","model":"qwen/qwen3.8-27b","maxConcurrency":1,"gpu":"AMD Radeon RX 7900 XTX 24GB"}
+    {
+      "id": "scout-b580",
+      "role": "SCOUT",
+      "enabled": false,
+      "baseUrl": "http://127.0.0.1:8081/v1",
+      "model": "qwen3.5:9b",
+      "maxConcurrency": 1,
+      "gpu": "Intel Arc B580 12GB"
+    },
+    {
+      "id": "brain-7900-primary",
+      "role": "PRIMARY_BRAIN",
+      "enabled": true,
+      "baseUrl": "http://127.0.0.1:8084/v1",
+      "model": "qwen/qwen3.8-27b",
+      "maxConcurrency": 1,
+      "gpu": "AMD Radeon RX 7900 XTX 24GB"
+    }
   ],
   "aiDutyRoutes": [
-    {"duty":"SCOUT_RESEARCH","resourceId":"scout-b580","enabled":false,"priority":10},
-    {"duty":"ENTRY_PRIMARY","resourceId":"brain-7900-primary","enabled":true,"priority":100},
-    {"duty":"PENDING_ENTRY_REVIEW","resourceId":"brain-7900-primary","enabled":true,"priority":20},
-    {"duty":"POSITION_REVIEW","resourceId":"brain-7900-primary","enabled":true,"priority":90}
+    {
+      "duty": "SCOUT_RESEARCH",
+      "resourceId": "scout-b580",
+      "enabled": false,
+      "priority": 10
+    },
+    {
+      "duty": "ENTRY_PRIMARY",
+      "resourceId": "brain-7900-primary",
+      "enabled": true,
+      "priority": 100
+    },
+    {
+      "duty": "PENDING_ENTRY_REVIEW",
+      "resourceId": "brain-7900-primary",
+      "enabled": true,
+      "priority": 20
+    },
+    {
+      "duty": "POSITION_REVIEW",
+      "resourceId": "brain-7900-primary",
+      "enabled": true,
+      "priority": 90
+    }
   ],
-  "appearance": {"theme":"BURGUNDY_EDITORIAL","density":"COMFORTABLE","numberFont":"TABULAR"},
-  "selection": {
-    "mode":"COMPREHENSIVE_MAINSTREAM","universeTopN":100,"poolTarget":20,"poolMax":24,"replacementDelta":4,
-    "cohort":{"size":100,"hydrateBatchSize":20,"readyLowWatermark":6,"staleMemberRotationMinutes":120,"protectedRatio":0.75,"refillBackoffSeconds":60},
-    "customSymbols":[],"excludeSymbols":[],"minQuoteVolumeUsd24h":20000000,"maxSpreadBps":18,"minDataCompleteness":0.92,
-    "marketQuality":{"enabled":true,"minQuoteVolumeUsd24h":0,"minTradeCount24h":0,"maxSpreadBps":0,"minDepthUsd":0,"minOpenInterestUsd":0,"minListingAgeDays":0,"allowedGrades":["A","B"],"allowSpeculative":true,"allowNewListings":false,"liquidityTopN":0,"symbolBlacklist":[],"underlyingBlacklist":[]},
-    "assetDirectory":{"version":"V3.8.0","approvedLiquid":[],"excluded":[]}
+  "appearance": {
+    "theme": "BURGUNDY_EDITORIAL",
+    "density": "COMFORTABLE",
+    "numberFont": "TABULAR"
   },
-  "entryProfile":"BALANCED","directionReference":"DEFAULT","leverage":{"mode":"DEFAULT","defaultValue":20,"customValue":20},
-  "portfolio":{"maxPositions":50,"maxPendingEntries":6,"entryMarginUsd":200},
-  "portfolioIntelligence":{"enabled":true,"quoteAssetPolicy":"AUTO","underlyingExposurePolicy":"BLOCK_SAME_DIRECTION","riskTierMode":"AUTO","globalDirectionPolicy":"BOTH","globalDirectionPreference":"INTELLIGENT_SHORT_BIAS","tierDirectionPreferences":{"CORE":"BALANCED","LIQUID_ALT":"INTELLIGENT_SHORT_BIAS","SPECULATIVE":"STRICT_SHORT_BIAS","NEW_LISTING":"SHORT_ONLY"},"symbolDirectionPreferences":{},"altLongMarginFactors":{"CORE":1,"LIQUID_ALT":0.65,"SPECULATIVE":0.35,"NEW_LISTING":0.1},"altLongLeverageCaps":{"CORE":20,"LIQUID_ALT":8,"SPECULATIVE":3,"NEW_LISTING":1},"dynamicMarginEnabled":true,"baseMarginUsd":200,"minMarginUsd":1,"maxMarginPerPositionUsd":500,"maxEquityPct":0.1,"dynamicLeverageEnabled":true,"globalMaxLeverage":20,"marginMode":"AUTO","locationProtectionEnabled":true,"minLocationScore":45,"maxSameUnderlyingPositions":1,"maxLongExposurePct":0.5,"maxShortExposurePct":0.5,"maxSpeculativeExposurePct":0.2,"maxSpeculativePositions":2,"maxQuoteAssetMarginUsagePct":0.8},
-  "runtimeControl":{"autoPauseOnNoCapital":true,"autoResumeOnCapital":true,"minExecutableCandidates":1,"capitalCheckIntervalSeconds":30},
-  "riskGovernance":{"entrySafetyMode":"AUTO","protectionMode":"SHADOW","requirePostAiVerification":true,"failClosedOnMissingEvidence":true,"requiredEvidenceCompleteness":0.92,"maxDailyLossUsd":0,"maxDailyLossPct":0,"maxConcurrentReservations":6,"reservationTtlSeconds":300,"lockLeaseSeconds":120,"circuitBreakerEnabled":true,"perTradeRiskPctEquity":0.01},
-  "tradeEconomics":{"parameterProfile":"CUSTOM","admissionMode":"SHADOW","historicalTpReachabilityEnabled":true,"minHistoricalReachProbability":0.5,"reachabilityLookbackBars":120,"reachabilityMinSamples":30},
-  "ai":{"scoutEnabled":false,"secondBrainReview":"OFF","maxEvidenceToolRounds":1,"maxEvidenceToolsPerRound":2,"minEvidenceCompleteness":0.86,"decisionTimeoutMs":45000,"highFrequency":{"mode":"NORMAL","scoutPrefetch":2,"retryCooldownSeconds":25,"quarantineAfterFailures":3,"quarantineSeconds":300}},
-  "externalIntelligence":{"enabled":false,"researchEnabled":true,"feedToPrimary":false,"refreshSeconds":900,"timeoutMs":10000,"maxContextItems":3,"maxContextTokens":300,"alpaca":{"enabled":false,"credentialRef":"alpaca-market-data","feed":"us","ttlSeconds":1800},"federalReserve":{"enabled":false,"rssUrl":"https://www.federalreserve.gov/feeds/press_monetary.xml","ttlSeconds":86400}},
-  "entry":{"absoluteTtlMinutes":60,"reviewIntervalSeconds":20,"maxReprices":12,"minReachability":0.48,"makerOffsetTicks":0,"minimumInitialMarginByQuote":{"USDT":100,"USDC":100},"minimumOrderNotionalBySymbol":{"BTCUSDT":150},"minimumOrderNotionalByQuote":{"USDT":200,"USDC":200},"nearMarket":{"enabled":true,"maxDistanceBps":5,"maxOffsetTicks":2,"ttlSeconds":90,"reviewSeconds":2,"repriceIntervalSeconds":5,"maxReprices":6}},
-  "takeProfit":{"enabled":true,"mode":"PRICE_MOVE_PERCENT","targetPriceMovePercent":1.20,"quantityPercent":100,"tpEconomicsEnabled":true,"minNetProfitUsd":1,"minNetProfitRoiPct":0.15,"feeSafetyBufferPct":10,"exitFeeAssumption":"TAKER","slippageBufferPct":0,"entryFeeRate":0.0004,"makerFeeRate":0.0002,"takerFeeRate":0.0004},
-  "positionManagement":{"humanHandoffAfterMinutes":1440,"lossHandoffBars":4,"humanManagedAdmissionCapsEnabled":true,"maxHumanManagedPositions":4,"maxHumanManagedNotionalPctEquity":0.2},
-  "performanceTracking":{"enabled":true,"baselineWalletByQuote":{"USDT":5000,"USDC":5000},"rollingDays":7},
-  "releasePolicy":{"lifecycleVersion":390}
+  "selection": {
+    "mode": "COMPREHENSIVE_MAINSTREAM",
+    "universeTopN": 100,
+    "poolTarget": 20,
+    "poolMax": 24,
+    "replacementDelta": 4,
+    "cohort": {
+      "size": 100,
+      "hydrateBatchSize": 20,
+      "readyLowWatermark": 6,
+      "staleMemberRotationMinutes": 120,
+      "protectedRatio": 0.75,
+      "refillBackoffSeconds": 60
+    },
+    "customSymbols": [],
+    "excludeSymbols": [],
+    "minQuoteVolumeUsd24h": 20000000,
+    "maxSpreadBps": 18,
+    "minDataCompleteness": 0.92,
+    "marketQuality": {
+      "enabled": true,
+      "minQuoteVolumeUsd24h": 0,
+      "minTradeCount24h": 0,
+      "maxSpreadBps": 0,
+      "minDepthUsd": 0,
+      "minOpenInterestUsd": 0,
+      "minListingAgeDays": 0,
+      "allowedGrades": [
+        "A",
+        "B"
+      ],
+      "allowSpeculative": true,
+      "allowNewListings": false,
+      "liquidityTopN": 0,
+      "symbolBlacklist": [],
+      "underlyingBlacklist": []
+    },
+    "assetDirectory": {
+      "version": "V3.8.0",
+      "approvedLiquid": [],
+      "excluded": []
+    }
+  },
+  "entryProfile": "BALANCED",
+  "directionReference": "DEFAULT",
+  "leverage": {
+    "mode": "DEFAULT",
+    "defaultValue": 20,
+    "customValue": 20
+  },
+  "portfolio": {
+    "maxPositions": 50,
+    "maxPendingEntries": 6,
+    "entryMarginUsd": 200
+  },
+  "portfolioIntelligence": {
+    "enabled": true,
+    "quoteAssetPolicy": "AUTO",
+    "underlyingExposurePolicy": "BLOCK_SAME_DIRECTION",
+    "riskTierMode": "AUTO",
+    "globalDirectionPolicy": "BOTH",
+    "globalDirectionPreference": "INTELLIGENT_SHORT_BIAS",
+    "tierDirectionPreferences": {
+      "CORE": "BALANCED",
+      "LIQUID_ALT": "INTELLIGENT_SHORT_BIAS",
+      "SPECULATIVE": "STRICT_SHORT_BIAS",
+      "NEW_LISTING": "SHORT_ONLY"
+    },
+    "symbolDirectionPreferences": {},
+    "altLongMarginFactors": {
+      "CORE": 1,
+      "LIQUID_ALT": 0.65,
+      "SPECULATIVE": 0.35,
+      "NEW_LISTING": 0.1
+    },
+    "altLongLeverageCaps": {
+      "CORE": 20,
+      "LIQUID_ALT": 8,
+      "SPECULATIVE": 3,
+      "NEW_LISTING": 1
+    },
+    "dynamicMarginEnabled": true,
+    "baseMarginUsd": 200,
+    "minMarginUsd": 1,
+    "maxMarginPerPositionUsd": 500,
+    "maxEquityPct": 0.1,
+    "dynamicLeverageEnabled": true,
+    "globalMaxLeverage": 20,
+    "marginMode": "AUTO",
+    "locationProtectionEnabled": true,
+    "minLocationScore": 45,
+    "maxSameUnderlyingPositions": 1,
+    "maxLongExposurePct": 0.5,
+    "maxShortExposurePct": 0.5,
+    "maxSpeculativeExposurePct": 0.2,
+    "maxSpeculativePositions": 2,
+    "maxQuoteAssetMarginUsagePct": 0.8
+  },
+  "runtimeControl": {
+    "autoPauseOnNoCapital": true,
+    "autoResumeOnCapital": true,
+    "minExecutableCandidates": 1,
+    "capitalCheckIntervalSeconds": 30
+  },
+  "riskGovernance": {
+    "entrySafetyMode": "AUTO",
+    "protectionMode": "SHADOW",
+    "requirePostAiVerification": true,
+    "failClosedOnMissingEvidence": true,
+    "requiredEvidenceCompleteness": 0.92,
+    "maxDailyLossUsd": 0,
+    "maxDailyLossPct": 0,
+    "maxConcurrentReservations": 6,
+    "reservationTtlSeconds": 300,
+    "lockLeaseSeconds": 120,
+    "circuitBreakerEnabled": true,
+    "perTradeRiskPctEquity": 0.01
+  },
+  "tradeEconomics": {
+    "parameterProfile": "CUSTOM",
+    "admissionMode": "SHADOW",
+    "historicalTpReachabilityEnabled": true,
+    "minHistoricalReachProbability": 0.5,
+    "reachabilityLookbackBars": 120,
+    "reachabilityMinSamples": 30
+  },
+  "ai": {
+    "scoutEnabled": false,
+    "secondBrainReview": "OFF",
+    "maxEvidenceToolRounds": 1,
+    "maxEvidenceToolsPerRound": 2,
+    "minEvidenceCompleteness": 0.86,
+    "decisionTimeoutMs": 45000,
+    "highFrequency": {
+      "mode": "NORMAL",
+      "scoutPrefetch": 2,
+      "retryCooldownSeconds": 25,
+      "quarantineAfterFailures": 3,
+      "quarantineSeconds": 300
+    }
+  },
+  "externalIntelligence": {
+    "enabled": false,
+    "researchEnabled": true,
+    "feedToPrimary": false,
+    "refreshSeconds": 900,
+    "timeoutMs": 10000,
+    "maxContextItems": 3,
+    "maxContextTokens": 300,
+    "alpaca": {
+      "enabled": false,
+      "credentialRef": "alpaca-market-data",
+      "feed": "us",
+      "ttlSeconds": 1800
+    },
+    "federalReserve": {
+      "enabled": false,
+      "rssUrl": "https://www.federalreserve.gov/feeds/press_monetary.xml",
+      "ttlSeconds": 86400
+    }
+  },
+  "entry": {
+    "absoluteTtlMinutes": 60,
+    "reviewIntervalSeconds": 20,
+    "maxReprices": 12,
+    "minReachability": 0.48,
+    "makerOffsetTicks": 0,
+    "minimumInitialMarginByQuote": {
+      "USDT": 100,
+      "USDC": 100
+    },
+    "minimumOrderNotionalBySymbol": {
+      "BTCUSDT": 150
+    },
+    "minimumOrderNotionalByQuote": {
+      "USDT": 200,
+      "USDC": 200
+    },
+    "nearMarket": {
+      "enabled": true,
+      "maxDistanceBps": 5,
+      "maxOffsetTicks": 2,
+      "ttlSeconds": 90,
+      "reviewSeconds": 2,
+      "repriceIntervalSeconds": 5,
+      "maxReprices": 6
+    }
+  },
+  "takeProfit": {
+    "enabled": true,
+    "mode": "PRICE_MOVE_PERCENT",
+    "targetPriceMovePercent": 1.2,
+    "quantityPercent": 100,
+    "tpEconomicsEnabled": true,
+    "minNetProfitUsd": 1,
+    "minNetProfitRoiPct": 0.15,
+    "feeSafetyBufferPct": 10,
+    "exitFeeAssumption": "TAKER",
+    "slippageBufferPct": 0,
+    "entryFeeRate": 0.0004,
+    "makerFeeRate": 0.0002,
+    "takerFeeRate": 0.0004
+  },
+  "positionManagement": {
+    "humanHandoffAfterMinutes": 1440,
+    "lossHandoffBars": 4,
+    "humanManagedAdmissionCapsEnabled": true,
+    "maxHumanManagedPositions": 4,
+    "maxHumanManagedNotionalPctEquity": 0.2
+  },
+  "performanceTracking": {
+    "enabled": true,
+    "baselineWalletByQuote": {
+      "USDT": 5000,
+      "USDC": 5000
+    },
+    "rollingDays": 7
+  },
+  "releasePolicy": {
+    "lifecycleVersion": 390
+  }
 }

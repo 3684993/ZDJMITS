@@ -1,5 +1,7 @@
 # J-MITS V3.9.7 — CURRENT MAINTENANCE HANDOFF
 
+> **Current Codex execution mode:** use `docs/prompts/CODEX_FULL_COMPLETION_RUN.md` for one continuous completion run through final 8080 restart and acceptance preparation; do not stop for staged approval.
+
 > Stable handoff entrypoint for a new ChatGPT maintenance conversation.
 > Last refreshed: 2026-10-07 (+08:00)
 > Repository: `3684993/ZDJMITS`

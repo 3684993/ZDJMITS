@@ -1126,12 +1126,12 @@ export class EntryCoordinator {
      }finally{this.reviewBusy=false;}
   }
   private schedulePendingEntryReview(order:EntryOrder,intent:EntryIntent,market:any,now:number){
-    const intervalMs=5*60_000,last=this.pendingReviewLastAt.get(order.id)??0,packet=this.state.eips.get(order.symbol);
-    if(!packet||now-order.createdAt<30_000||now-last<intervalMs||this.pendingReviewInFlight.has(order.id))return;
+    const intervalMs=30_000,last=this.pendingReviewLastAt.get(order.id)??0,packet=this.state.eips.get(order.symbol);
+    if(!packet||now-order.createdAt<15_000||now-last<intervalMs||this.pendingReviewInFlight.has(order.id))return;
     this.pendingReviewLastAt.set(order.id,now);this.pendingReviewInFlight.add(order.id);
     const facts={orderId:order.id,clientOrderId:order.clientOrderId,exchangeOrderId:order.exchangeOrderId??null,symbol:order.symbol,side:order.side,
       originalPrice:order.price,originalQuantity:order.quantity,filledQuantity:order.filledQuantity,unfilledQuantity:Math.max(0,order.quantity-order.filledQuantity),
-      orderAgeMs:Math.max(0,now-order.createdAt),remoteOrderStatus:order.status,remoteVerifiedAt:(order as any).verifiedAt??null,
+      orderAgeMs:Math.max(0,now-order.createdAt),localOrderStatus:order.status,localObservedAt:order.updatedAt,
       originalEconomicMandate:(intent as any).economicMandate??null,originalPrimaryThesis:{brainRunId:intent.brainRunId,decisionChainId:intent.decisionChainId,acceptablePriceRange:intent.acceptablePriceRange,
         profitTakePlan:intent.profitTakePlan,horizonMinutes:intent.horizonMinutes,authorizationExpiresAt:intent.aiAuthorizationExpiresAt,invalidation:(intent as any).entryInvalidation??null},
       currentFacts:{last:market.quote.last,bid:market.quote.bid,ask:market.quote.ask,book:market.microstructure??null,bars:Object.fromEntries(['1d','4h','15m','5m','1m'].map(tf=>[tf,market.technical?.[tf]??null]))},
@@ -1139,18 +1139,17 @@ export class EntryCoordinator {
         minimumNetProfit:(intent as any).economicAdmission?.requiredNetProfit??(intent as any).economicMandate?.economics?.minimumNetProfit??null,
         expectedReachability:(intent as any).economicAdmission?.reachProbability??order.reachability??null,feeAndFunding:(intent as any).economicMandate?.economics??null}};
     void (async()=>{
-      const exact=await this.exchange.findEntryByClientOrderId(order);
-      if(!exact||terminalOrderStatus(exact.status)||exact.clientOrderId!==order.clientOrderId)return;
-      const remote={...order,...exact,id:order.id,intentId:order.intentId,createdAt:order.createdAt,absoluteExpiresAt:order.absoluteExpiresAt};
-      const result=await this.ai.reviewPendingEntry(packet,{...facts,remoteOrderStatus:exact.status,remoteVerifiedAt:Date.now(),currentUnfilledQuantity:Math.max(0,Number(exact.quantity)-Number(exact.filledQuantity??0))});
+      // Review is advisory: current local/user-data facts are sufficient for KEEP. Spending a REST
+      // exact-order read before every model call amplified Binance latency without increasing safety.
+      const result=await this.ai.reviewPendingEntry(packet,{...facts,currentUnfilledQuantity:Math.max(0,Number(order.quantity)-Number(order.filledQuantity??0))});
       if(result.decision==='KEEP')return;
-      // The reviewer has no exchange capability. Re-check this exact identity after inference, then
-      // let the deterministic coordinator cancel it. REPLAN only releases a fresh scheduling opportunity.
-      const final=await this.exchange.findEntryByClientOrderId(remote);
-      if(!final||terminalOrderStatus(final.status)||final.clientOrderId!==remote.clientOrderId){
-        this.events.publish('PENDING_ENTRY_REVIEW_IDENTITY_ENDED',{orderId:remote.id,clientOrderId:remote.clientOrderId,decision:result.decision},remote.symbol);return;
+      // CANCEL/REPLAN can change exchange state, so exact identity is proven only at the action boundary.
+      const final=await this.exchange.findEntryByClientOrderId(order);
+      if(!final||terminalOrderStatus(final.status)||final.clientOrderId!==order.clientOrderId){
+        this.events.publish('PENDING_ENTRY_REVIEW_IDENTITY_ENDED',{orderId:order.id,clientOrderId:order.clientOrderId,decision:result.decision},order.symbol);return;
       }
-      const canceled=await this.exchange.cancelEntry({...remote,...final,id:remote.id,intentId:remote.intentId}),confirmed=terminalOrderStatus(canceled.status);
+      const remote={...order,...final,id:order.id,intentId:order.intentId,createdAt:order.createdAt,absoluteExpiresAt:order.absoluteExpiresAt};
+      const canceled=await this.exchange.cancelEntry(remote),confirmed=terminalOrderStatus(canceled.status);
       const saved={...remote,...canceled,status:confirmed?canceled.status:'UNKNOWN',exchangeTerminalStatus:confirmed?canceled.status:'UNKNOWN',activeRiskExposure:!confirmed,updatedAt:Date.now()} as EntryOrder;
       this.state.entryOrders.set(remote.id,saved);if(confirmed&&remote.reservationId)this.state.releaseEntryReservation(remote.reservationId);
       if(confirmed)reconcileCandidateLifecycles(this.state,this.events,`PENDING_ENTRY_REVIEW_${result.decision}`);

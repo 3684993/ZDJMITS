@@ -61,9 +61,11 @@ describe('user-facing operational incidents',()=>{
     const now=Date.now(),rows=operationalCandidates({pipeline:{pipelineState:'RUNNING',marketDataReason:null,freshMarkets:{status:'FRESH'}},marketStream:{state:'LIVE'},routes:[{recentFailures:[0,1,2,3].map(i=>({message:'BINANCE_TRANSPORT_BLOCKED: Binance request timed out',requestId:`m${i}`,endpoint:'/fapi/v1/ticker/24hr',method:'GET',routeIdentity:'proxy-test',completedAt:now-i*1000})),requestBudget:{recentDispatches:[],admissionObservedWeight1m:100,softBackgroundWeight:1000}}],account:{status:'READY'}});
     expect(rows).toHaveLength(0);
   });
-  it('does not turn optional derivatives REST timeout into a NEW_ENTRY outage while WS market facts are fresh',()=>{
-    const rows=operationalCandidates({pipeline:{pipelineState:'RUNNING',marketDataReason:null,freshMarkets:{status:'FRESH'}},marketStream:{state:'LIVE'},routes:[{recentFailures:[{message:'BINANCE_TRANSPORT_BLOCKED: Binance request timed out',requestId:'oi-1',endpoint:'/fapi/v1/openInterest',method:'GET',routeIdentity:'proxy-test'}],requestBudget:{recentDispatches:[{decision:'TIMEOUT',completedAt:Date.now(),endpoint:'/fapi/v1/openInterest',method:'GET',requestId:'oi-1',routeIdentity:'proxy-test'}],admissionObservedWeight1m:100,softBackgroundWeight:1000}}],account:{status:'READY'}});
-    expect(rows).toHaveLength(0);
+  it('never turns optional derivatives REST latency into NET-002, even while market execution is degraded',()=>{
+    const now=Date.now(),failures=['/fapi/v1/openInterest','/fapi/v1/premiumIndex','/futures/data/openInterestHist'].flatMap((endpoint,j)=>[0,1,2].map(i=>({message:'BINANCE_TRANSPORT_BLOCKED: Binance request timed out',requestId:`adv-${j}-${i}`,endpoint,method:'GET',routeIdentity:'proxy-test',completedAt:now-i*1000})));
+    const rows=operationalCandidates({pipeline:{pipelineState:'PAUSED_MARKET_DATA_UNAVAILABLE',marketDataReason:'MARKET_QUOTES_STALE',freshMarkets:{status:'STALE'}},marketStream:{state:'LIVE'},routes:[{recentFailures:failures,requestBudget:{recentDispatches:failures.map((row:any)=>({...row,decision:'TIMEOUT'})),admissionObservedWeight1m:100,softBackgroundWeight:1000}}],account:{status:'READY'}});
+    expect(rows.filter(row=>row.publicCode==='NET-002')).toHaveLength(0);
+    expect(rows.some(row=>row.publicCode==='MARKET-DATA-001')).toBe(true);
   });
   it('keeps historical UNKNOWN out of the current submit alarm',()=>{
     const facts={pipeline:{pipelineState:'RUNNING'},routes:[],account:{status:'READY'},orders:[{status:'UNKNOWN',activeRiskExposure:true,createdAt:Date.now()-86_400_000}]};

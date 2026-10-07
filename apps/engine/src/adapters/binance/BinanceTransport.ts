@@ -31,7 +31,10 @@ export function reconfigureBinanceTransports(settings:ConnectionSettings){for(co
 export class BinanceTransport {
  private agent:SocksProxyAgent|null=null;private budget!:ReturnType<typeof getBinanceRequestBudget>;private routeIdentity='proxy-unavailable';private settings:ConnectionSettings;private requestLimitFlight:Promise<void>|null=null;
  constructor(settings:ConnectionSettings){this.settings=settings;this.applyRoute();liveTransports.add(new WeakRef(this));}
- private applyRoute(){if(this.settings.proxy.enabled&&this.settings.proxy.url)this.agent=new SocksProxyAgent(this.settings.proxy.url);else this.agent=null;const proxyHash=this.agent?createHash('sha256').update(this.settings.proxy.url).digest('hex').slice(0,12):'unavailable';this.routeIdentity=`proxy-${proxyHash}`;this.budget=getBinanceRequestBudget(this.settings.exchange.environment,this.routeIdentity);this.requestLimitFlight=null;}
+ private applyRoute(){const retired=this.agent;if(this.settings.proxy.enabled&&this.settings.proxy.url)this.agent=new SocksProxyAgent(this.settings.proxy.url,{keepAlive:true,maxSockets:6,maxFreeSockets:6});else this.agent=null;
+  // Preserve captured in-flight/queued requests, but leave no pooled idle socket on an old route.
+  if(retired){retired.keepAlive=false;for(const sockets of Object.values(retired.freeSockets))for(const socket of sockets)socket.destroy();}
+  const proxyHash=this.agent?createHash('sha256').update(this.settings.proxy.url).digest('hex').slice(0,12):'unavailable';this.routeIdentity=`proxy-${proxyHash}`;this.budget=getBinanceRequestBudget(this.settings.exchange.environment,this.routeIdentity);this.requestLimitFlight=null;}
  reconfigure(settings:ConnectionSettings){this.settings=settings;this.applyRoute();}
  dispose(){try{this.agent?.destroy();}catch{}this.agent=null;for(const ref of [...liveTransports]){const value=ref.deref();if(!value||value===this)liveTransports.delete(ref);}}
  effectiveBaseUrl(){const exchange=this.settings.exchange as typeof this.settings.exchange & {testnetRestBaseUrl?:string;productionRestBaseUrl?:string};return exchange.environment==='TESTNET'?(exchange.testnetRestBaseUrl??exchange.testnetBaseUrl):(exchange.productionRestBaseUrl??exchange.productionBaseUrl);}environment(){return this.settings.exchange.environment;}executionMode(){return this.settings.executionMode;}

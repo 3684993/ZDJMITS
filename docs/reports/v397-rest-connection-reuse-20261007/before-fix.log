@@ -1,0 +1,79 @@
+(node:29844) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:39300) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> @zdj/engine@3.9.7 test
+> vitest run src/adapters/binance/BinanceTransportConnectionReuse.test.ts
+
+(node:35132) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+VITEST_TEST_TIMEOUT=5000 CI=
+
+ RUN  v3.2.7 D:/MITS-WORKTREES/v397-rest-connection-reuse-20261007/apps/engine
+
+(node:9420) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:16244) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:39164) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:18332) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:9420) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+ ❯ src/adapters/binance/BinanceTransportConnectionReuse.test.ts (2 tests | 2 failed) 58ms
+   × reuses the real SOCKS tunnel for sequential reads instead of opening one tunnel per request 45ms
+     → expected false to be true // Object.is equality
+   × does not reuse an idle tunnel after the route changes 12ms
+     → expected false to be true // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/adapters/binance/BinanceTransportConnectionReuse.test.ts > reuses the real SOCKS tunnel for sequential reads instead of opening one tunnel per request
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/adapters/binance/BinanceTransportConnectionReuse.test.ts:39:119
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/adapters/binance/BinanceTransportConnectionReuse.test.ts > does not reuse an idle tunnel after the route changes
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/adapters/binance/BinanceTransportConnectionReuse.test.ts:48:127
+     46|   await read(first.targetPort,old);const closed=Promise.all(Object.val…
+     47|   transport.reconfigure(settings(second.url) as never);await closed;
+     48|   const next=transport.websocketOptions().agent;await read(second.targ…
+       |                                                                                                                               ^
+     49|   expect(first.connects()).toBe(1);expect(second.connects()).toBe(1);e…
+     50|  }finally{old.destroy();transport.dispose();await Promise.all([first.c…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed (2)
+   Start at  19:49:02
+   Duration  1.12s (transform 102ms, setup 0ms, collect 347ms, tests 58ms, environment 0ms, prepare 401ms)
+
+(node:41820) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+npm error Lifecycle script `test` failed with error:
+npm error code 1
+npm error path D:\MITS-WORKTREES\v397-rest-connection-reuse-20261007\apps\engine
+npm error workspace @zdj/engine@3.9.7
+npm error location D:\MITS-WORKTREES\v397-rest-connection-reuse-20261007\apps\engine
+npm error command failed
+npm error command C:\Windows\system32\cmd.exe /d /s /c vitest run src/adapters/binance/BinanceTransportConnectionReuse.test.ts

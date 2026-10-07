@@ -43,9 +43,23 @@ export function classifyOperationalError(input:{message:unknown;subsystem?:strin
 export class OperationalIncidentTracker{
   private rows=new Map<string,OperationalIncident>();
   private archived:OperationalIncident[]=[];
+  private pending=new Map<string,{count:number;lastSeenAt:number}>();
   observe(candidates:Candidate[],now=Date.now()){
-    const seen=new Set<string>();
-    for(const row of candidates){const networkRoot=row.publicCode==='NET-001'||row.publicCode==='NET-002',identity=networkRoot?`${row.publicCode}:${row.subsystem}:${row.routeIdentity??''}`:`${row.publicCode}:${row.subsystem}:${row.endpoint??''}:${row.routeIdentity??''}`,id=createHash('sha256').update(identity).digest('hex').slice(0,16);seen.add(id);const old=this.rows.get(id);if(old&&!old.active)this.archived.push(old);const repeated=old?.active&&old.sourceMessage===row.sourceMessage&&old.requestId===row.requestId;this.rows.set(id,{...row,incidentId:id,active:true,firstSeenAt:old?.active?old.firstSeenAt:now,lastSeenAt:now,recoveredAt:null,count:repeated?old.count:(old?.active?old.count:0)+1});}
+    const seen=new Set<string>(),candidateIds=new Set<string>();
+    for(const row of candidates){
+      const networkRoot=row.publicCode==='NET-001'||row.publicCode==='NET-002',
+        identity=networkRoot?`${row.publicCode}:${row.subsystem}:${row.routeIdentity??''}`:`${row.publicCode}:${row.subsystem}:${row.endpoint??''}:${row.routeIdentity??''}`,
+        id=createHash('sha256').update(identity).digest('hex').slice(0,16);
+      candidateIds.add(id);
+      if(row.publicCode==='MARKET-DATA-001'){
+        const prior=this.pending.get(id),next={count:prior&&now-prior.lastSeenAt<=10_000?prior.count+1:1,lastSeenAt:now};this.pending.set(id,next);
+        // The execution gate pauses immediately; the operator alert waits for persistence.
+        if(next.count<3)continue;
+      }
+      seen.add(id);const old=this.rows.get(id);if(old&&!old.active)this.archived.push(old);const repeated=old?.active&&old.sourceMessage===row.sourceMessage&&old.requestId===row.requestId;
+      this.rows.set(id,{...row,incidentId:id,active:true,firstSeenAt:old?.active?old.firstSeenAt:now,lastSeenAt:now,recoveredAt:null,count:repeated?old.count:(old?.active?old.count:0)+1});
+    }
+    for(const id of [...this.pending.keys()])if(!candidateIds.has(id))this.pending.delete(id);
     for(const [id,row] of this.rows)if(row.active&&!seen.has(id))this.rows.set(id,{...row,active:false,recoveredAt:now});
     if(this.rows.size>200)for(const [id] of [...this.rows].filter(([,row])=>!row.active).sort((a,b)=>(a[1].recoveredAt??0)-(b[1].recoveredAt??0)).slice(0,this.rows.size-200))this.rows.delete(id);
     if(this.archived.length>200)this.archived.splice(0,this.archived.length-200);
@@ -74,7 +88,7 @@ export function operationalCandidates(facts:{pipeline:any;routes:any[];account:a
     // Normal Internet/Testnet jitter is not an incident. Require a burst of >=3 critical timeout facts
     // inside 60s before NET-002 becomes visible. One or two isolated failures remain telemetry only.
     const transportTimeouts=relevantFailures.filter((row:any)=>timeoutLike(row.message)&&now-Number(row.completedAt??now)<60_000);
-    const queueTimeouts=recent.filter((row:any)=>row.decision==='TIMEOUT'&&now-Number(row.completedAt??0)<60_000&&!(marketHealthy&&marketRestEndpoint(row.endpoint)));
+    const queueTimeouts=recent.filter((row:any)=>row.decision==='TIMEOUT'&&now-Number(row.completedAt??0)<60_000&&!controlEndpoint(row.endpoint)&&!(marketHealthy&&marketRestEndpoint(row.endpoint)));
     const timeoutFacts=[...transportTimeouts,...queueTimeouts],latest=timeoutFacts.at(-1),lowPressure=Number(budget.admissionObservedWeight1m??budget.usedWeight1m??Infinity)<Number(budget.softBackgroundWeight??0);
     if(latest&&timeoutFacts.length>=3&&lowPressure){
       const row=classifyOperationalError({message:'BINANCE_REQUEST_QUEUE_TIMEOUT',subsystem:'BINANCE_HTTP',transportEvidence:true,budgetPressureProven:false,endpoint:latest.endpoint,method:latest.method,requestId:latest.requestId,routeIdentity:latest.routeIdentity});if(row)out.push(row);

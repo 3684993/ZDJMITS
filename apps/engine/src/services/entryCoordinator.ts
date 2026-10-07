@@ -400,7 +400,7 @@ export class EntryCoordinator {
     if(!force&&now-last<intervalMs)return false;
     this.exactOrderQueryLastAt.set(key,now);return true;
   }
-  private async awaitUserDataConfirmation(order:EntryOrder,waitMs=1_000){
+  private async awaitUserDataConfirmation(order:EntryOrder,waitMs=3_000){
     const deadline=Date.now()+waitMs;
     do{const confirmed=this.userDataConfirmed(order);if(confirmed)return confirmed;if(Date.now()>=deadline)break;await new Promise(resolve=>setTimeout(resolve,100));}while(true);
     return this.userDataConfirmed(order);
@@ -800,7 +800,8 @@ export class EntryCoordinator {
           if(retryFundsOnly&&(retryDataError||!retryMaker.reachable||retryMaker.price<intent.acceptablePriceRange.min||retryMaker.price>intent.acceptablePriceRange.max))
             this.events.publish('POST_AI_OBSERVATION_ONLY',{brainRunId:result.runId,intentId:intent.id,kind:'POST_ONLY_RETRY_FACT_DRIFT',reason:retryDataError??retryMaker.reason,price:retryMaker.price,range:intent.acceptablePriceRange,postAiVeto:false},symbol);
           const retryQuantity=Number(intent.quantityUnits)*refreshed.quote.stepSize,
-            retryPrice=frozenAllocationPrice({desiredPrice:retryMaker.price,quantity:retryQuantity,tickSize:refreshed.quote.tickSize,
+            makerSafetyPrice=intent.side==='LONG'?retryMaker.price-refreshed.quote.tickSize:retryMaker.price+refreshed.quote.tickSize,
+            retryPrice=frozenAllocationPrice({desiredPrice:makerSafetyPrice,quantity:retryQuantity,tickSize:refreshed.quote.tickSize,
               entryRange:{min:Number(intent.acceptablePriceRange.min),max:Number(intent.acceptablePriceRange.max)},maxNotionalUsd:plan.notionalUsd});
           if(retryPrice===null)throw new Error('POST_ONLY_RETRY_BLOCKED:FROZEN_IDENTITY_CORRUPT');
           this.events.publish('ENTRY_POST_ONLY_RETRY',{brainRunId:result.runId,intentId:intent.id,orderId:order.id,reason:'BINANCE_-5022',from:order.price,to:retryPrice,attempt:1},symbol);

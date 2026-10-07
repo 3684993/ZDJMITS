@@ -207,6 +207,10 @@ export class AiFabric {
   /** A review became owed at `at`; the first such call owns the reservation until it is served. */
   clearReviewOwed(){this.reviewOwedSince=null;}
   reviewAvailable(duty:'PENDING_ENTRY_REVIEW'|'POSITION_REVIEW'='POSITION_REVIEW'){const resource=this.dutyResource(duty);return Boolean(resource&&resource.status!=='OFFLINE'&&this.endpointAvailable(resource.id));}
+  reviewDedicated(duty:'PENDING_ENTRY_REVIEW'|'POSITION_REVIEW'='POSITION_REVIEW'){
+    const review=this.dutyResource(duty),primary=this.dutyResource('ENTRY_PRIMARY');
+    return Boolean(review&&primary&&review.id!==primary.id);
+  }
   noteReviewOwed(at=Date.now()){if(this.reviewOwedSince==null)this.reviewOwedSince=at;}
   /** One rule, read by both the decision and the operator projection. */
   private reviewHeld(now=Date.now()){

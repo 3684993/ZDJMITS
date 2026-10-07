@@ -1,0 +1,33 @@
+{
+  "capturedAt": "2026-10-07T23:25:37.218250+00:00",
+  "capturedAtMs": 1791415537218,
+  "endpoints": {
+    "health": {
+      "error": "timed out",
+      "durationMs": 8071
+    },
+    "closeout": {
+      "error": "timed out",
+      "durationMs": 8070
+    },
+    "governance": {
+      "error": "timed out",
+      "durationMs": 8070
+    },
+    "private": {
+      "error": "timed out",
+      "durationMs": 8062
+    },
+    "operations": {
+      "error": "timed out",
+      "durationMs": 8062
+    },
+    "incidents": {
+      "error": "timed out",
+      "durationMs": 8062
+    }
+  },
+  "engineMemory": {
+    "error": "No observed Engine PID"
+  }
+}

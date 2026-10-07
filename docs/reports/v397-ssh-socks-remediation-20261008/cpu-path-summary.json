@@ -1,0 +1,58 @@
+[
+  {
+    "function": "maintainStorageBounds",
+    "url": "file:///D:/MITS-WORKTREES/v397-ssh-socks-remediation-20261008/apps/engine/dist/services/storageCapacityGuard.js",
+    "line": 21,
+    "samples": 9352,
+    "fraction": 0.3264679187321092
+  },
+  {
+    "function": "trim",
+    "url": "file:///D:/MITS-WORKTREES/v397-ssh-socks-remediation-20261008/apps/engine/dist/services/storageCapacityGuard.js",
+    "line": 33,
+    "samples": 8861,
+    "fraction": 0.3093276548209174
+  },
+  {
+    "function": "put",
+    "url": "file:///D:/MITS-WORKTREES/v397-ssh-socks-remediation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+    "line": 85,
+    "samples": 4066,
+    "fraction": 0.14193953780632548
+  },
+  {
+    "function": "captureState",
+    "url": "file:///D:/MITS-WORKTREES/v397-ssh-socks-remediation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+    "line": 188,
+    "samples": 4053,
+    "fraction": 0.14148572226488865
+  },
+  {
+    "function": "onEvent",
+    "url": "file:///D:/MITS-WORKTREES/v397-ssh-socks-remediation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+    "line": 111,
+    "samples": 1117,
+    "fraction": 0.03899322767576625
+  },
+  {
+    "function": "materialize",
+    "url": "file:///D:/MITS-WORKTREES/v397-ssh-socks-remediation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+    "line": 307,
+    "samples": 185,
+    "fraction": 0.006458144243524401
+  },
+  {
+    "function": "persistRuntime",
+    "url": "file:///D:/MITS-WORKTREES/v397-ssh-socks-remediation-20261008/apps/engine/dist/config/settingsStore.js",
+    "line": 924,
+    "samples": 4178,
+    "fraction": 0.14584933324024296
+  },
+  {
+    "function": "onEvent",
+    "url": "file:///D:/MITS-WORKTREES/v397-ssh-socks-remediation-20261008/apps/engine/dist/adapters/market/BinanceMarketStream.js",
+    "line": 178,
+    "samples": 6,
+    "fraction": 0.0002094533268170076
+  }
+]

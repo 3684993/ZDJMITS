@@ -20,8 +20,8 @@ No Engine/model restart, Settings or exchange write by guardian.
 
 Normal Start-Process under this Codex execution Job produced SSH38752 with inJob=true.
 WMI-owned replacement27880/final29068 proves inJob=false. Hidden detached guardian
-uses the same boundary. This removes a separately proven process-lifetime coupling;
-it is not proof that every previous SOCKS/TLS failure was caused by Job ownership.
+uses the same boundary. This removes the observed SSH Job membership at this launch boundary;
+the identity of that Job and every earlier SOCKS/TLS failure cause remain unproven.
 
 Server original MaxSessions0 correctly forbids exec/shell sessions. Prior failed
 read-only SSH command did not test remote DNS/curl. Final server script retains that

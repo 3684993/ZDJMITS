@@ -1,4 +1,4 @@
-import {DatabaseSync} from 'node:sqlite';
+import {DatabaseSync,type StatementSync} from 'node:sqlite';
 import {createHash,randomUUID} from 'node:crypto';
 import type {RuntimeState} from '../state/runtimeState.js';
 import type {DomainEvent,EventBus} from '../events/eventBus.js';
@@ -14,6 +14,8 @@ const rows=(db:DatabaseSync,scope:string,kind:string):any[]=>db.prepare('SELECT 
 export class TradingQualityCollector {
   private db:DatabaseSync;
   private cache=new Map<string,string>();
+  private prepared=new Map<string,StatementSync>();
+  private prepare(sql:string){let statement=this.prepared.get(sql);if(!statement){statement=this.db.prepare(sql);this.prepared.set(sql,statement);}return statement;}
   private lastSample=0;
   private lastRetention=0;
   private lastCheckpoint=0;
@@ -40,7 +42,7 @@ export class TradingQualityCollector {
       CREATE TABLE IF NOT EXISTS tq_entry_mandates(scope TEXT NOT NULL,mandate_id TEXT NOT NULL,intent_id TEXT NOT NULL,plan_id TEXT,quote_asset TEXT NOT NULL,side TEXT NOT NULL,settings_version INTEGER NOT NULL,facts_hash TEXT NOT NULL,persisted_at INTEGER NOT NULL,payload TEXT NOT NULL,PRIMARY KEY(scope,mandate_id));
       CREATE UNIQUE INDEX IF NOT EXISTS tq_entry_mandates_intent ON tq_entry_mandates(scope,intent_id);
       INSERT OR IGNORE INTO tq_migrations VALUES(1,${Date.now()});`);
-    this.db.prepare('INSERT OR IGNORE INTO tq_migrations VALUES(2,?)').run(Date.now());
+    this.prepare('INSERT OR IGNORE INTO tq_migrations VALUES(2,?)').run(Date.now());
     (this.state as any).tradingQualityEvidenceReady=true;
     this.listener=e=>{try{this.onEvent(e);}catch(error){this.error=String(error);(this.state as any).tradingQualityEvidenceReady=false;if(qualityPolicy(this.state.settings).mode==='ENFORCE'&&['TRADING_QUALITY_OPPORTUNITY','TRADING_QUALITY_PRIMARY_LINK','ENTRY_SUBMIT_ATTEMPTED'].includes(e.type))throw error;}};
     events.on('event',this.listener);
@@ -48,7 +50,7 @@ export class TradingQualityCollector {
   private scope(){const x=this.state.settings.connections.exchange;return `${x.environment}:${hash(x.credentialRef).slice(0,16)}`;}
   private markEpisodeDirty(intentId:string|undefined,symbol=''){
     if(!intentId)return;
-    this.db.prepare(`INSERT INTO tq_episode_work(scope,intent_id,symbol,dirty,first_fill_at,observation_until,matured,updated_at)
+    this.prepare(`INSERT INTO tq_episode_work(scope,intent_id,symbol,dirty,first_fill_at,observation_until,matured,updated_at)
       VALUES(?,?,?,1,NULL,NULL,0,?) ON CONFLICT(scope,intent_id) DO UPDATE SET
       symbol=CASE WHEN excluded.symbol='' THEN tq_episode_work.symbol ELSE excluded.symbol END,dirty=1,updated_at=excluded.updated_at`).run(this.scope(),intentId,symbol,Date.now());
   }
@@ -63,7 +65,7 @@ export class TradingQualityCollector {
   private registerExactFill(fill:any,now=Date.now()){
     const linked=this.exactEntryIntent(fill);if(!linked||!Number.isFinite(fill.executionTime)||fill.executionTime>now)return;
     const horizon=qualityPolicy(this.state.settings).positionObservationHorizonMs,until=fill.executionTime+horizon;
-    this.db.prepare(`INSERT INTO tq_episode_work(scope,intent_id,symbol,dirty,first_fill_at,observation_until,matured,updated_at)
+    this.prepare(`INSERT INTO tq_episode_work(scope,intent_id,symbol,dirty,first_fill_at,observation_until,matured,updated_at)
       VALUES(?,?,?,1,?,?,?,?) ON CONFLICT(scope,intent_id) DO UPDATE SET symbol=excluded.symbol,
       first_fill_at=CASE WHEN tq_episode_work.first_fill_at IS NULL THEN excluded.first_fill_at ELSE MIN(tq_episode_work.first_fill_at,excluded.first_fill_at) END,
       observation_until=CASE WHEN tq_episode_work.first_fill_at IS NULL OR excluded.first_fill_at<tq_episode_work.first_fill_at THEN excluded.observation_until ELSE tq_episode_work.observation_until END,
@@ -71,19 +73,26 @@ export class TradingQualityCollector {
   }
   private put(kind:string,id:string,value:unknown,ts=Date.now()){
     const scope=this.scope(),payload=JSON.stringify(value),key=`${scope}:${kind}:${id}`;
-    if(this.cache.get(key)===payload)return;
-    if(!this.cache.has(key)){
-      const existing=this.db.prepare('SELECT payload FROM tq_facts WHERE scope=? AND kind=? AND id=?').get(scope,kind,id) as any;
-      if(existing?.payload===payload){this.cache.set(key,payload);return;}
+    // Session-qualified event IDs are unique. They must not evict the retained
+    // entity cache, and require no read-before-write or duplicate payload copy.
+    const cached=kind!=='events',fingerprint=cached?createHash('sha256').update(payload).digest('hex'):'';
+    if(cached&&this.cache.get(key)===fingerprint)return;
+    if(cached&&!this.cache.has(key)){
+      const existing=this.prepare('SELECT payload FROM tq_facts WHERE scope=? AND kind=? AND id=?').get(scope,kind,id) as any;
+      if(existing?.payload===payload){this.remember(key,fingerprint);return;}
     }
     const sql=kind==='opportunities'?'INSERT OR IGNORE INTO tq_facts VALUES(?,?,?,?,?)':'INSERT INTO tq_facts VALUES(?,?,?,?,?) ON CONFLICT(scope,kind,id) DO UPDATE SET ts=excluded.ts,payload=excluded.payload';
-    this.db.prepare(sql).run(scope,kind,id,ts,payload);
-    this.cache.set(key,payload);if(this.cache.size>30000)this.cache.clear();
+    this.prepare(sql).run(scope,kind,id,ts,payload);
+    if(cached)this.remember(key,fingerprint);
     const row=value as any;
     if(kind==='intents')this.markEpisodeDirty(row?.id??id,row?.symbol??'');
     else if(kind==='orders')this.markEpisodeDirty(row?.intentId,row?.symbol??'');
     else if(kind==='fills')this.registerExactFill(row,Date.now());
     else if(kind==='trades')this.markEpisodeDirty(row?.entryIntentId,row?.symbol??'');
+  }
+  private remember(key:string,fingerprint:string){
+    this.cache.delete(key);this.cache.set(key,fingerprint);
+    if(this.cache.size>30000)this.cache.delete(this.cache.keys().next().value!);
   }
   private onEvent(e:DomainEvent){
     this.observedEvents++;
@@ -92,7 +101,7 @@ export class TradingQualityCollector {
     if(e.type==='ENTRY_INTENT_CREATED'){
       const intent=p?.intent,mandate=intent?.economicMandate;
       if(mandate?.schemaVersion==='V397-ENTRY-ECONOMIC-MANDATE-1'){
-        this.db.prepare(`INSERT INTO tq_entry_mandates(scope,mandate_id,intent_id,plan_id,quote_asset,side,settings_version,facts_hash,persisted_at,payload)
+        this.prepare(`INSERT INTO tq_entry_mandates(scope,mandate_id,intent_id,plan_id,quote_asset,side,settings_version,facts_hash,persisted_at,payload)
           VALUES(?,?,?,?,?,?,?,?,?,?) ON CONFLICT(scope,mandate_id) DO UPDATE SET payload=excluded.payload
           WHERE tq_entry_mandates.intent_id=excluded.intent_id AND tq_entry_mandates.facts_hash=excluded.facts_hash`).run(
           this.scope(),mandate.mandateId,intent.id,intent.planId??null,mandate.quoteAsset,mandate.side,mandate.settingsVersion,mandate.factsHash,e.ts,JSON.stringify(mandate));
@@ -121,7 +130,7 @@ export class TradingQualityCollector {
         disposition:opportunity.disposition,blockers:opportunity.blockers}:null,
     };
     const fingerprint=hash(material);
-    const current=()=>this.db.prepare('SELECT fingerprint,revision FROM tq_candidate_state WHERE scope=? AND candidate_id=?').get(scope,candidateId) as any;
+    const current=()=>this.prepare('SELECT fingerprint,revision FROM tq_candidate_state WHERE scope=? AND candidate_id=?').get(scope,candidateId) as any;
     if(current()?.fingerprint===fingerprint)return;
     this.db.exec('BEGIN IMMEDIATE');
     try{
@@ -130,14 +139,14 @@ export class TradingQualityCollector {
       const revision=Number(previous?.revision??0)+1;
       const observation={candidateId,candidate,lifecycle,opportunity,stage:'CANDIDATE_SHADOW',revision,materialFingerprint:fingerprint,observedAt:now};
       const observationId=`CANDIDATE_SHADOW:${candidateId}:${revision}`;
-      this.db.prepare('INSERT INTO tq_facts VALUES(?,?,?,?,?)').run(scope,'opportunityObservations',observationId,now,JSON.stringify(observation));
-      this.db.prepare(`INSERT INTO tq_facts VALUES(?,?,?,?,?) ON CONFLICT(scope,kind,id) DO UPDATE SET ts=excluded.ts,payload=excluded.payload`)
+      this.prepare('INSERT INTO tq_facts VALUES(?,?,?,?,?)').run(scope,'opportunityObservations',observationId,now,JSON.stringify(observation));
+      this.prepare(`INSERT INTO tq_facts VALUES(?,?,?,?,?) ON CONFLICT(scope,kind,id) DO UPDATE SET ts=excluded.ts,payload=excluded.payload`)
         .run(scope,'candidates',candidateId,now,JSON.stringify({candidateId,candidate,lifecycle,opportunity,observedAt:now}));
       if(opportunity){
         const value={opportunity,candidateId,stage:'CANDIDATE_SHADOW'};
-        this.db.prepare('INSERT OR IGNORE INTO tq_facts VALUES(?,?,?,?,?)').run(scope,'opportunities',`${opportunity.opportunityId}:${opportunity.version}`,now,JSON.stringify(value));
+        this.prepare('INSERT OR IGNORE INTO tq_facts VALUES(?,?,?,?,?)').run(scope,'opportunities',`${opportunity.opportunityId}:${opportunity.version}`,now,JSON.stringify(value));
       }
-      this.db.prepare(`INSERT INTO tq_candidate_state VALUES(?,?,?,?,?) ON CONFLICT(scope,candidate_id) DO UPDATE SET
+      this.prepare(`INSERT INTO tq_candidate_state VALUES(?,?,?,?,?) ON CONFLICT(scope,candidate_id) DO UPDATE SET
         fingerprint=excluded.fingerprint,revision=excluded.revision,updated_at=excluded.updated_at`)
         .run(scope,candidateId,fingerprint,revision,now);
       this.db.exec('COMMIT');
@@ -162,22 +171,22 @@ export class TradingQualityCollector {
       const p=qualityPolicy(this.state.settings);
       this.hydrateEpisodeWork(now,p.positionObservationHorizonMs);
       const scope=this.scope();
-      this.db.prepare('UPDATE tq_episode_work SET dirty=1,matured=1,updated_at=? WHERE scope=? AND matured=0 AND observation_until IS NOT NULL AND observation_until<=?').run(now,scope,now);
-      const windows=this.db.prepare('SELECT intent_id,symbol,first_fill_at,observation_until FROM tq_episode_work WHERE scope=? AND matured=0 AND first_fill_at IS NOT NULL AND observation_until>?').all(scope,now) as any[];
+      this.prepare('UPDATE tq_episode_work SET dirty=1,matured=1,updated_at=? WHERE scope=? AND matured=0 AND observation_until IS NOT NULL AND observation_until<=?').run(now,scope,now);
+      const windows=this.prepare('SELECT intent_id,symbol,first_fill_at,observation_until FROM tq_episode_work WHERE scope=? AND matured=0 AND first_fill_at IS NOT NULL AND observation_until>?').all(scope,now) as any[];
       // Quote timestamps, not poll timestamps: cached quotes cannot fill path gaps. Only exact,
       // attributed episodes inside their observation window authorize raw path storage.
       const activeBySymbol=new Map<string,any[]>();for(const w of windows){const list=activeBySymbol.get(w.symbol)??[];list.push(w);activeBySymbol.set(w.symbol,list);}
       for(const [symbol,active] of activeBySymbol){
         const m=this.state.snapshots.get(symbol),q=m?.quote;if(!q||q.ts>now||now-q.ts>5000||!Number.isFinite(q.mark)||q.mark<=0)continue;
         const eligible=active.filter(w=>q.ts>=w.first_fill_at&&q.ts<=w.observation_until);if(!eligible.length)continue;
-        const result=this.db.prepare('INSERT OR IGNORE INTO tq_marks VALUES(?,?,?,?,?,?,?)').run(scope,symbol,q.ts,q.mark,q.bid,q.ask,now);
-        if(Number(result.changes)>0)for(const w of eligible)this.db.prepare('UPDATE tq_episode_work SET dirty=1,updated_at=? WHERE scope=? AND intent_id=?').run(now,scope,w.intent_id);
+        const result=this.prepare('INSERT OR IGNORE INTO tq_marks VALUES(?,?,?,?,?,?,?)').run(scope,symbol,q.ts,q.mark,q.bid,q.ask,now);
+        if(Number(result.changes)>0)for(const w of eligible)this.prepare('UPDATE tq_episode_work SET dirty=1,updated_at=? WHERE scope=? AND intent_id=?').run(now,scope,w.intent_id);
       }
       if(now-this.lastSample>=5000){
         this.lastSample=now;
         const scope=this.scope(),eventCount=this.observedEvents;
-        this.db.prepare('INSERT OR IGNORE INTO tq_collector_samples(scope,identity,at,event_count) VALUES(?,?,?,?)').run(scope,this.session,now,eventCount);
-        this.db.prepare('DELETE FROM tq_collector_samples WHERE at<?').run(now-7*86_400_000);
+        this.prepare('INSERT OR IGNORE INTO tq_collector_samples(scope,identity,at,event_count) VALUES(?,?,?,?)').run(scope,this.session,now,eventCount);
+        this.prepare('DELETE FROM tq_collector_samples WHERE at<?').run(now-7*86_400_000);
         for(const c of this.state.universe){
           const m=this.state.snapshots.get(c.symbol),opportunity=m&&p.mode!=='OFF'?buildOpportunityEvidence(m,this.state.settings,now):null;
           const candidateId=`${c.symbol}:${c.selectionGeneration}`,lifecycle=this.state.candidateLifecycle.get(c.symbol)??null;
@@ -188,10 +197,10 @@ export class TradingQualityCollector {
       if(now-this.lastRetention>=60_000){
         this.lastRetention=now;
         const day=86_400_000,batch=2000;
-        this.db.prepare('DELETE FROM tq_marks WHERE rowid IN (SELECT rowid FROM tq_marks WHERE ts<? LIMIT ?)').run(now-2*day,batch);
-        this.db.prepare("DELETE FROM tq_facts WHERE rowid IN (SELECT rowid FROM tq_facts WHERE kind='opportunityObservations' AND ts<? LIMIT ?)").run(now-7*day,batch);
-        this.db.prepare("DELETE FROM tq_facts WHERE rowid IN (SELECT rowid FROM tq_facts WHERE kind='events' AND ts<? LIMIT ?)").run(now-14*day,batch);
-        this.db.prepare('DELETE FROM tq_candidate_state WHERE rowid IN (SELECT rowid FROM tq_candidate_state WHERE updated_at<? LIMIT ?)').run(now-7*day,batch);
+        this.prepare('DELETE FROM tq_marks WHERE rowid IN (SELECT rowid FROM tq_marks WHERE ts<? LIMIT ?)').run(now-2*day,batch);
+        this.prepare("DELETE FROM tq_facts WHERE rowid IN (SELECT rowid FROM tq_facts WHERE kind='opportunityObservations' AND ts<? LIMIT ?)").run(now-7*day,batch);
+        this.prepare("DELETE FROM tq_facts WHERE rowid IN (SELECT rowid FROM tq_facts WHERE kind='events' AND ts<? LIMIT ?)").run(now-14*day,batch);
+        this.prepare('DELETE FROM tq_candidate_state WHERE rowid IN (SELECT rowid FROM tq_candidate_state WHERE updated_at<? LIMIT ?)').run(now-7*day,batch);
       }
       if(now-this.lastCheckpoint>=5*60_000){this.lastCheckpoint=now;try{this.db.exec('PRAGMA wal_checkpoint(PASSIVE)');}catch{}}
       this.error=null;(this.state as any).tradingQualityEvidenceReady=true;
@@ -199,7 +208,7 @@ export class TradingQualityCollector {
   }
   private hydrateEpisodeWork(now:number,horizon:number){
     if(this.workHydrated)return;
-    const scope=this.scope(),seen=new Set<string>(),recent=this.db.prepare(`SELECT payload FROM tq_facts WHERE scope=? AND kind='fills' AND ts>=? AND ts<=?`).all(scope,now-horizon-60_000,now) as any[];
+    const scope=this.scope(),seen=new Set<string>(),recent=this.prepare(`SELECT payload FROM tq_facts WHERE scope=? AND kind='fills' AND ts>=? AND ts<=?`).all(scope,now-horizon-60_000,now) as any[];
     const candidates=new Map<string,any>();
     for(const row of recent){try{const f=JSON.parse(String(row.payload));if(f.attributionStatus==='SYSTEM_ATTRIBUTED')candidates.set(f.fillId??`${f.symbol}:${f.tradeId}`,f);}catch{}}
     for(const f of this.state.executionFills)if(f.attributionStatus==='SYSTEM_ATTRIBUTED')candidates.set(f.fillId??`${f.symbol}:${f.tradeId}`,f);
@@ -210,48 +219,48 @@ export class TradingQualityCollector {
     }
     for(const [intentId,{fill,intent}] of firstFills){
       if(seen.has(intentId))continue;seen.add(intentId);
-      const projected=this.db.prepare('SELECT 1 AS ok FROM tq_episodes WHERE scope=? AND intent_id=?').get(scope,intentId) as any;
-      const existing=this.db.prepare('SELECT first_fill_at FROM tq_episode_work WHERE scope=? AND intent_id=?').get(scope,intentId) as any;
+      const projected=this.prepare('SELECT 1 AS ok FROM tq_episodes WHERE scope=? AND intent_id=?').get(scope,intentId) as any;
+      const existing=this.prepare('SELECT first_fill_at FROM tq_episode_work WHERE scope=? AND intent_id=?').get(scope,intentId) as any;
       if(!projected||now<Number(existing?.first_fill_at??fill.executionTime)+horizon)this.registerExactFill(fill,now);
     }
     // Upgrade/restart repair is one-time: only intents missing their durable projection are added.
-    for(const intent of this.state.entryIntents.values())if(intent.brainRunId&&!this.db.prepare('SELECT 1 AS ok FROM tq_episodes WHERE scope=? AND intent_id=?').get(scope,intent.id))this.markEpisodeDirty(intent.id,intent.symbol);
+    for(const intent of this.state.entryIntents.values())if(intent.brainRunId&&!this.prepare('SELECT 1 AS ok FROM tq_episodes WHERE scope=? AND intent_id=?').get(scope,intent.id))this.markEpisodeDirty(intent.id,intent.symbol);
     this.workHydrated=true;
   }
   private materialize(now:number){
-    const scope=this.scope(),p=qualityPolicy(this.state.settings),pending=this.db.prepare('SELECT intent_id,symbol,first_fill_at,observation_until FROM tq_episode_work WHERE scope=? AND dirty=1 ORDER BY updated_at,intent_id LIMIT 500').all(scope) as any[];
+    const scope=this.scope(),p=qualityPolicy(this.state.settings),pending=this.prepare('SELECT intent_id,symbol,first_fill_at,observation_until FROM tq_episode_work WHERE scope=? AND dirty=1 ORDER BY updated_at,intent_id LIMIT 500').all(scope) as any[];
     for(const work of pending){
-      const intentRow=this.db.prepare("SELECT payload FROM tq_facts WHERE scope=? AND kind='intents' AND id=?").get(scope,work.intent_id) as any;if(!intentRow)continue;
+      const intentRow=this.prepare("SELECT payload FROM tq_facts WHERE scope=? AND kind='intents' AND id=?").get(scope,work.intent_id) as any;if(!intentRow)continue;
       const intent=JSON.parse(String(intentRow.payload));
       if(!intent.brainRunId)continue;
-      let orders=this.db.prepare("SELECT payload FROM tq_facts WHERE scope=? AND kind='orders' AND json_extract(payload,'$.intentId')=?").all(scope,intent.id).map((r:any)=>JSON.parse(String(r.payload))) as any[];
+      let orders=this.prepare("SELECT payload FROM tq_facts WHERE scope=? AND kind='orders' AND json_extract(payload,'$.intentId')=?").all(scope,intent.id).map((r:any)=>JSON.parse(String(r.payload))) as any[];
       // Retain unknown unsent facts, while omitting duplicate pre-submit snapshots once an
       // exchange identity exists.
       const submittedIds=new Set(orders.filter(o=>o.exchangeOrderId).map(o=>o.id));orders=orders.filter(o=>o.exchangeOrderId||!submittedIds.has(o.id));
       const exchangeIds=[...new Set(orders.map(o=>o.exchangeOrderId).filter(Boolean))] as string[];
-      const fills=exchangeIds.length?this.db.prepare(`SELECT payload FROM tq_facts WHERE scope=? AND kind='fills' AND json_extract(payload,'$.symbol')=? AND json_extract(payload,'$.orderId') IN (${exchangeIds.map(()=>'?').join(',')})`).all(scope,intent.symbol,...exchangeIds).map((r:any)=>JSON.parse(String(r.payload))) as any[]:[];
+      const fills=exchangeIds.length?this.prepare(`SELECT payload FROM tq_facts WHERE scope=? AND kind='fills' AND json_extract(payload,'$.symbol')=? AND json_extract(payload,'$.orderId') IN (${exchangeIds.map(()=>'?').join(',')})`).all(scope,intent.symbol,...exchangeIds).map((r:any)=>JSON.parse(String(r.payload))) as any[]:[];
       const fillIds=[...new Set(fills.map(f=>f.fillId).filter(Boolean))] as string[],orderIds=[...new Set(orders.flatMap(o=>[o.id,o.exchangeOrderId].filter(Boolean)))] as string[];
       const clauses=["json_extract(payload,'$.entryIntentId')=?","json_extract(payload,'$.entryRunId')=?"],tradeArgs:any[]=[scope,intent.id,intent.brainRunId];
       if(fillIds.length){clauses.push(`EXISTS(SELECT 1 FROM json_each(tq_facts.payload,'$.linkedFillIds') f WHERE f.value IN (${fillIds.map(()=>'?').join(',')}))`);tradeArgs.push(...fillIds);}
       if(orderIds.length){clauses.push(`EXISTS(SELECT 1 FROM json_each(tq_facts.payload,'$.entryOrderIds') o WHERE o.value IN (${orderIds.map(()=>'?').join(',')}))`);tradeArgs.push(...orderIds);}
-      const trades=this.db.prepare(`SELECT payload FROM tq_facts WHERE scope=? AND kind='trades' AND (${clauses.join(' OR ')})`).all(...tradeArgs).map((r:any)=>JSON.parse(String(r.payload))) as any[];
+      const trades=this.prepare(`SELECT payload FROM tq_facts WHERE scope=? AND kind='trades' AND (${clauses.join(' OR ')})`).all(...tradeArgs).map((r:any)=>JSON.parse(String(r.payload))) as any[];
       const input={run:{id:intent.brainRunId,symbol:intent.symbol},intent,orders,fills,tradeRecords:trades,now,
         adverseBoundaryBps:p.adverseBoundaryBps,favorableBoundaryBps:p.favorableBoundaryBps};
       const first=buildEpisodeEvidence(input);
-      if(first.completeFillAt!==null){const fullUntil=first.completeFillAt+p.positionObservationHorizonMs;if(fullUntil>Number(work.observation_until??0)){work.observation_until=fullUntil;this.db.prepare('UPDATE tq_episode_work SET observation_until=?,matured=? WHERE scope=? AND intent_id=?').run(fullUntil,now>=fullUntil?1:0,scope,intent.id);}}
+      if(first.completeFillAt!==null){const fullUntil=first.completeFillAt+p.positionObservationHorizonMs;if(fullUntil>Number(work.observation_until??0)){work.observation_until=fullUntil;this.prepare('UPDATE tq_episode_work SET observation_until=?,matured=? WHERE scope=? AND intent_id=?').run(fullUntil,now>=fullUntil?1:0,scope,intent.id);}}
       const until=Number(work.observation_until??(first.firstFillAt===null?0:first.firstFillAt+p.positionObservationHorizonMs));
-      const marks=first.firstFillAt===null?[]:this.db.prepare('SELECT ts,mark,bid,ask FROM tq_marks WHERE scope=? AND symbol=? AND ts>=? AND ts<=? ORDER BY ts').all(scope,intent.symbol,first.firstFillAt,Math.min(now,until)) as any[];
+      const marks=first.firstFillAt===null?[]:this.prepare('SELECT ts,mark,bid,ask FROM tq_marks WHERE scope=? AND symbol=? AND ts>=? AND ts<=? ORDER BY ts').all(scope,intent.symbol,first.firstFillAt,Math.min(now,until)) as any[];
       const ep=buildEpisodeEvidence({...input,marks});
-      this.db.prepare('INSERT INTO tq_episodes VALUES(?,?,?,?) ON CONFLICT(scope,intent_id) DO UPDATE SET updated_at=excluded.updated_at,payload=excluded.payload').run(scope,intent.id,now,JSON.stringify(ep));
-      this.db.prepare('UPDATE tq_episode_work SET dirty=0,updated_at=? WHERE scope=? AND intent_id=?').run(now,scope,intent.id);
+      this.prepare('INSERT INTO tq_episodes VALUES(?,?,?,?) ON CONFLICT(scope,intent_id) DO UPDATE SET updated_at=excluded.updated_at,payload=excluded.payload').run(scope,intent.id,now,JSON.stringify(ep));
+      this.prepare('UPDATE tq_episode_work SET dirty=0,updated_at=? WHERE scope=? AND intent_id=?').run(now,scope,intent.id);
     }
   }
   health(){return{status:this.error?'DEGRADED':'READY',error:this.error,scope:this.scope(),lastSampleAt:this.lastSample};}
   /** HTTP-safe operational summary. The full report intentionally remains an offline/internal
    * diagnostic because materialising every evidence payload on the Engine thread can be expensive. */
   summary(){
-    const scope=this.scope(),scalar=(sql:string,...args:any[])=>Number((this.db.prepare(sql).get(...args) as any)?.count??0);
-    const factRows=this.db.prepare('SELECT kind,COUNT(*) AS count FROM tq_facts WHERE scope=? GROUP BY kind ORDER BY kind').all(scope) as any[];
+    const scope=this.scope(),scalar=(sql:string,...args:any[])=>Number((this.prepare(sql).get(...args) as any)?.count??0);
+    const factRows=this.prepare('SELECT kind,COUNT(*) AS count FROM tq_facts WHERE scope=? GROUP BY kind ORDER BY kind').all(scope) as any[];
     return{schemaVersion:'TQ-HTTP-SUMMARY-1',scope,generatedAt:Date.now(),status:this.error?'DEGRADED':'READY',error:this.error,lastSampleAt:this.lastSample,
       counts:{episodes:scalar('SELECT COUNT(*) AS count FROM tq_episodes WHERE scope=?',scope),
         episodeWork:scalar('SELECT COUNT(*) AS count FROM tq_episode_work WHERE scope=?',scope),

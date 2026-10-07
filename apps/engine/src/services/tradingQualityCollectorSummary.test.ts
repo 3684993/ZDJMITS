@@ -1,4 +1,4 @@
-import {expect,it} from 'vitest';
+import {expect,it,vi} from 'vitest';
 import {mkdtempSync,rmSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import path from 'node:path';
@@ -15,5 +15,26 @@ it('projects a bounded HTTP summary without materialising raw evidence payloads'
     expect(summary.factsByKind).toEqual({});
     expect(summary).not.toHaveProperty('episodes');
     expect(summary).not.toHaveProperty('facts');
+  }finally{collector.close();rmSync(dir,{recursive:true,force:true});}
+});
+
+it('keeps exact mutable fill evidence across a 30000-event burst and database reopen',()=>{
+  const h=harness(),dir=mkdtempSync(path.join(tmpdir(),'tq-event-burst-')),file=path.join(dir,'evidence.sqlite');
+  let collector=new TradingQualityCollector(file,h.state,h.bus);
+  try{
+    const fill:any={symbol:'BTCUSDT',tradeId:'burst-fill',executionTime:Date.now(),qty:1,attributionStatus:'UNATTRIBUTED'};
+    h.state.executionFills=[fill];
+    (collector as any).captureState();
+    for(let n=0;n<30001;n++)(collector as any).put('events',`burst:${n}`,{id:n,type:'ENTRY_TEST',ts:n},n);
+    const prepare=vi.spyOn((collector as any).db,'prepare');
+    (collector as any).captureState();
+    expect(prepare.mock.calls.filter(([sql])=>String(sql).startsWith('SELECT payload FROM tq_facts'))).toHaveLength(0);
+    prepare.mockRestore();
+    fill.qty=2;(collector as any).captureState();
+    expect(JSON.parse((collector as any).db.prepare("SELECT payload FROM tq_facts WHERE kind='fills'").get().payload).qty).toBe(2);
+    expect(Number((collector as any).db.prepare("SELECT count(*) n FROM tq_facts WHERE kind='events'").get().n)).toBe(30001);
+    collector.close();collector=new TradingQualityCollector(file,h.state,h.bus);
+    (collector as any).captureState();
+    expect(JSON.parse((collector as any).db.prepare("SELECT payload FROM tq_facts WHERE kind='fills'").get().payload).qty).toBe(2);
   }finally{collector.close();rmSync(dir,{recursive:true,force:true});}
 });

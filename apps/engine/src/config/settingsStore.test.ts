@@ -14,6 +14,18 @@ it('repairs a stale checkpoint cache after another connection evicts an entity',
  try{const db=(store as any).db,value={executionFills:[{fillId:'f1',qty:1}]};store.persistRuntime(value);db.prepare("DELETE FROM runtime_entities WHERE kind='executionFills'").run();store.persistRuntime(value);expect(store.loadRuntime()).toMatchObject(value);}finally{store.close();}
 });
 
+it('checks a retained fill ledger with one index read and repairs missing rows atomically',async()=>{
+ const dir=await mkdtemp(path.join(os.tmpdir(),'zdj-checkpoint-ledger-'));paths.push(dir);const store=new SettingsStore(path.resolve('../../config'),dir);await store.load();
+ try{
+  const db=(store as any).db,value={executionFills:Array.from({length:5000},(_,i)=>({fillId:`f${i}`,qty:1}))};
+  store.persistRuntime(value);db.prepare("DELETE FROM runtime_entities WHERE kind='executionFills' AND entity_id='f3000'").run();
+  const prepare=vi.spyOn(db,'prepare');store.persistRuntime(value);
+  expect(prepare.mock.calls.filter(([sql])=>String(sql).startsWith('SELECT kind,entity_id FROM runtime_entities'))).toHaveLength(1);
+  expect(prepare.mock.calls.filter(([sql])=>String(sql).startsWith('SELECT 1 FROM runtime_entities'))).toHaveLength(0);
+  prepare.mockRestore();expect(store.loadRuntime()).toEqual(value);expect(store.checkpointMetrics().entityWrites).toBe(1);
+ }finally{store.close();}
+});
+
 it('replays only exact archived fills without writes and fails closed on conflicting evidence',async()=>{
  const dir=await mkdtemp(path.join(os.tmpdir(),'zdj-checkpoint-replay-'));paths.push(dir);const store=new SettingsStore(path.resolve('../../config'),dir);await store.load();
  try{const db=(store as any).db,fill={fillId:'exchange_BTCUSDT_1',symbol:'BTCUSDT',direction:'LONG',side:'BUY',positionSide:'LONG',orderId:'order1',clientOrderId:'client1',tradeId:'1',executionTime:100,qty:1,price:100,realizedPnl:0,commission:1,commissionAsset:'USDT',commissionUsd:1,maker:true,source:'USER_DATA_WS',attributionStatus:'SYSTEM_ATTRIBUTED'};store.persistRuntime({executionFills:[fill]});db.prepare("DELETE FROM runtime_entities WHERE kind='executionFills'").run();

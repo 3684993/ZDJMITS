@@ -1,0 +1,285 @@
+{
+  "totalSamples": 28646,
+  "inclusive": [
+    {
+      "function": "(root)",
+      "url": "",
+      "line": -1,
+      "samples": 28646,
+      "fraction": 1.0
+    },
+    {
+      "function": "processTimers",
+      "url": "node:internal/timers",
+      "line": 505,
+      "samples": 16750,
+      "fraction": 0.5847238706974796
+    },
+    {
+      "function": "listOnTimeout",
+      "url": "node:internal/timers",
+      "line": 525,
+      "samples": 16741,
+      "fraction": 0.584409690707254
+    },
+    {
+      "function": "emit",
+      "url": "node:events",
+      "line": 465,
+      "samples": 12351,
+      "fraction": 0.4311596732528102
+    },
+    {
+      "function": "apply",
+      "url": "file:///D:/MITS-WORKTREES/v397-ssh-socks-remediation-20261008/apps/engine/dist/services/runtimeWriteBuffer.js",
+      "line": 6,
+      "samples": 10457,
+      "fraction": 0.36504223975424144
+    },
+    {
+      "function": "storageEntryBlockReason",
+      "url": "file:///D:/MITS-WORKTREES/v397-ssh-socks-remediation-20261008/apps/engine/dist/services/storageCapacityGuard.js",
+      "line": 16,
+      "samples": 9359,
+      "fraction": 0.32671228094672905
+    },
+    {
+      "function": "canDispatch",
+      "url": "file:///D:/MITS-WORKTREES/v397-ssh-socks-remediation-20261008/apps/engine/dist/services/runtimeControlService.js",
+      "line": 32,
+      "samples": 9359,
+      "fraction": 0.32671228094672905
+    },
+    {
+      "function": "maintainStorageBounds",
+      "url": "file:///D:/MITS-WORKTREES/v397-ssh-socks-remediation-20261008/apps/engine/dist/services/storageCapacityGuard.js",
+      "line": 21,
+      "samples": 9352,
+      "fraction": 0.3264679187321092
+    },
+    {
+      "function": "get",
+      "url": "",
+      "line": -1,
+      "samples": 9137,
+      "fraction": 0.31896250785449975
+    },
+    {
+      "function": "trim",
+      "url": "file:///D:/MITS-WORKTREES/v397-ssh-socks-remediation-20261008/apps/engine/dist/services/storageCapacityGuard.js",
+      "line": 33,
+      "samples": 8861,
+      "fraction": 0.3093276548209174
+    },
+    {
+      "function": "processTicksAndRejections",
+      "url": "node:internal/process/task_queues",
+      "line": 70,
+      "samples": 8784,
+      "fraction": 0.30663967046009916
+    },
+    {
+      "function": "pipelineStatus",
+      "url": "file:///D:/MITS-WORKTREES/v397-ssh-socks-remediation-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "line": 2164,
+      "samples": 7958,
+      "fraction": 0.27780492913495775
+    },
+    {
+      "function": "publish",
+      "url": "file:///D:/MITS-WORKTREES/v397-ssh-socks-remediation-20261008/apps/engine/dist/events/eventBus.js",
+      "line": 3,
+      "samples": 7806,
+      "fraction": 0.2724987781889269
+    },
+    {
+      "function": "runMicrotasks",
+      "url": "",
+      "line": -1,
+      "samples": 6905,
+      "fraction": 0.24104587027857294
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-ssh-socks-remediation-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "line": 558,
+      "samples": 6680,
+      "fraction": 0.23319137052293515
+    },
+    {
+      "function": "parserOnHeadersComplete",
+      "url": "node:_http_common",
+      "line": 76,
+      "samples": 6341,
+      "fraction": 0.22135725755777422
+    },
+    {
+      "function": "handleRequest",
+      "url": "file:///D:/MITS-WORKTREES/v397-ssh-socks-remediation-20261008/node_modules/router/lib/layer.js",
+      "line": 141,
+      "samples": 6339,
+      "fraction": 0.22128743978216853
+    },
+    {
+      "function": "trimPrefix",
+      "url": "file:///D:/MITS-WORKTREES/v397-ssh-socks-remediation-20261008/node_modules/router/index.js",
+      "line": 303,
+      "samples": 6339,
+      "fraction": 0.22128743978216853
+    },
+    {
+      "function": "handle",
+      "url": "file:///D:/MITS-WORKTREES/v397-ssh-socks-remediation-20261008/node_modules/router/index.js",
+      "line": 148,
+      "samples": 6339,
+      "fraction": 0.22128743978216853
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-ssh-socks-remediation-20261008/apps/engine/dist/server.js",
+      "line": 17,
+      "samples": 6339,
+      "fraction": 0.22128743978216853
+    },
+    {
+      "function": "handle",
+      "url": "file:///D:/MITS-WORKTREES/v397-ssh-socks-remediation-20261008/node_modules/express/lib/application.js",
+      "line": 151,
+      "samples": 6339,
+      "fraction": 0.22128743978216853
+    },
+    {
+      "function": "app",
+      "url": "file:///D:/MITS-WORKTREES/v397-ssh-socks-remediation-20261008/node_modules/express/lib/express.js",
+      "line": 36,
+      "samples": 6339,
+      "fraction": 0.22128743978216853
+    },
+    {
+      "function": "parserOnIncoming",
+      "url": "node:_http_server",
+      "line": 1072,
+      "samples": 6339,
+      "fraction": 0.22128743978216853
+    },
+    {
+      "function": "read",
+      "url": "file:///D:/MITS-WORKTREES/v397-ssh-socks-remediation-20261008/node_modules/body-parser/lib/read.js",
+      "line": 38,
+      "samples": 6338,
+      "fraction": 0.2212525308943657
+    },
+    {
+      "function": "jsonParser",
+      "url": "file:///D:/MITS-WORKTREES/v397-ssh-socks-remediation-20261008/node_modules/body-parser/lib/types/json.js",
+      "line": 58,
+      "samples": 6338,
+      "fraction": 0.2212525308943657
+    },
+    {
+      "function": "next",
+      "url": "file:///D:/MITS-WORKTREES/v397-ssh-socks-remediation-20261008/node_modules/router/lib/route.js",
+      "line": 118,
+      "samples": 6333,
+      "fraction": 0.22107798645535154
+    },
+    {
+      "function": "dispatch",
+      "url": "file:///D:/MITS-WORKTREES/v397-ssh-socks-remediation-20261008/node_modules/router/lib/route.js",
+      "line": 97,
+      "samples": 6333,
+      "fraction": 0.22107798645535154
+    },
+    {
+      "function": "handle",
+      "url": "file:///D:/MITS-WORKTREES/v397-ssh-socks-remediation-20261008/node_modules/router/index.js",
+      "line": 433,
+      "samples": 6333,
+      "fraction": 0.22107798645535154
+    },
+    {
+      "function": "router",
+      "url": "file:///D:/MITS-WORKTREES/v397-ssh-socks-remediation-20261008/node_modules/router/index.js",
+      "line": 58,
+      "samples": 6330,
+      "fraction": 0.22097325979194302
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-ssh-socks-remediation-20261008/node_modules/router/index.js",
+      "line": 681,
+      "samples": 6330,
+      "fraction": 0.22097325979194302
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-ssh-socks-remediation-20261008/apps/engine/dist/server.js",
+      "line": 23,
+      "samples": 6330,
+      "fraction": 0.22097325979194302
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-ssh-socks-remediation-20261008/apps/engine/dist/api/router.js",
+      "line": 115,
+      "samples": 6324,
+      "fraction": 0.22076380646512603
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-ssh-socks-remediation-20261008/apps/engine/dist/api/router.js",
+      "line": 691,
+      "samples": 6286,
+      "fraction": 0.2194372687286183
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-ssh-socks-remediation-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "line": 573,
+      "samples": 6204,
+      "fraction": 0.21657473992878587
+    },
+    {
+      "function": "saveEntryExecution",
+      "url": "file:///D:/MITS-WORKTREES/v397-ssh-socks-remediation-20261008/apps/engine/dist/config/settingsStore.js",
+      "line": 1208,
+      "samples": 6199,
+      "fraction": 0.21640019548977169
+    },
+    {
+      "function": "run",
+      "url": "",
+      "line": -1,
+      "samples": 6146,
+      "fraction": 0.21455002443622145
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-ssh-socks-remediation-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "line": 671,
+      "samples": 5880,
+      "fraction": 0.20526426028066747
+    },
+    {
+      "function": "runNextTicks",
+      "url": "node:internal/process/task_queues",
+      "line": 61,
+      "samples": 4673,
+      "fraction": 0.1631292327026461
+    },
+    {
+      "function": "reviewPending",
+      "url": "file:///D:/MITS-WORKTREES/v397-ssh-socks-remediation-20261008/apps/engine/dist/services/entryCoordinator.js",
+      "line": 1582,
+      "samples": 4626,
+      "fraction": 0.16148851497591288
+    },
+    {
+      "function": "persistRuntime",
+      "url": "file:///D:/MITS-WORKTREES/v397-ssh-socks-remediation-20261008/apps/engine/dist/config/settingsStore.js",
+      "line": 924,
+      "samples": 4178,
+      "fraction": 0.14584933324024296
+    }
+  ]
+}

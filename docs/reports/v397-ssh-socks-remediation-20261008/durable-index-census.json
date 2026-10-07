@@ -1,0 +1,11 @@
+{
+  "zdj-settings.sqlite:executionFills": 5000,
+  "zdj-settings.sqlite:entryOrders": 2420,
+  "zdj-settings.sqlite:entryIntents": 2453,
+  "zdj-settings.sqlite:tradeRecords": 707,
+  "zdj-settings.sqlite:aiRuns": 200,
+  "trading-quality.sqlite:fills": 13301,
+  "trading-quality.sqlite:orders": 3993,
+  "trading-quality.sqlite:intents": 3913,
+  "trading-quality.sqlite:events": 536044
+}

@@ -1,0 +1,48 @@
+(node:24776) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+{
+ "branch": "main",
+ "localHead": "c6090bd4ed725555ef608bbbbfe5fe305fdafde5",
+ "remoteHead": "c6090bd4ed725555ef608bbbbfe5fe305fdafde5",
+ "gitHeadSubject": "fix: make SSH SOCKS health and recovery bounded and independent of Codex job",
+ "computed": {
+  "sourceHash": "95da2cc767faf4f01e5982973757a4fcc4c717025d76d8c910f89599d7a954eb",
+  "artifactHash": "a48feec0d8fa4ab16c2ec2a4764b8b9ec2bbd89a6940a418a398b25399cb3bc9",
+  "buildId": "3.9.7-a48feec0d8fa4ab16c2e"
+ },
+ "runtimeFile": {
+  "instanceId": "3cb86359-c205-4539-8918-ab942373449e",
+  "pid": 33460,
+  "startedAt": 1791415316109,
+  "host": "0.0.0.0",
+  "port": 8080,
+  "version": "3.9.7",
+  "buildId": "3.9.7-a48feec0d8fa4ab16c2e",
+  "artifactHash": "a48feec0d8fa4ab16c2ec2a4764b8b9ec2bbd89a6940a418a398b25399cb3bc9",
+  "sourceHash": "95da2cc767faf4f01e5982973757a4fcc4c717025d76d8c910f89599d7a954eb",
+  "startReason": "MANUAL_START",
+  "lanIps": [
+   "192.168.1.50"
+  ],
+  "restartCount": 267
+ },
+ "runtimeApi": {
+  "buildId": "3.9.7-a48feec0d8fa4ab16c2e",
+  "instanceId": "3cb86359-c205-4539-8918-ab942373449e",
+  "pid": 33460,
+  "version": "3.9.7",
+  "lastRestartReason": "MANUAL_START",
+  "restartCount": 267,
+  "lastRestartAt": 1791415316109
+ },
+ "dirtySourcePaths": "",
+ "checks": {
+  "remoteHeadEqualsLocalHead": true,
+  "committedSourceTreeMatchesRuntimeSourceHash": true,
+  "workingDistMatchesRuntimeArtifactHash": true,
+  "buildIdDerivedFromArtifactHash": true,
+  "runtimeApiMatchesInstanceFile": true,
+  "sourceTreeCleanForHashedFolders": true
+ },
+ "verdict": "IDENTITY_CLOSED"
+}

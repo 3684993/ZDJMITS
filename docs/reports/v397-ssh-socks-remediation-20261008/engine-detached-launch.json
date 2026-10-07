@@ -1,0 +1,8 @@
+{
+    "at":  "2026-10-07T23:21:52.5736878Z",
+    "script":  "D:\\MITS-WORKTREES\\v397-ssh-socks-remediation-20261008\\scripts\\start-zdj-lan.ps1",
+    "result":  "LAUNCHED_NOT_HEALTH_VERIFIED",
+    "detachedLauncherPid":  14740,
+    "mode":  "Engine",
+    "log":  "D:\\MITS-WORKTREES\\v397-ssh-socks-remediation-20261008\\docs\\reports\\v397-ssh-socks-remediation-20261008\\detached-engine-launch.txt"
+}

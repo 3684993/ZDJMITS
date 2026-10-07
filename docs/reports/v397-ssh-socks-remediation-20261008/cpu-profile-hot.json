@@ -1,0 +1,247 @@
+{
+  "pid": 33460,
+  "seconds": 45,
+  "totalSamples": 28646,
+  "hot": [
+    {
+      "samples": 5742,
+      "functionName": "get",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 2818,
+      "functionName": "put",
+      "scriptId": "202",
+      "url": "file:///D:/MITS-WORKTREES/v397-ssh-socks-remediation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "lineNumber": 85,
+      "columnNumber": 7
+    },
+    {
+      "samples": 2507,
+      "functionName": "",
+      "scriptId": "214",
+      "url": "file:///D:/MITS-WORKTREES/v397-ssh-socks-remediation-20261008/apps/engine/dist/config/settingsStore.js",
+      "lineNumber": 932,
+      "columnNumber": 25
+    },
+    {
+      "samples": 1967,
+      "functionName": "run",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 1531,
+      "functionName": "run",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 1447,
+      "functionName": "run",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 1443,
+      "functionName": "get",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 1432,
+      "functionName": "get",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 1074,
+      "functionName": "(garbage collector)",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 765,
+      "functionName": "put",
+      "scriptId": "202",
+      "url": "file:///D:/MITS-WORKTREES/v397-ssh-socks-remediation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "lineNumber": 85,
+      "columnNumber": 7
+    },
+    {
+      "samples": 728,
+      "functionName": "all",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 619,
+      "functionName": "all",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 363,
+      "functionName": "run",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 355,
+      "functionName": "",
+      "scriptId": "214",
+      "url": "file:///D:/MITS-WORKTREES/v397-ssh-socks-remediation-20261008/apps/engine/dist/config/settingsStore.js",
+      "lineNumber": 932,
+      "columnNumber": 25
+    },
+    {
+      "samples": 311,
+      "functionName": "persistRuntime",
+      "scriptId": "214",
+      "url": "file:///D:/MITS-WORKTREES/v397-ssh-socks-remediation-20261008/apps/engine/dist/config/settingsStore.js",
+      "lineNumber": 924,
+      "columnNumber": 18
+    },
+    {
+      "samples": 305,
+      "functionName": "all",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 278,
+      "functionName": "saveEntryExecution",
+      "scriptId": "214",
+      "url": "file:///D:/MITS-WORKTREES/v397-ssh-socks-remediation-20261008/apps/engine/dist/config/settingsStore.js",
+      "lineNumber": 1208,
+      "columnNumber": 22
+    },
+    {
+      "samples": 257,
+      "functionName": "saveEntryExecution",
+      "scriptId": "214",
+      "url": "file:///D:/MITS-WORKTREES/v397-ssh-socks-remediation-20261008/apps/engine/dist/config/settingsStore.js",
+      "lineNumber": 1208,
+      "columnNumber": 22
+    },
+    {
+      "samples": 246,
+      "functionName": "put",
+      "scriptId": "202",
+      "url": "file:///D:/MITS-WORKTREES/v397-ssh-socks-remediation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "lineNumber": 85,
+      "columnNumber": 7
+    },
+    {
+      "samples": 236,
+      "functionName": "saveEntryExecution",
+      "scriptId": "214",
+      "url": "file:///D:/MITS-WORKTREES/v397-ssh-socks-remediation-20261008/apps/engine/dist/config/settingsStore.js",
+      "lineNumber": 1208,
+      "columnNumber": 22
+    },
+    {
+      "samples": 173,
+      "functionName": "all",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 168,
+      "functionName": "get",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 168,
+      "functionName": "run",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 162,
+      "functionName": "",
+      "scriptId": "214",
+      "url": "file:///D:/MITS-WORKTREES/v397-ssh-socks-remediation-20261008/apps/engine/dist/config/settingsStore.js",
+      "lineNumber": 1235,
+      "columnNumber": 31
+    },
+    {
+      "samples": 161,
+      "functionName": "run",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 132,
+      "functionName": "(idle)",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 120,
+      "functionName": "exec",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 103,
+      "functionName": "run",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 101,
+      "functionName": "get",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 99,
+      "functionName": "get",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    }
+  ]
+}

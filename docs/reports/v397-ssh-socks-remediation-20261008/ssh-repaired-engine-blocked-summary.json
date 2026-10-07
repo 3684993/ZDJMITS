@@ -1,0 +1,195 @@
+{
+  "sampleCount": 23,
+  "elapsedHours": 0.18340833333333334,
+  "first": "2026-10-07T23:23:11.163015+00:00",
+  "last": "2026-10-07T23:34:11.433043+00:00",
+  "healthSampleStates": {
+    "STARTING": 1,
+    "READY": 11,
+    "OBSERVATION_UNAVAILABLE": 11
+  },
+  "privateSampleStates": {
+    "READY": 12,
+    "OBSERVATION_UNAVAILABLE": 11
+  },
+  "activeIncidentSampleCounts": {
+    "BINANCE-QUEUE-001": 14
+  },
+  "httpReadErrors": {
+    "health": 11,
+    "closeout": 11,
+    "governance": 11,
+    "private": 6,
+    "operations": 6,
+    "incidents": 6
+  },
+  "identities": [
+    {
+      "pid": 33460,
+      "instanceId": "3cb86359-c205-4539-8918-ab942373449e"
+    },
+    {
+      "pid": null,
+      "instanceId": null
+    }
+  ],
+  "privateSnapshotAgeMs": {
+    "observedSamples": 12,
+    "max": 54035,
+    "p95": 54035
+  },
+  "tpIssueSampleCounts": {},
+  "productionWriteSamples": {
+    "nonzero": 0,
+    "unknown": 11
+  },
+  "interpretation": "Sample prevalence is not incident frequency or duration. Missing samples and bounded ledgers cannot prove zero failures. OBSERVATION_UNAVAILABLE is a missing endpoint value, not proven private UNAVAILABLE. The original running collector progress uses the older conflated default; use this audited analyzer for acceptance.",
+  "acceptance": "REQUIRES_EVIDENCE_REVIEW",
+  "malformedSampleRows": 0,
+  "tpObservationSamples": {
+    "known": 12,
+    "unknown": 11
+  },
+  "samplingGaps": {
+    "maxMs": 41737,
+    "above90s": 0,
+    "endpointValuesAreNotAtomic": true
+  },
+  "workingSetBytes": {
+    "min": 642404352,
+    "max": 2108227584,
+    "last": 2108227584
+  },
+  "distinctPrivateFailureTimestampsSeen": 2,
+  "staleQuoteFieldSampleCounts": {
+    "bid": 12,
+    "ask": 12,
+    "last": 11,
+    "mark": 10
+  },
+  "routeDecisionDeltas": {
+    "proxy-05d851d4af74": {
+      "admitted": 717,
+      "queued": 937,
+      "blocked": 221,
+      "queueTimeout": 221
+    }
+  },
+  "boundedRequestEvidence": {
+    "distinctIdsSeen": 726,
+    "completedInWindowSeen": 601,
+    "queueAgeMs": {
+      "n": 472,
+      "median": 455.0,
+      "p95": 4303,
+      "max": 8244
+    },
+    "admittedNetworkMs": {
+      "n": 472,
+      "median": 1107.0,
+      "p95": 12941,
+      "max": 36338
+    },
+    "failurePhases": {
+      "SOCKS_NEGOTIATION": 2,
+      "FIRST_BYTE": 2,
+      "READ_BUDGET_ABORT": 1
+    },
+    "coverage": "Bounded recent ledgers sampled once/minute; not a full request census. Admission counters provide separate aggregate deltas."
+  },
+  "durableEvents": {
+    "files": [
+      "D:\\MITS\\data\\runtime-logs\\engine-2026-10-07-3cb86359-c205-4539-8918-ab942373449e-0.jsonl"
+    ],
+    "counts": {
+      "OPERATIONAL_INCIDENT_ACTIVATED": 22,
+      "CANDIDATE_SUPPLY_HEALTH": 58,
+      "POSITION_MARKETS_REFRESHED": 1,
+      "ANALYSIS_DISPATCH_HEARTBEAT": 18,
+      "SHADOW_RUNNER_STARTED": 1,
+      "ANALYSIS_DISPATCH_INTENT": 6,
+      "CANDIDATE_LIFECYCLE_CHANGED": 19,
+      "POOL_ANALYSIS_STARTED": 6,
+      "RUNTIME_STARTED": 1,
+      "OPERATIONAL_INCIDENT_RECOVERED": 21,
+      "TELEMETRY_HEARTBEAT": 20,
+      "PRE_AI_EXECUTION_ENVELOPE_CREATED": 1,
+      "PRE_AI_TRADE_PLAN_CANDIDATES_CREATED": 1,
+      "TRADING_QUALITY_OPPORTUNITY": 1,
+      "SCOUT_OBSERVATION_STARTED": 1,
+      "MARKET_SYMBOL_ERROR": 65,
+      "V396_OWNERSHIP_OUTBOX": 52,
+      "MARKET_COHORT_REFILLED": 4,
+      "POSITION_REVIEW_ONLY_AUTHORITY": 4,
+      "SCOUT_OBSERVATION_COMPLETED": 1,
+      "EXIT_TASK_CONVERGED": 39,
+      "EXIT_CONVERGENCE_QUEUE": 5,
+      "ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED": 28,
+      "ENTRY_ORDER_TTL_CLOSED": 28,
+      "ENTRY_ORDER_HISTORICAL_VERIFY_FAILED": 11,
+      "MARKET_RECOVERY_FAILED": 64,
+      "EXECUTION_READINESS_BLOCKED": 6,
+      "POSITION_REVIEW_APPLIED": 1,
+      "MANUAL_ORDER_REMOTE_STATUS_UNVERIFIED": 28,
+      "PRIVATE_SYNC_TRANSIENT_TOLERATED": 2,
+      "MARKET_COHORT_DEFERRED": 2,
+      "PRIVATE_SYNC_RECOVERED": 2,
+      "EXECUTION_READINESS_RESUMED": 5,
+      "AI_RUN_FAILED": 1,
+      "POSITION_REVIEW_FAILED": 1,
+      "PRIMARY_DECISION_NORMALIZED": 1,
+      "AI_RUN_TERMINAL": 1,
+      "TRADING_QUALITY_PRIMARY_LINK": 1,
+      "POST_AI_OBSERVATION_ONLY": 2,
+      "MATERIAL_DECISION_CHANGE": 1,
+      "POST_AI_REDUNDANT_FIELD_NORMALIZED": 1,
+      "AI_CANDIDATE_SELECTED": 1,
+      "ENTRY_ECONOMIC_ADMISSION_EVALUATED": 1,
+      "PORTFOLIO_RISK_ADMISSION_EVALUATED": 1,
+      "FROZEN_CHOICE_CONVERSION_OBSERVED": 1,
+      "TRADE_PLAN_PERSISTED": 1,
+      "ENTRY_RESERVATION_CREATED": 1,
+      "LIVE_RISK_ENVELOPE_EVALUATED": 1,
+      "ENTRY_INTENT_CREATED": 1,
+      "POSITION_REVIEW_DISCARDED": 2,
+      "CANDIDATE_LIFECYCLE_REDERIVED": 5,
+      "ENTRY_ORDER_BLOCKED": 1,
+      "TRADE_SYNC_AUTO_FAILED": 2,
+      "PRIMARY_DATA_ERROR": 2,
+      "ERROR_AGGREGATE": 6,
+      "UNKNOWN_RISK_AUDIT_SUMMARY": 1,
+      "RECONCILIATION_FAILED": 1,
+      "PORTFOLIO_CASH_FLOW_READ_FAILED": 3,
+      "ENTRY_ANALYSIS_FAILED": 3,
+      "MARKET_COHORT_FAILED": 1,
+      "FUNDING_INCOME_READ_FAILED": 1,
+      "FUNDING_INCOME_SYNCED": 1
+    },
+    "recoveryByIncidentId": {
+      "5ada6d85d6ff7add": 1,
+      "8ceb63c55e400af8": 1,
+      "a8cda90da71b2f79": 8,
+      "ff6dd1ef9ec6d550": 8,
+      "62e9fc7e02105de4": 1,
+      "c76cffc3afdd6c3e": 1,
+      "bfe6ba0e7db07add": 1
+    },
+    "activationByIncidentId": {
+      "5ada6d85d6ff7add": 1,
+      "8ceb63c55e400af8": 1,
+      "a8cda90da71b2f79": 9,
+      "ff6dd1ef9ec6d550": 8,
+      "62e9fc7e02105de4": 1,
+      "c76cffc3afdd6c3e": 1,
+      "bfe6ba0e7db07add": 1
+    },
+    "distinctUnverifiedEntryIds": 28,
+    "terminalTpExactRecoveryEvents": {},
+    "coverage": "Only retained matching-instance JSONL files, within first/last actual sample timestamps. No natural terminal event means UNKNOWN, not a live PASS."
+  },
+  "evidence": {
+    "rawSha256": "c762afecc4435d64ddbba16d010a8969f37988b29ad50e91e44269dbd3523458",
+    "gzipSha256": "ecb9f4e0c88f08ab78b2c3724b5092983fb296ebf0aeb96a1278e4571536bcb8",
+    "compressedFile": "ssh-repaired-engine-blocked-samples.jsonl.gz"
+  }
+}

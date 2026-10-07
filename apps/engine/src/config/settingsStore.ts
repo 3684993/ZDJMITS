@@ -980,8 +980,10 @@ export class SettingsStore {
       const prior=this.db.prepare('SELECT payload FROM runtime_state WHERE id=1').get() as {payload:string}|undefined;
       if(prior&&(JSON.parse(prior.payload).entryReservationRevision??0)>(core.entryReservationRevision??0))throw new Error('STALE_RESERVATION_CHECKPOINT');
       // Retention uses another connection. A cached payload does not prove its row still exists.
-      const durable=this.db.prepare('SELECT 1 FROM runtime_entities WHERE kind=? AND entity_id=?'),pending=new Set(updates.map(([kind,id])=>`${kind}:${id}`));
-      for(const [kind,info] of Object.entries(lists))for(const id of info.ids){const key=`${kind}:${id}`;if(!pending.has(key)&&!durable.get(kind,id)){const raw=this.runtimeEntityCache!.get(key);if(raw===undefined)throw new Error(`CHECKPOINT_ENTITY_UNAVAILABLE:${key}`);updates.push([kind,id,raw]);}}
+      // Read the covering primary-key index once inside the same savepoint instead of
+      // crossing the JS/SQLite boundary for every retained fill on every checkpoint.
+      const durable=new Set((this.db.prepare('SELECT kind,entity_id FROM runtime_entities').all() as Array<{kind:string;entity_id:string}>).map(row=>`${row.kind}:${row.entity_id}`)),pending=new Set(updates.map(([kind,id])=>`${kind}:${id}`));
+      for(const [kind,info] of Object.entries(lists))for(const id of info.ids){const key=`${kind}:${id}`;if(!pending.has(key)&&!durable.has(key)){const raw=this.runtimeEntityCache!.get(key);if(raw===undefined)throw new Error(`CHECKPOINT_ENTITY_UNAVAILABLE:${key}`);updates.push([kind,id,raw]);}}
       const upsert=this.db.prepare('INSERT INTO runtime_entities(kind,entity_id,payload) VALUES(?,?,?) ON CONFLICT(kind,entity_id) DO UPDATE SET payload=excluded.payload');for(const update of updates)upsert.run(...update);
       this.db.prepare('INSERT INTO runtime_state(id,payload,updated_at) VALUES(1,?,?) ON CONFLICT(id) DO UPDATE SET payload=excluded.payload,updated_at=excluded.updated_at').run(payload,Date.now());
       if(lists.aiRuns){

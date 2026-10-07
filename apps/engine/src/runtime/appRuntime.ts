@@ -1,3 +1,4 @@
+import {maintainStorageBounds} from '../services/storageCapacityGuard.js';
 import { resolveQuoteAsset, testnetFundsOnlyEntry } from '@zdj/core';
 import type {TradingQualityRuntimeObserver} from '../services/tradingQualityRuntimeObserver.js';
 import { TradingQualityCollector } from '../services/tradingQualityCollector.js';
@@ -918,6 +919,7 @@ export class EngineRuntime {
         this.events.publish('POSITION_REVIEW_TICK_FAILED',{reason:error instanceof Error?error.message:String(error),orderSent:false});}
     });
     this.every(1_000,()=>this.tradingQuality?.tick(), {name:'TRADING_QUALITY_TICK'});
+    this.every(5_000,async()=>{await maintainStorageBounds();}, {name:'STORAGE_MAINTENANCE'});
     this.every(5_000,()=>this.qualityObserver?.tick());
     this.every(5_000, async () => this.tp.sweep(), {name:'TP_SWEEP'});
     this.every(15_000, async () => {

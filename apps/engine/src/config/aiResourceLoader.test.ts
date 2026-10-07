@@ -13,11 +13,14 @@ describe('AI resource loader',()=>{
 
     expect(settings.aiResources.find(resource=>resource.role==='SCOUT')?.enabled).toBe(true);
     expect(settings.aiResources.find(resource=>resource.role==='PRIMARY_BRAIN')?.enabled).toBe(true);
+    expect(settings.aiResources.find(resource=>resource.role==='REVIEW_BRAIN')?.enabled).toBe(true);
     const resources=loadAiResources(settings);
 
     expect(resources.filter(resource=>resource.role==='SCOUT')).toHaveLength(1);
     expect(resources.filter(resource=>resource.role==='PRIMARY_BRAIN')).toHaveLength(1);
+    expect(resources.filter(resource=>resource.role==='REVIEW_BRAIN')).toHaveLength(1);
     expect(resources.find(resource=>resource.role==='PRIMARY_BRAIN')).toMatchObject({role:'PRIMARY_BRAIN',model:'qwen/qwen3.8-27b'});
     expect(resources.find(resource=>resource.role==='SCOUT')).toMatchObject({role:'SCOUT',model:'qwen3.5:9b'});
+    expect(resources.find(resource=>resource.role==='REVIEW_BRAIN')).toMatchObject({role:'REVIEW_BRAIN',baseUrl:'http://127.0.0.1:8083/v1'});
   });
 });

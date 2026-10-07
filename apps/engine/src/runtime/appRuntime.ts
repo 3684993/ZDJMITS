@@ -925,13 +925,13 @@ export class EngineRuntime {
     this.every(this.state.settings.externalIntelligence.refreshSeconds*1000,async()=>this.externalIntelligence.tick());
     this.every(2_000,async()=>this.externalResearch.tick(), {name:'EXTERNAL_RESEARCH'});
     this.every(30_000,()=>{this.externalResearch.enqueueMarketChanges();});
-    this.every(1_000,()=>{this.settingsStore.backfillAiRunSummaries(25,8);}, {name:'AI_RUN_SUMMARY_BACKFILL'});
+    this.every(30_000,()=>{this.settingsStore.backfillAiRunSummaries(50,12);}, {name:'AI_RUN_SUMMARY_BACKFILL'});
     // P6: funding is a scheduled income event, so the ledger is pulled on a slow cadence with an
     // explicit coverage window. A failed pull records nothing, which leaves attribution UNKNOWN rather
     // than implying "no funding happened".
     this.every(10*60_000,()=>{void this.syncFundingIncome();},{allowOverlap:true});
     this.every(45_000,()=>{void this.attributeCycleFunding();});
-    this.every(5_000,()=>{this.writes.apply('storage-retention',()=>{this.settingsStore.maintainRetention();});}, {name:'STORAGE_RETENTION'});
+    this.every(30_000,()=>{this.writes.apply('storage-retention',()=>{this.settingsStore.maintainRetention();});}, {name:'STORAGE_RETENTION'});
     // Do not await long research in the scheduler: coordinator single-flight owns
     // publication while every tick still observes expiry during a hung request.
     this.every(1_000, () => this.assetGovernance.tick(), { allowOverlap: true, name:'ASSET_GOVERNANCE_TICK' });

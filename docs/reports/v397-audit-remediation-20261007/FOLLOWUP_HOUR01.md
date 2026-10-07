@@ -25,3 +25,9 @@ TP修复失败包括exact GET排队失败、reconciliation read deadline取消�
 下一步继续原12h只读窗口，另在隔离checkout证明REST连接复用缺口并准备最小修复/完整verify；不修改当前运行源码、不自动部署重启。6h/12h按真实失败和缺口给出NOT_STABLE/INCOMPLETE，不能把代码或测试通过改称运行根治。
 
 证据：followup-hour01-summary.json、lossless followup-hour01-samples.jsonl.gz、events.jsonl、detailed-events.jsonl、detail.json、current.json、identity.json、processes.json。原始样本SHA256：108046c2b6e60f6299710b44f88b9a27e2fdcccced454041756e36d17177d725。详细事件仅包含该冻结窗口的当前实例保留日志；bounded ledger非完整请求普查。
+
+## 2026-10-07 19:52 +08:00 — additional isolated candidate (NOT DEPLOYED)
+
+First-hour runtime remains NOT_STABLE. Bounded account timing evidence and a real loopback SOCKS reproduction prove connections are reopened instead of reused. Minimal candidate a9e5b8819cbb1facc856dd766d5727718c5a1498 on codex/rest-connection-reuse-20261007 enables bounded keep-alive and retires old idle routes while preserving captured requests. Complete local verify passes1972 tests/232 files (Engine1789). Candidate source, reproduction failures, targeted77 tests and full verify logs are on GitHub at https://github.com/3684993/ZDJMITS/tree/codex/rest-connection-reuse-20261007/docs/reports/v397-rest-connection-reuse-20261007 . This is LOCAL_VERIFY_PASS / NOT_DEPLOYED / RUNTIME_ACCEPTANCE_UNKNOWN.
+
+No candidate code is in current main or live PID37952. Main still matches live source d9626b0f51ae679283d93b7b2bb9c6355322d3f65cbd7010b40d9aec57c9565e. Current heartbeat forbids lifecycle actions; do not automatically deploy/restart, infer runtime improvements from isolated tests, or silently count the ongoing window toward a future candidate deployment. Continue original collector35268 to the actual6h/12h checkpoints, report NOT_STABLE/INCOMPLETE honestly, preserve all evidence on GitHub. F04/F10/F11 remain deferred. Candidate checkout D:\MITS-WORKTREES\v397-rest-connection-reuse-20261007 has no live data junction; preserve its clean branch for subsequent authorized deployment context.

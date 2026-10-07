@@ -1,0 +1,18 @@
+[
+  {
+    "Name": "Listen",
+    "Count": 1
+  },
+  {
+    "Name": "Established",
+    "Count": 8
+  },
+  {
+    "Name": "CloseWait",
+    "Count": 9
+  },
+  {
+    "Name": "TimeWait",
+    "Count": 1
+  }
+]

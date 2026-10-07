@@ -6,6 +6,8 @@ const text=(value:unknown)=>String(value??'').replace(/(apiKey|apiSecret|signatu
 const template=(publicCode:string,titleZh:string,messageZh:string,remediationZh:string,category:OperationalIncident['category'],blockingScopes:string[]):Pick<Candidate,'publicCode'|'titleZh'|'messageZh'|'remediationZh'|'category'|'severity'|'blockingScopes'>=>({publicCode,titleZh,messageZh,remediationZh,category,severity:'ERROR',blockingScopes});
 const NETWORK=template('NET-001','Binance 连接错误','无法连接 Binance；只有依赖该交易所事实的操作会安全暂停。','检查交易所服务、网络与已配置代理；系统不会把该错误解释为行情趋势。','NETWORK',['MARKET_DATA','NEW_ENTRY','EXCHANGE_WRITE']);
 const TIMEOUT=template('NET-002','Binance REST 连续响应延迟','60 秒内多次关键 Binance REST 请求超时；孤立慢请求只记遥测，不会触发此事故。只有确实缺少关键事实的操作会安全暂停。','系统优先使用 WebSocket 实时事实并自动恢复；连续发生时再检查交易所服务与当前活动代理。','NETWORK',['MARKET_DATA','NEW_ENTRY']);
+const QUEUE=template('BINANCE-QUEUE-001','Binance REST 本地排队拥塞','关键事实请求在本地 admission 队列到期，不能据此判定交易所响应慢。缺失或过期事实仍安全暂停其依赖操作。','检查各请求 lane、排队年龄和恢复负载；系统保留当前私有事实容量并有界恢复。','NETWORK',['NEW_ENTRY']);
+const PRIVATE=template('PRIVATE-DATA-001','交易所私有事实暂不可用','账户或持仓事实未在允许的新鲜度内复核；显示最后已知状态，不代表交易所当前真值。','系统继续补取权威私有事实；不延长 TTL 或把行情更新视为仓位复核。','ACCOUNT',['NEW_ENTRY','PRIVATE_DATA']);
 const MARKET=template('MARKET-DATA-001','行情数据链路暂不可执行','报价、订单簿或K线的新鲜度/连续性不足，当前没有数据完整的可执行候选，新建仓分析已暂停。','系统会自动恢复；若持续发生，请检查 Binance WebSocket/REST 行情连接与交易所行情服务。这不是行情涨跌趋势判断。','MARKET_DATA',['MARKET_DATA','NEW_ENTRY']);
 const SUBMIT=template('EX-SUBMIT-UNKNOWN','订单提交结果未知','系统正按原 clientOrderId 查询订单身份，确认前禁止重复提交。','查看订单身份查询结果；不要手动重复提交同一订单。','SUBMIT_UNKNOWN',['EXCHANGE_WRITE','NEW_ENTRY']);
 const HTTP:Record<number,ReturnType<typeof template>>={
@@ -30,7 +32,7 @@ export function classifyOperationalError(input:{message:unknown;subsystem?:strin
   if(input.endpoint?.endsWith('/order')&&((input.method==='GET'&&code===-2013)||(input.method==='DELETE'&&code===-2011)))return null;
   if(HTTP[status])base=HTTP[status]!;
   else if(/SUBMIT.*UNKNOWN|ACK.*UNKNOWN|ENTRY_SUBMIT_UNACKED/.test(raw))base=SUBMIT;
-  else if(/BINANCE_REQUEST_QUEUE_TIMEOUT/.test(raw))base=input.budgetPressureProven?null:input.transportEvidence?TIMEOUT:null;
+  else if(/BINANCE_REQUEST_QUEUE_TIMEOUT/.test(raw))base=input.budgetPressureProven?null:input.transportEvidence?QUEUE:null;
   else if(/timed out|ETIMEDOUT|TimeoutError/i.test(raw))base=TIMEOUT;
   else if(/ECONNRESET|ECONNREFUSED|ENETUNREACH|EAI_AGAIN|SOCKS|PROXY_REQUIRED|socket|DNS|BINANCE_TRANSPORT_BLOCKED/i.test(raw))base=NETWORK;
   else if(Number.isFinite(code)){
@@ -45,7 +47,7 @@ export class OperationalIncidentTracker{
   private archived:OperationalIncident[]=[];
   private pending=new Map<string,{count:number;lastSeenAt:number}>();
   observe(candidates:Candidate[],now=Date.now()){
-    const seen=new Set<string>(),candidateIds=new Set<string>();
+    const seen=new Set<string>(),candidateIds=new Set<string>(),recovered:OperationalIncident[]=[];
     for(const row of candidates){
       const networkRoot=row.publicCode==='NET-001'||row.publicCode==='NET-002',
         identity=networkRoot?`${row.publicCode}:${row.subsystem}:${row.routeIdentity??''}`:`${row.publicCode}:${row.subsystem}:${row.endpoint??''}:${row.routeIdentity??''}`,
@@ -60,10 +62,10 @@ export class OperationalIncidentTracker{
       this.rows.set(id,{...row,incidentId:id,active:true,firstSeenAt:old?.active?old.firstSeenAt:now,lastSeenAt:now,recoveredAt:null,count:repeated?old.count:(old?.active?old.count:0)+1});
     }
     for(const id of [...this.pending.keys()])if(!candidateIds.has(id))this.pending.delete(id);
-    for(const [id,row] of this.rows)if(row.active&&!seen.has(id))this.rows.set(id,{...row,active:false,recoveredAt:now});
+    for(const [id,row] of this.rows)if(row.active&&!seen.has(id)){const done={...row,active:false,recoveredAt:now};this.rows.set(id,done);recovered.push(done);}
     if(this.rows.size>200)for(const [id] of [...this.rows].filter(([,row])=>!row.active).sort((a,b)=>(a[1].recoveredAt??0)-(b[1].recoveredAt??0)).slice(0,this.rows.size-200))this.rows.delete(id);
     if(this.archived.length>200)this.archived.splice(0,this.archived.length-200);
-    return this.read();
+    return {...this.read(),recovered};
   }
   read(){const rows=[...this.rows.values(),...this.archived].sort((a,b)=>b.lastSeenAt-a.lastSeenAt);return{active:rows.filter(row=>row.active),history:rows};}
 }
@@ -73,7 +75,7 @@ export function operationalCandidates(facts:{pipeline:any;routes:any[];account:a
       Number(facts.pipeline?.marketDataIsolation?.healthyCandidates??0)>0||facts.pipeline?.freshMarkets?.status==='FRESH'
     ),
     recentUnresolved=Boolean((facts.orders??[]).some((order:any)=>order.status==='UNKNOWN'&&order.activeRiskExposure!==false&&Number.isFinite(Number(order.createdAt))&&now-Number(order.createdAt)<3_600_000));
-  const advisoryRestEndpoint=(endpoint:unknown)=>/\/fapi\/v1\/(openInterest|premiumIndex|income)$|\/futures\/data\//.test(String(endpoint??''));
+  const advisoryRestEndpoint=(row:any)=>/\/fapi\/v1\/(openInterest|premiumIndex|income)$|\/futures\/data\//.test(String(row.endpoint??''))&&row.purpose!=='QUOTE_MARK_RECOVERY';
   const marketFallbackEndpoint=(endpoint:unknown)=>/\/fapi\/v1\/(ticker\/24hr|ticker\/bookTicker|depth|klines)$/.test(String(endpoint??''));
   const controlEndpoint=(endpoint:unknown)=>String(endpoint??'')==='/fapi/v1/time';
   const identityLookup=(row:any)=>recentUnresolved&&String(row?.method??'GET')==='GET'&&String(row?.endpoint??'')==='/fapi/v1/order';
@@ -81,7 +83,7 @@ export function operationalCandidates(facts:{pipeline:any;routes:any[];account:a
   for(const route of facts.routes){const budget=route.requestBudget??{},recent=budget.recentDispatches??[],failures=route.recentFailures??[];
     // A healthy WS stream is the primary market truth. REST market timeouts are tolerated while that
     // truth remains fresh; they are recovery telemetry, not a global NEW_ENTRY outage.
-    const relevantFailures=failures.filter((failure:any)=>!controlEndpoint(failure.endpoint)&&!identityLookup(failure)&&!advisoryRestEndpoint(failure.endpoint)&&!(marketHealthy&&marketFallbackEndpoint(failure.endpoint)));
+    const relevantFailures=failures.filter((failure:any)=>!controlEndpoint(failure.endpoint)&&!identityLookup(failure)&&!advisoryRestEndpoint(failure)&&!(marketHealthy&&marketFallbackEndpoint(failure.endpoint)));
     const makerRejects=relevantFailures.filter((failure:any)=>/"code"\s*:\s*-5022\b/.test(String(failure.message??''))&&now-Number(failure.completedAt??now)<60_000);
     for(const failure of relevantFailures){
       if(timeoutLike(failure.message))continue; // aggregated below with hysteresis
@@ -92,16 +94,17 @@ export function operationalCandidates(facts:{pipeline:any;routes:any[];account:a
     if(http){const row=classifyOperationalError({message:`Binance HTTP ${http.status}`,httpStatus:http.status,subsystem:'BINANCE_HTTP',endpoint:http.endpoint,method:http.method,requestId:http.requestId,routeIdentity:http.routeIdentity,retryAfter:http.retryAfter,blockedUntil:http.blockedUntil});if(row)out.push(row);}
     // Normal Internet/Testnet jitter is not an incident. Require a burst of >=3 critical timeout facts
     // inside 60s before NET-002 becomes visible. One or two isolated failures remain telemetry only.
-    const transportTimeouts=relevantFailures.filter((row:any)=>timeoutLike(row.message)&&now-Number(row.completedAt??now)<60_000);
-    const queueTimeouts=recent.filter((row:any)=>row.decision==='TIMEOUT'&&now-Number(row.completedAt??0)<60_000&&!controlEndpoint(row.endpoint)&&!identityLookup(row)&&!advisoryRestEndpoint(row.endpoint)&&!(marketHealthy&&marketFallbackEndpoint(row.endpoint)));
-    const timeoutFacts=[...new Map([...transportTimeouts,...queueTimeouts].map((row:any)=>[String(row.requestId??`${row.endpoint}:${row.completedAt??''}`),row])).values()],
-      latest=timeoutFacts.at(-1),lowPressure=Number(budget.admissionObservedWeight1m??budget.usedWeight1m??Infinity)<Number(budget.softBackgroundWeight??0);
-    if(latest&&timeoutFacts.length>=3&&lowPressure){
-      const row=classifyOperationalError({message:'BINANCE_REQUEST_QUEUE_TIMEOUT',subsystem:'BINANCE_HTTP',transportEvidence:true,budgetPressureProven:false,endpoint:latest.endpoint,method:latest.method,requestId:latest.requestId,routeIdentity:latest.routeIdentity});if(row)out.push(row);
-    }
+    const transportTimeouts=relevantFailures.filter((row:any)=>timeoutLike(row.message)&&!String(row.message).includes('BINANCE_REQUEST_QUEUE_TIMEOUT')&&now-Number(row.completedAt??now)<60_000);
+    const wireFacts=[...new Map(transportTimeouts.map((row:any)=>[String(row.requestId??`${row.endpoint}:${row.completedAt??''}`),row])).values()] as any[];
+    const wireIds=new Set(wireFacts.map(row=>row.requestId));
+    const queueTimeouts=recent.filter((row:any)=>row.decision==='TIMEOUT'&&!wireIds.has(row.requestId)&&now-Number(row.completedAt??0)<60_000&&!controlEndpoint(row.endpoint)&&!identityLookup(row)&&!advisoryRestEndpoint(row)&&!(marketHealthy&&marketFallbackEndpoint(row.endpoint)));
+    const queueFacts=[...new Map(queueTimeouts.map((row:any)=>[String(row.requestId??`${row.endpoint}:${row.completedAt??''}`),row])).values()] as any[];
+    if(wireFacts.length>=3){const latest=wireFacts.at(-1);const row=classifyOperationalError({...latest,message:latest.message,subsystem:'BINANCE_HTTP'});if(row)out.push(row);}
+    if(queueFacts.length>=3){const latest=queueFacts.at(-1);const row=classifyOperationalError({...latest,message:'BINANCE_REQUEST_QUEUE_TIMEOUT',subsystem:'BINANCE_HTTP',transportEvidence:true});if(row)out.push(row);}
+
   }
   if(facts.pipeline?.pipelineState==='PAUSED_MARKET_DATA_UNAVAILABLE'&&!out.some(row=>row.category==='NETWORK'))out.push({...MARKET,subsystem:'MARKET_DATA',sourceCode:String(facts.pipeline.marketDataReason??'MARKET_QUOTES_STALE'),sourceMessage:text(facts.pipeline.marketDataReason??'MARKET_QUOTES_STALE')});
-  if(facts.account?.status==='UNAVAILABLE'&&facts.account.reason){const row=classifyOperationalError({message:facts.account.reason,subsystem:'PRIVATE_DATA'});if(row)out.push(row);}
+  if(facts.account?.status==='UNAVAILABLE'&&facts.account.reason){const reason=String(facts.account.reason),row=timeoutLike(reason)?null:classifyOperationalError({message:reason,subsystem:'PRIVATE_DATA'});if(row&&row.publicCode!=='NET-002')out.push(row);out.push({...PRIVATE,subsystem:'PRIVATE_DATA',sourceCode:'PRIVATE_DATA_UNAVAILABLE',sourceMessage:text(reason)});}
   if(facts.valuation?.status==='ACCOUNT_VALUATION_INCONSISTENT')out.push({...template('ACCOUNT_VALUATION_INCONSISTENT','账户估值无法对账','同一 Binance 快照的钱包、浮盈亏与账户权益不一致。','检查交易所账户字段与资产换算；暂勿将该数字视为总资产。','ACCOUNT',['PRIVATE_DATA']),subsystem:'ACCOUNT',sourceCode:'ACCOUNT_VALUATION_INCONSISTENT',sourceMessage:'same-snapshot invariant failed'});
   // Historical UNKNOWN rows remain in the audit and risk occupancy models.  A
   // submit incident describes a current submit acknowledgement gap only.

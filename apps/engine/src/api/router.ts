@@ -90,9 +90,8 @@ export function createApiRouter(runtime: EngineRuntime) {
   const updateIncidents=()=>{
     const before=new Set(incidentTracker.read().active.map(row=>row.incidentId));
     const result=incidentTracker.observe(operationalCandidates({pipeline:runtime.pipelineStatus(),routes:binanceTransportGovernance(),account:runtime.state.account,marketStream:runtime.market.metrics(),valuation:(runtime.state.account as any).valuation,orders:[...runtime.state.entryOrders.values()]}));
-    const after=new Set(result.active.map(row=>row.incidentId));
     for(const row of result.active)if(!before.has(row.incidentId))runtime.events.publish('OPERATIONAL_INCIDENT_ACTIVATED',row,row.subsystem);
-    for(const row of result.history)if(before.has(row.incidentId)&&!after.has(row.incidentId))runtime.events.publish('OPERATIONAL_INCIDENT_RECOVERED',row,row.subsystem);
+    for(const row of result.recovered)runtime.events.publish('OPERATIONAL_INCIDENT_RECOVERED',row,row.subsystem);
     return result;
   };
   updateIncidents();

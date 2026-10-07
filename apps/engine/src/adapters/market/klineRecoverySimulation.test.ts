@@ -82,6 +82,8 @@ describe('V3.9.5 mass 1m gap heals without a request storm', () => {
     /** Quotes and books keep arriving; only the closed kline series is broken. */
     const pumpQuotes = () => {
       for (const symbol of SYMBOLS) {
+        stream.onEvent({ e: '24hrTicker', s: symbol, c: '100', q: '1000000000', P: '1', n: 100000, E: Date.now() });
+        stream.onEvent({ e: 'markPriceUpdate', s: symbol, p: '100', E: Date.now() });
         stream.onEvent({ e: 'bookTicker', s: symbol, b: '99.9', a: '100.1', E: Date.now() });
         stream.books.set(symbol, { symbol, bids: [[99.9, 1]], asks: [[100.1, 1]], ts: Date.now() });
       }

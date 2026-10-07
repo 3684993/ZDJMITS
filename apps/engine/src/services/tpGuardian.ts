@@ -82,9 +82,12 @@ export class TpGuardian {
       let fact:Awaited<ReturnType<NonNullable<ExchangeTradeAdapter['findExitByClientOrderId']>>>|null=null;
       try{fact=await this.exchange.findExitByClientOrderId({symbol:submitted.symbol,clientOrderId:prepared.clientOrderId});}catch{fact=null;}
       if(fact?.state==='FOUND'&&fact.order){
-        const executed=Number(fact.order.executedQuantity??0),original=Number(fact.order.originalQuantity??submitted.quantity)||submitted.quantity;
-        const adopted={...submitted,exchangeOrderId:String(fact.order.exchangeOrderId??''),filledQuantity:executed,status:(executed>=original-1e-12?'FILLED':executed>0?'PARTIALLY_FILLED':'WORKING') as TakeProfitOrder['status'],updatedAt:Date.now()} as TakeProfitOrder;
-        this.converge(prepared.clientOrderId,adopted,stepSize);
+        const executed=Number(fact.order.executedQuantity??0),original=Number(fact.order.originalQuantity??submitted.quantity),remoteStatus=String(fact.order.status??'');
+        const terminal=['CANCELED','EXPIRED','REJECTED'].includes(remoteStatus),valid=Number.isFinite(executed)&&Number.isFinite(original)&&original>0&&executed>=0&&executed<=original+1e-12;
+        const status=valid&&terminal?remoteStatus:valid&&['NEW','WORKING','PARTIALLY_FILLED','FILLED'].includes(remoteStatus)?(executed>=original-1e-12?'FILLED':remoteStatus==='FILLED'?'UNKNOWN':executed>0?'PARTIALLY_FILLED':'WORKING'):'UNKNOWN';
+        if(status==='UNKNOWN'){this.exitRuntime.markSubmitUncertain(prepared.clientOrderId,Date.now());throw new Error(`TP_EXACT_RECOVERY_FACT_UNVERIFIED:${remoteStatus}`);}
+        const adopted={...submitted,exchangeOrderId:String(fact.order.exchangeOrderId??''),filledQuantity:executed,status:status as TakeProfitOrder['status'],updatedAt:Number(fact.order.updateTime)||Date.now()} as TakeProfitOrder;
+        this.converge(prepared.clientOrderId,adopted,stepSize,'EXACT_ORDER');
         this.events.publish('TP_ORDER_RECOVERED_BY_CLIENT_ID',{positionId:submitted.positionId,clientOrderId:prepared.clientOrderId,status:adopted.status},submitted.symbol);
         return adopted;
       }
@@ -109,11 +112,11 @@ export class TpGuardian {
     return{adopted,blockers:[...new Set(blockers)]};
   }
 
-  private converge(clientOrderId:string,order:TakeProfitOrder,stepSize:number){
+  private converge(clientOrderId:string,order:TakeProfitOrder,stepSize:number,source?:'EXACT_ORDER'){
     // P1: the TP submit/cancel result is an exit-order fact like any other. Sending it through the
     // same reducer keeps the durable task, the quantity claim and this order row agreeing, instead
     // of the guardian advancing only the projection it owns.
-    this.exitRuntime.recordExitOrderReport(order.status==='CANCELED'||order.status==='EXPIRED'||order.status==='REJECTED'?'CANCEL_RESULT':'TP_SUBMIT_RESULT',{
+    this.exitRuntime.recordExitOrderReport(source??(order.status==='CANCELED'||order.status==='EXPIRED'||order.status==='REJECTED'?'CANCEL_RESULT':'TP_SUBMIT_RESULT'),{
       symbol:order.symbol,clientOrderId,exchangeOrderId:order.exchangeOrderId??'',
       positionSide:(order as any).positionSide??(order.side==='SELL'?'LONG':'SHORT'),
       status:order.status,originalQuantity:order.quantity,executedQuantity:Number((order as any).filledQuantity??0),updateTime:order.updatedAt??Date.now(),

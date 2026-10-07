@@ -81,15 +81,28 @@ export class BinancePublicMarketDataProvider implements MarketDataProvider {
 
   private async rules(symbol:string){const info=await this.info(),s=info.symbols.find((x:any)=>x.symbol===symbol);if(!s)throw new Error(`Unknown Binance symbol ${symbol}`);const pf=s.filters.find((x:any)=>x.filterType==='PRICE_FILTER'),lf=s.filters.find((x:any)=>x.filterType==='LOT_SIZE'),nf=s.filters.find((x:any)=>x.filterType==='MIN_NOTIONAL'),values={tickSize:Number(pf?.tickSize),stepSize:Number(lf?.stepSize),minQty:Number(lf?.minQty),minNotional:Number(nf?.notional)};if(!pf||!lf||!nf||Object.values(values).some(value=>!Number.isFinite(value)||value<=0))throw new Error(`BINANCE_REQUIRED_FILTER_INVALID:${symbol}`);return values;}
 
-  async getQuote(symbol:string):Promise<Quote>{
-    const cached=this.stream.quote(symbol),rules=await this.rules(symbol);
-    if(cached?.last&&cached.mark&&cached.bid&&cached.ask&&Date.now()-(cached.ts??0)<=15_000)return{symbol,last:cached.last,mark:cached.mark,bid:cached.bid,ask:cached.ask,...rules,quoteVolumeUsd24h:cached.quoteVolumeUsd24h??0,priceChangePercent24h:cached.priceChangePercent24h??0,tradeCount24h:cached.tradeCount24h??0,ts:cached.ts??Date.now()};
-    const [t,p,book]=await Promise.all([
-      this.json<any>(`/fapi/v1/ticker/24hr?symbol=${symbol}`),
-      this.json<any>(`/fapi/v1/premiumIndex?symbol=${symbol}`),
-      this.json<any>(`/fapi/v1/ticker/bookTicker?symbol=${symbol}`),
-    ]);
-    return{symbol,last:Number(t.lastPrice),mark:Number(p.markPrice),bid:Number(book.bidPrice),ask:Number(book.askPrice),...rules,quoteVolumeUsd24h:Number(t.quoteVolume),priceChangePercent24h:Number(t.priceChangePercent),tradeCount24h:Number(t.count??0),ts:Date.now()};
+  private quoteFlights=new Map<string,Promise<Quote>>();
+  private bookFlights=new Map<string,Promise<OrderBook>>();
+  private premiumFlights=new Map<string,Promise<any>>();
+  private premiumCache=new Map<string,{at:number;value:any}>();
+  private premiumIndex(symbol:string,critical:boolean){
+    const cached=this.premiumCache.get(symbol);if(cached&&Date.now()-cached.at<=5_000)return Promise.resolve(cached.value);
+    const pending=this.premiumFlights.get(symbol);if(pending)return pending;
+    const at=Date.now(),flight=this.transport.json<any>(`/fapi/v1/premiumIndex?symbol=${symbol}`,{source:critical?'MARKET_DATA':'BACKGROUND_AUDIT',purpose:critical?'QUOTE_MARK_RECOVERY':'DERIVATIVES_CONTEXT_MARK_PRICE',timeoutMs:critical?undefined:3_000}).then(value=>{if(this.premiumCache.size>=512)this.premiumCache.delete(this.premiumCache.keys().next().value!);this.premiumCache.set(symbol,{at,value});return value;}).finally(()=>this.premiumFlights.delete(symbol));this.premiumFlights.set(symbol,flight);return flight;
+  }
+  getQuote(symbol:string):Promise<Quote>{
+    const pending=this.quoteFlights.get(symbol);if(pending)return pending;
+    const flight=this.loadQuote(symbol).finally(()=>this.quoteFlights.delete(symbol));this.quoteFlights.set(symbol,flight);return flight;
+  }
+  private async loadQuote(symbol:string):Promise<Quote>{
+    const rules=await this.rules(symbol),fields=this.stream.quoteFields(symbol),work:Promise<unknown>[]=[];
+    // Required facts retain their own timestamp. Never pull all three endpoints for one gap.
+    if(fields.last===undefined||fields.quoteVolumeUsd24h===undefined){const at=Date.now();work.push(this.json<any>(`/fapi/v1/ticker/24hr?symbol=${symbol}`).then(t=>this.stream.seedQuote(symbol,{last:Number(t.lastPrice),quoteVolumeUsd24h:Number(t.quoteVolume),priceChangePercent24h:Number(t.priceChangePercent),tradeCount24h:Number(t.count??0),ts:at})));}
+    if(fields.mark===undefined){const at=Date.now();work.push(this.premiumIndex(symbol,true).then(p=>this.stream.seedQuote(symbol,{mark:Number(p.markPrice),ts:Number(p.time)>0?Number(p.time):at})));}
+    if(fields.bid===undefined||fields.ask===undefined)work.push(this.getOrderBook(symbol).then(book=>{if(!book.bids.length||!book.asks.length)throw new Error(`BINANCE_BOOK_FACT_UNAVAILABLE:${symbol}`);this.stream.seedQuote(symbol,{bid:book.bids[0]![0],ask:book.asks[0]![0],ts:book.ts});}));
+    await Promise.all(work);
+    const q=this.stream.quote(symbol);if(!q?.last||!q.mark||!q.bid||!q.ask||!q.ts)throw new Error(`BINANCE_REQUIRED_QUOTE_FACT_UNAVAILABLE:${symbol}`);
+    return{symbol,last:q.last,mark:q.mark,bid:q.bid,ask:q.ask,...rules,quoteVolumeUsd24h:q.quoteVolumeUsd24h??0,priceChangePercent24h:q.priceChangePercent24h??0,tradeCount24h:q.tradeCount24h??0,ts:q.ts};
   }
 
   private candleFlights=new Map<string,Promise<Candle[]>>();private candleCache=new Map<string,{rows:Candle[];until:number}>();
@@ -112,8 +125,8 @@ export class BinancePublicMarketDataProvider implements MarketDataProvider {
     this.repairFlights.set(key,flight);return flight;
   }
 
-  private async restOrderBook(symbol:string):Promise<OrderBook>{const d=await this.json<any>(`/fapi/v1/depth?symbol=${symbol}&limit=20`);return{symbol,bids:d.bids.map((x:any)=>[Number(x[0]),Number(x[1])] as [number,number]),asks:d.asks.map((x:any)=>[Number(x[0]),Number(x[1])] as [number,number]),ts:Date.now()};}
-  async getOrderBook(symbol:string):Promise<OrderBook>{return this.stream.book(symbol)??this.restOrderBook(symbol);}
+  private async restOrderBook(symbol:string):Promise<OrderBook>{const at=Date.now(),d=await this.json<any>(`/fapi/v1/depth?symbol=${symbol}&limit=20`),ts=Number(d.T??d.E)>0?Number(d.T??d.E):at;if(!Number.isFinite(ts)||ts>Date.now()+1_000)throw new Error(`BINANCE_BOOK_TIMESTAMP_INVALID:${symbol}`);return{symbol,bids:d.bids.map((x:any)=>[Number(x[0]),Number(x[1])] as [number,number]),asks:d.asks.map((x:any)=>[Number(x[0]),Number(x[1])] as [number,number]),ts};}
+  async getOrderBook(symbol:string):Promise<OrderBook>{const live=this.stream.book(symbol);if(live)return live;const pending=this.bookFlights.get(symbol);if(pending)return pending;const flight=this.restOrderBook(symbol).then(book=>{this.stream.seed(symbol,book,[]);return this.stream.book(symbol)??book;}).finally(()=>this.bookFlights.delete(symbol));this.bookFlights.set(symbol,flight);return flight;}
 
   hydrateLiveMarket(snapshot:MarketSymbolSnapshot):MarketSymbolSnapshot{const quote=this.stream.quote(snapshot.symbol),book=this.stream.book(snapshot.symbol);if(!quote&&!book)return snapshot;const now=Date.now();return{...snapshot,recentTradedPrices:this.stream.tradedPrices.near(snapshot.symbol,quote?.bid??snapshot.quote.bid,quote?.ask??snapshot.quote.ask,snapshot.quote.tickSize),quote:quote?{...snapshot.quote,last:quote.last??snapshot.quote.last,mark:quote.mark??snapshot.quote.mark,bid:quote.bid??snapshot.quote.bid,ask:quote.ask??snapshot.quote.ask,quoteVolumeUsd24h:quote.quoteVolumeUsd24h??snapshot.quote.quoteVolumeUsd24h,priceChangePercent24h:quote.priceChangePercent24h??snapshot.quote.priceChangePercent24h,tradeCount24h:quote.tradeCount24h??snapshot.quote.tradeCount24h,ts:quote.ts??now}:snapshot.quote,orderBook:book??snapshot.orderBook};}
   hydrateLiveTechnical(snapshot:MarketSymbolSnapshot):MarketSymbolSnapshot{const now=Date.now();for(const tf of ['1m','5m','15m'] as const){const period=tf==='1m'?60000:tf==='5m'?300000:900000,candles=this.stream.candleSeries(snapshot.symbol,period*2,tf);if(!candles)continue;const closed=candles.filter(c=>c.isClosed===true&&c.closeTime<now);if(closed.length<(tf==='15m'?240:20))continue;const sequence=closed.map(c=>`${c.openTime}:${c.closeTime}:${c.open}:${c.high}:${c.low}:${c.close}:${c.volume}`).join('|'),key=`${snapshot.symbol}:${tf}`;if(this.liveTechnicalFingerprint.get(key)===sequence)continue;this.liveTechnicalFingerprint.set(key,sequence);try{return{...snapshot,technical:{...snapshot.technical,[tf]:buildTechnicalCard(tf,candles)}};}catch(error){if(error&&typeof error==='object')Object.assign(error,{technicalTimeframe:tf,technicalSequence:sequence});throw error;}}return snapshot;}
@@ -130,8 +143,8 @@ export class BinancePublicMarketDataProvider implements MarketDataProvider {
       // Derivatives are contextual ranking evidence, never an Entry correctness fact. Keep these
       // bounded and on the BACKGROUND lane so a slow Testnet REST endpoint cannot stall a snapshot.
       const [oi,premium]=await Promise.all([
-        this.optional<any>(`/fapi/v1/openInterest?symbol=${key}`,null,{timeoutMs:3_000,source:'BACKGROUND',purpose:'DERIVATIVES_CONTEXT_OPEN_INTEREST'}),
-        this.optional<any>(`/fapi/v1/premiumIndex?symbol=${key}`,null,{timeoutMs:3_000,source:'BACKGROUND',purpose:'DERIVATIVES_CONTEXT_MARK_PRICE'}),
+        this.optional<any>(`/fapi/v1/openInterest?symbol=${key}`,null,{timeoutMs:3_000,source:'BACKGROUND_AUDIT',purpose:'DERIVATIVES_CONTEXT_OPEN_INTEREST'}),
+        this.premiumIndex(key,false).catch(()=>null),
       ]);
       let oiHist:any[]=[],taker:any[]=[],globalRatio:any[]=[],topPos:any[]=[];
       if(!testnet){
@@ -149,13 +162,13 @@ export class BinancePublicMarketDataProvider implements MarketDataProvider {
 
   async getSnapshot(symbol:string):Promise<MarketSymbolSnapshot>{
     const frames=["1m","5m","15m","1h","4h","1d","1w"] as Timeframe[],hydrateOrder=["15m","1m","5m","1h","4h","1d","1w"] as Timeframe[];
-    // The transport budget remains the concurrency governor. Parallelizing independent reads avoids
-    // multiplying proxy latency across seven serial calls while preserving Binance's request limits.
-    const [quote,orderBook,...loaded]=await Promise.all([
-      this.getQuote(symbol),
-      this.getOrderBook(symbol),
-      ...hydrateOrder.map(tf=>tf==='1m'?this.getCandles(symbol,tf,81):tf==='5m'?this.getCandles(symbol,tf,81):tf==='15m'?this.getCandles(symbol,tf,241):tf==='1h'?this.hourlyCandles(symbol):this.getCandles(symbol,tf,80)),
-    ]);
+    // Resolve executable facts first. Candle hydration is two reads per symbol, not a
+    // seven-request fanout competing with current account/reduction truth.
+    const [quote,orderBook]=await Promise.all([this.getQuote(symbol),this.getOrderBook(symbol)]);
+    const loaded:Candle[][]=new Array(hydrateOrder.length);let cursor=0;
+    const worker=async()=>{while(cursor<hydrateOrder.length){const index=cursor++,tf=hydrateOrder[index]!;loaded[index]=await (tf==='1m'?this.getCandles(symbol,tf,81):tf==='5m'?this.getCandles(symbol,tf,81):tf==='15m'?this.getCandles(symbol,tf,241):tf==='1h'?this.hourlyCandles(symbol):this.getCandles(symbol,tf,80));}};
+    await Promise.all([worker(),worker()]);
+
     const byFrame=new Map<Timeframe,Candle[]>();hydrateOrder.forEach((tf,index)=>byFrame.set(tf,loaded[index]??[]));
     // Open interest/funding context is refreshed on the slow-field cadence. Cold startup must not wait
     // for it, and missing derivatives are neutral evidence rather than incomplete execution data.

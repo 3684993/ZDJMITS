@@ -94,3 +94,29 @@ describe('V3.9.5 closed-kline continuity accounting',()=>{
     expect((stream.metrics() as any).lastKlineGap).toMatchObject({timeframe:'5m',expectedOpenTime:base+300_000,missingBars:1});
   });
 });
+
+
+it('keeps ticker/mark freshness independent from current book events and rejects older/future repairs',()=>{
+ vi.useFakeTimers();vi.setSystemTime(1_800_000_000_000);
+ try{
+  const stream=new BinanceMarketStream({} as never,vi.fn()),now=Date.now();stream.updateSymbols(['BTCUSDT']);
+  stream.seedQuote('BTCUSDT',{last:100,mark:101,bid:99,ask:102,ts:now-60_000});
+  (stream as any).onEvent({e:'bookTicker',s:'BTCUSDT',b:'104',a:'105',E:now});
+  expect(stream.quote('BTCUSDT')).toBeUndefined();expect(stream.quoteFields('BTCUSDT')).toMatchObject({bid:104,ask:105});
+  expect(stream.quoteFields('BTCUSDT').mark).toBeUndefined();
+  stream.seedQuote('BTCUSDT',{last:103,mark:104,ts:now-100});
+  stream.seedQuote('BTCUSDT',{bid:1,ask:2,ts:now-200});
+  stream.seedQuote('BTCUSDT',{last:999,mark:999,ts:now+60_000});
+  expect(stream.quote('BTCUSDT')).toMatchObject({last:103,mark:104,bid:104,ask:105,ts:now-100});
+  stream.seed('BTCUSDT',book(now),[]);stream.seed('BTCUSDT',{...book(now-100),bids:[[1,1]]},[]);
+  expect(stream.book('BTCUSDT')!.bids[0]![0]).toBe(100);
+ }finally{vi.useRealTimers();}
+});
+
+
+it('does not replace a current depth book with an older WS event or a future REST seed',()=>{
+ const stream=new BinanceMarketStream({} as never,vi.fn()),now=Date.now();stream.updateSymbols(['BTCUSDT']);stream.seed('BTCUSDT',book(now),[]);
+ (stream as any).onEvent({e:'depthUpdate',s:'BTCUSDT',u:12,pu:0,b:[[1,1]],a:[[2,1]],E:now-100});
+ stream.seed('BTCUSDT',{...book(now+60_000),bids:[[999,1]]},[]);
+ expect(stream.book('BTCUSDT')!.bids[0]![0]).toBe(100);
+});

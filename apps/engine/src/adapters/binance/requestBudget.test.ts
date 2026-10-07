@@ -97,7 +97,7 @@ it('defers BACKGROUND before PRIVATE_TRUTH under exchange pressure',async()=>{
 it('does not mistake an older concurrent response for a same-window Binance counter discontinuity',async()=>{
  vi.useFakeTimers();vi.setSystemTime(1_800_000_010_000);
  try{
-  const budget=new RequestBudget(2,2,100);
+  const budget=new RequestBudget(3,2,100);
   let releaseA!:()=>void,releaseB!:()=>void;
   const aMeta={requestId:'concurrent-a',source:'PRIVATE_STATE',endpoint:'/fapi/v2/account'};
   const bMeta={requestId:'concurrent-b',source:'RECONCILIATION',endpoint:'/fapi/v1/openOrders'};
@@ -114,4 +114,19 @@ it('does not mistake an older concurrent response for a same-window Binance coun
   expect(budget.health().rateLimits).toEqual(expect.arrayContaining([expect.objectContaining({rateLimitType:'REQUEST_WEIGHT',observedCount:200,counterDiscontinuity:false})]));
   expect(budget.health().weightObservations.at(-1)).toMatchObject({usedWeight1m:190,counterDiscontinuity:false,staleOutOfOrder:true});
  }finally{vi.useRealTimers();}
+});
+
+
+it('reserves a current-account slot under private reconciliation saturation',async()=>{
+ const budget=new RequestBudget(3,2,100),release:Array<()=>void>=[];
+ const work=Array.from({length:2},(_,i)=>budget.run(1,1,()=>new Promise<void>(r=>release.push(r)),{source:'RECONCILIATION',endpoint:'/fapi/v1/openOrders',requestId:`history-${i}`}));
+ await new Promise(r=>setImmediate(r));expect(release).toHaveLength(2);
+ const account=vi.fn(async()=>true);await expect(budget.run(1,1,account,{source:'PRIVATE_STATE',endpoint:'/fapi/v2/account'})).resolves.toBe(true);expect(account).toHaveBeenCalledOnce();
+ release.forEach(r=>r());await Promise.all(work);
+});
+it('removes canceled queued reads without dispatching them after capacity returns',async()=>{
+ const budget=new RequestBudget(1,1,100),controller=new AbortController();let release!:()=>void;
+ const active=budget.run(1,1,()=>new Promise<void>(r=>release=r),{source:'PRIVATE_STATE',endpoint:'/fapi/v2/account'});
+ await new Promise(r=>setImmediate(r));const fn=vi.fn(async()=>{}),pending=budget.run(4,1,fn,{source:'BACKGROUND',endpoint:'/fapi/v1/order'},controller.signal);
+ const rejected=expect(pending).rejects.toThrow('BINANCE_READ_ABORTED');controller.abort();await rejected;expect(budget.health().queued).toBe(0);release();await active;expect(fn).not.toHaveBeenCalled();
 });

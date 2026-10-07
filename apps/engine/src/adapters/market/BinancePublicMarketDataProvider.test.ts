@@ -1,6 +1,21 @@
 import { describe, expect, it, vi } from "vitest";
 import { BinancePublicMarketDataProvider } from "./BinancePublicMarketDataProvider.js";
 
+it('repairs only missing quote facts, shares concurrent repairs and retains newer WS facts',async()=>{
+ const now=Date.now(),filters=[{filterType:'PRICE_FILTER',tickSize:'0.1'},{filterType:'LOT_SIZE',minQty:'0.001',stepSize:'0.001'},{filterType:'MIN_NOTIONAL',notional:'5'}];let stream:any;
+ const json=vi.fn(async(path:string)=>{
+  if(path==='/fapi/v1/exchangeInfo')return{symbols:[{symbol:'BTCUSDT',filters}]};
+  if(path.includes('ticker/24hr')){stream.seedQuote('BTCUSDT',{last:110,ts:Date.now()+1});return{lastPrice:'100',quoteVolume:'1000',priceChangePercent:'1',count:5};}
+  throw new Error(`unexpected redundant REST: ${path}`);
+ });
+ const provider=new BinancePublicMarketDataProvider({json} as any);stream=(provider as any).stream;
+ stream.seedQuote('BTCUSDT',{mark:101,bid:100,ask:102,ts:now});
+ const quotes=await Promise.all(Array.from({length:20},()=>provider.getQuote('BTCUSDT')));
+ expect(quotes.every(q=>q.last===110&&q.mark===101&&q.bid===100&&q.ask===102)).toBe(true);
+ expect(json.mock.calls.filter(call=>call[0].includes('ticker/24hr'))).toHaveLength(1);
+ expect(json.mock.calls.some(call=>/premiumIndex|depth|bookTicker/.test(call[0]))).toBe(false);
+});
+
 it('advances all three closed frames during a REST outage without crossing frame histories',()=>{
  const provider=new BinancePublicMarketDataProvider({json:vi.fn(()=>Promise.reject(new Error('418')))} as any),stream=(provider as any).stream,now=Date.now();
  let snapshot:any={symbol:'BTCUSDT',technical:{}};
@@ -29,8 +44,8 @@ describe("BinancePublicMarketDataProvider live symbols", () => {
     expect(discovered).toContain('BTCUSDC');expect(discovered).toContain('ETHUSDC');
   });
   it('does not return an expired WebSocket quote when an independent REST quote is required', async () => {
-    const transport={json:vi.fn(async(path:string)=>{if(path==='/fapi/v1/exchangeInfo')return{symbols:[{symbol:'BTCUSDT',filters:[{filterType:'PRICE_FILTER',tickSize:'0.1'},{filterType:'LOT_SIZE',minQty:'0.001',stepSize:'0.001'},{filterType:'MIN_NOTIONAL',notional:'5'}]}]};if(path.includes('ticker/24hr'))return{lastPrice:'100',quoteVolume:'10',priceChangePercent:'0',count:1};if(path.includes('premiumIndex'))return{markPrice:'100'};if(path.includes('bookTicker'))return{bidPrice:'99.9',askPrice:'100.1'};return [];})} as any;
-    const provider=new BinancePublicMarketDataProvider(transport),stream=(provider as any).stream;vi.spyOn(stream,'quote').mockReturnValue({last:90,mark:90,bid:89,ask:91,ts:Date.now()-15_001});const quote=await provider.getQuote('BTCUSDT');expect(quote).toMatchObject({last:100,mark:100,bid:99.9,ask:100.1});expect(transport.json).toHaveBeenCalledWith('/fapi/v1/ticker/24hr?symbol=BTCUSDT');
+    const transport={json:vi.fn(async(path:string)=>{if(path==='/fapi/v1/exchangeInfo')return{symbols:[{symbol:'BTCUSDT',filters:[{filterType:'PRICE_FILTER',tickSize:'0.1'},{filterType:'LOT_SIZE',minQty:'0.001',stepSize:'0.001'},{filterType:'MIN_NOTIONAL',notional:'5'}]}]};if(path.includes('ticker/24hr'))return{lastPrice:'100',quoteVolume:'10',priceChangePercent:'0',count:1};if(path.includes('premiumIndex'))return{markPrice:'100'};if(path.includes('depth'))return{bids:[['99.9','1']],asks:[['100.1','1']]};return [];})} as any;
+    const provider=new BinancePublicMarketDataProvider(transport),stream=(provider as any).stream;stream.seedQuote('BTCUSDT',{last:90,mark:90,bid:89,ask:91,ts:Date.now()-15_001});const quote=await provider.getQuote('BTCUSDT');expect(quote).toMatchObject({last:100,mark:100,bid:99.9,ask:100.1});expect(transport.json).toHaveBeenCalledWith('/fapi/v1/ticker/24hr?symbol=BTCUSDT');
   });
   it('rejects missing exchange filters instead of inventing executable rules',async()=>{const transport={json:vi.fn(async(path:string)=>path==='/fapi/v1/exchangeInfo'?{symbols:[{symbol:'BTCUSDT',filters:[{filterType:'PRICE_FILTER',tickSize:'0.1'}]}]}:{lastPrice:'100',markPrice:'100',bidPrice:'99',askPrice:'101'})} as any;const provider=new BinancePublicMarketDataProvider(transport);await expect(provider.getQuote('BTCUSDT')).rejects.toThrow('BINANCE_REQUIRED_FILTER_INVALID');});
   it("keeps discovery side-effect free and makes retention the authoritative WS set", async () => {
@@ -63,7 +78,7 @@ it('hydrates a cold snapshot in bounded REST phases with 15m candles first',asyn
     return[];
   });
   const provider=new BinancePublicMarketDataProvider({json,environment:()=> 'TESTNET',streamUrl:()=>'',proxyAgent:()=>undefined,restRoute:()=>({routeIdentity:'test'})} as any),stream=(provider as any).stream;
-  vi.spyOn(stream,'quote').mockReturnValue(null);vi.spyOn(stream,'book').mockReturnValue(null);vi.spyOn(stream,'candleSeries').mockReturnValue(null);vi.spyOn(stream,'seedCandles').mockImplementation(()=>{});vi.spyOn(stream,'seed').mockImplementation(()=>{});
+  vi.spyOn(stream,'book').mockReturnValue(null);vi.spyOn(stream,'candleSeries').mockReturnValue(null);vi.spyOn(stream,'seedCandles').mockImplementation(()=>{});vi.spyOn(stream,'seed').mockImplementation(()=>{});
   const snapshot=await provider.getSnapshot('BTCUSDT');
   expect(snapshot.technical['15m']).toBeDefined();expect(maxInFlight).toBeGreaterThan(1);
   expect(snapshot.derivatives.openInterest).toBeNull();expect(snapshot.dataCompleteness).toBeGreaterThanOrEqual(.86);

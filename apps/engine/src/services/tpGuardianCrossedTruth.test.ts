@@ -19,3 +19,15 @@ function fixture(crossed:boolean){
 it('marks a crossed still-open TP pending and bounds exact verification to one request per 30s',async()=>{const x=fixture(true),previous=x.position.tpLastVerifiedAt;await x.guardian.ensure(x.position);await x.guardian.ensure(x.state.positions.get('p1')!);expect(x.exact).toHaveBeenCalledOnce();expect(x.state.positions.get('p1')).toMatchObject({tpStatus:'PENDING',tpOrderId:'tp1'});expect(x.state.positions.get('p1')!.tpLastVerifiedAt).toBeGreaterThan(previous);});
 
 it('does not manufacture a new verification timestamp from an untouched local WORKING TP',async()=>{const x=fixture(false),previous=x.position.tpLastVerifiedAt;await x.guardian.ensure(x.position);expect(x.exact).not.toHaveBeenCalled();expect(x.state.positions.get('p1')).toMatchObject({tpStatus:'PROTECTED',tpOrderId:'tp1',tpLastVerifiedAt:previous});});
+
+
+it.each(['CANCELED','EXPIRED','REJECTED'] as const)('retains exact remote %s after a lost TP ACK, including partial executions',async(status)=>{
+ const x=fixture(false);x.state.tpOrders.clear();const runtime=exitRuntimeHarness();
+ const placeTakeProfit=vi.fn(async()=>{throw new Error('Binance request timed out');});
+ const findExitByClientOrderId=vi.fn(async(input:any)=>({state:'FOUND',order:{symbol:x.tp.symbol,clientOrderId:input.clientOrderId,exchangeOrderId:'terminal-1',status,originalQuantity:10,executedQuantity:2,updateTime:Date.now()}}));
+ const exchange:any={...coordinatedExchange({liveQuantity:10}),placeTakeProfit,findExitByClientOrderId};
+ const guardian=new TpGuardian(x.state,exchange,new EventBus(),runtime);
+ const result=await guardian.place({...x.tp,status:'NEW'},{stepSize:1,tickSize:.001});
+ expect(result).toMatchObject({status,filledQuantity:2});expect(runtime.task(result.clientOrderId!)?.state).toBe(status);
+ expect(placeTakeProfit).toHaveBeenCalledOnce();expect(findExitByClientOrderId).toHaveBeenCalledOnce();
+});

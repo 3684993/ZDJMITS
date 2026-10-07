@@ -16,7 +16,7 @@ describe('user-facing operational incidents',()=>{
     expect(classify('Binance HTTP 400: {"code":-1000,"msg":"An unknown error occurred while processing the request."}')).toMatchObject({publicCode:'EX-BINANCE-1000',titleZh:'Binance 临时处理异常 -1000',category:'EXCHANGE'});
     expect(classify('ENTRY_SUBMIT_UNACKED')?.publicCode).toBe('EX-SUBMIT-UNKNOWN');
     expect(classify('BINANCE_REQUEST_QUEUE_TIMEOUT')).toBeNull();
-    expect(classify('BINANCE_REQUEST_QUEUE_TIMEOUT',{transportEvidence:true})?.publicCode).toBe('NET-002');
+    expect(classify('BINANCE_REQUEST_QUEUE_TIMEOUT',{transportEvidence:true})?.publicCode).toBe('BINANCE-QUEUE-001');
     expect(classify('BINANCE_REQUEST_QUEUE_TIMEOUT',{transportEvidence:true,budgetPressureProven:true})).toBeNull();
   });
   it('dedupes a root cause, clears active on recovery and retains history',()=>{
@@ -103,4 +103,16 @@ describe('user-facing operational incidents',()=>{
     expect(classify(missing,{method:'DELETE',endpoint:'/fapi/v1/order'})?.publicCode).toBe('EX-BINANCE-2013');
     expect(classify(missing,{method:'POST',endpoint:'/fapi/v1/order'})?.publicCode).toBe('EX-BINANCE-2013');
   });
+});
+
+
+it('does not let one private timeout bypass the sustained NET-002 criterion',()=>{
+ const rows=operationalCandidates({pipeline:{pipelineState:'RUNNING'},routes:[],account:{status:'UNAVAILABLE',reason:'BINANCE_REQUEST_QUEUE_TIMEOUT|requestId=private-one|endpoint=/fapi/v2/account'}});
+ expect(rows.some(row=>row.publicCode==='NET-002')).toBe(false);
+ expect(rows.some(row=>row.publicCode==='PRIVATE-DATA-001')).toBe(true);
+});
+it('returns recovery transitions once rather than replaying historical recoveries',()=>{
+ const tracker=new OperationalIncidentTracker(),candidate=classifyOperationalError({message:'Binance request timed out'})!;
+ for(let cycle=0;cycle<3;cycle++){tracker.observe([candidate],100+cycle*100);expect(tracker.observe([],110+cycle*100).recovered).toHaveLength(1);expect(tracker.observe([],120+cycle*100).recovered).toHaveLength(0);}
+ expect(tracker.read().history).toHaveLength(3);
 });

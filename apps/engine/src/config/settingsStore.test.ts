@@ -40,8 +40,8 @@ describe('SettingsStore', () => {
   it('moves persisted review duties off Entry Primary when a dedicated Review resource exists',async()=>{
     const dir=await mkdtemp(path.join(os.tmpdir(),'zdj-review-route-migration-'));paths.push(dir);const configDir=path.resolve(process.cwd(),'../../config');
     const first=new SettingsStore(configDir,dir),base:any=await first.load(),primary=base.aiResources.find((row:any)=>row.role==='PRIMARY_BRAIN');
-    const review={id:'brain-review-test',name:'Review GPU',role:'REVIEW_BRAIN',enabled:true,baseUrl:'http://127.0.0.1:8083/v1',model:'review-model',maxConcurrency:1,gpu:'GPU2'};
-    base.aiResources=[...base.aiResources.filter((row:any)=>row.id!==review.id),review];
+    const review=base.aiResources.find((row:any)=>row.role==='REVIEW_BRAIN'&&row.enabled!==false);
+    expect(review).toBeTruthy();
     base.aiDutyRoutes=[
       ...base.aiDutyRoutes.filter((row:any)=>!['PENDING_ENTRY_REVIEW','POSITION_REVIEW'].includes(row.duty)),
       {duty:'PENDING_ENTRY_REVIEW',resourceId:primary.id,enabled:true,priority:20},

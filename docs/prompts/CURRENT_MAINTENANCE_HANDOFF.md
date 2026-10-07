@@ -124,8 +124,17 @@ Final local gate on implementation commit `f634ca4c4b1f363f604c937c42d79ca2075d6
 - release identity: `V397_RELEASE_IDENTITY_PASS`;
 - S00 T01-T06: PASS, network not used, exchange writes 0, lifecycle not used;
 - workspace typecheck and production build: PASS;
-- Contracts 1 file / 2 tests, Core 8 / 58, Dashboard 24 / 123, Engine 198 / 1,761: PASS;
+- Contracts 1 file / 2 tests, Core 8 / 58, Dashboard 24 / 123, Engine 198 / 1,762: PASS;
 - GitHub Actions was not used as a decision or acceptance dependency.
+
+Runtime acceptance on integrated code/main baseline `171024bbcf9379636ab479a0db7e291fd29038f0`:
+- only 8080 was restarted with `MANUAL_START`; PID `50704`, instance `c14f2328-1ccf-49dd-bac6-5263cbecba3f`, `/health` 200 `READY`;
+- runtime source/artifact hashes matched independent disk recomputation; build id `3.9.7-00e1112122c1665b5b51`;
+- TESTNET + `TESTNET_ENABLED`, `lockedToTestnet=true`, Production writes 0, TESTNET writes during acceptance 0;
+- market WS `LIVE`, private account `READY`, pipeline `RUNNING`, scheduler `RUNNING`, TP 10/10 protected and active operational incidents 0;
+- Exchange/Proxy/AI resources loaded at Settings version 247; active proxy remained `binance-proxy` with no destructive migration;
+- SQLite integrity remained true with existing history retained. Historical UNKNOWN risk claims remain visible/fail-closed and keep reconciliation `DEGRADED`; they were not erased or manufactured away;
+- 8081/8083/8084 retained PIDs `12732` / `17468` / `51124` and were not restarted.
 
 For Codex/local continuation, use:
 `docs/prompts/CODEX_MAINTENANCE_CONTINUATION.md`

@@ -89,7 +89,9 @@ Implementation commit `f634ca4c4b1f363f604c937c42d79ca2075d68bf` completes the r
 - explicit manual LIMIT submission without a live preview is covered through the Dashboard/API boundary;
 - the safe Windows Engine host tolerates harmless Node probe stderr without weakening child-exit evidence capture.
 
-The final local `npm run verify` passed release identity, S00 T01-T06, all repository script self-tests, workspace typecheck, production build, Contracts 2 tests, Core 58 tests, Dashboard 123 tests and Engine 1,761 tests. The audit also retained exact-order single-flight/UNKNOWN non-resubmission, real required-market fail-closed behavior, bounded Review/Research, reconciliation budgets and storage/crash protections. No hosted CI result was used.
+The final local `npm run verify` passed release identity, S00 T01-T06, all repository script self-tests, workspace typecheck, production build, Contracts 2 tests, Core 58 tests, Dashboard 123 tests and Engine 1,762 tests. The audit also retained exact-order single-flight/UNKNOWN non-resubmission, real required-market fail-closed behavior, bounded Review/Research, reconciliation budgets and storage/crash protections. No hosted CI result was used.
+
+Post-integration runtime acceptance used code/main baseline `171024bbcf9379636ab479a0db7e291fd29038f0`. Only 8080 was restarted by `MANUAL_START`; it reached `/health` 200 `READY` as PID 50704 with independently matched source/artifact hashes. TESTNET was active, the testnet-only lock was true, Production writes and acceptance-time TESTNET writes were both 0, market/private/pipeline/scheduler/TP checks were healthy, Settings resources loaded, and active incidents were empty. Existing historical UNKNOWN risk claims remain auditable and fail-closed, so reconciliation truthfully reports `DEGRADED`; no history was deleted to manufacture a green state. 8081/8083/8084 retained PIDs 12732/17468/51124 and were not restarted.
 
 ## Priority A — Binance latency / NET-002
 

@@ -1,0 +1,98 @@
+(node:27852) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:14288) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:39536) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+ RUN  v3.2.7 D:/MITS-WORKTREES/v397-tp-terminal-projection-20261007
+
+(node:9564) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:18180) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:36716) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:44336) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:27320) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:28608) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:10004) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:14512) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:48432) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:9240) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:7584) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:35920) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:26448) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:39380) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:48068) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:12756) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:9564) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:31376) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ apps/engine/src/services/exitConvergenceFairness.test.ts (15 tests) 3435ms
+   ✓ P1 exit convergence fairness > a terminal order at the tail is serviced even while the head stays WORKING  1499ms
+   ✓ P1 exit convergence fairness > readback reports queue length, oldest unpolled age and terminal-unreleased claims  342ms
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  apps/engine/src/services/tpGuardianCrossedTruth.test.ts [ apps/engine/src/services/tpGuardianCrossedTruth.test.ts ]
+Error: Failed to resolve entry for package "@zdj/contracts". The package may have incorrect main/module/exports specified in its package.json.
+  Plugin: vite:import-analysis
+  File: D:/MITS-WORKTREES/v397-tp-terminal-projection-20261007/apps/engine/src/services/tpGuardianCrossedTruth.test.ts:2:35
+  1  |  import { expect, it, vi } from "vitest";
+  2  |  import { SystemSettingsSchema } from "@zdj/contracts";
+     |                                        ^
+  3  |  import defaults from "../../../../config/settings.default.json";
+  4  |  import { RuntimeState } from "../state/runtimeState.js";
+ ❯ packageEntryFailure node_modules/vite/dist/node/chunks/config.js:32896:32
+ ❯ resolvePackageEntry node_modules/vite/dist/node/chunks/config.js:32893:2
+ ❯ tryNodeResolve node_modules/vite/dist/node/chunks/config.js:32796:70
+ ❯ ResolveIdContext.handler node_modules/vite/dist/node/chunks/config.js:32635:16
+ ❯ EnvironmentPluginContainer.resolveId node_modules/vite/dist/node/chunks/config.js:28797:56
+ ❯ TransformPluginContext.resolve node_modules/vite/dist/node/chunks/config.js:29009:13
+ ❯ normalizeUrl node_modules/vite/dist/node/chunks/config.js:27191:22
+ ❯ node_modules/vite/dist/node/chunks/config.js:27257:32
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  apps/engine/src/services/tpTerminalProjection.test.ts [ apps/engine/src/services/tpTerminalProjection.test.ts ]
+Error: Failed to resolve entry for package "@zdj/core". The package may have incorrect main/module/exports specified in its package.json.
+  Plugin: vite:import-analysis
+  File: D:/MITS-WORKTREES/v397-tp-terminal-projection-20261007/apps/engine/src/state/runtimeState.ts:3:38
+  1  |  import { reservationDebitsAvailableFunds } from "../services/entryFundingCommitment.js";
+  2  |  import { testnetFundsOnlyEntry } from "@zdj/core";
+     |                                         ^
+  3  |  import { DynamicPool, resolveUnderlying } from "@zdj/core";
+  4  |  import { entryOrderOccupiesRisk } from "../services/entryRiskOccupancy.js";
+ ❯ packageEntryFailure node_modules/vite/dist/node/chunks/config.js:32896:32
+ ❯ resolvePackageEntry node_modules/vite/dist/node/chunks/config.js:32893:2
+ ❯ tryNodeResolve node_modules/vite/dist/node/chunks/config.js:32796:70
+ ❯ ResolveIdContext.handler node_modules/vite/dist/node/chunks/config.js:32635:16
+ ❯ EnvironmentPluginContainer.resolveId node_modules/vite/dist/node/chunks/config.js:28797:56
+ ❯ TransformPluginContext.resolve node_modules/vite/dist/node/chunks/config.js:29009:13
+ ❯ normalizeUrl node_modules/vite/dist/node/chunks/config.js:27191:22
+ ❯ node_modules/vite/dist/node/chunks/config.js:27257:32
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed | 1 passed (3)
+      Tests  15 passed (15)
+   Start at  22:51:59
+   Duration  4.69s (transform 356ms, setup 0ms, collect 311ms, tests 3.44s, environment 1ms, prepare 1.55s)
+
+(node:28716) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)

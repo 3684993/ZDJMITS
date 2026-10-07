@@ -1,0 +1,46 @@
+{
+ "branch": "main",
+ "localHead": "4a412de6c8c1c70e78cd9fb5c2dccb26e62ad36a",
+ "remoteHead": "4a412de6c8c1c70e78cd9fb5c2dccb26e62ad36a",
+ "gitHeadSubject": "docs: isolate growing short feedback evidence",
+ "computed": {
+  "sourceHash": "c66dbb739b51445750c2cc7771197dcaad94043778f43d1ef7a0f35e84e96772",
+  "artifactHash": "3b3fc50d6016c6569b99fa066dfe42b138e836396f2fb85f85bd343b68c80cc8",
+  "buildId": "3.9.7-3b3fc50d6016c6569b99"
+ },
+ "runtimeFile": {
+  "instanceId": "0c050f74-fc64-43ea-af88-2e1728edfb93",
+  "pid": 9112,
+  "startedAt": 1791384230613,
+  "host": "0.0.0.0",
+  "port": 8080,
+  "version": "3.9.7",
+  "buildId": "3.9.7-3b3fc50d6016c6569b99",
+  "artifactHash": "3b3fc50d6016c6569b99fa066dfe42b138e836396f2fb85f85bd343b68c80cc8",
+  "sourceHash": "c66dbb739b51445750c2cc7771197dcaad94043778f43d1ef7a0f35e84e96772",
+  "startReason": "MANUAL_START",
+  "lanIps": [
+   "192.168.1.50"
+  ],
+  "restartCount": 264
+ },
+ "runtimeApi": {
+  "buildId": "3.9.7-3b3fc50d6016c6569b99",
+  "instanceId": "0c050f74-fc64-43ea-af88-2e1728edfb93",
+  "pid": 9112,
+  "version": "3.9.7",
+  "lastRestartReason": "MANUAL_START",
+  "restartCount": 264,
+  "lastRestartAt": 1791384230613
+ },
+ "dirtySourcePaths": "",
+ "checks": {
+  "remoteHeadEqualsLocalHead": true,
+  "committedSourceTreeMatchesRuntimeSourceHash": true,
+  "workingDistMatchesRuntimeArtifactHash": true,
+  "buildIdDerivedFromArtifactHash": true,
+  "runtimeApiMatchesInstanceFile": true,
+  "sourceTreeCleanForHashedFolders": true
+ },
+ "verdict": "IDENTITY_CLOSED"
+}

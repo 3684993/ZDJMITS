@@ -1,0 +1,30 @@
+[
+  {
+    "State": 100,
+    "LocalAddress": "0.0.0.0",
+    "LocalPort": 56537,
+    "RemoteAddress": "0.0.0.0",
+    "RemotePort": 0
+  },
+  {
+    "State": 5,
+    "LocalAddress": "192.168.1.50",
+    "LocalPort": 56537,
+    "RemoteAddress": "43.156.0.24",
+    "RemotePort": 22091
+  },
+  {
+    "State": 8,
+    "LocalAddress": "127.0.0.1",
+    "LocalPort": 20091,
+    "RemoteAddress": "127.0.0.1",
+    "RemotePort": 53869
+  },
+  {
+    "State": 2,
+    "LocalAddress": "127.0.0.1",
+    "LocalPort": 20091,
+    "RemoteAddress": "0.0.0.0",
+    "RemotePort": 0
+  }
+]

@@ -1,12 +1,12 @@
 import type {Position} from '@zdj/contracts';
 import type {AdapterCapabilities,CoordinatorResult,ExitTask,ExitTaskState} from './s04ExitCoordinator.js';
-import {PositionExitCoordinator,OPEN_STATES} from './s04ExitCoordinator.js';
+import {PositionExitCoordinator,OPEN_STATES,parseExitScope} from './s04ExitCoordinator.js';
 import {OwnershipJournal} from './ownershipJournal.js';
 import {OwnershipService,type ProtectionMandate} from './ownershipService.js';
 import {executionScope} from './executionLifecycle.js';
 import type {AiExitVerdict} from './s03AiExitPolicy.js';
 import type {ExitFactSource,VerifiedExitOrderFact} from './exitOrderFact.js';
-import {normalizeExitOrderFact} from './exitOrderFact.js';
+import {normalizeExitOrderFact,exitFactProvesTerminal} from './exitOrderFact.js';
 import {OrderProvenanceRegistry} from './orderProvenanceRegistry.js';
 import {confirmedTpNotSent} from './tpSubmissionOutcome.js';
 
@@ -51,6 +51,22 @@ export class V396ExitRuntime {
   private readonly recoveryCoordinator:PositionExitCoordinator;
   readonly provenance:OrderProvenanceRegistry;
 
+  private terminalListeners:Array<(fact:VerifiedExitOrderFact)=>void>=[];
+  onTerminalFact(listener:(fact:VerifiedExitOrderFact)=>void){this.terminalListeners.push(listener);}
+  private terminalFactMatchesTask(fact:VerifiedExitOrderFact,task:ExitTask|null=this.task(fact.clientOrderId)){
+    if(!exitFactProvesTerminal(fact)||!fact.exchangeOrderId||fact.exchangeStatus!==fact.state||!Number.isFinite(fact.originalQty)||!Number.isFinite(fact.executedQty)||fact.originalQty<=0||fact.executedQty<0||fact.executedQty>fact.originalQty)return false;
+    const scope=task?parseExitScope(task.scope):null,identity=this.exchangeIdentity();
+    return Boolean(task&&scope&&task.source==='TP'&&task.state===fact.state&&scope.environment===identity.environment&&scope.account===identity.account&&scope.symbol===fact.symbol&&scope.environment===fact.environment&&scope.account===fact.accountId&&
+      (fact.positionSide==='BOTH'||fact.positionSide===scope.side)&&V396ExitRuntime.quantityUnitsOf(fact.originalQty,task.stepSize)===task.quantityUnits&&V396ExitRuntime.quantityUnitsOf(fact.executedQty,task.stepSize)===task.filledUnits&&Math.abs(task.filledUnits*task.stepSize-fact.executedQty)<=1e-9);
+  }
+  /** Replay retained terminal exchange evidence, never infer terminality from task state alone. */
+  terminalOrderFacts(){
+    const facts:VerifiedExitOrderFact[]=[],tasks=new Map(this.recoveryCoordinator.allTasks().map(task=>[task.clientOrderId,task]));
+    for(const row of this.journal.query<{payload:string}>("SELECT payload FROM v396_exit_observed WHERE json_extract(payload,'$.state') IN ('FILLED','CANCELED','EXPIRED','REJECTED') ORDER BY observed_at")){
+      try{const fact=JSON.parse(row.payload) as VerifiedExitOrderFact;if(this.terminalFactMatchesTask(fact,tasks.get(fact.clientOrderId)??null))facts.push(fact);}catch{/* Legacy incomplete event is not exchange evidence. */}
+    }
+    return facts;
+  }
   private lastConvergenceAt=0;private converging=false;
   constructor(
     dbFile:string,
@@ -354,6 +370,7 @@ export class V396ExitRuntime {
       this.provenance.record({environment:fact.environment,accountId:fact.accountId,symbol:fact.symbol,
         clientOrderId:fact.clientOrderId,exchangeOrderId:fact.exchangeOrderId,role:'EXIT',source:fact.source,observedAt:fact.observedAt});
     }
+    for(const fact of usable)if(this.terminalFactMatchesTask(fact))for(const listener of this.terminalListeners)listener(fact);
     return result;
   }
 

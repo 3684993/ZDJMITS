@@ -17,18 +17,18 @@ describe('UNKNOWN TP recovery',()=>{
     const now=Date.now(),state=new RuntimeState(settings()),bus=new EventBus(),events:any[]=[];bus.on('event',event=>events.push(event));
     const old=unknownTp(now);state.tpOrders.set(old.id,old);
     const exact=vi.fn(async()=>({...old,status:'FILLED',quantity:0,filledQuantity:10,exchangeOrderId:'exchange-99',updatedAt:now+1}));
-    const report=vi.fn();
-    const guardian=new TpGuardian(state,{findTakeProfitByClientOrderId:exact} as any,bus,{recordExitOrderReport:report} as any);
+    const runtime=exitRuntimeHarness(),report=vi.spyOn(runtime,'recordExitOrderReport');
+    const guardian=new TpGuardian(state,{findTakeProfitByClientOrderId:exact} as any,bus,runtime);
     await guardian.sweep();
     expect(state.tpOrders.get(old.id)).toMatchObject({status:'FILLED',quantity:0,filledQuantity:10,exchangeOrderId:'exchange-99'});
     expect(report).toHaveBeenCalledWith('EXACT_ORDER',expect.objectContaining({clientOrderId:old.clientOrderId,originalQuantity:10,executedQuantity:10,status:'FILLED'}),expect.any(Number));
     expect(events.some(event=>event.type==='TP_ORPHAN_TERMINAL_CONVERGED')).toBe(true);
-    await guardian.sweep();expect(exact).toHaveBeenCalledTimes(1);
+    await guardian.sweep();expect(exact).toHaveBeenCalledTimes(1);runtime.close();
   });
   it('retains an orphan UNKNOWN TP when the exact exchange identity is absent',async()=>{
     const now=Date.now(),state=new RuntimeState(settings()),bus=new EventBus(),old=unknownTp(now);state.tpOrders.set(old.id,old);
-    const report=vi.fn(),guardian=new TpGuardian(state,{findTakeProfitByClientOrderId:vi.fn(async()=>null)} as any,bus,{recordExitOrderReport:report} as any);
-    await guardian.sweep();expect(state.tpOrders.get(old.id)?.status).toBe('UNKNOWN');expect(report).not.toHaveBeenCalled();
+    const runtime=exitRuntimeHarness(),report=vi.spyOn(runtime,'recordExitOrderReport'),guardian=new TpGuardian(state,{findTakeProfitByClientOrderId:vi.fn(async()=>null)} as any,bus,runtime);
+    await guardian.sweep();expect(state.tpOrders.get(old.id)?.status).toBe('UNKNOWN');expect(report).not.toHaveBeenCalled();runtime.close();
   });
   it('does not turn repeated absence into terminal proof for an uncertain write',async()=>{
     vi.useFakeTimers();const now=1_800_000_000_000;vi.setSystemTime(now);

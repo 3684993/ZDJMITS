@@ -281,3 +281,7 @@ models/
 /docs/reports/v397-active-remediation-20261007/stability-samples.jsonl
 /docs/reports/v397-active-remediation-20261007/stability-progress.json
 /docs/reports/v397-active-remediation-20261007/stability-final.json
+
+/docs/reports/v397-tp-terminal-projection-20261007/stability-samples.jsonl
+/docs/reports/v397-tp-terminal-projection-20261007/stability-progress.json
+/docs/reports/v397-tp-terminal-projection-20261007/stability-final.json

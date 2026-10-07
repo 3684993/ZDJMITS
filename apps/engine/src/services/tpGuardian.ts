@@ -6,6 +6,7 @@ import type { ExchangeTradeAdapter } from '../types.js';
 import { binanceClientOrderIdFactory } from './binanceClientOrderIdFactory.js';
 import { confirmedTpSubmissionRejection, confirmedTpNotSent } from './tpSubmissionOutcome.js';
 import { V396ExitRuntime, exitSubjectFromPosition } from './v396ExitRuntime.js';
+import type {VerifiedExitOrderFact} from './exitOrderFact.js';
 import { assembleTargetSelection, authorizedTargetFacts } from './tpTargetContract.js';
 
 export class TpGuardian {
@@ -127,7 +128,24 @@ export class TpGuardian {
     },Date.now());
   }
   economicsFor(position:Position,exitPrice:number){const settings=this.state.settings.takeProfit,exitRate=settings.exitFeeAssumption==='MAKER'?settings.makerFeeRate:settings.takerFeeRate;return estimateTradingCost({entryPrice:position.entryPrice,qty:position.quantity,direction:position.side,leverage:position.leverage,entryFeeRate:settings.entryFeeRate,expectedExitFeeRate:exitRate,expectedSlippagePct:settings.slippageBufferPct,feeSafetyBufferPct:settings.feeSafetyBufferPct,minNetProfitUsd:settings.minNetProfitUsd,minNetProfitRoiPct:settings.minNetProfitRoiPct},exitPrice);}
-  constructor(private state:RuntimeState,private exchange:ExchangeTradeAdapter,private events:EventBus,private readonly exitRuntime:V396ExitRuntime){}
+  private projectTerminalFact(fact:VerifiedExitOrderFact){
+    const task=this.exitRuntime.task(fact.clientOrderId);if(!task)return;
+    for(const [id,order] of this.state.tpOrders){
+      if(!['WORKING','PARTIALLY_FILLED','UNKNOWN','SUBMITTING'].includes(order.status)||order.clientOrderId!==fact.clientOrderId||order.exchangeOrderId!==fact.exchangeOrderId||order.symbol!==fact.symbol||order.cycleId!==task.cycleId)continue;
+      if(fact.positionSide!=='BOTH'&&fact.positionSide!==(order.side==='SELL'?'LONG':'SHORT'))continue;
+      const tolerance=Math.max(1e-10,task.stepSize*1e-6),remaining=Math.max(0,fact.originalQty-fact.executedQty);
+      if(Math.min(Math.abs(order.quantity-fact.originalQty),Math.abs(order.quantity-remaining))>tolerance||Number(order.filledQuantity??0)>fact.executedQty+tolerance)continue;
+      this.state.tpOrders.set(id,{...order,status:fact.state as TakeProfitOrder['status'],quantity:remaining,filledQuantity:fact.executedQty,updatedAt:fact.observedAt});
+      const position=this.state.positions.get(order.positionId);
+      if(position?.tpOrderId===id)this.state.positions.set(position.id,{...position,tpStatus:'MISSING',tpCoverageSource:'NONE',tpLastVerifiedAt:fact.observedAt});
+      this.events.publish('TP_TERMINAL_FACT_PROJECTED',{orderId:id,clientOrderId:fact.clientOrderId,exchangeOrderId:fact.exchangeOrderId,status:fact.state,source:fact.source,factObservedAt:fact.observedAt},order.symbol);
+    }
+  }
+  constructor(private state:RuntimeState,private exchange:ExchangeTradeAdapter,private events:EventBus,private readonly exitRuntime:V396ExitRuntime){
+    // Restore the durable terminal fact before any local WORKING row can advertise protection.
+    for(const fact of exitRuntime.terminalOrderFacts())this.projectTerminalFact(fact);
+    exitRuntime.onTerminalFact(fact=>this.projectTerminalFact(fact));
+  }
   metrics(){const positions=[...this.state.positions.values()],active=[...this.state.tpOrders.values()].filter(order=>order.status==='WORKING'),byPosition=new Map<string,number>();for(const order of active)byPosition.set(order.positionId,(byPosition.get(order.positionId)??0)+1);const orphanTp=active.filter(order=>!this.state.positions.has(order.positionId)).length,duplicateTp=[...byPosition.values()].filter(count=>count>1).reduce((sum,count)=>sum+count-1,0),qtyMismatch=active.filter(order=>{const pos=this.state.positions.get(order.positionId);return Boolean(pos&&Math.abs(order.quantity-pos.quantity)>Math.max(1e-10,pos.quantity*.000001));}).length,wrongSide=active.filter(order=>{const pos=this.state.positions.get(order.positionId);return Boolean(pos&&order.side!==(pos.side==='LONG'?'SELL':'BUY'));}).length;const covered=(p:Position)=>active.some(o=>o.positionId===p.id&&o.symbol===p.symbol&&o.side===(p.side==='LONG'?'SELL':'BUY')&&Math.abs(o.quantity-p.quantity)<=Math.max(1e-10,p.quantity*1e-6));
     // A row whose existence the exchange has not settled is counted as unresolved, never as a position
     // that is missing its protection order — the two facts ask the operator for different actions.

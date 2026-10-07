@@ -1,0 +1,13 @@
+# F02 terminal projection propagation / restart recovery
+
+PROVEN local mismatch: two exact TP identities in tp-orphan-identities.json remain local WORKING while v396_exit_tasks.state=FILLED and matching v396_exit_observed retained USER_DATA_WS full-fill facts exist. Their positions are absent. Durable scope/account/cycle/client/exchange quantities match; claims are already settled by the durable reducer. The code recorded terminal WS/exact/convergence facts into the exit ledger but did not propagate to the TP map, and a restored checkpoint could replay WORKING.
+
+Implemented: V396ExitRuntime publishes only terminal facts that match its TP task, current environment/account/symbol/side, terminal state and original/executed whole-step quantities. A single startup scan reads retained verified terminal facts, with tasks loaded once. TpGuardian subscribes and replays with strict local symbol/client/exchange/cycle/side/quantity guards, preserving executed quantity and remaining quantity, marking an attached protection gap without removing physical positions. Unbound/mismatched/incomplete facts and task-state-only terminal claims cannot close a row. No exchange write, no database reset, no manufactured certainty. Terminal immutable exchange evidence can be replayed without claiming the current account is fresh.
+
+Regression: FILLED/CANCELED/EXPIRED/REJECTED (including partial canceled), propagation, stale restored projection, single event per transition and mismatched exchange/cycle/symbol/quantity rejection. Targeted35/4files PASS. Preliminary targeted log preserves missing built workspace dependency failure before contracts/core build; first full verify preserves two test failures from narrow report-only mocks lacking the new runtime contract. Those two fixtures now use the actual in-memory exit runtime with a report spy. Final full gate PENDING until log confirms exit0.
+
+The previous deployment's independent10.7954min short feedback failed: private fresh only one sample, proxy establishment still blocked. Python direct SOCKS probes separately prove greeting succeeds but CONNECT reply does not arrive in5s, bypassing Engine queue/pool. External-path availability is not solved by projection repair. No proxy/SSH lifecycle or Settings change is authorized by only8080 restart. F04/F10/F11 remain deferred.
+
+## Final local gate
+
+Final npm run verify exit0:1981tests/233files (Contracts2/Core58/Dashboard123/Engine1798), release/script/S00/typecheck/build PASS; git diff --check PASS. No GitHub Actions. Full log full-verify.log. Ready for the second active only8080 cutover; functional runtime result pending.

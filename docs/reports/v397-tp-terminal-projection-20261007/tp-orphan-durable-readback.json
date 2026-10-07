@@ -1,0 +1,192 @@
+{
+  "v396_exit_tasks": {
+    "schema": [
+      {
+        "cid": 0,
+        "name": "id",
+        "type": "TEXT",
+        "notnull": 0,
+        "dflt_value": null,
+        "pk": 1
+      },
+      {
+        "cid": 1,
+        "name": "payload",
+        "type": "TEXT",
+        "notnull": 1,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 2,
+        "name": "state",
+        "type": "TEXT",
+        "notnull": 1,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 3,
+        "name": "scope",
+        "type": "TEXT",
+        "notnull": 1,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 4,
+        "name": "cycle_id",
+        "type": "TEXT",
+        "notnull": 1,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 5,
+        "name": "last_attempt_at",
+        "type": "INTEGER",
+        "notnull": 1,
+        "dflt_value": "0",
+        "pk": 0
+      },
+      {
+        "cid": 6,
+        "name": "next_eligible_at",
+        "type": "INTEGER",
+        "notnull": 1,
+        "dflt_value": "0",
+        "pk": 0
+      },
+      {
+        "cid": 7,
+        "name": "attempt_count",
+        "type": "INTEGER",
+        "notnull": 1,
+        "dflt_value": "0",
+        "pk": 0
+      }
+    ],
+    "matches": [
+      {
+        "id": "exit_v396x9adc0a332525592eeb7a86908f19cb",
+        "payload": "{\"taskId\":\"exit_v396x9adc0a332525592eeb7a86908f19cb\",\"clientOrderId\":\"v396x9adc0a332525592eeb7a86908f19cb\",\"scope\":\"[\\\"TESTNET\\\",\\\"binance-primary\\\",\\\"ETHUSDT\\\",\\\"SHORT\\\"]\",\"cycleId\":\"cycle_entry_intent_muy1fn2q_ib4il59k\",\"source\":\"TP\",\"quantityUnits\":390,\"limitPrice\":2565.81,\"state\":\"FILLED\",\"version\":9,\"filledUnits\":390,\"ownerVersion\":1,\"planVersion\":1,\"positionVersion\":1791373382603,\"settingsVersion\":247,\"riskGeneration\":1,\"estimateHash\":\"V396_TP_1_1791373556738_2565.81\",\"decisionHash\":\"V396_TP_1_1791373556738_2565.81\",\"authorizationExpiresAt\":1791373571738,\"deadline\":1791373571738,\"createdAt\":1791373556738,\"updatedAt\":1791378148119,\"reasons\":[\"TP_SUBMIT_SENT\",\"TP_SUBMIT_RESULT_CONVERGED\",\"USER_DATA_WS_CONVERGED\",\"EXACT_ORDER_CONVERGED\",\"EXACT_ORDER_CONVERGED\",\"EXACT_ORDER_CONVERGED\",\"EXACT_ORDER_CONVERGED\",\"USER_DATA_WS_CONVERGED\"],\"stepSize\":0.001,\"requestKey\":\"[\\\"TP\\\",\\\"cycle_entry_intent_muy1fn2q_ib4il59k\\\",1,\\\"tp_muy1jxt8_quba37pu\\\"]\",\"mandateVersion\":1}",
+        "state": "FILLED",
+        "scope": "[\"TESTNET\",\"binance-primary\",\"ETHUSDT\",\"SHORT\"]",
+        "cycle_id": "cycle_entry_intent_muy1fn2q_ib4il59k",
+        "last_attempt_at": 1791377541552,
+        "next_eligible_at": 1791378441552,
+        "attempt_count": 9
+      },
+      {
+        "id": "exit_v396x49c5ed4f88f215302661aee1eaf278",
+        "payload": "{\"taskId\":\"exit_v396x49c5ed4f88f215302661aee1eaf278\",\"clientOrderId\":\"v396x49c5ed4f88f215302661aee1eaf278\",\"scope\":\"[\\\"TESTNET\\\",\\\"binance-primary\\\",\\\"BCHUSDT\\\",\\\"SHORT\\\"]\",\"cycleId\":\"cycle_entry_intent_muy1wvtw_yk0fv560\",\"source\":\"TP\",\"quantityUnits\":4959,\"limitPrice\":302.01,\"state\":\"FILLED\",\"version\":9,\"filledUnits\":4959,\"ownerVersion\":1,\"planVersion\":1,\"positionVersion\":1791374211147,\"settingsVersion\":247,\"riskGeneration\":1,\"estimateHash\":\"V396_TP_1_1791374398933_302.01\",\"decisionHash\":\"V396_TP_1_1791374398933_302.01\",\"authorizationExpiresAt\":1791374413933,\"deadline\":1791374413933,\"createdAt\":1791374398933,\"updatedAt\":1791375788015,\"reasons\":[\"TP_SUBMIT_SENT\",\"TP_SUBMIT_RESULT_CONVERGED\",\"USER_DATA_WS_CONVERGED\",\"EXACT_ORDER_CONVERGED\",\"EXACT_ORDER_CONVERGED\",\"EXACT_ORDER_CONVERGED\",\"EXACT_ORDER_CONVERGED\",\"USER_DATA_WS_CONVERGED\"],\"stepSize\":0.001,\"requestKey\":\"[\\\"TP\\\",\\\"cycle_entry_intent_muy1wvtw_yk0fv560\\\",1,\\\"tp_muy21qsq_16tn2lgo\\\"]\",\"mandateVersion\":1}",
+        "state": "FILLED",
+        "scope": "[\"TESTNET\",\"binance-primary\",\"BCHUSDT\",\"SHORT\"]",
+        "cycle_id": "cycle_entry_intent_muy1wvtw_yk0fv560",
+        "last_attempt_at": 1791375554491,
+        "next_eligible_at": 1791376454491,
+        "attempt_count": 6
+      }
+    ]
+  },
+  "v396_exit_observed": {
+    "schema": [
+      {
+        "cid": 0,
+        "name": "event_id",
+        "type": "TEXT",
+        "notnull": 0,
+        "dflt_value": null,
+        "pk": 1
+      },
+      {
+        "cid": 1,
+        "name": "payload",
+        "type": "TEXT",
+        "notnull": 1,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 2,
+        "name": "observed_at",
+        "type": "INTEGER",
+        "notnull": 1,
+        "dflt_value": null,
+        "pk": 0
+      }
+    ],
+    "matches": [
+      {
+        "event_id": "EXIT_FACT:[\"TESTNET\",\"binance-primary\",\"ETHUSDT\",\"v396x9adc0a332525592eeb7a86908f19cb\",\"WORKING\",0,\"WORKING\"]",
+        "payload": "{\"environment\":\"TESTNET\",\"accountId\":\"binance-primary\",\"symbol\":\"ETHUSDT\",\"positionSide\":\"SHORT\",\"clientOrderId\":\"v396x9adc0a332525592eeb7a86908f19cb\",\"exchangeOrderId\":\"16816670645\",\"originalQty\":0.39,\"executedQty\":0,\"exchangeStatus\":\"WORKING\",\"state\":\"WORKING\",\"eventId\":\"EXIT_FACT:[\\\"TESTNET\\\",\\\"binance-primary\\\",\\\"ETHUSDT\\\",\\\"v396x9adc0a332525592eeb7a86908f19cb\\\",\\\"WORKING\\\",0,\\\"WORKING\\\"]\",\"sequence\":null,\"source\":\"TP_SUBMIT_RESULT\",\"observedAt\":1791373572480,\"coverage\":{\"proven\":true,\"proof\":[\"TP_SUBMIT_RESULT\",\"STATUS_WORKING\",\"EXCHANGE_ORDER_ID_PRESENT\"]}}",
+        "observed_at": 1791373572480
+      },
+      {
+        "event_id": "EXIT_FACT:[\"TESTNET\",\"binance-primary\",\"ETHUSDT\",\"v396x9adc0a332525592eeb7a86908f19cb\",\"WORKING\",0,\"NEW\"]",
+        "payload": "{\"environment\":\"TESTNET\",\"accountId\":\"binance-primary\",\"symbol\":\"ETHUSDT\",\"positionSide\":\"SHORT\",\"clientOrderId\":\"v396x9adc0a332525592eeb7a86908f19cb\",\"exchangeOrderId\":\"16816670645\",\"originalQty\":0.39,\"executedQty\":0,\"exchangeStatus\":\"NEW\",\"state\":\"WORKING\",\"eventId\":\"EXIT_FACT:[\\\"TESTNET\\\",\\\"binance-primary\\\",\\\"ETHUSDT\\\",\\\"v396x9adc0a332525592eeb7a86908f19cb\\\",\\\"WORKING\\\",0,\\\"NEW\\\"]\",\"sequence\":null,\"source\":\"USER_DATA_WS\",\"observedAt\":1791373565940,\"coverage\":{\"proven\":true,\"proof\":[\"USER_DATA_WS\",\"STATUS_NEW\",\"EXCHANGE_ORDER_ID_PRESENT\"]}}",
+        "observed_at": 1791373565940
+      },
+      {
+        "event_id": "RECOVERY:v396x9adc0a332525592eeb7a86908f19cb:NEW:0:4",
+        "payload": "{\"environment\":\"TESTNET\",\"accountId\":\"binance-primary\",\"symbol\":\"ETHUSDT\",\"positionSide\":\"SHORT\",\"clientOrderId\":\"v396x9adc0a332525592eeb7a86908f19cb\",\"exchangeOrderId\":\"16816670645\",\"originalQty\":0.39,\"executedQty\":0,\"exchangeStatus\":\"NEW\",\"state\":\"WORKING\",\"eventId\":\"RECOVERY:v396x9adc0a332525592eeb7a86908f19cb:NEW:0:4\",\"sequence\":null,\"source\":\"EXACT_ORDER\",\"observedAt\":1791373785257,\"coverage\":{\"proven\":true,\"proof\":[\"EXACT_ORDER\",\"STATUS_NEW\",\"EXCHANGE_ORDER_ID_PRESENT\"]}}",
+        "observed_at": 1791373785257
+      },
+      {
+        "event_id": "RECOVERY:v396x9adc0a332525592eeb7a86908f19cb:NEW:0:5",
+        "payload": "{\"environment\":\"TESTNET\",\"accountId\":\"binance-primary\",\"symbol\":\"ETHUSDT\",\"positionSide\":\"SHORT\",\"clientOrderId\":\"v396x9adc0a332525592eeb7a86908f19cb\",\"exchangeOrderId\":\"16816670645\",\"originalQty\":0.39,\"executedQty\":0,\"exchangeStatus\":\"NEW\",\"state\":\"WORKING\",\"eventId\":\"RECOVERY:v396x9adc0a332525592eeb7a86908f19cb:NEW:0:5\",\"sequence\":null,\"source\":\"EXACT_ORDER\",\"observedAt\":1791373913569,\"coverage\":{\"proven\":true,\"proof\":[\"EXACT_ORDER\",\"STATUS_NEW\",\"EXCHANGE_ORDER_ID_PRESENT\"]}}",
+        "observed_at": 1791373913569
+      },
+      {
+        "event_id": "RECOVERY:v396x9adc0a332525592eeb7a86908f19cb:NEW:0:6",
+        "payload": "{\"environment\":\"TESTNET\",\"accountId\":\"binance-primary\",\"symbol\":\"ETHUSDT\",\"positionSide\":\"SHORT\",\"clientOrderId\":\"v396x9adc0a332525592eeb7a86908f19cb\",\"exchangeOrderId\":\"16816670645\",\"originalQty\":0.39,\"executedQty\":0,\"exchangeStatus\":\"NEW\",\"state\":\"WORKING\",\"eventId\":\"RECOVERY:v396x9adc0a332525592eeb7a86908f19cb:NEW:0:6\",\"sequence\":null,\"source\":\"EXACT_ORDER\",\"observedAt\":1791374037983,\"coverage\":{\"proven\":true,\"proof\":[\"EXACT_ORDER\",\"STATUS_NEW\",\"EXCHANGE_ORDER_ID_PRESENT\"]}}",
+        "observed_at": 1791374037983
+      },
+      {
+        "event_id": "EXIT_FACT:[\"TESTNET\",\"binance-primary\",\"BCHUSDT\",\"v396x49c5ed4f88f215302661aee1eaf278\",\"WORKING\",0,\"WORKING\"]",
+        "payload": "{\"environment\":\"TESTNET\",\"accountId\":\"binance-primary\",\"symbol\":\"BCHUSDT\",\"positionSide\":\"SHORT\",\"clientOrderId\":\"v396x49c5ed4f88f215302661aee1eaf278\",\"exchangeOrderId\":\"2589655935\",\"originalQty\":4.959,\"executedQty\":0,\"exchangeStatus\":\"WORKING\",\"state\":\"WORKING\",\"eventId\":\"EXIT_FACT:[\\\"TESTNET\\\",\\\"binance-primary\\\",\\\"BCHUSDT\\\",\\\"v396x49c5ed4f88f215302661aee1eaf278\\\",\\\"WORKING\\\",0,\\\"WORKING\\\"]\",\"sequence\":null,\"source\":\"TP_SUBMIT_RESULT\",\"observedAt\":1791374406266,\"coverage\":{\"proven\":true,\"proof\":[\"TP_SUBMIT_RESULT\",\"STATUS_WORKING\",\"EXCHANGE_ORDER_ID_PRESENT\"]}}",
+        "observed_at": 1791374406266
+      },
+      {
+        "event_id": "EXIT_FACT:[\"TESTNET\",\"binance-primary\",\"BCHUSDT\",\"v396x49c5ed4f88f215302661aee1eaf278\",\"WORKING\",0,\"NEW\"]",
+        "payload": "{\"environment\":\"TESTNET\",\"accountId\":\"binance-primary\",\"symbol\":\"BCHUSDT\",\"positionSide\":\"SHORT\",\"clientOrderId\":\"v396x49c5ed4f88f215302661aee1eaf278\",\"exchangeOrderId\":\"2589655935\",\"originalQty\":4.959,\"executedQty\":0,\"exchangeStatus\":\"NEW\",\"state\":\"WORKING\",\"eventId\":\"EXIT_FACT:[\\\"TESTNET\\\",\\\"binance-primary\\\",\\\"BCHUSDT\\\",\\\"v396x49c5ed4f88f215302661aee1eaf278\\\",\\\"WORKING\\\",0,\\\"NEW\\\"]\",\"sequence\":null,\"source\":\"USER_DATA_WS\",\"observedAt\":1791374405491,\"coverage\":{\"proven\":true,\"proof\":[\"USER_DATA_WS\",\"STATUS_NEW\",\"EXCHANGE_ORDER_ID_PRESENT\"]}}",
+        "observed_at": 1791374405491
+      },
+      {
+        "event_id": "RECOVERY:v396x49c5ed4f88f215302661aee1eaf278:NEW:0:4",
+        "payload": "{\"environment\":\"TESTNET\",\"accountId\":\"binance-primary\",\"symbol\":\"BCHUSDT\",\"positionSide\":\"SHORT\",\"clientOrderId\":\"v396x49c5ed4f88f215302661aee1eaf278\",\"exchangeOrderId\":\"2589655935\",\"originalQty\":4.959,\"executedQty\":0,\"exchangeStatus\":\"NEW\",\"state\":\"WORKING\",\"eventId\":\"RECOVERY:v396x49c5ed4f88f215302661aee1eaf278:NEW:0:4\",\"sequence\":null,\"source\":\"EXACT_ORDER\",\"observedAt\":1791374415816,\"coverage\":{\"proven\":true,\"proof\":[\"EXACT_ORDER\",\"STATUS_NEW\",\"EXCHANGE_ORDER_ID_PRESENT\"]}}",
+        "observed_at": 1791374415816
+      },
+      {
+        "event_id": "RECOVERY:v396x49c5ed4f88f215302661aee1eaf278:NEW:0:5",
+        "payload": "{\"environment\":\"TESTNET\",\"accountId\":\"binance-primary\",\"symbol\":\"BCHUSDT\",\"positionSide\":\"SHORT\",\"clientOrderId\":\"v396x49c5ed4f88f215302661aee1eaf278\",\"exchangeOrderId\":\"2589655935\",\"originalQty\":4.959,\"executedQty\":0,\"exchangeStatus\":\"NEW\",\"state\":\"WORKING\",\"eventId\":\"RECOVERY:v396x49c5ed4f88f215302661aee1eaf278:NEW:0:5\",\"sequence\":null,\"source\":\"EXACT_ORDER\",\"observedAt\":1791374796268,\"coverage\":{\"proven\":true,\"proof\":[\"EXACT_ORDER\",\"STATUS_NEW\",\"EXCHANGE_ORDER_ID_PRESENT\"]}}",
+        "observed_at": 1791374796268
+      },
+      {
+        "event_id": "RECOVERY:v396x49c5ed4f88f215302661aee1eaf278:NEW:0:6",
+        "payload": "{\"environment\":\"TESTNET\",\"accountId\":\"binance-primary\",\"symbol\":\"BCHUSDT\",\"positionSide\":\"SHORT\",\"clientOrderId\":\"v396x49c5ed4f88f215302661aee1eaf278\",\"exchangeOrderId\":\"2589655935\",\"originalQty\":4.959,\"executedQty\":0,\"exchangeStatus\":\"NEW\",\"state\":\"WORKING\",\"eventId\":\"RECOVERY:v396x49c5ed4f88f215302661aee1eaf278:NEW:0:6\",\"sequence\":null,\"source\":\"EXACT_ORDER\",\"observedAt\":1791374924838,\"coverage\":{\"proven\":true,\"proof\":[\"EXACT_ORDER\",\"STATUS_NEW\",\"EXCHANGE_ORDER_ID_PRESENT\"]}}",
+        "observed_at": 1791374924838
+      },
+      {
+        "event_id": "RECOVERY:v396x49c5ed4f88f215302661aee1eaf278:NEW:0:7",
+        "payload": "{\"environment\":\"TESTNET\",\"accountId\":\"binance-primary\",\"symbol\":\"BCHUSDT\",\"positionSide\":\"SHORT\",\"clientOrderId\":\"v396x49c5ed4f88f215302661aee1eaf278\",\"exchangeOrderId\":\"2589655935\",\"originalQty\":4.959,\"executedQty\":0,\"exchangeStatus\":\"NEW\",\"state\":\"WORKING\",\"eventId\":\"RECOVERY:v396x49c5ed4f88f215302661aee1eaf278:NEW:0:7\",\"sequence\":null,\"source\":\"EXACT_ORDER\",\"observedAt\":1791375333970,\"coverage\":{\"proven\":true,\"proof\":[\"EXACT_ORDER\",\"STATUS_NEW\",\"EXCHANGE_ORDER_ID_PRESENT\"]}}",
+        "observed_at": 1791375333970
+      },
+      {
+        "event_id": "RECOVERY:v396x9adc0a332525592eeb7a86908f19cb:NEW:0:7",
+        "payload": "{\"environment\":\"TESTNET\",\"accountId\":\"binance-primary\",\"symbol\":\"ETHUSDT\",\"positionSide\":\"SHORT\",\"clientOrderId\":\"v396x9adc0a332525592eeb7a86908f19cb\",\"exchangeOrderId\":\"16816670645\",\"originalQty\":0.39,\"executedQty\":0,\"exchangeStatus\":\"NEW\",\"state\":\"WORKING\",\"eventId\":\"RECOVERY:v396x9adc0a332525592eeb7a86908f19cb:NEW:0:7\",\"sequence\":null,\"source\":\"EXACT_ORDER\",\"observedAt\":1791375333970,\"coverage\":{\"proven\":true,\"proof\":[\"EXACT_ORDER\",\"STATUS_NEW\",\"EXCHANGE_ORDER_ID_PRESENT\"]}}",
+        "observed_at": 1791375333970
+      },
+      {
+        "event_id": "EXIT_FACT:[\"TESTNET\",\"binance-primary\",\"BCHUSDT\",\"v396x49c5ed4f88f215302661aee1eaf278\",\"FILLED\",495900000,\"FILLED\"]",
+        "payload": "{\"environment\":\"TESTNET\",\"accountId\":\"binance-primary\",\"symbol\":\"BCHUSDT\",\"positionSide\":\"SHORT\",\"clientOrderId\":\"v396x49c5ed4f88f215302661aee1eaf278\",\"exchangeOrderId\":\"2589655935\",\"originalQty\":4.959,\"executedQty\":4.959,\"exchangeStatus\":\"FILLED\",\"state\":\"FILLED\",\"eventId\":\"EXIT_FACT:[\\\"TESTNET\\\",\\\"binance-primary\\\",\\\"BCHUSDT\\\",\\\"v396x49c5ed4f88f215302661aee1eaf278\\\",\\\"FILLED\\\",495900000,\\\"FILLED\\\"]\",\"sequence\":null,\"source\":\"USER_DATA_WS\",\"observedAt\":1791375788015,\"coverage\":{\"proven\":true,\"proof\":[\"USER_DATA_WS\",\"STATUS_FILLED\",\"EXCHANGE_ORDER_ID_PRESENT\"]}}",
+        "observed_at": 1791375788015
+      },
+      {
+        "event_id": "EXIT_FACT:[\"TESTNET\",\"binance-primary\",\"ETHUSDT\",\"v396x9adc0a332525592eeb7a86908f19cb\",\"FILLED\",39000000,\"FILLED\"]",
+        "payload": "{\"environment\":\"TESTNET\",\"accountId\":\"binance-primary\",\"symbol\":\"ETHUSDT\",\"positionSide\":\"SHORT\",\"clientOrderId\":\"v396x9adc0a332525592eeb7a86908f19cb\",\"exchangeOrderId\":\"16816670645\",\"originalQty\":0.39,\"executedQty\":0.39,\"exchangeStatus\":\"FILLED\",\"state\":\"FILLED\",\"eventId\":\"EXIT_FACT:[\\\"TESTNET\\\",\\\"binance-primary\\\",\\\"ETHUSDT\\\",\\\"v396x9adc0a332525592eeb7a86908f19cb\\\",\\\"FILLED\\\",39000000,\\\"FILLED\\\"]\",\"sequence\":null,\"source\":\"USER_DATA_WS\",\"observedAt\":1791378148119,\"coverage\":{\"proven\":true,\"proof\":[\"USER_DATA_WS\",\"STATUS_FILLED\",\"EXCHANGE_ORDER_ID_PRESENT\"]}}",
+        "observed_at": 1791378148119
+      }
+    ]
+  }
+}

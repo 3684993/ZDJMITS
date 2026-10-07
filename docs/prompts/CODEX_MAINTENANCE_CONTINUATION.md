@@ -6,7 +6,7 @@
 > Local root: `D:\MITS`
 > Prepared: 2026-10-07 (+08:00)
 > Observed upstream baseline before the completion run: `5784154367838266e630ceb0b2bcca9c30f82853`
-> Final verified implementation candidate: `3a46408e2cecf2dbd6b404af29cbfe4703e208fb`
+> Final verified implementation candidate: `f634ca4c4b1f363f604c937c42d79ca2075d68bf`
 > Last user-confirmed green verification: V3.9.x Verify #655.
 
 ## Mission
@@ -82,8 +82,9 @@ The first local continuation batch completed this audit at `7fdadad6a95fa6bfa658
 
 ## Continuous completion record — 2026-10-07
 
-Implementation commit `3a46408e2cecf2dbd6b404af29cbfe4703e208fb` completes the remaining evidence-supported maintenance work:
+Implementation commit `f634ca4c4b1f363f604c937c42d79ca2075d68bf` completes the remaining evidence-supported maintenance work:
 - optional market REST fallback timeouts use candidate-local executable health and no longer produce a false `NET-002` merely because the aggregate retained-symbol freshness view is `RECOVERING`;
+- historical `/fapi/v1/income` enrichment latency remains telemetry when current Binance private truth is healthy and no longer creates a false Entry-blocking `NET-002`;
 - the proxy API rejects deletion of the active resource, preserving the explicit save/test/activate boundary;
 - explicit manual LIMIT submission without a live preview is covered through the Dashboard/API boundary;
 - the safe Windows Engine host tolerates harmless Node probe stderr without weakening child-exit evidence capture.

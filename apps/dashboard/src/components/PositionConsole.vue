@@ -57,11 +57,24 @@ async function begin(next: string) {
       price.value = String(p.limit.defaultPrice);
     } else price.value = String(detail.value?.tp?.price ?? "");
   } catch (e) {
-    feedback.value = String(e);
+    const message=String(e);
+    if(message.includes("MARKET_DATA_UNAVAILABLE") && next!=="EMERGENCY_CLOSE"){
+      preview.value=null;
+      quantity.value=String(detail.value?.position?.quantity ?? "");
+      price.value="";
+      feedback.value="实时行情预览暂不可用；仍可输入明确限价并提交。自动定价与紧急平仓需等待实时行情恢复。";
+      return;
+    }
+    if(message.includes("MARKET_DATA_UNAVAILABLE") && next==="EMERGENCY_CLOSE")action.value=null;
+    feedback.value = message;
   }
 }
 async function submit() {
   if (!action.value || busy.value) return;
+  if(action.value!=="EMERGENCY_CLOSE" && !preview.value && !price.value){
+    feedback.value="实时行情预览不可用时，请输入明确限价后再提交。";
+    return;
+  }
   if (
     action.value === "EMERGENCY_CLOSE" &&
     !window.confirm(
@@ -177,9 +190,8 @@ onMounted(load);
       <div class="management-card">
         <strong>人工交易控制台 · HUMAN ONLY · TESTNET</strong
         ><span
-          >默认值来自服务端
-          ManualActionPreview；确认提交前重新读取真实持仓、Bid/Ask
-          与交易精度。</span
+          >默认值来自服务端 ManualActionPreview；行情预览暂不可用时，人工明确限价仍可填写并提交。
+          自动定价与紧急平仓仍要求实时 Bid/Ask。</span
         >
         <div class="action-grid">
           <button class="button secondary" @click="begin('REDUCE')">减仓</button

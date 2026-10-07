@@ -210,8 +210,9 @@ export function createRuntimeSettingsResourcesRouter(runtime:EngineRuntime){
     }
     if(kind==='proxy'){
       const resource=proxyResources(runtime.state.settings).find((row:any)=>row.id===id);if(!resource)return res.status(404).json({error:{message:'PROXY_RESOURCE_NOT_FOUND'}});
-      const candidate=canonicalProxy(runtime.state.settings,resource,true),transport=new BinanceTransport(candidate.connections),startedAt=Date.now(),health=await transport.health();
-      return res.json({id,status:health.status,latencyMs:Date.now()-startedAt,active:id===(runtime.state.settings.connections.proxy as any).activeResourceId,transport:health});
+      const candidate=canonicalProxy(runtime.state.settings,resource,true),transport=new BinanceTransport(candidate.connections),startedAt=Date.now();
+      try{const health=await transport.health();return res.json({id,status:health.status,latencyMs:Date.now()-startedAt,active:id===(runtime.state.settings.connections.proxy as any).activeResourceId,transport:health});}
+      finally{transport.dispose();}
     }
     const transport=new BinanceTransport(runtime.state.settings.connections),health=await transport.health();
     const ref=runtime.state.settings.connections.exchange.credentialRef,[key,secret]=await Promise.all([runtime.settingsStore.secretStatus(`${ref}:apiKey`),runtime.settingsStore.secretStatus(`${ref}:apiSecret`)]);

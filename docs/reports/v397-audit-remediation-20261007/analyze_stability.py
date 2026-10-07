@@ -12,6 +12,17 @@ def main():
         except (json.JSONDecodeError,UnicodeDecodeError): bad+=1
     if not rows: raise SystemExit('No complete actual samples')
     summary=summarize(rows);summary['malformedSampleRows']=bad
+    # Distinguish endpoint observation gaps from an explicit Engine state.
+    healthStates=collections.Counter();privateStates=collections.Counter();tpKnown=0
+    for row in rows:
+        e=row['endpoints'];h=e.get('health',{}).get('data',{});pipeline=e.get('closeout',{}).get('data',{}).get('pipeline',{})
+        healthStates[str(h.get('status','OBSERVATION_UNAVAILABLE'))]+=1
+        privateStates[str(pipeline.get('binancePrivate',{}).get('status','OBSERVATION_UNAVAILABLE'))]+=1
+        tpKnown+=isinstance(pipeline.get('takeProfit'),dict)
+    summary['healthSampleStates']=dict(healthStates);summary['privateSampleStates']=dict(privateStates)
+    summary['tpObservationSamples']={'known':tpKnown,'unknown':len(rows)-tpKnown}
+    summary['interpretation']+=' OBSERVATION_UNAVAILABLE is a missing endpoint value, not proven private UNAVAILABLE. The original running collector progress uses the older conflated default; use this audited analyzer for acceptance.'
+
     first,last=rows[0]['capturedAtMs'],rows[-1]['capturedAtMs'];steps=[b['capturedAtMs']-a['capturedAtMs'] for a,b in zip(rows,rows[1:])]
     summary['samplingGaps']={'maxMs':max(steps) if steps else None,'above90s':sum(step>90_000 for step in steps),'endpointValuesAreNotAtomic':True}
     rss=[row['engineMemory']['workingSetBytes'] for row in rows if 'workingSetBytes' in row.get('engineMemory',{})];summary['workingSetBytes']={'min':min(rss) if rss else None,'max':max(rss) if rss else None,'last':rss[-1] if rss else None}

@@ -5,12 +5,13 @@
   "last": "2026-10-07T10:36:11.235324+00:00",
   "healthSampleStates": {
     "READY": 22,
-    "UNAVAILABLE": 1,
+    "OBSERVATION_UNAVAILABLE": 1,
     "DEGRADED": 1
   },
   "privateSampleStates": {
     "READY": 20,
-    "UNAVAILABLE": 4
+    "OBSERVATION_UNAVAILABLE": 3,
+    "UNAVAILABLE": 1
   },
   "activeIncidentSampleCounts": {
     "BINANCE-QUEUE-001": 24,
@@ -26,12 +27,12 @@
   },
   "identities": [
     {
-      "pid": null,
-      "instanceId": null
-    },
-    {
       "pid": 37780,
       "instanceId": "7a3b0f4a-b007-47a3-9bac-8e28d0c6365e"
+    },
+    {
+      "pid": null,
+      "instanceId": null
     }
   ],
   "privateSnapshotAgeMs": {
@@ -44,9 +45,13 @@
     "nonzero": 0,
     "unknown": 3
   },
-  "interpretation": "Sample prevalence is not incident frequency or duration. Missing samples and bounded ledgers cannot prove zero failures.",
+  "interpretation": "Sample prevalence is not incident frequency or duration. Missing samples and bounded ledgers cannot prove zero failures. OBSERVATION_UNAVAILABLE is a missing endpoint value, not proven private UNAVAILABLE. The original running collector progress uses the older conflated default; use this audited analyzer for acceptance.",
   "acceptance": "SHORT_WINDOW_NOT_ACCEPTED",
   "malformedSampleRows": 0,
+  "tpObservationSamples": {
+    "known": 21,
+    "unknown": 3
+  },
   "samplingGaps": {
     "maxMs": 68162,
     "above90s": 0,

@@ -504,3 +504,7 @@ Archived files:
 - `docs/reports/system-audit-20261007/AUDIT_QUESTIONS_255_20261007.md`
 - `docs/reports/system-audit-20261007/AUDIT_EVIDENCE_20261007.zip`
 - ZIP SHA256: `956781234f105f383a0379537263e7dabd882ddd12924bb42c9f11e0fb3335ca`
+
+## Observation classification correction
+
+The initial collector summary default conflated a missing closeout endpoint with explicit private UNAVAILABLE. Audited analyzer now separates OBSERVATION_UNAVAILABLE. Frozen first window: READY20 / explicit UNAVAILABLE1 / OBSERVATION_UNAVAILABLE3 (24 samples); nine distinct private failure timestamps still separately observed. First window remains failed, but four explicit unavailable states were not proven. Followup audited start checkpoint: READY3 / OBSERVATION_UNAVAILABLE1, no explicit private UNAVAILABLE in those four samples. A missing/slow diagnostic response is still a runtime observation failure. The running collector progress retains its original default; use analyze_stability.py and raw endpoint values for acceptance. No raw samples changed, no observer restart, no Engine change. TP observation missing counts are also explicit. Earlier Git versions/early summaries are retained as superseded evidence.

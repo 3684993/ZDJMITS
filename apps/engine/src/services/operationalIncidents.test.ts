@@ -33,6 +33,18 @@ describe('user-facing operational incidents',()=>{
     expect(market?.publicCode).toBe('MARKET-DATA-001');
     expect(market?.remediationZh).toContain('不是行情涨跌趋势判断');
   });
+  it('tolerates isolated REST jitter and raises NET-002 only after a sustained critical timeout burst',()=>{
+    const now=Date.now(),base:any={pipeline:{pipelineState:'RUNNING',marketDataReason:null,freshMarkets:{status:'FRESH'}},marketStream:{state:'LIVE'},account:{status:'READY'}};
+    const failure=(n:number)=>({message:'BINANCE_TRANSPORT_BLOCKED: Binance request timed out',requestId:`r${n}`,endpoint:'/fapi/v2/account',method:'GET',routeIdentity:'proxy-test',completedAt:now-n*1000});
+    const route=(count:number)=>({recentFailures:Array.from({length:count},(_,i)=>failure(i)),requestBudget:{recentDispatches:[],admissionObservedWeight1m:100,softBackgroundWeight:1000}});
+    expect(operationalCandidates({...base,routes:[route(1)]})).toHaveLength(0);
+    expect(operationalCandidates({...base,routes:[route(2)]})).toHaveLength(0);
+    expect(operationalCandidates({...base,routes:[route(3)]})[0]?.publicCode).toBe('NET-002');
+  });
+  it('keeps fresh WS market execution available despite repeated REST market fallback timeouts',()=>{
+    const now=Date.now(),rows=operationalCandidates({pipeline:{pipelineState:'RUNNING',marketDataReason:null,freshMarkets:{status:'FRESH'}},marketStream:{state:'LIVE'},routes:[{recentFailures:[0,1,2,3].map(i=>({message:'BINANCE_TRANSPORT_BLOCKED: Binance request timed out',requestId:`m${i}`,endpoint:'/fapi/v1/ticker/24hr',method:'GET',routeIdentity:'proxy-test',completedAt:now-i*1000})),requestBudget:{recentDispatches:[],admissionObservedWeight1m:100,softBackgroundWeight:1000}}],account:{status:'READY'}});
+    expect(rows).toHaveLength(0);
+  });
   it('does not turn optional derivatives REST timeout into a NEW_ENTRY outage while WS market facts are fresh',()=>{
     const rows=operationalCandidates({pipeline:{pipelineState:'RUNNING',marketDataReason:null,freshMarkets:{status:'FRESH'}},marketStream:{state:'LIVE'},routes:[{recentFailures:[{message:'BINANCE_TRANSPORT_BLOCKED: Binance request timed out',requestId:'oi-1',endpoint:'/fapi/v1/openInterest',method:'GET',routeIdentity:'proxy-test'}],requestBudget:{recentDispatches:[{decision:'TIMEOUT',completedAt:Date.now(),endpoint:'/fapi/v1/openInterest',method:'GET',requestId:'oi-1',routeIdentity:'proxy-test'}],admissionObservedWeight1m:100,softBackgroundWeight:1000}}],account:{status:'READY'}});
     expect(rows).toHaveLength(0);

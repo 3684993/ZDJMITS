@@ -3,9 +3,10 @@
 > Stable handoff entrypoint for a new ChatGPT maintenance conversation.
 > Last refreshed: 2026-10-07 (+08:00)
 > Repository: `3684993/ZDJMITS`
-> Current main baseline: `ae5e0c9e6ef6e03872d16aca9f0f9ea2dbd40194`
+> Current upstream `origin/main` baseline: `5784154367838266e630ceb0b2bcca9c30f82853`
+> Current local maintenance candidate: `7fdadad6a95fa6bfa658a1a1edb06e91dba8f38a`
 > Last user-confirmed green verification: **V3.9.x Verify #655 GREEN**
-> Current implementation baseline after that green run: `ae5e0c9e6ef6e03872d16aca9f0f9ea2dbd40194` (`fix: throttle exact-order recovery and prefer user data`).
+> Last upstream implementation baseline after that green run: `ae5e0c9e6ef6e03872d16aca9f0f9ea2dbd40194` (`fix: throttle exact-order recovery and prefer user data`).
 
 ## 0. Instructions to the next ChatGPT conversation
 
@@ -88,10 +89,23 @@ The old #651 failure is resolved.
 - Root cause was only a stale SettingsStore migration test fixture: it created `brain-review-test` even though the configured enabled Review resource was already `brain-7900-review`.
 - Production Review routing was not changed to satisfy the old literal.
 
-Current implementation baseline:
+Upstream UNKNOWN recovery baseline:
 `ae5e0c9e6ef6e03872d16aca9f0f9ea2dbd40194`
 
 That commit makes UNKNOWN/SUBMITTING Entry recovery prefer Binance User Data WS and throttles exact `/fapi/v1/order` recovery for the same clientOrderId. It also applies the same discipline to the durable `mustQueryFirst` branch and post-ACK-loss recovery. Unresolved UNKNOWN remains non-resubmittable.
+
+Local continuation commit `7fdadad6a95fa6bfa658a1a1edb06e91dba8f38a` completes the first exact-order call-site audit batch:
+- adapter-level single-flight now also shares an explicit Binance `-2013` / `-2011` absence for 15 seconds across Entry, reconciliation and action-boundary readers;
+- transport timeouts, queue pressure and other uncertain failures are never cached;
+- the UNKNOWN recovery contract now proves that the cooldown blocks an immediate duplicate REST probe, then recovers the same identity after the cooldown without a second wire submit;
+- two malformed Dashboard test stubs were corrected so invalid-template warnings no longer hide real Vue warnings.
+
+Local evidence for that candidate:
+- workspace typecheck: PASS;
+- workspace formal build: PASS;
+- Engine: 198 files / 1,760 tests PASS;
+- targeted Dashboard warning regression: 2 files / 27 tests PASS;
+- no Engine or auxiliary service restart; no runtime or exchange write was performed.
 
 For Codex/local continuation, use:
 `docs/prompts/CODEX_MAINTENANCE_CONTINUATION.md`
@@ -391,14 +405,13 @@ This avoids chat/tool timeout.
 
 ## 15. Immediate next task order
 
-1. Validate the `ae5e0c9...` UNKNOWN recovery changes locally and audit **all** exact-order lookup call sites for duplicate REST recovery.
-2. Finish Binance latency compatibility / NET-002 sustained-failure semantics without weakening private truth.
-3. Verify MARKET-DATA-001 is derived from real required WS/cache freshness and continuity, not optional REST context timeouts.
-4. Audit SettingsView markup and finish standard CRUD/save/cancel/test/activate/delete boundaries.
-5. Verify true multi-resource proxy persistence and explicit active-resource switching.
-6. Re-verify explicit manual LIMIT usability when preview quote is stale while preserving exchange/risk fail-closed facts.
-7. Improve Review/Research useful asynchronous utilization without creating a second Entry veto authority.
-8. Preserve reconciliation budgets, storage/I/O convergence and native crash protections.
+1. Finish Binance latency compatibility / NET-002 sustained-failure semantics without weakening private truth. The first UNKNOWN/exact-order call-site audit batch is locally complete at `7fdadad...` but is not yet on `origin/main`.
+2. Verify MARKET-DATA-001 is derived from real required WS/cache freshness and continuity, not optional REST context timeouts.
+3. Audit SettingsView markup and finish standard CRUD/save/cancel/test/activate/delete boundaries.
+4. Verify true multi-resource proxy persistence and explicit active-resource switching.
+5. Re-verify explicit manual LIMIT usability when preview quote is stale while preserving exchange/risk fail-closed facts.
+6. Improve Review/Research useful asynchronous utilization without creating a second Entry veto authority.
+7. Preserve reconciliation budgets, storage/I/O convergence and native crash protections.
 
 Codex may propose a different implementation when it is demonstrably better, but it must pair disagreement with a concrete safer/simpler replacement and tests; critique-only responses are not acceptable.
 
@@ -426,4 +439,4 @@ Likely relevant:
 
 ## 17. Short prompt for a new ChatGPT web conversation
 
-> 继续维护我的 GitHub 项目 `3684993/ZDJMITS`。先通过 GitHub 读取 `docs/prompts/CURRENT_MAINTENANCE_HANDOFF.md`，把它作为完整当前上下文，不要让我重复历史。当前 main 是 `53c70181cfef7e7ac98ce2757c80c3dcc0acb5a0`，V3.9.x Verify #651 失败；先按 handoff 中记录的精确失败修复，再继续网络延迟兼容、订单 UNKNOWN 去重、Settings 标准 CRUD UI、人工限价操作、三模型 GPU 利用率优化。每次改动后直接推 GitHub，但不要等待 Actions 结果，我会把绿/红结果反馈给你。8083/8084 未经提前明确告知禁止停止/重启；Production writes 必须保持 0；不要恢复静态出口 IP gate。
+> 继续维护我的 GitHub 项目 `3684993/ZDJMITS`。先读取 `docs/prompts/CURRENT_MAINTENANCE_HANDOFF.md` 和 `docs/prompts/CODEX_MAINTENANCE_CONTINUATION.md`，以当前代码和本地测试为事实基线，不要让我重复历史。当前上游 `origin/main` 是 `5784154367838266e630ceb0b2bcca9c30f82853`；本地候选 `7fdadad6a95fa6bfa658a1a1edb06e91dba8f38a` 已完成首批 UNKNOWN/exact-order 去重并通过本地验证。继续网络延迟/NET-002、MARKET-DATA-001、Settings 标准 CRUD、人工限价与三模型异步利用率优化。不要依赖或等待 GitHub Actions。8083/8084 未经提前明确告知禁止停止/重启；Production writes 必须保持 0；不要恢复静态出口 IP gate。

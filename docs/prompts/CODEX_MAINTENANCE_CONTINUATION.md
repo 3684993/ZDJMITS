@@ -3,7 +3,8 @@
 > Repository: `3684993/ZDJMITS`
 > Local root: `D:\MITS`
 > Prepared: 2026-10-07 (+08:00)
-> Observed baseline: `ae5e0c9e6ef6e03872d16aca9f0f9ea2dbd40194`
+> Observed upstream baseline: `5784154367838266e630ceb0b2bcca9c30f82853`
+> Current local maintenance candidate: `7fdadad6a95fa6bfa658a1a1edb06e91dba8f38a`
 > Last user-confirmed green verification: V3.9.x Verify #655.
 
 ## Mission
@@ -75,7 +76,7 @@ Intended semantics:
 - POST-ACK-loss recovery follows the same discipline.
 - No second wire submit while the identity is unresolved.
 
-First run the relevant local tests and inspect all exact-order recovery call sites. If a stronger shared design belongs at adapter/service level (for example existing exactOrderFlights/cache plus a shared recovery budget), you may refactor it, but preserve the safety semantics and prove them.
+The first local continuation batch completed this audit at `7fdadad6a95fa6bfa658a1a1edb06e91dba8f38a`: explicit Binance `-2013` / `-2011` absence is shared for 15 seconds by the adapter-level exact-order cache, while timeouts and other uncertain failures are never cached. The recovery contract proves cooldown followed by same-identity recovery without a second submit. Workspace typecheck/build and Engine 198 files / 1,760 tests passed locally. Continue from current code rather than repeating that batch unless new evidence invalidates it.
 
 ## Priority A — Binance latency / NET-002
 

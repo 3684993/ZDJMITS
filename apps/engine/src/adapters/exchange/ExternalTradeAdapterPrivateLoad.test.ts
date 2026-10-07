@@ -14,10 +14,10 @@ it('uses no income request for UNKNOWN risk proof',async()=>{
   expect(h.calls.filter(url=>url.startsWith('/fapi/v1/allOrders'))).toHaveLength(1);
 });
 
-it('reuses the Binance clock offset for thirty seconds across private reads',async()=>{
+it('reuses the Binance clock offset for five minutes across private reads',async()=>{
   vi.useFakeTimers();vi.setSystemTime(1_800_000_000_000);
   try{
-    const h=adapterHarness();await h.adapter.fetchSymbolRiskFacts('XLMUSDT',1,2);vi.advanceTimersByTime(29_999);await h.adapter.fetchSymbolRiskFacts('ETHUSDT',1,2);
+    const h=adapterHarness();await h.adapter.fetchSymbolRiskFacts('XLMUSDT',1,2);vi.advanceTimersByTime(299_999);await h.adapter.fetchSymbolRiskFacts('ETHUSDT',1,2);
     expect(h.calls.filter(url=>url==='/fapi/v1/time')).toHaveLength(1);
     vi.advanceTimersByTime(2);await h.adapter.fetchSymbolRiskFacts('ARBUSDC',1,2);
     expect(h.calls.filter(url=>url==='/fapi/v1/time')).toHaveLength(2);

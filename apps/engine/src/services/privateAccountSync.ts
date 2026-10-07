@@ -26,9 +26,18 @@ export class PrivateAccountSync {
       c.emit(recovered?'PRIVATE_SYNC_RECOVERED':'PRIVATE_SYNC_COMPLETED',{requestId,trigger,generation,durationMs:this.stats.durationMs,lastSuccessAt:this.stats.lastSuccessAt,enrichment:account.enrichment??null});
     }catch(error){
       if(generation!==c.generation())return;
-      const reason=String(error instanceof Error?error.message:error).replace(/(signature|apiKey|apiSecret)=[^&\s]+/gi,'$1=[REDACTED]');
-      this.stats={...this.stats,lastFailureAt:Date.now(),consecutiveFailures:this.stats.consecutiveFailures+1,lastError:reason,durationMs:Date.now()-startedAt};
-      c.set({...c.get(),status:'UNAVAILABLE',reason});
+      const failedAt=Date.now(),reason=String(error instanceof Error?error.message:error).replace(/(signature|apiKey|apiSecret)=[^&\s]+/gi,'$1=[REDACTED]'),nextFailures=this.stats.consecutiveFailures+1;
+      this.stats={...this.stats,lastFailureAt:failedAt,consecutiveFailures:nextFailures,lastError:reason,durationMs:failedAt-startedAt};
+      const previous=c.get(),lastGoodAt=Number(this.stats.lastSuccessAt??previous?.asOf??0),lastGoodFresh=Number.isFinite(lastGoodAt)&&lastGoodAt>0&&failedAt-lastGoodAt<=60_000,transient=/timeout|timed out|ECONNRESET|EAI_AGAIN|socket|BINANCE_TRANSPORT_BLOCKED/i.test(reason);
+      // One slow REST read is normal network behavior, not immediate proof that the account is
+      // unavailable. Keep the last-known-good private snapshot authoritative within its existing
+      // 60s freshness TTL, but only for two consecutive transient failures.
+      if(transient&&lastGoodFresh&&nextFailures<3){
+        c.set({...previous,status:'READY',reason:null});
+        c.emit('PRIVATE_SYNC_TRANSIENT_TOLERATED',{requestId,trigger,generation,...this.stats,errorCode:'TRANSIENT_TRANSPORT',lastGoodAt,remainingFreshMs:Math.max(0,60_000-(failedAt-lastGoodAt))});
+        return;
+      }
+      c.set({...previous,status:'UNAVAILABLE',reason});
       c.emit('PRIVATE_SYNC_FAILED',{requestId,trigger,generation,...this.stats,errorCode:/429|418/.test(reason)?'RATE_LIMIT':/timeout|timed out/i.test(reason)?'TIMEOUT':/401|403|-2015/.test(reason)?'AUTH_OR_PERMISSION':'TRANSPORT_OR_RESPONSE'});
     }
   }

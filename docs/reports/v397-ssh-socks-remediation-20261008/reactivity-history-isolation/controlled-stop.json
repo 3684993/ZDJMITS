@@ -1,0 +1,26 @@
+{
+  "identity": {
+    "instanceId": "31834012-3fd5-4a59-9378-afb5284aab53",
+    "pid": 3228,
+    "startedAt": 1791433650089,
+    "host": "0.0.0.0",
+    "port": 8080,
+    "version": "3.9.7",
+    "buildId": "3.9.7-3a0232fb2da283b98998",
+    "artifactHash": "3a0232fb2da283b98998d0308b2e10c04ace1bb58a26d8794321bf3cb405cf02",
+    "sourceHash": "67454797e1e5bc6dcf978ef895acee1976d3be9d36514e70e3902276a17c8fd5",
+    "startReason": "MANUAL_START",
+    "lanIps": [
+      "192.168.1.50"
+    ],
+    "restartCount": 273
+  },
+  "reason": "FAILED_FRESH_REACTIVITY_WINDOW_AND_MEMORY_ISOLATED_VERIFICATION",
+  "at": "2026-10-08T04:37:03.3016255Z",
+  "process": {
+    "ProcessId": 3228,
+    "ParentProcessId": 44084,
+    "CreationDate": "2026-10-08T12:27:28.30265+08:00",
+    "CommandLine": "\"C:\\Program Files\\nodejs\\node.exe\" --no-maglev \"D:\\MITS-WORKTREES\\v397-reactivity-deploy-acceptance-20261008\\apps\\engine\\dist\\main.js\" "
+  }
+}

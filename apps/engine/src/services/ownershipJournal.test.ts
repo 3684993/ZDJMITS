@@ -12,6 +12,18 @@ const init={scope:'TESTNET:account:BTCUSDT:BOTH',cycleId:'c',planRef:'p',firstFi
 const claim={scope:init.scope,cycleId:'c',source:'AI' as const,claimId:'one',quantityUnits:6,version:1,status:'ACTIVE' as const};
 afterEach(()=>{for(const j of journals.splice(0))j.close();for(const d of dirs.splice(0))rmSync(d,{recursive:true,force:true});});
 describe('S02/S04 durable foundation; no exchange writes',()=>{
+  it('uses the pending index without scanning delivered history and preserves exact rowid delivery order',()=>{
+    const file=database(),j=open(file),db=new DatabaseSync(file);
+    try{
+      db.exec('BEGIN');const insert=db.prepare('INSERT INTO v396_outbox(id,payload,delivered) VALUES(?,?,?)');
+      for(let n=0;n<1000;n++)insert.run(`delivered-${n}`,JSON.stringify({n}),1);
+      insert.run('pending-z',JSON.stringify({n:1}),0);insert.run('pending-a',JSON.stringify({n:2}),0);db.exec('COMMIT');
+      const plan=db.prepare('EXPLAIN QUERY PLAN SELECT id,payload FROM v396_outbox WHERE delivered=0 ORDER BY rowid').all();
+      expect(plan.some(row=>String(row.detail).includes('v396_outbox_pending'))).toBe(true);
+      expect(j.pendingEvents().map(row=>row.id)).toEqual(['pending-z','pending-a']);j.markDelivered('pending-z');expect(j.pendingEvents().map(row=>row.id)).toEqual(['pending-a']);
+      expect(db.prepare('SELECT count(*) n FROM v396_outbox').get()!.n).toBe(1002);
+    }finally{db.close();}
+  });
   it('rolls ownership back if outbox insertion fails inside the same transaction',()=>{
     const file=database(),j=open(file),fault=new DatabaseSync(file);
     try{fault.exec("CREATE TRIGGER reject_outbox BEFORE INSERT ON v396_outbox BEGIN SELECT RAISE(ABORT,'INJECTED_OUTBOX_FAILURE'); END;");

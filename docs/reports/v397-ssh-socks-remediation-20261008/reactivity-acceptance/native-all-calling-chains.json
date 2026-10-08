@@ -1,0 +1,470 @@
+{
+  "totalSamples": 38397,
+  "nativeAllChains": [
+    {
+      "samples": 3312,
+      "percent": 8.6257,
+      "chain": [
+        [
+          "materialize",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+          387
+        ],
+        [
+          "tick",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+          284
+        ],
+        [
+          "every.name",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/runtime/appRuntime.js",
+          886
+        ],
+        [
+          "",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/runtime/appRuntime.js",
+          693
+        ],
+        [
+          "listOnTimeout",
+          "node:internal/timers",
+          525
+        ]
+      ]
+    },
+    {
+      "samples": 1504,
+      "percent": 3.917,
+      "chain": [
+        [
+          "pendingEvents",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/ownershipJournal.js",
+          155
+        ],
+        [
+          "drainOutbox",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/ownershipService.js",
+          69
+        ],
+        [
+          "pump",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/ownershipRuntime.js",
+          97
+        ],
+        [
+          "every.name",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/runtime/appRuntime.js",
+          864
+        ],
+        [
+          "",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/runtime/appRuntime.js",
+          693
+        ]
+      ]
+    },
+    {
+      "samples": 752,
+      "percent": 1.9585,
+      "chain": [
+        [
+          "pendingEvents",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/ownershipJournal.js",
+          155
+        ],
+        [
+          "pendingTasks",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/ownershipService.js",
+          85
+        ],
+        [
+          "drainOutbox",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/ownershipService.js",
+          69
+        ],
+        [
+          "pump",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/ownershipRuntime.js",
+          97
+        ],
+        [
+          "every.name",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/runtime/appRuntime.js",
+          864
+        ]
+      ]
+    },
+    {
+      "samples": 272,
+      "percent": 0.7084,
+      "chain": [
+        [
+          "entryExecutionClaimStats",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/config/settingsStore.js",
+          1299
+        ],
+        [
+          "",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/runtime/appRuntime.js",
+          329
+        ],
+        [
+          "",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/reconciliationService.js",
+          206
+        ],
+        [
+          "runMicrotasks",
+          "",
+          -1
+        ],
+        [
+          "processTicksAndRejections",
+          "node:internal/process/task_queues",
+          70
+        ]
+      ]
+    },
+    {
+      "samples": 244,
+      "percent": 0.6355,
+      "chain": [
+        [
+          "query",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/ownershipJournal.js",
+          45
+        ],
+        [
+          "convergenceStats",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+          299
+        ],
+        [
+          "convergenceStats",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+          404
+        ],
+        [
+          "exitConvergenceHealth",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/runtime/appRuntime.js",
+          1415
+        ],
+        [
+          "executionTruthProjection",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/api/projections.js",
+          64
+        ]
+      ]
+    },
+    {
+      "samples": 234,
+      "percent": 0.6094,
+      "chain": [
+        [
+          "query",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/ownershipJournal.js",
+          45
+        ],
+        [
+          "convergenceStats",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+          299
+        ],
+        [
+          "convergenceStats",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+          404
+        ],
+        [
+          "exitConvergenceHealth",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/runtime/appRuntime.js",
+          1415
+        ],
+        [
+          "baseDashboardProjection",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/api/projections.js",
+          194
+        ]
+      ]
+    },
+    {
+      "samples": 207,
+      "percent": 0.5391,
+      "chain": [
+        [
+          "query",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/ownershipJournal.js",
+          45
+        ],
+        [
+          "allTasks",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+          100
+        ],
+        [
+          "recoveryPlan",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+          574
+        ],
+        [
+          "recoveryPlan",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+          623
+        ],
+        [
+          "exitConvergenceHealth",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/runtime/appRuntime.js",
+          1415
+        ]
+      ]
+    },
+    {
+      "samples": 189,
+      "percent": 0.4922,
+      "chain": [
+        [
+          "query",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/ownershipJournal.js",
+          45
+        ],
+        [
+          "allTasks",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+          100
+        ],
+        [
+          "unreleasedClaimInventory",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+          337
+        ],
+        [
+          "convergenceStats",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+          404
+        ],
+        [
+          "exitConvergenceHealth",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/runtime/appRuntime.js",
+          1415
+        ]
+      ]
+    },
+    {
+      "samples": 151,
+      "percent": 0.3933,
+      "chain": [
+        [
+          "persistRuntime",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/config/settingsStore.js",
+          981
+        ],
+        [
+          "",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/runtime/appRuntime.js",
+          217
+        ],
+        [
+          "mutateEntryReservations",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/config/settingsStore.js",
+          899
+        ],
+        [
+          "state.entryReservationTransaction",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/runtime/appRuntime.js",
+          217
+        ],
+        [
+          "mutateReservations",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/state/runtimeState.js",
+          127
+        ]
+      ]
+    },
+    {
+      "samples": 148,
+      "percent": 0.3854,
+      "chain": [
+        [
+          "query",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/ownershipJournal.js",
+          45
+        ],
+        [
+          "allTasks",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+          100
+        ],
+        [
+          "findTaskByClientOrderId",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+          569
+        ],
+        [
+          "task",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+          624
+        ],
+        [
+          "terminalFactMatchesTask",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+          31
+        ]
+      ]
+    },
+    {
+      "samples": 136,
+      "percent": 0.3542,
+      "chain": [
+        [
+          "query",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/ownershipJournal.js",
+          45
+        ],
+        [
+          "allTasks",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+          100
+        ],
+        [
+          "findTaskByClientOrderId",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+          569
+        ],
+        [
+          "recordVerifiedExitOrderFacts",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+          378
+        ],
+        [
+          "recordExitOrderReport",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+          398
+        ]
+      ]
+    },
+    {
+      "samples": 74,
+      "percent": 0.1927,
+      "chain": [
+        [
+          "runtimeEvents",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/config/settingsStore.js",
+          1705
+        ],
+        [
+          "",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/runtime/appRuntime.js",
+          2293
+        ],
+        [
+          "entryConversionReport",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/runExecutionOutcome.js",
+          507
+        ],
+        [
+          "pipelineStatus",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/runtime/appRuntime.js",
+          2188
+        ],
+        [
+          "updateIncidents",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/api/router.js",
+          96
+        ]
+      ]
+    },
+    {
+      "samples": 72,
+      "percent": 0.1875,
+      "chain": [
+        [
+          "rowsFor",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/fundingIncomeLedger.js",
+          84
+        ],
+        [
+          "attribution",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/fundingIncomeLedger.js",
+          98
+        ],
+        [
+          "cycleFundingFact",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/fundingIncomeLedger.js",
+          137
+        ],
+        [
+          "attributeCycleFunding",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/runtime/appRuntime.js",
+          1485
+        ],
+        [
+          "",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/runtime/appRuntime.js",
+          912
+        ]
+      ]
+    },
+    {
+      "samples": 67,
+      "percent": 0.1745,
+      "chain": [
+        [
+          "attribution",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/fundingIncomeLedger.js",
+          98
+        ],
+        [
+          "cycleFundingFact",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/fundingIncomeLedger.js",
+          137
+        ],
+        [
+          "attributeCycleFunding",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/runtime/appRuntime.js",
+          1485
+        ],
+        [
+          "",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/runtime/appRuntime.js",
+          912
+        ],
+        [
+          "",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/runtime/appRuntime.js",
+          693
+        ]
+      ]
+    },
+    {
+      "samples": 36,
+      "percent": 0.0938,
+      "chain": [
+        [
+          "query",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/ownershipJournal.js",
+          45
+        ],
+        [
+          "unreleasedClaimInventory",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+          337
+        ],
+        [
+          "convergenceStats",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+          404
+        ],
+        [
+          "exitConvergenceHealth",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/runtime/appRuntime.js",
+          1415
+        ],
+        [
+          "baseDashboardProjection",
+          "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/api/projections.js",
+          194
+        ]
+      ]
+    }
+  ]
+}

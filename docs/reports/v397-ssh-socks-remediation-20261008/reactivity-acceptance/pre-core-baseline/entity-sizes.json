@@ -1,0 +1,84 @@
+{
+  "at": "2026-10-08T01:30:21.265042+00:00",
+  "entities": [
+    {
+      "kind": "aiRuns",
+      "rows": 200,
+      "payloadBytes": 29255629,
+      "largestBytes": 268684
+    },
+    {
+      "kind": "aiUsage",
+      "rows": 5000,
+      "payloadBytes": 4953450,
+      "largestBytes": 1176
+    },
+    {
+      "kind": "allocationPlans",
+      "rows": 6030,
+      "payloadBytes": 7927031,
+      "largestBytes": 1399
+    },
+    {
+      "kind": "entryIntents",
+      "rows": 2472,
+      "payloadBytes": 101200761,
+      "largestBytes": 107551
+    },
+    {
+      "kind": "entryOrders",
+      "rows": 2441,
+      "payloadBytes": 6182962,
+      "largestBytes": 91891
+    },
+    {
+      "kind": "entryReservations",
+      "rows": 4420,
+      "payloadBytes": 1360567,
+      "largestBytes": 954
+    },
+    {
+      "kind": "executionFills",
+      "rows": 5000,
+      "payloadBytes": 3658381,
+      "largestBytes": 782
+    },
+    {
+      "kind": "manualIntents",
+      "rows": 314,
+      "payloadBytes": 142836,
+      "largestBytes": 641
+    },
+    {
+      "kind": "manualOrders",
+      "rows": 49,
+      "payloadBytes": 27761,
+      "largestBytes": 1461
+    },
+    {
+      "kind": "positions",
+      "rows": 14,
+      "payloadBytes": 23402,
+      "largestBytes": 1752
+    },
+    {
+      "kind": "tpOrders",
+      "rows": 1518,
+      "payloadBytes": 641269,
+      "largestBytes": 625
+    },
+    {
+      "kind": "tradePlans",
+      "rows": 3431,
+      "payloadBytes": 6967593,
+      "largestBytes": 3919
+    },
+    {
+      "kind": "tradeRecords",
+      "rows": 710,
+      "payloadBytes": 3043631,
+      "largestBytes": 41195
+    }
+  ],
+  "policyMode": "SHADOW"
+}

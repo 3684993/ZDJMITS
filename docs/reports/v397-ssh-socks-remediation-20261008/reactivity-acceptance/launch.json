@@ -1,0 +1,8 @@
+{
+  "detachedLauncherPid": 25204,
+  "mode": "Engine",
+  "result": "LAUNCHED_NOT_HEALTH_VERIFIED",
+  "script": "D:\\MITS-WORKTREES\\v397-reactivity-deploy-acceptance-20261008\\scripts\\start-zdj-lan.ps1",
+  "at": "2026-10-08T04:27:24.6218022Z",
+  "log": "D:\\MITS-WORKTREES\\v397-reactivity-deploy-acceptance-20261008\\docs\\reports\\v397-ssh-socks-remediation-20261008\\detached-engine-launch.txt"
+}

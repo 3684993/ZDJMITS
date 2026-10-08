@@ -1,0 +1,42 @@
+{
+  "reason": "Build/load verified main without concurrent Engine commit pressure",
+  "otherListeners": [
+    {
+      "LocalPort": 8084,
+      "OwningProcess": 51124
+    },
+    {
+      "LocalPort": 8083,
+      "OwningProcess": 17468
+    },
+    {
+      "LocalPort": 8081,
+      "OwningProcess": 12732
+    }
+  ],
+  "identity": {
+    "instanceId": "4b4688e0-3816-49c7-ae47-e4e41aeabfba",
+    "pid": 29620,
+    "startedAt": 1791422528504,
+    "host": "0.0.0.0",
+    "port": 8080,
+    "version": "3.9.7",
+    "buildId": "3.9.7-d5aba17f5428eaada039",
+    "artifactHash": "d5aba17f5428eaada039414038150eb0b6a1d6e89f3b099fd50c39641b0aba38",
+    "sourceHash": "a28ae25b5a74acfad29a69ecd1a3c51b8759173f9f1f71628a79e4a1f1754944",
+    "startReason": "MANUAL_START",
+    "lanIps": [
+      "192.168.1.50"
+    ],
+    "restartCount": 272
+  },
+  "process": {
+    "ProcessId": 29620,
+    "ParentProcessId": 43804,
+    "Name": "node.exe",
+    "CreationDate": "2026-10-08T09:22:07.23233+08:00",
+    "CommandLine": "\"C:\\Program Files\\nodejs\\node.exe\" --no-maglev \"D:\\MITS-WORKTREES\\v397-tq-event-scope-recovery-20261008\\apps\\engine\\dist\\main.js\" "
+  },
+  "mode": "AUTHORIZED_8080_DEPLOYMENT_STOP",
+  "at": "2026-10-08T04:26:52.7705311Z"
+}

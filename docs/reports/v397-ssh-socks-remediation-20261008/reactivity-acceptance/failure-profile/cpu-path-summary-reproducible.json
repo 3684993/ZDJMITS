@@ -1,0 +1,3678 @@
+{
+  "totalSamples": 28865,
+  "interpretation": "Inclusive CPU sample attribution overlaps. Not wall-clock durations or a request census.",
+  "inclusivePaths": [
+    {
+      "function": "(root)",
+      "url": "",
+      "samples": 28865,
+      "percent": 100.0
+    },
+    {
+      "function": "(idle)",
+      "url": "",
+      "samples": 13655,
+      "percent": 47.3064
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 9886,
+      "percent": 34.2491
+    },
+    {
+      "function": "processTimers",
+      "url": "node:internal/timers",
+      "samples": 8097,
+      "percent": 28.0513
+    },
+    {
+      "function": "listOnTimeout",
+      "url": "node:internal/timers",
+      "samples": 8003,
+      "percent": 27.7256
+    },
+    {
+      "function": "runMicrotasks",
+      "url": "",
+      "samples": 5774,
+      "percent": 20.0035
+    },
+    {
+      "function": "processTicksAndRejections",
+      "url": "node:internal/process/task_queues",
+      "samples": 5697,
+      "percent": 19.7367
+    },
+    {
+      "function": "all",
+      "url": "",
+      "samples": 5638,
+      "percent": 19.5323
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/reconciliationService.js",
+      "samples": 5549,
+      "percent": 19.224
+    },
+    {
+      "function": "every.name",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 4721,
+      "percent": 16.3554
+    },
+    {
+      "function": "tick",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "samples": 3114,
+      "percent": 10.7882
+    },
+    {
+      "function": "materialize",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "samples": 2669,
+      "percent": 9.2465
+    },
+    {
+      "function": "emit",
+      "url": "node:events",
+      "samples": 2587,
+      "percent": 8.9624
+    },
+    {
+      "function": "publish",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/events/eventBus.js",
+      "samples": 2210,
+      "percent": 7.6563
+    },
+    {
+      "function": "mutateReservations",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/state/runtimeState.js",
+      "samples": 2178,
+      "percent": 7.5455
+    },
+    {
+      "function": "mutateEntryReservations",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/config/settingsStore.js",
+      "samples": 2175,
+      "percent": 7.5351
+    },
+    {
+      "function": "state.entryReservationTransaction",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 2175,
+      "percent": 7.5351
+    },
+    {
+      "function": "apply",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/runtimeWriteBuffer.js",
+      "samples": 2073,
+      "percent": 7.1817
+    },
+    {
+      "function": "persistRuntime",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/config/settingsStore.js",
+      "samples": 1990,
+      "percent": 6.8942
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/api/router.js",
+      "samples": 1837,
+      "percent": 6.3641
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/config/settingsStore.js",
+      "samples": 1716,
+      "percent": 5.9449
+    },
+    {
+      "function": "publishSnapshot",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/api/router.js",
+      "samples": 1669,
+      "percent": 5.7821
+    },
+    {
+      "function": "dashboardProjection",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/api/projections.js",
+      "samples": 1609,
+      "percent": 5.5742
+    },
+    {
+      "function": "pump",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/ownershipRuntime.js",
+      "samples": 1546,
+      "percent": 5.356
+    },
+    {
+      "function": "baseDashboardProjection",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/api/projections.js",
+      "samples": 1543,
+      "percent": 5.3456
+    },
+    {
+      "function": "drainOutbox",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/ownershipService.js",
+      "samples": 1543,
+      "percent": 5.3456
+    },
+    {
+      "function": "pendingEvents",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/ownershipJournal.js",
+      "samples": 1542,
+      "percent": 5.3421
+    },
+    {
+      "function": "markEntryReservationWorking",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/state/runtimeState.js",
+      "samples": 1397,
+      "percent": 4.8398
+    },
+    {
+      "function": "run",
+      "url": "",
+      "samples": 1375,
+      "percent": 4.7636
+    },
+    {
+      "function": "saveEntryExecution",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/config/settingsStore.js",
+      "samples": 1192,
+      "percent": 4.1296
+    },
+    {
+      "function": "allTasks",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+      "samples": 1159,
+      "percent": 4.0152
+    },
+    {
+      "function": "exitConvergenceHealth",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 1127,
+      "percent": 3.9044
+    },
+    {
+      "function": "put",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "samples": 929,
+      "percent": 3.2184
+    },
+    {
+      "function": "query",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/ownershipJournal.js",
+      "samples": 929,
+      "percent": 3.2184
+    },
+    {
+      "function": "TradingQualityCollector.listener",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "samples": 877,
+      "percent": 3.0383
+    },
+    {
+      "function": "onEvent",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "samples": 877,
+      "percent": 3.0383
+    },
+    {
+      "function": "captureState",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "samples": 869,
+      "percent": 3.0106
+    },
+    {
+      "function": "(garbage collector)",
+      "url": "",
+      "samples": 812,
+      "percent": 2.8131
+    },
+    {
+      "function": "convergenceStats",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+      "samples": 789,
+      "percent": 2.7334
+    },
+    {
+      "function": "releaseEntryReservation",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/state/runtimeState.js",
+      "samples": 781,
+      "percent": 2.7057
+    },
+    {
+      "function": "persistRuntimeCore",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/config/settingsStore.js",
+      "samples": 747,
+      "percent": 2.5879
+    },
+    {
+      "function": "executionTruthProjection",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/api/projections.js",
+      "samples": 744,
+      "percent": 2.5775
+    },
+    {
+      "function": "reportOpenOrderExitFacts",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/reconciliationService.js",
+      "samples": 643,
+      "percent": 2.2276
+    },
+    {
+      "function": "recordExitOrderReport",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+      "samples": 643,
+      "percent": 2.2276
+    },
+    {
+      "function": "recordVerifiedExitOrderFacts",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+      "samples": 643,
+      "percent": 2.2276
+    },
+    {
+      "function": "entryExecutionClaimStats",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/config/settingsStore.js",
+      "samples": 522,
+      "percent": 1.8084
+    },
+    {
+      "function": "pendingTasks",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/ownershipService.js",
+      "samples": 518,
+      "percent": 1.7946
+    },
+    {
+      "function": "findTaskByClientOrderId",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+      "samples": 495,
+      "percent": 1.7149
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+      "samples": 471,
+      "percent": 1.6317
+    },
+    {
+      "function": "unreleasedClaimInventory",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+      "samples": 458,
+      "percent": 1.5867
+    },
+    {
+      "function": "recoveryPlan",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+      "samples": 337,
+      "percent": 1.1675
+    },
+    {
+      "function": "recoveryPlan",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+      "samples": 337,
+      "percent": 1.1675
+    },
+    {
+      "function": "pipelineStatus",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 336,
+      "percent": 1.164
+    },
+    {
+      "function": "convergenceStats",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+      "samples": 330,
+      "percent": 1.1433
+    },
+    {
+      "function": "runNextTicks",
+      "url": "node:internal/process/task_queues",
+      "samples": 322,
+      "percent": 1.1155
+    },
+    {
+      "function": "get",
+      "url": "",
+      "samples": 282,
+      "percent": 0.977
+    },
+    {
+      "function": "callbackTrampoline",
+      "url": "node:internal/async_hooks",
+      "samples": 267,
+      "percent": 0.925
+    },
+    {
+      "function": "processPool",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/entryCoordinator.js",
+      "samples": 260,
+      "percent": 0.9007
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/entryCoordinator.js",
+      "samples": 251,
+      "percent": 0.8696
+    },
+    {
+      "function": "objectiveCapacity",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/entryCoordinator.js",
+      "samples": 251,
+      "percent": 0.8696
+    },
+    {
+      "function": "terminalFactMatchesTask",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+      "samples": 251,
+      "percent": 0.8696
+    },
+    {
+      "function": "task",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+      "samples": 251,
+      "percent": 0.8696
+    },
+    {
+      "function": "buildPreAiExecutionEnvelope",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/preAiExecutionEnvelope.js",
+      "samples": 250,
+      "percent": 0.8661
+    },
+    {
+      "function": "updateIncidents",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/api/router.js",
+      "samples": 243,
+      "percent": 0.8418
+    },
+    {
+      "function": "runtimeEvents",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/config/settingsStore.js",
+      "samples": 239,
+      "percent": 0.828
+    },
+    {
+      "function": "processCallback",
+      "url": "node:zlib",
+      "samples": 233,
+      "percent": 0.8072
+    },
+    {
+      "function": "health",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/reconciliationService.js",
+      "samples": 229,
+      "percent": 0.7933
+    },
+    {
+      "function": "parserOnHeadersComplete",
+      "url": "node:_http_common",
+      "samples": 218,
+      "percent": 0.7552
+    },
+    {
+      "function": "reviewPending",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/entryCoordinator.js",
+      "samples": 217,
+      "percent": 0.7518
+    },
+    {
+      "function": "",
+      "url": "node:internal/streams/transform",
+      "samples": 213,
+      "percent": 0.7379
+    },
+    {
+      "function": "onwrite",
+      "url": "node:internal/streams/writable",
+      "samples": 212,
+      "percent": 0.7345
+    },
+    {
+      "function": "parserOnIncoming",
+      "url": "node:_http_server",
+      "samples": 210,
+      "percent": 0.7275
+    },
+    {
+      "function": "app",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/express/lib/express.js",
+      "samples": 205,
+      "percent": 0.7102
+    },
+    {
+      "function": "handle",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/express/lib/application.js",
+      "samples": 204,
+      "percent": 0.7067
+    },
+    {
+      "function": "handle",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/router/index.js",
+      "samples": 203,
+      "percent": 0.7033
+    },
+    {
+      "function": "next",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/router/index.js",
+      "samples": 200,
+      "percent": 0.6929
+    },
+    {
+      "function": "trimPrefix",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/router/index.js",
+      "samples": 197,
+      "percent": 0.6825
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/router/index.js",
+      "samples": 197,
+      "percent": 0.6825
+    },
+    {
+      "function": "handleRequest",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/router/lib/layer.js",
+      "samples": 197,
+      "percent": 0.6825
+    },
+    {
+      "function": "processParams",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/router/index.js",
+      "samples": 197,
+      "percent": 0.6825
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/server.js",
+      "samples": 195,
+      "percent": 0.6756
+    },
+    {
+      "function": "computeExecutableRiskHeadroom",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/executableRiskHeadroom.js",
+      "samples": 193,
+      "percent": 0.6686
+    },
+    {
+      "function": "jsonParser",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/body-parser/lib/types/json.js",
+      "samples": 190,
+      "percent": 0.6582
+    },
+    {
+      "function": "read",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/body-parser/lib/read.js",
+      "samples": 190,
+      "percent": 0.6582
+    },
+    {
+      "function": "dispatch",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/router/lib/route.js",
+      "samples": 186,
+      "percent": 0.6444
+    },
+    {
+      "function": "next",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/router/lib/route.js",
+      "samples": 186,
+      "percent": 0.6444
+    },
+    {
+      "function": "afterWrite",
+      "url": "node:internal/streams/writable",
+      "samples": 174,
+      "percent": 0.6028
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/ws/lib/permessage-deflate.js",
+      "samples": 173,
+      "percent": 0.5993
+    },
+    {
+      "function": "router",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/router/index.js",
+      "samples": 171,
+      "percent": 0.5924
+    },
+    {
+      "function": "entryConversionReport",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/runExecutionOutcome.js",
+      "samples": 171,
+      "percent": 0.5924
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/ws/lib/receiver.js",
+      "samples": 163,
+      "percent": 0.5647
+    },
+    {
+      "function": "exec",
+      "url": "",
+      "samples": 156,
+      "percent": 0.5404
+    },
+    {
+      "function": "health",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 150,
+      "percent": 0.5197
+    },
+    {
+      "function": "prepare",
+      "url": "",
+      "samples": 146,
+      "percent": 0.5058
+    },
+    {
+      "function": "record",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/orderProvenanceRegistry.js",
+      "samples": 145,
+      "percent": 0.5023
+    },
+    {
+      "function": "(program)",
+      "url": "",
+      "samples": 144,
+      "percent": 0.4989
+    },
+    {
+      "function": "transaction",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/orderProvenanceRegistry.js",
+      "samples": 144,
+      "percent": 0.4989
+    },
+    {
+      "function": "dataMessage",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/ws/lib/receiver.js",
+      "samples": 137,
+      "percent": 0.4746
+    },
+    {
+      "function": "update",
+      "url": "node:internal/crypto/hash",
+      "samples": 136,
+      "percent": 0.4712
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/adapters/market/BinanceMarketStream.js",
+      "samples": 135,
+      "percent": 0.4677
+    },
+    {
+      "function": "receiverOnMessage",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/ws/lib/websocket.js",
+      "samples": 133,
+      "percent": 0.4608
+    },
+    {
+      "function": "sideCapacity",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/preAiExecutionEnvelope.js",
+      "samples": 127,
+      "percent": 0.44
+    },
+    {
+      "function": "update",
+      "url": "",
+      "samples": 120,
+      "percent": 0.4157
+    },
+    {
+      "function": "evaluate",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/runtimeControlService.js",
+      "samples": 119,
+      "percent": 0.4123
+    },
+    {
+      "function": "cycleFundingFact",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/fundingIncomeLedger.js",
+      "samples": 118,
+      "percent": 0.4088
+    },
+    {
+      "function": "attributeCycleFunding",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 118,
+      "percent": 0.4088
+    },
+    {
+      "function": "onMessage",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/adapters/market/BinanceMarketStream.js",
+      "samples": 114,
+      "percent": 0.3949
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/shadowRunner.js",
+      "samples": 114,
+      "percent": 0.3949
+    },
+    {
+      "function": "sample",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/shadowRunner.js",
+      "samples": 113,
+      "percent": 0.3915
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/executableRiskHeadroom.js",
+      "samples": 108,
+      "percent": 0.3742
+    },
+    {
+      "function": "attribution",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/fundingIncomeLedger.js",
+      "samples": 105,
+      "percent": 0.3638
+    },
+    {
+      "function": "apply",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/state/runtimeState.js",
+      "samples": 103,
+      "percent": 0.3568
+    },
+    {
+      "function": "same",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/state/runtimeState.js",
+      "samples": 102,
+      "percent": 0.3534
+    },
+    {
+      "function": "reservationMapsChanged",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/state/runtimeState.js",
+      "samples": 102,
+      "percent": 0.3534
+    },
+    {
+      "function": "saveManualExecution",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/config/settingsStore.js",
+      "samples": 89,
+      "percent": 0.3083
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/runtimeControlService.js",
+      "samples": 86,
+      "percent": 0.2979
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/state/runtimeState.js",
+      "samples": 78,
+      "percent": 0.2702
+    },
+    {
+      "function": "recordShadowMark",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/config/settingsStore.js",
+      "samples": 77,
+      "percent": 0.2668
+    },
+    {
+      "function": "captureStateChunk",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "samples": 76,
+      "percent": 0.2633
+    },
+    {
+      "function": "auditProgressReadback",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/reconciliationService.js",
+      "samples": 75,
+      "percent": 0.2598
+    },
+    {
+      "function": "entryCapacity",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/state/runtimeState.js",
+      "samples": 74,
+      "percent": 0.2564
+    },
+    {
+      "function": "calculate",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/runtimeControlService.js",
+      "samples": 73,
+      "percent": 0.2529
+    },
+    {
+      "function": "refresh",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/universeCoordinator.js",
+      "samples": 69,
+      "percent": 0.239
+    },
+    {
+      "function": "reconcileCandidateLifecycles",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/candidateLifecycleDeriver.js",
+      "samples": 65,
+      "percent": 0.2252
+    },
+    {
+      "function": "cleanupReservations",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/state/runtimeState.js",
+      "samples": 65,
+      "percent": 0.2252
+    },
+    {
+      "function": "clearBuffer",
+      "url": "node:internal/streams/writable",
+      "samples": 62,
+      "percent": 0.2148
+    },
+    {
+      "function": "projectTradeRecordSummary",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/tradeRecordReadModel.js",
+      "samples": 58,
+      "percent": 0.2009
+    },
+    {
+      "function": "doWrite",
+      "url": "node:internal/streams/writable",
+      "samples": 56,
+      "percent": 0.194
+    },
+    {
+      "function": "readinessProjection",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 56,
+      "percent": 0.194
+    },
+    {
+      "function": "sum",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/executableRiskHeadroom.js",
+      "samples": 56,
+      "percent": 0.194
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/api/projections.js",
+      "samples": 54,
+      "percent": 0.1871
+    },
+    {
+      "function": "json",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/express/lib/response.js",
+      "samples": 51,
+      "percent": 0.1767
+    },
+    {
+      "function": "hash",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "samples": 48,
+      "percent": 0.1663
+    },
+    {
+      "function": "projectTradeRecordRow",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/tradeRecordReadModel.js",
+      "samples": 48,
+      "percent": 0.1663
+    },
+    {
+      "function": "write",
+      "url": "",
+      "samples": 47,
+      "percent": 0.1628
+    },
+    {
+      "function": "processChunk",
+      "url": "node:zlib",
+      "samples": 46,
+      "percent": 0.1594
+    },
+    {
+      "function": "ZlibBase._transform",
+      "url": "node:zlib",
+      "samples": 46,
+      "percent": 0.1594
+    },
+    {
+      "function": "Transform._write",
+      "url": "node:internal/streams/transform",
+      "samples": 46,
+      "percent": 0.1594
+    },
+    {
+      "function": "remoteFactAuditClass",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/entryRiskOccupancy.js",
+      "samples": 46,
+      "percent": 0.1594
+    },
+    {
+      "function": "safeParse",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/zod/v3/types.js",
+      "samples": 46,
+      "percent": 0.1594
+    },
+    {
+      "function": "parse",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/zod/v3/types.js",
+      "samples": 46,
+      "percent": 0.1594
+    },
+    {
+      "function": "scope",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "samples": 45,
+      "percent": 0.1559
+    },
+    {
+      "function": "ownership",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/ownershipService.js",
+      "samples": 45,
+      "percent": 0.1559
+    },
+    {
+      "function": "get",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/ownershipJournal.js",
+      "samples": 45,
+      "percent": 0.1559
+    },
+    {
+      "function": "_parseSync",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/zod/v3/types.js",
+      "samples": 45,
+      "percent": 0.1559
+    },
+    {
+      "function": "rowsFor",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/fundingIncomeLedger.js",
+      "samples": 45,
+      "percent": 0.1559
+    },
+    {
+      "function": "_parse",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/zod/v3/types.js",
+      "samples": 44,
+      "percent": 0.1524
+    },
+    {
+      "function": "reservationCleanupNeeded",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/state/runtimeState.js",
+      "samples": 43,
+      "percent": 0.149
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/tradeRecordReadModel.js",
+      "samples": 37,
+      "percent": 0.1282
+    },
+    {
+      "function": "riskClusterKey",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/executableRiskHeadroom.js",
+      "samples": 37,
+      "percent": 0.1282
+    },
+    {
+      "function": "buildEpisodeEvidence",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/tradingEpisodeEvidence.js",
+      "samples": 36,
+      "percent": 0.1247
+    },
+    {
+      "function": "recordRuntimeEvent",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/config/settingsStore.js",
+      "samples": 36,
+      "percent": 0.1247
+    },
+    {
+      "function": "persistCandidateShadow",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "samples": 33,
+      "percent": 0.1143
+    },
+    {
+      "function": "readableAddChunkPushByteMode",
+      "url": "node:internal/streams/readable",
+      "samples": 31,
+      "percent": 0.1074
+    },
+    {
+      "function": "Readable.push",
+      "url": "node:internal/streams/readable",
+      "samples": 31,
+      "percent": 0.1074
+    },
+    {
+      "function": "send",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/express/lib/response.js",
+      "samples": 30,
+      "percent": 0.1039
+    },
+    {
+      "function": "ownerOfScope",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+      "samples": 30,
+      "percent": 0.1039
+    },
+    {
+      "function": "",
+      "url": "",
+      "samples": 30,
+      "percent": 0.1039
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "samples": 29,
+      "percent": 0.1005
+    },
+    {
+      "function": "addChunk",
+      "url": "node:internal/streams/readable",
+      "samples": 29,
+      "percent": 0.1005
+    },
+    {
+      "function": "entryIdentityTombstone",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/entryRiskOccupancy.js",
+      "samples": 29,
+      "percent": 0.1005
+    },
+    {
+      "function": "createHash",
+      "url": "node:crypto",
+      "samples": 29,
+      "percent": 0.1005
+    },
+    {
+      "function": "upsertDecisionSnapshot",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/config/settingsStore.js",
+      "samples": 29,
+      "percent": 0.1005
+    },
+    {
+      "function": "clusterFor",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/executableRiskHeadroom.js",
+      "samples": 29,
+      "percent": 0.1005
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/adapters/binance/requestBudget.js",
+      "samples": 27,
+      "percent": 0.0935
+    },
+    {
+      "function": "Hash",
+      "url": "node:internal/crypto/hash",
+      "samples": 27,
+      "percent": 0.0935
+    },
+    {
+      "function": "onEvent",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/adapters/market/BinanceMarketStream.js",
+      "samples": 26,
+      "percent": 0.0901
+    },
+    {
+      "function": "health",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/adapters/binance/requestBudget.js",
+      "samples": 25,
+      "percent": 0.0866
+    },
+    {
+      "function": "collectPendingEntryRiskExposures",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/entryRiskOccupancy.js",
+      "samples": 25,
+      "percent": 0.0866
+    },
+    {
+      "function": "digest",
+      "url": "node:internal/crypto/hash",
+      "samples": 25,
+      "percent": 0.0866
+    },
+    {
+      "function": "riskUnderlying",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/executableRiskHeadroom.js",
+      "samples": 25,
+      "percent": 0.0866
+    },
+    {
+      "function": "digest",
+      "url": "",
+      "samples": 24,
+      "percent": 0.0831
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/zod/v3/types.js",
+      "samples": 24,
+      "percent": 0.0831
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/adapters/binance/BinanceTransport.js",
+      "samples": 24,
+      "percent": 0.0831
+    },
+    {
+      "function": "supplyHealth",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 23,
+      "percent": 0.0797
+    },
+    {
+      "function": "startLoop",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/ws/lib/receiver.js",
+      "samples": 23,
+      "percent": 0.0797
+    },
+    {
+      "function": "byteLength",
+      "url": "node:buffer",
+      "samples": 23,
+      "percent": 0.0797
+    },
+    {
+      "function": "Hash",
+      "url": "",
+      "samples": 23,
+      "percent": 0.0797
+    },
+    {
+      "function": "quoteAssetCommittedMargin",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/capitalCapacity.js",
+      "samples": 22,
+      "percent": 0.0762
+    },
+    {
+      "function": "dispatchAnalysisTick",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 22,
+      "percent": 0.0762
+    },
+    {
+      "function": "candidateCapitalFromState",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/capitalCapacity.js",
+      "samples": 21,
+      "percent": 0.0728
+    },
+    {
+      "function": "currentOpenEntryOrders",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/reconciliationService.js",
+      "samples": 21,
+      "percent": 0.0728
+    },
+    {
+      "function": "_write",
+      "url": "node:internal/streams/writable",
+      "samples": 21,
+      "percent": 0.0728
+    },
+    {
+      "function": "writeOrBuffer",
+      "url": "node:internal/streams/writable",
+      "samples": 21,
+      "percent": 0.0728
+    },
+    {
+      "function": "stringify",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/express/lib/response.js",
+      "samples": 20,
+      "percent": 0.0693
+    },
+    {
+      "function": "executionReadinessSnapshot",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 18,
+      "percent": 0.0624
+    },
+    {
+      "function": "tick",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/positionReviewRunner.js",
+      "samples": 18,
+      "percent": 0.0624
+    },
+    {
+      "function": "getData",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/ws/lib/receiver.js",
+      "samples": 17,
+      "percent": 0.0589
+    },
+    {
+      "function": "Writable.write",
+      "url": "node:internal/streams/writable",
+      "samples": 17,
+      "percent": 0.0589
+    },
+    {
+      "function": "binanceEntryBlockReason",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/adapters/binance/requestBudget.js",
+      "samples": 16,
+      "percent": 0.0554
+    },
+    {
+      "function": "writeAdmissionBlock",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/entryCoordinator.js",
+      "samples": 16,
+      "percent": 0.0554
+    },
+    {
+      "function": "canonicalPnlEligible",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/tradingQualityEligibility.js",
+      "samples": 16,
+      "percent": 0.0554
+    },
+    {
+      "function": "decompress",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/ws/lib/permessage-deflate.js",
+      "samples": 16,
+      "percent": 0.0554
+    },
+    {
+      "function": "decompress",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/ws/lib/receiver.js",
+      "samples": 16,
+      "percent": 0.0554
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/ws/lib/limiter.js",
+      "samples": 16,
+      "percent": 0.0554
+    },
+    {
+      "function": "add",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/ws/lib/limiter.js",
+      "samples": 16,
+      "percent": 0.0554
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/entryRiskOccupancy.js",
+      "samples": 16,
+      "percent": 0.0554
+    },
+    {
+      "function": "onStreamRead",
+      "url": "node:internal/stream_base_commons",
+      "samples": 16,
+      "percent": 0.0554
+    },
+    {
+      "function": "endReadableNT",
+      "url": "node:internal/streams/readable",
+      "samples": 16,
+      "percent": 0.0554
+    },
+    {
+      "function": "runtimeStatus",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 16,
+      "percent": 0.0554
+    },
+    {
+      "function": "capitalFactVersion",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/runtimeControlService.js",
+      "samples": 15,
+      "percent": 0.052
+    },
+    {
+      "function": "ledgerClosedComplete",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/tradingQualityEligibility.js",
+      "samples": 15,
+      "percent": 0.052
+    },
+    {
+      "function": "owner",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+      "samples": 15,
+      "percent": 0.052
+    },
+    {
+      "function": "_write",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/ws/lib/receiver.js",
+      "samples": 15,
+      "percent": 0.052
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/orderProvenanceRegistry.js",
+      "samples": 15,
+      "percent": 0.052
+    },
+    {
+      "function": "observeRemotePosition",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/positionService.js",
+      "samples": 15,
+      "percent": 0.052
+    },
+    {
+      "function": "end",
+      "url": "node:_http_outgoing",
+      "samples": 14,
+      "percent": 0.0485
+    },
+    {
+      "function": "networkInterfaces",
+      "url": "node:os",
+      "samples": 14,
+      "percent": 0.0485
+    },
+    {
+      "function": "currentLanIps",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/runtime/runtimeIdentity.js",
+      "samples": 14,
+      "percent": 0.0485
+    },
+    {
+      "function": "wrappedFn",
+      "url": "node:internal/errors",
+      "samples": 14,
+      "percent": 0.0485
+    },
+    {
+      "function": "evaluateCapitalAdmission",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/packages/core/dist/capitalAdmission.js",
+      "samples": 13,
+      "percent": 0.045
+    },
+    {
+      "function": "toString",
+      "url": "node:buffer",
+      "samples": 13,
+      "percent": 0.045
+    },
+    {
+      "function": "getInterfaceAddresses",
+      "url": "",
+      "samples": 13,
+      "percent": 0.045
+    },
+    {
+      "function": "checkError",
+      "url": "node:os",
+      "samples": 13,
+      "percent": 0.045
+    },
+    {
+      "function": "maybeReadMore",
+      "url": "node:internal/streams/readable",
+      "samples": 12,
+      "percent": 0.0416
+    },
+    {
+      "function": "nextTick",
+      "url": "node:internal/process/task_queues",
+      "samples": 12,
+      "percent": 0.0416
+    },
+    {
+      "function": "from",
+      "url": "node:buffer",
+      "samples": 12,
+      "percent": 0.0416
+    },
+    {
+      "function": "fromString",
+      "url": "node:buffer",
+      "samples": 12,
+      "percent": 0.0416
+    },
+    {
+      "function": "fromStringFast",
+      "url": "node:buffer",
+      "samples": 12,
+      "percent": 0.0416
+    },
+    {
+      "function": "createFromString",
+      "url": "node:buffer",
+      "samples": 12,
+      "percent": 0.0416
+    },
+    {
+      "function": "buildAllocationPlan",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/packages/core/dist/portfolio.js",
+      "samples": 12,
+      "percent": 0.0416
+    },
+    {
+      "function": "run",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/adapters/binance/requestBudget.js",
+      "samples": 12,
+      "percent": 0.0416
+    },
+    {
+      "function": "versions",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/positionReviewRunner.js",
+      "samples": 12,
+      "percent": 0.0416
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/tradingEpisodeEvidence.js",
+      "samples": 11,
+      "percent": 0.0381
+    },
+    {
+      "function": "writeAdmissionBlockReason",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/entryCoordinator.js",
+      "samples": 11,
+      "percent": 0.0381
+    },
+    {
+      "function": "ensure",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/tpGuardian.js",
+      "samples": 11,
+      "percent": 0.0381
+    },
+    {
+      "function": "sweep",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/tpGuardian.js",
+      "samples": 11,
+      "percent": 0.0381
+    },
+    {
+      "function": "remoteRiskAudit",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/entryRiskOccupancy.js",
+      "samples": 11,
+      "percent": 0.0381
+    },
+    {
+      "function": "memoryVersion",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 11,
+      "percent": 0.0381
+    },
+    {
+      "function": "tradeMemoryVersionOf",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/tradeMemoryService.js",
+      "samples": 11,
+      "percent": 0.0381
+    },
+    {
+      "function": "entryOrderOccupiesRisk",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/entryRiskOccupancy.js",
+      "samples": 11,
+      "percent": 0.0381
+    },
+    {
+      "function": "activeEntrySymbols",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/state/runtimeState.js",
+      "samples": 10,
+      "percent": 0.0346
+    },
+    {
+      "function": "getSnapshot",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/adapters/market/BinancePublicMarketDataProvider.js",
+      "samples": 10,
+      "percent": 0.0346
+    },
+    {
+      "function": "localFixedEstimate",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/adapters/binance/requestBudget.js",
+      "samples": 10,
+      "percent": 0.0346
+    },
+    {
+      "function": "run",
+      "url": "node:internal/async_local_storage/async_hooks",
+      "samples": 10,
+      "percent": 0.0346
+    },
+    {
+      "function": "withBinanceReadContext",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/adapters/binance/binanceReadContext.js",
+      "samples": 10,
+      "percent": 0.0346
+    },
+    {
+      "function": "run",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/reconciliationService.js",
+      "samples": 10,
+      "percent": 0.0346
+    },
+    {
+      "function": "readiness",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 10,
+      "percent": 0.0346
+    },
+    {
+      "function": "_decompress",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/ws/lib/permessage-deflate.js",
+      "samples": 10,
+      "percent": 0.0346
+    },
+    {
+      "function": "make",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/packages/core/dist/capitalAdmission.js",
+      "samples": 9,
+      "percent": 0.0312
+    },
+    {
+      "function": "json",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/adapters/binance/BinanceTransport.js",
+      "samples": 9,
+      "percent": 0.0312
+    },
+    {
+      "function": "metrics",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/tpGuardian.js",
+      "samples": 9,
+      "percent": 0.0312
+    },
+    {
+      "function": "attempt",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/adapters/exchange/ExternalTradeAdapter.js",
+      "samples": 9,
+      "percent": 0.0312
+    },
+    {
+      "function": "signed",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/adapters/exchange/ExternalTradeAdapter.js",
+      "samples": 9,
+      "percent": 0.0312
+    },
+    {
+      "function": "portfolioRiskRequiredSymbols",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 9,
+      "percent": 0.0312
+    },
+    {
+      "function": "mandate",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/ownershipService.js",
+      "samples": 9,
+      "percent": 0.0312
+    },
+    {
+      "function": "mandate",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+      "samples": 9,
+      "percent": 0.0312
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/capitalCapacity.js",
+      "samples": 9,
+      "percent": 0.0312
+    },
+    {
+      "function": "fillAnchoredPath",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/tradingEpisodeEvidence.js",
+      "samples": 8,
+      "percent": 0.0277
+    },
+    {
+      "function": "coverageSummary",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/fundingIncomeLedger.js",
+      "samples": 8,
+      "percent": 0.0277
+    },
+    {
+      "function": "fundingIncomeCoverage",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 8,
+      "percent": 0.0277
+    },
+    {
+      "function": "fixFirstFillDeadlines",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 8,
+      "percent": 0.0277
+    },
+    {
+      "function": "Writable.uncork",
+      "url": "node:internal/streams/writable",
+      "samples": 8,
+      "percent": 0.0277
+    },
+    {
+      "function": "Socket._writeGeneric",
+      "url": "node:net",
+      "samples": 8,
+      "percent": 0.0277
+    },
+    {
+      "function": "mergeObjectSync",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/zod/v3/helpers/parseUtil.js",
+      "samples": 8,
+      "percent": 0.0277
+    },
+    {
+      "function": "operationalEntrySymbols",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/state/runtimeState.js",
+      "samples": 8,
+      "percent": 0.0277
+    },
+    {
+      "function": "request",
+      "url": "node:https",
+      "samples": 8,
+      "percent": 0.0277
+    },
+    {
+      "function": "socketOnData",
+      "url": "node:_http_client",
+      "samples": 8,
+      "percent": 0.0277
+    },
+    {
+      "function": "exactCycleRecord",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/cycleAccounting.js",
+      "samples": 8,
+      "percent": 0.0277
+    },
+    {
+      "function": "write",
+      "url": "node:buffer",
+      "samples": 7,
+      "percent": 0.0243
+    },
+    {
+      "function": "utf8Write",
+      "url": "node:internal/buffer",
+      "samples": 7,
+      "percent": 0.0243
+    },
+    {
+      "function": "fixCycleDeadline",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 7,
+      "percent": 0.0243
+    },
+    {
+      "function": "entryAdmissionBlockReason",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/adapters/exchange/ExternalTradeAdapter.js",
+      "samples": 7,
+      "percent": 0.0243
+    },
+    {
+      "function": "entryBlockReason",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/adapters/binance/BinanceTransport.js",
+      "samples": 7,
+      "percent": 0.0243
+    },
+    {
+      "function": "writeBuffer",
+      "url": "",
+      "samples": 7,
+      "percent": 0.0243
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/adapters/market/BinancePublicMarketDataProvider.js",
+      "samples": 7,
+      "percent": 0.0243
+    },
+    {
+      "function": "buildTechnicalCard",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/packages/core/dist/indicators.js",
+      "samples": 7,
+      "percent": 0.0243
+    },
+    {
+      "function": "ClientRequest",
+      "url": "node:_http_client",
+      "samples": 7,
+      "percent": 0.0243
+    },
+    {
+      "function": "execute",
+      "url": "",
+      "samples": 7,
+      "percent": 0.0243
+    },
+    {
+      "function": "exposure",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/packages/core/dist/portfolio.js",
+      "samples": 6,
+      "percent": 0.0208
+    },
+    {
+      "function": "tick",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/v396AiExitRunner.js",
+      "samples": 6,
+      "percent": 0.0208
+    },
+    {
+      "function": "binanceBudgetLane",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/adapters/binance/requestBudget.js",
+      "samples": 6,
+      "percent": 0.0208
+    },
+    {
+      "function": "ondata",
+      "url": "node:internal/streams/readable",
+      "samples": 6,
+      "percent": 0.0208
+    },
+    {
+      "function": "writeSync",
+      "url": "node:fs",
+      "samples": 6,
+      "percent": 0.0208
+    },
+    {
+      "function": "",
+      "url": "node:internal/worker",
+      "samples": 6,
+      "percent": 0.0208
+    },
+    {
+      "function": "",
+      "url": "node:internal/per_context/messageport",
+      "samples": 6,
+      "percent": 0.0208
+    },
+    {
+      "function": "SyncWriteStream._write",
+      "url": "node:internal/fs/sync_write_stream",
+      "samples": 6,
+      "percent": 0.0208
+    },
+    {
+      "function": "",
+      "url": "node:internal/event_target",
+      "samples": 6,
+      "percent": 0.0208
+    },
+    {
+      "function": "get protocol",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/socks-proxy-agent/node_modules/agent-base/dist/index.js",
+      "samples": 6,
+      "percent": 0.0208
+    },
+    {
+      "function": "dutyResource",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/aiFabric.js",
+      "samples": 6,
+      "percent": 0.0208
+    },
+    {
+      "function": "transaction",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/ownershipJournal.js",
+      "samples": 6,
+      "percent": 0.0208
+    },
+    {
+      "function": "dedupeExecutionFills",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/tradingEpisodeEvidence.js",
+      "samples": 5,
+      "percent": 0.0173
+    },
+    {
+      "function": "nonEmptyId",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/entryRiskOccupancy.js",
+      "samples": 5,
+      "percent": 0.0173
+    },
+    {
+      "function": "remoteFactAuditDeferred",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/entryRiskOccupancy.js",
+      "samples": 5,
+      "percent": 0.0173
+    },
+    {
+      "function": "Socket._write",
+      "url": "node:net",
+      "samples": 5,
+      "percent": 0.0173
+    },
+    {
+      "function": "metrics",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/marketDataHub.js",
+      "samples": 5,
+      "percent": 0.0173
+    },
+    {
+      "function": "metrics",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/adapters/market/BinanceMarketStream.js",
+      "samples": 5,
+      "percent": 0.0173
+    },
+    {
+      "function": "streamMetrics",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/adapters/market/BinancePublicMarketDataProvider.js",
+      "samples": 5,
+      "percent": 0.0173
+    },
+    {
+      "function": "profileReadback",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/portfolioRiskLedger.js",
+      "samples": 5,
+      "percent": 0.0173
+    },
+    {
+      "function": "isSecureEndpoint",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/socks-proxy-agent/node_modules/agent-base/dist/index.js",
+      "samples": 5,
+      "percent": 0.0173
+    },
+    {
+      "function": "reviewDedicated",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/aiFabric.js",
+      "samples": 5,
+      "percent": 0.0173
+    },
+    {
+      "function": "decorateUniverse",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/packages/core/dist/portfolio.js",
+      "samples": 5,
+      "percent": 0.0173
+    },
+    {
+      "function": "Readable",
+      "url": "node:internal/streams/readable",
+      "samples": 5,
+      "percent": 0.0173
+    },
+    {
+      "function": "IncomingMessage",
+      "url": "node:_http_incoming",
+      "samples": 5,
+      "percent": 0.0173
+    },
+    {
+      "function": "entryHasUnresolvedExchangeTerminalRisk",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/entryRiskOccupancy.js",
+      "samples": 5,
+      "percent": 0.0173
+    },
+    {
+      "function": "concat",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/ws/lib/buffer-util.js",
+      "samples": 5,
+      "percent": 0.0173
+    },
+    {
+      "function": "storageEntryBlockReason",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/storageCapacityGuard.js",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "canDispatch",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/runtimeControlService.js",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "storageCapacityHealth",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/storageCapacityGuard.js",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "writeGeneric",
+      "url": "node:internal/stream_base_commons",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "sma",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/packages/core/dist/indicators.js",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "getInfo",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/ws/lib/receiver.js",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "generateETag",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/express/lib/utils.js",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "entitytag",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/etag/index.js",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "etag",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/etag/index.js",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "auditJson",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/api/projections.js",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "redactAudit",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/api/projections.js",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "Socket._writev",
+      "url": "node:net",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "writevGeneric",
+      "url": "node:internal/stream_base_commons",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "writev",
+      "url": "",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/aiFabric.js",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "entryConversionWindow",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/runExecutionOutcome.js",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/operationalLogger.js",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "emitInitScript",
+      "url": "node:internal/async_hooks",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "reviewSettings",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "noteSchedulerTick",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/entryCoordinator.js",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "dutyResources",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/aiFabric.js",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "candidateSupplyHealth",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/candidateSupplyHealth.js",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "get",
+      "url": "node:internal/bootstrap/node",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "worker",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/adapters/market/BinancePublicMarketDataProvider.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "getCandles",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/adapters/market/BinancePublicMarketDataProvider.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "onSocketNT",
+      "url": "node:_http_client",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "maintainStorageBounds",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/storageCapacityGuard.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "resolveUnderlying",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/packages/core/dist/portfolio.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "profileSettings",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/portfolioRiskLedger.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "stableRiskHash",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/portfolioRiskSnapshot.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "",
+      "url": "node:net",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "handleWriteReq",
+      "url": "node:internal/stream_base_commons",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "connect",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/socks-proxy-agent/dist/index.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "onConnectSecure",
+      "url": "node:internal/tls/wrap",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "TLSSocket._finishInit",
+      "url": "node:internal/tls/wrap",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "ssl.onhandshakedone",
+      "url": "node:internal/tls/wrap",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "observeResponse",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/adapters/binance/requestBudget.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "reservationSummary",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/state/runtimeState.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "reviewReadback",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/positionReviewScheduler.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "get defaultPort",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/socks-proxy-agent/node_modules/agent-base/dist/index.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "quoteFreshness",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/adapters/market/BinanceMarketStream.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "flush",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/operationalLogger.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "drain",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/operationalLogger.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "ReadableState",
+      "url": "node:internal/streams/readable",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "decisionSettingsContext",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/decisionContext.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "remoteFactAuditEligible",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/entryRiskOccupancy.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "emitInitNative",
+      "url": "node:internal/async_hooks",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "init",
+      "url": "node:internal/async_local_storage/async_hooks",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "markEpisodeDirty",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/positionReviewRunner.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "expire",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/ownershipJournal.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "expireDue",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/ownershipRuntime.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "hasVerifiedNoActiveRisk",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/entryRiskOccupancy.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "createUnsafeBuffer",
+      "url": "node:internal/buffer",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "allocate",
+      "url": "node:buffer",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "allocUnsafe",
+      "url": "node:buffer",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/packages/core/dist/selection.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "selectUniverse",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/packages/core/dist/selection.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "entryTradingCapital",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/capitalCapacity.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "quoteAssetCapitalLedgers",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/capitalCapacity.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/preAiExecutionEnvelope.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/candidateLifecycleDeriver.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "transact",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/ownershipJournal.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "applyVerifiedFacts",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "timeToPositive",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/tradingEpisodeEvidence.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "slice",
+      "url": "node:buffer",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "subarray",
+      "url": "node:buffer",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "statSync",
+      "url": "node:fs",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "stat",
+      "url": "",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "nextExternalResearch",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/config/settingsStore.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "tick",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/externalResearchService.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "json",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/adapters/market/BinancePublicMarketDataProvider.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "loadCandles",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/adapters/market/BinancePublicMarketDataProvider.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "_flush",
+      "url": "node:_http_outgoing",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "_flushOutput",
+      "url": "node:_http_outgoing",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "Worker",
+      "url": "node:internal/worker",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "buildSupplyHealth",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/supplyHealth.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "portfolioRiskAuthorityBlockers",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/portfolioRiskAuthority.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "portfolioRiskProfileBlockers",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/portfolioRiskLedger.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "sameObject",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/portfolioRiskAuthority.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "canonical",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/portfolioRiskSnapshot.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "buildOpportunityEvidence",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/opportunityEvidence.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "internalConnect",
+      "url": "node:net",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "defaultTriggerAsyncIdScope",
+      "url": "node:internal/async_hooks",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "connect",
+      "url": "",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "onceWrapper",
+      "url": "node:events",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "connect",
+      "url": "node:internal/tls/wrap",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "uid",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/packages/core/dist/math.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "getPeerCertificate",
+      "url": "",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "TLSSocket.getPeerCertificate",
+      "url": "node:internal/tls/wrap",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "estimatedWeight",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/adapters/binance/requestBudget.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "_implicitHeader",
+      "url": "node:_http_server",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "endpointAvailable",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/aiFabric.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "finish",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/adapters/binance/BinanceTransport.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "ema",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/packages/core/dist/indicators.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "parse",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/api/projections.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "statusFor",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/api/projections.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "binanceTransportGovernance",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/adapters/binance/BinanceTransport.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "manualMatch",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/reconciliationService.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "mkdir",
+      "url": "node:internal/fs/promises",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "Readable.on",
+      "url": "node:internal/streams/readable",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "setHeader",
+      "url": "node:_http_outgoing",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "firstFillVwap",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/tradingEpisodeEvidence.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "serialize",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/state/runtimeState.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "exchangePerformanceStatus",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "reservationDebitsAvailableFunds",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/entryFundingCommitment.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "prepareStackTraceCallback",
+      "url": "node:internal/errors",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "Stream",
+      "url": "node:internal/streams/legacy",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "_propagate",
+      "url": "node:internal/async_local_storage/async_hooks",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/cycleAccounting.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "executionScope",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/executionLifecycle.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "scope",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "settings",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "lastOutcome",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/positionReviewRunner.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "positionSymbols",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/state/runtimeState.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "fillVwap",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/tradingEpisodeEvidence.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "freshness",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/marketDataHub.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "FastBuffer",
+      "url": "node:internal/buffer",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "resolveQuoteAsset",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/packages/core/dist/portfolio.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/packages/core/dist/portfolio.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "quoteMargin",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/packages/core/dist/portfolio.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "reservationOccupiesRisk",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/state/runtimeState.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "parseurl",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/parseurl/index.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "getPathname",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/router/index.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "same",
+      "url": "node:internal/event_target",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "_storeHeader",
+      "url": "node:_http_outgoing",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "cachedOrderUsable",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/reconciliationService.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "write_",
+      "url": "node:_http_outgoing",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "_send",
+      "url": "node:_http_outgoing",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "coverageWatch",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "existsSync",
+      "url": "node:fs",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "existsSync",
+      "url": "",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "Worker.<computed>.onexit",
+      "url": "node:internal/worker",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/positionReviewScheduler.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "routineLimit",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/positionReviewScheduler.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "writeLatin1String",
+      "url": "",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "current",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "reserve",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/positionReviewScheduler.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "ownerOf",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "_getType",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/zod/v3/types.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "getParsedType",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/zod/v3/helpers/util.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "tick",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/exchangeLoop.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "SafeMap",
+      "url": "node:internal/per_context/primordials",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "processPromiseRejections",
+      "url": "node:internal/process/promises",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "allowed",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/adapters/binance/requestBudget.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "pump",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/adapters/binance/requestBudget.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "multiIntervalBudgetAllows",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/adapters/binance/requestBudget.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "startThread",
+      "url": "",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "onConnectHandler",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/socks/build/client/socksclient.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "afterConnect",
+      "url": "node:net",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "onConnect",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/socks/build/client/socksclient.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "sendSocks5InitialHandshake",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/socks/build/client/socksclient.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "fetchParams.controller.resume",
+      "url": "node:internal/deps/undici/undici",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "enqueue",
+      "url": "node:internal/webstreams/readablestream",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "ArrayBufferViewGetBuffer",
+      "url": "node:internal/webstreams/util",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "TLSSocket._start",
+      "url": "node:internal/tls/wrap",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "start",
+      "url": "",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "TLSSocket",
+      "url": "node:internal/tls/wrap",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "TLSSocket._init",
+      "url": "node:internal/tls/wrap",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "header",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/express/lib/request.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "isIP",
+      "url": "node:internal/net",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "isIPv6",
+      "url": "node:internal/net",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "checkServerIdentity",
+      "url": "node:tls",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/fundingIncomeLedger.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "now",
+      "url": "node:internal/perf/performance",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "maintainRetention",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/config/settingsStore.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "retireConsumed",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/marketCohort.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "tick",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/marketCohort.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "updateLedger",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/adapters/binance/requestBudget.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "recordNetworkTiming",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/adapters/binance/requestBudget.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "consume",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/ws/lib/receiver.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "params",
+      "url": "",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "strictContentLength",
+      "url": "node:_http_outgoing",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "UndiciError",
+      "url": "node:internal/deps/undici/undici",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "onParserTimeout",
+      "url": "node:internal/deps/undici/undici",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "InformationalError",
+      "url": "node:internal/deps/undici/undici",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "resolve",
+      "url": "node:path",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "fresh",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/adapters/market/BinanceMarketStream.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "parse",
+      "url": "",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "URL",
+      "url": "node:internal/url",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "restRoute",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/adapters/binance/BinanceTransport.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "mkdir",
+      "url": "",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "addListener",
+      "url": "node:events",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "_addListener",
+      "url": "node:events",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "tickOnSocket",
+      "url": "node:_http_client",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "",
+      "url": "node:_http_outgoing",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "checkInvalidHeaderChar",
+      "url": "node:_http_common",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "DOMException",
+      "url": "node:internal/per_context/domexception",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "",
+      "url": "node:internal/abort_controller",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "loadQuote",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/adapters/market/BinancePublicMarketDataProvider.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "quoteFields",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/adapters/market/BinanceMarketStream.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "related",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/packages/core/dist/indicators.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "mean",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/packages/core/dist/math.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "fundingEvidenceValid",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/tradingQualityEligibility.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "afterWriteDispatched",
+      "url": "node:internal/stream_base_commons",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "ZlibBase.reset",
+      "url": "node:zlib",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "reset",
+      "url": "",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "byOpenedAtDesc",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/api/chronologicalSort.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "observe",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/positionLifecycleTracker.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "key",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/positionLifecycleTracker.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "recoverStale",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/marketDataHub.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "firstBinding",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/executableRiskHeadroom.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "EventEmitter",
+      "url": "node:events",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "ServerResponse",
+      "url": "node:_http_server",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "OutgoingMessage",
+      "url": "node:_http_outgoing",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "",
+      "url": "node:events",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "responseOnEnd",
+      "url": "node:_http_client",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "classifyAsset",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/packages/core/dist/assetAdmission.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "hash",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/opportunityEvidence.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "afterWriteTick",
+      "url": "node:internal/streams/writable",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "Readable.removeListener",
+      "url": "node:internal/streams/readable",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "removeListener",
+      "url": "node:events",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "store",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/executionLease.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "activeExecutionLeaseMargin",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/executionLease.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "prune",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/executionLease.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "promiseInitHook",
+      "url": "node:internal/async_hooks",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "contentType",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/mime-types/index.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "header",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/express/lib/response.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "metrics",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/externalResearchService.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "externalResearchMetrics",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/config/settingsStore.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "list",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/packages/core/dist/pool.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "requestBudgetHealth",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/adapters/binance/BinanceTransport.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "ErrorPrepareStackTrace",
+      "url": "node:internal/errors",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "defaultPrepareStackTrace",
+      "url": "node:internal/errors",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "write",
+      "url": "node:string_decoder",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "parserOnBody",
+      "url": "node:_http_common",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "removeAbortListener",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/adapters/binance/BinanceTransport.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "reviewAvailable",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "reviewAvailable",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/aiFabric.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "onSocket",
+      "url": "node:_http_client",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "addRequest",
+      "url": "node:_http_agent",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "setRequestSocket",
+      "url": "node:_http_agent",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "read",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/operationalIncidents.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "writeHead",
+      "url": "node:_http_server",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "active",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/reconciliationService.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "fairEntryAuditRows",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/reconciliationService.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "entryOrderIdentityMatch",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/reconciliationService.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "onconnection",
+      "url": "node:net",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "setNoDelay",
+      "url": "",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "_writeRaw",
+      "url": "node:_http_outgoing",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "createHmac",
+      "url": "node:crypto",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "Hmac",
+      "url": "node:internal/crypto/hash",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/ownershipJournal.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "once",
+      "url": "node:events",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/storageCapacityGuard.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "prepare",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "record",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/operationalLogger.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "enqueue",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/operationalLogger.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/main.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "durableEntryClaimActive",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/entryRiskOccupancy.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "drainMessagePort",
+      "url": "",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "quoteable",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "isEntryQuoteAsset",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/packages/contracts/dist/portfolio.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "entryFundingEligibleSymbol",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/packages/contracts/dist/portfolio.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "isUtf8",
+      "url": "",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "isUtf8",
+      "url": "node:buffer",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "module.exports.isValidUTF8",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/ws/lib/validation.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "flush",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/realtime/wsServer.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "tick",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/marketDataHub.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "hydrateLiveMarket",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/adapters/market/BinancePublicMarketDataProvider.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/tpGuardian.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "aiRunHealthSummary",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/config/settingsStore.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "validateNoActiveRiskProof",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/entryRiskOccupancy.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "debug",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/debug/src/common.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "maybeReadMore_",
+      "url": "node:internal/streams/readable",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "qualityPolicy",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/opportunityEvidence.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "primaryReadyReasons",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/marketDataHub.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "heartbeat",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/operationalLogger.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "record",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/adapters/market/recentTradePrices.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "probeResources",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/aiFabric.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "probe",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/adapters/ai/OpenAiCompatibleClient.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "runMicrotask",
+      "url": "node:internal/process/task_queues",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "setStreamTimeout",
+      "url": "node:internal/stream_base_commons",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "resetSocketTimeout",
+      "url": "node:_http_server",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "marketDataQuality",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/riskReadiness.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "reservationHoldsRisk",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/state/runtimeState.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "utf8Slice",
+      "url": "",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "assignSocket",
+      "url": "node:_http_server",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/tradeMemoryService.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "protectedSymbols",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/marketCohort.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "syncLiveMarketSymbols",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "runtimeRetentionSymbols",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/marketCohort.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "refreshPositionMarkets",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/socks-proxy-agent/node_modules/agent-base/dist/index.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "Socket.connect",
+      "url": "node:net",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/socks/build/client/socksclient.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "connect",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/socks/build/client/socksclient.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "connect",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/adapters/binance/BinanceTransport.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "createConnection",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/socks/build/client/socksclient.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "readFileUtf8",
+      "url": "",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "readFileSync",
+      "url": "node:fs",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "binanceRequestBudgetsHealth",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/adapters/binance/requestBudget.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "socketOnClose",
+      "url": "node:_http_server",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "freeParser",
+      "url": "node:_http_common",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "candidateCapitalCapacity",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/capitalCapacity.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "_implicitHeader",
+      "url": "node:_http_client",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "binanceReadContext",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/adapters/binance/binanceReadContext.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "onFree",
+      "url": "node:_http_agent",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "",
+      "url": "node:_http_agent",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "removeSocket",
+      "url": "node:_http_agent",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "emitFreeNT",
+      "url": "node:_http_client",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "horizonLadder",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/quantityHorizonCandidates.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "legalTargetHorizonMinutes",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/quantityHorizonCandidates.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "_addHeaderLine",
+      "url": "node:_http_incoming",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "get",
+      "url": "node:_http_incoming",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "entryPositionRelation",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/reconciliationService.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "noActiveRiskEvidence",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/reconciliationService.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "setCharset",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/express/lib/utils.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "socketOnData",
+      "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/ws/lib/websocket.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "lookupPublicResource",
+      "url": "node:internal/async_hooks",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "executionAsyncResource",
+      "url": "node:internal/async_hooks",
+      "samples": 1,
+      "percent": 0.0035
+    }
+  ],
+  "nativeRunParents": {
+    "materialize": 11,
+    "persistRuntimeCore": 493,
+    "tick": 321,
+    "recordRuntimeEvent": 33,
+    "upsertDecisionSnapshot": 25,
+    "recordShadowMark": 77,
+    "maintainRetention": 1,
+    "": 15,
+    "apply": 2,
+    "persistCandidateShadow": 7,
+    "persistRuntime": 11,
+    "saveManualExecution": 85,
+    "saveEntryExecution": 273,
+    "put": 17,
+    "markEpisodeDirty": 3,
+    "nextExternalResearch": 1
+  }
+}

@@ -1,0 +1,5 @@
+{
+  "secretPatternHits": 0,
+  "diffCheck": "Only three original build/typecheck log final blank lines; raw forensic logs retained. Source diff check passed.",
+  "fullVerifyExitCode": 0
+}

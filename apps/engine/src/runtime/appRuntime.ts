@@ -624,7 +624,7 @@ export class EngineRuntime {
     // path is read-only by construction; a failed or absent answer leaves the task unacked.
     void runtime.convergeRecoveredExits();
     (state as any).tradingQualityEvidenceReady=false;
-    try{runtime.tradingQuality = new TradingQualityCollector(path.join(opts.dataDir,"trading-quality.sqlite"),state,events);}catch(error){events.publish('TRADING_QUALITY_STORAGE_UNAVAILABLE',{reason:String(error)});}
+    try{runtime.tradingQuality = new TradingQualityCollector(path.join(opts.dataDir,"trading-quality.sqlite"),state,events,{historyWorker:!testHarness});}catch(error){events.publish('TRADING_QUALITY_STORAGE_UNAVAILABLE',{reason:String(error)});}
     events.on("event", (event) => {
       if(runtime.persistenceClosed)return;
       // J4: the usage ledger is fed from the same event stream the audit uses, so a request that

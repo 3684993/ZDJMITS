@@ -26,6 +26,7 @@ export class OwnershipJournal {
     if(stamped&&!this.expectedTablesPresent())throw new Error(`OWNERSHIP_SCHEMA_TABLES_MISSING:version=${stamped}`);
     this.db.exec(`CREATE TABLE IF NOT EXISTS v396_owners(scope TEXT NOT NULL,cycle_id TEXT NOT NULL,version INTEGER NOT NULL,payload TEXT NOT NULL,PRIMARY KEY(scope,cycle_id));
       CREATE TABLE IF NOT EXISTS v396_outbox(id TEXT PRIMARY KEY,payload TEXT NOT NULL,delivered INTEGER NOT NULL DEFAULT 0);
+      CREATE INDEX IF NOT EXISTS v396_outbox_pending ON v396_outbox(delivered);
       CREATE TABLE IF NOT EXISTS v396_quantity_claims(id TEXT PRIMARY KEY,scope TEXT NOT NULL,payload TEXT NOT NULL);
       CREATE INDEX IF NOT EXISTS v396_claim_scope ON v396_quantity_claims(scope);
       CREATE TABLE IF NOT EXISTS v396_mandates(scope TEXT NOT NULL,cycle_id TEXT NOT NULL,version INTEGER NOT NULL,payload TEXT NOT NULL,PRIMARY KEY(scope,cycle_id));

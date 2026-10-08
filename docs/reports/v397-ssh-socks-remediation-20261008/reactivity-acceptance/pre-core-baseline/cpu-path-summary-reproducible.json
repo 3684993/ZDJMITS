@@ -1,0 +1,3864 @@
+{
+  "totalSamples": 28816,
+  "interpretation": "Inclusive CPU sample attribution overlaps. Not wall-clock durations or a request census.",
+  "inclusivePaths": [
+    {
+      "function": "(root)",
+      "url": "",
+      "samples": 28816,
+      "percent": 100.0
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 18342,
+      "percent": 63.6521
+    },
+    {
+      "function": "processTimers",
+      "url": "node:internal/timers",
+      "samples": 15117,
+      "percent": 52.4604
+    },
+    {
+      "function": "listOnTimeout",
+      "url": "node:internal/timers",
+      "samples": 13446,
+      "percent": 46.6616
+    },
+    {
+      "function": "persistRuntime",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/config/settingsStore.js",
+      "samples": 12472,
+      "percent": 43.2815
+    },
+    {
+      "function": "runMicrotasks",
+      "url": "",
+      "samples": 10298,
+      "percent": 35.7371
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/config/settingsStore.js",
+      "samples": 9909,
+      "percent": 34.3871
+    },
+    {
+      "function": "apply",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/runtimeWriteBuffer.js",
+      "samples": 9897,
+      "percent": 34.3455
+    },
+    {
+      "function": "processTicksAndRejections",
+      "url": "node:internal/process/task_queues",
+      "samples": 9073,
+      "percent": 31.486
+    },
+    {
+      "function": "emit",
+      "url": "node:events",
+      "samples": 5950,
+      "percent": 20.6483
+    },
+    {
+      "function": "publish",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/events/eventBus.js",
+      "samples": 5657,
+      "percent": 19.6315
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/reconciliationService.js",
+      "samples": 5042,
+      "percent": 17.4972
+    },
+    {
+      "function": "all",
+      "url": "",
+      "samples": 4704,
+      "percent": 16.3243
+    },
+    {
+      "function": "reviewPending",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/entryCoordinator.js",
+      "samples": 3750,
+      "percent": 13.0136
+    },
+    {
+      "function": "mutateReservations",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/state/runtimeState.js",
+      "samples": 3624,
+      "percent": 12.5763
+    },
+    {
+      "function": "mutateEntryReservations",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/config/settingsStore.js",
+      "samples": 3619,
+      "percent": 12.559
+    },
+    {
+      "function": "state.entryReservationTransaction",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 3619,
+      "percent": 12.559
+    },
+    {
+      "function": "every.name",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 3377,
+      "percent": 11.7192
+    },
+    {
+      "function": "put",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "samples": 3277,
+      "percent": 11.3722
+    },
+    {
+      "function": "onEvent",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "samples": 3136,
+      "percent": 10.8828
+    },
+    {
+      "function": "TradingQualityCollector.listener",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "samples": 3136,
+      "percent": 10.8828
+    },
+    {
+      "function": "captureState",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "samples": 3096,
+      "percent": 10.744
+    },
+    {
+      "function": "(idle)",
+      "url": "",
+      "samples": 3020,
+      "percent": 10.4803
+    },
+    {
+      "function": "releaseEntryReservation",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/state/runtimeState.js",
+      "samples": 2468,
+      "percent": 8.5647
+    },
+    {
+      "function": "runNextTicks",
+      "url": "node:internal/process/task_queues",
+      "samples": 1707,
+      "percent": 5.9238
+    },
+    {
+      "function": "tick",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "samples": 1534,
+      "percent": 5.3234
+    },
+    {
+      "function": "(garbage collector)",
+      "url": "",
+      "samples": 1492,
+      "percent": 5.1777
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/api/router.js",
+      "samples": 1426,
+      "percent": 4.9486
+    },
+    {
+      "function": "pump",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/ownershipRuntime.js",
+      "samples": 1384,
+      "percent": 4.8029
+    },
+    {
+      "function": "drainOutbox",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/ownershipService.js",
+      "samples": 1377,
+      "percent": 4.7786
+    },
+    {
+      "function": "pendingEvents",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/ownershipJournal.js",
+      "samples": 1362,
+      "percent": 4.7265
+    },
+    {
+      "function": "run",
+      "url": "",
+      "samples": 1325,
+      "percent": 4.5981
+    },
+    {
+      "function": "publishSnapshot",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/api/router.js",
+      "samples": 1322,
+      "percent": 4.5877
+    },
+    {
+      "function": "dashboardProjection",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/api/projections.js",
+      "samples": 1272,
+      "percent": 4.4142
+    },
+    {
+      "function": "baseDashboardProjection",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/api/projections.js",
+      "samples": 1216,
+      "percent": 4.2199
+    },
+    {
+      "function": "markEntryReservationWorking",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/state/runtimeState.js",
+      "samples": 1156,
+      "percent": 4.0117
+    },
+    {
+      "function": "saveEntryExecution",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/config/settingsStore.js",
+      "samples": 1025,
+      "percent": 3.5571
+    },
+    {
+      "function": "transition",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/entryCoordinator.js",
+      "samples": 1024,
+      "percent": 3.5536
+    },
+    {
+      "function": "allTasks",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+      "samples": 1013,
+      "percent": 3.5154
+    },
+    {
+      "function": "materialize",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "samples": 1010,
+      "percent": 3.505
+    },
+    {
+      "function": "exitConvergenceHealth",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 874,
+      "percent": 3.033
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/entryCoordinator.js",
+      "samples": 848,
+      "percent": 2.9428
+    },
+    {
+      "function": "processPool",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/entryCoordinator.js",
+      "samples": 819,
+      "percent": 2.8422
+    },
+    {
+      "function": "analyze",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/entryCoordinator.js",
+      "samples": 790,
+      "percent": 2.7415
+    },
+    {
+      "function": "query",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/ownershipJournal.js",
+      "samples": 781,
+      "percent": 2.7103
+    },
+    {
+      "function": "recordVerifiedExitOrderFacts",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+      "samples": 733,
+      "percent": 2.5437
+    },
+    {
+      "function": "recordExitOrderReport",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+      "samples": 712,
+      "percent": 2.4708
+    },
+    {
+      "function": "executionHardBlock",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/entryCoordinator.js",
+      "samples": 700,
+      "percent": 2.4292
+    },
+    {
+      "function": "reportOpenOrderExitFacts",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/reconciliationService.js",
+      "samples": 695,
+      "percent": 2.4119
+    },
+    {
+      "function": "convergenceStats",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+      "samples": 601,
+      "percent": 2.0856
+    },
+    {
+      "function": "executionTruthProjection",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/api/projections.js",
+      "samples": 591,
+      "percent": 2.0509
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+      "samples": 583,
+      "percent": 2.0232
+    },
+    {
+      "function": "findTaskByClientOrderId",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+      "samples": 495,
+      "percent": 1.7178
+    },
+    {
+      "function": "entryExecutionClaimStats",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/config/settingsStore.js",
+      "samples": 486,
+      "percent": 1.6866
+    },
+    {
+      "function": "pendingTasks",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/ownershipService.js",
+      "samples": 457,
+      "percent": 1.5859
+    },
+    {
+      "function": "update",
+      "url": "node:internal/crypto/hash",
+      "samples": 450,
+      "percent": 1.5616
+    },
+    {
+      "function": "exec",
+      "url": "",
+      "samples": 419,
+      "percent": 1.4541
+    },
+    {
+      "function": "update",
+      "url": "",
+      "samples": 401,
+      "percent": 1.3916
+    },
+    {
+      "function": "unreleasedClaimInventory",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+      "samples": 350,
+      "percent": 1.2146
+    },
+    {
+      "function": "saveManualExecution",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/config/settingsStore.js",
+      "samples": 325,
+      "percent": 1.1278
+    },
+    {
+      "function": "recordRuntimeEvent",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/config/settingsStore.js",
+      "samples": 274,
+      "percent": 0.9509
+    },
+    {
+      "function": "recoveryPlan",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+      "samples": 273,
+      "percent": 0.9474
+    },
+    {
+      "function": "recoveryPlan",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+      "samples": 273,
+      "percent": 0.9474
+    },
+    {
+      "function": "convergenceStats",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+      "samples": 253,
+      "percent": 0.878
+    },
+    {
+      "function": "terminalFactMatchesTask",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+      "samples": 250,
+      "percent": 0.8676
+    },
+    {
+      "function": "task",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+      "samples": 250,
+      "percent": 0.8676
+    },
+    {
+      "function": "get",
+      "url": "",
+      "samples": 242,
+      "percent": 0.8398
+    },
+    {
+      "function": "callbackTrampoline",
+      "url": "node:internal/async_hooks",
+      "samples": 232,
+      "percent": 0.8051
+    },
+    {
+      "function": "record",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/orderProvenanceRegistry.js",
+      "samples": 229,
+      "percent": 0.7947
+    },
+    {
+      "function": "transaction",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/orderProvenanceRegistry.js",
+      "samples": 229,
+      "percent": 0.7947
+    },
+    {
+      "function": "pipelineStatus",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 225,
+      "percent": 0.7808
+    },
+    {
+      "function": "processCallback",
+      "url": "node:zlib",
+      "samples": 210,
+      "percent": 0.7288
+    },
+    {
+      "function": "",
+      "url": "node:internal/streams/transform",
+      "samples": 200,
+      "percent": 0.6941
+    },
+    {
+      "function": "onwrite",
+      "url": "node:internal/streams/writable",
+      "samples": 198,
+      "percent": 0.6871
+    },
+    {
+      "function": "health",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/reconciliationService.js",
+      "samples": 193,
+      "percent": 0.6698
+    },
+    {
+      "function": "updateIncidents",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/api/router.js",
+      "samples": 190,
+      "percent": 0.6594
+    },
+    {
+      "function": "captureStateChunk",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "samples": 188,
+      "percent": 0.6524
+    },
+    {
+      "function": "afterWrite",
+      "url": "node:internal/streams/writable",
+      "samples": 176,
+      "percent": 0.6108
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/ws/lib/permessage-deflate.js",
+      "samples": 173,
+      "percent": 0.6004
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/ws/lib/receiver.js",
+      "samples": 164,
+      "percent": 0.5691
+    },
+    {
+      "function": "apply",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/state/runtimeState.js",
+      "samples": 160,
+      "percent": 0.5552
+    },
+    {
+      "function": "same",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/state/runtimeState.js",
+      "samples": 159,
+      "percent": 0.5518
+    },
+    {
+      "function": "reservationMapsChanged",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/state/runtimeState.js",
+      "samples": 159,
+      "percent": 0.5518
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/state/runtimeState.js",
+      "samples": 157,
+      "percent": 0.5448
+    },
+    {
+      "function": "runtimeEvents",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/config/settingsStore.js",
+      "samples": 140,
+      "percent": 0.4858
+    },
+    {
+      "function": "prepare",
+      "url": "",
+      "samples": 140,
+      "percent": 0.4858
+    },
+    {
+      "function": "dataMessage",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/ws/lib/receiver.js",
+      "samples": 138,
+      "percent": 0.4789
+    },
+    {
+      "function": "receiverOnMessage",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/ws/lib/websocket.js",
+      "samples": 138,
+      "percent": 0.4789
+    },
+    {
+      "function": "parserOnHeadersComplete",
+      "url": "node:_http_common",
+      "samples": 125,
+      "percent": 0.4338
+    },
+    {
+      "function": "parserOnIncoming",
+      "url": "node:_http_server",
+      "samples": 123,
+      "percent": 0.4268
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/adapters/market/BinanceMarketStream.js",
+      "samples": 122,
+      "percent": 0.4234
+    },
+    {
+      "function": "app",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/express/lib/express.js",
+      "samples": 121,
+      "percent": 0.4199
+    },
+    {
+      "function": "handle",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/express/lib/application.js",
+      "samples": 120,
+      "percent": 0.4164
+    },
+    {
+      "function": "handle",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/router/index.js",
+      "samples": 120,
+      "percent": 0.4164
+    },
+    {
+      "function": "trimPrefix",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/router/index.js",
+      "samples": 119,
+      "percent": 0.413
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/server.js",
+      "samples": 119,
+      "percent": 0.413
+    },
+    {
+      "function": "jsonParser",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/body-parser/lib/types/json.js",
+      "samples": 119,
+      "percent": 0.413
+    },
+    {
+      "function": "read",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/body-parser/lib/read.js",
+      "samples": 119,
+      "percent": 0.413
+    },
+    {
+      "function": "handleRequest",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/router/lib/layer.js",
+      "samples": 119,
+      "percent": 0.413
+    },
+    {
+      "function": "next",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/router/lib/route.js",
+      "samples": 117,
+      "percent": 0.406
+    },
+    {
+      "function": "dispatch",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/router/lib/route.js",
+      "samples": 117,
+      "percent": 0.406
+    },
+    {
+      "function": "health",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 116,
+      "percent": 0.4026
+    },
+    {
+      "function": "sample",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/shadowRunner.js",
+      "samples": 116,
+      "percent": 0.4026
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/shadowRunner.js",
+      "samples": 116,
+      "percent": 0.4026
+    },
+    {
+      "function": "objectiveCapacity",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/entryCoordinator.js",
+      "samples": 112,
+      "percent": 0.3887
+    },
+    {
+      "function": "buildPreAiExecutionEnvelope",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/preAiExecutionEnvelope.js",
+      "samples": 112,
+      "percent": 0.3887
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/router/index.js",
+      "samples": 111,
+      "percent": 0.3852
+    },
+    {
+      "function": "scope",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "samples": 109,
+      "percent": 0.3783
+    },
+    {
+      "function": "hash",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "samples": 109,
+      "percent": 0.3783
+    },
+    {
+      "function": "router",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/router/index.js",
+      "samples": 105,
+      "percent": 0.3644
+    },
+    {
+      "function": "onMessage",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/adapters/market/BinanceMarketStream.js",
+      "samples": 100,
+      "percent": 0.347
+    },
+    {
+      "function": "entryConversionReport",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/runExecutionOutcome.js",
+      "samples": 95,
+      "percent": 0.3297
+    },
+    {
+      "function": "createHash",
+      "url": "node:crypto",
+      "samples": 91,
+      "percent": 0.3158
+    },
+    {
+      "function": "refresh",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/universeCoordinator.js",
+      "samples": 90,
+      "percent": 0.3123
+    },
+    {
+      "function": "recordShadowMark",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/config/settingsStore.js",
+      "samples": 80,
+      "percent": 0.2776
+    },
+    {
+      "function": "Hash",
+      "url": "node:internal/crypto/hash",
+      "samples": 79,
+      "percent": 0.2742
+    },
+    {
+      "function": "reconcileCandidateLifecycles",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/candidateLifecycleDeriver.js",
+      "samples": 75,
+      "percent": 0.2603
+    },
+    {
+      "function": "cleanupReservations",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/state/runtimeState.js",
+      "samples": 70,
+      "percent": 0.2429
+    },
+    {
+      "function": "digest",
+      "url": "node:internal/crypto/hash",
+      "samples": 69,
+      "percent": 0.2395
+    },
+    {
+      "function": "next",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/router/index.js",
+      "samples": 68,
+      "percent": 0.236
+    },
+    {
+      "function": "processParams",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/router/index.js",
+      "samples": 67,
+      "percent": 0.2325
+    },
+    {
+      "function": "(program)",
+      "url": "",
+      "samples": 63,
+      "percent": 0.2186
+    },
+    {
+      "function": "digest",
+      "url": "",
+      "samples": 59,
+      "percent": 0.2047
+    },
+    {
+      "function": "Hash",
+      "url": "",
+      "samples": 58,
+      "percent": 0.2013
+    },
+    {
+      "function": "computeExecutableRiskHeadroom",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/executableRiskHeadroom.js",
+      "samples": 56,
+      "percent": 0.1943
+    },
+    {
+      "function": "buildPreAiCandidateSets",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/entryCoordinator.js",
+      "samples": 53,
+      "percent": 0.1839
+    },
+    {
+      "function": "reservationCleanupNeeded",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/state/runtimeState.js",
+      "samples": 53,
+      "percent": 0.1839
+    },
+    {
+      "function": "auditProgressReadback",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/reconciliationService.js",
+      "samples": 52,
+      "percent": 0.1805
+    },
+    {
+      "function": "evaluate",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/runtimeControlService.js",
+      "samples": 52,
+      "percent": 0.1805
+    },
+    {
+      "function": "run",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/aiFabric.js",
+      "samples": 52,
+      "percent": 0.1805
+    },
+    {
+      "function": "clearBuffer",
+      "url": "node:internal/streams/writable",
+      "samples": 52,
+      "percent": 0.1805
+    },
+    {
+      "function": "projectTradeRecordSummary",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/tradeRecordReadModel.js",
+      "samples": 49,
+      "percent": 0.17
+    },
+    {
+      "function": "doWrite",
+      "url": "node:internal/streams/writable",
+      "samples": 49,
+      "percent": 0.17
+    },
+    {
+      "function": "remoteFactAuditClass",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/entryRiskOccupancy.js",
+      "samples": 48,
+      "percent": 0.1666
+    },
+    {
+      "function": "sideCapacity",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/preAiExecutionEnvelope.js",
+      "samples": 47,
+      "percent": 0.1631
+    },
+    {
+      "function": "buildQuantityHorizonCandidates",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/quantityHorizonCandidates.js",
+      "samples": 45,
+      "percent": 0.1562
+    },
+    {
+      "function": "build",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/entryCoordinator.js",
+      "samples": 45,
+      "percent": 0.1562
+    },
+    {
+      "function": "entryCapacity",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/state/runtimeState.js",
+      "samples": 44,
+      "percent": 0.1527
+    },
+    {
+      "function": "readinessProjection",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 43,
+      "percent": 0.1492
+    },
+    {
+      "function": "upsertAiRun",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/config/settingsStore.js",
+      "samples": 43,
+      "percent": 0.1492
+    },
+    {
+      "function": "tick",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/marketCohort.js",
+      "samples": 43,
+      "percent": 0.1492
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/api/projections.js",
+      "samples": 42,
+      "percent": 0.1458
+    },
+    {
+      "function": "Transform._write",
+      "url": "node:internal/streams/transform",
+      "samples": 42,
+      "percent": 0.1458
+    },
+    {
+      "function": "quoteAssetCommittedMargin",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/capitalCapacity.js",
+      "samples": 41,
+      "percent": 0.1423
+    },
+    {
+      "function": "json",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/express/lib/response.js",
+      "samples": 41,
+      "percent": 0.1423
+    },
+    {
+      "function": "projectTradeRecordRow",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/tradeRecordReadModel.js",
+      "samples": 40,
+      "percent": 0.1388
+    },
+    {
+      "function": "ZlibBase._transform",
+      "url": "node:zlib",
+      "samples": 40,
+      "percent": 0.1388
+    },
+    {
+      "function": "processChunk",
+      "url": "node:zlib",
+      "samples": 40,
+      "percent": 0.1388
+    },
+    {
+      "function": "write",
+      "url": "",
+      "samples": 40,
+      "percent": 0.1388
+    },
+    {
+      "function": "nextExternalResearch",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/config/settingsStore.js",
+      "samples": 37,
+      "percent": 0.1284
+    },
+    {
+      "function": "tick",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/externalResearchService.js",
+      "samples": 37,
+      "percent": 0.1284
+    },
+    {
+      "function": "ownership",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/ownershipService.js",
+      "samples": 36,
+      "percent": 0.1249
+    },
+    {
+      "function": "get",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/ownershipJournal.js",
+      "samples": 36,
+      "percent": 0.1249
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/adapters/binance/BinanceTransport.js",
+      "samples": 36,
+      "percent": 0.1249
+    },
+    {
+      "function": "scout",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/aiFabric.js",
+      "samples": 35,
+      "percent": 0.1215
+    },
+    {
+      "function": "health",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/adapters/binance/requestBudget.js",
+      "samples": 32,
+      "percent": 0.111
+    },
+    {
+      "function": "_parseSync",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/zod/v3/types.js",
+      "samples": 31,
+      "percent": 0.1076
+    },
+    {
+      "function": "_parse",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/zod/v3/types.js",
+      "samples": 31,
+      "percent": 0.1076
+    },
+    {
+      "function": "safeParse",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/zod/v3/types.js",
+      "samples": 31,
+      "percent": 0.1076
+    },
+    {
+      "function": "parse",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/zod/v3/types.js",
+      "samples": 30,
+      "percent": 0.1041
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/tradeRecordReadModel.js",
+      "samples": 30,
+      "percent": 0.1041
+    },
+    {
+      "function": "persistCandidateShadow",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "samples": 29,
+      "percent": 0.1006
+    },
+    {
+      "function": "_write",
+      "url": "node:internal/streams/writable",
+      "samples": 28,
+      "percent": 0.0972
+    },
+    {
+      "function": "startLoop",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/ws/lib/receiver.js",
+      "samples": 28,
+      "percent": 0.0972
+    },
+    {
+      "function": "writeOrBuffer",
+      "url": "node:internal/streams/writable",
+      "samples": 28,
+      "percent": 0.0972
+    },
+    {
+      "function": "candidateCapitalFromState",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/capitalCapacity.js",
+      "samples": 27,
+      "percent": 0.0937
+    },
+    {
+      "function": "onEvent",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/adapters/market/BinanceMarketStream.js",
+      "samples": 27,
+      "percent": 0.0937
+    },
+    {
+      "function": "getData",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/ws/lib/receiver.js",
+      "samples": 27,
+      "percent": 0.0937
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/capitalCapacity.js",
+      "samples": 26,
+      "percent": 0.0902
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/adapters/binance/requestBudget.js",
+      "samples": 25,
+      "percent": 0.0868
+    },
+    {
+      "function": "sum",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/executableRiskHeadroom.js",
+      "samples": 25,
+      "percent": 0.0868
+    },
+    {
+      "function": "buildCandidate",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/quantityHorizonCandidates.js",
+      "samples": 25,
+      "percent": 0.0868
+    },
+    {
+      "function": "transaction",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/ownershipJournal.js",
+      "samples": 25,
+      "percent": 0.0868
+    },
+    {
+      "function": "convergeTasks",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+      "samples": 25,
+      "percent": 0.0868
+    },
+    {
+      "function": "decompress",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/ws/lib/permessage-deflate.js",
+      "samples": 25,
+      "percent": 0.0868
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/ws/lib/limiter.js",
+      "samples": 25,
+      "percent": 0.0868
+    },
+    {
+      "function": "add",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/ws/lib/limiter.js",
+      "samples": 25,
+      "percent": 0.0868
+    },
+    {
+      "function": "decompress",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/ws/lib/receiver.js",
+      "samples": 25,
+      "percent": 0.0868
+    },
+    {
+      "function": "",
+      "url": "",
+      "samples": 25,
+      "percent": 0.0868
+    },
+    {
+      "function": "supplyHealth",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 24,
+      "percent": 0.0833
+    },
+    {
+      "function": "json",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/adapters/binance/BinanceTransport.js",
+      "samples": 24,
+      "percent": 0.0833
+    },
+    {
+      "function": "upsertDecisionSnapshot",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/config/settingsStore.js",
+      "samples": 23,
+      "percent": 0.0798
+    },
+    {
+      "function": "Writable.write",
+      "url": "node:internal/streams/writable",
+      "samples": 23,
+      "percent": 0.0798
+    },
+    {
+      "function": "dispatchAnalysisTick",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 22,
+      "percent": 0.0763
+    },
+    {
+      "function": "collectPendingEntryRiskExposures",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/entryRiskOccupancy.js",
+      "samples": 22,
+      "percent": 0.0763
+    },
+    {
+      "function": "endReadableNT",
+      "url": "node:internal/streams/readable",
+      "samples": 22,
+      "percent": 0.0763
+    },
+    {
+      "function": "evaluateTargetReachability",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/historicalTpReachability.js",
+      "samples": 21,
+      "percent": 0.0729
+    },
+    {
+      "function": "send",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/express/lib/response.js",
+      "samples": 21,
+      "percent": 0.0729
+    },
+    {
+      "function": "ownerOfScope",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+      "samples": 21,
+      "percent": 0.0729
+    },
+    {
+      "function": "tick",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/positionReviewRunner.js",
+      "samples": 20,
+      "percent": 0.0694
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/executableRiskHeadroom.js",
+      "samples": 20,
+      "percent": 0.0694
+    },
+    {
+      "function": "onMessage",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/adapters/binance/BinanceUserDataStream.js",
+      "samples": 20,
+      "percent": 0.0694
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/adapters/binance/BinanceUserDataStream.js",
+      "samples": 20,
+      "percent": 0.0694
+    },
+    {
+      "function": "applyVerifiedFacts",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+      "samples": 19,
+      "percent": 0.0659
+    },
+    {
+      "function": "transact",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/ownershipJournal.js",
+      "samples": 19,
+      "percent": 0.0659
+    },
+    {
+      "function": "stringify",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/express/lib/response.js",
+      "samples": 19,
+      "percent": 0.0659
+    },
+    {
+      "function": "run",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/adapters/binance/requestBudget.js",
+      "samples": 19,
+      "percent": 0.0659
+    },
+    {
+      "function": "_write",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/ws/lib/receiver.js",
+      "samples": 18,
+      "percent": 0.0625
+    },
+    {
+      "function": "entryIdentityTombstone",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/entryRiskOccupancy.js",
+      "samples": 18,
+      "percent": 0.0625
+    },
+    {
+      "function": "ledgerClosedComplete",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/tradingQualityEligibility.js",
+      "samples": 17,
+      "percent": 0.059
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/runtimeControlService.js",
+      "samples": 17,
+      "percent": 0.059
+    },
+    {
+      "function": "reservationDebitsAvailableFunds",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/entryFundingCommitment.js",
+      "samples": 17,
+      "percent": 0.059
+    },
+    {
+      "function": "buildEpisodeEvidence",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/tradingEpisodeEvidence.js",
+      "samples": 17,
+      "percent": 0.059
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/zod/v3/types.js",
+      "samples": 17,
+      "percent": 0.059
+    },
+    {
+      "function": "applyUserData",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 17,
+      "percent": 0.059
+    },
+    {
+      "function": "_decompress",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/ws/lib/permessage-deflate.js",
+      "samples": 17,
+      "percent": 0.059
+    },
+    {
+      "function": "quoteAssetCapitalLedgers",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/capitalCapacity.js",
+      "samples": 16,
+      "percent": 0.0555
+    },
+    {
+      "function": "entryTradingCapital",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/capitalCapacity.js",
+      "samples": 16,
+      "percent": 0.0555
+    },
+    {
+      "function": "byteLength",
+      "url": "node:buffer",
+      "samples": 16,
+      "percent": 0.0555
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/marketDataHub.js",
+      "samples": 16,
+      "percent": 0.0555
+    },
+    {
+      "function": "targetFor",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/quantityHorizonCandidates.js",
+      "samples": 15,
+      "percent": 0.0521
+    },
+    {
+      "function": "signed",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/adapters/exchange/ExternalTradeAdapter.js",
+      "samples": 15,
+      "percent": 0.0521
+    },
+    {
+      "function": "attempt",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/adapters/exchange/ExternalTradeAdapter.js",
+      "samples": 15,
+      "percent": 0.0521
+    },
+    {
+      "function": "writeAdmissionBlock",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/entryCoordinator.js",
+      "samples": 14,
+      "percent": 0.0486
+    },
+    {
+      "function": "binanceEntryBlockReason",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/adapters/binance/requestBudget.js",
+      "samples": 14,
+      "percent": 0.0486
+    },
+    {
+      "function": "owner",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+      "samples": 14,
+      "percent": 0.0486
+    },
+    {
+      "function": "Socket._writeGeneric",
+      "url": "node:net",
+      "samples": 14,
+      "percent": 0.0486
+    },
+    {
+      "function": "toString",
+      "url": "node:buffer",
+      "samples": 14,
+      "percent": 0.0486
+    },
+    {
+      "function": "versions",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/positionReviewRunner.js",
+      "samples": 14,
+      "percent": 0.0486
+    },
+    {
+      "function": "activeEntrySymbols",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/state/runtimeState.js",
+      "samples": 13,
+      "percent": 0.0451
+    },
+    {
+      "function": "Writable.uncork",
+      "url": "node:internal/streams/writable",
+      "samples": 13,
+      "percent": 0.0451
+    },
+    {
+      "function": "readableAddChunkPushByteMode",
+      "url": "node:internal/streams/readable",
+      "samples": 13,
+      "percent": 0.0451
+    },
+    {
+      "function": "Readable.push",
+      "url": "node:internal/streams/readable",
+      "samples": 13,
+      "percent": 0.0451
+    },
+    {
+      "function": "memoryVersion",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 13,
+      "percent": 0.0451
+    },
+    {
+      "function": "tradeMemoryVersionOf",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/tradeMemoryService.js",
+      "samples": 13,
+      "percent": 0.0451
+    },
+    {
+      "function": "run",
+      "url": "node:internal/async_local_storage/async_hooks",
+      "samples": 13,
+      "percent": 0.0451
+    },
+    {
+      "function": "withBinanceReadContext",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/adapters/binance/binanceReadContext.js",
+      "samples": 13,
+      "percent": 0.0451
+    },
+    {
+      "function": "calculate",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/runtimeControlService.js",
+      "samples": 12,
+      "percent": 0.0416
+    },
+    {
+      "function": "summarizeReachability",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/historicalTpReachability.js",
+      "samples": 12,
+      "percent": 0.0416
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/adapters/market/BinancePublicMarketDataProvider.js",
+      "samples": 12,
+      "percent": 0.0416
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/orderProvenanceRegistry.js",
+      "samples": 12,
+      "percent": 0.0416
+    },
+    {
+      "function": "end",
+      "url": "node:_http_outgoing",
+      "samples": 12,
+      "percent": 0.0416
+    },
+    {
+      "function": "run",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/reconciliationService.js",
+      "samples": 12,
+      "percent": 0.0416
+    },
+    {
+      "function": "canonicalPnlEligible",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/tradingQualityEligibility.js",
+      "samples": 11,
+      "percent": 0.0382
+    },
+    {
+      "function": "auditJson",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/api/projections.js",
+      "samples": 11,
+      "percent": 0.0382
+    },
+    {
+      "function": "redactAudit",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/api/projections.js",
+      "samples": 11,
+      "percent": 0.0382
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "samples": 11,
+      "percent": 0.0382
+    },
+    {
+      "function": "entryAdmissionBlockReason",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/adapters/exchange/ExternalTradeAdapter.js",
+      "samples": 11,
+      "percent": 0.0382
+    },
+    {
+      "function": "entryBlockReason",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/adapters/binance/BinanceTransport.js",
+      "samples": 11,
+      "percent": 0.0382
+    },
+    {
+      "function": "addChunk",
+      "url": "node:internal/streams/readable",
+      "samples": 11,
+      "percent": 0.0382
+    },
+    {
+      "function": "currentOpenEntryOrders",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/reconciliationService.js",
+      "samples": 11,
+      "percent": 0.0382
+    },
+    {
+      "function": "coverageSummary",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/fundingIncomeLedger.js",
+      "samples": 10,
+      "percent": 0.0347
+    },
+    {
+      "function": "fundingIncomeCoverage",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 10,
+      "percent": 0.0347
+    },
+    {
+      "function": "capitalFactVersion",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/runtimeControlService.js",
+      "samples": 10,
+      "percent": 0.0347
+    },
+    {
+      "function": "executionReadinessSnapshot",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 10,
+      "percent": 0.0347
+    },
+    {
+      "function": "runtimeStatus",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 10,
+      "percent": 0.0347
+    },
+    {
+      "function": "fromString",
+      "url": "node:buffer",
+      "samples": 10,
+      "percent": 0.0347
+    },
+    {
+      "function": "from",
+      "url": "node:buffer",
+      "samples": 10,
+      "percent": 0.0347
+    },
+    {
+      "function": "fromStringFast",
+      "url": "node:buffer",
+      "samples": 10,
+      "percent": 0.0347
+    },
+    {
+      "function": "sweep",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/tpGuardian.js",
+      "samples": 10,
+      "percent": 0.0347
+    },
+    {
+      "function": "markDelivered",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/ownershipJournal.js",
+      "samples": 10,
+      "percent": 0.0347
+    },
+    {
+      "function": "onStreamRead",
+      "url": "node:internal/stream_base_commons",
+      "samples": 10,
+      "percent": 0.0347
+    },
+    {
+      "function": "observeRemotePosition",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/positionService.js",
+      "samples": 10,
+      "percent": 0.0347
+    },
+    {
+      "function": "reviewReadback",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/positionReviewScheduler.js",
+      "samples": 9,
+      "percent": 0.0312
+    },
+    {
+      "function": "sideSummary",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/historicalTpReachability.js",
+      "samples": 9,
+      "percent": 0.0312
+    },
+    {
+      "function": "ensure",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/tpGuardian.js",
+      "samples": 9,
+      "percent": 0.0312
+    },
+    {
+      "function": "remoteFactAuditDeferred",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/entryRiskOccupancy.js",
+      "samples": 9,
+      "percent": 0.0312
+    },
+    {
+      "function": "handleWriteReq",
+      "url": "node:internal/stream_base_commons",
+      "samples": 9,
+      "percent": 0.0312
+    },
+    {
+      "function": "Socket._write",
+      "url": "node:net",
+      "samples": 9,
+      "percent": 0.0312
+    },
+    {
+      "function": "writeGeneric",
+      "url": "node:internal/stream_base_commons",
+      "samples": 9,
+      "percent": 0.0312
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/aiFabric.js",
+      "samples": 9,
+      "percent": 0.0312
+    },
+    {
+      "function": "serialize",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/state/runtimeState.js",
+      "samples": 9,
+      "percent": 0.0312
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/entryFundingCommitment.js",
+      "samples": 9,
+      "percent": 0.0312
+    },
+    {
+      "function": "writeAdmissionBlockReason",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/entryCoordinator.js",
+      "samples": 8,
+      "percent": 0.0278
+    },
+    {
+      "function": "preTradeFacts",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/portfolioRiskLedger.js",
+      "samples": 8,
+      "percent": 0.0278
+    },
+    {
+      "function": "candles",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/entryCoordinator.js",
+      "samples": 8,
+      "percent": 0.0278
+    },
+    {
+      "function": "cachedCandles",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/adapters/market/BinancePublicMarketDataProvider.js",
+      "samples": 8,
+      "percent": 0.0278
+    },
+    {
+      "function": "cachedCandles",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/marketDataHub.js",
+      "samples": 8,
+      "percent": 0.0278
+    },
+    {
+      "function": "convergeExitsPeriodically",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 8,
+      "percent": 0.0278
+    },
+    {
+      "function": "currentLanIps",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/runtime/runtimeIdentity.js",
+      "samples": 8,
+      "percent": 0.0278
+    },
+    {
+      "function": "checkError",
+      "url": "node:os",
+      "samples": 8,
+      "percent": 0.0278
+    },
+    {
+      "function": "wrappedFn",
+      "url": "node:internal/errors",
+      "samples": 8,
+      "percent": 0.0278
+    },
+    {
+      "function": "networkInterfaces",
+      "url": "node:os",
+      "samples": 8,
+      "percent": 0.0278
+    },
+    {
+      "function": "getInterfaceAddresses",
+      "url": "",
+      "samples": 8,
+      "percent": 0.0278
+    },
+    {
+      "function": "tick",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/marketDataHub.js",
+      "samples": 8,
+      "percent": 0.0278
+    },
+    {
+      "function": "metrics",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/tpGuardian.js",
+      "samples": 8,
+      "percent": 0.0278
+    },
+    {
+      "function": "createFromString",
+      "url": "node:buffer",
+      "samples": 8,
+      "percent": 0.0278
+    },
+    {
+      "function": "estimateTradingCost",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/packages/core/dist/tradingCost.js",
+      "samples": 7,
+      "percent": 0.0243
+    },
+    {
+      "function": "readiness",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 7,
+      "percent": 0.0243
+    },
+    {
+      "function": "remoteRiskAudit",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/entryRiskOccupancy.js",
+      "samples": 7,
+      "percent": 0.0243
+    },
+    {
+      "function": "hydrateLiveMarket",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/adapters/market/BinancePublicMarketDataProvider.js",
+      "samples": 7,
+      "percent": 0.0243
+    },
+    {
+      "function": "writeLatin1String",
+      "url": "",
+      "samples": 7,
+      "percent": 0.0243
+    },
+    {
+      "function": "noteSchedulerTick",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/entryCoordinator.js",
+      "samples": 7,
+      "percent": 0.0243
+    },
+    {
+      "function": "candidateSupplyHealth",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/candidateSupplyHealth.js",
+      "samples": 7,
+      "percent": 0.0243
+    },
+    {
+      "function": "onSocketNT",
+      "url": "node:_http_client",
+      "samples": 7,
+      "percent": 0.0243
+    },
+    {
+      "function": "ClientRequest",
+      "url": "node:_http_client",
+      "samples": 7,
+      "percent": 0.0243
+    },
+    {
+      "function": "request",
+      "url": "node:https",
+      "samples": 7,
+      "percent": 0.0243
+    },
+    {
+      "function": "nonEmptyId",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/entryRiskOccupancy.js",
+      "samples": 6,
+      "percent": 0.0208
+    },
+    {
+      "function": "decide",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/aiFabric.js",
+      "samples": 6,
+      "percent": 0.0208
+    },
+    {
+      "function": "primaryOnce",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/aiFabric.js",
+      "samples": 6,
+      "percent": 0.0208
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/tradingEpisodeEvidence.js",
+      "samples": 6,
+      "percent": 0.0208
+    },
+    {
+      "function": "mandate",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/ownershipService.js",
+      "samples": 6,
+      "percent": 0.0208
+    },
+    {
+      "function": "mandate",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+      "samples": 6,
+      "percent": 0.0208
+    },
+    {
+      "function": "tick",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/v396AiExitRunner.js",
+      "samples": 6,
+      "percent": 0.0208
+    },
+    {
+      "function": "reservationSummary",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/state/runtimeState.js",
+      "samples": 6,
+      "percent": 0.0208
+    },
+    {
+      "function": "observeResponse",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/adapters/binance/requestBudget.js",
+      "samples": 6,
+      "percent": 0.0208
+    },
+    {
+      "function": "existsSync",
+      "url": "node:fs",
+      "samples": 6,
+      "percent": 0.0208
+    },
+    {
+      "function": "existsSync",
+      "url": "",
+      "samples": 6,
+      "percent": 0.0208
+    },
+    {
+      "function": "storageCapacityHealth",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/storageCapacityGuard.js",
+      "samples": 6,
+      "percent": 0.0208
+    },
+    {
+      "function": "storageEntryBlockReason",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/storageCapacityGuard.js",
+      "samples": 6,
+      "percent": 0.0208
+    },
+    {
+      "function": "expire",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/ownershipJournal.js",
+      "samples": 6,
+      "percent": 0.0208
+    },
+    {
+      "function": "expireDue",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/ownershipRuntime.js",
+      "samples": 6,
+      "percent": 0.0208
+    },
+    {
+      "function": "entryOrderOccupiesRisk",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/entryRiskOccupancy.js",
+      "samples": 6,
+      "percent": 0.0208
+    },
+    {
+      "function": "isSecureEndpoint",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/socks-proxy-agent/node_modules/agent-base/dist/index.js",
+      "samples": 6,
+      "percent": 0.0208
+    },
+    {
+      "function": "get protocol",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/socks-proxy-agent/node_modules/agent-base/dist/index.js",
+      "samples": 6,
+      "percent": 0.0208
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/positionReviewScheduler.js",
+      "samples": 6,
+      "percent": 0.0208
+    },
+    {
+      "function": "riskClusterKey",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/executableRiskHeadroom.js",
+      "samples": 6,
+      "percent": 0.0208
+    },
+    {
+      "function": "reviewPendingEntry",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/aiFabric.js",
+      "samples": 6,
+      "percent": 0.0208
+    },
+    {
+      "function": "schedulePendingEntryReview",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/entryCoordinator.js",
+      "samples": 6,
+      "percent": 0.0208
+    },
+    {
+      "function": "pumpReviewQueue",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/aiFabric.js",
+      "samples": 6,
+      "percent": 0.0208
+    },
+    {
+      "function": "queueReview",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/aiFabric.js",
+      "samples": 6,
+      "percent": 0.0208
+    },
+    {
+      "function": "metrics",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/adapters/market/BinanceMarketStream.js",
+      "samples": 5,
+      "percent": 0.0174
+    },
+    {
+      "function": "streamMetrics",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/adapters/market/BinancePublicMarketDataProvider.js",
+      "samples": 5,
+      "percent": 0.0174
+    },
+    {
+      "function": "metrics",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/marketDataHub.js",
+      "samples": 5,
+      "percent": 0.0174
+    },
+    {
+      "function": "fixCycleDeadline",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 5,
+      "percent": 0.0174
+    },
+    {
+      "function": "fixFirstFillDeadlines",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 5,
+      "percent": 0.0174
+    },
+    {
+      "function": "mergeObjectSync",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/zod/v3/helpers/parseUtil.js",
+      "samples": 5,
+      "percent": 0.0174
+    },
+    {
+      "function": "canDispatch",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/runtimeControlService.js",
+      "samples": 5,
+      "percent": 0.0174
+    },
+    {
+      "function": "entryOrderIdentityMatch",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/reconciliationService.js",
+      "samples": 5,
+      "percent": 0.0174
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/candidateLifecycleDeriver.js",
+      "samples": 5,
+      "percent": 0.0174
+    },
+    {
+      "function": "reservationOccupiesRisk",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/state/runtimeState.js",
+      "samples": 5,
+      "percent": 0.0174
+    },
+    {
+      "function": "_flush",
+      "url": "node:_http_outgoing",
+      "samples": 5,
+      "percent": 0.0174
+    },
+    {
+      "function": "_flushOutput",
+      "url": "node:_http_outgoing",
+      "samples": 5,
+      "percent": 0.0174
+    },
+    {
+      "function": "recover",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/adapters/market/BinanceMarketStream.js",
+      "samples": 5,
+      "percent": 0.0174
+    },
+    {
+      "function": "Socket._writev",
+      "url": "node:net",
+      "samples": 5,
+      "percent": 0.0174
+    },
+    {
+      "function": "clusterFor",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/executableRiskHeadroom.js",
+      "samples": 5,
+      "percent": 0.0174
+    },
+    {
+      "function": "loadCandles",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/adapters/market/BinancePublicMarketDataProvider.js",
+      "samples": 5,
+      "percent": 0.0174
+    },
+    {
+      "function": "operationalEntrySymbols",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/state/runtimeState.js",
+      "samples": 5,
+      "percent": 0.0174
+    },
+    {
+      "function": "reviewSettings",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "localFixedEstimate",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/adapters/binance/requestBudget.js",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "ownerOf",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "canonical",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/portfolioRiskSnapshot.js",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "stableId",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/quantityHorizonCandidates.js",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "write",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/ownershipJournal.js",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "convergePeriodically",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "profileReadback",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/portfolioRiskLedger.js",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "near",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/adapters/market/recentTradePrices.js",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "defaultTriggerAsyncIdScope",
+      "url": "node:internal/async_hooks",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "maintainStorageBounds",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/storageCapacityGuard.js",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/ownershipRuntime.js",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "processPromiseRejections",
+      "url": "node:internal/process/promises",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "emitInitScript",
+      "url": "node:internal/async_hooks",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "get",
+      "url": "node:_http_incoming",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "_addHeaderLine",
+      "url": "node:_http_incoming",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "fairEntryAuditRows",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/reconciliationService.js",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/ownershipJournal.js",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "appendDecisionChain",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/config/settingsStore.js",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "entryHasUnresolvedExchangeTerminalRisk",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/entryRiskOccupancy.js",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/entryRiskOccupancy.js",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "restOrderBook",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/adapters/market/BinancePublicMarketDataProvider.js",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "Readable.read",
+      "url": "node:internal/streams/readable",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "",
+      "url": "node:internal/per_context/messageport",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "",
+      "url": "node:internal/event_target",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "",
+      "url": "node:internal/worker",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "lastOutcome",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/positionReviewRunner.js",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "riskUnderlying",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/executableRiskHeadroom.js",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "getCandles",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/adapters/market/BinancePublicMarketDataProvider.js",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "json",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/adapters/market/BinancePublicMarketDataProvider.js",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "fsyncSync",
+      "url": "node:fs",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "writeFileSync",
+      "url": "node:fs",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "persist",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/adapters/binance/requestBudget.js",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "fsync",
+      "url": "",
+      "samples": 4,
+      "percent": 0.0139
+    },
+    {
+      "function": "getParsedType",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/zod/v3/helpers/util.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "inputs",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/portfolioRiskLedger.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "buildPortfolioRiskSnapshot",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/portfolioRiskSnapshot.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "stableRiskHash",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/portfolioRiskSnapshot.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/quantityHorizonCandidates.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "solveExit",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/packages/core/dist/tradingCost.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "closedRows",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/historicalTpReachability.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "measure",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/v397FrozenSizing.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "minimumQuantityForTarget",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/v397FrozenSizing.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "schedule",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "recordAttempt",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/main.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "portfolioRiskRequiredSymbols",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "Worker",
+      "url": "node:internal/worker",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "",
+      "url": "node:net",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "connect",
+      "url": "",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "internalConnect",
+      "url": "node:net",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "externalResearchMetrics",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/config/settingsStore.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "metrics",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/externalResearchService.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "utf8Slice",
+      "url": "",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "buildAllocationPlan",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/packages/core/dist/portfolio.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "decorateUniverse",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/packages/core/dist/portfolio.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "decisionSettingsContext",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/decisionContext.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "",
+      "url": "node:internal/abort_controller",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "binanceBudgetLane",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/adapters/binance/requestBudget.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "onceWrapper",
+      "url": "node:events",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "writeBuffer",
+      "url": "",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "write",
+      "url": "node:buffer",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "utf8Write",
+      "url": "node:internal/buffer",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "defaultPrepareStackTrace",
+      "url": "node:internal/errors",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "prepareStackTraceCallback",
+      "url": "node:internal/errors",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "ErrorPrepareStackTrace",
+      "url": "node:internal/errors",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "lookupPublicResource",
+      "url": "node:internal/async_hooks",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "emitInitNative",
+      "url": "node:internal/async_hooks",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "mergeQuote",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/adapters/market/BinanceMarketStream.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "resume_",
+      "url": "node:internal/streams/readable",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "socketOnData",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/ws/lib/websocket.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "Socket.read",
+      "url": "node:net",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "flow",
+      "url": "node:internal/streams/readable",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "ondata",
+      "url": "node:internal/streams/readable",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "SyncWriteStream._write",
+      "url": "node:internal/fs/sync_write_stream",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "writeSync",
+      "url": "node:fs",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "writevGeneric",
+      "url": "node:internal/stream_base_commons",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "dutyResource",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/aiFabric.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "reviewDedicated",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/aiFabric.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "exactCycleRecord",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/cycleAccounting.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/tpGuardian.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "getSnapshot",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/adapters/market/BinancePublicMarketDataProvider.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "seedCandles",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/adapters/market/BinanceMarketStream.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "promiseInitHook",
+      "url": "node:internal/async_hooks",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "cachedOrderUsable",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/reconciliationService.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "freshness",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/marketDataHub.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "execute",
+      "url": "",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "socketOnData",
+      "url": "node:_http_client",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "noteExecutionReadiness",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/entryCoordinator.js",
+      "samples": 3,
+      "percent": 0.0104
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/portfolioRiskLedger.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "factOrder",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/portfolioRiskSnapshot.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "cost",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/quantityHorizonCandidates.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "minimumQuantityProfitFloor",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/quantityHorizonCandidates.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/historicalTpReachability.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "profitable",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/v397FrozenSizing.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "round",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/quantityHorizonCandidates.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "append",
+      "url": "node:internal/linkedlist",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "record",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/operationalLogger.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "enqueue",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/operationalLogger.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "afterWriteTick",
+      "url": "node:internal/streams/writable",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "coverageWatch",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "fillAnchoredPath",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/tradingEpisodeEvidence.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "binanceTransportGovernance",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/adapters/binance/BinanceTransport.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "requestBudgetHealth",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/adapters/binance/BinanceTransport.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "reservationHoldsRisk",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/state/runtimeState.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "drain",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/operationalLogger.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "trackPromise",
+      "url": "node:internal/async_hooks",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "maybeReadMore_",
+      "url": "node:internal/streams/readable",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "maybeReadMore",
+      "url": "node:internal/streams/readable",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "nextTick",
+      "url": "node:internal/process/task_queues",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "estimatedWeight",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/adapters/binance/requestBudget.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "generateETag",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/express/lib/utils.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "exposure",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/packages/core/dist/portfolio.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "consume",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/ws/lib/receiver.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "reserve",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/positionReviewScheduler.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "httpNetworkFetch",
+      "url": "node:internal/deps/undici/undici",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "makeResponse",
+      "url": "node:internal/deps/undici/undici",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "_implicitHeader",
+      "url": "node:_http_client",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "removeAbortListener",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/adapters/binance/BinanceTransport.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "removeEventListener",
+      "url": "node:internal/event_target",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "finish",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/adapters/binance/BinanceTransport.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "hasVerifiedNoActiveRisk",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/entryRiskOccupancy.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "URL",
+      "url": "node:internal/url",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "loadQuote",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/adapters/market/BinancePublicMarketDataProvider.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "onDataReceivedHandler",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/socks/build/client/socksclient.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "onDataReceived",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/socks/build/client/socksclient.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "resourceMetrics",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/aiFabric.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/preAiExecutionEnvelope.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "_getType",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/zod/v3/types.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "writev",
+      "url": "",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "routineLimit",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/positionReviewScheduler.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "dutyResources",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/aiFabric.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "timeToPositive",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/tradingEpisodeEvidence.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "worker",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/adapters/market/BinancePublicMarketDataProvider.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "seed",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/adapters/market/BinanceMarketStream.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/tradeMemoryService.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "record",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/adapters/market/recentTradePrices.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "pump",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/adapters/binance/requestBudget.js",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "onError",
+      "url": "node:_http_incoming",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "Readable.on",
+      "url": "node:internal/streams/readable",
+      "samples": 2,
+      "percent": 0.0069
+    },
+    {
+      "function": "_processInputParams",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/zod/v3/types.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "",
+      "url": "node:internal/crypto/hash",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "getOptionValue",
+      "url": "node:internal/options",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "",
+      "url": "node:internal/util",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "isPendingDeprecation",
+      "url": "node:internal/util",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "buildEip",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/packages/core/dist/eip.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "build",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/eipService.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "collectPortfolioPendingRiskFacts",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/entryRiskOccupancy.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "candleSeries",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/adapters/market/BinanceMarketStream.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "finite",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/quantityHorizonCandidates.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/executionLease.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "acquireExecutionLease",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/executionLease.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "observeModelUsage",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "prune",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/aiUsageLedger.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "rows",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/aiUsageLedger.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "record",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/aiUsageLedger.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "compactEntryFacts",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/packages/core/dist/compactEntry.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "buildCompactBrainPrompt",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/packages/core/dist/compactEntry.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "compactFactIds",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/packages/core/dist/compactEntry.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "persist",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "Socket.end",
+      "url": "node:net",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "Writable.end",
+      "url": "node:internal/streams/writable",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "resOnFinish",
+      "url": "node:_http_server",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "onFinish",
+      "url": "node:_http_outgoing",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "Socket.destroySoon",
+      "url": "node:net",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "callback",
+      "url": "node:internal/streams/writable",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "current",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "connectionListenerInternal",
+      "url": "node:_http_server",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "onconnection",
+      "url": "node:net",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "connectionListener",
+      "url": "node:_http_server",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "isEntryQuoteAsset",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/packages/contracts/dist/portfolio.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "prune",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/executionLease.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "activeExecutionLeaseMargin",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/executionLease.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "createMainThreadPort",
+      "url": "node:internal/worker/messaging",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "MessageChannel",
+      "url": "",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "oninit",
+      "url": "node:internal/worker/io",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "initNodeEventTarget",
+      "url": "node:internal/event_target",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "promiseBeforeHook",
+      "url": "node:internal/async_hooks",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "_implicitHeader",
+      "url": "node:_http_server",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "writeHead",
+      "url": "node:_http_server",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "etag",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/etag/index.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "entitytag",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/etag/index.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "isBuffer",
+      "url": "node:buffer",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "toString",
+      "url": "node:internal/url",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "serializeParams",
+      "url": "node:internal/url",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "book",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/adapters/market/BinanceMarketStream.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "Worker",
+      "url": "",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "profileSettings",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/portfolioRiskLedger.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "assertBinance",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/adapters/binance/BinanceTransport.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "foregroundTrace",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "getInfo",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/ws/lib/receiver.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "reset",
+      "url": "",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "ZlibBase.reset",
+      "url": "node:zlib",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "processHeader",
+      "url": "node:_http_outgoing",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "evaluateCapitalAdmission",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/packages/core/dist/capitalAdmission.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "getBufferedUUID",
+      "url": "node:internal/crypto/random",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "randomUUID",
+      "url": "node:internal/crypto/random",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "getHexBytes",
+      "url": "node:internal/crypto/random",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "portfolioRiskAuthorityReadback",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/portfolioRiskAuthority.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "sameObject",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/portfolioRiskAuthority.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "portfolioRiskAuthorityBlockers",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/portfolioRiskAuthority.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "afterConnect",
+      "url": "node:net",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "onConnect",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/socks/build/client/socksclient.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "onConnectHandler",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/socks/build/client/socksclient.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "SmartBuffer",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/smart-buffer/build/smartbuffer.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "sendSocks5InitialHandshake",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/socks/build/client/socksclient.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "addIssueToContext",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/zod/v3/helpers/parseUtil.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "fundingEvidenceValid",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/tradingQualityEligibility.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "sendSocks5CommandRequest",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/socks/build/client/socksclient.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "processData",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/socks/build/client/socksclient.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "handleInitialSocks5HandshakeResponse",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/socks/build/client/socksclient.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "matchKnownFields",
+      "url": "node:_http_incoming",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "setTimeout",
+      "url": "node:timers",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "initAsyncResource",
+      "url": "node:internal/timers",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "Timeout",
+      "url": "node:internal/timers",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "tickOnSocket",
+      "url": "node:_http_client",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "hydrateLiveTechnical",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/adapters/market/BinancePublicMarketDataProvider.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "allocate",
+      "url": "node:buffer",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "allocUnsafe",
+      "url": "node:buffer",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "createUnsafeBuffer",
+      "url": "node:internal/buffer",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "copy",
+      "url": "node:buffer",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "append",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/socks/build/common/receivebuffer.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "copyImpl",
+      "url": "node:buffer",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "present",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/cycleAccounting.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "buildOpportunityEvidence",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/opportunityEvidence.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "qualityPolicy",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/opportunityEvidence.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "_read",
+      "url": "node:internal/worker/io",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "canonical",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/packages/core/dist/assetAdmission.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "classifyAsset",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/packages/core/dist/assetAdmission.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/operationalLogger.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "flush",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/operationalLogger.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "statSync",
+      "url": "node:fs",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "stat",
+      "url": "",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "allowed",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/adapters/binance/requestBudget.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "assignSocket",
+      "url": "node:_http_server",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "onDestroy",
+      "url": "node:internal/streams/destroy",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "markEpisodeDirty",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "endpointAvailable",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/aiFabric.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "destroy",
+      "url": "node:internal/deps/undici/undici",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "destroy",
+      "url": "node:internal/streams/destroy",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "close",
+      "url": "",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "onParserTimeout",
+      "url": "node:internal/deps/undici/undici",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "Writable.destroy",
+      "url": "node:internal/streams/writable",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "_destroy",
+      "url": "node:internal/streams/destroy",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "Socket._destroy",
+      "url": "node:net",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "closeSocketHandle",
+      "url": "node:net",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "get defaultPort",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/socks-proxy-agent/node_modules/agent-base/dist/index.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "quote",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/adapters/market/BinanceMarketStream.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "operationalCandidates",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/operationalIncidents.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/operationalIncidents.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "unrefActive",
+      "url": "node:internal/timers",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "refresh",
+      "url": "node:internal/timers",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "insertGuarded",
+      "url": "node:internal/timers",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "insert",
+      "url": "node:internal/timers",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "_unrefTimer",
+      "url": "node:net",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "send",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/ws/lib/sender.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "flush",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/realtime/wsServer.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "dispatch",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/ws/lib/sender.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "sendFrame",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/ws/lib/sender.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "send",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/ws/lib/websocket.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "primaryReadyReasons",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/marketDataHub.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "afterWriteDispatched",
+      "url": "node:internal/stream_base_commons",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "legalTargetHorizonMinutes",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/quantityHorizonCandidates.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/socks-proxy-agent/node_modules/agent-base/dist/index.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "inferredBinancePurpose",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/adapters/binance/BinanceTransport.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "evaluateEntryExecutionPermit",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/entryPermissionModel.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "fresh",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/adapters/market/BinanceMarketStream.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "seedQuote",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/adapters/market/BinanceMarketStream.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "writeIterable",
+      "url": "node:internal/deps/undici/undici",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "",
+      "url": "node:internal/deps/undici/undici",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "clearIncoming",
+      "url": "node:_http_server",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "readFileSync",
+      "url": "node:fs",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "readFileUtf8",
+      "url": "",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "retireConsumed",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/marketCohort.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "addRequest",
+      "url": "node:_http_agent",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "normalizeServerName",
+      "url": "node:_http_agent",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "parse",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/api/projections.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "statusFor",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/api/projections.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "parserOnIncomingClient",
+      "url": "node:_http_client",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "riskTierForSymbol",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/packages/core/dist/portfolio.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/packages/core/dist/portfolio.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "connect",
+      "url": "node:internal/deps/undici/undici",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "afterShutdown",
+      "url": "node:net",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "selectUniverse",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/packages/core/dist/selection.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "targetedTpSymbolsDue",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/reconciliationService.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "concat",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/node_modules/ws/lib/buffer-util.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "fromList",
+      "url": "node:internal/streams/readable",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "EventEmitter",
+      "url": "node:events",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "Readable",
+      "url": "node:internal/streams/readable",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "",
+      "url": "node:events",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "Stream",
+      "url": "node:internal/streams/legacy",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "IncomingMessage",
+      "url": "node:_http_incoming",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "nonEmpty",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/reconciliationService.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "current",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/reconciliationService.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "timeout",
+      "url": "node:internal/abort_controller",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "SafeWeakRef",
+      "url": "node:internal/per_context/primordials",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "parse",
+      "url": "",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "_storeHeader",
+      "url": "node:_http_outgoing",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "dedupeExecutionFills",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/tradingEpisodeEvidence.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "onclose",
+      "url": "node:internal/streams/end-of-stream",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "emitFreeNT",
+      "url": "node:_http_client",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "isNodeStream",
+      "url": "node:internal/streams/utils",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "isWritableErrored",
+      "url": "node:internal/streams/utils",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/supplyHealth.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "buildSupplyHealth",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/supplyHealth.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "SafeMap",
+      "url": "node:internal/per_context/primordials",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "readHistoryWindows",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/adapters/exchange/historyWindow.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/services/positionReviewRunner.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "settings",
+      "url": "file:///D:/MITS-WORKTREES/v397-tq-event-scope-recovery-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "FastBuffer",
+      "url": "node:internal/buffer",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "slice",
+      "url": "node:buffer",
+      "samples": 1,
+      "percent": 0.0035
+    },
+    {
+      "function": "subarray",
+      "url": "node:buffer",
+      "samples": 1,
+      "percent": 0.0035
+    }
+  ],
+  "nativeRunParents": {
+    "recordRuntimeEvent": 222,
+    "put": 36,
+    "upsertAiRun": 41,
+    "write": 4,
+    "": 10,
+    "tick": 291,
+    "materialize": 17,
+    "persistRuntime": 43,
+    "markDelivered": 10,
+    "recordShadowMark": 80,
+    "upsertDecisionSnapshot": 21,
+    "nextExternalResearch": 37,
+    "persistCandidateShadow": 7,
+    "appendDecisionChain": 4,
+    "saveEntryExecution": 183,
+    "saveManualExecution": 319
+  }
+}

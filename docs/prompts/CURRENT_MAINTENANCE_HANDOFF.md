@@ -1,3 +1,7 @@
+## 2026-10-08 12:44 +08 Engine Reactivity active override
+
+Latest-main c1ed495 deployment FAILED the independent 5.974min window: fresh event-loop max6417ms, REQUIRED_MARKET queue timeouts11; PRIVATE/EXECUTION0, privateREADY, Production0. persistRuntime inclusive CPU43.28% ->1.72%, remaining TQ history materialize9.29%. One authorized structural batch moves TQ historical projection/retention/WAL to bounded Worker with revision-fenced writes and indexes ownership pending delivery. Targeted53 and real compiled Worker smoke PASS; one full verify PASS (234 files/2010 tests plus16 script tests). Only8080 stopped while verifying; SSH/models/Settings frozen. Candidate promotion and fresh5–10min acceptance PENDING, not accepted. See docs/reports/v397-ssh-socks-remediation-20261008/REACTIVITY_DEPLOYMENT_ACCEPTANCE.md. No additional followup implementation authorized in this run; F04/F10/F11 paused. Old long heartbeat remains paused.
+
 # Fifth active correction verified; necessary 8080 cutover pending — 2026-10-08 09:11 +08
 
 09:20 combined gate PASS exit0:233files/2000tests (Engine1816/dashboard123/core59/contracts2), scripts/release/S00/typecheck/buildPASS. Zero rejected diagnostic and named runtime task changes are included, not merely earlierTQ-only gate. Local rejectedzero representation grants no execution; admittedpositive/minimumfunding/quantity facts unchanged. Necessary main promotion/8080 sourcecutover/new independent10–30min feedback next; no old6/12h gate.

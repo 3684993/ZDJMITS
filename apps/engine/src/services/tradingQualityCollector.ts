@@ -1,4 +1,5 @@
 import {DatabaseSync,type StatementSync} from 'node:sqlite';
+import {Worker} from 'node:worker_threads';
 import {createHash,randomUUID} from 'node:crypto';
 import type {RuntimeState} from '../state/runtimeState.js';
 import type {DomainEvent,EventBus} from '../events/eventBus.js';
@@ -28,7 +29,12 @@ export class TradingQualityCollector {
   private observedEvents=0;
   private error:string|null=null;
   private listener:(e:DomainEvent)=>void;
-  constructor(file:string,private state:RuntimeState,private events:EventBus){
+  private historyWorker:Worker|null=null;
+  private historyBusy=false;
+  private historyReady=false;
+  private historyPending:{now:number;settings:RuntimeState['settings']}|null=null;
+  private historyStatus:any={mode:'SYNCHRONOUS',status:'READY',authorization:'NONE'};
+  constructor(file:string,private state:RuntimeState,private events:EventBus,options:{historyWorker?:boolean}={}){
     this.db=new DatabaseSync(file);
     this.db.exec(`PRAGMA journal_mode=WAL; PRAGMA synchronous=NORMAL; PRAGMA busy_timeout=1000; PRAGMA journal_size_limit=33554432; PRAGMA wal_autocheckpoint=1000;
       CREATE TABLE IF NOT EXISTS tq_migrations(version INTEGER PRIMARY KEY,applied_at INTEGER NOT NULL);
@@ -47,16 +53,36 @@ export class TradingQualityCollector {
       CREATE UNIQUE INDEX IF NOT EXISTS tq_entry_mandates_intent ON tq_entry_mandates(scope,intent_id);
       INSERT OR IGNORE INTO tq_migrations VALUES(1,${Date.now()});`);
     this.prepare('INSERT OR IGNORE INTO tq_migrations VALUES(2,?)').run(Date.now());
+    if(!this.db.prepare('PRAGMA table_info(tq_episode_work)').all().some(row=>row.name==='revision'))this.db.exec('ALTER TABLE tq_episode_work ADD COLUMN revision INTEGER NOT NULL DEFAULT 0');
     (this.state as any).tradingQualityEvidenceReady=true;
     this.listener=e=>{try{this.onEvent(e);}catch(error){this.error=String(error);(this.state as any).tradingQualityEvidenceReady=false;if(qualityPolicy(this.state.settings).mode==='ENFORCE'&&['TRADING_QUALITY_OPPORTUNITY','TRADING_QUALITY_PRIMARY_LINK','ENTRY_SUBMIT_ATTEMPTED'].includes(e.type))throw error;}};
     events.on('event',this.listener);
+    if(options.historyWorker){
+      // Automatic WAL work must not migrate back onto the Engine writer.
+      // The history connection checkpoints in its own worker.
+      this.db.exec('PRAGMA wal_autocheckpoint=0');
+      this.historyStatus={mode:'ISOLATED_HISTORY_WORKER',status:'STARTING',authorization:'NONE'};
+      this.historyWorker=new Worker(new URL('../workers/tradingQualityHistoryWorker.js',import.meta.url),{workerData:{file,settings:state.settings},resourceLimits:{maxOldGenerationSizeMb:256}});
+      this.historyWorker.on('message',message=>{if(message.initialized)this.historyReady=true;else this.historyBusy=false;this.historyStatus={mode:'ISOLATED_HISTORY_WORKER',...message};this.updateEvidenceReadiness();const pending=this.historyPending;this.historyPending=null;if(pending)this.dispatchHistory(pending);});
+      this.historyWorker.on('error',error=>{this.historyBusy=false;this.historyPending=null;this.historyStatus={mode:'ISOLATED_HISTORY_WORKER',status:'DEGRADED',error:String(error),authorization:'NONE'};this.updateEvidenceReadiness();});
+      this.historyWorker.on('exit',code=>{if(this.historyWorker){this.historyWorker=null;this.historyBusy=false;this.historyPending=null;this.historyStatus={...this.historyStatus,status:'DEGRADED',exitCode:code,error:'HISTORY_WORKER_EXIT_NO_SYNCHRONOUS_FALLBACK'};this.updateEvidenceReadiness();}});
+    }
+  }
+  private updateEvidenceReadiness(){(this.state as any).tradingQualityEvidenceReady=this.health().status==='READY';}
+  private dispatchHistory(message:{now:number;settings:RuntimeState['settings']}){
+    if(!this.historyWorker)return;
+    if(!this.historyReady||this.historyBusy){this.historyPending=message;return;}
+    this.historyBusy=true;this.historyStatus={...this.historyStatus,startedAt:Date.now()};
+    // Only configuration and clock cross the boundary. The worker reads the
+    // durable additive evidence DB; never clone RuntimeState/history or adapters.
+    this.historyWorker.postMessage(message);
   }
   private scope(){const x=this.state.settings.connections.exchange;return `${x.environment}:${hash(x.credentialRef).slice(0,16)}`;}
   private markEpisodeDirty(intentId:string|undefined,symbol=''){
     if(!intentId)return;
     this.prepare(`INSERT INTO tq_episode_work(scope,intent_id,symbol,dirty,first_fill_at,observation_until,matured,updated_at)
       VALUES(?,?,?,1,NULL,NULL,0,?) ON CONFLICT(scope,intent_id) DO UPDATE SET
-      symbol=CASE WHEN excluded.symbol='' THEN tq_episode_work.symbol ELSE excluded.symbol END,dirty=1,updated_at=excluded.updated_at`).run(this.scope(),intentId,symbol,Date.now());
+      symbol=CASE WHEN excluded.symbol='' THEN tq_episode_work.symbol ELSE excluded.symbol END,dirty=1,revision=tq_episode_work.revision+1,updated_at=excluded.updated_at`).run(this.scope(),intentId,symbol,Date.now());
   }
   private exactEntryIntent(fill:any){
     if(fill?.attributionStatus!=='SYSTEM_ATTRIBUTED'||!fill.symbol||!fill.orderId||!['LONG','SHORT'].includes(fill.direction)||fill.side!==(fill.direction==='LONG'?'BUY':'SELL'))return null;
@@ -73,7 +99,7 @@ export class TradingQualityCollector {
       VALUES(?,?,?,1,?,?,?,?) ON CONFLICT(scope,intent_id) DO UPDATE SET symbol=excluded.symbol,
       first_fill_at=CASE WHEN tq_episode_work.first_fill_at IS NULL THEN excluded.first_fill_at ELSE MIN(tq_episode_work.first_fill_at,excluded.first_fill_at) END,
       observation_until=CASE WHEN tq_episode_work.first_fill_at IS NULL OR excluded.first_fill_at<tq_episode_work.first_fill_at THEN excluded.observation_until ELSE tq_episode_work.observation_until END,
-      dirty=1,matured=excluded.matured,updated_at=excluded.updated_at`).run(this.scope(),linked.intent.id,linked.intent.symbol,fill.executionTime,until,now>=until?1:0,now);
+      dirty=1,revision=tq_episode_work.revision+1,matured=excluded.matured,updated_at=excluded.updated_at`).run(this.scope(),linked.intent.id,linked.intent.symbol,fill.executionTime,until,now>=until?1:0,now);
   }
   private put(kind:string,id:string,value:unknown,ts=Date.now()){
     const scope=this.scope(),payload=JSON.stringify(value),key=`${scope}:${kind}:${id}`;
@@ -219,7 +245,7 @@ export class TradingQualityCollector {
       const p=qualityPolicy(this.state.settings);
       this.hydrateEpisodeWork(now,p.positionObservationHorizonMs);
       const scope=this.scope();
-      this.prepare('UPDATE tq_episode_work SET dirty=1,matured=1,updated_at=? WHERE scope=? AND matured=0 AND observation_until IS NOT NULL AND observation_until<=?').run(now,scope,now);
+      this.prepare('UPDATE tq_episode_work SET dirty=1,revision=revision+1,matured=1,updated_at=? WHERE scope=? AND matured=0 AND observation_until IS NOT NULL AND observation_until<=?').run(now,scope,now);
       const windows=this.prepare('SELECT intent_id,symbol,first_fill_at,observation_until FROM tq_episode_work WHERE scope=? AND matured=0 AND first_fill_at IS NOT NULL AND observation_until>?').all(scope,now) as any[];
       // Quote timestamps, not poll timestamps: cached quotes cannot fill path gaps. Only exact,
       // attributed episodes inside their observation window authorize raw path storage.
@@ -228,7 +254,7 @@ export class TradingQualityCollector {
         const m=this.state.snapshots.get(symbol),q=m?.quote;if(!q||q.ts>now||now-q.ts>5000||!Number.isFinite(q.mark)||q.mark<=0)continue;
         const eligible=active.filter(w=>q.ts>=w.first_fill_at&&q.ts<=w.observation_until);if(!eligible.length)continue;
         const result=this.prepare('INSERT OR IGNORE INTO tq_marks VALUES(?,?,?,?,?,?,?)').run(scope,symbol,q.ts,q.mark,q.bid,q.ask,now);
-        if(Number(result.changes)>0)for(const w of eligible)this.prepare('UPDATE tq_episode_work SET dirty=1,updated_at=? WHERE scope=? AND intent_id=?').run(now,scope,w.intent_id);
+        if(Number(result.changes)>0)for(const w of eligible)this.prepare('UPDATE tq_episode_work SET dirty=1,revision=revision+1,updated_at=? WHERE scope=? AND intent_id=?').run(now,scope,w.intent_id);
       }
       if(now-this.lastSample>=5000){
         this.lastSample=now;
@@ -240,8 +266,17 @@ export class TradingQualityCollector {
           const candidateId=`${c.symbol}:${c.selectionGeneration}`,lifecycle=this.state.candidateLifecycle.get(c.symbol)??null;
           this.persistCandidateShadow(candidateId,c,lifecycle,opportunity,now);
         }
-        this.materialize(now);
+        if(this.historyStatus.mode==='ISOLATED_HISTORY_WORKER')this.dispatchHistory({now,settings:this.state.settings});else this.materialize(now);
       }
+      if(this.historyStatus.mode!=='ISOLATED_HISTORY_WORKER')this.maintainHistory(now);
+      this.error=null;this.updateEvidenceReadiness();
+    }catch(error){this.error=String(error);(this.state as any).tradingQualityEvidenceReady=false;}
+  }
+  /** Analysis-only worker entrypoint: no capture, execution or network authority. */
+  historicalWork(now:number,settings:RuntimeState['settings']){
+    this.state.settings=settings;this.materialize(now);this.maintainHistory(now);
+  }
+  private maintainHistory(now:number){
       if(now-this.lastRetention>=60_000){
         this.lastRetention=now;
         const day=86_400_000,batch=2000;
@@ -251,8 +286,6 @@ export class TradingQualityCollector {
         this.prepare('DELETE FROM tq_candidate_state WHERE rowid IN (SELECT rowid FROM tq_candidate_state WHERE updated_at<? LIMIT ?)').run(now-7*day,batch);
       }
       if(now-this.lastCheckpoint>=5*60_000){this.lastCheckpoint=now;try{this.db.exec('PRAGMA wal_checkpoint(PASSIVE)');}catch{}}
-      this.error=null;(this.state as any).tradingQualityEvidenceReady=true;
-    }catch(error){this.error=String(error);(this.state as any).tradingQualityEvidenceReady=false;}
   }
   private hydrateEpisodeWork(now:number,horizon:number){
     if(this.workHydrated)return;
@@ -276,7 +309,7 @@ export class TradingQualityCollector {
     this.workHydrated=true;
   }
   private materialize(now:number){
-    const scope=this.scope(),p=qualityPolicy(this.state.settings),pending=this.prepare('SELECT intent_id,symbol,first_fill_at,observation_until FROM tq_episode_work WHERE scope=? AND dirty=1 ORDER BY updated_at,intent_id LIMIT 500').all(scope) as any[];
+    const scope=this.scope(),p=qualityPolicy(this.state.settings),pending=this.prepare('SELECT intent_id,symbol,first_fill_at,observation_until,revision FROM tq_episode_work WHERE scope=? AND dirty=1 ORDER BY updated_at,intent_id LIMIT 500').all(scope) as any[];
     for(const work of pending){
       const intentRow=this.prepare("SELECT payload FROM tq_facts WHERE scope=? AND kind='intents' AND id=?").get(scope,work.intent_id) as any;if(!intentRow)continue;
       const intent=JSON.parse(String(intentRow.payload));
@@ -295,21 +328,29 @@ export class TradingQualityCollector {
       const input={run:{id:intent.brainRunId,symbol:intent.symbol},intent,orders,fills,tradeRecords:trades,now,
         adverseBoundaryBps:p.adverseBoundaryBps,favorableBoundaryBps:p.favorableBoundaryBps};
       const first=buildEpisodeEvidence(input);
-      if(first.completeFillAt!==null){const fullUntil=first.completeFillAt+p.positionObservationHorizonMs;if(fullUntil>Number(work.observation_until??0)){work.observation_until=fullUntil;this.prepare('UPDATE tq_episode_work SET observation_until=?,matured=? WHERE scope=? AND intent_id=?').run(fullUntil,now>=fullUntil?1:0,scope,intent.id);}}
+      if(first.completeFillAt!==null){const fullUntil=first.completeFillAt+p.positionObservationHorizonMs;if(fullUntil>Number(work.observation_until??0)){work.observation_until=fullUntil;this.prepare('UPDATE tq_episode_work SET observation_until=?,matured=? WHERE scope=? AND intent_id=? AND revision=?').run(fullUntil,now>=fullUntil?1:0,scope,intent.id,work.revision);}}
       const until=Number(work.observation_until??(first.firstFillAt===null?0:first.firstFillAt+p.positionObservationHorizonMs));
       const marks=first.firstFillAt===null?[]:this.prepare('SELECT ts,mark,bid,ask FROM tq_marks WHERE scope=? AND symbol=? AND ts>=? AND ts<=? ORDER BY ts').all(scope,intent.symbol,first.firstFillAt,Math.min(now,until)) as any[];
       const ep=buildEpisodeEvidence({...input,marks});
-      this.prepare('INSERT INTO tq_episodes VALUES(?,?,?,?) ON CONFLICT(scope,intent_id) DO UPDATE SET updated_at=excluded.updated_at,payload=excluded.payload').run(scope,intent.id,now,JSON.stringify(ep));
-      this.prepare('UPDATE tq_episode_work SET dirty=0,updated_at=? WHERE scope=? AND intent_id=?').run(now,scope,intent.id);
+      this.commitEpisode(scope,intent.id,Number(work.revision),now,ep);
     }
   }
-  health(){return{status:this.error?'DEGRADED':'READY',error:this.error,scope:this.scope(),lastSampleAt:this.lastSample,stateCapture:{mode:'BACKGROUND_CHUNKS_WITH_SYNCHRONOUS_EVENTS',pendingRows:Math.max(0,this.stateCaptureKeys.length-this.stateCaptureOffset),lastCompletedAt:this.stateCaptureCompletedAt}};}
+  private commitEpisode(scope:string,intentId:string,revision:number,now:number,episode:unknown){
+    const payload=JSON.stringify(episode);
+    this.db.exec('SAVEPOINT tq_episode_projection');
+    try{
+      const changed=this.prepare('UPDATE tq_episode_work SET dirty=0,updated_at=? WHERE scope=? AND intent_id=? AND revision=? AND dirty=1').run(now,scope,intentId,revision);
+      if(Number(changed.changes)>0)this.prepare('INSERT INTO tq_episodes VALUES(?,?,?,?) ON CONFLICT(scope,intent_id) DO UPDATE SET updated_at=excluded.updated_at,payload=excluded.payload').run(scope,intentId,now,payload);
+      this.db.exec('RELEASE tq_episode_projection');return Number(changed.changes)>0;
+    }catch(error){this.db.exec('ROLLBACK TO tq_episode_projection; RELEASE tq_episode_projection');throw error;}
+  }
+  health(){const overdue=this.historyBusy&&Date.now()-Number(this.historyStatus.startedAt)>30_000;return{status:this.error||overdue||this.historyStatus.status!=='READY'?'DEGRADED':'READY',error:this.error??(overdue?'HISTORY_WORKER_DELAYED':this.historyStatus.error??null),scope:this.scope(),lastSampleAt:this.lastSample,history:{...this.historyStatus,busy:this.historyBusy,pending:Boolean(this.historyPending)},stateCapture:{mode:'BACKGROUND_CHUNKS_WITH_SYNCHRONOUS_EVENTS',pendingRows:Math.max(0,this.stateCaptureKeys.length-this.stateCaptureOffset),lastCompletedAt:this.stateCaptureCompletedAt}};}
   /** HTTP-safe operational summary. The full report intentionally remains an offline/internal
    * diagnostic because materialising every evidence payload on the Engine thread can be expensive. */
   summary(){
     const scope=this.scope(),scalar=(sql:string,...args:any[])=>Number((this.prepare(sql).get(...args) as any)?.count??0);
     const factRows=this.prepare('SELECT kind,COUNT(*) AS count FROM tq_facts WHERE scope=? GROUP BY kind ORDER BY kind').all(scope) as any[];
-    return{schemaVersion:'TQ-HTTP-SUMMARY-1',scope,generatedAt:Date.now(),status:this.error?'DEGRADED':'READY',error:this.error,lastSampleAt:this.lastSample,
+    return{schemaVersion:'TQ-HTTP-SUMMARY-1',scope,generatedAt:Date.now(),status:this.health().status,error:this.health().error,lastSampleAt:this.lastSample,
       counts:{episodes:scalar('SELECT COUNT(*) AS count FROM tq_episodes WHERE scope=?',scope),
         episodeWork:scalar('SELECT COUNT(*) AS count FROM tq_episode_work WHERE scope=?',scope),
         dirtyEpisodeWork:scalar('SELECT COUNT(*) AS count FROM tq_episode_work WHERE scope=? AND dirty=1',scope),
@@ -319,7 +360,7 @@ export class TradingQualityCollector {
       fullReportAvailableOffline:true,authorization:'NONE' as const};
   }
   report(){return tradingQualityReport(this.db,this.scope());}
-  close(){this.events.off('event',this.listener);try{this.db.exec('PRAGMA wal_checkpoint(TRUNCATE)');}catch{}this.db.close();}
+  close(){this.events.off('event',this.listener);const worker=this.historyWorker;this.historyWorker=null;this.historyPending=null;if(worker)void worker.terminate();try{this.db.exec('PRAGMA wal_checkpoint(PASSIVE)');}catch{}this.db.close();}
 }
 
 export function tradingQualityReport(db:DatabaseSync,scope:string){

@@ -1,0 +1,7 @@
+(node:35980) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:35980) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:35980) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:35980) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+{"mode":"OFFLINE_UNIQUE_TEMP_NO_EXCHANGE","result":"PASS","episodes":1,"synchronousEventCount":1,"worker":{"mode":"ISOLATED_HISTORY_WORKER","status":"READY","asOf":1791434327283,"completedAt":1791434327451,"durationMs":13.600099999999998,"authorization":"NONE","busy":false,"pending":false},"environment":"TESTNET","executionMode":"READ_ONLY","exchangeWrites":0}

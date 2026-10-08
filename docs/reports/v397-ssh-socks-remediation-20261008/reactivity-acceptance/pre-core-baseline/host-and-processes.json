@@ -1,0 +1,116 @@
+{
+  "processes": [
+    {
+      "ProcessId": 12732,
+      "ParentProcessId": 10764,
+      "Name": "llama-server.exe",
+      "CreationDate": "2026-09-18T22:52:52.484377+08:00"
+    },
+    {
+      "ProcessId": 17468,
+      "ParentProcessId": 24180,
+      "Name": "llama-server.exe",
+      "CreationDate": "2026-10-05T13:44:46.208699+08:00"
+    },
+    {
+      "ProcessId": 51124,
+      "ParentProcessId": 27984,
+      "Name": "llama-server.exe",
+      "CreationDate": "2026-10-05T13:45:30.41198+08:00"
+    },
+    {
+      "ProcessId": 2908,
+      "ParentProcessId": 23356,
+      "Name": "node.exe",
+      "CreationDate": "2026-10-08T06:55:01.666181+08:00"
+    },
+    {
+      "ProcessId": 4516,
+      "ParentProcessId": 41080,
+      "Name": "node.exe",
+      "CreationDate": "2026-10-08T06:55:01.722873+08:00"
+    },
+    {
+      "ProcessId": 40604,
+      "ParentProcessId": 47464,
+      "Name": "node.exe",
+      "CreationDate": "2026-10-08T06:55:01.81365+08:00"
+    },
+    {
+      "ProcessId": 29620,
+      "ParentProcessId": 43804,
+      "Name": "node.exe",
+      "CreationDate": "2026-10-08T09:22:07.23233+08:00"
+    },
+    {
+      "ProcessId": 38216,
+      "ParentProcessId": 23356,
+      "Name": "node.exe",
+      "CreationDate": "2026-10-08T09:23:23.769714+08:00"
+    },
+    {
+      "ProcessId": 1972,
+      "ParentProcessId": 19772,
+      "Name": "node.exe",
+      "CreationDate": "2026-10-08T09:23:23.814064+08:00"
+    },
+    {
+      "ProcessId": 27092,
+      "ParentProcessId": 10944,
+      "Name": "node.exe",
+      "CreationDate": "2026-10-08T09:23:23.814876+08:00"
+    },
+    {
+      "ProcessId": 39712,
+      "ParentProcessId": 41600,
+      "Name": "python.exe",
+      "CreationDate": "2026-10-08T09:26:34.91377+08:00"
+    }
+  ],
+  "at": "2026-10-08T01:28:04.4136235Z",
+  "identity": {
+    "instanceId": "4b4688e0-3816-49c7-ae47-e4e41aeabfba",
+    "pid": 29620,
+    "startedAt": 1791422528504,
+    "host": "0.0.0.0",
+    "port": 8080,
+    "version": "3.9.7",
+    "buildId": "3.9.7-d5aba17f5428eaada039",
+    "artifactHash": "d5aba17f5428eaada039414038150eb0b6a1d6e89f3b099fd50c39641b0aba38",
+    "sourceHash": "a28ae25b5a74acfad29a69ecd1a3c51b8759173f9f1f71628a79e4a1f1754944",
+    "startReason": "MANUAL_START",
+    "lanIps": [
+      "192.168.1.50"
+    ],
+    "restartCount": 272
+  },
+  "engine": {
+    "Id": 29620,
+    "StartTime": "2026-10-08T09:22:07.2323306+08:00",
+    "WorkingSet64": 1986002944,
+    "PrivateMemorySize64": 2032431104,
+    "CPU": 375.546875
+  },
+  "memory": [
+    {
+      "Path": "\\\\x570\\memory\\committed bytes",
+      "CookedValue": 122310582272.0
+    },
+    {
+      "Path": "\\\\x570\\memory\\commit limit",
+      "CookedValue": 126678085632.0
+    },
+    {
+      "Path": "\\\\x570\\memory\\available bytes",
+      "CookedValue": 21089525760.0
+    },
+    {
+      "Path": "\\\\x570\\memory\\pool paged bytes",
+      "CookedValue": 24692568064.0
+    },
+    {
+      "Path": "\\\\x570\\memory\\pool nonpaged bytes",
+      "CookedValue": 8818610176.0
+    }
+  ]
+}

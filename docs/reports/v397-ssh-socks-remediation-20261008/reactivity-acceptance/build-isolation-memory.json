@@ -1,0 +1,25 @@
+{
+  "memory": [
+    {
+      "Path": "\\\\x570\\memory\\committed bytes",
+      "CookedValue": 121196388352.0
+    },
+    {
+      "Path": "\\\\x570\\memory\\commit limit",
+      "CookedValue": 126678085632.0
+    },
+    {
+      "Path": "\\\\x570\\memory\\available bytes",
+      "CookedValue": 21371879424.0
+    },
+    {
+      "Path": "\\\\x570\\memory\\pool paged bytes",
+      "CookedValue": 24849256448.0
+    },
+    {
+      "Path": "\\\\x570\\memory\\pool nonpaged bytes",
+      "CookedValue": 8959303680.0
+    }
+  ],
+  "at": "2026-10-08T04:26:56.6820206Z"
+}

@@ -1,0 +1,247 @@
+{
+  "pid": 3228,
+  "seconds": 60,
+  "totalSamples": 38397,
+  "hot": [
+    {
+      "samples": 17325,
+      "functionName": "(idle)",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 3312,
+      "functionName": "all",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 1504,
+      "functionName": "all",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 1223,
+      "functionName": "put",
+      "scriptId": "203",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "lineNumber": 94,
+      "columnNumber": 7
+    },
+    {
+      "samples": 1205,
+      "functionName": "saveEntryExecution",
+      "scriptId": "215",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/config/settingsStore.js",
+      "lineNumber": 1272,
+      "columnNumber": 22
+    },
+    {
+      "samples": 1152,
+      "functionName": "(garbage collector)",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 752,
+      "functionName": "all",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 740,
+      "functionName": "",
+      "scriptId": "215",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/config/settingsStore.js",
+      "lineNumber": 1302,
+      "columnNumber": 31
+    },
+    {
+      "samples": 528,
+      "functionName": "run",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 445,
+      "functionName": "get",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 410,
+      "functionName": "",
+      "scriptId": "215",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/config/settingsStore.js",
+      "lineNumber": 989,
+      "columnNumber": 25
+    },
+    {
+      "samples": 342,
+      "functionName": "run",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 320,
+      "functionName": "run",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 299,
+      "functionName": "put",
+      "scriptId": "203",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "lineNumber": 94,
+      "columnNumber": 7
+    },
+    {
+      "samples": 298,
+      "functionName": "persistRuntimeCore",
+      "scriptId": "215",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/config/settingsStore.js",
+      "lineNumber": 929,
+      "columnNumber": 22
+    },
+    {
+      "samples": 272,
+      "functionName": "all",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 244,
+      "functionName": "all",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 234,
+      "functionName": "(program)",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 234,
+      "functionName": "all",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 225,
+      "functionName": "prepare",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 198,
+      "functionName": "update",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 183,
+      "functionName": "exec",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 182,
+      "functionName": "allTasks",
+      "scriptId": "356",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+      "lineNumber": 100,
+      "columnNumber": 12
+    },
+    {
+      "samples": 177,
+      "functionName": "allTasks",
+      "scriptId": "356",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+      "lineNumber": 100,
+      "columnNumber": 12
+    },
+    {
+      "samples": 169,
+      "functionName": "run",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 151,
+      "functionName": "all",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 148,
+      "functionName": "all",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 136,
+      "functionName": "all",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 122,
+      "functionName": "materialize",
+      "scriptId": "203",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "lineNumber": 387,
+      "columnNumber": 15
+    },
+    {
+      "samples": 120,
+      "functionName": "allTasks",
+      "scriptId": "356",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-deploy-acceptance-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+      "lineNumber": 100,
+      "columnNumber": 12
+    }
+  ]
+}

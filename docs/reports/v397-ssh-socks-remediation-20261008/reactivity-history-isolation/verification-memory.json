@@ -1,0 +1,18 @@
+{
+  "engineAbsent": true,
+  "memory": [
+    {
+      "Path": "\\\\x570\\memory\\committed bytes",
+      "CookedValue": 121372868608.0
+    },
+    {
+      "Path": "\\\\x570\\memory\\commit limit",
+      "CookedValue": 126678085632.0
+    },
+    {
+      "Path": "\\\\x570\\memory\\available bytes",
+      "CookedValue": 21490085888.0
+    }
+  ],
+  "at": "2026-10-08T04:37:06.3575407Z"
+}

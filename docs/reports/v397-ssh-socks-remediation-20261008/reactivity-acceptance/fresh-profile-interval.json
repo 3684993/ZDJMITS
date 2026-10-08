@@ -1,0 +1,24 @@
+{
+  "startedAt": 1791433799827,
+  "endedAt": 1791434160272,
+  "scope": "FRESH_PROFILE_INTERVAL_ONLY",
+  "eventLoopDelayMs": {
+    "max": 6417.285119,
+    "p95": 44.761087,
+    "p99": 397.410303
+  },
+  "memoryBefore": {
+    "rss": 1331294208,
+    "heapTotal": 1217441792,
+    "heapUsed": 1171277256,
+    "external": 10847107,
+    "arrayBuffers": 6960708
+  },
+  "memoryAfter": {
+    "rss": 2158882816,
+    "heapTotal": 1408659456,
+    "heapUsed": 1347844456,
+    "external": 8422502,
+    "arrayBuffers": 4537508
+  }
+}

@@ -1,0 +1,14 @@
+
+> @zdj/engine@3.9.8 test
+> vitest run src/services/tradeRecordSyncService.test.ts
+
+VITEST_TEST_TIMEOUT=5000 CI=
+
+ RUN  v3.2.7 D:/MITS-WORKTREES/v398-trade-integrity-20261009/apps/engine
+
+ ✓ src/services/tradeRecordSyncService.test.ts (10 tests) 18ms
+
+ Test Files  1 passed (1)
+      Tests  10 passed (10)
+   Start at  07:43:02
+   Duration  1.16s (transform 336ms, setup 0ms, collect 741ms, tests 18ms, environment 0ms, prepare 112ms)

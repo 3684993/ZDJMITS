@@ -10,7 +10,7 @@ SOURCE_IMPLEMENTED / NOT_DEPLOYED / NO_LIVE_MIGRATION。版本保持3.9.8。本�
 
 ## 经证实的问题与最小修改
 
-1. Sync当前wire识别：原legacy regex未识别v396e/v396x。新增当前prefix兼容仅在唯一持久订单、symbol、positionSide、双订单身份及唯一cycle owner一致时成立；无owner、错side/quote、CID或exchangeOrderId冲突、多持久订单都保持external。原legacy行为、canonical/funding/owner/finalizer资格保留。
+1. Sync当前wire识别：原legacy regex未识别v396e/v396x。新增当前prefix兼容仅在唯一持久订单、symbol、positionSide、双订单身份及唯一cycle owner一致时成立；无owner、错side/quote、CID或exchangeOrderId冲突、多持久订单都保持external。相同精确规则同时用于preview与offline apply的source/classification；当前TP角色需exact持久TP订单，避免仍标EXTERNAL/MANUAL。原legacy行为、canonical/funding/owner/finalizer资格保留，canonical:true记录标记不等于canonicalPnlEligible，UNKNOWN funding继续拒绝收益学习。
 2. 交易记录默认ALL；保留原分类、分页/排序/search/symbol/side，新增status筛选。页面分别显示账本状态、观察零仓待对账、原累计Entry与lot数量差异、资产单位、极值UNKNOWN。没有自动同步POST。read model附加diagnostics，不修改原record/status/classification/金额；缺数量不补零，观察时间不伪装为成交结算时间。
 3. EIP与实际Primary compact INPUT附加CURRENT_POSITION_CONTEXT，最多8条同symbol两方向事实；严格schema保留可选字段，范围/来源/as-of/freshness/owner/cycle明确。精确当前cycle/side的留存ENTRY成交与原openedAt一致才提供PARTIAL起点及年龄；缺失、过期、未来、错cycle/side/quantity为UNKNOWN/null。部分追加、HUMAN与最近updatedAt不重置origin。完整生命周期证明仍不足，不称verified earliest history。
 4. Prompt说明持仓事实不代替方向判断；同向独立补仓继续在pre-AI冻结候选前拦截，反向不会仅因另一侧库存被拒绝，Primary仍唯一选择合法冻结候选。compact输入保留entryAuthorizationPolicy。旧packet缺上下文时呈现UNKNOWN，不等于无仓位；没有新增AI调用或Review veto。
@@ -29,9 +29,9 @@ AVAX当前native无仓位/无open orders；18个独立Entry/17次独立追加，
 
 ## 验证
 
-完整 `npm run verify` PASS，UTC23:31:00–23:33:07：deps/scripts/release/S00/typecheck/build/workspace tests；**244文件 / 2086测试**（contracts1/2、core8/59、dashboard25/126、engine210/1899）。targeted实际UI/jsdom、Express GET只读、strict EIP/actual Primary INPUT、current wire identity/collision/side/quote/幂等、UNKNOWN/future/stale/partial/HUMAN与反向候选测试通过。合成Express fixture的SQLite total_changes和state保持零变更，不等于live历史接受。
+完整 `npm run verify` PASS，最终源码UTC23:43:04–23:45:12：deps/scripts/release/S00/typecheck/build/workspace tests；**244文件 / 2086测试**（contracts1/2、core8/59、dashboard25/126、engine210/1899）。targeted实际UI/jsdom、Express GET只读、strict EIP/actual Primary INPUT、current wire identity/collision/side/quote/幂等、UNKNOWN/future/stale/partial/HUMAN与反向候选测试通过。合成Express fixture的SQLite total_changes和state保持零变更，不等于live历史接受。
 
-所有失败保留：主机commit内存不足/native OOM、384MB V8 heap OOM；继承proxy环境与jitless Undici冲突；初次targeted cwd错误；两个typecheck泛型/fixture错误；两次完整验证因原prompt预算31000超界失败。收紧上下文文字后通过，未扩大预算。离线子进程暂用NODE_USE_ENV_PROXY=0及1024MB heap，仅本次命令环境；没有修改全局代理、运行实例环境/Settings/模型。正常编译最终成功。full-verify-first/second/third以及最终成功日志与结果全部保留。
+所有失败保留：主机commit内存不足/native OOM、384MB V8 heap OOM；继承proxy环境与jitless Undici冲突；初次targeted cwd错误；两个typecheck泛型/fixture错误；两次完整验证因原prompt预算31000超界失败。收紧上下文文字后通过，未扩大预算。离线子进程暂用NODE_USE_ENV_PROXY=0及1024MB heap，仅本次命令环境；没有修改全局代理、运行实例环境/Settings/模型。正常编译最终成功。full-verify-first/second/third以及最终成功日志与结果全部保留。第一次PASS归档为full-verify-first-pass；交付审阅发现preview/apply源分类和当前TP标签需统一，在f6b8243之后补齐并加固现有10项identity测试断言，重新完整verify，不把前一次PASS冒充最终源码验证。
 
 noSeparateAdd、origin ledger、EntryCoordinator、PositionService、PositionReviewRunner、Settings默认与TP Guardian共7个受保护文件与855362e一致。SOURCE_DELIVERED与现场部署、数据迁移独立；本轮均未授权后两者。
 

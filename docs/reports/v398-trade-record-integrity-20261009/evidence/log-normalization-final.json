@@ -1,0 +1,222 @@
+[
+  {
+    "path": "docs/reports/v398-trade-record-integrity-20261009/analysis-2.log",
+    "original": "docs/reports/v398-trade-record-integrity-20261009/analysis-2.log.final-original.gz",
+    "change": "terminal whitespace/LF/BOM only"
+  },
+  {
+    "path": "docs/reports/v398-trade-record-integrity-20261009/analysis.log",
+    "original": "docs/reports/v398-trade-record-integrity-20261009/analysis.log.final-original.gz",
+    "change": "terminal whitespace/LF/BOM only"
+  },
+  {
+    "path": "docs/reports/v398-trade-record-integrity-20261009/api-prompt-targeted-2.log",
+    "original": "docs/reports/v398-trade-record-integrity-20261009/api-prompt-targeted-2.log.final-original.gz",
+    "change": "terminal whitespace/LF/BOM only"
+  },
+  {
+    "path": "docs/reports/v398-trade-record-integrity-20261009/api-prompt-targeted.log",
+    "original": "docs/reports/v398-trade-record-integrity-20261009/api-prompt-targeted.log.final-original.gz",
+    "change": "terminal whitespace/LF/BOM only"
+  },
+  {
+    "path": "docs/reports/v398-trade-record-integrity-20261009/contracts-bounded-build.log",
+    "original": "docs/reports/v398-trade-record-integrity-20261009/contracts-bounded-build.log.final-original.gz",
+    "change": "terminal whitespace/LF/BOM only"
+  },
+  {
+    "path": "docs/reports/v398-trade-record-integrity-20261009/core-bounded-build-2.log",
+    "original": "docs/reports/v398-trade-record-integrity-20261009/core-bounded-build-2.log.final-original.gz",
+    "change": "terminal whitespace/LF/BOM only"
+  },
+  {
+    "path": "docs/reports/v398-trade-record-integrity-20261009/core-bounded-build.log",
+    "original": "docs/reports/v398-trade-record-integrity-20261009/core-bounded-build.log.final-original.gz",
+    "change": "terminal whitespace/LF/BOM only"
+  },
+  {
+    "path": "docs/reports/v398-trade-record-integrity-20261009/core-prompt-final-build.log",
+    "original": "docs/reports/v398-trade-record-integrity-20261009/core-prompt-final-build.log.final-original.gz",
+    "change": "terminal whitespace/LF/BOM only"
+  },
+  {
+    "path": "docs/reports/v398-trade-record-integrity-20261009/dashboard-targeted-first.log",
+    "original": "docs/reports/v398-trade-record-integrity-20261009/dashboard-targeted-first.log.final-original.gz",
+    "change": "terminal whitespace/LF/BOM only"
+  },
+  {
+    "path": "docs/reports/v398-trade-record-integrity-20261009/deps-build.log",
+    "original": "docs/reports/v398-trade-record-integrity-20261009/deps-build.log.final-original.gz",
+    "change": "terminal whitespace/LF/BOM only"
+  },
+  {
+    "path": "docs/reports/v398-trade-record-integrity-20261009/engine-bounded-typecheck.log",
+    "original": "docs/reports/v398-trade-record-integrity-20261009/engine-bounded-typecheck.log.final-original.gz",
+    "change": "terminal whitespace/LF/BOM only"
+  },
+  {
+    "path": "docs/reports/v398-trade-record-integrity-20261009/exchange-readonly-2.log",
+    "original": "docs/reports/v398-trade-record-integrity-20261009/exchange-readonly-2.log.final-original.gz",
+    "change": "terminal whitespace/LF/BOM only"
+  },
+  {
+    "path": "docs/reports/v398-trade-record-integrity-20261009/exchange-readonly.log",
+    "original": "docs/reports/v398-trade-record-integrity-20261009/exchange-readonly.log.final-original.gz",
+    "change": "terminal whitespace/LF/BOM only"
+  },
+  {
+    "path": "docs/reports/v398-trade-record-integrity-20261009/final-identity-targeted.log",
+    "original": "docs/reports/v398-trade-record-integrity-20261009/final-identity-targeted.log.final-original.gz",
+    "change": "terminal whitespace/LF/BOM only"
+  },
+  {
+    "path": "docs/reports/v398-trade-record-integrity-20261009/full-verify-first-pass.log",
+    "original": "docs/reports/v398-trade-record-integrity-20261009/full-verify-first-pass.log.final-original.gz",
+    "change": "terminal whitespace/LF/BOM only"
+  },
+  {
+    "path": "docs/reports/v398-trade-record-integrity-20261009/full-verify-first.log",
+    "original": "docs/reports/v398-trade-record-integrity-20261009/full-verify-first.log.final-original.gz",
+    "change": "terminal whitespace/LF/BOM only"
+  },
+  {
+    "path": "docs/reports/v398-trade-record-integrity-20261009/full-verify-second.log",
+    "original": "docs/reports/v398-trade-record-integrity-20261009/full-verify-second.log.final-original.gz",
+    "change": "terminal whitespace/LF/BOM only"
+  },
+  {
+    "path": "docs/reports/v398-trade-record-integrity-20261009/full-verify-third.log",
+    "original": "docs/reports/v398-trade-record-integrity-20261009/full-verify-third.log.final-original.gz",
+    "change": "terminal whitespace/LF/BOM only"
+  },
+  {
+    "path": "docs/reports/v398-trade-record-integrity-20261009/full-verify-wrapper-first.log",
+    "original": "docs/reports/v398-trade-record-integrity-20261009/full-verify-wrapper-first.log.final-original.gz",
+    "change": "terminal whitespace/LF/BOM only"
+  },
+  {
+    "path": "docs/reports/v398-trade-record-integrity-20261009/full-verify-wrapper-second.log",
+    "original": "docs/reports/v398-trade-record-integrity-20261009/full-verify-wrapper-second.log.final-original.gz",
+    "change": "terminal whitespace/LF/BOM only"
+  },
+  {
+    "path": "docs/reports/v398-trade-record-integrity-20261009/full-verify-wrapper-third.log",
+    "original": "docs/reports/v398-trade-record-integrity-20261009/full-verify-wrapper-third.log.final-original.gz",
+    "change": "terminal whitespace/LF/BOM only"
+  },
+  {
+    "path": "docs/reports/v398-trade-record-integrity-20261009/full-verify-wrapper.log",
+    "original": "docs/reports/v398-trade-record-integrity-20261009/full-verify-wrapper.log.final-original.gz",
+    "change": "terminal whitespace/LF/BOM only"
+  },
+  {
+    "path": "docs/reports/v398-trade-record-integrity-20261009/full-verify.log",
+    "original": "docs/reports/v398-trade-record-integrity-20261009/full-verify.log.final-original.gz",
+    "change": "terminal whitespace/LF/BOM only"
+  },
+  {
+    "path": "docs/reports/v398-trade-record-integrity-20261009/github-code-first.log",
+    "original": "docs/reports/v398-trade-record-integrity-20261009/github-code-first.log.final-original.gz",
+    "change": "terminal whitespace/LF/BOM only"
+  },
+  {
+    "path": "docs/reports/v398-trade-record-integrity-20261009/github-code-initial.log",
+    "original": "docs/reports/v398-trade-record-integrity-20261009/github-code-initial.log.final-original.gz",
+    "change": "terminal whitespace/LF/BOM only"
+  },
+  {
+    "path": "docs/reports/v398-trade-record-integrity-20261009/github-phase-b-jobs.log",
+    "original": "docs/reports/v398-trade-record-integrity-20261009/github-phase-b-jobs.log.final-original.gz",
+    "change": "terminal whitespace/LF/BOM only"
+  },
+  {
+    "path": "docs/reports/v398-trade-record-integrity-20261009/github-phase-b.log",
+    "original": "docs/reports/v398-trade-record-integrity-20261009/github-phase-b.log.final-original.gz",
+    "change": "terminal whitespace/LF/BOM only"
+  },
+  {
+    "path": "docs/reports/v398-trade-record-integrity-20261009/github-readonly.log",
+    "original": "docs/reports/v398-trade-record-integrity-20261009/github-readonly.log.final-original.gz",
+    "change": "terminal whitespace/LF/BOM only"
+  },
+  {
+    "path": "docs/reports/v398-trade-record-integrity-20261009/local-readonly-2.log",
+    "original": "docs/reports/v398-trade-record-integrity-20261009/local-readonly-2.log.final-original.gz",
+    "change": "terminal whitespace/LF/BOM only"
+  },
+  {
+    "path": "docs/reports/v398-trade-record-integrity-20261009/local-readonly-3.log",
+    "original": "docs/reports/v398-trade-record-integrity-20261009/local-readonly-3.log.final-original.gz",
+    "change": "terminal whitespace/LF/BOM only"
+  },
+  {
+    "path": "docs/reports/v398-trade-record-integrity-20261009/local-readonly.log",
+    "original": "docs/reports/v398-trade-record-integrity-20261009/local-readonly.log.final-original.gz",
+    "change": "terminal whitespace/LF/BOM only"
+  },
+  {
+    "path": "docs/reports/v398-trade-record-integrity-20261009/npm-ci.log",
+    "original": "docs/reports/v398-trade-record-integrity-20261009/npm-ci.log.final-original.gz",
+    "change": "terminal whitespace/LF/BOM only"
+  },
+  {
+    "path": "docs/reports/v398-trade-record-integrity-20261009/offline-replay-after.log",
+    "original": "docs/reports/v398-trade-record-integrity-20261009/offline-replay-after.log.final-original.gz",
+    "change": "terminal whitespace/LF/BOM only"
+  },
+  {
+    "path": "docs/reports/v398-trade-record-integrity-20261009/offline-replay-before-2.log",
+    "original": "docs/reports/v398-trade-record-integrity-20261009/offline-replay-before-2.log.final-original.gz",
+    "change": "terminal whitespace/LF/BOM only"
+  },
+  {
+    "path": "docs/reports/v398-trade-record-integrity-20261009/offline-replay-final.log",
+    "original": "docs/reports/v398-trade-record-integrity-20261009/offline-replay-final.log.final-original.gz",
+    "change": "terminal whitespace/LF/BOM only"
+  },
+  {
+    "path": "docs/reports/v398-trade-record-integrity-20261009/privacy-manifest.log",
+    "original": "docs/reports/v398-trade-record-integrity-20261009/privacy-manifest.log.final-original.gz",
+    "change": "terminal whitespace/LF/BOM only"
+  },
+  {
+    "path": "docs/reports/v398-trade-record-integrity-20261009/prompt-budget-final.log",
+    "original": "docs/reports/v398-trade-record-integrity-20261009/prompt-budget-final.log.final-original.gz",
+    "change": "terminal whitespace/LF/BOM only"
+  },
+  {
+    "path": "docs/reports/v398-trade-record-integrity-20261009/runtime-completion-collection.log",
+    "original": "docs/reports/v398-trade-record-integrity-20261009/runtime-completion-collection.log.final-original.gz",
+    "change": "terminal whitespace/LF/BOM only"
+  },
+  {
+    "path": "docs/reports/v398-trade-record-integrity-20261009/runtime-preservation.log",
+    "original": "docs/reports/v398-trade-record-integrity-20261009/runtime-preservation.log.final-original.gz",
+    "change": "terminal whitespace/LF/BOM only"
+  },
+  {
+    "path": "docs/reports/v398-trade-record-integrity-20261009/runtime-readonly.log",
+    "original": "docs/reports/v398-trade-record-integrity-20261009/runtime-readonly.log.final-original.gz",
+    "change": "terminal whitespace/LF/BOM only"
+  },
+  {
+    "path": "docs/reports/v398-trade-record-integrity-20261009/s00-final.log",
+    "original": "docs/reports/v398-trade-record-integrity-20261009/s00-final.log.final-original.gz",
+    "change": "terminal whitespace/LF/BOM only"
+  },
+  {
+    "path": "docs/reports/v398-trade-record-integrity-20261009/staged-phase-b-check.log",
+    "original": "docs/reports/v398-trade-record-integrity-20261009/staged-phase-b-check.log.final-original.gz",
+    "change": "terminal whitespace/LF/BOM only"
+  },
+  {
+    "path": "docs/reports/v398-trade-record-integrity-20261009/targeted-first.log",
+    "original": "docs/reports/v398-trade-record-integrity-20261009/targeted-first.log.final-original.gz",
+    "change": "terminal whitespace/LF/BOM only"
+  },
+  {
+    "path": "docs/reports/v398-trade-record-integrity-20261009/typecheck-second.log",
+    "original": "docs/reports/v398-trade-record-integrity-20261009/typecheck-second.log.final-original.gz",
+    "change": "terminal whitespace/LF/BOM only"
+  }
+]

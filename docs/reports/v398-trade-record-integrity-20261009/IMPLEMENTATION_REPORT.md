@@ -40,3 +40,5 @@ noSeparateAdd、origin ledger、EntryCoordinator、PositionService、PositionRev
 Phase A于23:00Z实际READY/PID8524；completion23:38Z八个GET失败，原PID已不存在且无8080监听，原因UNKNOWN。Settings250→253/digest变化，settings_audit显示CAS更新、summary结构message/maxPositions；执行者及停止原因不据此推定。runtime-preservation.json保留差异，不声称Settings或当前health不变。首次preservation脚本strip误去dirty行前空格，造成假差异；first收据保留，修正后canonical六项dirty和HEAD确实一致。运行源码worktree HEAD仍5fe95a8，本轮未修改其源码/dist或生命周期，live DB允许其他实际actor/Engine自身变动，不宣称全库字节冻结。
 
 全部本轮必要JSON/CSV/脱敏gzip/log/源码/测试/计划与SHA256 manifest上传GitHub。MANIFEST排除自引用REMOTE收据；REMOTE_C及最终verify-only核对所有列出blob。代码commit/Actions与最终FF/equality在交付收据中记录；未获得的证据不补造。旧私有backup仍保留，没有重试删除。
+
+最终业务源码 `feef65926f521af7b69e4d84308a828b2b09a08c`，Actions **37861262495 SUCCESS**（2026-10-08T23:54:59Z完成，run/head/jobs逐项API复核，github-source-final.json）；其212个远端blob SHA256通过。首次源码f6b8243的CI被后继提交的既有concurrency取消，未冒充SUCCESS。最终收据提交仅文档/JSON/log/manifest，不改apps/packages/package.json或脚本；最终main CI由GitHub自动触发并按实际final SHA另行只读核对，避免自引用收据无限追加提交。23:56:37Z再次8个GET全部UNAVAILABLE，不能宣称现场已恢复。最终部署、Engine lifecycle、真实账户/历史写仍0。

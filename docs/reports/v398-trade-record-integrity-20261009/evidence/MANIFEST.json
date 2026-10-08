@@ -1,8 +1,8 @@
 {
-  "observedAt": "2026-10-08T23:46:03.357332+00:00",
+  "observedAt": "2026-10-08T23:57:03.794420+00:00",
   "privacyGate": "PASS_NO_PRIVATE_FIELDS_OR_SECRET_PATTERNS",
   "normalization": "LF text/raw gzip",
-  "artifactCount": 212,
+  "artifactCount": 224,
   "artifacts": [
     {
       "path": "apps/dashboard/src/views/tradeClosePresentation.test.ts",
@@ -70,7 +70,7 @@
     },
     {
       "path": "docs/prompts/CURRENT_MAINTENANCE_HANDOFF.md",
-      "sha256": "fec0833f988f01de66b05f60ca1adf1e754fdfcdfd0e88ae1956df3363749ef9"
+      "sha256": "6e001f0a7e8e51dfbddcbc2e1c8e44cc1ecef80d7705e90ee7252bbd27b5b6f3"
     },
     {
       "path": "docs/reports/v398-trade-record-integrity-20261009/analysis-2.log",
@@ -245,6 +245,10 @@
       "sha256": "da25932221f450e14846f8f24e6be355f437a4e310bbfdf07b522b94375d14e1"
     },
     {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/delivery-closeout.json",
+      "sha256": "682d3d7b27d5dfbf37a2d28258688f15baafb46e7cf3c4143046dcbd7fdfa2c2"
+    },
+    {
       "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/entities.json.gz",
       "sha256": "deb6237f78fff2900e49fe77458878812e8181deb06068209314d579ca104529"
     },
@@ -269,12 +273,24 @@
       "sha256": "93e5fdac72acbbaa90445bea97db9b8e25b34d81abd70e3513781bd30b886c81"
     },
     {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/github-final-source-initial.json",
+      "sha256": "576af3410bff8d42814fab7651f0540204830bcc9965fb2c7e428d1c9d837b24"
+    },
+    {
       "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/github-phase-b-jobs.json",
       "sha256": "4d3956df0009fa4050d3782f84a32af069604d2086961a1dbcf568cd797d9e17"
     },
     {
       "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/github-phase-b.json",
       "sha256": "8fe0eb7f05bee1f8d98e134923eeeb3e1637aa30c548451751775f87842cff86"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/github-source-final.json",
+      "sha256": "05ed51759d587dd99e7cd333969e3573e97035c450cf7a640176d31d2a2d5a32"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/github-source-pending.json",
+      "sha256": "81e6077f8a0fb560c5f5146744edf4da950f9a988b574cf93f17bbdf6f8be529"
     },
     {
       "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/linked-ai-runs.json.gz",
@@ -355,6 +371,10 @@
     {
       "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/runtime-completion.json",
       "sha256": "bf267767c2c74d648eb23090e0e27c8713b2c1f0b7d3eda024d025cfc0903287"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/runtime-final-closeout.json",
+      "sha256": "08ab0496665c1bb0b2b7b208e1233c169b8c0a0bdbeedaeb2d7db42f0cff89db"
     },
     {
       "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/runtime-phase-a.json",
@@ -557,6 +577,14 @@
       "sha256": "c015377dc2bf618dcc0ca3f9b52d2f0b343b51a0093e4bea51875d4961d31e50"
     },
     {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/github-final-source-initial.log",
+      "sha256": "08e7b047ab904e982219a25b14f1d1edce103199d873b5255518335638bc357d"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/github-final-source-initial.log.closeout-original.gz",
+      "sha256": "927b2993651f5f74637b66bfc9932ccbe8e81f8a6e4ee3f5fc357026a2613d43"
+    },
+    {
       "path": "docs/reports/v398-trade-record-integrity-20261009/github-phase-b-jobs.log",
       "sha256": "e5e205b02b9520c9027be935710b13a7908287510d4ea7fceede40ea716ec0cd"
     },
@@ -593,8 +621,24 @@
       "sha256": "a0d3194397529c453a405406abbd93cce13d7b9d678b9b7cc09cdd677ec9359a"
     },
     {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/github-source-final.log",
+      "sha256": "67fad4c292ee59aa06b0524c840451ae622ff0fa83ee40efb6f4f1826cbbbb30"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/github-source-final.log.closeout-original.gz",
+      "sha256": "a9ffb3d5968370729815c8b6249e87dbc127702aa2fc12dc5357f24c2a3f7fd5"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/github-source-pending.log",
+      "sha256": "c5179b6f85e95e758809b8b9ff5ed855503229fd339ec4729ba76f5fd4ce337d"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/github-source-pending.log.closeout-original.gz",
+      "sha256": "045682f4e21f7c8477ccaf998fbea6f817fc2a9373f69dc2237d5e2150b56890"
+    },
+    {
       "path": "docs/reports/v398-trade-record-integrity-20261009/IMPLEMENTATION_REPORT.md",
-      "sha256": "419a6b0667b92a5763af700c9cd7e9ace0dab8e76dce5a8dd06f61c157bec399"
+      "sha256": "1d8d46619811fd3c33b885fdf7842536a771bfe7f020a36f2c878a6141601d58"
     },
     {
       "path": "docs/reports/v398-trade-record-integrity-20261009/local-readonly-2.log",
@@ -719,6 +763,10 @@
     {
       "path": "docs/reports/v398-trade-record-integrity-20261009/runtime-completion-collection.log.phase-c-original.gz",
       "sha256": "ac85a6c72b587474da307735077ef9373be89b682b055bac387aa100d01e176c"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/runtime-final-closeout.log",
+      "sha256": "7d2b4d48bbb69c834de9d41199e287f7e77a52bc93d8eb19b53c2bbc9c85aba4"
     },
     {
       "path": "docs/reports/v398-trade-record-integrity-20261009/runtime-preservation.log",

@@ -1,0 +1,50 @@
+{
+  "observedAt": "2026-10-08T23:57:02.624658+00:00",
+  "sourceCommit": "feef65926f521af7b69e4d84308a828b2b09a08c",
+  "sourceActions": {
+    "id": 37861262495,
+    "head_sha": "feef65926f521af7b69e4d84308a828b2b09a08c",
+    "status": "completed",
+    "conclusion": "success",
+    "html_url": "https://github.com/3684993/ZDJMITS/actions/runs/37861262495",
+    "name": "V3.9.x Verify",
+    "created_at": "2026-10-08T23:46:18Z",
+    "updated_at": "2026-10-08T23:54:59Z"
+  },
+  "localVerify": {
+    "startedAt": "2026-10-08T23:43:04.563Z",
+    "completedAt": "2026-10-08T23:45:12.480Z",
+    "command": "npm run verify",
+    "exitCode": 0,
+    "signal": null,
+    "error": null,
+    "liveEngineLifecycleCalls": 0,
+    "manualExchangeWrites": 0,
+    "log": "docs/reports/v398-trade-record-integrity-20261009/full-verify.log"
+  },
+  "phaseBReadback": {
+    "observedAt": "2026-10-08T23:11:20.289666+00:00",
+    "ref": "origin/main",
+    "head": "c7cf6b82bbdf29c86fc97634f37be0a8f86cde92",
+    "checked": 52,
+    "mismatches": [],
+    "passed": true
+  },
+  "sourceReadback": {
+    "observedAt": "2026-10-08T23:46:33.174192+00:00",
+    "ref": "origin/main",
+    "head": "feef65926f521af7b69e4d84308a828b2b09a08c",
+    "checked": 212,
+    "mismatches": [],
+    "passed": true
+  },
+  "sourceDelivery": "SOURCE_DELIVERED",
+  "deployment": "NOT_DEPLOYED",
+  "historicalMigration": "NO_LIVE_MIGRATION",
+  "taskLifecycleCalls": 0,
+  "taskSettingsWrites": 0,
+  "taskManualExchangeWrites": 0,
+  "historicalPeak": "UNKNOWN",
+  "originalAvaxShortLedger": "UNCLOSABLE",
+  "finalArchiveCommitScope": "documentation and evidence only; exact final HEAD/CI independently read back without self-reference"
+}

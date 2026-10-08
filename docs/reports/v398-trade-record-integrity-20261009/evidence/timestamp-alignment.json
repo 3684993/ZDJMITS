@@ -1,0 +1,26 @@
+{
+  "timezone": "Asia/Shanghai UTC+08",
+  "source": "fixed native exchange and SQLite snapshots; no history modification",
+  "rows": [
+    {
+      "field": "firstNativeEntry",
+      "epochMs": 1789834245678,
+      "localISO": "2026-09-20T00:10:45.678000+08:00"
+    },
+    {
+      "field": "nativeExit",
+      "epochMs": 1791472362824,
+      "localISO": "2026-10-08T23:12:42.824000+08:00"
+    },
+    {
+      "field": "ledgerObservedFlat",
+      "epochMs": 1791497311314,
+      "localISO": "2026-10-09T06:08:31.314000+08:00"
+    },
+    {
+      "field": "uniRecordedOpenedAt",
+      "epochMs": 1791499145663,
+      "localISO": "2026-10-09T06:39:05.663000+08:00"
+    }
+  ]
+}

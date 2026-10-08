@@ -21,7 +21,7 @@ SOURCE_IMPLEMENTED / NOT_DEPLOYED / NO_LIVE_MIGRATION。版本保持3.9.8。本�
 
 固定sanitized证据preview：system fills **268→301**、external **49→16**、repairable PARTIAL cycles **0→3**；没有调用真实apply，原TradeRecord字节投影未变。3个可修复预览全部为其他AVAX LONG周期。9/20原SHORT与另一个9/28 SHORT仍UNCLOSABLE：分别119条留存entry/1条exit与17条entry/0条exit，原物理连续仓位拆分的本地cycle及保留期缺口没有自动合并。离线合成小样本apply只用临时测试state验证数量守恒、幂等、funding UNKNOWN，不写live SQLite。
 
-AVAX当前native无仓位/无open orders；18个独立Entry/17次独立追加，累计1263与TP退出1263守恒。退出订单540405465、trade67893172在2026-10-08 **23:12:42.824+08**成交，真实reduceOnly BUY/SHORT、exact持久TP来源；不是本地boot观察到零仓的07:28时间。最初9/20历史仍在PARTIAL账本而默认COMPLETE隐藏。10/5当日结束已有14orders/13adds，与随后18/17、lifecycle addCount25数量变化口径不同；用户原始统计时刻仍UNKNOWN。timeline CSV保留逐订单时间及数量。
+AVAX当前native无仓位/无open orders；18个独立Entry/17次独立追加，累计1263与TP退出1263守恒。退出订单540405465、trade67893172在2026-10-08 **23:12:42.824+08**成交，真实reduceOnly BUY/SHORT、exact持久TP来源；不是本地boot观察到零仓的2026-10-09 06:08:31.314+08时间（1791497311314）。最初9/20历史仍在PARTIAL账本而默认COMPLETE隐藏。10/5当日结束已有14orders/13adds，与随后18/17、lifecycle addCount25数量变化口径不同；用户原始统计时刻仍UNKNOWN。timeline CSV保留逐订单时间及数量。
 
 全记录固定分母768：242 lotQty不等entryQty、51负remaining、并集285；这些是原记录差异，未批量写回。新增native-fee-asset-diagnostics.json证明本次768条原feeBreakdown中quote不一致0，不证明全局外汇折算或全生命周期资金费齐全。763 funding UNKNOWN继续不能补零或获得canonical/学习资格。
 

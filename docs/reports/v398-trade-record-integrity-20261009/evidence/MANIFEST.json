@@ -1,8 +1,8 @@
 {
-  "observedAt": "2026-10-08T23:57:03.794420+00:00",
+  "observedAt": "2026-10-08T23:58:09.605762+00:00",
   "privacyGate": "PASS_NO_PRIVATE_FIELDS_OR_SECRET_PATTERNS",
   "normalization": "LF text/raw gzip",
-  "artifactCount": 224,
+  "artifactCount": 225,
   "artifacts": [
     {
       "path": "apps/dashboard/src/views/tradeClosePresentation.test.ts",
@@ -397,6 +397,10 @@
       "sha256": "5440c6f7733be4b7ff8bcb6e7d28aee2cf1fac97c2c7835a177fe431b3a7d8e1"
     },
     {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/timestamp-alignment.json",
+      "sha256": "533c793478a5efccd375a0fff583ab9fbaf512a59f2a4f96653a963725771a61"
+    },
+    {
       "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/trade-records.json.gz",
       "sha256": "1ac57b0d57530f577b05d68344bd1a7056a0c9d3b873c61e1e3832d257a0e9ca"
     },
@@ -638,7 +642,7 @@
     },
     {
       "path": "docs/reports/v398-trade-record-integrity-20261009/IMPLEMENTATION_REPORT.md",
-      "sha256": "1d8d46619811fd3c33b885fdf7842536a771bfe7f020a36f2c878a6141601d58"
+      "sha256": "38cdb0ebaeeb6f57128fbd46f5047960753d3acd8fd416ba950ae39590187e1d"
     },
     {
       "path": "docs/reports/v398-trade-record-integrity-20261009/local-readonly-2.log",

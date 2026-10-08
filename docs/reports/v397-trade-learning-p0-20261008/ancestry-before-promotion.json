@@ -1,6 +1,6 @@
 {
-  "mainIsAncestor": false,
-  "baseMain": "64fdf6953277b8dac75820bab39b1bdbe793f15f",
-  "isolatedHead": "b65883d5e6435071acacd81e57d1921fc35a3574",
-  "checkedAt": "2026-10-08T20:22:30.4043882+08:00"
+  "mainBeforePush": "64fdf6953277b8dac75820bab39b1bdbe793f15f",
+  "implementationHead": "42334c4be58995547f53fe9b7b906470a19b5ee3",
+  "mainIsAncestor": true,
+  "proof": "git merge-base --is-ancestor exact prior remote main implementation commit; ordinary push log retained"
 }

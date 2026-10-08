@@ -83,3 +83,5 @@ USDT / USDC 的 book 分资产守恒。跨资产 legacy 总和无 FX 证明返�
 `D:\MITS` 的 6 个 dirty entries 保留，独立工作树只提交本轮源代码、fixture、脚本、报告、handoff 与完整日志/证据。提交前远端新增仅文档 commit `64fdf6953277b8dac75820bab39b1bdbe793f15f`（V3.9.8 启动提示）；已 ordinary FF 集成，P0 验证涉及的代码基线未变化，保留该他人提交。main promotion 使用 fetch ancestry proof + ordinary fast-forward push，不 force/rebase/squash，不 dispatch GitHub Actions。远端提交与 evidence hash 在提交后用 Git readback 核对。
 
 复核入口：`frozen-p0-summary.json`、`frozen-p0-record-projections.jsonl.gz`、`lineage-authority-subset-manifest.json`、`local-funding-facts.json`、`bounded-local-funding-proof-results.json`、`full-verify.log`、`full-verify-result.json`、`s00-corrected.log`、`full-typecheck.log`、`full-build.log`、`full-test.log`、`full-verify-continuation-result.json`、`targeted-final-readguards.log`、`readonly-boundary-before-verify.json`、listeners/memory 及 EVIDENCE_MANIFEST。
+
+GitHub implementation commit：`42334c4be58995547f53fe9b7b906470a19b5ee3`，ordinary FF `64fdf69 → 42334c4`。首次远端回读 ref equality PASS、52 artifact hashes / 39 source hashes PASS；`REMOTE_CLOSEOUT.json` 和 publication logs 随后作为纯证据 closeout 提交。

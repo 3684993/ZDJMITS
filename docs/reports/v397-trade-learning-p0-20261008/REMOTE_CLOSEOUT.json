@@ -1,0 +1,375 @@
+{
+  "at": "2026-10-08T12:25:55.713598+00:00",
+  "implementationCommit": "42334c4be58995547f53fe9b7b906470a19b5ee3",
+  "remoteMain": "42334c4be58995547f53fe9b7b906470a19b5ee3",
+  "refEquality": true,
+  "artifactHashesPassed": 52,
+  "sourceHashesPassed": 39,
+  "results": [
+    {
+      "path": "docs/reports/v397-trade-learning-p0-20261008/.gitattributes",
+      "pass": true
+    },
+    {
+      "path": "docs/reports/v397-trade-learning-p0-20261008/ancestry-before-promotion.json",
+      "pass": true
+    },
+    {
+      "path": "docs/reports/v397-trade-learning-p0-20261008/authority-extraction.log",
+      "pass": true
+    },
+    {
+      "path": "docs/reports/v397-trade-learning-p0-20261008/bounded-local-funding-proof-results.json",
+      "pass": true
+    },
+    {
+      "path": "docs/reports/v397-trade-learning-p0-20261008/dependencies-build-2.log",
+      "pass": true
+    },
+    {
+      "path": "docs/reports/v397-trade-learning-p0-20261008/dependencies-build-3.log",
+      "pass": true
+    },
+    {
+      "path": "docs/reports/v397-trade-learning-p0-20261008/dependencies-build-4.log",
+      "pass": true
+    },
+    {
+      "path": "docs/reports/v397-trade-learning-p0-20261008/dependencies-build-5.log",
+      "pass": true
+    },
+    {
+      "path": "docs/reports/v397-trade-learning-p0-20261008/dependencies-build.log",
+      "pass": true
+    },
+    {
+      "path": "docs/reports/v397-trade-learning-p0-20261008/engine-build-development-2.log",
+      "pass": true
+    },
+    {
+      "path": "docs/reports/v397-trade-learning-p0-20261008/engine-build-development-3.log",
+      "pass": true
+    },
+    {
+      "path": "docs/reports/v397-trade-learning-p0-20261008/engine-build-development.log",
+      "pass": true
+    },
+    {
+      "path": "docs/reports/v397-trade-learning-p0-20261008/engine-typecheck-02.log",
+      "pass": true
+    },
+    {
+      "path": "docs/reports/v397-trade-learning-p0-20261008/engine-typecheck-03.log",
+      "pass": true
+    },
+    {
+      "path": "docs/reports/v397-trade-learning-p0-20261008/engine-typecheck-development.log",
+      "pass": true
+    },
+    {
+      "path": "docs/reports/v397-trade-learning-p0-20261008/final-engine-build.log",
+      "pass": true
+    },
+    {
+      "path": "docs/reports/v397-trade-learning-p0-20261008/final-engine-typecheck.log",
+      "pass": true
+    },
+    {
+      "path": "docs/reports/v397-trade-learning-p0-20261008/frozen-p0-projection-integrity.json",
+      "pass": true
+    },
+    {
+      "path": "docs/reports/v397-trade-learning-p0-20261008/frozen-p0-record-projections.jsonl.gz",
+      "pass": true
+    },
+    {
+      "path": "docs/reports/v397-trade-learning-p0-20261008/frozen-p0-summary.json",
+      "pass": true
+    },
+    {
+      "path": "docs/reports/v397-trade-learning-p0-20261008/frozen-reprojection.log",
+      "pass": true
+    },
+    {
+      "path": "docs/reports/v397-trade-learning-p0-20261008/full-build.log",
+      "pass": true
+    },
+    {
+      "path": "docs/reports/v397-trade-learning-p0-20261008/full-test.log",
+      "pass": true
+    },
+    {
+      "path": "docs/reports/v397-trade-learning-p0-20261008/full-typecheck.log",
+      "pass": true
+    },
+    {
+      "path": "docs/reports/v397-trade-learning-p0-20261008/full-verify-continuation-result.json",
+      "pass": true
+    },
+    {
+      "path": "docs/reports/v397-trade-learning-p0-20261008/full-verify-result.json",
+      "pass": true
+    },
+    {
+      "path": "docs/reports/v397-trade-learning-p0-20261008/full-verify.log",
+      "pass": true
+    },
+    {
+      "path": "docs/reports/v397-trade-learning-p0-20261008/github-fetch.log",
+      "pass": true
+    },
+    {
+      "path": "docs/reports/v397-trade-learning-p0-20261008/github-integrate-latest-main.log",
+      "pass": true
+    },
+    {
+      "path": "docs/reports/v397-trade-learning-p0-20261008/host-memory-after-verify.json",
+      "pass": true
+    },
+    {
+      "path": "docs/reports/v397-trade-learning-p0-20261008/host-memory-before-verify.json",
+      "pass": true
+    },
+    {
+      "path": "docs/reports/v397-trade-learning-p0-20261008/lineage-authority-subset-manifest.json",
+      "pass": true
+    },
+    {
+      "path": "docs/reports/v397-trade-learning-p0-20261008/lineage-authority-subset.json.gz",
+      "pass": true
+    },
+    {
+      "path": "docs/reports/v397-trade-learning-p0-20261008/listeners-after-verify.json",
+      "pass": true
+    },
+    {
+      "path": "docs/reports/v397-trade-learning-p0-20261008/listeners-before-verify.json",
+      "pass": true
+    },
+    {
+      "path": "docs/reports/v397-trade-learning-p0-20261008/local-funding-facts.json",
+      "pass": true
+    },
+    {
+      "path": "docs/reports/v397-trade-learning-p0-20261008/P0_FACT_LAYER_IMPLEMENTATION.md",
+      "pass": true
+    },
+    {
+      "path": "docs/reports/v397-trade-learning-p0-20261008/preserved-live-worktree-status.txt",
+      "pass": true
+    },
+    {
+      "path": "docs/reports/v397-trade-learning-p0-20261008/readonly-boundary-before-verify.json",
+      "pass": true
+    },
+    {
+      "path": "docs/reports/v397-trade-learning-p0-20261008/readonly-boundary-final.json",
+      "pass": true
+    },
+    {
+      "path": "docs/reports/v397-trade-learning-p0-20261008/s00-corrected.log",
+      "pass": true
+    },
+    {
+      "path": "docs/reports/v397-trade-learning-p0-20261008/targeted-01.log",
+      "pass": true
+    },
+    {
+      "path": "docs/reports/v397-trade-learning-p0-20261008/targeted-02.log",
+      "pass": true
+    },
+    {
+      "path": "docs/reports/v397-trade-learning-p0-20261008/targeted-03.log",
+      "pass": true
+    },
+    {
+      "path": "docs/reports/v397-trade-learning-p0-20261008/targeted-04.log",
+      "pass": true
+    },
+    {
+      "path": "docs/reports/v397-trade-learning-p0-20261008/targeted-05.log",
+      "pass": true
+    },
+    {
+      "path": "docs/reports/v397-trade-learning-p0-20261008/targeted-06.log",
+      "pass": true
+    },
+    {
+      "path": "docs/reports/v397-trade-learning-p0-20261008/targeted-candidate.log",
+      "pass": true
+    },
+    {
+      "path": "docs/reports/v397-trade-learning-p0-20261008/targeted-dashboard.log",
+      "pass": true
+    },
+    {
+      "path": "docs/reports/v397-trade-learning-p0-20261008/targeted-final-readguards.log",
+      "pass": true
+    },
+    {
+      "path": "docs/reports/v397-trade-learning-p0-20261008/targeted-origin-final.log",
+      "pass": true
+    },
+    {
+      "path": "docs/reports/v397-trade-learning-p0-20261008/targeted-typecheck-final.log",
+      "pass": true
+    },
+    {
+      "path": "apps/dashboard/src/views/tradeClosePresentation.test.ts",
+      "pass": true
+    },
+    {
+      "path": "apps/dashboard/src/views/tradeClosePresentation.ts",
+      "pass": true
+    },
+    {
+      "path": "apps/engine/src/api/router.ts",
+      "pass": true
+    },
+    {
+      "path": "apps/engine/src/api/tradeCloseProvenance.test.ts",
+      "pass": true
+    },
+    {
+      "path": "apps/engine/src/runtime/appRuntime.ts",
+      "pass": true
+    },
+    {
+      "path": "apps/engine/src/services/aiFabric.ts",
+      "pass": true
+    },
+    {
+      "path": "apps/engine/src/services/cycleAccounting.ts",
+      "pass": true
+    },
+    {
+      "path": "apps/engine/src/services/economicEvidence.ts",
+      "pass": true
+    },
+    {
+      "path": "apps/engine/src/services/entryLineage.ts",
+      "pass": true
+    },
+    {
+      "path": "apps/engine/src/services/exitFactsAndFunding.test.ts",
+      "pass": true
+    },
+    {
+      "path": "apps/engine/src/services/exitProvenance.ts",
+      "pass": true
+    },
+    {
+      "path": "apps/engine/src/services/experienceService.test.ts",
+      "pass": true
+    },
+    {
+      "path": "apps/engine/src/services/experienceService.ts",
+      "pass": true
+    },
+    {
+      "path": "apps/engine/src/services/factLedgers.ts",
+      "pass": true
+    },
+    {
+      "path": "apps/engine/src/services/fixtures/p0-exit-golden.json",
+      "pass": true
+    },
+    {
+      "path": "apps/engine/src/services/fundingIncomeLedger.ts",
+      "pass": true
+    },
+    {
+      "path": "apps/engine/src/services/j3TradePlanHostile.test.ts",
+      "pass": true
+    },
+    {
+      "path": "apps/engine/src/services/orderProvenanceRegistry.ts",
+      "pass": true
+    },
+    {
+      "path": "apps/engine/src/services/quantityHorizonCandidates.ts",
+      "pass": true
+    },
+    {
+      "path": "apps/engine/src/services/tradeLearningFacts.ts",
+      "pass": true
+    },
+    {
+      "path": "apps/engine/src/services/tradeLearningP0.test.ts",
+      "pass": true
+    },
+    {
+      "path": "apps/engine/src/services/tradeRecordReadModel.test.ts",
+      "pass": true
+    },
+    {
+      "path": "apps/engine/src/services/tradeRecordReadModel.ts",
+      "pass": true
+    },
+    {
+      "path": "apps/engine/src/services/tradeRecordSyncService.ts",
+      "pass": true
+    },
+    {
+      "path": "apps/engine/src/services/tradingEpisodeEvidence.test.ts",
+      "pass": true
+    },
+    {
+      "path": "apps/engine/src/services/tradingEpisodeEvidence.ts",
+      "pass": true
+    },
+    {
+      "path": "apps/engine/src/services/tradingQualityBaseline.ts",
+      "pass": true
+    },
+    {
+      "path": "apps/engine/src/services/tradingQualityCollector.ts",
+      "pass": true
+    },
+    {
+      "path": "apps/engine/src/services/tradingQualityEligibility.test.ts",
+      "pass": true
+    },
+    {
+      "path": "apps/engine/src/services/tradingQualityEligibility.ts",
+      "pass": true
+    },
+    {
+      "path": "apps/engine/src/services/tradingQualityRuntimeObserver.ts",
+      "pass": true
+    },
+    {
+      "path": "apps/engine/src/state/runtimeState.ts",
+      "pass": true
+    },
+    {
+      "path": "docs/prompts/CURRENT_MAINTENANCE_HANDOFF.md",
+      "pass": true
+    },
+    {
+      "path": "docs/reports/v397-entry-sizing-primary-authority-version-closeout-20261004/s00/entrypoint-review.json",
+      "pass": true
+    },
+    {
+      "path": "packages/contracts/src/ai.ts",
+      "pass": true
+    },
+    {
+      "path": "packages/contracts/src/tradePlan.ts",
+      "pass": true
+    },
+    {
+      "path": "packages/contracts/src/trading.ts",
+      "pass": true
+    },
+    {
+      "path": "scripts/audit-trade-learning-p0.mjs",
+      "pass": true
+    },
+    {
+      "path": "scripts/extract-p0-authority.py",
+      "pass": true
+    }
+  ],
+  "scope": "First implementation promotion readback; closeout commit only adds evidence metadata/logs"
+}

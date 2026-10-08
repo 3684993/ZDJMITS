@@ -1,6 +1,6 @@
 {
-  "at": "2026-10-08T12:24:06.094177+00:00",
-  "artifactCount": 52,
+  "at": "2026-10-08T12:25:55.808097+00:00",
+  "artifactCount": 57,
   "credentialScalarFindings": [],
   "artifacts": [
     {
@@ -9,9 +9,14 @@
       "sha256": "5c2487a0085c94af8a60f2f73d104192c85f95979ef2aa67eb4d36f39ede4001"
     },
     {
-      "path": "ancestry-before-promotion.json",
+      "path": "ancestry-at-first-fetch.json",
       "bytes": 208,
       "sha256": "ee88119c4a34513f104569cf332eb70ecb252d487454f72ca42bfc21009e67c4"
+    },
+    {
+      "path": "ancestry-before-promotion.json",
+      "bytes": 284,
+      "sha256": "3e655316a3045663e03424a48d2d6833b03b99f19f71650a992e2c9233b4db74"
     },
     {
       "path": "authority-extraction.log",
@@ -144,9 +149,24 @@
       "sha256": "b3cb63cae557f812535b5085a9754e92aa56a2b5474361aef987931f8f550372"
     },
     {
+      "path": "github-implementation-commit.log",
+      "bytes": 5605,
+      "sha256": "5ca30ad2a864b3aed0c742c733b58b2a59e23c886d44680f03adb107d3ca2347"
+    },
+    {
+      "path": "github-implementation-push.log",
+      "bytes": 78,
+      "sha256": "e361cfdf1ec853566498534ba601141ee93cdbaeb34bfc2f6b11102f88893021"
+    },
+    {
       "path": "github-integrate-latest-main.log",
       "bytes": 241,
       "sha256": "c485a63d3a2b0f0025c0f0ea3ac09b00b7ab22c368ee701d958ed82e6b9d49e4"
+    },
+    {
+      "path": "github-readback-fetch.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     {
       "path": "host-memory-after-verify.json",
@@ -185,8 +205,8 @@
     },
     {
       "path": "P0_FACT_LAYER_IMPLEMENTATION.md",
-      "bytes": 13773,
-      "sha256": "5edb01301e01e68cd718c365d85df073c1a98f64902eb56bed5209a25a227174"
+      "bytes": 14057,
+      "sha256": "7ee30dd455621268c3e125ccbe8a1ffaa31fddb03c12749468f770bbd8402768"
     },
     {
       "path": "preserved-live-worktree-status.txt",
@@ -202,6 +222,11 @@
       "path": "readonly-boundary-final.json",
       "bytes": 414,
       "sha256": "6563ad168002a023aec4ac8dd92234acde891fb443b1e4be56d95451f11d7d67"
+    },
+    {
+      "path": "REMOTE_CLOSEOUT.json",
+      "bytes": 10767,
+      "sha256": "c2ee76dd434d30bb0878c5b3ed9a8082d0e168809fb20cb725928c47c00b22d2"
     },
     {
       "path": "s00-corrected.log",
@@ -462,8 +487,8 @@
     }
   ],
   "excluded": [
-    "EVIDENCE_MANIFEST.json self hash",
-    "later Git publication logs require manifest refresh before evidence closeout commit"
+    "EVIDENCE_MANIFEST.json self hash"
   ],
-  "validation": "Original one-shot verify S00 failure retained; resumed remaining pipeline PASS; final targeted readguards/typecheck/build PASS"
+  "validation": "Original one-shot verify S00 failure retained; resumed remaining pipeline PASS; final targeted readguards/typecheck/build PASS",
+  "implementationCommit": "42334c4be58995547f53fe9b7b906470a19b5ee3"
 }

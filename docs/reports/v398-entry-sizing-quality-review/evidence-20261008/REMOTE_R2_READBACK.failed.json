@@ -1,0 +1,15 @@
+{
+  "ref": "origin/main",
+  "sha": "5a4d158a07e93f655fb838440b24e9366e12859b",
+  "checked": 151,
+  "mismatches": [
+    "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bounded-entities.json.gz",
+    "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/entry-quantity-lineage.jsonl.gz",
+    "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/linked-primary-runs.json.gz",
+    "docs/reports/v398-entry-sizing-quality-review/r2-commit.log",
+    "docs/reports/v398-entry-sizing-quality-review/r2-fetch.log",
+    "docs/reports/v398-entry-sizing-quality-review/r2-push.log"
+  ],
+  "passed": false,
+  "observedAt": "2026-10-08T13:24:54.866156+00:00"
+}

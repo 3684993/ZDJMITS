@@ -16,9 +16,10 @@ for p in sorted(set(paths)):
 if findings:
  (out/'credential-findings.json').write_text(json.dumps(findings,indent=2)+'\n',encoding='utf-8');raise SystemExit('CREDENTIAL_SCANNER_FAILED_VALUES_NOT_PRINTED')
 manifest={'at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'hashNormalization':'LF-normalized UTF-8 for text; raw bytes for gzip/binary','artifactCount':len(rows),'credentialScalarFindings':findings,'artifacts':rows}
-(out/'EVIDENCE_MANIFEST.json').write_text(json.dumps(manifest,indent=2)+'\n',encoding='utf-8')
 if '--remote' in sys.argv:
  ref=sys.argv[sys.argv.index('--remote')+1];mismatches=[]
+ committedManifest=json.loads(subprocess.check_output(['git','show',ref+':docs/reports/v398-entry-sizing-quality-review/evidence-20261008/EVIDENCE_MANIFEST.json'],cwd=root))
+ rows=committedManifest['artifacts']
  for r in rows:
   proc=subprocess.run(['git','show',ref+':'+r['path']],cwd=root,capture_output=True)
   if proc.returncode or hashlib.sha256(normalized(pathlib.Path(r['path']),proc.stdout)).hexdigest()!=r['sha256']:mismatches.append(r['path'])
@@ -26,4 +27,5 @@ if '--remote' in sys.argv:
  name='REMOTE_'+(sys.argv[sys.argv.index('--phase')+1] if '--phase' in sys.argv else 'R2')+'_READBACK.json'
  (out/name).write_text(json.dumps(result,indent=2)+'\n',encoding='utf-8')
  print(json.dumps(result));sys.exit(1 if mismatches else 0)
+(out/'EVIDENCE_MANIFEST.json').write_text(json.dumps(manifest,indent=2)+'\n',encoding='utf-8')
 print(json.dumps({'artifactCount':len(rows),'credentialFindings':0}))

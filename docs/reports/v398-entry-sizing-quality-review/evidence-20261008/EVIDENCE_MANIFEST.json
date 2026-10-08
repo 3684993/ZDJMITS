@@ -1,7 +1,7 @@
 {
-  "at": "2026-10-08T13:24:14.791664+00:00",
+  "at": "2026-10-08T13:25:55.871312+00:00",
   "hashNormalization": "LF-normalized UTF-8 for text; raw bytes for gzip/binary",
-  "artifactCount": 148,
+  "artifactCount": 152,
   "credentialScalarFindings": [],
   "artifacts": [
     {
@@ -595,6 +595,11 @@
       "sha256": "3b5f4a794c518a6185963cc28839981264eacf03d997a944d08749789f4825b2"
     },
     {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/REMOTE_R2_READBACK.failed.json",
+      "bytesLFNormalized": 687,
+      "sha256": "b5d97c0ae77b845886c6ae31cbf1c5da4eedcd95ac26795d11dc9fe54e566028"
+    },
+    {
       "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/settings-policy-subset.json",
       "bytesLFNormalized": 5784,
       "sha256": "e22c2ccaf844787dd527403576f9b94869cc0b211ce2a4f0cdaa50fc14e7dd0e"
@@ -665,6 +670,21 @@
       "sha256": "66dc1f1f3ffed1b0a7708bc7e03bc4f46632bdf376ccfe930dd2ad050a026dc5"
     },
     {
+      "path": "docs/reports/v398-entry-sizing-quality-review/r2-commit.log",
+      "bytesLFNormalized": 14790,
+      "sha256": "2977526e783871206492a3e74dd75b0978561150065711e3fc20b996bdd90724"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/r2-fetch.log",
+      "bytesLFNormalized": 86,
+      "sha256": "4268dd93aeb7e6e09237279ea931993282d6f4cebcd4eed600659dc35a8bebed"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/r2-push.log",
+      "bytesLFNormalized": 76,
+      "sha256": "373e27ba5fbbf95cca00202f2cc395342e2f0b7bb6ff0a63377c117c3023e03f"
+    },
+    {
       "path": "docs/reports/v398-entry-sizing-quality-review/research-engine-build.log",
       "bytesLFNormalized": 407,
       "sha256": "a29a6ef1d9894693f23c74c5d8ea46330c2ba1656aac81a9ca2d97d87b250fce"
@@ -711,8 +731,8 @@
     },
     {
       "path": "scripts/v398-evidence-manifest.py",
-      "bytesLFNormalized": 2975,
-      "sha256": "08b9ac93f2779a79a6f0bb92c0a3114197144286d074303bec89e6183fe8b936"
+      "bytesLFNormalized": 3186,
+      "sha256": "384d896de5d1505c4c96f6872db38286c8c397aa739eac2c681849f0a2b88190"
     },
     {
       "path": "scripts/v398-github-readback.py",

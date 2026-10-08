@@ -1,0 +1,72 @@
+{
+  "walletBalanceUsd": 11204.66331248,
+  "availableUsd": 292.20830682,
+  "equityUsd": 9034.05252897,
+  "unrealizedPnlUsd": -2170.6107835099997,
+  "realizedPnlUsd24h": 211.67538995000044,
+  "assets": [
+    {
+      "asset": "BTC",
+      "walletBalance": 0.01,
+      "availableBalance": 0.01,
+      "crossWalletBalance": 0.01,
+      "unrealizedPnl": 0,
+      "usdValue": 824.033,
+      "marginEligible": true
+    },
+    {
+      "asset": "USDT",
+      "walletBalance": 6081.70009402,
+      "availableBalance": 292.20830682,
+      "crossWalletBalance": 6081.70009402,
+      "unrealizedPnl": -1852.37576486,
+      "usdValue": 6081.70009402,
+      "marginEligible": true
+    },
+    {
+      "asset": "USDC",
+      "walletBalance": 5122.96321846,
+      "availableBalance": 3935.15452719,
+      "crossWalletBalance": 5122.96321846,
+      "unrealizedPnl": -318.23501865,
+      "usdValue": 5122.96321846,
+      "marginEligible": true
+    }
+  ],
+  "valuation": {
+    "status": "RECONCILED",
+    "scope": "BINANCE_V2_ACCOUNT_TOTALS_USDT_ONLY",
+    "exchangeUsdtWallet": 6081.70009402,
+    "exchangeUsdtUnrealized": -1852.37576486,
+    "exchangeUsdtMargin": 4229.32432916,
+    "usdtMarginEquityUsd": 4229.32432916,
+    "usdcMarginEquityUsd": 4804.72819981,
+    "combinedStablecoinMarginEquityUsd": 9034.05252897,
+    "usdtWalletUsd": 6081.70009402,
+    "usdcWalletUsd": 5122.96321846,
+    "usdtAvailableUsd": 292.20830682,
+    "usdcAvailableUsd": 3935.15452719,
+    "combinedStablecoinWalletUsd": 11204.66331248,
+    "combinedStablecoinAvailableUsd": 4227.36283401,
+    "combinedStablecoinUnrealizedPnlUsd": -2170.6107835099997,
+    "stablecoinWalletUsd": 11204.66331248,
+    "stablecoinMarginUsd": 9034.05252897,
+    "unknownAssets": [],
+    "excludedAssets": [
+      "BTC"
+    ],
+    "toleranceUsd": 0.02,
+    "assetValuationComplete": true
+  },
+  "enrichment": {
+    "incomeAsOf": 1791458478325,
+    "valuationAsOf": 1791458477785,
+    "error": null,
+    "pending": true
+  },
+  "asOf": 1791458546866,
+  "status": "READY",
+  "source": "BINANCE_TESTNET_ACCOUNT",
+  "reason": null,
+  "riskBaseline": null
+}

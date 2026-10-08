@@ -1,0 +1,20 @@
+{
+  "phase": "R0",
+  "remoteHead": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+  "worktree": "D:\\MITS-WORKTREES\\v398-entry-quality-20261008",
+  "preservedLiveHead": "ea531b5f51e717f0ead322733765f2d6de30b4cb",
+  "engine8080": "NOT_LISTENING",
+  "currentProductionWrites": "UNKNOWN",
+  "taskExchangeWrites": 0,
+  "taskDatabaseWrites": 0,
+  "settingsVersion": 247,
+  "readonlySignedTestnet": "AVAILABLE",
+  "unknown": [
+    "historical PRIMARY completed archive",
+    "historical ownerVersion",
+    "point-in-time portfolio/pending/funds",
+    "exact historical peak drawdown",
+    "funding canonical net"
+  ],
+  "capturedAt": "2026-10-08T21:24:12.5511567+08:00"
+}

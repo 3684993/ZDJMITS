@@ -1,0 +1,5 @@
+3242a79bb480db81d7bd5fba9bd3a7300e8256e5 docs(v398): add Codex evidence-first no-add sizing execution prompt
+5cd9a9af1f053cd0990508840f671898492c243d docs(v398): add no-add risk budget research plan
+a2b4e245fc8db017f1d491322d28456e8cd962a9 docs(v398): record initial sizing architecture and evidence gaps
+cf7007a5c6d722a4c86354f3405c7565be3a8236 docs: close P0 fact-layer evidence with GitHub hash readback
+42334c4be58995547f53fe9b7b906470a19b5ee3 fix: prove trade-learning exit, funding, origin and EV facts

@@ -1,0 +1,26 @@
+{
+  "counts": {
+    "positions": 18,
+    "entryIntents": 2697,
+    "entryOrders": 2674,
+    "executionFills": 5002,
+    "tradePlans": 3668,
+    "entryReservations": 4654,
+    "tpOrders": 1675,
+    "manualIntents": 316,
+    "manualOrders": 51,
+    "allocationPlans": 2697
+  },
+  "uncompressedSha256": "2c28d0ae81acf5980fd7a29bc4a439976fbaab3a4551f6f9661abe05cd64fbc2",
+  "limits": {
+    "positions": 100,
+    "entryIntents": 5000,
+    "entryOrders": 5000,
+    "executionFills": 10000,
+    "tradePlans": 5000,
+    "entryReservations": 5000,
+    "tpOrders": 5000,
+    "manualIntents": 1000,
+    "manualOrders": 1000
+  }
+}

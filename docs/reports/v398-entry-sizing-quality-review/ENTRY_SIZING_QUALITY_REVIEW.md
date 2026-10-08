@@ -1,4 +1,84 @@
-# V3.9.8 Entry Sizing Quality Review — Round 1
+# V3.9.8 建仓数量、禁止独立补仓与风险预算研究 — R2
+
+2026-10-08 Asia/Shanghai。基线 `3242a79bb480db81d7bd5fba9bd3a7300e8256e5`。R0/R1/R2完成；**算法参数 IMPLEMENTATION_BLOCKED / INSUFFICIENT_EVIDENCE；确定性禁止独立补仓可进入离线验证，尚未部署。** 下方原Round1是历史记录，本节覆盖其没有live数据的结论。
+
+用户最后一句明确要求升级启动已停止实例，覆盖文档默认不部署/不重启；仅最终已通过本地门禁的当前TESTNET Engine/8080，不授权改Settings、模型、SSH、人工交易或制造样本。前期不能通过启动绕过只读采集。长期存活不能由测试保证，不启用自动重启。
+
+## 本轮真实基线
+
+原D:\MITS六项dirty原样保留；隔离D:\MITS-worktrees\v398-entry-quality-20261008从最新main建立。GitHub [Verify37779203134](https://github.com/3684993/ZDJMITS/actions/runs/37779203134)对3242a79 completed/success，未dispatch/re-run，后续提交不能继承此成功。8080无监听，netstat证实8081/8083/8084仍12732/17468/51124；PowerShell Get-NetTCPConnection没有返回记录，不能误称所有模型离线。Engine当前production counter UNKNOWN，本研究exchange writes=0。
+
+SQLite `mode=ro/query_only`，正常WAL、有界read transaction，无immutable/reset/migration/live写入；Settings247 /TESTNET_ENABLED。读取762TradeRecords、2697intents、2674orders、5002fills、3668plans、18persistedpositions、2697exact-linkedallocations、258非空linkedrunarchives。allocation全表超过5000后改exact-ID查询，失败日志保留。签名GET使用官方SQLite backup私有临时副本，秘密/完整privateprompt不发布。
+
+20:58:44+08账户锚17非零持仓、16openorders；21:06:35+08独立历史采集锚同为17/16、risk-increasing openorders=0；两者与SQLite不是原子同刻。85publicGET全部返回：17symbols×1w/1d/4h/1h/15m，只保留exchange clock前closedbars。ETH/AVAX历史固定6日窗，共5windows/10signedGET，各response<1000；无目标侧exit、全部entryqty与现仓守恒。未作任何exchange写/Settings写/lifecycle。
+
+数据/哈希/查询bound见[evidence](evidence-20261008/README_EVIDENCE.md)、[current file:line+SHA callgraph](evidence-20261008/architecture-callgraph.md)、[source audit](evidence-20261008/sizing-authority-audit.json)、[exchange reconstruction](evidence-20261008/exchange-cycle-reconstruction.json)、[missing facts](evidence-20261008/missing-facts.json)。不复用其他实例事实。
+
+## 源码权限及根因
+
+真实链：market/universe→pre-AI funds envelope→frozen quantity/horizon/target menu→Primary selectedCandidateId→allocation→immutable TradePlan→reservation→intent→durable exact journal→JIT/environment/funds→adapter→WS/exact recovery→physicalcycle/lots/TP/owner→lineage。行号从当前checkout机械生成，不猜。
+
+- `minimumQuantityForTarget`：exchange/businessnotional、至少100quote initialmargin、10–20leverage、absoluteprofit floor；availablemargin×leverage给上界，profitfloor可主动推大qty。AVAX历史origin intent leverage=8，不能倒灌今天10–20约束。
+- `quantityHorizonCandidates`：最多4rungs，horizon/target/floor形成冻结menu，risk字段加入margin/notional。TESTNET funds-only以真实native availablefunds给上界；旧portfolio finalNotional不缩减菜单。
+- `primaryOccupancyBlock`在funds-only返回null，`entrySubmissionIdentity`按每个intent做SUBMISSION_ONLY：exactidentity只能防同订单duplicate，不能防另一个独立intent增加同物理cycle。每次新intent可重新取得完整fundsbudget。
+- `PositionLifecycleTracker`每次quantity增加都递增addCount，含同订单partialfill/后续数量观察；不是独立add order计数。
+- `manualPositionService`存在HUMAN确认ADD通道；PLACE_LIMIT实际反向side/reduceOnly，不能按名称误称新Entry。PositionReview在人管时review-only，没有证据把历史adds归咎Review；TP改价保持owner/identity/qty，独立于Entry。
+- `entryLineage`严格逐lot验证fill/intent/plan/completedPRIMARY/model/context。SQLite-only full-lotexact56/762；174recentclosed funding全UNKNOWN。不得用runreference/current源码/finalVWAP补成历史模型批准。
+
+PROVEN current-source：缺no-separate-add边界，funds-only绕过occupancy及旧riskveto。STRONG_EVIDENCE historical：每个独立真实add有自己intent/runreference，17AVAX+3ETH在记录的人管接管后成交。UNKNOWN：各旧completedPRIMARY内容/时间、ownerVersion、当时组合/资金/reservations。
+
+## ETH / AVAX逐订单事实
+
+| case | origin真实成交 | 独立orders / separateadds | 展示addCount | 物理守恒 |
+|---|---|---:|---:|---|
+| ETHUSDT LONG | 10-05 14:57:18+08；0.211@2719.22；originalorder授权0.589、余量CANCELED |4 /3|5|0.211+.369+.518+.369=1.467；32partialfills、无目标侧exit |
+| AVAXUSDT SHORT |09-20 00:10:45+08；400@9.483；6originpartialfills|18 /17|25|1263nativeentryqty；无目标侧exit；18orders各matchlocalintent/runref |
+
+ETH3adds在记录18:00:51humanhandoff后、AVAX17adds在记录01:16:05后；不能据当前owner回填当时ownerVersion。所有exactids/time/qty/price/fees/authorizationcap/intentleverage见[exchange-lots-by-cycle.csv](evidence-20261008/exchange-lots-by-cycle.csv)。补证前SQLite-only短统计保留为中间证据，上表是交易所补证后结果。
+
+AVAX原始TradeRecord entryQty=288、17lots合计1074、exchange/position1263，真实持久化聚合不守恒；另立derivedexchange重建，不改原history、不晋升canonical，具体历史投影根因未在本主题修复。
+
+固定20:58 mark、仅保留已成交origin、ex-funding算术（**不是完整因果回测**）：
+
+|case|reportedcurrentuPnL|origin-onlyqty|origin-only固定markuPnL|quantity下降|
+|---|---:|---:|---:|---:|
+|ETH mark2530|-267.11078999USDT|.211|-39.92542USDT|85.6169%|
+|AVAX mark10.56584866|-97.41386385USDT|400|-433.139464USDT|68.3294%|
+
+AVAX no-add不保证每时刻亏损更小：adds提高shortVWAP，此恢复时点实际合并账浮亏比origin-only小；库存/tail敏感度下降与某刻损失不同。用户过去-1000/-298.59、ETH-261.65不冒充本轮读数；历史truemax/完整MAE/underwater UNKNOWN。初始授权减半不代表真实fill必减半：ETH .589cap/.211实际partial，queue/TP/资金/未来fill改变均UNKNOWN。policyCSV的scaled-fill仅演示线性暴露，不声称可执行fill。
+
+## 八政策及PIT/统计资格
+
+相同origin/冻结机会/可见截止为比较单位；physicalcycle为独立样本，不把adds当17/3独立输赢。正式结果全部null及缺口保存[policy-comparison](evidence-20261008/policy-comparison.csv)。
+
+|policy|机制 / 已知|裁决|
+|---|---|---|
+|Uniform haircut|.5只是预先写下的算术对照，固定pricePnl线性|真实fill、机会损失、winning contraction、formalnet UNKNOWN，不live|
+|Linear location|示例1−.5×directionalextremity|fillanchorclosed52w可算；decisioncutoff UNKNOWN，shadow|
+|Nonlinear location|示例1−.75×extremity²；强趋势/衰减二维|参数无OOS，不live|
+|Vol targeting|budget/adverseATR或realizedvol|currentATR/vol可算，historicalregime/decisioncoverage不足，formalqtyUNKNOWN|
+|Stressloss|side/horizon scenario或训练前ES/CVaR损失预算|无stop不是绝对maxloss，完整path/fee/funding/holdout不足|
+|Cyclebudget|origin固定累计cap，未来separateadds=0，原partial/exactrecovery保留|确定性no-add可离线验证；oldunknown不能继承新权利|
+|Portfolio/factor|nativeLONG/SHORTgross/net、共同cryptoshock、pending资金|current可算，historicalbook/FX/factor不足，shadow/null|
+|Hybridminbounds|Qmax=min(Qfunds,Qcycle,Qstress,Qportfolio,Qfactor)+softpreference|推荐架构非盈利最佳阈值；仅既有funds/exchange和no-addphysical可执行|
+
+currentUSDTgross37031.29149216/netLONG7688.789037/uPnL−1691.07483788；USDCgross/netLONG10095.56214325/uPnL−390.16954804，分asset不加总。reportedinitial/maintenance在nativeassetJSON，notional/L不是exactcrossallocatedmargin；降低leverage不降低相同notional价格风险，liquidationPrice0不代表无风险。
+
+三个0.8都代理同一tail时乘积.512重复惩罚，独立上界min=.8；这是代数例子非校准。保守共同shock替代稀疏correlation乐观点估计，仍需scope/time/scenario证明独立性。Qmax低于step/minQty/minNotional/100quote业务margin/profitfloor时必须NO_FEASIBLE_EXECUTABLE_QUANTITY，明确exchangelegal/funds/strategyeconomic，不加qty/抬leverage掩盖notional。
+
+85responses只取exchangeclock前closed；origin演示取firstFill前closed，历史observation和completedPrimarycutoff仍UNKNOWN。AVAXfillanchor52wrangeposition≈.04913、ETH≈.39558；**此TESTNET样本不证明ETH处于极端周线高位**。HigherTimeframeLocationScore应另有26/52w、EMA20/50warmup、ATRextension、robustzscore、drawdown/rally与daily/4hADX/trendslope/persistence二维。currentfeaturestrata只给实际算出的range/ATR/vol，缺窗口/未算不填normal。sizeevidence、modelcontext、experimentonly区分；不用RSI方向veto。
+
+174recentclosed funding UNKNOWN；formalnet/训练禁止。pricepathgap、historicalowner/book/reservations、oldrunarchives不足；purgedwalkforward/embargo/day-regimeblockbootstrap/holdout NOT_RUN_UNQUALIFIED_DATA。worst1/5%、CVaR、portfolioMAE、truemaxdrawdown、opportunityloss、calibratednet均null，open保留rightcensored。
+
+## 实施gate
+
+不依赖旧模型归档的确定性no-add：同symbol/side已有库存/HUMAN/pending/UNKNOWN不能获新独立authorization；futureorigin的cap/owner/identity/durability必须由当前代码+hostiletests闭合。旧事实缺失仅保持occupied，不用来给予恢复/新Entry权利。旧PRIMARY/AVAXrecord矛盾阻塞historical资格及新量化参数；如新链criticalowner/order/cap仍不证、S00/CI/localgate失败、TESTNET不成立，立刻IMPLEMENTATION_BLOCKED。no-add不能伪装成subjectivepostPLACEveto；仅物理授权collision，Primary仍唯一Entry。
+
+R2普通commit/push、远端hashreadback后才准改source；I2提交真实代码/tests/实施报告/影子状态再远端核验。最终启动授权存在，但不得启动仍允许补仓的旧代码来冒充任务完成；必须localgate+health/closeout/identity/TESTNET/Production/TP真实接受。F04/F10/F11/Reactivity/TP策略不扩展。
+
+---
+
+# Historical Round 1 (superseded by R2 above)
 Status: RESEARCH_ONLY / NO_STRATEGY_CHANGE / NO_RUNTIME_DEPLOYMENT
 Read baseline: main cf7007a5c6d722a4c86354f3405c7565be3a8236 (2026-10-08).
 

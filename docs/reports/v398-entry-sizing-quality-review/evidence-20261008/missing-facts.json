@@ -1,0 +1,34 @@
+{
+  "calibration": "INSUFFICIENT_EVIDENCE",
+  "noAddExactHistoricalCounterfactual": "INSUFFICIENT_EVIDENCE",
+  "criticalHistoricalOwnerOrderQuantityChains": "UNPROVEN",
+  "cases": [
+    {
+      "symbol": "AVAXUSDT",
+      "recordEntryQty": 288,
+      "sumLotQty": 1074,
+      "persistedPositionQty": 1263,
+      "formalNoAddCounterfactualStatus": "INSUFFICIENT_EVIDENCE",
+      "decisionTimeLocation": "UNKNOWN"
+    },
+    {
+      "symbol": "ETHUSDT",
+      "recordEntryQty": 1.466999999999999,
+      "sumLotQty": 1.4669999999999999,
+      "persistedPositionQty": 1.467,
+      "formalNoAddCounterfactualStatus": "INSUFFICIENT_EVIDENCE",
+      "decisionTimeLocation": "UNKNOWN"
+    }
+  ],
+  "historicalPortfolioInventory": "UNKNOWN",
+  "fundingNetQualification": "UNKNOWN",
+  "continuousPeakDrawdown": "UNKNOWN",
+  "purgedWalkForwardAndBlockBootstrap": "NOT_RUN_UNQUALIFIED_DATA",
+  "requiredEvidence": [
+    "complete original/partial order fill identities",
+    "point-in-time owner history and pending reservations",
+    "exact Primary completed run/packet/candidate cutoff",
+    "native funding continuous coverage and allocation",
+    "closed-bar observation time and gap-free executable path"
+  ]
+}

@@ -1,0 +1,1090 @@
+{
+  "observedAt": "2026-10-08T13:01:38.741995+00:00",
+  "source": "READ_ONLY_PERSISTED_SQLITE_NOT_FRESH_EXCHANGE",
+  "coreUpdatedAt": 1791458550411,
+  "positions": [
+    {
+      "id": "exchange_APTUSDT_LONG",
+      "symbol": "APTUSDT",
+      "side": "LONG",
+      "quantity": 112.2,
+      "entryPrice": 0.7813000000000001,
+      "markPrice": 0.7739,
+      "leverage": 16,
+      "unrealizedPnl": -0.8302800000000082,
+      "unrealizedPnlPercent": -15.154230129271875,
+      "openedAt": 1790734526983,
+      "firstObservedAt": 1791455783003,
+      "liquidationPrice": 0,
+      "marginAsset": "USDT",
+      "notionalUsd": 86.79792,
+      "maintenanceMarginUsd": 0.8679792,
+      "positionRiskSource": "V3_VERIFIED",
+      "entryTimeSource": "SYSTEM_FILL",
+      "managementStatus": "AUTO_MANAGED",
+      "humanManagedAt": null,
+      "tpStatus": "PROTECTED",
+      "tpOrderId": "tp_muzekahx_4l8h8ngb",
+      "tpLastVerifiedAt": 1791458523409,
+      "tpCoverageSource": "BINANCE_OPEN_ORDER",
+      "cycleId": "cycle_APTUSDT_LONG_00f4712b-6e20-48b3-9e32-4e19fb446eb3",
+      "profitTakePlan": {
+        "targetPrice": 0.7849,
+        "acceptableTargetRange": {
+          "min": 0.7849,
+          "max": 0.8111
+        },
+        "targetHorizonMinutes": 60,
+        "targetReason": "Target is set at the 15m resistance level of 0.7849, which is the upper Bollinger Band and recent swing high. The 60-minute horizon allows for a reasonable move to this level.",
+        "evidenceRefs": [
+          "technical.15m.confirmed",
+          "technical.1h.confirmed"
+        ]
+      },
+      "economicMandate": null,
+      "profitTakePlanSource": "STRUCTURE_15M",
+      "lossHandoff": {
+        "cycleId": "cycle_entry_intent_muzei09q_s6yavwba_LONG_1791455783003",
+        "lastClosedBarAt": 1791458099999,
+        "consecutiveLossBars": 2,
+        "status": "ACTIVE"
+      },
+      "physicalCycleKey": "APTUSDT:LONG",
+      "lastAddAt": 1791455792486,
+      "addCount": 1,
+      "tpEconomics": {
+        "currentTpPrice": 0.795,
+        "expectedGrossProfit": 1.5371399999999926,
+        "expectedFees": 0.07781877840000001,
+        "expectedNetProfit": 1.4593212215999927,
+        "requiredNetProfit": 1,
+        "breakEvenPrice": 0.7819878466525273,
+        "minProfitableExitPrice": 0.790904425918884,
+        "status": "TP_OK"
+      }
+    },
+    {
+      "id": "exchange_AVAXUSDT_SHORT",
+      "symbol": "AVAXUSDT",
+      "side": "SHORT",
+      "quantity": 1263,
+      "entryPrice": 10.488719714964375,
+      "markPrice": 10.72513054,
+      "leverage": 10,
+      "unrealizedPnl": -298.5868720199943,
+      "unrealizedPnlPercent": -22.539531178274782,
+      "openedAt": 1789834245678,
+      "firstObservedAt": 1789834249640,
+      "liquidationPrice": 13.64089712,
+      "marginAsset": "USDT",
+      "notionalUsd": 13535.32273209,
+      "maintenanceMarginUsd": 263.3830683,
+      "positionRiskSource": "V3_VERIFIED",
+      "entryTimeSource": "SYSTEM_FILL",
+      "managementStatus": "HUMAN_MANAGED",
+      "humanManagedAt": 1789838165290,
+      "tpStatus": "PROTECTED",
+      "tpOrderId": "tp_muz0y4ll_rlt4oyac",
+      "tpLastVerifiedAt": 1791458523408,
+      "tpCoverageSource": "BINANCE_OPEN_ORDER",
+      "cycleId": "cycle_entry_intent_mu8l1mm0_rcobpxad",
+      "profitTakePlan": {
+        "targetPrice": 9.15,
+        "acceptableTargetRange": {
+          "min": 9.1,
+          "max": 9.2
+        },
+        "targetHorizonMinutes": 120,
+        "targetReason": "Target 9.15 is within the 120m SHORT p75 move (1.44%) and p90 (2.36%) reachability. It aligns with the 15m EMA21 (9.27) and provides a net profit of ~130 USD (400 units * 0.325 move * 8x leverage - fees), exceeding the 1 USD minimum.",
+        "evidenceRefs": [
+          "economics.entry",
+          "technical.15m.confirmed"
+        ]
+      },
+      "economicMandate": null,
+      "profitTakePlanSource": "FIXED_PROFITABLE",
+      "lossHandoff": {
+        "cycleId": "cycle_entry_intent_mu8l1mm0_rcobpxad_SHORT_1789834249640",
+        "lastClosedBarAt": 1789838099999,
+        "consecutiveLossBars": 4,
+        "status": "HUMAN_HANDOFF"
+      },
+      "physicalCycleKey": "AVAXUSDT:SHORT",
+      "lastAddAt": 1791432944496,
+      "addCount": 25,
+      "tpEconomics": {
+        "currentTpPrice": 10.441,
+        "expectedGrossProfit": 60.2700000000052,
+        "expectedFees": 11.631063840000005,
+        "expectedNetProfit": 48.63893616000519,
+        "requiredNetProfit": 1.9870879500000007,
+        "breakEvenPrice": 10.479493701061322,
+        "minProfitableExitPrice": 10.47792108505512,
+        "status": "TP_OK"
+      }
+    },
+    {
+      "id": "exchange_BCHUSDT_LONG",
+      "symbol": "BCHUSDT",
+      "side": "LONG",
+      "quantity": 10.63,
+      "entryPrice": 320.05317121354653,
+      "markPrice": 294.03,
+      "leverage": 10,
+      "unrealizedPnl": -276.62631,
+      "unrealizedPnlPercent": -81.30889975210816,
+      "openedAt": 1791168000751,
+      "firstObservedAt": 1791168000751,
+      "liquidationPrice": 0,
+      "marginAsset": "USDT",
+      "notionalUsd": 3125.5389,
+      "maintenanceMarginUsd": 12.5021556,
+      "positionRiskSource": "V3_VERIFIED",
+      "entryTimeSource": "SYSTEM_FILL",
+      "managementStatus": "HUMAN_MANAGED",
+      "humanManagedAt": 1791171991192,
+      "tpStatus": "PROTECTED",
+      "tpOrderId": "tp_muuuuamj_sjc4r747",
+      "tpLastVerifiedAt": 1791458523408,
+      "tpCoverageSource": "BINANCE_OPEN_ORDER",
+      "cycleId": "cycle_entry_intent_muun58qm_d9vqvonb",
+      "profitTakePlan": {
+        "targetPrice": 321.55,
+        "acceptableTargetRange": {
+          "min": 321.55,
+          "max": 323.33
+        },
+        "targetHorizonMinutes": 15,
+        "targetReason": "Target is set at the 15m Bollinger Band upper limit (321.44) plus a small buffer, representing a reasonable extension of the current momentum. The 15m timeframe is the tactical focus, and the target is within the statistical ceiling.",
+        "evidenceRefs": [
+          "technical.15m.confirmed",
+          "economics.entry"
+        ]
+      },
+      "economicMandate": null,
+      "profitTakePlanSource": "FIXED_PROFITABLE",
+      "lossHandoff": {
+        "cycleId": "cycle_entry_intent_muun58qm_d9vqvonb_LONG_1791168000751",
+        "lastClosedBarAt": 1791171899999,
+        "consecutiveLossBars": 4,
+        "status": "HUMAN_HANDOFF"
+      },
+      "physicalCycleKey": "BCHUSDT:LONG",
+      "lastAddAt": 1791181246232,
+      "addCount": 3,
+      "tpEconomics": {
+        "currentTpPrice": 321.5,
+        "expectedGrossProfit": 15.379790000000344,
+        "expectedFees": 3.0006724924,
+        "expectedNetProfit": 12.379117507600345,
+        "requiredNetProfit": 1,
+        "breakEvenPrice": 320.3349419833532,
+        "minProfitableExitPrice": 320.42905677109405,
+        "status": "TP_OK"
+      }
+    },
+    {
+      "id": "exchange_BNBUSDC_LONG",
+      "symbol": "BNBUSDC",
+      "side": "LONG",
+      "quantity": 9.6,
+      "entryPrice": 783.7120625000003,
+      "markPrice": 762.63,
+      "leverage": 16,
+      "unrealizedPnl": -202.38780000000332,
+      "unrealizedPnlPercent": -43.04042468403444,
+      "openedAt": 1791184940656,
+      "firstObservedAt": 1791184940656,
+      "liquidationPrice": 268.51042759,
+      "marginAsset": "USDC",
+      "notionalUsd": 7321.3479359,
+      "maintenanceMarginUsd": 38.92808761,
+      "positionRiskSource": "V3_VERIFIED",
+      "entryTimeSource": "SYSTEM_FILL",
+      "managementStatus": "HUMAN_MANAGED",
+      "humanManagedAt": 1791189119797,
+      "tpStatus": "PROTECTED",
+      "tpOrderId": "tp_muyvddfh_a8flrh55",
+      "tpLastVerifiedAt": 1791458523408,
+      "tpCoverageSource": "BINANCE_OPEN_ORDER",
+      "cycleId": "cycle_entry_intent_muux904w_w9475lt3",
+      "profitTakePlan": {
+        "targetPrice": 795.12,
+        "acceptableTargetRange": {
+          "min": 795.12,
+          "max": 805.97
+        },
+        "targetHorizonMinutes": 60,
+        "targetReason": "Target is set at the 15m Bollinger Middle Band (794.71) and recent resistance (795.17), which is a logical first take-profit level for a 15m trend resumption. The 60-minute horizon aligns with the 1h trend strength and provides sufficient ",
+        "evidenceRefs": [
+          "technical.15m.confirmed",
+          "technical.1h.confirmed"
+        ]
+      },
+      "economicMandate": null,
+      "profitTakePlanSource": "FIXED_PROFITABLE",
+      "lossHandoff": {
+        "cycleId": "cycle_entry_intent_muux904w_w9475lt3_LONG_1791184940656",
+        "lastClosedBarAt": 1791188999999,
+        "consecutiveLossBars": 4,
+        "status": "HUMAN_HANDOFF"
+      },
+      "physicalCycleKey": "BNBUSDC:LONG",
+      "lastAddAt": 1791423449552,
+      "addCount": 7,
+      "tpEconomics": {
+        "currentTpPrice": 787.24,
+        "expectedGrossProfit": 33.8681999999968,
+        "expectedFees": 6.6357015120000025,
+        "expectedNetProfit": 27.232498487996793,
+        "requiredNetProfit": 1,
+        "breakEvenPrice": 784.4020327018892,
+        "minProfitableExitPrice": 784.5062452220648,
+        "status": "TP_OK"
+      }
+    },
+    {
+      "id": "exchange_BRUSDT_SHORT",
+      "symbol": "BRUSDT",
+      "side": "SHORT",
+      "quantity": 774,
+      "entryPrice": 0.48163999999999996,
+      "markPrice": 0.49166014,
+      "leverage": 10,
+      "unrealizedPnl": -7.7555883600000515,
+      "unrealizedPnlPercent": -20.80421061373654,
+      "openedAt": 1791449869338,
+      "firstObservedAt": 1791449894807,
+      "liquidationPrice": 5.28659586,
+      "marginAsset": "USDT",
+      "notionalUsd": 380.59128,
+      "maintenanceMarginUsd": 7.6118256,
+      "positionRiskSource": "V3_VERIFIED",
+      "entryTimeSource": "SYSTEM_FILL",
+      "managementStatus": "HUMAN_MANAGED",
+      "humanManagedAt": 1791453664184,
+      "tpStatus": "PROTECTED",
+      "tpOrderId": "tp_muzb0vbi_bu8uogdo",
+      "tpLastVerifiedAt": 1791458523409,
+      "tpCoverageSource": "BINANCE_OPEN_ORDER",
+      "cycleId": "cycle_entry_intent_muzaza3n_7g4dc27n",
+      "profitTakePlan": {
+        "targetPrice": 0.48,
+        "acceptableTargetRange": {
+          "min": 0.47667,
+          "max": 0.48
+        },
+        "targetHorizonMinutes": 15,
+        "targetReason": "Target is set at 0.48000, which is a round number and slightly below the current bid/ask spread, providing a high probability of fill within the 15-minute horizon given the strong downward momentum and proximity to the 1m/5m lower Bollinger",
+        "evidenceRefs": [
+          "technical.15m.confirmed",
+          "technical.5m.confirmed",
+          "quote.top"
+        ]
+      },
+      "economicMandate": null,
+      "profitTakePlanSource": "AI",
+      "lossHandoff": {
+        "cycleId": "cycle_entry_intent_muzaza3n_7g4dc27n_SHORT_1791449894807",
+        "lastClosedBarAt": 1791453599999,
+        "consecutiveLossBars": 4,
+        "status": "HUMAN_HANDOFF"
+      },
+      "physicalCycleKey": "BRUSDT:SHORT",
+      "lastAddAt": 1791449912702,
+      "addCount": 1,
+      "tpEconomics": {
+        "currentTpPrice": 0.48,
+        "expectedGrossProfit": 1.2693599999999805,
+        "expectedFees": 0.32749611840000004,
+        "expectedNetProfit": 0.9418638815999805,
+        "requiredNetProfit": 1,
+        "breakEvenPrice": 0.481216343208988,
+        "minProfitableExitPrice": 0.4799249217703383,
+        "status": "TP_LOW_NET"
+      }
+    },
+    {
+      "id": "exchange_BTCUSDT_LONG",
+      "symbol": "BTCUSDT",
+      "side": "LONG",
+      "quantity": 0.0349,
+      "entryPrice": 86261.43352435532,
+      "markPrice": 82415.19307759,
+      "leverage": 10,
+      "unrealizedPnl": -134.23379159210984,
+      "unrealizedPnlPercent": -44.58818141109799,
+      "openedAt": 1791299385241,
+      "firstObservedAt": 1791299385241,
+      "liquidationPrice": 56017199112.89155,
+      "marginAsset": "USDT",
+      "notionalUsd": 2876.83390398,
+      "maintenanceMarginUsd": 11.50733561,
+      "positionRiskSource": "V3_VERIFIED",
+      "entryTimeSource": "SYSTEM_FILL",
+      "managementStatus": "HUMAN_MANAGED",
+      "humanManagedAt": 1791303315289,
+      "tpStatus": "PROTECTED",
+      "tpOrderId": "tp_muwuxua6_p9cftofl",
+      "tpLastVerifiedAt": 1791458523408,
+      "tpCoverageSource": "BINANCE_OPEN_ORDER",
+      "cycleId": "cycle_entry_intent_muwtcoby_n4j9t7z3",
+      "profitTakePlan": {
+        "targetPrice": 86805.9,
+        "acceptableTargetRange": {
+          "min": 86805.9,
+          "max": 87112.2
+        },
+        "targetHorizonMinutes": 60,
+        "targetReason": "Target aligns with the 1h Bollinger Upper Band (86554.5) extension and recent 1h swing high (86444.9) breakout zone. The 60-minute horizon allows for the",
+        "evidenceRefs": [
+          "technical.1h.confirmed",
+          "technical.15m.confirmed"
+        ]
+      },
+      "economicMandate": null,
+      "profitTakePlanSource": "AI",
+      "lossHandoff": {
+        "cycleId": "cycle_entry_intent_muwtcoby_n4j9t7z3_LONG_1791299385241",
+        "lastClosedBarAt": 1791303299999,
+        "consecutiveLossBars": 4,
+        "status": "HUMAN_HANDOFF"
+      },
+      "physicalCycleKey": "BTCUSDT:LONG",
+      "lastAddAt": 1791302322314,
+      "addCount": 2,
+      "tpEconomics": {
+        "currentTpPrice": 86805.9,
+        "expectedGrossProfit": 19.00187999999908,
+        "expectedFees": 2.6576219736000004,
+        "expectedNetProfit": 16.34425802639908,
+        "requiredNetProfit": 1,
+        "breakEvenPrice": 86337.37700098648,
+        "minProfitableExitPrice": 86366.042909115,
+        "status": "TP_OK"
+      }
+    },
+    {
+      "id": "exchange_BTCUSDT_SHORT",
+      "symbol": "BTCUSDT",
+      "side": "SHORT",
+      "quantity": 0.0244,
+      "entryPrice": 82606.45,
+      "markPrice": 82415.19307759,
+      "leverage": 10,
+      "unrealizedPnl": 4.666668906804017,
+      "unrealizedPnlPercent": 2.3152783155552705,
+      "openedAt": 1791435239382,
+      "firstObservedAt": 1791435244705,
+      "liquidationPrice": 56017199112.89155,
+      "marginAsset": "USDT",
+      "notionalUsd": 2011.31080965,
+      "maintenanceMarginUsd": 8.04524323,
+      "positionRiskSource": "V3_VERIFIED",
+      "entryTimeSource": "SYSTEM_FILL",
+      "managementStatus": "HUMAN_MANAGED",
+      "humanManagedAt": 1791439339887,
+      "tpStatus": "PROTECTED",
+      "tpOrderId": "tp_muzexjei_ike0lcow",
+      "tpLastVerifiedAt": 1791458523408,
+      "tpCoverageSource": "BINANCE_OPEN_ORDER",
+      "cycleId": "cycle_entry_intent_muz2a6fa_odqrhlum",
+      "profitTakePlan": {
+        "targetPrice": 82278.6,
+        "acceptableTargetRange": {
+          "min": 80704,
+          "max": 82278.6
+        },
+        "targetHorizonMinutes": 240,
+        "targetReason": "Target is set at the 15m swing low area (82278.6) which is a logical support level. The 240-minute horizon allows for a potential trend continuation or mean reversion to this level, with a verified reach probability of 0.78.",
+        "evidenceRefs": [
+          "technical.15m.confirmed",
+          "economics.entry"
+        ]
+      },
+      "economicMandate": null,
+      "profitTakePlanSource": "FIXED_PROFITABLE",
+      "lossHandoff": {
+        "cycleId": "cycle_entry_intent_muz2a6fa_odqrhlum_SHORT_1791435244705",
+        "lastClosedBarAt": 1791439199999,
+        "consecutiveLossBars": 4,
+        "status": "HUMAN_HANDOFF"
+      },
+      "physicalCycleKey": "BTCUSDT:SHORT",
+      "lastAddAt": 1791456480620,
+      "addCount": 4,
+      "tpEconomics": {
+        "currentTpPrice": 82234.7,
+        "expectedGrossProfit": 9.0707,
+        "expectedFees": 1.7697345864000003,
+        "expectedNetProfit": 7.3009654136,
+        "requiredNetProfit": 1,
+        "breakEvenPrice": 82533.78829515012,
+        "minProfitableExitPrice": 82492.8227134487,
+        "status": "TP_OK"
+      }
+    },
+    {
+      "id": "exchange_DOTUSDT_LONG",
+      "symbol": "DOTUSDT",
+      "side": "LONG",
+      "quantity": 1695,
+      "entryPrice": 1.2306599646017697,
+      "markPrice": 1.10458454,
+      "leverage": 10,
+      "unrealizedPnl": -213.69784469999962,
+      "unrealizedPnlPercent": -102.44537746262554,
+      "openedAt": 1791278224412,
+      "firstObservedAt": 1791278268638,
+      "liquidationPrice": 0,
+      "marginAsset": "USDT",
+      "notionalUsd": 1872.369885,
+      "maintenanceMarginUsd": 12.17040425,
+      "positionRiskSource": "V3_VERIFIED",
+      "entryTimeSource": "SYSTEM_FILL",
+      "managementStatus": "HUMAN_MANAGED",
+      "humanManagedAt": 1791287273482,
+      "tpStatus": "PROTECTED",
+      "tpOrderId": "tp_mux9mc1y_kavlbwt4",
+      "tpLastVerifiedAt": 1791458523408,
+      "tpCoverageSource": "BINANCE_OPEN_ORDER",
+      "cycleId": "cycle_entry_intent_muwgsfgp_evh1g53f",
+      "profitTakePlan": {
+        "targetPrice": 1.2345,
+        "acceptableTargetRange": {
+          "min": 1.2345,
+          "max": 1.2581
+        },
+        "targetHorizonMinutes": 60,
+        "targetReason": "Target is set at the 15m EMA8 (1.2335) and upper Bollinger Band (1.2443) confluence zone, representing a realistic 60-minute move based on ATR and recent volatility.",
+        "evidenceRefs": [
+          "technical.15m.confirmed",
+          "technical.1h.confirmed"
+        ]
+      },
+      "economicMandate": null,
+      "profitTakePlanSource": "FIXED_PROFITABLE",
+      "lossHandoff": {
+        "cycleId": "cycle_entry_intent_muwgsfgp_evh1g53f_LONG_1791278268638",
+        "lastClosedBarAt": 1791287099999,
+        "consecutiveLossBars": 4,
+        "status": "HUMAN_HANDOFF"
+      },
+      "physicalCycleKey": "DOTUSDT:LONG",
+      "lastAddAt": 1791326547463,
+      "addCount": 5,
+      "tpEconomics": {
+        "currentTpPrice": 1.2362,
+        "expectedGrossProfit": 9.390360000000232,
+        "expectedFees": 1.8397841616,
+        "expectedNetProfit": 7.550575838400231,
+        "requiredNetProfit": 1,
+        "breakEvenPrice": 1.231743422091915,
+        "minProfitableExitPrice": 1.2323336522946793,
+        "status": "TP_OK"
+      }
+    },
+    {
+      "id": "exchange_ETCUSDT_LONG",
+      "symbol": "ETCUSDT",
+      "side": "LONG",
+      "quantity": 5.88,
+      "entryPrice": 8.444,
+      "markPrice": 8.341,
+      "leverage": 20,
+      "unrealizedPnl": -0.6056400000000091,
+      "unrealizedPnlPercent": -24.396020843202635,
+      "openedAt": 1791430358927,
+      "firstObservedAt": 1791430362069,
+      "liquidationPrice": 0,
+      "marginAsset": "USDT",
+      "notionalUsd": 49.04508,
+      "maintenanceMarginUsd": 0.2452254,
+      "positionRiskSource": "V3_VERIFIED",
+      "entryTimeSource": "SYSTEM_FILL",
+      "managementStatus": "HUMAN_MANAGED",
+      "humanManagedAt": 1791434983862,
+      "tpStatus": "PROTECTED",
+      "tpOrderId": "tp_muyze7hx_2725wivf",
+      "tpLastVerifiedAt": 1791458523408,
+      "tpCoverageSource": "BINANCE_OPEN_ORDER",
+      "cycleId": "cycle_entry_intent_muyzcx3y_fpu1ctkl",
+      "profitTakePlan": {
+        "targetPrice": 8.471,
+        "acceptableTargetRange": {
+          "min": 8.471,
+          "max": 8.521
+        },
+        "targetHorizonMinutes": 15,
+        "targetReason": "Target is set at the 15m BB middle band, a reasonable resistance level for a short-term long trade.",
+        "evidenceRefs": [
+          "technical.15m.confirmed"
+        ]
+      },
+      "economicMandate": null,
+      "profitTakePlanSource": "AI",
+      "lossHandoff": {
+        "cycleId": "cycle_entry_intent_muyzcx3y_fpu1ctkl_LONG_1791430362069",
+        "lastClosedBarAt": 1791434699999,
+        "consecutiveLossBars": 4,
+        "status": "HUMAN_HANDOFF"
+      },
+      "physicalCycleKey": "ETCUSDT:LONG",
+      "lastAddAt": 1791430379621,
+      "addCount": 1,
+      "tpEconomics": {
+        "currentTpPrice": 8.471,
+        "expectedGrossProfit": 0.15875999999999557,
+        "expectedFees": 0.04376248800000001,
+        "expectedNetProfit": 0.11499751199999557,
+        "requiredNetProfit": 1,
+        "breakEvenPrice": 8.451433990956023,
+        "minProfitableExitPrice": 8.621576881038543,
+        "status": "TP_LOW_NET"
+      }
+    },
+    {
+      "id": "exchange_ETHFIUSDC_SHORT",
+      "symbol": "ETHFIUSDC",
+      "side": "SHORT",
+      "quantity": 1766,
+      "entryPrice": 0.7293410305775763,
+      "markPrice": 0.7207,
+      "leverage": 10,
+      "unrealizedPnl": 15.260059999999672,
+      "unrealizedPnlPercent": 11.847723102501575,
+      "openedAt": 1791443327235,
+      "firstObservedAt": 1791443334635,
+      "liquidationPrice": 3.36036462,
+      "marginAsset": "USDC",
+      "notionalUsd": 1272.7562,
+      "maintenanceMarginUsd": 12.727562,
+      "positionRiskSource": "V3_VERIFIED",
+      "entryTimeSource": "SYSTEM_FILL",
+      "managementStatus": "AUTO_MANAGED",
+      "humanManagedAt": null,
+      "tpStatus": "PROTECTED",
+      "tpOrderId": "tp_muz86uls_cf8c2kga",
+      "tpLastVerifiedAt": 1791458523408,
+      "tpCoverageSource": "BINANCE_OPEN_ORDER",
+      "cycleId": "cycle_entry_intent_muz73hls_k8okh7at",
+      "profitTakePlan": {
+        "targetPrice": 0.7146,
+        "acceptableTargetRange": {
+          "min": 0.701,
+          "max": 0.7146
+        },
+        "targetHorizonMinutes": 60,
+        "targetReason": "The 60-minute horizon aligns with the 1h downtrend and provides sufficient time for the price to reach the 0.7146 target, which is supported by the 15m swing low of 0.6997 and the 1h swing low of 0.6997. The 15m MACD histogram is positive, ",
+        "evidenceRefs": [
+          "technical.15m.confirmed",
+          "technical.1h.confirmed",
+          "economics.entry"
+        ]
+      },
+      "economicMandate": null,
+      "profitTakePlanSource": "AI",
+      "lossHandoff": {
+        "cycleId": "cycle_entry_intent_muz73hls_k8okh7at_SHORT_1791443334635",
+        "lastClosedBarAt": 1791458099999,
+        "consecutiveLossBars": 0,
+        "status": "ACTIVE"
+      },
+      "physicalCycleKey": "ETHFIUSDC:SHORT",
+      "lastAddAt": 1791445106612,
+      "addCount": 5,
+      "tpEconomics": {
+        "currentTpPrice": 0.7146,
+        "expectedGrossProfit": 26.032659999999662,
+        "expectedFees": 1.1219999384,
+        "expectedNetProfit": 24.910660061599664,
+        "requiredNetProfit": 1,
+        "breakEvenPrice": 0.7286994927473133,
+        "minProfitableExitPrice": 0.7281334903727296,
+        "status": "TP_OK"
+      }
+    },
+    {
+      "id": "exchange_ETHUSDT_LONG",
+      "symbol": "ETHUSDT",
+      "side": "LONG",
+      "quantity": 1.467,
+      "entryPrice": 2712.079611451943,
+      "markPrice": 2533.72523256,
+      "leverage": 10,
+      "unrealizedPnl": -261.64587383448014,
+      "unrealizedPnlPercent": -65.76295848353018,
+      "openedAt": 1791183438139,
+      "firstObservedAt": 1791183499290,
+      "liquidationPrice": 0,
+      "marginAsset": "USDT",
+      "notionalUsd": 3716.61147828,
+      "maintenanceMarginUsd": 18.58305739,
+      "positionRiskSource": "V3_VERIFIED",
+      "entryTimeSource": "SYSTEM_FILL",
+      "managementStatus": "HUMAN_MANAGED",
+      "humanManagedAt": 1791194451462,
+      "tpStatus": "PROTECTED",
+      "tpOrderId": "tp_muwunbw7_y2d272pj",
+      "tpLastVerifiedAt": 1791458523408,
+      "tpCoverageSource": "BINANCE_OPEN_ORDER",
+      "cycleId": "cycle_entry_intent_muuwcjbl_nhtak25t",
+      "profitTakePlan": {
+        "targetPrice": 2726.62,
+        "acceptableTargetRange": {
+          "min": 2726.62,
+          "max": 2760.47
+        },
+        "targetHorizonMinutes": 240,
+        "targetReason": "Target 2726.62 is within 15m BB upper (2739.67) and 1h BB upper (2732.09). 240m horizon aligns with 4h trend UP (strength 0.68) and 1d trend UP (strength 1.0), providing structural support for continuation. Reach probability 0.792 exceeds 0",
+        "evidenceRefs": [
+          "technical.15m.confirmed",
+          "technical.4h.confirmed",
+          "technical.1d.confirmed"
+        ]
+      },
+      "economicMandate": null,
+      "profitTakePlanSource": "FIXED_PROFITABLE",
+      "lossHandoff": {
+        "cycleId": "cycle_entry_intent_muuwcjbl_nhtak25t_LONG_1791183499290",
+        "lastClosedBarAt": 1791194399999,
+        "consecutiveLossBars": 4,
+        "status": "HUMAN_HANDOFF"
+      },
+      "physicalCycleKey": "ETHUSDT:LONG",
+      "lastAddAt": 1791301463896,
+      "addCount": 5,
+      "tpEconomics": {
+        "currentTpPrice": 2724.29,
+        "expectedGrossProfit": 17.912639999999513,
+        "expectedFees": 3.5090678568,
+        "expectedNetProfit": 14.403572143199513,
+        "requiredNetProfit": 1,
+        "breakEvenPrice": 2714.4672920895014,
+        "minProfitableExitPrice": 2715.1492554117135,
+        "status": "TP_OK"
+      }
+    },
+    {
+      "id": "exchange_FETUSDT_LONG",
+      "symbol": "FETUSDT",
+      "side": "LONG",
+      "quantity": 1200,
+      "entryPrice": 0.23210000000000008,
+      "markPrice": 0.23062187,
+      "leverage": 10,
+      "unrealizedPnl": -1.773756000000093,
+      "unrealizedPnlPercent": -6.36850495476121,
+      "openedAt": 1791456169235,
+      "firstObservedAt": 1791456192884,
+      "liquidationPrice": 0,
+      "marginAsset": "USDT",
+      "notionalUsd": 276.84,
+      "maintenanceMarginUsd": 5.5368,
+      "positionRiskSource": "V3_VERIFIED",
+      "entryTimeSource": "SYSTEM_FILL",
+      "managementStatus": "AUTO_MANAGED",
+      "humanManagedAt": null,
+      "tpStatus": "PROTECTED",
+      "tpOrderId": "tp_muzetfay_ugqtrhv6",
+      "tpLastVerifiedAt": 1791458523409,
+      "tpCoverageSource": "BINANCE_OPEN_ORDER",
+      "cycleId": "cycle_entry_intent_muzeqp4v_bedt94jo",
+      "profitTakePlan": {
+        "targetPrice": 0.2332,
+        "acceptableTargetRange": {
+          "min": 0.2332,
+          "max": 0.2404
+        },
+        "targetHorizonMinutes": 240,
+        "targetReason": "Target is set at the 15m EMA8 (0.2329) and the 1h swing high (0.2342), which are key resistance levels. The 240-minute horizon allows for a broader market move to reach this level.",
+        "evidenceRefs": [
+          "technical.15m.confirmed",
+          "technical.1h.confirmed"
+        ]
+      },
+      "economicMandate": null,
+      "profitTakePlanSource": "AI",
+      "lossHandoff": {
+        "cycleId": "cycle_entry_intent_muzeqp4v_bedt94jo_LONG_1791456192884",
+        "lastClosedBarAt": 1791458099999,
+        "consecutiveLossBars": 2,
+        "status": "ACTIVE"
+      },
+      "physicalCycleKey": "FETUSDT:LONG",
+      "lastAddAt": 1791456283794,
+      "addCount": 1,
+      "tpEconomics": {
+        "currentTpPrice": 0.2332,
+        "expectedGrossProfit": 1.319999999999888,
+        "expectedFees": 0.24567840000000005,
+        "expectedNetProfit": 1.0743215999998879,
+        "requiredNetProfit": 1,
+        "breakEvenPrice": 0.2323043379086799,
+        "minProfitableExitPrice": 0.23313803807008426,
+        "status": "TP_OK"
+      }
+    },
+    {
+      "id": "exchange_FILUSDC_LONG",
+      "symbol": "FILUSDC",
+      "side": "LONG",
+      "quantity": 710.3,
+      "entryPrice": 1.0829999999999997,
+      "markPrice": 1.07233431,
+      "leverage": 10,
+      "unrealizedPnl": -7.575839606999806,
+      "unrealizedPnlPercent": -9.848282548476206,
+      "openedAt": 1791454809595,
+      "firstObservedAt": 1791454877719,
+      "liquidationPrice": 0,
+      "marginAsset": "USDC",
+      "notionalUsd": 761.69134858,
+      "maintenanceMarginUsd": 4.57014809,
+      "positionRiskSource": "V3_VERIFIED",
+      "entryTimeSource": "SYSTEM_FILL",
+      "managementStatus": "AUTO_MANAGED",
+      "humanManagedAt": null,
+      "tpStatus": "PROTECTED",
+      "tpOrderId": "tp_muzdzzyl_r9id7ns3",
+      "tpLastVerifiedAt": 1791458523409,
+      "tpCoverageSource": "BINANCE_OPEN_ORDER",
+      "cycleId": "cycle_entry_intent_muzdxmjh_w4g2sfsy",
+      "profitTakePlan": {
+        "targetPrice": 1.087,
+        "acceptableTargetRange": {
+          "min": 1.087,
+          "max": 1.098
+        },
+        "targetHorizonMinutes": 15,
+        "targetReason": "Target is set at 1.087, which is a 27.6 bps move from the entry reference price of 1.084. This exceeds the minimum economic edge of 51.6 bps when considering the 6 bps round-trip cost and 0.6 bps safety margin. The target is within the 15m",
+        "evidenceRefs": [
+          "economics.entry",
+          "technical.15m.confirmed"
+        ]
+      },
+      "economicMandate": null,
+      "profitTakePlanSource": "AI",
+      "lossHandoff": {
+        "cycleId": "cycle_entry_intent_muzdxmjh_w4g2sfsy_LONG_1791454877719",
+        "lastClosedBarAt": 1791458099999,
+        "consecutiveLossBars": 3,
+        "status": "ACTIVE"
+      },
+      "physicalCycleKey": "FILUSDC:LONG",
+      "lastAddAt": 1791454910916,
+      "addCount": 1,
+      "tpEconomics": {
+        "currentTpPrice": 1.087,
+        "expectedGrossProfit": 2.84120000000016,
+        "expectedFees": 0.6781944399999998,
+        "expectedNetProfit": 2.16300556000016,
+        "requiredNetProfit": 1,
+        "breakEvenPrice": 1.0839534595221896,
+        "minProfitableExitPrice": 1.0853619350870005,
+        "status": "TP_OK"
+      }
+    },
+    {
+      "id": "exchange_INJUSDT_LONG",
+      "symbol": "INJUSDT",
+      "side": "LONG",
+      "quantity": 47.7,
+      "entryPrice": 7.383000000000001,
+      "markPrice": 7.361,
+      "leverage": 10,
+      "unrealizedPnl": -1.0494000000000538,
+      "unrealizedPnlPercent": -2.979818501964124,
+      "openedAt": 1791455877587,
+      "firstObservedAt": 1791455900579,
+      "liquidationPrice": 0,
+      "marginAsset": "USDT",
+      "notionalUsd": 351.1674,
+      "maintenanceMarginUsd": 7.023348,
+      "positionRiskSource": "V3_VERIFIED",
+      "entryTimeSource": "SYSTEM_FILL",
+      "managementStatus": "AUTO_MANAGED",
+      "humanManagedAt": null,
+      "tpStatus": "PROTECTED",
+      "tpOrderId": "tp_muzelope_rgitj9yf",
+      "tpLastVerifiedAt": 1791458523409,
+      "tpCoverageSource": "BINANCE_OPEN_ORDER",
+      "cycleId": "cycle_entry_intent_muzeki77_dutcl0fv",
+      "profitTakePlan": {
+        "targetPrice": 7.416,
+        "acceptableTargetRange": {
+          "min": 7.416,
+          "max": 7.548
+        },
+        "targetHorizonMinutes": 60,
+        "targetReason": "Target 7.416 is just above the 15m swing high of 7.449? No, 7.416 is below the 15m swing high of 7.449. It is above the 1h EMA8 (7.387) and 5m EMA8 (7.406). It represents a reasonable extension of the 15m bullish impulse. The 60m horizon is",
+        "evidenceRefs": [
+          "technical.15m.confirmed",
+          "technical.1h.confirmed"
+        ]
+      },
+      "economicMandate": null,
+      "profitTakePlanSource": "AI",
+      "lossHandoff": {
+        "cycleId": "cycle_entry_intent_muzeki77_dutcl0fv_LONG_1791455900579",
+        "lastClosedBarAt": 1791458099999,
+        "consecutiveLossBars": 1,
+        "status": "ACTIVE"
+      },
+      "physicalCycleKey": "INJUSDT:LONG",
+      "lastAddAt": 1791455922725,
+      "addCount": 1,
+      "tpEconomics": {
+        "currentTpPrice": 7.416,
+        "expectedGrossProfit": 1.574099999999975,
+        "expectedFees": 0.3106014120000001,
+        "expectedNetProfit": 1.263498587999975,
+        "requiredNetProfit": 1,
+        "breakEvenPrice": 7.3894998999559816,
+        "minProfitableExitPrice": 7.410473488922129,
+        "status": "TP_OK"
+      }
+    },
+    {
+      "id": "exchange_NEARUSDC_LONG",
+      "symbol": "NEARUSDC",
+      "side": "LONG",
+      "quantity": 403,
+      "entryPrice": 5.441292803970225,
+      "markPrice": 5.13493878,
+      "leverage": 10,
+      "unrealizedPnl": -123.46067166000091,
+      "unrealizedPnlPercent": -56.30169796168572,
+      "openedAt": 1791444270691,
+      "firstObservedAt": 1791444293423,
+      "liquidationPrice": 0,
+      "marginAsset": "USDC",
+      "notionalUsd": 2069.34332085,
+      "maintenanceMarginUsd": 31.04014981,
+      "positionRiskSource": "V3_VERIFIED",
+      "entryTimeSource": "SYSTEM_FILL",
+      "managementStatus": "HUMAN_MANAGED",
+      "humanManagedAt": 1791448278182,
+      "tpStatus": "PROTECTED",
+      "tpOrderId": "tp_muz9vtnr_iptbifcz",
+      "tpLastVerifiedAt": 1791458523408,
+      "tpCoverageSource": "BINANCE_OPEN_ORDER",
+      "cycleId": "cycle_entry_intent_muz7nok8_xuxp5o2g",
+      "profitTakePlan": {
+        "targetPrice": 5.562,
+        "acceptableTargetRange": {
+          "min": 5.562,
+          "max": 5.68
+        },
+        "targetHorizonMinutes": 15,
+        "targetReason": "Target is set at 5.562, which is within the 15m Bollinger Band upper limit and represents a 0.2% move from entry, consistent with the 15m ATR and recent volatility. This level aligns with the 15m swing high resistance and offers a high-prob",
+        "evidenceRefs": [
+          "technical.15m.confirmed",
+          "technical.1m.confirmed",
+          "economics.entry"
+        ]
+      },
+      "economicMandate": null,
+      "profitTakePlanSource": "STRUCTURE_15M",
+      "lossHandoff": {
+        "cycleId": "cycle_entry_intent_muz7nok8_xuxp5o2g_LONG_1791444293423",
+        "lastClosedBarAt": 1791448199999,
+        "consecutiveLossBars": 4,
+        "status": "HUMAN_HANDOFF"
+      },
+      "physicalCycleKey": "NEARUSDC:LONG",
+      "lastAddAt": 1791447093391,
+      "addCount": 3,
+      "tpEconomics": {
+        "currentTpPrice": 5.543,
+        "expectedGrossProfit": 40.98799999999926,
+        "expectedFees": 1.9477348000000005,
+        "expectedNetProfit": 39.04026519999926,
+        "requiredNetProfit": 1,
+        "breakEvenPrice": 5.446083249433723,
+        "minProfitableExitPrice": 5.44856573130391,
+        "status": "TP_OK"
+      }
+    },
+    {
+      "id": "exchange_OPUSDT_LONG",
+      "symbol": "OPUSDT",
+      "side": "LONG",
+      "quantity": 10004.6,
+      "entryPrice": 0.12470000000000005,
+      "markPrice": 0.1227,
+      "leverage": 10,
+      "unrealizedPnl": -20.009200000000433,
+      "unrealizedPnlPercent": -16.038492381716463,
+      "openedAt": 1791453678627,
+      "firstObservedAt": 1791453739278,
+      "liquidationPrice": 0,
+      "marginAsset": "USDT",
+      "notionalUsd": 1226.56396,
+      "maintenanceMarginUsd": 7.35938376,
+      "positionRiskSource": "V3_VERIFIED",
+      "entryTimeSource": "SYSTEM_FILL",
+      "managementStatus": "HUMAN_MANAGED",
+      "humanManagedAt": 1791458334912,
+      "tpStatus": "PROTECTED",
+      "tpOrderId": "tp_muzdbncs_q1a0clbb",
+      "tpLastVerifiedAt": 1791458523409,
+      "tpCoverageSource": "BINANCE_OPEN_ORDER",
+      "cycleId": "cycle_entry_intent_muzd9d0w_w13ujgxa",
+      "profitTakePlan": {
+        "targetPrice": 0.125,
+        "acceptableTargetRange": {
+          "min": 0.125,
+          "max": 0.1263
+        },
+        "targetHorizonMinutes": 15,
+        "targetReason": "Target is set at 0.125, which is a nearby resistance level and within the acceptable range for the 15m timeframe. This target is achievable within the 15-minute horizon based on recent volatility and momentum.",
+        "evidenceRefs": [
+          "technical.15m.confirmed",
+          "technical.5m.confirmed"
+        ]
+      },
+      "economicMandate": null,
+      "profitTakePlanSource": "AI",
+      "lossHandoff": {
+        "cycleId": "cycle_entry_intent_muzd9d0w_w13ujgxa_LONG_1791453739278",
+        "lastClosedBarAt": 1791458099999,
+        "consecutiveLossBars": 4,
+        "status": "HUMAN_HANDOFF"
+      },
+      "physicalCycleKey": "OPUSDT:LONG",
+      "lastAddAt": 1791453774827,
+      "addCount": 1,
+      "tpEconomics": {
+        "currentTpPrice": 0.125,
+        "expectedGrossProfit": 3.0013799999995308,
+        "expectedFees": 1.0991853928000004,
+        "expectedNetProfit": 1.9021946071995302,
+        "requiredNetProfit": 1,
+        "breakEvenPrice": 0.12480978430509429,
+        "minProfitableExitPrice": 0.12490978232537349,
+        "status": "TP_OK"
+      }
+    },
+    {
+      "id": "exchange_SOLUSDT_LONG",
+      "symbol": "SOLUSDT",
+      "side": "LONG",
+      "quantity": 67.3,
+      "entryPrice": 121.04021842496289,
+      "markPrice": 113.41,
+      "leverage": 10,
+      "unrealizedPnl": -513.5137000000026,
+      "unrealizedPnlPercent": -63.03870336860912,
+      "openedAt": 1791155132270,
+      "firstObservedAt": 1791155132270,
+      "liquidationPrice": 56.5943158,
+      "marginAsset": "USDT",
+      "notionalUsd": 7632.493,
+      "maintenanceMarginUsd": 76.32493,
+      "positionRiskSource": "V3_VERIFIED",
+      "entryTimeSource": "SYSTEM_FILL",
+      "managementStatus": "HUMAN_MANAGED",
+      "humanManagedAt": 1791163149498,
+      "tpStatus": "PROTECTED",
+      "tpOrderId": "tp_muxbko4k_qecw9g7b",
+      "tpLastVerifiedAt": 1791458523408,
+      "tpCoverageSource": "BINANCE_OPEN_ORDER",
+      "cycleId": "cycle_entry_intent_muufgu1d_7lt418up",
+      "profitTakePlan": {
+        "targetPrice": 121.89,
+        "acceptableTargetRange": {
+          "min": 121.89,
+          "max": 124.54
+        },
+        "targetHorizonMinutes": 240,
+        "targetReason": "Target is set at 121.89, which is above the 15m Bollinger Upper Band (121.94) and near the 1h swing high (121.82), representing a reasonable first resistance level. The 240-minute horizon allows for a potential trend continuation.",
+        "evidenceRefs": [
+          "technical.15m.confirmed",
+          "technical.1h.confirmed"
+        ]
+      },
+      "economicMandate": null,
+      "profitTakePlanSource": "FIXED_PROFITABLE",
+      "lossHandoff": {
+        "cycleId": "cycle_entry_intent_muufgu1d_7lt418up_LONG_1791155132270",
+        "lastClosedBarAt": 1791162899999,
+        "consecutiveLossBars": 4,
+        "status": "HUMAN_HANDOFF"
+      },
+      "physicalCycleKey": "SOLUSDT:LONG",
+      "lastAddAt": 1791329877047,
+      "addCount": 12,
+      "tpEconomics": {
+        "currentTpPrice": 121.59,
+        "expectedGrossProfit": 37.00029999999791,
+        "expectedFees": 7.184766028000002,
+        "expectedNetProfit": 29.815533971997905,
+        "requiredNetProfit": 1.221901005,
+        "breakEvenPrice": 121.1467807045799,
+        "minProfitableExitPrice": 121.16494472951462,
+        "status": "TP_OK"
+      }
+    },
+    {
+      "id": "exchange_XLMUSDT_LONG",
+      "symbol": "XLMUSDT",
+      "side": "LONG",
+      "quantity": 6231,
+      "entryPrice": 0.21935493500240724,
+      "markPrice": 0.19844531,
+      "leverage": 10,
+      "unrealizedPnl": -130.28787338999945,
+      "unrealizedPnlPercent": -95.32324860700199,
+      "openedAt": 1790734103219,
+      "firstObservedAt": 1791186426734,
+      "liquidationPrice": 0,
+      "marginAsset": "USDT",
+      "notionalUsd": 1236.2466006,
+      "maintenanceMarginUsd": 18.543699,
+      "positionRiskSource": "V3_VERIFIED",
+      "entryTimeSource": "SYSTEM_FILL",
+      "managementStatus": "HUMAN_MANAGED",
+      "humanManagedAt": 1791190182142,
+      "tpStatus": "PROTECTED",
+      "tpOrderId": "tp_muwhvf33_thhxglgi",
+      "tpLastVerifiedAt": 1791458523408,
+      "tpCoverageSource": "BINANCE_OPEN_ORDER",
+      "cycleId": "cycle_XLMUSDT_LONG_93347849-4312-4df3-af8a-dd46fd6eb7db",
+      "profitTakePlan": {
+        "targetPrice": 0.22471,
+        "acceptableTargetRange": {
+          "min": 0.22471,
+          "max": 0.22799
+        },
+        "targetHorizonMinutes": 60,
+        "targetReason": "Target aligns with 15m swing high and 1h BB upper. 60m horizon allows for trend continuation.",
+        "evidenceRefs": [
+          "technical.15m.confirmed",
+          "technical.1h.confirmed"
+        ]
+      },
+      "economicMandate": null,
+      "profitTakePlanSource": "FIXED_PROFITABLE",
+      "lossHandoff": {
+        "cycleId": "cycle_entry_intent_muuy3zqd_0wqgtqyn_LONG_1791186426734",
+        "lastClosedBarAt": 1791189899999,
+        "consecutiveLossBars": 4,
+        "status": "HUMAN_HANDOFF"
+      },
+      "physicalCycleKey": "XLMUSDT:LONG",
+      "lastAddAt": 1791280010920,
+      "addCount": 4,
+      "tpEconomics": {
+        "currentTpPrice": 0.22035,
+        "expectedGrossProfit": 6.200250000000415,
+        "expectedFees": 1.2055126379999999,
+        "expectedNetProfit": 4.994737362000416,
+        "requiredNetProfit": 1,
+        "breakEvenPrice": 0.21954805231682772,
+        "minProfitableExitPrice": 0.21970861084574525,
+        "status": "TP_OK"
+      }
+    }
+  ]
+}

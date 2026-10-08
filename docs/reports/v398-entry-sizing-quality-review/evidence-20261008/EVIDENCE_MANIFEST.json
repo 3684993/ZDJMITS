@@ -1,0 +1,748 @@
+{
+  "at": "2026-10-08T13:24:14.791664+00:00",
+  "hashNormalization": "LF-normalized UTF-8 for text; raw bytes for gzip/binary",
+  "artifactCount": 148,
+  "credentialScalarFindings": [],
+  "artifacts": [
+    {
+      "path": "docs/plans/V398_ENTRY_SIZING_RISK_BUDGET_PLAN.md",
+      "bytesLFNormalized": 10917,
+      "sha256": "2d6fb8a497ad88613627f94bd0a3ab4b1e960485f1130da313c0fdd088702c9c"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/dependency-install.log",
+      "bytesLFNormalized": 996,
+      "sha256": "a93f5e8cae9c6e8a25d6e6cb4710e25cc286d302b379854cd34db9d8fd22e6a8"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/ENTRY_SIZING_QUALITY_REVIEW.md",
+      "bytesLFNormalized": 18311,
+      "sha256": "ffbb52417f41450ecaccebdf8ed46d6cf223149aead3dda693fa77aa0ad2551f"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/architecture-callgraph.md",
+      "bytesLFNormalized": 42069,
+      "sha256": "5c6badccfe2f57dfdaca67952da94209350fb88cde22b6a915ed48deac9160aa"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-APTUSDT-15m.json",
+      "bytesLFNormalized": 112619,
+      "sha256": "4f093ba74f7e1687ea6d670f0d84ac889cdb0c4fed49ce9f5c5dffdb64a43eac"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-APTUSDT-1d.json",
+      "bytesLFNormalized": 48108,
+      "sha256": "e20c130aada5bc265b497f0112861197e54149c8adf82c9d3eb00ca92bb5779a"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-APTUSDT-1h.json",
+      "bytesLFNormalized": 116372,
+      "sha256": "afe46801ca1c5f9d9c727d4fb96957cf8e6a7e33645d02e555150b4a74d406db"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-APTUSDT-1w.json",
+      "bytesLFNormalized": 14513,
+      "sha256": "dabfd058f7b047f50dc2b7952be900b376074c75191d8bf204e95413b941651f"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-APTUSDT-4h.json",
+      "bytesLFNormalized": 118245,
+      "sha256": "09e1669614d54f0155e186c4eb5524a61b90d847278ff63a980155a26f55adf9"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-AVAXUSDT-15m.json",
+      "bytesLFNormalized": 108010,
+      "sha256": "66f66e68465e040c1dfbb001461ad98c5183bb4e7a869de4ae6eb1fc0af47bb1"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-AVAXUSDT-1d.json",
+      "bytesLFNormalized": 45426,
+      "sha256": "5315a838b87652241fb209d73b4b1a4a7061b0474a5c0164534c8dabb32bdecc"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-AVAXUSDT-1h.json",
+      "bytesLFNormalized": 110766,
+      "sha256": "4bf2495f15d145b33cf9f885f9b9f03c2beeecfefb0e1675b393fa19ed9e9497"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-AVAXUSDT-1w.json",
+      "bytesLFNormalized": 13858,
+      "sha256": "558707a64df873c2089dc1527d551a105ba29ca215bf49acc7b5d7eb1a6677be"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-AVAXUSDT-4h.json",
+      "bytesLFNormalized": 111641,
+      "sha256": "b050e3ab54d42c7e7f1b59b5e5a5039a22fcce3bab5e510da7077c21e923bbd2"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-BCHUSDT-15m.json",
+      "bytesLFNormalized": 115070,
+      "sha256": "c5bb83bbb53ac02d45072d88f3b155ddc43b793101879e238eba7ee98a4476cb"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-BCHUSDT-1d.json",
+      "bytesLFNormalized": 48511,
+      "sha256": "374fc826a4a7fc95ab8476793727e48c13dbebb474dd2776538c8962df2ffa53"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-BCHUSDT-1h.json",
+      "bytesLFNormalized": 118198,
+      "sha256": "9823ec6d875305da3667665aa1a48710023281a8420005f03907ee380f70d1a8"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-BCHUSDT-1w.json",
+      "bytesLFNormalized": 14537,
+      "sha256": "f4e55f4a16109a0ac6fabf9f3768cdc7db41ce550ad216bc9a822c06673666ba"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-BCHUSDT-4h.json",
+      "bytesLFNormalized": 119361,
+      "sha256": "ec0458ebddae804c6343a0ffebc1a4ff1a638ce65df32cc19c098ad1fc292cb3"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-BNBUSDC-15m.json",
+      "bytesLFNormalized": 114261,
+      "sha256": "db59b1f3765ecdb8f9cef5625a1c52516c3e6dc3d1d0fb0e6805be5a1ba5e6a6"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-BNBUSDC-1d.json",
+      "bytesLFNormalized": 48633,
+      "sha256": "69cafda723b691f64dd4de9c0565ba7b063ff300f7343cf793fdcd3de58f5ce1"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-BNBUSDC-1h.json",
+      "bytesLFNormalized": 118233,
+      "sha256": "535354d97052559bbc525e9363e952d9e433e72c9a0580d8a3a379bec8998c99"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-BNBUSDC-1w.json",
+      "bytesLFNormalized": 14637,
+      "sha256": "aee449e23f5ce0e39f0eb121ce82acfd6b907c9e8a476b1eb23af474728b26ad"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-BNBUSDC-4h.json",
+      "bytesLFNormalized": 119584,
+      "sha256": "ef831c6d379304d037f31cbb975851430bb20c1ffd7ee95e177358f222c584ff"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-BRUSDT-15m.json",
+      "bytesLFNormalized": 118182,
+      "sha256": "e6ac7502ffcb7d56c82db07445542a2af772775dea77c694c95ebf8ff8aef17d"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-BRUSDT-1d.json",
+      "bytesLFNormalized": 49957,
+      "sha256": "652e78929830b76b9e4c435e0e19072d6b72676f8ab210c32376d4e20bdd7dbc"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-BRUSDT-1h.json",
+      "bytesLFNormalized": 120941,
+      "sha256": "3237cc168d42a7baaefde25a5f735109eff1afe913b1e90f7048abaca9e4c2b2"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-BRUSDT-1w.json",
+      "bytesLFNormalized": 15052,
+      "sha256": "b42efe6e392bc87f256d75c385f1393988043578307b4c186e4232c5aa248176"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-BRUSDT-4h.json",
+      "bytesLFNormalized": 122547,
+      "sha256": "64969084797f9a37de81ef4f02bf317117bc6834e7ac91e848f95fb61fc451ef"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-BTCUSDT-15m.json",
+      "bytesLFNormalized": 118445,
+      "sha256": "75c547c56f2a46e7eda33b04f77d3cf3c4d1edcb8aa264fb9e13b1ab03594c2f"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-BTCUSDT-1d.json",
+      "bytesLFNormalized": 49947,
+      "sha256": "1217a96f0001664dbfc13aa78c9aa3c47464532601acd2cbbbd3b5a4aa95e7bf"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-BTCUSDT-1h.json",
+      "bytesLFNormalized": 121414,
+      "sha256": "9033c25fcf1f8d49b04ee631637e47195b0d779e3283c40b80419ec2bf10f9ac"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-BTCUSDT-1w.json",
+      "bytesLFNormalized": 15075,
+      "sha256": "974c086970aa1f0011b745f6b0adb97f438aa20efc45a462d76409d23fe33b0b"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-BTCUSDT-4h.json",
+      "bytesLFNormalized": 122982,
+      "sha256": "6d8fae89a7d6911f6bba1ac997335c47c214edc38410e720da2c22e1589e0e98"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-DOTUSDT-15m.json",
+      "bytesLFNormalized": 115407,
+      "sha256": "11666eb3c604309dd1c4f0a65cc85ba8a7a0beb2fcf924a7c719da505fe74555"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-DOTUSDT-1d.json",
+      "bytesLFNormalized": 47160,
+      "sha256": "ba9e1cb83a10c1f6f24240c712ebb6c8679a821013aac1b75057555d6e655772"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-DOTUSDT-1h.json",
+      "bytesLFNormalized": 118888,
+      "sha256": "2b9778e2af09ad092730f5104d5c1432e4fcb9abec3e09e5f2c9888af24b4b4c"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-DOTUSDT-1w.json",
+      "bytesLFNormalized": 14009,
+      "sha256": "23bdafc8828b2bb684382d961f5eda7d6d7c9599696cbfca5f060c8590f4215a"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-DOTUSDT-4h.json",
+      "bytesLFNormalized": 120744,
+      "sha256": "2414f7c1f1212302684ba197667c72fddbb750972089d6bd5671b4d363f7e243"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-ETCUSDT-15m.json",
+      "bytesLFNormalized": 106879,
+      "sha256": "56e72e57a0842a5ba805b384515a0859c00eca5a16af6ca81320479f4281140f"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-ETCUSDT-1d.json",
+      "bytesLFNormalized": 46020,
+      "sha256": "0ec8cf72aecf6cc342411f2460fcc5ead6665b7e73d9bac922034c9a88e513f3"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-ETCUSDT-1h.json",
+      "bytesLFNormalized": 110584,
+      "sha256": "62573cf3a3432fab8b40de1064d62e99b1a128bf2b5364cb091300f67e140179"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-ETCUSDT-1w.json",
+      "bytesLFNormalized": 13996,
+      "sha256": "f92a473869a72dfb9742e041f497ac3dd4be1ef85060dae0de805157b6c1ee8a"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-ETCUSDT-4h.json",
+      "bytesLFNormalized": 112941,
+      "sha256": "3d46514783c6f0d8c0d28db70dfd47460d8cec662f4f7b405779f2cea540f656"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-ETHUSDT-15m.json",
+      "bytesLFNormalized": 115896,
+      "sha256": "ef8b96a4f04660e89992da2d23128ad0f0345683fa2d145257c8911a40e16616"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-ETHUSDT-1d.json",
+      "bytesLFNormalized": 48961,
+      "sha256": "6cf3e96921a2690a878c66e30d915f4a1160661160658fa517df0e5c9c3dedc6"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-ETHUSDT-1h.json",
+      "bytesLFNormalized": 119114,
+      "sha256": "456a50d19fe2fd86e3c5696083ce85ab38e7c754aa7342e14addd03477220c59"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-ETHUSDT-1w.json",
+      "bytesLFNormalized": 14812,
+      "sha256": "4b1e04dbecd761197a8f9db4cba4baeb80cb0e5fce9c7fc58b6c6ddfa4d268c6"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-ETHUSDT-4h.json",
+      "bytesLFNormalized": 120305,
+      "sha256": "7ed98ca34b4b15a628b40e2764e38cb163db238404282b6f14f35dc36ec8f102"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-FETUSDT-15m.json",
+      "bytesLFNormalized": 117267,
+      "sha256": "7ea03a161640b333db07185cf3d95f766aee376417b937286b7077d9307c3d8e"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-FETUSDT-1d.json",
+      "bytesLFNormalized": 49723,
+      "sha256": "14ad425c10d7f4cf04bc50d9a6fe152e87ff82525c96604c49a801a5d529208d"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-FETUSDT-1h.json",
+      "bytesLFNormalized": 120490,
+      "sha256": "cdda1875c9eb9d977e2a521da60cdabeb97b9936501014b8482df0786d847f51"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-FETUSDT-1w.json",
+      "bytesLFNormalized": 14973,
+      "sha256": "bda5b26930614eb41bfc81efce8445cd4bcc09b2c21491ea5d7fd4e3561952dc"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-FETUSDT-4h.json",
+      "bytesLFNormalized": 122121,
+      "sha256": "020870c0eb0ce88ece6778698f61e6e6398ada3bb4c8fcf24995266134a89f50"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-FILUSDC-15m.json",
+      "bytesLFNormalized": 117730,
+      "sha256": "9c66116c5eba421d30e455b7690e86599d62d3f761a791cea55ff26356f4e7bd"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-FILUSDC-1d.json",
+      "bytesLFNormalized": 50445,
+      "sha256": "a102eae640fd09af4d1565ad1dd50e102acaa89bb03581e8892a0173c3f2c4d8"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-FILUSDC-1h.json",
+      "bytesLFNormalized": 122554,
+      "sha256": "ce2602901bc6832d355408acb770b33abf91e1e03037aa5624986e5923f4ca0b"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-FILUSDC-1w.json",
+      "bytesLFNormalized": 15221,
+      "sha256": "c4ec01d1d8cf474418744347375a3acb20d3eb84072544df1172a18d6524e4a4"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-FILUSDC-4h.json",
+      "bytesLFNormalized": 123845,
+      "sha256": "dedc35cef51b1438cd83a0e43013c97579cd86c094a14778a9792c99a3dc3fa6"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-INJUSDT-15m.json",
+      "bytesLFNormalized": 117907,
+      "sha256": "26182254aabbb950220374b5d2c8214fbea72ad10aa90f7cc49192a45f263b20"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-INJUSDT-1d.json",
+      "bytesLFNormalized": 50270,
+      "sha256": "f1202f9bcb9813f58c9a905cee3465f0a4640a3d46c59bfdb58d1a923cacc4cd"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-INJUSDT-1h.json",
+      "bytesLFNormalized": 121495,
+      "sha256": "550e1791256939f649cd4bf55824bc50f5066497ddac94e63acf5d6cb1bac74b"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-INJUSDT-1w.json",
+      "bytesLFNormalized": 15179,
+      "sha256": "08d90f124e2ae3d60bbeb8885d9c2d2f2ebebdc0f094333b2a69bcf09a329f0a"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-INJUSDT-4h.json",
+      "bytesLFNormalized": 123458,
+      "sha256": "6e682d6ead4ddd229935a6468f2a9c761a2c2f30fe03945522d5d6efb08cfeb3"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-NEARUSDC-15m.json",
+      "bytesLFNormalized": 105921,
+      "sha256": "9b4c7394154c666678beddb5d2891b788591d5eb26f82449714a901dc060ba52"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-NEARUSDC-1d.json",
+      "bytesLFNormalized": 45648,
+      "sha256": "7e3c21ccc3fcb2dad27e838659246c70a7531cd3ebc8cd4053945e1337bfb481"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-NEARUSDC-1h.json",
+      "bytesLFNormalized": 110183,
+      "sha256": "f9ccdcdfd29d9586beba34e79c7d89b1273575a16c7c7b3a3b62eb5e7a5f4f52"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-NEARUSDC-1w.json",
+      "bytesLFNormalized": 13797,
+      "sha256": "099a4c7b214a9d7c9871f45a9820a62e0ec6403713f8340724a11581e7f7cb1d"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-NEARUSDC-4h.json",
+      "bytesLFNormalized": 111880,
+      "sha256": "9b1d36e4dce40fdbc6e7e3dddf3f04777d0b120ca4f4f9d1fc063518716f9f07"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-OPUSDT-15m.json",
+      "bytesLFNormalized": 120344,
+      "sha256": "a862ebb71c9f7bd8703672a12176e04a6064e4d70f6aaeac52d2f33fdf6ac701"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-OPUSDT-1d.json",
+      "bytesLFNormalized": 50953,
+      "sha256": "2cc0277c7efbbdb98066b72e36fc95ef86589a3ef17be9dd877e3360416e6f37"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-OPUSDT-1h.json",
+      "bytesLFNormalized": 123785,
+      "sha256": "8d46004def10075765c626e5a4bd015fd1627bb29902fe1db906e15c3a52d5b1"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-OPUSDT-1w.json",
+      "bytesLFNormalized": 15339,
+      "sha256": "2a45d95342f47a5726550fa68d476e3c2445c3724b7e39546a0fa23e3b26d05e"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-OPUSDT-4h.json",
+      "bytesLFNormalized": 125327,
+      "sha256": "5aeef740d983e029ca1433c310ea1e8eda16c246c49c63748463eeaf58834397"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-SOLUSDT-15m.json",
+      "bytesLFNormalized": 115639,
+      "sha256": "079442c70c7e1e024c4a63f9d82c51509755edcf28d6794088be9da5ae41cb18"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-SOLUSDT-1d.json",
+      "bytesLFNormalized": 47920,
+      "sha256": "f54f5f17507bb5296758e7c42a95e418d02f02972254448883bba07aeb53ea67"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-SOLUSDT-1h.json",
+      "bytesLFNormalized": 117321,
+      "sha256": "561158ac6c2fc8877710d8dcbd2cddcc59ac37d55699491a3a575a50bc8d035c"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-SOLUSDT-1w.json",
+      "bytesLFNormalized": 14370,
+      "sha256": "fe002268099e9cecffdc822ee1c60cf5c08cb7c9fea58a4c68ac5c460f9721a1"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-SOLUSDT-4h.json",
+      "bytesLFNormalized": 118131,
+      "sha256": "34b71223a4706a8025be04123814446e05cfb977b09ec88c5e6ee3819fafce78"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-VVVUSDT-15m.json",
+      "bytesLFNormalized": 117742,
+      "sha256": "74dde8abe30e0e6caf13f74cb7fb1fbe9a77a969620af0ff56c6695274556564"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-VVVUSDT-1d.json",
+      "bytesLFNormalized": 50430,
+      "sha256": "79b9fbeab58c2e089b15267bd0f0ff3ceba3d43bf55f4aedc614cd25b479381a"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-VVVUSDT-1h.json",
+      "bytesLFNormalized": 121712,
+      "sha256": "ec5d106581958d67a78e664ded4b11d932f1910fbd1ee944b9ab447ee4ae914f"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-VVVUSDT-1w.json",
+      "bytesLFNormalized": 15151,
+      "sha256": "0cd830e837c2c75c7917c7b2efe8f31db1df0fdfdf2183f4afd81e874784ef6d"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-VVVUSDT-4h.json",
+      "bytesLFNormalized": 124054,
+      "sha256": "a74a11c7539599523870831d28ba8fe95cb58f0fda4dceccbaf68a00b52419bc"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-XLMUSDT-15m.json",
+      "bytesLFNormalized": 109427,
+      "sha256": "469f5799b9e3295327512eaddecd36fddc6f371211cf1d13fbf420022d8942bc"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-XLMUSDT-1d.json",
+      "bytesLFNormalized": 47048,
+      "sha256": "ac202b86e41cd1bfa783e90f83ee50a295c67f17dd27d6fe602033c4964c2d0d"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-XLMUSDT-1h.json",
+      "bytesLFNormalized": 113039,
+      "sha256": "f81c770bcbb81b5859f92cfe244abe3305b79855ff7462ae20fa2f609e119409"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-XLMUSDT-1w.json",
+      "bytesLFNormalized": 14204,
+      "sha256": "2e7c823bd2d17771a26a78ee8b23b7455d7004db0db4c2b81c4eecc01fcc559c"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bars-XLMUSDT-4h.json",
+      "bytesLFNormalized": 115466,
+      "sha256": "aaff2f858c48c88c555232189b14418586bb8f534b2695c58d37c628d3e44951"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bounded-entities-manifest.json",
+      "bytesLFNormalized": 619,
+      "sha256": "7c8473e7cc78d10347b2dd669c8c5f6d4101e8c0e7af4340fb2526c832a7e586"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bounded-entities.json.gz",
+      "bytesLFNormalized": 20660902,
+      "sha256": "af7e3d04f466dbeca7c24b514912f674055d4dec8723af64d1b13f070454c8e3"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/case-study-calculations.json",
+      "bytesLFNormalized": 2559,
+      "sha256": "c189f0abb6c20b864211d64ba6cbc81a70adf94f289827fe01c274ac41e82ce1"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/collection-boundaries.json",
+      "bytesLFNormalized": 801,
+      "sha256": "5c3892753e7a16090c6fba167dcbf1a78905a74842672ddf4c5df5f5a6b78879"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/current-position-feature-strata.json",
+      "bytesLFNormalized": 11132,
+      "sha256": "5c6087d3a2a01acb3bcc7fc791c76ffdac8b87c1c5465e5593fd0bbd63bc3a3a"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/entry-quantity-lineage.jsonl.gz",
+      "bytesLFNormalized": 175213,
+      "sha256": "ae02b47c98fdf1450ac2cd121ffc47ee213baa07c5e2bf9ddff4925ded1350db"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/eth-avax-bounded-history.json",
+      "bytesLFNormalized": 339038,
+      "sha256": "09bc07f9e8d4651784445e6db656e43169bb6cd8a12ac32b56f99b7554e7af45"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/eth-avax-case-facts.json",
+      "bytesLFNormalized": 91185,
+      "sha256": "296dcd99327de1f049b1cd8301fe3a76d835ab94480a265bd7dcd4b1174ae953"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/exchange-clock.json",
+      "bytesLFNormalized": 65,
+      "sha256": "33a6f9dfc6e1dde11fd45755a51668ed00b5501577a66db219dfafa82b52d882"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/exchange-cycle-reconstruction.json",
+      "bytesLFNormalized": 20687,
+      "sha256": "1778aaada266e242dfb0c020fb7492801f036a6be3e318fcb81ee1a907ca930e"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/exchange-lots-by-cycle.csv",
+      "bytesLFNormalized": 6545,
+      "sha256": "7a55afcf83c375c0db481505440b8b90e24a612ab65fe8c687a283aae4d9a05f"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/github-actions.json",
+      "bytesLFNormalized": 1872,
+      "sha256": "fed92ea0a2c5b098967302a059a8725c5f9e980967fa51f7a0b9fccccee9a8ff"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/historical-exposure-asof.csv",
+      "bytesLFNormalized": 2406,
+      "sha256": "99618fc21a43ef1f4b67c262a9f81baaef841c0bfa2df2f6fb1eb8c75cdfb80b"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/lineage-summary.json",
+      "bytesLFNormalized": 984,
+      "sha256": "d2e4621628d8ee11c707e2965893760360a47dc7b6f1d021a6a345f79a8edb4e"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/linked-primary-runs.json.gz",
+      "bytesLFNormalized": 138636,
+      "sha256": "5f9afd84cc0a6d751e300ad8bbd4e691d09584e2a6c91e52b8275003c9c46b7f"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/listeners-r0.json",
+      "bytesLFNormalized": 279,
+      "sha256": "5f1f4e6a91711bcdb4647a4b55f7f6053b27cc20801e645c4484a1b7932e8366"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/local-state-shape.json",
+      "bytesLFNormalized": 3554,
+      "sha256": "39c86084957136a498bd3544915feea7083d28bec8e4c1367b51d979803d62e0"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/lots-by-cycle.csv",
+      "bytesLFNormalized": 4777,
+      "sha256": "5c5e9da3b0430ce9683e2fd21d8049f034936d7158b9589273fc41f4efb7426c"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/main-ci-runtime-baseline.json",
+      "bytesLFNormalized": 664,
+      "sha256": "396c99276a4e3a75f4c1f33faf7e8ad8f7898ee60336f7882fa6836d9ae2440b"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/main-recent-commits.txt",
+      "bytesLFNormalized": 509,
+      "sha256": "a4338a2ccc9d4e9a70741e31e268730b4f0487fc1c182a164a5c3f86b79761e3"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/market-bars-coverage.json",
+      "bytesLFNormalized": 16901,
+      "sha256": "2943e97fdcff87f2a147bfb84a406f97f08f99a0ff571cac6f4dc6a07b5cf455"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/missing-facts.json",
+      "bytesLFNormalized": 1204,
+      "sha256": "741bf2913d7e550aaa3a6dd18aba9b293144c30ae4362b757ff41914e729ab49"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/netstat-r0.txt",
+      "bytesLFNormalized": 231,
+      "sha256": "a2d84a328895dc10b73dd522e0702006e11f759553e1699b55327bb0b4944f61"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/persisted-account-asof.json",
+      "bytesLFNormalized": 2093,
+      "sha256": "065f297c18845cea8d28a2001d1f4e802a6f9c82a8609fda515dab9f3d73a969"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/policy-comparison.csv",
+      "bytesLFNormalized": 3791,
+      "sha256": "18a2f6c5c402dc12d1c8c38c42c450ccf5925e914ab739e6e1ba4c9f9e5e94c0"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/policy-comparison.json",
+      "bytesLFNormalized": 8857,
+      "sha256": "8f559f8b5918f7af5198b21c39ac6075ec745cc72fa930b830ca7a5c76e54ea1"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/portfolio-native-asset-summary.json",
+      "bytesLFNormalized": 787,
+      "sha256": "7299638bbb3c886b00fef3d26db3f812ec4e350979b9267eaf845fe662450949"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/positions-asof.json",
+      "bytesLFNormalized": 39714,
+      "sha256": "5cba6bb6e9ae9013672bfd876631124801a658781bb9e6afdde1ab5e997fbaa3"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/README_EVIDENCE.md",
+      "bytesLFNormalized": 1439,
+      "sha256": "3b5f4a794c518a6185963cc28839981264eacf03d997a944d08749789f4825b2"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/settings-policy-subset.json",
+      "bytesLFNormalized": 5784,
+      "sha256": "e22c2ccaf844787dd527403576f9b94869cc0b211ce2a4f0cdaa50fc14e7dd0e"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/sizing-authority-audit.json",
+      "bytesLFNormalized": 94450,
+      "sha256": "cadb5921be4278ed33d109ecbe15d16020ba9c8ca9a101d834381f2f69dedb4d"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/sqlite-schema.json",
+      "bytesLFNormalized": 14017,
+      "sha256": "d2e3c1ee3b59103c15122ff75240b031fa0ccbe21a2aed267f5030c7adf47c9a"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/testnet-history-account-readback.json",
+      "bytesLFNormalized": 878251,
+      "sha256": "8f3fb9f92039316d98613502a179c069fa2523aeb8af9815d527761d744ffcf0"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/testnet-signed-readback.json",
+      "bytesLFNormalized": 28675,
+      "sha256": "4f3e195a4d2030472b0168a973bde677fe7658c25da580fdca46f35024523352"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/trade-records-bounded.json",
+      "bytesLFNormalized": 4907480,
+      "sha256": "0f1f0fd26fa04a943ffc4a3d4010045cb2cba6c9535356881ea44bc45764ea47"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/exchange-reconstruction.log",
+      "bytesLFNormalized": 886,
+      "sha256": "6db4f7089ea0882e56870056ce24f9547334055add479183486e6cd44202224b"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/github-api.log",
+      "bytesLFNormalized": 1572,
+      "sha256": "a74f3d73cc5d9c9a5c2deb5074da5592258eb060276cf4ab9bcdf3345fc708af"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/history-collection.log",
+      "bytesLFNormalized": 441,
+      "sha256": "91875d96cd0684b3831b057d3cbce9259446bfa542aa96c8042c0ded11996882"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/lineage-projection.log",
+      "bytesLFNormalized": 891,
+      "sha256": "3583b544da3ee2c09629640aae2630d3600c213ddaee55a9dfb82aecf5eb5afe"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/local-collection-final.log",
+      "bytesLFNormalized": 2287,
+      "sha256": "7297f374576eb73d3e961f28e9b371b5d1a7b2292efc1d3c1c9ec0d786a65a55"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/local-collection.log",
+      "bytesLFNormalized": 2287,
+      "sha256": "7297f374576eb73d3e961f28e9b371b5d1a7b2292efc1d3c1c9ec0d786a65a55"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/market-collection.log",
+      "bytesLFNormalized": 428,
+      "sha256": "30b09a2efac09095b89f2cf664d056b12b7583521ba6dbefaf7c91b1324d8368"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/preserved-live-worktree-status.txt",
+      "bytesLFNormalized": 239,
+      "sha256": "66dc1f1f3ffed1b0a7708bc7e03bc4f46632bdf376ccfe930dd2ad050a026dc5"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/research-engine-build.log",
+      "bytesLFNormalized": 407,
+      "sha256": "a29a6ef1d9894693f23c74c5d8ea46330c2ba1656aac81a9ca2d97d87b250fce"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/schema-collection.log",
+      "bytesLFNormalized": 1202,
+      "sha256": "f6c597a47b9376eb66b6b91f4a1b8c30cd3c8e1cecdd9777dd4c4f5bdbb9b781"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/sizing-comparison.log",
+      "bytesLFNormalized": 2277,
+      "sha256": "3f4228fd1530e1afb28eda21b7a04ec4ac79807f2da827d3fa4a4d405059c998"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/source-audit-final.log",
+      "bytesLFNormalized": 91,
+      "sha256": "3efa959fdda94ffaa6f23402677a50e3ee72f0259e1093c66860c38e9d9db84a"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/source-audit.log",
+      "bytesLFNormalized": 91,
+      "sha256": "d2ef028133ab2dbb42b456630c628ceb879f6dde6cb50b3844119b0fdd20bdfb"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/testnet-readonly-corrected.log",
+      "bytesLFNormalized": 395,
+      "sha256": "876c29e577509142b9c71c89cc0cd9542da87d9ce20db5f5f1fefafaad021fa7"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/testnet-readonly.log",
+      "bytesLFNormalized": 1176,
+      "sha256": "c292c2fceaf11030fd3ffd6bc917fefbb236b1043ed3d10e8bb391aeae900e8b"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/verify-deps.log",
+      "bytesLFNormalized": 1269,
+      "sha256": "92b4f9d00e74eca7e594c3f62141286f386723f38a8ffb38e69dbac380390c2e"
+    },
+    {
+      "path": "scripts/v398-compare-sizing.py",
+      "bytesLFNormalized": 7305,
+      "sha256": "e4dea3e34dbc4e4fb4403655a95be4a377576e6b2fe4fe4ca175fc4d1355284b"
+    },
+    {
+      "path": "scripts/v398-evidence-manifest.py",
+      "bytesLFNormalized": 2975,
+      "sha256": "08b9ac93f2779a79a6f0bb92c0a3114197144286d074303bec89e6183fe8b936"
+    },
+    {
+      "path": "scripts/v398-github-readback.py",
+      "bytesLFNormalized": 1308,
+      "sha256": "88ac65c9609f5a4d57fa18bad73038c33f5d359b816d397308c25f9f232d1d58"
+    },
+    {
+      "path": "scripts/v398-project-lineage.mjs",
+      "bytesLFNormalized": 2887,
+      "sha256": "27fc7c0ac334e83d341b57f7cf5900551f920afaf53039169689bdd91538535c"
+    },
+    {
+      "path": "scripts/v398-readonly-research.py",
+      "bytesLFNormalized": 6327,
+      "sha256": "0deefc3f089139aeb1c4ee12f61af8181e82afbaa0bd07d5e54da198bb080c66"
+    },
+    {
+      "path": "scripts/v398-reconstruct-exchange.py",
+      "bytesLFNormalized": 5225,
+      "sha256": "c15181621cd2504f3cf5e84666b45de32f3c6622d8c86b578adb6f2e1b51c19a"
+    },
+    {
+      "path": "scripts/v398-source-audit.py",
+      "bytesLFNormalized": 4944,
+      "sha256": "ef8e407bad22a95b0b57ff40fc9145f0e11bd9842e93348f306ffcff34ec5a53"
+    },
+    {
+      "path": "scripts/v398-testnet-readonly.mjs",
+      "bytesLFNormalized": 5984,
+      "sha256": "354343bb62590d9900370fc806c385a8d91efea29c4da629d4024d62cd55246c"
+    }
+  ]
+}

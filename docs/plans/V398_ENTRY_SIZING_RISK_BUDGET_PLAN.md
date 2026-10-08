@@ -1,4 +1,56 @@
-# V3.9.8 Entry Sizing & Risk Budget Plan
+# V3.9.8 R2实施计划 — no separate add / shadow risk bounds
+
+基线3242a79，2026-10-08。先研究/计划GitHub readback后改source；用户最后一句另行明确授权最终升级启动当前停止的TESTNET8080，不授权改Settings/models/proxy/人工交易。旧计划在下方保留，本节覆盖其需重新授权offline/lifecycle的默认。
+
+## Gate及范围
+
+物理数量已用boundednative历史守恒：ETH4orders/3adds/1.467，AVAX18/17/1263，全部localintent/runrefs。当前sourceauthority逐行可审计。no-add不借旧runarchive创造权利：任何legacy库存/unknown/pending保持occupied，已有HUMAN不得自动加仓，未来origin按当下冻结candidate/Primary授权cap守恒。新链authority不证就停止实施。174fundingUNKNOWN、oldPRIMARY缺失、AVAXrawrecord288/lot1074与1263矛盾阻塞新live风险阈值，不能补0/写回history/放宽canonical。
+
+## 文件与函数修改表
+
+|文件/函数|最小化修改|
+|---|---|
+|新services/noSeparateAdd.ts|TESTNET同symbol/sideinventory/pending/lifecycle边界，unknownhold，originexactpartial/recovery累计cap，native scope|
+|preAiExecutionEnvelope.buildPreAiExecutionEnvelope|冻结candidate前sidecapacity声明NO_SEPARATE_ADD，oppositeside按自己physicalcycle，不恢复portfolio主观veto|
+|entryCoordinator.executionHardBlock/submitExactlyOnce|与prefreeze同一physicalpolicy，JIT验证durableorigin和exactcap，collision不改已选qty/target，不重新审判交易质量|
+|新originledger+settingsStore.claimEntryExecution|同SQLiteBEGINIMMEDIATE：scope/side/intent/client/cap独占，submissionidentity与cycle授权分离，旧history不改|
+|runtime/appRuntime/reconciliationService|注入durableoriginprefreeze读取；完整freshfullpositions/openorders+exactterminal/qtyconservedclosed才能释放filledorigin；UNKNOWN/−2013/TTL不释放；activeclaimbounded，不hot全historyscan|
+|manualPositionService.executeLocked|任何owner/TP清除/submit之前拒绝ADD；PLACE_LIMIT按现有reduceonly语义；TPprice不能成为增量旁路|
+|pure/shadowboundshelper|nativeasset独立boundsmin，unknownnull，whole-step/floor冲突；不接live阈值、不造默认|
+|workspacepackages/lock/contracts version/releasecheck|release3.9.8一致，保留V397冻结候选协议兼容，APIversion单独明确|
+|targetedtests/IMPLEMENTATION_REPORT|quantity/identity/race/restart/manualHUMAN/TP/PIT/nativebounds/unknown/TESTNET，保留全部stdoutstderr|
+
+## no-add与竞态
+
+scope=environment/account/symbol/positionSide。originalorderpartialfills不是独立add，cap是最大累计fill而非每次retry重新budget。不同intent/plan/run不能借symbol继承；lostACK只查询原exactclient，UNKNOWN不duplicatewire。已有人管/handoff库存不申请origin；legacyunknown不默认清除。
+
+两个Primary同时freeze：prefreeze库存/pending/durableorigin阻止新menu；最终sameSQLite事务排他挡住既已freeze后的physicalauthorizationcollision，不是subjectivepostPLACEveto。claim失败/DBcommit失败不wire，未知保持occupied。接管与freshposition到达时不能新增权利；privatefreshness/quote/JIT保持原硬事实。
+
+terminalorder不等于physicalcycleclosed。filledorigin释放需完整freshflatpositions/openorders、originalexactterminal、对应entryIntent/qty守恒closedrecord、观察时间晚于submit/close；zero-fill也需确证unsent/terminal0fill。scope错/clockfuture/缺数据/unknown一律hold。持久cap/客户端身份不可改，restart重建；不靠TTL清空。
+
+TP价格调整保持同protectedinventory/ownerVersion/identity/durability/qty，无增量；reduce/close权限原样。禁止新增TP%、trailing、maxhold、ReviewEntryveto及Reactivity/F04/F10/F11。
+
+## Shadow风险与科学gate
+
+Qmax=min(Qfunds,Qcycle,Qstress,Qportfolio,Qfactor)，每bound留nativeasset/scope/time/hash/coverage/scenario。缺输入不猜；live只已有真实funds/exchange及no-addphysical。location/trend/volsoftmapping保持experimentonly，不直接相乘相关haircuts。
+
+Qcap低于exchangeqty/notional、100quote业务margin或absoluteprofitfloor→NO_FEASIBLE_EXECUTABLE_QUANTITY，分类exchangelegal/funds/strategyeconomic；不加量/抬leverage/混asset。周线closed、availableAt<=decisioncutoff、26/52coverage齐全、freshsource；firstfillanchor不冒充PRIMARYcutoff。参数locationresponse/voltarget/stressES/cycle$/portfolio$/factor/correlation/FX/holding仍未确定，不修改Settings。
+
+## 两次发布与最终运行
+
+1.R2普通FFcommit/push研究/计划/脱敏原始证据/manifest；fetch逐blobSHA256核验。远端推进先兼容FF集成，冲突停，不force/rebase他人。source不能早于远端R2成功。
+
+2.I1先targeted：inventorybothsides/pending/HUMANhandoff/partial/rejected/postonly/UNKNOWN/lostACK/capoverfill/2DBconnectionconcurrency/restart/fakeflat/TPpriceqty/native/PIT/floor。新authority不闭合停止。verify:deps后按仓库tempfixture隔离运行认可checks；生产entrypoints不跑。
+
+3.一次候选local scripts/release/S00/typecheck/build/fulltests/diffcheck；新增offline工具机械更新S00inventory/currentidentity，不松historical锁。失败不promotion/启动。I2普通提交source+完整成功失败logs+实施报告，远端hash回读。Actions只读实际状态，不继承baseline，不dispatch。
+
+4.最终用户已授权的currentTESTNET8080升级启动：保留dirtycanonical，独立worktree真实source/build复用existingdata/config，不改Settings/models/proxy；无既有Engine不stop，仅一次MANUAL_START隐藏detach，无exittimer/auto-restart。先localgate，后health/closeout/identity6/6/TESTNET/Production0/TP确认；只有PID/HTTP_LISTENING是INCOMPLETE。没有freshno-add边界不启动旧允许adds代码。观察长运行不等于保证未来存活。
+
+回滚触发：TESTNET越界、duplicatewire、cap错误、人管越权、TPcoveragegap、UNKNOWN清除、durableorigin失效或新全historyhotpath。保留no-add及全部history/evidence，不以删ledger/开adds回滚；任何额外lifecycle遵守本轮scope。
+
+---
+
+# Historical design-only plan (superseded by R2 above)
 Status: DESIGN_ONLY / NOT AUTHORIZED FOR LIVE STRATEGY OR ORDER CHANGE
 Baseline: cf7007a5c6d722a4c86354f3405c7565be3a8236
 

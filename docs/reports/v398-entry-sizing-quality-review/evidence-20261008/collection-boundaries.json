@@ -1,0 +1,25 @@
+{
+  "source": "SQLite mode=ro + query_only + single read transaction, WAL observed normally; no immutable",
+  "collectedAt": "2026-10-08T13:01:39.279658+00:00",
+  "runtimeUpdatedAt": 1791458550411,
+  "recordCount": 762,
+  "recordLimit": 2000,
+  "runsRequested": 2697,
+  "runsPresent": 258,
+  "readOnlyQueries": true,
+  "taskDatabaseWrites": 0,
+  "taskExchangeWrites": 0,
+  "productionWritesCurrent": "UNKNOWN_ENGINE_OFFLINE",
+  "limits": {
+    "positions": 100,
+    "entryIntents": 5000,
+    "entryOrders": 5000,
+    "executionFills": 10000,
+    "tradePlans": 5000,
+    "entryReservations": 5000,
+    "tpOrders": 5000,
+    "manualIntents": 1000,
+    "manualOrders": 1000
+  },
+  "redaction": "credential keys, raw prompts/messages, account labels omitted recursively; native order identity retained"
+}

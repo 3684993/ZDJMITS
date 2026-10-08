@@ -1,0 +1,1933 @@
+{
+  "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+  "sources": [
+    {
+      "path": "apps/engine/src/services/entryCoordinator.ts",
+      "sha256": "3e5219a65d6be42ddf03ce4649da95cd51284fd48bdb212915eef825c60f81f2"
+    },
+    {
+      "path": "apps/engine/src/services/v397FrozenSizing.ts",
+      "sha256": "c6294c05204384fe88c65b8a6b810e807dc1e6fa9f3916fcb225fe06353d2918"
+    },
+    {
+      "path": "apps/engine/src/services/quantityHorizonCandidates.ts",
+      "sha256": "84d3e61d317cf8472b98adfde53820e4adedc9d5e14abe788088a380f6b04937"
+    },
+    {
+      "path": "apps/engine/src/services/preAiExecutionEnvelope.ts",
+      "sha256": "d7da1321aae2d14cc38c4eed05dd69da44bebbb776a071d5ed8088a5cf140f10"
+    },
+    {
+      "path": "apps/engine/src/services/entrySubmissionIdentity.ts",
+      "sha256": "1ace08bfd89986b3792de21dfc9957a8f18887fed78fd7d1ca79035db433881c"
+    },
+    {
+      "path": "apps/engine/src/config/settingsStore.ts",
+      "sha256": "5dfd0c59a00eff4f98ee8f85b1dcc4a2cd73c003d9ac6c0cd776c3d4a4ea4415"
+    },
+    {
+      "path": "apps/engine/src/services/entryLineage.ts",
+      "sha256": "7925cc21a4298ba7e0d87a0c8540fb3cf3cffdf637e7bb1c2eda6ee10a66c603"
+    },
+    {
+      "path": "apps/engine/src/services/positionLifecycleTracker.ts",
+      "sha256": "03098a368393afcddad07016b0dc9839d524caee35aaeb7325fc9f74360c690b"
+    },
+    {
+      "path": "apps/engine/src/services/positionService.ts",
+      "sha256": "d8ba408ee330af22d8f3f7b78eb305bdf898d0a201c1aaaeadb4377efe5c25d9"
+    },
+    {
+      "path": "apps/engine/src/adapters/exchange/ExternalTradeAdapter.ts",
+      "sha256": "46c057bb57658120006ed42c37b2aa5ffe11a1c8776c3dd5cf9e33545200c072"
+    },
+    {
+      "path": "apps/engine/src/state/runtimeState.ts",
+      "sha256": "31163d38d5bdbcd0b16ef985e036d5669774d89db337ad99707330ad5a67da0e"
+    },
+    {
+      "path": "apps/engine/src/services/aiQuantityAllocation.ts",
+      "sha256": "51ee0765413392df8cbbcd178de42d3183b550746b43726167b40f7ebf319b60"
+    },
+    {
+      "path": "apps/engine/src/services/executionLease.ts",
+      "sha256": "b23444e986bbe1e7db3f8f9d627a4743a568226e0f1db2ce9e0314849346bf95"
+    },
+    {
+      "path": "apps/engine/src/services/tpGuardian.ts",
+      "sha256": "b9b1d80d6a0ea7f69f7639e456f90ad940af2603ef2d8835d7d51fc77f1ad239"
+    },
+    {
+      "path": "apps/engine/src/services/manualPositionService.ts",
+      "sha256": "c7e8a4c4ec98e25db84292b17ecd0813ff1c91c541e752835f24102d22d56c08"
+    },
+    {
+      "path": "apps/engine/src/services/positionReviewRunner.ts",
+      "sha256": "c1ce1582bfd4449e219ebdf1fff2c6b2ccf880d82019f72037f5f8e1f98e1b8f"
+    },
+    {
+      "path": "apps/engine/src/services/positionReviewScheduler.ts",
+      "sha256": "9065fad8deabd2debddf214f50eeb4452c29b7e175e66d27d691b51b6427f3df"
+    }
+  ],
+  "hits": [
+    {
+      "file": "apps/engine/src/services/entryCoordinator.ts",
+      "line": 192,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "primaryOccupancyBlock("
+      ],
+      "excerpt": "!this.primaryOccupancyBlock(x.symbol) &&"
+    },
+    {
+      "file": "apps/engine/src/services/entryCoordinator.ts",
+      "line": 259,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "buildPreAiExecutionEnvelope(this.state,symbol"
+      ],
+      "excerpt": "private objectiveCapacity(symbol:string){try{const envelope=buildPreAiExecutionEnvelope(this.state,symbol);return envelope.LONG.executable||envelope.SHORT.executable;}catch{return false;}}"
+    },
+    {
+      "file": "apps/engine/src/services/entryCoordinator.ts",
+      "line": 260,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "primaryOccupancyBlock("
+      ],
+      "excerpt": "private primaryOccupancyBlock(symbol:string){"
+    },
+    {
+      "file": "apps/engine/src/services/entryCoordinator.ts",
+      "line": 261,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "if(testnetFundsOnlyEntry(this.state.settings))return null"
+      ],
+      "excerpt": "if(testnetFundsOnlyEntry(this.state.settings))return null;"
+    },
+    {
+      "file": "apps/engine/src/services/entryCoordinator.ts",
+      "line": 269,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "primaryOccupancyBlock("
+      ],
+      "excerpt": "const reason=this.primaryOccupancyBlock(symbol);if(!reason)return false;"
+    },
+    {
+      "file": "apps/engine/src/services/entryCoordinator.ts",
+      "line": 341,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "async submitExactlyOnce"
+      ],
+      "excerpt": "private async submitExactlyOnce(intent:EntryIntent,order:EntryOrder,resumedFrom?:string){"
+    },
+    {
+      "file": "apps/engine/src/services/entryCoordinator.ts",
+      "line": 360,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "entrySubmissionIsolation("
+      ],
+      "excerpt": "const isolation=entrySubmissionIsolation(this.state.settings,{environment,accountId:account,intentId:intent.id,underlying,kind:'ENTRY'});"
+    },
+    {
+      "file": "apps/engine/src/services/entryCoordinator.ts",
+      "line": 427,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "this.exchange.placeEntry("
+      ],
+      "excerpt": "try{const mandate=intent.economicMandate,requestFacts={schemaVersion:'V397-ENTRY-ADAPTER-REQUEST-1',intentId:intent.id,mandateId:mandate?.mandateId??null,orderId:submitting.id,clientOrderId:submitting.clientOrderId,symbol:submitting.symbol,side:submitting.side==='LONG'?'BUY':'SELL',positionSide:submitting.side,type:'LIMIT',timeInForce:'GTX',quantity:submitting.quantity,price:submitting.price,notionalQuote:submitting.quantity*submitting.price,initialMarginQuote:submitting.quantity*submitting.price/submitting.leverage,leverage:submitting.leverage,wireBytesAvailable:false,observedAt:Date.now()};this.events.publish('ENTRY_ADAPTER_REQUEST_FACTS',requestFacts,intent.symbol);const placed=await this.exchange.placeEntry(submitting);const accepted={...placed,submittedAt:placed.submittedAt??Date.now()};this.events.publish('ENTRY_ADAPTER_RESPONSE_FACTS',{schemaVersion:'V397-ENTRY-ADAPTER-RESPONSE-1',intentId:intent.id,mandateId:mandate?.mandateId??null,orderId:accepted.id,clientOrderId:accepted.clientOrderId,exchangeOrderId:accepted.exchangeOrderId,remoteQuantity:accepted.quantity,remotePrice:accepted.price,filledQuantity:accepted.filledQuantity,side:accepted.side,submittedAt:accepted.submittedAt,wireBytesAvailable:false,observedAt:Date.now()},intent.symbol);this.journal?.save({intent,order:accepted});return accepted;}catch(error){"
+    },
+    {
+      "file": "apps/engine/src/services/entryCoordinator.ts",
+      "line": 474,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "setLeverage("
+      ],
+      "excerpt": "try{await this.exchange.setLeverage(symbol,intent.leverage);}catch(error){this.events.publish('ENTRY_EXECUTION_WAIT_RETRY_FAILED',{intentId:intent.id,message:error instanceof Error?error.message:String(error),stage:'SET_LEVERAGE'},symbol);continue;}"
+    },
+    {
+      "file": "apps/engine/src/services/entryCoordinator.ts",
+      "line": 525,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "buildPreAiExecutionEnvelope(this.state,symbol"
+      ],
+      "excerpt": "executionEnvelope=buildPreAiExecutionEnvelope(this.state,symbol,Date.now(),reachability);"
+    },
+    {
+      "file": "apps/engine/src/services/entryCoordinator.ts",
+      "line": 547,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "buildPreAiCandidateSets("
+      ],
+      "excerpt": "const candidateBuild=this.buildPreAiCandidateSets(symbol,executionEnvelope);"
+    },
+    {
+      "file": "apps/engine/src/services/entryCoordinator.ts",
+      "line": 688,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "materializeCandidateQuantityAllocation("
+      ],
+      "excerpt": "const plan=materializeCandidateQuantityAllocation({state:this.state,candidate,snapshot:market,side,quantityUnits,authorizationMaxPrice:frozenEntryRange.max,envelope:selectedExecutionEnvelope});"
+    },
+    {
+      "file": "apps/engine/src/services/entryCoordinator.ts",
+      "line": 744,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "buildAndPersistTradePlan("
+      ],
+      "excerpt": "const planOutcome=this.buildAndPersistTradePlan({symbol,side,market,d:authorizedDecision,result,executionEnvelope:selectedExecutionEnvelope,admission,allocation:plan,cycleId:cycleIdOfIntent,candidateSet});"
+    },
+    {
+      "file": "apps/engine/src/services/entryCoordinator.ts",
+      "line": 755,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "reserveEntry({"
+      ],
+      "excerpt": "const reservation = this.state.reserveEntry({underlying:plan.underlying,quoteAsset:plan.quoteAsset,marginUsd:plan.marginUsd,notionalUsd:plan.notionalUsd,planId:plan.planId,maxPositions:this.state.settings.portfolio.maxPositions,ttlSeconds:this.state.settings.riskGovernance.reservationTtlSeconds,leaseSeconds:this.state.settings.riskGovernance.lockLeaseSeconds,riskGeneration:riskTicket?.riskGeneration,riskTicket,admissionCandidate,riskCapitalVersion:String(this.state.runtimeControl.capital.capitalVersion??''),maxConcurrentReservations:this.state.settings.riskGovernance.maxConcurrentReservations});"
+    },
+    {
+      "file": "apps/engine/src/services/entryCoordinator.ts",
+      "line": 792,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "setLeverage("
+      ],
+      "excerpt": "try {await this.exchange.setLeverage(symbol, leverage);} catch (error) {const reason=error instanceof Error?error.message:String(error);this.state.releaseEntryReservation(reservationId);this.events.publish(\"ENTRY_ORDER_BLOCKED\",{intentId:intent.id,planId:tradePlan.planId,reservationId,brainRunId:result.runId,decisionChainId:result.runId,reason,stage:\"SET_LEVERAGE\"},symbol);this.cooldown(symbol, reason, 60_000);return;}"
+    },
+    {
+      "file": "apps/engine/src/services/entryCoordinator.ts",
+      "line": 903,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "buildPreAiCandidateSets("
+      ],
+      "excerpt": "private buildPreAiCandidateSets(symbol:string,executionEnvelope:ReturnType<typeof buildPreAiExecutionEnvelope>){"
+    },
+    {
+      "file": "apps/engine/src/services/entryCoordinator.ts",
+      "line": 981,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "buildAndPersistTradePlan("
+      ],
+      "excerpt": "private buildAndPersistTradePlan(input:{symbol:string;side:'LONG'|'SHORT';market:any;d:any;result:any;executionEnvelope:any;admission:any;allocation:any;cycleId:string;candidateSet:CandidateSet}){"
+    },
+    {
+      "file": "apps/engine/src/services/entryCoordinator.ts",
+      "line": 1087,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "if(testnetFundsOnlyEntry(this.state.settings))return null"
+      ],
+      "excerpt": "if(testnetFundsOnlyEntry(this.state.settings))return null;"
+    },
+    {
+      "file": "apps/engine/src/services/v397FrozenSizing.ts",
+      "line": 3,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "export function leverageChoices"
+      ],
+      "excerpt": "export function leverageChoices(policyMaximum:number,exchangeMaximum:number):number[]{"
+    },
+    {
+      "file": "apps/engine/src/services/v397FrozenSizing.ts",
+      "line": 15,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "export function minimumQuantityForTarget"
+      ],
+      "excerpt": "export function minimumQuantityForTarget(input:FrozenSizingInput){"
+    },
+    {
+      "file": "apps/engine/src/services/v397FrozenSizing.ts",
+      "line": 23,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "const notionalFloor"
+      ],
+      "excerpt": "const notionalFloor=Math.max(input.exchangeMinimumNotional,input.businessMinimumNotional,"
+    },
+    {
+      "file": "apps/engine/src/services/v397FrozenSizing.ts",
+      "line": 26,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "const ceilingUnits"
+      ],
+      "excerpt": "const ceilingUnits=Math.floor(input.availableMarginQuote*leverage/(entryPrice*stepSize)+1e-9);"
+    },
+    {
+      "file": "apps/engine/src/services/v397FrozenSizing.ts",
+      "line": 34,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "if(!profitable(ceilingUnits))"
+      ],
+      "excerpt": "if(!profitable(ceilingUnits))return null;"
+    },
+    {
+      "file": "apps/engine/src/services/v397FrozenSizing.ts",
+      "line": 36,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "while(lo<hi)"
+      ],
+      "excerpt": "while(lo<hi){const mid=Math.floor((lo+hi)/2);if(profitable(mid))hi=mid;else lo=mid+1;}"
+    },
+    {
+      "file": "apps/engine/src/services/quantityHorizonCandidates.ts",
+      "line": 51,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "export function quantityLadder"
+      ],
+      "excerpt": "export function quantityLadder(minUnits:number,maxUnits:number,stepSize:number,entryPrice:number,minNotional:number){"
+    },
+    {
+      "file": "apps/engine/src/services/quantityHorizonCandidates.ts",
+      "line": 119,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "export function buildQuantityHorizonCandidates"
+      ],
+      "excerpt": "export function buildQuantityHorizonCandidates(input:{"
+    },
+    {
+      "file": "apps/engine/src/services/quantityHorizonCandidates.ts",
+      "line": 157,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "const quantityCeiling"
+      ],
+      "excerpt": "const quantityCeiling=Math.min(Number(envelope.maxQuantityUnits??0),Number(envelope.maxNotionalUsd??0)/(quote.stepSize*entryPrice),"
+    },
+    {
+      "file": "apps/engine/src/services/quantityHorizonCandidates.ts",
+      "line": 194,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "minimumQuantityForTarget({"
+      ],
+      "excerpt": "const solved=minimumQuantityForTarget({quoteAsset,side,entryPrice,targetPrice:target,stepSize:quote.stepSize,minQty:quote.minQty,"
+    },
+    {
+      "file": "apps/engine/src/services/quantityHorizonCandidates.ts",
+      "line": 261,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "const risk:TradePlanRisk"
+      ],
+      "excerpt": "const risk:TradePlanRisk|null=input.risk?{capitalAtRiskUsd:round(input.risk.capitalAtRiskUsd+margin,6),grossNotionalAfterUsd:round(input.risk.grossNotionalAfterUsd+notional,6),"
+    },
+    {
+      "file": "apps/engine/src/services/quantityHorizonCandidates.ts",
+      "line": 267,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "const sizingProof"
+      ],
+      "excerpt": "const sizingProof=input.candidateSchemaVersion==='V397-PLAN-CANDIDATE-1'?{"
+    },
+    {
+      "file": "apps/engine/src/services/preAiExecutionEnvelope.ts",
+      "line": 58,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "sameUnderlyingOccupied"
+      ],
+      "excerpt": "positionCapacity:{used:number;max:number;slotAvailable:boolean;sameUnderlyingOccupied:boolean};"
+    },
+    {
+      "file": "apps/engine/src/services/preAiExecutionEnvelope.ts",
+      "line": 91,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "export function buildPreAiExecutionEnvelope"
+      ],
+      "excerpt": "export function buildPreAiExecutionEnvelope(state:RuntimeState,symbol:string,now=Date.now(),reachability?:HistoricalTpReachabilityEnvelope):PreAiExecutionEnvelope {"
+    },
+    {
+      "file": "apps/engine/src/services/preAiExecutionEnvelope.ts",
+      "line": 94,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "availableBalance"
+      ],
+      "excerpt": "const equityUsd=Number(state.account.equityUsd??0),availableBalance=Number(state.account.assets.find((asset:any)=>asset.asset===quoteAsset)?.availableBalance??0);"
+    },
+    {
+      "file": "apps/engine/src/services/preAiExecutionEnvelope.ts",
+      "line": 96,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "fundsOnly"
+      ],
+      "excerpt": "const leverageTiers=state.marginTierCoverage?.tiersBySymbol?.[symbol]??[],fundsOnlyPolicy=testnetFundsOnlyEntry(state.settings),"
+    },
+    {
+      "file": "apps/engine/src/services/preAiExecutionEnvelope.ts",
+      "line": 99,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "fundsOnly"
+      ],
+      "excerpt": "leverage0=fundsOnlyPolicy?Math.max(1,leverageOptions.at(-1)??0):Math.min(Number(p.globalMaxLeverage??1),Number(candidate?.recommendedLeverage??p.globalMaxLeverage??1)),"
+    },
+    {
+      "file": "apps/engine/src/services/preAiExecutionEnvelope.ts",
+      "line": 102,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "sameUnderlyingOccupied"
+      ],
+      "excerpt": "const privateReady=privateAccountFresh(state.account,now),capacity=state.entryCapacity(),sameUnderlyingOccupied=[...state.positions.values()].some(row=>resolveUnderlying(row.symbol)===underlying)||[...state.entryOrders.values()].some(row=>resolveUnderlying(row.symbol)===underlying&&entryOrderOccupiesRisk(row,now))||[...state.entryReservations.values()].some((row:any)=>row.underlying===underlying&&['RESERVED','WORKING'].includes(row.status)&&Number(row.expiresAt)>now);"
+    },
+    {
+      "file": "apps/engine/src/services/preAiExecutionEnvelope.ts",
+      "line": 103,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "sameUnderlyingOccupied"
+      ],
+      "excerpt": "const slotAvailable=testnetFundsOnlyEntry(state.settings)||(capacity.used<state.settings.portfolio.maxPositions&&!sameUnderlyingOccupied);"
+    },
+    {
+      "file": "apps/engine/src/services/preAiExecutionEnvelope.ts",
+      "line": 125,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "fundsOnly"
+      ],
+      "excerpt": "const fundsOnly=testnetFundsOnlyEntry(state.settings);"
+    },
+    {
+      "file": "apps/engine/src/services/preAiExecutionEnvelope.ts",
+      "line": 131,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "fundsOnly"
+      ],
+      "excerpt": "const maxNotionalUsd=slotAvailable&&(fundsOnly||risk.executable)"
+    },
+    {
+      "file": "apps/engine/src/services/preAiExecutionEnvelope.ts",
+      "line": 132,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "fundsOnly"
+      ],
+      "excerpt": "?Math.max(0,fundsOnly?quoteNotionalCapacity:Math.min(quoteNotionalCapacity,risk.finalNotional)):0,"
+    },
+    {
+      "file": "apps/engine/src/services/preAiExecutionEnvelope.ts",
+      "line": 145,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "fundsOnly"
+      ],
+      "excerpt": "const executable=(!fundsOnly||leverageOptions.length>0)&&businessMinimumConfigured&&marginTierProven&&privateReady&&slotAvailable&&!humanHardBlock&&maxNotionalUsd+1e-8>=Math.max(minimumNotional,businessMinimumNotional)&&legalMaxQuantityUnits>=minQuantityUnits;"
+    },
+    {
+      "file": "apps/engine/src/services/preAiExecutionEnvelope.ts",
+      "line": 146,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "fundsOnly"
+      ],
+      "excerpt": "const blockers=[...(fundsOnly?[]:risk.blockers),...(humanHardBlock?['HUMAN_MANAGED_EXPOSURE_LIMIT']:[]),...(marginTierProven?[]:[`MARGIN_TIER_SYMBOL_UNPROVEN:${symbol}`]),...(minimumInitialMarginQuote===null?['BUSINESS_MINIMUM_INITIAL_MARGIN_UNCONFIGURED']:[]),...(minimumOrderNotionalQuote===null?['BUSINESS_MINIMUM_ORDER_NOTIONAL_UNCONFIGURED']:[]),...(fundsOnly&&businessMinimumConfigured&&maxNotionalUsd+1e-8<businessMinimumNotional?['BUSINESS_MINIMUM_EXCEEDS_AVAILABLE_FUNDS']:[])];"
+    },
+    {
+      "file": "apps/engine/src/services/preAiExecutionEnvelope.ts",
+      "line": 158,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "fundsOnly"
+      ],
+      "excerpt": "const firstBindingConstraint=fundsOnly"
+    },
+    {
+      "file": "apps/engine/src/services/preAiExecutionEnvelope.ts",
+      "line": 171,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "const LONG=sideCapacity"
+      ],
+      "excerpt": "const LONG=sideCapacity('LONG'),SHORT=sideCapacity('SHORT'),"
+    },
+    {
+      "file": "apps/engine/src/services/preAiExecutionEnvelope.ts",
+      "line": 182,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "fundsOnly"
+      ],
+      "excerpt": "const fundsOnly=testnetFundsOnlyEntry(state.settings),operatorMaxInitialMarginQuote=fundsOnly?null:Number.isFinite(Number(p.maxMarginPerPositionUsd))&&Number(p.maxMarginPerPositionUsd)>=0?Number(p.maxMarginPerPositionUsd):null,"
+    },
+    {
+      "file": "apps/engine/src/services/preAiExecutionEnvelope.ts",
+      "line": 183,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "fundsOnly"
+      ],
+      "excerpt": "operatorMaxEquityPct=fundsOnly?null:Number.isFinite(Number(p.maxEquityPct))&&Number(p.maxEquityPct)>=0?Number(p.maxEquityPct):null,"
+    },
+    {
+      "file": "apps/engine/src/services/preAiExecutionEnvelope.ts",
+      "line": 185,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "fundsOnly"
+      ],
+      "excerpt": "operatorCapApplied=!fundsOnly&&maxInitialMarginQuote+1e-8<Number(capital.executableMarginUsd??0),"
+    },
+    {
+      "file": "apps/engine/src/services/preAiExecutionEnvelope.ts",
+      "line": 188,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "availableBalance"
+      ],
+      "excerpt": "availableInitialMarginQuote:Number(capital.availableBalanceUsd??0),committedInitialMarginQuote:Number(reservedMarginUsd)+Number(executionLeaseMarginUsd),"
+    },
+    {
+      "file": "apps/engine/src/services/preAiExecutionEnvelope.ts",
+      "line": 191,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "sameUnderlyingOccupied",
+        "fundsOnly",
+        "availableBalance"
+      ],
+      "excerpt": "return {version:'V3.9.3_PRE_AI_EXECUTION_ENVELOPE',resourcePolicy:fundsOnly?'TESTNET_FUNDS_ONLY':'LEGACY_RISK_ENFORCED',symbol,underlying,quoteAsset,executableSides,noExecutableSide:executableSides.length===0,sideAuthorization,entryCapitalBudget,createdAt:now,expiresAt:now+Math.max(180_000,Number(state.settings.ai.decisionTimeoutMs??30_000)+120_000),notice:'EXECUTION FACTS ARE NOT MARKET SIGNALS.',account:{status:String(state.account.status),equityUsd,availableMarginUsd:availableBalance,reservedMarginUsd,executionLeaseMarginUsd,freeMarginUsd},positionCapacity:{used:capacity.used,max:state.settings.portfolio.maxPositions,slotAvailable,sameUnderlyingOccupied},leverage,leverageOptions,leverageTiers,exchange:{tickSize:q.tickSize,stepSize:q.stepSize,minQty:q.minQty,minNotional:q.minNotional},makerReachableBand:{min:bandMin,max:bandMax},recentTradedPrices:market.recentTradedPrices??[],fees:{makerFeeBps,takerFeeBps,roundTripCostBps:makerFeeBps+(state.settings.takeProfit.exitFeeAssumption==='TAKER'?takerFeeBps:makerFeeBps),safetyMarginBps},economics,...(reachability?{reachability}:{}),LONG,SHORT,leaseRequiredMarginUsd,leaseBudget:{requestedUsd:leaseRequiredMarginUsd,cappedBy:'MINIMUM_EXECUTABLE_CANDIDATE',budgetUsd:leaseRequiredMarginUsd}};"
+    },
+    {
+      "file": "apps/engine/src/services/entrySubmissionIdentity.ts",
+      "line": 52,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "export function entrySubmissionIsolation"
+      ],
+      "excerpt": "export function entrySubmissionIsolation(settings:any,identity:{environment:string;accountId:string;intentId:string;underlying:string;kind?:'ENTRY'|'EXIT'}):EntrySubmissionIsolation{"
+    },
+    {
+      "file": "apps/engine/src/services/entrySubmissionIdentity.ts",
+      "line": 56,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "mode:fundsOnly?'SUBMISSION_ONLY'"
+      ],
+      "excerpt": "mode:fundsOnly?'SUBMISSION_ONLY':'UNDERLYING_LEGACY',"
+    },
+    {
+      "file": "apps/engine/src/services/entrySubmissionIdentity.ts",
+      "line": 60,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "isolationKey:key"
+      ],
+      "excerpt": "isolationKey:key([identity.environment,identity.accountId,String(identity.underlying??'').trim().toUpperCase(),kind]),"
+    },
+    {
+      "file": "apps/engine/src/config/settingsStore.ts",
+      "line": 304,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "BEGIN IMMEDIATE"
+      ],
+      "excerpt": "this.db.exec(\"BEGIN IMMEDIATE\");"
+    },
+    {
+      "file": "apps/engine/src/config/settingsStore.ts",
+      "line": 319,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "BEGIN IMMEDIATE"
+      ],
+      "excerpt": "this.db.exec(\"BEGIN IMMEDIATE\");"
+    },
+    {
+      "file": "apps/engine/src/config/settingsStore.ts",
+      "line": 334,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "BEGIN IMMEDIATE"
+      ],
+      "excerpt": "this.db.exec(\"BEGIN IMMEDIATE\");"
+    },
+    {
+      "file": "apps/engine/src/config/settingsStore.ts",
+      "line": 349,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "BEGIN IMMEDIATE"
+      ],
+      "excerpt": "this.db.exec(\"BEGIN IMMEDIATE\");"
+    },
+    {
+      "file": "apps/engine/src/config/settingsStore.ts",
+      "line": 364,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "BEGIN IMMEDIATE"
+      ],
+      "excerpt": "this.db.exec(\"BEGIN IMMEDIATE\");"
+    },
+    {
+      "file": "apps/engine/src/config/settingsStore.ts",
+      "line": 425,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "BEGIN IMMEDIATE"
+      ],
+      "excerpt": "this.db.exec(\"BEGIN IMMEDIATE\");"
+    },
+    {
+      "file": "apps/engine/src/config/settingsStore.ts",
+      "line": 468,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "BEGIN IMMEDIATE"
+      ],
+      "excerpt": "this.db.exec(\"BEGIN IMMEDIATE\");"
+    },
+    {
+      "file": "apps/engine/src/config/settingsStore.ts",
+      "line": 671,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "BEGIN IMMEDIATE"
+      ],
+      "excerpt": "this.db.exec(\"BEGIN IMMEDIATE\");"
+    },
+    {
+      "file": "apps/engine/src/config/settingsStore.ts",
+      "line": 738,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "BEGIN IMMEDIATE"
+      ],
+      "excerpt": "* and the rows holding those datasets land in one `BEGIN IMMEDIATE`, so there is never a Settings"
+    },
+    {
+      "file": "apps/engine/src/config/settingsStore.ts",
+      "line": 970,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "BEGIN IMMEDIATE"
+      ],
+      "excerpt": "this.db.exec('BEGIN IMMEDIATE');"
+    },
+    {
+      "file": "apps/engine/src/config/settingsStore.ts",
+      "line": 1154,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "BEGIN IMMEDIATE"
+      ],
+      "excerpt": "this.db.exec(\"BEGIN IMMEDIATE\");"
+    },
+    {
+      "file": "apps/engine/src/config/settingsStore.ts",
+      "line": 1210,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "claimEntryExecution("
+      ],
+      "excerpt": "claimEntryExecution(scope:string,value:EntryExecutionRecord,retryRejected=false,isolation?:{mode:'SUBMISSION_ONLY'|'UNDERLYING_LEGACY';submissionKey:string;isolationKey:string}|null):EntryClaimOutcome{"
+    },
+    {
+      "file": "apps/engine/src/config/settingsStore.ts",
+      "line": 1242,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "if(mode==='UNDERLYING_LEGACY')"
+      ],
+      "excerpt": "if(mode==='UNDERLYING_LEGACY'){"
+    },
+    {
+      "file": "apps/engine/src/config/settingsStore.ts",
+      "line": 1267,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "BEGIN IMMEDIATE"
+      ],
+      "excerpt": "this.db.exec('BEGIN IMMEDIATE');this.transactionActive=true;"
+    },
+    {
+      "file": "apps/engine/src/config/settingsStore.ts",
+      "line": 1272,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "saveEntryExecutionRecord("
+      ],
+      "excerpt": "saveEntryExecution(value:EntryExecutionRecord){return reconciliationTiming.measure('journal.entry',()=>this.saveEntryExecutionRecord(value));}"
+    },
+    {
+      "file": "apps/engine/src/config/settingsStore.ts",
+      "line": 1273,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "saveEntryExecutionRecord("
+      ],
+      "excerpt": "private saveEntryExecutionRecord(value:EntryExecutionRecord){"
+    },
+    {
+      "file": "apps/engine/src/config/settingsStore.ts",
+      "line": 1407,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "BEGIN IMMEDIATE"
+      ],
+      "excerpt": "this.db.exec(\"BEGIN IMMEDIATE\");"
+    },
+    {
+      "file": "apps/engine/src/services/entryLineage.ts",
+      "line": 6,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "export function projectEntryLineage"
+      ],
+      "excerpt": "export function projectEntryLineage(record:TradeRecord, context:EntryLineageContext) {"
+    },
+    {
+      "file": "apps/engine/src/services/entryLineage.ts",
+      "line": 16,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "LOT_FILL_CHAIN_UNPROVEN"
+      ],
+      "excerpt": "if(!lotFills.length||Math.min(...lotFills.map(f=>f.executionTime))!==lot.filledAt||Math.abs(qty-lot.quantity)>Math.max(1e-8,lot.quantity*1e-8)||lot.averagePrice==null||Math.abs(cost/qty-lot.averagePrice)>Math.max(1e-8,lot.averagePrice*1e-8))reasons.push('LOT_FILL_CHAIN_UNPROVEN');"
+    },
+    {
+      "file": "apps/engine/src/services/entryLineage.ts",
+      "line": 20,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "LOT_PLAN_CHAIN_UNPROVEN"
+      ],
+      "excerpt": "if(!plan||plan.provenance?.modelRunId!==intent?.brainRunId||plan.symbol!==record.symbol||plan.planVersion!==intent?.planVersion||plan.cycleId!==(intent?.planCycleId??record.cycleId))reasons.push('LOT_PLAN_CHAIN_UNPROVEN');"
+    },
+    {
+      "file": "apps/engine/src/services/entryLineage.ts",
+      "line": 21,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "ORIGIN_PRIMARY_RUN_UNPROVEN"
+      ],
+      "excerpt": "if(!run||run.role!=='PRIMARY_BRAIN'||run.status!=='COMPLETED'||run.symbol!==record.symbol||run.requestSource!=='ENTRY')reasons.push('ORIGIN_PRIMARY_RUN_UNPROVEN');"
+    },
+    {
+      "file": "apps/engine/src/services/entryLineage.ts",
+      "line": 44,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "const complete="
+      ],
+      "excerpt": "const complete=lotQuantityConserved&&lots.length>0&&lots.every(l=>l.status==='EXACT')&&!duplicateRunForIndependentLots;"
+    },
+    {
+      "file": "apps/engine/src/services/positionLifecycleTracker.ts",
+      "line": 32,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "addCount:"
+      ],
+      "excerpt": "lastAddAt:input.quantity>0?now:null,addCount:0,entryOrderIds:[],entryTradeIds:[],exitOrderIds:[],exitTradeIds:[],entryLotIds:input.lotId?[input.lotId]:[],"
+    },
+    {
+      "file": "apps/engine/src/services/positionLifecycleTracker.ts",
+      "line": 41,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "transition==='INCREASE'",
+        "addCount:"
+      ],
+      "excerpt": "...(transition==='INCREASE'?{lastAddAt:now,addCount:Number(previous.addCount??0)+1,...(input.lotId&&!previous.entryLotIds?.includes(input.lotId)?{entryLotIds:[...new Set([...(previous.entryLotIds??[]),input.lotId])]}:{})}:{}),"
+    },
+    {
+      "file": "apps/engine/src/services/positionService.ts",
+      "line": 17,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "addCount"
+      ],
+      "excerpt": "* close, `lastAddAt`/`addCount` describe the add-ons, and `physicalCycleKey` makes the identity"
+    },
+    {
+      "file": "apps/engine/src/services/positionService.ts",
+      "line": 25,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "addCount"
+      ],
+      "excerpt": "position.addCount=Math.max(0,Number(lifecycle?.addCount??position.addCount??0));"
+    },
+    {
+      "file": "apps/engine/src/adapters/exchange/ExternalTradeAdapter.ts",
+      "line": 18,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "productionWrites"
+      ],
+      "excerpt": "private userStream:BinanceUserDataStream|null=null;private positionMode:{hedge:boolean;checkedAt:number}|null=null;private openTimeCache=new Map<string,{openedAt:number;source:Position['entryTimeSource'];checkedAt:number}>();private leverageCache=new Map<string,number>();private leverageFlights=new Map<string,Promise<number>>();private serverTime:{offset:number;fetchedAt:number}|null=null;private exactOrderCache=new Map<string,ExactOrderCacheEntry>();private exactOrderFlights=new Map<string,Promise<any>>();private writeStats={testnetWrites:0,productionWrites:0,blockedProductionWriteAttempts:0,lastWriteAt:null as number|null,lastWritePath:null as string|null};"
+    },
+    {
+      "file": "apps/engine/src/adapters/exchange/ExternalTradeAdapter.ts",
+      "line": 33,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "async signed"
+      ],
+      "excerpt": "private async signed<T>(method:string,path:string,params:Record<string,string|number|boolean>={},purpose?:string,source?:string){"
+    },
+    {
+      "file": "apps/engine/src/adapters/exchange/ExternalTradeAdapter.ts",
+      "line": 122,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "async placeEntry"
+      ],
+      "excerpt": "async placeEntry(order:EntryOrder){const hedge=await this.hedgeMode(),clientOrderId=binanceClientOrderIdFactory.assert(order.clientOrderId??binanceClientOrderIdFactory.create('ML',order.id)),params:Record<string,string|number|boolean>={symbol:order.symbol,side:order.side==='LONG'?'BUY':'SELL',type:'LIMIT',timeInForce:'GTX',quantity:order.quantity,price:order.price,newClientOrderId:clientOrderId};if(hedge)params.positionSide=order.side;const result=await this.signed<any>('POST','/fapi/v1/order',params,'NEW_ENTRY');return{...order,clientOrderId,exchangeOrderId:String(result.orderId),status:'WORKING' as const,updatedAt:Date.now()};}"
+    },
+    {
+      "file": "apps/engine/src/adapters/exchange/ExternalTradeAdapter.ts",
+      "line": 130,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "async replaceEntry"
+      ],
+      "excerpt": "async replaceEntry(order:EntryOrder,price:number){"
+    },
+    {
+      "file": "apps/engine/src/adapters/exchange/ExternalTradeAdapter.ts",
+      "line": 252,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "async fetchPositions"
+      ],
+      "excerpt": "async fetchPositions(){"
+    },
+    {
+      "file": "apps/engine/src/adapters/exchange/ExternalTradeAdapter.ts",
+      "line": 355,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "async setLeverage"
+      ],
+      "excerpt": "async setLeverage(symbol:string,requested:number){"
+    },
+    {
+      "file": "apps/engine/src/state/runtimeState.ts",
+      "line": 125,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "entryReservations"
+      ],
+      "excerpt": "entryReservations = new Map();"
+    },
+    {
+      "file": "apps/engine/src/state/runtimeState.ts",
+      "line": 134,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "entryReservations"
+      ],
+      "excerpt": "return !same(reservations,this.entryReservations)||!same(locks,this.underlyingLocks);"
+    },
+    {
+      "file": "apps/engine/src/state/runtimeState.ts",
+      "line": 143,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "entryReservations"
+      ],
+      "excerpt": "const reservations=new Map(this.entryReservations),locks=new Map(this.underlyingLocks),revision=this.entryReservationRevision;"
+    },
+    {
+      "file": "apps/engine/src/state/runtimeState.ts",
+      "line": 146,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "entryReservations"
+      ],
+      "excerpt": "catch(error){this.entryReservations=reservations;this.underlyingLocks=locks;this.entryReservationRevision=revision;if(error&&error.code===RESERVATION_NO_CHANGE)return error.reservationResult;throw error;}"
+    },
+    {
+      "file": "apps/engine/src/state/runtimeState.ts",
+      "line": 169,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "entryReservations"
+      ],
+      "excerpt": "for (const [id,reservation] of this.entryReservations) {"
+    },
+    {
+      "file": "apps/engine/src/state/runtimeState.ts",
+      "line": 172,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "entryReservations"
+      ],
+      "excerpt": "this.entryReservations.set(id,{...reservation,status:'RELEASED'});changed=true;"
+    },
+    {
+      "file": "apps/engine/src/state/runtimeState.ts",
+      "line": 181,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "entryReservations"
+      ],
+      "excerpt": "for(const [id,reservation] of this.entryReservations){"
+    },
+    {
+      "file": "apps/engine/src/state/runtimeState.ts",
+      "line": 195,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "entryReservations"
+      ],
+      "excerpt": "const inFlight=new Set(orders.map(o=>resolveUnderlying(o.symbol)).filter(u=>!held.has(u))),reservations=[...this.entryReservations.values()].filter(r=>r.id!==ignoreReservationId&&this.reservationOccupiesRisk(r,now)&&!held.has(String(r.underlying).toUpperCase())&&!inFlight.has(String(r.underlying).toUpperCase()));"
+    },
+    {
+      "file": "apps/engine/src/state/runtimeState.ts",
+      "line": 198,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "reserveEntry(input)"
+      ],
+      "excerpt": "reserveEntry(input) {"
+    },
+    {
+      "file": "apps/engine/src/state/runtimeState.ts",
+      "line": 209,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "entryReservations"
+      ],
+      "excerpt": "const reserved=[...this.entryReservations.values()].filter(x=>this.reservationHoldsRisk(x));"
+    },
+    {
+      "file": "apps/engine/src/state/runtimeState.ts",
+      "line": 239,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "entryReservations"
+      ],
+      "excerpt": "if(testnetFundsOnlyEntry(this.settings)&&input.planId&&[...this.entryReservations.values()].some(row=>row.planId===input.planId))return {ok:false,reason:'PLAN_ALREADY_RESERVED'};"
+    },
+    {
+      "file": "apps/engine/src/state/runtimeState.ts",
+      "line": 241,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "entryReservations"
+      ],
+      "excerpt": "this.entryReservations.set(id,{id,underlying,quoteAsset:input.quoteAsset,marginUsd:input.marginUsd,notionalUsd:input.notionalUsd,planId:input.planId,intentId:null,createdAt:now,expiresAt:now+input.ttlSeconds*1000,status:'RESERVED',riskBinding:binding});"
+    },
+    {
+      "file": "apps/engine/src/state/runtimeState.ts",
+      "line": 251,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "entryReservations"
+      ],
+      "excerpt": "const reservation=this.entryReservations.get(id);if(!reservation)return false;"
+    },
+    {
+      "file": "apps/engine/src/state/runtimeState.ts",
+      "line": 255,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "entryReservations"
+      ],
+      "excerpt": "if(status==='WORKING'){if(!reservation.intentId&&intentId)this.entryReservations.set(id,{...reservation,intentId});return true;}"
+    },
+    {
+      "file": "apps/engine/src/state/runtimeState.ts",
+      "line": 256,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "entryReservations"
+      ],
+      "excerpt": "if(status==='RESERVED'&&Number(reservation.expiresAt)>now){this.entryReservations.set(id,{...reservation,intentId:intentId??reservation.intentId,status:'WORKING'});return true;}"
+    },
+    {
+      "file": "apps/engine/src/state/runtimeState.ts",
+      "line": 258,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "entryReservations"
+      ],
+      "excerpt": "this.entryReservations.set(id,{...reservation,intentId:intentId??reservation.intentId,status:'WORKING',reopenedBy:'EXCHANGE_FACT',reopenedFromStatus:status,reopenOrderId:orderId,reopenReason:reason,reopenedAt:now});return true;"
+    },
+    {
+      "file": "apps/engine/src/state/runtimeState.ts",
+      "line": 267,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "entryReservations"
+      ],
+      "excerpt": "const existing=this.entryReservations.get(id);"
+    },
+    {
+      "file": "apps/engine/src/state/runtimeState.ts",
+      "line": 272,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "entryReservations"
+      ],
+      "excerpt": "this.entryReservations.set(id,merged);return true;"
+    },
+    {
+      "file": "apps/engine/src/state/runtimeState.ts",
+      "line": 276,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "entryReservations"
+      ],
+      "excerpt": "const reservation=this.entryReservations.get(id);if(!reservation||!['RESERVED','WORKING'].includes(reservation.status))return false;"
+    },
+    {
+      "file": "apps/engine/src/state/runtimeState.ts",
+      "line": 278,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "entryReservations"
+      ],
+      "excerpt": "this.entryReservations.set(id,{...reservation,status:'RELEASED'});"
+    },
+    {
+      "file": "apps/engine/src/state/runtimeState.ts",
+      "line": 282,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "entryReservations"
+      ],
+      "excerpt": "commitEntryReservation(id){return this.mutateReservations(()=>{const reservation=this.entryReservations.get(id);if(!reservation||!['RESERVED','WORKING'].includes(reservation.status))return false;this.entryReservations.set(id,{...reservation,status:'COMMITTED'});if(this.underlyingLocks.get(reservation.underlying)?.reservationId===id)this.underlyingLocks.delete(reservation.underlying);return true;});}"
+    },
+    {
+      "file": "apps/engine/src/state/runtimeState.ts",
+      "line": 284,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "entryReservations"
+      ],
+      "excerpt": "reservationSummary(now = Date.now()) { const active=[...this.entryReservations.values()].filter(x => this.reservationHoldsRisk(x)),locks=[...this.underlyingLocks.entries()].map(([underlying, value]) => ({ underlying, ...value })),activeById=new Map(active.map(row=>[row.id,row])),orphanLocks=locks.filter(lock=>{const reservation=activeById.get(lock.reservationId);return !reservation||reservation.underlying!==lock.underlying;}),expiredReservations=active.filter(row=>Number(row.expiresAt)<=now).map(row=>({id:row.id,underlying:row.underlying,status:row.status,expiresAt:row.expiresAt})); return { active, locks, orphanLocks, expiredReservations, expiredLocks:locks.filter(lock=>lock.leaseUntil<=now) }; }"
+    },
+    {
+      "file": "apps/engine/src/state/runtimeState.ts",
+      "line": 290,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "entryReservations"
+      ],
+      "excerpt": "serialize() { return { entryReservationRevision:this.entryReservationRevision, riskLedger:this.riskLedger, aiUsageDroppedRows:this.aiUsageDroppedRows, generation: this.generation, marketGeneration: this.marketGeneration, positions: [...this.positions], entryIntents: [...this.entryIntents], entryOrders: [...this.entryOrders], tpOrders: [...this.tpOrders], manualExitGoals:[...this.manualExitGoals], manualIntents: [...this.manualIntents], manualOrders: [...this.manualOrders], allocationPlans: [...this.allocationPlans], tradePlans: [...this.tradePlans], planExecutions: [...this.planExecutions], aiUsage: [...this.aiUsage], positionReviews: [...this.positionReviews], reviewBudgets: [...this.reviewBudgets], entryReservations: [...this.entryReservations], underlyingLocks: [...this.underlyingLocks], runtimeControl: this.runtimeControl, executionGovernance: this.executionGovernance, shadowRunner: this.shadowRunner, aiRuns: this.aiRuns, rejectionCooldown: [...this.rejectionCooldown], candidateLifecycle:[...this.candidateLifecycle], directionDecisionStates:[...this.directionDecisionStates], tradeOutcomes: this.tradeOutcomes, tradeRecords: [...this.tradeRecords], experienceSamples: [...this.experienceSamples], executionFills: this.executionFills, lifecycles: [...this.lifecycles], activity: this.activity, account: this.account }; }"
+    },
+    {
+      "file": "apps/engine/src/state/runtimeState.ts",
+      "line": 308,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "restore("
+      ],
+      "excerpt": "restore(value) { if (!value || typeof value !== 'object')"
+    },
+    {
+      "file": "apps/engine/src/state/runtimeState.ts",
+      "line": 309,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "entryReservations"
+      ],
+      "excerpt": "return; this.entryReservationRevision=Number.isSafeInteger(value.entryReservationRevision)?value.entryReservationRevision:0; this.riskLedger=value.riskLedger&&typeof value.riskLedger==='object'?value.riskLedger:null; this.aiUsageDroppedRows=Math.max(0,Math.trunc(Number(value.aiUsageDroppedRows)||0)); this.generation = Number(value.generation) || 1; this.marketGeneration = Number(value.marketGeneration) || this.generation; for (const [key, target] of [['positions', this.positions], ['entryIntents', this.entryIntents], ['entryOrders', this.entryOrders], ['tpOrders', this.tpOrders], ['manualExitGoals',this.manualExitGoals], ['manualIntents', this.manualIntents], ['manualOrders', this.manualOrders], ['allocationPlans', this.allocationPlans], ['tradePlans', this.tradePlans], ['planExecutions', this.planExecutions], ['aiUsage', this.aiUsage], ['positionReviews', this.positionReviews], ['reviewBudgets', this.reviewBudgets], ['tradeRecords', this.tradeRecords], ['experienceSamples', this.experienceSamples], ['rejectionCooldown', this.rejectionCooldown], ['candidateLifecycle', this.candidateLifecycle], ['lifecycles', this.lifecycles], ['entryReservations', this.entryReservations], ['underlyingLocks', this.underlyingLocks]])"
+    },
+    {
+      "file": "apps/engine/src/services/aiQuantityAllocation.ts",
+      "line": 21,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "materializeCandidateQuantityAllocation",
+        "quantityUnits",
+        "authorizationMaxPrice"
+      ],
+      "excerpt": "export function materializeCandidateQuantityAllocation(input:{state:RuntimeState;candidate:UniverseCandidate;snapshot:MarketSymbolSnapshot;side:ExecutionEnvelopeSide;quantityUnits:number;authorizationMaxPrice:number;envelope:PreAiExecutionEnvelope}):AllocationPlan {"
+    },
+    {
+      "file": "apps/engine/src/services/aiQuantityAllocation.ts",
+      "line": 22,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "quantityUnits"
+      ],
+      "excerpt": "const {state,candidate,snapshot,side,envelope}=input,units=Number(input.quantityUnits),step=snapshot.quote.stepSize;"
+    },
+    {
+      "file": "apps/engine/src/services/aiQuantityAllocation.ts",
+      "line": 30,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "authorizationMaxPrice"
+      ],
+      "excerpt": "const quantity=units*step,price=Number(input.authorizationMaxPrice),notionalUsd=quantity*price;"
+    },
+    {
+      "file": "apps/engine/src/services/aiQuantityAllocation.ts",
+      "line": 41,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "materializeCandidateQuantityAllocation"
+      ],
+      "excerpt": "export const materializeAiQuantityAllocation=materializeCandidateQuantityAllocation;"
+    },
+    {
+      "file": "apps/engine/src/services/executionLease.ts",
+      "line": 8,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "reservedMarginUsd"
+      ],
+      "excerpt": "reservedMarginUsd:number;"
+    },
+    {
+      "file": "apps/engine/src/services/executionLease.ts",
+      "line": 14,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "lease"
+      ],
+      "excerpt": "const prune=(state:RuntimeState,now=Date.now())=>{const value=store(state);for(const [id,lease] of value)if(now>=lease.expiresAt)value.delete(id);return value;};"
+    },
+    {
+      "file": "apps/engine/src/services/executionLease.ts",
+      "line": 16,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "reservedMarginUsd"
+      ],
+      "excerpt": "export function activeExecutionLeaseMargin(state:RuntimeState,quoteAsset:string,now=Date.now(),excludeId?:string){return [...prune(state,now).values()].filter(row=>row.id!==excludeId&&row.quoteAsset===quoteAsset).reduce((sum,row)=>sum+Math.max(0,row.reservedMarginUsd),0);}"
+    },
+    {
+      "file": "apps/engine/src/services/executionLease.ts",
+      "line": 17,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "acquireExecutionLease",
+        "lease",
+        "reservedMarginUsd"
+      ],
+      "excerpt": "export function acquireExecutionLease(state:RuntimeState,input:{symbol:string;quoteAsset:string;reservedMarginUsd:number;ttlMs:number},now=Date.now()):{ok:true;lease:ExecutionLease}|{ok:false;reason:string}{"
+    },
+    {
+      "file": "apps/engine/src/services/executionLease.ts",
+      "line": 18,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "reservedMarginUsd"
+      ],
+      "excerpt": "const requested=Math.max(0,Number(input.reservedMarginUsd));if(!Number.isFinite(requested)||requested<=0)return{ok:false,reason:'EXECUTION_LEASE_NO_CAPACITY'};"
+    },
+    {
+      "file": "apps/engine/src/services/executionLease.ts",
+      "line": 21,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "lease",
+        "reservedMarginUsd"
+      ],
+      "excerpt": "const id=`execlease_${input.symbol}_${now}_${Math.random().toString(36).slice(2,9)}`,lease:ExecutionLease={id,symbol:input.symbol,quoteAsset:input.quoteAsset,reservedMarginUsd:requested,createdAt:now,expiresAt:now+Math.max(1_000,input.ttlMs)};store(state).set(id,lease);return{ok:true,lease};"
+    },
+    {
+      "file": "apps/engine/src/services/executionLease.ts",
+      "line": 23,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "lease"
+      ],
+      "excerpt": "export function validateExecutionLease(state:RuntimeState,id:string|undefined,symbol:string,now=Date.now()){if(!id)return{ok:false as const,reason:'EXECUTION_LEASE_MISSING'};const lease=prune(state,now).get(id);if(!lease)return{ok:false as const,reason:'EXECUTION_LEASE_EXPIRED'};if(lease.symbol!==symbol)return{ok:false as const,reason:'EXECUTION_LEASE_SYMBOL_MISMATCH'};return{ok:true as const,lease};}"
+    },
+    {
+      "file": "apps/engine/src/services/executionLease.ts",
+      "line": 24,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "lease"
+      ],
+      "excerpt": "export function releaseExecutionLease(state:RuntimeState,id:string|undefined){if(id)store(state).delete(id);}"
+    },
+    {
+      "file": "apps/engine/src/services/tpGuardian.ts",
+      "line": 34,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "quantity"
+      ],
+      "excerpt": "const quantityUnits=V396ExitRuntime.quantityUnitsOf(order.quantity,stepSize);"
+    },
+    {
+      "file": "apps/engine/src/services/tpGuardian.ts",
+      "line": 35,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "quantity"
+      ],
+      "excerpt": "if(!quantityUnits)throw new Error(`TP_QUANTITY_STEP_INVALID: ${order.quantity}/${stepSize}`);"
+    },
+    {
+      "file": "apps/engine/src/services/tpGuardian.ts",
+      "line": 42,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "quantity"
+      ],
+      "excerpt": "// quantity conservatively. Adoption is proved before anything is prepared or persisted, so a"
+    },
+    {
+      "file": "apps/engine/src/services/tpGuardian.ts",
+      "line": 50,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "quantity"
+      ],
+      "excerpt": "const proof=await this.exchange.proveReduction({symbol:order.symbol,positionSide,quantity:order.quantity});"
+    },
+    {
+      "file": "apps/engine/src/services/tpGuardian.ts",
+      "line": 51,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "quantity"
+      ],
+      "excerpt": "const liveUnits=V396ExitRuntime.quantityUnitsOf(proof.liveQuantity,stepSize),positionUnits=V396ExitRuntime.quantityUnitsOf(Number(position?.quantity??order.quantity),stepSize)||quantityUnits;"
+    },
+    {
+      "file": "apps/engine/src/services/tpGuardian.ts",
+      "line": 53,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "quantity"
+      ],
+      "excerpt": "const prepared=await this.exitRuntime.prepareTakeProfit({requestKey,subject,quantityUnits,limitPrice:order.price,now:Date.now(),"
+    },
+    {
+      "file": "apps/engine/src/services/tpGuardian.ts",
+      "line": 56,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "quantity"
+      ],
+      "excerpt": "availableReduceUnits:Math.min(liveUnits,quantityUnits),remainingUnits:positionUnits,minNotional:Number(position?.minNotional??0),tickSize,stepSize,"
+    },
+    {
+      "file": "apps/engine/src/services/tpGuardian.ts",
+      "line": 91,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "quantity"
+      ],
+      "excerpt": "const identityMatches=fact.order.symbol===submitted.symbol&&fact.order.clientOrderId===prepared.clientOrderId&&String(fact.order.exchangeOrderId??'').trim().length>0&&['','BOTH',positionSide].includes(String(fact.order.positionSide??''))&&V396ExitRuntime.quantityUnitsOf(original,stepSize)===quantityUnits;"
+    },
+    {
+      "file": "apps/engine/src/services/tpGuardian.ts",
+      "line": 92,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "quantity"
+      ],
+      "excerpt": "const fillUnits=executed===0?0:V396ExitRuntime.quantityUnitsOf(executed,stepSize);"
+    },
+    {
+      "file": "apps/engine/src/services/tpGuardian.ts",
+      "line": 115,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "quantity"
+      ],
+      "excerpt": "const units=V396ExitRuntime.quantityUnitsOf(Number(row.quantity),stepSize);"
+    },
+    {
+      "file": "apps/engine/src/services/tpGuardian.ts",
+      "line": 118,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "quantity"
+      ],
+      "excerpt": "const outcome=this.exitRuntime.adoptRemoteExit({subject,clientOrderId:row.clientOrderId??null,quantityUnits:units,source:'TP',evidenceRef:row.exchangeOrderId??null});"
+    },
+    {
+      "file": "apps/engine/src/services/tpGuardian.ts",
+      "line": 126,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "quantity"
+      ],
+      "excerpt": "// same reducer keeps the durable task, the quantity claim and this order row agreeing, instead"
+    },
+    {
+      "file": "apps/engine/src/services/tpGuardian.ts",
+      "line": 131,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "quantity"
+      ],
+      "excerpt": "status:order.status,originalQuantity:order.quantity,executedQuantity:Number((order as any).filledQuantity??0),updateTime:order.updatedAt??Date.now(),"
+    },
+    {
+      "file": "apps/engine/src/services/tpGuardian.ts",
+      "line": 134,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "quantity"
+      ],
+      "excerpt": "economicsFor(position:Position,exitPrice:number){const settings=this.state.settings.takeProfit,exitRate=settings.exitFeeAssumption==='MAKER'?settings.makerFeeRate:settings.takerFeeRate;return estimateTradingCost({entryPrice:position.entryPrice,qty:position.quantity,direction:position.side,leverage:position.leverage,entryFeeRate:settings.entryFeeRate,expectedExitFeeRate:exitRate,expectedSlippagePct:settings.slippageBufferPct,feeSafetyBufferPct:settings.feeSafetyBufferPct,minNetProfitUsd:settings.minNetProfitUsd,minNetProfitRoiPct:settings.minNetProfitRoiPct},exitPrice);}"
+    },
+    {
+      "file": "apps/engine/src/services/tpGuardian.ts",
+      "line": 141,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "quantity"
+      ],
+      "excerpt": "if(Math.min(Math.abs(order.quantity-fact.originalQty),Math.abs(order.quantity-remaining))>tolerance||Number(order.filledQuantity??0)>fact.executedQty+tolerance)continue;"
+    },
+    {
+      "file": "apps/engine/src/services/tpGuardian.ts",
+      "line": 142,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "quantity"
+      ],
+      "excerpt": "this.state.tpOrders.set(id,{...order,status:fact.state as TakeProfitOrder['status'],quantity:remaining,filledQuantity:fact.executedQty,updatedAt:fact.observedAt});"
+    },
+    {
+      "file": "apps/engine/src/services/tpGuardian.ts",
+      "line": 153,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "quantity"
+      ],
+      "excerpt": "metrics(){const positions=[...this.state.positions.values()],active=[...this.state.tpOrders.values()].filter(order=>order.status==='WORKING'),byPosition=new Map<string,number>();for(const order of active)byPosition.set(order.positionId,(byPosition.get(order.positionId)??0)+1);const orphanTp=active.filter(order=>!this.state.positions.has(order.positionId)).length,duplicateTp=[...byPosition.values()].filter(count=>count>1).reduce((sum,count)=>sum+count-1,0),qtyMismatch=active.filter(order=>{const pos=this.state.positions.get(order.positionId);return Boolean(pos&&Math.abs(order.quantity-pos.quantity)>Math.max(1e-10,pos.quantity*.000001));}).length,wrongSide=active.filter(order=>{const pos=this.state.positions.get(order.positionId);return Boolean(pos&&order.side!==(pos.side==='LONG'?'SELL':'BUY'));}).length;const covered=(p:Position)=>active.some(o=>o.positionId===p.id&&o.symbol===p.symbol&&o.side===(p.side==='LONG'?'SELL':'BUY')&&Math.abs(o.quantity-p.quantity)<=Math.max(1e-10,p.quantity*1e-6));"
+    },
+    {
+      "file": "apps/engine/src/services/tpGuardian.ts",
+      "line": 162,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "quantity"
+      ],
+      "excerpt": "existing=[...this.state.tpOrders.values()].find(o=>o.positionId===current.id&&o.symbol===current.symbol&&o.status==='WORKING'&&o.side===(current.side==='LONG'?'SELL':'BUY')&&Math.abs(o.quantity-current.quantity)<=Math.max(1e-10,current.quantity*1e-6))??existing;"
+    },
+    {
+      "file": "apps/engine/src/services/tpGuardian.ts",
+      "line": 194,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "quantity"
+      ],
+      "excerpt": "if(existing?.status==='WORKING'&&Math.abs(existing.quantity-current.quantity)<=Math.max(1e-10,current.quantity*1e-6)&&existing.side===(current.side==='LONG'?'SELL':'BUY')){"
+    },
+    {
+      "file": "apps/engine/src/services/tpGuardian.ts",
+      "line": 211,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "quantity"
+      ],
+      "excerpt": "const rawQty=current.quantity*this.state.settings.takeProfit.quantityPercent/100;"
+    },
+    {
+      "file": "apps/engine/src/services/tpGuardian.ts",
+      "line": 213,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "quantity"
+      ],
+      "excerpt": "if(qty<market.quote.minQty){this.state.positions.set(current.id,{...current,tpStatus:'MANUAL_REVIEW_REQUIRED',tpOrderId:null,tpCoverageSource:'NONE'});this.repairing.delete(current.id);this.events.publish('TP_UNPROTECTED_DUST',{positionId:current.id,quantity:current.quantity,minQty:market.quote.minQty},current.symbol);return;}"
+    },
+    {
+      "file": "apps/engine/src/services/tpGuardian.ts",
+      "line": 249,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "quantity"
+      ],
+      "excerpt": "const tpEconomics={currentTpPrice:price,expectedGrossProfit:economics.expectedGrossProfit,expectedFees:economics.estimatedTotalFee+economics.slippageBuffer+economics.feeSafetyBuffer,expectedNetProfit:economics.expectedNetProfit,requiredNetProfit:economics.requiredNetProfit,breakEvenPrice:economics.breakEvenPrice,minProfitableExitPrice:economics.minProfitableExitPrice,status:(selection.economicWarning?'TP_LOW_NET_TARGET_KEPT':'TP_OK') as any,economicWarning:selection.economicWarning,targetProvenance:selection.provenance};this.state.positions.set(current.id,{...current,tpEconomics,profitTakePlanSource:selection.source});const order:TakeProfitOrder={id:uid('tp'),clientOrderId:null,exchangeOrderId:null,cycleId:current.cycleId,positionId:current.id,symbol:current.symbol,side:current.side==='LONG'?'SELL':'BUY',quantity:Math.max(market.quote.minQty,qty),price,status:'WORKING',createdAt:now,updatedAt:now};"
+    },
+    {
+      "file": "apps/engine/src/services/tpGuardian.ts",
+      "line": 262,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "quantity"
+      ],
+      "excerpt": "const exhausted=attempt>=5,delay=Math.min(15*60_000,60_000*2**Math.min(attempt-1,4)),nextAt=Date.now()+delay;this.retry.set(current.id,{attempt,nextAt:exhausted&&!contradiction?Date.now()+15*60_000:nextAt,lastError:message});const latest=this.state.positions.get(current.id);if(latest)this.state.positions.set(current.id,{...latest,tpStatus:contradiction?'POSITION_FACT_UNRESOLVED':exhausted?'MANUAL_REVIEW_REQUIRED':'REPAIR_FAILED',tpOrderId:null,tpLastVerifiedAt:Date.now(),tpCoverageSource:'NONE'});this.events.publish(contradiction?'TP_POSITION_FACT_UNRESOLVED':exhausted?'TP_MANUAL_REVIEW_REQUIRED':'TP_REPAIR_FAILED',{positionId:current.id,orderId:order.id,clientOrderId:submitted?.clientOrderId??order.clientOrderId,submissionOutcome:confirmedTpNotSent(error)?'NOT_ATTEMPTED':rejected?'REJECTED':submitted?'UNKNOWN':'NOT_ATTEMPTED',message,attempt,nextRetryAt:contradiction?nextAt:exhausted?Date.now()+15*60_000:nextAt,durableQuantity:current.quantity,durableSide:current.side,reduceOnlySubmitted:false},current.symbol);}"
+    },
+    {
+      "file": "apps/engine/src/services/tpGuardian.ts",
+      "line": 282,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "quantity"
+      ],
+      "excerpt": "originalQuantity:Math.max(order.quantity,retained.quantity+Number(retained.filledQuantity??0)),"
+    },
+    {
+      "file": "apps/engine/src/services/manualPositionService.ts",
+      "line": 15,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "quantity"
+      ],
+      "excerpt": "type Request={action:ManualAction;quantity?:unknown;price?:unknown;confirm?:unknown;idempotencyKey?:unknown;reason?:unknown};"
+    },
+    {
+      "file": "apps/engine/src/services/manualPositionService.ts",
+      "line": 24,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "async"
+      ],
+      "excerpt": "private async quote(position:Position,options:{cacheOnly?:boolean;allowStaleStatic?:boolean}={}){"
+    },
+    {
+      "file": "apps/engine/src/services/manualPositionService.ts",
+      "line": 41,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "async"
+      ],
+      "excerpt": "private async executionQuote(position:Position,explicitLimitPrice:number|null){"
+    },
+    {
+      "file": "apps/engine/src/services/manualPositionService.ts",
+      "line": 52,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "async",
+        "quantity",
+        "CLOSE"
+      ],
+      "excerpt": "async preview(positionId:string,cacheOnly=false){const p=this.state.positions.get(positionId);if(!p)throw new Error('POSITION_NOT_FOUND: 持仓不存在或已被对账关闭');const {quote:q,source,stale}=await this.quote(p,{cacheOnly}),reducePrice=p.side==='LONG'?q.bid:q.ask,addPrice=p.side==='LONG'?q.ask:q.bid,emergency=this.projectedNet(p,reducePrice,p.quantity),record=[...this.state.tradeRecords.values()].find((r:any)=>r.positionId===p.id&&r.status!=='CLOSED'),exitEstimate=estimateExit({grossRealizedToDate:record?.grossRealizedPnl??null,incurredFees:record?.totalFee??null,signedFunding:record?.fundingAttributionStatus==='EXACT'?record.funding:null,projectedExitGross:emergency.gross,projectedExitFee:emergency.projectedFees,uncertaintyBuffer:0,factsStatus:'UNKNOWN'}),available=this.state.account.availableUsd??0,expiresAt=q.ts+15_000;const base={symbol:p.symbol,currentQty:p.quantity,mark:p.markPrice,bestBid:q.bid,bestAsk:q.ask,bid:q.bid,ask:q.ask,tickSize:q.tickSize,stepSize:q.stepSize,minQty:q.minQty,minNotional:q.minNotional,availableMargin:available,leverage:p.leverage,quoteSource:source,quoteAt:q.ts,expiresAt,quoteStale:stale,warnings:stale?['行情缓存已过期：仅供表单参考；提交默认价格操作前仍需实时行情，明确限价可继续使用静态交易规则校验。']:[]};return{...base,exitEstimate,reduce:{side:p.side==='LONG'?'SELL':'BUY',positionSide:p.side,currentQty:p.quantity,defaultQty:p.quantity,priceMode:'AUTO_COUNTERPARTY',defaultPrice:reducePrice,estimatedNotional:p.quantity*reducePrice,warnings:['提交时服务端会重新读取持仓与盘口']},add:{side:p.side==='LONG'?'BUY':'SELL',positionSide:p.side,currentQty:p.quantity,priceMode:'AUTO_COUNTERPARTY',defaultPrice:addPrice,estimatedNotional:p.quantity*addPrice,warnings:['补仓必须由 HUMAN 确认']},limit:{defaultQty:p.quantity,priceMode:'AUTO_COUNTERPARTY_LIMIT',defaultPrice:addPrice,estimatedNotional:p.quantity*addPrice,warnings:[]},emergency:{phase:'PHASE1_COUNTERPARTY_LIMIT',defaultQty:p.quantity,defaultPrice:reducePrice,positionQty:p.quantity,side:p.side==='LONG'?'SELL':'BUY',limitPrice:reducePrice,tickSize:q.tickSize,projectedFees:emergency.projectedFees,projectedNet:emergency.projectedNet,quoteSource:source,quoteAt:q.ts,expiresAt,warnings:['HUMAN ONLY：确认后按最新盘口提交 reduce-only LIMIT；不会提交 Market']}};}"
+    },
+    {
+      "file": "apps/engine/src/services/manualPositionService.ts",
+      "line": 53,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "async"
+      ],
+      "excerpt": "async execute(positionId:string,input:Request){"
+    },
+    {
+      "file": "apps/engine/src/services/manualPositionService.ts",
+      "line": 54,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "CLOSE"
+      ],
+      "excerpt": "if(input.action==='EMERGENCY_CLOSE'&&input.confirm===true&&!this.state.manualExitGoals.has(positionId)){"
+    },
+    {
+      "file": "apps/engine/src/services/manualPositionService.ts",
+      "line": 58,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "async"
+      ],
+      "excerpt": "const task=(async()=>{if(prior)await prior.catch(()=>{});return this.executeLocked(positionId,input);})();"
+    },
+    {
+      "file": "apps/engine/src/services/manualPositionService.ts",
+      "line": 64,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "async"
+      ],
+      "excerpt": "async resumeExitGoals(){"
+    },
+    {
+      "file": "apps/engine/src/services/manualPositionService.ts",
+      "line": 80,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "CLOSE"
+      ],
+      "excerpt": "if(intent?.action==='EMERGENCY_CLOSE'&&working.status!=='UNKNOWN'&&Date.now()-working.createdAt<30000)continue;"
+    },
+    {
+      "file": "apps/engine/src/services/manualPositionService.ts",
+      "line": 90,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "CLOSE"
+      ],
+      "excerpt": "await this.executeLocked(key,{action:'EMERGENCY_CLOSE',confirm:true,idempotencyKey:`${goal.rootKey}:attempt:${goal.attempt}`,reason:'CONTINUE_EXPLICIT_HUMAN_CLOSE'});"
+    },
+    {
+      "file": "apps/engine/src/services/manualPositionService.ts",
+      "line": 95,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "async"
+      ],
+      "excerpt": "private async executeLocked(positionId:string,input:Request){"
+    },
+    {
+      "file": "apps/engine/src/services/manualPositionService.ts",
+      "line": 99,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "CLOSE"
+      ],
+      "excerpt": "if(!position&&input.action==='EMERGENCY_CLOSE'){"
+    },
+    {
+      "file": "apps/engine/src/services/manualPositionService.ts",
+      "line": 101,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "CLOSE"
+      ],
+      "excerpt": "if(!position)return{intent:null,order:null,replayed:true,goalSatisfied:true,reason:'POSITION_ALREADY_CLOSED'};"
+    },
+    {
+      "file": "apps/engine/src/services/manualPositionService.ts",
+      "line": 106,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "CLOSE"
+      ],
+      "excerpt": "if(occupied&&!['REBUILD_TP','REPLACE_TP'].includes(input.action)){const prior=this.state.manualIntents.get(occupied.intentId);if(prior)return{intent:prior,order:occupied,replayed:true,reason:input.action==='EMERGENCY_CLOSE'&&prior.action!=='EMERGENCY_CLOSE'?'EXIT_QUEUED_BEHIND_ACTIVE_TASK':'EXISTING_POSITION_TASK'};throw new Error('UNLINKED_ACTIVE_POSITION_TASK');}"
+    },
+    {
+      "file": "apps/engine/src/services/manualPositionService.ts",
+      "line": 107,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "quantity",
+        "CLOSE"
+      ],
+      "excerpt": "const remote=await this.exchange.fetchPositions(),fresh=remote.find(x=>x.symbol===position!.symbol&&x.side===position!.side);if(!fresh||fresh.quantity<=0)return{intent:null,order:null,replayed:true,goalSatisfied:true,reason:'POSITION_ALREADY_CLOSED'};position={...position,quantity:fresh.quantity,entryPrice:fresh.entryPrice,markPrice:fresh.markPrice,leverage:validPositionLeverage(fresh.leverage)??position.leverage};this.state.positions.set(position.id,position);"
+    },
+    {
+      "file": "apps/engine/src/services/manualPositionService.ts",
+      "line": 108,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "REDUCE",
+        "CLOSE"
+      ],
+      "excerpt": "const action=input.action,now=Date.now(),id=uid('manual_intent'),key=existingKey||id,client=binanceClientOrderIdFactory.create(action==='REDUCE'?'MR':action==='ADD'?'MA':action==='PLACE_LIMIT'?'ML':action==='EMERGENCY_CLOSE'?'EC1':'MC',id);let clientForSubmit=client;let coordinatedExit=false;"
+    },
+    {
+      "file": "apps/engine/src/services/manualPositionService.ts",
+      "line": 110,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "quantity",
+        "CLOSE"
+      ],
+      "excerpt": "let intent=ManualIntentSchema.parse({id,idempotencyKey:key,positionId,symbol:position.symbol,side:position.side,action,quantity:null,price:null,reduceOnly:action!=='ADD',postOnly:!['EMERGENCY_CLOSE','REBUILD_TP','REPLACE_TP'].includes(action),status:'RECEIVED',reason:typeof input.reason==='string'?input.reason.slice(0,240):null,exchangeOrderId:null,clientOrderId:client,createdAt:now,updatedAt:now});"
+    },
+    {
+      "file": "apps/engine/src/services/manualPositionService.ts",
+      "line": 115,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "CLOSE"
+      ],
+      "excerpt": "if(action==='EMERGENCY_CLOSE'&&input.confirm!==true)throw new Error('CONFIRMATION_REQUIRED: 紧急平仓必须二次确认');"
+    },
+    {
+      "file": "apps/engine/src/services/manualPositionService.ts",
+      "line": 116,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "quantity"
+      ],
+      "excerpt": "const numericQty=finite(input.quantity)?Number(input.quantity):null,numericPrice=finite(input.price)?Number(input.price):null,isTp=action==='REPLACE_TP'||action==='REBUILD_TP',"
+    },
+    {
+      "file": "apps/engine/src/services/manualPositionService.ts",
+      "line": 117,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "CLOSE"
+      ],
+      "excerpt": "explicitLimit=action!=='EMERGENCY_CLOSE'&&numericPrice!==null,"
+    },
+    {
+      "file": "apps/engine/src/services/manualPositionService.ts",
+      "line": 121,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "quantity",
+        "CLOSE"
+      ],
+      "excerpt": "const qty=floorStep(action==='EMERGENCY_CLOSE'?position.quantity:numericQty??position.quantity,q.stepSize);if(qty<q.minQty)throw new Error(`VALIDATION_MIN_QTY: 数量不得小于 ${q.minQty}`);"
+    },
+    {
+      "file": "apps/engine/src/services/manualPositionService.ts",
+      "line": 122,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "REDUCE",
+        "CLOSE"
+      ],
+      "excerpt": "const side:'BUY'|'SELL'=action==='ADD'?(position.side==='LONG'?'BUY':'SELL'):(position.side==='LONG'?'SELL':'BUY'),defaultPrice=action==='REDUCE'||action==='EMERGENCY_CLOSE'?(position.side==='LONG'?q.bid:q.ask):action==='ADD'||action==='PLACE_LIMIT'?(position.side==='LONG'?q.ask:q.bid):numericPrice!,price=isTp?numericPrice!:action==='EMERGENCY_CLOSE'?defaultPrice:finite(input.price)?numericPrice!:defaultPrice;"
+    },
+    {
+      "file": "apps/engine/src/services/manualPositionService.ts",
+      "line": 123,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "quantity",
+        "REDUCE",
+        "CLOSE"
+      ],
+      "excerpt": "if(price<=0||!align(price,q.tickSize))throw new Error(`VALIDATION_PRICE_PRECISION: 价格必须符合 tickSize ${q.tickSize}`);if(['REDUCE','EMERGENCY_CLOSE'].includes(action)&&qty>position.quantity+1e-9)throw new Error('VALIDATION_QTY_EXCEEDS_POSITION: 不能超过真实持仓');if(qty*price<q.minNotional)throw new Error(`VALIDATION_MIN_NOTIONAL: 名义价值不得小于 ${q.minNotional}`);"
+    },
+    {
+      "file": "apps/engine/src/services/manualPositionService.ts",
+      "line": 124,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "quantity",
+        "CLOSE"
+      ],
+      "excerpt": "const projected=action==='EMERGENCY_CLOSE'?this.projectedNet(position,price,qty):null;intent=ManualIntentSchema.parse({...intent,quantity:qty,price,status:'VALIDATED',updatedAt:Date.now()});this.state.manualIntents.set(id,intent);this.events.publish('MANUAL_INTENT_VALIDATED',{intent,quote:{bid:quote.source==='STATIC_FILTERS'?null:q.bid,ask:quote.source==='STATIC_FILTERS'?null:q.ask,source:quote.source,quoteAt:q.ts||null},freshPositionQty:position.quantity,projected,lossIsInformational:true},position.symbol);"
+    },
+    {
+      "file": "apps/engine/src/services/manualPositionService.ts",
+      "line": 126,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "quantity"
+      ],
+      "excerpt": "const pendingOrder=ManualOrderSchema.parse({id:`manual_order_${id}`,intentId:id,clientOrderId:client,exchangeOrderId:null,cycleId:position.cycleId,positionId:position.id,symbol:position.symbol,side,positionSide:position.side,type:'LIMIT',quantity:qty,price,reduceOnly:action!=='ADD',postOnly:false,status:'UNKNOWN',filledQuantity:0,createdAt:Date.now(),updatedAt:Date.now()});"
+    },
+    {
+      "file": "apps/engine/src/services/manualPositionService.ts",
+      "line": 133,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "REDUCE",
+        "CLOSE"
+      ],
+      "excerpt": "const rebalanceTp=['REDUCE','EMERGENCY_CLOSE'].includes(action);if(rebalanceTp){protectionCleared=true;await this.clearProtectionForExit(position);}"
+    },
+    {
+      "file": "apps/engine/src/services/manualPositionService.ts",
+      "line": 135,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "REDUCE",
+        "CLOSE"
+      ],
+      "excerpt": "if(['REDUCE','EMERGENCY_CLOSE'].includes(action)){const prepared=await this.prepareExitClaim(position,qty,price,q as any,key);clientForSubmit=prepared.clientOrderId;coordinatedProof={checkedAt:prepared.checkedAt};coordinatedExit=true;}"
+    },
+    {
+      "file": "apps/engine/src/services/manualPositionService.ts",
+      "line": 136,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "quantity"
+      ],
+      "excerpt": "const request={clientOrderId:clientForSubmit,internalOrderId:`manual_order_${id}`,symbol:position.symbol,side,positionSide:position.side,type:'LIMIT' as const,quantity:qty,price,reduceOnly:action!=='ADD',postOnly:false};let order:ManualOrder;"
+    },
+    {
+      "file": "apps/engine/src/services/manualPositionService.ts",
+      "line": 142,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "quantity"
+      ],
+      "excerpt": "try{submissionAttempted=true;order=await this.submitOrder(position,intent,request);if(coordinatedExit)this.convergeExit(clientForSubmit,order,q.stepSize);}catch(submitError){let recovered:ManualOrder|null=null;try{recovered=await this.exchange.findManualByClientOrderId?.({...request,internalOrderId:request.internalOrderId,positionId:position.id})??null;}catch{}if(recovered){order=recovered;if(coordinatedExit)this.convergeExit(clientForSubmit,recovered,q.stepSize);this.events.publish('MANUAL_ORDER_RECOVERED_BY_CLIENT_ID',{intentId:id,clientOrderId:clientForSubmit,exchangeOrderId:order.exchangeOrderId,status:order.status},position.symbol);}else{order=ManualOrderSchema.parse({id:request.internalOrderId,intentId:id,clientOrderId:clientForSubmit,exchangeOrderId:null,cycleId:position.cycleId,positionId:position.id,symbol:position.symbol,side,positionSide:position.side,type:'LIMIT',quantity:qty,price,reduceOnly:request.reduceOnly,postOnly:false,status:'UNKNOWN',filledQuantity:0,createdAt:Date.now(),updatedAt:Date.now()});intent=ManualIntentSchema.parse({...intent,status:'UNKNOWN',reason:`SUBMIT_RESULT_UNKNOWN: ${submitError instanceof Error?submitError.message:String(submitError)}`,updatedAt:Date.now()});if(coordinatedExit)this.exitRuntime.markSubmitUncertain(clientForSubmit,Date.now());this.events.publish('MANUAL_ORDER_SUBMIT_UNKNOWN',{intentId:id,clientOrderId:client,reason:intent.reason,retryForbidden:true},position.symbol);}}"
+    },
+    {
+      "file": "apps/engine/src/services/manualPositionService.ts",
+      "line": 154,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "async",
+        "quantity"
+      ],
+      "excerpt": "private async prepareExitClaim(position:Position,quantity:number,price:number,quote:{stepSize:number;tickSize:number;minNotional:number},requestKey:string){"
+    },
+    {
+      "file": "apps/engine/src/services/manualPositionService.ts",
+      "line": 156,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "quantity"
+      ],
+      "excerpt": "const quantityUnits=V396ExitRuntime.quantityUnitsOf(quantity,stepSize);"
+    },
+    {
+      "file": "apps/engine/src/services/manualPositionService.ts",
+      "line": 157,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "quantity"
+      ],
+      "excerpt": "if(!quantityUnits)throw new Error(`MANUAL_QUANTITY_STEP_INVALID: ${quantity}/${stepSize}`);"
+    },
+    {
+      "file": "apps/engine/src/services/manualPositionService.ts",
+      "line": 159,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "quantity"
+      ],
+      "excerpt": "const proof=await this.exchange.proveReduction({symbol:position.symbol,positionSide:position.side,quantity});"
+    },
+    {
+      "file": "apps/engine/src/services/manualPositionService.ts",
+      "line": 160,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "quantity"
+      ],
+      "excerpt": "const liveUnits=V396ExitRuntime.quantityUnitsOf(proof.liveQuantity,stepSize);"
+    },
+    {
+      "file": "apps/engine/src/services/manualPositionService.ts",
+      "line": 161,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "quantity"
+      ],
+      "excerpt": "const prepared=await this.exitRuntime.prepareManual({requestKey,subject:exitSubjectFromPosition(position),quantityUnits,limitPrice:price,now:Date.now(),"
+    },
+    {
+      "file": "apps/engine/src/services/manualPositionService.ts",
+      "line": 170,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "quantity"
+      ],
+      "excerpt": "const filledUnits=V396ExitRuntime.quantityUnitsOf(Number(order.filledQuantity??0),Number(stepSize));"
+    },
+    {
+      "file": "apps/engine/src/services/manualPositionService.ts",
+      "line": 175,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "async"
+      ],
+      "excerpt": "private async submitOrder(position:Position,intent:ManualIntent,request:Parameters<AccountExecutor['submit']>[0]){this.state.positions.set(position.id,{...position,managementStatus:'HUMAN_MANAGED',humanManagedAt:Date.now()});this.events.publish('CLIENT_ORDER_ID_GENERATED',{intentId:intent.id,clientOrderId:request.clientOrderId,action:intent.action},position.symbol);const order=await this.executor.submit(request);this.events.publish('MANUAL_ORDER_SUBMITTED',{intentId:intent.id,order},position.symbol);return order;}"
+    },
+    {
+      "file": "apps/engine/src/services/manualPositionService.ts",
+      "line": 176,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "async",
+        "quantity"
+      ],
+      "excerpt": "private async replaceTakeProfit(position:Position,intent:ManualIntent,quantity:number,price:number,quote:{stepSize:number;tickSize:number}){this.tp.suspend(position.id);try{for(const current of [...this.state.tpOrders.values()].filter(x=>x.positionId===position.id&&x.status==='WORKING')){const canceled=await this.tp.cancel(current);this.state.tpOrders.set(current.id,canceled);if(!['CANCELED','EXPIRED','REJECTED'].includes(canceled.status))throw new Error('TP_EXIT_COORDINATION_PENDING: reconcile TP terminal result before another order');}const order:TakeProfitOrder={id:`tp_manual_${intent.id}`,clientOrderId:null,exchangeOrderId:null,cycleId:position.cycleId,positionId:position.id,symbol:position.symbol,side:position.side==='LONG'?'SELL':'BUY',quantity,price,status:'WORKING',createdAt:Date.now(),updatedAt:Date.now()};const mandate=this.exitRuntime.rearmProtectionByHuman(exitSubjectFromPosition(position),price,Date.now());if(!mandate)throw new Error('HUMAN_TP_MANDATE_REJECTED');const placed=await this.tp.place(order,{stepSize:quote.stepSize,tickSize:quote.tickSize});this.state.tpOrders.set(placed.id,placed);this.state.positions.set(position.id,{...position,managementStatus:'HUMAN_MANAGED',humanManagedAt:Date.now(),tpStatus:'PROTECTED',tpOrderId:placed.id,tpLastVerifiedAt:Date.now(),tpCoverageSource:'SYSTEM_CREATED'});return placed;}finally{this.tp.resume(position.id);}}"
+    },
+    {
+      "file": "apps/engine/src/services/manualPositionService.ts",
+      "line": 177,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "async"
+      ],
+      "excerpt": "private async clearProtectionForExit(position:Position){this.tp.suspend(position.id);try{for(const current of [...this.state.tpOrders.values()].filter(x=>x.positionId===position.id&&x.status==='WORKING')){const canceled=await this.tp.cancel(current);this.state.tpOrders.set(current.id,canceled);if(!['CANCELED','EXPIRED','REJECTED'].includes(canceled.status))throw new Error('TP_EXIT_COORDINATION_PENDING: reconcile TP terminal result before another order');}this.state.positions.set(position.id,{...position,tpStatus:'MISSING',tpOrderId:null,tpLastVerifiedAt:Date.now(),tpCoverageSource:'NONE'});}catch(error){this.tp.resume(position.id);throw error;}}"
+    },
+    {
+      "file": "apps/engine/src/services/manualPositionService.ts",
+      "line": 178,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "async"
+      ],
+      "excerpt": "async cancelLimits(symbol:string){const adapter=this.exchange as ExchangeTradeAdapter&{cancelSymbolOrders?:(symbol:string,conditional:boolean)=>Promise<any>};this.events.publish('MANUAL_CANCEL_LIMITS_REQUESTED',{symbol,actor:'HUMAN'},symbol);const result=adapter.cancelSymbolOrders?await adapter.cancelSymbolOrders(symbol,false):{canceled:0,scope:'SYMBOL_ORDINARY_LIMIT'};await this.reconcile();return result;}"
+    },
+    {
+      "file": "apps/engine/src/services/manualPositionService.ts",
+      "line": 179,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "async"
+      ],
+      "excerpt": "async cancelConditionals(symbol:string){const adapter=this.exchange as ExchangeTradeAdapter&{cancelSymbolOrders?:(symbol:string,conditional:boolean)=>Promise<unknown>};this.events.publish('MANUAL_CANCEL_CONDITIONALS_REQUESTED',{symbol,actor:'HUMAN'},symbol);const result=adapter.cancelSymbolOrders?await adapter.cancelSymbolOrders(symbol,true):{canceled:0,scope:'SYMBOL_CONDITIONAL'};await this.reconcile();return result;}"
+    },
+    {
+      "file": "apps/engine/src/services/positionReviewRunner.ts",
+      "line": 19,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "ownerVersion"
+      ],
+      "excerpt": "at:number;runId:string|null;ownerVersion:number;triggerKey:string};"
+    },
+    {
+      "file": "apps/engine/src/services/positionReviewRunner.ts",
+      "line": 47,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "ownerVersion"
+      ],
+      "excerpt": "return{planVersion:plan.planVersion,planRef:plan.planId,ownerVersion:Number(this.ports.exitRuntime.owner({symbol:position.symbol,side:position.side,cycleId,openedAt:position.openedAt})?.ownerVersion??0),"
+    },
+    {
+      "file": "apps/engine/src/services/positionReviewRunner.ts",
+      "line": 55,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "HUMAN_MANAGED"
+      ],
+      "excerpt": "/** One bounded pass over AI-managed cycles and review-only HUMAN_MANAGED evidence subjects. */"
+    },
+    {
+      "file": "apps/engine/src/services/positionReviewRunner.ts",
+      "line": 66,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "HUMAN_MANAGED"
+      ],
+      "excerpt": "const reviewOnly=owner?.ownerState==='HUMAN_MANAGED';"
+    },
+    {
+      "file": "apps/engine/src/services/positionReviewRunner.ts",
+      "line": 89,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "HUMAN_MANAGED",
+        "ownerVersion",
+        "executionAuthority"
+      ],
+      "excerpt": "if(reviewOnly)this.ports.events.publish('POSITION_REVIEW_ONLY_AUTHORITY',{cycleId,scope,ownerVersion:ticket.ownerVersion,executionAuthority:false,reason:'HUMAN_MANAGED_REVIEW_EVIDENCE_ONLY'},position.symbol);"
+    },
+    {
+      "file": "apps/engine/src/services/positionReviewRunner.ts",
+      "line": 100,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "ownerVersion"
+      ],
+      "excerpt": "reason:applied.reason,at:Date.now(),runId:answer.runId,ownerVersion:ticket.ownerVersion,triggerKey:ticket.triggerKey};"
+    },
+    {
+      "file": "apps/engine/src/services/positionReviewRunner.ts",
+      "line": 114,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "ownerVersion"
+      ],
+      "excerpt": "reason:'REVIEW_CALL_FAILED',at:Date.now(),runId:null,ownerVersion:ticket.ownerVersion,triggerKey:ticket.triggerKey});"
+    },
+    {
+      "file": "apps/engine/src/services/positionReviewScheduler.ts",
+      "line": 8,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "HUMAN_MANAGED"
+      ],
+      "excerpt": "* handoff-pending cycles never get a routine call, HUMAN_MANAGED cycles get review-only tickets, and a model answer that"
+    },
+    {
+      "file": "apps/engine/src/services/positionReviewScheduler.ts",
+      "line": 14,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "ownerVersion"
+      ],
+      "excerpt": "export type ReviewVersions={planVersion:number;planRef:string;ownerVersion:number;positionVersion:number;settingsVersion:number;"
+    },
+    {
+      "file": "apps/engine/src/services/positionReviewScheduler.ts",
+      "line": 18,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "ownerVersion"
+      ],
+      "excerpt": "ownerVersion:number;reviewOnly:boolean;planRef:string;reservedAt:number;expiresAt:number;reasons:string[]};"
+    },
+    {
+      "file": "apps/engine/src/services/positionReviewScheduler.ts",
+      "line": 29,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "ownerVersion"
+      ],
+      "excerpt": "return `trg_${hash([input.scope,input.cycleId,v.planVersion,v.planRef,v.ownerVersion,v.positionVersion,v.settingsVersion,v.riskGeneration,"
+    },
+    {
+      "file": "apps/engine/src/services/positionReviewScheduler.ts",
+      "line": 44,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "ownerVersion"
+      ],
+      "excerpt": "ownerOf:(scope:string,cycleId:string)=>{ownerState:string;ownerVersion:number;deadline:number|null;reviewEligible?:boolean}|null;"
+    },
+    {
+      "file": "apps/engine/src/services/positionReviewScheduler.ts",
+      "line": 89,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "HUMAN_MANAGED"
+      ],
+      "excerpt": "const reviewOnly=owner.ownerState==='HUMAN_MANAGED';"
+    },
+    {
+      "file": "apps/engine/src/services/positionReviewScheduler.ts",
+      "line": 91,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "ownerVersion"
+      ],
+      "excerpt": "if(owner.ownerVersion!==input.versions.ownerVersion)return{granted:false,reason:'OWNER_VERSION_DRIFT'} as const;"
+    },
+    {
+      "file": "apps/engine/src/services/positionReviewScheduler.ts",
+      "line": 113,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "ownerVersion"
+      ],
+      "excerpt": "scope:input.scope,cycleId:input.cycleId,ownerVersion:input.versions.ownerVersion,reviewOnly,planRef:input.versions.planRef,"
+    },
+    {
+      "file": "apps/engine/src/services/positionReviewScheduler.ts",
+      "line": 145,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "HUMAN_MANAGED"
+      ],
+      "excerpt": "if(ticket.reviewOnly?owner.ownerState!=='HUMAN_MANAGED':owner.ownerState!=='AI_ACTIVE')return{usable:false,reason:`OWNER_AUTHORITY_CHANGED:${owner.ownerState}`,archived:true,row:usage.row};"
+    },
+    {
+      "file": "apps/engine/src/services/positionReviewScheduler.ts",
+      "line": 146,
+      "commit": "3242a79bb480db81d7bd5fba9bd3a7300e8256e5",
+      "patterns": [
+        "ownerVersion"
+      ],
+      "excerpt": "if(owner.ownerVersion!==ticket.ownerVersion)return{usable:false,reason:'OWNER_VERSION_CHANGED_DURING_MODEL_CALL',archived:true,row:usage.row};"
+    }
+  ],
+  "historicalRuntimeMatchesCurrentSource": "UNPROVEN; latest P0 not deployed",
+  "unproven": [
+    "Complete ETH/AVAX immutable PRIMARY chains",
+    "Historical portfolio and owner-version as-of",
+    "Complete AVAX quantity conservation",
+    "Natural new-policy concurrency/restart acceptance"
+  ]
+}

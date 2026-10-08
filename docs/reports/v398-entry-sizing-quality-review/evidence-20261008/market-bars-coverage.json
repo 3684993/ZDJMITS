@@ -1,0 +1,767 @@
+[
+  {
+    "symbol": "BTCUSDT",
+    "interval": "1w",
+    "requested": 60,
+    "closed": 59,
+    "firstOpenTime": 1755475200000,
+    "lastCloseTime": 1791158399999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "BTCUSDT",
+    "interval": "1d",
+    "requested": 200,
+    "closed": 199,
+    "firstOpenTime": 1774224000000,
+    "lastCloseTime": 1791417599999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "BTCUSDT",
+    "interval": "4h",
+    "requested": 500,
+    "closed": 499,
+    "firstOpenTime": 1784275200000,
+    "lastCloseTime": 1791460799999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "BTCUSDT",
+    "interval": "1h",
+    "requested": 500,
+    "closed": 499,
+    "firstOpenTime": 1789664400000,
+    "lastCloseTime": 1791460799999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "BTCUSDT",
+    "interval": "15m",
+    "requested": 500,
+    "closed": 499,
+    "firstOpenTime": 1791014400000,
+    "lastCloseTime": 1791463499999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "ETHUSDT",
+    "interval": "1w",
+    "requested": 60,
+    "closed": 59,
+    "firstOpenTime": 1755475200000,
+    "lastCloseTime": 1791158399999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "ETHUSDT",
+    "interval": "1d",
+    "requested": 200,
+    "closed": 199,
+    "firstOpenTime": 1774224000000,
+    "lastCloseTime": 1791417599999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "ETHUSDT",
+    "interval": "4h",
+    "requested": 500,
+    "closed": 499,
+    "firstOpenTime": 1784275200000,
+    "lastCloseTime": 1791460799999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "ETHUSDT",
+    "interval": "1h",
+    "requested": 500,
+    "closed": 499,
+    "firstOpenTime": 1789664400000,
+    "lastCloseTime": 1791460799999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "ETHUSDT",
+    "interval": "15m",
+    "requested": 500,
+    "closed": 499,
+    "firstOpenTime": 1791014400000,
+    "lastCloseTime": 1791463499999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "BCHUSDT",
+    "interval": "1w",
+    "requested": 60,
+    "closed": 59,
+    "firstOpenTime": 1755475200000,
+    "lastCloseTime": 1791158399999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "BCHUSDT",
+    "interval": "1d",
+    "requested": 200,
+    "closed": 199,
+    "firstOpenTime": 1774224000000,
+    "lastCloseTime": 1791417599999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "BCHUSDT",
+    "interval": "4h",
+    "requested": 500,
+    "closed": 499,
+    "firstOpenTime": 1784275200000,
+    "lastCloseTime": 1791460799999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "BCHUSDT",
+    "interval": "1h",
+    "requested": 500,
+    "closed": 499,
+    "firstOpenTime": 1789664400000,
+    "lastCloseTime": 1791460799999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "BCHUSDT",
+    "interval": "15m",
+    "requested": 500,
+    "closed": 499,
+    "firstOpenTime": 1791014400000,
+    "lastCloseTime": 1791463499999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "INJUSDT",
+    "interval": "1w",
+    "requested": 60,
+    "closed": 59,
+    "firstOpenTime": 1755475200000,
+    "lastCloseTime": 1791158399999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "INJUSDT",
+    "interval": "1d",
+    "requested": 200,
+    "closed": 199,
+    "firstOpenTime": 1774224000000,
+    "lastCloseTime": 1791417599999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "INJUSDT",
+    "interval": "4h",
+    "requested": 500,
+    "closed": 499,
+    "firstOpenTime": 1784275200000,
+    "lastCloseTime": 1791460799999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "INJUSDT",
+    "interval": "1h",
+    "requested": 500,
+    "closed": 499,
+    "firstOpenTime": 1789664400000,
+    "lastCloseTime": 1791460799999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "INJUSDT",
+    "interval": "15m",
+    "requested": 500,
+    "closed": 499,
+    "firstOpenTime": 1791014400000,
+    "lastCloseTime": 1791463499999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "ETCUSDT",
+    "interval": "1w",
+    "requested": 60,
+    "closed": 59,
+    "firstOpenTime": 1755475200000,
+    "lastCloseTime": 1791158399999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "ETCUSDT",
+    "interval": "1d",
+    "requested": 200,
+    "closed": 199,
+    "firstOpenTime": 1774224000000,
+    "lastCloseTime": 1791417599999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "ETCUSDT",
+    "interval": "4h",
+    "requested": 500,
+    "closed": 499,
+    "firstOpenTime": 1784275200000,
+    "lastCloseTime": 1791460799999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "ETCUSDT",
+    "interval": "1h",
+    "requested": 500,
+    "closed": 499,
+    "firstOpenTime": 1789664400000,
+    "lastCloseTime": 1791460799999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "ETCUSDT",
+    "interval": "15m",
+    "requested": 500,
+    "closed": 499,
+    "firstOpenTime": 1791014400000,
+    "lastCloseTime": 1791463499999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "XLMUSDT",
+    "interval": "1w",
+    "requested": 60,
+    "closed": 59,
+    "firstOpenTime": 1755475200000,
+    "lastCloseTime": 1791158399999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "XLMUSDT",
+    "interval": "1d",
+    "requested": 200,
+    "closed": 199,
+    "firstOpenTime": 1774224000000,
+    "lastCloseTime": 1791417599999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "XLMUSDT",
+    "interval": "4h",
+    "requested": 500,
+    "closed": 499,
+    "firstOpenTime": 1784275200000,
+    "lastCloseTime": 1791460799999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "XLMUSDT",
+    "interval": "1h",
+    "requested": 500,
+    "closed": 499,
+    "firstOpenTime": 1789664400000,
+    "lastCloseTime": 1791460799999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "XLMUSDT",
+    "interval": "15m",
+    "requested": 500,
+    "closed": 499,
+    "firstOpenTime": 1791014400000,
+    "lastCloseTime": 1791463499999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "BRUSDT",
+    "interval": "1w",
+    "requested": 60,
+    "closed": 59,
+    "firstOpenTime": 1755475200000,
+    "lastCloseTime": 1791158399999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "BRUSDT",
+    "interval": "1d",
+    "requested": 200,
+    "closed": 199,
+    "firstOpenTime": 1774224000000,
+    "lastCloseTime": 1791417599999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "BRUSDT",
+    "interval": "4h",
+    "requested": 500,
+    "closed": 499,
+    "firstOpenTime": 1784275200000,
+    "lastCloseTime": 1791460799999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "BRUSDT",
+    "interval": "1h",
+    "requested": 500,
+    "closed": 499,
+    "firstOpenTime": 1789664400000,
+    "lastCloseTime": 1791460799999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "BRUSDT",
+    "interval": "15m",
+    "requested": 500,
+    "closed": 499,
+    "firstOpenTime": 1791014400000,
+    "lastCloseTime": 1791463499999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "APTUSDT",
+    "interval": "1w",
+    "requested": 60,
+    "closed": 59,
+    "firstOpenTime": 1755475200000,
+    "lastCloseTime": 1791158399999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "APTUSDT",
+    "interval": "1d",
+    "requested": 200,
+    "closed": 199,
+    "firstOpenTime": 1774224000000,
+    "lastCloseTime": 1791417599999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "APTUSDT",
+    "interval": "4h",
+    "requested": 500,
+    "closed": 499,
+    "firstOpenTime": 1784275200000,
+    "lastCloseTime": 1791460799999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "APTUSDT",
+    "interval": "1h",
+    "requested": 500,
+    "closed": 499,
+    "firstOpenTime": 1789664400000,
+    "lastCloseTime": 1791460799999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "APTUSDT",
+    "interval": "15m",
+    "requested": 500,
+    "closed": 499,
+    "firstOpenTime": 1791014400000,
+    "lastCloseTime": 1791463499999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "FETUSDT",
+    "interval": "1w",
+    "requested": 60,
+    "closed": 59,
+    "firstOpenTime": 1755475200000,
+    "lastCloseTime": 1791158399999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "FETUSDT",
+    "interval": "1d",
+    "requested": 200,
+    "closed": 199,
+    "firstOpenTime": 1774224000000,
+    "lastCloseTime": 1791417599999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "FETUSDT",
+    "interval": "4h",
+    "requested": 500,
+    "closed": 499,
+    "firstOpenTime": 1784275200000,
+    "lastCloseTime": 1791460799999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "FETUSDT",
+    "interval": "1h",
+    "requested": 500,
+    "closed": 499,
+    "firstOpenTime": 1789664400000,
+    "lastCloseTime": 1791460799999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "FETUSDT",
+    "interval": "15m",
+    "requested": 500,
+    "closed": 499,
+    "firstOpenTime": 1791014400000,
+    "lastCloseTime": 1791463499999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "DOTUSDT",
+    "interval": "1w",
+    "requested": 60,
+    "closed": 59,
+    "firstOpenTime": 1755475200000,
+    "lastCloseTime": 1791158399999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "DOTUSDT",
+    "interval": "1d",
+    "requested": 200,
+    "closed": 199,
+    "firstOpenTime": 1774224000000,
+    "lastCloseTime": 1791417599999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "DOTUSDT",
+    "interval": "4h",
+    "requested": 500,
+    "closed": 499,
+    "firstOpenTime": 1784275200000,
+    "lastCloseTime": 1791460799999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "DOTUSDT",
+    "interval": "1h",
+    "requested": 500,
+    "closed": 499,
+    "firstOpenTime": 1789664400000,
+    "lastCloseTime": 1791460799999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "DOTUSDT",
+    "interval": "15m",
+    "requested": 500,
+    "closed": 499,
+    "firstOpenTime": 1791014400000,
+    "lastCloseTime": 1791463499999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "VVVUSDT",
+    "interval": "1w",
+    "requested": 60,
+    "closed": 59,
+    "firstOpenTime": 1755475200000,
+    "lastCloseTime": 1791158399999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "VVVUSDT",
+    "interval": "1d",
+    "requested": 200,
+    "closed": 199,
+    "firstOpenTime": 1774224000000,
+    "lastCloseTime": 1791417599999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "VVVUSDT",
+    "interval": "4h",
+    "requested": 500,
+    "closed": 499,
+    "firstOpenTime": 1784275200000,
+    "lastCloseTime": 1791460799999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "VVVUSDT",
+    "interval": "1h",
+    "requested": 500,
+    "closed": 499,
+    "firstOpenTime": 1789664400000,
+    "lastCloseTime": 1791460799999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "VVVUSDT",
+    "interval": "15m",
+    "requested": 500,
+    "closed": 499,
+    "firstOpenTime": 1791014400000,
+    "lastCloseTime": 1791463499999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "SOLUSDT",
+    "interval": "1w",
+    "requested": 60,
+    "closed": 59,
+    "firstOpenTime": 1755475200000,
+    "lastCloseTime": 1791158399999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "SOLUSDT",
+    "interval": "1d",
+    "requested": 200,
+    "closed": 199,
+    "firstOpenTime": 1774224000000,
+    "lastCloseTime": 1791417599999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "SOLUSDT",
+    "interval": "4h",
+    "requested": 500,
+    "closed": 499,
+    "firstOpenTime": 1784275200000,
+    "lastCloseTime": 1791460799999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "SOLUSDT",
+    "interval": "1h",
+    "requested": 500,
+    "closed": 499,
+    "firstOpenTime": 1789664400000,
+    "lastCloseTime": 1791460799999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "SOLUSDT",
+    "interval": "15m",
+    "requested": 500,
+    "closed": 499,
+    "firstOpenTime": 1791014400000,
+    "lastCloseTime": 1791463499999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "OPUSDT",
+    "interval": "1w",
+    "requested": 60,
+    "closed": 59,
+    "firstOpenTime": 1755475200000,
+    "lastCloseTime": 1791158399999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "OPUSDT",
+    "interval": "1d",
+    "requested": 200,
+    "closed": 199,
+    "firstOpenTime": 1774224000000,
+    "lastCloseTime": 1791417599999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "OPUSDT",
+    "interval": "4h",
+    "requested": 500,
+    "closed": 499,
+    "firstOpenTime": 1784275200000,
+    "lastCloseTime": 1791460799999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "OPUSDT",
+    "interval": "1h",
+    "requested": 500,
+    "closed": 499,
+    "firstOpenTime": 1789664400000,
+    "lastCloseTime": 1791460799999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "OPUSDT",
+    "interval": "15m",
+    "requested": 500,
+    "closed": 499,
+    "firstOpenTime": 1791014400000,
+    "lastCloseTime": 1791463499999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "AVAXUSDT",
+    "interval": "1w",
+    "requested": 60,
+    "closed": 59,
+    "firstOpenTime": 1755475200000,
+    "lastCloseTime": 1791158399999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "AVAXUSDT",
+    "interval": "1d",
+    "requested": 200,
+    "closed": 199,
+    "firstOpenTime": 1774224000000,
+    "lastCloseTime": 1791417599999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "AVAXUSDT",
+    "interval": "4h",
+    "requested": 500,
+    "closed": 499,
+    "firstOpenTime": 1784275200000,
+    "lastCloseTime": 1791460799999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "AVAXUSDT",
+    "interval": "1h",
+    "requested": 500,
+    "closed": 499,
+    "firstOpenTime": 1789664400000,
+    "lastCloseTime": 1791460799999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "AVAXUSDT",
+    "interval": "15m",
+    "requested": 500,
+    "closed": 499,
+    "firstOpenTime": 1791014400000,
+    "lastCloseTime": 1791463499999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "BNBUSDC",
+    "interval": "1w",
+    "requested": 60,
+    "closed": 59,
+    "firstOpenTime": 1755475200000,
+    "lastCloseTime": 1791158399999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "BNBUSDC",
+    "interval": "1d",
+    "requested": 200,
+    "closed": 199,
+    "firstOpenTime": 1774224000000,
+    "lastCloseTime": 1791417599999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "BNBUSDC",
+    "interval": "4h",
+    "requested": 500,
+    "closed": 499,
+    "firstOpenTime": 1784275200000,
+    "lastCloseTime": 1791460799999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "BNBUSDC",
+    "interval": "1h",
+    "requested": 500,
+    "closed": 499,
+    "firstOpenTime": 1789664400000,
+    "lastCloseTime": 1791460799999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "BNBUSDC",
+    "interval": "15m",
+    "requested": 500,
+    "closed": 499,
+    "firstOpenTime": 1791014400000,
+    "lastCloseTime": 1791463499999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "NEARUSDC",
+    "interval": "1w",
+    "requested": 60,
+    "closed": 59,
+    "firstOpenTime": 1755475200000,
+    "lastCloseTime": 1791158399999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "NEARUSDC",
+    "interval": "1d",
+    "requested": 200,
+    "closed": 199,
+    "firstOpenTime": 1774224000000,
+    "lastCloseTime": 1791417599999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "NEARUSDC",
+    "interval": "4h",
+    "requested": 500,
+    "closed": 499,
+    "firstOpenTime": 1784275200000,
+    "lastCloseTime": 1791460799999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "NEARUSDC",
+    "interval": "1h",
+    "requested": 500,
+    "closed": 499,
+    "firstOpenTime": 1789664400000,
+    "lastCloseTime": 1791460799999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "NEARUSDC",
+    "interval": "15m",
+    "requested": 500,
+    "closed": 499,
+    "firstOpenTime": 1791014400000,
+    "lastCloseTime": 1791463499999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "FILUSDC",
+    "interval": "1w",
+    "requested": 60,
+    "closed": 59,
+    "firstOpenTime": 1755475200000,
+    "lastCloseTime": 1791158399999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "FILUSDC",
+    "interval": "1d",
+    "requested": 200,
+    "closed": 199,
+    "firstOpenTime": 1774224000000,
+    "lastCloseTime": 1791417599999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "FILUSDC",
+    "interval": "4h",
+    "requested": 500,
+    "closed": 499,
+    "firstOpenTime": 1784275200000,
+    "lastCloseTime": 1791460799999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "FILUSDC",
+    "interval": "1h",
+    "requested": 500,
+    "closed": 499,
+    "firstOpenTime": 1789664400000,
+    "lastCloseTime": 1791460799999,
+    "status": "BOUNDED_READY"
+  },
+  {
+    "symbol": "FILUSDC",
+    "interval": "15m",
+    "requested": 500,
+    "closed": 499,
+    "firstOpenTime": 1791014400000,
+    "lastCloseTime": 1791463499999,
+    "status": "BOUNDED_READY"
+  }
+]

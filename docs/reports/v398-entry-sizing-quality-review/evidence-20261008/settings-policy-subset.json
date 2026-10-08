@@ -1,0 +1,188 @@
+{
+  "version": 247,
+  "updatedAt": 1791349868282,
+  "environment": "TESTNET",
+  "executionMode": "TESTNET_ENABLED",
+  "entry": {
+    "absoluteTtlMinutes": 60,
+    "reviewIntervalSeconds": 20,
+    "maxReprices": 12,
+    "minReachability": 0.48,
+    "makerOffsetTicks": 0,
+    "minimumInitialMarginByQuote": {
+      "USDT": 100,
+      "USDC": 100
+    },
+    "minimumOrderNotionalBySymbol": {
+      "BTCUSDT": 150
+    },
+    "minimumOrderNotionalByQuote": {
+      "USDT": 200,
+      "USDC": 200
+    },
+    "nearMarket": {
+      "enabled": true,
+      "maxDistanceBps": 5,
+      "maxOffsetTicks": 2,
+      "ttlSeconds": 90,
+      "reviewSeconds": 2,
+      "repriceIntervalSeconds": 5,
+      "maxReprices": 6
+    }
+  },
+  "takeProfit": {
+    "enabled": true,
+    "mode": "PRICE_MOVE_PERCENT",
+    "structureBufferPercent": 0.05,
+    "structureMinMovePercent": 0.45,
+    "structureMaxMovePercent": 3,
+    "targetPriceMovePercent": 0.45,
+    "quantityPercent": 100,
+    "tpEconomicsEnabled": true,
+    "minNetProfitUsd": 1,
+    "minNetProfitRoiPct": 0.15,
+    "feeSafetyBufferPct": 10,
+    "exitFeeAssumption": "TAKER",
+    "slippageBufferPct": 0,
+    "entryFeeRate": 0.0004,
+    "makerFeeRate": 0.0002,
+    "takerFeeRate": 0.0004,
+    "fullPositionMinMovePercent": 0,
+    "authorizedTargetProfitFloorDisposition": "WARN_AND_KEEP"
+  },
+  "tradeEconomics": {
+    "parameterProfile": "CUSTOM",
+    "admissionMode": "ENFORCE",
+    "historicalTpReachabilityEnabled": false,
+    "minHistoricalReachProbability": 0.5,
+    "reachabilityLookbackBars": 120,
+    "reachabilityMinSamples": 30
+  },
+  "riskGovernance": {
+    "entrySafetyMode": "AUTO",
+    "protectionMode": "SHADOW",
+    "requirePostAiVerification": true,
+    "failClosedOnMissingEvidence": true,
+    "requiredEvidenceCompleteness": 0.92,
+    "maxDailyLossUsd": 0,
+    "maxDailyLossPct": 0,
+    "maxConcurrentReservations": 6,
+    "reservationTtlSeconds": 300,
+    "lockLeaseSeconds": 120,
+    "circuitBreakerEnabled": true,
+    "perTradeRiskPctEquity": 0.01,
+    "maxGrossExposurePct": 1,
+    "maxDirectionExposurePct": 1,
+    "maxClusterExposurePct": 0.35,
+    "maxClusterDirectionExposurePct": 0.35,
+    "exposureCapacityPolicy": {
+      "gross": "OBSERVE",
+      "direction": "OBSERVE",
+      "cluster": "ENFORCE"
+    },
+    "maxDailyDrawdownPct": 0.05,
+    "highRiskReviewEnabled": true,
+    "highRiskEvidenceThreshold": 0.95,
+    "shadowDurationDays": 7,
+    "protectionShadowEnabled": true,
+    "shadow": {
+      "quoteTtlMs": 20000,
+      "bookTtlMs": 20000,
+      "klineTtlMs": 125000,
+      "accountTtlMs": 45000,
+      "reconnectGraceMs": 30000,
+      "aiEnabled": true,
+      "aiMaxRunsPerMinute": 2,
+      "aiQueueLimit": 8,
+      "aiSamplingRatio": 0.25,
+      "markRetentionDays": 30,
+      "posteriorMinSamples": 1
+    },
+    "exitCoordination": {
+      "aiExitAuthority": "ENFORCE",
+      "aiExitLossLimitUsd": 10,
+      "aiExitMinNetProfitUsd": 0.2,
+      "aiExitAllowSmallLoss": true,
+      "aiExitAuthorizationTtlMs": 15000,
+      "positionReviewEnabled": true,
+      "normalReviewsPerPlan": 2,
+      "exceptionReviewsPerPlan": 1,
+      "reviewFailureBudget": 2,
+      "reviewMinIntervalMs": 300000,
+      "reviewAuthorityTtlMs": 90000,
+      "continuousConvergenceEnabled": true,
+      "convergenceIntervalMs": 120000,
+      "convergenceBatchLimit": 8
+    },
+    "portfolioRisk": {
+      "configured": true,
+      "maxCapitalAtRiskUsd": 10811.957,
+      "maxDrawdownPct": 1,
+      "maxStressLossUsd": 5405.978,
+      "maxGrossNotionalUsd": 10811.957,
+      "maxDirectionNotionalUsd": 8649.565,
+      "maxClusterNotionalUsd": 10811.957,
+      "minMarginBufferPct": 0,
+      "minLiquidationBufferPct": 0,
+      "maxHumanPositions": 50,
+      "maxHumanNotionalUsd": 10811.957,
+      "maxPendingHandoffs": 50,
+      "maxAckAgeMs": 86400000,
+      "correlationVersion": "TESTNET_CORRELATION_CLUSTERS_V1_SHA256_d7ada0f6ba5cb950105a69439c409177748e1c87b164fa0872e845271d2bff65",
+      "clusters": {},
+      "scenarioVersion": "TESTNET_STRESS_SCENARIO_SET_V1_SHA256_3b9c016189e3b2cb2c2bad5f7bc761e7ae25181eadfa03b574be2ec9d1a0749c",
+      "snapshotTtlMs": 20000,
+      "marginTierVersion": "TESTNET_BINANCE_LEVERAGE_BRACKET_V1_SHA256_67dee0aca734d82f8718c7b6ad995ba6afb50be4a10798cba5071c9a08bb0fa9",
+      "maintenanceMarginRatePct": 0.167,
+      "cashFlowWindowMs": 86400000,
+      "cashFlowMaxAgeMs": 900000,
+      "scenarios": [
+        {
+          "id": "DOWN_10_LIQUIDITY",
+          "priceShockPct": -0.1,
+          "spreadWidenPct": 0.01,
+          "fundingShockPct": 0.005,
+          "markBasisShockPct": -0.01,
+          "depthPenaltyPct": 0.02,
+          "exchangeUnavailable": false,
+          "unavailablePenaltyPct": 0,
+          "clusterConvergencePct": 0.5
+        },
+        {
+          "id": "EXCHANGE_GAP_15",
+          "priceShockPct": -0.15,
+          "spreadWidenPct": 0.02,
+          "fundingShockPct": 0.005,
+          "markBasisShockPct": -0.02,
+          "depthPenaltyPct": 0.03,
+          "exchangeUnavailable": true,
+          "unavailablePenaltyPct": 0.03,
+          "clusterConvergencePct": 0.75
+        },
+        {
+          "id": "UP_10_LIQUIDITY",
+          "priceShockPct": 0.1,
+          "spreadWidenPct": 0.01,
+          "fundingShockPct": 0.005,
+          "markBasisShockPct": 0.01,
+          "depthPenaltyPct": 0.02,
+          "exchangeUnavailable": false,
+          "unavailablePenaltyPct": 0,
+          "clusterConvergencePct": 0.5
+        }
+      ]
+    }
+  },
+  "portfolio": {
+    "maxPositions": 50,
+    "maxPendingEntries": 6,
+    "entryMarginUsd": 200
+  },
+  "positionManagement": {
+    "humanHandoffAfterMinutes": 1440,
+    "lossHandoffBars": 4,
+    "humanManagedAdmissionCapsEnabled": true,
+    "maxHumanManagedPositions": 4,
+    "maxHumanManagedNotionalPctEquity": 0.2
+  }
+}

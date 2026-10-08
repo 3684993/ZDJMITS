@@ -1,0 +1,180 @@
+{
+  "kinds": [
+    [
+      "aiRuns"
+    ],
+    [
+      "aiUsage"
+    ],
+    [
+      "allocationPlans"
+    ],
+    [
+      "entryIntents"
+    ],
+    [
+      "entryOrders"
+    ],
+    [
+      "entryReservations"
+    ],
+    [
+      "executionFills"
+    ],
+    [
+      "manualIntents"
+    ],
+    [
+      "manualOrders"
+    ],
+    [
+      "positions"
+    ],
+    [
+      "tpOrders"
+    ],
+    [
+      "tradePlans"
+    ],
+    [
+      "tradeRecords"
+    ]
+  ],
+  "coreKeys": [
+    "entryReservationRevision",
+    "riskLedger",
+    "aiUsageDroppedRows",
+    "generation",
+    "marketGeneration",
+    "manualExitGoals",
+    "positionReviews",
+    "reviewBudgets",
+    "underlyingLocks",
+    "runtimeControl",
+    "executionGovernance",
+    "shadowRunner",
+    "rejectionCooldown",
+    "candidateLifecycle",
+    "directionDecisionStates",
+    "tradeOutcomes",
+    "lifecycles",
+    "activity",
+    "account",
+    "_entityLists"
+  ],
+  "updatedAt": 1791458550411,
+  "valueShapes": {
+    "entryReservationRevision": "int",
+    "riskLedger": [
+      "generation",
+      "contentHash",
+      "snapshotHash",
+      "profileVersion",
+      "evaluatedAt",
+      "expiresAt",
+      "peakEquityUsd"
+    ],
+    "aiUsageDroppedRows": "int",
+    "generation": "int",
+    "marketGeneration": "int",
+    "manualExitGoals": "list",
+    "positionReviews": "list",
+    "reviewBudgets": "list",
+    "underlyingLocks": "list",
+    "runtimeControl": [
+      "mode",
+      "reasonCode",
+      "reasonText",
+      "pausedAt",
+      "pauseSource",
+      "autoResume",
+      "lastTransitionAt",
+      "nextCapitalCheckAt",
+      "entrySafetyMode",
+      "manualRiskOverride",
+      "capital"
+    ],
+    "executionGovernance": [
+      "mode",
+      "changedAt",
+      "reason",
+      "capitalEpochId",
+      "validationId"
+    ],
+    "shadowRunner": [
+      "status",
+      "startAt",
+      "requiredUntil",
+      "samples",
+      "violations",
+      "dataQualityBlocks",
+      "exposureBlocks",
+      "reviewBlocks",
+      "wouldStops",
+      "duplicateUnderlyingAttempts",
+      "reservationConflicts",
+      "snapshotInvalidations",
+      "lastSampleAt",
+      "validityEpochAt",
+      "validObservationStartedAt",
+      "validObservationRequiredUntil",
+      "validObservationStreak",
+      "shadowOnlyRuns",
+      "shadowOnlyPlaceDecisions",
+      "shadowOnlyErrors"
+    ],
+    "rejectionCooldown": "list",
+    "candidateLifecycle": "list",
+    "directionDecisionStates": "list",
+    "tradeOutcomes": "list",
+    "lifecycles": "list",
+    "activity": [
+      "lastPrimaryRunAt",
+      "lastPlaceDecisionAt",
+      "lastEntryIntentAt",
+      "lastEntrySubmittedAt",
+      "lastEntryFilledAt",
+      "primaryRunsSinceLastPlace",
+      "uniqueSymbolsSinceLastPlace",
+      "consecutiveRejects",
+      "placeCount30m",
+      "rejectCount30m",
+      "primaryCount30m",
+      "entryIntentCount30m",
+      "submitCount30m",
+      "fillCount30m"
+    ],
+    "account": [
+      "walletBalanceUsd",
+      "availableUsd",
+      "equityUsd",
+      "unrealizedPnlUsd",
+      "realizedPnlUsd24h",
+      "assets",
+      "valuation",
+      "enrichment",
+      "asOf",
+      "status",
+      "source",
+      "reason",
+      "riskBaseline"
+    ],
+    "_entityLists": [
+      "positions",
+      "entryIntents",
+      "entryOrders",
+      "tpOrders",
+      "manualIntents",
+      "manualOrders",
+      "allocationPlans",
+      "tradePlans",
+      "planExecutions",
+      "aiUsage",
+      "entryReservations",
+      "aiRuns",
+      "tradeRecords",
+      "experienceSamples",
+      "executionFills"
+    ]
+  }
+}

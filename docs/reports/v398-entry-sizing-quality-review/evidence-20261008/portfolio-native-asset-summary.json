@@ -1,0 +1,26 @@
+{
+  "capturedAt": "2026-10-08T12:58:44.744Z",
+  "assets": {
+    "USDT": {
+      "longNotional": 22360.04026458,
+      "shortNotional": 14671.25122758,
+      "grossNotional": 37031.29149216,
+      "netNotional": 7688.789037000002,
+      "unrealizedPnl": -1691.07483788,
+      "initialMargin": 3697.368864,
+      "maintenanceMargin": 454.90081310999994
+    },
+    "USDC": {
+      "longNotional": 10095.56214325,
+      "shortNotional": 0,
+      "grossNotional": 10095.56214325,
+      "netNotional": 10095.56214325,
+      "unrealizedPnl": -390.16954804,
+      "initialMargin": 736.0960445,
+      "maintenanceMargin": 73.93723158
+    }
+  },
+  "crossAssetAggregation": "FX_UNPROVEN",
+  "physicalMargin": "EXCHANGE_REPORTED_NOT_ALLOCATION_TO_INDIVIDUAL_CYCLE",
+  "stressLossGuarantee": false
+}

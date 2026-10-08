@@ -1,34 +1,25 @@
 # Resume Engine Reactivity Remediation
 
-Read `docs/prompts/CURRENT_MAINTENANCE_HANDOFF.md` first.
+The checkpoint reactivity work is no longer an unverified candidate.
 
-Do not redo the SSH/SOCKS investigation or the earlier Trading Quality micro-tuning. The latest active profile
-already moved the dominant hotspot to full runtime checkpoint persistence.
+Authoritative current main: `ce46b71cf45b2a16eef2c83fb91242619e71a65a`.
 
-Use candidate branch `chatgpt/reactivity-core-checkpoint-20261008` at
-`45082f6354a79088534037d0b9751c37d03e7260`.
+The fix has already passed isolated local verification:
+- targeted RuntimeState + SettingsStore: 44/44 PASS
+- contracts: 2/2 PASS
+- core: 59/59 PASS
+- dashboard: 123/123 PASS
+- engine: 200 files / 1821 tests PASS
+- release identity, S00, typecheck and build: PASS
 
-Your first task is verification, not redesign:
+Do not redo the old candidate verification or SSH/SOCKS diagnosis.
 
-1. Diff the candidate against current main and ensure main has not gained conflicting runtime persistence changes.
-2. Run:
-   - `npm --workspace @zdj/engine test -- src/state/runtimeState.test.ts src/config/settingsStore.test.ts`
-   - `npm run verify`
-3. If green, integrate safely into latest main; no force/rebase over unrelated work.
-4. Build and restart only Engine/Dashboard 8080 for this code candidate. Leave SSH/SOCKS and 8081/8083/8084 alone unless new direct evidence requires otherwise.
-5. Start a fresh 5–10 minute window and capture:
-   - CPU profile;
-   - event-loop max/p95 delay;
-   - `persistRuntime` and Trading Quality inclusive CPU;
-   - REST lane queue timeouts split PRIVATE / EXECUTION / REQUIRED_MARKET / BACKGROUND;
-   - private snapshot freshness and required market freshness;
-   - host commit memory separately.
-6. Compare numerically with the pre-candidate baseline (~43.28% persistRuntime, ~10.74% TQ, max event-loop ~6.14s).
-7. If generic checkpoint cost materially falls but a different synchronous persistence path becomes dominant, do exactly one second structural iteration against that measured path. Do not return to per-warning patching.
-8. Store every verification log/profile/report in GitHub and update the handoff.
+Continue with:
+`docs/prompts/CODEX_DEPLOY_REACTIVITY_ACCEPTANCE.md`
 
-Hard boundaries remain: TESTNET only, Production writes 0, no DB/history reset, no weakening private/market freshness,
-no duplicate submit on UNKNOWN, no strategy/TP/Entry parameter tuning during this reactivity task.
+The immediate goal is to deploy current main to 8080 only and produce a fresh 5–10 minute before/after runtime comparison against the prior baseline:
+- persistRuntime inclusive CPU ~43.28%
+- TQ ~10.74%
+- event-loop max ~6.14s
 
-
-Current candidate head including the TQ test-only fsync stabilization: `45082f6354a79088534037d0b9751c37d03e7260`.
+Use log files for long command output and commit all runtime evidence to GitHub.

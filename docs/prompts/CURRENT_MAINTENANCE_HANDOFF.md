@@ -702,3 +702,19 @@ Observed gates:
 - engine: **200 files / 1821 tests PASS**.
 
 This establishes code/test correctness for the candidate. Runtime reactivity improvement still requires deployment plus a fresh 5–10 minute CPU/event-loop/REST-lane comparison.
+
+
+## Active status override — reactivity fix is verified and merged
+
+The earlier paragraphs describing the core-checkpoint work as an unverified candidate are superseded.
+
+Authoritative state now:
+- verified/merged main: `ce46b71cf45b2a16eef2c83fb91242619e71a65a`;
+- local targeted verification: 44/44 PASS;
+- full local verification: contracts 2/2, core 59/59, dashboard 123/123, engine 200 files / 1821 tests PASS;
+- verification log: `docs/reports/v397-ssh-socks-remediation-20261008/reactivity-core-checkpoint-local-verify-20261008.log`;
+- next task is **deployment + 5–10 minute runtime acceptance**, not candidate design or another full audit.
+
+Codex must follow `docs/prompts/CODEX_DEPLOY_REACTIVITY_ACCEPTANCE.md`.
+
+Long local command output must be written to log files and committed/uploaded; never require the user to paste long console transcripts into chat.

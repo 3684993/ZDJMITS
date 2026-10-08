@@ -119,8 +119,11 @@ export class TradingQualityCollector {
     }
     if(/^(ENTRY_|TRADING_QUALITY_|CANDIDATE_LIFECYCLE|TRADE_RECORD_|RECONCILIATION_COMPLETED)/.test(e.type)){
       this.put('events',`${this.session}:${e.id}`,e,e.ts);
-      // Capture before runtime maps can advance/reprice/trim. Never infer a fill.
-      this.captureState();
+      // These two proof events already persist their complete payload above and
+      // do not mutate the execution ledger. Avoid scanning all trading history
+      // per candidate; execution/reconciliation events still capture before
+      // runtime maps can advance/reprice/trim. Never infer a fill.
+      if(e.type!=='TRADING_QUALITY_OPPORTUNITY'&&e.type!=='TRADING_QUALITY_PRIMARY_LINK')this.captureState();
     }
   }
   private persistCandidateShadow(candidateId:string,candidate:any,lifecycle:any,opportunity:any,now:number){

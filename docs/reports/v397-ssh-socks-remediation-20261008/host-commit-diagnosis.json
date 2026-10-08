@@ -1,0 +1,16 @@
+{
+  "at": "2026-10-08T00:15:25.4758372Z",
+  "processPrivateSumBytes": 84916596736.0,
+  "disk": {
+    "sizeBytes": 189430493184,
+    "freeBytes": 79414038528,
+    "device": "D:"
+  },
+  "automaticManagedPagefile": true,
+  "isElevated": true,
+  "poolPagedBytes": 24579817472,
+  "commitLimit": 126678085632,
+  "committedBytes": 125917941760,
+  "pagefileSettings": [],
+  "poolNonpagedBytes": 8792502272
+}

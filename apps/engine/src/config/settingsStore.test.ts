@@ -9,6 +9,23 @@ import { classifyAsset } from '@zdj/core';
 
 const paths: string[] = [];
 
+it('does not rewrite unchanged trade records but persists changed facts and repairs durable eviction',async()=>{
+ const dir=await mkdtemp(path.join(os.tmpdir(),'zdj-trade-noop-'));paths.push(dir);const config=path.resolve('../../config');let store=new SettingsStore(config,dir);await store.load();
+ try{
+  const db=(store as any).db,record={tradeId:'t-noop',status:'OPEN',symbol:'BTCUSDT',qty:1};
+  store.upsertTradeRecord(record);
+  db.exec("UPDATE trade_records SET updated_at=123; CREATE TABLE trade_update_probe(n INTEGER); CREATE TRIGGER trade_update_probe AFTER UPDATE ON trade_records BEGIN INSERT INTO trade_update_probe VALUES(1); END;");
+  for(let n=0;n<100;n++)store.upsertTradeRecord({...record});
+  expect(db.prepare('SELECT updated_at FROM trade_records').get().updated_at).toBe(123);
+  expect(db.prepare('SELECT count(*) n FROM trade_update_probe').get().n).toBe(0);
+  const changed={...record,status:'CLOSED',qty:2};store.upsertTradeRecord(changed);
+  expect(db.prepare('SELECT count(*) n FROM trade_update_probe').get().n).toBe(1);
+  expect(store.listTradeRecords()).toEqual([changed]);
+  db.exec('DELETE FROM trade_records');store.upsertTradeRecord(changed);
+  store.close();store=new SettingsStore(config,dir);await store.load();expect(store.listTradeRecords()).toEqual([changed]);
+ }finally{store.close();}
+});
+
 it('repairs a stale checkpoint cache after another connection evicts an entity',async()=>{
  const dir=await mkdtemp(path.join(os.tmpdir(),'zdj-checkpoint-cache-'));paths.push(dir);const store=new SettingsStore(path.resolve('../../config'),dir);await store.load();
  try{const db=(store as any).db,value={executionFills:[{fillId:'f1',qty:1}]};store.persistRuntime(value);db.prepare("DELETE FROM runtime_entities WHERE kind='executionFills'").run();store.persistRuntime(value);expect(store.loadRuntime()).toMatchObject(value);}finally{store.close();}

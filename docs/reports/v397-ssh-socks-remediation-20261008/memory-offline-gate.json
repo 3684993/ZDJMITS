@@ -1,0 +1,9 @@
+{
+  "commitLimit": 126678085632,
+  "at": "2026-10-08T00:25:06.8540670Z",
+  "headroomBytes": 6958469120.0,
+  "poolNonpagedBytes": 8776474624,
+  "poolPagedBytes": 24598241280,
+  "freePhysicalKiB": 22214384,
+  "committedBytes": 119719616512
+}

@@ -5,6 +5,25 @@ import path from 'node:path';
 import {harness} from './tradingQualityTestHarness.js';
 import {TradingQualityCollector} from './tradingQualityCollector.js';
 
+it('durably captures opportunity and Primary proof without history scans, retaining synchronous execution facts',()=>{
+ const h=harness(),dir=mkdtempSync(path.join(tmpdir(),'tq-proof-event-')),file=path.join(dir,'evidence.sqlite');let collector=new TradingQualityCollector(file,h.state,h.bus);
+ try{
+  h.state.executionFills=[{symbol:'BTCUSDT',tradeId:'exact-fill',executionTime:Date.now(),qty:1,attributionStatus:'UNATTRIBUTED'} as any];
+  h.bus.publish('TRADING_QUALITY_OPPORTUNITY',{opportunity:{opportunityId:'op1',version:1},packetId:'packet1'});
+  h.bus.publish('TRADING_QUALITY_PRIMARY_LINK',{runId:'run1',packetId:'packet1',decision:'WAIT'});
+  const facts=()=>((collector as any).db.prepare('SELECT kind,id,payload FROM tq_facts').all() as any[]);
+  expect(facts().filter(row=>row.kind==='fills')).toHaveLength(0);
+  expect(facts().filter(row=>row.kind==='events')).toHaveLength(2);
+  expect(facts().find(row=>row.kind==='opportunityObservations').id).toBe('op1:packet1');
+  h.bus.publish('ENTRY_SUBMIT_ATTEMPTED',{intentId:'real-intent'});
+  expect(JSON.parse(facts().find(row=>row.kind==='fills').payload).qty).toBe(1);
+  collector.close();collector=new TradingQualityCollector(file,h.state,h.bus);
+  expect(JSON.parse(facts().find(row=>row.kind==='primaryLinks').payload)).toMatchObject({runId:'run1',packetId:'packet1',decision:'WAIT'});
+  expect(facts().filter(row=>row.kind==='opportunities')).toHaveLength(1);
+  expect(facts().filter(row=>row.kind==='events')).toHaveLength(3);
+ }finally{collector.close();rmSync(dir,{recursive:true,force:true});}
+});
+
 it('projects a bounded HTTP summary without materialising raw evidence payloads',()=>{
   const h=harness(),dir=mkdtempSync(path.join(tmpdir(),'tq-http-summary-'));
   const collector=new TradingQualityCollector(path.join(dir,'evidence.sqlite'),h.state,h.bus);

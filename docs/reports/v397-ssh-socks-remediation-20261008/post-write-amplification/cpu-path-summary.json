@@ -1,0 +1,180 @@
+{
+  "totalSamples": 12802,
+  "selectedInclusive": [
+    {
+      "function": "captureState",
+      "url": "file:///D:/MITS-WORKTREES/v397-runtime-write-amplification-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "line": 205,
+      "samples": 2710,
+      "fraction": 0.2116856741134198
+    },
+    {
+      "function": "put",
+      "url": "file:///D:/MITS-WORKTREES/v397-runtime-write-amplification-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "line": 94,
+      "samples": 2710,
+      "fraction": 0.2116856741134198
+    },
+    {
+      "function": "recordRuntimeEvent",
+      "url": "file:///D:/MITS-WORKTREES/v397-runtime-write-amplification-20261008/apps/engine/dist/config/settingsStore.js",
+      "line": 1365,
+      "samples": 125,
+      "fraction": 0.009764099359475082
+    },
+    {
+      "function": "captureStateChunk",
+      "url": "file:///D:/MITS-WORKTREES/v397-runtime-write-amplification-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "line": 223,
+      "samples": 10,
+      "fraction": 0.0007811279487580066
+    },
+    {
+      "function": "materialize",
+      "url": "file:///D:/MITS-WORKTREES/v397-runtime-write-amplification-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "line": 363,
+      "samples": 242,
+      "fraction": 0.01890329635994376
+    },
+    {
+      "function": "persistRuntime",
+      "url": "file:///D:/MITS-WORKTREES/v397-runtime-write-amplification-20261008/apps/engine/dist/config/settingsStore.js",
+      "line": 924,
+      "samples": 2472,
+      "fraction": 0.19309482893297922
+    },
+    {
+      "function": "saveManualExecution",
+      "url": "file:///D:/MITS-WORKTREES/v397-runtime-write-amplification-20261008/apps/engine/dist/config/settingsStore.js",
+      "line": 1102,
+      "samples": 122,
+      "fraction": 0.00952976097484768
+    },
+    {
+      "function": "markEpisodeDirty",
+      "url": "file:///D:/MITS-WORKTREES/v397-runtime-write-amplification-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "line": 65,
+      "samples": 1,
+      "fraction": 7.811279487580065e-05
+    },
+    {
+      "function": "saveEntryExecution",
+      "url": "file:///D:/MITS-WORKTREES/v397-runtime-write-amplification-20261008/apps/engine/dist/config/settingsStore.js",
+      "line": 1211,
+      "samples": 491,
+      "fraction": 0.03835338228401812
+    },
+    {
+      "function": "upsertTradeRecord",
+      "url": "file:///D:/MITS-WORKTREES/v397-runtime-write-amplification-20261008/apps/engine/dist/config/settingsStore.js",
+      "line": 1029,
+      "samples": 4226,
+      "fraction": 0.3301046711451336
+    },
+    {
+      "function": "maintainStorageBounds",
+      "url": "file:///D:/MITS-WORKTREES/v397-runtime-write-amplification-20261008/apps/engine/dist/services/storageCapacityGuard.js",
+      "line": 26,
+      "samples": 1,
+      "fraction": 7.811279487580065e-05
+    }
+  ],
+  "nativeRunParents": [
+    {
+      "function": "upsertTradeRecord",
+      "url": "file:///D:/MITS-WORKTREES/v397-runtime-write-amplification-20261008/apps/engine/dist/config/settingsStore.js",
+      "line": 1029,
+      "samples": 4150
+    },
+    {
+      "function": "saveManualExecution",
+      "url": "file:///D:/MITS-WORKTREES/v397-runtime-write-amplification-20261008/apps/engine/dist/config/settingsStore.js",
+      "line": 1102,
+      "samples": 120
+    },
+    {
+      "function": "recordRuntimeEvent",
+      "url": "file:///D:/MITS-WORKTREES/v397-runtime-write-amplification-20261008/apps/engine/dist/config/settingsStore.js",
+      "line": 1365,
+      "samples": 104
+    },
+    {
+      "function": "saveEntryExecution",
+      "url": "file:///D:/MITS-WORKTREES/v397-runtime-write-amplification-20261008/apps/engine/dist/config/settingsStore.js",
+      "line": 1211,
+      "samples": 87
+    },
+    {
+      "function": "recordShadowMark",
+      "url": "file:///D:/MITS-WORKTREES/v397-runtime-write-amplification-20261008/apps/engine/dist/config/settingsStore.js",
+      "line": 1610,
+      "samples": 29
+    },
+    {
+      "function": "put",
+      "url": "file:///D:/MITS-WORKTREES/v397-runtime-write-amplification-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "line": 94,
+      "samples": 27
+    },
+    {
+      "function": "tick",
+      "url": "file:///D:/MITS-WORKTREES/v397-runtime-write-amplification-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "line": 260,
+      "samples": 26
+    },
+    {
+      "function": "deleteExperienceSample",
+      "url": "file:///D:/MITS-WORKTREES/v397-runtime-write-amplification-20261008/apps/engine/dist/config/settingsStore.js",
+      "line": 1058,
+      "samples": 20
+    },
+    {
+      "function": "persistRuntime",
+      "url": "file:///D:/MITS-WORKTREES/v397-runtime-write-amplification-20261008/apps/engine/dist/config/settingsStore.js",
+      "line": 924,
+      "samples": 11
+    },
+    {
+      "function": "appendDecisionChain",
+      "url": "file:///D:/MITS-WORKTREES/v397-runtime-write-amplification-20261008/apps/engine/dist/config/settingsStore.js",
+      "line": 1483,
+      "samples": 11
+    },
+    {
+      "function": "upsertDecisionSnapshot",
+      "url": "file:///D:/MITS-WORKTREES/v397-runtime-write-amplification-20261008/apps/engine/dist/config/settingsStore.js",
+      "line": 1532,
+      "samples": 11
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-runtime-write-amplification-20261008/apps/engine/dist/services/orderProvenanceRegistry.js",
+      "line": 39,
+      "samples": 7
+    },
+    {
+      "function": "write",
+      "url": "file:///D:/MITS-WORKTREES/v397-runtime-write-amplification-20261008/apps/engine/dist/services/ownershipJournal.js",
+      "line": 46,
+      "samples": 4
+    },
+    {
+      "function": "persistCandidateShadow",
+      "url": "file:///D:/MITS-WORKTREES/v397-runtime-write-amplification-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "line": 160,
+      "samples": 1
+    },
+    {
+      "function": "materialize",
+      "url": "file:///D:/MITS-WORKTREES/v397-runtime-write-amplification-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "line": 363,
+      "samples": 1
+    },
+    {
+      "function": "maintainRetention",
+      "url": "file:///D:/MITS-WORKTREES/v397-runtime-write-amplification-20261008/apps/engine/dist/config/settingsStore.js",
+      "line": 985,
+      "samples": 1
+    }
+  ]
+}

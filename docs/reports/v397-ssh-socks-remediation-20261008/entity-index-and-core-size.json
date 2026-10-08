@@ -1,0 +1,18 @@
+{
+  "entityCounts": {
+    "aiRuns": 200,
+    "aiUsage": 5000,
+    "allocationPlans": 6012,
+    "entryIntents": 2456,
+    "entryOrders": 2423,
+    "entryReservations": 4402,
+    "executionFills": 5000,
+    "manualIntents": 314,
+    "manualOrders": 49,
+    "positions": 13,
+    "tpOrders": 1510,
+    "tradePlans": 3413,
+    "tradeRecords": 707
+  },
+  "coreBytes": 1792306
+}

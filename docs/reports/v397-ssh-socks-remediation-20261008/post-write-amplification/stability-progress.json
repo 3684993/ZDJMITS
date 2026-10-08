@@ -1,0 +1,47 @@
+{
+  "sampleCount": 31,
+  "elapsedHours": 0.25220722222222225,
+  "first": "2026-10-08T00:06:52.424765+00:00",
+  "last": "2026-10-08T00:22:00.370364+00:00",
+  "healthSampleStates": {
+    "READY": 30,
+    "UNAVAILABLE": 1
+  },
+  "privateSampleStates": {
+    "READY": 30,
+    "UNAVAILABLE": 1
+  },
+  "activeIncidentSampleCounts": {
+    "BINANCE-QUEUE-001": 6,
+    "MARKET-DATA-001": 1
+  },
+  "httpReadErrors": {
+    "health": 1,
+    "closeout": 1,
+    "governance": 1
+  },
+  "identities": [
+    {
+      "pid": 10988,
+      "instanceId": "d0e5cc7a-b745-401e-ac64-9f1be7cac80c"
+    },
+    {
+      "pid": null,
+      "instanceId": null
+    }
+  ],
+  "privateSnapshotAgeMs": {
+    "observedSamples": 30,
+    "max": 34398,
+    "p95": 15483
+  },
+  "tpIssueSampleCounts": {
+    "missing": 1
+  },
+  "productionWriteSamples": {
+    "nonzero": 0,
+    "unknown": 1
+  },
+  "interpretation": "Sample prevalence is not incident frequency or duration. Missing samples and bounded ledgers cannot prove zero failures.",
+  "acceptance": "OBSERVATION_PENDING"
+}

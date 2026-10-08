@@ -1,0 +1,11 @@
+{
+  "instanceId": "d0e5cc7a-b745-401e-ac64-9f1be7cac80c",
+  "at": "2026-10-08T08:24:10.2737733+08:00",
+  "purpose": "AUTHORIZED_CORRECTION_OF_PROVEN_TRADE_WRITE_AMPLIFICATION",
+  "process": {
+    "commandLine": "\"C:\\Program Files\\nodejs\\node.exe\" --no-maglev \"D:\\MITS-WORKTREES\\v397-runtime-write-amplification-20261008\\apps\\engine\\dist\\main.js\" ",
+    "name": "node.exe",
+    "created": "2026-10-08T08:04:39.017754+08:00"
+  },
+  "pid": 10988
+}

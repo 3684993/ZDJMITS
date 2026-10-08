@@ -1,0 +1,9 @@
+﻿{
+    "at":  "2026-10-08T00:06:49.4325290Z",
+    "label":  "post-write-amplification",
+    "script":  "D:\\MITS-WORKTREES\\v397-runtime-write-amplification-20261008\\docs\\reports\\v397-ssh-socks-remediation-20261008\\post-write-amplification\\collect_stability.py",
+    "pid":  15688,
+    "intervalSeconds":  30,
+    "minutes":  15,
+    "mode":  "READ_ONLY_LOCALHOST_INDEPENDENT_WINDOW"
+}

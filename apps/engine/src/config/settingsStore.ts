@@ -1042,7 +1042,10 @@ export class SettingsStore {
     const row = value as any;
     this.db
       .prepare(
-        "INSERT INTO trade_records(trade_id,status,symbol,payload,updated_at) VALUES(?,?,?,?,?) ON CONFLICT(trade_id) DO UPDATE SET status=excluded.status,symbol=excluded.symbol,payload=excluded.payload,updated_at=excluded.updated_at",
+        // Classification revisits retained records on each trade event. Keep
+        // unchanged rows (and their durable update time) untouched; comparing
+        // in SQLite also repairs externally changed/evicted rows without a cache.
+        "INSERT INTO trade_records(trade_id,status,symbol,payload,updated_at) VALUES(?,?,?,?,?) ON CONFLICT(trade_id) DO UPDATE SET status=excluded.status,symbol=excluded.symbol,payload=excluded.payload,updated_at=excluded.updated_at WHERE trade_records.status<>excluded.status OR trade_records.symbol<>excluded.symbol OR trade_records.payload<>excluded.payload",
       )
       .run(
         row.tradeId,

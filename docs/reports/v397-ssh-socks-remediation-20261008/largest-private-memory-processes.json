@@ -1,0 +1,92 @@
+[
+  {
+    "Id": 17468,
+    "ProcessName": "llama-server",
+    "PrivateMemorySize64": 26494431232,
+    "WorkingSet64": 21991342080
+  },
+  {
+    "Id": 51124,
+    "ProcessName": "llama-server",
+    "PrivateMemorySize64": 23914033152,
+    "WorkingSet64": 16052310016
+  },
+  {
+    "Id": 12732,
+    "ProcessName": "llama-server",
+    "PrivateMemorySize64": 15539974144,
+    "WorkingSet64": 2144514048
+  },
+  {
+    "Id": 9576,
+    "ProcessName": "WindowsTerminal",
+    "PrivateMemorySize64": 1820786688,
+    "WorkingSet64": 177618944
+  },
+  {
+    "Id": 10988,
+    "ProcessName": "node",
+    "PrivateMemorySize64": 1723957248,
+    "WorkingSet64": 1684365312
+  },
+  {
+    "Id": 34400,
+    "ProcessName": "ToDesk",
+    "PrivateMemorySize64": 1202884608,
+    "WorkingSet64": 248348672
+  },
+  {
+    "Id": 39520,
+    "ProcessName": "chrome",
+    "PrivateMemorySize64": 897609728,
+    "WorkingSet64": 193818624
+  },
+  {
+    "Id": 47348,
+    "ProcessName": "chrome",
+    "PrivateMemorySize64": 849100800,
+    "WorkingSet64": 563744768
+  },
+  {
+    "Id": 20004,
+    "ProcessName": "chrome",
+    "PrivateMemorySize64": 776331264,
+    "WorkingSet64": 449040384
+  },
+  {
+    "Id": 9492,
+    "ProcessName": "explorer",
+    "PrivateMemorySize64": 724652032,
+    "WorkingSet64": 409423872
+  },
+  {
+    "Id": 36468,
+    "ProcessName": "ChatGPT",
+    "PrivateMemorySize64": 721338368,
+    "WorkingSet64": 460902400
+  },
+  {
+    "Id": 47272,
+    "ProcessName": "ChatGPT",
+    "PrivateMemorySize64": 708468736,
+    "WorkingSet64": 623497216
+  },
+  {
+    "Id": 4840,
+    "ProcessName": "MsMpEng",
+    "PrivateMemorySize64": 574681088,
+    "WorkingSet64": 488738816
+  },
+  {
+    "Id": 1472,
+    "ProcessName": "dwm",
+    "PrivateMemorySize64": 438022144,
+    "WorkingSet64": 166330368
+  },
+  {
+    "Id": 45584,
+    "ProcessName": "esrv",
+    "PrivateMemorySize64": 346050560,
+    "WorkingSet64": 240488448
+  }
+]

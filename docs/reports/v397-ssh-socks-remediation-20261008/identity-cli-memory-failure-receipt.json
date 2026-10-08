@@ -1,0 +1,15 @@
+{
+  "evidenceType": "OPERATOR_RECEIPT_OF_TOOL_RETURNED_STDERR_NOT_ORIGINAL_LOG",
+  "context": "First identity verification CLI against PID10988, after second correction loaded on 2026-10-08 +08",
+  "exitCode": 134,
+  "observedFatalMessages": [
+    "Committing semi space failed",
+    "Allocation failed - JavaScript heap out of memory"
+  ],
+  "originalCompleteStderrOnDisk": false,
+  "originalCompleteStderrLocation": "Earlier exec_command tool return in this conversation",
+  "successfulRetry": "node --max-old-space-size=128 --max-semi-space-size=1 scripts/v396-g1-g4-identity-closure.mjs <repositoryRoot>",
+  "successfulRetryEvidence": "write-amplification-loaded-identity.json",
+  "engineV8OptionsChanged": false,
+  "interpretation": "Explicit native memory allocation failure in a standalone diagnostic CLI; not proof of the cause of earlier unrelated C0000409 or C00000FD exits. Host commit shortage separately measured."
+}

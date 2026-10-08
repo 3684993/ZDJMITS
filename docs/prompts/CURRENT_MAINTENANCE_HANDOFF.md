@@ -763,3 +763,35 @@ Code inspection confirms:
 
 Follow `docs/prompts/CODEX_PRIVATE_RECONCILIATION_FANOUT_REMEDIATION.md`.
 First measure wall-clock phases; then remove confirmed all-row derived persistence/claim-stat work while preserving authority-critical synchronous durability.
+
+
+## Active status override — fan-out remediation closed; trade/TP quality review next
+
+Supersedes the earlier “Next active remediation — private reconciliation fan-out” section.
+
+Authoritative closeout:
+- main: `a5e21b28fad5d371b42c7a701df63e12e0f1cb7e`;
+- GitHub Actions V3.9.x Verify: SUCCESS;
+- private reconciliation fan-out remediation: COMPLETE and proven;
+- overall Engine runtime acceptance: FAIL;
+- remaining loop max ~6140ms, p95 ~35.55ms;
+- PRIVATE / EXECUTION / REQUIRED_MARKET timeout identities: 0 / 0 / 4;
+- private READY 25/25;
+- TP issue snapshots 0, final 19/19;
+- Production writes 0;
+- exact 6.14s stall caller remains UNKNOWN.
+
+Do not continue fan-out work. Do not extend observation just to reproduce the same failure.
+Reactivity work is PAUSED pending a separately scoped investigation of exact spike attribution.
+
+Next active task:
+`docs/prompts/CODEX_CLOSEOUT_THEN_TRADE_QUALITY_REVIEW.md`
+
+That task first performs a short documentation/worktree closeout, then runs an analysis-only review of:
+- AAVEUSDT / ETHFIUSDC manual-close provenance;
+- all current positions and TP distance/holding quality;
+- recent TradeRecord MFE/MAE/holding/exit distributions;
+- active Qwen PRIMARY Entry/Exit decision quality;
+- a no-code implementation plan for improving Entry/TP/Exit quality.
+
+No strategy/model/TP/Entry parameter changes are authorized in that review.

@@ -27,6 +27,8 @@ export type EntrySubmissionIsolation={
   /** Legacy per-underlying exclusion; only meaningful when mode is UNDERLYING_LEGACY. */
   isolationKey:string;
   enforcedBy:SubmissionIdentity['kind'];
+  /** Deterministic physical-cycle authority; independent from portfolio-risk observation. */
+  noAdd?:{authorizedQuantity:number};
 };
 
 export type PortfolioScopeObservation={
@@ -89,7 +91,7 @@ export function portfolioScopeObservation(input:{settings:any;environment:string
 }
 
 /** Typed causes so a journal conflict keeps its own name instead of becoming RESERVATION_INVALID. */
-export type EntryClaimCause='ACQUIRED'|'SAME_INTENT_REPLAY'|'SAME_INTENT_UNACKNOWLEDGED_RECOVER'|'SUBMISSION_IDENTITY_CONFLICT'|'LEGACY_UNDERLYING_ISOLATION'|'JOURNAL_CONFLICT'|'RELEASED_IDENTITY_IMMUTABLE';
+export type EntryClaimCause='ACQUIRED'|'SAME_INTENT_REPLAY'|'SAME_INTENT_UNACKNOWLEDGED_RECOVER'|'SUBMISSION_IDENTITY_CONFLICT'|'LEGACY_UNDERLYING_ISOLATION'|'JOURNAL_CONFLICT'|'RELEASED_IDENTITY_IMMUTABLE'|'NO_SEPARATE_ADD';
 
 export type EntryClaimOutcome={acquired:boolean;cause:EntryClaimCause;record:any;conflict:{intentId:string|null;orderId:string|null;clientOrderId:string|null;status:string|null;at:number|null}|null;maySubmit:boolean;mustQueryFirst:boolean};
 

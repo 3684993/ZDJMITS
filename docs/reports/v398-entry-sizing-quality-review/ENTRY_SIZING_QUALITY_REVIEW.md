@@ -1,3 +1,11 @@
+# I2 当前状态 — 2026-10-09
+
+研究和计划已先发布并完成 152 项 GitHub readback。确定性禁止独立补仓代码及原始授权持久化已在隔离目录实施，完整本地验证 240 files / 2063 tests PASS。严格 envelope schema 保留兼容可选政策声明，Primary 权限不变。风险数量函数仅影子，正式风险校准继续 INSUFFICIENT_EVIDENCE；下方 R2 研究结论和原始交易事实不被改写。
+
+研究、代码、运行三个阶段分别验收。此提交尚未启动实例；用户另行明确要求升级启动当前停止的 TESTNET 8080，I2 远端/CI 通过后才执行一次，并单独记录健康及身份闭合。详细实现/失败日志/限制见 `IMPLEMENTATION_REPORT.md`。
+
+---
+
 # V3.9.8 建仓数量、禁止独立补仓与风险预算研究 — R2
 
 2026-10-08 Asia/Shanghai。基线 `3242a79bb480db81d7bd5fba9bd3a7300e8256e5`。R0/R1/R2完成；**算法参数 IMPLEMENTATION_BLOCKED / INSUFFICIENT_EVIDENCE；确定性禁止独立补仓可进入离线验证，尚未部署。** 下方原Round1是历史记录，本节覆盖其没有live数据的结论。

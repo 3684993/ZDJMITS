@@ -131,9 +131,19 @@ describe('persistent human full-close goals',()=>{
   });
   it('keeps a close queued when cancellation of an existing add is unknown',async()=>{
     const x=await fixture(),service=new ManualPositionService(x.state,x.market,x.exchange,x.tp,new EventBus(),x.reconcile,manualJournalHarness() as any,exitRuntimeHarness());
-    await service.execute(x.position.id,{action:'ADD',quantity:100,idempotencyKey:'add'});
+    // Historical add imported from before V3.9.8: new ADD requests are now forbidden.
+    x.state.manualOrders.set('old-add',{id:'old-add',intentId:'old-add',clientOrderId:'old-add',symbol:x.position.symbol,side:'SELL',positionSide:'SHORT',quantity:100,filledQuantity:0,status:'UNKNOWN',createdAt:Date.now(),updatedAt:Date.now()} as any);
+    x.state.manualIntents.set('old-add',{id:'old-add',positionId:x.position.id,action:'ADD',idempotencyKey:'old-add'} as any);
     x.exchange.cancelManualOrder=vi.fn(async(o:any)=>({...o,status:'UNKNOWN'}));
     const close=await service.execute(x.position.id,{action:'EMERGENCY_CLOSE',confirm:true,idempotencyKey:'close'});expect(close.reason).toBe('EXIT_QUEUED_BEHIND_ACTIVE_TASK');
-    await service.resumeExitGoals();expect(x.exchange.placeManualOrder).toHaveBeenCalledOnce();expect(x.state.manualExitGoals.get(x.position.id)?.lastReason).toBe('WAITING_EXACT_CANCEL_CONFIRMATION');
+    await service.resumeExitGoals();expect(x.exchange.placeManualOrder).not.toHaveBeenCalled();expect(x.state.manualExitGoals.get(x.position.id)?.lastReason).toBe('WAITING_EXACT_CANCEL_CONFIRMATION');
   });
+});
+
+it('rejects even confirmed HUMAN ADD before takeover, quote refresh, TP cancel or exchange writes',async()=>{
+ const x=await fixture(),service=new ManualPositionService(x.state,x.market,x.exchange,x.tp,new EventBus(),x.reconcile,manualJournalHarness() as any,exitRuntimeHarness());
+ await expect(service.execute(x.position.id,{action:'ADD',confirm:true,quantity:100,idempotencyKey:'forbidden-add'})).rejects.toThrow('NO_SEPARATE_ADD');
+ expect(x.position.managementStatus).toBe('AUTO_MANAGED');expect(x.state.manualIntents.size).toBe(0);
+ expect(x.exchange.placeManualOrder).not.toHaveBeenCalled();expect(x.exchange.fetchPositions).not.toHaveBeenCalled();
+ expect(x.market.freshQuote).not.toHaveBeenCalled();expect(x.tp.cancel).not.toHaveBeenCalled();expect(x.tp.suspend).not.toHaveBeenCalled();
 });

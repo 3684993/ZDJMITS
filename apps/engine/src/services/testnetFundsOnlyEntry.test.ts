@@ -19,17 +19,30 @@ function hostileBook(){
   Object.assign(s.settings.riskGovernance,{maxGrossExposurePct:0,maxDirectionExposurePct:0,maxClusterExposurePct:0,maxClusterDirectionExposurePct:0,perTradeRiskPctEquity:0,maxDailyDrawdownPct:0,maxDailyLossUsd:1,circuitBreakerEnabled:true});
   Object.assign(s.settings.portfolioIntelligence,{maxMarginPerPositionUsd:0,maxEquityPct:0,maxQuoteAssetMarginUsagePct:0,maxSameUnderlyingPositions:0,underlyingExposurePolicy:'BLOCK_ALL',maxSpeculativeExposurePct:0});
   s.account.riskBaseline={riskDrawdownPct:.99,calendarDayRealizedPnlUsd:-99999} as any;
-  s.positions.set('held',{id:'held',symbol,side:'LONG',quantity:1e9,markPrice:1,leverage:1,managementStatus:'HUMAN_MANAGED',cycleId:'historical'} as any);
-  s.entryOrders.set('unknown',{id:'unknown',intentId:'old-intent',reservationId:'old-reserve',symbol,side:'SHORT',quantity:1e9,price:1,filledQuantity:0,status:'UNKNOWN',createdAt:1,updatedAt:1,absoluteExpiresAt:2} as any);
+  s.positions.set('held',{id:'held',symbol:'HISTORYUSDT',side:'LONG',quantity:1e9,markPrice:1,leverage:1,managementStatus:'HUMAN_MANAGED',cycleId:'historical'} as any);
+  s.entryOrders.set('unknown',{id:'unknown',intentId:'old-intent',reservationId:'old-reserve',symbol:'HISTORYUSDT',side:'SHORT',quantity:1e9,price:1,filledQuantity:0,status:'UNKNOWN',createdAt:1,updatedAt:1,absoluteExpiresAt:2} as any);
   s.entryReservations.set('old-reserve',{id:'old-reserve',intentId:'old-intent',planId:'old-plan',underlying:symbol.replace(/USD[TC]$/,''),quoteAsset:'USDT',marginUsd:1e9,notionalUsd:1e9,status:'WORKING',createdAt:1,expiresAt:now+60000});
   // Historical risk may be absent, while the physical exchange leverage proof stays present.
-  s.manualExitGoals.set('old-goal',{symbol} as any);
+  s.manualExitGoals.set('old-goal',{symbol:'HISTORYUSDT'} as any);
   (s as any).riskAdmission={capacityFacts:()=>{throw Error('RISK_ADMISSION_UNAVAILABLE');},admit:()=>({allowed:false,reasons:['PENDING_RISK_UNVERIFIED','UNKNOWN','STRESS_LIMIT:MAX_GROSS_NOTIONAL','HUMAN_POTENTIAL_SLOT_LIMIT'],limits:['MAX_CLUSTER_NOTIONAL'],snapshot:{complete:false},ticket:null}),preTradeFacts:()=>({complete:false,blockers:['UNKNOWN'],snapshotHash:'unproven'})};
   s.entryRiskGate=(()=>{throw Error('RISK_GATE_MUST_NOT_VETO');}) as any;
   return h;
 }
 
 describe('TESTNET funds-only Entry resource authority',()=>{
+  it('V398 declares no-add before Primary and portfolio limit widening cannot reopen an occupied physical side',async()=>{
+    const h=hostileBook(),s=h.state;
+    s.positions.get('held')!.symbol=h.packet.symbol;
+    s.entryOrders.get('unknown')!.symbol=h.packet.symbol;
+    const envelope=buildPreAiExecutionEnvelope(s,h.packet.symbol);
+    expect(envelope.entryAuthorizationPolicy).toBe('NO_SEPARATE_ADD_V398');
+    expect(envelope.LONG.riskHeadroom.blockers).toContain('NO_SEPARATE_ADD_POSITION_EXISTS');
+    expect(envelope.SHORT.riskHeadroom.blockers).toContain('NO_SEPARATE_ADD_PENDING_ORDER');
+    expect(envelope.executableSides).toEqual([]);
+    s.settings.portfolio.maxPositions=10000;s.settings.riskGovernance.maxGrossExposurePct=100;
+    expect(buildPreAiExecutionEnvelope(s,h.packet.symbol).executableSides).toEqual([]);
+    await h.run();expect(h.ai.decide).not.toHaveBeenCalled();expect(h.exchange.placeEntry).not.toHaveBeenCalled();
+  });
   it('requires exact TESTNET and TESTNET_ENABLED; never unlocks READ_ONLY or Production',()=>{
     for(const environment of ['PRODUCTION','TESTNET','UNKNOWN',undefined])for(const executionMode of ['READ_ONLY','TESTNET_ENABLED',undefined])
       expect(testnetFundsOnlyEntry({connections:{exchange:{environment},executionMode}})).toBe(environment==='TESTNET'&&executionMode==='TESTNET_ENABLED');

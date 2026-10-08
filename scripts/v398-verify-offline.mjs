@@ -1,0 +1,22 @@
+// Explicit offline verification: mock/temp fixture tests only. Never launches a live Engine.
+import {readFileSync,writeFileSync,mkdirSync,copyFileSync,openSync,closeSync} from 'node:fs';
+import {createHash} from 'node:crypto';
+import {spawnSync} from 'node:child_process';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+import {buildEntrypointReview} from './v396-s00-isolation-rules.mjs';
+const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
+const base='docs/reports/v398-entry-sizing-quality-review',s00=`${base}/s00`;
+mkdirSync(path.join(root,s00),{recursive:true});
+const identity=JSON.parse(readFileSync(path.join(root,'docs/reports/v397-entry-sizing-primary-authority-version-closeout-20261004/s00/current-identity.json'),'utf8'));
+const hash=file=>createHash('sha256').update(readFileSync(path.join(root,file),'utf8').replaceAll('\r\n','\n')).digest('hex');
+identity.currentSha256=hash('config/settings.default.json');identity.currentPackageLockSha256=hash('package-lock.json');
+writeFileSync(path.join(root,s00,'current-identity.json'),JSON.stringify(identity,null,2)+'\n');
+copyFileSync(path.join(root,'docs/reports/v397-entry-sizing-primary-authority-version-closeout-20261004/s00/historical-package-lock.json'),path.join(root,s00,'historical-package-lock.json'));
+writeFileSync(path.join(root,s00,'entrypoint-review.json'),JSON.stringify(buildEntrypointReview(root),null,2)+'\n');
+if(process.argv.includes('--inventory-only'))process.exit(0);
+const startedAt=new Date().toISOString(),log=path.join(root,base,'v398-full-verify.log'),fd=openSync(log,'w');
+const result=spawnSync('cmd.exe',['/d','/s','/c','npm run verify'],{cwd:root,stdio:['ignore',fd,fd],windowsHide:true});closeSync(fd);
+const summary={startedAt,completedAt:new Date().toISOString(),command:'npm run verify',exitCode:result.status,signal:result.signal,error:result.error?.message??null,liveEngineLifecycleCalls:0,manualExchangeWrites:0,log:`${base}/v398-full-verify.log`};
+writeFileSync(path.join(root,base,'v398-full-verify-result.json'),JSON.stringify(summary,null,2)+'\n');
+console.log(JSON.stringify(summary));process.exit(result.status??1);

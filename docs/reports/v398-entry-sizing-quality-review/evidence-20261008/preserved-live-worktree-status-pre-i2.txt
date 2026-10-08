@@ -1,0 +1,6 @@
+ D ZDJ-MITS-V3.9.2-UNKNOWN-P0-Fix-Verification-20260913.md
+?? docs/reports/crash/engine-crash-20261006-071531/
+?? docs/reports/crash/jitless-20261006-074518/
+?? docs/reports/handoff/
+?? scripts/collect-zdj-v397-handoff.ps1
+?? scripts/vpn/

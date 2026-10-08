@@ -238,6 +238,7 @@ export class EngineRuntime {
       : loadedSettings;
     const state = new RuntimeState(settings);
     state.restore(store.loadRuntime());
+    (state as any).noAddOriginReader=(symbol:string,side:string)=>store.noAddOrigin(String(state.settings.connections.exchange.environment),String(state.settings.connections.exchange.credentialRef),symbol,side);
     // J4: the usage ledger is a view over the durable RuntimeState rows, so it exists before the first
     // request can be made and comes back from a restart already holding the rows it wrote.
     const aiUsage = new AiUsageLedger(state as any);
@@ -650,7 +651,11 @@ export class EngineRuntime {
         const fill=(event.payload as any)?.fill,fillId=String(fill?.fillId??'');
         if(fillId)runtime.writes.apply(`runtime-entity:fill:${fillId}`,()=>store.persistRuntimeEntity('executionFills',fillId,fill,{tuple:false,front:true,maxIds:5000}));
       }
-      if(event.type==='RECONCILIATION_COMPLETED')persistReconciliationJournals(event,state,value=>runtime.writes.apply(`entry:${value.order.id}`,()=>store.saveEntryExecution(latestEntryRecord(state,value.order.id))),value=>runtime.writes.apply(`manual:${value.order.id}`,()=>store.saveManualExecution(latestManualRecord(state,value.order.id))));
+      if(event.type==='RECONCILIATION_COMPLETED'){
+        persistReconciliationJournals(event,state,value=>runtime.writes.apply(`entry:${value.order.id}`,()=>store.saveEntryExecution(latestEntryRecord(state,value.order.id))),value=>runtime.writes.apply(`manual:${value.order.id}`,()=>store.saveManualExecution(latestManualRecord(state,value.order.id))));
+        const proof=(event.payload as any)?.noAddFlatSnapshot;
+        if(proof)store.releaseNoAddOrigins({...proof,environment:String(state.settings.connections.exchange.environment),account:String(state.settings.connections.exchange.credentialRef)});
+      }
       if(event.type==='ENTRY_ORDER_TTL_CLOSED'||event.type==='ENTRY_ORDER_REPRICED'){
         const orderId=(event.payload as any)?.orderId;
         const orders=!orderId?state.entryOrders.values():[state.entryOrders.get(orderId)];

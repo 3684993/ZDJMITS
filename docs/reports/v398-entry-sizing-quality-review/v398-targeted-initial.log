@@ -1,0 +1,113 @@
+(node:23896) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:33652) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> @zdj/engine@3.9.8 test
+> vitest run --run src/config/noAddOriginLedger.test.ts src/services/noSeparateAdd.test.ts src/services/v398RiskQuantityBounds.test.ts src/services/manualPositionService.test.ts src/services/entrySubmissionIdentity.integration.test.ts src/services/entryCoordinator.test.ts
+
+(node:22312) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+VITEST_TEST_TIMEOUT=5000 CI=
+
+ RUN  v3.2.7 D:/MITS-WORKTREES/v398-entry-quality-20261008/apps/engine
+
+(node:25488) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:12116) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2624) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:26656) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:26656) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:12116) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+ ❯ src/config/noAddOriginLedger.test.ts (2 tests | 2 failed) 19ms
+   × the same SQLite subject survives restart and excludes concurrent independent intents atomically 18ms
+     → 6 values for 5 columns
+   × UNKNOWN, partial fills, active positions, open orders and unclosed lots cannot release origin authority 1ms
+     → 6 values for 5 columns
+(node:3776) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/services/noSeparateAdd.test.ts (4 tests) 4ms
+(node:31524) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/services/v398RiskQuantityBounds.test.ts (3 tests) 3ms
+(node:24588) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:25488) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+ ❯ src/services/manualPositionService.test.ts (21 tests | 1 failed) 166ms
+   ✓ Manual cache-only preview > uses a fresh zero-I/O cached WS quote without calling REST fallback 11ms
+   ✓ Manual stale-market tolerance > keeps preview available from stale cache and labels it as non-live 4ms
+   ✓ Manual stale-market tolerance > allows an explicit manual limit to use recent cached contract filters when live quote REST fails 8ms
+   ✓ Manual stale-market tolerance > allows an explicit manual limit with no quote at all when authoritative contract filters are available 4ms
+   ✓ Manual stale-market tolerance > still fails closed for an automatic-price emergency close when no live quote exists 5ms
+   ✓ Manual emergency close > uses REST fresh quote when the WS snapshot is unavailable and produces a full-position short BUY preview 3ms
+   ✓ Manual emergency close > refreshes remote position and quote on confirmation, ignores stale form values, and only submits reduce-only LIMIT 8ms
+   ✓ Manual emergency close > fails closed when neither a fresh WS quote nor REST quote exists 3ms
+   ✓ Manual emergency close > allows confirmed human close with gross and net loss while keeping reduce-only LIMIT 5ms
+   ✓ Manual emergency close > allows confirmed human close with gross profit but fee-adjusted net loss while keeping reduce-only LIMIT 4ms
+   ✓ Manual emergency close > allows a confirmed losing LONG close and never reverses the position 4ms
+   ✓ Manual emergency close > serializes concurrent clicks before refresh and submits exactly once 63ms
+   ✓ Manual emergency close > replays an idempotency key without recanceling TP or resubmitting 5ms
+   ✓ Manual emergency close > recovers a lost submission response by exact clientOrderId and forbids duplicate submit 4ms
+   ✓ Manual emergency close > records UNKNOWN on an unprovable timeout and never retries that key 4ms
+   ✓ Manual emergency close > restores TP protection after a definite exchange rejection 5ms
+   ✓ Manual emergency close > keeps a partial fill submitted and rebuilds protection for the remaining position 4ms
+   ✓ Manual emergency close > marks completion only after reconciliation proves the position is gone 3ms
+   ✓ persistent human full-close goals > cancels an old partial close, refreshes remainder and submits exactly one continuation 6ms
+   × persistent human full-close goals > keeps a close queued when cancellation of an existing add is unknown 8ms
+     → UNLINKED_ACTIVE_POSITION_TASK
+   ✓ rejects even confirmed HUMAN ADD before takeover, quote refresh, TP cancel or exchange writes 3ms
+(node:25092) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/services/entrySubmissionIdentity.integration.test.ts (11 tests) 1257ms
+(node:12004) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/services/entryCoordinator.test.ts (25 tests) 6241ms
+   ✓ Entry Manager chain > recovers an accepted-but-disconnected submit by stable client id without a second order  3108ms
+   ✓ Entry Manager chain > keeps the same order identity across restart recovery from UNKNOWN  3112ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/config/noAddOriginLedger.test.ts > the same SQLite subject survives restart and excludes concurrent independent intents atomically
+Error: 6 values for 5 columns
+ ❯ claimNoAddOrigin src/config/noAddOriginLedger.ts:22:5
+
+ ❯ src/config/noAddOriginLedger.test.ts:12:63
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  src/config/noAddOriginLedger.test.ts > UNKNOWN, partial fills, active positions, open orders and unclosed lots cannot release origin authority
+Error: 6 values for 5 columns
+ ❯ claimNoAddOrigin src/config/noAddOriginLedger.ts:22:5
+
+ ❯ src/config/noAddOriginLedger.test.ts:27:26
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  src/services/manualPositionService.test.ts > persistent human full-close goals > keeps a close queued when cancellation of an existing add is unknown
+Error: UNLINKED_ACTIVE_POSITION_TASK
+ ❯ ManualPositionService.executeLocked src/services/manualPositionService.ts:108:328
+
+ ❯ src/services/manualPositionService.ts:58:74
+ ❯ ManualPositionService.execute src/services/manualPositionService.ts:58:106
+ ❯ src/services/manualPositionService.test.ts:137:31
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  2 failed | 4 passed (6)
+      Tests  3 failed | 63 passed (66)
+   Start at  05:40:23
+   Duration  8.24s (transform 1.48s, setup 0ms, collect 3.43s, tests 7.69s, environment 1ms, prepare 2.00s)
+
+(node:45312) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+npm error Lifecycle script `test` failed with error:
+npm error code 1
+npm error path D:\MITS-WORKTREES\v398-entry-quality-20261008\apps\engine
+npm error workspace @zdj/engine@3.9.8
+npm error location D:\MITS-WORKTREES\v398-entry-quality-20261008\apps\engine
+npm error command failed
+npm error command C:\Windows\system32\cmd.exe /d /s /c vitest run --run src/config/noAddOriginLedger.test.ts src/services/noSeparateAdd.test.ts src/services/v398RiskQuantityBounds.test.ts src/services/manualPositionService.test.ts src/services/entrySubmissionIdentity.integration.test.ts src/services/entryCoordinator.test.ts

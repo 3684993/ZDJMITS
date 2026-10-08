@@ -7,6 +7,9 @@ import {SettingsStore} from '../apps/engine/dist/config/settingsStore.js';
 import {BinanceTransport} from '../apps/engine/dist/adapters/binance/BinanceTransport.js';
 import {ExternalTradeAdapter} from '../apps/engine/dist/adapters/exchange/ExternalTradeAdapter.js';
 const out='docs/reports/v398-entry-sizing-quality-review/evidence-20261008';
+const snapshotArgument=process.argv.find(a=>a.startsWith('--snapshot='))?.slice('--snapshot='.length);
+if(snapshotArgument&&!/^[a-z0-9-]+\.json$/.test(snapshotArgument))throw new Error('INVALID_SNAPSHOT_FILENAME');
+const snapshotName=snapshotArgument??(process.argv.includes('--history')?'testnet-history-account-readback.json':'testnet-signed-readback.json');
 const temp=mkdtempSync(path.join(tmpdir(),'v398-private-read-'));
 let db,store;
 const capturedAt=new Date().toISOString();
@@ -27,7 +30,7 @@ try {
   if(key==='account')result[key]={assets:value.assets,positions:value.positions,totalInitialMargin:value.totalInitialMargin,totalMaintMargin:value.totalMaintMargin,availableBalance:value.availableBalance,updateTime:value.updateTime};
   else result[key]=Array.isArray(value)?value.filter(row=>key==='openOrders'||Math.abs(Number(row.positionAmt))>0).map(row=>Object.fromEntries(Object.entries(row).filter(([name])=>!['accountId','accountAlias'].includes(name)))):value;
  }catch(error){result[key]={status:'UNAVAILABLE',errorType:error?.name??'ERROR'};}}
- writeFileSync(`${out}/${process.argv.includes('--history')?'testnet-history-account-readback.json':'testnet-signed-readback.json'}`,JSON.stringify(result,null,2)+'\n');
+ writeFileSync(`${out}/${snapshotName}`,JSON.stringify(result,null,2)+'\n');
  console.log(JSON.stringify({capturedAt,environment:result.environment,positions:Array.isArray(result.positions)?result.positions.length:result.positions.status,openOrders:Array.isArray(result.openOrders)?result.openOrders.length:result.openOrders.status,taskExchangeWrites:0}));
  if(process.argv.includes('--history')){
   const until=Date.now();const windows=[];
@@ -58,5 +61,5 @@ try {
   }
   console.log(JSON.stringify({barRequests:coverage.length,unavailable:coverage.filter(r=>r.status==='UNAVAILABLE').length}));
  }
-}catch(error){writeFileSync(`${out}/testnet-signed-readback.json`,JSON.stringify({capturedAt,status:'UNAVAILABLE',errorType:error?.name??'ERROR',taskExchangeWrites:0},null,2)+'\n');console.log('TESTNET_READ_UNAVAILABLE');}
+}catch(error){writeFileSync(`${out}/${snapshotName}`,JSON.stringify({capturedAt,status:'UNAVAILABLE',errorType:error?.name??'ERROR',taskExchangeWrites:0},null,2)+'\n');console.log('TESTNET_READ_UNAVAILABLE');}
 finally{db?.close();store?.close();rmSync(temp,{recursive:true,force:true});}

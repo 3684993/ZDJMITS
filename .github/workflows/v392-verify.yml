@@ -85,7 +85,7 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Verify scripts
         run: npm run verify:scripts
-      - name: Verify V3.9.7 release identity
+      - name: Verify release identity
         run: npm run verify:release
       - name: Verify current S00 identity and isolation
         run: npm run verify:s00

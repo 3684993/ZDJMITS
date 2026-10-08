@@ -195,8 +195,8 @@ onMounted(load);
         >
         <div class="action-grid">
           <button class="button secondary" @click="begin('REDUCE')">减仓</button
-          ><button class="button secondary" @click="begin('ADD')">
-            同向补仓</button
+          ><button class="button secondary" disabled title="禁止独立补仓">
+            禁止补仓</button
           ><button class="button secondary" @click="begin('PLACE_LIMIT')">
             限价挂单</button
           ><button class="button secondary" @click="begin('REPLACE_TP')">

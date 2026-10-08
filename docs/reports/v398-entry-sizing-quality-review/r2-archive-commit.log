@@ -1,0 +1,9 @@
+[codex/v398-entry-quality-20261008 2b0143e] docs(v398): preserve lossless archives and correct remote manifest replay
+ 9 files changed, 192 insertions(+), 5 deletions(-)
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/evidence-20261008/REMOTE_R2_READBACK.failed.json
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/evidence-20261008/bounded-entities.json.gz
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/evidence-20261008/entry-quantity-lineage.jsonl.gz
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/evidence-20261008/linked-primary-runs.json.gz
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/r2-commit.log
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/r2-fetch.log
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/r2-push.log

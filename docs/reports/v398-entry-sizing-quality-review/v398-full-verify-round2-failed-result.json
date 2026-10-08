@@ -1,0 +1,11 @@
+{
+  "startedAt": "2026-10-08T21:46:45.370Z",
+  "completedAt": "2026-10-08T21:48:37.445Z",
+  "command": "npm run verify",
+  "exitCode": 1,
+  "signal": null,
+  "error": null,
+  "liveEngineLifecycleCalls": 0,
+  "manualExchangeWrites": 0,
+  "log": "docs/reports/v398-entry-sizing-quality-review/v398-full-verify.log"
+}

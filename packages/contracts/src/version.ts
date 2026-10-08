@@ -1,6 +1,6 @@
-export const RELEASE_VERSION = "3.9.7" as const;
+export const RELEASE_VERSION = "3.9.8" as const;
 export const RELEASE_NAME =
-  "Frozen Primary Entry Authority" as const;
+  "Primary Entry Authority / No Separate Add" as const;
 export const PRODUCT_NAME = "ZDJ-MITS" as const;
 export const RELEASE_LABEL = `${PRODUCT_NAME} V${RELEASE_VERSION}` as const;
 export const PROMPT_SCHEMA_VERSION = "V3.9.2" as const;

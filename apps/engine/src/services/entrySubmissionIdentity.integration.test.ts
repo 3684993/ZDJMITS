@@ -6,6 +6,9 @@ import {DatabaseSync} from 'node:sqlite';
 import {SettingsStore} from '../config/settingsStore.js';
 import {entrySubmissionIsolation,portfolioScopeObservation} from './entrySubmissionIdentity.js';
 import {NO_RISK_ABSENCE_SOURCES} from './entryRiskOccupancy.js';
+import {EntryCoordinator} from './entryCoordinator.js';
+import {RuntimeState} from '../state/runtimeState.js';
+import {EventBus} from '../events/eventBus.js';
 
 /**
  * P3 acceptance, on a real SettingsStore and a real SQLite schema.
@@ -41,6 +44,39 @@ const orderOf=(id:string,status='UNKNOWN',now=Date.now(),proof=false):any=>({
 const recordOf=(o:any)=>({intent:{id:o.intentId},order:o} as any);
 const isolationFor=(settings:any,intentId:string,underlying:string,environment='TESTNET',account='binance-primary')=>
   entrySubmissionIsolation(settings,{environment,accountId:account,intentId,underlying,kind:'ENTRY'});
+
+it('V398 durable no-add claim blocks a second wire even when two pre-Primary/JIT snapshots race',async()=>{
+ const {store,dataDir}=await openStore(),other=new SettingsStore(path.resolve(process.cwd(),'../../config'),dataDir);await other.load();
+ try{
+  const placeEntry=vi.fn(async(order:any)=>({...order,status:'WORKING',exchangeOrderId:'accepted'}));
+  const create=(journalStore:SettingsStore,id:string)=>{
+   const state=new RuntimeState(fundsOnlySettings as any),journal={claim:journalStore.claimEntryExecution.bind(journalStore),save:journalStore.saveEntryExecution.bind(journalStore)};
+   const coordinator=new EntryCoordinator(state,{} as any,{} as any,{placeEntry} as any,new EventBus(),undefined,journal as any);
+   // Both processes already passed their snapshot checks. Exercise the real final durable seam.
+   (coordinator as any).executionHardBlock=()=>null;
+   const intent={id,symbol:'ETHUSDT',side:'LONG',leverage:10,absoluteExpiresAt:Date.now()+60000,aiAuthorizationExpiresAt:Date.now()+60000} as any;
+   const order=(coordinator as any).preparedOrder(intent,10,100,1);
+   return{coordinator,intent,order};
+  };
+  const first=create(store,'origin'),second=create(other,'independent-add');
+  await (first.coordinator as any).submitExactlyOnce(first.intent,first.order);
+  await expect((second.coordinator as any).submitExactlyOnce(second.intent,second.order)).rejects.toThrow('NO_SEPARATE_ADD');
+  expect(placeEntry).toHaveBeenCalledOnce();expect(other.noAddOrigin('TESTNET','binance-primary','ETHUSDT','LONG')).toMatchObject({intentId:'origin',quantity:10});
+  const partial={...first.order,status:'UNKNOWN',filledQuantity:4,clientOrderId:first.order.clientOrderId};
+  const query=vi.fn(async()=>({...partial,status:'PARTIALLY_FILLED',exchangeOrderId:'accepted'}));
+  (first.coordinator as any).exchange={placeEntry,findEntryByClientOrderId:query};
+  expect(await (first.coordinator as any).submitExactlyOnce(first.intent,partial)).toMatchObject({filledQuantity:4});
+  expect(placeEntry).toHaveBeenCalledOnce();expect(query).toHaveBeenCalledOnce();
+ }finally{other.close();store.close();}
+});
+
+it('V398 authorization and order quantity must agree before any durable origin is created',async()=>{
+ const {store}=await openStore();try{
+  const order=orderOf('cap-mismatch','NEW'),isolation={...isolationFor(fundsOnlySettings,order.intentId,'ETH'),noAdd:{authorizedQuantity:2}};
+  expect(store.claimEntryExecution(entryScope('ETH'),recordOf(order),false,isolation)).toMatchObject({acquired:false,cause:'NO_SEPARATE_ADD',maySubmit:false});
+  expect(store.noAddOrigin('TESTNET','binance-primary',order.symbol,order.side)).toBeNull();
+ }finally{store.close();}
+});
 
 it('unchanged journal reconciliation performs no write but expired UNKNOWN proof reactivates its exact claim',async()=>{
  const {store}=await openStore(),now=Date.now(),clock=vi.spyOn(Date,'now').mockReturnValue(now);

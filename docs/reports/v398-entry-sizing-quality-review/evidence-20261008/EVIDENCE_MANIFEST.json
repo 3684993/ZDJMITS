@@ -1,13 +1,135 @@
 {
-  "at": "2026-10-08T13:25:55.871312+00:00",
+  "at": "2026-10-08T21:55:32.619409+00:00",
   "hashNormalization": "LF-normalized UTF-8 for text; raw bytes for gzip/binary",
-  "artifactCount": 152,
+  "artifactCount": 217,
   "credentialScalarFindings": [],
+  "credentialScannerExemptions": [
+    {
+      "file": "docs/reports/v398-entry-sizing-quality-review/s00/historical-package-lock.json",
+      "field": "cookie",
+      "reason": "verified npm dependency semver inside package-lock packages.dependencies"
+    },
+    {
+      "file": "package-lock.json",
+      "field": "cookie",
+      "reason": "verified npm dependency semver inside package-lock packages.dependencies"
+    }
+  ],
   "artifacts": [
     {
+      "path": ".github/workflows/v392-verify.yml",
+      "bytesLFNormalized": 4122,
+      "sha256": "b8a166bad6ac1754965ba134197c7b312529c69ef3e20f91005af8d76060b7f4"
+    },
+    {
+      "path": "apps/dashboard/package.json",
+      "bytesLFNormalized": 631,
+      "sha256": "c36a286307d87c3fbf817d43399ddb99241475ba04b40dc5c05630befa6c642a"
+    },
+    {
+      "path": "apps/dashboard/src/components/PositionConsole.vue",
+      "bytesLFNormalized": 12907,
+      "sha256": "a1172c445a34f145889a5cb551a486e19b2a379098eae1c1ceb8844271a67f9c"
+    },
+    {
+      "path": "apps/engine/package.json",
+      "bytesLFNormalized": 898,
+      "sha256": "3c48b83e7eeced8c2d232739844beb155a6c4349316f7ad299ebfd8fa84fe795"
+    },
+    {
+      "path": "apps/engine/src/config/noAddOriginLedger.test.ts",
+      "bytesLFNormalized": 3678,
+      "sha256": "c3a4ad388ed3412625bcee25282b10b115ab5ba8d3ff74a7e1387b948fb5cfaf"
+    },
+    {
+      "path": "apps/engine/src/config/noAddOriginLedger.ts",
+      "bytesLFNormalized": 5545,
+      "sha256": "4c4f06d3107e99aee9f2b71d69a084847034505bb1bcf3b14eea16915a443f6a"
+    },
+    {
+      "path": "apps/engine/src/config/settingsStore.ts",
+      "bytesLFNormalized": 122777,
+      "sha256": "99b4e55e53252b3a18591eaf082dbdefd88f3c248e3683770f5a2e13a2629562"
+    },
+    {
+      "path": "apps/engine/src/runtime/appRuntime.ts",
+      "bytesLFNormalized": 155209,
+      "sha256": "a88997a9498ed1f28b2dc29edb8086529a9687b614b38d380bcb8c2e267da1c3"
+    },
+    {
+      "path": "apps/engine/src/services/entryCoordinator.ts",
+      "bytesLFNormalized": 142077,
+      "sha256": "086f4844fb2fbe82f56e49cfb2b155adc7d83e2823c6bcae43195eb9266667a4"
+    },
+    {
+      "path": "apps/engine/src/services/entrySubmissionIdentity.integration.test.ts",
+      "bytesLFNormalized": 19993,
+      "sha256": "059294b9d24236134f02577a9c20e1da18dc3cf636bfed6b5ac8f98ad8eb77e7"
+    },
+    {
+      "path": "apps/engine/src/services/entrySubmissionIdentity.ts",
+      "bytesLFNormalized": 5694,
+      "sha256": "ef8f006ebf360bb59d9abe12242148695f06cd575f2561ba6d8ee5010960d3e4"
+    },
+    {
+      "path": "apps/engine/src/services/manualPositionService.test.ts",
+      "bytesLFNormalized": 20350,
+      "sha256": "2b9a2ff06ba686290847a59d7e029066c6bcda6cfed90f1d2104463a247bfa09"
+    },
+    {
+      "path": "apps/engine/src/services/manualPositionService.ts",
+      "bytesLFNormalized": 29693,
+      "sha256": "df82f4c905057529747f11daae5287388a9ee20a95042c17d241951ed03f40e8"
+    },
+    {
+      "path": "apps/engine/src/services/noSeparateAdd.test.ts",
+      "bytesLFNormalized": 2752,
+      "sha256": "a4eaed98f9337241d916c0f66edad7e0f63b54ee7bccb4ca82563a7524de3ff1"
+    },
+    {
+      "path": "apps/engine/src/services/noSeparateAdd.ts",
+      "bytesLFNormalized": 2766,
+      "sha256": "9208d398430a469d867d5daac47761beaff76dc1f6999b8b3d15631e6f91235b"
+    },
+    {
+      "path": "apps/engine/src/services/preAiExecutionEnvelope.ts",
+      "bytesLFNormalized": 21717,
+      "sha256": "9fe246717951ef298318ee9749cac71bcd91a2a68f43fe5fdc53ce127043c780"
+    },
+    {
+      "path": "apps/engine/src/services/reconciliationService.ts",
+      "bytesLFNormalized": 60932,
+      "sha256": "5f4d570b004aee7cc8b764867aa009b879dc4719120c7468348e07882a51473b"
+    },
+    {
+      "path": "apps/engine/src/services/temporalAlgorithms.test.ts",
+      "bytesLFNormalized": 4058,
+      "sha256": "35de7ca1834aace3fb28d8a300d0a7da3d6422a3a06a2a61d8c44ecebc640ea0"
+    },
+    {
+      "path": "apps/engine/src/services/testnetFundsOnlyEntry.test.ts",
+      "bytesLFNormalized": 12736,
+      "sha256": "64e80dcf837eb70ee4ea7ae516b328bb76735f2c7c6300b2e29261668534e0d8"
+    },
+    {
+      "path": "apps/engine/src/services/v398RiskQuantityBounds.test.ts",
+      "bytesLFNormalized": 2033,
+      "sha256": "616f46331352c9843c921117fec2fb6b99f6e4dbbd79014cf36358f50d795665"
+    },
+    {
+      "path": "apps/engine/src/services/v398RiskQuantityBounds.ts",
+      "bytesLFNormalized": 2001,
+      "sha256": "75094a26fc700ad775d86371b79b974838c5847cd79e93d6a2516a6ae3bba2d0"
+    },
+    {
       "path": "docs/plans/V398_ENTRY_SIZING_RISK_BUDGET_PLAN.md",
-      "bytesLFNormalized": 10917,
-      "sha256": "2d6fb8a497ad88613627f94bd0a3ab4b1e960485f1130da313c0fdd088702c9c"
+      "bytesLFNormalized": 11728,
+      "sha256": "c31d0d0575a99ca87e563032bafa077bb1fa3d62d4d35c6d3d31d591b4cfc51d"
+    },
+    {
+      "path": "docs/prompts/CURRENT_MAINTENANCE_HANDOFF.md",
+      "bytesLFNormalized": 68161,
+      "sha256": "9b4b7a495d23180a1b18d5022f20581ae7f7d1604cd8809ab73ff60f9f404100"
     },
     {
       "path": "docs/reports/v398-entry-sizing-quality-review/dependency-install.log",
@@ -16,8 +138,8 @@
     },
     {
       "path": "docs/reports/v398-entry-sizing-quality-review/ENTRY_SIZING_QUALITY_REVIEW.md",
-      "bytesLFNormalized": 18311,
-      "sha256": "ffbb52417f41450ecaccebdf8ed46d6cf223149aead3dda693fa77aa0ad2551f"
+      "bytesLFNormalized": 19058,
+      "sha256": "6b4ca4f06f6a06ee8807d4db222a2ba00c9547140a7d0ad60e66a3d9057f02b5"
     },
     {
       "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/architecture-callgraph.md",
@@ -470,6 +592,11 @@
       "sha256": "5c3892753e7a16090c6fba167dcbf1a78905a74842672ddf4c5df5f5a6b78879"
     },
     {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/credential-findings.json",
+      "bytesLFNormalized": 244,
+      "sha256": "36a823010c816725c0834b7c61495f8cbfc131366032bc22dab6854455090bb6"
+    },
+    {
       "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/current-position-feature-strata.json",
       "bytesLFNormalized": 11132,
       "sha256": "5c6087d3a2a01acb3bcc7fc791c76ffdac8b87c1c5465e5593fd0bbd63bc3a3a"
@@ -505,6 +632,16 @@
       "sha256": "7a55afcf83c375c0db481505440b8b90e24a612ab65fe8c687a283aae4d9a05f"
     },
     {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/github-actions-pre-i2.json",
+      "bytesLFNormalized": 1868,
+      "sha256": "c52826f52fca3e21821e72715ed27b44ee6317bb15622ff00feeead3a52c5fbc"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/github-actions-r2-failure.json",
+      "bytesLFNormalized": 6552,
+      "sha256": "a5d1553e39bf1ebd3261508eac86818ba3740df0439c7c15e4231a93c475fd38"
+    },
+    {
       "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/github-actions.json",
       "bytesLFNormalized": 1872,
       "sha256": "fed92ea0a2c5b098967302a059a8725c5f9e980967fa51f7a0b9fccccee9a8ff"
@@ -513,6 +650,11 @@
       "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/historical-exposure-asof.csv",
       "bytesLFNormalized": 2406,
       "sha256": "99618fc21a43ef1f4b67c262a9f81baaef841c0bfa2df2f6fb1eb8c75cdfb80b"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/implementation-source-audit.json",
+      "bytesLFNormalized": 5261,
+      "sha256": "5e2c0b678056963bb0476da49ef6faa1ae3de22872ea956b8d76e00d850bb11b"
     },
     {
       "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/lineage-summary.json",
@@ -590,6 +732,11 @@
       "sha256": "5cba6bb6e9ae9013672bfd876631124801a658781bb9e6afdde1ab5e997fbaa3"
     },
     {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/preserved-live-worktree-status-pre-i2.txt",
+      "bytesLFNormalized": 239,
+      "sha256": "66dc1f1f3ffed1b0a7708bc7e03bc4f46632bdf376ccfe930dd2ad050a026dc5"
+    },
+    {
       "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/README_EVIDENCE.md",
       "bytesLFNormalized": 1439,
       "sha256": "3b5f4a794c518a6185963cc28839981264eacf03d997a944d08749789f4825b2"
@@ -645,6 +792,11 @@
       "sha256": "91875d96cd0684b3831b057d3cbce9259446bfa542aa96c8042c0ded11996882"
     },
     {
+      "path": "docs/reports/v398-entry-sizing-quality-review/IMPLEMENTATION_REPORT.md",
+      "bytesLFNormalized": 6638,
+      "sha256": "118f0b33b2f0a37700b8a7a664b12917df2e4c509fec193ef55334d9c9ebbb9e"
+    },
+    {
       "path": "docs/reports/v398-entry-sizing-quality-review/lineage-projection.log",
       "bytesLFNormalized": 891,
       "sha256": "3583b544da3ee2c09629640aae2630d3600c213ddaee55a9dfb82aecf5eb5afe"
@@ -670,6 +822,21 @@
       "sha256": "66dc1f1f3ffed1b0a7708bc7e03bc4f46632bdf376ccfe930dd2ad050a026dc5"
     },
     {
+      "path": "docs/reports/v398-entry-sizing-quality-review/r2-archive-commit.log",
+      "bytesLFNormalized": 859,
+      "sha256": "a7e40b6089e05541b8b63212a762aa4e57823eb25e2880685e2ef6c1212d9415"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/r2-archive-fetch.log",
+      "bytesLFNormalized": 86,
+      "sha256": "4268dd93aeb7e6e09237279ea931993282d6f4cebcd4eed600659dc35a8bebed"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/r2-archive-push.log",
+      "bytesLFNormalized": 76,
+      "sha256": "aac3f710ea4394ab89b0d846760b55ce175ab0071380a95607ddc94979364dbb"
+    },
+    {
       "path": "docs/reports/v398-entry-sizing-quality-review/r2-commit.log",
       "bytesLFNormalized": 14790,
       "sha256": "2977526e783871206492a3e74dd75b0978561150065711e3fc20b996bdd90724"
@@ -688,6 +855,21 @@
       "path": "docs/reports/v398-entry-sizing-quality-review/research-engine-build.log",
       "bytesLFNormalized": 407,
       "sha256": "a29a6ef1d9894693f23c74c5d8ea46330c2ba1656aac81a9ca2d97d87b250fce"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/s00/current-identity.json",
+      "bytesLFNormalized": 463,
+      "sha256": "2c80079cac4966a6b2acf3d6fd0d30926774f7ee6209f3dee0578bebed0d23a6"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/s00/entrypoint-review.json",
+      "bytesLFNormalized": 99771,
+      "sha256": "465d18dffcd11c73992eb8cf6b148cac6cf92810eee3b3d4c3838eaeaf6357bf"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/s00/historical-package-lock.json",
+      "bytesLFNormalized": 152462,
+      "sha256": "7ed4dd27fd4b20bf718ec20a4cf943035c93842adad7d7a233118da3c3e42c7b"
     },
     {
       "path": "docs/reports/v398-entry-sizing-quality-review/schema-collection.log",
@@ -720,9 +902,144 @@
       "sha256": "c292c2fceaf11030fd3ffd6bc917fefbb236b1043ed3d10e8bb391aeae900e8b"
     },
     {
+      "path": "docs/reports/v398-entry-sizing-quality-review/v398-actions-pre-i2.log",
+      "bytesLFNormalized": 1568,
+      "sha256": "73c1a47fbdec42993ba51c4d3a43fe5c53ceed8016205d9b309b345bdf7e09fc"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/v398-actions-r2-failure.log",
+      "bytesLFNormalized": 4850,
+      "sha256": "c0cfc206c48e9330991989e5f6e2865e0620377789caf3e8381fb513ab9ca594"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/v398-contract-refresh.log",
+      "bytesLFNormalized": 1267,
+      "sha256": "498d646ccf40863b0b5cffde217f72bfc7d070f186798f5b30558fd76a614452"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/v398-contract-refresh.log.original.gz",
+      "bytesLFNormalized": 299,
+      "sha256": "11ebc3060fa90a040daefd83d0633dd1f9282daabcfd0b41d3a5b17bd37c8916"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/v398-diff-check.log",
+      "bytesLFNormalized": 376,
+      "sha256": "fee65a36f33f29e9fa0c8246b8cddfc6e311b262266958ed5e0515423c8df21b"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/v398-engine-typecheck-initial.log",
+      "bytesLFNormalized": 419,
+      "sha256": "725cf8e0199f5a251866e3ff3bbc84194a6505cd6c482475766f1d6104167b67"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/v398-engine-typecheck-initial.log.original.gz",
+      "bytesLFNormalized": 228,
+      "sha256": "6d6ece33dd5e46c3d1d8be8137e4a838c26829fff776c47da4a40f56adf70edf"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/v398-envelope-schema-targeted.log",
+      "bytesLFNormalized": 2258,
+      "sha256": "195a868e8e9b6506d4fb418a067a9fcdd53b710660ba358e33ebae873291123a"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/v398-full-verify-result.json",
+      "bytesLFNormalized": 315,
+      "sha256": "62267e280d8d24e35cb6bdf71aca3cb2ee1f0e3394b195bd4f8dbe594a4b27f6"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/v398-full-verify-round1-failed-result.json",
+      "bytesLFNormalized": 315,
+      "sha256": "c428e3540bda3d28e746749203ef30cae1890bfee8d53c289f93c383acc2050e"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/v398-full-verify-round1-failed.log",
+      "bytesLFNormalized": 110908,
+      "sha256": "e0de84093de7f2a84053f3632dc897d7eda5effe6d6ba933ec874f9191eb787d"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/v398-full-verify-round2-failed-result.json",
+      "bytesLFNormalized": 315,
+      "sha256": "4913afb0612192483f3116381e27c610729c5f19ac92027031ccfb069feb343c"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/v398-full-verify-round2-failed.log",
+      "bytesLFNormalized": 113284,
+      "sha256": "c97b987f8cc39d04e036b6a799c11293bbca3aac292a8dd89a7a259cd9cb11b5"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/v398-full-verify.log",
+      "bytesLFNormalized": 105346,
+      "sha256": "4a20dba86fcf82d4f898c334622a8279310382219279cb0c4a3f119f2a0aa659"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/v398-i2-publication.log",
+      "bytesLFNormalized": 90,
+      "sha256": "44ac9c72889ae1d419359f290460c4dc2a0298dc54bbcd6a0a2e1cd049a63c7e"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/v398-s00-final.log",
+      "bytesLFNormalized": 1668,
+      "sha256": "211b24a4bb47a6b887c310646036dec55e0bf3c298c64db480e9b753eb2a0dc3"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/v398-staged-diff-initial-failed.log",
+      "bytesLFNormalized": 205,
+      "sha256": "69776f8e3c9c826d6d2d1e1c6e9597d108df5213b149821e9aef8e221c058094"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/v398-targeted-corrected.log",
+      "bytesLFNormalized": 3803,
+      "sha256": "e013a43b6c909268be299a5ba5c2539d0a309006b4c3681168603aa7c8ae1b95"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/v398-targeted-final.log",
+      "bytesLFNormalized": 4365,
+      "sha256": "a046847cf35cb00d3c738f489997f7625c1571b836d886c2bf09a2c124b01e0e"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/v398-targeted-initial.log",
+      "bytesLFNormalized": 8622,
+      "sha256": "611c61bd34838b8a5764e5619cf5343630170ebe93c8e919e18f84b1598053af"
+    },
+    {
       "path": "docs/reports/v398-entry-sizing-quality-review/verify-deps.log",
       "bytesLFNormalized": 1269,
       "sha256": "92b4f9d00e74eca7e594c3f62141286f386723f38a8ffb38e69dbac380390c2e"
+    },
+    {
+      "path": "package-lock.json",
+      "bytesLFNormalized": 152462,
+      "sha256": "7918f62e5bf557382d9f59068afb6b846f30b008a9a9f6b6596edde37c910b08"
+    },
+    {
+      "path": "package.json",
+      "bytesLFNormalized": 3729,
+      "sha256": "c3c4ec84e48acde929b60d47bff10cf95798345ccc82ef45f9a4eec9db37fb21"
+    },
+    {
+      "path": "packages/contracts/package.json",
+      "bytesLFNormalized": 396,
+      "sha256": "ab7f141f6fce2641df480897d595ba4a0fade6cf808b59d630a048b4efe2839e"
+    },
+    {
+      "path": "packages/contracts/src/trading.ts",
+      "bytesLFNormalized": 30749,
+      "sha256": "d41640d9c3889b5a0f4a3237bcdffac4bb788c2e132166e1b6917eda02efeabb"
+    },
+    {
+      "path": "packages/contracts/src/version.ts",
+      "bytesLFNormalized": 955,
+      "sha256": "52b14467a997f260de64a6eee9fff669c4171935fcd91d806a8c7b971febf563"
+    },
+    {
+      "path": "packages/core/package.json",
+      "bytesLFNormalized": 382,
+      "sha256": "a23aa2e3da46f95f0c6c7e0691a0628e894337fb1b7e146c6019690b97c1c83e"
+    },
+    {
+      "path": "scripts/v397-release-identity.mjs",
+      "bytesLFNormalized": 1443,
+      "sha256": "4c4994d83aa499e9a97476c702145a192f587c9726a11c6ff9597a7b54cf8804"
     },
     {
       "path": "scripts/v398-compare-sizing.py",
@@ -731,13 +1048,23 @@
     },
     {
       "path": "scripts/v398-evidence-manifest.py",
-      "bytesLFNormalized": 3186,
-      "sha256": "384d896de5d1505c4c96f6872db38286c8c397aa739eac2c681849f0a2b88190"
+      "bytesLFNormalized": 4313,
+      "sha256": "bb715f02e55817ecd8b4ca51d0004fa12898e1a6fbd1f61b629f1056ae8cd3d0"
     },
     {
       "path": "scripts/v398-github-readback.py",
-      "bytesLFNormalized": 1308,
-      "sha256": "88ac65c9609f5a4d57fa18bad73038c33f5d359b816d397308c25f9f232d1d58"
+      "bytesLFNormalized": 2828,
+      "sha256": "a0a3e9135a8ab62a5cec2c9593baa226e41528f877abcb68d0c439f1fc1f2077"
+    },
+    {
+      "path": "scripts/v398-implementation-audit.py",
+      "bytesLFNormalized": 2314,
+      "sha256": "875f478a37ded070dbf6c4799036b48f9a543402cb583ff602d41e910e51a844"
+    },
+    {
+      "path": "scripts/v398-manual-start.ps1",
+      "bytesLFNormalized": 4083,
+      "sha256": "93d5989d67c36ccd078164093d86b1be17aabd9cd98f810681452e34bc06c3f5"
     },
     {
       "path": "scripts/v398-project-lineage.mjs",
@@ -755,14 +1082,24 @@
       "sha256": "c15181621cd2504f3cf5e84666b45de32f3c6622d8c86b578adb6f2e1b51c19a"
     },
     {
+      "path": "scripts/v398-runtime-readback.mjs",
+      "bytesLFNormalized": 1576,
+      "sha256": "6528c5a1b9e6a487f90656ab1204e00ed364bf83cdf04a95919c59794f21706d"
+    },
+    {
       "path": "scripts/v398-source-audit.py",
       "bytesLFNormalized": 4944,
       "sha256": "ef8e407bad22a95b0b57ff40fc9145f0e11bd9842e93348f306ffcff34ec5a53"
     },
     {
       "path": "scripts/v398-testnet-readonly.mjs",
-      "bytesLFNormalized": 5984,
-      "sha256": "354343bb62590d9900370fc806c385a8d91efea29c4da629d4024d62cd55246c"
+      "bytesLFNormalized": 6239,
+      "sha256": "e4fdd8208c14af1ddd09809470de56f37299e5cb5d3d2a6b5fc8cfc292954fca"
+    },
+    {
+      "path": "scripts/v398-verify-offline.mjs",
+      "bytesLFNormalized": 2171,
+      "sha256": "04e1ca2cead1c71a81e59807ac3b042bf5ceaedf83e773aa398159a896447ed1"
     }
   ]
 }

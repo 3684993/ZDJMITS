@@ -1,3 +1,11 @@
+# Current — V3.9.8 I2 offline implementation; runtime pending — 2026-10-09
+
+R2 `2b0143e` research/plan and 152 remote hashes preceded all source edits. Deterministic NO_SEPARATE_ADD_V398 is declared before frozen candidates/Primary; a durable origin cap and exact submission claim share SQLite BEGIN IMMEDIATE; HUMAN ADD is rejected before all write/takeover paths. Risk min-of-bounds is pure shadow only, no uncalibrated multiplier. Primary sole authority; UNKNOWN, canonical funding/lot gaps and protected TP remain conservative.
+
+Local full verify PASS: 240 workspace files / 2063 tests. Two failed full runs and initial targeted SQL failure remain evidence. Strict Zod envelope compatibility fixed, source protected files unchanged. R2 automatic Actions failed S00 inventory; current inventory mechanically regenerated. I2 remote/CI and user-authorized one-shot current TESTNET startup remain pending at this checkpoint; this is not runtime acceptance. Do not trigger extra starts/restarts, models or proxy lifecycle, manual orders or Settings edits. See `docs/reports/v398-entry-sizing-quality-review/IMPLEMENTATION_REPORT.md`.
+
+--- Historical handoff follows ---
+
 # Current — Trade Learning P0 completed locally; NOT_DEPLOYED — 2026-10-08 20:15 +08
 
 P0.1/P0.2/P0.3/P0.4 implemented in isolated worktree `D:\MITS-WORKTREES\v397-trade-learning-p0-20261008` from main `b65883d5e6435071acacd81e57d1921fc35a3574`. Exact exit composition/finalizer/identityConflict/quantity proof separates ETHFI MIXED_TP_MANUAL from real identity collision; AAVE stays pure SYSTEM_MANUAL. Independent native-asset fee/realized/funding proofs, full canonical gate, per-lot immutable PRIMARY Entry/run/cost/TP/context/fill-stage lineage and estimate/scenario/calibrated EV semantics are implemented. Raw provenance history preserved; no strategy, TP percentage, max-hold/trailing/break-even, Entry authority, Review veto, model resource or SSH changes; no P1 collector/Qwen revenue feedback.

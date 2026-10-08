@@ -3,6 +3,7 @@ import {reconciliationTiming} from '../services/reconciliationTiming.js';
 import { mkdir, readFile, stat, link, unlink } from "node:fs/promises";
 import path from "node:path";
 import { DatabaseSync, backup as sqliteBackup } from "node:sqlite";
+import {createNoAddOriginSchema,claimNoAddOrigin,readNoAddOrigin,releaseFlatNoAddOrigins,type NoAddFlatSnapshot} from './noAddOriginLedger.js';
 import { Worker } from "node:worker_threads";
 import { ExecutionFillSchema, SystemSettingsSchema, type SystemSettings } from "@zdj/contracts";
 import { WindowsCredentialManagerSecretStore } from "./windowsCredentialManagerSecretStore.js";
@@ -513,6 +514,7 @@ export class SettingsStore {
       intent_id TEXT PRIMARY KEY, scope TEXT NOT NULL, active INTEGER NOT NULL, payload TEXT NOT NULL, updated_at INTEGER NOT NULL
     ); CREATE UNIQUE INDEX IF NOT EXISTS execution_tasks_active_scope ON execution_tasks(scope) WHERE active=1;`);
     this.db.exec(`CREATE TABLE IF NOT EXISTS entry_execution_tasks(intent_id TEXT PRIMARY KEY,scope TEXT NOT NULL,active INTEGER NOT NULL,payload TEXT NOT NULL,updated_at INTEGER NOT NULL,released_at INTEGER NOT NULL DEFAULT 0);`);
+    createNoAddOriginSchema(this.db);
     // The legacy `entry_execution_scope` partial unique index is deliberately NOT created here. It was
     // dropped by migration 11 because funds-only submission identity legitimately keeps more than one
     // ACTIVE row per underlying; recreating it on the next open would fail on that very data and stop
@@ -1251,6 +1253,14 @@ export class SettingsStore {
           return{acquired:false,cause:'LEGACY_UNDERLYING_ISOLATION' as const,record,conflict:describeClaimConflict(record),maySubmit:false,mustQueryFirst:false};
         }
       }
+      const noAdd=(isolation as any)?.noAdd;
+      if(noAdd){
+        if(!Number.isFinite(noAdd.authorizedQuantity)||value.order.quantity!==noAdd.authorizedQuantity)return{acquired:false,cause:'NO_SEPARATE_ADD',record:value,conflict:describeClaimConflict(value),maySubmit:false,mustQueryFirst:false};
+        const parts=JSON.parse(scope),refusal=claimNoAddOrigin(this.db,{environment:String(parts[0]),account:String(parts[1]),symbol:value.order.symbol,side:value.order.side,
+          intentId:value.intent.id,clientOrderId:String(value.order.clientOrderId??''),quantity:Number(noAdd.authorizedQuantity),now});
+        if(refusal||!Number.isFinite(noAdd.authorizedQuantity)||value.order.quantity!==noAdd.authorizedQuantity)
+          return{acquired:false,cause:'NO_SEPARATE_ADD',record:value,conflict:describeClaimConflict(value),maySubmit:false,mustQueryFirst:false};
+      }
       let result=this.db.prepare('INSERT OR IGNORE INTO entry_execution_tasks(intent_id,scope,active,payload,updated_at,submission_key,isolation_key,isolation_mode) VALUES(?,?,1,?,?,?,?,?)')
         .run(value.intent.id,scope,JSON.stringify(value),now,submissionKey,isolationKey,mode);
       if(!result.changes&&retryRejected)result=this.db.prepare('UPDATE OR IGNORE entry_execution_tasks SET active=1,payload=?,updated_at=?,released_at=0 WHERE intent_id=? AND submission_key=? AND active=0 AND released_at=0').run(JSON.stringify(value),now,value.intent.id,submissionKey);
@@ -1270,6 +1280,8 @@ export class SettingsStore {
     finally{this.transactionActive=false;}
   }
   saveEntryExecution(value:EntryExecutionRecord){return reconciliationTiming.measure('journal.entry',()=>this.saveEntryExecutionRecord(value));}
+  noAddOrigin(environment:string,account:string,symbol:string,side:string){return readNoAddOrigin(this.db,environment,account,symbol,side);}
+  releaseNoAddOrigins(snapshot:NoAddFlatSnapshot){return releaseFlatNoAddOrigins(this.db,snapshot);}
   private saveEntryExecutionRecord(value:EntryExecutionRecord){
     reconciliationTiming.count('entryJournalSaveCalls');
     const now=Date.now(),order=value.order as any;

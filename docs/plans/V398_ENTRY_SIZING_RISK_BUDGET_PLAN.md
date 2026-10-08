@@ -1,3 +1,11 @@
+# I2 实施状态 — 2026-10-09
+
+R2 在 `2b0143e5dc112266437da2e14c7eb808f51d9869` 完成 152 项远端 hash 核验后才修改代码。确定性 no-add、SQLite 原始授权、人工 ADD 拒绝、版本 3.9.8 与纯 shadow risk bounds 已实施；完整本地 verify 240 files / 2063 tests PASS。新增工具后的 S00 清单再次机械验证 PASS。细节及保留的两轮失败见 `docs/reports/v398-entry-sizing-quality-review/IMPLEMENTATION_REPORT.md`。
+
+新 live risk multiplier 不启用，原周线/portfolio/funding 覆盖缺口仍阻断正式参数校准。用户另行授权的当前停止 TESTNET 实例启动，需先完成 I2 远端与 CI，之后只允许一次 MANUAL_START，真实 health/closeout/identity 待验收。不能由此次授权重试失败启动或制造测试交易。
+
+---
+
 # V3.9.8 R2实施计划 — no separate add / shadow risk bounds
 
 基线3242a79，2026-10-08。先研究/计划GitHub readback后改source；用户最后一句另行明确授权最终升级启动当前停止的TESTNET8080，不授权改Settings/models/proxy/人工交易。旧计划在下方保留，本节覆盖其需重新授权offline/lifecycle的默认。

@@ -1,0 +1,3 @@
+warning: in the working copy of 'scripts/v398-evidence-manifest.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'scripts/v398-github-readback.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'scripts/v398-testnet-readonly.mjs', LF will be replaced by CRLF the next time Git touches it

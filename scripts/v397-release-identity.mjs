@@ -6,7 +6,7 @@ import path from 'node:path';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const read=file=>readFileSync(path.join(root,file),'utf8');
 const json=file=>JSON.parse(read(file));
-const version='3.9.7';
+const version='3.9.8';
 const files=['package.json','packages/contracts/package.json','packages/core/package.json','apps/engine/package.json','apps/dashboard/package.json'];
 const lock=json('package-lock.json');
 for(const file of files){
@@ -18,4 +18,4 @@ for(const file of files){
 if(lock.version!==version||!read('packages/contracts/src/version.ts').includes(`RELEASE_VERSION = "${version}"`)||
   !read('packages/contracts/src/version.ts').includes('API_VERSION = "V3.9.7"'))throw new Error('RELEASE_CONTRACT_IDENTITY_MISMATCH');
 if(!read('apps/dashboard/src/layouts/AppShell.vue').includes('RELEASE_LABEL'))throw new Error('DASHBOARD_RELEASE_LABEL_UNWIRED');
-console.log(JSON.stringify({gate:'V397_RELEASE_IDENTITY_PASS',version,packages:files.length,lock:true,api:'V3.9.7'}));
+console.log(JSON.stringify({gate:'V398_RELEASE_IDENTITY_PASS',version,packages:files.length,lock:true,api:'V3.9.7'}));

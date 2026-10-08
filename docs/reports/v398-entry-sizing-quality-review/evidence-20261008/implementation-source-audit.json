@@ -1,0 +1,129 @@
+{
+  "observedAt": "2026-10-08T21:52:29.712267+00:00",
+  "researchPlanRemoteBase": "2b0143e5dc112266437da2e14c7eb808f51d9869",
+  "head": "2b0143e5dc112266437da2e14c7eb808f51d9869",
+  "sourceState": "UNCOMMITTED_I1",
+  "files": [
+    {
+      "path": "apps/dashboard/package.json",
+      "sha256LF": "c36a286307d87c3fbf817d43399ddb99241475ba04b40dc5c05630befa6c642a"
+    },
+    {
+      "path": "apps/dashboard/src/components/PositionConsole.vue",
+      "sha256LF": "a1172c445a34f145889a5cb551a486e19b2a379098eae1c1ceb8844271a67f9c"
+    },
+    {
+      "path": "apps/engine/package.json",
+      "sha256LF": "3c48b83e7eeced8c2d232739844beb155a6c4349316f7ad299ebfd8fa84fe795"
+    },
+    {
+      "path": "apps/engine/src/config/noAddOriginLedger.test.ts",
+      "sha256LF": "c3a4ad388ed3412625bcee25282b10b115ab5ba8d3ff74a7e1387b948fb5cfaf"
+    },
+    {
+      "path": "apps/engine/src/config/noAddOriginLedger.ts",
+      "sha256LF": "4c4f06d3107e99aee9f2b71d69a084847034505bb1bcf3b14eea16915a443f6a"
+    },
+    {
+      "path": "apps/engine/src/config/settingsStore.ts",
+      "sha256LF": "99b4e55e53252b3a18591eaf082dbdefd88f3c248e3683770f5a2e13a2629562"
+    },
+    {
+      "path": "apps/engine/src/runtime/appRuntime.ts",
+      "sha256LF": "a88997a9498ed1f28b2dc29edb8086529a9687b614b38d380bcb8c2e267da1c3"
+    },
+    {
+      "path": "apps/engine/src/services/entryCoordinator.ts",
+      "sha256LF": "086f4844fb2fbe82f56e49cfb2b155adc7d83e2823c6bcae43195eb9266667a4"
+    },
+    {
+      "path": "apps/engine/src/services/entrySubmissionIdentity.integration.test.ts",
+      "sha256LF": "059294b9d24236134f02577a9c20e1da18dc3cf636bfed6b5ac8f98ad8eb77e7"
+    },
+    {
+      "path": "apps/engine/src/services/entrySubmissionIdentity.ts",
+      "sha256LF": "ef8f006ebf360bb59d9abe12242148695f06cd575f2561ba6d8ee5010960d3e4"
+    },
+    {
+      "path": "apps/engine/src/services/manualPositionService.test.ts",
+      "sha256LF": "2b9a2ff06ba686290847a59d7e029066c6bcda6cfed90f1d2104463a247bfa09"
+    },
+    {
+      "path": "apps/engine/src/services/manualPositionService.ts",
+      "sha256LF": "df82f4c905057529747f11daae5287388a9ee20a95042c17d241951ed03f40e8"
+    },
+    {
+      "path": "apps/engine/src/services/noSeparateAdd.test.ts",
+      "sha256LF": "a4eaed98f9337241d916c0f66edad7e0f63b54ee7bccb4ca82563a7524de3ff1"
+    },
+    {
+      "path": "apps/engine/src/services/noSeparateAdd.ts",
+      "sha256LF": "9208d398430a469d867d5daac47761beaff76dc1f6999b8b3d15631e6f91235b"
+    },
+    {
+      "path": "apps/engine/src/services/preAiExecutionEnvelope.ts",
+      "sha256LF": "9fe246717951ef298318ee9749cac71bcd91a2a68f43fe5fdc53ce127043c780"
+    },
+    {
+      "path": "apps/engine/src/services/reconciliationService.ts",
+      "sha256LF": "5f4d570b004aee7cc8b764867aa009b879dc4719120c7468348e07882a51473b"
+    },
+    {
+      "path": "apps/engine/src/services/temporalAlgorithms.test.ts",
+      "sha256LF": "35de7ca1834aace3fb28d8a300d0a7da3d6422a3a06a2a61d8c44ecebc640ea0"
+    },
+    {
+      "path": "apps/engine/src/services/testnetFundsOnlyEntry.test.ts",
+      "sha256LF": "64e80dcf837eb70ee4ea7ae516b328bb76735f2c7c6300b2e29261668534e0d8"
+    },
+    {
+      "path": "apps/engine/src/services/v398RiskQuantityBounds.test.ts",
+      "sha256LF": "616f46331352c9843c921117fec2fb6b99f6e4dbbd79014cf36358f50d795665"
+    },
+    {
+      "path": "apps/engine/src/services/v398RiskQuantityBounds.ts",
+      "sha256LF": "75094a26fc700ad775d86371b79b974838c5847cd79e93d6a2516a6ae3bba2d0"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256LF": "7918f62e5bf557382d9f59068afb6b846f30b008a9a9f6b6596edde37c910b08"
+    },
+    {
+      "path": "package.json",
+      "sha256LF": "c3c4ec84e48acde929b60d47bff10cf95798345ccc82ef45f9a4eec9db37fb21"
+    },
+    {
+      "path": "packages/contracts/package.json",
+      "sha256LF": "ab7f141f6fce2641df480897d595ba4a0fade6cf808b59d630a048b4efe2839e"
+    },
+    {
+      "path": "packages/contracts/src/trading.ts",
+      "sha256LF": "d41640d9c3889b5a0f4a3237bcdffac4bb788c2e132166e1b6917eda02efeabb"
+    },
+    {
+      "path": "packages/contracts/src/version.ts",
+      "sha256LF": "52b14467a997f260de64a6eee9fff669c4171935fcd91d806a8c7b971febf563"
+    },
+    {
+      "path": "packages/core/package.json",
+      "sha256LF": "a23aa2e3da46f95f0c6c7e0691a0628e894337fb1b7e146c6019690b97c1c83e"
+    }
+  ],
+  "protectedSourceUnchanged": {
+    "apps/engine/src/services/tpGuardian.ts": true,
+    "apps/engine/src/services/positionReviewRunner.ts": true,
+    "apps/engine/src/services/positionService.ts": true,
+    "config/settings.default.json": true
+  },
+  "authority": [
+    "read physical position/pending/origin -> deterministic no-add envelope before candidate freeze",
+    "frozen candidate set -> sole Primary candidate ID -> TradePlan -> reservation -> intent",
+    "JIT frozen quantity equality -> BEGIN IMMEDIATE origin + submission journal claim",
+    "exact intent/client/quantity cap -> final no-add/owner check -> TESTNET adapter",
+    "UNKNOWN -> WS/exact same-order GET; never replacement POST",
+    "full fresh reconciliation + exact terminal + CLOSED/CONSERVED cycle -> release original authority"
+  ],
+  "shadowRiskBoundsLiveCallers": [],
+  "formalRiskCalibration": "INSUFFICIENT_EVIDENCE",
+  "noHistoryRewrite": true
+}

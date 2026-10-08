@@ -40,6 +40,7 @@ import { buildPreAiExecutionEnvelope } from './preAiExecutionEnvelope.js';
 import { acquireExecutionLease, releaseExecutionLease, validateExecutionLease } from './executionLease.js';
 import { frozenAllocationPrice, materializeCandidateQuantityAllocation } from './aiQuantityAllocation.js';
 import { buildHistoricalTpReachability } from './historicalTpReachability.js';
+import {noAddEnabled,noSeparateAddBlock} from './noSeparateAdd.js';
 
 /** How long the latest deterministic admission refusal may still be called the current first cause. */
 export const RISK_ADMISSION_VERDICT_TTL_MS = 5 * 60_000;
@@ -272,6 +273,7 @@ export class EntryCoordinator {
     return true;
   }
   private executionHardBlock(intent:EntryIntent, order?:EntryOrder){
+    const noAddBlock=noSeparateAddBlock(this.state,intent.symbol,intent.side,intent.id,Date.now(),order?.quantity);if(noAddBlock)return noAddBlock;
     const qp=qualityPolicy(this.state.settings),qm=this.state.snapshots.get(intent.symbol),fundsOnlyExecution=testnetFundsOnlyEntry(this.state.settings);
     if(!fundsOnlyExecution&&qp.mode==='ENFORCE'&&(this.state as any).tradingQualityEvidenceReady===false)return'TRADING_QUALITY_STORAGE_UNAVAILABLE';
     const budgetBlock=this.writeAdmissionBlock();if(budgetBlock)return budgetBlock;
@@ -357,9 +359,17 @@ export class EntryCoordinator {
       const scope=executionScope(environment,account,underlying,'ENTRY');
       // P3: funds-only claims are keyed by this Intent's submission identity alone. The same rows that
       // used to hold the underlying scope are still read, but only as an observation.
-      const isolation=entrySubmissionIsolation(this.state.settings,{environment,accountId:account,intentId:intent.id,underlying,kind:'ENTRY'});
+      const isolation={...entrySubmissionIsolation(this.state.settings,{environment,accountId:account,intentId:intent.id,underlying,kind:'ENTRY'}),
+        ...(noAddEnabled(this.state.settings)?{noAdd:{authorizedQuantity:order.quantity}}:{})};
       const claim=this.journal.claim(scope,{intent,order:submitting,reservation:order.reservationId?this.state.entryReservations.get(order.reservationId):undefined},resumedFrom==='POST_ONLY_REPRICE',isolation);
       if(!claim.acquired){
+        if(claim.cause==='NO_SEPARATE_ADD'){
+          const rejected={...order,status:'REJECTED' as const,factSource:'LOCAL_NOT_SUBMITTED',updatedAt:Date.now()};
+          this.state.entryOrders.set(order.id,rejected);this.journal.save({intent,order:rejected});
+          if(order.reservationId)this.state.releaseEntryReservation(order.reservationId);
+          this.events.publish('ENTRY_ORIGIN_AUTHORIZATION_REFUSED',{intentId:intent.id,orderId:order.id,reason:claim.cause,exchangeWrites:0,policyDeclaredBeforePrimary:true},order.symbol);
+          throw new Error('NO_SEPARATE_ADD_ORIGIN_AUTHORIZATION_EXISTS');
+        }
         const conflict=claim.conflict;
         const holderIsSomeoneElse=String(claim.record?.intent?.id??'')!==intent.id;
         this.events.publish('ENTRY_SUBMISSION_CLAIM_REFUSED',{brainRunId:intent.brainRunId,intentId:intent.id,orderId:order.id,clientOrderId:order.clientOrderId,
@@ -417,6 +427,7 @@ export class EntryCoordinator {
   /** The single wire submit for an intent whose durable claim this caller holds. */
   private async placeAfterClaim(intent:EntryIntent,submitting:EntryOrder,resumedFrom?:string):Promise<EntryOrder>{
     const order=submitting;
+    const finalBlock=noSeparateAddBlock(this.state,intent.symbol,intent.side,intent.id,Date.now(),order.quantity);if(finalBlock){const rejected={...order,status:'REJECTED' as const,factSource:'LOCAL_NOT_SUBMITTED',updatedAt:Date.now()};this.state.entryOrders.set(order.id,rejected);this.journal?.save({intent,order:rejected});throw new Error(`JIT_BLOCKED:${finalBlock}`);}
     try{this.events.publish('ENTRY_SUBMIT_ATTEMPTED',{brainRunId:intent.brainRunId,intentId:intent.id,orderId:order.id,clientOrderId:order.clientOrderId,environment:'TESTNET',resumedFrom:resumedFrom??null},intent.symbol);}catch(error){
       // No exchange call has occurred yet. Retire the durable claim as locally unsent instead of
       // leaving SUBMITTING to be mistaken for an exchange-UNKNOWN outcome.

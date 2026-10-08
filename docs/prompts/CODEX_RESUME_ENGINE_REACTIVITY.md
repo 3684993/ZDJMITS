@@ -6,7 +6,7 @@ Do not redo the SSH/SOCKS investigation or the earlier Trading Quality micro-tun
 already moved the dominant hotspot to full runtime checkpoint persistence.
 
 Use candidate branch `chatgpt/reactivity-core-checkpoint-20261008` at
-`54cc468960a3ca0eee221915c277427f60de237e`.
+`16bfdc05f1a3698c1c23066c4467def713dbee62`.
 
 Your first task is verification, not redesign:
 

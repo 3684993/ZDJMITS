@@ -1,0 +1,151 @@
+{
+  "observedAt": "2026-10-08T22:26:46.839168+00:00",
+  "mode": "READ_ONLY_QUERY_ONLY",
+  "rowLimit": 256,
+  "accountOmitted": true,
+  "origins": [
+    {
+      "intentId": "intent_mv03eggy_2duf28r3",
+      "environment": "TESTNET",
+      "symbol": "AAVEUSDT",
+      "side": "SHORT",
+      "clientOrderId": "ml_37478f2a56304f3ba96c7909fa08",
+      "immutableQuantity": 6.0,
+      "createdAt": 1791497581997,
+      "releasedAt": 0,
+      "order": {
+        "clientOrderId": "ml_37478f2a56304f3ba96c7909fa08",
+        "symbol": "AAVEUSDT",
+        "side": "SHORT",
+        "quantity": 6,
+        "filledQuantity": 1.4,
+        "exchangeTerminalStatus": "UNKNOWN",
+        "status": "CANCELED",
+        "updatedAt": 1791497610280
+      }
+    },
+    {
+      "intentId": "intent_mv03gk3g_ut4ytmsm",
+      "environment": "TESTNET",
+      "symbol": "ONDOUSDT",
+      "side": "SHORT",
+      "clientOrderId": "ml_6dbe4c46f5e5c464b74a50b3e82c",
+      "immutableQuantity": 4127.0,
+      "createdAt": 1791497684462,
+      "releasedAt": 0,
+      "order": {
+        "clientOrderId": "ml_6dbe4c46f5e5c464b74a50b3e82c",
+        "symbol": "ONDOUSDT",
+        "side": "SHORT",
+        "quantity": 4127,
+        "filledQuantity": 0,
+        "exchangeTerminalStatus": null,
+        "status": "CANCELED",
+        "updatedAt": 1791497705427
+      }
+    },
+    {
+      "intentId": "intent_mv03j6vs_61hoxici",
+      "environment": "TESTNET",
+      "symbol": "ZECUSDT",
+      "side": "LONG",
+      "clientOrderId": "ml_bef256c88ece5cb43341868cb765",
+      "immutableQuantity": 0.845,
+      "createdAt": 1791497803691,
+      "releasedAt": 0,
+      "order": {
+        "clientOrderId": "ml_bef256c88ece5cb43341868cb765",
+        "symbol": "ZECUSDT",
+        "side": "LONG",
+        "quantity": 0.845,
+        "filledQuantity": 0.327,
+        "exchangeTerminalStatus": "UNKNOWN",
+        "status": "PARTIALLY_FILLED",
+        "updatedAt": 1791497834247
+      }
+    },
+    {
+      "intentId": "intent_mv03nhe0_lhkxn0na",
+      "environment": "TESTNET",
+      "symbol": "TAOUSDT",
+      "side": "SHORT",
+      "clientOrderId": "ml_6478694abc930e2abe2b08d7dda8",
+      "immutableQuantity": 3.709,
+      "createdAt": 1791498003322,
+      "releasedAt": 1791498103209,
+      "order": {
+        "clientOrderId": "ml_6478694abc930e2abe2b08d7dda8",
+        "symbol": "TAOUSDT",
+        "side": "SHORT",
+        "quantity": 3.709,
+        "filledQuantity": 0,
+        "exchangeTerminalStatus": "CANCELED",
+        "status": "CANCELED",
+        "updatedAt": 1791498039711
+      }
+    },
+    {
+      "intentId": "intent_mv03pwil_pvoftfl8",
+      "environment": "TESTNET",
+      "symbol": "USELESSUSDT",
+      "side": "SHORT",
+      "clientOrderId": "ml_35cbea5accf956c488aeddbf7dfa",
+      "immutableQuantity": 5302.0,
+      "createdAt": 1791498116120,
+      "releasedAt": 0,
+      "order": {
+        "clientOrderId": "ml_35cbea5accf956c488aeddbf7dfa",
+        "symbol": "USELESSUSDT",
+        "side": "SHORT",
+        "quantity": 5302,
+        "filledQuantity": 0,
+        "exchangeTerminalStatus": null,
+        "status": "CANCELED",
+        "updatedAt": 1791498139655
+      }
+    },
+    {
+      "intentId": "intent_mv03sww5_b9zzvotn",
+      "environment": "TESTNET",
+      "symbol": "PENGUUSDT",
+      "side": "SHORT",
+      "clientOrderId": "ml_1a23b00d71caa96f7cc4a146ba5c",
+      "immutableQuantity": 125055.0,
+      "createdAt": 1791498256677,
+      "releasedAt": 0,
+      "order": {
+        "clientOrderId": "ml_1a23b00d71caa96f7cc4a146ba5c",
+        "symbol": "PENGUUSDT",
+        "side": "SHORT",
+        "quantity": 125055,
+        "filledQuantity": 0,
+        "exchangeTerminalStatus": null,
+        "status": "CANCELED",
+        "updatedAt": 1791498284187
+      }
+    },
+    {
+      "intentId": "intent_mv03uz8x_f338tg3t",
+      "environment": "TESTNET",
+      "symbol": "VVVUSDT",
+      "side": "SHORT",
+      "clientOrderId": "ml_8a1e2f89d39e9fdcbaccaa4e0988",
+      "immutableQuantity": 43.87,
+      "createdAt": 1791498353364,
+      "releasedAt": 0,
+      "order": {
+        "clientOrderId": "ml_8a1e2f89d39e9fdcbaccaa4e0988",
+        "symbol": "VVVUSDT",
+        "side": "SHORT",
+        "quantity": 43.87,
+        "filledQuantity": 8.01,
+        "exchangeTerminalStatus": "UNKNOWN",
+        "status": "PARTIALLY_FILLED",
+        "updatedAt": 1791498384683
+      }
+    }
+  ],
+  "scope": "Natural durable origin and task projection only; no forced order, restart, or extra exchange request",
+  "crossRestartRuntimeAcceptance": "UNKNOWN_NOT_EXERCISED",
+  "allPartialFillAndIndependentAddRuntimeAcceptance": "UNKNOWN_REQUIRES_EXACT_FULL_CHAIN"
+}

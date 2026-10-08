@@ -1,5 +1,5 @@
 {
-  "observedAt": "2026-10-08T22:17:43.646Z",
+  "observedAt": "2026-10-08T22:25:56.351Z",
   "checks": {
     "healthReady": true,
     "closeoutHTTP200": true,
@@ -20,7 +20,7 @@
     "instanceId": "c685f035-1f52-48ac-80fa-998811ff3fe5",
     "version": "3.9.8",
     "buildId": "3.9.8-7271c941c2cdec049610",
-    "uptimeMs": 656308,
+    "uptimeMs": 1148993,
     "lastRestartReason": "MANUAL_START",
     "restartCount": 276
   },
@@ -28,11 +28,11 @@
     "environment": "TESTNET",
     "executionMode": "TESTNET_ENABLED",
     "lockedToTestnet": true,
-    "testnetWrites": 12,
+    "testnetWrites": 23,
     "productionWrites": 0,
     "blockedProductionWriteAttempts": 0,
-    "lastWriteAt": 1791497860120,
-    "lastWritePath": "/fapi/v1/order"
+    "lastWriteAt": 1791498351692,
+    "lastWritePath": "/fapi/v1/leverage"
   },
   "takeProfit": {
     "status": "READY",
@@ -56,11 +56,14 @@
   "taskActualEngineStops": 0,
   "taskManualExchangeWrites": 0,
   "optionalOnlineNativeOrderReadback": "CANCELED_BACKUP_TIMEOUT_UNKNOWN",
-  "newOriginNaturalEntryAcceptance": "UNKNOWN_NO_FORCED_ORDERS",
+  "newOriginNaturalEntryAcceptance": "PARTIAL_EVIDENCE_DURABLE_ORIGINS_AND_TASK_FILLED_PROJECTIONS",
   "formalRiskCalibration": "INSUFFICIENT_EVIDENCE",
   "engineExitTimerRemoved": true,
   "autoRestartEnabled": false,
   "sourceWorktree": "D:/MITS-worktrees/v398-entry-quality-20261008",
   "dataJunctionTarget": "D:/MITS/data",
-  "priorLogsPreserved": true
+  "priorLogsPreserved": true,
+  "naturalOriginEvidence": "natural-origin-completion.json",
+  "crossRestartRuntimeAcceptance": "UNKNOWN_NOT_EXERCISED",
+  "allPartialFillAndIndependentAddRuntimeAcceptance": "UNKNOWN_REQUIRES_EXACT_FULL_CHAIN"
 }

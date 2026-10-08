@@ -135,3 +135,11 @@ Need current TESTNET read-only snapshot, TradeRecord and lot/order/fill/PRIMARY/
 
 ## Required validation
 Bounded lossless snapshot and hashes; first-fill lot accounting and quantity conservation; identical policy replay across chronological purged walk-forward, block bootstrap, regime grouping; no lookahead, no future VWAP/quantity, open losers retained/right censored. Compare net/funding-qualified results separately from noncanonical MAE/stress; report CVaR, worst tails, maximum portfolio drawdown, size opportunity cost, quote/margin, stress, manual intervention, directional skew and data coverage. Unproven funding stays UNKNOWN. No quantitative optimum until evidence satisfies coverage gates.
+
+## 最终只读复查补充（2026-10-09 06:25–06:29，Asia/Shanghai）
+
+本文较早的 TP13/13、Engine TESTNET写1、无新origin描述是启动后早期快照，不能作为当前统计。`runtime-completion.json` 的固定观测时点为 UTC2026-10-08T22:25:56.351Z：PID8524，3.9.8，health READY/HTTP200，closeout200，scheduler RUNNING，TP14/14，缺失/重复/数量/方向/未核验均0；累计 Engine TESTNET gateway写23，生产写0。这些包含系统自然 Entry、保护、杠杆等请求，任务人工交易写0，不能描述为全局零写。
+
+`local-identity-completion.json` 随后观测6个active origin；更晚独立只读事务 `natural-origin-completion.json` 取得7个历史origin及其exact intent/clientOrderId/原始quantity上限/任务订单投影（账户标识省略）。AAVE投影filled1.4，ZEC0.327，VVV8.01，另4个filled0；订单投影与授权数量在公开JSON中可复核。计数变化来自持续运行与不同观测时间，不拼为同一快照。现在已存在自然授权及成交投影，旧“未发生”条件不再成立；这些有限记录尚不能证明完整逐lot交易所链、所有独立补仓拦截或跨重启接受，相关验收仍UNKNOWN，不强迫交易/重启制造样本。
+
+代码提交3327c84的GitHub Actions已SUCCESS；证据提交1cd6d75的272项远端哈希PASS，其Actions在回执时in_progress。最后归档提交仅证据/报告变化，不改变已加载Engine源码/dist。额外在线原生GET未完成的UNKNOWN、临时私有备份保留、风险校准INSUFFICIENT_EVIDENCE等边界继续有效。

@@ -1,0 +1,923 @@
+{
+  "observedAt": "2026-10-08T22:26:05.186987+00:00",
+  "databaseMode": "read-only/query-only",
+  "settingsVersion": 247,
+  "settingsUpdatedAt": 1791349868282,
+  "settingsPayloadSha256": "762941247f34ec1e94a19371ea8b79227a72cff594a814578c3a9d61897cbbb6",
+  "environment": "TESTNET",
+  "executionMode": "TESTNET_ENABLED",
+  "activeV398Origins": 6,
+  "releaseHead": "1cd6d75a46fc7f8032e682589eb50fe34b68e79b",
+  "canonicalHead": "ea531b5f51e717f0ead322733765f2d6de30b4cb",
+  "preservedCanonicalStatus": [
+    "D ZDJ-MITS-V3.9.2-UNKNOWN-P0-Fix-Verification-20260913.md",
+    "?? docs/reports/crash/engine-crash-20261006-071531/",
+    "?? docs/reports/crash/jitless-20261006-074518/",
+    "?? docs/reports/handoff/",
+    "?? scripts/collect-zdj-v397-handoff.ps1",
+    "?? scripts/vpn/"
+  ],
+  "taskSettingsWrites": 0,
+  "taskExchangeWrites": 0,
+  "currentInstanceBoundedEvents": [
+    {
+      "type": "ENGINE_INSTANCE_STARTED",
+      "ts": 1791497264098,
+      "payload": {
+        "instanceId": "c685f035-1f52-48ac-80fa-998811ff3fe5",
+        "pid": 8524,
+        "startReason": "MANUAL_START",
+        "restartCount": 276
+      }
+    },
+    {
+      "type": "TP_TERMINAL_FACT_PROJECTED",
+      "ts": 1791497271566,
+      "payload": {
+        "orderId": "tp_muz0y4ll_rlt4oyac",
+        "clientOrderId": "v396x886c70c48aac64e399dba540931142",
+        "exchangeOrderId": "540405465",
+        "status": "FILLED",
+        "source": "EXACT_ORDER",
+        "factObservedAt": 1791497262769
+      }
+    },
+    {
+      "type": "TP_TERMINAL_FACT_PROJECTED",
+      "ts": 1791497272409,
+      "payload": {
+        "orderId": "tp_muz86uls_cf8c2kga",
+        "clientOrderId": "v396x461c035baeef636c90f09eb20dcf5d",
+        "exchangeOrderId": "158705901",
+        "status": "FILLED",
+        "source": "EXACT_ORDER",
+        "factObservedAt": 1791497262769
+      }
+    },
+    {
+      "type": "TP_TERMINAL_FACT_PROJECTED",
+      "ts": 1791497274868,
+      "payload": {
+        "orderId": "tp_muzdzzyl_r9id7ns3",
+        "clientOrderId": "v396x4ddaf74980d68636ba5c8df8b655e3",
+        "exchangeOrderId": "183733944",
+        "status": "FILLED",
+        "source": "EXACT_ORDER",
+        "factObservedAt": 1791497262769
+      }
+    },
+    {
+      "type": "TP_TERMINAL_FACT_PROJECTED",
+      "ts": 1791497275432,
+      "payload": {
+        "orderId": "tp_muzekahx_4l8h8ngb",
+        "clientOrderId": "v396x4a8aa282fc0a7087d296b145bb7ca7",
+        "exchangeOrderId": "484257179",
+        "status": "FILLED",
+        "source": "EXACT_ORDER",
+        "factObservedAt": 1791497262769
+      }
+    },
+    {
+      "type": "TP_TERMINAL_FACT_PROJECTED",
+      "ts": 1791497276737,
+      "payload": {
+        "orderId": "tp_muzetfay_ugqtrhv6",
+        "clientOrderId": "v396x828c4309c907e832ea355a6fb5db21",
+        "exchangeOrderId": "341320275",
+        "status": "FILLED",
+        "source": "EXACT_ORDER",
+        "factObservedAt": 1791497262769
+      }
+    },
+    {
+      "type": "TP_TERMINAL_FACT_PROJECTED",
+      "ts": 1791497277291,
+      "payload": {
+        "orderId": "tp_muzexjei_ike0lcow",
+        "clientOrderId": "v396x437aab37d314a67a93a8d82a0d18b3",
+        "exchangeOrderId": "28623277113",
+        "status": "FILLED",
+        "source": "EXACT_ORDER",
+        "factObservedAt": 1791497262769
+      }
+    },
+    {
+      "type": "TP_REPAIR_STARTED",
+      "ts": 1791497333364,
+      "payload": {
+        "positionId": "exchange_VVVUSDT_SHORT",
+        "attempt": 1,
+        "source": "DETERMINISTIC_POSITION_FACTS"
+      }
+    },
+    {
+      "type": "TP_TARGET_SELECTED",
+      "ts": 1791497333371,
+      "payload": {
+        "positionId": "exchange_VVVUSDT_SHORT",
+        "price": 22.805,
+        "source": "FIXED_PROFITABLE",
+        "reason": "AI_HORIZON_EXPIRED_AT_1791459413441",
+        "authorizedTargetUsed": false,
+        "authorizedPresent": true,
+        "authorizedPrice": 24.197,
+        "authorizedReason": "Target aligns with the 15m Bollinger Lower Band (24.31) and recent swing lows, offering a high probability (98.4%) reach within the tactical horizon while maintaining a net profit above the minimum threshold.",
+        "authorizedHorizonExpiresAt": 1791459413441,
+        "authorizedValid": false,
+        "finalPrice": 22.805,
+        "fellBackFrom": "AI",
+        "refusals": [
+          "AI_HORIZON_EXPIRED_AT_1791459413441",
+          "TARGET_NOT_ON_REACHABLE_SIDE"
+        ],
+        "economics": {
+          "expectedNetProfit": 64.19231704560016,
+          "requiredNetProfit": 1,
+          "meetsProfitFloor": true
+        },
+        "profitFloorDisposition": "WARN_AND_KEEP",
+        "minMoveFloorPercent": 0,
+        "minMoveFloorSource": "DEFAULT_ZERO",
+        "parameterVersion": "TP-CONTRACT-V1:minMove=0:target=0.45:floor=1/0.15%",
+        "economicWarning": null,
+        "structureValid": false,
+        "fixedValid": true,
+        "aiPlanPresent": true
+      }
+    },
+    {
+      "type": "TP_SUBMISSION_PREPARED",
+      "ts": 1791497334828,
+      "payload": {
+        "positionId": "exchange_VVVUSDT_SHORT",
+        "order": {
+          "id": "tp_mv0399c0_ifje0w1h",
+          "clientOrderId": "v396xc23fed6c7fc85cdfce8568a31da99f",
+          "exchangeOrderId": null,
+          "cycleId": "cycle_entry_intent_muzg4s1l_7qblp97u",
+          "positionId": "exchange_VVVUSDT_SHORT",
+          "symbol": "VVVUSDT",
+          "side": "BUY",
+          "quantity": 41.25,
+          "price": 22.805,
+          "status": "UNKNOWN",
+          "createdAt": 1791497333370,
+          "updatedAt": 1791497333370
+        }
+      }
+    },
+    {
+      "type": "TP_SUBMISSION_NOT_SENT",
+      "ts": 1791497336214,
+      "payload": {
+        "positionId": "exchange_VVVUSDT_SHORT",
+        "clientOrderId": "v396xc23fed6c7fc85cdfce8568a31da99f",
+        "reason": "Error: TP_LOCAL_PREWIRE_FAILED: database is locked",
+        "exchangeRequestSent": false
+      }
+    },
+    {
+      "type": "TP_REPAIR_FAILED",
+      "ts": 1791497336220,
+      "payload": {
+        "positionId": "exchange_VVVUSDT_SHORT",
+        "orderId": "tp_mv0399c0_ifje0w1h",
+        "clientOrderId": "v396xc23fed6c7fc85cdfce8568a31da99f",
+        "submissionOutcome": "NOT_ATTEMPTED",
+        "message": "TP_LOCAL_PREWIRE_FAILED: database is locked",
+        "attempt": 1,
+        "nextRetryAt": 1791497396220,
+        "durableQuantity": 41.25,
+        "durableSide": "SHORT",
+        "reduceOnlySubmitted": false
+      }
+    },
+    {
+      "type": "TP_REPAIR_STARTED",
+      "ts": 1791497397975,
+      "payload": {
+        "positionId": "exchange_VVVUSDT_SHORT",
+        "attempt": 2,
+        "source": "DETERMINISTIC_POSITION_FACTS"
+      }
+    },
+    {
+      "type": "TP_TARGET_SELECTED",
+      "ts": 1791497397977,
+      "payload": {
+        "positionId": "exchange_VVVUSDT_SHORT",
+        "price": 22.805,
+        "source": "FIXED_PROFITABLE",
+        "reason": "AI_HORIZON_EXPIRED_AT_1791459413441",
+        "authorizedTargetUsed": false,
+        "authorizedPresent": true,
+        "authorizedPrice": 24.197,
+        "authorizedReason": "Target aligns with the 15m Bollinger Lower Band (24.31) and recent swing lows, offering a high probability (98.4%) reach within the tactical horizon while maintaining a net profit above the minimum threshold.",
+        "authorizedHorizonExpiresAt": 1791459413441,
+        "authorizedValid": false,
+        "finalPrice": 22.805,
+        "fellBackFrom": "AI",
+        "refusals": [
+          "AI_HORIZON_EXPIRED_AT_1791459413441",
+          "TARGET_NOT_ON_REACHABLE_SIDE"
+        ],
+        "economics": {
+          "expectedNetProfit": 64.19231704560016,
+          "requiredNetProfit": 1,
+          "meetsProfitFloor": true
+        },
+        "profitFloorDisposition": "WARN_AND_KEEP",
+        "minMoveFloorPercent": 0,
+        "minMoveFloorSource": "DEFAULT_ZERO",
+        "parameterVersion": "TP-CONTRACT-V1:minMove=0:target=0.45:floor=1/0.15%",
+        "economicWarning": null,
+        "structureValid": false,
+        "fixedValid": true,
+        "aiPlanPresent": true
+      }
+    },
+    {
+      "type": "TP_SUBMISSION_PREPARED",
+      "ts": 1791497401056,
+      "payload": {
+        "positionId": "exchange_VVVUSDT_SHORT",
+        "order": {
+          "id": "tp_mv03an6i_n03o484v",
+          "clientOrderId": "v396xa1ff1c7920cdd3e54e8e26c407a997",
+          "exchangeOrderId": null,
+          "cycleId": "cycle_entry_intent_muzg4s1l_7qblp97u",
+          "positionId": "exchange_VVVUSDT_SHORT",
+          "symbol": "VVVUSDT",
+          "side": "BUY",
+          "quantity": 41.25,
+          "price": 22.805,
+          "status": "UNKNOWN",
+          "createdAt": 1791497397977,
+          "updatedAt": 1791497397977
+        }
+      }
+    },
+    {
+      "type": "TP_PROTECTED",
+      "ts": 1791497403207,
+      "payload": {
+        "positionId": "exchange_VVVUSDT_SHORT",
+        "order": {
+          "id": "tp_mv03an6i_n03o484v",
+          "clientOrderId": "v396xa1ff1c7920cdd3e54e8e26c407a997",
+          "exchangeOrderId": "775318990",
+          "cycleId": "cycle_entry_intent_muzg4s1l_7qblp97u",
+          "positionId": "exchange_VVVUSDT_SHORT",
+          "symbol": "VVVUSDT",
+          "side": "BUY",
+          "quantity": 41.25,
+          "price": 22.805,
+          "status": "WORKING",
+          "createdAt": 1791497397977,
+          "updatedAt": 1791497403140
+        },
+        "repairAttempt": 2,
+        "tpEconomics": {
+          "currentTpPrice": 22.805,
+          "expectedGrossProfit": 65.04876000000016,
+          "expectedFees": 0.8564429544000002,
+          "expectedNetProfit": 64.19231704560016,
+          "requiredNetProfit": 1,
+          "breakEvenPrice": 24.36049296601859,
+          "minProfitableExitPrice": 24.33626120375156,
+          "status": "TP_OK",
+          "economicWarning": null,
+          "targetProvenance": {
+            "authorizedPresent": true,
+            "authorizedPrice": 24.197,
+            "authorizedReason": "Target aligns with the 15m Bollinger Lower Band (24.31) and recent swing lows, offering a high probability (98.4%) reach within the tactical horizon while maintaining a net profit above the minimum threshold.",
+            "authorizedHorizonExpiresAt": 1791459413441,
+            "authorizedValid": false,
+            "finalPrice": 22.805,
+            "fellBackFrom": "AI",
+            "refusals": [
+              "AI_HORIZON_EXPIRED_AT_1791459413441",
+              "TARGET_NOT_ON_REACHABLE_SIDE"
+            ],
+            "economics": {
+              "expectedNetProfit": 64.19231704560016,
+              "requiredNetProfit": 1,
+              "meetsProfitFloor": true
+            },
+            "profitFloorDisposition": "WARN_AND_KEEP",
+            "minMoveFloorPercent": 0,
+            "minMoveFloorSource": "DEFAULT_ZERO",
+            "parameterVersion": "TP-CONTRACT-V1:minMove=0:target=0.45:floor=1/0.15%"
+          }
+        }
+      }
+    },
+    {
+      "type": "ENTRY_SUBMIT_ATTEMPTED",
+      "ts": 1791497582467,
+      "payload": {
+        "brainRunId": "airun_mv03cx29_12t7knc2",
+        "intentId": "intent_mv03eggy_2duf28r3",
+        "orderId": "entry_intent_mv03eggy_2duf28r3",
+        "clientOrderId": "ml_37478f2a56304f3ba96c7909fa08",
+        "environment": "TESTNET",
+        "resumedFrom": null
+      }
+    },
+    {
+      "type": "ENTRY_ADAPTER_REQUEST_FACTS",
+      "ts": 1791497584466,
+      "payload": {
+        "schemaVersion": "V397-ENTRY-ADAPTER-REQUEST-1",
+        "intentId": "intent_mv03eggy_2duf28r3",
+        "mandateId": null,
+        "orderId": "entry_intent_mv03eggy_2duf28r3",
+        "clientOrderId": "ml_37478f2a56304f3ba96c7909fa08",
+        "symbol": "AAVEUSDT",
+        "side": "SELL",
+        "positionSide": "SHORT",
+        "type": "LIMIT",
+        "timeInForce": "GTX",
+        "quantity": 6,
+        "price": 167.68,
+        "notionalQuote": 1006.08,
+        "initialMarginQuote": 100.608,
+        "leverage": 10,
+        "wireBytesAvailable": false,
+        "observedAt": 1791497584466
+      }
+    },
+    {
+      "type": "TP_REPAIR_STARTED",
+      "ts": 1791497617530,
+      "payload": {
+        "positionId": "exchange_AAVEUSDT_SHORT",
+        "attempt": 1,
+        "source": "DETERMINISTIC_POSITION_FACTS"
+      }
+    },
+    {
+      "type": "TP_TARGET_SELECTED",
+      "ts": 1791497617532,
+      "payload": {
+        "positionId": "exchange_AAVEUSDT_SHORT",
+        "price": 166.79,
+        "source": "AI",
+        "reason": "15m swing low at 166.22 and 1h lower band at 161.94 provide support. 60m horizon allows for 15m trend continuation",
+        "authorizedTargetUsed": true,
+        "authorizedPresent": true,
+        "authorizedPrice": 166.79,
+        "authorizedReason": "15m swing low at 166.22 and 1h lower band at 161.94 provide support. 60m horizon allows for 15m trend continuation",
+        "authorizedHorizonExpiresAt": 1791501201307,
+        "authorizedValid": true,
+        "finalPrice": 166.79,
+        "fellBackFrom": null,
+        "refusals": [],
+        "economics": {
+          "expectedNetProfit": 0.7600896800000764,
+          "requiredNetProfit": 1,
+          "meetsProfitFloor": false
+        },
+        "profitFloorDisposition": "WARN_AND_KEEP",
+        "minMoveFloorPercent": 0,
+        "minMoveFloorSource": "DEFAULT_ZERO",
+        "parameterVersion": "TP-CONTRACT-V1:minMove=0:target=0.45:floor=1/0.15%",
+        "economicWarning": {
+          "expectedNetProfit": 0.7600896800000764,
+          "requiredNetProfit": 1,
+          "shortfallUsd": 0.23991031999992363
+        },
+        "structureValid": false,
+        "fixedValid": true,
+        "aiPlanPresent": true
+      }
+    },
+    {
+      "type": "TP_SUBMISSION_PREPARED",
+      "ts": 1791497618279,
+      "payload": {
+        "positionId": "exchange_AAVEUSDT_SHORT",
+        "order": {
+          "id": "tp_mv03fcla_80ef9fuu",
+          "clientOrderId": "v396xd802be70ad87b9c48b7ee949c1a90a",
+          "exchangeOrderId": null,
+          "cycleId": "cycle_entry_intent_mv03eggy_2duf28r3",
+          "positionId": "exchange_AAVEUSDT_SHORT",
+          "symbol": "AAVEUSDT",
+          "side": "BUY",
+          "quantity": 1.4,
+          "price": 166.79,
+          "status": "UNKNOWN",
+          "createdAt": 1791497617532,
+          "updatedAt": 1791497617532
+        }
+      }
+    },
+    {
+      "type": "TP_PROTECTED",
+      "ts": 1791497620560,
+      "payload": {
+        "positionId": "exchange_AAVEUSDT_SHORT",
+        "order": {
+          "id": "tp_mv03fcla_80ef9fuu",
+          "clientOrderId": "v396xd802be70ad87b9c48b7ee949c1a90a",
+          "exchangeOrderId": "428009461",
+          "cycleId": "cycle_entry_intent_mv03eggy_2duf28r3",
+          "positionId": "exchange_AAVEUSDT_SHORT",
+          "symbol": "AAVEUSDT",
+          "side": "BUY",
+          "quantity": 1.4,
+          "price": 166.79,
+          "status": "WORKING",
+          "createdAt": 1791497617532,
+          "updatedAt": 1791497620518
+        },
+        "repairAttempt": 1,
+        "tpEconomics": {
+          "currentTpPrice": 166.79,
+          "expectedGrossProfit": 0.9660000000000764,
+          "expectedFees": 0.20591032,
+          "expectedNetProfit": 0.7600896800000764,
+          "requiredNetProfit": 1,
+          "breakEvenPrice": 167.33268241973533,
+          "minProfitableExitPrice": 166.61871085293902,
+          "status": "TP_LOW_NET_TARGET_KEPT",
+          "economicWarning": {
+            "expectedNetProfit": 0.7600896800000764,
+            "requiredNetProfit": 1,
+            "shortfallUsd": 0.23991031999992363
+          },
+          "targetProvenance": {
+            "authorizedPresent": true,
+            "authorizedPrice": 166.79,
+            "authorizedReason": "15m swing low at 166.22 and 1h lower band at 161.94 provide support. 60m horizon allows for 15m trend continuation",
+            "authorizedHorizonExpiresAt": 1791501201307,
+            "authorizedValid": true,
+            "finalPrice": 166.79,
+            "fellBackFrom": null,
+            "refusals": [],
+            "economics": {
+              "expectedNetProfit": 0.7600896800000764,
+              "requiredNetProfit": 1,
+              "meetsProfitFloor": false
+            },
+            "profitFloorDisposition": "WARN_AND_KEEP",
+            "minMoveFloorPercent": 0,
+            "minMoveFloorSource": "DEFAULT_ZERO",
+            "parameterVersion": "TP-CONTRACT-V1:minMove=0:target=0.45:floor=1/0.15%"
+          }
+        }
+      }
+    },
+    {
+      "type": "ENTRY_SUBMIT_ATTEMPTED",
+      "ts": 1791497684951,
+      "payload": {
+        "brainRunId": "airun_mv03eyjq_v1a6m9ag",
+        "intentId": "intent_mv03gk3g_ut4ytmsm",
+        "orderId": "entry_intent_mv03gk3g_ut4ytmsm",
+        "clientOrderId": "ml_6dbe4c46f5e5c464b74a50b3e82c",
+        "environment": "TESTNET",
+        "resumedFrom": null
+      }
+    },
+    {
+      "type": "ENTRY_ADAPTER_REQUEST_FACTS",
+      "ts": 1791497686924,
+      "payload": {
+        "schemaVersion": "V397-ENTRY-ADAPTER-REQUEST-1",
+        "intentId": "intent_mv03gk3g_ut4ytmsm",
+        "mandateId": null,
+        "orderId": "entry_intent_mv03gk3g_ut4ytmsm",
+        "clientOrderId": "ml_6dbe4c46f5e5c464b74a50b3e82c",
+        "symbol": "ONDOUSDT",
+        "side": "SELL",
+        "positionSide": "SHORT",
+        "type": "LIMIT",
+        "timeInForce": "GTX",
+        "quantity": 4127,
+        "price": 0.4856,
+        "notionalQuote": 2004.0711999999999,
+        "initialMarginQuote": 100.20356,
+        "leverage": 20,
+        "wireBytesAvailable": false,
+        "observedAt": 1791497686924
+      }
+    },
+    {
+      "type": "ENTRY_SUBMIT_ATTEMPTED",
+      "ts": 1791497804182,
+      "payload": {
+        "brainRunId": "airun_mv03hlkb_kc7gitw4",
+        "intentId": "intent_mv03j6vs_61hoxici",
+        "orderId": "entry_intent_mv03j6vs_61hoxici",
+        "clientOrderId": "ml_bef256c88ece5cb43341868cb765",
+        "environment": "TESTNET",
+        "resumedFrom": null
+      }
+    },
+    {
+      "type": "ENTRY_ADAPTER_REQUEST_FACTS",
+      "ts": 1791497806483,
+      "payload": {
+        "schemaVersion": "V397-ENTRY-ADAPTER-REQUEST-1",
+        "intentId": "intent_mv03j6vs_61hoxici",
+        "mandateId": null,
+        "orderId": "entry_intent_mv03j6vs_61hoxici",
+        "clientOrderId": "ml_bef256c88ece5cb43341868cb765",
+        "symbol": "ZECUSDT",
+        "side": "BUY",
+        "positionSide": "LONG",
+        "type": "LIMIT",
+        "timeInForce": "GTX",
+        "quantity": 0.845,
+        "price": 1186.04,
+        "notionalQuote": 1002.2037999999999,
+        "initialMarginQuote": 100.22037999999999,
+        "leverage": 10,
+        "wireBytesAvailable": false,
+        "observedAt": 1791497806483
+      }
+    },
+    {
+      "type": "TP_REPAIR_STARTED",
+      "ts": 1791497887178,
+      "payload": {
+        "positionId": "exchange_ZECUSDT_LONG",
+        "attempt": 1,
+        "source": "DETERMINISTIC_POSITION_FACTS"
+      }
+    },
+    {
+      "type": "TP_TARGET_SELECTED",
+      "ts": 1791497887179,
+      "payload": {
+        "positionId": "exchange_ZECUSDT_LONG",
+        "price": 1191.38,
+        "source": "FIXED_PROFITABLE",
+        "reason": "TARGET_NOT_ON_REACHABLE_SIDE",
+        "authorizedTargetUsed": false,
+        "authorizedPresent": true,
+        "authorizedPrice": 1188.75,
+        "authorizedReason": "Target is set at the 15m Bollinger Middle Band (1187.16) and 5m Bollinger Upper Band (1189.53), which are likely resistance levels. The 15m horizon aligns with the tactical focus and the candidate's reach probability of 75.38%.",
+        "authorizedHorizonExpiresAt": 1791498709003,
+        "authorizedValid": false,
+        "finalPrice": 1191.38,
+        "fellBackFrom": "AI",
+        "refusals": [
+          "TARGET_NOT_ON_REACHABLE_SIDE"
+        ],
+        "economics": {
+          "expectedNetProfit": 2.808233620800839,
+          "requiredNetProfit": 1,
+          "meetsProfitFloor": true
+        },
+        "profitFloorDisposition": "WARN_AND_KEEP",
+        "minMoveFloorPercent": 0,
+        "minMoveFloorSource": "DEFAULT_ZERO",
+        "parameterVersion": "TP-CONTRACT-V1:minMove=0:target=0.45:floor=1/0.15%",
+        "economicWarning": null,
+        "structureValid": false,
+        "fixedValid": true,
+        "aiPlanPresent": true
+      }
+    },
+    {
+      "type": "TP_SUBMISSION_PREPARED",
+      "ts": 1791497888924,
+      "payload": {
+        "positionId": "exchange_ZECUSDT_LONG",
+        "order": {
+          "id": "tp_mv03l4nh_so2bdqco",
+          "clientOrderId": "v396xe4d38a39bc614dbe98531279be0d3e",
+          "exchangeOrderId": null,
+          "cycleId": "cycle_entry_intent_mv03j6vs_61hoxici",
+          "positionId": "exchange_ZECUSDT_LONG",
+          "symbol": "ZECUSDT",
+          "side": "SELL",
+          "quantity": 0.654,
+          "price": 1191.38,
+          "status": "UNKNOWN",
+          "createdAt": 1791497887179,
+          "updatedAt": 1791497887179
+        }
+      }
+    },
+    {
+      "type": "TP_PROTECTED",
+      "ts": 1791497891090,
+      "payload": {
+        "positionId": "exchange_ZECUSDT_LONG",
+        "order": {
+          "id": "tp_mv03l4nh_so2bdqco",
+          "clientOrderId": "v396xe4d38a39bc614dbe98531279be0d3e",
+          "exchangeOrderId": "2979538373",
+          "cycleId": "cycle_entry_intent_mv03j6vs_61hoxici",
+          "positionId": "exchange_ZECUSDT_LONG",
+          "symbol": "ZECUSDT",
+          "side": "SELL",
+          "quantity": 0.654,
+          "price": 1191.38,
+          "status": "WORKING",
+          "createdAt": 1791497887179,
+          "updatedAt": 1791497891050
+        },
+        "repairAttempt": 1,
+        "tpEconomics": {
+          "currentTpPrice": 1191.38,
+          "expectedGrossProfit": 3.492360000000839,
+          "expectedFees": 0.6841263791999997,
+          "expectedNetProfit": 2.808233620800839,
+          "requiredNetProfit": 1,
+          "breakEvenPrice": 1187.0841746368392,
+          "minProfitableExitPrice": 1188.6138997036362,
+          "status": "TP_OK",
+          "economicWarning": null,
+          "targetProvenance": {
+            "authorizedPresent": true,
+            "authorizedPrice": 1188.75,
+            "authorizedReason": "Target is set at the 15m Bollinger Middle Band (1187.16) and 5m Bollinger Upper Band (1189.53), which are likely resistance levels. The 15m horizon aligns with the tactical focus and the candidate's reach probability of 75.38%.",
+            "authorizedHorizonExpiresAt": 1791498709003,
+            "authorizedValid": false,
+            "finalPrice": 1191.38,
+            "fellBackFrom": "AI",
+            "refusals": [
+              "TARGET_NOT_ON_REACHABLE_SIDE"
+            ],
+            "economics": {
+              "expectedNetProfit": 2.808233620800839,
+              "requiredNetProfit": 1,
+              "meetsProfitFloor": true
+            },
+            "profitFloorDisposition": "WARN_AND_KEEP",
+            "minMoveFloorPercent": 0,
+            "minMoveFloorSource": "DEFAULT_ZERO",
+            "parameterVersion": "TP-CONTRACT-V1:minMove=0:target=0.45:floor=1/0.15%"
+          }
+        }
+      }
+    },
+    {
+      "type": "ENTRY_SUBMIT_ATTEMPTED",
+      "ts": 1791498003792,
+      "payload": {
+        "brainRunId": "airun_mv03lduj_z5h7v0yv",
+        "intentId": "intent_mv03nhe0_lhkxn0na",
+        "orderId": "entry_intent_mv03nhe0_lhkxn0na",
+        "clientOrderId": "ml_6478694abc930e2abe2b08d7dda8",
+        "environment": "TESTNET",
+        "resumedFrom": null
+      }
+    },
+    {
+      "type": "ENTRY_ADAPTER_REQUEST_FACTS",
+      "ts": 1791498005674,
+      "payload": {
+        "schemaVersion": "V397-ENTRY-ADAPTER-REQUEST-1",
+        "intentId": "intent_mv03nhe0_lhkxn0na",
+        "mandateId": null,
+        "orderId": "entry_intent_mv03nhe0_lhkxn0na",
+        "clientOrderId": "ml_6478694abc930e2abe2b08d7dda8",
+        "symbol": "TAOUSDT",
+        "side": "SELL",
+        "positionSide": "SHORT",
+        "type": "LIMIT",
+        "timeInForce": "GTX",
+        "quantity": 3.709,
+        "price": 270.38,
+        "notionalQuote": 1002.83942,
+        "initialMarginQuote": 100.283942,
+        "leverage": 10,
+        "wireBytesAvailable": false,
+        "observedAt": 1791498005674
+      }
+    },
+    {
+      "type": "ENTRY_SUBMIT_ATTEMPTED",
+      "ts": 1791498116561,
+      "payload": {
+        "brainRunId": "airun_mv03ntaj_vyyu5ryd",
+        "intentId": "intent_mv03pwil_pvoftfl8",
+        "orderId": "entry_intent_mv03pwil_pvoftfl8",
+        "clientOrderId": "ml_35cbea5accf956c488aeddbf7dfa",
+        "environment": "TESTNET",
+        "resumedFrom": null
+      }
+    },
+    {
+      "type": "ENTRY_ADAPTER_REQUEST_FACTS",
+      "ts": 1791498118732,
+      "payload": {
+        "schemaVersion": "V397-ENTRY-ADAPTER-REQUEST-1",
+        "intentId": "intent_mv03pwil_pvoftfl8",
+        "mandateId": null,
+        "orderId": "entry_intent_mv03pwil_pvoftfl8",
+        "clientOrderId": "ml_35cbea5accf956c488aeddbf7dfa",
+        "symbol": "USELESSUSDT",
+        "side": "SELL",
+        "positionSide": "SHORT",
+        "type": "LIMIT",
+        "timeInForce": "GTX",
+        "quantity": 5302,
+        "price": 0.1888,
+        "notionalQuote": 1001.0176,
+        "initialMarginQuote": 100.10176,
+        "leverage": 10,
+        "wireBytesAvailable": false,
+        "observedAt": 1791498118732
+      }
+    },
+    {
+      "type": "TP_TERMINAL_FACT_PROJECTED",
+      "ts": 1791498151704,
+      "payload": {
+        "orderId": "tp_mv03an6i_n03o484v",
+        "clientOrderId": "v396xa1ff1c7920cdd3e54e8e26c407a997",
+        "exchangeOrderId": "775318990",
+        "status": "FILLED",
+        "source": "USER_DATA_WS",
+        "factObservedAt": 1791498150683
+      }
+    },
+    {
+      "type": "ENTRY_SUBMIT_ATTEMPTED",
+      "ts": 1791498257041,
+      "payload": {
+        "brainRunId": "airun_mv03qotb_d1h4dah6",
+        "intentId": "intent_mv03sww5_b9zzvotn",
+        "orderId": "entry_intent_mv03sww5_b9zzvotn",
+        "clientOrderId": "ml_1a23b00d71caa96f7cc4a146ba5c",
+        "environment": "TESTNET",
+        "resumedFrom": null
+      }
+    },
+    {
+      "type": "ENTRY_ADAPTER_REQUEST_FACTS",
+      "ts": 1791498258714,
+      "payload": {
+        "schemaVersion": "V397-ENTRY-ADAPTER-REQUEST-1",
+        "intentId": "intent_mv03sww5_b9zzvotn",
+        "mandateId": null,
+        "orderId": "entry_intent_mv03sww5_b9zzvotn",
+        "clientOrderId": "ml_1a23b00d71caa96f7cc4a146ba5c",
+        "symbol": "PENGUUSDT",
+        "side": "SELL",
+        "positionSide": "SHORT",
+        "type": "LIMIT",
+        "timeInForce": "GTX",
+        "quantity": 125055,
+        "price": 0.007998,
+        "notionalQuote": 1000.18989,
+        "initialMarginQuote": 100.018989,
+        "leverage": 10,
+        "wireBytesAvailable": false,
+        "observedAt": 1791498258714
+      }
+    },
+    {
+      "type": "ENTRY_SUBMIT_ATTEMPTED",
+      "ts": 1791498353766,
+      "payload": {
+        "brainRunId": "airun_mv03tdz7_yly0f9ij",
+        "intentId": "intent_mv03uz8x_f338tg3t",
+        "orderId": "entry_intent_mv03uz8x_f338tg3t",
+        "clientOrderId": "ml_8a1e2f89d39e9fdcbaccaa4e0988",
+        "environment": "TESTNET",
+        "resumedFrom": null
+      }
+    },
+    {
+      "type": "ENTRY_ADAPTER_REQUEST_FACTS",
+      "ts": 1791498355485,
+      "payload": {
+        "schemaVersion": "V397-ENTRY-ADAPTER-REQUEST-1",
+        "intentId": "intent_mv03uz8x_f338tg3t",
+        "mandateId": null,
+        "orderId": "entry_intent_mv03uz8x_f338tg3t",
+        "clientOrderId": "ml_8a1e2f89d39e9fdcbaccaa4e0988",
+        "symbol": "VVVUSDT",
+        "side": "SELL",
+        "positionSide": "SHORT",
+        "type": "LIMIT",
+        "timeInForce": "GTX",
+        "quantity": 43.87,
+        "price": 22.846,
+        "notionalQuote": 1002.25402,
+        "initialMarginQuote": 100.225402,
+        "leverage": 10,
+        "wireBytesAvailable": false,
+        "observedAt": 1791498355485
+      }
+    }
+  ],
+  "eventLimit": 128,
+  "processProof": {
+    "receipt": {
+      "launchId": "4a98707d1ae24b95831560cb381f3974",
+      "pid": 8524,
+      "hostPid": 44084,
+      "startedAt": 1791497207245,
+      "enginePath": "D:\\MITS-WORKTREES\\v398-entry-quality-20261008\\apps\\engine\\dist\\main.js"
+    },
+    "processEvents": [
+      {
+        "ts": 1791497207705,
+        "event": "PROCESS_TELEMETRY_INSTALLED",
+        "pid": 8524,
+        "ppid": 44084,
+        "uptimeMs": 411,
+        "exitCode": null,
+        "payload": {
+          "execPath": "C:\\Program Files\\nodejs\\node.exe",
+          "argv1": "D:\\MITS-WORKTREES\\v398-entry-quality-20261008\\apps\\engine\\dist\\main.js"
+        }
+      },
+      {
+        "ts": 1791497207707,
+        "event": "PROCESS_START",
+        "pid": 8524,
+        "ppid": 44084,
+        "uptimeMs": 413,
+        "exitCode": null,
+        "payload": {
+          "releaseVersion": "3.9.8",
+          "host": "0.0.0.0",
+          "port": 8080,
+          "startReason": "MANUAL_START"
+        }
+      },
+      {
+        "ts": 1791497207707,
+        "event": "BOOTSTRAP_STARTED",
+        "pid": 8524,
+        "ppid": 44084,
+        "uptimeMs": 413,
+        "exitCode": null,
+        "payload": {
+          "configDir": "D:\\MITS-WORKTREES\\v398-entry-quality-20261008\\config",
+          "dataDir": "D:\\MITS-WORKTREES\\v398-entry-quality-20261008\\data"
+        }
+      },
+      {
+        "ts": 1791497264039,
+        "event": "BOOTSTRAP_RUNTIME_CREATED",
+        "pid": 8524,
+        "ppid": 44084,
+        "uptimeMs": 56745,
+        "exitCode": null,
+        "payload": {
+          "instanceId": "c685f035-1f52-48ac-80fa-998811ff3fe5",
+          "recoveredRuntimeEntities": []
+        }
+      },
+      {
+        "ts": 1791497264274,
+        "event": "HTTP_LISTENING",
+        "pid": 8524,
+        "ppid": 44084,
+        "uptimeMs": 56980,
+        "exitCode": null,
+        "payload": {
+          "host": "0.0.0.0",
+          "port": 8080,
+          "instanceId": "c685f035-1f52-48ac-80fa-998811ff3fe5"
+        }
+      }
+    ],
+    "hostEvents": [
+      {
+        "ts": 1791497207185,
+        "event": "HOST_STARTED",
+        "launchId": "4a98707d1ae24b95831560cb381f3974",
+        "hostPid": 44084,
+        "payload": {
+          "nodeVersion": "v22.23.1",
+          "nodeFlags": [
+            "--no-maglev"
+          ],
+          "v8Version": "12.4.254.21-node.56",
+          "enginePath": "D:\\MITS-WORKTREES\\v398-entry-quality-20261008\\apps\\engine\\dist\\main.js",
+          "workingDirectory": "D:\\MITS-WORKTREES\\v398-entry-quality-20261008"
+        }
+      },
+      {
+        "ts": 1791497207251,
+        "event": "CHILD_STARTED",
+        "launchId": "4a98707d1ae24b95831560cb381f3974",
+        "hostPid": 44084,
+        "payload": {
+          "pid": 8524,
+          "handleCaptured": true,
+          "nodeFlags": [
+            "--no-maglev"
+          ]
+        }
+      }
+    ],
+    "bytesPerFileBound": 65536,
+    "actualEngineStartsThisTask": 1,
+    "actualEngineStopsThisTask": 0,
+    "preflightRefusalBeforeAnyChildStart": true
+  }
+}

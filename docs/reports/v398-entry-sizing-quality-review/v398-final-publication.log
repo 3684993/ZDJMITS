@@ -1,3 +1,65 @@
 From https://github.com/3684993/ZDJMITS
  * branch            main       -> FETCH_HEAD
 0	0
+[codex/v398-entry-quality-20261008 1cd6d75] docs(v398): close runtime identity and publish complete validation evidence
+ 67 files changed, 94363 insertions(+), 30 deletions(-)
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/evidence-20261008/REMOTE_I2_READBACK.json
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/evidence-20261008/RUNTIME_CLOSEOUT.json
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/evidence-20261008/github-actions-i2-initial.json
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/evidence-20261008/github-actions-i2-progress-2.json
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/evidence-20261008/github-actions-i2-progress-3.json
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/evidence-20261008/github-actions-i2-progress.json
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/evidence-20261008/github-actions-i2-ready-2.json
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/evidence-20261008/github-actions-i2-ready-3.json
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/evidence-20261008/github-actions-i2-ready.json
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/evidence-20261008/identity-post-load.json
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/evidence-20261008/identity-post-load.stdout-stderr.log
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/evidence-20261008/local-identity-accepted-state.json
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/evidence-20261008/local-identity-post-start.json
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/evidence-20261008/local-identity-pre-start.json
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/evidence-20261008/manual-start-preflight.json
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/evidence-20261008/netstat-accepted.txt
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/evidence-20261008/netstat-accepted.txt.original.gz
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/evidence-20261008/netstat-post-start.txt
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/evidence-20261008/netstat-post-start.txt.original.gz
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/evidence-20261008/post-start-optional-readback-canceled.json
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/evidence-20261008/preflight-clock-type-proof.json
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/evidence-20261008/prior-runtime-log-preservation.json
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/evidence-20261008/private-temporary-backup-preserved.json
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/evidence-20261008/runtime-acceptance-final.json
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/evidence-20261008/runtime-bootstrap-probe.json
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/evidence-20261008/runtime-first-probe.json
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/evidence-20261008/runtime-policy-summary.json
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/evidence-20261008/runtime-readiness-probe.json
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/evidence-20261008/runtime-settled-probe.json
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/evidence-20261008/runtime-starting-probe.json
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/evidence-20261008/testnet-pre-start-readback-2157.json
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/evidence-20261008/testnet-pre-start-readback.json
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/v398-accepted-local-identity.log
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/v398-actions-i2-initial.log
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/v398-actions-i2-progress-2.log
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/v398-actions-i2-progress-3.log
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/v398-actions-i2-progress.log
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/v398-actions-i2-ready-2.log
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/v398-actions-i2-ready-3.log
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/v398-actions-i2-ready.log
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/v398-final-diff-check.log
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/v398-final-publication.log
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/v398-final-staged-diff.log
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/v398-finalize-runtime-evidence.log
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/v398-manual-start-preflight-fixed.log
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/v398-manual-start-preflight-refused.log
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/v398-manual-start.log
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/v398-prior-log-preservation.log
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/v398-s00-closeout-final.log
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/v398-s00-closeout-tools.log
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/v398-testnet-final-pre-start.log
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/v398-testnet-post-start.log
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/v398-testnet-pre-start.log
+ create mode 100644 scripts/v398-finalize-runtime-evidence.py
+ create mode 100644 scripts/v398-local-identity-readonly.py
+ create mode 100644 scripts/v398-preserve-prior-logs.ps1
+To https://github.com/3684993/ZDJMITS.git
+   3327c84..1cd6d75  HEAD -> main
+From https://github.com/3684993/ZDJMITS
+ * branch            main       -> FETCH_HEAD

@@ -1,7 +1,7 @@
 {
-  "at": "2026-10-08T22:23:15.574848+00:00",
+  "at": "2026-10-08T22:27:16.709303+00:00",
   "hashNormalization": "LF-normalized UTF-8 for text; raw bytes for gzip/binary",
-  "artifactCount": 272,
+  "artifactCount": 277,
   "credentialScalarFindings": [],
   "credentialScannerExemptions": [
     {
@@ -123,13 +123,13 @@
     },
     {
       "path": "docs/plans/V398_ENTRY_SIZING_RISK_BUDGET_PLAN.md",
-      "bytesLFNormalized": 12493,
-      "sha256": "47bc936a8f8c8921498efeaeaa4b25666bb183721e1934e0e94509fdbbf430ae"
+      "bytesLFNormalized": 14096,
+      "sha256": "3bdcef8706803670511da18ecc9c960a2282b273b01d82b3e1650b7491bcac3c"
     },
     {
       "path": "docs/prompts/CURRENT_MAINTENANCE_HANDOFF.md",
-      "bytesLFNormalized": 68926,
-      "sha256": "044e1bde79ef34e28d252f0126cd160895ee46f8635d525abaa8da0556dafe0a"
+      "bytesLFNormalized": 70529,
+      "sha256": "c16bbfb511c895809549f722546ef35780944f8700dfd028614d95c19500591e"
     },
     {
       "path": "docs/reports/v398-entry-sizing-quality-review/dependency-install.log",
@@ -138,8 +138,8 @@
     },
     {
       "path": "docs/reports/v398-entry-sizing-quality-review/ENTRY_SIZING_QUALITY_REVIEW.md",
-      "bytesLFNormalized": 19823,
-      "sha256": "6588c7244054e41492fc916f1afba213ae13a3b40fa1c7c8ef53dc0a373b525d"
+      "bytesLFNormalized": 21426,
+      "sha256": "df484237e5418fb7377e9929c9a415ea3006b227cf3b6d66919e5be92ec75d01"
     },
     {
       "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/architecture-callgraph.md",
@@ -682,9 +682,19 @@
       "sha256": "fed92ea0a2c5b098967302a059a8725c5f9e980967fa51f7a0b9fccccee9a8ff"
     },
     {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/github-final-evidence-actions.json",
+      "bytesLFNormalized": 1863,
+      "sha256": "0a213ce958f9d517d1cd491557ab9171c0ac586b0140057f17a841c854588808"
+    },
+    {
       "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/historical-exposure-asof.csv",
       "bytesLFNormalized": 2406,
       "sha256": "99618fc21a43ef1f4b67c262a9f81baaef841c0bfa2df2f6fb1eb8c75cdfb80b"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/identity-completion.json",
+      "bytesLFNormalized": 1546,
+      "sha256": "32578a6a8c970f2a9fe0ec264c2be65f6e07b8bde99931f600e3f6b4a00011f3"
     },
     {
       "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/identity-post-load.json",
@@ -720,6 +730,11 @@
       "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/local-identity-accepted-state.json",
       "bytesLFNormalized": 13911,
       "sha256": "7f353d6ed4b91923977b5de87585b406f7f2d5e3beb36a613eec9352ae57995c"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/local-identity-completion.json",
+      "bytesLFNormalized": 30776,
+      "sha256": "b46dae3a55fcd86fbc2ac6992848fdefe751b362a19b2d6d574d744f84bd1d1b"
     },
     {
       "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/local-identity-post-start.json",
@@ -765,6 +780,11 @@
       "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/missing-facts.json",
       "bytesLFNormalized": 1204,
       "sha256": "741bf2913d7e550aaa3a6dd18aba9b293144c30ae4362b757ff41914e729ab49"
+    },
+    {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/natural-origin-completion.json",
+      "bytesLFNormalized": 4619,
+      "sha256": "4400cbac011c5b7a7b501b5abd405633ed928b39be777133c0bbb04cd56dd144"
     },
     {
       "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/netstat-accepted.txt",
@@ -862,6 +882,11 @@
       "sha256": "0b9f23755c416db3f845d5ee279c34279d98f84589bb591ee501b3de24859582"
     },
     {
+      "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/runtime-completion.json",
+      "bytesLFNormalized": 1532772,
+      "sha256": "fa6b9ff887150579457c8041f421dcaf3401fafc8275dd2d40992be41d4d675d"
+    },
+    {
       "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/runtime-first-probe.json",
       "bytesLFNormalized": 358,
       "sha256": "b68178edf9f25fbd460b90f28762981a48a582e8801acaf1b0ec9d6886231ca6"
@@ -888,8 +913,8 @@
     },
     {
       "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/RUNTIME_CLOSEOUT.json",
-      "bytesLFNormalized": 1921,
-      "sha256": "a1fdd4c8bd7cd92b5c822230c6ab294c14e2c668d16ccd26620366889e401af7"
+      "bytesLFNormalized": 2173,
+      "sha256": "ed5779f051583dd152882bf2cc690077d546eaf37a2943f3ed95e4b916522305"
     },
     {
       "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/settings-policy-subset.json",
@@ -948,8 +973,8 @@
     },
     {
       "path": "docs/reports/v398-entry-sizing-quality-review/IMPLEMENTATION_REPORT.md",
-      "bytesLFNormalized": 9376,
-      "sha256": "4e4ee4b74a8bdb48d427083be227fe669deef87c333794651cc37303eb3793c1"
+      "bytesLFNormalized": 10979,
+      "sha256": "9fe0bd504d7f8bcd31363939d983c1c658cf62018fbb6cff9a0f77033a90309b"
     },
     {
       "path": "docs/reports/v398-entry-sizing-quality-review/lineage-projection.log",
@@ -1143,8 +1168,8 @@
     },
     {
       "path": "docs/reports/v398-entry-sizing-quality-review/v398-final-publication.log",
-      "bytesLFNormalized": 90,
-      "sha256": "44ac9c72889ae1d419359f290460c4dc2a0298dc54bbcd6a0a2e1cd049a63c7e"
+      "bytesLFNormalized": 6287,
+      "sha256": "bf6130b2c30e0905c7eb3b2b77de9de03a7e80571645942a4a15cc184a337586"
     },
     {
       "path": "docs/reports/v398-entry-sizing-quality-review/v398-final-staged-diff.log",

@@ -598,3 +598,61 @@ The user explicitly authorizes Codex to operate the current Engine runtime and i
 Two existing local proxy/VPN scripts are located under `D:\MITS\scripts\vpn`. They are currently **not present in GitHub**. Codex must inspect their real filenames/contents, use them as the starting point, repair them if needed, run/restart the tunnel as required, then commit the complete secret-free final scripts under `scripts/vpn/` and record their exact paths here. All generated diagnostics/reports/evidence must also be committed to GitHub.
 
 Do not change trading strategy parameters to hide network failure. Preserve TESTNET-only and Production writes=0. Avoid unnecessary model-service restarts; network remediation should operate only what evidence requires.
+
+
+## Engine reactivity structural candidate — 2026-10-08
+
+Current verified/deployed baseline observed before this handoff: `cfeeaffc537fdf93f7e036683c6dfbaa7a2214af`.
+
+The active remediation profile after the Trading Quality event-scope fixes changed the bottleneck:
+- `persistRuntime` inclusive CPU attribution: ~43.28%;
+- synchronous Trading Quality capture: ~10.74%;
+- maximum observed event-loop delay: ~6.14s;
+- host available commit memory during that sample: ~4.37GB.
+
+Interpretation: the remaining dominant local bottleneck is the runtime checkpoint architecture, not
+the already-repaired SSH/SOCKS path and not another Trading Quality micro-filter. The generic
+1-second event-coalesced checkpoint still serializes the complete RuntimeState, JSON-encodes all
+retained runtime entities and scans the runtime-entity key index.
+
+ChatGPT prepared an **unverified deployment candidate** on:
+
+- branch: `chatgpt/reactivity-core-checkpoint-20261008`
+- first commit: `31a9586cff3f2a93d8f2cf380ea534a6daa6cf4b`
+- current candidate head: `54cc468960a3ca0eee221915c277427f60de237e`
+- candidate report: `docs/reports/v397-ssh-socks-remediation-20261008/CORE_CHECKPOINT_CANDIDATE.md` on that branch.
+
+Candidate behavior:
+1. ordinary 1-second checkpoint uses `serializeCheckpointCore()` + `persistRuntimeCore()`, preserving
+   the existing `_entityLists` manifest and avoiding full retained-history scans;
+2. full checkpoints remain at existing submission/TP/manual safety boundaries, reservation transactions,
+   startup migration and clean shutdown;
+3. newly-created `tradePlans`, `planExecutions`, and attributed `executionFills` are persisted through
+   an O(1) entity+manifest savepoint so the performance change does not create a new crash-recovery gap;
+4. no Entry/TP/strategy/proxy/TTL/UNKNOWN/Production policy is changed.
+
+**Do not merge/deploy this candidate merely from this handoff.** ChatGPT's GitHub connector cannot run the
+local Windows repository tests or operate the local Engine. When local execution is available, continue
+from this candidate instead of re-diagnosing:
+
+```powershell
+git fetch origin
+# use an isolated worktree/branch at origin/chatgpt/reactivity-core-checkpoint-20261008
+npm --workspace @zdj/engine test -- src/state/runtimeState.test.ts src/config/settingsStore.test.ts
+npm run verify
+```
+
+If targeted + full verify pass, integrate by ordinary fast-forward/cherry-pick onto the latest compatible
+main, rebuild, restart **8080 only for this Engine-code deployment** (SSH/SOCKS and 8081/8083/8084 do not
+need lifecycle changes for this candidate), then run a fresh 5–10 minute CPU/event-loop/REST-lane comparison.
+
+Acceptance for this iteration:
+- `persistRuntime` inclusive CPU falls materially from ~43.28%;
+- generic checkpoint no longer creates multi-second event-loop stalls;
+- PRIVATE / EXECUTION / REQUIRED_MARKET lanes do not queue-timeout;
+- private and required market facts remain fresh;
+- Production writes remain 0 and TESTNET isolation stays intact.
+
+If those fail while the generic checkpoint cost has fallen, profile once and attack the remaining synchronous
+full checkpoint/reservation path as the second structural iteration. Do not resume Trading Quality
+micro-tuning or passive 15-minute "still unhealthy" loops without a new profile showing they are again dominant.

@@ -8,6 +8,6 @@ describe('S01-T05 experience denominator',()=>{
       ['unknown',{status:'CLOSED',recordCompleteness:'COMPLETE',symbol:'BTCUSDT',regime:'R1',netPnl:null,fundingAttributionStatus:'UNKNOWN',openedAt:2_000,createdAt:1_000}],
     ])};
     const result=new ExperienceService(state).summarize('BTCUSDT','R1');
-    expect(result).toMatchObject({sampleSize:1,sameSymbolWinRate:1,coverage:{eligible:1,closedComplete:2,excludedNetUnknown:1,excludedOther:0}});
+    expect(result).toMatchObject({sampleSize:0,sameSymbolWinRate:null,coverage:{eligible:0,closedComplete:2,excludedNetUnknown:1,excludedOther:1}});
   });
 });

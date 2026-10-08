@@ -1,0 +1,73 @@
+(node:27812) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:8628) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> @zdj/engine@3.9.7 typecheck
+> tsc -p tsconfig.json --noEmit
+
+src/api/router.ts(3,108): error TS2345: Argument of type 'RuntimeState' is not assignable to parameter of type 'ExitProvenanceContext'.
+  The types of 'orderProvenance.resolve(...).rows' are incompatible between these types.
+    Type '{ role: "ENTRY" | "TP" | "EXIT" | "MANUAL"; cycleId: string; }[]' is not assignable to type 'OrderProvenanceRow[]'.
+      Type '{ role: "ENTRY" | "TP" | "EXIT" | "MANUAL"; cycleId: string; }' is missing the following properties from type 'OrderProvenanceRow': environment, accountId, symbol, clientOrderId, and 6 more.
+src/api/router.ts(1057,94): error TS2345: Argument of type '{ learningContext: RuntimeState; experimentManifest: { policyVersion?: string; exclusionReasons?: string[]; createdAt?: number; environment?: string; experimentId?: string; ... 12 more ...; runtimeSessions?: { startedAt?: number; sessionId?: string; endedAt?: number; }[]; }; enrollmentByCycle: any; accountScope: str...' is not assignable to parameter of type 'TradeRecordReadModelInput'.
+  Types of property 'learningContext' are incompatible.
+    Type 'RuntimeState' is not assignable to type 'TradeLearningContext'.
+      Type 'RuntimeState' is not assignable to type 'ExitProvenanceContext'.
+        The types of 'orderProvenance.resolve(...).rows' are incompatible between these types.
+          Type '{ role: "ENTRY" | "TP" | "EXIT" | "MANUAL"; cycleId: string; }[]' is not assignable to type 'OrderProvenanceRow[]'.
+            Type '{ role: "ENTRY" | "TP" | "EXIT" | "MANUAL"; cycleId: string; }' is missing the following properties from type 'OrderProvenanceRow': environment, accountId, symbol, clientOrderId, and 6 more.
+src/api/router.ts(1058,106): error TS2322: Type 'RuntimeState' is not assignable to type 'TradeLearningContext'.
+  Type 'RuntimeState' is not assignable to type 'ExitProvenanceContext'.
+    The types of 'orderProvenance.resolve(...).rows' are incompatible between these types.
+      Type '{ role: "ENTRY" | "TP" | "EXIT" | "MANUAL"; cycleId: string; }[]' is not assignable to type 'OrderProvenanceRow[]'.
+        Type '{ role: "ENTRY" | "TP" | "EXIT" | "MANUAL"; cycleId: string; }' is missing the following properties from type 'OrderProvenanceRow': environment, accountId, symbol, clientOrderId, and 6 more.
+src/api/router.ts(1068,102): error TS2345: Argument of type 'RuntimeState' is not assignable to parameter of type 'ExitProvenanceContext'.
+  The types of 'orderProvenance.resolve(...).rows' are incompatible between these types.
+    Type '{ role: "ENTRY" | "TP" | "EXIT" | "MANUAL"; cycleId: string; }[]' is not assignable to type 'OrderProvenanceRow[]'.
+      Type '{ role: "ENTRY" | "TP" | "EXIT" | "MANUAL"; cycleId: string; }' is missing the following properties from type 'OrderProvenanceRow': environment, accountId, symbol, clientOrderId, and 6 more.
+src/api/router.ts(1078,87): error TS2322: Type 'RuntimeState' is not assignable to type 'TradeLearningContext'.
+  Type 'RuntimeState' is not assignable to type 'ExitProvenanceContext'.
+    The types of 'orderProvenance.resolve(...).rows' are incompatible between these types.
+      Type '{ role: "ENTRY" | "TP" | "EXIT" | "MANUAL"; cycleId: string; }[]' is not assignable to type 'OrderProvenanceRow[]'.
+        Type '{ role: "ENTRY" | "TP" | "EXIT" | "MANUAL"; cycleId: string; }' is missing the following properties from type 'OrderProvenanceRow': environment, accountId, symbol, clientOrderId, and 6 more.
+src/api/router.ts(1085,146): error TS2322: Type 'RuntimeState' is not assignable to type 'TradeLearningContext'.
+  Type 'RuntimeState' is not assignable to type 'ExitProvenanceContext'.
+    The types of 'orderProvenance.resolve(...).rows' are incompatible between these types.
+      Type '{ role: "ENTRY" | "TP" | "EXIT" | "MANUAL"; cycleId: string; }[]' is not assignable to type 'OrderProvenanceRow[]'.
+        Type '{ role: "ENTRY" | "TP" | "EXIT" | "MANUAL"; cycleId: string; }' is missing the following properties from type 'OrderProvenanceRow': environment, accountId, symbol, clientOrderId, and 6 more.
+src/services/tradeLearningP0.test.ts(22,104): error TS2345: Argument of type '{ executionFills: any; manualOrders: Map<unknown, unknown>; tpOrders: Map<unknown, unknown>; orderProvenance: OrderProvenanceRegistry; }' is not assignable to parameter of type 'ExitProvenanceContext'.
+  Types of property 'manualOrders' are incompatible.
+    Type 'Map<unknown, unknown>' is not assignable to type 'Map<string, any>'.
+      Type 'unknown' is not assignable to type 'string'.
+src/services/tradeLearningP0.test.ts(23,128): error TS2345: Argument of type '{ executionFills: any; manualOrders: Map<unknown, unknown>; tpOrders: Map<unknown, unknown>; orderProvenance: OrderProvenanceRegistry; }' is not assignable to parameter of type 'ExitProvenanceContext'.
+  Types of property 'manualOrders' are incompatible.
+    Type 'Map<unknown, unknown>' is not assignable to type 'Map<string, any>'.
+      Type 'unknown' is not assignable to type 'string'.
+src/services/tradeLearningP0.test.ts(24,374): error TS2345: Argument of type '{ executionFills: any; manualOrders: Map<unknown, unknown>; tpOrders: Map<unknown, unknown>; orderProvenance: OrderProvenanceRegistry; }' is not assignable to parameter of type 'ExitProvenanceContext'.
+  Types of property 'manualOrders' are incompatible.
+    Type 'Map<unknown, unknown>' is not assignable to type 'Map<string, any>'.
+      Type 'unknown' is not assignable to type 'string'.
+src/services/tradeLearningP0.test.ts(25,244): error TS2345: Argument of type '{ executionFills: any; manualOrders: Map<unknown, unknown>; tpOrders: Map<unknown, unknown>; orderProvenance: OrderProvenanceRegistry; }' is not assignable to parameter of type 'ExitProvenanceContext'.
+  Types of property 'manualOrders' are incompatible.
+    Type 'Map<unknown, unknown>' is not assignable to type 'Map<string, any>'.
+      Type 'unknown' is not assignable to type 'string'.
+src/services/tradeLearningP0.test.ts(26,224): error TS2345: Argument of type '{ executionFills: any; manualOrders: Map<unknown, unknown>; tpOrders: Map<unknown, unknown>; orderProvenance: OrderProvenanceRegistry; }' is not assignable to parameter of type 'ExitProvenanceContext'.
+  Types of property 'manualOrders' are incompatible.
+    Type 'Map<unknown, unknown>' is not assignable to type 'Map<string, any>'.
+      Type 'unknown' is not assignable to type 'string'.
+src/services/tradeLearningP0.test.ts(27,246): error TS2345: Argument of type '{ executionFills: any; manualOrders: Map<unknown, unknown>; tpOrders: Map<unknown, unknown>; orderProvenance: OrderProvenanceRegistry; }' is not assignable to parameter of type 'ExitProvenanceContext'.
+  Types of property 'manualOrders' are incompatible.
+    Type 'Map<unknown, unknown>' is not assignable to type 'Map<string, any>'.
+      Type 'unknown' is not assignable to type 'string'.
+src/services/tradeLearningP0.test.ts(28,230): error TS2345: Argument of type '{ executionFills: any; manualOrders: Map<unknown, unknown>; tpOrders: Map<unknown, unknown>; orderProvenance: OrderProvenanceRegistry; }' is not assignable to parameter of type 'ExitProvenanceContext'.
+  Types of property 'manualOrders' are incompatible.
+    Type 'Map<unknown, unknown>' is not assignable to type 'Map<string, any>'.
+      Type 'unknown' is not assignable to type 'string'.
+npm error Lifecycle script `typecheck` failed with error:
+npm error code 2
+npm error path D:\MITS-WORKTREES\v397-trade-learning-p0-20261008\apps\engine
+npm error workspace @zdj/engine@3.9.7
+npm error location D:\MITS-WORKTREES\v397-trade-learning-p0-20261008\apps\engine
+npm error command failed
+npm error command C:\Windows\system32\cmd.exe /d /s /c tsc -p tsconfig.json --noEmit

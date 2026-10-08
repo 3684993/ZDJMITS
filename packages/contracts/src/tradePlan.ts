@@ -12,7 +12,7 @@ import { EntryEconomicMandateSchema } from './entryEconomicMandate.js';
  * divergence is recorded beside it.
  */
 
-export const PlanEvidenceStatusSchema = z.enum(['VERIFIED', 'INSUFFICIENT_SAMPLE', 'UNPROVEN', 'CONFLICT', 'STALE', 'NOT_APPLICABLE']);
+export const PlanEvidenceStatusSchema = z.enum(['VERIFIED', 'INSUFFICIENT_SAMPLE', 'UNPROVEN', 'CONFLICT', 'STALE', 'NOT_APPLICABLE', 'ESTIMATE', 'SCENARIO']);
 export type PlanEvidenceStatus = z.infer<typeof PlanEvidenceStatusSchema>;
 
 /** Only pre-registered comparisons may invalidate a thesis; no expression from a model is evaluated. */
@@ -45,7 +45,19 @@ export type TradePlanCosts = z.infer<typeof TradePlanCostsSchema>;
  * reached, and the expectation over the whole horizon. A missing statistical sample stays a status,
  * never a number, and no field here may be filled in from model confidence.
  */
+export const EconomicEvidenceSchema = z.object({
+  costBoundProof:z.object({status:z.enum(['CONDITIONAL_BOUND','UNKNOWN']),targetConditionalExFunding:z.number().finite().nullable(),assumptions:z.array(z.string()).min(1)}).strict(),
+  historicalTouchEstimate:z.object({status:z.enum(['ESTIMATE','UNKNOWN']),probability:z.number().min(0).max(1).nullable(),sampleCount:z.number().int().nonnegative(),source:z.string().nullable(),overlappingWindows:z.literal(true),executableFillProbability:z.literal(false)}).strict(),
+  scenarioExpectedPayoff:z.object({status:z.enum(['SCENARIO','UNKNOWN']),value:z.number().finite().nullable(),nonTouchPayoff:z.number().finite().nullable(),nonTouchPolicy:z.literal('ASSUMED_NEGATIVE_PROFIT_FLOOR')}).strict(),
+  calibratedExpectedNetPnl:z.object({status:z.enum(['KNOWN','UNKNOWN']),value:z.number().finite().nullable(),proof:z.object({nonTouchExitPolicy:z.string().min(1),feeFactIds:z.array(z.string()).min(1),fundingFactIds:z.array(z.string()).min(1),executablePathProofIds:z.array(z.string()).min(1),calibrationId:z.string().min(1),trainingEndAt:z.number().int(),testStartAt:z.number().int(),outOfSample:z.literal(true)}).strict().nullable()}).strict(),
+}).strict().superRefine((v,ctx)=>{
+  const c=v.calibratedExpectedNetPnl;
+  if(c.status==='KNOWN'&&(!c.proof||c.value===null||c.proof.testStartAt<=c.proof.trainingEndAt))ctx.addIssue({code:'custom',message:'CALIBRATED_EV_PROOF_INCOMPLETE'});
+  if(c.status==='UNKNOWN'&&c.value!==null)ctx.addIssue({code:'custom',message:'UNKNOWN_CALIBRATED_EV_CANNOT_HAVE_VALUE'});
+});
+
 export const TradePlanEconomicsSchema = z.object({
+  evidence:EconomicEvidenceSchema.optional(),
   targetConditionalNetProfitUsd: z.number().finite().nullable(),
   targetConditionalNetProfitStatus: PlanEvidenceStatusSchema,
   expectedNetPnlAtHorizonUsd: z.number().finite().nullable(),

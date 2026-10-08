@@ -1,0 +1,405 @@
+{
+  "method": "FROZEN_LOCAL_BOUNDED_FACT_REPROJECTION_V397_P0",
+  "cohort": 165,
+  "inputs": {
+    "trade-records-bounded.json": "7f706cb8007a0100070c8dcf3b7a6e981ecddaa48ef533897d0881f29cf94a96",
+    "recent-cycle-quality-metrics.json": "859e40fd91c2ac4f126c3ed20e4c52c6849d4d6a43558b92a7a4e3488e617abc",
+    "analysis-entities-slim.json": "410e0c78ea386a82f85fd01a0a78c6457044f64ca5cc357956c60df160902ffb",
+    "linked-primary-runs.json": "829165d1095f29163dc8f6afd97681f27570c8de7325b8f016b614676aac3b6b",
+    "lineage-authority-subset.json.gz": "3e3023ed4b0986fe0b3fb385a3c4ac4430edee53a483eedb54ea75b39573f38b"
+  },
+  "limitations": [
+    "No live exchange/history replay",
+    "5000 retained fills; missing fills are unknown, never reconstructed",
+    "183 linked run IDs include empty archived payloads",
+    "Registry coverage outside the two golden cases is not complete; local exact order compatibility is explicitly bounded",
+    "Counts are the identical frozen rolling-week cohort, not live post-deployment results"
+  ],
+  "before": {
+    "canonicalEligible": 0,
+    "fundingUnknown": 165,
+    "provenance": {
+      "TP": 66,
+      "UNKNOWN": 95,
+      "SYSTEM_MANUAL": 3,
+      "CONFLICT": 1
+    }
+  },
+  "after": {
+    "canonicalEligible": 0,
+    "fundingUnknown": 165,
+    "composition": {
+      "TP": 66,
+      "UNKNOWN": 95,
+      "MANUAL": 3,
+      "MIXED_TP_MANUAL": 1
+    },
+    "identityConflict": 0,
+    "originTemporalInvalid": 1,
+    "fullLotLineageExactCycles": 33,
+    "fullLotLineageUncertainCycles": 132,
+    "lineageReasons": {
+      "LOT_FILL_CHAIN_UNPROVEN": 95,
+      "ORIGIN_PRIMARY_RUN_UNPROVEN": 132,
+      "ORIGIN_TIMESTAMPS_MISSING": 132,
+      "ENTRY_CONTEXT_UNPROVEN": 132,
+      "MODEL_RESOURCE_IDENTITY_UNPROVEN": 132,
+      "ENTRY_LOT_QUANTITY_NOT_CONSERVED": 8,
+      "LOT_ORDER_INTENT_CHAIN_UNPROVEN": 1,
+      "LOT_PLAN_CHAIN_UNPROVEN": 1,
+      "LOT_TP_VERSION_UNPROVEN": 1
+    },
+    "canonicalReasons": {
+      "CLASSIFICATION_NOT_COMPLETE": 103,
+      "IDENTITY_OR_QUANTITY_CONFLICT": 103,
+      "FILL_LEDGER_COVERAGE_MISSING": 91,
+      "FILL_QUANTITY_NOT_CONSERVED": 91,
+      "LOT_FILL_CHAIN_UNPROVEN": 95,
+      "ORIGIN_PRIMARY_RUN_UNPROVEN": 132,
+      "ORIGIN_TIMESTAMPS_MISSING": 132,
+      "ENTRY_CONTEXT_UNPROVEN": 132,
+      "MODEL_RESOURCE_IDENTITY_UNPROVEN": 132,
+      "ENTRY_LINEAGE_UNPROVEN": 132,
+      "FUNDING_ASSET_ALLOCATION_UNPROVEN": 165,
+      "FUNDING_EVIDENCE_NOT_EXACT": 165,
+      "AUTHORITATIVE_NET_PNL_MISSING": 165,
+      "FILL_MONEY_NOT_CONSERVED": 9,
+      "EXIT_PROOF_COVERAGE_INCOMPLETE": 81,
+      "FILL_RANGE_INVALID": 1,
+      "RECORD_NOT_COMPLETE": 17,
+      "QUANTITY_NOT_CONSERVED": 17,
+      "ENTRY_LOT_QUANTITY_NOT_CONSERVED": 8,
+      "FEE_NOT_COMPLETE": 14,
+      "FILL_FACTS_MISSING": 14,
+      "AVERAGE_PRICE_MISSING": 14,
+      "FEE_SUM_INCONSISTENT": 14,
+      "TRADING_NET_INCONSISTENT": 14,
+      "FEE_VALUE_MISSING": 14,
+      "FILL_MONEY_FACTS_MISSING": 14,
+      "TRADING_NET_EX_FUNDING_MISSING": 14,
+      "LOT_ORDER_INTENT_CHAIN_UNPROVEN": 1,
+      "LOT_PLAN_CHAIN_UNPROVEN": 1,
+      "LOT_TP_VERSION_UNPROVEN": 1
+    }
+  },
+  "boundedLocalFundingSupplement": {
+    "sourceAt": "2026-10-08T12:10:41.513449+00:00",
+    "incomeRows": 374,
+    "coverageRows": 18,
+    "provenZero": 0,
+    "unknown": 165,
+    "reasons": {
+      "COVERAGE_DOES_NOT_ENCLOSE_WINDOW": 163,
+      "FUNDING_CYCLE_ALLOCATION_AMBIGUOUS": 2
+    },
+    "persistedIntoLiveRecords": false,
+    "canonicalPromotionPerformed": false
+  },
+  "cases": [
+    {
+      "symbol": "AAVEUSDT",
+      "tradeId": "trade_cycle_entry_intent_muyy90ez_iu1tjkcq",
+      "before": "SYSTEM_MANUAL",
+      "after": {
+        "closeProvenance": "SYSTEM_MANUAL",
+        "exitComposition": "MANUAL",
+        "quantityConflict": false,
+        "finalizer": "SYSTEM_MANUAL",
+        "finalizerIsTerminalProof": true,
+        "identityConflict": false,
+        "proofCoverage": {
+          "expectedQuantity": 11.4,
+          "observedQuantity": 11.4,
+          "provenQuantity": 11.4,
+          "unknownQuantity": 0,
+          "complete": true,
+          "roleQuantities": {
+            "TP": 0,
+            "MANUAL": 11.4,
+            "EXIT": 0
+          }
+        },
+        "exitIdentityEvidence": [
+          {
+            "fillId": "exchange_AAVEUSDT_66483538",
+            "exchangeOrderId": "427802880",
+            "clientOrderId": "v396x46ede71601c21ed2414ad1bff0c243",
+            "quantity": 11.4,
+            "executionTime": 1791450423479,
+            "role": "MANUAL",
+            "proofStatus": "EXACT"
+          }
+        ]
+      }
+    },
+    {
+      "symbol": "ETHFIUSDC",
+      "tradeId": "trade_cycle_entry_intent_muyvhnis_rlba6wa6",
+      "before": "CONFLICT",
+      "after": {
+        "closeProvenance": "MIXED_TP_MANUAL",
+        "exitComposition": "MIXED_TP_MANUAL",
+        "quantityConflict": false,
+        "finalizer": "SYSTEM_MANUAL",
+        "finalizerIsTerminalProof": true,
+        "identityConflict": false,
+        "proofCoverage": {
+          "expectedQuantity": 3611.5999999999985,
+          "observedQuantity": 3611.6,
+          "provenQuantity": 3611.6,
+          "unknownQuantity": 0,
+          "complete": true,
+          "roleQuantities": {
+            "TP": 118.5,
+            "MANUAL": 3493.1,
+            "EXIT": 0
+          }
+        },
+        "exitIdentityEvidence": [
+          {
+            "fillId": "exchange_ETHFIUSDC_63972354",
+            "exchangeOrderId": "158623772",
+            "clientOrderId": "v396x2ebcc6d12582486e6360b9b163b251",
+            "quantity": 7.1,
+            "executionTime": 1791445060143,
+            "role": "TP",
+            "proofStatus": "EXACT"
+          },
+          {
+            "fillId": "exchange_ETHFIUSDC_63972355",
+            "exchangeOrderId": "158623772",
+            "clientOrderId": "v396x2ebcc6d12582486e6360b9b163b251",
+            "quantity": 7.4,
+            "executionTime": 1791445060143,
+            "role": "TP",
+            "proofStatus": "EXACT"
+          },
+          {
+            "fillId": "exchange_ETHFIUSDC_63972356",
+            "exchangeOrderId": "158623772",
+            "clientOrderId": "v396x2ebcc6d12582486e6360b9b163b251",
+            "quantity": 7.7,
+            "executionTime": 1791445060439,
+            "role": "TP",
+            "proofStatus": "EXACT"
+          },
+          {
+            "fillId": "exchange_ETHFIUSDC_63972357",
+            "exchangeOrderId": "158623772",
+            "clientOrderId": "v396x2ebcc6d12582486e6360b9b163b251",
+            "quantity": 7.7,
+            "executionTime": 1791445061287,
+            "role": "TP",
+            "proofStatus": "EXACT"
+          },
+          {
+            "fillId": "exchange_ETHFIUSDC_63972358",
+            "exchangeOrderId": "158623772",
+            "clientOrderId": "v396x2ebcc6d12582486e6360b9b163b251",
+            "quantity": 7.7,
+            "executionTime": 1791445063059,
+            "role": "TP",
+            "proofStatus": "EXACT"
+          },
+          {
+            "fillId": "exchange_ETHFIUSDC_63972359",
+            "exchangeOrderId": "158623772",
+            "clientOrderId": "v396x2ebcc6d12582486e6360b9b163b251",
+            "quantity": 7.2,
+            "executionTime": 1791445063207,
+            "role": "TP",
+            "proofStatus": "EXACT"
+          },
+          {
+            "fillId": "exchange_ETHFIUSDC_63972360",
+            "exchangeOrderId": "158623772",
+            "clientOrderId": "v396x2ebcc6d12582486e6360b9b163b251",
+            "quantity": 7.5,
+            "executionTime": 1791445063387,
+            "role": "TP",
+            "proofStatus": "EXACT"
+          },
+          {
+            "fillId": "exchange_ETHFIUSDC_63972361",
+            "exchangeOrderId": "158623772",
+            "clientOrderId": "v396x2ebcc6d12582486e6360b9b163b251",
+            "quantity": 7,
+            "executionTime": 1791445063459,
+            "role": "TP",
+            "proofStatus": "EXACT"
+          },
+          {
+            "fillId": "exchange_ETHFIUSDC_63972362",
+            "exchangeOrderId": "158623772",
+            "clientOrderId": "v396x2ebcc6d12582486e6360b9b163b251",
+            "quantity": 7.6,
+            "executionTime": 1791445065783,
+            "role": "TP",
+            "proofStatus": "EXACT"
+          },
+          {
+            "fillId": "exchange_ETHFIUSDC_63972363",
+            "exchangeOrderId": "158623772",
+            "clientOrderId": "v396x2ebcc6d12582486e6360b9b163b251",
+            "quantity": 7.1,
+            "executionTime": 1791445065819,
+            "role": "TP",
+            "proofStatus": "EXACT"
+          },
+          {
+            "fillId": "exchange_ETHFIUSDC_63972364",
+            "exchangeOrderId": "158623772",
+            "clientOrderId": "v396x2ebcc6d12582486e6360b9b163b251",
+            "quantity": 7.7,
+            "executionTime": 1791445066459,
+            "role": "TP",
+            "proofStatus": "EXACT"
+          },
+          {
+            "fillId": "exchange_ETHFIUSDC_63972365",
+            "exchangeOrderId": "158623772",
+            "clientOrderId": "v396x2ebcc6d12582486e6360b9b163b251",
+            "quantity": 7.7,
+            "executionTime": 1791445066783,
+            "role": "TP",
+            "proofStatus": "EXACT"
+          },
+          {
+            "fillId": "exchange_ETHFIUSDC_63972366",
+            "exchangeOrderId": "158623772",
+            "clientOrderId": "v396x2ebcc6d12582486e6360b9b163b251",
+            "quantity": 7.1,
+            "executionTime": 1791445068535,
+            "role": "TP",
+            "proofStatus": "EXACT"
+          },
+          {
+            "fillId": "exchange_ETHFIUSDC_63972367",
+            "exchangeOrderId": "158623772",
+            "clientOrderId": "v396x2ebcc6d12582486e6360b9b163b251",
+            "quantity": 7.6,
+            "executionTime": 1791445068643,
+            "role": "TP",
+            "proofStatus": "EXACT"
+          },
+          {
+            "fillId": "exchange_ETHFIUSDC_63972368",
+            "exchangeOrderId": "158623772",
+            "clientOrderId": "v396x2ebcc6d12582486e6360b9b163b251",
+            "quantity": 7.5,
+            "executionTime": 1791445068927,
+            "role": "TP",
+            "proofStatus": "EXACT"
+          },
+          {
+            "fillId": "exchange_ETHFIUSDC_63972369",
+            "exchangeOrderId": "158623772",
+            "clientOrderId": "v396x2ebcc6d12582486e6360b9b163b251",
+            "quantity": 6.9,
+            "executionTime": 1791445069399,
+            "role": "TP",
+            "proofStatus": "EXACT"
+          },
+          {
+            "fillId": "exchange_ETHFIUSDC_63982896",
+            "exchangeOrderId": "158727542",
+            "clientOrderId": "v396xf4237e9d3ccb02bd6caf8865518183",
+            "quantity": 3493.1,
+            "executionTime": 1791450377211,
+            "role": "MANUAL",
+            "proofStatus": "EXACT"
+          }
+        ]
+      }
+    }
+  ],
+  "nativeAssetSummary": {
+    "semanticsVersion": "V3.9.3-A2-1",
+    "asOf": 1791455345489,
+    "observedClosed": 165,
+    "closedCompleteCount": 62,
+    "completeClosed": 62,
+    "ledgerReconciliationPending": 103,
+    "awaitingReconciliation": 103,
+    "fundingUnknownCount": 62,
+    "legacyEconomicInconsistentCount": 0,
+    "identityOrLedgerIssueCount": 103,
+    "tradingNetExFundingEligibleCount": 62,
+    "tradingNetExFunding": null,
+    "canonicalPnlEligibleCount": 0,
+    "canonicalNetPnl": null,
+    "canonicalNetPnlStatus": "NO_ELIGIBLE_SAMPLES",
+    "canonicalCoverage": {
+      "eligible": 0,
+      "ledgerClosedComplete": 62,
+      "ratio": 0
+    },
+    "localAccounting": {
+      "exFundingNet": null,
+      "completeCycles": 62,
+      "confirmedFunding": null,
+      "confirmedAllInNet": null,
+      "confirmedAllInCycles": 0,
+      "fundingUnknownCycles": 62,
+      "allInUnconfirmedCycles": 62,
+      "fundingExactEvidencePendingCycles": 0,
+      "coverage": {
+        "external": 0,
+        "duplicate": 0,
+        "noncanonical": 0,
+        "feeMissing": 14,
+        "cycleInconsistent": 3,
+        "cycleUnconserved": 14,
+        "cycleUnproven": 0,
+        "localFundingUnknown": 62,
+        "localAllInUnconfirmed": 62,
+        "localFundingExactEvidencePending": 0,
+        "excludedClosed": 103,
+        "cycleCollision": 0
+      },
+      "byAsset": {
+        "USDT": {
+          "completeCycles": 45,
+          "exFundingNet": 117.89584631000001,
+          "canonicalEligible": 0,
+          "confirmedFunding": null,
+          "canonicalNetPnl": null
+        },
+        "USDC": {
+          "completeCycles": 17,
+          "exFundingNet": 93.85110410000001,
+          "canonicalEligible": 0,
+          "confirmedFunding": null,
+          "canonicalNetPnl": null
+        }
+      }
+    },
+    "prospective": {
+      "status": "MANIFEST_UNAVAILABLE",
+      "experimentId": null,
+      "entryCycleCount": null,
+      "closedCycleCount": null,
+      "canonicalPnlEligibleCount": null
+    },
+    "completed": 0,
+    "netPnl": null,
+    "byAsset": {
+      "USDT": {
+        "completeCycles": 45,
+        "exFundingNet": 117.89584631000001,
+        "canonicalEligible": 0,
+        "confirmedFunding": null,
+        "canonicalNetPnl": null
+      },
+      "USDC": {
+        "completeCycles": 17,
+        "exFundingNet": 93.85110410000001,
+        "canonicalEligible": 0,
+        "confirmedFunding": null,
+        "canonicalNetPnl": null
+      }
+    },
+    "aggregateAsset": null,
+    "aggregateStatus": "FX_UNPROVEN"
+  }
+}

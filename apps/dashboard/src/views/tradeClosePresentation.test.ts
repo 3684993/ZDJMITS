@@ -1,5 +1,6 @@
 import {describe,expect,it} from 'vitest';
 import {tradeClosePresentation} from './tradeClosePresentation.js';
+it('labels TP plus exact manual exits without a conflict label',()=>expect(tradeClosePresentation({closedAt:2,closeProvenance:'MIXED_TP_MANUAL'}).label).toBe('止盈＋人工平仓'));
 describe('trade close display uses provenance, never taker as a proxy',()=>{
   it('labels external exchange close facts as exchange close',()=>expect(tradeClosePresentation({closedAt:2,closeProvenance:'EXCHANGE_CLOSE'}).label).toBe('交易所平仓'));
   it('keeps a system taker exit labeled system when its order provenance says EXIT',()=>expect(tradeClosePresentation({closedAt:2,closeProvenance:'SYSTEM_EXIT',maker:false}).label).toBe('系统主动平仓'));

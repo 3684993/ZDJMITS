@@ -6,6 +6,9 @@ export function tradeClosePresentation(row:any):ClosePresentation{
     SYSTEM_EXIT:{label:'系统主动平仓',cls:'warn',hint:'订单 provenance registry 确认为系统 Exit'},
     SYSTEM_MANUAL:{label:'系统人工操作',cls:'warn',hint:'订单 provenance registry 确认为 Dashboard 手工操作'},
     EXCHANGE_CLOSE:{label:'交易所平仓',cls:'warn',hint:'平仓成交为交易所侧外部事实，且无系统订单 provenance'},
+    MIXED_TP_MANUAL:{label:'止盈＋人工平仓',cls:'warn',hint:'不同 exact identity 分别为 TP 和人工退出；不是身份冲突'},
+    MIXED:{label:'混合平仓',cls:'warn',hint:'周期包含多种已证明退出角色；不代表同一身份冲突'},
+    MANUAL:{label:'系统人工操作',cls:'warn',hint:'exact durable manual identity'},
     CONFLICT:{label:'来源冲突',cls:'danger',hint:'平仓身份出现多个冲突 provenance'},
     UNKNOWN:{label:'未知来源',cls:'danger',hint:'没有足够订单 provenance，未根据 taker 标志推断来源'},
   };

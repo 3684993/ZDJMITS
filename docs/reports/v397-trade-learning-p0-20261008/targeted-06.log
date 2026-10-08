@@ -1,0 +1,55 @@
+(node:47144) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:47572) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> @zdj/engine@3.9.7 test
+> vitest run src/api/tradeCloseProvenance.test.ts src/api/projections.test.ts src/services/j4ReviewMemoryHostile.test.ts src/services/tradingQualityIntegration.test.ts src/services/tradeLearningP0.test.ts
+
+(node:17072) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+VITEST_TEST_TIMEOUT=5000 CI=
+
+ RUN  v3.2.7 D:/MITS-WORKTREES/v397-trade-learning-p0-20261008/apps/engine
+
+(node:20300) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:36704) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:17776) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:24152) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:17776) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:20300) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+ ✓ src/services/tradeLearningP0.test.ts (24 tests) 34ms
+(node:24152) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:26692) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:36704) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:26692) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+ ✓ src/api/tradeCloseProvenance.test.ts (2 tests) 3ms
+(node:27932) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:24152) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/services/tradingQualityIntegration.test.ts (30 tests) 1203ms
+(node:38544) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:24152) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:24152) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/api/projections.test.ts (4 tests) 1074ms
+   ✓ dashboard projections > schema-validates one server-side snapshot and redacts audit secrets  492ms
+(node:42180) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/services/j4ReviewMemoryHostile.test.ts (54 tests) 2523ms
+
+ Test Files  5 passed (5)
+      Tests  114 passed (114)
+   Start at  19:57:32
+   Duration  3.21s (transform 1.64s, setup 0ms, collect 4.07s, tests 4.84s, environment 1ms, prepare 487ms)
+
+(node:25008) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)

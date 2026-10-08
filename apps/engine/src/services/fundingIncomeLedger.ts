@@ -1,3 +1,4 @@
+import {attributeFunding,type CycleExposure} from './factLedgers.js';
 import {DatabaseSync} from 'node:sqlite';
 
 /**
@@ -21,6 +22,7 @@ export type FundingIncomeRow={
 export type FundingCoverage={environment:string;accountId:string;asset:string;sinceMs:number;untilMs:number;complete:boolean;pages:number;rows:number;observedAt:number;reason:string|null};
 
 const DDL=`
+CREATE TABLE IF NOT EXISTS v397_income_conflicts(environment TEXT NOT NULL,account_id TEXT NOT NULL,asset TEXT NOT NULL,income_type TEXT NOT NULL,income_id TEXT NOT NULL,time INTEGER NOT NULL,payload TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS v396_funding_income(
   income_id TEXT NOT NULL,environment TEXT NOT NULL,account_id TEXT NOT NULL,asset TEXT NOT NULL,symbol TEXT,
   income_type TEXT NOT NULL,income REAL NOT NULL,time INTEGER NOT NULL,source TEXT NOT NULL,observed_at INTEGER NOT NULL,PRIMARY KEY(environment,account_id,income_type,income_id));
@@ -64,7 +66,11 @@ export class FundingIncomeLedger {
         const statement=this.db.prepare(`INSERT INTO v396_funding_income(income_id,environment,account_id,asset,symbol,income_type,income,time,source,observed_at)
           VALUES(?,?,?,?,?,?,?,?,?,?) ON CONFLICT(environment,account_id,income_type,income_id) DO NOTHING`);
         const result=statement.run(incomeId,environment,accountId,asset,text(row.symbol),numberType(row.incomeType),income,Math.trunc(time),String(row.source??'INCOME_READ'),Math.trunc(Number(row.observedAt??Date.now())));
-        if(result.changes)inserted++;else duplicates++;
+        if(result.changes)inserted++;else {duplicates++;const prior=this.db.prepare('SELECT income,asset,symbol,time FROM v396_funding_income WHERE environment=? AND account_id=? AND income_type=? AND income_id=?').get(environment,accountId,numberType(row.incomeType),incomeId) as any;
+          if(prior&&(Number(prior.income)!==income||prior.asset!==asset||prior.symbol!==text(row.symbol)||Number(prior.time)!==Math.trunc(time))){
+            this.db.prepare('INSERT INTO v397_income_conflicts VALUES(?,?,?,?,?,?,?)').run(environment,accountId,prior.asset,numberType(row.incomeType),incomeId,prior.time,JSON.stringify({prior,attempt:row}));rejected.push(`INCOME_IDENTITY_CONFLICT:${incomeId}`);
+          }
+        }
       }
       this.db.exec('COMMIT');
     }catch(error){this.db.exec('ROLLBACK');throw error;}
@@ -98,24 +104,34 @@ export class FundingIncomeLedger {
    * window AND every funding event inside it is known; a zero with incomplete coverage is still
    * unknown, because funding settles on a schedule and a quiet window proves nothing about a gap.
    */
-  attribution(input:{asset:string;symbol:string;fromMs:number;toMs:number}){
+  attribution(input:{asset:string;symbol:string;fromMs:number;toMs:number;ownership?:{record:any;exposures:CycleExposure[];universeComplete:boolean}}){
     const rows=this.rowsFor(input);
     const funding=rows.filter(row=>String(row.income_type)==='FUNDING_FEE');
     const coverage=this.db.prepare('SELECT * FROM v396_funding_coverage WHERE environment=? AND account_id=? AND asset=? ORDER BY since_ms').all(this.identity().environment,this.identity().account,input.asset) as Array<Record<string,unknown>>;
     const enclosing=coverage.filter(row=>Number(row.since_ms)<=input.fromMs&&Number(row.until_ms)>=input.toMs&&Number(row.complete)===1);
-    let through=input.fromMs;const completeWindows=coverage.filter(row=>Number(row.complete)===1);
+    let through=input.fromMs;const completeWindows=coverage.filter(row=>Number(row.complete)===1&&Number(row.observed_at)>=Number(row.until_ms));
     for(const row of completeWindows){if(Number(row.since_ms)>through)break;if(Number(row.until_ms)>=through)through=Math.max(through,Number(row.until_ms));}
-    const exact=Number.isFinite(input.fromMs)&&Number.isFinite(input.toMs)&&input.fromMs>0&&input.toMs>=input.fromMs&&through>=input.toMs;
-    const total=funding.reduce((sum,row)=>sum+Number(row.income),0);
+    const coverageComplete=Number.isFinite(input.fromMs)&&Number.isFinite(input.toMs)&&input.fromMs>0&&input.toMs>=input.fromMs&&through>=input.toMs;
+    const used=completeWindows.filter(r=>Number(r.until_ms)>=input.fromMs&&Number(r.since_ms)<=input.toMs);
+    const verifiedAt=used.length?Math.min(...used.map(r=>Number(r.observed_at))):0;
+    const identityConflict=Number((this.db.prepare("SELECT COUNT(*) n FROM v397_income_conflicts WHERE environment=? AND account_id=? AND asset=? AND income_type='FUNDING_FEE' AND time>=? AND time<=?").get(this.identity().environment,this.identity().account,input.asset,input.fromMs,input.toMs) as any).n)>0;
+    const late=funding.some(r=>Number(r.observed_at)>verifiedAt);
+    const allocation=input.ownership?attributeFunding({record:input.ownership.record,asset:input.asset,accountScope:`${this.identity().environment}|${this.identity().account}`,proof:{accountScope:`${this.identity().environment}|${this.identity().account}`,cycleId:input.ownership.record.cycleId,asset:input.asset,from:input.fromMs,to:input.toMs,verifiedAt,coverageIds:used.map(r=>`coverage:${r.since_ms}:${r.until_ms}:${r.observed_at}`),complete:coverageComplete,exposureUniverseComplete:input.ownership.universeComplete},income:funding.map(r=>({id:String(r.income_id),asset:String(r.asset),symbol:r.symbol==null?null:String(r.symbol),type:String(r.income_type),amount:Number(r.income),at:Number(r.time),observedAt:Number(r.observed_at)})),exposures:input.ownership.exposures}):null;
+    const exact=coverageComplete&&!late&&!identityConflict&&(allocation?allocation.status==='EXACT':funding.length===0);
+    const total=allocation?.amount??0;
+    const reason=exact?null:identityConflict?'FUNDING_IDENTITY_CONFLICT':!coverageComplete?(coverage.length?'COVERAGE_DOES_NOT_ENCLOSE_WINDOW':'COVERAGE_UNRECORDED'):late?'LATE_FUNDING_REQUIRES_REVERIFICATION':allocation?.reasons.join('|')||'FUNDING_OWNER_NOT_PROVEN';
     return{
       status:exact?'EXACT':'UNKNOWN' as 'EXACT'|'UNKNOWN',
-      fundingUsd:exact?total:null,
+      fundingUsd:exact&&input.asset==='USDT'?total:null,
       observedFundingRows:funding.length,
-      coverageComplete:exact,
-      coverage:exact?{sinceMs:input.fromMs,untilMs:through,pages:completeWindows.reduce((n,r)=>n+Number(r.pages),0),rows:funding.length}:null,
+      coverageComplete,
+      fundingNative:exact?{asset:input.asset,amount:total}:null,
+      allocation,
+      learningProof:exact&&input.ownership&&input.ownership.record.cycleId?{accountScope:`${this.identity().environment}|${this.identity().account}`,cycleId:input.ownership.record.cycleId,asset:input.asset,amount:total,from:input.fromMs,to:input.toMs,verifiedAt,coverageIds:used.map(r=>`coverage:${r.since_ms}:${r.until_ms}:${r.observed_at}`),allocations:allocation?.allocations??[]}:null,
+      coverage:coverageComplete?{sinceMs:input.fromMs,untilMs:through,pages:completeWindows.reduce((n,r)=>n+Number(r.pages),0),rows:funding.length}:null,
       // Reported separately so a partial import is never read as "there was no funding".
       partialCoverageRows:coverage.filter(row=>Number(row.complete)!==1).length,
-      reason:exact?null:coverage.length?'COVERAGE_DOES_NOT_ENCLOSE_WINDOW':'COVERAGE_UNRECORDED',
+      reason,
     };
   }
 
@@ -137,9 +153,9 @@ export class FundingIncomeLedger {
 export function cycleFundingFact(ledger:FundingIncomeLedger,record:any,records:any[],now:number){
   const asset=String(record.symbol).endsWith('USDC')?'USDC':String(record.symbol).endsWith('USDT')?'USDT':'UNKNOWN';
   const fromMs=Number(record.openedAt??0),toMs=Number(record.closedAt??record.observedClosedAt??now);
-  const fact=ledger.attribution({asset,symbol:record.symbol,fromMs,toMs});
+  const fact=ledger.attribution({asset,symbol:record.symbol,fromMs,toMs,ownership:{record,exposures:[],universeComplete:false}});
   const overlaps=records.some(other=>other.tradeId!==record.tradeId&&!other.duplicateOf&&other.canonical!==false&&other.symbol===record.symbol&&
     Number(other.openedAt??0)<=toMs&&Number(other.closedAt??other.observedClosedAt??now)>=fromMs);
-  const reason=asset!=='USDT'?'FUNDING_BASE_CONVERSION_UNPROVEN':overlaps&&fact.observedFundingRows>0?'FUNDING_CYCLE_ALLOCATION_AMBIGUOUS':fact.reason;
+  const reason=asset==='UNKNOWN'?'FUNDING_QUOTE_ASSET_UNKNOWN':overlaps&&fact.observedFundingRows>0?'FUNDING_CYCLE_ALLOCATION_AMBIGUOUS':fact.reason;
   return {...fact,status:reason?'UNKNOWN' as const:fact.status,fundingUsd:reason?null:fact.fundingUsd,reason};
 }

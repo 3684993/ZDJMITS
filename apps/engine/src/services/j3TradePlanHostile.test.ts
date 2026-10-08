@@ -203,7 +203,7 @@ describe('S06 candidate generation',()=>{
     const shadowed=candidates({settings:baseSettings({tradeEconomics:{...baseSettings().tradeEconomics,admissionMode:'SHADOW'}})});
     const row=shadowed.set.candidates[0];
     expect(row).toBeTruthy();
-    expect(['INSUFFICIENT_SAMPLE','VERIFIED']).toContain(row.economics.expectedNetPnlAtHorizonStatus);
+    expect(['INSUFFICIENT_SAMPLE','SCENARIO']).toContain(row.economics.expectedNetPnlAtHorizonStatus);
     expect(row.economics.modelConfidenceIsAuthority).toBe(false);
     if(row.economics.expectedNetPnlAtHorizonStatus==='INSUFFICIENT_SAMPLE'){
       expect(row.economics.expectedNetPnlAtHorizonUsd).toBeNull();

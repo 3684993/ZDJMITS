@@ -2,7 +2,7 @@
   "inventoryVersion": "S00-T01-entry-review-2",
   "capturedAt": "2026-09-21",
   "derivation": "mechanical over-approximating static scan by scripts/v396-s00-isolation-rules.mjs; a match can only tighten a status, never relax it",
-  "entryCount": 155,
+  "entryCount": 157,
   "statusLegend": {
     "ALLOWED_STATIC": "executed by the S00 verification command",
     "CONDITIONAL_NOT_RUN": "not executed; a later stage may run it only after the required boundary is proven",
@@ -542,6 +542,17 @@
       "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; unique temp data dir plus unique loopback port; no credential read"
     },
     {
+      "path": "scripts/audit-trade-learning-p0.mjs",
+      "kind": "script",
+      "sideEffects": [
+        "host-or-data-mutation",
+        "network-or-exchange"
+      ],
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; mock/no-network/no-exchange-write assertion with a write counter that throws"
+    },
+    {
       "path": "scripts/audit-trading-quality-baseline.mjs",
       "kind": "script",
       "sideEffects": [
@@ -685,6 +696,16 @@
       "derivedFrom": "file-content-and-one-hop-target",
       "status": "CONDITIONAL_NOT_RUN",
       "requiredBoundary": "unique temp data dir plus unique loopback port; no credential read"
+    },
+    {
+      "path": "scripts/extract-p0-authority.py",
+      "kind": "script",
+      "sideEffects": [
+        "host-or-data-mutation"
+      ],
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store"
     },
     {
       "path": "scripts/finalize-v320-acceptance.mjs",

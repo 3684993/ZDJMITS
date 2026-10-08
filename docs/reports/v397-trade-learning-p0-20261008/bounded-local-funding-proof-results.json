@@ -1,0 +1,1652 @@
+[
+  {
+    "tradeId": "trade_cycle_entry_intent_muwcfzru_7y3e0rp1",
+    "symbol": "TIAUSDC",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muzc6ldg_vvlrzg5u",
+    "symbol": "ZROUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muzd3quz_34ttgkms",
+    "symbol": "ONDOUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_XLMUSDT_SHORT_e4f6c2f2-26e3-4b92-a9d4-60f06d00bded",
+    "symbol": "XLMUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muwazcjx_236ze1i3",
+    "symbol": "NEARUSDC",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muwavszx_cbkcc7sy",
+    "symbol": "BNBUSDC",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muwadg4u_l4sifmib",
+    "symbol": "SOLUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muw9pnye_myh9ywh0",
+    "symbol": "DOTUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muz6gdkk_vzibwneb",
+    "symbol": "BNBUSDC",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muw73ugr_o1dar8b0",
+    "symbol": "SOLUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muyy90ez_iu1tjkcq",
+    "symbol": "AAVEUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muyvhnis_rlba6wa6",
+    "symbol": "ETHFIUSDC",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muyldxqy_r892kd84",
+    "symbol": "ONDOUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muyo8qm2_uol3062c",
+    "symbol": "NEARUSDC",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muw36341_vihtn1yg",
+    "symbol": "LTCUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muvhochn_parb782z",
+    "symbol": "ETHUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muz5cfom_70owrmtl",
+    "symbol": "FILUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muz6qn5j_fua4eblw",
+    "symbol": "NEARUSDC",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muz59uv2_61at8afi",
+    "symbol": "NEARUSDC",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muvh13vl_uejfj59b",
+    "symbol": "ONDOUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muz4qhhu_x6tpk340",
+    "symbol": "BNBUSDC",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muz4zibc_qjrqi4fa",
+    "symbol": "UNIUSDC",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muz520yz_0hwsnl7w",
+    "symbol": "ZECUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muz45wfl_1nprta5u",
+    "symbol": "NEARUSDC",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_UNIUSDT_LONG_5651fce1-552b-4789-a08e-5e6d565f6a32",
+    "symbol": "UNIUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muz254oy_mlsbtniy",
+    "symbol": "AAVEUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muz2u2ix_c143vcml",
+    "symbol": "ETHFIUSDC",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muvfzhp0_w32x22ee",
+    "symbol": "ONDOUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muz2wgol_u3m1pj3r",
+    "symbol": "WIFUSDC",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muyx3ru4_r1f9y9vo",
+    "symbol": "FETUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muz3ns4k_sntbhucj",
+    "symbol": "NEARUSDC",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muve8v1t_o9bsa9hu",
+    "symbol": "ONDOUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muve0ozg_6dvft1il",
+    "symbol": "NEARUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muz11jsx_lhiqd1md",
+    "symbol": "LTCUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muyzzq8y_x1sp0r2h",
+    "symbol": "NEARUSDC",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muvd0xwa_f4015s34",
+    "symbol": "ETHFIUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muyg0576_70guy4my",
+    "symbol": "ARBUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muyyj5wf_a8pdi8s4",
+    "symbol": "ONDOUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muyehhtz_9jke1e9l",
+    "symbol": "BNBUSDC",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muyz38p1_atb0ymqi",
+    "symbol": "VVVUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muyy1gte_j9oa2fgi",
+    "symbol": "INJUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muyy622v_j2su4t21",
+    "symbol": "TIAUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muv9slja_9wyopokp",
+    "symbol": "BCHUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muyyd41h_f4k5pk0z",
+    "symbol": "SOLUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muyt640s_sf8lnp6h",
+    "symbol": "TAOUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muyxnq87_rwi5w5js",
+    "symbol": "BCHUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muyxktzd_uvnc6tx0",
+    "symbol": "TIAUSDC",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muywqz80_0mevqj5m",
+    "symbol": "TIAUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muyvr02i_792mkq64",
+    "symbol": "NEARUSDC",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muywk0e8_0a716mju",
+    "symbol": "ZECUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muv0zi34_ujjc0re9",
+    "symbol": "NEARUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muydycyn_8fl2sd83",
+    "symbol": "BTCUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muuwy9u7_6f30on5g",
+    "symbol": "NEARUSDC",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muyt1rih_y188q0jb",
+    "symbol": "NEARUSDC",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muuvusvk_jm0lbmyp",
+    "symbol": "SOLUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muuvo7xx_voizkeg7",
+    "symbol": "NEARUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muuuzxwm_xafwbpdm",
+    "symbol": "BNBUSDC",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muuung0g_36qr5cne",
+    "symbol": "NEARUSDC",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muuukbgp_u5jpi24b",
+    "symbol": "ETHUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muurbncl_duboctnt",
+    "symbol": "ZECUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muys8czq_nvccqxxs",
+    "symbol": "ZECUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muyjvse1_h6kqke8n",
+    "symbol": "ONDOUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muyfl3ql_39b7a561",
+    "symbol": "AAVEUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muyf9pn1_kuhhczt1",
+    "symbol": "DOTUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_ETHUSDT_SHORT_9e29330a-fe31-41ef-92ef-64220ff0921f",
+    "symbol": "ETHUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muyak59b_foujxpi4",
+    "symbol": "SOLUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muya37o8_2hz2pxg1",
+    "symbol": "BCHUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muy1wvtw_yk0fv560",
+    "symbol": "BCHUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muy1fn2q_ib4il59k",
+    "symbol": "ETHUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muy03mn8_xpd6nk2t",
+    "symbol": "ETHUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muxoex8d_lajt9sg7",
+    "symbol": "BTCUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muxo341a_tcyd3v6n",
+    "symbol": "ETHUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muxicoas_y787bel1",
+    "symbol": "SOLUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muxhij4g_4svci4ba",
+    "symbol": "BCHUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muxhcc5h_0zushqz7",
+    "symbol": "BTCUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muxgtkwy_t5moa72g",
+    "symbol": "BTCUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muxeu113_rbtqe4t1",
+    "symbol": "AVAXUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_mux9p49s_3ytnbj2y",
+    "symbol": "ETHUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muwvbk76_2fa44usa",
+    "symbol": "BCHUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muwmzh78_vfp1v6g2",
+    "symbol": "AVAXUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muwl5r8g_8mxs9m05",
+    "symbol": "AVAXUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muwhhken_wb5e6vy8",
+    "symbol": "BCHUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muwekwke_7mm03oed",
+    "symbol": "TIAUSDC",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muwduyyv_ea8hhn4y",
+    "symbol": "TIAUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muwdiwog_k17vkmgo",
+    "symbol": "AVAXUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muupsb1c_bf7rr9m2",
+    "symbol": "ZECUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muuoahyz_fwtv5iym",
+    "symbol": "USELESSUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muunaq5v_x8sbbbj0",
+    "symbol": "DOTUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muumfki4_opm77n4a",
+    "symbol": "VVVUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muulua6t_0ian9iq7",
+    "symbol": "DOTUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muull094_mwsq6p2m",
+    "symbol": "BTCUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muukc8ev_xuqq1gcs",
+    "symbol": "BRUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muuk3p5u_32vd1smk",
+    "symbol": "ETHUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muujibnu_cqzxvzow",
+    "symbol": "AAVEUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muuimmmz_4jajfcy9",
+    "symbol": "NEARUSDC",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muufjpe8_yd16iuvk",
+    "symbol": "PENGUUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muuejr74_z3mp90ec",
+    "symbol": "ZECUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muuchpuh_ikp2982v",
+    "symbol": "PENGUUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muucadjm_hwnozge8",
+    "symbol": "DOGEUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muubkmht_ef11ce1o",
+    "symbol": "WIFUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muuanuoy_wvcgr8p3",
+    "symbol": "AAVEUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muua7p6s_bntfijba",
+    "symbol": "NEARUSDC",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_USELESSUSDT_SHORT_4bdd25c2-f75c-4eb8-80c9-86e752a80f02",
+    "symbol": "USELESSUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muu7f9hk_lb5tt78f",
+    "symbol": "ONDOUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muu6og8s_ja1rz8ek",
+    "symbol": "BRUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_BNBUSDC_LONG_718d5113-55d4-4a2c-965d-d270b8b91cd0",
+    "symbol": "BNBUSDC",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muu288ep_kw8r3p7z",
+    "symbol": "LTCUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muu1xhlo_g44bgmqp",
+    "symbol": "BCHUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_ONDOUSDT_LONG_bd461581-5922-444d-ae14-9402a258f3f8",
+    "symbol": "ONDOUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_mutznc3c_tr9r9vuo",
+    "symbol": "VVVUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_mutzbq6k_i717b0k3",
+    "symbol": "SOLUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_mutyt2b5_m9p05pnm",
+    "symbol": "ETHFIUSDC",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_mutx8b5u_22stho1c",
+    "symbol": "DASHUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_mutx5noc_0dd89zm7",
+    "symbol": "HYPEUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_mutvpjvl_zxt3jqee",
+    "symbol": "AAVEUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_mutv6ffd_3thrft32",
+    "symbol": "ZECUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_mutsryg4_0jy53n6k",
+    "symbol": "PENGUUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muts1f5c_8m3wl3e3",
+    "symbol": "BCHUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_mutrhb87_pe6zgjq0",
+    "symbol": "AAVEUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_mutren0u_y76qbq4q",
+    "symbol": "ZECUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_mutr32jh_3mmcjfoh",
+    "symbol": "NEARUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_mutr0ehz_6mok8phg",
+    "symbol": "SOLUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_mutqxhav_x0lgjwhh",
+    "symbol": "ETHUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_murqvsny_1stqisfp",
+    "symbol": "ZROUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muqslzde_yim5kj9g",
+    "symbol": "ARBUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muqppx8c_tjvomscs",
+    "symbol": "PENGUUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muqmxlru_gy3dft77",
+    "symbol": "ARBUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_BCHUSDT_LONG_becbaf6b-ed27-4657-9532-2c0bf531ea4a",
+    "symbol": "BCHUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muqe8rgx_g31do5bf",
+    "symbol": "WIFUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muq6sc89_znx6cjij",
+    "symbol": "NEARUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_mupylaiu_qm1b66ex",
+    "symbol": "AAVEUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_mupwgx2p_ceek5n71",
+    "symbol": "ZECUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_mupeeoo9_6mgqagjw",
+    "symbol": "XRPUSDC",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_mupe1rv3_x6sjdc46",
+    "symbol": "SOLUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_mupdpbyg_0igv6fji",
+    "symbol": "INJUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_mupc9oh4_4w3uhfrr",
+    "symbol": "VVVUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_mup8vd7v_0ajc6tge",
+    "symbol": "SUIUSDC",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_mup6lq0z_twl1dbvm",
+    "symbol": "TAOUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_mup6qos1_mo9u9umx",
+    "symbol": "NEARUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_mup6en2k_2skcdy0d",
+    "symbol": "ETHFIUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_mup62ee7_pywukx3t",
+    "symbol": "VIRTUALUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_mup5vegg_gcgfivc0",
+    "symbol": "ARBUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_mup5m47x_bgl3ojhx",
+    "symbol": "INJUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_mup4nuvf_kpn1iyxf",
+    "symbol": "ARBUSDC",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_mup49yw8_wm3ocutf",
+    "symbol": "ZROUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_mup3r27w_xxnnj18n",
+    "symbol": "OPUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_SOLUSDT_LONG_6f9a2f03-ebc6-476d-88c2-9f61b092a6cc",
+    "symbol": "SOLUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_HBARUSDT_LONG_b44eeb73-0df1-4774-86e0-fb45bdf35cb4",
+    "symbol": "HBARUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_mup25k2o_dzamkfbi",
+    "symbol": "ETHUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_mup0o6xz_hyy80lw1",
+    "symbol": "TIAUSDC",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_mup02pou_mt7l9b7v",
+    "symbol": "SUIUSDC",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muoz4iad_c0doamlw",
+    "symbol": "WIFUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_HBARUSDT_SHORT_f872a779-f4e8-4efb-8d61-8fddecaee997",
+    "symbol": "HBARUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muot7sbi_i7mzldgm",
+    "symbol": "WLDUSDC",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muotizrv_6ktud80z",
+    "symbol": "FILUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muopuk4l_xmbpj2zo",
+    "symbol": "OPUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muoq16a6_wgjni7kr",
+    "symbol": "BCHUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muoohnib_bofwch4z",
+    "symbol": "ETHUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_muooawik_gc4l3o5u",
+    "symbol": "TAOUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_munukkdi_zo3beoau",
+    "symbol": "VIRTUALUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_munqu8mj_4tagnzbr",
+    "symbol": "TIAUSDC",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_munqjtjm_lga8objp",
+    "symbol": "DOGEUSDC",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_munjlnrz_wdbq6rwz",
+    "symbol": "ENAUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
+    "coverageComplete": false,
+    "observedFundingRows": 0,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_mugkidet_8lh0blpk",
+    "symbol": "DASHUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "FUNDING_CYCLE_ALLOCATION_AMBIGUOUS",
+    "coverageComplete": false,
+    "observedFundingRows": 7,
+    "learningProof": null
+  },
+  {
+    "tradeId": "trade_cycle_entry_intent_mubpoawr_aiicz3a2",
+    "symbol": "BTCUSDT",
+    "status": "UNKNOWN",
+    "native": null,
+    "reason": "FUNDING_CYCLE_ALLOCATION_AMBIGUOUS",
+    "coverageComplete": false,
+    "observedFundingRows": 8,
+    "learningProof": null
+  }
+]

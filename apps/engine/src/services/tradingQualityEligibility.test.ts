@@ -21,7 +21,7 @@ describe('V3.9.3 eligibility contract',()=>{
   it('requires durable funding evidence and authoritative net consistency',()=>{
     const r=record({funding:.1,fundingAttributionStatus:'EXACT',pnlBasis:'CANONICAL_NET_WITH_FUNDING',netPnl:1.02});
     expect(canonicalPnlEligible(r).eligible).toBe(false);
-    expect(canonicalPnlEligible(r,{accountScope:'acct',fundingEvidence:{attributionStatus:'EXACT',factIds:['income-1'],coverageStartAt:1_000,coverageEndAt:2_000,accountScope:'acct',cycleId:'cy1',verifiedAt:2_100}}).eligible).toBe(true);
+    expect(canonicalPnlEligible(r,{accountScope:'acct',fundingEvidence:{attributionStatus:'EXACT',factIds:['income-1'],coverageStartAt:1_000,coverageEndAt:2_000,accountScope:'acct',cycleId:'cy1',verifiedAt:2_100}}).eligible).toBe(false);
     expect(canonicalPnlEligible({...r,netPnl:99},{accountScope:'acct',fundingEvidence:{attributionStatus:'EXACT',factIds:['income-1'],coverageStartAt:1_000,coverageEndAt:2_000,accountScope:'acct',cycleId:'cy1',verifiedAt:2_100}}).reasons).toContain('AUTHORITATIVE_NET_PNL_INCONSISTENT');
   });
   it('quarantines legacy net values without promoting funding',()=>expect(legacyEconomicInconsistency(record({netPnl:4.2,fundingAttributionStatus:undefined,pnlBasis:undefined}))).toBe(true));

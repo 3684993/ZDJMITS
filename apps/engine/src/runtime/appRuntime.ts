@@ -1,3 +1,4 @@
+import {projectEntryLineage} from '../services/entryLineage.js';
 import {reconciliationTiming} from '../services/reconciliationTiming.js';
 import {persistReconciliationJournals,latestEntryRecord,latestManualRecord} from '../services/reconciliationJournalPersistence.js';
 import {maintainStorageBounds} from '../services/storageCapacityGuard.js';
@@ -61,6 +62,7 @@ import { LossHandoffService } from '../services/lossHandoff.js';
 import { attachOwnershipRuntime, type OwnershipRuntime } from '../services/ownershipRuntime.js';
 import { V396ExitRuntime, exitSubjectFromPosition } from '../services/v396ExitRuntime.js';
 import { accountCycle, cycleFills } from '../services/cycleAccounting.js';
+import { projectTradeRecordRow } from '../services/tradeRecordReadModel.js';
 import { FundingIncomeLedger, cycleFundingFact } from '../services/fundingIncomeLedger.js';
 import { V396AiExitRunner } from '../services/v396AiExitRunner.js';
 import { AiExitAuthorityService } from '../services/aiExitAuthority.js';
@@ -719,9 +721,14 @@ export class EngineRuntime {
           runtime.writes.apply(`trade:${candidate.tradeId}`,()=>store.upsertTradeRecord(candidate));
           if(candidate.classification!=="COMPLETE")runtime.writes.apply(`sample-delete:${candidate.tradeId}`,()=>store.deleteExperienceSample(`sample_${candidate.tradeId}`));
         }
-        const record = state.tradeRecords.get(
+        let record = state.tradeRecords.get(
           String((event.payload as any)?.tradeId),
         );
+        if(record){
+          const bindings=projectEntryLineage(record,state);
+          record={...record,entryLots:(record.entryLots??[]).map(lot=>{const binding=bindings.lots.find(binding=>binding.lotId===lot.lotId);return {...lot,...(binding?.status==='EXACT'?{intentId:binding.intentId,orderId:binding.orderId}:{}),decisionLineage:binding};})};
+          state.tradeRecords.set(record.tradeId,record);
+        }
         if (record) runtime.writes.apply(`trade:${record.tradeId}`,()=>store.upsertTradeRecord(record));
       }
       if (event.type === "EXPERIENCE_SAMPLE_CREATED") {
@@ -1275,7 +1282,7 @@ export class EngineRuntime {
     const num=(value:unknown)=>Number.isFinite(Number(value))?Number(value):null;
     const coordination=(this.state.settings.riskGovernance as any)?.exitCoordination??{};
     const snapshot=this.state.snapshots.get(input.position.symbol) as any;
-    const memory=reviewMemoryFor([...this.state.tradeRecords.values()],{
+    const memory=reviewMemoryFor([...this.state.tradeRecords.values()].map(r=>r.fundingAttributionStatus==='EXACT'&&r.netPnl!=null&&r.learningFundingProof?projectTradeRecordRow(r,{learningContext:this.state}):{...r,netPnl:null}),{
       direction:input.plan.side==='SHORT'?'SHORT':'LONG',excludeCycleId:input.ticket.cycleId});
     const request:PositionReviewRequest={
       symbol:input.position.symbol,cycleId:input.ticket.cycleId,positionId:input.position.id,
@@ -1481,13 +1488,13 @@ export class EngineRuntime {
       const openedAt=Number(record.openedAt??0);
       if(!(openedAt>0)){unknown++;continue;}
       const fact=cycleFundingFact(ledger,record,[...this.state.tradeRecords.values()],now);
-      if(fact.status!=='EXACT'){unknown++;if(record.fundingAttributionStatus==='EXACT')this.state.tradeRecords.set(record.tradeId,accountCycle({...record,funding:null,fundingAttributionStatus:'UNKNOWN',fundingCoverage:null},cycleFills(this.state,record)));continue;}
-      if(record.fundingAttributionStatus==='EXACT'&&record.funding===fact.fundingUsd&&record.fundingCoverage?.untilMs===fact.coverage?.untilMs)continue;
-      this.state.tradeRecords.set(record.tradeId,accountCycle({...record,funding:fact.fundingUsd,fundingAttributionStatus:'EXACT',
+      if(fact.status!=='EXACT'){unknown++;if(record.fundingAttributionStatus==='EXACT')this.state.tradeRecords.set(record.tradeId,accountCycle({...record,funding:null,fundingAttributionStatus:'UNKNOWN',fundingCoverage:null,learningFundingProof:undefined},cycleFills(this.state,record)));continue;}
+      if(record.fundingAttributionStatus==='EXACT'&&record.learningFundingProof?.verifiedAt===fact.learningProof?.verifiedAt&&record.learningFundingProof&&record.funding===fact.fundingNative?.amount&&record.fundingCoverage?.untilMs===fact.coverage?.untilMs)continue;
+      this.state.tradeRecords.set(record.tradeId,accountCycle({...record,funding:fact.fundingNative?.amount??null,fundingAttributionStatus:'EXACT',learningFundingProof:fact.learningProof??undefined,
         fundingCoverage:{sinceMs:fact.coverage?.sinceMs??null,untilMs:fact.coverage?.untilMs??null,observedRows:fact.observedFundingRows,attributedAt:now},
         updatedAt:now},cycleFills(this.state,record)));
       attributed++;
-      this.events.publish('TRADE_RECORD_FUNDING_ATTRIBUTED',{tradeId:record.tradeId,cycleId:record.cycleId,funding:fact.fundingUsd,observedRows:fact.observedFundingRows,coverage:fact.coverage},record.symbol);
+      this.events.publish('TRADE_RECORD_FUNDING_ATTRIBUTED',{tradeId:record.tradeId,cycleId:record.cycleId,funding:fact.fundingNative?.amount??null,observedRows:fact.observedFundingRows,coverage:fact.coverage},record.symbol);
     }
     return {attributed,unknown};
   }

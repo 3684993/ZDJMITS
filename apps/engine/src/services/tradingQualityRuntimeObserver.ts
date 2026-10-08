@@ -46,7 +46,7 @@ export class TradingQualityRuntimeObserver {
     const candidates=this.state.universe.slice(0,64).map(c=>({candidateId:`${c.symbol}:${c.selectionGeneration}`,candidateSetId:String(c.selectionGeneration),symbol:c.symbol,legal:c.eligible,selected:false,rank:c.rank??999,directionAligned:null,timingVerified:null,eventAgeMs:null,locationDistanceAtr:null,conservativePayoffBps:null,spreadBps:null,depthUsd:null,riskCapacity:null,observedAt:now}));
     const quotes=[...this.state.snapshots].map(([symbol,m])=>({symbol,ts:m.quote.ts,mark:m.quote.mark,bid:m.quote.bid,ask:m.quote.ask,receivedAt:now})).slice(0,164);
     this.busy=true;this.lastSent=now;
-    this.worker.postMessage({now,records,intents,orders,fills,runs:this.state.aiRuns.filter(r=>runIds.has(r.id)).map(r=>({id:r.id,symbol:r.symbol,startedAt:r.startedAt})),positions:[...this.state.positions.values()].slice(0,100),candidates,quotes});
+    this.worker.postMessage({now,records,intents,orders,fills,runs:this.state.aiRuns.filter(r=>runIds.has(r.id)).map(r=>({id:r.id,symbol:r.symbol,startedAt:r.startedAt,completedAt:r.completedAt,status:r.status,requestSource:r.requestSource})),positions:[...this.state.positions.values()].slice(0,100),candidates,quotes});
   }
   report(){return{...this.result,manifest:this.manifest,entryEnforceAuthorized:false,profitRealizationAuthorized:false};}
   readContext(){return{experimentManifest:this.result.status==='READY'?this.manifest:undefined,enrollmentByCycle:this.result.enrollmentByCycle??{},accountScope:this.accountScope};}

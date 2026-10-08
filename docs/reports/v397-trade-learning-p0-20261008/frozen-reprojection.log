@@ -1,0 +1,99 @@
+(node:34084) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+{
+  "before": {
+    "canonicalEligible": 0,
+    "fundingUnknown": 165,
+    "provenance": {
+      "TP": 66,
+      "UNKNOWN": 95,
+      "SYSTEM_MANUAL": 3,
+      "CONFLICT": 1
+    }
+  },
+  "after": {
+    "canonicalEligible": 0,
+    "fundingUnknown": 165,
+    "composition": {
+      "TP": 66,
+      "UNKNOWN": 95,
+      "MANUAL": 3,
+      "MIXED_TP_MANUAL": 1
+    },
+    "identityConflict": 0,
+    "originTemporalInvalid": 1,
+    "fullLotLineageExactCycles": 33,
+    "fullLotLineageUncertainCycles": 132,
+    "lineageReasons": {
+      "LOT_FILL_CHAIN_UNPROVEN": 95,
+      "ORIGIN_PRIMARY_RUN_UNPROVEN": 132,
+      "ORIGIN_TIMESTAMPS_MISSING": 132,
+      "ENTRY_CONTEXT_UNPROVEN": 132,
+      "MODEL_RESOURCE_IDENTITY_UNPROVEN": 132,
+      "ENTRY_LOT_QUANTITY_NOT_CONSERVED": 8,
+      "LOT_ORDER_INTENT_CHAIN_UNPROVEN": 1,
+      "LOT_PLAN_CHAIN_UNPROVEN": 1,
+      "LOT_TP_VERSION_UNPROVEN": 1
+    },
+    "canonicalReasons": {
+      "CLASSIFICATION_NOT_COMPLETE": 103,
+      "IDENTITY_OR_QUANTITY_CONFLICT": 103,
+(node:34084) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+      "FILL_LEDGER_COVERAGE_MISSING": 91,
+      "FILL_QUANTITY_NOT_CONSERVED": 91,
+      "LOT_FILL_CHAIN_UNPROVEN": 95,
+      "ORIGIN_PRIMARY_RUN_UNPROVEN": 132,
+      "ORIGIN_TIMESTAMPS_MISSING": 132,
+      "ENTRY_CONTEXT_UNPROVEN": 132,
+      "MODEL_RESOURCE_IDENTITY_UNPROVEN": 132,
+      "ENTRY_LINEAGE_UNPROVEN": 132,
+      "FUNDING_ASSET_ALLOCATION_UNPROVEN": 165,
+      "FUNDING_EVIDENCE_NOT_EXACT": 165,
+      "AUTHORITATIVE_NET_PNL_MISSING": 165,
+      "FILL_MONEY_NOT_CONSERVED": 9,
+      "EXIT_PROOF_COVERAGE_INCOMPLETE": 81,
+      "FILL_RANGE_INVALID": 1,
+      "RECORD_NOT_COMPLETE": 17,
+      "QUANTITY_NOT_CONSERVED": 17,
+      "ENTRY_LOT_QUANTITY_NOT_CONSERVED": 8,
+      "FEE_NOT_COMPLETE": 14,
+      "FILL_FACTS_MISSING": 14,
+      "AVERAGE_PRICE_MISSING": 14,
+      "FEE_SUM_INCONSISTENT": 14,
+      "TRADING_NET_INCONSISTENT": 14,
+      "FEE_VALUE_MISSING": 14,
+      "FILL_MONEY_FACTS_MISSING": 14,
+      "TRADING_NET_EX_FUNDING_MISSING": 14,
+      "LOT_ORDER_INTENT_CHAIN_UNPROVEN": 1,
+      "LOT_PLAN_CHAIN_UNPROVEN": 1,
+      "LOT_TP_VERSION_UNPROVEN": 1
+    }
+  },
+  "boundedLocalFundingSupplement": {
+    "sourceAt": "2026-10-08T12:10:41.513449+00:00",
+    "incomeRows": 374,
+    "coverageRows": 18,
+    "provenZero": 0,
+    "unknown": 165,
+    "reasons": {
+      "COVERAGE_DOES_NOT_ENCLOSE_WINDOW": 163,
+      "FUNDING_CYCLE_ALLOCATION_AMBIGUOUS": 2
+    },
+    "persistedIntoLiveRecords": false,
+    "canonicalPromotionPerformed": false
+  },
+  "cases": [
+    {
+      "symbol": "AAVEUSDT",
+      "composition": "MANUAL",
+      "finalizer": "SYSTEM_MANUAL",
+      "conflict": false
+    },
+    {
+      "symbol": "ETHFIUSDC",
+      "composition": "MIXED_TP_MANUAL",
+      "finalizer": "SYSTEM_MANUAL",
+      "conflict": false
+    }
+  ]
+}

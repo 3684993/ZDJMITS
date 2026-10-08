@@ -1,3 +1,4 @@
+import {economicEvidence} from './economicEvidence.js';
 import {createHash} from 'node:crypto';
 import type {TradePlanCandidate, TradePlanEconomics, TradePlanRisk} from '@zdj/contracts';
 import {STANDARD_TP_HORIZONS, reachabilityTimeframe, evaluateTargetReachability} from './historicalTpReachability.js';
@@ -240,13 +241,13 @@ export function buildQuantityHorizonCandidates(input:{
     if(enforceEconomics&&probabilityKnown&&finite(reach.hardMaxMovePercent)&&targetMovePercent>(reach.hardMaxMovePercent as number)+1e-9)
       blockers.push('TP_HISTORICAL_REACHABILITY_UNMET');
     const economics:TradePlanEconomics={
-      targetConditionalNetProfitUsd:round(cost.expectedNetProfit,6),targetConditionalNetProfitStatus:'VERIFIED',
+      targetConditionalNetProfitUsd:round(cost.expectedNetProfit,6),targetConditionalNetProfitStatus:'ESTIMATE',
       // The unconditional expectation needs a distribution; without a ready sample it stays unknown,
       // and it is never filled in from the model's own confidence.
       expectedNetPnlAtHorizonUsd:probabilityKnown?round((reach.reachProbability as number)*cost.expectedNetProfit+(1-(reach.reachProbability as number))*-Math.max(0,cost.requiredNetProfit),6):null,
-      expectedNetPnlAtHorizonStatus:probabilityKnown?'VERIFIED':'INSUFFICIENT_SAMPLE',
+      expectedNetPnlAtHorizonStatus:probabilityKnown?'SCENARIO':'INSUFFICIENT_SAMPLE',
       reachProbability:probabilityKnown?reach.reachProbability:null,
-      reachProbabilityStatus:probabilityKnown?'VERIFIED':reach.status==='STALE'?'STALE':reach.status==='INSUFFICIENT_DATA'?'INSUFFICIENT_SAMPLE':'UNPROVEN',
+      reachProbabilityStatus:probabilityKnown?'ESTIMATE':reach.status==='STALE'?'STALE':reach.status==='INSUFFICIENT_DATA'?'INSUFFICIENT_SAMPLE':'UNPROVEN',
       reachSampleCount:reach.sampleCount,historicalHardMaxMovePercent:finite(reach.hardMaxMovePercent)?reach.hardMaxMovePercent:null,
       targetMovePercent:round(targetMovePercent,6),
       statisticalSource:probabilityKnown?`CLOSED_CANDLE_CACHE:${reach.timeframe}:${reach.sampleCount}`:null,
@@ -255,6 +256,7 @@ export function buildQuantityHorizonCandidates(input:{
       targetVsStatisticalCeiling:!probabilityKnown||!finite(reach.hardMaxMovePercent)?'UNPROVEN'
         :targetMovePercent>(reach.hardMaxMovePercent as number)+1e-9?'BEYOND':'WITHIN',
       modelConfidence:null,modelConfidenceIsAuthority:false,
+      evidence:economicEvidence({conditionalNet:round(cost.expectedNetProfit,6),requiredProfit:cost.requiredNetProfit,probability:probabilityKnown?reach.reachProbability:null,samples:reach.sampleCount,source:probabilityKnown?`CLOSED_CANDLE_CACHE:${reach.timeframe}:${reach.sampleCount}`:null}),
     };
     const risk:TradePlanRisk|null=input.risk?{capitalAtRiskUsd:round(input.risk.capitalAtRiskUsd+margin,6),grossNotionalAfterUsd:round(input.risk.grossNotionalAfterUsd+notional,6),
       longNotionalAfterUsd:round(side==='LONG'?input.risk.longNotionalAfterUsd+notional:input.risk.longNotionalAfterUsd,6),

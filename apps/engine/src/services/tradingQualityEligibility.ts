@@ -1,3 +1,4 @@
+import type {TradeLearningFacts} from './tradeLearningFacts.js';
 import {TradingQualityExperimentManifestSchema,TradingQualityEnrollmentEvidenceSchema,TradingQualityFundingEvidenceSchema} from '@zdj/contracts';
 import type {
   TradeRecord,
@@ -21,7 +22,7 @@ export function ledgerClosedComplete(record:TradeRecord):EligibilityResult {
   if(record.feeCompleteness!=='COMPLETE')reasons.push('FEE_NOT_COMPLETE');
   if(record.canonical===false||record.duplicateOf)reasons.push('NON_CANONICAL_OR_DUPLICATE');
   if(!record.cycleId)reasons.push('CYCLE_ID_MISSING');
-  if(record.integrityFlags.includes('CONFLICT')||record.integrityFlags.includes('FILL_CONSERVATION_FAILED'))reasons.push('IDENTITY_OR_QUANTITY_CONFLICT');
+  if((record.integrityFlags??[]).includes('CONFLICT')||(record.integrityFlags??[]).includes('FILL_CONSERVATION_FAILED'))reasons.push('IDENTITY_OR_QUANTITY_CONFLICT');
   if(record.entryFillCount<=0||record.exitFillCount<=0)reasons.push('FILL_FACTS_MISSING');
   if(!finite(record.entryAveragePrice)||!finite(record.exitAveragePrice))reasons.push('AVERAGE_PRICE_MISSING');
   if(!finite(record.entryQty)||record.entryQty<=0||!finite(record.openedAt)||!finite(record.closedAt)||record.closedAt<record.openedAt)reasons.push('LEDGER_RANGE_INVALID');
@@ -45,8 +46,18 @@ function fundingEvidenceValid(record:TradeRecord,evidence?:TradingQualityFunding
 }
 
 /** Formal net-PnL eligibility. The stored authoritative net is consumed, never manufactured here. */
-export function canonicalPnlEligible(record:TradeRecord,input?:{fundingEvidence?:TradingQualityFundingEvidence|null;accountScope?:string}):EligibilityResult{
+export function canonicalPnlEligible(record:TradeRecord,input?:{fundingEvidence?:TradingQualityFundingEvidence|null;accountScope?:string;learningFacts?:TradeLearningFacts}):EligibilityResult{
   const ledger=ledgerClosedComplete(record),reasons=[...ledger.reasons];
+  const facts=input?.learningFacts;
+  if(!facts)reasons.push('P0_FACT_LAYERS_NOT_EVALUATED');
+  else {
+    if(!facts.fillLedger.complete)reasons.push(...facts.fillLedger.reasons);
+    if(facts.exit.identityConflict)reasons.push('EXIT_IDENTITY_CONFLICT');
+    if(!facts.exit.proofCoverage.complete)reasons.push('EXIT_PROOF_COVERAGE_INCOMPLETE');
+    if(facts.entry.complete&&record.entryRunId&&record.entryRunId!==facts.entry.originRunId)reasons.push('CYCLE_ORIGIN_RUN_REFERENCE_CONFLICT');
+    if(!facts.entry.complete)reasons.push(...facts.entry.reasons,'ENTRY_LINEAGE_UNPROVEN');
+    if(facts.funding?.status!=='EXACT'||facts.funding.asset!==facts.fillLedger.quoteAsset||facts.funding.amount!==record.funding)reasons.push('FUNDING_ASSET_ALLOCATION_UNPROVEN');
+  }
   if(!fundingEvidenceValid(record,input?.fundingEvidence,input?.accountScope))reasons.push('FUNDING_EVIDENCE_NOT_EXACT');
   if(!finite(record.tradingNetPnlExFunding))reasons.push('TRADING_NET_EX_FUNDING_MISSING');
   if(!finite(record.netPnl))reasons.push('AUTHORITATIVE_NET_PNL_MISSING');

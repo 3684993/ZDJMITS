@@ -256,7 +256,19 @@ export type TakeProfitOrder = z.infer<typeof TakeProfitOrderSchema>;
 export const TradeRecordClassificationSchema = z.enum(['COMPLETE','PARTIAL','IMPORTED','EXTERNAL','DUPLICATE','CONFLICT','INVALID']);
 export type TradeRecordClassification = z.infer<typeof TradeRecordClassificationSchema>;
 
+export const EntryLotDecisionLineageSchema=z.object({
+  lotId:z.string(),intentId:z.string().nullable(),orderId:z.string().nullable(),exchangeOrderId:z.string().nullable(),
+  quantity:z.number().nonnegative(),entryPrice:z.number().positive().nullable(),entryCost:z.number().nonnegative().nullable(),allocatedEntryFee:z.number().nullable(),
+  planId:z.string().nullable(),planCycleId:z.string().nullable().optional(),positionCycleId:z.string().nullable().optional(),tpVersion:z.number().int().nullable(),tpTarget:z.number().positive().nullable(),runId:z.string().nullable(),model:z.string().nullable(),resourceId:z.string().nullable(),modelIdentity:z.record(z.unknown()).nullable(),
+  contextTimestamp:z.number().int().nullable(),runStartedAt:z.number().int().nullable(),runCompletedAt:z.number().int().nullable(),firstFillAt:z.number().int().nullable(),
+  fillStages:z.array(z.object({fillId:z.string(),quantity:z.number().positive(),entryCost:z.number().positive(),executionTime:z.number().int(),feeAsset:z.string(),feeAmount:z.number().nonnegative()})).optional(),
+  status:z.enum(['EXACT','UNCERTAIN']),reasons:z.array(z.string()),
+}).superRefine((v,ctx)=>{
+ if(v.status==='EXACT'&&(!v.intentId||!v.orderId||!v.exchangeOrderId||!v.planId||!v.runId||!v.model||!v.resourceId||!v.modelIdentity||v.contextTimestamp===null||v.runStartedAt===null||v.runCompletedAt===null||v.firstFillAt===null||v.runStartedAt>v.runCompletedAt||v.runCompletedAt>v.firstFillAt||v.contextTimestamp>v.runStartedAt||v.quantity<=0||v.entryPrice===null||v.entryCost===null||v.tpVersion===null||v.tpTarget===null||v.allocatedEntryFee===null||!v.fillStages?.length||v.reasons.length))ctx.addIssue({code:'custom',message:'EXACT_LOT_LINEAGE_PROOF_INCOMPLETE'});
+ if(v.status==='EXACT'&&v.fillStages?.length){const qty=v.fillStages.reduce((n,f)=>n+f.quantity,0),cost=v.fillStages.reduce((n,f)=>n+f.entryCost,0),first=Math.min(...v.fillStages.map(f=>f.executionTime));if(Math.abs(qty-v.quantity)>Math.max(1e-8,v.quantity*1e-8)||v.entryCost===null||Math.abs(cost-v.entryCost)>Math.max(1e-8,cost*1e-8)||first!==v.firstFillAt||v.runCompletedAt===null||v.runCompletedAt>first)ctx.addIssue({code:'custom',message:'EXACT_LOT_STAGE_CONSERVATION_FAILED'});}
+});
 export const EntryLotSchema = z.object({
+  decisionLineage:EntryLotDecisionLineageSchema.optional(),
   /** One independent Entry intent/authorization/fill. Additions create a lot, not a new cycle. */
   lotId:z.string(),
   intentId:z.string().nullable().default(null),
@@ -279,7 +291,13 @@ export const EntryLotSchema = z.object({
 });
 export type EntryLot = z.infer<typeof EntryLotSchema>;
 
+export const LearningFundingProofSchema=z.object({
+ accountScope:z.string().min(1),cycleId:z.string().min(1),asset:z.enum(['USDT','USDC']),amount:z.number().finite(),
+ from:z.number().int(),to:z.number().int(),verifiedAt:z.number().int(),coverageIds:z.array(z.string()).min(1),
+ allocations:z.array(z.object({incomeId:z.string(),cycleId:z.string(),quantityAtEvent:z.number().positive(),amount:z.number().finite(),asset:z.string()})),
+}).superRefine((v,ctx)=>{if(v.to<v.from||v.verifiedAt<v.to||Math.abs(v.allocations.reduce((n,a)=>n+a.amount,0)-v.amount)>1e-8||v.allocations.some(a=>a.cycleId!==v.cycleId||a.asset!==v.asset))ctx.addIssue({code:'custom',message:'FUNDING_PROOF_NOT_CONSERVED'});});
 export const TradeRecordSchema = z.object({
+  learningFundingProof:LearningFundingProofSchema.optional(),
   positionId:z.string().nullable().optional(),
   /**
    * V3.9.7 splits the two identities the audit found conflated (R4). `positionCycleId` is the

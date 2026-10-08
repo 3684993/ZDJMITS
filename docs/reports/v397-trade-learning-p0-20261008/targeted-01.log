@@ -1,0 +1,210 @@
+(node:33064) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:7100) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> @zdj/engine@3.9.7 test
+> vitest run src/services/tradeLearningP0.test.ts src/services/tradeRecordReadModel.test.ts src/services/tradingQualityEligibility.test.ts src/services/experienceService.test.ts src/services/exitFactsAndFunding.test.ts
+
+(node:31976) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+VITEST_TEST_TIMEOUT=5000 CI=
+
+ RUN  v3.2.7 D:/MITS-WORKTREES/v397-trade-learning-p0-20261008/apps/engine
+
+(node:50164) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:44328) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:48248) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:31308) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:50164) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:44328) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+ ❯ src/services/tradingQualityEligibility.test.ts (7 tests | 1 failed) 14ms
+   ✓ V3.9.3 eligibility contract > keeps funding UNKNOWN independent from ledger CLOSED COMPLETE 2ms
+   × V3.9.3 eligibility contract > requires durable funding evidence and authoritative net consistency 8ms
+     → expected false to be true // Object.is equality
+   ✓ V3.9.3 eligibility contract > quarantines legacy net values without promoting funding 0ms
+   ✓ V3.9.3 eligibility contract > freezes cohort membership against restart/late discovery semantics 2ms
+   ✓ V3.9.3 eligibility contract > does not spread funding UNKNOWN into price metrics 0ms
+   ✓ does not accept a funding coverage fragment or another account 0ms
+   ✓ rejects a late-created Entry even with an in-window decision 0ms
+ ❯ src/services/tradeRecordReadModel.test.ts (7 tests | 1 failed) 16ms
+   ✓ A2 trade record read model > does not call funding-only incompleteness ledger reconciliation 2ms
+   ✓ A2 trade record read model > keeps missing manifest unknown instead of reporting a complete zero cohort 1ms
+   ✓ A2 trade record read model > quarantines legacy raw net from formal row display and WIN/LOSS filtering 1ms
+   ✓ A2 trade record read model > separates ledger failures from funding unknown 0ms
+   ✓ A2 trade record read model > sums only proven local closed cycles even while funding is unknown 1ms
+   ✓ A2 trade record read model > quarantines ambiguous canonical cycle collisions and unconserved rows 0ms
+   × A2 trade record read model > confirms funding and all-in net only with exact scoped evidence 10ms
+     → expected { exFundingNet: 0.92, …(8) } to match object { exFundingNet: 0.92, …(6) }
+(14 matching properties omitted from actual)
+ ✓ src/services/tradeLearningP0.test.ts (20 tests) 30ms
+(node:9184) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:23888) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:31680) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ❯ src/services/experienceService.test.ts (1 test | 1 failed) 6ms
+   × S01-T05 experience denominator > excludes closed complete records whose canonical net PnL is unknown 5ms
+     → Cannot read properties of undefined (reading 'includes')
+(node:2676) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ❯ src/services/exitFactsAndFunding.test.ts (21 tests | 2 failed) 265ms
+   × P6 funding income ledger > records an income row once and reports the exact total for an enclosed window 44ms
+     → expected { status: 'UNKNOWN', …(6) } to match object { status: 'EXACT', …(4) }
+(2 matching properties omitted from actual)
+     → EBUSY: resource busy or locked, unlink 'C:\Users\5700x\AppData\Local\Temp\zdj-v396-funding-T3uFsE\v396-ownership.sqlite'
+   ✓ P6 funding income ledger > a coverage gap stays UNKNOWN and is never reported as zero funding 32ms
+   ✓ P6 funding income ledger > a window with full coverage and no rows is proven zero, which is not the same claim as unknown 27ms
+   ✓ P6 funding income ledger > income rows of another type are kept but never counted as funding 31ms
+   ✓ P6 funding income ledger > a rejected row is reported, not silently dropped 22ms
+   ✓ P6 quote conversion contract > USDT needs no rate and says so, rather than pretending a rate was proven 0ms
+   ✓ P6 quote conversion contract > USDC uses a timestamped rate when one exists 0ms
+   ✓ P6 quote conversion contract > a missing rate is a refusal with no amount, never an implicit one 0ms
+   ✓ P6 quote conversion contract > a stale rate refuses the conversion instead of applying an old number 0ms
+   ✓ P6 quote conversion contract > an unknown asset cannot be converted at all 0ms
+   ✓ P6 executable depth from the order book > walks only the side that receives the order and only inside the bound 0ms
+   ✓ P6 executable depth from the order book > reports an insufficient walk instead of rounding it up to enough 0ms
+   ✓ P6 executable depth from the order book > a SHORT buys the asks at or below its bound 0ms
+   ✓ P6 executable depth from the order book > every unavailable book is a named reason, never a zero 0ms
+   ✓ P6 bounded fairness on the shared Primary endpoint > an Entry yields to a review that has been owed past its reservation 1ms
+   ✓ P6 bounded fairness on the shared Primary endpoint > a freshly owed review does not block Entry at all 0ms
+   ✓ P6 bounded fairness on the shared Primary endpoint > the reservation is spent once the review has taken its bounded share 0ms
+   ✓ P6 bounded fairness on the shared Primary endpoint > the ceiling is unchanged: one slot still admits one run at a time 0ms
+   ✓ joins adjacent proven coverage windows but never bridges an unobserved gap 33ms
+   × never synthesizes income identity or attributes one nonzero hedge income to two cycles 32ms
+     → expected 'UNKNOWN' to be 'EXACT' // Object.is equality
+     → EBUSY: resource busy or locked, unlink 'C:\Users\5700x\AppData\Local\Temp\zdj-v396-funding-KBeOeA\v396-ownership.sqlite'
+   ✓ migrates income identity transactionally, preserving rows across reopen and account scopes 39ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/services/exitFactsAndFunding.test.ts > P6 funding income ledger > records an income row once and reports the exact total for an enclosed window
+AssertionError: expected { status: 'UNKNOWN', …(6) } to match object { status: 'EXACT', …(4) }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "coverageComplete": true,
+-   "fundingUsd": -0.15,
++   "coverageComplete": false,
++   "fundingUsd": null,
+    "observedFundingRows": 2,
+-   "reason": null,
+-   "status": "EXACT",
++   "reason": "COVERAGE_DOES_NOT_ENCLOSE_WINDOW",
++   "status": "UNKNOWN",
+  }
+
+ ❯ src/services/exitFactsAndFunding.test.ts:43:91
+     41|     expect(ledger.coverageSummary().fundingRows).toBe(2);
+     42|     ledger.recordCoverage({asset:'USDT',sinceMs:now-120_000,untilMs:no…
+     43|     expect(ledger.attribution({asset:'USDT',symbol:'BRUSDT',fromMs:now…
+       |                                                                                           ^
+     44|       status:'EXACT',fundingUsd:-0.15,observedFundingRows:2,coverageCo…
+     45|     ledger.close();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯
+
+ FAIL  src/services/exitFactsAndFunding.test.ts > P6 funding income ledger > records an income row once and reports the exact total for an enclosed window
+Error: EBUSY: resource busy or locked, unlink 'C:\Users\5700x\AppData\Local\Temp\zdj-v396-funding-T3uFsE\v396-ownership.sqlite'
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/7]⎯
+
+ FAIL  src/services/exitFactsAndFunding.test.ts > never synthesizes income identity or attributes one nonzero hedge income to two cycles
+AssertionError: expected 'UNKNOWN' to be 'EXACT' // Object.is equality
+
+Expected: "EXACT"
+Received: "UNKNOWN"
+
+ ❯ src/services/exitFactsAndFunding.test.ts:208:54
+    206|   ledger.recordCoverage({asset:'USDT',sinceMs:1000,untilMs:3000,pages:…
+    207|   const r={tradeId:'a',symbol:'BRUSDT',openedAt:1100,closedAt:2000};
+    208|   expect(cycleFundingFact(ledger,r,[r],2500).status).toBe('EXACT');
+       |                                                      ^
+    209|   expect(cycleFundingFact(ledger,r,[r,{...r,tradeId:'b'}],2500).reason…
+    210|   expect(cycleFundingFact(ledger,{...r,closedAt:null,fundingAttributio…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/7]⎯
+
+ FAIL  src/services/exitFactsAndFunding.test.ts > never synthesizes income identity or attributes one nonzero hedge income to two cycles
+Error: EBUSY: resource busy or locked, unlink 'C:\Users\5700x\AppData\Local\Temp\zdj-v396-funding-KBeOeA\v396-ownership.sqlite'
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/7]⎯
+
+ FAIL  src/services/experienceService.test.ts > S01-T05 experience denominator > excludes closed complete records whose canonical net PnL is unknown
+TypeError: Cannot read properties of undefined (reading 'includes')
+ ❯ ledgerClosedComplete src/services/tradingQualityEligibility.ts:25:28
+     23|   if(record.canonical===false||record.duplicateOf)reasons.push('NON_CA…
+     24|   if(!record.cycleId)reasons.push('CYCLE_ID_MISSING');
+     25|   if(record.integrityFlags.includes('CONFLICT')||record.integrityFlags…
+       |                            ^
+     26|   if(record.entryFillCount<=0||record.exitFillCount<=0)reasons.push('F…
+     27|   if(!finite(record.entryAveragePrice)||!finite(record.exitAveragePric…
+ ❯ canonicalPnlEligible src/services/tradingQualityEligibility.ts:50:16
+ ❯ src/services/experienceService.ts:9:40
+ ❯ ExperienceService.summarize src/services/experienceService.ts:9:30
+ ❯ src/services/experienceService.test.ts:10:47
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/7]⎯
+
+ FAIL  src/services/tradeRecordReadModel.test.ts > A2 trade record read model > confirms funding and all-in net only with exact scoped evidence
+
+AssertionError: expected { exFundingNet: 0.92, …(8) } to match object { exFundingNet: 0.92, …(6) }
+(14 matching properties omitted from actual)
+ Test Files  4 failed | 1 passed (5)
+      Tests  5 failed | 51 passed (56)
+   Start at  19:42:45
+   Duration  1.11s (transform 466ms, setup 0ms, collect 1.41s, tests 330ms, environment 1ms, prepare 480ms)
+
+
+- Expected
++ Received
+
+  {
+-   "allInUnconfirmedCycles": 0,
+-   "confirmedAllInCycles": 1,
+-   "confirmedAllInNet": 1.02,
+-   "confirmedFunding": 0.1,
++   "allInUnconfirmedCycles": 1,
++   "confirmedAllInCycles": 0,
++   "confirmedAllInNet": null,
++   "confirmedFunding": null,
+    "exFundingNet": 0.92,
+-   "fundingExactEvidencePendingCycles": 0,
++   "fundingExactEvidencePendingCycles": 1,
+    "fundingUnknownCycles": 0,
+  }
+
+ ❯ src/services/tradeRecordReadModel.test.ts:25:36
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/7]⎯
+
+ FAIL  src/services/tradingQualityEligibility.test.ts > V3.9.3 eligibility contract > requires durable funding evidence and authoritative net consistency
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/services/tradingQualityEligibility.test.ts:24:226
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/7]⎯
+
+(node:34948) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+npm error Lifecycle script `test` failed with error:
+npm error code 1
+npm error path D:\MITS-WORKTREES\v397-trade-learning-p0-20261008\apps\engine
+npm error workspace @zdj/engine@3.9.7
+npm error location D:\MITS-WORKTREES\v397-trade-learning-p0-20261008\apps\engine
+npm error command failed
+npm error command C:\Windows\system32\cmd.exe /d /s /c vitest run src/services/tradeLearningP0.test.ts src/services/tradeRecordReadModel.test.ts src/services/tradingQualityEligibility.test.ts src/services/experienceService.test.ts src/services/exitFactsAndFunding.test.ts

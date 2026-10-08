@@ -139,7 +139,7 @@ export class TradingQualityCollector {
     }
     if(e.type==='TRADING_QUALITY_OPPORTUNITY'){this.put('opportunities',p.opportunity.opportunityId+':'+p.opportunity.version,p,e.ts);this.put('opportunityObservations',`${p.opportunity.opportunityId}:${p.packetId}`,p,e.ts);}
     if(e.type==='TRADING_QUALITY_PRIMARY_LINK')this.put('primaryLinks',p.runId,p,e.ts);
-    if(e.type.startsWith('AI_RUN_')&&p?.id&&p.role==='PRIMARY_BRAIN')this.put('runs',p.id,{id:p.id,symbol:p.symbol,decision:p.decision,status:p.status,startedAt:p.startedAt,completedAt:p.completedAt,normalizedPreview:p.normalizedPreview},e.ts);
+    if(e.type.startsWith('AI_RUN_')&&p?.id&&p.role==='PRIMARY_BRAIN')this.put('runs',p.id,{id:p.id,symbol:p.symbol,decision:p.decision,status:p.status,startedAt:p.startedAt,completedAt:p.completedAt,normalizedPreview:p.normalizedPreview,requestSource:p.requestSource},e.ts);
     if(e.type==='EXCHANGE_FILL_ATTRIBUTED'||e.type==='EXCHANGE_FILL_UNATTRIBUTED'){
       const f=p.fill;this.put('fills',`${f.symbol}:${f.tradeId}`,f,e.ts);this.registerExactFill(f,e.ts);
     }
@@ -325,7 +325,9 @@ export class TradingQualityCollector {
       if(fillIds.length){clauses.push(`EXISTS(SELECT 1 FROM json_each(tq_facts.payload,'$.linkedFillIds') f WHERE f.value IN (${fillIds.map(()=>'?').join(',')}))`);tradeArgs.push(...fillIds);}
       if(orderIds.length){clauses.push(`EXISTS(SELECT 1 FROM json_each(tq_facts.payload,'$.entryOrderIds') o WHERE o.value IN (${orderIds.map(()=>'?').join(',')}))`);tradeArgs.push(...orderIds);}
       const trades=this.prepare(`SELECT payload FROM tq_facts WHERE scope=? AND kind='trades' AND (${clauses.join(' OR ')})`).all(...tradeArgs).map((r:any)=>JSON.parse(String(r.payload))) as any[];
-      const input={run:{id:intent.brainRunId,symbol:intent.symbol},intent,orders,fills,tradeRecords:trades,now,
+      const runRow=this.prepare("SELECT payload FROM tq_facts WHERE scope=? AND kind='runs' AND id=?").get(scope,intent.brainRunId) as any;
+      const exactRun=runRow?JSON.parse(String(runRow.payload)):{id:intent.brainRunId,symbol:intent.symbol};
+      const input={run:exactRun,intent,orders,fills,tradeRecords:trades,now,
         adverseBoundaryBps:p.adverseBoundaryBps,favorableBoundaryBps:p.favorableBoundaryBps};
       const first=buildEpisodeEvidence(input);
       if(first.completeFillAt!==null){const fullUntil=first.completeFillAt+p.positionObservationHorizonMs;if(fullUntil>Number(work.observation_until??0)){work.observation_until=fullUntil;this.prepare('UPDATE tq_episode_work SET observation_until=?,matured=? WHERE scope=? AND intent_id=? AND revision=?').run(fullUntil,now>=fullUntil?1:0,scope,intent.id,work.revision);}}

@@ -41,7 +41,7 @@ describe('P6 funding income ledger',()=>{
     expect(ledger.coverageSummary().fundingRows).toBe(2);
     ledger.recordCoverage({asset:'USDT',sinceMs:now-120_000,untilMs:now,pages:1,rows:2,complete:true});
     expect(ledger.attribution({asset:'USDT',symbol:'BRUSDT',fromMs:now-90_000,toMs:now})).toMatchObject({
-      status:'EXACT',fundingUsd:-0.15,observedFundingRows:2,coverageComplete:true,reason:null});
+      status:'UNKNOWN',fundingUsd:null,observedFundingRows:2,coverageComplete:true,reason:'FUNDING_OWNER_NOT_PROVEN'});
     ledger.close();
   });
 
@@ -205,7 +205,7 @@ it('never synthesizes income identity or attributes one nonzero hedge income to 
   ledger.recordRows([{incomeId:'shared',asset:'USDT',symbol:'BRUSDT',incomeType:'FUNDING_FEE',income:1,time:1500}]);
   ledger.recordCoverage({asset:'USDT',sinceMs:1000,untilMs:3000,pages:1,rows:1,complete:true});
   const r={tradeId:'a',symbol:'BRUSDT',openedAt:1100,closedAt:2000};
-  expect(cycleFundingFact(ledger,r,[r],2500).status).toBe('EXACT');
+  expect(cycleFundingFact(ledger,r,[r],2500).status).toBe('UNKNOWN');
   expect(cycleFundingFact(ledger,r,[r,{...r,tradeId:'b'}],2500).reason).toBe('FUNDING_CYCLE_ALLOCATION_AMBIGUOUS');
   expect(cycleFundingFact(ledger,{...r,closedAt:null,fundingAttributionStatus:'EXACT'},[r],4000).status).toBe('UNKNOWN');ledger.close();
 });

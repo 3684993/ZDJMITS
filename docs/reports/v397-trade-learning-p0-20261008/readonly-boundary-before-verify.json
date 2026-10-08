@@ -1,0 +1,70 @@
+{
+  "at": "2026-10-08T12:07:21.976618+00:00",
+  "methods": "localhost GET / readonly SQLite mode=ro query_only",
+  "runtimeLifecycleActions": 0,
+  "exchangeWritesByThisRun": 0,
+  "health": {
+    "error": "<urlopen error [WinError 10061] 由于目标计算机积极拒绝，无法连接。>",
+    "status": "UNKNOWN"
+  },
+  "closeout": {
+    "error": "<urlopen error [WinError 10061] 由于目标计算机积极拒绝，无法连接。>",
+    "status": "UNKNOWN"
+  },
+  "localIncomeLedger": {
+    "byAssetAndType": [
+      [
+        "USDC",
+        "COMMISSION",
+        12
+      ],
+      [
+        "USDC",
+        "FUNDING_FEE",
+        32
+      ],
+      [
+        "USDC",
+        "REALIZED_PNL",
+        1
+      ],
+      [
+        "USDT",
+        "COMMISSION",
+        127
+      ],
+      [
+        "USDT",
+        "FUNDING_FEE",
+        184
+      ],
+      [
+        "USDT",
+        "REALIZED_PNL",
+        18
+      ]
+    ],
+    "coverageWindows": [
+      [
+        "USDC",
+        0,
+        1
+      ],
+      [
+        "USDC",
+        1,
+        8
+      ],
+      [
+        "USDT",
+        0,
+        1
+      ],
+      [
+        "USDT",
+        1,
+        8
+      ]
+    ]
+  }
+}

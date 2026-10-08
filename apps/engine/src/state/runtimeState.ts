@@ -90,7 +90,7 @@ export class RuntimeState {
      */
     orderProvenance: {
       record:(input:{environment?:string;accountId?:string;symbol:string;clientOrderId:string;exchangeOrderId?:string|null;role:'ENTRY'|'TP'|'EXIT'|'MANUAL';intentId?:string|null;orderId?:string|null;cycleId?:string|null;source:string;observedAt?:number})=>{recorded:boolean;conflict:string|null};
-      resolve:(input:{symbol:string;clientOrderId?:string|null;exchangeOrderId?:string|null})=>{status:'SYSTEM_PROVEN'|'UNRESOLVED';proof:string[];rows?:Array<{role:'ENTRY'|'TP'|'EXIT'|'MANUAL';cycleId:string|null}>};
+      resolve:(input:{symbol:string;clientOrderId?:string|null;exchangeOrderId?:string|null})=>{status:'SYSTEM_PROVEN'|'UNRESOLVED';proof:string[];rows?:Array<import('../services/orderProvenanceRegistry.js').OrderProvenanceRow>};
     } | null = null;
     /** Write-once. Returns the row that already stands when the caller tries to rewrite history. */
     putTradePlan(plan) {

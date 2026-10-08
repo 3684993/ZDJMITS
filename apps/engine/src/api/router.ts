@@ -1,31 +1,7 @@
+import { projectEconomicEvidence } from '../services/economicEvidence.js';
 import { filterFormalOutcome, projectTradeRecordRow, projectTradeRecordSummary } from '../services/tradeRecordReadModel.js';
-export function tradeCloseProvenance(record:any,runtime:EngineRuntime){
-  if(!Number.isFinite(record.closedAt))return'OPEN';
-  const ids=new Set((record.exitOrderIds??[]).map((id:unknown)=>String(id)));
-  const fills=runtime.state.executionFills.filter((fill:any)=>fill.symbol===record.symbol&&
-    (ids.has(String(fill.orderId??''))||ids.has(String(fill.clientOrderId??''))));
-  const roles=new Set<string>();let externalExchangeFact=false;
-  const matchesIdentity=(order:any,fill:any)=>order?.symbol===fill.symbol&&(
-    (order.exchangeOrderId&&String(order.exchangeOrderId)===String(fill.orderId??''))||
-    (order.clientOrderId&&String(order.clientOrderId)===String(fill.clientOrderId??''))||
-    String(order.id??'')===String(fill.orderId??'')||
-    String(order.id??'')===String(fill.clientOrderId??''));
-  for(const fill of fills){
-    const proof=runtime.state.orderProvenance?.resolve?.({symbol:fill.symbol,clientOrderId:fill.clientOrderId,exchangeOrderId:fill.orderId});
-    for(const item of proof?.rows??[])roles.add(String(item.role));
-    // Compatibility repair for exits created before the provenance registry writer existed:
-    // an exact durable manual/TP order identity is recorded system provenance, not a guess.
-    if([...runtime.state.manualOrders.values()].some((order:any)=>order.reduceOnly!==false&&matchesIdentity(order,fill)))roles.add('MANUAL');
-    if([...runtime.state.tpOrders.values()].some((order:any)=>matchesIdentity(order,fill)))roles.add('TP');
-    if(fill.attributionStatus==='EXTERNAL_OR_UNLINKED'&&['EXCHANGE_AUDIT','USER_DATA_WS'].includes(String(fill.source)))externalExchangeFact=true;
-  }
-  if(roles.has('TP')&&roles.size===1)return'TP';
-  if(roles.has('EXIT')&&roles.size===1)return'SYSTEM_EXIT';
-  if(roles.has('MANUAL')&&roles.size===1)return'SYSTEM_MANUAL';
-  if(roles.size>0)return'CONFLICT';
-  if(externalExchangeFact||record.source==='EXTERNAL')return'EXCHANGE_CLOSE';
-  return'UNKNOWN';
-}
+import { projectExitProvenance } from '../services/exitProvenance.js';
+export function tradeCloseProvenance(record:any,runtime:EngineRuntime){return projectExitProvenance(record,runtime.state).closeProvenance;}
 import { binanceRequestBudgetsHealth } from '../adapters/binance/requestBudget.js';
 import { Router } from "express";
 import { mkdir } from "node:fs/promises";
@@ -1079,8 +1055,8 @@ export function createApiRouter(runtime: EngineRuntime) {
   );
   r.get('/trade-records',(req,res)=>{
     const q=req.query as Record<string,string|undefined>,page=Math.max(1,Number(q.page??1)),limit=Math.min(100,Math.max(1,Number(q.limit??20)));
-    const records=[...runtime.state.tradeRecords.values()],summary=projectTradeRecordSummary({records,...runtime.qualityObserver?.readContext()}),integrity=new TradeRecordIntegrityService(runtime.state).summary();
-    let rows=records.map(record=>projectTradeRecordRow(record,runtime.qualityObserver?.readContext())).sort((a,b)=>byClosedAtDesc(a,b)||a.tradeId.localeCompare(b.tradeId));
+    const records=[...runtime.state.tradeRecords.values()],summary=projectTradeRecordSummary({records,...{...runtime.qualityObserver?.readContext(),learningContext:runtime.state}}),integrity=new TradeRecordIntegrityService(runtime.state).summary();
+    let rows=records.map(record=>projectTradeRecordRow(record,{...runtime.qualityObserver?.readContext(),learningContext:runtime.state})).sort((a,b)=>byClosedAtDesc(a,b)||a.tradeId.localeCompare(b.tradeId));
     const category=q.category??'COMPLETE';
     rows=category==='ISSUES'?rows.filter(row=>['DUPLICATE','CONFLICT','INVALID'].includes(row.classification)):rows.filter(row=>row.classification===category);
     if(q.symbol)rows=rows.filter(row=>row.symbol.toUpperCase().includes(q.symbol!.toUpperCase()));
@@ -1090,7 +1066,7 @@ export function createApiRouter(runtime: EngineRuntime) {
     rows=filterFormalOutcome(rows,q.outcome);
     if(q.search)rows=rows.filter(row=>JSON.stringify(row).toLowerCase().includes(q.search!.toLowerCase()));
     const total=rows.length;
-    const items=rows.slice((page-1)*limit,page*limit).map(row=>({...row,closeProvenance:tradeCloseProvenance(row,runtime)}));
+    const items=rows.slice((page-1)*limit,page*limit).map(row=>({...row,...projectExitProvenance(row,runtime.state)}));
     res.json({page,limit,total,items,autoSync:runtime.tradeRecordAutoSyncStatus(),summary:{...summary,
       partiallyClosed:records.filter(row=>row.status==='PARTIALLY_CLOSED').length,
       unknownCount:records.filter(row=>row.classification!=='COMPLETE'||row.fundingAttributionStatus!=='EXACT').length,
@@ -1100,14 +1076,15 @@ export function createApiRouter(runtime: EngineRuntime) {
   });
   r.get('/trade-records/:id',(req,res)=>{
     const raw=runtime.state.tradeRecords.get(req.params.id);if(!raw)return res.status(404).json({error:{message:'trade record not found'}});
-    const record=projectTradeRecordRow(raw,runtime.qualityObserver?.readContext()),entryRuns=raw.entryRunId?runtime.state.aiRuns.filter(run=>run.id===raw.entryRunId):[];
+    const record=projectTradeRecordRow(raw,{...runtime.qualityObserver?.readContext(),learningContext:runtime.state}),entryRuns=raw.entryRunId?runtime.state.aiRuns.filter(run=>run.id===raw.entryRunId):[];
     res.json({record,rawRecord:raw,experience:record.economicEligibility.canonicalPnlEligible?([...runtime.state.experienceSamples.values()].find(sample=>sample.tradeId===raw.tradeId)??null):null,
       linkedFills:runtime.state.executionFills.filter(fill=>fill.symbol===raw.symbol&&(raw.linkedFillIds.includes(fill.fillId)||raw.entryOrderIds.includes(fill.orderId)||raw.exitOrderIds.includes(fill.orderId))),entryRuns,
+      tradePlans:[...runtime.state.tradePlans.values()].filter(p=>p.cycleId===raw.cycleId).map(p=>({...p,economics:projectEconomicEvidence(p.economics)})),
       entryOrders:raw.entryOrderIds.map(id=>runtime.state.entryOrders.get(id)).filter(Boolean),exitOrders:raw.exitOrderIds.map(id=>runtime.state.tpOrders.get(id)).filter(Boolean),
       rawAudit:runtime.settingsStore.runtimeEvents(raw.createdAt,['TRADE_RECORD_OPENED','TRADE_RECORD_CLOSED','TRADE_RECORD_REPAIRED','EXPERIENCE_SAMPLE_CREATED'],500)});
   });
   r.get('/experience',(_req,res)=>{
-    const projected=[...runtime.state.tradeRecords.values()].map(record=>projectTradeRecordRow(record,runtime.qualityObserver?.readContext())).filter(row=>row.economicEligibility.canonicalPnlEligible),ids=new Set(projected.map(row=>row.tradeId));
+    const projected=[...runtime.state.tradeRecords.values()].map(record=>projectTradeRecordRow(record,{...runtime.qualityObserver?.readContext(),learningContext:runtime.state})).filter(row=>row.economicEligibility.canonicalPnlEligible),ids=new Set(projected.map(row=>row.tradeId));
     const samples=[...runtime.state.experienceSamples.values()].filter(sample=>ids.has(sample.tradeId)).sort((a,b)=>b.createdAt-a.createdAt),wins=samples.filter(x=>x.winLoss==='WIN').length,losses=samples.filter(x=>x.winLoss==='LOSS').length;
     res.json({samples,records:projected,summary:{completed:samples.length,wins,losses,winRate:samples.length?wins/samples.length:null,avgNetPnl:projected.length?projected.reduce((n,row)=>n+(row.formalNetPnl??0),0)/projected.length:null,avgHoldingDurationMs:projected.length?projected.reduce((n,row)=>n+(row.durationMs??0),0)/projected.length:null,avgFillDelayMs:samples.length?samples.reduce((n,row)=>n+(row.fillDelayMs??0),0)/samples.length:null,status:projected.length?'ELIGIBLE':'NO_ELIGIBLE_SAMPLES'}});
   });

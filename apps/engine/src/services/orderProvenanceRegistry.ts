@@ -17,6 +17,8 @@ export type OrderProvenanceRow={
 };
 
 const DDL=`
+CREATE TABLE IF NOT EXISTS v397_order_provenance_conflicts(environment TEXT NOT NULL,account_id TEXT NOT NULL,symbol TEXT NOT NULL,client_order_id TEXT NOT NULL,exchange_order_id TEXT,reason TEXT NOT NULL,payload TEXT NOT NULL,observed_at INTEGER NOT NULL);
+CREATE INDEX IF NOT EXISTS v397_provenance_conflict_identity ON v397_order_provenance_conflicts(environment,account_id,symbol,client_order_id,exchange_order_id);
 CREATE TABLE IF NOT EXISTS v396_order_provenance(
   environment TEXT NOT NULL,account_id TEXT NOT NULL,symbol TEXT NOT NULL,client_order_id TEXT NOT NULL,
   exchange_order_id TEXT,role TEXT NOT NULL,intent_id TEXT,order_id TEXT,cycle_id TEXT,source TEXT NOT NULL,
@@ -60,7 +62,8 @@ export class OrderProvenanceRegistry {
       const existing=this.db.prepare('SELECT payload FROM v396_order_provenance WHERE environment=? AND account_id=? AND client_order_id=?').get(environment,accountId,clientOrderId) as {payload:string}|undefined;
       if(existing){
         const prior=JSON.parse(String(existing.payload)) as OrderProvenanceRow;
-        if(prior.symbol!==symbol)return{recorded:false,conflict:`PROVENANCE_SYMBOL_CONFLICT:${prior.symbol}!=${symbol}`};
+        const conflict=prior.symbol!==symbol?`PROVENANCE_SYMBOL_CONFLICT:${prior.symbol}!=${symbol}`:prior.role!==row.role?'PROVENANCE_ROLE_CONFLICT':prior.cycleId&&row.cycleId&&prior.cycleId!==row.cycleId?'PROVENANCE_CYCLE_CONFLICT':prior.exchangeOrderId&&row.exchangeOrderId&&prior.exchangeOrderId!==row.exchangeOrderId?'PROVENANCE_IDENTITY_CONFLICT':null;
+        if(conflict){this.db.prepare('INSERT INTO v397_order_provenance_conflicts VALUES(?,?,?,?,?,?,?,?)').run(environment,accountId,prior.symbol,clientOrderId,prior.exchangeOrderId,conflict,JSON.stringify({prior,attempt:row}),at);return{recorded:false,conflict};}
         const merged:OrderProvenanceRow={...prior,exchangeOrderId:prior.exchangeOrderId??row.exchangeOrderId,cycleId:prior.cycleId??row.cycleId,
           intentId:prior.intentId??row.intentId,orderId:prior.orderId??row.orderId,source:`${prior.source}+${row.source}`,lastSeenAt:Math.max(prior.lastSeenAt,row.lastSeenAt)};
         this.db.prepare('UPDATE v396_order_provenance SET exchange_order_id=?,cycle_id=?,intent_id=?,order_id=?,source=?,last_seen_at=?,payload=? WHERE environment=? AND account_id=? AND client_order_id=?')
@@ -91,7 +94,14 @@ export class OrderProvenanceRegistry {
       .map(row=>JSON.parse(String(row.payload)) as OrderProvenanceRow);
     const matched=rows.filter(row=>(clientOrderId&&row.clientOrderId===clientOrderId)||(exchangeOrderId&&row.exchangeOrderId===exchangeOrderId));
     if(!matched.length)return{status:'UNRESOLVED',rows:[],proof:['PROVENANCE_REGISTRY_HAS_NO_MATCH']};
+    const rejected=this.db.prepare('SELECT reason FROM v397_order_provenance_conflicts WHERE environment=? AND account_id=? AND symbol=? AND (client_order_id=? OR exchange_order_id=?)').all(identity.environment,identity.accountId,symbol,clientOrderId??'',exchangeOrderId??'');
+    if(rejected.length)return{status:'UNRESOLVED',rows:[],proof:[...new Set(rejected.map(r=>String(r.reason)))]};
+    if(matched.some(r=>clientOrderId&&r.clientOrderId===clientOrderId&&exchangeOrderId&&r.exchangeOrderId&&r.exchangeOrderId!==exchangeOrderId))return{status:'UNRESOLVED',rows:[],proof:['PROVENANCE_IDENTITY_CONFLICT']};
+    const scopes=new Set(matched.map(r=>`${r.environment}|${r.accountId}`));
+    if(scopes.size!==1)return{status:'UNRESOLVED',rows:[],proof:['PROVENANCE_SCOPE_CONFLICT']};
     const distinctRoles=new Set(matched.map(row=>row.role));
+    const distinctCycles=new Set(matched.map(row=>row.cycleId).filter(Boolean));
+    if(distinctCycles.size>1)return{status:'UNRESOLVED',rows:[],proof:['PROVENANCE_CYCLE_CONFLICT']};
     if(distinctRoles.size>1)return{status:'UNRESOLVED',rows:[],proof:[`PROVENANCE_ROLE_CONFLICT:${[...distinctRoles].join('|')}`]};
     return{status:'SYSTEM_PROVEN',rows:matched,proof:[`REGISTRY_ROLE_${[...distinctRoles][0]}`,clientOrderId?'CLIENT_ORDER_ID':'EXCHANGE_ORDER_ID']};
   }

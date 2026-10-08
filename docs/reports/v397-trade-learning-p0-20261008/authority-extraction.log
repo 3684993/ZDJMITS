@@ -1,0 +1,11 @@
+{
+  "source": "docs\\reports\\v397-trade-entry-exit-quality-review-20261008\\durable-entities.json.gz",
+  "sourceSha256": "65cdd5b370287edf28c0ce06968e61b87743580ac48c4792cc654bb3348c99c7",
+  "uncompressedSubsetSha256": "e2d0081ffeb109a35642ea3ccf4afbde44683c616b5fc713c9c9a31c03ca2213",
+  "counts": {
+    "entryIntents": 272,
+    "entryOrders": 272,
+    "tradePlans": 271
+  },
+  "method": "Exact identity bounded cohort subset; each retained row unchanged; missing rows remain unknown"
+}

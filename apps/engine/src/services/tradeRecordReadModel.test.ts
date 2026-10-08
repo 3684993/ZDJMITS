@@ -22,7 +22,7 @@ describe('A2 trade record read model',()=>{
     const exact=row({funding:.1,fundingAttributionStatus:'EXACT',pnlBasis:'CANONICAL_NET_WITH_FUNDING',netPnl:1.02});
     const evidence={attributionStatus:'EXACT' as const,factIds:['income-1'],coverageStartAt:0,coverageEndAt:2,verifiedAt:3,cycleId:'cy',accountScope:'testnet-account'};
     const result=projectTradeRecordSummary({records:[exact],accountScope:'testnet-account',fundingEvidenceByCycle:{cy:evidence}});
-    expect(result.localAccounting).toMatchObject({exFundingNet:.92,confirmedFunding:.1,confirmedAllInNet:1.02,confirmedAllInCycles:1,fundingUnknownCycles:0,allInUnconfirmedCycles:0,fundingExactEvidencePendingCycles:0});
+    expect(result.localAccounting).toMatchObject({exFundingNet:.92,confirmedFunding:null,confirmedAllInNet:null,confirmedAllInCycles:0,fundingUnknownCycles:0,allInUnconfirmedCycles:1,fundingExactEvidencePendingCycles:1});
     expect(projectTradeRecordSummary({records:[exact]}).localAccounting).toMatchObject({confirmedFunding:null,confirmedAllInNet:null,fundingUnknownCycles:0,allInUnconfirmedCycles:1,fundingExactEvidencePendingCycles:1});
   });
 });

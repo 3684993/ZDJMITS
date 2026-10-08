@@ -1,8 +1,8 @@
 import {expect,it} from 'vitest';
 import {tradeCloseProvenance} from './router.js';
 
-const fill={symbol:'BTCUSDT',orderId:'12345',clientOrderId:'manual-client',attributionStatus:'SYSTEM_ATTRIBUTED',source:'EXCHANGE_AUDIT'};
-const record={closedAt:1,symbol:'BTCUSDT',exitOrderIds:['12345']};
+const fill={fillId:'f',tradeId:'t',qty:1,price:100,side:'SELL',executionTime:1,cycleId:'cy',symbol:'BTCUSDT',orderId:'12345',clientOrderId:'manual-client',attributionStatus:'SYSTEM_ATTRIBUTED',source:'EXCHANGE_AUDIT'};
+const record={direction:'LONG',cycleId:'cy',exitQty:1,exitFillCount:1,linkedFillIds:['f'],closedAt:1,symbol:'BTCUSDT',exitOrderIds:['12345']};
 
 it('recovers a historical Dashboard manual close from exact durable manual order identity',()=>{
   const runtime:any={state:{

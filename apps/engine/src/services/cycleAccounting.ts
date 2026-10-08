@@ -89,6 +89,7 @@ export function entryLotsFromFills(record:TradeRecord,entries:ExecutionFill[]):E
     const entryFee=bucket.fills.every(fill=>fill.commissionUsd!=null)?bucket.fills.reduce((sum,fill)=>sum+Number(fill.commissionUsd),0):null;
     const prior=existing.get(lotId);
     built.push([lotId,{
+      ...prior,
       lotId,
       intentId:prior?.intentId??null,
       orderId:prior?.orderId??bucket.fills[0]?.orderId??null,

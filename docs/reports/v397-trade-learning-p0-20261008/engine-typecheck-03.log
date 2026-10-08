@@ -1,0 +1,16 @@
+(node:15260) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:48668) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> @zdj/engine@3.9.7 typecheck
+> tsc -p tsconfig.json --noEmit
+
+src/api/router.ts(1081,116): error TS2304: Cannot find name 'projectEconomicEvidence'.
+npm error Lifecycle script `typecheck` failed with error:
+npm error code 2
+npm error path D:\MITS-WORKTREES\v397-trade-learning-p0-20261008\apps\engine
+npm error workspace @zdj/engine@3.9.7
+npm error location D:\MITS-WORKTREES\v397-trade-learning-p0-20261008\apps\engine
+npm error command failed
+npm error command C:\Windows\system32\cmd.exe /d /s /c tsc -p tsconfig.json --noEmit

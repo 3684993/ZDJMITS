@@ -16,6 +16,10 @@ export class TradingQualityCollector {
   private cache=new Map<string,string>();
   private prepared=new Map<string,StatementSync>();
   private prepare(sql:string){let statement=this.prepared.get(sql);if(!statement){statement=this.db.prepare(sql);this.prepared.set(sql,statement);}return statement;}
+  private stateCaptureKeys:Array<[string,string,string]>=[];
+  private stateCaptureOffset=0;
+  private stateCaptureScope='';
+  private stateCaptureCompletedAt:number|null=null;
   private lastSample=0;
   private lastRetention=0;
   private lastCheckpoint=0;
@@ -165,9 +169,39 @@ export class TradingQualityCollector {
     for(const p of this.state.positions.values())this.put('positions',p.id,p);
     for(const r of this.state.entryReservations.values())this.put('reservations',r.id,r);
   }
+  /** Background history scanning cannot monopolise the Engine. Domain-event
+   * capture above remains synchronous before runtime maps can advance or trim. */
+  private captureStateChunk(){
+    const scope=this.scope();
+    if(this.stateCaptureScope!==scope||this.stateCaptureOffset>=this.stateCaptureKeys.length){
+      if(this.stateCaptureScope!==scope)this.stateCaptureCompletedAt=null;
+      this.stateCaptureScope=scope;this.stateCaptureOffset=0;this.stateCaptureKeys=[];
+      for(const [kind,field] of [['intents','entryIntents'],['orders','entryOrders'],['trades','tradeRecords'],['cycles','lifecycles'],['positions','positions'],['reservations','entryReservations']]){
+        for(const key of (this.state as any)[field].keys())this.stateCaptureKeys.push([kind,field,key]);
+      }
+      for(const fill of this.state.executionFills)this.stateCaptureKeys.push(['fills','executionFills',`${fill.symbol}:${fill.tradeId}`]);
+    }
+    const fills=new Map(this.state.executionFills.map(fill=>[`${fill.symbol}:${fill.tradeId}`,fill]));
+    let processed=0;
+    while(this.stateCaptureOffset<this.stateCaptureKeys.length&&processed++<256){
+      const [kind,field,key]=this.stateCaptureKeys[this.stateCaptureOffset];
+      // Resolve current objects at execution time. Never overwrite an event's
+      // newer replacement with a reference retained from an earlier scan.
+      const value=field==='executionFills'?fills.get(key):(this.state as any)[field].get(key);
+      if(value){
+        if(kind==='intents')this.put(kind,value.id,value,value.createdAt);
+        else if(kind==='orders')this.put(kind,`${value.id}:${value.exchangeOrderId??'UNSUBMITTED'}`,value,value.updatedAt);
+        else if(kind==='fills')this.put(kind,`${value.symbol}:${value.tradeId}`,value,value.executionTime);
+        else if(kind==='trades')this.put(kind,value.tradeId,value,value.updatedAt);
+        else this.put(kind,kind==='cycles'?value.cycleId:value.id,value);
+      }
+      this.stateCaptureOffset++;
+    }
+    if(this.stateCaptureOffset>=this.stateCaptureKeys.length)this.stateCaptureCompletedAt=Date.now();
+  }
   tick(now=Date.now()){
     try{
-      this.captureState();
+      this.captureStateChunk();
       const p=qualityPolicy(this.state.settings);
       this.hydrateEpisodeWork(now,p.positionObservationHorizonMs);
       const scope=this.scope();
@@ -255,7 +289,7 @@ export class TradingQualityCollector {
       this.prepare('UPDATE tq_episode_work SET dirty=0,updated_at=? WHERE scope=? AND intent_id=?').run(now,scope,intent.id);
     }
   }
-  health(){return{status:this.error?'DEGRADED':'READY',error:this.error,scope:this.scope(),lastSampleAt:this.lastSample};}
+  health(){return{status:this.error?'DEGRADED':'READY',error:this.error,scope:this.scope(),lastSampleAt:this.lastSample,stateCapture:{mode:'BACKGROUND_CHUNKS_WITH_SYNCHRONOUS_EVENTS',pendingRows:Math.max(0,this.stateCaptureKeys.length-this.stateCaptureOffset),lastCompletedAt:this.stateCaptureCompletedAt}};}
   /** HTTP-safe operational summary. The full report intentionally remains an offline/internal
    * diagnostic because materialising every evidence payload on the Engine thread can be expensive. */
   summary(){

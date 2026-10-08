@@ -1,0 +1,6 @@
+{
+  "reason": "Freeze startup-only window; start independent post-READY window",
+  "script": "\"C:\\Users\\5700x\\AppData\\Local\\Programs\\Python\\Python313\\python.exe\" \"D:\\MITS-WORKTREES\\v397-runtime-reactivity-20261008\\docs\\reports\\v397-ssh-socks-remediation-20261008\\post-reactivity\\collect_stability.py\" --hours 0.25 --interval 30",
+  "at": "2026-10-07T23:47:07.5972712Z",
+  "pid": 8568
+}

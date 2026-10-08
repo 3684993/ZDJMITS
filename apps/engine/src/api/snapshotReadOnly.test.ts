@@ -34,6 +34,10 @@ it('reconciliation telemetry still persists execution facts',async()=>{
  runtime.state.manualIntents.set('m',{id:'m'} as any);runtime.state.manualOrders.set('mo',{id:'mo',intentId:'m'} as any);
  const entry=vi.spyOn(runtime.settingsStore,'saveEntryExecution').mockImplementation(()=>{}),manual=vi.spyOn(runtime.settingsStore,'saveManualExecution').mockImplementation(()=>{});
  runtime.events.publish('RECONCILIATION_COMPLETED',{});expect(entry).toHaveBeenCalled();expect(manual).toHaveBeenCalled();
+ entry.mockClear();
+ for(let n=0;n<200;n++)runtime.state.entryOrders.set(`history-${n}`,{id:`history-${n}`,intentId:'i'} as any);
+ runtime.events.publish('ENTRY_ORDER_TTL_CLOSED',{orderId:'o'});
+ expect(entry).toHaveBeenCalledTimes(1);expect(entry.mock.calls[0][0].order.id).toBe('o');
 });
 
 it('pipeline HTTP preserves the installed admission readback and scoped reconciliation without writes after the initial authority diagnostic',async()=>{

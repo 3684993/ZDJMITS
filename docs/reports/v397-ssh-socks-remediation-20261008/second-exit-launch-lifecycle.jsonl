@@ -1,0 +1,3 @@
+{"ts":1791415314820,"event":"HOST_STARTED","launchId":"62d8276f157c494aaaf0dc9af4a810b0","hostPid":9408,"payload":{"v8Version":"12.4.254.21-node.56","nodeVersion":"v22.23.1","nodeFlags":["--no-maglev"],"enginePath":"D:\\MITS-WORKTREES\\v397-ssh-socks-remediation-20261008\\apps\\engine\\dist\\main.js","workingDirectory":"D:\\MITS-WORKTREES\\v397-ssh-socks-remediation-20261008"}}
+{"ts":1791415314926,"event":"CHILD_STARTED","launchId":"62d8276f157c494aaaf0dc9af4a810b0","hostPid":9408,"payload":{"handleCaptured":true,"pid":33460,"nodeFlags":["--no-maglev"]}}
+{"ts":1791416290436,"event":"CHILD_EXITED","launchId":"62d8276f157c494aaaf0dc9af4a810b0","hostPid":9408,"payload":{"exitCode":-1073740791,"pid":33460,"exitedAt":1791416290436}}

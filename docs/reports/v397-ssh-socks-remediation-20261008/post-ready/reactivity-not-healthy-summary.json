@@ -1,0 +1,209 @@
+{
+  "sampleCount": 21,
+  "elapsedHours": 0.16779583333333334,
+  "first": "2026-10-07T23:47:09.907898+00:00",
+  "last": "2026-10-07T23:57:13.972763+00:00",
+  "healthSampleStates": {
+    "READY": 18,
+    "OBSERVATION_UNAVAILABLE": 3
+  },
+  "privateSampleStates": {
+    "READY": 18,
+    "OBSERVATION_UNAVAILABLE": 3
+  },
+  "activeIncidentSampleCounts": {
+    "MARKET-DATA-001": 1,
+    "BINANCE-QUEUE-001": 10
+  },
+  "httpReadErrors": {
+    "private": 2,
+    "operations": 2,
+    "incidents": 2,
+    "health": 3,
+    "closeout": 3,
+    "governance": 3
+  },
+  "identities": [
+    {
+      "pid": null,
+      "instanceId": null
+    },
+    {
+      "pid": 5424,
+      "instanceId": "fbce3561-26fd-4fe4-9b1a-e4c8285401cd"
+    }
+  ],
+  "privateSnapshotAgeMs": {
+    "observedSamples": 18,
+    "max": 39812,
+    "p95": 39812
+  },
+  "tpIssueSampleCounts": {
+    "missing": 4,
+    "unverifiedTp": 2
+  },
+  "productionWriteSamples": {
+    "nonzero": 0,
+    "unknown": 3
+  },
+  "interpretation": "Sample prevalence is not incident frequency or duration. Missing samples and bounded ledgers cannot prove zero failures. OBSERVATION_UNAVAILABLE is a missing endpoint value, not proven private UNAVAILABLE. The original running collector progress uses the older conflated default; use this audited analyzer for acceptance.",
+  "acceptance": "REQUIRES_EVIDENCE_REVIEW",
+  "malformedSampleRows": 0,
+  "tpObservationSamples": {
+    "known": 18,
+    "unknown": 3
+  },
+  "samplingGaps": {
+    "maxMs": 38824,
+    "above90s": 0,
+    "endpointValuesAreNotAtomic": true
+  },
+  "workingSetBytes": {
+    "min": 1044361216,
+    "max": 1872478208,
+    "last": 1044361216
+  },
+  "distinctPrivateFailureTimestampsSeen": 1,
+  "staleQuoteFieldSampleCounts": {
+    "last": 16,
+    "mark": 16,
+    "bid": 18,
+    "ask": 18
+  },
+  "routeDecisionDeltas": {
+    "proxy-05d851d4af74": {
+      "admitted": 873,
+      "queued": 1047,
+      "blocked": 174,
+      "queueTimeout": 174
+    }
+  },
+  "boundedRequestEvidence": {
+    "distinctIdsSeen": 948,
+    "completedInWindowSeen": 843,
+    "queueAgeMs": {
+      "n": 692,
+      "median": 13.5,
+      "p95": 3994,
+      "max": 6233
+    },
+    "admittedNetworkMs": {
+      "n": 692,
+      "median": 1369.0,
+      "p95": 8874,
+      "max": 20945
+    },
+    "failurePhases": {
+      "FIRST_BYTE": 2,
+      "READ_BUDGET_ABORT": 3,
+      "RESPONSE_BODY": 1
+    },
+    "coverage": "Bounded recent ledgers sampled once/minute; not a full request census. Admission counters provide separate aggregate deltas."
+  },
+  "durableEvents": {
+    "files": [
+      "D:\\MITS\\data\\runtime-logs\\engine-2026-10-07-fbce3561-26fd-4fe4-9b1a-e4c8285401cd-0.jsonl"
+    ],
+    "counts": {
+      "ANALYSIS_DISPATCH_INTENT": 10,
+      "CANDIDATE_LIFECYCLE_CHANGED": 29,
+      "POOL_ANALYSIS_STARTED": 10,
+      "PRIMARY_DATA_ERROR": 5,
+      "MARKET_COHORT_DEFERRED": 3,
+      "ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED": 35,
+      "CANDIDATE_SUPPLY_HEALTH": 63,
+      "ENTRY_ORDER_TTL_CLOSED": 37,
+      "MARKET_SYMBOL_ERROR": 61,
+      "ANALYSIS_DISPATCH_HEARTBEAT": 18,
+      "PRE_AI_EXECUTION_ENVELOPE_CREATED": 3,
+      "PRE_AI_TRADE_PLAN_CANDIDATES_CREATED": 3,
+      "TRADING_QUALITY_OPPORTUNITY": 3,
+      "SCOUT_OBSERVATION_STARTED": 3,
+      "MANUAL_ORDER_REMOTE_STATUS_UNVERIFIED": 32,
+      "MARKET_RECOVERY_FAILED": 51,
+      "OPERATIONAL_INCIDENT_ACTIVATED": 22,
+      "TELEMETRY_HEARTBEAT": 19,
+      "SCOUT_OBSERVATION_COMPLETED": 2,
+      "OPERATIONAL_INCIDENT_RECOVERED": 21,
+      "EXECUTION_READINESS_BLOCKED": 8,
+      "ERROR_AGGREGATE": 6,
+      "EXECUTION_READINESS_RESUMED": 7,
+      "V396_OWNERSHIP_OUTBOX": 45,
+      "EXIT_TASK_CONVERGED": 32,
+      "EXIT_CONVERGENCE_QUEUE": 4,
+      "PRIMARY_DECISION_NORMALIZED": 2,
+      "AI_RUN_TERMINAL": 2,
+      "TRADING_QUALITY_PRIMARY_LINK": 2,
+      "POST_AI_OBSERVATION_ONLY": 6,
+      "MATERIAL_DECISION_CHANGE": 2,
+      "AI_CANDIDATE_SELECTED": 2,
+      "ENTRY_ECONOMIC_ADMISSION_EVALUATED": 2,
+      "PORTFOLIO_RISK_ADMISSION_EVALUATED": 2,
+      "FROZEN_CHOICE_CONVERSION_OBSERVED": 2,
+      "TRADE_PLAN_PERSISTED": 2,
+      "ENTRY_RESERVATION_CREATED": 2,
+      "LIVE_RISK_ENVELOPE_EVALUATED": 2,
+      "ENTRY_INTENT_CREATED": 2,
+      "FINAL_ORDER_RISK_EVALUATED": 3,
+      "ENTRY_EXECUTION_PERMIT_EVALUATED": 3,
+      "ENTRY_SUBMIT_ATTEMPTED": 2,
+      "ENTRY_ADAPTER_REQUEST_FACTS": 2,
+      "CANDIDATE_LIFECYCLE_REDERIVED": 8,
+      "ENTRY_ADAPTER_RESPONSE_FACTS": 2,
+      "ENTRY_ORDER_CREATED": 2,
+      "MARKET_COHORT_REFILLED": 4,
+      "ENTRY_ANALYSIS_FAILED": 2,
+      "ENTRY_ORDER_USER_DATA_CONFIRMED": 7,
+      "BINANCE_USER_DATA": 20,
+      "UNKNOWN_RISK_AUDIT_SUMMARY": 1,
+      "ORDER_FILL_RECONCILED": 6,
+      "TRADE_RECORD_REPAIRED": 6,
+      "EXCHANGE_FILL_ATTRIBUTED": 6,
+      "TP_REPAIR_STARTED": 3,
+      "TP_TARGET_SELECTED": 3,
+      "TP_TERMINAL_FACT_PROJECTED": 1,
+      "TP_SUBMISSION_PREPARED": 2,
+      "ENTRY_ORDER_NO_ACTIVE_RISK_EVIDENCE_FAILED": 1,
+      "TP_PROTECTED": 2,
+      "POSITION_LIFECYCLE_TRANSITION": 1,
+      "TP_REPAIR_FAILED": 1,
+      "TRADE_SYNC_AUTO_FAILED": 2,
+      "ORPHAN_TP_CANCEL_FAILED": 1,
+      "PRIVATE_SYNC_TRANSIENT_TOLERATED": 1,
+      "PRIVATE_SYNC_RECOVERED": 1,
+      "MARKET_KLINE_SEQUENCE_REPAIR_FAILED": 2,
+      "POSITION_REVIEW_ONLY_AUTHORITY": 4,
+      "POSITION_REVIEW_APPLIED": 3,
+      "ENTRY_ORDER_REPRICED": 1,
+      "FUNDING_INCOME_READ_FAILED": 1,
+      "FUNDING_INCOME_SYNCED": 1,
+      "AI_RUN_FAILED": 1,
+      "SCOUT_OBSERVATION_FAILED": 1,
+      "PENDING_ENTRY_REVIEW_COMPLETED": 1,
+      "PENDING_ENTRY_REVIEW_IDENTITY_ENDED": 1,
+      "RUNTIME_TASK_FAILED": 1
+    },
+    "recoveryByIncidentId": {
+      "a8cda90da71b2f79": 9,
+      "5ada6d85d6ff7add": 1,
+      "ff6dd1ef9ec6d550": 8,
+      "bfe6ba0e7db07add": 2,
+      "1f8f4d6e99db7892": 1
+    },
+    "activationByIncidentId": {
+      "a8cda90da71b2f79": 10,
+      "5ada6d85d6ff7add": 1,
+      "ff6dd1ef9ec6d550": 8,
+      "bfe6ba0e7db07add": 2,
+      "1f8f4d6e99db7892": 1
+    },
+    "distinctUnverifiedEntryIds": 35,
+    "terminalTpExactRecoveryEvents": {},
+    "coverage": "Only retained matching-instance JSONL files, within first/last actual sample timestamps. No natural terminal event means UNKNOWN, not a live PASS."
+  },
+  "evidence": {
+    "rawSha256": "61215a177f5f130463cb70e342f0071d16edd750a8125c1f85acde20b7b2cf71",
+    "gzipSha256": "c9d4e38f99b7226a4eaa599fb39803e51e5d633fa6d9fe205e9b7bf1c9546fa3",
+    "compressedFile": "reactivity-not-healthy-samples.jsonl.gz"
+  }
+}

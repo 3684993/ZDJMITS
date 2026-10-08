@@ -38,3 +38,17 @@ it('keeps exact mutable fill evidence across a 30000-event burst and database re
     expect(JSON.parse((collector as any).db.prepare("SELECT payload FROM tq_facts WHERE kind='fills'").get().payload).qty).toBe(2);
   }finally{collector.close();rmSync(dir,{recursive:true,force:true});}
 });
+
+it('bounds background history capture and never reverts a replaced fill after synchronous event capture',()=>{
+ const h=harness(),dir=mkdtempSync(path.join(tmpdir(),'tq-background-capture-')),collector=new TradingQualityCollector(path.join(dir,'evidence.sqlite'),h.state,h.bus);
+ try{
+  h.state.executionFills=Array.from({length:1000},(_,n)=>({symbol:'BTCUSDT',tradeId:`chunk-${n}`,executionTime:Date.now(),qty:1,attributionStatus:'UNATTRIBUTED'} as any));
+  collector.tick();expect(collector.health().stateCapture.pendingRows).toBeGreaterThan(0);
+  expect(Number((collector as any).db.prepare("SELECT count(*) n FROM tq_facts WHERE kind='fills'").get().n)).toBeLessThan(1000);
+  h.state.executionFills=h.state.executionFills.map((fill,n)=>n===900?{...fill,qty:2}:fill);
+  h.bus.publish('RECONCILIATION_COMPLETED',{});
+  expect(Number((collector as any).db.prepare("SELECT count(*) n FROM tq_facts WHERE kind='fills'").get().n)).toBe(1000);
+  for(let n=0;n<8;n++)collector.tick();
+  expect(JSON.parse((collector as any).db.prepare("SELECT payload FROM tq_facts WHERE kind='fills' AND id='BTCUSDT:chunk-900'").get().payload).qty).toBe(2);
+ }finally{collector.close();rmSync(dir,{recursive:true,force:true});}
+});

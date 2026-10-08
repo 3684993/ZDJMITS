@@ -9,4 +9,3 @@ for name in ['ai_resources','exchange_resources','proxy_resources']:
 (r/('settings-'+(sys.argv[1] if len(sys.argv)>1 else 'before')+'.json')).write_text(json.dumps(result,indent=2),encoding='utf-8')
 print(json.dumps(result,indent=2))
 d.close()
-

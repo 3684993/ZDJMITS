@@ -1,0 +1,9 @@
+﻿{
+    "at":  "2026-10-07T23:45:27.8491736Z",
+    "label":  "post-reactivity",
+    "script":  "D:\\MITS-WORKTREES\\v397-runtime-reactivity-20261008\\docs\\reports\\v397-ssh-socks-remediation-20261008\\post-reactivity\\collect_stability.py",
+    "pid":  8568,
+    "intervalSeconds":  30,
+    "minutes":  15,
+    "mode":  "READ_ONLY_LOCALHOST_INDEPENDENT_WINDOW"
+}

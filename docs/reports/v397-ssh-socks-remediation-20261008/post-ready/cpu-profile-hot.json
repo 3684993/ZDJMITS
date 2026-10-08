@@ -1,0 +1,247 @@
+{
+  "pid": 5424,
+  "seconds": 45,
+  "totalSamples": 28823,
+  "hot": [
+    {
+      "samples": 4676,
+      "functionName": "put",
+      "scriptId": "203",
+      "url": "file:///D:/MITS-WORKTREES/v397-runtime-reactivity-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "lineNumber": 90,
+      "columnNumber": 7
+    },
+    {
+      "samples": 4450,
+      "functionName": "",
+      "scriptId": "215",
+      "url": "file:///D:/MITS-WORKTREES/v397-runtime-reactivity-20261008/apps/engine/dist/config/settingsStore.js",
+      "lineNumber": 932,
+      "columnNumber": 25
+    },
+    {
+      "samples": 3573,
+      "functionName": "run",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 2428,
+      "functionName": "run",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 1230,
+      "functionName": "run",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 1022,
+      "functionName": "put",
+      "scriptId": "203",
+      "url": "file:///D:/MITS-WORKTREES/v397-runtime-reactivity-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "lineNumber": 90,
+      "columnNumber": 7
+    },
+    {
+      "samples": 841,
+      "functionName": "(idle)",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 756,
+      "functionName": "(garbage collector)",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 749,
+      "functionName": "all",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 703,
+      "functionName": "update",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 509,
+      "functionName": "saveEntryExecution",
+      "scriptId": "215",
+      "url": "file:///D:/MITS-WORKTREES/v397-runtime-reactivity-20261008/apps/engine/dist/config/settingsStore.js",
+      "lineNumber": 1210,
+      "columnNumber": 22
+    },
+    {
+      "samples": 502,
+      "functionName": "all",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 461,
+      "functionName": "run",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 444,
+      "functionName": "persistRuntime",
+      "scriptId": "215",
+      "url": "file:///D:/MITS-WORKTREES/v397-runtime-reactivity-20261008/apps/engine/dist/config/settingsStore.js",
+      "lineNumber": 924,
+      "columnNumber": 18
+    },
+    {
+      "samples": 384,
+      "functionName": "run",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 377,
+      "functionName": "all",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 346,
+      "functionName": "all",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 332,
+      "functionName": "",
+      "scriptId": "215",
+      "url": "file:///D:/MITS-WORKTREES/v397-runtime-reactivity-20261008/apps/engine/dist/config/settingsStore.js",
+      "lineNumber": 1237,
+      "columnNumber": 31
+    },
+    {
+      "samples": 265,
+      "functionName": "saveEntryExecution",
+      "scriptId": "215",
+      "url": "file:///D:/MITS-WORKTREES/v397-runtime-reactivity-20261008/apps/engine/dist/config/settingsStore.js",
+      "lineNumber": 1210,
+      "columnNumber": 22
+    },
+    {
+      "samples": 251,
+      "functionName": "put",
+      "scriptId": "203",
+      "url": "file:///D:/MITS-WORKTREES/v397-runtime-reactivity-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "lineNumber": 90,
+      "columnNumber": 7
+    },
+    {
+      "samples": 203,
+      "functionName": "get",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 191,
+      "functionName": "saveEntryExecution",
+      "scriptId": "215",
+      "url": "file:///D:/MITS-WORKTREES/v397-runtime-reactivity-20261008/apps/engine/dist/config/settingsStore.js",
+      "lineNumber": 1210,
+      "columnNumber": 22
+    },
+    {
+      "samples": 166,
+      "functionName": "exec",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 164,
+      "functionName": "update",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 137,
+      "functionName": "prepare",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 110,
+      "functionName": "all",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 106,
+      "functionName": "exec",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 105,
+      "functionName": "get",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 89,
+      "functionName": "run",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 81,
+      "functionName": "Hash",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    }
+  ]
+}

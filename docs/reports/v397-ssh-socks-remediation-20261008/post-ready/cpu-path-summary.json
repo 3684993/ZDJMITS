@@ -1,0 +1,65 @@
+[
+  {
+    "function": "saveEntryExecution",
+    "url": "file:///D:/MITS-WORKTREES/v397-runtime-reactivity-20261008/apps/engine/dist/config/settingsStore.js",
+    "line": 1210,
+    "samples": 8785,
+    "fraction": 0.3047913124934948
+  },
+  {
+    "function": "saveManualExecution",
+    "url": "file:///D:/MITS-WORKTREES/v397-runtime-reactivity-20261008/apps/engine/dist/config/settingsStore.js",
+    "line": 1102,
+    "samples": 466,
+    "fraction": 0.01616764389550012
+  },
+  {
+    "function": "put",
+    "url": "file:///D:/MITS-WORKTREES/v397-runtime-reactivity-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+    "line": 90,
+    "samples": 7459,
+    "fraction": 0.25878638587239355
+  },
+  {
+    "function": "captureState",
+    "url": "file:///D:/MITS-WORKTREES/v397-runtime-reactivity-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+    "line": 201,
+    "samples": 7486,
+    "fraction": 0.25972313777191824
+  },
+  {
+    "function": "materialize",
+    "url": "file:///D:/MITS-WORKTREES/v397-runtime-reactivity-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+    "line": 320,
+    "samples": 530,
+    "fraction": 0.018388092842521596
+  },
+  {
+    "function": "persistRuntime",
+    "url": "file:///D:/MITS-WORKTREES/v397-runtime-reactivity-20261008/apps/engine/dist/config/settingsStore.js",
+    "line": 924,
+    "samples": 5459,
+    "fraction": 0.18939735627797244
+  },
+  {
+    "function": "onEvent",
+    "url": "file:///D:/MITS-WORKTREES/v397-runtime-reactivity-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+    "line": 124,
+    "samples": 1620,
+    "fraction": 0.05620511397148111
+  },
+  {
+    "function": "onEvent",
+    "url": "file:///D:/MITS-WORKTREES/v397-runtime-reactivity-20261008/apps/engine/dist/adapters/market/BinanceMarketStream.js",
+    "line": 178,
+    "samples": 16,
+    "fraction": 0.000555112236755369
+  },
+  {
+    "function": "maintainStorageBounds",
+    "url": "file:///D:/MITS-WORKTREES/v397-runtime-reactivity-20261008/apps/engine/dist/services/storageCapacityGuard.js",
+    "line": 26,
+    "samples": 1,
+    "fraction": 3.469451479721056e-05
+  }
+]

@@ -1,0 +1,46 @@
+{
+ "branch": "main",
+ "localHead": "4559d07fbf5ce94e703935f842d425eaab01bd77",
+ "remoteHead": "4559d07fbf5ce94e703935f842d425eaab01bd77",
+ "gitHeadSubject": "fix(engine): isolate retention and reduce durable evidence hot paths",
+ "computed": {
+  "sourceHash": "25d75e3579e44c2aff79af326f0aa23c10061facc3f4973726a8c22157ebbc75",
+  "artifactHash": "42e73ad66f678c8bf16ed9b76580d7dd7fc4c5eccc5dbbe846a504392841e1ab",
+  "buildId": "3.9.7-42e73ad66f678c8bf16e"
+ },
+ "runtimeFile": {
+  "instanceId": "fbce3561-26fd-4fe4-9b1a-e4c8285401cd",
+  "pid": 5424,
+  "startedAt": 1791416667098,
+  "host": "0.0.0.0",
+  "port": 8080,
+  "version": "3.9.7",
+  "buildId": "3.9.7-42e73ad66f678c8bf16e",
+  "artifactHash": "42e73ad66f678c8bf16ed9b76580d7dd7fc4c5eccc5dbbe846a504392841e1ab",
+  "sourceHash": "25d75e3579e44c2aff79af326f0aa23c10061facc3f4973726a8c22157ebbc75",
+  "startReason": "MANUAL_START",
+  "lanIps": [
+   "192.168.1.50"
+  ],
+  "restartCount": 268
+ },
+ "runtimeApi": {
+  "buildId": "3.9.7-42e73ad66f678c8bf16e",
+  "instanceId": "fbce3561-26fd-4fe4-9b1a-e4c8285401cd",
+  "pid": 5424,
+  "version": "3.9.7",
+  "lastRestartReason": "MANUAL_START",
+  "restartCount": 268,
+  "lastRestartAt": 1791416667098
+ },
+ "dirtySourcePaths": "",
+ "checks": {
+  "remoteHeadEqualsLocalHead": true,
+  "committedSourceTreeMatchesRuntimeSourceHash": true,
+  "workingDistMatchesRuntimeArtifactHash": true,
+  "buildIdDerivedFromArtifactHash": true,
+  "runtimeApiMatchesInstanceFile": true,
+  "sourceTreeCleanForHashedFolders": true
+ },
+ "verdict": "IDENTITY_CLOSED"
+}

@@ -633,7 +633,9 @@ export class EngineRuntime {
       const requiredBeforeWrite=['ENTRY_SUBMIT_ATTEMPTED','MANUAL_SUBMISSION_PREPARED','TP_SUBMISSION_PREPARED'];
       if(requiredBeforeWrite.includes(event.type))store.recordRuntimeEvent(event);else runtime.writes.apply(`event:${event.id}`,()=>store.recordRuntimeEvent(event));
       if(event.type==='RECONCILIATION_COMPLETED'||event.type==='ENTRY_ORDER_TTL_CLOSED'||event.type==='ENTRY_ORDER_REPRICED'){
-        for(const order of state.entryOrders.values()){const intent=state.entryIntents.get(order.intentId);if(intent)runtime.writes.apply(`entry:${order.id}`,()=>store.saveEntryExecution({intent,order,reservation:order.reservationId?state.entryReservations.get(order.reservationId):undefined}));}
+        const orderId=(event.payload as any)?.orderId;
+        const orders=event.type==='RECONCILIATION_COMPLETED'||!orderId?state.entryOrders.values():[state.entryOrders.get(orderId)];
+        for(const order of orders){if(!order)continue;const intent=state.entryIntents.get(order.intentId);if(intent)runtime.writes.apply(`entry:${order.id}`,()=>store.saveEntryExecution({intent,order,reservation:order.reservationId?state.entryReservations.get(order.reservationId):undefined}));}
       }
       if(['ENTRY_SUBMIT_ATTEMPTED','ENTRY_ORDER_CREATED','ENTRY_ORDER_MANAGEMENT_UNVERIFIED','MANUAL_SUBMISSION_PREPARED','TP_SUBMISSION_PREPARED','TP_ORDER_REJECTED','MANUAL_EXIT_GOAL_QUEUED','MANUAL_EXIT_GOAL_PROGRESS','MANUAL_EXIT_GOAL_COMPLETED'].includes(event.type))store.persistRuntime(state.serialize());
       if(event.type.startsWith('MANUAL_')||event.type==='RECONCILIATION_COMPLETED') {

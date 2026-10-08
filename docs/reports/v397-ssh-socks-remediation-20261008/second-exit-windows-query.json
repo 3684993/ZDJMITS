@@ -1,0 +1,9 @@
+{
+  "startLocal": "2026-10-08T07:33:00+08:00",
+  "queryErrors": [
+    "NoMatchingEventsFound,Microsoft.PowerShell.Commands.GetWinEventCommand"
+  ],
+  "endLocal": "2026-10-08T07:45:00+08:00",
+  "queriedAt": "2026-10-08T00:02:03.5239313Z",
+  "events": []
+}

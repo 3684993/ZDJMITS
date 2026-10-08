@@ -1134,8 +1134,9 @@ export class SettingsStore {
     return JSON.parse(row.payload) as ManualExecutionRecord;
   }
   saveManualExecution(value: ManualExecutionRecord) {
-    this.db.prepare('UPDATE execution_tasks SET active=?,payload=?,updated_at=? WHERE intent_id=?')
-      .run(activeOrderStatus(value.order.status) ? 1 : 0, JSON.stringify(value), Date.now(), value.intent.id);
+    const active=activeOrderStatus(value.order.status)?1:0,payload=JSON.stringify(value);
+    this.db.prepare('UPDATE execution_tasks SET active=?,payload=?,updated_at=? WHERE intent_id=? AND (active<>? OR payload<>?)')
+      .run(active,payload,Date.now(),value.intent.id,active,payload);
   }
   loadManualExecutions(fills:any[]=[]): ManualExecutionRecord[] {
     return (this.db.prepare('SELECT payload FROM execution_tasks').all() as Array<{payload:string}>)
@@ -1231,8 +1232,11 @@ export class SettingsStore {
         .get(stored?.isolation_key??'',value.intent.id);
       if(held)nextActive=0;
     }
-    this.db.prepare('UPDATE entry_execution_tasks SET active=?,payload=?,updated_at=?,released_at=? WHERE intent_id=?')
-      .run(nextActive,JSON.stringify(value),now,releasedByProof?Math.max(stored?.released_at??0,now):(stored?.released_at??0),value.intent.id);
+    // Re-evaluate proof validity on every call, but unchanged durable facts must
+    // not rewrite thousands of historical journals on every reconciliation.
+    const payload=JSON.stringify(value);
+    this.db.prepare('UPDATE entry_execution_tasks SET active=?,payload=?,updated_at=?,released_at=? WHERE intent_id=? AND (active<>? OR payload<>? OR (?=1 AND released_at=0))')
+      .run(nextActive,payload,now,releasedByProof?Math.max(stored?.released_at??0,now):(stored?.released_at??0),value.intent.id,nextActive,payload,releasedByProof?1:0);
   }
   /** Hydrate history verbatim. Validity is time-dependent, so no load-time flag can grant a release. */
   loadEntryExecutions():EntryExecutionRecord[]{return(this.db.prepare('SELECT payload FROM entry_execution_tasks').all() as Array<{payload:string}>).map(row=>JSON.parse(row.payload));}

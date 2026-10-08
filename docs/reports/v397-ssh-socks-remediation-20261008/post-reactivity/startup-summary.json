@@ -1,0 +1,147 @@
+{
+  "sampleCount": 4,
+  "elapsedHours": 0.025899166666666668,
+  "first": "2026-10-07T23:45:32.134178+00:00",
+  "last": "2026-10-07T23:47:05.371328+00:00",
+  "healthSampleStates": {
+    "OBSERVATION_UNAVAILABLE": 1,
+    "STARTING": 1,
+    "READY": 2
+  },
+  "privateSampleStates": {
+    "OBSERVATION_UNAVAILABLE": 1,
+    "READY": 3
+  },
+  "activeIncidentSampleCounts": {},
+  "httpReadErrors": {
+    "health": 1,
+    "closeout": 1,
+    "governance": 1,
+    "private": 1,
+    "operations": 1,
+    "incidents": 1
+  },
+  "identities": [
+    {
+      "pid": null,
+      "instanceId": null
+    },
+    {
+      "pid": 5424,
+      "instanceId": "fbce3561-26fd-4fe4-9b1a-e4c8285401cd"
+    }
+  ],
+  "privateSnapshotAgeMs": {
+    "observedSamples": 3,
+    "max": 8812,
+    "p95": 8812
+  },
+  "tpIssueSampleCounts": {},
+  "productionWriteSamples": {
+    "nonzero": 0,
+    "unknown": 1
+  },
+  "interpretation": "Sample prevalence is not incident frequency or duration. Missing samples and bounded ledgers cannot prove zero failures. OBSERVATION_UNAVAILABLE is a missing endpoint value, not proven private UNAVAILABLE. The original running collector progress uses the older conflated default; use this audited analyzer for acceptance.",
+  "acceptance": "SHORT_PROTOCOL_INCOMPLETE",
+  "malformedSampleRows": 0,
+  "tpObservationSamples": {
+    "known": 3,
+    "unknown": 1
+  },
+  "samplingGaps": {
+    "maxMs": 39854,
+    "above90s": 0,
+    "endpointValuesAreNotAtomic": true
+  },
+  "workingSetBytes": {
+    "min": 668823552,
+    "max": 1534935040,
+    "last": 1534935040
+  },
+  "distinctPrivateFailureTimestampsSeen": 0,
+  "staleQuoteFieldSampleCounts": {
+    "bid": 3,
+    "ask": 3,
+    "last": 2,
+    "mark": 2
+  },
+  "routeDecisionDeltas": {
+    "proxy-05d851d4af74": {
+      "admitted": 80,
+      "queued": 84,
+      "blocked": 5,
+      "queueTimeout": 5
+    }
+  },
+  "boundedRequestEvidence": {
+    "distinctIdsSeen": 148,
+    "completedInWindowSeen": 143,
+    "queueAgeMs": {
+      "n": 138,
+      "median": 362.5,
+      "p95": 827,
+      "max": 7505
+    },
+    "admittedNetworkMs": {
+      "n": 138,
+      "median": 564.0,
+      "p95": 8881,
+      "max": 12000
+    },
+    "failurePhases": {},
+    "coverage": "Bounded recent ledgers sampled once/minute; not a full request census. Admission counters provide separate aggregate deltas."
+  },
+  "durableEvents": {
+    "files": [
+      "D:\\MITS\\data\\runtime-logs\\engine-2026-10-07-fbce3561-26fd-4fe4-9b1a-e4c8285401cd-0.jsonl"
+    ],
+    "counts": {
+      "ENGINE_INSTANCE_STARTED": 1,
+      "PORTFOLIO_RISK_AUTHORITY_LOADED": 1,
+      "LAN_AVAILABLE": 1,
+      "AI_RESOURCE_HEALTH_CHANGED": 3,
+      "EXIT_RECOVERY_CONVERGED": 1,
+      "OPERATIONAL_INCIDENT_ACTIVATED": 1,
+      "MARKET_COHORT_REFILLED": 2,
+      "CANDIDATE_SUPPLY_HEALTH": 7,
+      "OPERATIONAL_INCIDENT_RECOVERED": 1,
+      "TELEMETRY_HEARTBEAT": 3,
+      "POSITION_MARKETS_REFRESHED": 1,
+      "MANUAL_ORDER_REMOTE_STATUS_UNVERIFIED": 4,
+      "ANALYSIS_DISPATCH_HEARTBEAT": 2,
+      "SHADOW_RUNNER_STARTED": 1,
+      "RUNTIME_STARTED": 1,
+      "MARKET_SYMBOL_ERROR": 2,
+      "EXECUTION_READINESS_BLOCKED": 3,
+      "V396_OWNERSHIP_OUTBOX": 20,
+      "ENTRY_ORDER_USER_DATA_CONFIRMED": 1,
+      "BINANCE_USER_DATA": 1,
+      "ENTRY_ORDER_TTL_CLOSED": 4,
+      "MARKET_RECOVERY_FAILED": 4,
+      "EXECUTION_READINESS_RESUMED": 2,
+      "ANALYSIS_DISPATCH_INTENT": 1,
+      "CANDIDATE_LIFECYCLE_CHANGED": 2,
+      "POOL_ANALYSIS_STARTED": 1,
+      "CANDIDATE_LIFECYCLE_REDERIVED": 1,
+      "ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED": 3,
+      "PRIMARY_DATA_ERROR": 1,
+      "ENTRY_ORDER_HISTORICAL_VERIFY_FAILED": 1,
+      "EXIT_TASK_CONVERGED": 8,
+      "EXIT_CONVERGENCE_QUEUE": 1
+    },
+    "recoveryByIncidentId": {
+      "5ada6d85d6ff7add": 1
+    },
+    "activationByIncidentId": {
+      "5ada6d85d6ff7add": 1
+    },
+    "distinctUnverifiedEntryIds": 3,
+    "terminalTpExactRecoveryEvents": {},
+    "coverage": "Only retained matching-instance JSONL files, within first/last actual sample timestamps. No natural terminal event means UNKNOWN, not a live PASS."
+  },
+  "evidence": {
+    "rawSha256": "d9d59bde35bf49978d7ac3f358eda93ba74f409593bbd75745a708ef5694c1ae",
+    "gzipSha256": "b9d6e0ad9e5eeb370a12c2ec6e6d56a3cd5d9ad42bcbe294c144b35be50e0a5d",
+    "compressedFile": "startup-samples.jsonl.gz"
+  }
+}

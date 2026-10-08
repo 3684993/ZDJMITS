@@ -1,7 +1,7 @@
 import {mkdtemp,rm} from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import {afterEach,expect,it} from 'vitest';
+import {afterEach,expect,it,vi} from 'vitest';
 import {DatabaseSync} from 'node:sqlite';
 import {SettingsStore} from '../config/settingsStore.js';
 import {entrySubmissionIsolation,portfolioScopeObservation} from './entrySubmissionIdentity.js';
@@ -41,6 +41,22 @@ const orderOf=(id:string,status='UNKNOWN',now=Date.now(),proof=false):any=>({
 const recordOf=(o:any)=>({intent:{id:o.intentId},order:o} as any);
 const isolationFor=(settings:any,intentId:string,underlying:string,environment='TESTNET',account='binance-primary')=>
   entrySubmissionIsolation(settings,{environment,accountId:account,intentId,underlying,kind:'ENTRY'});
+
+it('unchanged journal reconciliation performs no write but expired UNKNOWN proof reactivates its exact claim',async()=>{
+ const {store}=await openStore(),now=Date.now(),clock=vi.spyOn(Date,'now').mockReturnValue(now);
+ try{
+  const order=orderOf('stable','UNKNOWN',now);order.activeRiskExposure=false;
+  order.activeRiskEvidence={status:'VERIFIED_NO_ACTIVE_RISK',proofTier:0,proofClass:'POSITION_ABSENT',checkedAt:now,validUntil:now+1000,identityTombstone:`ENTRY:${order.symbol.toUpperCase()}:${order.clientOrderId}`,sources:[...NO_RISK_ABSENCE_SOURCES,'BINANCE_LONG_SHORT_POSITION_ZERO']};
+  const record=recordOf(order);store.claimEntryExecution(entryScope('stable'),record,false,isolationFor(fundsOnlySettings,order.intentId,'stable'));store.saveEntryExecution(record);
+  const db=(store as any).db,before=Number(db.prepare('SELECT total_changes() n').get().n);
+  expect(db.prepare('SELECT active,released_at FROM entry_execution_tasks WHERE intent_id=?').get(order.intentId)).toMatchObject({active:0,released_at:now});
+  clock.mockReturnValue(now+50);store.saveEntryExecution(record);
+  expect(Number(db.prepare('SELECT total_changes() n').get().n)).toBe(before);
+  clock.mockReturnValue(now+2000);store.saveEntryExecution(record);
+  expect(db.prepare('SELECT active,released_at FROM entry_execution_tasks WHERE intent_id=?').get(order.intentId)).toMatchObject({active:1,released_at:now});
+  order.price=101;store.saveEntryExecution(record);expect(store.loadEntryExecutions()[0].order).toMatchObject({status:'UNKNOWN',price:101});
+ }finally{clock.mockRestore();store.close();}
+});
 
 it('the cross-Intent ENTRY scope unique index is gone and is replaced by two distinct controls',async()=>{
   const {store,dataDir}=await openStore();

@@ -726,3 +726,28 @@ Authoritative state now:
 Codex must follow `docs/prompts/CODEX_DEPLOY_REACTIVITY_ACCEPTANCE.md`.
 
 Long local command output must be written to log files and committed/uploaded; never require the user to paste long console transcripts into chat.
+
+
+## Next active remediation — private reconciliation fan-out
+
+The 2026-10-08 history-isolation deployment improved idle CPU but runtime acceptance still failed.
+Authoritative report:
+`docs/reports/v397-ssh-socks-remediation-20261008/REACTIVITY_DEPLOYMENT_ACCEPTANCE.md`.
+
+Do not resume broad observation, SSH/SOCKS work or TQ history micro-tuning.
+
+Fresh evidence now points to the private reconciliation completion turn:
+- reconciliation/event fan-out ~17.16% inclusive CPU;
+- `RuntimeWriteBuffer.apply` ~6.88% within that path;
+- event-loop max 5255.463ms;
+- REQUIRED_MARKET timeout identities 7 during the 6.008-minute window;
+- private remained READY 25/25.
+
+Code inspection confirms:
+- EventBus emit is synchronous;
+- successful `RuntimeWriteBuffer.apply` executes its write inline;
+- `RECONCILIATION_COMPLETED` currently iterates every entry order and every manual order for execution-journal saves;
+- `entryExecutionClaimStats()` performs a full durable task read plus per-row JSON parse.
+
+Follow `docs/prompts/CODEX_PRIVATE_RECONCILIATION_FANOUT_REMEDIATION.md`.
+First measure wall-clock phases; then remove confirmed all-row derived persistence/claim-stat work while preserving authority-critical synchronous durability.

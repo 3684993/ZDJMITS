@@ -36,3 +36,14 @@ it('counts unresolved submissions, deduplicates quotes/reservations, and keeps p
  state.entryReservations.set('r',{id:'r',underlying:'ETH',status:'WORKING',expiresAt:Date.now()+10000});
  expect(state.entryCapacity()).toMatchObject({positions:1,inFlight:1,reserved:0,used:2,max:2});
 });
+
+it('omits extracted entity collections from the high-frequency checkpoint core',()=>{
+ const state=new RuntimeState(settings);
+ state.positions.set('p',{symbol:'BTCUSDT'});state.entryOrders.set('o',{id:'o'});state.allocationPlans.set('a',{planId:'a'});
+ state.tradePlans.set('t',{planId:'t'});state.executionFills=[{fillId:'f'}] as any;state.activity={...state.activity,lastPrimaryRunAt:123};
+ const full=state.serialize() as any;expect(full.positions).toHaveLength(1);expect(full.entryOrders).toHaveLength(1);expect(full.allocationPlans).toHaveLength(1);
+ const fullSpy=vi.spyOn(state,'serialize').mockImplementation(()=>{throw new Error('FULL_SERIALIZE_MUST_NOT_RUN');});
+ const core=state.serializeCheckpointCore() as any;expect(fullSpy).not.toHaveBeenCalled();fullSpy.mockRestore();
+ for(const key of ['positions','entryIntents','entryOrders','tpOrders','manualIntents','manualOrders','allocationPlans','entryReservations','tradeRecords','experienceSamples','tradePlans','planExecutions','aiUsage','aiRuns','executionFills'])expect(core).not.toHaveProperty(key);
+ expect(core.activity.lastPrimaryRunAt).toBe(123);expect(core.entryReservationRevision).toBe(state.entryReservationRevision);
+});

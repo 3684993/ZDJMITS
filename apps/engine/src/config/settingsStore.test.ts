@@ -53,6 +53,53 @@ it('replays only exact archived fills without writes and fails closed on conflic
  store.recordRuntimeEvent({id:'fact2',type:'EXCHANGE_FILL_ATTRIBUTED',ts:102,payload:{fill:{...fill,qty:2}}});expect(()=>store.loadRuntime()).toThrow('RUNTIME_FILL_REPLAY_CONFLICT');
  }finally{store.close();}
 });
+
+it('updates only runtime core without rescanning or replacing entity manifests',async()=>{
+ const dir=await mkdtemp(path.join(os.tmpdir(),'zdj-core-checkpoint-'));paths.push(dir);const store=new SettingsStore(path.resolve('../../config'),dir);await store.load();
+ try{
+  const db=(store as any).db,base={entryReservationRevision:3,activity:{lastPrimaryRunAt:1},positions:[['p',{quantity:2}]],executionFills:[{fillId:'f1',qty:1}]};
+  store.persistRuntime(base);
+  const manifest=JSON.parse(db.prepare('SELECT payload FROM runtime_state WHERE id=1').get().payload)._entityLists;
+  const prepare=vi.spyOn(db,'prepare');store.persistRuntimeCore({entryReservationRevision:3,activity:{lastPrimaryRunAt:2}});
+  const runtimeEntityQueries=prepare.mock.calls.filter(([sql])=>String(sql).includes('runtime_entities'));prepare.mockRestore();
+  expect(runtimeEntityQueries).toHaveLength(0);expect(store.checkpointMetrics().entityWrites).toBe(0);
+  expect(store.loadRuntime()).toEqual({...base,activity:{lastPrimaryRunAt:2}});
+  expect(JSON.parse(db.prepare('SELECT payload FROM runtime_state WHERE id=1').get().payload)._entityLists).toEqual(manifest);
+ }finally{store.close();}
+});
+it('refuses a stale core checkpoint and never invents a missing entity manifest',async()=>{
+ const dir=await mkdtemp(path.join(os.tmpdir(),'zdj-core-checkpoint-revision-'));paths.push(dir);const store=new SettingsStore(path.resolve('../../config'),dir);await store.load();
+ try{
+  expect(()=>store.persistRuntimeCore({entryReservationRevision:0,activity:{}})).toThrow('RUNTIME_CORE_CHECKPOINT_BASE_MISSING');
+  store.persistRuntime({entryReservationRevision:2,positions:[['p',{quantity:1}]]});
+  expect(()=>store.persistRuntimeCore({entryReservationRevision:1,activity:{}})).toThrow('STALE_RESERVATION_CHECKPOINT');
+  expect(store.loadRuntime()).toMatchObject({entryReservationRevision:2,positions:[['p',{quantity:1}]]});
+ }finally{store.close();}
+});
+
+it('persists one runtime entity without scanning retained history',async()=>{
+ const dir=await mkdtemp(path.join(os.tmpdir(),'zdj-single-runtime-entity-'));paths.push(dir);const store=new SettingsStore(path.resolve('../../config'),dir);await store.load();
+ try{
+  const db=(store as any).db;store.persistRuntime({entryReservationRevision:1,tradePlans:[],planExecutions:[],executionFills:[]});
+  const prepare=vi.spyOn(db,'prepare');
+  store.persistRuntimeEntity('tradePlans','p1',{planId:'p1',value:1},{tuple:true});
+  store.persistRuntimeEntity('planExecutions','p1',[{recordedAt:1}],{tuple:true});
+  store.persistRuntimeEntity('executionFills','f1',{fillId:'f1',qty:1},{tuple:false,front:true,maxIds:5000});
+  const fullEntityScans=prepare.mock.calls.filter(([sql])=>String(sql).trim()==='SELECT kind,entity_id,payload FROM runtime_entities'||String(sql).trim()==='SELECT kind,entity_id FROM runtime_entities');
+  prepare.mockRestore();expect(fullEntityScans).toHaveLength(0);
+  expect(store.loadRuntime()).toMatchObject({tradePlans:[['p1',{planId:'p1',value:1}]],planExecutions:[['p1',[{recordedAt:1}]]],executionFills:[{fillId:'f1',qty:1}]});
+ }finally{store.close();}
+});
+it('keeps targeted execution fills newest-first and bounds their manifest',async()=>{
+ const dir=await mkdtemp(path.join(os.tmpdir(),'zdj-single-fill-order-'));paths.push(dir);const store=new SettingsStore(path.resolve('../../config'),dir);await store.load();
+ try{
+  store.persistRuntime({entryReservationRevision:0,executionFills:[]});
+  store.persistRuntimeEntity('executionFills','f1',{fillId:'f1'},{tuple:false,front:true,maxIds:2});
+  store.persistRuntimeEntity('executionFills','f2',{fillId:'f2'},{tuple:false,front:true,maxIds:2});
+  store.persistRuntimeEntity('executionFills','f3',{fillId:'f3'},{tuple:false,front:true,maxIds:2});
+  expect((store.loadRuntime() as any).executionFills.map((row:any)=>row.fillId)).toEqual(['f3','f2']);
+ }finally{store.close();}
+});
 afterEach(async () => { await Promise.all(paths.splice(0).map(value => rm(value, { recursive: true, force: true }))); });
 
 describe('SettingsStore', () => {

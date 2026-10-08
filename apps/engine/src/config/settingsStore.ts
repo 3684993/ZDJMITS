@@ -968,6 +968,44 @@ export class SettingsStore {
     }catch(error){this.db.exec('ROLLBACK');this.runtimeEntityCache=null;throw error;}
     finally{this.transactionActive=false;}
   }
+  /**
+   * High-frequency checkpoint for scalar/small runtime state only.
+   * The last full checkpoint owns the runtime-entity manifest; this path preserves that manifest
+   * and never scans or JSON-encodes retained entities.
+   */
+  persistRuntimeCore(value: unknown) {
+    const startedAt=Date.now(),incoming={...(value as any)};
+    delete incoming._entityLists;
+    const row=this.db.prepare('SELECT payload FROM runtime_state WHERE id=1').get() as {payload:string}|undefined;
+    if(!row)throw new Error('RUNTIME_CORE_CHECKPOINT_BASE_MISSING');
+    const prior=JSON.parse(row.payload) as Record<string,any>,priorRevision=Number(prior.entryReservationRevision??0),nextRevision=Number(incoming.entryReservationRevision??priorRevision);
+    if(Number.isFinite(priorRevision)&&Number.isFinite(nextRevision)&&priorRevision>nextRevision)throw new Error('STALE_RESERVATION_CHECKPOINT');
+    const next={...prior,...incoming};
+    if(prior._entityLists!==undefined)next._entityLists=prior._entityLists;else delete next._entityLists;
+    const payload=JSON.stringify(next);
+    this.db.prepare('UPDATE runtime_state SET payload=?,updated_at=? WHERE id=1').run(payload,Date.now());
+    this.runtimeCheckpointStats={entityWrites:0,checkpointBytes:Buffer.byteLength(payload),durationMs:Date.now()-startedAt};
+  }
+  /**
+   * Persist one extracted runtime entity and its manifest membership atomically.
+   * This is the durable fast path for newly created facts whose crash window must not depend on a
+   * later full-history checkpoint.
+   */
+  persistRuntimeEntity(kind: string,id: string,entity: unknown,options: {tuple?:boolean;front?:boolean;maxIds?:number} = {}) {
+    const entityId=String(id??'').trim();if(!entityId)throw new Error('RUNTIME_ENTITY_ID_MISSING');
+    const tuple=options.tuple!==false,row=this.db.prepare('SELECT payload FROM runtime_state WHERE id=1').get() as {payload:string}|undefined;
+    if(!row)throw new Error('RUNTIME_ENTITY_CHECKPOINT_BASE_MISSING');
+    const core=JSON.parse(row.payload) as Record<string,any>,lists={...(core._entityLists??{})},existing=lists[kind] as {ids:string[];tuple:boolean}|undefined;
+    if(existing&&Boolean(existing.tuple)!==tuple)throw new Error(`RUNTIME_ENTITY_SHAPE_MISMATCH:${kind}`);
+    const priorIds=Array.isArray(existing?.ids)?existing!.ids.map(String):[],ids=(options.front?[entityId,...priorIds.filter(value=>value!==entityId)]:[...priorIds.filter(value=>value!==entityId),entityId]);
+    if(Number.isFinite(options.maxIds)&&Number(options.maxIds)>0)ids.length=Math.min(ids.length,Math.trunc(Number(options.maxIds)));
+    lists[kind]={ids,tuple};core._entityLists=lists;const payload=JSON.stringify(core),raw=JSON.stringify(entity),key=`${kind}:${entityId}`;
+    this.db.exec('SAVEPOINT runtime_entity_checkpoint');try{
+      this.db.prepare('INSERT INTO runtime_entities(kind,entity_id,payload) VALUES(?,?,?) ON CONFLICT(kind,entity_id) DO UPDATE SET payload=excluded.payload').run(kind,entityId,raw);
+      this.db.prepare('UPDATE runtime_state SET payload=?,updated_at=? WHERE id=1').run(payload,Date.now());
+      this.db.exec('RELEASE runtime_entity_checkpoint');this.runtimeEntityCache?.set(key,raw);
+    }catch(error){this.db.exec('ROLLBACK TO runtime_entity_checkpoint; RELEASE runtime_entity_checkpoint');this.runtimeEntityCache=null;throw error;}
+  }
   persistRuntime(value: unknown) {
     const startedAt=Date.now(),core={...(value as any)},lists:Record<string,{ids:string[];tuple:boolean}>={},updates:Array<[string,string,string]>=[];
     this.runtimeEntityCache??=new Map((this.db.prepare('SELECT kind,entity_id,payload FROM runtime_entities').all() as any[]).map(r=>[`${r.kind}:${r.entity_id}`,r.payload]));

@@ -65,3 +65,21 @@ cost of materializing every retained Map/array. The candidate now constructs the
 directly and a regression test makes full `serialize()` throw while `serializeCheckpointCore()`
 must still succeed. This is required for the change to remove both serialization and
 pre-serialization retained-history work from the ordinary 1-second path.
+
+
+## Local verification result
+
+Verified in isolated Windows worktree on 2026-10-08.
+
+- targeted RuntimeState + SettingsStore: **44/44 PASS**
+- `npm run verify`: PASS
+- contracts: **2 tests PASS**
+- core: **59 tests PASS**
+- dashboard: **123 tests PASS**
+- engine: **200 files / 1821 tests PASS**
+- release identity and S00 T01–T06: PASS
+
+Full log:
+`reactivity-core-checkpoint-local-verify-20261008.log`
+
+Runtime acceptance is still pending deployment and profile comparison.

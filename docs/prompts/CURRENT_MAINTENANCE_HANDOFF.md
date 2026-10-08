@@ -659,3 +659,46 @@ micro-tuning or passive 15-minute "still unhealthy" loops without a new profile 
 
 
 CI note: GitHub Actions #688 exposed only a hosted Windows fsync-sensitive timeout in the 30,001-event TQ correctness test. Main commit `c00c1252a07faa58c408477abe42efa24ddb6f2e` batches those test-only event inserts in one transaction without changing production code or the 30,001 put() calls. The same test-only adjustment is included in candidate head `45082f6354a79088534037d0b9751c37d03e7260`.
+
+
+## Local command output handoff rule — 2026-10-08
+
+When the user must run any local command that is expected to produce long output, **never ask the user to copy/paste the console transcript into chat**.
+
+Instead:
+- provide a command that writes/tees the complete stdout+stderr to a timestamped `.log` or `.txt` file;
+- keep the console usable, but make the file the canonical feedback artifact;
+- ask the user to upload only that log file;
+- after reading it, archive relevant verification/diagnostic logs in GitHub when they are part of project maintenance evidence.
+
+Preferred PowerShell pattern:
+
+```powershell
+<command> *>&1 | Tee-Object -FilePath <log-path>
+```
+
+For very large outputs, prefer a stable path under `D:\MITS\logs\` or an isolated worktree's `logs\` directory.
+
+
+## Core-checkpoint candidate local verification — 2026-10-08
+
+Candidate `183f54ed8ec92ac373059c1965dd31c712dc12ab` was verified in isolated local worktree
+`D:\MITS-WORKTREES\reactivity-checkpoint-20261008`.
+
+Evidence:
+`docs/reports/v397-ssh-socks-remediation-20261008/reactivity-core-checkpoint-local-verify-20261008.log`.
+
+Observed gates:
+- targeted RuntimeState + SettingsStore: 2 files, **44/44 tests PASS**;
+- `verify:deps`: PASS;
+- `verify:scripts`: PASS;
+- V3.9.7 release identity: PASS;
+- S00 T01–T06: PASS;
+- typecheck: PASS;
+- production build: PASS;
+- contracts: **2/2 PASS**;
+- core: **59/59 PASS**;
+- dashboard: **123/123 PASS**;
+- engine: **200 files / 1821 tests PASS**.
+
+This establishes code/test correctness for the candidate. Runtime reactivity improvement still requires deployment plus a fresh 5–10 minute CPU/event-loop/REST-lane comparison.

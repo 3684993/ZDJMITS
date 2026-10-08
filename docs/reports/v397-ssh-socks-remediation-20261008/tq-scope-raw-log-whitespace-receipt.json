@@ -1,0 +1,8 @@
+{
+  "rawLogWhitespaceWarnings": [
+    "tq-event-scope-deps.log:24: new blank line at EOF",
+    "zero-rejected-allocation-deps.log:24: new blank line at EOF"
+  ],
+  "decision": "Preserve exact command logs; check all other staged files",
+  "at": "2026-10-08T01:21:21.5556885Z"
+}

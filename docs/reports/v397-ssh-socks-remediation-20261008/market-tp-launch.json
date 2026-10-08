@@ -1,0 +1,8 @@
+{
+  "detachedLauncherPid": 49076,
+  "at": "2026-10-08T00:54:44.1121804Z",
+  "mode": "Engine",
+  "result": "LAUNCHED_NOT_HEALTH_VERIFIED",
+  "script": "D:\\MITS-WORKTREES\\v397-market-recovery-dispatch-time-20261008\\scripts\\start-zdj-lan.ps1",
+  "log": "D:\\MITS-WORKTREES\\v397-market-recovery-dispatch-time-20261008\\docs\\reports\\v397-ssh-socks-remediation-20261008\\detached-engine-launch.txt"
+}

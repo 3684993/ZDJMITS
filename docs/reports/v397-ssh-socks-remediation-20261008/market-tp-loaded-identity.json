@@ -1,0 +1,46 @@
+{
+ "branch": "main",
+ "localHead": "35a951ab8e134dd572332562fec0b09671af6bd9",
+ "remoteHead": "35a951ab8e134dd572332562fec0b09671af6bd9",
+ "gitHeadSubject": "fix: preserve dispatch fact age and recover proven pre-wire TP failures",
+ "computed": {
+  "sourceHash": "9878c290ea4d3e77ef8cb6acba9bc3f687c7270ec81dbedaf7846badc24ce477",
+  "artifactHash": "9ed43df8da029919df5a35c6156e3e04cdef7f877e445f958b292251dadef1c9",
+  "buildId": "3.9.7-9ed43df8da029919df5a"
+ },
+ "runtimeFile": {
+  "instanceId": "119eff3a-54a3-4d8c-9a6a-224e9aa8014f",
+  "pid": 12828,
+  "startedAt": 1791420888366,
+  "host": "0.0.0.0",
+  "port": 8080,
+  "version": "3.9.7",
+  "buildId": "3.9.7-9ed43df8da029919df5a",
+  "artifactHash": "9ed43df8da029919df5a35c6156e3e04cdef7f877e445f958b292251dadef1c9",
+  "sourceHash": "9878c290ea4d3e77ef8cb6acba9bc3f687c7270ec81dbedaf7846badc24ce477",
+  "startReason": "MANUAL_START",
+  "lanIps": [
+   "192.168.1.50"
+  ],
+  "restartCount": 271
+ },
+ "runtimeApi": {
+  "buildId": "3.9.7-9ed43df8da029919df5a",
+  "instanceId": "119eff3a-54a3-4d8c-9a6a-224e9aa8014f",
+  "pid": 12828,
+  "version": "3.9.7",
+  "lastRestartReason": "MANUAL_START",
+  "restartCount": 271,
+  "lastRestartAt": 1791420888366
+ },
+ "dirtySourcePaths": "",
+ "checks": {
+  "remoteHeadEqualsLocalHead": true,
+  "committedSourceTreeMatchesRuntimeSourceHash": true,
+  "workingDistMatchesRuntimeArtifactHash": true,
+  "buildIdDerivedFromArtifactHash": true,
+  "runtimeApiMatchesInstanceFile": true,
+  "sourceTreeCleanForHashedFolders": true
+ },
+ "verdict": "IDENTITY_CLOSED"
+}

@@ -1,0 +1,2919 @@
+{
+  "totalSamples": 12862,
+  "interpretation": "Inclusive CPU sample attribution overlaps. Not wall-clock durations or a request census.",
+  "inclusivePaths": [
+    {
+      "function": "(root)",
+      "url": "",
+      "samples": 12862,
+      "percent": 100.0
+    },
+    {
+      "function": "processTicksAndRejections",
+      "url": "node:internal/process/task_queues",
+      "samples": 7684,
+      "percent": 59.7419
+    },
+    {
+      "function": "runMicrotasks",
+      "url": "",
+      "samples": 7182,
+      "percent": 55.8389
+    },
+    {
+      "function": "emit",
+      "url": "node:events",
+      "samples": 7037,
+      "percent": 54.7116
+    },
+    {
+      "function": "publish",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/events/eventBus.js",
+      "samples": 6933,
+      "percent": 53.903
+    },
+    {
+      "function": "processTimers",
+      "url": "node:internal/timers",
+      "samples": 5909,
+      "percent": 45.9415
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 5813,
+      "percent": 45.1951
+    },
+    {
+      "function": "onEvent",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "samples": 5250,
+      "percent": 40.8179
+    },
+    {
+      "function": "TradingQualityCollector.listener",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "samples": 5250,
+      "percent": 40.8179
+    },
+    {
+      "function": "captureState",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "samples": 5226,
+      "percent": 40.6313
+    },
+    {
+      "function": "put",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "samples": 5208,
+      "percent": 40.4914
+    },
+    {
+      "function": "listOnTimeout",
+      "url": "node:internal/timers",
+      "samples": 4130,
+      "percent": 32.1101
+    },
+    {
+      "function": "persistRuntime",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/config/settingsStore.js",
+      "samples": 4105,
+      "percent": 31.9157
+    },
+    {
+      "function": "analyze",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/entryCoordinator.js",
+      "samples": 3576,
+      "percent": 27.8028
+    },
+    {
+      "function": "apply",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/runtimeWriteBuffer.js",
+      "samples": 3184,
+      "percent": 24.7551
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/config/settingsStore.js",
+      "samples": 3011,
+      "percent": 23.41
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/reconciliationService.js",
+      "samples": 2011,
+      "percent": 15.6352
+    },
+    {
+      "function": "runNextTicks",
+      "url": "node:internal/process/task_queues",
+      "samples": 1787,
+      "percent": 13.8936
+    },
+    {
+      "function": "submitExactlyOnce",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/entryCoordinator.js",
+      "samples": 1772,
+      "percent": 13.777
+    },
+    {
+      "function": "reviewPending",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/entryCoordinator.js",
+      "samples": 1741,
+      "percent": 13.536
+    },
+    {
+      "function": "all",
+      "url": "",
+      "samples": 1680,
+      "percent": 13.0617
+    },
+    {
+      "function": "placeAfterClaim",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/entryCoordinator.js",
+      "samples": 1606,
+      "percent": 12.4864
+    },
+    {
+      "function": "every.name",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 715,
+      "percent": 5.559
+    },
+    {
+      "function": "reconcileCandidateLifecycles",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/candidateLifecycleDeriver.js",
+      "samples": 697,
+      "percent": 5.4191
+    },
+    {
+      "function": "update",
+      "url": "node:internal/crypto/hash",
+      "samples": 672,
+      "percent": 5.2247
+    },
+    {
+      "function": "update",
+      "url": "",
+      "samples": 630,
+      "percent": 4.8981
+    },
+    {
+      "function": "(garbage collector)",
+      "url": "",
+      "samples": 629,
+      "percent": 4.8904
+    },
+    {
+      "function": "pump",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/ownershipRuntime.js",
+      "samples": 569,
+      "percent": 4.4239
+    },
+    {
+      "function": "pendingEvents",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/ownershipJournal.js",
+      "samples": 567,
+      "percent": 4.4083
+    },
+    {
+      "function": "drainOutbox",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/ownershipService.js",
+      "samples": 567,
+      "percent": 4.4083
+    },
+    {
+      "function": "popAsyncContext",
+      "url": "node:internal/async_hooks",
+      "samples": 529,
+      "percent": 4.1129
+    },
+    {
+      "function": "emitAfterScript",
+      "url": "node:internal/async_hooks",
+      "samples": 529,
+      "percent": 4.1129
+    },
+    {
+      "function": "run",
+      "url": "",
+      "samples": 417,
+      "percent": 3.2421
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/api/router.js",
+      "samples": 346,
+      "percent": 2.6901
+    },
+    {
+      "function": "transition",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/entryCoordinator.js",
+      "samples": 327,
+      "percent": 2.5424
+    },
+    {
+      "function": "executionHardBlock",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/entryCoordinator.js",
+      "samples": 326,
+      "percent": 2.5346
+    },
+    {
+      "function": "publishSnapshot",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/api/router.js",
+      "samples": 305,
+      "percent": 2.3713
+    },
+    {
+      "function": "dashboardProjection",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/api/projections.js",
+      "samples": 294,
+      "percent": 2.2858
+    },
+    {
+      "function": "mutateReservations",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/state/runtimeState.js",
+      "samples": 287,
+      "percent": 2.2314
+    },
+    {
+      "function": "state.entryReservationTransaction",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 286,
+      "percent": 2.2236
+    },
+    {
+      "function": "mutateEntryReservations",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/config/settingsStore.js",
+      "samples": 286,
+      "percent": 2.2236
+    },
+    {
+      "function": "saveEntryExecution",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/config/settingsStore.js",
+      "samples": 285,
+      "percent": 2.2158
+    },
+    {
+      "function": "baseDashboardProjection",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/api/projections.js",
+      "samples": 283,
+      "percent": 2.2003
+    },
+    {
+      "function": "markEntryReservationWorking",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/state/runtimeState.js",
+      "samples": 248,
+      "percent": 1.9282
+    },
+    {
+      "function": "entryExecutionClaimStats",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/config/settingsStore.js",
+      "samples": 242,
+      "percent": 1.8815
+    },
+    {
+      "function": "(idle)",
+      "url": "",
+      "samples": 234,
+      "percent": 1.8193
+    },
+    {
+      "function": "exitConvergenceHealth",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 203,
+      "percent": 1.5783
+    },
+    {
+      "function": "attachReservationToIntent",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/state/runtimeState.js",
+      "samples": 193,
+      "percent": 1.5005
+    },
+    {
+      "function": "pendingTasks",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/ownershipService.js",
+      "samples": 190,
+      "percent": 1.4772
+    },
+    {
+      "function": "hash",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "samples": 178,
+      "percent": 1.3839
+    },
+    {
+      "function": "scope",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "samples": 178,
+      "percent": 1.3839
+    },
+    {
+      "function": "get",
+      "url": "",
+      "samples": 176,
+      "percent": 1.3684
+    },
+    {
+      "function": "recordRuntimeEvent",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/config/settingsStore.js",
+      "samples": 173,
+      "percent": 1.345
+    },
+    {
+      "function": "claim",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 162,
+      "percent": 1.2595
+    },
+    {
+      "function": "claimEntryExecution",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/config/settingsStore.js",
+      "samples": 162,
+      "percent": 1.2595
+    },
+    {
+      "function": "work",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/config/settingsStore.js",
+      "samples": 160,
+      "percent": 1.244
+    },
+    {
+      "function": "createHash",
+      "url": "node:crypto",
+      "samples": 153,
+      "percent": 1.1896
+    },
+    {
+      "function": "Hash",
+      "url": "node:internal/crypto/hash",
+      "samples": 144,
+      "percent": 1.1196
+    },
+    {
+      "function": "convergenceStats",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+      "samples": 142,
+      "percent": 1.104
+    },
+    {
+      "function": "digest",
+      "url": "node:internal/crypto/hash",
+      "samples": 139,
+      "percent": 1.0807
+    },
+    {
+      "function": "tick",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "samples": 138,
+      "percent": 1.0729
+    },
+    {
+      "function": "executionTruthProjection",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/api/projections.js",
+      "samples": 134,
+      "percent": 1.0418
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/shadowRunner.js",
+      "samples": 128,
+      "percent": 0.9952
+    },
+    {
+      "function": "sample",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/shadowRunner.js",
+      "samples": 128,
+      "percent": 0.9952
+    },
+    {
+      "function": "query",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/ownershipJournal.js",
+      "samples": 126,
+      "percent": 0.9796
+    },
+    {
+      "function": "digest",
+      "url": "",
+      "samples": 125,
+      "percent": 0.9719
+    },
+    {
+      "function": "allTasks",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+      "samples": 121,
+      "percent": 0.9408
+    },
+    {
+      "function": "attributeCycleFunding",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 118,
+      "percent": 0.9174
+    },
+    {
+      "function": "Hash",
+      "url": "",
+      "samples": 115,
+      "percent": 0.8941
+    },
+    {
+      "function": "cycleFundingFact",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/fundingIncomeLedger.js",
+      "samples": 113,
+      "percent": 0.8786
+    },
+    {
+      "function": "exec",
+      "url": "",
+      "samples": 111,
+      "percent": 0.863
+    },
+    {
+      "function": "attribution",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/fundingIncomeLedger.js",
+      "samples": 108,
+      "percent": 0.8397
+    },
+    {
+      "function": "pipelineStatus",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 102,
+      "percent": 0.793
+    },
+    {
+      "function": "materialize",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "samples": 94,
+      "percent": 0.7308
+    },
+    {
+      "function": "callbackTrampoline",
+      "url": "node:internal/async_hooks",
+      "samples": 86,
+      "percent": 0.6686
+    },
+    {
+      "function": "unreleasedClaimInventory",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+      "samples": 84,
+      "percent": 0.6531
+    },
+    {
+      "function": "updateIncidents",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/api/router.js",
+      "samples": 83,
+      "percent": 0.6453
+    },
+    {
+      "function": "prepare",
+      "url": "",
+      "samples": 78,
+      "percent": 0.6064
+    },
+    {
+      "function": "processCallback",
+      "url": "node:zlib",
+      "samples": 78,
+      "percent": 0.6064
+    },
+    {
+      "function": "",
+      "url": "node:internal/streams/transform",
+      "samples": 77,
+      "percent": 0.5987
+    },
+    {
+      "function": "onwrite",
+      "url": "node:internal/streams/writable",
+      "samples": 77,
+      "percent": 0.5987
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+      "samples": 75,
+      "percent": 0.5831
+    },
+    {
+      "function": "recordShadowMark",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/config/settingsStore.js",
+      "samples": 75,
+      "percent": 0.5831
+    },
+    {
+      "function": "runtimeEvents",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/config/settingsStore.js",
+      "samples": 70,
+      "percent": 0.5442
+    },
+    {
+      "function": "afterWrite",
+      "url": "node:internal/streams/writable",
+      "samples": 64,
+      "percent": 0.4976
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/node_modules/ws/lib/permessage-deflate.js",
+      "samples": 63,
+      "percent": 0.4898
+    },
+    {
+      "function": "recoveryPlan",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+      "samples": 61,
+      "percent": 0.4743
+    },
+    {
+      "function": "recoveryPlan",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+      "samples": 61,
+      "percent": 0.4743
+    },
+    {
+      "function": "apply",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/state/runtimeState.js",
+      "samples": 60,
+      "percent": 0.4665
+    },
+    {
+      "function": "reservationMapsChanged",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/state/runtimeState.js",
+      "samples": 59,
+      "percent": 0.4587
+    },
+    {
+      "function": "same",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/state/runtimeState.js",
+      "samples": 59,
+      "percent": 0.4587
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/node_modules/ws/lib/receiver.js",
+      "samples": 59,
+      "percent": 0.4587
+    },
+    {
+      "function": "convergenceStats",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+      "samples": 58,
+      "percent": 0.4509
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/state/runtimeState.js",
+      "samples": 57,
+      "percent": 0.4432
+    },
+    {
+      "function": "rowsFor",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/fundingIncomeLedger.js",
+      "samples": 57,
+      "percent": 0.4432
+    },
+    {
+      "function": "parserOnHeadersComplete",
+      "url": "node:_http_common",
+      "samples": 49,
+      "percent": 0.381
+    },
+    {
+      "function": "health",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/reconciliationService.js",
+      "samples": 49,
+      "percent": 0.381
+    },
+    {
+      "function": "next",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/node_modules/router/index.js",
+      "samples": 47,
+      "percent": 0.3654
+    },
+    {
+      "function": "jsonParser",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/node_modules/body-parser/lib/types/json.js",
+      "samples": 47,
+      "percent": 0.3654
+    },
+    {
+      "function": "parserOnIncoming",
+      "url": "node:_http_server",
+      "samples": 47,
+      "percent": 0.3654
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/node_modules/router/index.js",
+      "samples": 47,
+      "percent": 0.3654
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/server.js",
+      "samples": 47,
+      "percent": 0.3654
+    },
+    {
+      "function": "read",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/node_modules/body-parser/lib/read.js",
+      "samples": 47,
+      "percent": 0.3654
+    },
+    {
+      "function": "handle",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/node_modules/express/lib/application.js",
+      "samples": 47,
+      "percent": 0.3654
+    },
+    {
+      "function": "app",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/node_modules/express/lib/express.js",
+      "samples": 47,
+      "percent": 0.3654
+    },
+    {
+      "function": "processParams",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/node_modules/router/index.js",
+      "samples": 47,
+      "percent": 0.3654
+    },
+    {
+      "function": "trimPrefix",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/node_modules/router/index.js",
+      "samples": 47,
+      "percent": 0.3654
+    },
+    {
+      "function": "handleRequest",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/node_modules/router/lib/layer.js",
+      "samples": 47,
+      "percent": 0.3654
+    },
+    {
+      "function": "handle",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/node_modules/router/index.js",
+      "samples": 47,
+      "percent": 0.3654
+    },
+    {
+      "function": "next",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/node_modules/router/lib/route.js",
+      "samples": 46,
+      "percent": 0.3576
+    },
+    {
+      "function": "dispatch",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/node_modules/router/lib/route.js",
+      "samples": 46,
+      "percent": 0.3576
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/adapters/market/BinanceMarketStream.js",
+      "samples": 45,
+      "percent": 0.3499
+    },
+    {
+      "function": "receiverOnMessage",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/node_modules/ws/lib/websocket.js",
+      "samples": 44,
+      "percent": 0.3421
+    },
+    {
+      "function": "dataMessage",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/node_modules/ws/lib/receiver.js",
+      "samples": 44,
+      "percent": 0.3421
+    },
+    {
+      "function": "upsertDecisionSnapshot",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/config/settingsStore.js",
+      "samples": 43,
+      "percent": 0.3343
+    },
+    {
+      "function": "router",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/node_modules/router/index.js",
+      "samples": 41,
+      "percent": 0.3188
+    },
+    {
+      "function": "entryConversionReport",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/runExecutionOutcome.js",
+      "samples": 39,
+      "percent": 0.3032
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/entryCoordinator.js",
+      "samples": 39,
+      "percent": 0.3032
+    },
+    {
+      "function": "releaseEntryReservation",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/state/runtimeState.js",
+      "samples": 39,
+      "percent": 0.3032
+    },
+    {
+      "function": "onMessage",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/adapters/market/BinanceMarketStream.js",
+      "samples": 38,
+      "percent": 0.2954
+    },
+    {
+      "function": "processPool",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/entryCoordinator.js",
+      "samples": 34,
+      "percent": 0.2643
+    },
+    {
+      "function": "objectiveCapacity",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/entryCoordinator.js",
+      "samples": 32,
+      "percent": 0.2488
+    },
+    {
+      "function": "buildPreAiExecutionEnvelope",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/preAiExecutionEnvelope.js",
+      "samples": 32,
+      "percent": 0.2488
+    },
+    {
+      "function": "health",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 26,
+      "percent": 0.2021
+    },
+    {
+      "function": "evaluate",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/runtimeControlService.js",
+      "samples": 26,
+      "percent": 0.2021
+    },
+    {
+      "function": "computeExecutableRiskHeadroom",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/executableRiskHeadroom.js",
+      "samples": 26,
+      "percent": 0.2021
+    },
+    {
+      "function": "doWrite",
+      "url": "node:internal/streams/writable",
+      "samples": 26,
+      "percent": 0.2021
+    },
+    {
+      "function": "clearBuffer",
+      "url": "node:internal/streams/writable",
+      "samples": 26,
+      "percent": 0.2021
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/marketDataHub.js",
+      "samples": 25,
+      "percent": 0.1944
+    },
+    {
+      "function": "Transform._write",
+      "url": "node:internal/streams/transform",
+      "samples": 23,
+      "percent": 0.1788
+    },
+    {
+      "function": "ZlibBase._transform",
+      "url": "node:zlib",
+      "samples": 22,
+      "percent": 0.171
+    },
+    {
+      "function": "processChunk",
+      "url": "node:zlib",
+      "samples": 22,
+      "percent": 0.171
+    },
+    {
+      "function": "write",
+      "url": "",
+      "samples": 21,
+      "percent": 0.1633
+    },
+    {
+      "function": "auditProgressReadback",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/reconciliationService.js",
+      "samples": 20,
+      "percent": 0.1555
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/runtimeControlService.js",
+      "samples": 19,
+      "percent": 0.1477
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/executableRiskHeadroom.js",
+      "samples": 18,
+      "percent": 0.1399
+    },
+    {
+      "function": "refresh",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/universeCoordinator.js",
+      "samples": 18,
+      "percent": 0.1399
+    },
+    {
+      "function": "appendDecisionChain",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/config/settingsStore.js",
+      "samples": 17,
+      "percent": 0.1322
+    },
+    {
+      "function": "cleanupReservations",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/state/runtimeState.js",
+      "samples": 16,
+      "percent": 0.1244
+    },
+    {
+      "function": "(program)",
+      "url": "",
+      "samples": 15,
+      "percent": 0.1166
+    },
+    {
+      "function": "ownership",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/ownershipService.js",
+      "samples": 14,
+      "percent": 0.1088
+    },
+    {
+      "function": "sideCapacity",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/preAiExecutionEnvelope.js",
+      "samples": 14,
+      "percent": 0.1088
+    },
+    {
+      "function": "startLoop",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/node_modules/ws/lib/receiver.js",
+      "samples": 14,
+      "percent": 0.1088
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/adapters/binance/BinanceTransport.js",
+      "samples": 13,
+      "percent": 0.1011
+    },
+    {
+      "function": "get",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/ownershipJournal.js",
+      "samples": 13,
+      "percent": 0.1011
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/api/projections.js",
+      "samples": 13,
+      "percent": 0.1011
+    },
+    {
+      "function": "getData",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/node_modules/ws/lib/receiver.js",
+      "samples": 13,
+      "percent": 0.1011
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/adapters/binance/requestBudget.js",
+      "samples": 12,
+      "percent": 0.0933
+    },
+    {
+      "function": "entryCapacity",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/state/runtimeState.js",
+      "samples": 12,
+      "percent": 0.0933
+    },
+    {
+      "function": "health",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/adapters/binance/requestBudget.js",
+      "samples": 12,
+      "percent": 0.0933
+    },
+    {
+      "function": "persistCandidateShadow",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "samples": 12,
+      "percent": 0.0933
+    },
+    {
+      "function": "_write",
+      "url": "node:internal/streams/writable",
+      "samples": 12,
+      "percent": 0.0933
+    },
+    {
+      "function": "Writable.write",
+      "url": "node:internal/streams/writable",
+      "samples": 12,
+      "percent": 0.0933
+    },
+    {
+      "function": "writeOrBuffer",
+      "url": "node:internal/streams/writable",
+      "samples": 12,
+      "percent": 0.0933
+    },
+    {
+      "function": "onEvent",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/adapters/market/BinanceMarketStream.js",
+      "samples": 12,
+      "percent": 0.0933
+    },
+    {
+      "function": "",
+      "url": "",
+      "samples": 11,
+      "percent": 0.0855
+    },
+    {
+      "function": "json",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/node_modules/express/lib/response.js",
+      "samples": 11,
+      "percent": 0.0855
+    },
+    {
+      "function": "quoteAssetCommittedMargin",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/capitalCapacity.js",
+      "samples": 11,
+      "percent": 0.0855
+    },
+    {
+      "function": "remoteFactAuditClass",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/entryRiskOccupancy.js",
+      "samples": 11,
+      "percent": 0.0855
+    },
+    {
+      "function": "calculate",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/runtimeControlService.js",
+      "samples": 11,
+      "percent": 0.0855
+    },
+    {
+      "function": "decompress",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/node_modules/ws/lib/receiver.js",
+      "samples": 11,
+      "percent": 0.0855
+    },
+    {
+      "function": "_decompress",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/node_modules/ws/lib/permessage-deflate.js",
+      "samples": 11,
+      "percent": 0.0855
+    },
+    {
+      "function": "add",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/node_modules/ws/lib/limiter.js",
+      "samples": 11,
+      "percent": 0.0855
+    },
+    {
+      "function": "decompress",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/node_modules/ws/lib/permessage-deflate.js",
+      "samples": 11,
+      "percent": 0.0855
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/node_modules/ws/lib/limiter.js",
+      "samples": 11,
+      "percent": 0.0855
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/capitalCapacity.js",
+      "samples": 10,
+      "percent": 0.0777
+    },
+    {
+      "function": "captureStateChunk",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "samples": 10,
+      "percent": 0.0777
+    },
+    {
+      "function": "readinessProjection",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 10,
+      "percent": 0.0777
+    },
+    {
+      "function": "collectPendingEntryRiskExposures",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/entryRiskOccupancy.js",
+      "samples": 10,
+      "percent": 0.0777
+    },
+    {
+      "function": "sum",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/executableRiskHeadroom.js",
+      "samples": 10,
+      "percent": 0.0777
+    },
+    {
+      "function": "reservationCleanupNeeded",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/state/runtimeState.js",
+      "samples": 10,
+      "percent": 0.0777
+    },
+    {
+      "function": "json",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/adapters/binance/BinanceTransport.js",
+      "samples": 9,
+      "percent": 0.07
+    },
+    {
+      "function": "_parseSync",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/node_modules/zod/v3/types.js",
+      "samples": 9,
+      "percent": 0.07
+    },
+    {
+      "function": "_parse",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/node_modules/zod/v3/types.js",
+      "samples": 9,
+      "percent": 0.07
+    },
+    {
+      "function": "parse",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/node_modules/zod/v3/types.js",
+      "samples": 9,
+      "percent": 0.07
+    },
+    {
+      "function": "safeParse",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/node_modules/zod/v3/types.js",
+      "samples": 9,
+      "percent": 0.07
+    },
+    {
+      "function": "projectTradeRecordSummary",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/tradeRecordReadModel.js",
+      "samples": 9,
+      "percent": 0.07
+    },
+    {
+      "function": "run",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/adapters/binance/requestBudget.js",
+      "samples": 8,
+      "percent": 0.0622
+    },
+    {
+      "function": "supplyHealth",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 8,
+      "percent": 0.0622
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/entryRiskOccupancy.js",
+      "samples": 8,
+      "percent": 0.0622
+    },
+    {
+      "function": "ownerOfScope",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+      "samples": 8,
+      "percent": 0.0622
+    },
+    {
+      "function": "_write",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/node_modules/ws/lib/receiver.js",
+      "samples": 8,
+      "percent": 0.0622
+    },
+    {
+      "function": "observeRemotePosition",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/positionService.js",
+      "samples": 8,
+      "percent": 0.0622
+    },
+    {
+      "function": "byteLength",
+      "url": "node:buffer",
+      "samples": 7,
+      "percent": 0.0544
+    },
+    {
+      "function": "endReadableNT",
+      "url": "node:internal/streams/readable",
+      "samples": 7,
+      "percent": 0.0544
+    },
+    {
+      "function": "request",
+      "url": "node:https",
+      "samples": 7,
+      "percent": 0.0544
+    },
+    {
+      "function": "remoteFactAuditDeferred",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/entryRiskOccupancy.js",
+      "samples": 7,
+      "percent": 0.0544
+    },
+    {
+      "function": "candidateCapitalFromState",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/capitalCapacity.js",
+      "samples": 7,
+      "percent": 0.0544
+    },
+    {
+      "function": "readableAddChunkPushByteMode",
+      "url": "node:internal/streams/readable",
+      "samples": 7,
+      "percent": 0.0544
+    },
+    {
+      "function": "addChunk",
+      "url": "node:internal/streams/readable",
+      "samples": 7,
+      "percent": 0.0544
+    },
+    {
+      "function": "Readable.push",
+      "url": "node:internal/streams/readable",
+      "samples": 7,
+      "percent": 0.0544
+    },
+    {
+      "function": "tick",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/positionReviewRunner.js",
+      "samples": 7,
+      "percent": 0.0544
+    },
+    {
+      "function": "sweep",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/tpGuardian.js",
+      "samples": 6,
+      "percent": 0.0466
+    },
+    {
+      "function": "owner",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+      "samples": 6,
+      "percent": 0.0466
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/tradeRecordReadModel.js",
+      "samples": 6,
+      "percent": 0.0466
+    },
+    {
+      "function": "entryOrderOccupiesRisk",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/entryRiskOccupancy.js",
+      "samples": 6,
+      "percent": 0.0466
+    },
+    {
+      "function": "ClientRequest",
+      "url": "node:_http_client",
+      "samples": 6,
+      "percent": 0.0466
+    },
+    {
+      "function": "activeEntrySymbols",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/state/runtimeState.js",
+      "samples": 6,
+      "percent": 0.0466
+    },
+    {
+      "function": "saveManualExecution",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/config/settingsStore.js",
+      "samples": 6,
+      "percent": 0.0466
+    },
+    {
+      "function": "exactCycleRecord",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/cycleAccounting.js",
+      "samples": 6,
+      "percent": 0.0466
+    },
+    {
+      "function": "stringify",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/node_modules/express/lib/response.js",
+      "samples": 5,
+      "percent": 0.0389
+    },
+    {
+      "function": "ensure",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/tpGuardian.js",
+      "samples": 5,
+      "percent": 0.0389
+    },
+    {
+      "function": "writeAdmissionBlock",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/entryCoordinator.js",
+      "samples": 5,
+      "percent": 0.0389
+    },
+    {
+      "function": "executionReadinessSnapshot",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 5,
+      "percent": 0.0389
+    },
+    {
+      "function": "writeAdmissionBlockReason",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/entryCoordinator.js",
+      "samples": 5,
+      "percent": 0.0389
+    },
+    {
+      "function": "binanceEntryBlockReason",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/adapters/binance/requestBudget.js",
+      "samples": 5,
+      "percent": 0.0389
+    },
+    {
+      "function": "remoteRiskAudit",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/entryRiskOccupancy.js",
+      "samples": 5,
+      "percent": 0.0389
+    },
+    {
+      "function": "projectTradeRecordRow",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/tradeRecordReadModel.js",
+      "samples": 5,
+      "percent": 0.0389
+    },
+    {
+      "function": "reservationDebitsAvailableFunds",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/entryFundingCommitment.js",
+      "samples": 5,
+      "percent": 0.0389
+    },
+    {
+      "function": "nextTick",
+      "url": "node:internal/process/task_queues",
+      "samples": 5,
+      "percent": 0.0389
+    },
+    {
+      "function": "onStreamRead",
+      "url": "node:internal/stream_base_commons",
+      "samples": 5,
+      "percent": 0.0389
+    },
+    {
+      "function": "Socket._writeGeneric",
+      "url": "node:net",
+      "samples": 5,
+      "percent": 0.0389
+    },
+    {
+      "function": "Writable.uncork",
+      "url": "node:internal/streams/writable",
+      "samples": 5,
+      "percent": 0.0389
+    },
+    {
+      "function": "signed",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/adapters/exchange/ExternalTradeAdapter.js",
+      "samples": 5,
+      "percent": 0.0389
+    },
+    {
+      "function": "attempt",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/adapters/exchange/ExternalTradeAdapter.js",
+      "samples": 5,
+      "percent": 0.0389
+    },
+    {
+      "function": "send",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/node_modules/express/lib/response.js",
+      "samples": 5,
+      "percent": 0.0389
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/fundingIncomeLedger.js",
+      "samples": 5,
+      "percent": 0.0389
+    },
+    {
+      "function": "run",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/aiFabric.js",
+      "samples": 5,
+      "percent": 0.0389
+    },
+    {
+      "function": "schedulePendingEntryReview",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/entryCoordinator.js",
+      "samples": 5,
+      "percent": 0.0389
+    },
+    {
+      "function": "pumpReviewQueue",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/aiFabric.js",
+      "samples": 5,
+      "percent": 0.0389
+    },
+    {
+      "function": "reviewPendingEntry",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/aiFabric.js",
+      "samples": 5,
+      "percent": 0.0389
+    },
+    {
+      "function": "queueReview",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/aiFabric.js",
+      "samples": 5,
+      "percent": 0.0389
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/aiFabric.js",
+      "samples": 5,
+      "percent": 0.0389
+    },
+    {
+      "function": "observeResponse",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/adapters/binance/requestBudget.js",
+      "samples": 4,
+      "percent": 0.0311
+    },
+    {
+      "function": "quoteAssetCapitalLedgers",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/capitalCapacity.js",
+      "samples": 4,
+      "percent": 0.0311
+    },
+    {
+      "function": "entryTradingCapital",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/capitalCapacity.js",
+      "samples": 4,
+      "percent": 0.0311
+    },
+    {
+      "function": "entryAdmissionBlockReason",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/adapters/exchange/ExternalTradeAdapter.js",
+      "samples": 4,
+      "percent": 0.0311
+    },
+    {
+      "function": "entryBlockReason",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/adapters/binance/BinanceTransport.js",
+      "samples": 4,
+      "percent": 0.0311
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/node_modules/zod/v3/types.js",
+      "samples": 4,
+      "percent": 0.0311
+    },
+    {
+      "function": "capitalFactVersion",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/runtimeControlService.js",
+      "samples": 4,
+      "percent": 0.0311
+    },
+    {
+      "function": "dispatchAnalysisTick",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 4,
+      "percent": 0.0311
+    },
+    {
+      "function": "maybeReadMore",
+      "url": "node:internal/streams/readable",
+      "samples": 4,
+      "percent": 0.0311
+    },
+    {
+      "function": "_flush",
+      "url": "node:_http_outgoing",
+      "samples": 4,
+      "percent": 0.0311
+    },
+    {
+      "function": "Socket._write",
+      "url": "node:net",
+      "samples": 4,
+      "percent": 0.0311
+    },
+    {
+      "function": "_flushOutput",
+      "url": "node:_http_outgoing",
+      "samples": 4,
+      "percent": 0.0311
+    },
+    {
+      "function": "onSocketNT",
+      "url": "node:_http_client",
+      "samples": 4,
+      "percent": 0.0311
+    },
+    {
+      "function": "writeGeneric",
+      "url": "node:internal/stream_base_commons",
+      "samples": 4,
+      "percent": 0.0311
+    },
+    {
+      "function": "wrappedFn",
+      "url": "node:internal/errors",
+      "samples": 4,
+      "percent": 0.0311
+    },
+    {
+      "function": "runtimeStatus",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 4,
+      "percent": 0.0311
+    },
+    {
+      "function": "checkError",
+      "url": "node:os",
+      "samples": 4,
+      "percent": 0.0311
+    },
+    {
+      "function": "currentLanIps",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/runtime/runtimeIdentity.js",
+      "samples": 4,
+      "percent": 0.0311
+    },
+    {
+      "function": "networkInterfaces",
+      "url": "node:os",
+      "samples": 4,
+      "percent": 0.0311
+    },
+    {
+      "function": "getInterfaceAddresses",
+      "url": "",
+      "samples": 4,
+      "percent": 0.0311
+    },
+    {
+      "function": "entryIdentityTombstone",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/entryRiskOccupancy.js",
+      "samples": 4,
+      "percent": 0.0311
+    },
+    {
+      "function": "canonicalPnlEligible",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/tradingQualityEligibility.js",
+      "samples": 4,
+      "percent": 0.0311
+    },
+    {
+      "function": "localFixedEstimate",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/adapters/binance/requestBudget.js",
+      "samples": 4,
+      "percent": 0.0311
+    },
+    {
+      "function": "riskClusterKey",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/executableRiskHeadroom.js",
+      "samples": 4,
+      "percent": 0.0311
+    },
+    {
+      "function": "clusterFor",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/executableRiskHeadroom.js",
+      "samples": 4,
+      "percent": 0.0311
+    },
+    {
+      "function": "ledgerClosedComplete",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/tradingQualityEligibility.js",
+      "samples": 4,
+      "percent": 0.0311
+    },
+    {
+      "function": "reservationSummary",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/state/runtimeState.js",
+      "samples": 4,
+      "percent": 0.0311
+    },
+    {
+      "function": "reserve",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/positionReviewScheduler.js",
+      "samples": 4,
+      "percent": 0.0311
+    },
+    {
+      "function": "toString",
+      "url": "node:buffer",
+      "samples": 4,
+      "percent": 0.0311
+    },
+    {
+      "function": "upsertAiRun",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/config/settingsStore.js",
+      "samples": 4,
+      "percent": 0.0311
+    },
+    {
+      "function": "enqueue",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/operationalLogger.js",
+      "samples": 3,
+      "percent": 0.0233
+    },
+    {
+      "function": "record",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/operationalLogger.js",
+      "samples": 3,
+      "percent": 0.0233
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/main.js",
+      "samples": 3,
+      "percent": 0.0233
+    },
+    {
+      "function": "mandate",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+      "samples": 3,
+      "percent": 0.0233
+    },
+    {
+      "function": "tick",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/v396AiExitRunner.js",
+      "samples": 3,
+      "percent": 0.0233
+    },
+    {
+      "function": "fundingIncomeCoverage",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 3,
+      "percent": 0.0233
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/entryFundingCommitment.js",
+      "samples": 3,
+      "percent": 0.0233
+    },
+    {
+      "function": "entryHasUnresolvedExchangeTerminalRisk",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/entryRiskOccupancy.js",
+      "samples": 3,
+      "percent": 0.0233
+    },
+    {
+      "function": "readiness",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 3,
+      "percent": 0.0233
+    },
+    {
+      "function": "riskUnderlying",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/executableRiskHeadroom.js",
+      "samples": 3,
+      "percent": 0.0233
+    },
+    {
+      "function": "isSecureEndpoint",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/node_modules/socks-proxy-agent/node_modules/agent-base/dist/index.js",
+      "samples": 3,
+      "percent": 0.0233
+    },
+    {
+      "function": "get protocol",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/node_modules/socks-proxy-agent/node_modules/agent-base/dist/index.js",
+      "samples": 3,
+      "percent": 0.0233
+    },
+    {
+      "function": "loadSnapshot",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/marketDataHub.js",
+      "samples": 3,
+      "percent": 0.0233
+    },
+    {
+      "function": "getSnapshot",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/adapters/market/BinancePublicMarketDataProvider.js",
+      "samples": 3,
+      "percent": 0.0233
+    },
+    {
+      "function": "worker",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/marketDataHub.js",
+      "samples": 3,
+      "percent": 0.0233
+    },
+    {
+      "function": "restOrderBook",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/adapters/market/BinancePublicMarketDataProvider.js",
+      "samples": 3,
+      "percent": 0.0233
+    },
+    {
+      "function": "serialize",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/state/runtimeState.js",
+      "samples": 3,
+      "percent": 0.0233
+    },
+    {
+      "function": "ownerOf",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 3,
+      "percent": 0.0233
+    },
+    {
+      "function": "handleWriteReq",
+      "url": "node:internal/stream_base_commons",
+      "samples": 3,
+      "percent": 0.0233
+    },
+    {
+      "function": "writeLatin1String",
+      "url": "",
+      "samples": 3,
+      "percent": 0.0233
+    },
+    {
+      "function": "nonEmptyId",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/entryRiskOccupancy.js",
+      "samples": 3,
+      "percent": 0.0233
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/cycleAccounting.js",
+      "samples": 3,
+      "percent": 0.0233
+    },
+    {
+      "function": "redactAudit",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/api/projections.js",
+      "samples": 2,
+      "percent": 0.0155
+    },
+    {
+      "function": "mandate",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/ownershipService.js",
+      "samples": 2,
+      "percent": 0.0155
+    },
+    {
+      "function": "profileReadback",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/portfolioRiskLedger.js",
+      "samples": 2,
+      "percent": 0.0155
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/ownershipJournal.js",
+      "samples": 2,
+      "percent": 0.0155
+    },
+    {
+      "function": "transaction",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/ownershipJournal.js",
+      "samples": 2,
+      "percent": 0.0155
+    },
+    {
+      "function": "expireDue",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/ownershipRuntime.js",
+      "samples": 2,
+      "percent": 0.0155
+    },
+    {
+      "function": "expire",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/ownershipJournal.js",
+      "samples": 2,
+      "percent": 0.0155
+    },
+    {
+      "function": "fixCycleDeadline",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 2,
+      "percent": 0.0155
+    },
+    {
+      "function": "fixFirstFillDeadlines",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 2,
+      "percent": 0.0155
+    },
+    {
+      "function": "reviewReadback",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/positionReviewScheduler.js",
+      "samples": 2,
+      "percent": 0.0155
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/positionReviewScheduler.js",
+      "samples": 2,
+      "percent": 0.0155
+    },
+    {
+      "function": "evaluateCapitalAdmission",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/packages/core/dist/capitalAdmission.js",
+      "samples": 2,
+      "percent": 0.0155
+    },
+    {
+      "function": "binanceBudgetLane",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/adapters/binance/requestBudget.js",
+      "samples": 2,
+      "percent": 0.0155
+    },
+    {
+      "function": "lifecycleRunnable",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/entryCoordinator.js",
+      "samples": 2,
+      "percent": 0.0155
+    },
+    {
+      "function": "addAbortSignal",
+      "url": "node:internal/streams/add-abort-signal",
+      "samples": 2,
+      "percent": 0.0155
+    },
+    {
+      "function": "module.exports.addAbortSignalNoValidate",
+      "url": "node:internal/streams/add-abort-signal",
+      "samples": 2,
+      "percent": 0.0155
+    },
+    {
+      "function": "generateETag",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/node_modules/express/lib/utils.js",
+      "samples": 2,
+      "percent": 0.0155
+    },
+    {
+      "function": "etag",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/node_modules/etag/index.js",
+      "samples": 2,
+      "percent": 0.0155
+    },
+    {
+      "function": "entitytag",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/node_modules/etag/index.js",
+      "samples": 2,
+      "percent": 0.0155
+    },
+    {
+      "function": "coverageSummary",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/fundingIncomeLedger.js",
+      "samples": 2,
+      "percent": 0.0155
+    },
+    {
+      "function": "end",
+      "url": "node:_http_outgoing",
+      "samples": 2,
+      "percent": 0.0155
+    },
+    {
+      "function": "metrics",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/tpGuardian.js",
+      "samples": 2,
+      "percent": 0.0155
+    },
+    {
+      "function": "ErrorPrepareStackTrace",
+      "url": "node:internal/errors",
+      "samples": 2,
+      "percent": 0.0155
+    },
+    {
+      "function": "prepareStackTraceCallback",
+      "url": "node:internal/errors",
+      "samples": 2,
+      "percent": 0.0155
+    },
+    {
+      "function": "defaultPrepareStackTrace",
+      "url": "node:internal/errors",
+      "samples": 2,
+      "percent": 0.0155
+    },
+    {
+      "function": "get defaultPort",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/node_modules/socks-proxy-agent/node_modules/agent-base/dist/index.js",
+      "samples": 2,
+      "percent": 0.0155
+    },
+    {
+      "function": "getOrderBook",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/adapters/market/BinancePublicMarketDataProvider.js",
+      "samples": 2,
+      "percent": 0.0155
+    },
+    {
+      "function": "reservationHoldsRisk",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/state/runtimeState.js",
+      "samples": 2,
+      "percent": 0.0155
+    },
+    {
+      "function": "decisionSettingsContext",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/decisionContext.js",
+      "samples": 2,
+      "percent": 0.0155
+    },
+    {
+      "function": "versions",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/positionReviewRunner.js",
+      "samples": 2,
+      "percent": 0.0155
+    },
+    {
+      "function": "reviewSettings",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 2,
+      "percent": 0.0155
+    },
+    {
+      "function": "dutyResources",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/aiFabric.js",
+      "samples": 2,
+      "percent": 0.0155
+    },
+    {
+      "function": "dutyResource",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/aiFabric.js",
+      "samples": 2,
+      "percent": 0.0155
+    },
+    {
+      "function": "reviewDedicated",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/aiFabric.js",
+      "samples": 2,
+      "percent": 0.0155
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/adapters/market/BinancePublicMarketDataProvider.js",
+      "samples": 2,
+      "percent": 0.0155
+    },
+    {
+      "function": "recoverStale",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/marketDataHub.js",
+      "samples": 2,
+      "percent": 0.0155
+    },
+    {
+      "function": "",
+      "url": "node:internal/deps/undici/undici",
+      "samples": 2,
+      "percent": 0.0155
+    },
+    {
+      "function": "destroy",
+      "url": "node:internal/streams/destroy",
+      "samples": 2,
+      "percent": 0.0155
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "samples": 2,
+      "percent": 0.0155
+    },
+    {
+      "function": "near",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/adapters/market/recentTradePrices.js",
+      "samples": 2,
+      "percent": 0.0155
+    },
+    {
+      "function": "tick",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/marketDataHub.js",
+      "samples": 2,
+      "percent": 0.0155
+    },
+    {
+      "function": "hydrateLiveMarket",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/adapters/market/BinancePublicMarketDataProvider.js",
+      "samples": 2,
+      "percent": 0.0155
+    },
+    {
+      "function": "markEpisodeDirty",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "samples": 2,
+      "percent": 0.0155
+    },
+    {
+      "function": "loadQuote",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/adapters/market/BinancePublicMarketDataProvider.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "pump",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/adapters/binance/requestBudget.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "parseBinanceRateLimitHeaders",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/adapters/binance/requestBudget.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "urlToHttpOptions",
+      "url": "node:internal/url",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "portfolioRiskRequiredSymbols",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "coverageWatch",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "validateNoActiveRiskProof",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/entryRiskOccupancy.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "decisionContextPermissions",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/decisionContext.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "_addListener",
+      "url": "node:events",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "eos",
+      "url": "node:internal/streams/end-of-stream",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "addListener",
+      "url": "node:events",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "writeSync",
+      "url": "node:fs",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "ondata",
+      "url": "node:internal/streams/readable",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "",
+      "url": "node:internal/per_context/messageport",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "Worker.<computed>.onexit",
+      "url": "node:internal/worker",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "writeBuffer",
+      "url": "",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "",
+      "url": "node:internal/worker",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "SyncWriteStream._write",
+      "url": "node:internal/fs/sync_write_stream",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "drainMessagePort",
+      "url": "",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "",
+      "url": "node:internal/event_target",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "getOrSetAsyncId",
+      "url": "node:internal/async_hooks",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "connectionListener",
+      "url": "node:_http_server",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "onconnection",
+      "url": "node:net",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "finishMaybe",
+      "url": "node:internal/streams/writable",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "afterWriteTick",
+      "url": "node:internal/streams/writable",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "callback",
+      "url": "node:internal/streams/writable",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "Socket._final",
+      "url": "node:net",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "Socket.end",
+      "url": "node:net",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "prefinish",
+      "url": "node:internal/streams/writable",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "Writable.end",
+      "url": "node:internal/streams/writable",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "resOnFinish",
+      "url": "node:_http_server",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "onFinish",
+      "url": "node:_http_outgoing",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "Socket.destroySoon",
+      "url": "node:net",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "aiRunHealthSummary",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/config/settingsStore.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "entrySideCapacityTraces",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/entryCapacityTrace.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "ReadableState",
+      "url": "node:internal/streams/readable",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "Readable",
+      "url": "node:internal/streams/readable",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "IncomingMessage",
+      "url": "node:_http_incoming",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "fromStringFast",
+      "url": "node:buffer",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "from",
+      "url": "node:buffer",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "createFromString",
+      "url": "node:buffer",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "fromString",
+      "url": "node:buffer",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "Socket._writev",
+      "url": "node:net",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "writev",
+      "url": "",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "writevGeneric",
+      "url": "node:internal/stream_base_commons",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "_implicitHeader",
+      "url": "node:_http_server",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "storeHeader",
+      "url": "node:_http_outgoing",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "writeHead",
+      "url": "node:_http_server",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "_storeHeader",
+      "url": "node:_http_outgoing",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "matchHeader",
+      "url": "node:_http_outgoing",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "processHeader",
+      "url": "node:_http_outgoing",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "write_",
+      "url": "node:_http_outgoing",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "estimatedWeight",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/adapters/binance/requestBudget.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "horizonLadder",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/quantityHorizonCandidates.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/quantityHorizonCandidates.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "legalTargetHorizonMinutes",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/quantityHorizonCandidates.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "freshness",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/marketDataHub.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "evaluateEntryExecutionPermit",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/entryPermissionModel.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "portfolioRiskObservation",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/entryPermissionModel.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "flush",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/realtime/wsServer.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "send",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/node_modules/ws/lib/websocket.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "buildRiskEnvelope",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/riskReadiness.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "backfillAiRunSummaries",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/config/settingsStore.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "exposure",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/packages/core/dist/portfolio.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "mergeObjectSync",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/node_modules/zod/v3/helpers/parseUtil.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "addAbortListener",
+      "url": "node:internal/events/abort_listener",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "defaultTriggerAsyncIdScope",
+      "url": "node:internal/async_hooks",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "internalConnect",
+      "url": "node:net",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "connect",
+      "url": "",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "",
+      "url": "node:net",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/candidateLifecycleDeriver.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "tradeMemoryVersionOf",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/tradeMemoryService.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "memoryVersion",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "requestBudgetHealth",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/adapters/binance/BinanceTransport.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "binanceTransportGovernance",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/adapters/binance/BinanceTransport.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "auditJson",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/api/projections.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "params",
+      "url": "",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "metrics",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/adapters/market/BinanceMarketStream.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "metrics",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/marketDataHub.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "fresh",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/adapters/market/BinanceMarketStream.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "streamMetrics",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/adapters/market/BinancePublicMarketDataProvider.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "rules",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/adapters/market/BinancePublicMarketDataProvider.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "noteExecutionReadiness",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/entryCoordinator.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "header",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/node_modules/express/lib/response.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "reservationNoChange",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/state/runtimeState.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "parse",
+      "url": "",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "URL",
+      "url": "node:internal/url",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "selectUniverse",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/packages/core/dist/selection.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/packages/core/dist/selection.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "routineLimit",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/positionReviewScheduler.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "onMessageComplete",
+      "url": "node:internal/deps/undici/undici",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "js-to-wasm:i:i",
+      "url": "wasm://wasm/0002f80e",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "emitReadable_",
+      "url": "node:internal/streams/readable",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "wasm-to-js",
+      "url": "",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "execute",
+      "url": "node:internal/deps/undici/undici",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "wasm-function[20]",
+      "url": "wasm://wasm/0002f80e",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "wasm_on_message_complete",
+      "url": "node:internal/deps/undici/undici",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "onComplete",
+      "url": "node:internal/deps/undici/undici",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "readMore",
+      "url": "node:internal/deps/undici/undici",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "emitFreeNT",
+      "url": "node:_http_client",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "onFree",
+      "url": "node:_http_agent",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "removeSocket",
+      "url": "node:_http_agent",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "",
+      "url": "node:_http_agent",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "recover",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/adapters/market/BinanceMarketStream.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "init",
+      "url": "node:internal/async_local_storage/async_hooks",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "emitInitScript",
+      "url": "node:internal/async_hooks",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "_propagate",
+      "url": "node:internal/async_local_storage/async_hooks",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "emitInitNative",
+      "url": "node:internal/async_hooks",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "getInfo",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/node_modules/ws/lib/receiver.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "controlMessage",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/node_modules/ws/lib/receiver.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "receiverOnPong",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/node_modules/ws/lib/websocket.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "inflateOnData",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/node_modules/ws/lib/permessage-deflate.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "consume",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/node_modules/ws/lib/receiver.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "persist",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/adapters/binance/requestBudget.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "openSync",
+      "url": "node:fs",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "open",
+      "url": "",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "writeFileSync",
+      "url": "node:fs",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "_destroy",
+      "url": "node:internal/streams/destroy",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "_destroy",
+      "url": "node:_http_incoming",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "save",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/runtime/appRuntime.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "parserOnIncomingClient",
+      "url": "node:_http_client",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "execute",
+      "url": "",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "socketOnData",
+      "url": "node:_http_client",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "onceWrapper",
+      "url": "node:events",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "removeListener",
+      "url": "node:events",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "json",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/adapters/market/BinancePublicMarketDataProvider.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "loadCandles",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/adapters/market/BinancePublicMarketDataProvider.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "getCandles",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/adapters/market/BinancePublicMarketDataProvider.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "worker",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/adapters/market/BinancePublicMarketDataProvider.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "reservationOccupiesRisk",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/state/runtimeState.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "scope",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "executionScope",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/executionLifecycle.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "storageEntryBlockReason",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/storageCapacityGuard.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "storageCapacityHealth",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/storageCapacityGuard.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "existsSync",
+      "url": "",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "canDispatch",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/runtimeControlService.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "existsSync",
+      "url": "node:fs",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "canonical",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/portfolioRiskSnapshot.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "portfolioRiskAuthorityReadback",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/portfolioRiskAuthority.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "portfolioRiskAuthorityBlockers",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/portfolioRiskAuthority.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "sameObject",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/portfolioRiskAuthority.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "stableRiskHash",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/portfolioRiskSnapshot.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "fetch",
+      "url": "node:internal/bootstrap/web/exposed-window-or-worker",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "tee",
+      "url": "node:internal/webstreams/readablestream",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "cloneRequest",
+      "url": "node:internal/deps/undici/undici",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "fetch",
+      "url": "node:internal/deps/undici/undici",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "fetch2",
+      "url": "node:internal/deps/undici/undici",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "runJson",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/adapters/ai/OpenAiCompatibleClient.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "createReadableByteStream",
+      "url": "node:internal/webstreams/readablestream",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "readableStreamTee",
+      "url": "node:internal/webstreams/readablestream",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "httpNetworkOrCacheFetch",
+      "url": "node:internal/deps/undici/undici",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "fetching",
+      "url": "node:internal/deps/undici/undici",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "mainFetch",
+      "url": "node:internal/deps/undici/undici",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "schemeFetch",
+      "url": "node:internal/deps/undici/undici",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "cloneBody",
+      "url": "node:internal/deps/undici/undici",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "httpFetch",
+      "url": "node:internal/deps/undici/undici",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "readableByteStreamTee",
+      "url": "node:internal/webstreams/readablestream",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "mapLimit",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/marketDataHub.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "destroy",
+      "url": "node:internal/deps/undici/undici",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "checkError",
+      "url": "node:internal/streams/destroy",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "onParserTimeout",
+      "url": "node:internal/deps/undici/undici",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "Writable.destroy",
+      "url": "node:internal/streams/writable",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "_processInputParams",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/node_modules/zod/v3/types.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/positionService.js",
+      "samples": 1,
+      "percent": 0.0078
+    },
+    {
+      "function": "durableEntryClaimActive",
+      "url": "file:///D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine/dist/services/entryRiskOccupancy.js",
+      "samples": 1,
+      "percent": 0.0078
+    }
+  ],
+  "nativeRunParents": {
+    "persistRuntime": 13,
+    "put": 19,
+    "recordRuntimeEvent": 152,
+    "appendDecisionChain": 11,
+    "tick": 21,
+    "materialize": 14,
+    "saveEntryExecution": 54,
+    "upsertDecisionSnapshot": 43,
+    "recordShadowMark": 75,
+    "persistCandidateShadow": 4,
+    "saveManualExecution": 6,
+    "upsertAiRun": 3,
+    "markEpisodeDirty": 2
+  }
+}

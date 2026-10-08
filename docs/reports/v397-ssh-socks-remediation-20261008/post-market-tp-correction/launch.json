@@ -1,0 +1,9 @@
+{
+  "at": "2026-10-08T00:56:42.3661219Z",
+  "script": "D:\\MITS-WORKTREES\\v397-market-recovery-dispatch-time-20261008\\docs\\reports\\v397-ssh-socks-remediation-20261008\\post-market-tp-correction\\collect_stability.py",
+  "mode": "READ_ONLY_LOCALHOST_INDEPENDENT_WINDOW",
+  "intervalSeconds": 30,
+  "pid": 44820,
+  "label": "post-market-tp-correction",
+  "minutes": 15
+}

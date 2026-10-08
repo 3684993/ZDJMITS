@@ -1,0 +1,152 @@
+{
+  "at": "2026-10-08T00:56:28.833273+00:00",
+  "mode": "READ_ONLY_EXACT_VERSIONED_SQLITE",
+  "clientOrderId": "v396x8419a8beaceabdc09e207493241b89",
+  "tasks": [
+    {
+      "taskId": "exit_v396x8419a8beaceabdc09e207493241b89",
+      "clientOrderId": "v396x8419a8beaceabdc09e207493241b89",
+      "scope": "[\"TESTNET\",\"binance-primary\",\"NEARUSDC\",\"LONG\"]",
+      "cycleId": "cycle_entry_intent_muyt1rih_y188q0jb",
+      "source": "TP",
+      "quantityUnits": 189,
+      "limitPrice": 5.329,
+      "state": "REJECTED",
+      "version": 3,
+      "filledUnits": 0,
+      "ownerVersion": 1,
+      "planVersion": 1,
+      "positionVersion": 1791419745355,
+      "settingsVersion": 247,
+      "riskGeneration": 1,
+      "estimateHash": "V396_TP_1_1791419773328_5.329",
+      "decisionHash": "V396_TP_1_1791419773328_5.329",
+      "authorizationExpiresAt": 1791419788328,
+      "deadline": 1791419788328,
+      "createdAt": 1791419773328,
+      "updatedAt": 1791420970312,
+      "reasons": [
+        "SUBMIT_ACK_LOST_MUST_QUERY_BY_CLIENT_ORDER_ID",
+        "LOCAL_NOT_SENT:COMPLETE_VERSIONED_PREWIRE_HISTORY"
+      ],
+      "stepSize": 1,
+      "requestKey": "[\"TP\",\"cycle_entry_intent_muyt1rih_y188q0jb\",1,\"tp_muyt2v3y_psu36bxm\"]",
+      "mandateVersion": 1
+    }
+  ],
+  "versions": [
+    {
+      "id": "[\"[\\\"TESTNET\\\",\\\"binance-primary\\\",\\\"NEARUSDC\\\",\\\"LONG\\\"]\",\"cycle_entry_intent_muyt1rih_y188q0jb\",\"exit_v396x8419a8beaceabdc09e207493241b89\",1]",
+      "found": true,
+      "event": {
+        "type": "EXIT_TASK_UPDATED",
+        "payload": {
+          "task": {
+            "taskId": "exit_v396x8419a8beaceabdc09e207493241b89",
+            "clientOrderId": "v396x8419a8beaceabdc09e207493241b89",
+            "scope": "[\"TESTNET\",\"binance-primary\",\"NEARUSDC\",\"LONG\"]",
+            "cycleId": "cycle_entry_intent_muyt1rih_y188q0jb",
+            "source": "TP",
+            "quantityUnits": 189,
+            "limitPrice": 5.329,
+            "state": "PREPARED",
+            "version": 1,
+            "filledUnits": 0,
+            "ownerVersion": 1,
+            "planVersion": 1,
+            "positionVersion": 1791419745355,
+            "settingsVersion": 247,
+            "riskGeneration": 1,
+            "estimateHash": "V396_TP_1_1791419773328_5.329",
+            "decisionHash": "V396_TP_1_1791419773328_5.329",
+            "authorizationExpiresAt": 1791419788328,
+            "deadline": 1791419788328,
+            "createdAt": 1791419773328,
+            "updatedAt": 1791419773328,
+            "reasons": [],
+            "stepSize": 1,
+            "requestKey": "[\"TP\",\"cycle_entry_intent_muyt1rih_y188q0jb\",1,\"tp_muyt2v3y_psu36bxm\"]",
+            "mandateVersion": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "[\"[\\\"TESTNET\\\",\\\"binance-primary\\\",\\\"NEARUSDC\\\",\\\"LONG\\\"]\",\"cycle_entry_intent_muyt1rih_y188q0jb\",\"exit_v396x8419a8beaceabdc09e207493241b89\",2]",
+      "found": true,
+      "event": {
+        "type": "EXIT_TASK_UPDATED",
+        "payload": {
+          "task": {
+            "taskId": "exit_v396x8419a8beaceabdc09e207493241b89",
+            "clientOrderId": "v396x8419a8beaceabdc09e207493241b89",
+            "scope": "[\"TESTNET\",\"binance-primary\",\"NEARUSDC\",\"LONG\"]",
+            "cycleId": "cycle_entry_intent_muyt1rih_y188q0jb",
+            "source": "TP",
+            "quantityUnits": 189,
+            "limitPrice": 5.329,
+            "state": "UNKNOWN",
+            "version": 2,
+            "filledUnits": 0,
+            "ownerVersion": 1,
+            "planVersion": 1,
+            "positionVersion": 1791419745355,
+            "settingsVersion": 247,
+            "riskGeneration": 1,
+            "estimateHash": "V396_TP_1_1791419773328_5.329",
+            "decisionHash": "V396_TP_1_1791419773328_5.329",
+            "authorizationExpiresAt": 1791419788328,
+            "deadline": 1791419788328,
+            "createdAt": 1791419773328,
+            "updatedAt": 1791419853166,
+            "reasons": [
+              "SUBMIT_ACK_LOST_MUST_QUERY_BY_CLIENT_ORDER_ID"
+            ],
+            "stepSize": 1,
+            "requestKey": "[\"TP\",\"cycle_entry_intent_muyt1rih_y188q0jb\",1,\"tp_muyt2v3y_psu36bxm\"]",
+            "mandateVersion": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "[\"[\\\"TESTNET\\\",\\\"binance-primary\\\",\\\"NEARUSDC\\\",\\\"LONG\\\"]\",\"cycle_entry_intent_muyt1rih_y188q0jb\",\"exit_v396x8419a8beaceabdc09e207493241b89\",3]",
+      "found": true,
+      "event": {
+        "type": "EXIT_TASK_UPDATED",
+        "payload": {
+          "task": {
+            "taskId": "exit_v396x8419a8beaceabdc09e207493241b89",
+            "clientOrderId": "v396x8419a8beaceabdc09e207493241b89",
+            "scope": "[\"TESTNET\",\"binance-primary\",\"NEARUSDC\",\"LONG\"]",
+            "cycleId": "cycle_entry_intent_muyt1rih_y188q0jb",
+            "source": "TP",
+            "quantityUnits": 189,
+            "limitPrice": 5.329,
+            "state": "REJECTED",
+            "version": 3,
+            "filledUnits": 0,
+            "ownerVersion": 1,
+            "planVersion": 1,
+            "positionVersion": 1791419745355,
+            "settingsVersion": 247,
+            "riskGeneration": 1,
+            "estimateHash": "V396_TP_1_1791419773328_5.329",
+            "decisionHash": "V396_TP_1_1791419773328_5.329",
+            "authorizationExpiresAt": 1791419788328,
+            "deadline": 1791419788328,
+            "createdAt": 1791419773328,
+            "updatedAt": 1791420970312,
+            "reasons": [
+              "SUBMIT_ACK_LOST_MUST_QUERY_BY_CLIENT_ORDER_ID",
+              "LOCAL_NOT_SENT:COMPLETE_VERSIONED_PREWIRE_HISTORY"
+            ],
+            "stepSize": 1,
+            "requestKey": "[\"TP\",\"cycle_entry_intent_muyt1rih_y188q0jb\",1,\"tp_muyt2v3y_psu36bxm\"]",
+            "mandateVersion": 1
+          }
+        }
+      }
+    }
+  ]
+}

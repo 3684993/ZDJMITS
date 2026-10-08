@@ -123,7 +123,7 @@ export class TradingQualityCollector {
       // do not mutate the execution ledger. Avoid scanning all trading history
       // per candidate; execution/reconciliation events still capture before
       // runtime maps can advance/reprice/trim. Never infer a fill.
-      if(e.type!=='TRADING_QUALITY_OPPORTUNITY'&&e.type!=='TRADING_QUALITY_PRIMARY_LINK')this.captureState();
+      if(e.type!=='TRADING_QUALITY_OPPORTUNITY'&&e.type!=='TRADING_QUALITY_PRIMARY_LINK')this.captureState(this.exactMutationSymbol(e));
     }
   }
   private persistCandidateShadow(candidateId:string,candidate:any,lifecycle:any,opportunity:any,now:number){
@@ -163,14 +163,25 @@ export class TradingQualityCollector {
       throw error;
     }
   }
-  private captureState(){
-    for(const i of this.state.entryIntents.values())this.put('intents',i.id,i,i.createdAt);
-    for(const o of this.state.entryOrders.values())this.put('orders',`${o.id}:${o.exchangeOrderId??'UNSUBMITTED'}`,o,o.updatedAt);
-    for(const f of this.state.executionFills)this.put('fills',`${f.symbol}:${f.tradeId}`,f,f.executionTime);
-    for(const t of this.state.tradeRecords.values())this.put('trades',t.tradeId,t,t.updatedAt);
-    for(const l of this.state.lifecycles.values())this.put('cycles',l.cycleId,l);
-    for(const p of this.state.positions.values())this.put('positions',p.id,p);
-    for(const r of this.state.entryReservations.values())this.put('reservations',r.id,r);
+  private exactMutationSymbol(e:DomainEvent):string|undefined{
+    // These producers mutate one exact order/trade and its symbol's linked
+    // ledger. Capture every related side/cycle synchronously, not all retained
+    // instruments per imported fill or historical order audit. Aggregate,
+    // missing identity and mismatching symbol events keep the full capture.
+    const p=e.payload as any;
+    const row=e.type==='TRADE_RECORD_REPAIRED'?this.state.tradeRecords.get(p?.tradeId)
+      :['ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED','ENTRY_ORDER_TTL_CLOSED'].includes(e.type)?this.state.entryOrders.get(p?.orderId):null;
+    return row&&typeof e.symbol==='string'&&row.symbol===e.symbol?e.symbol:undefined;
+  }
+  private captureState(symbol?:string){
+    const related=(row:{symbol?:string})=>symbol===undefined||row.symbol===symbol;
+    for(const i of this.state.entryIntents.values())if(related(i))this.put('intents',i.id,i,i.createdAt);
+    for(const o of this.state.entryOrders.values())if(related(o))this.put('orders',`${o.id}:${o.exchangeOrderId??'UNSUBMITTED'}`,o,o.updatedAt);
+    for(const f of this.state.executionFills)if(related(f))this.put('fills',`${f.symbol}:${f.tradeId}`,f,f.executionTime);
+    for(const t of this.state.tradeRecords.values())if(related(t))this.put('trades',t.tradeId,t,t.updatedAt);
+    for(const l of this.state.lifecycles.values())if(related(l))this.put('cycles',l.cycleId,l);
+    for(const p of this.state.positions.values())if(related(p))this.put('positions',p.id,p);
+    for(const r of this.state.entryReservations.values())if(related(r))this.put('reservations',r.id,r);
   }
   /** Background history scanning cannot monopolise the Engine. Domain-event
    * capture above remains synchronous before runtime maps can advance or trim. */

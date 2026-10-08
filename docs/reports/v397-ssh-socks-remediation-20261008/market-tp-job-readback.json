@@ -1,0 +1,42 @@
+[
+  {
+    "parentPid": 49144,
+    "queryOk": true,
+    "pid": 12828,
+    "name": "node.exe",
+    "createdAt": "2026-10-08T00:54:47.1218420Z",
+    "inJob": true
+  },
+  {
+    "parentPid": 49076,
+    "queryOk": true,
+    "pid": 49144,
+    "name": "powershell.exe",
+    "createdAt": "2026-10-08T00:54:46.5430140Z",
+    "inJob": false
+  },
+  {
+    "parentPid": 41600,
+    "queryOk": true,
+    "pid": 29068,
+    "name": "ssh.exe",
+    "createdAt": "2026-10-07T23:18:23.6234750Z",
+    "inJob": false
+  },
+  {
+    "parentPid": 41600,
+    "queryOk": true,
+    "pid": 11852,
+    "name": "powershell.exe",
+    "createdAt": "2026-10-07T23:19:22.9950470Z",
+    "inJob": false
+  },
+  {
+    "parentPid": 41600,
+    "queryOk": true,
+    "pid": 44820,
+    "name": "python.exe",
+    "createdAt": "2026-10-08T00:56:42.3349780Z",
+    "inJob": false
+  }
+]

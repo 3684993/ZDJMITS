@@ -2,7 +2,7 @@
 import datetime, json, pathlib, time
 from collect_stability import read
 root=pathlib.Path(__file__).resolve().parent
-target=root/'trade-correction-bootstrap-probes.jsonl'
+target=root/'market-tp-bootstrap-probes.jsonl'
 if target.exists(): raise SystemExit('Refusing to overwrite startup evidence')
 deadline=time.monotonic()+180
 while True:

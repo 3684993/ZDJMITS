@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { PortfolioIntelligenceSettingsSchema } from '@zdj/contracts';
+import { AllocationPlanSchema, PortfolioIntelligenceSettingsSchema } from '@zdj/contracts';
 import { buildAllocationPlan, decorateUniverse, directionPolicy, locationScore, resolveUnderlying, routeContract, riskTier } from './portfolio.js';
 
 const p=PortfolioIntelligenceSettingsSchema.parse({});
@@ -21,6 +21,17 @@ describe('Portfolio Intelligence',()=>{
   // §B3: a side sized to zero has to arrive with the one number that bound it, because "REJECT_EXPOSURE_LIMIT"
   // alone is still a label. The room is the minimum over the capacities sizing actually consumed.
   const sized=(direction:'LONG'|'SHORT',over:Record<string,any>)=>buildAllocationPlan({candidate:{symbol:'BTCUSDT',rank:1,score:80,lifecycle:'SHORTLIST',eligible:true,exclusionReasons:[],components:{liquidity:80,tradingActivity:70,capitalActivity:60,technicalOpportunity:70,executionReachability:80,dataQuality:100},quoteVolumeUsd24h:100_000_000,spreadBps:2,lastPrice:100,change24hPercent:0,dataCompleteness:1,selectionGeneration:1,updatedAt:Date.now(),underlyingAsset:'BTC',quoteAsset:'USDT',riskTier:'LIQUID_ALT',directionPolicy:'BOTH'} as any,snapshot:snap('BTCUSDT'),direction,confidence:.8,settings,positions:[],assets:[{asset:'USDT',availableBalance:5_000,usdValue:5_000},{asset:'USDC',availableBalance:5_000,usdValue:5_000}] as any,...over} as any);
+  it('reports true zero-funded TESTNET rejection without aborting diagnostics or permitting zero admitted size',()=>{
+    const plan=sized('LONG',{settings:{...settings,connections:{exchange:{environment:'TESTNET'},executionMode:'TESTNET_ENABLED'}} as any,
+      assets:[{asset:'USDT',availableBalance:0,usdValue:0},{asset:'USDC',availableBalance:5000,usdValue:5000}] as any});
+    expect(plan).toMatchObject({admission:'REJECT_QUOTE_MARGIN',marginUsd:0,notionalUsd:0});
+    expect(plan.reasons).toContain('TESTNET_FUNDS_ONLY_ENTRY');expect(AllocationPlanSchema.parse(JSON.parse(JSON.stringify(plan)))).toEqual(plan);
+    for(const admission of ['ALLOW','ALLOW_REDUCED_SIZE'])expect(AllocationPlanSchema.safeParse({...plan,admission}).success).toBe(false);
+    expect(AllocationPlanSchema.safeParse({...plan,marginUsd:-1}).success).toBe(false);
+    expect(AllocationPlanSchema.safeParse({...plan,notionalUsd:-1}).success).toBe(false);
+    const funded=sized('LONG',{settings:{...settings,connections:{exchange:{environment:'TESTNET'},executionMode:'TESTNET_ENABLED'}} as any});
+    expect(funded.admission).toBe('ALLOW');expect(funded.marginUsd).toBeGreaterThan(0);
+  });
   it('CR-01 names the direction cap and its used/ceiling numbers when sizing a side comes out zero',()=>{
     const plan=sized('SHORT',{positions:[{symbol:'ETHUSDT',side:'SHORT' as const,quantity:70,markPrice:100,leverage:10}]});
     expect(plan.admission).toBe('REJECT_EXPOSURE_LIMIT');

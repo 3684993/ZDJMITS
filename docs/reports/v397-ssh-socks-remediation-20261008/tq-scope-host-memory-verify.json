@@ -1,0 +1,25 @@
+{
+  "counters": [
+    {
+      "Path": "\\\\x570\\memory\\committed bytes",
+      "CookedValue": 122244136960.0
+    },
+    {
+      "Path": "\\\\x570\\memory\\commit limit",
+      "CookedValue": 126678085632.0
+    },
+    {
+      "Path": "\\\\x570\\memory\\pool paged bytes",
+      "CookedValue": 24691326976.0
+    },
+    {
+      "Path": "\\\\x570\\memory\\pool nonpaged bytes",
+      "CookedValue": 8813887488.0
+    },
+    {
+      "Path": "\\\\x570\\memory\\available bytes",
+      "CookedValue": 21290930176.0
+    }
+  ],
+  "at": "2026-10-08T01:16:54.1268325Z"
+}

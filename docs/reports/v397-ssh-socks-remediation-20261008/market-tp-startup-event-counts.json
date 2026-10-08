@@ -1,0 +1,36 @@
+{
+  "at": "2026-10-08T00:56:00.518453+00:00",
+  "identity": {
+    "instanceId": "119eff3a-54a3-4d8c-9a6a-224e9aa8014f",
+    "pid": 12828,
+    "startedAt": 1791420888366,
+    "host": "0.0.0.0",
+    "port": 8080,
+    "version": "3.9.7",
+    "buildId": "3.9.7-9ed43df8da029919df5a",
+    "artifactHash": "9ed43df8da029919df5a35c6156e3e04cdef7f877e445f958b292251dadef1c9",
+    "sourceHash": "9878c290ea4d3e77ef8cb6acba9bc3f687c7270ec81dbedaf7846badc24ce477",
+    "startReason": "MANUAL_START",
+    "lanIps": [
+      "192.168.1.50"
+    ],
+    "restartCount": 271
+  },
+  "files": [
+    "D:\\MITS\\data\\runtime-logs\\engine-2026-10-08-119eff3a-54a3-4d8c-9a6a-224e9aa8014f-0.jsonl"
+  ],
+  "counts": {
+    "ENGINE_INSTANCE_STARTED": 1,
+    "PORTFOLIO_RISK_AUTHORITY_LOADED": 1,
+    "LAN_AVAILABLE": 1,
+    "AI_RESOURCE_HEALTH_CHANGED": 3,
+    "OPERATIONAL_INCIDENT_ACTIVATED": 1,
+    "EXIT_RECOVERY_CONVERGED": 1,
+    "MARKET_COHORT_REFILLED": 1,
+    "CANDIDATE_LIFECYCLE_REDERIVED": 1,
+    "CANDIDATE_SUPPLY_HEALTH": 1,
+    "OPERATIONAL_INCIDENT_RECOVERED": 1
+  },
+  "malformedRows": 0,
+  "coverage": "Only currently retained matching-instance logs, including startup; not a complete wire census or acceptance window."
+}

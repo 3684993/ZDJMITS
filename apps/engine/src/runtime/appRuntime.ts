@@ -744,7 +744,7 @@ export class EngineRuntime {
           if(options.name)this.foregroundTrace('SCHEDULED_TASK_END',{task:options.name,intervalMs:ms,runNumber:currentRun,durationMs:Date.now()-startedAt});
         } catch (error) {
           if(options.name)this.foregroundTrace('SCHEDULED_TASK_FAILED',{task:options.name,intervalMs:ms,runNumber:currentRun,durationMs:Date.now()-startedAt,message:error instanceof Error?error.message:String(error)});
-          this.events.publish("RUNTIME_TASK_FAILED", { message: error instanceof Error ? error.message : String(error) });
+          this.events.publish("RUNTIME_TASK_FAILED", { task:options.name??'UNNAMED',intervalMs:ms,runNumber:currentRun,durationMs:Date.now()-startedAt,message: error instanceof Error ? error.message : String(error) });
         }
         return;
       }
@@ -755,6 +755,7 @@ export class EngineRuntime {
       } catch (error) {
         if(options.name)this.foregroundTrace('SCHEDULED_TASK_FAILED',{task:options.name,intervalMs:ms,runNumber:currentRun,durationMs:Date.now()-startedAt,message:error instanceof Error?error.message:String(error)});
         this.events.publish("RUNTIME_TASK_FAILED", {
+          task:options.name??'UNNAMED',intervalMs:ms,runNumber:currentRun,durationMs:Date.now()-startedAt,
           message: error instanceof Error ? error.message : String(error),
         });
       } finally {
@@ -888,7 +889,7 @@ export class EngineRuntime {
     });
     // Live quote and depth updates can clear stale exclusions without entering the REST
     // recovery branch. Re-evaluate candidate eligibility from those new facts promptly.
-    this.every(15_000, () => { this.universe.refresh(); });
+    this.every(15_000, () => { this.universe.refresh(); }, {name:'UNIVERSE_REFRESH'});
     this.every(1_000, async () => {
       await this.market.tick();
       if (this.state.settings.connections.executionMode === "TESTNET_ENABLED")

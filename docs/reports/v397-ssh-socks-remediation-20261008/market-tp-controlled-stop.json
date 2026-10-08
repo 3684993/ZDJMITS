@@ -1,0 +1,20 @@
+{
+  "identity": {
+    "instanceId": "c1715c2b-1cd3-470b-84fa-b0ac56f3ffd4",
+    "pid": 28712,
+    "startedAt": 1791419381422,
+    "host": "0.0.0.0",
+    "port": 8080,
+    "version": "3.9.7",
+    "buildId": "3.9.7-7cf475406fe5e09e7a90",
+    "artifactHash": "7cf475406fe5e09e7a905eae2d8534c084bd6bb88edc10858dd484c093729496",
+    "sourceHash": "08187a69e2b9c5b2c54f7b692a697ab6a33570b5f2e46114d6ab42d6fc58f945",
+    "startReason": "MANUAL_START",
+    "lanIps": [
+      "192.168.1.50"
+    ],
+    "restartCount": 270
+  },
+  "at": "2026-10-08T00:54:40.5263995Z",
+  "reason": "AUTHORIZED_MARKET_TP_PREWIRE_CORRECTION"
+}

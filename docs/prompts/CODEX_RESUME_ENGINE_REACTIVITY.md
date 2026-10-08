@@ -6,7 +6,7 @@ Do not redo the SSH/SOCKS investigation or the earlier Trading Quality micro-tun
 already moved the dominant hotspot to full runtime checkpoint persistence.
 
 Use candidate branch `chatgpt/reactivity-core-checkpoint-20261008` at
-`16bfdc05f1a3698c1c23066c4467def713dbee62`.
+`45082f6354a79088534037d0b9751c37d03e7260`.
 
 Your first task is verification, not redesign:
 
@@ -29,3 +29,6 @@ Your first task is verification, not redesign:
 
 Hard boundaries remain: TESTNET only, Production writes 0, no DB/history reset, no weakening private/market freshness,
 no duplicate submit on UNKNOWN, no strategy/TP/Entry parameter tuning during this reactivity task.
+
+
+Current candidate head including the TQ test-only fsync stabilization: `45082f6354a79088534037d0b9751c37d03e7260`.

@@ -619,7 +619,7 @@ ChatGPT prepared an **unverified deployment candidate** on:
 
 - branch: `chatgpt/reactivity-core-checkpoint-20261008`
 - first commit: `31a9586cff3f2a93d8f2cf380ea534a6daa6cf4b`
-- current candidate head: `16bfdc05f1a3698c1c23066c4467def713dbee62`
+- current candidate head: `45082f6354a79088534037d0b9751c37d03e7260`
 - candidate report: `docs/reports/v397-ssh-socks-remediation-20261008/CORE_CHECKPOINT_CANDIDATE.md` on that branch.
 
 Candidate behavior:
@@ -656,3 +656,6 @@ Acceptance for this iteration:
 If those fail while the generic checkpoint cost has fallen, profile once and attack the remaining synchronous
 full checkpoint/reservation path as the second structural iteration. Do not resume Trading Quality
 micro-tuning or passive 15-minute "still unhealthy" loops without a new profile showing they are again dominant.
+
+
+CI note: GitHub Actions #688 exposed only a hosted Windows fsync-sensitive timeout in the 30,001-event TQ correctness test. Main commit `c00c1252a07faa58c408477abe42efa24ddb6f2e` batches those test-only event inserts in one transaction without changing production code or the 30,001 put() calls. The same test-only adjustment is included in candidate head `45082f6354a79088534037d0b9751c37d03e7260`.

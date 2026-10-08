@@ -1,0 +1,247 @@
+{
+  "pid": 48296,
+  "seconds": 60,
+  "totalSamples": 38540,
+  "hot": [
+    {
+      "samples": 24551,
+      "functionName": "(idle)",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 1207,
+      "functionName": "put",
+      "scriptId": "203",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "lineNumber": 136,
+      "columnNumber": 7
+    },
+    {
+      "samples": 1198,
+      "functionName": "saveEntryExecution",
+      "scriptId": "215",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/config/settingsStore.js",
+      "lineNumber": 1272,
+      "columnNumber": 22
+    },
+    {
+      "samples": 729,
+      "functionName": "",
+      "scriptId": "215",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/config/settingsStore.js",
+      "lineNumber": 1302,
+      "columnNumber": 31
+    },
+    {
+      "samples": 701,
+      "functionName": "(garbage collector)",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 474,
+      "functionName": "run",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 454,
+      "functionName": "exec",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 393,
+      "functionName": "run",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 379,
+      "functionName": "get",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 311,
+      "functionName": "run",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 281,
+      "functionName": "put",
+      "scriptId": "203",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "lineNumber": 136,
+      "columnNumber": 7
+    },
+    {
+      "samples": 279,
+      "functionName": "all",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 276,
+      "functionName": "persistRuntimeCore",
+      "scriptId": "215",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/config/settingsStore.js",
+      "lineNumber": 929,
+      "columnNumber": 22
+    },
+    {
+      "samples": 259,
+      "functionName": "(program)",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 227,
+      "functionName": "all",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 227,
+      "functionName": "all",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 216,
+      "functionName": "prepare",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 186,
+      "functionName": "update",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 181,
+      "functionName": "allTasks",
+      "scriptId": "356",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+      "lineNumber": 100,
+      "columnNumber": 12
+    },
+    {
+      "samples": 180,
+      "functionName": "allTasks",
+      "scriptId": "356",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+      "lineNumber": 100,
+      "columnNumber": 12
+    },
+    {
+      "samples": 143,
+      "functionName": "all",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 134,
+      "functionName": "all",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 134,
+      "functionName": "all",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 132,
+      "functionName": "allTasks",
+      "scriptId": "356",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+      "lineNumber": 100,
+      "columnNumber": 12
+    },
+    {
+      "samples": 131,
+      "functionName": "allTasks",
+      "scriptId": "356",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+      "lineNumber": 100,
+      "columnNumber": 12
+    },
+    {
+      "samples": 130,
+      "functionName": "allTasks",
+      "scriptId": "356",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+      "lineNumber": 100,
+      "columnNumber": 12
+    },
+    {
+      "samples": 126,
+      "functionName": "allTasks",
+      "scriptId": "356",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+      "lineNumber": 100,
+      "columnNumber": 12
+    },
+    {
+      "samples": 126,
+      "functionName": "run",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 108,
+      "functionName": "onMessage",
+      "scriptId": "322",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/adapters/market/BinanceMarketStream.js",
+      "lineNumber": 160,
+      "columnNumber": 13
+    },
+    {
+      "samples": 98,
+      "functionName": "run",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    }
+  ]
+}

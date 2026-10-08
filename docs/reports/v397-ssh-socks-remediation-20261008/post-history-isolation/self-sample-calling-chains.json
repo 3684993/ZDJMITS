@@ -1,0 +1,1812 @@
+[
+  {
+    "samples": 24551,
+    "percent": 63.702646600934095,
+    "chain": [
+      {
+        "function": "(idle)",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 1207,
+    "percent": 3.131811105345096,
+    "chain": [
+      {
+        "function": "put",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 136
+      },
+      {
+        "function": "captureState",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 261
+      },
+      {
+        "function": "onEvent",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 170
+      },
+      {
+        "function": "TradingQualityCollector.listener",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 61
+      },
+      {
+        "function": "emit",
+        "url": "node:events",
+        "lineNumber": 465
+      },
+      {
+        "function": "publish",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/events/eventBus.js",
+        "lineNumber": 3
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 206
+      },
+      {
+        "function": "runMicrotasks",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "processTicksAndRejections",
+        "url": "node:internal/process/task_queues",
+        "lineNumber": 70
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 1198,
+    "percent": 3.1084587441619096,
+    "chain": [
+      {
+        "function": "saveEntryExecution",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1272
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/runtime/appRuntime.js",
+        "lineNumber": 595
+      },
+      {
+        "function": "apply",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/runtimeWriteBuffer.js",
+        "lineNumber": 6
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/runtime/appRuntime.js",
+        "lineNumber": 559
+      },
+      {
+        "function": "emit",
+        "url": "node:events",
+        "lineNumber": 465
+      },
+      {
+        "function": "publish",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/events/eventBus.js",
+        "lineNumber": 3
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 206
+      },
+      {
+        "function": "runMicrotasks",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "processTicksAndRejections",
+        "url": "node:internal/process/task_queues",
+        "lineNumber": 70
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 729,
+    "percent": 1.8915412558380902,
+    "chain": [
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1302
+      },
+      {
+        "function": "entryExecutionClaimStats",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1299
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/runtime/appRuntime.js",
+        "lineNumber": 329
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 206
+      },
+      {
+        "function": "runMicrotasks",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "processTicksAndRejections",
+        "url": "node:internal/process/task_queues",
+        "lineNumber": 70
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 701,
+    "percent": 1.8188894654903995,
+    "chain": [
+      {
+        "function": "(garbage collector)",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 474,
+    "percent": 1.2298910223144786,
+    "chain": [
+      {
+        "function": "run",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "saveEntryExecution",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1272
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/runtime/appRuntime.js",
+        "lineNumber": 595
+      },
+      {
+        "function": "apply",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/runtimeWriteBuffer.js",
+        "lineNumber": 6
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/runtime/appRuntime.js",
+        "lineNumber": 559
+      },
+      {
+        "function": "emit",
+        "url": "node:events",
+        "lineNumber": 465
+      },
+      {
+        "function": "publish",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/events/eventBus.js",
+        "lineNumber": 3
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 206
+      },
+      {
+        "function": "runMicrotasks",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "processTicksAndRejections",
+        "url": "node:internal/process/task_queues",
+        "lineNumber": 70
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 454,
+    "percent": 1.1779968863518422,
+    "chain": [
+      {
+        "function": "exec",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "transaction",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/orderProvenanceRegistry.js",
+        "lineNumber": 111
+      },
+      {
+        "function": "record",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/orderProvenanceRegistry.js",
+        "lineNumber": 31
+      },
+      {
+        "function": "recordVerifiedExitOrderFacts",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+        "lineNumber": 378
+      },
+      {
+        "function": "recordExitOrderReport",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+        "lineNumber": 398
+      },
+      {
+        "function": "reportOpenOrderExitFacts",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 80
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 206
+      },
+      {
+        "function": "runMicrotasks",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "processTicksAndRejections",
+        "url": "node:internal/process/task_queues",
+        "lineNumber": 70
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 393,
+    "percent": 1.0197197716658017,
+    "chain": [
+      {
+        "function": "run",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "saveManualExecution",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1163
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/runtime/appRuntime.js",
+        "lineNumber": 604
+      },
+      {
+        "function": "apply",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/runtimeWriteBuffer.js",
+        "lineNumber": 6
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/runtime/appRuntime.js",
+        "lineNumber": 559
+      },
+      {
+        "function": "emit",
+        "url": "node:events",
+        "lineNumber": 465
+      },
+      {
+        "function": "publish",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/events/eventBus.js",
+        "lineNumber": 3
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 206
+      },
+      {
+        "function": "runMicrotasks",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "processTicksAndRejections",
+        "url": "node:internal/process/task_queues",
+        "lineNumber": 70
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 379,
+    "percent": 0.9833938764919564,
+    "chain": [
+      {
+        "function": "get",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "saveEntryExecution",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1272
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/runtime/appRuntime.js",
+        "lineNumber": 595
+      },
+      {
+        "function": "apply",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/runtimeWriteBuffer.js",
+        "lineNumber": 6
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/runtime/appRuntime.js",
+        "lineNumber": 559
+      },
+      {
+        "function": "emit",
+        "url": "node:events",
+        "lineNumber": 465
+      },
+      {
+        "function": "publish",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/events/eventBus.js",
+        "lineNumber": 3
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 206
+      },
+      {
+        "function": "runMicrotasks",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "processTicksAndRejections",
+        "url": "node:internal/process/task_queues",
+        "lineNumber": 70
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 311,
+    "percent": 0.8069538142189933,
+    "chain": [
+      {
+        "function": "run",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "persistRuntimeCore",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 929
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/runtime/appRuntime.js",
+        "lineNumber": 671
+      },
+      {
+        "function": "apply",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/runtimeWriteBuffer.js",
+        "lineNumber": 6
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/runtime/appRuntime.js",
+        "lineNumber": 670
+      },
+      {
+        "function": "listOnTimeout",
+        "url": "node:internal/timers",
+        "lineNumber": 525
+      },
+      {
+        "function": "processTimers",
+        "url": "node:internal/timers",
+        "lineNumber": 505
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 281,
+    "percent": 0.7291126102750389,
+    "chain": [
+      {
+        "function": "put",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 136
+      },
+      {
+        "function": "captureStateChunk",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 287
+      },
+      {
+        "function": "tick",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 326
+      },
+      {
+        "function": "every.name",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/runtime/appRuntime.js",
+        "lineNumber": 886
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/runtime/appRuntime.js",
+        "lineNumber": 693
+      },
+      {
+        "function": "listOnTimeout",
+        "url": "node:internal/timers",
+        "lineNumber": 525
+      },
+      {
+        "function": "processTimers",
+        "url": "node:internal/timers",
+        "lineNumber": 505
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 279,
+    "percent": 0.7239231966787752,
+    "chain": [
+      {
+        "function": "all",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "entryExecutionClaimStats",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1299
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/runtime/appRuntime.js",
+        "lineNumber": 329
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 206
+      },
+      {
+        "function": "runMicrotasks",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "processTicksAndRejections",
+        "url": "node:internal/process/task_queues",
+        "lineNumber": 70
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 276,
+    "percent": 0.7161390762843799,
+    "chain": [
+      {
+        "function": "persistRuntimeCore",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 929
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/runtime/appRuntime.js",
+        "lineNumber": 671
+      },
+      {
+        "function": "apply",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/runtimeWriteBuffer.js",
+        "lineNumber": 6
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/runtime/appRuntime.js",
+        "lineNumber": 670
+      },
+      {
+        "function": "listOnTimeout",
+        "url": "node:internal/timers",
+        "lineNumber": 525
+      },
+      {
+        "function": "processTimers",
+        "url": "node:internal/timers",
+        "lineNumber": 505
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 259,
+    "percent": 0.6720290607161391,
+    "chain": [
+      {
+        "function": "(program)",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 227,
+    "percent": 0.5889984431759211,
+    "chain": [
+      {
+        "function": "all",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "query",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/ownershipJournal.js",
+        "lineNumber": 46
+      },
+      {
+        "function": "convergenceStats",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+        "lineNumber": 299
+      },
+      {
+        "function": "convergenceStats",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+        "lineNumber": 404
+      },
+      {
+        "function": "exitConvergenceHealth",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/runtime/appRuntime.js",
+        "lineNumber": 1415
+      },
+      {
+        "function": "baseDashboardProjection",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/api/projections.js",
+        "lineNumber": 194
+      },
+      {
+        "function": "dashboardProjection",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/api/projections.js",
+        "lineNumber": 315
+      },
+      {
+        "function": "publishSnapshot",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/api/router.js",
+        "lineNumber": 116
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/api/router.js",
+        "lineNumber": 129
+      },
+      {
+        "function": "listOnTimeout",
+        "url": "node:internal/timers",
+        "lineNumber": 525
+      },
+      {
+        "function": "processTimers",
+        "url": "node:internal/timers",
+        "lineNumber": 505
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 227,
+    "percent": 0.5889984431759211,
+    "chain": [
+      {
+        "function": "all",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "query",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/ownershipJournal.js",
+        "lineNumber": 46
+      },
+      {
+        "function": "convergenceStats",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+        "lineNumber": 299
+      },
+      {
+        "function": "convergenceStats",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+        "lineNumber": 404
+      },
+      {
+        "function": "exitConvergenceHealth",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/runtime/appRuntime.js",
+        "lineNumber": 1415
+      },
+      {
+        "function": "executionTruthProjection",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/api/projections.js",
+        "lineNumber": 64
+      },
+      {
+        "function": "baseDashboardProjection",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/api/projections.js",
+        "lineNumber": 194
+      },
+      {
+        "function": "dashboardProjection",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/api/projections.js",
+        "lineNumber": 315
+      },
+      {
+        "function": "publishSnapshot",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/api/router.js",
+        "lineNumber": 116
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/api/router.js",
+        "lineNumber": 129
+      },
+      {
+        "function": "listOnTimeout",
+        "url": "node:internal/timers",
+        "lineNumber": 525
+      },
+      {
+        "function": "processTimers",
+        "url": "node:internal/timers",
+        "lineNumber": 505
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 216,
+    "percent": 0.5604566683964712,
+    "chain": [
+      {
+        "function": "prepare",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "saveEntryExecution",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1272
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/runtime/appRuntime.js",
+        "lineNumber": 595
+      },
+      {
+        "function": "apply",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/runtimeWriteBuffer.js",
+        "lineNumber": 6
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/runtime/appRuntime.js",
+        "lineNumber": 559
+      },
+      {
+        "function": "emit",
+        "url": "node:events",
+        "lineNumber": 465
+      },
+      {
+        "function": "publish",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/events/eventBus.js",
+        "lineNumber": 3
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 206
+      },
+      {
+        "function": "runMicrotasks",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "processTicksAndRejections",
+        "url": "node:internal/process/task_queues",
+        "lineNumber": 70
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 186,
+    "percent": 0.48261546445251685,
+    "chain": [
+      {
+        "function": "update",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "update",
+        "url": "node:internal/crypto/hash",
+        "lineNumber": 131
+      },
+      {
+        "function": "put",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 136
+      },
+      {
+        "function": "captureState",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 261
+      },
+      {
+        "function": "onEvent",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 170
+      },
+      {
+        "function": "TradingQualityCollector.listener",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 61
+      },
+      {
+        "function": "emit",
+        "url": "node:events",
+        "lineNumber": 465
+      },
+      {
+        "function": "publish",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/events/eventBus.js",
+        "lineNumber": 3
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 206
+      },
+      {
+        "function": "runMicrotasks",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "processTicksAndRejections",
+        "url": "node:internal/process/task_queues",
+        "lineNumber": 70
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 181,
+    "percent": 0.4696419304618578,
+    "chain": [
+      {
+        "function": "allTasks",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+        "lineNumber": 100
+      },
+      {
+        "function": "findTaskByClientOrderId",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+        "lineNumber": 569
+      },
+      {
+        "function": "recordVerifiedExitOrderFacts",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+        "lineNumber": 378
+      },
+      {
+        "function": "recordExitOrderReport",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+        "lineNumber": 398
+      },
+      {
+        "function": "reportOpenOrderExitFacts",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 80
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 206
+      },
+      {
+        "function": "runMicrotasks",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "processTicksAndRejections",
+        "url": "node:internal/process/task_queues",
+        "lineNumber": 70
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 180,
+    "percent": 0.467047223663726,
+    "chain": [
+      {
+        "function": "allTasks",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+        "lineNumber": 100
+      },
+      {
+        "function": "findTaskByClientOrderId",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+        "lineNumber": 569
+      },
+      {
+        "function": "task",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+        "lineNumber": 624
+      },
+      {
+        "function": "terminalFactMatchesTask",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+        "lineNumber": 31
+      },
+      {
+        "function": "recordVerifiedExitOrderFacts",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+        "lineNumber": 378
+      },
+      {
+        "function": "recordExitOrderReport",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+        "lineNumber": 398
+      },
+      {
+        "function": "reportOpenOrderExitFacts",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 80
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 206
+      },
+      {
+        "function": "runMicrotasks",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "processTicksAndRejections",
+        "url": "node:internal/process/task_queues",
+        "lineNumber": 70
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 143,
+    "percent": 0.371043072132849,
+    "chain": [
+      {
+        "function": "all",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "query",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/ownershipJournal.js",
+        "lineNumber": 46
+      },
+      {
+        "function": "allTasks",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+        "lineNumber": 100
+      },
+      {
+        "function": "findTaskByClientOrderId",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+        "lineNumber": 569
+      },
+      {
+        "function": "task",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+        "lineNumber": 624
+      },
+      {
+        "function": "terminalFactMatchesTask",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+        "lineNumber": 31
+      },
+      {
+        "function": "recordVerifiedExitOrderFacts",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+        "lineNumber": 378
+      },
+      {
+        "function": "recordExitOrderReport",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+        "lineNumber": 398
+      },
+      {
+        "function": "reportOpenOrderExitFacts",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 80
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 206
+      },
+      {
+        "function": "runMicrotasks",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "processTicksAndRejections",
+        "url": "node:internal/process/task_queues",
+        "lineNumber": 70
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 134,
+    "percent": 0.3476907109496627,
+    "chain": [
+      {
+        "function": "all",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "query",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/ownershipJournal.js",
+        "lineNumber": 46
+      },
+      {
+        "function": "allTasks",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+        "lineNumber": 100
+      },
+      {
+        "function": "findTaskByClientOrderId",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+        "lineNumber": 569
+      },
+      {
+        "function": "recordVerifiedExitOrderFacts",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+        "lineNumber": 378
+      },
+      {
+        "function": "recordExitOrderReport",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+        "lineNumber": 398
+      },
+      {
+        "function": "reportOpenOrderExitFacts",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 80
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 206
+      },
+      {
+        "function": "runMicrotasks",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "processTicksAndRejections",
+        "url": "node:internal/process/task_queues",
+        "lineNumber": 70
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 134,
+    "percent": 0.3476907109496627,
+    "chain": [
+      {
+        "function": "all",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "summary",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 503
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/api/router.js",
+        "lineNumber": 112
+      },
+      {
+        "function": "handleRequest",
+        "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/router/lib/layer.js",
+        "lineNumber": 141
+      },
+      {
+        "function": "next",
+        "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/router/lib/route.js",
+        "lineNumber": 118
+      },
+      {
+        "function": "dispatch",
+        "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/router/lib/route.js",
+        "lineNumber": 97
+      },
+      {
+        "function": "handle",
+        "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/router/index.js",
+        "lineNumber": 433
+      },
+      {
+        "function": "handleRequest",
+        "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/router/lib/layer.js",
+        "lineNumber": 141
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/router/index.js",
+        "lineNumber": 290
+      },
+      {
+        "function": "processParams",
+        "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/router/index.js",
+        "lineNumber": 575
+      },
+      {
+        "function": "next",
+        "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/router/index.js",
+        "lineNumber": 187
+      },
+      {
+        "function": "handle",
+        "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/router/index.js",
+        "lineNumber": 148
+      },
+      {
+        "function": "router",
+        "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/router/index.js",
+        "lineNumber": 58
+      },
+      {
+        "function": "handleRequest",
+        "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/router/lib/layer.js",
+        "lineNumber": 141
+      },
+      {
+        "function": "trimPrefix",
+        "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/router/index.js",
+        "lineNumber": 303
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/router/index.js",
+        "lineNumber": 290
+      },
+      {
+        "function": "processParams",
+        "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/router/index.js",
+        "lineNumber": 575
+      },
+      {
+        "function": "next",
+        "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/router/index.js",
+        "lineNumber": 187
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/router/index.js",
+        "lineNumber": 681
+      },
+      {
+        "function": "next",
+        "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/router/index.js",
+        "lineNumber": 187
+      },
+      {
+        "function": "handle",
+        "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/router/index.js",
+        "lineNumber": 148
+      },
+      {
+        "function": "router",
+        "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/router/index.js",
+        "lineNumber": 58
+      },
+      {
+        "function": "handleRequest",
+        "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/router/lib/layer.js",
+        "lineNumber": 141
+      },
+      {
+        "function": "trimPrefix",
+        "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/router/index.js",
+        "lineNumber": 303
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/router/index.js",
+        "lineNumber": 290
+      },
+      {
+        "function": "processParams",
+        "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/router/index.js",
+        "lineNumber": 575
+      },
+      {
+        "function": "next",
+        "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/router/index.js",
+        "lineNumber": 187
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/server.js",
+        "lineNumber": 23
+      },
+      {
+        "function": "handleRequest",
+        "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/router/lib/layer.js",
+        "lineNumber": 141
+      },
+      {
+        "function": "trimPrefix",
+        "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/router/index.js",
+        "lineNumber": 303
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/router/index.js",
+        "lineNumber": 290
+      },
+      {
+        "function": "processParams",
+        "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/router/index.js",
+        "lineNumber": 575
+      },
+      {
+        "function": "next",
+        "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/router/index.js",
+        "lineNumber": 187
+      },
+      {
+        "function": "read",
+        "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/body-parser/lib/read.js",
+        "lineNumber": 38
+      },
+      {
+        "function": "jsonParser",
+        "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/body-parser/lib/types/json.js",
+        "lineNumber": 58
+      },
+      {
+        "function": "handleRequest",
+        "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/router/lib/layer.js",
+        "lineNumber": 141
+      },
+      {
+        "function": "trimPrefix",
+        "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/router/index.js",
+        "lineNumber": 303
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/router/index.js",
+        "lineNumber": 290
+      },
+      {
+        "function": "processParams",
+        "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/router/index.js",
+        "lineNumber": 575
+      },
+      {
+        "function": "next",
+        "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/router/index.js",
+        "lineNumber": 187
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/server.js",
+        "lineNumber": 17
+      },
+      {
+        "function": "handleRequest",
+        "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/router/lib/layer.js",
+        "lineNumber": 141
+      },
+      {
+        "function": "trimPrefix",
+        "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/router/index.js",
+        "lineNumber": 303
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/router/index.js",
+        "lineNumber": 290
+      },
+      {
+        "function": "processParams",
+        "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/router/index.js",
+        "lineNumber": 575
+      },
+      {
+        "function": "next",
+        "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/router/index.js",
+        "lineNumber": 187
+      },
+      {
+        "function": "handle",
+        "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/router/index.js",
+        "lineNumber": 148
+      },
+      {
+        "function": "handle",
+        "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/express/lib/application.js",
+        "lineNumber": 151
+      },
+      {
+        "function": "app",
+        "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/express/lib/express.js",
+        "lineNumber": 36
+      },
+      {
+        "function": "emit",
+        "url": "node:events",
+        "lineNumber": 465
+      },
+      {
+        "function": "parserOnIncoming",
+        "url": "node:_http_server",
+        "lineNumber": 1072
+      },
+      {
+        "function": "parserOnHeadersComplete",
+        "url": "node:_http_common",
+        "lineNumber": 76
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 132,
+    "percent": 0.34250129735339907,
+    "chain": [
+      {
+        "function": "allTasks",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+        "lineNumber": 100
+      },
+      {
+        "function": "recoveryPlan",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+        "lineNumber": 574
+      },
+      {
+        "function": "recoveryPlan",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+        "lineNumber": 623
+      },
+      {
+        "function": "exitConvergenceHealth",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/runtime/appRuntime.js",
+        "lineNumber": 1415
+      },
+      {
+        "function": "executionTruthProjection",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/api/projections.js",
+        "lineNumber": 64
+      },
+      {
+        "function": "baseDashboardProjection",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/api/projections.js",
+        "lineNumber": 194
+      },
+      {
+        "function": "dashboardProjection",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/api/projections.js",
+        "lineNumber": 315
+      },
+      {
+        "function": "publishSnapshot",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/api/router.js",
+        "lineNumber": 116
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/api/router.js",
+        "lineNumber": 129
+      },
+      {
+        "function": "listOnTimeout",
+        "url": "node:internal/timers",
+        "lineNumber": 525
+      },
+      {
+        "function": "processTimers",
+        "url": "node:internal/timers",
+        "lineNumber": 505
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 131,
+    "percent": 0.33990659055526723,
+    "chain": [
+      {
+        "function": "allTasks",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+        "lineNumber": 100
+      },
+      {
+        "function": "unreleasedClaimInventory",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+        "lineNumber": 337
+      },
+      {
+        "function": "convergenceStats",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+        "lineNumber": 404
+      },
+      {
+        "function": "exitConvergenceHealth",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/runtime/appRuntime.js",
+        "lineNumber": 1415
+      },
+      {
+        "function": "baseDashboardProjection",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/api/projections.js",
+        "lineNumber": 194
+      },
+      {
+        "function": "dashboardProjection",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/api/projections.js",
+        "lineNumber": 315
+      },
+      {
+        "function": "publishSnapshot",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/api/router.js",
+        "lineNumber": 116
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/api/router.js",
+        "lineNumber": 129
+      },
+      {
+        "function": "listOnTimeout",
+        "url": "node:internal/timers",
+        "lineNumber": 525
+      },
+      {
+        "function": "processTimers",
+        "url": "node:internal/timers",
+        "lineNumber": 505
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 130,
+    "percent": 0.33731188375713544,
+    "chain": [
+      {
+        "function": "allTasks",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+        "lineNumber": 100
+      },
+      {
+        "function": "unreleasedClaimInventory",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+        "lineNumber": 337
+      },
+      {
+        "function": "convergenceStats",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+        "lineNumber": 404
+      },
+      {
+        "function": "exitConvergenceHealth",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/runtime/appRuntime.js",
+        "lineNumber": 1415
+      },
+      {
+        "function": "executionTruthProjection",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/api/projections.js",
+        "lineNumber": 64
+      },
+      {
+        "function": "baseDashboardProjection",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/api/projections.js",
+        "lineNumber": 194
+      },
+      {
+        "function": "dashboardProjection",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/api/projections.js",
+        "lineNumber": 315
+      },
+      {
+        "function": "publishSnapshot",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/api/router.js",
+        "lineNumber": 116
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/api/router.js",
+        "lineNumber": 129
+      },
+      {
+        "function": "listOnTimeout",
+        "url": "node:internal/timers",
+        "lineNumber": 525
+      },
+      {
+        "function": "processTimers",
+        "url": "node:internal/timers",
+        "lineNumber": 505
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 126,
+    "percent": 0.3269330565646082,
+    "chain": [
+      {
+        "function": "allTasks",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+        "lineNumber": 100
+      },
+      {
+        "function": "recoveryPlan",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+        "lineNumber": 574
+      },
+      {
+        "function": "recoveryPlan",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+        "lineNumber": 623
+      },
+      {
+        "function": "exitConvergenceHealth",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/runtime/appRuntime.js",
+        "lineNumber": 1415
+      },
+      {
+        "function": "baseDashboardProjection",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/api/projections.js",
+        "lineNumber": 194
+      },
+      {
+        "function": "dashboardProjection",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/api/projections.js",
+        "lineNumber": 315
+      },
+      {
+        "function": "publishSnapshot",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/api/router.js",
+        "lineNumber": 116
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/api/router.js",
+        "lineNumber": 129
+      },
+      {
+        "function": "listOnTimeout",
+        "url": "node:internal/timers",
+        "lineNumber": 525
+      },
+      {
+        "function": "processTimers",
+        "url": "node:internal/timers",
+        "lineNumber": 505
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 126,
+    "percent": 0.3269330565646082,
+    "chain": [
+      {
+        "function": "run",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "recordShadowMark",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1671
+      },
+      {
+        "function": "sample",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/shadowRunner.js",
+        "lineNumber": 33
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/shadowRunner.js",
+        "lineNumber": 29
+      },
+      {
+        "function": "listOnTimeout",
+        "url": "node:internal/timers",
+        "lineNumber": 525
+      },
+      {
+        "function": "processTimers",
+        "url": "node:internal/timers",
+        "lineNumber": 505
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 108,
+    "percent": 0.2802283341982356,
+    "chain": [
+      {
+        "function": "onMessage",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/adapters/market/BinanceMarketStream.js",
+        "lineNumber": 160
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/adapters/market/BinanceMarketStream.js",
+        "lineNumber": 133
+      },
+      {
+        "function": "emit",
+        "url": "node:events",
+        "lineNumber": 465
+      },
+      {
+        "function": "receiverOnMessage",
+        "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/ws/lib/websocket.js",
+        "lineNumber": 1237
+      },
+      {
+        "function": "emit",
+        "url": "node:events",
+        "lineNumber": 465
+      },
+      {
+        "function": "dataMessage",
+        "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/ws/lib/receiver.js",
+        "lineNumber": 576
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/ws/lib/receiver.js",
+        "lineNumber": 544
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/ws/lib/permessage-deflate.js",
+        "lineNumber": 308
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/reactivity-checkpoint-20261008/node_modules/ws/lib/permessage-deflate.js",
+        "lineNumber": 366
+      },
+      {
+        "function": "afterWrite",
+        "url": "node:internal/streams/writable",
+        "lineNumber": 698
+      },
+      {
+        "function": "onwrite",
+        "url": "node:internal/streams/writable",
+        "lineNumber": 614
+      },
+      {
+        "function": "",
+        "url": "node:internal/streams/transform",
+        "lineNumber": 170
+      },
+      {
+        "function": "processCallback",
+        "url": "node:zlib",
+        "lineNumber": 511
+      },
+      {
+        "function": "callbackTrampoline",
+        "url": "node:internal/async_hooks",
+        "lineNumber": 117
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 98,
+    "percent": 0.2542812662169175,
+    "chain": [
+      {
+        "function": "run",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "tick",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 326
+      },
+      {
+        "function": "every.name",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/runtime/appRuntime.js",
+        "lineNumber": 886
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/runtime/appRuntime.js",
+        "lineNumber": 693
+      },
+      {
+        "function": "listOnTimeout",
+        "url": "node:internal/timers",
+        "lineNumber": 525
+      },
+      {
+        "function": "processTimers",
+        "url": "node:internal/timers",
+        "lineNumber": 505
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  }
+]

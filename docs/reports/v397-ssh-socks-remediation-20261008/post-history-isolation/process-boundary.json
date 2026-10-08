@@ -1,0 +1,54 @@
+[
+  {
+    "queryOk": true,
+    "createdAt": "2026-10-08T04:46:31.0564940Z",
+    "name": "node.exe",
+    "inJob": false,
+    "pid": 48296,
+    "parentPid": 16304
+  },
+  {
+    "queryOk": true,
+    "createdAt": "2026-10-08T04:46:30.3857390Z",
+    "name": "powershell.exe",
+    "inJob": false,
+    "pid": 16304,
+    "parentPid": 34224
+  },
+  {
+    "exists": false,
+    "pid": 29068
+  },
+  {
+    "queryOk": true,
+    "createdAt": "2026-10-07T23:19:22.9950470Z",
+    "name": "powershell.exe",
+    "inJob": false,
+    "pid": 11852,
+    "parentPid": 41600
+  },
+  {
+    "queryOk": true,
+    "createdAt": "2026-09-18T14:52:52.4843770Z",
+    "name": "llama-server.exe",
+    "inJob": false,
+    "pid": 12732,
+    "parentPid": 10764
+  },
+  {
+    "queryOk": true,
+    "createdAt": "2026-10-05T05:44:46.2086990Z",
+    "name": "llama-server.exe",
+    "inJob": false,
+    "pid": 17468,
+    "parentPid": 24180
+  },
+  {
+    "queryOk": true,
+    "createdAt": "2026-10-05T05:45:30.4119800Z",
+    "name": "llama-server.exe",
+    "inJob": false,
+    "pid": 51124,
+    "parentPid": 27984
+  }
+]

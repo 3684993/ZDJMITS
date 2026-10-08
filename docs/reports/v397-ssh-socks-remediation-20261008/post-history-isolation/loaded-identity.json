@@ -1,0 +1,48 @@
+(node:23768) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+{
+ "branch": "main",
+ "localHead": "2133b36cd28c60f9843882a48e5d15440f9f49b8",
+ "remoteHead": "2133b36cd28c60f9843882a48e5d15440f9f49b8",
+ "gitHeadSubject": "fix(engine): isolate Trading Quality history work from reactive main thread",
+ "computed": {
+  "sourceHash": "f4b639839911043ec6975bf9b8f809a5eebc446e65f0ad2adc24009386cb7ed1",
+  "artifactHash": "223bda27d4103c507b0a10c0efc3b576a84ed9fca58a96b07c1323463fe2ad81",
+  "buildId": "3.9.7-223bda27d4103c507b0a"
+ },
+ "runtimeFile": {
+  "instanceId": "1354def8-eba9-48ce-bb90-3c83a73da9a1",
+  "pid": 48296,
+  "startedAt": 1791434792333,
+  "host": "0.0.0.0",
+  "port": 8080,
+  "version": "3.9.7",
+  "buildId": "3.9.7-223bda27d4103c507b0a",
+  "artifactHash": "223bda27d4103c507b0a10c0efc3b576a84ed9fca58a96b07c1323463fe2ad81",
+  "sourceHash": "f4b639839911043ec6975bf9b8f809a5eebc446e65f0ad2adc24009386cb7ed1",
+  "startReason": "MANUAL_START",
+  "lanIps": [
+   "192.168.1.50"
+  ],
+  "restartCount": 274
+ },
+ "runtimeApi": {
+  "buildId": "3.9.7-223bda27d4103c507b0a",
+  "instanceId": "1354def8-eba9-48ce-bb90-3c83a73da9a1",
+  "pid": 48296,
+  "version": "3.9.7",
+  "lastRestartReason": "MANUAL_START",
+  "restartCount": 274,
+  "lastRestartAt": 1791434792333
+ },
+ "dirtySourcePaths": "",
+ "checks": {
+  "remoteHeadEqualsLocalHead": true,
+  "committedSourceTreeMatchesRuntimeSourceHash": true,
+  "workingDistMatchesRuntimeArtifactHash": true,
+  "buildIdDerivedFromArtifactHash": true,
+  "runtimeApiMatchesInstanceFile": true,
+  "sourceTreeCleanForHashedFolders": true
+ },
+ "verdict": "IDENTITY_CLOSED"
+}

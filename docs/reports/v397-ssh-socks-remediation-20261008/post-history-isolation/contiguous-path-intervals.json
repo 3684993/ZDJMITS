@@ -1,0 +1,1875 @@
+{
+  "note": "Approximate contiguous sampled intervals; not an instrumented transaction duration or proof of unique stall cause.",
+  "paths": [
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 206,
+        "columnNumber": 68
+      },
+      "inclusiveSamples": 6799,
+      "maxContiguousSamplingIntervalMs": 294.432
+    },
+    {
+      "frame": {
+        "functionName": "summary",
+        "scriptId": "203",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 503,
+        "columnNumber": 11
+      },
+      "inclusiveSamples": 146,
+      "maxContiguousSamplingIntervalMs": 228.462
+    },
+    {
+      "frame": {
+        "functionName": "apply",
+        "scriptId": "212",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/runtimeWriteBuffer.js",
+        "lineNumber": 6,
+        "columnNumber": 9
+      },
+      "inclusiveSamples": 2737,
+      "maxContiguousSamplingIntervalMs": 214.301
+    },
+    {
+      "frame": {
+        "functionName": "saveManualExecution",
+        "scriptId": "215",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1163,
+        "columnNumber": 23
+      },
+      "inclusiveSamples": 402,
+      "maxContiguousSamplingIntervalMs": 194.051
+    },
+    {
+      "frame": {
+        "functionName": "saveEntryExecution",
+        "scriptId": "215",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1272,
+        "columnNumber": 22
+      },
+      "inclusiveSamples": 2267,
+      "maxContiguousSamplingIntervalMs": 117.305
+    },
+    {
+      "frame": {
+        "functionName": "mutateEntryReservations",
+        "scriptId": "215",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 899,
+        "columnNumber": 27
+      },
+      "inclusiveSamples": 169,
+      "maxContiguousSamplingIntervalMs": 81.44
+    },
+    {
+      "frame": {
+        "functionName": "TradingQualityCollector.listener",
+        "scriptId": "203",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 61,
+        "columnNumber": 24
+      },
+      "inclusiveSamples": 1541,
+      "maxContiguousSamplingIntervalMs": 74.665
+    },
+    {
+      "frame": {
+        "functionName": "onEvent",
+        "scriptId": "203",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 170,
+        "columnNumber": 11
+      },
+      "inclusiveSamples": 1541,
+      "maxContiguousSamplingIntervalMs": 74.665
+    },
+    {
+      "frame": {
+        "functionName": "captureState",
+        "scriptId": "203",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 261,
+        "columnNumber": 16
+      },
+      "inclusiveSamples": 1522,
+      "maxContiguousSamplingIntervalMs": 74.665
+    },
+    {
+      "frame": {
+        "functionName": "put",
+        "scriptId": "203",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 136,
+        "columnNumber": 7
+      },
+      "inclusiveSamples": 1512,
+      "maxContiguousSamplingIntervalMs": 74.665
+    },
+    {
+      "frame": {
+        "functionName": "entryExecutionClaimStats",
+        "scriptId": "215",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1299,
+        "columnNumber": 28
+      },
+      "inclusiveSamples": 1064,
+      "maxContiguousSamplingIntervalMs": 59.064
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "215",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1302,
+        "columnNumber": 31
+      },
+      "inclusiveSamples": 731,
+      "maxContiguousSamplingIntervalMs": 59.064
+    },
+    {
+      "frame": {
+        "functionName": "apply",
+        "scriptId": "212",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/runtimeWriteBuffer.js",
+        "lineNumber": 6,
+        "columnNumber": 9
+      },
+      "inclusiveSamples": 650,
+      "maxContiguousSamplingIntervalMs": 55.684
+    },
+    {
+      "frame": {
+        "functionName": "persistRuntimeCore",
+        "scriptId": "215",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 929,
+        "columnNumber": 22
+      },
+      "inclusiveSamples": 649,
+      "maxContiguousSamplingIntervalMs": 55.684
+    },
+    {
+      "frame": {
+        "functionName": "tick",
+        "scriptId": "203",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 326,
+        "columnNumber": 8
+      },
+      "inclusiveSamples": 504,
+      "maxContiguousSamplingIntervalMs": 51.387
+    },
+    {
+      "frame": {
+        "functionName": "captureStateChunk",
+        "scriptId": "203",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 287,
+        "columnNumber": 21
+      },
+      "inclusiveSamples": 362,
+      "maxContiguousSamplingIntervalMs": 51.091
+    },
+    {
+      "frame": {
+        "functionName": "put",
+        "scriptId": "203",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 136,
+        "columnNumber": 7
+      },
+      "inclusiveSamples": 351,
+      "maxContiguousSamplingIntervalMs": 51.091
+    },
+    {
+      "frame": {
+        "functionName": "reportOpenOrderExitFacts",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 80,
+        "columnNumber": 28
+      },
+      "inclusiveSamples": 1186,
+      "maxContiguousSamplingIntervalMs": 43.602
+    },
+    {
+      "frame": {
+        "functionName": "TradingQualityCollector.listener",
+        "scriptId": "203",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 61,
+        "columnNumber": 24
+      },
+      "inclusiveSamples": 90,
+      "maxContiguousSamplingIntervalMs": 34.423
+    },
+    {
+      "frame": {
+        "functionName": "onEvent",
+        "scriptId": "203",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 170,
+        "columnNumber": 11
+      },
+      "inclusiveSamples": 90,
+      "maxContiguousSamplingIntervalMs": 34.423
+    },
+    {
+      "frame": {
+        "functionName": "captureState",
+        "scriptId": "203",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 261,
+        "columnNumber": 16
+      },
+      "inclusiveSamples": 86,
+      "maxContiguousSamplingIntervalMs": 34.423
+    },
+    {
+      "frame": {
+        "functionName": "put",
+        "scriptId": "203",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 136,
+        "columnNumber": 7
+      },
+      "inclusiveSamples": 86,
+      "maxContiguousSamplingIntervalMs": 34.423
+    },
+    {
+      "frame": {
+        "functionName": "apply",
+        "scriptId": "212",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/runtimeWriteBuffer.js",
+        "lineNumber": 6,
+        "columnNumber": 9
+      },
+      "inclusiveSamples": 22,
+      "maxContiguousSamplingIntervalMs": 34.184
+    },
+    {
+      "frame": {
+        "functionName": "maintainRetention",
+        "scriptId": "215",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1042,
+        "columnNumber": 21
+      },
+      "inclusiveSamples": 22,
+      "maxContiguousSamplingIntervalMs": 34.184
+    },
+    {
+      "frame": {
+        "functionName": "mutateEntryReservations",
+        "scriptId": "215",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 899,
+        "columnNumber": 27
+      },
+      "inclusiveSamples": 129,
+      "maxContiguousSamplingIntervalMs": 23.93
+    },
+    {
+      "frame": {
+        "functionName": "mutateEntryReservations",
+        "scriptId": "215",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 899,
+        "columnNumber": 27
+      },
+      "inclusiveSamples": 15,
+      "maxContiguousSamplingIntervalMs": 23.402
+    },
+    {
+      "frame": {
+        "functionName": "apply",
+        "scriptId": "212",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/runtimeWriteBuffer.js",
+        "lineNumber": 6,
+        "columnNumber": 9
+      },
+      "inclusiveSamples": 14,
+      "maxContiguousSamplingIntervalMs": 21.842
+    },
+    {
+      "frame": {
+        "functionName": "recordRuntimeEvent",
+        "scriptId": "215",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1426,
+        "columnNumber": 22
+      },
+      "inclusiveSamples": 14,
+      "maxContiguousSamplingIntervalMs": 21.842
+    },
+    {
+      "frame": {
+        "functionName": "runtimeEvents",
+        "scriptId": "215",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1705,
+        "columnNumber": 17
+      },
+      "inclusiveSamples": 46,
+      "maxContiguousSamplingIntervalMs": 20.43
+    },
+    {
+      "frame": {
+        "functionName": "mutateEntryReservations",
+        "scriptId": "215",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 899,
+        "columnNumber": 27
+      },
+      "inclusiveSamples": 13,
+      "maxContiguousSamplingIntervalMs": 19.967
+    },
+    {
+      "frame": {
+        "functionName": "runtimeEvents",
+        "scriptId": "215",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1705,
+        "columnNumber": 17
+      },
+      "inclusiveSamples": 135,
+      "maxContiguousSamplingIntervalMs": 18.823
+    },
+    {
+      "frame": {
+        "functionName": "scalar",
+        "scriptId": "203",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 504,
+        "columnNumber": 45
+      },
+      "inclusiveSamples": 11,
+      "maxContiguousSamplingIntervalMs": 17.369
+    },
+    {
+      "frame": {
+        "functionName": "upsertAiRun",
+        "scriptId": "215",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1462,
+        "columnNumber": 15
+      },
+      "inclusiveSamples": 10,
+      "maxContiguousSamplingIntervalMs": 15.677
+    },
+    {
+      "frame": {
+        "functionName": "apply",
+        "scriptId": "212",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/runtimeWriteBuffer.js",
+        "lineNumber": 6,
+        "columnNumber": 9
+      },
+      "inclusiveSamples": 44,
+      "maxContiguousSamplingIntervalMs": 15.661
+    },
+    {
+      "frame": {
+        "functionName": "put",
+        "scriptId": "203",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 136,
+        "columnNumber": 7
+      },
+      "inclusiveSamples": 15,
+      "maxContiguousSamplingIntervalMs": 15.57
+    },
+    {
+      "frame": {
+        "functionName": "recordRuntimeEvent",
+        "scriptId": "215",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1426,
+        "columnNumber": 22
+      },
+      "inclusiveSamples": 50,
+      "maxContiguousSamplingIntervalMs": 12.729
+    },
+    {
+      "frame": {
+        "functionName": "nextExternalResearch",
+        "scriptId": "215",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1623,
+        "columnNumber": 24
+      },
+      "inclusiveSamples": 9,
+      "maxContiguousSamplingIntervalMs": 12.547
+    },
+    {
+      "frame": {
+        "functionName": "apply",
+        "scriptId": "212",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/runtimeWriteBuffer.js",
+        "lineNumber": 6,
+        "columnNumber": 9
+      },
+      "inclusiveSamples": 7,
+      "maxContiguousSamplingIntervalMs": 11.016
+    },
+    {
+      "frame": {
+        "functionName": "apply",
+        "scriptId": "212",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/runtimeWriteBuffer.js",
+        "lineNumber": 6,
+        "columnNumber": 9
+      },
+      "inclusiveSamples": 7,
+      "maxContiguousSamplingIntervalMs": 10.907
+    },
+    {
+      "frame": {
+        "functionName": "recordRuntimeEvent",
+        "scriptId": "215",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1426,
+        "columnNumber": 22
+      },
+      "inclusiveSamples": 7,
+      "maxContiguousSamplingIntervalMs": 10.907
+    },
+    {
+      "frame": {
+        "functionName": "apply",
+        "scriptId": "212",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/runtimeWriteBuffer.js",
+        "lineNumber": 6,
+        "columnNumber": 9
+      },
+      "inclusiveSamples": 10,
+      "maxContiguousSamplingIntervalMs": 9.388
+    },
+    {
+      "frame": {
+        "functionName": "recordRuntimeEvent",
+        "scriptId": "215",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1426,
+        "columnNumber": 22
+      },
+      "inclusiveSamples": 10,
+      "maxContiguousSamplingIntervalMs": 9.388
+    },
+    {
+      "frame": {
+        "functionName": "apply",
+        "scriptId": "212",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/runtimeWriteBuffer.js",
+        "lineNumber": 6,
+        "columnNumber": 9
+      },
+      "inclusiveSamples": 12,
+      "maxContiguousSamplingIntervalMs": 9.338
+    },
+    {
+      "frame": {
+        "functionName": "recordRuntimeEvent",
+        "scriptId": "215",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1426,
+        "columnNumber": 22
+      },
+      "inclusiveSamples": 12,
+      "maxContiguousSamplingIntervalMs": 9.338
+    },
+    {
+      "frame": {
+        "functionName": "recordShadowMark",
+        "scriptId": "215",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1671,
+        "columnNumber": 20
+      },
+      "inclusiveSamples": 126,
+      "maxContiguousSamplingIntervalMs": 9.338
+    },
+    {
+      "frame": {
+        "functionName": "health",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 656,
+        "columnNumber": 10
+      },
+      "inclusiveSamples": 28,
+      "maxContiguousSamplingIntervalMs": 7.961
+    },
+    {
+      "frame": {
+        "functionName": "recordRuntimeEvent",
+        "scriptId": "215",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1426,
+        "columnNumber": 22
+      },
+      "inclusiveSamples": 25,
+      "maxContiguousSamplingIntervalMs": 7.904
+    },
+    {
+      "frame": {
+        "functionName": "runtimeEvents",
+        "scriptId": "215",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1705,
+        "columnNumber": 17
+      },
+      "inclusiveSamples": 47,
+      "maxContiguousSamplingIntervalMs": 7.888
+    },
+    {
+      "frame": {
+        "functionName": "persistCandidateShadow",
+        "scriptId": "203",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 206,
+        "columnNumber": 26
+      },
+      "inclusiveSamples": 25,
+      "maxContiguousSamplingIntervalMs": 7.878
+    },
+    {
+      "frame": {
+        "functionName": "runtimeEvents",
+        "scriptId": "215",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1705,
+        "columnNumber": 17
+      },
+      "inclusiveSamples": 17,
+      "maxContiguousSamplingIntervalMs": 7.771
+    },
+    {
+      "frame": {
+        "functionName": "saveEntryExecution",
+        "scriptId": "215",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1272,
+        "columnNumber": 22
+      },
+      "inclusiveSamples": 19,
+      "maxContiguousSamplingIntervalMs": 7.757
+    },
+    {
+      "frame": {
+        "functionName": "apply",
+        "scriptId": "212",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/runtimeWriteBuffer.js",
+        "lineNumber": 6,
+        "columnNumber": 9
+      },
+      "inclusiveSamples": 7,
+      "maxContiguousSamplingIntervalMs": 6.857
+    },
+    {
+      "frame": {
+        "functionName": "saveEntryExecution",
+        "scriptId": "215",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1272,
+        "columnNumber": 22
+      },
+      "inclusiveSamples": 4,
+      "maxContiguousSamplingIntervalMs": 6.297
+    },
+    {
+      "frame": {
+        "functionName": "upsertDecisionSnapshot",
+        "scriptId": "215",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1593,
+        "columnNumber": 26
+      },
+      "inclusiveSamples": 67,
+      "maxContiguousSamplingIntervalMs": 6.278
+    },
+    {
+      "frame": {
+        "functionName": "apply",
+        "scriptId": "212",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/runtimeWriteBuffer.js",
+        "lineNumber": 6,
+        "columnNumber": 9
+      },
+      "inclusiveSamples": 4,
+      "maxContiguousSamplingIntervalMs": 6.22
+    },
+    {
+      "frame": {
+        "functionName": "recordRuntimeEvent",
+        "scriptId": "215",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1426,
+        "columnNumber": 22
+      },
+      "inclusiveSamples": 4,
+      "maxContiguousSamplingIntervalMs": 6.22
+    },
+    {
+      "frame": {
+        "functionName": "appendDecisionChain",
+        "scriptId": "215",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1544,
+        "columnNumber": 23
+      },
+      "inclusiveSamples": 4,
+      "maxContiguousSamplingIntervalMs": 6.165
+    },
+    {
+      "frame": {
+        "functionName": "recordRuntimeEvent",
+        "scriptId": "215",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1426,
+        "columnNumber": 22
+      },
+      "inclusiveSamples": 6,
+      "maxContiguousSamplingIntervalMs": 5.227
+    },
+    {
+      "frame": {
+        "functionName": "run",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 196,
+        "columnNumber": 13
+      },
+      "inclusiveSamples": 3,
+      "maxContiguousSamplingIntervalMs": 4.786
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 206,
+        "columnNumber": 68
+      },
+      "inclusiveSamples": 3,
+      "maxContiguousSamplingIntervalMs": 4.786
+    },
+    {
+      "frame": {
+        "functionName": "run",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 196,
+        "columnNumber": 13
+      },
+      "inclusiveSamples": 9,
+      "maxContiguousSamplingIntervalMs": 4.744
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 206,
+        "columnNumber": 68
+      },
+      "inclusiveSamples": 9,
+      "maxContiguousSamplingIntervalMs": 4.744
+    },
+    {
+      "frame": {
+        "functionName": "recordRuntimeEvent",
+        "scriptId": "215",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1426,
+        "columnNumber": 22
+      },
+      "inclusiveSamples": 3,
+      "maxContiguousSamplingIntervalMs": 4.719
+    },
+    {
+      "frame": {
+        "functionName": "scope",
+        "scriptId": "203",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 106,
+        "columnNumber": 9
+      },
+      "inclusiveSamples": 56,
+      "maxContiguousSamplingIntervalMs": 4.701
+    },
+    {
+      "frame": {
+        "functionName": "hash",
+        "scriptId": "203",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 7,
+        "columnNumber": 13
+      },
+      "inclusiveSamples": 55,
+      "maxContiguousSamplingIntervalMs": 4.701
+    },
+    {
+      "frame": {
+        "functionName": "appendDecisionChain",
+        "scriptId": "215",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1544,
+        "columnNumber": 23
+      },
+      "inclusiveSamples": 3,
+      "maxContiguousSamplingIntervalMs": 4.696
+    },
+    {
+      "frame": {
+        "functionName": "health",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 656,
+        "columnNumber": 10
+      },
+      "inclusiveSamples": 58,
+      "maxContiguousSamplingIntervalMs": 4.679
+    },
+    {
+      "frame": {
+        "functionName": "health",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 656,
+        "columnNumber": 10
+      },
+      "inclusiveSamples": 11,
+      "maxContiguousSamplingIntervalMs": 4.679
+    },
+    {
+      "frame": {
+        "functionName": "health",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 656,
+        "columnNumber": 10
+      },
+      "inclusiveSamples": 45,
+      "maxContiguousSamplingIntervalMs": 4.624
+    },
+    {
+      "frame": {
+        "functionName": "health",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 656,
+        "columnNumber": 10
+      },
+      "inclusiveSamples": 50,
+      "maxContiguousSamplingIntervalMs": 3.233
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 662,
+        "columnNumber": 1926
+      },
+      "inclusiveSamples": 31,
+      "maxContiguousSamplingIntervalMs": 3.233
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 662,
+        "columnNumber": 2019
+      },
+      "inclusiveSamples": 24,
+      "maxContiguousSamplingIntervalMs": 3.233
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 662,
+        "columnNumber": 2071
+      },
+      "inclusiveSamples": 21,
+      "maxContiguousSamplingIntervalMs": 3.233
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 662,
+        "columnNumber": 1926
+      },
+      "inclusiveSamples": 12,
+      "maxContiguousSamplingIntervalMs": 3.209
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 662,
+        "columnNumber": 2019
+      },
+      "inclusiveSamples": 9,
+      "maxContiguousSamplingIntervalMs": 3.209
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 662,
+        "columnNumber": 2071
+      },
+      "inclusiveSamples": 8,
+      "maxContiguousSamplingIntervalMs": 3.209
+    },
+    {
+      "frame": {
+        "functionName": "health",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 656,
+        "columnNumber": 10
+      },
+      "inclusiveSamples": 5,
+      "maxContiguousSamplingIntervalMs": 3.209
+    },
+    {
+      "frame": {
+        "functionName": "TradingQualityCollector.listener",
+        "scriptId": "203",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 61,
+        "columnNumber": 24
+      },
+      "inclusiveSamples": 2,
+      "maxContiguousSamplingIntervalMs": 3.202
+    },
+    {
+      "frame": {
+        "functionName": "onEvent",
+        "scriptId": "203",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 170,
+        "columnNumber": 11
+      },
+      "inclusiveSamples": 2,
+      "maxContiguousSamplingIntervalMs": 3.202
+    },
+    {
+      "frame": {
+        "functionName": "captureState",
+        "scriptId": "203",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 261,
+        "columnNumber": 16
+      },
+      "inclusiveSamples": 2,
+      "maxContiguousSamplingIntervalMs": 3.202
+    },
+    {
+      "frame": {
+        "functionName": "put",
+        "scriptId": "203",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 136,
+        "columnNumber": 7
+      },
+      "inclusiveSamples": 2,
+      "maxContiguousSamplingIntervalMs": 3.202
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 662,
+        "columnNumber": 1926
+      },
+      "inclusiveSamples": 21,
+      "maxContiguousSamplingIntervalMs": 3.197
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 662,
+        "columnNumber": 2019
+      },
+      "inclusiveSamples": 16,
+      "maxContiguousSamplingIntervalMs": 3.197
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 662,
+        "columnNumber": 2071
+      },
+      "inclusiveSamples": 15,
+      "maxContiguousSamplingIntervalMs": 3.197
+    },
+    {
+      "frame": {
+        "functionName": "health",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 656,
+        "columnNumber": 10
+      },
+      "inclusiveSamples": 4,
+      "maxContiguousSamplingIntervalMs": 3.196
+    },
+    {
+      "frame": {
+        "functionName": "scope",
+        "scriptId": "203",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 106,
+        "columnNumber": 9
+      },
+      "inclusiveSamples": 15,
+      "maxContiguousSamplingIntervalMs": 3.188
+    },
+    {
+      "frame": {
+        "functionName": "hash",
+        "scriptId": "203",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 7,
+        "columnNumber": 13
+      },
+      "inclusiveSamples": 14,
+      "maxContiguousSamplingIntervalMs": 3.188
+    },
+    {
+      "frame": {
+        "functionName": "health",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 656,
+        "columnNumber": 10
+      },
+      "inclusiveSamples": 53,
+      "maxContiguousSamplingIntervalMs": 3.188
+    },
+    {
+      "frame": {
+        "functionName": "auditProgressReadback",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 36,
+        "columnNumber": 25
+      },
+      "inclusiveSamples": 18,
+      "maxContiguousSamplingIntervalMs": 3.187
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 45,
+        "columnNumber": 114
+      },
+      "inclusiveSamples": 7,
+      "maxContiguousSamplingIntervalMs": 3.187
+    },
+    {
+      "frame": {
+        "functionName": "health",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 656,
+        "columnNumber": 10
+      },
+      "inclusiveSamples": 37,
+      "maxContiguousSamplingIntervalMs": 3.183
+    },
+    {
+      "frame": {
+        "functionName": "health",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 656,
+        "columnNumber": 10
+      },
+      "inclusiveSamples": 6,
+      "maxContiguousSamplingIntervalMs": 3.132
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 662,
+        "columnNumber": 1926
+      },
+      "inclusiveSamples": 22,
+      "maxContiguousSamplingIntervalMs": 3.127
+    },
+    {
+      "frame": {
+        "functionName": "auditProgressReadback",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 36,
+        "columnNumber": 25
+      },
+      "inclusiveSamples": 14,
+      "maxContiguousSamplingIntervalMs": 3.11
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 662,
+        "columnNumber": 1926
+      },
+      "inclusiveSamples": 13,
+      "maxContiguousSamplingIntervalMs": 3.046
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 662,
+        "columnNumber": 2221
+      },
+      "inclusiveSamples": 3,
+      "maxContiguousSamplingIntervalMs": 3.046
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "215",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1319,
+        "columnNumber": 93
+      },
+      "inclusiveSamples": 5,
+      "maxContiguousSamplingIntervalMs": 2.801
+    },
+    {
+      "frame": {
+        "functionName": "auditProgressReadback",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 36,
+        "columnNumber": 25
+      },
+      "inclusiveSamples": 10,
+      "maxContiguousSamplingIntervalMs": 1.958
+    },
+    {
+      "frame": {
+        "functionName": "markEpisodeDirty",
+        "scriptId": "203",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 107,
+        "columnNumber": 20
+      },
+      "inclusiveSamples": 2,
+      "maxContiguousSamplingIntervalMs": 1.698
+    },
+    {
+      "frame": {
+        "functionName": "externalResearchMetrics",
+        "scriptId": "215",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1627,
+        "columnNumber": 27
+      },
+      "inclusiveSamples": 4,
+      "maxContiguousSamplingIntervalMs": 1.671
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 662,
+        "columnNumber": 1926
+      },
+      "inclusiveSamples": 4,
+      "maxContiguousSamplingIntervalMs": 1.642
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 662,
+        "columnNumber": 2019
+      },
+      "inclusiveSamples": 4,
+      "maxContiguousSamplingIntervalMs": 1.642
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 662,
+        "columnNumber": 2221
+      },
+      "inclusiveSamples": 10,
+      "maxContiguousSamplingIntervalMs": 1.641
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 662,
+        "columnNumber": 1926
+      },
+      "inclusiveSamples": 2,
+      "maxContiguousSamplingIntervalMs": 1.628
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 662,
+        "columnNumber": 2221
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.628
+    },
+    {
+      "frame": {
+        "functionName": "health",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 656,
+        "columnNumber": 10
+      },
+      "inclusiveSamples": 4,
+      "maxContiguousSamplingIntervalMs": 1.627
+    },
+    {
+      "frame": {
+        "functionName": "auditProgressReadback",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 36,
+        "columnNumber": 25
+      },
+      "inclusiveSamples": 20,
+      "maxContiguousSamplingIntervalMs": 1.623
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 45,
+        "columnNumber": 114
+      },
+      "inclusiveSamples": 9,
+      "maxContiguousSamplingIntervalMs": 1.623
+    },
+    {
+      "frame": {
+        "functionName": "auditProgressReadback",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 36,
+        "columnNumber": 25
+      },
+      "inclusiveSamples": 10,
+      "maxContiguousSamplingIntervalMs": 1.622
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 662,
+        "columnNumber": 2019
+      },
+      "inclusiveSamples": 9,
+      "maxContiguousSamplingIntervalMs": 1.618
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 662,
+        "columnNumber": 2071
+      },
+      "inclusiveSamples": 9,
+      "maxContiguousSamplingIntervalMs": 1.618
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 662,
+        "columnNumber": 2019
+      },
+      "inclusiveSamples": 12,
+      "maxContiguousSamplingIntervalMs": 1.618
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 662,
+        "columnNumber": 2071
+      },
+      "inclusiveSamples": 12,
+      "maxContiguousSamplingIntervalMs": 1.618
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 45,
+        "columnNumber": 114
+      },
+      "inclusiveSamples": 5,
+      "maxContiguousSamplingIntervalMs": 1.61
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 45,
+        "columnNumber": 114
+      },
+      "inclusiveSamples": 6,
+      "maxContiguousSamplingIntervalMs": 1.609
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 662,
+        "columnNumber": 2221
+      },
+      "inclusiveSamples": 6,
+      "maxContiguousSamplingIntervalMs": 1.603
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 662,
+        "columnNumber": 2221
+      },
+      "inclusiveSamples": 4,
+      "maxContiguousSamplingIntervalMs": 1.601
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 662,
+        "columnNumber": 1926
+      },
+      "inclusiveSamples": 2,
+      "maxContiguousSamplingIntervalMs": 1.601
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 662,
+        "columnNumber": 2019
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.601
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 662,
+        "columnNumber": 2071
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.601
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 662,
+        "columnNumber": 1926
+      },
+      "inclusiveSamples": 2,
+      "maxContiguousSamplingIntervalMs": 1.601
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 662,
+        "columnNumber": 2019
+      },
+      "inclusiveSamples": 2,
+      "maxContiguousSamplingIntervalMs": 1.601
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 662,
+        "columnNumber": 2071
+      },
+      "inclusiveSamples": 2,
+      "maxContiguousSamplingIntervalMs": 1.601
+    },
+    {
+      "frame": {
+        "functionName": "auditProgressReadback",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 36,
+        "columnNumber": 25
+      },
+      "inclusiveSamples": 24,
+      "maxContiguousSamplingIntervalMs": 1.6
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 662,
+        "columnNumber": 1926
+      },
+      "inclusiveSamples": 12,
+      "maxContiguousSamplingIntervalMs": 1.6
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 662,
+        "columnNumber": 2221
+      },
+      "inclusiveSamples": 5,
+      "maxContiguousSamplingIntervalMs": 1.6
+    },
+    {
+      "frame": {
+        "functionName": "auditProgressReadback",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 36,
+        "columnNumber": 25
+      },
+      "inclusiveSamples": 5,
+      "maxContiguousSamplingIntervalMs": 1.596
+    },
+    {
+      "frame": {
+        "functionName": "auditProgressReadback",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 36,
+        "columnNumber": 25
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.595
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 45,
+        "columnNumber": 114
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.595
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 47,
+        "columnNumber": 79
+      },
+      "inclusiveSamples": 2,
+      "maxContiguousSamplingIntervalMs": 1.59
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 45,
+        "columnNumber": 114
+      },
+      "inclusiveSamples": 9,
+      "maxContiguousSamplingIntervalMs": 1.586
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 44,
+        "columnNumber": 37
+      },
+      "inclusiveSamples": 2,
+      "maxContiguousSamplingIntervalMs": 1.586
+    },
+    {
+      "frame": {
+        "functionName": "noActiveRiskEvidence",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 160,
+        "columnNumber": 30
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.584
+    },
+    {
+      "frame": {
+        "functionName": "auditProgressReadback",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 36,
+        "columnNumber": 25
+      },
+      "inclusiveSamples": 2,
+      "maxContiguousSamplingIntervalMs": 1.581
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 45,
+        "columnNumber": 114
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.581
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 45,
+        "columnNumber": 114
+      },
+      "inclusiveSamples": 3,
+      "maxContiguousSamplingIntervalMs": 1.58
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 662,
+        "columnNumber": 2019
+      },
+      "inclusiveSamples": 7,
+      "maxContiguousSamplingIntervalMs": 1.575
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 662,
+        "columnNumber": 2071
+      },
+      "inclusiveSamples": 7,
+      "maxContiguousSamplingIntervalMs": 1.575
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 287,
+        "columnNumber": 117
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.573
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 662,
+        "columnNumber": 1926
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.571
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 662,
+        "columnNumber": 2019
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.571
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 662,
+        "columnNumber": 2071
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.571
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 662,
+        "columnNumber": 2071
+      },
+      "inclusiveSamples": 3,
+      "maxContiguousSamplingIntervalMs": 1.567
+    },
+    {
+      "frame": {
+        "functionName": "auditProgressReadback",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 36,
+        "columnNumber": 25
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.567
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 45,
+        "columnNumber": 114
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.567
+    },
+    {
+      "frame": {
+        "functionName": "noActiveRiskEvidence",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 160,
+        "columnNumber": 30
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.566
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 662,
+        "columnNumber": 2221
+      },
+      "inclusiveSamples": 3,
+      "maxContiguousSamplingIntervalMs": 1.564
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "203",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 346,
+        "columnNumber": 47
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.563
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 239,
+        "columnNumber": 131
+      },
+      "inclusiveSamples": 2,
+      "maxContiguousSamplingIntervalMs": 1.559
+    },
+    {
+      "frame": {
+        "functionName": "nonEmpty",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 7,
+        "columnNumber": 17
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.559
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 600,
+        "columnNumber": 98
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.558
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "203",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 302,
+        "columnNumber": 60
+      },
+      "inclusiveSamples": 3,
+      "maxContiguousSamplingIntervalMs": 1.557
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 224,
+        "columnNumber": 58
+      },
+      "inclusiveSamples": 2,
+      "maxContiguousSamplingIntervalMs": 1.556
+    },
+    {
+      "frame": {
+        "functionName": "cachedOrderUsable",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 126,
+        "columnNumber": 21
+      },
+      "inclusiveSamples": 2,
+      "maxContiguousSamplingIntervalMs": 1.556
+    },
+    {
+      "frame": {
+        "functionName": "hash",
+        "scriptId": "203",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 7,
+        "columnNumber": 13
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.553
+    },
+    {
+      "frame": {
+        "functionName": "active",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 5,
+        "columnNumber": 15
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.553
+    },
+    {
+      "frame": {
+        "functionName": "auditProgressReadback",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 36,
+        "columnNumber": 25
+      },
+      "inclusiveSamples": 3,
+      "maxContiguousSamplingIntervalMs": 1.55
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 45,
+        "columnNumber": 114
+      },
+      "inclusiveSamples": 2,
+      "maxContiguousSamplingIntervalMs": 1.549
+    },
+    {
+      "frame": {
+        "functionName": "scope",
+        "scriptId": "203",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 106,
+        "columnNumber": 9
+      },
+      "inclusiveSamples": 2,
+      "maxContiguousSamplingIntervalMs": 1.549
+    },
+    {
+      "frame": {
+        "functionName": "hash",
+        "scriptId": "203",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 7,
+        "columnNumber": 13
+      },
+      "inclusiveSamples": 2,
+      "maxContiguousSamplingIntervalMs": 1.549
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 662,
+        "columnNumber": 2221
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.548
+    },
+    {
+      "frame": {
+        "functionName": "current",
+        "scriptId": "203",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 217,
+        "columnNumber": 24
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.547
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 44,
+        "columnNumber": 37
+      },
+      "inclusiveSamples": 3,
+      "maxContiguousSamplingIntervalMs": 1.545
+    },
+    {
+      "frame": {
+        "functionName": "aiRunHealthSummary",
+        "scriptId": "215",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1520,
+        "columnNumber": 22
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.535
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 662,
+        "columnNumber": 2019
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.533
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 662,
+        "columnNumber": 2071
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.533
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 45,
+        "columnNumber": 114
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.532
+    },
+    {
+      "frame": {
+        "functionName": "scope",
+        "scriptId": "203",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 106,
+        "columnNumber": 9
+      },
+      "inclusiveSamples": 2,
+      "maxContiguousSamplingIntervalMs": 1.519
+    },
+    {
+      "frame": {
+        "functionName": "hash",
+        "scriptId": "203",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 7,
+        "columnNumber": 13
+      },
+      "inclusiveSamples": 2,
+      "maxContiguousSamplingIntervalMs": 1.519
+    },
+    {
+      "frame": {
+        "functionName": "fairEntryAuditRows",
+        "scriptId": "231",
+        "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 187,
+        "columnNumber": 22
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 0.374
+    }
+  ]
+}

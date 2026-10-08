@@ -1,0 +1,20 @@
+{
+  "verdict": "FAIL",
+  "loadedCommit": "2133b36cd28c60f9843882a48e5d15440f9f49b8",
+  "reason": [
+    "fresh event-loop max5255.462911ms",
+    "REQUIRED_MARKET queueTimeout identities7",
+    "required market not continuously fresh",
+    "two TPmissing/unverified observations; last17/18 protected"
+  ],
+  "private": "25/25READY, failure0",
+  "production": "25known0, lockedTESTNET25",
+  "settingsFingerprintUnchanged": true,
+  "naturalTpTerminalRecovery": "UNKNOWN",
+  "operatorExchangeWrites": 0,
+  "implementedStructuralFollowups": 1,
+  "furtherCodeChanges": "NONE; scope limit reached",
+  "observerExitCode": 0,
+  "profileExitCode": 0,
+  "failureProfileExitCode": 0
+}

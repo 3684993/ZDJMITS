@@ -1,0 +1,186 @@
+{
+  "actualFirst": "2026-10-08T04:48:25.971894+00:00",
+  "actualLast": "2026-10-08T04:54:26.442766+00:00",
+  "actualMinutes": 6.00785,
+  "samples": 25,
+  "identities": [
+    {
+      "pid": 48296,
+      "instanceId": "1354def8-eba9-48ce-bb90-3c83a73da9a1"
+    }
+  ],
+  "privateStates": {
+    "READY": 25
+  },
+  "privateAgeMs": {
+    "n": 25,
+    "max": 16905,
+    "p95": 13112,
+    "min": 47
+  },
+  "consecutivePrivateFailures": {
+    "n": 25,
+    "max": 0,
+    "p95": 0,
+    "min": 0
+  },
+  "httpReadErrors": {},
+  "criticalQueueTimeouts": {
+    "PRIVATE": 0,
+    "EXECUTION": 0,
+    "REQUIRED_MARKET": 7
+  },
+  "otherQueueTimeouts": {
+    "BACKGROUND_AUDIT": 1
+  },
+  "observedDispatches": 671,
+  "sampledQueueDepth": {
+    "n": 25,
+    "max": 7,
+    "p95": 5,
+    "min": 0
+  },
+  "marketStates": {
+    "RECOVERING": 12,
+    "FRESH": 6,
+    "DEGRADED": 7
+  },
+  "hotQuoteAgeMs": {
+    "n": 228,
+    "max": 31602,
+    "p95": 14592,
+    "min": 1481
+  },
+  "hotBookAgeMs": {
+    "n": 228,
+    "max": 17585,
+    "p95": 13558,
+    "min": 488
+  },
+  "hotReasons": {
+    "TECHNICAL_1m_MISSING_LATEST_CLOSED": 66,
+    "TECHNICAL_5m_MISSING_LATEST_CLOSED": 16,
+    "ORDER_BOOK_STALE": 3,
+    "QUOTE_STALE": 11
+  },
+  "tpIssueSamples": {
+    "missing": 2,
+    "unverifiedTp": 2
+  },
+  "activeIncidentSamples": {},
+  "productionWrites": {
+    "nonzero": 0,
+    "unknown": 0
+  },
+  "testnetLock": {
+    "True": 25
+  },
+  "lifetimeHttpHistogram": {
+    "maxAcrossSamples": {
+      "n": 25,
+      "max": 5255.463,
+      "p95": 5255.463,
+      "min": 2975.859
+    },
+    "p95AcrossSamples": {
+      "n": 25,
+      "max": 26.345,
+      "p95": 24.363,
+      "min": 20.955
+    },
+    "includesStartup": true
+  },
+  "freshInterval": {
+    "startedAt": 1791434917799,
+    "endedAt": 1791435278099,
+    "scope": "FRESH_PROFILE_INTERVAL_ONLY",
+    "eventLoopDelayMs": {
+      "max": 5255.462911,
+      "p95": 36.405247,
+      "p99": 200.933375
+    },
+    "memoryBefore": {
+      "rss": 903168000,
+      "heapTotal": 754995200,
+      "heapUsed": 707941056,
+      "external": 8824532,
+      "arrayBuffers": 4938133
+    },
+    "memoryAfter": {
+      "rss": 1799544832,
+      "heapTotal": 988037120,
+      "heapUsed": 938672736,
+      "external": 6716340,
+      "arrayBuffers": 2831346
+    }
+  },
+  "rssBytes": {
+    "n": 25,
+    "max": 1948594176,
+    "p95": 1847562240,
+    "min": 679313408
+  },
+  "heapUsedBytes": {
+    "n": 25,
+    "max": 1664922992,
+    "p95": 1225915576,
+    "min": 266570192
+  },
+  "hostCommitHeadroomBytes": {
+    "n": 25,
+    "max": 4323102720,
+    "p95": 4020195328,
+    "min": 3086290944
+  },
+  "cpuInclusivePaths": [
+    {
+      "function": "captureState",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "samples": 1610,
+      "percent": 4.1775
+    },
+    {
+      "function": "(garbage collector)",
+      "url": "",
+      "samples": 701,
+      "percent": 1.8189
+    },
+    {
+      "function": "persistRuntimeCore",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/config/settingsStore.js",
+      "samples": 649,
+      "percent": 1.684
+    },
+    {
+      "function": "tick",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "samples": 504,
+      "percent": 1.3077
+    },
+    {
+      "function": "tick",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/positionReviewRunner.js",
+      "samples": 26,
+      "percent": 0.0675
+    },
+    {
+      "function": "tick",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/marketDataHub.js",
+      "samples": 18,
+      "percent": 0.0467
+    },
+    {
+      "function": "tick",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/v396AiExitRunner.js",
+      "samples": 9,
+      "percent": 0.0234
+    },
+    {
+      "function": "tick",
+      "url": "file:///D:/MITS-WORKTREES/v397-reactivity-history-isolation-20261008/apps/engine/dist/services/externalResearchService.js",
+      "samples": 9,
+      "percent": 0.0234
+    }
+  ],
+  "coverage": "15-second sampled endpoints and deduplicated currently retained request ledgers. Not a complete wire census; missing values are unknown. Independent fresh histogram spans its explicitly recorded interval. Candidate hot facts include boundary/continuity failures, not just quote/book age."
+}

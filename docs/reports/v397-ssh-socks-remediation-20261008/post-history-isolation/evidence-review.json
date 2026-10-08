@@ -1,0 +1,11 @@
+{
+  "secretPatternHits": 0,
+  "losslessGzipVerified": [
+    "docs\\reports\\v397-ssh-socks-remediation-20261008\\post-history-isolation\\live-cpu.cpuprofile.gz",
+    "docs\\reports\\v397-ssh-socks-remediation-20261008\\post-history-isolation\\samples.jsonl.gz",
+    "docs\\reports\\v397-ssh-socks-remediation-20261008\\post-history-isolation\\failure-profile\\live-cpu.cpuprofile.gz"
+  ],
+  "sourceUnchangedAfterFullVerify": true,
+  "sourceDiffCheck": "PASS",
+  "scope": "Only post-deployment localhost observations, offline profile analysis and docs changed"
+}

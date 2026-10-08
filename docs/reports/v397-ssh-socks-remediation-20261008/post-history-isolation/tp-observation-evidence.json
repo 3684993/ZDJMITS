@@ -1,0 +1,65 @@
+{
+  "exceptions": [
+    {
+      "at": "2026-10-08T04:50:26.100114+00:00",
+      "tp": {
+        "status": "DEGRADED",
+        "unverifiedTp": 1,
+        "required": 16,
+        "protected": 15,
+        "missing": 1,
+        "repairing": 0,
+        "repairFailed": 0,
+        "manualReviewRequired": 0,
+        "positionFactUnresolved": 0,
+        "positionFactUnresolvedSymbols": [],
+        "orphanTp": 0,
+        "duplicateTp": 0,
+        "qtyMismatch": 0,
+        "wrongSide": 0,
+        "tpMissing": 1,
+        "retryQueue": 0
+      }
+    },
+    {
+      "at": "2026-10-08T04:54:26.442766+00:00",
+      "tp": {
+        "status": "DEGRADED",
+        "unverifiedTp": 1,
+        "required": 18,
+        "protected": 17,
+        "missing": 1,
+        "repairing": 0,
+        "repairFailed": 0,
+        "manualReviewRequired": 0,
+        "positionFactUnresolved": 0,
+        "positionFactUnresolvedSymbols": [],
+        "orphanTp": 0,
+        "duplicateTp": 0,
+        "qtyMismatch": 0,
+        "wrongSide": 0,
+        "tpMissing": 1,
+        "retryQueue": 0
+      }
+    }
+  ],
+  "last": {
+    "status": "DEGRADED",
+    "unverifiedTp": 1,
+    "required": 18,
+    "protected": 17,
+    "missing": 1,
+    "repairing": 0,
+    "repairFailed": 0,
+    "manualReviewRequired": 0,
+    "positionFactUnresolved": 0,
+    "positionFactUnresolvedSymbols": [],
+    "orphanTp": 0,
+    "duplicateTp": 0,
+    "qtyMismatch": 0,
+    "wrongSide": 0,
+    "tpMissing": 1,
+    "retryQueue": 0
+  },
+  "naturalTerminalRecovery": "UNKNOWN: protection counts alone do not establish terminal recovery chain"
+}

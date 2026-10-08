@@ -1,0 +1,8 @@
+{
+  "log": "D:\\MITS-WORKTREES\\v397-reactivity-history-isolation-20261008\\docs\\reports\\v397-ssh-socks-remediation-20261008\\detached-engine-launch.txt",
+  "mode": "Engine",
+  "script": "D:\\MITS-WORKTREES\\v397-reactivity-history-isolation-20261008\\scripts\\start-zdj-lan.ps1",
+  "at": "2026-10-08T04:46:28.5288034Z",
+  "result": "LAUNCHED_NOT_HEALTH_VERIFIED",
+  "detachedLauncherPid": 34224
+}

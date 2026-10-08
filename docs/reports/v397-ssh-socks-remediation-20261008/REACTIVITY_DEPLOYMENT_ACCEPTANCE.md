@@ -43,8 +43,45 @@ Dirty work now has a durable revision. Concurrent fact/mark updates increment it
 
 Ownership outbox gets a delivered index; pending rows are selected in the same exact rowid order with no cap/drop/ownership-policy change. This avoids scanning delivered history in recurring synchronous delivery reads. Other warnings, K-line boundaries and residual paths remain evidence/backlog unless this single post-fix profile requires discussion; no per-alert expansion.
 
-Targeted4files/53tests PASS; Engine typecheck PASS; S00 re-derived with unchanged rules PASS; formal targeted build PASS. Real compiled Worker smoke PASS in unique OS-temp READ_ONLY TESTNET DB (one synchronous event, one projected episode, authorityNONE, exchangeWrites0); synthetic offline fixture is not natural runtime acceptance. Full npm run verify PASS (exit0): 234 Vitest files / 2010 tests plus 16 script tests, script contracts, S00, release identity, typecheck and formal builds. No live8080 or data junction during verification. Second deployment/feedback pending. At most this one followup implementation is authorized in this run.
+Targeted4files/53tests PASS; Engine typecheck PASS; S00 re-derived with unchanged rules PASS; formal targeted build PASS. Real compiled Worker smoke PASS in unique OS-temp READ_ONLY TESTNET DB (one synchronous event, one projected episode, authorityNONE, exchangeWrites0); synthetic offline fixture is not natural runtime acceptance. Full npm run verify PASS (exit0): 234 Vitest files / 2010 tests plus 16 script tests, script contracts, S00, release identity, typecheck and formal builds. No live8080 or data junction during verification. Second deployment/feedback completed FAIL below. At most this one followup implementation is authorized in this run.
 
 ## Evidence
 
-reactivity-acceptance/ contains build/controlled-stop/startup/identity/settings/profile/raw samples/lossless gzip+SHA256/audited summary/deduplicated requests and fresh histogram. reactivity-history-isolation/ contains source verification, unit/real Worker smoke, memory isolation and necessary second lifecycle/feedback evidence. Final result and actual deployment identity will be appended after the one full gate and short feedback.
+reactivity-acceptance/ contains build/controlled-stop/startup/identity/settings/profile/raw samples/lossless gzip+SHA256/audited summary/deduplicated requests and fresh histogram. reactivity-history-isolation/ contains source verification, unit/real Worker smoke, memory isolation and necessary second lifecycle/feedback evidence. Final result and actual deployment identity are recorded below.
+
+
+## Final second deployment — FAIL / NOT ACCEPTED
+
+One full npm run verify exit0:234 Vitest files/2010 tests plus16 script tests; scripts/S00/typecheck/formal builds/release identity PASS. No live8080 or data junction during full verification. Fetched/proved c1ed495 ancestor then ordinary FF-pushed **2133b36cd28c60f9843882a48e5d15440f9f49b8**, confirmed remote/local equality before load. No Actions.
+
+Only8080 MANUAL_START: **PID48296/host16304/instance1354def8-eba9-48ce-bb90-3c83a73da9a1/restart274**, build3.9.7-223bda27d4103c507b0a, artifact223bda27d4103c507b0a10c0efc3b576a84ed9fca58a96b07c1323463fe2ad81, sourcef4b639839911043ec6975bf9b8f809a5eebc446e65f0ad2adc24009386cb7ed1. Loaded identity6/6 CLOSED. READY/privateREADY12:48:11.839+08. SSH29068/guardian11852/models12732/17468/51124 identity/creation unchanged. Settings247 payload/resource fingerprints unchanged. Live clean worktree D:\MITS-WORKTREES\v397-reactivity-history-isolation-20261008; dirty canonical preserved. Engine stays running; no third restart/correction.
+
+Actual acceptance **12:48:25.971894–12:54:26.442766+08**,6.00785min/25samples. Independent fresh histogram12:48:37.799–12:54:38.099+08,6.005min. Startup separate. Initial60s/failure45s CPU profiles; failure reuses only the initial probe-owned inspector after Profiler.stop, primary closes it. 9229 absent at completion. No tests/build overlap.
+
+| Metric | First deployment | History isolation |
+|---|---:|---:|
+| persistRuntime inclusive CPU |1.7189% (original43.2815%)|0 samples in60s; future full boundaries not assumed free|
+| persistRuntimeCore CPU |1.8309%|1.6840%|
+| TQ captureState CPU |4.2764%|4.1775%|
+| TQ tick CPU |11.441%|1.3077%|
+| TQ materialize main CPU |9.2898%|absent; structurally moved to Worker|
+| ownership pendingEvents CPU |scan chains3.917%+1.9585%|0.0052%|
+| Main idle |45.1207%|63.7026%; failure64.4729%|
+| Fresh loop max /p95 |6417.285 /44.761ms|5255.463 /36.405ms|
+| PRIVATE /EXECUTION /REQUIRED_MARKET queue timeout identities |0 /0 /11|0 /0 /7|
+| BACKGROUND/AUDIT timeout identities (excludedcritical)|5|1|
+| Market FRESH /RECOVERING /DEGRADED samples|7 /12 /6|6 /12 /7|
+
+CPU attribution overlaps, not additive transaction wall time. Max declined18.1% but remains5.26s; reduced hotspot cost does not satisfy reactivity acceptance. PRIVATE READY25/25, maxage16905ms/p9513112ms, consecutivefailures0; all sampled endpoints completed.671deduplicated retained dispatches, queuemax7/p955. EXECUTION timeout0 is observation, not a synthetic stress test or proof of unobserved trading behavior. Hotquotemax31602/p9514592ms, bookmax17585/p9513558ms. Hot facts include66 latest1m/16 latest5m missing,3ORDER_BOOK_STALE/11QUOTE_STALE sample row facts; not separate incidents. No active incident at sample times does not prove NET-002 absent between samples; underlying critical request timeout identities remain7. Bounded ledgers are not a complete wire census.
+
+TP continuous observation FAIL:12:50:26 protected15/16 with missing1/unverified1; final12:54:26 protected17/18 with missing1/unverified1. Other sampled duplicate/qty/side/orphan/unresolved flags0. Later explicitly out-of-window closeout shows18/18 READY, but cannot retroactively clear failures. Natural terminal recovery chain **UNKNOWN**; protection totals do not establish terminal-order causality. TP policy unchanged; no operator exchange writes or forced samples.
+
+Production writes known0 and TESTNETlock25/25. RSSmax1.949GB/heapUsedmax1.665GB. Available hostcommit3.086–4.323GB (decimal), separate from physicalavailable; current commit observations do not identify kernel-pool ownership or eliminate memory latency. Worker actualREADY,230/366ms at two captures, bounded/coalesced clock/config dispatch. No Settings/TTL/Entry/TP/leverage/SSH/model/Production changes.
+
+### Remaining measured path and concrete recommendation
+
+Fresh failure profile: private-result reconciliationService event fan-out17.1612% inclusive, runtimeWriteBuffer.apply6.8790% within it (initial18.124%/9.1178%). Leaf chains contain synchronous saveEntryExecution/saveManualExecution/entryExecutionClaimStats and TQ onEvent/captureState. Main historical isolation succeeded but totalstall remains. Contiguous sampled-path intervals do not individually establish a5.26s transaction; CPU profiles cannot assign each histogram stall to a unique function. External/tunnel cause **UNKNOWN**; no new tunnel investigation.
+
+The next narrowly scoped structural task should time the whole private-result application, event fan-out and SQLite/serialization boundaries, then separate derived historical/report writes from synchronous authority-critical reservations/intents/TP durability. A bounded ordered writer with durable sequence/revision acknowledgments can move history work; exchange authorization must still wait for durable critical facts. Coalesce redundant derived writes only with exact identity/history/fail-closed proof. This is a proposed next task, not another implemented fix or authority for a third iteration here. Do not replace these measurements with per-warning patches or12h waiting.
+
+Final **FAIL / NOT ACCEPTED**. Exactly one structural followup fully verified/deployed and short feedback completed. Old6/12h observer is not a gate; F04/F10/F11 remain paused. Source/report/evidence committed to GitHub. Lossless samples/profiles, SHA256, reproducible summaries, loaded identity and boundaries are under post-history-isolation/.

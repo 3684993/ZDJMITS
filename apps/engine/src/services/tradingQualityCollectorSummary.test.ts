@@ -93,7 +93,17 @@ it('keeps exact mutable fill evidence across a 30000-event burst and database re
     const fill:any={symbol:'BTCUSDT',tradeId:'burst-fill',executionTime:Date.now(),qty:1,attributionStatus:'UNATTRIBUTED'};
     h.state.executionFills=[fill];
     (collector as any).captureState();
-    for(let n=0;n<30001;n++)(collector as any).put('events',`burst:${n}`,{id:n,type:'ENTRY_TEST',ts:n},n);
+    // This is a correctness/cache-churn invariant, not a benchmark of hosted-runner fsync.
+    // Keep all 30,001 put() calls, but commit them as one SQLite transaction so Windows cloud-disk
+    // autocommit latency cannot turn an otherwise-correct test into a machine-speed timeout.
+    (collector as any).db.exec('BEGIN IMMEDIATE');
+    try{
+      for(let n=0;n<30001;n++)(collector as any).put('events',`burst:${n}`,{id:n,type:'ENTRY_TEST',ts:n},n);
+      (collector as any).db.exec('COMMIT');
+    }catch(error){
+      try{(collector as any).db.exec('ROLLBACK');}catch{}
+      throw error;
+    }
     const prepare=vi.spyOn((collector as any).db,'prepare');
     (collector as any).captureState();
     expect(prepare.mock.calls.filter(([sql])=>String(sql).startsWith('SELECT payload FROM tq_facts'))).toHaveLength(0);

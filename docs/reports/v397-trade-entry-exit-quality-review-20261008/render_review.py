@@ -47,7 +47,7 @@ AAVE 的保留路径几乎没有正向空间，优先指向 Entry 方向/时机�
 
 ## 2. Phase A 正式收尾
 
-先完整读取指定prompt、handoff及上一轮验收报告；fetch后main从a5e21b2推进85eed50，active worktree无遗留fan-out修改。正式closeout已单独提交9eabbc4并普通FF推送。历史样本/CPU原始与gzip、timing、identity、request artifacts存在，lossless配对验证通过；见[PHASE_A_CLOSEOUT.json](PHASE_A_CLOSEOUT.json)。只读核对既有[GitHub Actions Verify #697 SUCCESS](https://github.com/3684993/ZDJMITS/actions/runs/37759949272)，没有新触发Actions。
+先完整读取指定prompt、handoff及上一轮验收报告；fetch后main从a5e21b2推进85eed50，active worktree无遗留fan-out修改。正式closeout已单独提交9eabbc4并普通FF推送。历史样本/CPU原始与gzip、timing、identity、request artifacts存在，lossless配对验证通过；见[PHASE_A_CLOSEOUT.json](PHASE_A_CLOSEOUT.json)。只读核对既有[GitHub Actions Verify #697 SUCCESS](https://github.com/3684993/ZDJMITS/actions/runs/37759949272)，未手动触发或重跑Actions。
 
 Fan-out修复**COMPLETE且有效**：entry journal calls2622→1–4，manual141→4，claim stats457–523ms→0.12–6.92ms，completion1460–1885ms→520–638ms。整体Engine Reactivity仍**FAIL**：loopmax约6140ms/p95约35.55ms、REQUIRED_MARKET四个timeout identities、market非持续fresh；6.14秒stall唯一调用链**UNKNOWN**。后续Reactivity **PAUSED等待独立专项**，本轮没有扩展修复/verify/重启/长观察。
 

@@ -169,6 +169,26 @@
       "sha256": "226fa0ec4b9b6b3efb69dab2f6ef2a04543a7df4c2a09bbf3d23853eac1b7303"
     },
     {
+      "path": "github-analysis-commit.log",
+      "bytes": 12863,
+      "sha256": "20b3f16026e921b9b7df0cddbeb1231814f652ddfe0a1c733f458180ee1b66f9"
+    },
+    {
+      "path": "github-analysis-fetch.log",
+      "bytes": 88,
+      "sha256": "3a3f87cd05b2ce1bdb8b19f98d8dbff8c47c6570a9c53513360a8b565d408751"
+    },
+    {
+      "path": "github-analysis-push.log",
+      "bytes": 78,
+      "sha256": "3e8f47a9ce5ca8c8273cf5699c113edd4acf0028b53bf5bb5c4e548de5de3659"
+    },
+    {
+      "path": "github-remote-fetch.log",
+      "bytes": 88,
+      "sha256": "3a3f87cd05b2ce1bdb8b19f98d8dbff8c47c6570a9c53513360a8b565d408751"
+    },
+    {
       "path": "linked-primary-runs.json",
       "bytes": 14428978,
       "sha256": "829165d1095f29163dc8f6afd97681f27570c8de7325b8f016b614676aac3b6b"
@@ -574,14 +594,24 @@
       "sha256": "6adb9c04f407aa461c07cf92424bd822d915cfc90f38fadbc95f8abf48bf004e"
     },
     {
+      "path": "remote-verification.log",
+      "bytes": 84,
+      "sha256": "4cadd2fc6a3d66d87fbcc8b795e4002d498e98fbc98900ada548aace273f1e1d"
+    },
+    {
+      "path": "REMOTE_CLOSEOUT.json",
+      "bytes": 1034,
+      "sha256": "a83abda5a5f1da683fe757dd8f2ecde5adcc6b40c4bbf3abcb81c7c79c671a09"
+    },
+    {
       "path": "render-review.log",
       "bytes": 54,
       "sha256": "89d5bc40fd9059239dd5f902c26a0b7cc77a50156dbc0ba4921e3894ca4d0e0d"
     },
     {
       "path": "render_review.py",
-      "bytes": 28650,
-      "sha256": "0933e6d8e2bac878c411ff4ed3fe506186ba2bde4946845fefebd9cee3f8f865"
+      "bytes": 28871,
+      "sha256": "9c69d5dab7d34a0a5f5be562ef3dbd52485500bbeba3e9591b0eace229cf537b"
     },
     {
       "path": "SOURCE_MAP.json",
@@ -600,13 +630,18 @@
     },
     {
       "path": "TRADE_ENTRY_EXIT_QUALITY_REVIEW.md",
-      "bytes": 36359,
-      "sha256": "1a90b774efbd54657f52ff1a72006ac185caa6a4fc9e4df489a7f3fb4334caf1"
+      "bytes": 36368,
+      "sha256": "994bda1280e701c533883025e9b38652a022ff1bb0979cad9ce8bbf736a26145"
     },
     {
       "path": "validate_evidence.py",
       "bytes": 2290,
       "sha256": "766add6ee1febdf32618b26478926ba30a46b3d93bbe3a901d8c455663537cde"
+    },
+    {
+      "path": "verify_remote_evidence.py",
+      "bytes": 1881,
+      "sha256": "7fdb97ee1da1bc6fbb84c94f5459def91bfaa25daed052c30ce2a8f749abd1fa"
     }
   ],
   "notes": [
@@ -615,5 +650,6 @@
     "No source/tests/build/lifecycle writes. Raw query state changes naturally while analysis runs."
   ],
   "relativeDocumentLinksValid": true,
-  "artifactLineEndings": "Scoped .gitattributes -text preserves exact bytes for manifest replay"
+  "artifactLineEndings": "Scoped .gitattributes -text preserves exact bytes for manifest replay",
+  "remoteBaseValidated": "ed41ddc4691e7f93cfaa0cd354726dcfa5d63f56"
 }

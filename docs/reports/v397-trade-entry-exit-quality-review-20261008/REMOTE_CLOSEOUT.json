@@ -1,0 +1,22 @@
+{
+  "at": "2026-10-08T11:18:05.879382+00:00",
+  "remoteMain": "ed41ddc4691e7f93cfaa0cd354726dcfa5d63f56",
+  "verifiedArtifactCount": 121,
+  "remoteManifestReplay": "PASS_EXACT_SHA256",
+  "requiredDocumentBlobIds": {
+    "docs/reports/v397-trade-entry-exit-quality-review-20261008/TRADE_ENTRY_EXIT_QUALITY_REVIEW.md": "d8ec7a9a86368f5671bb8f7cd19ec1d2b7cb29ae",
+    "docs/plans/V397_ENTRY_EXIT_TP_QUALITY_OPTIMIZATION_PLAN_20261008.md": "b1c31bafe0ad0c8acaf34fefd604d39d8dc89a17",
+    "docs/prompts/CURRENT_MAINTENANCE_HANDOFF.md": "064c5945f0cdb806079e051fdd9484d784358922"
+  },
+  "runtimeSourceChanges": [],
+  "promotion": "ordinary non-force push; fetched main ancestry proven before push",
+  "fanout": "COMPLETE_EFFECTIVE",
+  "engineReactivity": "FAIL",
+  "remaining6140msCaller": "UNKNOWN",
+  "reactivityFollowup": "PAUSED_SEPARATE_SCOPE",
+  "strategyImplementation": "NOT_STARTED",
+  "productionWritesFinalObserved": 0,
+  "settingsVersionFinalObserved": 247,
+  "servicesRestarted": 0,
+  "fullVerifyRuns": 0
+}

@@ -1,0 +1,4 @@
+(node:39680) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:39680) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+{"requests":16,"windows":6,"positionMode":{"dualSidePosition":true},"positions":18,"writes":0}

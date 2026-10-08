@@ -1,0 +1,7 @@
+{
+  "file": "offline-replay-before.log",
+  "line": 28,
+  "issue": "trailing whitespace in native Node fatal stack trace",
+  "rawPreserved": "offline-replay-before.log.original.gz",
+  "normalized": "terminal whitespace only, diagnostic content unchanged"
+}

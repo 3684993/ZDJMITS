@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "D:\MITS-WORKTREES\v398-trade-integrity-20261009\scripts\v398-integrity-local-readonly.py", line 22, in <module>
+    recent=db.execute("SELECT entity_id,payload FROM runtime_entities WHERE kind='aiRuns' ORDER BY updated_at DESC LIMIT 30").fetchall()
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such column: updated_at

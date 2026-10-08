@@ -1,0 +1,28 @@
+(node:51148) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+<--- Last few GCs --->
+
+[51148:000002A4D0574000]      285 ms: Mark-Compact (reduce) 14.4 (31.6) -> 13.7 (16.6) MB, pooled: 0 MB, 7.38 / 0.00 ms  (average mu = 0.956, current mu = 0.833) last resort; GC in old space requested
+[51148:000002A4D0574000]      289 ms: Mark-Compact (reduce) 13.7 (16.6) -> 13.7 (15.9) MB, pooled: 0 MB, 4.67 / 0.00 ms  (average mu = 0.926, current mu = 0.004) last resort; GC in old space requested
+
+
+<--- JS stacktrace --->
+
+FATAL ERROR: CALL_AND_RETRY_LAST Allocation failed - JavaScript heap out of memory
+----- Native stack trace -----
+
+ 1: 00007FF694724287 node::SetCppgcReference+21127
+ 2: 00007FF69468433B EVP_MD_meth_get_input_blocksize+102619
+ 3: 00007FF6952919F1 v8::Isolate::ReportExternalAllocationLimitReached+65
+ 4: 00007FF69527E4A6 v8::Function::Experimental_IsNopFunction+3318
+ 5: 00007FF6950EEE91 v8::Isolate::GetHeapProfiler+14001
+ 6: 00007FF6950F90E1 v8::Isolate::GetHeapProfiler+55553
+ 7: 00007FF695108EA6 v8::Isolate::GetHeapProfiler+120518
+ 8: 00007FF69510DCB8 v8::Isolate::GetHeapProfiler+140504
+ 9: 00007FF6950F8C81 v8::Isolate::GetHeapProfiler+54433
+10: 00007FF6951047E1 v8::Isolate::GetHeapProfiler+102401
+11: 00007FF69528EA73 v8::String::NewFromUtf8+163
+12: 00007FF694501D0C v8::CTypeInfoBuilder<__int64>::Build+21932
+13: 00007FF6946AEDA5 node::OnFatalError+174645
+14: 00007FF63528FA64

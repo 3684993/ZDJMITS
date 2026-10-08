@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "D:\MITS-WORKTREES\v398-trade-integrity-20261009\scripts\v398-integrity-analyze.py", line 20, in <module>
+    if abs(entry-exit-remaining)>1e-8:reasons.append('ENTRY_EXIT_REMAINING_ARITHMETIC')
+           ~~~~~~~~~~^~~~~~~~~~
+TypeError: unsupported operand type(s) for -: 'float' and 'NoneType'

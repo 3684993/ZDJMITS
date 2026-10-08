@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { RuntimeState } from './runtimeState.js';
 import { installDeterministicAdmission } from '../testing/deterministicRiskAdmission.js';
 

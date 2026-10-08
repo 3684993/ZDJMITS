@@ -295,10 +295,14 @@ export class RuntimeState {
      * Full serialize() remains the recovery/clean-stop boundary.
      */
     serializeCheckpointCore() {
-        const core = this.serialize() as Record<string, unknown>;
-        for (const key of ['positions','entryIntents','entryOrders','tpOrders','manualIntents','manualOrders','allocationPlans','entryReservations','tradeRecords','experienceSamples','tradePlans','planExecutions','aiUsage','aiRuns','executionFills'])
-            delete core[key];
-        return core;
+        return {
+            entryReservationRevision:this.entryReservationRevision,riskLedger:this.riskLedger,aiUsageDroppedRows:this.aiUsageDroppedRows,
+            generation:this.generation,marketGeneration:this.marketGeneration,manualExitGoals:[...this.manualExitGoals],
+            positionReviews:[...this.positionReviews],reviewBudgets:[...this.reviewBudgets],underlyingLocks:[...this.underlyingLocks],
+            runtimeControl:this.runtimeControl,executionGovernance:this.executionGovernance,shadowRunner:this.shadowRunner,
+            rejectionCooldown:[...this.rejectionCooldown],candidateLifecycle:[...this.candidateLifecycle],directionDecisionStates:[...this.directionDecisionStates],
+            tradeOutcomes:this.tradeOutcomes,lifecycles:[...this.lifecycles],activity:this.activity,account:this.account,
+        };
     }
 
 restore(value) { if (!value || typeof value !== 'object')

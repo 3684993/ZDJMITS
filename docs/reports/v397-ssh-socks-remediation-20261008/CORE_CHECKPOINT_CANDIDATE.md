@@ -56,3 +56,12 @@ The branch now adds `persistRuntimeEntity()`, which atomically upserts one entit
 
 This preserves the crash-recovery facts that the core-only generic checkpoint would otherwise
 delay, while keeping the high-frequency path independent of retained-history size.
+
+
+## Static correction before local verification
+
+A review of the first helper found that deleting fields *after* calling `serialize()` still paid the
+cost of materializing every retained Map/array. The candidate now constructs the core payload
+directly and a regression test makes full `serialize()` throw while `serializeCheckpointCore()`
+must still succeed. This is required for the change to remove both serialization and
+pre-serialization retained-history work from the ordinary 1-second path.

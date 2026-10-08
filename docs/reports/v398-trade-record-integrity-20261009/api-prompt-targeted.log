@@ -1,0 +1,148 @@
+VITEST_TEST_TIMEOUT=5000 CI=
+
+ RUN  v3.2.7 D:/MITS-WORKTREES/v398-trade-integrity-20261009/apps/engine
+
+(node:10192) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ❯ src/api/snapshotReadOnly.test.ts (6 tests | 6 failed) 613ms
+   × TradeRecord GET list/detail and Experience perform zero SQLite writes and zero state mutation 108ms
+     → ENOENT: no such file or directory, open 'D:\config\settings.default.json'
+     → EBUSY: resource busy or locked, unlink 'C:\Users\5700x\AppData\Local\Temp\zdj-trade-get-BeTqMb\zdj-settings.sqlite-shm'
+   × published dashboard snapshot > serves a bounded immutable summary without reconciliation waits or SQLite writes 91ms
+     → ENOENT: no such file or directory, open 'D:\config\settings.default.json'
+     → EBUSY: resource busy or locked, unlink 'C:\Users\5700x\AppData\Local\Temp\zdj-snapshot-3c631U\zdj-settings.sqlite-shm'
+   × position detail and stale manual preview perform zero market REST reads 97ms
+     → ENOENT: no such file or directory, open 'D:\config\settings.default.json'
+     → EBUSY: resource busy or locked, unlink 'C:\Users\5700x\AppData\Local\Temp\zdj-position-get-bQYgw0\zdj-settings.sqlite-shm'
+   × reconciliation telemetry still persists execution facts 107ms
+     → ENOENT: no such file or directory, open 'D:\config\settings.default.json'
+     → EBUSY: resource busy or locked, unlink 'C:\Users\5700x\AppData\Local\Temp\zdj-reconcile-event-N6WpI6\zdj-settings.sqlite'
+   × pipeline HTTP preserves the installed admission readback and scoped reconciliation without writes after the initial authority diagnostic 103ms
+     → ENOENT: no such file or directory, open 'D:\config\settings.default.json'
+     → EBUSY: resource busy or locked, unlink 'C:\Users\5700x\AppData\Local\Temp\zdj-pipeline-readback-5bR7Ty\zdj-settings.sqlite-shm'
+   × ALL history API preserves incomplete origins with side/status filters and pagination without writes 106ms
+     → ENOENT: no such file or directory, open 'D:\config\settings.default.json'
+     → EBUSY: resource busy or locked, unlink 'C:\Users\5700x\AppData\Local\Temp\zdj-integrity-get-02XMJR\zdj-settings.sqlite'
+ ✓ src/services/primaryPositionContext.test.ts (1 test) 16ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/api/snapshotReadOnly.test.ts > TradeRecord GET list/detail and Experience perform zero SQLite writes and zero state mutation
+Error: ENOENT: no such file or directory, open 'D:\config\settings.default.json'
+ ❯ SettingsStore.defaults src/config/settingsStore.ts:592:7
+    590|   private async defaults() {
+    591|     return JSON.parse(
+    592|       await readFile(
+       |       ^
+    593|         path.join(this.configDir, "settings.default.json"),
+    594|         "utf8",
+ ❯ SettingsStore.load src/config/settingsStore.ts:630:21
+ ❯ Function.createInternal src/runtime/appRuntime.ts:231:28
+ ❯ src/api/snapshotReadOnly.test.ts:9:73
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/12]⎯
+
+ FAIL  src/api/snapshotReadOnly.test.ts > TradeRecord GET list/detail and Experience perform zero SQLite writes and zero state mutation
+Error: EBUSY: resource busy or locked, unlink 'C:\Users\5700x\AppData\Local\Temp\zdj-trade-get-BeTqMb\zdj-settings.sqlite-shm'
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/12]⎯
+
+ FAIL  src/api/snapshotReadOnly.test.ts > published dashboard snapshot > serves a bounded immutable summary without reconciliation waits or SQLite writes
+Error: ENOENT: no such file or directory, open 'D:\config\settings.default.json'
+ ❯ SettingsStore.defaults src/config/settingsStore.ts:592:7
+    590|   private async defaults() {
+    591|     return JSON.parse(
+    592|       await readFile(
+       |       ^
+    593|         path.join(this.configDir, "settings.default.json"),
+    594|         "utf8",
+ ❯ SettingsStore.load src/config/settingsStore.ts:630:21
+ ❯ Function.createInternal src/runtime/appRuntime.ts:231:28
+ ❯ src/api/snapshotReadOnly.test.ts:20:169
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/12]⎯
+
+ FAIL  src/api/snapshotReadOnly.test.ts > published dashboard snapshot > serves a bounded immutable summary without reconciliation waits or SQLite writes
+Error: EBUSY: resource busy or locked, unlink 'C:\Users\5700x\AppData\Local\Temp\zdj-snapshot-3c631U\zdj-settings.sqlite-shm'
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/12]⎯
+
+ FAIL  src/api/snapshotReadOnly.test.ts > position detail and stale manual preview perform zero market REST reads
+Error: ENOENT: no such file or directory, open 'D:\config\settings.default.json'
+ ❯ SettingsStore.defaults src/config/settingsStore.ts:592:7
+    590|   private async defaults() {
+    591|     return JSON.parse(
+    592|       await readFile(
+       |       ^
+    593|         path.join(this.configDir, "settings.default.json"),
+    594|         "utf8",
+ ❯ SettingsStore.load src/config/settingsStore.ts:630:21
+ ❯ Function.createInternal src/runtime/appRuntime.ts:231:28
+ ❯ src/api/snapshotReadOnly.test.ts:24:76
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/12]⎯
+
+ FAIL  src/api/snapshotReadOnly.test.ts > position detail and stale manual preview perform zero market REST reads
+Error: EBUSY: resource busy or locked, unlink 'C:\Users\5700x\AppData\Local\Temp\zdj-position-get-bQYgw0\zdj-settings.sqlite-shm'
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/12]⎯
+
+ FAIL  src/api/snapshotReadOnly.test.ts > reconciliation telemetry still persists execution facts
+Error: ENOENT: no such file or directory, open 'D:\config\settings.default.json'
+ ❯ SettingsStore.defaults src/config/settingsStore.ts:592:7
+    590|   private async defaults() {
+    591|     return JSON.parse(
+    592|       await readFile(
+       |       ^
+    593|         path.join(this.configDir, "settings.default.json"),
+    594|         "utf8",
+ ❯ SettingsStore.load src/config/settingsStore.ts:630:21
+ ❯ Function.createInternal src/runtime/appRuntime.ts:231:28
+ ❯ src/api/snapshotReadOnly.test.ts:32:79
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/12]⎯
+
+ FAIL  src/api/snapshotReadOnly.test.ts > reconciliation telemetry still persists execution facts
+Error: EBUSY: resource busy or locked, unlink 'C:\Users\5700x\AppData\Local\Temp\zdj-reconcile-event-N6WpI6\zdj-settings.sqlite'
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/12]⎯
+
+ FAIL  src/api/snapshotReadOnly.test.ts > pipeline HTTP preserves the installed admission readback and scoped reconciliation without writes after the initial authority diagnostic
+Error: ENOENT: no such file or directory, open 'D:\config\settings.default.json'
+ ❯ SettingsStore.defaults src/config/settingsStore.ts:592:7
+    590|   private async defaults() {
+    591|     return JSON.parse(
+    592|       await readFile(
+       |       ^
+    593|         path.join(this.configDir, "settings.default.json"),
+    594|         "utf8",
+ ❯ SettingsStore.load src/config/settingsStore.ts:630:21
+ ❯ Function.createInternal src/runtime/appRuntime.ts:231:28
+ ❯ src/api/snapshotReadOnly.test.ts:44:81
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/12]⎯
+
+ FAIL  src/api/snapshotReadOnly.test.ts > pipeline HTTP preserves the installed admission readback and scoped reconciliation without writes after the initial authority diagnostic
+Error: EBUSY: resource busy or locked, unlink 'C:\Users\5700x\AppData\Local\Temp\zdj-pipeline-readback-5bR7Ty\zdj-settings.sqlite-shm'
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/12]⎯
+
+ FAIL  src/api/snapshotReadOnly.test.ts > ALL history API preserves incomplete origins with side/status filters and pagination without writes
+Error: ENOENT: no such file or directory, open 'D:\config\settings.default.json'
+ ❯ SettingsStore.defaults src/config/settingsStore.ts:592:7
+    590|   private async defaults() {
+    591|     return JSON.parse(
+    592|       await readFile(
+       |       ^
+    593|         path.join(this.configDir, "settings.default.json"),
+    594|         "utf8",
+ ❯ SettingsStore.load src/config/settingsStore.ts:630:21
+ ❯ Function.createInternal src/runtime/appRuntime.ts:231:28
+ ❯ src/api/snapshotReadOnly.test.ts:57:77
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/12]⎯
+
+ FAIL  src/api/snapshotReadOnly.test.ts > ALL history API preserves incomplete origins with side/status filters and pagination without writes
+Error: EBUSY: resource busy or locked, unlink 'C:\Users\5700x\AppData\Local\Temp\zdj-integrity-get-02XMJR\zdj-settings.sqlite'
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/12]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  6 failed | 1 passed (7)
+   Start at  07:23:38
+   Duration  5.01s (transform 1.26s, setup 0ms, collect 3.76s, tests 629ms, environment 0ms, prepare 181ms)

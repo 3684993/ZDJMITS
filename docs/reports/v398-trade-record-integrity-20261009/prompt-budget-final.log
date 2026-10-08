@@ -1,0 +1,14 @@
+VITEST_TEST_TIMEOUT=5000 CI=
+
+ RUN  v3.2.7 D:/MITS-WORKTREES/v398-trade-integrity-20261009/apps/engine
+
+(node:3980) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/services/eipService.test.ts (3 tests) 943ms
+   ✓ EIP 3.0 evidence gates > builds seven-timeframe evidence within a bounded prompt size  389ms
+ ✓ src/services/primaryPositionContext.test.ts (1 test) 17ms
+
+ Test Files  2 passed (2)
+      Tests  4 passed (4)
+   Start at  07:30:44
+   Duration  3.80s (transform 1.22s, setup 0ms, collect 2.23s, tests 960ms, environment 0ms, prepare 178ms)

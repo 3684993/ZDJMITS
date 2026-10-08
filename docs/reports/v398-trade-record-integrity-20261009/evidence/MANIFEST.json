@@ -1,20 +1,164 @@
 {
-  "observedAt": "2026-10-08T23:11:08.282324+00:00",
+  "observedAt": "2026-10-08T23:42:02.161270+00:00",
   "privacyGate": "PASS_NO_PRIVATE_FIELDS_OR_SECRET_PATTERNS",
   "normalization": "LF text/raw gzip",
-  "artifactCount": 52,
+  "artifactCount": 158,
   "artifacts": [
     {
+      "path": "apps/dashboard/src/views/tradeClosePresentation.test.ts",
+      "sha256": "2f040d4484c4bf6678be9225057435b371a49367d9ff6e6b08e1e002623d26d4"
+    },
+    {
+      "path": "apps/dashboard/src/views/tradeClosePresentation.ts",
+      "sha256": "9fbfdf9734a7371a1c0f4f84ebe48150b8a1aa4b50283663dd34c18f46063a04"
+    },
+    {
+      "path": "apps/dashboard/src/views/TradeRecordsView.integrity.test.ts",
+      "sha256": "1a32254b7c7e7716d58167127333dca5017bb8c69cd2685ac95b9f6bc7565e17"
+    },
+    {
+      "path": "apps/dashboard/src/views/TradeRecordsView.vue",
+      "sha256": "7d74d452d2eb5be9968f73f72a404c1f0245bf04e9a5e59a6c0a9e4d4034b077"
+    },
+    {
+      "path": "apps/engine/src/api/router.ts",
+      "sha256": "2eaa5c7684bc2f1f7129681cedd67b0392df066f309d6c4755d3c6778fa99c18"
+    },
+    {
+      "path": "apps/engine/src/api/snapshotReadOnly.test.ts",
+      "sha256": "2fd190f62119da2f5b3dd0fbc7688ac97ecaee8010a14869eae88ca09fa9ad2b"
+    },
+    {
+      "path": "apps/engine/src/services/eipService.ts",
+      "sha256": "d9e4386e9d4952567a723ce9bd8fa461adef1b64c7149d7899a949147e94ffe2"
+    },
+    {
+      "path": "apps/engine/src/services/existingPositionContext.test.ts",
+      "sha256": "b2396a5733fbaafc4d0913925b0affa046e39592c14a4fa0f319b6ba239c911a"
+    },
+    {
+      "path": "apps/engine/src/services/existingPositionContext.ts",
+      "sha256": "4fa5c267a5a62359706549e7c9b6ae41dd306c06c70f65c7a95b35629e20a4e5"
+    },
+    {
+      "path": "apps/engine/src/services/primaryPositionContext.test.ts",
+      "sha256": "1ef964e855517d59955252b5e9d72f04d545ae56356e87616960fa4a4119e9d9"
+    },
+    {
+      "path": "apps/engine/src/services/tradeRecordDiagnostics.test.ts",
+      "sha256": "ffc6727ecf9eccea3ecb9dbfd0f7567a4111741896c622de34fdf72fe6467e88"
+    },
+    {
+      "path": "apps/engine/src/services/tradeRecordDiagnostics.ts",
+      "sha256": "e8cd0633c5f8c582ec09a8d77f2403c47987a0310177824b0dcf4fbef1ad44d3"
+    },
+    {
+      "path": "apps/engine/src/services/tradeRecordReadModel.ts",
+      "sha256": "21947f7b6816441052873acd23665b0e715ee32f0e891b170cb73595ebdc0713"
+    },
+    {
+      "path": "apps/engine/src/services/tradeRecordSyncService.test.ts",
+      "sha256": "bbef3b4d684cef6444b4e62133ce0423881de49ab42c6ca2da60d24cae3a3dbc"
+    },
+    {
+      "path": "apps/engine/src/services/tradeRecordSyncService.ts",
+      "sha256": "416281d5270ab13dc96c538555ef8d4003dca4b0aa8e8b515b469e2b6de1619a"
+    },
+    {
       "path": "docs/plans/V398_TRADE_RECORD_INTEGRITY_IMPLEMENTATION_PLAN_20261009.md",
-      "sha256": "33c5cf59eddc745dc662030292f78084e2b037fc9644875e055b0d11b92284c9"
+      "sha256": "17eea67f0e9c5aad2d8ba06217d906e2d1cae4ab5e6092246097bc1beb0e5e8d"
+    },
+    {
+      "path": "docs/prompts/CURRENT_MAINTENANCE_HANDOFF.md",
+      "sha256": "fec0833f988f01de66b05f60ca1adf1e754fdfcdfd0e88ae1956df3363749ef9"
     },
     {
       "path": "docs/reports/v398-trade-record-integrity-20261009/analysis-2.log",
       "sha256": "23f5f75c312d3262e734d4d69c3d2cd0d31714af0d16724e757a5acadca4cb5c"
     },
     {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/analysis-2.log.phase-c-original.gz",
+      "sha256": "0bb0d4501679cfcc3034c9be768b0a9c8baaa9fb5b62f0c145b1320b7baf5bcc"
+    },
+    {
       "path": "docs/reports/v398-trade-record-integrity-20261009/analysis.log",
       "sha256": "aab848ddc3ac418ef7e1c5e7887d6bc565e11c2a8980897250211d16ed59a18c"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/analysis.log.phase-c-original.gz",
+      "sha256": "c47e77424fcabc01747a727446ed39c186d843feb8b695b3244a8280d4f611d2"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/api-prompt-targeted-2.log",
+      "sha256": "fe01fdb983314c566550cb88286f3731c6bfdc7f179f413953f89694990157d1"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/api-prompt-targeted-2.log.phase-c-original.gz",
+      "sha256": "54ec7455aa03914f01203f9d51a38b18a87fa4491e424a1a7e0c00ea15e7abfe"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/api-prompt-targeted.log",
+      "sha256": "a3dc993680b0f921bca133fb6aa44ffda7835499e0dbaea0e325e9a196865fbf"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/api-prompt-targeted.log.phase-c-original.gz",
+      "sha256": "6154cf6592895b32062390f00814aa6fb56c7eead3678b1d0f8896bf5f7999cc"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/contracts-bounded-build.log",
+      "sha256": "62f7ca75234d5db36ee6e8d5b9cc49594789d5f418457f167c0b5e8db1324567"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/contracts-bounded-build.log.phase-c-original.gz",
+      "sha256": "a1f8d5941985d1cd9a42db4160c96a0ddfdf631c8cbe9f55f239bc98f028e419"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/core-bounded-build-2.log",
+      "sha256": "62f7ca75234d5db36ee6e8d5b9cc49594789d5f418457f167c0b5e8db1324567"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/core-bounded-build-2.log.phase-c-original.gz",
+      "sha256": "a1f8d5941985d1cd9a42db4160c96a0ddfdf631c8cbe9f55f239bc98f028e419"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/core-bounded-build.log",
+      "sha256": "64a8b7a8624a9d5b821ec8e6ba275a30874418ba2b805e744d27eb6ed4f5b554"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/core-bounded-build.log.phase-c-original.gz",
+      "sha256": "e7434f164d0d74d9d05c1ed13f9ff314f7d6ff980aa333f4894614cc8f876bc3"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/core-prompt-final-build.log",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/core-prompt-final-build.log.phase-c-original.gz",
+      "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/dashboard-targeted-first.log",
+      "sha256": "3303da0d68dc1bf05609516919b89a158c65519d1c064f2a1994d3d45d50e665"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/dashboard-targeted-first.log.phase-c-original.gz",
+      "sha256": "398ed50241d4d7da3337eff9f9b12c123ab4a60d4412df00e688fdc8a8940b6a"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/deps-build.log",
+      "sha256": "4d79d83cb56870b72ecbf0e3c003c0b26e4b4bfc0bad72c41a9d9eeb41495cd1"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/deps-build.log.phase-c-original.gz",
+      "sha256": "4d74b8dd5456a4131dbe5ef115b9a756155aac3bde91d6a92456e3eacbed075e"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/engine-bounded-typecheck.log",
+      "sha256": "f2b90a7965a805872fb7debee268ddcfd5c559531f78d9b5921a2d7d7b12d63f"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/engine-bounded-typecheck.log.phase-c-original.gz",
+      "sha256": "cff711a67ee4227ef348b8fd2a24f55fd54198218e4e498cf66c6bf0f028411f"
     },
     {
       "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/actual-primary-rendered-fact-proof.json",
@@ -53,6 +197,10 @@
       "sha256": "9d834fe18734283acbee761000c186a188de853d3a4a53ff3eaf43a5ca3e739c"
     },
     {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/avax-short-native-timeline.csv",
+      "sha256": "da25932221f450e14846f8f24e6be355f437a4e310bbfdf07b522b94375d14e1"
+    },
+    {
       "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/entities.json.gz",
       "sha256": "deb6237f78fff2900e49fe77458878812e8181deb06068209314d579ca104529"
     },
@@ -69,16 +217,36 @@
       "sha256": "e35edba0f40f0579c17d986534a0282c2e13d8cc1378819228f41e9b0c195ef3"
     },
     {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/github-phase-b-jobs.json",
+      "sha256": "4d3956df0009fa4050d3782f84a32af069604d2086961a1dbcf568cd797d9e17"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/github-phase-b.json",
+      "sha256": "8fe0eb7f05bee1f8d98e134923eeeb3e1637aa30c548451751775f87842cff86"
+    },
+    {
       "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/linked-ai-runs.json.gz",
       "sha256": "38e1cead89ce317ea8825c770dc37574e1cf103549ec70dd8ea1830f6996d4f7"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/local-build-memory-block.json",
+      "sha256": "8af8d094016ac41e08bfac840ce00c72dc2da1712b48a7ba1b8fb31338bf490a"
     },
     {
       "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/local-collection-boundary.json",
       "sha256": "2daf5868e1bd24d1ca5faddd4c117a81ea9c614a0f4971c658c3332ea6104149"
     },
     {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/log-normalization.json",
+      "sha256": "2f10a4f25acc312726cb7b4ad3b7f7e886af633739d6cf742264b4fa7565ed71"
+    },
+    {
       "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/mark-retention.json",
       "sha256": "9b11ebf659011082dc55750ee10d6570cfc54fee7ed3087710667e97e9447a05"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/native-fee-asset-diagnostics.json",
+      "sha256": "4ce9c0809e6eeab5633bc6ef443571a9db4310172476aaff1dc4549242df1bd3"
     },
     {
       "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/native-orders-derived.json",
@@ -87,6 +255,10 @@
     {
       "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/offline-case-fixture.json",
       "sha256": "08ba2028d637fd944f6d8b6c345b0462513470e04f2a1c493e81fd1f1ec3c994"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/offline-replay-after.json",
+      "sha256": "0055a854dfa2a51cc79c25c5e4f9c34ad0da40a9f2ef85263410b4198393cb15"
     },
     {
       "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/offline-replay-before.json",
@@ -105,6 +277,14 @@
       "sha256": "26cc757d8d5c1e28160a0081fa385209a353214f33977fe7f3fbeb523fe7d538"
     },
     {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/process-observation.json",
+      "sha256": "2dda2a51b6af60255373c639f9b5b0b078946735727c6e3480dc5a29df917c9c"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/protected-source-invariants.json",
+      "sha256": "644cdf1783b727d8a2337112e68af03975db23058facca86c59532cd330897c9"
+    },
+    {
       "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/required-reading-source-map.json",
       "sha256": "ff4ba0f528037f27bf43d33592571033c35de264e946d9b9643427eb3fb93436"
     },
@@ -113,8 +293,20 @@
       "sha256": "63ddcd068c12bab0dc41cda447bcd63228eb2916a59ab8993eb21c897acdaa01"
     },
     {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/runtime-completion.json",
+      "sha256": "bf267767c2c74d648eb23090e0e27c8713b2c1f0b7d3eda024d025cfc0903287"
+    },
+    {
       "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/runtime-phase-a.json",
       "sha256": "54cc817644bec2f6e4bebcfe0d9e3b34d2152d7dd0f9e4b382b5b4841e9452e0"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/runtime-preservation-first.json",
+      "sha256": "d92e4dea6ceefda065d80e2f33128fb007024b11dbf4d93a4c075680db722210"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/runtime-preservation.json",
+      "sha256": "320b36e3a431d6be99a54767d25f72ef1005803039d69f0e79a17a1d393846d0"
     },
     {
       "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/schema.json",
@@ -133,36 +325,176 @@
       "sha256": "b46a4ae21b0eb1a3ae01613b60d32abe359ed847bc946342f6141f46f95ef3f0"
     },
     {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/exchange-readonly-2.log.phase-c-original.gz",
+      "sha256": "66fff3288b0324f03d91b9aed2e1690ab52d3667c6af82a937b044fb7ef2c839"
+    },
+    {
       "path": "docs/reports/v398-trade-record-integrity-20261009/exchange-readonly.log",
       "sha256": "141c234c351d2a17436f637e03d7334f6024ab9f04c14bb7b34de4113bc607e8"
     },
     {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/exchange-readonly.log.phase-c-original.gz",
+      "sha256": "4bb6788079f12225fd3e0149465c7f3f6d3233e325e21dab7523cb3ff1a47e47"
+    },
+    {
       "path": "docs/reports/v398-trade-record-integrity-20261009/FACT_AUDIT_REPORT.md",
-      "sha256": "c739e319caecfe3d80e6fb5d40df59f03e3c55a53391150ec3eca1d6b6cb1145"
+      "sha256": "36b7401b9774d1503da88469940d76563397c166c978b9c16c759ff1f8a11735"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/full-verify-first-result.json",
+      "sha256": "ff973ff32e1200c23387667663b9cc59ef81ded916a5e15f76aa4297932f30b9"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/full-verify-first.log",
+      "sha256": "46f10ac21f1ec6af8e7fb79c6df8346cc4d574a924971039cbb3a2acedc359a1"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/full-verify-first.log.phase-c-original.gz",
+      "sha256": "afb40ea29a8ccd3f91d4320aa413500539fd3e0f8a9502e612c19b167c541e72"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/full-verify-result.json",
+      "sha256": "8851c6d4128aa4cfdd9ce137528325c34ed9a5b685e6825b849cf99643a0fdd5"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/full-verify-second-result.json",
+      "sha256": "64054e4bbf17bb492ae5fafec5f87c14aa297f1a635cb9f5d3384f06abfc0327"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/full-verify-second.log",
+      "sha256": "b6d7e9485a0733a98b8664dba14cffe2ab2072e0415c938b2dbdcf1e07afb676"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/full-verify-second.log.phase-c-original.gz",
+      "sha256": "5ea4dcb3d00c71def45330b424f3b3588d6c0568cd8a46ae6b17e8a25845d2d3"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/full-verify-third-result.json",
+      "sha256": "fad8b331e49e159feee051685d340f07ed93439f5f0f9d9a427200f094770664"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/full-verify-third.log",
+      "sha256": "4df407a50202777a22484744a8d15df076e9335aa129e7582f948e1034d8c50c"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/full-verify-third.log.phase-c-original.gz",
+      "sha256": "96db1d1f2593cf39b752aee3eccd5c9d102177f27021614ee18fe4e8ddd71da2"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/full-verify-wrapper-first.log",
+      "sha256": "d5df616a867f22a8553100e422b14259290643075ee883716f333d102f52ddd4"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/full-verify-wrapper-first.log.phase-c-original.gz",
+      "sha256": "2ad4d18cba768deb76a5ac2ac178edf55cadb9058499d627185058f49cbea8c4"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/full-verify-wrapper-second.log",
+      "sha256": "1e41c5cd0f4f4602b8689cc2663ab7d8ffe3ece618b955009a82c96c60889c18"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/full-verify-wrapper-second.log.phase-c-original.gz",
+      "sha256": "a75d0b14a7c7429b2b1be017afba218ed1e8d9bb5df61ab064d1ea21a4e5f24e"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/full-verify-wrapper-third.log",
+      "sha256": "267b50677e0874190c28b0bdc48bc6018a6c18edbd316b7128689fdf48a42ae2"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/full-verify-wrapper-third.log.phase-c-original.gz",
+      "sha256": "d8aaf6e2b82867b3ebef4197d8597bf26b9da5a9d096a1e72069e66428af139a"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/full-verify-wrapper.log",
+      "sha256": "52f4b4a91e78e7599322bdba72ef61e3e7926b5e642f5d0cc54de77b0c0c6f21"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/full-verify-wrapper.log.phase-c-original.gz",
+      "sha256": "11ba7db6d8257fb2b25862e774d77f5ebd7ab0ac64e632d93675f694f001b1a9"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/full-verify.log",
+      "sha256": "b7531328a3061af36dd5693953cf716acfbc92e682c8d4721cfa456d50f88036"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/full-verify.log.phase-c-original.gz",
+      "sha256": "8282b280a747a031cefd5bc302d3d76a47386cfb3987707b81d9e2d137679e47"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/github-phase-b-jobs.log",
+      "sha256": "e5e205b02b9520c9027be935710b13a7908287510d4ea7fceede40ea716ec0cd"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/github-phase-b-jobs.log.phase-c-original.gz",
+      "sha256": "424dd6d62c94a535ac3d24e83239bc2c6e847983368af5ec3ac35a80e0830146"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/github-phase-b.log",
+      "sha256": "8059ccf1106b884da2ac036844b18f093c10915b6dafce070c0637903437833f"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/github-phase-b.log.phase-c-original.gz",
+      "sha256": "ff60107338a2df7661c8a6341958bd2e48d3f39d309379beae21c04c33cad1be"
     },
     {
       "path": "docs/reports/v398-trade-record-integrity-20261009/github-readonly.log",
       "sha256": "694c2a3e700c9db2a43e8732dbbdbfa0c7c9d26c0d640ebf4be553b271a759ee"
     },
     {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/github-readonly.log.phase-c-original.gz",
+      "sha256": "a0d3194397529c453a405406abbd93cce13d7b9d678b9b7cc09cdd677ec9359a"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/IMPLEMENTATION_REPORT.md",
+      "sha256": "3297cb87ae06a25a1205532d9741106d4911260d188d9efaad044b6cd228dd70"
+    },
+    {
       "path": "docs/reports/v398-trade-record-integrity-20261009/local-readonly-2.log",
       "sha256": "dda8bc1e4a05eee8fb9c3cabb704e9e8bd8c585db61ccf34a1d7f401fad7d4fc"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/local-readonly-2.log.phase-c-original.gz",
+      "sha256": "e9b15e3f03fd46c4185df922908228ba76468a3c2933a58e10cefe5d6476bc9b"
     },
     {
       "path": "docs/reports/v398-trade-record-integrity-20261009/local-readonly-3.log",
       "sha256": "83221d73010676695a6571366479b6495fd3e57d78537a59d7011e0b7dcf3773"
     },
     {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/local-readonly-3.log.phase-c-original.gz",
+      "sha256": "5b385d138aeb36757657ed26c48cb54fa67a8b695d686a0f799bd19081d63969"
+    },
+    {
       "path": "docs/reports/v398-trade-record-integrity-20261009/local-readonly.log",
       "sha256": "35d0f8586b72de22b298f5d9510ce737cc7126641af478a0820359a813957855"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/local-readonly.log.phase-c-original.gz",
+      "sha256": "27806685b563cc4a68dbce683d2c66a50f0abf5e1161199e64fbe18bb5ead853"
     },
     {
       "path": "docs/reports/v398-trade-record-integrity-20261009/npm-ci.log",
       "sha256": "d64d709477494a31d782c60e9d2ca3bf5c1e9961c66415f90f9d765ca75bac37"
     },
     {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/npm-ci.log.phase-c-original.gz",
+      "sha256": "c74e8e902fe6c02975721e03a9528662b551a892bc7a4016978636acefd846ae"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/offline-replay-after.log",
+      "sha256": "3b54ed384614d16580f1a54d96ee0f20373a85b5f3bb429e17c6040031ab49df"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/offline-replay-after.log.phase-c-original.gz",
+      "sha256": "581d7ba9c9f2e2bbe6bd8dab92fcd685448a8234de6329feb65e4c149e7862e9"
+    },
+    {
       "path": "docs/reports/v398-trade-record-integrity-20261009/offline-replay-before-2.log",
       "sha256": "2377f84b2ec63d9e3a477b82f2fa1a7903c2e33fae8c509a204097a920121332"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/offline-replay-before-2.log.phase-c-original.gz",
+      "sha256": "ce29b91c8c630cb4b59f98d402c6f6730eade7d9149957f4aeb372a550a1f7d5"
     },
     {
       "path": "docs/reports/v398-trade-record-integrity-20261009/offline-replay-before.log",
@@ -177,12 +509,96 @@
       "sha256": "0820cd7d52cccb297725159cbe98a3a22a105712a5c8d9e4aa53fefbd51bee2f"
     },
     {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/privacy-manifest.log.phase-c-original.gz",
+      "sha256": "694e519152c725132bb0c3a0d3d8d54c24392dd0dd4ef66bf6887d93a96fe441"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/prompt-budget-final.log",
+      "sha256": "cc92282457fd744811ce3675b522ad83749abc5038ff5683d79d622c8e4ea99a"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/prompt-budget-final.log.phase-c-original.gz",
+      "sha256": "a28b4f35f18c61a1e3575edb64f3b8122a4e96cca0c179d565106a5d887d213b"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/runtime-completion-collection.log",
+      "sha256": "2c44a1c6c30213b5de7d965a80d45766b5cd105bc7d387a556ae9f2b3b24526c"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/runtime-completion-collection.log.phase-c-original.gz",
+      "sha256": "ac85a6c72b587474da307735077ef9373be89b682b055bac387aa100d01e176c"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/runtime-preservation.log",
+      "sha256": "342fec0c2c5421925270c0665d2b23ef475b58ae9a59b4d13acf0bd425097c8d"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/runtime-preservation.log.phase-c-original.gz",
+      "sha256": "a0e25f5ed05d73c7c2c544ccbcae11f55a153c74fa66247e5dc55d06e626bad0"
+    },
+    {
       "path": "docs/reports/v398-trade-record-integrity-20261009/runtime-readonly.log",
       "sha256": "e15dd8bb39fc17c83b85f0e854b2faebf5d6824c6fe3436122d3b79711b06120"
     },
     {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/runtime-readonly.log.phase-c-original.gz",
+      "sha256": "42a1a630b41ff250c9b639f862280d716d59350d8f36685ac733ee9d687493ca"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/s00/current-identity.json",
+      "sha256": "2c80079cac4966a6b2acf3d6fd0d30926774f7ee6209f3dee0578bebed0d23a6"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/s00/entrypoint-review.json",
+      "sha256": "a8e36005079d48b18b969455498c0f46aa61bbc1266e65dcb61c5a88cdb326ea"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/s00/historical-package-lock.json",
+      "sha256": "7ed4dd27fd4b20bf718ec20a4cf943035c93842adad7d7a233118da3c3e42c7b"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/s00-final.log",
+      "sha256": "4c45f22b359e06cd504342106a8e58a95e20c7b8f5fec15347a230907213a637"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/s00-final.log.phase-c-original.gz",
+      "sha256": "cbf89e44d5b630fdc6296ac76a4c3b775b51920228ed68e62339401d4cacfe1d"
+    },
+    {
       "path": "docs/reports/v398-trade-record-integrity-20261009/staged-phase-b-check.log",
-      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/staged-phase-b-check.log.phase-c-original.gz",
+      "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/targeted-first.log",
+      "sha256": "b11cba24f6763c64b475ea9b50bcfed163bb1ab53adbb9df62fe41a8321a0161"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/targeted-first.log.phase-c-original.gz",
+      "sha256": "04159adb3d657825968b5c3658aa3eb03f036ec2028ceeb4cd2490eda3b5431b"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/typecheck-second.log",
+      "sha256": "6c4bd40e3f24c70a386284600d332bb1544bf634b8f9e06562a13b733f42be57"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/typecheck-second.log.phase-c-original.gz",
+      "sha256": "9807fa2be16cba46908b7c23dca974419e46cffef5831f71cacfd58e6a4c5105"
+    },
+    {
+      "path": "package.json",
+      "sha256": "b2bdd39e1407372a4a2782182d6926323a58a5e36031af57fcec0cffa9922084"
+    },
+    {
+      "path": "packages/contracts/src/eip.ts",
+      "sha256": "a63f64d91757b4185546b3dd1e3e4b2cb9bb59f14a9a4d6af205dc969f7e672e"
+    },
+    {
+      "path": "packages/core/src/compactEntry.ts",
+      "sha256": "6e02effa98800d2457d0977dd4164217df44a7eafd30c98f8a971c291ab02ed3"
     },
     {
       "path": "scripts/v398-integrity-analyze.py",
@@ -209,8 +625,16 @@
       "sha256": "4f405865ac8fec1505d6ab14e233d8ea86112f5550b0bde3bce454943c1379e6"
     },
     {
+      "path": "scripts/v398-integrity-preservation.py",
+      "sha256": "016e74d3bdf3fc5a466e03347a2090b893a086248450f1488758a4f4780b33e4"
+    },
+    {
       "path": "scripts/v398-integrity-runtime-readonly.mjs",
       "sha256": "d02c89889a65bfa4ed0acd6ed871f42e533c7996c17806b4060b006664a4690c"
+    },
+    {
+      "path": "scripts/v398-integrity-verify-offline.mjs",
+      "sha256": "d9be262bea9fb932dc0464c30a72fd82f07c39df16711b4303f99e776944e029"
     }
   ]
 }

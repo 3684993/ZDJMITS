@@ -1,0 +1,19 @@
+Warning: disabling flag --expose_wasm due to conflicting flags
+
+<--- Last few GCs --->
+rr[9928:000001C17B134000]    20129 ms: Mark-Compact (reduce) 383.4 (391.1) -> 382.0 (391.4) MB, pooled: 0 MB, 59.68 / 0.00 ms  (+ 0.0 ms in 0 steps since start of marking, biggest step 0.0 ms, walltime since start of marking 68 ms) (average mu = 0.288, curr[9928:000001C17B134000]    20210 ms: Mark-Compact (reduce) 382.1 (391.4) -> 381.2 (390.4) MB, pooled: 0 MB, 65.37 / 0.00 ms  (+ 0.0 ms in 0 steps since start of marking, biggest step 0.0 ms, walltime since start of marking 66 ms) (average mu = 0.241, curr
+
+<--- JS stacktrace --->
+
+FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory
+----- Native stack trace -----
+
+ 1: 00007FF694724287 node::SetCppgcReference+21127
+ 2: 00007FF69468433B EVP_MD_meth_get_input_blocksize+102619
+ 3: 00007FF6952919F1 v8::Isolate::ReportExternalAllocationLimitReached+65
+ 4: 00007FF69527E4A6 v8::Function::Experimental_IsNopFunction+3318
+ 5: 00007FF6950DAAF0 v8::internal::StrongRootAllocatorBase::StrongRootAllocatorBase+33904
+ 6: 00007FF6950D3F3A v8::internal::StrongRootAllocatorBase::StrongRootAllocatorBase+6330
+ 7: 00007FF6950CF755 v8::CpuProfileNode::GetScriptResourceNameStr+190293
+ 8: 00007FF694A56A8D BIO_ssl_shutdown+189
+ 9: 7FF8000000000000

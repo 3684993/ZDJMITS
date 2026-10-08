@@ -1,5 +1,7 @@
 # V3.9.8 交易记录完整性专项事实审查
 
+Phase C补充：本报告Phase A固定快照及其证据不等于最终live状态；23:38Z completion不可连接、PID8524已不在、Settings250→253，来源/停止原因UNKNOWN。本任务零生命周期/Settings/live历史写入。实施与历史限制见IMPLEMENTATION_REPORT.md；fixed replay301system/16external/3可修复LONG预览，原AVAX SHORT仍UNCLOSABLE，1000+极值仍UNKNOWN。
+
 2026-10-09；Phase A 完成，Phase C 尚未开始。分类严格使用 PROVEN / PARTIAL / CONTRADICTED / UNKNOWN。固定原始证据在 evidence/；失败日志一并保留。源代码基线 `855362ecd42acb820dc88807b09575a4becf605c`，行号索引见 required-reading-source-map.json。
 
 ## 当前真实性与边界

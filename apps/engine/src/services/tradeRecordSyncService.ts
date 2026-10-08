@@ -16,10 +16,19 @@ export interface TradeSyncPreview {window:TradeAuditSnapshot['window'];maxFills:
 
 export class TradeRecordSyncService {
   constructor(private state:RuntimeState,private positions:PositionService){}
+  /** Current wire ids require exact durable ownership; a prefix alone grants nothing. */
+  private ownsCurrentWire(fill:SyncFill){
+    if(!/^v396[ex][a-f0-9]+$/.test(fill.clientOrderId))return false;
+    const owner=exactCycleRecord(this.state,fill);
+    if(!owner?.cycleId||owner.source==='EXTERNAL'||fill.positionSide!=='BOTH'&&fill.positionSide!==owner.direction)return false;
+    const orders=[...this.state.entryOrders.values(),...this.state.tpOrders.values(),...this.state.manualOrders.values()].filter(o=>o.symbol===fill.symbol&&(o.exchangeOrderId===fill.orderId||o.clientOrderId===fill.clientOrderId));
+    return orders.length===1&&orders[0]!.exchangeOrderId===fill.orderId&&orders[0]!.clientOrderId===fill.clientOrderId&&orders[0]!.cycleId===owner.cycleId;
+  }
   private normalize(audit:TradeAuditSnapshot):{fills:SyncFill[];external:SyncFill[]} {
     const orders=new Map(audit.orders.map(order=>[order.orderId,order])),income=new Map(audit.income.filter(row=>row.incomeType==='COMMISSION'&&row.tradeId).map(row=>[row.tradeId!,row]));
     const all=audit.fills.map(raw=>{const order=orders.get(raw.orderId),commission=income.get(raw.tradeId),asset=commission?.asset??raw.commissionAsset,amount=commission?Math.abs(commission.income):Math.abs(raw.commission);return{...raw,fillId:`exchange_${raw.symbol}_${raw.tradeId}`,clientOrderId:raw.clientOrderId||order?.clientOrderId||'',commission:amount,commissionAsset:asset,commissionUsd:stable(asset)?amount:null,source:'EXCHANGE_AUDIT' as const};});
-    return{fills:all.filter(fill=>systemClient(fill.clientOrderId)),external:all.filter(fill=>!systemClient(fill.clientOrderId))};
+    const owned=(fill:SyncFill)=>systemClient(fill.clientOrderId)||this.ownsCurrentWire(fill);
+    return{fills:all.filter(owned),external:all.filter(fill=>!owned(fill))};
   }
   private cycles(fills:SyncFill[]){
     const byId=new Map<string,Cycle>();let unclosable=0;

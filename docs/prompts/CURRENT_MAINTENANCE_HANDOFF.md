@@ -1,4 +1,12 @@
-# Current closure — V3.9.8 RUNNING / 2026-10-09 06:17 +08
+# Current — V3.9.8 trade-record integrity offline / NOT_DEPLOYED / 2026-10-09 07:40 +08
+
+Phase B c7cf6b8 report/plan and52 remote blob hashes passed before source edits. Current wire attribution requires unique exact durable order/cycle identities; default history ALL and readonly lifecycle/quantity/extrema diagnostics; bounded CURRENT_POSITION_CONTEXT in strict EIP and actual Primary INPUT. No independent same-side adds, opposite-side legal candidates and Primary sole authority unchanged. Full local verify PASS244files/2086tests. Fixed replay268→301 system fills,49→16 external,0→3 repairable previews; all3 are other LONG cycles. Original9/20 AVAX SHORT remains UNCLOSABLE, no live history merge/apply. Historical1000+ exact peak and natural new-context/reverse execution acceptance UNKNOWN.
+
+Fresh completion GET23:38Z unavailable; PID8524 absent/no8080 listener, stopped cause UNKNOWN. Settings250→253 with CAS audit; actor UNKNOWN. This task performed no lifecycle, Settings, trade or live SQLite writes. Canonical HEAD and all six dirty entries preserved. Do not infer current RUNNING from historical closure below; no restart/start/deploy authorized by this audit. See docs/reports/v398-trade-record-integrity-20261009/IMPLEMENTATION_REPORT.md and runtime-preservation.json. Code/CI/remote completion receipt follows in evidence; version3.9.8 offline candidate only.
+
+--- Previous observed closure follows ---
+
+# Historical closure — V3.9.8 RUNNING / 2026-10-09 06:17 +08
 
 用户另行明确授权的当前TESTNET升级启动完成：代码3327c84，CI37850135010 success，remote217hash通过。PID8524/build3.9.8-7271c941c2cdec049610；/health READY、closeout200、identity6/6、TP13/13。生产写0、Engine自然TP写1、任务人工交易0；Settings247/digest与原dirty checkout未变。仅一次实际MANUAL_START，无退出定时器/自动重启。风险函数仅影子、formal calibration/new-origin natural evidence UNKNOWN。额外在线native GET备份超界已取消；临时私有copy因policy拒绝删除而本机保留。详见IMPLEMENTATION_REPORT.md / RUNTIME_CLOSEOUT.json。下方为原分阶段历史，旧NOT_DEPLOYED不能作为当前状态。
 

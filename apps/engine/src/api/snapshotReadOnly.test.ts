@@ -51,3 +51,15 @@ it('pipeline HTTP preserves the installed admission readback and scoped reconcil
  expect(body.reconciliation).toMatchObject({snapshotConsistency:'BEST_EFFORT_CROSS_STORE',activeRiskUnresolvedCountScope:'ENTRY_OCCUPYING_RISK_PLUS_MANUAL_UNKNOWN_PLUS_TP_UNKNOWN'});
  expect(db.prepare('SELECT total_changes() n').get().n).toBe(changes);
 });
+
+
+it('ALL history API preserves incomplete origins with side/status filters and pagination without writes',async()=>{
+ dataDir=await mkdtemp(path.join(os.tmpdir(),'zdj-integrity-get-'));runtime=await EngineRuntime.createTestHarness({configDir:'../../config',dataDir});
+ const base={symbol:'AVAXUSDT',direction:'SHORT',openedAt:1,closedAt:null,durationMs:null,entryQty:288,entryAveragePrice:10,exitAveragePrice:null,funding:null,grossRealizedPnl:null,netPnl:null,closeReason:'RECONCILIATION',status:'INCOMPLETE',classification:'PARTIAL',observedClosedAt:90,entryRunId:null,entryIntentId:null,entryOrderIds:[],exitOrderIds:[],source:'SYSTEM',regime:null,createdAt:1,updatedAt:2,firstObservedAt:1};
+ for(const raw of [{...base,tradeId:'old-short',cycleId:'short-cycle'},{...base,tradeId:'closed-long',cycleId:'long-cycle',direction:'LONG',status:'CLOSED',classification:'COMPLETE',closedAt:30},{...base,tradeId:'other-quote',cycleId:'usdc-cycle',symbol:'AVAXUSDC'}]){const r=TradeRecordSchema.parse(raw);runtime.state.tradeRecords.set(r.tradeId,r);}
+ const app=express();app.use('/api/v3',createApiRouter(runtime));server=app.listen(0,'127.0.0.1');await new Promise(resolve=>server.once('listening',resolve));const url=`http://127.0.0.1:${server.address().port}/api/v3/trade-records`,db=(runtime.settingsStore as any).db,before=JSON.stringify([...runtime.state.tradeRecords]),changes=db.prepare('SELECT total_changes() n').get().n;
+ const all:any=await (await fetch(url)).json();expect(all.total).toBe(3);
+ const partial:any=await (await fetch(url+'?symbol=AVAXUSDT&direction=SHORT&status=INCOMPLETE')).json();expect(partial.total).toBe(1);expect(partial.items[0]).toMatchObject({tradeId:'old-short',entryQty:288,status:'INCOMPLETE',lifecycleDiagnostics:{lifecycleStatus:'OBSERVED_FLAT_AWAITING_LEDGER'}});
+ const page:any=await (await fetch(url+'?symbol=AVAXUSDT&limit=1&page=2')).json();expect(page.total).toBe(2);expect(page.items).toHaveLength(1);expect(page.items[0].tradeId).toBe('old-short');
+ expect(db.prepare('SELECT total_changes() n').get().n).toBe(changes);expect(JSON.stringify([...runtime.state.tradeRecords])).toBe(before);
+});

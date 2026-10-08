@@ -13,7 +13,13 @@ export const EvidenceRefSchema = z.object({
 export type EvidenceRef = z.infer<typeof EvidenceRefSchema>;
 const ReferenceMarketSchema=z.object({symbol:z.string(),quote:QuoteSchema,technical:z.record(TimeframeSchema,TechnicalCardSchema),derivatives:DerivativesSnapshotSchema,orderBook:OrderBookSchema,recentTradedPrices:z.array(z.object({price:z.number().positive(),lastSeenAt:z.number().int()})).max(16).optional()});
 
+export const ExistingPositionContextSchema=z.object({
+  version:z.literal('V398_POSITION_CONTEXT_1'),asOf:z.number().int().positive(),privateAccountAsOf:z.number().int().nullable(),environment:z.enum(['TESTNET','PRODUCTION']),source:z.string(),coverage:z.enum(['BOUND_REACHED_UNKNOWN','CURRENT_SNAPSHOT','STALE_OR_UNPROVEN']),notice:z.string(),
+  positions:z.array(z.object({symbol:z.string(),quoteAsset:z.enum(['USDT','USDC','UNKNOWN']),side:z.enum(['LONG','SHORT']),cycleId:z.string().nullable(),quantity:z.number().finite().positive().nullable(),managementStatus:z.string(),recordedOpenedAt:z.number().int().positive().nullable(),entryTimeSource:z.string(),firstFillAt:z.number().int().positive().nullable(),holdingAgeMs:z.number().int().nonnegative().nullable(),timeEvidence:z.enum(['PARTIAL_RETAINED_ENTRY_MATCHES_CYCLE_OPEN','UNKNOWN']),inventoryEvidence:z.enum(['CURRENT_PRIVATE_ACCOUNT_CONTEXT','STALE_OR_UNPROVEN']),reasons:z.array(z.string())}).strict()).max(8),
+}).strict().superRefine((v,ctx)=>{for(const p of v.positions){if(p.firstFillAt!==null&&(p.firstFillAt>v.asOf||p.holdingAgeMs!==v.asOf-p.firstFillAt))ctx.addIssue({code:'custom',message:'POSITION_CONTEXT_TIME_CONFLICT'});if(p.timeEvidence==='UNKNOWN'&&(p.firstFillAt!==null||p.holdingAgeMs!==null))ctx.addIssue({code:'custom',message:'UNKNOWN_POSITION_AGE_MUST_BE_NULL'});}});
+
 export const EntryIntelligencePacketSchema = z.object({
+  existingPositionContext:ExistingPositionContextSchema.optional(),
   opportunityEvidence:OpportunityEvidenceSchema.optional(),
   version: z.literal('3.0'),
   packetId: z.string(),

@@ -1,0 +1,10 @@
+
+ RUN  v3.2.7 D:/MITS-WORKTREES/v398-trade-integrity-20261009/apps/dashboard
+
+ ✓ src/views/TradeRecordsView.integrity.test.ts (1 test) 70ms
+ ✓ src/views/tradeClosePresentation.test.ts (6 tests) 3ms
+
+ Test Files  2 passed (2)
+      Tests  7 passed (7)
+   Start at  07:20:10
+   Duration  6.91s (transform 223ms, setup 0ms, collect 420ms, tests 73ms, environment 5.83s, prepare 176ms)

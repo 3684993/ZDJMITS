@@ -1,0 +1,215 @@
+
+> zdj-mits-v3@3.9.8 verify
+> npm run verify:deps && npm run verify:scripts && npm run verify:release && npm run verify:s00 && npm run typecheck && npm run build && npm run test
+
+
+> zdj-mits-v3@3.9.8 verify:deps
+> npm run build -w @zdj/contracts && npm run build -w @zdj/core
+
+
+> @zdj/contracts@3.9.8 build
+> tsc -p tsconfig.json
+
+
+> @zdj/core@3.9.8 build
+> tsc -p tsconfig.json
+
+
+> zdj-mits-v3@3.9.8 verify:scripts
+> node --check scripts/maintain-storage.mjs && node --check scripts/reset-testnet-runtime-db.mjs && node --check scripts/init-local-runtime.mjs && node --check scripts/prune-zdj-backups.mjs && node --check scripts/install-storage-retention.mjs && node --check scripts/v394-stage6-set-readonly.mjs && node scripts/v394-stage6-set-readonly.mjs --self-test && node --check scripts/v394-stage6-preflight.mjs && node scripts/v394-stage6-preflight.mjs --self-test && node --check scripts/audit-ai-entry-quality.mjs && node --check scripts/audit-trading-quality-baseline.mjs && node --check scripts/inspect-sqlite-capacity.mjs && node --check scripts/audit-v394-entry-authorization.mjs && node --test scripts/maintain-storage.test.mjs scripts/reset-testnet-runtime-db.test.mjs scripts/init-local-runtime.test.mjs && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/start-zdj-engine-host.test.ps1 && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/run-v394-readonly-canary.test.ps1 && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/run-v394-local-rollout.test.ps1 && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/run-v394-stage7-to-stage9.test.ps1 && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/vpn/zdj-trade-proxy-client-windows.test.ps1
+
+(node:31208) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V3.9.4 explicit proxy-enable + legacy normalization + READ_ONLY self-test PASS
+(node:24368) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V3.9.4 Stage6 preflight self-test PASS
+TAP version 13
+# (node:43200) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: V3.9.3 init preserves static configuration and removes active local trading history
+ok 1 - V3.9.3 init preserves static configuration and removes active local trading history
+  ---
+  duration_ms: 1008.3638
+  type: 'test'
+  ...
+# (node:36992) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: offline maintenance preserves source: dry
+ok 2 - offline maintenance preserves source: dry
+  ---
+  duration_ms: 711.5613
+  type: 'test'
+  ...
+# Subtest: offline maintenance preserves source: build
+ok 3 - offline maintenance preserves source: build
+  ---
+  duration_ms: 250.5703
+  type: 'test'
+  ...
+# Subtest: offline maintenance preserves source: alias
+ok 4 - offline maintenance preserves source: alias
+  ---
+  duration_ms: 164.9637
+  type: 'test'
+  ...
+# Subtest: offline maintenance preserves source: existing
+ok 5 - offline maintenance preserves source: existing
+  ---
+  duration_ms: 156.974
+  type: 'test'
+  ...
+# Subtest: offline maintenance preserves source: wal
+ok 6 - offline maintenance preserves source: wal
+  ---
+  duration_ms: 160.3428
+  type: 'test'
+  ...
+# Subtest: offline maintenance preserves source: disk
+ok 7 - offline maintenance preserves source: disk
+  ---
+  duration_ms: 212.7925
+  type: 'test'
+  ...
+# Subtest: offline maintenance preserves source: delete-failure
+ok 8 - offline maintenance preserves source: delete-failure
+  ---
+  duration_ms: 176.3537
+  type: 'test'
+  ...
+# Subtest: offline maintenance preserves source: vacuum-failure
+ok 9 - offline maintenance preserves source: vacuum-failure
+  ---
+  duration_ms: 176.8432
+  type: 'test'
+  ...
+# Subtest: offline maintenance preserves source: publish-lock
+ok 10 - offline maintenance preserves source: publish-lock
+  ---
+  duration_ms: 196.8044
+  type: 'test'
+  ...
+# Subtest: offline maintenance preserves source: corrupt-copy
+ok 11 - offline maintenance preserves source: corrupt-copy
+  ---
+  duration_ms: 193.4322
+  type: 'test'
+  ...
+# Subtest: offline maintenance preserves source: crash
+ok 12 - offline maintenance preserves source: crash
+  ---
+  duration_ms: 184.5189
+  type: 'test'
+  ...
+# Subtest: backup pruning requires an explicit verified baseline and keeps it even when it is oldest
+ok 13 - backup pruning requires an explicit verified baseline and keeps it even when it is oldest
+  ---
+  duration_ms: 424.2926
+  type: 'test'
+  ...
+# Subtest: AI quality treats missing outcomes as missing and does not promote PLACE-only samples
+ok 14 - AI quality treats missing outcomes as missing and does not promote PLACE-only samples
+  ---
+  duration_ms: 289.9266
+  type: 'test'
+  ...
+# Subtest: valid WAL is copied and replayed only on the working database
+ok 15 - valid WAL is copied and replayed only on the working database
+  ---
+  duration_ms: 215.2134
+  type: 'test'
+  ...
+# (node:48564) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: schema-only reset preserves schema/static configuration and never copies runtime history
+ok 16 - schema-only reset preserves schema/static configuration and never copies runtime history
+  ---
+  duration_ms: 889.1979
+  type: 'test'
+  ...
+1..16
+# tests 16
+# suites 0
+# pass 16
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3652.9611
+start-zdj-engine-host.test.ps1 PASS
+V3.9.4 read-only canary script contract PASS
+V3.9.4 local rollout script contract PASS
+V3.9.4 stage7-to-stage9 runner contract PASS
+VPN_CLIENT_TEST_PASS: foreign owner, pid reuse, real stalled peer deadline/socket close, finite failed-start recovery, no embedded secret
+
+> zdj-mits-v3@3.9.8 verify:release
+> node scripts/v397-release-identity.mjs
+
+{"gate":"V398_RELEASE_IDENTITY_PASS","version":"3.9.8","packages":5,"lock":true,"api":"V3.9.7"}
+
+> zdj-mits-v3@3.9.8 verify:s00
+> node scripts/v396-s00-static-check.mjs --review=docs/reports/v398-trade-record-integrity-20261009/s00/entrypoint-review.json --current-identity=docs/reports/v398-trade-record-integrity-20261009/s00/current-identity.json --historical-lock=docs/reports/v398-trade-record-integrity-20261009/s00/historical-package-lock.json
+
+{
+  "stage": "S00",
+  "tests": {
+    "S00_T01": "PASS",
+    "S00_T02": "PASS",
+    "S00_T03": "PASS",
+    "S00_T04": "PASS",
+    "S00_T05": "PASS",
+    "S00_T06": "PASS"
+  },
+  "fixtureHash": "295c949a0cf5b2c7c06db81db91e42fd6fd4437fe5a2f23143c09ac4a7fbab21",
+  "network": "NOT_USED",
+  "exchangeWrites": 0,
+  "engineLifecycle": "NOT_USED",
+  "settingsModified": false,
+  "verifierScope": "STATIC_READS_AND_OS_TEMP_ONLY",
+  "entrypointReviewCount": 180,
+  "entrypointStatusCounts": {
+    "FORBIDDEN_OR_NOT_RUN": 162,
+    "CONDITIONAL_NOT_RUN": 17,
+    "ALLOWED_STATIC": 1
+  },
+  "engineTestIsolation": {
+    "testFiles": 210,
+    "openingAStore": 21,
+    "everyStoreOpeningTestIsolated": true,
+    "repositoryDataDirReferences": 0,
+    "productionPortReferences": 0
+  },
+  "blockers": []
+}
+
+> zdj-mits-v3@3.9.8 typecheck
+> npm run typecheck -ws --if-present
+
+
+> @zdj/contracts@3.9.8 typecheck
+> tsc -p tsconfig.json --noEmit
+
+
+> @zdj/core@3.9.8 typecheck
+> tsc -p tsconfig.json --noEmit
+
+
+> @zdj/dashboard@3.9.8 typecheck
+> vue-tsc --noEmit
+
+
+> @zdj/engine@3.9.8 typecheck
+> tsc -p tsconfig.json --noEmit
+
+src/api/router.ts(1062,5): error TS2322: Type '{ classification: string; }[]' is not assignable to type '{ entryLineage: { complete: boolean; lots: ({ status?: "EXACT" | "UNCERTAIN"; model?: string; resourceId?: string; modelIdentity?: Record<string, unknown>; reasons?: string[]; quantity?: number; ... 17 more ...; fillStages?: { ...; }[]; } | { ...; })[]; originRunId: any; reasons: string[]; } | { ...; }; ... 73 more ...'.
+  Type '{ classification: string; }' is missing the following properties from type '{ entryLineage: { complete: boolean; lots: ({ status?: "EXACT" | "UNCERTAIN"; model?: string; resourceId?: string; modelIdentity?: Record<string, unknown>; reasons?: string[]; quantity?: number; ... 17 more ...; fillStages?: { ...; }[]; } | { ...; })[]; originRunId: any; reasons: string[]; } | { ...; }; ... 73 more ...': entryLineage, factLedgers, moneyAsset, rawNetPnl, and 10 more.
+src/api/router.ts(1062,36): error TS2345: Argument of type '{ entryLineage: { complete: boolean; lots: ({ status?: "EXACT" | "UNCERTAIN"; model?: string; resourceId?: string; modelIdentity?: Record<string, unknown>; reasons?: string[]; quantity?: number; ... 17 more ...; fillStages?: { ...; }[]; } | { ...; })[]; originRunId: any; reasons: string[]; } | { ...; }; ... 73 more ...' is not assignable to parameter of type '{ classification: string; }[]'.
+  Type '{ entryLineage: { complete: boolean; lots: ({ status?: "UNCERTAIN" | "EXACT"; model?: string; resourceId?: string; modelIdentity?: Record<string, unknown>; reasons?: string[]; quantity?: number; ... 17 more ...; fillStages?: { quantity?: number; entryCost?: number; fillId?: string; executionTime?: number; feeAsset?:...' is not assignable to type '{ classification: string; }'.
+    Property 'classification' is optional in type '{ entryLineage: { complete: boolean; lots: ({ status?: "EXACT" | "UNCERTAIN"; model?: string; resourceId?: string; modelIdentity?: Record<string, unknown>; reasons?: string[]; quantity?: number; ... 17 more ...; fillStages?: { ...; }[]; } | { ...; })[]; originRunId: any; reasons: string[]; } | { ...; }; ... 73 more ...' but required in type '{ classification: string; }'.
+npm error Lifecycle script `typecheck` failed with error:
+npm error code 2
+npm error path D:\MITS-WORKTREES\v398-trade-integrity-20261009\apps\engine
+npm error workspace @zdj/engine@3.9.8
+npm error location D:\MITS-WORKTREES\v398-trade-integrity-20261009\apps\engine
+npm error command failed
+npm error command C:\Windows\system32\cmd.exe /d /s /c tsc -p tsconfig.json --noEmit

@@ -1,0 +1,33 @@
+
+> zdj-mits-v3@3.9.8 typecheck
+> npm run typecheck -ws --if-present
+
+
+> @zdj/contracts@3.9.8 typecheck
+> tsc -p tsconfig.json --noEmit
+
+
+> @zdj/core@3.9.8 typecheck
+> tsc -p tsconfig.json --noEmit
+
+
+> @zdj/dashboard@3.9.8 typecheck
+> vue-tsc --noEmit
+
+
+> @zdj/engine@3.9.8 typecheck
+> tsc -p tsconfig.json --noEmit
+
+src/api/router.ts(1062,5): error TS2322: Type '{ classification: string; }[]' is not assignable to type '{ entryLineage: { complete: boolean; lots: ({ status?: "EXACT" | "UNCERTAIN"; model?: string; resourceId?: string; modelIdentity?: Record<string, unknown>; reasons?: string[]; quantity?: number; ... 17 more ...; fillStages?: { ...; }[]; } | { ...; })[]; originRunId: any; reasons: string[]; } | { ...; }; ... 73 more ...'.
+  Type '{ classification: string; }' is missing the following properties from type '{ entryLineage: { complete: boolean; lots: ({ status?: "EXACT" | "UNCERTAIN"; model?: string; resourceId?: string; modelIdentity?: Record<string, unknown>; reasons?: string[]; quantity?: number; ... 17 more ...; fillStages?: { ...; }[]; } | { ...; })[]; originRunId: any; reasons: string[]; } | { ...; }; ... 73 more ...': entryLineage, factLedgers, moneyAsset, rawNetPnl, and 10 more.
+src/api/router.ts(1062,36): error TS2345: Argument of type '{ entryLineage: { complete: boolean; lots: ({ status?: "EXACT" | "UNCERTAIN"; model?: string; resourceId?: string; modelIdentity?: Record<string, unknown>; reasons?: string[]; quantity?: number; ... 17 more ...; fillStages?: { ...; }[]; } | { ...; })[]; originRunId: any; reasons: string[]; } | { ...; }; ... 73 more ...' is not assignable to parameter of type '{ classification: string; }[]'.
+  Type '{ entryLineage: { complete: boolean; lots: ({ status?: "UNCERTAIN" | "EXACT"; model?: string; resourceId?: string; modelIdentity?: Record<string, unknown>; reasons?: string[]; quantity?: number; ... 17 more ...; fillStages?: { quantity?: number; entryCost?: number; fillId?: string; executionTime?: number; feeAsset?:...' is not assignable to type '{ classification: string; }'.
+    Property 'classification' is optional in type '{ entryLineage: { complete: boolean; lots: ({ status?: "EXACT" | "UNCERTAIN"; model?: string; resourceId?: string; modelIdentity?: Record<string, unknown>; reasons?: string[]; quantity?: number; ... 17 more ...; fillStages?: { ...; }[]; } | { ...; })[]; originRunId: any; reasons: string[]; } | { ...; }; ... 73 more ...' but required in type '{ classification: string; }'.
+src/services/tradeRecordSyncService.test.ts(35,214): error TS2322: Type '"SHORT"' is not assignable to type '"LONG"'.
+npm error Lifecycle script `typecheck` failed with error:
+npm error code 2
+npm error path D:\MITS-WORKTREES\v398-trade-integrity-20261009\apps\engine
+npm error workspace @zdj/engine@3.9.8
+npm error location D:\MITS-WORKTREES\v398-trade-integrity-20261009\apps\engine
+npm error command failed
+npm error command C:\Windows\system32\cmd.exe /d /s /c tsc -p tsconfig.json --noEmit

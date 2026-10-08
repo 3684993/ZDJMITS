@@ -1,0 +1,44 @@
+{
+  "baseline": "855362e",
+  "checks": [
+    {
+      "path": "apps/engine/src/services/noSeparateAdd.ts",
+      "unchanged": true,
+      "sha256": "9208d398430a469d867d5daac47761beaff76dc1f6999b8b3d15631e6f91235b"
+    },
+    {
+      "path": "apps/engine/src/config/noAddOriginLedger.ts",
+      "unchanged": true,
+      "sha256": "4c4f06d3107e99aee9f2b71d69a084847034505bb1bcf3b14eea16915a443f6a"
+    },
+    {
+      "path": "apps/engine/src/services/entryCoordinator.ts",
+      "unchanged": true,
+      "sha256": "086f4844fb2fbe82f56e49cfb2b155adc7d83e2823c6bcae43195eb9266667a4"
+    },
+    {
+      "path": "apps/engine/src/services/positionService.ts",
+      "unchanged": true,
+      "sha256": "2f01e9e941bf803fb188f123bdcee5b6733e64b5c08b26c948476d7233274b66"
+    },
+    {
+      "path": "apps/engine/src/services/positionReviewRunner.ts",
+      "unchanged": true,
+      "sha256": "62fffc5335c1edc25064cb93bc7af5c22d4ed489a590df60fe4c4ed22d977cfa"
+    },
+    {
+      "path": "config/settings.default.json",
+      "unchanged": true,
+      "sha256": "bf818ea7d5800d92fa63d26cbbb24c20c4ad841149f5128b168887857c397091"
+    },
+    {
+      "path": "apps/engine/src/services/tpGuardian.ts",
+      "unchanged": true,
+      "sha256": "a0513ba64bcb9f7466d49221328b6bd26fae038d0c3d4b973c8323e67cd41ea4"
+    }
+  ],
+  "passed": true,
+  "taskLiveDatabaseWrites": 0,
+  "taskExchangeWrites": 0,
+  "taskLifecycleCalls": 0
+}

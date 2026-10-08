@@ -1,0 +1,11 @@
+{
+  "observedAt": "2026-10-08T23:17:20.962041+00:00",
+  "command": "npm run verify:deps",
+  "exitCode": -2147483645,
+  "failure": "Windows native allocation failure in contracts tsc",
+  "freePhysicalKB": 17718900,
+  "freeVirtualKB": 96292,
+  "totalVirtualKB": 123709068,
+  "runtimeNotStopped": true,
+  "noOSMemoryChanges": true
+}

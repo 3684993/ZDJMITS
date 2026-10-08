@@ -1,3 +1,4 @@
+import {tradeRecordDiagnostics} from './tradeRecordDiagnostics.js';
 import {projectTradeLearningFacts,type TradeLearningContext,type TradeLearningFacts} from './tradeLearningFacts.js';
 import type {TradeRecord,TradingQualityEnrollmentEvidence,TradingQualityExperimentManifest,TradingQualityFundingEvidence} from '@zdj/contracts';
 import {canonicalPnlEligible,ledgerClosedComplete,legacyEconomicInconsistency,prospectiveCohortMember} from './tradingQualityEligibility.js';
@@ -11,7 +12,7 @@ export function projectTradeRecordRow(record:TradeRecord,input:Omit<TradeRecordR
   const ledger=ledgerClosedComplete(record),canonical=canonicalPnlEligible(record,{fundingEvidence,accountScope:input.learningContext&&learningFacts?.funding?.status==='EXACT'?p?.accountScope??input.accountScope:input.accountScope,learningFacts});
   const cohort=record.cycleId?prospectiveCohortMember(input.experimentManifest,input.enrollmentByCycle?.[record.cycleId]):{eligible:false,reasons:['CYCLE_ID_MISSING']};
   const legacyEconomicInconsistent=legacyEconomicInconsistency(record),rawNetPnl=record.netPnl;
-  return {...record,rawEntryRunId:record.entryRunId,entryRunId:learningFacts?.entry.originRunId??null,...(learningFacts?.exit??{}),entryLineage:learningFacts?.entry??{complete:false,lots:[],reasons:['ENTRY_LINEAGE_NOT_EVALUATED']},factLedgers:learningFacts?.fillLedger??null,moneyAsset:record.symbol.endsWith('USDC')?'USDC':record.symbol.endsWith('USDT')?'USDT':null,rawNetPnl,
+  return {...record,lifecycleDiagnostics:tradeRecordDiagnostics(record),rawEntryRunId:record.entryRunId,entryRunId:learningFacts?.entry.originRunId??null,...(learningFacts?.exit??{}),entryLineage:learningFacts?.entry??{complete:false,lots:[],reasons:['ENTRY_LINEAGE_NOT_EVALUATED']},factLedgers:learningFacts?.fillLedger??null,moneyAsset:record.symbol.endsWith('USDC')?'USDC':record.symbol.endsWith('USDT')?'USDT':null,rawNetPnl,
     // Compatibility `netPnl` is the formal display value. Raw source remains available as rawNetPnl/rawRecord without mutating state.
     netPnl:canonical.eligible?rawNetPnl:null,netRoiOnMargin:canonical.eligible?record.netRoiOnMargin:null,netReturnOnNotional:canonical.eligible?record.netReturnOnNotional:null,
     economicEligibility:{ledgerClosedComplete:ledger.eligible,canonicalPnlEligible:canonical.eligible,prospectiveCohortMember:cohort.eligible,ledgerReasons:ledger.reasons,canonicalReasons:canonical.reasons,cohortReasons:cohort.reasons,legacyEconomicInconsistent},

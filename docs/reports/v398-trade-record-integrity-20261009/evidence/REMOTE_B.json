@@ -1,23 +1,8 @@
 {
-  "observedAt": "2026-10-08T23:10:47.044408+00:00",
+  "observedAt": "2026-10-08T23:11:20.289666+00:00",
   "ref": "origin/main",
-  "head": "757a5c1a1e741fb4e920a28bb5274cd1ee64a82b",
-  "checked": 50,
-  "mismatches": [
-    "docs/reports/v398-trade-record-integrity-20261009/analysis-2.log",
-    "docs/reports/v398-trade-record-integrity-20261009/analysis.log",
-    "docs/reports/v398-trade-record-integrity-20261009/exchange-readonly-2.log",
-    "docs/reports/v398-trade-record-integrity-20261009/exchange-readonly.log",
-    "docs/reports/v398-trade-record-integrity-20261009/github-readonly.log",
-    "docs/reports/v398-trade-record-integrity-20261009/local-readonly-2.log",
-    "docs/reports/v398-trade-record-integrity-20261009/local-readonly-3.log",
-    "docs/reports/v398-trade-record-integrity-20261009/local-readonly.log",
-    "docs/reports/v398-trade-record-integrity-20261009/npm-ci.log",
-    "docs/reports/v398-trade-record-integrity-20261009/offline-replay-before-2.log",
-    "docs/reports/v398-trade-record-integrity-20261009/offline-replay-before.log",
-    "docs/reports/v398-trade-record-integrity-20261009/privacy-manifest.log",
-    "docs/reports/v398-trade-record-integrity-20261009/runtime-readonly.log",
-    "docs/reports/v398-trade-record-integrity-20261009/staged-phase-b-check.log"
-  ],
-  "passed": false
+  "head": "c7cf6b82bbdf29c86fc97634f37be0a8f86cde92",
+  "checked": 52,
+  "mismatches": [],
+  "passed": true
 }

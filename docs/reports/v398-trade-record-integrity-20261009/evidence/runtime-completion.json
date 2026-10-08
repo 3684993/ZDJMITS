@@ -1,0 +1,49 @@
+{
+  "observedAt": "2026-10-08T23:38:46.048Z",
+  "methods": [
+    "GET"
+  ],
+  "taskManualExchangeWrites": 0,
+  "results": [
+    {
+      "endpoint": "/health",
+      "status": "UNAVAILABLE",
+      "errorType": "TypeError"
+    },
+    {
+      "endpoint": "/api/v3/diagnostics/closeout",
+      "status": "UNAVAILABLE",
+      "errorType": "TypeError"
+    },
+    {
+      "endpoint": "/api/v3/positions",
+      "status": "UNAVAILABLE",
+      "errorType": "TypeError"
+    },
+    {
+      "endpoint": "/api/v3/trade-records?symbol=AVAXUSDT&category=COMPLETE&limit=100",
+      "status": "UNAVAILABLE",
+      "errorType": "TypeError"
+    },
+    {
+      "endpoint": "/api/v3/trade-records?symbol=AVAXUSDT&category=PARTIAL&limit=100",
+      "status": "UNAVAILABLE",
+      "errorType": "TypeError"
+    },
+    {
+      "endpoint": "/api/v3/trade-records?symbol=AVAXUSDT&category=IMPORTED&limit=100",
+      "status": "UNAVAILABLE",
+      "errorType": "TypeError"
+    },
+    {
+      "endpoint": "/api/v3/trade-records?symbol=AVAXUSDT&category=EXTERNAL&limit=100",
+      "status": "UNAVAILABLE",
+      "errorType": "TypeError"
+    },
+    {
+      "endpoint": "/api/v3/trade-records?symbol=AVAXUSDT&category=ISSUES&limit=100",
+      "status": "UNAVAILABLE",
+      "errorType": "TypeError"
+    }
+  ]
+}

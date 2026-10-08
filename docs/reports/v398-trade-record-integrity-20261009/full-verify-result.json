@@ -1,0 +1,11 @@
+{
+  "startedAt": "2026-10-08T23:31:00.866Z",
+  "completedAt": "2026-10-08T23:33:07.545Z",
+  "command": "npm run verify",
+  "exitCode": 0,
+  "signal": null,
+  "error": null,
+  "liveEngineLifecycleCalls": 0,
+  "manualExchangeWrites": 0,
+  "log": "docs/reports/v398-trade-record-integrity-20261009/full-verify.log"
+}

@@ -1,3 +1,4 @@
+import {filterTradeRecordCategory} from '../services/tradeRecordDiagnostics.js';
 import { projectEconomicEvidence } from '../services/economicEvidence.js';
 import { filterFormalOutcome, projectTradeRecordRow, projectTradeRecordSummary } from '../services/tradeRecordReadModel.js';
 import { projectExitProvenance } from '../services/exitProvenance.js';
@@ -1057,8 +1058,8 @@ export function createApiRouter(runtime: EngineRuntime) {
     const q=req.query as Record<string,string|undefined>,page=Math.max(1,Number(q.page??1)),limit=Math.min(100,Math.max(1,Number(q.limit??20)));
     const records=[...runtime.state.tradeRecords.values()],summary=projectTradeRecordSummary({records,...{...runtime.qualityObserver?.readContext(),learningContext:runtime.state}}),integrity=new TradeRecordIntegrityService(runtime.state).summary();
     let rows=records.map(record=>projectTradeRecordRow(record,{...runtime.qualityObserver?.readContext(),learningContext:runtime.state})).sort((a,b)=>byClosedAtDesc(a,b)||a.tradeId.localeCompare(b.tradeId));
-    const category=q.category??'COMPLETE';
-    rows=category==='ISSUES'?rows.filter(row=>['DUPLICATE','CONFLICT','INVALID'].includes(row.classification)):rows.filter(row=>row.classification===category);
+    const category=q.category??'ALL';
+    rows=filterTradeRecordCategory(rows,category);
     if(q.symbol)rows=rows.filter(row=>row.symbol.toUpperCase().includes(q.symbol!.toUpperCase()));
     if(q.direction)rows=rows.filter(row=>row.direction===q.direction);
     if(q.status)rows=rows.filter(row=>row.status===q.status);

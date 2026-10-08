@@ -1,0 +1,48 @@
+(node:41460) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:40692) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> zdj-mits-v3@3.9.8 verify:deps
+> npm run build -w @zdj/contracts && npm run build -w @zdj/core
+
+(node:39688) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:11144) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> @zdj/contracts@3.9.8 build
+> tsc -p tsconfig.json
+
+
+
+#
+# Fatal process out of memory: Re-embedded builtins: set permissions
+#
+----- Native stack trace -----
+
+ 1: 00007FF694724287
+ 2: 00007FF6945F4CCF
+ 3: 00007FF6958F7536
+ 4: 00007FF695291A43
+ 5: 00007FF69527E4A6
+ 6: 00007FF695127A4A
+ 7: 00007FF69514EA9A
+ 8: 00007FF69514CA6F
+ 9: 00007FF694D7EA93
+10: 00007FF6952875D1
+11: 00007FF69476270D
+12: 00007FF694626D2B
+13: 00007FF6946CEE19
+14: 00007FF6946CDB3E
+15: 00007FF69442B1EC
+16: 00007FF695FEC5A4
+17: 00007FF81ECBCD87 BaseThreadInitThunk+23
+18: 00007FF8209ECAEC RtlUserThreadStart+44
+npm error Lifecycle script `build` failed with error:
+npm error code 2147483651
+npm error path D:\MITS-WORKTREES\v398-trade-integrity-20261009\packages\contracts
+npm error workspace @zdj/contracts@3.9.8
+npm error location D:\MITS-WORKTREES\v398-trade-integrity-20261009\packages\contracts
+npm error command failed
+npm error command C:\Windows\system32\cmd.exe /d /s /c tsc -p tsconfig.json

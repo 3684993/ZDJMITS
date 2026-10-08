@@ -1,0 +1,20 @@
+Warning: disabling flag --expose_wasm due to conflicting flags
+(node:42376) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+node:internal/deps/undici/undici:5980
+        mod = await WebAssembly.compile(llhttpWasmData || require_llhttp_wasm());
+        ^
+
+ReferenceError: WebAssembly is not defined
+    at lazyllhttp (node:internal/deps/undici/undici:5980:9)
+    at lib/dispatcher/client-h1.js (node:internal/deps/undici/undici:6026:25)
+    at __require (node:internal/deps/undici/undici:6:50)
+    at lib/dispatcher/client.js (node:internal/deps/undici/undici:7855:21)
+    at __require (node:internal/deps/undici/undici:6:50)
+    at lib/dispatcher/pool.js (node:internal/deps/undici/undici:8317:18)
+    at __require (node:internal/deps/undici/undici:6:50)
+    at lib/dispatcher/agent.js (node:internal/deps/undici/undici:8408:16)
+    at __require (node:internal/deps/undici/undici:6:50)
+    at lib/global.js (node:internal/deps/undici/undici:8508:17)
+
+Node.js v22.23.1

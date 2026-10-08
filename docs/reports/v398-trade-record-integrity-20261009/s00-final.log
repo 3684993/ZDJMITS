@@ -1,0 +1,35 @@
+
+> zdj-mits-v3@3.9.8 verify:s00
+> node scripts/v396-s00-static-check.mjs --review=docs/reports/v398-trade-record-integrity-20261009/s00/entrypoint-review.json --current-identity=docs/reports/v398-trade-record-integrity-20261009/s00/current-identity.json --historical-lock=docs/reports/v398-trade-record-integrity-20261009/s00/historical-package-lock.json
+
+{
+  "stage": "S00",
+  "tests": {
+    "S00_T01": "PASS",
+    "S00_T02": "PASS",
+    "S00_T03": "PASS",
+    "S00_T04": "PASS",
+    "S00_T05": "PASS",
+    "S00_T06": "PASS"
+  },
+  "fixtureHash": "295c949a0cf5b2c7c06db81db91e42fd6fd4437fe5a2f23143c09ac4a7fbab21",
+  "network": "NOT_USED",
+  "exchangeWrites": 0,
+  "engineLifecycle": "NOT_USED",
+  "settingsModified": false,
+  "verifierScope": "STATIC_READS_AND_OS_TEMP_ONLY",
+  "entrypointReviewCount": 181,
+  "entrypointStatusCounts": {
+    "FORBIDDEN_OR_NOT_RUN": 162,
+    "CONDITIONAL_NOT_RUN": 18,
+    "ALLOWED_STATIC": 1
+  },
+  "engineTestIsolation": {
+    "testFiles": 210,
+    "openingAStore": 21,
+    "everyStoreOpeningTestIsolated": true,
+    "repositoryDataDirReferences": 0,
+    "productionPortReferences": 0
+  },
+  "blockers": []
+}

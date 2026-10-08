@@ -1,0 +1,14 @@
+VITEST_TEST_TIMEOUT=5000 CI=
+
+ RUN  v3.2.7 D:/MITS-WORKTREES/v398-trade-integrity-20261009/apps/engine
+
+(node:1712) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/api/snapshotReadOnly.test.ts (6 tests) 1648ms
+   ✓ TradeRecord GET list/detail and Experience perform zero SQLite writes and zero state mutation  433ms
+ ✓ src/services/primaryPositionContext.test.ts (1 test) 16ms
+
+ Test Files  2 passed (2)
+      Tests  7 passed (7)
+   Start at  07:24:08
+   Duration  4.60s (transform 1.28s, setup 0ms, collect 2.33s, tests 1.66s, environment 0ms, prepare 186ms)

@@ -1,6 +1,6 @@
 export type ClosePresentation={label:string;cls:string;hint:string};
 export function tradeClosePresentation(row:any):ClosePresentation{
-  if(!row?.closedAt)return{label:'持仓中',cls:'neutral',hint:'尚未出现平仓成交时间'};
+  if(!row?.closedAt)return row?.observedClosedAt?{label:'零仓待对账',cls:'warn',hint:'本地已观察零仓，未证明完整结算账本；观察时间不是平仓成交时间'}:{label:'账本未闭合',cls:'neutral',hint:'未证明完整结算；此记录不能用来判断当前是否仍有物理持仓'};
   const kinds:Record<string,ClosePresentation>={
     TP:{label:'止盈平仓',cls:'good',hint:'订单 provenance registry 确认为系统 TP'},
     SYSTEM_EXIT:{label:'系统主动平仓',cls:'warn',hint:'订单 provenance registry 确认为系统 Exit'},

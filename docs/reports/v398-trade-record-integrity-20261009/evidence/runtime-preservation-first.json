@@ -1,0 +1,35 @@
+{
+  "observedAt": "2026-10-08T23:39:20.149200+00:00",
+  "checks": {
+    "settingsUnchanged": false,
+    "canonicalHeadUnchanged": true,
+    "canonicalDirtyPreserved": false,
+    "sameRuntimeIdentity": false,
+    "healthReady": false
+  },
+  "before": {
+    "httpStatus": 200,
+    "status": "READY",
+    "facts": {
+      "version": "3.9.8",
+      "pid": 8524,
+      "instanceId": "c685f035-1f52-48ac-80fa-998811ff3fe5",
+      "buildId": "3.9.8-7271c941c2cdec049610",
+      "lastRestartReason": "MANUAL_START",
+      "restartCount": 276
+    }
+  },
+  "completion": {
+    "httpStatus": null,
+    "status": null,
+    "facts": {}
+  },
+  "settingsVersion": 253,
+  "settingsPayloadSHA256": "9edea9f1bc02a3b844b2baf50f0be541871d167860ef6bb5fcb8449e0b744151",
+  "runningSourceHead": "5fe95a8662639571ac27e2ae1580c5994847ff77",
+  "taskLiveDatabaseWrites": 0,
+  "taskManualExchangeWrites": 0,
+  "taskEngineLifecycleCalls": 0,
+  "liveDatabaseBytesUnchanged": "NOT_ASSERTED_ENGINE_CONTINUES_NATURAL_WRITES",
+  "candidateDeployment": "NOT_DEPLOYED"
+}

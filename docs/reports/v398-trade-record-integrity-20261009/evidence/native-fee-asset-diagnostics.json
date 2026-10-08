@@ -1,0 +1,6 @@
+{
+  "recordDenominator": 768,
+  "recordsWithFeeAssetsDifferentFromQuote": 0,
+  "definition": "raw fee asset differs from quote; not automatically an error or FX-converted net proof",
+  "rows": []
+}

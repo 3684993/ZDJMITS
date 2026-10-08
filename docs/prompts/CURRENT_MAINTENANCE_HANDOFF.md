@@ -619,7 +619,7 @@ ChatGPT prepared an **unverified deployment candidate** on:
 
 - branch: `chatgpt/reactivity-core-checkpoint-20261008`
 - first commit: `31a9586cff3f2a93d8f2cf380ea534a6daa6cf4b`
-- current candidate head: `54cc468960a3ca0eee221915c277427f60de237e`
+- current candidate head: `16bfdc05f1a3698c1c23066c4467def713dbee62`
 - candidate report: `docs/reports/v397-ssh-socks-remediation-20261008/CORE_CHECKPOINT_CANDIDATE.md` on that branch.
 
 Candidate behavior:

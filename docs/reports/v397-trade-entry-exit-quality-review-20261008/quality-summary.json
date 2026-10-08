@@ -1,0 +1,1431 @@
+{
+  "window": {
+    "since": 1790850545489,
+    "until": 1791455345489,
+    "weeks": 1,
+    "recordsCaptured": 755,
+    "closedInWeek": 165
+  },
+  "formalCanonicalEligible": 0,
+  "classification": {
+    "PARTIAL": 103,
+    "COMPLETE": 62
+  },
+  "provenance": {
+    "TP": 66,
+    "UNKNOWN": 95,
+    "SYSTEM_MANUAL": 3,
+    "CONFLICT": 1
+  },
+  "exFundingDiagnostic": {
+    "n": 61,
+    "wins": 59,
+    "losses": 2,
+    "winRate": 0.9672131147540983,
+    "netExFundingQuoteSum": 228.34102239,
+    "holdingHours": {
+      "n": 61,
+      "min": 0.01840472222222222,
+      "max": 195.9115475,
+      "median": 0.8510869444444444,
+      "mean": 5.46429155737705,
+      "p95": 10.515912222222223
+    },
+    "winningHoldingHours": {
+      "n": 59,
+      "min": 0.01840472222222222,
+      "max": 195.9115475,
+      "median": 0.8203788888888889,
+      "mean": 5.53042266007533,
+      "p95": 10.842336666666666
+    },
+    "losingHoldingHours": {
+      "n": 2,
+      "min": 0.9280258333333333,
+      "max": 6.098822222222222,
+      "median": 3.513424027777778,
+      "mean": 3.513424027777778,
+      "p95": 6.098822222222222
+    },
+    "tpCycleCount": 59,
+    "manualCycleCount": 2,
+    "manualExFundingQuoteSum": -87.30956760000001,
+    "horizonKnown": 61,
+    "horizonExceeded": 34,
+    "sampledPathFeeCoverObserved": 51,
+    "completeEarly5m": 0,
+    "completeEarly15m": 0
+  },
+  "ledgerIncludingMixed": {
+    "n": 62,
+    "wins": 59,
+    "losses": 3,
+    "winRate": 0.9516129032258065,
+    "netExFundingQuoteSum": 211.74695041,
+    "holdingHours": {
+      "n": 62,
+      "min": 0.01840472222222222,
+      "max": 195.9115475,
+      "median": 0.8846243055555556,
+      "mean": 5.495078248207886,
+      "p95": 10.515912222222223
+    },
+    "winningHoldingHours": {
+      "n": 59,
+      "min": 0.01840472222222222,
+      "max": 195.9115475,
+      "median": 0.8203788888888889,
+      "mean": 5.53042266007533,
+      "p95": 10.842336666666666
+    },
+    "losingHoldingHours": {
+      "n": 3,
+      "min": 0.9280258333333333,
+      "max": 7.373066388888889,
+      "median": 6.098822222222222,
+      "mean": 4.799971481481482,
+      "p95": 7.373066388888889
+    },
+    "tpCycleCount": 59,
+    "manualCycleCount": 2,
+    "manualExFundingQuoteSum": -87.30956760000001,
+    "horizonKnown": 62,
+    "horizonExceeded": 35,
+    "sampledPathFeeCoverObserved": 52,
+    "completeEarly5m": 0,
+    "completeEarly15m": 0
+  },
+  "uncertaintyBucket": {
+    "n": 104,
+    "wins": 84,
+    "losses": 6,
+    "winRate": 0.9333333333333333,
+    "netExFundingQuoteSum": 237.28614762,
+    "holdingHours": {
+      "n": 104,
+      "min": 0.08219166666666666,
+      "max": 313.43281527777776,
+      "median": 6.7137754166666666,
+      "mean": 23.639420101495727,
+      "p95": 113.85369694444445
+    },
+    "winningHoldingHours": {
+      "n": 84,
+      "min": 0.08219166666666666,
+      "max": 180.36834277777777,
+      "median": 6.1261504166666665,
+      "mean": 18.99196482473545,
+      "p95": 54.25835333333333
+    },
+    "losingHoldingHours": {
+      "n": 6,
+      "min": 7.373066388888889,
+      "max": 98.2505563888889,
+      "median": 69.45960652777778,
+      "mean": 58.224571574074076,
+      "p95": 98.2505563888889
+    },
+    "tpCycleCount": 7,
+    "manualCycleCount": 1,
+    "manualExFundingQuoteSum": -1.0975304700000001,
+    "horizonKnown": 102,
+    "horizonExceeded": 82,
+    "sampledPathFeeCoverObserved": 2,
+    "completeEarly5m": 0,
+    "completeEarly15m": 0
+  },
+  "quoteBreakdown": {
+    "USDT": {
+      "n": 45,
+      "wins": 43,
+      "losses": 2,
+      "winRate": 0.9555555555555556,
+      "netExFundingQuoteSum": 117.89584631,
+      "holdingHours": {
+        "n": 45,
+        "min": 0.01840472222222222,
+        "max": 195.9115475,
+        "median": 1.1353063888888888,
+        "mean": 6.724416049382716,
+        "p95": 10.842336666666666
+      },
+      "winningHoldingHours": {
+        "n": 43,
+        "min": 0.01840472222222222,
+        "max": 195.9115475,
+        "median": 1.1353063888888888,
+        "mean": 6.8737645155038765,
+        "p95": 10.842336666666666
+      },
+      "losingHoldingHours": {
+        "n": 2,
+        "min": 0.9280258333333333,
+        "max": 6.098822222222222,
+        "median": 3.513424027777778,
+        "mean": 3.513424027777778,
+        "p95": 6.098822222222222
+      },
+      "tpCycleCount": 43,
+      "manualCycleCount": 2,
+      "manualExFundingQuoteSum": -87.30956760000001,
+      "horizonKnown": 45,
+      "horizonExceeded": 27,
+      "sampledPathFeeCoverObserved": 38,
+      "completeEarly5m": 0,
+      "completeEarly15m": 0
+    },
+    "USDC": {
+      "n": 16,
+      "wins": 16,
+      "losses": 0,
+      "winRate": 1.0,
+      "netExFundingQuoteSum": 110.44517608,
+      "holdingHours": {
+        "n": 16,
+        "min": 0.02037777777777778,
+        "max": 10.515912222222223,
+        "median": 0.6256638888888889,
+        "mean": 1.920191423611111,
+        "p95": 10.515912222222223
+      },
+      "winningHoldingHours": {
+        "n": 16,
+        "min": 0.02037777777777778,
+        "max": 10.515912222222223,
+        "median": 0.6256638888888889,
+        "mean": 1.920191423611111,
+        "p95": 10.515912222222223
+      },
+      "losingHoldingHours": {
+        "n": 0,
+        "min": null,
+        "max": null,
+        "median": null,
+        "mean": null,
+        "p95": null
+      },
+      "tpCycleCount": 16,
+      "manualCycleCount": 0,
+      "manualExFundingQuoteSum": 0,
+      "horizonKnown": 16,
+      "horizonExceeded": 7,
+      "sampledPathFeeCoverObserved": 13,
+      "completeEarly5m": 0,
+      "completeEarly15m": 0
+    }
+  },
+  "symbolBreakdown": {
+    "AAVEUSDT": {
+      "n": 3,
+      "wins": 2,
+      "losses": 1,
+      "winRate": 0.6666666666666666,
+      "netExFundingQuoteSum": -29.0049708,
+      "holdingHours": {
+        "n": 3,
+        "min": 1.16434,
+        "max": 6.098822222222222,
+        "median": 1.9416977777777777,
+        "mean": 3.0682866666666664,
+        "p95": 6.098822222222222
+      },
+      "winningHoldingHours": {
+        "n": 2,
+        "min": 1.16434,
+        "max": 1.9416977777777777,
+        "median": 1.553018888888889,
+        "mean": 1.553018888888889,
+        "p95": 1.9416977777777777
+      },
+      "losingHoldingHours": {
+        "n": 1,
+        "min": 6.098822222222222,
+        "max": 6.098822222222222,
+        "median": 6.098822222222222,
+        "mean": 6.098822222222222,
+        "p95": 6.098822222222222
+      },
+      "tpCycleCount": 2,
+      "manualCycleCount": 1,
+      "manualExFundingQuoteSum": -35.3887236,
+      "horizonKnown": 3,
+      "horizonExceeded": 3,
+      "sampledPathFeeCoverObserved": 2,
+      "completeEarly5m": 0,
+      "completeEarly15m": 0
+    },
+    "ARBUSDT": {
+      "n": 1,
+      "wins": 1,
+      "losses": 0,
+      "winRate": 1.0,
+      "netExFundingQuoteSum": 5.668485,
+      "holdingHours": {
+        "n": 1,
+        "min": 9.842743888888888,
+        "max": 9.842743888888888,
+        "median": 9.842743888888888,
+        "mean": 9.842743888888888,
+        "p95": 9.842743888888888
+      },
+      "winningHoldingHours": {
+        "n": 1,
+        "min": 9.842743888888888,
+        "max": 9.842743888888888,
+        "median": 9.842743888888888,
+        "mean": 9.842743888888888,
+        "p95": 9.842743888888888
+      },
+      "losingHoldingHours": {
+        "n": 0,
+        "min": null,
+        "max": null,
+        "median": null,
+        "mean": null,
+        "p95": null
+      },
+      "tpCycleCount": 1,
+      "manualCycleCount": 0,
+      "manualExFundingQuoteSum": 0,
+      "horizonKnown": 1,
+      "horizonExceeded": 1,
+      "sampledPathFeeCoverObserved": 1,
+      "completeEarly5m": 0,
+      "completeEarly15m": 0
+    },
+    "AVAXUSDT": {
+      "n": 4,
+      "wins": 3,
+      "losses": 1,
+      "winRate": 0.75,
+      "netExFundingQuoteSum": -15.865796570000002,
+      "holdingHours": {
+        "n": 4,
+        "min": 0.19880472222222223,
+        "max": 10.842336666666666,
+        "median": 0.92309375,
+        "mean": 3.221832222222222,
+        "p95": 10.842336666666666
+      },
+      "winningHoldingHours": {
+        "n": 3,
+        "min": 0.19880472222222223,
+        "max": 10.842336666666666,
+        "median": 0.9181616666666667,
+        "mean": 3.9864343518518517,
+        "p95": 10.842336666666666
+      },
+      "losingHoldingHours": {
+        "n": 1,
+        "min": 0.9280258333333333,
+        "max": 0.9280258333333333,
+        "median": 0.9280258333333333,
+        "mean": 0.9280258333333333,
+        "p95": 0.9280258333333333
+      },
+      "tpCycleCount": 3,
+      "manualCycleCount": 1,
+      "manualExFundingQuoteSum": -51.920844,
+      "horizonKnown": 4,
+      "horizonExceeded": 1,
+      "sampledPathFeeCoverObserved": 2,
+      "completeEarly5m": 0,
+      "completeEarly15m": 0
+    },
+    "BCHUSDT": {
+      "n": 6,
+      "wins": 6,
+      "losses": 0,
+      "winRate": 1.0,
+      "netExFundingQuoteSum": 29.4911259,
+      "holdingHours": {
+        "n": 6,
+        "min": 0.22548138888888888,
+        "max": 8.417914722222223,
+        "median": 1.1811588888888889,
+        "mean": 2.950809490740741,
+        "p95": 8.417914722222223
+      },
+      "winningHoldingHours": {
+        "n": 6,
+        "min": 0.22548138888888888,
+        "max": 8.417914722222223,
+        "median": 1.1811588888888889,
+        "mean": 2.950809490740741,
+        "p95": 8.417914722222223
+      },
+      "losingHoldingHours": {
+        "n": 0,
+        "min": null,
+        "max": null,
+        "median": null,
+        "mean": null,
+        "p95": null
+      },
+      "tpCycleCount": 6,
+      "manualCycleCount": 0,
+      "manualExFundingQuoteSum": 0,
+      "horizonKnown": 6,
+      "horizonExceeded": 4,
+      "sampledPathFeeCoverObserved": 4,
+      "completeEarly5m": 0,
+      "completeEarly15m": 0
+    },
+    "BNBUSDC": {
+      "n": 3,
+      "wins": 3,
+      "losses": 0,
+      "winRate": 1.0,
+      "netExFundingQuoteSum": 39.349719119999996,
+      "holdingHours": {
+        "n": 3,
+        "min": 0.46066555555555555,
+        "max": 10.405365555555555,
+        "median": 2.444348888888889,
+        "mean": 4.436793333333333,
+        "p95": 10.405365555555555
+      },
+      "winningHoldingHours": {
+        "n": 3,
+        "min": 0.46066555555555555,
+        "max": 10.405365555555555,
+        "median": 2.444348888888889,
+        "mean": 4.436793333333333,
+        "p95": 10.405365555555555
+      },
+      "losingHoldingHours": {
+        "n": 0,
+        "min": null,
+        "max": null,
+        "median": null,
+        "mean": null,
+        "p95": null
+      },
+      "tpCycleCount": 3,
+      "manualCycleCount": 0,
+      "manualExFundingQuoteSum": 0,
+      "horizonKnown": 3,
+      "horizonExceeded": 1,
+      "sampledPathFeeCoverObserved": 2,
+      "completeEarly5m": 0,
+      "completeEarly15m": 0
+    },
+    "BTCUSDT": {
+      "n": 4,
+      "wins": 4,
+      "losses": 0,
+      "winRate": 1.0,
+      "netExFundingQuoteSum": 52.32286816,
+      "holdingHours": {
+        "n": 4,
+        "min": 0.04604305555555555,
+        "max": 8.614673333333334,
+        "median": 2.0792094444444444,
+        "mean": 3.2047838194444447,
+        "p95": 8.614673333333334
+      },
+      "winningHoldingHours": {
+        "n": 4,
+        "min": 0.04604305555555555,
+        "max": 8.614673333333334,
+        "median": 2.0792094444444444,
+        "mean": 3.2047838194444447,
+        "p95": 8.614673333333334
+      },
+      "losingHoldingHours": {
+        "n": 0,
+        "min": null,
+        "max": null,
+        "median": null,
+        "mean": null,
+        "p95": null
+      },
+      "tpCycleCount": 4,
+      "manualCycleCount": 0,
+      "manualExFundingQuoteSum": 0,
+      "horizonKnown": 4,
+      "horizonExceeded": 2,
+      "sampledPathFeeCoverObserved": 4,
+      "completeEarly5m": 0,
+      "completeEarly15m": 0
+    },
+    "DOTUSDT": {
+      "n": 1,
+      "wins": 1,
+      "losses": 0,
+      "winRate": 1.0,
+      "netExFundingQuoteSum": 0.054495539999999995,
+      "holdingHours": {
+        "n": 1,
+        "min": 0.18591777777777777,
+        "max": 0.18591777777777777,
+        "median": 0.18591777777777777,
+        "mean": 0.18591777777777777,
+        "p95": 0.18591777777777777
+      },
+      "winningHoldingHours": {
+        "n": 1,
+        "min": 0.18591777777777777,
+        "max": 0.18591777777777777,
+        "median": 0.18591777777777777,
+        "mean": 0.18591777777777777,
+        "p95": 0.18591777777777777
+      },
+      "losingHoldingHours": {
+        "n": 0,
+        "min": null,
+        "max": null,
+        "median": null,
+        "mean": null,
+        "p95": null
+      },
+      "tpCycleCount": 1,
+      "manualCycleCount": 0,
+      "manualExFundingQuoteSum": 0,
+      "horizonKnown": 1,
+      "horizonExceeded": 0,
+      "sampledPathFeeCoverObserved": 1,
+      "completeEarly5m": 0,
+      "completeEarly15m": 0
+    },
+    "ETHFIUSDC": {
+      "n": 1,
+      "wins": 1,
+      "losses": 0,
+      "winRate": 1.0,
+      "netExFundingQuoteSum": 0.55176,
+      "holdingHours": {
+        "n": 1,
+        "min": 0.8203788888888889,
+        "max": 0.8203788888888889,
+        "median": 0.8203788888888889,
+        "mean": 0.8203788888888889,
+        "p95": 0.8203788888888889
+      },
+      "winningHoldingHours": {
+        "n": 1,
+        "min": 0.8203788888888889,
+        "max": 0.8203788888888889,
+        "median": 0.8203788888888889,
+        "mean": 0.8203788888888889,
+        "p95": 0.8203788888888889
+      },
+      "losingHoldingHours": {
+        "n": 0,
+        "min": null,
+        "max": null,
+        "median": null,
+        "mean": null,
+        "p95": null
+      },
+      "tpCycleCount": 1,
+      "manualCycleCount": 0,
+      "manualExFundingQuoteSum": 0,
+      "horizonKnown": 1,
+      "horizonExceeded": 1,
+      "sampledPathFeeCoverObserved": 1,
+      "completeEarly5m": 0,
+      "completeEarly15m": 0
+    },
+    "ETHUSDT": {
+      "n": 5,
+      "wins": 5,
+      "losses": 0,
+      "winRate": 1.0,
+      "netExFundingQuoteSum": 12.12950069,
+      "holdingHours": {
+        "n": 5,
+        "min": 0.24998777777777778,
+        "max": 3.3900133333333335,
+        "median": 1.615441388888889,
+        "mean": 1.8262011666666667,
+        "p95": 3.3900133333333335
+      },
+      "winningHoldingHours": {
+        "n": 5,
+        "min": 0.24998777777777778,
+        "max": 3.3900133333333335,
+        "median": 1.615441388888889,
+        "mean": 1.8262011666666667,
+        "p95": 3.3900133333333335
+      },
+      "losingHoldingHours": {
+        "n": 0,
+        "min": null,
+        "max": null,
+        "median": null,
+        "mean": null,
+        "p95": null
+      },
+      "tpCycleCount": 5,
+      "manualCycleCount": 0,
+      "manualExFundingQuoteSum": 0,
+      "horizonKnown": 5,
+      "horizonExceeded": 3,
+      "sampledPathFeeCoverObserved": 5,
+      "completeEarly5m": 0,
+      "completeEarly15m": 0
+    },
+    "FETUSDT": {
+      "n": 1,
+      "wins": 1,
+      "losses": 0,
+      "winRate": 1.0,
+      "netExFundingQuoteSum": 0.50908846,
+      "holdingHours": {
+        "n": 1,
+        "min": 3.099,
+        "max": 3.099,
+        "median": 3.099,
+        "mean": 3.099,
+        "p95": 3.099
+      },
+      "winningHoldingHours": {
+        "n": 1,
+        "min": 3.099,
+        "max": 3.099,
+        "median": 3.099,
+        "mean": 3.099,
+        "p95": 3.099
+      },
+      "losingHoldingHours": {
+        "n": 0,
+        "min": null,
+        "max": null,
+        "median": null,
+        "mean": null,
+        "p95": null
+      },
+      "tpCycleCount": 1,
+      "manualCycleCount": 0,
+      "manualExFundingQuoteSum": 0,
+      "horizonKnown": 1,
+      "horizonExceeded": 1,
+      "sampledPathFeeCoverObserved": 1,
+      "completeEarly5m": 0,
+      "completeEarly15m": 0
+    },
+    "FILUSDT": {
+      "n": 1,
+      "wins": 1,
+      "losses": 0,
+      "winRate": 1.0,
+      "netExFundingQuoteSum": 0.47357373,
+      "holdingHours": {
+        "n": 1,
+        "min": 1.0353152777777779,
+        "max": 1.0353152777777779,
+        "median": 1.0353152777777779,
+        "mean": 1.0353152777777779,
+        "p95": 1.0353152777777779
+      },
+      "winningHoldingHours": {
+        "n": 1,
+        "min": 1.0353152777777779,
+        "max": 1.0353152777777779,
+        "median": 1.0353152777777779,
+        "mean": 1.0353152777777779,
+        "p95": 1.0353152777777779
+      },
+      "losingHoldingHours": {
+        "n": 0,
+        "min": null,
+        "max": null,
+        "median": null,
+        "mean": null,
+        "p95": null
+      },
+      "tpCycleCount": 1,
+      "manualCycleCount": 0,
+      "manualExFundingQuoteSum": 0,
+      "horizonKnown": 1,
+      "horizonExceeded": 1,
+      "sampledPathFeeCoverObserved": 1,
+      "completeEarly5m": 0,
+      "completeEarly15m": 0
+    },
+    "INJUSDT": {
+      "n": 1,
+      "wins": 1,
+      "losses": 0,
+      "winRate": 1.0,
+      "netExFundingQuoteSum": 1.5893880599999999,
+      "holdingHours": {
+        "n": 1,
+        "min": 1.1568766666666668,
+        "max": 1.1568766666666668,
+        "median": 1.1568766666666668,
+        "mean": 1.1568766666666668,
+        "p95": 1.1568766666666668
+      },
+      "winningHoldingHours": {
+        "n": 1,
+        "min": 1.1568766666666668,
+        "max": 1.1568766666666668,
+        "median": 1.1568766666666668,
+        "mean": 1.1568766666666668,
+        "p95": 1.1568766666666668
+      },
+      "losingHoldingHours": {
+        "n": 0,
+        "min": null,
+        "max": null,
+        "median": null,
+        "mean": null,
+        "p95": null
+      },
+      "tpCycleCount": 1,
+      "manualCycleCount": 0,
+      "manualExFundingQuoteSum": 0,
+      "horizonKnown": 1,
+      "horizonExceeded": 1,
+      "sampledPathFeeCoverObserved": 1,
+      "completeEarly5m": 0,
+      "completeEarly15m": 0
+    },
+    "LTCUSDT": {
+      "n": 1,
+      "wins": 1,
+      "losses": 0,
+      "winRate": 1.0,
+      "netExFundingQuoteSum": 0.01723953,
+      "holdingHours": {
+        "n": 1,
+        "min": 0.01840472222222222,
+        "max": 0.01840472222222222,
+        "median": 0.01840472222222222,
+        "mean": 0.01840472222222222,
+        "p95": 0.01840472222222222
+      },
+      "winningHoldingHours": {
+        "n": 1,
+        "min": 0.01840472222222222,
+        "max": 0.01840472222222222,
+        "median": 0.01840472222222222,
+        "mean": 0.01840472222222222,
+        "p95": 0.01840472222222222
+      },
+      "losingHoldingHours": {
+        "n": 0,
+        "min": null,
+        "max": null,
+        "median": null,
+        "mean": null,
+        "p95": null
+      },
+      "tpCycleCount": 1,
+      "manualCycleCount": 0,
+      "manualExFundingQuoteSum": 0,
+      "horizonKnown": 1,
+      "horizonExceeded": 0,
+      "sampledPathFeeCoverObserved": 1,
+      "completeEarly5m": 0,
+      "completeEarly15m": 0
+    },
+    "NEARUSDC": {
+      "n": 8,
+      "wins": 8,
+      "losses": 0,
+      "winRate": 1.0,
+      "netExFundingQuoteSum": 63.32999996,
+      "holdingHours": {
+        "n": 8,
+        "min": 0.02037777777777778,
+        "max": 10.515912222222223,
+        "median": 0.5646827777777778,
+        "mean": 1.701715277777778,
+        "p95": 10.515912222222223
+      },
+      "winningHoldingHours": {
+        "n": 8,
+        "min": 0.02037777777777778,
+        "max": 10.515912222222223,
+        "median": 0.5646827777777778,
+        "mean": 1.701715277777778,
+        "p95": 10.515912222222223
+      },
+      "losingHoldingHours": {
+        "n": 0,
+        "min": null,
+        "max": null,
+        "median": null,
+        "mean": null,
+        "p95": null
+      },
+      "tpCycleCount": 8,
+      "manualCycleCount": 0,
+      "manualExFundingQuoteSum": 0,
+      "horizonKnown": 8,
+      "horizonExceeded": 3,
+      "sampledPathFeeCoverObserved": 7,
+      "completeEarly5m": 0,
+      "completeEarly15m": 0
+    },
+    "ONDOUSDT": {
+      "n": 4,
+      "wins": 4,
+      "losses": 0,
+      "winRate": 1.0,
+      "netExFundingQuoteSum": 5.87494343,
+      "holdingHours": {
+        "n": 4,
+        "min": 0.16012944444444444,
+        "max": 12.029537222222222,
+        "median": 0.6603643055555555,
+        "mean": 3.3775988194444446,
+        "p95": 12.029537222222222
+      },
+      "winningHoldingHours": {
+        "n": 4,
+        "min": 0.16012944444444444,
+        "max": 12.029537222222222,
+        "median": 0.6603643055555555,
+        "mean": 3.3775988194444446,
+        "p95": 12.029537222222222
+      },
+      "losingHoldingHours": {
+        "n": 0,
+        "min": null,
+        "max": null,
+        "median": null,
+        "mean": null,
+        "p95": null
+      },
+      "tpCycleCount": 4,
+      "manualCycleCount": 0,
+      "manualExFundingQuoteSum": 0,
+      "horizonKnown": 4,
+      "horizonExceeded": 2,
+      "sampledPathFeeCoverObserved": 4,
+      "completeEarly5m": 0,
+      "completeEarly15m": 0
+    },
+    "SOLUSDT": {
+      "n": 3,
+      "wins": 3,
+      "losses": 0,
+      "winRate": 1.0,
+      "netExFundingQuoteSum": 12.023038940000001,
+      "holdingHours": {
+        "n": 3,
+        "min": 0.14027472222222223,
+        "max": 6.743928888888889,
+        "median": 1.7487336111111111,
+        "mean": 2.877645740740741,
+        "p95": 6.743928888888889
+      },
+      "winningHoldingHours": {
+        "n": 3,
+        "min": 0.14027472222222223,
+        "max": 6.743928888888889,
+        "median": 1.7487336111111111,
+        "mean": 2.877645740740741,
+        "p95": 6.743928888888889
+      },
+      "losingHoldingHours": {
+        "n": 0,
+        "min": null,
+        "max": null,
+        "median": null,
+        "mean": null,
+        "p95": null
+      },
+      "tpCycleCount": 3,
+      "manualCycleCount": 0,
+      "manualExFundingQuoteSum": 0,
+      "horizonKnown": 3,
+      "horizonExceeded": 2,
+      "sampledPathFeeCoverObserved": 3,
+      "completeEarly5m": 0,
+      "completeEarly15m": 0
+    },
+    "TAOUSDT": {
+      "n": 1,
+      "wins": 1,
+      "losses": 0,
+      "winRate": 1.0,
+      "netExFundingQuoteSum": 1.8800265899999997,
+      "holdingHours": {
+        "n": 1,
+        "min": 2.4738622222222224,
+        "max": 2.4738622222222224,
+        "median": 2.4738622222222224,
+        "mean": 2.4738622222222224,
+        "p95": 2.4738622222222224
+      },
+      "winningHoldingHours": {
+        "n": 1,
+        "min": 2.4738622222222224,
+        "max": 2.4738622222222224,
+        "median": 2.4738622222222224,
+        "mean": 2.4738622222222224,
+        "p95": 2.4738622222222224
+      },
+      "losingHoldingHours": {
+        "n": 0,
+        "min": null,
+        "max": null,
+        "median": null,
+        "mean": null,
+        "p95": null
+      },
+      "tpCycleCount": 1,
+      "manualCycleCount": 0,
+      "manualExFundingQuoteSum": 0,
+      "horizonKnown": 1,
+      "horizonExceeded": 1,
+      "sampledPathFeeCoverObserved": 1,
+      "completeEarly5m": 0,
+      "completeEarly15m": 0
+    },
+    "TIAUSDC": {
+      "n": 2,
+      "wins": 2,
+      "losses": 0,
+      "winRate": 1.0,
+      "netExFundingQuoteSum": 3.2731,
+      "holdingHours": {
+        "n": 2,
+        "min": 0.04910472222222222,
+        "max": 1.9546055555555555,
+        "median": 1.0018551388888888,
+        "mean": 1.0018551388888888,
+        "p95": 1.9546055555555555
+      },
+      "winningHoldingHours": {
+        "n": 2,
+        "min": 0.04910472222222222,
+        "max": 1.9546055555555555,
+        "median": 1.0018551388888888,
+        "mean": 1.0018551388888888,
+        "p95": 1.9546055555555555
+      },
+      "losingHoldingHours": {
+        "n": 0,
+        "min": null,
+        "max": null,
+        "median": null,
+        "mean": null,
+        "p95": null
+      },
+      "tpCycleCount": 2,
+      "manualCycleCount": 0,
+      "manualExFundingQuoteSum": 0,
+      "horizonKnown": 2,
+      "horizonExceeded": 1,
+      "sampledPathFeeCoverObserved": 1,
+      "completeEarly5m": 0,
+      "completeEarly15m": 0
+    },
+    "TIAUSDT": {
+      "n": 3,
+      "wins": 3,
+      "losses": 0,
+      "winRate": 1.0,
+      "netExFundingQuoteSum": 10.960214200000001,
+      "holdingHours": {
+        "n": 3,
+        "min": 0.20025,
+        "max": 1.9502127777777778,
+        "median": 0.8510869444444444,
+        "mean": 1.000516574074074,
+        "p95": 1.9502127777777778
+      },
+      "winningHoldingHours": {
+        "n": 3,
+        "min": 0.20025,
+        "max": 1.9502127777777778,
+        "median": 0.8510869444444444,
+        "mean": 1.000516574074074,
+        "p95": 1.9502127777777778
+      },
+      "losingHoldingHours": {
+        "n": 0,
+        "min": null,
+        "max": null,
+        "median": null,
+        "mean": null,
+        "p95": null
+      },
+      "tpCycleCount": 3,
+      "manualCycleCount": 0,
+      "manualExFundingQuoteSum": 0,
+      "horizonKnown": 3,
+      "horizonExceeded": 1,
+      "sampledPathFeeCoverObserved": 2,
+      "completeEarly5m": 0,
+      "completeEarly15m": 0
+    },
+    "UNIUSDC": {
+      "n": 1,
+      "wins": 1,
+      "losses": 0,
+      "winRate": 1.0,
+      "netExFundingQuoteSum": 3.8930669999999994,
+      "holdingHours": {
+        "n": 1,
+        "min": 0.29466777777777775,
+        "max": 0.29466777777777775,
+        "median": 0.29466777777777775,
+        "mean": 0.29466777777777775,
+        "p95": 0.29466777777777775
+      },
+      "winningHoldingHours": {
+        "n": 1,
+        "min": 0.29466777777777775,
+        "max": 0.29466777777777775,
+        "median": 0.29466777777777775,
+        "mean": 0.29466777777777775,
+        "p95": 0.29466777777777775
+      },
+      "losingHoldingHours": {
+        "n": 0,
+        "min": null,
+        "max": null,
+        "median": null,
+        "mean": null,
+        "p95": null
+      },
+      "tpCycleCount": 1,
+      "manualCycleCount": 0,
+      "manualExFundingQuoteSum": 0,
+      "horizonKnown": 1,
+      "horizonExceeded": 0,
+      "sampledPathFeeCoverObserved": 1,
+      "completeEarly5m": 0,
+      "completeEarly15m": 0
+    },
+    "UNIUSDT": {
+      "n": 1,
+      "wins": 1,
+      "losses": 0,
+      "winRate": 1.0,
+      "netExFundingQuoteSum": 13.0550616,
+      "holdingHours": {
+        "n": 1,
+        "min": 195.9115475,
+        "max": 195.9115475,
+        "median": 195.9115475,
+        "mean": 195.9115475,
+        "p95": 195.9115475
+      },
+      "winningHoldingHours": {
+        "n": 1,
+        "min": 195.9115475,
+        "max": 195.9115475,
+        "median": 195.9115475,
+        "mean": 195.9115475,
+        "p95": 195.9115475
+      },
+      "losingHoldingHours": {
+        "n": 0,
+        "min": null,
+        "max": null,
+        "median": null,
+        "mean": null,
+        "p95": null
+      },
+      "tpCycleCount": 1,
+      "manualCycleCount": 0,
+      "manualExFundingQuoteSum": 0,
+      "horizonKnown": 1,
+      "horizonExceeded": 1,
+      "sampledPathFeeCoverObserved": 0,
+      "completeEarly5m": 0,
+      "completeEarly15m": 0
+    },
+    "VVVUSDT": {
+      "n": 1,
+      "wins": 1,
+      "losses": 0,
+      "winRate": 1.0,
+      "netExFundingQuoteSum": 3.5900106999999997,
+      "holdingHours": {
+        "n": 1,
+        "min": 0.6725963888888888,
+        "max": 0.6725963888888888,
+        "median": 0.6725963888888888,
+        "mean": 0.6725963888888888,
+        "p95": 0.6725963888888888
+      },
+      "winningHoldingHours": {
+        "n": 1,
+        "min": 0.6725963888888888,
+        "max": 0.6725963888888888,
+        "median": 0.6725963888888888,
+        "mean": 0.6725963888888888,
+        "p95": 0.6725963888888888
+      },
+      "losingHoldingHours": {
+        "n": 0,
+        "min": null,
+        "max": null,
+        "median": null,
+        "mean": null,
+        "p95": null
+      },
+      "tpCycleCount": 1,
+      "manualCycleCount": 0,
+      "manualExFundingQuoteSum": 0,
+      "horizonKnown": 1,
+      "horizonExceeded": 1,
+      "sampledPathFeeCoverObserved": 1,
+      "completeEarly5m": 0,
+      "completeEarly15m": 0
+    },
+    "WIFUSDC": {
+      "n": 1,
+      "wins": 1,
+      "losses": 0,
+      "winRate": 1.0,
+      "netExFundingQuoteSum": 0.047529999999999996,
+      "holdingHours": {
+        "n": 1,
+        "min": 0.6802036111111112,
+        "max": 0.6802036111111112,
+        "median": 0.6802036111111112,
+        "mean": 0.6802036111111112,
+        "p95": 0.6802036111111112
+      },
+      "winningHoldingHours": {
+        "n": 1,
+        "min": 0.6802036111111112,
+        "max": 0.6802036111111112,
+        "median": 0.6802036111111112,
+        "mean": 0.6802036111111112,
+        "p95": 0.6802036111111112
+      },
+      "losingHoldingHours": {
+        "n": 0,
+        "min": null,
+        "max": null,
+        "median": null,
+        "mean": null,
+        "p95": null
+      },
+      "tpCycleCount": 1,
+      "manualCycleCount": 0,
+      "manualExFundingQuoteSum": 0,
+      "horizonKnown": 1,
+      "horizonExceeded": 1,
+      "sampledPathFeeCoverObserved": 1,
+      "completeEarly5m": 0,
+      "completeEarly15m": 0
+    },
+    "ZECUSDT": {
+      "n": 3,
+      "wins": 3,
+      "losses": 0,
+      "winRate": 1.0,
+      "netExFundingQuoteSum": 11.41056212,
+      "holdingHours": {
+        "n": 3,
+        "min": 0.11949555555555555,
+        "max": 0.33537805555555555,
+        "median": 0.21693361111111112,
+        "mean": 0.22393574074074074,
+        "p95": 0.33537805555555555
+      },
+      "winningHoldingHours": {
+        "n": 3,
+        "min": 0.11949555555555555,
+        "max": 0.33537805555555555,
+        "median": 0.21693361111111112,
+        "mean": 0.22393574074074074,
+        "p95": 0.33537805555555555
+      },
+      "losingHoldingHours": {
+        "n": 0,
+        "min": null,
+        "max": null,
+        "median": null,
+        "mean": null,
+        "p95": null
+      },
+      "tpCycleCount": 3,
+      "manualCycleCount": 0,
+      "manualExFundingQuoteSum": 0,
+      "horizonKnown": 3,
+      "horizonExceeded": 1,
+      "sampledPathFeeCoverObserved": 3,
+      "completeEarly5m": 0,
+      "completeEarly15m": 0
+    },
+    "ZROUSDT": {
+      "n": 1,
+      "wins": 1,
+      "losses": 0,
+      "winRate": 1.0,
+      "netExFundingQuoteSum": 1.71699103,
+      "holdingHours": {
+        "n": 1,
+        "min": 0.6385813888888889,
+        "max": 0.6385813888888889,
+        "median": 0.6385813888888889,
+        "mean": 0.6385813888888889,
+        "p95": 0.6385813888888889
+      },
+      "winningHoldingHours": {
+        "n": 1,
+        "min": 0.6385813888888889,
+        "max": 0.6385813888888889,
+        "median": 0.6385813888888889,
+        "mean": 0.6385813888888889,
+        "p95": 0.6385813888888889
+      },
+      "losingHoldingHours": {
+        "n": 0,
+        "min": null,
+        "max": null,
+        "median": null,
+        "mean": null,
+        "p95": null
+      },
+      "tpCycleCount": 1,
+      "manualCycleCount": 0,
+      "manualExFundingQuoteSum": 0,
+      "horizonKnown": 1,
+      "horizonExceeded": 1,
+      "sampledPathFeeCoverObserved": 1,
+      "completeEarly5m": 0,
+      "completeEarly15m": 0
+    }
+  },
+  "regimeBreakdown": {
+    "MIXED": {
+      "n": 6,
+      "wins": 6,
+      "losses": 0,
+      "winRate": 1.0,
+      "netExFundingQuoteSum": 38.65364615,
+      "holdingHours": {
+        "n": 6,
+        "min": 0.04604305555555555,
+        "max": 8.417914722222223,
+        "median": 1.9524091666666665,
+        "mean": 3.338477777777778,
+        "p95": 8.417914722222223
+      },
+      "winningHoldingHours": {
+        "n": 6,
+        "min": 0.04604305555555555,
+        "max": 8.417914722222223,
+        "median": 1.9524091666666665,
+        "mean": 3.338477777777778,
+        "p95": 8.417914722222223
+      },
+      "losingHoldingHours": {
+        "n": 0,
+        "min": null,
+        "max": null,
+        "median": null,
+        "mean": null,
+        "p95": null
+      },
+      "tpCycleCount": 6,
+      "manualCycleCount": 0,
+      "manualExFundingQuoteSum": 0,
+      "horizonKnown": 6,
+      "horizonExceeded": 4,
+      "sampledPathFeeCoverObserved": 2,
+      "completeEarly5m": 0,
+      "completeEarly15m": 0
+    },
+    "LOW_VOLATILITY": {
+      "n": 32,
+      "wins": 30,
+      "losses": 2,
+      "winRate": 0.9375,
+      "netExFundingQuoteSum": 46.686044370000005,
+      "holdingHours": {
+        "n": 32,
+        "min": 0.01840472222222222,
+        "max": 195.9115475,
+        "median": 0.6456934722222223,
+        "mean": 8.228169296875,
+        "p95": 12.029537222222222
+      },
+      "winningHoldingHours": {
+        "n": 30,
+        "min": 0.01840472222222222,
+        "max": 195.9115475,
+        "median": 0.6413345833333334,
+        "mean": 8.54248564814815,
+        "p95": 12.029537222222222
+      },
+      "losingHoldingHours": {
+        "n": 2,
+        "min": 0.9280258333333333,
+        "max": 6.098822222222222,
+        "median": 3.513424027777778,
+        "mean": 3.513424027777778,
+        "p95": 6.098822222222222
+      },
+      "tpCycleCount": 30,
+      "manualCycleCount": 2,
+      "manualExFundingQuoteSum": -87.30956760000001,
+      "horizonKnown": 32,
+      "horizonExceeded": 17,
+      "sampledPathFeeCoverObserved": 28,
+      "completeEarly5m": 0,
+      "completeEarly15m": 0
+    },
+    "RISK_ON": {
+      "n": 2,
+      "wins": 2,
+      "losses": 0,
+      "winRate": 1.0,
+      "netExFundingQuoteSum": 7.147378059999999,
+      "holdingHours": {
+        "n": 2,
+        "min": 0.22548138888888888,
+        "max": 6.377206666666667,
+        "median": 3.3013440277777777,
+        "mean": 3.3013440277777777,
+        "p95": 6.377206666666667
+      },
+      "winningHoldingHours": {
+        "n": 2,
+        "min": 0.22548138888888888,
+        "max": 6.377206666666667,
+        "median": 3.3013440277777777,
+        "mean": 3.3013440277777777,
+        "p95": 6.377206666666667
+      },
+      "losingHoldingHours": {
+        "n": 0,
+        "min": null,
+        "max": null,
+        "median": null,
+        "mean": null,
+        "p95": null
+      },
+      "tpCycleCount": 2,
+      "manualCycleCount": 0,
+      "manualExFundingQuoteSum": 0,
+      "horizonKnown": 2,
+      "horizonExceeded": 1,
+      "sampledPathFeeCoverObserved": 1,
+      "completeEarly5m": 0,
+      "completeEarly15m": 0
+    },
+    "RISK_OFF": {
+      "n": 21,
+      "wins": 21,
+      "losses": 0,
+      "winRate": 1.0,
+      "netExFundingQuoteSum": 135.85395381,
+      "holdingHours": {
+        "n": 21,
+        "min": 0.02037777777777778,
+        "max": 10.405365555555555,
+        "median": 1.0353152777777779,
+        "mean": 2.0660387037037036,
+        "p95": 9.842743888888888
+      },
+      "winningHoldingHours": {
+        "n": 21,
+        "min": 0.02037777777777778,
+        "max": 10.405365555555555,
+        "median": 1.0353152777777779,
+        "mean": 2.0660387037037036,
+        "p95": 9.842743888888888
+      },
+      "losingHoldingHours": {
+        "n": 0,
+        "min": null,
+        "max": null,
+        "median": null,
+        "mean": null,
+        "p95": null
+      },
+      "tpCycleCount": 21,
+      "manualCycleCount": 0,
+      "manualExFundingQuoteSum": 0,
+      "horizonKnown": 21,
+      "horizonExceeded": 12,
+      "sampledPathFeeCoverObserved": 20,
+      "completeEarly5m": 0,
+      "completeEarly15m": 0
+    }
+  },
+  "modelLatencyMs": {
+    "n": 41,
+    "min": 92522,
+    "max": 108570,
+    "median": 96972,
+    "mean": 97686.80487804877,
+    "p95": 102503
+  },
+  "quoteAgeAtDecisionMs": {
+    "n": 41,
+    "min": 97057,
+    "max": 112752,
+    "median": 105132,
+    "mean": 105059.46341463414,
+    "p95": 111130
+  },
+  "firstFillDelayMs": {
+    "n": 41,
+    "min": -693802077,
+    "max": 99958,
+    "median": 17865,
+    "mean": -16898013.80487805,
+    "p95": 58722
+  },
+  "fillToIdealBps": {
+    "n": 164,
+    "min": -110.74646722264659,
+    "max": 21.81673938913109,
+    "median": -6.1340121012581905,
+    "mean": -7.364719661840441,
+    "p95": 11.603812681311165
+  },
+  "predicateDistribution": {
+    "NO_PREDICATE": 148,
+    "null": 2,
+    "CLOSED_BAR_BREAKS_LEVEL": 15
+  },
+  "open": {
+    "count": 21,
+    "humanManaged": 16,
+    "horizonExceeded": 19,
+    "marketFresh": 8,
+    "unknownStaleMarket": 13,
+    "tpEntryPct": {
+      "n": 21,
+      "min": 0.20637468470532647,
+      "max": 2.0211437392878615,
+      "median": 0.45017958230570465,
+      "mean": 0.5764858089294062,
+      "p95": 1.86917336915897
+    },
+    "remainingTpPctFreshOnly": {
+      "n": 8,
+      "min": 0.15465209152270912,
+      "max": 11.489898989898986,
+      "median": 5.515905363223614,
+      "mean": 6.0048181448229085,
+      "p95": 11.489898989898986
+    },
+    "tpSources": {
+      "FIXED_PROFITABLE": 9,
+      "AI": 10,
+      "STRUCTURE_15M": 2
+    },
+    "holdingHours": {
+      "n": 21,
+      "min": 0.14885944444444443,
+      "max": 450.30550305555556,
+      "median": 5.585029722222222,
+      "mean": 52.30346492063492,
+      "p95": 200.345075
+    },
+    "snapshotUnrealizedQuoteByAsset": {
+      "USDT": -1820.2825973100892,
+      "USDC": -227.36381929700397
+    },
+    "detailMissingCount": 1
+  },
+  "metricsPolicy": "No canonical net inference from UNKNOWN funding. Path gaps retained, no interpolation. Numeric sampled excursions are lower bounds; multi-lot fixed anchor not position-level true path. Closed cohort is censored by retained open losers."
+}

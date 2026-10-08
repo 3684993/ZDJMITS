@@ -1,0 +1,76 @@
+{
+  "codeRef": "4cd57a99af028189ca213b7aee3ed27ed1e362c4",
+  "sourceUnchangedInThisRound": true,
+  "files": [
+    {
+      "path": "apps/engine/src/api/router.ts",
+      "sha256": "5bce6a524aea9036e01d5e0f4876955c37132e13327b606b28d7c2bdfac6da19",
+      "url": "https://github.com/3684993/ZDJMITS/blob/4cd57a99af028189ca213b7aee3ed27ed1e362c4/apps/engine/src/api/router.ts"
+    },
+    {
+      "path": "apps/engine/src/services/orderProvenanceRegistry.ts",
+      "sha256": "5089821ca0f9b2ee398a7a59096e31628dffcb1fe97b477a4c3c6ee65105040b",
+      "url": "https://github.com/3684993/ZDJMITS/blob/4cd57a99af028189ca213b7aee3ed27ed1e362c4/apps/engine/src/services/orderProvenanceRegistry.ts"
+    },
+    {
+      "path": "apps/engine/src/services/quantityHorizonCandidates.ts",
+      "sha256": "c8f858950742cd154e0271902d068fdbad7e9ff6369d6b3296db8b048e75fa88",
+      "url": "https://github.com/3684993/ZDJMITS/blob/4cd57a99af028189ca213b7aee3ed27ed1e362c4/apps/engine/src/services/quantityHorizonCandidates.ts"
+    },
+    {
+      "path": "apps/engine/src/services/historicalTpReachability.ts",
+      "sha256": "24fbc23c53ad371493a9a21dd359e7988777b83f39a8b2b3d4120a3058d1478f",
+      "url": "https://github.com/3684993/ZDJMITS/blob/4cd57a99af028189ca213b7aee3ed27ed1e362c4/apps/engine/src/services/historicalTpReachability.ts"
+    },
+    {
+      "path": "apps/engine/src/services/tradingQualityCollector.ts",
+      "sha256": "e83f3db5cf6f7f021fd1155858b00bf741caaab1e7a9df14d5f3316f9c59ea77",
+      "url": "https://github.com/3684993/ZDJMITS/blob/4cd57a99af028189ca213b7aee3ed27ed1e362c4/apps/engine/src/services/tradingQualityCollector.ts"
+    },
+    {
+      "path": "apps/engine/src/services/tradingQualityEligibility.ts",
+      "sha256": "cd3d1c9f63cbdd06fde2171e5fae6002c5ad39703f51ad6b68704bf5c878d501",
+      "url": "https://github.com/3684993/ZDJMITS/blob/4cd57a99af028189ca213b7aee3ed27ed1e362c4/apps/engine/src/services/tradingQualityEligibility.ts"
+    },
+    {
+      "path": "apps/engine/src/services/entryCoordinator.ts",
+      "sha256": "3e5219a65d6be42ddf03ce4649da95cd51284fd48bdb212915eef825c60f81f2",
+      "url": "https://github.com/3684993/ZDJMITS/blob/4cd57a99af028189ca213b7aee3ed27ed1e362c4/apps/engine/src/services/entryCoordinator.ts"
+    },
+    {
+      "path": "apps/engine/src/services/tradePlanService.ts",
+      "sha256": "68f52459cb89f85b14e11facb8bf197d01773af1315093e8db2bb614a49aa0fa",
+      "url": "https://github.com/3684993/ZDJMITS/blob/4cd57a99af028189ca213b7aee3ed27ed1e362c4/apps/engine/src/services/tradePlanService.ts"
+    },
+    {
+      "path": "apps/engine/src/services/tpGuardian.ts",
+      "sha256": "b9b1d80d6a0ea7f69f7639e456f90ad940af2603ef2d8835d7d51fc77f1ad239",
+      "url": "https://github.com/3684993/ZDJMITS/blob/4cd57a99af028189ca213b7aee3ed27ed1e362c4/apps/engine/src/services/tpGuardian.ts"
+    },
+    {
+      "path": "apps/engine/src/services/lossHandoff.ts",
+      "sha256": "f2df807f39c9460f1f39d4b021f2a0b5b0873b295d77b0e08cd63994ef78b22c",
+      "url": "https://github.com/3684993/ZDJMITS/blob/4cd57a99af028189ca213b7aee3ed27ed1e362c4/apps/engine/src/services/lossHandoff.ts"
+    },
+    {
+      "path": "apps/engine/src/services/aiFabric.ts",
+      "sha256": "43dd4a672ffa0e16102ed2a3636d22fd263c0809add5f51142f3a1555869f76d",
+      "url": "https://github.com/3684993/ZDJMITS/blob/4cd57a99af028189ca213b7aee3ed27ed1e362c4/apps/engine/src/services/aiFabric.ts"
+    },
+    {
+      "path": "apps/engine/src/services/positionService.ts",
+      "sha256": "d8ba408ee330af22d8f3f7b78eb305bdf898d0a201c1aaaeadb4377efe5c25d9",
+      "url": "https://github.com/3684993/ZDJMITS/blob/4cd57a99af028189ca213b7aee3ed27ed1e362c4/apps/engine/src/services/positionService.ts"
+    },
+    {
+      "path": "apps/engine/src/runtime/appRuntime.ts",
+      "sha256": "68f52727b9be046fe4ff261023a4b1f29cac295e544bb7e100574cc09feb1ff1",
+      "url": "https://github.com/3684993/ZDJMITS/blob/4cd57a99af028189ca213b7aee3ed27ed1e362c4/apps/engine/src/runtime/appRuntime.ts"
+    },
+    {
+      "path": "apps/engine/src/adapters/market/BinanceMarketStream.ts",
+      "sha256": "f36e1bdbdf2e07950aefa1db40bc835913baf480dbd82a225670920f2059bb7a",
+      "url": "https://github.com/3684993/ZDJMITS/blob/4cd57a99af028189ca213b7aee3ed27ed1e362c4/apps/engine/src/adapters/market/BinanceMarketStream.ts"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+(node:8596) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+node:internal/modules/esm/resolve:275
+    throw new ERR_MODULE_NOT_FOUND(
+          ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module 'D:\MITS-WORKTREES\apps\engine\dist\services\tradeRecordReadModel.js' imported from D:\MITS-WORKTREES\v397-private-reconciliation-fanout-20261008\docs\reports\v397-trade-entry-exit-quality-review-20261008\project_offline.mjs
+    at finalizeResolution (node:internal/modules/esm/resolve:275:11)
+    at moduleResolve (node:internal/modules/esm/resolve:861:10)
+    at defaultResolve (node:internal/modules/esm/resolve:985:11)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:747:20)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:724:38)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:320:38)
+    at ModuleJob._link (node:internal/modules/esm/module_job:182:49)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5) {
+  code: 'ERR_MODULE_NOT_FOUND',
+  url: 'file:///D:/MITS-WORKTREES/apps/engine/dist/services/tradeRecordReadModel.js'
+}
+
+Node.js v22.23.1

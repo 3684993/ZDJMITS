@@ -1,0 +1,17 @@
+[
+  {
+    "id": "scout-b580",
+    "payload": "{\"id\":\"scout-b580\",\"role\":\"SCOUT\",\"enabled\":true,\"baseUrl\":\"http://127.0.0.1:8081/v1\",\"model\":\"qwen3.5:9b\",\"maxConcurrency\":1,\"gpu\":\"Intel Arc B580 12GB\"}",
+    "updated_at": 1787581312903
+  },
+  {
+    "id": "brain-7900-primary",
+    "payload": "{\"id\":\"brain-7900-primary\",\"role\":\"PRIMARY_BRAIN\",\"enabled\":true,\"baseUrl\":\"http://127.0.0.1:8084/v1\",\"model\":\"qwen/qwen3.8-27b\",\"maxConcurrency\":1,\"gpu\":\"AMD Radeon RX 7900 XTX 24GB\"}",
+    "updated_at": 1787581312948
+  },
+  {
+    "id": "review-7900-gpu2",
+    "payload": "{\"id\":\"review-7900-gpu2\",\"name\":\"GPU2 qwen3.8 27B Reviewer\",\"role\":\"REVIEW_BRAIN\",\"enabled\":true,\"baseUrl\":\"http://127.0.0.1:8083/v1\",\"model\":\"qwen/qwen3.8-27b\",\"maxConcurrency\":1,\"gpu\":\"AMD Radeon RX 7900 XTX 24GB (LUID 00000000_00011D3B; SUBSYS79011EAE)\"}",
+    "updated_at": 1790948828855
+  }
+]

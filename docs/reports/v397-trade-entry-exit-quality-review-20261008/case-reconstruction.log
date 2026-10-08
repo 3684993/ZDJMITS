@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "D:\MITS-WORKTREES\v397-private-reconciliation-fanout-20261008\docs\reports\v397-trade-entry-exit-quality-review-20261008\reconstruct_cases.py", line 4, in <module>
+    r=next(x for x in t if x['symbol']==sym and x.get('direction')=='LONG' and 1791450300000<(x.get('closedAt') or 0)<1791450600000);ids=set(map(str,r['exitOrderIds']));fills=[f for f in e['executionFills'] if f['symbol']==sym and (str(f.get('orderId','')) in ids or str(f.get('clientOrderId','')) in ids)];alllinked=[f for f in e['executionFills'] if f['id'] in set(r['linkedFillIds'])];out={'record':r,'linkedFills':alllinked,'exitFills':fills,'identityEvidence':[]}
+                                                                                                                                                                                                                                                                                                                                                                ~^^^^^^
+KeyError: 'id'

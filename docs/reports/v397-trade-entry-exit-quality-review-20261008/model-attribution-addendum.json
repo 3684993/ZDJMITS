@@ -1,0 +1,101 @@
+{
+  "originRunInvalid": [
+    {
+      "tradeId": "trade_cycle_UNIUSDT_LONG_5651fce1-552b-4789-a08e-5e6d565f6a32",
+      "symbol": "UNIUSDT",
+      "quoteAsset": "USDT",
+      "side": "LONG",
+      "openedAt": 1790734143824,
+      "closedAt": 1791439425395,
+      "heldHours": 195.9115475,
+      "closeProvenance": "TP",
+      "classification": "COMPLETE",
+      "ledgerClosedComplete": true,
+      "formalCanonicalNetEligible": false,
+      "exFundingDiagnosticEligibleNoProvenanceConflict": true,
+      "gross": 13.860000000000001,
+      "fees": 0.8049383999999999,
+      "funding": null,
+      "exFundingNet": 13.0550616,
+      "formalNet": null,
+      "target": 7.99,
+      "targetHorizonMinutes": 60,
+      "entryTtlMinutes": 3,
+      "invalidationPredicate": "NO_PREDICATE",
+      "entryLots": 1,
+      "entryRunId": "airun_muyxw0gh_9ajnxjl1",
+      "runPresent": true,
+      "model": "qwen/qwen3.8-27b",
+      "modelLatencyMs": 94812,
+      "quoteAgeAtRunCompleteMs": 100614,
+      "firstFillFromDecisionMs": -693802077,
+      "fillSlippageBps": -21.316614420060496,
+      "repriceCount": 0,
+      "confidence": 0.65,
+      "setup": "TREND_RESUMPTION",
+      "regime": "LOW_VOLATILITY",
+      "modelRegime": "RANGE",
+      "targetDistanceOriginPct": 0.40211108318671945,
+      "earlyPath": {
+        "300000": {
+          "horizonMs": 300000,
+          "sampleCount": 17,
+          "coverage": "SPARSE",
+          "maxGapMs": 87227,
+          "observedThrough": 1791428253204,
+          "maeBps": null,
+          "mfeBps": null,
+          "lastSignedBps": null
+        },
+        "900000": {
+          "horizonMs": 900000,
+          "sampleCount": 90,
+          "coverage": "SPARSE",
+          "maxGapMs": 90826,
+          "observedThrough": 1791428845187,
+          "maeBps": null,
+          "mfeBps": null,
+          "lastSignedBps": null
+        },
+        "3600000": {
+          "horizonMs": 3600000,
+          "sampleCount": 96,
+          "coverage": "SPARSE",
+          "maxGapMs": 2671729,
+          "observedThrough": 1791428885703,
+          "maeBps": null,
+          "mfeBps": null,
+          "lastSignedBps": null
+        }
+      },
+      "path": {
+        "status": "SPARSE_LOWER_BOUNDS_ONLY",
+        "sampleCount": 1940,
+        "sampledMfePct": 0.0070472480522579175,
+        "sampledMaePct": 3.1666247800955096,
+        "sampledLastSignedPct": -2.921312515707476,
+        "timeToSampledMfeMinutes": 6.91595,
+        "first": 1791428044000,
+        "last": 1791439423549,
+        "maxGapMs": 672584,
+        "coveredAdjacentMinutes": 44.20585,
+        "observedAboveEntryMinutes": 0.0,
+        "observedBelowEntryMinutes": 44.20585,
+        "unobservedMinutes": 146.40595,
+        "basis": "MARK samples, fixed entry anchor; not guaranteed executable fill or full extrema"
+      },
+      "labels": [
+        "HOLD_TOO_LONG_OBSERVED_HORIZON_OVERRUN"
+      ],
+      "netFeeCoverageSampled": false,
+      "feeCoverageBasis": "Known actual full-cycle commissions divided by entry notional; funding/slippage unknown; adds mismatch prevents causal good-entry label",
+      "BAD_ENTRY": "UNKNOWN_INCOMPLETE_EARLY_PATH",
+      "GOOD_ENTRY_BAD_EXIT": "UNKNOWN_WITHOUT_COMPLETE_EXECUTABLE_COST_PATH"
+    }
+  ],
+  "validOriginLinkedCount": 40,
+  "diagnosticEligibleCount": 39,
+  "wins": 38,
+  "exFundingQuoteSum": 142.12114919,
+  "warning": "Original quality-summary firstFillDelayMs includes a negative origin/run link. Exclude it, do not clamp to zero. Model latency itself measures the linked call, not proof of origin authority."
+}

@@ -1,0 +1,787 @@
+{
+  "capturedAt": "2026-10-08T10:29:05.969586+00:00",
+  "elapsedMs": 136.86159998178482,
+  "data": {
+    "page": 1,
+    "limit": 100,
+    "total": 3,
+    "items": [
+      {
+        "positionId": "pos_AAVEUSDT_LONG",
+        "positionCycleId": "cycle_entry_intent_muyy90ez_iu1tjkcq",
+        "entryLots": [
+          {
+            "lotId": "entry_intent_muyy90ez_iu1tjkcq",
+            "intentId": "intent_muyy90ez_iu1tjkcq",
+            "orderId": "entry_intent_muyy90ez_iu1tjkcq",
+            "exchangeOrderId": "427712764",
+            "quantity": 11.4,
+            "averagePrice": 175.79,
+            "filledAt": 1791428467719,
+            "exitAllocatedQuantity": 11.4,
+            "exitAllocatedNotional": 1969.806,
+            "allocatedEntryFee": 0.4008012,
+            "allocatedExitFee": 0.7879224,
+            "allocatedGrossRealizedPnl": -34.2,
+            "allocationSource": "EXPLICIT"
+          }
+        ],
+        "lotAllocationMethod": "FIFO",
+        "ledgerConservation": "CONSERVED",
+        "exitQty": 11.4,
+        "remainingQty": 0,
+        "observedClosedAt": 1791450424776,
+        "tradingNetPnlExFunding": -35.3887236,
+        "fundingAttributionStatus": "UNKNOWN",
+        "pnlBasis": "CANONICAL_NET_WITH_FUNDING_UNKNOWN",
+        "tradeId": "trade_cycle_entry_intent_muyy90ez_iu1tjkcq",
+        "symbol": "AAVEUSDT",
+        "direction": "LONG",
+        "openedAt": 1791428467719,
+        "closedAt": 1791450423479,
+        "durationMs": 21955760,
+        "entryQty": 11.4,
+        "entryAveragePrice": 175.79,
+        "exitAveragePrice": 172.79,
+        "entryFee": 0.4008012,
+        "exitFee": 0.7879224,
+        "totalFee": 1.1887236,
+        "funding": null,
+        "entryGrossNotional": 2004.006,
+        "exitGrossNotional": 1969.806,
+        "marginUsed": null,
+        "netRoiOnMargin": null,
+        "netReturnOnNotional": null,
+        "entryFillCount": 22,
+        "exitFillCount": 1,
+        "feeBreakdown": [
+          {
+            "stage": "EXIT",
+            "asset": "USDT",
+            "amount": 0.7879224,
+            "usd": 0.7879224,
+            "conversionSource": "EXCHANGE_COMMISSION"
+          },
+          {
+            "stage": "ENTRY",
+            "asset": "USDT",
+            "amount": 0.0140632,
+            "usd": 0.0140632,
+            "conversionSource": "EXCHANGE_COMMISSION"
+          },
+          {
+            "stage": "ENTRY",
+            "asset": "USDT",
+            "amount": 0.0140632,
+            "usd": 0.0140632,
+            "conversionSource": "EXCHANGE_COMMISSION"
+          },
+          {
+            "stage": "ENTRY",
+            "asset": "USDT",
+            "amount": 0.0210948,
+            "usd": 0.0210948,
+            "conversionSource": "EXCHANGE_COMMISSION"
+          },
+          {
+            "stage": "ENTRY",
+            "asset": "USDT",
+            "amount": 0.0070316,
+            "usd": 0.0070316,
+            "conversionSource": "EXCHANGE_COMMISSION"
+          },
+          {
+            "stage": "ENTRY",
+            "asset": "USDT",
+            "amount": 0.0105474,
+            "usd": 0.0105474,
+            "conversionSource": "EXCHANGE_COMMISSION"
+          },
+          {
+            "stage": "ENTRY",
+            "asset": "USDT",
+            "amount": 0.035158,
+            "usd": 0.035158,
+            "conversionSource": "EXCHANGE_COMMISSION"
+          },
+          {
+            "stage": "ENTRY",
+            "asset": "USDT",
+            "amount": 0.0035158,
+            "usd": 0.0035158,
+            "conversionSource": "EXCHANGE_COMMISSION"
+          },
+          {
+            "stage": "ENTRY",
+            "asset": "USDT",
+            "amount": 0.0105474,
+            "usd": 0.0105474,
+            "conversionSource": "EXCHANGE_COMMISSION"
+          },
+          {
+            "stage": "ENTRY",
+            "asset": "USDT",
+            "amount": 0.017579,
+            "usd": 0.017579,
+            "conversionSource": "EXCHANGE_COMMISSION"
+          },
+          {
+            "stage": "ENTRY",
+            "asset": "USDT",
+            "amount": 0.0070316,
+            "usd": 0.0070316,
+            "conversionSource": "EXCHANGE_COMMISSION"
+          },
+          {
+            "stage": "ENTRY",
+            "asset": "USDT",
+            "amount": 0.0316422,
+            "usd": 0.0316422,
+            "conversionSource": "EXCHANGE_COMMISSION"
+          },
+          {
+            "stage": "ENTRY",
+            "asset": "USDT",
+            "amount": 0.0140632,
+            "usd": 0.0140632,
+            "conversionSource": "EXCHANGE_COMMISSION"
+          },
+          {
+            "stage": "ENTRY",
+            "asset": "USDT",
+            "amount": 0.0281264,
+            "usd": 0.0281264,
+            "conversionSource": "EXCHANGE_COMMISSION"
+          },
+          {
+            "stage": "ENTRY",
+            "asset": "USDT",
+            "amount": 0.0035158,
+            "usd": 0.0035158,
+            "conversionSource": "EXCHANGE_COMMISSION"
+          },
+          {
+            "stage": "ENTRY",
+            "asset": "USDT",
+            "amount": 0.0140632,
+            "usd": 0.0140632,
+            "conversionSource": "EXCHANGE_COMMISSION"
+          },
+          {
+            "stage": "ENTRY",
+            "asset": "USDT",
+            "amount": 0.0105474,
+            "usd": 0.0105474,
+            "conversionSource": "EXCHANGE_COMMISSION"
+          },
+          {
+            "stage": "ENTRY",
+            "asset": "USDT",
+            "amount": 0.0281264,
+            "usd": 0.0281264,
+            "conversionSource": "EXCHANGE_COMMISSION"
+          },
+          {
+            "stage": "ENTRY",
+            "asset": "USDT",
+            "amount": 0.0316422,
+            "usd": 0.0316422,
+            "conversionSource": "EXCHANGE_COMMISSION"
+          },
+          {
+            "stage": "ENTRY",
+            "asset": "USDT",
+            "amount": 0.0281264,
+            "usd": 0.0281264,
+            "conversionSource": "EXCHANGE_COMMISSION"
+          },
+          {
+            "stage": "ENTRY",
+            "asset": "USDT",
+            "amount": 0.0281264,
+            "usd": 0.0281264,
+            "conversionSource": "EXCHANGE_COMMISSION"
+          },
+          {
+            "stage": "ENTRY",
+            "asset": "USDT",
+            "amount": 0.017579,
+            "usd": 0.017579,
+            "conversionSource": "EXCHANGE_COMMISSION"
+          },
+          {
+            "stage": "ENTRY",
+            "asset": "USDT",
+            "amount": 0.0246106,
+            "usd": 0.0246106,
+            "conversionSource": "EXCHANGE_COMMISSION"
+          }
+        ],
+        "grossRealizedPnl": -34.2,
+        "netPnl": null,
+        "closeReason": "RECONCILIATION",
+        "status": "CLOSED",
+        "entryRunId": "airun_muyy6vcx_v6rixmfo",
+        "entryIntentId": "intent_muyy90ez_iu1tjkcq",
+        "entryOrderIds": [
+          "entry_intent_muyy90ez_iu1tjkcq",
+          "427712764"
+        ],
+        "exitOrderIds": [
+          "427802880"
+        ],
+        "source": "SYSTEM",
+        "regime": "LOW_VOLATILITY",
+        "feeCompleteness": "COMPLETE",
+        "recordCompleteness": "COMPLETE",
+        "classification": "COMPLETE",
+        "canonical": true,
+        "duplicateOf": null,
+        "cycleId": "cycle_entry_intent_muyy90ez_iu1tjkcq",
+        "repairSource": "RECONCILIATION",
+        "linkedFillIds": [
+          "exchange_AAVEUSDT_66483538",
+          "exchange_AAVEUSDT_66445854",
+          "exchange_AAVEUSDT_66445853",
+          "exchange_AAVEUSDT_66445852",
+          "exchange_AAVEUSDT_66445851",
+          "exchange_AAVEUSDT_66445850",
+          "exchange_AAVEUSDT_66445849",
+          "exchange_AAVEUSDT_66445848",
+          "exchange_AAVEUSDT_66445847",
+          "exchange_AAVEUSDT_66445846",
+          "exchange_AAVEUSDT_66445845",
+          "exchange_AAVEUSDT_66445844",
+          "exchange_AAVEUSDT_66445843",
+          "exchange_AAVEUSDT_66445842",
+          "exchange_AAVEUSDT_66445841",
+          "exchange_AAVEUSDT_66445840",
+          "exchange_AAVEUSDT_66445839",
+          "exchange_AAVEUSDT_66445838",
+          "exchange_AAVEUSDT_66445837",
+          "exchange_AAVEUSDT_66445836",
+          "exchange_AAVEUSDT_66445833",
+          "exchange_AAVEUSDT_66445832",
+          "exchange_AAVEUSDT_66445822"
+        ],
+        "missingFacts": [],
+        "integrityFlags": [],
+        "createdAt": 1791428467719,
+        "updatedAt": 1791450398370,
+        "firstObservedAt": 1791428467719,
+        "rawNetPnl": null,
+        "economicEligibility": {
+          "ledgerClosedComplete": true,
+          "canonicalPnlEligible": false,
+          "prospectiveCohortMember": false,
+          "ledgerReasons": [],
+          "canonicalReasons": [
+            "FUNDING_EVIDENCE_NOT_EXACT",
+            "AUTHORITATIVE_NET_PNL_MISSING"
+          ],
+          "cohortReasons": [
+            "MANIFEST_MISSING"
+          ],
+          "legacyEconomicInconsistent": false
+        },
+        "formalNetPnl": null,
+        "formalOutcome": null,
+        "formalNetPnlStatus": "INELIGIBLE",
+        "closeProvenance": "SYSTEM_MANUAL"
+      },
+      {
+        "positionId": "pos_AAVEUSDT_SHORT",
+        "positionCycleId": "cycle_entry_intent_muz254oy_mlsbtniy",
+        "entryLots": [
+          {
+            "lotId": "entry_intent_muz254oy_mlsbtniy",
+            "intentId": "intent_muz254oy_mlsbtniy",
+            "orderId": "entry_intent_muz254oy_mlsbtniy",
+            "exchangeOrderId": "427738756",
+            "quantity": 5.9,
+            "averagePrice": 172.53,
+            "filledAt": 1791435004787,
+            "exitAllocatedQuantity": 5.9,
+            "exitAllocatedNotional": 1014.21,
+            "allocatedEntryFee": 0.2035854,
+            "allocatedExitFee": 0.202842,
+            "allocatedGrossRealizedPnl": 3.717,
+            "allocationSource": "EXPLICIT"
+          }
+        ],
+        "lotAllocationMethod": "FIFO",
+        "ledgerConservation": "CONSERVED",
+        "exitQty": 5.9,
+        "remainingQty": 0,
+        "observedClosedAt": 1791439196734,
+        "tradingNetPnlExFunding": 3.3105726,
+        "fundingAttributionStatus": "UNKNOWN",
+        "pnlBasis": "CANONICAL_NET_WITH_FUNDING_UNKNOWN",
+        "tradeId": "trade_cycle_entry_intent_muz254oy_mlsbtniy",
+        "symbol": "AAVEUSDT",
+        "direction": "SHORT",
+        "openedAt": 1791435004787,
+        "closedAt": 1791439196411,
+        "durationMs": 4191624,
+        "entryQty": 5.8999999999999995,
+        "entryAveragePrice": 172.53,
+        "exitAveragePrice": 171.9,
+        "entryFee": 0.20358539999999997,
+        "exitFee": 0.202842,
+        "totalFee": 0.4064274,
+        "funding": null,
+        "entryGrossNotional": 1017.9269999999999,
+        "exitGrossNotional": 1014.2100000000002,
+        "marginUsed": null,
+        "netRoiOnMargin": null,
+        "netReturnOnNotional": null,
+        "entryFillCount": 11,
+        "exitFillCount": 1,
+        "feeBreakdown": [
+          {
+            "stage": "EXIT",
+            "asset": "USDT",
+            "amount": 0.202842,
+            "usd": 0.202842,
+            "conversionSource": "EXCHANGE_COMMISSION"
+          },
+          {
+            "stage": "ENTRY",
+            "asset": "USDT",
+            "amount": 0.0207036,
+            "usd": 0.0207036,
+            "conversionSource": "EXCHANGE_COMMISSION"
+          },
+          {
+            "stage": "ENTRY",
+            "asset": "USDT",
+            "amount": 0.0207036,
+            "usd": 0.0207036,
+            "conversionSource": "EXCHANGE_COMMISSION"
+          },
+          {
+            "stage": "ENTRY",
+            "asset": "USDT",
+            "amount": 0.0138024,
+            "usd": 0.0138024,
+            "conversionSource": "EXCHANGE_COMMISSION"
+          },
+          {
+            "stage": "ENTRY",
+            "asset": "USDT",
+            "amount": 0.017253,
+            "usd": 0.017253,
+            "conversionSource": "EXCHANGE_COMMISSION"
+          },
+          {
+            "stage": "ENTRY",
+            "asset": "USDT",
+            "amount": 0.017253,
+            "usd": 0.017253,
+            "conversionSource": "EXCHANGE_COMMISSION"
+          },
+          {
+            "stage": "ENTRY",
+            "asset": "USDT",
+            "amount": 0.0138024,
+            "usd": 0.0138024,
+            "conversionSource": "EXCHANGE_COMMISSION"
+          },
+          {
+            "stage": "ENTRY",
+            "asset": "USDT",
+            "amount": 0.0103518,
+            "usd": 0.0103518,
+            "conversionSource": "EXCHANGE_COMMISSION"
+          },
+          {
+            "stage": "ENTRY",
+            "asset": "USDT",
+            "amount": 0.017253,
+            "usd": 0.017253,
+            "conversionSource": "EXCHANGE_COMMISSION"
+          },
+          {
+            "stage": "ENTRY",
+            "asset": "USDT",
+            "amount": 0.0241542,
+            "usd": 0.0241542,
+            "conversionSource": "EXCHANGE_COMMISSION"
+          },
+          {
+            "stage": "ENTRY",
+            "asset": "USDT",
+            "amount": 0.0207036,
+            "usd": 0.0207036,
+            "conversionSource": "EXCHANGE_COMMISSION"
+          },
+          {
+            "stage": "ENTRY",
+            "asset": "USDT",
+            "amount": 0.0276048,
+            "usd": 0.0276048,
+            "conversionSource": "EXCHANGE_COMMISSION"
+          }
+        ],
+        "grossRealizedPnl": 3.717,
+        "netPnl": null,
+        "closeReason": "RECONCILIATION",
+        "status": "CLOSED",
+        "entryRunId": "airun_muz232bo_glnq2kk9",
+        "entryIntentId": "intent_muz254oy_mlsbtniy",
+        "entryOrderIds": [
+          "entry_intent_muz254oy_mlsbtniy",
+          "427738756"
+        ],
+        "exitOrderIds": [
+          "427738868"
+        ],
+        "source": "SYSTEM",
+        "regime": "RISK_OFF",
+        "feeCompleteness": "COMPLETE",
+        "recordCompleteness": "COMPLETE",
+        "classification": "COMPLETE",
+        "canonical": true,
+        "duplicateOf": null,
+        "cycleId": "cycle_entry_intent_muz254oy_mlsbtniy",
+        "repairSource": "RECONCILIATION",
+        "linkedFillIds": [
+          "exchange_AAVEUSDT_66464698",
+          "AAVEUSDT:66456703",
+          "AAVEUSDT:66456702",
+          "AAVEUSDT:66456701",
+          "AAVEUSDT:66456700",
+          "AAVEUSDT:66456699",
+          "AAVEUSDT:66456698",
+          "AAVEUSDT:66456697",
+          "AAVEUSDT:66456696",
+          "AAVEUSDT:66456695",
+          "AAVEUSDT:66456694",
+          "AAVEUSDT:66456693"
+        ],
+        "missingFacts": [],
+        "integrityFlags": [],
+        "createdAt": 1791435004787,
+        "updatedAt": 1791439186644,
+        "firstObservedAt": 1791435004787,
+        "rawNetPnl": null,
+        "economicEligibility": {
+          "ledgerClosedComplete": true,
+          "canonicalPnlEligible": false,
+          "prospectiveCohortMember": false,
+          "ledgerReasons": [],
+          "canonicalReasons": [
+            "FUNDING_EVIDENCE_NOT_EXACT",
+            "AUTHORITATIVE_NET_PNL_MISSING"
+          ],
+          "cohortReasons": [
+            "MANIFEST_MISSING"
+          ],
+          "legacyEconomicInconsistent": false
+        },
+        "formalNetPnl": null,
+        "formalOutcome": null,
+        "formalNetPnlStatus": "INELIGIBLE",
+        "closeProvenance": "TP"
+      },
+      {
+        "positionId": "pos_AAVEUSDT_LONG",
+        "positionCycleId": "cycle_entry_intent_muyfl3ql_39b7a561",
+        "entryLots": [
+          {
+            "lotId": "entry_intent_muyfl3ql_39b7a561",
+            "intentId": "intent_muyfl3ql_39b7a561",
+            "orderId": "entry_intent_muyfl3ql_39b7a561",
+            "exchangeOrderId": "427591400",
+            "quantity": 5.9,
+            "averagePrice": 172.51000000000002,
+            "filledAt": 1791397132323,
+            "exitAllocatedQuantity": 5.9,
+            "exitAllocatedNotional": 1021.29,
+            "allocatedEntryFee": 0.2035618,
+            "allocatedExitFee": 0.204258,
+            "allocatedGrossRealizedPnl": 3.481,
+            "allocationSource": "EXPLICIT"
+          }
+        ],
+        "lotAllocationMethod": "FIFO",
+        "ledgerConservation": "CONSERVED",
+        "exitQty": 5.9,
+        "remainingQty": 0,
+        "observedClosedAt": 1791404135477,
+        "tradingNetPnlExFunding": 3.0731802,
+        "fundingAttributionStatus": "UNKNOWN",
+        "pnlBasis": "CANONICAL_NET_WITH_FUNDING_UNKNOWN",
+        "tradeId": "trade_cycle_entry_intent_muyfl3ql_39b7a561",
+        "symbol": "AAVEUSDT",
+        "direction": "LONG",
+        "openedAt": 1791397132323,
+        "closedAt": 1791404122435,
+        "durationMs": 6990112,
+        "entryQty": 5.8999999999999995,
+        "entryAveragePrice": 172.51000000000002,
+        "exitAveragePrice": 173.1,
+        "entryFee": 0.2035618,
+        "exitFee": 0.204258,
+        "totalFee": 0.40781979999999995,
+        "funding": null,
+        "entryGrossNotional": 1017.809,
+        "exitGrossNotional": 1021.2900000000001,
+        "marginUsed": null,
+        "netRoiOnMargin": null,
+        "netReturnOnNotional": null,
+        "entryFillCount": 13,
+        "exitFillCount": 1,
+        "feeBreakdown": [
+          {
+            "stage": "EXIT",
+            "asset": "USDT",
+            "amount": 0.204258,
+            "usd": 0.204258,
+            "conversionSource": "EXCHANGE_COMMISSION"
+          },
+          {
+            "stage": "ENTRY",
+            "asset": "USDT",
+            "amount": 0.0138008,
+            "usd": 0.0138008,
+            "conversionSource": "EXCHANGE_COMMISSION"
+          },
+          {
+            "stage": "ENTRY",
+            "asset": "USDT",
+            "amount": 0.017251,
+            "usd": 0.017251,
+            "conversionSource": "EXCHANGE_COMMISSION"
+          },
+          {
+            "stage": "ENTRY",
+            "asset": "USDT",
+            "amount": 0.0069004,
+            "usd": 0.0069004,
+            "conversionSource": "EXCHANGE_COMMISSION"
+          },
+          {
+            "stage": "ENTRY",
+            "asset": "USDT",
+            "amount": 0.0138008,
+            "usd": 0.0138008,
+            "conversionSource": "EXCHANGE_COMMISSION"
+          },
+          {
+            "stage": "ENTRY",
+            "asset": "USDT",
+            "amount": 0.0138008,
+            "usd": 0.0138008,
+            "conversionSource": "EXCHANGE_COMMISSION"
+          },
+          {
+            "stage": "ENTRY",
+            "asset": "USDT",
+            "amount": 0.0103506,
+            "usd": 0.0103506,
+            "conversionSource": "EXCHANGE_COMMISSION"
+          },
+          {
+            "stage": "ENTRY",
+            "asset": "USDT",
+            "amount": 0.0241514,
+            "usd": 0.0241514,
+            "conversionSource": "EXCHANGE_COMMISSION"
+          },
+          {
+            "stage": "ENTRY",
+            "asset": "USDT",
+            "amount": 0.0138008,
+            "usd": 0.0138008,
+            "conversionSource": "EXCHANGE_COMMISSION"
+          },
+          {
+            "stage": "ENTRY",
+            "asset": "USDT",
+            "amount": 0.0138008,
+            "usd": 0.0138008,
+            "conversionSource": "EXCHANGE_COMMISSION"
+          },
+          {
+            "stage": "ENTRY",
+            "asset": "USDT",
+            "amount": 0.0034502,
+            "usd": 0.0034502,
+            "conversionSource": "EXCHANGE_COMMISSION"
+          },
+          {
+            "stage": "ENTRY",
+            "asset": "USDT",
+            "amount": 0.0138008,
+            "usd": 0.0138008,
+            "conversionSource": "EXCHANGE_COMMISSION"
+          },
+          {
+            "stage": "ENTRY",
+            "asset": "USDT",
+            "amount": 0.034502,
+            "usd": 0.034502,
+            "conversionSource": "EXCHANGE_COMMISSION"
+          },
+          {
+            "stage": "ENTRY",
+            "asset": "USDT",
+            "amount": 0.0241514,
+            "usd": 0.0241514,
+            "conversionSource": "EXCHANGE_COMMISSION"
+          }
+        ],
+        "grossRealizedPnl": 3.481,
+        "netPnl": null,
+        "closeReason": "RECONCILIATION",
+        "status": "CLOSED",
+        "entryRunId": "airun_muyfizsg_y8f5s99t",
+        "entryIntentId": "intent_muyfl3ql_39b7a561",
+        "entryOrderIds": [
+          "entry_intent_muyfl3ql_39b7a561",
+          "427591400"
+        ],
+        "exitOrderIds": [
+          "427591993"
+        ],
+        "source": "SYSTEM",
+        "regime": "RISK_OFF",
+        "feeCompleteness": "COMPLETE",
+        "recordCompleteness": "COMPLETE",
+        "classification": "COMPLETE",
+        "canonical": true,
+        "duplicateOf": null,
+        "cycleId": "cycle_entry_intent_muyfl3ql_39b7a561",
+        "repairSource": "RECONCILIATION",
+        "linkedFillIds": [
+          "exchange_AAVEUSDT_66409054",
+          "exchange_AAVEUSDT_66397890",
+          "exchange_AAVEUSDT_66397889",
+          "exchange_AAVEUSDT_66397888",
+          "exchange_AAVEUSDT_66397887",
+          "exchange_AAVEUSDT_66397886",
+          "exchange_AAVEUSDT_66397885",
+          "exchange_AAVEUSDT_66397884",
+          "exchange_AAVEUSDT_66397883",
+          "exchange_AAVEUSDT_66397882",
+          "exchange_AAVEUSDT_66397881",
+          "exchange_AAVEUSDT_66397880",
+          "exchange_AAVEUSDT_66397879",
+          "exchange_AAVEUSDT_66397878"
+        ],
+        "missingFacts": [],
+        "integrityFlags": [],
+        "createdAt": 1791397132323,
+        "updatedAt": 1791404126274,
+        "firstObservedAt": 1791397132323,
+        "rawNetPnl": null,
+        "economicEligibility": {
+          "ledgerClosedComplete": true,
+          "canonicalPnlEligible": false,
+          "prospectiveCohortMember": false,
+          "ledgerReasons": [],
+          "canonicalReasons": [
+            "FUNDING_EVIDENCE_NOT_EXACT",
+            "AUTHORITATIVE_NET_PNL_MISSING"
+          ],
+          "cohortReasons": [
+            "MANIFEST_MISSING"
+          ],
+          "legacyEconomicInconsistent": false
+        },
+        "formalNetPnl": null,
+        "formalOutcome": null,
+        "formalNetPnlStatus": "INELIGIBLE",
+        "closeProvenance": "TP"
+      }
+    ],
+    "autoSync": {
+      "status": "ERROR",
+      "startedAt": 1791452648522,
+      "rollingDays": 7,
+      "windowStart": 1790850320725,
+      "windowEnd": 1791455120725,
+      "lastAttemptAt": 1791455120725,
+      "lastSuccessAt": null,
+      "lastWindow": null,
+      "lastResult": null,
+      "lastError": "Error: TRADE_SYNC_BASELINE_TOO_LARGE: offline storage cleanup required"
+    },
+    "summary": {
+      "semanticsVersion": "V3.9.3-A2-1",
+      "asOf": 1791455345832,
+      "observedClosed": 628,
+      "closedCompleteCount": 62,
+      "completeClosed": 62,
+      "ledgerReconciliationPending": 566,
+      "awaitingReconciliation": 566,
+      "fundingUnknownCount": 62,
+      "legacyEconomicInconsistentCount": 0,
+      "identityOrLedgerIssueCount": 420,
+      "tradingNetExFundingEligibleCount": 62,
+      "tradingNetExFunding": 211.74695040999998,
+      "canonicalPnlEligibleCount": 0,
+      "canonicalNetPnl": null,
+      "canonicalNetPnlStatus": "NO_ELIGIBLE_SAMPLES",
+      "canonicalCoverage": {
+        "eligible": 0,
+        "ledgerClosedComplete": 62,
+        "ratio": 0
+      },
+      "localAccounting": {
+        "exFundingNet": 211.74695040999998,
+        "completeCycles": 62,
+        "confirmedFunding": null,
+        "confirmedAllInNet": null,
+        "confirmedAllInCycles": 0,
+        "fundingUnknownCycles": 62,
+        "allInUnconfirmedCycles": 62,
+        "fundingExactEvidencePendingCycles": 0,
+        "coverage": {
+          "external": 0,
+          "duplicate": 0,
+          "noncanonical": 0,
+          "feeMissing": 14,
+          "cycleInconsistent": 52,
+          "cycleUnconserved": 107,
+          "cycleUnproven": 6,
+          "localFundingUnknown": 62,
+          "localAllInUnconfirmed": 62,
+          "localFundingExactEvidencePending": 0,
+          "excludedClosed": 420,
+          "cycleCollision": 0
+        }
+      },
+      "prospective": {
+        "status": "MANIFEST_UNAVAILABLE",
+        "experimentId": null,
+        "entryCycleCount": null,
+        "closedCycleCount": null,
+        "canonicalPnlEligibleCount": null
+      },
+      "completed": 0,
+      "netPnl": 0,
+      "partiallyClosed": 14,
+      "unknownCount": 755,
+      "grossIncome": null,
+      "lossExpense": null,
+      "totalFees": null,
+      "floatingPnl": -2047.78914256,
+      "counts": {
+        "total": 755,
+        "complete": 62,
+        "partial": 686,
+        "imported": 7,
+        "external": 0,
+        "duplicate": 0,
+        "conflict": 0,
+        "invalid": 0,
+        "invalidClosed": 14,
+        "missingExit": 14,
+        "missingFee": 232,
+        "missingMargin": 12
+      }
+    }
+  }
+}

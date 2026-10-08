@@ -1,0 +1,7 @@
+{
+  "rawBytes": 198779576,
+  "gzipBytes": 21645690,
+  "rawSha256": "686c8b708bb8ecafcbd43becc1ecdd6c81ad26bd4af0079017f7515bd519669b",
+  "gzipSha256": "65cdd5b370287edf28c0ce06968e61b87743580ac48c4792cc654bb3348c99c7",
+  "storage": "lossless gzip is authoritative GitHub representation; raw locally available without deleting/altering runtime DB"
+}

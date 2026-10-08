@@ -1,0 +1,9 @@
+{
+  "relativeLinks": "PASS",
+  "stagedArtifactHashes": "PASS_EXACT_BYTES",
+  "credentialScalarScan": "PASS",
+  "losslessGzip": "PASS",
+  "scope": "Only requested docs/reports/handoff staged; no source/runtime changes",
+  "whitespace": "CRLF raw evidence preserved with -text; default diff --check flags CR as trailing whitespace. cr-at-eol check PASS; no evidence content normalized.",
+  "fullVerify": "NOT_RUN_AS_REQUESTED"
+}

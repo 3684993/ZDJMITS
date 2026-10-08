@@ -1,0 +1,338 @@
+[
+  {
+    "positionId": "exchange_AVAXUSDT_SHORT",
+    "scope": "[\"TESTNET\",\"binance-primary\",\"AVAXUSDT\",\"SHORT\"]",
+    "cycleId": "cycle_entry_intent_mu8l1mm0_rcobpxad",
+    "owner": {
+      "scope": "[\"TESTNET\",\"binance-primary\",\"AVAXUSDT\",\"SHORT\"]",
+      "cycleId": "cycle_entry_intent_mu8l1mm0_rcobpxad",
+      "ownerState": "HUMAN_MANAGED",
+      "ownerVersion": 2,
+      "planRef": null,
+      "deadline": null,
+      "transitionedAt": 1790135800399,
+      "reason": "MIGRATED_HUMAN_PRESERVED",
+      "acknowledgedAt": null
+    }
+  },
+  {
+    "positionId": "exchange_SOLUSDT_LONG",
+    "scope": "[\"TESTNET\",\"binance-primary\",\"SOLUSDT\",\"LONG\"]",
+    "cycleId": "cycle_entry_intent_muufgu1d_7lt418up",
+    "owner": {
+      "scope": "[\"TESTNET\",\"binance-primary\",\"SOLUSDT\",\"LONG\"]",
+      "cycleId": "cycle_entry_intent_muufgu1d_7lt418up",
+      "ownerState": "HUMAN_MANAGED",
+      "ownerVersion": 2,
+      "planRef": null,
+      "deadline": null,
+      "transitionedAt": 1791163149499,
+      "reason": "LOSS_HANDOFF_BARS",
+      "acknowledgedAt": null
+    }
+  },
+  {
+    "positionId": "exchange_BCHUSDT_LONG",
+    "scope": "[\"TESTNET\",\"binance-primary\",\"BCHUSDT\",\"LONG\"]",
+    "cycleId": "cycle_entry_intent_muun58qm_d9vqvonb",
+    "owner": {
+      "scope": "[\"TESTNET\",\"binance-primary\",\"BCHUSDT\",\"LONG\"]",
+      "cycleId": "cycle_entry_intent_muun58qm_d9vqvonb",
+      "ownerState": "HUMAN_MANAGED",
+      "ownerVersion": 2,
+      "planRef": null,
+      "deadline": null,
+      "transitionedAt": 1791171991192,
+      "reason": "LOSS_HANDOFF_BARS",
+      "acknowledgedAt": null
+    }
+  },
+  {
+    "positionId": "exchange_ETHUSDT_LONG",
+    "scope": "[\"TESTNET\",\"binance-primary\",\"ETHUSDT\",\"LONG\"]",
+    "cycleId": "cycle_entry_intent_muuwcjbl_nhtak25t",
+    "owner": {
+      "scope": "[\"TESTNET\",\"binance-primary\",\"ETHUSDT\",\"LONG\"]",
+      "cycleId": "cycle_entry_intent_muuwcjbl_nhtak25t",
+      "ownerState": "HUMAN_MANAGED",
+      "ownerVersion": 3,
+      "planRef": "plan:cycle_entry_intent_muuwcjbl_nhtak25t",
+      "deadline": 1791269838139,
+      "transitionedAt": 1791194451463,
+      "reason": "LOSS_HANDOFF_BARS",
+      "acknowledgedAt": null
+    }
+  },
+  {
+    "positionId": "exchange_BNBUSDC_LONG",
+    "scope": "[\"TESTNET\",\"binance-primary\",\"BNBUSDC\",\"LONG\"]",
+    "cycleId": "cycle_entry_intent_muux904w_w9475lt3",
+    "owner": {
+      "scope": "[\"TESTNET\",\"binance-primary\",\"BNBUSDC\",\"LONG\"]",
+      "cycleId": "cycle_entry_intent_muux904w_w9475lt3",
+      "ownerState": "HUMAN_MANAGED",
+      "ownerVersion": 2,
+      "planRef": null,
+      "deadline": null,
+      "transitionedAt": 1791189119797,
+      "reason": "LOSS_HANDOFF_BARS",
+      "acknowledgedAt": null
+    }
+  },
+  {
+    "positionId": "exchange_XLMUSDT_LONG",
+    "scope": "[\"TESTNET\",\"binance-primary\",\"XLMUSDT\",\"LONG\"]",
+    "cycleId": "cycle_XLMUSDT_LONG_93347849-4312-4df3-af8a-dd46fd6eb7db",
+    "owner": {
+      "scope": "[\"TESTNET\",\"binance-primary\",\"XLMUSDT\",\"LONG\"]",
+      "cycleId": "cycle_XLMUSDT_LONG_93347849-4312-4df3-af8a-dd46fd6eb7db",
+      "ownerState": "HUMAN_MANAGED",
+      "ownerVersion": 2,
+      "planRef": null,
+      "deadline": null,
+      "transitionedAt": 1791190182142,
+      "reason": "LOSS_HANDOFF_BARS",
+      "acknowledgedAt": null
+    }
+  },
+  {
+    "positionId": "exchange_DOTUSDT_LONG",
+    "scope": "[\"TESTNET\",\"binance-primary\",\"DOTUSDT\",\"LONG\"]",
+    "cycleId": "cycle_entry_intent_muwgsfgp_evh1g53f",
+    "owner": {
+      "scope": "[\"TESTNET\",\"binance-primary\",\"DOTUSDT\",\"LONG\"]",
+      "cycleId": "cycle_entry_intent_muwgsfgp_evh1g53f",
+      "ownerState": "HUMAN_MANAGED",
+      "ownerVersion": 2,
+      "planRef": null,
+      "deadline": null,
+      "transitionedAt": 1791287273482,
+      "reason": "LOSS_HANDOFF_BARS",
+      "acknowledgedAt": null
+    }
+  },
+  {
+    "positionId": "exchange_BTCUSDT_LONG",
+    "scope": "[\"TESTNET\",\"binance-primary\",\"BTCUSDT\",\"LONG\"]",
+    "cycleId": "cycle_entry_intent_muwtcoby_n4j9t7z3",
+    "owner": {
+      "scope": "[\"TESTNET\",\"binance-primary\",\"BTCUSDT\",\"LONG\"]",
+      "cycleId": "cycle_entry_intent_muwtcoby_n4j9t7z3",
+      "ownerState": "HUMAN_MANAGED",
+      "ownerVersion": 3,
+      "planRef": "plan:cycle_entry_intent_muwtcoby_n4j9t7z3",
+      "deadline": 1791385785241,
+      "transitionedAt": 1791303315289,
+      "reason": "LOSS_HANDOFF_BARS",
+      "acknowledgedAt": null
+    }
+  },
+  {
+    "positionId": "exchange_ETCUSDT_LONG",
+    "scope": "[\"TESTNET\",\"binance-primary\",\"ETCUSDT\",\"LONG\"]",
+    "cycleId": "cycle_entry_intent_muyzcx3y_fpu1ctkl",
+    "owner": {
+      "scope": "[\"TESTNET\",\"binance-primary\",\"ETCUSDT\",\"LONG\"]",
+      "cycleId": "cycle_entry_intent_muyzcx3y_fpu1ctkl",
+      "ownerState": "HUMAN_MANAGED",
+      "ownerVersion": 2,
+      "planRef": null,
+      "deadline": null,
+      "transitionedAt": 1791434983862,
+      "reason": "LOSS_HANDOFF_BARS",
+      "acknowledgedAt": null
+    }
+  },
+  {
+    "positionId": "exchange_ETHUSDT_SHORT",
+    "scope": "[\"TESTNET\",\"binance-primary\",\"ETHUSDT\",\"SHORT\"]",
+    "cycleId": "cycle_entry_intent_muz27ktc_e6f5ajnr",
+    "owner": {
+      "scope": "[\"TESTNET\",\"binance-primary\",\"ETHUSDT\",\"SHORT\"]",
+      "cycleId": "cycle_entry_intent_muz27ktc_e6f5ajnr",
+      "ownerState": "HUMAN_MANAGED",
+      "ownerVersion": 2,
+      "planRef": null,
+      "deadline": null,
+      "transitionedAt": 1791439339865,
+      "reason": "LOSS_HANDOFF_BARS",
+      "acknowledgedAt": null
+    }
+  },
+  {
+    "positionId": "exchange_BTCUSDT_SHORT",
+    "scope": "[\"TESTNET\",\"binance-primary\",\"BTCUSDT\",\"SHORT\"]",
+    "cycleId": "cycle_entry_intent_muz2a6fa_odqrhlum",
+    "owner": {
+      "scope": "[\"TESTNET\",\"binance-primary\",\"BTCUSDT\",\"SHORT\"]",
+      "cycleId": "cycle_entry_intent_muz2a6fa_odqrhlum",
+      "ownerState": "HUMAN_MANAGED",
+      "ownerVersion": 2,
+      "planRef": null,
+      "deadline": null,
+      "transitionedAt": 1791439339887,
+      "reason": "LOSS_HANDOFF_BARS",
+      "acknowledgedAt": null
+    }
+  },
+  {
+    "positionId": "exchange_USELESSUSDT_SHORT",
+    "scope": "[\"TESTNET\",\"binance-primary\",\"USELESSUSDT\",\"SHORT\"]",
+    "cycleId": "cycle_entry_intent_muz2mm72_2lw3q6n2",
+    "owner": {
+      "scope": "[\"TESTNET\",\"binance-primary\",\"USELESSUSDT\",\"SHORT\"]",
+      "cycleId": "cycle_entry_intent_muz2mm72_2lw3q6n2",
+      "ownerState": "HUMAN_MANAGED",
+      "ownerVersion": 2,
+      "planRef": null,
+      "deadline": null,
+      "transitionedAt": 1791445652770,
+      "reason": "LOSS_HANDOFF_BARS",
+      "acknowledgedAt": null
+    }
+  },
+  {
+    "positionId": "exchange_ENAUSDT_SHORT",
+    "scope": "[\"TESTNET\",\"binance-primary\",\"ENAUSDT\",\"SHORT\"]",
+    "cycleId": "cycle_entry_intent_muz5z98g_5h0qt8fg",
+    "owner": {
+      "scope": "[\"TESTNET\",\"binance-primary\",\"ENAUSDT\",\"SHORT\"]",
+      "cycleId": "cycle_entry_intent_muz5z98g_5h0qt8fg",
+      "ownerState": "HUMAN_MANAGED",
+      "ownerVersion": 2,
+      "planRef": null,
+      "deadline": null,
+      "transitionedAt": 1791445652791,
+      "reason": "LOSS_HANDOFF_BARS",
+      "acknowledgedAt": null
+    }
+  },
+  {
+    "positionId": "exchange_DOGEUSDT_SHORT",
+    "scope": "[\"TESTNET\",\"binance-primary\",\"DOGEUSDT\",\"SHORT\"]",
+    "cycleId": "cycle_entry_intent_muz621l0_23ugltmt",
+    "owner": {
+      "scope": "[\"TESTNET\",\"binance-primary\",\"DOGEUSDT\",\"SHORT\"]",
+      "cycleId": "cycle_entry_intent_muz621l0_23ugltmt",
+      "ownerState": "HUMAN_MANAGED",
+      "ownerVersion": 2,
+      "planRef": null,
+      "deadline": null,
+      "transitionedAt": 1791445652813,
+      "reason": "LOSS_HANDOFF_BARS",
+      "acknowledgedAt": null
+    }
+  },
+  {
+    "positionId": "exchange_ETHFIUSDC_SHORT",
+    "scope": "[\"TESTNET\",\"binance-primary\",\"ETHFIUSDC\",\"SHORT\"]",
+    "cycleId": "cycle_entry_intent_muz73hls_k8okh7at",
+    "owner": {
+      "scope": "[\"TESTNET\",\"binance-primary\",\"ETHFIUSDC\",\"SHORT\"]",
+      "cycleId": "cycle_entry_intent_muz73hls_k8okh7at",
+      "ownerState": "HANDOFF_PENDING",
+      "ownerVersion": 1,
+      "planRef": null,
+      "deadline": null,
+      "transitionedAt": 1791443359815,
+      "reason": "LEGACY_OR_INVALID_PLAN",
+      "acknowledgedAt": null
+    }
+  },
+  {
+    "positionId": "exchange_NEARUSDC_LONG",
+    "scope": "[\"TESTNET\",\"binance-primary\",\"NEARUSDC\",\"LONG\"]",
+    "cycleId": "cycle_entry_intent_muz7nok8_xuxp5o2g",
+    "owner": {
+      "scope": "[\"TESTNET\",\"binance-primary\",\"NEARUSDC\",\"LONG\"]",
+      "cycleId": "cycle_entry_intent_muz7nok8_xuxp5o2g",
+      "ownerState": "HUMAN_MANAGED",
+      "ownerVersion": 2,
+      "planRef": null,
+      "deadline": null,
+      "transitionedAt": 1791448278182,
+      "reason": "LOSS_HANDOFF_BARS",
+      "acknowledgedAt": null
+    }
+  },
+  {
+    "positionId": "exchange_BRUSDT_SHORT",
+    "scope": "[\"TESTNET\",\"binance-primary\",\"BRUSDT\",\"SHORT\"]",
+    "cycleId": "cycle_entry_intent_muzaza3n_7g4dc27n",
+    "owner": {
+      "scope": "[\"TESTNET\",\"binance-primary\",\"BRUSDT\",\"SHORT\"]",
+      "cycleId": "cycle_entry_intent_muzaza3n_7g4dc27n",
+      "ownerState": "HUMAN_MANAGED",
+      "ownerVersion": 2,
+      "planRef": null,
+      "deadline": null,
+      "transitionedAt": 1791453664184,
+      "reason": "LOSS_HANDOFF_BARS",
+      "acknowledgedAt": null
+    }
+  },
+  {
+    "positionId": "exchange_UNIUSDT_SHORT",
+    "scope": "[\"TESTNET\",\"binance-primary\",\"UNIUSDT\",\"SHORT\"]",
+    "cycleId": "cycle_entry_intent_muzbr9bh_q9upe0bp",
+    "owner": {
+      "scope": "[\"TESTNET\",\"binance-primary\",\"UNIUSDT\",\"SHORT\"]",
+      "cycleId": "cycle_entry_intent_muzbr9bh_q9upe0bp",
+      "ownerState": "HUMAN_MANAGED",
+      "ownerVersion": 2,
+      "planRef": null,
+      "deadline": null,
+      "transitionedAt": 1791455442483,
+      "reason": "LOSS_HANDOFF_BARS",
+      "acknowledgedAt": null
+    }
+  },
+  {
+    "positionId": "exchange_OPUSDT_LONG",
+    "scope": "[\"TESTNET\",\"binance-primary\",\"OPUSDT\",\"LONG\"]",
+    "cycleId": "cycle_entry_intent_muzd9d0w_w13ujgxa",
+    "owner": {
+      "scope": "[\"TESTNET\",\"binance-primary\",\"OPUSDT\",\"LONG\"]",
+      "cycleId": "cycle_entry_intent_muzd9d0w_w13ujgxa",
+      "ownerState": "HANDOFF_PENDING",
+      "ownerVersion": 1,
+      "planRef": null,
+      "deadline": null,
+      "transitionedAt": 1791453774844,
+      "reason": "LEGACY_OR_INVALID_PLAN",
+      "acknowledgedAt": null
+    }
+  },
+  {
+    "positionId": "exchange_BNBUSDC_SHORT",
+    "scope": "[\"TESTNET\",\"binance-primary\",\"BNBUSDC\",\"SHORT\"]",
+    "cycleId": "cycle_entry_intent_muzdekhi_kdi5m4wj",
+    "owner": {
+      "scope": "[\"TESTNET\",\"binance-primary\",\"BNBUSDC\",\"SHORT\"]",
+      "cycleId": "cycle_entry_intent_muzdekhi_kdi5m4wj",
+      "ownerState": "HANDOFF_PENDING",
+      "ownerVersion": 1,
+      "planRef": null,
+      "deadline": null,
+      "transitionedAt": 1791453945179,
+      "reason": "LEGACY_OR_INVALID_PLAN",
+      "acknowledgedAt": null
+    }
+  },
+  {
+    "positionId": "exchange_FILUSDC_LONG",
+    "scope": "[\"TESTNET\",\"binance-primary\",\"FILUSDC\",\"LONG\"]",
+    "cycleId": "cycle_entry_intent_muzdxmjh_w4g2sfsy",
+    "owner": {
+      "scope": "[\"TESTNET\",\"binance-primary\",\"FILUSDC\",\"LONG\"]",
+      "cycleId": "cycle_entry_intent_muzdxmjh_w4g2sfsy",
+      "ownerState": "HANDOFF_PENDING",
+      "ownerVersion": 1,
+      "planRef": null,
+      "deadline": null,
+      "transitionedAt": 1791454910925,
+      "reason": "LEGACY_OR_INVALID_PLAN",
+      "acknowledgedAt": null
+    }
+  }
+]

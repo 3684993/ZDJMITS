@@ -1,0 +1,9 @@
+{
+  "startedAt": "2026-10-08T10:29:05.518959+00:00",
+  "endedAt": "2026-10-08T10:29:15.576426+00:00",
+  "sqliteMode": "mode=ro/query_only, one bounded settings read transaction, independent ownership transaction",
+  "apiMethods": "GET localhost cached snapshots only",
+  "tradeRecordLimit": 5000,
+  "entityKindLimit": 10000,
+  "warnings": "not atomic across HTTP/settings/ownership; current independent field freshness must be checked"
+}

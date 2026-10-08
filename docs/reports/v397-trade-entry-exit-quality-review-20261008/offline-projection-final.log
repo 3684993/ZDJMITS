@@ -1,0 +1,74 @@
+(node:35504) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+<--- Last few GCs --->
+
+[35504:0000023D27443000]      419 ms: Mark-Compact 18.2 (32.7) -> 16.9 (34.2) MB, pooled: 0 MB, 1.76 / 0.00 ms  (+ 0.0 ms in 0 steps since start of marking, biggest step 0.0 ms, walltime since start of marking 11 ms) (average mu = 0.996, current mu = 0.99[35504:0000023D27443000]      996 ms: Mark-Compact 404.5 (413.9) -> 401.7 (434.6) MB, pooled: 0 MB, 15.93 / 0.00 ms  (average mu = 0.982, current mu = 0.972) allocation failure; scavenge might not succeed
+
+
+<--- JS stacktrace --->
+
+FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory
+----- Native stack trace -----
+
+ 1: 00007FF656E34287 node::SetCppgcReference+21127
+ 2: 00007FF656D9433B EVP_MD_meth_get_input_blocksize+102619
+ 3: 00007FF6579A19F1 v8::Isolate::ReportExternalAllocationLimitReached+65
+ 4: 00007FF65798E4A6 v8::Function::Experimental_IsNopFunction+3318
+ 5: 00007FF6577EAAF0 v8::internal::StrongRootAllocatorBase::StrongRootAllocatorBase+33904
+ 6: 00007FF6577E717A v8::internal::StrongRootAllocatorBase::StrongRootAllocatorBase+19194
+ 7: 00007FF6577FD72C v8::Isolate::GetHeapProfiler+8012
+ 8: 00007FF6577FDFAA v8::Isolate::GetHeapProfiler+10186
+ 9: 00007FF6578090E1 v8::Isolate::GetHeapProfiler+55553
+10: 00007FF657818CC2 v8::Isolate::GetHeapProfiler+120034
+11: 00007FF65781DBB8 v8::Isolate::GetHeapProfiler+140248
+12: 00007FF6577147F7 v8::Message::GetIsolate+373175
+13: 00007FF65771182D v8::Message::GetIsolate+360941
+14: 00007FF657714B34 v8::Message::GetIsolate+374004
+15: 00007FF657944CC5 v8::SharedValueConveyor::SharedValueConveyor+265781
+16: 00007FF657944F40 v8::SharedValueConveyor::SharedValueConveyor+266416
+17: 00007FF657A5D38E v8::PropertyDescriptor::writable+727470
+18: 00007FF6579BD672 v8::PropertyDescriptor::writable+72850
+19: 00007FF6579BD672 v8::PropertyDescriptor::writable+72850
+20: 00007FF657A001A1 v8::PropertyDescriptor::writable+346049
+21: 00007FF6579BB270 v8::PropertyDescriptor::writable+63632
+22: 00007FF6579BAE6B v8::PropertyDescriptor::writable+62603
+23: 00007FF65787333D v8::Isolate::NumberOfHeapSpaces+2557
+24: 00007FF65787342B v8::Isolate::NumberOfHeapSpaces+2795
+25: 00007FF657873E71 v8::Isolate::NumberOfHeapSpaces+5425
+26: 00007FF6575A9CD5 v8::MemorySpan<std::basic_string_view<char,std::char_traits<char> > const >::end+73269
+27: 00007FF6575AC016 v8::MemorySpan<std::basic_string_view<char,std::char_traits<char> > const >::end+82294
+28: 00007FF6575A95DC v8::MemorySpan<std::basic_string_view<char,std::char_traits<char> > const >::end+71484
+29: 00007FF6575DA71F v8::MemorySpan<std::basic_string_view<char,std::char_traits<char> > const >::end+272511
+30: 00007FF65798D354 v8::Module::Evaluate+324
+31: 00007FF656DE1CEA v8::base::CPU::has_popcnt+10986
+32: 00007FF656DE31EE v8::base::CPU::has_popcnt+16366
+33: 00007FF6579BF3B8 v8::PropertyDescriptor::writable+80344
+34: 00007FF6579BD672 v8::PropertyDescriptor::writable+72850
+35: 00007FF6579FD057 v8::PropertyDescriptor::writable+333431
+36: 00007FF657ADD609 v8::PropertyDescriptor::writable+1252393
+37: 00007FF6579ECF03 v8::PropertyDescriptor::writable+267555
+38: 00007FF6579BB16B v8::PropertyDescriptor::writable+63371
+39: 00007FF657873354 v8::Isolate::NumberOfHeapSpaces+2580
+40: 00007FF65787342B v8::Isolate::NumberOfHeapSpaces+2795
+41: 00007FF657874054 v8::Isolate::NumberOfHeapSpaces+5908
+42: 00007FF65784B0F6 v8::base::CPU::has_sse41+1574
+43: 00007FF65784AE10 v8::base::CPU::has_sse41+832
+44: 00007FF6579BF3B8 v8::PropertyDescriptor::writable+80344
+45: 00007FF6579BD672 v8::PropertyDescriptor::writable+72850
+46: 00007FF6579BB270 v8::PropertyDescriptor::writable+63632
+47: 00007FF6579BAE6B v8::PropertyDescriptor::writable+62603
+48: 00007FF65787333D v8::Isolate::NumberOfHeapSpaces+2557
+49: 00007FF657872C73 v8::Isolate::NumberOfHeapSpaces+819
+50: 00007FF657986B34 v8::Function::Call+308
+51: 00007FF656E75CEB node::CallbackScope::~CallbackScope+795
+52: 00007FF656E75A5E node::CallbackScope::~CallbackScope+142
+53: 00007FF656DDDF5C node::Start+1084
+54: 00007FF656E7252A node::LoadEnvironment+234
+55: 00007FF656D37128 v8_inspector::protocol::Binary::operator=+129912
+56: 00007FF656DDEE23 node::Start+4867
+57: 00007FF656DDDB3E node::Start+30
+58: 00007FF656B3B1EC AES_cbc_encrypt+152028
+59: 00007FF6586FC5A4 inflateValidate+40756
+60: 00007FF81ECBCD87 BaseThreadInitThunk+23
+61: 00007FF8209ECAEC RtlUserThreadStart+44

@@ -1,0 +1,422 @@
+{
+  "scope": "TESTNET:ea81dfa72650505a",
+  "since": 1790850545489,
+  "until": 1791455345489,
+  "limitPerSymbol": 50001,
+  "coverage": {
+    "AAVEUSDT": {
+      "rows": 4373,
+      "truncated": false,
+      "first": 1791397274815,
+      "last": 1791449409563,
+      "selectedRawSha256": "6c7ceea63e4bcfd63c2cbe8942305c6513aabd399657a1b71f3aba174e70684e",
+      "gzipSha256": "b1d8aa71338909eafd566f86ab310a4fb05698e0e92c243a811cd977e8cc28d0",
+      "querySeconds": 0.07485279999673367
+    },
+    "ARBUSDC": {
+      "rows": 0,
+      "truncated": false,
+      "first": null,
+      "last": null,
+      "selectedRawSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "gzipSha256": "64406e753d82e11c6bd63d1d04bb6aa083eefa0a46949bbfce994d556b989f0f",
+      "querySeconds": 0.0005870999302715063
+    },
+    "ARBUSDT": {
+      "rows": 188,
+      "truncated": false,
+      "first": 1791397920343,
+      "last": 1791413415591,
+      "selectedRawSha256": "5b380736abde5140d1141d1fcf047cb222906140be521497dd2a2c0f3d49b66d",
+      "gzipSha256": "48a2f1ae27a464982960dba370cc12e741a268d5b6bc77c7d99afef2e297bc99",
+      "querySeconds": 0.0027447000611573458
+    },
+    "AVAXUSDT": {
+      "rows": 7957,
+      "truncated": false,
+      "first": 1791282826356,
+      "last": 1791447310543,
+      "selectedRawSha256": "e06955e14eb2ce263cac6fb495619d7191201b6b12429fab679b826671cfdacc",
+      "gzipSha256": "ba5fa73595c5701bb44ad001334a698847752e18481d3d7161d5c6974be7f33e",
+      "querySeconds": 0.13643029984086752
+    },
+    "BCHUSDT": {
+      "rows": 6237,
+      "truncated": false,
+      "first": 1791282825984,
+      "last": 1791441896225,
+      "selectedRawSha256": "8f57aea960d1a50bd7d749cd3253cc91b9575859e9281138d3bd1e0a9df94b38",
+      "gzipSha256": "52e98382835206ea4b6b097d89c5528783bf52cbf01e49ee9dc23d64f5c26a61",
+      "querySeconds": 0.0806561999488622
+    },
+    "BNBUSDC": {
+      "rows": 7927,
+      "truncated": false,
+      "first": 1791296070000,
+      "last": 1791455343743,
+      "selectedRawSha256": "773a3414d9b22ea0a6f2f86bac18d0431f20e9790fb87dcb173c6b132dceb40b",
+      "gzipSha256": "c7bc4b82d3deb77c60bbe8e3ec7bda574dff0775155914f440c05c49f1b48521",
+      "querySeconds": 0.09996420005336404
+    },
+    "BRUSDT": {
+      "rows": 1078,
+      "truncated": false,
+      "first": 1791449896143,
+      "last": 1791455344643,
+      "selectedRawSha256": "464b0c5622c947b2eac5c2084a518b447a63f0b283000390673d5059ac7f3288",
+      "gzipSha256": "245f9bf43f8ce2fea8cbe85860499717e7649745c3d7fce51ca389c74eedecc2",
+      "querySeconds": 0.010177900083363056
+    },
+    "BTCUSDT": {
+      "rows": 11168,
+      "truncated": false,
+      "first": 1791282825364,
+      "last": 1791449642411,
+      "selectedRawSha256": "5b3e8a0c03f6c908eed87869ea688e95a0742dd0b773cf254ffd821292244447",
+      "gzipSha256": "0562975b3367d43dbc4c23b3ca85d2214e8695ce101b58bb9f37175f0dd00b33",
+      "querySeconds": 0.11144630005583167
+    },
+    "DASHUSDT": {
+      "rows": 0,
+      "truncated": false,
+      "first": null,
+      "last": null,
+      "selectedRawSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "gzipSha256": "64406e753d82e11c6bd63d1d04bb6aa083eefa0a46949bbfce994d556b989f0f",
+      "querySeconds": 0.0009911998640745878
+    },
+    "DOGEUSDC": {
+      "rows": 0,
+      "truncated": false,
+      "first": null,
+      "last": null,
+      "selectedRawSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "gzipSha256": "64406e753d82e11c6bd63d1d04bb6aa083eefa0a46949bbfce994d556b989f0f",
+      "querySeconds": 0.00038650003261864185
+    },
+    "DOGEUSDT": {
+      "rows": 3057,
+      "truncated": false,
+      "first": 1791441598950,
+      "last": 1791455343657,
+      "selectedRawSha256": "a53149963dbe2da2334cacf3bb385de8782d50a59c59c3c4344525457df66b2d",
+      "gzipSha256": "71d0dfe6176f002fdb43b5d7970bac52d2fe5e207088b145299e7c222fc572f1",
+      "querySeconds": 0.040839700028300285
+    },
+    "DOTUSDT": {
+      "rows": 2299,
+      "truncated": false,
+      "first": 1791282827836,
+      "last": 1791410984228,
+      "selectedRawSha256": "60aa00e90b2da3c38fb6f3161cdcd785d5f5dec3ce2ebcc1f5e7da3c7edfdf21",
+      "gzipSha256": "9eaaca98f897e1e4d58c997cfabbc8882789c2cfeefe60b728c6e4354e30a0f3",
+      "querySeconds": 0.027112500043585896
+    },
+    "ENAUSDT": {
+      "rows": 3100,
+      "truncated": false,
+      "first": 1791441462666,
+      "last": 1791455344523,
+      "selectedRawSha256": "fa89367b9fabea4dede7f783718e448b33d1858e7acc0f1045966d5e404a3980",
+      "gzipSha256": "5db1620921d7223ffde6f4c22dda4aa857085d0d1d76db92e38eeeb72ee1a503",
+      "querySeconds": 0.03383479989133775
+    },
+    "ETCUSDT": {
+      "rows": 2972,
+      "truncated": false,
+      "first": 1791430387607,
+      "last": 1791444754377,
+      "selectedRawSha256": "62da5a62cfcae4af0cbd4e46aa31bcf62b7bae604ecb383b3df8c8cdea3d7014",
+      "gzipSha256": "d1904b913058cd6a9003391d92704567a12967d17d9a8fa963dae7d8a4579683",
+      "querySeconds": 0.035141600063070655
+    },
+    "ETHFIUSDC": {
+      "rows": 5989,
+      "truncated": false,
+      "first": 1791423858779,
+      "last": 1791455342023,
+      "selectedRawSha256": "76f1b57753d30afa38d1a4121fcb780618f3b3265679070989a70669b4199a85",
+      "gzipSha256": "3e6b073c2d341b03914292b09e75b371c7e5115982116f72c10560e5c995c38a",
+      "querySeconds": 0.07285570004023612
+    },
+    "ETHFIUSDT": {
+      "rows": 482,
+      "truncated": false,
+      "first": 1791284304001,
+      "last": 1791288912544,
+      "selectedRawSha256": "dc3745fc6f0e56a752935cb8a1ba83052dd0881d5d6a574a05fe966c1e29b1f3",
+      "gzipSha256": "6641a554465fa9f932c625a3683fa340e40fa8bf1a5f3972e51bb0fb3c2175a8",
+      "querySeconds": 0.004176900023594499
+    },
+    "ETHUSDT": {
+      "rows": 9185,
+      "truncated": false,
+      "first": 1791286811000,
+      "last": 1791455342743,
+      "selectedRawSha256": "b0eb78b2450ba5ccec59d821a6d3b2c38b8deeaac47608efbd0a64607d146df7",
+      "gzipSha256": "152ca93d12e6b0b753d81aa222d8d67bc17d6bd9c33bc422ce4939ed679fbda5",
+      "querySeconds": 0.10434959991835058
+    },
+    "FETUSDT": {
+      "rows": 2446,
+      "truncated": false,
+      "first": 1791426592927,
+      "last": 1791440949526,
+      "selectedRawSha256": "892adf076403a8dc4e59ff169a7ba3ed2de132770cdc53044cfc7881df26086e",
+      "gzipSha256": "d83fc063c0f9d7d010f269d864fbede87925a37e3c7912ed4172c2a509297b57",
+      "querySeconds": 0.026297400007024407
+    },
+    "FILUSDC": {
+      "rows": 1912,
+      "truncated": false,
+      "first": 1791444418279,
+      "last": 1791455342768,
+      "selectedRawSha256": "c95514cfd2ab5d1c27b8f1d932135641381e11a530fdbb21b252880ecf60b87a",
+      "gzipSha256": "497b0fc747087a39d3c02218c7f6a8dd52142fb09c5e63046f52316ed2d207f8",
+      "querySeconds": 0.017575199948623776
+    },
+    "FILUSDT": {
+      "rows": 961,
+      "truncated": false,
+      "first": 1791440411000,
+      "last": 1791454782968,
+      "selectedRawSha256": "eb51e2d3075c8f7f41c507a3c8e92eb3df8541ae4e9768079d6a19b44ba6f1ce",
+      "gzipSha256": "c8b37200658abbd584e6ab3fe94e4ead9d4ff214c011b11e2b26a74a010efa96",
+      "querySeconds": 0.01080689998343587
+    },
+    "HBARUSDT": {
+      "rows": 0,
+      "truncated": false,
+      "first": null,
+      "last": null,
+      "selectedRawSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "gzipSha256": "64406e753d82e11c6bd63d1d04bb6aa083eefa0a46949bbfce994d556b989f0f",
+      "querySeconds": 0.00043160002678632736
+    },
+    "HYPEUSDT": {
+      "rows": 0,
+      "truncated": false,
+      "first": null,
+      "last": null,
+      "selectedRawSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "gzipSha256": "64406e753d82e11c6bd63d1d04bb6aa083eefa0a46949bbfce994d556b989f0f",
+      "querySeconds": 0.00040500005707144737
+    },
+    "INJUSDT": {
+      "rows": 1779,
+      "truncated": false,
+      "first": 1791428173271,
+      "last": 1791442511620,
+      "selectedRawSha256": "470bfd9134243f298227ab7884cbb2be97636700688e3c016a6aff534a54be2c",
+      "gzipSha256": "be5cf3146e3d36958bdae0956876dbeca797bafa520d2d32a1a8a4812a532988",
+      "querySeconds": 0.018041699891909957
+    },
+    "LTCUSDT": {
+      "rows": 2956,
+      "truncated": false,
+      "first": 1791433196535,
+      "last": 1791447579114,
+      "selectedRawSha256": "43509f09b7c5ffba828bdbb20a3824d8108fe57e3596bc3ce5377731b0673e31",
+      "gzipSha256": "f4ec9e569a9510d76db55dc1305c4c2d47b7a1b5d6a69284141c54c60f37b85c",
+      "querySeconds": 0.03209200012497604
+    },
+    "NEARUSDC": {
+      "rows": 6854,
+      "truncated": false,
+      "first": 1791282827315,
+      "last": 1791455341275,
+      "selectedRawSha256": "4420d9f476c12b70cdbd0e27d0aefc28f0fe204dafdf955a3e8f200a7434d87c",
+      "gzipSha256": "a63c304f6d5c50559d70f6cea3f2f2f948b94ae400bd66fb62cb2828ffdf5566",
+      "querySeconds": 0.0835541000124067
+    },
+    "NEARUSDT": {
+      "rows": 0,
+      "truncated": false,
+      "first": null,
+      "last": null,
+      "selectedRawSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "gzipSha256": "64406e753d82e11c6bd63d1d04bb6aa083eefa0a46949bbfce994d556b989f0f",
+      "querySeconds": 0.0012257001362740993
+    },
+    "ONDOUSDT": {
+      "rows": 5671,
+      "truncated": false,
+      "first": 1791282825986,
+      "last": 1791455341643,
+      "selectedRawSha256": "f4ab074a4759096acd811ea28818291140028110cb41c87728ed0316641616df",
+      "gzipSha256": "10f2482c6ff14a2f5037862ecc48e79efac378d0ec95a712ee643f0326d6d406",
+      "querySeconds": 0.06588200014084578
+    },
+    "OPUSDT": {
+      "rows": 388,
+      "truncated": false,
+      "first": 1791453745504,
+      "last": 1791455344584,
+      "selectedRawSha256": "609f02c327dc2ab0a97f0684f61d08dc43c42ae5fe8c05d905d93425c813f21d",
+      "gzipSha256": "bcccb989a01bcfc649a95f871799757ba02bc61d1b0220595539c87064d56110",
+      "querySeconds": 0.003467199858278036
+    },
+    "PENGUUSDT": {
+      "rows": 0,
+      "truncated": false,
+      "first": null,
+      "last": null,
+      "selectedRawSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "gzipSha256": "64406e753d82e11c6bd63d1d04bb6aa083eefa0a46949bbfce994d556b989f0f",
+      "querySeconds": 0.00033110007643699646
+    },
+    "SOLUSDT": {
+      "rows": 7401,
+      "truncated": false,
+      "first": 1791282827753,
+      "last": 1791443068146,
+      "selectedRawSha256": "a39a85e0a6c49e6a368534d7d8cb1cad4fe89d367eec5976cc0d71c9923c5250",
+      "gzipSha256": "a3ec6aa6f9b9b092cf1577b8698b1a033348816ab93229ec483598cb30266adb",
+      "querySeconds": 0.08371880021877587
+    },
+    "SUIUSDC": {
+      "rows": 0,
+      "truncated": false,
+      "first": null,
+      "last": null,
+      "selectedRawSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "gzipSha256": "64406e753d82e11c6bd63d1d04bb6aa083eefa0a46949bbfce994d556b989f0f",
+      "querySeconds": 0.0006126000080257654
+    },
+    "TAOUSDT": {
+      "rows": 1639,
+      "truncated": false,
+      "first": 1791420052642,
+      "last": 1791434218690,
+      "selectedRawSha256": "8f749f45de0c387c05dadb84e45883f62c248defd69337b17f2bd369d6dc1848",
+      "gzipSha256": "fb28edcb3065306383ac2ad6a4bc83a86de1c4f13c0bdc642cb15f6a53c30fe8",
+      "querySeconds": 0.01963720005005598
+    },
+    "TIAUSDC": {
+      "rows": 511,
+      "truncated": false,
+      "first": 1791286923000,
+      "last": 1791433606595,
+      "selectedRawSha256": "af6dd862f8d4505822fb5d9bf47c69f7fe4fc110546f016a6f983daf743819db",
+      "gzipSha256": "992b99c67ede15027755ec6ddee564b6e918890d8ce7962455237c648b33d37f",
+      "querySeconds": 0.004167000064626336
+    },
+    "TIAUSDT": {
+      "rows": 2650,
+      "truncated": false,
+      "first": 1791286923000,
+      "last": 1791442813291,
+      "selectedRawSha256": "642798fef034a9576bdb6f57a78e8fe6c0c380e3f1de9b1defec2586a304a7da",
+      "gzipSha256": "439f2163a7bb077f168fabffd85372e5b71e844cf5338d1543508ce9e410986c",
+      "querySeconds": 0.03214820008724928
+    },
+    "UNIUSDC": {
+      "rows": 1399,
+      "truncated": false,
+      "first": 1791439798713,
+      "last": 1791452044907,
+      "selectedRawSha256": "23a138b8431cc8f6d9ecefd93aba6c355451c89eb66dee70e2aacb7157f7b2cb",
+      "gzipSha256": "03feed2a2dddfdf08ecdb24f61c9d7cf8e076c7c34308bde6042f8647384c46b",
+      "querySeconds": 0.015485499985516071
+    },
+    "UNIUSDT": {
+      "rows": 3441,
+      "truncated": false,
+      "first": 1791428044000,
+      "last": 1791455342421,
+      "selectedRawSha256": "5e5dde71d668fbc1d89c420be02a0163de55244e408460651743f44c8be64682",
+      "gzipSha256": "6b802550d309f91679436d40406e08a7f34bb2b3e015172e3f1606c78dff46d9",
+      "querySeconds": 0.04225719999521971
+    },
+    "USELESSUSDT": {
+      "rows": 3470,
+      "truncated": false,
+      "first": 1791435829335,
+      "last": 1791450214004,
+      "selectedRawSha256": "bc383d8a3886b629ac8469e6985257ce8da94baf8cd3862ad299630f118c95ae",
+      "gzipSha256": "d6dc44c9ab048c9ba12999490069d43a3e475539de762125d2ff7c965e056604",
+      "querySeconds": 0.03943859995342791
+    },
+    "VIRTUALUSDT": {
+      "rows": 0,
+      "truncated": false,
+      "first": null,
+      "last": null,
+      "selectedRawSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "gzipSha256": "64406e753d82e11c6bd63d1d04bb6aa083eefa0a46949bbfce994d556b989f0f",
+      "querySeconds": 0.0007551000453531742
+    },
+    "VVVUSDT": {
+      "rows": 2741,
+      "truncated": false,
+      "first": 1791430120890,
+      "last": 1791446072679,
+      "selectedRawSha256": "4c6778312dcc1b2cec6dd6142213e6585d80ae98f43310c2ff5b6f499954f7dc",
+      "gzipSha256": "6533b139b8c84c9e9144161dd4efa94906fccdaaa8dd7cae97f2343c0770f7d9",
+      "querySeconds": 0.04205000004731119
+    },
+    "WIFUSDC": {
+      "rows": 663,
+      "truncated": false,
+      "first": 1791436329049,
+      "last": 1791438789423,
+      "selectedRawSha256": "9162be9230e957f9f3edd1ac27721864f33c8e9caaa1c8ed3fe726fbf0f90f91",
+      "gzipSha256": "404c8a23d50a890b184c9b147b08dffc397f269e00273dea25625842ca0ee80f",
+      "querySeconds": 0.004849699791520834
+    },
+    "WIFUSDT": {
+      "rows": 0,
+      "truncated": false,
+      "first": null,
+      "last": null,
+      "selectedRawSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "gzipSha256": "64406e753d82e11c6bd63d1d04bb6aa083eefa0a46949bbfce994d556b989f0f",
+      "querySeconds": 0.000362900085747242
+    },
+    "WLDUSDC": {
+      "rows": 0,
+      "truncated": false,
+      "first": null,
+      "last": null,
+      "selectedRawSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "gzipSha256": "64406e753d82e11c6bd63d1d04bb6aa083eefa0a46949bbfce994d556b989f0f",
+      "querySeconds": 0.00030800001695752144
+    },
+    "XLMUSDT": {
+      "rows": 657,
+      "truncated": false,
+      "first": 1791282825108,
+      "last": 1791289917000,
+      "selectedRawSha256": "bd17866964aa79be9f8c5c8009b6fe112bc8c0e803eb458974d7bf98b0435b53",
+      "gzipSha256": "0ae570f2d1cd06d8ff30543ad64c6170fcbce69fad00050824913367df93cff5",
+      "querySeconds": 0.006179899908602238
+    },
+    "XRPUSDC": {
+      "rows": 0,
+      "truncated": false,
+      "first": null,
+      "last": null,
+      "selectedRawSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "gzipSha256": "64406e753d82e11c6bd63d1d04bb6aa083eefa0a46949bbfce994d556b989f0f",
+      "querySeconds": 0.0003355001099407673
+    },
+    "ZECUSDT": {
+      "rows": 5590,
+      "truncated": false,
+      "first": 1791418672139,
+      "last": 1791453913281,
+      "selectedRawSha256": "6ca7df3a8e9f25ff2596383a95a648027e2f0ce3670fa1471b905e7a3fb4f6d0",
+      "gzipSha256": "b9e0028bbe8d350f23aef3d1b78ff9444bfcd376a8511d6d2078c19358340865",
+      "querySeconds": 0.06213529990054667
+    },
+    "ZROUSDT": {
+      "rows": 496,
+      "truncated": false,
+      "first": 1791451926792,
+      "last": 1791455341968,
+      "selectedRawSha256": "98925d57cf597f5e8eb1c741b0e160d0330f07185d479176f92484e04617b8b9",
+      "gzipSha256": "7331c793998a331c185c005a8ece0d5bc9602456f2069b7fadea76af37ddbad4",
+      "querySeconds": 0.0038997000083327293
+    }
+  }
+}

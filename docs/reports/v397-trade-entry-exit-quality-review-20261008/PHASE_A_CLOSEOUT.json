@@ -1,0 +1,33 @@
+{
+  "at": "2026-10-08T10:27:57.979030+00:00",
+  "latestMain": "85eed50",
+  "fanOut": "COMPLETE_EFFECTIVE",
+  "runtime": "FAIL",
+  "stallUniqueCaller": "UNKNOWN",
+  "reactivity": "PAUSED_FOR_SEPARATE_SCOPE",
+  "artifacts": {
+    "samples.jsonl": true,
+    "samples.jsonl.gz": true,
+    "samples-hashes.json": true,
+    "live-cpu.cpuprofile": true,
+    "live-cpu.cpuprofile.gz": true,
+    "cpu-evidence-hashes.json": true,
+    "reconciliation-phase-summary.json": true,
+    "reconciliation-cycles.json": true,
+    "loaded-identity.json": true,
+    "deduplicated-request-evidence.json": true,
+    "fresh-profile-interval.json": true,
+    "samplesLossless": true,
+    "cpuLossless": true
+  },
+  "servicesRestarted": 0,
+  "fullVerifyRuns": 0,
+  "actions": [
+    [
+      "V3.9.x Verify",
+      697,
+      "success",
+      "https://github.com/3684993/ZDJMITS/actions/runs/37759949272"
+    ]
+  ]
+}

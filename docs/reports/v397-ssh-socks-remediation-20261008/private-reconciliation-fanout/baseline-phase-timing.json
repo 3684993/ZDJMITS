@@ -1,0 +1,1109 @@
+{
+  "pid": 48296,
+  "startedAt": 1791450681924,
+  "endedAt": 1791450771942,
+  "cycles": [
+    {
+      "id": "baseline-1",
+      "at": 1791450689191,
+      "phases": {
+        "sqlite:all:v": {
+          "ms": 273.304500002414,
+          "count": 110,
+          "maxMs": 6.186499999836087
+        },
+        "sqlite:get:v": {
+          "ms": 6.2735000010579824,
+          "count": 103,
+          "maxMs": 0.13979999907314777
+        },
+        "sqlite:run:v": {
+          "ms": 8.477299997583032,
+          "count": 19,
+          "maxMs": 0.6544000003486872
+        },
+        "sqlite:get:runtime_state": {
+          "ms": 23.634500002488494,
+          "count": 6,
+          "maxMs": 4.399699999019504
+        },
+        "TQ.onEvent:ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED": {
+          "ms": 47.398700000718236,
+          "count": 3,
+          "maxMs": 37.13969999924302
+        },
+        "sqlite:run:runtime_events": {
+          "ms": 8.891799999400973,
+          "count": 5,
+          "maxMs": 2.8135000001639128
+        },
+        "recordRuntimeEvent": {
+          "ms": 9.242499995976686,
+          "count": 26,
+          "maxMs": 2.88399999961257
+        },
+        "publish:ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED": {
+          "ms": 54.16759999841452,
+          "count": 3,
+          "maxMs": 38.61089999973774
+        },
+        "sqlite:all:external_research_tasks": {
+          "ms": 0.14619999937713146,
+          "count": 4,
+          "maxMs": 0.04659999907016754
+        },
+        "sqlite:get:external_research_tasks": {
+          "ms": 0.05780000053346157,
+          "count": 4,
+          "maxMs": 0.02579999901354313
+        },
+        "sqlite:all:other": {
+          "ms": 0.8109000027179718,
+          "count": 8,
+          "maxMs": 0.13120000064373016
+        },
+        "sqlite:run:runtime_state": {
+          "ms": 50.811100002378225,
+          "count": 3,
+          "maxMs": 34.39960000105202
+        },
+        "TQ.onEvent:MANUAL_ORDER_REMOTE_STATUS_UNVERIFIED": {
+          "ms": 0.0035999994724988937,
+          "count": 2,
+          "maxMs": 0.002199999988079071
+        },
+        "sqlite:run:execution_tasks": {
+          "ms": 76.51609998196363,
+          "count": 141,
+          "maxMs": 2.666600000113249
+        },
+        "saveManualExecution": {
+          "ms": 80.74699999950826,
+          "count": 141,
+          "maxMs": 2.717000000178814
+        },
+        "publish:MANUAL_ORDER_REMOTE_STATUS_UNVERIFIED": {
+          "ms": 10.139000000432134,
+          "count": 2,
+          "maxMs": 5.377299999818206
+        },
+        "TQ.onEvent:POSITION_LIFECYCLE_TRANSITION": {
+          "ms": 0.020799996331334114,
+          "count": 20,
+          "maxMs": 0.002900000661611557
+        },
+        "publish:POSITION_LIFECYCLE_TRANSITION": {
+          "ms": 0.29980000108480453,
+          "count": 20,
+          "maxMs": 0.039799999445676804
+        },
+        "sqlite:all:entry_execution_tasks": {
+          "ms": 197.12809999845922,
+          "count": 1,
+          "maxMs": 197.12809999845922
+        },
+        "entryExecutionClaimStats": {
+          "ms": 502.11969999969006,
+          "count": 1,
+          "maxMs": 502.11969999969006
+        },
+        "listener:event:0": {
+          "ms": 0.004900000989437103,
+          "count": 1,
+          "maxMs": 0.004900000989437103
+        },
+        "listener:event:1": {
+          "ms": 0.001700000837445259,
+          "count": 1,
+          "maxMs": 0.001700000837445259
+        },
+        "TQ.onEvent:RECONCILIATION_COMPLETED": {
+          "ms": 581.4788000006229,
+          "count": 1,
+          "maxMs": 581.4788000006229
+        },
+        "listener:event:2": {
+          "ms": 581.5074000004679,
+          "count": 1,
+          "maxMs": 581.5074000004679
+        },
+        "sqlite:get:entry_execution_tasks": {
+          "ms": 171.72500003501773,
+          "count": 2624,
+          "maxMs": 0.6907000001519918
+        },
+        "sqlite:run:entry_execution_tasks": {
+          "ms": 228.65699997916818,
+          "count": 2622,
+          "maxMs": 62.290300000458956
+        },
+        "saveEntryExecution": {
+          "ms": 958.6165000125766,
+          "count": 2622,
+          "maxMs": 62.517399998381734
+        },
+        "listener:event:3": {
+          "ms": 1043.2811000011861,
+          "count": 1,
+          "maxMs": 1043.2811000011861
+        },
+        "listener:event:4": {
+          "ms": 0.00860000029206276,
+          "count": 1,
+          "maxMs": 0.00860000029206276
+        },
+        "listener:event:5": {
+          "ms": 0.0015999991446733475,
+          "count": 1,
+          "maxMs": 0.0015999991446733475
+        },
+        "listener:event:6": {
+          "ms": 0.013599999248981476,
+          "count": 1,
+          "maxMs": 0.013599999248981476
+        },
+        "listener:event:send": {
+          "ms": 0.00989999994635582,
+          "count": 1,
+          "maxMs": 0.00989999994635582
+        },
+        "publish:RECONCILIATION_COMPLETED": {
+          "ms": 1625.100700000301,
+          "count": 1,
+          "maxMs": 1625.100700000301
+        }
+      },
+      "entrySaveCalls": 2622,
+      "manualSaveCalls": 141,
+      "entrySqlChanged": 1,
+      "manualSqlChanged": 49,
+      "adapterWrapped": true,
+      "remoteCompleted": 15973679.0434,
+      "applyStart": 15898261.5785,
+      "remoteToApplyMs": 1.2914000004529953,
+      "beforeCompletionPublish": 15902258.5805,
+      "mutationElapsedMs": 3997.001999998465,
+      "totalMs": 6140.63020000048
+    },
+    {
+      "id": "baseline-2",
+      "at": 1791450704205,
+      "phases": {
+        "sqlite:all:v": {
+          "ms": 240.85030000843108,
+          "count": 99,
+          "maxMs": 4.477799998596311
+        },
+        "sqlite:get:v": {
+          "ms": 4.807200001552701,
+          "count": 83,
+          "maxMs": 0.08509999886155128
+        },
+        "sqlite:run:v": {
+          "ms": 9.419700000435114,
+          "count": 20,
+          "maxMs": 0.5568000003695488
+        },
+        "sqlite:get:runtime_state": {
+          "ms": 13.557400001212955,
+          "count": 3,
+          "maxMs": 5.161199999973178
+        },
+        "TQ.onEvent:ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED": {
+          "ms": 3.696399999782443,
+          "count": 1,
+          "maxMs": 3.696399999782443
+        },
+        "sqlite:run:runtime_events": {
+          "ms": 10.88880000077188,
+          "count": 3,
+          "maxMs": 6.089800000190735
+        },
+        "recordRuntimeEvent": {
+          "ms": 11.131699992343783,
+          "count": 24,
+          "maxMs": 6.16950000077486
+        },
+        "publish:ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED": {
+          "ms": 6.0020000003278255,
+          "count": 1,
+          "maxMs": 6.0020000003278255
+        },
+        "sqlite:all:external_research_tasks": {
+          "ms": 0.11160000041127205,
+          "count": 3,
+          "maxMs": 0.043300000950694084
+        },
+        "sqlite:get:external_research_tasks": {
+          "ms": 0.033800000324845314,
+          "count": 3,
+          "maxMs": 0.012199999764561653
+        },
+        "sqlite:all:other": {
+          "ms": 0.5335999988019466,
+          "count": 6,
+          "maxMs": 0.10040000081062317
+        },
+        "sqlite:run:runtime_state": {
+          "ms": 25.031899999827147,
+          "count": 2,
+          "maxMs": 17.717499999329448
+        },
+        "TQ.onEvent:MANUAL_ORDER_REMOTE_STATUS_UNVERIFIED": {
+          "ms": 0.006200000643730164,
+          "count": 2,
+          "maxMs": 0.0032999999821186066
+        },
+        "sqlite:run:execution_tasks": {
+          "ms": 330.21749999932945,
+          "count": 141,
+          "maxMs": 14.935399999842048
+        },
+        "saveManualExecution": {
+          "ms": 334.34189999103546,
+          "count": 141,
+          "maxMs": 14.985500000417233
+        },
+        "publish:MANUAL_ORDER_REMOTE_STATUS_UNVERIFIED": {
+          "ms": 20.729300001636147,
+          "count": 2,
+          "maxMs": 14.709600001573563
+        },
+        "TQ.onEvent:POSITION_LIFECYCLE_TRANSITION": {
+          "ms": 0.020899999886751175,
+          "count": 20,
+          "maxMs": 0.0034999996423721313
+        },
+        "publish:POSITION_LIFECYCLE_TRANSITION": {
+          "ms": 0.28919999673962593,
+          "count": 20,
+          "maxMs": 0.03969999961555004
+        },
+        "sqlite:all:entry_execution_tasks": {
+          "ms": 224.125,
+          "count": 1,
+          "maxMs": 224.125
+        },
+        "entryExecutionClaimStats": {
+          "ms": 514.963899999857,
+          "count": 1,
+          "maxMs": 514.963899999857
+        },
+        "listener:event:0": {
+          "ms": 0.0044999998062849045,
+          "count": 1,
+          "maxMs": 0.0044999998062849045
+        },
+        "listener:event:1": {
+          "ms": 0.003699999302625656,
+          "count": 1,
+          "maxMs": 0.003699999302625656
+        },
+        "TQ.onEvent:RECONCILIATION_COMPLETED": {
+          "ms": 563.4862999990582,
+          "count": 1,
+          "maxMs": 563.4862999990582
+        },
+        "listener:event:2": {
+          "ms": 563.5014999993145,
+          "count": 1,
+          "maxMs": 563.5014999993145
+        },
+        "sqlite:get:entry_execution_tasks": {
+          "ms": 149.8553999401629,
+          "count": 2624,
+          "maxMs": 0.5974000003188848
+        },
+        "sqlite:run:entry_execution_tasks": {
+          "ms": 140.05790000222623,
+          "count": 2622,
+          "maxMs": 0.28110000118613243
+        },
+        "saveEntryExecution": {
+          "ms": 822.7538000475615,
+          "count": 2622,
+          "maxMs": 5.2065000012516975
+        },
+        "listener:event:3": {
+          "ms": 1154.054999999702,
+          "count": 1,
+          "maxMs": 1154.054999999702
+        },
+        "listener:event:4": {
+          "ms": 0.1152999997138977,
+          "count": 1,
+          "maxMs": 0.1152999997138977
+        },
+        "listener:event:5": {
+          "ms": 0.0010000001639127731,
+          "count": 1,
+          "maxMs": 0.0010000001639127731
+        },
+        "listener:event:6": {
+          "ms": 0.001499999314546585,
+          "count": 1,
+          "maxMs": 0.001499999314546585
+        },
+        "listener:event:send": {
+          "ms": 0.006500000134110451,
+          "count": 1,
+          "maxMs": 0.006500000134110451
+        },
+        "publish:RECONCILIATION_COMPLETED": {
+          "ms": 1717.8052000012249,
+          "count": 1,
+          "maxMs": 1717.8052000012249
+        }
+      },
+      "entrySaveCalls": 2622,
+      "manualSaveCalls": 141,
+      "entrySqlChanged": 0,
+      "manualSqlChanged": 49,
+      "adapterWrapped": true,
+      "remoteCompleted": 15973679.0458,
+      "applyStart": 15913281.6633,
+      "remoteToApplyMs": 6.133400000631809,
+      "beforeCompletionPublish": 15918851.6013,
+      "mutationElapsedMs": 5569.937999999151,
+      "totalMs": 7811.797199999914
+    },
+    {
+      "id": "baseline-3",
+      "at": 1791450719567,
+      "phases": {
+        "sqlite:all:v": {
+          "ms": 182.72829999774694,
+          "count": 73,
+          "maxMs": 4.8336999993771315
+        },
+        "sqlite:get:v": {
+          "ms": 2.0202999990433455,
+          "count": 41,
+          "maxMs": 0.07919999957084656
+        },
+        "sqlite:run:v": {
+          "ms": 9.123099999502301,
+          "count": 20,
+          "maxMs": 0.5325000006705523
+        },
+        "sqlite:get:runtime_state": {
+          "ms": 17.04139999859035,
+          "count": 4,
+          "maxMs": 4.8282999992370605
+        },
+        "TQ.onEvent:ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED": {
+          "ms": 21.15339999832213,
+          "count": 3,
+          "maxMs": 9.962500000372529
+        },
+        "sqlite:run:runtime_events": {
+          "ms": 17.726099997758865,
+          "count": 5,
+          "maxMs": 5.234699999913573
+        },
+        "recordRuntimeEvent": {
+          "ms": 18.024400003254414,
+          "count": 26,
+          "maxMs": 5.31279999949038
+        },
+        "publish:ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED": {
+          "ms": 29.330500001087785,
+          "count": 3,
+          "maxMs": 15.385400000959635
+        },
+        "sqlite:all:external_research_tasks": {
+          "ms": 0.04279999993741512,
+          "count": 1,
+          "maxMs": 0.04279999993741512
+        },
+        "sqlite:get:external_research_tasks": {
+          "ms": 0.007799999788403511,
+          "count": 1,
+          "maxMs": 0.007799999788403511
+        },
+        "sqlite:all:other": {
+          "ms": 0.1870000008493662,
+          "count": 2,
+          "maxMs": 0.10830000042915344
+        },
+        "TQ.onEvent:MANUAL_ORDER_REMOTE_STATUS_UNVERIFIED": {
+          "ms": 0.00390000082552433,
+          "count": 2,
+          "maxMs": 0.0022999998182058334
+        },
+        "sqlite:run:execution_tasks": {
+          "ms": 275.31189998053014,
+          "count": 141,
+          "maxMs": 6.0962000004947186
+        },
+        "saveManualExecution": {
+          "ms": 279.35389998182654,
+          "count": 141,
+          "maxMs": 6.146999999880791
+        },
+        "publish:MANUAL_ORDER_REMOTE_STATUS_UNVERIFIED": {
+          "ms": 24.360999999567866,
+          "count": 2,
+          "maxMs": 13.001000000163913
+        },
+        "TQ.onEvent:POSITION_LIFECYCLE_TRANSITION": {
+          "ms": 0.02240000292658806,
+          "count": 20,
+          "maxMs": 0.003600001335144043
+        },
+        "publish:POSITION_LIFECYCLE_TRANSITION": {
+          "ms": 0.270899998024106,
+          "count": 20,
+          "maxMs": 0.042899999767541885
+        },
+        "sqlite:all:entry_execution_tasks": {
+          "ms": 175.80299999937415,
+          "count": 1,
+          "maxMs": 175.80299999937415
+        },
+        "entryExecutionClaimStats": {
+          "ms": 483.6677000001073,
+          "count": 1,
+          "maxMs": 483.6677000001073
+        },
+        "listener:event:0": {
+          "ms": 0.0021000001579523087,
+          "count": 1,
+          "maxMs": 0.0021000001579523087
+        },
+        "listener:event:1": {
+          "ms": 0.0010000001639127731,
+          "count": 1,
+          "maxMs": 0.0010000001639127731
+        },
+        "TQ.onEvent:RECONCILIATION_COMPLETED": {
+          "ms": 561.2494999989867,
+          "count": 1,
+          "maxMs": 561.2494999989867
+        },
+        "listener:event:2": {
+          "ms": 561.2670999988914,
+          "count": 1,
+          "maxMs": 561.2670999988914
+        },
+        "sqlite:get:entry_execution_tasks": {
+          "ms": 196.63750000298023,
+          "count": 2624,
+          "maxMs": 0.6926000006496906
+        },
+        "sqlite:run:entry_execution_tasks": {
+          "ms": 272.5998000521213,
+          "count": 2622,
+          "maxMs": 62.563699999824166
+        },
+        "saveEntryExecution": {
+          "ms": 1048.1920999977738,
+          "count": 2622,
+          "maxMs": 62.966199999675155
+        },
+        "listener:event:3": {
+          "ms": 1323.6037999987602,
+          "count": 1,
+          "maxMs": 1323.6037999987602
+        },
+        "listener:event:4": {
+          "ms": 0.007300000637769699,
+          "count": 1,
+          "maxMs": 0.007300000637769699
+        },
+        "listener:event:5": {
+          "ms": 0.0010999999940395355,
+          "count": 1,
+          "maxMs": 0.0010999999940395355
+        },
+        "listener:event:6": {
+          "ms": 0.0019000004976987839,
+          "count": 1,
+          "maxMs": 0.0019000004976987839
+        },
+        "listener:event:send": {
+          "ms": 0.007699999958276749,
+          "count": 1,
+          "maxMs": 0.007699999958276749
+        },
+        "publish:RECONCILIATION_COMPLETED": {
+          "ms": 1884.9583999998868,
+          "count": 1,
+          "maxMs": 1884.9583999998868
+        },
+        "sqlite:run:runtime_state": {
+          "ms": 42.2632999997586,
+          "count": 1,
+          "maxMs": 42.2632999997586
+        }
+      },
+      "entrySaveCalls": 2622,
+      "manualSaveCalls": 141,
+      "entrySqlChanged": 3,
+      "manualSqlChanged": 49,
+      "adapterWrapped": true,
+      "remoteCompleted": 15973679.0467,
+      "applyStart": 15928620.4975,
+      "remoteToApplyMs": 1.1554000005126,
+      "beforeCompletionPublish": 15931517.0975,
+      "mutationElapsedMs": 2896.5999999996275,
+      "totalMs": 5282.626299999654
+    },
+    {
+      "id": "baseline-4",
+      "at": 1791450734569,
+      "phases": {
+        "sqlite:all:v": {
+          "ms": 258.5425000078976,
+          "count": 99,
+          "maxMs": 5.83669999986887
+        },
+        "sqlite:get:v": {
+          "ms": 5.376899998635054,
+          "count": 83,
+          "maxMs": 0.11940000019967556
+        },
+        "sqlite:run:v": {
+          "ms": 10.085799997672439,
+          "count": 20,
+          "maxMs": 0.6730000004172325
+        },
+        "TQ.onEvent:ENTRY_ORDER_HISTORICAL_VERIFY_FAILED": {
+          "ms": 545.0205000005662,
+          "count": 1,
+          "maxMs": 545.0205000005662
+        },
+        "sqlite:run:runtime_events": {
+          "ms": 21.991099996492267,
+          "count": 6,
+          "maxMs": 12.964099999517202
+        },
+        "recordRuntimeEvent": {
+          "ms": 22.433800004422665,
+          "count": 27,
+          "maxMs": 13.044700000435114
+        },
+        "publish:ENTRY_ORDER_HISTORICAL_VERIFY_FAILED": {
+          "ms": 549.8330000005662,
+          "count": 1,
+          "maxMs": 549.8330000005662
+        },
+        "sqlite:get:runtime_state": {
+          "ms": 27.304500002413988,
+          "count": 6,
+          "maxMs": 6.2347999997437
+        },
+        "TQ.onEvent:ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED": {
+          "ms": 29.207799999043345,
+          "count": 3,
+          "maxMs": 15.014499999582767
+        },
+        "publish:ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED": {
+          "ms": 32.85759999975562,
+          "count": 3,
+          "maxMs": 16.395400000736117
+        },
+        "sqlite:all:external_research_tasks": {
+          "ms": 0.41530000045895576,
+          "count": 3,
+          "maxMs": 0.2637000009417534
+        },
+        "sqlite:get:external_research_tasks": {
+          "ms": 0.04079999960958958,
+          "count": 3,
+          "maxMs": 0.017899999395012856
+        },
+        "sqlite:all:other": {
+          "ms": 0.5808000024408102,
+          "count": 6,
+          "maxMs": 0.14790000021457672
+        },
+        "sqlite:run:runtime_state": {
+          "ms": 55.972400000318885,
+          "count": 2,
+          "maxMs": 45.18820000067353
+        },
+        "TQ.onEvent:MANUAL_ORDER_REMOTE_STATUS_UNVERIFIED": {
+          "ms": 0.005499999970197678,
+          "count": 2,
+          "maxMs": 0.0028000008314847946
+        },
+        "sqlite:run:execution_tasks": {
+          "ms": 68.26830000430346,
+          "count": 141,
+          "maxMs": 5.600300000980496
+        },
+        "saveManualExecution": {
+          "ms": 71.88700000196695,
+          "count": 141,
+          "maxMs": 5.621899999678135
+        },
+        "publish:MANUAL_ORDER_REMOTE_STATUS_UNVERIFIED": {
+          "ms": 25.002200001850724,
+          "count": 2,
+          "maxMs": 20.745900001376867
+        },
+        "TQ.onEvent:POSITION_LIFECYCLE_TRANSITION": {
+          "ms": 0.01940000243484974,
+          "count": 20,
+          "maxMs": 0.0021000001579523087
+        },
+        "publish:POSITION_LIFECYCLE_TRANSITION": {
+          "ms": 0.2525000087916851,
+          "count": 20,
+          "maxMs": 0.03140000067651272
+        },
+        "sqlite:all:entry_execution_tasks": {
+          "ms": 169.5125000011176,
+          "count": 1,
+          "maxMs": 169.5125000011176
+        },
+        "entryExecutionClaimStats": {
+          "ms": 456.8407000005245,
+          "count": 1,
+          "maxMs": 456.8407000005245
+        },
+        "listener:event:0": {
+          "ms": 0.0027000010013580322,
+          "count": 1,
+          "maxMs": 0.0027000010013580322
+        },
+        "listener:event:1": {
+          "ms": 0.001199999824166298,
+          "count": 1,
+          "maxMs": 0.001199999824166298
+        },
+        "TQ.onEvent:RECONCILIATION_COMPLETED": {
+          "ms": 549.0081999991089,
+          "count": 1,
+          "maxMs": 549.0081999991089
+        },
+        "listener:event:2": {
+          "ms": 549.0193999987096,
+          "count": 1,
+          "maxMs": 549.0193999987096
+        },
+        "sqlite:get:entry_execution_tasks": {
+          "ms": 150.7461999375373,
+          "count": 2624,
+          "maxMs": 0.5677000004798174
+        },
+        "sqlite:run:entry_execution_tasks": {
+          "ms": 160.04710000380874,
+          "count": 2622,
+          "maxMs": 6.496700000017881
+        },
+        "saveEntryExecution": {
+          "ms": 843.5973000265658,
+          "count": 2622,
+          "maxMs": 6.682899998500943
+        },
+        "listener:event:3": {
+          "ms": 910.6670999992639,
+          "count": 1,
+          "maxMs": 910.6670999992639
+        },
+        "listener:event:4": {
+          "ms": 0.11620000004768372,
+          "count": 1,
+          "maxMs": 0.11620000004768372
+        },
+        "listener:event:5": {
+          "ms": 0.0007999986410140991,
+          "count": 1,
+          "maxMs": 0.0007999986410140991
+        },
+        "listener:event:6": {
+          "ms": 0.0020000003278255463,
+          "count": 1,
+          "maxMs": 0.0020000003278255463
+        },
+        "listener:event:send": {
+          "ms": 0.0071999989449977875,
+          "count": 1,
+          "maxMs": 0.0071999989449977875
+        },
+        "publish:RECONCILIATION_COMPLETED": {
+          "ms": 1459.8840000014752,
+          "count": 1,
+          "maxMs": 1459.8840000014752
+        }
+      },
+      "entrySaveCalls": 2622,
+      "manualSaveCalls": 141,
+      "entrySqlChanged": 3,
+      "manualSqlChanged": 49,
+      "adapterWrapped": true,
+      "remoteCompleted": 15973679.0476,
+      "applyStart": 15943917.3875,
+      "remoteToApplyMs": 1.1399999987334013,
+      "beforeCompletionPublish": 15949262.8261,
+      "mutationElapsedMs": 5345.438599999994,
+      "totalMs": 7602.8908000011
+    },
+    {
+      "id": "baseline-5",
+      "at": 1791450749584,
+      "phases": {
+        "sqlite:all:v": {
+          "ms": 205.55609998479486,
+          "count": 86,
+          "maxMs": 4.571999998763204
+        },
+        "sqlite:get:v": {
+          "ms": 4.11200000718236,
+          "count": 62,
+          "maxMs": 0.10920000076293945
+        },
+        "sqlite:run:v": {
+          "ms": 9.37080000154674,
+          "count": 20,
+          "maxMs": 0.5935000013560057
+        },
+        "sqlite:get:runtime_state": {
+          "ms": 15.968300001695752,
+          "count": 4,
+          "maxMs": 4.307000000029802
+        },
+        "TQ.onEvent:ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED": {
+          "ms": 29.925400000065565,
+          "count": 3,
+          "maxMs": 15.338700000196695
+        },
+        "sqlite:run:runtime_events": {
+          "ms": 13.195499995723367,
+          "count": 5,
+          "maxMs": 4.969799999147654
+        },
+        "recordRuntimeEvent": {
+          "ms": 13.477899996563792,
+          "count": 26,
+          "maxMs": 5.046900000423193
+        },
+        "publish:ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED": {
+          "ms": 41.49770000204444,
+          "count": 3,
+          "maxMs": 20.42850000038743
+        },
+        "sqlite:all:external_research_tasks": {
+          "ms": 0.08050000108778477,
+          "count": 2,
+          "maxMs": 0.042899999767541885
+        },
+        "sqlite:get:external_research_tasks": {
+          "ms": 0.016499999910593033,
+          "count": 2,
+          "maxMs": 0.008799999952316284
+        },
+        "sqlite:all:other": {
+          "ms": 0.334799999371171,
+          "count": 4,
+          "maxMs": 0.08750000037252903
+        },
+        "sqlite:run:runtime_state": {
+          "ms": 7.7577999997884035,
+          "count": 1,
+          "maxMs": 7.7577999997884035
+        },
+        "TQ.onEvent:MANUAL_ORDER_REMOTE_STATUS_UNVERIFIED": {
+          "ms": 0.003100000321865082,
+          "count": 2,
+          "maxMs": 0.0020000003278255463
+        },
+        "sqlite:run:execution_tasks": {
+          "ms": 61.87009999901056,
+          "count": 141,
+          "maxMs": 2.3284000009298325
+        },
+        "saveManualExecution": {
+          "ms": 65.29230000264943,
+          "count": 141,
+          "maxMs": 2.359399998560548
+        },
+        "publish:MANUAL_ORDER_REMOTE_STATUS_UNVERIFIED": {
+          "ms": 7.944400001317263,
+          "count": 2,
+          "maxMs": 4.149500001221895
+        },
+        "TQ.onEvent:POSITION_LIFECYCLE_TRANSITION": {
+          "ms": 0.015300001949071884,
+          "count": 20,
+          "maxMs": 0.001400001347064972
+        },
+        "publish:POSITION_LIFECYCLE_TRANSITION": {
+          "ms": 0.18930000066757202,
+          "count": 20,
+          "maxMs": 0.022299999371170998
+        },
+        "sqlite:all:entry_execution_tasks": {
+          "ms": 194.80390000157058,
+          "count": 1,
+          "maxMs": 194.80390000157058
+        },
+        "entryExecutionClaimStats": {
+          "ms": 492.99469999969006,
+          "count": 1,
+          "maxMs": 492.99469999969006
+        },
+        "listener:event:0": {
+          "ms": 0.002499999478459358,
+          "count": 1,
+          "maxMs": 0.002499999478459358
+        },
+        "listener:event:1": {
+          "ms": 0.0008000005036592484,
+          "count": 1,
+          "maxMs": 0.0008000005036592484
+        },
+        "TQ.onEvent:RECONCILIATION_COMPLETED": {
+          "ms": 574.3664999995381,
+          "count": 1,
+          "maxMs": 574.3664999995381
+        },
+        "listener:event:2": {
+          "ms": 574.3792000003159,
+          "count": 1,
+          "maxMs": 574.3792000003159
+        },
+        "sqlite:get:entry_execution_tasks": {
+          "ms": 195.25270003266633,
+          "count": 2624,
+          "maxMs": 0.5537999998778105
+        },
+        "sqlite:run:entry_execution_tasks": {
+          "ms": 349.1192000415176,
+          "count": 2622,
+          "maxMs": 95.8504999987781
+        },
+        "saveEntryExecution": {
+          "ms": 1134.2064999751747,
+          "count": 2622,
+          "maxMs": 96.3743999991566
+        },
+        "listener:event:3": {
+          "ms": 1200.3903000000864,
+          "count": 1,
+          "maxMs": 1200.3903000000864
+        },
+        "listener:event:4": {
+          "ms": 0.0074000004678964615,
+          "count": 1,
+          "maxMs": 0.0074000004678964615
+        },
+        "listener:event:5": {
+          "ms": 0.001199999824166298,
+          "count": 1,
+          "maxMs": 0.001199999824166298
+        },
+        "listener:event:6": {
+          "ms": 0.0021000001579523087,
+          "count": 1,
+          "maxMs": 0.0021000001579523087
+        },
+        "listener:event:send": {
+          "ms": 0.008100001141428947,
+          "count": 1,
+          "maxMs": 0.008100001141428947
+        },
+        "publish:RECONCILIATION_COMPLETED": {
+          "ms": 1774.8585000000894,
+          "count": 1,
+          "maxMs": 1774.8585000000894
+        }
+      },
+      "entrySaveCalls": 2622,
+      "manualSaveCalls": 141,
+      "entrySqlChanged": 1,
+      "manualSqlChanged": 49,
+      "adapterWrapped": true,
+      "remoteCompleted": 15973679.0487,
+      "applyStart": 15958653.234,
+      "remoteToApplyMs": 1.2394999992102385,
+      "beforeCompletionPublish": 15961972.294,
+      "mutationElapsedMs": 3319.0600000005215,
+      "totalMs": 5612.163200000301
+    },
+    {
+      "id": "baseline-6",
+      "at": 1791450764595,
+      "phases": {
+        "sqlite:all:v": {
+          "ms": 244.86490000225604,
+          "count": 99,
+          "maxMs": 5.044800000265241
+        },
+        "sqlite:get:v": {
+          "ms": 4.728500017896295,
+          "count": 83,
+          "maxMs": 0.107999999076128
+        },
+        "sqlite:run:v": {
+          "ms": 9.732900001108646,
+          "count": 20,
+          "maxMs": 0.6532999984920025
+        },
+        "sqlite:get:runtime_state": {
+          "ms": 17.968900000676513,
+          "count": 4,
+          "maxMs": 4.967399999499321
+        },
+        "TQ.onEvent:ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED": {
+          "ms": 35.53559999912977,
+          "count": 3,
+          "maxMs": 16.16499999910593
+        },
+        "sqlite:run:runtime_events": {
+          "ms": 16.002000000327826,
+          "count": 5,
+          "maxMs": 6.232499999925494
+        },
+        "recordRuntimeEvent": {
+          "ms": 16.376299990341067,
+          "count": 26,
+          "maxMs": 6.309000000357628
+        },
+        "publish:ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED": {
+          "ms": 41.008399998769164,
+          "count": 3,
+          "maxMs": 19.104199999943376
+        },
+        "sqlite:all:external_research_tasks": {
+          "ms": 0.1380000002682209,
+          "count": 3,
+          "maxMs": 0.04820000007748604
+        },
+        "sqlite:get:external_research_tasks": {
+          "ms": 0.027700001373887062,
+          "count": 3,
+          "maxMs": 0.009600000455975533
+        },
+        "sqlite:all:other": {
+          "ms": 0.5546999983489513,
+          "count": 6,
+          "maxMs": 0.11129999905824661
+        },
+        "sqlite:run:runtime_state": {
+          "ms": 4.709799999371171,
+          "count": 1,
+          "maxMs": 4.709799999371171
+        },
+        "TQ.onEvent:MANUAL_ORDER_REMOTE_STATUS_UNVERIFIED": {
+          "ms": 0.005699999630451202,
+          "count": 2,
+          "maxMs": 0.003100000321865082
+        },
+        "sqlite:run:execution_tasks": {
+          "ms": 69.08170001395047,
+          "count": 141,
+          "maxMs": 1.9845000002533197
+        },
+        "saveManualExecution": {
+          "ms": 72.72600001096725,
+          "count": 141,
+          "maxMs": 2.0252000000327826
+        },
+        "publish:MANUAL_ORDER_REMOTE_STATUS_UNVERIFIED": {
+          "ms": 17.243100000545382,
+          "count": 2,
+          "maxMs": 8.873500000685453
+        },
+        "TQ.onEvent:POSITION_LIFECYCLE_TRANSITION": {
+          "ms": 0.021099993959069252,
+          "count": 20,
+          "maxMs": 0.0032999999821186066
+        },
+        "publish:POSITION_LIFECYCLE_TRANSITION": {
+          "ms": 0.2744000032544136,
+          "count": 20,
+          "maxMs": 0.04100000113248825
+        },
+        "sqlite:all:entry_execution_tasks": {
+          "ms": 214.28959999978542,
+          "count": 1,
+          "maxMs": 214.28959999978542
+        },
+        "entryExecutionClaimStats": {
+          "ms": 523.2192000001669,
+          "count": 1,
+          "maxMs": 523.2192000001669
+        },
+        "listener:event:0": {
+          "ms": 0.002199999988079071,
+          "count": 1,
+          "maxMs": 0.002199999988079071
+        },
+        "listener:event:1": {
+          "ms": 0.0009000003337860107,
+          "count": 1,
+          "maxMs": 0.0009000003337860107
+        },
+        "TQ.onEvent:RECONCILIATION_COMPLETED": {
+          "ms": 587.4273000005633,
+          "count": 1,
+          "maxMs": 587.4273000005633
+        },
+        "listener:event:2": {
+          "ms": 587.441000001505,
+          "count": 1,
+          "maxMs": 587.441000001505
+        },
+        "sqlite:get:entry_execution_tasks": {
+          "ms": 152.44379997067153,
+          "count": 2624,
+          "maxMs": 0.6068999990820885
+        },
+        "sqlite:run:entry_execution_tasks": {
+          "ms": 141.71589999087155,
+          "count": 2622,
+          "maxMs": 0.29569999873638153
+        },
+        "saveEntryExecution": {
+          "ms": 831.4956000186503,
+          "count": 2622,
+          "maxMs": 5.9979999996721745
+        },
+        "listener:event:3": {
+          "ms": 904.2050000000745,
+          "count": 1,
+          "maxMs": 904.2050000000745
+        },
+        "listener:event:4": {
+          "ms": 0.00820000097155571,
+          "count": 1,
+          "maxMs": 0.00820000097155571
+        },
+        "listener:event:5": {
+          "ms": 0.0016000010073184967,
+          "count": 1,
+          "maxMs": 0.0016000010073184967
+        },
+        "listener:event:6": {
+          "ms": 0.002699999138712883,
+          "count": 1,
+          "maxMs": 0.002699999138712883
+        },
+        "listener:event:send": {
+          "ms": 0.010399999096989632,
+          "count": 1,
+          "maxMs": 0.010399999096989632
+        },
+        "publish:RECONCILIATION_COMPLETED": {
+          "ms": 1491.7508000005037,
+          "count": 1,
+          "maxMs": 1491.7508000005037
+        }
+      },
+      "entrySaveCalls": 2622,
+      "manualSaveCalls": 141,
+      "entrySqlChanged": 0,
+      "manualSqlChanged": 49,
+      "adapterWrapped": true,
+      "remoteCompleted": 15973679.0495,
+      "applyStart": 15973680.3001,
+      "remoteToApplyMs": 1.2506000008434057,
+      "beforeCompletionPublish": 15978059.7484,
+      "mutationElapsedMs": 4379.44830000028,
+      "totalMs": 6406.134400000796
+    }
+  ]
+}

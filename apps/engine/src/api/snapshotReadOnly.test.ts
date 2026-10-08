@@ -33,7 +33,7 @@ it('reconciliation telemetry still persists execution facts',async()=>{
  runtime.state.entryIntents.set('i',{id:'i'} as any);runtime.state.entryOrders.set('o',{id:'o',intentId:'i'} as any);
  runtime.state.manualIntents.set('m',{id:'m'} as any);runtime.state.manualOrders.set('mo',{id:'mo',intentId:'m'} as any);
  const entry=vi.spyOn(runtime.settingsStore,'saveEntryExecution').mockImplementation(()=>{}),manual=vi.spyOn(runtime.settingsStore,'saveManualExecution').mockImplementation(()=>{});
- runtime.events.publish('RECONCILIATION_COMPLETED',{});expect(entry).toHaveBeenCalled();expect(manual).toHaveBeenCalled();
+ runtime.events.publish('RECONCILIATION_COMPLETED',{executionChanges:{entryOrderIds:[...runtime.state.entryOrders.keys()],manualOrderIds:[...runtime.state.manualOrders.keys()]}});expect(entry).toHaveBeenCalled();expect(manual).toHaveBeenCalled();
  entry.mockClear();
  for(let n=0;n<200;n++)runtime.state.entryOrders.set(`history-${n}`,{id:`history-${n}`,intentId:'i'} as any);
  runtime.events.publish('ENTRY_ORDER_TTL_CLOSED',{orderId:'o'});

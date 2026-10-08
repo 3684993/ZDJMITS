@@ -1,3 +1,5 @@
+import {EntryClaimStatsIndex,type ClaimRow} from './entryClaimStatsIndex.js';
+import {reconciliationTiming} from '../services/reconciliationTiming.js';
 import { mkdir, readFile, stat, link, unlink } from "node:fs/promises";
 import path from "node:path";
 import { DatabaseSync, backup as sqliteBackup } from "node:sqlite";
@@ -263,6 +265,7 @@ export class SettingsStore {
   private baselineFlights=new Map<string,Promise<string>>();
   checkpointMetrics(){return this.runtimeCheckpointStats;}
   private transactionActive = false;
+  private entryClaimStatsIndex:EntryClaimStatsIndex|null=null;
   private operationalWorker:Worker|null=null;
   private operationalCache: {
     at: number;
@@ -573,6 +576,14 @@ export class SettingsStore {
         "DELETE FROM secrets WHERE ciphertext NOT LIKE 'credential-manager:%' AND ciphertext NOT LIKE 'machine-dpapi:%'",
       )
       .run();
+    // Derived invalidation IDs are transactional with exact journal writes, including external SQL edits.
+    this.db.exec(`CREATE TABLE IF NOT EXISTS entry_claim_stat_changes(intent_id TEXT PRIMARY KEY);
+      CREATE TRIGGER IF NOT EXISTS entry_claim_stats_insert AFTER INSERT ON entry_execution_tasks BEGIN INSERT OR IGNORE INTO entry_claim_stat_changes VALUES(NEW.intent_id); END;
+      CREATE TRIGGER IF NOT EXISTS entry_claim_stats_update AFTER UPDATE ON entry_execution_tasks BEGIN INSERT OR IGNORE INTO entry_claim_stat_changes VALUES(NEW.intent_id); END;
+      CREATE TRIGGER IF NOT EXISTS entry_claim_stats_delete AFTER DELETE ON entry_execution_tasks BEGIN INSERT OR IGNORE INTO entry_claim_stat_changes VALUES(OLD.intent_id); END;`);
+    this.entryClaimStatsIndex=new EntryClaimStatsIndex();
+    const now=Date.now();for(const row of this.db.prepare('SELECT intent_id,active,released_at,payload,scope,isolation_mode,isolation_key FROM entry_execution_tasks').iterate() as Iterable<ClaimRow>)this.entryClaimStatsIndex.update(row,now);
+    this.db.exec('DELETE FROM entry_claim_stat_changes'); // Consumed derived IDs only, never execution history.
   }
   private async defaults() {
     return JSON.parse(
@@ -1174,10 +1185,12 @@ export class SettingsStore {
     if (!row) throw new Error('EXECUTION_JOURNAL_CLAIM_FAILED');
     return JSON.parse(row.payload) as ManualExecutionRecord;
   }
-  saveManualExecution(value: ManualExecutionRecord) {
-    const active=activeOrderStatus(value.order.status)?1:0,payload=JSON.stringify(value);
-    this.db.prepare('UPDATE execution_tasks SET active=?,payload=?,updated_at=? WHERE intent_id=? AND (active<>? OR payload<>?)')
-      .run(active,payload,Date.now(),value.intent.id,active,payload);
+  saveManualExecution(value:ManualExecutionRecord){return reconciliationTiming.measure('journal.manual',()=>this.saveManualExecutionRecord(value));}
+  private saveManualExecutionRecord(value: ManualExecutionRecord) {
+    reconciliationTiming.count('manualJournalSaveCalls');
+    const active=activeOrderStatus(value.order.status)?1:0,payload=reconciliationTiming.measure('journal.manual.serialize',()=>JSON.stringify(value));
+    const changed=reconciliationTiming.measure('journal.manual.sqliteWrite',()=>this.db.prepare('UPDATE execution_tasks SET active=?,payload=?,updated_at=? WHERE intent_id=? AND (active<>? OR payload<>?)')
+      .run(active,payload,Date.now(),value.intent.id,active,payload));reconciliationTiming.count('manualJournalSqlChangedRows',Number(changed.changes));
   }
   loadManualExecutions(fills:any[]=[]): ManualExecutionRecord[] {
     return (this.db.prepare('SELECT payload FROM execution_tasks').all() as Array<{payload:string}>)
@@ -1256,7 +1269,9 @@ export class SettingsStore {
     catch(error){this.db.exec('ROLLBACK');throw error;}
     finally{this.transactionActive=false;}
   }
-  saveEntryExecution(value:EntryExecutionRecord){
+  saveEntryExecution(value:EntryExecutionRecord){return reconciliationTiming.measure('journal.entry',()=>this.saveEntryExecutionRecord(value));}
+  private saveEntryExecutionRecord(value:EntryExecutionRecord){
+    reconciliationTiming.count('entryJournalSaveCalls');
     const now=Date.now(),order=value.order as any;
     const stored=this.db.prepare('SELECT active,released_at,isolation_mode,isolation_key FROM entry_execution_tasks WHERE intent_id=?')
       .get(value.intent.id) as {active:number;released_at:number;isolation_mode:string;isolation_key:string}|undefined;
@@ -1275,14 +1290,28 @@ export class SettingsStore {
     }
     // Re-evaluate proof validity on every call, but unchanged durable facts must
     // not rewrite thousands of historical journals on every reconciliation.
-    const payload=JSON.stringify(value);
-    this.db.prepare('UPDATE entry_execution_tasks SET active=?,payload=?,updated_at=?,released_at=? WHERE intent_id=? AND (active<>? OR payload<>? OR (?=1 AND released_at=0))')
-      .run(nextActive,payload,now,releasedByProof?Math.max(stored?.released_at??0,now):(stored?.released_at??0),value.intent.id,nextActive,payload,releasedByProof?1:0);
+    const payload=reconciliationTiming.measure('journal.entry.serialize',()=>JSON.stringify(value));
+    const changed=reconciliationTiming.measure('journal.entry.sqliteWrite',()=>this.db.prepare('UPDATE entry_execution_tasks SET active=?,payload=?,updated_at=?,released_at=? WHERE intent_id=? AND (active<>? OR payload<>? OR (?=1 AND released_at=0))')
+      .run(nextActive,payload,now,releasedByProof?Math.max(stored?.released_at??0,now):(stored?.released_at??0),value.intent.id,nextActive,payload,releasedByProof?1:0));reconciliationTiming.count('entryJournalSqlChangedRows',Number(changed.changes));
   }
   /** Hydrate history verbatim. Validity is time-dependent, so no load-time flag can grant a release. */
   loadEntryExecutions():EntryExecutionRecord[]{return(this.db.prepare('SELECT payload FROM entry_execution_tasks').all() as Array<{payload:string}>).map(row=>JSON.parse(row.payload));}
   /** Effective risk claims include invalid/expired proof releases, even before a reconciliation write. */
   entryExecutionClaimStats(){
+    if(this.transactionActive||!this.entryClaimStatsIndex)return this.scanEntryExecutionClaimStats();
+    const now=Date.now(),index=this.entryClaimStatsIndex;
+    if(!this.db.prepare('SELECT 1 FROM entry_claim_stat_changes LIMIT 1').get())return index.stats(now);
+    // The short transaction prevents a concurrent writer's invalidation being consumed without its value.
+    let changed:ClaimRow[];
+    this.db.exec('SAVEPOINT entry_claim_stats_refresh');
+    try{changed=this.db.prepare('SELECT c.intent_id,t.active,t.released_at,t.payload,t.scope,t.isolation_mode,t.isolation_key FROM entry_claim_stat_changes c LEFT JOIN entry_execution_tasks t ON t.intent_id=c.intent_id').all() as ClaimRow[];this.db.exec('DELETE FROM entry_claim_stat_changes');this.db.exec('RELEASE entry_claim_stats_refresh');}
+    catch(error){this.db.exec('ROLLBACK TO entry_claim_stats_refresh');this.db.exec('RELEASE entry_claim_stats_refresh');throw error;}
+    reconciliationTiming.count('claimStatsChangedIds',changed.length);
+    for(const row of changed){if(row.payload===null)index.remove(row.intent_id);else index.update(row,now);}
+
+    return index.stats(now);
+  }
+  private scanEntryExecutionClaimStats(){
     const evaluatedAt=Date.now();
     const rows=this.db.prepare('SELECT active,released_at,payload,scope,isolation_mode,submission_key,isolation_key FROM entry_execution_tasks').all() as Array<{active:number;released_at:number;payload:string;scope:string;isolation_mode:string;submission_key:string;isolation_key:string}>;
     const facts=rows.map(row=>{try{const order=JSON.parse(row.payload)?.order;return{...row,status:String(order?.status??''),historicalUnknown:Boolean(order)&&isHistoricalUnknownEntryOrder(order),effectiveActive:row.active===1||!order||durableEntryClaimActive(order,evaluatedAt)};}

@@ -1,0 +1,42 @@
+[
+  {
+    "createdAt": "2026-10-08T02:37:25.9797200Z",
+    "queryOk": true,
+    "inJob": false,
+    "name": "ssh.exe",
+    "parentPid": 41600,
+    "pid": 24916
+  },
+  {
+    "createdAt": "2026-10-07T23:19:22.9950470Z",
+    "queryOk": true,
+    "inJob": false,
+    "name": "powershell.exe",
+    "parentPid": 41600,
+    "pid": 11852
+  },
+  {
+    "createdAt": "2026-09-18T14:52:52.4843770Z",
+    "queryOk": true,
+    "inJob": false,
+    "name": "llama-server.exe",
+    "parentPid": 10764,
+    "pid": 12732
+  },
+  {
+    "createdAt": "2026-10-05T05:44:46.2086990Z",
+    "queryOk": true,
+    "inJob": false,
+    "name": "llama-server.exe",
+    "parentPid": 24180,
+    "pid": 17468
+  },
+  {
+    "createdAt": "2026-10-05T05:45:30.4119800Z",
+    "queryOk": true,
+    "inJob": false,
+    "name": "llama-server.exe",
+    "parentPid": 27984,
+    "pid": 51124
+  }
+]

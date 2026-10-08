@@ -1,3 +1,5 @@
+import {reconciliationTiming} from '../services/reconciliationTiming.js';
+import {persistReconciliationJournals,latestEntryRecord,latestManualRecord} from '../services/reconciliationJournalPersistence.js';
 import {maintainStorageBounds} from '../services/storageCapacityGuard.js';
 import { resolveQuoteAsset, testnetFundsOnlyEntry } from '@zdj/core';
 import type {TradingQualityRuntimeObserver} from '../services/tradingQualityRuntimeObserver.js';
@@ -625,13 +627,13 @@ export class EngineRuntime {
     void runtime.convergeRecoveredExits();
     (state as any).tradingQualityEvidenceReady=false;
     try{runtime.tradingQuality = new TradingQualityCollector(path.join(opts.dataDir,"trading-quality.sqlite"),state,events,{historyWorker:!testHarness});}catch(error){events.publish('TRADING_QUALITY_STORAGE_UNAVAILABLE',{reason:String(error)});}
-    events.on("event", (event) => {
+    events.onMeasured("RuntimePersistence", (event) => {
       if(runtime.persistenceClosed)return;
       // J4: the usage ledger is fed from the same event stream the audit uses, so a request that
       // failed before the caller ever saw an answer is still on the record.
-      runtime.observeModelUsage(event);
+      runtime.observeModelUsage({...event,payload:event.payload});
       const requiredBeforeWrite=['ENTRY_SUBMIT_ATTEMPTED','MANUAL_SUBMISSION_PREPARED','TP_SUBMISSION_PREPARED'];
-      if(requiredBeforeWrite.includes(event.type))store.recordRuntimeEvent(event);else runtime.writes.apply(`event:${event.id}`,()=>store.recordRuntimeEvent(event));
+      reconciliationTiming.measure('runtime.eventPersistence',()=>{if(requiredBeforeWrite.includes(event.type))store.recordRuntimeEvent(event);else runtime.writes.apply(`event:${event.id}`,()=>store.recordRuntimeEvent(event));});
       // Persist newly-created recovery facts without forcing the generic checkpoint to scan
       // every historical runtime entity. These events are published only after in-memory mutation.
       if(event.type==='TRADE_PLAN_PERSISTED'){
@@ -646,14 +648,18 @@ export class EngineRuntime {
         const fill=(event.payload as any)?.fill,fillId=String(fill?.fillId??'');
         if(fillId)runtime.writes.apply(`runtime-entity:fill:${fillId}`,()=>store.persistRuntimeEntity('executionFills',fillId,fill,{tuple:false,front:true,maxIds:5000}));
       }
-      if(event.type==='RECONCILIATION_COMPLETED'||event.type==='ENTRY_ORDER_TTL_CLOSED'||event.type==='ENTRY_ORDER_REPRICED'){
+      if(event.type==='RECONCILIATION_COMPLETED')persistReconciliationJournals(event,state,value=>runtime.writes.apply(`entry:${value.order.id}`,()=>store.saveEntryExecution(latestEntryRecord(state,value.order.id))),value=>runtime.writes.apply(`manual:${value.order.id}`,()=>store.saveManualExecution(latestManualRecord(state,value.order.id))));
+      if(event.type==='ENTRY_ORDER_TTL_CLOSED'||event.type==='ENTRY_ORDER_REPRICED'){
         const orderId=(event.payload as any)?.orderId;
-        const orders=event.type==='RECONCILIATION_COMPLETED'||!orderId?state.entryOrders.values():[state.entryOrders.get(orderId)];
+        const orders=!orderId?state.entryOrders.values():[state.entryOrders.get(orderId)];
         for(const order of orders){if(!order)continue;const intent=state.entryIntents.get(order.intentId);if(intent)runtime.writes.apply(`entry:${order.id}`,()=>store.saveEntryExecution({intent,order,reservation:order.reservationId?state.entryReservations.get(order.reservationId):undefined}));}
       }
       if(['ENTRY_SUBMIT_ATTEMPTED','ENTRY_ORDER_CREATED','ENTRY_ORDER_MANAGEMENT_UNVERIFIED','MANUAL_SUBMISSION_PREPARED','TP_SUBMISSION_PREPARED','TP_ORDER_REJECTED','MANUAL_EXIT_GOAL_QUEUED','MANUAL_EXIT_GOAL_PROGRESS','MANUAL_EXIT_GOAL_COMPLETED'].includes(event.type))store.persistRuntime(state.serialize());
-      if(event.type.startsWith('MANUAL_')||event.type==='RECONCILIATION_COMPLETED') {
-        for(const order of state.manualOrders.values()) {
+      if(event.type.startsWith('MANUAL_')) {
+        const payload=event.payload as any,orderId=payload?.orderId??payload?.order?.id;
+        const manualRows=reconciliationTiming.active()&&orderId?[state.manualOrders.get(orderId)]:reconciliationTiming.active()&&payload?.intent?.id?[...state.manualOrders.values()].filter(row=>row.intentId===payload.intent.id):state.manualOrders.values();
+        for(const order of manualRows) {
+          if(!order)continue;
           const intent=state.manualIntents.get(order.intentId);
           if(intent)runtime.writes.apply(`manual:${order.id}`,()=>store.saveManualExecution({intent,order}));
         }

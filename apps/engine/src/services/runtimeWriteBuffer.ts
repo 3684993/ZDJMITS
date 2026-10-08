@@ -1,4 +1,4 @@
-/** Coalesced retry for non-critical telemetry/checkpoints. Submission journals remain synchronous. */
+/** Success executes synchronously inline; only failed non-critical writes enter a coalesced retry queue. Authority-critical submission journals must call the store directly and propagate failure. */
 export class RuntimeWriteBuffer {
   private pending=new Map<string,()=>void>();private failures=0;private overflow=0;private lastError:string|null=null;
   apply(key:string,write:()=>void){try{write();this.pending.delete(key);}catch(error){this.failures++;this.lastError=String(error);if(this.pending.has(key)||this.pending.size<5000)this.pending.set(key,write);else this.overflow++;}}

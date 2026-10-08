@@ -1,0 +1,17 @@
+{
+  "baselineMain": "69486283bcaeb50a2d65b846ce4fd20b1109105a",
+  "at": "2026-10-08T09:38:57.418956+00:00",
+  "fullVerifyRuns": 1,
+  "deployment": "PENDING",
+  "settingsVersion": 247,
+  "frozen": [
+    "SSH",
+    "models",
+    "strategy",
+    "Entry",
+    "TP policy",
+    "TTLs",
+    "Production permissions"
+  ],
+  "operatorExchangeWrites": 0
+}

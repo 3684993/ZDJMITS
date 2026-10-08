@@ -1,0 +1,71 @@
+(node:47452) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:9080) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> @zdj/engine@3.9.7 test
+> vitest run src/services/reconciliationFanout.test.ts src/config/entryClaimStatsIndex.test.ts src/services/reconciliationService.test.ts src/services/reconciliationUnknownRisk.test.ts src/services/entrySubmissionIdentity.integration.test.ts src/services/executionLifecycle.integration.test.ts src/services/unknownProofHydration.test.ts src/services/privateAccountSync.test.ts src/api/snapshotReadOnly.test.ts src/events/eventBus.test.ts
+
+(node:24432) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+VITEST_TEST_TIMEOUT=5000 CI=
+
+ RUN  v3.2.7 D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine
+
+(node:43864) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:43864) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+ ✓ src/config/entryClaimStatsIndex.test.ts (4 tests) 492ms
+(node:14600) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:14600) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:14600) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:14600) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:14600) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:14600) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:14600) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/api/snapshotReadOnly.test.ts (5 tests) 1326ms
+   ✓ TradeRecord GET list/detail and Experience perform zero SQLite writes and zero state mutation  397ms
+(node:3908) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:3908) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+ ✓ src/services/executionLifecycle.integration.test.ts (17 tests) 2072ms
+   ✓ V3.9 execution outcomes with real services > retains UNKNOWN claim across SQLite reopen without another submission  513ms
+   ✓ V3.9 durable Entry ownership > enforces one underlying across database connections and retains a crash-before-response claim  530ms
+(node:22744) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:22744) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+ ✓ src/services/entrySubmissionIdentity.integration.test.ts (11 tests) 1198ms
+(node:11416) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:11416) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+ ✓ src/services/unknownProofHydration.test.ts (13 tests) 1057ms
+   ✓ hydrates malformed and expired proof verbatim but blocks new claims without waiting for a save  477ms
+(node:49452) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/services/reconciliationUnknownRisk.test.ts (11 tests) 39ms
+(node:49568) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/services/reconciliationService.test.ts (21 tests) 35ms
+(node:13524) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/services/reconciliationFanout.test.ts (6 tests) 24ms
+(node:38852) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/services/privateAccountSync.test.ts (5 tests) 10ms
+(node:48160) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/events/eventBus.test.ts (1 test) 4ms
+
+ Test Files  10 passed (10)
+      Tests  94 passed (94)
+   Start at  17:28:34
+   Duration  12.09s (transform 1.38s, setup 0ms, collect 3.43s, tests 6.26s, environment 2ms, prepare 831ms)
+
+(node:30616) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)

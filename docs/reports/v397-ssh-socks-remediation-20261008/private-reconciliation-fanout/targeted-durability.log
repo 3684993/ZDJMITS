@@ -1,0 +1,33 @@
+(node:24600) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:28016) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> @zdj/engine@3.9.7 test
+> vitest run src/services/reconciliationFanout.test.ts src/config/entryClaimStatsIndex.test.ts src/services/runtimeWriteBuffer.test.ts
+
+(node:18216) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+VITEST_TEST_TIMEOUT=5000 CI=
+
+ RUN  v3.2.7 D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine
+
+(node:5316) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:5316) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+ ✓ src/config/entryClaimStatsIndex.test.ts (4 tests) 486ms
+(node:48484) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/services/reconciliationFanout.test.ts (7 tests) 28ms
+(node:49200) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:49200) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+ ✓ src/services/runtimeWriteBuffer.test.ts (1 test) 39ms
+
+ Test Files  3 passed (3)
+      Tests  12 passed (12)
+   Start at  17:30:31
+   Duration  2.06s (transform 386ms, setup 0ms, collect 757ms, tests 554ms, environment 0ms, prepare 252ms)
+
+(node:42736) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)

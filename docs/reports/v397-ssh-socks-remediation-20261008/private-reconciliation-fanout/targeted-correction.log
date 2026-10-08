@@ -1,0 +1,57 @@
+(node:8068) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:28788) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> @zdj/engine@3.9.7 test
+> vitest run src/services/reconciliationFanout.test.ts src/config/entryClaimStatsIndex.test.ts
+
+(node:50392) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+VITEST_TEST_TIMEOUT=5000 CI=
+
+ RUN  v3.2.7 D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine
+
+(node:16548) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:16548) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+ ❯ src/config/entryClaimStatsIndex.test.ts (4 tests | 1 failed) 546ms
+   ✓ incremental stats equal full durable truth after direct SQL updates, malformed rows and deletion 162ms
+   ✓ unchanged snapshots do not SELECT or JSON.parse full durable history; changed IDs only 133ms
+   ✓ expiry and clock rollback revalidate strict proof exactly without a durable rewrite 114ms
+   × transaction rollback and restart do not leave optimistic cached telemetry 135ms
+     → database is not open
+(node:43920) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/services/reconciliationFanout.test.ts (6 tests) 25ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/config/entryClaimStatsIndex.test.ts > transaction rollback and restart do not leave optimistic cached telemetry
+Error: database is not open
+ ❯ SettingsStore.close src/config/settingsStore.ts:1901:14
+    1899|   close() {
+    1900|     void this.operationalWorker?.terminate();this.operationalWorker=nu…
+    1901|     this.db?.close();
+       |              ^
+    1902|   }
+    1903| }
+ ❯ src/config/entryClaimStatsIndex.test.ts:10:700
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 9 passed (10)
+   Start at  17:27:19
+   Duration  1.79s (transform 378ms, setup 0ms, collect 719ms, tests 571ms, environment 0ms, prepare 163ms)
+
+(node:34496) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+npm error Lifecycle script `test` failed with error:
+npm error code 1
+npm error path D:\MITS-WORKTREES\v397-private-reconciliation-fanout-20261008\apps\engine
+npm error workspace @zdj/engine@3.9.7
+npm error location D:\MITS-WORKTREES\v397-private-reconciliation-fanout-20261008\apps\engine
+npm error command failed
+npm error command C:\Windows\system32\cmd.exe /d /s /c vitest run src/services/reconciliationFanout.test.ts src/config/entryClaimStatsIndex.test.ts

@@ -1,0 +1,11 @@
+{
+  "at": "2026-10-08T09:34:55.305532+00:00",
+  "scope": "DURING_SINGLE_FULL_VERIFY_ENGINE_STOPPED",
+  "memory": {
+    "CommitTotal": 123295346688,
+    "CommitLimit": 126678085632,
+    "PhysicalAvailable": 19381936128,
+    "KernelPaged": 24976973824,
+    "KernelNonpaged": 9283268608
+  }
+}

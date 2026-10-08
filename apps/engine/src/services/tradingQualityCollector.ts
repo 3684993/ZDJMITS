@@ -56,7 +56,7 @@ export class TradingQualityCollector {
     if(!this.db.prepare('PRAGMA table_info(tq_episode_work)').all().some(row=>row.name==='revision'))this.db.exec('ALTER TABLE tq_episode_work ADD COLUMN revision INTEGER NOT NULL DEFAULT 0');
     (this.state as any).tradingQualityEvidenceReady=true;
     this.listener=e=>{try{this.onEvent(e);}catch(error){this.error=String(error);(this.state as any).tradingQualityEvidenceReady=false;if(qualityPolicy(this.state.settings).mode==='ENFORCE'&&['TRADING_QUALITY_OPPORTUNITY','TRADING_QUALITY_PRIMARY_LINK','ENTRY_SUBMIT_ATTEMPTED'].includes(e.type))throw error;}};
-    events.on('event',this.listener);
+    this.listener=events.onMeasured('TradingQuality',this.listener);
     if(options.historyWorker){
       // Automatic WAL work must not migrate back onto the Engine writer.
       // The history connection checkpoints in its own worker.

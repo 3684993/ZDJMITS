@@ -1,12 +1,14 @@
+import {performance} from 'node:perf_hooks';
 import { randomUUID } from 'node:crypto';
 
 /** All REST refresh triggers share one flight; only the same settings generation may publish. */
 export class PrivateAccountSync {
   private flight:Promise<void>|null=null;
   private lastStartedAt=0;
+  private applications:Array<{requestId:string;remoteCompletedAt:number;applicationMs:number;completionEventMs:number}>=[];
   private stats={requestId:null as string|null,lastSuccessAt:null as number|null,lastFailureAt:null as number|null,consecutiveFailures:0,coalesced:0,lastError:null as string|null,durationMs:0};
   constructor(private readonly context:{configured:()=>boolean;generation:()=>number;read:()=>Promise<any>;get:()=>any;set:(value:any)=>void;emit:(type:string,payload:unknown)=>void}){}
-  health(){return{...this.stats,inFlight:Boolean(this.flight),snapshotAgeMs:this.stats.lastSuccessAt===null?null:Date.now()-this.stats.lastSuccessAt};}
+  health(){const durations=this.applications.map(x=>x.applicationMs+x.completionEventMs).sort((a,b)=>a-b);return{resultApplicationTiming:{count:durations.length,maxMs:durations.at(-1)??null,p95Ms:durations.length?durations[Math.floor((durations.length-1)*.95)]:null,recent:this.applications},...this.stats,inFlight:Boolean(this.flight),snapshotAgeMs:this.stats.lastSuccessAt===null?null:Date.now()-this.stats.lastSuccessAt};}
   sync(trigger='POLL'):Promise<void>{
     const account=this.context.get();if(account.status==='READY'&&typeof account.asOf==='number'&&Date.now()-account.asOf>60_000)this.context.set({...account,status:'UNAVAILABLE',reason:'PRIVATE_DATA_STALE'});
     if(this.flight){this.stats.coalesced++;return this.flight;}
@@ -19,11 +21,11 @@ export class PrivateAccountSync {
     const generation=c.generation(),requestId=randomUUID(),startedAt=Date.now();this.stats.requestId=requestId;
     c.emit('PRIVATE_SYNC_STARTED',{requestId,trigger,generation,startedAt});
     try{
-      const account=await c.read();if(generation!==c.generation()){c.emit('PRIVATE_SYNC_DISCARDED',{requestId,reason:'SETTINGS_GENERATION_CHANGED'});return;}
+      const account=await c.read(),remoteCompletedAt=Date.now();if(generation!==c.generation()){c.emit('PRIVATE_SYNC_DISCARDED',{requestId,reason:'SETTINGS_GENERATION_CHANGED'});return;}
       const recovered=this.stats.consecutiveFailures>0;
       this.stats={...this.stats,lastSuccessAt:account.asOf??Date.now(),consecutiveFailures:0,lastError:null,durationMs:Date.now()-startedAt};
-      c.set({...account,status:'READY',source:'BINANCE_TESTNET_ACCOUNT',reason:null,riskBaseline:c.get().riskBaseline??null});
-      c.emit(recovered?'PRIVATE_SYNC_RECOVERED':'PRIVATE_SYNC_COMPLETED',{requestId,trigger,generation,durationMs:this.stats.durationMs,lastSuccessAt:this.stats.lastSuccessAt,enrichment:account.enrichment??null});
+      const applyStart=performance.now();c.set({...account,status:'READY',source:'BINANCE_TESTNET_ACCOUNT',reason:null,riskBaseline:c.get().riskBaseline??null});
+      const applicationMs=performance.now()-applyStart,emitStart=performance.now();c.emit(recovered?'PRIVATE_SYNC_RECOVERED':'PRIVATE_SYNC_COMPLETED',{requestId,trigger,generation,durationMs:this.stats.durationMs,lastSuccessAt:this.stats.lastSuccessAt,enrichment:account.enrichment??null});this.applications.push({requestId,remoteCompletedAt,applicationMs,completionEventMs:performance.now()-emitStart});if(this.applications.length>64)this.applications.shift();
     }catch(error){
       if(generation!==c.generation())return;
       const failedAt=Date.now(),reason=String(error instanceof Error?error.message:error).replace(/(signature|apiKey|apiSecret)=[^&\s]+/gi,'$1=[REDACTED]'),nextFailures=this.stats.consecutiveFailures+1;

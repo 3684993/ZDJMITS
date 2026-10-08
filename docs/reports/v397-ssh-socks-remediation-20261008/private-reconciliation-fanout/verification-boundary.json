@@ -1,0 +1,46 @@
+[
+  {
+    "pid": 48296,
+    "exists": false
+  },
+  {
+    "pid": 16304,
+    "exists": false
+  },
+  {
+    "pid": 29068,
+    "exists": false
+  },
+  {
+    "inJob": false,
+    "parentPid": 41600,
+    "pid": 11852,
+    "queryOk": true,
+    "name": "powershell.exe",
+    "createdAt": "2026-10-07T23:19:22.9950470Z"
+  },
+  {
+    "inJob": false,
+    "parentPid": 10764,
+    "pid": 12732,
+    "queryOk": true,
+    "name": "llama-server.exe",
+    "createdAt": "2026-09-18T14:52:52.4843770Z"
+  },
+  {
+    "inJob": false,
+    "parentPid": 24180,
+    "pid": 17468,
+    "queryOk": true,
+    "name": "llama-server.exe",
+    "createdAt": "2026-10-05T05:44:46.2086990Z"
+  },
+  {
+    "inJob": false,
+    "parentPid": 27984,
+    "pid": 51124,
+    "queryOk": true,
+    "name": "llama-server.exe",
+    "createdAt": "2026-10-05T05:45:30.4119800Z"
+  }
+]

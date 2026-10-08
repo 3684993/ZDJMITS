@@ -1,0 +1,25 @@
+{
+  "reason": "ONE_CANDIDATE_FULL_VERIFY_MEMORY_ISOLATION",
+  "at": "2026-10-08T09:34:08.3129313Z",
+  "identity": {
+    "instanceId": "1354def8-eba9-48ce-bb90-3c83a73da9a1",
+    "pid": 48296,
+    "startedAt": 1791434792333,
+    "host": "0.0.0.0",
+    "port": 8080,
+    "version": "3.9.7",
+    "buildId": "3.9.7-223bda27d4103c507b0a",
+    "artifactHash": "223bda27d4103c507b0a10c0efc3b576a84ed9fca58a96b07c1323463fe2ad81",
+    "sourceHash": "f4b639839911043ec6975bf9b8f809a5eebc446e65f0ad2adc24009386cb7ed1",
+    "startReason": "MANUAL_START",
+    "lanIps": [
+      "192.168.1.50"
+    ],
+    "restartCount": 274
+  },
+  "process": {
+    "created": "2026-10-08T12:46:31.056494+08:00",
+    "parent": 16304,
+    "pid": 48296
+  }
+}

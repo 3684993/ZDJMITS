@@ -1,0 +1,17 @@
+(node:50060) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:40680) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> @zdj/engine@3.9.7 typecheck
+> tsc -p tsconfig.json --noEmit
+
+src/runtime/appRuntime.ts(634,33): error TS2345: Argument of type 'DomainEvent' is not assignable to parameter of type '{ id?: string; type: string; ts: number; payload: any; }'.
+  Property 'payload' is optional in type 'DomainEvent' but required in type '{ id?: string; type: string; ts: number; payload: any; }'.
+npm error Lifecycle script `typecheck` failed with error:
+npm error code 2
+npm error path D:\MITS-WORKTREES\v397-private-reconciliation-fanout-20261008\apps\engine
+npm error workspace @zdj/engine@3.9.7
+npm error location D:\MITS-WORKTREES\v397-private-reconciliation-fanout-20261008\apps\engine
+npm error command failed
+npm error command C:\Windows\system32\cmd.exe /d /s /c tsc -p tsconfig.json --noEmit

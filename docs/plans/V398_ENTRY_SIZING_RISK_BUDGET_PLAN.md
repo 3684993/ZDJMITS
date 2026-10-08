@@ -1,3 +1,9 @@
+# Current closure — V3.9.8 RUNNING / 2026-10-09 06:17 +08
+
+用户另行明确授权的当前TESTNET升级启动完成：代码3327c84，CI37850135010 success，remote217hash通过。PID8524/build3.9.8-7271c941c2cdec049610；/health READY、closeout200、identity6/6、TP13/13。生产写0、Engine自然TP写1、任务人工交易0；Settings247/digest与原dirty checkout未变。仅一次实际MANUAL_START，无退出定时器/自动重启。风险函数仅影子、formal calibration/new-origin natural evidence UNKNOWN。额外在线native GET备份超界已取消；临时私有copy因policy拒绝删除而本机保留。详见IMPLEMENTATION_REPORT.md / RUNTIME_CLOSEOUT.json。下方为原分阶段历史，旧NOT_DEPLOYED不能作为当前状态。
+
+---
+
 # I2 实施状态 — 2026-10-09
 
 R2 在 `2b0143e5dc112266437da2e14c7eb808f51d9869` 完成 152 项远端 hash 核验后才修改代码。确定性 no-add、SQLite 原始授权、人工 ADD 拒绝、版本 3.9.8 与纯 shadow risk bounds 已实施；完整本地 verify 240 files / 2063 tests PASS。新增工具后的 S00 清单再次机械验证 PASS。细节及保留的两轮失败见 `docs/reports/v398-entry-sizing-quality-review/IMPLEMENTATION_REPORT.md`。

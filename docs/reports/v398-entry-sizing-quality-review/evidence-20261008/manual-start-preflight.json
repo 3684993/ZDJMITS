@@ -1,0 +1,14 @@
+{
+  "at": "2026-10-08T22:06:44.1741524+00:00",
+  "head": "3327c84ff943934653e003f98b31573b3886647d",
+  "environment": "TESTNET",
+  "positions": 13,
+  "openOrders": 12,
+  "riskIncreasingOpenOrders": 0,
+  "enginePreviouslyStopped": true,
+  "dataTarget": "D:\\MITS\\data",
+  "exitTimerRemoved": true,
+  "autoRestart": false,
+  "auxiliaryServicesUntouched": true,
+  "authorizedManualStartCalls": 1
+}

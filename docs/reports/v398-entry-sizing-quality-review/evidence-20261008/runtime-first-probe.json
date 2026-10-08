@@ -1,0 +1,19 @@
+{
+  "observedAt": "2026-10-08T22:06:47.516Z",
+  "methods": [
+    "GET"
+  ],
+  "taskManualExchangeWrites": 0,
+  "results": [
+    {
+      "endpoint": "/health",
+      "status": "UNAVAILABLE",
+      "errorType": "TypeError"
+    },
+    {
+      "endpoint": "/api/v3/diagnostics/closeout",
+      "status": "UNAVAILABLE",
+      "errorType": "TypeError"
+    }
+  ]
+}

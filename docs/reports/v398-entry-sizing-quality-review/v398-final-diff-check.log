@@ -1,0 +1,6 @@
+warning: in the working copy of 'docs/reports/v398-entry-sizing-quality-review/s00/current-identity.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'docs/reports/v398-entry-sizing-quality-review/s00/entrypoint-review.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'docs/reports/v398-entry-sizing-quality-review/v398-i2-publication.log', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'scripts/v398-evidence-manifest.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'scripts/v398-github-readback.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'scripts/v398-manual-start.ps1', LF will be replaced by CRLF the next time Git touches it

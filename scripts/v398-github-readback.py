@@ -29,5 +29,5 @@ if run:
             if re.search(r'gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{25,}',log):raise ValueError('CREDENTIAL_PATTERN')
             (out/f"github-run-{run}-job-{job['id']}.log").write_text(log,encoding='utf-8')
     except Exception as e:result['jobReadbackErrorType']=type(e).__name__
-(out/filename).write_text(json.dumps(result,indent=2)+'\n',encoding='utf-8')
+if '--print-only' not in sys.argv:(out/filename).write_text(json.dumps(result,indent=2)+'\n',encoding='utf-8')
 print(json.dumps(result))

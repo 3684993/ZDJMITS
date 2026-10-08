@@ -1,0 +1,20 @@
+{
+  "privatePath": "C:\\Users\\5700x\\AppData\\Local\\Temp\\v398-private-read-FzvAc6",
+  "originalDatabaseUntouched": true,
+  "automaticApprovalResult": "blocked by policy",
+  "excludedFromGitHubForPrivateData": true,
+  "files": [
+    {
+      "sha256": "E33FAA8F556D0ED8469A9E9A490F2E0174881E5799A00C77F9AE9B34D60D2545",
+      "bytes": 896204800,
+      "name": "zdj-settings.sqlite"
+    },
+    {
+      "sha256": "8B83D37EE50AD06921BF53666078AA5DC380E7F38951AF31470ACAF3D5B1B4B5",
+      "bytes": 1024,
+      "name": "zdj-settings.sqlite-journal"
+    }
+  ],
+  "at": "2026-10-08T22:20:58.4645754+00:00",
+  "status": "PRESERVED_PRIVATE_POLICY_REJECTED_CLEANUP"
+}

@@ -34,7 +34,7 @@ if '--remote' in sys.argv:
   if proc.returncode or hashlib.sha256(normalized(pathlib.Path(r['path']),proc.stdout)).hexdigest()!=r['sha256']:mismatches.append(r['path'])
  result={'ref':ref,'sha':subprocess.check_output(['git','rev-parse',ref],cwd=root,text=True).strip(),'checked':len(rows),'mismatches':mismatches,'passed':not mismatches,'observedAt':datetime.datetime.now(datetime.timezone.utc).isoformat()}
  name='REMOTE_'+(sys.argv[sys.argv.index('--phase')+1] if '--phase' in sys.argv else 'R2')+'_READBACK.json'
- (out/name).write_text(json.dumps(result,indent=2)+'\n',encoding='utf-8')
+ if '--verify-only' not in sys.argv:(out/name).write_text(json.dumps(result,indent=2)+'\n',encoding='utf-8')
  print(json.dumps(result));sys.exit(1 if mismatches else 0)
 (out/'EVIDENCE_MANIFEST.json').write_text(json.dumps(manifest,indent=2)+'\n',encoding='utf-8')
 print(json.dumps({'artifactCount':len(rows),'credentialFindings':0}))

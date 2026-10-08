@@ -41,3 +41,18 @@ TPGuardian、PositionReviewRunner、PositionService 和默认 Settings 相对 R2
 I2/运行后状态在后续小节记录，明确代码提交、远端 hash、CI run、一次 MANUAL_START、/health + closeout、IDENTITY_CLOSED 六项、TESTNET 与 production-write 实际读数。运行实例使用保留的 `D:\MITS\data`，原 dirty checkout 的六项变更不 reset/stash/switch/commit。8081/8083/8084 辅助服务保持原 PID，不部署生产环境。长期运行使用 detached 非重启 host，没有退出定时器；不承诺尚未观察到的未来可用性。
 
 提交 whitespace gate 曾发现两个 stdout 日志的尾部多余空行；原字节另存 `.original.gz`，plain log 仅规范末尾换行，保留完整输出内容和失败检查日志。secret scanner 的两个 cookie 报警证实是 package-lock `packages.dependencies.cookie` 的 npm semver，限定结构验证后记录 exemption，没有豁免真正 cookie。
+
+
+## 当前运行闭合 — 2026-10-09 06:17 +08
+
+代码 `3327c84ff943934653e003f98b31573b3886647d` 普通 FF 到 main，217 项 remote blob 哈希通过；[CI37850135010](https://github.com/3684993/ZDJMITS/actions/runs/37850135010) completed/success，deps/scripts/release/S00/typecheck/build/test全部成功，未额外 workflow_dispatch。
+
+用户独立明确授权的当前 TESTNET 升级启动已完成，不再是 NOT_DEPLOYED。原已停止，stop=0、实际 MANUAL_START=1；PID8524、host PID44084、instance c685f035-1f52-48ac-80fa-998811ff3fe5、build3.9.8-7271c941c2cdec049610。工具 freshness 预检第一次在任何子进程创建前拒绝；UTC DateTime 被重解析为本地字符串造成 +8h，类型证据记录并修正，PreflightOnly通过后才完成唯一实际启动。没有 Engine 失败后的重新启动、退出定时器或自动重启 supervisor。
+
+/health HTTP200 READY，closeout200，IDENTITY_CLOSED6/6；数据库 HEALTHY、scheduler RUNNING。启动前 signed GET13positions/12orders/risk-increasing0。原 TPGuardian 为 VVVUSDT SHORT41.25 补齐 BUY41.25 保护：第一次 SQLite lock 在 pre-wire 阶段 NOT_ATTEMPTED，正常保护重试后 TP_PROTECTED记录 exchangeOrderId775318990。当前 TP13/13，missing/duplicate/qtyMismatch/wrongSide/unverified均0。**Engine实际TESTNET写1、生产写0；任务人工交易0。** 不把自然保护写入藏成全局零写。
+
+额外运行后 native GET 卡在在线 SQLite backup，只停止 owned read-only helper30824，未动 Engine8524/模型。没有生成原生 readback，不声称成功；TP证据为当前实例 TP_PROTECTED、qty/side/exchange ID、gateway/counter，额外native GET仍UNKNOWN。自动审批拒绝删除临时私有备份，原因仅为 blocked by policy；私有copy保留本机，公开大小/hash/ref清单，不换方式重试删除、不上传私有数据。
+
+Settings247及完整payload digest前后相同；原 D:\MITS 六项dirty entries与HEAD保留。运行源码 D:\MITS-worktrees\v398-entry-quality-20261008、data junction指向原 D:\MITS\data；不要从旧dirty checkout启动旧build。8081/8083/8084仍PID12732/17468/51124。原stdout/stderr原字节私有归档并公开hash/ref；原数据库/私有完整历史日志不上传。随后只提交维护工具/运行证据/报告，不改变已加载Engine src/dist。
+
+详见RUNTIME_CLOSEOUT.json、分阶段快照、process receipts、source/hash/manifest、全部测试失败与成功日志。新origin的自然Entry/partial/concurrent/restart接受样本仍UNKNOWN，无强迫交易；formal sizing参数仍INSUFFICIENT_EVIDENCE。独立Reactivity历史6.14s未知链仍暂停。当前健康不代表未来无限uptime或风险算法已校准。

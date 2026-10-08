@@ -1,0 +1,426 @@
+{
+  "observedAt": "2026-10-08T22:12:28.288674+00:00",
+  "databaseMode": "read-only/query-only",
+  "settingsVersion": 247,
+  "settingsUpdatedAt": 1791349868282,
+  "settingsPayloadSha256": "762941247f34ec1e94a19371ea8b79227a72cff594a814578c3a9d61897cbbb6",
+  "environment": "TESTNET",
+  "executionMode": "TESTNET_ENABLED",
+  "activeV398Origins": 0,
+  "releaseHead": "3327c84ff943934653e003f98b31573b3886647d",
+  "canonicalHead": "ea531b5f51e717f0ead322733765f2d6de30b4cb",
+  "preservedCanonicalStatus": [
+    "D ZDJ-MITS-V3.9.2-UNKNOWN-P0-Fix-Verification-20260913.md",
+    "?? docs/reports/crash/engine-crash-20261006-071531/",
+    "?? docs/reports/crash/jitless-20261006-074518/",
+    "?? docs/reports/handoff/",
+    "?? scripts/collect-zdj-v397-handoff.ps1",
+    "?? scripts/vpn/"
+  ],
+  "taskSettingsWrites": 0,
+  "taskExchangeWrites": 0,
+  "currentInstanceBoundedEvents": [
+    {
+      "type": "ENGINE_INSTANCE_STARTED",
+      "ts": 1791497264098,
+      "payload": {
+        "instanceId": "c685f035-1f52-48ac-80fa-998811ff3fe5",
+        "pid": 8524,
+        "startReason": "MANUAL_START",
+        "restartCount": 276
+      }
+    },
+    {
+      "type": "TP_TERMINAL_FACT_PROJECTED",
+      "ts": 1791497271566,
+      "payload": {
+        "orderId": "tp_muz0y4ll_rlt4oyac",
+        "clientOrderId": "v396x886c70c48aac64e399dba540931142",
+        "exchangeOrderId": "540405465",
+        "status": "FILLED",
+        "source": "EXACT_ORDER",
+        "factObservedAt": 1791497262769
+      }
+    },
+    {
+      "type": "TP_TERMINAL_FACT_PROJECTED",
+      "ts": 1791497272409,
+      "payload": {
+        "orderId": "tp_muz86uls_cf8c2kga",
+        "clientOrderId": "v396x461c035baeef636c90f09eb20dcf5d",
+        "exchangeOrderId": "158705901",
+        "status": "FILLED",
+        "source": "EXACT_ORDER",
+        "factObservedAt": 1791497262769
+      }
+    },
+    {
+      "type": "TP_TERMINAL_FACT_PROJECTED",
+      "ts": 1791497274868,
+      "payload": {
+        "orderId": "tp_muzdzzyl_r9id7ns3",
+        "clientOrderId": "v396x4ddaf74980d68636ba5c8df8b655e3",
+        "exchangeOrderId": "183733944",
+        "status": "FILLED",
+        "source": "EXACT_ORDER",
+        "factObservedAt": 1791497262769
+      }
+    },
+    {
+      "type": "TP_TERMINAL_FACT_PROJECTED",
+      "ts": 1791497275432,
+      "payload": {
+        "orderId": "tp_muzekahx_4l8h8ngb",
+        "clientOrderId": "v396x4a8aa282fc0a7087d296b145bb7ca7",
+        "exchangeOrderId": "484257179",
+        "status": "FILLED",
+        "source": "EXACT_ORDER",
+        "factObservedAt": 1791497262769
+      }
+    },
+    {
+      "type": "TP_TERMINAL_FACT_PROJECTED",
+      "ts": 1791497276737,
+      "payload": {
+        "orderId": "tp_muzetfay_ugqtrhv6",
+        "clientOrderId": "v396x828c4309c907e832ea355a6fb5db21",
+        "exchangeOrderId": "341320275",
+        "status": "FILLED",
+        "source": "EXACT_ORDER",
+        "factObservedAt": 1791497262769
+      }
+    },
+    {
+      "type": "TP_TERMINAL_FACT_PROJECTED",
+      "ts": 1791497277291,
+      "payload": {
+        "orderId": "tp_muzexjei_ike0lcow",
+        "clientOrderId": "v396x437aab37d314a67a93a8d82a0d18b3",
+        "exchangeOrderId": "28623277113",
+        "status": "FILLED",
+        "source": "EXACT_ORDER",
+        "factObservedAt": 1791497262769
+      }
+    },
+    {
+      "type": "TP_REPAIR_STARTED",
+      "ts": 1791497333364,
+      "payload": {
+        "positionId": "exchange_VVVUSDT_SHORT",
+        "attempt": 1,
+        "source": "DETERMINISTIC_POSITION_FACTS"
+      }
+    },
+    {
+      "type": "TP_TARGET_SELECTED",
+      "ts": 1791497333371,
+      "payload": {
+        "positionId": "exchange_VVVUSDT_SHORT",
+        "price": 22.805,
+        "source": "FIXED_PROFITABLE",
+        "reason": "AI_HORIZON_EXPIRED_AT_1791459413441",
+        "authorizedTargetUsed": false,
+        "authorizedPresent": true,
+        "authorizedPrice": 24.197,
+        "authorizedReason": "Target aligns with the 15m Bollinger Lower Band (24.31) and recent swing lows, offering a high probability (98.4%) reach within the tactical horizon while maintaining a net profit above the minimum threshold.",
+        "authorizedHorizonExpiresAt": 1791459413441,
+        "authorizedValid": false,
+        "finalPrice": 22.805,
+        "fellBackFrom": "AI",
+        "refusals": [
+          "AI_HORIZON_EXPIRED_AT_1791459413441",
+          "TARGET_NOT_ON_REACHABLE_SIDE"
+        ],
+        "economics": {
+          "expectedNetProfit": 64.19231704560016,
+          "requiredNetProfit": 1,
+          "meetsProfitFloor": true
+        },
+        "profitFloorDisposition": "WARN_AND_KEEP",
+        "minMoveFloorPercent": 0,
+        "minMoveFloorSource": "DEFAULT_ZERO",
+        "parameterVersion": "TP-CONTRACT-V1:minMove=0:target=0.45:floor=1/0.15%",
+        "economicWarning": null,
+        "structureValid": false,
+        "fixedValid": true,
+        "aiPlanPresent": true
+      }
+    },
+    {
+      "type": "TP_SUBMISSION_PREPARED",
+      "ts": 1791497334828,
+      "payload": {
+        "positionId": "exchange_VVVUSDT_SHORT",
+        "order": {
+          "id": "tp_mv0399c0_ifje0w1h",
+          "clientOrderId": "v396xc23fed6c7fc85cdfce8568a31da99f",
+          "exchangeOrderId": null,
+          "cycleId": "cycle_entry_intent_muzg4s1l_7qblp97u",
+          "positionId": "exchange_VVVUSDT_SHORT",
+          "symbol": "VVVUSDT",
+          "side": "BUY",
+          "quantity": 41.25,
+          "price": 22.805,
+          "status": "UNKNOWN",
+          "createdAt": 1791497333370,
+          "updatedAt": 1791497333370
+        }
+      }
+    },
+    {
+      "type": "TP_SUBMISSION_NOT_SENT",
+      "ts": 1791497336214,
+      "payload": {
+        "positionId": "exchange_VVVUSDT_SHORT",
+        "clientOrderId": "v396xc23fed6c7fc85cdfce8568a31da99f",
+        "reason": "Error: TP_LOCAL_PREWIRE_FAILED: database is locked",
+        "exchangeRequestSent": false
+      }
+    },
+    {
+      "type": "TP_REPAIR_FAILED",
+      "ts": 1791497336220,
+      "payload": {
+        "positionId": "exchange_VVVUSDT_SHORT",
+        "orderId": "tp_mv0399c0_ifje0w1h",
+        "clientOrderId": "v396xc23fed6c7fc85cdfce8568a31da99f",
+        "submissionOutcome": "NOT_ATTEMPTED",
+        "message": "TP_LOCAL_PREWIRE_FAILED: database is locked",
+        "attempt": 1,
+        "nextRetryAt": 1791497396220,
+        "durableQuantity": 41.25,
+        "durableSide": "SHORT",
+        "reduceOnlySubmitted": false
+      }
+    },
+    {
+      "type": "TP_REPAIR_STARTED",
+      "ts": 1791497397975,
+      "payload": {
+        "positionId": "exchange_VVVUSDT_SHORT",
+        "attempt": 2,
+        "source": "DETERMINISTIC_POSITION_FACTS"
+      }
+    },
+    {
+      "type": "TP_TARGET_SELECTED",
+      "ts": 1791497397977,
+      "payload": {
+        "positionId": "exchange_VVVUSDT_SHORT",
+        "price": 22.805,
+        "source": "FIXED_PROFITABLE",
+        "reason": "AI_HORIZON_EXPIRED_AT_1791459413441",
+        "authorizedTargetUsed": false,
+        "authorizedPresent": true,
+        "authorizedPrice": 24.197,
+        "authorizedReason": "Target aligns with the 15m Bollinger Lower Band (24.31) and recent swing lows, offering a high probability (98.4%) reach within the tactical horizon while maintaining a net profit above the minimum threshold.",
+        "authorizedHorizonExpiresAt": 1791459413441,
+        "authorizedValid": false,
+        "finalPrice": 22.805,
+        "fellBackFrom": "AI",
+        "refusals": [
+          "AI_HORIZON_EXPIRED_AT_1791459413441",
+          "TARGET_NOT_ON_REACHABLE_SIDE"
+        ],
+        "economics": {
+          "expectedNetProfit": 64.19231704560016,
+          "requiredNetProfit": 1,
+          "meetsProfitFloor": true
+        },
+        "profitFloorDisposition": "WARN_AND_KEEP",
+        "minMoveFloorPercent": 0,
+        "minMoveFloorSource": "DEFAULT_ZERO",
+        "parameterVersion": "TP-CONTRACT-V1:minMove=0:target=0.45:floor=1/0.15%",
+        "economicWarning": null,
+        "structureValid": false,
+        "fixedValid": true,
+        "aiPlanPresent": true
+      }
+    },
+    {
+      "type": "TP_SUBMISSION_PREPARED",
+      "ts": 1791497401056,
+      "payload": {
+        "positionId": "exchange_VVVUSDT_SHORT",
+        "order": {
+          "id": "tp_mv03an6i_n03o484v",
+          "clientOrderId": "v396xa1ff1c7920cdd3e54e8e26c407a997",
+          "exchangeOrderId": null,
+          "cycleId": "cycle_entry_intent_muzg4s1l_7qblp97u",
+          "positionId": "exchange_VVVUSDT_SHORT",
+          "symbol": "VVVUSDT",
+          "side": "BUY",
+          "quantity": 41.25,
+          "price": 22.805,
+          "status": "UNKNOWN",
+          "createdAt": 1791497397977,
+          "updatedAt": 1791497397977
+        }
+      }
+    },
+    {
+      "type": "TP_PROTECTED",
+      "ts": 1791497403207,
+      "payload": {
+        "positionId": "exchange_VVVUSDT_SHORT",
+        "order": {
+          "id": "tp_mv03an6i_n03o484v",
+          "clientOrderId": "v396xa1ff1c7920cdd3e54e8e26c407a997",
+          "exchangeOrderId": "775318990",
+          "cycleId": "cycle_entry_intent_muzg4s1l_7qblp97u",
+          "positionId": "exchange_VVVUSDT_SHORT",
+          "symbol": "VVVUSDT",
+          "side": "BUY",
+          "quantity": 41.25,
+          "price": 22.805,
+          "status": "WORKING",
+          "createdAt": 1791497397977,
+          "updatedAt": 1791497403140
+        },
+        "repairAttempt": 2,
+        "tpEconomics": {
+          "currentTpPrice": 22.805,
+          "expectedGrossProfit": 65.04876000000016,
+          "expectedFees": 0.8564429544000002,
+          "expectedNetProfit": 64.19231704560016,
+          "requiredNetProfit": 1,
+          "breakEvenPrice": 24.36049296601859,
+          "minProfitableExitPrice": 24.33626120375156,
+          "status": "TP_OK",
+          "economicWarning": null,
+          "targetProvenance": {
+            "authorizedPresent": true,
+            "authorizedPrice": 24.197,
+            "authorizedReason": "Target aligns with the 15m Bollinger Lower Band (24.31) and recent swing lows, offering a high probability (98.4%) reach within the tactical horizon while maintaining a net profit above the minimum threshold.",
+            "authorizedHorizonExpiresAt": 1791459413441,
+            "authorizedValid": false,
+            "finalPrice": 22.805,
+            "fellBackFrom": "AI",
+            "refusals": [
+              "AI_HORIZON_EXPIRED_AT_1791459413441",
+              "TARGET_NOT_ON_REACHABLE_SIDE"
+            ],
+            "economics": {
+              "expectedNetProfit": 64.19231704560016,
+              "requiredNetProfit": 1,
+              "meetsProfitFloor": true
+            },
+            "profitFloorDisposition": "WARN_AND_KEEP",
+            "minMoveFloorPercent": 0,
+            "minMoveFloorSource": "DEFAULT_ZERO",
+            "parameterVersion": "TP-CONTRACT-V1:minMove=0:target=0.45:floor=1/0.15%"
+          }
+        }
+      }
+    }
+  ],
+  "eventLimit": 128,
+  "processProof": {
+    "receipt": {
+      "launchId": "4a98707d1ae24b95831560cb381f3974",
+      "pid": 8524,
+      "hostPid": 44084,
+      "startedAt": 1791497207245,
+      "enginePath": "D:\\MITS-WORKTREES\\v398-entry-quality-20261008\\apps\\engine\\dist\\main.js"
+    },
+    "processEvents": [
+      {
+        "ts": 1791497207705,
+        "event": "PROCESS_TELEMETRY_INSTALLED",
+        "pid": 8524,
+        "ppid": 44084,
+        "uptimeMs": 411,
+        "exitCode": null,
+        "payload": {
+          "execPath": "C:\\Program Files\\nodejs\\node.exe",
+          "argv1": "D:\\MITS-WORKTREES\\v398-entry-quality-20261008\\apps\\engine\\dist\\main.js"
+        }
+      },
+      {
+        "ts": 1791497207707,
+        "event": "PROCESS_START",
+        "pid": 8524,
+        "ppid": 44084,
+        "uptimeMs": 413,
+        "exitCode": null,
+        "payload": {
+          "releaseVersion": "3.9.8",
+          "host": "0.0.0.0",
+          "port": 8080,
+          "startReason": "MANUAL_START"
+        }
+      },
+      {
+        "ts": 1791497207707,
+        "event": "BOOTSTRAP_STARTED",
+        "pid": 8524,
+        "ppid": 44084,
+        "uptimeMs": 413,
+        "exitCode": null,
+        "payload": {
+          "configDir": "D:\\MITS-WORKTREES\\v398-entry-quality-20261008\\config",
+          "dataDir": "D:\\MITS-WORKTREES\\v398-entry-quality-20261008\\data"
+        }
+      },
+      {
+        "ts": 1791497264039,
+        "event": "BOOTSTRAP_RUNTIME_CREATED",
+        "pid": 8524,
+        "ppid": 44084,
+        "uptimeMs": 56745,
+        "exitCode": null,
+        "payload": {
+          "instanceId": "c685f035-1f52-48ac-80fa-998811ff3fe5",
+          "recoveredRuntimeEntities": []
+        }
+      },
+      {
+        "ts": 1791497264274,
+        "event": "HTTP_LISTENING",
+        "pid": 8524,
+        "ppid": 44084,
+        "uptimeMs": 56980,
+        "exitCode": null,
+        "payload": {
+          "host": "0.0.0.0",
+          "port": 8080,
+          "instanceId": "c685f035-1f52-48ac-80fa-998811ff3fe5"
+        }
+      }
+    ],
+    "hostEvents": [
+      {
+        "ts": 1791497207185,
+        "event": "HOST_STARTED",
+        "launchId": "4a98707d1ae24b95831560cb381f3974",
+        "hostPid": 44084,
+        "payload": {
+          "nodeVersion": "v22.23.1",
+          "nodeFlags": [
+            "--no-maglev"
+          ],
+          "v8Version": "12.4.254.21-node.56",
+          "enginePath": "D:\\MITS-WORKTREES\\v398-entry-quality-20261008\\apps\\engine\\dist\\main.js",
+          "workingDirectory": "D:\\MITS-WORKTREES\\v398-entry-quality-20261008"
+        }
+      },
+      {
+        "ts": 1791497207251,
+        "event": "CHILD_STARTED",
+        "launchId": "4a98707d1ae24b95831560cb381f3974",
+        "hostPid": 44084,
+        "payload": {
+          "pid": 8524,
+          "handleCaptured": true,
+          "nodeFlags": [
+            "--no-maglev"
+          ]
+        }
+      }
+    ],
+    "bytesPerFileBound": 65536,
+    "actualEngineStartsThisTask": 1,
+    "actualEngineStopsThisTask": 0,
+    "preflightRefusalBeforeAnyChildStart": true
+  }
+}

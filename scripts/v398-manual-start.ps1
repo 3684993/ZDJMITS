@@ -1,5 +1,5 @@
 [CmdletBinding()]
-param([switch]$AuthorizedCurrentInstanceStart)
+param([switch]$AuthorizedCurrentInstanceStart,[switch]$PreflightOnly)
 $ErrorActionPreference='Stop'
 if(-not $AuthorizedCurrentInstanceStart){throw 'EXPLICIT_CURRENT_INSTANCE_LIFECYCLE_AUTHORIZATION_REQUIRED'}
 $releaseRoot=[IO.Path]::GetFullPath((Split-Path -Parent $PSScriptRoot))
@@ -14,12 +14,16 @@ if($verification.exitCode -ne 0){throw 'OFFLINE_VERIFY_NOT_PASSED'}
 $readback=Get-Content -LiteralPath "$evidence/REMOTE_I2_READBACK.json" -Raw|ConvertFrom-Json
 if(-not $readback.passed -or $readback.sha -ne $head){throw 'I2_REMOTE_HASHES_UNPROVEN'}
 $facts=Get-Content -LiteralPath "$evidence/testnet-pre-start-readback.json" -Raw|ConvertFrom-Json
+# PowerShell 7.5 JSON dates are UTC DateTime values; stringify+Parse would drop Kind and shift by 8h.
+$captured=if($facts.capturedAt -is [DateTime]){[DateTimeOffset]$facts.capturedAt}else{[DateTimeOffset]::Parse([string]$facts.capturedAt)}
+$ageMinutes=([DateTimeOffset]::UtcNow-$captured).TotalMinutes
 if($facts.environment -ne 'TESTNET' -or $facts.host -ne 'demo-fapi.binance.com' -or $facts.taskExchangeWrites -ne 0 -or
-  $facts.positions -isnot [array] -or $facts.openOrders -isnot [array] -or ([DateTimeOffset]::UtcNow-[DateTimeOffset]::Parse($facts.capturedAt)).TotalMinutes -gt 5){throw 'FRESH_TESTNET_READBACK_UNPROVEN'}
+  $facts.positions -isnot [array] -or $facts.openOrders -isnot [array] -or $ageMinutes -lt 0 -or $ageMinutes -gt 5){throw 'FRESH_TESTNET_READBACK_UNPROVEN'}
 $increasing=@($facts.openOrders|Where-Object {($_.positionSide -eq 'LONG' -and $_.side -eq 'BUY') -or ($_.positionSide -eq 'SHORT' -and $_.side -eq 'SELL') -or ($_.positionSide -eq 'BOTH' -and $_.reduceOnly -ne $true)})
 if($increasing.Count){throw 'EXISTING_RISK_INCREASING_ORDER_REQUIRES_MANUAL_REVIEW'}
 $listeners=@(netstat -ano|Where-Object {$_ -match '^\s*TCP\s+\S+:8080\s+\S+\s+LISTENING\s+\d+'})
 if($listeners.Count){throw 'CURRENT_ENGINE_NOT_STOPPED_NO_AUTOMATIC_RETRY'}
+if($PreflightOnly){Write-Output 'PREFLIGHT_ONLY_PASS: no process start or data mutation';return}
 $liveData=[IO.Path]::GetFullPath('D:\MITS\data');$releaseData=[IO.Path]::GetFullPath((Join-Path $releaseRoot 'data'))
 if(-not $releaseData.StartsWith($releaseRoot+[IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase)){throw 'DATA_PATH_OUTSIDE_RELEASE'}
 if(Test-Path -LiteralPath $releaseData){

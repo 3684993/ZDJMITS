@@ -1,8 +1,8 @@
 {
-  "observedAt": "2026-10-08T21:52:29.712267+00:00",
+  "observedAt": "2026-10-08T21:55:54.890477+00:00",
   "researchPlanRemoteBase": "2b0143e5dc112266437da2e14c7eb808f51d9869",
-  "head": "2b0143e5dc112266437da2e14c7eb808f51d9869",
-  "sourceState": "UNCOMMITTED_I1",
+  "head": "3327c84ff943934653e003f98b31573b3886647d",
+  "sourceState": "COMMITTED_I2",
   "files": [
     {
       "path": "apps/dashboard/package.json",

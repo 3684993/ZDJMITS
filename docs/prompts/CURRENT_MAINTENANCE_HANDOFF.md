@@ -1,3 +1,9 @@
+# Current closure — V3.9.8 RUNNING / 2026-10-09 06:17 +08
+
+用户另行明确授权的当前TESTNET升级启动完成：代码3327c84，CI37850135010 success，remote217hash通过。PID8524/build3.9.8-7271c941c2cdec049610；/health READY、closeout200、identity6/6、TP13/13。生产写0、Engine自然TP写1、任务人工交易0；Settings247/digest与原dirty checkout未变。仅一次实际MANUAL_START，无退出定时器/自动重启。风险函数仅影子、formal calibration/new-origin natural evidence UNKNOWN。额外在线native GET备份超界已取消；临时私有copy因policy拒绝删除而本机保留。详见IMPLEMENTATION_REPORT.md / RUNTIME_CLOSEOUT.json。下方为原分阶段历史，旧NOT_DEPLOYED不能作为当前状态。
+
+---
+
 # Current — V3.9.8 I2 offline implementation; runtime pending — 2026-10-09
 
 R2 `2b0143e` research/plan and 152 remote hashes preceded all source edits. Deterministic NO_SEPARATE_ADD_V398 is declared before frozen candidates/Primary; a durable origin cap and exact submission claim share SQLite BEGIN IMMEDIATE; HUMAN ADD is rejected before all write/takeover paths. Risk min-of-bounds is pure shadow only, no uncalibrated multiplier. Primary sole authority; UNKNOWN, canonical funding/lot gaps and protected TP remain conservative.

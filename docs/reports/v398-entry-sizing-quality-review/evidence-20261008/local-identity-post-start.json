@@ -1,0 +1,22 @@
+{
+  "observedAt": "2026-10-08T22:07:09.329040+00:00",
+  "databaseMode": "read-only/query-only",
+  "settingsVersion": 247,
+  "settingsUpdatedAt": 1791349868282,
+  "settingsPayloadSha256": "762941247f34ec1e94a19371ea8b79227a72cff594a814578c3a9d61897cbbb6",
+  "environment": "TESTNET",
+  "executionMode": "TESTNET_ENABLED",
+  "activeV398Origins": 0,
+  "releaseHead": "3327c84ff943934653e003f98b31573b3886647d",
+  "canonicalHead": "ea531b5f51e717f0ead322733765f2d6de30b4cb",
+  "preservedCanonicalStatus": [
+    "D ZDJ-MITS-V3.9.2-UNKNOWN-P0-Fix-Verification-20260913.md",
+    "?? docs/reports/crash/engine-crash-20261006-071531/",
+    "?? docs/reports/crash/jitless-20261006-074518/",
+    "?? docs/reports/handoff/",
+    "?? scripts/collect-zdj-v397-handoff.ps1",
+    "?? scripts/vpn/"
+  ],
+  "taskSettingsWrites": 0,
+  "taskExchangeWrites": 0
+}

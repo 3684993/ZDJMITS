@@ -2,7 +2,7 @@
   "inventoryVersion": "S00-T01-entry-review-2",
   "capturedAt": "2026-09-21",
   "derivation": "mechanical over-approximating static scan by scripts/v396-s00-isolation-rules.mjs; a match can only tighten a status, never relax it",
-  "entryCount": 169,
+  "entryCount": 172,
   "statusLegend": {
     "ALLOWED_STATIC": "executed by the S00 verification command",
     "CONDITIONAL_NOT_RUN": "not executed; a later stage may run it only after the required boundary is proven",
@@ -1980,6 +1980,16 @@
       "requiredBoundary": "unique temp data dir plus unique loopback port; no credential read"
     },
     {
+      "path": "scripts/v398-finalize-runtime-evidence.py",
+      "kind": "script",
+      "sideEffects": [
+        "network-or-exchange"
+      ],
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "mock/no-network/no-exchange-write assertion with a write counter that throws"
+    },
+    {
       "path": "scripts/v398-github-readback.py",
       "kind": "script",
       "sideEffects": [
@@ -2000,6 +2010,16 @@
       "requiredBoundary": "unique temp data dir; unique loopback port; mock/no-network/no-exchange-write assertion; explicit user authorization where lifecycle is involved"
     },
     {
+      "path": "scripts/v398-local-identity-readonly.py",
+      "kind": "script",
+      "sideEffects": [
+        "runtime-data-or-credential-boundary"
+      ],
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "CONDITIONAL_NOT_RUN",
+      "requiredBoundary": "unique temp data dir plus unique loopback port; no credential read"
+    },
+    {
       "path": "scripts/v398-manual-start.ps1",
       "kind": "script",
       "sideEffects": [
@@ -2011,6 +2031,16 @@
       "derivedFrom": "file-content-and-one-hop-target",
       "status": "FORBIDDEN_OR_NOT_RUN",
       "requiredBoundary": "read-only adapter only; exchange writes require separate authorization; unique temp data dir outside the repository; no live database or Settings store; mock/no-network/no-exchange-write assertion with a write counter that throws; unique temp data dir plus unique loopback port; no credential read"
+    },
+    {
+      "path": "scripts/v398-preserve-prior-logs.ps1",
+      "kind": "script",
+      "sideEffects": [
+        "host-or-data-mutation"
+      ],
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store"
     },
     {
       "path": "scripts/v398-project-lineage.mjs",

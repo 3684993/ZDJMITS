@@ -1,0 +1,1635 @@
+{
+  "observedAt": "2026-10-08T22:07:50.241Z",
+  "methods": [
+    "GET"
+  ],
+  "taskManualExchangeWrites": 0,
+  "results": [
+    {
+      "endpoint": "/health",
+      "httpStatus": 503,
+      "data": {
+        "status": "STARTING",
+        "ready": false,
+        "checks": {
+          "database": {
+            "integrity": true,
+            "status": "HEALTHY",
+            "auditEvents": 70023,
+            "runtimePersistedAt": 1791458550411,
+            "checkedAt": 1791497211116,
+            "error": null
+          },
+          "marketSnapshots": 0,
+          "reconciliation": {
+            "phaseTiming": {
+              "scope": "CURRENT_INSTANCE_BOUNDED64_COMPLETED_CYCLES",
+              "phases": {},
+              "recent": []
+            },
+            "lastRun": 0,
+            "lastError": null,
+            "remoteReadBudget": {
+              "attemptedIds": [],
+              "budgetAborted": false,
+              "startedAt": 0,
+              "completedAt": 0,
+              "trackedIdentities": 0,
+              "historicalDeferred": 0,
+              "uniqueIdentitiesAttempted": 0,
+              "uniqueIdentitiesProgressed": 0,
+              "oldestDeferredAgeMs": null,
+              "retryReasonsByClass": [
+                {
+                  "class": "unknown",
+                  "counts": {}
+                },
+                {
+                  "class": "terminal",
+                  "counts": {}
+                },
+                {
+                  "class": "neverSubmitted",
+                  "counts": {}
+                }
+              ]
+            },
+            "exchangePositions": null,
+            "exchangeOrders": null,
+            "exchangeOpenEntryOrders": 0,
+            "exchangeOpenEntryOrdersStatus": "UNAVAILABLE",
+            "exchangeOpenEntryOrdersVerifiedAt": null,
+            "driftCount": 0,
+            "unresolvedDriftCount": 0,
+            "historicalUnknownCount": 0,
+            "activeRiskUnresolvedCount": 0,
+            "activeRiskUnresolvedCountScope": "ENTRY_OCCUPYING_RISK_PLUS_MANUAL_UNKNOWN_PLUS_TP_UNKNOWN",
+            "scopeLabel": "ENTRY_MANUAL_TP_MIXED_COMPAT",
+            "deprecationNote": "Compatibility aggregate only; new consumers must use scoped UNKNOWN fields",
+            "verifiedNoActiveRiskUnknownCount": 0,
+            "evaluatedAt": 0,
+            "entryUnknownHistorical": 0,
+            "entryUnknownOccupyingRisk": 0,
+            "entryUnknownProofValid": 0,
+            "activeEntryClaims": null,
+            "activeUnknownEntryClaims": null,
+            "activeEntryClaimsObservedAt": null,
+            "manualUnknown": 0,
+            "manualUnknownDetails": [],
+            "tpUnknown": 0,
+            "tpUnknownDetails": [],
+            "snapshotConsistency": "BEST_EFFORT_CROSS_STORE",
+            "correctedDifferenceCount": 0,
+            "verifiedOrderFactMismatchCount": 0,
+            "lastFullOrderScanAt": 0,
+            "fullOrderScanIntervalMs": 300000,
+            "unknownRiskScanIntervalMs": 60000,
+            "unknownRiskEvidenceTtlMs": 300000,
+            "unknownRiskAuditTierIntervalsMs": [
+              300000,
+              900000,
+              1800000
+            ],
+            "unknownRiskAuditsByTier": [
+              0,
+              0,
+              0
+            ],
+            "unknownRiskLastAuditAt": null,
+            "unknownRiskNextAuditAt": null,
+            "remoteFactAuditsByClassAndTier": [
+              {
+                "class": "unknown",
+                "ladderMs": [
+                  300000,
+                  900000,
+                  1800000
+                ],
+                "tiers": [
+                  0,
+                  0,
+                  0
+                ],
+                "deferred": 0
+              },
+              {
+                "class": "terminal",
+                "ladderMs": [
+                  300000,
+                  1800000,
+                  3600000
+                ],
+                "tiers": [
+                  215,
+                  0,
+                  16
+                ],
+                "deferred": 0
+              },
+              {
+                "class": "neverSubmitted",
+                "ladderMs": [
+                  300000,
+                  1800000,
+                  21600000
+                ],
+                "tiers": [
+                  0,
+                  0,
+                  0
+                ],
+                "deferred": 0
+              }
+            ]
+          },
+          "marketStream": {
+            "quoteFactFreshness": {
+              "evaluatedAt": 1791497270215,
+              "maxAgeMs": 5000,
+              "retainedSymbols": 17,
+              "staleByField": {
+                "last": 17,
+                "mark": 17,
+                "bid": 17,
+                "ask": 17
+              },
+              "samples": [
+                {
+                  "symbol": "AVAXUSDT",
+                  "fields": {}
+                },
+                {
+                  "symbol": "SOLUSDT",
+                  "fields": {}
+                },
+                {
+                  "symbol": "BCHUSDT",
+                  "fields": {}
+                },
+                {
+                  "symbol": "ETHUSDT",
+                  "fields": {}
+                },
+                {
+                  "symbol": "BNBUSDC",
+                  "fields": {}
+                },
+                {
+                  "symbol": "XLMUSDT",
+                  "fields": {}
+                },
+                {
+                  "symbol": "DOTUSDT",
+                  "fields": {}
+                },
+                {
+                  "symbol": "BTCUSDT",
+                  "fields": {}
+                },
+                {
+                  "symbol": "ETCUSDT",
+                  "fields": {}
+                },
+                {
+                  "symbol": "ETHFIUSDC",
+                  "fields": {}
+                },
+                {
+                  "symbol": "NEARUSDC",
+                  "fields": {}
+                },
+                {
+                  "symbol": "BRUSDT",
+                  "fields": {}
+                },
+                {
+                  "symbol": "OPUSDT",
+                  "fields": {}
+                },
+                {
+                  "symbol": "FILUSDC",
+                  "fields": {}
+                },
+                {
+                  "symbol": "APTUSDT",
+                  "fields": {}
+                },
+                {
+                  "symbol": "INJUSDT",
+                  "fields": {}
+                }
+              ]
+            },
+            "state": "CONNECTING",
+            "connectedAt": null,
+            "lastMessageAt": null,
+            "lastTickerMessageAt": null,
+            "lastBookTickerMessageAt": null,
+            "lastPongAt": null,
+            "reconnects": 0,
+            "gaps": 0,
+            "gapsByType": {
+              "websocketConnection": 0,
+              "quote": 0,
+              "bookTicker": 0,
+              "depthSequence": 0,
+              "kline": 0,
+              "eventTimestamp": 0,
+              "subscription": 0
+            },
+            "backfills": 0,
+            "subscriptions": 0,
+            "cumulativeSubscriptions": 0,
+            "recoverySuccess": 0,
+            "recoveryFailure": 0,
+            "lastError": null,
+            "lastKlineGap": null,
+            "lanes": {
+              "PUBLIC": {
+                "state": "CONNECTING",
+                "connectedAt": null,
+                "lastMessageAt": null,
+                "reconnects": 0,
+                "lastError": null,
+                "subscriptions": 0
+              },
+              "MARKET": {
+                "state": "CONNECTING",
+                "connectedAt": null,
+                "lastMessageAt": null,
+                "reconnects": 0,
+                "lastError": null,
+                "subscriptions": 0
+              }
+            },
+            "klineRepairAttempts": 0,
+            "klineRepairSuccess": 0,
+            "recoveryQueue": 0
+          },
+          "privateData": {
+            "walletBalanceUsd": 11298.24920479,
+            "availableUsd": 1789.61722681,
+            "equityUsd": 8385.04315173,
+            "unrealizedPnlUsd": -2913.2060530599997,
+            "realizedPnlUsd24h": null,
+            "assets": [
+              {
+                "asset": "BTC",
+                "walletBalance": 0.01,
+                "availableBalance": 0.01,
+                "crossWalletBalance": 0.01,
+                "unrealizedPnl": 0,
+                "usdValue": null,
+                "marginEligible": true
+              },
+              {
+                "asset": "USDT",
+                "walletBalance": 6149.09411682,
+                "availableBalance": 1789.61722681,
+                "crossWalletBalance": 6149.09411682,
+                "unrealizedPnl": -2067.64725466,
+                "usdValue": 6149.09411682,
+                "marginEligible": true
+              },
+              {
+                "asset": "USDC",
+                "walletBalance": 5149.15508797,
+                "availableBalance": 3680.94608957,
+                "crossWalletBalance": 5149.15508797,
+                "unrealizedPnl": -845.5587984,
+                "usdValue": 5149.15508797,
+                "marginEligible": true
+              }
+            ],
+            "valuation": {
+              "status": "PARTIAL",
+              "scope": "BINANCE_V2_ACCOUNT_TOTALS_USDT_ONLY",
+              "exchangeUsdtWallet": 6149.09411682,
+              "exchangeUsdtUnrealized": -2067.64725466,
+              "exchangeUsdtMargin": 4081.44686216,
+              "usdtMarginEquityUsd": 4081.44686216,
+              "usdcMarginEquityUsd": 4303.59628957,
+              "combinedStablecoinMarginEquityUsd": 8385.04315173,
+              "usdtWalletUsd": 6149.09411682,
+              "usdcWalletUsd": 5149.15508797,
+              "usdtAvailableUsd": 1789.61722681,
+              "usdcAvailableUsd": 3680.94608957,
+              "combinedStablecoinWalletUsd": 11298.24920479,
+              "combinedStablecoinAvailableUsd": 5470.563316379999,
+              "combinedStablecoinUnrealizedPnlUsd": -2913.2060530599997,
+              "stablecoinWalletUsd": 11298.24920479,
+              "stablecoinMarginUsd": 8385.04315173,
+              "unknownAssets": [
+                "BTC"
+              ],
+              "excludedAssets": [
+                "BTC"
+              ],
+              "toleranceUsd": 0.02,
+              "assetValuationComplete": false
+            },
+            "enrichment": {
+              "incomeAsOf": null,
+              "valuationAsOf": null,
+              "error": null,
+              "pending": true
+            },
+            "asOf": 1791497268598,
+            "status": "READY",
+            "source": "BINANCE_TESTNET_ACCOUNT",
+            "reason": null,
+            "riskBaseline": null
+          }
+        },
+        "service": "zdj-engine-v3",
+        "version": "3.9.8",
+        "buildVersion": {
+          "releaseVersion": "3.9.8",
+          "releaseName": "Primary Entry Authority / No Separate Add",
+          "productName": "ZDJ-MITS",
+          "promptSchemaVersion": "V3.9.2",
+          "factSchemaVersion": "V3.9.2",
+          "apiVersion": "V3.9.7"
+        },
+        "pid": 8524,
+        "ts": 1791497270220,
+        "runtime": {
+          "instanceId": "c685f035-1f52-48ac-80fa-998811ff3fe5",
+          "pid": 8524,
+          "uptimeMs": 62924,
+          "host": "0.0.0.0",
+          "port": 8080,
+          "version": "3.9.8",
+          "buildId": "3.9.8-7271c941c2cdec049610",
+          "lanIps": [
+            "192.168.1.50"
+          ],
+          "lanUrls": [
+            "http://192.168.1.50:8080"
+          ],
+          "listener": {
+            "alive": true,
+            "host": "0.0.0.0",
+            "port": 8080,
+            "ownerPid": 8524
+          },
+          "lastRestartAt": 1791497208530,
+          "lastRestartReason": "MANUAL_START",
+          "restartCount": 276,
+          "runtimeDataDir": "D:\\MITS-WORKTREES\\v398-entry-quality-20261008\\data",
+          "supervisorProbePath": "D:\\MITS-WORKTREES\\v398-entry-quality-20261008\\data\\runtime\\lan-supervisor-state.json",
+          "networkProfile": null,
+          "firewallRuleState": null,
+          "loopbackProbe": null,
+          "lanProbe": null,
+          "supervisor": {
+            "status": "NOT_RUNNING"
+          },
+          "shadow": {
+            "status": {
+              "status": "RUNNING",
+              "startAt": 1789597616507,
+              "requiredUntil": null,
+              "samples": 1212226,
+              "violations": 774551,
+              "dataQualityBlocks": 180599,
+              "exposureBlocks": 748354,
+              "reviewBlocks": 1212226,
+              "wouldStops": 242849,
+              "duplicateUnderlyingAttempts": 0,
+              "reservationConflicts": 0,
+              "snapshotInvalidations": 0,
+              "lastSampleAt": 1791458522149,
+              "validityEpochAt": 1789597616507,
+              "validObservationStartedAt": 1789597826548,
+              "validObservationRequiredUntil": 1790202626548,
+              "validObservationStreak": 8,
+              "shadowOnlyRuns": 0,
+              "shadowOnlyPlaceDecisions": 0,
+              "shadowOnlyErrors": 0,
+              "elapsedMs": 1899653713,
+              "validObservationElapsedMs": 1899443672,
+              "remainingMs": 0,
+              "autoResume": false,
+              "automaticExitCount": 0,
+              "automaticStopMarketCount": 0
+            },
+            "validObservationStartedAt": 1789597826548,
+            "validObservationRequiredUntil": 1790202626548
+          },
+          "autoResume": true,
+          "autoFrozen": false
+        },
+        "shadow": {
+          "status": "RUNNING",
+          "startAt": 1789597616507,
+          "requiredUntil": null,
+          "samples": 1212226,
+          "violations": 774551,
+          "dataQualityBlocks": 180599,
+          "exposureBlocks": 748354,
+          "reviewBlocks": 1212226,
+          "wouldStops": 242849,
+          "duplicateUnderlyingAttempts": 0,
+          "reservationConflicts": 0,
+          "snapshotInvalidations": 0,
+          "lastSampleAt": 1791458522149,
+          "validityEpochAt": 1789597616507,
+          "validObservationStartedAt": 1789597826548,
+          "validObservationRequiredUntil": 1790202626548,
+          "validObservationStreak": 8,
+          "shadowOnlyRuns": 0,
+          "shadowOnlyPlaceDecisions": 0,
+          "shadowOnlyErrors": 0,
+          "elapsedMs": 1899653713,
+          "validObservationElapsedMs": 1899443672,
+          "remainingMs": 0,
+          "autoResume": false,
+          "automaticExitCount": 0,
+          "automaticStopMarketCount": 0
+        },
+        "autoResume": true,
+        "autoFrozen": false
+      }
+    },
+    {
+      "endpoint": "/api/v3/diagnostics/closeout",
+      "httpStatus": 200,
+      "data": {
+        "asOf": 1791497270223,
+        "observationVersion": "1:1:1791497268598",
+        "runtime": {
+          "pid": 8524,
+          "instanceId": "c685f035-1f52-48ac-80fa-998811ff3fe5",
+          "uptimeMs": 62930,
+          "host": "0.0.0.0",
+          "port": 8080,
+          "version": "3.9.8",
+          "buildId": "3.9.8-7271c941c2cdec049610",
+          "lanIps": [
+            "192.168.1.50"
+          ],
+          "lanUrls": [
+            "http://192.168.1.50:8080"
+          ],
+          "listener": {
+            "alive": true,
+            "host": "0.0.0.0",
+            "port": 8080,
+            "ownerPid": 8524
+          },
+          "lastRestartAt": 1791497208530,
+          "lastRestartReason": "MANUAL_START",
+          "restartCount": 276,
+          "runtimeDataDir": "D:\\MITS-WORKTREES\\v398-entry-quality-20261008\\data",
+          "supervisorProbePath": "D:\\MITS-WORKTREES\\v398-entry-quality-20261008\\data\\runtime\\lan-supervisor-state.json",
+          "networkProfile": null,
+          "firewallRuleState": null,
+          "loopbackProbe": null,
+          "lanProbe": null,
+          "supervisor": {
+            "status": "NOT_RUNNING"
+          },
+          "shadow": {
+            "status": {
+              "status": "RUNNING",
+              "startAt": 1789597616507,
+              "requiredUntil": null,
+              "samples": 1212226,
+              "violations": 774551,
+              "dataQualityBlocks": 180599,
+              "exposureBlocks": 748354,
+              "reviewBlocks": 1212226,
+              "wouldStops": 242849,
+              "duplicateUnderlyingAttempts": 0,
+              "reservationConflicts": 0,
+              "snapshotInvalidations": 0,
+              "lastSampleAt": 1791458522149,
+              "validityEpochAt": 1789597616507,
+              "validObservationStartedAt": 1789597826548,
+              "validObservationRequiredUntil": 1790202626548,
+              "validObservationStreak": 8,
+              "shadowOnlyRuns": 0,
+              "shadowOnlyPlaceDecisions": 0,
+              "shadowOnlyErrors": 0,
+              "elapsedMs": 1899653719,
+              "validObservationElapsedMs": 1899443678,
+              "remainingMs": 0,
+              "autoResume": false,
+              "automaticExitCount": 0,
+              "automaticStopMarketCount": 0
+            },
+            "validObservationStartedAt": 1789597826548,
+            "validObservationRequiredUntil": 1790202626548
+          },
+          "autoResume": true,
+          "autoFrozen": false
+        },
+        "persistence": {
+          "integrity": true,
+          "status": "HEALTHY",
+          "auditEvents": 70023,
+          "runtimePersistedAt": 1791458550411,
+          "checkedAt": 1791497211116,
+          "error": null
+        },
+        "pipeline": {
+          "runtimeControl": {
+            "mode": "RUNNING",
+            "reasonCode": "NO_EXECUTABLE_CONTRACT",
+            "reasonText": "持续扫描中：当前没有合格可执行机会",
+            "pausedAt": null,
+            "pauseSource": "NONE",
+            "autoResume": true,
+            "lastTransitionAt": 1789831520254,
+            "nextCapitalCheckAt": 1791458578463,
+            "entrySafetyMode": "AUTO",
+            "manualRiskOverride": null,
+            "capital": {
+              "evaluatedAt": 1791458548463,
+              "generation": 1,
+              "capitalVersion": "{\"assets\":[[\"BTC\",0.01,0.01,824.033],[\"USDC\",3935.15452719,5122.96321846,5122.96321846],[\"USDT\",292.20830682,6081.70009402,6081.70009402]],\"positions\":[[\"APTUSDT\",\"LONG\",112.2,0.7739,16],[\"AVAXUSDT\",\"SHORT\",1263,10.72513054,10],[\"BCHUSDT\",\"LONG\",10.63,294.03,10],[\"BNBUSDC\",\"LONG\",9.6,762.63,16],[\"BRUSDT\",\"SHORT\",774,0.49166014,10],[\"BTCUSDT\",\"LONG\",0.0349,82415.19307759,10],[\"BTCUSDT\",\"SHORT\",0.0244,82415.19307759,10],[\"DOTUSDT\",\"LONG\",1695,1.10458454,10],[\"ETCUSDT\",\"LONG\",5.88,8.341,20],[\"ETHFIUSDC\",\"SHORT\",1766,0.7207,10],[\"ETHUSDT\",\"LONG\",1.467,2533.72523256,10],[\"FETUSDT\",\"LONG\",1200,0.23062187,10],[\"FILUSDC\",\"LONG\",710.3,1.07233431,10],[\"INJUSDT\",\"LONG\",47.7,7.361,10],[\"NEARUSDC\",\"LONG\",403,5.13493878,10],[\"OPUSDT\",\"LONG\",10004.6,0.1227,10],[\"SOLUSDT\",\"LONG\",67.3,113.41,10],[\"XLMUSDT\",\"LONG\",6231,0.19844531,10]],\"reservations\":[[\"reserve_1791458493265_80liwy\",\"VVV\",\"USDT\",100.8370463863125,1008.370463863125,\"WORKING\",1791458793265]],\"orders\":[[\"1000PEPEUSDC\",\"EXPIRED\",401950,0,false,null],[\"1000PEPEUSDC\",\"EXPIRED\",16361,0,false,null],[\"AAVEUSDT\",\"EXPIRED\",5.800000000000001,0,false,null],[\"ADAUSDC\",\"EXPIRED\",20.700000000000003,0,false,null],[\"APTUSDT\",\"EXPIRED\",64.10000000000001,0,false,null],[\"APTUSDT\",\"EXPIRED\",6.1000000000000005,0,false,null],[\"APTUSDT\",\"EXPIRED\",6.1000000000000005,0,false,null],[\"APTUSDT\",\"EXPIRED\",6.1000000000000005,0,false,null],[\"APTUSDT\",\"EXPIRED\",6.1000000000000005,0,false,null],[\"APTUSDT\",\"EXPIRED\",6.300000000000001,0,false,null],[\"APTUSDT\",\"EXPIRED\",6.300000000000001,0,false,null],[\"APTUSDT\",\"EXPIRED\",6.300000000000001,0,false,null],[\"ARBUSDC\",\"EXPIRED\",193.10000000000002,0,false,null],[\"ARBUSDC\",\"EXPIRED\",24.400000000000002,0,false,null],[\"ARBUSDC\",\"EXPIRED\",24.700000000000003,0,false,null],[\"ARBUSDC\",\"EXPIRED\",23.900000000000002,0,false,null],[\"ARBUSDC\",\"EXPIRED\",24.200000000000003,0,false,null],[\"ARBUSDC\",\"EXPIRED\",24.700000000000003,0,false,null],[\"ARBUSDC\",\"EXPIRED\",24.700000000000003,0,false,null],[\"ARBUSDC\",\"EXPIRED\",24.700000000000003,0,false,null],[\"ARBUSDC\",\"EXPIRED\",24.900000000000002,0,false,null],[\"ARBUSDC\",\"EXPIRED\",24.700000000000003,0,false,null],[\"ARBUSDT\",\"EXPIRED\",797.8000000000001,0,false,null],[\"ARBUSDT\",\"EXPIRED\",24.200000000000003,0,false,null],[\"ARBUSDT\",\"EXPIRED\",23.900000000000002,0,false,null],[\"ARBUSDT\",\"EXPIRED\",24.400000000000002,0,false,null],[\"ARBUSDT\",\"EXPIRED\",24.700000000000003,0,false,null],[\"ARBUSDT\",\"EXPIRED\",24.700000000000003,0,false,null],[\"ARBUSDT\",\"EXPIRED\",24.900000000000002,0,false,null],[\"ARBUSDT\",\"EXPIRED\",9491.4,0,false,null],[\"AVAXUSDT\",\"EXPIRED\",19,0,false,null],[\"AVAXUSDT\",\"EXPIRED\",3752,0,false,null],[\"AVAXUSDT\",\"EXPIRED\",182,0,false,null],[\"AVAXUSDT\",\"EXPIRED\",89,0,false,null],[\"BCHUSDT\",\"EXPIRED\",0.17300000000000001,0,false,null],[\"BCHUSDT\",\"EXPIRED\",0.11900000000000001,0,false,null],[\"BCHUSDT\",\"EXPIRED\",6.345,0,false,null],[\"BCHUSDT\",\"EXPIRED\",3.17,0,false,null],[\"BCHUSDT\",\"EXPIRED\",3.2640000000000002,0,false,null],[\"BCHUSDT\",\"EXPIRED\",3.275,0,false,null],[\"BCHUSDT\",\"EXPIRED\",3.3200000000000003,0,false,null],[\"BCHUSDT\",\"EXPIRED\",3.39,0,false,null],[\"BNBUSDC\",\"EXPIRED\",4.89,0,false,null],[\"BNBUSDC\",\"EXPIRED\",1.31,0,false,null],[\"BNBUSDC\",\"EXPIRED\",1.94,0,false,null],[\"BTCUSDT\",\"EXPIRED\",0.0009000000000000001,0,false,null],[\"BTCUSDT\",\"EXPIRED\",0.042100000000000005,0,false,null],[\"BTCUSDT\",\"EXPIRED\",0.038400000000000004,0,false,null],[\"BTCUSDT\",\"EXPIRED\",0.0006000000000000001,0,false,null],[\"BTCUSDT\",\"EXPIRED\",0.0006000000000000001,0,false,null],[\"BTCUSDT\",\"EXPIRED\",0.0006000000000000001,0,false,null],[\"BTCUSDT\",\"EXPIRED\",0.0006000000000000001,0,false,null],[\"BTCUSDT\",\"EXPIRED\",0.0006000000000000001,0,false,null],[\"BTCUSDT\",\"EXPIRED\",0.0006000000000000001,0,false,null],[\"BTCUSDT\",\"EXPIRED\",0.0006000000000000001,0,false,null],[\"BTCUSDT\",\"EXPIRED\",0.0235,0,false,null],[\"BTCUSDT\",\"EXPIRED\",0.0117,0,false,null],[\"BTCUSDT\",\"EXPIRED\",0.011600000000000001,0,false,null],[\"BTCUSDT\",\"EXPIRED\",0.0235,0,false,null],[\"BTCUSDT\",\"EXPIRED\",0.012,0,false,null],[\"BTCUSDT\",\"EXPIRED\",0.012,0,false,null],[\"BTCUSDT\",\"EXPIRED\",0.0239,0,false,null],[\"BTCUSDT\",\"EXPIRED\",0.024,0,false,null],[\"BTCUSDT\",\"EXPIRED\",0.0122,0,false,null],[\"CRVUSDC\",\"EXPIRED\",15.200000000000001,0,false,null],[\"CRVUSDC\",\"EXPIRED\",12.600000000000001,0,false,null],[\"CRVUSDC\",\"EXPIRED\",12.600000000000001,0,false,null],[\"CRVUSDC\",\"EXPIRED\",12.200000000000001,0,false,null],[\"CRVUSDC\",\"EXPIRED\",13.200000000000001,0,false,null],[\"CRVUSDC\",\"EXPIRED\",13.200000000000001,0,false,null],[\"CRVUSDC\",\"EXPIRED\",12.700000000000001,0,false,null],[\"CRVUSDC\",\"EXPIRED\",12.600000000000001,0,false,null],[\"CRVUSDT\",\"EXPIRED\",32.800000000000004,0,false,null],[\"CRVUSDT\",\"EXPIRED\",14.200000000000001,0,false,null],[\"CRVUSDT\",\"EXPIRED\",13.200000000000001,0,false,null],[\"DASHUSDT\",\"EXPIRED\",0.28800000000000003,0,false,null],[\"DASHUSDT\",\"EXPIRED\",0.10300000000000001,0,false,null],[\"DASHUSDT\",\"EXPIRED\",0.11900000000000001,0,false,null],[\"DOGEUSDT\",\"EXPIRED\",11333,0,false,null],[\"DOTUSDT\",\"EXPIRED\",4.1000000000000005,0,false,null],[\"DOTUSDT\",\"EXPIRED\",4.1000000000000005,0,false,null],[\"DOTUSDT\",\"EXPIRED\",887.5,0,false,null],[\"ENAUSDT\",\"EXPIRED\",10264,0,false,null],[\"ETHFIUSDC\",\"EXPIRED\",2097.6,0,false,null],[\"ETHFIUSDT\",\"EXPIRED\",7.6000000000000005,0,false,null],[\"ETHFIUSDT\",\"EXPIRED\",7.1000000000000005,0,false,null],[\"ETHFIUSDT\",\"EXPIRED\",7.300000000000001,0,false,null],[\"ETHFIUSDT\",\"EXPIRED\",6.800000000000001,0,false,null],[\"ETHFIUSDT\",\"EXPIRED\",6.6000000000000005,0,false,null],[\"ETHFIUSDT\",\"EXPIRED\",6.6000000000000005,0,false,null],[\"ETHFIUSDT\",\"EXPIRED\",6.6000000000000005,0,false,null],[\"ETHFIUSDT\",\"EXPIRED\",6.6000000000000005,0,false,null],[\"ETHFIUSDT\",\"EXPIRED\",6.6000000000000005,0,false,null],[\"ETHUSDT\",\"EXPIRED\",0.47900000000000004,0,false,null],[\"ETHUSDT\",\"EXPIRED\",0.008,0,false,null],[\"ETHUSDT\",\"EXPIRED\",0.008,0,false,null],[\"ETHUSDT\",\"EXPIRED\",0.556,0,false,null],[\"ETHUSDT\",\"EXPIRED\",0.735,0,false,null],[\"ETHUSDT\",\"EXPIRED\",0.367,0,false,null],[\"ETHUSDT\",\"EXPIRED\",0.733,0,false,null],[\"ETHUSDT\",\"EXPIRED\",0.372,0,false,null],[\"ETHUSDT\",\"EXPIRED\",0.74,0,false,null],[\"ETHUSDT\",\"EXPIRED\",0.373,0,false,null],[\"ETHUSDT\",\"EXPIRED\",0.39,0,false,null],[\"ETHUSDT\",\"EXPIRED\",0.778,0,false,null],[\"FETUSDT\",\"EXPIRED\",4353,0,false,null],[\"FILUSDC\",\"EXPIRED\",923.4000000000001,0,false,null],[\"FILUSDT\",\"EXPIRED\",622.3000000000001,0,false,null],[\"FILUSDT\",\"EXPIRED\",4.800000000000001,0,false,null],[\"FILUSDT\",\"EXPIRED\",4.800000000000001,0,false,null],[\"FILUSDT\",\"EXPIRED\",4.6000000000000005,0,false,null],[\"FILUSDT\",\"EXPIRED\",4.800000000000001,0,false,null],[\"FILUSDT\",\"EXPIRED\",4.800000000000001,0,false,null],[\"INJUSDT\",\"EXPIRED\",3.4000000000000004,0,false,null],[\"INJUSDT\",\"EXPIRED\",220.10000000000002,0,false,null],[\"INJUSDT\",\"EXPIRED\",227.10000000000002,0,false,null],[\"INJUSDT\",\"EXPIRED\",0.7000000000000001,0,false,null],[\"INJUSDT\",\"EXPIRED\",0.7000000000000001,0,false,null],[\"INJUSDT\",\"EXPIRED\",0.7000000000000001,0,false,null],[\"INJUSDT\",\"EXPIRED\",0.7000000000000001,0,false,null],[\"INJUSDT\",\"EXPIRED\",0.7000000000000001,0,false,null],[\"INJUSDT\",\"EXPIRED\",0.7000000000000001,0,false,null],[\"INJUSDT\",\"EXPIRED\",0.7000000000000001,0,false,null],[\"INJUSDT\",\"EXPIRED\",0.7000000000000001,0,false,null],[\"INJUSDT\",\"EXPIRED\",0.7000000000000001,0,false,null],[\"INJUSDT\",\"EXPIRED\",0.7000000000000001,0,false,null],[\"INJUSDT\",\"EXPIRED\",0.7000000000000001,0,false,null],[\"INJUSDT\",\"EXPIRED\",0.7000000000000001,0,false,null],[\"INJUSDT\",\"EXPIRED\",0.7000000000000001,0,false,null],[\"INJUSDT\",\"EXPIRED\",0.7000000000000001,0,false,null],[\"INJUSDT\",\"EXPIRED\",0.7000000000000001,0,false,null],[\"INJUSDT\",\"EXPIRED\",0.7000000000000001,0,false,null],[\"INJUSDT\",\"EXPIRED\",0.7000000000000001,0,false,null],[\"INJUSDT\",\"EXPIRED\",0.7000000000000001,0,false,null],[\"INJUSDT\",\"EXPIRED\",0.7000000000000001,0,false,null],[\"LINKUSDT\",\"EXPIRED\",0.35000000000000003,0,false,null],[\"LTCUSDT\",\"EXPIRED\",0.20700000000000002,0,false,null],[\"LTCUSDT\",\"EXPIRED\",14.298,0,false,null],[\"LTCUSDT\",\"EXPIRED\",14.198,0,false,null],[\"NEARUSDC\",\"EXPIRED\",200,0,false,null],[\"NEARUSDT\",\"EXPIRED\",53,0,false,null],[\"NEARUSDT\",\"EXPIRED\",205,0,false,null],[\"ONDOUSDT\",\"EXPIRED\",2220,0,false,null],[\"OPUSDT\",\"EXPIRED\",26513.600000000002,0,false,null],[\"OPUSDT\",\"EXPIRED\",36.800000000000004,0,false,null],[\"OPUSDT\",\"EXPIRED\",38.400000000000006,0,false,null],[\"OPUSDT\",\"EXPIRED\",38.900000000000006,0,false,null],[\"OPUSDT\",\"EXPIRED\",38.7,0,false,null],[\"OPUSDT\",\"EXPIRED\",38.400000000000006,0,false,null],[\"OPUSDT\",\"EXPIRED\",38.300000000000004,0,false,null],[\"OPUSDT\",\"EXPIRED\",37.800000000000004,0,false,null],[\"OPUSDT\",\"EXPIRED\",7426,0,false,null],[\"POLUSDT\",\"EXPIRED\",43,0,false,null],[\"RAYSOLUSDT\",\"EXPIRED\",2.8000000000000003,0,false,null],[\"RAYSOLUSDT\",\"EXPIRED\",2.8000000000000003,0,false,null],[\"SOLUSDT\",\"EXPIRED\",8.6,0,false,null],[\"SUIUSDC\",\"EXPIRED\",97.30000000000001,0,false,null],[\"TIAUSDC\",\"EXPIRED\",11,0,false,null],[\"TUTUSDT\",\"EXPIRED\",334.40000000000003,0,false,null],[\"TUTUSDT\",\"EXPIRED\",388.70000000000005,0,false,null],[\"TUTUSDT\",\"EXPIRED\",1901.3000000000002,0,false,null],[\"TUTUSDT\",\"EXPIRED\",2787.6000000000004,0,false,null],[\"TUTUSDT\",\"EXPIRED\",3184.6000000000004,0,false,null],[\"TUTUSDT\",\"EXPIRED\",6562.700000000001,0,false,null],[\"TUTUSDT\",\"EXPIRED\",3072.2000000000003,0,false,null],[\"TUTUSDT\",\"EXPIRED\",7210.200000000001,0,false,null],[\"UNIUSDT\",\"EXPIRED\",1,0,false,null],[\"VIRTUALUSDT\",\"EXPIRED\",6.1000000000000005,0,false,null],[\"VIRTUALUSDT\",\"EXPIRED\",6.300000000000001,0,false,null],[\"VIRTUALUSDT\",\"EXPIRED\",6.1000000000000005,0,false,null],[\"VIRTUALUSDT\",\"EXPIRED\",6.300000000000001,0,false,null],[\"VIRTUALUSDT\",\"EXPIRED\",6.300000000000001,0,false,null],[\"VIRTUALUSDT\",\"EXPIRED\",6.1000000000000005,0,false,null],[\"VIRTUALUSDT\",\"EXPIRED\",6.300000000000001,0,false,null],[\"VVVUSDT\",\"EXPIRED\",19.240000000000002,0,false,null],[\"VVVUSDT\",\"PARTIALLY_FILLED\",41.25,9.4,true,null],[\"WIFUSDT\",\"EXPIRED\",21.900000000000002,0,false,null],[\"WIFUSDT\",\"EXPIRED\",21.700000000000003,0,false,null],[\"WIFUSDT\",\"EXPIRED\",21.700000000000003,0,false,null],[\"WIFUSDT\",\"EXPIRED\",21.700000000000003,0,false,null],[\"WIFUSDT\",\"EXPIRED\",21.200000000000003,0,false,null],[\"WIFUSDT\",\"EXPIRED\",20.400000000000002,0,false,null],[\"WIFUSDT\",\"EXPIRED\",20.200000000000003,0,false,null],[\"WLDUSDC\",\"EXPIRED\",9.700000000000001,0,false,null],[\"WLDUSDC\",\"EXPIRED\",10.100000000000001,0,false,null],[\"WLDUSDC\",\"EXPIRED\",10.100000000000001,0,false,null],[\"WLDUSDC\",\"EXPIRED\",10.100000000000001,0,false,null],[\"WLDUSDC\",\"EXPIRED\",10.200000000000001,0,false,null],[\"WLDUSDC\",\"EXPIRED\",10.100000000000001,0,false,null],[\"WLDUSDC\",\"EXPIRED\",9.700000000000001,0,false,null],[\"XRPUSDC\",\"EXPIRED\",139,0,false,null],[\"XRPUSDC\",\"EXPIRED\",138.3,0,false,null],[\"XRPUSDC\",\"EXPIRED\",27.700000000000003,0,false,null],[\"XRPUSDC\",\"EXPIRED\",73.60000000000001,0,false,null],[\"XRPUSDC\",\"EXPIRED\",7.800000000000001,0,false,null],[\"XRPUSDC\",\"EXPIRED\",23.900000000000002,0,false,null],[\"XRPUSDC\",\"EXPIRED\",3.4000000000000004,0,false,null],[\"XRPUSDC\",\"EXPIRED\",3.4000000000000004,0,false,null],[\"XRPUSDC\",\"EXPIRED\",3.4000000000000004,0,false,null],[\"XRPUSDC\",\"EXPIRED\",3.4000000000000004,0,false,null],[\"XRPUSDC\",\"EXPIRED\",3.4000000000000004,0,false,null],[\"XRPUSDC\",\"EXPIRED\",3.4000000000000004,0,false,null],[\"XRPUSDC\",\"EXPIRED\",3.4000000000000004,0,false,null],[\"ZECUSDT\",\"EXPIRED\",2.7800000000000002,0,false,null],[\"ZECUSDT\",\"EXPIRED\",0.051000000000000004,0,false,null],[\"ZECUSDT\",\"EXPIRED\",0.11900000000000001,0,false,null],[\"ZECUSDT\",\"EXPIRED\",0.14400000000000002,0,false,null],[\"ZECUSDT\",\"EXPIRED\",0.8170000000000001,0,false,null],[\"ZROUSDT\",\"EXPIRED\",3.3000000000000003,0,false,null],[\"ZROUSDT\",\"EXPIRED\",3.3000000000000003,0,false,null],[\"ZROUSDT\",\"EXPIRED\",3.3000000000000003,0,false,null],[\"ZROUSDT\",\"EXPIRED\",3.3000000000000003,0,false,null],[\"ZROUSDT\",\"EXPIRED\",3.3000000000000003,0,false,null],[\"ZROUSDT\",\"EXPIRED\",2.8000000000000003,0,false,null],[\"ZROUSDT\",\"EXPIRED\",2.9000000000000004,0,false,null],[\"ZROUSDT\",\"EXPIRED\",2.9000000000000004,0,false,null]],\"equity\":9034.05252897,\"risk\":null,\"limits\":{\"portfolio\":{\"maxPositions\":50,\"maxPendingEntries\":6,\"entryMarginUsd\":200},\"portfolioIntelligence\":{\"enabled\":true,\"quoteAssetPolicy\":\"AUTO\",\"underlyingExposurePolicy\":\"BLOCK_SAME_DIRECTION\",\"riskTierMode\":\"AUTO\",\"globalDirectionPolicy\":\"BOTH\",\"tierDirectionPolicies\":{},\"symbolDirectionPolicies\":{},\"globalDirectionPreference\":\"BALANCED\",\"tierDirectionPreferences\":{\"CORE\":\"BALANCED\",\"LIQUID_ALT\":\"INTELLIGENT_SHORT_BIAS\",\"SPECULATIVE\":\"STRICT_SHORT_BIAS\",\"NEW_LISTING\":\"SHORT_ONLY\"},\"symbolDirectionPreferences\":{},\"altLongMarginFactors\":{\"CORE\":1,\"LIQUID_ALT\":0.65,\"SPECULATIVE\":0.35,\"NEW_LISTING\":0.1},\"altLongLeverageCaps\":{\"CORE\":20,\"LIQUID_ALT\":8,\"SPECULATIVE\":3,\"NEW_LISTING\":1},\"dynamicMarginEnabled\":true,\"baseMarginUsd\":200,\"minMarginUsd\":1,\"maxMarginPerPositionUsd\":500,\"maxEquityPct\":0.1,\"tierMarginFactors\":{\"CORE\":1,\"LIQUID_ALT\":0.8,\"SPECULATIVE\":0.45,\"NEW_LISTING\":0.3,\"RESTRICTED\":0},\"dynamicLeverageEnabled\":true,\"globalMaxLeverage\":20,\"tierMaxLeverage\":{\"CORE\":20,\"LIQUID_ALT\":12,\"SPECULATIVE\":5,\"NEW_LISTING\":3,\"RESTRICTED\":1},\"marginMode\":\"AUTO\",\"tierMarginModes\":{},\"symbolMarginModes\":{},\"locationProtectionEnabled\":true,\"minLocationScore\":45,\"maxEma21DistanceAtr\":2,\"maxBbLong\":0.9,\"minBbShort\":0.1,\"maxImpulseAtr\":2,\"maxSameUnderlyingPositions\":1,\"maxLongExposurePct\":0.5,\"maxShortExposurePct\":0.5,\"maxSpeculativeExposurePct\":0.2,\"maxSpeculativePositions\":2,\"maxQuoteAssetMarginUsagePct\":0.8,\"symbolOverrides\":{}},\"riskGovernance\":{\"entrySafetyMode\":\"AUTO\",\"protectionMode\":\"SHADOW\",\"requirePostAiVerification\":true,\"failClosedOnMissingEvidence\":true,\"requiredEvidenceCompleteness\":0.92,\"maxDailyLossUsd\":0,\"maxDailyLossPct\":0,\"maxConcurrentReservations\":6,\"reservationTtlSeconds\":300,\"lockLeaseSeconds\":120,\"circuitBreakerEnabled\":true,\"perTradeRiskPctEquity\":0.01,\"maxGrossExposurePct\":1,\"maxDirectionExposurePct\":1,\"maxClusterExposurePct\":0.35,\"maxClusterDirectionExposurePct\":0.35,\"exposureCapacityPolicy\":{\"gross\":\"OBSERVE\",\"direction\":\"OBSERVE\",\"cluster\":\"ENFORCE\"},\"maxDailyDrawdownPct\":0.05,\"highRiskReviewEnabled\":true,\"highRiskEvidenceThreshold\":0.95,\"shadowDurationDays\":7,\"protectionShadowEnabled\":true,\"shadow\":{\"quoteTtlMs\":20000,\"bookTtlMs\":20000,\"klineTtlMs\":125000,\"accountTtlMs\":45000,\"reconnectGraceMs\":30000,\"aiEnabled\":true,\"aiMaxRunsPerMinute\":2,\"aiQueueLimit\":8,\"aiSamplingRatio\":0.25,\"markRetentionDays\":30,\"posteriorMinSamples\":1},\"exitCoordination\":{\"aiExitAuthority\":\"ENFORCE\",\"aiExitLossLimitUsd\":10,\"aiExitMinNetProfitUsd\":0.2,\"aiExitAllowSmallLoss\":true,\"aiExitAuthorizationTtlMs\":15000,\"positionReviewEnabled\":true,\"normalReviewsPerPlan\":2,\"exceptionReviewsPerPlan\":1,\"reviewFailureBudget\":2,\"reviewMinIntervalMs\":300000,\"reviewAuthorityTtlMs\":90000,\"continuousConvergenceEnabled\":true,\"convergenceIntervalMs\":120000,\"convergenceBatchLimit\":8},\"portfolioRisk\":{\"configured\":true,\"maxCapitalAtRiskUsd\":10811.957,\"maxDrawdownPct\":1,\"maxStressLossUsd\":5405.978,\"maxGrossNotionalUsd\":10811.957,\"maxDirectionNotionalUsd\":8649.565,\"maxClusterNotionalUsd\":10811.957,\"minMarginBufferPct\":0,\"minLiquidationBufferPct\":0,\"maxHumanPositions\":50,\"maxHumanNotionalUsd\":10811.957,\"maxPendingHandoffs\":50,\"maxAckAgeMs\":86400000,\"correlationVersion\":\"TESTNET_CORRELATION_CLUSTERS_V1_SHA256_d7ada0f6ba5cb950105a69439c409177748e1c87b164fa0872e845271d2bff65\",\"clusters\":{},\"scenarioVersion\":\"TESTNET_STRESS_SCENARIO_SET_V1_SHA256_3b9c016189e3b2cb2c2bad5f7bc761e7ae25181eadfa03b574be2ec9d1a0749c\",\"snapshotTtlMs\":20000,\"marginTierVersion\":\"TESTNET_BINANCE_LEVERAGE_BRACKET_V1_SHA256_67dee0aca734d82f8718c7b6ad995ba6afb50be4a10798cba5071c9a08bb0fa9\",\"maintenanceMarginRatePct\":0.167,\"cashFlowWindowMs\":86400000,\"cashFlowMaxAgeMs\":900000,\"scenarios\":[{\"id\":\"DOWN_10_LIQUIDITY\",\"priceShockPct\":-0.1,\"spreadWidenPct\":0.01,\"fundingShockPct\":0.005,\"markBasisShockPct\":-0.01,\"depthPenaltyPct\":0.02,\"exchangeUnavailable\":false,\"unavailablePenaltyPct\":0,\"clusterConvergencePct\":0.5},{\"id\":\"EXCHANGE_GAP_15\",\"priceShockPct\":-0.15,\"spreadWidenPct\":0.02,\"fundingShockPct\":0.005,\"markBasisShockPct\":-0.02,\"depthPenaltyPct\":0.03,\"exchangeUnavailable\":true,\"unavailablePenaltyPct\":0.03,\"clusterConvergencePct\":0.75},{\"id\":\"UP_10_LIQUIDITY\",\"priceShockPct\":0.1,\"spreadWidenPct\":0.01,\"fundingShockPct\":0.005,\"markBasisShockPct\":0.01,\"depthPenaltyPct\":0.02,\"exchangeUnavailable\":false,\"unavailablePenaltyPct\":0,\"clusterConvergencePct\":0.5}]}}}}",
+              "directionBudget": {
+                "equityUsd": 9034.05252897,
+                "grossLimitUsd": 9034.05252897,
+                "directionLimitUsd": 9034.05252897,
+                "grossNotionalUsd": 49813.76672068962,
+                "longNotionalUsd": 32603.69498921641,
+                "shortNotionalUsd": 17210.071731473196,
+                "remainingGrossUsd": 0,
+                "grossUsedPct": 5.514000119099268,
+                "longAvailableNotionalUsd": 0,
+                "shortAvailableNotionalUsd": 0,
+                "longUsedPct": 3.608977796472217,
+                "shortUsedPct": 1.905022322627049,
+                "grossAvailableNotionalUsd": 0,
+                "policy": {
+                  "gross": "OBSERVE",
+                  "direction": "OBSERVE",
+                  "cluster": "OBSERVE"
+                },
+                "positionLimitsEnforced": false,
+                "evaluatedAt": 1791458548463
+              },
+              "funding": {
+                "quoteAssets": [
+                  {
+                    "quoteAsset": "USDT",
+                    "entryFundingEligible": true,
+                    "availableBalanceUsd": 292.20830682,
+                    "walletBalanceUsd": 6081.70009402,
+                    "reservedMarginUsd": 0,
+                    "executionLeaseMarginUsd": 0,
+                    "executableMarginUsd": 292.20830682,
+                    "factsComplete": true,
+                    "reasons": []
+                  },
+                  {
+                    "quoteAsset": "USDC",
+                    "entryFundingEligible": true,
+                    "availableBalanceUsd": 3935.15452719,
+                    "walletBalanceUsd": 5122.96321846,
+                    "reservedMarginUsd": 0,
+                    "executionLeaseMarginUsd": 0,
+                    "executableMarginUsd": 3935.15452719,
+                    "factsComplete": true,
+                    "reasons": []
+                  }
+                ],
+                "totalExecutableMarginUsd": 4227.36283401,
+                "proven": true,
+                "excludedAssets": [
+                  {
+                    "asset": "BTC",
+                    "usdValue": 824.033,
+                    "reason": "NOT_IN_ENTRY_FUNDING_UNIVERSE"
+                  }
+                ],
+                "accountEquityUsd": 9034.05252897
+              },
+              "firstBindingConstraint": {
+                "LONG": {
+                  "executableNotionalUsd": 0,
+                  "quoteAsset": null,
+                  "symbol": null,
+                  "firstBindingConstraint": "NO_CAPITAL_ROUTE",
+                  "executableRoutes": 0,
+                  "minimumLegalNotionalUsd": null,
+                  "candidates": []
+                },
+                "SHORT": {
+                  "executableNotionalUsd": 0,
+                  "quoteAsset": null,
+                  "symbol": null,
+                  "firstBindingConstraint": "NO_CAPITAL_ROUTE",
+                  "executableRoutes": 0,
+                  "minimumLegalNotionalUsd": null,
+                  "candidates": []
+                }
+              },
+              "executableCandidateCount": 0,
+              "usdtAvailable": 292.20830682,
+              "usdcAvailable": 3935.15452719,
+              "usdtExecutableUnderlyings": 0,
+              "usdcExecutableUnderlyings": 0,
+              "noUsdtMargin": 0,
+              "noUsdcMargin": 0,
+              "noUsdcContract": 0,
+              "liquidityRejected": 0,
+              "exposureRejected": 0,
+              "minMarginRejected": 0,
+              "marketNotFresh": 0,
+              "underlyingBlocked": 0,
+              "reasonCounts": {},
+              "routedCandidates": [],
+              "nextRecheckAt": 1791458578463
+            }
+          },
+          "asOf": 1791497270226,
+          "observationVersion": "1:1:1791497268598",
+          "capacity": {
+            "positions": 18,
+            "inFlight": 0,
+            "reserved": 0,
+            "used": 18,
+            "max": 50
+          },
+          "privateSync": {
+            "resultApplicationTiming": {
+              "count": 1,
+              "maxMs": 0.3162000000011176,
+              "p95Ms": 0.3162000000011176,
+              "recent": [
+                {
+                  "requestId": "c5ff14d6-2dad-44be-bb64-5b2e23a332b8",
+                  "remoteCompletedAt": 1791497268598,
+                  "applicationMs": 0.032100000003993046,
+                  "completionEventMs": 0.28409999999712454
+                }
+              ]
+            },
+            "requestId": "c5ff14d6-2dad-44be-bb64-5b2e23a332b8",
+            "lastSuccessAt": 1791497268598,
+            "lastFailureAt": null,
+            "consecutiveFailures": 0,
+            "coalesced": 0,
+            "lastError": null,
+            "durationMs": 4291,
+            "inFlight": false,
+            "snapshotAgeMs": 1632
+          },
+          "capacityVisibility": {
+            "funding": {
+              "quoteAssets": [
+                {
+                  "quoteAsset": "USDT",
+                  "entryFundingEligible": true,
+                  "availableBalanceUsd": 1789.61722681,
+                  "walletBalanceUsd": 6149.09411682,
+                  "reservedMarginUsd": 0,
+                  "executionLeaseMarginUsd": 0,
+                  "executableMarginUsd": 1789.61722681,
+                  "factsComplete": true,
+                  "reasons": []
+                },
+                {
+                  "quoteAsset": "USDC",
+                  "entryFundingEligible": true,
+                  "availableBalanceUsd": 3680.94608957,
+                  "walletBalanceUsd": 5149.15508797,
+                  "reservedMarginUsd": 0,
+                  "executionLeaseMarginUsd": 0,
+                  "executableMarginUsd": 3680.94608957,
+                  "factsComplete": true,
+                  "reasons": []
+                }
+              ],
+              "totalExecutableMarginUsd": 5470.563316379999,
+              "proven": true,
+              "excludedAssets": [
+                {
+                  "asset": "BTC",
+                  "usdValue": 0,
+                  "reason": "NOT_IN_ENTRY_FUNDING_UNIVERSE"
+                }
+              ],
+              "accountEquityUsd": 8385.04315173
+            },
+            "exposure": {
+              "gross": {
+                "notionalUsd": 49813.76672068962,
+                "limitUsd": 9034.05252897,
+                "remainingUsd": 0,
+                "usedPct": 5.514000119099268,
+                "mode": "OBSERVE",
+                "enforced": false
+              },
+              "LONG": {
+                "notionalUsd": 32603.69498921641,
+                "limitUsd": 9034.05252897,
+                "remainingUsd": 0,
+                "usedPct": 3.608977796472217,
+                "mode": "OBSERVE",
+                "enforced": false
+              },
+              "SHORT": {
+                "notionalUsd": 17210.071731473196,
+                "limitUsd": 9034.05252897,
+                "remainingUsd": 0,
+                "usedPct": 1.905022322627049,
+                "mode": "OBSERVE",
+                "enforced": false
+              }
+            },
+            "limits": {
+              "slots": {
+                "used": 18,
+                "max": 50,
+                "positions": 18,
+                "inFlight": 0,
+                "reserved": 0
+              },
+              "policy": {
+                "gross": "OBSERVE",
+                "direction": "OBSERVE",
+                "cluster": "OBSERVE"
+              }
+            },
+            "entryCapacity": {
+              "LONG": {
+                "executableNotionalUsd": 0,
+                "quoteAsset": null,
+                "symbol": null,
+                "firstBindingConstraint": "NO_CAPITAL_ROUTE",
+                "executableRoutes": 0,
+                "minimumLegalNotionalUsd": null,
+                "candidates": []
+              },
+              "SHORT": {
+                "executableNotionalUsd": 0,
+                "quoteAsset": null,
+                "symbol": null,
+                "firstBindingConstraint": "NO_CAPITAL_ROUTE",
+                "executableRoutes": 0,
+                "minimumLegalNotionalUsd": null,
+                "candidates": []
+              }
+            },
+            "sideStatus": {
+              "code": "NO_EXECUTABLE_SIDE",
+              "text": "本轮没有可路由候选"
+            },
+            "admission": {
+              "status": "NOT_APPLICABLE",
+              "hasVerdict": false,
+              "exhausted": false,
+              "code": null,
+              "gate": null,
+              "detail": "TESTNET_FUNDS_ONLY_ENTRY: portfolio risk is observational; see risk diagnostics",
+              "ceilingUsdBySide": null,
+              "enforced": false,
+              "reasons": [],
+              "evaluatedAt": 0,
+              "overdueHandoffs": 0,
+              "oldestOverdueHours": null
+            },
+            "firstBlocker": "NONE",
+            "blockingDimensions": [],
+            "exhaustedReason": null,
+            "exhaustedForNewRisk": false,
+            "evaluatedAt": 1791458548463
+          },
+          "entryResourcePolicy": {
+            "mode": "TESTNET_FUNDS_ONLY",
+            "portfolioRiskVeto": false,
+            "fundingSource": "EXCHANGE_AVAILABLE_BALANCE",
+            "executionCorrectnessEnforced": true
+          },
+          "authoritativeBlocker": {
+            "code": "SCHEDULER_STOPPED",
+            "stage": "PERMISSION",
+            "nextAction": "等待人工恢复 Entry 权限；不自动重启、不改阈值换取放行",
+            "evidence": {
+              "pipelineState": "PAUSED_MARKET_DATA_UNAVAILABLE",
+              "marketDataReason": "MARKET_QUOTES_STALE",
+              "isolatedSymbols": [],
+              "isolatedCount": 0,
+              "healthyCandidates": 0,
+              "slotsUsed": 18,
+              "slotsMax": 50,
+              "executableCandidateCount": 0,
+              "exhaustedForNewRisk": false,
+              "pendingEntries": 43,
+              "maxPendingEntries": 6,
+              "poolStatus": "POOL_SUPPLY_SHORTAGE",
+              "riskAdmissionStage": null,
+              "riskAdmissionSymbol": null,
+              "riskAdmissionReasons": [],
+              "riskAdmissionLimits": [],
+              "riskAdmissionBinding": null,
+              "riskAdmissionGates": [],
+              "riskAdmissionReadback": null,
+              "riskAdmissionCeilingUsdBySide": null,
+              "riskAdmissionExhausted": false,
+              "bookAdmission": {
+                "status": "NOT_APPLICABLE",
+                "hasVerdict": false,
+                "exhausted": false,
+                "code": null,
+                "gate": null,
+                "detail": "TESTNET_FUNDS_ONLY_ENTRY: portfolio risk is observational; see risk diagnostics",
+                "ceilingUsdBySide": null,
+                "enforced": false,
+                "reasons": [],
+                "evaluatedAt": 0,
+                "overdueHandoffs": 0,
+                "oldestOverdueHours": null
+              },
+              "riskAdmissionAgeMs": null
+            },
+            "secondary": [
+              {
+                "code": "MARKET_DATA_DIAGNOSTIC:MARKET_QUOTES_STALE",
+                "detail": "健康候选 0/0，已隔离 0"
+              },
+              {
+                "code": "EXECUTION_FACTS_DIAGNOSTIC:NO_EXECUTABLE_CANDIDATE",
+                "detail": "NO_EXECUTABLE_CANDIDATE"
+              },
+              {
+                "code": "CAPACITY_DIAGNOSTIC:NO_EXECUTABLE_SIDE",
+                "detail": "本轮没有可路由候选"
+              },
+              {
+                "code": "SUPPLY_DIAGNOSTIC:ELIGIBILITY",
+                "detail": "BLOCKED 0（可执行 0）"
+              },
+              {
+                "code": "MODEL_DIAGNOSTIC:IDLE_REASON",
+                "detail": "WAITING_CANDIDATE"
+              },
+              {
+                "code": "MODEL_DIAGNOSTIC:ANALYSIS_REASON",
+                "detail": "DISPATCH_STALLED"
+              }
+            ],
+            "evaluatedAt": 1791497270226
+          },
+          "pipelineState": "PAUSED_MARKET_DATA_UNAVAILABLE",
+          "marketDataReason": "MARKET_QUOTES_STALE",
+          "marketDataIsolation": {
+            "candidateCount": 0,
+            "isolatedCount": 0,
+            "healthyCandidates": 0,
+            "isolated": []
+          },
+          "marketDataDetail": {
+            "streamState": "CONNECTING",
+            "streamError": null,
+            "quotesFresh": 0,
+            "orderBooksFresh": 0,
+            "healthyCandidates": 0
+          },
+          "market": {
+            "status": "OFFLINE",
+            "count": 0
+          },
+          "freshMarkets": {
+            "status": "DEGRADED",
+            "count": 0,
+            "stale": [],
+            "quoteFreshRatio": 0,
+            "klineFreshRatio": 0,
+            "sequenceInvalid": 0
+          },
+          "pool": {
+            "target": 20,
+            "qualifiedSupply": 0,
+            "readySupply": 0,
+            "ready": 0,
+            "display": 0,
+            "targetGap": 20,
+            "supplyShortage": true,
+            "refillFailure": false,
+            "health": {
+              "cohort": {
+                "status": "NOT_ESTABLISHED",
+                "memberCount": null
+              },
+              "retention": {
+                "status": "NOT_INVENTORIED",
+                "zombieSnapshotCount": null
+              },
+              "counts": {
+                "rankedSymbols": 0,
+                "residentSymbols": 0,
+                "potentialReadySymbols": 0,
+                "dispatchReadySymbols": 0,
+                "poolReadySymbols": 0,
+                "poolWaitingSymbols": 0,
+                "poolAnalyzingSymbols": 0,
+                "cooldownSymbols": 0,
+                "staleSymbols": 0,
+                "governanceBlockedSymbols": 0,
+                "occupiedUnderlyings": 41,
+                "freeResidentUnderlyings": 0,
+                "snapshotCount": 0,
+                "consumedSymbols": null
+              },
+              "target": 20,
+              "lowWatermark": 4,
+              "rootBlocker": "SUPPLY",
+              "reasonCounts": {
+                "SUPPLY": 1,
+                "CAPITAL": 0,
+                "CAPACITY": 0,
+                "RISK": 0,
+                "MARKET": 0,
+                "GOVERNANCE": 0,
+                "AI": 0
+              },
+              "poolCount": 0,
+              "readyCount": 0,
+              "qualifiedSupply": 0,
+              "readySupply": 0,
+              "targetGap": 20,
+              "supplyShortage": true,
+              "refillFailure": false,
+              "belowLowWatermark": true
+            },
+            "status": "POOL_SUPPLY_SHORTAGE",
+            "current": 0
+          },
+          "universe": {
+            "status": "SYNCING",
+            "count": 0
+          },
+          "eligibility": {
+            "status": "BLOCKED",
+            "count": 0,
+            "cooldown": 0,
+            "excluded": 0
+          },
+          "scout": {
+            "status": "READY",
+            "runs": 0,
+            "historicalRuns": 53,
+            "resource": {
+              "id": "scout-b580",
+              "role": "SCOUT",
+              "enabled": true,
+              "baseUrl": "http://127.0.0.1:8081/v1",
+              "model": "qwen3.5:9b",
+              "maxConcurrency": 1,
+              "gpu": "Intel Arc B580 12GB",
+              "status": "ONLINE",
+              "active": 0,
+              "totalRuns": 0,
+              "failures": 0,
+              "lastLatencyMs": null,
+              "currentStatus": "WAITING_CANDIDATE_OR_SHARED_EVENT",
+              "currentSymbol": null,
+              "currentRunId": null,
+              "currentRunSeconds": 0,
+              "lastCompletedAt": null,
+              "lastDirection": null,
+              "lastDecision": null,
+              "idleReason": "WAITING_CANDIDATE_OR_SHARED_EVENT",
+              "nextStep": "等待动态交易池候选或新的共享外部事件",
+              "queueDepth": 0,
+              "connectionStatus": "ONLINE",
+              "healthCheckedAt": 1791497264304,
+              "healthReason": null
+            }
+          },
+          "primaryBrain": {
+            "status": "READY",
+            "observation": "MARKET_PAUSE",
+            "alert": null,
+            "runs": 0,
+            "historicalRuns": 53,
+            "resource": {
+              "id": "brain-7900-primary",
+              "role": "PRIMARY_BRAIN",
+              "enabled": true,
+              "baseUrl": "http://127.0.0.1:8084/v1",
+              "model": "qwen/qwen3.8-27b",
+              "maxConcurrency": 1,
+              "gpu": "AMD Radeon RX 7900 XTX 24GB",
+              "status": "ONLINE",
+              "active": 0,
+              "totalRuns": 0,
+              "failures": 0,
+              "lastLatencyMs": null,
+              "currentStatus": "IDLE",
+              "currentSymbol": null,
+              "currentRunId": null,
+              "currentRunSeconds": 0,
+              "lastCompletedAt": null,
+              "lastDirection": null,
+              "lastDecision": null,
+              "idleReason": "WAITING_CANDIDATE",
+              "nextStep": "等待动态交易池候选",
+              "queueDepth": 0,
+              "connectionStatus": "ONLINE",
+              "healthCheckedAt": 1791497264301,
+              "healthReason": null
+            },
+            "lastRunAgeMs": 38876507,
+            "idleReason": "WAITING_CANDIDATE",
+            "healthReason": "IDLE_NO_DISPATCHABLE_CANDIDATE"
+          },
+          "existingPositions": {
+            "status": "FACT",
+            "count": 18
+          },
+          "excludedSymbols": {
+            "status": "FACT",
+            "count": 0,
+            "reasonHistogram": {}
+          },
+          "pendingEntries": {
+            "status": "UNAVAILABLE",
+            "count": null,
+            "historicalRiskClaimSymbols": 43,
+            "max": 6
+          },
+          "entryPermission": {
+            "status": "BLOCKED",
+            "executionMode": "TESTNET_ENABLED",
+            "autoExecutionMode": "AUTO_RUNNING"
+          },
+          "binancePrivate": {
+            "status": "READY",
+            "asOf": 1791497268598,
+            "reason": null,
+            "resultApplicationTiming": {
+              "count": 1,
+              "maxMs": 0.3162000000011176,
+              "p95Ms": 0.3162000000011176,
+              "recent": [
+                {
+                  "requestId": "c5ff14d6-2dad-44be-bb64-5b2e23a332b8",
+                  "remoteCompletedAt": 1791497268598,
+                  "applicationMs": 0.032100000003993046,
+                  "completionEventMs": 0.28409999999712454
+                }
+              ]
+            },
+            "requestId": "c5ff14d6-2dad-44be-bb64-5b2e23a332b8",
+            "lastSuccessAt": 1791497268598,
+            "lastFailureAt": null,
+            "consecutiveFailures": 0,
+            "coalesced": 0,
+            "lastError": null,
+            "durationMs": 4291,
+            "inFlight": false,
+            "snapshotAgeMs": 1632
+          },
+          "reconciliation": {
+            "status": "READY",
+            "phaseTiming": {
+              "scope": "CURRENT_INSTANCE_BOUNDED64_COMPLETED_CYCLES",
+              "phases": {},
+              "recent": []
+            },
+            "lastRun": 0,
+            "lastError": null,
+            "remoteReadBudget": {
+              "attemptedIds": [],
+              "budgetAborted": false,
+              "startedAt": 0,
+              "completedAt": 0,
+              "trackedIdentities": 0,
+              "historicalDeferred": 0,
+              "uniqueIdentitiesAttempted": 0,
+              "uniqueIdentitiesProgressed": 0,
+              "oldestDeferredAgeMs": null,
+              "retryReasonsByClass": [
+                {
+                  "class": "unknown",
+                  "counts": {}
+                },
+                {
+                  "class": "terminal",
+                  "counts": {}
+                },
+                {
+                  "class": "neverSubmitted",
+                  "counts": {}
+                }
+              ]
+            },
+            "exchangePositions": null,
+            "exchangeOrders": null,
+            "exchangeOpenEntryOrders": 0,
+            "exchangeOpenEntryOrdersStatus": "UNAVAILABLE",
+            "exchangeOpenEntryOrdersVerifiedAt": null,
+            "driftCount": 0,
+            "unresolvedDriftCount": 0,
+            "historicalUnknownCount": 0,
+            "activeRiskUnresolvedCount": 0,
+            "activeRiskUnresolvedCountScope": "ENTRY_OCCUPYING_RISK_PLUS_MANUAL_UNKNOWN_PLUS_TP_UNKNOWN",
+            "scopeLabel": "ENTRY_MANUAL_TP_MIXED_COMPAT",
+            "deprecationNote": "Compatibility aggregate only; new consumers must use scoped UNKNOWN fields",
+            "verifiedNoActiveRiskUnknownCount": 0,
+            "evaluatedAt": 0,
+            "entryUnknownHistorical": 0,
+            "entryUnknownOccupyingRisk": 0,
+            "entryUnknownProofValid": 0,
+            "activeEntryClaims": null,
+            "activeUnknownEntryClaims": null,
+            "activeEntryClaimsObservedAt": null,
+            "manualUnknown": 0,
+            "manualUnknownDetails": [],
+            "tpUnknown": 0,
+            "tpUnknownDetails": [],
+            "snapshotConsistency": "BEST_EFFORT_CROSS_STORE",
+            "correctedDifferenceCount": 0,
+            "verifiedOrderFactMismatchCount": 0,
+            "lastFullOrderScanAt": 0,
+            "fullOrderScanIntervalMs": 300000,
+            "unknownRiskScanIntervalMs": 60000,
+            "unknownRiskEvidenceTtlMs": 300000,
+            "unknownRiskAuditTierIntervalsMs": [
+              300000,
+              900000,
+              1800000
+            ],
+            "unknownRiskAuditsByTier": [
+              0,
+              0,
+              0
+            ],
+            "unknownRiskLastAuditAt": null,
+            "unknownRiskNextAuditAt": null,
+            "remoteFactAuditsByClassAndTier": [
+              {
+                "class": "unknown",
+                "ladderMs": [
+                  300000,
+                  900000,
+                  1800000
+                ],
+                "tiers": [
+                  0,
+                  0,
+                  0
+                ],
+                "deferred": 0
+              },
+              {
+                "class": "terminal",
+                "ladderMs": [
+                  300000,
+                  1800000,
+                  3600000
+                ],
+                "tiers": [
+                  215,
+                  0,
+                  16
+                ],
+                "deferred": 0
+              },
+              {
+                "class": "neverSubmitted",
+                "ladderMs": [
+                  300000,
+                  1800000,
+                  21600000
+                ],
+                "tiers": [
+                  0,
+                  0,
+                  0
+                ],
+                "deferred": 0
+              }
+            ]
+          },
+          "takeProfit": {
+            "status": "READY",
+            "unverifiedTp": 0,
+            "required": 18,
+            "protected": 18,
+            "missing": 0,
+            "repairing": 0,
+            "repairFailed": 0,
+            "manualReviewRequired": 0,
+            "positionFactUnresolved": 0,
+            "positionFactUnresolvedSymbols": [],
+            "orphanTp": 0,
+            "duplicateTp": 0,
+            "qtyMismatch": 0,
+            "wrongSide": 0,
+            "tpMissing": 0,
+            "retryQueue": 0
+          },
+          "analysis": {
+            "mode": "EXECUTION_ENABLED",
+            "lastTickAt": null,
+            "lastAttemptAt": null,
+            "lastRequestAt": null,
+            "lastSuccessAt": null,
+            "lastFailureAt": null,
+            "lastBlockedReason": null,
+            "reason": "DISPATCH_STALLED",
+            "schedulerStatus": "STALLED",
+            "schedulerCycle": 0,
+            "instanceId": "c685f035-1f52-48ac-80fa-998811ff3fe5",
+            "heartbeatAt": null,
+            "heartbeatAgeMs": null,
+            "nextEvaluationAt": null,
+            "suppression": null,
+            "capitalExecutableCount": 0,
+            "active": 0,
+            "primaryDispatchAgeMs": 7501,
+            "primarySuccessAgeMs": 7501,
+            "silenceMs": 7501,
+            "observationStartedAt": 1791497262729,
+            "execution": {
+              "intent": false,
+              "ready": true,
+              "blockers": [],
+              "firstBlocker": null,
+              "lastReadyAt": null,
+              "readinessText": null
+            },
+            "text": "STALLED · DISPATCH_STALLED"
+          },
+          "portfolioRiskProfile": {
+            "source": "SETTINGS",
+            "settingsVersion": 247,
+            "path": "riskGovernance.portfolioRisk",
+            "configured": true,
+            "contentHash": "v396rc287216460554e02fb05153b54eeae5d30bf5f683aa34156a776a2e1b95ea113",
+            "status": "READY",
+            "version": "v396rc287216460554e02fb05153b54eeae5d30bf5f683aa34156a776a2e1b95ea113",
+            "values": {
+              "configured": true,
+              "maxCapitalAtRiskUsd": 10811.957,
+              "maxDrawdownPct": 1,
+              "maxStressLossUsd": 5405.978,
+              "maxGrossNotionalUsd": 10811.957,
+              "maxDirectionNotionalUsd": 8649.565,
+              "maxClusterNotionalUsd": 10811.957,
+              "minMarginBufferPct": 0,
+              "minLiquidationBufferPct": 0,
+              "maxHumanPositions": 50,
+              "maxHumanNotionalUsd": 10811.957,
+              "maxPendingHandoffs": 50,
+              "maxAckAgeMs": 86400000,
+              "correlationVersion": "TESTNET_CORRELATION_CLUSTERS_V1_SHA256_d7ada0f6ba5cb950105a69439c409177748e1c87b164fa0872e845271d2bff65",
+              "clusters": {},
+              "scenarioVersion": "TESTNET_STRESS_SCENARIO_SET_V1_SHA256_3b9c016189e3b2cb2c2bad5f7bc761e7ae25181eadfa03b574be2ec9d1a0749c",
+              "snapshotTtlMs": 20000,
+              "marginTierVersion": "TESTNET_BINANCE_LEVERAGE_BRACKET_V1_SHA256_67dee0aca734d82f8718c7b6ad995ba6afb50be4a10798cba5071c9a08bb0fa9",
+              "maintenanceMarginRatePct": 0.167,
+              "cashFlowWindowMs": 86400000,
+              "cashFlowMaxAgeMs": 900000,
+              "scenarios": [
+                {
+                  "id": "DOWN_10_LIQUIDITY",
+                  "priceShockPct": -0.1,
+                  "spreadWidenPct": 0.01,
+                  "fundingShockPct": 0.005,
+                  "markBasisShockPct": -0.01,
+                  "depthPenaltyPct": 0.02,
+                  "exchangeUnavailable": false,
+                  "unavailablePenaltyPct": 0,
+                  "clusterConvergencePct": 0.5
+                },
+                {
+                  "id": "EXCHANGE_GAP_15",
+                  "priceShockPct": -0.15,
+                  "spreadWidenPct": 0.02,
+                  "fundingShockPct": 0.005,
+                  "markBasisShockPct": -0.02,
+                  "depthPenaltyPct": 0.03,
+                  "exchangeUnavailable": true,
+                  "unavailablePenaltyPct": 0.03,
+                  "clusterConvergencePct": 0.75
+                },
+                {
+                  "id": "UP_10_LIQUIDITY",
+                  "priceShockPct": 0.1,
+                  "spreadWidenPct": 0.01,
+                  "fundingShockPct": 0.005,
+                  "markBasisShockPct": 0.01,
+                  "depthPenaltyPct": 0.02,
+                  "exchangeUnavailable": false,
+                  "unavailablePenaltyPct": 0,
+                  "clusterConvergencePct": 0.5
+                }
+              ]
+            },
+            "missingFields": [],
+            "blockers": [],
+            "authority": {
+              "source": "settings portfolio_risk_authority",
+              "environment": "TESTNET",
+              "accountScope": "binance-primary",
+              "committed": true,
+              "marginTierVersion": "TESTNET_BINANCE_LEVERAGE_BRACKET_V1_SHA256_67dee0aca734d82f8718c7b6ad995ba6afb50be4a10798cba5071c9a08bb0fa9",
+              "contentHash": "67dee0aca734d82f8718c7b6ad995ba6afb50be4a10798cba5071c9a08bb0fa9",
+              "coverageSymbols": [
+                "1000BONKUSDC",
+                "1000PEPEUSDC",
+                "1000SHIBUSDC",
+                "1000SHIBUSDT",
+                "AAVEUSDT",
+                "ADAUSDC",
+                "ADAUSDT",
+                "APTUSDT",
+                "ARBUSDT",
+                "AVAXUSDT",
+                "BCHUSDT",
+                "BNBUSDC",
+                "BRUSDT",
+                "BTCUSDT",
+                "COTIUSDT",
+                "CRVUSDC",
+                "CRVUSDT",
+                "DASHUSDT",
+                "DOGEUSDC",
+                "DOGEUSDT",
+                "DOTUSDT",
+                "ENAUSDT",
+                "ETCUSDT",
+                "ETHFIUSDC",
+                "ETHFIUSDT",
+                "ETHUSDT",
+                "FETUSDT",
+                "FILUSDC",
+                "FILUSDT",
+                "HBARUSDC",
+                "HBARUSDT",
+                "HYPEUSDT",
+                "INJUSDT",
+                "JUPUSDT",
+                "LINKUSDC",
+                "LINKUSDT",
+                "LTCUSDT",
+                "NEARUSDC",
+                "NEARUSDT",
+                "ONDOUSDT",
+                "OPUSDT",
+                "PENGUUSDC",
+                "PENGUUSDT",
+                "POLUSDT",
+                "RAYSOLUSDT",
+                "SOLUSDC",
+                "SOLUSDT",
+                "SUIUSDC",
+                "SUIUSDT",
+                "TAOUSDT",
+                "TIAUSDC",
+                "TIAUSDT",
+                "TRUMPUSDC",
+                "TUTUSDT",
+                "UNIUSDC",
+                "UNIUSDT",
+                "USELESSUSDT",
+                "VIRTUALUSDT",
+                "VVVUSDT",
+                "WIFUSDC",
+                "WIFUSDT",
+                "WLDUSDC",
+                "WLDUSDT",
+                "XLMUSDT",
+                "XMRUSDT",
+                "XPLUSDT",
+                "XRPUSDC",
+                "XRPUSDT",
+                "ZECUSDT",
+                "ZENUSDT",
+                "ZROUSDT"
+              ],
+              "derivedMaintenanceMarginRatePct": 0.167,
+              "rateDerivation": "ENTRY_BOUND_TIERS",
+              "observedAt": 1790400271582,
+              "committedAt": 1790400271582,
+              "correlationVersion": "TESTNET_CORRELATION_CLUSTERS_V1_SHA256_d7ada0f6ba5cb950105a69439c409177748e1c87b164fa0872e845271d2bff65",
+              "scenarioVersion": "TESTNET_STRESS_SCENARIO_SET_V1_SHA256_3b9c016189e3b2cb2c2bad5f7bc761e7ae25181eadfa03b574be2ec9d1a0749c",
+              "missingSymbols": [],
+              "mismatchReasons": [],
+              "authorityStatus": "MATCHED",
+              "profileStatus": "READY",
+              "uncoveredCoverageCandidates": [
+                "AAVEUSDC",
+                "AEROUSDT",
+                "ARBUSDC",
+                "AVAXUSDC",
+                "BCHUSDC",
+                "BNBUSDT",
+                "ENAUSDC",
+                "JTOUSDT",
+                "LDOUSDT",
+                "LSKUSDT",
+                "LTCUSDC",
+                "ONEUSDT",
+                "SEIUSDT",
+                "ZECUSDC"
+              ],
+              "coverageLag": {
+                "uncoveredCandidates": [
+                  "AAVEUSDC",
+                  "AEROUSDT",
+                  "ARBUSDC",
+                  "AVAXUSDC",
+                  "BCHUSDC",
+                  "BNBUSDT",
+                  "ENAUSDC",
+                  "JTOUSDT",
+                  "LDOUSDT",
+                  "LSKUSDT",
+                  "LTCUSDC",
+                  "ONEUSDT",
+                  "SEIUSDT",
+                  "ZECUSDC"
+                ],
+                "marginTierVersion": "TESTNET_BINANCE_LEVERAGE_BRACKET_V1_SHA256_67dee0aca734d82f8718c7b6ad995ba6afb50be4a10798cba5071c9a08bb0fa9",
+                "committedAt": 1790400271582,
+                "action": "re-collect and commit the margin-tier authority for these symbols; until then each is refused by name before a model call"
+              }
+            }
+          },
+          "executionReadiness": {
+            "intent": true,
+            "ready": false,
+            "modelSpendPermitted": false,
+            "blockers": [
+              "NO_EXECUTABLE_CANDIDATE"
+            ],
+            "firstBlocker": "NO_EXECUTABLE_CANDIDATE",
+            "profileStatus": "READY",
+            "privateFresh": true,
+            "writeLocked": false,
+            "executableCandidateCount": 0,
+            "mode": "EXECUTION_BLOCKED",
+            "text": "执行事实未齐：NO_EXECUTABLE_CANDIDATE；已停止调用模型，避免产生无法执行的决策"
+          },
+          "scheduler": {
+            "status": "STOPPED"
+          },
+          "work": {
+            "current": "WAITING_CANDIDATE",
+            "recentDecision": {
+              "symbol": "VVVUSDT",
+              "direction": "SHORT",
+              "decision": "PLACE_SHORT",
+              "at": 1791458491401
+            },
+            "next": "等待动态交易池候选"
+          },
+          "entryActivity": {
+            "lastPrimaryRunAt": 1791458491433,
+            "lastPlaceDecisionAt": 1791458491433,
+            "lastEntryIntentAt": 1791458496857,
+            "lastEntrySubmittedAt": 1791458517222,
+            "lastEntryFilledAt": 1791453938511,
+            "primaryRunsSinceLastPlace": 0,
+            "uniqueSymbolsSinceLastPlace": 15,
+            "consecutiveRejects": 0,
+            "placeCount30m": 0,
+            "rejectCount30m": 0,
+            "primaryCount30m": 0,
+            "entryIntentCount30m": 0,
+            "submitCount30m": 0,
+            "fillCount30m": 0
+          },
+          "entryConversion": {
+            "generatedAt": 1791497270226,
+            "mode": {
+              "fundsOnly": true,
+              "economicAdmissionMode": "ENFORCE"
+            },
+            "thirtyMinutes": {
+              "since": 1791495470226,
+              "until": 1791497270226,
+              "primaryCompleted": 0,
+              "place": 0,
+              "authorizedPlace": 0,
+              "riskAllowed": 0,
+              "economicAdmissionPassed": 0,
+              "tradePlanReady": 0,
+              "reservationCreated": 0,
+              "intentCreated": 0,
+              "submitAttempted": 0,
+              "orderSubmitted": 0,
+              "entryFilled": 0,
+              "waitingPrice": 0,
+              "blocked": [],
+              "authorizedNoSubmit": [],
+              "ratios": {
+                "placeToTradePlan": null,
+                "tradePlanToSubmit": null,
+                "placeToSubmit": null,
+                "submitToFill": null,
+                "authorizedPlaceToSubmit": null
+              },
+              "topDropStage": null,
+              "topDropReason": null,
+              "topDropCount": 0,
+              "degraded": false,
+              "degradedReason": null,
+              "stageSemantics": {
+                "primaryCompleted": "REQUIRED",
+                "place": "REQUIRED",
+                "authorizedPlace": "REQUIRED",
+                "riskAllowed": "NOT_REQUIRED",
+                "economicAdmissionPassed": "REQUIRED",
+                "tradePlanReady": "REQUIRED",
+                "reservationCreated": "REQUIRED",
+                "intentCreated": "REQUIRED",
+                "waitingPrice": "OBSERVED",
+                "submitAttempted": "REQUIRED",
+                "orderSubmitted": "REQUIRED",
+                "entryFilled": "OBSERVED"
+              }
+            },
+            "oneHour": {
+              "since": 1791493670226,
+              "until": 1791497270226,
+              "primaryCompleted": 0,
+              "place": 0,
+              "authorizedPlace": 0,
+              "riskAllowed": 0,
+              "economicAdmissionPassed": 0,
+              "tradePlanReady": 0,
+              "reservationCreated": 0,
+              "intentCreated": 0,
+              "submitAttempted": 0,
+              "orderSubmitted": 0,
+              "entryFilled": 0,
+              "waitingPrice": 0,
+              "blocked": [],
+              "authorizedNoSubmit": [],
+              "ratios": {
+                "placeToTradePlan": null,
+                "tradePlanToSubmit": null,
+                "placeToSubmit": null,
+                "submitToFill": null,
+                "authorizedPlaceToSubmit": null
+              },
+              "topDropStage": null,
+              "topDropReason": null,
+              "topDropCount": 0,
+              "degraded": false,
+              "degradedReason": null,
+              "stageSemantics": {
+                "primaryCompleted": "REQUIRED",
+                "place": "REQUIRED",
+                "authorizedPlace": "REQUIRED",
+                "riskAllowed": "NOT_REQUIRED",
+                "economicAdmissionPassed": "REQUIRED",
+                "tradePlanReady": "REQUIRED",
+                "reservationCreated": "REQUIRED",
+                "intentCreated": "REQUIRED",
+                "waitingPrice": "OBSERVED",
+                "submitAttempted": "REQUIRED",
+                "orderSubmitted": "REQUIRED",
+                "entryFilled": "OBSERVED"
+              }
+            }
+          },
+          "candidateLifecycle": {
+            "counts": {
+              "READY": 85
+            },
+            "nextCandidate": null,
+            "primaryWaiters": []
+          },
+          "aiHealth": {
+            "completed": 0,
+            "failed": 0,
+            "dataError": 0,
+            "rawPlaceFailed": 0,
+            "schemaInvalid": 0,
+            "normalized": 0,
+            "timeout": 0,
+            "cooldown": 0,
+            "quarantine": 0,
+            "topError": null,
+            "consecutiveFailures": 0,
+            "alert": null
+          },
+          "stagnation": null,
+          "noEntryReason": "SCHEDULER_STOPPED"
+        },
+        "hot": [],
+        "productionWriteBoundary": {
+          "environment": "TESTNET",
+          "executionMode": "TESTNET_ENABLED",
+          "lockedToTestnet": true,
+          "testnetWrites": 0,
+          "productionWrites": 0,
+          "blockedProductionWriteAttempts": 0,
+          "lastWriteAt": null,
+          "lastWritePath": null
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "branch": "main",
+  "localHead": "3327c84ff943934653e003f98b31573b3886647d",
+  "remoteHead": "3327c84ff943934653e003f98b31573b3886647d",
+  "gitHeadSubject": "feat(v398): enforce immutable no-add entry authority and shadow risk bounds",
+  "computed": {
+    "sourceHash": "b0d4d18ccff1e34ec177cf38906562ada99e8b338aeff5f29ccf6d40aa4f88b0",
+    "artifactHash": "7271c941c2cdec0496104afc960dd3b215f1ed8735fe902923db8139f8e4dbac",
+    "buildId": "3.9.8-7271c941c2cdec049610"
+  },
+  "runtimeFile": {
+    "instanceId": "c685f035-1f52-48ac-80fa-998811ff3fe5",
+    "pid": 8524,
+    "startedAt": 1791497208530,
+    "host": "0.0.0.0",
+    "port": 8080,
+    "version": "3.9.8",
+    "buildId": "3.9.8-7271c941c2cdec049610",
+    "artifactHash": "7271c941c2cdec0496104afc960dd3b215f1ed8735fe902923db8139f8e4dbac",
+    "sourceHash": "b0d4d18ccff1e34ec177cf38906562ada99e8b338aeff5f29ccf6d40aa4f88b0",
+    "startReason": "MANUAL_START",
+    "lanIps": [
+      "192.168.1.50"
+    ],
+    "restartCount": 276
+  },
+  "runtimeApi": {
+    "buildId": "3.9.8-7271c941c2cdec049610",
+    "instanceId": "c685f035-1f52-48ac-80fa-998811ff3fe5",
+    "pid": 8524,
+    "version": "3.9.8",
+    "lastRestartReason": "MANUAL_START",
+    "restartCount": 276,
+    "lastRestartAt": 1791497208530
+  },
+  "dirtySourcePaths": "",
+  "checks": {
+    "remoteHeadEqualsLocalHead": true,
+    "committedSourceTreeMatchesRuntimeSourceHash": true,
+    "workingDistMatchesRuntimeArtifactHash": true,
+    "buildIdDerivedFromArtifactHash": true,
+    "runtimeApiMatchesInstanceFile": true,
+    "sourceTreeCleanForHashedFolders": true
+  },
+  "verdict": "IDENTITY_CLOSED"
+}

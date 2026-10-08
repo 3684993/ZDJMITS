@@ -1,3 +1,52 @@
 From https://github.com/3684993/ZDJMITS
  * branch            main       -> FETCH_HEAD
 0	0
+[codex/v398-entry-quality-20261008 3327c84] feat(v398): enforce immutable no-add entry authority and shadow risk bounds
+ 72 files changed, 12826 insertions(+), 66 deletions(-)
+ create mode 100644 apps/engine/src/config/noAddOriginLedger.test.ts
+ create mode 100644 apps/engine/src/config/noAddOriginLedger.ts
+ create mode 100644 apps/engine/src/services/noSeparateAdd.test.ts
+ create mode 100644 apps/engine/src/services/noSeparateAdd.ts
+ create mode 100644 apps/engine/src/services/v398RiskQuantityBounds.test.ts
+ create mode 100644 apps/engine/src/services/v398RiskQuantityBounds.ts
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/IMPLEMENTATION_REPORT.md
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/evidence-20261008/REMOTE_R2_READBACK.json
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/evidence-20261008/credential-findings.json
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/evidence-20261008/github-actions-pre-i2.json
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/evidence-20261008/github-actions-r2-failure.json
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/evidence-20261008/implementation-source-audit.json
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/evidence-20261008/preserved-live-worktree-status-pre-i2.txt
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/r2-archive-commit.log
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/r2-archive-fetch.log
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/r2-archive-push.log
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/s00/current-identity.json
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/s00/entrypoint-review.json
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/s00/historical-package-lock.json
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/v398-actions-pre-i2.log
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/v398-actions-r2-failure.log
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/v398-contract-refresh.log
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/v398-contract-refresh.log.original.gz
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/v398-diff-check.log
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/v398-engine-typecheck-initial.log
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/v398-engine-typecheck-initial.log.original.gz
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/v398-envelope-schema-targeted.log
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/v398-full-verify-result.json
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/v398-full-verify-round1-failed-result.json
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/v398-full-verify-round1-failed.log
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/v398-full-verify-round2-failed-result.json
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/v398-full-verify-round2-failed.log
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/v398-full-verify.log
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/v398-i2-publication.log
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/v398-s00-final.log
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/v398-staged-diff-initial-failed.log
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/v398-targeted-corrected.log
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/v398-targeted-final.log
+ create mode 100644 docs/reports/v398-entry-sizing-quality-review/v398-targeted-initial.log
+ create mode 100644 scripts/v398-implementation-audit.py
+ create mode 100644 scripts/v398-manual-start.ps1
+ create mode 100644 scripts/v398-runtime-readback.mjs
+ create mode 100644 scripts/v398-verify-offline.mjs
+To https://github.com/3684993/ZDJMITS.git
+   2b0143e..3327c84  HEAD -> main
+From https://github.com/3684993/ZDJMITS
+ * branch            main       -> FETCH_HEAD

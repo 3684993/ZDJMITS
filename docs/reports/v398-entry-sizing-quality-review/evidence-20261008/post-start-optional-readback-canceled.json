@@ -1,0 +1,9 @@
+{
+  "reason": "Online SQLite backup did not finish within bounded observation",
+  "manualExchangeWrites": 0,
+  "nativeOrderReadback": "UNKNOWN",
+  "status": "CANCELED_NONESSENTIAL_POSTSTART_READBACK",
+  "helperPid": 30824,
+  "at": "2026-10-08T22:17:42.0833912+00:00",
+  "enginePidUntouched": 8524
+}

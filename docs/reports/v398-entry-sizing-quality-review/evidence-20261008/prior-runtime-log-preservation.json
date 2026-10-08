@@ -1,0 +1,20 @@
+{
+  "at": "2026-10-08T22:03:25.6550505+00:00",
+  "rawPrivateRuntimeLogsExcludedFromGitHub": true,
+  "preserved": [
+    {
+      "bytes": 247,
+      "identical": true,
+      "source": "D:\\MITS\\data\\runtime-logs\\engine.stdout.log",
+      "sha256": "CCF6672532F5782F6108B7D9FBC03B104C7669FA6C03D805FBF0920B70CE7525",
+      "privateArchive": "D:\\MITS\\data\\runtime-logs\\engine.stdout.log.before-v398-20261008T220325Z"
+    },
+    {
+      "bytes": 295502,
+      "identical": true,
+      "source": "D:\\MITS\\data\\runtime-logs\\engine.stderr.log",
+      "sha256": "A415187BF996626D80024AC835FFF29B62C255686EA594A39E0422F9459D1C82",
+      "privateArchive": "D:\\MITS\\data\\runtime-logs\\engine.stderr.log.before-v398-20261008T220325Z"
+    }
+  ]
+}

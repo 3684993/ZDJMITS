@@ -1,0 +1,1963 @@
+[
+  {
+    "symbol": "AVAXUSDT",
+    "positionSide": "SHORT",
+    "role": "ENTRY",
+    "exchangeOrderId": "532553883",
+    "fillIds": [
+      "64690771",
+      "64690772",
+      "64690773",
+      "64690774",
+      "64690775",
+      "64690776"
+    ],
+    "fillCount": 6,
+    "firstFillAt": 1789834245678,
+    "lastFillAt": 1789834249640,
+    "quantity": 400.0,
+    "vwap": 9.482999999999999,
+    "realizedPnl": 0.0,
+    "commissionByAsset": {
+      "USDT": 0.7586400000000001
+    },
+    "localOrderId": "entry_intent_mu8l1mm0_rcobpxad",
+    "intentId": "intent_mu8l1mm0_rcobpxad"
+  },
+  {
+    "symbol": "AVAXUSDT",
+    "positionSide": "SHORT",
+    "role": "ENTRY",
+    "exchangeOrderId": "536298865",
+    "fillIds": [
+      "66254419",
+      "66254420",
+      "66254421",
+      "66254422",
+      "66254423",
+      "66254424",
+      "66254425",
+      "66254426",
+      "66254427",
+      "66254428",
+      "66254429",
+      "66254430",
+      "66254431",
+      "66254432",
+      "66254436",
+      "66254437",
+      "66254438"
+    ],
+    "fillCount": 17,
+    "firstFillAt": 1790594170874,
+    "lastFillAt": 1790594181833,
+    "quantity": 100.0,
+    "vwap": 10.540999999999999,
+    "realizedPnl": 0.0,
+    "commissionByAsset": {
+      "USDT": 0.21082
+    },
+    "localOrderId": "entry_intent_mul5j2sb_6sj02qqt",
+    "intentId": "intent_mul5j2sb_6sj02qqt"
+  },
+  {
+    "symbol": "AVAXUSDT",
+    "positionSide": "SHORT",
+    "role": "ENTRY",
+    "exchangeOrderId": "536861793",
+    "fillIds": [
+      "66488285",
+      "66488286",
+      "66488287",
+      "66488288",
+      "66488289",
+      "66488290",
+      "66488291",
+      "66488292",
+      "66488293",
+      "66488294",
+      "66488295",
+      "66488296",
+      "66488297",
+      "66488298",
+      "66488299",
+      "66488301",
+      "66488302",
+      "66488303",
+      "66488304"
+    ],
+    "fillCount": 19,
+    "firstFillAt": 1790702995400,
+    "lastFillAt": 1790703010524,
+    "quantity": 100.0,
+    "vwap": 11.1,
+    "realizedPnl": 0.0,
+    "commissionByAsset": {
+      "USDT": 0.222
+    },
+    "localOrderId": "entry_intent_mumyax4w_9pj3v4py",
+    "intentId": "intent_mumyax4w_9pj3v4py"
+  },
+  {
+    "symbol": "AVAXUSDT",
+    "positionSide": "SHORT",
+    "role": "ENTRY",
+    "exchangeOrderId": "536881041",
+    "fillIds": [
+      "66496105"
+    ],
+    "fillCount": 1,
+    "firstFillAt": 1790707032121,
+    "lastFillAt": 1790707032121,
+    "quantity": 1.0,
+    "vwap": 11.225,
+    "realizedPnl": 0.0,
+    "commissionByAsset": {
+      "USDT": 0.002245
+    },
+    "localOrderId": "entry_intent_mun0mzfv_7cppnra4",
+    "intentId": "intent_mun0mzfv_7cppnra4"
+  },
+  {
+    "symbol": "AVAXUSDT",
+    "positionSide": "LONG",
+    "role": "ENTRY",
+    "exchangeOrderId": "536894279",
+    "fillIds": [
+      "66500935"
+    ],
+    "fillCount": 1,
+    "firstFillAt": 1790709512683,
+    "lastFillAt": 1790709512683,
+    "quantity": 1.0,
+    "vwap": 11.329,
+    "realizedPnl": 0.0,
+    "commissionByAsset": {
+      "USDT": 0.0022658
+    },
+    "localOrderId": "entry_intent_mun279vu_tgljunw6",
+    "intentId": "intent_mun279vu_tgljunw6"
+  },
+  {
+    "symbol": "AVAXUSDT",
+    "positionSide": "LONG",
+    "role": "ENTRY",
+    "exchangeOrderId": "536922702",
+    "fillIds": [
+      "66512857"
+    ],
+    "fillCount": 1,
+    "firstFillAt": 1790715643088,
+    "lastFillAt": 1790715643088,
+    "quantity": 1.0,
+    "vwap": 11.452,
+    "realizedPnl": 0.0,
+    "commissionByAsset": {
+      "USDT": 0.0022904
+    },
+    "localOrderId": "entry_intent_mun5ugjh_xnx714as",
+    "intentId": "intent_mun5ugjh_xnx714as"
+  },
+  {
+    "symbol": "AVAXUSDT",
+    "positionSide": "LONG",
+    "role": "ENTRY",
+    "exchangeOrderId": "536936769",
+    "fillIds": [
+      "66518931"
+    ],
+    "fillCount": 1,
+    "firstFillAt": 1790718135683,
+    "lastFillAt": 1790718135683,
+    "quantity": 1.0,
+    "vwap": 11.422,
+    "realizedPnl": 0.0,
+    "commissionByAsset": {
+      "USDT": 0.00228439
+    },
+    "localOrderId": "entry_intent_mun79b7z_w9abj217",
+    "intentId": "intent_mun79b7z_w9abj217"
+  },
+  {
+    "symbol": "AVAXUSDT",
+    "positionSide": "LONG",
+    "role": "ENTRY",
+    "exchangeOrderId": "536970666",
+    "fillIds": [
+      "66532738"
+    ],
+    "fillCount": 1,
+    "firstFillAt": 1790725729622,
+    "lastFillAt": 1790725729622,
+    "quantity": 1.0,
+    "vwap": 11.409,
+    "realizedPnl": 0.0,
+    "commissionByAsset": {
+      "USDT": 0.0022818
+    },
+    "localOrderId": "entry_intent_munbupjs_ncv9mxu3",
+    "intentId": "intent_munbupjs_ncv9mxu3"
+  },
+  {
+    "symbol": "AVAXUSDT",
+    "positionSide": "SHORT",
+    "role": "ENTRY",
+    "exchangeOrderId": "536986572",
+    "fillIds": [
+      "66538554"
+    ],
+    "fillCount": 1,
+    "firstFillAt": 1790728506677,
+    "lastFillAt": 1790728506677,
+    "quantity": 1.0,
+    "vwap": 11.424,
+    "realizedPnl": 0.0,
+    "commissionByAsset": {
+      "USDT": 0.0022848
+    },
+    "localOrderId": "entry_intent_mundhw8z_986hdeck",
+    "intentId": "intent_mundhw8z_986hdeck"
+  },
+  {
+    "symbol": "AVAXUSDT",
+    "positionSide": "LONG",
+    "role": "ENTRY",
+    "exchangeOrderId": "536999641",
+    "fillIds": [
+      "66543349"
+    ],
+    "fillCount": 1,
+    "firstFillAt": 1790731241034,
+    "lastFillAt": 1790731241034,
+    "quantity": 1.0,
+    "vwap": 11.411,
+    "realizedPnl": 0.0,
+    "commissionByAsset": {
+      "USDT": 0.00228219
+    },
+    "localOrderId": "entry_intent_munf4uj5_v310ij9c",
+    "intentId": "intent_munf4uj5_v310ij9c"
+  },
+  {
+    "symbol": "AVAXUSDT",
+    "positionSide": "LONG",
+    "role": "EXIT",
+    "exchangeOrderId": "537011127",
+    "fillIds": [
+      "66548345"
+    ],
+    "fillCount": 1,
+    "firstFillAt": 1790734153038,
+    "lastFillAt": 1790734153038,
+    "quantity": 5.0,
+    "vwap": 11.417,
+    "realizedPnl": 0.062,
+    "commissionByAsset": {
+      "USDT": 0.022834
+    },
+    "localOrderId": null,
+    "intentId": null
+  },
+  {
+    "symbol": "AVAXUSDT",
+    "positionSide": "SHORT",
+    "role": "ENTRY",
+    "exchangeOrderId": "537029626",
+    "fillIds": [
+      "66555773"
+    ],
+    "fillCount": 1,
+    "firstFillAt": 1790738239212,
+    "lastFillAt": 1790738239212,
+    "quantity": 1.0,
+    "vwap": 11.347,
+    "realizedPnl": 0.0,
+    "commissionByAsset": {
+      "USDT": 0.0022694
+    },
+    "localOrderId": "entry_intent_munjast7_ewumnuhx",
+    "intentId": "intent_munjast7_ewumnuhx"
+  },
+  {
+    "symbol": "AVAXUSDT",
+    "positionSide": "SHORT",
+    "role": "ENTRY",
+    "exchangeOrderId": "537107799",
+    "fillIds": [
+      "66587539"
+    ],
+    "fillCount": 1,
+    "firstFillAt": 1790754205628,
+    "lastFillAt": 1790754205628,
+    "quantity": 1.0,
+    "vwap": 11.123,
+    "realizedPnl": 0.0,
+    "commissionByAsset": {
+      "USDT": 0.0022246
+    },
+    "localOrderId": "entry_intent_munsskv7_suz74ewh",
+    "intentId": "intent_munsskv7_suz74ewh"
+  },
+  {
+    "symbol": "AVAXUSDT",
+    "positionSide": "SHORT",
+    "role": "ENTRY",
+    "exchangeOrderId": "537136263",
+    "fillIds": [
+      "66598354"
+    ],
+    "fillCount": 1,
+    "firstFillAt": 1790760322205,
+    "lastFillAt": 1790760322205,
+    "quantity": 1.0,
+    "vwap": 11.176,
+    "realizedPnl": 0.0,
+    "commissionByAsset": {
+      "USDT": 0.0022352
+    },
+    "localOrderId": "entry_intent_munwg6y8_ihuwyyr9",
+    "intentId": "intent_munwg6y8_ihuwyyr9"
+  },
+  {
+    "symbol": "AVAXUSDT",
+    "positionSide": "SHORT",
+    "role": "ENTRY",
+    "exchangeOrderId": "537144598",
+    "fillIds": [
+      "66601651"
+    ],
+    "fillCount": 1,
+    "firstFillAt": 1790762114260,
+    "lastFillAt": 1790762114260,
+    "quantity": 1.0,
+    "vwap": 11.171,
+    "realizedPnl": 0.0,
+    "commissionByAsset": {
+      "USDT": 0.0022342
+    },
+    "localOrderId": "entry_intent_munxihcs_ljg1q1at",
+    "intentId": "intent_munxihcs_ljg1q1at"
+  },
+  {
+    "symbol": "AVAXUSDT",
+    "positionSide": "LONG",
+    "role": "ENTRY",
+    "exchangeOrderId": "537159021",
+    "fillIds": [
+      "66608342"
+    ],
+    "fillCount": 1,
+    "firstFillAt": 1790766019631,
+    "lastFillAt": 1790766019631,
+    "quantity": 1.0,
+    "vwap": 11.178,
+    "realizedPnl": 0.0,
+    "commissionByAsset": {
+      "USDT": 0.0022356
+    },
+    "localOrderId": "entry_intent_munzuc8k_hpm3md3k",
+    "intentId": "intent_munzuc8k_hpm3md3k"
+  },
+  {
+    "symbol": "AVAXUSDT",
+    "positionSide": "SHORT",
+    "role": "ENTRY",
+    "exchangeOrderId": "537167992",
+    "fillIds": [
+      "66612363"
+    ],
+    "fillCount": 1,
+    "firstFillAt": 1790768321473,
+    "lastFillAt": 1790768321473,
+    "quantity": 1.0,
+    "vwap": 11.142,
+    "realizedPnl": 0.0,
+    "commissionByAsset": {
+      "USDT": 0.0022284
+    },
+    "localOrderId": "entry_intent_muo1787l_9xry8tqq",
+    "intentId": "intent_muo1787l_9xry8tqq"
+  },
+  {
+    "symbol": "AVAXUSDT",
+    "positionSide": "LONG",
+    "role": "EXIT",
+    "exchangeOrderId": "537164910",
+    "fillIds": [
+      "66618357"
+    ],
+    "fillCount": 1,
+    "firstFillAt": 1790771528530,
+    "lastFillAt": 1790771528530,
+    "quantity": 1.0,
+    "vwap": 11.229,
+    "realizedPnl": 0.051,
+    "commissionByAsset": {
+      "USDT": 0.0022458
+    },
+    "localOrderId": "tp_muo0okm6_xoo9eovw",
+    "intentId": null
+  },
+  {
+    "symbol": "ETHUSDT",
+    "positionSide": "LONG",
+    "role": "ENTRY",
+    "exchangeOrderId": "16814505692",
+    "fillIds": [
+      "334743383",
+      "334743420",
+      "334743426",
+      "334743433",
+      "334743447",
+      "334743454",
+      "334743457",
+      "334743464",
+      "334743475",
+      "334743479",
+      "334743490",
+      "334743503",
+      "334743528",
+      "334743536"
+    ],
+    "fillCount": 14,
+    "firstFillAt": 1791134074584,
+    "lastFillAt": 1791134147057,
+    "quantity": 0.741,
+    "vwap": 2701.18,
+    "realizedPnl": 0.0,
+    "commissionByAsset": {
+      "USDT": 0.40031481
+    },
+    "localOrderId": "entry_intent_muu2ybbf_ynn34902",
+    "intentId": "intent_muu2ybbf_ynn34902"
+  },
+  {
+    "symbol": "ETHUSDT",
+    "positionSide": "LONG",
+    "role": "EXIT",
+    "exchangeOrderId": "16814506523",
+    "fillIds": [
+      "334808048"
+    ],
+    "fillCount": 1,
+    "firstFillAt": 1791152010530,
+    "lastFillAt": 1791152010530,
+    "quantity": 2.817,
+    "vwap": 2712.6,
+    "realizedPnl": 34.23968,
+    "commissionByAsset": {
+      "USDT": 1.52827884
+    },
+    "localOrderId": "tp_muu31sjm_x6p27yov",
+    "intentId": "exchange-recovered"
+  },
+  {
+    "symbol": "ETHUSDT",
+    "positionSide": "LONG",
+    "role": "ENTRY",
+    "exchangeOrderId": "16814789705",
+    "fillIds": [
+      "334862490",
+      "334862520",
+      "334862797"
+    ],
+    "fillCount": 3,
+    "firstFillAt": 1791162876807,
+    "lastFillAt": 1791162895394,
+    "quantity": 0.734,
+    "vwap": 2726.559645776567,
+    "realizedPnl": 0.0,
+    "commissionByAsset": {
+      "USDT": 0.40025893999999995
+    },
+    "localOrderId": "entry_intent_muuk3p5u_32vd1smk",
+    "intentId": "intent_muuk3p5u_32vd1smk"
+  },
+  {
+    "symbol": "ETHUSDT",
+    "positionSide": "LONG",
+    "role": "EXIT",
+    "exchangeOrderId": "16814798136",
+    "fillIds": [
+      "334879948",
+      "334879949",
+      "334879952",
+      "334879953",
+      "334879956",
+      "334879957",
+      "334879959",
+      "334879960",
+      "334879961",
+      "334879962",
+      "334879963"
+    ],
+    "fillCount": 11,
+    "firstFillAt": 1791166522061,
+    "lastFillAt": 1791166525424,
+    "quantity": 0.734,
+    "vwap": 2731.97,
+    "realizedPnl": 3.97119996,
+    "commissionByAsset": {
+      "USDT": 0.40105316
+    },
+    "localOrderId": "tp_muukl74k_ejso358s",
+    "intentId": "exchange-recovered"
+  },
+  {
+    "symbol": "ETHUSDT",
+    "positionSide": "LONG",
+    "role": "ENTRY",
+    "exchangeOrderId": "16814960378",
+    "fillIds": [
+      "334948858"
+    ],
+    "fillCount": 1,
+    "firstFillAt": 1791180440284,
+    "lastFillAt": 1791180440284,
+    "quantity": 0.702,
+    "vwap": 2708.53,
+    "realizedPnl": 0.0,
+    "commissionByAsset": {
+      "USDT": 0.38027761
+    },
+    "localOrderId": "entry_intent_muuukbgp_u5jpi24b",
+    "intentId": "intent_muuukbgp_u5jpi24b"
+  },
+  {
+    "symbol": "ETHUSDT",
+    "positionSide": "LONG",
+    "role": "EXIT",
+    "exchangeOrderId": "16814966070",
+    "fillIds": [
+      "334953214"
+    ],
+    "fillCount": 1,
+    "firstFillAt": 1791181048715,
+    "lastFillAt": 1791181048715,
+    "quantity": 0.702,
+    "vwap": 2714.05,
+    "realizedPnl": 3.87504,
+    "commissionByAsset": {
+      "USDT": 0.38105262
+    },
+    "localOrderId": "tp_muuuu38u_81p5h6l2",
+    "intentId": null
+  },
+  {
+    "symbol": "AVAXUSDT",
+    "positionSide": "SHORT",
+    "role": "ENTRY",
+    "exchangeOrderId": "539226832",
+    "fillIds": [
+      "67373566",
+      "67373567",
+      "67373568",
+      "67373569",
+      "67373570",
+      "67373571",
+      "67373572"
+    ],
+    "fillCount": 7,
+    "firstFillAt": 1791182766652,
+    "lastFillAt": 1791182769960,
+    "quantity": 92.0,
+    "vwap": 10.933,
+    "realizedPnl": 0.0,
+    "commissionByAsset": {
+      "USDT": 0.2011672
+    },
+    "localOrderId": "entry_intent_muuvxqur_avk6j906",
+    "intentId": "intent_muuvxqur_avk6j906"
+  },
+  {
+    "symbol": "ETHUSDT",
+    "positionSide": "LONG",
+    "role": "ENTRY",
+    "exchangeOrderId": "16814991357",
+    "fillIds": [
+      "334962417",
+      "334962423",
+      "334962430",
+      "334962431",
+      "334962437",
+      "334962552",
+      "334962556",
+      "334962567",
+      "334962574"
+    ],
+    "fillCount": 9,
+    "firstFillAt": 1791183438139,
+    "lastFillAt": 1791183499290,
+    "quantity": 0.211,
+    "vwap": 2719.22,
+    "realizedPnl": 0.0,
+    "commissionByAsset": {
+      "USDT": 0.11475106
+    },
+    "localOrderId": "entry_intent_muuwcjbl_nhtak25t",
+    "intentId": "intent_muuwcjbl_nhtak25t"
+  },
+  {
+    "symbol": "AVAXUSDT",
+    "positionSide": "SHORT",
+    "role": "ENTRY",
+    "exchangeOrderId": "539232553",
+    "fillIds": [
+      "67375345",
+      "67375346",
+      "67375347",
+      "67375348",
+      "67375349",
+      "67375350",
+      "67375351",
+      "67375352",
+      "67375353",
+      "67375354",
+      "67375355",
+      "67375358",
+      "67375359",
+      "67375360",
+      "67375361",
+      "67375362"
+    ],
+    "fillCount": 16,
+    "firstFillAt": 1791183766249,
+    "lastFillAt": 1791183775692,
+    "quantity": 92.0,
+    "vwap": 10.991,
+    "realizedPnl": 0.0,
+    "commissionByAsset": {
+      "USDT": 0.2022344
+    },
+    "localOrderId": "entry_intent_muuwjq9f_mhg288ai",
+    "intentId": "intent_muuwjq9f_mhg288ai"
+  },
+  {
+    "symbol": "AVAXUSDT",
+    "positionSide": "LONG",
+    "role": "ENTRY",
+    "exchangeOrderId": "539324922",
+    "fillIds": [
+      "67409119",
+      "67409120",
+      "67409121",
+      "67409122",
+      "67409123",
+      "67409124",
+      "67409203",
+      "67409204",
+      "67409205",
+      "67409206",
+      "67409207",
+      "67409208",
+      "67409209",
+      "67409210",
+      "67409211",
+      "67409212",
+      "67409213"
+    ],
+    "fillCount": 17,
+    "firstFillAt": 1791201151857,
+    "lastFillAt": 1791201206418,
+    "quantity": 91.0,
+    "vwap": 10.998,
+    "realizedPnl": 0.0,
+    "commissionByAsset": {
+      "USDT": 0.2001636
+    },
+    "localOrderId": "entry_intent_muv6watr_vbyn6zs9",
+    "intentId": "intent_muv6watr_vbyn6zs9"
+  },
+  {
+    "symbol": "AVAXUSDT",
+    "positionSide": "SHORT",
+    "role": "ENTRY",
+    "exchangeOrderId": "539344860",
+    "fillIds": [
+      "67416093",
+      "67416094",
+      "67416095",
+      "67416096"
+    ],
+    "fillCount": 4,
+    "firstFillAt": 1791205054149,
+    "lastFillAt": 1791205055745,
+    "quantity": 92.0,
+    "vwap": 10.911,
+    "realizedPnl": 0.0,
+    "commissionByAsset": {
+      "USDT": 0.2007624
+    },
+    "localOrderId": "entry_intent_muv97yob_vhodxqu5",
+    "intentId": "intent_muv97yob_vhodxqu5"
+  },
+  {
+    "symbol": "AVAXUSDT",
+    "positionSide": "SHORT",
+    "role": "ENTRY",
+    "exchangeOrderId": "539361642",
+    "fillIds": [
+      "67422469",
+      "67422470",
+      "67422471",
+      "67422472",
+      "67422473",
+      "67422474",
+      "67422475",
+      "67422476",
+      "67422477",
+      "67422478",
+      "67422479",
+      "67422480",
+      "67422481",
+      "67422482",
+      "67422483",
+      "67422484"
+    ],
+    "fillCount": 16,
+    "firstFillAt": 1791208698839,
+    "lastFillAt": 1791208709073,
+    "quantity": 92.0,
+    "vwap": 10.986,
+    "realizedPnl": 0.0,
+    "commissionByAsset": {
+      "USDT": 0.20214231
+    },
+    "localOrderId": "entry_intent_muvbe0tt_vmqzqlq8",
+    "intentId": "intent_muvbe0tt_vmqzqlq8"
+  },
+  {
+    "symbol": "ETHUSDT",
+    "positionSide": "SHORT",
+    "role": "ENTRY",
+    "exchangeOrderId": "16815386011",
+    "fillIds": [
+      "335088921"
+    ],
+    "fillCount": 1,
+    "firstFillAt": 1791219257063,
+    "lastFillAt": 1791219257063,
+    "quantity": 0.009,
+    "vwap": 2713.4400000000005,
+    "realizedPnl": 0.0,
+    "commissionByAsset": {
+      "USDT": 0.00488419
+    },
+    "localOrderId": "entry_intent_muvhochn_parb782z",
+    "intentId": "intent_muvhochn_parb782z"
+  },
+  {
+    "symbol": "AVAXUSDT",
+    "positionSide": "LONG",
+    "role": "EXIT",
+    "exchangeOrderId": "539327559",
+    "fillIds": [
+      "67477512",
+      "67477513",
+      "67477514",
+      "67477515",
+      "67477516",
+      "67477517",
+      "67477518",
+      "67477519",
+      "67477520",
+      "67477521",
+      "67477522",
+      "67477523",
+      "67477524",
+      "67477525",
+      "67477526",
+      "67477527",
+      "67477528",
+      "67477529"
+    ],
+    "fillCount": 18,
+    "firstFillAt": 1791237748675,
+    "lastFillAt": 1791237757312,
+    "quantity": 91.0,
+    "vwap": 11.039,
+    "realizedPnl": 3.73099998,
+    "commissionByAsset": {
+      "USDT": 0.2009098
+    },
+    "localOrderId": "tp_muv776sb_t33s1czs",
+    "intentId": "exchange-recovered"
+  },
+  {
+    "symbol": "ETHUSDT",
+    "positionSide": "SHORT",
+    "role": "EXIT",
+    "exchangeOrderId": "16815588239",
+    "fillIds": [
+      "335116822"
+    ],
+    "fillCount": 1,
+    "firstFillAt": 1791267983526,
+    "lastFillAt": 1791267983526,
+    "quantity": 0.009,
+    "vwap": 2701.2200000000003,
+    "realizedPnl": 0.10998,
+    "commissionByAsset": {
+      "USDT": 0.00486219
+    },
+    "localOrderId": "tp_muvzeowu_jityhsws",
+    "intentId": "exchange-recovered"
+  },
+  {
+    "symbol": "AVAXUSDT",
+    "positionSide": "LONG",
+    "role": "ENTRY",
+    "exchangeOrderId": "539724703",
+    "fillIds": [
+      "67554208",
+      "67554209",
+      "67554210",
+      "67554211",
+      "67554212",
+      "67554213",
+      "67554214",
+      "67554215",
+      "67554216",
+      "67554217",
+      "67554218",
+      "67554219",
+      "67554220",
+      "67554221",
+      "67554222"
+    ],
+    "fillCount": 15,
+    "firstFillAt": 1791272759989,
+    "lastFillAt": 1791272768022,
+    "quantity": 89.0,
+    "vwap": 11.309,
+    "realizedPnl": 0.0,
+    "commissionByAsset": {
+      "USDT": 0.20130018
+    },
+    "localOrderId": "entry_intent_muwdiwog_k17vkmgo",
+    "intentId": "intent_muwdiwog_k17vkmgo"
+  },
+  {
+    "symbol": "AVAXUSDT",
+    "positionSide": "LONG",
+    "role": "EXIT",
+    "exchangeOrderId": "539727283",
+    "fillIds": [
+      "67560370",
+      "67560371",
+      "67560372",
+      "67560373",
+      "67560374",
+      "67560375",
+      "67560376",
+      "67560377",
+      "67560378",
+      "67560379",
+      "67560380"
+    ],
+    "fillCount": 11,
+    "firstFillAt": 1791276059625,
+    "lastFillAt": 1791276065371,
+    "quantity": 89.0,
+    "vwap": 11.383,
+    "realizedPnl": 6.586,
+    "commissionByAsset": {
+      "USDT": 0.2026174
+    },
+    "localOrderId": "tp_muwdrak8_697fhmzg",
+    "intentId": "exchange-recovered"
+  },
+  {
+    "symbol": "AVAXUSDT",
+    "positionSide": "LONG",
+    "role": "ENTRY",
+    "exchangeOrderId": "539788270",
+    "fillIds": [
+      "67577110",
+      "67577111",
+      "67577112",
+      "67577113",
+      "67577114",
+      "67577115",
+      "67577116",
+      "67577117",
+      "67577118",
+      "67577119",
+      "67577120",
+      "67577121",
+      "67577122",
+      "67577123"
+    ],
+    "fillCount": 14,
+    "firstFillAt": 1791285587635,
+    "lastFillAt": 1791285596221,
+    "quantity": 89.0,
+    "vwap": 11.372,
+    "realizedPnl": 0.0,
+    "commissionByAsset": {
+      "USDT": 0.2024216
+    },
+    "localOrderId": "entry_intent_muwl5r8g_8mxs9m05",
+    "intentId": "intent_muwl5r8g_8mxs9m05"
+  },
+  {
+    "symbol": "AVAXUSDT",
+    "positionSide": "LONG",
+    "role": "EXIT",
+    "exchangeOrderId": "539791721",
+    "fillIds": [
+      "67578485",
+      "67578486",
+      "67578487",
+      "67578488",
+      "67578489",
+      "67578490",
+      "67578491",
+      "67578492",
+      "67578493",
+      "67578494",
+      "67578495",
+      "67578496",
+      "67578497",
+      "67578498",
+      "67578499"
+    ],
+    "fillCount": 15,
+    "firstFillAt": 1791286296242,
+    "lastFillAt": 1791286303332,
+    "quantity": 89.0,
+    "vwap": 11.397,
+    "realizedPnl": 2.225,
+    "commissionByAsset": {
+      "USDT": 0.20286659999999998
+    },
+    "localOrderId": "tp_muwlgj0r_valjbi52",
+    "intentId": null
+  },
+  {
+    "symbol": "ETHUSDT",
+    "positionSide": "LONG",
+    "role": "ENTRY",
+    "exchangeOrderId": "16815898056",
+    "fillIds": [
+      "335193870",
+      "335193871",
+      "335193872",
+      "335193873",
+      "335193874",
+      "335193875",
+      "335193876",
+      "335193877",
+      "335193878",
+      "335193879",
+      "335193880",
+      "335193881",
+      "335193882",
+      "335193883",
+      "335193884",
+      "335193885",
+      "335193886",
+      "335193887",
+      "335193888",
+      "335193889",
+      "335193890"
+    ],
+    "fillCount": 21,
+    "firstFillAt": 1791286607518,
+    "lastFillAt": 1791286619607,
+    "quantity": 0.369,
+    "vwap": 2714.9700000000003,
+    "realizedPnl": 0.0,
+    "commissionByAsset": {
+      "USDT": 0.20036473000000002
+    },
+    "localOrderId": "entry_intent_muwls5hm_2s5p3phb",
+    "intentId": "intent_muwls5hm_2s5p3phb"
+  },
+  {
+    "symbol": "AVAXUSDT",
+    "positionSide": "LONG",
+    "role": "ENTRY",
+    "exchangeOrderId": "539806068",
+    "fillIds": [
+      "67584500",
+      "67584538",
+      "67584542",
+      "67584546",
+      "67584555",
+      "67584556",
+      "67584557",
+      "67584558",
+      "67584602",
+      "67584603",
+      "67584604",
+      "67584605",
+      "67584606"
+    ],
+    "fillCount": 13,
+    "firstFillAt": 1791288645319,
+    "lastFillAt": 1791288700271,
+    "quantity": 82.0,
+    "vwap": 11.661,
+    "realizedPnl": 0.0,
+    "commissionByAsset": {
+      "USDT": 0.1912404
+    },
+    "localOrderId": "entry_intent_muwmzh78_vfp1v6g2",
+    "intentId": "intent_muwmzh78_vfp1v6g2"
+  },
+  {
+    "symbol": "ETHUSDT",
+    "positionSide": "LONG",
+    "role": "ENTRY",
+    "exchangeOrderId": "16815994429",
+    "fillIds": [
+      "335238710"
+    ],
+    "fillCount": 1,
+    "firstFillAt": 1791297256309,
+    "lastFillAt": 1791297256309,
+    "quantity": 0.518,
+    "vwap": 2706.2,
+    "realizedPnl": 0.0,
+    "commissionByAsset": {
+      "USDT": 0.28036232
+    },
+    "localOrderId": "entry_intent_muws3q5o_k8xs52pb",
+    "intentId": "intent_muws3q5o_k8xs52pb"
+  },
+  {
+    "symbol": "AVAXUSDT",
+    "positionSide": "LONG",
+    "role": "ENTRY",
+    "exchangeOrderId": "539854462",
+    "fillIds": [
+      "67602368",
+      "67602369",
+      "67602370",
+      "67602371",
+      "67602372",
+      "67602373",
+      "67602374",
+      "67602375",
+      "67602376",
+      "67602377",
+      "67602378",
+      "67602379",
+      "67602380",
+      "67602381"
+    ],
+    "fillCount": 14,
+    "firstFillAt": 1791299745999,
+    "lastFillAt": 1791299754992,
+    "quantity": 75.0,
+    "vwap": 11.565,
+    "realizedPnl": 0.0,
+    "commissionByAsset": {
+      "USDT": 0.17347499
+    },
+    "localOrderId": "entry_intent_muwtkw0w_m7p5etkr",
+    "intentId": "intent_muwtkw0w_m7p5etkr"
+  },
+  {
+    "symbol": "ETHUSDT",
+    "positionSide": "LONG",
+    "role": "ENTRY",
+    "exchangeOrderId": "16816037837",
+    "fillIds": [
+      "335255913"
+    ],
+    "fillCount": 1,
+    "firstFillAt": 1791301463896,
+    "lastFillAt": 1791301463896,
+    "quantity": 0.369,
+    "vwap": 2713.36,
+    "realizedPnl": 0.0,
+    "commissionByAsset": {
+      "USDT": 0.20024596
+    },
+    "localOrderId": "entry_intent_muwum4i0_u62c7zbc",
+    "intentId": "intent_muwum4i0_u62c7zbc"
+  },
+  {
+    "symbol": "AVAXUSDT",
+    "positionSide": "LONG",
+    "role": "ENTRY",
+    "exchangeOrderId": "539862808",
+    "fillIds": [
+      "67604964"
+    ],
+    "fillCount": 1,
+    "firstFillAt": 1791301592763,
+    "lastFillAt": 1791301592763,
+    "quantity": 122.0,
+    "vwap": 11.562000000000001,
+    "realizedPnl": 0.0,
+    "commissionByAsset": {
+      "USDT": 0.2821128
+    },
+    "localOrderId": "entry_intent_muwup4mx_xmr4vn4s",
+    "intentId": "intent_muwup4mx_xmr4vn4s"
+  },
+  {
+    "symbol": "AVAXUSDT",
+    "positionSide": "LONG",
+    "role": "ENTRY",
+    "exchangeOrderId": "539868359",
+    "fillIds": [
+      "67607309",
+      "67607310",
+      "67607311",
+      "67607312",
+      "67607313",
+      "67607314",
+      "67607315",
+      "67607316",
+      "67607317"
+    ],
+    "fillCount": 9,
+    "firstFillAt": 1791303001067,
+    "lastFillAt": 1791303005808,
+    "quantity": 88.0,
+    "vwap": 11.48,
+    "realizedPnl": 0.0,
+    "commissionByAsset": {
+      "USDT": 0.202048
+    },
+    "localOrderId": "entry_intent_muwvja1c_vc1zfqbk",
+    "intentId": "intent_muwvja1c_vc1zfqbk"
+  },
+  {
+    "symbol": "AVAXUSDT",
+    "positionSide": "LONG",
+    "role": "ENTRY",
+    "exchangeOrderId": "539887245",
+    "fillIds": [
+      "67614090",
+      "67614091",
+      "67614092",
+      "67614093",
+      "67614094",
+      "67614095",
+      "67614096",
+      "67614098"
+    ],
+    "fillCount": 8,
+    "firstFillAt": 1791307691829,
+    "lastFillAt": 1791307696103,
+    "quantity": 44.0,
+    "vwap": 11.496,
+    "realizedPnl": 0.0,
+    "commissionByAsset": {
+      "USDT": 0.1011648
+    },
+    "localOrderId": "entry_intent_muwybo8w_18h5p2kk",
+    "intentId": "intent_muwybo8w_18h5p2kk"
+  },
+  {
+    "symbol": "ETHUSDT",
+    "positionSide": "SHORT",
+    "role": "ENTRY",
+    "exchangeOrderId": "16816274539",
+    "fillIds": [
+      "335348572",
+      "335348573",
+      "335348574",
+      "335348575",
+      "335348576",
+      "335348577",
+      "335348578",
+      "335348579"
+    ],
+    "fillCount": 8,
+    "firstFillAt": 1791326781007,
+    "lastFillAt": 1791326783415,
+    "quantity": 0.372,
+    "vwap": 2695.16,
+    "realizedPnl": 0.0,
+    "commissionByAsset": {
+      "USDT": 0.20051987999999998
+    },
+    "localOrderId": "entry_intent_mux9p49s_3ytnbj2y",
+    "intentId": "intent_mux9p49s_3ytnbj2y"
+  },
+  {
+    "symbol": "AVAXUSDT",
+    "positionSide": "LONG",
+    "role": "ENTRY",
+    "exchangeOrderId": "539972589",
+    "fillIds": [
+      "67646935",
+      "67646936",
+      "67646946",
+      "67646947",
+      "67646948",
+      "67646949",
+      "67646950",
+      "67646951",
+      "67646952",
+      "67646953",
+      "67646954",
+      "67646955",
+      "67646956",
+      "67646957",
+      "67646958",
+      "67646959",
+      "67646960",
+      "67646961"
+    ],
+    "fillCount": 18,
+    "firstFillAt": 1791327274863,
+    "lastFillAt": 1791327294947,
+    "quantity": 173.0,
+    "vwap": 11.597,
+    "realizedPnl": 0.0,
+    "commissionByAsset": {
+      "USDT": 0.4012562
+    },
+    "localOrderId": "entry_intent_mux9zjdx_4rm1b0gz",
+    "intentId": "intent_mux9zjdx_4rm1b0gz"
+  },
+  {
+    "symbol": "ETHUSDT",
+    "positionSide": "SHORT",
+    "role": "ENTRY",
+    "exchangeOrderId": "16816280129",
+    "fillIds": [
+      "335350023",
+      "335350024",
+      "335350025",
+      "335350026",
+      "335350028",
+      "335350029",
+      "335350030",
+      "335350031",
+      "335350032",
+      "335350033",
+      "335350034",
+      "335350035",
+      "335350036",
+      "335350037",
+      "335350038",
+      "335350039"
+    ],
+    "fillCount": 16,
+    "firstFillAt": 1791327654647,
+    "lastFillAt": 1791327664307,
+    "quantity": 0.372,
+    "vwap": 2695.56,
+    "realizedPnl": 0.0,
+    "commissionByAsset": {
+      "USDT": 0.2005496
+    },
+    "localOrderId": "entry_intent_muxa78k6_01sxbc7v",
+    "intentId": "intent_muxa78k6_01sxbc7v"
+  },
+  {
+    "symbol": "AVAXUSDT",
+    "positionSide": "LONG",
+    "role": "EXIT",
+    "exchangeOrderId": "539973571",
+    "fillIds": [
+      "67647666"
+    ],
+    "fillCount": 1,
+    "firstFillAt": 1791327677731,
+    "lastFillAt": 1791327677731,
+    "quantity": 584.0,
+    "vwap": 11.622,
+    "realizedPnl": 30.762,
+    "commissionByAsset": {
+      "USDT": 1.3574496
+    },
+    "localOrderId": "tp_muxa41qe_m9tks6hr",
+    "intentId": null
+  },
+  {
+    "symbol": "AVAXUSDT",
+    "positionSide": "LONG",
+    "role": "ENTRY",
+    "exchangeOrderId": "540007209",
+    "fillIds": [
+      "67660306",
+      "67660308",
+      "67660309",
+      "67660310",
+      "67660311",
+      "67660312",
+      "67660313",
+      "67660314",
+      "67660315",
+      "67660316",
+      "67660317",
+      "67660318",
+      "67660319",
+      "67660320",
+      "67660321",
+      "67660322",
+      "67660323"
+    ],
+    "fillCount": 17,
+    "firstFillAt": 1791335421355,
+    "lastFillAt": 1791335432887,
+    "quantity": 95.0,
+    "vwap": 11.609,
+    "realizedPnl": 0.0,
+    "commissionByAsset": {
+      "USDT": 0.220571
+    },
+    "localOrderId": "entry_intent_muxeu113_rbtqe4t1",
+    "intentId": "intent_muxeu113_rbtqe4t1"
+  },
+  {
+    "symbol": "ETHUSDT",
+    "positionSide": "SHORT",
+    "role": "EXIT",
+    "exchangeOrderId": "16816281566",
+    "fillIds": [
+      "335380122"
+    ],
+    "fillCount": 1,
+    "firstFillAt": 1791335967007,
+    "lastFillAt": 1791335967007,
+    "quantity": 0.744,
+    "vwap": 2689.36,
+    "realizedPnl": 4.464,
+    "commissionByAsset": {
+      "USDT": 0.40017676
+    },
+    "localOrderId": "tp_muxacdoa_wypjc4u4",
+    "intentId": "exchange-recovered"
+  },
+  {
+    "symbol": "AVAXUSDT",
+    "positionSide": "LONG",
+    "role": "EXIT",
+    "exchangeOrderId": "540021298",
+    "fillIds": [
+      "67666963"
+    ],
+    "fillCount": 1,
+    "firstFillAt": 1791338762248,
+    "lastFillAt": 1791338762248,
+    "quantity": 95.0,
+    "vwap": 11.067,
+    "realizedPnl": -51.49,
+    "commissionByAsset": {
+      "USDT": 0.210273
+    },
+    "localOrderId": null,
+    "intentId": null
+  },
+  {
+    "symbol": "AVAXUSDT",
+    "positionSide": "SHORT",
+    "role": "ENTRY",
+    "exchangeOrderId": "540046738",
+    "fillIds": [
+      "67678048",
+      "67678049",
+      "67678050",
+      "67678051",
+      "67678052",
+      "67678053",
+      "67678054",
+      "67678055",
+      "67678056",
+      "67678057",
+      "67678058",
+      "67678059",
+      "67678060",
+      "67678061",
+      "67678062",
+      "67678063"
+    ],
+    "fillCount": 16,
+    "firstFillAt": 1791344953479,
+    "lastFillAt": 1791344964439,
+    "quantity": 91.0,
+    "vwap": 11.028,
+    "realizedPnl": 0.0,
+    "commissionByAsset": {
+      "USDT": 0.20070954
+    },
+    "localOrderId": "entry_intent_muxkiod1_gl3tolvx",
+    "intentId": "intent_muxkiod1_gl3tolvx"
+  },
+  {
+    "symbol": "ETHUSDT",
+    "positionSide": "SHORT",
+    "role": "ENTRY",
+    "exchangeOrderId": "16816480063",
+    "fillIds": [
+      "335450561",
+      "335450600",
+      "335450606",
+      "335450616"
+    ],
+    "fillCount": 4,
+    "firstFillAt": 1791350967351,
+    "lastFillAt": 1791350976979,
+    "quantity": 0.11,
+    "vwap": 2614.45,
+    "realizedPnl": 0.0,
+    "commissionByAsset": {
+      "USDT": 0.0575179
+    },
+    "localOrderId": "entry_intent_muxo341a_tcyd3v6n",
+    "intentId": "intent_muxo341a_tcyd3v6n"
+  },
+  {
+    "symbol": "ETHUSDT",
+    "positionSide": "SHORT",
+    "role": "ENTRY",
+    "exchangeOrderId": "16816488988",
+    "fillIds": [
+      "335453981",
+      "335453988",
+      "335453995",
+      "335454002",
+      "335454004",
+      "335454009",
+      "335454018",
+      "335454033",
+      "335454040",
+      "335454045"
+    ],
+    "fillCount": 10,
+    "firstFillAt": 1791352039999,
+    "lastFillAt": 1791352068053,
+    "quantity": 0.383,
+    "vwap": 2617.2,
+    "realizedPnl": 0.0,
+    "commissionByAsset": {
+      "USDT": 0.20047752000000002
+    },
+    "localOrderId": "entry_intent_muxoqja2_cne2n76s",
+    "intentId": "intent_muxoqja2_cne2n76s"
+  },
+  {
+    "symbol": "ETHUSDT",
+    "positionSide": "SHORT",
+    "role": "EXIT",
+    "exchangeOrderId": "16816490116",
+    "fillIds": [
+      "335496725",
+      "335496726",
+      "335496727"
+    ],
+    "fillCount": 3,
+    "firstFillAt": 1791363170896,
+    "lastFillAt": 1791363171399,
+    "quantity": 0.49300000000000005,
+    "vwap": 2608.6,
+    "realizedPnl": 3.93729998,
+    "commissionByAsset": {
+      "USDT": 0.25720796
+    },
+    "localOrderId": "tp_muxotvaw_62xzb4ln",
+    "intentId": "exchange-recovered"
+  },
+  {
+    "symbol": "AVAXUSDT",
+    "positionSide": "SHORT",
+    "role": "ENTRY",
+    "exchangeOrderId": "540137218",
+    "fillIds": [
+      "67712886",
+      "67712887",
+      "67712888",
+      "67712889",
+      "67712890",
+      "67712891",
+      "67712892",
+      "67712893",
+      "67712894",
+      "67712895",
+      "67712896",
+      "67712897",
+      "67712898",
+      "67712899",
+      "67712900",
+      "67712901",
+      "67712902"
+    ],
+    "fillCount": 17,
+    "firstFillAt": 1791365806887,
+    "lastFillAt": 1791365816907,
+    "quantity": 83.0,
+    "vwap": 11.09,
+    "realizedPnl": 0.0,
+    "commissionByAsset": {
+      "USDT": 0.184094
+    },
+    "localOrderId": "entry_intent_muxwxdzr_qqnozaxx",
+    "intentId": "intent_muxwxdzr_qqnozaxx"
+  },
+  {
+    "symbol": "AVAXUSDT",
+    "positionSide": "SHORT",
+    "role": "ENTRY",
+    "exchangeOrderId": "540158510",
+    "fillIds": [
+      "67721540",
+      "67721541",
+      "67721542",
+      "67721543",
+      "67721544",
+      "67721545",
+      "67721546"
+    ],
+    "fillCount": 7,
+    "firstFillAt": 1791370116319,
+    "lastFillAt": 1791370118719,
+    "quantity": 91.0,
+    "vwap": 11.022,
+    "realizedPnl": 0.0,
+    "commissionByAsset": {
+      "USDT": 0.2006004
+    },
+    "localOrderId": "entry_intent_muxzhjey_o5jyvrs7",
+    "intentId": "intent_muxzhjey_o5jyvrs7"
+  },
+  {
+    "symbol": "ETHUSDT",
+    "positionSide": "SHORT",
+    "role": "ENTRY",
+    "exchangeOrderId": "16816648072",
+    "fillIds": [
+      "335530637",
+      "335530689"
+    ],
+    "fillCount": 2,
+    "firstFillAt": 1791371126731,
+    "lastFillAt": 1791371128743,
+    "quantity": 0.776,
+    "vwap": 2578.58,
+    "realizedPnl": 0.0,
+    "commissionByAsset": {
+      "USDT": 0.40019561
+    },
+    "localOrderId": "entry_intent_muy03mn8_xpd6nk2t",
+    "intentId": "intent_muy03mn8_xpd6nk2t"
+  },
+  {
+    "symbol": "ETHUSDT",
+    "positionSide": "SHORT",
+    "role": "EXIT",
+    "exchangeOrderId": "16816653479",
+    "fillIds": [
+      "335535432"
+    ],
+    "fillCount": 1,
+    "firstFillAt": 1791372026687,
+    "lastFillAt": 1791372026687,
+    "quantity": 0.776,
+    "vwap": 2575.0099999999998,
+    "realizedPnl": 2.77032,
+    "commissionByAsset": {
+      "USDT": 0.39964155
+    },
+    "localOrderId": "tp_muy0fajv_svi4p4wj",
+    "intentId": "exchange-recovered"
+  },
+  {
+    "symbol": "ETHUSDT",
+    "positionSide": "SHORT",
+    "role": "ENTRY",
+    "exchangeOrderId": "16816669043",
+    "fillIds": [
+      "335541323",
+      "335541324",
+      "335541325",
+      "335541326",
+      "335541327"
+    ],
+    "fillCount": 5,
+    "firstFillAt": 1791373382091,
+    "lastFillAt": 1791373382603,
+    "quantity": 0.39,
+    "vwap": 2571.5699999999997,
+    "realizedPnl": 0.0,
+    "commissionByAsset": {
+      "USDT": 0.20058243
+    },
+    "localOrderId": "entry_intent_muy1fn2q_ib4il59k",
+    "intentId": "intent_muy1fn2q_ib4il59k"
+  },
+  {
+    "symbol": "ETHUSDT",
+    "positionSide": "SHORT",
+    "role": "EXIT",
+    "exchangeOrderId": "16816670645",
+    "fillIds": [
+      "335563571"
+    ],
+    "fillCount": 1,
+    "firstFillAt": 1791378148119,
+    "lastFillAt": 1791378148119,
+    "quantity": 0.39,
+    "vwap": 2565.81,
+    "realizedPnl": 2.2464,
+    "commissionByAsset": {
+      "USDT": 0.20013318
+    },
+    "localOrderId": "tp_muy1jxt8_quba37pu",
+    "intentId": "exchange-recovered"
+  },
+  {
+    "symbol": "ETHUSDT",
+    "positionSide": "SHORT",
+    "role": "ENTRY",
+    "exchangeOrderId": "16816802944",
+    "fillIds": [
+      "335614936",
+      "335614949"
+    ],
+    "fillCount": 2,
+    "firstFillAt": 1791388930195,
+    "lastFillAt": 1791388931211,
+    "quantity": 0.097,
+    "vwap": 2569.91,
+    "realizedPnl": 0.0,
+    "commissionByAsset": {
+      "USDT": 0.04985624
+    },
+    "localOrderId": "entry_intent_muyap8eq_sqdwmbm7",
+    "intentId": "intent_muyap8eq_sqdwmbm7"
+  },
+  {
+    "symbol": "ETHUSDT",
+    "positionSide": "SHORT",
+    "role": "EXIT",
+    "exchangeOrderId": "16816803704",
+    "fillIds": [
+      "335640691",
+      "335640692"
+    ],
+    "fillCount": 2,
+    "firstFillAt": 1791394853387,
+    "lastFillAt": 1791394853423,
+    "quantity": 0.097,
+    "vwap": 2556.22,
+    "realizedPnl": 1.32793,
+    "commissionByAsset": {
+      "USDT": 0.04959066
+    },
+    "localOrderId": "tp_muyas53j_rkbd5k08",
+    "intentId": "exchange-recovered"
+  },
+  {
+    "symbol": "AVAXUSDT",
+    "positionSide": "SHORT",
+    "role": "ENTRY",
+    "exchangeOrderId": "540405239",
+    "fillIds": [
+      "67823081",
+      "67823082",
+      "67823086",
+      "67823097"
+    ],
+    "fillCount": 4,
+    "firstFillAt": 1791432914347,
+    "lastFillAt": 1791432928295,
+    "quantity": 23.0,
+    "vwap": 10.991,
+    "realizedPnl": 0.0,
+    "commissionByAsset": {
+      "USDT": 0.0505586
+    },
+    "localOrderId": "entry_intent_muz0w41l_ecoym5wd",
+    "intentId": "intent_muz0w41l_ecoym5wd"
+  },
+  {
+    "symbol": "ETHUSDT",
+    "positionSide": "SHORT",
+    "role": "ENTRY",
+    "exchangeOrderId": "16817186179",
+    "fillIds": [
+      "335810426",
+      "335810427",
+      "335810428",
+      "335810429",
+      "335810430",
+      "335810431"
+    ],
+    "fillCount": 6,
+    "firstFillAt": 1791435122745,
+    "lastFillAt": 1791435125756,
+    "quantity": 0.392,
+    "vwap": 2559.5599999999995,
+    "realizedPnl": 0.0,
+    "commissionByAsset": {
+      "USDT": 0.20066946
+    },
+    "localOrderId": "entry_intent_muz27ktc_e6f5ajnr",
+    "intentId": "intent_muz27ktc_e6f5ajnr"
+  },
+  {
+    "symbol": "UNIUSDC",
+    "positionSide": "SHORT",
+    "role": "ENTRY",
+    "exchangeOrderId": "147981255",
+    "fillIds": [
+      "61148097",
+      "61148098",
+      "61148099"
+    ],
+    "fillCount": 3,
+    "firstFillAt": 1791439791255,
+    "lastFillAt": 1791439792390,
+    "quantity": 130.0,
+    "vwap": 7.7459999999999996,
+    "realizedPnl": 0.0,
+    "commissionByAsset": {
+      "USDC": 0.20139600000000002
+    },
+    "localOrderId": "entry_intent_muz4zibc_qjrqi4fa",
+    "intentId": "intent_muz4zibc_qjrqi4fa"
+  },
+  {
+    "symbol": "UNIUSDC",
+    "positionSide": "SHORT",
+    "role": "EXIT",
+    "exchangeOrderId": "147981416",
+    "fillIds": [
+      "61149425",
+      "61149426",
+      "61149427",
+      "61149428"
+    ],
+    "fillCount": 4,
+    "firstFillAt": 1791440583073,
+    "lastFillAt": 1791440585924,
+    "quantity": 20.0,
+    "vwap": 7.720000000000001,
+    "realizedPnl": 0.52,
+    "commissionByAsset": {
+      "USDC": 0.030879999999999998
+    },
+    "localOrderId": "tp_muz50830_jmndtj4r",
+    "intentId": "exchange-recovered"
+  },
+  {
+    "symbol": "UNIUSDC",
+    "positionSide": "SHORT",
+    "role": "EXIT",
+    "exchangeOrderId": "147984921",
+    "fillIds": [
+      "61149445",
+      "61149446",
+      "61149447",
+      "61149448",
+      "61149449"
+    ],
+    "fillCount": 5,
+    "firstFillAt": 1791440597619,
+    "lastFillAt": 1791440601591,
+    "quantity": 36.0,
+    "vwap": 7.720000000000001,
+    "realizedPnl": 0.936,
+    "commissionByAsset": {
+      "USDC": 0.055584
+    },
+    "localOrderId": "tp_muz5gzl9_lkxzd4j8",
+    "intentId": null
+  },
+  {
+    "symbol": "UNIUSDC",
+    "positionSide": "SHORT",
+    "role": "EXIT",
+    "exchangeOrderId": "147984973",
+    "fillIds": [
+      "61149539",
+      "61149540"
+    ],
+    "fillCount": 2,
+    "firstFillAt": 1791440662519,
+    "lastFillAt": 1791440662625,
+    "quantity": 12.0,
+    "vwap": 7.710999999999999,
+    "realizedPnl": 0.42,
+    "commissionByAsset": {
+      "USDC": 0.0185064
+    },
+    "localOrderId": "tp_muz5hbic_3qu1msjd",
+    "intentId": "exchange-recovered"
+  },
+  {
+    "symbol": "UNIUSDC",
+    "positionSide": "SHORT",
+    "role": "EXIT",
+    "exchangeOrderId": "147985191",
+    "fillIds": [
+      "61149562",
+      "61149563",
+      "61149564",
+      "61149565"
+    ],
+    "fillCount": 4,
+    "firstFillAt": 1791440678451,
+    "lastFillAt": 1791440680239,
+    "quantity": 31.0,
+    "vwap": 7.71,
+    "realizedPnl": 1.116,
+    "commissionByAsset": {
+      "USDC": 0.047802
+    },
+    "localOrderId": "tp_muz5in6n_8mqo59no",
+    "intentId": null
+  },
+  {
+    "symbol": "UNIUSDC",
+    "positionSide": "SHORT",
+    "role": "EXIT",
+    "exchangeOrderId": "147985403",
+    "fillIds": [
+      "61149695",
+      "61149696",
+      "61149697",
+      "61149698",
+      "61149699",
+      "61149700"
+    ],
+    "fillCount": 6,
+    "firstFillAt": 1791440776910,
+    "lastFillAt": 1791440780275,
+    "quantity": 22.0,
+    "vwap": 7.706,
+    "realizedPnl": 0.88,
+    "commissionByAsset": {
+      "USDC": 0.0339064
+    },
+    "localOrderId": "tp_muz5kbuj_qv7x2wup",
+    "intentId": null
+  },
+  {
+    "symbol": "UNIUSDC",
+    "positionSide": "SHORT",
+    "role": "EXIT",
+    "exchangeOrderId": "147985789",
+    "fillIds": [
+      "61149785"
+    ],
+    "fillCount": 1,
+    "firstFillAt": 1791440852059,
+    "lastFillAt": 1791440852059,
+    "quantity": 9.0,
+    "vwap": 7.699,
+    "realizedPnl": 0.423,
+    "commissionByAsset": {
+      "USDC": 0.0138582
+    },
+    "localOrderId": "tp_muz5mjgo_vqqagntu",
+    "intentId": null
+  },
+  {
+    "symbol": "ETHUSDT",
+    "positionSide": "SHORT",
+    "role": "ENTRY",
+    "exchangeOrderId": "16817320980",
+    "fillIds": [
+      "335880283"
+    ],
+    "fillCount": 1,
+    "firstFillAt": 1791450798847,
+    "lastFillAt": 1791450798847,
+    "quantity": 0.391,
+    "vwap": 2563.85,
+    "realizedPnl": 0.0,
+    "commissionByAsset": {
+      "USDT": 0.20049307
+    },
+    "localOrderId": "entry_intent_muzbjnng_f3tjo1yt",
+    "intentId": "intent_muzbjnng_f3tjo1yt"
+  },
+  {
+    "symbol": "ETHUSDT",
+    "positionSide": "SHORT",
+    "role": "EXIT",
+    "exchangeOrderId": "16817321131",
+    "fillIds": [
+      "335905047"
+    ],
+    "fillCount": 1,
+    "firstFillAt": 1791456154077,
+    "lastFillAt": 1791456154077,
+    "quantity": 0.783,
+    "vwap": 2550.17,
+    "realizedPnl": 9.02976,
+    "commissionByAsset": {
+      "USDT": 0.39935662
+    },
+    "localOrderId": "tp_muzbk32g_cn4qlf4t",
+    "intentId": "exchange-recovered"
+  },
+  {
+    "symbol": "AVAXUSDT",
+    "positionSide": "SHORT",
+    "role": "EXIT",
+    "exchangeOrderId": "540405465",
+    "fillIds": [
+      "67893172"
+    ],
+    "fillCount": 1,
+    "firstFillAt": 1791472362824,
+    "lastFillAt": 1791472362824,
+    "quantity": 1263.0,
+    "vwap": 10.441,
+    "realizedPnl": 60.27,
+    "commissionByAsset": {
+      "USDT": 2.6373966
+    },
+    "localOrderId": "tp_muz0y4ll_rlt4oyac",
+    "intentId": "exchange-recovered"
+  },
+  {
+    "symbol": "UNIUSDC",
+    "positionSide": "SHORT",
+    "role": "ENTRY",
+    "exchangeOrderId": "148238961",
+    "fillIds": [
+      "61261945",
+      "61261946",
+      "61261947",
+      "61261948",
+      "61261949",
+      "61261950",
+      "61261951",
+      "61261952",
+      "61261953",
+      "61261954",
+      "61261955",
+      "61261956",
+      "61261957",
+      "61261958",
+      "61261959",
+      "61261960",
+      "61261961",
+      "61261962",
+      "61261963",
+      "61261964",
+      "61261965",
+      "61261966",
+      "61261967",
+      "61261968",
+      "61261969",
+      "61261970",
+      "61261971",
+      "61261972"
+    ],
+    "fillCount": 28,
+    "firstFillAt": 1791499145663,
+    "lastFillAt": 1791499163815,
+    "quantity": 168.0,
+    "vwap": 7.341,
+    "realizedPnl": 0.0,
+    "commissionByAsset": {
+      "USDC": 0.2466576
+    },
+    "localOrderId": "entry_intent_mv04bo29_v4anyi1j",
+    "intentId": "intent_mv04bo29_v4anyi1j"
+  }
+]

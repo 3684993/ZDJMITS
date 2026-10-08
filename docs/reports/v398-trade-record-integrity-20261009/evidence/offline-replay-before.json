@@ -1,0 +1,122 @@
+{
+  "baseline": true,
+  "source": "fixed sanitized cohort, imported committed production projector",
+  "preview": {
+    "window": {
+      "startTime": 1789834245678,
+      "endTime": 1791500249002
+    },
+    "maxFills": 1000,
+    "fills": 268,
+    "systemFills": 268,
+    "externalFills": 49,
+    "cyclesDetected": 9,
+    "existingComplete": 3,
+    "repairablePartial": 0,
+    "newComplete": 0,
+    "newPartial": 0,
+    "duplicates": 0,
+    "conflicts": 0,
+    "unclosable": 6,
+    "experienceChanges": 0,
+    "cyclePlans": [
+      {
+        "cycleId": "cycle_entry_intent_mu8l1mm0_rcobpxad",
+        "symbol": "AVAXUSDT",
+        "direction": "SHORT",
+        "entryFills": 119,
+        "exitFills": 0,
+        "closed": false,
+        "feesComplete": true,
+        "action": "UNCLOSABLE"
+      },
+      {
+        "cycleId": "cycle_entry_intent_mul5j2sb_6sj02qqt",
+        "symbol": "AVAXUSDT",
+        "direction": "SHORT",
+        "entryFills": 17,
+        "exitFills": 0,
+        "closed": false,
+        "feesComplete": true,
+        "action": "UNCLOSABLE"
+      },
+      {
+        "cycleId": "cycle_entry_intent_mun279vu_tgljunw6",
+        "symbol": "AVAXUSDT",
+        "direction": "LONG",
+        "entryFills": 5,
+        "exitFills": 0,
+        "closed": false,
+        "feesComplete": true,
+        "action": "UNCLOSABLE"
+      },
+      {
+        "cycleId": "cycle_AVAXUSDT_LONG_d0641adb-25d8-4e65-a19a-9e5e38f73090",
+        "symbol": "AVAXUSDT",
+        "direction": "LONG",
+        "entryFills": 1,
+        "exitFills": 0,
+        "closed": false,
+        "feesComplete": true,
+        "action": "UNCLOSABLE"
+      },
+      {
+        "cycleId": "cycle_entry_intent_muv6watr_vbyn6zs9",
+        "symbol": "AVAXUSDT",
+        "direction": "LONG",
+        "entryFills": 17,
+        "exitFills": 0,
+        "closed": false,
+        "feesComplete": true,
+        "action": "UNCLOSABLE"
+      },
+      {
+        "cycleId": "cycle_entry_intent_muwdiwog_k17vkmgo",
+        "symbol": "AVAXUSDT",
+        "direction": "LONG",
+        "entryFills": 15,
+        "exitFills": 0,
+        "closed": false,
+        "feesComplete": true,
+        "action": "UNCLOSABLE"
+      },
+      {
+        "cycleId": "cycle_entry_intent_muwl5r8g_8mxs9m05",
+        "symbol": "AVAXUSDT",
+        "direction": "LONG",
+        "entryFills": 14,
+        "exitFills": 15,
+        "closed": true,
+        "feesComplete": true,
+        "action": "SKIP_COMPLETE"
+      },
+      {
+        "cycleId": "cycle_entry_intent_muwmzh78_vfp1v6g2",
+        "symbol": "AVAXUSDT",
+        "direction": "LONG",
+        "entryFills": 63,
+        "exitFills": 1,
+        "closed": true,
+        "feesComplete": true,
+        "action": "SKIP_COMPLETE"
+      },
+      {
+        "cycleId": "cycle_entry_intent_muxeu113_rbtqe4t1",
+        "symbol": "AVAXUSDT",
+        "direction": "LONG",
+        "entryFills": 17,
+        "exitFills": 1,
+        "closed": true,
+        "feesComplete": true,
+        "action": "SKIP_COMPLETE"
+      }
+    ]
+  },
+  "originalRecordsUnchanged": true,
+  "networkCalls": 0,
+  "databaseWrites": 0,
+  "uniPresent": true,
+  "sameSidePolicy": "NO_SEPARATE_ADD_POSITION_EXISTS",
+  "reverseSidePolicy": null,
+  "reverseExchangeLegalityNotProvenByThisCheck": true
+}

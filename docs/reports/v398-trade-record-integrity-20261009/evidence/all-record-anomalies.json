@@ -1,0 +1,4009 @@
+{
+  "denominator": 768,
+  "definitions": "raw arithmetic diagnostics, not new canonical eligibility or permission to rewrite history",
+  "anomalousRecords": 285,
+  "byReason": {
+    "NEGATIVE_REMAINING_QTY": 51,
+    "ENTRY_LOT_SUM_NE_ENTRY_QTY": 242
+  },
+  "rows": [
+    {
+      "tradeId": "trade_cycle_entry_intent_muzg4s1l_7qblp97u",
+      "symbol": "VVVUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 2.9500000000000006,
+      "lotQty": 2.95,
+      "exitQty": 41.25,
+      "remainingQty": -38.3,
+      "reasons": [
+        "NEGATIVE_REMAINING_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu8l1mm0_rcobpxad",
+      "symbol": "AVAXUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 288,
+      "lotQty": 1074.0,
+      "exitQty": 0,
+      "remainingQty": 288,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_muull094_mwsq6p2m",
+      "symbol": "BTCUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 0.1341,
+      "lotQty": 0.1457,
+      "exitQty": 0.1457,
+      "remainingQty": -0.0116,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY",
+        "NEGATIVE_REMAINING_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_muuidxer_5kmssoh0",
+      "symbol": "DOTUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "PARTIALLY_CLOSED",
+      "entryQty": 828.7,
+      "lotQty": 878.9000000000001,
+      "exitQty": 650.9,
+      "remainingQty": 177.80000000000007,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_muuanuoy_wvcgr8p3",
+      "symbol": "AAVEUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 5.599999999999999,
+      "lotQty": 11.2,
+      "exitQty": 0,
+      "remainingQty": 5.599999999999999,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_muu8ommp_tyyclzgv",
+      "symbol": "TIAUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 2105,
+      "lotQty": 8158.0,
+      "exitQty": 3250,
+      "remainingQty": -1145,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY",
+        "NEGATIVE_REMAINING_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_ONDOUSDT_SHORT_e43beba3-eadb-43f5-aec3-b36de412baa6",
+      "symbol": "ONDOUSDT",
+      "side": "SHORT",
+      "classification": "IMPORTED",
+      "status": "PARTIALLY_CLOSED",
+      "entryQty": 3862,
+      "lotQty": 0,
+      "exitQty": 1265,
+      "remainingQty": null,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mutznc3c_tr9r9vuo",
+      "symbol": "VVVUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 38.02000000000001,
+      "lotQty": 53.62,
+      "exitQty": 49.97,
+      "remainingQty": -11.949999999999989,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY",
+        "NEGATIVE_REMAINING_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mutzbq6k_i717b0k3",
+      "symbol": "SOLUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 2.67,
+      "lotQty": 15.799999999999999,
+      "exitQty": 0,
+      "remainingQty": 2.67,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mutv6ffd_3thrft32",
+      "symbol": "ZECUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 0.292,
+      "lotQty": 1.115,
+      "exitQty": 0,
+      "remainingQty": 0.292,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_TAOUSDT_SHORT_0f242669-5435-497c-b827-322d4582ca9f",
+      "symbol": "TAOUSDT",
+      "side": "SHORT",
+      "classification": "IMPORTED",
+      "status": "PARTIALLY_CLOSED",
+      "entryQty": 1.745,
+      "lotQty": 0,
+      "exitQty": 1.745,
+      "remainingQty": null,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_muts1f5c_8m3wl3e3",
+      "symbol": "BCHUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 12.258,
+      "lotQty": 15.397,
+      "exitQty": 15.397,
+      "remainingQty": -3.139000000000001,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY",
+        "NEGATIVE_REMAINING_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_muqppx8c_tjvomscs",
+      "symbol": "PENGUUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 19937,
+      "lotQty": 173279.0,
+      "exitQty": 0,
+      "remainingQty": 19937,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_DOGEUSDC_LONG_7c9a4ed4-10ef-448b-890f-20dd4a451395",
+      "symbol": "DOGEUSDC",
+      "side": "LONG",
+      "classification": "IMPORTED",
+      "status": "PARTIALLY_CLOSED",
+      "entryQty": 53,
+      "lotQty": 0,
+      "exitQty": 53,
+      "remainingQty": null,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_INJUSDT_LONG_9f22f432-cf51-4f9b-b46f-2e43b5650cd8",
+      "symbol": "INJUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 1.4,
+      "lotQty": 1.4,
+      "exitQty": 2.4,
+      "remainingQty": -1,
+      "reasons": [
+        "NEGATIVE_REMAINING_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_ZECUSDT_LONG_88409138-0145-4071-a95b-98b1640b1fe1",
+      "symbol": "ZECUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 0.004,
+      "lotQty": 0.004,
+      "exitQty": 0.016,
+      "remainingQty": -0.012,
+      "reasons": [
+        "NEGATIVE_REMAINING_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_RAYSOLUSDT_LONG_4a5f340b-7ec6-4417-a214-62bcc5380502",
+      "symbol": "RAYSOLUSDT",
+      "side": "LONG",
+      "classification": "IMPORTED",
+      "status": "INCOMPLETE",
+      "entryQty": 2.7,
+      "lotQty": 2.7,
+      "exitQty": 5.4,
+      "remainingQty": -2.7,
+      "reasons": [
+        "NEGATIVE_REMAINING_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_AVAXUSDT_LONG_d0641adb-25d8-4e65-a19a-9e5e38f73090",
+      "symbol": "AVAXUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 1,
+      "lotQty": 1.0,
+      "exitQty": 6,
+      "remainingQty": -5,
+      "reasons": [
+        "NEGATIVE_REMAINING_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_SUIUSDC_SHORT_32c64e68-4436-40cc-bbeb-cc6fba1d675b",
+      "symbol": "SUIUSDC",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 4.4,
+      "lotQty": 4.4,
+      "exitQty": 40.8,
+      "remainingQty": -36.4,
+      "reasons": [
+        "NEGATIVE_REMAINING_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_AAVEUSDT_LONG_1827685d-6824-4218-a54a-a528cee8fe98",
+      "symbol": "AAVEUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 0.1,
+      "lotQty": 0.1,
+      "exitQty": 0.30000000000000004,
+      "remainingQty": -0.20000000000000004,
+      "reasons": [
+        "NEGATIVE_REMAINING_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_SUIUSDC_LONG_ef815989-9f0f-4bc7-9235-917dcbc3dd0a",
+      "symbol": "SUIUSDC",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 8.6,
+      "lotQty": 8.6,
+      "exitQty": 17.3,
+      "remainingQty": -8.700000000000001,
+      "reasons": [
+        "NEGATIVE_REMAINING_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_WLDUSDC_LONG_b1c2e817-dc05-4cc9-b15b-cb6e5e80d8f6",
+      "symbol": "WLDUSDC",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 10,
+      "lotQty": 10.0,
+      "exitQty": 19.8,
+      "remainingQty": -9.8,
+      "reasons": [
+        "NEGATIVE_REMAINING_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_TAOUSDT_SHORT_86983986-8040-4245-9673-99f7d60b8291",
+      "symbol": "TAOUSDT",
+      "side": "SHORT",
+      "classification": "IMPORTED",
+      "status": "PARTIALLY_CLOSED",
+      "entryQty": 0.017,
+      "lotQty": 0,
+      "exitQty": 0.017,
+      "remainingQty": null,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_DOTUSDT_LONG_30e010b3-49df-4eeb-b94e-6a5f4512ea20",
+      "symbol": "DOTUSDT",
+      "side": "LONG",
+      "classification": "IMPORTED",
+      "status": "PARTIALLY_CLOSED",
+      "entryQty": 4.2,
+      "lotQty": 0,
+      "exitQty": 4.2,
+      "remainingQty": null,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_OPUSDT_SHORT_a52ef426-9703-44e8-aad1-39f323098822",
+      "symbol": "OPUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 38.5,
+      "lotQty": 38.5,
+      "exitQty": 152.6,
+      "remainingQty": -114.1,
+      "reasons": [
+        "NEGATIVE_REMAINING_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_WIFUSDT_LONG_6b446ac3-1afb-4d6b-b581-33a478e4d582",
+      "symbol": "WIFUSDT",
+      "side": "LONG",
+      "classification": "IMPORTED",
+      "status": "PARTIALLY_CLOSED",
+      "entryQty": 20.6,
+      "lotQty": 0,
+      "exitQty": 20.6,
+      "remainingQty": null,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_ARBUSDT_SHORT_0617c33d-3ebf-45f0-a64a-73c8f6bbee77",
+      "symbol": "ARBUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 24.6,
+      "lotQty": 24.6,
+      "exitQty": 79.2,
+      "remainingQty": -54.6,
+      "reasons": [
+        "NEGATIVE_REMAINING_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_POLUSDT_SHORT_7ed6e2cb-8965-46c6-ba29-2b38b0703b84",
+      "symbol": "POLUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 43,
+      "lotQty": 43.0,
+      "exitQty": 307,
+      "remainingQty": -264,
+      "reasons": [
+        "NEGATIVE_REMAINING_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_ETHFIUSDT_LONG_35817e36-f0ca-4a7c-9679-7d8a8c4839a8",
+      "symbol": "ETHFIUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 13,
+      "lotQty": 13.0,
+      "exitQty": 32,
+      "remainingQty": -19,
+      "reasons": [
+        "NEGATIVE_REMAINING_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_ENAUSDT_SHORT_acf93004-498f-4f38-a70e-ff32ca53c8c8",
+      "symbol": "ENAUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 21,
+      "lotQty": 21.0,
+      "exitQty": 1200,
+      "remainingQty": -1179,
+      "reasons": [
+        "NEGATIVE_REMAINING_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_TIAUSDC_SHORT_e6242296-a03f-476f-b882-b0dec2449d95",
+      "symbol": "TIAUSDC",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 24,
+      "lotQty": 24.0,
+      "exitQty": 48,
+      "remainingQty": -24,
+      "reasons": [
+        "NEGATIVE_REMAINING_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mundpw8w_b5ohbdwl",
+      "symbol": "VVVUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 0.38,
+      "lotQty": 0.38,
+      "exitQty": 0.5700000000000001,
+      "remainingQty": -0.19000000000000006,
+      "reasons": [
+        "NEGATIVE_REMAINING_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mum4ffiw_3q6bn53k",
+      "symbol": "BTCUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 0.035199999999999995,
+      "lotQty": 0.0391,
+      "exitQty": 0.0391,
+      "remainingQty": -0.0039000000000000076,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY",
+        "NEGATIVE_REMAINING_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mulwcxla_52cn6vzz",
+      "symbol": "HBARUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 129,
+      "lotQty": 129.0,
+      "exitQty": 171,
+      "remainingQty": -42,
+      "reasons": [
+        "NEGATIVE_REMAINING_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mulq88tp_b8d3im6x",
+      "symbol": "NEARUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 16,
+      "lotQty": 16.0,
+      "exitQty": 18,
+      "remainingQty": -2,
+      "reasons": [
+        "NEGATIVE_REMAINING_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mulnq4t0_37cdlvhh",
+      "symbol": "HBARUSDC",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 40,
+      "lotQty": 40.0,
+      "exitQty": 82,
+      "remainingQty": -42,
+      "reasons": [
+        "NEGATIVE_REMAINING_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mulkq8m4_dbp1ydau",
+      "symbol": "DOGEUSDC",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 107,
+      "lotQty": 107.0,
+      "exitQty": 161,
+      "remainingQty": -54,
+      "reasons": [
+        "NEGATIVE_REMAINING_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mulfde4l_cd1pjvog",
+      "symbol": "XLMUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 67,
+      "lotQty": 67.0,
+      "exitQty": 135,
+      "remainingQty": -68,
+      "reasons": [
+        "NEGATIVE_REMAINING_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mulcsn6d_m8lx9azp",
+      "symbol": "BRUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "OPEN",
+      "entryQty": 6,
+      "lotQty": 0,
+      "exitQty": 0,
+      "remainingQty": 6,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mulc9rz5_b1i5jwla",
+      "symbol": "RAYSOLUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 8,
+      "lotQty": 8.0,
+      "exitQty": 13.3,
+      "remainingQty": -5.300000000000001,
+      "reasons": [
+        "NEGATIVE_REMAINING_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mul86oed_hz2wtfux",
+      "symbol": "BRUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "OPEN",
+      "entryQty": 6,
+      "lotQty": 0,
+      "exitQty": 0,
+      "remainingQty": 6,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mul5hd9t_q18x0mt6",
+      "symbol": "VVVUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 0.75,
+      "lotQty": 0.75,
+      "exitQty": 1.13,
+      "remainingQty": -0.3799999999999999,
+      "reasons": [
+        "NEGATIVE_REMAINING_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mul4vdu2_d5uf2bc5",
+      "symbol": "BRUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "OPEN",
+      "entryQty": 6,
+      "lotQty": 0,
+      "exitQty": 0,
+      "remainingQty": 6,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mul3xlmh_9vp0l4kk",
+      "symbol": "BCHUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 0.051000000000000004,
+      "lotQty": 0.051000000000000004,
+      "exitQty": 0.068,
+      "remainingQty": -0.017,
+      "reasons": [
+        "NEGATIVE_REMAINING_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mul3nfr5_swpdn8uc",
+      "symbol": "NEARUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 2,
+      "lotQty": 2.0,
+      "exitQty": 6,
+      "remainingQty": -4,
+      "reasons": [
+        "NEGATIVE_REMAINING_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mul32mle_hgbib1ol",
+      "symbol": "HBARUSDC",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 45,
+      "lotQty": 45.0,
+      "exitQty": 86,
+      "remainingQty": -41,
+      "reasons": [
+        "NEGATIVE_REMAINING_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mul2zn05_qm1525zs",
+      "symbol": "BRUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 6,
+      "lotQty": 6.0,
+      "exitQty": 18,
+      "remainingQty": -12,
+      "reasons": [
+        "NEGATIVE_REMAINING_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mul2rjga_lnj8jso9",
+      "symbol": "VIRTUALUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 13,
+      "lotQty": 13.0,
+      "exitQty": 25.6,
+      "remainingQty": -12.600000000000001,
+      "reasons": [
+        "NEGATIVE_REMAINING_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mul2prx3_kqygrms3",
+      "symbol": "ADAUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 105,
+      "lotQty": 105.0,
+      "exitQty": 125,
+      "remainingQty": -20,
+      "reasons": [
+        "NEGATIVE_REMAINING_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mul2j6ir_4xi26yhk",
+      "symbol": "COTIUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 756,
+      "lotQty": 756.0,
+      "exitQty": 1513,
+      "remainingQty": -757,
+      "reasons": [
+        "NEGATIVE_REMAINING_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mukzb23e_xjcwypl8",
+      "symbol": "BRUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "OPEN",
+      "entryQty": 6,
+      "lotQty": 0,
+      "exitQty": 0,
+      "remainingQty": 6,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mukz2jj7_7fsvr6oj",
+      "symbol": "PENGUUSDC",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 522,
+      "lotQty": 522.0,
+      "exitQty": 3170,
+      "remainingQty": -2648,
+      "reasons": [
+        "NEGATIVE_REMAINING_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mukz0v9n_7nvjuu3q",
+      "symbol": "WLDUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 10,
+      "lotQty": 10.0,
+      "exitQty": 41,
+      "remainingQty": -31,
+      "reasons": [
+        "NEGATIVE_REMAINING_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mukxlmzj_6z9zq42b",
+      "symbol": "TAOUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 0.034,
+      "lotQty": 0.034,
+      "exitQty": 0.10200000000000001,
+      "remainingQty": -0.068,
+      "reasons": [
+        "NEGATIVE_REMAINING_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mukxjzol_q8q1s20j",
+      "symbol": "BRUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 6,
+      "lotQty": 6.0,
+      "exitQty": 18,
+      "remainingQty": -12,
+      "reasons": [
+        "NEGATIVE_REMAINING_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mukxggrv_wb9s24d6",
+      "symbol": "UNIUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 1,
+      "lotQty": 1.0,
+      "exitQty": 2,
+      "remainingQty": -1,
+      "reasons": [
+        "NEGATIVE_REMAINING_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mugll57e_nuoeecm5",
+      "symbol": "TIAUSDC",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 100,
+      "lotQty": 0,
+      "exitQty": 0,
+      "remainingQty": 100,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mughjbjh_yaqsiv88",
+      "symbol": "VVVUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 1,
+      "lotQty": 0,
+      "exitQty": 1,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mugfaltp_ddydvxsb",
+      "symbol": "APTUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 16.2,
+      "lotQty": 16.2,
+      "exitQty": 40.8,
+      "remainingQty": -24.599999999999998,
+      "reasons": [
+        "NEGATIVE_REMAINING_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mugdwy2l_z5qhhj62",
+      "symbol": "FILUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 14.9,
+      "lotQty": 14.9,
+      "exitQty": 29.4,
+      "remainingQty": -14.499999999999998,
+      "reasons": [
+        "NEGATIVE_REMAINING_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mugb090c_t4le4g8u",
+      "symbol": "DOGEUSDC",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 225,
+      "lotQty": 225.0,
+      "exitQty": 279,
+      "remainingQty": -54,
+      "reasons": [
+        "NEGATIVE_REMAINING_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mugaaj5z_1vn0gxp2",
+      "symbol": "NEARUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "PARTIALLY_CLOSED",
+      "entryQty": 2,
+      "lotQty": 0,
+      "exitQty": 102,
+      "remainingQty": -100,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY",
+        "NEGATIVE_REMAINING_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_muga8t29_uegn3ogb",
+      "symbol": "TAOUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "PARTIALLY_CLOSED",
+      "entryQty": 0.107,
+      "lotQty": 0,
+      "exitQty": 0.044,
+      "remainingQty": 0.063,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mug9gjt5_p9n3qold",
+      "symbol": "UNIUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 117,
+      "lotQty": 0,
+      "exitQty": 117,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mug8yzgd_q650tibs",
+      "symbol": "PENGUUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 36332,
+      "lotQty": 0,
+      "exitQty": 36332,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mud50w9f_hyr0vesg",
+      "symbol": "HBARUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 1502,
+      "lotQty": 0,
+      "exitQty": 1502,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mud47fll_e31spp3a",
+      "symbol": "WLDUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 266,
+      "lotQty": 0,
+      "exitQty": 266,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mud3azev_1vpdeo3n",
+      "symbol": "TUTUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 7290.5999999999985,
+      "lotQty": 0,
+      "exitQty": 7290.6,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mud2rkdc_27t7dcpo",
+      "symbol": "XRPUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 10,
+      "lotQty": 0,
+      "exitQty": 10,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mud1xpzz_ze1h7358",
+      "symbol": "USELESSUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 47,
+      "lotQty": 0,
+      "exitQty": 47,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mud0dcqe_ki4ccz7t",
+      "symbol": "PENGUUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 2437,
+      "lotQty": 0,
+      "exitQty": 2437,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mucz0bfg_88j889re",
+      "symbol": "PENGUUSDC",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 8803,
+      "lotQty": 0,
+      "exitQty": 8803,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mucx1fpc_8u9eilfb",
+      "symbol": "BCHUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 0.127,
+      "lotQty": 0,
+      "exitQty": 0.127,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mucwzx7g_uw2jzyhd",
+      "symbol": "DASHUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 0.12,
+      "lotQty": 0,
+      "exitQty": 0,
+      "remainingQty": 0.12,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_muct7pj1_sngxi120",
+      "symbol": "HBARUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 597,
+      "lotQty": 0,
+      "exitQty": 597,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mucklu9o_kbghd9o1",
+      "symbol": "HBARUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 2425,
+      "lotQty": 0,
+      "exitQty": 2425,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_much5uct_jfowx94r",
+      "symbol": "NEARUSDC",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 2,
+      "lotQty": 0,
+      "exitQty": 0,
+      "remainingQty": 2,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mucep921_vykz7th7",
+      "symbol": "1000PEPEUSDC",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 6078,
+      "lotQty": 0,
+      "exitQty": 0,
+      "remainingQty": 6078,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_muc6nerx_sze7skcb",
+      "symbol": "WLDUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 82,
+      "lotQty": 0,
+      "exitQty": 82,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_muc5w5r3_l3jp3qra",
+      "symbol": "DOGEUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 4828,
+      "lotQty": 0,
+      "exitQty": 0,
+      "remainingQty": 4828,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_muc3hcph_lp266syu",
+      "symbol": "NEARUSDC",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 27,
+      "lotQty": 0,
+      "exitQty": 27,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_muc0538s_19zxd9xp",
+      "symbol": "NEARUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 16,
+      "lotQty": 0,
+      "exitQty": 16,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mubr88zl_6vyjj3iu",
+      "symbol": "XRPUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 20.6,
+      "lotQty": 0,
+      "exitQty": 20.6,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mubqz25o_2fvgxklc",
+      "symbol": "TAOUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 0.048,
+      "lotQty": 0,
+      "exitQty": 0,
+      "remainingQty": 0.048,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mubpoawr_aiicz3a2",
+      "symbol": "BTCUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 0.0235,
+      "lotQty": 0.1471,
+      "exitQty": 0,
+      "remainingQty": 0.0235,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mubno5s4_eg4rpv2o",
+      "symbol": "DASHUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 0.5109999999999999,
+      "lotQty": 0,
+      "exitQty": 0.511,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mubnecgg_9gouyqaq",
+      "symbol": "BTCUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 0.0412,
+      "lotQty": 0,
+      "exitQty": 0.0412,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mubko2rb_z465x06f",
+      "symbol": "DOGEUSDC",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 2954,
+      "lotQty": 0,
+      "exitQty": 2954,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mubjkh4w_r0fhabnc",
+      "symbol": "TUTUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 428.1,
+      "lotQty": 0,
+      "exitQty": 428.1,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mubidny8_eoiftga7",
+      "symbol": "DOGEUSDC",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 2843,
+      "lotQty": 0,
+      "exitQty": 2843,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mubhp0gr_z8fztbuw",
+      "symbol": "ADAUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 47,
+      "lotQty": 0,
+      "exitQty": 0,
+      "remainingQty": 47,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mubgebej_x5kj2tle",
+      "symbol": "ETHUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 0.034,
+      "lotQty": 0.034,
+      "exitQty": 0.041999999999999996,
+      "remainingQty": -0.007999999999999993,
+      "reasons": [
+        "NEGATIVE_REMAINING_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mubfvpsz_rjvcg2k6",
+      "symbol": "1000PEPEUSDC",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 14731,
+      "lotQty": 0,
+      "exitQty": 14731,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mubf02zn_rp9m88h5",
+      "symbol": "PENGUUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 1187,
+      "lotQty": 0,
+      "exitQty": 1187,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mube8hln_5hrkhjau",
+      "symbol": "DOGEUSDC",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 1503,
+      "lotQty": 0,
+      "exitQty": 1503,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mubdv771_u7h3xllf",
+      "symbol": "BTCUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 0.0417,
+      "lotQty": 0,
+      "exitQty": 0.0417,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mubbckaa_mixr3rvu",
+      "symbol": "SUIUSDC",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 10,
+      "lotQty": 0,
+      "exitQty": 0,
+      "remainingQty": 10,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mubb3i9q_ahyd2fi8",
+      "symbol": "PENGUUSDC",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 46875,
+      "lotQty": 0,
+      "exitQty": 46875,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mub2llhp_v906uose",
+      "symbol": "BTCUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 0.0402,
+      "lotQty": 0,
+      "exitQty": 0.0402,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mub294e9_fjeyqnm3",
+      "symbol": "DOGEUSDC",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 1719,
+      "lotQty": 0,
+      "exitQty": 1719,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mub0au3x_iri4sbv9",
+      "symbol": "VVVUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 0.48,
+      "lotQty": 0,
+      "exitQty": 0,
+      "remainingQty": 0.48,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_muazync2_dmc5a7qz",
+      "symbol": "BTCUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 0.0222,
+      "lotQty": 0,
+      "exitQty": 0.0222,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_muawxh22_0in79zms",
+      "symbol": "VVVUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 5.279999999999999,
+      "lotQty": 0,
+      "exitQty": 5.28,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_muawvtjf_pcvfm796",
+      "symbol": "SUIUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 11.5,
+      "lotQty": 0,
+      "exitQty": 11.5,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_muavqz4a_kzzy9yp3",
+      "symbol": "XMRUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 0.031,
+      "lotQty": 0,
+      "exitQty": 0,
+      "remainingQty": 0.031,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_muav699z_9ym0lj8e",
+      "symbol": "NEARUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 8,
+      "lotQty": 0,
+      "exitQty": 8,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_muaqcby9_216mo9vw",
+      "symbol": "XPLUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 61,
+      "lotQty": 0,
+      "exitQty": 0,
+      "remainingQty": 61,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_muap1kg7_3f1bcjfw",
+      "symbol": "VVVUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 1.28,
+      "lotQty": 0,
+      "exitQty": 1.28,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mualzsyx_85s7n8ao",
+      "symbol": "ETHUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 0.609,
+      "lotQty": 0,
+      "exitQty": 0.609,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_muakvyea_n3esx7yy",
+      "symbol": "VVVUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 1,
+      "lotQty": 0,
+      "exitQty": 1,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_muais1wq_n2nrj864",
+      "symbol": "NEARUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 28,
+      "lotQty": 0,
+      "exitQty": 28,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_muaig94a_3qqy920q",
+      "symbol": "WLDUSDC",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 555.0000000000001,
+      "lotQty": 0,
+      "exitQty": 555,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_muaicwcm_7t2xu89z",
+      "symbol": "HBARUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 172,
+      "lotQty": 0,
+      "exitQty": 172,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_muaib3iw_umm0osk1",
+      "symbol": "TUTUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 859.2,
+      "lotQty": 0,
+      "exitQty": 859.2,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu9ugrf4_lxxgucmx",
+      "symbol": "VVVUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 38.61000000000001,
+      "lotQty": 0,
+      "exitQty": 38.61,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu9snf8c_riqwirca",
+      "symbol": "VVVUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 15.62,
+      "lotQty": 0,
+      "exitQty": 15.62,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu9lpe0w_u7yjdvud",
+      "symbol": "ZECUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "PARTIALLY_CLOSED",
+      "entryQty": 0.7880000000000006,
+      "lotQty": 0,
+      "exitQty": 0.796,
+      "remainingQty": -0.007999999999999452,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY",
+        "NEGATIVE_REMAINING_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu9awslo_bv0u4pp5",
+      "symbol": "TIAUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 1000,
+      "lotQty": 0,
+      "exitQty": 1000,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu98jui6_m35w96nl",
+      "symbol": "ENAUSDC",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 1000,
+      "lotQty": 0,
+      "exitQty": 1000,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu982ls3_pvotrl0m",
+      "symbol": "ZECUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 0.23000000000000007,
+      "lotQty": 0,
+      "exitQty": 0.23,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu97669y_0r9d32qs",
+      "symbol": "ENAUSDC",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 10781,
+      "lotQty": 0,
+      "exitQty": 10781,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu95o9o8_c4nzb3h3",
+      "symbol": "FETUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 168,
+      "lotQty": 168.0,
+      "exitQty": 369,
+      "remainingQty": -201,
+      "reasons": [
+        "NEGATIVE_REMAINING_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu90d519_lm1di9f7",
+      "symbol": "PENGUUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 100000,
+      "lotQty": 0,
+      "exitQty": 100000,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu9092xe_3cu6756b",
+      "symbol": "SUIUSDC",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 10,
+      "lotQty": 0,
+      "exitQty": 10,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu8zmmby_ozh5lm7o",
+      "symbol": "INJUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 1,
+      "lotQty": 0,
+      "exitQty": 0,
+      "remainingQty": 1,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu8xi1fp_vg3w9nn0",
+      "symbol": "1000PEPEUSDC",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 1466,
+      "lotQty": 0,
+      "exitQty": 1466,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu8xbk68_ljqef13j",
+      "symbol": "INJUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 225.9,
+      "lotQty": 0,
+      "exitQty": 225.9,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu8u9owx_mt88diil",
+      "symbol": "XRPUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 10,
+      "lotQty": 0,
+      "exitQty": 10,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu8u1h8u_95e7zhcg",
+      "symbol": "INJUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 10.000000000000002,
+      "lotQty": 0,
+      "exitQty": 10,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu8rjg1i_1jl8uoaj",
+      "symbol": "ZECUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 0.12299999999999998,
+      "lotQty": 0,
+      "exitQty": 0.12300000000000004,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu8ojs14_agc8fprj",
+      "symbol": "ADAUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 68,
+      "lotQty": 0,
+      "exitQty": 68,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu8oc5ar_4y9suatc",
+      "symbol": "ETHUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 0.5130000000000003,
+      "lotQty": 0,
+      "exitQty": 0.513,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu8nkuxj_72dlybmx",
+      "symbol": "ENAUSDC",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 5104,
+      "lotQty": 0,
+      "exitQty": 5104,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu8mwer0_hbzntsc5",
+      "symbol": "ZECUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 0.047,
+      "lotQty": 0,
+      "exitQty": 0.047,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu8mmzuo_ewktrq6r",
+      "symbol": "FILUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 10,
+      "lotQty": 0,
+      "exitQty": 0,
+      "remainingQty": 10,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu8mif4o_5pfypq2d",
+      "symbol": "XMRUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 0.09999999999999999,
+      "lotQty": 0,
+      "exitQty": 0.1,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu8m7js7_t4f6ev5y",
+      "symbol": "XPLUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 2684,
+      "lotQty": 0,
+      "exitQty": 2684,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu8ksu36_rn2ewwzf",
+      "symbol": "BTCUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 0.001,
+      "lotQty": 0,
+      "exitQty": 0.001,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu8kf3t9_nd7s0pth",
+      "symbol": "BCHUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 0.057,
+      "lotQty": 0,
+      "exitQty": 0.057,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu8k2mr9_c86bpk55",
+      "symbol": "TAOUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 0.034999999999999996,
+      "lotQty": 0,
+      "exitQty": 0.035,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu8itygl_29abulu4",
+      "symbol": "OPUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 48.5,
+      "lotQty": 0,
+      "exitQty": 0,
+      "remainingQty": 48.5,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu8i3b7i_v7jsqe6a",
+      "symbol": "DOGEUSDC",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 296,
+      "lotQty": 0,
+      "exitQty": 296,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu8hkyc4_qok75god",
+      "symbol": "ENAUSDC",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 9085,
+      "lotQty": 0,
+      "exitQty": 9085,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu8h5fj1_cgasxjvm",
+      "symbol": "CRVUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 70.7,
+      "lotQty": 0,
+      "exitQty": 70.7,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu8gy6f6_mnw16c3b",
+      "symbol": "ZECUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 0.1,
+      "lotQty": 0,
+      "exitQty": 0.1,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu8gwhso_vliefzdb",
+      "symbol": "DASHUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 0.1,
+      "lotQty": 0,
+      "exitQty": 0.1,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu8fviww_13g3u5il",
+      "symbol": "ENAUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 295,
+      "lotQty": 0,
+      "exitQty": 295,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu8fatjs_gdwf7r27",
+      "symbol": "ADAUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 4290,
+      "lotQty": 0,
+      "exitQty": 4290,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu8eyqqy_buwfopea",
+      "symbol": "INJUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 217.90000000000012,
+      "lotQty": 0,
+      "exitQty": 217.89999999999998,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu8er40o_ikaokzih",
+      "symbol": "XPLUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 1212,
+      "lotQty": 0,
+      "exitQty": 1212,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu8e25cp_h3548fi1",
+      "symbol": "ENAUSDC",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 7208,
+      "lotQty": 0,
+      "exitQty": 7208,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu8dsjtr_4cdnxi59",
+      "symbol": "VVVUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 1,
+      "lotQty": 0,
+      "exitQty": 1,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu87hvfj_z05ffigz",
+      "symbol": "XRPUSDC",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 32.599999999999994,
+      "lotQty": 0,
+      "exitQty": 32.6,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu87g4uq_oj94vwns",
+      "symbol": "OPUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 6588.900000000004,
+      "lotQty": 0,
+      "exitQty": 6588.9,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu85b1u2_zvm1szrs",
+      "symbol": "ENAUSDC",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 3138,
+      "lotQty": 0,
+      "exitQty": 3138,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu8532ev_3dl82mju",
+      "symbol": "FILUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 17.6,
+      "lotQty": 0,
+      "exitQty": 17.6,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu851id4_y7xelxk1",
+      "symbol": "UNIUSDC",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 2,
+      "lotQty": 0,
+      "exitQty": 2,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu84s92f_oy7kkh9l",
+      "symbol": "XMRUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 0.031,
+      "lotQty": 0,
+      "exitQty": 0.031,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu83d7ho_tpicfrwf",
+      "symbol": "ONDOUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 55,
+      "lotQty": 55.0,
+      "exitQty": 146,
+      "remainingQty": -91,
+      "reasons": [
+        "NEGATIVE_REMAINING_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu835vg9_5fvhw7y9",
+      "symbol": "LTCUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 35.532000000000025,
+      "lotQty": 35.891999999999996,
+      "exitQty": 35.892,
+      "remainingQty": -0.3599999999999781,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY",
+        "NEGATIVE_REMAINING_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu82yupd_2gwodtgc",
+      "symbol": "AVAXUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 2,
+      "lotQty": 0,
+      "exitQty": 2,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu82gs9g_c0rg9boy",
+      "symbol": "TUTUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 1607.8999999999999,
+      "lotQty": 0,
+      "exitQty": 1607.9,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu822m8r_wox4og6u",
+      "symbol": "SOLUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 0.86,
+      "lotQty": 0,
+      "exitQty": 0.86,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu81jvy4_si7bhdf9",
+      "symbol": "DASHUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 2.029,
+      "lotQty": 0,
+      "exitQty": 2.029,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu819gbd_lcwq1u7v",
+      "symbol": "NEARUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 9,
+      "lotQty": 0,
+      "exitQty": 9,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu8116qo_5doey1hw",
+      "symbol": "UNIUSDC",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 390,
+      "lotQty": 0,
+      "exitQty": 390,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu80smnn_eqb0s4ok",
+      "symbol": "APTUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 10,
+      "lotQty": 0,
+      "exitQty": 10,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu7xja2g_vg36bi9m",
+      "symbol": "BNBUSDC",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 0.07,
+      "lotQty": 0.06999999999999999,
+      "exitQty": 0.09,
+      "remainingQty": -0.01999999999999999,
+      "reasons": [
+        "NEGATIVE_REMAINING_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu7xg4vl_vzaku217",
+      "symbol": "SOLUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 2.89,
+      "lotQty": 0,
+      "exitQty": 2.89,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu7xcztc_x7sm73rs",
+      "symbol": "ZECUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 2.4459999999999997,
+      "lotQty": 0,
+      "exitQty": 2.446,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu7x18sq_5ssvwucx",
+      "symbol": "DOTUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 18.200000000000003,
+      "lotQty": 18.2,
+      "exitQty": 35.4,
+      "remainingQty": -17.199999999999996,
+      "reasons": [
+        "NEGATIVE_REMAINING_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu7wmfyy_ny8dfek2",
+      "symbol": "TAOUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 0.066,
+      "lotQty": 0,
+      "exitQty": 0.066,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu7wj7yd_p7n8zyet",
+      "symbol": "WLDUSDC",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 35.4,
+      "lotQty": 0,
+      "exitQty": 35.400000000000006,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu7v1lto_7ev53f2a",
+      "symbol": "USELESSUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 669,
+      "lotQty": 0,
+      "exitQty": 669,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu7tow0k_k4kuoecj",
+      "symbol": "HYPEUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 5.749999999999999,
+      "lotQty": 0,
+      "exitQty": 5.749999999999998,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu7s9eds_9zmtavwh",
+      "symbol": "ENAUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 149,
+      "lotQty": 0,
+      "exitQty": 149,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu7oso5q_8q2covg1",
+      "symbol": "TAOUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 0.078,
+      "lotQty": 0,
+      "exitQty": 0.078,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu7oju8a_j02ufrz4",
+      "symbol": "XMRUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 0.12499999999999999,
+      "lotQty": 0,
+      "exitQty": 0.125,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu7oi8xd_99y1ioys",
+      "symbol": "ADAUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 44,
+      "lotQty": 0,
+      "exitQty": 44,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu7nzwd4_psey4x2i",
+      "symbol": "CRVUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 19.8,
+      "lotQty": 0,
+      "exitQty": 19.8,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu7n788v_wg8tcpo8",
+      "symbol": "PENGUUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 1040,
+      "lotQty": 0,
+      "exitQty": 1040,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu7m75u4_4dbphht5",
+      "symbol": "BCHUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 14.641,
+      "lotQty": 0,
+      "exitQty": 14.641,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu7k2cbr_q7eue648",
+      "symbol": "XLMUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 5702,
+      "lotQty": 0,
+      "exitQty": 5702,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu7jew7m_zhi4zh4v",
+      "symbol": "SUIUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 16.6,
+      "lotQty": 0,
+      "exitQty": 16.6,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu7j7ruu_itc0uor0",
+      "symbol": "DOTUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 54.50000000000001,
+      "lotQty": 0,
+      "exitQty": 54.5,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu7iy0ox_dk12yo02",
+      "symbol": "ENAUSDC",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 69,
+      "lotQty": 0,
+      "exitQty": 69,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu7iv537_ixahdofr",
+      "symbol": "LTCUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 0.375,
+      "lotQty": 0,
+      "exitQty": 0.375,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu7htaco_foduflp7",
+      "symbol": "AAVEUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 0.4,
+      "lotQty": 0,
+      "exitQty": 0.4,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu7gd8oh_wspsyttp",
+      "symbol": "ADAUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 2888,
+      "lotQty": 0,
+      "exitQty": 2888,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu7gabct_uwlarckx",
+      "symbol": "WLDUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 100,
+      "lotQty": 0,
+      "exitQty": 100,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu7gbrav_dwp8xhu2",
+      "symbol": "UNIUSDC",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 410,
+      "lotQty": 0,
+      "exitQty": 410,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu7g8s71_ejsui16l",
+      "symbol": "FILUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 10,
+      "lotQty": 0,
+      "exitQty": 10,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu7g4s99_obhtlrmq",
+      "symbol": "DOGEUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 10000,
+      "lotQty": 0,
+      "exitQty": 10000,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu7d17bk_1fw99iv7",
+      "symbol": "ETHUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 0.032,
+      "lotQty": 0,
+      "exitQty": 0.032,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu67oi7s_t0wn93mj",
+      "symbol": "BCHUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 0.91,
+      "lotQty": 0,
+      "exitQty": 0.91,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu67n48d_hauv1f0h",
+      "symbol": "UNIUSDC",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 1,
+      "lotQty": 0,
+      "exitQty": 1,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu66por9_avmsj6kj",
+      "symbol": "DASHUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 1.571,
+      "lotQty": 0,
+      "exitQty": 1.5710000000000002,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu65gtj9_ueltjfhy",
+      "symbol": "VVVUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 0.2,
+      "lotQty": 0,
+      "exitQty": 0.2,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu6565pt_30o2a6b1",
+      "symbol": "ENAUSDC",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 865,
+      "lotQty": 0,
+      "exitQty": 865,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu63dgo1_yp1c0hzr",
+      "symbol": "VVVUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 4.8,
+      "lotQty": 0,
+      "exitQty": 4.800000000000002,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu627jiz_xzyqnwfy",
+      "symbol": "USELESSUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 19,
+      "lotQty": 0,
+      "exitQty": 19,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu61kpnz_li3kt997",
+      "symbol": "TUTUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 580.2,
+      "lotQty": 0,
+      "exitQty": 580.2,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu61b855_nl41vrat",
+      "symbol": "UNIUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 4,
+      "lotQty": 0,
+      "exitQty": 4,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu615kio_ud7d81vk",
+      "symbol": "FILUSDC",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 227.39999999999995,
+      "lotQty": 0,
+      "exitQty": 227.39999999999998,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu5zu97p_onjnsegz",
+      "symbol": "HYPEUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 0.09,
+      "lotQty": 0,
+      "exitQty": 0.09,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu5uuj4t_tnfrfg22",
+      "symbol": "1000SHIBUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 1816,
+      "lotQty": 0,
+      "exitQty": 1816,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu5unx6j_2haqy8qe",
+      "symbol": "ONDOUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 33,
+      "lotQty": 0,
+      "exitQty": 33,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu5tpfxz_gy07jz8y",
+      "symbol": "BCHUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 0.091,
+      "lotQty": 0,
+      "exitQty": 0.091,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu5tnzpm_b2oqql3i",
+      "symbol": "LTCUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 0.11,
+      "lotQty": 0,
+      "exitQty": 0.11,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu5tc15l_wmu6pl8b",
+      "symbol": "SOLUSDC",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 0.05,
+      "lotQty": 0,
+      "exitQty": 0.05,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu5spxwj_i88sb0vi",
+      "symbol": "OPUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 64.2,
+      "lotQty": 0,
+      "exitQty": 64.2,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu5scsgg_5ysnl048",
+      "symbol": "ADAUSDC",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 18369.5,
+      "lotQty": 0,
+      "exitQty": 18369.5,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu5pp8o9_gbau0lep",
+      "symbol": "ENAUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 337,
+      "lotQty": 0,
+      "exitQty": 337,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu5mkh5h_1at2jp98",
+      "symbol": "UNIUSDC",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 490,
+      "lotQty": 0,
+      "exitQty": 490,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu5m5e66_b2gvh4zu",
+      "symbol": "ETHUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 0.58,
+      "lotQty": 0,
+      "exitQty": 0.58,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu5lmvgv_lm43r9t5",
+      "symbol": "UNIUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 506,
+      "lotQty": 0,
+      "exitQty": 506,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu5l1q1u_8lptsrtt",
+      "symbol": "DOGEUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 506,
+      "lotQty": 0,
+      "exitQty": 506,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu5kta0s_mky37pzx",
+      "symbol": "UNIUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 381,
+      "lotQty": 0,
+      "exitQty": 0,
+      "remainingQty": 381,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu5itjjf_qlpt3c8n",
+      "symbol": "FILUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 11.8,
+      "lotQty": 0,
+      "exitQty": 0,
+      "remainingQty": 11.8,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu5gqm5q_ll8ruhil",
+      "symbol": "FETUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 504,
+      "lotQty": 0,
+      "exitQty": 504,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu5gp3ki_88xtbl7y",
+      "symbol": "VVVUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 0.37,
+      "lotQty": 0,
+      "exitQty": 0,
+      "remainingQty": 0.37,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu5f2oc2_6kw9pm2u",
+      "symbol": "TIAUSDC",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 3960,
+      "lotQty": 0,
+      "exitQty": 3960,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu5du12t_an8lj293",
+      "symbol": "XLMUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 20986,
+      "lotQty": 0,
+      "exitQty": 20986,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu5draxi_c8321p19",
+      "symbol": "CRVUSDC",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 39.1,
+      "lotQty": 0,
+      "exitQty": 39.1,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu5dj40t_inw8n2nl",
+      "symbol": "ONDOUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 22,
+      "lotQty": 0,
+      "exitQty": 22,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu5d3vy9_xwumr1w2",
+      "symbol": "USELESSUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 95,
+      "lotQty": 0,
+      "exitQty": 0,
+      "remainingQty": 95,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu5cymmn_kqsmaq23",
+      "symbol": "DASHUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 22.807000000000006,
+      "lotQty": 0,
+      "exitQty": 22.807,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu5ceqj9_wnm0mnjt",
+      "symbol": "AAVEUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 1,
+      "lotQty": 0,
+      "exitQty": 1,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu5c9enu_1g8tx1k5",
+      "symbol": "ADAUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 5107,
+      "lotQty": 0,
+      "exitQty": 5107,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu5a62g0_vh1omhoy",
+      "symbol": "UNIUSDC",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 187,
+      "lotQty": 0,
+      "exitQty": 187,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu5a3945_fz6bh1hf",
+      "symbol": "VVVUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 0.9199999999999999,
+      "lotQty": 0,
+      "exitQty": 0.92,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu57tx1y_7aqkgama",
+      "symbol": "1000SHIBUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 5975,
+      "lotQty": 0,
+      "exitQty": 0,
+      "remainingQty": 5975,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu57mwkf_9e85vwvm",
+      "symbol": "ADAUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 735,
+      "lotQty": 0,
+      "exitQty": 0,
+      "remainingQty": 735,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu57hg9v_ryvphrku",
+      "symbol": "ZECUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 0.108,
+      "lotQty": 0,
+      "exitQty": 0.108,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu57d5fu_3rqmj142",
+      "symbol": "BTCUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 0.0169,
+      "lotQty": 0,
+      "exitQty": 0.0169,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu57e3jd_3dvwul93",
+      "symbol": "FILUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 290.69999999999993,
+      "lotQty": 0,
+      "exitQty": 290.7,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu576xsv_4tlcdczb",
+      "symbol": "USELESSUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 812,
+      "lotQty": 0,
+      "exitQty": 0,
+      "remainingQty": 812,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu5720ix_u61gx5hh",
+      "symbol": "ETHUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 0.4360000000000002,
+      "lotQty": 0,
+      "exitQty": 0.436,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu55vx5a_ixa9u20r",
+      "symbol": "OPUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 1470,
+      "lotQty": 0,
+      "exitQty": 1470,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu552lt5_vw7ckouw",
+      "symbol": "USELESSUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 447,
+      "lotQty": 0,
+      "exitQty": 447,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu54pq8c_x6a0htu1",
+      "symbol": "BNBUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 0.25,
+      "lotQty": 0,
+      "exitQty": 0.25,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu53z3oo_qyxbarj2",
+      "symbol": "USELESSUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 466,
+      "lotQty": 0,
+      "exitQty": 466,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu53ro2c_65chdlfq",
+      "symbol": "ARBUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 796.2000000000003,
+      "lotQty": 0,
+      "exitQty": 0,
+      "remainingQty": 796.2000000000003,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu53o870_0dl2n1jo",
+      "symbol": "DOTUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 50.3,
+      "lotQty": 0,
+      "exitQty": 50.300000000000004,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu52umm1_db4gztfe",
+      "symbol": "OPUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 1481.6999999999998,
+      "lotQty": 0,
+      "exitQty": 1481.6999999999998,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu52tbjd_4uurrxtl",
+      "symbol": "TUTUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 3404,
+      "lotQty": 0,
+      "exitQty": 3404,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu52pgvb_4olzwvfz",
+      "symbol": "AAVEUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 1.1,
+      "lotQty": 0,
+      "exitQty": 1.1,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu52g6z6_i8n2gqie",
+      "symbol": "HBARUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 1942,
+      "lotQty": 0,
+      "exitQty": 1942,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu52a4kd_d4nh3h5x",
+      "symbol": "VVVUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 5.57,
+      "lotQty": 0,
+      "exitQty": 0,
+      "remainingQty": 5.57,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu51i4f4_guyr9xj6",
+      "symbol": "USELESSUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 501,
+      "lotQty": 0,
+      "exitQty": 501,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu51h7ix_pm6zo83z",
+      "symbol": "ARBUSDC",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 850.6,
+      "lotQty": 0,
+      "exitQty": 850.6,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu51awq0_1vc6zl2n",
+      "symbol": "VVVUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 5.64,
+      "lotQty": 0,
+      "exitQty": 5.64,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu515qdb_v3kctdt8",
+      "symbol": "ETHUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 0.48400000000000004,
+      "lotQty": 0,
+      "exitQty": 0.484,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu514ppe_qfcbfq1r",
+      "symbol": "CRVUSDC",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 660.1,
+      "lotQty": 0,
+      "exitQty": 660.1,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu5114zu_l9g6jqby",
+      "symbol": "DASHUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 2.3600000000000008,
+      "lotQty": 0,
+      "exitQty": 2.36,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu50x0x4_ql6oopr3",
+      "symbol": "OPUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 2754.6,
+      "lotQty": 0,
+      "exitQty": 2754.6,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu50vzxp_4gqiqe8o",
+      "symbol": "ENAUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 666,
+      "lotQty": 0,
+      "exitQty": 666,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu50skuw_2dudqg0g",
+      "symbol": "FILUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 374.2,
+      "lotQty": 0,
+      "exitQty": 374.2,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu50javh_v3h63o6v",
+      "symbol": "AAVEUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 3,
+      "lotQty": 0,
+      "exitQty": 3,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu50ibzb_h2o8qn9q",
+      "symbol": "DOGEUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 5828,
+      "lotQty": 0,
+      "exitQty": 5828,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu50gl9e_uxlepuk9",
+      "symbol": "ADAUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 859,
+      "lotQty": 0,
+      "exitQty": 859,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu50fjs9_t5osvs4j",
+      "symbol": "USELESSUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 1122,
+      "lotQty": 0,
+      "exitQty": 1122,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu4yfptw_fphyr288",
+      "symbol": "1000SHIBUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 26610,
+      "lotQty": 0,
+      "exitQty": 26610,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu4y8r11_g0k37no8",
+      "symbol": "TUTUSDT",
+      "side": "SHORT",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 60943.399999999994,
+      "lotQty": 0,
+      "exitQty": 60943.4,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu4wem4a_63ek7nx6",
+      "symbol": "SUIUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 12.6,
+      "lotQty": 0,
+      "exitQty": 12.6,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu4w3lkv_mmq5ji38",
+      "symbol": "ONDOUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "INCOMPLETE",
+      "entryQty": 394,
+      "lotQty": 0,
+      "exitQty": 0,
+      "remainingQty": 394,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu4w28jl_55ca8iiv",
+      "symbol": "DOTUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 138.3,
+      "lotQty": 0,
+      "exitQty": 138.3,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu4w0a7x_hyxnq06t",
+      "symbol": "XMRUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 0.148,
+      "lotQty": 0,
+      "exitQty": 0.148,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu4vo553_9c6p808j",
+      "symbol": "XLMUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 764,
+      "lotQty": 0,
+      "exitQty": 764,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu4vmbgo_jddv2kc8",
+      "symbol": "UNIUSDC",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 20,
+      "lotQty": 0,
+      "exitQty": 20,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu4vkm9r_tt719o6n",
+      "symbol": "AAVEUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 1.1,
+      "lotQty": 0,
+      "exitQty": 1.1,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu4v2g3b_t2vfhbdc",
+      "symbol": "WLDUSDC",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 375.3999999999999,
+      "lotQty": 0,
+      "exitQty": 375.4,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu4ujipb_mbg1ggd8",
+      "symbol": "BTCUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 0.0149,
+      "lotQty": 0,
+      "exitQty": 0.0149,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu4ugdqn_ab69jqg0",
+      "symbol": "FILUSDC",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 275.3,
+      "lotQty": 0,
+      "exitQty": 275.3,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu4u8i7i_8i0976k1",
+      "symbol": "ARBUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 840.9,
+      "lotQty": 0,
+      "exitQty": 840.9,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu4tn1iy_smux56hc",
+      "symbol": "ADAUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 737,
+      "lotQty": 0,
+      "exitQty": 737,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu4ti3dw_9pt7gf1c",
+      "symbol": "LINKUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 12.87,
+      "lotQty": 0,
+      "exitQty": 12.870000000000001,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu4suy0n_nww8ud21",
+      "symbol": "ETHUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 0.961,
+      "lotQty": 0,
+      "exitQty": 0.961,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu4styoq_l4tn0u7c",
+      "symbol": "DOGEUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 6559,
+      "lotQty": 0,
+      "exitQty": 6559,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu4rgcky_5ydgqlwl",
+      "symbol": "ENAUSDC",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 921,
+      "lotQty": 0,
+      "exitQty": 921,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu4pe2t4_ivw6p0e7",
+      "symbol": "UNIUSDC",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 21,
+      "lotQty": 0,
+      "exitQty": 21,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu4p26t1_dkl98c1q",
+      "symbol": "DOGEUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 2236,
+      "lotQty": 0,
+      "exitQty": 2236,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu4oiz3a_xq5x5kex",
+      "symbol": "ZECUSDC",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 0.10400000000000002,
+      "lotQty": 0,
+      "exitQty": 0.104,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu4of9b9_ykrn1uh1",
+      "symbol": "BTCUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 0.0189,
+      "lotQty": 0,
+      "exitQty": 0.0189,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mu4oai32_mkc6bgk8",
+      "symbol": "ETHUSDT",
+      "side": "LONG",
+      "classification": "PARTIAL",
+      "status": "CLOSED",
+      "entryQty": 1.2399999999999998,
+      "lotQty": 0,
+      "exitQty": 1.24,
+      "remainingQty": 0,
+      "reasons": [
+        "ENTRY_LOT_SUM_NE_ENTRY_QTY"
+      ]
+    }
+  ]
+}

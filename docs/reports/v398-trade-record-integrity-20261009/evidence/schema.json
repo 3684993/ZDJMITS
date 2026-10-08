@@ -1,0 +1,150 @@
+[
+  [
+    "ai_resources",
+    "CREATE TABLE ai_resources (id TEXT PRIMARY KEY, payload TEXT NOT NULL, updated_at INTEGER NOT NULL)"
+  ],
+  [
+    "ai_runs_archive",
+    "CREATE TABLE ai_runs_archive (run_id TEXT PRIMARY KEY, symbol TEXT NOT NULL, started_at INTEGER NOT NULL, status TEXT NOT NULL, payload TEXT NOT NULL, updated_at INTEGER NOT NULL, role TEXT, model TEXT, decision TEXT, direction TEXT, completed_at INTEGER, latency_ms INTEGER, input_tokens INTEGER, output_tokens INTEGER, short_reason TEXT)"
+  ],
+  [
+    "capital_epochs",
+    "CREATE TABLE capital_epochs (\n            capital_epoch_id TEXT PRIMARY KEY, started_at INTEGER NOT NULL, reason TEXT NOT NULL,\n            status TEXT NOT NULL, payload TEXT NOT NULL, created_at INTEGER NOT NULL\n          )"
+  ],
+  [
+    "connection_profiles",
+    "CREATE TABLE connection_profiles (id TEXT PRIMARY KEY, profile TEXT NOT NULL, updated_at INTEGER NOT NULL)"
+  ],
+  [
+    "decision_chains",
+    "CREATE TABLE decision_chains (chain_id TEXT PRIMARY KEY, symbol TEXT, started_at INTEGER NOT NULL, updated_at INTEGER NOT NULL, status TEXT NOT NULL, payload TEXT NOT NULL)"
+  ],
+  [
+    "decision_episodes",
+    "CREATE TABLE decision_episodes (\n        episode_id TEXT PRIMARY KEY, run_id TEXT NOT NULL UNIQUE, packet_id TEXT, scout_run_id TEXT,\n        symbol TEXT NOT NULL, underlying TEXT NOT NULL, quote_asset TEXT NOT NULL, decided_at INTEGER NOT NULL,\n        direction TEXT, decision TEXT, completeness TEXT NOT NULL, outcome_status TEXT NOT NULL,\n        snapshot_id TEXT, risk_tier TEXT, liquidity_class TEXT, regime_state TEXT, regime_age_ms INTEGER,\n        transition_score REAL, fingerprint TEXT, would_reuse INTEGER NOT NULL DEFAULT 0,\n        return_15m REAL, return_1h REAL, return_4h REAL, return_24h REAL, return_3d REAL, return_7d REAL,\n        mfe REAL, mae REAL, feature_json TEXT NOT NULL, decision_json TEXT NOT NULL, outcome_json TEXT NOT NULL,\n        updated_at INTEGER NOT NULL\n      )"
+  ],
+  [
+    "decision_snapshots",
+    "CREATE TABLE decision_snapshots (snapshot_id TEXT PRIMARY KEY, candidate_id TEXT, symbol TEXT NOT NULL, created_at INTEGER NOT NULL, payload TEXT NOT NULL)"
+  ],
+  [
+    "entry_execution_tasks",
+    "CREATE TABLE entry_execution_tasks(intent_id TEXT PRIMARY KEY,scope TEXT NOT NULL,active INTEGER NOT NULL,payload TEXT NOT NULL,updated_at INTEGER NOT NULL, released_at INTEGER NOT NULL DEFAULT 0, submission_key TEXT NOT NULL DEFAULT '', isolation_key TEXT NOT NULL DEFAULT '', isolation_mode TEXT NOT NULL DEFAULT '')"
+  ],
+  [
+    "exchange_resources",
+    "CREATE TABLE exchange_resources (id TEXT PRIMARY KEY, payload TEXT NOT NULL, updated_at INTEGER NOT NULL)"
+  ],
+  [
+    "execution_tasks",
+    "CREATE TABLE execution_tasks (\n      intent_id TEXT PRIMARY KEY, scope TEXT NOT NULL, active INTEGER NOT NULL, payload TEXT NOT NULL, updated_at INTEGER NOT NULL\n    )"
+  ],
+  [
+    "experience_samples",
+    "CREATE TABLE experience_samples (sample_id TEXT PRIMARY KEY, trade_id TEXT NOT NULL, payload TEXT NOT NULL, created_at INTEGER NOT NULL)"
+  ],
+  [
+    "external_intelligence_snapshots",
+    "CREATE TABLE external_intelligence_snapshots (id TEXT PRIMARY KEY, provider TEXT NOT NULL, source_id TEXT NOT NULL, available_at INTEGER NOT NULL, expires_at INTEGER NOT NULL, content_hash TEXT NOT NULL, payload TEXT NOT NULL, received_at INTEGER NOT NULL, UNIQUE(provider,source_id,content_hash))"
+  ],
+  [
+    "external_provider_state",
+    "CREATE TABLE external_provider_state (provider TEXT PRIMARY KEY, status TEXT NOT NULL, payload TEXT NOT NULL, updated_at INTEGER NOT NULL)"
+  ],
+  [
+    "external_research_tasks",
+    "CREATE TABLE external_research_tasks (\n        content_hash TEXT PRIMARY KEY, source_id TEXT NOT NULL, status TEXT NOT NULL,\n        available_at INTEGER NOT NULL, expires_at INTEGER NOT NULL, attempts INTEGER NOT NULL DEFAULT 0,\n        next_attempt_at INTEGER NOT NULL, payload TEXT NOT NULL, result TEXT,\n        error TEXT, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL\n      )"
+  ],
+  [
+    "live_validation_daily_summaries",
+    "CREATE TABLE live_validation_daily_summaries (\n            summary_id TEXT PRIMARY KEY, validation_id TEXT NOT NULL, day_key TEXT NOT NULL,\n            generated_at INTEGER NOT NULL, payload TEXT NOT NULL,\n            UNIQUE(validation_id,day_key)\n          )"
+  ],
+  [
+    "proxy_resources",
+    "CREATE TABLE proxy_resources (id TEXT PRIMARY KEY, payload TEXT NOT NULL, updated_at INTEGER NOT NULL)"
+  ],
+  [
+    "regime_episodes",
+    "CREATE TABLE regime_episodes (\n        regime_id TEXT PRIMARY KEY, state TEXT NOT NULL, started_at INTEGER NOT NULL, ended_at INTEGER,\n        confidence REAL NOT NULL, breadth_start REAL, breadth_peak REAL, breadth_current REAL,\n        transition_score REAL, updated_at INTEGER NOT NULL\n      )"
+  ],
+  [
+    "regime_samples",
+    "CREATE TABLE regime_samples (\n        sample_at INTEGER PRIMARY KEY, state TEXT NOT NULL, confidence REAL NOT NULL, bullish_breadth REAL,\n        bearish_breadth REAL, neutral_breadth REAL, breadth_slope REAL, breadth_acceleration REAL,\n        breadth_persistence INTEGER, eligible_count INTEGER NOT NULL, btc_eth_alignment TEXT,\n        volatility REAL, extension REAL, multi_tf_conflict REAL, transition_v1 REAL, transition_v2 REAL,\n        transition_v3 REAL, feature_json TEXT NOT NULL\n      )"
+  ],
+  [
+    "research_candidates",
+    "CREATE TABLE research_candidates (\n        candidate_id TEXT PRIMARY KEY, kind TEXT NOT NULL, version TEXT NOT NULL, source TEXT NOT NULL,\n        status TEXT NOT NULL, proposed_at INTEGER NOT NULL, feature_set TEXT NOT NULL, formula TEXT NOT NULL,\n        code_hash TEXT NOT NULL, training_window TEXT, validation_windows TEXT, metrics_json TEXT NOT NULL,\n        hypothesis TEXT NOT NULL\n      )"
+  ],
+  [
+    "runtime_entities",
+    "CREATE TABLE runtime_entities(kind TEXT NOT NULL,entity_id TEXT NOT NULL,payload TEXT NOT NULL,PRIMARY KEY(kind,entity_id))"
+  ],
+  [
+    "runtime_events",
+    "CREATE TABLE runtime_events (id TEXT PRIMARY KEY, type TEXT NOT NULL, ts INTEGER NOT NULL, symbol TEXT, payload TEXT NOT NULL)"
+  ],
+  [
+    "runtime_state",
+    "CREATE TABLE runtime_state (id INTEGER PRIMARY KEY CHECK(id=1), payload TEXT NOT NULL, updated_at INTEGER NOT NULL)"
+  ],
+  [
+    "schema_migrations",
+    "CREATE TABLE schema_migrations (version INTEGER PRIMARY KEY, applied_at INTEGER NOT NULL)"
+  ],
+  [
+    "secrets",
+    "CREATE TABLE secrets (ref TEXT PRIMARY KEY, ciphertext TEXT NOT NULL, last4 TEXT NOT NULL, updated_at INTEGER NOT NULL)"
+  ],
+  [
+    "settings",
+    "CREATE TABLE settings (id INTEGER PRIMARY KEY CHECK(id=1), version INTEGER NOT NULL, payload TEXT NOT NULL, updated_at INTEGER NOT NULL)"
+  ],
+  [
+    "settings_audit",
+    "CREATE TABLE settings_audit (id INTEGER PRIMARY KEY AUTOINCREMENT, changed_at INTEGER NOT NULL, source TEXT NOT NULL, old_version INTEGER, new_version INTEGER NOT NULL, summary TEXT NOT NULL)"
+  ],
+  [
+    "sqlite_sequence",
+    "CREATE TABLE sqlite_sequence(name,seq)"
+  ],
+  [
+    "shadow_mark_series",
+    "CREATE TABLE shadow_mark_series (id TEXT PRIMARY KEY, ts INTEGER NOT NULL, symbol TEXT NOT NULL, mark REAL NOT NULL, bid REAL, ask REAL, snapshot_id TEXT)"
+  ],
+  [
+    "state_change_observations",
+    "CREATE TABLE state_change_observations (\n        run_id TEXT PRIMARY KEY, symbol TEXT NOT NULL, observed_at INTEGER NOT NULL, fingerprint TEXT NOT NULL,\n        would_reuse INTEGER NOT NULL, material_change INTEGER NOT NULL, reason TEXT NOT NULL,\n        scout_tokens INTEGER NOT NULL, primary_tokens INTEGER NOT NULL\n      )"
+  ],
+  [
+    "temporal_jobs",
+    "CREATE TABLE temporal_jobs (\n        job_id TEXT PRIMARY KEY, kind TEXT NOT NULL, status TEXT NOT NULL, started_at INTEGER,\n        completed_at INTEGER, cursor TEXT, error TEXT, metrics_json TEXT NOT NULL\n      )"
+  ],
+  [
+    "trade_records",
+    "CREATE TABLE trade_records (trade_id TEXT PRIMARY KEY, status TEXT NOT NULL, symbol TEXT NOT NULL, payload TEXT NOT NULL, updated_at INTEGER NOT NULL)"
+  ],
+  [
+    "trade_sync_history",
+    "CREATE TABLE trade_sync_history (sync_id TEXT PRIMARY KEY, status TEXT NOT NULL, payload TEXT NOT NULL, created_at INTEGER NOT NULL)"
+  ],
+  [
+    "weekly_live_validations",
+    "CREATE TABLE weekly_live_validations (\n            validation_id TEXT PRIMARY KEY, status TEXT NOT NULL, started_at INTEGER NOT NULL,\n            required_until INTEGER NOT NULL, payload TEXT NOT NULL, updated_at INTEGER NOT NULL\n          )"
+  ],
+  [
+    "sqlite_stat1",
+    "CREATE TABLE sqlite_stat1(tbl,idx,stat)"
+  ],
+  [
+    "portfolio_risk_authority",
+    "CREATE TABLE portfolio_risk_authority (\n        kind TEXT PRIMARY KEY CHECK(kind IN ('margin','correlation','scenarios')),\n        environment TEXT NOT NULL, account_scope TEXT NOT NULL, schema_version TEXT NOT NULL,\n        content_hash TEXT NOT NULL, version TEXT NOT NULL, canonical_payload TEXT NOT NULL,\n        observed_at INTEGER NOT NULL, committed_at INTEGER NOT NULL, settings_version INTEGER NOT NULL,\n        provenance TEXT NOT NULL\n      )"
+  ],
+  [
+    "entry_claim_stat_changes",
+    "CREATE TABLE entry_claim_stat_changes(intent_id TEXT PRIMARY KEY)"
+  ],
+  [
+    "v398_entry_origins",
+    "CREATE TABLE v398_entry_origins(intent_id TEXT PRIMARY KEY,subject_key TEXT NOT NULL,client_order_id TEXT NOT NULL,quantity REAL NOT NULL CHECK(quantity>0),created_at INTEGER NOT NULL,released_at INTEGER NOT NULL DEFAULT 0)"
+  ]
+]

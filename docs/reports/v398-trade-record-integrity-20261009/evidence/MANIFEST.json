@@ -1,0 +1,208 @@
+{
+  "observedAt": "2026-10-08T23:10:31.832897+00:00",
+  "privacyGate": "PASS_NO_PRIVATE_FIELDS_OR_SECRET_PATTERNS",
+  "normalization": "LF text/raw gzip",
+  "artifactCount": 50,
+  "artifacts": [
+    {
+      "path": "docs/plans/V398_TRADE_RECORD_INTEGRITY_IMPLEMENTATION_PLAN_20261009.md",
+      "sha256": "33c5cf59eddc745dc662030292f78084e2b037fc9644875e055b0d11b92284c9"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/analysis-2.log",
+      "sha256": "23f5f75c312d3262e734d4d69c3d2cd0d31714af0d16724e757a5acadca4cb5c"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/analysis.log",
+      "sha256": "aab848ddc3ac418ef7e1c5e7887d6bc565e11c2a8980897250211d16ed59a18c"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/actual-primary-rendered-fact-proof.json",
+      "sha256": "9d0f4c0d079f1537d032f65b742905885dcd19a0b3ba2e853ac4da0f6e66480c"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/ai-context-audit-summary.json",
+      "sha256": "e832507a4020f291d6cee8d6b8f546d5a43886f0eb3492998eee8eeedd858b69"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/ai-input-fact-presence.json",
+      "sha256": "907861b00b6b12e0c47b40d4e11df5ea5657e173b4f53ee45769ced25564f830"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/all-record-anomalies.json",
+      "sha256": "ab5c57394a8845cf1ff50c03bf1b56559560757d31f442c2f25045fcbfdea1b1"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/all-record-coverage.json",
+      "sha256": "4d0dd708f71997d81e55c1fa95132ea6efb316ce3ee963a01431806c4dd9164f"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/auxiliary-schema.json",
+      "sha256": "b600e08ad35f1902889b6e34bfa984dcecb602af409b5ef8943a0ec6042c1a5e"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/avax-events.json.gz",
+      "sha256": "cafb7f4ef44d6ecd81e3a2470eedaa60fa0b481e56b5f43bcc0c629dfcb0c6a4"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/avax-exit-provenance.json",
+      "sha256": "d952b8e405d6133a8141504d43ad2a1c616ffd02180a560f5801a05a9c98c01a"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/avax-layer-reconciliation.json",
+      "sha256": "9d834fe18734283acbee761000c186a188de853d3a4a53ff3eaf43a5ca3e739c"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/entities.json.gz",
+      "sha256": "deb6237f78fff2900e49fe77458878812e8181deb06068209314d579ca104529"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/exchange-current-history.json",
+      "sha256": "20f10f12fef9be0fba1f446484e3d2500e6dd6c6d90a8437f22de7c79148d32c"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/extrema-retention-coverage.json",
+      "sha256": "2ab731f40a2ccba2d18500dc6da1d27fd2035ee445de555d3f9c8729e6bd96fc"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/github-actions.json",
+      "sha256": "e35edba0f40f0579c17d986534a0282c2e13d8cc1378819228f41e9b0c195ef3"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/linked-ai-runs.json.gz",
+      "sha256": "38e1cead89ce317ea8825c770dc37574e1cf103549ec70dd8ea1830f6996d4f7"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/local-collection-boundary.json",
+      "sha256": "2daf5868e1bd24d1ca5faddd4c117a81ea9c614a0f4971c658c3332ea6104149"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/mark-retention.json",
+      "sha256": "9b11ebf659011082dc55750ee10d6570cfc54fee7ed3087710667e97e9447a05"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/native-orders-derived.json",
+      "sha256": "96c8fe154d472601365dd0218b6a3880cf5e93982afb11d87552ed3322be0ec2"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/offline-case-fixture.json",
+      "sha256": "08ba2028d637fd944f6d8b6c345b0462513470e04f2a1c493e81fd1f1ec3c994"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/offline-replay-before.json",
+      "sha256": "226344a2703ccebd799afe94554a6c8b138e21b9b1fc50d5961f83a545b936dd"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/persisted-runtime.json",
+      "sha256": "d1045f27aaf404378821dc732718668bf02e3d8d6ba1e0728fc09b1ed015a140"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/position-query-first-bound-failure.json",
+      "sha256": "9e0ddd904acf931febfc8c91f6354d0b02318719616e5e9b1778c4e1763935e3"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/privacy-first-gate-failure.json",
+      "sha256": "26cc757d8d5c1e28160a0081fa385209a353214f33977fe7f3fbeb523fe7d538"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/required-reading-source-map.json",
+      "sha256": "ff4ba0f528037f27bf43d33592571033c35de264e946d9b9643427eb3fb93436"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/retained-position-pnl-observations.json",
+      "sha256": "63ddcd068c12bab0dc41cda447bcd63228eb2916a59ab8993eb21c897acdaa01"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/runtime-phase-a.json",
+      "sha256": "54cc817644bec2f6e4bebcfe0d9e3b34d2152d7dd0f9e4b382b5b4841e9452e0"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/schema.json",
+      "sha256": "cfa2bafed2a15c0a98f2c4da410b1bc0cbe32842be9da3efdf60179d4bed743e"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/evidence/trade-records.json.gz",
+      "sha256": "1ac57b0d57530f577b05d68344bd1a7056a0c9d3b873c61e1e3832d257a0e9ca"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/exchange-readonly-2.log",
+      "sha256": "b46a4ae21b0eb1a3ae01613b60d32abe359ed847bc946342f6141f46f95ef3f0"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/exchange-readonly.log",
+      "sha256": "141c234c351d2a17436f637e03d7334f6024ab9f04c14bb7b34de4113bc607e8"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/FACT_AUDIT_REPORT.md",
+      "sha256": "c739e319caecfe3d80e6fb5d40df59f03e3c55a53391150ec3eca1d6b6cb1145"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/github-readonly.log",
+      "sha256": "694c2a3e700c9db2a43e8732dbbdbfa0c7c9d26c0d640ebf4be553b271a759ee"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/local-readonly-2.log",
+      "sha256": "dda8bc1e4a05eee8fb9c3cabb704e9e8bd8c585db61ccf34a1d7f401fad7d4fc"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/local-readonly-3.log",
+      "sha256": "83221d73010676695a6571366479b6495fd3e57d78537a59d7011e0b7dcf3773"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/local-readonly.log",
+      "sha256": "35d0f8586b72de22b298f5d9510ce737cc7126641af478a0820359a813957855"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/npm-ci.log",
+      "sha256": "d64d709477494a31d782c60e9d2ca3bf5c1e9961c66415f90f9d765ca75bac37"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/offline-replay-before-2.log",
+      "sha256": "2377f84b2ec63d9e3a477b82f2fa1a7903c2e33fae8c509a204097a920121332"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/offline-replay-before.log",
+      "sha256": "17aec5f72c579b612fe50be3aa31966926dc3a49f4b6f0176e5534ba9ee71423"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/privacy-manifest.log",
+      "sha256": "0820cd7d52cccb297725159cbe98a3a22a105712a5c8d9e4aa53fefbd51bee2f"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/runtime-readonly.log",
+      "sha256": "e15dd8bb39fc17c83b85f0e854b2faebf5d6824c6fe3436122d3b79711b06120"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/staged-phase-b-check.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "scripts/v398-integrity-analyze.py",
+      "sha256": "87d182d04b3c0e630ed5380e1358a1279b5d8c1c32f83a5bffa838a9f07fdb84"
+    },
+    {
+      "path": "scripts/v398-integrity-exchange-readonly.mjs",
+      "sha256": "0001b38bd5ce3974c693a3406004058117659b539ae6d994e25a4262da9b1019"
+    },
+    {
+      "path": "scripts/v398-integrity-github-readonly.py",
+      "sha256": "4460be5d6b3849d5e59d8a280e184f9cb2b3b64e4f1432aac2c901c018230a45"
+    },
+    {
+      "path": "scripts/v398-integrity-local-readonly.py",
+      "sha256": "fbead643f420c47a2dfa9806de4dfcba2e0e05733181a1eaaf21138d70658401"
+    },
+    {
+      "path": "scripts/v398-integrity-manifest.py",
+      "sha256": "c4c9abcd3c12cd1739c9b50d6aa71d10a413ef35bb7d6db6a8a0885526c0584c"
+    },
+    {
+      "path": "scripts/v398-integrity-offline-replay.mjs",
+      "sha256": "4f405865ac8fec1505d6ab14e233d8ea86112f5550b0bde3bce454943c1379e6"
+    },
+    {
+      "path": "scripts/v398-integrity-runtime-readonly.mjs",
+      "sha256": "d02c89889a65bfa4ed0acd6ed871f42e533c7996c17806b4060b006664a4690c"
+    }
+  ]
+}

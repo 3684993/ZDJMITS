@@ -1,0 +1,117 @@
+{
+  "rows": [
+    {
+      "factId": "exchange_ETHUSDT_LONG",
+      "storedAt": 1791500674940,
+      "facts": {
+        "id": "exchange_ETHUSDT_LONG",
+        "symbol": "ETHUSDT",
+        "side": "LONG",
+        "quantity": 1.467,
+        "entryPrice": 2712.079611451943,
+        "markPrice": 2476.63686047,
+        "unrealizedPnl": -345.39451568,
+        "openedAt": 1791183438139,
+        "firstObservedAt": 1791183499290,
+        "entryTimeSource": "SYSTEM_FILL",
+        "cycleId": "cycle_entry_intent_muuwcjbl_nhtak25t",
+        "addCount": 5
+      }
+    },
+    {
+      "factId": "exchange_UNIUSDC_LONG",
+      "storedAt": 1791500674942,
+      "facts": {
+        "id": "exchange_UNIUSDC_LONG",
+        "symbol": "UNIUSDC",
+        "side": "LONG",
+        "quantity": 139,
+        "entryPrice": 7.3400000000000025,
+        "markPrice": 7.34489873,
+        "unrealizedPnl": 0.68092347,
+        "openedAt": 1791500636560,
+        "firstObservedAt": 1791500646407,
+        "entryTimeSource": "SYSTEM_FILL",
+        "cycleId": "cycle_entry_intent_mv057q9s_dbbf8pvt",
+        "addCount": 1
+      }
+    },
+    {
+      "factId": "exchange_AVAXUSDT_LONG",
+      "storedAt": 1791338803304,
+      "facts": {
+        "id": "exchange_AVAXUSDT_LONG",
+        "symbol": "AVAXUSDT",
+        "side": "LONG",
+        "quantity": 95,
+        "entryPrice": 11.609,
+        "markPrice": 11.09705485,
+        "unrealizedPnl": -48.63478925000007,
+        "openedAt": 1791335421355,
+        "firstObservedAt": 1791335432887,
+        "entryTimeSource": "SYSTEM_FILL",
+        "cycleId": "cycle_entry_intent_muxeu113_rbtqe4t1",
+        "addCount": 1
+      }
+    },
+    {
+      "factId": "exchange_AVAXUSDT_SHORT",
+      "storedAt": 1791497311569,
+      "facts": {
+        "id": "exchange_AVAXUSDT_SHORT",
+        "symbol": "AVAXUSDT",
+        "side": "SHORT",
+        "quantity": 1263,
+        "entryPrice": 10.488719714964375,
+        "markPrice": 10.72513054,
+        "unrealizedPnl": -298.5868720199943,
+        "openedAt": 1789834245678,
+        "firstObservedAt": 1789834249640,
+        "entryTimeSource": "SYSTEM_FILL",
+        "cycleId": "cycle_entry_intent_mu8l1mm0_rcobpxad",
+        "addCount": 25
+      }
+    },
+    {
+      "factId": "exchange_ETHUSDT_SHORT",
+      "storedAt": 1791456154513,
+      "facts": {
+        "id": "exchange_ETHUSDT_SHORT",
+        "symbol": "ETHUSDT",
+        "side": "SHORT",
+        "quantity": 0.783,
+        "entryPrice": 2561.7022605363986,
+        "markPrice": 2550.24152783,
+        "unrealizedPnl": 8.973753709110127,
+        "openedAt": 1791435122745,
+        "firstObservedAt": 1791435125756,
+        "entryTimeSource": "SYSTEM_FILL",
+        "cycleId": "cycle_entry_intent_muz27ktc_e6f5ajnr",
+        "addCount": 2
+      }
+    },
+    {
+      "factId": "exchange_UNIUSDC_SHORT",
+      "storedAt": 1791500674941,
+      "facts": {
+        "id": "exchange_UNIUSDC_SHORT",
+        "symbol": "UNIUSDC",
+        "side": "SHORT",
+        "quantity": 168,
+        "entryPrice": 7.341,
+        "markPrice": 7.34489873,
+        "unrealizedPnl": -0.65498664,
+        "openedAt": 1791499145663,
+        "firstObservedAt": 1791499158191,
+        "entryTimeSource": "SYSTEM_FILL",
+        "cycleId": "cycle_entry_intent_mv04bo29_v4anyi1j",
+        "addCount": 1
+      }
+    }
+  ],
+  "rowLimit": 200,
+  "scopeOmitted": true,
+  "elapsedSeconds": 0.05823930003680289,
+  "coverage": "last retained position by identity; not continuous lifecycle trajectory",
+  "fullCycleExtrema": "UNKNOWN"
+}

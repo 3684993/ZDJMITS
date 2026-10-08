@@ -1,0 +1,108 @@
+{
+  "observedAt": "2026-10-08T22:57:29.002Z",
+  "environment": "TESTNET",
+  "positionMode": {
+    "dualSidePosition": true
+  },
+  "physicalCurrent": [],
+  "openOrders": [],
+  "nativeShortEntryOrders": 18,
+  "nativeShortSeparateAdds": 17,
+  "nativeShortEntryQty": 1263.0,
+  "nativeShortExitOrders": 1,
+  "nativeShortExitQty": 1263.0,
+  "firstNativeShortFillAt": 1789834245678,
+  "lastNativeShortExitAt": 1791472362824,
+  "atOct5": [
+    {
+      "cutoff": "2026-10-05T00:00:00+08:00",
+      "independentEntryOrders": 10,
+      "separateAdds": 9,
+      "fillStages": 49
+    },
+    {
+      "cutoff": "2026-10-06T00:00:00+08:00",
+      "independentEntryOrders": 14,
+      "separateAdds": 13,
+      "fillStages": 92
+    }
+  ],
+  "localShortRecords": [
+    {
+      "tradeId": "trade_cycle_entry_intent_mu8l1mm0_rcobpxad",
+      "cycleId": "cycle_entry_intent_mu8l1mm0_rcobpxad",
+      "openedAt": 1789834245678,
+      "closedAt": null,
+      "status": "INCOMPLETE",
+      "classification": "PARTIAL",
+      "entryQty": 288,
+      "exitQty": 0,
+      "remainingQty": 288,
+      "closeReason": "RECONCILIATION",
+      "fundingAttributionStatus": "UNKNOWN",
+      "lotQuantity": 1074
+    },
+    {
+      "tradeId": "trade_cycle_entry_intent_mul5j2sb_6sj02qqt",
+      "cycleId": "cycle_entry_intent_mul5j2sb_6sj02qqt",
+      "openedAt": 1790594170874,
+      "closedAt": null,
+      "status": "OPEN",
+      "classification": "PARTIAL",
+      "entryQty": 100,
+      "exitQty": 0,
+      "remainingQty": 100,
+      "closeReason": null,
+      "fundingAttributionStatus": "UNKNOWN",
+      "lotQuantity": 100
+    }
+  ],
+  "localPositions": [],
+  "apiCategories": [
+    {
+      "endpoint": "/api/v3/trade-records?symbol=AVAXUSDT&category=COMPLETE&limit=100",
+      "http": 200,
+      "total": 3,
+      "ids": [
+        "trade_cycle_entry_intent_muxeu113_rbtqe4t1",
+        "trade_cycle_entry_intent_muwmzh78_vfp1v6g2",
+        "trade_cycle_entry_intent_muwl5r8g_8mxs9m05"
+      ]
+    },
+    {
+      "endpoint": "/api/v3/trade-records?symbol=AVAXUSDT&category=PARTIAL&limit=100",
+      "http": 200,
+      "total": 7,
+      "ids": [
+        "trade_cycle_entry_intent_muwdiwog_k17vkmgo",
+        "trade_cycle_entry_intent_mu82yupd_2gwodtgc",
+        "trade_cycle_AVAXUSDT_LONG_d0641adb-25d8-4e65-a19a-9e5e38f73090",
+        "trade_cycle_entry_intent_mu8l1mm0_rcobpxad",
+        "trade_cycle_entry_intent_mul5j2sb_6sj02qqt",
+        "trade_cycle_entry_intent_mun279vu_tgljunw6",
+        "trade_cycle_entry_intent_muv6watr_vbyn6zs9"
+      ]
+    },
+    {
+      "endpoint": "/api/v3/trade-records?symbol=AVAXUSDT&category=IMPORTED&limit=100",
+      "http": 200,
+      "total": 0,
+      "ids": []
+    },
+    {
+      "endpoint": "/api/v3/trade-records?symbol=AVAXUSDT&category=EXTERNAL&limit=100",
+      "http": 200,
+      "total": 0,
+      "ids": []
+    },
+    {
+      "endpoint": "/api/v3/trade-records?symbol=AVAXUSDT&category=ISSUES&limit=100",
+      "http": 200,
+      "total": 0,
+      "ids": []
+    }
+  ],
+  "coverage": "6-day signed GET windows, each <1000 non-saturated; retention remains a separate question",
+  "user1000Plus": "UNKNOWN_USER_OBSERVATION_NOT_EXACT_REPLAY",
+  "historical13Adds": "UNKNOWN_EXACT_OBSERVATION_TIME_AND_DEFINITION_NOT_RETAINED"
+}

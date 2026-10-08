@@ -1,0 +1,237 @@
+{
+  "observedAt": "2026-10-08T23:06:21.040526+00:00",
+  "limit": 10,
+  "privatePromptOmitted": true,
+  "rows": [
+    {
+      "runId": "airun_mv05agbs_jhyo8nsr",
+      "symbol": "DOGEUSDT",
+      "startedAt": 1791500748328,
+      "inputPresent": true,
+      "rawInputSHA256": "c4e63d0fc7a906018ee47af3eebbc9df24e5fd33a1600b58b946a91a0da1bf59",
+      "renderedFactKeys": [
+        "contract",
+        "MARKET_FACTS",
+        "EXECUTION_ENVELOPE",
+        "validFactIds"
+      ],
+      "marketFactKeys": [
+        "symbol",
+        "BTC",
+        "ETH",
+        "economics",
+        "externalContext"
+      ],
+      "executionResourcePolicy": "TESTNET_FUNDS_ONLY",
+      "explicitPositionContextPresent": false,
+      "entryAuthorizationPolicyPresent": false
+    },
+    {
+      "runId": "airun_mv0585ci_uzgcsku5",
+      "symbol": "FETUSDT",
+      "startedAt": 1791500640786,
+      "inputPresent": true,
+      "rawInputSHA256": "d94e00f0d3c745b49ccf7848b235db3bac525852d37cc523b424da40bb5d2c4c",
+      "renderedFactKeys": [
+        "contract",
+        "MARKET_FACTS",
+        "EXECUTION_ENVELOPE",
+        "validFactIds"
+      ],
+      "marketFactKeys": [
+        "symbol",
+        "BTC",
+        "ETH",
+        "economics",
+        "externalContext"
+      ],
+      "executionResourcePolicy": "TESTNET_FUNDS_ONLY",
+      "explicitPositionContextPresent": false,
+      "entryAuthorizationPolicyPresent": false
+    },
+    {
+      "runId": "airun_mv0567ap_1o5a771s",
+      "symbol": "UNIUSDC",
+      "startedAt": 1791500550001,
+      "inputPresent": true,
+      "rawInputSHA256": "889d70d55ff76222b471015f76055fe38213231dffa644a893a396b32247090c",
+      "renderedFactKeys": [
+        "contract",
+        "MARKET_FACTS",
+        "EXECUTION_ENVELOPE",
+        "validFactIds"
+      ],
+      "marketFactKeys": [
+        "symbol",
+        "BTC",
+        "ETH",
+        "economics",
+        "externalContext"
+      ],
+      "executionResourcePolicy": "TESTNET_FUNDS_ONLY",
+      "explicitPositionContextPresent": false,
+      "entryAuthorizationPolicyPresent": false
+    },
+    {
+      "runId": "airun_mv054lab_vq03bnft",
+      "symbol": "WLDUSDT",
+      "startedAt": 1791500474819,
+      "inputPresent": true,
+      "rawInputSHA256": "b1c5f9065bd4b6ccfd75c35effb56ad77af459289d19268d64ea430bff30169e",
+      "renderedFactKeys": [
+        "contract",
+        "MARKET_FACTS",
+        "EXECUTION_ENVELOPE",
+        "validFactIds"
+      ],
+      "marketFactKeys": [
+        "symbol",
+        "BTC",
+        "ETH",
+        "economics",
+        "externalContext"
+      ],
+      "executionResourcePolicy": "TESTNET_FUNDS_ONLY",
+      "explicitPositionContextPresent": false,
+      "entryAuthorizationPolicyPresent": false
+    },
+    {
+      "runId": "airun_mv052208_6e2cb8s5",
+      "symbol": "TIAUSDT",
+      "startedAt": 1791500356520,
+      "inputPresent": true,
+      "rawInputSHA256": "ae96ae7e7ccc4616f7af2c642f053e94ae03e5e558084bb0b532ddf9265eb192",
+      "renderedFactKeys": [
+        "contract",
+        "MARKET_FACTS",
+        "EXECUTION_ENVELOPE",
+        "validFactIds"
+      ],
+      "marketFactKeys": [
+        "symbol",
+        "BTC",
+        "ETH",
+        "economics",
+        "externalContext"
+      ],
+      "executionResourcePolicy": "TESTNET_FUNDS_ONLY",
+      "explicitPositionContextPresent": false,
+      "entryAuthorizationPolicyPresent": false
+    },
+    {
+      "runId": "airun_mv0503ku_zaj28nvc",
+      "symbol": "UNIUSDT",
+      "startedAt": 1791500265246,
+      "inputPresent": true,
+      "rawInputSHA256": "e697a051a26b2aacbcce97c1febbea5306bf778dc2cf49c4417128871a436042",
+      "renderedFactKeys": [
+        "contract",
+        "MARKET_FACTS",
+        "EXECUTION_ENVELOPE",
+        "validFactIds"
+      ],
+      "marketFactKeys": [
+        "symbol",
+        "BTC",
+        "ETH",
+        "economics",
+        "externalContext"
+      ],
+      "executionResourcePolicy": "TESTNET_FUNDS_ONLY",
+      "explicitPositionContextPresent": false,
+      "entryAuthorizationPolicyPresent": false
+    },
+    {
+      "runId": "airun_mv04xdb4_seaxgtrx",
+      "symbol": "WLDUSDT",
+      "startedAt": 1791500137888,
+      "inputPresent": true,
+      "rawInputSHA256": "3b794d74d92f1d0632fbbaec7230004a03cacf84ff1932c180c320cc9e8cac00",
+      "renderedFactKeys": [
+        "contract",
+        "MARKET_FACTS",
+        "EXECUTION_ENVELOPE",
+        "validFactIds"
+      ],
+      "marketFactKeys": [
+        "symbol",
+        "BTC",
+        "ETH",
+        "economics",
+        "externalContext"
+      ],
+      "executionResourcePolicy": "TESTNET_FUNDS_ONLY",
+      "explicitPositionContextPresent": false,
+      "entryAuthorizationPolicyPresent": false
+    },
+    {
+      "runId": "airun_mv04slzt_o3sismri",
+      "symbol": "SUIUSDT",
+      "startedAt": 1791499915865,
+      "inputPresent": true,
+      "rawInputSHA256": "ec4aae00800c08205b17f1ec983ea7b3aa3403635b60f1b4584703f4110f12ff",
+      "renderedFactKeys": [
+        "contract",
+        "MARKET_FACTS",
+        "EXECUTION_ENVELOPE",
+        "validFactIds"
+      ],
+      "marketFactKeys": [
+        "symbol",
+        "BTC",
+        "ETH",
+        "economics",
+        "externalContext"
+      ],
+      "executionResourcePolicy": "TESTNET_FUNDS_ONLY",
+      "explicitPositionContextPresent": false,
+      "entryAuthorizationPolicyPresent": false
+    },
+    {
+      "runId": "airun_mv04q5mu_31va3ook",
+      "symbol": "WLDUSDT",
+      "startedAt": 1791499801350,
+      "inputPresent": true,
+      "rawInputSHA256": "0d4f1e446391a10d33d79eccda5158e7f306e2239faab632c96e175723397092",
+      "renderedFactKeys": [
+        "contract",
+        "MARKET_FACTS",
+        "EXECUTION_ENVELOPE",
+        "validFactIds"
+      ],
+      "marketFactKeys": [
+        "symbol",
+        "BTC",
+        "ETH",
+        "economics",
+        "externalContext"
+      ],
+      "executionResourcePolicy": "TESTNET_FUNDS_ONLY",
+      "explicitPositionContextPresent": false,
+      "entryAuthorizationPolicyPresent": false
+    },
+    {
+      "runId": "airun_mv04o8hc_lv0cpyq9",
+      "symbol": "ADAUSDC",
+      "startedAt": 1791499711728,
+      "inputPresent": true,
+      "rawInputSHA256": "2a7c99eeeb9ffe74aaf7beb1cb19db8c882a46c268bde3ac455940bdc850cb3d",
+      "renderedFactKeys": [
+        "contract",
+        "MARKET_FACTS",
+        "EXECUTION_ENVELOPE",
+        "validFactIds"
+      ],
+      "marketFactKeys": [
+        "symbol",
+        "BTC",
+        "ETH",
+        "economics",
+        "externalContext"
+      ],
+      "executionResourcePolicy": "TESTNET_FUNDS_ONLY",
+      "explicitPositionContextPresent": false,
+      "entryAuthorizationPolicyPresent": false
+    }
+  ]
+}

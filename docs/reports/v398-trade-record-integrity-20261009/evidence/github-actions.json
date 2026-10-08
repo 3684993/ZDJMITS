@@ -1,0 +1,205 @@
+{
+  "observedAt": "2026-10-08T23:00:14.637487+00:00",
+  "runs": [
+    {
+      "id": 37856136559,
+      "head_sha": "855362ecd42acb820dc88807b09575a4becf605c",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/3684993/ZDJMITS/actions/runs/37856136559",
+      "name": "V3.9.x Verify",
+      "created_at": "2026-10-08T22:52:13Z",
+      "updated_at": "2026-10-08T23:00:03Z"
+    },
+    {
+      "id": 37853581957,
+      "head_sha": "5fe95a8662639571ac27e2ae1580c5994847ff77",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/3684993/ZDJMITS/actions/runs/37853581957",
+      "name": "V3.9.x Verify",
+      "created_at": "2026-10-08T22:27:25Z",
+      "updated_at": "2026-10-08T22:35:38Z"
+    },
+    {
+      "id": 37853152289,
+      "head_sha": "1cd6d75a46fc7f8032e682589eb50fe34b68e79b",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "html_url": "https://github.com/3684993/ZDJMITS/actions/runs/37853152289",
+      "name": "V3.9.x Verify",
+      "created_at": "2026-10-08T22:23:25Z",
+      "updated_at": "2026-10-08T22:28:33Z"
+    },
+    {
+      "id": 37850135010,
+      "head_sha": "3327c84ff943934653e003f98b31573b3886647d",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/3684993/ZDJMITS/actions/runs/37850135010",
+      "name": "V3.9.x Verify",
+      "created_at": "2026-10-08T21:55:44Z",
+      "updated_at": "2026-10-08T22:04:05Z"
+    },
+    {
+      "id": 37784329961,
+      "head_sha": "2b0143e5dc112266437da2e14c7eb808f51d9869",
+      "status": "completed",
+      "conclusion": "failure",
+      "html_url": "https://github.com/3684993/ZDJMITS/actions/runs/37784329961",
+      "name": "V3.9.x Verify",
+      "created_at": "2026-10-08T13:26:15Z",
+      "updated_at": "2026-10-08T13:27:36Z"
+    }
+  ],
+  "inspectedRun": "37853581957",
+  "jobs": [
+    {
+      "id": 113572684158,
+      "name": "verify",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/3684993/ZDJMITS/actions/runs/37853581957/job/113572684158",
+      "started_at": "2026-10-08T22:28:35Z",
+      "completed_at": "2026-10-08T22:35:37Z",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-08T22:28:36Z",
+          "completed_at": "2026-10-08T22:28:36Z"
+        },
+        {
+          "name": "Checkout",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-08T22:28:36Z",
+          "completed_at": "2026-10-08T22:28:46Z"
+        },
+        {
+          "name": "Setup Node",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-08T22:28:46Z",
+          "completed_at": "2026-10-08T22:28:54Z"
+        },
+        {
+          "name": "Install exact dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-08T22:28:54Z",
+          "completed_at": "2026-10-08T22:29:08Z"
+        },
+        {
+          "name": "Apply V3.9.3 autonomous Entry migration",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 5,
+          "started_at": "2026-10-08T22:29:08Z",
+          "completed_at": "2026-10-08T22:29:08Z"
+        },
+        {
+          "name": "Persist migration patch",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 6,
+          "started_at": "2026-10-08T22:29:08Z",
+          "completed_at": "2026-10-08T22:29:08Z"
+        },
+        {
+          "name": "Diff check for current change set",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-08T22:29:08Z",
+          "completed_at": "2026-10-08T22:29:08Z"
+        },
+        {
+          "name": "Build workspace type prerequisites",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-10-08T22:29:08Z",
+          "completed_at": "2026-10-08T22:29:17Z"
+        },
+        {
+          "name": "Verify scripts",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-10-08T22:29:17Z",
+          "completed_at": "2026-10-08T22:29:37Z"
+        },
+        {
+          "name": "Verify release identity",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-10-08T22:29:37Z",
+          "completed_at": "2026-10-08T22:29:38Z"
+        },
+        {
+          "name": "Verify current S00 identity and isolation",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-10-08T22:29:38Z",
+          "completed_at": "2026-10-08T22:29:39Z"
+        },
+        {
+          "name": "Typecheck",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-10-08T22:29:39Z",
+          "completed_at": "2026-10-08T22:30:02Z"
+        },
+        {
+          "name": "Build",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-10-08T22:30:02Z",
+          "completed_at": "2026-10-08T22:30:35Z"
+        },
+        {
+          "name": "Test",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-10-08T22:30:35Z",
+          "completed_at": "2026-10-08T22:35:33Z"
+        },
+        {
+          "name": "Post Setup Node",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 27,
+          "started_at": "2026-10-08T22:35:33Z",
+          "completed_at": "2026-10-08T22:35:34Z"
+        },
+        {
+          "name": "Post Checkout",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 28,
+          "started_at": "2026-10-08T22:35:34Z",
+          "completed_at": "2026-10-08T22:35:36Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 29,
+          "started_at": "2026-10-08T22:35:36Z",
+          "completed_at": "2026-10-08T22:35:36Z"
+        }
+      ]
+    }
+  ]
+}

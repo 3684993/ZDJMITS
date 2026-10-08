@@ -1,0 +1,230 @@
+[
+  {
+    "path": "docs/prompts/CURRENT_MAINTENANCE_HANDOFF.md",
+    "sha256": "c16bbfb511c895809549f722546ef35780944f8700dfd028614d95c19500591e",
+    "lines": 845,
+    "sourceCommit": "855362ecd42acb820dc88807b09575a4becf605c",
+    "relevantLines": []
+  },
+  {
+    "path": "docs/prompts/CODEX_V398_ENTRY_SIZING_NO_ADD_VALIDATION_AND_IMPLEMENTATION.md",
+    "sha256": "4badf4b2d436a8b99c8bb14f5a0f739c14014aa71fdb4508ca5572a5d6129079",
+    "lines": 162,
+    "sourceCommit": "855362ecd42acb820dc88807b09575a4becf605c",
+    "relevantLines": []
+  },
+  {
+    "path": "docs/prompts/CHATGPT_V398_ENTRY_QUALITY_OPTIMIZATION_START.md",
+    "sha256": "d8f32f593d59189734012a0cc03fa49c8fc2751ae81ae6950182e744abff9fe5",
+    "lines": 632,
+    "sourceCommit": "855362ecd42acb820dc88807b09575a4becf605c",
+    "relevantLines": []
+  },
+  {
+    "path": "docs/reports/v398-entry-sizing-quality-review/IMPLEMENTATION_REPORT.md",
+    "sha256": "9fe0bd504d7f8bcd31363939d983c1c658cf62018fbb6cff9a0f77033a90309b",
+    "lines": 66,
+    "sourceCommit": "855362ecd42acb820dc88807b09575a4becf605c",
+    "relevantLines": []
+  },
+  {
+    "path": "docs/reports/v398-entry-sizing-quality-review/ENTRY_SIZING_QUALITY_REVIEW.md",
+    "sha256": "df484237e5418fb7377e9929c9a415ea3006b227cf3b6d66919e5be92ec75d01",
+    "lines": 145,
+    "sourceCommit": "855362ecd42acb820dc88807b09575a4becf605c",
+    "relevantLines": [
+      83
+    ]
+  },
+  {
+    "path": "docs/plans/V398_ENTRY_SIZING_RISK_BUDGET_PLAN.md",
+    "sha256": "3bdcef8706803670511da18ecc9c960a2282b273b01d82b3e1650b7491bcac3c",
+    "lines": 101,
+    "sourceCommit": "855362ecd42acb820dc88807b09575a4becf605c",
+    "relevantLines": []
+  },
+  {
+    "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/exchange-cycle-reconstruction.json",
+    "sha256": "1778aaada266e242dfb0c020fb7492801f036a6be3e318fcb81ee1a907ca930e",
+    "lines": 592,
+    "sourceCommit": "855362ecd42acb820dc88807b09575a4becf605c",
+    "relevantLines": [
+      49,
+      74,
+      99,
+      124,
+      149,
+      174,
+      199,
+      224,
+      249,
+      274,
+      299,
+      324,
+      349,
+      374,
+      399,
+      424,
+      449,
+      474,
+      499,
+      524,
+      549,
+      574
+    ]
+  },
+  {
+    "path": "docs/reports/v398-entry-sizing-quality-review/evidence-20261008/missing-facts.json",
+    "sha256": "741bf2913d7e550aaa3a6dd18aba9b293144c30ae4362b757ff41914e729ab49",
+    "lines": 34,
+    "sourceCommit": "855362ecd42acb820dc88807b09575a4becf605c",
+    "relevantLines": []
+  },
+  {
+    "path": "docs/reports/v397-trade-entry-exit-quality-review-20261008/TRADE_ENTRY_EXIT_QUALITY_REVIEW.md",
+    "sha256": "efbd5e756bffbeb375580f8881c879024e2483a6ff9b85023185f2871f4be920",
+    "lines": 277,
+    "sourceCommit": "855362ecd42acb820dc88807b09575a4becf605c",
+    "relevantLines": [
+      222
+    ]
+  },
+  {
+    "path": "docs/reports/v397-trade-learning-p0-20261008/P0_FACT_LAYER_IMPLEMENTATION.md",
+    "sha256": "faae1f6baccd4039a467348eaace407b1d34ea75f12a20726ec4ac9ade8c15a8",
+    "lines": 87,
+    "sourceCommit": "855362ecd42acb820dc88807b09575a4becf605c",
+    "relevantLines": []
+  },
+  {
+    "path": "apps/engine/src/api/router.ts",
+    "sha256": "ca0fbcff17e349f2f4e615151c734d9b3ec1b5529e4a9280602816b1259b973c",
+    "lines": 1170,
+    "sourceCommit": "855362ecd42acb820dc88807b09575a4becf605c",
+    "relevantLines": [
+      1056,
+      1077
+    ]
+  },
+  {
+    "path": "apps/dashboard/src/views/TradeRecordsView.vue",
+    "sha256": "e11a213050e0b07613066d1c40acdb65f0e591b918d013810324a6e632c0afbb",
+    "lines": 55,
+    "sourceCommit": "855362ecd42acb820dc88807b09575a4becf605c",
+    "relevantLines": [
+      12,
+      46
+    ]
+  },
+  {
+    "path": "apps/engine/src/services/tradeRecordSyncService.ts",
+    "sha256": "5cac5f469192e0aecb324c79d4624ae17730aa165beba7f1f0b1b435e9aeda53",
+    "lines": 68,
+    "sourceCommit": "855362ecd42acb820dc88807b09575a4becf605c",
+    "relevantLines": [
+      11,
+      22,
+      55,
+      65
+    ]
+  },
+  {
+    "path": "apps/engine/src/services/positionService.ts",
+    "sha256": "2f01e9e941bf803fb188f123bdcee5b6733e64b5c08b26c948476d7233274b66",
+    "lines": 199,
+    "sourceCommit": "855362ecd42acb820dc88807b09575a4becf605c",
+    "relevantLines": [
+      55,
+      61,
+      66,
+      181,
+      186,
+      189,
+      191
+    ]
+  },
+  {
+    "path": "apps/engine/src/services/cycleAccounting.ts",
+    "sha256": "57d291fe918b1a73265a2abc82ee56a15c69906a0cd7e7106372e433975839b9",
+    "lines": 198,
+    "sourceCommit": "855362ecd42acb820dc88807b09575a4becf605c",
+    "relevantLines": [
+      147,
+      153,
+      192
+    ]
+  },
+  {
+    "path": "apps/engine/src/services/tradeRecordReadModel.ts",
+    "sha256": "09efca6913938314abd5ad3a4098ecdb3113f3edfccca37c735834c576d8077d",
+    "lines": 62,
+    "sourceCommit": "855362ecd42acb820dc88807b09575a4becf605c",
+    "relevantLines": [
+      26
+    ]
+  },
+  {
+    "path": "apps/engine/src/services/positionLifecycleTracker.ts",
+    "sha256": "2ea9c2148d9a4fb2babdedc73c06fe68db3926936abe738361201c9f282576c2",
+    "lines": 58,
+    "sourceCommit": "855362ecd42acb820dc88807b09575a4becf605c",
+    "relevantLines": []
+  },
+  {
+    "path": "apps/engine/src/services/eipService.ts",
+    "sha256": "d903040a1470ffc02071604c79432bb67a13a5c858c6099143e2c2ba9b948169",
+    "lines": 46,
+    "sourceCommit": "855362ecd42acb820dc88807b09575a4becf605c",
+    "relevantLines": [
+      25
+    ]
+  },
+  {
+    "path": "apps/engine/src/services/noSeparateAdd.ts",
+    "sha256": "9208d398430a469d867d5daac47761beaff76dc1f6999b8b3d15631e6f91235b",
+    "lines": 29,
+    "sourceCommit": "855362ecd42acb820dc88807b09575a4becf605c",
+    "relevantLines": [
+      8
+    ]
+  },
+  {
+    "path": "apps/engine/src/services/preAiExecutionEnvelope.ts",
+    "sha256": "9fe246717951ef298318ee9749cac71bcd91a2a68f43fe5fdc53ce127043c780",
+    "lines": 195,
+    "sourceCommit": "855362ecd42acb820dc88807b09575a4becf605c",
+    "relevantLines": [
+      15,
+      117
+    ]
+  },
+  {
+    "path": "packages/core/src/compactEntry.ts",
+    "sha256": "9927a68052f465660b12a4610085fcc158c6ceeca9beec4b0536f15fe1a94a98",
+    "lines": 41,
+    "sourceCommit": "855362ecd42acb820dc88807b09575a4becf605c",
+    "relevantLines": [
+      18,
+      27,
+      31
+    ]
+  },
+  {
+    "path": "packages/core/src/eip.ts",
+    "sha256": "b18d55a2000acff1d51eae9a8facb7fa77579ef9969f6cd1ee8e2cd15a010b75",
+    "lines": 63,
+    "sourceCommit": "855362ecd42acb820dc88807b09575a4becf605c",
+    "relevantLines": [
+      58
+    ]
+  },
+  {
+    "path": "apps/engine/src/config/settingsStore.ts",
+    "sha256": "99b4e55e53252b3a18591eaf082dbdefd88f3c248e3683770f5a2e13a2629562",
+    "lines": 1916,
+    "sourceCommit": "855362ecd42acb820dc88807b09575a4becf605c",
+    "relevantLines": [
+      1064
+    ]
+  }
+]

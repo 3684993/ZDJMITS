@@ -1,0 +1,20 @@
+{
+  "denominator": 768,
+  "statusCounts": {
+    "OPEN": 124,
+    "CLOSED": 491,
+    "INCOMPLETE": 139,
+    "PARTIALLY_CLOSED": 14
+  },
+  "fundingCounts": {
+    "UNKNOWN": 763,
+    "EXACT": 5
+  },
+  "missingCycleId": 0,
+  "missingOriginRunReference": 14,
+  "duplicateCycleGroups": 0,
+  "duplicateCycleRows": 0,
+  "unclosedRecords": 277,
+  "physicallyHeldAtIndependentLocalSnapshot": 18,
+  "note": "Unclosed diagnostic records are not proof of present physical inventory; denominators are fixed collection snapshots."
+}

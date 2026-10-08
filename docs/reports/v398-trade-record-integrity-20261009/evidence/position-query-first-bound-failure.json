@@ -1,0 +1,9 @@
+{
+  "at": "2026-10-08T23:04:46.414562+00:00",
+  "mode": "query_only",
+  "query": "kind positions without leading scope index",
+  "secondsBound": 5,
+  "error": "sqlite3.OperationalError: interrupted",
+  "fallback": "bind existing scope before kind, using composite primary key",
+  "writes": 0
+}

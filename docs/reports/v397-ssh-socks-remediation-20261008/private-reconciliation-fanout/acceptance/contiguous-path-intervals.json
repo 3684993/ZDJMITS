@@ -1,0 +1,3140 @@
+{
+  "note": "Approximate contiguous sampled intervals; not an instrumented transaction duration or proof of unique stall cause.",
+  "paths": [
+    {
+      "frame": {
+        "functionName": "claimEntryExecution",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1199,
+        "columnNumber": 23
+      },
+      "inclusiveSamples": 203,
+      "maxContiguousSamplingIntervalMs": 317.14
+    },
+    {
+      "frame": {
+        "functionName": "work",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1200,
+        "columnNumber": 21
+      },
+      "inclusiveSamples": 197,
+      "maxContiguousSamplingIntervalMs": 307.691
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 211,
+        "columnNumber": 68
+      },
+      "inclusiveSamples": 4510,
+      "maxContiguousSamplingIntervalMs": 257.993
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 647,
+        "columnNumber": 66
+      },
+      "inclusiveSamples": 1538,
+      "maxContiguousSamplingIntervalMs": 257.993
+    },
+    {
+      "frame": {
+        "functionName": "TradingQualityCollector.listener",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 61,
+        "columnNumber": 24
+      },
+      "inclusiveSamples": 1519,
+      "maxContiguousSamplingIntervalMs": 257.993
+    },
+    {
+      "frame": {
+        "functionName": "onEvent",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 170,
+        "columnNumber": 11
+      },
+      "inclusiveSamples": 1519,
+      "maxContiguousSamplingIntervalMs": 257.993
+    },
+    {
+      "frame": {
+        "functionName": "captureState",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 261,
+        "columnNumber": 16
+      },
+      "inclusiveSamples": 1485,
+      "maxContiguousSamplingIntervalMs": 217.433
+    },
+    {
+      "frame": {
+        "functionName": "put",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 136,
+        "columnNumber": 7
+      },
+      "inclusiveSamples": 1474,
+      "maxContiguousSamplingIntervalMs": 212.789
+    },
+    {
+      "frame": {
+        "functionName": "mutateEntryReservations",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 912,
+        "columnNumber": 27
+      },
+      "inclusiveSamples": 698,
+      "maxContiguousSamplingIntervalMs": 191.459
+    },
+    {
+      "frame": {
+        "functionName": "persistRuntime",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 994,
+        "columnNumber": 18
+      },
+      "inclusiveSamples": 672,
+      "maxContiguousSamplingIntervalMs": 191.459
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1002,
+        "columnNumber": 25
+      },
+      "inclusiveSamples": 419,
+      "maxContiguousSamplingIntervalMs": 191.459
+    },
+    {
+      "frame": {
+        "functionName": "TradingQualityCollector.listener",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 61,
+        "columnNumber": 24
+      },
+      "inclusiveSamples": 372,
+      "maxContiguousSamplingIntervalMs": 156.587
+    },
+    {
+      "frame": {
+        "functionName": "onEvent",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 170,
+        "columnNumber": 11
+      },
+      "inclusiveSamples": 372,
+      "maxContiguousSamplingIntervalMs": 156.587
+    },
+    {
+      "frame": {
+        "functionName": "captureState",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 261,
+        "columnNumber": 16
+      },
+      "inclusiveSamples": 372,
+      "maxContiguousSamplingIntervalMs": 156.587
+    },
+    {
+      "frame": {
+        "functionName": "put",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 136,
+        "columnNumber": 7
+      },
+      "inclusiveSamples": 372,
+      "maxContiguousSamplingIntervalMs": 156.587
+    },
+    {
+      "frame": {
+        "functionName": "TradingQualityCollector.listener",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 61,
+        "columnNumber": 24
+      },
+      "inclusiveSamples": 372,
+      "maxContiguousSamplingIntervalMs": 149.604
+    },
+    {
+      "frame": {
+        "functionName": "onEvent",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 170,
+        "columnNumber": 11
+      },
+      "inclusiveSamples": 372,
+      "maxContiguousSamplingIntervalMs": 149.604
+    },
+    {
+      "frame": {
+        "functionName": "captureState",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 261,
+        "columnNumber": 16
+      },
+      "inclusiveSamples": 370,
+      "maxContiguousSamplingIntervalMs": 149.604
+    },
+    {
+      "frame": {
+        "functionName": "put",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 136,
+        "columnNumber": 7
+      },
+      "inclusiveSamples": 370,
+      "maxContiguousSamplingIntervalMs": 149.604
+    },
+    {
+      "frame": {
+        "functionName": "TradingQualityCollector.listener",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 61,
+        "columnNumber": 24
+      },
+      "inclusiveSamples": 366,
+      "maxContiguousSamplingIntervalMs": 147.3
+    },
+    {
+      "frame": {
+        "functionName": "onEvent",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 170,
+        "columnNumber": 11
+      },
+      "inclusiveSamples": 366,
+      "maxContiguousSamplingIntervalMs": 147.3
+    },
+    {
+      "frame": {
+        "functionName": "captureState",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 261,
+        "columnNumber": 16
+      },
+      "inclusiveSamples": 365,
+      "maxContiguousSamplingIntervalMs": 147.3
+    },
+    {
+      "frame": {
+        "functionName": "put",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 136,
+        "columnNumber": 7
+      },
+      "inclusiveSamples": 364,
+      "maxContiguousSamplingIntervalMs": 147.3
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 406,
+        "columnNumber": 69
+      },
+      "inclusiveSamples": 704,
+      "maxContiguousSamplingIntervalMs": 131.043
+    },
+    {
+      "frame": {
+        "functionName": "mutateEntryReservations",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 912,
+        "columnNumber": 27
+      },
+      "inclusiveSamples": 704,
+      "maxContiguousSamplingIntervalMs": 131.043
+    },
+    {
+      "frame": {
+        "functionName": "persistRuntime",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 994,
+        "columnNumber": 18
+      },
+      "inclusiveSamples": 675,
+      "maxContiguousSamplingIntervalMs": 131.043
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1002,
+        "columnNumber": 25
+      },
+      "inclusiveSamples": 418,
+      "maxContiguousSamplingIntervalMs": 129.403
+    },
+    {
+      "frame": {
+        "functionName": "mutateEntryReservations",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 912,
+        "columnNumber": 27
+      },
+      "inclusiveSamples": 944,
+      "maxContiguousSamplingIntervalMs": 113.273
+    },
+    {
+      "frame": {
+        "functionName": "TradingQualityCollector.listener",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 61,
+        "columnNumber": 24
+      },
+      "inclusiveSamples": 737,
+      "maxContiguousSamplingIntervalMs": 110.344
+    },
+    {
+      "frame": {
+        "functionName": "onEvent",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 170,
+        "columnNumber": 11
+      },
+      "inclusiveSamples": 737,
+      "maxContiguousSamplingIntervalMs": 110.344
+    },
+    {
+      "frame": {
+        "functionName": "captureState",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 261,
+        "columnNumber": 16
+      },
+      "inclusiveSamples": 736,
+      "maxContiguousSamplingIntervalMs": 110.344
+    },
+    {
+      "frame": {
+        "functionName": "put",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 136,
+        "columnNumber": 7
+      },
+      "inclusiveSamples": 734,
+      "maxContiguousSamplingIntervalMs": 110.344
+    },
+    {
+      "frame": {
+        "functionName": "persistRuntime",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 994,
+        "columnNumber": 18
+      },
+      "inclusiveSamples": 530,
+      "maxContiguousSamplingIntervalMs": 104.546
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1002,
+        "columnNumber": 25
+      },
+      "inclusiveSamples": 325,
+      "maxContiguousSamplingIntervalMs": 104.546
+    },
+    {
+      "frame": {
+        "functionName": "TradingQualityCollector.listener",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 61,
+        "columnNumber": 24
+      },
+      "inclusiveSamples": 1109,
+      "maxContiguousSamplingIntervalMs": 101.322
+    },
+    {
+      "frame": {
+        "functionName": "onEvent",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 170,
+        "columnNumber": 11
+      },
+      "inclusiveSamples": 1109,
+      "maxContiguousSamplingIntervalMs": 101.322
+    },
+    {
+      "frame": {
+        "functionName": "captureState",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 261,
+        "columnNumber": 16
+      },
+      "inclusiveSamples": 1107,
+      "maxContiguousSamplingIntervalMs": 101.322
+    },
+    {
+      "frame": {
+        "functionName": "put",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 136,
+        "columnNumber": 7
+      },
+      "inclusiveSamples": 1104,
+      "maxContiguousSamplingIntervalMs": 101.322
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 434,
+        "columnNumber": 68
+      },
+      "inclusiveSamples": 871,
+      "maxContiguousSamplingIntervalMs": 86.196
+    },
+    {
+      "frame": {
+        "functionName": "mutateEntryReservations",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 912,
+        "columnNumber": 27
+      },
+      "inclusiveSamples": 869,
+      "maxContiguousSamplingIntervalMs": 86.196
+    },
+    {
+      "frame": {
+        "functionName": "persistRuntime",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 994,
+        "columnNumber": 18
+      },
+      "inclusiveSamples": 680,
+      "maxContiguousSamplingIntervalMs": 86.196
+    },
+    {
+      "frame": {
+        "functionName": "apply",
+        "scriptId": "214",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/runtimeWriteBuffer.js",
+        "lineNumber": 6,
+        "columnNumber": 9
+      },
+      "inclusiveSamples": 799,
+      "maxContiguousSamplingIntervalMs": 85.089
+    },
+    {
+      "frame": {
+        "functionName": "persistRuntimeCore",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 942,
+        "columnNumber": 22
+      },
+      "inclusiveSamples": 798,
+      "maxContiguousSamplingIntervalMs": 85.089
+    },
+    {
+      "frame": {
+        "functionName": "persistRuntime",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 994,
+        "columnNumber": 18
+      },
+      "inclusiveSamples": 682,
+      "maxContiguousSamplingIntervalMs": 81.239
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1002,
+        "columnNumber": 25
+      },
+      "inclusiveSamples": 429,
+      "maxContiguousSamplingIntervalMs": 76.331
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1002,
+        "columnNumber": 25
+      },
+      "inclusiveSamples": 426,
+      "maxContiguousSamplingIntervalMs": 67.215
+    },
+    {
+      "frame": {
+        "functionName": "apply",
+        "scriptId": "214",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/runtimeWriteBuffer.js",
+        "lineNumber": 6,
+        "columnNumber": 9
+      },
+      "inclusiveSamples": 54,
+      "maxContiguousSamplingIntervalMs": 60.651
+    },
+    {
+      "frame": {
+        "functionName": "recordRuntimeEvent",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1473,
+        "columnNumber": 22
+      },
+      "inclusiveSamples": 54,
+      "maxContiguousSamplingIntervalMs": 60.651
+    },
+    {
+      "frame": {
+        "functionName": "apply",
+        "scriptId": "214",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/runtimeWriteBuffer.js",
+        "lineNumber": 6,
+        "columnNumber": 9
+      },
+      "inclusiveSamples": 39,
+      "maxContiguousSamplingIntervalMs": 51.506
+    },
+    {
+      "frame": {
+        "functionName": "recordRuntimeEvent",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1473,
+        "columnNumber": 22
+      },
+      "inclusiveSamples": 39,
+      "maxContiguousSamplingIntervalMs": 51.506
+    },
+    {
+      "frame": {
+        "functionName": "tick",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 326,
+        "columnNumber": 8
+      },
+      "inclusiveSamples": 514,
+      "maxContiguousSamplingIntervalMs": 48.09
+    },
+    {
+      "frame": {
+        "functionName": "captureStateChunk",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 287,
+        "columnNumber": 21
+      },
+      "inclusiveSamples": 384,
+      "maxContiguousSamplingIntervalMs": 48.09
+    },
+    {
+      "frame": {
+        "functionName": "put",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 136,
+        "columnNumber": 7
+      },
+      "inclusiveSamples": 369,
+      "maxContiguousSamplingIntervalMs": 48.09
+    },
+    {
+      "frame": {
+        "functionName": "reportOpenOrderExitFacts",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 82,
+        "columnNumber": 28
+      },
+      "inclusiveSamples": 1127,
+      "maxContiguousSamplingIntervalMs": 39.209
+    },
+    {
+      "frame": {
+        "functionName": "apply",
+        "scriptId": "214",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/runtimeWriteBuffer.js",
+        "lineNumber": 6,
+        "columnNumber": 9
+      },
+      "inclusiveSamples": 23,
+      "maxContiguousSamplingIntervalMs": 35.91
+    },
+    {
+      "frame": {
+        "functionName": "persistRuntimeEntity",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 965,
+        "columnNumber": 24
+      },
+      "inclusiveSamples": 23,
+      "maxContiguousSamplingIntervalMs": 35.91
+    },
+    {
+      "frame": {
+        "functionName": "put",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 136,
+        "columnNumber": 7
+      },
+      "inclusiveSamples": 29,
+      "maxContiguousSamplingIntervalMs": 31.121
+    },
+    {
+      "frame": {
+        "functionName": "TradingQualityCollector.listener",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 61,
+        "columnNumber": 24
+      },
+      "inclusiveSamples": 65,
+      "maxContiguousSamplingIntervalMs": 28.099
+    },
+    {
+      "frame": {
+        "functionName": "onEvent",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 170,
+        "columnNumber": 11
+      },
+      "inclusiveSamples": 65,
+      "maxContiguousSamplingIntervalMs": 28.099
+    },
+    {
+      "frame": {
+        "functionName": "captureState",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 261,
+        "columnNumber": 16
+      },
+      "inclusiveSamples": 55,
+      "maxContiguousSamplingIntervalMs": 28.099
+    },
+    {
+      "frame": {
+        "functionName": "put",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 136,
+        "columnNumber": 7
+      },
+      "inclusiveSamples": 53,
+      "maxContiguousSamplingIntervalMs": 28.099
+    },
+    {
+      "frame": {
+        "functionName": "runtimeEvents",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1752,
+        "columnNumber": 17
+      },
+      "inclusiveSamples": 68,
+      "maxContiguousSamplingIntervalMs": 26.709
+    },
+    {
+      "frame": {
+        "functionName": "runtimeEvents",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1752,
+        "columnNumber": 17
+      },
+      "inclusiveSamples": 182,
+      "maxContiguousSamplingIntervalMs": 26.658
+    },
+    {
+      "frame": {
+        "functionName": "mutateEntryReservations",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 912,
+        "columnNumber": 27
+      },
+      "inclusiveSamples": 32,
+      "maxContiguousSamplingIntervalMs": 25.054
+    },
+    {
+      "frame": {
+        "functionName": "mutateEntryReservations",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 912,
+        "columnNumber": 27
+      },
+      "inclusiveSamples": 58,
+      "maxContiguousSamplingIntervalMs": 23.471
+    },
+    {
+      "frame": {
+        "functionName": "mutateEntryReservations",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 912,
+        "columnNumber": 27
+      },
+      "inclusiveSamples": 59,
+      "maxContiguousSamplingIntervalMs": 23.442
+    },
+    {
+      "frame": {
+        "functionName": "apply",
+        "scriptId": "214",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/runtimeWriteBuffer.js",
+        "lineNumber": 6,
+        "columnNumber": 9
+      },
+      "inclusiveSamples": 36,
+      "maxContiguousSamplingIntervalMs": 20.327
+    },
+    {
+      "frame": {
+        "functionName": "recordRuntimeEvent",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1473,
+        "columnNumber": 22
+      },
+      "inclusiveSamples": 36,
+      "maxContiguousSamplingIntervalMs": 20.327
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 364,
+        "columnNumber": 73
+      },
+      "inclusiveSamples": 13,
+      "maxContiguousSamplingIntervalMs": 20.297
+    },
+    {
+      "frame": {
+        "functionName": "mutateEntryReservations",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 912,
+        "columnNumber": 27
+      },
+      "inclusiveSamples": 13,
+      "maxContiguousSamplingIntervalMs": 20.297
+    },
+    {
+      "frame": {
+        "functionName": "TradingQualityCollector.listener",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 61,
+        "columnNumber": 24
+      },
+      "inclusiveSamples": 27,
+      "maxContiguousSamplingIntervalMs": 14.061
+    },
+    {
+      "frame": {
+        "functionName": "onEvent",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 170,
+        "columnNumber": 11
+      },
+      "inclusiveSamples": 27,
+      "maxContiguousSamplingIntervalMs": 14.061
+    },
+    {
+      "frame": {
+        "functionName": "captureState",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 261,
+        "columnNumber": 16
+      },
+      "inclusiveSamples": 25,
+      "maxContiguousSamplingIntervalMs": 14.061
+    },
+    {
+      "frame": {
+        "functionName": "put",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 136,
+        "columnNumber": 7
+      },
+      "inclusiveSamples": 25,
+      "maxContiguousSamplingIntervalMs": 14.061
+    },
+    {
+      "frame": {
+        "functionName": "runtimeEvents",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1752,
+        "columnNumber": 17
+      },
+      "inclusiveSamples": 83,
+      "maxContiguousSamplingIntervalMs": 14.059
+    },
+    {
+      "frame": {
+        "functionName": "recordShadowMark",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1718,
+        "columnNumber": 20
+      },
+      "inclusiveSamples": 131,
+      "maxContiguousSamplingIntervalMs": 13.973
+    },
+    {
+      "frame": {
+        "functionName": "runtimeEvents",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1752,
+        "columnNumber": 17
+      },
+      "inclusiveSamples": 31,
+      "maxContiguousSamplingIntervalMs": 12.681
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 996,
+        "columnNumber": 125
+      },
+      "inclusiveSamples": 10,
+      "maxContiguousSamplingIntervalMs": 12.532
+    },
+    {
+      "frame": {
+        "functionName": "apply",
+        "scriptId": "214",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/runtimeWriteBuffer.js",
+        "lineNumber": 6,
+        "columnNumber": 9
+      },
+      "inclusiveSamples": 19,
+      "maxContiguousSamplingIntervalMs": 12.513
+    },
+    {
+      "frame": {
+        "functionName": "recordRuntimeEvent",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1473,
+        "columnNumber": 22
+      },
+      "inclusiveSamples": 19,
+      "maxContiguousSamplingIntervalMs": 12.513
+    },
+    {
+      "frame": {
+        "functionName": "apply",
+        "scriptId": "214",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/runtimeWriteBuffer.js",
+        "lineNumber": 6,
+        "columnNumber": 9
+      },
+      "inclusiveSamples": 12,
+      "maxContiguousSamplingIntervalMs": 12.478
+    },
+    {
+      "frame": {
+        "functionName": "recordRuntimeEvent",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1473,
+        "columnNumber": 22
+      },
+      "inclusiveSamples": 12,
+      "maxContiguousSamplingIntervalMs": 12.478
+    },
+    {
+      "frame": {
+        "functionName": "TradingQualityCollector.listener",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 61,
+        "columnNumber": 24
+      },
+      "inclusiveSamples": 12,
+      "maxContiguousSamplingIntervalMs": 12.426
+    },
+    {
+      "frame": {
+        "functionName": "onEvent",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 170,
+        "columnNumber": 11
+      },
+      "inclusiveSamples": 12,
+      "maxContiguousSamplingIntervalMs": 12.426
+    },
+    {
+      "frame": {
+        "functionName": "captureState",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 261,
+        "columnNumber": 16
+      },
+      "inclusiveSamples": 11,
+      "maxContiguousSamplingIntervalMs": 12.426
+    },
+    {
+      "frame": {
+        "functionName": "put",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 136,
+        "columnNumber": 7
+      },
+      "inclusiveSamples": 11,
+      "maxContiguousSamplingIntervalMs": 12.426
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1764,
+        "columnNumber": 24
+      },
+      "inclusiveSamples": 7,
+      "maxContiguousSamplingIntervalMs": 11.08
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 996,
+        "columnNumber": 125
+      },
+      "inclusiveSamples": 9,
+      "maxContiguousSamplingIntervalMs": 10.933
+    },
+    {
+      "frame": {
+        "functionName": "persistCandidateShadow",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 206,
+        "columnNumber": 26
+      },
+      "inclusiveSamples": 23,
+      "maxContiguousSamplingIntervalMs": 10.915
+    },
+    {
+      "frame": {
+        "functionName": "apply",
+        "scriptId": "214",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/runtimeWriteBuffer.js",
+        "lineNumber": 6,
+        "columnNumber": 9
+      },
+      "inclusiveSamples": 50,
+      "maxContiguousSamplingIntervalMs": 10.906
+    },
+    {
+      "frame": {
+        "functionName": "recordRuntimeEvent",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1473,
+        "columnNumber": 22
+      },
+      "inclusiveSamples": 50,
+      "maxContiguousSamplingIntervalMs": 10.906
+    },
+    {
+      "frame": {
+        "functionName": "apply",
+        "scriptId": "214",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/runtimeWriteBuffer.js",
+        "lineNumber": 6,
+        "columnNumber": 9
+      },
+      "inclusiveSamples": 6,
+      "maxContiguousSamplingIntervalMs": 9.373
+    },
+    {
+      "frame": {
+        "functionName": "recordRuntimeEvent",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1473,
+        "columnNumber": 22
+      },
+      "inclusiveSamples": 6,
+      "maxContiguousSamplingIntervalMs": 9.373
+    },
+    {
+      "frame": {
+        "functionName": "recordRuntimeEvent",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1473,
+        "columnNumber": 22
+      },
+      "inclusiveSamples": 6,
+      "maxContiguousSamplingIntervalMs": 9.347
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 615,
+        "columnNumber": 72
+      },
+      "inclusiveSamples": 13,
+      "maxContiguousSamplingIntervalMs": 7.845
+    },
+    {
+      "frame": {
+        "functionName": "entryExecutionClaimStats",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1318,
+        "columnNumber": 28
+      },
+      "inclusiveSamples": 13,
+      "maxContiguousSamplingIntervalMs": 7.845
+    },
+    {
+      "frame": {
+        "functionName": "upsertAiRun",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1509,
+        "columnNumber": 15
+      },
+      "inclusiveSamples": 12,
+      "maxContiguousSamplingIntervalMs": 7.821
+    },
+    {
+      "frame": {
+        "functionName": "TradingQualityCollector.listener",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 61,
+        "columnNumber": 24
+      },
+      "inclusiveSamples": 21,
+      "maxContiguousSamplingIntervalMs": 7.811
+    },
+    {
+      "frame": {
+        "functionName": "onEvent",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 170,
+        "columnNumber": 11
+      },
+      "inclusiveSamples": 21,
+      "maxContiguousSamplingIntervalMs": 7.811
+    },
+    {
+      "frame": {
+        "functionName": "captureState",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 261,
+        "columnNumber": 16
+      },
+      "inclusiveSamples": 19,
+      "maxContiguousSamplingIntervalMs": 7.811
+    },
+    {
+      "frame": {
+        "functionName": "put",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 136,
+        "columnNumber": 7
+      },
+      "inclusiveSamples": 19,
+      "maxContiguousSamplingIntervalMs": 7.811
+    },
+    {
+      "frame": {
+        "functionName": "apply",
+        "scriptId": "214",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/runtimeWriteBuffer.js",
+        "lineNumber": 6,
+        "columnNumber": 9
+      },
+      "inclusiveSamples": 3,
+      "maxContiguousSamplingIntervalMs": 7.235
+    },
+    {
+      "frame": {
+        "functionName": "recordRuntimeEvent",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1473,
+        "columnNumber": 22
+      },
+      "inclusiveSamples": 3,
+      "maxContiguousSamplingIntervalMs": 7.235
+    },
+    {
+      "frame": {
+        "functionName": "apply",
+        "scriptId": "214",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/runtimeWriteBuffer.js",
+        "lineNumber": 6,
+        "columnNumber": 9
+      },
+      "inclusiveSamples": 8,
+      "maxContiguousSamplingIntervalMs": 6.827
+    },
+    {
+      "frame": {
+        "functionName": "recordRuntimeEvent",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1473,
+        "columnNumber": 22
+      },
+      "inclusiveSamples": 8,
+      "maxContiguousSamplingIntervalMs": 6.827
+    },
+    {
+      "frame": {
+        "functionName": "apply",
+        "scriptId": "214",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/runtimeWriteBuffer.js",
+        "lineNumber": 6,
+        "columnNumber": 9
+      },
+      "inclusiveSamples": 8,
+      "maxContiguousSamplingIntervalMs": 6.798
+    },
+    {
+      "frame": {
+        "functionName": "saveEntryExecution",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1288,
+        "columnNumber": 22
+      },
+      "inclusiveSamples": 8,
+      "maxContiguousSamplingIntervalMs": 6.798
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1288,
+        "columnNumber": 85
+      },
+      "inclusiveSamples": 8,
+      "maxContiguousSamplingIntervalMs": 6.798
+    },
+    {
+      "frame": {
+        "functionName": "saveEntryExecutionRecord",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1289,
+        "columnNumber": 28
+      },
+      "inclusiveSamples": 8,
+      "maxContiguousSamplingIntervalMs": 6.798
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1311,
+        "columnNumber": 82
+      },
+      "inclusiveSamples": 7,
+      "maxContiguousSamplingIntervalMs": 6.798
+    },
+    {
+      "frame": {
+        "functionName": "health",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 665,
+        "columnNumber": 10
+      },
+      "inclusiveSamples": 16,
+      "maxContiguousSamplingIntervalMs": 6.335
+    },
+    {
+      "frame": {
+        "functionName": "apply",
+        "scriptId": "214",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/runtimeWriteBuffer.js",
+        "lineNumber": 6,
+        "columnNumber": 9
+      },
+      "inclusiveSamples": 17,
+      "maxContiguousSamplingIntervalMs": 6.318
+    },
+    {
+      "frame": {
+        "functionName": "saveManualExecution",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1176,
+        "columnNumber": 23
+      },
+      "inclusiveSamples": 17,
+      "maxContiguousSamplingIntervalMs": 6.318
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1176,
+        "columnNumber": 87
+      },
+      "inclusiveSamples": 17,
+      "maxContiguousSamplingIntervalMs": 6.318
+    },
+    {
+      "frame": {
+        "functionName": "saveManualExecutionRecord",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1177,
+        "columnNumber": 29
+      },
+      "inclusiveSamples": 17,
+      "maxContiguousSamplingIntervalMs": 6.318
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1180,
+        "columnNumber": 83
+      },
+      "inclusiveSamples": 17,
+      "maxContiguousSamplingIntervalMs": 6.318
+    },
+    {
+      "frame": {
+        "functionName": "health",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 665,
+        "columnNumber": 10
+      },
+      "inclusiveSamples": 31,
+      "maxContiguousSamplingIntervalMs": 6.279
+    },
+    {
+      "frame": {
+        "functionName": "apply",
+        "scriptId": "214",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/runtimeWriteBuffer.js",
+        "lineNumber": 6,
+        "columnNumber": 9
+      },
+      "inclusiveSamples": 5,
+      "maxContiguousSamplingIntervalMs": 6.263
+    },
+    {
+      "frame": {
+        "functionName": "recordRuntimeEvent",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1473,
+        "columnNumber": 22
+      },
+      "inclusiveSamples": 5,
+      "maxContiguousSamplingIntervalMs": 6.263
+    },
+    {
+      "frame": {
+        "functionName": "apply",
+        "scriptId": "214",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/runtimeWriteBuffer.js",
+        "lineNumber": 6,
+        "columnNumber": 9
+      },
+      "inclusiveSamples": 11,
+      "maxContiguousSamplingIntervalMs": 6.255
+    },
+    {
+      "frame": {
+        "functionName": "recordRuntimeEvent",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1473,
+        "columnNumber": 22
+      },
+      "inclusiveSamples": 11,
+      "maxContiguousSamplingIntervalMs": 6.255
+    },
+    {
+      "frame": {
+        "functionName": "run",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 198,
+        "columnNumber": 13
+      },
+      "inclusiveSamples": 9,
+      "maxContiguousSamplingIntervalMs": 6.255
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 199,
+        "columnNumber": 48
+      },
+      "inclusiveSamples": 9,
+      "maxContiguousSamplingIntervalMs": 6.255
+    },
+    {
+      "frame": {
+        "functionName": "runCycle",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 200,
+        "columnNumber": 18
+      },
+      "inclusiveSamples": 9,
+      "maxContiguousSamplingIntervalMs": 6.255
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 211,
+        "columnNumber": 68
+      },
+      "inclusiveSamples": 9,
+      "maxContiguousSamplingIntervalMs": 6.255
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 214,
+        "columnNumber": 67
+      },
+      "inclusiveSamples": 9,
+      "maxContiguousSamplingIntervalMs": 6.255
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 996,
+        "columnNumber": 125
+      },
+      "inclusiveSamples": 8,
+      "maxContiguousSamplingIntervalMs": 6.245
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 996,
+        "columnNumber": 125
+      },
+      "inclusiveSamples": 7,
+      "maxContiguousSamplingIntervalMs": 6.2
+    },
+    {
+      "frame": {
+        "functionName": "upsertDecisionSnapshot",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1640,
+        "columnNumber": 26
+      },
+      "inclusiveSamples": 64,
+      "maxContiguousSamplingIntervalMs": 6.179
+    },
+    {
+      "frame": {
+        "functionName": "apply",
+        "scriptId": "214",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/runtimeWriteBuffer.js",
+        "lineNumber": 6,
+        "columnNumber": 9
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 5.979
+    },
+    {
+      "frame": {
+        "functionName": "recordRuntimeEvent",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1473,
+        "columnNumber": 22
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 5.979
+    },
+    {
+      "frame": {
+        "functionName": "apply",
+        "scriptId": "214",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/runtimeWriteBuffer.js",
+        "lineNumber": 6,
+        "columnNumber": 9
+      },
+      "inclusiveSamples": 12,
+      "maxContiguousSamplingIntervalMs": 5.648
+    },
+    {
+      "frame": {
+        "functionName": "recordRuntimeEvent",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1473,
+        "columnNumber": 22
+      },
+      "inclusiveSamples": 12,
+      "maxContiguousSamplingIntervalMs": 5.648
+    },
+    {
+      "frame": {
+        "functionName": "apply",
+        "scriptId": "214",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/runtimeWriteBuffer.js",
+        "lineNumber": 6,
+        "columnNumber": 9
+      },
+      "inclusiveSamples": 3,
+      "maxContiguousSamplingIntervalMs": 5.243
+    },
+    {
+      "frame": {
+        "functionName": "recordRuntimeEvent",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1473,
+        "columnNumber": 22
+      },
+      "inclusiveSamples": 3,
+      "maxContiguousSamplingIntervalMs": 5.243
+    },
+    {
+      "frame": {
+        "functionName": "apply",
+        "scriptId": "214",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/runtimeWriteBuffer.js",
+        "lineNumber": 6,
+        "columnNumber": 9
+      },
+      "inclusiveSamples": 3,
+      "maxContiguousSamplingIntervalMs": 4.803
+    },
+    {
+      "frame": {
+        "functionName": "recordRuntimeEvent",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1473,
+        "columnNumber": 22
+      },
+      "inclusiveSamples": 3,
+      "maxContiguousSamplingIntervalMs": 4.803
+    },
+    {
+      "frame": {
+        "functionName": "apply",
+        "scriptId": "214",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/runtimeWriteBuffer.js",
+        "lineNumber": 6,
+        "columnNumber": 9
+      },
+      "inclusiveSamples": 3,
+      "maxContiguousSamplingIntervalMs": 4.739
+    },
+    {
+      "frame": {
+        "functionName": "recordRuntimeEvent",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1473,
+        "columnNumber": 22
+      },
+      "inclusiveSamples": 3,
+      "maxContiguousSamplingIntervalMs": 4.739
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 490,
+        "columnNumber": 58
+      },
+      "inclusiveSamples": 28,
+      "maxContiguousSamplingIntervalMs": 4.738
+    },
+    {
+      "frame": {
+        "functionName": "appendDecisionChain",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1591,
+        "columnNumber": 23
+      },
+      "inclusiveSamples": 7,
+      "maxContiguousSamplingIntervalMs": 4.725
+    },
+    {
+      "frame": {
+        "functionName": "run",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 198,
+        "columnNumber": 13
+      },
+      "inclusiveSamples": 3,
+      "maxContiguousSamplingIntervalMs": 4.722
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 199,
+        "columnNumber": 48
+      },
+      "inclusiveSamples": 3,
+      "maxContiguousSamplingIntervalMs": 4.722
+    },
+    {
+      "frame": {
+        "functionName": "runCycle",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 200,
+        "columnNumber": 18
+      },
+      "inclusiveSamples": 3,
+      "maxContiguousSamplingIntervalMs": 4.722
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 211,
+        "columnNumber": 68
+      },
+      "inclusiveSamples": 3,
+      "maxContiguousSamplingIntervalMs": 4.722
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 214,
+        "columnNumber": 67
+      },
+      "inclusiveSamples": 3,
+      "maxContiguousSamplingIntervalMs": 4.722
+    },
+    {
+      "frame": {
+        "functionName": "apply",
+        "scriptId": "214",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/runtimeWriteBuffer.js",
+        "lineNumber": 6,
+        "columnNumber": 9
+      },
+      "inclusiveSamples": 9,
+      "maxContiguousSamplingIntervalMs": 4.716
+    },
+    {
+      "frame": {
+        "functionName": "saveEntryExecution",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1288,
+        "columnNumber": 22
+      },
+      "inclusiveSamples": 9,
+      "maxContiguousSamplingIntervalMs": 4.716
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1288,
+        "columnNumber": 85
+      },
+      "inclusiveSamples": 9,
+      "maxContiguousSamplingIntervalMs": 4.716
+    },
+    {
+      "frame": {
+        "functionName": "saveEntryExecutionRecord",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1289,
+        "columnNumber": 28
+      },
+      "inclusiveSamples": 9,
+      "maxContiguousSamplingIntervalMs": 4.716
+    },
+    {
+      "frame": {
+        "functionName": "health",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 665,
+        "columnNumber": 10
+      },
+      "inclusiveSamples": 66,
+      "maxContiguousSamplingIntervalMs": 4.714
+    },
+    {
+      "frame": {
+        "functionName": "appendDecisionChain",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1591,
+        "columnNumber": 23
+      },
+      "inclusiveSamples": 6,
+      "maxContiguousSamplingIntervalMs": 4.711
+    },
+    {
+      "frame": {
+        "functionName": "health",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 665,
+        "columnNumber": 10
+      },
+      "inclusiveSamples": 45,
+      "maxContiguousSamplingIntervalMs": 4.709
+    },
+    {
+      "frame": {
+        "functionName": "apply",
+        "scriptId": "214",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/runtimeWriteBuffer.js",
+        "lineNumber": 6,
+        "columnNumber": 9
+      },
+      "inclusiveSamples": 3,
+      "maxContiguousSamplingIntervalMs": 4.705
+    },
+    {
+      "frame": {
+        "functionName": "recordRuntimeEvent",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1473,
+        "columnNumber": 22
+      },
+      "inclusiveSamples": 3,
+      "maxContiguousSamplingIntervalMs": 4.705
+    },
+    {
+      "frame": {
+        "functionName": "current",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 217,
+        "columnNumber": 24
+      },
+      "inclusiveSamples": 6,
+      "maxContiguousSamplingIntervalMs": 4.705
+    },
+    {
+      "frame": {
+        "functionName": "appendDecisionChain",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1591,
+        "columnNumber": 23
+      },
+      "inclusiveSamples": 13,
+      "maxContiguousSamplingIntervalMs": 4.697
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1311,
+        "columnNumber": 82
+      },
+      "inclusiveSamples": 8,
+      "maxContiguousSamplingIntervalMs": 4.694
+    },
+    {
+      "frame": {
+        "functionName": "scope",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 106,
+        "columnNumber": 9
+      },
+      "inclusiveSamples": 15,
+      "maxContiguousSamplingIntervalMs": 4.683
+    },
+    {
+      "frame": {
+        "functionName": "hash",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 7,
+        "columnNumber": 13
+      },
+      "inclusiveSamples": 15,
+      "maxContiguousSamplingIntervalMs": 4.683
+    },
+    {
+      "frame": {
+        "functionName": "scope",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 106,
+        "columnNumber": 9
+      },
+      "inclusiveSamples": 51,
+      "maxContiguousSamplingIntervalMs": 4.675
+    },
+    {
+      "frame": {
+        "functionName": "hash",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 7,
+        "columnNumber": 13
+      },
+      "inclusiveSamples": 51,
+      "maxContiguousSamplingIntervalMs": 4.675
+    },
+    {
+      "frame": {
+        "functionName": "apply",
+        "scriptId": "214",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/runtimeWriteBuffer.js",
+        "lineNumber": 6,
+        "columnNumber": 9
+      },
+      "inclusiveSamples": 8,
+      "maxContiguousSamplingIntervalMs": 4.674
+    },
+    {
+      "frame": {
+        "functionName": "saveEntryExecution",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1288,
+        "columnNumber": 22
+      },
+      "inclusiveSamples": 8,
+      "maxContiguousSamplingIntervalMs": 4.674
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1288,
+        "columnNumber": 85
+      },
+      "inclusiveSamples": 8,
+      "maxContiguousSamplingIntervalMs": 4.674
+    },
+    {
+      "frame": {
+        "functionName": "saveEntryExecutionRecord",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1289,
+        "columnNumber": 28
+      },
+      "inclusiveSamples": 8,
+      "maxContiguousSamplingIntervalMs": 4.674
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1311,
+        "columnNumber": 82
+      },
+      "inclusiveSamples": 8,
+      "maxContiguousSamplingIntervalMs": 4.674
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 996,
+        "columnNumber": 125
+      },
+      "inclusiveSamples": 5,
+      "maxContiguousSamplingIntervalMs": 4.671
+    },
+    {
+      "frame": {
+        "functionName": "scope",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 106,
+        "columnNumber": 9
+      },
+      "inclusiveSamples": 41,
+      "maxContiguousSamplingIntervalMs": 4.664
+    },
+    {
+      "frame": {
+        "functionName": "hash",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 7,
+        "columnNumber": 13
+      },
+      "inclusiveSamples": 41,
+      "maxContiguousSamplingIntervalMs": 4.664
+    },
+    {
+      "frame": {
+        "functionName": "appendDecisionChain",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1591,
+        "columnNumber": 23
+      },
+      "inclusiveSamples": 3,
+      "maxContiguousSamplingIntervalMs": 4.649
+    },
+    {
+      "frame": {
+        "functionName": "health",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 665,
+        "columnNumber": 10
+      },
+      "inclusiveSamples": 59,
+      "maxContiguousSamplingIntervalMs": 4.641
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1017,
+        "columnNumber": 109
+      },
+      "inclusiveSamples": 3,
+      "maxContiguousSamplingIntervalMs": 3.257
+    },
+    {
+      "frame": {
+        "functionName": "health",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 665,
+        "columnNumber": 10
+      },
+      "inclusiveSamples": 4,
+      "maxContiguousSamplingIntervalMs": 3.228
+    },
+    {
+      "frame": {
+        "functionName": "apply",
+        "scriptId": "214",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/runtimeWriteBuffer.js",
+        "lineNumber": 6,
+        "columnNumber": 9
+      },
+      "inclusiveSamples": 3,
+      "maxContiguousSamplingIntervalMs": 3.209
+    },
+    {
+      "frame": {
+        "functionName": "recordRuntimeEvent",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1473,
+        "columnNumber": 22
+      },
+      "inclusiveSamples": 3,
+      "maxContiguousSamplingIntervalMs": 3.209
+    },
+    {
+      "frame": {
+        "functionName": "health",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 665,
+        "columnNumber": 10
+      },
+      "inclusiveSamples": 61,
+      "maxContiguousSamplingIntervalMs": 3.199
+    },
+    {
+      "frame": {
+        "functionName": "health",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 665,
+        "columnNumber": 10
+      },
+      "inclusiveSamples": 38,
+      "maxContiguousSamplingIntervalMs": 3.172
+    },
+    {
+      "frame": {
+        "functionName": "scope",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 106,
+        "columnNumber": 9
+      },
+      "inclusiveSamples": 14,
+      "maxContiguousSamplingIntervalMs": 3.163
+    },
+    {
+      "frame": {
+        "functionName": "hash",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 7,
+        "columnNumber": 13
+      },
+      "inclusiveSamples": 14,
+      "maxContiguousSamplingIntervalMs": 3.163
+    },
+    {
+      "frame": {
+        "functionName": "health",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 665,
+        "columnNumber": 10
+      },
+      "inclusiveSamples": 4,
+      "maxContiguousSamplingIntervalMs": 3.158
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 671,
+        "columnNumber": 1970
+      },
+      "inclusiveSamples": 28,
+      "maxContiguousSamplingIntervalMs": 3.145
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 671,
+        "columnNumber": 2063
+      },
+      "inclusiveSamples": 22,
+      "maxContiguousSamplingIntervalMs": 3.145
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 671,
+        "columnNumber": 2115
+      },
+      "inclusiveSamples": 20,
+      "maxContiguousSamplingIntervalMs": 3.145
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1764,
+        "columnNumber": 24
+      },
+      "inclusiveSamples": 2,
+      "maxContiguousSamplingIntervalMs": 3.126
+    },
+    {
+      "frame": {
+        "functionName": "appendDecisionChain",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1591,
+        "columnNumber": 23
+      },
+      "inclusiveSamples": 4,
+      "maxContiguousSamplingIntervalMs": 3.125
+    },
+    {
+      "frame": {
+        "functionName": "upsertAiRun",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1509,
+        "columnNumber": 15
+      },
+      "inclusiveSamples": 2,
+      "maxContiguousSamplingIntervalMs": 3.118
+    },
+    {
+      "frame": {
+        "functionName": "scope",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 106,
+        "columnNumber": 9
+      },
+      "inclusiveSamples": 16,
+      "maxContiguousSamplingIntervalMs": 3.115
+    },
+    {
+      "frame": {
+        "functionName": "hash",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 7,
+        "columnNumber": 13
+      },
+      "inclusiveSamples": 16,
+      "maxContiguousSamplingIntervalMs": 3.115
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 671,
+        "columnNumber": 1970
+      },
+      "inclusiveSamples": 9,
+      "maxContiguousSamplingIntervalMs": 3.114
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 671,
+        "columnNumber": 1970
+      },
+      "inclusiveSamples": 6,
+      "maxContiguousSamplingIntervalMs": 3.111
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 671,
+        "columnNumber": 2063
+      },
+      "inclusiveSamples": 4,
+      "maxContiguousSamplingIntervalMs": 3.111
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 671,
+        "columnNumber": 2115
+      },
+      "inclusiveSamples": 4,
+      "maxContiguousSamplingIntervalMs": 3.111
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 671,
+        "columnNumber": 1970
+      },
+      "inclusiveSamples": 16,
+      "maxContiguousSamplingIntervalMs": 3.109
+    },
+    {
+      "frame": {
+        "functionName": "scope",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 106,
+        "columnNumber": 9
+      },
+      "inclusiveSamples": 9,
+      "maxContiguousSamplingIntervalMs": 3.027
+    },
+    {
+      "frame": {
+        "functionName": "hash",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 7,
+        "columnNumber": 13
+      },
+      "inclusiveSamples": 9,
+      "maxContiguousSamplingIntervalMs": 3.027
+    },
+    {
+      "frame": {
+        "functionName": "put",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 136,
+        "columnNumber": 7
+      },
+      "inclusiveSamples": 4,
+      "maxContiguousSamplingIntervalMs": 1.655
+    },
+    {
+      "frame": {
+        "functionName": "health",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 665,
+        "columnNumber": 10
+      },
+      "inclusiveSamples": 3,
+      "maxContiguousSamplingIntervalMs": 1.629
+    },
+    {
+      "frame": {
+        "functionName": "auditProgressReadback",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 38,
+        "columnNumber": 25
+      },
+      "inclusiveSamples": 2,
+      "maxContiguousSamplingIntervalMs": 1.629
+    },
+    {
+      "frame": {
+        "functionName": "apply",
+        "scriptId": "214",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/runtimeWriteBuffer.js",
+        "lineNumber": 6,
+        "columnNumber": 9
+      },
+      "inclusiveSamples": 2,
+      "maxContiguousSamplingIntervalMs": 1.627
+    },
+    {
+      "frame": {
+        "functionName": "recordRuntimeEvent",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1473,
+        "columnNumber": 22
+      },
+      "inclusiveSamples": 2,
+      "maxContiguousSamplingIntervalMs": 1.627
+    },
+    {
+      "frame": {
+        "functionName": "upsertAiRun",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1509,
+        "columnNumber": 15
+      },
+      "inclusiveSamples": 2,
+      "maxContiguousSamplingIntervalMs": 1.627
+    },
+    {
+      "frame": {
+        "functionName": "auditProgressReadback",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 38,
+        "columnNumber": 25
+      },
+      "inclusiveSamples": 25,
+      "maxContiguousSamplingIntervalMs": 1.625
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 47,
+        "columnNumber": 114
+      },
+      "inclusiveSamples": 14,
+      "maxContiguousSamplingIntervalMs": 1.625
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 671,
+        "columnNumber": 2265
+      },
+      "inclusiveSamples": 5,
+      "maxContiguousSamplingIntervalMs": 1.619
+    },
+    {
+      "frame": {
+        "functionName": "auditProgressReadback",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 38,
+        "columnNumber": 25
+      },
+      "inclusiveSamples": 13,
+      "maxContiguousSamplingIntervalMs": 1.617
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 47,
+        "columnNumber": 114
+      },
+      "inclusiveSamples": 8,
+      "maxContiguousSamplingIntervalMs": 1.617
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 671,
+        "columnNumber": 2063
+      },
+      "inclusiveSamples": 8,
+      "maxContiguousSamplingIntervalMs": 1.614
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 671,
+        "columnNumber": 2115
+      },
+      "inclusiveSamples": 7,
+      "maxContiguousSamplingIntervalMs": 1.614
+    },
+    {
+      "frame": {
+        "functionName": "auditProgressReadback",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 38,
+        "columnNumber": 25
+      },
+      "inclusiveSamples": 2,
+      "maxContiguousSamplingIntervalMs": 1.614
+    },
+    {
+      "frame": {
+        "functionName": "externalResearchMetrics",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1674,
+        "columnNumber": 27
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.613
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 47,
+        "columnNumber": 114
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.61
+    },
+    {
+      "frame": {
+        "functionName": "scope",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 106,
+        "columnNumber": 9
+      },
+      "inclusiveSamples": 13,
+      "maxContiguousSamplingIntervalMs": 1.609
+    },
+    {
+      "frame": {
+        "functionName": "hash",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 7,
+        "columnNumber": 13
+      },
+      "inclusiveSamples": 13,
+      "maxContiguousSamplingIntervalMs": 1.609
+    },
+    {
+      "frame": {
+        "functionName": "apply",
+        "scriptId": "214",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/runtimeWriteBuffer.js",
+        "lineNumber": 6,
+        "columnNumber": 9
+      },
+      "inclusiveSamples": 2,
+      "maxContiguousSamplingIntervalMs": 1.607
+    },
+    {
+      "frame": {
+        "functionName": "recordRuntimeEvent",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1473,
+        "columnNumber": 22
+      },
+      "inclusiveSamples": 2,
+      "maxContiguousSamplingIntervalMs": 1.607
+    },
+    {
+      "frame": {
+        "functionName": "auditProgressReadback",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 38,
+        "columnNumber": 25
+      },
+      "inclusiveSamples": 32,
+      "maxContiguousSamplingIntervalMs": 1.607
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 47,
+        "columnNumber": 114
+      },
+      "inclusiveSamples": 19,
+      "maxContiguousSamplingIntervalMs": 1.607
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 671,
+        "columnNumber": 1970
+      },
+      "inclusiveSamples": 9,
+      "maxContiguousSamplingIntervalMs": 1.604
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 671,
+        "columnNumber": 2063
+      },
+      "inclusiveSamples": 6,
+      "maxContiguousSamplingIntervalMs": 1.604
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 671,
+        "columnNumber": 2115
+      },
+      "inclusiveSamples": 6,
+      "maxContiguousSamplingIntervalMs": 1.604
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 671,
+        "columnNumber": 2063
+      },
+      "inclusiveSamples": 12,
+      "maxContiguousSamplingIntervalMs": 1.601
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 671,
+        "columnNumber": 2115
+      },
+      "inclusiveSamples": 12,
+      "maxContiguousSamplingIntervalMs": 1.601
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 671,
+        "columnNumber": 2265
+      },
+      "inclusiveSamples": 4,
+      "maxContiguousSamplingIntervalMs": 1.6
+    },
+    {
+      "frame": {
+        "functionName": "auditProgressReadback",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 38,
+        "columnNumber": 25
+      },
+      "inclusiveSamples": 5,
+      "maxContiguousSamplingIntervalMs": 1.6
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 47,
+        "columnNumber": 114
+      },
+      "inclusiveSamples": 5,
+      "maxContiguousSamplingIntervalMs": 1.6
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 671,
+        "columnNumber": 1970
+      },
+      "inclusiveSamples": 13,
+      "maxContiguousSamplingIntervalMs": 1.597
+    },
+    {
+      "frame": {
+        "functionName": "put",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 136,
+        "columnNumber": 7
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.595
+    },
+    {
+      "frame": {
+        "functionName": "auditProgressReadback",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 38,
+        "columnNumber": 25
+      },
+      "inclusiveSamples": 14,
+      "maxContiguousSamplingIntervalMs": 1.594
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 47,
+        "columnNumber": 114
+      },
+      "inclusiveSamples": 9,
+      "maxContiguousSamplingIntervalMs": 1.594
+    },
+    {
+      "frame": {
+        "functionName": "auditProgressReadback",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 38,
+        "columnNumber": 25
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.591
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 47,
+        "columnNumber": 114
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.591
+    },
+    {
+      "frame": {
+        "functionName": "auditProgressReadback",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 38,
+        "columnNumber": 25
+      },
+      "inclusiveSamples": 16,
+      "maxContiguousSamplingIntervalMs": 1.588
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 47,
+        "columnNumber": 114
+      },
+      "inclusiveSamples": 9,
+      "maxContiguousSamplingIntervalMs": 1.588
+    },
+    {
+      "frame": {
+        "functionName": "apply",
+        "scriptId": "214",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/runtimeWriteBuffer.js",
+        "lineNumber": 6,
+        "columnNumber": 9
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.586
+    },
+    {
+      "frame": {
+        "functionName": "saveEntryExecution",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1288,
+        "columnNumber": 22
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.586
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1288,
+        "columnNumber": 85
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.586
+    },
+    {
+      "frame": {
+        "functionName": "saveEntryExecutionRecord",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1289,
+        "columnNumber": 28
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.586
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1311,
+        "columnNumber": 82
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.586
+    },
+    {
+      "frame": {
+        "functionName": "upsertLiveDecisionEpisode",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1517,
+        "columnNumber": 29
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.584
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 671,
+        "columnNumber": 2265
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.581
+    },
+    {
+      "frame": {
+        "functionName": "scope",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 106,
+        "columnNumber": 9
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.577
+    },
+    {
+      "frame": {
+        "functionName": "hash",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 7,
+        "columnNumber": 13
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.577
+    },
+    {
+      "frame": {
+        "functionName": "auditProgressReadback",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 38,
+        "columnNumber": 25
+      },
+      "inclusiveSamples": 13,
+      "maxContiguousSamplingIntervalMs": 1.576
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 47,
+        "columnNumber": 114
+      },
+      "inclusiveSamples": 8,
+      "maxContiguousSamplingIntervalMs": 1.576
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 671,
+        "columnNumber": 1970
+      },
+      "inclusiveSamples": 11,
+      "maxContiguousSamplingIntervalMs": 1.575
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 671,
+        "columnNumber": 2063
+      },
+      "inclusiveSamples": 8,
+      "maxContiguousSamplingIntervalMs": 1.575
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 671,
+        "columnNumber": 2115
+      },
+      "inclusiveSamples": 5,
+      "maxContiguousSamplingIntervalMs": 1.575
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 671,
+        "columnNumber": 2265
+      },
+      "inclusiveSamples": 3,
+      "maxContiguousSamplingIntervalMs": 1.575
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 671,
+        "columnNumber": 2265
+      },
+      "inclusiveSamples": 3,
+      "maxContiguousSamplingIntervalMs": 1.574
+    },
+    {
+      "frame": {
+        "functionName": "aiRunHealthSummary",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1567,
+        "columnNumber": 22
+      },
+      "inclusiveSamples": 2,
+      "maxContiguousSamplingIntervalMs": 1.573
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 231,
+        "columnNumber": 58
+      },
+      "inclusiveSamples": 3,
+      "maxContiguousSamplingIntervalMs": 1.57
+    },
+    {
+      "frame": {
+        "functionName": "cachedOrderUsable",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 128,
+        "columnNumber": 21
+      },
+      "inclusiveSamples": 3,
+      "maxContiguousSamplingIntervalMs": 1.57
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 671,
+        "columnNumber": 2265
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.569
+    },
+    {
+      "frame": {
+        "functionName": "appendDecisionChain",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1591,
+        "columnNumber": 23
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.568
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 47,
+        "columnNumber": 114
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.567
+    },
+    {
+      "frame": {
+        "functionName": "apply",
+        "scriptId": "214",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/runtimeWriteBuffer.js",
+        "lineNumber": 6,
+        "columnNumber": 9
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.566
+    },
+    {
+      "frame": {
+        "functionName": "recordRuntimeEvent",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1473,
+        "columnNumber": 22
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.566
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 46,
+        "columnNumber": 37
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.565
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 671,
+        "columnNumber": 2063
+      },
+      "inclusiveSamples": 8,
+      "maxContiguousSamplingIntervalMs": 1.562
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 671,
+        "columnNumber": 2115
+      },
+      "inclusiveSamples": 8,
+      "maxContiguousSamplingIntervalMs": 1.562
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 671,
+        "columnNumber": 1970
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.561
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 671,
+        "columnNumber": 2063
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.561
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 671,
+        "columnNumber": 2115
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.561
+    },
+    {
+      "frame": {
+        "functionName": "put",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 136,
+        "columnNumber": 7
+      },
+      "inclusiveSamples": 2,
+      "maxContiguousSamplingIntervalMs": 1.558
+    },
+    {
+      "frame": {
+        "functionName": "health",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 665,
+        "columnNumber": 10
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.557
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 671,
+        "columnNumber": 2265
+      },
+      "inclusiveSamples": 2,
+      "maxContiguousSamplingIntervalMs": 1.555
+    },
+    {
+      "frame": {
+        "functionName": "updateEvidenceReadiness",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 92,
+        "columnNumber": 27
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.554
+    },
+    {
+      "frame": {
+        "functionName": "appendDecisionChain",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1591,
+        "columnNumber": 23
+      },
+      "inclusiveSamples": 2,
+      "maxContiguousSamplingIntervalMs": 1.55
+    },
+    {
+      "frame": {
+        "functionName": "scope",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 106,
+        "columnNumber": 9
+      },
+      "inclusiveSamples": 3,
+      "maxContiguousSamplingIntervalMs": 1.549
+    },
+    {
+      "frame": {
+        "functionName": "hash",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 7,
+        "columnNumber": 13
+      },
+      "inclusiveSamples": 3,
+      "maxContiguousSamplingIntervalMs": 1.549
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 346,
+        "columnNumber": 47
+      },
+      "inclusiveSamples": 2,
+      "maxContiguousSamplingIntervalMs": 1.549
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 46,
+        "columnNumber": 37
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.547
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 302,
+        "columnNumber": 60
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.546
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "217",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1310,
+        "columnNumber": 80
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.546
+    },
+    {
+      "frame": {
+        "functionName": "scope",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 106,
+        "columnNumber": 9
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.544
+    },
+    {
+      "frame": {
+        "functionName": "hash",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 7,
+        "columnNumber": 13
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.544
+    },
+    {
+      "frame": {
+        "functionName": "markEpisodeDirty",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 107,
+        "columnNumber": 20
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.542
+    },
+    {
+      "frame": {
+        "functionName": "markEpisodeDirty",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 107,
+        "columnNumber": 20
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.534
+    },
+    {
+      "frame": {
+        "functionName": "nonEmpty",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 9,
+        "columnNumber": 17
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.528
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 671,
+        "columnNumber": 1970
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.438
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 671,
+        "columnNumber": 2063
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.438
+    },
+    {
+      "frame": {
+        "functionName": "",
+        "scriptId": "233",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 671,
+        "columnNumber": 2115
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 1.438
+    },
+    {
+      "frame": {
+        "functionName": "scope",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 106,
+        "columnNumber": 9
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 0.215
+    },
+    {
+      "frame": {
+        "functionName": "hash",
+        "scriptId": "205",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 7,
+        "columnNumber": 13
+      },
+      "inclusiveSamples": 1,
+      "maxContiguousSamplingIntervalMs": 0.215
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+(node:9908) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+node:internal/deps/undici/undici:15141
+      Error.captureStackTrace(err);
+            ^
+
+TypeError: fetch failed
+    at node:internal/deps/undici/undici:15141:13
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/scripts/v396-g1-g4-identity-closure.mjs:33:18 {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:8080
+      at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1638:16) {
+    errno: -4078,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 8080
+  }
+}
+
+Node.js v22.23.1

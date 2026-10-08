@@ -1,0 +1,2605 @@
+[
+  {
+    "id": "reconcile-6",
+    "startedAt": 1791452786699,
+    "counts": {
+      "manualJournalSaveCalls": 4,
+      "manualJournalSqlChangedRows": 2,
+      "claimStatsChangedIds": 1,
+      "entryJournalSaveCalls": 3,
+      "entryJournalSqlChangedRows": 2
+    },
+    "marks": {
+      "remoteCompleted": 196405.3484,
+      "applicationStart": 196405.3543
+    },
+    "endedAt": 1791452790408,
+    "totalMs": 3708.4530999999843,
+    "phases": {
+      "reservationCleanup": {
+        "count": 1,
+        "totalMs": 5.511100000003353,
+        "maxMs": 5.511100000003353
+      },
+      "remote.initialReads": {
+        "count": 1,
+        "totalMs": 551.6828000000096,
+        "maxMs": 551.6828000000096
+      },
+      "remoteCompletionToApply": {
+        "count": 1,
+        "totalMs": 1.4988000000012107,
+        "maxMs": 1.4988000000012107
+      },
+      "listener.TradingQuality.Other": {
+        "count": 24,
+        "totalMs": 30.33820000005653,
+        "maxMs": 16.34560000000056
+      },
+      "runtime.eventPersistence": {
+        "count": 25,
+        "totalMs": 22.214800000016112,
+        "maxMs": 10.47729999999865
+      },
+      "listener.RuntimePersistence.Other": {
+        "count": 24,
+        "totalMs": 24.902299999987008,
+        "maxMs": 10.489399999991292
+      },
+      "eventBus.genericListeners": {
+        "count": 25,
+        "totalMs": 675.2219999999797,
+        "maxMs": 619.390699999989
+      },
+      "eventBus.typedListeners": {
+        "count": 25,
+        "totalMs": 0.01639999999315478,
+        "maxMs": 0.002099999983329326
+      },
+      "journal.manual.serialize": {
+        "count": 4,
+        "totalMs": 0.03419999999459833,
+        "maxMs": 0.00969999999506399
+      },
+      "journal.manual.sqliteWrite": {
+        "count": 4,
+        "totalMs": 2.576199999981327,
+        "maxMs": 1.2554999999993015
+      },
+      "journal.manual": {
+        "count": 4,
+        "totalMs": 2.640400000003865,
+        "maxMs": 1.2731999999959953
+      },
+      "claimStats": {
+        "count": 1,
+        "totalMs": 6.451700000005076,
+        "maxMs": 6.451700000005076
+      },
+      "applicationBeforeCompletion": {
+        "count": 1,
+        "totalMs": 2527.114199999982,
+        "maxMs": 2527.114199999982
+      },
+      "listener.TradingQuality.Completion": {
+        "count": 1,
+        "totalMs": 613.1498999999894,
+        "maxMs": 613.1498999999894
+      },
+      "journal.entry.serialize": {
+        "count": 3,
+        "totalMs": 0.15570000003208406,
+        "maxMs": 0.05840000000898726
+      },
+      "journal.entry.sqliteWrite": {
+        "count": 3,
+        "totalMs": 5.638600000005681,
+        "maxMs": 4.550099999993108
+      },
+      "journal.entry": {
+        "count": 3,
+        "totalMs": 6.007900000025984,
+        "maxMs": 4.656200000026729
+      },
+      "entry.persistenceFanout": {
+        "count": 1,
+        "totalMs": 6.042700000019977,
+        "maxMs": 6.042700000019977
+      },
+      "manual.persistenceFanout": {
+        "count": 1,
+        "totalMs": 0.10749999998370185,
+        "maxMs": 0.10749999998370185
+      },
+      "listener.RuntimePersistence.Completion": {
+        "count": 1,
+        "totalMs": 6.184999999997672,
+        "maxMs": 6.184999999997672
+      },
+      "completionPublish": {
+        "count": 1,
+        "totalMs": 623.9113999999827,
+        "maxMs": 623.9113999999827
+      }
+    }
+  },
+  {
+    "id": "reconcile-7",
+    "startedAt": 1791452801701,
+    "counts": {
+      "manualJournalSaveCalls": 4,
+      "manualJournalSqlChangedRows": 2,
+      "claimStatsChangedIds": 5,
+      "entryJournalSaveCalls": 4,
+      "entryJournalSqlChangedRows": 0
+    },
+    "marks": {
+      "remoteCompleted": 211391.3936,
+      "applicationStart": 211391.3949
+    },
+    "endedAt": 1791452808283,
+    "totalMs": 6581.859599999996,
+    "phases": {
+      "reservationCleanup": {
+        "count": 1,
+        "totalMs": 6.577799999999115,
+        "maxMs": 6.577799999999115
+      },
+      "remote.initialReads": {
+        "count": 1,
+        "totalMs": 534.5461999999825,
+        "maxMs": 534.5461999999825
+      },
+      "remoteCompletionToApply": {
+        "count": 1,
+        "totalMs": 1.7023999999801163,
+        "maxMs": 1.7023999999801163
+      },
+      "listener.TradingQuality.Other": {
+        "count": 24,
+        "totalMs": 44.02589999992051,
+        "maxMs": 27.972099999984493
+      },
+      "runtime.eventPersistence": {
+        "count": 25,
+        "totalMs": 17.098300000012387,
+        "maxMs": 5.5332999999809545
+      },
+      "listener.RuntimePersistence.Other": {
+        "count": 24,
+        "totalMs": 23.956700000038836,
+        "maxMs": 10.53279999998631
+      },
+      "eventBus.genericListeners": {
+        "count": 25,
+        "totalMs": 671.3747999999614,
+        "maxMs": 602.7572000000218
+      },
+      "eventBus.typedListeners": {
+        "count": 25,
+        "totalMs": 0.015900000056717545,
+        "maxMs": 0.0023000000219326466
+      },
+      "journal.manual.serialize": {
+        "count": 4,
+        "totalMs": 0.036699999967822805,
+        "maxMs": 0.010799999989103526
+      },
+      "journal.manual.sqliteWrite": {
+        "count": 4,
+        "totalMs": 6.743200000055367,
+        "maxMs": 5.438600000023143
+      },
+      "journal.manual": {
+        "count": 4,
+        "totalMs": 6.81329999997979,
+        "maxMs": 5.4592999999877065
+      },
+      "claimStats": {
+        "count": 1,
+        "totalMs": 6.394300000014482,
+        "maxMs": 6.394300000014482
+      },
+      "applicationBeforeCompletion": {
+        "count": 1,
+        "totalMs": 5433.48609999998,
+        "maxMs": 5433.48609999998
+      },
+      "listener.TradingQuality.Completion": {
+        "count": 1,
+        "totalMs": 600.8460999999952,
+        "maxMs": 600.8460999999952
+      },
+      "journal.entry.serialize": {
+        "count": 4,
+        "totalMs": 0.38460000007762574,
+        "maxMs": 0.16400000001885928
+      },
+      "journal.entry.sqliteWrite": {
+        "count": 4,
+        "totalMs": 0.3071999999519903,
+        "maxMs": 0.08809999999357387
+      },
+      "journal.entry": {
+        "count": 4,
+        "totalMs": 1.6746000000275671,
+        "maxMs": 0.9266000000061467
+      },
+      "entry.persistenceFanout": {
+        "count": 1,
+        "totalMs": 1.7185000000172295,
+        "maxMs": 1.7185000000172295
+      },
+      "manual.persistenceFanout": {
+        "count": 1,
+        "totalMs": 0.11050000000977889,
+        "maxMs": 0.11050000000977889
+      },
+      "listener.RuntimePersistence.Completion": {
+        "count": 1,
+        "totalMs": 1.8632999999972526,
+        "maxMs": 1.8632999999972526
+      },
+      "completionPublish": {
+        "count": 1,
+        "totalMs": 607.0266999999876,
+        "maxMs": 607.0266999999876
+      }
+    }
+  },
+  {
+    "id": "reconcile-8",
+    "startedAt": 1791452816702,
+    "counts": {
+      "manualJournalSaveCalls": 4,
+      "manualJournalSqlChangedRows": 2,
+      "entryJournalSaveCalls": 3,
+      "entryJournalSqlChangedRows": 3
+    },
+    "marks": {
+      "remoteCompleted": 227315.4243,
+      "applicationStart": 227315.4256
+    },
+    "endedAt": 1791452821797,
+    "totalMs": 5095.497299999988,
+    "phases": {
+      "reservationCleanup": {
+        "count": 1,
+        "totalMs": 5.664300000004005,
+        "maxMs": 5.664300000004005
+      },
+      "remote.initialReads": {
+        "count": 1,
+        "totalMs": 1459.3436999999976,
+        "maxMs": 1459.3436999999976
+      },
+      "remoteCompletionToApply": {
+        "count": 1,
+        "totalMs": 1.465700000000652,
+        "maxMs": 1.465700000000652
+      },
+      "listener.TradingQuality.Other": {
+        "count": 24,
+        "totalMs": 29.252400000026682,
+        "maxMs": 14.858199999987846
+      },
+      "runtime.eventPersistence": {
+        "count": 25,
+        "totalMs": 31.508700000093086,
+        "maxMs": 10.182399999990594
+      },
+      "listener.RuntimePersistence.Other": {
+        "count": 24,
+        "totalMs": 41.80239999992773,
+        "maxMs": 10.206899999990128
+      },
+      "eventBus.genericListeners": {
+        "count": 25,
+        "totalMs": 704.8543000000645,
+        "maxMs": 633.2041000000027
+      },
+      "eventBus.typedListeners": {
+        "count": 25,
+        "totalMs": 0.01480000009178184,
+        "maxMs": 0.0016999999934341758
+      },
+      "journal.manual.serialize": {
+        "count": 4,
+        "totalMs": 0.033100000029662624,
+        "maxMs": 0.010000000009313226
+      },
+      "journal.manual.sqliteWrite": {
+        "count": 4,
+        "totalMs": 10.18680000002496,
+        "maxMs": 5.456800000014482
+      },
+      "journal.manual": {
+        "count": 4,
+        "totalMs": 10.250099999946542,
+        "maxMs": 5.4720999999844935
+      },
+      "claimStats": {
+        "count": 1,
+        "totalMs": 0.11670000001322478,
+        "maxMs": 0.11670000001322478
+      },
+      "applicationBeforeCompletion": {
+        "count": 1,
+        "totalMs": 2992.47080000001,
+        "maxMs": 2992.47080000001
+      },
+      "listener.TradingQuality.Completion": {
+        "count": 1,
+        "totalMs": 626.213699999993,
+        "maxMs": 626.213699999993
+      },
+      "journal.entry.serialize": {
+        "count": 3,
+        "totalMs": 0.24719999998342246,
+        "maxMs": 0.08979999998700805
+      },
+      "journal.entry.sqliteWrite": {
+        "count": 3,
+        "totalMs": 6.216800000023795,
+        "maxMs": 4.442399999999907
+      },
+      "journal.entry": {
+        "count": 3,
+        "totalMs": 6.786600000021281,
+        "maxMs": 4.691000000020722
+      },
+      "entry.persistenceFanout": {
+        "count": 1,
+        "totalMs": 6.819099999993341,
+        "maxMs": 6.819099999993341
+      },
+      "manual.persistenceFanout": {
+        "count": 1,
+        "totalMs": 0.09360000002197921,
+        "maxMs": 0.09360000002197921
+      },
+      "listener.RuntimePersistence.Completion": {
+        "count": 1,
+        "totalMs": 6.945899999991525,
+        "maxMs": 6.945899999991525
+      },
+      "completionPublish": {
+        "count": 1,
+        "totalMs": 637.780700000003,
+        "maxMs": 637.780700000003
+      }
+    }
+  },
+  {
+    "id": "reconcile-9",
+    "startedAt": 1791452832870,
+    "counts": {
+      "manualJournalSaveCalls": 4,
+      "manualJournalSqlChangedRows": 2,
+      "claimStatsChangedIds": 7,
+      "entryJournalSaveCalls": 3,
+      "entryJournalSqlChangedRows": 0
+    },
+    "marks": {
+      "remoteCompleted": 246551.9944,
+      "applicationStart": 246551.9957
+    },
+    "endedAt": 1791452847425,
+    "totalMs": 14555.416599999997,
+    "phases": {
+      "reservationCleanup": {
+        "count": 1,
+        "totalMs": 8.181900000025053,
+        "maxMs": 8.181900000025053
+      },
+      "remote.initialReads": {
+        "count": 1,
+        "totalMs": 4525.593999999983,
+        "maxMs": 4525.593999999983
+      },
+      "remoteCompletionToApply": {
+        "count": 1,
+        "totalMs": 2.044900000008056,
+        "maxMs": 2.044900000008056
+      },
+      "listener.TradingQuality.Other": {
+        "count": 24,
+        "totalMs": 25.774899999960326,
+        "maxMs": 14.532600000005914
+      },
+      "runtime.eventPersistence": {
+        "count": 25,
+        "totalMs": 16.252399999968475,
+        "maxMs": 7.896099999983562
+      },
+      "listener.RuntimePersistence.Other": {
+        "count": 24,
+        "totalMs": 26.46369999993476,
+        "maxMs": 16.68719999998575
+      },
+      "eventBus.genericListeners": {
+        "count": 25,
+        "totalMs": 579.4725999999209,
+        "maxMs": 526.7548999999999
+      },
+      "eventBus.typedListeners": {
+        "count": 25,
+        "totalMs": 0.013099999952828512,
+        "maxMs": 0.0020000000076834112
+      },
+      "journal.manual.serialize": {
+        "count": 4,
+        "totalMs": 0.030599999998230487,
+        "maxMs": 0.009400000009918585
+      },
+      "journal.manual.sqliteWrite": {
+        "count": 4,
+        "totalMs": 10.096000000019558,
+        "maxMs": 8.744700000010198
+      },
+      "journal.manual": {
+        "count": 4,
+        "totalMs": 10.158800000033807,
+        "maxMs": 8.7732000000251
+      },
+      "claimStats": {
+        "count": 1,
+        "totalMs": 2.8619999999937136,
+        "maxMs": 2.8619999999937136
+      },
+      "applicationBeforeCompletion": {
+        "count": 1,
+        "totalMs": 9490.968400000012,
+        "maxMs": 9490.968400000012
+      },
+      "listener.TradingQuality.Completion": {
+        "count": 1,
+        "totalMs": 526.0588999999745,
+        "maxMs": 526.0588999999745
+      },
+      "journal.entry.serialize": {
+        "count": 3,
+        "totalMs": 0.2012000000104308,
+        "maxMs": 0.07219999999506399
+      },
+      "journal.entry.sqliteWrite": {
+        "count": 3,
+        "totalMs": 0.18480000001727603,
+        "maxMs": 0.07910000000265427
+      },
+      "journal.entry": {
+        "count": 3,
+        "totalMs": 0.5218000000168104,
+        "maxMs": 0.23060000000987202
+      },
+      "entry.persistenceFanout": {
+        "count": 1,
+        "totalMs": 0.5452999999979511,
+        "maxMs": 0.5452999999979511
+      },
+      "manual.persistenceFanout": {
+        "count": 1,
+        "totalMs": 0.07699999999022111,
+        "maxMs": 0.07699999999022111
+      },
+      "listener.RuntimePersistence.Completion": {
+        "count": 1,
+        "totalMs": 0.6535999999905471,
+        "maxMs": 0.6535999999905471
+      },
+      "completionPublish": {
+        "count": 1,
+        "totalMs": 530.3390000000072,
+        "maxMs": 530.3390000000072
+      }
+    }
+  },
+  {
+    "id": "reconcile-10",
+    "startedAt": 1791452847940,
+    "counts": {
+      "manualJournalSaveCalls": 4,
+      "manualJournalSqlChangedRows": 2,
+      "claimStatsChangedIds": 1,
+      "entryJournalSaveCalls": 2,
+      "entryJournalSqlChangedRows": 1
+    },
+    "marks": {
+      "remoteCompleted": 257642.3505,
+      "applicationStart": 257642.3517
+    },
+    "endedAt": 1791452856440,
+    "totalMs": 8499.799100000004,
+    "phases": {
+      "reservationCleanup": {
+        "count": 1,
+        "totalMs": 6.496099999989383,
+        "maxMs": 6.496099999989383
+      },
+      "remote.initialReads": {
+        "count": 1,
+        "totalMs": 546.8458999999857,
+        "maxMs": 546.8458999999857
+      },
+      "remoteCompletionToApply": {
+        "count": 1,
+        "totalMs": 0.9755000000004657,
+        "maxMs": 0.9755000000004657
+      },
+      "listener.TradingQuality.Other": {
+        "count": 22,
+        "totalMs": 1.822100000048522,
+        "maxMs": 1.7929000000003725
+      },
+      "runtime.eventPersistence": {
+        "count": 23,
+        "totalMs": 11.633499999996275,
+        "maxMs": 5.277800000039861
+      },
+      "listener.RuntimePersistence.Other": {
+        "count": 22,
+        "totalMs": 21.911000000080094,
+        "maxMs": 10.48399999999674
+      },
+      "eventBus.genericListeners": {
+        "count": 23,
+        "totalMs": 599.2065000000875,
+        "maxMs": 575.0529000000097
+      },
+      "eventBus.typedListeners": {
+        "count": 23,
+        "totalMs": 0.011200000008102506,
+        "maxMs": 0.0016000000177882612
+      },
+      "journal.manual.serialize": {
+        "count": 4,
+        "totalMs": 0.037499999918509275,
+        "maxMs": 0.010899999993853271
+      },
+      "journal.manual.sqliteWrite": {
+        "count": 4,
+        "totalMs": 10.232699999993201,
+        "maxMs": 5.357399999978952
+      },
+      "journal.manual": {
+        "count": 4,
+        "totalMs": 10.303500000096392,
+        "maxMs": 5.386700000031851
+      },
+      "claimStats": {
+        "count": 1,
+        "totalMs": 3.768400000000838,
+        "maxMs": 3.768400000000838
+      },
+      "applicationBeforeCompletion": {
+        "count": 1,
+        "totalMs": 7365.670199999993,
+        "maxMs": 7365.670199999993
+      },
+      "listener.TradingQuality.Completion": {
+        "count": 1,
+        "totalMs": 570.5374999999767,
+        "maxMs": 570.5374999999767
+      },
+      "journal.entry.serialize": {
+        "count": 2,
+        "totalMs": 0.479700000025332,
+        "maxMs": 0.3817999999737367
+      },
+      "journal.entry.sqliteWrite": {
+        "count": 2,
+        "totalMs": 3.2194000000017695,
+        "maxMs": 3.1212999999988824
+      },
+      "journal.entry": {
+        "count": 2,
+        "totalMs": 4.2577999999630265,
+        "maxMs": 3.761999999987893
+      },
+      "entry.persistenceFanout": {
+        "count": 1,
+        "totalMs": 4.290899999963585,
+        "maxMs": 4.290899999963585
+      },
+      "manual.persistenceFanout": {
+        "count": 1,
+        "totalMs": 0.136400000017602,
+        "maxMs": 0.136400000017602
+      },
+      "listener.RuntimePersistence.Completion": {
+        "count": 1,
+        "totalMs": 4.466899999999441,
+        "maxMs": 4.466899999999441
+      },
+      "completionPublish": {
+        "count": 1,
+        "totalMs": 580.4661000000197,
+        "maxMs": 580.4661000000197
+      }
+    }
+  },
+  {
+    "id": "reconcile-11",
+    "startedAt": 1791452862954,
+    "counts": {
+      "manualJournalSaveCalls": 4,
+      "manualJournalSqlChangedRows": 2,
+      "claimStatsChangedIds": 4,
+      "entryJournalSaveCalls": 3,
+      "entryJournalSqlChangedRows": 0
+    },
+    "marks": {
+      "remoteCompleted": 272656.1003,
+      "applicationStart": 272656.1013
+    },
+    "endedAt": 1791452868714,
+    "totalMs": 5760.668499999971,
+    "phases": {
+      "reservationCleanup": {
+        "count": 1,
+        "totalMs": 4.310200000007171,
+        "maxMs": 4.310200000007171
+      },
+      "remote.initialReads": {
+        "count": 1,
+        "totalMs": 549.4307000000263,
+        "maxMs": 549.4307000000263
+      },
+      "remoteCompletionToApply": {
+        "count": 1,
+        "totalMs": 1.74820000003092,
+        "maxMs": 1.74820000003092
+      },
+      "listener.TradingQuality.Other": {
+        "count": 24,
+        "totalMs": 28.803900000057183,
+        "maxMs": 13.055500000016764
+      },
+      "runtime.eventPersistence": {
+        "count": 25,
+        "totalMs": 17.598599999968428,
+        "maxMs": 5.573499999998603
+      },
+      "listener.RuntimePersistence.Other": {
+        "count": 24,
+        "totalMs": 20.22500000015134,
+        "maxMs": 5.584199999982957
+      },
+      "eventBus.genericListeners": {
+        "count": 25,
+        "totalMs": 584.92449999979,
+        "maxMs": 535.3735999999917
+      },
+      "eventBus.typedListeners": {
+        "count": 25,
+        "totalMs": 0.010999999940395355,
+        "maxMs": 0.001500000013038516
+      },
+      "journal.manual.serialize": {
+        "count": 4,
+        "totalMs": 0.03140000003622845,
+        "maxMs": 0.010899999993853271
+      },
+      "journal.manual.sqliteWrite": {
+        "count": 4,
+        "totalMs": 2.521300000080373,
+        "maxMs": 1.2533000000403263
+      },
+      "journal.manual": {
+        "count": 4,
+        "totalMs": 2.578899999964051,
+        "maxMs": 1.2739999999757856
+      },
+      "claimStats": {
+        "count": 1,
+        "totalMs": 6.586200000019744,
+        "maxMs": 6.586200000019744
+      },
+      "applicationBeforeCompletion": {
+        "count": 1,
+        "totalMs": 4667.824100000027,
+        "maxMs": 4667.824100000027
+      },
+      "listener.TradingQuality.Completion": {
+        "count": 1,
+        "totalMs": 534.6559000000125,
+        "maxMs": 534.6559000000125
+      },
+      "journal.entry.serialize": {
+        "count": 3,
+        "totalMs": 0.23050000006332994,
+        "maxMs": 0.08490000001620501
+      },
+      "journal.entry.sqliteWrite": {
+        "count": 3,
+        "totalMs": 0.1859000000404194,
+        "maxMs": 0.07380000001285225
+      },
+      "journal.entry": {
+        "count": 3,
+        "totalMs": 0.5536999999312684,
+        "maxMs": 0.22899999999208376
+      },
+      "entry.persistenceFanout": {
+        "count": 1,
+        "totalMs": 0.5763999999617226,
+        "maxMs": 0.5763999999617226
+      },
+      "manual.persistenceFanout": {
+        "count": 1,
+        "totalMs": 0.07459999999264255,
+        "maxMs": 0.07459999999264255
+      },
+      "listener.RuntimePersistence.Completion": {
+        "count": 1,
+        "totalMs": 0.6793999999645166,
+        "maxMs": 0.6793999999645166
+      },
+      "completionPublish": {
+        "count": 1,
+        "totalMs": 538.8892999999807,
+        "maxMs": 538.8892999999807
+      }
+    }
+  },
+  {
+    "id": "reconcile-12",
+    "startedAt": 1791452877958,
+    "counts": {
+      "manualJournalSaveCalls": 4,
+      "manualJournalSqlChangedRows": 2,
+      "claimStatsChangedIds": 2,
+      "entryJournalSaveCalls": 3,
+      "entryJournalSqlChangedRows": 1
+    },
+    "marks": {
+      "remoteCompleted": 287664.7498,
+      "applicationStart": 287664.751
+    },
+    "endedAt": 1791452884700,
+    "totalMs": 6741.56329999998,
+    "phases": {
+      "reservationCleanup": {
+        "count": 1,
+        "totalMs": 4.228400000021793,
+        "maxMs": 4.228400000021793
+      },
+      "remote.initialReads": {
+        "count": 1,
+        "totalMs": 554.0513999999966,
+        "maxMs": 554.0513999999966
+      },
+      "remoteCompletionToApply": {
+        "count": 1,
+        "totalMs": 1.9023000000161119,
+        "maxMs": 1.9023000000161119
+      },
+      "listener.TradingQuality.Other": {
+        "count": 24,
+        "totalMs": 72.2198999999091,
+        "maxMs": 34.364900000044145
+      },
+      "runtime.eventPersistence": {
+        "count": 25,
+        "totalMs": 14.524800000013784,
+        "maxMs": 4.965900000010151
+      },
+      "listener.RuntimePersistence.Other": {
+        "count": 24,
+        "totalMs": 17.297800000116695,
+        "maxMs": 5.927399999985937
+      },
+      "eventBus.genericListeners": {
+        "count": 25,
+        "totalMs": 618.002000000095,
+        "maxMs": 527.8798999999999
+      },
+      "eventBus.typedListeners": {
+        "count": 25,
+        "totalMs": 0.012300000118557364,
+        "maxMs": 0.0020000000367872417
+      },
+      "journal.manual.serialize": {
+        "count": 4,
+        "totalMs": 0.04510000004665926,
+        "maxMs": 0.017300000006798655
+      },
+      "journal.manual.sqliteWrite": {
+        "count": 4,
+        "totalMs": 2.6546000000089407,
+        "maxMs": 1.36099999997532
+      },
+      "journal.manual": {
+        "count": 4,
+        "totalMs": 2.734299999952782,
+        "maxMs": 1.3889000000199303
+      },
+      "claimStats": {
+        "count": 1,
+        "totalMs": 6.600700000009965,
+        "maxMs": 6.600700000009965
+      },
+      "applicationBeforeCompletion": {
+        "count": 1,
+        "totalMs": 5651.747900000017,
+        "maxMs": 5651.747900000017
+      },
+      "listener.TradingQuality.Completion": {
+        "count": 1,
+        "totalMs": 522.6358999999939,
+        "maxMs": 522.6358999999939
+      },
+      "journal.entry.serialize": {
+        "count": 3,
+        "totalMs": 0.20699999999487773,
+        "maxMs": 0.07099999999627471
+      },
+      "journal.entry.sqliteWrite": {
+        "count": 3,
+        "totalMs": 4.642700000025798,
+        "maxMs": 4.517200000002049
+      },
+      "journal.entry": {
+        "count": 3,
+        "totalMs": 5.027699999976903,
+        "maxMs": 4.648099999991246
+      },
+      "entry.persistenceFanout": {
+        "count": 1,
+        "totalMs": 5.054899999988265,
+        "maxMs": 5.054899999988265
+      },
+      "manual.persistenceFanout": {
+        "count": 1,
+        "totalMs": 0.11329999996814877,
+        "maxMs": 0.11329999996814877
+      },
+      "listener.RuntimePersistence.Completion": {
+        "count": 1,
+        "totalMs": 5.1995999999926426,
+        "maxMs": 5.1995999999926426
+      },
+      "completionPublish": {
+        "count": 1,
+        "totalMs": 531.3545000000158,
+        "maxMs": 531.3545000000158
+      }
+    }
+  },
+  {
+    "id": "reconcile-13",
+    "startedAt": 1791452892970,
+    "counts": {
+      "manualJournalSaveCalls": 4,
+      "manualJournalSqlChangedRows": 2,
+      "claimStatsChangedIds": 1,
+      "entryJournalSaveCalls": 3,
+      "entryJournalSqlChangedRows": 3
+    },
+    "marks": {
+      "remoteCompleted": 302759.916,
+      "applicationStart": 302759.9175
+    },
+    "endedAt": 1791452897215,
+    "totalMs": 4244.454300000041,
+    "phases": {
+      "reservationCleanup": {
+        "count": 1,
+        "totalMs": 4.602500000037253,
+        "maxMs": 4.602500000037253
+      },
+      "remote.initialReads": {
+        "count": 1,
+        "totalMs": 638.0580000000191,
+        "maxMs": 638.0580000000191
+      },
+      "remoteCompletionToApply": {
+        "count": 1,
+        "totalMs": 2.4158999999635853,
+        "maxMs": 2.4158999999635853
+      },
+      "listener.TradingQuality.Other": {
+        "count": 24,
+        "totalMs": 67.24430000019493,
+        "maxMs": 36.803100000019185
+      },
+      "runtime.eventPersistence": {
+        "count": 25,
+        "totalMs": 10.104699999850709,
+        "maxMs": 4.75
+      },
+      "listener.RuntimePersistence.Other": {
+        "count": 24,
+        "totalMs": 12.76320000004489,
+        "maxMs": 4.769000000029337
+      },
+      "eventBus.genericListeners": {
+        "count": 25,
+        "totalMs": 656.7851999999257,
+        "maxMs": 576.3032000000239
+      },
+      "eventBus.typedListeners": {
+        "count": 25,
+        "totalMs": 0.011600000085309148,
+        "maxMs": 0.0020000000367872417
+      },
+      "journal.manual.serialize": {
+        "count": 4,
+        "totalMs": 0.033900000038556755,
+        "maxMs": 0.010500000033061951
+      },
+      "journal.manual.sqliteWrite": {
+        "count": 4,
+        "totalMs": 2.6160999999847263,
+        "maxMs": 1.260599999979604
+      },
+      "journal.manual": {
+        "count": 4,
+        "totalMs": 2.6770000000251457,
+        "maxMs": 1.282999999995809
+      },
+      "claimStats": {
+        "count": 1,
+        "totalMs": 5.895699999993667,
+        "maxMs": 5.895699999993667
+      },
+      "applicationBeforeCompletion": {
+        "count": 1,
+        "totalMs": 3021.2840000000433,
+        "maxMs": 3021.2840000000433
+      },
+      "listener.TradingQuality.Completion": {
+        "count": 1,
+        "totalMs": 536.1921999999904,
+        "maxMs": 536.1921999999904
+      },
+      "journal.entry.serialize": {
+        "count": 3,
+        "totalMs": 0.2805999999982305,
+        "maxMs": 0.11369999998714775
+      },
+      "journal.entry.sqliteWrite": {
+        "count": 3,
+        "totalMs": 39.12810000003083,
+        "maxMs": 32.1984999999986
+      },
+      "journal.entry": {
+        "count": 3,
+        "totalMs": 39.86000000004424,
+        "maxMs": 32.51459999999497
+      },
+      "entry.persistenceFanout": {
+        "count": 1,
+        "totalMs": 39.898800000024494,
+        "maxMs": 39.898800000024494
+      },
+      "manual.persistenceFanout": {
+        "count": 1,
+        "totalMs": 0.13520000001881272,
+        "maxMs": 0.13520000001881272
+      },
+      "listener.RuntimePersistence.Completion": {
+        "count": 1,
+        "totalMs": 40.06450000003679,
+        "maxMs": 40.06450000003679
+      },
+      "completionPublish": {
+        "count": 1,
+        "totalMs": 580.2422999999835,
+        "maxMs": 580.2422999999835
+      }
+    }
+  },
+  {
+    "id": "reconcile-14",
+    "startedAt": 1791452907970,
+    "counts": {
+      "manualJournalSaveCalls": 4,
+      "manualJournalSqlChangedRows": 2,
+      "claimStatsChangedIds": 6,
+      "entryJournalSaveCalls": 3,
+      "entryJournalSqlChangedRows": 0
+    },
+    "marks": {
+      "remoteCompleted": 317681.3291,
+      "applicationStart": 317681.33
+    },
+    "endedAt": 1791452913499,
+    "totalMs": 5528.770399999979,
+    "phases": {
+      "reservationCleanup": {
+        "count": 1,
+        "totalMs": 4.351600000052713,
+        "maxMs": 4.351600000052713
+      },
+      "remote.initialReads": {
+        "count": 1,
+        "totalMs": 559.6443999999901,
+        "maxMs": 559.6443999999901
+      },
+      "remoteCompletionToApply": {
+        "count": 1,
+        "totalMs": 1.450200000021141,
+        "maxMs": 1.450200000021141
+      },
+      "listener.TradingQuality.Other": {
+        "count": 24,
+        "totalMs": 10.332100000116043,
+        "maxMs": 4.541400000045542
+      },
+      "runtime.eventPersistence": {
+        "count": 25,
+        "totalMs": 22.5700000001234,
+        "maxMs": 5.942399999999907
+      },
+      "listener.RuntimePersistence.Other": {
+        "count": 24,
+        "totalMs": 30.097000000067055,
+        "maxMs": 11.52960000000894
+      },
+      "eventBus.genericListeners": {
+        "count": 25,
+        "totalMs": 564.4643000000506,
+        "maxMs": 523.49099999998
+      },
+      "eventBus.typedListeners": {
+        "count": 25,
+        "totalMs": 0.011399999959394336,
+        "maxMs": 0.0013000000035390258
+      },
+      "journal.manual.serialize": {
+        "count": 4,
+        "totalMs": 0.03150000004097819,
+        "maxMs": 0.00969999999506399
+      },
+      "journal.manual.sqliteWrite": {
+        "count": 4,
+        "totalMs": 7.408999999985099,
+        "maxMs": 6.131200000003446
+      },
+      "journal.manual": {
+        "count": 4,
+        "totalMs": 7.472600000037346,
+        "maxMs": 6.159099999989849
+      },
+      "claimStats": {
+        "count": 1,
+        "totalMs": 2.0609999999869615,
+        "maxMs": 2.0609999999869615
+      },
+      "applicationBeforeCompletion": {
+        "count": 1,
+        "totalMs": 4437.875399999961,
+        "maxMs": 4437.875399999961
+      },
+      "listener.TradingQuality.Completion": {
+        "count": 1,
+        "totalMs": 522.7751999999746,
+        "maxMs": 522.7751999999746
+      },
+      "journal.entry.serialize": {
+        "count": 3,
+        "totalMs": 0.20820000005187467,
+        "maxMs": 0.07300000003306195
+      },
+      "journal.entry.sqliteWrite": {
+        "count": 3,
+        "totalMs": 0.18949999997857958,
+        "maxMs": 0.07569999998668209
+      },
+      "journal.entry": {
+        "count": 3,
+        "totalMs": 0.5470000001369044,
+        "maxMs": 0.24120000004768372
+      },
+      "entry.persistenceFanout": {
+        "count": 1,
+        "totalMs": 0.5716000000247732,
+        "maxMs": 0.5716000000247732
+      },
+      "manual.persistenceFanout": {
+        "count": 1,
+        "totalMs": 0.07769999996526167,
+        "maxMs": 0.07769999996526167
+      },
+      "listener.RuntimePersistence.Completion": {
+        "count": 1,
+        "totalMs": 0.6742000000085682,
+        "maxMs": 0.6742000000085682
+      },
+      "completionPublish": {
+        "count": 1,
+        "totalMs": 526.7247999999672,
+        "maxMs": 526.7247999999672
+      }
+    }
+  },
+  {
+    "id": "reconcile-15",
+    "startedAt": 1791452922971,
+    "counts": {
+      "manualJournalSaveCalls": 4,
+      "manualJournalSqlChangedRows": 2,
+      "claimStatsChangedIds": 1,
+      "entryJournalSaveCalls": 1,
+      "entryJournalSqlChangedRows": 0
+    },
+    "marks": {
+      "remoteCompleted": 332639.7836,
+      "applicationStart": 332639.785
+    },
+    "endedAt": 1791452932523,
+    "totalMs": 9551.728699999978,
+    "phases": {
+      "reservationCleanup": {
+        "count": 1,
+        "totalMs": 4.26490000000922,
+        "maxMs": 4.26490000000922
+      },
+      "remote.initialReads": {
+        "count": 1,
+        "totalMs": 517.156100000022,
+        "maxMs": 517.156100000022
+      },
+      "remoteCompletionToApply": {
+        "count": 1,
+        "totalMs": 0.9277999999467283,
+        "maxMs": 0.9277999999467283
+      },
+      "listener.TradingQuality.Other": {
+        "count": 22,
+        "totalMs": 30.812900000019,
+        "maxMs": 30.783600000024308
+      },
+      "runtime.eventPersistence": {
+        "count": 23,
+        "totalMs": 11.913600000028964,
+        "maxMs": 5.351399999985006
+      },
+      "listener.RuntimePersistence.Other": {
+        "count": 22,
+        "totalMs": 14.755000000004657,
+        "maxMs": 6.743499999982305
+      },
+      "eventBus.genericListeners": {
+        "count": 23,
+        "totalMs": 579.6030000001192,
+        "maxMs": 533.6000999999815
+      },
+      "eventBus.typedListeners": {
+        "count": 23,
+        "totalMs": 0.010700000042561442,
+        "maxMs": 0.0016000000177882612
+      },
+      "journal.manual.serialize": {
+        "count": 4,
+        "totalMs": 0.034500000008847564,
+        "maxMs": 0.012700000021141022
+      },
+      "journal.manual.sqliteWrite": {
+        "count": 4,
+        "totalMs": 2.7533000000403263,
+        "maxMs": 1.345400000049267
+      },
+      "journal.manual": {
+        "count": 4,
+        "totalMs": 2.8207999999285676,
+        "maxMs": 1.3704999999608845
+      },
+      "claimStats": {
+        "count": 1,
+        "totalMs": 6.360900000028778,
+        "maxMs": 6.360900000028778
+      },
+      "applicationBeforeCompletion": {
+        "count": 1,
+        "totalMs": 8492.498200000031,
+        "maxMs": 8492.498200000031
+      },
+      "listener.TradingQuality.Completion": {
+        "count": 1,
+        "totalMs": 533.0003999999608,
+        "maxMs": 533.0003999999608
+      },
+      "journal.entry.serialize": {
+        "count": 1,
+        "totalMs": 0.0824000000138767,
+        "maxMs": 0.0824000000138767
+      },
+      "journal.entry.sqliteWrite": {
+        "count": 1,
+        "totalMs": 0.0746999999973923,
+        "maxMs": 0.0746999999973923
+      },
+      "journal.entry": {
+        "count": 1,
+        "totalMs": 0.4171999999671243,
+        "maxMs": 0.4171999999671243
+      },
+      "entry.persistenceFanout": {
+        "count": 1,
+        "totalMs": 0.4310999999870546,
+        "maxMs": 0.4310999999870546
+      },
+      "manual.persistenceFanout": {
+        "count": 1,
+        "totalMs": 0.09789999999338761,
+        "maxMs": 0.09789999999338761
+      },
+      "listener.RuntimePersistence.Completion": {
+        "count": 1,
+        "totalMs": 0.552800000004936,
+        "maxMs": 0.552800000004936
+      },
+      "completionPublish": {
+        "count": 1,
+        "totalMs": 537.6133000000264,
+        "maxMs": 537.6133000000264
+      }
+    }
+  },
+  {
+    "id": "reconcile-16",
+    "startedAt": 1791452938070,
+    "counts": {
+      "manualJournalSaveCalls": 4,
+      "manualJournalSqlChangedRows": 2,
+      "claimStatsChangedIds": 3,
+      "entryJournalSaveCalls": 3,
+      "entryJournalSqlChangedRows": 1
+    },
+    "marks": {
+      "remoteCompleted": 348088.7176,
+      "applicationStart": 348088.7188
+    },
+    "endedAt": 1791452958309,
+    "totalMs": 20237.33559999999,
+    "phases": {
+      "reservationCleanup": {
+        "count": 1,
+        "totalMs": 4.284700000018347,
+        "maxMs": 4.284700000018347
+      },
+      "remote.initialReads": {
+        "count": 1,
+        "totalMs": 867.5299999999697,
+        "maxMs": 867.5299999999697
+      },
+      "remoteCompletionToApply": {
+        "count": 1,
+        "totalMs": 1.2497000000439584,
+        "maxMs": 1.2497000000439584
+      },
+      "listener.TradingQuality.Other": {
+        "count": 25,
+        "totalMs": 530.7140999999247,
+        "maxMs": 522.0888999999734
+      },
+      "runtime.eventPersistence": {
+        "count": 26,
+        "totalMs": 18.891400000080466,
+        "maxMs": 5.771999999997206
+      },
+      "listener.RuntimePersistence.Other": {
+        "count": 25,
+        "totalMs": 26.421599999943282,
+        "maxMs": 11.961499999975786
+      },
+      "eventBus.genericListeners": {
+        "count": 26,
+        "totalMs": 1096.2087999999058,
+        "maxMs": 538.5179999999818
+      },
+      "eventBus.typedListeners": {
+        "count": 26,
+        "totalMs": 0.011899999983143061,
+        "maxMs": 0.0017000000225380063
+      },
+      "journal.manual.serialize": {
+        "count": 4,
+        "totalMs": 0.04089999996358529,
+        "maxMs": 0.012999999977182597
+      },
+      "journal.manual.sqliteWrite": {
+        "count": 4,
+        "totalMs": 7.472699999983888,
+        "maxMs": 6.152800000039861
+      },
+      "journal.manual": {
+        "count": 4,
+        "totalMs": 7.543999999994412,
+        "maxMs": 6.172900000005029
+      },
+      "claimStats": {
+        "count": 1,
+        "totalMs": 2.0666000000201166,
+        "maxMs": 2.0666000000201166
+      },
+      "applicationBeforeCompletion": {
+        "count": 1,
+        "totalMs": 18822.8566,
+        "maxMs": 18822.8566
+      },
+      "listener.TradingQuality.Completion": {
+        "count": 1,
+        "totalMs": 534.4910999999847,
+        "maxMs": 534.4910999999847
+      },
+      "journal.entry.serialize": {
+        "count": 3,
+        "totalMs": 0.21160000003874302,
+        "maxMs": 0.07940000004600734
+      },
+      "journal.entry.sqliteWrite": {
+        "count": 3,
+        "totalMs": 3.286199999973178,
+        "maxMs": 3.1442999999853782
+      },
+      "journal.entry": {
+        "count": 3,
+        "totalMs": 3.7924999999813735,
+        "maxMs": 3.2797999999602325
+      },
+      "entry.persistenceFanout": {
+        "count": 1,
+        "totalMs": 3.8202999999630265,
+        "maxMs": 3.8202999999630265
+      },
+      "manual.persistenceFanout": {
+        "count": 1,
+        "totalMs": 0.13220000005094334,
+        "maxMs": 0.13220000005094334
+      },
+      "listener.RuntimePersistence.Completion": {
+        "count": 1,
+        "totalMs": 3.982799999997951,
+        "maxMs": 3.982799999997951
+      },
+      "completionPublish": {
+        "count": 1,
+        "totalMs": 542.5300000000279,
+        "maxMs": 542.5300000000279
+      }
+    }
+  },
+  {
+    "id": "reconcile-17",
+    "startedAt": 1791452969912,
+    "counts": {
+      "manualJournalSaveCalls": 4,
+      "manualJournalSqlChangedRows": 2,
+      "claimStatsChangedIds": 5,
+      "entryJournalSaveCalls": 3,
+      "entryJournalSqlChangedRows": 0
+    },
+    "marks": {
+      "remoteCompleted": 379599.2531,
+      "applicationStart": 379599.2548
+    },
+    "endedAt": 1791452977410,
+    "totalMs": 7498.557700000005,
+    "phases": {
+      "reservationCleanup": {
+        "count": 1,
+        "totalMs": 6.070999999996275,
+        "maxMs": 6.070999999996275
+      },
+      "remote.initialReads": {
+        "count": 1,
+        "totalMs": 536.6327000000165,
+        "maxMs": 536.6327000000165
+      },
+      "remoteCompletionToApply": {
+        "count": 1,
+        "totalMs": 2.049200000008568,
+        "maxMs": 2.049200000008568
+      },
+      "listener.TradingQuality.Other": {
+        "count": 24,
+        "totalMs": 9.813099999912083,
+        "maxMs": 3.6823999999905936
+      },
+      "runtime.eventPersistence": {
+        "count": 25,
+        "totalMs": 29.544699999911245,
+        "maxMs": 8.904699999955483
+      },
+      "listener.RuntimePersistence.Other": {
+        "count": 24,
+        "totalMs": 41.892600000079256,
+        "maxMs": 15.047099999967031
+      },
+      "eventBus.genericListeners": {
+        "count": 25,
+        "totalMs": 571.9988999999478,
+        "maxMs": 519.8017999999574
+      },
+      "eventBus.typedListeners": {
+        "count": 25,
+        "totalMs": 0.009500000101979822,
+        "maxMs": 0.0013000000035390258
+      },
+      "journal.manual.serialize": {
+        "count": 4,
+        "totalMs": 0.03439999994589016,
+        "maxMs": 0.011300000012852252
+      },
+      "journal.manual.sqliteWrite": {
+        "count": 4,
+        "totalMs": 12.241900000022724,
+        "maxMs": 6.105500000005122
+      },
+      "journal.manual": {
+        "count": 4,
+        "totalMs": 12.300800000026356,
+        "maxMs": 6.123699999996461
+      },
+      "claimStats": {
+        "count": 1,
+        "totalMs": 6.617400000046473,
+        "maxMs": 6.617400000046473
+      },
+      "applicationBeforeCompletion": {
+        "count": 1,
+        "totalMs": 6432.087999999989,
+        "maxMs": 6432.087999999989
+      },
+      "listener.TradingQuality.Completion": {
+        "count": 1,
+        "totalMs": 519.1133999999729,
+        "maxMs": 519.1133999999729
+      },
+      "journal.entry.serialize": {
+        "count": 3,
+        "totalMs": 0.21640000003390014,
+        "maxMs": 0.07880000001750886
+      },
+      "journal.entry.sqliteWrite": {
+        "count": 3,
+        "totalMs": 0.18530000001192093,
+        "maxMs": 0.08429999998770654
+      },
+      "journal.entry": {
+        "count": 3,
+        "totalMs": 0.5354000000515953,
+        "maxMs": 0.2405000000144355
+      },
+      "entry.persistenceFanout": {
+        "count": 1,
+        "totalMs": 0.5584000000380911,
+        "maxMs": 0.5584000000380911
+      },
+      "manual.persistenceFanout": {
+        "count": 1,
+        "totalMs": 0.07069999998202547,
+        "maxMs": 0.07069999998202547
+      },
+      "listener.RuntimePersistence.Completion": {
+        "count": 1,
+        "totalMs": 0.6501999999745749,
+        "maxMs": 0.6501999999745749
+      },
+      "completionPublish": {
+        "count": 1,
+        "totalMs": 523.6329999999725,
+        "maxMs": 523.6329999999725
+      }
+    }
+  },
+  {
+    "id": "reconcile-18",
+    "startedAt": 1791452984926,
+    "counts": {
+      "manualJournalSaveCalls": 4,
+      "manualJournalSqlChangedRows": 2,
+      "claimStatsChangedIds": 1,
+      "entryJournalSaveCalls": 1,
+      "entryJournalSqlChangedRows": 0
+    },
+    "marks": {
+      "remoteCompleted": 394567.546,
+      "applicationStart": 394567.5474
+    },
+    "endedAt": 1791452993845,
+    "totalMs": 8918.709900000016,
+    "phases": {
+      "reservationCleanup": {
+        "count": 1,
+        "totalMs": 5.688800000003539,
+        "maxMs": 5.688800000003539
+      },
+      "remote.initialReads": {
+        "count": 1,
+        "totalMs": 490.35580000001937,
+        "maxMs": 490.35580000001937
+      },
+      "remoteCompletionToApply": {
+        "count": 1,
+        "totalMs": 1.0053000000189058,
+        "maxMs": 1.0053000000189058
+      },
+      "listener.TradingQuality.Other": {
+        "count": 22,
+        "totalMs": 4.436599999957252,
+        "maxMs": 4.414300000004005
+      },
+      "runtime.eventPersistence": {
+        "count": 23,
+        "totalMs": 11.238200000021607,
+        "maxMs": 5.04849999997532
+      },
+      "listener.RuntimePersistence.Other": {
+        "count": 22,
+        "totalMs": 19.12460000021383,
+        "maxMs": 11.556899999966845
+      },
+      "eventBus.genericListeners": {
+        "count": 23,
+        "totalMs": 553.7206000000588,
+        "maxMs": 529.7973999999813
+      },
+      "eventBus.typedListeners": {
+        "count": 23,
+        "totalMs": 0.00980000023264438,
+        "maxMs": 0.0017000000225380063
+      },
+      "journal.manual.serialize": {
+        "count": 4,
+        "totalMs": 0.03190000000176951,
+        "maxMs": 0.010300000023562461
+      },
+      "journal.manual.sqliteWrite": {
+        "count": 4,
+        "totalMs": 7.794300000066869,
+        "maxMs": 6.455500000040047
+      },
+      "journal.manual": {
+        "count": 4,
+        "totalMs": 7.854799999971874,
+        "maxMs": 6.483599999977741
+      },
+      "claimStats": {
+        "count": 1,
+        "totalMs": 6.358000000007451,
+        "maxMs": 6.358000000007451
+      },
+      "applicationBeforeCompletion": {
+        "count": 1,
+        "totalMs": 7888.88949999999,
+        "maxMs": 7888.88949999999
+      },
+      "listener.TradingQuality.Completion": {
+        "count": 1,
+        "totalMs": 529.4563999999664,
+        "maxMs": 529.4563999999664
+      },
+      "journal.entry.serialize": {
+        "count": 1,
+        "totalMs": 0.07280000002356246,
+        "maxMs": 0.07280000002356246
+      },
+      "journal.entry.sqliteWrite": {
+        "count": 1,
+        "totalMs": 0.05859999998938292,
+        "maxMs": 0.05859999998938292
+      },
+      "journal.entry": {
+        "count": 1,
+        "totalMs": 0.2101999999722466,
+        "maxMs": 0.2101999999722466
+      },
+      "entry.persistenceFanout": {
+        "count": 1,
+        "totalMs": 0.22120000002905726,
+        "maxMs": 0.22120000002905726
+      },
+      "manual.persistenceFanout": {
+        "count": 1,
+        "totalMs": 0.07000000000698492,
+        "maxMs": 0.07000000000698492
+      },
+      "listener.RuntimePersistence.Completion": {
+        "count": 1,
+        "totalMs": 0.3119999999762513,
+        "maxMs": 0.3119999999762513
+      },
+      "completionPublish": {
+        "count": 1,
+        "totalMs": 533.6358999999939,
+        "maxMs": 533.6358999999939
+      }
+    }
+  },
+  {
+    "id": "reconcile-19",
+    "startedAt": 1791452999926,
+    "counts": {
+      "manualJournalSaveCalls": 4,
+      "manualJournalSqlChangedRows": 2,
+      "claimStatsChangedIds": 2,
+      "entryJournalSaveCalls": 3,
+      "entryJournalSqlChangedRows": 1
+    },
+    "marks": {
+      "remoteCompleted": 409581.747,
+      "applicationStart": 409581.7488
+    },
+    "endedAt": 1791453004696,
+    "totalMs": 4769.026799999992,
+    "phases": {
+      "reservationCleanup": {
+        "count": 1,
+        "totalMs": 6.275800000003073,
+        "maxMs": 6.275800000003073
+      },
+      "remote.initialReads": {
+        "count": 1,
+        "totalMs": 503.93900000001304,
+        "maxMs": 503.93900000001304
+      },
+      "remoteCompletionToApply": {
+        "count": 1,
+        "totalMs": 1.519800000009127,
+        "maxMs": 1.519800000009127
+      },
+      "listener.TradingQuality.Other": {
+        "count": 24,
+        "totalMs": 28.409899999795016,
+        "maxMs": 11.057600000000093
+      },
+      "runtime.eventPersistence": {
+        "count": 25,
+        "totalMs": 26.376999999920372,
+        "maxMs": 5.901000000012573
+      },
+      "listener.RuntimePersistence.Other": {
+        "count": 24,
+        "totalMs": 37.31840000022203,
+        "maxMs": 10.796100000035949
+      },
+      "eventBus.genericListeners": {
+        "count": 25,
+        "totalMs": 599.4741999997641,
+        "maxMs": 533.2923000000301
+      },
+      "eventBus.typedListeners": {
+        "count": 25,
+        "totalMs": 0.011500000022351742,
+        "maxMs": 0.0023999999975785613
+      },
+      "journal.manual.serialize": {
+        "count": 4,
+        "totalMs": 0.034499999950639904,
+        "maxMs": 0.00969999999506399
+      },
+      "journal.manual.sqliteWrite": {
+        "count": 4,
+        "totalMs": 10.87290000001667,
+        "maxMs": 5.421399999991991
+      },
+      "journal.manual": {
+        "count": 4,
+        "totalMs": 10.93380000005709,
+        "maxMs": 5.445999999996275
+      },
+      "claimStats": {
+        "count": 1,
+        "totalMs": 5.6124999999883585,
+        "maxMs": 5.6124999999883585
+      },
+      "applicationBeforeCompletion": {
+        "count": 1,
+        "totalMs": 3721.455900000001,
+        "maxMs": 3721.455900000001
+      },
+      "listener.TradingQuality.Completion": {
+        "count": 1,
+        "totalMs": 528.0264000000316,
+        "maxMs": 528.0264000000316
+      },
+      "journal.entry.serialize": {
+        "count": 3,
+        "totalMs": 0.2232000000658445,
+        "maxMs": 0.07900000002700835
+      },
+      "journal.entry.sqliteWrite": {
+        "count": 3,
+        "totalMs": 4.68560000002617,
+        "maxMs": 4.532899999991059
+      },
+      "journal.entry": {
+        "count": 3,
+        "totalMs": 5.077099999994971,
+        "maxMs": 4.660399999993388
+      },
+      "entry.persistenceFanout": {
+        "count": 1,
+        "totalMs": 5.101599999994505,
+        "maxMs": 5.101599999994505
+      },
+      "manual.persistenceFanout": {
+        "count": 1,
+        "totalMs": 0.1056999999564141,
+        "maxMs": 0.1056999999564141
+      },
+      "listener.RuntimePersistence.Completion": {
+        "count": 1,
+        "totalMs": 5.233000000007451,
+        "maxMs": 5.233000000007451
+      },
+      "completionPublish": {
+        "count": 1,
+        "totalMs": 537.2136000000173,
+        "maxMs": 537.2136000000173
+      }
+    }
+  },
+  {
+    "id": "reconcile-20",
+    "startedAt": 1791453014949,
+    "counts": {
+      "manualJournalSaveCalls": 4,
+      "manualJournalSqlChangedRows": 2,
+      "claimStatsChangedIds": 4,
+      "entryJournalSaveCalls": 3,
+      "entryJournalSqlChangedRows": 0
+    },
+    "marks": {
+      "remoteCompleted": 425730.2655,
+      "applicationStart": 425730.2662
+    },
+    "endedAt": 1791453022731,
+    "totalMs": 7782.206000000006,
+    "phases": {
+      "reservationCleanup": {
+        "count": 1,
+        "totalMs": 6.237399999983609,
+        "maxMs": 6.237399999983609
+      },
+      "remote.initialReads": {
+        "count": 1,
+        "totalMs": 1631.7048000000068,
+        "maxMs": 1631.7048000000068
+      },
+      "remoteCompletionToApply": {
+        "count": 1,
+        "totalMs": 1.2229999999981374,
+        "maxMs": 1.2229999999981374
+      },
+      "listener.TradingQuality.Other": {
+        "count": 24,
+        "totalMs": 17.767699999851175,
+        "maxMs": 10.292000000015832
+      },
+      "runtime.eventPersistence": {
+        "count": 25,
+        "totalMs": 16.724299999827053,
+        "maxMs": 5.448099999979604
+      },
+      "listener.RuntimePersistence.Other": {
+        "count": 24,
+        "totalMs": 24.252100000041537,
+        "maxMs": 10.389199999975972
+      },
+      "eventBus.genericListeners": {
+        "count": 25,
+        "totalMs": 568.5295000000042,
+        "maxMs": 526.0546999999788
+      },
+      "eventBus.typedListeners": {
+        "count": 25,
+        "totalMs": 0.009799999825190753,
+        "maxMs": 0.0014999999548308551
+      },
+      "journal.manual.serialize": {
+        "count": 4,
+        "totalMs": 0.02949999994598329,
+        "maxMs": 0.01009999995585531
+      },
+      "journal.manual.sqliteWrite": {
+        "count": 4,
+        "totalMs": 7.447399999946356,
+        "maxMs": 6.150399999984074
+      },
+      "journal.manual": {
+        "count": 4,
+        "totalMs": 7.498400000040419,
+        "maxMs": 6.1670000000158325
+      },
+      "claimStats": {
+        "count": 1,
+        "totalMs": 6.524100000038743,
+        "maxMs": 6.524100000038743
+      },
+      "applicationBeforeCompletion": {
+        "count": 1,
+        "totalMs": 5614.806600000011,
+        "maxMs": 5614.806600000011
+      },
+      "listener.TradingQuality.Completion": {
+        "count": 1,
+        "totalMs": 525.3512999999803,
+        "maxMs": 525.3512999999803
+      },
+      "journal.entry.serialize": {
+        "count": 3,
+        "totalMs": 0.22190000000409782,
+        "maxMs": 0.08569999999599531
+      },
+      "journal.entry.sqliteWrite": {
+        "count": 3,
+        "totalMs": 0.18430000002263114,
+        "maxMs": 0.0779999999795109
+      },
+      "journal.entry": {
+        "count": 3,
+        "totalMs": 0.5559999999823049,
+        "maxMs": 0.2577999999630265
+      },
+      "entry.persistenceFanout": {
+        "count": 1,
+        "totalMs": 0.5793999999877997,
+        "maxMs": 0.5793999999877997
+      },
+      "manual.persistenceFanout": {
+        "count": 1,
+        "totalMs": 0.06969999999273568,
+        "maxMs": 0.06969999999273568
+      },
+      "listener.RuntimePersistence.Completion": {
+        "count": 1,
+        "totalMs": 0.6724000000394881,
+        "maxMs": 0.6724000000394881
+      },
+      "completionPublish": {
+        "count": 1,
+        "totalMs": 529.3278999999748,
+        "maxMs": 529.3278999999748
+      }
+    }
+  },
+  {
+    "id": "reconcile-21",
+    "startedAt": 1791453029962,
+    "counts": {
+      "manualJournalSaveCalls": 4,
+      "manualJournalSqlChangedRows": 2,
+      "claimStatsChangedIds": 1,
+      "entryJournalSaveCalls": 3,
+      "entryJournalSqlChangedRows": 2
+    },
+    "marks": {
+      "remoteCompleted": 439620.741,
+      "applicationStart": 439620.742
+    },
+    "endedAt": 1791453034860,
+    "totalMs": 4897.771999999997,
+    "phases": {
+      "reservationCleanup": {
+        "count": 1,
+        "totalMs": 4.274299999990035,
+        "maxMs": 4.274299999990035
+      },
+      "remote.initialReads": {
+        "count": 1,
+        "totalMs": 510.3496000000159,
+        "maxMs": 510.3496000000159
+      },
+      "remoteCompletionToApply": {
+        "count": 1,
+        "totalMs": 1.5546000000322238,
+        "maxMs": 1.5546000000322238
+      },
+      "listener.TradingQuality.Other": {
+        "count": 24,
+        "totalMs": 24.42230000003474,
+        "maxMs": 8.515099999960512
+      },
+      "runtime.eventPersistence": {
+        "count": 25,
+        "totalMs": 9.135099999955855,
+        "maxMs": 4.347999999998137
+      },
+      "listener.RuntimePersistence.Other": {
+        "count": 24,
+        "totalMs": 11.785900000249967,
+        "maxMs": 4.35910000000149
+      },
+      "eventBus.genericListeners": {
+        "count": 25,
+        "totalMs": 564.1804999997839,
+        "maxMs": 527.505199999956
+      },
+      "eventBus.typedListeners": {
+        "count": 25,
+        "totalMs": 0.00990000000456348,
+        "maxMs": 0.001500000013038516
+      },
+      "journal.manual.serialize": {
+        "count": 4,
+        "totalMs": 0.02909999998519197,
+        "maxMs": 0.008399999991524965
+      },
+      "journal.manual.sqliteWrite": {
+        "count": 4,
+        "totalMs": 2.5860000000102445,
+        "maxMs": 1.263600000005681
+      },
+      "journal.manual": {
+        "count": 4,
+        "totalMs": 2.6395000000484288,
+        "maxMs": 1.2852000000420958
+      },
+      "claimStats": {
+        "count": 1,
+        "totalMs": 1.6757999999681488,
+        "maxMs": 1.6757999999681488
+      },
+      "applicationBeforeCompletion": {
+        "count": 1,
+        "totalMs": 3851.9616999999853,
+        "maxMs": 3851.9616999999853
+      },
+      "listener.TradingQuality.Completion": {
+        "count": 1,
+        "totalMs": 524.9721000000136,
+        "maxMs": 524.9721000000136
+      },
+      "journal.entry.serialize": {
+        "count": 3,
+        "totalMs": 0.24690000002738088,
+        "maxMs": 0.09059999999590218
+      },
+      "journal.entry.sqliteWrite": {
+        "count": 3,
+        "totalMs": 1.861800000013318,
+        "maxMs": 1.081899999990128
+      },
+      "journal.entry": {
+        "count": 3,
+        "totalMs": 2.354300000006333,
+        "maxMs": 1.2366000000038184
+      },
+      "entry.persistenceFanout": {
+        "count": 1,
+        "totalMs": 2.3800000000046566,
+        "maxMs": 2.3800000000046566
+      },
+      "manual.persistenceFanout": {
+        "count": 1,
+        "totalMs": 0.08819999999832362,
+        "maxMs": 0.08819999999832362
+      },
+      "listener.RuntimePersistence.Completion": {
+        "count": 1,
+        "totalMs": 2.4966999999596737,
+        "maxMs": 2.4966999999596737
+      },
+      "completionPublish": {
+        "count": 1,
+        "totalMs": 531.0586999999941,
+        "maxMs": 531.0586999999941
+      }
+    }
+  },
+  {
+    "id": "reconcile-22",
+    "startedAt": 1791453044973,
+    "counts": {
+      "manualJournalSaveCalls": 4,
+      "manualJournalSqlChangedRows": 2,
+      "claimStatsChangedIds": 5,
+      "entryJournalSaveCalls": 3,
+      "entryJournalSqlChangedRows": 0
+    },
+    "marks": {
+      "remoteCompleted": 455526.6592,
+      "applicationStart": 455526.6607
+    },
+    "endedAt": 1791453050477,
+    "totalMs": 5503.990500000014,
+    "phases": {
+      "reservationCleanup": {
+        "count": 1,
+        "totalMs": 5.926600000006147,
+        "maxMs": 5.926600000006147
+      },
+      "remote.initialReads": {
+        "count": 1,
+        "totalMs": 1403.632099999988,
+        "maxMs": 1403.632099999988
+      },
+      "remoteCompletionToApply": {
+        "count": 1,
+        "totalMs": 2.101100000028964,
+        "maxMs": 2.101100000028964
+      },
+      "listener.TradingQuality.Other": {
+        "count": 24,
+        "totalMs": 17.585199999972247,
+        "maxMs": 7.220499999995809
+      },
+      "runtime.eventPersistence": {
+        "count": 25,
+        "totalMs": 22.45499999995809,
+        "maxMs": 5.79660000000149
+      },
+      "listener.RuntimePersistence.Other": {
+        "count": 24,
+        "totalMs": 29.945999999763444,
+        "maxMs": 11.71899999998277
+      },
+      "eventBus.genericListeners": {
+        "count": 25,
+        "totalMs": 579.6912999999477,
+        "maxMs": 531.6184999999823
+      },
+      "eventBus.typedListeners": {
+        "count": 25,
+        "totalMs": 0.010300000023562461,
+        "maxMs": 0.0016999999643303454
+      },
+      "journal.manual.serialize": {
+        "count": 4,
+        "totalMs": 0.034500000067055225,
+        "maxMs": 0.011400000017601997
+      },
+      "journal.manual.sqliteWrite": {
+        "count": 4,
+        "totalMs": 7.354300000006333,
+        "maxMs": 6.06419999996433
+      },
+      "journal.manual": {
+        "count": 4,
+        "totalMs": 7.4140999999362975,
+        "maxMs": 6.088099999993574
+      },
+      "claimStats": {
+        "count": 1,
+        "totalMs": 2.0887000000220723,
+        "maxMs": 2.0887000000220723
+      },
+      "applicationBeforeCompletion": {
+        "count": 1,
+        "totalMs": 3559.162000000011,
+        "maxMs": 3559.162000000011
+      },
+      "listener.TradingQuality.Completion": {
+        "count": 1,
+        "totalMs": 530.8472999999649,
+        "maxMs": 530.8472999999649
+      },
+      "journal.entry.serialize": {
+        "count": 3,
+        "totalMs": 0.2333999999682419,
+        "maxMs": 0.08569999999599531
+      },
+      "journal.entry.sqliteWrite": {
+        "count": 3,
+        "totalMs": 0.23139999998966232,
+        "maxMs": 0.10050000000046566
+      },
+      "journal.entry": {
+        "count": 3,
+        "totalMs": 0.6132999999681488,
+        "maxMs": 0.27230000001145527
+      },
+      "entry.persistenceFanout": {
+        "count": 1,
+        "totalMs": 0.6379999999771826,
+        "maxMs": 0.6379999999771826
+      },
+      "manual.persistenceFanout": {
+        "count": 1,
+        "totalMs": 0.07630000001518056,
+        "maxMs": 0.07630000001518056
+      },
+      "listener.RuntimePersistence.Completion": {
+        "count": 1,
+        "totalMs": 0.7333000000216998,
+        "maxMs": 0.7333000000216998
+      },
+      "completionPublish": {
+        "count": 1,
+        "totalMs": 535.1205000000191,
+        "maxMs": 535.1205000000191
+      }
+    }
+  },
+  {
+    "id": "reconcile-23",
+    "startedAt": 1791453061989,
+    "counts": {
+      "manualJournalSaveCalls": 4,
+      "manualJournalSqlChangedRows": 2,
+      "claimStatsChangedIds": 2,
+      "entryJournalSaveCalls": 1,
+      "entryJournalSqlChangedRows": 0
+    },
+    "marks": {
+      "remoteCompleted": 471677.7423,
+      "applicationStart": 471677.7435
+    },
+    "endedAt": 1791453079398,
+    "totalMs": 17408.112100000028,
+    "phases": {
+      "reservationCleanup": {
+        "count": 1,
+        "totalMs": 4.628099999972619,
+        "maxMs": 4.628099999972619
+      },
+      "remote.initialReads": {
+        "count": 1,
+        "totalMs": 540.4680999999982,
+        "maxMs": 540.4680999999982
+      },
+      "remoteCompletionToApply": {
+        "count": 1,
+        "totalMs": 0.9132000000099652,
+        "maxMs": 0.9132000000099652
+      },
+      "listener.TradingQuality.Other": {
+        "count": 22,
+        "totalMs": 35.317600000009406,
+        "maxMs": 35.2954000000027
+      },
+      "runtime.eventPersistence": {
+        "count": 23,
+        "totalMs": 4.804400000022724,
+        "maxMs": 2.3663999999989755
+      },
+      "listener.RuntimePersistence.Other": {
+        "count": 22,
+        "totalMs": 7.428599999984726,
+        "maxMs": 3.648300000000745
+      },
+      "eventBus.genericListeners": {
+        "count": 23,
+        "totalMs": 567.5509000000893,
+        "maxMs": 524.4645000000019
+      },
+      "eventBus.typedListeners": {
+        "count": 23,
+        "totalMs": 0.007699999958276749,
+        "maxMs": 0.001500000013038516
+      },
+      "journal.manual.serialize": {
+        "count": 4,
+        "totalMs": 0.028999999980442226,
+        "maxMs": 0.009399999980814755
+      },
+      "journal.manual.sqliteWrite": {
+        "count": 4,
+        "totalMs": 2.5641999999643303,
+        "maxMs": 1.2694999999948777
+      },
+      "journal.manual": {
+        "count": 4,
+        "totalMs": 2.6168999999645166,
+        "maxMs": 1.289299999945797
+      },
+      "claimStats": {
+        "count": 1,
+        "totalMs": 1.765300000028219,
+        "maxMs": 1.765300000028219
+      },
+      "applicationBeforeCompletion": {
+        "count": 1,
+        "totalMs": 16331.707800000033,
+        "maxMs": 16331.707800000033
+      },
+      "listener.TradingQuality.Completion": {
+        "count": 1,
+        "totalMs": 524.0617000000202,
+        "maxMs": 524.0617000000202
+      },
+      "journal.entry.serialize": {
+        "count": 1,
+        "totalMs": 0.09010000003036112,
+        "maxMs": 0.09010000003036112
+      },
+      "journal.entry.sqliteWrite": {
+        "count": 1,
+        "totalMs": 0.0799000000115484,
+        "maxMs": 0.0799000000115484
+      },
+      "journal.entry": {
+        "count": 1,
+        "totalMs": 0.252100000041537,
+        "maxMs": 0.252100000041537
+      },
+      "entry.persistenceFanout": {
+        "count": 1,
+        "totalMs": 0.2651000000187196,
+        "maxMs": 0.2651000000187196
+      },
+      "manual.persistenceFanout": {
+        "count": 1,
+        "totalMs": 0.07750000001396984,
+        "maxMs": 0.07750000001396984
+      },
+      "listener.RuntimePersistence.Completion": {
+        "count": 1,
+        "totalMs": 0.36580000002868474,
+        "maxMs": 0.36580000002868474
+      },
+      "completionPublish": {
+        "count": 1,
+        "totalMs": 531.1922999999952,
+        "maxMs": 531.1922999999952
+      }
+    }
+  },
+  {
+    "id": "reconcile-24",
+    "startedAt": 1791453092391,
+    "counts": {
+      "manualJournalSaveCalls": 4,
+      "manualJournalSqlChangedRows": 2,
+      "claimStatsChangedIds": 4,
+      "entryJournalSaveCalls": 4,
+      "entryJournalSqlChangedRows": 0
+    },
+    "marks": {
+      "remoteCompleted": 502118.9067,
+      "applicationStart": 502118.9086
+    },
+    "endedAt": 1791453097868,
+    "totalMs": 5477.801099999982,
+    "phases": {
+      "reservationCleanup": {
+        "count": 1,
+        "totalMs": 4.48599999997532,
+        "maxMs": 4.48599999997532
+      },
+      "remote.initialReads": {
+        "count": 1,
+        "totalMs": 581.305400000012,
+        "maxMs": 581.305400000012
+      },
+      "remoteCompletionToApply": {
+        "count": 1,
+        "totalMs": 1.9921999999787658,
+        "maxMs": 1.9921999999787658
+      },
+      "listener.TradingQuality.Other": {
+        "count": 24,
+        "totalMs": 18.22790000011446,
+        "maxMs": 9.115300000004936
+      },
+      "runtime.eventPersistence": {
+        "count": 25,
+        "totalMs": 24.132600000011735,
+        "maxMs": 8.106599999999162
+      },
+      "listener.RuntimePersistence.Other": {
+        "count": 24,
+        "totalMs": 35.805599999963306,
+        "maxMs": 11.156099999963772
+      },
+      "eventBus.genericListeners": {
+        "count": 25,
+        "totalMs": 570.5493999999599,
+        "maxMs": 516.024700000009
+      },
+      "eventBus.typedListeners": {
+        "count": 25,
+        "totalMs": 0.010699999867938459,
+        "maxMs": 0.0018000000272877514
+      },
+      "journal.manual.serialize": {
+        "count": 4,
+        "totalMs": 0.035299999988637865,
+        "maxMs": 0.011600000027101487
+      },
+      "journal.manual.sqliteWrite": {
+        "count": 4,
+        "totalMs": 11.575399999972433,
+        "maxMs": 6.1049999999813735
+      },
+      "journal.manual": {
+        "count": 4,
+        "totalMs": 11.63990000000922,
+        "maxMs": 6.133800000010524
+      },
+      "claimStats": {
+        "count": 1,
+        "totalMs": 6.920699999958742,
+        "maxMs": 6.920699999958742
+      },
+      "applicationBeforeCompletion": {
+        "count": 1,
+        "totalMs": 4372.3582999999635,
+        "maxMs": 4372.3582999999635
+      },
+      "listener.TradingQuality.Completion": {
+        "count": 1,
+        "totalMs": 515.1906000000308,
+        "maxMs": 515.1906000000308
+      },
+      "journal.entry.serialize": {
+        "count": 4,
+        "totalMs": 0.30529999994905666,
+        "maxMs": 0.083199999993667
+      },
+      "journal.entry.sqliteWrite": {
+        "count": 4,
+        "totalMs": 0.2089999999734573,
+        "maxMs": 0.05839999997988343
+      },
+      "journal.entry": {
+        "count": 4,
+        "totalMs": 0.6798999999882653,
+        "maxMs": 0.19479999999748543
+      },
+      "entry.persistenceFanout": {
+        "count": 1,
+        "totalMs": 0.7050999999628402,
+        "maxMs": 0.7050999999628402
+      },
+      "manual.persistenceFanout": {
+        "count": 1,
+        "totalMs": 0.073900000017602,
+        "maxMs": 0.073900000017602
+      },
+      "listener.RuntimePersistence.Completion": {
+        "count": 1,
+        "totalMs": 0.8041999999550171,
+        "maxMs": 0.8041999999550171
+      },
+      "completionPublish": {
+        "count": 1,
+        "totalMs": 519.5331000000006,
+        "maxMs": 519.5331000000006
+      }
+    }
+  },
+  {
+    "id": "reconcile-25",
+    "startedAt": 1791453107393,
+    "counts": {
+      "manualJournalSaveCalls": 4,
+      "manualJournalSqlChangedRows": 2,
+      "claimStatsChangedIds": 2,
+      "entryJournalSaveCalls": 3,
+      "entryJournalSqlChangedRows": 1
+    },
+    "marks": {
+      "remoteCompleted": 517164.3583,
+      "applicationStart": 517164.3592
+    },
+    "endedAt": 1791453111884,
+    "totalMs": 4491.228799999983,
+    "phases": {
+      "reservationCleanup": {
+        "count": 1,
+        "totalMs": 4.327899999974761,
+        "maxMs": 4.327899999974761
+      },
+      "remote.initialReads": {
+        "count": 1,
+        "totalMs": 624.3482999999542,
+        "maxMs": 624.3482999999542
+      },
+      "remoteCompletionToApply": {
+        "count": 1,
+        "totalMs": 1.3886999999522232,
+        "maxMs": 1.3886999999522232
+      },
+      "listener.TradingQuality.Other": {
+        "count": 24,
+        "totalMs": 23.76859999995213,
+        "maxMs": 11.796699999948032
+      },
+      "runtime.eventPersistence": {
+        "count": 25,
+        "totalMs": 34.89880000014091,
+        "maxMs": 14.398700000019744
+      },
+      "listener.RuntimePersistence.Other": {
+        "count": 24,
+        "totalMs": 45.78159999992931,
+        "maxMs": 14.408899999980349
+      },
+      "eventBus.genericListeners": {
+        "count": 25,
+        "totalMs": 608.7328000000562,
+        "maxMs": 538.6914999999572
+      },
+      "eventBus.typedListeners": {
+        "count": 25,
+        "totalMs": 0.01129999995464459,
+        "maxMs": 0.001500000013038516
+      },
+      "journal.manual.serialize": {
+        "count": 4,
+        "totalMs": 0.036299999919719994,
+        "maxMs": 0.009999999951105565
+      },
+      "journal.manual.sqliteWrite": {
+        "count": 4,
+        "totalMs": 10.833100000047125,
+        "maxMs": 5.398200000054203
+      },
+      "journal.manual": {
+        "count": 4,
+        "totalMs": 10.898099999991246,
+        "maxMs": 5.422299999976531
+      },
+      "claimStats": {
+        "count": 1,
+        "totalMs": 6.299600000027567,
+        "maxMs": 6.299600000027567
+      },
+      "applicationBeforeCompletion": {
+        "count": 1,
+        "totalMs": 3317.83679999999,
+        "maxMs": 3317.83679999999
+      },
+      "listener.TradingQuality.Completion": {
+        "count": 1,
+        "totalMs": 533.2253999999957,
+        "maxMs": 533.2253999999957
+      },
+      "journal.entry.serialize": {
+        "count": 3,
+        "totalMs": 0.2409999999217689,
+        "maxMs": 0.08759999996982515
+      },
+      "journal.entry.sqliteWrite": {
+        "count": 3,
+        "totalMs": 4.674800000037067,
+        "maxMs": 4.557800000009593
+      },
+      "journal.entry": {
+        "count": 3,
+        "totalMs": 5.24989999999525,
+        "maxMs": 4.682399999990594
+      },
+      "entry.persistenceFanout": {
+        "count": 1,
+        "totalMs": 5.272599999967497,
+        "maxMs": 5.272599999967497
+      },
+      "manual.persistenceFanout": {
+        "count": 1,
+        "totalMs": 0.1307999999844469,
+        "maxMs": 0.1307999999844469
+      },
+      "listener.RuntimePersistence.Completion": {
+        "count": 1,
+        "totalMs": 5.429499999969266,
+        "maxMs": 5.429499999969266
+      },
+      "completionPublish": {
+        "count": 1,
+        "totalMs": 544.5937000000267,
+        "maxMs": 544.5937000000267
+      }
+    }
+  },
+  {
+    "id": "reconcile-26",
+    "startedAt": 1791453122408,
+    "counts": {
+      "manualJournalSaveCalls": 4,
+      "manualJournalSqlChangedRows": 2,
+      "claimStatsChangedIds": 3,
+      "entryJournalSaveCalls": 4,
+      "entryJournalSqlChangedRows": 1
+    },
+    "marks": {
+      "remoteCompleted": 532101.9157,
+      "applicationStart": 532101.9177
+    },
+    "endedAt": 1791453129964,
+    "totalMs": 7556.452800000086,
+    "phases": {
+      "reservationCleanup": {
+        "count": 1,
+        "totalMs": 4.964599999948405,
+        "maxMs": 4.964599999948405
+      },
+      "remote.initialReads": {
+        "count": 1,
+        "totalMs": 546.9115000000456,
+        "maxMs": 546.9115000000456
+      },
+      "remoteCompletionToApply": {
+        "count": 1,
+        "totalMs": 1.2863999999826774,
+        "maxMs": 1.2863999999826774
+      },
+      "listener.TradingQuality.Other": {
+        "count": 25,
+        "totalMs": 542.4393999997992,
+        "maxMs": 516.8139000000665
+      },
+      "runtime.eventPersistence": {
+        "count": 26,
+        "totalMs": 27.12680000020191,
+        "maxMs": 9.103400000021793
+      },
+      "listener.RuntimePersistence.Other": {
+        "count": 25,
+        "totalMs": 34.6111000002129,
+        "maxMs": 15.237800000002608
+      },
+      "eventBus.genericListeners": {
+        "count": 26,
+        "totalMs": 1111.0867999999318,
+        "maxMs": 533.4226999999955
+      },
+      "eventBus.typedListeners": {
+        "count": 26,
+        "totalMs": 0.011399999726563692,
+        "maxMs": 0.0017000000225380063
+      },
+      "journal.manual.serialize": {
+        "count": 4,
+        "totalMs": 0.03309999988414347,
+        "maxMs": 0.011399999959394336
+      },
+      "journal.manual.sqliteWrite": {
+        "count": 4,
+        "totalMs": 7.382100000046194,
+        "maxMs": 6.099900000030175
+      },
+      "journal.manual": {
+        "count": 4,
+        "totalMs": 7.441499999840744,
+        "maxMs": 6.116099999984726
+      },
+      "claimStats": {
+        "count": 1,
+        "totalMs": 6.015100000076927,
+        "maxMs": 6.015100000076927
+      },
+      "applicationBeforeCompletion": {
+        "count": 1,
+        "totalMs": 6467.086499999976,
+        "maxMs": 6467.086499999976
+      },
+      "listener.TradingQuality.Completion": {
+        "count": 1,
+        "totalMs": 527.7528000000166,
+        "maxMs": 527.7528000000166
+      },
+      "journal.entry.serialize": {
+        "count": 4,
+        "totalMs": 0.38369999977294356,
+        "maxMs": 0.1386999998940155
+      },
+      "journal.entry.sqliteWrite": {
+        "count": 4,
+        "totalMs": 4.873499999870546,
+        "maxMs": 4.710099999909289
+      },
+      "journal.entry": {
+        "count": 4,
+        "totalMs": 5.506099999882281,
+        "maxMs": 4.871599999954924
+      },
+      "entry.persistenceFanout": {
+        "count": 1,
+        "totalMs": 5.535299999988638,
+        "maxMs": 5.535299999988638
+      },
+      "manual.persistenceFanout": {
+        "count": 1,
+        "totalMs": 0.07849999994505197,
+        "maxMs": 0.07849999994505197
+      },
+      "listener.RuntimePersistence.Completion": {
+        "count": 1,
+        "totalMs": 5.636799999978393,
+        "maxMs": 5.636799999978393
+      },
+      "completionPublish": {
+        "count": 1,
+        "totalMs": 537.3552000001073,
+        "maxMs": 537.3552000001073
+      }
+    }
+  }
+]

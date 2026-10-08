@@ -1,0 +1,1972 @@
+[
+  {
+    "samples": 21041,
+    "percent": 54.52590116354401,
+    "chain": [
+      {
+        "function": "(idle)",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 1189,
+    "percent": 3.081188939853326,
+    "chain": [
+      {
+        "function": "put",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 136
+      },
+      {
+        "function": "captureState",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 261
+      },
+      {
+        "function": "onEvent",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 170
+      },
+      {
+        "function": "TradingQualityCollector.listener",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 61
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/events/eventBus.js",
+        "lineNumber": 4
+      },
+      {
+        "function": "measure",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationTiming.js",
+        "lineNumber": 19
+      },
+      {
+        "function": "wrapped",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/events/eventBus.js",
+        "lineNumber": 4
+      },
+      {
+        "function": "emit",
+        "url": "node:events",
+        "lineNumber": 465
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/events/eventBus.js",
+        "lineNumber": 5
+      },
+      {
+        "function": "measure",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationTiming.js",
+        "lineNumber": 19
+      },
+      {
+        "function": "publish",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/events/eventBus.js",
+        "lineNumber": 5
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 647
+      },
+      {
+        "function": "measure",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationTiming.js",
+        "lineNumber": 19
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 211
+      },
+      {
+        "function": "runMicrotasks",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "processTicksAndRejections",
+        "url": "node:internal/process/task_queues",
+        "lineNumber": 70
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 1159,
+    "percent": 3.003446578040374,
+    "chain": [
+      {
+        "function": "(garbage collector)",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 886,
+    "percent": 2.295991085542512,
+    "chain": [
+      {
+        "function": "put",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 136
+      },
+      {
+        "function": "captureState",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 261
+      },
+      {
+        "function": "onEvent",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 170
+      },
+      {
+        "function": "TradingQualityCollector.listener",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 61
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/events/eventBus.js",
+        "lineNumber": 4
+      },
+      {
+        "function": "measure",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationTiming.js",
+        "lineNumber": 19
+      },
+      {
+        "function": "wrapped",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/events/eventBus.js",
+        "lineNumber": 4
+      },
+      {
+        "function": "emit",
+        "url": "node:events",
+        "lineNumber": 465
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/events/eventBus.js",
+        "lineNumber": 5
+      },
+      {
+        "function": "measure",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationTiming.js",
+        "lineNumber": 19
+      },
+      {
+        "function": "publish",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/events/eventBus.js",
+        "lineNumber": 5
+      },
+      {
+        "function": "analyze",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/entryCoordinator.js",
+        "lineNumber": 728
+      },
+      {
+        "function": "runMicrotasks",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "processTicksAndRejections",
+        "url": "node:internal/process/task_queues",
+        "lineNumber": 70
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 596,
+    "percent": 1.5444815880173106,
+    "chain": [
+      {
+        "function": "put",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 136
+      },
+      {
+        "function": "captureState",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 261
+      },
+      {
+        "function": "onEvent",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 170
+      },
+      {
+        "function": "TradingQualityCollector.listener",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 61
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/events/eventBus.js",
+        "lineNumber": 4
+      },
+      {
+        "function": "measure",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationTiming.js",
+        "lineNumber": 19
+      },
+      {
+        "function": "wrapped",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/events/eventBus.js",
+        "lineNumber": 4
+      },
+      {
+        "function": "emit",
+        "url": "node:events",
+        "lineNumber": 465
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/events/eventBus.js",
+        "lineNumber": 5
+      },
+      {
+        "function": "measure",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationTiming.js",
+        "lineNumber": 19
+      },
+      {
+        "function": "publish",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/events/eventBus.js",
+        "lineNumber": 5
+      },
+      {
+        "function": "transition",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/entryCoordinator.js",
+        "lineNumber": 1538
+      },
+      {
+        "function": "analyze",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/entryCoordinator.js",
+        "lineNumber": 728
+      },
+      {
+        "function": "runMicrotasks",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "processTicksAndRejections",
+        "url": "node:internal/process/task_queues",
+        "lineNumber": 70
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 429,
+    "percent": 1.111715773925212,
+    "chain": [
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1002
+      },
+      {
+        "function": "persistRuntime",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 994
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/runtime/appRuntime.js",
+        "lineNumber": 219
+      },
+      {
+        "function": "mutateEntryReservations",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 912
+      },
+      {
+        "function": "state.entryReservationTransaction",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/runtime/appRuntime.js",
+        "lineNumber": 219
+      },
+      {
+        "function": "mutateReservations",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/state/runtimeState.js",
+        "lineNumber": 127
+      },
+      {
+        "function": "reserveEntry",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/state/runtimeState.js",
+        "lineNumber": 225
+      },
+      {
+        "function": "analyze",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/entryCoordinator.js",
+        "lineNumber": 728
+      },
+      {
+        "function": "runMicrotasks",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "processTicksAndRejections",
+        "url": "node:internal/process/task_queues",
+        "lineNumber": 70
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 426,
+    "percent": 1.1039415377439166,
+    "chain": [
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1002
+      },
+      {
+        "function": "persistRuntime",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 994
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/runtime/appRuntime.js",
+        "lineNumber": 219
+      },
+      {
+        "function": "mutateEntryReservations",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 912
+      },
+      {
+        "function": "state.entryReservationTransaction",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/runtime/appRuntime.js",
+        "lineNumber": 219
+      },
+      {
+        "function": "mutateReservations",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/state/runtimeState.js",
+        "lineNumber": 127
+      },
+      {
+        "function": "markEntryReservationWorking",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/state/runtimeState.js",
+        "lineNumber": 298
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 434
+      },
+      {
+        "function": "reservation",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationChanges.js",
+        "lineNumber": 21
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 211
+      },
+      {
+        "function": "runMicrotasks",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "processTicksAndRejections",
+        "url": "node:internal/process/task_queues",
+        "lineNumber": 70
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 424,
+    "percent": 1.0987587136230532,
+    "chain": [
+      {
+        "function": "exec",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "transaction",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/orderProvenanceRegistry.js",
+        "lineNumber": 111
+      },
+      {
+        "function": "record",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/orderProvenanceRegistry.js",
+        "lineNumber": 31
+      },
+      {
+        "function": "recordVerifiedExitOrderFacts",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+        "lineNumber": 378
+      },
+      {
+        "function": "recordExitOrderReport",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+        "lineNumber": 398
+      },
+      {
+        "function": "reportOpenOrderExitFacts",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 82
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 211
+      },
+      {
+        "function": "runMicrotasks",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "processTicksAndRejections",
+        "url": "node:internal/process/task_queues",
+        "lineNumber": 70
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 422,
+    "percent": 1.0935758895021896,
+    "chain": [
+      {
+        "function": "run",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "persistRuntimeCore",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 942
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/runtime/appRuntime.js",
+        "lineNumber": 679
+      },
+      {
+        "function": "apply",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/runtimeWriteBuffer.js",
+        "lineNumber": 6
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/runtime/appRuntime.js",
+        "lineNumber": 678
+      },
+      {
+        "function": "listOnTimeout",
+        "url": "node:internal/timers",
+        "lineNumber": 525
+      },
+      {
+        "function": "processTimers",
+        "url": "node:internal/timers",
+        "lineNumber": 505
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 419,
+    "percent": 1.0858016533208945,
+    "chain": [
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1002
+      },
+      {
+        "function": "persistRuntime",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 994
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/runtime/appRuntime.js",
+        "lineNumber": 219
+      },
+      {
+        "function": "mutateEntryReservations",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 912
+      },
+      {
+        "function": "state.entryReservationTransaction",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/runtime/appRuntime.js",
+        "lineNumber": 219
+      },
+      {
+        "function": "mutateReservations",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/state/runtimeState.js",
+        "lineNumber": 127
+      },
+      {
+        "function": "markEntryReservationWorking",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/state/runtimeState.js",
+        "lineNumber": 298
+      },
+      {
+        "function": "attachReservationToIntent",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/state/runtimeState.js",
+        "lineNumber": 322
+      },
+      {
+        "function": "analyze",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/entryCoordinator.js",
+        "lineNumber": 728
+      },
+      {
+        "function": "runMicrotasks",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "processTicksAndRejections",
+        "url": "node:internal/process/task_queues",
+        "lineNumber": 70
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 418,
+    "percent": 1.0832102412604627,
+    "chain": [
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1002
+      },
+      {
+        "function": "persistRuntime",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 994
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/runtime/appRuntime.js",
+        "lineNumber": 219
+      },
+      {
+        "function": "mutateEntryReservations",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 912
+      },
+      {
+        "function": "state.entryReservationTransaction",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/runtime/appRuntime.js",
+        "lineNumber": 219
+      },
+      {
+        "function": "mutateReservations",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/state/runtimeState.js",
+        "lineNumber": 127
+      },
+      {
+        "function": "releaseEntryReservation",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/state/runtimeState.js",
+        "lineNumber": 342
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 406
+      },
+      {
+        "function": "reservation",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationChanges.js",
+        "lineNumber": 21
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 211
+      },
+      {
+        "function": "runMicrotasks",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "processTicksAndRejections",
+        "url": "node:internal/process/task_queues",
+        "lineNumber": 70
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 325,
+    "percent": 0.842208919640312,
+    "chain": [
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 1002
+      },
+      {
+        "function": "persistRuntime",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 994
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/runtime/appRuntime.js",
+        "lineNumber": 561
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/events/eventBus.js",
+        "lineNumber": 4
+      },
+      {
+        "function": "measure",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationTiming.js",
+        "lineNumber": 19
+      },
+      {
+        "function": "wrapped",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/events/eventBus.js",
+        "lineNumber": 4
+      },
+      {
+        "function": "emit",
+        "url": "node:events",
+        "lineNumber": 465
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/events/eventBus.js",
+        "lineNumber": 5
+      },
+      {
+        "function": "measure",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationTiming.js",
+        "lineNumber": 19
+      },
+      {
+        "function": "publish",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/events/eventBus.js",
+        "lineNumber": 5
+      },
+      {
+        "function": "placeAfterClaim",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/entryCoordinator.js",
+        "lineNumber": 542
+      },
+      {
+        "function": "submitExactlyOnce",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/entryCoordinator.js",
+        "lineNumber": 413
+      },
+      {
+        "function": "analyze",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/entryCoordinator.js",
+        "lineNumber": 728
+      },
+      {
+        "function": "runMicrotasks",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "processTicksAndRejections",
+        "url": "node:internal/process/task_queues",
+        "lineNumber": 70
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 308,
+    "percent": 0.7981549146129726,
+    "chain": [
+      {
+        "function": "persistRuntimeCore",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 942
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/runtime/appRuntime.js",
+        "lineNumber": 679
+      },
+      {
+        "function": "apply",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/runtimeWriteBuffer.js",
+        "lineNumber": 6
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/runtime/appRuntime.js",
+        "lineNumber": 678
+      },
+      {
+        "function": "listOnTimeout",
+        "url": "node:internal/timers",
+        "lineNumber": 525
+      },
+      {
+        "function": "processTimers",
+        "url": "node:internal/timers",
+        "lineNumber": 505
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 301,
+    "percent": 0.7800150301899506,
+    "chain": [
+      {
+        "function": "put",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 136
+      },
+      {
+        "function": "captureState",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 261
+      },
+      {
+        "function": "onEvent",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 170
+      },
+      {
+        "function": "TradingQualityCollector.listener",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 61
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/events/eventBus.js",
+        "lineNumber": 4
+      },
+      {
+        "function": "measure",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationTiming.js",
+        "lineNumber": 19
+      },
+      {
+        "function": "wrapped",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/events/eventBus.js",
+        "lineNumber": 4
+      },
+      {
+        "function": "emit",
+        "url": "node:events",
+        "lineNumber": 465
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/events/eventBus.js",
+        "lineNumber": 5
+      },
+      {
+        "function": "measure",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationTiming.js",
+        "lineNumber": 19
+      },
+      {
+        "function": "publish",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/events/eventBus.js",
+        "lineNumber": 5
+      },
+      {
+        "function": "reconcileCandidateLifecycles",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/candidateLifecycleDeriver.js",
+        "lineNumber": 14
+      },
+      {
+        "function": "refresh",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/universeCoordinator.js",
+        "lineNumber": 17
+      },
+      {
+        "function": "every.name",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/runtime/appRuntime.js",
+        "lineNumber": 854
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/runtime/appRuntime.js",
+        "lineNumber": 701
+      },
+      {
+        "function": "listOnTimeout",
+        "url": "node:internal/timers",
+        "lineNumber": 525
+      },
+      {
+        "function": "processTimers",
+        "url": "node:internal/timers",
+        "lineNumber": 505
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 301,
+    "percent": 0.7800150301899506,
+    "chain": [
+      {
+        "function": "put",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 136
+      },
+      {
+        "function": "captureState",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 261
+      },
+      {
+        "function": "onEvent",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 170
+      },
+      {
+        "function": "TradingQualityCollector.listener",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 61
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/events/eventBus.js",
+        "lineNumber": 4
+      },
+      {
+        "function": "measure",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationTiming.js",
+        "lineNumber": 19
+      },
+      {
+        "function": "wrapped",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/events/eventBus.js",
+        "lineNumber": 4
+      },
+      {
+        "function": "emit",
+        "url": "node:events",
+        "lineNumber": 465
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/events/eventBus.js",
+        "lineNumber": 5
+      },
+      {
+        "function": "measure",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationTiming.js",
+        "lineNumber": 19
+      },
+      {
+        "function": "publish",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/events/eventBus.js",
+        "lineNumber": 5
+      },
+      {
+        "function": "executionHardBlock",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/entryCoordinator.js",
+        "lineNumber": 297
+      },
+      {
+        "function": "submitExactlyOnce",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/entryCoordinator.js",
+        "lineNumber": 413
+      },
+      {
+        "function": "analyze",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/entryCoordinator.js",
+        "lineNumber": 728
+      },
+      {
+        "function": "runMicrotasks",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "processTicksAndRejections",
+        "url": "node:internal/process/task_queues",
+        "lineNumber": 70
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 300,
+    "percent": 0.7774236181295188,
+    "chain": [
+      {
+        "function": "put",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 136
+      },
+      {
+        "function": "captureState",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 261
+      },
+      {
+        "function": "onEvent",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 170
+      },
+      {
+        "function": "TradingQualityCollector.listener",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 61
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/events/eventBus.js",
+        "lineNumber": 4
+      },
+      {
+        "function": "measure",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationTiming.js",
+        "lineNumber": 19
+      },
+      {
+        "function": "wrapped",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/events/eventBus.js",
+        "lineNumber": 4
+      },
+      {
+        "function": "emit",
+        "url": "node:events",
+        "lineNumber": 465
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/events/eventBus.js",
+        "lineNumber": 5
+      },
+      {
+        "function": "measure",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationTiming.js",
+        "lineNumber": 19
+      },
+      {
+        "function": "publish",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/events/eventBus.js",
+        "lineNumber": 5
+      },
+      {
+        "function": "placeAfterClaim",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/entryCoordinator.js",
+        "lineNumber": 542
+      },
+      {
+        "function": "submitExactlyOnce",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/entryCoordinator.js",
+        "lineNumber": 413
+      },
+      {
+        "function": "analyze",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/entryCoordinator.js",
+        "lineNumber": 728
+      },
+      {
+        "function": "runMicrotasks",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "processTicksAndRejections",
+        "url": "node:internal/process/task_queues",
+        "lineNumber": 70
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 296,
+    "percent": 0.7670579698877918,
+    "chain": [
+      {
+        "function": "put",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 136
+      },
+      {
+        "function": "captureStateChunk",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 287
+      },
+      {
+        "function": "tick",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 326
+      },
+      {
+        "function": "every.name",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/runtime/appRuntime.js",
+        "lineNumber": 894
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/runtime/appRuntime.js",
+        "lineNumber": 701
+      },
+      {
+        "function": "listOnTimeout",
+        "url": "node:internal/timers",
+        "lineNumber": 525
+      },
+      {
+        "function": "processTimers",
+        "url": "node:internal/timers",
+        "lineNumber": 505
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 236,
+    "percent": 0.6115732462618881,
+    "chain": [
+      {
+        "function": "all",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "query",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/ownershipJournal.js",
+        "lineNumber": 46
+      },
+      {
+        "function": "convergenceStats",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+        "lineNumber": 299
+      },
+      {
+        "function": "convergenceStats",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+        "lineNumber": 404
+      },
+      {
+        "function": "exitConvergenceHealth",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/runtime/appRuntime.js",
+        "lineNumber": 1423
+      },
+      {
+        "function": "baseDashboardProjection",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/api/projections.js",
+        "lineNumber": 194
+      },
+      {
+        "function": "dashboardProjection",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/api/projections.js",
+        "lineNumber": 315
+      },
+      {
+        "function": "publishSnapshot",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/api/router.js",
+        "lineNumber": 116
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/api/router.js",
+        "lineNumber": 129
+      },
+      {
+        "function": "listOnTimeout",
+        "url": "node:internal/timers",
+        "lineNumber": 525
+      },
+      {
+        "function": "processTimers",
+        "url": "node:internal/timers",
+        "lineNumber": 505
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 233,
+    "percent": 0.6037990100805929,
+    "chain": [
+      {
+        "function": "(program)",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 228,
+    "percent": 0.5908419497784343,
+    "chain": [
+      {
+        "function": "all",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "query",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/ownershipJournal.js",
+        "lineNumber": 46
+      },
+      {
+        "function": "convergenceStats",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+        "lineNumber": 299
+      },
+      {
+        "function": "convergenceStats",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+        "lineNumber": 404
+      },
+      {
+        "function": "exitConvergenceHealth",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/runtime/appRuntime.js",
+        "lineNumber": 1423
+      },
+      {
+        "function": "executionTruthProjection",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/api/projections.js",
+        "lineNumber": 64
+      },
+      {
+        "function": "baseDashboardProjection",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/api/projections.js",
+        "lineNumber": 194
+      },
+      {
+        "function": "dashboardProjection",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/api/projections.js",
+        "lineNumber": 315
+      },
+      {
+        "function": "publishSnapshot",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/api/router.js",
+        "lineNumber": 116
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/api/router.js",
+        "lineNumber": 129
+      },
+      {
+        "function": "listOnTimeout",
+        "url": "node:internal/timers",
+        "lineNumber": 525
+      },
+      {
+        "function": "processTimers",
+        "url": "node:internal/timers",
+        "lineNumber": 505
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 182,
+    "percent": 0.4716369949985747,
+    "chain": [
+      {
+        "function": "allTasks",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+        "lineNumber": 100
+      },
+      {
+        "function": "findTaskByClientOrderId",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+        "lineNumber": 569
+      },
+      {
+        "function": "task",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+        "lineNumber": 624
+      },
+      {
+        "function": "terminalFactMatchesTask",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+        "lineNumber": 31
+      },
+      {
+        "function": "recordVerifiedExitOrderFacts",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+        "lineNumber": 378
+      },
+      {
+        "function": "recordExitOrderReport",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+        "lineNumber": 398
+      },
+      {
+        "function": "reportOpenOrderExitFacts",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 82
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 211
+      },
+      {
+        "function": "runMicrotasks",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "processTicksAndRejections",
+        "url": "node:internal/process/task_queues",
+        "lineNumber": 70
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 181,
+    "percent": 0.46904558293814297,
+    "chain": [
+      {
+        "function": "update",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "update",
+        "url": "node:internal/crypto/hash",
+        "lineNumber": 131
+      },
+      {
+        "function": "put",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 136
+      },
+      {
+        "function": "captureState",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 261
+      },
+      {
+        "function": "onEvent",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 170
+      },
+      {
+        "function": "TradingQualityCollector.listener",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+        "lineNumber": 61
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/events/eventBus.js",
+        "lineNumber": 4
+      },
+      {
+        "function": "measure",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationTiming.js",
+        "lineNumber": 19
+      },
+      {
+        "function": "wrapped",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/events/eventBus.js",
+        "lineNumber": 4
+      },
+      {
+        "function": "emit",
+        "url": "node:events",
+        "lineNumber": 465
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/events/eventBus.js",
+        "lineNumber": 5
+      },
+      {
+        "function": "measure",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationTiming.js",
+        "lineNumber": 19
+      },
+      {
+        "function": "publish",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/events/eventBus.js",
+        "lineNumber": 5
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 647
+      },
+      {
+        "function": "measure",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationTiming.js",
+        "lineNumber": 19
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 211
+      },
+      {
+        "function": "runMicrotasks",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "processTicksAndRejections",
+        "url": "node:internal/process/task_queues",
+        "lineNumber": 70
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 178,
+    "percent": 0.46127134675684783,
+    "chain": [
+      {
+        "function": "allTasks",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+        "lineNumber": 100
+      },
+      {
+        "function": "findTaskByClientOrderId",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+        "lineNumber": 569
+      },
+      {
+        "function": "recordVerifiedExitOrderFacts",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+        "lineNumber": 378
+      },
+      {
+        "function": "recordExitOrderReport",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+        "lineNumber": 398
+      },
+      {
+        "function": "reportOpenOrderExitFacts",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 82
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 211
+      },
+      {
+        "function": "runMicrotasks",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "processTicksAndRejections",
+        "url": "node:internal/process/task_queues",
+        "lineNumber": 70
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 152,
+    "percent": 0.39389463318562284,
+    "chain": [
+      {
+        "function": "all",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "persistRuntime",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 994
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/runtime/appRuntime.js",
+        "lineNumber": 219
+      },
+      {
+        "function": "mutateEntryReservations",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 912
+      },
+      {
+        "function": "state.entryReservationTransaction",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/runtime/appRuntime.js",
+        "lineNumber": 219
+      },
+      {
+        "function": "mutateReservations",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/state/runtimeState.js",
+        "lineNumber": 127
+      },
+      {
+        "function": "releaseEntryReservation",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/state/runtimeState.js",
+        "lineNumber": 342
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 406
+      },
+      {
+        "function": "reservation",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationChanges.js",
+        "lineNumber": 21
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 211
+      },
+      {
+        "function": "runMicrotasks",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "processTicksAndRejections",
+        "url": "node:internal/process/task_queues",
+        "lineNumber": 70
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 152,
+    "percent": 0.39389463318562284,
+    "chain": [
+      {
+        "function": "all",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "persistRuntime",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 994
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/runtime/appRuntime.js",
+        "lineNumber": 219
+      },
+      {
+        "function": "mutateEntryReservations",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 912
+      },
+      {
+        "function": "state.entryReservationTransaction",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/runtime/appRuntime.js",
+        "lineNumber": 219
+      },
+      {
+        "function": "mutateReservations",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/state/runtimeState.js",
+        "lineNumber": 127
+      },
+      {
+        "function": "markEntryReservationWorking",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/state/runtimeState.js",
+        "lineNumber": 298
+      },
+      {
+        "function": "attachReservationToIntent",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/state/runtimeState.js",
+        "lineNumber": 322
+      },
+      {
+        "function": "analyze",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/entryCoordinator.js",
+        "lineNumber": 728
+      },
+      {
+        "function": "runMicrotasks",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "processTicksAndRejections",
+        "url": "node:internal/process/task_queues",
+        "lineNumber": 70
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 151,
+    "percent": 0.3913032211251911,
+    "chain": [
+      {
+        "function": "all",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "persistRuntime",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 994
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/runtime/appRuntime.js",
+        "lineNumber": 219
+      },
+      {
+        "function": "mutateEntryReservations",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 912
+      },
+      {
+        "function": "state.entryReservationTransaction",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/runtime/appRuntime.js",
+        "lineNumber": 219
+      },
+      {
+        "function": "mutateReservations",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/state/runtimeState.js",
+        "lineNumber": 127
+      },
+      {
+        "function": "reserveEntry",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/state/runtimeState.js",
+        "lineNumber": 225
+      },
+      {
+        "function": "analyze",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/entryCoordinator.js",
+        "lineNumber": 728
+      },
+      {
+        "function": "runMicrotasks",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "processTicksAndRejections",
+        "url": "node:internal/process/task_queues",
+        "lineNumber": 70
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 151,
+    "percent": 0.3913032211251911,
+    "chain": [
+      {
+        "function": "all",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "persistRuntime",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 994
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/runtime/appRuntime.js",
+        "lineNumber": 561
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/events/eventBus.js",
+        "lineNumber": 4
+      },
+      {
+        "function": "measure",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationTiming.js",
+        "lineNumber": 19
+      },
+      {
+        "function": "wrapped",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/events/eventBus.js",
+        "lineNumber": 4
+      },
+      {
+        "function": "emit",
+        "url": "node:events",
+        "lineNumber": 465
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/events/eventBus.js",
+        "lineNumber": 5
+      },
+      {
+        "function": "measure",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationTiming.js",
+        "lineNumber": 19
+      },
+      {
+        "function": "publish",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/events/eventBus.js",
+        "lineNumber": 5
+      },
+      {
+        "function": "placeAfterClaim",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/entryCoordinator.js",
+        "lineNumber": 542
+      },
+      {
+        "function": "submitExactlyOnce",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/entryCoordinator.js",
+        "lineNumber": 413
+      },
+      {
+        "function": "analyze",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/entryCoordinator.js",
+        "lineNumber": 728
+      },
+      {
+        "function": "runMicrotasks",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "processTicksAndRejections",
+        "url": "node:internal/process/task_queues",
+        "lineNumber": 70
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 145,
+    "percent": 0.37575474876260073,
+    "chain": [
+      {
+        "function": "all",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "persistRuntime",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 994
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/runtime/appRuntime.js",
+        "lineNumber": 219
+      },
+      {
+        "function": "mutateEntryReservations",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+        "lineNumber": 912
+      },
+      {
+        "function": "state.entryReservationTransaction",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/runtime/appRuntime.js",
+        "lineNumber": 219
+      },
+      {
+        "function": "mutateReservations",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/state/runtimeState.js",
+        "lineNumber": 127
+      },
+      {
+        "function": "markEntryReservationWorking",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/state/runtimeState.js",
+        "lineNumber": 298
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 434
+      },
+      {
+        "function": "reservation",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationChanges.js",
+        "lineNumber": 21
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 211
+      },
+      {
+        "function": "runMicrotasks",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "processTicksAndRejections",
+        "url": "node:internal/process/task_queues",
+        "lineNumber": 70
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 142,
+    "percent": 0.36798051258130554,
+    "chain": [
+      {
+        "function": "all",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "query",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/ownershipJournal.js",
+        "lineNumber": 46
+      },
+      {
+        "function": "allTasks",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+        "lineNumber": 100
+      },
+      {
+        "function": "findTaskByClientOrderId",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+        "lineNumber": 569
+      },
+      {
+        "function": "task",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+        "lineNumber": 624
+      },
+      {
+        "function": "terminalFactMatchesTask",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+        "lineNumber": 31
+      },
+      {
+        "function": "recordVerifiedExitOrderFacts",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+        "lineNumber": 378
+      },
+      {
+        "function": "recordExitOrderReport",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+        "lineNumber": 398
+      },
+      {
+        "function": "reportOpenOrderExitFacts",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 82
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/reconciliationService.js",
+        "lineNumber": 211
+      },
+      {
+        "function": "runMicrotasks",
+        "url": "",
+        "lineNumber": -1
+      },
+      {
+        "function": "processTicksAndRejections",
+        "url": "node:internal/process/task_queues",
+        "lineNumber": 70
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  },
+  {
+    "samples": 130,
+    "percent": 0.3368835678561248,
+    "chain": [
+      {
+        "function": "allTasks",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+        "lineNumber": 100
+      },
+      {
+        "function": "unreleasedClaimInventory",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+        "lineNumber": 337
+      },
+      {
+        "function": "convergenceStats",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/v396ExitRuntime.js",
+        "lineNumber": 404
+      },
+      {
+        "function": "exitConvergenceHealth",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/runtime/appRuntime.js",
+        "lineNumber": 1423
+      },
+      {
+        "function": "executionTruthProjection",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/api/projections.js",
+        "lineNumber": 64
+      },
+      {
+        "function": "baseDashboardProjection",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/api/projections.js",
+        "lineNumber": 194
+      },
+      {
+        "function": "dashboardProjection",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/api/projections.js",
+        "lineNumber": 315
+      },
+      {
+        "function": "publishSnapshot",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/api/router.js",
+        "lineNumber": 116
+      },
+      {
+        "function": "",
+        "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/api/router.js",
+        "lineNumber": 129
+      },
+      {
+        "function": "listOnTimeout",
+        "url": "node:internal/timers",
+        "lineNumber": 525
+      },
+      {
+        "function": "processTimers",
+        "url": "node:internal/timers",
+        "lineNumber": 505
+      },
+      {
+        "function": "(root)",
+        "url": "",
+        "lineNumber": -1
+      }
+    ]
+  }
+]

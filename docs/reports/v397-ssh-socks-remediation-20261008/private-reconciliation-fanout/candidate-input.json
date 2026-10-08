@@ -13,5 +13,8 @@
     "TTLs",
     "Production permissions"
   ],
-  "operatorExchangeWrites": 0
+  "operatorExchangeWrites": 0,
+  "verification": "PASS",
+  "runtimeAcceptance": "FAIL",
+  "deployedCommit": "4cd57a99af028189ca213b7aee3ed27ed1e362c4"
 }

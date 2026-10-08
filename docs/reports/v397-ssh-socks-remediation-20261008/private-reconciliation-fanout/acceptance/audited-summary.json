@@ -1,0 +1,188 @@
+{
+  "actualFirst": "2026-10-08T09:46:14.986111+00:00",
+  "actualLast": "2026-10-08T09:52:15.182624+00:00",
+  "actualMinutes": 6.003266666666667,
+  "samples": 25,
+  "identities": [
+    {
+      "pid": 43308,
+      "instanceId": "e4ce7af1-1a99-4976-a3a7-062dc4dca2ee"
+    }
+  ],
+  "privateStates": {
+    "READY": 25
+  },
+  "privateAgeMs": {
+    "n": 25,
+    "max": 18178,
+    "p95": 15646,
+    "min": 293
+  },
+  "consecutivePrivateFailures": {
+    "n": 25,
+    "max": 0,
+    "p95": 0,
+    "min": 0
+  },
+  "httpReadErrors": {},
+  "criticalQueueTimeouts": {
+    "PRIVATE": 0,
+    "EXECUTION": 0,
+    "REQUIRED_MARKET": 4
+  },
+  "otherQueueTimeouts": {
+    "BACKGROUND_AUDIT": 1
+  },
+  "observedDispatches": 626,
+  "sampledQueueDepth": {
+    "n": 25,
+    "max": 9,
+    "p95": 4,
+    "min": 0
+  },
+  "marketStates": {
+    "RECOVERING": 12,
+    "FRESH": 8,
+    "DEGRADED": 5
+  },
+  "hotQuoteAgeMs": {
+    "n": 251,
+    "max": 19832,
+    "p95": 13076,
+    "min": 1023
+  },
+  "hotBookAgeMs": {
+    "n": 251,
+    "max": 12521,
+    "p95": 8254,
+    "min": 611
+  },
+  "hotReasons": {
+    "TECHNICAL_1m_MISSING_LATEST_CLOSED": 48,
+    "QUOTE_STALE": 11,
+    "TECHNICAL_5m_MISSING_LATEST_CLOSED": 12
+  },
+  "tpIssueSamples": {},
+  "activeIncidentSamples": {},
+  "productionWrites": {
+    "nonzero": 0,
+    "unknown": 0
+  },
+  "testnetLock": {
+    "True": 25
+  },
+  "lifetimeHttpHistogram": {
+    "maxAcrossSamples": {
+      "n": 25,
+      "max": 6140.461,
+      "p95": 6140.461,
+      "min": 2447.376
+    },
+    "p95AcrossSamples": {
+      "n": 25,
+      "max": 29.917,
+      "p95": 29.917,
+      "min": 22.61
+    },
+    "includesStartup": true
+  },
+  "freshInterval": {
+    "startedAt": 1791452775805,
+    "endedAt": 1791453136163,
+    "scope": "FRESH_PROFILE_INTERVAL_ONLY",
+    "eventLoopDelayMs": {
+      "max": 6140.461055,
+      "p95": 35.553279,
+      "p99": 111.869951
+    },
+    "memoryBefore": {
+      "rss": 850911232,
+      "heapTotal": 686149632,
+      "heapUsed": 639925984,
+      "external": 10501936,
+      "arrayBuffers": 6564602
+    },
+    "memoryAfter": {
+      "rss": 2080624640,
+      "heapTotal": 1327247360,
+      "heapUsed": 1187336184,
+      "external": 13703087,
+      "arrayBuffers": 9765753
+    }
+  },
+  "rssBytes": {
+    "n": 25,
+    "max": 2155380736,
+    "p95": 2136285184,
+    "min": 847462400
+  },
+  "heapUsedBytes": {
+    "n": 25,
+    "max": 1670808880,
+    "p95": 1582375064,
+    "min": 486785624
+  },
+  "hostCommitHeadroomBytes": {
+    "n": 25,
+    "max": 2788757504,
+    "p95": 2104176640,
+    "min": 1225633792
+  },
+  "cpuInclusivePaths": [
+    {
+      "function": "captureState",
+      "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "samples": 4545,
+      "percent": 11.778
+    },
+    {
+      "function": "persistRuntime",
+      "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+      "samples": 3239,
+      "percent": 8.3936
+    },
+    {
+      "function": "(garbage collector)",
+      "url": "",
+      "samples": 1159,
+      "percent": 3.0034
+    },
+    {
+      "function": "persistRuntimeCore",
+      "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+      "samples": 798,
+      "percent": 2.0679
+    },
+    {
+      "function": "tick",
+      "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "samples": 514,
+      "percent": 1.332
+    },
+    {
+      "function": "tick",
+      "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/v396AiExitRunner.js",
+      "samples": 72,
+      "percent": 0.1866
+    },
+    {
+      "function": "tick",
+      "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/positionReviewRunner.js",
+      "samples": 65,
+      "percent": 0.1684
+    },
+    {
+      "function": "tick",
+      "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/marketDataHub.js",
+      "samples": 8,
+      "percent": 0.0207
+    },
+    {
+      "function": "tick",
+      "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/exchangeLoop.js",
+      "samples": 1,
+      "percent": 0.0026
+    }
+  ],
+  "coverage": "15-second sampled endpoints and deduplicated currently retained request ledgers. Not a complete wire census; missing values are unknown. Independent fresh histogram spans its explicitly recorded interval. Candidate hot facts include boundary/continuity failures, not just quote/book age."
+}

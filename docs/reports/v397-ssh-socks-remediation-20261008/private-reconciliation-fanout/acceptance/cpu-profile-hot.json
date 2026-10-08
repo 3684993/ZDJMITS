@@ -1,0 +1,247 @@
+{
+  "pid": 43308,
+  "seconds": 60,
+  "totalSamples": 38589,
+  "hot": [
+    {
+      "samples": 21041,
+      "functionName": "(idle)",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 1189,
+      "functionName": "put",
+      "scriptId": "205",
+      "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "lineNumber": 136,
+      "columnNumber": 7
+    },
+    {
+      "samples": 1159,
+      "functionName": "(garbage collector)",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 886,
+      "functionName": "put",
+      "scriptId": "205",
+      "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "lineNumber": 136,
+      "columnNumber": 7
+    },
+    {
+      "samples": 596,
+      "functionName": "put",
+      "scriptId": "205",
+      "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "lineNumber": 136,
+      "columnNumber": 7
+    },
+    {
+      "samples": 429,
+      "functionName": "",
+      "scriptId": "217",
+      "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+      "lineNumber": 1002,
+      "columnNumber": 25
+    },
+    {
+      "samples": 426,
+      "functionName": "",
+      "scriptId": "217",
+      "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+      "lineNumber": 1002,
+      "columnNumber": 25
+    },
+    {
+      "samples": 424,
+      "functionName": "exec",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 422,
+      "functionName": "run",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 419,
+      "functionName": "",
+      "scriptId": "217",
+      "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+      "lineNumber": 1002,
+      "columnNumber": 25
+    },
+    {
+      "samples": 418,
+      "functionName": "",
+      "scriptId": "217",
+      "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+      "lineNumber": 1002,
+      "columnNumber": 25
+    },
+    {
+      "samples": 325,
+      "functionName": "",
+      "scriptId": "217",
+      "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+      "lineNumber": 1002,
+      "columnNumber": 25
+    },
+    {
+      "samples": 308,
+      "functionName": "persistRuntimeCore",
+      "scriptId": "217",
+      "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/config/settingsStore.js",
+      "lineNumber": 942,
+      "columnNumber": 22
+    },
+    {
+      "samples": 301,
+      "functionName": "put",
+      "scriptId": "205",
+      "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "lineNumber": 136,
+      "columnNumber": 7
+    },
+    {
+      "samples": 301,
+      "functionName": "put",
+      "scriptId": "205",
+      "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "lineNumber": 136,
+      "columnNumber": 7
+    },
+    {
+      "samples": 300,
+      "functionName": "put",
+      "scriptId": "205",
+      "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "lineNumber": 136,
+      "columnNumber": 7
+    },
+    {
+      "samples": 296,
+      "functionName": "put",
+      "scriptId": "205",
+      "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "lineNumber": 136,
+      "columnNumber": 7
+    },
+    {
+      "samples": 236,
+      "functionName": "all",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 233,
+      "functionName": "(program)",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 228,
+      "functionName": "all",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 182,
+      "functionName": "allTasks",
+      "scriptId": "361",
+      "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+      "lineNumber": 100,
+      "columnNumber": 12
+    },
+    {
+      "samples": 181,
+      "functionName": "update",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 178,
+      "functionName": "allTasks",
+      "scriptId": "361",
+      "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+      "lineNumber": 100,
+      "columnNumber": 12
+    },
+    {
+      "samples": 152,
+      "functionName": "all",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 152,
+      "functionName": "all",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 151,
+      "functionName": "all",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 151,
+      "functionName": "all",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 145,
+      "functionName": "all",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 142,
+      "functionName": "all",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 130,
+      "functionName": "allTasks",
+      "scriptId": "361",
+      "url": "file:///D:/MITS-WORKTREES/v397-private-reconciliation-fanout-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+      "lineNumber": 100,
+      "columnNumber": 12
+    }
+  ]
+}

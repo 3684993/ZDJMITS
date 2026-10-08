@@ -1,3 +1,5 @@
+Current followup2026-10-08: private reconciliation fan-out candidate4cd57a9 deployed once and fullverifyPASS. Independent6.003267min acceptanceFAIL: loopmax6140.461/p9535.553ms,critical0/0/4,privateREADY25/25,TPprotected/Production0. Measured fan-out eliminated; next exact spikecallerUNKNOWN. See [private reconciliation closeout](private-reconciliation-fanout/PRIVATE_RECONCILIATION_FANOUT_ACCEPTANCE.md). Prior windows below remain historical and are not mixed into current acceptance.
+
 # Engine Reactivity deployment and one structural followup
 
 2026-10-08 +08. Authority: current human instruction and CODEX_DEPLOY_REACTIVITY_ACCEPTANCE.md. Old6/12h observation is not a gate. SSH/SOCKS, 8081/8083/8084, Settings247, strategy/Entry/TP/TTL/leverage/quote-routing/Production policy are frozen. This run does not reopen the broad audit. No Actions used as a gate.

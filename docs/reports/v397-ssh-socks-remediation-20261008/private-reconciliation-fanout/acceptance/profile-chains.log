@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "D:\MITS-WORKTREES\v397-private-reconciliation-fanout-20261008\docs\reports\v397-ssh-socks-remediation-20261008\private-reconciliation-fanout\acceptance\analyze_profile_chains.py", line 3, in <module>
+    r=pathlib.Path(sys.argv[1]);p=json.loads((r/'live-cpu.cpuprofile').read_text());nodes={n['id']:n for n in p['nodes']};parents={c:n['id'] for n in p['nodes'] for c in n.get('children',[])};memo={}
+                   ~~~~~~~~^^^
+IndexError: list index out of range

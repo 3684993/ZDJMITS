@@ -1,0 +1,8 @@
+{
+  "script": "D:\\MITS-WORKTREES\\v397-private-reconciliation-fanout-20261008\\scripts\\start-zdj-lan.ps1",
+  "detachedLauncherPid": 48504,
+  "at": "2026-10-08T09:43:08.1000382Z",
+  "result": "LAUNCHED_NOT_HEALTH_VERIFIED",
+  "log": "D:\\MITS-WORKTREES\\v397-private-reconciliation-fanout-20261008\\docs\\reports\\v397-ssh-socks-remediation-20261008\\detached-engine-launch.txt",
+  "mode": "Engine"
+}

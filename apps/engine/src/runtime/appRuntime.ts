@@ -713,7 +713,7 @@ export class EngineRuntime {
       if (runtime.stopped) return;
       if (runtime.persistTimer) return;
       runtime.persistTimer = setTimeout(() => {
-        runtime.writes.apply('runtime-checkpoint',()=>store.persistRuntime(state.serialize()));
+        runtime.writes.apply('runtime-checkpoint',()=>store.persistRuntimeCore(state.serializeCheckpointCore()));
         runtime.persistTimer = null;
       }, 1000);
     });

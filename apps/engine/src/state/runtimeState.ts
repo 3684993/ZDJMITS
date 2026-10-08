@@ -288,6 +288,19 @@ export class RuntimeState {
         this.executionFills.unshift(fill); if (this.executionFills.length > 5000)
         this.executionFills.length = 5000; }
     serialize() { return { entryReservationRevision:this.entryReservationRevision, riskLedger:this.riskLedger, aiUsageDroppedRows:this.aiUsageDroppedRows, generation: this.generation, marketGeneration: this.marketGeneration, positions: [...this.positions], entryIntents: [...this.entryIntents], entryOrders: [...this.entryOrders], tpOrders: [...this.tpOrders], manualExitGoals:[...this.manualExitGoals], manualIntents: [...this.manualIntents], manualOrders: [...this.manualOrders], allocationPlans: [...this.allocationPlans], tradePlans: [...this.tradePlans], planExecutions: [...this.planExecutions], aiUsage: [...this.aiUsage], positionReviews: [...this.positionReviews], reviewBudgets: [...this.reviewBudgets], entryReservations: [...this.entryReservations], underlyingLocks: [...this.underlyingLocks], runtimeControl: this.runtimeControl, executionGovernance: this.executionGovernance, shadowRunner: this.shadowRunner, aiRuns: this.aiRuns, rejectionCooldown: [...this.rejectionCooldown], candidateLifecycle:[...this.candidateLifecycle], directionDecisionStates:[...this.directionDecisionStates], tradeOutcomes: this.tradeOutcomes, tradeRecords: [...this.tradeRecords], experienceSamples: [...this.experienceSamples], executionFills: this.executionFills, lifecycles: [...this.lifecycles], activity: this.activity, account: this.account }; }
+    /**
+     * Cheap high-frequency checkpoint payload. Large entity collections already live behind
+     * runtime_state._entityLists/runtime_entities and are deliberately omitted here so a routine
+     * event cannot re-materialize and JSON-encode the complete retained history on the event loop.
+     * Full serialize() remains the recovery/clean-stop boundary.
+     */
+    serializeCheckpointCore() {
+        const core = this.serialize() as Record<string, unknown>;
+        for (const key of ['positions','entryIntents','entryOrders','tpOrders','manualIntents','manualOrders','allocationPlans','entryReservations','tradeRecords','experienceSamples','tradePlans','planExecutions','aiUsage','aiRuns','executionFills'])
+            delete core[key];
+        return core;
+    }
+
 restore(value) { if (!value || typeof value !== 'object')
         return; this.entryReservationRevision=Number.isSafeInteger(value.entryReservationRevision)?value.entryReservationRevision:0; this.riskLedger=value.riskLedger&&typeof value.riskLedger==='object'?value.riskLedger:null; this.aiUsageDroppedRows=Math.max(0,Math.trunc(Number(value.aiUsageDroppedRows)||0)); this.generation = Number(value.generation) || 1; this.marketGeneration = Number(value.marketGeneration) || this.generation; for (const [key, target] of [['positions', this.positions], ['entryIntents', this.entryIntents], ['entryOrders', this.entryOrders], ['tpOrders', this.tpOrders], ['manualExitGoals',this.manualExitGoals], ['manualIntents', this.manualIntents], ['manualOrders', this.manualOrders], ['allocationPlans', this.allocationPlans], ['tradePlans', this.tradePlans], ['planExecutions', this.planExecutions], ['aiUsage', this.aiUsage], ['positionReviews', this.positionReviews], ['reviewBudgets', this.reviewBudgets], ['tradeRecords', this.tradeRecords], ['experienceSamples', this.experienceSamples], ['rejectionCooldown', this.rejectionCooldown], ['candidateLifecycle', this.candidateLifecycle], ['lifecycles', this.lifecycles], ['entryReservations', this.entryReservations], ['underlyingLocks', this.underlyingLocks]])
         if (Array.isArray(value[key]))

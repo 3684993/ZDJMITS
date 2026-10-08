@@ -968,6 +968,24 @@ export class SettingsStore {
     }catch(error){this.db.exec('ROLLBACK');this.runtimeEntityCache=null;throw error;}
     finally{this.transactionActive=false;}
   }
+  /**
+   * High-frequency checkpoint for scalar/small runtime state only.
+   * The last full checkpoint owns the runtime-entity manifest; this path preserves that manifest
+   * and never scans or JSON-encodes retained entities.
+   */
+  persistRuntimeCore(value: unknown) {
+    const startedAt=Date.now(),incoming={...(value as any)};
+    delete incoming._entityLists;
+    const row=this.db.prepare('SELECT payload FROM runtime_state WHERE id=1').get() as {payload:string}|undefined;
+    if(!row)throw new Error('RUNTIME_CORE_CHECKPOINT_BASE_MISSING');
+    const prior=JSON.parse(row.payload) as Record<string,any>,priorRevision=Number(prior.entryReservationRevision??0),nextRevision=Number(incoming.entryReservationRevision??priorRevision);
+    if(Number.isFinite(priorRevision)&&Number.isFinite(nextRevision)&&priorRevision>nextRevision)throw new Error('STALE_RESERVATION_CHECKPOINT');
+    const next={...prior,...incoming};
+    if(prior._entityLists!==undefined)next._entityLists=prior._entityLists;else delete next._entityLists;
+    const payload=JSON.stringify(next);
+    this.db.prepare('UPDATE runtime_state SET payload=?,updated_at=? WHERE id=1').run(payload,Date.now());
+    this.runtimeCheckpointStats={entityWrites:0,checkpointBytes:Buffer.byteLength(payload),durationMs:Date.now()-startedAt};
+  }
   persistRuntime(value: unknown) {
     const startedAt=Date.now(),core={...(value as any)},lists:Record<string,{ids:string[];tuple:boolean}>={},updates:Array<[string,string,string]>=[];
     this.runtimeEntityCache??=new Map((this.db.prepare('SELECT kind,entity_id,payload FROM runtime_entities').all() as any[]).map(r=>[`${r.kind}:${r.entity_id}`,r.payload]));

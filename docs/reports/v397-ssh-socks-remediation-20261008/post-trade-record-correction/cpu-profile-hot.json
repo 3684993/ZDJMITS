@@ -1,0 +1,247 @@
+{
+  "pid": 28712,
+  "seconds": 20,
+  "totalSamples": 12808,
+  "hot": [
+    {
+      "samples": 2555,
+      "functionName": "",
+      "scriptId": "215",
+      "url": "file:///D:/MITS-WORKTREES/v397-trade-record-write-amplification-20261008/apps/engine/dist/config/settingsStore.js",
+      "lineNumber": 932,
+      "columnNumber": 25
+    },
+    {
+      "samples": 2552,
+      "functionName": "(idle)",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 796,
+      "functionName": "put",
+      "scriptId": "203",
+      "url": "file:///D:/MITS-WORKTREES/v397-trade-record-write-amplification-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "lineNumber": 94,
+      "columnNumber": 7
+    },
+    {
+      "samples": 605,
+      "functionName": "(garbage collector)",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 562,
+      "functionName": "all",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 535,
+      "functionName": "put",
+      "scriptId": "203",
+      "url": "file:///D:/MITS-WORKTREES/v397-trade-record-write-amplification-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "lineNumber": 94,
+      "columnNumber": 7
+    },
+    {
+      "samples": 392,
+      "functionName": "all",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 388,
+      "functionName": "persistRuntime",
+      "scriptId": "215",
+      "url": "file:///D:/MITS-WORKTREES/v397-trade-record-write-amplification-20261008/apps/engine/dist/config/settingsStore.js",
+      "lineNumber": 924,
+      "columnNumber": 18
+    },
+    {
+      "samples": 364,
+      "functionName": "",
+      "scriptId": "215",
+      "url": "file:///D:/MITS-WORKTREES/v397-trade-record-write-amplification-20261008/apps/engine/dist/config/settingsStore.js",
+      "lineNumber": 932,
+      "columnNumber": 25
+    },
+    {
+      "samples": 305,
+      "functionName": "all",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 270,
+      "functionName": "put",
+      "scriptId": "203",
+      "url": "file:///D:/MITS-WORKTREES/v397-trade-record-write-amplification-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "lineNumber": 94,
+      "columnNumber": 7
+    },
+    {
+      "samples": 255,
+      "functionName": "saveEntryExecution",
+      "scriptId": "215",
+      "url": "file:///D:/MITS-WORKTREES/v397-trade-record-write-amplification-20261008/apps/engine/dist/config/settingsStore.js",
+      "lineNumber": 1215,
+      "columnNumber": 22
+    },
+    {
+      "samples": 202,
+      "functionName": "put",
+      "scriptId": "203",
+      "url": "file:///D:/MITS-WORKTREES/v397-trade-record-write-amplification-20261008/apps/engine/dist/services/tradingQualityCollector.js",
+      "lineNumber": 94,
+      "columnNumber": 7
+    },
+    {
+      "samples": 192,
+      "functionName": "all",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 164,
+      "functionName": "",
+      "scriptId": "215",
+      "url": "file:///D:/MITS-WORKTREES/v397-trade-record-write-amplification-20261008/apps/engine/dist/config/settingsStore.js",
+      "lineNumber": 1245,
+      "columnNumber": 31
+    },
+    {
+      "samples": 102,
+      "functionName": "exec",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 96,
+      "functionName": "update",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 94,
+      "functionName": "run",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 85,
+      "functionName": "get",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 65,
+      "functionName": "all",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 64,
+      "functionName": "update",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 58,
+      "functionName": "run",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 57,
+      "functionName": "all",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 56,
+      "functionName": "all",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 52,
+      "functionName": "prepare",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 48,
+      "functionName": "exec",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 44,
+      "functionName": "update",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 40,
+      "functionName": "onMessage",
+      "scriptId": "322",
+      "url": "file:///D:/MITS-WORKTREES/v397-trade-record-write-amplification-20261008/apps/engine/dist/adapters/market/BinanceMarketStream.js",
+      "lineNumber": 160,
+      "columnNumber": 13
+    },
+    {
+      "samples": 38,
+      "functionName": "(program)",
+      "scriptId": "0",
+      "url": "",
+      "lineNumber": -1,
+      "columnNumber": -1
+    },
+    {
+      "samples": 38,
+      "functionName": "",
+      "scriptId": "356",
+      "url": "file:///D:/MITS-WORKTREES/v397-trade-record-write-amplification-20261008/apps/engine/dist/services/s04ExitCoordinator.js",
+      "lineNumber": 101,
+      "columnNumber": 77
+    }
+  ]
+}

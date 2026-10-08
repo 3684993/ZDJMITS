@@ -1,0 +1,8 @@
+{
+  "poolNonpagedBytes": 8781447168,
+  "headroomBytes": 6549983232.0,
+  "commitLimit": 126678085632,
+  "poolPagedBytes": 24612601856,
+  "committedBytes": 120128102400,
+  "at": "2026-10-08T00:31:06.4956185Z"
+}

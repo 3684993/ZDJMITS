@@ -1,0 +1,9 @@
+{
+  "label": "post-trade-record-correction",
+  "intervalSeconds": 30,
+  "pid": 26660,
+  "at": "2026-10-08T00:31:44.0593857Z",
+  "mode": "READ_ONLY_LOCALHOST_INDEPENDENT_WINDOW",
+  "minutes": 15,
+  "script": "D:\\MITS-WORKTREES\\v397-trade-record-write-amplification-20261008\\docs\\reports\\v397-ssh-socks-remediation-20261008\\post-trade-record-correction\\collect_stability.py"
+}

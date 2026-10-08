@@ -1,0 +1,14 @@
+[
+  {
+    "name": "zdj-trade-proxy-client-windows.ps1",
+    "normalizedContentEqual": true,
+    "localNormalizedSha256": "0db532f1cad8c6a8de6c5ae997905408360128f915ff76ec5f25227f05412038",
+    "projectNormalizedSha256": "0db532f1cad8c6a8de6c5ae997905408360128f915ff76ec5f25227f05412038"
+  },
+  {
+    "name": "zdj-trade-proxy-server-ubuntu.sh",
+    "normalizedContentEqual": true,
+    "localNormalizedSha256": "5c84c4cb38e1b0889f1dbddb3e3defe20028886899112e9269d4c4774d78ff3b",
+    "projectNormalizedSha256": "5c84c4cb38e1b0889f1dbddb3e3defe20028886899112e9269d4c4774d78ff3b"
+  }
+]

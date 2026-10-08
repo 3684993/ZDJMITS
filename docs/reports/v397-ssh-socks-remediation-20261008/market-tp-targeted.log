@@ -1,0 +1,32 @@
+(node:25176) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:21412) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:28772) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+VITEST_TEST_TIMEOUT=5000 CI=
+
+ RUN  v3.2.7 D:/MITS-WORKTREES/v397-market-recovery-dispatch-time-20261008/apps/engine
+
+(node:50900) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/adapters/market/BinancePublicMarketDataProvider.test.ts (13 tests) 115ms
+(node:13564) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/adapters/binance/BinanceTransport.test.ts (49 tests) 41ms
+(node:41664) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:41664) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+ ✓ src/services/tpSubmissionOutcome.test.ts (10 tests) 42ms
+(node:21480) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:21480) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+ ✓ src/services/tpUnknownRecovery.test.ts (4 tests) 21ms
+
+ Test Files  4 passed (4)
+      Tests  76 passed (76)
+   Start at  08:46:46
+   Duration  2.26s (transform 381ms, setup 0ms, collect 983ms, tests 220ms, environment 1ms, prepare 381ms)
+
+(node:24760) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)

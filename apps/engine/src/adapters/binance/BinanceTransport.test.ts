@@ -9,6 +9,17 @@ import https from 'node:https';
 import {EventEmitter} from 'node:events';
 const settings=(enabled=true)=>({executionMode:'TESTNET_ENABLED',exchange:{environment:'TESTNET',testnetBaseUrl:'https://demo-fapi.binance.com',testnetRestBaseUrl:'https://demo-fapi.binance.com',testnetWsBaseUrl:'wss://stream.binancefuture.com/ws',productionBaseUrl:'https://fapi.binance.com',productionRestBaseUrl:'https://fapi.binance.com',productionWsBaseUrl:'wss://fstream.binance.com/ws'},proxy:{enabled,url:'socks5h://127.0.0.1:20081',forceBinanceRest:true,forceBinanceWs:true,proxyDns:true,failClosed:true,binanceRestRoute:'CONFIGURED'}});
 
+it('reports quote dispatch time only after admission, before the wire request',async()=>{
+ vi.useFakeTimers();vi.setSystemTime(10000);
+ const transport=new BinanceTransport({...settings(),proxy:{...settings().proxy,url:'socks5h://127.0.0.1:29875'}} as never),onDispatch=vi.fn();let admit!:()=>void;
+ const run=vi.spyOn((transport as any).budget,'run').mockImplementation((...args:any[])=>new Promise(resolve=>{admit=()=>resolve(args[2]());}));
+ const requestSpy=vi.spyOn(https,'request').mockImplementation((...args:any[])=>{
+  const req:any=new EventEmitter();req.destroy=vi.fn();req.end=()=>{const response:any=new EventEmitter();response.statusCode=200;response.headers={};response.setEncoding=vi.fn();args[2](response);response.emit('data','{}');response.emit('end');};return req;
+ });
+ try{const pending=transport.json('/fapi/v1/ticker/bookTicker?symbol=BTCUSDT',{onDispatch});expect(onDispatch).not.toHaveBeenCalled();expect(requestSpy).not.toHaveBeenCalled();vi.setSystemTime(17000);admit();await pending;expect(onDispatch).toHaveBeenCalledExactlyOnceWith(17000);expect(requestSpy).toHaveBeenCalledTimes(1);}
+ finally{run.mockRestore();requestSpy.mockRestore();transport.dispose();vi.useRealTimers();}
+});
+
 it('inherits cancellation and historical priority only for reads, preserving execution writes',async()=>{
  const transport=new BinanceTransport(settings() as never),controller=new AbortController(),run=vi.spyOn((transport as any).budget,'run').mockResolvedValue({} as never);
  try{

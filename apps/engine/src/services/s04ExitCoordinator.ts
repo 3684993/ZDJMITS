@@ -400,6 +400,31 @@ export class PositionExitCoordinator {
 
 
   /** Local non-send evidence is distinct from an exchange REJECTED response. */
+  abortNeverSubmittedTp(clientOrderId:string,now:number){
+    return this.journal.transact(()=>{
+      const task=this.findTaskByClientOrderId(clientOrderId);
+      if(!task||task.source!=='TP'||!['PREPARED','UNKNOWN'].includes(task.state)||task.filledUnits!==0||task.version<1||task.version>16||now<task.updatedAt)return null;
+      // Every state transition commits its versioned outbox row with the task.
+      // Missing history is UNKNOWN. SUBMITTING is mandatory before adapter entry,
+      // so a complete chain containing only PREPARED -> ACK-loss bookkeeping
+      // proves this particular TP could never reach the wire path.
+      const evidence:string[]=[];
+      for(let version=1;version<=task.version;version++){
+        const id=JSON.stringify([task.scope,task.cycleId,task.taskId,version]);
+        const row=this.journal.query<{payload:string}>('SELECT payload FROM v396_outbox WHERE id=?',id)[0];if(!row)return null;
+        const event=JSON.parse(row.payload),prior=event.payload?.task;
+        if(event.type!=='EXIT_TASK_UPDATED'||!prior||prior.version!==version||prior.taskId!==task.taskId||prior.clientOrderId!==clientOrderId||prior.scope!==task.scope||prior.cycleId!==task.cycleId||prior.source!=='TP'||prior.quantityUnits!==task.quantityUnits||prior.stepSize!==task.stepSize||prior.requestKey!==task.requestKey||prior.filledUnits!==0)return null;
+        if(version===1?prior.state!=='PREPARED':prior.state!=='UNKNOWN')return null;
+        if(!Array.isArray(prior.reasons)||prior.reasons.some((reason:string)=>/SENT|SUBMITTING|CONVERGED|EXCHANGE_FACT/.test(reason)))return null;
+        if(prior.reasons.length!==version-1||prior.reasons.some((reason:string)=>reason!=='SUBMIT_ACK_LOST_MUST_QUERY_BY_CLIENT_ORDER_ID'))return null;
+        if(version===task.version&&JSON.stringify(prior)!==JSON.stringify(task))return null;
+        evidence.push(id);
+      }
+      const next:ExitTask={...task,state:'REJECTED',version:task.version+1,updatedAt:now,reasons:[...task.reasons,'LOCAL_NOT_SENT:COMPLETE_VERSIONED_PREWIRE_HISTORY']};
+      this.persist(next);this.settleClaim(next,['LOCAL_NOT_SENT','COMPLETE_VERSIONED_PREWIRE_HISTORY',...evidence]);return next;
+    });
+  }
+
   abortProvenNotSent(clientOrderId:string,proofRef:string,now:number){
     return this.journal.transact(()=>{
       const task=this.findTaskByClientOrderId(clientOrderId);

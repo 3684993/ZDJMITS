@@ -1,0 +1,9 @@
+{
+  "at": "2026-10-08T00:30:47.1390830Z",
+  "evidenceType": "OPERATOR_RECEIPT_TOOL_STDERR",
+  "exitCode": 1,
+  "enginePid": 28712,
+  "probe": "identity closure CLI before HTTP_LISTENING",
+  "interpretation": "Pre-listen probe failure is not evidence of process death. Loaded identity pending.",
+  "observedError": "ECONNREFUSED 127.0.0.1:8080"
+}

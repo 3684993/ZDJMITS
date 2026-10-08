@@ -4,7 +4,7 @@ import type { RuntimeState } from '../state/runtimeState.js';
 import type { EventBus } from '../events/eventBus.js';
 import type { ExchangeTradeAdapter } from '../types.js';
 import { binanceClientOrderIdFactory } from './binanceClientOrderIdFactory.js';
-import { confirmedTpSubmissionRejection, confirmedTpNotSent } from './tpSubmissionOutcome.js';
+import { confirmedTpSubmissionRejection, confirmedTpNotSent, tpLocalPreWireFailure } from './tpSubmissionOutcome.js';
 import { V396ExitRuntime, exitSubjectFromPosition } from './v396ExitRuntime.js';
 import type {VerifiedExitOrderFact} from './exitOrderFact.js';
 import { assembleTargetSelection, authorizedTargetFacts } from './tpTargetContract.js';
@@ -58,24 +58,28 @@ export class TpGuardian {
     if(!prepared.clientOrderId)throw new Error(`TP_EXIT_CLIENT_ORDER_ID_MISSING: ${prepared.reasons.join('|')}`);
     // P2: record the identity before the wire call. A TP that fills over WS must be provable as
     // system-generated from the durable registry, not from the shape of its client order id.
-    this.exitRuntime.registerExitProvenance({subject,clientOrderId:prepared.clientOrderId,role:'TP',source:'TP_GUARDIAN'});
-    if(!prepared.accepted&&!prepared.submitRequired)throw new Error(`TP_EXIT_PREPARE_REFUSED: ${prepared.reasons.join('|')}`);
     const submitted:TakeProfitOrder={...order,clientOrderId:prepared.clientOrderId};
-    this.state.tpOrders.set(order.id,{...submitted,status:'UNKNOWN'});
-    this.events.publish('TP_SUBMISSION_PREPARED',{positionId:order.positionId,order:{...submitted,status:'UNKNOWN'}},order.symbol);
-    if(!this.exitRuntime.transitionByClientOrderId(prepared.clientOrderId,'SUBMITTING',Date.now(),'TP_SUBMIT_SENT'))throw new Error('TP_EXIT_PREPARED_STATE_LOST');
+    let adapterAttempted=false;
     try{
+      this.exitRuntime.registerExitProvenance({subject,clientOrderId:prepared.clientOrderId,role:'TP',source:'TP_GUARDIAN'});
+      if(!prepared.accepted&&!prepared.submitRequired)throw new Error(`TP_EXIT_PREPARE_REFUSED: ${prepared.reasons.join('|')}`);
+      this.state.tpOrders.set(order.id,{...submitted,status:'UNKNOWN'});
+      this.events.publish('TP_SUBMISSION_PREPARED',{positionId:order.positionId,order:{...submitted,status:'UNKNOWN'}},order.symbol);
+      if(!this.exitRuntime.transitionByClientOrderId(prepared.clientOrderId,'SUBMITTING',Date.now(),'TP_SUBMIT_SENT'))throw new Error('TP_EXIT_PREPARED_STATE_LOST');
       const jit=this.exitRuntime.jitBeforeSubmit({subject,clientOrderId:prepared.clientOrderId,proofCheckedAt:proof.checkedAt,now:Date.now()});
       if(!jit.allowed)throw new Error(`TP_EXIT_JIT_RECHECK_FAILED: ${jit.blockers.join('|')}`);
+      adapterAttempted=true;
       const placed=await this.exchange.placeTakeProfit(submitted);
       this.converge(prepared.clientOrderId,placed,stepSize);
       return placed;
     }catch(error){
+      if(!adapterAttempted)error=tpLocalPreWireFailure(error);
       if(confirmedTpNotSent(error)&&this.exitRuntime.abortTpNotSent(prepared.clientOrderId,error,String(error))){
         this.state.tpOrders.set(order.id,{...submitted,status:'REJECTED',updatedAt:Date.now()});
         this.events.publish('TP_SUBMISSION_NOT_SENT',{positionId:order.positionId,clientOrderId:prepared.clientOrderId,reason:String(error),exchangeRequestSent:false},order.symbol);
         throw error;
       }
+      if(!adapterAttempted)throw error; // Never invent ACK loss for a local prepare failure.
       if(confirmedTpSubmissionRejection(error)){
         this.exitRuntime.observe({eventId:`TP_REJECTED:${prepared.clientOrderId}`,clientOrderId:prepared.clientOrderId,state:'REJECTED',filledUnits:0,positionVersion:this.exitRuntime.task(prepared.clientOrderId)!.positionVersion});
         throw error;
@@ -159,6 +163,12 @@ export class TpGuardian {
     existing??=[...this.state.tpOrders.values()].find(o=>o.positionId===current.id&&o.status==='UNKNOWN');
     // A failed repair clears the pointer; still cancel the old under-sized TP before replacing it.
     if(!existing||!['UNKNOWN','WORKING','PARTIALLY_FILLED'].includes(existing.status))existing=[...this.state.tpOrders.values()].find(o=>o.positionId===current.id&&['WORKING','PARTIALLY_FILLED'].includes(o.status))??existing;
+    if(existing?.status==='UNKNOWN'&&existing.clientOrderId){
+      try{
+        const aborted=this.exitRuntime.abortTpNeverSubmitted(existing.clientOrderId);
+        if(aborted){existing={...existing,status:'REJECTED',updatedAt:aborted.updatedAt};this.state.tpOrders.set(existing.id,existing);this.retry.delete(current.id);this.events.publish('TP_LOCAL_PREWIRE_HISTORY_RECOVERED',{positionId:current.id,orderId:existing.id,clientOrderId:existing.clientOrderId,exchangeRequestSent:false,proof:'COMPLETE_VERSIONED_TASK_HISTORY'},current.symbol);}
+      }catch(error){this.events.publish('TP_LOCAL_PREWIRE_HISTORY_DEFERRED',{positionId:current.id,clientOrderId:existing.clientOrderId,message:String(error),repairReleased:false},current.symbol);}
+    }
     if(existing?.status==='UNKNOWN'){
       const proof=this.unknownAbsenceProof.get(existing.id),now=Date.now();
       if(proof&&now-proof.lastAt<15_000)return;

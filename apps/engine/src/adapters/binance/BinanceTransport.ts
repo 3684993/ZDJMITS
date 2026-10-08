@@ -65,7 +65,7 @@ export class BinanceTransport {
  websocketRoute(){const configuredUrl=this.configuredWsUrl(),publicUrl=this.effectiveWsUrl('PUBLIC'),marketUrl=this.effectiveWsUrl('MARKET');return{url:configuredUrl,publicUrl,marketUrl,throughProxy:Boolean(this.agent),proxyUrl:this.agent?this.settings.proxy.url:null,tlsServername:new URL(marketUrl).hostname,routeIdentity:this.routeIdentity,failClosed:true};}
  private assertBinance(url:URL){if(!(url.hostname==='binance.com'||url.hostname.endsWith('.binance.com'))&&!(url.hostname==='binancefuture.com'||url.hostname.endsWith('.binancefuture.com')))throw new Error(`Refusing non-Binance transport host: ${url.hostname}`);this.assertProxy();}
  private async ensureRequestWeightLimit(){if(this.budget.health().limitSource==='BINANCE_EXCHANGE_INFO')return;if(!this.requestLimitFlight){const flight=this.json<any>('/fapi/v1/exchangeInfo',{source:'RATE_LIMIT_CONTROL',purpose:'REQUEST_WEIGHT_DISCOVERY'}).then(()=>{}).finally(()=>{if(this.requestLimitFlight===flight)this.requestLimitFlight=null;});this.requestLimitFlight=flight;}await this.requestLimitFlight;}
- async json<T>(pathOrUrl:string,init:{method?:string;headers?:Record<string,string>;body?:string;timeoutMs?:number;source?:string;purpose?:string;signal?:AbortSignal}={}):Promise<T>{
+ async json<T>(pathOrUrl:string,init:{method?:string;headers?:Record<string,string>;body?:string;timeoutMs?:number;source?:string;purpose?:string;signal?:AbortSignal;onDispatch?:(startedAt:number)=>void}={}):Promise<T>{
    const url=new URL(pathOrUrl,this.effectiveBaseUrl());this.assertBinance(url);
    if(url.origin!==new URL(this.effectiveBaseUrl()).origin)throw new Error('BINANCE_ENVIRONMENT_ORIGIN_MISMATCH');
    const method=(init.method??'GET').toUpperCase(),context=method==='GET'?binanceReadContext():undefined,signal=method==='GET'?(init.signal??context?.signal):undefined,
@@ -81,6 +81,9 @@ export class BinanceTransport {
      return new Promise<T>((resolve,reject)=>{
        const timeoutMs=init.timeoutMs??15_000,deadline=AbortSignal.timeout(timeoutMs),requestSignal=signal?AbortSignal.any([signal,deadline]):deadline;
        const timing={startedAt:Date.now(),proxyConnectStartedAt:null as number|null,proxyConnectedAt:null as number|null,socketAssignedAt:null as number|null,secureConnectedAt:null as number|null,responseAt:null as number|null,completedAt:null as number|null,reusedSocket:false,failurePhase:null as string|null};
+       // A quote's observation bound starts at admitted wire dispatch, not while
+       // waiting in admission. Network/body time remains part of its age.
+       init.onDispatch?.(timing.startedAt);
        let removeSecureListener=()=>{},removeAbortListener=()=>{},settled=false;
        const finish=(failed=false)=>{if(settled)return false;settled=true;removeSecureListener();removeAbortListener();timing.completedAt=Date.now();if(failed)timing.failurePhase=signal?.aborted?'READ_BUDGET_ABORT':timing.responseAt?'RESPONSE_BODY':timing.secureConnectedAt?'FIRST_BYTE':timing.socketAssignedAt?'TLS_HANDSHAKE':timing.proxyConnectStartedAt?'SOCKS_NEGOTIATION':'AGENT_QUEUE';budget.recordNetworkTiming(meta,timing);return true;};
        const request=https.request(url,{method,headers:{'user-agent':'zdj-mits-v3/3.9',...init.headers},agent,timeout:timeoutMs,signal:requestSignal},response=>{

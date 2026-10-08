@@ -1,0 +1,53 @@
+{
+  "scripts": [
+    {
+      "localSha256": "0DB532F1CAD8C6A8DE6C5AE997905408360128F915FF76EC5F25227F05412038",
+      "name": "zdj-trade-proxy-client-windows.ps1",
+      "projectSha256": "DF81D93F0DE1DA85E7D5EDDEFD0EAE64E870ED008CBDD481AC1292BAF9688B95"
+    },
+    {
+      "localSha256": "5C84C4CB38E1B0889F1DBDDB3E3DEFE20028886899112E9269D4C4774D78FF3B",
+      "name": "zdj-trade-proxy-server-ubuntu.sh",
+      "projectSha256": "A212D76B4546C1BD4B80D33F4750F6AFF14FCABF154E97DC065B11E0A8FD5128"
+    }
+  ],
+  "processes": [
+    {
+      "present": true,
+      "pid": 28712,
+      "name": "node.exe",
+      "createdAt": "2026-10-08T08:29:40.053799+08:00"
+    },
+    {
+      "present": true,
+      "pid": 29068,
+      "name": "ssh.exe",
+      "createdAt": "2026-10-08T07:18:23.623475+08:00"
+    },
+    {
+      "present": true,
+      "pid": 11852,
+      "name": "powershell.exe",
+      "createdAt": "2026-10-08T07:19:22.995047+08:00"
+    },
+    {
+      "present": true,
+      "pid": 12732,
+      "name": "llama-server.exe",
+      "createdAt": "2026-09-18T22:52:52.484377+08:00"
+    },
+    {
+      "present": true,
+      "pid": 17468,
+      "name": "llama-server.exe",
+      "createdAt": "2026-10-05T13:44:46.208699+08:00"
+    },
+    {
+      "present": true,
+      "pid": 51124,
+      "name": "llama-server.exe",
+      "createdAt": "2026-10-05T13:45:30.41198+08:00"
+    }
+  ],
+  "at": "2026-10-08T00:53:06.4098587Z"
+}

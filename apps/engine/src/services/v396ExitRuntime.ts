@@ -544,6 +544,12 @@ export class V396ExitRuntime {
     return this.recoveryCoordinator.abortProvenNotSent(clientOrderId,proofRef,now);
   }
 
+  abortTpNeverSubmitted(clientOrderId:string,now=Date.now()){
+    const task=this.task(clientOrderId),identity=this.exchangeIdentity();if(!task||task.source!=='TP'||identity.environment!=='TESTNET')return null;
+    const scope=V396ExitRuntime.parseScope(task.scope);if(scope?.environment!==identity.environment||scope?.account!==identity.account)return null;
+    return this.recoveryCoordinator.abortNeverSubmittedTp(clientOrderId,now);
+  }
+
   transitionByClientOrderId(clientOrderId:string,next:ExitTaskState,now:number,reason:string){
     const task=this.recoveryCoordinator.findTaskByClientOrderId(clientOrderId);
     return task?this.recoveryCoordinator.transition(task.taskId,next,now,reason):null;

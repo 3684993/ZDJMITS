@@ -83,13 +83,19 @@ export class BinancePublicMarketDataProvider implements MarketDataProvider {
 
   private quoteFlights=new Map<string,Promise<Quote>>();
   private bookFlights=new Map<string,Promise<OrderBook>>();
-  private premiumFlights=new Map<string,Promise<any>>();
+  private premiumFlights=new Map<string,Promise<{at:number;value:any}>>();
   private premiumCache=new Map<string,{at:number;value:any}>();
-  private premiumIndex(symbol:string,critical:boolean){
-    const cached=this.premiumCache.get(symbol);if(cached&&Date.now()-cached.at<=5_000)return Promise.resolve(cached.value);
-    const pending=this.premiumFlights.get(symbol);if(pending)return pending;
-    const at=Date.now(),flight=this.transport.json<any>(`/fapi/v1/premiumIndex?symbol=${symbol}`,{source:critical?'MARKET_DATA':'BACKGROUND_AUDIT',purpose:critical?'QUOTE_MARK_RECOVERY':'DERIVATIVES_CONTEXT_MARK_PRICE',timeoutMs:critical?undefined:3_000}).then(value=>{if(this.premiumCache.size>=512)this.premiumCache.delete(this.premiumCache.keys().next().value!);this.premiumCache.set(symbol,{at,value});return value;}).finally(()=>this.premiumFlights.delete(symbol));this.premiumFlights.set(symbol,flight);return flight;
+  private premiumIndexFact(symbol:string,critical:boolean){
+    const cached=this.premiumCache.get(symbol);if(cached&&Date.now()-cached.at<=5_000)return Promise.resolve(cached);
+    // A required mark must not inherit a queued advisory read's priority/deadline.
+    // Coalesce within each lane; a late older response cannot replace a newer fact.
+    const key=`${symbol}:${critical?'critical':'background'}`,pending=this.premiumFlights.get(key);if(pending)return pending;
+    let at=Date.now();
+    const flight=this.transport.json<any>(`/fapi/v1/premiumIndex?symbol=${symbol}`,{source:critical?'MARKET_DATA':'BACKGROUND_AUDIT',purpose:critical?'QUOTE_MARK_RECOVERY':'DERIVATIVES_CONTEXT_MARK_PRICE',timeoutMs:critical?undefined:3_000,onDispatch:startedAt=>{at=startedAt;}}).then(value=>{
+      const fact={at,value};if(at>=(this.premiumCache.get(symbol)?.at??0)){if(this.premiumCache.size>=512&&!this.premiumCache.has(symbol))this.premiumCache.delete(this.premiumCache.keys().next().value!);this.premiumCache.set(symbol,fact);}return fact;
+    }).finally(()=>this.premiumFlights.delete(key));this.premiumFlights.set(key,flight);return flight;
   }
+  private premiumIndex(symbol:string,critical:boolean){return this.premiumIndexFact(symbol,critical).then(fact=>fact.value);}
   getQuote(symbol:string):Promise<Quote>{
     const pending=this.quoteFlights.get(symbol);if(pending)return pending;
     const flight=this.loadQuote(symbol).finally(()=>this.quoteFlights.delete(symbol));this.quoteFlights.set(symbol,flight);return flight;
@@ -97,8 +103,8 @@ export class BinancePublicMarketDataProvider implements MarketDataProvider {
   private async loadQuote(symbol:string):Promise<Quote>{
     const rules=await this.rules(symbol),fields=this.stream.quoteFields(symbol),work:Promise<unknown>[]=[];
     // Required facts retain their own timestamp. Never pull all three endpoints for one gap.
-    if(fields.last===undefined||fields.quoteVolumeUsd24h===undefined){const at=Date.now();work.push(this.transport.json<any>(`/fapi/v1/ticker/24hr?symbol=${symbol}`,{source:'MARKET_DATA',purpose:'QUOTE_LAST_RECOVERY'}).then(t=>this.stream.seedQuote(symbol,{last:Number(t.lastPrice),quoteVolumeUsd24h:Number(t.quoteVolume),priceChangePercent24h:Number(t.priceChangePercent),tradeCount24h:Number(t.count??0),ts:at})));}
-    if(fields.mark===undefined){const at=Date.now();work.push(this.premiumIndex(symbol,true).then(p=>this.stream.seedQuote(symbol,{mark:Number(p.markPrice),ts:Number(p.time)>0?Number(p.time):at})));}
+    if(fields.last===undefined||fields.quoteVolumeUsd24h===undefined){let at=Date.now();work.push(this.transport.json<any>(`/fapi/v1/ticker/24hr?symbol=${symbol}`,{source:'MARKET_DATA',purpose:'QUOTE_LAST_RECOVERY',onDispatch:startedAt=>{at=startedAt;}}).then(t=>this.stream.seedQuote(symbol,{last:Number(t.lastPrice),quoteVolumeUsd24h:Number(t.quoteVolume),priceChangePercent24h:Number(t.priceChangePercent),tradeCount24h:Number(t.count??0),ts:at})));}
+    if(fields.mark===undefined)work.push(this.premiumIndexFact(symbol,true).then(({at,value:p})=>this.stream.seedQuote(symbol,{mark:Number(p.markPrice),ts:Number(p.time)>0?Number(p.time):at})));
     if(fields.bid===undefined||fields.ask===undefined)work.push(this.getOrderBook(symbol).then(book=>{if(!book.bids.length||!book.asks.length)throw new Error(`BINANCE_BOOK_FACT_UNAVAILABLE:${symbol}`);this.stream.seedQuote(symbol,{bid:book.bids[0]![0],ask:book.asks[0]![0],ts:book.ts});}));
     await Promise.all(work);
     const q=this.stream.quote(symbol);if(!q?.last||!q.mark||!q.bid||!q.ask||!q.ts)throw new Error(`BINANCE_REQUIRED_QUOTE_FACT_UNAVAILABLE:${symbol}`);
@@ -125,7 +131,7 @@ export class BinancePublicMarketDataProvider implements MarketDataProvider {
     this.repairFlights.set(key,flight);return flight;
   }
 
-  private async restOrderBook(symbol:string):Promise<OrderBook>{const at=Date.now(),d=await this.transport.json<any>(`/fapi/v1/depth?symbol=${symbol}&limit=20`,{source:'MARKET_DATA',purpose:'QUOTE_BOOK_RECOVERY'}),ts=Number(d.T??d.E)>0?Number(d.T??d.E):at;if(!Number.isFinite(ts)||ts>Date.now()+1_000)throw new Error(`BINANCE_BOOK_TIMESTAMP_INVALID:${symbol}`);return{symbol,bids:d.bids.map((x:any)=>[Number(x[0]),Number(x[1])] as [number,number]),asks:d.asks.map((x:any)=>[Number(x[0]),Number(x[1])] as [number,number]),ts};}
+  private async restOrderBook(symbol:string):Promise<OrderBook>{let at=Date.now();const d=await this.transport.json<any>(`/fapi/v1/depth?symbol=${symbol}&limit=20`,{source:'MARKET_DATA',purpose:'QUOTE_BOOK_RECOVERY',onDispatch:startedAt=>{at=startedAt;}}),ts=Number(d.T??d.E)>0?Number(d.T??d.E):at;if(!Number.isFinite(ts)||ts>Date.now()+1_000)throw new Error(`BINANCE_BOOK_TIMESTAMP_INVALID:${symbol}`);return{symbol,bids:d.bids.map((x:any)=>[Number(x[0]),Number(x[1])] as [number,number]),asks:d.asks.map((x:any)=>[Number(x[0]),Number(x[1])] as [number,number]),ts};}
   async getOrderBook(symbol:string):Promise<OrderBook>{const live=this.stream.book(symbol);if(live)return live;const pending=this.bookFlights.get(symbol);if(pending)return pending;const flight=this.restOrderBook(symbol).then(book=>{this.stream.seed(symbol,book,[]);return this.stream.book(symbol)??book;}).finally(()=>this.bookFlights.delete(symbol));this.bookFlights.set(symbol,flight);return flight;}
 
   hydrateLiveMarket(snapshot:MarketSymbolSnapshot):MarketSymbolSnapshot{const quote=this.stream.quote(snapshot.symbol),book=this.stream.book(snapshot.symbol);if(!quote&&!book)return snapshot;const now=Date.now();return{...snapshot,recentTradedPrices:this.stream.tradedPrices.near(snapshot.symbol,quote?.bid??snapshot.quote.bid,quote?.ask??snapshot.quote.ask,snapshot.quote.tickSize),quote:quote?{...snapshot.quote,last:quote.last??snapshot.quote.last,mark:quote.mark??snapshot.quote.mark,bid:quote.bid??snapshot.quote.bid,ask:quote.ask??snapshot.quote.ask,quoteVolumeUsd24h:quote.quoteVolumeUsd24h??snapshot.quote.quoteVolumeUsd24h,priceChangePercent24h:quote.priceChangePercent24h??snapshot.quote.priceChangePercent24h,tradeCount24h:quote.tradeCount24h??snapshot.quote.tradeCount24h,ts:quote.ts??now}:snapshot.quote,orderBook:book??snapshot.orderBook};}

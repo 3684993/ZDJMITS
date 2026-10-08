@@ -40,3 +40,19 @@ PRIVATE / EXECUTION / REQUIRED_MARKET lanes remain free of queue timeout with fr
 If full persistence remains dominant after this first structural cut, the next iteration should
 replace the remaining synchronous full checkpoints/reservation transaction with entity-specific
 incremental persistence, not resume Trading Quality micro-tuning.
+
+
+## Crash-window refinement
+
+Static review of the first candidate found three extracted facts that can be created between full
+safety checkpoints: `tradePlans`, `planExecutions`, and `executionFills`.
+
+The branch now adds `persistRuntimeEntity()`, which atomically upserts one entity and its
+`_entityLists` membership without a full `runtime_entities` scan. Event wiring persists:
+
+- `TRADE_PLAN_PERSISTED` -> one `tradePlans` row;
+- `TRADE_PLAN_EXECUTION_RECORDED` -> the one plan's execution array;
+- `EXCHANGE_FILL_ATTRIBUTED` -> one newest-first fill, bounded to the existing 5,000-row window.
+
+This preserves the crash-recovery facts that the core-only generic checkpoint would otherwise
+delay, while keeping the high-frequency path independent of retained-history size.

@@ -632,6 +632,20 @@ export class EngineRuntime {
       runtime.observeModelUsage(event);
       const requiredBeforeWrite=['ENTRY_SUBMIT_ATTEMPTED','MANUAL_SUBMISSION_PREPARED','TP_SUBMISSION_PREPARED'];
       if(requiredBeforeWrite.includes(event.type))store.recordRuntimeEvent(event);else runtime.writes.apply(`event:${event.id}`,()=>store.recordRuntimeEvent(event));
+      // Persist newly-created recovery facts without forcing the generic checkpoint to scan
+      // every historical runtime entity. These events are published only after in-memory mutation.
+      if(event.type==='TRADE_PLAN_PERSISTED'){
+        const planId=String((event.payload as any)?.planId??''),plan=state.tradePlans.get(planId);
+        if(plan)runtime.writes.apply(`runtime-entity:trade-plan:${planId}`,()=>store.persistRuntimeEntity('tradePlans',planId,plan,{tuple:true}));
+      }
+      if(event.type==='TRADE_PLAN_EXECUTION_RECORDED'){
+        const planId=String((event.payload as any)?.planId??''),executions=state.planExecutions.get(planId);
+        if(executions)runtime.writes.apply(`runtime-entity:plan-execution:${planId}`,()=>store.persistRuntimeEntity('planExecutions',planId,executions,{tuple:true}));
+      }
+      if(event.type==='EXCHANGE_FILL_ATTRIBUTED'){
+        const fill=(event.payload as any)?.fill,fillId=String(fill?.fillId??'');
+        if(fillId)runtime.writes.apply(`runtime-entity:fill:${fillId}`,()=>store.persistRuntimeEntity('executionFills',fillId,fill,{tuple:false,front:true,maxIds:5000}));
+      }
       if(event.type==='RECONCILIATION_COMPLETED'||event.type==='ENTRY_ORDER_TTL_CLOSED'||event.type==='ENTRY_ORDER_REPRICED'){
         const orderId=(event.payload as any)?.orderId;
         const orders=event.type==='RECONCILIATION_COMPLETED'||!orderId?state.entryOrders.values():[state.entryOrders.get(orderId)];

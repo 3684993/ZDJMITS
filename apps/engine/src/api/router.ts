@@ -332,6 +332,11 @@ export function createApiRouter(runtime: EngineRuntime) {
   r.get('/market-intelligence/external-research',(_q,res)=>res.json({providers:runtime.externalIntelligence.status(),research:runtime.externalResearch.metrics()}));
   r.get('/diagnostics/private-sync',(_q,res)=>res.json({sync:runtime.privateSyncHealth(),requests:binanceRequestBudgetsHealth()}));
   r.get('/diagnostics/binance-governance',(_q,res)=>res.json({asOf:Date.now(),routes:binanceTransportGovernance(),budgets:binanceRequestBudgetsHealth()}));
+  r.get('/diagnostics/market-stream-traffic',(_q,res)=>{const metrics:any=runtime.market.metrics();res.json({
+    asOf:Date.now(),state:metrics.state??'UNKNOWN',retainedSymbols:metrics.quoteFactFreshness?.retainedSymbols??null,
+    streamTraffic:metrics.streamTraffic??null,lanes:metrics.lanes??null,
+    unit:'DECODED_WS_APPLICATION_PAYLOAD_NOT_SSH_WIRE_BYTES',readOnly:true
+  });});
   r.get('/diagnostics/logging',(_q,res)=>res.json((runtime as any).operationalLogHealth?.()??{status:'NOT_ATTACHED'}));
   r.get('/diagnostics/supply',(_q,res)=>res.json({health:runtime.supplyHealth(),residentTarget:runtime.state.settings.selection.poolTarget,residents:runtime.state.pool.list(),capacity:runtime.runtimeControl.capacityDiagnostics(),reserve:runtime.state.universe.filter(c=>(c.residentEligible??c.eligible)&&!runtime.state.pool.has(c.symbol)).slice(0,40).map(c=>({symbol:c.symbol,rank:c.rank,components:c.components,assetAdmission:c.assetAdmission,pipelineEligible:c.pipelineEligible}))}));
   // P4: the three layers the Entry chain now answers with, side by side, plus the fund/lease facts the

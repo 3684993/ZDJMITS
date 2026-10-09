@@ -76,6 +76,23 @@ powershell -NoProfile -ExecutionPolicy Bypass -File "$review\maintenance-preflig
 
 **后续获授权维护的原则顺序：** 先确认 Engine 不在运行及持仓保护由交易所独立存在；保存 model logs、精确 PID/创建时间和 watchdog 身份；确认谁会自动重启；再分角色停止 27B Primary→27B Harness（最后视必要性停 9B）；每停止一项观测提交内存及内核池真实回收，再先 9B、Harness、Primary 逐一重载并逐角色 smoke；重载后每一步若低内存/百万句柄/模型 API 异常，立即停住而非继续第三个。手动 Stop 的真实授权、Engine 保护状态、内存预算若不满足，不准执行此流程。
 
+## 2026-10-09 09:26 +08：PowerShell 只读预检修复
+
+用户首次执行 maintenance-preflight-readonly.ps1 时遇到 `无法覆盖变量 PID，因为该变量为只读变量或常量`，原因为脚本内写入小写 `$pid`。Windows PowerShell 变量大小写不敏感，因此它与只读自动变量 `$PID` 冲突；问题发生在创建维护状态摘要前，**没有执行任何 Stop/Start**。
+
+已将维护脚本所有本地 `$pid` 改为 `$roleListenerPid`，并通过源码排查保证三个模型候选启动脚本只读使用 `$PID`；同时在 verify-candidate-parse-readonly.ps1 中加入 PowerShell AST 检测：解析候选 PS1 时拒绝任何向 `$PID`（任何大小写）赋值或作为参数绑定；加入一条合成错误赋值和一条合法读取的回归自测。**此改动通过 GitHub 远端文件 readback 后，还需用户 Windows 本地实际运行该检查；不得把远端静态检查写成 Windows PASS。**
+
+修复后从 review worktree 执行（不覆盖旧工作区）：
+
+~~~powershell
+git -C D:\MITS-worktrees\llama-memory-20261009 pull --ff-only origin codex/llama-vulkan-memory-20261009
+$review = 'D:\MITS-worktrees\llama-memory-20261009\scripts\llama-vulkan'
+powershell -NoProfile -ExecutionPolicy Bypass -File "$review\verify-candidate-parse-readonly.ps1"
+powershell -NoProfile -ExecutionPolicy Bypass -File "$review\maintenance-preflight-readonly.ps1"
+~~~
+
+此时仍只有约 1.48GiB commit headroom，不可因修复诊断脚本就立刻重启。请求本机日志摘要而不是要求用户传完整隐私文件。
+
 ## 本机后续根因调查
 
 1. 独立核实 8083/8084 的 Process HandleCount 与 PerfCIM HandleCount，检查短时增量与进程创建时间；若仍百万级，使用本机资源工具确认句柄类型与 PoolMon tag，不得直接认定驱动泄漏。

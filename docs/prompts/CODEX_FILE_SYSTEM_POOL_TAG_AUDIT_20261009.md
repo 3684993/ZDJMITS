@@ -51,3 +51,18 @@ Absolutely no blanket filter unload, attach/detach, Driver Verifier, forced hand
 - confidence-graded finding: established Filter Manager broad allocation category, suspected responsible filter(s) conditional, root cause UNKNOWN unless proof;
 - concrete least-risk fix/mitigation choices ranked by evidence; mention operational pagefile/reboot only as separate authorized resource mitigation, not root fix;
 - commit sanitized summary to this **isolated review branch only**, do not use Actions.
+
+
+## 2026-10-09 10:07 +08: Phase 1 completed — do not redo the same step
+
+The user's actual `fltmc` capture succeeded with 0 return codes. This addendum supersedes older directions to run fltmc just to collect topology.
+
+- Windows 11 Pro 25H2 **26200.9457**, exactly September 14 KB5129195 servicing build.
+- Active C:/D: minifilters include `WdFilter`, `FileInfo`, `UCPD`, `bfs`, `Wof`, `gameflt`. `bindflt` is active C: only. `CldFlt` loaded but 0 active instances. Every enumerated filter frame=0; no visible <Legacy>.
+- Resident pools **22.699GiB paged / 7.540GiB nonpaged**; host commit about **69.799GiB**. 8081 9B still listening; 8080/8083/8084 absent.
+- File stack pool tag evidence still FMfn=12.7989GiB, File=4.7545GiB, Ntfc=1.8958GiB, IoNm=1.7121GiB. Pool tag allocation owner not demonstrated; Windows device/filter stack membership alone is not culpability.
+- Microsoft KB5129195 release text does **not claim FMfn fix**. Community reports of similar Windows builds may help scope inquiry, but are not proof the user's machine shares the same bug. See `scripts/llama-vulkan/POST_FILTER_STACK_FINDINGS_20261009.md`.
+
+**Your next useful action** (read-only): use new `scripts/llama-vulkan/capture-filter-driver-provenance-readonly.ps1` to verify driver service/binary version/signature, and `capture-kernel-pool-tags-native-readonly.ps1` plus `compare-kernel-pool-tags-readonly.ps1` on independent snapshots 10+ minutes apart to assess actual byte growth. The driver script makes a same-name Win32_SystemDriver match and uses file Authenticode check; **catalog-signed driver files can appear NotSigned**, and certificate/system binary mapping is not a per-pool allocation stack. Do not claim a driver is untrusted based solely on this.
+
+Continue only by preserving all original controls: no Windows update or reboot without approval, no main commit, no Actions, no 27B restart, no 9B stop, no Engine startup. Only sanitized report on the review branch. No automatic WPR/ETW acquisition without operator approval due file path privacy.

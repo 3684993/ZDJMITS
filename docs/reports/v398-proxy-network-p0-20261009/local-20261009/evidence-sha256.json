@@ -1,182 +1,290 @@
 [
   {
-    "file": "_ZDJ-MITS_Local_Health_Monitor.before.xml",
-    "bytes": 3354,
-    "sha256": "573D1D81F175A9F62F217CA9CA73E255D1051EFEBEABE118F3464594E3290526"
-  },
-  {
-    "file": "_ZDJ-MITS_Local_Health_Monitor.vbs",
-    "bytes": 590,
-    "sha256": "B7506B0DA18583EFC265763ABB7B764666DF93932D7E31FE9E38BAEB9FDC7434"
-  },
-  {
-    "file": "_ZDJ-MITS_Manual_Engine.before.xml",
-    "bytes": 2812,
-    "sha256": "F5D96FBD7461897D2EDA984493AF4BFA6BF723248B8C99E743175538D8E48444"
-  },
-  {
-    "file": "_ZDJ-MITS_Manual_Engine.vbs",
-    "bytes": 864,
-    "sha256": "E3E7C999927842C1A90B3921FBD57C1AE2D2200083B0C857DF148B1B09D8EDD9"
-  },
-  {
-    "file": "_ZDJ-MITS_V3_9_2_Testnet_Acceptance_Monitor.before.xml",
-    "bytes": 3470,
-    "sha256": "EF8807BBB3F4CF9C077BAB34157A55955D6542E3ACA7197462599D64F22FD9DD"
-  },
-  {
-    "file": "_ZDJ-MITS_V3_9_2_Testnet_Acceptance_Monitor.vbs",
-    "bytes": 612,
-    "sha256": "515A7077A72EE0CAC18653417F50BFC8745322F43C88061B70BF082B43CCC625"
-  },
-  {
-    "file": "_ZDJ-MITS-AfterReboot-TESTNET.before.xml",
-    "bytes": 4110,
-    "sha256": "6F593230F6DCB8F5A3D4D4E18362B76C02C7F67FF0CDED387BFDFAD4104EBF81"
-  },
-  {
-    "file": "_ZDJ-MITS-AfterReboot-TESTNET.vbs",
-    "bytes": 1556,
-    "sha256": "96C674C82DA8FDE6D61CC266BA82E44B856B205409C21E1E81C86B4984D62055"
-  },
-  {
-    "file": "_ZDJMITS_ZDJ-MITS-Engine-Crash-Observer.before.xml",
-    "bytes": 4706,
-    "sha256": "71E0ADF043ED77B481C7E9820EF09FBFA6EA6CF72A313B6924C9802B20541E10"
-  },
-  {
-    "file": "_ZDJMITS_ZDJ-MITS-Engine-Crash-Observer.vbs",
-    "bytes": 2018,
-    "sha256": "DC04AF9BD7F6EFCEE85B9584A0AF421281CFC6B2C93D3D684BAC76EAA2D2E06B"
-  },
-  {
-    "file": "_ZDJMITS_ZDJ-V398-24h-Readonly-Checkpoint.before.xml",
-    "bytes": 3776,
-    "sha256": "1784E902EC72ED636CC398AC93157D36A0C5A6B334CB8DD972E131F12E89E142"
-  },
-  {
-    "file": "_ZDJMITS_ZDJ-V398-24h-Readonly-Checkpoint.vbs",
-    "bytes": 714,
-    "sha256": "1FDCE53B6F16FE38808AA4A45868CCF0C254DB83D6B83DBB4965360B9A1E5237"
-  },
-  {
-    "file": "_ZDJMITS_ZDJ-V398-Passive-Trade-Audit.before.xml",
-    "bytes": 3604,
-    "sha256": "FCA082E87711D032A93F22D6413E904BB272DC267BD389FB4B949E030494E9A2"
-  },
-  {
-    "file": "_ZDJMITS_ZDJ-V398-Passive-Trade-Audit.vbs",
-    "bytes": 710,
-    "sha256": "8530D2A0ACD596DA718D5E7938E12AECF5C64F5D37CBE54084D7D38EAA8444C3"
-  },
-  {
-    "file": "_ZDJMITS_ZDJ-V398-Primary-Cadence-90min.before.xml",
-    "bytes": 3616,
-    "sha256": "D77B7C9AF16AE4A300A1CE27B5AED4CA0921E8166415BD9F9F2315CEB9E2B642"
-  },
-  {
-    "file": "_ZDJMITS_ZDJ-V398-Primary-Cadence-90min.vbs",
-    "bytes": 716,
-    "sha256": "6A17C4F052586B6D6F439FC1BA34E227DC054F330E863E7E560E57D85B3DCFA1"
-  },
-  {
     "file": "ad-hoc-memory-update.md",
-    "bytes": 2539,
-    "sha256": "5F66C91214F30265C26B32EDE978EDA1AEE69AC71C29586E9EFFFCC121B20AA1"
+    "localBytes": 2539,
+    "sha256": "5f66c91214f30265c26b32ede978eda1aee69ac71c29586e9efffcc121b20aa1",
+    "githubBlobBytes": 2539,
+    "githubBlobSha256": "5f66c91214f30265c26b32ede978eda1aee69ac71c29586e9efffcc121b20aa1",
+    "normalization": "VERBATIM"
   },
   {
     "file": "cadence-waiting.jsonl",
-    "bytes": 262,
-    "sha256": "AEBED2C9A3C661171B84E836D46FB04382C82336133EC8E151A5E26F187C19F8"
+    "localBytes": 262,
+    "sha256": "aebed2c9a3c661171b84e836d46fb04382c82336133ec8e151a5e26f187c19f8",
+    "githubBlobBytes": 260,
+    "githubBlobSha256": "12ff639657dc49d489b23ec4dfa9130308d29e31d7882c07f3bff0710535b949",
+    "normalization": "GIT_TEXT_LF_NORMALIZATION"
   },
   {
     "file": "focused-dashboard.log",
-    "bytes": 1862,
-    "sha256": "DC2D64B390E3505458D362339887A5015FA41C294571423D79B9072E9A795092"
+    "localBytes": 1862,
+    "sha256": "dc2d64b390e3505458d362339887a5015fa41c294571423d79b9072e9a795092",
+    "githubBlobBytes": 1862,
+    "githubBlobSha256": "dc2d64b390e3505458d362339887a5015fa41c294571423d79b9072e9a795092",
+    "normalization": "VERBATIM"
   },
   {
     "file": "focused-engine.log",
-    "bytes": 2186,
-    "sha256": "E3F79D7AF8C9C551C56546CC452855EDC1C8CCCEBA186748F848690B7DAD74CA"
+    "localBytes": 2186,
+    "sha256": "e3f79d7af8c9c551c56546cc452855edc1c8ccceba186748f848690b7dad74ca",
+    "githubBlobBytes": 2186,
+    "githubBlobSha256": "e3f79d7af8c9c551c56546cc452855edc1c8ccceba186748f848690b7dad74ca",
+    "normalization": "VERBATIM"
   },
   {
     "file": "github-readback.json",
-    "bytes": 693,
-    "sha256": "213C2810DAD5979D7ADACAC0C20DDC07E3B5D0C8B4AD700A4658903FBA116E5C"
+    "localBytes": 693,
+    "sha256": "213c2810dad5979d7adacac0c20ddc07e3b5d0c8b4ad700a4658903fba116e5c",
+    "githubBlobBytes": 693,
+    "githubBlobSha256": "213c2810dad5979d7adacac0c20ddc07e3b5d0c8b4ad700a4658903fba116e5c",
+    "normalization": "VERBATIM"
   },
   {
     "file": "npm-ci.log",
-    "bytes": 1442,
-    "sha256": "C12ED2DC1123ABBB61FE110BB9CFF10BAFC8BAA7ECB55C65EA49A538E7765BEB"
+    "localBytes": 1442,
+    "sha256": "c12ed2dc1123abbb61fe110bb9cff10bafc8baa7ecb55c65ea49a538e7765beb",
+    "githubBlobBytes": 1442,
+    "githubBlobSha256": "c12ed2dc1123abbb61fe110bb9cff10bafc8baa7ecb55c65ea49a538e7765beb",
+    "normalization": "VERBATIM"
   },
   {
     "file": "npm-verify-final.log",
-    "bytes": 114260,
-    "sha256": "E307FA1784C8731AED9425CC8998A37D660269D098FF8CE82EF4B7C8086BF85F"
+    "localBytes": 114260,
+    "sha256": "e307fa1784c8731aed9425cc8998a37d660269d098ff8ce82ef4b7c8086bf85f",
+    "githubBlobBytes": 114260,
+    "githubBlobSha256": "e307fa1784c8731aed9425cc8998a37d660269d098ff8ce82ef4b7c8086bf85f",
+    "normalization": "VERBATIM"
   },
   {
     "file": "npm-verify-green.log",
-    "bytes": 110288,
-    "sha256": "E6543949F774C1999E861D9FD7D4D8CBAE0C60A4A3D4D5AA5845741CE256CD75"
+    "localBytes": 110288,
+    "sha256": "e6543949f774c1999e861d9fd7d4d8cbae0c60a4a3d4d5aa5845741ce256cd75",
+    "githubBlobBytes": 110288,
+    "githubBlobSha256": "e6543949f774c1999e861d9fd7d4d8cbae0c60a4a3d4d5aa5845741ce256cd75",
+    "normalization": "VERBATIM"
   },
   {
     "file": "npm-verify.log",
-    "bytes": 111716,
-    "sha256": "80B48DD8AC7DF169975292148479D318742AF18B6E1DFA4255C2108BE9241EC0"
+    "localBytes": 111716,
+    "sha256": "80b48dd8ac7df169975292148479d318742af18b6e1dfa4255c2108be9241ec0",
+    "githubBlobBytes": 111716,
+    "githubBlobSha256": "80b48dd8ac7df169975292148479d318742af18b6e1dfa4255c2108be9241ec0",
+    "normalization": "VERBATIM"
   },
   {
     "file": "primary-retrospective.json",
-    "bytes": 516,
-    "sha256": "5C2F9E99DCF84CF2956DFF36EEF13BB73BA83FB756BA5BC7CDB126CA61318AE9"
+    "localBytes": 516,
+    "sha256": "5c2f9e99dcf84cf2956dff36eef13bb73ba83fb756ba5bc7cdb126ca61318ae9",
+    "githubBlobBytes": 516,
+    "githubBlobSha256": "5c2f9e99dcf84cf2956dff36eef13bb73ba83fb756ba5bc7cdb126ca61318ae9",
+    "normalization": "VERBATIM"
   },
   {
     "file": "primary-retrospective.mjs",
-    "bytes": 1067,
-    "sha256": "E2496E5AFF077D6762D7CF9CD13AC9B79B31B3AAFBD65C02E0E9C006465F957F"
+    "localBytes": 1067,
+    "sha256": "e2496e5aff077d6762d7cf9cd13ac9b79b31b3aafbd65c02e0e9c006465f957f",
+    "githubBlobBytes": 1067,
+    "githubBlobSha256": "e2496e5aff077d6762d7cf9cd13ac9b79b31b3aafbd65c02e0e9c006465f957f",
+    "normalization": "VERBATIM"
   },
   {
     "file": "runtime-readonly.mjs",
-    "bytes": 2751,
-    "sha256": "6A39B5202BEF8186C1958645D2BC095AE29CB4668FF336631BA90E63E3FFA194"
+    "localBytes": 2751,
+    "sha256": "6a39b5202bef8186c1958645d2bc095ae29cb4668ff336631ba90e63e3ffa194",
+    "githubBlobBytes": 2751,
+    "githubBlobSha256": "6a39b5202bef8186c1958645d2bc095ae29cb4668ff336631ba90e63e3ffa194",
+    "normalization": "VERBATIM"
   },
   {
     "file": "runtime-snapshot.json",
-    "bytes": 44715,
-    "sha256": "E82430713141B52174577F1F7C34A993BA6AD08354C8181CCC9051D24C4BB62B"
+    "localBytes": 44715,
+    "sha256": "e82430713141b52174577f1f7c34a993ba6ad08354c8181ccc9051d24c4bb62b",
+    "githubBlobBytes": 44715,
+    "githubBlobSha256": "e82430713141b52174577f1f7c34a993ba6ad08354c8181ccc9051d24c4bb62b",
+    "normalization": "VERBATIM"
   },
   {
     "file": "silent-launcher-test.log",
-    "bytes": 134,
-    "sha256": "173AC58365CE8DD95E902DCA9259F8EA82741676316A5AD673920A24DF01B2F9"
+    "localBytes": 134,
+    "sha256": "173ac58365ce8dd95e902dca9259f8ea82741676316a5ad673920a24df01b2f9",
+    "githubBlobBytes": 134,
+    "githubBlobSha256": "173ac58365ce8dd95e902dca9259f8ea82741676316a5ad673920a24df01b2f9",
+    "normalization": "VERBATIM"
   },
   {
     "file": "ssh-sample-1.log",
-    "bytes": 53,
-    "sha256": "D7E79FF792990EF5C6930046532B9D9C1FEDDB1C327A51C67F186980BDA34C77"
+    "localBytes": 53,
+    "sha256": "d7e79ff792990ef5c6930046532b9d9c1feddb1c327a51c67f186980bda34c77",
+    "githubBlobBytes": 53,
+    "githubBlobSha256": "d7e79ff792990ef5c6930046532b9d9c1feddb1c327a51c67f186980bda34c77",
+    "normalization": "VERBATIM"
   },
   {
     "file": "task-readback.json",
-    "bytes": 2833,
-    "sha256": "A5C87086C134D08AEA495C7E035C5E3E574FFB0E0A5D2064C0F1E0093E4CDF59"
+    "localBytes": 2833,
+    "sha256": "a5c87086c134d08aea495c7e035c5e3e574ffb0e0a5d2064c0f1e0093e4cdf59",
+    "githubBlobBytes": 2759,
+    "githubBlobSha256": "dbbb8f78027245c1e348e1da87b55d48efc4cb53ab03e21776eb388bb9fc2e5d",
+    "normalization": "GIT_TEXT_LF_NORMALIZATION"
   },
   {
     "file": "task-silent-changes.json",
-    "bytes": 6852,
-    "sha256": "1301739E82D9BD6EFCBF90C71B3C91361358B5ACD64D6AAD870E1695EF02236D"
+    "localBytes": 6852,
+    "sha256": "1301739e82d9bd6efcbf90c71b3c91361358b5acd64d6aad870e1695ef02236d",
+    "githubBlobBytes": 6738,
+    "githubBlobSha256": "19f70288522eabf9e4ebca3d9882f9efb00a9a5996c25436a7028b0b4cb316a7",
+    "normalization": "GIT_TEXT_LF_NORMALIZATION"
   },
   {
     "file": "verify-green-result.json",
-    "bytes": 257,
-    "sha256": "392FDCE1F6EB0F40ED7357165ED2CDF2C3AF9407FDE3C927E6D718223D56A73C"
+    "localBytes": 257,
+    "sha256": "392fdce1f6eb0f40ed7357165ed2cdf2c3af9407fde3c927e6d718223d56a73c",
+    "githubBlobBytes": 250,
+    "githubBlobSha256": "f2fa676c1a18d110e86b52adc3322c82d31e2e45bfdddae3aea44edc0e0164ca",
+    "normalization": "GIT_TEXT_LF_NORMALIZATION"
   },
   {
     "file": "verify-result.json",
-    "bytes": 257,
-    "sha256": "AF4694651EB92BB73EEF50982FFAA3FCD028EA2377EAA4C57BB1A5BA683EFCFF"
+    "localBytes": 257,
+    "sha256": "af4694651eb92bb73eef50982ffaa3fcd028ea2377eaa4c57bb1a5ba683efcff",
+    "githubBlobBytes": 250,
+    "githubBlobSha256": "09a9fc3ad66d6aa0aa5949401de2649fcbca7c08a1bd9286d22a8073e95d8950",
+    "normalization": "GIT_TEXT_LF_NORMALIZATION"
   },
   {
     "file": "windows-audit.json",
-    "bytes": 2282,
-    "sha256": "94ED3E756A2150535274BE4A02F49DBB9E8AA47E812E50B852DC016CECD869AA"
+    "localBytes": 2282,
+    "sha256": "94ed3e756a2150535274be4a02f49dbb9e8aa47e812e50b852dc016cecd869aa",
+    "githubBlobBytes": 2187,
+    "githubBlobSha256": "eac7af9c9a44a79c6c9dc353c4ce1ef7d1135590aa7a99743908c52c69df356e",
+    "normalization": "GIT_TEXT_LF_NORMALIZATION"
+  },
+  {
+    "file": "_ZDJ-MITS-AfterReboot-TESTNET.before.xml",
+    "localBytes": 4110,
+    "sha256": "6f593230f6dcb8f5a3d4d4e18362b76c02c7f67ff0cded387bfdfad4104ebf81",
+    "githubBlobBytes": 4110,
+    "githubBlobSha256": "6f593230f6dcb8f5a3d4d4e18362b76c02c7f67ff0cded387bfdfad4104ebf81",
+    "normalization": "VERBATIM"
+  },
+  {
+    "file": "_ZDJ-MITS-AfterReboot-TESTNET.vbs",
+    "localBytes": 1556,
+    "sha256": "96c674c82da8fde6d61cc266ba82e44b856b205409c21e1e81c86b4984d62055",
+    "githubBlobBytes": 1556,
+    "githubBlobSha256": "96c674c82da8fde6d61cc266ba82e44b856b205409c21e1e81c86b4984d62055",
+    "normalization": "VERBATIM"
+  },
+  {
+    "file": "_ZDJ-MITS_Local_Health_Monitor.before.xml",
+    "localBytes": 3354,
+    "sha256": "573d1d81f175a9f62f217ca9ca73e255d1051efebeabe118f3464594e3290526",
+    "githubBlobBytes": 3354,
+    "githubBlobSha256": "573d1d81f175a9f62f217ca9ca73e255d1051efebeabe118f3464594e3290526",
+    "normalization": "VERBATIM"
+  },
+  {
+    "file": "_ZDJ-MITS_Local_Health_Monitor.vbs",
+    "localBytes": 590,
+    "sha256": "b7506b0da18583efc265763abb7b764666df93932d7e31fe9e38baeb9fdc7434",
+    "githubBlobBytes": 590,
+    "githubBlobSha256": "b7506b0da18583efc265763abb7b764666df93932d7e31fe9e38baeb9fdc7434",
+    "normalization": "VERBATIM"
+  },
+  {
+    "file": "_ZDJ-MITS_Manual_Engine.before.xml",
+    "localBytes": 2812,
+    "sha256": "f5d96fbd7461897d2eda984493af4bfa6bf723248b8c99e743175538d8e48444",
+    "githubBlobBytes": 2812,
+    "githubBlobSha256": "f5d96fbd7461897d2eda984493af4bfa6bf723248b8c99e743175538d8e48444",
+    "normalization": "VERBATIM"
+  },
+  {
+    "file": "_ZDJ-MITS_Manual_Engine.vbs",
+    "localBytes": 864,
+    "sha256": "e3e7c999927842c1a90b3921fbd57c1ae2d2200083b0c857df148b1b09d8edd9",
+    "githubBlobBytes": 864,
+    "githubBlobSha256": "e3e7c999927842c1a90b3921fbd57c1ae2d2200083b0c857df148b1b09d8edd9",
+    "normalization": "VERBATIM"
+  },
+  {
+    "file": "_ZDJ-MITS_V3_9_2_Testnet_Acceptance_Monitor.before.xml",
+    "localBytes": 3470,
+    "sha256": "ef8807bbb3f4cf9c077bab34157a55955d6542e3aca7197462599d64f22fd9dd",
+    "githubBlobBytes": 3470,
+    "githubBlobSha256": "ef8807bbb3f4cf9c077bab34157a55955d6542e3aca7197462599d64f22fd9dd",
+    "normalization": "VERBATIM"
+  },
+  {
+    "file": "_ZDJ-MITS_V3_9_2_Testnet_Acceptance_Monitor.vbs",
+    "localBytes": 612,
+    "sha256": "515a7077a72ee0cac18653417f50bfc8745322f43c88061b70bf082b43ccc625",
+    "githubBlobBytes": 612,
+    "githubBlobSha256": "515a7077a72ee0cac18653417f50bfc8745322f43c88061b70bf082b43ccc625",
+    "normalization": "VERBATIM"
+  },
+  {
+    "file": "_ZDJMITS_ZDJ-MITS-Engine-Crash-Observer.before.xml",
+    "localBytes": 4706,
+    "sha256": "71e0adf043ed77b481c7e9820ef09fbfa6ea6cf72a313b6924c9802b20541e10",
+    "githubBlobBytes": 4706,
+    "githubBlobSha256": "71e0adf043ed77b481c7e9820ef09fbfa6ea6cf72a313b6924c9802b20541e10",
+    "normalization": "VERBATIM"
+  },
+  {
+    "file": "_ZDJMITS_ZDJ-MITS-Engine-Crash-Observer.vbs",
+    "localBytes": 2018,
+    "sha256": "dc04af9bd7f6efcee85b9584a0af421281cfc6b2c93d3d684bac76eaa2d2e06b",
+    "githubBlobBytes": 2018,
+    "githubBlobSha256": "dc04af9bd7f6efcee85b9584a0af421281cfc6b2c93d3d684bac76eaa2d2e06b",
+    "normalization": "VERBATIM"
+  },
+  {
+    "file": "_ZDJMITS_ZDJ-V398-24h-Readonly-Checkpoint.before.xml",
+    "localBytes": 3776,
+    "sha256": "1784e902ec72ed636cc398ac93157d36a0c5a6b334cb8dd972e131f12e89e142",
+    "githubBlobBytes": 3776,
+    "githubBlobSha256": "1784e902ec72ed636cc398ac93157d36a0c5a6b334cb8dd972e131f12e89e142",
+    "normalization": "VERBATIM"
+  },
+  {
+    "file": "_ZDJMITS_ZDJ-V398-24h-Readonly-Checkpoint.vbs",
+    "localBytes": 714,
+    "sha256": "1fdce53b6f16fe38808aa4a45868ccf0c254db83d6b83dbb4965360b9a1e5237",
+    "githubBlobBytes": 714,
+    "githubBlobSha256": "1fdce53b6f16fe38808aa4a45868ccf0c254db83d6b83dbb4965360b9a1e5237",
+    "normalization": "VERBATIM"
+  },
+  {
+    "file": "_ZDJMITS_ZDJ-V398-Passive-Trade-Audit.before.xml",
+    "localBytes": 3604,
+    "sha256": "fca082e87711d032a93f22d6413e904bb272dc267bd389fb4b949e030494e9a2",
+    "githubBlobBytes": 3604,
+    "githubBlobSha256": "fca082e87711d032a93f22d6413e904bb272dc267bd389fb4b949e030494e9a2",
+    "normalization": "VERBATIM"
+  },
+  {
+    "file": "_ZDJMITS_ZDJ-V398-Passive-Trade-Audit.vbs",
+    "localBytes": 710,
+    "sha256": "8530d2a0acd596da718d5e7938e12aecf5c64f5d37cbe54084d7d38eaa8444c3",
+    "githubBlobBytes": 710,
+    "githubBlobSha256": "8530d2a0acd596da718d5e7938e12aecf5c64f5d37cbe54084d7d38eaa8444c3",
+    "normalization": "VERBATIM"
+  },
+  {
+    "file": "_ZDJMITS_ZDJ-V398-Primary-Cadence-90min.before.xml",
+    "localBytes": 3616,
+    "sha256": "d77b7c9af16ae4a300a1ce27b5aed4ca0921e8166415bd9f9f2315ceb9e2b642",
+    "githubBlobBytes": 3616,
+    "githubBlobSha256": "d77b7c9af16ae4a300a1ce27b5aed4ca0921e8166415bd9f9f2315ceb9e2b642",
+    "normalization": "VERBATIM"
+  },
+  {
+    "file": "_ZDJMITS_ZDJ-V398-Primary-Cadence-90min.vbs",
+    "localBytes": 716,
+    "sha256": "6a17c4f052586b6d6f439fc1ba34e227dc054f330e863e7e560e57d85b3dcfa1",
+    "githubBlobBytes": 716,
+    "githubBlobSha256": "6a17c4f052586b6d6f439fc1ba34e227dc054f330e863e7e560e57d85b3dcfa1",
+    "normalization": "VERBATIM"
   }
 ]

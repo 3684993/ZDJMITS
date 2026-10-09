@@ -1281,6 +1281,9 @@ function Stop-All {
     if ($last.StartTime.ToUniversalTime() -ne $created -or (Get-PortOwnerPid -ListenPort $Port) -ne $ExpectedServerPid) {
         throw "STOP_IDENTITY_CHANGED_BEFORE_TERMINATION; no server kill performed"
     }
+    if (@(Get-NetTCPConnection -State Listen -LocalPort 8080 -ErrorAction SilentlyContinue).Count) {
+        throw "STOP_BLOCKED_ENGINE_STARTED_DURING_WAIT: no server kill performed"
+    }
     Write-Warning "Operator-confirmed maintenance stop: port=$Port pid=$ExpectedServerPid createdUtc=$($created.ToString('o'))"
     Stop-Process -Id $ExpectedServerPid -Force -ErrorAction Stop
     $deadline=(Get-Date).AddSeconds(40)

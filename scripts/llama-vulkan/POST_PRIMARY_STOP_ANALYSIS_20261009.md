@@ -41,7 +41,7 @@
 
 **用户必须先确认 Harness 8083 上没有未完成的 Codex/AI 请求**。同时重新确认 8080 Engine 端口无监听、相应 Node Engine PID 未运行、准确 PID+创建时间未变化。提交额度只有约23GiB，远低于下一次27B冷加载最保守40GiB门槛，**不允许启动任何27B**。
 
-1. 先将现有三份诊断文件哈希、08:03?（实际日志时间以其自身内容为准）、模型stderr/watchdog日志留本机；不要公开 8083 全量命令行/模型消息、不要对245万句柄进行未经预算的大规模枚举。
+1. 先将现有三份诊断文件哈希、09:35及09:41的本地资源快照、模型stderr/watchdog日志留本机；不要公开 8083 全量命令行/模型消息、不要对245万句柄进行未经预算的大规模枚举。
 2. 如本机已装微软 Sysinternals Handle，则可在资源余量稳定后**单独批准**对PID17468执行摘要 `handle.exe -s -p 17468`（官方参数）；这可能枚举245万对象而耗时/占资源。严格限定输出到本机、超时、失败不反复重试；并非必备关卡。如本机已装 Windows Driver Kit PoolMon，可先读 snapshot 的最大内核池标签，保存本地用于与停止后对比；**不要安装新工具或打开 Driver Verifier**。
 3. 获得用户对中断 Harness 服务的单次明确认可后，依 `CONTROLLED_MAINTENANCE_RUNBOOK_20261009.md` 用准确 PID17468/start UTC 的确认参数手动停止**唯一** 8083；如 `STOP_CONFIRMED`，立刻执行现有 `maintenance-preflight-readonly.ps1` 与 `measure-memory-handles-readonly.ps1`，对照系统 Commit、PagedPool、NonpagedPool。不要停止9B（8081），不自动启动任何模型。
 4. 若释放后 pools 仍很大，优先追踪 PoolMon 最大的 tags 与 drivers。若 8083 结束后 pools 大幅下降，也只能证明这次 stop 与回收有关，再查对应模型/Vulkan驱动、llama.cpp版本及参数是否造成异常句柄积累。

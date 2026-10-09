@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, onUnmounted, ref } from "vue";
 import { RELEASE_LABEL, type SystemSettings } from "@zdj/contracts";
 import {
   api,
@@ -28,6 +28,7 @@ const tab = ref("strategy"),
   aiRouteDraft = ref<any[]>([]),
   aiProbeResults = ref<Record<string,any>>({}),
   resourceProbeResults = ref<Record<string,any>>({}),
+  passiveProxyHealth = ref<Record<string,any>>({}),
   resourceSettingsVersion = ref<number | null>(null),
   resourceBaseline = ref<Record<string, Record<string, string>>>({ exchange: {}, proxy: {}, ai: {} }),
   selectedResourceId = ref<Record<string,string>>({exchange:"",proxy:"",ai:""}),
@@ -257,6 +258,18 @@ async function removeResource(kind: string, id: string) {
 function isResourceDirty(kind:string,item:any){return resourceBaseline.value[kind]?.[item.id]!==JSON.stringify(item);}
 function selectedResources(kind:string){const id=selectedResourceId.value[kind];return id?resources.value[kind].filter((x:any)=>x.id===id):resources.value[kind].slice(0,1);}
 async function cancelResourceEdits(kind:string){try{const selected=selectedResourceId.value[kind],loaded=await api.resources(kind);resources.value[kind]=loaded.items??[];resourceSettingsVersion.value=Number(loaded.settingsVersion);resourceBaseline.value[kind]=Object.fromEntries(resources.value[kind].map((x:any)=>[x.id,JSON.stringify(x)]));selectedResourceId.value[kind]=resources.value[kind].some((x:any)=>x.id===selected)?selected:(resources.value[kind][0]?.id??"");notice.value="未保存修改已取消";}catch(e){error.value=String(e);}}
+async function refreshPassiveProxyHealth(){
+  const active=resources.value.proxy.find((item:any)=>item.active&&item.enabled!==false);
+  if(!active)return;
+  try{const result=await api.proxyPassiveHealth(active.id);passiveProxyHealth.value={...passiveProxyHealth.value,[active.id]:result};}
+  catch(error){passiveProxyHealth.value={...passiveProxyHealth.value,[active.id]:{status:'MONITOR_UNAVAILABLE',observation:'NO_NETWORK_REQUEST',message:String(error),asOf:Date.now()}};}
+}
+function passiveProxyLabel(value:string){return({
+  RECENT_BINANCE_SUCCESS:'最近已通过代理访问币安',REQUEST_QUEUE_TIMEOUT:'请求排队超时（不代表代理掉线）',
+  NETWORK_FAILURE_OBSERVED:'已发送请求发生网络故障',BINANCE_RATE_LIMITED_OR_RECOVERING:'币安限流／恢复中',
+  STALE_OR_UNKNOWN:'近期无足够连通证据',NO_OBSERVATION:'暂无连通证据',INACTIVE_NO_PROBE:'非活动代理（未持续监测）',
+  MONITOR_UNAVAILABLE:'只读监测暂不可用',DISABLED:'已停用'
+} as Record<string,string>)[value]??'状态尚未确定';}
 async function testResource(kind:"exchange"|"proxy"|"ai",item:any){try{if(isResourceDirty(kind,item))throw new Error("请先保存当前资源修改，再执行真实连接测试");const result=await api.testResource(kind,item.id);resourceProbeResults.value={...resourceProbeResults.value,[item.id]:result};if(kind==="ai"){aiProbeResults.value={...aiProbeResults.value,[item.id]:result};notice.value=`连接 ${result.status} · ${result.latencyMs}ms · 实际 model id: ${(result.models??[]).join(", ")||"未返回"}`;}else notice.value=`连接测试：${result.status??result.state??"PASS"}${result.latencyMs!=null?` · ${result.latencyMs}ms`:""}`;}catch(e){error.value=String(e);}}
 const aiDutyLabels:Record<string,string>={SCOUT_RESEARCH:"Scout / Research",ENTRY_PRIMARY:"Entry Primary",PENDING_ENTRY_REVIEW:"Pending Entry Review",POSITION_REVIEW:"Position Review"};
 function updateAiRoute(duty:string,resourceId:string){const routes=structuredClone(aiRouteDraft.value),found=routes.find((row:any)=>row.duty===duty);if(found){found.resourceId=resourceId;found.enabled=Boolean(resourceId);}else if(resourceId)routes.push({duty,resourceId,enabled:true,priority:duty==="ENTRY_PRIMARY"?100:duty==="POSITION_REVIEW"?90:duty==="PENDING_ENTRY_REVIEW"?20:10});aiRouteDraft.value=routes;}
@@ -308,7 +321,12 @@ function removeSymbolDirectionOverride(symbol: string) {
 }
 function addBlacklist(kind:'symbolBlacklist'|'underlyingBlacklist',value:string){if(!draft.value)return;const normalized=normalizeBlacklistInput(kind,value);if(!normalized){error.value='请输入有效 Symbol 或 Underlying（支持币安人生/USDT 这类 Unicode 合约名）';return;}const list=draft.value.selection.marketQuality[kind];if(!list.includes(normalized))list.push(normalized);if(kind==='symbolBlacklist')blacklistSymbol.value='';else blacklistUnderlying.value='';}
 function removeBlacklist(kind:'symbolBlacklist'|'underlyingBlacklist',value:string){if(draft.value)draft.value.selection.marketQuality[kind]=draft.value.selection.marketQuality[kind].filter(x=>x!==value);}
-onMounted(load);
+let proxyMonitorTimer:number|null=null;
+onMounted(()=>{
+  void load().then(()=>{void refreshPassiveProxyHealth();});
+  proxyMonitorTimer=window.setInterval(()=>{if(tab.value==='proxy')void refreshPassiveProxyHealth();},30_000);
+});
+onUnmounted(()=>{if(proxyMonitorTimer!==null)window.clearInterval(proxyMonitorTimer);});
 </script>
 
 <template>
@@ -884,12 +902,17 @@ onMounted(load);
                 <div><small>状态</small><strong>{{item.active?'ACTIVE':(item.status??'READY')}}</strong></div>
                 <div><small>最近测试延迟</small><strong>{{resourceProbeResults[item.id]?.latencyMs==null?'—':resourceProbeResults[item.id].latencyMs+' ms'}}</strong></div>
                 <div><small>测试结果</small><strong>{{resourceProbeResults[item.id]?.status??'尚未测试'}}</strong></div>
+                <div v-if="item.active"><small>运行中代理观察</small><strong>{{passiveProxyLabel(passiveProxyHealth[item.id]?.status??'NO_OBSERVATION')}}</strong></div>
+                <div v-if="item.active"><small>内部请求排队数</small><strong>{{passiveProxyHealth[item.id]?.queueDepth??'—'}}</strong></div>
+                <div v-if="item.active"><small>最近币安成功通信</small><strong>{{passiveProxyHealth[item.id]?.lastSuccessAt?new Date(passiveProxyHealth[item.id].lastSuccessAt).toLocaleTimeString():'无近期成功证据'}}</strong></div>
+                <div v-if="item.active"><small>最近排队超时</small><strong>{{passiveProxyHealth[item.id]?.lastQueueTimeoutAt?new Date(passiveProxyHealth[item.id].lastQueueTimeoutAt).toLocaleTimeString():'未观察到'}}</strong></div>
               </div>
               <div class="resource-actions">
-                <span class="muted">标准流程：编辑 → 保存 → 测试 → 激活。活动代理变更会 hot-apply。</span>
+                <span class="muted">只读状态每30秒更新，利用现有通信记录，不额外请求币安；“测试连接”才会发起一次真实请求。排队超时不等于代理断线，实时故障以最后一次网络阶段和交易所返回为准。</span>
                 <div>
                   <button class="button primary" :disabled="!isResourceDirty('proxy',item)" @click="saveResource('proxy',item)">保存资源</button>
                   <button class="button secondary" :disabled="!isResourceDirty('proxy',item)" @click="cancelResourceEdits('proxy')">取消修改</button>
+                  <button class="button secondary" :disabled="!item.active" @click="refreshPassiveProxyHealth()">刷新运行状态</button>
                   <button class="button secondary" :disabled="isResourceDirty('proxy',item)" @click="testResource('proxy',item)">测试连接</button>
                   <button class="button secondary" :disabled="isResourceDirty('proxy',item)||item.active||!item.enabled" @click="activateResource('proxy',item.id)">设为活动</button>
                   <button class="button danger" :disabled="item.active" @click="removeResource('proxy',item.id)">删除</button>

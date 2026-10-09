@@ -6,7 +6,7 @@
 
 Added `scripts/start-zdj-stack-after-reboot.ps1` for sequential startup after user logon. It starts the three configured local model launchers once with their watchdog switches disabled, validates model API aliases and process ownership, then checks and starts the exact `D:\MITS\scripts\vpn\zdj-trade-proxy-client-windows.ps1` listener on port 20091. Only after proxy readiness does it run a bounded read-only TESTNET current-position protection gate. It can launch the built Engine host exactly once only if that gate passes and port 8080 is empty. It does not restart failed components, kill foreign port owners, alter orders, or change V8 parameters.
 
-`-RegisterAtLogon` installs a separate current-user AtLogOn task, delayed 30 seconds, with multiple-instance suppression and no failure restart action. It does not alter the legacy production-path task. Registration is an explicit switch so the task action can be reviewed before being installed.
+`-RegisterAtLogon` installs a separate current-user AtLogOn task, delayed 30 seconds, with multiple-instance suppression and no failure restart action. It does not alter the legacy production-path task. The task action was reviewed and registered on this host as `ZDJ-MITS-AfterReboot-TESTNET`; it is enabled/Ready, uses the current interactive user, and has not run. The legacy production-path task remains disabled. Registration does not launch the stack in the current session.
 
 The local-only gate helper requires TESTNET and the configured 127.0.0.1:20091 proxy, then performs no more than five signed/public Binance demo GET requests for position mode, positions, ordinary open orders, and conditional algorithm orders. Private JSON output is directed to the caller-specified local diagnostics directory and must not be committed. The gate requires explicit same-symbol and same-position-side TAKE_PROFIT identity for every nonzero position; an arbitrary reduce-only LIMIT order is not accepted as TP proof.
 
@@ -22,6 +22,6 @@ No order or position was changed. No Engine, model, or proxy restart was perform
 - `npm run verify`: PASS, exit 0; 210 test files and 1,899 tests passed, with S00 entrypoint count regenerated from 184 to 187 for the three added files.
 - `scripts/start-zdj-stack-after-reboot.test.ps1`: PASS; PowerShell parser, ordering, fail-closed, TESTNET and no-retry static contracts.
 - Current account gate: `BLOCKED` with `exchangeWrites=0`; this is intentionally not a test pass for live trading readiness.
-- No GitHub Actions result is claimed. No deployment or unattended Engine start has occurred.
+- No GitHub Actions result is claimed. No Engine deployment or Engine start has occurred; the registered task's first Engine-start attempt remains behind the account-protection gate.
 
 The launch task is a convenience for starting dependencies and enforcing the same current account gate after logon. It is not a watchdog and cannot turn `UNKNOWN` protection into permission to trade. Continuous live-runtime acceptance still requires a separate authorization and a user-approved observation window.

@@ -34,18 +34,18 @@ $results=@(foreach($r in $roles){
         }
     }
     $p=$null
-    $pid=$null
-    if($ownedPids.Count -eq 1){$pid=[int]$ownedPids[0];$p=Get-Process -Id $pid -ErrorAction SilentlyContinue}
+    $roleListenerPid=$null
+    if($ownedPids.Count -eq 1){$roleListenerPid=[int]$ownedPids[0];$p=Get-Process -Id $roleListenerPid -ErrorAction SilentlyContinue}
     [pscustomobject]@{
         role=$r.role;port=$r.port;device=$r.device
-        listenerPid=$pid;serverPidFile=$serverPidFromFile
+        listenerPid=$roleListenerPid;serverPidFile=$serverPidFromFile
         watchdogPidFile=$watchPidFromFile
         watchdogAlive=$(if($null -eq $watchPidFromFile){$null}else{[bool](Get-Process -Id $watchPidFromFile -ErrorAction SilentlyContinue)})
         processName=$(if($p){$p.ProcessName}else{$null})
         startedUtc=$(if($p){try{$p.StartTime.ToUniversalTime().ToString('o')}catch{$null}}else{$null})
         handleCount=$(if($p){$p.HandleCount}else{$null})
         privateGiB=$(if($p){[Math]::Round($p.PrivateMemorySize64/1GB,3)}else{$null})
-        pidFileMatchesListener=($null -ne $pid -and $serverPidFromFile -eq $pid)
+        pidFileMatchesListener=($null -ne $roleListenerPid -and $serverPidFromFile -eq $roleListenerPid)
     }
 })
 $results|Format-Table -AutoSize|Out-Host

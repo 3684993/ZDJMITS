@@ -180,3 +180,11 @@ it('bounds buckets for long-running diverse traffic and counts malformed frames 
     expect(JSON.stringify(traffic)).not.toContain('not-json');
   }finally{vi.useRealTimers();}
 });
+
+it('treats a null JSON WS frame as control/other telemetry without throwing',()=>{
+  const stream=new BinanceMarketStream({} as never,vi.fn());
+  expect(()=>(stream as any).onMessage('null','PUBLIC')).not.toThrow();
+  expect((stream.metrics() as any).streamTraffic.PUBLIC).toMatchObject({
+    totalMessages:1,totalByType:{CONTROL_OR_OTHER:{messages:1,decodedBytes:4}}
+  });
+});

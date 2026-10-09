@@ -1,4 +1,13 @@
 # V3.9.8 新 ChatGPT 窗口 / 本机 Codex 接力交接（Primary 3–5 分钟 + Binance SSH 代理拥塞 P0）
+
+## 2026-10-09 22:14+08 本机实际执行增量（优先于下文历史）
+
+- 本机已完整读取本文件/remote follow-up，同步 main `7d698a5` 和 PR20 `023aad9`。修复源提交 `0399eff5e601723c249ff6f6b70c59a23cb8dd22`：修复代理页测试回归、统一PUBLIC/MARKET流量快照时间、全部类型计数验证及隐藏任务启动器。全量 `npm run verify` **exit0、251文件/2157测试PASS**，脚本/S00/类型/build全通过。证据日志及SHA见 [LOCAL_EXECUTION_RECEIPT_20261009](../reports/v398-proxy-network-p0-20261009/LOCAL_EXECUTION_RECEIPT_20261009.md)。PR20最终HEAD仍须实时读取；未合并或部署。
+- 271计划任务/启动项/后台进程已审计。两个5min Interactive Node任务是周期弹窗高可信来源；8个ZDJ任务仅改Action为永久隐藏WScript launcher，原命令/触发器/principal/disabled状态保留。独立隐藏/退出码测试通过，22:09:11和22:10:52两个自然任务均exit0并持续记录。保留Crash Observer PID17772、WER、三个模型及代理；没有生命周期操作。初期launcher换行错误曾造成一次被动审计exit1，已修复且历史保留。
+- 现场仍旧 Engine PID18100/build `3.9.8-6cd926abca3eec24392e`，私有事实22:09:53年龄约1196s、66次连续失败，SOCKS协商/连接回复deadline失败；本地TP13/13不等于fresh exchange证明。ProductionWrites=0。Ubuntu `zdjproxy` 的MaxSessions0拒绝shell，未获得本轮ss新样本；未改SSH/地理出口/订阅。
+- `OFFLINE_VERIFIED=PASS(0399eff)`；`MERGED=false`；`LIVE_DEPLOYED=false`；`PRIVATE_READY=false`；`ELIGIBILITY=UNKNOWN`；`CADENCE_90MIN=NOT_STARTED/T0=null`。本轮未重新尝试先前被policy拒绝的Engine stop/start，也无变形调用。部署因现实preflight缺失BLOCKED。20:44:10–22:14:10只读归档回看Primary0/Review6，不是新90min验收。
+- main精确SHA `7d698a5c59818f7b16a8729b5e672b1674d74336` Actions [37939796692](https://github.com/3684993/ZDJMITS/actions/runs/37939796692)实时确认SUCCESS；PR20分支排除触发、无精确HEAD成功CI。不得调用会在codex/v398分支跑旧migration+push的workflow_dispatch。先ChatGPT远端审阅，再解决资格/正规Linux运维/私有事实恢复；获合法发布条件后更新观察器预期build才设T0。
+
 > 2026-10-09（北京时间）截至本文件写入前的 GitHub 远端与用户现场证据。**必须先重新读取 live main / PR / Windows / Ubuntu；此文件是起点，不是实时状态证明。**
 >
 > 仓库：`3684993/ZDJMITS`。此文件特意独立于已有 72 KB `docs/prompts/CURRENT_MAINTENANCE_HANDOFF.md`：后者顶部仍记载更早的 PID / 24h 限制，有历史价值，但**本文件的后来时间、用户最新授权和实时证据优先**。不要要求用户重贴旧聊天。

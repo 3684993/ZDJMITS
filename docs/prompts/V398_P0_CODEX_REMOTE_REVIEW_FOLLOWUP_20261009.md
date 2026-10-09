@@ -1,4 +1,9 @@
 # V3.9.8 / Codex authorized local follow-up — P0.0–P0.6
+
+## Executed local receipt, 2026-10-09 22:14+08
+
+Read [LOCAL_EXECUTION_RECEIPT_20261009](../reports/v398-proxy-network-p0-20261009/LOCAL_EXECUTION_RECEIPT_20261009.md) and `local-20261009/verify-green-result.json` first. Source `0399eff5e601723c249ff6f6b70c59a23cb8dd22` passed full npm verify (exit0, 251 Vitest files / 2157 tests plus script gates). Identified periodic MITS console tasks now launch hidden without disabling safety monitors; actual scheduled runs and harmless child visibility/exit tests passed. Original failed verify and one launcher failure remain documented. No Engine/model/proxy cutover occurred. Private facts remain stale, eligibility UNKNOWN, latest exchange TP unproven; new-build 90min T0 was not set. Proxy-only SSH account refuses shell by MaxSessions0; no fresh Linux TCP counters exist. Main CI succeeded for exact 7d698a5; PR20 CI excluded by current trigger. Re-read final PR20 HEAD and docs before continuing; do not repeat unsafe workflow dispatch, loosen gates or retry a previously denied lifecycle through alternatives.
+
 > GitHub remote review context, 2026-10-09. **Instructions, not evidence that local work has executed.** Latest ChatGPT code-review report: `docs/reports/v398-proxy-network-p0-20261009/PR20_REMOTE_REVIEW.md`. Original master handoff: `docs/prompts/V398_NEXT_CHAT_PRIMARY_PROXY_HANDOFF_20261009.md`.
 
 You are the Codex assistant running in a **genuinely authorized Windows D:\MITS and Ubuntu host environment**. Do not assume Github PR comments automatically launch local Codex. Re-read this task, remote live main, PR #20, PR #19, Issue #18 and the original handoff before taking action. This file supersedes no previous fail-closed trading authority.

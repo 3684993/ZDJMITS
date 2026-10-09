@@ -1,0 +1,7 @@
+{
+  "command": "npm run verify",
+  "exitCode": 1,
+  "completedAt": "2026-10-09T22:11:44.6605188+08:00",
+  "sourceCommit": "7e003d863c4e0fa7c82ac88738b09e4ff2e0754f",
+  "logSha256": "E307FA1784C8731AED9425CC8998A37D660269D098FF8CE82EF4B7C8086BF85F"
+}

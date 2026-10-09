@@ -1,0 +1,20 @@
+{
+  "observedAt": "2026-10-09T14:14:10.660Z",
+  "from": "2026-10-09T12:44:10.660Z",
+  "to": "2026-10-09T14:14:10.660Z",
+  "scope": "ARCHIVED_RUN_START_TIMES_ONLY_NOT_CONTINUOUS_ACCEPTANCE",
+  "runs": [
+    {
+      "role": "REVIEW_BRAIN",
+      "status": "COMPLETED",
+      "count": 6
+    }
+  ],
+  "lastPrimary": {
+    "startedAt": 1791542587162
+  },
+  "eligibleCandidateDenominator": "UNKNOWN_NOT_RECONSTRUCTED",
+  "cadence90min": "NOT_STARTED_NEW_BUILD_NOT_DEPLOYED",
+  "settingsWrites": 0,
+  "exchangeWrites": 0
+}

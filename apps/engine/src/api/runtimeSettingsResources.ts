@@ -2,6 +2,8 @@ import { Router, type NextFunction, type Request, type Response } from 'express'
 import { SystemSettingsSchema, type SystemSettings } from '@zdj/contracts';
 import { loadAiResources } from '../config/aiResourceLoader.js';
 import { BinanceTransport, reconfigureBinanceTransports } from '../adapters/binance/BinanceTransport.js';
+import { createHash } from 'node:crypto';
+import { binanceRequestBudgetsHealth } from '../adapters/binance/requestBudget.js';
 import type { EngineRuntime } from '../runtime/appRuntime.js';
 import { applyGovernancePatch, changedGovernancePaths, governanceFieldOf, governanceReadback, governanceRequiresAck, readPath } from '../config/governanceSettingsMatrix.js';
 
@@ -13,6 +15,46 @@ function proxyResources(settings:SystemSettings){
   if(rows.length)return rows.map((row:any)=>({id:String(row.id),name:String(row.name??row.id),type:'SOCKS5H' as const,url:String(row.url),enabled:row.enabled!==false}));
   return[{id:String(proxy.activeResourceId??'binance-proxy'),name:'默认 SOCKS5H',type:'SOCKS5H' as const,url:String(proxy.url),enabled:proxy.enabled!==false}];
 }
+/** Pure, GET-only proxy telemetry. A queued health probe did NOT reach SOCKS or Binance. */
+export function proxyPassiveHealth(settings:SystemSettings,resource:{id:string;url:string;enabled:boolean},now=Date.now()){
+  const activeId=String((settings.connections.proxy as any).activeResourceId??'binance-proxy'),
+    active=resource.id===activeId,enabled=resource.enabled!==false&&settings.connections.proxy.enabled!==false;
+  if(!enabled)return{status:'DISABLED',active,asOf:now,observation:'NO_NETWORK_REQUEST'};
+  if(!active)return{status:'INACTIVE_NO_PROBE',active:false,asOf:now,observation:'NO_NETWORK_REQUEST'};
+  const routeIdentity='proxy-'+createHash('sha256').update(settings.connections.proxy.url).digest('hex').slice(0,12),
+    scope=`${settings.connections.exchange.environment.toUpperCase()}:${routeIdentity}`,
+    budget:any=(binanceRequestBudgetsHealth() as Record<string,any>)[scope]??null;
+  if(!budget)return{status:'NO_OBSERVATION',active:true,asOf:now,routeIdentity,observation:'NO_NETWORK_REQUEST'};
+  const dispatches=Array.isArray(budget.recentDispatches)?budget.recentDispatches:[],
+    successes=dispatches.filter((row:any)=>row.admittedAt!==null&&Number(row.status)>=200&&Number(row.status)<400),
+    queuedTimeouts=dispatches.filter((row:any)=>row.decision==='TIMEOUT'),
+    networkFailures=dispatches.filter((row:any)=>row.admittedAt!==null&&row.networkTiming?.failurePhase),
+    eligibilityRejections=dispatches.filter((row:any)=>row.admittedAt!==null&&row.status===451),
+    upstream502s=dispatches.filter((row:any)=>row.admittedAt!==null&&row.status===502),
+    latestSuccess=Math.max(0,...successes.map((row:any)=>Number(row.completedAt??0))),
+    latestQueueTimeout=Math.max(0,...queuedTimeouts.map((row:any)=>Number(row.completedAt??0))),
+    latestNetworkFailure=Math.max(0,...networkFailures.map((row:any)=>Number(row.completedAt??0))),
+    latestEligibilityRejection=Math.max(0,...eligibilityRejections.map((row:any)=>Number(row.completedAt??0))),
+    latestUpstream502=Math.max(0,...upstream502s.map((row:any)=>Number(row.completedAt??0))),
+    lastNetworkFailure=networkFailures.findLast((row:any)=>Number(row.completedAt??0)===latestNetworkFailure),
+    freshSuccess=latestSuccess>0&&now-latestSuccess<=120_000,
+    freshQueueTimeout=latestQueueTimeout>0&&now-latestQueueTimeout<=120_000,
+    freshNetworkFailure=latestNetworkFailure>0&&now-latestNetworkFailure<=120_000;
+  // Public 2xx does not invalidate an independently observed eligibility refusal.
+  const status=latestEligibilityRejection>0&&now>=latestEligibilityRejection&&now-latestEligibilityRejection<=120_000?'HTTP_451_ELIGIBILITY'
+    :budget.status==='RATE_LIMITED'||budget.status==='RECOVERING'?'BINANCE_RATE_LIMITED_OR_RECOVERING'
+    :latestUpstream502>0&&now>=latestUpstream502&&now-latestUpstream502<=120_000&&latestUpstream502>=latestSuccess?'HTTP_502_UPSTREAM_UNKNOWN'
+    :freshQueueTimeout&&latestQueueTimeout>latestSuccess?'REQUEST_QUEUE_TIMEOUT'
+    :freshNetworkFailure&&latestNetworkFailure>latestSuccess?'NETWORK_FAILURE_OBSERVED'
+    :freshSuccess?'RECENT_BINANCE_SUCCESS':'STALE_OR_UNKNOWN';
+  return{status,active:true,asOf:now,routeIdentity,observation:'PASSIVE_RECENT_REQUESTS_ONLY',
+    lastSuccessAt:latestSuccess||null,lastQueueTimeoutAt:latestQueueTimeout||null,lastNetworkFailureAt:latestNetworkFailure||null,
+    lastEligibilityRejectionAt:latestEligibilityRejection||null,lastUpstream502At:latestUpstream502||null,
+    networkFailurePhase:lastNetworkFailure?.networkTiming?.failurePhase??null,queuePressure:budget.queuePressure??null,
+    queueDepth:budget.queued??0,budgetStatus:budget.status??'UNKNOWN',budgetBlockedUntil:budget.blockedUntil??0,
+    decisions:budget.decisions??null,ageMs:latestSuccess?Math.max(0,now-latestSuccess):null};
+}
+
 function canonicalProxy(settings:SystemSettings,item?:any,activate=false):SystemSettings{
   const next=structuredClone(settings),current:any=next.connections.proxy,existing=proxyResources(next);
   let resources=existing,activeResourceId=String(current.activeResourceId??existing[0]?.id??'binance-proxy');
@@ -172,6 +214,11 @@ export function createRuntimeSettingsResourcesRouter(runtime:EngineRuntime){
         explanation:'组合风险权威数据集未能从真实 Testnet 事实证明，未写入任何 Settings。'}});return;}
     next(error);}});
   router.get('/settings/resources/:kind',(req,res,next)=>{try{const kind=kindOf(req);res.json({settingsVersion:runtime.state.settings.settingsVersion,items:resourceView(runtime.state.settings,kind,runtime)});}catch(error){next(error);}});
+  router.get('/settings/resources/proxy/:id/health',(req,res,next)=>{try{
+    const resource=proxyResources(runtime.state.settings).find(item=>item.id===String(req.params.id));
+    if(!resource)return res.status(404).json({error:{code:'PROXY_RESOURCE_NOT_FOUND'}});
+    return res.json(proxyPassiveHealth(runtime.state.settings,resource));
+  }catch(error){next(error);}});
   router.get('/settings/ai-duty-routes',(_req,res)=>res.json({settingsVersion:runtime.state.settings.settingsVersion,routes:runtime.state.settings.aiDutyRoutes??[],resources:runtime.state.settings.aiResources.map(({id,name,enabled,model})=>({id,name:name??id,enabled,model}))}));
   router.put('/settings/ai-duty-routes',async(req,res,next)=>{try{
     const expected=expectedVersion(req),routes=Array.isArray(req.body?.routes)?req.body.routes:[],before=runtime.state.settings,candidate=structuredClone(before);

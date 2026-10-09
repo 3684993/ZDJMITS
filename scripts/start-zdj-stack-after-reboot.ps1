@@ -29,7 +29,7 @@ function Test-ExistingAutostartAction([object]$Action,[string]$ExpectedTaskName)
   if ($executable -notmatch '^wscript(\.exe)?$' -or
       $arguments -notmatch '^//B\s+//Nologo\s+"([^"\r\n]+\.vbs)"$') { return $false }
   $launcher = $Matches[1]
-  $expectedLeaf = ('_' + (('\' + $ExpectedTaskName) -replace '[^a-zA-Z0-9-]','_') + '.vbs')
+  $expectedLeaf = ((('\' + $ExpectedTaskName) -replace '[^a-zA-Z0-9-]','_') + '.vbs')
   if (-not [IO.Path]::IsPathRooted($launcher) -or
       [IO.Path]::GetFileName($launcher) -cne $expectedLeaf -or
       -not (Test-Path -LiteralPath $launcher -PathType Leaf)) { return $false }

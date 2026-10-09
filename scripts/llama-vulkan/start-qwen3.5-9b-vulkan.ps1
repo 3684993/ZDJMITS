@@ -35,6 +35,9 @@ param(
     [ValidateRange(4096,65536)][int]$MaxContextTokens = 16384,
     [ValidateRange(4,80)][int]$MinimumHostCommitFreeGiB = 8,
     [switch]$EnableWatchdog,
+    [switch]$ConfirmStop,
+    [ValidateRange(1,2147483647)][int]$ExpectedServerPid = 0,
+    [string]$ExpectedStartUtc = '',
     [switch]$SkipSmokeTest,
     [switch]$NoWatchdog,
     [switch]$Debug
@@ -1116,25 +1119,78 @@ function Run-Watchdog {
 }
 
 function Stop-All {
+    # Destructive maintenance requires explicit operator intent and exact identity.
+    if (-not $ConfirmStop.IsPresent -or $ExpectedServerPid -le 0 -or [string]::IsNullOrWhiteSpace($ExpectedStartUtc)) {
+        throw 'MANUAL_STOP_CONFIRMATION_REQUIRED: provide -ConfirmStop -ExpectedServerPid <PID> -ExpectedStartUtc <UTC_ISO8601>. No process was stopped.'
+    }
+    $listener = Get-PortOwnerPid -ListenPort $Port
+    $trackedPid = Get-PidFromFile -Path $ServerPidFile
+    if ($null -eq $listener -or $listener -ne $ExpectedServerPid -or $trackedPid -ne $ExpectedServerPid) {
+        throw "STOP_IDENTITY_MISMATCH port=$Port expected=$ExpectedServerPid listener=$listener pidFile=$trackedPid"
+    }
+    $p = Get-Process -Id $ExpectedServerPid -ErrorAction Stop
+    if ($p.ProcessName -ine 'llama-server') { throw "STOP_PROCESS_NAME_MISMATCH pid=$ExpectedServerPid name=$($p.ProcessName)" }
+    $created = $p.StartTime.ToUniversalTime()
+    $expected = [DateTimeOffset]::Parse($ExpectedStartUtc, [Globalization.CultureInfo]::InvariantCulture).ToUniversalTime().UtcDateTime
+    if ([Math]::Abs(($created-$expected).TotalSeconds) -gt 2) {
+        throw "STOP_PROCESS_CREATION_MISMATCH pid=$ExpectedServerPid created=$($created.ToString('o')) expected=$ExpectedStartUtc"
+    }
+    $cim = Get-CimInstance Win32_Process -Filter "ProcessId=$ExpectedServerPid" -ErrorAction Stop
+    $cmd = [string]$cim.CommandLine
+    $portRegex = '(?i)(?:^|\s)--port(?:\s+|=)' + [regex]::Escape([string]$Port) + '(?:\s|$)'
+    if ($cmd -notmatch $portRegex -or ($cmd -notmatch [regex]::Escape($Model) -and $cmd -notmatch [regex]::Escape($Alias))) {
+        throw "STOP_COMMANDLINE_IDENTITY_MISMATCH pid=$ExpectedServerPid port=$Port"
+    }
+    # Do not disrupt a live trading Engine. It may need the local models.
+    $enginePort = @(Get-NetTCPConnection -State Listen -LocalPort 8080 -ErrorAction SilentlyContinue)
+    if ($enginePort.Count) {
+        throw "STOP_BLOCKED_ENGINE_8080_LISTENING: coordinate trading maintenance first."
+    }
+    # Race check before writing watchdog stop signal.
+    if ((Get-PortOwnerPid -ListenPort $Port) -ne $ExpectedServerPid) {
+        throw "STOP_PORT_OWNER_CHANGED pid=$ExpectedServerPid port=$Port"
+    }
     New-Item -ItemType File -Force -Path $StopFlag | Out-Null
-
     $watchPid = Get-PidFromFile -Path $WatchPidFile
-    if (Test-ProcessAlive -ProcessId $watchPid) {
-        Stop-Process -Id $watchPid -Force -ErrorAction SilentlyContinue
-        Write-Host "Stopped B580 watchdog PID=$watchPid"
+    if ($null -ne $watchPid -and (Test-ProcessAlive -ProcessId $watchPid)) {
+        $watchProc = Get-CimInstance Win32_Process -Filter "ProcessId=$watchPid" -ErrorAction Stop
+        $watchCommand = [string]$watchProc.CommandLine
+        # Never kill an unknown PowerShell host, and never force-stop the watcher.
+        if ($watchCommand -notmatch '(?i)-Mode\s+Watch' -or $watchCommand -notmatch [regex]::Escape([IO.Path]::GetFileName($PSCommandPath))) {
+            throw "STOP_BLOCKED_UNKNOWN_WATCHDOG pid=$watchPid; stop.flag retained; manual inspection required"
+        }
+        $deadline=(Get-Date).AddSeconds(75)
+        while ((Get-Date) -lt $deadline -and (Test-ProcessAlive -ProcessId $watchPid)) {
+            Start-Sleep -Seconds 1
+        }
+        if (Test-ProcessAlive -ProcessId $watchPid) {
+            throw "STOP_BLOCKED_WATCHDOG_STILL_ALIVE pid=$watchPid; no server kill performed"
+        }
     }
-
-    $serverPid = Get-PidFromFile -Path $ServerPidFile
-    if (Test-ProcessAlive -ProcessId $serverPid) {
-        Stop-Process -Id $serverPid -Force -ErrorAction SilentlyContinue
-        Write-Host "Stopped B580 llama-server PID=$serverPid"
+    # A legacy untracked watcher can immediately relaunch: do not proceed if found.
+    $watchers=@(Get-CimInstance Win32_Process -Filter "Name='powershell.exe' OR Name='pwsh.exe'" -ErrorAction Stop |
+        Where-Object { $_.CommandLine -match '(?i)-Mode\s+Watch' -and $_.CommandLine -match [regex]::Escape([IO.Path]::GetFileName($PSCommandPath)) })
+    if ($watchers.Count) {
+        throw "STOP_BLOCKED_UNTRACKED_WATCHDOG count=$($watchers.Count); no server kill performed"
     }
-
-    Remove-GpuClaimsForPid -ServerPid $serverPid
-    Remove-Item -LiteralPath $WatchPidFile,$ServerPidFile -Force `
-        -ErrorAction SilentlyContinue
-
-    Write-WatchLog 'manual-stop'
+    # Reconfirm identity immediately before explicit, one-time maintenance stop.
+    $last=Get-Process -Id $ExpectedServerPid -ErrorAction Stop
+    if ($last.StartTime.ToUniversalTime() -ne $created -or (Get-PortOwnerPid -ListenPort $Port) -ne $ExpectedServerPid) {
+        throw "STOP_IDENTITY_CHANGED_BEFORE_TERMINATION; no server kill performed"
+    }
+    Write-Warning "Operator-confirmed maintenance stop: port=$Port pid=$ExpectedServerPid createdUtc=$($created.ToString('o'))"
+    Stop-Process -Id $ExpectedServerPid -Force -ErrorAction Stop
+    $deadline=(Get-Date).AddSeconds(40)
+    while ((Get-Date) -lt $deadline -and (Test-ProcessAlive -ProcessId $ExpectedServerPid)) {
+        Start-Sleep -Seconds 1
+    }
+    if (Test-ProcessAlive -ProcessId $ExpectedServerPid) {
+        throw "STOP_NOT_CONFIRMED pid=$ExpectedServerPid; do not start replacement"
+    }
+    Remove-GpuClaimsForPid -ServerPid $ExpectedServerPid
+    Remove-Item -LiteralPath $WatchPidFile,$ServerPidFile -Force -ErrorAction SilentlyContinue
+    Write-WatchLog "operator-confirmed-maintenance-stop pid=$ExpectedServerPid"
+    Write-Host "STOP_CONFIRMED role=$RoleName port=$Port pid=$ExpectedServerPid"
 }
 
 function Show-Status {
@@ -1180,8 +1236,9 @@ function Show-Status {
 
 switch ($Mode) {
     'Start' {
-        Remove-Item -LiteralPath $StopFlag,$WatchHaltFile -Force `
-            -ErrorAction SilentlyContinue
+        if (Test-Path -LiteralPath $StopFlag) {
+            throw "START_BLOCKED_STOP_FLAG_PRESENT: inspect prior watchdog and stop completion before clearing $StopFlag"
+        }
 
         $runSmoke = -not $SkipSmokeTest.IsPresent
 
@@ -1196,7 +1253,7 @@ switch ($Mode) {
         Write-Host ''
         Write-Host "B580 endpoint: http://${HostAddress}:$Port/v1"
         Write-Host "Status: .\$([IO.Path]::GetFileName($PSCommandPath)) -Mode Status"
-        Write-Host "Stop  : .\$([IO.Path]::GetFileName($PSCommandPath)) -Mode Stop"
+        Write-Host "Stop  : .\$([IO.Path]::GetFileName($PSCommandPath)) -Mode Stop -ConfirmStop -ExpectedServerPid <PID> -ExpectedStartUtc <UTC>"
     }
 
     'Watch' {

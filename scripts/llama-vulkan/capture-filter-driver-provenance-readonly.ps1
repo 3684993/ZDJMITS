@@ -22,7 +22,9 @@ function Resolve-SystemDriverBinary {
     if([string]::IsNullOrWhiteSpace($PathName)){return $null}
     $v=$PathName.Trim().Trim('"')
     $v=[Environment]::ExpandEnvironmentVariables($v)
-    $v=$v -replace '^(?i)\\SystemRoot\\', ([regex]::Escape($env:SystemRoot) + '\')
+    if($v.StartsWith('\SystemRoot\',[StringComparison]::OrdinalIgnoreCase)){
+        $v=Join-Path $env:SystemRoot $v.Substring('\SystemRoot\'.Length)
+    }
     # Replace the common NT service path prefix without inventing arbitrary paths.
     $v=$v -replace '^(?i)\\\?\?\\',''
     if($v -match '^(?i)System32\\'){
@@ -83,5 +85,6 @@ $result=[ordered]@{
 $rows | Select-Object filterName,binaryFileName,version,companyName,signatureStatus |
     Format-Table -AutoSize | Out-Host
 Write-Host "LOCAL_ONLY_DRIVER_PROVENANCE: $out"
+Write-Host 'Note: Microsoft catalog-signed drivers can show NotSigned for an individual .sys; no signer attribution without catalog validation.'
 Write-Host 'Driver names/signatures are evidence of installed components, not of allocation ownership.'
 Write-Host 'NO_DRIVER_WAS_CHANGED'

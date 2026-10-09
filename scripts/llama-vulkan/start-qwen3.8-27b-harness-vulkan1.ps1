@@ -43,7 +43,7 @@ param(
     [ValidateRange(40,80)][int]$MinimumHostCommitFreeGiB = 40,
     [switch]$EnableWatchdog,
     [switch]$ConfirmStop,
-    [ValidateRange(1,2147483647)][int]$ExpectedServerPid = 0,
+    [ValidateRange(0,2147483647)][int]$ExpectedServerPid = 0,
     [string]$ExpectedStartUtc = '',
     [switch]$SkipSmokeTest,
     [switch]$NoWatchdog
@@ -927,11 +927,13 @@ function Start-ModelServer {
 
     # IMPORTANT: Hold the allocator across selection -> Start-Process -> claim.
     # This closes the race where Harness and ZDJ are clicked simultaneously.
-    Assert-HostMemoryForColdStart -MinimumFreeGiB $MinimumHostCommitFreeGiB
-
     $allocator = Enter-GpuAllocator
 
     try {
+        # Serialize the host-commit check with GPU reservation and child creation.
+        # Two parallel launchers must not both pass on the same stale free-commit snapshot.
+        Assert-HostMemoryForColdStart -MinimumFreeGiB $MinimumHostCommitFreeGiB
+
         $selection = Resolve-Amd7900Selection `
             -PreferredPhysicalDevice $PreferredDevice `
             -MinimumFreeMiB $MinFreeMiB
@@ -1369,7 +1371,7 @@ switch ($Mode) {
         Write-Host ''
         Write-Host "$RoleName endpoint: http://${HostAddress}:$Port/v1"
         Write-Host "Preferred physical GPU: $PreferredDevice"
-        Write-Host 'If preferred GPU is busy, another safe FREE 7900 XTX is selected.'
+        Write-Host 'Preferred AMD GPU is REQUIRED; no silent fallback to a different GPU.'
         Write-Host "Status: .\$([IO.Path]::GetFileName($PSCommandPath)) -Mode Status"
         Write-Host "Stop  : .\$([IO.Path]::GetFileName($PSCommandPath)) -Mode Stop -ConfirmStop -ExpectedServerPid <PID> -ExpectedStartUtc <UTC>"
     }

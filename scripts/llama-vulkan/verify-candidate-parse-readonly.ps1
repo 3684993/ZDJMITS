@@ -14,6 +14,7 @@ $files=@(
  'capture-filter-stack-readonly.ps1',
  'compare-kernel-pool-tags-readonly.ps1',
  'capture-filter-driver-provenance-readonly.ps1',
+ 'full-recovery-preflight-readonly.ps1',
  'ZDJ-memory-first-check.ps1'
 )
 function Get-ForbiddenAutomaticPidBindings {

@@ -3,6 +3,16 @@
 >
 > 仓库：`3684993/ZDJMITS`。此文件特意独立于已有 72 KB `docs/prompts/CURRENT_MAINTENANCE_HANDOFF.md`：后者顶部仍记载更早的 PID / 24h 限制，有历史价值，但**本文件的后来时间、用户最新授权和实时证据优先**。不要要求用户重贴旧聊天。
 
+
+## I. 2026-10-09 GitHub 远端复核增量（新窗口先读，均非主机部署证明）
+- 连接的 GitHub 工具在复核时确认 PR #19 `MERGED`，原合并提交 `39931a7` 的 Actions run [37930909464](https://github.com/3684993/ZDJMITS/actions/runs/37930909464) 已 **SUCCESS**；docs-only main `e9623c5` 的 [37938125083](https://github.com/3684993/ZDJMITS/actions/runs/37938125083) 亦已 **SUCCESS**。早期“托管 CI 未确认”仅是过去时刻的信息。
+- PR #20 持续为 **OPEN/NOT_MERGED/NOT_DEPLOYED**，原七个受影响文件。2026-10-09 后续远程复核已把 HEAD 发展至 `4a0ddb3d16f5504d4fc5cd86f97778651e6c86b0`；这是**这一轮审查锚点**，下一轮仍须重新读 HEAD。新增 1s×60 桶及分类 message bytes、HTTP 451/502 被动诊断和定向单测，未更改交易/订阅。**没有 PR #20 HEAD 的 npm verify / hosted CI SUCCESS 证据，禁止直接合并或发布。**
+- PR #20 分支未命中现有 `.github/workflows/v392-verify.yml` push trigger；不得把 main 的 SUCCESS 冒充 PR20 SUCCESS。验证必须由正式获授权本机 Codex 在独立 worktree 完整执行，或经独立审查的合法 CI 触发。
+- 已在 main 发布两份新文件：审查及证据边界 [PR20_REMOTE_REVIEW.md](../reports/v398-proxy-network-p0-20261009/PR20_REMOTE_REVIEW.md)，以及可直接给本机 Codex 使用的 [V398_P0_CODEX_REMOTE_REVIEW_FOLLOWUP_20261009.md](./V398_P0_CODEX_REMOTE_REVIEW_FOLLOWUP_20261009.md)。
+- **仍无本轮 Windows/Ubuntu 新实测**：不得把旧 PID18100、旧私有 TP13/13、Ubuntu Send-Q 或 policy 阻断时间延伸为当前运行状态；`LIVE_DEPLOYED` / `PRIVATE_READY` / `CADENCE_90MIN` 均需重新取证。计数仪表只涵盖 PUBLIC + MARKET 解码 WS 帧，不是 SSH 线上字节，PRIVATE WS/REST 另行同步取证，未测量前不剪全市场订阅。
+- P0.0～P0.6 与 F 节保持不变；尤其禁止独立补仓、fail-open、绕地区资格451、偷偷部署、绕过 `blocked by policy`，只按真实合法候选 3～5 分钟有效 Primary 分析作为验收标准。
+
+
 ## A. 新 ChatGPT 窗口的执行总指令（直接采用）
 你是此仓库的远程维护负责人，中文答复，与运行在用户 Windows 主机、能读取本地 SQLite/日志/进程和 Ubuntu 的 Codex 配合。通过已连接的 GitHub 工具先核实本文件、`main`、PR #19/#20、Issue #18、报告和代码；不要猜想、不要把文档旧 PID 说成当前运行值。**由你负责 GitHub 代码审查/小范围修复/测试证据审阅/commit、PR与进度文件；由真正获主机权限的 Codex 执行 Windows/Ubuntu 只读采样、完整测试、合规生命周期和部署验证。** 不能由一个 GitHub 提交推断本机已部署。不要靠 @codex PR 评论“已经执行”：曾有自动回复要求配置仓库 Codex cloud environment，因此按可用的真实 Codex 运行环境交接，保留执行回执。
 

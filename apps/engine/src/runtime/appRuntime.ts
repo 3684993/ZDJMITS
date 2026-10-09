@@ -48,6 +48,7 @@ import { ShadowRunner } from "../services/shadowRunner.js";
 import { ShadowReadinessService } from "../services/shadowReadiness.js";
 import { TestnetLowLossCleanupService } from "../services/testnetLowLossCleanupService.js";
 import { currentLanIps, type RuntimeIdentity } from "./runtimeIdentity.js";
+import {entryStartupPolicy} from '../services/entryStartupPolicy.js';
 import { entryFundingEligibleSymbol, RELEASE_VERSION, type Position, type TradePlan } from "@zdj/contracts";
 import { TemporalIntelligenceService } from "../services/temporalIntelligenceService.js";
 import { LiveValidationService } from "../services/liveValidationService.js";
@@ -858,6 +859,7 @@ export class EngineRuntime {
   /** The pre-model cost gate: read the facts the write path itself will check, before paying for them. */
   executionReadinessSnapshot(now = Date.now()) {
     return executionReadiness({
+      entryPolicy: entryStartupPolicy(this.state.settings),
       settings: this.state.settings,
       account: this.state.account,
       runtimeControlMode: this.state.runtimeControl.mode,
@@ -2491,7 +2493,9 @@ export class EngineRuntime {
         max: this.state.settings.portfolio.maxPendingEntries,
       },
       entryPermission: {
-        status: noEntryReason ? "BLOCKED" : "READY",
+        status: entryStartupPolicy(this.state.settings).orderAuthorization ? (noEntryReason ? "BLOCKED" : "READY") : 'ANALYSIS_ONLY',
+        executionFactsStatus: noEntryReason ? 'BLOCKED' : 'READY',
+        ...entryStartupPolicy(this.state.settings),
         executionMode: this.state.settings.connections.executionMode,
         autoExecutionMode: this.state.executionGovernance.mode,
       },

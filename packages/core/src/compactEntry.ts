@@ -3,6 +3,20 @@ import type {EntryIntelligencePacket,ScoutAnnotation} from '@zdj/contracts';
 const decisionFrames=['1m','5m','15m','1h','4h','1d','1w'] as const;
 const referenceFrames=['15m','1h','4h','1d','1w'] as const;
 
+/** Lossless wire representation: no candidate, value, proof or authorization is removed. */
+export function encodeCandidateMenu(candidates:Record<string,unknown>[]) {
+  if (!candidates.length) return { encoding:'COMMON_COLUMNS_V1', common:{}, columns:[], rows:[] };
+  const keys=[...new Set(candidates.flatMap(candidate=>Object.keys(candidate)))];
+  const common=Object.fromEntries(keys.filter(key=>candidates.every(candidate=>Object.hasOwn(candidate,key)&&JSON.stringify(candidate[key])===JSON.stringify(candidates[0]![key]))).map(key=>[key,candidates[0]![key]]));
+  const columns=keys.filter(key=>!Object.hasOwn(common,key));
+  // Presence is explicit, so absent fields cannot turn into null or UNKNOWN into zero.
+  return {encoding:'COMMON_COLUMNS_V1',common,columns,rows:candidates.map(candidate=>columns.map(key=>Object.hasOwn(candidate,key)?{v:candidate[key]}:{absent:true}))};
+}
+
+export function decodeCandidateMenu(menu:ReturnType<typeof encodeCandidateMenu>):Record<string,unknown>[] {
+  return menu.rows.map(row=>Object.assign({},menu.common,Object.fromEntries(menu.columns.flatMap((key,i)=>'v' in row[i]! ? [[key,(row[i] as {v:unknown}).v]] : []))));
+}
+
 export function compactFactIds(p:EntryIntelligencePacket):string[]{
   const ids=['quote.top','microstructure.book5','execution.envelope','execution.recentTrades','positions.current','economics.entry','portfolio.context','experience.context'];
   for(const tf of decisionFrames)if(p.market.technical[tf])ids.push(`technical.${tf}.confirmed`);
@@ -29,6 +43,13 @@ export function compactEntryFacts(p:EntryIntelligencePacket) {
 
 export function buildCompactBrainPrompt(packet:EntryIntelligencePacket,confirmation?:unknown,_externalContext?:unknown,scout?:ScoutAnnotation|null):string {
   const facts=compactEntryFacts(packet);
+  // Change only the presentation copy; the frozen packet and candidate hashes remain original.
+  const wireFacts=JSON.parse(JSON.stringify(facts));
+  let encodedMenus=false;
+  for(const side of ['LONG','SHORT']) {
+    const candidates=wireFacts.EXECUTION_ENVELOPE[side]?.planCandidates;
+    if(Array.isArray(candidates)&&candidates.length){wireFacts.EXECUTION_ENVELOPE[side].planCandidates=encodeCandidateMenu(candidates);encodedMenus=true;}
+  }
   return `You are the single autonomous Entry Primary under protocol V3.9.7. Use only the supplied MARKET_FACTS and EXECUTION_ENVELOPE. You have no tools and no order-write permission.
 When EXECUTION_ENVELOPE.resourcePolicy is TESTNET_FUNDS_ONLY, portfolio/history/UNKNOWN/pending risk, gross/direction/cluster exposure, human-managed capacity, position count, stress and risk proofs are audit context only: they MUST NOT cause WAIT, REJECT, smaller sizing or a different direction. Only the published funded legal quantity/price bounds constrain resources. Continue to judge the market opportunity independently; do not manufacture a PLACE.
 CURRENT_POSITION_CONTEXT is as-of execution evidence. PARTIAL does not verify complete history; UNKNOWN age is not zero. No independent same-side adds. Opposite inventory alone neither selects nor vetoes a direction. Primary alone chooses a legal frozen candidate.
@@ -38,5 +59,6 @@ Return exactly one unfenced JSON object matching the provided schema. For PLACE_
 For PLACE, copy the chosen candidate's targetPrice, acceptableTargetRange and targetHorizonMinutes exactly into profitTakePlan. profitTakePlan.targetHorizonMinutes must therefore be one of EXECUTION_ENVELOPE.economics.targetHorizonMinutes and must equal the chosen candidate; this list does not imply a preferred horizon. Any mismatch, unknown id, stale candidateSetHash or later legality failure is rejected and never rounded, clamped, resized or switched to another candidate. idealPrice must be inside acceptablePriceRange and the range must remain compatible with objective maker reachability. If no offered candidate fits the independently chosen opportunity, return a non-PLACE decision. If your chosen side has zero executable candidates, do not flip merely because the other side is executable; return a non-PLACE decision and state the execution conflict.
 Deterministic opportunity evidence is NON_AUTHORITATIVE about direction and cannot veto or flip your side. It may support timing/location only when it matches your independently chosen side. Scout content is also non-authoritative.
 Cite supplied fact IDs in supportingEvidenceRefs. State at least one material counterpoint. Never expose hidden reasoning; provide concise conclusions and evidence references only. Never invent evidence, prices, permissions, fills or probabilities. entryInvalidation is ENTRY_ONLY and never authorizes a close, reversal, market order or risk expansion.
-${scout?`SCOUT_FACTS_NON_AUTHORITATIVE:${JSON.stringify(scout)}\n`:''}INPUT:${JSON.stringify(facts)}${confirmation?`\nPREVIOUS_WAIT_RECONFIRMATION:${JSON.stringify(confirmation)}\nReassess from fresh facts; the previous decision is context, not authorization or direction.`:''}`;
+${encodedMenus?'COMMON_COLUMNS_V1 menus are lossless: each row is one candidate, common supplies shared fields; columns[i] names rows[n][i].v; absent:true omits the key. Reconstruct each exact candidate, select its candidateId and copy its TP fields. All LONG/SHORT candidates and proofs are present.\n':''}
+${scout?`SCOUT_FACTS_NON_AUTHORITATIVE:${JSON.stringify(scout)}\n`:''}INPUT:${JSON.stringify(wireFacts)}${confirmation?`\nPREVIOUS_WAIT_RECONFIRMATION:${JSON.stringify(confirmation)}\nReassess from fresh facts; the previous decision is context, not authorization or direction.`:''}`;
 }

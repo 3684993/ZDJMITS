@@ -58,7 +58,7 @@ try {
   ]);
   const livePositions = Array.isArray(positions) ? positions.filter(p => Number(p.positionAmt) !== 0) : null;
   const allOrders = Array.isArray(orders) && Array.isArray(algoOrders) ? [...orders, ...algoOrders] : null;
-  const hasTakeProfit = order => /TAKE_PROFIT/.test(String(order.type ?? order.orderType ?? '')) || /^tp_/i.test(String(order.clientOrderId ?? order.clientAlgoId ?? ''));
+  const hasTakeProfit = order => /TAKE_PROFIT/.test(String(order.type ?? order.orderType ?? '')) || /^tp_/i.test(String(order.clientOrderId ?? order.clientAlgoId ?? '')) || (String(order.type ?? order.orderType) === 'LIMIT' && order.reduceOnly === true);
   const candidateMatches = livePositions === null || allOrders === null ? null : livePositions.filter(p => allOrders.some(o => String(o.symbol) === String(p.symbol) && String(o.positionSide ?? 'BOTH') === String(p.positionSide ?? 'BOTH') && hasTakeProfit(o))).length;
   evidence.positionMode = mode; evidence.nonzeroPositions = livePositions?.length ?? null; evidence.ordinaryOpenOrders = Array.isArray(orders) ? orders.length : null; evidence.openAlgoOrders = Array.isArray(algoOrders) ? algoOrders.length : null;
   evidence.candidateProtectionMatches = candidateMatches;

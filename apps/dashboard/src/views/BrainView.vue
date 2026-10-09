@@ -60,13 +60,13 @@ const placeSummary=computed(()=>{
   const blocked=place.filter(r=>r.execution?.executionState==="NOT_SUBMITTED");
   const reasons=new Map<string,number>();
   for(const row of blocked){const label=reasonLabel(row.execution?.blockReasons?.[0]);reasons.set(label,(reasons.get(label)??0)+1);}
-  return{place:place.length,submitted,blocked:blocked.length,reasons:[...reasons.entries()].sort((a,b)=>b[1]-a[1])};
+  return{readOnly:place.filter(r=>r.execution?.executionState==="READ_ONLY_NON_EXECUTABLE").length,place:place.length,submitted,blocked:blocked.length,reasons:[...reasons.entries()].sort((a,b)=>b[1]-a[1])};
 });
 const stamp = (value: unknown) => (typeof value === "number" && value > 0 ? new Date(value).toLocaleString() : null);
 const executionChain = (e: any) => (e ? {
   brainRunId: e.brainRunId, tradePlanId: e.tradePlanId, reservationId: e.reservationId, intentId: e.intentId,
   orderId: e.orderId, clientOrderId: e.clientOrderId, exchangeOrderId: e.exchangeOrderId,
-  portfolioRiskAllowed: e.portfolioRiskAllowed, submittedAt: stamp(e.submittedAt), firstFillAt: stamp(e.firstFillAt), updatedAt: stamp(e.updatedAt),
+  analysisOnly:e.analysisOnly,orderAuthorization:e.orderAuthorization,riskObservation:e.riskObservation,portfolioRiskAllowed: e.portfolioRiskAllowed, submittedAt: stamp(e.submittedAt), firstFillAt: stamp(e.firstFillAt), updatedAt: stamp(e.updatedAt),
   inconsistentFacts: e.inconsistentFacts ?? [],
 } : null);
 const detailOpen = () => detailLoading.value || Boolean(detailError.value) || Boolean(detail.value);
@@ -176,6 +176,7 @@ onUnmounted(()=>{listController?.abort();detailController?.abort();window.remove
       subtitle="Input → Raw Output → Normalized Decision → Error；拒绝与失败永不自动转 PLACE"
       ><div class="facts wide" v-if="placeSummary.place">
         <div><dt>本页 Primary PLACE</dt><dd>{{placeSummary.place}}</dd></div>
+        <div><dt>只读分析（未授权下单）</dt><dd>{{placeSummary.readOnly}}</dd></div>
         <div><dt>已进入订单链</dt><dd>{{placeSummary.submitted}}</dd></div>
         <div><dt>未挂单</dt><dd>{{placeSummary.blocked}}</dd></div>
         <div><dt>不挂单主因</dt><dd>{{placeSummary.reasons.map(([reason,count])=>`${reason} ${count}`).join(" · ")||"—"}}</dd></div>

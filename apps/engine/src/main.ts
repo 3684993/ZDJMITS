@@ -1,3 +1,4 @@
+import {bindEntryStartupIdentity} from './services/entryStartupPolicy.js';
 import {TradingQualityRuntimeObserver} from './services/tradingQualityRuntimeObserver.js';
 import { OperationalLogger } from './services/operationalLogger.js';
 import path from 'node:path';
@@ -8,6 +9,8 @@ import { redactAudit } from './api/projections.js';
 import { createRuntimeIdentity } from './runtime/runtimeIdentity.js';
 import { installProcessLifecycleTelemetry,processErrorFact } from './runtime/processLifecycleTelemetry.js';
 import { RELEASE_VERSION } from '@zdj/contracts';
+// A fresh real process never inherits an implicit Entry write authorization.
+process.env.ZDJ_ENTRY_EXECUTION_POLICY ??= 'ANALYSIS_ONLY';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../../..');
 const host=process.env.ZDJ_HOST??'0.0.0.0',port=Number(process.env.ZDJ_PORT??8080),configDir=path.resolve(process.env.ZDJ_CONFIG_DIR??path.join(root,'config')),dataDir=path.resolve(process.env.ZDJ_DATA_DIR??path.join(root,'data'));
 const lifecycle=installProcessLifecycleTelemetry(dataDir);lifecycle.record('PROCESS_START',{releaseVersion:RELEASE_VERSION,host,port,startReason:process.env.ZDJ_START_REASON??null});
@@ -15,6 +18,7 @@ lifecycle.record('BOOTSTRAP_STARTED',{configDir,dataDir});
 let identityRecord:Awaited<ReturnType<typeof createRuntimeIdentity>>,runtime:EngineRuntime;
 try{
   identityRecord=await createRuntimeIdentity(dataDir,host,port,RELEASE_VERSION);
+  bindEntryStartupIdentity(identityRecord.identity);
   runtime=await EngineRuntime.create({configDir,dataDir});
   lifecycle.record('BOOTSTRAP_RUNTIME_CREATED',{instanceId:identityRecord.identity.instanceId,recoveredRuntimeEntities:runtime.settingsStore.runtimeLoadRecoveries});
 }catch(error){lifecycle.record('BOOTSTRAP_FAILED',{error:processErrorFact(error)});throw error;}

@@ -28,6 +28,10 @@ const readiness = (over: Record<string, unknown> = {}) => executionReadiness({
 } as never);
 
 describe('execution readiness judgment', () => {
+  it('reports startup analysis permission separately from order readiness without stopping observation',()=>{
+    expect(readiness({entryPolicy:{orderAuthorization:false,reason:'ENTRY_ADMISSION_DISABLED_BY_STARTUP_POLICY'}})).toMatchObject({ready:false,writeLocked:true,modelSpendPermitted:true,mode:'RESEARCH_ONLY',blockers:['ENTRY_ADMISSION_DISABLED_BY_STARTUP_POLICY']});
+    expect(readiness({entryPolicy:{orderAuthorization:false,reason:'ENTRY_APPROVAL_UNAVAILABLE'},account:{status:'UNKNOWN',asOf:null}}).modelSpendPermitted).toBe(false);
+  });
   it('permits model spend only when every execution fact is present', () => {
     const ready = readiness();
     expect(ready).toMatchObject({ intent: true, ready: true, modelSpendPermitted: true, blockers: [], firstBlocker: null, mode: 'EXECUTION_READY' });

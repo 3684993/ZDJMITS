@@ -1,6 +1,8 @@
 [CmdletBinding()]
 param(
   [switch]$RegisterAtLogon,
+  [ValidateSet('ANALYSIS_ONLY','TESTNET_ENTRY_ENABLED')][string]$EntryMode = 'ANALYSIS_ONLY',
+  [string]$EntryApprovalFile = '',
   [string]$ProjectRoot = (Split-Path -Parent $PSScriptRoot),
   [string]$ModelScriptsRoot = 'D:\MITS-WORKTREES\llama-memory-20261009\scripts\llama-vulkan',
   [string]$NodePath = (Get-Command node.exe -ErrorAction Stop).Source,
@@ -108,7 +110,7 @@ try {
       Unregister-ScheduledTask -TaskName $TaskName -Confirm:$false
     }
     $script = Join-Path $PSScriptRoot 'start-zdj-stack-after-reboot.ps1'
-    $action = New-ScheduledTaskAction -Execute (Get-Command powershell.exe).Source -Argument "-NoProfile -ExecutionPolicy Bypass -File `"$script`" -ProjectRoot `"$ProjectRoot`" -ModelScriptsRoot `"$ModelScriptsRoot`" -NodePath `"$NodePath`" -DataRoot `"$DataRoot`" -ProxyPort $ProxyPort"
+    $action = New-ScheduledTaskAction -Execute (Get-Command powershell.exe).Source -Argument "-NoProfile -ExecutionPolicy Bypass -File `"$script`" -ProjectRoot `"$ProjectRoot`" -ModelScriptsRoot `"$ModelScriptsRoot`" -NodePath `"$NodePath`" -DataRoot `"$DataRoot`" -ProxyPort $ProxyPort -EntryMode $EntryMode -EntryApprovalFile `"$EntryApprovalFile`""
     $trigger = New-ScheduledTaskTrigger -AtLogOn -User "$env:USERDOMAIN\$env:USERNAME"
     $trigger.Delay = 'PT30S'
     $settingsTask = New-ScheduledTaskSettingsSet -StartWhenAvailable -ExecutionTimeLimit (New-TimeSpan -Hours 4) -MultipleInstances IgnoreNew
@@ -174,6 +176,20 @@ try {
   $hostScript = Join-Path $ProjectRoot 'scripts\start-zdj-engine-host.ps1'
   $hostArgs = @('-NoProfile','-ExecutionPolicy','Bypass','-File',$hostScript,'-NodePath',$NodePath,'-EnginePath',(Join-Path $ProjectRoot 'apps\engine\dist\main.js'),'-WorkingDirectory',(Join-Path $ProjectRoot 'apps\engine'),'-StdoutPath',(Join-Path $engineLogDir ($launchId+'.stdout.log')),'-StderrPath',(Join-Path $engineLogDir ($launchId+'.stderr.log')),'-LifecyclePath',(Join-Path $engineLogDir 'lifecycle.jsonl'),'-ReceiptPath',(Join-Path $engineLogDir 'current-receipt.json'),'-LaunchId',$launchId)
   $env:ZDJ_CONFIG_DIR = Join-Path $ProjectRoot 'config'; $env:ZDJ_DATA_DIR = $DataRoot; $env:ZDJ_START_REASON = 'MANUAL_START'; $env:ZDJ_ENTRY_ADMISSION_DISABLED = '1'
+  $env:ZDJ_ENTRY_EXECUTION_POLICY = 'ANALYSIS_ONLY'
+  $env:ZDJ_ENTRY_APPROVAL_FILE = ''; $env:ZDJ_ENTRY_APPROVED_ARTIFACT_SHA256 = ''
+  if ($EntryMode -eq 'TESTNET_ENTRY_ENABLED') {
+    try {
+      $approval = Get-Content -LiteralPath $EntryApprovalFile -Raw | ConvertFrom-Json
+      $artifact = (Get-FileHash -LiteralPath (Join-Path $ProjectRoot 'apps\engine\dist\main.js') -Algorithm SHA256).Hash.ToLowerInvariant()
+      if ($approval.version -ne 1 -or $approval.mode -ne 'TESTNET_ENTRY_ENABLED' -or $approval.operatorApproval -ne 'ONE_TESTNET_ENGINE_SWITCH' -or $approval.revoked -ne $false -or $approval.expiresAt -le [DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds() -or $approval.entrypointSha256 -ne $artifact -or $approval.dataRoot -cne $DataRoot) { throw 'ENTRY_APPROVAL_INVALID_OR_EXPIRED' }
+      $env:ZDJ_ENTRY_APPROVAL_FILE = [IO.Path]::GetFullPath($EntryApprovalFile)
+      $env:ZDJ_ENTRY_APPROVED_ARTIFACT_SHA256 = [string]$approval.artifactSha256
+      $env:ZDJ_ENTRY_EXECUTION_POLICY = 'TESTNET_ENTRY_ENABLED'
+      $env:ZDJ_ENTRY_ADMISSION_DISABLED = '0'
+      Write-Stage 'ENTRY_POLICY' 'EXPLICIT_APPROVAL_LOADED' @{ approvalFile = $env:ZDJ_ENTRY_APPROVAL_FILE; entrypointSha256 = $artifact; artifactSha256 = $env:ZDJ_ENTRY_APPROVED_ARTIFACT_SHA256; runtimeMustVerifyFullArtifactAndSource = $true; startupIndependentOfEntry = $true }
+    } catch { Write-Stage 'ENTRY_POLICY' 'ANALYSIS_ONLY_FALLBACK' @{ reason = $_.Exception.Message; startupIndependentOfEntry = $true } }
+  }
   $encodedArgs = ($hostArgs | ForEach-Object { '"' + ($_ -replace '"','\"') + '"' }) -join ' '
   $engineHostProcess = Start-Process -FilePath (Get-Command powershell.exe).Source -ArgumentList $encodedArgs -WorkingDirectory $ProjectRoot -WindowStyle Hidden -PassThru
   Write-Stage 'ENGINE_HOST' 'STARTED_ONCE' @{ hostPid = $engineHostProcess.Id; launchId = $launchId; sourceHead = $head; proxyPort = $ProxyPort; stdout = (Join-Path $engineLogDir ($launchId+'.stdout.log')); stderr = (Join-Path $engineLogDir ($launchId+'.stderr.log')) }

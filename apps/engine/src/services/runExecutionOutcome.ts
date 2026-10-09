@@ -17,6 +17,7 @@
  */
 
 export type ExecutionState =
+  | 'READ_ONLY_NON_EXECUTABLE'
   | 'DECISION_ONLY'
   | 'EXECUTING'
   | 'WAITING_PRICE'
@@ -51,6 +52,9 @@ export interface RunExecutionOutcome {
   blockStage: ExecutionBlockStage | null;
   blockReasons: string[];
   portfolioRiskAllowed: boolean | null;
+  analysisOnly: boolean;
+  orderAuthorization: boolean | null;
+  riskObservation: { allowed: boolean | null; reasons: string[] } | null;
   tradePlanId: string | null;
   tradePlanReady: boolean;
   reservationId: string | null;
@@ -84,6 +88,7 @@ export interface RunRow {
 
 /** Events the projection reads. Anything not listed here cannot change an execution outcome. */
 export const ENTRY_EXECUTION_LINEAGE_EVENT_TYPES = [
+  'ANALYSIS_ONLY_COMPLETED',
   'ENTRY_ECONOMIC_ADMISSION_EVALUATED',
   'AI_CANDIDATE_SELECTED',
   'PORTFOLIO_RISK_ADMISSION_EVALUATED',
@@ -131,6 +136,7 @@ const BLOCK_STAGE: Record<string, ExecutionBlockStage> = {
 };
 
 export const EXECUTION_LABELS: Record<ExecutionState, string> = {
+  READ_ONLY_NON_EXECUTABLE: '只读分析 · 未授权订单执行',
   DECISION_ONLY: '仅决策 · 未进入执行链',
   EXECUTING: '正在执行',
   WAITING_PRICE: '等待价格',
@@ -158,6 +164,9 @@ const reasonsOf = (payload: any, fallback: string | null): string[] => {
 };
 
 interface Mutable {
+  analysisOnly: boolean;
+  orderAuthorization: boolean | null;
+  riskObservation: { allowed: boolean | null; reasons: string[] } | null;
   symbol: string;
   decision: string | null;
   direction: 'LONG' | 'SHORT' | null;
@@ -210,6 +219,7 @@ export function projectRunExecutionOutcomes(
       clientOrderId: null, exchangeOrderId: null, submittedAt: null,
       firstFillAt: null, partialFillAt: null, waitingSince: null,
       portfolioRiskAllowed: null, blockStage: null, blockReasons: [],
+      analysisOnly: false, orderAuthorization: null, riskObservation: null,
       lineageProven: false, inconsistent: [], updatedAt: Number(run.decidedAt ?? now),
       submittedIntentId: null,
     });
@@ -261,12 +271,18 @@ export function projectRunExecutionOutcomes(
     if (!row.symbol && event.symbol) row.symbol = String(event.symbol);
 
     switch (event.type) {
+      case 'ANALYSIS_ONLY_COMPLETED':
+        row.analysisOnly = true;
+        row.orderAuthorization = false;
+        break;
       case 'ENTRY_ECONOMIC_ADMISSION_EVALUATED':
         break;
       case 'PORTFOLIO_RISK_ADMISSION_EVALUATED':
         row.portfolioRiskAllowed = payload.allowed === true;
+        row.riskObservation = { allowed: typeof payload.observedAllowed === 'boolean' ? payload.observedAllowed : typeof payload.allowed === 'boolean' ? payload.allowed : null, reasons: Array.isArray(payload.observedReasons) ? payload.observedReasons.map(String) : reasonsOf(payload, null) };
+        if (payload.analysisOnly === true) { row.analysisOnly = true; row.orderAuthorization = false; }
         // Funds-only TESTNET records the risk verdict for audit, but does not enforce it.
-        if (row.portfolioRiskAllowed === false && payload.entryVetoEnforced !== false) {
+        if (row.portfolioRiskAllowed === false && payload.entryVetoEnforced !== false && payload.analysisOnly !== true) {
           row.blockStage = 'PORTFOLIO_RISK';
           row.blockReasons = reasonsOf(payload, 'PORTFOLIO_RISK_NOT_ALLOWED');
         }
@@ -362,6 +378,7 @@ export function projectRunExecutionOutcomes(
     if (row.firstFillAt != null) state = 'FILLED';
     else if (row.partialFillAt != null) state = 'PARTIALLY_FILLED';
     else if (row.orderId != null) state = 'SUBMITTED';
+    else if (row.analysisOnly) state = 'READ_ONLY_NON_EXECUTABLE';
     else if (row.waitingSince != null) state = 'WAITING_PRICE';
     else if (row.blockStage != null) state = 'NOT_SUBMITTED';
     else if (!isPlace(row.decision)) state = 'DECISION_ONLY';
@@ -384,6 +401,9 @@ export function projectRunExecutionOutcomes(
       blockStage: state === 'NOT_SUBMITTED' ? row.blockStage : null,
       blockReasons,
       portfolioRiskAllowed: row.portfolioRiskAllowed,
+      analysisOnly: row.analysisOnly,
+      orderAuthorization: row.orderAuthorization,
+      riskObservation: row.riskObservation,
       tradePlanId: row.planId,
       tradePlanReady: row.planId != null,
       reservationId: row.reservationId,
@@ -395,7 +415,7 @@ export function projectRunExecutionOutcomes(
       firstFillAt: row.firstFillAt,
       updatedAt: row.updatedAt,
       lineageProven: row.lineageProven,
-      inconsistentFacts: [...new Set(row.inconsistent)].slice(0, 8),
+      inconsistentFacts: [...new Set([...row.inconsistent, ...(row.analysisOnly && (row.intentId || row.orderId || row.firstFillAt) ? ['READ_ONLY_EXECUTION_FACT_CONTRADICTION'] : [])])].slice(0, 8),
     });
   }
   return outcomes;
@@ -417,6 +437,8 @@ export interface EntryConversionWindow {
   place: number;
   /** Only schema-valid, offered, frozen candidate selections count as authorized PLACE. */
   authorizedPlace: number;
+  readOnlyPlace: number;
+  executablePlace: number;
   riskAllowed: number;
   economicAdmissionPassed: number;
   tradePlanReady: number;
@@ -464,6 +486,7 @@ export function entryConversionWindow(
   const primaryRuns = new Set<string>();
   const placeRuns = new Set<string>();
   const authorizedRuns=new Set<string>();
+  const readOnlyRuns=new Set<string>();
   const firstBlockByRun=new Map<string,{stage:ExecutionBlockStage|'UNKNOWN';reason:string}>();
   // Same attribution rule as the run projection: the event that introduces an intent or an order owns
   // the identity, and a later event that names only that identity belongs to the same run. Without
@@ -486,6 +509,9 @@ export function entryConversionWindow(
       ?? (orderKey != null ? orderOwner.get(String(orderKey)) : undefined)
       ?? directRunId;
     switch (event.type) {
+      case 'ANALYSIS_ONLY_COMPLETED':
+        if(runId)readOnlyRuns.add(runId);
+        break;
       case 'PRIMARY_DECISION_NORMALIZED':
         if (!runId) break;
         primaryRuns.add(runId);
@@ -498,6 +524,7 @@ export function entryConversionWindow(
         if (payload.passed === true) add('economicAdmissionPassed', runId);
         break;
       case 'PORTFOLIO_RISK_ADMISSION_EVALUATED':
+        if(payload.analysisOnly===true&&runId)readOnlyRuns.add(runId);
         if (payload.allowed === true && payload.analysisOnly !== true) add('riskAllowed', runId);
         break;
       case 'TRADE_PLAN_PERSISTED':
@@ -555,22 +582,24 @@ export function entryConversionWindow(
   const top = blocked[0] ?? null;
   const ratio = (numerator: number, denominator: number) => (denominator > 0 ? Number(((numerator / denominator) * 100).toFixed(1)) : null);
   const place = placeRuns.size, orderSubmitted = stage('orderSubmitted');
+  const readOnlyPlace=[...placeRuns].filter(id=>readOnlyRuns.has(id)).length,executablePlace=place-readOnlyPlace;
   const authorizedNoSubmitCounts=new Map<string,{stage:ExecutionBlockStage|'UNKNOWN';reason:string;count:number}>();
   for(const runId of authorizedRuns){
-    if(byRun.get('orderSubmitted')?.has(runId))continue;
+    if(readOnlyRuns.has(runId)||byRun.get('orderSubmitted')?.has(runId))continue;
     const first=firstBlockByRun.get(runId)??{stage:'UNKNOWN' as const,reason:'EXECUTION_LINEAGE_UNPROVEN'};
     const key=`${first.stage}|${first.reason}`,prior=authorizedNoSubmitCounts.get(key);
     authorizedNoSubmitCounts.set(key,{...first,count:(prior?.count??0)+1});
   }
   const totalBlocked = blocked.reduce((sum, row) => sum + row.count, 0);
   const dominantIsIntendedGate = top == null || INTENDED_GATE.test(top.reason) || top.stage === 'PRE_AI';
-  const degraded = place >= 5 && orderSubmitted === 0 && top != null && !dominantIsIntendedGate && top.count >= Math.max(1, Math.ceil(totalBlocked / 2));
+  const degraded = executablePlace >= 5 && orderSubmitted === 0 && top != null && !dominantIsIntendedGate && top.count >= Math.max(1, Math.ceil(totalBlocked / 2));
   return {
     since: input.since,
     until: input.until,
     primaryCompleted: primaryRuns.size,
     place,
     authorizedPlace:authorizedRuns.size,
+    readOnlyPlace, executablePlace,
     riskAllowed: stage('riskAllowed'),
     economicAdmissionPassed: stage('economicAdmissionPassed'),
     tradePlanReady: stage('tradePlanReady'),
@@ -583,9 +612,9 @@ export function entryConversionWindow(
     blocked,
     authorizedNoSubmit:[...authorizedNoSubmitCounts.values()].sort((a,b)=>b.count-a.count),
     ratios: {
-      placeToTradePlan: ratio(stage('tradePlanReady'), place),
+      placeToTradePlan: ratio(stage('tradePlanReady'), executablePlace),
       tradePlanToSubmit: ratio(orderSubmitted, stage('tradePlanReady')),
-      placeToSubmit: ratio(orderSubmitted, place),
+      placeToSubmit: ratio(orderSubmitted, executablePlace),
       submitToFill: ratio(stage('entryFilled'), orderSubmitted),
       authorizedPlaceToSubmit:ratio([...authorizedRuns].filter(runId=>byRun.get('orderSubmitted')?.has(runId)).length,authorizedRuns.size),
     },

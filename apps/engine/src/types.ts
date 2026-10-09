@@ -81,7 +81,7 @@ export interface TradeAuditSnapshot {
 
 export interface ModelRunResult<T> { value:T; inputTokens:number|null; outputTokens:number|null; finishReason:string|null; modelIdentity:Record<string,unknown>|null; raw:unknown; timing:{requestMs:number;parseMs:number;retryMs:number;transportAttempts?:number}; }
 export interface AiModelClient {
-  runJson<T>(args:{baseUrl:string;model:string;prompt:string;schemaName:string;timeoutMs:number;jsonSchema?:Record<string,unknown>;maxOutputTokens?:number;parse:(value:unknown)=>T}):Promise<ModelRunResult<T>>;
+  runJson<T>(args:{baseUrl:string;model:string;prompt:string;schemaName:string;timeoutMs:number;jsonSchema?:Record<string,unknown>;maxOutputTokens?:number;requireContextBudget?:boolean;onContextBudget?:(budget:import('./adapters/ai/promptBudget.js').PromptBudget)=>void;parse:(value:unknown)=>T}):Promise<ModelRunResult<T>>;
 }
 
 export interface EvidenceToolContext { symbol:string; }

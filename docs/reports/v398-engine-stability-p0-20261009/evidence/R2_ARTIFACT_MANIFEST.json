@@ -1,0 +1,45 @@
+{
+  "baseline": "b5db4710c6cc4d7be6f0af0b7c744bef242c4ef0",
+  "artifacts": [
+    {
+      "path": "docs/evidence/v396/S00/20260921T145000Z/entrypoint-review.json",
+      "bytes": 106363,
+      "sha256": "55BE42A18ECA723E6B1ED03382FDBE31CD259AD602CC8097C75774084020893F"
+    },
+    {
+      "path": "docs/reports/v398-trade-record-integrity-20261009/s00/entrypoint-review.json",
+      "bytes": 106363,
+      "sha256": "55BE42A18ECA723E6B1ED03382FDBE31CD259AD602CC8097C75774084020893F"
+    },
+    {
+      "path": "docs/reports/v398-engine-stability-p0-20261009/IMPLEMENTATION_REPORT.md",
+      "bytes": 3813,
+      "sha256": "8752312D57BD5473FD0C150A9532C8D463AF9FC5FD5E6943EE0A547C1193C948"
+    },
+    {
+      "path": "docs/reports/v398-engine-stability-p0-20261009/evidence/R2_OFFLINE_VERIFICATION.json",
+      "bytes": 1807,
+      "sha256": "289CE6BB13B90E4837AE503F622AF5A7EE1BF898BD9314B63CB8530409152A24"
+    },
+    {
+      "path": "scripts/collect-zdj-engine-crash-evidence.ps1",
+      "bytes": 10371,
+      "sha256": "B637859A5CD1EF652F6C4618DBFBC8D4D95BCFB285D901842171B349188AAA7A"
+    },
+    {
+      "path": "scripts/collect-zdj-engine-crash-evidence.test.ps1",
+      "bytes": 6297,
+      "sha256": "5C9D12C45CE4C8487B9F47C0F53BE8945C521BF013B0AD02BBE61D082F8A9DA8"
+    },
+    {
+      "path": "scripts/engine-crash-diagnostics.psm1",
+      "bytes": 7301,
+      "sha256": "526D8741CA9D2F34FE5A70D405EFA8761476C546C78590FC01A1D3EBD004D7EA"
+    },
+    {
+      "path": "package.json",
+      "bytes": 3890,
+      "sha256": "3C0667340F8DDECD02D0B5F04DAE0FCB605AC8D703D4F8B549F8A746D2F7B526"
+    }
+  ]
+}

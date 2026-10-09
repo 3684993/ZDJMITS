@@ -1,0 +1,56 @@
+{
+  "status": "DIAGNOSTICS_READY_NOT_DEPLOYED",
+  "runtimeAcceptance": "RUNTIME_ACCEPTANCE_PENDING",
+  "baselineCommit": "b5db4710c6cc4d7be6f0af0b7c744bef242c4ef0",
+  "verification": {
+    "command": "npm run verify",
+    "exitCode": 0,
+    "result": "PASS",
+    "testFilesPassed": 210,
+    "testsPassed": 1899,
+    "targetedCollectorAssertions": 25,
+    "gitDiffCheck": "PASS",
+    "fullLog": {
+      "storage": "LOCAL_ONLY",
+      "path": "%LOCALAPPDATA%/MITS/incident-pid8524-20261009/r2-full-verify-20261009T005316Z.log",
+      "bytes": 108720,
+      "sha256": "0CE77FE12D4197F9213016B1C73F2B1B05143CC8DE25D4259EEA66B2DD326483"
+    }
+  },
+  "syntheticEndToEnd": {
+    "result": "PASS",
+    "input": "synthetic logs and a fake process identity",
+    "classification": "PROCESS_EXIT_CRASH",
+    "exitCodeHex": "0xC0000409",
+    "boundedResourceEventsObserved": 4,
+    "privateEventRecordsStoredLocally": 4,
+    "eventLogCoverage": ["COLLECTED", "COLLECTED"],
+    "fullOutput": "%LOCALAPPDATA%/MITS/crash-collector-e2e-final-316d7813ecd745b2ad5bc77593fdcac9/output",
+    "liveEngineAccessed": false,
+    "engineHttpAccessed": false,
+    "sqliteAccessed": false,
+    "exchangeAccessed": false
+  },
+  "s00EntrypointReview": {
+    "entryCount": 184,
+    "forbiddenOrNotRun": 164,
+    "conditionalNotRun": 19,
+    "allowedStatic": 1,
+    "rulesChanged": false
+  },
+  "runtimeActions": {
+    "engineStartedStoppedOrRestarted": false,
+    "deployed": false,
+    "watchdogChanged": false,
+    "werConfigured": false,
+    "exchangeWrites": 0,
+    "runtimeWindowAccepted": false
+  },
+  "causality": {
+    "pid8524ExitClass": "PROCESS_EXIT_CRASH",
+    "exitCodeHex": "0xC0000409",
+    "nativeTrigger": "UNKNOWN",
+    "systemVirtualMemoryPressure": "STRONG_EVIDENCE",
+    "pressureCausedPid8524Exit": "UNKNOWN"
+  }
+}

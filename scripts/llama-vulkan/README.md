@@ -16,6 +16,7 @@
 
 - ZDJ-memory-first-check.ps1：此前的只读首轮诊断脚本，纳入仓库保存，不再要求上传私有原始日志。
 - measure-memory-handles-readonly.ps1：读取 Windows commit/pools/pagefile 与两个独立来源的 llama-server 句柄数，默认 3 次、间隔 3 秒。
+- maintenance-preflight-readonly.ps1：只读检查三个端口的真实 PID、进程创建UTC、watchdog PID、Engine 8080 进程和 commit，生成本地维护预检报告。
 - verify-candidate-parse-readonly.ps1：只解析候选 PS1 语法，不加载模型、不连交易所。
 - start-qwen3.5-9b-vulkan.ps1：完整原架构候选，B580/8081，默认 Context16K、KV q8_0、ubatch128。
 - start-qwen3.8-27b-harness-vulkan1.ps1：完整 Harness 候选，7900XTX/8083，Context32K、KV q8_0、batch512/ubatch128，保留 tool/reasoning/responses 逻辑。
@@ -48,6 +49,32 @@ powershell -NoProfile -ExecutionPolicy Bypass -File "$review\start-qwen3.8-27b-z
 ~~~
 
 **现在禁止 -Mode Start、-Mode Stop、-EnableWatchdog、手动重启模型、调整页面文件、替换原脚本或部署交易 Engine。** 当前只有 2GiB 提交余量，且百万句柄值尚未确认；上述保护门禁会阻止新冷加载。
+
+## 2026-10-09 09:24 +08 补充：两条独立句柄读数完全一致，立即不要自动重启
+
+3次样本间隔3秒，Windows提交余量 1.502→1.493→1.482 GiB，PagedPool约23.10 GiB、NonpagedPool约8.67 GiB；8083 PID17468句柄2451581、8084 PID51124句柄10631013，Get-Process 和 PerfCIM 每个样本完全一致；8081 PID12732仅317。数值稳定不代表正常，也不能只用这9秒的数据证明增长性内存/句柄泄漏；优先判定百万级句柄的对象类型。Microsoft Sysinternals Handle `-s -p <PID>` 可以按句柄类型计数，但目前提交余量仅1.48GiB，不要立刻对千万级句柄进程做重负载枚举。
+
+### 正确的维护策略（回答是否先手工停三模型）
+
+**不建议在 1.48GiB 提交余量条件下自动杀进程并重启三个模型。先只读检查、决定单次人工批准的维护时机、保存现有日志和句柄事实，然后分角色有序停止和启动。**
+
+新脚本的 `-Mode Start` 在已有端口健康时不重复启动；端口已有进程但 unhealthy/legacy 时抛错，决不自动强杀。默认不自动启用 watchdog，但**旧后台 watchdog 不会因拉取新代码就消失**。
+
+`-Mode Stop` 已加安全门禁，必须提供 `-ConfirmStop -ExpectedServerPid <实际PID> -ExpectedStartUtc <进程真实创建UTC>`；检查 PID 文件/监听端口、进程名称/命令行、时间、已关闭的 8080 Engine、已停稳的该角色 watchdog，并核对无并行遗留 watcher 才进行一次明确的 Windows `Stop-Process -Force`。此操作会中断模型服务，所以**本次用户提问并不授权立即执行**，请用户在看过预检报告后明确批准。若 PID 文件不同、旧 watchdog 不能识别或权限不足，停止并留证，绝不能绕过。
+
+三份 AMD 模型配置已改为**严格绑定** 8083→Vulkan1、8084→Vulkan2；若首选 GPU 被占用/资源不足立即拒绝启动，绝不静默将 Harness/Primary 交换 GPU。
+
+先从 GitHub 拉取最新分支，然后只读执行：
+
+~~~powershell
+$review = 'D:\MITS-worktrees\llama-memory-20261009\scripts\llama-vulkan'
+powershell -NoProfile -ExecutionPolicy Bypass -File "$review\verify-candidate-parse-readonly.ps1"
+powershell -NoProfile -ExecutionPolicy Bypass -File "$review\maintenance-preflight-readonly.ps1"
+~~~
+
+如果工作树已检出但还没更新，先按 Git 状态确认 clean，`git -C D:\MITS-worktrees\llama-memory-20261009 pull --ff-only origin codex/llama-vulkan-memory-20261009`。原 `D:\MITS` dirty 文件不可重置。以上没有 Stop/Start/迁移/交易写入。
+
+**后续获授权维护的原则顺序：** 先确认 Engine 不在运行及持仓保护由交易所独立存在；保存 model logs、精确 PID/创建时间和 watchdog 身份；确认谁会自动重启；再分角色停止 27B Primary→27B Harness（最后视必要性停 9B）；每停止一项观测提交内存及内核池真实回收，再先 9B、Harness、Primary 逐一重载并逐角色 smoke；重载后每一步若低内存/百万句柄/模型 API 异常，立即停住而非继续第三个。手动 Stop 的真实授权、Engine 保护状态、内存预算若不满足，不准执行此流程。
 
 ## 本机后续根因调查
 

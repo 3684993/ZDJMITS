@@ -18,6 +18,32 @@ $diagnostics = Join-Path $env:LOCALAPPDATA 'ZDJMITS\diagnostics\reboot-orchestra
 $log = Join-Path $diagnostics ('startup-' + (Get-Date -Format 'yyyyMMdd-HHmmss') + '.log')
 Start-Transcript -LiteralPath $log -Force | Out-Null
 
+# Recognize the prior hidden launcher for THIS task without accepting arbitrary wscript tasks.
+# No task is started/stopped by this predicate.
+function Test-ExistingAutostartAction([object]$Action,[string]$ExpectedTaskName) {
+  $executable = [IO.Path]::GetFileName(([string]$Action.Execute).Trim('"'))
+  $arguments = [string]$Action.Arguments
+  if ($executable -match '^(powershell|pwsh)(\.exe)?$') {
+    return $arguments -like '*start-zdj-stack-after-reboot.ps1*'
+  }
+  if ($executable -notmatch '^wscript(\.exe)?$' -or
+      $arguments -notmatch '^//B\s+//Nologo\s+"([^"\r\n]+\.vbs)"$') { return $false }
+  $launcher = $Matches[1]
+  $expectedLeaf = ('_' + (('\' + $ExpectedTaskName) -replace '[^a-zA-Z0-9-]','_') + '.vbs')
+  if (-not [IO.Path]::IsPathRooted($launcher) -or
+      [IO.Path]::GetFileName($launcher) -cne $expectedLeaf -or
+      -not (Test-Path -LiteralPath $launcher -PathType Leaf)) { return $false }
+  try { $lines = @(Get-Content -LiteralPath $launcher -ErrorAction Stop) } catch { return $false }
+  if ($lines.Count -lt 5 -or $lines.Count -gt 6) { return $false }
+  if ($lines[0] -ne 'Option Explicit' -or
+      $lines[1] -ne 'Dim shell, result' -or
+      $lines[2] -ne 'Set shell = CreateObject("WScript.Shell")' -or
+      $lines[-1] -ne 'WScript.Quit result') { return $false }
+  $run = @($lines | Where-Object { $_ -match '^result = shell\.Run\(' })
+  return ($run.Count -eq 1 -and
+      $run[0] -like '*start-zdj-stack-after-reboot.ps1*' -and
+      $run[0] -match ',\s*0,\s*True\)$')
+}
 function Write-Stage([string]$Name, [string]$State, [hashtable]$Data = @{}) {
   $row = [ordered]@{ at = [DateTimeOffset]::Now.ToString('o'); utc = [DateTimeOffset]::UtcNow.ToString('o'); stage = $Name; state = $State; data = $Data }
   [IO.File]::AppendAllText((Join-Path $diagnostics 'startup-events.jsonl'), (($row | ConvertTo-Json -Compress -Depth 8) + [Environment]::NewLine), [Text.UTF8Encoding]::new($false))
@@ -106,7 +132,7 @@ try {
     $existing = Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue
     if ($existing) {
       $act = $existing.Actions | Select-Object -First 1
-      if ($act.Execute -notmatch 'powershell' -or $act.Arguments -notlike "*start-zdj-stack-after-reboot.ps1*") { throw "TASK_NAME_COLLISION:$TaskName" }
+      if (-not (Test-ExistingAutostartAction -Action $act -ExpectedTaskName $TaskName)) { throw "TASK_NAME_COLLISION:$TaskName" }
       Unregister-ScheduledTask -TaskName $TaskName -Confirm:$false
     }
     $script = Join-Path $PSScriptRoot 'start-zdj-stack-after-reboot.ps1'

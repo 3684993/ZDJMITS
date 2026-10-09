@@ -49,10 +49,12 @@ $results=@(foreach($r in $roles){
     }
 })
 $results|Format-Table -AutoSize|Out-Host
-$blocked=($freeGiB -lt 20 -or $useRatio -ge 0.90 -or $engineListening.Count -gt 0 -or $engines.Count -gt 0)
+# Conservatively represent whether a 27B COLD START could pass resource headroom.
+# This does not mean all three models can be restarted on this commit limit.
+$blocked=($freeGiB -lt 40 -or $useRatio -ge 0.90 -or $engineListening.Count -gt 0 -or $engines.Count -gt 0)
 if(@($results|Where-Object {$_.handleCount -ge 100000}).Count){$blocked=$true}
 if(@($results|Where-Object {$_.listenerPid -and -not $_.pidFileMatchesListener}).Count){$blocked=$true}
-$doc=[ordered]@{utc=[DateTimeOffset]::UtcNow.ToString('o');mode='READ_ONLY_MAINTENANCE_PLAN';commitFreeGiB=[Math]::Round($freeGiB,3);commitUsedRatio=$useRatio;engineListeningCount=$engineListening.Count;engineProcessCount=$engines.Count;requiresManualApproval=$true;safeToColdRestartNow=(-not $blocked);models=$results;note='A false result prevents restart. Even true is only a resource preflight, not permission or an execution guarantee.'}
+$doc=[ordered]@{utc=[DateTimeOffset]::UtcNow.ToString('o');mode='READ_ONLY_MAINTENANCE_PLAN';commitFreeGiB=[Math]::Round($freeGiB,3);commitUsedRatio=$useRatio;engineListeningCount=$engineListening.Count;engineProcessCount=$engines.Count;requiresManualApproval=$true;safeToColdRestartNow=(-not $blocked);minimum27BFreeGiB=40;minimum9BFreeGiB=24;models=$results;note='This preliminary result is a 27B resource gate only. A false result blocks start. Even true is neither authorization nor proof that loading every model will remain safe.'}
 $folder=Join-Path $env:LOCALAPPDATA 'ZDJMITS\diagnostics'
 [IO.Directory]::CreateDirectory($folder)|Out-Null
 $file=Join-Path $folder ('model-maintenance-preflight-'+(Get-Date -Format yyyyMMdd-HHmmss)+'.json')

@@ -37,7 +37,7 @@ param(
     [ValidateRange(24,80)][int]$MinimumHostCommitFreeGiB = 24,
     [switch]$EnableWatchdog,
     [switch]$ConfirmStop,
-    [ValidateRange(1,2147483647)][int]$ExpectedServerPid = 0,
+    [ValidateRange(0,2147483647)][int]$ExpectedServerPid = 0,
     [string]$ExpectedStartUtc = '',
     [switch]$SkipSmokeTest,
     [switch]$NoWatchdog,
@@ -873,11 +873,13 @@ function Start-ModelServer {
         }
     }
 
-    Assert-HostMemoryForColdStart -MinimumFreeGiB $MinimumHostCommitFreeGiB
-
     $allocator = Enter-GpuAllocator
 
     try {
+        # Serialize the host-commit check with GPU reservation and child creation.
+        # Two parallel launchers must not both pass on the same stale free-commit snapshot.
+        Assert-HostMemoryForColdStart -MinimumFreeGiB $MinimumHostCommitFreeGiB
+
         $selection = Resolve-B580Selection -MinimumFreeMiB $MinFreeMiB
         $physicalDevice = [string]$selection.Device
         $physicalIndex = [int]$selection.Index

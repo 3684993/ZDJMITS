@@ -1143,8 +1143,10 @@ function Stop-All {
     }
     # Do not disrupt a live trading Engine. It may need the local models.
     $enginePort = @(Get-NetTCPConnection -State Listen -LocalPort 8080 -ErrorAction SilentlyContinue)
-    if ($enginePort.Count) {
-        throw "STOP_BLOCKED_ENGINE_8080_LISTENING: coordinate trading maintenance first."
+    $engineProcesses = @(Get-CimInstance Win32_Process -Filter "Name='node.exe'" -ErrorAction Stop |
+        Where-Object { [string]$_.CommandLine -match '(?i)[\\/]apps[\\/]engine[\\/]dist[\\/]main\.js' })
+    if ($enginePort.Count -or $engineProcesses.Count) {
+        throw "STOP_BLOCKED_TRADING_ENGINE_PRESENT listeners=$($enginePort.Count) engineProcesses=$($engineProcesses.Count); coordinate maintenance first."
     }
     # Race check before writing watchdog stop signal.
     if ((Get-PortOwnerPid -ListenPort $Port) -ne $ExpectedServerPid) {
@@ -1179,7 +1181,10 @@ function Stop-All {
     if ($last.StartTime.ToUniversalTime() -ne $created -or (Get-PortOwnerPid -ListenPort $Port) -ne $ExpectedServerPid) {
         throw "STOP_IDENTITY_CHANGED_BEFORE_TERMINATION; no server kill performed"
     }
-    if (@(Get-NetTCPConnection -State Listen -LocalPort 8080 -ErrorAction SilentlyContinue).Count) {
+    $engineListeningNow = @(Get-NetTCPConnection -State Listen -LocalPort 8080 -ErrorAction SilentlyContinue)
+    $engineProcessesNow = @(Get-CimInstance Win32_Process -Filter "Name='node.exe'" -ErrorAction Stop |
+        Where-Object { [string]$_.CommandLine -match '(?i)[\\/]apps[\\/]engine[\\/]dist[\\/]main\.js' })
+    if ($engineListeningNow.Count -or $engineProcessesNow.Count) {
         throw "STOP_BLOCKED_ENGINE_STARTED_DURING_WAIT: no server kill performed"
     }
     Write-Warning "Operator-confirmed maintenance stop: port=$Port pid=$ExpectedServerPid createdUtc=$($created.ToString('o'))"

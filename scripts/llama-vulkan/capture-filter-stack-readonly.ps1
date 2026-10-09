@@ -9,7 +9,7 @@ param(
 $ErrorActionPreference='Stop'
 Set-StrictMode -Version Latest
 $exe=Join-Path $env:SystemRoot 'System32\fltmc.exe'
-if(-not (Test-Path -LiteralPath $exe -PathType Leaf)){throw 'FL TMC_NOT_FOUND: system fltmc.exe unavailable'}
+if(-not (Test-Path -LiteralPath $exe -PathType Leaf)){throw 'FLTMC_NOT_FOUND: system fltmc.exe unavailable'}
 function Invoke-ReadOnlyFltmc {
     param([ValidateSet('filters','instances','volumes')][string]$QueryName)
     # The executable is a built-in Windows utility; only non-mutating subcommands allowed.

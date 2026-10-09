@@ -17,12 +17,13 @@
 - ZDJ-memory-first-check.ps1：此前的只读首轮诊断脚本，纳入仓库保存，不再要求上传私有原始日志。
 - measure-memory-handles-readonly.ps1：读取 Windows commit/pools/pagefile 与两个独立来源的 llama-server 句柄数，默认 3 次、间隔 3 秒。
 - maintenance-preflight-readonly.ps1：只读检查三个端口的真实 PID、进程创建UTC、watchdog PID、Engine 8080 进程和 commit，生成本地维护预检报告。
+- CONTROLLED_MAINTENANCE_RUNBOOK_20261009.md：用户确认维护窗口后，仅针对一个指定旧PID手动停止、回读内存/内核池的操作步骤；**不得自动批量重启**。
 - verify-candidate-parse-readonly.ps1：只解析候选 PS1 语法，不加载模型、不连交易所。
 - start-qwen3.5-9b-vulkan.ps1：完整原架构候选，B580/8081，默认 Context16K、KV q8_0、ubatch128。
 - start-qwen3.8-27b-harness-vulkan1.ps1：完整 Harness 候选，7900XTX/8083，Context32K、KV q8_0、batch512/ubatch128，保留 tool/reasoning/responses 逻辑。
 - start-qwen3.8-27b-zdj-vulkan1.ps1：完整 Primary 候选，7900XTX/8084，Context32K、KV q8_0、batch512/ubatch128，保留原别名与输出逻辑。
 
-相较原脚本：冷加载前要求 Host Commit 空余至少 8GiB(9B)/20GiB(27B) 且总占用低于90%；任何存活的 llama-server 句柄数超过100000即阻止新 cold load；已有端口 unhealthy 或 legacy 进程**不得**被新的 Start 命令强制杀掉；默认不启动 Watchdog，必须显式 -EnableWatchdog 才会启用；保留既有崩溃日志而不自动清理；在本机 llama.cpp help 提供 --cache-ram 选项时使用 --cache-ram 0；--ctx-checkpoints 0 保留。新的候选文件不影响已经运行的老 watchdog 进程。
+相较原脚本：冷加载前要求 Host Commit 空余至少 **24GiB(9B)/40GiB(27B)** 且总占用低于90%；任何存活的 llama-server 句柄数超过100000即阻止新 cold load；已有端口 unhealthy 或 legacy 进程**不得**被新的 Start 命令强制杀掉；默认不启动 Watchdog，必须显式 -EnableWatchdog 才会启用；保留既有崩溃日志而不自动清理；在本机 llama.cpp help 提供 --cache-ram 选项时使用 --cache-ram 0；--ctx-checkpoints 0 保留。新的候选文件不影响已经运行的老 watchdog 进程。
 
 **风险/兼容：** context32K 可能不能满足原 Harness/Primary 的 64K 上下文需求；KV/ubatch 改动也需要做真实请求与质量验证。可以通过 -MaxContextTokens 65536 临时选回，但仅在已有明确资源预算且获授权的维护窗口内。缓存选项随 llama.cpp 构建变化，未在用户本机执行前不能声称支持或速度提升。
 
@@ -107,3 +108,11 @@ powershell -NoProfile -ExecutionPolicy Bypass -File "$review\maintenance-preflig
 ## GitHub Actions
 
 本专项只保存在非触发 review 分支 codex/llama-vulkan-memory-20261009。不会发 workflow_dispatch、rerun 或推送 main；任何合并 main 都需要用户另行批准。脚本在本轮只经过静态检查；**尚未在 Windows 运行 ParseFile 或真实模型测试**。
+
+## 09:35 +08 预检结果及最新安全门禁
+
+最新只读预检完成：8080 不监听且匹配 Engine 进程数为0，8081/8083/8084 listener PID=pidfile，三个 watchdog PID 文件均陈旧、watchdogAlive=false；三个模型活着，Host Commit 116.68/117.98GiB、空闲仅1.297GiB。**结论 MAINTENANCE_RESTART_BLOCKED 仍成立。** 该快照不保证外部 AI clients 没有活跃任务。
+
+本目录三份候选严格提高启动门槛：9B >=24GiB host commit free，27B >=40GiB host commit free，系统 commit 使用率 <90%，已有任何 llama-server handleCount >=100000 时拒绝 cold load；还增加了 Engine **进程存在但尚未监听8080**时拒绝被请求的 stop。内核池/句柄数本身是否为真正泄漏仍需停止后回收趋势对照。
+
+**后续完整操作只采用 [CONTROLLED_MAINTENANCE_RUNBOOK_20261009.md](CONTROLLED_MAINTENANCE_RUNBOOK_20261009.md)。当前不要一次停止并重启三个模型。**

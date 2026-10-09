@@ -39,7 +39,8 @@ param(
     [int]$MinFreeMiB = 20000,
 
     [ValidateRange(4096,65536)][int]$MaxContextTokens = 32768,
-    [ValidateRange(4,80)][int]$MinimumHostCommitFreeGiB = 20,
+    # Measured 27B private commit 20.8-24.2GiB; reserve headroom for load transient and post-load system safety.
+    [ValidateRange(40,80)][int]$MinimumHostCommitFreeGiB = 40,
     [switch]$EnableWatchdog,
     [switch]$ConfirmStop,
     [ValidateRange(1,2147483647)][int]$ExpectedServerPid = 0,

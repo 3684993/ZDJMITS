@@ -1,7 +1,7 @@
 import {EntryDecisionJsonSchema,type EntryIntelligencePacket} from '@zdj/contracts';
 
 export const PRIMARY_CHOICE_PROTOCOL='FROZEN_CANDIDATE_ID_V1';
-const redundant=['quantityUnits','idealPrice','acceptablePriceRange','horizonMinutes','profitTakePlan'];
+const redundant=['quantityUnits','idealPrice','acceptablePriceRange','profitTakePlan'];
 
 /** New requests select an immutable menu row, rather than retyping its execution numbers. */
 export function primaryChoiceJsonSchema(packet:EntryIntelligencePacket){
@@ -23,9 +23,10 @@ export function materializePrimaryChoice(value:any,packet:EntryIntelligencePacke
   const {executionSelection,candidateSetHash,...raw}=value;
   const side=raw.decision==='PLACE_LONG'?'LONG':raw.decision==='PLACE_SHORT'?'SHORT':null;
   if(!side){
-    if(candidateSetHash!==null||raw.selectedCandidateId!==null||raw.tradeSide!==null)throw Error('AI_OUTPUT_INVALID: non-PLACE choice has execution authority');
+    if(candidateSetHash!==null||raw.selectedCandidateId!==null||raw.tradeSide!==null||raw.horizonMinutes!==null)throw Error('AI_OUTPUT_INVALID: non-PLACE choice has execution authority');
     return {...raw,quantityUnits:null,idealPrice:null,acceptablePriceRange:null,horizonMinutes:null,profitTakePlan:null};
   }
+  if(!Number.isInteger(raw.horizonMinutes)||raw.horizonMinutes<1||raw.horizonMinutes>5)throw Error('AI_OUTPUT_INVALID: Entry authorization horizon must be 1-5 minutes');
   const envelope=packet.executionEnvelope,capacity=envelope?.[side];
   if(raw.schemaVersion!=='V3.9.7'||raw.tradeSide!==side||!envelope||envelope.symbol!==packet.symbol||
     !capacity?.executable||!capacity.candidateSetHash||candidateSetHash!==capacity.candidateSetHash||
@@ -39,7 +40,7 @@ export function materializePrimaryChoice(value:any,packet:EntryIntelligencePacke
     range.min>range.max||price<range.min||price>range.max||Math.abs(price/tick-Math.round(price/tick))>1e-7)
     throw Error('AI_OUTPUT_INVALID: frozen candidate has no legal tick price');
   // The candidate set hash is checked again against the full frozen set at the coordinator boundary.
-  return {...raw,quantityUnits:null,idealPrice:price,acceptablePriceRange:{...range},horizonMinutes:1,
+  return {...raw,quantityUnits:null,idealPrice:price,acceptablePriceRange:{...range},horizonMinutes:raw.horizonMinutes,
     profitTakePlan:{targetPrice:selected.targetPrice,acceptableTargetRange:{...selected.acceptableTargetRange},
       targetHorizonMinutes:selected.targetHorizonMinutes,targetReason:raw.entryLocationReason,evidenceRefs:raw.supportingEvidenceRefs?.slice(0,4)??[]}};
 }

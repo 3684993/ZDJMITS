@@ -13,12 +13,12 @@ export class DynamicPool {
   remove(symbol:string, state:'REJECTED'|'EXPIRED'='REJECTED'){ const item=this.items.get(symbol); if(item){ item.state=state; this.items.delete(symbol); } return item; }
   markAnalyzing(symbol:string){ const item=this.items.get(symbol); if(item)item.state='ANALYZING'; }
   markReady(symbol:string){ const item=this.items.get(symbol); if(item)item.state='READY'; }
-  replenish(candidates:UniverseCandidate[], now=Date.now()):PoolItem[] {
+  replenish(candidates:UniverseCandidate[], now=Date.now(),dispatchable?:Set<string>):PoolItem[] {
     // poolMax is resident storage; poolTarget is the maximum dispatch-ready
     // view.  A WAITING resident therefore cannot consume a READY slot.
     const residentTarget=this.settings.selection.poolMax;
     const readyTarget=Math.min(residentTarget,this.settings.selection.poolTarget);
-    const eligibleForPipeline=(x:UniverseCandidate)=>x.eligible&&x.rank>0&&x.pipelineEligible!==false;
+    const eligibleForPipeline=(x:UniverseCandidate)=>x.eligible&&x.rank>0&&x.pipelineEligible!==false&&(!dispatchable||dispatchable.has(x.symbol));
     const selectable=(x:UniverseCandidate)=>(x.residentEligible??x.eligible)&&x.rank>0;
     const current=new Map(candidates.filter(selectable).map(x=>[x.symbol,x]));
     // Transient execution occupancy changes READY/WAITING but does not evict a

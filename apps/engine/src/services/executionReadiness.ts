@@ -39,6 +39,7 @@ export type ExecutionReadinessInput = {
   portfolioRiskAuthority?: Pick<PortfolioRiskProfileAuthorityContext, 'facts' | 'staleObservedContentHash'> | null;
   authorityScope?: { environment: string; accountScope: string } | null;
   now?: number;
+  entryPolicy?: {orderAuthorization:boolean;reason:string};
 };
 
 export type ExecutionReadiness = {
@@ -81,6 +82,8 @@ export function executionReadiness(input: ExecutionReadinessInput): ExecutionRea
   const blockers: ExecutionBlocker[] = [];
   if (environment !== 'TESTNET') blockers.push('ENVIRONMENT_NOT_TESTNET');
   if (executionMode !== 'TESTNET_ENABLED') blockers.push('EXECUTION_WRITE_LOCKED');
+  const analysisOnly = input.entryPolicy?.orderAuthorization === false;
+  if (analysisOnly) blockers.push(input.entryPolicy!.reason);
   if (!privateFresh) blockers.push('PRIVATE_DATA_UNAVAILABLE');
   if (input.writeAdmissionBlock) blockers.push(input.writeAdmissionBlock);
   if (input.runtimeControlMode !== 'RUNNING') blockers.push('RUNTIME_NOT_RUNNING');
@@ -90,11 +93,11 @@ export function executionReadiness(input: ExecutionReadinessInput): ExecutionRea
   if (input.executableCandidateCount < 1) blockers.push('NO_EXECUTABLE_CANDIDATE');
   const ready = blockers.length === 0;
   return {
-    intent, ready, modelSpendPermitted: !intent || ready, blockers, firstBlocker: blockers[0] ?? null,
+    intent, ready, modelSpendPermitted: !intent || ready || (analysisOnly && privateFresh && environment==='TESTNET' && input.runtimeControlMode==='RUNNING'), blockers, firstBlocker: blockers[0] ?? null,
     profileStatus: portfolioRiskProfileStatus(profile, authority), privateFresh,
-    writeLocked: executionMode !== 'TESTNET_ENABLED', executableCandidateCount: input.executableCandidateCount,
-    mode: ready ? 'EXECUTION_READY' : intent ? 'EXECUTION_BLOCKED' : 'RESEARCH_ONLY',
-    text: ready
+    writeLocked: executionMode !== 'TESTNET_ENABLED' || analysisOnly, executableCandidateCount: input.executableCandidateCount,
+    mode: analysisOnly ? 'RESEARCH_ONLY' : ready ? 'EXECUTION_READY' : intent ? 'EXECUTION_BLOCKED' : 'RESEARCH_ONLY',
+    text: analysisOnly ? `只读分析与风险观察可运行；未授权新 Entry 订单：${input.entryPolicy!.reason}` : ready
       ? '执行事实齐备：PLACE 可进入 reservation → intent → order submit 链'
       : `执行事实未齐：${blockers.join(' · ')}；已停止调用模型，避免产生无法执行的决策`,
   };

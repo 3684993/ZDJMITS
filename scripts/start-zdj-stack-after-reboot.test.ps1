@@ -21,7 +21,7 @@ foreach ($item in $ordered) {
   if ($index -le $last) { throw "AUTOSTART_ORDER_OR_REQUIRED_STEP_INVALID:$item" }
   $last = $index
 }
-foreach ($required in @('TESTNET', 'demo-fapi.binance.com', 'TP_UNVERIFIED_ENGINE_START_ALLOWED', 'ZDJ_ENTRY_ADMISSION_DISABLED', 'WARM_MODELS_SKIP_COLD_GATE', 'Invoke-NodeDiagnostic', 'STARTED_ONCE', 'NoWatchdog', 'FAILED_CLOSED', '20091')) {
+foreach ($required in @('TESTNET', 'demo-fapi.binance.com', 'TP_UNVERIFIED_ENGINE_START_ALLOWED', 'ZDJ_ENTRY_ADMISSION_DISABLED', 'ZDJ_ENTRY_EXECUTION_POLICY', 'EntryApprovalFile', 'ENTRY_APPROVAL_INVALID_OR_EXPIRED', 'ANALYSIS_ONLY_FALLBACK', 'entrypointSha256', 'runtimeMustVerifyFullArtifactAndSource', 'WARM_MODELS_SKIP_COLD_GATE', 'Invoke-NodeDiagnostic', 'STARTED_ONCE', 'NoWatchdog', 'FAILED_CLOSED', '20091')) {
   if ($combined -notmatch [regex]::Escape($required)) { throw "AUTOSTART_SAFETY_GATE_MISSING:$required" }
 }
 if ($source -match '(?i)MaxRestarts|EnableWatchdog|while\s*\(\s*\$true\s*\)' -or $source -match '(?i)restartOnFailure\s*=\s*\$true') { throw 'AUTOSTART_AUTOMATIC_RETRY_OR_WATCHDOG_FOUND' }

@@ -10,6 +10,21 @@ import {
 } from './runExecutionOutcome.js';
 
 const T0 = 1_800_000_000_000;
+
+it('projects historical analysis-only risk observations without fabricating a risk refusal',()=>{
+ const event={type:'PORTFOLIO_RISK_ADMISSION_EVALUATED',ts:T0,payload:{brainRunId:'readonly',analysisOnly:true,allowed:false,reasons:['REAL_OBSERVED_RISK']}};
+ const run={brainRunId:'readonly',decision:'PLACE_LONG',decidedAt:T0};
+ expect(projectRunExecutionOutcomes([event],[run],T0+600000).get('readonly')).toMatchObject({executionState:'READ_ONLY_NON_EXECUTABLE',blockStage:null,blockReasons:[],orderAuthorization:false,riskObservation:{allowed:false,reasons:['REAL_OBSERVED_RISK']}});
+ expect(projectRunExecutionOutcomes([{...event,payload:{...event.payload,analysisOnly:false}}],[run]).get('readonly')).toMatchObject({executionState:'NOT_SUBMITTED',blockStage:'PORTFOLIO_RISK'});
+});
+it('retains real submitted identities and reports contradictions with read-only events',()=>{
+ const events=[{type:'ANALYSIS_ONLY_COMPLETED',ts:T0,payload:{brainRunId:'r'}},{type:'ENTRY_ORDER_CREATED',ts:T0+1,payload:{brainRunId:'r',order:{id:'order',clientOrderId:'client',exchangeOrderId:'exchange'}}}];
+ expect(projectRunExecutionOutcomes(events,[{brainRunId:'r',decision:'PLACE_LONG'}]).get('r')).toMatchObject({executionState:'SUBMITTED',exchangeOrderId:'exchange',inconsistentFacts:['READ_ONLY_EXECUTION_FACT_CONTRADICTION']});
+});
+it('keeps readonly PLACE out of execution conversion denominators',()=>{
+ const events=[{type:'PRIMARY_DECISION_NORMALIZED',ts:T0,payload:{runId:'r',normalizedDecision:'PLACE_LONG'}},{type:'ANALYSIS_ONLY_COMPLETED',ts:T0+1,payload:{brainRunId:'r'}}];
+ expect(entryConversionWindow(events,{since:T0,until:T0+10})).toMatchObject({place:1,readOnlyPlace:1,executablePlace:0,authorizedPlace:0,ratios:{placeToSubmit:null,placeToTradePlan:null},degraded:false});
+});
 const at = (offsetSeconds: number) => T0 + offsetSeconds * 1000;
 
 const run = (over: Partial<RunRow> & {brainRunId: string}): RunRow => ({

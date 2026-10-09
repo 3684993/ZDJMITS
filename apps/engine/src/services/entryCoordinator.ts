@@ -1,3 +1,4 @@
+import {entryStartupPolicy} from './entryStartupPolicy.js';
 import { evaluateEntryExecutionPermit } from './entryPermissionModel.js';
 import {reservationDebitsAvailableFunds} from './entryFundingCommitment.js';
 import { testnetFundsOnlyEntry } from '@zdj/core';
@@ -70,7 +71,7 @@ export class EntryCoordinator {
   private schedulerInstanceId:string|null=null;
   private lastSuppression:{evaluatedAt:number;instanceId:string|null;schedulerCycle:number;candidateCount:number;capacityStatus:string;authoritativeBlocker:string|null;nextEvaluationAt:number;dispatchSuppressed:true;suppressionReason:string}|null=null;
   private analysisFacts={lastTickAt:null as number|null,lastAttemptAt:null as number|null,lastRequestAt:null as number|null,lastSuccessAt:null as number|null,lastFailureAt:null as number|null,lastBlockedReason:null as string|null};
-  private analysisOnly(){return analysisOnlyMode(this.state)||process.env.ZDJ_ENTRY_ADMISSION_DISABLED==='1';}
+  private analysisOnly(){return analysisOnlyMode(this.state)||!entryStartupPolicy(this.state.settings).orderAuthorization;}
   /**
    * The last pre-model readiness verdict, pushed by the runtime every scheduler tick. A model call is
    * a cost the pipeline may only pay when the book could act on the answer, so the reason it refuses
@@ -126,7 +127,7 @@ export class EntryCoordinator {
     else if(model?.status==='OFFLINE')reason='MODEL_UNREACHABLE';
     else if(!this.state.universe.some((x:any)=>x.eligible))reason='WAITING_CANDIDATE';
     else if(capital===0)reason='WAITING_EXECUTION_CAPACITY';
-    return{mode:this.analysisOnly()?'ANALYSIS_ONLY':'EXECUTION_ENABLED',...f,reason,schedulerStatus,schedulerCycle:this.schedulerCycle,instanceId:this.schedulerInstanceId,
+    return{entryExecutionPolicy:entryStartupPolicy(this.state.settings),mode:this.analysisOnly()?'ANALYSIS_ONLY':'EXECUTION_ENABLED',...f,reason,schedulerStatus,schedulerCycle:this.schedulerCycle,instanceId:this.schedulerInstanceId,
       heartbeatAt:f.lastTickAt,heartbeatAgeMs,nextEvaluationAt:f.lastTickAt===null?null:f.lastTickAt+ANALYSIS_SCHEDULER_TICK_INTERVAL_MS,suppression:this.lastSuppression,capitalExecutableCount:capital,
       active:this.active.size,primaryDispatchAgeMs:now-(f.lastRequestAt??this.analysisStartedAt),primarySuccessAgeMs:now-(f.lastSuccessAt??this.analysisStartedAt),silenceMs:now-(f.lastSuccessAt??this.analysisStartedAt),observationStartedAt:this.analysisStartedAt,
       execution:{intent:gate?.intent??false,ready:gate?.ready??true,blockers:gate?.blockers??[],firstBlocker:gate?.firstBlocker??null,lastReadyAt:gate?.lastReadyAt||null,readinessText:gate?.text??null},
@@ -142,7 +143,7 @@ export class EntryCoordinator {
   }
   async processPool() {
     this.noteSchedulerTick();
-    const startupAnalysisOnly=process.env.ZDJ_ENTRY_ADMISSION_DISABLED==='1';
+    const startupAnalysisOnly=!entryStartupPolicy(this.state.settings).orderAuthorization;
     if(startupAnalysisOnly){
       this.noteDispatchSuppressed({reason:'ENTRY_ADMISSION_DISABLED_BY_STARTUP_POLICY',candidateCount:this.state.pool.readyList().length,capacityStatus:'STARTUP_TP_REVIEW',authoritativeBlocker:'TP_IDENTITY_UNVERIFIED'});
       this.noteWriteAdmission('ENTRY_ADMISSION_DISABLED_BY_STARTUP_POLICY');
@@ -357,7 +358,7 @@ export class EntryCoordinator {
       const raced=this.userDataConfirmed(order);if(raced)return raced;
       throw new Error('ENTRY_SUBMISSION_UNKNOWN_PENDING_RECONCILIATION');
     }
-    if(process.env.ZDJ_ENTRY_ADMISSION_DISABLED==='1'){
+    if(!entryStartupPolicy(this.state.settings).orderAuthorization){
       if(order.status==='NEW'){
         const rejected={...order,status:'REJECTED' as const,factSource:'LOCAL_NOT_SUBMITTED',updatedAt:Date.now()};
         this.state.entryOrders.set(order.id,rejected);this.journal?.save({intent,order:rejected});
@@ -913,7 +914,7 @@ export class EntryCoordinator {
   private completeReadOnlyAnalysis(input:{symbol:string;d:any;result:any;executionEnvelope:any}){
     const admission=(this.state as any).riskAdmission;
     const observation=admission?.observe?.()??{allowed:false,reasons:['PORTFOLIO_RISK_ADMISSION_NOT_INSTALLED'],scope:'CURRENT_BOOK'};
-    this.events.publish('PORTFOLIO_RISK_ADMISSION_EVALUATED',{...observation,brainRunId:input.result.runId,analysisOnly:true,locked:false},input.symbol);
+    this.events.publish('PORTFOLIO_RISK_ADMISSION_EVALUATED',{...observation,brainRunId:input.result.runId,analysisOnly:true,orderAuthorization:false,entryVetoEnforced:false,observedAllowed:observation.allowed,observedReasons:observation.reasons,locked:false},input.symbol);
     // The model output stays in its immutable run. A system WAIT records the independent write lock,
     // not a fabricated model PLACE/WAIT and not a reservation or ownership claim.
     const reasons=['EXCHANGE_WRITE_LOCKED',...observation.reasons];
@@ -921,7 +922,7 @@ export class EntryCoordinator {
       factVersion:planFactVersionOf({runId:input.result.runId,observation,settingsVersion:(this.state.settings as any).settingsVersion}),
       d:{...input.d,reason:`Model ${input.d.decision}: ${input.d.reason??''}`,releaseCondition:reasons.join('|'),blockingCondition:'SYSTEM_ANALYSIS_ONLY'}});
     this.analysisFacts.lastBlockedReason='EXCHANGE_WRITE_LOCKED';
-    this.events.publish('ANALYSIS_ONLY_COMPLETED',{brainRunId:input.result.runId,modelDecision:input.d.decision,reasons,reservationCreated:false,orderCreated:false},input.symbol);
+    this.events.publish('ANALYSIS_ONLY_COMPLETED',{brainRunId:input.result.runId,modelDecision:input.d.decision,analysisOnly:true,orderAuthorization:false,reasons,reservationCreated:false,orderCreated:false},input.symbol);
   }
 
   /** Freeze every executable sizing/TP choice before Primary is called. */

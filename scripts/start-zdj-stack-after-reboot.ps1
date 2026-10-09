@@ -175,8 +175,8 @@ try {
   $hostArgs = @('-NoProfile','-ExecutionPolicy','Bypass','-File',$hostScript,'-NodePath',$NodePath,'-EnginePath',(Join-Path $ProjectRoot 'apps\engine\dist\main.js'),'-WorkingDirectory',(Join-Path $ProjectRoot 'apps\engine'),'-StdoutPath',(Join-Path $engineLogDir ($launchId+'.stdout.log')),'-StderrPath',(Join-Path $engineLogDir ($launchId+'.stderr.log')),'-LifecyclePath',(Join-Path $engineLogDir 'lifecycle.jsonl'),'-ReceiptPath',(Join-Path $engineLogDir 'current-receipt.json'),'-LaunchId',$launchId)
   $env:ZDJ_CONFIG_DIR = Join-Path $ProjectRoot 'config'; $env:ZDJ_DATA_DIR = $DataRoot; $env:ZDJ_START_REASON = 'MANUAL_START'; $env:ZDJ_ENTRY_ADMISSION_DISABLED = '1'
   $encodedArgs = ($hostArgs | ForEach-Object { '"' + ($_ -replace '"','\"') + '"' }) -join ' '
-  $host = Start-Process -FilePath (Get-Command powershell.exe).Source -ArgumentList $encodedArgs -WorkingDirectory $ProjectRoot -WindowStyle Hidden -PassThru
-  Write-Stage 'ENGINE_HOST' 'STARTED_ONCE' @{ hostPid = $host.Id; launchId = $launchId; sourceHead = $head; proxyPort = $ProxyPort; stdout = (Join-Path $engineLogDir ($launchId+'.stdout.log')); stderr = (Join-Path $engineLogDir ($launchId+'.stderr.log')) }
+  $engineHostProcess = Start-Process -FilePath (Get-Command powershell.exe).Source -ArgumentList $encodedArgs -WorkingDirectory $ProjectRoot -WindowStyle Hidden -PassThru
+  Write-Stage 'ENGINE_HOST' 'STARTED_ONCE' @{ hostPid = $engineHostProcess.Id; launchId = $launchId; sourceHead = $head; proxyPort = $ProxyPort; stdout = (Join-Path $engineLogDir ($launchId+'.stdout.log')); stderr = (Join-Path $engineLogDir ($launchId+'.stderr.log')) }
 } catch {
   Write-Stage 'ORCHESTRATOR' 'FAILED_CLOSED' @{ error = $_.Exception.Message; engineStartedByThisRun = $false }
   throw

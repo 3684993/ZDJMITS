@@ -741,14 +741,7 @@ function Resolve-Amd7900Selection {
         return $preferred
     }
 
-    $selected = $safe | Sort-Object Index | Select-Object -First 1
-
-    Write-Warning (
-        "Preferred device $PreferredPhysicalDevice is unavailable; " +
-        "using safe free RX 7900 XTX $($selected.Device)."
-    )
-
-    return $selected
+    throw "PREFERRED_GPU_NOT_AVAILABLE preferred=$PreferredPhysicalDevice; no silent swap of the dedicated Harness/Primary GPU"
 }
 
 function Get-ServerArgs {

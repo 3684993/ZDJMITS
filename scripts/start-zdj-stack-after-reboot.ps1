@@ -21,10 +21,14 @@ Start-Transcript -LiteralPath $log -Force | Out-Null
 # Recognize the prior hidden launcher for THIS task without accepting arbitrary wscript tasks.
 # No task is started/stopped by this predicate.
 function Test-ExistingAutostartAction([object]$Action,[string]$ExpectedTaskName) {
+  function Test-RebootFileArguments([string]$Value) {
+    # Recognize a File invocation, not a script name mentioned inside -Command.
+    return $Value -match '^(?:(?:-NoProfile|-NonInteractive|-ExecutionPolicy\s+(?:Bypass|RemoteSigned))\s+)*-File\s+(?:"[^"\r\n]*[\\/]start-zdj-stack-after-reboot\.ps1"|[^\s"]*[\\/]start-zdj-stack-after-reboot\.ps1)(?:\s+[^\r\n]*)?$'
+  }
   $executable = [IO.Path]::GetFileName(([string]$Action.Execute).Trim('"'))
   $arguments = [string]$Action.Arguments
   if ($executable -match '^(powershell|pwsh)(\.exe)?$') {
-    return $arguments -like '*start-zdj-stack-after-reboot.ps1*'
+    return Test-RebootFileArguments $arguments
   }
   if ($executable -notmatch '^wscript(\.exe)?$') { return $false }
   if ($arguments -match '^//B\s+//Nologo\s+"([^"\r\n]+\.vbs)"$') {
@@ -40,10 +44,15 @@ function Test-ExistingAutostartAction([object]$Action,[string]$ExpectedTaskName)
       $lines[1] -ne 'Dim shell, result' -or
       $lines[2] -ne 'Set shell = CreateObject("WScript.Shell")' -or
       $lines[-1] -ne 'WScript.Quit result') { return $false }
-  $run = @($lines | Where-Object { $_ -match '^result = shell\.Run\(' })
-  return ($run.Count -eq 1 -and
-      $run[0] -like '*start-zdj-stack-after-reboot.ps1*' -and
-      $run[0] -match ',\s*0,\s*True\)$')
+  if ($lines.Count -eq 6 -and $lines[3] -notmatch '^shell\.CurrentDirectory = "(?:[^"\r\n]|"")*"$') { return $false }
+  $run = $lines[$lines.Count - 2]
+  if ($run -notmatch '^result = shell\.Run\("((?:[^"\r\n]|"")*)",\s*0,\s*True\)$') { return $false }
+  $command = $Matches[1].Replace('""','"')
+  if ($command -notmatch '^(?:"([^"\r\n]+)"|([^\s"]+))\s+([^\r\n]+)$') { return $false }
+  $image = if ($Matches[1]) { $Matches[1] } else { $Matches[2] }
+  $fileArguments = $Matches[3]
+  if ([IO.Path]::GetFileName($image) -notmatch '^(powershell|pwsh)(\.exe)?$') { return $false }
+  return Test-RebootFileArguments $fileArguments
 }
 function Write-Stage([string]$Name, [string]$State, [hashtable]$Data = @{}) {
   $row = [ordered]@{ at = [DateTimeOffset]::Now.ToString('o'); utc = [DateTimeOffset]::UtcNow.ToString('o'); stage = $Name; state = $State; data = $Data }

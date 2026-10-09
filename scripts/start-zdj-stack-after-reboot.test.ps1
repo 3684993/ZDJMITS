@@ -62,11 +62,23 @@ try {
   $direct = [pscustomobject]@{Execute='C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe';Arguments='-NoProfile -File "D:\MITS\scripts\start-zdj-stack-after-reboot.ps1"'}
   if (-not (Test-ExistingAutostartAction -Action $direct -ExpectedTaskName $task)) { throw 'DIRECT_AUTOSTART_REJECTED' }
   if (Test-ExistingAutostartAction -Action $wrapped -ExpectedTaskName 'ZDJ-MITS-OtherTask') { throw 'UNRELATED_TASK_WRAPPER_ACCEPTED' }
+  $validLines = @(Get-Content -LiteralPath $fixture)
+  $validLines[3] = 'MsgBox "unexpected"'
+  $validLines | Set-Content -LiteralPath $fixture -Encoding Unicode
+  if (Test-ExistingAutostartAction -Action $wrapped -ExpectedTaskName $task) { throw 'INSERTED_VBS_STATEMENT_ACCEPTED' }
+  $validLines[3] = 'shell.CurrentDirectory = "D:\MITS"'
+  $validLines | Set-Content -LiteralPath $fixture -Encoding Unicode
+  $spoof = [pscustomobject]@{Execute=$direct.Execute;Arguments='-Command "Write-Output start-zdj-stack-after-reboot.ps1"'}
+  if (Test-ExistingAutostartAction -Action $spoof -ExpectedTaskName $task) { throw 'COMMAND_SUBSTRING_ACCEPTED' }
   Add-Content -LiteralPath $fixture -Value 'MsgBox "unexpected"' -Encoding Unicode
   if (Test-ExistingAutostartAction -Action $wrapped -ExpectedTaskName $task) { throw 'ALTERED_WRAPPER_ACCEPTED' }
   $unknown = [pscustomobject]@{Execute='C:\Windows\System32\wscript.exe';Arguments='//B //Nologo "D:\random\untrusted.vbs"'}
   if (Test-ExistingAutostartAction -Action $unknown -ExpectedTaskName $task) { throw 'ARBITRARY_SCRIPT_ACCEPTED' }
   Write-Output 'SILENT_REBOOT_REREGISTRATION_GUARD_PASS'
 } finally {
+  $resolvedFixture = [IO.Path]::GetFullPath($fixtureDir)
+  $tempRoot = [IO.Path]::GetFullPath([IO.Path]::GetTempPath()).TrimEnd('\') + '\'
+  if (-not $resolvedFixture.StartsWith($tempRoot, [StringComparison]::OrdinalIgnoreCase) -or
+      [IO.Path]::GetFileName($resolvedFixture) -notlike 'zdj-reboot-guard-*') { throw 'FIXTURE_CLEANUP_PATH_INVALID' }
   Remove-Item -LiteralPath $fixtureDir -Recurse -Force
 }

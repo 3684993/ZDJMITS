@@ -58,7 +58,7 @@ function Read-HostSnapshot {
 function Run-PoolMonSnapshot {
     param([string]$Exe,[string[]]$Options,[string]$Destination,[int]$DeadlineSec)
     # Microsoft WDK PoolMon: /b sort by bytes, /p nonpaged, /p /p paged, /e totals, /n file snapshot.
-    $argsList=@($Options)+@('/b','/e','/n',('"' + $Destination + '"'))
+    $argsList=@(@($Options) | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })+@('/b','/e','/n',('"' + $Destination + '"'))
     $child=Start-Process -FilePath $Exe -ArgumentList $argsList -PassThru -WindowStyle Hidden -ErrorAction Stop
     try{
         if(-not $child.WaitForExit($DeadlineSec*1000)){

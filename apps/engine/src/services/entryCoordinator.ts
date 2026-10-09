@@ -70,7 +70,7 @@ export class EntryCoordinator {
   private schedulerInstanceId:string|null=null;
   private lastSuppression:{evaluatedAt:number;instanceId:string|null;schedulerCycle:number;candidateCount:number;capacityStatus:string;authoritativeBlocker:string|null;nextEvaluationAt:number;dispatchSuppressed:true;suppressionReason:string}|null=null;
   private analysisFacts={lastTickAt:null as number|null,lastAttemptAt:null as number|null,lastRequestAt:null as number|null,lastSuccessAt:null as number|null,lastFailureAt:null as number|null,lastBlockedReason:null as string|null};
-  private analysisOnly(){return analysisOnlyMode(this.state);}
+  private analysisOnly(){return analysisOnlyMode(this.state)||process.env.ZDJ_ENTRY_ADMISSION_DISABLED==='1';}
   /**
    * The last pre-model readiness verdict, pushed by the runtime every scheduler tick. A model call is
    * a cost the pipeline may only pay when the book could act on the answer, so the reason it refuses
@@ -142,15 +142,15 @@ export class EntryCoordinator {
   }
   async processPool() {
     this.noteSchedulerTick();
-    if(process.env.ZDJ_ENTRY_ADMISSION_DISABLED==='1'){
+    const startupAnalysisOnly=process.env.ZDJ_ENTRY_ADMISSION_DISABLED==='1';
+    if(startupAnalysisOnly){
       this.noteDispatchSuppressed({reason:'ENTRY_ADMISSION_DISABLED_BY_STARTUP_POLICY',candidateCount:this.state.pool.readyList().length,capacityStatus:'STARTUP_TP_REVIEW',authoritativeBlocker:'TP_IDENTITY_UNVERIFIED'});
       this.noteWriteAdmission('ENTRY_ADMISSION_DISABLED_BY_STARTUP_POLICY');
       this.ai.setIdleContext('ENTRY_ADMISSION_DISABLED_BY_STARTUP_POLICY',this.state.pool.list().length,'TP 身份复核期间仅禁用新增 Entry；同步、对账、健康检查和已授权退出维护继续运行');
-      return;
     }
     const admissionBlock=this.writeAdmissionBlock();
-    if(admissionBlock){this.noteDispatchSuppressed({reason:'DATA_BLOCKED',candidateCount:this.state.pool.readyList().length,authoritativeBlocker:admissionBlock});this.noteWriteAdmission(admissionBlock);return;}
-    this.noteWriteAdmission(null);
+    if(admissionBlock&&!startupAnalysisOnly){this.noteDispatchSuppressed({reason:'DATA_BLOCKED',candidateCount:this.state.pool.readyList().length,authoritativeBlocker:admissionBlock});this.noteWriteAdmission(admissionBlock);return;}
+    if(!startupAnalysisOnly)this.noteWriteAdmission(null);
     if (
       this.state.executionGovernance?.mode !== "AUTO_RUNNING" ||
       this.state.runtimeControl.mode !== "RUNNING"
@@ -194,7 +194,7 @@ export class EntryCoordinator {
             const directionExecutable=this.objectiveCapacity(x.symbol);
             if(!directionExecutable)this.events.publish('PRIMARY_SKIPPED_EXECUTION_CAPACITY',{reason:'NO_OBJECTIVE_EXECUTION_CAPACITY',primaryRequested:false},x.symbol);
             return x.state === "READY" &&
-            directionExecutable &&
+            (this.analysisOnly()||directionExecutable) &&
             this.eipDependenciesPresent(x.symbol) &&
             !this.primaryOccupancyBlock(x.symbol) &&
             !this.active.has(x.symbol) &&
@@ -202,7 +202,7 @@ export class EntryCoordinator {
             this.lifecycleRunnable(x.symbol);
           },
         ).sort((a,b)=>(this.lastDispatched.get(a.symbol)??0)-(this.lastDispatched.get(b.symbol)??0)||this.primaryReadinessScore(b.symbol,b.score)-this.primaryReadinessScore(a.symbol,a.score)||a.symbol.localeCompare(b.symbol));
-    if (!testnetFundsOnlyEntry(this.state.settings)&&pending >= this.state.settings.portfolio.maxPendingEntries) {
+    if (!this.analysisOnly()&&!testnetFundsOnlyEntry(this.state.settings)&&pending >= this.state.settings.portfolio.maxPendingEntries) {
       this.noteDispatchSuppressed({reason:'WAITING_EXECUTION_CAPACITY',candidateCount:ready.length,capacityStatus:'MAX_PENDING_ENTRIES',authoritativeBlocker:'MAX_PENDING_ENTRIES'});
       this.ai.setIdleContext(
         "ENTRY_BACKPRESSURE",
@@ -216,9 +216,9 @@ export class EntryCoordinator {
     // A model call is a cost, not a status report: with an armed AUTO_RUNNING intent the Primary is
     // only worth asking when the answer could actually be executed. Everything above this point is
     // deterministic supply maintenance, so the first ready tick resumes without a warm-up cycle.
-    if (!this.modelSpendPermitted()) {this.noteDispatchSuppressed({reason:'DATA_BLOCKED',candidateCount:ready.length,capacityStatus:'EXECUTION_READINESS',authoritativeBlocker:this.executionGate?.firstBlocker??'MODEL_SPEND_NOT_PERMITTED'});return;}
-    await this.ai.probePrimaryIfDue(now);
-    if(!this.ai.hasCapacity('PRIMARY_BRAIN')) {
+    if (!startupAnalysisOnly&&!this.modelSpendPermitted()) {this.noteDispatchSuppressed({reason:'DATA_BLOCKED',candidateCount:ready.length,capacityStatus:'EXECUTION_READINESS',authoritativeBlocker:this.executionGate?.firstBlocker??'MODEL_SPEND_NOT_PERMITTED'});return;}
+    if(ready.length)await this.ai.probePrimaryIfDue(now);
+    if(ready.length&&!this.ai.hasCapacity('PRIMARY_BRAIN')) {
       this.noteDispatchSuppressed({reason:'COOLDOWN',candidateCount:ready.length,capacityStatus:'PRIMARY_CIRCUIT_OPEN',authoritativeBlocker:'BUDGET_OR_COOLDOWN'});
       this.ai.setIdleContext('AI_PRIMARY_CIRCUIT_OPEN',ready.length,'Primary 请求连续失败，等待退避窗口后再尝试');
       return;

@@ -21,6 +21,10 @@ The same PID/build remained `READY`; identity closure was repeated after the doc
 
 PID 22988 / build `3.9.8-97aa98c71e15a39ef7b6` remained HTTP 200 READY, DB HEALTHY, and identity-closed 6/6 against remote main `55d2340c4ec77a69f4a43a4dde4f54266f98d5d2`. TESTNET remained locked; Production writes stayed 0. Current readback showed 13/13 TP-protected positions; all three model ports and proxy port 20091 still had the same listener PIDs. The observer task had recorded 10 identity-matching READY samples. Natural Primary history was 8 runs (7 context-overflow failures, one PLACE_SHORT), with no intent/order/fill on the successful decision. Scheduler was RUNNING with `WAITING_CANDIDATE`; ready supply was 9/20. This is under 10 minutes of observed runtime, not a duration-based stability acceptance.
 
+## 13:08 +08 natural-analysis continuation
+
+Without a lifecycle action, the same Engine advanced to 10 completed and 1 running Primary records. Three natural outputs were `PLACE_LONG/SHORT` decisions; all remained analysis-only with no intent/order/fill. Seven prior `AI_HTTP_400` failures all have durable `exceed_context_size_error` evidence. Health, 13/13 TP protection, TESTNET lock and Production writes 0 remained intact. This observation is still only minutes long and does not close the context-budget defect, entry-quality threshold, or 24-hour stability window.
+
 ## PR source and verification (pre-merge checkpoint)
 
 - Repository: `3684993/ZDJMITS`; target branch `main` at `d1ecbe978df84805f30fc1126bac85584df78011` when checked; PR branch `codex/reboot-orchestration-20261009` at `8f5d90bef48dffac537582e6755a6fb498bc8a75` before this turn's changes.

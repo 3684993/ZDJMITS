@@ -1,5 +1,11 @@
 # V3.9.8 AI Entry dispatch and quality acceptance
 
+## Latest natural analysis sample — 2026-10-09 13:08 +08
+
+- `/health` remained READY on PID 22988 and the analysis scheduler heartbeat remained fresh/RUNNING. The current instance had 10 completed and 1 running Primary records: 7 context-size failures and 3 natural decisions — ENAUSDT `PLACE_SHORT`, SUIUSDT `PLACE_LONG`, and ONDOUSDT `PLACE_SHORT`.
+- All three decision observations had no intent, no order ID, no submit time, and no fill. The analysis-only latch remained effective; Production write count was 0. Thirteen positions remained protected by Binance open-order TP coverage.
+- One additional Primary request was naturally in progress at this sample. It was not manually triggered or retried. Pool supply remained short of the target (11 ready / 20 target). Three natural AI outputs establish analysis observability, not valid entry quality or execution acceptance; the mature-chain sample remains insufficient.
+
 ## Latest runtime evidence — 2026-10-09 13:05 +08
 
 - The current instance has 8 natural Primary run records: 7 failures and 1 completed ENAUSDT `PLACE_SHORT`. All 7 failures contain the same server error `exceed_context_size_error`; actual prompt sizes ranged 38,220–38,768 tokens against `n_ctx=32,768`. The model's failure is now proven as request-size overflow, not network unavailability.

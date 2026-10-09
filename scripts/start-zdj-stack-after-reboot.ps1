@@ -32,7 +32,9 @@ function Get-MemorySnapshot {
   $m = Get-CimInstance Win32_PerfFormattedData_PerfOS_Memory
   $commitLimit = [double]$m.CommitLimit
   $committed = [double]$m.CommittedBytes
-  $free = [math]::Max(0, $commitLimit - $committed) / 1GB
+  $freeBytes = $commitLimit - $committed
+  if ($freeBytes -lt 0) { $freeBytes = 0 }
+  $free = $freeBytes / 1GB
   $processHandles = @(Get-CimInstance Win32_Process | Where-Object { $_.Name -eq 'llama-server.exe' } | ForEach-Object { (Get-Process -Id $_.ProcessId -ErrorAction SilentlyContinue).Handles })
   return [ordered]@{ commitFreeGiB = [math]::Round($free, 2); commitUsedPercent = [double]$m.PercentCommittedBytesInUse; poolPagedBytes = [double]$m.PoolPagedBytes; poolNonpagedBytes = [double]$m.PoolNonpagedBytes; llamaHandles = @($processHandles); maxLlamaHandles = if ($processHandles.Count) { ($processHandles | Measure-Object -Maximum).Maximum } else { 0 } }
 }

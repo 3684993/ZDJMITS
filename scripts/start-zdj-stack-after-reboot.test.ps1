@@ -25,6 +25,7 @@ foreach ($required in @('TESTNET', 'demo-fapi.binance.com', 'TP_UNVERIFIED_ENGIN
   if ($combined -notmatch [regex]::Escape($required)) { throw "AUTOSTART_SAFETY_GATE_MISSING:$required" }
 }
 if ($source -match '(?i)MaxRestarts|EnableWatchdog|while\s*\(\s*\$true\s*\)' -or $source -match '(?i)restartOnFailure\s*=\s*\$true') { throw 'AUTOSTART_AUTOMATIC_RETRY_OR_WATCHDOG_FOUND' }
+if ($source -notmatch '\$freeBytes\s*=\s*\$commitLimit\s*-\s*\$committed') { throw 'MEMORY_COMMIT_ARITHMETIC_MUST_PRESERVE_INT64_RANGE' }
 node --check $helper
 if ($LASTEXITCODE -ne 0) { throw 'CURRENT_GATE_SYNTAX_FAILED' }
 if ($helperSource.Contains("method: 'POST'") -or $helperSource -match 'method\s*:\s*[''\"]?(POST|PUT|PATCH|DELETE)') { throw 'CURRENT_GATE_MUST_REMAIN_READ_ONLY' }

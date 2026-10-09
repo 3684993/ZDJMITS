@@ -1,8 +1,15 @@
 # V3.9.8 AI Entry dispatch and quality acceptance
 
+## Latest runtime evidence — 2026-10-09 13:05 +08
+
+- The current instance has 8 natural Primary run records: 7 failures and 1 completed ENAUSDT `PLACE_SHORT`. All 7 failures contain the same server error `exceed_context_size_error`; actual prompt sizes ranged 38,220–38,768 tokens against `n_ctx=32,768`. The model's failure is now proven as request-size overflow, not network unavailability.
+- The successful natural output still has no intent, order, submit, or fill. Runtime Entry observation is 1 `PLACE_SHORT`, 7 `AI_PROTOCOL_FAILURE`, 0 running. TESTNET remains locked to analysis-only; `/diagnostics/closeout` reports `productionWrites=0`.
+- At this check, analysis heartbeat was fresh, scheduler `RUNNING`, status `WAITING_CANDIDATE`; the pool had ready supply 9 of target 20. The prior 13:03 circuit-open snapshot had recovered by this check, but repeated context-size errors and one quarantine remain in the current instance's AI history. No circuit reset, Settings edit, or forced inference was performed.
+- The context overflow is still uncorrected in the deployed source. Natural Entry quality acceptance remains `INSUFFICIENT`: no intent/order/fill outcome exists, and the planned 50 mature-chain bar has not been approached. No further Engine or model restart was performed.
+
 ## Follow-up runtime evidence — 2026-10-09 13:03 +08
 
-- Read-only SQLite evidence for this Engine instance contains 7 Primary runs: six failed with the same `exceed_context_size_error` (prompt token counts 38,307–38,768 against `n_ctx=32,768`) and one completed naturally for ENAUSDT with `PLACE_SHORT`. This confirms that the no-write analysis path can reach the model and receive a decision when the request fits; it also proves repeatable context overflow for other candidates.
+- Read-only SQLite evidence for this Engine instance at 13:03 contained 7 Primary runs: six failed with the same `exceed_context_size_error` (prompt token counts 38,307–38,768 against `n_ctx=32,768`) and one completed naturally for ENAUSDT with `PLACE_SHORT`. This confirms that the no-write analysis path can reach the model and receive a decision when the request fits; it also proves repeatable context overflow for other candidates.
 - The completed `PLACE_SHORT` observation has no intent ID/time, zero order IDs, no submit time, and no fills. The analysis-only latch prevented the decision from creating an intent/order. Runtime entry counts are `PLACE_SHORT=1`, `AI_PROTOCOL_FAILURE=6`; Production writes remain 0.
 - At 13:03 +08, scheduler heartbeat remained fresh and `analysis.mode=ANALYSIS_ONLY`; dispatch was in `COOLDOWN` and the Primary resource reported `AI_PRIMARY_CIRCUIT_OPEN`. Candidate pool remained below target. Do not manually reset the circuit or force another call; repair the request-size problem offline before any further controlled cutover.
 - The source-level context overflow is **not fixed in the running build**. Avoid increasing model context or making prompt-pruning changes without preserving the full decision/risk/TP contract and running the planned offline tests. No additional Engine/model restart is authorized by this closeout.

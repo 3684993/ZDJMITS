@@ -17,6 +17,10 @@ Status: PR `MERGED`; stable-root TESTNET cutover and 6/6 runtime identity closur
 
 The same PID/build remained `READY`; identity closure was repeated after the docs-only main update and again returned `IDENTITY_CLOSED` 6/6. `/diagnostics/closeout` remained TESTNET-locked with Production writes 0. Thirteen positions still report exchange-backed TP protection. The AI run ledger now shows one natural Primary `PLACE_SHORT` decision with no intent/order, and six context-size failures that have opened the AI circuit. This finding does not change the Engine health/identity result; AI quality remains insufficient and the oversized request is a source-level follow-up not yet corrected or deployed.
 
+## 13:05 +08 final runtime sample
+
+PID 22988 / build `3.9.8-97aa98c71e15a39ef7b6` remained HTTP 200 READY, DB HEALTHY, and identity-closed 6/6 against remote main `55d2340c4ec77a69f4a43a4dde4f54266f98d5d2`. TESTNET remained locked; Production writes stayed 0. Current readback showed 13/13 TP-protected positions; all three model ports and proxy port 20091 still had the same listener PIDs. The observer task had recorded 10 identity-matching READY samples. Natural Primary history was 8 runs (7 context-overflow failures, one PLACE_SHORT), with no intent/order/fill on the successful decision. Scheduler was RUNNING with `WAITING_CANDIDATE`; ready supply was 9/20. This is under 10 minutes of observed runtime, not a duration-based stability acceptance.
+
 ## PR source and verification (pre-merge checkpoint)
 
 - Repository: `3684993/ZDJMITS`; target branch `main` at `d1ecbe978df84805f30fc1126bac85584df78011` when checked; PR branch `codex/reboot-orchestration-20261009` at `8f5d90bef48dffac537582e6755a6fb498bc8a75` before this turn's changes.

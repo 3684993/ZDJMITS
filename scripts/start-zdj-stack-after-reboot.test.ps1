@@ -34,3 +34,39 @@ if ($source -match 'ENGINE_BLOCKED_ACCOUNT_PROTECTION_GATE') { throw 'TP_STATE_M
 if ($source -match 'gate\.uncoveredPositions') { throw 'TP_DIAGNOSTIC_SUMMARY_REFERENCES_REMOVED_HEURISTIC_FIELD' }
 if ($source -match '\$host\s*=\s*Start-Process') { throw 'ENGINE_HOST_ASSIGNMENT_MUST_NOT_USE_READONLY_AUTOMATION_VARIABLE' }
 Write-Output 'start-zdj-stack-after-reboot.test.ps1 PASS'
+
+# Extract only the pure predicate from the parsed source: never execute orchestration,
+# register tasks, alter task state, or launch Engine in this test.
+$autostartAst = [Management.Automation.Language.Parser]::ParseFile($path, [ref]$tokens, [ref]$errors)
+$guard = $autostartAst.Find({param($node)
+  $node -is [Management.Automation.Language.FunctionDefinitionAst] -and
+  $node.Name -eq 'Test-ExistingAutostartAction'
+}, $true)
+if (-not $guard) { throw 'SILENT_REBOOT_RECONCILIATION_GUARD_MISSING' }
+. ([scriptblock]::Create($guard.Extent.Text))
+$fixtureDir = Join-Path ([IO.Path]::GetTempPath()) ('zdj-reboot-guard-' + [guid]::NewGuid())
+New-Item -ItemType Directory -Path $fixtureDir | Out-Null
+try {
+  $task = 'ZDJ-MITS-AfterReboot-TESTNET'
+  $fixture = Join-Path $fixtureDir ('_' + $task + '.vbs')
+  @(
+    'Option Explicit'
+    'Dim shell, result'
+    'Set shell = CreateObject("WScript.Shell")'
+    'shell.CurrentDirectory = "D:\MITS"'
+    'result = shell.Run("""C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe"" -NoProfile -File ""D:\MITS\scripts\start-zdj-stack-after-reboot.ps1""", 0, True)'
+    'WScript.Quit result'
+  ) | Set-Content -LiteralPath $fixture -Encoding Unicode
+  $wrapped = [pscustomobject]@{Execute='C:\Windows\System32\wscript.exe';Arguments=('//B //Nologo "'+$fixture+'"')}
+  if (-not (Test-ExistingAutostartAction -Action $wrapped -ExpectedTaskName $task)) { throw 'KNOWN_SILENT_WRAPPER_REJECTED' }
+  $direct = [pscustomobject]@{Execute='C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe';Arguments='-NoProfile -File "D:\MITS\scripts\start-zdj-stack-after-reboot.ps1"'}
+  if (-not (Test-ExistingAutostartAction -Action $direct -ExpectedTaskName $task)) { throw 'DIRECT_AUTOSTART_REJECTED' }
+  if (Test-ExistingAutostartAction -Action $wrapped -ExpectedTaskName 'ZDJ-MITS-OtherTask') { throw 'UNRELATED_TASK_WRAPPER_ACCEPTED' }
+  Add-Content -LiteralPath $fixture -Value 'MsgBox "unexpected"' -Encoding Unicode
+  if (Test-ExistingAutostartAction -Action $wrapped -ExpectedTaskName $task) { throw 'ALTERED_WRAPPER_ACCEPTED' }
+  $unknown = [pscustomobject]@{Execute='C:\Windows\System32\wscript.exe';Arguments='//B //Nologo "D:\random\untrusted.vbs"'}
+  if (Test-ExistingAutostartAction -Action $unknown -ExpectedTaskName $task) { throw 'ARBITRARY_SCRIPT_ACCEPTED' }
+  Write-Output 'SILENT_REBOOT_REREGISTRATION_GUARD_PASS'
+} finally {
+  Remove-Item -LiteralPath $fixtureDir -Recurse -Force
+}

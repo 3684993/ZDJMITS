@@ -10,6 +10,7 @@ $files=@(
  'measure-memory-handles-readonly.ps1',
  'maintenance-preflight-readonly.ps1',
  'capture-kernel-pool-tags-readonly.ps1',
+ 'capture-kernel-pool-tags-native-readonly.ps1',
  'ZDJ-memory-first-check.ps1'
 )
 function Get-ForbiddenAutomaticPidBindings {

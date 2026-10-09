@@ -216,3 +216,18 @@ powershell -NoProfile -ExecutionPolicy Bypass -File "$review\full-recovery-prefl
 ~~~
 
 如需交给本机Codex实际执行**待资源允许后**的全部服务受控恢复，读取 [CODEX_V398_CONDITIONAL_FULL_RESTORE_AFTER_KERNEL_POOL_20261009.md](../../docs/prompts/CODEX_V398_CONDITIONAL_FULL_RESTORE_AFTER_KERNEL_POOL_20261009.md)。Codex必须保护dirty D:\MITS与交易真实仓位TP，读main最新交接/验证当前main源码/准确build，先3模型真实health/smoke，再检查TESTNET/Production零写证据和Engine identity后单次启动；如果任何门禁失败明确报告而不是伪称启动成功。任何更改pagefile、Windows、重启系统需**单独授权**。
+
+
+## 2026-10-09 10:27 +08：用户正式请求处理 Windows 提交额度并恢复三模型/TESTNET Engine
+
+最新用户上传预检 `20261009-102424` 显示已提交69.903 / 上限112.926 GiB、空闲43.022GiB；9B仍8081/PID12732/317句柄，8083/8084/8080未运行，paged22.701GiB/nonpaged7.549GiB。全模型70GiB所需提交余量未满足；不能直接启动。
+
+**采用单一且可回滚的容量缓解方案：新增 C: 固定48GiB pagefile，D: 原系统管理页面文件继续保留**。微软 WMI `Win32_PageFileSetting` 配置在系统启动时生效，OS Restart手工执行；脚本 `configure-windows-pagefile-48g-safe.ps1` 提供 `-Mode Plan`（只读）、`-Mode Apply -ConfirmApply`（需管理员，变更pagefile并回读、局部失败回滚）、`-Mode Verify`（重启后严格验证C/D配置和总commit余量；失败返回非零）。要求C剩余空间>=64GiB、D>=16GiB且初始布局仅有D系统管理pagefile。符合假定时 free commit可望从43→约91GiB，**仍须重启后实测**。这不是根治旧FMfn/File资源保留或 Engine `0xC0000409`。
+
+三份模型脚本最新修复：主机commit预检已移到GPU allocator mutex内部，关闭并发Cold Start同一份旧余量的问题；AMD只接受严格的Vulkan1/Harness和Vulkan2/Primary，不做错误的fallback提示；默认不启动watchdog；所有真实Model Smoke仍执行。用户需要完整的一轮命令，见：
+
+[ONE_PASS_PAGEFILE_AND_MODEL_RESTART_20261009.md](ONE_PASS_PAGEFILE_AND_MODEL_RESTART_20261009.md)。
+
+恢复顺序：管理员Plan→手工Apply→用户主动Windows正常Restart→Verify_PASS→9B(B580/8081)→`full-recovery-preflight-readonly.ps1 -Enforce`→Harness27B(Vulkan1/8083)→Primary27B(Vulkan2/8084)→三API/内存/句柄核验→**只有此时**由本机Codex按最新main 3.9.8代码、本地现有持仓/TP/Settings/TESTNET防线受控启动Engine8080。
+
+**Engine最新代码仍处于offline NOT_DEPLOYED，不能假装一条旧 `npm start` 就能完成发布，更不能使用过期v398工作树启动交易。** 本次GitHub操作仅在review分支提交，未在用户Windows上执行任何pagefile变更、模型启动、Engine部署或Actions。

@@ -1,5 +1,14 @@
 # V3.9.8 crash capture arming receipt
 
+## Final state after PR #12 merge and controlled cutover — 2026-10-09 12:59 +08
+
+- WER LocalDumps re-verified `WER_READY` at 12:58:24 +08: `node.exe`, full dump (`DumpType=2`), count 2, protected ACL with only SYSTEM/current user/Administrators, and the local backup manifest present. Raw dumps remain local and were not uploaded.
+- The independent task `\\ZDJMITS\\ZDJ-MITS-Engine-Crash-Observer` is Running. Three samples are present for current PID 22988 / instance `322685fa-bd92-4f3b-9257-fd15a2ffdc68` / build `3.9.8-97aa98c71e15a39ef7b6`; each binds the runtime identity and host receipt and reports HTTP 200 READY. The latest sample was 12:58:37 +08. The task has read-only sampling and no Engine lifecycle action.
+- The current source/artifact/runtime identity later closed 6/6 against `main` at `a742e3aa3e0f14678178c508ccbde38b8406d97b` (see merge closeout). The observer's earlier per-sample `sourceCommit` field was `SOURCE_COMMIT_NOT_RECORDED`; SHA identity closure supplies the independent source/artifact proof.
+- The isolated managed same-image fault previously confirmed WER policy operation, but native Node `process.abort()` did not emit a dump in that fixture. Therefore native fatal-signal capture is **not proven**. Historical PID 8524 `0xC0000409` component/callsite and trigger remain `UNKNOWN`; this receipt does not claim that the historical crash was reproduced or explained.
+
+Raw dump, exchange/private payloads, and full observer JSONL remain on the host only. The prior sample digest is retained below; the actively growing current observer stream is not assigned a final hash.
+
 Captured 2026-10-09 (Asia/Shanghai) on the Windows runtime host. Engine lifecycle was not invoked for instrumentation.
 
 ## WER LocalDumps

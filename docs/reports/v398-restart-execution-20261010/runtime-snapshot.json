@@ -1,0 +1,1788 @@
+{
+  "observedAt": "2026-10-09T22:21:35.395Z",
+  "localMethods": [
+    "GET"
+  ],
+  "taskExchangeWrites": 0,
+  "health": {
+    "status": "READY",
+    "ready": true,
+    "pid": 18100,
+    "version": "3.9.8"
+  },
+  "identity": {
+    "instanceId": "65185f71-b336-4f6f-8149-cafe90f5e160",
+    "pid": 18100,
+    "buildId": "3.9.8-6cd926abca3eec24392e",
+    "version": "3.9.8",
+    "uptimeMs": 55021710
+  },
+  "production": {
+    "environment": "TESTNET",
+    "executionMode": "TESTNET_ENABLED",
+    "lockedToTestnet": true,
+    "testnetWrites": 118,
+    "productionWrites": 0,
+    "blockedProductionWriteAttempts": 0,
+    "lastWriteAt": 1791577665762,
+    "lastWritePath": "/fapi/v1/leverage"
+  },
+  "entry": {
+    "status": "READY",
+    "executionFactsStatus": "READY",
+    "mode": "TESTNET_ENTRY_ENABLED",
+    "analysisAllowed": true,
+    "riskObservation": true,
+    "orderAuthorization": true,
+    "reason": "EXPLICIT_TESTNET_APPROVAL_VALID",
+    "executionMode": "TESTNET_ENABLED",
+    "autoExecutionMode": "AUTO_RUNNING"
+  },
+  "runtimeControl": {
+    "mode": "RUNNING",
+    "reasonCode": "NONE",
+    "reasonText": "运行中",
+    "pausedAt": null
+  },
+  "privateSync": {
+    "lastSuccessAt": 1791584494873,
+    "lastFailureAt": 1791562360757,
+    "consecutiveFailures": 0,
+    "lastError": null,
+    "durationMs": 425,
+    "inFlight": false,
+    "snapshotAgeMs": 610
+  },
+  "takeProfitLocal": {
+    "status": "READY",
+    "unverifiedTp": 0,
+    "required": 13,
+    "protected": 13,
+    "missing": 0,
+    "repairing": 0,
+    "repairFailed": 0,
+    "manualReviewRequired": 0,
+    "positionFactUnresolved": 0,
+    "positionFactUnresolvedSymbols": [],
+    "orphanTp": 0,
+    "duplicateTp": 0,
+    "qtyMismatch": 0,
+    "wrongSide": 0,
+    "tpMissing": 0,
+    "retryQueue": 0
+  },
+  "privateAuthority": "LOCAL_CACHED_FACTS_ONLY_NOT_FRESH_SIGNED_EXCHANGE_PROOF",
+  "primary": {
+    "status": "READY",
+    "runs": 34,
+    "historicalRuns": 36,
+    "idleReason": "WAITING_CANDIDATE",
+    "healthReason": "IDLE_NO_DISPATCHABLE_CANDIDATE",
+    "lastRunAgeMs": 6899555
+  },
+  "pipeline": {
+    "pipelineState": "RUNNING",
+    "marketDataReason": null,
+    "noEntryReason": null,
+    "authoritativeBlocker": {
+      "code": "NONE",
+      "stage": "NONE",
+      "evaluatedAt": 1791584495434
+    },
+    "freshMarkets": {
+      "status": "RECOVERING",
+      "count": 54,
+      "quoteFreshRatio": 1,
+      "klineFreshRatio": 0.9734513274336283,
+      "sequenceInvalid": 0
+    }
+  },
+  "market": {
+    "status": "READY",
+    "count": 113
+  },
+  "analysis": {
+    "entryExecutionPolicy": {
+      "mode": "TESTNET_ENTRY_ENABLED",
+      "analysisAllowed": true,
+      "riskObservation": true,
+      "orderAuthorization": true,
+      "reason": "EXPLICIT_TESTNET_APPROVAL_VALID"
+    },
+    "mode": "EXECUTION_ENABLED",
+    "lastTickAt": 1791584494391,
+    "lastAttemptAt": 1791580824295,
+    "lastRequestAt": 1791577595877,
+    "lastSuccessAt": 1791577660236,
+    "lastFailureAt": 1791563670320,
+    "lastBlockedReason": "WAITING_CANDIDATE",
+    "reason": "WAITING_CANDIDATE",
+    "schedulerStatus": "RUNNING",
+    "schedulerCycle": 21293,
+    "instanceId": "65185f71-b336-4f6f-8149-cafe90f5e160",
+    "heartbeatAt": 1791584494391,
+    "heartbeatAgeMs": 1073,
+    "nextEvaluationAt": 1791584496891,
+    "suppression": {
+      "evaluatedAt": 1791584494447,
+      "instanceId": "65185f71-b336-4f6f-8149-cafe90f5e160",
+      "schedulerCycle": 21293,
+      "candidateCount": 26,
+      "capacityStatus": "NOT_APPLICABLE",
+      "authoritativeBlocker": "PLANNED_NOTIONAL",
+      "nextEvaluationAt": 1791584496947,
+      "dispatchSuppressed": true,
+      "suppressionReason": "WAITING_CANDIDATE"
+    },
+    "capitalExecutableCount": 26,
+    "active": 0,
+    "primaryDispatchAgeMs": 6899587,
+    "primarySuccessAgeMs": 6835228,
+    "silenceMs": 6835228,
+    "observationStartedAt": 1791529535533,
+    "execution": {
+      "intent": true,
+      "ready": true,
+      "blockers": [],
+      "firstBlocker": null,
+      "lastReadyAt": 1791584494391,
+      "readinessText": "执行事实齐备：PLACE 可进入 reservation → intent → order submit 链"
+    },
+    "text": "RUNNING · WAITING_CANDIDATE"
+  },
+  "positions": [
+    {
+      "side": "LONG",
+      "tpStatus": "PROTECTED",
+      "openedAt": 1791532107967,
+      "symbolHash": "33b1e83c9b898cd95e91afe45e7fbc2e2ee48bdaa2b5f647e8b8d42145d85134",
+      "positionIdHash": "486f7b13a22fa80616b067df369e5787758f25d7bb0b2311894d508e66d42db6",
+      "tpOrderIdHash": "13b129f19c4d7bd3fe4de72f38b3dae47d147273714d6bd82059b634b2b10993"
+    },
+    {
+      "side": "LONG",
+      "tpStatus": "PROTECTED",
+      "openedAt": 1791531885219,
+      "symbolHash": "3778967091ffae98a5f98df5d56eae42a2fbc98dc5299d4a4375c1631045a01e",
+      "positionIdHash": "de15a794f0faadcd51dc025c306bd1a691f076ac0dbd71ea67cb23b61e620df2",
+      "tpOrderIdHash": "2f171458c13c10f00a5a20c6bf820358c82ddce74c40438209196e4142ce48d8"
+    },
+    {
+      "side": "LONG",
+      "tpStatus": "PROTECTED",
+      "openedAt": 1791455877587,
+      "symbolHash": "970cf680acc08b56d0d0ba9c5d68208931e084354bd58395390741d567259292",
+      "positionIdHash": "84c06342d163c136dad3c1acdec54a64299dbe944d7ce7149d5399316aac0f31",
+      "tpOrderIdHash": "03f6d824c7dbcd54e2ad0d2315fd30ca5e0c5c09bb2a54a8f50557c48d995fed"
+    },
+    {
+      "side": "SHORT",
+      "tpStatus": "PROTECTED",
+      "openedAt": 1791449869338,
+      "symbolHash": "65007313a157103ad38b9574768715be219ccf79dcf2a53cac5624a574f82f18",
+      "positionIdHash": "a6d54e940c651449e813b701ba0b681d9ebbd77dc2b68f06b2cc257c6421c234",
+      "tpOrderIdHash": "e6939417454aab7fd4031b2234825cecce9b55331dc89272172a7732268d34f2"
+    },
+    {
+      "side": "LONG",
+      "tpStatus": "PROTECTED",
+      "openedAt": 1791444270691,
+      "symbolHash": "04d591cb32d6ba5c0222dc626beb575942113a1c97a5e65ce60fd15b8a3ec996",
+      "positionIdHash": "45f6344492c104932e6008e5d9c58f3956ef022da1cc7a3a66d52efbe2698c69",
+      "tpOrderIdHash": "fc8f220bf38fca95d135822b506a721362d69ba5b118af4417b35b0318874859"
+    },
+    {
+      "side": "LONG",
+      "tpStatus": "PROTECTED",
+      "openedAt": 1791430358927,
+      "symbolHash": "62c56fad00031d56dfa15d81073c5dbee0936d6e9b81bcb9259273f8d5b7bb60",
+      "positionIdHash": "ae4cd55dcf508ee93e55a8a91ead2bb0515f63d4275ca4d47ee12fe5b02043fc",
+      "tpOrderIdHash": "235ed4df981df23ad6193dec547f3309d30f3cd9b88112db41846a73765c5a4b"
+    },
+    {
+      "side": "LONG",
+      "tpStatus": "PROTECTED",
+      "openedAt": 1791299385241,
+      "symbolHash": "19aa16aed07f38e9beb894bb1fa1131d164e72a1fff057b80ed35e55a1ad0334",
+      "positionIdHash": "eb953965b267b141e5c83069a62bbac5f867b718110d64659a024bb75b9ceece",
+      "tpOrderIdHash": "33effd5b471ec46036564167a31eb30c185f34e343c403aa425081e314a81869"
+    },
+    {
+      "side": "LONG",
+      "tpStatus": "PROTECTED",
+      "openedAt": 1791278224412,
+      "symbolHash": "34de1a9f178567cc9f14b5b5a2638508178c96a88318da5cfbb686a6ff13d5a0",
+      "positionIdHash": "bfe4227a58936103d7a116092ed70683c6593397e1a90ed10b187cc88781b3e1",
+      "tpOrderIdHash": "6d881a16a583c8a5421a938c2e72a0d0d89ef94efbb3f304ef486dee5a040de8"
+    },
+    {
+      "side": "LONG",
+      "tpStatus": "PROTECTED",
+      "openedAt": 1791184940656,
+      "symbolHash": "b5d13a6196a1fac4ed1918744f7c6b6c013a70a2735f84f73b12af347356c904",
+      "positionIdHash": "8738218fe3d0ef71b834c9291619a8440962920fa8fc10f5c451cd82cbc17284",
+      "tpOrderIdHash": "d2365a57ba8762a0be4ac06fca2f126b749c587710b234b58c55600c16a27e87"
+    },
+    {
+      "side": "LONG",
+      "tpStatus": "PROTECTED",
+      "openedAt": 1791183438139,
+      "symbolHash": "7e6e9fceedc4d56e8469b0c6024197b663e8da6210a18bbc24657cf91c730f2e",
+      "positionIdHash": "58283d58f763fb0be4e271295ff7fdda346c5cd41d3c394f60c44336dc65a765",
+      "tpOrderIdHash": "a39202ff48a4a343db6c036ae2c94439b8f3799343e1af4b74e1704c0f3e8ccd"
+    },
+    {
+      "side": "LONG",
+      "tpStatus": "PROTECTED",
+      "openedAt": 1791168000751,
+      "symbolHash": "10feb615345011936a67003b48d7831c61201fc728885f495b4546897bdc74f9",
+      "positionIdHash": "c0d5422f770e26117e09010bc96b2bda427cbbdfcb528f43b7083903df6eae28",
+      "tpOrderIdHash": "2fa03010a64610922ea0323ba3922cac89b29422d444ba2cf1a1ed50cd297e5d"
+    },
+    {
+      "side": "LONG",
+      "tpStatus": "PROTECTED",
+      "openedAt": 1791155132270,
+      "symbolHash": "0465f3eeb0f6a6cdb5207012a24ee4eed488d5285f82f96b7d4abe46ec574045",
+      "positionIdHash": "6c13f60b815c8e2cfa0b7517f70a015c1129b522031fc552f41b020b59f90d13",
+      "tpOrderIdHash": "51a634a4d6a3d07f13097f5ed072d47b55e03042e58d2587fb6885186f48fa31"
+    },
+    {
+      "side": "LONG",
+      "tpStatus": "PROTECTED",
+      "openedAt": 1790734103219,
+      "symbolHash": "4c57f41d6b05cb9f0df7a8a60936ab9730769da1a2cd08ba30bbac0f0bad02dd",
+      "positionIdHash": "9dc1f9e31c810cb630b7f8cb6634b8bedcf4f1b8ce115814a7be97e08fbc2795",
+      "tpOrderIdHash": "5d8a45fdd7792fcb48bd374959a4ad3c139e40edc1d39259393761b8a4456c4f"
+    }
+  ],
+  "takeProfit": [
+    {
+      "status": "WORKING",
+      "verifiedAt": 1791584425459,
+      "updatedAt": 1791259802707,
+      "symbolHash": "10feb615345011936a67003b48d7831c61201fc728885f495b4546897bdc74f9",
+      "idHash": "2fa03010a64610922ea0323ba3922cac89b29422d444ba2cf1a1ed50cd297e5d",
+      "positionIdHash": "c0d5422f770e26117e09010bc96b2bda427cbbdfcb528f43b7083903df6eae28",
+      "exchangeOrderIdHash": "4ab09d5265dcb0d8d9cb603af115d9b50074bd49801cf3bc9b992f0249447f0f",
+      "clientOrderIdHash": "8214a0188c84ac463161dfa3637629f9cd39d8f2ce597a26b624fc0e36f243a5"
+    },
+    {
+      "status": "WORKING",
+      "verifiedAt": 1791584425459,
+      "updatedAt": 1791280050682,
+      "symbolHash": "4c57f41d6b05cb9f0df7a8a60936ab9730769da1a2cd08ba30bbac0f0bad02dd",
+      "idHash": "5d8a45fdd7792fcb48bd374959a4ad3c139e40edc1d39259393761b8a4456c4f",
+      "positionIdHash": "9dc1f9e31c810cb630b7f8cb6634b8bedcf4f1b8ce115814a7be97e08fbc2795",
+      "exchangeOrderIdHash": "600c612e48e2224c2b68ee8ded13e938496ca91ac6b9098473b61ee576564cae",
+      "clientOrderIdHash": "f06099b2d88da072da4195dfae3a3bf929c45251a795bbb7da37001b1d692cfc"
+    },
+    {
+      "status": "WORKING",
+      "verifiedAt": 1791584425459,
+      "updatedAt": 1791301505451,
+      "symbolHash": "7e6e9fceedc4d56e8469b0c6024197b663e8da6210a18bbc24657cf91c730f2e",
+      "idHash": "a39202ff48a4a343db6c036ae2c94439b8f3799343e1af4b74e1704c0f3e8ccd",
+      "positionIdHash": "58283d58f763fb0be4e271295ff7fdda346c5cd41d3c394f60c44336dc65a765",
+      "exchangeOrderIdHash": "fe3c93968d3f345e4ddc42ea875400111deebc84318619fa579ddb250febbc16",
+      "clientOrderIdHash": "4a20bb6501d247bd36f99af4b8debf21ddcaa21399ee2b140ce68833d2289c34"
+    },
+    {
+      "status": "WORKING",
+      "verifiedAt": 1791584425459,
+      "updatedAt": 1791301999431,
+      "symbolHash": "19aa16aed07f38e9beb894bb1fa1131d164e72a1fff057b80ed35e55a1ad0334",
+      "idHash": "33effd5b471ec46036564167a31eb30c185f34e343c403aa425081e314a81869",
+      "positionIdHash": "eb953965b267b141e5c83069a62bbac5f867b718110d64659a024bb75b9ceece",
+      "exchangeOrderIdHash": "06df980a979770021d537e7afc9f13aef9529a39654cd9d72ae82a66b47231c4",
+      "clientOrderIdHash": "d1853db7b2e8a063de917edb9945dd46d5ae81afb8060318667a9d4eb4167459"
+    },
+    {
+      "status": "WORKING",
+      "verifiedAt": 1791584425459,
+      "updatedAt": 1791326632012,
+      "symbolHash": "34de1a9f178567cc9f14b5b5a2638508178c96a88318da5cfbb686a6ff13d5a0",
+      "idHash": "6d881a16a583c8a5421a938c2e72a0d0d89ef94efbb3f304ef486dee5a040de8",
+      "positionIdHash": "bfe4227a58936103d7a116092ed70683c6593397e1a90ed10b187cc88781b3e1",
+      "exchangeOrderIdHash": "88d83c9762a6ff8da090ee686c3a134db1cf0ffd7c6e7324843061d2b53640d5",
+      "clientOrderIdHash": "d3bac73f5916dc1bbb33b06219c9a813a7da47ac5459075daac9dfaf2a7873cd"
+    },
+    {
+      "status": "WORKING",
+      "verifiedAt": 1791584425459,
+      "updatedAt": 1791329945087,
+      "symbolHash": "0465f3eeb0f6a6cdb5207012a24ee4eed488d5285f82f96b7d4abe46ec574045",
+      "idHash": "51a634a4d6a3d07f13097f5ed072d47b55e03042e58d2587fb6885186f48fa31",
+      "positionIdHash": "6c13f60b815c8e2cfa0b7517f70a015c1129b522031fc552f41b020b59f90d13",
+      "exchangeOrderIdHash": "fdefb0eca595ed6d2d0692214b8f9dd86b586d5163d09b795576f3c737486e53",
+      "clientOrderIdHash": "36537ef7863843bc76f67605c398c5026e8ee0872a98122b271466fb31d4b173"
+    },
+    {
+      "status": "WORKING",
+      "verifiedAt": 1791584425459,
+      "updatedAt": 1791423624247,
+      "symbolHash": "b5d13a6196a1fac4ed1918744f7c6b6c013a70a2735f84f73b12af347356c904",
+      "idHash": "d2365a57ba8762a0be4ac06fca2f126b749c587710b234b58c55600c16a27e87",
+      "positionIdHash": "8738218fe3d0ef71b834c9291619a8440962920fa8fc10f5c451cd82cbc17284",
+      "exchangeOrderIdHash": "91df88c41743ae70e31cc90d551c863e5a10f33be47ccecad8c78f8440f8794c",
+      "clientOrderIdHash": "30f5d09c4cdf8d1854f6e6b8859231c4e19fe4a26f51ab940cee41156d80f7f3"
+    },
+    {
+      "status": "WORKING",
+      "verifiedAt": 1791584425459,
+      "updatedAt": 1791430381400,
+      "symbolHash": "62c56fad00031d56dfa15d81073c5dbee0936d6e9b81bcb9259273f8d5b7bb60",
+      "idHash": "235ed4df981df23ad6193dec547f3309d30f3cd9b88112db41846a73765c5a4b",
+      "positionIdHash": "ae4cd55dcf508ee93e55a8a91ead2bb0515f63d4275ca4d47ee12fe5b02043fc",
+      "exchangeOrderIdHash": "d431bf398b13ca103fecfa2e7f24d41a809d395fbc3803720324597be66a9f36",
+      "clientOrderIdHash": "cb02f37a34858bf1751b2a5139d49578ed9e3c15eef24b3daece4d8d2657b5ae"
+    },
+    {
+      "status": "WORKING",
+      "verifiedAt": 1791584425459,
+      "updatedAt": 1791448001417,
+      "symbolHash": "04d591cb32d6ba5c0222dc626beb575942113a1c97a5e65ce60fd15b8a3ec996",
+      "idHash": "fc8f220bf38fca95d135822b506a721362d69ba5b118af4417b35b0318874859",
+      "positionIdHash": "45f6344492c104932e6008e5d9c58f3956ef022da1cc7a3a66d52efbe2698c69",
+      "exchangeOrderIdHash": "c67de2ac022a2c17eeac08fd5905d5a7590d5548f80c88035c6098a82420807d",
+      "clientOrderIdHash": "8a4accb1627e123fb31d0d6ac5e6e9be781d32d134bbec825749326a973a38b7"
+    },
+    {
+      "status": "WORKING",
+      "verifiedAt": 1791584425459,
+      "updatedAt": 1791449916163,
+      "symbolHash": "65007313a157103ad38b9574768715be219ccf79dcf2a53cac5624a574f82f18",
+      "idHash": "e6939417454aab7fd4031b2234825cecce9b55331dc89272172a7732268d34f2",
+      "positionIdHash": "a6d54e940c651449e813b701ba0b681d9ebbd77dc2b68f06b2cc257c6421c234",
+      "exchangeOrderIdHash": "71644390b9a84c3022656af8699146737acc579114ae9ad99857862b2ea1f52b",
+      "clientOrderIdHash": "2cba46ff8931c346209b46c2ca074c640fc7e4f38db1922b326be5c77f53ba86"
+    },
+    {
+      "status": "WORKING",
+      "verifiedAt": 1791584425459,
+      "updatedAt": 1791455925983,
+      "symbolHash": "970cf680acc08b56d0d0ba9c5d68208931e084354bd58395390741d567259292",
+      "idHash": "03f6d824c7dbcd54e2ad0d2315fd30ca5e0c5c09bb2a54a8f50557c48d995fed",
+      "positionIdHash": "84c06342d163c136dad3c1acdec54a64299dbe944d7ce7149d5399316aac0f31",
+      "exchangeOrderIdHash": "93c1f331d1296642cdd9f0c4eef3bb499093764369815bce2392f06b658b1554",
+      "clientOrderIdHash": "55b82eb631d69d0590842992b5c7b6b467385e4d58e4d5731c6bc87ad4a1091a"
+    },
+    {
+      "status": "WORKING",
+      "verifiedAt": 1791584425459,
+      "updatedAt": 1791531940023,
+      "symbolHash": "3778967091ffae98a5f98df5d56eae42a2fbc98dc5299d4a4375c1631045a01e",
+      "idHash": "2f171458c13c10f00a5a20c6bf820358c82ddce74c40438209196e4142ce48d8",
+      "positionIdHash": "de15a794f0faadcd51dc025c306bd1a691f076ac0dbd71ea67cb23b61e620df2",
+      "exchangeOrderIdHash": "21949d08985aa93dfcd88bcc999e872b2445f856818387c9d391880b3f2b9972",
+      "clientOrderIdHash": "69400bb7be6e22cbe86307e414e0672161c4e3464cf56f7abf9478390ee51b25"
+    },
+    {
+      "status": "WORKING",
+      "verifiedAt": 1791584425459,
+      "updatedAt": 1791532190715,
+      "symbolHash": "33b1e83c9b898cd95e91afe45e7fbc2e2ee48bdaa2b5f647e8b8d42145d85134",
+      "idHash": "13b129f19c4d7bd3fe4de72f38b3dae47d147273714d6bd82059b634b2b10993",
+      "positionIdHash": "486f7b13a22fa80616b067df369e5787758f25d7bb0b2311894d508e66d42db6",
+      "exchangeOrderIdHash": "78bc374021fb4e9b14106aa1e70f4fe8f0e300fac3a4843c98eb64a0906dd599",
+      "clientOrderIdHash": "a130787fb602dd79d06cfc87b924906867bb7454fba637055fb144973983b8a3"
+    }
+  ],
+  "requestBudgets": {
+    "TESTNET:default": {
+      "status": "AVAILABLE",
+      "active": 0,
+      "queued": 0,
+      "queuePressure": {
+        "totalSlots": 6,
+        "publicSlots": 4,
+        "active": 0,
+        "publicActive": 0,
+        "oldestQueuedAgeMs": 0,
+        "currentPrivateReserve": 1,
+        "currentQuoteReserve": 1,
+        "backgroundActive": 0,
+        "backgroundSlots": 1,
+        "hydrationActive": 0,
+        "hydrationSlots": 2
+      },
+      "decisions": {
+        "admitted": 0,
+        "queued": 0,
+        "blocked": 0,
+        "queueTimeout": 0
+      },
+      "recentDispatches": []
+    },
+    "TESTNET:proxy-05d851d4af74": {
+      "status": "AVAILABLE",
+      "active": 0,
+      "queued": 0,
+      "queuePressure": {
+        "totalSlots": 6,
+        "publicSlots": 4,
+        "active": 0,
+        "publicActive": 0,
+        "oldestQueuedAgeMs": 0,
+        "currentPrivateReserve": 1,
+        "currentQuoteReserve": 1,
+        "backgroundActive": 0,
+        "backgroundSlots": 1,
+        "hydrationActive": 0,
+        "hydrationSlots": 2
+      },
+      "decisions": {
+        "admitted": 103669,
+        "queued": 112766,
+        "blocked": 9092,
+        "queueTimeout": 9092
+      },
+      "recentDispatches": [
+        {
+          "requestId": "d5f4f245-f5d8-4671-89c4-c75092316922",
+          "endpoint": "/fapi/v1/order",
+          "source": "ORDER_VERIFICATION",
+          "purpose": "EXACT_ORDER_FACT",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584456826,
+          "completedAt": 1791584457223,
+          "status": 400,
+          "networkTiming": {
+            "startedAt": 1791584456829,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584456829,
+            "secureConnectedAt": 1791584456829,
+            "responseAt": 1791584457223,
+            "completedAt": 1791584457223,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "84d19750-b8e4-4f5f-aa0d-8b0190d6d9b2",
+          "endpoint": "/fapi/v1/order",
+          "source": "ORDER_VERIFICATION",
+          "purpose": "EXACT_ORDER_FACT",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584457272,
+          "completedAt": 1791584457703,
+          "status": 400,
+          "networkTiming": {
+            "startedAt": 1791584457274,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584457274,
+            "secureConnectedAt": 1791584457274,
+            "responseAt": 1791584457703,
+            "completedAt": 1791584457703,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "6ae61bcc-07ae-4a3c-be2c-d997855c3ad7",
+          "endpoint": "/fapi/v1/order",
+          "source": "ORDER_VERIFICATION",
+          "purpose": "EXACT_ORDER_FACT",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584457755,
+          "completedAt": 1791584458238,
+          "status": 400,
+          "networkTiming": {
+            "startedAt": 1791584457757,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584457757,
+            "secureConnectedAt": 1791584457757,
+            "responseAt": 1791584458238,
+            "completedAt": 1791584458238,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "4c989371-0673-4b45-97ca-06b7005a1ce0",
+          "endpoint": "/fapi/v1/order",
+          "source": "ORDER_VERIFICATION",
+          "purpose": "EXACT_ORDER_FACT",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584458263,
+          "completedAt": 1791584458679,
+          "status": 400,
+          "networkTiming": {
+            "startedAt": 1791584458265,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584458265,
+            "secureConnectedAt": 1791584458265,
+            "responseAt": 1791584458679,
+            "completedAt": 1791584458679,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "f842cb87-e152-4235-bd4d-41d7f0f150c3",
+          "endpoint": "/fapi/v1/klines",
+          "source": "MARKET_DATA",
+          "purpose": "READ_KLINES",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584461897,
+          "completedAt": 1791584462316,
+          "status": 200,
+          "networkTiming": {
+            "startedAt": 1791584461917,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584461918,
+            "secureConnectedAt": 1791584461918,
+            "responseAt": 1791584462316,
+            "completedAt": 1791584462316,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "ae464a84-8ae5-419f-80f1-deb9a7e10740",
+          "endpoint": "/fapi/v1/klines",
+          "source": "MARKET_DATA",
+          "purpose": "READ_KLINES",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584461907,
+          "completedAt": 1791584462384,
+          "status": 200,
+          "networkTiming": {
+            "startedAt": 1791584461917,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584461918,
+            "secureConnectedAt": 1791584461918,
+            "responseAt": 1791584462384,
+            "completedAt": 1791584462384,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "e11683d0-612b-41be-a840-21161867cd2c",
+          "endpoint": "/fapi/v1/klines",
+          "source": "MARKET_DATA",
+          "purpose": "READ_KLINES",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584462327,
+          "completedAt": 1791584462752,
+          "status": 200,
+          "networkTiming": {
+            "startedAt": 1791584462331,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584462332,
+            "secureConnectedAt": 1791584462332,
+            "responseAt": 1791584462752,
+            "completedAt": 1791584462752,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "9244a448-8d31-49f3-8edf-255732d11ad4",
+          "endpoint": "/fapi/v1/klines",
+          "source": "MARKET_DATA",
+          "purpose": "READ_KLINES",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584462395,
+          "completedAt": 1791584462817,
+          "status": 200,
+          "networkTiming": {
+            "startedAt": 1791584462404,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584462405,
+            "secureConnectedAt": 1791584462405,
+            "responseAt": 1791584462793,
+            "completedAt": 1791584462817,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "6106d2d3-c401-4141-bb54-b1334fbe21ea",
+          "endpoint": "/fapi/v1/klines",
+          "source": "MARKET_DATA",
+          "purpose": "READ_KLINES",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584462757,
+          "completedAt": 1791584463200,
+          "status": 200,
+          "networkTiming": {
+            "startedAt": 1791584462758,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584462772,
+            "secureConnectedAt": 1791584462772,
+            "responseAt": 1791584463200,
+            "completedAt": 1791584463200,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "7f8f651c-31f0-4808-a3e9-fd8abc2a3dbb",
+          "endpoint": "/fapi/v1/klines",
+          "source": "MARKET_DATA",
+          "purpose": "READ_KLINES",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584462822,
+          "completedAt": 1791584463237,
+          "status": 200,
+          "networkTiming": {
+            "startedAt": 1791584462823,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584462832,
+            "secureConnectedAt": 1791584462832,
+            "responseAt": 1791584463227,
+            "completedAt": 1791584463237,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "5812c0a9-7cdc-476f-b5d5-a03fe2d8299f",
+          "endpoint": "/fapi/v1/klines",
+          "source": "MARKET_DATA",
+          "purpose": "READ_KLINES",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584463206,
+          "completedAt": 1791584463625,
+          "status": 200,
+          "networkTiming": {
+            "startedAt": 1791584463208,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584463208,
+            "secureConnectedAt": 1791584463208,
+            "responseAt": 1791584463624,
+            "completedAt": 1791584463624,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "c861063d-df25-448a-8d67-896ef395d139",
+          "endpoint": "/fapi/v1/klines",
+          "source": "MARKET_DATA",
+          "purpose": "READ_KLINES",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584463242,
+          "completedAt": 1791584463646,
+          "status": 200,
+          "networkTiming": {
+            "startedAt": 1791584463246,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584463255,
+            "secureConnectedAt": 1791584463255,
+            "responseAt": 1791584463646,
+            "completedAt": 1791584463646,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "fb59bb74-b395-4e1e-98d4-0eb594a7897c",
+          "endpoint": "/fapi/v1/klines",
+          "source": "MARKET_DATA",
+          "purpose": "READ_KLINES",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584463629,
+          "completedAt": 1791584464031,
+          "status": 200,
+          "networkTiming": {
+            "startedAt": 1791584463631,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584463632,
+            "secureConnectedAt": 1791584463632,
+            "responseAt": 1791584464031,
+            "completedAt": 1791584464031,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "ceaaf4ed-94a0-4175-ad88-092ae64c56dc",
+          "endpoint": "/fapi/v2/account",
+          "source": "PRIVATE_STATE",
+          "purpose": "READ_ACCOUNT",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584464426,
+          "completedAt": 1791584464875,
+          "status": 200,
+          "networkTiming": {
+            "startedAt": 1791584464427,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584464428,
+            "secureConnectedAt": 1791584464428,
+            "responseAt": 1791584464812,
+            "completedAt": 1791584464875,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "4a17dbb7-8f1d-4c22-8749-da326406b48f",
+          "endpoint": "/fapi/v1/premiumIndex",
+          "source": "MARKET_DATA",
+          "purpose": "READ_PREMIUMINDEX",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584464888,
+          "completedAt": 1791584465295,
+          "status": 200,
+          "networkTiming": {
+            "startedAt": 1791584464900,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584464900,
+            "secureConnectedAt": 1791584464900,
+            "responseAt": 1791584465295,
+            "completedAt": 1791584465295,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "183bfdd1-7ea0-4877-a9fe-57590009b23c",
+          "endpoint": "/fapi/v1/income",
+          "source": "BACKGROUND_AUDIT",
+          "purpose": "READ_INCOME",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584464898,
+          "completedAt": 1791584465290,
+          "status": 200,
+          "networkTiming": {
+            "startedAt": 1791584464900,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584464900,
+            "secureConnectedAt": 1791584464900,
+            "responseAt": 1791584465277,
+            "completedAt": 1791584465290,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "7d999b75-7392-4567-b717-15c9c112a39e",
+          "endpoint": "/fapi/v3/positionRisk",
+          "source": "PRIVATE_STATE",
+          "purpose": "POSITION_RISK_V3",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584470477,
+          "completedAt": 1791584471004,
+          "status": 200,
+          "networkTiming": {
+            "startedAt": 1791584470479,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584470479,
+            "secureConnectedAt": 1791584470479,
+            "responseAt": 1791584471004,
+            "completedAt": 1791584471004,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "957f84ed-2263-4d63-8df7-239f31faf2c0",
+          "endpoint": "/fapi/v1/order",
+          "source": "ORDER_VERIFICATION",
+          "purpose": "EXACT_ORDER_FACT",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584471338,
+          "completedAt": 1791584471800,
+          "status": 400,
+          "networkTiming": {
+            "startedAt": 1791584471340,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584471340,
+            "secureConnectedAt": 1791584471340,
+            "responseAt": 1791584471800,
+            "completedAt": 1791584471800,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "ea5c434a-d9fe-4ac0-b600-6e90cabe6a7f",
+          "endpoint": "/fapi/v1/order",
+          "source": "ORDER_VERIFICATION",
+          "purpose": "EXACT_ORDER_FACT",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584471890,
+          "completedAt": 1791584472294,
+          "status": 400,
+          "networkTiming": {
+            "startedAt": 1791584471894,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584471895,
+            "secureConnectedAt": 1791584471895,
+            "responseAt": 1791584472294,
+            "completedAt": 1791584472294,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "71efdc5c-bc1b-4cf8-928f-0e30edbdee40",
+          "endpoint": "/fapi/v1/klines",
+          "source": "MARKET_DATA",
+          "purpose": "READ_KLINES",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584471916,
+          "completedAt": 1791584472487,
+          "status": 200,
+          "networkTiming": {
+            "startedAt": 1791584471941,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584471942,
+            "secureConnectedAt": 1791584471942,
+            "responseAt": 1791584472487,
+            "completedAt": 1791584472487,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "1466e764-e37d-40ed-ad94-a727d46bb8f6",
+          "endpoint": "/fapi/v1/klines",
+          "source": "MARKET_DATA",
+          "purpose": "READ_KLINES",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584471931,
+          "completedAt": 1791584474130,
+          "status": 200,
+          "networkTiming": {
+            "startedAt": 1791584471941,
+            "proxyConnectStartedAt": 1791584471941,
+            "proxyConnectedAt": 1791584472500,
+            "socketAssignedAt": 1791584472500,
+            "secureConnectedAt": 1791584473756,
+            "responseAt": 1791584474130,
+            "completedAt": 1791584474130,
+            "reusedSocket": false,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "059e046a-3e7d-4160-8f63-47a2e330d53e",
+          "endpoint": "/fapi/v1/klines",
+          "source": "MARKET_DATA",
+          "purpose": "READ_KLINES",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584472493,
+          "completedAt": 1791584473757,
+          "status": 200,
+          "networkTiming": {
+            "startedAt": 1791584472498,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584472499,
+            "secureConnectedAt": 1791584472499,
+            "responseAt": 1791584473756,
+            "completedAt": 1791584473756,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "7f28d396-3dfe-4c73-bb47-edf4a60adc2b",
+          "endpoint": "/fapi/v1/order",
+          "source": "ORDER_VERIFICATION",
+          "purpose": "EXACT_ORDER_FACT",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584472356,
+          "completedAt": 1791584472785,
+          "status": 400,
+          "networkTiming": {
+            "startedAt": 1791584472359,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584472359,
+            "secureConnectedAt": 1791584472359,
+            "responseAt": 1791584472785,
+            "completedAt": 1791584472785,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "eace027f-7d26-4407-be03-279ea71e41e8",
+          "endpoint": "/fapi/v1/klines",
+          "source": "MARKET_DATA",
+          "purpose": "READ_KLINES",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584473768,
+          "completedAt": 1791584474165,
+          "status": 200,
+          "networkTiming": {
+            "startedAt": 1791584473770,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584473770,
+            "secureConnectedAt": 1791584473770,
+            "responseAt": 1791584474165,
+            "completedAt": 1791584474165,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "51c242d7-2055-42f9-a7f9-d9fc5da0335e",
+          "endpoint": "/fapi/v1/klines",
+          "source": "MARKET_DATA",
+          "purpose": "READ_KLINES",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584474162,
+          "completedAt": 1791584474652,
+          "status": 200,
+          "networkTiming": {
+            "startedAt": 1791584474164,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584474165,
+            "secureConnectedAt": 1791584474165,
+            "responseAt": 1791584474652,
+            "completedAt": 1791584474652,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "673df447-025f-4b56-a7c2-0732b6cecb3b",
+          "endpoint": "/fapi/v2/account",
+          "source": "PRIVATE_STATE",
+          "purpose": "READ_ACCOUNT",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584479428,
+          "completedAt": 1791584480134,
+          "status": 200,
+          "networkTiming": {
+            "startedAt": 1791584479429,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584479430,
+            "secureConnectedAt": 1791584479430,
+            "responseAt": 1791584479808,
+            "completedAt": 1791584480133,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "2c2b4c72-0e78-4aa1-8001-c366a8bf9708",
+          "endpoint": "/fapi/v1/klines",
+          "source": "MARKET_DATA",
+          "purpose": "READ_KLINES",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584481913,
+          "completedAt": 1791584482336,
+          "status": 200,
+          "networkTiming": {
+            "startedAt": 1791584481929,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584481930,
+            "secureConnectedAt": 1791584481930,
+            "responseAt": 1791584482336,
+            "completedAt": 1791584482336,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "2098c2a8-2133-4e86-9239-3d482455c4ae",
+          "endpoint": "/fapi/v1/klines",
+          "source": "MARKET_DATA",
+          "purpose": "READ_KLINES",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584481922,
+          "completedAt": 1791584482369,
+          "status": 200,
+          "networkTiming": {
+            "startedAt": 1791584481930,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584481930,
+            "secureConnectedAt": 1791584481930,
+            "responseAt": 1791584482369,
+            "completedAt": 1791584482369,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "6ff16409-a0eb-4d1e-b34b-b45a76e7970a",
+          "endpoint": "/fapi/v1/klines",
+          "source": "MARKET_DATA",
+          "purpose": "READ_KLINES",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584482341,
+          "completedAt": 1791584482736,
+          "status": 200,
+          "networkTiming": {
+            "startedAt": 1791584482343,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584482343,
+            "secureConnectedAt": 1791584482343,
+            "responseAt": 1791584482736,
+            "completedAt": 1791584482736,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "28064d32-77e4-4d93-99a1-cecfd6bbdccb",
+          "endpoint": "/fapi/v1/klines",
+          "source": "MARKET_DATA",
+          "purpose": "READ_KLINES",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584482378,
+          "completedAt": 1791584482771,
+          "status": 200,
+          "networkTiming": {
+            "startedAt": 1791584482382,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584482382,
+            "secureConnectedAt": 1791584482382,
+            "responseAt": 1791584482771,
+            "completedAt": 1791584482771,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "96dce0e0-a8ff-47b6-8340-b7bf2f2b8fef",
+          "endpoint": "/fapi/v1/income",
+          "source": "BACKGROUND_AUDIT",
+          "purpose": "TRADE_AUDIT_INCOME",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584482492,
+          "completedAt": 1791584482981,
+          "status": 200,
+          "networkTiming": {
+            "startedAt": 1791584482493,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584482494,
+            "secureConnectedAt": 1791584482494,
+            "responseAt": 1791584482880,
+            "completedAt": 1791584482981,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "88bff8f4-99a9-4dff-8319-f1413020f246",
+          "endpoint": "/fapi/v1/klines",
+          "source": "MARKET_DATA",
+          "purpose": "READ_KLINES",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584482747,
+          "completedAt": 1791584483132,
+          "status": 200,
+          "networkTiming": {
+            "startedAt": 1791584482749,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584482749,
+            "secureConnectedAt": 1791584482749,
+            "responseAt": 1791584483131,
+            "completedAt": 1791584483132,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "d43b7126-09d5-4fa5-8e06-7a66446d7b62",
+          "endpoint": "/fapi/v1/income",
+          "source": "BACKGROUND_AUDIT",
+          "purpose": "TRADE_AUDIT_INCOME",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584482992,
+          "completedAt": 1791584483496,
+          "status": 200,
+          "networkTiming": {
+            "startedAt": 1791584482994,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584482994,
+            "secureConnectedAt": 1791584482994,
+            "responseAt": 1791584483383,
+            "completedAt": 1791584483496,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "6a29368e-5068-4d6d-ae5d-8ee8d0913d60",
+          "endpoint": "/fapi/v1/income",
+          "source": "BACKGROUND_AUDIT",
+          "purpose": "TRADE_AUDIT_INCOME",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584483509,
+          "completedAt": 1791584483933,
+          "status": 200,
+          "networkTiming": {
+            "startedAt": 1791584483511,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584483511,
+            "secureConnectedAt": 1791584483511,
+            "responseAt": 1791584483901,
+            "completedAt": 1791584483933,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "ef64ce95-c4f9-487b-9b94-6b4dd03e1995",
+          "endpoint": "/fapi/v1/order",
+          "source": "ORDER_VERIFICATION",
+          "purpose": "EXACT_ORDER_FACT",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584483629,
+          "completedAt": 1791584484043,
+          "status": 200,
+          "networkTiming": {
+            "startedAt": 1791584483631,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584483631,
+            "secureConnectedAt": 1791584483631,
+            "responseAt": 1791584484043,
+            "completedAt": 1791584484043,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "c5bba346-e978-473b-b0c4-6ae48cb8fbc8",
+          "endpoint": "/fapi/v1/income",
+          "source": "BACKGROUND_AUDIT",
+          "purpose": "TRADE_AUDIT_INCOME",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584483948,
+          "completedAt": 1791584484355,
+          "status": 200,
+          "networkTiming": {
+            "startedAt": 1791584483951,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584483951,
+            "secureConnectedAt": 1791584483951,
+            "responseAt": 1791584484347,
+            "completedAt": 1791584484355,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "f3341003-3215-4272-955b-877594a4bd7c",
+          "endpoint": "/fapi/v1/order",
+          "source": "ORDER_VERIFICATION",
+          "purpose": "EXACT_ORDER_FACT",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584484099,
+          "completedAt": 1791584484508,
+          "status": 200,
+          "networkTiming": {
+            "startedAt": 1791584484101,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584484102,
+            "secureConnectedAt": 1791584484102,
+            "responseAt": 1791584484508,
+            "completedAt": 1791584484508,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "63e5042b-5254-460b-a3ba-58fe61dfe78e",
+          "endpoint": "/fapi/v1/income",
+          "source": "BACKGROUND_AUDIT",
+          "purpose": "TRADE_AUDIT_INCOME",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584484366,
+          "completedAt": 1791584484839,
+          "status": 200,
+          "networkTiming": {
+            "startedAt": 1791584484368,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584484368,
+            "secureConnectedAt": 1791584484368,
+            "responseAt": 1791584484773,
+            "completedAt": 1791584484839,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "05a7313e-9662-41bc-8c05-ce4a919714ca",
+          "endpoint": "/fapi/v1/order",
+          "source": "ORDER_VERIFICATION",
+          "purpose": "EXACT_ORDER_FACT",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584484567,
+          "completedAt": 1791584485128,
+          "status": 200,
+          "networkTiming": {
+            "startedAt": 1791584484569,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584484569,
+            "secureConnectedAt": 1791584484569,
+            "responseAt": 1791584485128,
+            "completedAt": 1791584485128,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "e0aef674-d594-4b74-94de-2d5f89398416",
+          "endpoint": "/fapi/v1/income",
+          "source": "BACKGROUND_AUDIT",
+          "purpose": "TRADE_AUDIT_INCOME",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584484858,
+          "completedAt": 1791584485441,
+          "status": 200,
+          "networkTiming": {
+            "startedAt": 1791584484860,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584484860,
+            "secureConnectedAt": 1791584484860,
+            "responseAt": 1791584485258,
+            "completedAt": 1791584485441,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "65c93bae-946e-4f2c-a609-0d6d1cc5bfca",
+          "endpoint": "/fapi/v1/order",
+          "source": "ORDER_VERIFICATION",
+          "purpose": "EXACT_ORDER_FACT",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584485196,
+          "completedAt": 1791584485687,
+          "status": 200,
+          "networkTiming": {
+            "startedAt": 1791584485199,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584485199,
+            "secureConnectedAt": 1791584485199,
+            "responseAt": 1791584485687,
+            "completedAt": 1791584485687,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "da9ae92e-b114-4183-9254-86b5ca6c1012",
+          "endpoint": "/fapi/v1/income",
+          "source": "BACKGROUND_AUDIT",
+          "purpose": "TRADE_AUDIT_INCOME",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584485461,
+          "completedAt": 1791584486347,
+          "status": 200,
+          "networkTiming": {
+            "startedAt": 1791584485463,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584485463,
+            "secureConnectedAt": 1791584485463,
+            "responseAt": 1791584486346,
+            "completedAt": 1791584486347,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "7ceb8084-6528-4995-99b2-c8756075677a",
+          "endpoint": "/fapi/v3/positionRisk",
+          "source": "PRIVATE_STATE",
+          "purpose": "POSITION_RISK_V3",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584485484,
+          "completedAt": 1791584485863,
+          "status": 200,
+          "networkTiming": {
+            "startedAt": 1791584485488,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584485488,
+            "secureConnectedAt": 1791584485488,
+            "responseAt": 1791584485863,
+            "completedAt": 1791584485863,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "0feb6781-2205-4f1b-85e6-9754b30e7676",
+          "endpoint": "/fapi/v1/order",
+          "source": "ORDER_VERIFICATION",
+          "purpose": "EXACT_ORDER_FACT",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584485763,
+          "completedAt": 1791584486371,
+          "status": 200,
+          "networkTiming": {
+            "startedAt": 1791584485766,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584485766,
+            "secureConnectedAt": 1791584485766,
+            "responseAt": 1791584486371,
+            "completedAt": 1791584486371,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "1b615710-c6db-4fc1-bded-eca0496d4945",
+          "endpoint": "/fapi/v1/order",
+          "source": "ORDER_VERIFICATION",
+          "purpose": "EXACT_ORDER_FACT",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584486211,
+          "completedAt": 1791584486620,
+          "status": 400,
+          "networkTiming": {
+            "startedAt": 1791584486213,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584486213,
+            "secureConnectedAt": 1791584486213,
+            "responseAt": 1791584486620,
+            "completedAt": 1791584486620,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "410e90a9-7c08-4ce6-a608-24b277034c4c",
+          "endpoint": "/fapi/v1/income",
+          "source": "BACKGROUND_AUDIT",
+          "purpose": "TRADE_AUDIT_INCOME",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584486366,
+          "completedAt": 1791584486776,
+          "status": 200,
+          "networkTiming": {
+            "startedAt": 1791584486369,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584486369,
+            "secureConnectedAt": 1791584486369,
+            "responseAt": 1791584486773,
+            "completedAt": 1791584486776,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "5c378b6e-7025-4fd5-bc72-4e5f9969e00c",
+          "endpoint": "/fapi/v1/order",
+          "source": "ORDER_VERIFICATION",
+          "purpose": "EXACT_ORDER_FACT",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584486476,
+          "completedAt": 1791584486996,
+          "status": 200,
+          "networkTiming": {
+            "startedAt": 1791584486482,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584486483,
+            "secureConnectedAt": 1791584486483,
+            "responseAt": 1791584486996,
+            "completedAt": 1791584486996,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "6e2f96b0-ac09-4f8b-bc56-4e4df11e5dc6",
+          "endpoint": "/fapi/v1/order",
+          "source": "ORDER_VERIFICATION",
+          "purpose": "EXACT_ORDER_FACT",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584486675,
+          "completedAt": 1791584487143,
+          "status": 400,
+          "networkTiming": {
+            "startedAt": 1791584486680,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584486681,
+            "secureConnectedAt": 1791584486681,
+            "responseAt": 1791584487143,
+            "completedAt": 1791584487143,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "8d15a9ff-77e9-4936-896e-8c079811aaae",
+          "endpoint": "/fapi/v1/income",
+          "source": "BACKGROUND_AUDIT",
+          "purpose": "TRADE_AUDIT_INCOME",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584486794,
+          "completedAt": 1791584487220,
+          "status": 200,
+          "networkTiming": {
+            "startedAt": 1791584486800,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584486801,
+            "secureConnectedAt": 1791584486801,
+            "responseAt": 1791584487215,
+            "completedAt": 1791584487219,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "b5d33cd8-4206-4fab-b6c2-384eb355026c",
+          "endpoint": "/fapi/v1/order",
+          "source": "ORDER_VERIFICATION",
+          "purpose": "EXACT_ORDER_FACT",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584487049,
+          "completedAt": 1791584487531,
+          "status": 200,
+          "networkTiming": {
+            "startedAt": 1791584487051,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584487052,
+            "secureConnectedAt": 1791584487052,
+            "responseAt": 1791584487531,
+            "completedAt": 1791584487531,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "b0d138ee-eb7d-402b-a7fe-e3d8d93c2d84",
+          "endpoint": "/fapi/v1/order",
+          "source": "ORDER_VERIFICATION",
+          "purpose": "EXACT_ORDER_FACT",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584487193,
+          "completedAt": 1791584487588,
+          "status": 400,
+          "networkTiming": {
+            "startedAt": 1791584487194,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584487195,
+            "secureConnectedAt": 1791584487195,
+            "responseAt": 1791584487588,
+            "completedAt": 1791584487588,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "cb819b9b-6d96-468f-b985-e681c78d4d73",
+          "endpoint": "/fapi/v1/income",
+          "source": "BACKGROUND_AUDIT",
+          "purpose": "TRADE_AUDIT_INCOME",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584487232,
+          "completedAt": 1791584487708,
+          "status": 200,
+          "networkTiming": {
+            "startedAt": 1791584487234,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584487235,
+            "secureConnectedAt": 1791584487235,
+            "responseAt": 1791584487642,
+            "completedAt": 1791584487708,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "8cf67d5b-de59-4ac2-89a7-6f51a0aec08c",
+          "endpoint": "/fapi/v1/order",
+          "source": "ORDER_VERIFICATION",
+          "purpose": "EXACT_ORDER_FACT",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584487585,
+          "completedAt": 1791584488141,
+          "status": 200,
+          "networkTiming": {
+            "startedAt": 1791584487587,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584487588,
+            "secureConnectedAt": 1791584487588,
+            "responseAt": 1791584488141,
+            "completedAt": 1791584488141,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "8ec5fa9d-c79f-4807-bbe3-3d3f581b615e",
+          "endpoint": "/fapi/v1/order",
+          "source": "ORDER_VERIFICATION",
+          "purpose": "EXACT_ORDER_FACT",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584487634,
+          "completedAt": 1791584488123,
+          "status": 400,
+          "networkTiming": {
+            "startedAt": 1791584487636,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584487636,
+            "secureConnectedAt": 1791584487636,
+            "responseAt": 1791584488123,
+            "completedAt": 1791584488123,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "44bdf425-a185-406f-9e1b-e0e302273e20",
+          "endpoint": "/fapi/v1/income",
+          "source": "BACKGROUND_AUDIT",
+          "purpose": "TRADE_AUDIT_INCOME",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584487720,
+          "completedAt": 1791584488204,
+          "status": 200,
+          "networkTiming": {
+            "startedAt": 1791584487722,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584487723,
+            "secureConnectedAt": 1791584487723,
+            "responseAt": 1791584488204,
+            "completedAt": 1791584488204,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "36b1df27-c2be-4632-b0b3-6b862362e99a",
+          "endpoint": "/fapi/v1/order",
+          "source": "ORDER_VERIFICATION",
+          "purpose": "EXACT_ORDER_FACT",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584488138,
+          "completedAt": 1791584488710,
+          "status": 400,
+          "networkTiming": {
+            "startedAt": 1791584488140,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584488140,
+            "secureConnectedAt": 1791584488140,
+            "responseAt": 1791584488710,
+            "completedAt": 1791584488710,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "1ca67e08-655d-4344-9d7c-6fd831321412",
+          "endpoint": "/fapi/v1/income",
+          "source": "BACKGROUND_AUDIT",
+          "purpose": "TRADE_AUDIT_INCOME",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584488216,
+          "completedAt": 1791584489305,
+          "status": 200,
+          "networkTiming": {
+            "startedAt": 1791584488220,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584488220,
+            "secureConnectedAt": 1791584488220,
+            "responseAt": 1791584489305,
+            "completedAt": 1791584489305,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "c8e1ceb6-4914-47af-b4dd-5d864945c9ff",
+          "endpoint": "/fapi/v1/income",
+          "source": "BACKGROUND_AUDIT",
+          "purpose": "TRADE_AUDIT_INCOME",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584489317,
+          "completedAt": 1791584489879,
+          "status": 200,
+          "networkTiming": {
+            "startedAt": 1791584489320,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584489320,
+            "secureConnectedAt": 1791584489320,
+            "responseAt": 1791584489758,
+            "completedAt": 1791584489879,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "dda81c97-6373-4604-b110-d172de2ca85b",
+          "endpoint": "/fapi/v1/klines",
+          "source": "MARKET_DATA",
+          "purpose": "READ_KLINES",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584491943,
+          "completedAt": 1791584492366,
+          "status": 200,
+          "networkTiming": {
+            "startedAt": 1791584491959,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584491960,
+            "secureConnectedAt": 1791584491960,
+            "responseAt": 1791584492366,
+            "completedAt": 1791584492366,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "884e6f55-6644-42eb-8b25-72316e224eb8",
+          "endpoint": "/fapi/v1/klines",
+          "source": "MARKET_DATA",
+          "purpose": "READ_KLINES",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584491950,
+          "completedAt": 1791584492422,
+          "status": 200,
+          "networkTiming": {
+            "startedAt": 1791584491960,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584491960,
+            "secureConnectedAt": 1791584491960,
+            "responseAt": 1791584492422,
+            "completedAt": 1791584492422,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "f5914478-8b95-4217-8f46-870a553ea5f7",
+          "endpoint": "/fapi/v1/klines",
+          "source": "MARKET_DATA",
+          "purpose": "READ_KLINES",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584492370,
+          "completedAt": 1791584492806,
+          "status": 200,
+          "networkTiming": {
+            "startedAt": 1791584492372,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584492373,
+            "secureConnectedAt": 1791584492373,
+            "responseAt": 1791584492806,
+            "completedAt": 1791584492806,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "386eec5d-2e1c-49de-b13b-40b27afee4ba",
+          "endpoint": "/fapi/v1/klines",
+          "source": "MARKET_DATA",
+          "purpose": "READ_KLINES",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584492433,
+          "completedAt": 1791584492864,
+          "status": 200,
+          "networkTiming": {
+            "startedAt": 1791584492437,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584492437,
+            "secureConnectedAt": 1791584492437,
+            "responseAt": 1791584492864,
+            "completedAt": 1791584492864,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "514dcf0b-7e62-4800-846a-0bd6535d46d6",
+          "endpoint": "/fapi/v1/klines",
+          "source": "MARKET_DATA",
+          "purpose": "READ_KLINES",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584492817,
+          "completedAt": 1791584493297,
+          "status": 200,
+          "networkTiming": {
+            "startedAt": 1791584492819,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584492819,
+            "secureConnectedAt": 1791584492819,
+            "responseAt": 1791584493297,
+            "completedAt": 1791584493297,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        },
+        {
+          "requestId": "ea18ff29-e1d5-4411-b383-929e9a3c1b17",
+          "endpoint": "/fapi/v2/account",
+          "source": "PRIVATE_STATE",
+          "purpose": "READ_ACCOUNT",
+          "decision": "ADMITTED",
+          "admittedAt": 1791584494456,
+          "completedAt": 1791584494866,
+          "status": 200,
+          "networkTiming": {
+            "startedAt": 1791584494458,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791584494459,
+            "secureConnectedAt": 1791584494459,
+            "responseAt": 1791584494841,
+            "completedAt": 1791584494865,
+            "reusedSocket": true,
+            "failurePhase": null
+          }
+        }
+      ]
+    }
+  }
+}

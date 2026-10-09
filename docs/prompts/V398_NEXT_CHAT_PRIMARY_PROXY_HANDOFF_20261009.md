@@ -1,5 +1,9 @@
 # V3.9.8 新 ChatGPT 窗口 / 本机 Codex 接力交接（Primary 3–5 分钟 + Binance SSH 代理拥塞 P0）
 
+## Latest immediate restart execution — 2026-10-10 06:21+08
+
+Main d41c9df and exact CI37997259184 SUCCESS rechecked. Six fresh bounded TESTNET GETs all200; signed exact TP13/13, private age610ms, Production0, new socket1.303s. Earlier06:02 timeout remains unresolved intermittent evidence, not a current failed refresh. Old Engine18100/build6cd926 preserved; no lifecycle attempted/current policy denial, NOT_DEPLOYED,24h NOT_STARTED/T0=null. Actual-account/region lawful eligibility UNKNOWN; authenticated Chrome connector failed. Non-sensitive official confirmation requested; restart business authorization already received. Old approval does not bind candidatebb45c11. See [fresh execution receipt](../reports/v398-restart-execution-20261010/EXECUTION_RECEIPT.md) and sanitized signed/host evidence; refresh before any cutover. Earlier status paragraphs below are timestamped history.
+
 ## 2026-10-10 PR21 / 24h continuation (latest)
 
 Latest06:02 bounded refresh failed at first public time GET after8.016s; prior05:47 signed TP13/13 is preserved as a historical sample, not a current release pass. No retry/lifecycle. Eligibility remains UNKNOWN; 24h NOT_STARTED/T0=null. PR21 merged by normal fast-forward at 8cd63a0; exact push/PR CI37996114153/37996120547 SUCCESS. Final local verify251/2157 and four Engine shards216/1966 PASS; dependency audit11→4 unresolved ECharts/Vitest advisories. Actual old host receipt and source/artifact hashes match Engine18100, but new candidate buildbb45c11 is not deployed. See new report for current vs historical policy evidence.

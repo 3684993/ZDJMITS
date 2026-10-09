@@ -1,0 +1,18 @@
+{
+  "environment": "TESTNET",
+  "sourceMain": "d41c9dfb2231b7474167c36de981973297ecd7f1",
+  "businessRestartAuthorization": "RECEIVED",
+  "freshSignedTechnicalSampleAt": "2026-10-09T22:21:36.095Z",
+  "signedAccountTechnicalAccess": "PASS_AT_SAMPLE_TIME",
+  "signedTpCoverage": "13/13_AT_SAMPLE_TIME",
+  "productionWrites": 0,
+  "actualAccountRegionEligibility": "UNKNOWN",
+  "newIdentityBoundApproval": "PENDING",
+  "currentLifecycleAttempts": 0,
+  "currentPolicyDenials": 0,
+  "deployment": "NOT_DEPLOYED",
+  "engineRestart": "NOT_PERFORMED",
+  "acceptance24h": "NOT_STARTED",
+  "t0": null,
+  "restartAfterAbortRule": "FULL_NEW_24H_AFTER_REPAIR_RELEASE_AND_ALL_GATES"
+}

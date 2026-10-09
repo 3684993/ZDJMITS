@@ -1,0 +1,217 @@
+﻿{
+    "observedAt":  "2026-10-09T22:27:07.9625964Z",
+    "lifecycleAttempts":  0,
+    "settingsWrites":  0,
+    "taskChanges":  0,
+    "routeChanges":  0,
+    "listeners":  [
+                      {
+                          "LocalAddress":  "0.0.0.0",
+                          "LocalPort":  8080,
+                          "OwningProcess":  18100
+                      },
+                      {
+                          "LocalAddress":  "127.0.0.1",
+                          "LocalPort":  8081,
+                          "OwningProcess":  3400
+                      },
+                      {
+                          "LocalAddress":  "127.0.0.1",
+                          "LocalPort":  8083,
+                          "OwningProcess":  14020
+                      },
+                      {
+                          "LocalAddress":  "127.0.0.1",
+                          "LocalPort":  8084,
+                          "OwningProcess":  22336
+                      },
+                      {
+                          "LocalAddress":  "127.0.0.1",
+                          "LocalPort":  20091,
+                          "OwningProcess":  18300
+                      }
+                  ],
+    "engine":  {
+                   "ProcessId":  18100,
+                   "ParentProcessId":  23056,
+                   "Name":  "node.exe",
+                   "CreationDate":  "\/Date(1791529472522)\/",
+                   "ExecutablePath":  "C:\\Program Files\\nodejs\\node.exe"
+               },
+    "crashObserver":  {
+                          "ProcessId":  17772,
+                          "ParentProcessId":  2220,
+                          "Name":  "powershell.exe",
+                          "CreationDate":  "\/Date(1791533639329)\/"
+                      },
+    "exactFileInvocationProxyWatchProcesses":  [
+
+                                               ],
+    "proxyHealthHistory":  {
+                               "at":  "2026-10-09T14:04:11.9990787Z",
+                               "healthy":  false,
+                               "pid":  18300,
+                               "failurePhase":  "SOCKS_CONNECT_REPLY",
+                               "ageSeconds":  30178.579529299997,
+                               "authoritativeForCurrentTransport":  false
+                           },
+    "proxyEventsHistory":  [
+                               {
+                                   "at":  "2026-10-09T02:50:56.5020865Z",
+                                   "event":  "HEALTH",
+                                   "pid":  24916,
+                                   "healthy":  true,
+                                   "elapsedMs":  3051
+                               },
+                               {
+                                   "at":  "2026-10-09T02:51:29.0147924Z",
+                                   "event":  "HEALTH",
+                                   "pid":  24916,
+                                   "healthy":  true,
+                                   "elapsedMs":  2508
+                               },
+                               {
+                                   "at":  "2026-10-09T02:52:02.1185475Z",
+                                   "event":  "HEALTH",
+                                   "pid":  24916,
+                                   "healthy":  true,
+                                   "elapsedMs":  3087
+                               },
+                               {
+                                   "at":  "2026-10-09T02:52:35.1344073Z",
+                                   "event":  "HEALTH",
+                                   "pid":  24916,
+                                   "healthy":  true,
+                                   "elapsedMs":  3003
+                               },
+                               {
+                                   "at":  "2026-10-09T02:53:08.0918364Z",
+                                   "event":  "HEALTH",
+                                   "pid":  24916,
+                                   "healthy":  true,
+                                   "elapsedMs":  2941
+                               },
+                               {
+                                   "at":  "2026-10-09T02:53:41.2926318Z",
+                                   "event":  "HEALTH",
+                                   "pid":  24916,
+                                   "healthy":  true,
+                                   "elapsedMs":  3186
+                               },
+                               {
+                                   "at":  "2026-10-09T02:54:13.9971769Z",
+                                   "event":  "HEALTH",
+                                   "pid":  24916,
+                                   "healthy":  true,
+                                   "elapsedMs":  2698
+                               },
+                               {
+                                   "at":  "2026-10-09T03:05:53.7962902Z",
+                                   "event":  "TUNNEL_STARTED",
+                                   "pid":  6784,
+                                   "healthy":  null,
+                                   "elapsedMs":  null
+                               },
+                               {
+                                   "at":  "2026-10-09T03:05:56.6829609Z",
+                                   "event":  "INITIAL_HEALTH",
+                                   "pid":  6784,
+                                   "healthy":  true,
+                                   "elapsedMs":  2866
+                               },
+                               {
+                                   "at":  "2026-10-09T12:37:56.3117762Z",
+                                   "event":  "TUNNEL_STOPPED",
+                                   "pid":  6784,
+                                   "healthy":  null,
+                                   "elapsedMs":  null
+                               },
+                               {
+                                   "at":  "2026-10-09T12:38:04.1949696Z",
+                                   "event":  "TUNNEL_STARTED",
+                                   "pid":  18300,
+                                   "healthy":  null,
+                                   "elapsedMs":  null
+                               },
+                               {
+                                   "at":  "2026-10-09T12:38:07.5978438Z",
+                                   "event":  "INITIAL_HEALTH",
+                                   "pid":  18300,
+                                   "healthy":  true,
+                                   "elapsedMs":  3387
+                               }
+                           ],
+    "proxyStderr":  {
+                        "byteLength":  0,
+                        "contentRead":  "FAILED_FILE_LOCK_NOT_A_CLEAN_LOG_PROOF"
+                    },
+    "tasks":  [
+                  {
+                      "name":  "ZDJ-MITS Local Health Monitor",
+                      "state":  "Disabled",
+                      "hiddenWscript":  true,
+                      "lastRunTime":  "\/Date(1789221100000)\/",
+                      "lastTaskResult":  1
+                  },
+                  {
+                      "name":  "ZDJ-MITS Manual Engine",
+                      "state":  "Ready",
+                      "hiddenWscript":  true,
+                      "lastRunTime":  "\/Date(943891200000)\/",
+                      "lastTaskResult":  267011
+                  },
+                  {
+                      "name":  "ZDJ-MITS V3.9.2 Testnet Acceptance Monitor",
+                      "state":  "Disabled",
+                      "hiddenWscript":  true,
+                      "lastRunTime":  "\/Date(1789295512000)\/",
+                      "lastTaskResult":  0
+                  },
+                  {
+                      "name":  "ZDJ-MITS-AfterReboot-TESTNET",
+                      "state":  "Ready",
+                      "hiddenWscript":  true,
+                      "lastRunTime":  "\/Date(943891200000)\/",
+                      "lastTaskResult":  267011
+                  },
+                  {
+                      "name":  "ZDJ-MITS-Engine-Crash-Observer",
+                      "state":  "Running",
+                      "hiddenWscript":  true,
+                      "lastRunTime":  "\/Date(1791533639000)\/",
+                      "lastTaskResult":  267009
+                  },
+                  {
+                      "name":  "ZDJ-V398-24h-Readonly-Checkpoint",
+                      "state":  "Disabled",
+                      "hiddenWscript":  true,
+                      "lastRunTime":  "\/Date(1791547970000)\/",
+                      "lastTaskResult":  0
+                  },
+                  {
+                      "name":  "ZDJ-V398-Passive-Trade-Audit",
+                      "state":  "Ready",
+                      "hiddenWscript":  true,
+                      "lastRunTime":  "\/Date(1791584752000)\/",
+                      "lastTaskResult":  0
+                  },
+                  {
+                      "name":  "ZDJ-V398-Primary-Cadence-90min",
+                      "state":  "Ready",
+                      "hiddenWscript":  true,
+                      "lastRunTime":  "\/Date(1791584651000)\/",
+                      "lastTaskResult":  0
+                  }
+              ],
+    "approval":  {
+                     "mode":  "TESTNET_ENTRY_ENABLED",
+                     "revoked":  false,
+                     "settingsVersion":  253,
+                     "sourceSha256":  "53856d74adc0241a04fac4bee7fc59cb0f7deaaac86a36b28beee0ea2e59af02",
+                     "artifactSha256":  "6cd926abca3eec24392ea4f51db845914309ceb974908be2fbfc549ed3afd169",
+                     "entrypointSha256":  "df014d7d4da78af092844fa646c3ac1409bff38ec27c35da5db3de0caf072376",
+                     "approvedAt":  1791529335943,
+                     "expiresAt":  1794121335943,
+                     "authorizesNewCandidate":  false
+                 }
+}

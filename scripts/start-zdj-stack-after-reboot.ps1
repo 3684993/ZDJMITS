@@ -26,9 +26,10 @@ function Test-ExistingAutostartAction([object]$Action,[string]$ExpectedTaskName)
   if ($executable -match '^(powershell|pwsh)(\.exe)?$') {
     return $arguments -like '*start-zdj-stack-after-reboot.ps1*'
   }
-  if ($executable -notmatch '^wscript(\.exe)?$' -or
-      $arguments -notmatch '^//B\s+//Nologo\s+"([^"\r\n]+\.vbs)"$') { return $false }
-  $launcher = $Matches[1]
+  if ($executable -notmatch '^wscript(\.exe)?$') { return $false }
+  if ($arguments -match '^//B\s+//Nologo\s+"([^"\r\n]+\.vbs)"$') {
+    $launcher = $Matches[1]
+  } else { return $false }
   $expectedLeaf = ((('\' + $ExpectedTaskName) -replace '[^a-zA-Z0-9-]','_') + '.vbs')
   if (-not [IO.Path]::IsPathRooted($launcher) -or
       [IO.Path]::GetFileName($launcher) -cne $expectedLeaf -or

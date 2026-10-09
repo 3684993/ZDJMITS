@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from "vue";
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { RELEASE_LABEL, type SystemSettings } from "@zdj/contracts";
 import {
   api,
@@ -268,6 +268,7 @@ function passiveProxyLabel(value:string){return({
   RECENT_BINANCE_SUCCESS:'最近已通过代理访问币安',REQUEST_QUEUE_TIMEOUT:'请求排队超时（不代表代理掉线）',
   NETWORK_FAILURE_OBSERVED:'已发送请求发生网络故障',BINANCE_RATE_LIMITED_OR_RECOVERING:'币安限流／恢复中',
   STALE_OR_UNKNOWN:'近期无足够连通证据',NO_OBSERVATION:'暂无连通证据',INACTIVE_NO_PROBE:'非活动代理（未持续监测）',
+  HTTP_451_ELIGIBILITY:'币安返回451：需独立核实账户及地区使用资格',HTTP_502_UPSTREAM_UNKNOWN:'币安或上游返回502：不能归类为SOCKS超时',
   MONITOR_UNAVAILABLE:'只读监测暂不可用',DISABLED:'已停用'
 } as Record<string,string>)[value]??'状态尚未确定';}
 async function testResource(kind:"exchange"|"proxy"|"ai",item:any){try{if(isResourceDirty(kind,item))throw new Error("请先保存当前资源修改，再执行真实连接测试");const result=await api.testResource(kind,item.id);resourceProbeResults.value={...resourceProbeResults.value,[item.id]:result};if(kind==="ai"){aiProbeResults.value={...aiProbeResults.value,[item.id]:result};notice.value=`连接 ${result.status} · ${result.latencyMs}ms · 实际 model id: ${(result.models??[]).join(", ")||"未返回"}`;}else notice.value=`连接测试：${result.status??result.state??"PASS"}${result.latencyMs!=null?` · ${result.latencyMs}ms`:""}`;}catch(e){error.value=String(e);}}
@@ -323,9 +324,10 @@ function addBlacklist(kind:'symbolBlacklist'|'underlyingBlacklist',value:string)
 function removeBlacklist(kind:'symbolBlacklist'|'underlyingBlacklist',value:string){if(draft.value)draft.value.selection.marketQuality[kind]=draft.value.selection.marketQuality[kind].filter(x=>x!==value);}
 let proxyMonitorTimer:number|null=null;
 onMounted(()=>{
-  void load().then(()=>{void refreshPassiveProxyHealth();});
+  void load().then(()=>{if(tab.value==='proxy')void refreshPassiveProxyHealth();});
   proxyMonitorTimer=window.setInterval(()=>{if(tab.value==='proxy')void refreshPassiveProxyHealth();},30_000);
 });
+watch(tab,value=>{if(value==='proxy')void refreshPassiveProxyHealth();});
 onUnmounted(()=>{if(proxyMonitorTimer!==null)window.clearInterval(proxyMonitorTimer);});
 </script>
 

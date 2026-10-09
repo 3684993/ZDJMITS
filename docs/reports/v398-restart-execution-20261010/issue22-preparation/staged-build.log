@@ -1,0 +1,59 @@
+(node:25276) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:25852) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> zdj-mits-v3@3.9.8 build
+> npm run build -ws --if-present
+
+(node:21164) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:23060) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> @zdj/contracts@3.9.8 build
+> tsc -p tsconfig.json
+
+
+> @zdj/core@3.9.8 build
+> tsc -p tsconfig.json
+
+
+> @zdj/dashboard@3.9.8 build
+> vue-tsc -b && vite build
+
+(node:17512) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 1669 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                                                0.42 kB │ gzip:  0.30 kB
+dist/assets/BrainView-C19KGV8J.css                                             0.41 kB │ gzip:  0.25 kB
+dist/assets/SettingsView-DpBJNmpc.css                                          4.20 kB │ gzip:  1.10 kB
+dist/assets/index-2bhk4SYA.css                                                42.87 kB │ gzip:  9.82 kB
+dist/assets/positionModel-UU3TmqIC.js                                          0.28 kB │ gzip:  0.20 kB
+dist/assets/EmptyState.vue_vue_type_script_setup_true_lang-Bt_G2z9A.js         0.30 kB │ gzip:  0.24 kB
+dist/assets/format-BTnsUY7D.js                                                 0.37 kB │ gzip:  0.28 kB
+dist/assets/Panel.vue_vue_type_script_setup_true_lang-BN2FYpnj.js              0.56 kB │ gzip:  0.34 kB
+dist/assets/StatusBadge.vue_vue_type_script_setup_true_lang-8-CWPllg.js        0.58 kB │ gzip:  0.40 kB
+dist/assets/MemoryView-D5888BOL.js                                             2.35 kB │ gzip:  1.18 kB
+dist/assets/UniverseView-ChEPUvvS.js                                           4.95 kB │ gzip:  2.14 kB
+dist/assets/HumanManagedView-B83NQl5f.js                                       6.89 kB │ gzip:  3.09 kB
+dist/assets/PositionsView-BVu1nJzx.js                                          7.30 kB │ gzip:  3.15 kB
+dist/assets/OrdersView-CX2MzUi-.js                                             7.42 kB │ gzip:  2.74 kB
+dist/assets/IntelligenceView-BIA2h32U.js                                       7.89 kB │ gzip:  2.85 kB
+dist/assets/OperationsView-DMgCsGL7.js                                         8.24 kB │ gzip:  3.42 kB
+dist/assets/TemporalIntelligenceView-Bk3Bpbr_.js                               8.25 kB │ gzip:  3.03 kB
+dist/assets/PositionConsole.vue_vue_type_script_setup_true_lang-jvT-B4nr.js   13.21 kB │ gzip:  5.62 kB
+dist/assets/BrainView-7F6Ux6yR.js                                             15.17 kB │ gzip:  6.03 kB
+dist/assets/TradeRecordsView-vjWf78zS.js                                      19.18 kB │ gzip:  7.08 kB
+dist/assets/OverviewView-MMxsQ9M_.js                                          48.52 kB │ gzip: 16.20 kB
+dist/assets/SettingsView-tpB26duV.js                                          75.65 kB │ gzip: 22.09 kB
+dist/assets/index-Dx1lseKb.js                                                281.86 kB │ gzip: 86.20 kB
+✓ built in 5.87s
+
+> @zdj/engine@3.9.8 build
+> tsc -p tsconfig.json
+

@@ -1,0 +1,51 @@
+{
+  "observedAt": "2026-10-09T23:10:11.769Z",
+  "localMethods": [
+    "GET"
+  ],
+  "taskExchangeRequests": 0,
+  "taskExchangeWrites": 0,
+  "lifecycleAttempts": 0,
+  "identity": {
+    "pid": 18100,
+    "instanceId": "65185f71-b336-4f6f-8149-cafe90f5e160",
+    "buildId": "3.9.8-6cd926abca3eec24392e",
+    "status": "READY"
+  },
+  "privateSync": {
+    "snapshotAgeMs": 3673,
+    "consecutiveFailures": 0,
+    "lastError": null
+  },
+  "localTp": {
+    "status": "READY",
+    "unverifiedTp": 0,
+    "required": 12,
+    "protected": 12,
+    "missing": 0,
+    "repairing": 0,
+    "repairFailed": 0,
+    "manualReviewRequired": 0,
+    "positionFactUnresolved": 0,
+    "positionFactUnresolvedSymbols": [],
+    "orphanTp": 0,
+    "duplicateTp": 0,
+    "qtyMismatch": 0,
+    "wrongSide": 0,
+    "tpMissing": 0,
+    "retryQueue": 0
+  },
+  "production": {
+    "environment": "TESTNET",
+    "executionMode": "TESTNET_ENABLED",
+    "lockedToTestnet": true,
+    "testnetWrites": 118,
+    "productionWrites": 0,
+    "blockedProductionWriteAttempts": 0,
+    "lastWriteAt": 1791577665762,
+    "lastWritePath": "/fapi/v1/leverage"
+  },
+  "signedTpAuthority": "NO_NEW_SIGNED_SAMPLE_THIS_PREPARATION; 06:21_SAMPLE_IS_HISTORY_REFRESH_BEFORE_CUTOVER",
+  "acceptance24h": "NOT_STARTED",
+  "t0": null
+}

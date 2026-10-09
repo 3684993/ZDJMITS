@@ -1,0 +1,18 @@
+﻿{
+    "observedAt":  "2026-10-09T23:11:45.4891638Z",
+    "stagePath":  "D:\\MITS-RELEASES\\ZDJMITS-v398-main-6f228cd",
+    "manifestVerifiedFiles":  1923,
+    "sealedReadOnlyFiles":  1923,
+    "sealMechanism":  "ReadOnly file attributes plus exact per-file SHA256 and pinned clean Git source; reverify before activation",
+    "stageGitStatus":  "",
+    "privateEvidenceAcl":  "Current user and SYSTEM only",
+    "privateRollbackSnapshotHashes":  {
+                                          "old-engine-instance.json":  "7098793EAEE4D43A391D98D728E8717DCC1216492438F0A8D7BE8AF70A7AF9FA",
+                                          "old-entry-approval.json":  "378C2E9407E1057195357E6A7B69A208C4859362A0B6FCFC359EBCC3807886CA",
+                                          "old-engine-host-receipt.json":  "CE218DF84DF9CB3E3B0113CA6DA58FE7BFA1B6E04193875017F7DCC715D58AD7"
+                                      },
+    "oldLiveApprovalSha256":  "378C2E9407E1057195357E6A7B69A208C4859362A0B6FCFC359EBCC3807886CA",
+    "oldLiveApprovalUnmodified":  true,
+    "runtimeDataJunctionCreated":  false,
+    "lifecycleChanges":  0
+}

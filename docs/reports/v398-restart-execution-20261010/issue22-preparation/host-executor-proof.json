@@ -1,0 +1,69 @@
+﻿{
+    "observedAt":  "2026-10-09T23:05:57.5397123Z",
+    "formalHostFunctions":  "AST_EXTRACTED_NATIVE_PROBES_ONLY",
+    "nodeRuntime":  {
+                        "nodeVersion":  "v22.23.1",
+                        "v8Version":  "12.4.254.21-node.56",
+                        "flags":  [
+                                      "--no-maglev"
+                                  ]
+                    },
+    "nativeProbes":  "PASS",
+    "effectiveExecutionPolicy":  "RemoteSigned",
+    "executionPolicies":  [
+                              {
+                                  "policy":  "Undefined",
+                                  "scope":  "MachinePolicy"
+                              },
+                              {
+                                  "policy":  "Undefined",
+                                  "scope":  "UserPolicy"
+                              },
+                              {
+                                  "policy":  "Undefined",
+                                  "scope":  "Process"
+                              },
+                              {
+                                  "policy":  "RemoteSigned",
+                                  "scope":  "CurrentUser"
+                              },
+                              {
+                                  "policy":  "Undefined",
+                                  "scope":  "LocalMachine"
+                              }
+                          ],
+    "languageMode":  "FullLanguage",
+    "oldEnginePid":  18100,
+    "oldHostPid":  23056,
+    "oldEngineTerminateHandleOpen":  true,
+    "lifecycleAttempts":  0,
+    "currentPolicyDenials":  0,
+    "futureLifecyclePolicy":  "MUST_BE_CHECKED_AT_ACTUAL_FORMAL_ACTION_NO_ALTERNATE_ON_DENIAL",
+    "wer":  {
+                "dumpFolder":  "C:\\Users\\5700x\\AppData\\Local\\ZDJMITS\\diagnostics\\engine-wer",
+                "dumpCount":  2,
+                "dumpType":  2
+            },
+    "observer":  {
+                     "createdAt":  "\/Date(1791533639329)\/",
+                     "pid":  17772
+                 },
+    "auxiliaryListeners":  [
+                               {
+                                   "LocalPort":  20091,
+                                   "OwningProcess":  18300
+                               },
+                               {
+                                   "LocalPort":  8084,
+                                   "OwningProcess":  22336
+                               },
+                               {
+                                   "LocalPort":  8083,
+                                   "OwningProcess":  14020
+                               },
+                               {
+                                   "LocalPort":  8081,
+                                   "OwningProcess":  3400
+                               }
+                           ]
+}

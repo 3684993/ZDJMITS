@@ -1,0 +1,73 @@
+{
+  "state": "PREPARED_NOT_EXECUTED",
+  "businessAuthorization": "RECEIVED_USER_AND_ISSUE22",
+  "soleExternallyMissingFact": "OFFICIAL_ACTUAL_ACCOUNT_REGION_FUTURES_DEMO_ELIGIBILITY_SOURCE_DATE_SCOPE",
+  "stage": "D:/MITS-RELEASES/ZDJMITS-v398-main-6f228cd",
+  "preStopChecks": [
+    "Close official actual-account/region eligibility with verifiable non-sensitive source/time/scope",
+    "Rehash sealed stage using exact frozen per-file manifest; require clean source and pinned approved commit",
+    "Refresh signed account/positions/openOrders/openAlgoOrders and exact dual-ID all-position TP younger than60s",
+    "Require live Production writes0 and unchanged TESTNET Settings253/payload hash/account scope",
+    "Refresh SQLite online backup immediately before cutover; preserve the completed preparation backup",
+    "Activate only the independent new identity approval via normal authorized procedure after all gates, never copy old approval",
+    "Re-identify8080 old PID, command path, instance and actual host receipt; preserve auxiliary listeners and observer",
+    "Honor action-time formal executor policy; any rejection stops the action, no alternate invocation"
+  ],
+  "formalStop": {
+    "script": "D:/MITS-RELEASES/ZDJMITS-v398-ai-entry-cb0de7b/scripts/stop-zdj-lan.ps1",
+    "parameters": {"Port": 8080},
+    "sha256": "d0e1a6b8e1287fc6d3cf37c10930cd398f5c5136c0ff6ad4f26fd680a94f82e4",
+    "verifiedIdenticalToNewStageStopScript": true,
+    "dataJunction": "D:/MITS/data",
+    "scope": "IDENTIFIED_ENGINE_ONLY"
+  },
+  "formalStart": {
+    "script": "D:/MITS-RELEASES/ZDJMITS-v398-main-6f228cd/scripts/start-zdj-engine-host.ps1",
+    "hostWindowStyle": "Hidden",
+    "automaticRetries": 0,
+    "parameters": {
+      "NodePath": "C:/Program Files/nodejs/node.exe",
+      "EnginePath": "D:/MITS-RELEASES/ZDJMITS-v398-main-6f228cd/apps/engine/dist/main.js",
+      "WorkingDirectory": "D:/MITS-RELEASES/ZDJMITS-v398-main-6f228cd",
+      "StdoutPath": "LOCALAPPDATA/ZDJMITS/diagnostics/issue22-cutover/new-engine.stdout.log",
+      "StderrPath": "LOCALAPPDATA/ZDJMITS/diagnostics/issue22-cutover/new-engine.stderr.log",
+      "LifecyclePath": "LOCALAPPDATA/ZDJMITS/diagnostics/issue22-cutover/new-engine-lifecycle.jsonl",
+      "ReceiptPath": "LOCALAPPDATA/ZDJMITS/diagnostics/issue22-cutover/new-engine-receipt.json",
+      "LaunchId": "ONE_FRESH_APPROVED_LAUNCH_ID_AT_CUTOVER"
+    },
+    "environment": {
+      "ZDJ_HOST": "0.0.0.0",
+      "ZDJ_PORT": "8080",
+      "ZDJ_DATA_DIR": "D:/MITS/data",
+      "ZDJ_CONFIG_DIR": "D:/MITS-RELEASES/ZDJMITS-v398-main-6f228cd/config",
+      "ZDJ_START_REASON": "MANUAL_START",
+      "ZDJ_ENTRY_EXECUTION_POLICY": "TESTNET_ENTRY_ENABLED",
+      "ZDJ_ENTRY_ADMISSION_DISABLED": "0",
+      "ZDJ_ENTRY_APPROVAL_FILE": "THE_NEW_INDEPENDENT_APPROVAL_ONLY_AFTER_GATES_AND_ACTIVATION",
+      "ZDJ_ENTRY_APPROVED_ARTIFACT_SHA256": "bb45c11acbe9819a34566eb59f5eaaf0beff8912d92955bbdd882d035e06117e"
+    }
+  },
+  "postStartIdentitySixChecks": [
+    "Frozen approved Git source and current main runtime-code equivalence",
+    "Actual process entrypoint/source tree hash equals staged source hash",
+    "Actual full dist artifact hash and derived buildId equal staged values",
+    "Actual entrypoint main.js SHA256 equals staged and new approval values",
+    "Actual Settings version/payload/account scope equal approved values",
+    "New child PID/host receipt/instance/API and actual child Entry environment all agree"
+  ],
+  "postStartSafety": ["READY health and closeout", "private facts fresh", "fresh signed exact TP for every current position", "Production0", "models/proxy identities preserved", "WER and observer preserved and expected build updated", "hidden reboot task readback uses new stable root and approval"],
+  "rollback": {
+    "binary": "D:/MITS-RELEASES/ZDJMITS-v398-ai-entry-cb0de7b/apps/engine/dist/main.js",
+    "build": "3.9.8-6cd926abca3eec24392e",
+    "host": "D:/MITS-RELEASES/ZDJMITS-v398-ai-entry-cb0de7b/scripts/start-zdj-engine-host.ps1",
+    "approval": "EXISTING_UNCHANGED_OLD_APPROVAL_REVALIDATED_FOR_OLD_IDENTITY_ONLY",
+    "normalProcedureOnly": true,
+    "currentDurableDbRetained": true,
+    "automaticStaleDbRestore": false,
+    "freshIdentityTpProductionRecheckRequired": true,
+    "onPolicyDenial": "STOP_NO_ALTERNATE",
+    "acceptance": "ABORT_AND_FULL_NEW24H_ONLY_AFTER_ALL_GATES"
+  },
+  "acceptance24h": "NOT_STARTED",
+  "t0": null
+}

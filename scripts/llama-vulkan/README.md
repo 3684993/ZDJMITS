@@ -123,3 +123,23 @@ powershell -NoProfile -ExecutionPolicy Bypass -File "$review\maintenance-preflig
 已确认Primary8084和Harness8083均停止，8081 Intel B580 9B仍运行且仅317句柄。系统提交内存116.68→69.94GiB、剩余提交额度1.30→42.99GiB；分页池23.10→22.70GiB、非分页池8.67→7.54GiB。**两27B结束释放了约46.74GiB提交资源，但仍有约30.24GiB内核池在系统中。**
 
 下一步不再盲目调整三个推理脚本，而是运行新增的 **`capture-kernel-pool-tags-readonly.ps1`**（仅使用已安装的微软 WDK PoolMon，`/n`静态快照，不停止模型/Engine、不修改驱动/注册表/页面文件，若不存在则明确报告缺失），并检查 [POST_HARNESS_STOP_AND_KERNEL_POOL_PLAN_20261009.md](POST_HARNESS_STOP_AND_KERNEL_POOL_PLAN_20261009.md)。所有原始诊断输出留在本机，GitHub只保存脱敏报告。未运行 Windows现场 PoolMon 测试，不称已有根因。
+
+
+## 2026-10-09：无需 WDK/PoolMon 的优先方案
+
+用户 Windows 主机找不到 poolmon.exe；不是权限错误也不是内存池标签不存在。先用**无需安装工具**的 `capture-kernel-pool-tags-native-readonly.ps1`，它只执行 `NtQuerySystemInformation(SystemPoolTagInformation=0x16)` 的读取，并使用 C# Add-Type（Windows PowerShell 自带）解析 x64 上的 paged/nonpaged pool tag 数值。**该信息类的二进制结构未获 Microsoft 正式文档支持，因此可能被系统拒绝或在未来版本中改变**。脚本有 x64、原生缓冲上限16MiB、Managed ABI synthetic self-test、返回状态码、行数与边界验证；若失败就立即退出，不修改系统。
+
+~~~powershell
+git -C D:\MITS-worktrees\llama-memory-20261009 pull --ff-only origin codex/llama-vulkan-memory-20261009
+$review = 'D:\MITS-worktrees\llama-memory-20261009\scripts\llama-vulkan'
+powershell -NoProfile -ExecutionPolicy Bypass -File "$review\verify-candidate-parse-readonly.ps1"
+powershell -NoProfile -ExecutionPolicy Bypass -File "$review\capture-kernel-pool-tags-native-readonly.ps1" -Mode Validate
+powershell -NoProfile -ExecutionPolicy Bypass -File "$review\capture-kernel-pool-tags-native-readonly.ps1" -Mode Capture -Samples 2 -IntervalSeconds 5 -TopRows 20
+~~~
+
+**注意：** `Validate` 的 `NATIVE_POOLTAG_LAYOUT_SELFTEST_PASS` 仅验证人工构造的测试数据，不代表 Windows 端读到了真实标签。必须在 `Capture` 输出 `PAGED TOP BY BYTES` 与 `NONPAGED TOP BY BYTES` 和合理计数后再判断是否成功，且总 tags 所报告的 pool 使用值可能与 OS counters 不完全一致。全量 JSON 留 `LOCALAPPDATA\ZDJMITS\diagnostics`，公开仓库不存原始系统快照。
+
+如果返回 `NATIVE_POOLTAG_UNAVAILABLE`，**不要盲目运行第三方可执行程序**。可以将 [Codex 提示词](../../docs/prompts/CODEX_WINDOWS_POOL_TAGS_NO_WDK_FIRST_20261009.md) 交给本机 Codex，先在 Windows Kits 已安装目录安全地寻找官方 poolmon.exe；必要时提出官方 WDK 安装方案，在得到用户明确许可后执行，不得悄悄安装组件。微软提供官方安装指南：
+https://learn.microsoft.com/en-us/windows-hardware/drivers/install-the-wdk-using-winget
+
+这是一个内核池归属调查工具，不是 `llama-server` 崩溃修复，也不会自动恢复8083/8084或更改Engine。 

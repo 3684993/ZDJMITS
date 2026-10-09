@@ -1,7 +1,7 @@
 {
   "privateEvidenceRoot": "C:\\Users\\5700x\\AppData\\Local\\ZDJMITS\\diagnostics\\ai-entry-p0-20261009",
   "rawEvidenceUploaded": false,
-  "manifestSha256": "fdea0a681bb0964c55245ec0c6f5d02c36a02663e45132abf330b919121091df",
+  "manifestSha256": "eb8578f9657d870c39398fb1d0c1a02aecd28fe5901818f7ebc5579417a962cf",
   "files": [
     {
       "file": "assets-final.json",
@@ -17,6 +17,16 @@
       "file": "brain-diagnostics.json",
       "bytes": 200,
       "sha256": "8ad756606f9e47ad606e87ebefc79afa1be390efc5287e476c768317cfc0f3a6"
+    },
+    {
+      "file": "candidate-identity.json",
+      "bytes": 305,
+      "sha256": "5eff46442373b5e1499d9e3a757422be0a709ab5d2669d0ee8ad617d620924b7"
+    },
+    {
+      "file": "candidate-npm-ci.log",
+      "bytes": 1227,
+      "sha256": "8c473016d4822aad1ee7f6e5a0c66e21ac73894772affd8d925d59fe7a9fb0fc"
     },
     {
       "file": "closeout-final.json",
@@ -74,6 +84,36 @@
       "sha256": "9772bb714a6e8b6ae49246cd7a9489ab30bc06ff15edb0d22dc49809bdb6b1c5"
     },
     {
+      "file": "pre-confirm-account-assets.json",
+      "bytes": 626,
+      "sha256": "dc3751a52e3a55c5c612260f55134818bbc045b243595a8b6c15c001698a861c"
+    },
+    {
+      "file": "pre-confirm-diagnostics-closeout.json",
+      "bytes": 1520694,
+      "sha256": "7e5521eddc7e36af87fe7c6258c557eff1d89cf6a9c8f8d1584e680a43d240f4"
+    },
+    {
+      "file": "pre-confirm-health.json",
+      "bytes": 165891,
+      "sha256": "a8d9b5f5863c06ea17b7a58ab3cb9815ccfea52851eba56f625fd2e551bb9deb"
+    },
+    {
+      "file": "pre-confirm-orders.json",
+      "bytes": 740563,
+      "sha256": "45cb5c1b8d1d82ff99939cc74fab342e4e4e63d6de3280808f54c91555032197"
+    },
+    {
+      "file": "pre-confirm-positions.json",
+      "bytes": 20078,
+      "sha256": "2ba384ff95a41e55d70b6085d1b3958f2325aa6a88d7db940a22b3616c8cdbf1"
+    },
+    {
+      "file": "pre-confirm-tp-check.json",
+      "bytes": 1236,
+      "sha256": "4b9f9f5be731de1e05091056ed160cdf6269c09e57b1e89727a3ce9a3ba9acd2"
+    },
+    {
       "file": "primary-props.json",
       "bytes": 5473,
       "sha256": "366b4aef29c9902c77f90922a0c0a0af2a3c259ffa973d7846fb40e148a5cc30"
@@ -124,6 +164,16 @@
       "sha256": "9edea9f1bc02a3b844b2baf50f0be541871d167860ef6bb5fcb8449e0b744151"
     },
     {
+      "file": "sqlite-backup-receipt.json",
+      "bytes": 380,
+      "sha256": "bbb16b2cb88db27721d4cff5b9f8445c30b51f4ad80bee1a4cdec489c705b0ae"
+    },
+    {
+      "file": "stable-candidate-receipt.json",
+      "bytes": 387,
+      "sha256": "16a2994c7f61ba621441aeba3c7ecf76ee7c4b8bed0753308ad2c4425ab1f9df"
+    },
+    {
       "file": "templated.json",
       "bytes": 93503,
       "sha256": "e0c70d6b09620e0b50b87e8578ad905176d39a840b04dcee651f412b73a6b036"
@@ -140,8 +190,8 @@
     },
     {
       "file": "verify-delivery.log",
-      "bytes": 93686,
-      "sha256": "686dadc489ca41a285dd5f412177cff9f376e77c4eb49396b242782023fd50ef"
+      "bytes": 109474,
+      "sha256": "c2f03a6e997bafff5ea5705fcc4871ab77333f279821e601283949e3322c6544"
     },
     {
       "file": "verify-final.log",
@@ -162,6 +212,11 @@
       "file": "exchange/testnet-start-gate.json",
       "bytes": 28140,
       "sha256": "a802037230614ce88cd4113b00e05d5f50c0fc841bfbf8438ed7d84b337bd933"
+    },
+    {
+      "file": "exchange-pre-confirm/testnet-start-gate.json",
+      "bytes": 874545,
+      "sha256": "d979ba66186fe4f2f040e680a8717657c0f678e8f2d900787b644529bd6fe337"
     },
     {
       "file": "exchange-v2/testnet-start-gate.json",

@@ -1,0 +1,37 @@
+{
+  "observedAt": "2026-10-09T22:00:59.464Z",
+  "candidate": {
+    "gitHead": "8cd63a0f13f3260b3faa986b89959cfb090d6844",
+    "sourceHash": "04af4747623b3b8dd459465ed7c5fede3380d46f7a955da2d863ea4eb430d482",
+    "artifactHash": "bb45c11acbe9819a34566eb59f5eaaf0beff8912d92955bbdd882d035e06117e",
+    "buildId": "3.9.8-bb45c11acbe9819a3456",
+    "entrypointSha256": "df014d7d4da78af092844fa646c3ac1409bff38ec27c35da5db3de0caf072376"
+  },
+  "runtime": {
+    "pid": 18100,
+    "instanceId": "65185f71-b336-4f6f-8149-cafe90f5e160",
+    "buildId": "3.9.8-6cd926abca3eec24392e",
+    "sourceHash": "53856d74adc0241a04fac4bee7fc59cb0f7deaaac86a36b28beee0ea2e59af02",
+    "artifactHash": "6cd926abca3eec24392ea4f51db845914309ceb974908be2fbfc549ed3afd169",
+    "entrypoint": "D:\\MITS-RELEASES\\ZDJMITS-v398-ai-entry-cb0de7b\\apps\\engine\\dist\\main.js",
+    "hostPid": 23056,
+    "launchId": "v398-approved-entry-20261009-one"
+  },
+  "settings": {
+    "version": 253,
+    "payloadSha256": "9edea9f1bc02a3b844b2baf50f0be541871d167860ef6bb5fcb8449e0b744151",
+    "environment": "TESTNET",
+    "executionMode": "TESTNET_ENABLED"
+  },
+  "checks": {
+    "actualReceiptMatchesInstance": true,
+    "deployedSourceMatchesInstance": true,
+    "deployedArtifactMatchesInstance": true,
+    "candidateSourceMatchesInstance": false,
+    "candidateArtifactMatchesInstance": false
+  },
+  "taskSettingsWrites": 0,
+  "taskExchangeWrites": 0,
+  "taskLifecycleChanges": 0,
+  "verdict": "CANDIDATE_NOT_DEPLOYED"
+}

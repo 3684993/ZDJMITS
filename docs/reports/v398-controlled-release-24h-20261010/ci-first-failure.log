@@ -1,0 +1,1286 @@
+2026-10-09T21:45:54.9859736Z Current runner version: '2.337.0'
+2026-10-09T21:45:54.9888246Z ##[group]Runner Image Provisioner
+2026-10-09T21:45:54.9889262Z Hosted Compute Agent
+2026-10-09T21:45:54.9889840Z Version: 20260901.588
+2026-10-09T21:45:54.9890434Z Commit: f88ec8081b781fac6c440065ac7ff9e710ce3d0b
+2026-10-09T21:45:54.9891132Z Build Date: 2026-09-01T19:56:44Z
+2026-10-09T21:45:54.9891772Z Worker ID: {6d8b142e-aee7-45fa-addd-67377df466f2}
+2026-10-09T21:45:54.9892435Z Azure Region: westus3
+2026-10-09T21:45:54.9892991Z ##[endgroup]
+2026-10-09T21:45:54.9894435Z ##[group]Operating System
+2026-10-09T21:45:54.9895100Z Microsoft Windows Server 2025
+2026-10-09T21:45:54.9895684Z 10.0.26100
+2026-10-09T21:45:54.9896158Z Datacenter
+2026-10-09T21:45:54.9896708Z ##[endgroup]
+2026-10-09T21:45:54.9897213Z ##[group]Runner Image
+2026-10-09T21:45:54.9897765Z Image: windows-2025-vs2026
+2026-10-09T21:45:54.9898346Z Version: 20260925.250.1
+2026-10-09T21:45:54.9899774Z Included Software: https://github.com/actions/runner-images/blob/win25-vs2026/20260925.250/images/windows/Windows2025-VS2026-Readme.md
+2026-10-09T21:45:54.9901783Z Image Release: https://github.com/actions/runner-images/releases/tag/win25-vs2026%2F20260925.250
+2026-10-09T21:45:54.9902877Z ##[endgroup]
+2026-10-09T21:45:54.9903998Z ##[group]GITHUB_TOKEN Permissions
+2026-10-09T21:45:54.9906427Z Contents: read
+2026-10-09T21:45:54.9907022Z Metadata: read
+2026-10-09T21:45:54.9907560Z ##[endgroup]
+2026-10-09T21:45:54.9909711Z Secret source: Actions
+2026-10-09T21:45:54.9910591Z Cache mode: write
+2026-10-09T21:45:54.9911273Z Prepare workflow directory
+2026-10-09T21:45:55.0255141Z Prepare all required actions
+2026-10-09T21:45:55.0304912Z Getting action download info
+2026-10-09T21:45:55.3264035Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-10-09T21:45:55.4539270Z Download action repository 'actions/setup-node@v4' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+2026-10-09T21:45:55.7590016Z Complete job name: verify
+2026-10-09T21:45:55.9090817Z ##[group]Run actions/checkout@v4
+2026-10-09T21:45:55.9091878Z with:
+2026-10-09T21:45:55.9092310Z   fetch-depth: 0
+2026-10-09T21:45:55.9092762Z   repository: 3684993/ZDJMITS
+2026-10-09T21:45:55.9097298Z   token: ***
+2026-10-09T21:45:55.9097887Z   ssh-strict: true
+2026-10-09T21:45:55.9098621Z   ssh-user: git
+2026-10-09T21:45:55.9099373Z   persist-credentials: true
+2026-10-09T21:45:55.9100184Z   clean: true
+2026-10-09T21:45:55.9100966Z   sparse-checkout-cone-mode: true
+2026-10-09T21:45:55.9101904Z   fetch-tags: false
+2026-10-09T21:45:55.9102694Z   show-progress: true
+2026-10-09T21:45:55.9103449Z   lfs: false
+2026-10-09T21:45:55.9104166Z   submodules: false
+2026-10-09T21:45:55.9104972Z   set-safe-directory: true
+2026-10-09T21:45:55.9105870Z   allow-unsafe-pr-checkout: false
+2026-10-09T21:45:55.9107175Z ##[endgroup]
+2026-10-09T21:45:56.0628703Z Syncing repository: 3684993/ZDJMITS
+2026-10-09T21:45:56.0630561Z ##[group]Getting Git version info
+2026-10-09T21:45:56.0631274Z Working directory is 'D:\a\ZDJMITS\ZDJMITS'
+2026-10-09T21:45:56.1631149Z [command]"C:\Program Files\Git\bin\git.exe" version
+2026-10-09T21:45:56.5406171Z git version 2.55.0.windows.5
+2026-10-09T21:45:56.5454828Z ##[endgroup]
+2026-10-09T21:45:56.5474906Z Temporarily overriding HOME='D:\a\_temp\c2fec0ea-2d41-4ee8-a629-a5ea73d2e041' before making global git config changes
+2026-10-09T21:45:56.5476758Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-09T21:45:56.5486478Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\ZDJMITS\ZDJMITS
+2026-10-09T21:45:56.6110691Z Deleting the contents of 'D:\a\ZDJMITS\ZDJMITS'
+2026-10-09T21:45:56.6116737Z ##[group]Initializing the repository
+2026-10-09T21:45:56.6127767Z [command]"C:\Program Files\Git\bin\git.exe" init D:\a\ZDJMITS\ZDJMITS
+2026-10-09T21:45:56.6937054Z Initialized empty Git repository in D:/a/ZDJMITS/ZDJMITS/.git/
+2026-10-09T21:45:56.6984048Z [command]"C:\Program Files\Git\bin\git.exe" remote add origin https://github.com/3684993/ZDJMITS
+2026-10-09T21:45:56.7603001Z ##[endgroup]
+2026-10-09T21:45:56.7605021Z ##[group]Disabling automatic garbage collection
+2026-10-09T21:45:56.7612360Z [command]"C:\Program Files\Git\bin\git.exe" config --local gc.auto 0
+2026-10-09T21:45:56.7921365Z ##[endgroup]
+2026-10-09T21:45:56.7923123Z ##[group]Setting up auth
+2026-10-09T21:45:56.7933722Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-10-09T21:45:56.8252051Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-10-09T21:45:58.2302494Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-09T21:45:58.2611553Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-10-09T21:45:58.7937947Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-09T21:45:58.8241541Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+2026-10-09T21:45:59.3442397Z [command]"C:\Program Files\Git\bin\git.exe" config --local http.https://github.com/.extraheader "AUTHORIZATION: basic ***"
+2026-10-09T21:45:59.3754124Z ##[endgroup]
+2026-10-09T21:45:59.3754949Z ##[group]Fetching the repository
+2026-10-09T21:45:59.3768571Z [command]"C:\Program Files\Git\bin\git.exe" -c protocol.version=2 fetch --prune --no-recurse-submodules origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/* +28832d5058f4906d76d7f572f81dc27eede87b81:refs/remotes/pull/21/merge
+2026-10-09T21:46:03.0244267Z From https://github.com/3684993/ZDJMITS
+2026-10-09T21:46:03.0245928Z  * [new branch]      audit-live-20260912                      -> origin/audit-live-20260912
+2026-10-09T21:46:03.0247259Z  * [new branch]      backup/main-wip-before-v392-release-20260912 -> origin/backup/main-wip-before-v392-release-20260912
+2026-10-09T21:46:03.0248768Z  * [new branch]      chatgpt/reactivity-core-checkpoint-20261008 -> origin/chatgpt/reactivity-core-checkpoint-20261008
+2026-10-09T21:46:03.0250472Z  * [new branch]      chatgpt/reactivity-core-checkpoint-current-main-20261008 -> origin/chatgpt/reactivity-core-checkpoint-current-main-20261008
+2026-10-09T21:46:03.0252215Z  * [new branch]      chatgpt/trade-entry-exit-quality-review-20261008 -> origin/chatgpt/trade-entry-exit-quality-review-20261008
+2026-10-09T21:46:03.0253720Z  * [new branch]      chatgpt/v397-account-network-closeout-20261005 -> origin/chatgpt/v397-account-network-closeout-20261005
+2026-10-09T21:46:03.0255091Z  * [new branch]      codex/audit-remediation-20261007         -> origin/codex/audit-remediation-20261007
+2026-10-09T21:46:03.0256192Z  * [new branch]      codex/audit-remediation-final-20261007   -> origin/codex/audit-remediation-final-20261007
+2026-10-09T21:46:03.0256939Z  * [new branch]      codex/llama-vulkan-memory-20261009       -> origin/codex/llama-vulkan-memory-20261009
+2026-10-09T21:46:03.0257589Z  * [new branch]      codex/main-maintenance-20261007          -> origin/codex/main-maintenance-20261007
+2026-10-09T21:46:03.0258298Z  * [new branch]      codex/p0-native-failfast-local-20261009  -> origin/codex/p0-native-failfast-local-20261009
+2026-10-09T21:46:03.0259075Z  * [new branch]      codex/reboot-orchestration-20261009      -> origin/codex/reboot-orchestration-20261009
+2026-10-09T21:46:03.0259768Z  * [new branch]      codex/rest-connection-reuse-20261007     -> origin/codex/rest-connection-reuse-20261007
+2026-10-09T21:46:03.0260564Z  * [new branch]      codex/trade-record-cycle-accounting-final -> origin/codex/trade-record-cycle-accounting-final
+2026-10-09T21:46:03.0262589Z  * [new branch]      codex/v393-final-audit-20260915          -> origin/codex/v393-final-audit-20260915
+2026-10-09T21:46:03.0263877Z  * [new branch]      codex/v396-astra-handoff-20260922        -> origin/codex/v396-astra-handoff-20260922
+2026-10-09T21:46:03.0265407Z  * [new branch]      codex/v396-design-completion-20260921    -> origin/codex/v396-design-completion-20260921
+2026-10-09T21:46:03.0266782Z  * [new branch]      codex/v396-entry-frequency-risk-audit-20260927 -> origin/codex/v396-entry-frequency-risk-audit-20260927
+2026-10-09T21:46:03.0268100Z  * [new branch]      codex/v396-final-convergence-20260922    -> origin/codex/v396-final-convergence-20260922
+2026-10-09T21:46:03.0269238Z  * [new branch]      codex/v396-project-plan-20260921         -> origin/codex/v396-project-plan-20260921
+2026-10-09T21:46:03.0270490Z  * [new branch]      codex/v396-s00-reviewed-baseline-20260921 -> origin/codex/v396-s00-reviewed-baseline-20260921
+2026-10-09T21:46:03.0272007Z  * [new branch]      codex/v398-ai-entry-execution-context-20261009 -> origin/codex/v398-ai-entry-execution-context-20261009
+2026-10-09T21:46:03.0273475Z  * [new branch]      codex/v398-order-lifecycle-visibility-20261009 -> origin/codex/v398-order-lifecycle-visibility-20261009
+2026-10-09T21:46:03.0274971Z  * [new branch]      codex/v398-order-lifecycle-visibility-fix-20261009 -> origin/codex/v398-order-lifecycle-visibility-fix-20261009
+2026-10-09T21:46:03.0276420Z  * [new branch]      codex/v398-passive-proxy-health-20261009 -> origin/codex/v398-passive-proxy-health-20261009
+2026-10-09T21:46:03.0277900Z  * [new branch]      codex/v398-primary-cadence-cutover-evidence-20261009 -> origin/codex/v398-primary-cadence-cutover-evidence-20261009
+2026-10-09T21:46:03.0279323Z  * [new branch]      codex/v398-primary-cadence-fix-20261009  -> origin/codex/v398-primary-cadence-fix-20261009
+2026-10-09T21:46:03.0281472Z  * [new branch]      codex/v398-primary-cadence-p0-20261009   -> origin/codex/v398-primary-cadence-p0-20261009
+2026-10-09T21:46:03.0283022Z  * [new branch]      codex/v398-silent-reboot-registration-20261010 -> origin/codex/v398-silent-reboot-registration-20261010
+2026-10-09T21:46:03.0284369Z  * [new branch]      docs/v395-24h-final-audit-20260921       -> origin/docs/v395-24h-final-audit-20260921
+2026-10-09T21:46:03.0285877Z  * [new branch]      docs/v395-24h-final-report-20260921      -> origin/docs/v395-24h-final-report-20260921
+2026-10-09T21:46:03.0287209Z  * [new branch]      docs/v395-actions-recovery-deploy-20260919 -> origin/docs/v395-actions-recovery-deploy-20260919
+2026-10-09T21:46:03.0288397Z  * [new branch]      docs/v395-handover-20260919              -> origin/docs/v395-handover-20260919
+2026-10-09T21:46:03.0289655Z  * [new branch]      docs/v395-r13-early-adjudication-20260920 -> origin/docs/v395-r13-early-adjudication-20260920
+2026-10-09T21:46:03.0291042Z  * [new branch]      docs/v395-r15-terminal-audit-governance-20260920 -> origin/docs/v395-r15-terminal-audit-governance-20260920
+2026-10-09T21:46:03.0292417Z  * [new branch]      docs/v395-r16-final-safety-24h-20260920  -> origin/docs/v395-r16-final-safety-24h-20260920
+2026-10-09T21:46:03.0293605Z  * [new branch]      docs/v395-shadow-deploy-20260919         -> origin/docs/v395-shadow-deploy-20260919
+2026-10-09T21:46:03.0294710Z  * [new branch]      fix/v392-astra-final-fixes               -> origin/fix/v392-astra-final-fixes
+2026-10-09T21:46:03.0295724Z  * [new branch]      gpt56-closeout-20260912                  -> origin/gpt56-closeout-20260912
+2026-10-09T21:46:03.0296849Z  * [new branch]      gpt56-final-convergence-20260913         -> origin/gpt56-final-convergence-20260913
+2026-10-09T21:46:03.0297968Z  * [new branch]      gpt56-optimize-v392-20260912             -> origin/gpt56-optimize-v392-20260912
+2026-10-09T21:46:03.0299087Z  * [new branch]      integrate/8096-main-sync-20261003        -> origin/integrate/8096-main-sync-20261003
+2026-10-09T21:46:03.0300305Z  * [new branch]      integrate/v392-release-20260912          -> origin/integrate/v392-release-20260912
+2026-10-09T21:46:03.0301568Z  * [new branch]      main                                     -> origin/main
+2026-10-09T21:46:03.0302621Z  * [new branch]      online/v397-account-network-closeout-20261005 -> origin/online/v397-account-network-closeout-20261005
+2026-10-09T21:46:03.0304033Z  * [new branch]      online/v397-account-network-final-20261005 -> origin/online/v397-account-network-final-20261005
+2026-10-09T21:46:03.0305740Z  * [new branch]      online/v397-post-ai-authority-collapse-20261004 -> origin/online/v397-post-ai-authority-collapse-20261004
+2026-10-09T21:46:03.0307029Z  * [new branch]      snapshot/8096-2a6b864-20261003           -> origin/snapshot/8096-2a6b864-20261003
+2026-10-09T21:46:03.0308104Z  * [new branch]      trading-quality-stage1-3-20260914        -> origin/trading-quality-stage1-3-20260914
+2026-10-09T21:46:03.0309213Z  * [new branch]      v393-a1-eligibility-contract             -> origin/v393-a1-eligibility-contract
+2026-10-09T21:46:03.0310137Z  * [new branch]      v393-a1-working                          -> origin/v393-a1-working
+2026-10-09T21:46:03.0310953Z  * [new branch]      v393-a2-working                          -> origin/v393-a2-working
+2026-10-09T21:46:03.0311954Z  * [new branch]      v393-final-closeout-20260915             -> origin/v393-final-closeout-20260915
+2026-10-09T21:46:03.0313070Z  * [new branch]      v393-final-closeout-fix-20260915         -> origin/v393-final-closeout-fix-20260915
+2026-10-09T21:46:03.0314177Z  * [new branch]      v393-offline-checkpoints                 -> origin/v393-offline-checkpoints
+2026-10-09T21:46:03.0315103Z  * [new branch]      v393-offline-ci                          -> origin/v393-offline-ci
+2026-10-09T21:46:03.0316008Z  * [new branch]      v393-offline-dev                         -> origin/v393-offline-dev
+2026-10-09T21:46:03.0317002Z  * [new branch]      v393-offline-final-working               -> origin/v393-offline-final-working
+2026-10-09T21:46:03.0318380Z  * [new branch]      v393-offline-impl                        -> origin/v393-offline-impl
+2026-10-09T21:46:03.0319618Z  * [new branch]      v393-offline-implementation-20260914     -> origin/v393-offline-implementation-20260914
+2026-10-09T21:46:03.0320839Z  * [new branch]      v393-offline-review                      -> origin/v393-offline-review
+2026-10-09T21:46:03.0321765Z  * [new branch]      v393-offline-stage                       -> origin/v393-offline-stage
+2026-10-09T21:46:03.0322791Z  * [new branch]      v393-p0-runtime-recovery-20260915        -> origin/v393-p0-runtime-recovery-20260915
+2026-10-09T21:46:03.0323938Z  * [new branch]      v393-p0-tp-risk-recovery-20260915        -> origin/v393-p0-tp-risk-recovery-20260915
+2026-10-09T21:46:03.0325456Z  * [new branch]      v393-private-truth-tp-canary-20260916    -> origin/v393-private-truth-tp-canary-20260916
+2026-10-09T21:46:03.0326821Z  * [new branch]      v393-runtime-stability-final-20260915    -> origin/v393-runtime-stability-final-20260915
+2026-10-09T21:46:03.0327943Z  * [new branch]      v393-source-ffd225e                      -> origin/v393-source-ffd225e
+2026-10-09T21:46:03.0329116Z  * [new branch]      v394-binance-governance-settings-20260918 -> origin/v394-binance-governance-settings-20260918
+2026-10-09T21:46:03.0330435Z  * [new branch]      v395-economics-human-managed-20260919    -> origin/v395-economics-human-managed-20260919
+2026-10-09T21:46:03.0331701Z  * [new branch]      v395-enforce-readiness-20260919          -> origin/v395-enforce-readiness-20260919
+2026-10-09T21:46:03.0332652Z  * [new ref]         28832d5058f4906d76d7f572f81dc27eede87b81 -> pull/21/merge
+2026-10-09T21:46:03.0334319Z ##[endgroup]
+2026-10-09T21:46:03.0334691Z ##[group]Determining the checkout info
+2026-10-09T21:46:03.0335072Z ##[endgroup]
+2026-10-09T21:46:03.0335372Z [command]"C:\Program Files\Git\bin\git.exe" sparse-checkout disable
+2026-10-09T21:46:03.0790816Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset-all extensions.worktreeConfig
+2026-10-09T21:46:03.1103303Z ##[group]Checking out the ref
+2026-10-09T21:46:03.1112643Z [command]"C:\Program Files\Git\bin\git.exe" checkout --progress --force refs/remotes/pull/21/merge
+2026-10-09T21:46:04.1767268Z Updating files:  63% (2189/3427)
+2026-10-09T21:46:04.1980944Z Updating files:  64% (2194/3427)
+2026-10-09T21:46:04.2357121Z Updating files:  65% (2228/3427)
+2026-10-09T21:46:04.2673624Z Updating files:  66% (2262/3427)
+2026-10-09T21:46:04.2811969Z Updating files:  67% (2297/3427)
+2026-10-09T21:46:04.2965752Z Updating files:  68% (2331/3427)
+2026-10-09T21:46:04.3210302Z Updating files:  69% (2365/3427)
+2026-10-09T21:46:04.3363525Z Updating files:  70% (2399/3427)
+2026-10-09T21:46:04.3631946Z Updating files:  71% (2434/3427)
+2026-10-09T21:46:04.3779196Z Updating files:  72% (2468/3427)
+2026-10-09T21:46:04.4514864Z Updating files:  73% (2502/3427)
+2026-10-09T21:46:04.6159831Z Updating files:  74% (2536/3427)
+2026-10-09T21:46:04.6276772Z Updating files:  75% (2571/3427)
+2026-10-09T21:46:04.7031863Z Updating files:  76% (2605/3427)
+2026-10-09T21:46:04.7113660Z Updating files:  77% (2639/3427)
+2026-10-09T21:46:04.7369774Z Updating files:  78% (2674/3427)
+2026-10-09T21:46:04.7526723Z Updating files:  79% (2708/3427)
+2026-10-09T21:46:04.7783735Z Updating files:  80% (2742/3427)
+2026-10-09T21:46:04.8014356Z Updating files:  81% (2776/3427)
+2026-10-09T21:46:04.9401720Z Updating files:  82% (2811/3427)
+2026-10-09T21:46:04.9617293Z Updating files:  83% (2845/3427)
+2026-10-09T21:46:05.0029727Z Updating files:  84% (2879/3427)
+2026-10-09T21:46:05.0115402Z Updating files:  85% (2913/3427)
+2026-10-09T21:46:05.0214101Z Updating files:  86% (2948/3427)
+2026-10-09T21:46:05.0295257Z Updating files:  87% (2982/3427)
+2026-10-09T21:46:05.0631294Z Updating files:  88% (3016/3427)
+2026-10-09T21:46:05.0823084Z Updating files:  89% (3051/3427)
+2026-10-09T21:46:05.0902346Z Updating files:  90% (3085/3427)
+2026-10-09T21:46:05.0976799Z Updating files:  91% (3119/3427)
+2026-10-09T21:46:05.1054959Z Updating files:  92% (3153/3427)
+2026-10-09T21:46:05.1143509Z Updating files:  93% (3188/3427)
+2026-10-09T21:46:05.1232244Z Updating files:  94% (3222/3427)
+2026-10-09T21:46:05.1308684Z Updating files:  95% (3256/3427)
+2026-10-09T21:46:05.1401784Z Updating files:  96% (3290/3427)
+2026-10-09T21:46:05.1486585Z Updating files:  97% (3325/3427)
+2026-10-09T21:46:05.1571723Z Updating files:  98% (3359/3427)
+2026-10-09T21:46:05.1650279Z Updating files:  99% (3393/3427)
+2026-10-09T21:46:05.1653727Z Updating files: 100% (3427/3427)
+2026-10-09T21:46:05.1654159Z Updating files: 100% (3427/3427), done.
+2026-10-09T21:46:05.1783817Z Note: switching to 'refs/remotes/pull/21/merge'.
+2026-10-09T21:46:05.1784233Z 
+2026-10-09T21:46:05.1784656Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-10-09T21:46:05.1785594Z changes and commit them, and you can discard any commits you make in this
+2026-10-09T21:46:05.1786433Z state without impacting any branches by switching back to a branch.
+2026-10-09T21:46:05.1786936Z 
+2026-10-09T21:46:05.1787325Z If you want to create a new branch to retain commits you create, you may
+2026-10-09T21:46:05.1787863Z do so (now or later) by using -c with the switch command. Example:
+2026-10-09T21:46:05.1788166Z 
+2026-10-09T21:46:05.1788283Z   git switch -c <new-branch-name>
+2026-10-09T21:46:05.1788487Z 
+2026-10-09T21:46:05.1788585Z Or undo this operation with:
+2026-10-09T21:46:05.1788765Z 
+2026-10-09T21:46:05.1788846Z   git switch -
+2026-10-09T21:46:05.1788979Z 
+2026-10-09T21:46:05.1789232Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-10-09T21:46:05.1789636Z 
+2026-10-09T21:46:05.1790090Z HEAD is now at 28832d5 Merge fadb7967573659202003a47ee31a76b9c8b278d6 into 57c42dc8dd4ad1c6e8e364bafb5d2bd8682a5494
+2026-10-09T21:46:05.1983808Z ##[endgroup]
+2026-10-09T21:46:05.2325408Z [command]"C:\Program Files\Git\bin\git.exe" log -1 --format=%H
+2026-10-09T21:46:05.2588775Z 28832d5058f4906d76d7f572f81dc27eede87b81
+2026-10-09T21:46:05.3125212Z ##[group]Run actions/setup-node@v4
+2026-10-09T21:46:05.3125525Z with:
+2026-10-09T21:46:05.3125714Z   node-version: 22
+2026-10-09T21:46:05.3125905Z   cache: npm
+2026-10-09T21:46:05.3126078Z   always-auth: false
+2026-10-09T21:46:05.3126278Z   check-latest: false
+2026-10-09T21:46:05.3128921Z   token: ***
+2026-10-09T21:46:05.3129107Z ##[endgroup]
+2026-10-09T21:46:05.4948949Z Found in cache @ C:\hostedtoolcache\windows\node\22.23.3\x64
+2026-10-09T21:46:05.4956156Z (node:1048) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-09T21:46:05.4956991Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-09T21:46:05.4960280Z ##[group]Environment details
+2026-10-09T21:46:10.5839420Z node: v22.23.3
+2026-10-09T21:46:10.5839735Z npm: 10.9.9
+2026-10-09T21:46:10.5839904Z yarn: 1.22.22
+2026-10-09T21:46:10.5840551Z ##[endgroup]
+2026-10-09T21:46:10.6736089Z [command]C:\Windows\system32\cmd.exe /D /S /C "C:\hostedtoolcache\windows\node\22.23.3\x64\npm.cmd config get cache"
+2026-10-09T21:46:11.2170293Z C:\npm\cache
+2026-10-09T21:46:11.6163446Z Cache hit for: node-cache-Windows-x64-npm-090b299fe58203869eb89b4eeec52d4532d033b3c2e8af718ee7b26e4446787b
+2026-10-09T21:46:11.6292793Z (node:1048) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-10-09T21:46:12.7610096Z Received 39704646 of 39704646 (100.0%), 42.8 MBs/sec
+2026-10-09T21:46:12.7613151Z Cache Size: ~38 MB (39704646 B)
+2026-10-09T21:46:12.7689570Z [command]"C:\Program Files\Git\usr\bin\tar.exe" -xf D:/a/_temp/774e9e9a-d38a-455c-bb31-17c7969f94be/cache.tzst -P -C D:/a/ZDJMITS/ZDJMITS --force-local --use-compress-program "zstd -d"
+2026-10-09T21:46:14.2773877Z Cache restored successfully
+2026-10-09T21:46:14.2815680Z Cache restored from key: node-cache-Windows-x64-npm-090b299fe58203869eb89b4eeec52d4532d033b3c2e8af718ee7b26e4446787b
+2026-10-09T21:46:14.3142634Z ##[group]Run $base = git merge-base origin/main HEAD
+2026-10-09T21:46:14.3143129Z $base = git merge-base origin/main HEAD
+2026-10-09T21:46:14.3143448Z git diff --check "$base..HEAD"
+2026-10-09T21:46:14.3143779Z if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+2026-10-09T21:46:14.3705351Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-10-09T21:46:14.3705793Z ##[endgroup]
+2026-10-09T21:46:15.4770053Z ##[group]Run npm ci
+2026-10-09T21:46:15.4770340Z npm ci
+2026-10-09T21:46:15.4839025Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-10-09T21:46:15.4839380Z ##[endgroup]
+2026-10-09T21:46:19.7483547Z npm warn deprecated whatwg-encoding@3.1.1: Use @exodus/bytes instead for a more spec-conformant and faster implementation
+2026-10-09T21:46:21.1256615Z npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-10-09T21:46:26.2790300Z npm warn deprecated lucide-vue-next@0.468.0: Package deprecated. Please use @lucide/vue instead.
+2026-10-09T21:46:26.5894020Z 
+2026-10-09T21:46:26.5894795Z added 279 packages, and audited 284 packages in 10s
+2026-10-09T21:46:26.5895449Z 
+2026-10-09T21:46:26.5895847Z 68 packages are looking for funding
+2026-10-09T21:46:26.5896609Z   run `npm fund` for details
+2026-10-09T21:46:26.6054393Z 
+2026-10-09T21:46:26.6054905Z 11 vulnerabilities (4 moderate, 4 high, 3 critical)
+2026-10-09T21:46:26.6055344Z 
+2026-10-09T21:46:26.6055703Z To address issues that do not require attention, run:
+2026-10-09T21:46:26.6056266Z   npm audit fix
+2026-10-09T21:46:26.6056477Z 
+2026-10-09T21:46:26.6056843Z To address all issues (including breaking changes), run:
+2026-10-09T21:46:26.6057707Z   npm audit fix --force
+2026-10-09T21:46:26.6058334Z 
+2026-10-09T21:46:26.6058540Z Run `npm audit` for details.
+2026-10-09T21:46:28.7045610Z ##[group]Run npm run verify
+2026-10-09T21:46:28.7046093Z npm run verify
+2026-10-09T21:46:28.7123514Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-10-09T21:46:28.7123867Z ##[endgroup]
+2026-10-09T21:46:29.4977977Z 
+2026-10-09T21:46:29.4978794Z > zdj-mits-v3@3.9.8 verify
+2026-10-09T21:46:29.4980263Z > npm run verify:deps && npm run verify:scripts && npm run verify:release && npm run verify:s00 && npm run typecheck && npm run build && npm run test
+2026-10-09T21:46:29.4981302Z 
+2026-10-09T21:46:29.8321854Z 
+2026-10-09T21:46:29.8322661Z > zdj-mits-v3@3.9.8 verify:deps
+2026-10-09T21:46:29.8323158Z > npm run build -w @zdj/contracts && npm run build -w @zdj/core
+2026-10-09T21:46:29.8323439Z 
+2026-10-09T21:46:30.1907567Z 
+2026-10-09T21:46:30.1908180Z > @zdj/contracts@3.9.8 build
+2026-10-09T21:46:30.1908691Z > tsc -p tsconfig.json
+2026-10-09T21:46:30.1908967Z 
+2026-10-09T21:46:35.1995806Z 
+2026-10-09T21:46:35.1996611Z > @zdj/core@3.9.8 build
+2026-10-09T21:46:35.1997346Z > tsc -p tsconfig.json
+2026-10-09T21:46:35.1997543Z 
+2026-10-09T21:46:38.0397191Z 
+2026-10-09T21:46:38.0397887Z > zdj-mits-v3@3.9.8 verify:scripts
+2026-10-09T21:46:38.0405605Z > node --check scripts/maintain-storage.mjs && node --check scripts/reset-testnet-runtime-db.mjs && node --check scripts/init-local-runtime.mjs && node --check scripts/prune-zdj-backups.mjs && node --check scripts/install-storage-retention.mjs && node --check scripts/v394-stage6-set-readonly.mjs && node scripts/v394-stage6-set-readonly.mjs --self-test && node --check scripts/v394-stage6-preflight.mjs && node scripts/v394-stage6-preflight.mjs --self-test && node --check scripts/audit-ai-entry-quality.mjs && node --check scripts/audit-trading-quality-baseline.mjs && node --check scripts/inspect-sqlite-capacity.mjs && node --check scripts/audit-v394-entry-authorization.mjs && node --test scripts/maintain-storage.test.mjs scripts/reset-testnet-runtime-db.test.mjs scripts/init-local-runtime.test.mjs && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/start-zdj-engine-host.test.ps1 && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/collect-zdj-engine-crash-evidence.test.ps1 && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/run-v394-readonly-canary.test.ps1 && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/run-v394-local-rollout.test.ps1 && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/run-v394-stage7-to-stage9.test.ps1 && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/vpn/zdj-trade-proxy-client-windows.test.ps1 && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/start-zdj-stack-after-reboot.test.ps1 && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/set-zdj-scheduled-task-silent.test.ps1
+2026-10-09T21:46:38.0411707Z 
+2026-10-09T21:46:38.3863827Z (node:6704) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:46:38.3864567Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:46:38.5860542Z V3.9.4 explicit proxy-enable + legacy normalization + READ_ONLY self-test PASS
+2026-10-09T21:46:38.6938976Z (node:1352) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:46:38.6940089Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:46:39.1154834Z V3.9.4 Stage6 preflight self-test PASS
+2026-10-09T21:46:39.3981403Z TAP version 13
+2026-10-09T21:46:42.4461477Z # (node:1616) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:46:42.4462907Z # (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:46:42.4481199Z # Subtest: V3.9.3 init preserves static configuration and removes active local trading history
+2026-10-09T21:46:42.4488677Z ok 1 - V3.9.3 init preserves static configuration and removes active local trading history
+2026-10-09T21:46:42.4490274Z   ---
+2026-10-09T21:46:42.4492913Z   duration_ms: 2988.4805
+2026-10-09T21:46:42.4493264Z   type: 'test'
+2026-10-09T21:46:42.4493459Z   ...
+2026-10-09T21:46:49.4159090Z # (node:2788) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:46:49.4160135Z # (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:46:49.4199250Z # Subtest: offline maintenance preserves source: dry
+2026-10-09T21:46:49.4203734Z ok 2 - offline maintenance preserves source: dry
+2026-10-09T21:46:49.4204294Z   ---
+2026-10-09T21:46:49.4204601Z   duration_ms: 1771.7988
+2026-10-09T21:46:49.4204988Z   type: 'test'
+2026-10-09T21:46:49.4205310Z   ...
+2026-10-09T21:46:49.4207105Z # Subtest: offline maintenance preserves source: build
+2026-10-09T21:46:49.4209918Z ok 3 - offline maintenance preserves source: build
+2026-10-09T21:46:49.4210487Z   ---
+2026-10-09T21:46:49.4210807Z   duration_ms: 1458.3064
+2026-10-09T21:46:49.4211552Z   type: 'test'
+2026-10-09T21:46:49.4211879Z   ...
+2026-10-09T21:46:49.4214837Z # Subtest: offline maintenance preserves source: alias
+2026-10-09T21:46:49.4216692Z ok 4 - offline maintenance preserves source: alias
+2026-10-09T21:46:49.4217487Z   ---
+2026-10-09T21:46:49.4218024Z   duration_ms: 424.6095
+2026-10-09T21:46:49.4218607Z   type: 'test'
+2026-10-09T21:46:49.4219981Z   ...
+2026-10-09T21:46:49.4221615Z # Subtest: offline maintenance preserves source: existing
+2026-10-09T21:46:49.4222983Z ok 5 - offline maintenance preserves source: existing
+2026-10-09T21:46:49.4223652Z   ---
+2026-10-09T21:46:49.4224272Z   duration_ms: 415.326
+2026-10-09T21:46:49.4224636Z   type: 'test'
+2026-10-09T21:46:49.4225101Z   ...
+2026-10-09T21:46:49.4225718Z # Subtest: offline maintenance preserves source: wal
+2026-10-09T21:46:49.4234772Z ok 6 - offline maintenance preserves source: wal
+2026-10-09T21:46:49.4235629Z   ---
+2026-10-09T21:46:49.4236135Z   duration_ms: 455.5499
+2026-10-09T21:46:49.4266212Z   type: 'test'
+2026-10-09T21:46:49.4266831Z   ...
+2026-10-09T21:46:49.4267621Z # Subtest: offline maintenance preserves source: disk
+2026-10-09T21:46:49.4268536Z ok 7 - offline maintenance preserves source: disk
+2026-10-09T21:46:49.4269219Z   ---
+2026-10-09T21:46:49.4269693Z   duration_ms: 431.6589
+2026-10-09T21:46:49.4270217Z   type: 'test'
+2026-10-09T21:46:49.4270704Z   ...
+2026-10-09T21:46:49.4271456Z # Subtest: offline maintenance preserves source: delete-failure
+2026-10-09T21:46:49.4272883Z ok 8 - offline maintenance preserves source: delete-failure
+2026-10-09T21:46:49.4273653Z   ---
+2026-10-09T21:46:49.4278158Z   duration_ms: 455.9437
+2026-10-09T21:46:49.4278735Z   type: 'test'
+2026-10-09T21:46:49.4279226Z   ...
+2026-10-09T21:46:49.4279947Z # Subtest: offline maintenance preserves source: vacuum-failure
+2026-10-09T21:46:49.4280962Z ok 9 - offline maintenance preserves source: vacuum-failure
+2026-10-09T21:46:49.4281695Z   ---
+2026-10-09T21:46:49.4282154Z   duration_ms: 518.3728
+2026-10-09T21:46:49.4282686Z   type: 'test'
+2026-10-09T21:46:49.4283000Z   ...
+2026-10-09T21:46:49.4283587Z # Subtest: offline maintenance preserves source: publish-lock
+2026-10-09T21:46:49.4284412Z ok 10 - offline maintenance preserves source: publish-lock
+2026-10-09T21:46:49.4284953Z   ---
+2026-10-09T21:46:49.4285277Z   duration_ms: 506.0431
+2026-10-09T21:46:49.4285630Z   type: 'test'
+2026-10-09T21:46:49.4285927Z   ...
+2026-10-09T21:46:49.4286444Z # Subtest: offline maintenance preserves source: corrupt-copy
+2026-10-09T21:46:49.4287240Z ok 11 - offline maintenance preserves source: corrupt-copy
+2026-10-09T21:46:49.4287782Z   ---
+2026-10-09T21:46:49.4288075Z   duration_ms: 559.493
+2026-10-09T21:46:49.4288433Z   type: 'test'
+2026-10-09T21:46:49.4288729Z   ...
+2026-10-09T21:46:49.4289204Z # Subtest: offline maintenance preserves source: crash
+2026-10-09T21:46:49.4289901Z ok 12 - offline maintenance preserves source: crash
+2026-10-09T21:46:49.4290425Z   ---
+2026-10-09T21:46:49.4294060Z   duration_ms: 483.8865
+2026-10-09T21:46:49.4294538Z   type: 'test'
+2026-10-09T21:46:49.4296250Z   ...
+2026-10-09T21:46:49.4297228Z # Subtest: backup pruning requires an explicit verified baseline and keeps it even when it is oldest
+2026-10-09T21:46:49.4298662Z ok 13 - backup pruning requires an explicit verified baseline and keeps it even when it is oldest
+2026-10-09T21:46:49.4299493Z   ---
+2026-10-09T21:46:49.4299811Z   duration_ms: 607.5968
+2026-10-09T21:46:49.4300190Z   type: 'test'
+2026-10-09T21:46:49.4300488Z   ...
+2026-10-09T21:46:49.4301325Z # Subtest: AI quality treats missing outcomes as missing and does not promote PLACE-only samples
+2026-10-09T21:46:49.4302641Z ok 14 - AI quality treats missing outcomes as missing and does not promote PLACE-only samples
+2026-10-09T21:46:49.4303426Z   ---
+2026-10-09T21:46:49.4303727Z   duration_ms: 1194.2615
+2026-10-09T21:46:49.4304108Z   type: 'test'
+2026-10-09T21:46:49.4304417Z   ...
+2026-10-09T21:46:49.4305040Z # Subtest: valid WAL is copied and replayed only on the working database
+2026-10-09T21:46:49.4306030Z ok 15 - valid WAL is copied and replayed only on the working database
+2026-10-09T21:46:49.4306641Z   ---
+2026-10-09T21:46:49.4306958Z   duration_ms: 665.8573
+2026-10-09T21:46:49.4307324Z   type: 'test'
+2026-10-09T21:46:49.4307644Z   ...
+2026-10-09T21:46:49.4400239Z # (node:9560) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:46:49.4401487Z # (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:46:49.4402762Z # Subtest: schema-only reset preserves schema/static configuration and never copies runtime history
+2026-10-09T21:46:49.4404206Z ok 16 - schema-only reset preserves schema/static configuration and never copies runtime history
+2026-10-09T21:46:49.4405068Z   ---
+2026-10-09T21:46:49.4405392Z   duration_ms: 2832.422
+2026-10-09T21:46:49.4405768Z   type: 'test'
+2026-10-09T21:46:49.4406085Z   ...
+2026-10-09T21:46:49.4406381Z 1..16
+2026-10-09T21:46:49.4406666Z # tests 16
+2026-10-09T21:46:49.4406965Z # suites 0
+2026-10-09T21:46:49.4407292Z # pass 16
+2026-10-09T21:46:49.4407580Z # fail 0
+2026-10-09T21:46:49.4408698Z # cancelled 0
+2026-10-09T21:46:49.4409398Z # skipped 0
+2026-10-09T21:46:49.4410565Z # todo 0
+2026-10-09T21:46:49.4411670Z # duration_ms 10076.2912
+2026-10-09T21:46:53.9516181Z start-zdj-engine-host.test.ps1 PASS
+2026-10-09T21:46:54.6748892Z collect-zdj-engine-crash-evidence.test.ps1 PASS (25 assertions)
+2026-10-09T21:46:54.9763626Z V3.9.4 read-only canary script contract PASS
+2026-10-09T21:46:55.3473235Z V3.9.4 local rollout script contract PASS
+2026-10-09T21:46:55.8150895Z V3.9.4 stage7-to-stage9 runner contract PASS
+2026-10-09T21:46:57.5856888Z VPN_CLIENT_TEST_PASS: foreign owner, pid reuse, real stalled peer deadline/socket close, finite failed-start recovery, no embedded secret
+2026-10-09T21:46:58.0092157Z start-zdj-stack-after-reboot.test.ps1 PASS
+2026-10-09T21:46:58.0965576Z SILENT_REBOOT_REREGISTRATION_GUARD_PASS
+2026-10-09T21:47:00.5855471Z SILENT_TASK_TEST_PASS: no visible child console, quoted paths, working directory, wait and exit=23; no real task or Engine lifecycle
+2026-10-09T21:47:00.9174695Z 
+2026-10-09T21:47:00.9175511Z > zdj-mits-v3@3.9.8 verify:release
+2026-10-09T21:47:00.9176145Z > node scripts/v397-release-identity.mjs
+2026-10-09T21:47:00.9176606Z 
+2026-10-09T21:47:00.9885128Z {"gate":"V398_RELEASE_IDENTITY_PASS","version":"3.9.8","packages":5,"lock":true,"api":"V3.9.7"}
+2026-10-09T21:47:01.2828745Z 
+2026-10-09T21:47:01.2829525Z > zdj-mits-v3@3.9.8 verify:s00
+2026-10-09T21:47:01.2832455Z > node scripts/v396-s00-static-check.mjs --review=docs/reports/v398-trade-record-integrity-20261009/s00/entrypoint-review.json --current-identity=docs/reports/v398-trade-record-integrity-20261009/s00/current-identity.json --historical-lock=docs/reports/v398-trade-record-integrity-20261009/s00/historical-package-lock.json
+2026-10-09T21:47:01.2834726Z 
+2026-10-09T21:47:01.4800298Z {
+2026-10-09T21:47:01.4800721Z   "stage": "S00",
+2026-10-09T21:47:01.4802148Z   "tests": {
+2026-10-09T21:47:01.4802535Z     "S00_T01": "PASS",
+2026-10-09T21:47:01.4802807Z     "S00_T02": "PASS",
+2026-10-09T21:47:01.4803058Z     "S00_T03": "PASS",
+2026-10-09T21:47:01.4803298Z     "S00_T04": "PASS",
+2026-10-09T21:47:01.4803550Z     "S00_T05": "PASS",
+2026-10-09T21:47:01.4803783Z     "S00_T06": "PASS"
+2026-10-09T21:47:01.4804008Z   },
+2026-10-09T21:47:01.4804479Z   "fixtureHash": "295c949a0cf5b2c7c06db81db91e42fd6fd4437fe5a2f23143c09ac4a7fbab21",
+2026-10-09T21:47:01.4805009Z   "network": "NOT_USED",
+2026-10-09T21:47:01.4805273Z   "exchangeWrites": 0,
+2026-10-09T21:47:01.4805561Z   "engineLifecycle": "NOT_USED",
+2026-10-09T21:47:01.4805859Z   "settingsModified": false,
+2026-10-09T21:47:01.4806221Z   "verifierScope": "STATIC_READS_AND_OS_TEMP_ONLY",
+2026-10-09T21:47:01.4806614Z   "entrypointReviewCount": 194,
+2026-10-09T21:47:01.4807126Z   "entrypointStatusCounts": {
+2026-10-09T21:47:01.4807459Z     "FORBIDDEN_OR_NOT_RUN": 173,
+2026-10-09T21:47:01.4807771Z     "CONDITIONAL_NOT_RUN": 20,
+2026-10-09T21:47:01.4808064Z     "ALLOWED_STATIC": 1
+2026-10-09T21:47:01.4808309Z   },
+2026-10-09T21:47:01.4808523Z   "engineTestIsolation": {
+2026-10-09T21:47:01.4808809Z     "testFiles": 216,
+2026-10-09T21:47:01.4809052Z     "openingAStore": 21,
+2026-10-09T21:47:01.4809587Z     "everyStoreOpeningTestIsolated": true,
+2026-10-09T21:47:01.4809990Z     "repositoryDataDirReferences": 0,
+2026-10-09T21:47:01.4810347Z     "productionPortReferences": 0
+2026-10-09T21:47:01.4810636Z   },
+2026-10-09T21:47:01.4810831Z   "blockers": []
+2026-10-09T21:47:01.4811050Z }
+2026-10-09T21:47:01.7863009Z 
+2026-10-09T21:47:01.7863569Z > zdj-mits-v3@3.9.8 typecheck
+2026-10-09T21:47:01.7864121Z > npm run typecheck -ws --if-present
+2026-10-09T21:47:01.7864390Z 
+2026-10-09T21:47:02.1186891Z 
+2026-10-09T21:47:02.1187536Z > @zdj/contracts@3.9.8 typecheck
+2026-10-09T21:47:02.1188145Z > tsc -p tsconfig.json --noEmit
+2026-10-09T21:47:02.1188383Z 
+2026-10-09T21:47:06.2367594Z 
+2026-10-09T21:47:06.2368483Z > @zdj/core@3.9.8 typecheck
+2026-10-09T21:47:06.2369394Z > tsc -p tsconfig.json --noEmit
+2026-10-09T21:47:06.2369995Z 
+2026-10-09T21:47:08.5427842Z 
+2026-10-09T21:47:08.5428440Z > @zdj/dashboard@3.9.8 typecheck
+2026-10-09T21:47:08.5428836Z > vue-tsc --noEmit
+2026-10-09T21:47:08.5428977Z 
+2026-10-09T21:47:14.7951078Z 
+2026-10-09T21:47:14.7951669Z > @zdj/engine@3.9.8 typecheck
+2026-10-09T21:47:14.7952259Z > tsc -p tsconfig.json --noEmit
+2026-10-09T21:47:14.7952551Z 
+2026-10-09T21:47:25.0231810Z 
+2026-10-09T21:47:25.0232349Z > zdj-mits-v3@3.9.8 build
+2026-10-09T21:47:25.0232806Z > npm run build -ws --if-present
+2026-10-09T21:47:25.0233033Z 
+2026-10-09T21:47:25.3498748Z 
+2026-10-09T21:47:25.3499331Z > @zdj/contracts@3.9.8 build
+2026-10-09T21:47:25.3499772Z > tsc -p tsconfig.json
+2026-10-09T21:47:25.3499963Z 
+2026-10-09T21:47:30.0410516Z 
+2026-10-09T21:47:30.0411179Z > @zdj/core@3.9.8 build
+2026-10-09T21:47:30.0411747Z > tsc -p tsconfig.json
+2026-10-09T21:47:30.0412051Z 
+2026-10-09T21:47:32.6724139Z 
+2026-10-09T21:47:32.6724622Z > @zdj/dashboard@3.9.8 build
+2026-10-09T21:47:32.6724983Z > vue-tsc -b && vite build
+2026-10-09T21:47:32.6725141Z 
+2026-10-09T21:47:39.4396503Z vite v7.3.6 building client environment for production...
+2026-10-09T21:47:39.5846759Z transforming...
+2026-10-09T21:47:43.9330795Z ✓ 1669 modules transformed.
+2026-10-09T21:47:44.1108388Z rendering chunks...
+2026-10-09T21:47:44.2328072Z computing gzip size...
+2026-10-09T21:47:44.2464257Z dist/index.html                                                                0.42 kB │ gzip:  0.30 kB
+2026-10-09T21:47:44.2465628Z dist/assets/BrainView-C19KGV8J.css                                             0.41 kB │ gzip:  0.25 kB
+2026-10-09T21:47:44.2466935Z dist/assets/SettingsView-DpBJNmpc.css                                          4.20 kB │ gzip:  1.10 kB
+2026-10-09T21:47:44.2469086Z dist/assets/index-2bhk4SYA.css                                                42.87 kB │ gzip:  9.82 kB
+2026-10-09T21:47:44.2471413Z dist/assets/positionModel-UU3TmqIC.js                                          0.28 kB │ gzip:  0.20 kB
+2026-10-09T21:47:44.2473689Z dist/assets/EmptyState.vue_vue_type_script_setup_true_lang-BuzYttwn.js         0.30 kB │ gzip:  0.24 kB
+2026-10-09T21:47:44.2475782Z dist/assets/format-BTnsUY7D.js                                                 0.37 kB │ gzip:  0.28 kB
+2026-10-09T21:47:44.2477882Z dist/assets/Panel.vue_vue_type_script_setup_true_lang-vTB_U8KD.js              0.56 kB │ gzip:  0.35 kB
+2026-10-09T21:47:44.2480437Z dist/assets/StatusBadge.vue_vue_type_script_setup_true_lang-CktiXWGA.js        0.58 kB │ gzip:  0.40 kB
+2026-10-09T21:47:44.2482587Z dist/assets/MemoryView-BzFDjDn0.js                                             2.35 kB │ gzip:  1.18 kB
+2026-10-09T21:47:44.2484598Z dist/assets/UniverseView-_dG5IEVO.js                                           4.95 kB │ gzip:  2.14 kB
+2026-10-09T21:47:44.2486591Z dist/assets/HumanManagedView-DjUqV0bO.js                                       6.89 kB │ gzip:  3.09 kB
+2026-10-09T21:47:44.2488347Z dist/assets/PositionsView-SIpiCpcA.js                                          7.30 kB │ gzip:  3.15 kB
+2026-10-09T21:47:44.2490057Z dist/assets/OrdersView-BUmugfa5.js                                             7.42 kB │ gzip:  2.74 kB
+2026-10-09T21:47:44.2491795Z dist/assets/IntelligenceView-DppSN8FG.js                                       7.89 kB │ gzip:  2.85 kB
+2026-10-09T21:47:44.2493549Z dist/assets/OperationsView-BIBZC5VD.js                                         8.24 kB │ gzip:  3.42 kB
+2026-10-09T21:47:44.2495328Z dist/assets/TemporalIntelligenceView-CzeUDSuZ.js                               8.25 kB │ gzip:  3.03 kB
+2026-10-09T21:47:44.2497240Z dist/assets/PositionConsole.vue_vue_type_script_setup_true_lang-D-ypHBTg.js   13.21 kB │ gzip:  5.62 kB
+2026-10-09T21:47:44.2499368Z dist/assets/BrainView-lUT6bFXm.js                                             15.17 kB │ gzip:  6.03 kB
+2026-10-09T21:47:44.2501061Z dist/assets/TradeRecordsView-BfKwD-WV.js                                      19.18 kB │ gzip:  7.08 kB
+2026-10-09T21:47:44.2502851Z dist/assets/OverviewView-CHaZuniC.js                                          48.52 kB │ gzip: 16.20 kB
+2026-10-09T21:47:44.2504609Z dist/assets/SettingsView-Blq7turT.js                                          75.65 kB │ gzip: 22.09 kB
+2026-10-09T21:47:44.2506368Z dist/assets/index-B4GD-LiU.js                                                280.56 kB │ gzip: 85.76 kB
+2026-10-09T21:47:44.2507470Z ✓ built in 4.78s
+2026-10-09T21:47:44.5402347Z 
+2026-10-09T21:47:44.5402872Z > @zdj/engine@3.9.8 build
+2026-10-09T21:47:44.5403384Z > tsc -p tsconfig.json
+2026-10-09T21:47:44.5403617Z 
+2026-10-09T21:47:57.5239607Z 
+2026-10-09T21:47:57.5240164Z > zdj-mits-v3@3.9.8 test
+2026-10-09T21:47:57.5240685Z > npm run test -ws --if-present
+2026-10-09T21:47:57.5241450Z 
+2026-10-09T21:47:57.8618441Z 
+2026-10-09T21:47:57.8619980Z > @zdj/contracts@3.9.8 test
+2026-10-09T21:47:57.8620457Z > vitest run --passWithNoTests
+2026-10-09T21:47:57.8620702Z 
+2026-10-09T21:47:58.4081112Z 
+2026-10-09T21:47:58.4085388Z  RUN  v3.2.7 D:/a/ZDJMITS/ZDJMITS/packages/contracts
+2026-10-09T21:47:58.4085784Z 
+2026-10-09T21:47:58.8500936Z  ✓ src/entryEconomicMandate.test.ts (2 tests) 12ms
+2026-10-09T21:47:58.8761603Z 
+2026-10-09T21:47:58.8763120Z  Test Files  1 passed (1)
+2026-10-09T21:47:58.8764241Z       Tests  2 passed (2)
+2026-10-09T21:47:58.8765207Z    Start at  21:47:58
+2026-10-09T21:47:58.8766614Z    Duration  465ms (transform 74ms, setup 0ms, collect 96ms, tests 12ms, environment 0ms, prepare 125ms)
+2026-10-09T21:47:58.8767809Z 
+2026-10-09T21:47:59.0289808Z 
+2026-10-09T21:47:59.0290465Z > @zdj/core@3.9.8 test
+2026-10-09T21:47:59.0290804Z > vitest run
+2026-10-09T21:47:59.0290924Z 
+2026-10-09T21:47:59.5654176Z 
+2026-10-09T21:47:59.5658364Z  RUN  v3.2.7 D:/a/ZDJMITS/ZDJMITS/packages/core
+2026-10-09T21:47:59.5659001Z 
+2026-10-09T21:48:00.2690972Z  ✓ src/selection.test.ts (9 tests) 22ms
+2026-10-09T21:48:00.5246394Z  ✓ src/capitalAdmission.test.ts (8 tests) 26ms
+2026-10-09T21:48:00.5248167Z  ✓ src/portfolio.test.ts (16 tests) 38ms
+2026-10-09T21:48:00.8103233Z  ✓ src/pool.test.ts (12 tests) 20ms
+2026-10-09T21:48:01.1301649Z  ✓ src/assetAdmission.test.ts (3 tests) 6ms
+2026-10-09T21:48:01.1673706Z  ✓ src/makerPricing.test.ts (5 tests) 193ms
+2026-10-09T21:48:01.3243525Z  ✓ src/tpStructure.test.ts (3 tests) 8ms
+2026-10-09T21:48:01.5411515Z  ✓ src/tradingCost.test.ts (4 tests) 8ms
+2026-10-09T21:48:01.5831071Z  ✓ src/compactEntryBudget.test.ts (2 tests) 9ms
+2026-10-09T21:48:01.6037406Z 
+2026-10-09T21:48:01.6038743Z  Test Files  9 passed (9)
+2026-10-09T21:48:01.6039984Z       Tests  62 passed (62)
+2026-10-09T21:48:01.6041633Z    Start at  21:47:59
+2026-10-09T21:48:01.6043743Z    Duration  2.03s (transform 633ms, setup 0ms, collect 1.76s, tests 331ms, environment 3ms, prepare 1.39s)
+2026-10-09T21:48:01.6046040Z 
+2026-10-09T21:48:01.7872430Z 
+2026-10-09T21:48:01.7873162Z > @zdj/dashboard@3.9.8 test
+2026-10-09T21:48:01.7873551Z > vitest run
+2026-10-09T21:48:01.7873675Z 
+2026-10-09T21:48:02.5376965Z 
+2026-10-09T21:48:02.5380060Z  RUN  v3.2.7 D:/a/ZDJMITS/ZDJMITS/apps/dashboard
+2026-10-09T21:48:02.5380692Z 
+2026-10-09T21:48:06.3011166Z  ✓ src/views/PositionsView.holding.test.ts (5 tests) 523ms
+2026-10-09T21:48:06.4789790Z  ✓ src/views/SettingsView.exposure.test.ts (7 tests) 700ms
+2026-10-09T21:48:06.9232172Z  ✓ src/views/OverviewView.executionTruth.test.ts (14 tests) 1198ms
+2026-10-09T21:48:07.1613982Z  ✓ src/views/OverviewView.capacity.test.ts (21 tests) 1720ms
+2026-10-09T21:48:09.0072095Z  ✓ src/views/HumanManagedView.holding.test.ts (4 tests) 353ms
+2026-10-09T21:48:09.3056846Z  ✓ src/views/OverviewView.conversion.test.ts (6 tests) 669ms
+2026-10-09T21:48:09.5622603Z  ✓ src/components/PositionConsole.holding.test.ts (5 tests) 416ms
+2026-10-09T21:48:09.7737622Z  ✓ src/views/BrainView.auditDrawer.test.ts (6 tests) 524ms
+2026-10-09T21:48:11.6635257Z  ✓ src/views/BrainView.execution.test.ts (3 tests) 406ms
+2026-10-09T21:48:11.7452684Z  ✓ src/views/SettingsView.resources.test.ts (3 tests) 468ms
+2026-10-09T21:48:12.1992121Z  ✓ src/views/TradeRecordsView.integrity.test.ts (1 test) 219ms
+2026-10-09T21:48:12.2309815Z  ✓ src/layouts/AppShell.incidents.test.ts (2 tests) 266ms
+2026-10-09T21:48:12.8493712Z  ✓ src/utils/holdingDuration.test.ts (15 tests) 55ms
+2026-10-09T21:48:12.8758598Z  ✓ src/governancePanel.test.ts (8 tests) 12ms
+2026-10-09T21:48:13.4229707Z  ✓ src/tradingParameterProfiles.test.ts (2 tests) 6ms
+2026-10-09T21:48:13.6902380Z  ✓ src/testing/dashboardSnapshotFixture.test.ts (3 tests) 33ms
+2026-10-09T21:48:13.8386965Z  ✓ src/utils/useNow.test.ts (1 test) 37ms
+2026-10-09T21:48:14.0297844Z  ✓ src/positionModel.test.ts (4 tests) 9ms
+2026-10-09T21:48:14.0312190Z  ✓ src/views/OverviewView.test.ts (1 test) 209ms
+2026-10-09T21:48:14.3099621Z  ✓ src/views/tradeClosePresentation.test.ts (6 tests) 6ms
+2026-10-09T21:48:14.3759973Z  ✓ src/requestId.test.ts (3 tests) 4ms
+2026-10-09T21:48:14.5640373Z  ✓ src/navigation.test.ts (2 tests) 9ms
+2026-10-09T21:48:14.6706241Z  ✓ src/candidateBlacklistDto.test.ts (2 tests) 8ms
+2026-10-09T21:48:14.8812426Z  ✓ src/blacklistInput.test.ts (2 tests) 8ms
+2026-10-09T21:48:14.9680377Z  ✓ src/stores/system.test.ts (1 test) 4ms
+2026-10-09T21:48:14.9888713Z 
+2026-10-09T21:48:14.9894316Z  Test Files  25 passed (25)
+2026-10-09T21:48:14.9896552Z       Tests  127 passed (127)
+2026-10-09T21:48:14.9897694Z    Start at  21:48:02
+2026-10-09T21:48:14.9899169Z    Duration  12.45s (transform 2.84s, setup 0ms, collect 10.76s, tests 7.86s, environment 16.97s, prepare 4.63s)
+2026-10-09T21:48:14.9900184Z 
+2026-10-09T21:48:15.1749134Z 
+2026-10-09T21:48:15.1749779Z > @zdj/engine@3.9.8 test
+2026-10-09T21:48:15.1750273Z > vitest run
+2026-10-09T21:48:15.1750491Z 
+2026-10-09T21:48:15.7309722Z VITEST_TEST_TIMEOUT=20000 CI=true
+2026-10-09T21:48:15.7690216Z 
+2026-10-09T21:48:15.7692282Z  RUN  v3.2.7 D:/a/ZDJMITS/ZDJMITS/apps/engine
+2026-10-09T21:48:15.7693745Z 
+2026-10-09T21:48:16.9589338Z (node:6936) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:48:16.9602370Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:48:16.9811760Z (node:3756) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:48:16.9813879Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:48:17.5787730Z (node:10116) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:48:17.5789994Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:48:17.6928838Z (node:2892) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:48:17.6930426Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:48:19.8581147Z  ✓ src/services/testnetRiskAuthority.test.ts (34 tests) 220ms
+2026-10-09T21:48:20.2704639Z  ✓ src/services/s05PortfolioTailRisk.test.ts (76 tests) 60ms
+2026-10-09T21:48:21.4760901Z  ✓ src/services/j3TradePlanHostile.test.ts (24 tests) 664ms
+2026-10-09T21:48:21.9470237Z  ✓ src/services/s03ExitCostPolicy.test.ts (21 tests) 175ms
+2026-10-09T21:48:22.5653369Z  ✓ src/services/placeToSubmitCapacityTruth.test.ts (23 tests) 111ms
+2026-10-09T21:48:23.0688311Z (node:8428) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:48:23.0690062Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:48:30.0991110Z  ✓ src/services/tradingQualityIntegration.test.ts (30 tests) 7007ms
+2026-10-09T21:48:30.1029950Z    ✓ prospective runtime evidence collection > 100 unchanged SHADOW candidates do not create poll-time observation rows  1545ms
+2026-10-09T21:48:30.1033412Z    ✓ prospective runtime evidence collection > persists a new candidate observation when a material opportunity version changes  447ms
+2026-10-09T21:48:30.1036559Z    ✓ prospective runtime evidence collection > keeps the exact Primary-linked opportunity observation alongside candidate coalescing  305ms
+2026-10-09T21:48:30.1039213Z    ✓ prospective runtime evidence collection > does not replay unchanged candidate observations after collector restart  559ms
+2026-10-09T21:48:30.1041654Z    ✓ prospective runtime evidence collection > samples an exactly attributed filled Entry and ignores idle-symbol quotes  539ms
+2026-10-09T21:48:30.1049858Z    ✓ prospective runtime evidence collection > restarts an unfinished exact observation window without changing its identity  936ms
+2026-10-09T21:48:30.1056438Z    ✓ prospective runtime evidence collection > stops raw path writes and episode recomputation after the observation horizon matures  647ms
+2026-10-09T21:48:30.1059219Z    ✓ prospective runtime evidence collection > automatically persists fills/episodes, samples fresh quote timestamps and survives reopen  802ms
+2026-10-09T21:48:30.5231902Z (node:7340) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:48:30.5232892Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:48:37.9768502Z  ✓ src/services/c3RuntimeWiringHostile.test.ts (48 tests) 20076ms
+2026-10-09T21:48:37.9770750Z    ✓ C3-3 a lost ACK stays UNKNOWN on the original clientOrderId > the runtime journal persists exit tasks so the next process can query them  1627ms
+2026-10-09T21:48:37.9773033Z    ✓ C3-4 owner state is consumed before an exit write > a human takeover invalidates an older AI ownerVersion request  1144ms
+2026-10-09T21:48:37.9774878Z    ✓ C3-8 restart queries and never resends > a reopened journal re-queries PREPARED and UNKNOWN tasks without any submit  2078ms
+2026-10-09T21:48:37.9776425Z    ✓ C3-8 restart queries and never resends > a FOUND exchange fact at restart converges the task and still never submits  2981ms
+2026-10-09T21:48:37.9777803Z    ✓ C3-8 restart queries and never resends > the offline coordinator refuses a stale requestKey replay after terminal and accepts a new key  1897ms
+2026-10-09T21:48:37.9779150Z    ✓ C3 Round 1.1 binding HUMAN protection > R1 revoke without a prior mandate survives reopening and blocks ensure and sweep  2270ms
+2026-10-09T21:48:37.9780361Z    ✓ final audit coordinator adversarial cases > different scopes sharing a cycle never overwrite tasks  1493ms
+2026-10-09T21:48:37.9781543Z    ✓ final audit coordinator adversarial cases > a previous cycle claim still occupies the same position scope  1418ms
+2026-10-09T21:48:37.9784411Z    ✓ final audit coordinator adversarial cases > UNKNOWN cannot be resolved by a fabricated terminal fill quantity  1630ms
+2026-10-09T21:48:37.9785818Z    ✓ final audit coordinator adversarial cases > UNKNOWN cannot be reset into PREPARED by an exchange event  1670ms
+2026-10-09T21:48:37.9786965Z    ✓ final audit exact recovery boundaries > a local FILLED label cannot release a submitted claim  1603ms
+2026-10-09T21:48:38.5473200Z  ✓ src/services/positionCycleLotAccounting.test.ts (29 tests) 70ms
+2026-10-09T21:48:38.8522758Z (node:4056) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:48:38.8524091Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:48:46.0713550Z  ✓ src/services/j5SettingsGovernanceHostile.test.ts (24 tests) 6855ms
+2026-10-09T21:48:46.0716184Z    ✓ S08 durable ledger: backup, restore, idempotent migration and a newer writer > stamps a fresh ledger and reopens it without changing the records  1189ms
+2026-10-09T21:48:46.0718472Z    ✓ S08 durable ledger: backup, restore, idempotent migration and a newer writer > refuses a ledger written by a newer schema before running any DDL of its own  1138ms
+2026-10-09T21:48:46.0720511Z    ✓ S08 durable ledger: backup, restore, idempotent migration and a newer writer > refuses a stamped ledger whose tables have gone missing  1394ms
+2026-10-09T21:48:46.0722557Z    ✓ S08 durable ledger: backup, restore, idempotent migration and a newer writer > previews, applies, reads back, restores and repeats without inventing authority  1648ms
+2026-10-09T21:48:46.0724679Z    ✓ S08 durable ledger: backup, restore, idempotent migration and a newer writer > never lets a migration hand AI authority to a row the human already owns  1340ms
+2026-10-09T21:48:46.5113124Z (node:6660) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:48:46.5114408Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:48:48.2674868Z  ✓ src/services/executionReadiness.test.ts (19 tests) 1435ms
+2026-10-09T21:48:48.2676335Z    ✓ an armed trade intent spends no model on facts it cannot execute > blocks on stale private facts and resumes on the next tick without a restart  316ms
+2026-10-09T21:48:48.6068032Z  ✓ src/services/runExecutionOutcome.test.ts (20 tests) 33ms
+2026-10-09T21:48:48.8890763Z (node:9200) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:48:48.8891605Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:48:56.0180301Z  ✓ src/services/v370Contract.test.ts (35 tests) 6886ms
+2026-10-09T21:48:56.0182503Z    ✓ V3.7.0 isolated real-EIP contracts; production write=0 > recovers an exchange-accepted submit after response loss without a duplicate  3061ms
+2026-10-09T21:48:56.0184131Z    ✓ V3.7.0 isolated real-EIP contracts; production write=0 > recovers the same UNKNOWN identity by clientOrderId without another wire submit  3078ms
+2026-10-09T21:48:56.3236413Z (node:7920) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:48:56.3237186Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:49:08.0034235Z  ✓ src/services/j4ReviewMemoryHostile.test.ts (54 tests) 50666ms
+2026-10-09T21:49:08.0036870Z    ✓ S07-T01 human-managed cycles get zero routine model calls > refuses a HANDOFF_PENDING cycle before spending anything, and records that the call was zero  596ms
+2026-10-09T21:49:08.0047892Z    ✓ S07-T01 human-managed cycles get zero routine model calls > permits evidence-only review after human takeover without restoring execution authority  1717ms
+2026-10-09T21:49:08.0050550Z    ✓ S07-T01 human-managed cycles get zero routine model calls > treats an untracked cycle as not AI-owned rather than as a default authority  1427ms
+2026-10-09T21:49:08.0077878Z    ✓ S07-T03 identical facts never cost a second request > deduplicates the same fact set and keeps the spent budget where it was  1497ms
+2026-10-09T21:49:08.0080676Z    ✓ S07-T03 identical facts never cost a second request > caps routine reviews at the configured number, so the bound exists in fact  1763ms
+2026-10-09T21:49:08.0083235Z    ✓ S07-T03 identical facts never cost a second request > renews one advisory review after twelve hours without erasing the spent budget  2356ms
+2026-10-09T21:49:08.0085685Z    ✓ S07-T03 identical facts never cost a second request > refuses to compress two requests inside the minimum interval  2177ms
+2026-10-09T21:49:08.0088064Z    ✓ S07-T03 identical facts never cost a second request > counts a failure against a separate budget and stops asking a dead endpoint  1895ms
+2026-10-09T21:49:08.0091133Z    ✓ S07-T04 any fact that could change the answer invalidates the previous one > refuses an owner version that moved between the read and the reservation  2069ms
+2026-10-09T21:49:08.0093945Z    ✓ S07-T04 any fact that could change the answer invalidates the previous one > refuses a review after the management deadline, which is not a renewal channel  1979ms
+2026-10-09T21:49:08.0096937Z    ✓ S07-T02 an answer that arrives after the authority moved is archived, not applied > keeps a 26-second reviewer answer inside the configured 90-second authority window  1952ms
+2026-10-09T21:49:08.0099974Z    ✓ S07-T02 an answer that arrives after the authority moved is archived, not applied > keeps the budget spent when the answer arrived late but real  1757ms
+2026-10-09T21:49:08.0103219Z    ✓ S07-T02 an answer that arrives after the authority moved is archived, not applied > refuses a verdict whose ownership moved during the model call  2089ms
+2026-10-09T21:49:08.0106020Z    ✓ S07-T02 an answer that arrives after the authority moved is archived, not applied > refuses the instant the deadline passes while the call is in flight  2252ms
+2026-10-09T21:49:08.0110302Z    ✓ S07-T02 an answer that arrives after the authority moved is archived, not applied > finalizes the row the reservation opened, so one request is one row  2007ms
+2026-10-09T21:49:08.0113255Z    ✓ S07-T02 an answer that arrives after the authority moved is archived, not applied > a restart never refunds a budget that was already spent  3294ms
+2026-10-09T21:49:08.0116233Z    ✓ S07-T08 usage is either reported or UNKNOWN, and an answer cannot carry entry authority > records a missing server usage as UNKNOWN and refuses to compute a total from it  1555ms
+2026-10-09T21:49:08.0119337Z    ✓ S07-T08 usage is either reported or UNKNOWN, and an answer cannot carry entry authority > marks a length-truncated answer as truncated and counts it as a failure  1556ms
+2026-10-09T21:49:08.0122383Z    ✓ S07-A/B production consumer: the review tick > does nothing at all when the switch is off, which is the shipped default  1461ms
+2026-10-09T21:49:08.0124724Z    ✓ S07-A/B production consumer: the review tick > makes exactly one call for one fact set and deduplicates the next pass  1536ms
+2026-10-09T21:49:08.0127040Z    ✓ S07-A/B production consumer: the review tick > reviews a HUMAN-managed cycle as evidence only, without execution authority  1723ms
+2026-10-09T21:49:08.0130711Z    ✓ S07-A/B production consumer: the review tick > S07-T09: a dead endpoint spends review budget, records the failure and changes no order or deadline  1905ms
+2026-10-09T21:49:08.0133526Z    ✓ S07-A/B production consumer: the review tick > does not poison a review budget for the known pre-inference envelope defect  1957ms
+2026-10-09T21:49:08.0136219Z    ✓ S07-A/B production consumer: the review tick > checkpoints the spent budget into the runtime state the writer serializes  1981ms
+2026-10-09T21:49:08.0137693Z    ✓ S07-A/B production consumer: the review tick > discards a late answer and keeps it out of the exit evidence  2212ms
+2026-10-09T21:49:08.0139065Z    ✓ S07-A/B production consumer: the review tick > a verdict for the previous plan version is not evidence for the new one  1958ms
+2026-10-09T21:49:08.0141541Z    ✓ S07-A/B production consumer: the review tick > refuses a persisted exit proposal when the exact plan has no invalidation predicate  1962ms
+2026-10-09T21:49:08.4948920Z  ✓ src/services/tradingLoopRepair.test.ts (24 tests) 30ms
+2026-10-09T21:49:09.2664627Z  ✓ src/api/runtimeSettingsResources.test.ts (18 tests) 222ms
+2026-10-09T21:49:09.5667971Z (node:4132) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:49:09.5669395Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:49:14.6838162Z  ✓ src/state/c2ReservationAtomicityHostile.test.ts (23 tests) 44122ms
+2026-10-09T21:49:14.6843004Z    ✓ C2 one durable transaction: version, freshness, reservation > an admitted reservation carries a non-null risk binding built from the authoritative facts  2297ms
+2026-10-09T21:49:14.6845145Z    ✓ C2 one durable transaction: version, freshness, reservation > a caller claim that disagrees with the authoritative facts is refused  2162ms
+2026-10-09T21:49:14.6846786Z    ✓ C2 one durable transaction: version, freshness, reservation > stale capital facts cannot authorise a reservation even with a fresh account  2123ms
+2026-10-09T21:49:14.6848344Z    ✓ C2 one durable transaction: version, freshness, reservation > the S05 gate stays an extension: its refusal and its bad binding are both rejected  1940ms
+2026-10-09T21:49:14.6849888Z    ✓ C2 one durable transaction: version, freshness, reservation > a refusal changes no fact: same revision, no persisted payload  2195ms
+2026-10-09T21:49:14.6851260Z    ✓ C2 concurrent writers and lost updates > two revision-current writers compete once: only one wins the headroom  2540ms
+2026-10-09T21:49:14.6852717Z    ✓ C2 concurrent writers and lost updates > two independent SettingsStore connections on one data dir still serialise on the revision  2349ms
+2026-10-09T21:49:14.6854164Z    ✓ C2 concurrent writers and lost updates > an API-marked WORKING transition survives a second writer instead of being lost  1815ms
+2026-10-09T21:49:14.6855588Z    ✓ C2 concurrent writers and lost updates > a terminal row is never resurrected by an ordinary retry and only by a remote order fact  1818ms
+2026-10-09T21:49:14.6857026Z    ✓ C2 restart keeps in-flight risk and stays revision-consistent > restore loads only: no release, no transaction, no revision drift  1757ms
+2026-10-09T21:49:14.6858541Z    ✓ C2 restart keeps in-flight risk and stays revision-consistent > the startup sequence releases provably expired risk durably and later entries still work  1786ms
+2026-10-09T21:49:14.6860636Z    ✓ C2 restart keeps in-flight risk and stays revision-consistent > an expired reservation whose UNKNOWN order is only in the durable entry store stays occupied  1884ms
+2026-10-09T21:49:14.6862496Z    ✓ C2 status reads never write, and odd ledger rows stay occupied > reservationSummary is a pure read even with expired rows and a failing store  2013ms
+2026-10-09T21:49:14.6864114Z    ✓ C2 status reads never write, and odd ledger rows stay occupied > an unrecognised persisted status occupies margin and capacity until a mutation terminalises it  2133ms
+2026-10-09T21:49:14.6865555Z    ✓ C2 private account facts gate admission > NOT_CONFIGURED with no observation time cannot size a reservation  2246ms
+2026-10-09T21:49:14.6866750Z    ✓ C2 private account facts gate admission > UNAVAILABLE account cannot size a reservation  2151ms
+2026-10-09T21:49:14.6867816Z    ✓ C2 private account facts gate admission > 61 seconds old cannot size a reservation  2203ms
+2026-10-09T21:49:14.6868947Z    ✓ C2 private account facts gate admission > 6 seconds in the future cannot size a reservation  2214ms
+2026-10-09T21:49:14.6870141Z    ✓ C2 private account facts gate admission > a non-numeric balance is refused and a fresh READY account may proceed  2010ms
+2026-10-09T21:49:14.6871673Z    ✓ C2 private account facts gate admission > the durable payload cannot roll the reservation revision backwards  2136ms
+2026-10-09T21:49:14.6873087Z    ✓ C2 private account facts gate admission > an in-flight mutation inside an active store transaction fails closed without corrupting memory  2265ms
+2026-10-09T21:49:15.3894614Z  ✓ src/services/grossRiskCapacityVisibility.test.ts (16 tests) 201ms
+2026-10-09T21:49:15.8944583Z  ✓ src/services/reconciliationService.test.ts (21 tests) 52ms
+2026-10-09T21:49:16.3200473Z (node:9928) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:49:16.3201917Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:49:16.4185302Z  ✓ src/services/tpGuardianEconomics.test.ts (16 tests) 84ms
+2026-10-09T21:49:16.8642632Z (node:7272) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:49:16.8644065Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:49:17.0621790Z  ✓ src/services/manualPositionService.test.ts (21 tests) 183ms
+2026-10-09T21:49:17.4374876Z  ✓ src/services/s09ReplayStressHostile.test.ts (22 tests) 43ms
+2026-10-09T21:49:17.7472590Z (node:1252) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:49:17.7473658Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:49:21.4453308Z  ✓ src/services/s04ExitCoordination.test.ts (11 tests) 25100ms
+2026-10-09T21:49:21.4455870Z    ✓ S04 unified exit coordination > S04-T01 two concurrent exits on one cycle cannot both hold the quantity  1721ms
+2026-10-09T21:49:21.4458349Z    ✓ S04 unified exit coordination > S04-T02 a lost acknowledgement stays UNKNOWN on the same clientOrderId and never re-submits  2102ms
+2026-10-09T21:49:21.4460832Z    ✓ S04 unified exit coordination > S04-T03 a TP that filled before the cancel is honoured by the fact, never oversold  2187ms
+2026-10-09T21:49:21.4463219Z    ✓ S04 unified exit coordination > S04-T04 an unconfirmed cancel blocks a conflicting full TP exit  2038ms
+2026-10-09T21:49:21.4465676Z    ✓ S04 unified exit coordination > S05 boundary S04-T05 a partial fill that crosses -10 cannot keep consuming the same permission  1729ms
+2026-10-09T21:49:21.4468297Z    ✓ S04 unified exit coordination > S04-T06 a crash at PREPARED, SUBMITTING or WORKING recovers with a stable identity  4360ms
+2026-10-09T21:49:21.4470738Z    ✓ S04 unified exit coordination > S04-T07 duplicate, out-of-order and stale facts are deduplicated by identity and watermark  2488ms
+2026-10-09T21:49:21.4473421Z    ✓ S04 unified exit coordination > S04-T08 both position modes, precision and exposure rules refuse rather than add risk  4216ms
+2026-10-09T21:49:21.4475733Z    ✓ S04 unified exit coordination > S04-T09 paused risk, offline model and unverified egress cannot be reasoned around  987ms
+2026-10-09T21:49:21.4477928Z    ✓ S04 unified exit coordination > S04-T10 a mandate the human revoked is never restored by a retry or a recovery  1353ms
+2026-10-09T21:49:21.4480747Z    ✓ S04 unified exit coordination > S04 properties: versions increase, terminal is forever, and no open state disappears silently  1917ms
+2026-10-09T21:49:21.9390963Z  ✓ src/adapters/binance/requestBudget.test.ts (26 tests) 209ms
+2026-10-09T21:49:22.3529562Z (node:5644) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:49:22.3530366Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:49:24.6367624Z  ✓ src/services/j2PortfolioAdmissionHostile.test.ts (15 tests) 2251ms
+2026-10-09T21:49:24.6368980Z    ✓ J2 portfolio admission is the only risk authority > the durable transaction still refuses a stale writer after an admission succeeds  2184ms
+2026-10-09T21:49:31.2675616Z  ✓ src/services/entryCoordinator.test.ts (29 tests) 6156ms
+2026-10-09T21:49:31.2677061Z    ✓ Entry Manager chain > recovers an accepted-but-disconnected submit by stable client id without a second order  3103ms
+2026-10-09T21:49:31.2678406Z    ✓ Entry Manager chain > keeps the same order identity across restart recovery from UNKNOWN  3019ms
+2026-10-09T21:49:31.6637616Z  ✓ src/services/positionRiskV3Facts.test.ts (17 tests) 40ms
+2026-10-09T21:49:32.1950894Z  ✓ src/services/unknownRiskAuditTiering.test.ts (22 tests) 111ms
+2026-10-09T21:49:32.4863714Z (node:9096) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:49:32.4865199Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:49:32.6895717Z  ✓ src/services/j1ExitTruthHostile.test.ts (10 tests) 61ms
+2026-10-09T21:49:33.0992943Z (node:6020) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:49:33.0993833Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:49:38.3278619Z  ✓ src/services/j1AiExitConsumer.test.ts (13 tests) 4895ms
+2026-10-09T21:49:38.3280800Z    ✓ J1 runtime consumer > binds the management deadline in the same turn as the fill and never re-fixes it  4840ms
+2026-10-09T21:49:38.6083207Z (node:6556) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:49:38.6084758Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:49:38.7825192Z  ✓ src/services/tradeLearningP0.test.ts (25 tests) 54ms
+2026-10-09T21:49:39.0651913Z (node:4920) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:49:39.0652713Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:49:44.2366717Z  ✓ src/services/entrySubmissionIdentity.integration.test.ts (13 tests) 26274ms
+2026-10-09T21:49:44.2368040Z    ✓ V398 durable no-add claim blocks a second wire even when two pre-Primary/JIT snapshots race  2312ms
+2026-10-09T21:49:44.2369140Z    ✓ V398 authorization and order quantity must agree before any durable origin is created  1886ms
+2026-10-09T21:49:44.2370309Z    ✓ unchanged journal reconciliation performs no write but expired UNKNOWN proof reactivates its exact claim  2125ms
+2026-10-09T21:49:44.2371442Z    ✓ the cross-Intent ENTRY scope unique index is gone and is replaced by two distinct controls  1813ms
+2026-10-09T21:49:44.2372953Z    ✓ funds-only: a historical UNKNOWN claim on the same underlying cannot veto a new Intent  1774ms
+2026-10-09T21:49:44.2374029Z    ✓ Production legacy mode still excludes a second Intent on the same underlying  1853ms
+2026-10-09T21:49:44.2374987Z    ✓ the same Intent replays to its own identity and is never given a second submit right  1710ms
+2026-10-09T21:49:44.2375902Z    ✓ two concurrent writers on one Intent produce exactly one active row  1873ms
+2026-10-09T21:49:44.2376885Z    ✓ a released submission identity is not revived by a later claim of the same Intent  2042ms
+2026-10-09T21:49:44.2377868Z    ✓ a journal conflict keeps its own cause instead of becoming a reservation error  2267ms
+2026-10-09T21:49:44.2379120Z    ✓ funds-only rows never participate in the legacy unique index  2044ms
+2026-10-09T21:49:44.2380059Z    ✓ restarting on a funds-only ledger does not resurrect the scope veto index  2401ms
+2026-10-09T21:49:44.2381067Z    ✓ WORKING replay cannot authorize another submit; client identity and payload cannot fork  2172ms
+2026-10-09T21:49:44.7073204Z  ✓ src/services/entryPermissionModel.test.ts (14 tests) 32ms
+2026-10-09T21:49:45.1016679Z  ✓ src/adapters/binance/BinanceTransport.test.ts (49 tests) 52ms
+2026-10-09T21:49:45.5093911Z (node:9784) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:49:45.5095355Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:49:50.5849145Z  ✓ src/config/settingsStore.test.ts (37 tests) 92351ms
+2026-10-09T21:49:50.5850983Z    ✓ does not rewrite unchanged trade records but persists changed facts and repairs durable eviction  2135ms
+2026-10-09T21:49:50.5853062Z    ✓ repairs a stale checkpoint cache after another connection evicts an entity  1726ms
+2026-10-09T21:49:50.5854693Z    ✓ checks a retained fill ledger with one index read and repairs missing rows atomically  2189ms
+2026-10-09T21:49:50.5856037Z    ✓ replays only exact archived fills without writes and fails closed on conflicting evidence  2284ms
+2026-10-09T21:49:50.5857103Z    ✓ updates only runtime core without rescanning or replacing entity manifests  2183ms
+2026-10-09T21:49:50.5858534Z    ✓ refuses a stale core checkpoint and never invents a missing entity manifest  2203ms
+2026-10-09T21:49:50.5859578Z    ✓ persists one runtime entity without scanning retained history  2342ms
+2026-10-09T21:49:50.5861251Z    ✓ keeps targeted execution fills newest-first and bounds their manifest  2180ms
+2026-10-09T21:49:50.5862998Z    ✓ SettingsStore > migrates V3.9.4 economics by field facts while preserving a high optimistic settings revision  2458ms
+2026-10-09T21:49:50.5864300Z    ✓ SettingsStore > moves persisted review duties off Entry Primary when a dedicated Review resource exists  1990ms
+2026-10-09T21:49:50.5865564Z    ✓ SettingsStore > rejects a migrated minNetProfitUsd below the floor instead of rewriting it on boot  2620ms
+2026-10-09T21:49:50.5867027Z    ✓ SettingsStore > rejects a migrated minNetProfitUsd above the ceiling instead of clamping it to 20  2445ms
+2026-10-09T21:49:50.5869004Z    ✓ SettingsStore > keeps in-range migrated floors untouched and migrates a legacy document exactly once  8087ms
+2026-10-09T21:49:50.5873524Z    ✓ SettingsStore > keeps the TradeRecord sync baseline standalone without WAL SHM or temp residue  1868ms
+2026-10-09T21:49:50.5874852Z    ✓ SettingsStore > persists versioned settings in SQLite and creates an integrity-checked backup  2110ms
+2026-10-09T21:49:50.5877689Z    ✓ SettingsStore > rejects a stale compare-and-swap settings publish without changing current settings  2120ms
+2026-10-09T21:49:50.5879537Z    ✓ SettingsStore > accepts exactly one concurrent same-version CAS publish  2209ms
+2026-10-09T21:49:50.5880702Z    ✓ SettingsStore > round-trips per-asset admission evidence through schema and SQLite  2272ms
+2026-10-09T21:49:50.5881778Z    ✓ SettingsStore > persists runtime facts and redacted bounded audit metrics  2257ms
+2026-10-09T21:49:50.5882993Z    ✓ SettingsStore > keeps complete AI artifacts in the run archive and a lossless JSON reference in its decision chain  2302ms
+2026-10-09T21:49:50.5884229Z    ✓ SettingsStore > paginates compact AI summaries in SQL with a stable tie-break and keeps full detail by id  5405ms
+2026-10-09T21:49:50.5885393Z    ✓ SettingsStore > deduplicates and recovers external research tasks across store instances  2297ms
+2026-10-09T21:49:50.5886557Z    ✓ SettingsStore > recovers deduplicated persisted exchange fill facts for restart-safe sync  1714ms
+2026-10-09T21:49:50.5887655Z    ✓ SettingsStore > creates versioned product tables and supports resource CRUD  2250ms
+2026-10-09T21:49:50.5888786Z    ✓ SettingsStore > repairs missing external intelligence tables even when migration 7 is marked  2195ms
+2026-10-09T21:49:50.5889916Z    ✓ SettingsStore > rolls back a bounded transaction and rejects async transaction callbacks  1983ms
+2026-10-09T21:49:50.5890962Z    ✓ SettingsStore > rolls back when the transaction deadline is exceeded  1826ms
+2026-10-09T21:49:50.5891980Z    ✓ migrates full recovery facts into atomic incremental entities and survives a database reopen  1906ms
+2026-10-09T21:49:50.5892903Z    ✓ rolls back entity changes if checkpoint commit fails  1855ms
+2026-10-09T21:49:50.5893832Z    ✓ records capacity before/after and preserves memory when settings persistence fails  1742ms
+2026-10-09T21:49:50.5894860Z    ✓ archives AI telemetry without journaling it and retains changed position transitions  1855ms
+2026-10-09T21:49:50.5896204Z    ✓ runs bounded retention, keeps raw running AI and all critical events, and evicts only orphan AI entities  5921ms
+2026-10-09T21:49:50.5897448Z    ✓ reuses a single trade sync baseline across concurrent sync requests  2539ms
+2026-10-09T21:49:50.5898584Z    ✓ Live inference evidence > persists failed Primary runs as inference evidence without inventing an opportunity  2244ms
+2026-10-09T21:49:50.5900272Z    ✓ D: a semantic no-op must not mint settings lineage > saving the same decision set changes no version and writes no audit row, while a real change still does  1879ms
+2026-10-09T21:49:50.5901983Z    ✓ D: a semantic no-op must not mint settings lineage > a reopen that migrates nothing adds no audit row, and a real migration still audits exactly once  2504ms
+2026-10-09T21:49:50.5903350Z    ✓ recovers terminal legacy manual side only with matching intent identity and consistent fills  2251ms
+2026-10-09T21:49:50.9293765Z  ✓ src/services/operationalIncidents.test.ts (20 tests) 20ms
+2026-10-09T21:49:51.3680617Z  ✓ src/adapters/market/BinanceMarketStream.test.ts (17 tests) 138ms
+2026-10-09T21:49:51.8748913Z  ✓ src/adapters/market/BinancePublicMarketDataProvider.test.ts (13 tests) 83ms
+2026-10-09T21:49:52.2009724Z (node:6232) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:49:52.2013292Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:49:55.9297235Z  ✓ src/services/ownershipS02Acceptance.test.ts (11 tests) 16850ms
+2026-10-09T21:49:55.9299652Z    ✓ S02 acceptance matrix > S02-T01 enforces deadline-1 / deadline / deadline+1 exactly, and expiry blocks a new AI write  1438ms
+2026-10-09T21:49:55.9301088Z    ✓ S02 acceptance matrix > S02-T02 only the path holding the current ownerVersion commits when AI and human race  1343ms
+2026-10-09T21:49:55.9302412Z    ✓ S02 acceptance matrix > S02-T03 a later fill after recovery neither extends the deadline nor resets the cycle  1030ms
+2026-10-09T21:49:55.9303690Z    ✓ S02 acceptance matrix > S02-T04 a crash after commit keeps the revocation and redelivers one idempotent task  1487ms
+2026-10-09T21:49:55.9305029Z    ✓ S02 acceptance matrix > S02-T05 an acknowledgement is a read receipt: neither silence nor profit restores AI  1123ms
+2026-10-09T21:49:55.9306311Z    ✓ S02 acceptance matrix > S02-T06 an unverified or drifted same-scope quantity invalidates the standing authority  2546ms
+2026-10-09T21:49:55.9307650Z    ✓ S02 acceptance matrix > S02-T07 a human mandate revocation outranks the guardian and reports the protection gap  1487ms
+2026-10-09T21:49:55.9308919Z    ✓ S02 acceptance matrix > S02-T08 legacy, human and closed cycles gain no authority and closed cycles stay closed  1835ms
+2026-10-09T21:49:55.9310225Z    ✓ S02 storage migration and recovery > preview writes nothing and the rehearsal on an isolated copy is idempotent  1903ms
+2026-10-09T21:49:55.9311445Z    ✓ S02 storage migration and recovery > backup, restore and re-apply keep the same ownership set  1364ms
+2026-10-09T21:49:55.9312879Z    ✓ S04-A durable claim primitives (not wired to any order path) > a claim survives a crash, is exactly-once by idempotency key, and only a terminal proof releases it  1293ms
+2026-10-09T21:49:56.1911907Z (node:6456) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:49:56.1912714Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:50:03.2150628Z  ✓ src/services/exitFactsAndFunding.test.ts (21 tests) 6858ms
+2026-10-09T21:50:03.2154944Z    ✓ P6 funding income ledger > records an income row once and reports the exact total for an enclosed window  858ms
+2026-10-09T21:50:03.2156714Z    ✓ P6 funding income ledger > a coverage gap stays UNKNOWN and is never reported as zero funding  799ms
+2026-10-09T21:50:03.2158003Z    ✓ P6 funding income ledger > a window with full coverage and no rows is proven zero, which is not the same claim as unknown  677ms
+2026-10-09T21:50:03.2159260Z    ✓ P6 funding income ledger > income rows of another type are kept but never counted as funding  917ms
+2026-10-09T21:50:03.2160308Z    ✓ P6 funding income ledger > a rejected row is reported, not silently dropped  688ms
+2026-10-09T21:50:03.2161313Z    ✓ joins adjacent proven coverage windows but never bridges an unobserved gap  968ms
+2026-10-09T21:50:03.2162351Z    ✓ never synthesizes income identity or attributes one nonzero hedge income to two cycles  844ms
+2026-10-09T21:50:03.2177553Z    ✓ migrates income identity transactionally, preserving rows across reopen and account scopes  1096ms
+2026-10-09T21:50:03.6565101Z  ✓ src/services/entryCapacityTrace.test.ts (12 tests) 11ms
+2026-10-09T21:50:04.1786466Z  ✓ src/services/runtimeControlService.test.ts (13 tests) 80ms
+2026-10-09T21:50:04.6592345Z  ✓ src/services/unknownNoActiveRiskProofRenewal.test.ts (9 tests) 62ms
+2026-10-09T21:50:04.9946150Z  ✓ src/services/pipelineVerdict.test.ts (14 tests) 13ms
+2026-10-09T21:50:05.1136466Z  ✓ src/config/portfolioRiskAuthorityStore.test.ts (6 tests) 12765ms
+2026-10-09T21:50:05.1138931Z    ✓ one commit, or nothing > writes the three dataset rows and the settings row together, bumping the version exactly once  2128ms
+2026-10-09T21:50:05.1141439Z    ✓ one commit, or nothing > reads the durable authority back and refuses a hand-edited row instead of trusting its hash  2251ms
+2026-10-09T21:50:05.1143719Z    ✓ one commit, or nothing > H11 rolls every byte back when a dataset row write fails mid-transaction  2225ms
+2026-10-09T21:50:05.1146339Z    ✓ one commit, or nothing > refuses a CAS conflict, a forged row set and a production context without touching anything  2438ms
+2026-10-09T21:50:05.1148858Z    ✓ the dataset fields stay locked on the generic channels > H7/H25 refuses a PATCH that only wants to lower the derived maintenance rate  2031ms
+2026-10-09T21:50:05.1151535Z    ✓ the dataset fields stay locked on the generic channels > H9 refuses to write a dataset version through the patch channel at all  1674ms
+2026-10-09T21:50:05.5292672Z  ✓ src/services/pendingRiskOccupancyConvergence.test.ts (11 tests) 37ms
+2026-10-09T21:50:05.9662496Z  ✓ src/services/preAiExecutableSides.test.ts (12 tests) 246ms
+2026-10-09T21:50:06.5612223Z  ✓ src/services/testnetFundsOnlyEntry.test.ts (11 tests) 376ms
+2026-10-09T21:50:06.5977149Z  ✓ src/services/positionLeverageV3.test.ts (6 tests) 38ms
+2026-10-09T21:50:07.0413566Z  ✓ src/adapters/exchange/ExternalTradeAdapter.test.ts (19 tests) 41ms
+2026-10-09T21:50:07.1142205Z (node:9000) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:50:07.1143504Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:50:07.5487890Z  ✓ src/services/reconciliationUnknownRisk.test.ts (11 tests) 59ms
+2026-10-09T21:50:08.1770526Z  ✓ src/services/executionLifecycle.integration.test.ts (17 tests) 22603ms
+2026-10-09T21:50:08.1773483Z    ✓ V3.9 execution outcomes with real services > retains UNKNOWN claim across SQLite reopen without another submission  2436ms
+2026-10-09T21:50:08.1776379Z    ✓ V3.9 durable Entry ownership > enforces one underlying across database connections and retains a crash-before-response claim  2269ms
+2026-10-09T21:50:08.1779370Z    ✓ V3.9.5 durable entry claim release on proven no-active-risk > keeps blocking a second intent while an UNKNOWN submission is still genuinely unresolved  1993ms
+2026-10-09T21:50:08.1783434Z    ✓ V3.9.5 durable entry claim release on proven no-active-risk > releases the scope once exchange facts prove no active risk and still keeps the UNKNOWN row  2209ms
+2026-10-09T21:50:08.1786566Z    ✓ V3.9.5 durable entry claim release on proven no-active-risk > never lets a released claim re-arm the original intent, even as a rejected retry  2234ms
+2026-10-09T21:50:08.1790619Z    ✓ V3.9.5 durable entry claim release on proven no-active-risk > reports a collision instead of throwing when a proof-released intent tries to re-arm a free scope  2165ms
+2026-10-09T21:50:08.1797214Z    ✓ V3.9.5 durable entry claim release on proven no-active-risk > keeps the pre-existing reprice re-arm for an order that reached a real terminal status  2401ms
+2026-10-09T21:50:08.1800527Z    ✓ V3.9.5 durable entry claim release on proven no-active-risk > reactivates a released claim across restart when its proof is no longer valid  2228ms
+2026-10-09T21:50:08.1809277Z    ✓ V3.9.5 durable entry claim release on proven no-active-risk > restores a genuinely uncertain task across restart so it keeps blocking and cannot double-submit  1714ms
+2026-10-09T21:50:08.1817349Z    ✓ V3.9.5 durable entry claim release on proven no-active-risk > gives the next entry a fresh identity instead of reusing the released intent or clientOrderId  1405ms
+2026-10-09T21:50:08.1820261Z    ✓ V3.9.5 durable entry claim release on proven no-active-risk > counts historical UNKNOWN orders separately from live durable claims  1505ms
+2026-10-09T21:50:08.3324523Z  ✓ src/services/preAiPlanFeasibility.test.ts (9 tests) 286ms
+2026-10-09T21:50:08.8085039Z (node:3256) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:50:08.8086344Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:50:08.9598321Z  ✓ src/services/remoteFactAuditIntegration.test.ts (7 tests) 50ms
+2026-10-09T21:50:09.4132395Z  ✓ src/services/capitalCapacityModel.test.ts (12 tests) 48ms
+2026-10-09T21:50:09.8437681Z  ✓ src/services/marketDataHub.test.ts (11 tests) 20ms
+2026-10-09T21:50:10.3636313Z (node:5968) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:50:10.3638365Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:50:14.9240513Z  ✓ src/services/tradingQualityCollectorSummary.test.ts (8 tests) 6104ms
+2026-10-09T21:50:14.9242046Z    ✓ captures exact trade repair scope and mutable linked facts before maps disappear without serializing unrelated retained fills  349ms
+2026-10-09T21:50:14.9243207Z    ✓ keeps exact mutable fill evidence across a 30000-event burst and database reopen  1480ms
+2026-10-09T21:50:14.9244261Z    ✓ bounds background history capture and never reverts a replaced fill after synchronous event capture  3117ms
+2026-10-09T21:50:15.3569032Z (node:1300) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:50:15.3570322Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:50:17.5803124Z  ✓ src/services/unknownProofHydration.test.ts (13 tests) 10322ms
+2026-10-09T21:50:17.5804481Z    ✓ hydrates malformed and expired proof verbatim but blocks new claims without waiting for a save  1641ms
+2026-10-09T21:50:17.5805831Z    ✓ expired proof reactivates effective claim on a pure stats/claim read, retaining release history  1740ms
+2026-10-09T21:50:17.5807505Z    ✓ multiple reactivated proofs cannot bypass the unique active index or overwrite the current owner  2520ms
+2026-10-09T21:50:17.5808869Z    ✓ fresh real producer facts naturally renew invalid proof and R1/claims agree  2167ms
+2026-10-09T21:50:17.5810015Z    ✓ counts terminal-UNKNOWN claims as unresolved UNKNOWN and preserves a newer exact-query result  2221ms
+2026-10-09T21:50:18.0000412Z (node:6096) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:50:18.0002252Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:50:18.0766675Z  ✓ src/services/tpSubmissionOutcome.test.ts (10 tests) 63ms
+2026-10-09T21:50:18.4895384Z  ✓ src/services/marketCohort.test.ts (12 tests) 20ms
+2026-10-09T21:50:18.9092877Z  ✓ src/adapters/market/klineTargetedRepair.test.ts (8 tests) 18ms
+2026-10-09T21:50:19.5900379Z  ✓ src/services/sideNeutralEntryAuthorization.test.ts (4 tests) 173ms
+2026-10-09T21:50:20.0397654Z (node:3792) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:50:20.0398951Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:50:36.3645686Z  ✓ src/runtime/appRuntime.test.ts (8 tests) 20684ms
+2026-10-09T21:50:36.3647611Z    ✓ mock V3 runtime > retains an in-flight cohort hydrate through the real runtime sync, then admits its snapshot  4279ms
+2026-10-09T21:50:36.3649610Z    ✓ mock V3 runtime > loads every missing position market before a serialized reconciliation pass  5201ms
+2026-10-09T21:50:36.3651767Z    ✓ does not publish into the closed database from queued UI snapshots  5688ms
+2026-10-09T21:50:36.3653356Z    ✓ starts private synchronization before a delayed bounded cohort bootstrap  5214ms
+2026-10-09T21:50:36.8071528Z  ✓ src/services/entryFundingUniverse.test.ts (11 tests) 33ms
+2026-10-09T21:50:37.1943962Z  ✓ src/adapters/exchange/ExternalTradeAdapterPrivateLoad.test.ts (9 tests) 54ms
+2026-10-09T21:50:37.6070052Z (node:3512) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:50:37.6071340Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:50:40.5835836Z  ✓ src/api/snapshotReadOnly.test.ts (6 tests) 29766ms
+2026-10-09T21:50:40.5837630Z    ✓ TradeRecord GET list/detail and Experience perform zero SQLite writes and zero state mutation  5148ms
+2026-10-09T21:50:40.5839750Z    ✓ published dashboard snapshot > serves a bounded immutable summary without reconciliation waits or SQLite writes  4264ms
+2026-10-09T21:50:40.5841147Z    ✓ position detail and stale manual preview perform zero market REST reads  5118ms
+2026-10-09T21:50:40.5842068Z    ✓ reconciliation telemetry still persists execution facts  5364ms
+2026-10-09T21:50:40.5843546Z    ✓ pipeline HTTP preserves the installed admission readback and scoped reconciliation without writes after the initial authority diagnostic  5100ms
+2026-10-09T21:50:40.5845041Z    ✓ ALL history API preserves incomplete origins with side/status filters and pagination without writes  4769ms
+2026-10-09T21:50:41.4947232Z  ✓ src/adapters/binance/BinanceTransportConnectionReuse.test.ts (5 tests) 560ms
+2026-10-09T21:50:41.8450078Z  ✓ src/state/reservationConvergence.test.ts (13 tests) 4199ms
+2026-10-09T21:50:41.8452090Z    ✓ C2 reservation safety > durably reserves before returning and rejects a stale second writer  2190ms
+2026-10-09T21:50:41.8454262Z    ✓ C2 reservation safety > persists cleanup of an expired reservation and lock in one durable mutation  1997ms
+2026-10-09T21:50:42.4029284Z  ✓ src/adapters/market/klineContinuity.test.ts (11 tests) 33ms
+2026-10-09T21:50:42.8672669Z  ✓ src/services/v370Decision.test.ts (7 tests) 35ms
+2026-10-09T21:50:43.8736995Z  ✓ src/adapters/market/klineRecoverySimulation.test.ts (1 test) 569ms
+2026-10-09T21:50:43.8738317Z    ✓ V3.9.5 mass 1m gap heals without a request storm > uses at most one klines request per symbol, reloads no snapshots and restores readiness  567ms
+2026-10-09T21:50:44.3440619Z  ✓ src/services/aiFabricResourceState.test.ts (5 tests) 29ms
+2026-10-09T21:50:44.8006394Z (node:2388) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:50:44.8007111Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:50:45.4148648Z  ✓ src/services/entryExecutionChain.test.ts (6 tests) 3390ms
+2026-10-09T21:50:45.4150530Z    ✓ V3.9.6 PLACE -> submit chain closure > EC-04 (T5) an unknown submission is reconciled, never re-sent  3100ms
+2026-10-09T21:50:45.7787025Z  ✓ src/services/assetGovernanceCoordinator.test.ts (6 tests) 14ms
+2026-10-09T21:50:46.2881398Z (node:9564) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:50:46.2882234Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:50:46.6101962Z  ✓ src/services/finalActivation.test.ts (13 tests) 94ms
+2026-10-09T21:50:47.1258353Z  ✓ src/services/cycleAccounting.test.ts (16 tests) 66ms
+2026-10-09T21:50:47.7766207Z  ✓ src/services/targetHorizonContract.test.ts (4 tests) 162ms
+2026-10-09T21:50:48.0645468Z (node:2836) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:50:48.0646766Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:50:49.4548272Z  ✓ src/services/positionNotionalSemantics.test.ts (4 tests) 4393ms
+2026-10-09T21:50:49.4549543Z    ✓ position notionalUsd semantics > normalises legacy persisted signed notionals so the dashboard snapshot still validates  4379ms
+2026-10-09T21:50:49.8781007Z  ✓ src/services/aiQuantityAllocation.test.ts (6 tests) 9ms
+2026-10-09T21:50:50.2870123Z  ✓ src/services/tradingEpisodeEvidence.test.ts (10 tests) 16ms
+2026-10-09T21:50:50.5526448Z (node:7752) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:50:50.5527743Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:50:51.7815561Z  ✓ src/services/ownershipScopeIdentity.test.ts (3 tests) 3703ms
+2026-10-09T21:50:51.7816822Z    ✓ ownership scope identity agreement > derives migration subjects with the scope the Engine uses, so a migrated cycle stays one row  1335ms
+2026-10-09T21:50:51.7818177Z    ✓ ownership scope identity agreement > shows that an entry-side scope leaves a parallel row the Engine cannot see  1261ms
+2026-10-09T21:50:51.7819524Z    ✓ ownership scope identity agreement > refuses subjects built from an incomplete identity, a missing cycle or an unknown mandate  1104ms
+2026-10-09T21:50:52.2149732Z  ✓ src/services/tradeRecordSyncService.test.ts (10 tests) 25ms
+2026-10-09T21:50:52.6204836Z  ✓ src/api/executionTruthSplit.test.ts (6 tests) 10ms
+2026-10-09T21:50:52.9179643Z  ✓ src/services/frozenChoiceTelemetry.test.ts (6 tests) 10ms
+2026-10-09T21:50:53.2104074Z  ✓ src/services/marketDataStaleness.test.ts (10 tests) 9ms
+2026-10-09T21:50:53.6187122Z  ✓ src/services/tradeRecordIntegrity.test.ts (5 tests) 13ms
+2026-10-09T21:50:53.9201908Z (node:8960) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:50:53.9203762Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:50:58.5892890Z  ✓ src/services/exitConvergenceFairness.test.ts (15 tests) 108995ms
+2026-10-09T21:50:58.5894165Z    ✓ recovers only bound pre-wire non-sends, never a generic timeout or a known working order  3578ms
+2026-10-09T21:50:58.5895327Z    ✓ P1 exit convergence fairness > a terminal order at the tail is serviced even while the head stays WORKING  54075ms
+2026-10-09T21:50:58.5896505Z    ✓ P1 exit convergence fairness > a failed query backs off only the order that failed  8911ms
+2026-10-09T21:50:58.5898147Z    ✓ P1 exit convergence fairness > readback reports queue length, oldest unpolled age and terminal-unreleased claims  10780ms
+2026-10-09T21:50:58.5900143Z    ✓ P1 exit convergence fairness > reports a never-polled waiting age from the durable creation time, not from the epoch  3363ms
+2026-10-09T21:50:58.5901405Z    ✓ P1 exit convergence fairness > a converged order also becomes durable provenance, not only a state change  3736ms
+2026-10-09T21:50:58.5902607Z    ✓ P1 exit convergence fairness > one hung exact-order read cannot park the walk for the rest of the process  4211ms
+2026-10-09T21:50:58.5903789Z    ✓ P1 exit terminal propagation > a late WORKING report cannot roll a FILLED order back or re-occupy its claim  2907ms
+2026-10-09T21:50:58.5905383Z    ✓ P1 exit terminal propagation > a partial fill updates the remaining claim instead of releasing it  1639ms
+2026-10-09T21:50:58.5906453Z    ✓ P1 exit terminal propagation > duplicate and out-of-order WS reports are idempotent  1765ms
+2026-10-09T21:50:58.5907555Z    ✓ P1 exit terminal propagation > an ABSENT answer keeps an unacked order UNKNOWN and its claim occupied  2566ms
+2026-10-09T21:50:58.5908672Z    ✓ P1 exit terminal propagation > a claim is never released by a local label without exchange evidence  2180ms
+2026-10-09T21:50:58.5909783Z    ✓ P1 exit terminal propagation > an order from a cycle that no longer has a live position still converges  2878ms
+2026-10-09T21:50:58.5910927Z    ✓ P1 exit terminal propagation > a WS report for an entry order does not acquire an exit role in the registry  1744ms
+2026-10-09T21:50:58.5912157Z    ✓ P1 replay of the audited BR/NEAR/WLD shape > a filled take-profit releases the old claim and lets the new cycle protect itself  4660ms
+2026-10-09T21:50:58.9949566Z (node:8944) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:50:58.9950847Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:51:03.6229410Z  ✓ src/services/ownershipJournal.test.ts (11 tests) 13049ms
+2026-10-09T21:51:03.6231338Z    ✓ S02/S04 durable foundation; no exchange writes > uses the pending index without scanning delivered history and preserves exact rowid delivery order  1347ms
+2026-10-09T21:51:03.6233181Z    ✓ S02/S04 durable foundation; no exchange writes > rolls ownership back if outbox insertion fails inside the same transaction  996ms
+2026-10-09T21:51:03.6236170Z    ✓ S02/S04 durable foundation; no exchange writes > revokes at exact deadline and commits a recoverable outbox  984ms
+2026-10-09T21:51:03.6237628Z    ✓ S02/S04 durable foundation; no exchange writes > keeps owner expiry events separate from an existing mandate event with the same scope and version  1218ms
+2026-10-09T21:51:03.6239785Z    ✓ S02/S04 durable foundation; no exchange writes > never extends deadline on later fills or restart and never automatically restores human authority  1327ms
+2026-10-09T21:51:03.6242549Z    ✓ S02/S04 durable foundation; no exchange writes > competing connections cannot overwrite ownership or reserve duplicate quantity  1317ms
+2026-10-09T21:51:03.6244827Z    ✓ S02/S04 durable foundation; no exchange writes > same id is idempotent but cannot change quantity or scope  1124ms
+2026-10-09T21:51:03.6247204Z    ✓ S02/S04 durable foundation; no exchange writes > legacy and missing plans cannot mint AI authority  1017ms
+2026-10-09T21:51:03.6249475Z    ✓ S02/S04 durable foundation; no exchange writes > manual must revoke AI first; TP occupies shared quantity across cycles  1265ms
+2026-10-09T21:51:03.6251699Z    ✓ S02/S04 durable foundation; no exchange writes > outbox delivery acknowledgement is idempotent and never reauthorizes AI  1353ms
+2026-10-09T21:51:03.6253872Z    ✓ S02/S04 durable foundation; no exchange writes > clock rollback cannot change ownership or reserve a fresh task  1101ms
+2026-10-09T21:51:04.1053299Z  ✓ src/services/reconciliationFanout.test.ts (7 tests) 50ms
+2026-10-09T21:51:04.4317980Z  ✓ src/services/remoteFactAuditPolicy.test.ts (7 tests) 14ms
+2026-10-09T21:51:04.7566632Z  ✓ src/services/v396OfflineStages.test.ts (11 tests) 26ms
+2026-10-09T21:51:05.1863994Z  ✓ src/services/marketDataHubSlowFields.test.ts (4 tests) 16ms
+2026-10-09T21:51:05.6020195Z  ✓ src/state/runtimeState.test.ts (7 tests) 14ms
+2026-10-09T21:51:05.8260969Z  ✓ src/api/brainRunExecution.test.ts (4 tests) 11510ms
+2026-10-09T21:51:05.8263441Z    ✓ V3.9.6 durable run -> execution result > RX-01 a natural PLACE that reaches the wire is journalled as 已挂单 with its whole lineage  3390ms
+2026-10-09T21:51:05.8266575Z    ✓ V3.9.6 durable run -> execution result > RX-02 a frozen TESTNET PLACE reaches the wire even when recent-trade reachability is absent  3108ms
+2026-10-09T21:51:05.8268114Z    ✓ V3.9.6 durable run -> execution result > RX-03 a scout row carries no execution answer, because it never had an order to place  2278ms
+2026-10-09T21:51:05.8269312Z    ✓ V3.9.6 durable run -> execution result > RX-04 the funnel reads the same journal the rows do  2733ms
+2026-10-09T21:51:06.2287612Z  ✓ src/services/unknownProofValidation.test.ts (47 tests) 25ms
+2026-10-09T21:51:06.5839959Z (node:6416) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:51:06.5841129Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:51:06.6697586Z  ✓ src/services/primaryCadenceDispatch.test.ts (6 tests) 455ms
+2026-10-09T21:51:06.7696467Z  ✓ src/services/tradingQualityV393EvidenceStore.test.ts (5 tests) 25ms
+2026-10-09T21:51:07.1754911Z (node:7808) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:51:07.1756188Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:51:07.2263862Z  ✓ src/services/tpUnknownRecovery.test.ts (4 tests) 34ms
+2026-10-09T21:51:07.2775166Z (node:7052) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:51:07.2776673Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:51:07.3298329Z  ✓ src/services/tpPositionFactTruth.test.ts (4 tests) 38ms
+2026-10-09T21:51:07.5740862Z (node:3408) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:51:07.5742268Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:51:07.7733717Z  ✓ src/services/s07ConsumerBoundary.test.ts (7 tests) 97ms
+2026-10-09T21:51:08.1432211Z  ✓ src/services/tradingQualityEligibility.test.ts (7 tests) 11ms
+2026-10-09T21:51:08.4892357Z  ✓ src/services/v396AuditFollowup.test.ts (8 tests) 23ms
+2026-10-09T21:51:08.8115843Z  ✓ src/services/v396AuditBoundaries.test.ts (23 tests) 21ms
+2026-10-09T21:51:09.4621478Z  ✓ src/services/ownershipStorageCoverage.test.ts (6 tests) 67ms
+2026-10-09T21:51:09.9764513Z  ✓ src/services/productionAssetResearch.test.ts (6 tests) 39ms
+2026-10-09T21:51:10.4395739Z (node:4120) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:51:10.4396501Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:51:13.8904671Z  ✓ src/services/ownershipRuntime.test.ts (5 tests) 6299ms
+2026-10-09T21:51:13.8905792Z    ✓ ownership runtime activation > records a human takeover durably and it survives a reopen  1045ms
+2026-10-09T21:51:13.8906964Z    ✓ ownership runtime activation > is driven by the existing handoff and manual events without a caller change  1486ms
+2026-10-09T21:51:13.8908114Z    ✓ ownership runtime activation > expires AI authority on the deadline without extending it  1737ms
+2026-10-09T21:51:13.8909149Z    ✓ ownership runtime activation > grants nothing when the cycle identity is unknown  2023ms
+2026-10-09T21:51:14.5172415Z  ✓ src/services/primaryCandidateChoice.test.ts (19 tests) 94ms
+2026-10-09T21:51:14.8466387Z  ✓ src/api/projections.test.ts (4 tests) 15530ms
+2026-10-09T21:51:14.8467482Z    ✓ dashboard projections > schema-validates one server-side snapshot and redacts audit secrets  5173ms
+2026-10-09T21:51:14.8468639Z    ✓ projects exchange-complete trading PnL while funding keeps canonical net unavailable  3122ms
+2026-10-09T21:51:14.8469708Z    ✓ projects the configured 5000+5000 wallet baseline separately from rolling local and exchange PnL  7227ms
+2026-10-09T21:51:14.9948119Z (node:2192) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:51:15.0084554Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:51:15.1141457Z  ✓ src/services/tpGuardianCrossedTruth.test.ts (11 tests) 109ms
+2026-10-09T21:51:15.4001770Z  ✓ src/services/tradeRecordReadModel.test.ts (7 tests) 18ms
+2026-10-09T21:51:15.7656773Z  ✓ src/services/reconciliationCoverageContract.test.ts (6 tests) 52ms
+2026-10-09T21:51:16.1871649Z  ✓ src/services/entryLeverageFacts.test.ts (10 tests) 76ms
+2026-10-09T21:51:16.4941244Z (node:7836) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:51:16.4968193Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:51:16.6036555Z  ✓ src/services/externalIntelligenceService.test.ts (5 tests) 21ms
+2026-10-09T21:51:17.0370225Z  ✓ src/services/tradingQualityV393.test.ts (10 tests) 10ms
+2026-10-09T21:51:17.5551811Z  ✓ src/services/tradingQualityHistoryIsolation.test.ts (4 tests) 1044ms
+2026-10-09T21:51:17.5556777Z    ✓ moves only durable history projection to one bounded worker and coalesces clocks without cloning runtime history  335ms
+2026-10-09T21:51:17.5984474Z  ✓ src/services/reconciliationRequestBudget.test.ts (3 tests) 96ms
+2026-10-09T21:51:17.6891335Z  ✓ src/runtime/v393FrozenEntryRestart.test.ts (1 test) 6910ms
+2026-10-09T21:51:17.6894270Z    ✓ V3.9.3 frozen Entry authorization restart persistence > preserves AI side, quantityUnits, acceptable range and pre-AI envelope through SQLite and Engine restart  6909ms
+2026-10-09T21:51:17.7416919Z  ✓ src/services/aiFabric.test.ts (14 tests) 57385ms
+2026-10-09T21:51:17.7420265Z    ✓ Primary decision fail-closed normalization > normalizes a reject without inventing an executable side  5353ms
+2026-10-09T21:51:17.7441875Z    ✓ Primary decision fail-closed normalization > repairs reject formatting without restoring a trade side or direction authority  5237ms
+2026-10-09T21:51:17.7500227Z    ✓ Primary decision fail-closed normalization > preserves raw PLACE_LONG including autonomous quantity  5159ms
+2026-10-09T21:51:17.7508536Z    ✓ Primary decision fail-closed normalization > preserves raw PLACE_SHORT including autonomous quantity  4819ms
+2026-10-09T21:51:17.7516313Z    ✓ Primary decision fail-closed normalization > normalizes only unambiguous confidence protocol values  3393ms
+2026-10-09T21:51:17.7601016Z    ✓ Primary decision fail-closed normalization > normalizes only unambiguous confidence protocol values  3732ms
+2026-10-09T21:51:17.7606982Z    ✓ Primary decision fail-closed normalization > normalizes only unambiguous confidence protocol values  4926ms
+2026-10-09T21:51:17.7671777Z    ✓ Primary decision fail-closed normalization > does not manufacture a missing executable price range  4955ms
+2026-10-09T21:51:17.7675671Z    ✓ Primary decision fail-closed normalization > repairs only a frozen candidate target range after the model selects its exact target  4910ms
+2026-10-09T21:51:17.7739723Z    ✓ Primary decision fail-closed normalization > accepts a directionless reject without inventing PLACE  3721ms
+2026-10-09T21:51:17.7858595Z    ✓ Primary decision fail-closed normalization > computes 15m structure evidence without creating an execution decision  4797ms
+2026-10-09T21:51:17.7901227Z    ✓ Primary decision fail-closed normalization > accepts both AI sides regardless of 15m trend when protocol fields are valid  6374ms
+2026-10-09T21:51:18.2377750Z  ✓ src/adapters/exchange/ExternalTradeAdapterFunding.test.ts (6 tests) 79ms
+2026-10-09T21:51:18.2905725Z  ✓ src/services/economicEntryFeasibility.test.ts (6 tests) 16ms
+2026-10-09T21:51:18.3404986Z (node:8564) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:51:18.3511262Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:51:18.4862510Z  ✓ src/config/noAddOriginLedger.test.ts (2 tests) 118ms
+2026-10-09T21:51:18.7206455Z  ✓ src/services/finalRiskConvergence.test.ts (5 tests) 29ms
+2026-10-09T21:51:18.8793186Z (node:872) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:51:18.8865859Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:51:19.1471798Z  ✓ src/services/positionLifecycleIntegrity.test.ts (3 tests) 27ms
+2026-10-09T21:51:19.3826209Z (node:5804) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:51:19.3836697Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:51:19.4547379Z  ✓ src/services/preflightFeasibility.test.ts (6 tests) 26ms
+2026-10-09T21:51:19.7389937Z  ✓ src/services/executableRiskHeadroom.test.ts (6 tests) 24ms
+2026-10-09T21:51:20.0291622Z  ✓ src/services/v397FrozenSizing.test.ts (6 tests) 60ms
+2026-10-09T21:51:20.1801441Z  ✓ src/services/s05ConsumerBoundary.test.ts (4 tests) 82ms
+2026-10-09T21:51:20.6657574Z  ✓ src/services/temporalAlgorithms.test.ts (11 tests) 16ms
+2026-10-09T21:51:20.8130237Z  ✓ src/services/p0EntryIntegrity.test.ts (4 tests) 11ms
+2026-10-09T21:51:21.2264004Z (node:9828) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:51:21.2264922Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:51:21.4202166Z  ✓ src/services/lossHandoff.test.ts (4 tests) 14ms
+2026-10-09T21:51:22.0295668Z (node:5804) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:51:22.0297037Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:51:22.0508611Z  ✓ src/services/privateAccountSync.test.ts (5 tests) 21ms
+2026-10-09T21:51:22.2628851Z (node:5804) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:51:22.2630145Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:51:22.2667162Z  ✓ src/services/storageCapacityGuard.test.ts (5 tests) 2888ms
+2026-10-09T21:51:22.2669057Z    ✓ coalesces worker passes and preserves checkpoint-referenced recovery entities  2612ms
+2026-10-09T21:51:22.4213858Z  ✓ src/services/positionReviewSchedulerReviewOnly.test.ts (3 tests) 19ms
+2026-10-09T21:51:23.0595851Z (node:9420) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:51:23.0597557Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:51:23.1708414Z (node:2324) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:51:23.1710362Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:51:23.6678827Z  ✓ src/runtime/userPositionFacts.test.ts (4 tests) 28ms
+2026-10-09T21:51:24.1429858Z (node:10112) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:51:30.4048792Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:51:30.4049943Z  ✓ src/runtime/riskPauseOverride.test.ts (1 test) 8763ms
+2026-10-09T21:51:30.4052250Z    ✓ Testnet risk-pause override > TESTNET records daily loss without pausing Entry, including restored state  8761ms
+2026-10-09T21:51:30.8320870Z  ✓ src/services/candidateLifecycleDeriver.test.ts (10 tests) 7ms
+2026-10-09T21:51:31.1216894Z (node:6472) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:51:31.1218151Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:51:32.7763924Z  ✓ src/config/entryClaimStatsIndex.test.ts (4 tests) 13700ms
+2026-10-09T21:51:32.7765276Z    ✓ incremental stats equal full durable truth after direct SQL updates, malformed rows and deletion  3920ms
+2026-10-09T21:51:32.7766578Z    ✓ unchanged snapshots do not SELECT or JSON.parse full durable history; changed IDs only  4323ms
+2026-10-09T21:51:32.7767838Z    ✓ expiry and clock rollback revalidate strict proof exactly without a durable rewrite  3158ms
+2026-10-09T21:51:32.7768999Z    ✓ transaction rollback and restart do not leave optimistic cached telemetry  2297ms
+2026-10-09T21:51:33.2405358Z (node:6156) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:51:33.2406619Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:51:35.6549474Z  ✓ src/services/externalResearchService.test.ts (3 tests) 4376ms
+2026-10-09T21:51:35.6550942Z    ✓ ExternalResearchService > does not spend 9B on duplicate local-market facts when Primary cannot consume them  2132ms
+2026-10-09T21:51:35.6552586Z    ✓ ExternalResearchService > allows local-market research only when its context is configured for Primary consumption  2240ms
+2026-10-09T21:51:36.0773261Z  ✓ src/services/positionService.test.ts (3 tests) 16ms
+2026-10-09T21:51:36.3811831Z  ✓ src/services/accountValuation.test.ts (3 tests) 6ms
+2026-10-09T21:51:36.7931278Z  ✓ src/services/existingPositionContext.test.ts (8 tests) 14ms
+2026-10-09T21:51:37.1021495Z  ✓ src/services/s05ConvergenceHostile.test.ts (8 tests) 22ms
+2026-10-09T21:51:37.5497554Z (node:7868) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:51:37.5499105Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:51:37.5997562Z  ✓ src/services/tpTerminalProjection.test.ts (5 tests) 36ms
+2026-10-09T21:51:37.9080598Z (node:4288) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:51:37.9082199Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:51:38.8317051Z  ✓ src/runtime/restartRecovery.test.ts (2 tests) 14350ms
+2026-10-09T21:51:38.8318076Z    ✓ persists recovered lot projections and their evidence before a second reopen  9544ms
+2026-10-09T21:51:38.8320129Z    ✓ runtime restart recovery > restores test-harness facts only through the explicit harness factory  4804ms
+2026-10-09T21:51:38.8747915Z  ✓ src/runtime/tradeRecordAutoSync.test.ts (1 test) 5303ms
+2026-10-09T21:51:38.8751187Z    ✓ automatic TradeRecord rolling sync window > backfills the last seven days one day per pass, then stays incremental  5302ms
+2026-10-09T21:51:39.1722210Z  ✓ src/services/noSeparateAdd.test.ts (5 tests) 8ms
+2026-10-09T21:51:39.4668296Z  ✓ src/services/nearMarketPrice.test.ts (4 tests) 11ms
+2026-10-09T21:51:39.6890986Z  ✓ src/services/supplyHealth.test.ts (3 tests) 7ms
+2026-10-09T21:51:40.0134693Z (node:7008) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:51:40.0136266Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:51:40.0795392Z  ✓ src/adapters/binance/requestBudgetPrivateTruth.test.ts (3 tests) 27ms
+2026-10-09T21:51:40.4162706Z  ✓ src/services/brainRunArchive.test.ts (4 tests) 6ms
+2026-10-09T21:51:40.7170449Z  ✓ src/services/s01TruthAccountingObservability.test.ts (5 tests) 6ms
+2026-10-09T21:51:41.0082698Z  ✓ src/services/candidateSupplyHealth.test.ts (3 tests) 18ms
+2026-10-09T21:51:41.3641364Z  ✓ src/adapters/binance/BinanceTransportLanes.test.ts (3 tests) 6ms
+2026-10-09T21:51:41.7186263Z  ✓ src/services/eipService.test.ts (3 tests) 18181ms
+2026-10-09T21:51:41.7188187Z    ✓ EIP 3.0 evidence gates > builds seven-timeframe evidence within a bounded prompt size  9294ms
+2026-10-09T21:51:41.7190312Z    ✓ EIP 3.0 evidence gates > fails closed for stale price but sanitizes stale derivatives as contextual evidence  4941ms
+2026-10-09T21:51:41.7193059Z    ✓ EIP 3.0 evidence gates > sanitizes stale partial derivatives before classifying exchange availability, while preserving fresh partial facts  3945ms
+2026-10-09T21:51:41.9235738Z (node:9520) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:51:41.9237620Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:51:42.2148067Z  ✓ src/services/v392HistoricalDecisionRegression.test.ts (3 tests) 8ms
+2026-10-09T21:51:42.5104457Z  ✓ src/services/tradingQualityBaseline.test.ts (4 tests) 7ms
+2026-10-09T21:51:42.8018859Z  ✓ src/services/tradingQualityReleaseGate.test.ts (5 tests) 6ms
+2026-10-09T21:51:43.0969255Z  ✓ src/services/externalResearchQuality.test.ts (2 tests) 7ms
+2026-10-09T21:51:43.1387454Z  ✓ src/config/exposureCapacityPolicyMigration.test.ts (3 tests) 5082ms
+2026-10-09T21:51:43.1389200Z    ✓ enforces every notional ratio for a document that never chose a mode  1845ms
+2026-10-09T21:51:43.1390238Z    ✓ keeps an operator margin-driven choice across a restart without touching a single ratio  1634ms
+2026-10-09T21:51:43.1391675Z    ✓ refuses an out-of-vocabulary mode instead of defaulting it open  1601ms
+2026-10-09T21:51:43.4630494Z  ✓ src/services/productionReadOnlyPreflight.test.ts (4 tests) 13ms
+2026-10-09T21:51:43.7220679Z  ✓ src/services/operationalLogger.test.ts (2 tests) 68ms
+2026-10-09T21:51:43.9705397Z (node:9424) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:51:43.9708795Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:51:44.0428693Z  ✓ src/api/positionCycleSnapshot.test.ts (1 test) 3650ms
+2026-10-09T21:51:44.0430370Z    ✓ publishes the position-cycle accounting facts through the snapshot schema  3649ms
+2026-10-09T21:51:44.1130223Z  ✓ src/services/entryStartupPolicy.test.ts (1 test) 8ms
+2026-10-09T21:51:44.4507373Z  ✓ src/services/egressFailClosed.test.ts (3 tests) 14ms
+2026-10-09T21:51:44.5749600Z  ✓ src/adapters/ai/promptBudget.test.ts (4 tests) 28ms
+2026-10-09T21:51:44.7853966Z  ✓ src/services/tradeRecordDiagnostics.test.ts (4 tests) 8ms
+2026-10-09T21:51:44.9037438Z (node:3428) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:51:44.9088152Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:51:45.3416592Z (node:3428) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:51:45.3417924Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:51:45.3850842Z  ✓ src/services/primaryPositionContext.test.ts (1 test) 23ms
+2026-10-09T21:51:45.4397545Z  ✓ src/services/tradingQualityObserverWorker.test.ts (1 test) 416ms
+2026-10-09T21:51:45.4398676Z    ✓ runs compiled evidence worker in an isolated database, without trading authority  414ms
+2026-10-09T21:51:45.6093487Z  ✓ src/config/assetAdmissionIntegration.test.ts (1 test) 1592ms
+2026-10-09T21:51:45.6096248Z    ✓ isolated contracts build admission integration > uses the isolated contracts/core build for SQLite reload and LKG admission  1590ms
+2026-10-09T21:51:45.8242619Z  ✓ src/api/assetDirectoryReview.test.ts (1 test) 3511ms
+2026-10-09T21:51:45.8315214Z    ✓ asset directory review API > keeps default preview read-only and only explicitly applies through governance CAS  3509ms
+2026-10-09T21:51:45.9097142Z  ✓ src/services/v398RiskQuantityBounds.test.ts (5 tests) 104ms
+2026-10-09T21:51:46.0758202Z  ✓ src/services/liveValidationObservation.test.ts (2 tests) 56ms
+2026-10-09T21:51:46.3771731Z  ✓ src/services/reconciliationOpenOrdersProjection.test.ts (2 tests) 10ms
+2026-10-09T21:51:46.4574977Z  ✓ src/runtime/processLifecycleTelemetry.test.ts (3 tests) 35ms
+2026-10-09T21:51:46.5960561Z  ✓ src/services/marketDataReadiness.test.ts (3 tests) 8ms
+2026-10-09T21:51:46.8358481Z  ✓ src/services/riskReadiness.test.ts (3 tests) 7ms
+2026-10-09T21:51:46.9741610Z  ✓ src/adapters/exchange/historyWindow.test.ts (5 tests) 14ms
+2026-10-09T21:51:47.0812854Z  ✓ src/services/entryWaiting.test.ts (4 tests) 7ms
+2026-10-09T21:51:47.2842230Z  ✓ src/api/activeEntryProjection.test.ts (1 test) 7ms
+2026-10-09T21:51:47.4004564Z  ✓ src/services/historicalTpReachability.test.ts (3 tests) 8ms
+2026-10-09T21:51:47.5179156Z  ✓ src/services/entryObservation.test.ts (4 tests) 9ms
+2026-10-09T21:51:47.8075158Z  ✓ src/services/shadowReadiness.test.ts (2 tests) 7ms
+2026-10-09T21:51:47.9101234Z  ✓ src/adapters/binance/requestBudgetEntryGate.test.ts (2 tests) 12ms
+2026-10-09T21:51:48.1608422Z  ✓ src/config/aiResourceLoader.test.ts (1 test) 16ms
+2026-10-09T21:51:48.2770443Z  ✓ src/services/humanManagedProjection.test.ts (1 test) 9ms
+2026-10-09T21:51:48.3738341Z  ✓ src/services/effectivePrimaryCadence.test.ts (7 tests) 10ms
+2026-10-09T21:51:48.5035159Z  ✓ src/adapters/binance/requestBudgetAnomaly.test.ts (1 test) 25ms
+2026-10-09T21:51:48.8018680Z  ✓ src/adapters/binance/BinanceUserDataStream.test.ts (2 tests) 13ms
+2026-10-09T21:51:48.9506709Z  ✓ src/services/directionPolicyService.test.ts (1 test) 19ms
+2026-10-09T21:51:49.3174623Z (node:4228) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:51:49.3431581Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:51:49.4408948Z (node:6316) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:51:49.4411606Z  ✓ src/services/positionReviewPrompt.test.ts (1 test) 6ms
+2026-10-09T21:51:49.4478403Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:51:49.4479835Z  ✓ src/api/tradeCloseProvenance.test.ts (2 tests) 5ms
+2026-10-09T21:51:49.5108800Z (node:2252) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:51:49.5110399Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:51:49.9906645Z  ✓ src/services/shadowObservation.test.ts (4 tests) 6ms
+2026-10-09T21:51:49.9913172Z  ✓ src/services/tradingQualityObservationPlan.test.ts (3 tests) 6ms
+2026-10-09T21:51:50.1882541Z  ✓ src/services/collectorRecovery.test.ts (1 test) 324ms
+2026-10-09T21:51:50.1885216Z    ✓ collector restart uses a new counter identity; reporting legacy databases remains read-only compatible  322ms
+2026-10-09T21:51:50.3365270Z (node:4660) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:51:50.3369353Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:51:50.3640098Z  ✓ src/api/entryCancelEligibility.test.ts (5 tests) 4ms
+2026-10-09T21:51:50.5525157Z  ✓ src/services/runtimeWriteBuffer.test.ts (1 test) 205ms
+2026-10-09T21:51:50.6027611Z  ✓ src/adapters/ai/OpenAiCompatibleClient.test.ts (1 test) 17ms
+2026-10-09T21:51:50.7695956Z  ✓ src/services/decisionContext.test.ts (3 tests) 7ms
+2026-10-09T21:51:51.0072057Z  ✓ src/services/p0RiskConvergence.test.ts (3 tests) 7ms
+2026-10-09T21:51:51.1168279Z  ✓ src/adapters/binance/requestBudgetProxyTruth.test.ts (1 test) 23ms
+2026-10-09T21:51:51.3089019Z  ✓ src/api/exchangeFillProjection.test.ts (1 test) 1503ms
+2026-10-09T21:51:51.3092743Z    ✓ exchange fill projection > does not raise a system attribution alert for an external Binance App fill  1501ms
+2026-10-09T21:51:51.4442481Z (node:1372) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:51:51.4527354Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:51:51.6293091Z  ✓ src/services/quoteUsdConversion.test.ts (2 tests) 8ms
+2026-10-09T21:51:51.7475835Z  ✓ src/services/unsubmittedEntryRecovery.test.ts (2 tests) 7ms
+2026-10-09T21:51:51.9275084Z  ✓ src/services/binanceClientOrderIdFactory.test.ts (3 tests) 10ms
+2026-10-09T21:51:52.2825535Z  ✓ src/services/experienceService.test.ts (1 test) 6ms
+2026-10-09T21:51:52.5102919Z  ✓ src/adapters/market/BinanceExchangeInfoSingleFlight.test.ts (1 test) 8ms
+2026-10-09T21:51:52.5171286Z  ✓ src/adapters/binance/BinanceBudgetFailureTelemetry.test.ts (1 test) 49ms
+2026-10-09T21:51:52.7956010Z  ✓ src/api/chronologicalSort.test.ts (2 tests) 6ms
+2026-10-09T21:51:52.9603934Z (node:2316) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2026-10-09T21:51:52.9657137Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-09T21:51:52.9866111Z  ✓ src/config/settingsCloseoutInvariant.test.ts (1 test) 6ms
+2026-10-09T21:51:53.0009845Z  ✓ src/services/testnetLowLossCleanupService.test.ts (2 tests) 5ms
+2026-10-09T21:51:53.3399005Z  ✓ src/services/TemporalIntelligenceService.test.ts (1 test) 10ms
+2026-10-09T21:51:53.3849589Z  ✓ src/services/eipResidentInspection.test.ts (1 test) 1499ms
+2026-10-09T21:51:53.3851598Z    ✓ resident EIP inspection > keeps a held contract available to read-only EIP inspection  1497ms
+2026-10-09T21:51:53.4500270Z  ✓ src/runtime/bootstrapReconciliationInvariant.test.ts (1 test) 6ms
+2026-10-09T21:51:53.5069163Z  ✓ src/services/tradeAuditProvenance.test.ts (1 test) 6ms
+2026-10-09T21:51:53.8280020Z  ✓ src/config/engineTestTimeout.test.ts (1 test) 5ms
+2026-10-09T21:51:53.9507829Z  ✓ src/services/privateAccountReadiness.test.ts (1 test) 4ms
+2026-10-09T21:51:54.0629697Z  ✓ src/events/eventBus.test.ts (1 test) 8ms
+2026-10-09T21:51:54.0971058Z ⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+2026-10-09T21:51:54.1098316Z 
+2026-10-09T21:51:54.1099046Z 
+2026-10-09T21:51:54.1100731Z Vitest caught 1 unhandled error during the test run.
+2026-10-09T21:51:54.1101777Z  Test Files  216 passed (216)
+2026-10-09T21:51:54.1176177Z This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+2026-10-09T21:51:54.1180488Z       Tests  1966 passed (1966)
+2026-10-09T21:51:54.1191799Z 
+2026-10-09T21:51:54.1193019Z      Errors  1 error
+2026-10-09T21:51:54.1303520Z ⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+2026-10-09T21:51:54.1305545Z    Start at  21:48:15
+2026-10-09T21:51:54.1316967Z Error: [vitest-worker]: Timeout calling "onTaskUpdate"
+2026-10-09T21:51:54.1323826Z    Duration  218.32s (transform 6.35s, setup 0ms, collect 45.61s, tests 751.10s, environment 68ms, prepare 28.95s)
+2026-10-09T21:51:54.1399720Z  ❯ Object.onTimeoutError ../../node_modules/vitest/dist/chunks/rpc.-pEldfrD.js:53:10
+2026-10-09T21:51:54.1401324Z 
+2026-10-09T21:51:54.1439697Z  ❯ Timeout._onTimeout ../../node_modules/vitest/dist/chunks/index.B521nVV-.js:59:62
+2026-10-09T21:51:54.1443696Z  ❯ listOnTimeout node:internal/timers:585:17
+2026-10-09T21:51:54.1455204Z  ❯ processTimers node:internal/timers:521:7
+2026-10-09T21:51:54.1684787Z 
+2026-10-09T21:51:54.1812542Z ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+2026-10-09T21:51:54.1822592Z 
+2026-10-09T21:51:54.3324220Z npm error Lifecycle script `test` failed with error:
+2026-10-09T21:51:54.3325913Z npm error code 1
+2026-10-09T21:51:54.3326545Z npm error path D:\a\ZDJMITS\ZDJMITS\apps\engine
+2026-10-09T21:51:54.3328689Z npm error workspace @zdj/engine@3.9.8
+2026-10-09T21:51:54.3329363Z npm error location D:\a\ZDJMITS\ZDJMITS\apps\engine
+2026-10-09T21:51:54.3332090Z npm error command failed
+2026-10-09T21:51:54.3333607Z npm error command C:\Windows\system32\cmd.exe /d /s /c vitest run
+2026-10-09T21:51:54.4039536Z ##[error]Process completed with exit code 1.
+2026-10-09T21:51:54.4327960Z Post job cleanup.
+2026-10-09T21:51:54.6254654Z [command]"C:\Program Files\Git\bin\git.exe" version
+2026-10-09T21:51:54.6534706Z git version 2.55.0.windows.5
+2026-10-09T21:51:54.6610991Z Temporarily overriding HOME='D:\a\_temp\1929c74d-cb58-4f2b-9628-b26d0f15a9d8' before making global git config changes
+2026-10-09T21:51:54.6612369Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-09T21:51:54.6623461Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\ZDJMITS\ZDJMITS
+2026-10-09T21:51:54.6942872Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-10-09T21:51:54.7282222Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-10-09T21:51:55.3071670Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-09T21:51:55.3331741Z http.https://github.com/.extraheader
+2026-10-09T21:51:55.3382278Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset-all http.https://github.com/.extraheader
+2026-10-09T21:51:55.3742681Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-10-09T21:51:55.9107856Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-09T21:51:55.9441249Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+2026-10-09T21:51:56.4733970Z Cleaning up orphan processes
+2026-10-09T21:51:56.5342362Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

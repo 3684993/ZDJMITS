@@ -1,5 +1,13 @@
 # V3.9.8 / Codex authorized local follow-up — P0.0–P0.6
 
+## 2026-10-10 PR21 / 24h continuation (latest)
+
+Latest06:02 bounded refresh failed at first public time GET after8.016s; prior05:47 signed TP13/13 is preserved as a historical sample, not a current release pass. No retry/lifecycle. Eligibility remains UNKNOWN; 24h NOT_STARTED/T0=null. PR21 merged by normal fast-forward at 8cd63a0; exact push/PR CI37996114153/37996120547 SUCCESS. Final local verify251/2157 and four Engine shards216/1966 PASS; dependency audit11→4 unresolved ECharts/Vitest advisories. Actual old host receipt and source/artifact hashes match Engine18100, but new candidate buildbb45c11 is not deployed. See new report for current vs historical policy evidence.
+
+
+
+PR20 merged; fetched main57c42dc, PR21 base headbe2417d. Fix source8cd63a0 has local full verify PASS251 files/2157 tests and read-only full CI; actual final CI/merge refs in [new execution receipt](../reports/v398-controlled-release-24h-20261010/EXECUTION_RECEIPT.md). Old Engine18100/build6cd926 is still deployed. Private sync naturally recovered, signed exact TP13/13 and Production0 verified; no lifecycle/Settings/manual exchange write. Eight hidden task actions and Crash Observer17772 intact. Official actual-account/region eligibility unconfirmed; new artifact approval/current action checks required; no deployment or T0. Latest user authorized24h only after all gates, any abort/fix/redeploy requires full new24h. Do not count retrospective Primary1/Review9 as acceptance or relax PLANNED_NOTIONAL/freshness/no-add gates. Earlier timestamped blockers/counts below are history, refresh them before acting.
+
 ## Executed local receipt, 2026-10-09 22:14+08
 
 Read [LOCAL_EXECUTION_RECEIPT_20261009](../reports/v398-proxy-network-p0-20261009/LOCAL_EXECUTION_RECEIPT_20261009.md) and `local-20261009/verify-green-result.json` first. Source `0399eff5e601723c249ff6f6b70c59a23cb8dd22` passed full npm verify (exit0, 251 Vitest files / 2157 tests plus script gates). Identified periodic MITS console tasks now launch hidden without disabling safety monitors; actual scheduled runs and harmless child visibility/exit tests passed. Original failed verify and one launcher failure remain documented. No Engine/model/proxy cutover occurred. Private facts remain stale, eligibility UNKNOWN, latest exchange TP unproven; new-build 90min T0 was not set. Proxy-only SSH account refuses shell by MaxSessions0; no fresh Linux TCP counters exist. Main CI succeeded for exact 7d698a5; PR20 CI excluded by current trigger. Re-read final PR20 HEAD and docs before continuing; do not repeat unsafe workflow dispatch, loosen gates or retry a previously denied lifecycle through alternatives.

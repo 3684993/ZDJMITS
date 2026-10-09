@@ -1,0 +1,28 @@
+{
+  "observedAt": "2026-10-09T21:50:20.640Z",
+  "scope": "BOUNDED_EXISTING_LOCAL_REQUEST_BUDGET_ONLY_NOT_ALL_HISTORY",
+  "rows": [
+    {
+      "scope": "TESTNET:default",
+      "status": "AVAILABLE",
+      "active": 0,
+      "queued": 0,
+      "recentDispatches": 0,
+      "statusCounts": {},
+      "timingCoverage": 0
+    },
+    {
+      "scope": "TESTNET:proxy-05d851d4af74",
+      "status": "AVAILABLE",
+      "active": 1,
+      "queued": 2,
+      "recentDispatches": 64,
+      "statusCounts": {
+        "200": 56,
+        "400": 5,
+        "UNKNOWN": 3
+      },
+      "timingCoverage": 61
+    }
+  ]
+}

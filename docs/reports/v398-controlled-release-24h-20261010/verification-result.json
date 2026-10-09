@@ -1,0 +1,46 @@
+{
+  "observedAt": "2026-10-10T05:55:47.7305626+08:00",
+  "sourceSha": "8cd63a0f13f3260b3faa986b89959cfb090d6844",
+  "npmCiExit": 0,
+  "fullVerifyExit": 0,
+  "vitestFiles": 251,
+  "vitestTests": 2157,
+  "nodeScriptTests": 16,
+  "historicalLockModified": false,
+  "runtimeModified": false,
+  "logs": [
+    {
+      "file": "npm-ci.log",
+      "bytes": 1206,
+      "sha256": "F379F6E3DCC87DD8110F518D298A712EF3D6E83D49E2F3C156FF3B9097014F59"
+    },
+    {
+      "file": "npm-verify.log",
+      "bytes": 108146,
+      "sha256": "51B865EE197ED7E9B6F5914F775312CD6D0517E90E18C508DBC7E70D99CEDF34"
+    },
+    {
+      "file": "npm-ci-deps.log",
+      "bytes": 1126,
+      "sha256": "63E00B39B4EB96B88656180A52B3C7A9A193A23AB13C8AF93D1E4C6A446AE044"
+    },
+    {
+      "file": "npm-verify-deps.log",
+      "bytes": 13790,
+      "sha256": "9F73B8A6FA4C9BC0CBAEB3071DB091F71B41AEB86B6FF9B1DC98CEB611619FF8"
+    },
+    {
+      "file": "npm-verify-final.log",
+      "bytes": 107725,
+      "sha256": "1783C20D3296F047480B79645358954C2554F53F3AECF3A7722F2BB130F08549"
+    }
+  ],
+  "localEngineCiShards": {
+    "exit": 0,
+    "files": 216,
+    "tests": 1966,
+    "shards": 4,
+    "maxWorkersPerShard": 1,
+    "sha256": "2DC5BA6E7393C5D0994614631E0212CA0D17C9381481F1ECA7F40EA172017F35"
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "observedAt": "2026-10-09T22:02:00.282Z",
+  "sourceSha": "8cd63a0f13f3260b3faa986b89959cfb090d6844",
+  "initialMain": "57c42dc8dd4ad1c6e8e364bafb5d2bd8682a5494",
+  "promotedMain": "8cd63a0f13f3260b3faa986b89959cfb090d6844",
+  "promotion": "NORMAL_FAST_FORWARD_PUSH_ANCESTRY_PROVEN_NO_FORCE_REBASE_SQUASH",
+  "pr": {
+    "number": 21,
+    "merged": true,
+    "mergeSha": "8cd63a0f13f3260b3faa986b89959cfb090d6844",
+    "readback": true
+  },
+  "sourceCi": [
+    {
+      "id": 37996120547,
+      "sha": "8cd63a0f13f3260b3faa986b89959cfb090d6844",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/3684993/ZDJMITS/actions/runs/37996120547",
+      "event": "pull_request"
+    },
+    {
+      "id": 37996114153,
+      "sha": "8cd63a0f13f3260b3faa986b89959cfb090d6844",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/3684993/ZDJMITS/actions/runs/37996114153",
+      "event": "push"
+    }
+  ],
+  "documentDelivery": "FOLLOWUP_DOCUMENT_COMMIT_TO_MAIN_SHA_EXCLUDED_TO_AVOID_SELF_REFERENCE",
+  "runtimeDeployed": false,
+  "acceptance24h": "NOT_STARTED",
+  "t0": null
+}

@@ -1,0 +1,30 @@
+{
+  "observedAt": "2026-10-09T21:47:50.905Z",
+  "from": "2026-10-09T20:17:50.905Z",
+  "to": "2026-10-09T21:47:50.905Z",
+  "scope": "ARCHIVED_RUN_START_TIMES_ONLY_NOT_CONTINUOUS_ACCEPTANCE",
+  "runs": [
+    {
+      "role": "PRIMARY_BRAIN",
+      "status": "COMPLETED",
+      "count": 1
+    },
+    {
+      "role": "REVIEW_BRAIN",
+      "status": "COMPLETED",
+      "count": 9
+    },
+    {
+      "role": "SCOUT",
+      "status": "COMPLETED",
+      "count": 1
+    }
+  ],
+  "lastPrimary": {
+    "startedAt": 1791577595879
+  },
+  "eligibleCandidateDenominator": "UNKNOWN_NOT_RECONSTRUCTED",
+  "cadence90min": "NOT_STARTED_NEW_BUILD_NOT_DEPLOYED",
+  "settingsWrites": 0,
+  "exchangeWrites": 0
+}

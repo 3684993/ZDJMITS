@@ -1,0 +1,43 @@
+(node:13628) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:18528) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+up to date, audited 334 packages in 33s
+
+69 packages are looking for funding
+  run `npm fund` for details
+
+# npm audit report
+
+@vitest/mocker  2.1.0 - 4.1.10
+Severity: moderate
+Vitest: Path Traversal / Arbitrary File Read via @vitest/mocker Redirect Mock - https://github.com/advisories/GHSA-82fw-gwwq-j7x9
+fix available via `npm audit fix --force`
+Will install vitest@5.0.3, which is a breaking change
+node_modules/@vitest/mocker
+  vitest  0.0.95 - 4.1.10
+  Depends on vulnerable versions of @vitest/mocker
+  Depends on vulnerable versions of tinypool
+  node_modules/vitest
+
+echarts  <6.1.0
+Severity: moderate
+Apache ECharts has a cross-site scripting (XSS) vulnerability - https://github.com/advisories/GHSA-fgmj-fm8m-jvvx
+fix available via `npm audit fix --force`
+Will install echarts@6.1.0, which is a breaking change
+node_modules/echarts
+
+tinypool  <=2.1.1
+Severity: critical
+Tinypool: Prototype Pollution gadget in worker options leads to Remote Code Execution - https://github.com/advisories/GHSA-5gmw-xhrv-c9v3
+Tinypool: Prototype Pollution Gadget to RCE in run() options - https://github.com/advisories/GHSA-85c8-ppgw-ccpr
+fix available via `npm audit fix --force`
+Will install vitest@5.0.3, which is a breaking change
+node_modules/tinypool
+
+
+4 vulnerabilities (2 moderate, 2 critical)
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force

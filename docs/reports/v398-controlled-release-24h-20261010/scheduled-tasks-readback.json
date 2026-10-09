@@ -1,0 +1,80 @@
+{
+  "observedAt": "2026-10-10T05:48:21.4110275+08:00",
+  "tasks": [
+    {
+      "name": "\\ZDJ-MITS Local Health Monitor",
+      "state": "Disabled",
+      "execute": "C:\\Windows\\System32\\wscript.exe",
+      "lastRun": "2026-09-12T21:51:40.0000000+08:00",
+      "lastResult": 1,
+      "restartCount": 0,
+      "actionCount": 1
+    },
+    {
+      "name": "\\ZDJ-MITS Manual Engine",
+      "state": "Ready",
+      "execute": "C:\\Windows\\System32\\wscript.exe",
+      "lastRun": "1999-11-30T00:00:00.0000000+08:00",
+      "lastResult": 267011,
+      "restartCount": 0,
+      "actionCount": 1
+    },
+    {
+      "name": "\\ZDJ-MITS V3.9.2 Testnet Acceptance Monitor",
+      "state": "Disabled",
+      "execute": "C:\\Windows\\System32\\wscript.exe",
+      "lastRun": "2026-09-13T18:31:52.0000000+08:00",
+      "lastResult": 0,
+      "restartCount": 0,
+      "actionCount": 1
+    },
+    {
+      "name": "\\ZDJ-MITS-AfterReboot-TESTNET",
+      "state": "Ready",
+      "execute": "C:\\Windows\\System32\\wscript.exe",
+      "lastRun": "1999-11-30T00:00:00.0000000+08:00",
+      "lastResult": 267011,
+      "restartCount": 0,
+      "actionCount": 1
+    },
+    {
+      "name": "\\ZDJMITS\\ZDJ-MITS-Engine-Crash-Observer",
+      "state": "Running",
+      "execute": "C:\\Windows\\System32\\wscript.exe",
+      "lastRun": "2026-10-09T16:13:59.0000000+08:00",
+      "lastResult": 267009,
+      "restartCount": 0,
+      "actionCount": 1
+    },
+    {
+      "name": "\\ZDJMITS\\ZDJ-V398-24h-Readonly-Checkpoint",
+      "state": "Disabled",
+      "execute": "C:\\Windows\\System32\\wscript.exe",
+      "lastRun": "2026-10-09T20:12:50.0000000+08:00",
+      "lastResult": 0,
+      "restartCount": 0,
+      "actionCount": 1
+    },
+    {
+      "name": "\\ZDJMITS\\ZDJ-V398-Passive-Trade-Audit",
+      "state": "Ready",
+      "execute": "C:\\Windows\\System32\\wscript.exe",
+      "lastRun": "2026-10-10T05:45:52.0000000+08:00",
+      "lastResult": 0,
+      "restartCount": 0,
+      "actionCount": 1
+    },
+    {
+      "name": "\\ZDJMITS\\ZDJ-V398-Primary-Cadence-90min",
+      "state": "Ready",
+      "execute": "C:\\Windows\\System32\\wscript.exe",
+      "lastRun": "2026-10-10T05:44:12.0000000+08:00",
+      "lastResult": 0,
+      "restartCount": 0,
+      "actionCount": 1
+    }
+  ],
+  "crashObserverPid": 17772,
+  "lifecycleChanges": 0,
+  "registrationChanges": 0
+}

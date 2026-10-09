@@ -22,7 +22,7 @@ for($i=0;$i -lt $Samples;$i++){
         $independent=@($rawPerf | Where-Object { [int]$_.IDProcess -eq [int]$proc.Id } | Select-Object -First 1)
         [pscustomobject]@{
             pid=$proc.Id
-            startedUtc=try{$proc.StartTime.ToUniversalTime().ToString('o')}catch{$null}
+            startedUtc=$(try{$proc.StartTime.ToUniversalTime().ToString('o')}catch{$null})
             processHandleCount=$proc.HandleCount
             perfHandleCount=if($independent.Count){[long]$independent[0].HandleCount}else{$null}
             privateGiB=[Math]::Round($proc.PrivateMemorySize64/1GB,3)

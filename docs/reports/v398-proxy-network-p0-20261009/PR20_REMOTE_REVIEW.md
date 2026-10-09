@@ -4,7 +4,7 @@
 This report is based on **live GitHub connector readback**, not Windows or Ubuntu access. It does not attest that Engine, TCP tunnel, private facts, TP, or cadence have changed.
 
 - Readback main before report write: `e9623c53380b6d8df41f2b8c8a5a0898246c28f1` (PR #19 already merged via `39931a7`).
-- PR #20: OPEN / NOT_MERGED, latest reviewed HEAD `4a0ddb3d16f5504d4fc5cd86f97778651e6c86b0`, seven affected files.
+- PR #20: OPEN / NOT_MERGED, latest reviewed HEAD `023aad9512ba3288a7f7c128b08c92a6611d97d0`, seven affected files.
 - Hosted main verify `37930909464` for PR #19 merge **SUCCESS**; main `37938125083` for `e9623c5` **SUCCESS** (actual GitHub runs, not historical local claims).
 - The current workflow `.github/workflows/v392-verify.yml` does not automatically trigger for `codex/v398-passive-proxy-health-20261009`; there is no successful PR #20 head CI. Do not treat another SHA's CI as PR #20 verification.
 - PR #20 **OFFLINE_VERIFIED = NOT_PROVEN**, `MERGED=false`, `LIVE_DEPLOYED=false`, `PRIVATE_READY=UNKNOWN_LIVE`, `CADENCE_90MIN=NOT_STARTED`.
@@ -15,7 +15,8 @@ This report is based on **live GitHub connector readback**, not Windows or Ubunt
 2. `61b5087` / `755e6db`: passive cache now distinguishes observed admitted HTTP 451 eligibility refusals and HTTP 502 upstream responses from pre-dispatch queue timeout and socket failures. A recent 451 remains a warning even if a public 2xx is observed afterward; 2xx does **not** prove account/product/region eligibility. Tests use in-memory request-budget metadata, not real Binance probes.
 3. `3b5d82b`: Settings proxy tab distinguishes 451 and 502; passive GET on tab activation and 30s only while that tab is open (still no new Binance GET). Existing manual POST test still performs actual health probe and remains unchanged.
 4. `4a0ddb3`: subscription telemetry renamed `requestedGlobalStreams` with `subscriptionEvidence=LOCAL_REQUESTED_NOT_EXCHANGE_ACKED`; local subscription bookkeeping is not proof of exchange ACK.
-5. No subscribe/unsubscribe policy, request budget admission, private TTL, network route, order submission, TP Guardian, risk guard, no-add rule or Production path was modified by these review changes. PR #20 still needs independent build/test verification before merge.
+5. `817d265` / `023aad9`: tolerate JSON `null` WebSocket frames without throwing from message handling; add count-only regression fixture.
+6. No subscribe/unsubscribe policy, request budget admission, private TTL, network route, order submission, TP Guardian, risk guard, no-add rule or Production path was modified by these review changes. PR #20 still needs independent build/test verification before merge.
 
 Measurement limitations: 1s bucket quantization gives approximate rolling 60s (up to <1s edge error). Byte counts reflect **decoded application messages** on PUBLIC and MARKET WS only. They exclude TLS/TCP framing/retransmits/SSH overhead and the PRIVATE user-data WS and REST. Type grouping identifies event types; it alone cannot prove which upstream requested stream sent each message or account for total SSH bytes. Reconcile with host-level SSH stats and private traffic separately. Until an approved instrumented Engine is running, **no real per-lane Mbps/share is known**, so reducing global subscriptions now would be speculative.
 

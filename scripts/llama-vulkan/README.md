@@ -143,3 +143,30 @@ powershell -NoProfile -ExecutionPolicy Bypass -File "$review\capture-kernel-pool
 https://learn.microsoft.com/en-us/windows-hardware/drivers/install-the-wdk-using-winget
 
 这是一个内核池归属调查工具，不是 `llama-server` 崩溃修复，也不会自动恢复8083/8084或更改Engine。 
+
+
+## 2026-10-09 09:59 +08：已获得内核池标签，下一步查 Filter Manager
+
+免安装接口在用户 Windows 返回 3,517 pool tags（两次短采样）。最大分页池标签 `FMfn` 12.7989GiB / 3,817万 outstanding，最大非分页池 `File` 4.7545GiB / 1,276万 outstanding；`Ntfc` 1.8958GiB、`IoNm` 1.7121GiB。总 pool 仍约 30.24GiB。两次仅5秒间隔，尚未证明当前增长率，也不能直接认定是 AMD Vulkan 驱动泄漏。**优先查 Windows Filter Manager 名称缓存、文件对象、mini-filter 驱动堆栈以及 Windows OS patch level。**
+
+证据和外部对照：
+[NATIVE_POOL_TAG_FINDINGS_20261009.md](NATIVE_POOL_TAG_FINDINGS_20261009.md)。
+请注意其中收录的 Microsoft Q&A 2026 Windows 25H2 26200 类似用户反馈只是比较案例，非本机根因，也非官方确认系统BUG。
+
+只读、免安装的后续检查：
+
+~~~powershell
+git -C D:\MITS-worktrees\llama-memory-20261009 pull --ff-only origin codex/llama-vulkan-memory-20261009
+$review = 'D:\MITS-worktrees\llama-memory-20261009\scripts\llama-vulkan'
+powershell -NoProfile -ExecutionPolicy Bypass -File "$review\verify-candidate-parse-readonly.ps1"
+powershell -NoProfile -ExecutionPolicy Bypass -File "$review\capture-filter-stack-readonly.ps1"
+~~~
+
+这只运行微软系统自带 `fltmc filters/instances/volumes` **枚举**，不会 load/unload/attach/detach，也不动 Defender、模型、WDK、Windows。程序将只读 OS UBR 和与过滤器名匹配的驱动服务状态（服务名匹配不能证明该服务持有对应 pool tag），原始 stdout/设备名字留用户本机。
+
+如需判断 pool 是否持续增长，可在**之后**再执行一次 native capture，并运行 `compare-kernel-pool-tags-readonly.ps1`，它对比独立 JSON 文件中共同进入 top-N 的标签；顶级标签之外未出现不等于 0，不得用5秒平稳证明没有历史泄漏。
+
+可直接交给 Codex 的独立任务文档：
+[CODEX_FILE_SYSTEM_POOL_TAG_AUDIT_20261009.md](../../docs/prompts/CODEX_FILE_SYSTEM_POOL_TAG_AUDIT_20261009.md)。
+
+安全约束不变：9B 8081 仍运行，两个27B仍停止，Engine不自行启动，main不改、不使用Actions。不执行 fltmc unload/attach、Driver Verifier、改UAC、防护软件或pagefile；任何异常或假设先报告，再决定授权测试。

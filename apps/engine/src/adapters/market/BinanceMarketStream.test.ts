@@ -143,3 +143,40 @@ it('accounts for rejected-symbol decoded WS payload per lane without persisting 
     expect(aged.PUBLIC.totalMessages).toBe(1);
   }finally{vi.useRealTimers();}
 });
+
+it('keeps retained 50s event across the former 10-second bucket boundary and counts each type',()=>{
+  vi.useFakeTimers();vi.setSystemTime(1_800_000_009_900);
+  try{
+    const stream=new BinanceMarketStream({} as never,vi.fn());
+    stream.updateSymbols(['BTCUSDT']);
+    const book=JSON.stringify({e:'bookTicker',s:'OTHERUSDT',b:'1',a:'2',E:Date.now()});
+    const ticker=JSON.stringify([{e:'24hrTicker',s:'OTHERUSDT',c:'1',q:'5',P:'0',n:1,E:Date.now()}]);
+    (stream as any).onMessage(book,'PUBLIC');
+    (stream as any).onMessage(ticker,'MARKET');
+    vi.advanceTimersByTime(50_200);
+    let traffic=(stream.metrics() as any).streamTraffic;
+    expect(traffic.PUBLIC.last60sByType.BOOK_TICKER).toEqual({messages:1,decodedBytes:Buffer.byteLength(book)});
+    expect(traffic.MARKET.last60sByType.TICKER_24H).toEqual({messages:1,decodedBytes:Buffer.byteLength(ticker)});
+    expect(traffic.PUBLIC.windowResolutionMs).toBe(1000);
+    vi.advanceTimersByTime(10_000);
+    traffic=(stream.metrics() as any).streamTraffic;
+    expect(traffic.PUBLIC.last60sMessages).toBe(0);
+    expect(traffic.MARKET.last60sMessages).toBe(0);
+    expect(traffic.PUBLIC.totalByType.BOOK_TICKER.messages).toBe(1);
+    expect(JSON.stringify(traffic)).not.toContain('OTHERUSDT');
+  }finally{vi.useRealTimers();}
+});
+
+it('bounds buckets for long-running diverse traffic and counts malformed frames safely',()=>{
+  vi.useFakeTimers();vi.setSystemTime(1_800_000_000_000);
+  try{
+    const stream=new BinanceMarketStream({} as never,vi.fn());
+    for(let i=0;i<70;i++){(stream as any).onMessage('not-json','PUBLIC');vi.advanceTimersByTime(1000);}
+    const traffic=(stream.metrics() as any).streamTraffic.PUBLIC;
+    expect((stream as any).streamTraffic.PUBLIC.buckets.length).toBeLessThanOrEqual(60);
+    expect(traffic.totalMessages).toBe(70);
+    expect(traffic.last60sMessages).toBeLessThanOrEqual(60);
+    expect(traffic.totalByType.INVALID_JSON.messages).toBe(70);
+    expect(JSON.stringify(traffic)).not.toContain('not-json');
+  }finally{vi.useRealTimers();}
+});

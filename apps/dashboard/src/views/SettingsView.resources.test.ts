@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import {mount,flushPromises} from '@vue/test-utils';
-import {beforeEach,expect,it,vi} from 'vitest';
+import {afterEach,beforeEach,expect,it,vi} from 'vitest';
 import {readFileSync} from 'node:fs';
 import path from 'node:path';
 import Settings from './SettingsView.vue';
@@ -15,14 +15,16 @@ vi.mock('../api/client',()=>({
   api:{
     settings:vi.fn(),connections:vi.fn(),resources:vi.fn(),aiDutyRoutes:vi.fn(),governanceSettings:vi.fn(),
     saveSettings:vi.fn(),saveResource:vi.fn(),deleteResource:vi.fn(),activateResource:vi.fn(),testResource:vi.fn(),
-    saveAiDutyRoutes:vi.fn(),saveGovernanceFields:vi.fn(),
+    saveAiDutyRoutes:vi.fn(),saveGovernanceFields:vi.fn(),proxyPassiveHealth:vi.fn(),
   },
   saveExchangeCredentials:vi.fn(),testPrivateCredentials:vi.fn(),
 }));
 
+const mounted:ReturnType<typeof mount>[]=[];
+afterEach(()=>{for(const wrapper of mounted.splice(0))wrapper.unmount();vi.useRealTimers();});
 async function open(){
   const wrapper=mount(Settings,{global:{stubs:{Panel:{template:'<section><slot/></section>'},EmptyState:{props:['title','detail'],template:'<div>{{title}} {{detail}}</div>'}}}});
-  await flushPromises();return wrapper;
+  mounted.push(wrapper);await flushPromises();return wrapper;
 }
 const tabButton=(w:any,label:string)=>w.findAll('button').find((b:any)=>b.text().trim()===label)!;
 
@@ -34,6 +36,26 @@ beforeEach(()=>{
   vi.mocked(api.aiDutyRoutes).mockResolvedValue({settingsVersion:1,routes:defaults.aiDutyRoutes??[],resources:ai} as never);
   vi.mocked(api.governanceSettings).mockResolvedValue({settingsVersion:1,fields:[]} as never);
   vi.mocked(api.saveSettings).mockImplementation(async(x:any)=>x);
+  vi.mocked(api.proxyPassiveHealth).mockResolvedValue({status:'RECENT_BINANCE_SUCCESS',queueDepth:0} as never);
+});
+
+it('polls existing evidence only while proxy tab is open and stops after unmount without a real probe',async()=>{
+  vi.useFakeTimers();
+  const w=await open();
+  await vi.advanceTimersByTimeAsync(30_000);
+  expect(api.proxyPassiveHealth).not.toHaveBeenCalled();
+  await tabButton(w,'网络代理').trigger('click');await flushPromises();
+  expect(api.proxyPassiveHealth).toHaveBeenCalledTimes(1);
+  expect(w.text()).toContain('最近已通过代理访问币安');
+  await vi.advanceTimersByTimeAsync(30_000);await flushPromises();
+  expect(api.proxyPassiveHealth).toHaveBeenCalledTimes(2);
+  expect(api.testResource).not.toHaveBeenCalled();
+  await tabButton(w,'交易所').trigger('click');
+  await vi.advanceTimersByTimeAsync(30_000);
+  expect(api.proxyPassiveHealth).toHaveBeenCalledTimes(2);
+  w.unmount();mounted.splice(mounted.indexOf(w),1);
+  await vi.advanceTimersByTimeAsync(30_000);
+  expect(api.proxyPassiveHealth).toHaveBeenCalledTimes(2);
 });
 
 it('adds a new proxy draft without replacing the existing proxy resource',async()=>{

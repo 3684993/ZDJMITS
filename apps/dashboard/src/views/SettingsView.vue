@@ -910,7 +910,7 @@ onUnmounted(()=>{if(proxyMonitorTimer!==null)window.clearInterval(proxyMonitorTi
                 <div v-if="item.active"><small>最近排队超时</small><strong>{{passiveProxyHealth[item.id]?.lastQueueTimeoutAt?new Date(passiveProxyHealth[item.id].lastQueueTimeoutAt).toLocaleTimeString():'未观察到'}}</strong></div>
               </div>
               <div class="resource-actions">
-                <span class="muted">只读状态每30秒更新，利用现有通信记录，不额外请求币安；“测试连接”才会发起一次真实请求。排队超时不等于代理断线，实时故障以最后一次网络阶段和交易所返回为准。</span>
+                <span class="muted">编辑 → 保存 → 测试 → 激活。当前代理页打开时，只读状态每30秒更新，利用现有通信记录，不额外请求币安；“测试连接”才会发起一次真实请求。排队超时不等于代理断线，实时故障以最后一次网络阶段和交易所返回为准。</span>
                 <div>
                   <button class="button primary" :disabled="!isResourceDirty('proxy',item)" @click="saveResource('proxy',item)">保存资源</button>
                   <button class="button secondary" :disabled="!isResourceDirty('proxy',item)" @click="cancelResourceEdits('proxy')">取消修改</button>

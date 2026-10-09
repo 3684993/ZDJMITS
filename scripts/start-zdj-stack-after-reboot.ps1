@@ -116,6 +116,7 @@ try {
     $settingsTask = New-ScheduledTaskSettingsSet -StartWhenAvailable -ExecutionTimeLimit (New-TimeSpan -Hours 4) -MultipleInstances IgnoreNew
     $principal = New-ScheduledTaskPrincipal -UserId "$env:USERDOMAIN\$env:USERNAME" -LogonType Interactive -RunLevel Limited
     Register-ScheduledTask -TaskName $TaskName -Action $action -Trigger $trigger -Settings $settingsTask -Principal $principal -Description 'Sequential TESTNET model, proxy and fail-closed Engine startup. No automatic retries or restart actions.' | Out-Null
+    & (Join-Path $PSScriptRoot 'set-zdj-scheduled-task-silent.ps1') -TaskName $TaskName -TaskPath '\' -OutputDirectory (Join-Path $env:LOCALAPPDATA 'ZDJMITS\task-launchers') -Apply | Out-Null
     Write-Stage 'TASK_REGISTER' 'PASS' @{ taskName = $TaskName; trigger = 'AtLogOn+30s'; restartOnFailure = $false; action = $action.Arguments }
     return
   }

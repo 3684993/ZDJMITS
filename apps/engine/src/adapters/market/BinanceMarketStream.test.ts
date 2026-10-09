@@ -188,3 +188,27 @@ it('treats a null JSON WS frame as control/other telemetry without throwing',()=
     totalMessages:1,totalByType:{CONTROL_OR_OTHER:{messages:1,decodedBytes:4}}
   });
 });
+
+it('reconciles every event class to lane totals at one snapshot time, including rejected symbols',()=>{
+  vi.useFakeTimers();vi.setSystemTime(1_800_000_000_000);
+  try {
+    const stream=new BinanceMarketStream({} as never,vi.fn());
+    stream.updateSymbols(['BTCUSDT']);
+    const frames=[{e:'bookTicker'},{e:'24hrTicker'},{e:'markPriceUpdate'},{e:'depthUpdate'},
+      {e:'kline'},{e:'aggTrade'},{result:null,id:1},[{e:'bookTicker'},{e:'24hrTicker'}]];
+    for(const lane of ['PUBLIC','MARKET'] as const){
+      for(const frame of frames)(stream as any).onMessage(JSON.stringify(Array.isArray(frame)?frame:{...frame,s:'REJECTEDUSDT'}),lane);
+      (stream as any).onMessage('invalid-json',lane);
+    }
+    const metrics=stream.metrics(),traffic=metrics.streamTraffic as any;
+    for(const lane of ['PUBLIC','MARKET']){
+      const value=traffic[lane],counts=Object.values(value.last60sByType) as any[];
+      expect(Object.keys(value.last60sByType).sort()).toEqual(['BOOK_TICKER','TICKER_24H','MARK_PRICE','DEPTH','KLINE','AGG_TRADE','CONTROL_OR_OTHER','MIXED_OR_OTHER','INVALID_JSON'].sort());
+      expect(counts.reduce((sum,row)=>sum+row.messages,0)).toBe(value.last60sMessages);
+      expect(counts.reduce((sum,row)=>sum+row.decodedBytes,0)).toBe(value.last60sDecodedBytes);
+      expect(value.last60sByType).toEqual(value.totalByType);
+      expect(value.windowAsOf).toBe(metrics.quoteFactFreshness.evaluatedAt);
+    }
+    expect(JSON.stringify(traffic)).not.toContain('REJECTEDUSDT');
+  } finally {vi.useRealTimers();}
+});

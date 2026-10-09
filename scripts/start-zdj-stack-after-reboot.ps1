@@ -84,6 +84,20 @@ function Wait-Model([int]$Port, [string]$Alias, [string]$LaunchScript) {
   } while ([DateTimeOffset]::UtcNow -lt $deadline)
   throw "MODEL_READY_TIMEOUT_NO_RETRY:$Port"
 }
+function Invoke-NodeDiagnostic([string]$Executable, [string]$ScriptPath, [string]$OutputDirectory) {
+  $start = [Diagnostics.ProcessStartInfo]::new()
+  $start.FileName = $Executable
+  $start.Arguments = ('"' + $ScriptPath.Replace('"','\"') + '" --current-only --out-dir "' + $OutputDirectory.Replace('"','\"') + '"')
+  $start.UseShellExecute = $false; $start.CreateNoWindow = $true; $start.RedirectStandardOutput = $true; $start.RedirectStandardError = $true
+  $process = [Diagnostics.Process]::new(); $process.StartInfo = $start
+  if (-not $process.Start()) { throw 'TESTNET_DIAGNOSTIC_PROCESS_START_FAILED' }
+  $stdoutTask = $process.StandardOutput.ReadToEndAsync(); $stderrTask = $process.StandardError.ReadToEndAsync()
+  $process.WaitForExit(); $stdout = $stdoutTask.GetAwaiter().GetResult(); $stderr = $stderrTask.GetAwaiter().GetResult()
+  [IO.File]::WriteAllText((Join-Path $OutputDirectory 'stdout.log'), $stdout, [Text.UTF8Encoding]::new($false))
+  [IO.File]::WriteAllText((Join-Path $OutputDirectory 'stderr.log'), $stderr, [Text.UTF8Encoding]::new($false))
+  if ($stdout) { Write-Host $stdout.TrimEnd() }; if ($stderr) { Write-Host ('DIAGNOSTIC_STDERR: ' + $stderr.Trim()) }
+  $exitCode = [int]$process.ExitCode; $process.Dispose(); return $exitCode
+}
 
 try {
   if ($RegisterAtLogon) {
@@ -141,8 +155,9 @@ try {
   $gateOut = Join-Path $diagnostics ('exchange-gate-' + (Get-Date -Format 'yyyyMMdd-HHmmss'))
   [IO.Directory]::CreateDirectory($gateOut) | Out-Null
   $env:ZDJ_SETTINGS_DB = Join-Path $DataRoot 'zdj-settings.sqlite'
-  & $NodePath (Join-Path $ProjectRoot 'scripts\v398-integrity-current-gate.mjs') --current-only --out-dir $gateOut 2>&1 | Tee-Object -FilePath (Join-Path $gateOut 'stdout.log') | Out-Host
-  $gateExit = $LASTEXITCODE
+  $gateExit = 125
+  try { $gateExit = Invoke-NodeDiagnostic -Executable $NodePath -ScriptPath (Join-Path $ProjectRoot 'scripts\v398-integrity-current-gate.mjs') -OutputDirectory $gateOut }
+  catch { Write-Stage 'TESTNET_TP_DIAGNOSTIC' 'UNKNOWN_DIAGNOSTIC_PROCESS_ERROR' @{ error = $_.Exception.Message; exchangeWrites = 0 } }
   $gatePath = Join-Path $gateOut 'testnet-start-gate.json'
   $gateState = 'UNKNOWN'; $gate = $null
   if (Test-Path $gatePath) { $gate = Get-Content -Raw -LiteralPath $gatePath | ConvertFrom-Json; $gateState = [string]$gate.gate }

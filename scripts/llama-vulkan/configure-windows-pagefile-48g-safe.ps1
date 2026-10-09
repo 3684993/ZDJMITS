@@ -76,7 +76,7 @@ if($Mode -eq 'Verify'){
        $before.commitFreeGiB -lt 70){
        Write-Warning 'PAGEFILE_VERIFY_BLOCKED: no model start permitted. Check after Windows reboot; inspect settings and current commit.'
        Write-LocalReceipt -Name 'pagefile-verify-failed' -Payload $before
-       return
+       throw 'PAGEFILE_VERIFY_BLOCKED: STOP; do not start any model'
     }
     Write-Host 'PAGEFILE_VERIFY_PASS: C fixed48GiB + D system-managed; host free-commit>=70GiB'
     Write-LocalReceipt -Name 'pagefile-verify-pass' -Payload $before

@@ -8,6 +8,7 @@ $files=@(
  'start-qwen3.8-27b-harness-vulkan1.ps1',
  'start-qwen3.5-9b-vulkan.ps1',
  'measure-memory-handles-readonly.ps1',
+ 'maintenance-preflight-readonly.ps1',
  'ZDJ-memory-first-check.ps1'
 )
 $errorsFound=0

@@ -161,7 +161,7 @@ try {
   $gatePath = Join-Path $gateOut 'testnet-start-gate.json'
   $gateState = 'UNKNOWN'; $gate = $null
   if (Test-Path $gatePath) { $gate = Get-Content -Raw -LiteralPath $gatePath | ConvertFrom-Json; $gateState = [string]$gate.gate }
-  Write-Stage 'TESTNET_TP_DIAGNOSTIC' 'TP_UNVERIFIED_ENGINE_START_ALLOWED' @{ diagnosticState = $gateState; helperExit = $gateExit; evidence = $gatePath; nonzeroPositions = if ($gate) { $gate.nonzeroPositions } else { $null }; uncoveredPositions = if ($gate) { @($gate.uncoveredPositions).Count } else { $null }; entryAdmission = 'DISABLED_UNTIL_TP_IDENTITY_REVIEW'; exchangeWrites = 'EXISTING_DURABLE_GUARDS_ONLY' }
+  Write-Stage 'TESTNET_TP_DIAGNOSTIC' 'TP_UNVERIFIED_ENGINE_START_ALLOWED' @{ diagnosticState = $gateState; helperExit = $gateExit; evidence = $gatePath; nonzeroPositions = if ($gate) { $gate.nonzeroPositions } else { $null }; candidateProtectionMatches = if ($gate) { $gate.candidateProtectionMatches } else { $null }; assessment = if ($gate) { $gate.protectionAssessment } else { 'UNVERIFIED' }; entryAdmission = 'DISABLED_UNTIL_TP_IDENTITY_REVIEW'; exchangeWrites = 'EXISTING_DURABLE_GUARDS_ONLY' }
 
   if (-not (Test-Path -LiteralPath (Join-Path $ProjectRoot 'apps\engine\dist\main.js'))) { throw 'BUILT_ENGINE_ENTRYPOINT_MISSING' }
   $head = (& git -C $ProjectRoot rev-parse HEAD).Trim()

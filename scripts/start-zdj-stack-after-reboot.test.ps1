@@ -31,4 +31,5 @@ node --check $helper
 if ($LASTEXITCODE -ne 0) { throw 'CURRENT_GATE_SYNTAX_FAILED' }
 if ($helperSource.Contains("method: 'POST'") -or $helperSource -match 'method\s*:\s*[''\"]?(POST|PUT|PATCH|DELETE)') { throw 'CURRENT_GATE_MUST_REMAIN_READ_ONLY' }
 if ($source -match 'ENGINE_BLOCKED_ACCOUNT_PROTECTION_GATE') { throw 'TP_STATE_MUST_NOT_BLOCK_ENGINE_START' }
+if ($source -match 'gate\.uncoveredPositions') { throw 'TP_DIAGNOSTIC_SUMMARY_REFERENCES_REMOVED_HEURISTIC_FIELD' }
 Write-Output 'start-zdj-stack-after-reboot.test.ps1 PASS'

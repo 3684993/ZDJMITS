@@ -93,8 +93,14 @@ $dLive=@($livePagefiles|Where-Object {[string]$_.Name -ieq 'D:\pagefile.sys'})
 if($cLive.Count -ne 0 -or $cSettings.Count -ne 0){
     throw 'C_PAGEFILE_ALREADY_CONFIGURED: do not overwrite unknown configuration'
 }
-if($dLive.Count -ne 1 -or $dSettings.Count -gt 1){
-    throw 'D_PAGEFILE_EXPECTED_SINGLE: no changes performed'
+if($dLive.Count -ne 1 -or $dSettings.Count -gt 0){
+    throw 'D_PAGEFILE_BASELINE_NOT_AUTOMATIC: no changes performed'
+}
+# Previous failed Apply must have restored the exact original auto-managed baseline.
+if(@($before.pagefileSettings).Count -ne 0 -or
+   @($before.registryPagingFiles).Count -ne 1 -or
+   [string]$before.registryPagingFiles[0] -ine '?:\pagefile.sys'){
+    throw 'PREVIOUS_PAGEFILE_ROLLBACK_UNVERIFIED: require auto wildcard and zero explicit settings; no change performed'
 }
 if(-not $before.automaticManaged) {
     throw 'CUSTOM_PAGEFILE_LAYOUT_ALREADY_ACTIVE: inspect actual config before editing'
@@ -102,7 +108,8 @@ if(-not $before.automaticManaged) {
 if($before.cFreeGiB -lt 48+$KeepCFreeGiB -or $before.dFreeGiB -lt $KeepDFreeGiB){
     throw ("DISK_SPACE_GUARD: require C free>=64GiB and D free>=16GiB; currently C={0:N2} D={1:N2}" -f $before.cFreeGiB,$before.dFreeGiB)
 }
-Write-Host 'PLAN: switch global automatic pagefile flag OFF; keep D:\pagefile.sys via explicit System-managed (0/0); add C:\pagefile.sys fixed 49152/49152 MiB.'
+Write-Host 'PAGEFILE_AUTO_BASELINE_VERIFIED: wildcard registry config, zero explicit entries, runtime D pagefile present.'
+Write-Host 'PLAN: disable global auto flag; keep D: as 0/0; convert WMI-generated C: from 0/0 to fixed 49152/49152 MiB.'
 Write-Host 'PLAN: existing runtime pagefiles remain until user performs an OS restart; preserve crash dump configuration (do not edit CrashControl).'
 Write-Host ("ESTIMATED HOST FREE COMMIT AFTER REBOOT IF USAGE IS UNCHANGED: ~{0:N2}GiB; ACTUAL VALUE MUST BE MEASURED" -f ($before.commitFreeGiB+48))
 Write-LocalReceipt -Name 'pagefile-before' -Payload $before
@@ -118,8 +125,11 @@ $beforeWrite=Get-Snapshot
 if(-not $beforeWrite.automaticManaged -or
    $beforeWrite.cFreeGiB -lt 48+$KeepCFreeGiB -or
    @($beforeWrite.actualPagefiles).Count -ne 1 -or
-   [string]$beforeWrite.actualPagefiles[0].Name -ine 'D:\pagefile.sys'){
-    throw 'CONFIG_CHANGED_SINCE_PLAN: no changes performed'
+   [string]$beforeWrite.actualPagefiles[0].Name -ine 'D:\pagefile.sys' -or
+   @($beforeWrite.pagefileSettings).Count -ne 0 -or
+   @($beforeWrite.registryPagingFiles).Count -ne 1 -or
+   [string]$beforeWrite.registryPagingFiles[0] -ine '?:\pagefile.sys'){
+    throw 'CONFIG_CHANGED_SINCE_PLAN: automatic pagefile baseline not intact; no change performed'
 }
 $changedAuto=$false
 $addedD=$false

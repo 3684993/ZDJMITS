@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 import { AiRunSchema, EntryDecisionV370Schema, EntryDecisionJsonSchema, ScoutAnnotationJsonSchema, BrainDecisionSchema, ScoutAnnotationSchema, type AiResource, type AiRun, type BrainDecision, type EntryIntelligencePacket, type ScoutAnnotation } from '@zdj/contracts';
-import { buildCompactBrainPrompt, buildScoutPrompt, compactFactIds, clamp, uid } from '@zdj/core';
+import { buildCompactBrainPrompt, buildScoutPrompt, compactFactIds, clamp, uid, testnetFundsOnlyEntry } from '@zdj/core';
 import { AiRequestError, OpenAiCompatibleClient, parseSingleJsonDecision } from '../adapters/ai/OpenAiCompatibleClient.js';
 import type { RuntimeState } from '../state/runtimeState.js';
 import type { EventBus } from '../events/eventBus.js';
@@ -10,6 +10,7 @@ import { normalizeAiProtocol, type ProtocolNormalization } from './aiProtocolNor
 import type {ExternalIntelligenceSnapshot} from './externalIntelligenceService.js';
 import {buildExternalResearchPrompt,externalResearchJsonSchema,verifyExternalResearch,materializeExternalResearch} from './externalResearchQuality.js';
 import {buildPositionReviewPrompt,parsePositionReview,type PositionReviewRequest,type PositionReviewVerdict} from './positionReviewPrompt.js';
+import {materializePrimaryChoice,primaryChoiceJsonSchema} from './primaryCandidateChoice.js';
 
 interface ResourceLoad {
   active:number; totalRuns:number; failures:number; lastLatencyMs:number|null;
@@ -38,7 +39,7 @@ export function fifteenMinuteDirection(packet:EntryIntelligencePacket):'LONG'|'S
 }
 
 export function entryDecisionParse(value:unknown,packet:EntryIntelligencePacket):BrainDecision {
-  const normalized=normalizeAiProtocol(value,['confidence']);
+  const normalized=normalizeAiProtocol(materializePrimaryChoice(value,packet),['confidence']);
   const raw:any={...(normalized.value as any)}, legacyDirection=raw.direction, place=String(raw.decision??'').startsWith('PLACE_');
   raw.tradeSide=raw.tradeSide??(place?(legacyDirection??String(raw.decision).replace('PLACE_','')):null);
   raw.selectedCandidateId=place?(raw.selectedCandidateId??null):null;
@@ -324,7 +325,7 @@ export class AiFabric {
     finally{load.active=Math.max(0,load.active-1);if(!load.active){load.currentSymbol=null;load.currentRunId=null;load.currentStartedAt=null;}resource.status=load.active?'BUSY':'ONLINE';}
   }
   private async primaryOnce(packet:EntryIntelligencePacket,scout:ScoutAnnotation|null,excludeId?:string,role:'PRIMARY_BRAIN'|'REVIEW_BRAIN'='PRIMARY_BRAIN',extra:Record<string,unknown>={},queueMs=0):Promise<{decision:BrainDecision;run:AiRun;resource:AiResource}>{
-    const resource=this.choose('PRIMARY_BRAIN',excludeId);if(this.primaryCircuitState==='OPEN'||this.primaryCircuitState==='PROBING')throw new Error('AI_PRIMARY_CIRCUIT_OPEN');let result=await this.run({resource,symbol:packet.symbol,packet,role,prompt:buildCompactBrainPrompt(packet,extra.confirmation,(packet as any).externalContext,scout),schemaName:'EntryDecisionV392',parse:value=>entryDecisionParse(value,packet),queueMs}),decision=result.value;
+    const resource=this.choose('PRIMARY_BRAIN',excludeId),candidateChoice=testnetFundsOnlyEntry(this.state.settings);if(this.primaryCircuitState==='OPEN'||this.primaryCircuitState==='PROBING')throw new Error('AI_PRIMARY_CIRCUIT_OPEN');let result=await this.run({resource,symbol:packet.symbol,packet,role,prompt:buildCompactBrainPrompt(packet,extra.confirmation,(packet as any).externalContext,scout,candidateChoice),schemaName:'EntryDecisionV392',jsonSchema:candidateChoice?primaryChoiceJsonSchema(packet):EntryDecisionJsonSchema,parse:value=>entryDecisionParse(value,packet),queueMs}),decision=result.value;
     if(decision.action!=='FINAL')throw new Error('AI_PROTOCOL_INCOMPLETE: evidence request did not converge to FINAL');
     const raw=rawIntent(result.run.outputPreview),stored=this.state.aiRuns.find(x=>x.id===result.run.id),rawDirection=typeof raw?.direction==='string'?raw.direction.toUpperCase():null,rawAction=typeof raw?.action==='string'?raw.action:null,rawDecision=typeof raw?.decision==='string'?raw.decision:['PLACE_LONG','PLACE_SHORT','REJECT_CANDIDATE'].includes(rawAction??'')?rawAction:null,parserRepaired=rawDirection!==decision.direction||rawDecision!==decision.decision;
     Object.assign(result.run,{direction:decision.direction,decision:decision.decision,rawDirection,rawDecision,normalizedPreview:redactAudit(decision,50000),parserRepaired});if(stored)Object.assign(stored,result.run);

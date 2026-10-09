@@ -1,0 +1,94 @@
+{
+  "validatedAt": "2026-10-09T11:24:05.013Z",
+  "baseCommit": "7c9c94e9807c8c8ab1a9e0c8b205e391974493ec",
+  "branch": "codex/v398-primary-cadence-fix-20261009",
+  "fullVerify": {
+    "command": "npm run verify",
+    "exitCode": 0,
+    "logSha256": "df23694c37a99a70ef0e940200cd670fe5ab680661248243ebc5daa7d6dbdc9e",
+    "workerEnvironment": {
+      "VITEST_MAX_THREADS": 1,
+      "VITEST_MIN_THREADS": 1,
+      "VITEST_MAX_FORKS": 1,
+      "VITEST_MIN_FORKS": 1
+    },
+    "gates": [
+      "verify:deps",
+      "verify:scripts",
+      "verify:release",
+      "verify:s00",
+      "typecheck",
+      "build",
+      "test"
+    ],
+    "workspaces": {
+      "contracts": {
+        "files": 1,
+        "tests": 2
+      },
+      "dashboard": {
+        "files": 9,
+        "tests": 62
+      },
+      "core": {
+        "files": 25,
+        "tests": 126
+      },
+      "engine": {
+        "files": 216,
+        "tests": 1938
+      }
+    },
+    "testFiles": 251,
+    "tests": 2128,
+    "failed": 0,
+    "s00Entrypoints": 191,
+    "hostedCI": "NOT_REQUESTED_OR_AWAITED"
+  },
+  "historicalReplay": {
+    "runs": 17,
+    "accepted": 15,
+    "rejected": 2,
+    "rawModelContentUsed": true,
+    "originalFailuresRemainRejected": true,
+    "modelCalls": 0,
+    "exchangeWrites": 0,
+    "liveStateWrites": 0
+  },
+  "runtimeRecheck": {
+    "observedAtUtc": "2026-10-09T11:16:55.1417513Z",
+    "status": "READY",
+    "ready": true,
+    "pid": 18100,
+    "instanceId": "65185f71-b336-4f6f-8149-cafe90f5e160",
+    "buildId": "3.9.8-6cd926abca3eec24392e",
+    "restartCount": 279,
+    "uptimeMs": 15142556
+  },
+  "boundaries": {
+    "deployment": "NOT_PERFORMED",
+    "engineModelProxyLifecycleActions": 0,
+    "liveSettingsSQLiteWERModified": false,
+    "mainPromoted": false,
+    "threeToFiveMinuteAcceptance": "UNKNOWN_NOT_DEPLOYED",
+    "oldOriginJournalBackfill": "NOT_PERFORMED_REQUIRES_EXACT_IDENTITY_AND_CONSERVATION_PROOF"
+  },
+  "sourceSha256": {
+    "apps/engine/src/services/aiFabric.ts": "19010dfe52e8c57f250c36b7cfb8ea182378e1e1e091d2bf87ce71660d1eafc6",
+    "apps/engine/src/services/entryCoordinator.ts": "c6e5422c52247b5afa7ee7e6d2cd0c6fff8d4b6d828d542dbf8a1c2001c922e2",
+    "apps/engine/src/services/preAiExecutionEnvelope.ts": "9b6e62d6baa156717c4a0b990d1bec942637980baa98ae873d3c7eab36401ac6",
+    "apps/engine/src/services/quantityHorizonCandidates.ts": "9e758569ccd77cef1f061b3d72becb02d91f7d418f9efc118eaa306d09b5cf63",
+    "apps/engine/src/services/v370Contract.test.ts": "5e58171eec7dfca6d64a3ee1cd5f091af22d3100d00697668c46d581aaff7ee5",
+    "apps/engine/src/services/effectivePrimaryCadence.ts": "8b1a2a5cdbfdc6a775f7ae0feadc16b9504e064b36953aacb70aa239530bef91",
+    "apps/engine/src/services/effectivePrimaryCadence.test.ts": "085d75a64aa259d9033dfd2b64faa4e6f1c1e5e337da9aa01b1398cf7a1620b1",
+    "apps/engine/src/services/entryLeverageFacts.ts": "1431d8d27c90e2a11387ce92e7f7c7e124a176a1e4669177e25cf00b2a2b200c",
+    "apps/engine/src/services/entryLeverageFacts.test.ts": "1021bdb9991146c3fad49b227f915210ffbc96734d4acd148794546427b03080",
+    "apps/engine/src/services/primaryCadenceDispatch.test.ts": "1438a2b11d8e4be2e3186f2bf9b3f2a13cfe0845aa7f03bf29856b1ab0d6d0dd",
+    "apps/engine/src/services/primaryCandidateChoice.ts": "f1ba879ce0df78cad7d4f38770173930fb4270ea16f1712e582dfed6339dd86b",
+    "apps/engine/src/services/primaryCandidateChoice.test.ts": "89d1931b534f3d9368d804bcc4637b3d222cdc37bdc83a03d5570720a2a18788",
+    "packages/core/src/compactEntry.ts": "c39e1745d67d6a45cedbda561220eba37a5eee9e63249830f61e3e1cfd107bc1",
+    "packages/core/src/pool.ts": "403f867b4e68865971785ba4ced9ddfa36d3e03d3185b164ac0f7c2250357d20",
+    "packages/core/src/pool.test.ts": "438d2ec6c4513c4457f92f0126a682899ee528abf845e9a345fcf4485fc5eeb8",
+    "scripts/v398-primary-cadence-replay.ts": "8a383067df1dfafc0f2aeb9d18cd58b12270db12134c8bdb696aebc6cee95e90"
+  }
+}

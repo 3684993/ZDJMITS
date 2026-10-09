@@ -1,6 +1,7 @@
 import { testnetFundsOnlyEntry } from '@zdj/core';
 import { resolveQuoteAsset, resolveUnderlying } from '@zdj/core';
 import type { RuntimeState } from '../state/runtimeState.js';
+import {entryLeverageTiers} from './entryLeverageFacts.js';
 import { collectPendingEntryRiskExposures, entryOrderOccupiesRisk } from './entryRiskOccupancy.js';
 import { computeExecutableRiskHeadroom } from './riskReadiness.js';
 import { activeExecutionLeaseMargin } from './executionLease.js';
@@ -95,7 +96,7 @@ export function buildPreAiExecutionEnvelope(state:RuntimeState,symbol:string,now
   const q=market.quote,quoteAsset=resolveQuoteAsset(symbol),underlying=resolveUnderlying(symbol),candidate:any=state.universe.find((row:any)=>row.symbol===symbol),p=state.settings.portfolioIntelligence;
   const equityUsd=Number(state.account.equityUsd??0),availableBalance=Number(state.account.assets.find((asset:any)=>asset.asset===quoteAsset)?.availableBalance??0);
   const activeReservations=[...state.entryReservations.values()].filter((row:any)=>['RESERVED','WORKING'].includes(row.status)&&Number(row.expiresAt)>now&&row.quoteAsset===quoteAsset);
-  const leverageTiers=state.marginTierCoverage?.tiersBySymbol?.[symbol]??[],fundsOnlyPolicy=testnetFundsOnlyEntry(state.settings),
+  const leverageTiers=testnetFundsOnlyEntry(state.settings)?entryLeverageTiers(state,symbol,now):state.marginTierCoverage?.tiersBySymbol?.[symbol]??[],fundsOnlyPolicy=testnetFundsOnlyEntry(state.settings),
     exchangeMaximum=leverageTiers[0]?.initialLeverage??(state.settings.connections.executionMode==='TESTNET_ENABLED'?0:Number(p.globalMaxLeverage??0)),
     leverageOptions=leverageChoices(Number(p.globalMaxLeverage??0),exchangeMaximum),
     leverage0=fundsOnlyPolicy?Math.max(1,leverageOptions.at(-1)??0):Math.min(Number(p.globalMaxLeverage??1),Number(candidate?.recommendedLeverage??p.globalMaxLeverage??1)),

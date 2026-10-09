@@ -42,6 +42,8 @@ import { acquireExecutionLease, releaseExecutionLease, validateExecutionLease } 
 import { frozenAllocationPrice, materializeCandidateQuantityAllocation } from './aiQuantityAllocation.js';
 import { buildHistoricalTpReachability } from './historicalTpReachability.js';
 import {noAddEnabled,noSeparateAddBlock} from './noSeparateAdd.js';
+import {EntryLeverageFactRecovery} from './entryLeverageFacts.js';
+import {EffectivePrimaryCadence,primaryFailureClass} from './effectivePrimaryCadence.js';
 
 /** How long the latest deterministic admission refusal may still be called the current first cause. */
 export const RISK_ADMISSION_VERDICT_TTL_MS = 5 * 60_000;
@@ -56,6 +58,10 @@ export class EntryCoordinator {
   private pendingReviewLastAt=new Map<string,number>();
   private exactOrderQueryLastAt=new Map<string,number>();
   private lastDispatched=new Map<string,number>();
+  private leverageRecovery:EntryLeverageFactRecovery|null=null;
+  private effectiveCadence=new EffectivePrimaryCadence();
+  private lastFunnelAt=0;
+  private dispatchFunnel:{evaluatedAt:number;ranked:number;preflightReady:number;poolReady:number;blockers:Record<string,number>;symbols:Array<{symbol:string;firstBlocker:string|null;LONG:string|null;SHORT:string|null}>}|null=null;
   constructor(
     private state: RuntimeState,
     private eip: EipService,
@@ -130,6 +136,7 @@ export class EntryCoordinator {
     return{entryExecutionPolicy:entryStartupPolicy(this.state.settings),mode:this.analysisOnly()?'ANALYSIS_ONLY':'EXECUTION_ENABLED',...f,reason,schedulerStatus,schedulerCycle:this.schedulerCycle,instanceId:this.schedulerInstanceId,
       heartbeatAt:f.lastTickAt,heartbeatAgeMs,nextEvaluationAt:f.lastTickAt===null?null:f.lastTickAt+ANALYSIS_SCHEDULER_TICK_INTERVAL_MS,suppression:this.lastSuppression,capitalExecutableCount:capital,
       active:this.active.size,primaryDispatchAgeMs:now-(f.lastRequestAt??this.analysisStartedAt),primarySuccessAgeMs:now-(f.lastSuccessAt??this.analysisStartedAt),silenceMs:now-(f.lastSuccessAt??this.analysisStartedAt),observationStartedAt:this.analysisStartedAt,
+      dispatchFunnel:this.dispatchFunnel,effectiveCadence:this.effectiveCadence.projection(now),
       execution:{intent:gate?.intent??false,ready:gate?.ready??true,blockers:gate?.blockers??[],firstBlocker:gate?.firstBlocker??null,lastReadyAt:gate?.lastReadyAt||null,readinessText:gate?.text??null},
       text:`${schedulerStatus==='RUNNING'?'RUNNING':'STALLED'} · ${reason}`};
   }
@@ -166,6 +173,8 @@ export class EntryCoordinator {
       return;
     }
     const now = Date.now();
+    this.leverageRecovery??=new EntryLeverageFactRecovery(this.state,this.exchange,this.events);
+    void this.leverageRecovery.refreshMissing(now);
     for(const [symbol,row] of this.state.candidateLifecycle) {
       if(row?.status!=='WAIT_FOR_PRICE'||!row.waitContext)continue;
       const market=this.state.snapshots.get(symbol);if(!market)continue;
@@ -180,27 +189,34 @@ export class EntryCoordinator {
     for (const [symbol, row] of this.state.rejectionCooldown)
       if (row.until <= now) {
         const lifecycle=this.state.candidateLifecycle.get(symbol);
-        if(!lifecycle?.decisionContextKey||lifecycle.decisionContextKey!==this.currentDecisionContext(symbol,lifecycle.confirmation)){
+        const failed=['AI_FAILURE_COOLDOWN','QUARANTINED'].includes(lifecycle?.status);
+        if(failed||!lifecycle?.decisionContextKey||lifecycle.decisionContextKey!==this.currentDecisionContext(symbol,lifecycle.confirmation)){
           this.state.rejectionCooldown.delete(symbol);
-          this.transition(symbol, "READY", "DECISION_CONTEXT_CHANGED");
+          this.transition(symbol, "READY", failed?'FAILED_ANALYSIS_RETRY_DUE':"DECISION_CONTEXT_CHANGED",failed?{decisionContextKey:null,noEdgeReview:null,nextReviewAt:null}:{});
         }
       }
     const pending = this.state.operationalEntrySymbols().size,
       routes = new Map(this.state.runtimeControl.capital.routedCandidates.map(item=>[item.symbol,item]));
-    this.state.pool.refreshReadyView(new Set(this.state.universe.filter((candidate:any)=>candidate.eligible&&candidate.pipelineEligible!==false&&this.objectiveCapacity(candidate.symbol)).map((candidate:any)=>candidate.symbol)));
+    const assessments=this.state.universe.filter((candidate:any)=>candidate.eligible&&candidate.rank>0&&candidate.pipelineEligible!==false).map((candidate:any)=>{
+      const symbol=candidate.symbol;let LONG:string|null=null,SHORT:string|null=null,firstBlocker:string|null=null;
+      try{const envelope=buildPreAiExecutionEnvelope(this.state,symbol,now);LONG=envelope.LONG.executable?null:envelope.LONG.firstBindingConstraint??'NO_OBJECTIVE_EXECUTION_CAPACITY';SHORT=envelope.SHORT.executable?null:envelope.SHORT.firstBindingConstraint??'NO_OBJECTIVE_EXECUTION_CAPACITY';if(LONG&&SHORT)firstBlocker=LONG===SHORT?LONG:'BOTH_SIDES_NOT_EXECUTABLE';}
+      catch(error){firstBlocker=error instanceof Error?error.message:'EXECUTION_ENVELOPE_UNAVAILABLE';}
+      firstBlocker??=!this.eipDependenciesPresent(symbol)?'EIP_DEPENDENCY_MISSING':this.primaryOccupancyBlock(symbol);
+      firstBlocker??=this.active.has(symbol)?'PRIMARY_ACTIVE':this.state.rejectionCooldown.has(symbol)?'CANDIDATE_COOLDOWN':!this.lifecycleRunnable(symbol)?'LIFECYCLE_WAITING_NEW_FACTS':null;
+      if(!firstBlocker){const reasons=this.market?.primaryReadyReasons(symbol)??[];firstBlocker=reasons[0]??null;}
+      return{symbol,firstBlocker,LONG,SHORT};
+    });
+    const dispatchable=new Set(assessments.filter(x=>!x.firstBlocker).map(x=>x.symbol));
+    this.state.pool.replenish(this.state.universe,now,dispatchable);
+    this.state.pool.refreshReadyView(dispatchable);
+    this.dispatchFunnel={evaluatedAt:now,ranked:assessments.length,preflightReady:dispatchable.size,poolReady:this.state.pool.readyList().length,blockers:assessments.reduce((counts:Record<string,number>,x)=>{if(x.firstBlocker)counts[x.firstBlocker]=(counts[x.firstBlocker]??0)+1;return counts;},{}),symbols:assessments};
+    this.effectiveCadence.evaluate(dispatchable.size,now);
+    if(now-this.lastFunnelAt>=30_000){this.lastFunnelAt=now;this.events.publish('PRIMARY_DISPATCH_FUNNEL',{...this.dispatchFunnel,instanceId:this.schedulerInstanceId,schedulerCycle:this.schedulerCycle,eligibilityLevel:'PREFLIGHT_ONLY_CANDIDATE_SET_VERIFIED_AT_DISPATCH'},undefined);}
     const ready = this.state.pool
         .readyList()
         .filter(
           (x) => {
-            const directionExecutable=this.objectiveCapacity(x.symbol);
-            if(!directionExecutable)this.events.publish('PRIMARY_SKIPPED_EXECUTION_CAPACITY',{reason:'NO_OBJECTIVE_EXECUTION_CAPACITY',primaryRequested:false},x.symbol);
-            return x.state === "READY" &&
-            (this.analysisOnly()||directionExecutable) &&
-            this.eipDependenciesPresent(x.symbol) &&
-            !this.primaryOccupancyBlock(x.symbol) &&
-            !this.active.has(x.symbol) &&
-            !this.state.rejectionCooldown.has(x.symbol) &&
-            this.lifecycleRunnable(x.symbol);
+            return x.state === "READY" && dispatchable.has(x.symbol);
           },
         ).sort((a,b)=>(this.lastDispatched.get(a.symbol)??0)-(this.lastDispatched.get(b.symbol)??0)||this.primaryReadinessScore(b.symbol,b.score)-this.primaryReadinessScore(a.symbol,a.score)||a.symbol.localeCompare(b.symbol));
     if (!this.analysisOnly()&&!testnetFundsOnlyEntry(this.state.settings)&&pending >= this.state.settings.portfolio.maxPendingEntries) {
@@ -237,13 +253,14 @@ export class EntryCoordinator {
       // two different facts, and only the first one decides whether "no runnable candidate" is the truth.
       const gateDeniesNewRisk = capacity.admission?.exhausted === true;
       const capacityBlocked = demand && (executable === 0 || gateDeniesNewRisk) && capacity.exhaustedForNewRisk;
-      const reason = capacityBlocked || !routes.size ? 'WAITING_EXECUTION_CAPACITY' : this.state.pool.readyList().length ? 'WAITING_NEW_FACTS' : 'WAITING_CANDIDATE';
-      this.noteDispatchSuppressed({reason,candidateCount:routes.size||this.state.pool.readyList().length,capacityStatus:capacity.admission?.status??capacity.exhaustedReason??'ROUTES_PRESENT',authoritativeBlocker:capacity.admission?.code??capacity.entryCapacity?.LONG?.firstBindingConstraint??capacity.entryCapacity?.SHORT?.firstBindingConstraint??null});
+      const reason = capacityBlocked ? 'WAITING_EXECUTION_CAPACITY' : assessments.length?'NO_ELIGIBLE_CANDIDATE':'WAITING_CANDIDATE';
+      const firstBlocker=Object.entries(this.dispatchFunnel.blockers).sort((a,b)=>b[1]-a[1])[0]?.[0]??null;
+      this.noteDispatchSuppressed({reason,candidateCount:assessments.length,capacityStatus:capacity.admission?.status??capacity.exhaustedReason??'ROUTES_PRESENT',authoritativeBlocker:firstBlocker??capacity.admission?.code??null});
       const usd = (value: number) => `$${value.toFixed(2)}`;
       const nextStep = capacityBlocked
         ? `新增风险额度已用尽：${gateDeniesNewRisk ? `确定性风险门 ${capacity.admission.code}（${capacity.admission.detail ?? '任意名义均拒'}；当前两侧可新增 ${capacity.admission.ceilingUsdBySide?usd(Math.min(capacity.admission.ceilingUsdBySide.LONG, capacity.admission.ceilingUsdBySide.SHORT)):'未给出权威上限'}）` : capacity.exhaustedReason === 'BOTH_DIRECTIONS' ? 'LONG 与 SHORT 双向额度均满' : capacity.exhaustedReason}（首因 ${capacity.entryCapacity.LONG.firstBindingConstraint}/${capacity.entryCapacity.SHORT.firstBindingConstraint}，槽位 ${capacity.limits.slots.used}/${capacity.limits.slots.max}；组合名义 ${usd(capacity.exposure.gross.notionalUsd)}，其政策为 ${capacity.exposure.gross.mode}）；继续供给与订单维护`
         : reason === 'WAITING_EXECUTION_CAPACITY' ? '当前无资本可执行路由；继续供给与订单维护'
-        : reason === 'WAITING_NEW_FACTS' ? '等待新的候选事实，避免重复推理'
+        : reason === 'NO_ELIGIBLE_CANDIDATE' ? `当前无可派发候选：${firstBlocker??'NO_PREFLIGHT_CANDIDATE'}；等待真实事实恢复`
         : '暂无可派发候选；继续供给与订单维护';
       this.ai.setIdleContext(reason, 0, nextStep);
       return;
@@ -476,7 +493,7 @@ export class EntryCoordinator {
     this.events.publish('ENTRY_EXECUTION_WAIT_TERMINATED',{intentId:intent?.id??row?.executionWait?.intentId,brainRunId:intent?.brainRunId??row?.runId,reason,terminalStage:'ENTRY_EXECUTION_WAIT_TERMINATED',entryOrderCreated:Boolean(order),exchangeOrderId:order?.exchangeOrderId??null,actual:{bid:market?.quote.bid??null,ask:market?.quote.ask??null,mark:market?.quote.mark??null,availableQuote:intent?.allocationPlan?.quoteAsset?this.state.account.assets.find((x:any)=>x.asset===intent.allocationPlan?.quoteAsset)?.availableBalance??null:null},limit:{acceptablePriceRange:intent?.acceptablePriceRange??row?.executionWait?.acceptablePriceRange??null,authorizationExpiresAt:intent?.aiAuthorizationExpiresAt??row?.executionWait?.expiresAt??null}},symbol);
   }
   private completeExecutionWait(symbol:string,intent:EntryIntent,reservation:any,placed:EntryOrder,recovered=false){
-    const terminal=['FILLED','CANCELED','EXPIRED','REJECTED'].includes(placed.status);if(terminal)this.state.releaseEntryReservation(reservation.id);else this.state.markEntryReservationWorking(reservation.id,reservation.intentId);this.state.entryOrders.set(placed.id,placed);this.journal?.save({intent,order:placed});this.transition(symbol,placed.status==='FILLED'?'POSITION_OPEN':terminal?'READY':'ENTRY_WORKING',recovered?'EXECUTION_SUBMISSION_RECOVERED':'EXECUTION_RANGE_REACHED',{runId:intent.brainRunId,executionWait:null});this.state.pool.remove(symbol);this.events.publish('ENTRY_ORDER_CREATED',{order:placed,intent,brainRunId:intent.brainRunId,decisionChainId:intent.brainRunId,resumedFrom:'WAIT_EXECUTION_RANGE',recovered},symbol);
+    this.journal?.save({intent,order:placed});const terminal=['FILLED','CANCELED','EXPIRED','REJECTED'].includes(placed.status);if(terminal)this.state.releaseEntryReservation(reservation.id);else this.state.markEntryReservationWorking(reservation.id,reservation.intentId);this.state.entryOrders.set(placed.id,placed);this.transition(symbol,placed.status==='FILLED'?'POSITION_OPEN':terminal?'READY':'ENTRY_WORKING',recovered?'EXECUTION_SUBMISSION_RECOVERED':'EXECUTION_RANGE_REACHED',{runId:intent.brainRunId,executionWait:null});this.state.pool.remove(symbol);this.events.publish('ENTRY_ORDER_CREATED',{order:placed,intent,brainRunId:intent.brainRunId,decisionChainId:intent.brainRunId,resumedFrom:'WAIT_EXECUTION_RANGE',recovered},symbol);
   }
   private async resumeExecutionWaits(now:number){
     for(const [symbol,row] of this.state.candidateLifecycle){
@@ -610,10 +627,21 @@ export class EntryCoordinator {
       }
       if(opportunity)this.events.publish('TRADING_QUALITY_PRIMARY_LINK',{runId:result.runId,packetId:packet.packetId,opportunity,decision:result.decision},symbol);
 
-      this.transition(symbol,'PRIMARY_COMPLETED','PRIMARY_TERMINAL',{confirmation:null,runId:result.runId,decisionContextKey:contextKey,lastDecision:result.decision.decision,nextReviewAt:nextClosedFiveMinute()});
+      this.transition(symbol,'PRIMARY_COMPLETED','PRIMARY_TERMINAL',{confirmation:null,noEdgeReview:null,failureCount:0,runId:result.runId,decisionContextKey:contextKey,lastDecision:result.decision.decision,nextReviewAt:nextClosedFiveMinute()});
       terminalRunId=result.runId;
       const d = result.decision;
-      this.analysisFacts.lastSuccessAt=Date.now();
+      const outcomeSide=d.decision==='PLACE_LONG'?'LONG':d.decision==='PLACE_SHORT'?'SHORT':null;
+      const outcomeCandidate=outcomeSide?candidateSets?.[outcomeSide]?.candidates.find(row=>row.candidateId===d.selectedCandidateId):null;
+      const outcomeRange=outcomeCandidate?.sizingProof?.executableEntryRange??d.acceptablePriceRange;
+      const effective=!['DATA_ERROR','AI_OUTPUT_INVALID'].includes(String(d.decision))&&(!outcomeSide||Boolean(
+        outcomeCandidate?.executable&&executionEnvelope[outcomeSide].executable&&Number.isFinite(d.idealPrice)&&outcomeRange&&
+        d.idealPrice!>=outcomeRange.min&&d.idealPrice!<=outcomeRange.max&&
+        d.profitTakePlan?.targetPrice===outcomeCandidate.targetPrice&&d.profitTakePlan?.targetHorizonMinutes===outcomeCandidate.targetHorizonMinutes&&
+        d.profitTakePlan?.acceptableTargetRange.min===outcomeCandidate.acceptableTargetRange.min&&d.profitTakePlan?.acceptableTargetRange.max===outcomeCandidate.acceptableTargetRange.max));
+      const classification=!effective&&outcomeSide?'FROZEN_CHOICE_INVALID':String(d.decision);
+      this.effectiveCadence.outcome(symbol,classification,effective);
+      this.events.publish('PRIMARY_ANALYSIS_OUTCOME',{runId:result.runId,classification,effective,entrySubmitted:false},symbol);
+      if(effective)this.analysisFacts.lastSuccessAt=Date.now();
       if(this.analysisOnly()){
         this.completeReadOnlyAnalysis({symbol,d,result,executionEnvelope});
         this.cooldown(symbol,'ANALYSIS_ONLY_COMPLETED',Math.max(60_000,nextClosedFiveMinute()-Date.now()));
@@ -696,11 +724,12 @@ export class EntryCoordinator {
         &&Number(d.profitTakePlan.targetHorizonMinutes)===selectedPlanCandidate.targetHorizonMinutes;
       if(!targetRestatementValid)this.events.publish('POST_AI_REDUNDANT_FIELD_NORMALIZED',{brainRunId:result.runId,field:'profitTakePlan',reported:d.profitTakePlan??null,canonical:{targetPrice:selectedPlanCandidate.targetPrice,acceptableTargetRange:selectedPlanCandidate.acceptableTargetRange,targetHorizonMinutes:selectedPlanCandidate.targetHorizonMinutes},selectedCandidateId:selectedPlanCandidate.candidateId,postAiVeto:false},symbol);
       const frozenEntryRange=selectedPlanCandidate.sizingProof?.executableEntryRange??d.acceptablePriceRange;
+      if(!Number.isFinite(d.idealPrice)||d.idealPrice<frozenEntryRange.min||d.idealPrice>frozenEntryRange.max){this.reject(symbol,'AI_ENTRY_PRICE_OUTSIDE_FROZEN_RANGE',result.runId,d.tradeSide??undefined);return;}
       if(d.acceptablePriceRange.min!==frozenEntryRange.min||d.acceptablePriceRange.max!==frozenEntryRange.max)
         this.events.publish('POST_AI_REDUNDANT_FIELD_NORMALIZED',{brainRunId:result.runId,field:'acceptablePriceRange',reported:d.acceptablePriceRange,
           canonical:frozenEntryRange,selectedCandidateId:selectedPlanCandidate.candidateId,postAiVeto:false},symbol);
       const authorizedDecision={...d,selectedCandidateId:selectedPlanCandidate.candidateId,quantityUnits:null,
-        acceptablePriceRange:{...frozenEntryRange},idealPrice:Math.min(frozenEntryRange.max,Math.max(frozenEntryRange.min,d.idealPrice)),profitTakePlan:{...d.profitTakePlan,
+        acceptablePriceRange:{...frozenEntryRange},idealPrice:d.idealPrice,profitTakePlan:{...d.profitTakePlan,
         targetPrice:selectedPlanCandidate.targetPrice,acceptableTargetRange:{...selectedPlanCandidate.acceptableTargetRange},targetHorizonMinutes:selectedPlanCandidate.targetHorizonMinutes}};
       const quantityUnits=selectedPlanCandidate.quantityUnits;
       this.events.publish('AI_CANDIDATE_SELECTED',{brainRunId:result.runId,protocol:candidateProtocol?'V3.9.7_CANDIDATE_ID':'LEGACY_EXACT_MATCH',candidateSetHash:candidateSet.candidateSetHash,
@@ -850,6 +879,8 @@ export class EntryCoordinator {
     } catch (error) {
       this.analysisFacts.lastFailureAt=Date.now();
       const reason = error instanceof Error ? error.message : String(error);
+      if(!terminalRunId){const classification=primaryFailureClass(reason);this.effectiveCadence.outcome(symbol,classification,false);
+        this.events.publish('PRIMARY_ANALYSIS_OUTCOME',{runId:(error as any)?.runId??null,classification,effective:false,entrySubmitted:false},symbol);}
       this.analysisFacts.lastBlockedReason=reason;
       if(reason.startsWith('EIP_EVIDENCE_STALE')){this.events.publish('PRIMARY_DATA_ERROR',{stage:'EIP_STALE',reason,entryIntentCreated:false},symbol);this.cooldown(symbol,'EIP_STALE',this.aiFailureCooldownSeconds(),'TECHNICAL_COOLDOWN');return;}
       this.events.publish("ENTRY_ANALYSIS_FAILED",{ runId:terminalRunId??(error as any)?.runId,message: reason, intentCreated:terminalRunId?[...this.state.entryIntents.values()].some(x=>x.brainRunId===terminalRunId):false, policy: 'FAIL_CLOSED' },symbol);this.cooldown(symbol, reason, this.aiFailureCooldownSeconds(), "AI_FAILURE_COOLDOWN");
@@ -865,9 +896,9 @@ export class EntryCoordinator {
     if(!row||row.status!=='READY')return !row;
     if(!row.decisionContextKey)return true;
     const current=this.currentDecisionContext(symbol,row.confirmation);
+    if(row.noEdgeReview){const market=this.state.snapshots.get(symbol);if(!market)return false;const release=noEdgeReleaseReason(row.noEdgeReview,noEdgeReviewFacts({market,...this.routeCapabilities(symbol)}));if(!release)return false;row.triggerReason=release;return true;}
     if(row.decisionContextKey===current)return false;
     if(row.confirmation)return true;
-    if(row.noEdgeReview){const market=this.state.snapshots.get(symbol);if(!market)return false;const release=noEdgeReleaseReason(row.noEdgeReview,noEdgeReviewFacts({market,...this.routeCapabilities(symbol)}));if(!release)return false;row.triggerReason=release;return true;}
     const prior=decisionContextPermissions(row.decisionContextKey),next=decisionContextPermissions(current);
     if(prior.longExecutable!==next.longExecutable||prior.shortExecutable!==next.shortExecutable)return true;
     return !row.nextReviewAt||Date.now()>=row.nextReviewAt;
@@ -1116,6 +1147,11 @@ export class EntryCoordinator {
     return {...verdict,ageMs:now-Number(verdict.at)};
   }
   private reviewBusy=false;
+  private persistManagedOrder(order:EntryOrder){
+    const intent=this.state.entryIntents.get(order.intentId);
+    if(this.journal&&!intent)throw Error('ENTRY_TERMINAL_INTENT_UNAVAILABLE');
+    if(intent)this.journal?.save({intent,order});
+  }
   async reviewPending() {
     const now=Date.now(),policy=this.state.settings.entry.nearMarket,interval=(policy?.enabled?policy.reviewSeconds:this.state.settings.entry.reviewIntervalSeconds)*1000;if(this.reviewBusy||now-this.lastReview<interval)return;this.reviewBusy=true;this.lastReview=now;
      try{
@@ -1132,12 +1168,13 @@ export class EntryCoordinator {
           if(!ws&&now>=deadline)this.reserveExactOrderQuery(order,now,15_000,true);
           const verified=ws??await this.exchange.findEntryByClientOrderId(order);
           if(!verified){
-            if(autoEntry&&now>=deadline){const reason=now>=order.createdAt+3_600_000?'ONE_HOUR_HARD_TTL':'NEAR_MARKET_TTL',saved={...order,status:'EXPIRED' as const,exchangeTerminalStatus:'UNKNOWN',activeRiskExposure:false,activeRiskEvidence:null,updatedAt:now} as EntryOrder;this.state.entryOrders.set(id,saved);if(order.reservationId)this.state.releaseEntryReservation(order.reservationId);reconcileCandidateLifecycles(this.state,this.events,'ENTRY_TTL_REMOTE_ABSENT');this.events.publish('ENTRY_ORDER_TTL_CLOSED',{orderId:id,clientOrderId:order.clientOrderId,status:'EXPIRED',remoteExactLookup:'ABSENT',exchangeWrite:false,occupancyReleased:true,reason},order.symbol);continue;}
+            if(autoEntry&&now>=deadline){const saved={...order,status:'UNKNOWN' as const,exchangeTerminalStatus:'UNKNOWN',activeRiskExposure:true,activeRiskEvidence:null,updatedAt:now} as EntryOrder;this.persistManagedOrder(saved);this.state.entryOrders.set(id,saved);this.events.publish('ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED',{orderId:id,clientOrderId:order.clientOrderId,remoteExactLookup:'ABSENT',exchangeWrite:false,occupancyReleased:false,reason:'TTL_EXACT_ABSENCE_NOT_TERMINAL_PROOF'},order.symbol);continue;}
             this.state.entryOrders.set(id,{...order,status:'UNKNOWN'});continue;
           }
           order={...order,...verified,id:order.id,intentId:order.intentId,createdAt:order.createdAt,absoluteExpiresAt:order.absoluteExpiresAt,
             exchangeTerminalStatus:terminalOrderStatus(verified.status)?verified.status:'UNKNOWN',activeRiskExposure:!terminalOrderStatus(verified.status),activeRiskEvidence:null} as EntryOrder;
           this.state.entryOrders.set(id,order);
+          this.persistManagedOrder(order);
           if(terminalOrderStatus(order.status)){if(order.reservationId)this.state.releaseEntryReservation(order.reservationId);reconcileCandidateLifecycles(this.state,this.events,'EXACT_ORDER_TERMINAL');continue;}
         }
         // Never keep a system Entry identity alive beyond an hour, regardless of a malformed old TTL.
@@ -1145,10 +1182,10 @@ export class EntryCoordinator {
           const ws=this.userDataConfirmed(order);
           this.reserveExactOrderQuery(order,now,15_000,true);
           const exact=ws??await this.exchange.findEntryByClientOrderId(order);
-          if(!exact){const reason=now>=order.createdAt+3_600_000?'ONE_HOUR_HARD_TTL':'NEAR_MARKET_TTL',saved={...order,status:'EXPIRED' as const,exchangeTerminalStatus:'UNKNOWN',activeRiskExposure:false,activeRiskEvidence:null,updatedAt:Date.now()} as EntryOrder;this.state.entryOrders.set(id,saved);if(order.reservationId)this.state.releaseEntryReservation(order.reservationId);reconcileCandidateLifecycles(this.state,this.events,'ENTRY_TTL_REMOTE_ABSENT');this.events.publish('ENTRY_ORDER_TTL_CLOSED',{orderId:id,clientOrderId:order.clientOrderId,status:'EXPIRED',remoteExactLookup:'ABSENT',exchangeWrite:false,occupancyReleased:true,reason},order.symbol);continue;}
-          if(terminalOrderStatus(exact.status)){this.state.entryOrders.set(id,{...order,...exact,id:order.id,intentId:order.intentId});if(order.reservationId)this.state.releaseEntryReservation(order.reservationId);reconcileCandidateLifecycles(this.state,this.events,'TTL_FINAL_CHECK_TERMINAL');continue;}
+          if(!exact){const saved={...order,status:'UNKNOWN' as const,exchangeTerminalStatus:'UNKNOWN',activeRiskExposure:true,activeRiskEvidence:null,updatedAt:now} as EntryOrder;this.persistManagedOrder(saved);this.state.entryOrders.set(id,saved);this.events.publish('ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED',{orderId:id,clientOrderId:order.clientOrderId,remoteExactLookup:'ABSENT',exchangeWrite:false,occupancyReleased:false,reason:'TTL_EXACT_ABSENCE_NOT_TERMINAL_PROOF'},order.symbol);continue;}
+          if(terminalOrderStatus(exact.status)){const saved={...order,...exact,id:order.id,intentId:order.intentId,exchangeTerminalStatus:exact.status,activeRiskExposure:false,activeRiskEvidence:null} as EntryOrder;this.state.entryOrders.set(id,saved);this.persistManagedOrder(saved);if(order.reservationId)this.state.releaseEntryReservation(order.reservationId);reconcileCandidateLifecycles(this.state,this.events,'TTL_FINAL_CHECK_TERMINAL');continue;}
           const canceled=await this.exchange.cancelEntry({...order,...exact,id:order.id,intentId:order.intentId}),confirmed=terminalOrderStatus(canceled.status),saved:EntryOrder={...order,...canceled,status:confirmed?canceled.status:'UNKNOWN',exchangeTerminalStatus:confirmed?canceled.status:'UNKNOWN',activeRiskExposure:!confirmed,activeRiskEvidence:null,createdAt:order.createdAt,absoluteExpiresAt:order.absoluteExpiresAt} as any;
-          this.state.entryOrders.set(id,saved);if(order.reservationId){if(confirmed)this.state.releaseEntryReservation(order.reservationId);else this.state.markEntryReservationWorking(order.reservationId);}
+          this.state.entryOrders.set(id,saved);this.persistManagedOrder(saved);if(order.reservationId){if(confirmed)this.state.releaseEntryReservation(order.reservationId);else this.state.markEntryReservationWorking(order.reservationId);}
           if(confirmed)reconcileCandidateLifecycles(this.state,this.events,'ENTRY_TTL_TERMINAL_CONFIRMED');
           this.events.publish(confirmed?'ENTRY_ORDER_TTL_CLOSED':'ENTRY_CANCEL_UNVERIFIED',{orderId:id,clientOrderId:order.clientOrderId,status:saved.status,exchangeTerminalStatus:confirmed?canceled.status:'UNKNOWN',filledQuantity:canceled.filledQuantity,occupancyReleased:confirmed,reason:now>=order.createdAt+3_600_000?'ONE_HOUR_HARD_TTL':'NEAR_MARKET_TTL'},order.symbol);continue;
         }
@@ -1190,7 +1227,9 @@ export class EntryCoordinator {
       const remote={...order,...final,id:order.id,intentId:order.intentId,createdAt:order.createdAt,absoluteExpiresAt:order.absoluteExpiresAt};
       const canceled=await this.exchange.cancelEntry(remote),confirmed=terminalOrderStatus(canceled.status);
       const saved={...remote,...canceled,status:confirmed?canceled.status:'UNKNOWN',exchangeTerminalStatus:confirmed?canceled.status:'UNKNOWN',activeRiskExposure:!confirmed,updatedAt:Date.now()} as EntryOrder;
-      this.state.entryOrders.set(remote.id,saved);if(confirmed&&remote.reservationId)this.state.releaseEntryReservation(remote.reservationId);
+      this.journal?.save({intent,order:saved,reservation:saved.reservationId?this.state.entryReservations.get(saved.reservationId):undefined});
+      this.state.entryOrders.set(remote.id,saved);
+      if(confirmed&&remote.reservationId)this.state.releaseEntryReservation(remote.reservationId);
       if(confirmed)reconcileCandidateLifecycles(this.state,this.events,`PENDING_ENTRY_REVIEW_${result.decision}`);
       this.events.publish(confirmed?'PENDING_ENTRY_REVIEW_ACTION_CONVERGED':'PENDING_ENTRY_REVIEW_ACTION_UNVERIFIED',{orderId:remote.id,clientOrderId:remote.clientOrderId,decision:result.decision,exchangeStatus:canceled.status,confirmed,oldIdentityTerminated:confirmed,newPlanSubmitted:false,reason:'DETERMINISTIC_COORDINATOR_ACTION'},remote.symbol);
     })().catch(error=>this.events.publish('PENDING_ENTRY_REVIEW_FAILED',{orderId:order.id,clientOrderId:order.clientOrderId,reason:error instanceof Error?error.message:String(error),exchangeAction:false},order.symbol))

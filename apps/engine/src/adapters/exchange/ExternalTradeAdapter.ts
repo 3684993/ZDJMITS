@@ -1,5 +1,5 @@
 import {createHistoryReadBudget, readHistoryWindows} from './historyWindow.js';
-import { createHmac } from 'node:crypto';
+import { createHmac, createHash } from 'node:crypto';
 import type { EntryOrder, ManualOrder, Position, TakeProfitOrder } from '@zdj/contracts';
 import type { ExchangeTradeAdapter, TradeAuditSnapshot, ExchangeTradeFill, ExchangeIncomeFact, ExchangeOrderFact } from '../../types.js';
 import { BinanceTransport } from '../binance/BinanceTransport.js';
@@ -17,8 +17,10 @@ type ExactOrderCacheEntry={expiresAt:number;outcome:{state:'FOUND';row:any}|{sta
 export class ExternalTradeAdapter implements ExchangeTradeAdapter {
   private userStream:BinanceUserDataStream|null=null;private positionMode:{hedge:boolean;checkedAt:number}|null=null;private openTimeCache=new Map<string,{openedAt:number;source:Position['entryTimeSource'];checkedAt:number}>();private leverageCache=new Map<string,number>();private leverageFlights=new Map<string,Promise<number>>();private serverTime:{offset:number;fetchedAt:number}|null=null;private exactOrderCache=new Map<string,ExactOrderCacheEntry>();private exactOrderFlights=new Map<string,Promise<any>>();private writeStats={testnetWrites:0,productionWrites:0,blockedProductionWriteAttempts:0,lastWriteAt:null as number|null,lastWritePath:null as string|null};
   constructor(private transport:BinanceTransport,private credentials:Credentials,private recvWindowMs=5000){}
+  private credentialGeneration=0;
+  accountScopeIdentity(){return this.credentials&&this.transport.environment()==='TESTNET'?{environment:'TESTNET',credentialFingerprint:createHash('sha256').update(this.credentials.apiKey).digest('hex'),credentialGeneration:this.credentialGeneration}:null;}
   hasCredentials(){return Boolean(this.credentials);}
-  setCredentials(credentials:Credentials){this.stopUserData();this.credentials=credentials;this.enrichmentGeneration++;this.enrichmentFlight=null;this.enrichment={income:null,incomeAsOf:null,prices:new Map(),pricesAsOf:null,lastAttempt:0,lastError:null};this.positionMode=null;this.openTimeCache.clear();this.leverageCache.clear();this.leverageFlights.clear();this.exactOrderCache.clear();this.exactOrderFlights.clear();this.serverTime=null;}
+  setCredentials(credentials:Credentials){this.credentialGeneration++;this.stopUserData();this.credentials=credentials;this.enrichmentGeneration++;this.enrichmentFlight=null;this.enrichment={income:null,incomeAsOf:null,prices:new Map(),pricesAsOf:null,lastAttempt:0,lastError:null};this.positionMode=null;this.openTimeCache.clear();this.leverageCache.clear();this.leverageFlights.clear();this.exactOrderCache.clear();this.exactOrderFlights.clear();this.serverTime=null;}
   private creds(){if(!this.credentials)throw new Error('TRADING_BLOCKED: credentials unavailable from SecretStore');if(this.transport.environment()!=='TESTNET'){this.writeStats.blockedProductionWriteAttempts++;throw new Error('TESTNET_ONLY_WRITE_LOCK: production private writes disabled');}return this.credentials;}
   private serverTimeFlight:Promise<void>|null=null;
   private async refreshServerTime(force=false){
@@ -329,6 +331,7 @@ export class ExternalTradeAdapter implements ExchangeTradeAdapter {
   async fetchMaintenanceMarginBrackets(symbols:string[],options:{maxInFlight?:number;credentialRef?:string}={}){
     const environment=this.transport.environment();
     if(environment!=='TESTNET')throw new Error(`MARGIN_AUTHORITY_REQUIRES_TESTNET:${environment}`);
+    const accountIdentity=this.accountScopeIdentity();if(!accountIdentity)throw new Error('MARGIN_AUTHORITY_ACCOUNT_IDENTITY_UNAVAILABLE');
     const required=[...new Set((symbols??[]).map(symbol=>String(symbol).trim().toUpperCase()).filter(Boolean))].sort();
     if(!required.length)throw new Error('MARGIN_AUTHORITY_COVERAGE_EMPTY');
     const limit=Math.max(1,Math.min(4,Number(options.maxInFlight??4)||4));
@@ -348,7 +351,8 @@ export class ExternalTradeAdapter implements ExchangeTradeAdapter {
       }
     };
     await Promise.all(Array.from({length:Math.min(limit,required.length)},()=>worker()));
-    return {environment,credentialRef:String(options.credentialRef??''),observedAt:Date.now(),
+    if(JSON.stringify(accountIdentity)!==JSON.stringify(this.accountScopeIdentity()))throw new Error('MARGIN_AUTHORITY_CREDENTIAL_GENERATION_CHANGED');
+    return {environment,credentialRef:String(options.credentialRef??''),observedAt:Date.now(),accountIdentity:{...accountIdentity,proof:'SIGNED_TESTNET_GET' as const},
       symbols:collected.sort((a,b)=>a.symbol.localeCompare(b.symbol)),
       failures:failures.sort((a,b)=>a.symbol.localeCompare(b.symbol))};
   }

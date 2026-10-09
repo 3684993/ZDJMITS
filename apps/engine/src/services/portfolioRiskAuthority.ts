@@ -16,7 +16,7 @@ export type MarginBracketSymbolDataset = {symbol: string; tiers: MarginBracketTi
 /** What a collector returns before canonicalisation: exchange rows as read, nothing asserted. */
 export type MarginBracketRawRead = {symbol: string; brackets: unknown[]};
 export type MarginBracketFailure = {symbol: string; reason: string};
-export type MarginBracketAuthorityRead = {environment: string; credentialRef: string; observedAt: number; symbols: MarginBracketRawRead[]; failures: MarginBracketFailure[]};
+export type MarginBracketAuthorityRead = {environment: string; credentialRef: string; observedAt: number; accountIdentity?:{environment:string;credentialFingerprint:string;credentialGeneration:number;proof:'SIGNED_TESTNET_GET'}; symbols: MarginBracketRawRead[]; failures: MarginBracketFailure[]};
 export type SizingReachability = {symbol: string; minNotionalUsd: number; maxNotionalUsd: number};
 
 export type PortfolioRiskAuthorityFacts = {

@@ -2,7 +2,7 @@
   "inventoryVersion": "S00-T01-entry-review-2",
   "capturedAt": "2026-09-21",
   "derivation": "mechanical over-approximating static scan by scripts/v396-s00-isolation-rules.mjs; a match can only tighten a status, never relax it",
-  "entryCount": 190,
+  "entryCount": 191,
   "statusLegend": {
     "ALLOWED_STATIC": "executed by the S00 verification command",
     "CONDITIONAL_NOT_RUN": "not executed; a later stage may run it only after the required boundary is proven",
@@ -2241,6 +2241,14 @@
       "derivedFrom": "file-content-and-one-hop-target",
       "status": "FORBIDDEN_OR_NOT_RUN",
       "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store"
+    },
+    {
+      "path": "scripts/v398-primary-cadence-replay.ts",
+      "kind": "script",
+      "sideEffects": [],
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "CONDITIONAL_NOT_RUN",
+      "requiredBoundary": "unique temp data dir; unique loopback port; mock/no-network/no-exchange-write assertion; explicit user authorization where lifecycle is involved"
     },
     {
       "path": "scripts/v398-project-lineage.mjs",

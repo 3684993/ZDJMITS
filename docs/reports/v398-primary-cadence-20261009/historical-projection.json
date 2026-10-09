@@ -1,0 +1,1003 @@
+{
+  "sources": {
+    "window": {
+      "since": 1791537160905,
+      "until": 1791542560905,
+      "extended": 1791531760905,
+      "events": 11683,
+      "runs": 76,
+      "file": "D:/MITS/data/runtime-logs/engine-2026-10-09-65185f71-b336-4f6f-8149-cafe90f5e160-0.jsonl"
+    },
+    "sha256": {
+      "runs": "73b2a0b4fdfe404d56e7ee600ddec6d5fc50f779bd6abb2739dff7181883b276",
+      "bnb": "2e18546c63486d96a9259855c3ec28e74bcdc2974616a303d623a10547df1fba",
+      "logs": "de645886519606d80bf27b4c50d3fa8f6ee10a2335c411c19ba627de29209ee9",
+      "events": "aaec1c1a89dab72b809a905d00a1f3c23f92b773969d87bb787adac7719b28de",
+      "entities": "57dc19c4dea821053dead27b7c77f9d10f69e6fb24bf2623d91f76d8eeae4ae7",
+      "origins": "f9698cd0fd0c3ce1eb0a9e818bb352d3cd61200f966951cb30527e26c2f63af9"
+    },
+    "privacy": "No credentials, private account balances, raw orders, SQLite or full prompts included. Snapshot projections are non-atomic; asOf on side blockers is diagnostic reference time, not a common snapshot transaction."
+  },
+  "bnb": {
+    "runId": "airun_mv0tqcnh_qqb6z1hm",
+    "completedAt": 1791541863374,
+    "raw": {
+      "action": "FINAL",
+      "schemaVersion": "V3.9.7",
+      "structureDirection": "SHORT",
+      "tradeSide": "SHORT",
+      "selectedCandidateId": "cand_35aa79aef83b10a3ed635ed1",
+      "quantityUnits": null,
+      "opportunityType": "TREND_RESUMPTION",
+      "marketRegime": "RANGE",
+      "confidence": 0.65,
+      "directionReason": "15m structure shows higher highs/lows with bullish MACD histogram slope, while 4h/1d context indicates a broader downtrend/correction. The short setup targets a",
+      "timingReason": "1m/5m timing shows consolidation near support with low volume, suggesting a potential breakout or breakdown. The 15m bar is nearly complete, providing a clear",
+      "entryLocationReason": "Entry is placed near the current bid/ask spread, within the maker-reachable band, to minimize slippage and capture the move from the 15m swing low.",
+      "reason": "The 15m timeframe shows a bullish structure with higher highs and higher lows, and the MACD histogram is rising, indicating increasing momentum. However, the 4h",
+      "entryInvalidation": "If price breaks below the 15m swing low of 742.01 or the 1h support at 733.17, the short thesis is invalidated.",
+      "supportingEvidenceRefs": [
+        "technical.15m.confirmed",
+        "technical.1h.confirmed",
+        "technical.4h.confirmed",
+        "quote.top",
+        "microstructure.book5"
+      ],
+      "profitTakePlan": {
+        "targetPrice": 741.6,
+        "acceptableTargetRange": {
+          "min": 741.44,
+          "max": 741.6
+        },
+        "targetHorizonMinutes": 15,
+        "targetReason": "Target is set at the 15m swing low, which is a key support level. The 15m timeframe shows a bullish structure, but the 4h and 1d timeframes indicate a broader downtrend, suggesting that the price may retest this support level.",
+        "evidenceRefs": [
+          "technical.15m.confirmed",
+          "technical.4h.confirmed",
+          "technical.1d.confirmed"
+        ]
+      },
+      "rejectLayer": "NONE",
+      "blockingCondition": "NONE",
+      "releaseCondition": "NONE",
+      "timingEvent": {
+        "id": "NONE",
+        "status": "NONE",
+        "time": null,
+        "anchorPrice": null,
+        "timeframe": "15m",
+        "provenance": "NONE"
+      },
+      "decision": "PLACE_SHORT",
+      "idealPrice": 743,
+      "acceptablePriceRange": {
+        "min": 743.001876315681,
+        "max": 743.218123684319
+      },
+      "horizonMinutes": 1,
+      "waitCondition": null
+    },
+    "candidate": {
+      "candidateId": "cand_35aa79aef83b10a3ed635ed1",
+      "side": "SHORT",
+      "quantityUnits": 135,
+      "notionalUsd": 1003.344467,
+      "marginUsd": 100.334447,
+      "leverage": 10,
+      "entryReferencePrice": 743.0018763157,
+      "targetPrice": 741.6,
+      "acceptableTargetRange": {
+        "min": 741.44,
+        "max": 741.6
+      },
+      "targetHorizonMinutes": 15,
+      "targetConditionalNetProfitUsd": 1.01068,
+      "expectedNetPnlAtHorizonUsd": -0.983244,
+      "reachProbability": 0.008333333333333333,
+      "reachProbabilityStatus": "ESTIMATE",
+      "targetVsStatisticalCeiling": "WITHIN",
+      "costVersion": "fees:0.0004:0.0004:0:10:fx=UNPROVEN",
+      "sizingProof": {
+        "executableEntryRange": {
+          "min": 743.0018763157,
+          "max": 743.2181236843
+        },
+        "exchangeMinimumNotionalQuote": 5,
+        "businessMinimumNotionalQuote": 0,
+        "minimumInitialMarginQuote": 100,
+        "requiredNetProfitQuote": 1,
+        "fundingPolicy": "TARGET_CONDITIONAL_EX_FUNDING_WHEN_UNPROVEN"
+      },
+      "requiredNetProfitQuote": 1,
+      "fundingStatus": "UNPROVEN"
+    },
+    "tickSize": 0.01,
+    "failureStage": "SCHEMA_VALIDATION",
+    "errorCode": "AI_SCHEMA_INVALID"
+  },
+  "primaryRuns": [
+    {
+      "id": "airun_mv0nrxq7_uvokcqjz",
+      "symbol": "TIAUSDC",
+      "status": "COMPLETED",
+      "startedAt": 1791531797119,
+      "completedAt": 1791531861765,
+      "queueMs": 1291,
+      "latencyMs": 64646,
+      "error": null,
+      "decision": "PLACE_LONG"
+    },
+    {
+      "id": "airun_mv0nus9e_4vf48hv9",
+      "symbol": "FETUSDT",
+      "status": "COMPLETED",
+      "startedAt": 1791531930002,
+      "completedAt": 1791531992441,
+      "queueMs": 1198,
+      "latencyMs": 62439,
+      "error": null,
+      "decision": "PLACE_SHORT"
+    },
+    {
+      "id": "airun_mv0nwxy8_ehi7flmg",
+      "symbol": "RAYSOLUSDT",
+      "status": "COMPLETED",
+      "startedAt": 1791532030688,
+      "completedAt": 1791532095229,
+      "queueMs": 1591,
+      "latencyMs": 64541,
+      "error": null,
+      "decision": "PLACE_LONG"
+    },
+    {
+      "id": "airun_mv0nypfo_riedr45h",
+      "symbol": "SUIUSDT",
+      "status": "COMPLETED",
+      "startedAt": 1791532112964,
+      "completedAt": 1791532176295,
+      "queueMs": 1185,
+      "latencyMs": 63331,
+      "error": null,
+      "decision": "PLACE_LONG"
+    },
+    {
+      "id": "airun_mv0o2d6d_thmsfj4p",
+      "symbol": "1000SHIBUSDT",
+      "status": "COMPLETED",
+      "startedAt": 1791532283701,
+      "completedAt": 1791532357695,
+      "queueMs": 1240,
+      "latencyMs": 73994,
+      "error": null,
+      "decision": "PLACE_LONG"
+    },
+    {
+      "id": "airun_mv0o4kzn_al4mh08l",
+      "symbol": "UNIUSDC",
+      "status": "COMPLETED",
+      "startedAt": 1791532387139,
+      "completedAt": 1791532449140,
+      "queueMs": 1239,
+      "latencyMs": 62001,
+      "error": null,
+      "decision": "PLACE_LONG"
+    },
+    {
+      "id": "airun_mv0o725a_uw74dymf",
+      "symbol": "ADAUSDT",
+      "status": "COMPLETED",
+      "startedAt": 1791532502686,
+      "completedAt": 1791532563916,
+      "queueMs": 1656,
+      "latencyMs": 61230,
+      "error": null,
+      "decision": "PLACE_SHORT"
+    },
+    {
+      "id": "airun_mv0oew3t_bh37wl6l",
+      "symbol": "BRUSDT",
+      "status": "COMPLETED",
+      "startedAt": 1791532868105,
+      "completedAt": 1791532933123,
+      "queueMs": 1230,
+      "latencyMs": 65018,
+      "error": null,
+      "decision": "PLACE_LONG"
+    },
+    {
+      "id": "airun_mv0oj1cq_8e0rhelx",
+      "symbol": "ADAUSDT",
+      "status": "FAILED",
+      "startedAt": 1791533061530,
+      "completedAt": 1791533124258,
+      "queueMs": 1225,
+      "latencyMs": 62728,
+      "error": "AI_SCHEMA_INVALID",
+      "decision": null
+    },
+    {
+      "id": "airun_mv0omtlq_6xfqhkyh",
+      "symbol": "FETUSDT",
+      "status": "COMPLETED",
+      "startedAt": 1791533238110,
+      "completedAt": 1791533300498,
+      "queueMs": 1455,
+      "latencyMs": 62388,
+      "error": null,
+      "decision": "PLACE_SHORT"
+    },
+    {
+      "id": "airun_mv0opc1l_rjkm5p0k",
+      "symbol": "XRPUSDT",
+      "status": "COMPLETED",
+      "startedAt": 1791533355321,
+      "completedAt": 1791533426568,
+      "queueMs": 1453,
+      "latencyMs": 71247,
+      "error": null,
+      "decision": "PLACE_LONG"
+    },
+    {
+      "id": "airun_mv0p8c94_rxpikq74",
+      "symbol": "ADAUSDT",
+      "status": "COMPLETED",
+      "startedAt": 1791534242056,
+      "completedAt": 1791534302828,
+      "queueMs": 1322,
+      "latencyMs": 60772,
+      "error": null,
+      "decision": "PLACE_SHORT"
+    },
+    {
+      "id": "airun_mv0pa8xk_z5qrslc3",
+      "symbol": "USELESSUSDT",
+      "status": "COMPLETED",
+      "startedAt": 1791534331064,
+      "completedAt": 1791534402482,
+      "queueMs": 1357,
+      "latencyMs": 71418,
+      "error": null,
+      "decision": "PLACE_SHORT"
+    },
+    {
+      "id": "airun_mv0pg5df_q7cxj2zn",
+      "symbol": "USELESSUSDT",
+      "status": "COMPLETED",
+      "startedAt": 1791534606387,
+      "completedAt": 1791534668393,
+      "queueMs": 1194,
+      "latencyMs": 62006,
+      "error": null,
+      "decision": "PLACE_SHORT"
+    },
+    {
+      "id": "airun_mv0pi7as_jxa0tfjr",
+      "symbol": "USELESSUSDT",
+      "status": "COMPLETED",
+      "startedAt": 1791534702196,
+      "completedAt": 1791534763451,
+      "queueMs": 1307,
+      "latencyMs": 61255,
+      "error": null,
+      "decision": "PLACE_LONG"
+    },
+    {
+      "id": "airun_mv0pxhnx_dcpmq1zr",
+      "symbol": "FETUSDT",
+      "status": "COMPLETED",
+      "startedAt": 1791535415469,
+      "completedAt": 1791535478967,
+      "queueMs": 1561,
+      "latencyMs": 63498,
+      "error": null,
+      "decision": "PLACE_LONG"
+    },
+    {
+      "id": "airun_mv0tqcnh_qqb6z1hm",
+      "symbol": "BNBUSDC",
+      "status": "FAILED",
+      "startedAt": 1791541800845,
+      "completedAt": 1791541863374,
+      "queueMs": 1263,
+      "latencyMs": 62529,
+      "error": "AI_SCHEMA_INVALID",
+      "decision": null
+    }
+  ],
+  "originDrift": [
+    {
+      "symbol": "ADAUSDT",
+      "side": "SHORT",
+      "exactOrderPresent": true,
+      "taskTerminal": "UNKNOWN",
+      "liveTerminal": "CANCELED",
+      "taskFilled": 183,
+      "liveFilled": 360
+    },
+    {
+      "symbol": "BRUSDT",
+      "side": "LONG",
+      "exactOrderPresent": true,
+      "taskTerminal": "ABSENT",
+      "liveTerminal": "CANCELED",
+      "taskFilled": 0,
+      "liveFilled": 0
+    },
+    {
+      "symbol": "DOGEUSDC",
+      "side": "LONG",
+      "exactOrderPresent": true,
+      "taskTerminal": "ABSENT",
+      "liveTerminal": "CANCELED",
+      "taskFilled": 0,
+      "liveFilled": 0
+    },
+    {
+      "symbol": "DOGEUSDC",
+      "side": "SHORT",
+      "exactOrderPresent": true,
+      "taskTerminal": "UNKNOWN",
+      "liveTerminal": "CANCELED",
+      "taskFilled": 0,
+      "liveFilled": 0
+    },
+    {
+      "symbol": "DOGEUSDT",
+      "side": "LONG",
+      "exactOrderPresent": true,
+      "taskTerminal": "UNKNOWN",
+      "liveTerminal": "CANCELED",
+      "taskFilled": 0,
+      "liveFilled": 0
+    },
+    {
+      "symbol": "ENAUSDT",
+      "side": "SHORT",
+      "exactOrderPresent": true,
+      "taskTerminal": "ABSENT",
+      "liveTerminal": "CANCELED",
+      "taskFilled": 0,
+      "liveFilled": 0
+    },
+    {
+      "symbol": "JUPUSDT",
+      "side": "LONG",
+      "exactOrderPresent": true,
+      "taskTerminal": "ABSENT",
+      "liveTerminal": "CANCELED",
+      "taskFilled": 0,
+      "liveFilled": 0
+    },
+    {
+      "symbol": "JUPUSDT",
+      "side": "SHORT",
+      "exactOrderPresent": true,
+      "taskTerminal": "UNKNOWN",
+      "liveTerminal": "CANCELED",
+      "taskFilled": 0,
+      "liveFilled": 0
+    },
+    {
+      "symbol": "ONDOUSDT",
+      "side": "SHORT",
+      "exactOrderPresent": true,
+      "taskTerminal": "UNKNOWN",
+      "liveTerminal": "CANCELED",
+      "taskFilled": 0,
+      "liveFilled": 0
+    },
+    {
+      "symbol": "RAYSOLUSDT",
+      "side": "LONG",
+      "exactOrderPresent": true,
+      "taskTerminal": "ABSENT",
+      "liveTerminal": "ABSENT",
+      "taskFilled": 42.1,
+      "liveFilled": 606.3
+    },
+    {
+      "symbol": "SUIUSDC",
+      "side": "SHORT",
+      "exactOrderPresent": true,
+      "taskTerminal": "UNKNOWN",
+      "liveTerminal": "CANCELED",
+      "taskFilled": 0,
+      "liveFilled": 0
+    },
+    {
+      "symbol": "TAOUSDT",
+      "side": "LONG",
+      "exactOrderPresent": true,
+      "taskTerminal": "UNKNOWN",
+      "liveTerminal": "CANCELED",
+      "taskFilled": 0,
+      "liveFilled": 0
+    },
+    {
+      "symbol": "TIAUSDC",
+      "side": "LONG",
+      "exactOrderPresent": true,
+      "taskTerminal": "ABSENT",
+      "liveTerminal": "FILLED",
+      "taskFilled": 194,
+      "liveFilled": 1965
+    },
+    {
+      "symbol": "TIAUSDT",
+      "side": "LONG",
+      "exactOrderPresent": true,
+      "taskTerminal": "UNKNOWN",
+      "liveTerminal": "CANCELED",
+      "taskFilled": 0,
+      "liveFilled": 0
+    },
+    {
+      "symbol": "TIAUSDT",
+      "side": "SHORT",
+      "exactOrderPresent": true,
+      "taskTerminal": "UNKNOWN",
+      "liveTerminal": "CANCELED",
+      "taskFilled": 0,
+      "liveFilled": 0
+    },
+    {
+      "symbol": "UNIUSDC",
+      "side": "LONG",
+      "exactOrderPresent": true,
+      "taskTerminal": "UNKNOWN",
+      "liveTerminal": "CANCELED",
+      "taskFilled": 0,
+      "liveFilled": 0
+    },
+    {
+      "symbol": "UNIUSDT",
+      "side": "SHORT",
+      "exactOrderPresent": true,
+      "taskTerminal": "ABSENT",
+      "liveTerminal": "CANCELED",
+      "taskFilled": 0,
+      "liveFilled": 0
+    },
+    {
+      "symbol": "USELESSUSDT",
+      "side": "SHORT",
+      "exactOrderPresent": true,
+      "taskTerminal": "UNKNOWN",
+      "liveTerminal": "CANCELED",
+      "taskFilled": 0,
+      "liveFilled": 0
+    },
+    {
+      "symbol": "WLDUSDT",
+      "side": "LONG",
+      "exactOrderPresent": true,
+      "taskTerminal": "ABSENT",
+      "liveTerminal": "CANCELED",
+      "taskFilled": 0,
+      "liveFilled": 0
+    },
+    {
+      "symbol": "XRPUSDT",
+      "side": "LONG",
+      "exactOrderPresent": true,
+      "taskTerminal": "ABSENT",
+      "liveTerminal": "CANCELED",
+      "taskFilled": 0,
+      "liveFilled": 0
+    },
+    {
+      "symbol": "XRPUSDT",
+      "side": "SHORT",
+      "exactOrderPresent": true,
+      "taskTerminal": "ABSENT",
+      "liveTerminal": "CANCELED",
+      "taskFilled": 0,
+      "liveFilled": 0
+    }
+  ],
+  "sideBlockers": {
+    "asOf": 1791542898118,
+    "rows": [
+      {
+        "symbol": "TIAUSDC",
+        "LONG": "NO_SEPARATE_ADD_ORIGIN_AUTHORIZATION_EXISTS",
+        "SHORT": "NO_SEPARATE_ADD_PENDING_ORDER"
+      },
+      {
+        "symbol": "ONDOUSDT",
+        "LONG": "NO_SEPARATE_ADD_PENDING_ORDER",
+        "SHORT": "NO_SEPARATE_ADD_ORIGIN_AUTHORIZATION_EXISTS"
+      },
+      {
+        "symbol": "RAYSOLUSDT",
+        "LONG": "NO_SEPARATE_ADD_ORIGIN_AUTHORIZATION_EXISTS",
+        "SHORT": "NO_SEPARATE_ADD_PENDING_ORDER"
+      },
+      {
+        "symbol": "BTCUSDT",
+        "LONG": "NO_SEPARATE_ADD_POSITION_EXISTS",
+        "SHORT": "NO_SEPARATE_ADD_PENDING_ORDER"
+      },
+      {
+        "symbol": "DOGEUSDT",
+        "LONG": "NO_SEPARATE_ADD_ORIGIN_AUTHORIZATION_EXISTS",
+        "SHORT": "NO_SEPARATE_ADD_PENDING_ORDER"
+      },
+      {
+        "symbol": "LDOUSDT",
+        "LONG": null,
+        "SHORT": null
+      },
+      {
+        "symbol": "XRPUSDC",
+        "LONG": "NO_SEPARATE_ADD_PENDING_ORDER",
+        "SHORT": "NO_SEPARATE_ADD_PENDING_ORDER"
+      },
+      {
+        "symbol": "DOTUSDT",
+        "LONG": "NO_SEPARATE_ADD_POSITION_EXISTS",
+        "SHORT": "NO_SEPARATE_ADD_PENDING_ORDER"
+      },
+      {
+        "symbol": "ETHUSDT",
+        "LONG": "NO_SEPARATE_ADD_POSITION_EXISTS",
+        "SHORT": "NO_SEPARATE_ADD_PENDING_ORDER"
+      },
+      {
+        "symbol": "BNBUSDC",
+        "LONG": "NO_SEPARATE_ADD_POSITION_EXISTS",
+        "SHORT": "NO_SEPARATE_ADD_PENDING_ORDER"
+      },
+      {
+        "symbol": "VVVUSDT",
+        "LONG": "NO_SEPARATE_ADD_PENDING_ORDER",
+        "SHORT": "NO_SEPARATE_ADD_ORIGIN_AUTHORIZATION_EXISTS"
+      },
+      {
+        "symbol": "ZECUSDT",
+        "LONG": "NO_SEPARATE_ADD_ORIGIN_AUTHORIZATION_EXISTS",
+        "SHORT": "NO_SEPARATE_ADD_PENDING_ORDER"
+      },
+      {
+        "symbol": "ETHFIUSDT",
+        "LONG": "NO_SEPARATE_ADD_PENDING_ORDER",
+        "SHORT": "NO_SEPARATE_ADD_PENDING_ORDER"
+      },
+      {
+        "symbol": "ENAUSDC",
+        "LONG": null,
+        "SHORT": null
+      },
+      {
+        "symbol": "FILUSDC",
+        "LONG": "NO_SEPARATE_ADD_PENDING_ORDER",
+        "SHORT": "NO_SEPARATE_ADD_ORIGIN_AUTHORIZATION_EXISTS"
+      },
+      {
+        "symbol": "NEARUSDC",
+        "LONG": "NO_SEPARATE_ADD_POSITION_EXISTS",
+        "SHORT": "NO_SEPARATE_ADD_PENDING_ORDER"
+      },
+      {
+        "symbol": "AAVEUSDT",
+        "LONG": "NO_SEPARATE_ADD_PENDING_ORDER",
+        "SHORT": "NO_SEPARATE_ADD_ORIGIN_AUTHORIZATION_EXISTS"
+      },
+      {
+        "symbol": "RENDERUSDT",
+        "LONG": null,
+        "SHORT": null
+      },
+      {
+        "symbol": "USELESSUSDT",
+        "LONG": "NO_SEPARATE_ADD_ORIGIN_AUTHORIZATION_EXISTS",
+        "SHORT": "NO_SEPARATE_ADD_ORIGIN_AUTHORIZATION_EXISTS"
+      },
+      {
+        "symbol": "ARBUSDC",
+        "LONG": null,
+        "SHORT": "NO_SEPARATE_ADD_PENDING_ORDER"
+      },
+      {
+        "symbol": "JTOUSDT",
+        "LONG": null,
+        "SHORT": null
+      },
+      {
+        "symbol": "WLDUSDT",
+        "LONG": "NO_SEPARATE_ADD_ORIGIN_AUTHORIZATION_EXISTS",
+        "SHORT": "NO_SEPARATE_ADD_ORIGIN_AUTHORIZATION_EXISTS"
+      },
+      {
+        "symbol": "OPUSDT",
+        "LONG": "NO_SEPARATE_ADD_PENDING_ORDER",
+        "SHORT": "NO_SEPARATE_ADD_PENDING_ORDER"
+      },
+      {
+        "symbol": "SUIUSDC",
+        "LONG": "NO_SEPARATE_ADD_PENDING_ORDER",
+        "SHORT": "NO_SEPARATE_ADD_ORIGIN_AUTHORIZATION_EXISTS"
+      }
+    ]
+  },
+  "bins": [
+    {
+      "since": 1791537160905,
+      "until": 1791537460905,
+      "pool": [
+        16,
+        20
+      ],
+      "capital": [
+        16,
+        32
+      ],
+      "heartbeats": 10,
+      "dispatch": 0,
+      "scout": 0,
+      "primary": 0,
+      "completed": 0,
+      "failed": 0,
+      "intents": 0,
+      "orders": 0,
+      "historicalFullEligibility": "UNKNOWN_UNRECORDED"
+    },
+    {
+      "since": 1791537460905,
+      "until": 1791537760905,
+      "pool": [
+        16,
+        20
+      ],
+      "capital": [
+        16,
+        27
+      ],
+      "heartbeats": 9,
+      "dispatch": 0,
+      "scout": 0,
+      "primary": 0,
+      "completed": 0,
+      "failed": 0,
+      "intents": 0,
+      "orders": 0,
+      "historicalFullEligibility": "UNKNOWN_UNRECORDED"
+    },
+    {
+      "since": 1791537760905,
+      "until": 1791538060905,
+      "pool": [
+        18,
+        20
+      ],
+      "capital": [
+        18,
+        30
+      ],
+      "heartbeats": 10,
+      "dispatch": 0,
+      "scout": 0,
+      "primary": 0,
+      "completed": 0,
+      "failed": 0,
+      "intents": 0,
+      "orders": 0,
+      "historicalFullEligibility": "UNKNOWN_UNRECORDED"
+    },
+    {
+      "since": 1791538060905,
+      "until": 1791538360905,
+      "pool": [
+        20,
+        20
+      ],
+      "capital": [
+        22,
+        29
+      ],
+      "heartbeats": 10,
+      "dispatch": 0,
+      "scout": 0,
+      "primary": 0,
+      "completed": 0,
+      "failed": 0,
+      "intents": 0,
+      "orders": 0,
+      "historicalFullEligibility": "UNKNOWN_UNRECORDED"
+    },
+    {
+      "since": 1791538360905,
+      "until": 1791538660905,
+      "pool": [
+        20,
+        20
+      ],
+      "capital": [
+        22,
+        28
+      ],
+      "heartbeats": 9,
+      "dispatch": 0,
+      "scout": 0,
+      "primary": 0,
+      "completed": 0,
+      "failed": 0,
+      "intents": 0,
+      "orders": 0,
+      "historicalFullEligibility": "UNKNOWN_UNRECORDED"
+    },
+    {
+      "since": 1791538660905,
+      "until": 1791538960905,
+      "pool": [
+        20,
+        20
+      ],
+      "capital": [
+        20,
+        29
+      ],
+      "heartbeats": 10,
+      "dispatch": 0,
+      "scout": 0,
+      "primary": 0,
+      "completed": 0,
+      "failed": 0,
+      "intents": 0,
+      "orders": 0,
+      "historicalFullEligibility": "UNKNOWN_UNRECORDED"
+    },
+    {
+      "since": 1791538960905,
+      "until": 1791539260905,
+      "pool": [
+        20,
+        20
+      ],
+      "capital": [
+        23,
+        30
+      ],
+      "heartbeats": 10,
+      "dispatch": 0,
+      "scout": 0,
+      "primary": 0,
+      "completed": 0,
+      "failed": 0,
+      "intents": 0,
+      "orders": 0,
+      "historicalFullEligibility": "UNKNOWN_UNRECORDED"
+    },
+    {
+      "since": 1791539260905,
+      "until": 1791539560905,
+      "pool": [
+        20,
+        20
+      ],
+      "capital": [
+        22,
+        30
+      ],
+      "heartbeats": 9,
+      "dispatch": 0,
+      "scout": 0,
+      "primary": 0,
+      "completed": 0,
+      "failed": 0,
+      "intents": 0,
+      "orders": 0,
+      "historicalFullEligibility": "UNKNOWN_UNRECORDED"
+    },
+    {
+      "since": 1791539560905,
+      "until": 1791539860905,
+      "pool": [
+        20,
+        20
+      ],
+      "capital": [
+        25,
+        32
+      ],
+      "heartbeats": 10,
+      "dispatch": 0,
+      "scout": 0,
+      "primary": 0,
+      "completed": 0,
+      "failed": 0,
+      "intents": 0,
+      "orders": 0,
+      "historicalFullEligibility": "UNKNOWN_UNRECORDED"
+    },
+    {
+      "since": 1791539860905,
+      "until": 1791540160905,
+      "pool": [
+        20,
+        20
+      ],
+      "capital": [
+        22,
+        31
+      ],
+      "heartbeats": 10,
+      "dispatch": 0,
+      "scout": 0,
+      "primary": 0,
+      "completed": 0,
+      "failed": 0,
+      "intents": 0,
+      "orders": 0,
+      "historicalFullEligibility": "UNKNOWN_UNRECORDED"
+    },
+    {
+      "since": 1791540160905,
+      "until": 1791540460905,
+      "pool": [
+        20,
+        20
+      ],
+      "capital": [
+        21,
+        30
+      ],
+      "heartbeats": 9,
+      "dispatch": 0,
+      "scout": 0,
+      "primary": 0,
+      "completed": 0,
+      "failed": 0,
+      "intents": 0,
+      "orders": 0,
+      "historicalFullEligibility": "UNKNOWN_UNRECORDED"
+    },
+    {
+      "since": 1791540460905,
+      "until": 1791540760905,
+      "pool": [
+        20,
+        20
+      ],
+      "capital": [
+        23,
+        29
+      ],
+      "heartbeats": 10,
+      "dispatch": 0,
+      "scout": 0,
+      "primary": 0,
+      "completed": 0,
+      "failed": 0,
+      "intents": 0,
+      "orders": 0,
+      "historicalFullEligibility": "UNKNOWN_UNRECORDED"
+    },
+    {
+      "since": 1791540760905,
+      "until": 1791541060905,
+      "pool": [
+        20,
+        20
+      ],
+      "capital": [
+        24,
+        30
+      ],
+      "heartbeats": 10,
+      "dispatch": 0,
+      "scout": 0,
+      "primary": 0,
+      "completed": 0,
+      "failed": 0,
+      "intents": 0,
+      "orders": 0,
+      "historicalFullEligibility": "UNKNOWN_UNRECORDED"
+    },
+    {
+      "since": 1791541060905,
+      "until": 1791541360905,
+      "pool": [
+        20,
+        20
+      ],
+      "capital": [
+        23,
+        29
+      ],
+      "heartbeats": 9,
+      "dispatch": 0,
+      "scout": 0,
+      "primary": 0,
+      "completed": 0,
+      "failed": 0,
+      "intents": 0,
+      "orders": 0,
+      "historicalFullEligibility": "UNKNOWN_UNRECORDED"
+    },
+    {
+      "since": 1791541360905,
+      "until": 1791541660905,
+      "pool": [
+        20,
+        20
+      ],
+      "capital": [
+        22,
+        31
+      ],
+      "heartbeats": 10,
+      "dispatch": 0,
+      "scout": 0,
+      "primary": 0,
+      "completed": 0,
+      "failed": 0,
+      "intents": 0,
+      "orders": 0,
+      "historicalFullEligibility": "UNKNOWN_UNRECORDED"
+    },
+    {
+      "since": 1791541660905,
+      "until": 1791541960905,
+      "pool": [
+        17,
+        20
+      ],
+      "capital": [
+        17,
+        30
+      ],
+      "heartbeats": 10,
+      "dispatch": 1,
+      "scout": 1,
+      "primary": 1,
+      "completed": 0,
+      "failed": 1,
+      "intents": 0,
+      "orders": 0,
+      "historicalFullEligibility": "UNKNOWN_UNRECORDED"
+    },
+    {
+      "since": 1791541960905,
+      "until": 1791542260905,
+      "pool": [
+        18,
+        20
+      ],
+      "capital": [
+        17,
+        29
+      ],
+      "heartbeats": 9,
+      "dispatch": 0,
+      "scout": 0,
+      "primary": 0,
+      "completed": 0,
+      "failed": 0,
+      "intents": 0,
+      "orders": 0,
+      "historicalFullEligibility": "UNKNOWN_UNRECORDED"
+    },
+    {
+      "since": 1791542260905,
+      "until": 1791542560905,
+      "pool": [
+        20,
+        20
+      ],
+      "capital": [
+        26,
+        33
+      ],
+      "heartbeats": 10,
+      "dispatch": 0,
+      "scout": 0,
+      "primary": 0,
+      "completed": 0,
+      "failed": 0,
+      "intents": 0,
+      "orders": 0,
+      "historicalFullEligibility": "UNKNOWN_UNRECORDED"
+    }
+  ]
+}

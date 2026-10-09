@@ -25,7 +25,7 @@ it('UNKNOWN, partial fills, active positions, open orders and unclosed lots cann
  try{
   createNoAddOriginSchema(db);db.exec('CREATE TABLE entry_execution_tasks(intent_id TEXT PRIMARY KEY,payload TEXT);CREATE TABLE trade_records(trade_id TEXT PRIMARY KEY,payload TEXT)');
   const original=input();claimNoAddOrigin(db,original);
-  const order={clientOrderId:original.clientOrderId,symbol:original.symbol,side:original.side,exchangeTerminalStatus:'UNKNOWN',filledQuantity:4,updatedAt:original.now};
+  const order={clientOrderId:original.clientOrderId,symbol:original.symbol,side:original.side,exchangeTerminalStatus:'UNKNOWN',filledQuantity:4,updatedAt:original.now,quantity:10,exchangeOrderId:'exchange',factSource:'BINANCE_EXACT_ORDER',verifiedAt:original.now,verifiedExchangeFills:[{symbol:'ETHUSDT',orderId:'exchange',clientOrderId:original.clientOrderId,qty:4}]};
   const save=()=>db.prepare('INSERT OR REPLACE INTO entry_execution_tasks VALUES(?,?)').run(original.intentId,JSON.stringify({order}));save();
   const snapshot={environment:'TESTNET',account:'local',requestedAt:Date.now()-10,observedAt:Date.now(),fullOrderScan:true,positions:[],openOrders:[]} as any;
   expect(releaseFlatNoAddOrigins(db,snapshot)).toBe(0);
@@ -35,6 +35,10 @@ it('UNKNOWN, partial fills, active positions, open orders and unclosed lots cann
   expect(releaseFlatNoAddOrigins(db,{...snapshot,positions:[{symbol:'ETHUSDT',side:'LONG',quantity:1}]})).toBe(0);
   expect(releaseFlatNoAddOrigins(db,{...snapshot,openOrders:[{symbol:'ETHUSDT',side:'SELL'}]})).toBe(0);
   expect(releaseFlatNoAddOrigins(db,{...snapshot,fullOrderScan:false})).toBe(0);
+  order.quantity=11;save();expect(releaseFlatNoAddOrigins(db,snapshot)).toBe(0);order.quantity=10;
+  order.factSource='LOCAL_LABEL';save();expect(releaseFlatNoAddOrigins(db,snapshot)).toBe(0);order.factSource='BINANCE_EXACT_ORDER';
+  order.verifiedExchangeFills[0]!.qty=3;save();expect(releaseFlatNoAddOrigins(db,snapshot)).toBe(0);order.verifiedExchangeFills[0]!.qty=4;
+  order.verifiedExchangeFills[0]!.orderId='other';save();expect(releaseFlatNoAddOrigins(db,snapshot)).toBe(0);order.verifiedExchangeFills[0]!.orderId='exchange';save();
   expect(releaseFlatNoAddOrigins(db,snapshot)).toBe(1);
   expect(readNoAddOrigin(db,'TESTNET','local','ETHUSDT','LONG')).toBeNull();
   expect(claimNoAddOrigin(db,input())).toBe('NO_ADD_ORIGIN_RELEASED_IDENTITY');

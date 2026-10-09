@@ -56,10 +56,11 @@ async function frozenFarPricePlace(){
   }),runId:'frozen-place-run'}));
   await h.run();
   expect(h.ai.decide).toHaveBeenCalledOnce();
-  expect(h.exchange.placeEntry).toHaveBeenCalledOnce();
-  expect(h.state.candidateLifecycle.get(h.packet.symbol)).toMatchObject({status:'ENTRY_WORKING'});
+  expect(h.exchange.placeEntry).not.toHaveBeenCalled();
+  expect(h.state.entryIntents.size).toBe(0);
   expect(h.state.candidateLifecycle.get(h.packet.symbol)?.status).not.toBe('WAIT_EXECUTION_RANGE');
-  expect(h.events.some(e=>e.type==='POST_AI_OBSERVATION_ONLY'&&e.payload?.postAiVeto===false)).toBe(true);
+  expect(h.events.some(e=>e.type==='CANDIDATE_REJECTED'&&e.payload?.reason==='AI_ENTRY_PRICE_OUTSIDE_FROZEN_RANGE')).toBe(true);
+  expect(h.events.some(e=>e.type==='PRIMARY_ANALYSIS_OUTCOME'&&e.payload?.classification==='FROZEN_CHOICE_INVALID'&&e.payload?.effective===false)).toBe(true);
   return h;
 }
 describe('V3.7.0 isolated real-EIP contracts; production write=0',()=>{
@@ -92,13 +93,12 @@ describe('V3.7.0 isolated real-EIP contracts; production write=0',()=>{
   it('does not clear cooldown when Entry and Universe inspect the same unchanged facts',()=>{const h=harness(),symbol=h.packet.symbol,context=(h.coordinator as any).currentDecisionContext(symbol);h.state.candidateLifecycle.set(symbol,{symbol,status:'REJECT_COOLDOWN',reason:'TEST',decisionContextKey:context,nextEligibleAt:Date.now()+60_000,updatedAt:Date.now()});h.state.rejectionCooldown.set(symbol,{until:Date.now()+60_000});new UniverseCoordinator(h.state,new EventBus()).refresh();expect(h.state.candidateLifecycle.get(symbol)).toMatchObject({status:'REJECT_COOLDOWN'});expect(h.state.rejectionCooldown.has(symbol)).toBe(true);});
   it('repairs Episode fields from normalized terminal facts with previous provenance',()=>{const d=terminalDecision({id:'r',status:'COMPLETED',startedAt:1,completedAt:2,normalizedPreview:JSON.stringify({confidence:.8,reason:'explicit'})},{status:'RUNNING'});expect(d).toMatchObject({confidence:.8,reason:'explicit',revision:{previous:{status:'RUNNING'}}});});
   it('fixed outcome rejects immature horizons and separates SHORT from market return',()=>{const db=new DatabaseSync(':memory:');try{db.exec('CREATE TABLE shadow_mark_series(symbol TEXT,ts INTEGER,mark REAL)');const s=db.prepare('INSERT INTO shadow_mark_series VALUES(?,?,?)');for(let i=0;i<=15;i++)s.run('X',1000+i*60000,100-i/15);expect(observedOutcome(db,'X',1000,100,'SHORT',1000+899999).horizons.m15).toBeNull();const o=observedOutcome(db,'X',1000,100,'SHORT',901000);expect(o.horizons.m15).toMatchObject({maturedAt:901000,coverage:'SAMPLED_CONTIGUOUS',mae:0});expect(o.horizons.m15.directionReturn).toBeCloseTo(.01);expect(o.horizons.m15.marketReturn).toBeCloseTo(-.01);expect(o.horizons.h1).toBeNull();}finally{db.close();}});
-  it('submits a frozen far-price PLACE immediately and never creates a post-Primary execution wait',async()=>{
+  it('refuses a model price outside its selected frozen candidate instead of silently clamping and submitting',async()=>{
     const h=await frozenFarPricePlace();
     await (h.coordinator as any).resumeExecutionWaits(Date.now());
-    expect(h.exchange.placeEntry).toHaveBeenCalledOnce();
-    expect(h.state.entryIntents.size).toBe(1);
-    expect(h.state.entryOrders.size).toBe(1);
-    expect([...h.state.entryOrders.values()][0]?.clientOrderId).toMatch(/^ml_/);
+    expect(h.exchange.placeEntry).not.toHaveBeenCalled();
+    expect(h.state.entryIntents.size).toBe(0);
+    expect(h.state.entryOrders.size).toBe(0);
   });
 
   it('uses the frozen candidate price ceiling when the maker quote rises during Primary',async()=>{

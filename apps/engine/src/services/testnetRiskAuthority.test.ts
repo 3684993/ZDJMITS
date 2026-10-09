@@ -585,3 +585,16 @@ describe('the authority commit channel derives its own facts', () => {
     expect(uncovered.reasons).toContain('MARGIN_TIER_SYMBOL_UNPROVEN:DOGEUSDT');
   });
 });
+
+it('bracket proof binds the key actually used to sign and invalidates same-ref credential replacement',async()=>{
+ const transport=fakeTransport(),adapter=adapterFor(transport),first=adapter.accountScopeIdentity()!;
+ const read=await adapter.fetchMaintenanceMarginBrackets(['BTCUSDT'],{credentialRef:'unchanged'});
+ expect(read.accountIdentity).toEqual({...first,proof:'SIGNED_TESTNET_GET'});
+ adapter.setCredentials({apiKey:'other-account-key',apiSecret:'other-secret'});const next=adapter.accountScopeIdentity()!;
+ expect(next.credentialFingerprint).not.toBe(first.credentialFingerprint);expect(next.credentialGeneration).toBe(first.credentialGeneration+1);
+});
+it('refuses in-flight bracket facts after credentials rotate',async()=>{
+ const transport=fakeTransport(),adapter=adapterFor(transport),original=transport.json;
+ transport.json=async(path:string)=>{const response=await original(path);if(path.startsWith('/fapi/v1/leverageBracket'))adapter.setCredentials({apiKey:'changed',apiSecret:'s'});return response;};
+ await expect(adapter.fetchMaintenanceMarginBrackets(['BTCUSDT'],{credentialRef:'unchanged'})).rejects.toThrow('CREDENTIAL_GENERATION_CHANGED');
+});

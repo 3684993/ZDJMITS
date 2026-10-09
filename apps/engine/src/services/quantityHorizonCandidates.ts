@@ -146,16 +146,18 @@ export function buildQuantityHorizonCandidates(input:{
     selection:input.selection?{...input.selection,offered:false,refusals:[...new Set(reasons)],fallbacks:[]}:undefined});
   if(!envelope.executable)return rejectAll('SIDE_NOT_EXECUTABLE',...(envelope.riskHeadroom?.blockers??[]));
   if(!(quote.stepSize>0)||!(quote.tickSize>0)||!(leverage>0))return rejectAll('CANDIDATE_MARKET_FACT_INVALID');
-  const currentEntryPrice=side==='LONG'?quote.ask:quote.bid,
-    authorizedMin=finite(quote.minEntryPrice)&&Number(quote.minEntryPrice)>0?Number(quote.minEntryPrice):Math.min(quote.bid,quote.ask),
-    authorizedMax=finite(quote.maxEntryPrice)&&Number(quote.maxEntryPrice)>0?Number(quote.maxEntryPrice):Math.max(quote.bid,quote.ask),
+  const authorizedMin=alignTick(finite(quote.minEntryPrice)&&Number(quote.minEntryPrice)>0?Number(quote.minEntryPrice):Math.min(quote.bid,quote.ask),quote.tickSize,true),
+    authorizedMax=alignTick(finite(quote.maxEntryPrice)&&Number(quote.maxEntryPrice)>0?Number(quote.maxEntryPrice):Math.max(quote.bid,quote.ask),quote.tickSize,false),
     // Price, sizing and TP must remain valid for every maker price Primary is allowed to execute.
     // Using the conservative edge here prevents a later reprice from turning the frozen target onto
     // the wrong side or below the already-proven profit floor.
-    entryPrice=side==='LONG'?Math.max(currentEntryPrice,authorizedMax):Math.min(currentEntryPrice,authorizedMin);
+    entryPrice=side==='LONG'?authorizedMax:authorizedMin;
+  if(authorizedMin>authorizedMax)return rejectAll('NO_LEGAL_TICK_IN_ENTRY_RANGE');
   if(!(entryPrice>0))return rejectAll('CANDIDATE_ENTRY_PRICE_UNPROVEN');
-  const quantityCeiling=Math.min(Number(envelope.maxQuantityUnits??0),Number(envelope.maxNotionalUsd??0)/(quote.stepSize*entryPrice),
-    Number(envelope.maxMarginUsd??Number.POSITIVE_INFINITY)*leverage/(quote.stepSize*entryPrice));
+  // Capital is bounded at the maximum allowed entry price on either side; SHORT's
+  // conservative profit reference is the lower edge and cannot prove this ceiling.
+  const quantityCeiling=Math.min(Number(envelope.maxQuantityUnits??0),Number(envelope.maxNotionalUsd??0)/(quote.stepSize*authorizedMax),
+    Number(envelope.maxMarginUsd??Number.POSITIVE_INFINITY)*leverage/(quote.stepSize*authorizedMax));
   // Orders may be repriced anywhere in the authorized bid/ask interval. Size the floor against
   // the lowest current authorized quote so legal repricing cannot turn a $200 mandate into $199.
   const floorEntryPrice=Math.min(entryPrice,quote.bid,quote.ask,Number(quote.minEntryPrice??Number.POSITIVE_INFINITY));

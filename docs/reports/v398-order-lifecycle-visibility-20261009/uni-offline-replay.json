@@ -1,0 +1,16 @@
+{
+  "observedAt": "2026-10-09T07:56:32.748Z",
+  "brainRunFingerprint": "0864c83f6f6206c93852e12a1c6500fe37aa9765b57b063936375a553c31f619",
+  "executionState": "CANCELED",
+  "label": "曾成功提交 · 已撤单（成交0）",
+  "wasSubmitted": true,
+  "lifecycleStatus": "CANCELED",
+  "filledQuantity": 0,
+  "remainingQuantity": 135,
+  "statusAuthority": "BINANCE_EXACT_ORDER",
+  "attemptCount": 1,
+  "totalFilledQuantity": 0,
+  "sqliteChanges": 0,
+  "exchangeWrites": 0,
+  "deployment": "OFFLINE_REPLAY_ONLY"
+}

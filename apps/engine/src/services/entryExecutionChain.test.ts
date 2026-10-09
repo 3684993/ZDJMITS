@@ -53,7 +53,7 @@ describe('V3.9.6 PLACE -> submit chain closure', () => {
     const intent = h.state.entryIntents.values().next().value as any;
     expect(intent.planId).toBe(plan.planId);
     expect(intent.brainRunId).toBe(RUN);
-    expect(outcome(h.events).executionState).toBe('SUBMITTED');
+    expect(outcome(h.events).executionState).toBe('SUBMITTED_BUT_REMOTE_UNKNOWN');
   });
 
   it('EC-02 (T6) post-Primary quote drift is observed but does not revoke a frozen TESTNET PLACE', async () => {
@@ -72,13 +72,13 @@ describe('V3.9.6 PLACE -> submit chain closure', () => {
     expect(plan.planId).toBeTruthy();
     expect(types.indexOf('TRADE_PLAN_PERSISTED')).toBeLessThan(types.indexOf('ENTRY_RESERVATION_CREATED'));
     expect([...h.state.entryReservations.values()][0].status).not.toBe('RELEASED');
-    expect(outcome(h.events).executionState).toBe('SUBMITTED');
+    expect(outcome(h.events).executionState).toBe('SUBMITTED_BUT_REMOTE_UNKNOWN');
   });
 
   it('EC-03 a human exit goal remains intact and cannot veto a separate TESTNET Entry', async () => {
     const h=armed();h.exchange.setLeverage.mockImplementation(async()=>{h.state.manualExitGoals.set('goal_1',{symbol:fixtureSymbol} as never);});
     await h.run();expect(h.exchange.placeEntry).toHaveBeenCalledOnce();
-    expect(h.state.manualExitGoals.has('goal_1')).toBe(true);expect(outcome(h.events).executionState).toBe('SUBMITTED');
+    expect(h.state.manualExitGoals.has('goal_1')).toBe(true);expect(outcome(h.events).executionState).toBe('SUBMITTED_BUT_REMOTE_UNKNOWN');
   });
 
   it('EC-03B a post-Primary authorization-age change is audit-only in TESTNET funds-only', async () => {
@@ -90,7 +90,7 @@ describe('V3.9.6 PLACE -> submit chain closure', () => {
     await h.run();
     expect(h.exchange.placeEntry).toHaveBeenCalledOnce();
     expect(h.events.some((event:any)=>event.type==='POST_AI_OBSERVATION_ONLY'&&['AI_AUTHORIZATION_EXPIRED','JIT_AUTHORIZATION_AGE'].includes(event.payload?.kind)&&event.payload?.postAiVeto===false)).toBe(true);
-    expect(outcome(h.events).executionState).toBe('SUBMITTED');
+    expect(outcome(h.events).executionState).toBe('SUBMITTED_BUT_REMOTE_UNKNOWN');
   });
 
   it('EC-04 (T5) an unknown submission is reconciled, never re-sent', async () => {
@@ -113,5 +113,5 @@ it('a throwing telemetry subscriber cannot alter the real conversion/submit chai
   const observation=h.events.find((row:any)=>row.type==='FROZEN_CHOICE_CONVERSION_OBSERVED')!.payload as any;
   expect(observation).toMatchObject({side:'LONG',selectedCandidateId:expect.any(String),selectedQuantityUnits:expect.any(Number),selectedHorizonMinutes:3,conversion:'CONVERTED'});
   expect(observation.selectedQuantityUnits).toBeGreaterThan(0);
-  expect(outcome(h.events).executionState).toBe('SUBMITTED');
+  expect(outcome(h.events).executionState).toBe('SUBMITTED_BUT_REMOTE_UNKNOWN');
 });

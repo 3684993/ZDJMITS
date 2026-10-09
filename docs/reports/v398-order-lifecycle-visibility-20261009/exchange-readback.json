@@ -1,0 +1,22 @@
+{
+  "observedAt": "2026-10-09T07:55:31.336Z",
+  "environment": "TESTNET",
+  "host": "demo-fapi.binance.com",
+  "methods": [
+    "GET"
+  ],
+  "requestCount": 5,
+  "exchangeWrites": 0,
+  "status": "CANCELED",
+  "originalQuantity": 135,
+  "executedQuantity": 0,
+  "orderTime": 1791530511207,
+  "terminalUpdateTime": 1791530531199,
+  "clientIdentityMatches": true,
+  "clientFingerprint": "d33cfe3f81c8392501468cba174f2876917c50cc7f7c202611b3b15167b35f77",
+  "exchangeFingerprint": "d15ca44317cdce4ccbd6533cba2f64f31119dd405a483af53c3cba72275410e7",
+  "tradeRows": 0,
+  "exactTradeQuantity": 0,
+  "currentSymbolOpenOrders": 0,
+  "rawOrderResponseSha256": "5a808e58535a2c1fb77578f38fe6224a1a3849be0e868d4aa10149ea2c67fa9f"
+}

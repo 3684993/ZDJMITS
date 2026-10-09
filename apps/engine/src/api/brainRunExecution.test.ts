@@ -61,7 +61,7 @@ describe('V3.9.6 durable run -> execution result', () => {
     expect(row.role).toBe('PRIMARY_BRAIN');
     expect(row.execution).toMatchObject({
       brainRunId: 'durable-run', symbol: fixtureSymbol, decision: 'PLACE_LONG', direction: 'LONG',
-      executionState: 'SUBMITTED', executionLabel: '已挂单', blockStage: null, blockReasons: [],
+      executionState: 'SUBMITTED_BUT_REMOTE_UNKNOWN', wasSubmitted: true, executionLabel: '曾成功提交 · 状态待核验', blockStage: null, blockReasons: [],
       tradePlanReady: true, lineageProven: true,
     });
     expect(row.execution.tradePlanId).toMatch(/^plan/);
@@ -83,7 +83,7 @@ describe('V3.9.6 durable run -> execution result', () => {
     expect(h.events.some((event: any) => event.type === 'POST_AI_OBSERVATION_ONLY' && event.payload?.kind === 'MAKER_REACHABILITY' && event.payload?.postAiVeto === false)).toBe(true);
     recordRun(store);
     const row = await firstRow(store);
-    expect(row.execution).toMatchObject({executionState: 'SUBMITTED', executionLabel: '已挂单', blockStage: null, firstFillAt: null});
+    expect(row.execution).toMatchObject({executionState: 'SUBMITTED_BUT_REMOTE_UNKNOWN', wasSubmitted: true, executionLabel: '曾成功提交 · 状态待核验', blockStage: null, firstFillAt: null});
     expect(row.execution.intentId).toBeTruthy();
     expect(row.execution.tradePlanId).toBeTruthy();
   });

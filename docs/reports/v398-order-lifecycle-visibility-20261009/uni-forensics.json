@@ -1,0 +1,81 @@
+{
+  "status": "UNI_TERMINAL_VERIFIED",
+  "identitySha256": {
+    "brainRunId": "0864c83f6f6206c93852e12a1c6500fe37aa9765b57b063936375a553c31f619",
+    "intentId": "a1b4d2e6b54969b319fe2646cc922a3762c393de6d19b16392d77c0d46ba4180",
+    "internalOrderId": "c69d7ac47070e03a4c26848ce28e7f038b6e24e93d776027b9866d36085a7eea",
+    "clientOrderId": "d33cfe3f81c8392501468cba174f2876917c50cc7f7c202611b3b15167b35f77",
+    "exchangeOrderId": "d15ca44317cdce4ccbd6533cba2f64f31119dd405a483af53c3cba72275410e7",
+    "reviewRunId": "6c0c9ff6cb712dc7125acd59681217cd98ce8fb37f0ea0c88079bb2e76e4fa27"
+  },
+  "symbol": "UNIUSDT",
+  "side": "SHORT",
+  "quantity": 135,
+  "price": 7.442,
+  "filledQuantity": 0,
+  "remainingQuantity": 135,
+  "lifecycleStatus": "CANCELED_UNFILLED",
+  "source": "BINANCE_EXACT_ORDER + USER_DATA_WS + SQLITE",
+  "primaryStartedAt": 1791530434985,
+  "primaryCompletedAt": 1791530497286,
+  "timeline": [
+    {
+      "type": "ENTRY_RESERVATION_CREATED",
+      "ts": 1791530500611,
+      "beijing": "2026-10-09T15:21:40.611000+08:00"
+    },
+    {
+      "type": "ENTRY_INTENT_CREATED",
+      "ts": 1791530502274,
+      "beijing": "2026-10-09T15:21:42.274000+08:00"
+    },
+    {
+      "type": "ENTRY_SUBMIT_ATTEMPTED",
+      "ts": 1791530507805,
+      "beijing": "2026-10-09T15:21:47.805000+08:00"
+    },
+    {
+      "type": "ENTRY_ORDER_CREATED",
+      "ts": 1791530512610,
+      "beijing": "2026-10-09T15:21:52.610000+08:00"
+    },
+    {
+      "type": "ENTRY_ORDER_USER_DATA_CONFIRMED",
+      "ts": 1791530514478,
+      "beijing": "2026-10-09T15:21:54.478000+08:00",
+      "status": "WORKING",
+      "filledQuantity": 0
+    },
+    {
+      "type": "PENDING_ENTRY_REVIEW_COMPLETED",
+      "ts": 1791530530003,
+      "beijing": "2026-10-09T15:22:10.003000+08:00",
+      "decision": "CANCEL"
+    },
+    {
+      "type": "ENTRY_ORDER_USER_DATA_CONFIRMED",
+      "ts": 1791530532510,
+      "beijing": "2026-10-09T15:22:12.510000+08:00",
+      "status": "CANCELED",
+      "filledQuantity": 0
+    },
+    {
+      "type": "PENDING_ENTRY_REVIEW_ACTION_CONVERGED",
+      "ts": 1791530533263,
+      "beijing": "2026-10-09T15:22:13.263000+08:00",
+      "decision": "CANCEL",
+      "confirmed": true,
+      "reason": "DETERMINISTIC_COORDINATOR_ACTION"
+    }
+  ],
+  "reviewReason": "Authorization expired at 1791530560611, which is before the local observed time of 1791530511207 (or effectively concurrent/expired given the 1-minute horizon and current market movement). Additionally, the current ask price (7.442) is at the upper bound of the acceptable price range (7.4525741459), and the 15m trend is UP while the order is a SHORT entry, indicating adverse momentum relative to the short-term thesis. The order has not filled (0/135), and the economic mandate is no longer valid.",
+  "reviewReasonNumericError": {
+    "authorizationExpiresAt": 1791530560611,
+    "claimedObservedAt": 1791530511207,
+    "actualOrderCanceledAt": 1791530531199,
+    "conclusion": "Both observed time and cancellation preceded authorization expiry. Model wording is not deterministic expiration proof."
+  },
+  "readOnly": true,
+  "exchangeWritesFromAudit": 0,
+  "liveDeployment": "NOT_DEPLOYED"
+}

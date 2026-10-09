@@ -1798,7 +1798,7 @@ export class SettingsStore {
       lastAt: row?.last_ts ?? null,
     };
   }
-  runtimeEvents(since: number, types: string[] = [], limit = 5000) {
+  runtimeEvents(since: number, types: string[] = [], limit = 5000, latest = false) {
     let rows: Array<{
       id: string;
       type: string;
@@ -1810,15 +1810,16 @@ export class SettingsStore {
       const placeholders = types.map(() => "?").join(",");
       rows = this.db
         .prepare(
-          `SELECT id,type,ts,symbol,payload FROM runtime_events WHERE ts>=? AND type IN (${placeholders}) ORDER BY ts ASC LIMIT ?`,
+          `SELECT id,type,ts,symbol,payload FROM runtime_events WHERE ts>=? AND type IN (${placeholders}) ORDER BY ts ${latest?'DESC':'ASC'},rowid ${latest?'DESC':'ASC'} LIMIT ?`,
         )
         .all(since, ...types, limit) as typeof rows;
     } else
       rows = this.db
         .prepare(
-          "SELECT id,type,ts,symbol,payload FROM runtime_events WHERE ts>=? ORDER BY ts ASC LIMIT ?",
+          `SELECT id,type,ts,symbol,payload FROM runtime_events WHERE ts>=? ORDER BY ts ${latest?'DESC':'ASC'},rowid ${latest?'DESC':'ASC'} LIMIT ?`,
         )
         .all(since, limit) as typeof rows;
+    if(latest)rows.reverse();
     return rows.map((row) => {
       let payload: unknown = null;
       try {

@@ -29,7 +29,7 @@ function Get-Snapshot {
         actualPagefiles=@($usage | Select-Object Name,AllocatedBaseSize,CurrentUsage,PeakUsage)
         registryPagingFiles=@($reg)
         dumpType=$crash.CrashDumpEnabled
-        dedicatedDumpFile=$crash.DedicatedDumpFile
+        dedicatedDumpFile=$(if($crash.PSObject.Properties['DedicatedDumpFile']){[string]$crash.DedicatedDumpFile}else{$null})
         cFreeGiB=[Math]::Round([double]$c.FreeSpace/1GB,3)
         dFreeGiB=[Math]::Round([double]$d.FreeSpace/1GB,3)
         commitUsedGiB=[Math]::Round([double]$mem.CommittedBytes/1GB,3)

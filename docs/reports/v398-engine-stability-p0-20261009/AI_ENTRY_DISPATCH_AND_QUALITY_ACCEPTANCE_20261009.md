@@ -1,5 +1,12 @@
 # V3.9.8 AI Entry dispatch and quality acceptance
 
+## Final snapshot — 2026-10-09 13:08 +08
+
+- The instance ledger reached 13 completed Primary runs and 0 running: 10 failures and 3 natural decisions (ENAUSDT `PLACE_SHORT`, SUIUSDT `PLACE_LONG`, ONDOUSDT `PLACE_SHORT`). All 10 failures are the same `exceed_context_size_error`, with prompt sizes 37,993–38,768 versus `n_ctx=32,768`.
+- Each of the three natural decisions remains unlinked to any intent, order, submit, or fill. This is expected under `ANALYSIS_ONLY`; Production writes remain 0. The pipeline reports a fresh RUNNING scheduler but current analysis `COOLDOWN`, and supply shortage (12 ready / 20 target).
+- `/health` remained READY, private data READY, SQLite HEALTHY, and 13/13 positions retained Binance open-order TP protection. No lifecycle action, forced retry, circuit reset, Settings change, or Production write occurred during this sample.
+- Context-size overflow is still uncorrected in deployed source. Entry-quality acceptance and mature-trade evidence remain `INSUFFICIENT`; 3 analysis decisions without execution outcomes are not a quality pass. Do not use Engine READY as the acceptance criterion.
+
 ## Latest natural analysis sample — 2026-10-09 13:08 +08
 
 - `/health` remained READY on PID 22988 and the analysis scheduler heartbeat remained fresh/RUNNING. The current instance had 10 completed and 1 running Primary records: 7 context-size failures and 3 natural decisions — ENAUSDT `PLACE_SHORT`, SUIUSDT `PLACE_LONG`, and ONDOUSDT `PLACE_SHORT`.

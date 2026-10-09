@@ -25,6 +25,8 @@ PID 22988 / build `3.9.8-97aa98c71e15a39ef7b6` remained HTTP 200 READY, DB HEALT
 
 Without a lifecycle action, the same Engine advanced to 10 completed and 1 running Primary records. Three natural outputs were `PLACE_LONG/SHORT` decisions; all remained analysis-only with no intent/order/fill. Seven prior `AI_HTTP_400` failures all have durable `exceed_context_size_error` evidence. Health, 13/13 TP protection, TESTNET lock and Production writes 0 remained intact. This observation is still only minutes long and does not close the context-budget defect, entry-quality threshold, or 24-hour stability window.
 
+At the final 13:08 recheck, the naturally running request had completed into a 13-record ledger: 10/13 context-size failures and the same three no-order decisions. Scheduler remained RUNNING, analysis was in COOLDOWN, and the pool was short of target. Health/private/SQLite readiness and 13/13 TP protection remained green with Production writes 0. Runtime observation is still minutes, not long-duration acceptance.
+
 ## PR source and verification (pre-merge checkpoint)
 
 - Repository: `3684993/ZDJMITS`; target branch `main` at `d1ecbe978df84805f30fc1126bac85584df78011` when checked; PR branch `codex/reboot-orchestration-20261009` at `8f5d90bef48dffac537582e6755a6fb498bc8a75` before this turn's changes.

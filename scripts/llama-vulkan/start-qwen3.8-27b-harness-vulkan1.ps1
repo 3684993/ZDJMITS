@@ -1265,7 +1265,8 @@ function Stop-All {
         $watchProc = Get-CimInstance Win32_Process -Filter "ProcessId=$watchPid" -ErrorAction Stop
         $watchCommand = [string]$watchProc.CommandLine
         # Never kill an unknown PowerShell host, and never force-stop the watcher.
-        if ($watchCommand -notmatch '(?i)-Mode\s+Watch' -or $watchCommand -notmatch [regex]::Escape([IO.Path]::GetFileName($PSCommandPath))) {
+        $roleStem=[IO.Path]::GetFileNameWithoutExtension($PSCommandPath)
+        if ($watchCommand -notmatch '(?i)-Mode\s+Watch' -or $watchCommand -notmatch [regex]::Escape($roleStem)) {
             throw "STOP_BLOCKED_UNKNOWN_WATCHDOG pid=$watchPid; stop.flag retained; manual inspection required"
         }
         $deadline=(Get-Date).AddSeconds(75)
@@ -1278,7 +1279,7 @@ function Stop-All {
     }
     # A legacy untracked watcher can immediately relaunch: do not proceed if found.
     $watchers=@(Get-CimInstance Win32_Process -Filter "Name='powershell.exe' OR Name='pwsh.exe'" -ErrorAction Stop |
-        Where-Object { $_.CommandLine -match '(?i)-Mode\s+Watch' -and $_.CommandLine -match [regex]::Escape([IO.Path]::GetFileName($PSCommandPath)) })
+        Where-Object { $_.CommandLine -match '(?i)-Mode\s+Watch' -and $_.CommandLine -match [regex]::Escape([IO.Path]::GetFileNameWithoutExtension($PSCommandPath)) })
     if ($watchers.Count) {
         throw "STOP_BLOCKED_UNTRACKED_WATCHDOG count=$($watchers.Count); no server kill performed"
     }
@@ -1298,6 +1299,8 @@ function Stop-All {
     }
     Remove-GpuClaimsForPid -ServerPid $ExpectedServerPid
     Remove-Item -LiteralPath $WatchPidFile,$ServerPidFile -Force -ErrorAction SilentlyContinue
+    # Only clear the stop flag after the tracked watchdog and exact server have exited.
+    Remove-Item -LiteralPath $StopFlag,$WatchHaltFile -Force -ErrorAction SilentlyContinue
     Write-WatchLog "operator-confirmed-maintenance-stop pid=$ExpectedServerPid"
     Write-Host "STOP_CONFIRMED role=$RoleName port=$Port pid=$ExpectedServerPid"
 }

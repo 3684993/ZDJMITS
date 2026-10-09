@@ -1,0 +1,26 @@
+{
+  "incidentId":"ENGINE-20261009-PID8524-C685F035",
+  "eventLog":"System",
+  "provider":"Microsoft-Windows-Resource-Exhaustion-Detector",
+  "eventId":2004,
+  "queryWindowAsiaShanghai":{"start":"2026-10-09T06:30:00+08:00","end":"2026-10-09T08:20:00+08:00"},
+  "events":[
+    {"recordId":24135,"time":"2026-10-09T06:54:31.157+08:00","messageClass":"Windows reported low virtual memory; named top three consumers"},
+    {"recordId":24136,"time":"2026-10-09T07:00:29.419+08:00","messageClass":"Windows reported low virtual memory; named top three consumers"},
+    {"recordId":24137,"time":"2026-10-09T07:05:36.999+08:00","messageClass":"Windows reported low virtual memory; named top three consumers"},
+    {"recordId":24141,"time":"2026-10-09T07:12:08.200+08:00","messageClass":"Windows reported low virtual memory; named top three consumers"}
+  ],
+  "processCorrelation": {
+    "pid8524ListedAmongTopThree":false,
+    "namesListed":"Three independent llama-server.exe processes",
+    "note":"The full local event messages contain process IDs and virtual-memory byte counts; these are retained locally and are not reproduced in this public summary."
+  },
+  "interpretation": {
+    "systemVirtualMemoryPressure":"STRONG_EVIDENCE",
+    "enginePidSpecificPressure":"UNKNOWN",
+    "causalContributionToExit":"UNKNOWN",
+    "exitClass":"PROCESS_EXIT_CRASH",
+    "timeFromLastResourceEventToExitMs":290149
+  },
+  "privateRawEvidence":"See the local-only incident evidence manifest; full event XML and messages are not committed."
+}

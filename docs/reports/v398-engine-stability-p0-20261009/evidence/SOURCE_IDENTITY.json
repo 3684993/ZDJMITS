@@ -1,0 +1,42 @@
+{
+  "repository": "3684993/ZDJMITS",
+  "observedAtUtc": "2026-10-09T00:30:51.071Z",
+  "latestMain": {
+    "sha": "b5db4710c6cc4d7be6f0af0b7c744bef242c4ef0",
+    "fetchedFrom": "origin/main",
+    "worktree": "[LOCAL_CODEX_WORKTREE_ROOT]\\v398-engine-p0\\MITS",
+    "githubActions": {"runId":37864514697,"headSha":"b5db4710c6cc4d7be6f0af0b7c744bef242c4ef0","status":"in_progress","conclusion":null,"url":"https://github.com/3684993/ZDJMITS/actions/runs/37864514697"}
+  },
+  "runtimeLoadedIdentity": {
+    "pid":8524,
+    "parentPid":44084,
+    "instanceId":"c685f035-1f52-48ac-80fa-998811ff3fe5",
+    "buildId":"3.9.8-7271c941c2cdec049610",
+    "sourceCommit":"5fe95a8662639571ac27e2ae1580c5994847ff77",
+    "sourceWorktree":"D:\\MITS-WORKTREES\\v398-entry-quality-20261008",
+    "enginePath":"D:\\MITS-WORKTREES\\v398-entry-quality-20261008\\apps\\engine\\dist\\main.js",
+    "runtimeLogSha256":"B18C6173CCDA88E32BB7EF5C7BD63A9FBD4A9823D71B81740A213C38C81D6215",
+    "runtimeLogBytes":7485338,
+    "runtimeLogLastWriteAsiaShanghai":"2026-10-09T07:16:57.1173468+08:00",
+    "launchLifecycleSha256":"9FDC90DFC99F21FCE516ECA429D3D6671B6EF7A2063D91251514E4B19614FF2E",
+    "processLifecycleSha256":"96D90F4655C44607FD9DC23BC0BB1E2FCF89D45F3BC85DAE500B0202CEA12879",
+    "stderrSha256":"F7D750725678D0630B63403F2D299CD2C2C6C5807BBFD807020512F0D2953521",
+    "stdoutSha256":"187EE866FCA9144BCEA1C34D17D5A1A8F1A41B337F1CEFF5174945556684F61C",
+    "runtimeSourceDistMainSha256":"B33B6D9E48F0D4442ED1A5C7E4EB05029AD0C2FA88B180E71041E5EC710824D5"
+  },
+  "loadedSourceWorktreeStatus": {"head":"5fe95a8662639571ac27e2ae1580c5994847ff77","dirtyAtAudit":"false"},
+  "canonicalD_MITS": {
+    "head":"ea531b5f51e717f0ead322733765f2d6de30b4cb",
+    "relationToFetchedMain":"70 commits behind at audit time",
+    "dirtyInventoryPreserved":true,
+    "trackedDeletion":"ZDJ-MITS-V3.9.2-UNKNOWN-P0-Fix-Verification-20260913.md",
+    "untrackedPaths":["docs/reports/crash/engine-crash-20261006-071531/","docs/reports/crash/jitless-20261006-074518/","docs/reports/handoff/","scripts/collect-zdj-v397-handoff.ps1","scripts/vpn/"]
+  },
+  "sourceComparison": {
+    "from":"5fe95a8662639571ac27e2ae1580c5994847ff77",
+    "to":"b5db4710c6cc4d7be6f0af0b7c744bef242c4ef0",
+    "pathsCompared":["apps/engine/src/main.ts","apps/engine/src/runtime/processLifecycleTelemetry.ts","apps/engine/src/runtime/processLifecycleTelemetry.test.ts","apps/engine/src/services/operationalLogger.ts","apps/engine/src/services/operationalLogger.test.ts","scripts/start-zdj-engine-host.ps1","scripts/start-zdj-engine-host.test.ps1","scripts/start-zdj-lan.ps1","scripts/windows/start-engine.ps1"],
+    "diffsFound":false,
+    "note":"These exact lifecycle/logger/launcher files are unchanged after the loaded source commit. This does not establish that other code paths are unchanged or causal."
+  }
+}

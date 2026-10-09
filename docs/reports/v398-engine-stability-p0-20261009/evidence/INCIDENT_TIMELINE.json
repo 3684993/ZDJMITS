@@ -1,0 +1,45 @@
+{
+  "incidentId": "ENGINE-20261009-PID8524-C685F035",
+  "timezone": "UTC and Asia/Shanghai (UTC+08:00)",
+  "runtime": {
+    "pid": 8524,
+    "parentPid": 44084,
+    "instanceId": "c685f035-1f52-48ac-80fa-998811ff3fe5",
+    "version": "3.9.8",
+    "buildId": "3.9.8-7271c941c2cdec049610",
+    "sourceCommit": "5fe95a8662639571ac27e2ae1580c5994847ff77",
+    "enginePath": "D:\\MITS-WORKTREES\\v398-entry-quality-20261008\\apps\\engine\\dist\\main.js",
+    "nodeVersion": "v22.23.1",
+    "v8Version": "12.4.254.21-node.56",
+    "nodeFlags": ["--no-maglev"]
+  },
+  "events": [
+    {"kind":"PROCESS_START","utc":"2026-10-08T22:06:47.707Z","asiaShanghai":"2026-10-09T06:06:47.707+08:00","source":"engine-process-lifecycle.jsonl"},
+    {"kind":"RUNTIME_CREATED","utc":"2026-10-08T22:07:44.039Z","asiaShanghai":"2026-10-09T06:07:44.039+08:00","source":"engine-process-lifecycle.jsonl"},
+    {"kind":"HTTP_LISTENING","utc":"2026-10-08T22:07:44.274Z","asiaShanghai":"2026-10-09T06:07:44.274+08:00","source":"engine-process-lifecycle.jsonl"},
+    {"kind":"LATEST_KNOWN_HEALTH_READY","utc":"2026-10-08T23:00:11.985Z","asiaShanghai":"2026-10-09T07:00:11.985+08:00","source":"runtime-phase-a.json"},
+    {"kind":"SETTINGS_UPDATED","utc":"2026-10-08T22:53:07.387Z","asiaShanghai":"2026-10-09T06:53:07.387+08:00","generation":93,"settingsVersion":248,"actor":"UNKNOWN"},
+    {"kind":"SETTINGS_UPDATED","utc":"2026-10-08T22:55:17.774Z","asiaShanghai":"2026-10-09T06:55:17.774+08:00","generation":94,"settingsVersion":249,"actor":"UNKNOWN"},
+    {"kind":"SETTINGS_UPDATED","utc":"2026-10-08T22:57:36.357Z","asiaShanghai":"2026-10-09T06:57:36.357+08:00","generation":95,"settingsVersion":250,"actor":"UNKNOWN"},
+    {"kind":"SETTINGS_UPDATED","utc":"2026-10-08T23:00:58.920Z","asiaShanghai":"2026-10-09T07:00:58.920+08:00","generation":96,"settingsVersion":251,"actor":"UNKNOWN"},
+    {"kind":"SETTINGS_UPDATED","utc":"2026-10-08T23:06:34.300Z","asiaShanghai":"2026-10-09T07:06:34.300+08:00","generation":97,"settingsVersion":252,"actor":"UNKNOWN"},
+    {"kind":"SETTINGS_UPDATED","utc":"2026-10-08T23:15:50.334Z","asiaShanghai":"2026-10-09T07:15:50.334+08:00","generation":98,"settingsVersion":253,"actor":"UNKNOWN"},
+    {"kind":"WINDOWS_LOW_VIRTUAL_MEMORY","eventId":2004,"utc":"2026-10-08T22:54:31.157Z","asiaShanghai":"2026-10-09T06:54:31.157+08:00","pid8524InTopThree":false,"source":"System Resource-Exhaustion-Detector"},
+    {"kind":"WINDOWS_LOW_VIRTUAL_MEMORY","eventId":2004,"utc":"2026-10-08T23:00:29.419Z","asiaShanghai":"2026-10-09T07:00:29.419+08:00","pid8524InTopThree":false,"source":"System Resource-Exhaustion-Detector"},
+    {"kind":"WINDOWS_LOW_VIRTUAL_MEMORY","eventId":2004,"utc":"2026-10-08T23:05:36.999Z","asiaShanghai":"2026-10-09T07:05:36.999+08:00","pid8524InTopThree":false,"source":"System Resource-Exhaustion-Detector"},
+    {"kind":"WINDOWS_LOW_VIRTUAL_MEMORY","eventId":2004,"utc":"2026-10-08T23:12:08.200Z","asiaShanghai":"2026-10-09T07:12:08.200+08:00","pid8524InTopThree":false,"source":"System Resource-Exhaustion-Detector"},
+    {"kind":"LAST_STRUCTURED_ENGINE_EVENT","event":"BINANCE_USER_DATA","detail":"A TESTNET user-data order-trade update was logged; exact active call stack is unavailable","utc":"2026-10-08T23:16:57.109Z","asiaShanghai":"2026-10-09T07:16:57.109+08:00","source":"PID 8524 instance JSONL"},
+    {"kind":"CHILD_PROCESS_EXIT","utc":"2026-10-08T23:16:58.349Z","asiaShanghai":"2026-10-09T07:16:58.349+08:00","exitCodeDecimal":-1073740791,"exitCodeHex":"0xC0000409","source":"engine-launch-lifecycle.jsonl CHILD_EXITED"},
+    {"kind":"LAUNCHER_EXIT_RECEIPT_WRITTEN","utc":"2026-10-08T23:16:58.351Z","asiaShanghai":"2026-10-09T07:16:58.351+08:00","pid":8524,"hostPid":44084,"exitCodeDecimal":-1073740791,"source":"engine-launch-lifecycle.jsonl"},
+    {"kind":"FIRST_RECORDED_HTTP_FAILURE","utc":"2026-10-08T23:38:46.048Z","asiaShanghai":"2026-10-09T07:38:46.048+08:00","methods":["GET"],"failedEndpoints":8,"source":"runtime-completion.json"},
+    {"kind":"LATER_HTTP_FAILURE_CONFIRMATION","utc":"2026-10-08T23:56:37.074Z","asiaShanghai":"2026-10-09T07:56:37.074+08:00","methods":["GET"],"failedEndpoints":8,"source":"runtime-final-closeout.json"},
+    {"kind":"CURRENT_READ_ONLY_HOST_SNAPSHOT","utc":"2026-10-09T00:28:12.209Z","asiaShanghai":"2026-10-09T08:28:12.206+08:00","pid8524Present":false,"port8080Listening":false,"ports8081_8083_8084Listening":true,"osLastBoot":"2026-09-18T14:44:52.820Z"}
+  ],
+  "derivedIntervals": {
+    "processStartToExitMs": 4210642,
+    "lastStructuredEventToExitMs": 1240,
+    "exitToFirstHttpFailureMs": 1307699,
+    "settingsVersion253ToExitMs": 68015
+  },
+  "clockNotes": "Engine and launcher timestamps are Unix epoch milliseconds. Original HTTP snapshots used UTC Z timestamps. Local and UTC representations above are converted from those sources; host capture time was recorded by PowerShell. No historical WMI process creation event or request-level HTTP access log was available."
+}

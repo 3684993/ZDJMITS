@@ -1,0 +1,43 @@
+{
+  "observedAtUtc": "2026-10-09T00:37:12.0670625Z",
+  "privacyGate": "SANITIZED_SUMMARY_ONLY_RAW_RUNTIME_AND_EVENT_TEXT_LOCAL",
+  "privateEvidenceManifestSha256": "B6052AF5EC4D9CEC967CD3CDF7AA422D3685EC74C8871B506D77B93D2F89FF18",
+  "privateEvidenceLocalId": "incident-pid8524-20261009",
+  "publicArtifacts": [
+    {
+      "path": "docs/reports/v398-engine-stability-p0-20261009/INCIDENT_FORENSICS_REPORT.md",
+      "bytes": 9137,
+      "sha256": "AD305314A4FB456FA11334E884F483AE0AD56F6ECD99BBF22792D74064EFDF47"
+    },
+    {
+      "path": "docs/plans/V398_ENGINE_STABILITY_P0_IMPLEMENTATION_PLAN_20261009.md",
+      "bytes": 5830,
+      "sha256": "750C759A5AE12B6055434800E7DE5F09A52279322589FD5D810CCA39C336BD19"
+    },
+    {
+      "path": "docs/reports/v398-engine-stability-p0-20261009/evidence/EXIT_CLASSIFICATION.json",
+      "bytes": 3811,
+      "sha256": "346B7198CA0413AF5B34A6BD966A7A891E4F12B01926110040C0CB6B0237B128"
+    },
+    {
+      "path": "docs/reports/v398-engine-stability-p0-20261009/evidence/INCIDENT_TIMELINE.json",
+      "bytes": 4962,
+      "sha256": "F51949E838B754A733637F70D4E35D534D79E2311EEFB85C243CE0F87E96218D"
+    },
+    {
+      "path": "docs/reports/v398-engine-stability-p0-20261009/evidence/RESOURCE_EXHAUSTION_SUMMARY.json",
+      "bytes": 1524,
+      "sha256": "98DF52453BE9F859733054696A9C730AD0821C37B164FCEABC67A975C615A301"
+    },
+    {
+      "path": "docs/reports/v398-engine-stability-p0-20261009/evidence/SOURCE_COVERAGE.json",
+      "bytes": 4462,
+      "sha256": "6EAF6D8C4624995CCC721CF426B13B432D6509FE348EFF46F98E44DE79FB2C2E"
+    },
+    {
+      "path": "docs/reports/v398-engine-stability-p0-20261009/evidence/SOURCE_IDENTITY.json",
+      "bytes": 2851,
+      "sha256": "385DD6A9A0BED5406B917619B36F4258B505DD8E5CE6C4F6FE1CEBC2BF2838CD"
+    }
+  ]
+}

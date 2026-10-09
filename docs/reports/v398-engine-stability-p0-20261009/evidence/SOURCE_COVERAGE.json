@@ -1,0 +1,22 @@
+{
+  "incidentId":"ENGINE-20261009-PID8524-C685F035",
+  "windowAsiaShanghai":{"start":"2026-10-09T06:30:00+08:00","end":"2026-10-09T08:20:00+08:00"},
+  "sources":[
+    {"source":"GitHub origin/main and GitHub Actions","status":"COLLECTED","scope":"Latest main SHA plus workflow run queried by exact head SHA","result":"main b5db471; Actions 37864514697 was in_progress at 00:30:51Z"},
+    {"source":"D:\\MITS Git status and HEAD","status":"COLLECTED","scope":"Read-only status/head/diff; no reset/stash/clean/switch performed","result":"HEAD ea531b5; one tracked deletion and five untracked paths preserved"},
+    {"source":"Loaded-source worktree","status":"COLLECTED","scope":"Identity and lifecycle source files at 5fe95a8","result":"Clean worktree; exact runtime source identity agrees with lifecycle payload"},
+    {"source":"8080/8081/8083/8084 listeners and selected process identities","status":"COLLECTED","scope":"Current snapshot at 08:28:12.206+08","result":"PID 8524 absent; 8080 no listener; model ports remain on separate PIDs"},
+    {"source":"Windows Application and System Event Logs","status":"COLLECTED_BOUNDED","scope":"All records in 06:30–08:20+08, then targeted provider/PID/instance/path matches","result":"Application 21 records, System 7 records; no Application Error/WER record matched PID 8524, instance ID, or node.exe. Four System Event ID 2004 records explicitly report low virtual memory; the top-three process lists do not include PID 8524."},
+    {"source":"WER ReportArchive/ReportQueue, user CrashDumps, Windows Minidump directories","status":"COLLECTED_BOUNDED","scope":"Immediate directory entries filtered by incident time and PID/node/instance name; dump contents not opened","result":"No PID 8524/node.exe incident dump or matching app report; unrelated WER entries were not attributed"},
+    {"source":"Engine instance JSONL","status":"COLLECTED_HASHED","scope":"Full 7,485,338-byte file preserved at original path; streamed event metadata and exact last event; no copy to GitHub","result":"Last row BINANCE_USER_DATA at 07:16:57.109+08; file SHA recorded in SOURCE_IDENTITY.json"},
+    {"source":"Engine launcher lifecycle JSONL","status":"COLLECTED_HASHED","scope":"Full append-only file preserved at original path; exact launch/child-exit rows extracted","result":"PID 8524 child exit 0xC0000409 at 07:16:58.349+08; launcher row 07:16:58.351+08"},
+    {"source":"Engine process lifecycle JSONL","status":"COLLECTED_HASHED","scope":"Full file preserved and filtered to PID 8524","result":"Startup and HTTP_LISTENING exist; no fatal handler, graceful shutdown, or process-exit row for this PID"},
+    {"source":"Engine stdout/stderr","status":"COLLECTED_HASHED","scope":"Original files preserved and hashed; bounded tails saved locally","result":"stderr's last-write time is 07:16:57.116+08; no structured native crash receipt in the log tail"},
+    {"source":"Settings CAS/update facts","status":"COLLECTED_REDACTED","scope":"Only timestamp, generation, and version metadata from six SETTINGS_UPDATED rows","result":"Versions 248–253; actor/callsite and payload UNKNOWN; private settings payload was not read or exported"},
+    {"source":"Historical 0xC0000409 foreground incident","status":"COLLECTED_COMPARISON_ONLY","scope":"Committed 2026-10-06 crash analysis, not merged with PID 8524 timeline","result":"Same exit status, different process age and last event; common trigger not established"},
+    {"source":"CPU/memory/pagefile/handles/threads and active native stack","status":"PARTIAL","scope":"Four Event ID 2004 virtual-memory pressure reports captured; no same-time PID 8524 counters or dump","result":"System-level low virtual memory is STRONG_EVIDENCE shortly before exit; cannot establish PID 8524 use or causal link to fail-fast"},
+    {"source":"Last successful HTTP response/request log","status":"PARTIAL_GAP","scope":"Available snapshots only","result":"Latest known /health READY at 07:00:11.985+08; exact last success after that is unknown"},
+    {"source":"SQLite/live database","status":"NOT_READ","scope":"No backup, query, or raw database copy in this investigation","result":"Avoided additional lock/IO and private data exposure; settings evidence came from existing structured logs"},
+    {"source":"Exchange/network actions","status":"NOT_PERFORMED","scope":"No HTTP probe to Engine, no exchange API calls, no writes","result":"No Engine lifecycle or exchange action performed"}
+  ]
+}

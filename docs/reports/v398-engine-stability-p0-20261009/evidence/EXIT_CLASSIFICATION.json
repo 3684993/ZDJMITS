@@ -1,0 +1,46 @@
+{
+  "incidentId": "ENGINE-20261009-PID8524-C685F035",
+  "classification": "PROCESS_EXIT_CRASH",
+  "confidence": "PROVEN",
+  "facts": {
+    "pid": 8524,
+    "parentPid": 44084,
+    "instanceId": "c685f035-1f52-48ac-80fa-998811ff3fe5",
+    "processExitUtc": "2026-10-08T23:16:58.349Z",
+    "launcherReceiptUtc": "2026-10-08T23:16:58.351Z",
+    "exitCodeDecimal": -1073740791,
+    "exitCodeHex": "0xC0000409",
+    "windowsInterpretation": "User-mode fail-fast exception status; fail-fast subcode is unavailable.",
+    "lastEngineEventUtc": "2026-10-08T23:16:57.109Z",
+    "lastEngineEvent": "BINANCE_USER_DATA",
+    "firstFailedHttpUtc": "2026-10-08T23:38:46.048Z"
+  },
+  "supportingEvidence": [
+    "Matching CHILD_EXITED row in engine-launch-lifecycle.jsonl includes PID 8524, launcher PID 44084, exitCode -1073740791, and exitedAt.",
+    "Matching instance JSONL ends 1.240 seconds before the launcher-observed exit.",
+    "First failed HTTP observation occurs 21m47.699s after process exit.",
+    "No normal SHUTDOWN_REQUESTED, ENGINE_FATAL_HANDLER, UNCAUGHT_EXCEPTION_MONITOR, or PROCESS_EXIT row exists for PID 8524 in the captured process lifecycle file."
+  ],
+  "separateCategories": {
+    "PROCESS_EXIT_NORMAL_OR_EXTERNAL": "CONTRADICTED as the primary classification; no graceful shutdown record and a fail-fast exit status are present. An unobserved external termination mechanism cannot be absolutely excluded without an OS trace or dump.",
+    "PROCESS_ALIVE_HTTP_UNAVAILABLE": "CONTRADICTED for the time of failure because the child has a matching process exit receipt; HTTP was not tested at the exact exit instant.",
+    "RESOURCE_PRESSURE_OR_NATIVE_FAILURE": "Native fail-fast termination is PROVEN as the exit class. Four Windows System Event ID 2004 records provide STRONG_EVIDENCE of system low-virtual-memory pressure 4m50s before exit; PID 8524 is not named among the top three processes. Whether that pressure caused or contributed to this process exit remains UNKNOWN without PID-specific counters or a dump.",
+    "MULTIPLE_OR_UNKNOWN_TRIGGER": "UNKNOWN for the initiating code path, native module, fast-fail subcode, and instruction stack."
+  },
+  "candidateAssessment": {
+    "repeatOf20261006StatusCode": {"status":"PROVEN_SAME_STATUS_ONLY","note":"The earlier incident has the same 0xC0000409 status. Different runtime age and last event do not prove a shared trigger."},
+    "maglev": {"status":"CONTRADICTED_FOR_THIS_RUN_CONFIGURATION","note":"Both launcher records show --no-maglev; no V8 flags were changed in this investigation."},
+    "settingsCas": {"status":"UNKNOWN_UNSUPPORTED","note":"Versions 248-253 are timestamped; actor, payload, and causal stack are unavailable."},
+    "systemVirtualMemoryPressure": {"status":"STRONG_EVIDENCE_PRESENT_CAUSALITY_UNKNOWN","note":"Four Event ID 2004 records report low virtual memory from 06:54:31 through 07:12:08+08. They list three llama-server processes, not PID 8524."},
+    "eventLoopStall": {"status":"UNKNOWN","note":"Historical multi-second observations are not contemporaneous with this exit."},
+    "offlineVerifierOom": {"status":"CONTRADICTED_AS_PID8524_CAUSE","note":"Those observations belong to separate Codex/test processes."},
+    "specificNativeLibraryOrSubsystem": {"status":"UNKNOWN","note":"No faulting module, exception parameters, WER fault report, or dump."}
+  },
+  "evidenceGaps": [
+    "No matching Windows Application Error/WER event in the bounded event window.",
+    "No matching user-mode dump in the bounded WER/CrashDumps/Minidump inventory.",
+    "No same-time CPU, private bytes/heap/commit, thread/handle, or pagefile sample.",
+    "No request-level access log to establish the exact last successful HTTP response.",
+    "No captured active stack/in-flight operation at the fail-fast instant."
+  ]
+}

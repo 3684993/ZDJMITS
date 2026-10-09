@@ -231,3 +231,12 @@ powershell -NoProfile -ExecutionPolicy Bypass -File "$review\full-recovery-prefl
 恢复顺序：管理员Plan→手工Apply→用户主动Windows正常Restart→Verify_PASS→9B(B580/8081)→`full-recovery-preflight-readonly.ps1 -Enforce`→Harness27B(Vulkan1/8083)→Primary27B(Vulkan2/8084)→三API/内存/句柄核验→**只有此时**由本机Codex按最新main 3.9.8代码、本地现有持仓/TP/Settings/TESTNET防线受控启动Engine8080。
 
 **Engine最新代码仍处于offline NOT_DEPLOYED，不能假装一条旧 `npm start` 就能完成发布，更不能使用过期v398工作树启动交易。** 本次GitHub操作仅在review分支提交，未在用户Windows上执行任何pagefile变更、模型启动、Engine部署或Actions。
+
+
+## 2026-10-09 10:39：首次页面文件 Apply 因 WMI 自动生成 C 条目而被主动阻止
+
+用户实际运行 `-Mode Plan` 完全正常：自动管理开启、D:17,408MiB 在用配置、无显式Win32_PageFileSetting、C:84.31GiB/D:75.06GiB空闲。首次 `-Mode Apply -ConfirmApply` 在关闭全局自动管理后遇到 `C_PAGEFILE_CREATED_BY_OTHER_ACTOR` 错误，进入了回滚，但用户尚未提供`pagefile-apply-error-20261009-103906.json`回滚结果。**在读到回滚状态前不允许Windows重启或重复旧Apply**。
+
+修复后新增`-Mode SelfTest`（不访问Windows配置的合成分支测试）；`-Mode Plan` 要求原始自动管理`?:\\pagefile.sys`占位配置及`Win32_PageFileSetting`无显式设置都已恢复，否则直接拒绝下一次Apply；允许WMI在切换管理模式时自动产生的C:0/0，只把精确0/0转换为固定49152/49152MiB，绝不覆盖未知大小/盘符。回滚会检查原registry占位与显式配置数量。完整原因和下一步请读 [PAGEFILE_APPLY_1039_FAILURE_FIX_20261009.md](PAGEFILE_APPLY_1039_FAILURE_FIX_20261009.md)。如果Baseline拒绝，提供本机脱敏回滚摘要，不要人工执行reg命令绕过。
+
+之前的ONE_PASS运行手册仍适用，但是必须在再次修改前依次通过：最新语法检查、SelfTest、Plan严格Baseline、显式Apply成功、用户手工Restart、Verify PASS。

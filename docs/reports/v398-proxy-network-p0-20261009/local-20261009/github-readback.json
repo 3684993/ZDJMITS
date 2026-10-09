@@ -1,0 +1,16 @@
+{
+  "observedAt": "2026-10-09T14:21:13Z",
+  "repository": "3684993/ZDJMITS",
+  "pullRequest": 20,
+  "state": "open",
+  "merged": false,
+  "readbackHead": "d53e4b6907dad0e993155c5ceae1a02e3a16223c",
+  "verifiedCodeCommit": "0399eff5e601723c249ff6f6b70c59a23cb8dd22",
+  "main": "7d698a5c59818f7b16a8729b5e672b1674d74336",
+  "mainRun": 37939796692,
+  "mainConclusion": "success",
+  "prHeadWorkflowRuns": 0,
+  "hostedPrVerification": "NOT_TRIGGERED_NOT_PROVEN",
+  "workflowDispatched": false,
+  "followup": "This historical readback precedes the verbatim-log archive commit. Read latest PR head again; no source changed after verifiedCodeCommit apart from documentation/log storage attributes."
+}

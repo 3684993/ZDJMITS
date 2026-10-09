@@ -21,6 +21,8 @@
 
 证据位于 [local-20261009](./local-20261009/)；完整成功回执以 `verify-green-result.json` 为准。npm ci 完成；没有执行 npm audit fix 或改依赖。
 
+该目录的 `.log` 以逐字节binary属性入库，避免Git CRLF正规化破坏原始stdout/stderr的SHA；不清洗失败断言的空白。此设置仅涵盖本轮已审计日志，不改变代码whitespace检查。任务XML/VBS为原始Unicode备份。
+
 - `npm-verify.log`：原 PR20 + main 全量执行，脚本、S00、类型、build 与 Engine 通过，Dashboard 1 个资源说明断言失败；整体 FAIL。
 - `npm-verify-final.log` / `verify-result.json`：整体 exit=1；验证中曾继续编辑流量源/测试，Vitest 的旧源转换与新增测试混用，新增 `windowAsOf` 断言失败。这次不可作为任何最终源的有效验收，日志完整保留。
 - `focused-dashboard.log`：3 个组件测试 PASS；`focused-engine.log`：行情 17、资源 API 18，共 35 个测试 PASS；`silent-launcher-test.log`：隐藏/工作目录/退出码合同 PASS。

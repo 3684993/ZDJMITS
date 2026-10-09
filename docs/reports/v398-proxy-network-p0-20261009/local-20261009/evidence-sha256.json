@@ -1,0 +1,177 @@
+[
+  {
+    "file": "_ZDJ-MITS_Local_Health_Monitor.before.xml",
+    "bytes": 3354,
+    "sha256": "573D1D81F175A9F62F217CA9CA73E255D1051EFEBEABE118F3464594E3290526"
+  },
+  {
+    "file": "_ZDJ-MITS_Local_Health_Monitor.vbs",
+    "bytes": 590,
+    "sha256": "B7506B0DA18583EFC265763ABB7B764666DF93932D7E31FE9E38BAEB9FDC7434"
+  },
+  {
+    "file": "_ZDJ-MITS_Manual_Engine.before.xml",
+    "bytes": 2812,
+    "sha256": "F5D96FBD7461897D2EDA984493AF4BFA6BF723248B8C99E743175538D8E48444"
+  },
+  {
+    "file": "_ZDJ-MITS_Manual_Engine.vbs",
+    "bytes": 864,
+    "sha256": "E3E7C999927842C1A90B3921FBD57C1AE2D2200083B0C857DF148B1B09D8EDD9"
+  },
+  {
+    "file": "_ZDJ-MITS_V3_9_2_Testnet_Acceptance_Monitor.before.xml",
+    "bytes": 3470,
+    "sha256": "EF8807BBB3F4CF9C077BAB34157A55955D6542E3ACA7197462599D64F22FD9DD"
+  },
+  {
+    "file": "_ZDJ-MITS_V3_9_2_Testnet_Acceptance_Monitor.vbs",
+    "bytes": 612,
+    "sha256": "515A7077A72EE0CAC18653417F50BFC8745322F43C88061B70BF082B43CCC625"
+  },
+  {
+    "file": "_ZDJ-MITS-AfterReboot-TESTNET.before.xml",
+    "bytes": 4110,
+    "sha256": "6F593230F6DCB8F5A3D4D4E18362B76C02C7F67FF0CDED387BFDFAD4104EBF81"
+  },
+  {
+    "file": "_ZDJ-MITS-AfterReboot-TESTNET.vbs",
+    "bytes": 1556,
+    "sha256": "96C674C82DA8FDE6D61CC266BA82E44B856B205409C21E1E81C86B4984D62055"
+  },
+  {
+    "file": "_ZDJMITS_ZDJ-MITS-Engine-Crash-Observer.before.xml",
+    "bytes": 4706,
+    "sha256": "71E0ADF043ED77B481C7E9820EF09FBFA6EA6CF72A313B6924C9802B20541E10"
+  },
+  {
+    "file": "_ZDJMITS_ZDJ-MITS-Engine-Crash-Observer.vbs",
+    "bytes": 2018,
+    "sha256": "DC04AF9BD7F6EFCEE85B9584A0AF421281CFC6B2C93D3D684BAC76EAA2D2E06B"
+  },
+  {
+    "file": "_ZDJMITS_ZDJ-V398-24h-Readonly-Checkpoint.before.xml",
+    "bytes": 3776,
+    "sha256": "1784E902EC72ED636CC398AC93157D36A0C5A6B334CB8DD972E131F12E89E142"
+  },
+  {
+    "file": "_ZDJMITS_ZDJ-V398-24h-Readonly-Checkpoint.vbs",
+    "bytes": 714,
+    "sha256": "1FDCE53B6F16FE38808AA4A45868CCF0C254DB83D6B83DBB4965360B9A1E5237"
+  },
+  {
+    "file": "_ZDJMITS_ZDJ-V398-Passive-Trade-Audit.before.xml",
+    "bytes": 3604,
+    "sha256": "FCA082E87711D032A93F22D6413E904BB272DC267BD389FB4B949E030494E9A2"
+  },
+  {
+    "file": "_ZDJMITS_ZDJ-V398-Passive-Trade-Audit.vbs",
+    "bytes": 710,
+    "sha256": "8530D2A0ACD596DA718D5E7938E12AECF5C64F5D37CBE54084D7D38EAA8444C3"
+  },
+  {
+    "file": "_ZDJMITS_ZDJ-V398-Primary-Cadence-90min.before.xml",
+    "bytes": 3616,
+    "sha256": "D77B7C9AF16AE4A300A1CE27B5AED4CA0921E8166415BD9F9F2315CEB9E2B642"
+  },
+  {
+    "file": "_ZDJMITS_ZDJ-V398-Primary-Cadence-90min.vbs",
+    "bytes": 716,
+    "sha256": "6A17C4F052586B6D6F439FC1BA34E227DC054F330E863E7E560E57D85B3DCFA1"
+  },
+  {
+    "file": "ad-hoc-memory-update.md",
+    "bytes": 2539,
+    "sha256": "5F66C91214F30265C26B32EDE978EDA1AEE69AC71C29586E9EFFFCC121B20AA1"
+  },
+  {
+    "file": "cadence-waiting.jsonl",
+    "bytes": 262,
+    "sha256": "AEBED2C9A3C661171B84E836D46FB04382C82336133EC8E151A5E26F187C19F8"
+  },
+  {
+    "file": "focused-dashboard.log",
+    "bytes": 1862,
+    "sha256": "DC2D64B390E3505458D362339887A5015FA41C294571423D79B9072E9A795092"
+  },
+  {
+    "file": "focused-engine.log",
+    "bytes": 2186,
+    "sha256": "E3F79D7AF8C9C551C56546CC452855EDC1C8CCCEBA186748F848690B7DAD74CA"
+  },
+  {
+    "file": "npm-ci.log",
+    "bytes": 1442,
+    "sha256": "C12ED2DC1123ABBB61FE110BB9CFF10BAFC8BAA7ECB55C65EA49A538E7765BEB"
+  },
+  {
+    "file": "npm-verify-final.log",
+    "bytes": 114260,
+    "sha256": "E307FA1784C8731AED9425CC8998A37D660269D098FF8CE82EF4B7C8086BF85F"
+  },
+  {
+    "file": "npm-verify-green.log",
+    "bytes": 110288,
+    "sha256": "E6543949F774C1999E861D9FD7D4D8CBAE0C60A4A3D4D5AA5845741CE256CD75"
+  },
+  {
+    "file": "npm-verify.log",
+    "bytes": 111716,
+    "sha256": "80B48DD8AC7DF169975292148479D318742AF18B6E1DFA4255C2108BE9241EC0"
+  },
+  {
+    "file": "primary-retrospective.json",
+    "bytes": 516,
+    "sha256": "5C2F9E99DCF84CF2956DFF36EEF13BB73BA83FB756BA5BC7CDB126CA61318AE9"
+  },
+  {
+    "file": "primary-retrospective.mjs",
+    "bytes": 1067,
+    "sha256": "E2496E5AFF077D6762D7CF9CD13AC9B79B31B3AAFBD65C02E0E9C006465F957F"
+  },
+  {
+    "file": "runtime-readonly.mjs",
+    "bytes": 2751,
+    "sha256": "6A39B5202BEF8186C1958645D2BC095AE29CB4668FF336631BA90E63E3FFA194"
+  },
+  {
+    "file": "runtime-snapshot.json",
+    "bytes": 44715,
+    "sha256": "E82430713141B52174577F1F7C34A993BA6AD08354C8181CCC9051D24C4BB62B"
+  },
+  {
+    "file": "silent-launcher-test.log",
+    "bytes": 134,
+    "sha256": "173AC58365CE8DD95E902DCA9259F8EA82741676316A5AD673920A24DF01B2F9"
+  },
+  {
+    "file": "ssh-sample-1.log",
+    "bytes": 53,
+    "sha256": "D7E79FF792990EF5C6930046532B9D9C1FEDDB1C327A51C67F186980BDA34C77"
+  },
+  {
+    "file": "task-readback.json",
+    "bytes": 2833,
+    "sha256": "A5C87086C134D08AEA495C7E035C5E3E574FFB0E0A5D2064C0F1E0093E4CDF59"
+  },
+  {
+    "file": "task-silent-changes.json",
+    "bytes": 6852,
+    "sha256": "1301739E82D9BD6EFCBF90C71B3C91361358B5ACD64D6AAD870E1695EF02236D"
+  },
+  {
+    "file": "verify-green-result.json",
+    "bytes": 257,
+    "sha256": "392FDCE1F6EB0F40ED7357165ED2CDF2C3AF9407FDE3C927E6D718223D56A73C"
+  },
+  {
+    "file": "verify-result.json",
+    "bytes": 257,
+    "sha256": "AF4694651EB92BB73EEF50982FFAA3FCD028EA2377EAA4C57BB1A5BA683EFCFF"
+  },
+  {
+    "file": "windows-audit.json",
+    "bytes": 2282,
+    "sha256": "94ED3E756A2150535274BE4A02F49DBB9E8AA47E812E50B852DC016CECD869AA"
+  }
+]

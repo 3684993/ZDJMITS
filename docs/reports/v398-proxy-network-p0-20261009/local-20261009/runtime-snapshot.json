@@ -1,0 +1,1301 @@
+{
+  "observedAt": "2026-10-09T14:19:04.920Z",
+  "localMethods": [
+    "GET"
+  ],
+  "taskExchangeWrites": 0,
+  "health": {
+    "status": "DEGRADED",
+    "ready": true,
+    "pid": 18100,
+    "version": "3.9.8"
+  },
+  "identity": {
+    "instanceId": "65185f71-b336-4f6f-8149-cafe90f5e160",
+    "pid": 18100,
+    "buildId": "3.9.8-6cd926abca3eec24392e",
+    "version": "3.9.8",
+    "uptimeMs": 26072378
+  },
+  "production": {
+    "environment": "TESTNET",
+    "executionMode": "TESTNET_ENABLED",
+    "lockedToTestnet": true,
+    "testnetWrites": 117,
+    "productionWrites": 0,
+    "blockedProductionWriteAttempts": 0,
+    "lastWriteAt": 1791542681275,
+    "lastWritePath": "/fapi/v1/order"
+  },
+  "entry": {
+    "status": "BLOCKED",
+    "executionFactsStatus": "BLOCKED",
+    "mode": "TESTNET_ENTRY_ENABLED",
+    "analysisAllowed": true,
+    "riskObservation": true,
+    "orderAuthorization": true,
+    "reason": "EXPLICIT_TESTNET_APPROVAL_VALID",
+    "executionMode": "TESTNET_ENABLED",
+    "autoExecutionMode": "AUTO_RUNNING"
+  },
+  "runtimeControl": {
+    "mode": "RUNNING",
+    "reasonCode": "PRIVATE_NOT_READY",
+    "reasonText": "私有账户事实待刷新；仅新增建仓等待，行情/订单/持仓维护继续：BINANCE_TRANSPORT_BLOCKED: Proxy connection timed out",
+    "pausedAt": null
+  },
+  "privateSync": {
+    "lastSuccessAt": 1791553797555,
+    "lastFailureAt": 1791555515359,
+    "consecutiveFailures": 84,
+    "lastError": "BINANCE_TRANSPORT_BLOCKED: Proxy connection timed out",
+    "durationMs": 23022,
+    "inFlight": true,
+    "snapshotAgeMs": 1747415
+  },
+  "takeProfitLocal": {
+    "status": "READY",
+    "unverifiedTp": 0,
+    "required": 13,
+    "protected": 13,
+    "missing": 0,
+    "repairing": 0,
+    "repairFailed": 0,
+    "manualReviewRequired": 0,
+    "positionFactUnresolved": 0,
+    "positionFactUnresolvedSymbols": [],
+    "orphanTp": 0,
+    "duplicateTp": 0,
+    "qtyMismatch": 0,
+    "wrongSide": 0,
+    "tpMissing": 0,
+    "retryQueue": 0
+  },
+  "privateAuthority": "LOCAL_CACHED_FACTS_ONLY_NOT_FRESH_SIGNED_EXCHANGE_PROOF",
+  "primary": {
+    "status": "PAUSED",
+    "runs": 33,
+    "historicalRuns": 58,
+    "idleReason": "NO_EXECUTABLE_CANDIDATE",
+    "healthReason": "RUNTIME_PAUSED",
+    "lastRunAgeMs": 12957783
+  },
+  "pipeline": {
+    "pipelineState": "PAUSED_MARKET_DATA_UNAVAILABLE",
+    "authoritativeBlocker": {
+      "code": "PRIVATE_DATA_UNAVAILABLE",
+      "stage": "EXECUTION_FACTS",
+      "nextAction": "先补齐执行事实 PRIVATE_DATA_UNAVAILABLE；在事实齐备前不调用模型、不提交订单",
+      "evidence": {
+        "pipelineState": "PAUSED_MARKET_DATA_UNAVAILABLE",
+        "marketDataReason": "MARKET_QUOTES_STALE",
+        "isolatedSymbols": [
+          "BCHUSDT:TECHNICAL_15m_SEQUENCE_INVALID",
+          "BTCUSDT:TECHNICAL_1m_SEQUENCE_INVALID",
+          "XRPUSDT:TECHNICAL_1m_SEQUENCE_INVALID",
+          "LDOUSDT:TECHNICAL_1m_SEQUENCE_INVALID",
+          "ETHUSDT:TECHNICAL_1m_SEQUENCE_INVALID",
+          "NEARUSDC:TECHNICAL_5m_SEQUENCE_INVALID",
+          "RAYSOLUSDT:TECHNICAL_5m_SEQUENCE_INVALID",
+          "DOGEUSDT:TECHNICAL_1m_SEQUENCE_INVALID",
+          "BNBUSDC:TECHNICAL_5m_SEQUENCE_INVALID"
+        ],
+        "isolatedCount": 9,
+        "healthyCandidates": 0,
+        "slotsUsed": 13,
+        "slotsMax": 50,
+        "executableCandidateCount": 0,
+        "exhaustedForNewRisk": false,
+        "pendingEntries": 43,
+        "maxPendingEntries": 6,
+        "poolStatus": "POOL_SUPPLY_SHORTAGE",
+        "riskAdmissionStage": null,
+        "riskAdmissionSymbol": null,
+        "riskAdmissionReasons": [],
+        "riskAdmissionLimits": [],
+        "riskAdmissionBinding": null,
+        "riskAdmissionGates": [],
+        "riskAdmissionReadback": null,
+        "riskAdmissionCeilingUsdBySide": null,
+        "riskAdmissionExhausted": false,
+        "bookAdmission": {
+          "status": "NOT_APPLICABLE",
+          "hasVerdict": false,
+          "exhausted": false,
+          "code": null,
+          "gate": null,
+          "detail": "TESTNET_FUNDS_ONLY_ENTRY: portfolio risk is observational; see risk diagnostics",
+          "ceilingUsdBySide": null,
+          "enforced": false,
+          "reasons": [],
+          "evaluatedAt": 0,
+          "overdueHandoffs": 0,
+          "oldestOverdueHours": null
+        },
+        "riskAdmissionAgeMs": null
+      },
+      "secondary": [
+        {
+          "code": "MARKET_DATA_DIAGNOSTIC:MARKET_QUOTES_STALE",
+          "detail": "健康候选 0/9，已隔离 9"
+        },
+        {
+          "code": "EXECUTION_FACTS_DIAGNOSTIC:PRIVATE_DATA_UNAVAILABLE",
+          "detail": "PRIVATE_DATA_UNAVAILABLE · NO_EXECUTABLE_CANDIDATE"
+        },
+        {
+          "code": "CAPACITY_DIAGNOSTIC:NO_EXECUTABLE_SIDE",
+          "detail": "本轮没有可路由候选"
+        },
+        {
+          "code": "SUPPLY_DIAGNOSTIC:ELIGIBILITY",
+          "detail": "BLOCKED 0（可执行 0）"
+        },
+        {
+          "code": "MARKET_DIAGNOSTIC:STALE_SYMBOLS",
+          "detail": "DEGRADED 序列无效 16：SOLUSDT BCHUSDT ETHUSDT BNBUSDC XLMUSDT DOTUSDT BTCUSDT ETCUSDT"
+        },
+        {
+          "code": "MODEL_DIAGNOSTIC:IDLE_REASON",
+          "detail": "NO_EXECUTABLE_CANDIDATE"
+        },
+        {
+          "code": "MODEL_DIAGNOSTIC:ANALYSIS_REASON",
+          "detail": "POLICY_OR_FACT_GATE"
+        }
+      ],
+      "evaluatedAt": 1791555544945
+    },
+    "marketDataReason": "MARKET_QUOTES_STALE",
+    "freshMarkets": {
+      "status": "DEGRADED",
+      "count": 0,
+      "stale": [
+        "SOLUSDT",
+        "BCHUSDT",
+        "ETHUSDT",
+        "BNBUSDC",
+        "XLMUSDT",
+        "DOTUSDT",
+        "BTCUSDT",
+        "ETCUSDT",
+        "NEARUSDC",
+        "BRUSDT",
+        "INJUSDT",
+        "DOGEUSDT",
+        "RAYSOLUSDT",
+        "TIAUSDC",
+        "LDOUSDT",
+        "XRPUSDT"
+      ],
+      "quoteFreshRatio": 0,
+      "klineFreshRatio": 0,
+      "sequenceInvalid": 16
+    },
+    "noEntryReason": "PRIVATE_DATA_UNAVAILABLE"
+  },
+  "market": {
+    "status": "READY",
+    "count": 16
+  },
+  "analysis": {
+    "entryExecutionPolicy": {
+      "mode": "TESTNET_ENTRY_ENABLED",
+      "analysisAllowed": true,
+      "riskObservation": true,
+      "orderAuthorization": true,
+      "reason": "EXPLICIT_TESTNET_APPROVAL_VALID"
+    },
+    "mode": "EXECUTION_ENABLED",
+    "lastTickAt": 1791555544081,
+    "lastAttemptAt": 1791546067985,
+    "lastRequestAt": 1791542587161,
+    "lastSuccessAt": 1791542649845,
+    "lastFailureAt": 1791541863387,
+    "lastBlockedReason": "DATA_BLOCKED",
+    "reason": "POLICY_OR_FACT_GATE",
+    "schedulerStatus": "RUNNING",
+    "schedulerCycle": 9962,
+    "instanceId": "65185f71-b336-4f6f-8149-cafe90f5e160",
+    "heartbeatAt": 1791555544081,
+    "heartbeatAgeMs": 880,
+    "nextEvaluationAt": 1791555546581,
+    "suppression": {
+      "evaluatedAt": 1791555544081,
+      "instanceId": "65185f71-b336-4f6f-8149-cafe90f5e160",
+      "schedulerCycle": 9962,
+      "candidateCount": 0,
+      "capacityStatus": "POLICY_OR_FACT_GATE",
+      "authoritativeBlocker": "POLICY_OR_FACT_GATE",
+      "nextEvaluationAt": 1791555546581,
+      "dispatchSuppressed": true,
+      "suppressionReason": "DATA_BLOCKED"
+    },
+    "capitalExecutableCount": 0,
+    "active": 0,
+    "primaryDispatchAgeMs": 12957800,
+    "primarySuccessAgeMs": 12895116,
+    "silenceMs": 12895116,
+    "observationStartedAt": 1791529535533,
+    "execution": {
+      "intent": true,
+      "ready": false,
+      "blockers": [
+        "NO_EXECUTABLE_CANDIDATE"
+      ],
+      "firstBlocker": "NO_EXECUTABLE_CANDIDATE",
+      "lastReadyAt": 1791549058737,
+      "readinessText": "执行事实未齐：NO_EXECUTABLE_CANDIDATE；已停止调用模型，避免产生无法执行的决策"
+    },
+    "text": "RUNNING · POLICY_OR_FACT_GATE"
+  },
+  "positions": [
+    {
+      "symbol": "RAYSOLUSDT",
+      "side": "LONG",
+      "quantity": 606.3,
+      "tpStatus": "PROTECTED",
+      "openedAt": 1791532107967,
+      "positionIdHash": "486f7b13a22fa80616b067df369e5787758f25d7bb0b2311894d508e66d42db6",
+      "tpOrderIdHash": "13b129f19c4d7bd3fe4de72f38b3dae47d147273714d6bd82059b634b2b10993"
+    },
+    {
+      "symbol": "TIAUSDC",
+      "side": "LONG",
+      "quantity": 1965,
+      "tpStatus": "PROTECTED",
+      "openedAt": 1791531885219,
+      "positionIdHash": "de15a794f0faadcd51dc025c306bd1a691f076ac0dbd71ea67cb23b61e620df2",
+      "tpOrderIdHash": "2f171458c13c10f00a5a20c6bf820358c82ddce74c40438209196e4142ce48d8"
+    },
+    {
+      "symbol": "INJUSDT",
+      "side": "LONG",
+      "quantity": 47.7,
+      "tpStatus": "PROTECTED",
+      "openedAt": 1791455877587,
+      "positionIdHash": "84c06342d163c136dad3c1acdec54a64299dbe944d7ce7149d5399316aac0f31",
+      "tpOrderIdHash": "03f6d824c7dbcd54e2ad0d2315fd30ca5e0c5c09bb2a54a8f50557c48d995fed"
+    },
+    {
+      "symbol": "BRUSDT",
+      "side": "SHORT",
+      "quantity": 774,
+      "tpStatus": "PROTECTED",
+      "openedAt": 1791449869338,
+      "positionIdHash": "a6d54e940c651449e813b701ba0b681d9ebbd77dc2b68f06b2cc257c6421c234",
+      "tpOrderIdHash": "e6939417454aab7fd4031b2234825cecce9b55331dc89272172a7732268d34f2"
+    },
+    {
+      "symbol": "NEARUSDC",
+      "side": "LONG",
+      "quantity": 403,
+      "tpStatus": "PROTECTED",
+      "openedAt": 1791444270691,
+      "positionIdHash": "45f6344492c104932e6008e5d9c58f3956ef022da1cc7a3a66d52efbe2698c69",
+      "tpOrderIdHash": "fc8f220bf38fca95d135822b506a721362d69ba5b118af4417b35b0318874859"
+    },
+    {
+      "symbol": "ETCUSDT",
+      "side": "LONG",
+      "quantity": 5.88,
+      "tpStatus": "PROTECTED",
+      "openedAt": 1791430358927,
+      "positionIdHash": "ae4cd55dcf508ee93e55a8a91ead2bb0515f63d4275ca4d47ee12fe5b02043fc",
+      "tpOrderIdHash": "235ed4df981df23ad6193dec547f3309d30f3cd9b88112db41846a73765c5a4b"
+    },
+    {
+      "symbol": "BTCUSDT",
+      "side": "LONG",
+      "quantity": 0.0349,
+      "tpStatus": "PROTECTED",
+      "openedAt": 1791299385241,
+      "positionIdHash": "eb953965b267b141e5c83069a62bbac5f867b718110d64659a024bb75b9ceece",
+      "tpOrderIdHash": "33effd5b471ec46036564167a31eb30c185f34e343c403aa425081e314a81869"
+    },
+    {
+      "symbol": "DOTUSDT",
+      "side": "LONG",
+      "quantity": 1695,
+      "tpStatus": "PROTECTED",
+      "openedAt": 1791278224412,
+      "positionIdHash": "bfe4227a58936103d7a116092ed70683c6593397e1a90ed10b187cc88781b3e1",
+      "tpOrderIdHash": "6d881a16a583c8a5421a938c2e72a0d0d89ef94efbb3f304ef486dee5a040de8"
+    },
+    {
+      "symbol": "BNBUSDC",
+      "side": "LONG",
+      "quantity": 9.6,
+      "tpStatus": "PROTECTED",
+      "openedAt": 1791184940656,
+      "positionIdHash": "8738218fe3d0ef71b834c9291619a8440962920fa8fc10f5c451cd82cbc17284",
+      "tpOrderIdHash": "d2365a57ba8762a0be4ac06fca2f126b749c587710b234b58c55600c16a27e87"
+    },
+    {
+      "symbol": "ETHUSDT",
+      "side": "LONG",
+      "quantity": 1.467,
+      "tpStatus": "PROTECTED",
+      "openedAt": 1791183438139,
+      "positionIdHash": "58283d58f763fb0be4e271295ff7fdda346c5cd41d3c394f60c44336dc65a765",
+      "tpOrderIdHash": "a39202ff48a4a343db6c036ae2c94439b8f3799343e1af4b74e1704c0f3e8ccd"
+    },
+    {
+      "symbol": "BCHUSDT",
+      "side": "LONG",
+      "quantity": 10.63,
+      "tpStatus": "PROTECTED",
+      "openedAt": 1791168000751,
+      "positionIdHash": "c0d5422f770e26117e09010bc96b2bda427cbbdfcb528f43b7083903df6eae28",
+      "tpOrderIdHash": "2fa03010a64610922ea0323ba3922cac89b29422d444ba2cf1a1ed50cd297e5d"
+    },
+    {
+      "symbol": "SOLUSDT",
+      "side": "LONG",
+      "quantity": 67.3,
+      "tpStatus": "PROTECTED",
+      "openedAt": 1791155132270,
+      "positionIdHash": "6c13f60b815c8e2cfa0b7517f70a015c1129b522031fc552f41b020b59f90d13",
+      "tpOrderIdHash": "51a634a4d6a3d07f13097f5ed072d47b55e03042e58d2587fb6885186f48fa31"
+    },
+    {
+      "symbol": "XLMUSDT",
+      "side": "LONG",
+      "quantity": 6231,
+      "tpStatus": "PROTECTED",
+      "openedAt": 1790734103219,
+      "positionIdHash": "9dc1f9e31c810cb630b7f8cb6634b8bedcf4f1b8ce115814a7be97e08fbc2795",
+      "tpOrderIdHash": "5d8a45fdd7792fcb48bd374959a4ad3c139e40edc1d39259393761b8a4456c4f"
+    }
+  ],
+  "takeProfit": [
+    {
+      "symbol": "BCHUSDT",
+      "side": "SELL",
+      "quantity": 10.63,
+      "price": 321.5,
+      "status": "WORKING",
+      "verifiedAt": 1791549882757,
+      "updatedAt": 1791259802707,
+      "idHash": "2fa03010a64610922ea0323ba3922cac89b29422d444ba2cf1a1ed50cd297e5d",
+      "positionIdHash": "c0d5422f770e26117e09010bc96b2bda427cbbdfcb528f43b7083903df6eae28",
+      "exchangeOrderIdHash": "4ab09d5265dcb0d8d9cb603af115d9b50074bd49801cf3bc9b992f0249447f0f",
+      "clientOrderIdHash": "8214a0188c84ac463161dfa3637629f9cd39d8f2ce597a26b624fc0e36f243a5"
+    },
+    {
+      "symbol": "XLMUSDT",
+      "side": "SELL",
+      "quantity": 6231,
+      "price": 0.22035,
+      "status": "WORKING",
+      "verifiedAt": 1791549882757,
+      "updatedAt": 1791280050682,
+      "idHash": "5d8a45fdd7792fcb48bd374959a4ad3c139e40edc1d39259393761b8a4456c4f",
+      "positionIdHash": "9dc1f9e31c810cb630b7f8cb6634b8bedcf4f1b8ce115814a7be97e08fbc2795",
+      "exchangeOrderIdHash": "600c612e48e2224c2b68ee8ded13e938496ca91ac6b9098473b61ee576564cae",
+      "clientOrderIdHash": "f06099b2d88da072da4195dfae3a3bf929c45251a795bbb7da37001b1d692cfc"
+    },
+    {
+      "symbol": "ETHUSDT",
+      "side": "SELL",
+      "quantity": 1.467,
+      "price": 2724.29,
+      "status": "WORKING",
+      "verifiedAt": 1791549882757,
+      "updatedAt": 1791301505451,
+      "idHash": "a39202ff48a4a343db6c036ae2c94439b8f3799343e1af4b74e1704c0f3e8ccd",
+      "positionIdHash": "58283d58f763fb0be4e271295ff7fdda346c5cd41d3c394f60c44336dc65a765",
+      "exchangeOrderIdHash": "fe3c93968d3f345e4ddc42ea875400111deebc84318619fa579ddb250febbc16",
+      "clientOrderIdHash": "4a20bb6501d247bd36f99af4b8debf21ddcaa21399ee2b140ce68833d2289c34"
+    },
+    {
+      "symbol": "BTCUSDT",
+      "side": "SELL",
+      "quantity": 0.0349,
+      "price": 86805.9,
+      "status": "WORKING",
+      "verifiedAt": 1791549882757,
+      "updatedAt": 1791301999431,
+      "idHash": "33effd5b471ec46036564167a31eb30c185f34e343c403aa425081e314a81869",
+      "positionIdHash": "eb953965b267b141e5c83069a62bbac5f867b718110d64659a024bb75b9ceece",
+      "exchangeOrderIdHash": "06df980a979770021d537e7afc9f13aef9529a39654cd9d72ae82a66b47231c4",
+      "clientOrderIdHash": "d1853db7b2e8a063de917edb9945dd46d5ae81afb8060318667a9d4eb4167459"
+    },
+    {
+      "symbol": "DOTUSDT",
+      "side": "SELL",
+      "quantity": 1695,
+      "price": 1.2362,
+      "status": "WORKING",
+      "verifiedAt": 1791549882757,
+      "updatedAt": 1791326632012,
+      "idHash": "6d881a16a583c8a5421a938c2e72a0d0d89ef94efbb3f304ef486dee5a040de8",
+      "positionIdHash": "bfe4227a58936103d7a116092ed70683c6593397e1a90ed10b187cc88781b3e1",
+      "exchangeOrderIdHash": "88d83c9762a6ff8da090ee686c3a134db1cf0ffd7c6e7324843061d2b53640d5",
+      "clientOrderIdHash": "d3bac73f5916dc1bbb33b06219c9a813a7da47ac5459075daac9dfaf2a7873cd"
+    },
+    {
+      "symbol": "SOLUSDT",
+      "side": "SELL",
+      "quantity": 67.3,
+      "price": 121.59,
+      "status": "WORKING",
+      "verifiedAt": 1791549882757,
+      "updatedAt": 1791329945087,
+      "idHash": "51a634a4d6a3d07f13097f5ed072d47b55e03042e58d2587fb6885186f48fa31",
+      "positionIdHash": "6c13f60b815c8e2cfa0b7517f70a015c1129b522031fc552f41b020b59f90d13",
+      "exchangeOrderIdHash": "fdefb0eca595ed6d2d0692214b8f9dd86b586d5163d09b795576f3c737486e53",
+      "clientOrderIdHash": "36537ef7863843bc76f67605c398c5026e8ee0872a98122b271466fb31d4b173"
+    },
+    {
+      "symbol": "BNBUSDC",
+      "side": "SELL",
+      "quantity": 9.6,
+      "price": 787.24,
+      "status": "WORKING",
+      "verifiedAt": 1791549882757,
+      "updatedAt": 1791423624247,
+      "idHash": "d2365a57ba8762a0be4ac06fca2f126b749c587710b234b58c55600c16a27e87",
+      "positionIdHash": "8738218fe3d0ef71b834c9291619a8440962920fa8fc10f5c451cd82cbc17284",
+      "exchangeOrderIdHash": "91df88c41743ae70e31cc90d551c863e5a10f33be47ccecad8c78f8440f8794c",
+      "clientOrderIdHash": "30f5d09c4cdf8d1854f6e6b8859231c4e19fe4a26f51ab940cee41156d80f7f3"
+    },
+    {
+      "symbol": "ETCUSDT",
+      "side": "SELL",
+      "quantity": 5.88,
+      "price": 8.471,
+      "status": "WORKING",
+      "verifiedAt": 1791549882757,
+      "updatedAt": 1791430381400,
+      "idHash": "235ed4df981df23ad6193dec547f3309d30f3cd9b88112db41846a73765c5a4b",
+      "positionIdHash": "ae4cd55dcf508ee93e55a8a91ead2bb0515f63d4275ca4d47ee12fe5b02043fc",
+      "exchangeOrderIdHash": "d431bf398b13ca103fecfa2e7f24d41a809d395fbc3803720324597be66a9f36",
+      "clientOrderIdHash": "cb02f37a34858bf1751b2a5139d49578ed9e3c15eef24b3daece4d8d2657b5ae"
+    },
+    {
+      "symbol": "NEARUSDC",
+      "side": "SELL",
+      "quantity": 403,
+      "price": 5.543,
+      "status": "WORKING",
+      "verifiedAt": 1791549882757,
+      "updatedAt": 1791448001417,
+      "idHash": "fc8f220bf38fca95d135822b506a721362d69ba5b118af4417b35b0318874859",
+      "positionIdHash": "45f6344492c104932e6008e5d9c58f3956ef022da1cc7a3a66d52efbe2698c69",
+      "exchangeOrderIdHash": "c67de2ac022a2c17eeac08fd5905d5a7590d5548f80c88035c6098a82420807d",
+      "clientOrderIdHash": "8a4accb1627e123fb31d0d6ac5e6e9be781d32d134bbec825749326a973a38b7"
+    },
+    {
+      "symbol": "BRUSDT",
+      "side": "BUY",
+      "quantity": 774,
+      "price": 0.48,
+      "status": "WORKING",
+      "verifiedAt": 1791549882757,
+      "updatedAt": 1791449916163,
+      "idHash": "e6939417454aab7fd4031b2234825cecce9b55331dc89272172a7732268d34f2",
+      "positionIdHash": "a6d54e940c651449e813b701ba0b681d9ebbd77dc2b68f06b2cc257c6421c234",
+      "exchangeOrderIdHash": "71644390b9a84c3022656af8699146737acc579114ae9ad99857862b2ea1f52b",
+      "clientOrderIdHash": "2cba46ff8931c346209b46c2ca074c640fc7e4f38db1922b326be5c77f53ba86"
+    },
+    {
+      "symbol": "INJUSDT",
+      "side": "SELL",
+      "quantity": 47.7,
+      "price": 7.416,
+      "status": "WORKING",
+      "verifiedAt": 1791549882757,
+      "updatedAt": 1791455925983,
+      "idHash": "03f6d824c7dbcd54e2ad0d2315fd30ca5e0c5c09bb2a54a8f50557c48d995fed",
+      "positionIdHash": "84c06342d163c136dad3c1acdec54a64299dbe944d7ce7149d5399316aac0f31",
+      "exchangeOrderIdHash": "93c1f331d1296642cdd9f0c4eef3bb499093764369815bce2392f06b658b1554",
+      "clientOrderIdHash": "55b82eb631d69d0590842992b5c7b6b467385e4d58e4d5731c6bc87ad4a1091a"
+    },
+    {
+      "symbol": "TIAUSDC",
+      "side": "SELL",
+      "quantity": 1965,
+      "price": 0.5113,
+      "status": "WORKING",
+      "verifiedAt": 1791549882757,
+      "updatedAt": 1791531940023,
+      "idHash": "2f171458c13c10f00a5a20c6bf820358c82ddce74c40438209196e4142ce48d8",
+      "positionIdHash": "de15a794f0faadcd51dc025c306bd1a691f076ac0dbd71ea67cb23b61e620df2",
+      "exchangeOrderIdHash": "21949d08985aa93dfcd88bcc999e872b2445f856818387c9d391880b3f2b9972",
+      "clientOrderIdHash": "69400bb7be6e22cbe86307e414e0672161c4e3464cf56f7abf9478390ee51b25"
+    },
+    {
+      "symbol": "RAYSOLUSDT",
+      "side": "SELL",
+      "quantity": 606.3,
+      "price": 2.4862,
+      "status": "WORKING",
+      "verifiedAt": 1791549882757,
+      "updatedAt": 1791532190715,
+      "idHash": "13b129f19c4d7bd3fe4de72f38b3dae47d147273714d6bd82059b634b2b10993",
+      "positionIdHash": "486f7b13a22fa80616b067df369e5787758f25d7bb0b2311894d508e66d42db6",
+      "exchangeOrderIdHash": "78bc374021fb4e9b14106aa1e70f4fe8f0e300fac3a4843c98eb64a0906dd599",
+      "clientOrderIdHash": "a130787fb602dd79d06cfc87b924906867bb7454fba637055fb144973983b8a3"
+    }
+  ],
+  "requestBudgets": {
+    "TESTNET:default": {
+      "status": "AVAILABLE",
+      "active": 0,
+      "queued": 0,
+      "queuePressure": {
+        "totalSlots": 6,
+        "publicSlots": 4,
+        "active": 0,
+        "publicActive": 0,
+        "oldestQueuedAgeMs": 0,
+        "currentPrivateReserve": 1,
+        "currentQuoteReserve": 1,
+        "backgroundActive": 0,
+        "backgroundSlots": 1,
+        "hydrationActive": 0,
+        "hydrationSlots": 2
+      },
+      "decisions": {
+        "admitted": 0,
+        "queued": 0,
+        "blocked": 0,
+        "queueTimeout": 0
+      },
+      "recentDispatches": []
+    },
+    "TESTNET:proxy-05d851d4af74": {
+      "status": "AVAILABLE",
+      "active": 6,
+      "queued": 17,
+      "queuePressure": {
+        "totalSlots": 6,
+        "publicSlots": 4,
+        "active": 6,
+        "publicActive": 4,
+        "oldestQueuedAgeMs": 4010,
+        "currentPrivateReserve": 1,
+        "currentQuoteReserve": 1,
+        "backgroundActive": 0,
+        "backgroundSlots": 1,
+        "hydrationActive": 0,
+        "hydrationSlots": 2
+      },
+      "decisions": {
+        "admitted": 48051,
+        "queued": 54143,
+        "blocked": 6073,
+        "queueTimeout": 6073
+      },
+      "recentDispatches": [
+        {
+          "requestId": "b4255067-c69f-4026-b759-9164645e48a4",
+          "endpoint": "/fapi/v1/premiumIndex",
+          "source": "MARKET_DATA",
+          "purpose": "QUOTE_MARK_RECOVERY",
+          "decision": "TIMEOUT",
+          "admittedAt": null,
+          "completedAt": 1791555515704,
+          "status": null
+        },
+        {
+          "requestId": "6f30ee42-e925-4784-9beb-c49eccdef5a5",
+          "endpoint": "/fapi/v1/ticker/24hr",
+          "source": "MARKET_DATA",
+          "purpose": "QUOTE_LAST_RECOVERY",
+          "decision": "TIMEOUT",
+          "admittedAt": null,
+          "completedAt": 1791555515704,
+          "status": null
+        },
+        {
+          "requestId": "bf16649f-1a33-423e-a244-8e67787ff496",
+          "endpoint": "/fapi/v1/premiumIndex",
+          "source": "MARKET_DATA",
+          "purpose": "QUOTE_MARK_RECOVERY",
+          "decision": "TIMEOUT",
+          "admittedAt": null,
+          "completedAt": 1791555515704,
+          "status": null
+        },
+        {
+          "requestId": "c2e7445f-94df-41d4-bd89-f32490e0afca",
+          "endpoint": "/fapi/v1/order",
+          "source": "ORDER_VERIFICATION",
+          "purpose": "EXACT_ORDER_FACT",
+          "decision": "ADMITTED",
+          "admittedAt": 1791555515354,
+          "completedAt": 1791555530369,
+          "status": null,
+          "networkTiming": {
+            "startedAt": 1791555515358,
+            "proxyConnectStartedAt": 1791555515359,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": null,
+            "secureConnectedAt": null,
+            "responseAt": null,
+            "completedAt": 1791555530369,
+            "reusedSocket": false,
+            "failurePhase": "SOCKS_NEGOTIATION"
+          }
+        },
+        {
+          "requestId": "a334b5cb-cb1c-485a-8afd-d7e31e16f3a9",
+          "endpoint": "/fapi/v1/depth",
+          "source": "MARKET_DATA",
+          "purpose": "QUOTE_BOOK_RECOVERY",
+          "decision": "ADMITTED",
+          "admittedAt": 1791555515925,
+          "completedAt": 1791555530939,
+          "status": null,
+          "networkTiming": {
+            "startedAt": 1791555515933,
+            "proxyConnectStartedAt": 1791555515934,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": null,
+            "secureConnectedAt": null,
+            "responseAt": null,
+            "completedAt": 1791555530939,
+            "reusedSocket": false,
+            "failurePhase": "SOCKS_NEGOTIATION"
+          }
+        },
+        {
+          "requestId": "51e95c11-c5cf-484a-8816-1278154e477a",
+          "endpoint": "/fapi/v1/ticker/24hr",
+          "source": "MARKET_DATA",
+          "purpose": "QUOTE_LAST_RECOVERY",
+          "decision": "TIMEOUT",
+          "admittedAt": null,
+          "completedAt": 1791555520811,
+          "status": null
+        },
+        {
+          "requestId": "8d2d3643-b4cc-4eb2-847c-d7dc157ad732",
+          "endpoint": "/fapi/v1/premiumIndex",
+          "source": "MARKET_DATA",
+          "purpose": "QUOTE_MARK_RECOVERY",
+          "decision": "TIMEOUT",
+          "admittedAt": null,
+          "completedAt": 1791555520811,
+          "status": null
+        },
+        {
+          "requestId": "1ece12c2-d8ee-404e-a0d4-9990fbc14a55",
+          "endpoint": "/fapi/v1/depth",
+          "source": "MARKET_DATA",
+          "purpose": "QUOTE_BOOK_RECOVERY",
+          "decision": "TIMEOUT",
+          "admittedAt": null,
+          "completedAt": 1791555520811,
+          "status": null
+        },
+        {
+          "requestId": "3b0e9913-311f-4e1a-afc1-1d287c2852ab",
+          "endpoint": "/fapi/v1/ticker/24hr",
+          "source": "MARKET_DATA",
+          "purpose": "QUOTE_LAST_RECOVERY",
+          "decision": "TIMEOUT",
+          "admittedAt": null,
+          "completedAt": 1791555520811,
+          "status": null
+        },
+        {
+          "requestId": "5d068620-79c7-4cf6-9716-2866fd30e344",
+          "endpoint": "/fapi/v1/premiumIndex",
+          "source": "MARKET_DATA",
+          "purpose": "QUOTE_MARK_RECOVERY",
+          "decision": "TIMEOUT",
+          "admittedAt": null,
+          "completedAt": 1791555520811,
+          "status": null
+        },
+        {
+          "requestId": "273f1c71-3150-4fe1-83ec-8abf035b4cc1",
+          "endpoint": "/fapi/v1/depth",
+          "source": "MARKET_DATA",
+          "purpose": "QUOTE_BOOK_RECOVERY",
+          "decision": "TIMEOUT",
+          "admittedAt": null,
+          "completedAt": 1791555525883,
+          "status": null
+        },
+        {
+          "requestId": "6d6f1ace-3530-4287-b87a-364cbc8651a4",
+          "endpoint": "/fapi/v1/depth",
+          "source": "MARKET_DATA",
+          "purpose": "QUOTE_BOOK_RECOVERY",
+          "decision": "TIMEOUT",
+          "admittedAt": null,
+          "completedAt": 1791555525883,
+          "status": null
+        },
+        {
+          "requestId": "d550804a-ba3d-4a0e-b56c-5615a2952a2e",
+          "endpoint": "/fapi/v1/ticker/24hr",
+          "source": "MARKET_DATA",
+          "purpose": "QUOTE_LAST_RECOVERY",
+          "decision": "TIMEOUT",
+          "admittedAt": null,
+          "completedAt": 1791555525883,
+          "status": null
+        },
+        {
+          "requestId": "7533e907-3f8e-45db-b58e-b5bca9aaae74",
+          "endpoint": "/fapi/v1/premiumIndex",
+          "source": "MARKET_DATA",
+          "purpose": "QUOTE_MARK_RECOVERY",
+          "decision": "TIMEOUT",
+          "admittedAt": null,
+          "completedAt": 1791555525883,
+          "status": null
+        },
+        {
+          "requestId": "c227ee87-1a3e-476e-b983-5d617cc5e161",
+          "endpoint": "/fapi/v1/ticker/24hr",
+          "source": "MARKET_DATA",
+          "purpose": "QUOTE_LAST_RECOVERY",
+          "decision": "TIMEOUT",
+          "admittedAt": null,
+          "completedAt": 1791555525883,
+          "status": null
+        },
+        {
+          "requestId": "b4192507-962a-4cbe-8c65-5194ad1d0804",
+          "endpoint": "/fapi/v1/premiumIndex",
+          "source": "MARKET_DATA",
+          "purpose": "QUOTE_MARK_RECOVERY",
+          "decision": "TIMEOUT",
+          "admittedAt": null,
+          "completedAt": 1791555525883,
+          "status": null
+        },
+        {
+          "requestId": "8d02fbec-7220-40b9-b179-eea158c382f2",
+          "endpoint": "/fapi/v1/depth",
+          "source": "MARKET_DATA",
+          "purpose": "QUOTE_BOOK_RECOVERY",
+          "decision": "ADMITTED",
+          "admittedAt": 1791555525934,
+          "completedAt": 1791555540947,
+          "status": null,
+          "networkTiming": {
+            "startedAt": 1791555525936,
+            "proxyConnectStartedAt": 1791555525936,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": null,
+            "secureConnectedAt": null,
+            "responseAt": null,
+            "completedAt": 1791555540947,
+            "reusedSocket": false,
+            "failurePhase": "SOCKS_NEGOTIATION"
+          }
+        },
+        {
+          "requestId": "7d455709-9723-41fd-b9f7-642a8b07184a",
+          "endpoint": "/fapi/v1/ticker/24hr",
+          "source": "MARKET_DATA",
+          "purpose": "QUOTE_LAST_RECOVERY",
+          "decision": "TIMEOUT",
+          "admittedAt": null,
+          "completedAt": 1791555525963,
+          "status": null
+        },
+        {
+          "requestId": "04dae5a8-f3a8-4765-b7d1-2e96d4d56762",
+          "endpoint": "/fapi/v1/premiumIndex",
+          "source": "MARKET_DATA",
+          "purpose": "QUOTE_MARK_RECOVERY",
+          "decision": "TIMEOUT",
+          "admittedAt": null,
+          "completedAt": 1791555525963,
+          "status": null
+        },
+        {
+          "requestId": "56378dff-df03-454e-9374-bebecef39dc4",
+          "endpoint": "/fapi/v1/time",
+          "source": "CLOCK",
+          "purpose": "READ_TIME",
+          "decision": "ADMITTED",
+          "admittedAt": 1791555522357,
+          "completedAt": 1791555530393,
+          "status": null,
+          "networkTiming": {
+            "startedAt": 1791555522364,
+            "proxyConnectStartedAt": 1791555522365,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": null,
+            "secureConnectedAt": null,
+            "responseAt": null,
+            "completedAt": 1791555530393,
+            "reusedSocket": false,
+            "failurePhase": "SOCKS_NEGOTIATION"
+          }
+        },
+        {
+          "requestId": "4353a656-1ef6-47c6-a6d5-de3b325e4010",
+          "endpoint": "/fapi/v1/depth",
+          "source": "MARKET_DATA",
+          "purpose": "QUOTE_BOOK_RECOVERY",
+          "decision": "ADMITTED",
+          "admittedAt": 1791555525963,
+          "completedAt": 1791555540991,
+          "status": null,
+          "networkTiming": {
+            "startedAt": 1791555525965,
+            "proxyConnectStartedAt": 1791555525965,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": null,
+            "secureConnectedAt": null,
+            "responseAt": null,
+            "completedAt": 1791555540991,
+            "reusedSocket": false,
+            "failurePhase": "SOCKS_NEGOTIATION"
+          }
+        },
+        {
+          "requestId": "4f192c46-0cab-47eb-a3ed-9c0b13cd709a",
+          "endpoint": "/fapi/v1/depth",
+          "source": "MARKET_DATA",
+          "purpose": "QUOTE_BOOK_RECOVERY",
+          "decision": "ADMITTED",
+          "admittedAt": 1791555526042,
+          "completedAt": 1791555541057,
+          "status": null,
+          "networkTiming": {
+            "startedAt": 1791555526045,
+            "proxyConnectStartedAt": 1791555526046,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": null,
+            "secureConnectedAt": null,
+            "responseAt": null,
+            "completedAt": 1791555541057,
+            "reusedSocket": false,
+            "failurePhase": "SOCKS_NEGOTIATION"
+          }
+        },
+        {
+          "requestId": "83674383-aeb0-4842-80c1-3ceb1ba85a1f",
+          "endpoint": "/fapi/v1/depth",
+          "source": "MARKET_DATA",
+          "purpose": "QUOTE_BOOK_RECOVERY",
+          "decision": "TIMEOUT",
+          "admittedAt": null,
+          "completedAt": 1791555530939,
+          "status": null
+        },
+        {
+          "requestId": "1e3319f9-b06c-413c-b820-03544603936f",
+          "endpoint": "/fapi/v1/ticker/24hr",
+          "source": "MARKET_DATA",
+          "purpose": "QUOTE_LAST_RECOVERY",
+          "decision": "TIMEOUT",
+          "admittedAt": null,
+          "completedAt": 1791555530939,
+          "status": null
+        },
+        {
+          "requestId": "21021a77-fc1d-462c-900a-47f197206b94",
+          "endpoint": "/fapi/v1/premiumIndex",
+          "source": "MARKET_DATA",
+          "purpose": "QUOTE_MARK_RECOVERY",
+          "decision": "TIMEOUT",
+          "admittedAt": null,
+          "completedAt": 1791555530939,
+          "status": null
+        },
+        {
+          "requestId": "20d58452-5b13-409d-91f9-759f34d1edb7",
+          "endpoint": "/fapi/v1/ticker/24hr",
+          "source": "MARKET_DATA",
+          "purpose": "QUOTE_LAST_RECOVERY",
+          "decision": "TIMEOUT",
+          "admittedAt": null,
+          "completedAt": 1791555530939,
+          "status": null
+        },
+        {
+          "requestId": "946bc414-c971-4702-9c07-ea5b946f5d85",
+          "endpoint": "/fapi/v1/premiumIndex",
+          "source": "MARKET_DATA",
+          "purpose": "QUOTE_MARK_RECOVERY",
+          "decision": "TIMEOUT",
+          "admittedAt": null,
+          "completedAt": 1791555530939,
+          "status": null
+        },
+        {
+          "requestId": "67b9d43b-bf13-45b2-b853-2ef35938a6b2",
+          "endpoint": "/fapi/v1/ticker/24hr",
+          "source": "MARKET_DATA",
+          "purpose": "QUOTE_LAST_RECOVERY",
+          "decision": "TIMEOUT",
+          "admittedAt": null,
+          "completedAt": 1791555530939,
+          "status": null
+        },
+        {
+          "requestId": "ab63dbb8-5f21-4b7d-9084-2be3dd1150cc",
+          "endpoint": "/fapi/v1/premiumIndex",
+          "source": "MARKET_DATA",
+          "purpose": "QUOTE_MARK_RECOVERY",
+          "decision": "TIMEOUT",
+          "admittedAt": null,
+          "completedAt": 1791555530939,
+          "status": null
+        },
+        {
+          "requestId": "3910bc27-dc55-45d7-a7aa-ac346cdb0158",
+          "endpoint": "/fapi/v1/depth",
+          "source": "MARKET_DATA",
+          "purpose": "QUOTE_BOOK_RECOVERY",
+          "decision": "ADMITTED",
+          "admittedAt": 1791555530939,
+          "completedAt": null,
+          "status": null
+        },
+        {
+          "requestId": "81fda87b-f5bb-4e70-bba7-4966c80f21a4",
+          "endpoint": "/fapi/v1/ticker/24hr",
+          "source": "MARKET_DATA",
+          "purpose": "QUOTE_LAST_RECOVERY",
+          "decision": "TIMEOUT",
+          "admittedAt": null,
+          "completedAt": 1791555531052,
+          "status": null
+        },
+        {
+          "requestId": "9517d047-40ed-4fd3-bfce-4cdd6cfea82e",
+          "endpoint": "/fapi/v1/premiumIndex",
+          "source": "MARKET_DATA",
+          "purpose": "QUOTE_MARK_RECOVERY",
+          "decision": "TIMEOUT",
+          "admittedAt": null,
+          "completedAt": 1791555531052,
+          "status": null
+        },
+        {
+          "requestId": "9bdb20ba-8508-4339-89c1-22642fe518e4",
+          "endpoint": "/fapi/v2/account",
+          "source": "PRIVATE_STATE",
+          "purpose": "READ_ACCOUNT",
+          "decision": "ADMITTED",
+          "admittedAt": 1791555530406,
+          "completedAt": null,
+          "status": null
+        },
+        {
+          "requestId": "498f8d01-06cb-4c29-b6a7-3b79cccfa89c",
+          "endpoint": "/fapi/v1/order",
+          "source": "ORDER_VERIFICATION",
+          "purpose": "EXACT_ORDER_FACT",
+          "decision": "ADMITTED",
+          "admittedAt": 1791555530939,
+          "completedAt": null,
+          "status": null
+        },
+        {
+          "requestId": "e81825bc-c9a4-4e0e-94b6-214c7e7f5068",
+          "endpoint": "/fapi/v1/depth",
+          "source": "MARKET_DATA",
+          "purpose": "QUOTE_BOOK_RECOVERY",
+          "decision": "TIMEOUT",
+          "admittedAt": null,
+          "completedAt": 1791555535974,
+          "status": null
+        },
+        {
+          "requestId": "1c9c3717-8bce-460a-a6cd-9382893933b9",
+          "endpoint": "/fapi/v1/ticker/24hr",
+          "source": "MARKET_DATA",
+          "purpose": "QUOTE_LAST_RECOVERY",
+          "decision": "TIMEOUT",
+          "admittedAt": null,
+          "completedAt": 1791555535974,
+          "status": null
+        },
+        {
+          "requestId": "e5303dcb-14df-4bbf-819e-094fb1aac64d",
+          "endpoint": "/fapi/v1/premiumIndex",
+          "source": "MARKET_DATA",
+          "purpose": "QUOTE_MARK_RECOVERY",
+          "decision": "TIMEOUT",
+          "admittedAt": null,
+          "completedAt": 1791555535974,
+          "status": null
+        },
+        {
+          "requestId": "46375a15-07f4-4a6d-98e2-300816ec22f2",
+          "endpoint": "/fapi/v1/openInterest",
+          "source": "BACKGROUND_AUDIT",
+          "purpose": "DERIVATIVES_CONTEXT_OPEN_INTEREST",
+          "decision": "TIMEOUT",
+          "admittedAt": null,
+          "completedAt": 1791555540988,
+          "status": null
+        },
+        {
+          "requestId": "c00e918e-4de5-487f-b446-7d330cdf6704",
+          "endpoint": "/fapi/v1/premiumIndex",
+          "source": "BACKGROUND_AUDIT",
+          "purpose": "DERIVATIVES_CONTEXT_MARK_PRICE",
+          "decision": "TIMEOUT",
+          "admittedAt": null,
+          "completedAt": 1791555540988,
+          "status": null
+        },
+        {
+          "requestId": "66d32db9-f13e-45d2-896c-71b50f171c50",
+          "endpoint": "/fapi/v1/klines",
+          "source": "MARKET_DATA",
+          "purpose": "READ_KLINES",
+          "decision": "TIMEOUT",
+          "admittedAt": null,
+          "completedAt": 1791555540991,
+          "status": null
+        },
+        {
+          "requestId": "431872a8-ac98-444e-848c-48f6b4fa3f47",
+          "endpoint": "/fapi/v1/klines",
+          "source": "MARKET_DATA",
+          "purpose": "READ_KLINES",
+          "decision": "TIMEOUT",
+          "admittedAt": null,
+          "completedAt": 1791555541057,
+          "status": null
+        },
+        {
+          "requestId": "bcc57f36-5671-4aff-ac12-acd554036c44",
+          "endpoint": "/fapi/v1/ticker/24hr",
+          "source": "MARKET_DATA",
+          "purpose": "QUOTE_LAST_RECOVERY",
+          "decision": "ADMITTED",
+          "admittedAt": 1791555540947,
+          "completedAt": null,
+          "status": null
+        },
+        {
+          "requestId": "e317f511-9f68-4714-a7cc-b44aea40e40c",
+          "endpoint": "/fapi/v1/premiumIndex",
+          "source": "MARKET_DATA",
+          "purpose": "QUOTE_MARK_RECOVERY",
+          "decision": "ADMITTED",
+          "admittedAt": 1791555540991,
+          "completedAt": null,
+          "status": null
+        },
+        {
+          "requestId": "5a075910-2555-48e9-a8e2-461d7c796859",
+          "endpoint": "/fapi/v1/ticker/24hr",
+          "source": "MARKET_DATA",
+          "purpose": "QUOTE_LAST_RECOVERY",
+          "decision": "TIMEOUT",
+          "admittedAt": null,
+          "completedAt": 1791555541057,
+          "status": null
+        },
+        {
+          "requestId": "287130da-bbe3-4324-8fde-8a52fd364dcf",
+          "endpoint": "/fapi/v1/premiumIndex",
+          "source": "MARKET_DATA",
+          "purpose": "QUOTE_MARK_RECOVERY",
+          "decision": "TIMEOUT",
+          "admittedAt": null,
+          "completedAt": 1791555541057,
+          "status": null
+        },
+        {
+          "requestId": "76a13dec-1c81-4b11-99ce-00ae8d0a8a40",
+          "endpoint": "/fapi/v1/depth",
+          "source": "MARKET_DATA",
+          "purpose": "QUOTE_BOOK_RECOVERY",
+          "decision": "TIMEOUT",
+          "admittedAt": null,
+          "completedAt": 1791555541057,
+          "status": null
+        },
+        {
+          "requestId": "c3845848-ef45-4f87-9595-50dd5a502094",
+          "endpoint": "/fapi/v1/openInterest",
+          "source": "BACKGROUND_AUDIT",
+          "purpose": "DERIVATIVES_CONTEXT_OPEN_INTEREST",
+          "decision": "QUEUED",
+          "admittedAt": null,
+          "completedAt": null,
+          "status": null
+        },
+        {
+          "requestId": "0ffb7860-7a13-4639-a08c-65fc26551c29",
+          "endpoint": "/fapi/v1/premiumIndex",
+          "source": "BACKGROUND_AUDIT",
+          "purpose": "DERIVATIVES_CONTEXT_MARK_PRICE",
+          "decision": "QUEUED",
+          "admittedAt": null,
+          "completedAt": null,
+          "status": null
+        },
+        {
+          "requestId": "d76c2d83-4f1a-4e69-a96c-1888679f093a",
+          "endpoint": "/fapi/v1/klines",
+          "source": "MARKET_DATA",
+          "purpose": "READ_KLINES",
+          "decision": "QUEUED",
+          "admittedAt": null,
+          "completedAt": null,
+          "status": null
+        },
+        {
+          "requestId": "de80e1bd-a770-4bf1-8c7d-6cd7dc44468a",
+          "endpoint": "/fapi/v1/ticker/24hr",
+          "source": "MARKET_DATA",
+          "purpose": "QUOTE_LAST_RECOVERY",
+          "decision": "ADMITTED",
+          "admittedAt": 1791555541057,
+          "completedAt": null,
+          "status": null
+        },
+        {
+          "requestId": "8a57bb6f-4955-4081-9f15-3c05dc0f5b99",
+          "endpoint": "/fapi/v1/premiumIndex",
+          "source": "MARKET_DATA",
+          "purpose": "QUOTE_MARK_RECOVERY",
+          "decision": "QUEUED",
+          "admittedAt": null,
+          "completedAt": null,
+          "status": null
+        },
+        {
+          "requestId": "d9a1c0a1-a084-4dcd-8b62-4f6a1681823e",
+          "endpoint": "/fapi/v1/depth",
+          "source": "MARKET_DATA",
+          "purpose": "QUOTE_BOOK_RECOVERY",
+          "decision": "QUEUED",
+          "admittedAt": null,
+          "completedAt": null,
+          "status": null
+        },
+        {
+          "requestId": "0c315e9f-c9d4-47f7-9a39-0ca58d377f44",
+          "endpoint": "/fapi/v1/depth",
+          "source": "MARKET_DATA",
+          "purpose": "QUOTE_BOOK_RECOVERY",
+          "decision": "QUEUED",
+          "admittedAt": null,
+          "completedAt": null,
+          "status": null
+        },
+        {
+          "requestId": "2371eed7-bfac-4175-9f68-a2b83bc46c46",
+          "endpoint": "/fapi/v1/depth",
+          "source": "MARKET_DATA",
+          "purpose": "QUOTE_BOOK_RECOVERY",
+          "decision": "QUEUED",
+          "admittedAt": null,
+          "completedAt": null,
+          "status": null
+        },
+        {
+          "requestId": "f60f4111-53e8-41c9-abb8-bb46ab7794eb",
+          "endpoint": "/fapi/v1/ticker/24hr",
+          "source": "MARKET_DATA",
+          "purpose": "QUOTE_LAST_RECOVERY",
+          "decision": "QUEUED",
+          "admittedAt": null,
+          "completedAt": null,
+          "status": null
+        },
+        {
+          "requestId": "7e9b5f00-6450-44e2-93e6-0cffd9c3c2a9",
+          "endpoint": "/fapi/v1/premiumIndex",
+          "source": "MARKET_DATA",
+          "purpose": "QUOTE_MARK_RECOVERY",
+          "decision": "QUEUED",
+          "admittedAt": null,
+          "completedAt": null,
+          "status": null
+        },
+        {
+          "requestId": "d9bff487-0003-4227-b63c-ec2af1a51edb",
+          "endpoint": "/fapi/v1/ticker/24hr",
+          "source": "MARKET_DATA",
+          "purpose": "QUOTE_LAST_RECOVERY",
+          "decision": "QUEUED",
+          "admittedAt": null,
+          "completedAt": null,
+          "status": null
+        },
+        {
+          "requestId": "06f8b664-71e6-4da9-966c-48bf758e7ad8",
+          "endpoint": "/fapi/v1/premiumIndex",
+          "source": "MARKET_DATA",
+          "purpose": "QUOTE_MARK_RECOVERY",
+          "decision": "QUEUED",
+          "admittedAt": null,
+          "completedAt": null,
+          "status": null
+        },
+        {
+          "requestId": "8d744586-a368-4e43-89a0-3c4792b6c606",
+          "endpoint": "/fapi/v1/openInterest",
+          "source": "BACKGROUND_AUDIT",
+          "purpose": "DERIVATIVES_CONTEXT_OPEN_INTEREST",
+          "decision": "QUEUED",
+          "admittedAt": null,
+          "completedAt": null,
+          "status": null
+        },
+        {
+          "requestId": "2521bf37-7dbb-42d8-b144-bb7fe9ff5555",
+          "endpoint": "/fapi/v1/premiumIndex",
+          "source": "BACKGROUND_AUDIT",
+          "purpose": "DERIVATIVES_CONTEXT_MARK_PRICE",
+          "decision": "QUEUED",
+          "admittedAt": null,
+          "completedAt": null,
+          "status": null
+        },
+        {
+          "requestId": "f40989f2-2f62-4f45-a1b1-7f04012a6e08",
+          "endpoint": "/fapi/v1/klines",
+          "source": "MARKET_DATA",
+          "purpose": "READ_KLINES",
+          "decision": "QUEUED",
+          "admittedAt": null,
+          "completedAt": null,
+          "status": null
+        },
+        {
+          "requestId": "80d7d789-be0f-407d-bd53-9c81d7f8accb",
+          "endpoint": "/fapi/v1/ticker/24hr",
+          "source": "MARKET_DATA",
+          "purpose": "QUOTE_LAST_RECOVERY",
+          "decision": "QUEUED",
+          "admittedAt": null,
+          "completedAt": null,
+          "status": null
+        },
+        {
+          "requestId": "c7db38cf-bcfb-4e46-bbca-ad9b9c22b817",
+          "endpoint": "/fapi/v1/premiumIndex",
+          "source": "MARKET_DATA",
+          "purpose": "QUOTE_MARK_RECOVERY",
+          "decision": "QUEUED",
+          "admittedAt": null,
+          "completedAt": null,
+          "status": null
+        },
+        {
+          "requestId": "efba5371-b462-4f34-8c6f-7009262523d5",
+          "endpoint": "/fapi/v1/depth",
+          "source": "MARKET_DATA",
+          "purpose": "QUOTE_BOOK_RECOVERY",
+          "decision": "QUEUED",
+          "admittedAt": null,
+          "completedAt": null,
+          "status": null
+        }
+      ]
+    }
+  }
+}

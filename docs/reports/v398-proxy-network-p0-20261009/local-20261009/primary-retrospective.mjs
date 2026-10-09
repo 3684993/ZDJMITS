@@ -1,0 +1,11 @@
+import {DatabaseSync} from 'node:sqlite';
+import {writeFileSync} from 'node:fs';
+const observedAt=Date.now(),from=observedAt-90*60_000;
+const db=new DatabaseSync('D:/MITS/data/zdj-settings.sqlite',{readOnly:true});
+db.exec('PRAGMA query_only=ON; PRAGMA busy_timeout=1000');
+const runs=db.prepare('SELECT role,status,count(*) count FROM ai_runs_archive WHERE started_at>=? AND started_at<=? GROUP BY role,status').all(from,observedAt);
+const lastPrimary=db.prepare("SELECT max(started_at) startedAt FROM ai_runs_archive WHERE role='PRIMARY_BRAIN'").get();
+db.close();
+const result={observedAt:new Date(observedAt).toISOString(),from:new Date(from).toISOString(),to:new Date(observedAt).toISOString(),scope:'ARCHIVED_RUN_START_TIMES_ONLY_NOT_CONTINUOUS_ACCEPTANCE',runs,lastPrimary,eligibleCandidateDenominator:'UNKNOWN_NOT_RECONSTRUCTED',cadence90min:'NOT_STARTED_NEW_BUILD_NOT_DEPLOYED',settingsWrites:0,exchangeWrites:0};
+writeFileSync(new URL('./primary-retrospective.json',import.meta.url),JSON.stringify(result,null,2)+'\n');
+console.log(JSON.stringify(result));

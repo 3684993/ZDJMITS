@@ -1,0 +1,74 @@
+[
+  {
+    "task": "\\ZDJ-MITS Local Health Monitor",
+    "state": "Disabled",
+    "execute": "C:\\Windows\\System32\\wscript.exe",
+    "arguments": "//B //Nologo \"D:\\MITS-OPERATIONS\\silent-tasks-20261009\\_ZDJ-MITS_Local_Health_Monitor.vbs\"",
+    "lastRun": "2026-09-12T21:51:40+08:00",
+    "result": 1,
+    "interval": "PT10M"
+  },
+  {
+    "task": "\\ZDJ-MITS Manual Engine",
+    "state": "Ready",
+    "execute": "C:\\Windows\\System32\\wscript.exe",
+    "arguments": "//B //Nologo \"D:\\MITS-OPERATIONS\\silent-tasks-20261009\\_ZDJ-MITS_Manual_Engine.vbs\"",
+    "lastRun": "1999-11-30T00:00:00+08:00",
+    "result": 267011,
+    "interval": null
+  },
+  {
+    "task": "\\ZDJ-MITS V3.9.2 Testnet Acceptance Monitor",
+    "state": "Disabled",
+    "execute": "C:\\Windows\\System32\\wscript.exe",
+    "arguments": "//B //Nologo \"D:\\MITS-OPERATIONS\\silent-tasks-20261009\\_ZDJ-MITS_V3_9_2_Testnet_Acceptance_Monitor.vbs\"",
+    "lastRun": "2026-09-13T18:31:52+08:00",
+    "result": 0,
+    "interval": "PT30M"
+  },
+  {
+    "task": "\\ZDJ-MITS-AfterReboot-TESTNET",
+    "state": "Ready",
+    "execute": "C:\\Windows\\System32\\wscript.exe",
+    "arguments": "//B //Nologo \"D:\\MITS-OPERATIONS\\silent-tasks-20261009\\_ZDJ-MITS-AfterReboot-TESTNET.vbs\"",
+    "lastRun": "1999-11-30T00:00:00+08:00",
+    "result": 267011,
+    "interval": null
+  },
+  {
+    "task": "\\ZDJMITS\\ZDJ-MITS-Engine-Crash-Observer",
+    "state": "Running",
+    "execute": "C:\\Windows\\System32\\wscript.exe",
+    "arguments": "//B //Nologo \"D:\\MITS-OPERATIONS\\silent-tasks-20261009\\_ZDJMITS_ZDJ-MITS-Engine-Crash-Observer.vbs\"",
+    "lastRun": "2026-10-09T16:13:59+08:00",
+    "result": 267009,
+    "interval": null
+  },
+  {
+    "task": "\\ZDJMITS\\ZDJ-V398-24h-Readonly-Checkpoint",
+    "state": "Disabled",
+    "execute": "C:\\Windows\\System32\\wscript.exe",
+    "arguments": "//B //Nologo \"D:\\MITS-OPERATIONS\\silent-tasks-20261009\\_ZDJMITS_ZDJ-V398-24h-Readonly-Checkpoint.vbs\"",
+    "lastRun": "2026-10-09T20:12:50+08:00",
+    "result": 0,
+    "interval": "PT5M"
+  },
+  {
+    "task": "\\ZDJMITS\\ZDJ-V398-Passive-Trade-Audit",
+    "state": "Ready",
+    "execute": "C:\\Windows\\System32\\wscript.exe",
+    "arguments": "//B //Nologo \"D:\\MITS-OPERATIONS\\silent-tasks-20261009\\_ZDJMITS_ZDJ-V398-Passive-Trade-Audit.vbs\"",
+    "lastRun": "2026-10-09T22:15:52+08:00",
+    "result": 0,
+    "interval": "PT5M"
+  },
+  {
+    "task": "\\ZDJMITS\\ZDJ-V398-Primary-Cadence-90min",
+    "state": "Ready",
+    "execute": "C:\\Windows\\System32\\wscript.exe",
+    "arguments": "//B //Nologo \"D:\\MITS-OPERATIONS\\silent-tasks-20261009\\_ZDJMITS_ZDJ-V398-Primary-Cadence-90min.vbs\"",
+    "lastRun": "2026-10-09T22:14:11+08:00",
+    "result": 0,
+    "interval": "PT5M"
+  }
+]

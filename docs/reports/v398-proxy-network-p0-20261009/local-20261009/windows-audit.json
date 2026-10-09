@@ -1,0 +1,95 @@
+{
+  "at": "2026-10-09T22:14:07.8522845+08:00",
+  "scheduledTaskCount": 271,
+  "consoleTasks": [
+    {
+      "task": "\\USER_ESRV_SVC_QUEENCREEK",
+      "state": "Ready",
+      "logonType": "ServiceAccount",
+      "executables": [
+        "powershell"
+      ],
+      "interval": [
+        "PT3H"
+      ]
+    },
+    {
+      "task": "\\ZhiDuoJin-Trading-System-Autostart",
+      "state": "Disabled",
+      "logonType": "Interactive",
+      "executables": [
+        "powershell.exe"
+      ],
+      "interval": [
+        null
+      ]
+    },
+    {
+      "task": "\\Microsoft\\Windows\\Hotpatch\\Monitoring",
+      "state": "Ready",
+      "logonType": "ServiceAccount",
+      "executables": [
+        "%systemroot%\\system32\\cmd.exe"
+      ],
+      "interval": [
+        null,
+        null,
+        "P1D"
+      ]
+    }
+  ],
+  "startupFolderItems": [],
+  "runRegistryNames": [
+    "OneDrive",
+    "Yuanbao",
+    "GameViewer",
+    "Battle.net",
+    "AMDNoiseSuppression"
+  ],
+  "taskHistoryEnabled": false,
+  "criticalProcesses": [
+    {
+      "Name": "llama-server.exe",
+      "ProcessId": 3400,
+      "ParentProcessId": 13384,
+      "CreationDate": "2026-10-09T10:59:34.332653+08:00"
+    },
+    {
+      "Name": "llama-server.exe",
+      "ProcessId": 14020,
+      "ParentProcessId": 17780,
+      "CreationDate": "2026-10-09T11:10:45.128538+08:00"
+    },
+    {
+      "Name": "llama-server.exe",
+      "ProcessId": 22336,
+      "ParentProcessId": 5352,
+      "CreationDate": "2026-10-09T11:17:27.749862+08:00"
+    },
+    {
+      "Name": "node.exe",
+      "ProcessId": 18100,
+      "ParentProcessId": 23056,
+      "CreationDate": "2026-10-09T15:04:32.522736+08:00"
+    },
+    {
+      "Name": "powershell.exe",
+      "ProcessId": 17772,
+      "ParentProcessId": 2220,
+      "CreationDate": "2026-10-09T16:13:59.329604+08:00"
+    },
+    {
+      "Name": "ssh.exe",
+      "ProcessId": 18300,
+      "ParentProcessId": 26468,
+      "CreationDate": "2026-10-09T20:37:59.09116+08:00"
+    }
+  ],
+  "observerLogLastWrite": "2026-10-09T22:13:50.1817348+08:00",
+  "observerLogSize": 1156069,
+  "wer": {
+    "DumpType": 1,
+    "DumpCount": null,
+    "DumpFolder": "D:\\MITS\\docs\\reports\\crash\\dumps"
+  }
+}

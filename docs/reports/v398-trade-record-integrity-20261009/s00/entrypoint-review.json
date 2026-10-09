@@ -360,6 +360,13 @@
           "status": "FORBIDDEN_OR_NOT_RUN"
         },
         {
+          "name": "verify:ci",
+          "sideEffects": [
+            "aggregate-verification-chain"
+          ],
+          "status": "FORBIDDEN_OR_NOT_RUN"
+        },
+        {
           "name": "verify:deps",
           "sideEffects": [
             "aggregate-verification-chain"

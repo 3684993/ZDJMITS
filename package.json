@@ -23,6 +23,7 @@
     "verify:release": "node scripts/v397-release-identity.mjs",
     "verify:s00": "node scripts/v396-s00-static-check.mjs --review=docs/reports/v398-trade-record-integrity-20261009/s00/entrypoint-review.json --current-identity=docs/reports/v398-trade-record-integrity-20261009/s00/current-identity.json --historical-lock=docs/reports/v398-trade-record-integrity-20261009/s00/historical-package-lock.json",
     "verify": "npm run verify:deps && npm run verify:scripts && npm run verify:release && npm run verify:s00 && npm run typecheck && npm run build && npm run test",
+    "verify:ci": "npm run verify:deps && npm run verify:scripts && npm run verify:release && npm run verify:s00 && npm run typecheck && npm run build && npm run test -w @zdj/contracts && npm run test -w @zdj/core && npm run test -w @zdj/dashboard && npm run test:ci -w @zdj/engine",
     "acceptance": "powershell -ExecutionPolicy Bypass -File scripts/run-acceptance.ps1",
     "verify:isolated": "npm run build -w @zdj/contracts && npm run build -w @zdj/core && npm run typecheck && npm run build -w @zdj/engine && npm run build -w @zdj/dashboard -- --outDir ../../data-test/v390-build/dashboard && npm test",
     "storage:plan": "node scripts/maintain-storage.mjs",

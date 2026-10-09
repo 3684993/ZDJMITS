@@ -34,4 +34,6 @@ jobs:
       - name: Install locked dependencies
         run: npm ci
       - name: Full offline verification
-        run: npm run verify
+        # Identical gates and all workspace tests; use the existing bounded
+        # four-shard Engine CI runner to avoid worker RPC starvation on Windows.
+        run: npm run verify:ci

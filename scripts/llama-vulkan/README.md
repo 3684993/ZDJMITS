@@ -116,3 +116,10 @@ powershell -NoProfile -ExecutionPolicy Bypass -File "$review\maintenance-preflig
 本目录三份候选严格提高启动门槛：9B >=24GiB host commit free，27B >=40GiB host commit free，系统 commit 使用率 <90%，已有任何 llama-server handleCount >=100000 时拒绝 cold load；还增加了 Engine **进程存在但尚未监听8080**时拒绝被请求的 stop。内核池/句柄数本身是否为真正泄漏仍需停止后回收趋势对照。
 
 **后续完整操作只采用 [CONTROLLED_MAINTENANCE_RUNBOOK_20261009.md](CONTROLLED_MAINTENANCE_RUNBOOK_20261009.md)。当前不要一次停止并重启三个模型。**
+
+
+## 2026-10-09 09:47 +08：两个27B均停后的资源回收报告
+
+已确认Primary8084和Harness8083均停止，8081 Intel B580 9B仍运行且仅317句柄。系统提交内存116.68→69.94GiB、剩余提交额度1.30→42.99GiB；分页池23.10→22.70GiB、非分页池8.67→7.54GiB。**两27B结束释放了约46.74GiB提交资源，但仍有约30.24GiB内核池在系统中。**
+
+下一步不再盲目调整三个推理脚本，而是运行新增的 **`capture-kernel-pool-tags-readonly.ps1`**（仅使用已安装的微软 WDK PoolMon，`/n`静态快照，不停止模型/Engine、不修改驱动/注册表/页面文件，若不存在则明确报告缺失），并检查 [POST_HARNESS_STOP_AND_KERNEL_POOL_PLAN_20261009.md](POST_HARNESS_STOP_AND_KERNEL_POOL_PLAN_20261009.md)。所有原始诊断输出留在本机，GitHub只保存脱敏报告。未运行 Windows现场 PoolMon 测试，不称已有根因。

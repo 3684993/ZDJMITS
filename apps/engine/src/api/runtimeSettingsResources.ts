@@ -29,19 +29,27 @@ export function proxyPassiveHealth(settings:SystemSettings,resource:{id:string;u
     successes=dispatches.filter((row:any)=>row.admittedAt!==null&&Number(row.status)>=200&&Number(row.status)<400),
     queuedTimeouts=dispatches.filter((row:any)=>row.decision==='TIMEOUT'),
     networkFailures=dispatches.filter((row:any)=>row.admittedAt!==null&&row.networkTiming?.failurePhase),
+    eligibilityRejections=dispatches.filter((row:any)=>row.admittedAt!==null&&row.status===451),
+    upstream502s=dispatches.filter((row:any)=>row.admittedAt!==null&&row.status===502),
     latestSuccess=Math.max(0,...successes.map((row:any)=>Number(row.completedAt??0))),
     latestQueueTimeout=Math.max(0,...queuedTimeouts.map((row:any)=>Number(row.completedAt??0))),
     latestNetworkFailure=Math.max(0,...networkFailures.map((row:any)=>Number(row.completedAt??0))),
+    latestEligibilityRejection=Math.max(0,...eligibilityRejections.map((row:any)=>Number(row.completedAt??0))),
+    latestUpstream502=Math.max(0,...upstream502s.map((row:any)=>Number(row.completedAt??0))),
     lastNetworkFailure=networkFailures.findLast((row:any)=>Number(row.completedAt??0)===latestNetworkFailure),
     freshSuccess=latestSuccess>0&&now-latestSuccess<=120_000,
     freshQueueTimeout=latestQueueTimeout>0&&now-latestQueueTimeout<=120_000,
     freshNetworkFailure=latestNetworkFailure>0&&now-latestNetworkFailure<=120_000;
-  const status=budget.status==='RATE_LIMITED'||budget.status==='RECOVERING'?'BINANCE_RATE_LIMITED_OR_RECOVERING'
+  // Public 2xx does not invalidate an independently observed eligibility refusal.
+  const status=latestEligibilityRejection>0&&now>=latestEligibilityRejection&&now-latestEligibilityRejection<=120_000?'HTTP_451_ELIGIBILITY'
+    :budget.status==='RATE_LIMITED'||budget.status==='RECOVERING'?'BINANCE_RATE_LIMITED_OR_RECOVERING'
+    :latestUpstream502>0&&now>=latestUpstream502&&now-latestUpstream502<=120_000&&latestUpstream502>=latestSuccess?'HTTP_502_UPSTREAM_UNKNOWN'
     :freshQueueTimeout&&latestQueueTimeout>latestSuccess?'REQUEST_QUEUE_TIMEOUT'
     :freshNetworkFailure&&latestNetworkFailure>latestSuccess?'NETWORK_FAILURE_OBSERVED'
     :freshSuccess?'RECENT_BINANCE_SUCCESS':'STALE_OR_UNKNOWN';
   return{status,active:true,asOf:now,routeIdentity,observation:'PASSIVE_RECENT_REQUESTS_ONLY',
     lastSuccessAt:latestSuccess||null,lastQueueTimeoutAt:latestQueueTimeout||null,lastNetworkFailureAt:latestNetworkFailure||null,
+    lastEligibilityRejectionAt:latestEligibilityRejection||null,lastUpstream502At:latestUpstream502||null,
     networkFailurePhase:lastNetworkFailure?.networkTiming?.failurePhase??null,queuePressure:budget.queuePressure??null,
     queueDepth:budget.queued??0,budgetStatus:budget.status??'UNKNOWN',budgetBlockedUntil:budget.blockedUntil??0,
     decisions:budget.decisions??null,ageMs:latestSuccess?Math.max(0,now-latestSuccess):null};

@@ -134,3 +134,26 @@ describe('proxy passive health contracts (no Binance /fapi/v1/time probe)',()=>{
     expect(missing.status).toBe(404);
   });
 });
+
+it('keeps Binance HTTP 451 eligibility separate from healthy public probes and distinguishes HTTP 502',async()=>{
+  const url='socks5h://127.0.0.1:28883',value:any=settings();
+  value.connections.proxy.url=url;
+  const route='proxy-'+createHash('sha256').update(url).digest('hex').slice(0,12);
+  const budget=getBinanceRequestBudget('TESTNET',route);
+  const meta=(id:string)=>({requestId:id,source:'HEALTH_PROBE',endpoint:'/fapi/v1/time',purpose:'SERVER_TIME',method:'GET',routeIdentity:route});
+  await budget.run(2,1,async()=>{},meta('eligibility-451'));
+  budget.observe(451,'1',undefined,meta('eligibility-451'));
+  await budget.run(2,1,async()=>{},meta('public-200'));
+  budget.observe(200,'2',undefined,meta('public-200'));
+  const snapshot=proxyPassiveHealth(value,{id:'binance-proxy',url,enabled:true});
+  expect(snapshot).toMatchObject({status:'HTTP_451_ELIGIBILITY',active:true,observation:'PASSIVE_RECENT_REQUESTS_ONLY'});
+  expect((snapshot as any).lastEligibilityRejectionAt).toBeGreaterThan(0);
+  const url502='socks5h://127.0.0.1:28884',other:any=settings();
+  other.connections.proxy.url=url502;
+  const route502='proxy-'+createHash('sha256').update(url502).digest('hex').slice(0,12);
+  const meta502={requestId:'upstream-502',source:'HEALTH_PROBE',endpoint:'/fapi/v1/time',purpose:'SERVER_TIME',method:'GET',routeIdentity:route502};
+  const budget502=getBinanceRequestBudget('TESTNET',route502);
+  await budget502.run(2,1,async()=>{},meta502);
+  budget502.observe(502,'1',undefined,meta502);
+  expect(proxyPassiveHealth(other,{id:'binance-proxy',url:url502,enabled:true})).toMatchObject({status:'HTTP_502_UPSTREAM_UNKNOWN'});
+});

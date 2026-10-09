@@ -170,3 +170,31 @@ powershell -NoProfile -ExecutionPolicy Bypass -File "$review\capture-filter-stac
 [CODEX_FILE_SYSTEM_POOL_TAG_AUDIT_20261009.md](../../docs/prompts/CODEX_FILE_SYSTEM_POOL_TAG_AUDIT_20261009.md)。
 
 安全约束不变：9B 8081 仍运行，两个27B仍停止，Engine不自行启动，main不改、不使用Actions。不执行 fltmc unload/attach、Driver Verifier、改UAC、防护软件或pagefile；任何异常或假设先报告，再决定授权测试。
+
+
+## 2026-10-09 10:07 +08：fltmc 成功，确认 Windows 25H2 26200.9457
+
+用户现场 `fltmc filters`、`fltmc instances`、`fltmc volumes` 全部 exitCode=0，C:/D: 当前挂载 `FileInfo`, `UCPD`, `WdFilter`, `bfs`, `Wof`, `gameflt`（`bindflt` 仅 C:），而 `CldFlt` 已加载但无活动挂载实例。均是 Frame=0，无明显<Legacy>；不等于已经认定全部过滤器均由 Microsoft 签名，也不等于没有其他内核驱动。系统最新 snapshot 22.699GiB paged、7.540GiB nonpaged、69.799GiB committed。8081有9B监听，8080/8083/8084没有监听。
+
+已整理成 [POST_FILTER_STACK_FINDINGS_20261009.md](POST_FILTER_STACK_FINDINGS_20261009.md)。该系统的 `26200.9457` 和 2026-09-14 `KB5129195` 对应，但官方发行说明没有明确的 `FMfn` 修复；同类 Microsoft Q&A 不是官方已确认的本机同一根因。
+
+**保持现在的9B运行、27B暂停；不需安装软件或重启 Windows。** 进一步只读采集如下：
+
+~~~powershell
+git -C D:\MITS-worktrees\llama-memory-20261009 pull --ff-only origin codex/llama-vulkan-memory-20261009
+$review = 'D:\MITS-worktrees\llama-memory-20261009\scripts\llama-vulkan'
+powershell -NoProfile -ExecutionPolicy Bypass -File "$review\verify-candidate-parse-readonly.ps1"
+powershell -NoProfile -ExecutionPolicy Bypass -File "$review\capture-filter-driver-provenance-readonly.ps1"
+~~~
+
+新的 `capture-filter-driver-provenance-readonly.ps1` 只读枚举已加载的 fltmc 名称，按服务名尝试查找存在的 `.sys`、文件版本、发布者、内嵌 Authenticode 签名结果及 SHA256；本机原始路径/证书完整信息仅保存在 LOCALAPPDATA。**某个文件在 Get-AuthenticodeSignature 显示 NotSigned 可能只是该驱动采用 Windows Catalog 签名，不要仅根据它认定驱动是非微软或不可信。** 同名服务匹配亦非 Pool Tag 归属证明。
+
+为确认**正在持续增长**而不只是历史高位，之后选一个自然时间点（与9:59 首个 snapshot 间隔至少10分钟）执行：
+
+~~~powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File "$review\capture-kernel-pool-tags-native-readonly.ps1" -Mode Capture -Samples 2 -IntervalSeconds 5 -TopRows 20
+powershell -NoProfile -ExecutionPolicy Bypass -File "$review\compare-kernel-pool-tags-readonly.ps1" -TopRows 20
+~~~
+
+比较器只统计两个独立采集文件中**共同进入 Top-N**的 tag，缺失行不是零；必须检查 `FMfn`、`File`、`Ntfc`、`IoNm` 的 MiB 增量、alloc/frees 差与内核池实际总量。5秒平稳只说明短期平稳。禁止强制对 13M 文件对象枚举句柄、禁用 Defender 或 UAC、重启模型、向公开仓库推私密设备路径、触发 Actions。
+

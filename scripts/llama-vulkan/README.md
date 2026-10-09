@@ -198,3 +198,21 @@ powershell -NoProfile -ExecutionPolicy Bypass -File "$review\compare-kernel-pool
 
 比较器只统计两个独立采集文件中**共同进入 Top-N**的 tag，缺失行不是零；必须检查 `FMfn`、`File`、`Ntfc`、`IoNm` 的 MiB 增量、alloc/frees 差与内核池实际总量。5秒平稳只说明短期平稳。禁止强制对 13M 文件对象枚举句柄、禁用 Defender 或 UAC、重启模型、向公开仓库推私密设备路径、触发 Actions。
 
+
+
+## 2026-10-09 收尾决定与用户要求恢复三个模型 + 3.9.8 TESTNET Engine
+
+用户最新提供15.42分钟标签差异: `FMfn +1.128MiB`, `File +0.253MiB`, paged/nonpaged系统池几乎不变。全部13个已核对minifilter文件显示Microsoft和有效签名；**可以收尾这次诊断，但不能把根因判为已证明的Windows BUG，也不能把Engine 0xC0000409声明修复**。完整依据：[FINAL_MEMORY_TRIAGE_AND_RESTORE_GATE_20261009.md](FINAL_MEMORY_TRIAGE_AND_RESTORE_GATE_20261009.md)。
+
+恢复**安全阻断**：当前主机 commit free约43GiB，小于两个27B历史占用合计45GiB，更无启动/Engine余量。3模型整体资源预检保守要求>=70GiB free、commit占用率<80%，单个27B仍各保持40GiB门槛。不能现在就把三个模型+Engine全启，不能为了“成功”改掉这两个门槛。留 9B 8081运行，8083/8084和8080停；不隐性重启任何进程。**增加物理96GiB内存不是首选修复**；经用户另行批准、根据实际磁盘空间/转储设置扩大Windows pagefile可能缓解commit limit，不修复高位内核池；Ubuntu值得独立试验且不保证模型/Engine Bug必然消失。
+
+只读可执行的 **FULL RECOVERY STOP GATE**（GitHub review worktree）：
+
+~~~powershell
+git -C D:\MITS-worktrees\llama-memory-20261009 pull --ff-only origin codex/llama-vulkan-memory-20261009
+$review = 'D:\MITS-worktrees\llama-memory-20261009\scripts\llama-vulkan'
+powershell -NoProfile -ExecutionPolicy Bypass -File "$review\verify-candidate-parse-readonly.ps1"
+powershell -NoProfile -ExecutionPolicy Bypass -File "$review\full-recovery-preflight-readonly.ps1"
+~~~
+
+如需交给本机Codex实际执行**待资源允许后**的全部服务受控恢复，读取 [CODEX_V398_CONDITIONAL_FULL_RESTORE_AFTER_KERNEL_POOL_20261009.md](../../docs/prompts/CODEX_V398_CONDITIONAL_FULL_RESTORE_AFTER_KERNEL_POOL_20261009.md)。Codex必须保护dirty D:\MITS与交易真实仓位TP，读main最新交接/验证当前main源码/准确build，先3模型真实health/smoke，再检查TESTNET/Production零写证据和Engine identity后单次启动；如果任何门禁失败明确报告而不是伪称启动成功。任何更改pagefile、Windows、重启系统需**单独授权**。

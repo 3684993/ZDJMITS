@@ -2,7 +2,7 @@
   "inventoryVersion": "S00-T01-entry-review-2",
   "capturedAt": "2026-09-21",
   "derivation": "mechanical over-approximating static scan by scripts/v396-s00-isolation-rules.mjs; a match can only tighten a status, never relax it",
-  "entryCount": 184,
+  "entryCount": 190,
   "statusLegend": {
     "ALLOWED_STATIC": "executed by the S00 verification command",
     "CONDITIONAL_NOT_RUN": "not executed; a later stage may run it only after the required boundary is proven",
@@ -699,6 +699,17 @@
       "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; mock/no-network/no-exchange-write assertion with a write counter that throws; unique temp data dir plus unique loopback port; no credential read"
     },
     {
+      "path": "scripts/configure-zdj-node-wer.ps1",
+      "kind": "script",
+      "sideEffects": [
+        "host-or-data-mutation",
+        "runtime-data-or-credential-boundary"
+      ],
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; unique temp data dir plus unique loopback port; no credential read"
+    },
+    {
       "path": "scripts/dev.mjs",
       "kind": "script",
       "sideEffects": [
@@ -878,6 +889,18 @@
       "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; mock/no-network/no-exchange-write assertion with a write counter that throws; unique temp data dir plus unique loopback port; no credential read"
     },
     {
+      "path": "scripts/observe-zdj-engine-readonly.ps1",
+      "kind": "script",
+      "sideEffects": [
+        "host-or-data-mutation",
+        "network-or-exchange",
+        "runtime-data-or-credential-boundary"
+      ],
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; mock/no-network/no-exchange-write assertion with a write counter that throws; unique temp data dir plus unique loopback port; no credential read"
+    },
+    {
       "path": "scripts/package-zdj-deploy.ps1",
       "kind": "script",
       "sideEffects": [
@@ -908,6 +931,17 @@
       "derivedFrom": "file-content-and-one-hop-target",
       "status": "FORBIDDEN_OR_NOT_RUN",
       "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store"
+    },
+    {
+      "path": "scripts/register-zdj-engine-observer.ps1",
+      "kind": "script",
+      "sideEffects": [
+        "host-or-data-mutation",
+        "process-lifecycle"
+      ],
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; no process start of any kind; requires explicit user authorization per Engine lifecycle action"
     },
     {
       "path": "scripts/repair-v391-rejected-tp.mjs",
@@ -1368,6 +1402,32 @@
       "derivedFrom": "file-content-and-one-hop-target",
       "status": "FORBIDDEN_OR_NOT_RUN",
       "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; manual lifecycle entrypoint; excluded from automated verification; mock/no-network/no-exchange-write assertion with a write counter that throws; no process start of any kind; requires explicit user authorization per Engine lifecycle action; unique temp data dir plus unique loopback port; no credential read"
+    },
+    {
+      "path": "scripts/start-zdj-stack-after-reboot.ps1",
+      "kind": "script",
+      "sideEffects": [
+        "host-or-data-mutation",
+        "lifecycle-named-entrypoint",
+        "network-or-exchange",
+        "process-lifecycle",
+        "runtime-data-or-credential-boundary"
+      ],
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; manual lifecycle entrypoint; excluded from automated verification; mock/no-network/no-exchange-write assertion with a write counter that throws; no process start of any kind; requires explicit user authorization per Engine lifecycle action; unique temp data dir plus unique loopback port; no credential read"
+    },
+    {
+      "path": "scripts/start-zdj-stack-after-reboot.test.ps1",
+      "kind": "script",
+      "sideEffects": [
+        "lifecycle-named-entrypoint",
+        "network-or-exchange",
+        "process-lifecycle"
+      ],
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "manual lifecycle entrypoint; excluded from automated verification; mock/no-network/no-exchange-write assertion with a write counter that throws; no process start of any kind; requires explicit user authorization per Engine lifecycle action"
     },
     {
       "path": "scripts/status-v3.ps1",
@@ -2047,6 +2107,18 @@
       "derivedFrom": "file-content-and-one-hop-target",
       "status": "FORBIDDEN_OR_NOT_RUN",
       "requiredBoundary": "read-only adapter only; exchange writes require separate authorization"
+    },
+    {
+      "path": "scripts/v398-integrity-current-gate.mjs",
+      "kind": "script",
+      "sideEffects": [
+        "host-or-data-mutation",
+        "network-or-exchange",
+        "runtime-data-or-credential-boundary"
+      ],
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; mock/no-network/no-exchange-write assertion with a write counter that throws; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/v398-integrity-exchange-readonly.mjs",

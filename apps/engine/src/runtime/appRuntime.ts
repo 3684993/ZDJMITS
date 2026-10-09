@@ -846,7 +846,7 @@ export class EngineRuntime {
       this.events.publish("MARKET_COHORT_FAILED",{reason:"POST_RECONCILIATION_BOOTSTRAP",message:error instanceof Error?error.message:String(error)}));
     if (
       this.state.settings.connections.exchange.environment === "TESTNET" &&
-      this.runtimeControl.canDispatch()
+      (this.runtimeControl.canAnalyze?.()??this.runtimeControl.canDispatch())
     )
       void this.entry.processPool().catch((error) =>
         this.events.publish("ENTRY_ANALYSIS_FAILED", {
@@ -874,8 +874,8 @@ export class EngineRuntime {
     });
   }
   async dispatchAnalysisTick(){
-    const permitted=this.state.settings.connections.exchange.environment==='TESTNET'&&this.runtimeControl.canDispatch();
-    if(!permitted){this.entry.noteSchedulerTick?.();this.entry.noteAnalysisBlocked?.('POLICY_OR_FACT_GATE');return;}
+    const permitted=this.state.settings.connections.exchange.environment==='TESTNET'&&(this.runtimeControl.canAnalyze?.()??this.runtimeControl.canDispatch());
+    if(!permitted){this.entry.noteSchedulerTick?.();this.entry.noteAnalysisBlocked?.(process.env.ZDJ_ENTRY_ADMISSION_DISABLED==='1'?'ANALYSIS_DISABLED_BY_RUNTIME_FACT_GATE':'POLICY_OR_FACT_GATE');return;}
     // The verdict is pushed, not polled: the tick that changes it is the tick that must stop paying
     // for a model, and the deterministic supply maintenance inside processPool keeps running.
     this.entry.noteExecutionReadiness?.(this.executionReadinessSnapshot());
@@ -1542,6 +1542,9 @@ export class EngineRuntime {
       riskGovernance: this.state.settings.riskGovernance,
       shadowRunner: this.shadow.status(),
       executionGovernance: this.state.executionGovernance,
+      entryAdmissionDisabledByStartupPolicy: process.env.ZDJ_ENTRY_ADMISSION_DISABLED==='1',
+      entryDispatchAllowed: this.runtimeControl.canDispatch(),
+      analysisDispatchAllowed: this.runtimeControl.canAnalyze(),
       capitalEpoch: this.liveValidation.getCapitalEpoch(),
       weeklyLiveValidation: this.liveValidation.getValidation(),
       manualRiskOverride: this.runtimeControl.manualRiskOverrideStatus(),
@@ -2294,7 +2297,7 @@ export class EngineRuntime {
     else if(!privateAccountFresh(this.state.account))noEntryReason='PRIVATE_DATA_UNAVAILABLE';
     }
     const resources = this.ai.resourceMetrics(),
-      paused = !this.runtimeControl.canDispatch(),
+      paused = !this.runtimeControl.canAnalyze(),
       activeResource = resources.find((x) => x.currentStatus === "ANALYZING"),
       lastDirection = latestPrimary?.direction ?? null,
       lastDecision = latestPrimary?.decision ?? null,

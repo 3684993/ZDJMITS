@@ -46,3 +46,11 @@ Evidence source coverage, private evidence hashes, exact UTC/+08 timeline, and t
 ## Conclusion
 
 The immediate failure class is established: PID 8524 terminated by a Windows fail-fast status before the first failed HTTP observation. The code-level trigger is **not yet established**. The supported next step is a bounded, offline diagnostic collector and deterministic classification tests, followed by a separately authorized foreground capture with preconfigured local WER/dump handling if an equivalent natural failure recurs. No broad try/catch, V8 parameter change, business hot-path rewrite, restart, or deployment is justified by current evidence. Runtime status remains `RUNTIME_ACCEPTANCE_PENDING`.
+
+## 2026-10-09 authorized recovery addendum
+
+After this forensic snapshot and the PR #12 P0 instruction were read back, the user separately authorized one current TESTNET Engine recovery. The original PID 8524 finding remains unchanged: `0xC0000409` is proven; the triggering component remains `UNKNOWN`. The recovery does not claim to fix or explain that historical exit.
+
+The startup path was amended so already healthy model aliases take a warm-start path without the 70 GiB cold-load threshold. The bounded read-only account/position/order probe is diagnostic only and labels TP coverage `UNKNOWN` / `UNVERIFIED_CANDIDATE_ONLY`; it cannot veto Engine process, account sync, reconciliation, health or TP diagnostics. During this recovery, a process-scoped startup admission latch prevents new Entry model dispatch and rejects a new unsent durable Entry before journal claim or exchange submission. It leaves exact identity reconciliation for `UNKNOWN`/`SUBMITTING`, existing order reconciliation, TP diagnostics and existing durable TP safeguards enabled. No risk limit, settings, TP order, or existing order is modified.
+
+This operational exception supersedes the earlier no-start boundary only for one explicit current TESTNET launch. It does not authorize Production, repeated launch attempts, deployment to `D:\MITS`, or a claim of long-window stability. Runtime acceptance still requires the actual PID/build/identity, `/health`, private account facts, model/proxy routes, zero Production writes and an observed continuous window; TP identity remains a separate post-start investigation.

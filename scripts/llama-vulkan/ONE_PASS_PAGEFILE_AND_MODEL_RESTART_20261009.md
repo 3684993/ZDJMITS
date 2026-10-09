@@ -53,7 +53,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File "$review\configure-windows-p
 if($LASTEXITCODE -ne 0){throw 'PAGEFILE_VERIFY_SCRIPT_ERROR'}
 ~~~
 
-Must PRINT PAGEFILE_VERIFY_PASS. It requires actual C pagefile allocation>=48,000MiB, intended C setting49152/49152, D setting0/0 and present, host FREE commit>=70GiB. Beware this script may intentionally return a warning without a PowerShell error: **CHECK LITERAL PAGEFILE_VERIFY_PASS** before following commands; otherwise halt and return console output.
+Must PRINT PAGEFILE_VERIFY_PASS (otherwise exits nonzero). It requires actual C pagefile allocation>=48,000MiB, intended C setting49152/49152, D setting0/0 and present, host FREE commit>=70GiB. **CHECK LITERAL PAGEFILE_VERIFY_PASS** before proceeding; on failure command exits nonzero.
 
 ## Step 5: each optimized script (not a single parallel startup)
 
@@ -64,7 +64,7 @@ Run **one command at a time**. IF any smoke fails, stop and preserve logs; do no
 ~~~powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File "$review\start-qwen3.5-9b-vulkan.ps1" -Mode Start -NoWatchdog
 if($LASTEXITCODE -ne 0){throw '9B_START_FAILED'}
-powershell -NoProfile -ExecutionPolicy Bypass -File "$review\full-recovery-preflight-readonly.ps1"
+powershell -NoProfile -ExecutionPolicy Bypass -File "$review\full-recovery-preflight-readonly.ps1" -Enforce
 if($LASTEXITCODE -ne 0){throw 'MODEL_BUDGET_PREFLIGHT_FAILED'}
 ~~~
 

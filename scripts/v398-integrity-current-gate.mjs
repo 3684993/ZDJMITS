@@ -59,11 +59,11 @@ try {
   const livePositions = Array.isArray(positions) ? positions.filter(p => Number(p.positionAmt) !== 0) : null;
   const allOrders = Array.isArray(orders) && Array.isArray(algoOrders) ? [...orders, ...algoOrders] : null;
   const hasTakeProfit = order => /TAKE_PROFIT/.test(String(order.type ?? order.orderType ?? '')) || /^tp_/i.test(String(order.clientOrderId ?? order.clientAlgoId ?? ''));
-  const uncovered = livePositions === null || allOrders === null ? null : livePositions.filter(p => !allOrders.some(o => String(o.symbol) === String(p.symbol) && String(o.positionSide ?? 'BOTH') === String(p.positionSide ?? 'BOTH') && hasTakeProfit(o))).map(p => ({ symbol: p.symbol, positionSide: p.positionSide, positionAmt: p.positionAmt }));
+  const candidateMatches = livePositions === null || allOrders === null ? null : livePositions.filter(p => allOrders.some(o => String(o.symbol) === String(p.symbol) && String(o.positionSide ?? 'BOTH') === String(p.positionSide ?? 'BOTH') && hasTakeProfit(o))).length;
   evidence.positionMode = mode; evidence.nonzeroPositions = livePositions?.length ?? null; evidence.ordinaryOpenOrders = Array.isArray(orders) ? orders.length : null; evidence.openAlgoOrders = Array.isArray(algoOrders) ? algoOrders.length : null;
-  evidence.uncoveredPositions = uncovered;
-  evidence.gate = mode?.dualSidePosition !== true || uncovered === null ? 'UNKNOWN' : uncovered.length ? 'BLOCKED' : 'PASS';
-} catch (error) { evidence.errorType = error.name; evidence.gate = 'UNKNOWN'; }
+  evidence.candidateProtectionMatches = candidateMatches;
+  evidence.protectionAssessment = 'UNVERIFIED_CANDIDATE_ONLY';
+  evidence.gate = 'UNKNOWN';
+} catch (error) { evidence.errorType = error.name; evidence.gate = 'UNKNOWN'; evidence.protectionAssessment = 'UNVERIFIED'; }
 finally { transport.dispose(); save(); }
-console.log(JSON.stringify({ gate: evidence.gate, nonzeroPositions: evidence.nonzeroPositions ?? null, uncoveredPositions: evidence.uncoveredPositions?.length ?? null, requests: evidence.requests.length, exchangeWrites: 0, evidencePath: `${out}/testnet-start-gate.json` }));
-if (evidence.gate !== 'PASS') process.exitCode = 2;
+console.log(JSON.stringify({ gate: evidence.gate, protectionAssessment: evidence.protectionAssessment ?? 'UNVERIFIED', nonzeroPositions: evidence.nonzeroPositions ?? null, candidateProtectionMatches: evidence.candidateProtectionMatches ?? null, requests: evidence.requests.length, exchangeWrites: 0, evidencePath: `${out}/testnet-start-gate.json` }));

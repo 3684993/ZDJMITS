@@ -142,6 +142,12 @@ export class EntryCoordinator {
   }
   async processPool() {
     this.noteSchedulerTick();
+    if(process.env.ZDJ_ENTRY_ADMISSION_DISABLED==='1'){
+      this.noteDispatchSuppressed({reason:'ENTRY_ADMISSION_DISABLED_BY_STARTUP_POLICY',candidateCount:this.state.pool.readyList().length,capacityStatus:'STARTUP_TP_REVIEW',authoritativeBlocker:'TP_IDENTITY_UNVERIFIED'});
+      this.noteWriteAdmission('ENTRY_ADMISSION_DISABLED_BY_STARTUP_POLICY');
+      this.ai.setIdleContext('ENTRY_ADMISSION_DISABLED_BY_STARTUP_POLICY',this.state.pool.list().length,'TP 身份复核期间仅禁用新增 Entry；同步、对账、健康检查和已授权退出维护继续运行');
+      return;
+    }
     const admissionBlock=this.writeAdmissionBlock();
     if(admissionBlock){this.noteDispatchSuppressed({reason:'DATA_BLOCKED',candidateCount:this.state.pool.readyList().length,authoritativeBlocker:admissionBlock});this.noteWriteAdmission(admissionBlock);return;}
     this.noteWriteAdmission(null);
@@ -350,6 +356,14 @@ export class EntryCoordinator {
       catch(error){const raced=this.userDataConfirmed(order);if(raced)return raced;throw error;}
       const raced=this.userDataConfirmed(order);if(raced)return raced;
       throw new Error('ENTRY_SUBMISSION_UNKNOWN_PENDING_RECONCILIATION');
+    }
+    if(process.env.ZDJ_ENTRY_ADMISSION_DISABLED==='1'){
+      if(order.status==='NEW'){
+        const rejected={...order,status:'REJECTED' as const,factSource:'LOCAL_NOT_SUBMITTED',updatedAt:Date.now()};
+        this.state.entryOrders.set(order.id,rejected);this.journal?.save({intent,order:rejected});
+        if(order.reservationId)this.state.releaseEntryReservation(order.reservationId);
+      }
+      throw new Error('ENTRY_ADMISSION_DISABLED_BY_STARTUP_POLICY');
     }
     const block=this.executionHardBlock(intent,order);if(block){if(order.status==='NEW'){const rejected={...order,status:'REJECTED' as const,factSource:'LOCAL_NOT_SUBMITTED',updatedAt:Date.now()};this.state.entryOrders.set(order.id,rejected);this.journal?.save({intent,order:rejected});}throw new Error(`JIT_BLOCKED:${block}`);}
     const submitting={...order,status:'SUBMITTING' as const,updatedAt:Date.now()};this.state.entryOrders.set(order.id,submitting);

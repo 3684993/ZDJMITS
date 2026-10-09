@@ -21,11 +21,12 @@ foreach ($item in $ordered) {
   if ($index -le $last) { throw "AUTOSTART_ORDER_OR_REQUIRED_STEP_INVALID:$item" }
   $last = $index
 }
-foreach ($required in @('TESTNET', 'demo-fapi.binance.com', 'ENGINE_BLOCKED_ACCOUNT_PROTECTION_GATE', 'STARTED_ONCE', 'NoWatchdog', 'FAILED_CLOSED', '20091')) {
+foreach ($required in @('TESTNET', 'demo-fapi.binance.com', 'TP_UNVERIFIED_ENGINE_START_ALLOWED', 'ZDJ_ENTRY_ADMISSION_DISABLED', 'WARM_MODELS_SKIP_COLD_GATE', 'STARTED_ONCE', 'NoWatchdog', 'FAILED_CLOSED', '20091')) {
   if ($combined -notmatch [regex]::Escape($required)) { throw "AUTOSTART_SAFETY_GATE_MISSING:$required" }
 }
 if ($source -match '(?i)MaxRestarts|EnableWatchdog|while\s*\(\s*\$true\s*\)' -or $source -match '(?i)restartOnFailure\s*=\s*\$true') { throw 'AUTOSTART_AUTOMATIC_RETRY_OR_WATCHDOG_FOUND' }
 node --check $helper
 if ($LASTEXITCODE -ne 0) { throw 'CURRENT_GATE_SYNTAX_FAILED' }
 if ($helperSource.Contains("method: 'POST'") -or $helperSource -match 'method\s*:\s*[''\"]?(POST|PUT|PATCH|DELETE)') { throw 'CURRENT_GATE_MUST_REMAIN_READ_ONLY' }
+if ($source -match 'ENGINE_BLOCKED_ACCOUNT_PROTECTION_GATE') { throw 'TP_STATE_MUST_NOT_BLOCK_ENGINE_START' }
 Write-Output 'start-zdj-stack-after-reboot.test.ps1 PASS'

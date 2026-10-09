@@ -34,7 +34,21 @@ function Get-MemorySnapshot {
   $committed = [double]$m.CommittedBytes
   $free = [math]::Max(0, $commitLimit - $committed) / 1GB
   $processHandles = @(Get-CimInstance Win32_Process | Where-Object { $_.Name -eq 'llama-server.exe' } | ForEach-Object { (Get-Process -Id $_.ProcessId -ErrorAction SilentlyContinue).Handles })
-  return [ordered]@{ commitFreeGiB = [math]::Round($free, 2); llamaHandles = @($processHandles); maxLlamaHandles = if ($processHandles.Count) { ($processHandles | Measure-Object -Maximum).Maximum } else { 0 } }
+  return [ordered]@{ commitFreeGiB = [math]::Round($free, 2); commitUsedPercent = [double]$m.PercentCommittedBytesInUse; poolPagedBytes = [double]$m.PoolPagedBytes; poolNonpagedBytes = [double]$m.PoolNonpagedBytes; llamaHandles = @($processHandles); maxLlamaHandles = if ($processHandles.Count) { ($processHandles | Measure-Object -Maximum).Maximum } else { 0 } }
+}
+function Test-ModelReady([int]$Port, [string]$Alias) {
+  $owners = @(Get-NetTCPConnection -State Listen -LocalPort $Port -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess -Unique)
+  if ($owners.Count -eq 0) { return $false }
+  $owner = Assert-ListenerOwner -Port $Port -ExpectedImage 'llama-server.exe' -ExpectedFragment "--port $Port"
+  try {
+    $r = Invoke-RestMethod -Uri "http://127.0.0.1:$Port/v1/models" -TimeoutSec 5
+    $id = [string]$r.data[0].id
+    if ($id -and $id -ne $Alias) { throw "MODEL_ALIAS_MISMATCH:${Port}:$id" }
+    if ($id -eq $Alias) { Write-Stage "MODEL_READY_$Port" 'PASS' @{ pid = $owner.ProcessId; alias = $id; executable = $owner.ExecutablePath }; return $true }
+  } catch {
+    if ($_.Exception.Message -like 'MODEL_ALIAS_MISMATCH*' -or $_.Exception.Message -like 'PORT_OWNER_IDENTITY_MISMATCH*') { throw }
+  }
+  return $false
 }
 function Wait-Model([int]$Port, [string]$Alias, [string]$LaunchScript) {
   $modelsUri = "http://127.0.0.1:$Port/v1/models"
@@ -89,10 +103,11 @@ try {
   }
 
   $modelNames = @('start-qwen3.5-9b-vulkan.ps1','start-qwen3.8-27b-harness-vulkan1.ps1','start-qwen3.8-27b-zdj-vulkan1.ps1')
-  foreach ($script in $modelNames) { if (-not (Test-Path -LiteralPath (Join-Path $ModelScriptsRoot $script))) { throw "MODEL_SCRIPT_ROOT_UNAVAILABLE:$ModelScriptsRoot" } }
+  $warmModels = (Test-ModelReady 8081 'qwen3.5:9b') -and (Test-ModelReady 8083 'qwen/qwen3.8-27b') -and (Test-ModelReady 8084 'qwen/qwen3.8-27b')
+  if (-not $warmModels) { foreach ($script in $modelNames) { if (-not (Test-Path -LiteralPath (Join-Path $ModelScriptsRoot $script))) { throw "MODEL_SCRIPT_ROOT_UNAVAILABLE:$ModelScriptsRoot" } } }
   $mem = Get-MemorySnapshot
-  if ($mem.commitFreeGiB -lt 70) { throw "COMMIT_HEADROOM_BELOW_COLD_MODEL_LOAD:$($mem.commitFreeGiB)GiB" }
-  Write-Stage 'PRE_MODEL_MEMORY' 'PASS' $mem
+  if (-not $warmModels -and $mem.commitFreeGiB -lt 70) { throw "COMMIT_HEADROOM_BELOW_COLD_MODEL_LOAD:$($mem.commitFreeGiB)GiB" }
+  Write-Stage 'PRE_MODEL_MEMORY' $(if ($warmModels) { 'WARM_MODELS_SKIP_COLD_GATE' } else { 'COLD_START_GATE_PASS' }) $mem
   Wait-Model 8081 'qwen3.5:9b' (Join-Path $ModelScriptsRoot $modelNames[0])
   Wait-Model 8083 'qwen/qwen3.8-27b' (Join-Path $ModelScriptsRoot $modelNames[1])
   $mem = Get-MemorySnapshot
@@ -100,8 +115,12 @@ try {
   Write-Stage 'PRE_PRIMARY_MEMORY' 'PASS' $mem
   Wait-Model 8084 'qwen/qwen3.8-27b' (Join-Path $ModelScriptsRoot $modelNames[2])
   $mem = Get-MemorySnapshot
-  if ($mem.commitFreeGiB -lt 16 -or $mem.maxLlamaHandles -ge 100000) { throw "POST_MODEL_RESOURCE_GATE_BLOCKED:$($mem | ConvertTo-Json -Compress)" }
-  Write-Stage 'MODELS' 'PASS' $mem
+  $memorySamples = @($mem)
+  for ($sample = 0; $sample -lt 4; $sample++) { Start-Sleep -Seconds 5; $memorySamples += (Get-MemorySnapshot) }
+  $mem = $memorySamples[-1]
+  $poolRise = [double]$mem.poolPagedBytes + [double]$mem.poolNonpagedBytes - [double]$memorySamples[0].poolPagedBytes - [double]$memorySamples[0].poolNonpagedBytes
+  if ($mem.commitFreeGiB -lt 16 -or $mem.commitUsedPercent -ge 85 -or $mem.maxLlamaHandles -ge 100000 -or $poolRise -gt 256MB) { throw "POST_MODEL_RESOURCE_GATE_BLOCKED:$($mem | ConvertTo-Json -Compress):poolRiseBytes=$poolRise" }
+  Write-Stage 'MODELS' 'PASS' @{ snapshot = $mem; sampleCount = $memorySamples.Count; sampleIntervalSeconds = 5; poolRiseBytes = $poolRise; warmModels = $warmModels }
 
   $proxyScript = 'D:\MITS\scripts\vpn\zdj-trade-proxy-client-windows.ps1'
   if (-not (Test-Path -LiteralPath $proxyScript)) { throw "REQUIRED_PROXY_SCRIPT_MISSING:$proxyScript" }
@@ -123,10 +142,9 @@ try {
   & $NodePath (Join-Path $ProjectRoot 'scripts\v398-integrity-current-gate.mjs') --current-only --out-dir $gateOut 2>&1 | Tee-Object -FilePath (Join-Path $gateOut 'stdout.log') | Out-Host
   $gateExit = $LASTEXITCODE
   $gatePath = Join-Path $gateOut 'testnet-start-gate.json'
-  if ($gateExit -ne 0 -or -not (Test-Path $gatePath)) { Write-Stage 'TESTNET_ACCOUNT_PROTECTION_GATE' 'BLOCKED_OR_UNKNOWN' @{ helperExit = $gateExit; evidence = $gatePath }; throw 'ENGINE_BLOCKED_ACCOUNT_PROTECTION_GATE' }
-  $gate = Get-Content -Raw -LiteralPath $gatePath | ConvertFrom-Json
-  if ($gate.gate -ne 'PASS') { Write-Stage 'TESTNET_ACCOUNT_PROTECTION_GATE' ([string]$gate.gate) @{ evidence = $gatePath; nonzeroPositions = $gate.nonzeroPositions; uncoveredPositions = @($gate.uncoveredPositions).Count }; throw 'ENGINE_BLOCKED_ACCOUNT_PROTECTION_GATE' }
-  Write-Stage 'TESTNET_ACCOUNT_PROTECTION_GATE' 'PASS' @{ evidence = $gatePath; nonzeroPositions = $gate.nonzeroPositions }
+  $gateState = 'UNKNOWN'; $gate = $null
+  if (Test-Path $gatePath) { $gate = Get-Content -Raw -LiteralPath $gatePath | ConvertFrom-Json; $gateState = [string]$gate.gate }
+  Write-Stage 'TESTNET_TP_DIAGNOSTIC' 'TP_UNVERIFIED_ENGINE_START_ALLOWED' @{ diagnosticState = $gateState; helperExit = $gateExit; evidence = $gatePath; nonzeroPositions = if ($gate) { $gate.nonzeroPositions } else { $null }; uncoveredPositions = if ($gate) { @($gate.uncoveredPositions).Count } else { $null }; entryAdmission = 'DISABLED_UNTIL_TP_IDENTITY_REVIEW'; exchangeWrites = 'EXISTING_DURABLE_GUARDS_ONLY' }
 
   if (-not (Test-Path -LiteralPath (Join-Path $ProjectRoot 'apps\engine\dist\main.js'))) { throw 'BUILT_ENGINE_ENTRYPOINT_MISSING' }
   $head = (& git -C $ProjectRoot rev-parse HEAD).Trim()
@@ -138,7 +156,7 @@ try {
   [IO.Directory]::CreateDirectory($engineLogDir) | Out-Null
   $hostScript = Join-Path $ProjectRoot 'scripts\start-zdj-engine-host.ps1'
   $hostArgs = @('-NoProfile','-ExecutionPolicy','Bypass','-File',$hostScript,'-NodePath',$NodePath,'-EnginePath',(Join-Path $ProjectRoot 'apps\engine\dist\main.js'),'-WorkingDirectory',(Join-Path $ProjectRoot 'apps\engine'),'-StdoutPath',(Join-Path $engineLogDir ($launchId+'.stdout.log')),'-StderrPath',(Join-Path $engineLogDir ($launchId+'.stderr.log')),'-LifecyclePath',(Join-Path $engineLogDir 'lifecycle.jsonl'),'-ReceiptPath',(Join-Path $engineLogDir 'current-receipt.json'),'-LaunchId',$launchId)
-  $env:ZDJ_CONFIG_DIR = Join-Path $ProjectRoot 'config'; $env:ZDJ_DATA_DIR = $DataRoot; $env:ZDJ_START_REASON = 'MANUAL_START'
+  $env:ZDJ_CONFIG_DIR = Join-Path $ProjectRoot 'config'; $env:ZDJ_DATA_DIR = $DataRoot; $env:ZDJ_START_REASON = 'MANUAL_START'; $env:ZDJ_ENTRY_ADMISSION_DISABLED = '1'
   $encodedArgs = ($hostArgs | ForEach-Object { '"' + ($_ -replace '"','\"') + '"' }) -join ' '
   $host = Start-Process -FilePath (Get-Command powershell.exe).Source -ArgumentList $encodedArgs -WorkingDirectory $ProjectRoot -WindowStyle Hidden -PassThru
   Write-Stage 'ENGINE_HOST' 'STARTED_ONCE' @{ hostPid = $host.Id; launchId = $launchId; sourceHead = $head; proxyPort = $ProxyPort; stdout = (Join-Path $engineLogDir ($launchId+'.stdout.log')); stderr = (Join-Path $engineLogDir ($launchId+'.stderr.log')) }

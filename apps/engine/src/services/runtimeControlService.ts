@@ -32,7 +32,7 @@ export class RuntimeControlService {
   capacityDiagnostics(){return{slots:this.state.entryCapacity(),newRiskBlocked:this.entryRiskBlocked,storage:storageCapacityHealth(),candidates:this.admissionDetails,capital:this.state.runtimeControl.capital};}
   constructor(private state:RuntimeState,private events:EventBus){}
 
-  canDispatch(){return !storageEntryBlockReason()&&privateAccountFresh(this.state.account)&&!this.entryRiskBlocked&&this.state.executionGovernance?.mode==='AUTO_RUNNING'&&this.state.runtimeControl.mode==='RUNNING'&&(this.state.settings.riskGovernance?.entrySafetyMode??'AUTO')==='AUTO';}
+  canDispatch(){return process.env.ZDJ_ENTRY_ADMISSION_DISABLED!=='1'&&!storageEntryBlockReason()&&privateAccountFresh(this.state.account)&&!this.entryRiskBlocked&&this.state.executionGovernance?.mode==='AUTO_RUNNING'&&this.state.runtimeControl.mode==='RUNNING'&&(this.state.settings.riskGovernance?.entrySafetyMode??'AUTO')==='AUTO';}
   isPaused(){return !this.canDispatch();}
 
   manualRiskOverrideActive(at=Date.now()){

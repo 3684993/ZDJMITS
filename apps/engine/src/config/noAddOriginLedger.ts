@@ -39,11 +39,18 @@ export function releaseFlatNoAddOrigins(db:DatabaseSync,snapshot:NoAddFlatSnapsh
   const task=db.prepare('SELECT payload FROM entry_execution_tasks WHERE intent_id=?').get(row.intent_id) as any;
   let record:any;try{record=JSON.parse(task?.payload??'null');}catch{continue;}
   const order=record?.order;
+  // Legacy journal labels alone are insufficient. Only a persisted exact private read,
+  // its original submission identity/quantity and conserved fills may release an origin.
+  if(order?.factSource!=='BINANCE_EXACT_ORDER'||!order.exchangeOrderId||!Number.isFinite(order.verifiedAt)||order.verifiedAt>snapshot.requestedAt||
+    !Number.isFinite(order.quantity)||Math.abs(order.quantity-row.quantity)>1e-9)continue;
   if(!order||order.clientOrderId!==row.client_order_id||order.symbol!==symbol||order.side!==side||!['FILLED','CANCELED','EXPIRED','REJECTED'].includes(order.exchangeTerminalStatus)||!Number.isFinite(order.filledQuantity)||order.filledQuantity<0||order.filledQuantity>row.quantity+1e-9||!Number.isFinite(order.updatedAt)||order.updatedAt>snapshot.requestedAt)continue;
   if(order.filledQuantity>0){
+   const fills=order.verifiedExchangeFills;
+   if(!Array.isArray(fills)||!fills.length||fills.some((fill:any)=>fill.symbol!==symbol||String(fill.orderId)!==String(order.exchangeOrderId)||fill.clientOrderId!==row.client_order_id||!Number.isFinite(fill.qty)||fill.qty<=0)||
+     Math.abs(fills.reduce((sum:number,fill:any)=>sum+fill.qty,0)-order.filledQuantity)>1e-9)continue;
    const trade=db.prepare('SELECT payload FROM trade_records WHERE trade_id=?').get(`trade_cycle_entry_${row.intent_id}`) as any;
    let cycle:any;try{cycle=JSON.parse(trade?.payload??'null');}catch{continue;}
-   if(!cycle||cycle.symbol!==symbol||cycle.direction!==side||cycle.entryIntentId!==row.intent_id||cycle.status!=='CLOSED'||cycle.ledgerConservation!=='CONSERVED'||!Number.isFinite(cycle.entryQty)||cycle.entryQty<order.filledQuantity-1e-9||cycle.entryQty>row.quantity+1e-9||!Number.isFinite(cycle.exitQty)||Math.abs(cycle.exitQty-cycle.entryQty)>1e-9||cycle.remainingQty!==0||!Number.isFinite(cycle.closedAt)||cycle.closedAt>snapshot.requestedAt||cycle.closedAt<row.created_at)continue;
+   if(!cycle||cycle.symbol!==symbol||cycle.direction!==side||cycle.entryIntentId!==row.intent_id||cycle.status!=='CLOSED'||cycle.ledgerConservation!=='CONSERVED'||!Number.isFinite(cycle.entryQty)||Math.abs(cycle.entryQty-order.filledQuantity)>1e-9||cycle.entryQty>row.quantity+1e-9||!Number.isFinite(cycle.exitQty)||Math.abs(cycle.exitQty-cycle.entryQty)>1e-9||cycle.remainingQty!==0||!Number.isFinite(cycle.closedAt)||cycle.closedAt>snapshot.requestedAt||cycle.closedAt<row.created_at)continue;
   }
   released+=Number(db.prepare('UPDATE v398_entry_origins SET released_at=? WHERE intent_id=? AND released_at=0').run(snapshot.observedAt,row.intent_id).changes);
  }

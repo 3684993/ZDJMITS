@@ -7,17 +7,21 @@ import {createHash} from 'node:crypto';
 import {noSeparateAddBlock} from './noSeparateAdd.js';
 
 type Fact={scope:string;observedAt:number;validUntil:number;contentHash:string;tiers:MarginBracketTier[]};
-const scopeOf=(state:RuntimeState)=>JSON.stringify([state.settings.connections.exchange.environment,state.settings.connections.exchange.credentialRef]);
+const scopeOf=(state:RuntimeState)=>{
+  const identity=(state as any).entryLeverageScopeReader?.();
+  return identity?.environment==='TESTNET'&&/^[a-f0-9]{64}$/.test(identity.credentialFingerprint)&&Number.isSafeInteger(identity.credentialGeneration)&&identity.credentialGeneration>=0
+    ?JSON.stringify([state.settings.connections.exchange.environment,state.settings.connections.exchange.credentialRef,identity.credentialFingerprint,identity.credentialGeneration]):null;
+};
 const factHash=(row:unknown)=>createHash('sha256').update(JSON.stringify(row)).digest('hex');
 export function entryLeverageTiers(state:RuntimeState,symbol:string,now:number){
   const fact:Fact|undefined=(state as any).entryLeverageFacts?.get(symbol);
-  return fact&&fact.scope===scopeOf(state)&&now>=fact.observedAt&&now<fact.validUntil?fact.tiers:state.marginTierCoverage?.tiersBySymbol?.[symbol]??[];
+  return fact&&scopeOf(state)!==null&&fact.scope===scopeOf(state)&&now>=fact.observedAt&&now<fact.validUntil?fact.tiers:state.marginTierCoverage?.tiersBySymbol?.[symbol]??[];
 }
 
 /** TESTNET signed GET facts, separate from the operator's committed portfolio risk policy. */
 export class EntryLeverageFactRecovery {
   private inFlight=false;private nextReadAt=0;
-  constructor(private state:RuntimeState,private exchange:ExchangeTradeAdapter,private events:EventBus){}
+  constructor(private state:RuntimeState,private exchange:ExchangeTradeAdapter,private events:EventBus){(state as any).entryLeverageScopeReader=()=>exchange.accountScopeIdentity?.()??null;}
   async refreshMissing(now=Date.now()){
     if(this.inFlight||now<this.nextReadAt||!testnetFundsOnlyEntry(this.state.settings)||!this.exchange.fetchMaintenanceMarginBrackets)return;
     const symbols=this.state.universe.filter((x:any)=>x.eligible&&x.rank>0&&x.pipelineEligible!==false&&
@@ -26,11 +30,12 @@ export class EntryLeverageFactRecovery {
       .sort((a:any,b:any)=>a.rank-b.rank).slice(0,3).map((x:any)=>x.symbol);
     if(!symbols.length)return;
     this.inFlight=true;this.nextReadAt=now+60_000;
-    const scope=scopeOf(this.state),credentialRef=String(this.state.settings.connections.exchange.credentialRef);
+    const scope=scopeOf(this.state),identity=this.exchange.accountScopeIdentity?.(),credentialRef=String(this.state.settings.connections.exchange.credentialRef);
     try{
+      if(!scope||!identity)throw Error('ENTRY_LEVERAGE_AUTHENTICATED_SCOPE_UNAVAILABLE');
       const read=await this.exchange.fetchMaintenanceMarginBrackets(symbols,{maxInFlight:1,credentialRef});
       const completedAt=Date.now();
-      if(scope!==scopeOf(this.state)||read.environment!=='TESTNET'||read.credentialRef!==credentialRef||
+      if(!read.accountIdentity||read.accountIdentity.proof!=='SIGNED_TESTNET_GET'||read.accountIdentity.environment!==identity.environment||read.accountIdentity.credentialFingerprint!==identity.credentialFingerprint||read.accountIdentity.credentialGeneration!==identity.credentialGeneration||scope!==scopeOf(this.state)||read.environment!=='TESTNET'||read.credentialRef!==credentialRef||
         !Number.isSafeInteger(read.observedAt)||read.observedAt<now||read.observedAt>completedAt||completedAt-read.observedAt>30_000)
         throw Error('ENTRY_LEVERAGE_FACT_SCOPE_OR_TIME_CONFLICT');
       const normalized=canonicalizeMarginBrackets(read);

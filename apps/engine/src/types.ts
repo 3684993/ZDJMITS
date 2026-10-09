@@ -47,6 +47,7 @@ export interface ExchangeTradeAdapter {
    * Read-only margin-tier authority: one signed GET per symbol, bounded, and never a writer.
    * The PortfolioRisk profile may only claim a proven bracket table that this produced.
    */
+  accountScopeIdentity?():{environment:string;credentialFingerprint:string;credentialGeneration:number}|null;
   fetchMaintenanceMarginBrackets?(symbols:string[],options?:{maxInFlight?:number;credentialRef?:string}):Promise<import('./services/portfolioRiskAuthority.js').MarginBracketAuthorityRead>;
   /** Read-only field-presence probe of the per-position risk facts. */
   probePositionRiskFields?():Promise<{environment:string;endpoint:string;observedAt:number;rowCount:number;fieldNames:string[];rows:Record<string,unknown>[]}>;

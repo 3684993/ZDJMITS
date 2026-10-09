@@ -33,3 +33,10 @@ it.each(['LONG','SHORT'] as const)('offers only inward-aligned frozen %s prices 
   const h=harness(),set=buildQuantityHorizonCandidates({symbol:'BNBUSDC',side,now:Date.now(),candidateSchemaVersion:'V397-PLAN-CANDIDATE-1',risk:null,quote:{bid:743.1,ask:743.11,tickSize:.01,stepSize:.01,minQty:.01,minNotional:5,minEntryPrice:743.001876315681,maxEntryPrice:743.218123684319},leverage:10,envelope:{executable:true,maxQuantityUnits:1000,minQuantityUnits:135,maxNotionalUsd:7430,maxMarginUsd:743,minimumInitialMarginQuote:100},envelopeExpiresAt:Date.now()+180000,factVersion:'historical-numeric-projection',settings:h.state.settings,candles:()=>[],managementDurationMs:60000});
   expect(set.candidates.length).toBeGreaterThan(0);for(const c of set.candidates){expect(c.sizingProof?.executableEntryRange).toEqual({min:743.01,max:743.21});expect(c.entryReferencePrice).toBe(side==='SHORT'?743.01:743.21);expect(c.entryReferencePrice/.01).toBeCloseTo(Math.round(c.entryReferencePrice/.01),7);expect(c.quantityUnits*.01*743.21).toBeLessThanOrEqual(7430);expect(c.quantityUnits*.01*743.21/c.leverage).toBeLessThanOrEqual(743);}
 });
+
+it('journal save failure does not release reservation or expose terminal in-memory order',async()=>{
+ const h=harness();await h.run();const order=[...h.state.entryOrders.values()][0]!,intent=h.state.entryIntents.get(order.intentId)!;h.state.eips.set(order.symbol,h.packet);
+ (h.coordinator as any).journal={save:vi.fn(()=>{throw Error('SQLITE_FULL');})};(h.ai as any).reviewDedicated=()=>true;(h.ai as any).reviewPendingEntry=async()=>({decision:'CANCEL'});h.exchange.findEntryByClientOrderId.mockResolvedValue(order);
+ (h.coordinator as any).schedulePendingEntryReview(order,intent,h.packet.market,Date.now()+30000);
+ await vi.waitFor(()=>expect(h.events.some(e=>e.type==='PENDING_ENTRY_REVIEW_FAILED')).toBe(true));expect(h.state.entryReservations.get(order.reservationId)?.status).toBe('WORKING');expect(h.state.entryOrders.get(order.id)?.status).toBe('WORKING');expect(h.events.some(e=>e.type==='PENDING_ENTRY_REVIEW_ACTION_CONVERGED')).toBe(false);
+});

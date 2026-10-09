@@ -17,7 +17,8 @@ projected.candidateId='projection_'+createHash('sha256').update(JSON.stringify(p
 const hash=createHash('sha256').update(JSON.stringify(projected)).digest('hex'),at=fixture.bnb.completedAt;
 const packet:any={symbol:'BNBUSDC',executionEnvelope:{symbol:'BNBUSDC',createdAt:at-1,expiresAt:at+180000,exchange:{tickSize:tick},SHORT:{executable:true,candidateSetHash:hash,planCandidates:[projected]}}};
 const choice:any={...fixture.bnb.raw,executionSelection:PRIMARY_CHOICE_PROTOCOL,candidateSetHash:hash,selectedCandidateId:projected.candidateId};
-for(const key of ['quantityUnits','idealPrice','acceptablePriceRange','horizonMinutes','profitTakePlan'])delete choice[key];
+for(const key of ['quantityUnits','idealPrice','acceptablePriceRange','profitTakePlan'])delete choice[key];
+choice.horizonMinutes=3;
 const decision=EntryDecisionV370Schema.parse(materializePrimaryChoice(choice,packet,at));
 assert.equal(decision.idealPrice,743.01);assert.equal(decision.profitTakePlan?.targetPrice,old.targetPrice);
 assert.throws(()=>materializePrimaryChoice({...choice,idealPrice:743},packet,at));

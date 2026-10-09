@@ -86,3 +86,14 @@ describe('scheduler liveness and dispatch suppression',()=>{
     expect(entry.analysisDiagnostics(now).reason).toBe('WAITING_EXECUTION_CAPACITY');
   });
 });
+
+it.each(['UNKNOWN','WORKING'] as const)('TTL lookup absence keeps %s occupied',async(status)=>{
+ const state=new RuntimeState(settings);state.entryIntents.set(intent.id,intent);state.entryOrders.set(order.id,{...order,status,reservationId:'r'});state.entryReservations.set('r',{id:'r',status:'WORKING',expiresAt:Date.now()+60000} as any);
+ const e=new EntryCoordinator(state,{} as never,{} as never,{findEntryByClientOrderId:vi.fn(async()=>null),cancelEntry:vi.fn()} as never,new EventBus());await e.reviewPending();
+ expect(state.entryOrders.get('o')).toMatchObject({status:'UNKNOWN',exchangeTerminalStatus:'UNKNOWN',activeRiskExposure:true});expect(state.entryReservations.get('r')?.status).toBe('WORKING');
+});
+it('terminal journal failure retains reservation',async()=>{
+ const state=new RuntimeState(settings);state.entryIntents.set(intent.id,intent);state.entryOrders.set(order.id,{...order,reservationId:'r'});state.entryReservations.set('r',{id:'r',status:'WORKING',expiresAt:Date.now()+60000} as any);
+ const e=new EntryCoordinator(state,{} as never,{} as never,{findEntryByClientOrderId:vi.fn(async()=>({...order,status:'CANCELED'})),cancelEntry:vi.fn()} as never,new EventBus());(e as any).journal={save:()=>{throw Error('SQLITE_FULL');}};await e.reviewPending();
+ expect(state.entryOrders.get('o')?.status).toBe('UNKNOWN');expect(state.entryReservations.get('r')?.status).toBe('WORKING');
+});

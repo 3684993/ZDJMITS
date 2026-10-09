@@ -493,7 +493,7 @@ export class EntryCoordinator {
     this.events.publish('ENTRY_EXECUTION_WAIT_TERMINATED',{intentId:intent?.id??row?.executionWait?.intentId,brainRunId:intent?.brainRunId??row?.runId,reason,terminalStage:'ENTRY_EXECUTION_WAIT_TERMINATED',entryOrderCreated:Boolean(order),exchangeOrderId:order?.exchangeOrderId??null,actual:{bid:market?.quote.bid??null,ask:market?.quote.ask??null,mark:market?.quote.mark??null,availableQuote:intent?.allocationPlan?.quoteAsset?this.state.account.assets.find((x:any)=>x.asset===intent.allocationPlan?.quoteAsset)?.availableBalance??null:null},limit:{acceptablePriceRange:intent?.acceptablePriceRange??row?.executionWait?.acceptablePriceRange??null,authorizationExpiresAt:intent?.aiAuthorizationExpiresAt??row?.executionWait?.expiresAt??null}},symbol);
   }
   private completeExecutionWait(symbol:string,intent:EntryIntent,reservation:any,placed:EntryOrder,recovered=false){
-    const terminal=['FILLED','CANCELED','EXPIRED','REJECTED'].includes(placed.status);if(terminal)this.state.releaseEntryReservation(reservation.id);else this.state.markEntryReservationWorking(reservation.id,reservation.intentId);this.state.entryOrders.set(placed.id,placed);this.journal?.save({intent,order:placed});this.transition(symbol,placed.status==='FILLED'?'POSITION_OPEN':terminal?'READY':'ENTRY_WORKING',recovered?'EXECUTION_SUBMISSION_RECOVERED':'EXECUTION_RANGE_REACHED',{runId:intent.brainRunId,executionWait:null});this.state.pool.remove(symbol);this.events.publish('ENTRY_ORDER_CREATED',{order:placed,intent,brainRunId:intent.brainRunId,decisionChainId:intent.brainRunId,resumedFrom:'WAIT_EXECUTION_RANGE',recovered},symbol);
+    this.journal?.save({intent,order:placed});const terminal=['FILLED','CANCELED','EXPIRED','REJECTED'].includes(placed.status);if(terminal)this.state.releaseEntryReservation(reservation.id);else this.state.markEntryReservationWorking(reservation.id,reservation.intentId);this.state.entryOrders.set(placed.id,placed);this.transition(symbol,placed.status==='FILLED'?'POSITION_OPEN':terminal?'READY':'ENTRY_WORKING',recovered?'EXECUTION_SUBMISSION_RECOVERED':'EXECUTION_RANGE_REACHED',{runId:intent.brainRunId,executionWait:null});this.state.pool.remove(symbol);this.events.publish('ENTRY_ORDER_CREATED',{order:placed,intent,brainRunId:intent.brainRunId,decisionChainId:intent.brainRunId,resumedFrom:'WAIT_EXECUTION_RANGE',recovered},symbol);
   }
   private async resumeExecutionWaits(now:number){
     for(const [symbol,row] of this.state.candidateLifecycle){
@@ -1149,6 +1149,7 @@ export class EntryCoordinator {
   private reviewBusy=false;
   private persistManagedOrder(order:EntryOrder){
     const intent=this.state.entryIntents.get(order.intentId);
+    if(this.journal&&!intent)throw Error('ENTRY_TERMINAL_INTENT_UNAVAILABLE');
     if(intent)this.journal?.save({intent,order});
   }
   async reviewPending() {
@@ -1167,7 +1168,7 @@ export class EntryCoordinator {
           if(!ws&&now>=deadline)this.reserveExactOrderQuery(order,now,15_000,true);
           const verified=ws??await this.exchange.findEntryByClientOrderId(order);
           if(!verified){
-            if(autoEntry&&now>=deadline){const reason=now>=order.createdAt+3_600_000?'ONE_HOUR_HARD_TTL':'NEAR_MARKET_TTL',saved={...order,status:'EXPIRED' as const,exchangeTerminalStatus:'UNKNOWN',activeRiskExposure:false,activeRiskEvidence:null,updatedAt:now} as EntryOrder;this.state.entryOrders.set(id,saved);if(order.reservationId)this.state.releaseEntryReservation(order.reservationId);reconcileCandidateLifecycles(this.state,this.events,'ENTRY_TTL_REMOTE_ABSENT');this.events.publish('ENTRY_ORDER_TTL_CLOSED',{orderId:id,clientOrderId:order.clientOrderId,status:'EXPIRED',remoteExactLookup:'ABSENT',exchangeWrite:false,occupancyReleased:true,reason},order.symbol);continue;}
+            if(autoEntry&&now>=deadline){const saved={...order,status:'UNKNOWN' as const,exchangeTerminalStatus:'UNKNOWN',activeRiskExposure:true,activeRiskEvidence:null,updatedAt:now} as EntryOrder;this.persistManagedOrder(saved);this.state.entryOrders.set(id,saved);this.events.publish('ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED',{orderId:id,clientOrderId:order.clientOrderId,remoteExactLookup:'ABSENT',exchangeWrite:false,occupancyReleased:false,reason:'TTL_EXACT_ABSENCE_NOT_TERMINAL_PROOF'},order.symbol);continue;}
             this.state.entryOrders.set(id,{...order,status:'UNKNOWN'});continue;
           }
           order={...order,...verified,id:order.id,intentId:order.intentId,createdAt:order.createdAt,absoluteExpiresAt:order.absoluteExpiresAt,
@@ -1181,7 +1182,7 @@ export class EntryCoordinator {
           const ws=this.userDataConfirmed(order);
           this.reserveExactOrderQuery(order,now,15_000,true);
           const exact=ws??await this.exchange.findEntryByClientOrderId(order);
-          if(!exact){const reason=now>=order.createdAt+3_600_000?'ONE_HOUR_HARD_TTL':'NEAR_MARKET_TTL',saved={...order,status:'EXPIRED' as const,exchangeTerminalStatus:'UNKNOWN',activeRiskExposure:false,activeRiskEvidence:null,updatedAt:Date.now()} as EntryOrder;this.state.entryOrders.set(id,saved);if(order.reservationId)this.state.releaseEntryReservation(order.reservationId);reconcileCandidateLifecycles(this.state,this.events,'ENTRY_TTL_REMOTE_ABSENT');this.events.publish('ENTRY_ORDER_TTL_CLOSED',{orderId:id,clientOrderId:order.clientOrderId,status:'EXPIRED',remoteExactLookup:'ABSENT',exchangeWrite:false,occupancyReleased:true,reason},order.symbol);continue;}
+          if(!exact){const saved={...order,status:'UNKNOWN' as const,exchangeTerminalStatus:'UNKNOWN',activeRiskExposure:true,activeRiskEvidence:null,updatedAt:now} as EntryOrder;this.persistManagedOrder(saved);this.state.entryOrders.set(id,saved);this.events.publish('ENTRY_ORDER_REMOTE_STATUS_UNVERIFIED',{orderId:id,clientOrderId:order.clientOrderId,remoteExactLookup:'ABSENT',exchangeWrite:false,occupancyReleased:false,reason:'TTL_EXACT_ABSENCE_NOT_TERMINAL_PROOF'},order.symbol);continue;}
           if(terminalOrderStatus(exact.status)){const saved={...order,...exact,id:order.id,intentId:order.intentId,exchangeTerminalStatus:exact.status,activeRiskExposure:false,activeRiskEvidence:null} as EntryOrder;this.state.entryOrders.set(id,saved);this.persistManagedOrder(saved);if(order.reservationId)this.state.releaseEntryReservation(order.reservationId);reconcileCandidateLifecycles(this.state,this.events,'TTL_FINAL_CHECK_TERMINAL');continue;}
           const canceled=await this.exchange.cancelEntry({...order,...exact,id:order.id,intentId:order.intentId}),confirmed=terminalOrderStatus(canceled.status),saved:EntryOrder={...order,...canceled,status:confirmed?canceled.status:'UNKNOWN',exchangeTerminalStatus:confirmed?canceled.status:'UNKNOWN',activeRiskExposure:!confirmed,activeRiskEvidence:null,createdAt:order.createdAt,absoluteExpiresAt:order.absoluteExpiresAt} as any;
           this.state.entryOrders.set(id,saved);this.persistManagedOrder(saved);if(order.reservationId){if(confirmed)this.state.releaseEntryReservation(order.reservationId);else this.state.markEntryReservationWorking(order.reservationId);}
@@ -1226,8 +1227,8 @@ export class EntryCoordinator {
       const remote={...order,...final,id:order.id,intentId:order.intentId,createdAt:order.createdAt,absoluteExpiresAt:order.absoluteExpiresAt};
       const canceled=await this.exchange.cancelEntry(remote),confirmed=terminalOrderStatus(canceled.status);
       const saved={...remote,...canceled,status:confirmed?canceled.status:'UNKNOWN',exchangeTerminalStatus:confirmed?canceled.status:'UNKNOWN',activeRiskExposure:!confirmed,updatedAt:Date.now()} as EntryOrder;
-      this.state.entryOrders.set(remote.id,saved);
       this.journal?.save({intent,order:saved,reservation:saved.reservationId?this.state.entryReservations.get(saved.reservationId):undefined});
+      this.state.entryOrders.set(remote.id,saved);
       if(confirmed&&remote.reservationId)this.state.releaseEntryReservation(remote.reservationId);
       if(confirmed)reconcileCandidateLifecycles(this.state,this.events,`PENDING_ENTRY_REVIEW_${result.decision}`);
       this.events.publish(confirmed?'PENDING_ENTRY_REVIEW_ACTION_CONVERGED':'PENDING_ENTRY_REVIEW_ACTION_UNVERIFIED',{orderId:remote.id,clientOrderId:remote.clientOrderId,decision:result.decision,exchangeStatus:canceled.status,confirmed,oldIdentityTerminated:confirmed,newPlanSubmitted:false,reason:'DETERMINISTIC_COORDINATOR_ACTION'},remote.symbol);

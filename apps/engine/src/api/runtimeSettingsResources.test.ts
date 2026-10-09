@@ -1,7 +1,9 @@
 import express from 'express';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { BinanceTransport } from '../adapters/binance/BinanceTransport.js';
-import { createRuntimeSettingsResourcesRouter } from './runtimeSettingsResources.js';
+import { createHash } from 'node:crypto';
+import { getBinanceRequestBudget } from '../adapters/binance/requestBudget.js';
+import { createRuntimeSettingsResourcesRouter, proxyPassiveHealth } from './runtimeSettingsResources.js';
 
 const servers:any[]=[];afterEach(async()=>{for(const server of servers.splice(0))await new Promise<void>(resolve=>server.close(()=>resolve()));});
 function settings(legacy=false){return{settingsVersion:1,connections:{proxy:{enabled:true,protocol:'SOCKS5H',url:'socks5h://127.0.0.1:20081',forceBinanceRest:!legacy,forceBinanceWs:!legacy,proxyDns:!legacy,binanceRestRoute:legacy?'DIRECT':'CONFIGURED',bypassLocalhost:true,failClosed:!legacy},exchange:{provider:'BINANCE_USDM',environment:'TESTNET',productionBaseUrl:'https://fapi.binance.com',testnetBaseUrl:'https://demo-fapi.binance.com',testnetRestBaseUrl:'https://demo-fapi.binance.com',testnetWsBaseUrl:'wss://stream.binancefuture.com/ws',productionRestBaseUrl:'https://fapi.binance.com',productionWsBaseUrl:'wss://fstream.binance.com/ws',credentialRef:'binance-primary',recvWindowMs:5000,autoTimeSync:true},marketDataMode:'BINANCE',executionMode:'READ_ONLY',aiMode:'OPENAI_COMPATIBLE'},aiResources:[{id:'primary',role:'PRIMARY_BRAIN',enabled:true,baseUrl:'http://127.0.0.1:8084/v1',model:'qwen',maxConcurrency:1,gpu:'gpu'}]};}
@@ -96,5 +98,39 @@ describe('portfolio risk authority commit channel',()=>{
     const blocked=(await call.json()).error.blockedPaths;
     expect(blocked).toEqual(expect.arrayContaining(['riskGovernance.portfolioRisk.marginTierVersion','riskGovernance.portfolioRisk.maintenanceMarginRatePct','riskGovernance.portfolioRisk.correlationVersion','riskGovernance.portfolioRisk.scenarioVersion']));
     expect(runtime.updateSettingsIfVersion).not.toHaveBeenCalled();
+  });
+});
+
+describe('proxy passive health contracts (no Binance /fapi/v1/time probe)',()=>{
+  it('reports an idle active proxy as UNKNOWN, not falsely HEALTHY; inactive proxy has no observed status',()=>{
+    const value:any=settings(),url='socks5h://127.0.0.1:28881';
+    value.connections.proxy.url=url;
+    const active=proxyPassiveHealth(value,{id:'binance-proxy',url,enabled:true},Date.now());
+    expect(active).toMatchObject({status:'NO_OBSERVATION',active:true,observation:'NO_NETWORK_REQUEST'});
+    const inactive=proxyPassiveHealth(value,{id:'other',url,enabled:true},Date.now());
+    expect(inactive).toMatchObject({status:'INACTIVE_NO_PROBE',observation:'NO_NETWORK_REQUEST'});
+  });
+  it('returns immutable live request evidence and distinguishes admitted Binance success from a queue failure',async()=>{
+    const value:any=settings(),url='socks5h://127.0.0.1:28882',now=Date.now();
+    value.connections.proxy.url=url;
+    const route='proxy-'+createHash('sha256').update(url).digest('hex').slice(0,12),
+      budget=getBinanceRequestBudget('TESTNET',route),
+      meta={requestId:'proxy-readonly-p0-fixture',source:'HEALTH_PROBE',endpoint:'/fapi/v1/time',purpose:'SERVER_TIME',method:'GET',routeIdentity:route};
+    await budget.run(2,1,async()=>{},meta);
+    budget.observe(200,'3',undefined,meta);
+    const after=proxyPassiveHealth(value,{id:'binance-proxy',url,enabled:true},Date.now());
+    expect(after).toMatchObject({status:'RECENT_BINANCE_SUCCESS',active:true,observation:'PASSIVE_RECENT_REQUESTS_ONLY',queueDepth:0});
+    expect(after.lastSuccessAt).toBeGreaterThanOrEqual(now);
+    expect((after as any).lastNetworkFailureAt).toBeNull();
+  });
+  it('GET passive endpoint performs no active request; returns current telemetry only',async()=>{
+    const{url,runtime}=await fixture();
+    const response=await fetch(url+'/settings/resources/proxy/binance-proxy/health');
+    expect(response.status).toBe(200);
+    const body=await response.json();
+    expect(body).toMatchObject({active:true,observation:expect.stringMatching(/^NO_NETWORK_REQUEST$|^PASSIVE_RECENT_REQUESTS_ONLY$/)});
+    expect(runtime.updateSettingsIfVersion).not.toHaveBeenCalled();
+    const missing=await fetch(url+'/settings/resources/proxy/absent/health');
+    expect(missing.status).toBe(404);
   });
 });

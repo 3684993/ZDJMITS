@@ -2,7 +2,10 @@
 # This script DOES NOT start/restart/stop ANY process, perform trading or modify pagefile.
 # Conservative all-model reserve based on measured 27B private commit and startup transients.
 [CmdletBinding()]
-param([ValidateRange(60,160)][int]$RequiredCommitFreeGiB=70)
+param(
+    [ValidateRange(60,160)][int]$RequiredCommitFreeGiB=70,
+    [switch]$Enforce
+)
 $ErrorActionPreference='Stop'
 Set-StrictMode -Version Latest
 $m=Get-CimInstance Win32_PerfFormattedData_PerfOS_Memory -ErrorAction Stop
@@ -75,6 +78,7 @@ $rows|Format-Table role,port,listenerCount,processId,handles,privateGiB -AutoSiz
 if($blocked.Count){
     Write-Warning 'ALL_MODEL_RESTART_BLOCKED: do NOT sequentially start two 27B under this commit budget.'
     foreach($reason in $blocked){Write-Host "BLOCK: $reason"}
+    if($Enforce.IsPresent){throw 'ALL_MODEL_RESTART_BLOCKED_ENFORCED: no service was started'}
 }else{
     Write-Host 'RESOURCE_PRECHECK_PASS_ONLY: fresh TESTNET account/safeguards, exact Engine build and all model APIs still require separate verification.'
 }

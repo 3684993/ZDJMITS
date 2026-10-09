@@ -120,3 +120,26 @@ it('does not replace a current depth book with an older WS event or a future RES
  stream.seed('BTCUSDT',{...book(now+60_000),bids:[[999,1]]},[]);
  expect(stream.book('BTCUSDT')!.bids[0]![0]).toBe(100);
 });
+
+it('accounts for rejected-symbol decoded WS payload per lane without persisting raw data',()=>{
+  vi.useFakeTimers();vi.setSystemTime(1_800_000_000_000);
+  try{
+    const stream=new BinanceMarketStream({} as never,vi.fn());
+    stream.updateSymbols(['BTCUSDT']);
+    const publicPayload=JSON.stringify({e:'bookTicker',s:'OTHERUSDT',b:'1',a:'2',E:Date.now()}),
+      marketPayload=JSON.stringify({e:'24hrTicker',s:'OTHERUSDT',c:'1',q:'100',P:'0',n:1,E:Date.now()});
+    (stream as any).onMessage(publicPayload,'PUBLIC');
+    (stream as any).onMessage(marketPayload,'MARKET');
+    const traffic=(stream.metrics() as any).streamTraffic;
+    expect(traffic.PUBLIC).toMatchObject({last60sMessages:1,totalMessages:1,last60sDecodedBytes:Buffer.byteLength(publicPayload)});
+    expect(traffic.MARKET).toMatchObject({last60sMessages:1,totalMessages:1,last60sDecodedBytes:Buffer.byteLength(marketPayload)});
+    expect(traffic.PUBLIC.measurement).toBe('DECODED_WS_APPLICATION_PAYLOAD_NOT_SSH_WIRE_BYTES');
+    expect(stream.quote('OTHERUSDT')).toBeUndefined();
+    expect(JSON.stringify(traffic)).not.toContain('OTHERUSDT');
+    vi.advanceTimersByTime(61_000);
+    const aged=(stream.metrics() as any).streamTraffic;
+    expect(aged.PUBLIC.last60sMessages).toBe(0);
+    expect(aged.MARKET.last60sDecodedBytes).toBe(0);
+    expect(aged.PUBLIC.totalMessages).toBe(1);
+  }finally{vi.useRealTimers();}
+});

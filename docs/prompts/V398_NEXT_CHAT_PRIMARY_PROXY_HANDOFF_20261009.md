@@ -6,7 +6,7 @@
 
 ## I. 2026-10-09 GitHub 远端复核增量（新窗口先读，均非主机部署证明）
 - 连接的 GitHub 工具在复核时确认 PR #19 `MERGED`，原合并提交 `39931a7` 的 Actions run [37930909464](https://github.com/3684993/ZDJMITS/actions/runs/37930909464) 已 **SUCCESS**；docs-only main `e9623c5` 的 [37938125083](https://github.com/3684993/ZDJMITS/actions/runs/37938125083) 亦已 **SUCCESS**。早期“托管 CI 未确认”仅是过去时刻的信息。
-- PR #20 持续为 **OPEN/NOT_MERGED/NOT_DEPLOYED**，原七个受影响文件。2026-10-09 后续远程复核已把 HEAD 发展至 `4a0ddb3d16f5504d4fc5cd86f97778651e6c86b0`；这是**这一轮审查锚点**，下一轮仍须重新读 HEAD。新增 1s×60 桶及分类 message bytes、HTTP 451/502 被动诊断和定向单测，未更改交易/订阅。**没有 PR #20 HEAD 的 npm verify / hosted CI SUCCESS 证据，禁止直接合并或发布。**
+- PR #20 持续为 **OPEN/NOT_MERGED/NOT_DEPLOYED**，原七个受影响文件。2026-10-09 后续远程复核已把 HEAD 发展至 `023aad9512ba3288a7f7c128b08c92a6611d97d0`；这是**这一轮审查锚点**，下一轮仍须重新读 HEAD。新增 1s×60 桶及分类 message bytes、HTTP 451/502 被动诊断和定向单测，未更改交易/订阅。**没有 PR #20 HEAD 的 npm verify / hosted CI SUCCESS 证据，禁止直接合并或发布。**
 - PR #20 分支未命中现有 `.github/workflows/v392-verify.yml` push trigger；不得把 main 的 SUCCESS 冒充 PR20 SUCCESS。验证必须由正式获授权本机 Codex 在独立 worktree 完整执行，或经独立审查的合法 CI 触发。
 - 已在 main 发布两份新文件：审查及证据边界 [PR20_REMOTE_REVIEW.md](../reports/v398-proxy-network-p0-20261009/PR20_REMOTE_REVIEW.md)，以及可直接给本机 Codex 使用的 [V398_P0_CODEX_REMOTE_REVIEW_FOLLOWUP_20261009.md](./V398_P0_CODEX_REMOTE_REVIEW_FOLLOWUP_20261009.md)。
 - **仍无本轮 Windows/Ubuntu 新实测**：不得把旧 PID18100、旧私有 TP13/13、Ubuntu Send-Q 或 policy 阻断时间延伸为当前运行状态；`LIVE_DEPLOYED` / `PRIVATE_READY` / `CADENCE_90MIN` 均需重新取证。计数仪表只涵盖 PUBLIC + MARKET 解码 WS 帧，不是 SSH 线上字节，PRIVATE WS/REST 另行同步取证，未测量前不剪全市场订阅。

@@ -1,0 +1,20 @@
+{
+  "sourceCommit": "d39024d97f681c46c94e7537dd688f6bf271096a",
+  "previousRuntimeSource": "6533e4d5bbedfe758336f3dd40c188bad37413cd",
+  "pullRequest": "https://github.com/3684993/ZDJMITS/pull/38",
+  "status": "NOT_PERFORMED",
+  "modelRecovery": "BLOCKED_BY_AUTOMATIC_APPROVAL_REVIEW",
+  "actualInferenceSuccess": "NOT_PROVEN",
+  "attemptedAction": "START_OFFLINE_SCOUT_ONCE",
+  "toolRejection": "blocked by policy",
+  "reasonDetailProvided": false,
+  "attemptExecuted": false,
+  "engineLifecycleActions": 0,
+  "modelLifecycleActions": 0,
+  "manualExchangeWrites": 0,
+  "proxyRouteChanges": 0,
+  "newAcceptance": "NOT_STARTED_WAITING_USER_INSTRUCTION",
+  "newT0": null,
+  "oldAcceptance": "ABORTED_SAFETY_FAILURE_20261010T083400.270+08:00",
+  "note": "No deployment receipt or inference success is manufactured. Runtime remains the prior build. A future lifecycle action requires fresh safety and a permitted tool execution."
+}

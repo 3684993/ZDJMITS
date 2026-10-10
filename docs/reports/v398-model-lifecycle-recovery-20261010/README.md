@@ -30,12 +30,18 @@
 
 ## 运维配置和剩余边界
 
-默认管理操作 **关闭**。正式受控部署时，须为正式 Engine 注入 `ZDJ_MODEL_MANIFEST`（用户/SYSTEM 可写的私有绝对路径）、`ZDJ_MODEL_OPERATIONS_DIR`、`ZDJ_MODEL_OPERATION_TOKEN`。本轮已经生成并只读验证三模型的实际本机 manifest，保存在私有操作目录，不上传密钥或私有配置。三个 `status` 调用实际返回 STOPPED。
+默认管理操作 **关闭**。正式受控部署时，须为正式 Engine 注入 `ZDJ_MODEL_MANIFEST`（用户/SYSTEM 可写的私有绝对路径）、`ZDJ_MODEL_OPERATIONS_DIR`、`ZDJ_MODEL_OPERATION_TOKEN`，并在正式 host 的 PATH 中配置已审查的 PowerShell 7 `pwsh.exe`，不能把 Codex 会话的 PATH 当成正式启动环境。使用同一 PowerShell 7 隐藏启动子启动器，避免 Windows PowerShell 5 的原生 stderr 解释差异。本轮已经生成并只读验证三模型的实际本机 manifest，保存在私有操作目录，不上传密钥或私有配置。三个 `status` 调用实际返回 STOPPED。
 
 manifest 的每个模型包含 `id,model,port,launcher,launcherSha256,executable,executableSha256,stateFile,logRoot,modelPath,physicalDevice`。只能由运维人员配置已审查的启动器；不得用 Settings 资源编辑绕过该清单。当前进程看不到 slot、存在 watchdog/外部客户端、端口归属或创建时间不确定时，后端拒绝停止；这类情况需另行核对，不进行强杀。异常锁只能在确认启动器和模型最终状态、交易保护后由运维人员处理，没有浏览器“强制解锁”接口。
 
-当前 GPU 采样仍依赖上一轮有限采样器；长时间采样服务尚未部署，过期显存继续 UNKNOWN。本轮没有恢复成功后的自然任务性能对比，不能宣称模型/交易吞吐提升。
+当前 GPU 采样仍依赖上一轮有限采样器；长时间采样服务尚未部署，过期显存继续 UNKNOWN。首次健康探测原先可能串联 `/health` 与 `/props` 两个 GET，现在只发一个 `/health` GET，单测核实请求数；这是探测路径优化，不是自然任务吞吐对比。本轮没有恢复成功后的自然任务性能对比，不能宣称模型/交易吞吐提升。Primary 候选 backlog 也不等于在途推理；保留 backlog 的维护测试通过，实际活动推理和 Review 队列仍会拒绝维护。
 
 ## 验证记录
 
 `npm ci` 实际完成；现有 npm audit 报告 2 moderate/2 critical，未执行不经验证的强制依赖升级。初始验证保留 S00 entrypoint 新增、review 路径误选、测试固定端口静态门禁、私有同步联合类型四份失败日志；修复清单与类型后继续完整验证。最终测试/构建与 GitHub 精确 HEAD CI 状态见本目录后续验证收据，不能借用上轮 source6533 的 CI。
+
+## 最终源码验证收据
+
+源码 `d39024d97f681c46c94e7537dd688f6bf271096a` 的本机 `npm run verify:ci` exit0，264 文件/2,210 测试全部通过，包括完整类型检查、构建、脚本/release/S00 门禁；[精确源码 Windows CI 38032096492](https://github.com/3684993/ZDJMITS/actions/runs/38032096492) SUCCESS，完整日志已归档。主实现提交为 `43eca77cf931f79dca4ab3ace6499769095d8f90`，最终边界修正为 d39024d；[Draft PR #38](https://github.com/3684993/ZDJMITS/pull/38) 尚未合并。之后仅更新文档/证据，不能将此 CI 宣称为未来文档 HEAD 的已完成 CI。
+
+本轮最终仍 NOT_PERFORMED / NOT_PROVEN。旧 Engine23936/build3.9.8-0de7665352d82b261c1d 在线，三模型未恢复。最新签名28/28和独立canTrade=true不构成持续安全或长验收 PASS；首次29笔中的本地身份失败样本仍保留。完整失败/成功验证日志和脱敏状态见同目录 JSON/log 文件。

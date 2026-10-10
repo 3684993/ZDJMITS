@@ -1,0 +1,63 @@
+{
+  "models": [
+    {
+      "resourceId": "scout-b580",
+      "port": 8081,
+      "model": "qwen3.5:9b",
+      "modelFilename": "Qwen3.5-9B-Q4_K_M.gguf",
+      "launcherFilename": "start-qwen3.5-9b-vulkan.ps1",
+      "launcherSha256": "D0B9F5F4D05ED4DE3AFFA41DBBE7A182993CFB2A0A5133D4C69DC6AA012EC45E",
+      "executableSha256": "5ED8B8FC6316EB051FC793B59F54C57B0CD2B40E344327E969C5A9C70C7384BA",
+      "physicalDeviceConfigured": "Vulkan0",
+      "runtimeStatus": "STOPPED",
+      "currentPid": null,
+      "currentVram": "UNKNOWN"
+    },
+    {
+      "resourceId": "review-7900-gpu2",
+      "port": 8083,
+      "model": "qwen/qwen3.8-27b",
+      "modelFilename": "Qwen3.8-27B-Q4_K_M.gguf",
+      "launcherFilename": "start-qwen3.8-27b-harness-vulkan1.ps1",
+      "launcherSha256": "E1E7C83663DB5CEFC8A6D2CE5CD0D41D9F9177A13C6C2592DA7DBAB35DA6BC48",
+      "executableSha256": "5ED8B8FC6316EB051FC793B59F54C57B0CD2B40E344327E969C5A9C70C7384BA",
+      "physicalDeviceConfigured": "Vulkan1",
+      "runtimeStatus": "STOPPED",
+      "currentPid": null,
+      "currentVram": "UNKNOWN"
+    },
+    {
+      "resourceId": "brain-7900-primary",
+      "port": 8084,
+      "model": "qwen/qwen3.8-27b",
+      "modelFilename": "Qwen3.8-27B-Q4_K_M.gguf",
+      "launcherFilename": "start-qwen3.8-27b-zdj-vulkan1.ps1",
+      "launcherSha256": "8AF565EDF29AEC5EC70674FC0894FA352AFCC0F89187B583EFDB74806E536C8E",
+      "executableSha256": "5ED8B8FC6316EB051FC793B59F54C57B0CD2B40E344327E969C5A9C70C7384BA",
+      "physicalDeviceConfigured": "Vulkan2",
+      "runtimeStatus": "STOPPED",
+      "currentPid": null,
+      "currentVram": "UNKNOWN"
+    }
+  ],
+  "vulkanEnumeration": [
+    "Vulkan0 Intel Arc B580",
+    "Vulkan1 AMD Radeon RX 7900 XTX",
+    "Vulkan2 AMD Radeon RX 7900 XTX"
+  ],
+  "pciEnumeration": [
+    {
+      "gpu": "B580",
+      "bus": 5
+    },
+    {
+      "gpu": "RX7900XTX",
+      "bus": 22
+    },
+    {
+      "gpu": "RX7900XTX",
+      "bus": 19
+    }
+  ],
+  "mappingNote": "Current processes absent. Vulkan role assignments are configured/historical, not a new PID-to-PCI measurement."
+}

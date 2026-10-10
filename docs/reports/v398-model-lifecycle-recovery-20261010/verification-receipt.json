@@ -1,0 +1,57 @@
+{
+  "sourceCommit": "d39024d97f681c46c94e7537dd688f6bf271096a",
+  "observedAt": "2026-10-10T06:51:50.062283+00:00",
+  "npmCi": {
+    "exitCode": 0,
+    "lockedDependencies": true,
+    "receipt": "npm-ci-receipt.txt"
+  },
+  "verifyCi": {
+    "exitCode": 0,
+    "workspaceTestCounts": [
+      2,
+      63,
+      140,
+      575,
+      623,
+      399,
+      408
+    ],
+    "totalTests": 2210,
+    "totalTestFiles": 264,
+    "typecheck": "PASS",
+    "build": "PASS",
+    "scriptTests": "PASS",
+    "releaseGate": "PASS",
+    "s00": "PASS",
+    "log": "verify-ci.log",
+    "logSha256": "1ada28f07f15d6379c8c0e567c3c8a3e5a70633f875d064ec0e98f069fc868bc"
+  },
+  "githubCi": {
+    "sourceCommit": "d39024d97f681c46c94e7537dd688f6bf271096a",
+    "conclusion": "success",
+    "runId": 38032096492,
+    "url": "https://github.com/3684993/ZDJMITS/actions/runs/38032096492",
+    "jobs": [
+      {
+        "id": 114155009072,
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ],
+    "archivedLog": {
+      "path": "github-ci-integration-38032096492-success.log",
+      "originalSha256": "5100693f5a9142b9249f6e03058c61552ccc2f431f1ba6caf1a181afb546341e",
+      "normalization": "trailing whitespace and EOF only"
+    }
+  },
+  "runtimeDeployment": "NOT_PERFORMED",
+  "recovery": "NOT_PROVEN",
+  "benchmark": {
+    "kind": "SOURCE_AND_MOCK_REQUEST_COUNT",
+    "firstHealthProbeRequestsBeforeMax": 2,
+    "firstHealthProbeRequestsAfter": 1,
+    "naturalInferenceThroughputComparison": "NOT_AVAILABLE_MODELS_OFFLINE"
+  },
+  "documentationOnlyFollowup": "Evidence commit contains no apps/packages/scripts changes; its newly triggered CI is separate from this verified source."
+}

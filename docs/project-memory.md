@@ -106,3 +106,7 @@ PR31驾驶舱含资金/收益图，121点自然窗口30.055分钟（Primary计�
 独立PR33容量租约最终HEAD402b850f73fd10018fb03db0b5deaeda493dd499，GitHub CI38018026331 success；PR32 TP SHADOW最终HEAD6ac46f8a93c096b5764bc05508ba47aa015bf381，CI38018034694 success。源码与全部日志在各分支统一reports目录，PR31另归档两者最终CI快照。PR33借用默认关闭（27B reasoning/output不等价、审批policy接线未做）；PR32生产provider/候选生成/调度接线及挂单事实触发优化未做。禁止真实TP改价/补仓，Primary唯一Entry不变。
 
 原24h仍ABORTED，不部署不重启；02:10Z签名25/25 TP只是历史一时样本，Production当前全套门禁/region eligibility等UNKNOWN，未来必须新鲜全部门禁和完整新24h。PR31最后源码修复/归档HEAD CI以Issue30和PR的实际回读为准，不借其他分支绿灯。
+
+### PR31 源码精确 CI 回读
+
+源码248e5f8b7d8d4a4e6e178dfde52a563d6a1abbb1完整GitHub Actions38022146483 SUCCESS。本机2173项完整验证成功；成功作业日志与回执已归档统一reports目录，详见FINAL_DELIVERY.md。随后纯归档提交的最终HEAD CI以PR31/Issue30精确回读为准。未部署未重启，当前发布门禁UNKNOWN，旧24h仍ABORTED。

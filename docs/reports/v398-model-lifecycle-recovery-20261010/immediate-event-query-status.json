@@ -1,0 +1,31 @@
+[
+  {
+    "queryStatus": "SUCCEEDED",
+    "logName": "Application",
+    "matchingRecords": 0,
+    "ids": [
+      1000,
+      1001
+    ],
+    "events": []
+  },
+  {
+    "queryStatus": "NO_MATCHING_RECORDS",
+    "logName": "System",
+    "errorId": "NoMatchingEventsFound,Microsoft.PowerShell.Commands.GetWinEventCommand",
+    "matchingRecords": 0,
+    "ids": [
+      2004,
+      4101
+    ]
+  },
+  {
+    "queryStatus": "NO_MATCHING_RECORDS",
+    "logName": "Security",
+    "errorId": "NoMatchingEventsFound,Microsoft.PowerShell.Commands.GetWinEventCommand",
+    "matchingRecords": 0,
+    "ids": [
+      4689
+    ]
+  }
+]

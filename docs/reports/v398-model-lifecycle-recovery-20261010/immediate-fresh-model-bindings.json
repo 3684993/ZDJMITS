@@ -1,0 +1,32 @@
+{
+  "observedAt": "2026-10-10T09:05:19.8745917Z",
+  "data": [
+    {
+      "id": "scout-b580",
+      "physicalDeviceConfigured": "Vulkan0",
+      "executableSha256": "5ED8B8FC6316EB051FC793B59F54C57B0CD2B40E344327E969C5A9C70C7384BA",
+      "launcher": "D:/MITS-WORKTREES/llama-memory-20261009/scripts/llama-vulkan/start-qwen3.5-9b-vulkan.ps1",
+      "port": 8081,
+      "launcherSha256": "D0B9F5F4D05ED4DE3AFFA41DBBE7A182993CFB2A0A5133D4C69DC6AA012EC45E",
+      "match": true
+    },
+    {
+      "id": "review-7900-gpu2",
+      "physicalDeviceConfigured": "Vulkan1",
+      "executableSha256": "5ED8B8FC6316EB051FC793B59F54C57B0CD2B40E344327E969C5A9C70C7384BA",
+      "launcher": "D:/MITS-WORKTREES/llama-memory-20261009/scripts/llama-vulkan/start-qwen3.8-27b-harness-vulkan1.ps1",
+      "port": 8083,
+      "launcherSha256": "E1E7C83663DB5CEFC8A6D2CE5CD0D41D9F9177A13C6C2592DA7DBAB35DA6BC48",
+      "match": true
+    },
+    {
+      "id": "brain-7900-primary",
+      "physicalDeviceConfigured": "Vulkan2",
+      "executableSha256": "5ED8B8FC6316EB051FC793B59F54C57B0CD2B40E344327E969C5A9C70C7384BA",
+      "launcher": "D:/MITS-WORKTREES/llama-memory-20261009/scripts/llama-vulkan/start-qwen3.8-27b-zdj-vulkan1.ps1",
+      "port": 8084,
+      "launcherSha256": "8AF565EDF29AEC5EC70674FC0894FA352AFCC0F89187B583EFDB74806E536C8E",
+      "match": true
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "observedAt": "2026-10-10T09:05:19.8745917Z",
+  "data": [
+    {
+      "TaskPath": "\\",
+      "TaskName": "ZDJ-MITS Local Health Monitor",
+      "State": 1
+    },
+    {
+      "TaskPath": "\\",
+      "TaskName": "ZDJ-MITS Manual Engine",
+      "State": 3
+    },
+    {
+      "TaskPath": "\\",
+      "TaskName": "ZDJ-MITS V3.9.2 Testnet Acceptance Monitor",
+      "State": 1
+    },
+    {
+      "TaskPath": "\\",
+      "TaskName": "ZDJ-MITS-AfterReboot-TESTNET",
+      "State": 3
+    },
+    {
+      "TaskPath": "\\ZDJMITS\\",
+      "TaskName": "ZDJ-MITS-Engine-Crash-Observer",
+      "State": 4
+    },
+    {
+      "TaskPath": "\\ZDJMITS\\",
+      "TaskName": "ZDJ-V398-24h-20261010",
+      "State": 3
+    },
+    {
+      "TaskPath": "\\ZDJMITS\\",
+      "TaskName": "ZDJ-V398-24h-Readonly-Checkpoint",
+      "State": 1
+    },
+    {
+      "TaskPath": "\\ZDJMITS\\",
+      "TaskName": "ZDJ-V398-Passive-Trade-Audit",
+      "State": 3
+    },
+    {
+      "TaskPath": "\\ZDJMITS\\",
+      "TaskName": "ZDJ-V398-Primary-Cadence-90min",
+      "State": 3
+    }
+  ]
+}

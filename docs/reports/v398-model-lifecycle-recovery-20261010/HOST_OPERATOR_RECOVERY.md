@@ -6,6 +6,12 @@
 
 ## 1. 在本机 PowerShell 7 准备日志和只读检查
 
+如果目前打开的是Windows PowerShell5，可先在本机终端执行以下已存在的PowerShell7程序，进入交互会话：
+
+```powershell
+& 'C:/Users/5700x/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe' -NoProfile
+```
+
 逐段执行；任何 throw/超时/非零退出立即停在当前段，不自动重试，不强杀进程。请保留 stdout、stderr 和 smoke 结果，只上传日志文件，勿粘贴长控制台输出或凭证。
 
 ```powershell
@@ -42,7 +48,7 @@ Invoke-RestMethod http://127.0.0.1:8081/health -TimeoutSec 8 | ConvertTo-Json | 
 Get-Content "$logRoot/scout.stdout.log" -Tail 30
 ```
 
-检查原启动器日志明确包含真实 smoke 成功；只有 `/health=ok` 不足以确认推理成功。若启动器失败但进程仍存在，保留现场，勿补一次启动或关掉 Engine。
+原启动器实际提交 smoke：Scout检查completion choice；Review提交两次Responses请求但丢弃响应体；Primary检查真实返回的SKIP_THIS_CYCLE JSON。它们不是三份完整响应收据。保留server.stderr/启动退出码，并在后续Engine自然任务投影中核验新启动时间后的完成与失败记录；缺少内容或自然任务则该项UNKNOWN，不能只凭`/health=ok`称全部推理恢复。不要额外对正在被旧Engine调用的模型发未取得容量租约的测试请求。若启动器失败但进程仍存在，保留现场，勿补一次启动或关掉Engine。
 
 ## 3. Review 8083（Scout 成功后执行）
 
@@ -92,6 +98,11 @@ Copy-Item D:/MITS-RELEASES/ZDJMITS-v398-models-4c84631/scripts/performance/map-g
 & $ps7 -NoProfile -File "$logRoot/map-gpu-luid.ps1" *>&1 | Tee-Object -FilePath "$logRoot/gpu-mapping.log"
 Copy-Item D:/MITS-RELEASES/ZDJMITS-v398-models-4c84631/scripts/performance/collect-windows-gpu.ps1 "$logRoot/collect-windows-gpu.ps1"
 & $ps7 -NoProfile -File "$logRoot/collect-windows-gpu.ps1" -Samples 3 -IntervalSeconds 15 *>&1 | Tee-Object -FilePath "$logRoot/gpu-sampling.log"
+foreach ($model in $manifest.models) {
+  Copy-Item -LiteralPath $model.stateFile -Destination "$logRoot/$($model.id)-state.private.json"
+  $lastLog = Get-ChildItem -LiteralPath $model.logRoot -Filter '*.err.log' | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+  if ($lastLog) { Copy-Item -LiteralPath $lastLog.FullName -Destination "$logRoot/$($model.id)-server.private.err.log" }
+}
 Invoke-RestMethod http://127.0.0.1:8080/api/v3/brain/resources -TimeoutSec 12 | ConvertTo-Json -Depth 12 | Set-Content "$logRoot/engine-models.json"
 Invoke-RestMethod http://127.0.0.1:8080/api/v3/diagnostics/closeout -TimeoutSec 12 | ConvertTo-Json -Depth 30 | Set-Content "$logRoot/closeout-after.private.json"
 Stop-Transcript

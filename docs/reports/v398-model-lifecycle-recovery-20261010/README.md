@@ -1,3 +1,5 @@
+> 最新立即恢复授权执行见 [FINAL_RUNTIME_RECOVERY_AND_DEPLOYMENT](./FINAL_RUNTIME_RECOVERY_AND_DEPLOYMENT.md) 和 [HOST_OPERATOR_RECOVERY](./HOST_OPERATOR_RECOVERY.md)。PR39记录本輪新的真实拒绝、264/2210全量验证、封存发布包及签名26/26；三模型未恢复、Engine未部署/重启。下文PR38记录保留为历史，不替代新操作收据。
+
 # 三模型离线与受保护的模型管理（2026-10-10）
 
 ## 已证实的现场情况

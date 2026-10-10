@@ -2,11 +2,11 @@
 
 已拉取 main4c846312，源码/脚本/lock与PR38 d390等价。本轮重新 npm ci / verify:ci EXIT0，264文件2210例；独立发布包构建成功，1999文件封存与Settings253对照通过。候选build3.9.8-5b239d299d94d9ce70a8只STAGED，未上线；新精确授权仍inactive。
 
-Scout8081原始启动器正常终端请求再次在CreateProcess前被平台 blocked by policy 拒绝，没有执行/新PID；Review/Primary和Engine生命周期未尝试。当前工具approval policy never，无可用交互升级，不换包装/通道/删保护绕过。用户授权明确，不再索取一般许可。主机操作者原有三段启动命令及日志步骤见 [HOST_OPERATOR_RECOVERY](../reports/v398-model-lifecycle-recovery-20261010/HOST_OPERATOR_RECOVERY.md)。正式报告 [FINAL_RUNTIME_RECOVERY_AND_DEPLOYMENT](../reports/v398-model-lifecycle-recovery-20261010/FINAL_RUNTIME_RECOVERY_AND_DEPLOYMENT.md)。从prompts目录访问需用 ../reports。
+Scout8081原始启动器正常终端请求再次在CreateProcess前被平台 blocked by policy 拒绝，没有执行/新PID；Review/Primary和Engine生命周期未尝试。当前工具approval policy never，无可用交互升级，不换包装/通道/删保护绕过。用户授权明确，不再索取一般许可。主机操作者原有三段启动命令及日志步骤见 [HOST_OPERATOR_RECOVERY](../reports/v398-model-lifecycle-recovery-20261010/HOST_OPERATOR_RECOVERY.md)。正式报告 [FINAL_RUNTIME_RECOVERY_AND_DEPLOYMENT](../reports/v398-model-lifecycle-recovery-20261010/FINAL_RUNTIME_RECOVERY_AND_DEPLOYMENT.md)。
 
 末查17:00+08旧Engine23936/host12440/build0de766不变，代理18300/20091。三模型无监听，真实connection refused，退出发起者/退出码UNKNOWN；不能称修复退出根因或恢复推理。两次签名26/26 TP全身份通过；独立V2 canTrade=true，末私有age8134ms/失败0；Production0，Engine自然TESTNET写51/任务交换写0。本轮备份quick_checkok+fsync/Settings对照，旧29→28/cycle失败及TP缺口仍保留。现有stop-zdj-lan用Stop-Process -Force，不能冒充graceful；旧实例优雅停止路径未证明前不得强制切换。
 
-旧24h08:34 ABORTED保持，新24h NOT_STARTED/T0=null等用户后令。准确区分source验证、STAGED、平台拒绝、运行恢复未执行及未部署；本轮PR精确HEAD CI另存github-actions-immediate.json，不借PR38其它SHA绿灯。
+旧24h08:34 ABORTED保持，新24h NOT_STARTED/T0=null等用户后令。准确区分source验证、STAGED、平台拒绝、运行恢复未执行及未部署；本轮 [Draft PR #39](https://github.com/3684993/ZDJMITS/pull/39) 首次精确HEAD ee4bab35e84fa054a90e730ec9a745bedbf6d490 Windows CI38040055297 SUCCESS，全日志另存github-actions-immediate.json；后续归档HEAD仍单独回读，不借PR38其它SHA绿灯。
 
 # 2026-10-10 用户要求立刻恢复全部模型与部署（最新权威状态）
 - 用户明确要求在 Windows 主机**现在受控部署并逐个启动已离线的三个Qwen模型**，无需反复概念性许可。PR38源代码已验证本机2210 tests和GitHub两个exact-head SUCCESS，已于2026-10-10由ChatGPT合并`main`，合并SHA `84d5d4f81b3ad6c73b1f7744c441d4f887de9638`。

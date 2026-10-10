@@ -12,7 +12,7 @@
 - 发布 worktree `D:/MITS-RELEASES/ZDJMITS-v398-models-4c84631`：独立 `npm ci`、全部 workspace build EXIT0，clean source，**1999 文件**封存 + Settings253/hash 对照成功。
 - source hash `3611b8d300f091946b7dc479e951c8f1ee45dafc4f11ae50ce9e8be71b467de5`；artifact hash `5b239d299d94d9ce70a85c835040337d9d4c36ee2456cd3d48b6ebde7eadc688`；候选 build `3.9.8-5b239d299d94d9ce70a8`。这不是当前在线 build。
 - 新精确构建授权 **prepared/inactive/revoked=true**；原在线授权未修改。随机48-byte模型操作 token 已存主机私有文件，ACL仅当前操作者/SYSTEM；没有注入旧 Engine，也未上传 token。
-- 本轮 PR 的精确 HEAD CI 将另行归档到 `github-actions-immediate.json`；PR38 原源码 CI 回执保留在 `github-actions-integration.json`，不覆盖、不借用。
+- 本轮 PR39 首次精确 HEAD `ee4bab35e84fa054a90e730ec9a745bedbf6d490` 的 [Windows CI 38040055297](https://github.com/3684993/ZDJMITS/actions/runs/38040055297) **SUCCESS**，job步骤全部success，完整成功作业日志和原始SHA256已另归档到 `github-actions-immediate.json`。随后证据归档提交不改运行源码，其最终HEAD仍需单独回读，不用此绿色冒充归档HEAD结果。PR38 原源码 CI 回执保留在 `github-actions-integration.json`，不覆盖、不借用。
 
 ## 现场证据与原因分层
 
@@ -26,11 +26,13 @@
 
 不存在 llama 服务进程/端口且本机 HTTP 明确拒绝连接，证明三个服务确实离线，不能解释为单纯 HTTP 超时或 UI 探测误报。旧 Engine 的 `fetch failed` 缺少分类，PR38 已补连接拒绝、探测超时、UNKNOWN及驾驶舱分层显示，但旧在线包仍未加载这些修复。
 
-原始 llama.exe 与三个启动器 hash 均与私有 manifest 匹配；9B GGUF hash `cd76ec205963b3b33350093e6904d9de16c4e666fd104e1f632d25c7f15f2a13`、27B GGUF hash `e00082f779fa385cee8c68a3ec8833a75778cc87272240b942f74e0b8243e520` 本轮重读一致。`--list-devices` 真实列出三卡，空闲约11421/23748/23748MiB；这是离线时 Vulkan 枚举值，**不是三模型同时装载的预算或进程显存**。
+17:05+08 再次读取三个原始启动器与 llama.exe，hash 均与私有 manifest 匹配。Windows service查询成功且无ZDJ/MITS/llama服务记录；相关task状态另附JSON，未更改task。主机commit limit178,217,693,184bytes、committed25,287,835,648bytes，物理available80,878,825,472bytes；这是未装载模型时的余量，非三模型预算。
+
+9B GGUF hash `cd76ec205963b3b33350093e6904d9de16c4e666fd104e1f632d25c7f15f2a13`、27B GGUF hash `e00082f779fa385cee8c68a3ec8833a75778cc87272240b942f74e0b8243e520` 本轮重读一致。`--list-devices` 真实列出三卡，空闲约11421/23748/23748MiB；这是离线时 Vulkan 枚举值，**不是三模型同时装载的预算或进程显存**。
 
 当时没有模型 PID，当前 PID→LUID→PCI、各模型专用显存、自然任务利用率及真实 inference 都 **UNKNOWN/NOT_PROVEN**，不沿用历史3400/14020/22336或旧PCI归属冒充当前测量。当前 GPU collector 的旧有限窗口也不能充当持久新监控。主机操作步骤提供只读 D3DKMT/WDDM 回读和三点真实采样，采样不会发模型请求。
 
-原退出发起者、真实退出码、是否控制台/父进程退出 **UNKNOWN**。三份原 stderr/state 日志已复制到新私有目录保留。新一轮四小时窗口 Application1000/1001无 llama/Vulkan匹配、System2004/4101无匹配，不证明“无崩溃”或“人为关闭”；缺少原进程退出收据、可用 Security4689 与父控制台退出证据。没有假设为OOM、驱动崩溃或其它维护会话操作。
+原退出发起者、真实退出码、是否控制台/父进程退出 **UNKNOWN**。三份原 stderr/state 日志已复制到新私有目录保留。新一轮四小时窗口 Application1000/1001无 llama/Vulkan匹配、System2004/4101无匹配，不证明“无崩溃”或“人为关闭”；缺少原进程退出收据与父控制台退出证据；本轮 Security4689 查询成功但四小时内无匹配，不证明当时已启用终止审计。没有假设为OOM、驱动崩溃或其它维护会话操作。
 
 ## 交易安全、备份与部署边界
 

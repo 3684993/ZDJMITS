@@ -23,5 +23,10 @@
     "executed": false,
     "parseErrors": 0,
     "file": "operator-snippet-4.ps1"
+  },
+  {
+    "executed": false,
+    "parseErrors": 0,
+    "file": "operator-snippet-5.ps1"
   }
 ]

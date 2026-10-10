@@ -157,5 +157,21 @@
       408
     ],
     "originalVerifyLogSha256": "4380cd3be13cee06935fee706ac2dc19fdd8fb4b895c5799651baaae087a6ee3"
+  },
+  "combinedSignedReadback": {
+    "sameAccountScope": true,
+    "v3CanTradeMissingPreserved": true,
+    "v2CanTrade": true,
+    "nonzeroPositions": 26,
+    "fullExactProtectionPass": true,
+    "readMethodsOnly": true,
+    "actionTimePermission": false,
+    "reason": "Historical readback samples expire; no lifecycle executed."
+  },
+  "originalAcceptanceLiveReadback": {
+    "observedAt": "2026-10-10T09:10:40.684836+00:00",
+    "status": "ABORTED_SAFETY_FAILURE",
+    "originalAutomationStatus": "PAUSED",
+    "taskChanged": false
   }
 }

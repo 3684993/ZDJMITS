@@ -1,0 +1,39 @@
+{
+  "phase": "N2_DESIGN_NOT_IMPLEMENTED",
+  "retentionOwnerSource": "apps/engine/src/services/marketCohort.ts:11-14",
+  "union": [
+    "positions",
+    "operational entries",
+    "candidateLifecycle active states",
+    "BTCUSDT/ETHUSDT global context",
+    "cohort members",
+    "hydrating",
+    "pool residents"
+  ],
+  "providerChain": [
+    "appRuntime.syncLiveMarketSymbols",
+    "MarketDataHub.setRetentionSymbols",
+    "provider.setLiveSymbols",
+    "BinanceMarketStream.updateSymbols"
+  ],
+  "proposedPublic": [
+    "symbol@bookTicker",
+    "symbol@depth20@500ms"
+  ],
+  "proposedMarket": [
+    "symbol@markPrice@1s",
+    "symbol@kline_1m",
+    "symbol@kline_5m",
+    "symbol@kline_15m",
+    "symbol@aggTrade"
+  ],
+  "tickerDiscovery": "keep !ticker@arr until selection/dependency replay proves it can be narrowed",
+  "controlsPerSecondCurrentUpperBound": 3,
+  "officialStreamsPerConnectionLimit": 1024,
+  "mustNotDropProtectedForCap": true,
+  "needsAckTimeoutAndChurnTests": true,
+  "decodedByteSavings": "NOT_MEASURED",
+  "sshWireSavings": "UNKNOWN",
+  "primarySupplyRegression": "PENDING",
+  "signedTpRegression": "PENDING_AUTHORITATIVE_RUNTIME_PHASE"
+}

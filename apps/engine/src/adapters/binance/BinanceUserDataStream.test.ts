@@ -1,7 +1,19 @@
 import { describe,expect,it,vi } from 'vitest';import {EventEmitter} from 'node:events';
-const sockets=vi.hoisted(()=>[] as any[]);vi.mock('ws',()=>({default:class extends EventEmitter{ping=vi.fn(()=>this.emit('pong'));terminate=vi.fn();close=vi.fn();constructor(){super();sockets.push(this);}}}));
+const sockets=vi.hoisted(()=>[] as any[]);vi.mock('ws',()=>({default:class extends EventEmitter{ping=vi.fn(()=>this.emit('pong'));terminate=vi.fn();close=vi.fn();constructor(public url:string,public options:any){super();sockets.push(this);}}}));
 import { BinanceUserDataStream } from './BinanceUserDataStream.js';
 describe('Binance User Data WS',()=>{
 it('forwards only private account/order facts and ignores malformed frames',()=>{const sink=vi.fn(),stream=new BinanceUserDataStream({} as never,'key',sink);(stream as any).onMessage('{bad');(stream as any).onMessage(JSON.stringify({e:'markPriceUpdate'}));(stream as any).onMessage(JSON.stringify({e:'ORDER_TRADE_UPDATE',o:{s:'BTCUSDT'}}));(stream as any).onMessage(JSON.stringify({e:'ACCOUNT_UPDATE'}));expect(sink).toHaveBeenCalledTimes(2);});
 it('keeps an idle pong-responsive socket alive and terminates a silent one',async()=>{vi.useFakeTimers();const stream=new BinanceUserDataStream({json:async()=>({listenKey:'test'}),effectiveWsUrl:()=>'',websocketOptions:()=>({})} as never,'test',vi.fn());try{stream.start();await vi.advanceTimersByTimeAsync(0);const socket=sockets.at(-1);socket.emit('open');await vi.advanceTimersByTimeAsync(120000);expect(socket.terminate).not.toHaveBeenCalled();socket.ping.mockImplementation(()=>{});await vi.advanceTimersByTimeAsync(60000);expect(socket.terminate).toHaveBeenCalled();}finally{stream.stop();vi.useRealTimers();}});
+});
+it('uses PRIVATE before listenKey creation and separates idle pong from private facts',async()=>{
+ vi.useFakeTimers();const route=vi.fn(()=> 'wss://demo-fstream.binance.com/private/ws'),json=vi.fn(async()=>({listenKey:'synthetic/key'})),sink=vi.fn();
+ const stream=new BinanceUserDataStream({json,effectiveWsUrl:route,websocketOptions:()=>({agent:'mock-proxy'})} as never,'mock',sink);
+ try{stream.start();await vi.advanceTimersByTimeAsync(0);const socket=sockets.at(-1);expect(route).toHaveBeenCalledWith('PRIVATE');expect(socket.url).toBe('wss://demo-fstream.binance.com/private/ws/synthetic%2Fkey');expect(socket.options).toMatchObject({agent:'mock-proxy',handshakeTimeout:15000});socket.emit('open');await vi.advanceTimersByTimeAsync(60000);expect(stream.metrics()).toMatchObject({state:'LIVE',lastMessageAt:null,privateEventEvidence:'UNKNOWN_NO_ACCOUNT_OR_ORDER_EVENTS',orderEvents:0,accountEvents:0});expect(stream.metrics().lastPongAt).not.toBeNull();socket.emit('message',JSON.stringify({e:'ACCOUNT_UPDATE',E:1,T:1}));socket.emit('message',JSON.stringify({e:'ORDER_TRADE_UPDATE',E:2,T:2}));expect(sink).toHaveBeenCalledTimes(2);expect(stream.metrics()).toMatchObject({accountEvents:1,orderEvents:1,privateEventEvidence:'EVENTS_OBSERVED_NOT_REST_REPLACEMENT'});socket.emit('message',JSON.stringify({e:'listenKeyExpired'}));expect(socket.terminate).toHaveBeenCalledTimes(1);}finally{stream.stop();vi.useRealTimers();}
+});
+it.each(['PROXY_REQUIRED','BINANCE_WS_ENVIRONMENT_ORIGIN_MISMATCH','BINANCE_WS_LEGACY_CONFIG_REQUIRES_EXPLICIT_MIGRATION'])('rejects %s before any listenKey request',async reason=>{
+ vi.useFakeTimers();const json=vi.fn(),stream=new BinanceUserDataStream({json,effectiveWsUrl:()=>{throw Error(reason);},websocketOptions:()=>({})} as never,'mock',vi.fn());
+ try{stream.start();await vi.advanceTimersByTimeAsync(0);expect(json).not.toHaveBeenCalled();expect(stream.metrics().lastError).toBe(reason);}finally{stream.stop();vi.useRealTimers();}
+});
+it('does not create a listenKey without credentials',async()=>{
+ vi.useFakeTimers();const json=vi.fn(),stream=new BinanceUserDataStream({json,effectiveWsUrl:()=>'',websocketOptions:()=>({})} as never,' ',vi.fn());try{stream.start();await vi.advanceTimersByTimeAsync(0);expect(json).not.toHaveBeenCalled();expect(stream.metrics().lastError).toBe('BINANCE_USER_STREAM_CREDENTIAL_REQUIRED');}finally{stream.stop();vi.useRealTimers();}
 });

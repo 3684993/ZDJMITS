@@ -1,0 +1,38 @@
+[
+  {
+    "path": "apps/engine/src/adapters/binance/BinanceTransport.ts",
+    "sha256": "6a1756813d5eac7cbb1042717afd8acfea1474651db0908d23088a062bc94c88"
+  },
+  {
+    "path": "apps/engine/src/adapters/binance/BinanceTransport.test.ts",
+    "sha256": "a6980b722436c051e23c484fbe5f6736fbd874257c2f4fc15259a2d407f008d4"
+  },
+  {
+    "path": "apps/engine/src/adapters/binance/wsEndpoint.ts",
+    "sha256": "d32289d8fb96d548ecbe7a4024d741b935d7ece06fc1d023373c9d2aabe8e596"
+  },
+  {
+    "path": "apps/engine/src/adapters/binance/wsEndpoint.test.ts",
+    "sha256": "9a39326a9b53200f70e274363c1252c1eb4973ce3f0879e52b7b2bd6e336921e"
+  },
+  {
+    "path": "apps/engine/src/adapters/binance/BinanceUserDataStream.ts",
+    "sha256": "7c1d1e62fe9b180564b9161ba54d2755f44e8cfb31380d0a9a7f736cc0edea7c"
+  },
+  {
+    "path": "apps/engine/src/adapters/binance/BinanceUserDataStream.test.ts",
+    "sha256": "5656b0a599a607bd09f586976c20a3503dda5b68f78c9ffceb814dd950e2abd2"
+  },
+  {
+    "path": "packages/contracts/src/settings.ts",
+    "sha256": "c1313c36eb3a2e8cf266073668bb080b76351f80a0fb3291f14d7d2f67cb8832"
+  },
+  {
+    "path": "config/settings.default.json",
+    "sha256": "57426310c5f89e607c86c39ff9d5171ae35ad2c640971acddfc1e6afd9279b38"
+  },
+  {
+    "path": "package-lock.json",
+    "sha256": "6a75110f6a141f8098b2bbade98796ad5ad2acf1defd683eb86f5c39f09e29ca"
+  }
+]

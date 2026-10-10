@@ -1,0 +1,56 @@
+{
+  "samples": [
+    {
+      "file": "baseline-first.json",
+      "observedAt": "2026-10-10T00:41:50.887Z",
+      "retainedSymbols": 44,
+      "totalDecodedBytes": 17319400,
+      "globalStreamClassDecodedBytes": 13767448,
+      "globalClassShare": 0.7949,
+      "publicReconnects": 0,
+      "marketReconnects": 2,
+      "quoteFreshRatio": 0.3181818181818182,
+      "klineFreshRatio": 0.6363636363636364,
+      "sequenceInvalid": 14,
+      "tp": {
+        "status": "DEGRADED",
+        "required": 16,
+        "protected": 15,
+        "missing": 1,
+        "unverifiedTp": 0,
+        "duplicateTp": 0,
+        "qtyMismatch": 0,
+        "wrongSide": 0
+      }
+    },
+    {
+      "file": "baseline-second.json",
+      "observedAt": "2026-10-10T00:43:55.599Z",
+      "retainedSymbols": 46,
+      "totalDecodedBytes": 19598130,
+      "globalStreamClassDecodedBytes": 15656148,
+      "globalClassShare": 0.7989,
+      "publicReconnects": 0,
+      "marketReconnects": 2,
+      "quoteFreshRatio": 1,
+      "klineFreshRatio": 0.6739130434782609,
+      "sequenceInvalid": 13,
+      "tp": {
+        "status": "READY",
+        "required": 17,
+        "protected": 17,
+        "missing": 0,
+        "unverifiedTp": 0,
+        "duplicateTp": 0,
+        "qtyMismatch": 0,
+        "wrongSide": 0
+      }
+    }
+  ],
+  "units": "DECODED_WS_APPLICATION_BYTES_PER_60S",
+  "NOT_savingsMeasurement": true,
+  "NOT_sshWireBytes": true,
+  "unusedSymbolFraction": "UNKNOWN_NO_PER_SYMBOL_INGRESS_COUNTER",
+  "postOptimizationComparison": "PENDING_NOT_DEPLOYED",
+  "causalQueueRelationship": "UNPROVEN_NO_SSH_SOCKET_BACKLOG"
+}

@@ -8,7 +8,7 @@
 1. 最新 `main` HEAD、GitHub Actions、所有开放的相关 PR/Issue、真实已部署runtime build（不可用最新文档commit冒充部署）。
 2. 优先读取 `docs/prompts/CURRENT_MAINTENANCE_HANDOFF.md`、`docs/project-memory.md`、`docs/reports/v398-engine-cutover-20261010/DEPLOYMENT_RECEIPT.md`、`docs/reports/v398-engine-cutover-20261010/acceptance/state.json`。
 3. **此次主计划：** `docs/plans/V398_DASHBOARD_GPU_OBSERVABILITY_AND_PERFORMANCE_PLAN_20261010.md`；同步读取 `docs/plans/V398_DUAL_27B_GPU_UTILIZATION_AND_DUTY_SCHEDULING_20261010.md`、`docs/plans/V398_GPU2_POSITION_PENDING_TP_REVIEW_OPTIMIZATION_20261010.md`、`docs/plans/V398_BINANCE_NETWORK_COMMUNICATION_AUDIT_AND_OPTIMIZATION_20261010.md`。
-4. 关联Issues #23 (ENAUSDC显示补仓1次的订单身份审计)、#24 (REST/WS/SOCKS优化)、#26 (双Qwen27B容量租约)、#28 (GPU2挂单/持仓/TP SHADOW)。必须检查是否已有Codex提交，不要重复工作，新增页面应与现有Vue组件和样式兼容。
+4. 主线执行任务 Issue #30（GPU与驾驶舱性能优化），关联Issues #23 (ENAUSDC显示补仓1次的订单身份审计)、#24 (REST/WS/SOCKS优化)、#26 (双Qwen27B容量租约)、#28 (GPU2挂单/持仓/TP SHADOW)。必须检查是否已有Codex提交，不要重复工作，新增页面应与现有Vue组件和样式兼容。
 5. 当前仓库技术：Dashboard = Vue 3 + Pinia + **ECharts 5** + Vue Router，`apps/dashboard/src/views/{OverviewView,OperationsView,BrainView}.vue`、`components/EquityChart.vue`、`router.ts`、`navigation.ts`、`routePreload.ts`、`layouts/AppShell.vue`；Engine已提供大量只读`/api/v3`快照/diagnostics。先复用已有接口与图表库，不引入新前端框架。
 
 ## 已知最新实际运行事实（必须重新只读确认，勿把历史回执当实时）

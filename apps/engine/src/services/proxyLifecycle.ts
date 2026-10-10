@@ -37,6 +37,8 @@ export class ProxyLifecycleService{
   private busy=false;
   private flights=new Map<string,Promise<Result>>();
   private values=new Map<string,Result>();
+  private failureCounts=new Map<string,number>();
+  private nextProbeAt=new Map<string,number>();
   constructor(private options:{directory:string;run?:(action:'start'|'restart'|'verify',resource:ProxyResource)=>Promise<Result>;audit?:(row:any)=>void}){}
   private key(r:ProxyResource,host="demo-fapi.binance.com"){return `${r.id}:${r.url}:${r.enabled}:${host}`;}
   status(r:ProxyResource,host="demo-fapi.binance.com"):Result{
@@ -58,8 +60,11 @@ export class ProxyLifecycleService{
   async verify(r:ProxyResource,host='demo-fapi.binance.com'){
     const base=this.status(r,host);if(['NOT_CONFIGURED','DISABLED'].includes(base.status))return base;
     const key=this.key(r,host),running=this.flights.get(key);if(running)return running;
+    // Repeated UI requests share recent evidence and back off after actual failures.
+    // The original asOf remains unchanged, so cached proof naturally expires.
+    const cached=this.values.get(key);if(cached&&Date.now()<(this.nextProbeAt.get(key)??0))return{...this.status(r,host),manageable:managedProxy(r)};
     if(!['demo-fapi.binance.com','fapi.binance.com'].includes(host))throw Error('PROXY_PROBE_HOST_NOT_ALLOWED');
-    const flight=(async()=>{let result:Result;try{result=this.options.run?await this.options.run('verify',r):managedProxy(r)&&host==='demo-fapi.binance.com'?await this.command('verify',r):await remoteProbe(r,host);}catch(error){result={status:'VALIDATION_FAILED',asOf:Date.now(),reason:(error as Error).message};}result={...result,targetHost:host};this.values.set(key,result);await this.audit({resourceId:r.id,action:'verify',...result});return{...result,manageable:managedProxy(r)};})();
+    const flight=(async()=>{let result:Result;try{result=this.options.run?await this.options.run('verify',r):managedProxy(r)&&host==='demo-fapi.binance.com'?await this.command('verify',r):await remoteProbe(r,host);}catch(error){result={status:'VALIDATION_FAILED',asOf:Date.now(),reason:(error as Error).message};}result={...result,targetHost:host};this.values.set(key,result);const failures=result.status==='VERIFIED'?0:Math.min(4,(this.failureCounts.get(key)??0)+1);this.failureCounts.set(key,failures);this.nextProbeAt.set(key,Date.now()+Math.min(120000,30000*2**Math.max(0,failures-1))+Math.floor(Math.random()*1000));await this.audit({resourceId:r.id,action:'verify',...result});return{...result,manageable:managedProxy(r)};})();
     this.flights.set(key,flight);try{return await flight;}finally{this.flights.delete(key);}
   }
   async operate(r:ProxyResource,action:unknown){
@@ -68,7 +73,7 @@ export class ProxyLifecycleService{
     if(this.busy||this.flights.size)throw Error('PROXY_OPERATION_BUSY');this.busy=true;
     const lockPath=path.join(this.options.directory,'proxy-operation.lock');let lock:any,complete=false;
     try{await mkdir(this.options.directory,{recursive:true});lock=await open(lockPath,'wx',0o600);await lock.writeFile(JSON.stringify({enginePid:process.pid,resourceId:r.id,action,at:Date.now()}));await this.audit({resourceId:r.id,action,status:'STARTED'});
-      const result={...await this.command(action,r),targetHost:'demo-fapi.binance.com',manageable:true};this.values.set(this.key(r),result);complete=true;await this.audit({resourceId:r.id,action,...result});return result;
+      const result={...await this.command(action,r),targetHost:'demo-fapi.binance.com',manageable:true};this.values.set(this.key(r),result);this.nextProbeAt.delete(this.key(r));this.failureCounts.delete(this.key(r));complete=true;await this.audit({resourceId:r.id,action,...result});return result;
     }catch(error){complete=!(error as Error).message.includes('TIMEOUT_OUTCOME_UNKNOWN');await this.audit({resourceId:r.id,action,status:'FAILED',reason:(error as Error).message});throw error;
     }finally{await lock?.close();if(lock&&complete)await unlink(lockPath);this.busy=false;}
   }

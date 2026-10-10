@@ -40,6 +40,15 @@ try {
   function Start-Sleep {param($Seconds,$Milliseconds)}
   $bounded=$false;try{Main|Out-Null}catch{$bounded=$_.Exception.Message -like 'RESTART_BUDGET_EXHAUSTED*'}
   if(-not $bounded -or $script:starts -ne 3 -or $script:stops -ne 2){throw 'Failed start/restart budget not bounded'}
+  # One-shot restart restores the monitor even if public verification still fails.
+  # All lifecycle functions remain fixtures: no production process is touched.
+  $Watch=$false;$Restart=$true;$script:restored=0;$script:guardianStops=0
+  function Stop-Guardian {$script:guardianStops++}
+  function Start-Guardian {$script:restored++}
+  function Start-OwnedTunnel {$script:starts++}
+  $failed=$false;try{Main|Out-Null}catch{$failed=$_.Exception.Message -like 'TUNNEL_UNHEALTHY*'}
+  if(-not $failed -or $script:restored -ne 1 -or $script:guardianStops -ne 1){throw 'Restart lost guardian after failed probe'}
+  if($text -match 'AddMinutes\(-15\)') {throw 'Lifetime restart budget must not reset on clock passage'}
   Write-Output 'VPN_CLIENT_TEST_PASS: foreign owner, pid reuse, real stalled peer deadline/socket close, finite failed-start recovery, no embedded secret'
 }finally{
   # Resolve and check the exact generated temp directory before recursive cleanup.

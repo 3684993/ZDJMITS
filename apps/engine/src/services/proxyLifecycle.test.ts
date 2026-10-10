@@ -36,3 +36,9 @@ it('retains the lock after uncertain timeout and prevents a second lifecycle att
   expect(await readFile(path.join(directory,'proxy-operation.lock'),'utf8')).toContain('restart');
   await expect(s.operate(resource,'start')).rejects.toThrow();
 });
+it('reuses recent probe evidence without refreshing asOf and backs off failed probes',async()=>{
+ vi.useFakeTimers();const run=vi.fn().mockResolvedValue({status:'VALIDATION_FAILED',asOf:Date.now(),failurePhase:'SOCKS_CONNECT_REPLY'}),s=(await service(run)).service;
+ const first=await s.verify(resource);for(let i=0;i<100;i++)expect((await s.verify(resource)).asOf).toBe(first.asOf);expect(run).toHaveBeenCalledTimes(1);
+ vi.advanceTimersByTime(31000);run.mockResolvedValue({status:'VALIDATION_FAILED',asOf:Date.now()});await s.verify(resource);expect(run).toHaveBeenCalledTimes(2);
+ vi.advanceTimersByTime(31000);await s.verify(resource);expect(run).toHaveBeenCalledTimes(2);vi.advanceTimersByTime(31000);await s.verify(resource);expect(run).toHaveBeenCalledTimes(3);
+});

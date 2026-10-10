@@ -63,6 +63,12 @@ it('derives all official WS lanes without an unrouted private fallback',()=>{
  expect(transport.effectiveWsUrl('MARKET')).toBe('wss://demo-fstream.binance.com/market/ws');
  expect(transport.websocketRoute()).toMatchObject({publicUrl:'wss://demo-fstream.binance.com/public/ws',marketUrl:'wss://demo-fstream.binance.com/market/ws',tlsServername:'demo-fstream.binance.com'});
 });
+it('reports invalid legacy WS config without crashing governance or creating an alternate route',()=>{
+ const transport=new BinanceTransport({...settings(),exchange:{...settings().exchange,testnetWsBaseUrl:'wss://stream.binancefuture.com/ws'}} as never);
+ expect(()=>transport.effectiveWsUrl('PRIVATE')).toThrow('EXPLICIT_MIGRATION');
+ expect(transport.websocketRoute()).toMatchObject({url:null,publicUrl:null,marketUrl:null,privateUrl:null,configurationError:'BINANCE_WS_LEGACY_CONFIG_REQUIRES_EXPLICIT_MIGRATION',failClosed:true});
+ expect(transport.restRoute()).toMatchObject({host:'demo-fapi.binance.com',throughProxy:true});transport.dispose();
+});
 it('reserves the private-truth lane for listen-key maintenance without relying on signature heuristics',async()=>{const transport=new BinanceTransport(settings() as never),run=vi.spyOn((transport as any).budget,'run').mockResolvedValue({} as never);try{await transport.json('/fapi/v1/listenKey',{method:'PUT',headers:{'X-MBX-APIKEY':'isolated-test'}});expect(run.mock.calls[0]![0]).toBe(1);expect(run.mock.calls[0]![1]).toBe(1);expect(run.mock.calls[0]![3]).toMatchObject({source:'USER_DATA_STREAM',endpoint:'/fapi/v1/listenKey'});}finally{run.mockRestore();}});
 it.each([
  ['POST','/fapi/v1/leverage','EXECUTION'],['POST','/fapi/v1/order','EXECUTION'],['PUT','/fapi/v1/order','EXECUTION'],['DELETE','/fapi/v1/order','EXECUTION'],['GET','/fapi/v1/order','PRIVATE_TRUTH'],

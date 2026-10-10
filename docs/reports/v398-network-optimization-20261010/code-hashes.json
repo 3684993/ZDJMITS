@@ -1,11 +1,11 @@
 [
   {
     "path": "apps/engine/src/adapters/binance/BinanceTransport.ts",
-    "sha256": "987f1aa62913f61774c212f4239c6318c13d310f59b4518fc1b4f7a72d225a0a"
+    "sha256": "6a1756813d5eac7cbb1042717afd8acfea1474651db0908d23088a062bc94c88"
   },
   {
     "path": "apps/engine/src/adapters/binance/BinanceTransport.test.ts",
-    "sha256": "5d63c2747c6090a5ee6d3dd7e70ba7bff0e0686faea2e36c648870e40cc3b284"
+    "sha256": "a6980b722436c051e23c484fbe5f6736fbd874257c2f4fc15259a2d407f008d4"
   },
   {
     "path": "apps/engine/src/adapters/binance/wsEndpoint.ts",

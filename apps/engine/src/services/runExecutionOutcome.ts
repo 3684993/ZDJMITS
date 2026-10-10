@@ -16,7 +16,10 @@
  *   (`EXECUTION_LINEAGE_UNPROVEN`), because by then every layer would have written something.
  */
 
+import { entryOrderHistory, ORDER_LIFECYCLE_EVENTS } from './entryOrderHistory.js';
+
 export type ExecutionState =
+  | 'CANCELED' | 'CANCELED_PARTIAL_FILL' | 'EXPIRED' | 'REJECTED' | 'SUBMITTED_BUT_REMOTE_UNKNOWN'
   | 'READ_ONLY_NON_EXECUTABLE'
   | 'DECISION_ONLY'
   | 'EXECUTING'
@@ -68,6 +71,16 @@ export interface RunExecutionOutcome {
   /** False when no execution event of any kind carries this run: the chain never spoke about it. */
   lineageProven: boolean;
   inconsistentFacts: string[];
+  wasSubmitted?: boolean;
+  lifecycleStatus?: string;
+  terminalAt?: number | null;
+  filledQuantity?: number | null;
+  remainingQuantity?: number | null;
+  statusAuthority?: string;
+  lastExchangeVerifiedAt?: number | null;
+  orderAttempts?: any[];
+  totalFilledQuantity?: number | null;
+  knownFilledQuantityLowerBound?: number;
 }
 
 export interface LineageEvent {
@@ -88,6 +101,7 @@ export interface RunRow {
 
 /** Events the projection reads. Anything not listed here cannot change an execution outcome. */
 export const ENTRY_EXECUTION_LINEAGE_EVENT_TYPES = [
+  ...ORDER_LIFECYCLE_EVENTS,
   'ANALYSIS_ONLY_COMPLETED',
   'ENTRY_ECONOMIC_ADMISSION_EVALUATED',
   'AI_CANDIDATE_SELECTED',
@@ -136,12 +150,17 @@ const BLOCK_STAGE: Record<string, ExecutionBlockStage> = {
 };
 
 export const EXECUTION_LABELS: Record<ExecutionState, string> = {
+  CANCELED: '曾成功提交 · 已撤单（成交0）',
+  CANCELED_PARTIAL_FILL: '曾成功提交 · 部分成交后撤单',
+  EXPIRED: '曾成功提交 · 交易所已过期',
+  REJECTED: '订单已拒绝',
+  SUBMITTED_BUT_REMOTE_UNKNOWN: '曾成功提交 · 状态待核验',
   READ_ONLY_NON_EXECUTABLE: '只读分析 · 未授权订单执行',
   DECISION_ONLY: '仅决策 · 未进入执行链',
   EXECUTING: '正在执行',
   WAITING_PRICE: '等待价格',
   NOT_SUBMITTED: '未挂单',
-  SUBMITTED: '已挂单',
+  SUBMITTED: '曾成功提交 · 活动状态待刷新',
   PARTIALLY_FILLED: '部分成交',
   FILLED: '已成交',
 };
@@ -206,6 +225,7 @@ export function projectRunExecutionOutcomes(
   runs: RunRow[],
   now = Date.now(),
   fallbackRunId: string | null = null,
+  orderRecords: any[] = [],
 ): Map<string, RunExecutionOutcome> {
   const rows = new Map<string, Mutable>();
   for (const run of runs) {
@@ -417,6 +437,30 @@ export function projectRunExecutionOutcomes(
       lineageProven: row.lineageProven,
       inconsistentFacts: [...new Set([...row.inconsistent, ...(row.analysisOnly && (row.intentId || row.orderId || row.firstFillAt) ? ['READ_ONLY_EXECUTION_FACT_CONTRADICTION'] : [])])].slice(0, 8),
     });
+  }
+  const history=entryOrderHistory(orderRecords,events,now);
+  for(const [id,outcome] of outcomes){
+    const owned=history.filter(o=>o.decisionRunId===id);
+    if(!owned.length)continue;
+    const current=owned.find(o=>o.id===outcome.orderId)??owned[0];
+    const attempts=[...new Map(owned.flatMap(o=>o.orderAttempts.map((a:any)=>({...a,internalOrderId:o.id}))).map((a:any)=>[String(a.exchangeOrderId??a.clientOrderId??a.internalOrderId),a])).values()];
+    const status=current.lifecycleStatus;
+    const state:ExecutionState=status==='LOCAL_TTL_EXPIRED_REMOTE_UNKNOWN'||status==='UNKNOWN'?'SUBMITTED_BUT_REMOTE_UNKNOWN'
+      :status==='WORKING'?'SUBMITTED':status as ExecutionState;
+    const wasSubmitted=owned.some(o=>o.wasSubmitted);
+    const validState=state==='REJECTED'&&!wasSubmitted&&outcome.executionState==='NOT_SUBMITTED'?'NOT_SUBMITTED':Object.prototype.hasOwnProperty.call(EXECUTION_LABELS,state)?state:outcome.executionState;
+    const executionLabel=validState==='NOT_SUBMITTED'?outcome.executionLabel
+      :status==='UNKNOWN'&&!wasSubmitted?'提交结果待核验 · 禁止重复提交'
+      :status==='LOCAL_TTL_EXPIRED_REMOTE_UNKNOWN'?'本地超时 · 交易所状态待核验'
+      :status==='CANCELED'&&current.filledQuantity==null?'曾成功提交 · 已撤单（成交量待核验）'
+      :status==='WORKING'?`曾成功提交 · ${current.freshness==='FRESH'?'活动中':'活动状态待刷新'}`
+      :EXECUTION_LABELS[validState];
+    outcomes.set(id,{...outcome,executionState:validState,executionLabel,wasSubmitted,lifecycleStatus:status,
+      terminalAt:current.terminalAt,filledQuantity:current.filledQuantity,remainingQuantity:current.remainingQuantity,
+      statusAuthority:current.statusAuthority,lastExchangeVerifiedAt:current.lastExchangeVerifiedAt,
+      orderAttempts:attempts,
+      totalFilledQuantity:attempts.length&&attempts.every((a:any)=>a.filledQuantity!=null)?attempts.reduce((sum:number,a:any)=>sum+Number(a.filledQuantity),0):null,
+      knownFilledQuantityLowerBound:attempts.reduce((sum:number,a:any)=>sum+Number(a.filledQuantity??0),0) });
   }
   return outcomes;
 }

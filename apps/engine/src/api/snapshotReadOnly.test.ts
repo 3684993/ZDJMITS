@@ -63,3 +63,15 @@ it('ALL history API preserves incomplete origins with side/status filters and pa
  const page:any=await (await fetch(url+'?symbol=AVAXUSDT&limit=1&page=2')).json();expect(page.total).toBe(2);expect(page.items).toHaveLength(1);expect(page.items[0].tradeId).toBe('old-short');
  expect(db.prepare('SELECT total_changes() n').get().n).toBe(changes);expect(JSON.stringify([...runtime.state.tradeRecords])).toBe(before);
 });
+it('Entry history GET folds durable canceled identities without SQLite or exchange writes',async()=>{
+ dataDir=await mkdtemp(path.join(os.tmpdir(),'zdj-entry-history-readonly-'));runtime=await EngineRuntime.createTestHarness({configDir:'../../config',dataDir});
+ const now=Date.now(),order={id:'history-order',intentId:'history-intent',decisionChainId:'history-primary',clientOrderId:'history-client',exchangeOrderId:'history-exchange',symbol:'UNIUSDT',side:'SHORT',quantity:135,price:7.442,filledQuantity:0,status:'CANCELED',createdAt:now-900000,updatedAt:now-10000};
+ runtime.state.entryOrders.set(order.id,order as any);
+ runtime.settingsStore.recordRuntimeEvent({id:'history-create',type:'ENTRY_ORDER_CREATED',ts:now-890000,symbol:order.symbol,payload:{brainRunId:order.decisionChainId,order:{...order,status:'WORKING'}}});
+ runtime.settingsStore.recordRuntimeEvent({id:'history-cancel',type:'ENTRY_ORDER_USER_DATA_CONFIRMED',ts:now-10000,symbol:order.symbol,payload:{orderId:order.id,clientOrderId:order.clientOrderId,exchangeOrderId:order.exchangeOrderId,status:'CANCELED',filledQuantity:0}});
+ const app=express();app.use('/api/v3',createApiRouter(runtime));server=app.listen(0,'127.0.0.1');await new Promise(resolve=>server.once('listening',resolve));
+ const db=(runtime.settingsStore as any).db,before=JSON.stringify([...runtime.state.entryOrders]),changes=db.prepare('SELECT total_changes() n').get().n;
+ const body:any=await(await fetch(`http://127.0.0.1:${server.address().port}/api/v3/orders?status=CANCELED`)).json();
+ expect(body.entryHistory).toMatchObject({readOnly:true,total:1,items:[{decisionRunId:'history-primary',lifecycleStatus:'CANCELED',wasSubmitted:true,filledQuantity:0}]});
+ expect(db.prepare('SELECT total_changes() n').get().n).toBe(changes);expect(JSON.stringify([...runtime.state.entryOrders])).toBe(before);
+});

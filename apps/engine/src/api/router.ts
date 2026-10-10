@@ -17,6 +17,7 @@ import { resolveUnderlying } from '@zdj/core';
 import { canonicalBlacklistValue } from '../services/universeCoordinator.js';
 import { ProductionAssetResearchService } from '../services/productionAssetResearch.js';
 import { archivedPacket, projectBrainRun } from '../services/brainRunArchive.js';
+import { entryOrderHistory, entryHistoryPage, ORDER_LIFECYCLE_EVENTS } from '../services/entryOrderHistory.js';
 import { p0EntryIntegrity } from '../services/p0EntryIntegrity.js';
 import { byClosedAtDesc, byOpenedAtDesc } from './chronologicalSort.js';
 import { entryObservation } from '../services/entryObservation.js';
@@ -44,17 +45,15 @@ export function withExecutionOutcomes(runtime: EngineRuntime, items: any[]) {
   if (!primaries.length) return rows.map((row) => ({...row, execution: null}));
   const ends = primaries.map((row) => Number(row.completedAt ?? row.startedAt ?? 0)).filter((value) => Number.isFinite(value) && value > 0);
   const since = Math.min(...ends) - 60_000;
-  const until = Math.max(...ends) + EXECUTION_LINEAGE_GRACE_MS;
   const events = runtime.settingsStore
-    .runtimeEvents(since, [...ENTRY_CONVERSION_EVENT_TYPES], 20_000)
-    .filter((event: any) => Number(event.ts) <= until);
+    .runtimeEvents(since, [...new Set(ENTRY_CONVERSION_EVENT_TYPES)], 100_000,true);
   const outcomes = projectRunExecutionOutcomes(events, primaries.map((row) => ({
     brainRunId: String(row.id),
     symbol: row.symbol ?? null,
     decision: row.decision ?? null,
     direction: row.direction ?? null,
     decidedAt: Number(row.completedAt ?? row.startedAt ?? Date.now()),
-  })));
+  })),Date.now(),null,[...(runtime.state?.entryOrders?.values?.()??[])]);
   return rows.map((row) => ({
     ...row,
     execution: row?.role === 'PRIMARY_BRAIN' ? outcomes.get(String(row.id)) ?? null : null,
@@ -187,16 +186,16 @@ export function createApiRouter(runtime: EngineRuntime) {
         normalizedDecision = JSON.parse(normalizedDecision);
     } catch {}
     const chain=runtime.settingsStore.getDecisionChain(run.id),
-      execution = projectRunExecutionOutcomes(
-        [...(chain?.events ?? [])].sort((a: any, b: any) => Number(a.ts ?? 0) - Number(b.ts ?? 0)),
-        [{brainRunId: run.id, symbol: run.symbol ?? null, decision: run.decision ?? null, direction: run.direction ?? null, decidedAt: Number(run.completedAt ?? run.startedAt ?? Date.now())}],
-        Date.now(),
-        run.id,
-      ).get(run.id) ?? null,
-      projection=projectBrainRun(run,chain,[...runtime.state.entryOrders.values()],runtime.state.executionFills,Date.now(),execution),finalEvent=projection.timeline.at(-1);
+      execution = withExecutionOutcomes(runtime,[run])[0]?.execution??null,
+      linkedOrders=[...runtime.state.entryOrders.values()].filter((o:any)=>o.decisionChainId===run.id),
+      exactIds=new Set(linkedOrders.map((o:any)=>o.id)),
+      extraEvents=runtime.settingsStore.runtimeEvents(Number(run.startedAt??0)-60000,[...ORDER_LIFECYCLE_EVENTS],10000,true).filter((e:any)=>exactIds.has(e.payload?.orderId??e.payload?.order?.id)),
+      mergedChain={...chain,events:[...new Map([...(chain?.events??[]),...extraEvents].map((e:any)=>[e.id??`${e.type}:${e.ts}`,e])).values()]},
+      projection=projectBrainRun(run,mergedChain,[...runtime.state.entryOrders.values()],runtime.state.executionFills,Date.now(),execution),finalEvent=projection.timeline.at(-1);
     res.json({
       run,
       execution,
+      orderAttempts:projection.orderAttempts,
       summary: projection.summary,
       temporalMemory: runtime.settingsStore.getDecisionEpisodeByRun(run.id),
       eip:packet,
@@ -661,7 +660,11 @@ export function createApiRouter(runtime: EngineRuntime) {
     const manualCurrent=runtime.reconciliation?.currentOpenManualOrders?.()??{status:'UNAVAILABLE',verifiedAt:null,items:[]};
     const allHistoricalUnknown=[...runtime.state.entryOrders.values()].filter(order=>order.status==='UNKNOWN'||( ['FILLED','CANCELED','EXPIRED','REJECTED'].includes(order.status)&&(order as any).exchangeTerminalStatus==='UNKNOWN'));
     const historicalUnknown=allHistoricalUnknown.filter(order=>Number(order.createdAt??0)>=historyCutoff);
+    const lifecycleEvents=runtime.settingsStore.runtimeEvents(now-30*86400000,[...ORDER_LIFECYCLE_EVENTS],100000,true);
+    const historyPage=entryHistoryPage(entryOrderHistory([...runtime.state.entryOrders.values()],lifecycleEvents,now),_q.query,now);
+    for(const order of historyPage.items)for(const review of order.review){if(!review.reviewRunId)continue;try{const archived=runtime.settingsStore.getAiRun(review.reviewRunId);const result=typeof archived?.normalizedPreview==='string'?JSON.parse(archived.normalizedPreview):archived?.normalizedPreview;review.reason=result?.reason??review.reason;}catch{ /* Missing archive is explicitly shown as unrecorded. */ }}
     res.json({entry:current.items,entryReadback:{status:current.status,verifiedAt:current.verifiedAt,count:current.items.length},historicalUnknown,
+      entryHistory:{...historyPage,eventsTruncated:lifecycleEvents.length>=100000},
       historicalUnknownWindow:{since:historyCutoff,until:now,visibleCount:historicalUnknown.length,olderHiddenCount:allHistoricalUnknown.length-historicalUnknown.length},
       takeProfit:[...runtime.state.tpOrders.values()],manual:manualCurrent.items,manualReadback:{status:manualCurrent.status,verifiedAt:manualCurrent.verifiedAt,count:manualCurrent.items.length}});
   });

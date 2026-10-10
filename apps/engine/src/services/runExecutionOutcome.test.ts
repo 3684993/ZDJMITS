@@ -19,7 +19,7 @@ it('projects historical analysis-only risk observations without fabricating a ri
 });
 it('retains real submitted identities and reports contradictions with read-only events',()=>{
  const events=[{type:'ANALYSIS_ONLY_COMPLETED',ts:T0,payload:{brainRunId:'r'}},{type:'ENTRY_ORDER_CREATED',ts:T0+1,payload:{brainRunId:'r',order:{id:'order',clientOrderId:'client',exchangeOrderId:'exchange'}}}];
- expect(projectRunExecutionOutcomes(events,[{brainRunId:'r',decision:'PLACE_LONG'}]).get('r')).toMatchObject({executionState:'SUBMITTED',exchangeOrderId:'exchange',inconsistentFacts:['READ_ONLY_EXECUTION_FACT_CONTRADICTION']});
+ expect(projectRunExecutionOutcomes(events,[{brainRunId:'r',decision:'PLACE_LONG'}]).get('r')).toMatchObject({executionState:'SUBMITTED_BUT_REMOTE_UNKNOWN',wasSubmitted:true,exchangeOrderId:'exchange',inconsistentFacts:['READ_ONLY_EXECUTION_FACT_CONTRADICTION']});
 });
 it('keeps readonly PLACE out of execution conversion denominators',()=>{
  const events=[{type:'PRIMARY_DECISION_NORMALIZED',ts:T0,payload:{runId:'r',normalizedDecision:'PLACE_LONG'}},{type:'ANALYSIS_ONLY_COMPLETED',ts:T0+1,payload:{brainRunId:'r'}}];

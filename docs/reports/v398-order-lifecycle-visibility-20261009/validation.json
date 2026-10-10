@@ -1,0 +1,76 @@
+{
+  "fullNpmVerify": "PASS",
+  "exitCode": 0,
+  "npmCi": "PASS",
+  "workspaceTestFiles": [
+    1,
+    9,
+    26,
+    214
+  ],
+  "workspaceTests": [
+    2,
+    61,
+    129,
+    1933
+  ],
+  "totalTestFiles": 250,
+  "totalTests": 2125,
+  "s00": "PASS 6/6",
+  "releaseIdentity": "PASS",
+  "typecheck": "PASS",
+  "build": "PASS",
+  "scriptSafetyTests": "PASS",
+  "verifyLogSha256": "01881453056b2578d2c5d5b506eb83474666daf489e5d4fe7a0f9f3b9ecbe70a",
+  "offlineReplay": "LIVE_SQLITE_READ_ONLY",
+  "deployment": "NOT_DEPLOYED",
+  "firstVerifyRegression": "5 simulator fixtures had assumed current remote status from historical submit; corrected to UNKNOWN with wasSubmitted retained",
+  "dependencyAudit": "11 pre-existing advisories (4 moderate,4 high,3 critical); no dependency policy change",
+  "runtimePreserved": {
+    "observedAt": "2026-10-09T15:56:34.2058923+08:00",
+    "pid": 18100,
+    "status": "READY",
+    "build": "3.9.8-6cd926abca3eec24392e",
+    "instance": "65185f71-b336-4f6f-8149-cafe90f5e160",
+    "uptimeMs": 3120815,
+    "latchZero": true,
+    "executionPolicyEnabled": true,
+    "orderAuthorization": true,
+    "tpRequired": 13,
+    "tpProtected": 13,
+    "productionWrites": 0,
+    "portOwners": [
+      {
+        "LocalPort": 20091,
+        "OwningProcess": 6784
+      },
+      {
+        "LocalPort": 8084,
+        "OwningProcess": 22336
+      },
+      {
+        "LocalPort": 8083,
+        "OwningProcess": 14020
+      },
+      {
+        "LocalPort": 8081,
+        "OwningProcess": 3400
+      },
+      {
+        "LocalPort": 8080,
+        "OwningProcess": 18100
+      }
+    ]
+  },
+  "verifyLogHashScope": "Git canonical UTF-8/LF bytes as delivered on GitHub",
+  "githubDelivery": {
+    "pr": 16,
+    "codeCommit": "15166ac",
+    "remoteMain": "7c9c94e9807c8c8ab1a9e0c8b205e391974493ec",
+    "reportReadback": "VERIFIED",
+    "verifyLogBlob": "a07597678202db882efe451b47b8f839ab90d23c",
+    "commitStatuses": 0,
+    "hostedCi": "UNKNOWN_NOT_CLAIMED_PASS",
+    "deployment": "NOT_DEPLOYED"
+  }
+}

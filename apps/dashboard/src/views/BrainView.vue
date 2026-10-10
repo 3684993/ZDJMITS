@@ -56,7 +56,7 @@ const executionDisplay=(execution:any)=>{
 };
 const placeSummary=computed(()=>{
   const place=rows.value.filter(r=>r.role==="PRIMARY_BRAIN"&&["PLACE_LONG","PLACE_SHORT"].includes(r.decision));
-  const submitted=place.filter(r=>["SUBMITTED","PARTIALLY_FILLED","FILLED"].includes(r.execution?.executionState)).length;
+  const submitted=place.filter(r=>r.execution?.wasSubmitted??["SUBMITTED","PARTIALLY_FILLED","FILLED"].includes(r.execution?.executionState)).length;
   const blocked=place.filter(r=>r.execution?.executionState==="NOT_SUBMITTED");
   const reasons=new Map<string,number>();
   for(const row of blocked){const label=reasonLabel(row.execution?.blockReasons?.[0]);reasons.set(label,(reasons.get(label)??0)+1);}
@@ -67,6 +67,7 @@ const executionChain = (e: any) => (e ? {
   brainRunId: e.brainRunId, tradePlanId: e.tradePlanId, reservationId: e.reservationId, intentId: e.intentId,
   orderId: e.orderId, clientOrderId: e.clientOrderId, exchangeOrderId: e.exchangeOrderId,
   analysisOnly:e.analysisOnly,orderAuthorization:e.orderAuthorization,riskObservation:e.riskObservation,portfolioRiskAllowed: e.portfolioRiskAllowed, submittedAt: stamp(e.submittedAt), firstFillAt: stamp(e.firstFillAt), updatedAt: stamp(e.updatedAt),
+  wasSubmitted:e.wasSubmitted,lifecycleStatus:e.lifecycleStatus,terminalAt:stamp(e.terminalAt),filledQuantity:e.filledQuantity,remainingQuantity:e.remainingQuantity,statusAuthority:e.statusAuthority,lastExchangeVerifiedAt:stamp(e.lastExchangeVerifiedAt),orderAttempts:e.orderAttempts,totalFilledQuantity:e.totalFilledQuantity,knownFilledQuantityLowerBound:e.knownFilledQuantityLowerBound,
   inconsistentFacts: e.inconsistentFacts ?? [],
 } : null);
 const detailOpen = () => detailLoading.value || Boolean(detailError.value) || Boolean(detail.value);

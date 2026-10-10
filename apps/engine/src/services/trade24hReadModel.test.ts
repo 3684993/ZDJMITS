@@ -24,6 +24,12 @@ describe('24h closed-cycle native-asset PnL',()=>{
       grossProfit:3,grossLoss:-2,netExFunding:1,totalFees:3,allInConfirmedCycles:0,allInConfirmedNet:null,fundingUnknownCycles:3});
     expect(result.coverage).toMatchObject({eligibleClosedCycles:3,excludedClosedRows:0});
   });
+  it('uses half-open [from,to) boundaries without double counting future timestamps',()=>{
+    const result=project([row('inclusive','USDT',1,{closedAt:end-86_400_000}),
+      row('exclusive','USDT',2,{closedAt:end})]);
+    expect(result.byAsset.USDT.cycles).toBe(1);
+    expect(result.byAsset.USDT.netExFunding).toBe(1);
+  });
   it('does not mix USDT with USDC or convert them to USD',()=>{
     const result=project([row('u','USDT',4),row('c','USDC',-1)]);
     expect(result.aggregate).toMatchObject({status:'MULTIPLE_NATIVE_ASSETS_NO_FX',asset:null,netExFunding:null});

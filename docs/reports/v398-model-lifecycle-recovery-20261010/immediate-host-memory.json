@@ -1,0 +1,9 @@
+{
+  "observedAt": "2026-10-10T09:05:19.8745917Z",
+  "data": {
+    "AvailableBytes": 80878825472,
+    "CommittedBytes": 25287835648,
+    "CommitLimit": 178217693184,
+    "PoolNonpagedBytes": 1828397056
+  }
+}

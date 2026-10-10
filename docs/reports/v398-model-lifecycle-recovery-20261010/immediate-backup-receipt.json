@@ -1,0 +1,7 @@
+{
+  "quickCheck": "ok",
+  "bytes": 1026441216,
+  "sha256": "f595b8306e2c5877422ef7f430ed25baf4a8df0fda260b9073e837e62f26cf5d",
+  "elapsedSeconds": 4.611795499993605,
+  "method": "SQLite read-only pinned transaction online backup including committed WAL"
+}

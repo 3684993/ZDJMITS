@@ -1,0 +1,7 @@
+0.08.407.484 I srv  llama_server: listening on http://127.0.0.1:8083
+0.09.641.288 I slot print_timing: id  0 | task 0 | prompt eval time =     131.68 ms /    37 tokens (    3.56 ms per token,   280.99 tokens per second)
+0.09.641.295 I slot print_timing: id  0 | task 0 |        eval time =     868.98 ms /    38 tokens (   22.87 ms per token,    43.73 tokens per second)
+0.09.641.332 I slot      release: id  0 | task 0 | stop processing: n_tokens = 74, truncated = 0
+0.10.943.931 I slot print_timing: id  0 | task 39 | prompt eval time =     357.42 ms /   205 tokens (    1.74 ms per token,   573.55 tokens per second)
+0.10.943.937 I slot print_timing: id  0 | task 39 |        eval time =     872.46 ms /    38 tokens (   22.96 ms per token,    43.55 tokens per second)
+0.10.943.982 I slot      release: id  0 | task 39 | stop processing: n_tokens = 242, truncated = 0

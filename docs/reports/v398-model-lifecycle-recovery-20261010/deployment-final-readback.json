@@ -1,0 +1,37 @@
+{
+  "asOf": "2026-10-10T18:14:00.7068566+08:00",
+  "enginePid": 23936,
+  "restarted": false,
+  "takeProfit": {
+    "status": "READY",
+    "unverifiedTp": 0,
+    "required": 29,
+    "protected": 29,
+    "missing": 0,
+    "repairing": 0,
+    "repairFailed": 0,
+    "manualReviewRequired": 0,
+    "positionFactUnresolved": 0,
+    "positionFactUnresolvedSymbols": [],
+    "orphanTp": 0,
+    "duplicateTp": 0,
+    "qtyMismatch": 0,
+    "wrongSide": 0,
+    "tpMissing": 0,
+    "retryQueue": 0
+  },
+  "privateAgeMs": 6996,
+  "privateFailures": 0,
+  "writeBoundary": {
+    "environment": "TESTNET",
+    "executionMode": "TESTNET_ENABLED",
+    "lockedToTestnet": true,
+    "testnetWrites": 67,
+    "productionWrites": 0,
+    "blockedProductionWriteAttempts": 0,
+    "lastWriteAt": 1791627180836,
+    "lastWritePath": "/fapi/v1/order"
+  },
+  "deployDecision": "NO_GO_SIGNED_TP_GATE_FAILED",
+  "newAcceptanceT0": null
+}

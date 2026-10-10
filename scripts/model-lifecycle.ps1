@@ -51,7 +51,7 @@ if($Action -in @('start','restart')){
   $stdout=Join-Path $logDir "model-$($entry.port)-$stamp.stdout.log"
   $stderr=Join-Path $logDir "model-$($entry.port)-$stamp.stderr.log"
   # Only a sealed operator launcher receives fixed arguments. No browser command or path is accepted.
-  $launcher=Start-Process (Get-Process -Id $PID).Path -ArgumentList @('-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass','-File',('"'+$entry.launcher+'"'),'-Mode','Start','-NoWatchdog') -WindowStyle Hidden -RedirectStandardOutput $stdout -RedirectStandardError $stderr -PassThru
+  $launcher=Start-Process (Get-Process -Id $PID).Path -ArgumentList @('-NoProfile','-NonInteractive','-File',('"'+$entry.launcher+'"'),'-Mode','Start','-NoWatchdog') -WindowStyle Hidden -RedirectStandardOutput $stdout -RedirectStandardError $stderr -PassThru
   if(-not $launcher.WaitForExit(300000)){throw 'MODEL_START_TIMEOUT_OUTCOME_UNKNOWN'}
   if($launcher.ExitCode -ne 0){throw 'MODEL_LAUNCH_FAILED_INSPECT_PRIVATE_LOG'}
 }

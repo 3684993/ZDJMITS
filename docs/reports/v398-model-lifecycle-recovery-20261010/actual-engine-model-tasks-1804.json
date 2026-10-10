@@ -1,0 +1,32 @@
+[
+  {
+    "id": "scout-b580",
+    "status": "ONLINE",
+    "active": 0,
+    "totalRuns": 15,
+    "failures": 0,
+    "lastCompletedAt": 1791626425566,
+    "lastLatencyMs": 13535,
+    "connectionStatus": "ONLINE"
+  },
+  {
+    "id": "brain-7900-primary",
+    "status": "ONLINE",
+    "active": 0,
+    "totalRuns": 9,
+    "failures": 0,
+    "lastCompletedAt": 1791626477621,
+    "lastLatencyMs": 65582,
+    "connectionStatus": "ONLINE"
+  },
+  {
+    "id": "review-7900-gpu2",
+    "status": "ONLINE",
+    "active": 0,
+    "totalRuns": 28,
+    "failures": 19,
+    "lastCompletedAt": 1791626047732,
+    "lastLatencyMs": 17314,
+    "connectionStatus": "ONLINE"
+  }
+]

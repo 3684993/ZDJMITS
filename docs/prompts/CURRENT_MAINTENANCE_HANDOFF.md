@@ -1,3 +1,31 @@
+> 最新最终状态（2026-10-10 18:27 北京时间）：已实际部署源码2c9fec513bd5ba0406015c33b2c7cf9ce420ebaf，构建3.9.8-a6b1702cf52af4257f04，Engine12140/host1216/instance2c07d7d9-7f73-4730-903f-20d26674aa2a，运行身份6/6，health READY。旧Engine23936收到隔离CTRL_C/SIGINT后退出0，只有一次Engine切换。重启前、稳定后签名全仓TP均28/28，canTrade=true，Production0；先前网络超时、29/27及28/27失败证据保留。三模型25912/22880/16772均READY。线上浏览器三资源启动/停止/重启按钮显示，填本机密钥后启动/重启可用；三次授权启动200且PID不变，无密钥403。源码CI38043800329 SUCCESS，264文件/2211例。新24h未启动/T0=null。额外GPU侧车采样启动被平台执行前拒绝，未执行，实时显存UNKNOWN，不虚报新鲜采样。旧观察器PID1920独占锁已按身份切换，新观察器6376绑定新receipt并Running。
+
+> 18:11部署门禁更新：独立签名复核29仓位，仅27仓位TP精确身份PASS；随后在线Engine28/27，missing=1/retryQueue=1/DEGRADED。新鲜签名全仓TP门禁不通过，Engine未退出/未部署；这是实际交易保护失败，不是平台权限拒绝。三模型继续健康，Primary唯一Entry与Production0保持。新构建2c9fec5/a6b1702c已编译封存且私有审批仍revoked=true；新验收T0=null。
+
+> 最新覆盖状态（2026-10-10 18:06 北京时间）：Review 原脚本已实际启动，PID22880/8083/Vulkan1；Scout25912/8081/Vulkan0、Primary16772/8084/Vulkan2均健康。三模型进程身份与原脚本SHA已只读验证。三卡同时实测专用显存约5.92/17.28/17.28GiB；Review两次启动推理各生成38tokens。当前Engine仍23936/6533，按钮源码与权限/互斥/超时/审计已存在，新增重复启动READY模型的幂等修复；此刻尚未部署。旧验收ABORTED，新T0=null。历史拒绝记录不代表本次执行结果。
+
+## 2026-10-10 17:42 实际部分恢复：Scout/Primary成功，Review未执行
+
+本轮正常工具实际允许Scout/Primary创建启动器；第一次Scout因Windows RemoteSigned和三原脚本ZoneId=3而未加载。已核验三文件Git内容无diff、SHA256一致，仅对用户明确指定的三文件执行Microsoft Unblock-File；标记已私有备份，未修改全局/用户/组策略、脚本内容或TP/交易保护。随后Scout25912/8081/Vulkan0/ctx32768与Primary16772/8084/Vulkan2/ctx65536实际启动，health=ok，原启动器真实smoke完成；Scout还有两次新自然Engine完成，Primary此样本未观察新自然Engine run，勿将startup JSON smoke等同自然Entry。
+
+Review8083原harness脚本启动请求在CreateProcess前被平台blocked by policy拒绝，没有细项，没有启动器/模型PID，不换包装/通道绕过。实际2/3恢复，不宣称全部完成。D3DKMT+WDDM主要显存：Scout PCIbus5约6,357,635,072bytes，Primarybus19约18,526,982,144bytes；跨卡少量分配保留。两模型同时加载commit52,047,556,608/limit178,217,693,184bytes；未加载Review，三模型预算尚UNKNOWN。
+
+当前Engine23936未重启/未部署，17:42本地TP26/26 READY且问题计数0、Production0；这只是本地保护读回，不伪称此次新增签名全仓门禁。旧08:34验收ABORTED、新24h NOT_STARTED/T0=null。原退出发起者/退出码仍UNKNOWN；本轮Windows来源标记只解释新Scout首次启动失败，不解释旧llama退出。运行证据和启动/推理事实日志在actual-partial-recovery-1742.json及actual-*.log。完整本机日志D:/MITS/logs/model-start-20261010-173800。
+
+## 2026-10-10 17:20 用户指定scripts/1立即启动补充
+
+用户新指定D:/MITS/scripts/1三原始启动器，已实读存在/hash/context：Scout32768、两27B65536，不同于已封存P0版本。正常Scout启动请求再次在CreateProcess前blocked by policy，脚本未运行，无新PID/回执；Review/Primary未尝试。没有删除保护或换通道绕过。原始三条主机运维命令及日志路径见 [USER_SPECIFIED_SCRIPTS_REQUEST](../reports/v398-model-lifecycle-recovery-20261010/USER_SPECIFIED_SCRIPTS_REQUEST.md)。私有manifest和正式Engine封存未改，旧Engine管理TP不变。新24h仍NOT_STARTED/T0=null。
+
+## 2026-10-10 立即模型恢复授权的最新实际执行状态
+
+已拉取 main4c846312，源码/脚本/lock与PR38 d390等价。本轮重新 npm ci / verify:ci EXIT0，264文件2210例；独立发布包构建成功，1999文件封存与Settings253对照通过。候选build3.9.8-5b239d299d94d9ce70a8只STAGED，未上线；新精确授权仍inactive。
+
+Scout8081原始启动器正常终端请求再次在CreateProcess前被平台 blocked by policy 拒绝，没有执行/新PID；Review/Primary和Engine生命周期未尝试。当前工具approval policy never，无可用交互升级，不换包装/通道/删保护绕过。用户授权明确，不再索取一般许可。主机操作者原有三段启动命令及日志步骤见 [HOST_OPERATOR_RECOVERY](../reports/v398-model-lifecycle-recovery-20261010/HOST_OPERATOR_RECOVERY.md)。正式报告 [FINAL_RUNTIME_RECOVERY_AND_DEPLOYMENT](../reports/v398-model-lifecycle-recovery-20261010/FINAL_RUNTIME_RECOVERY_AND_DEPLOYMENT.md)。
+
+末查17:00+08旧Engine23936/host12440/build0de766不变，代理18300/20091。三模型无监听，真实connection refused，退出发起者/退出码UNKNOWN；不能称修复退出根因或恢复推理。两次签名26/26 TP全身份通过；独立V2 canTrade=true，末私有age8134ms/失败0；Production0，Engine自然TESTNET写51/任务交换写0。本轮备份quick_checkok+fsync/Settings对照，旧29→28/cycle失败及TP缺口仍保留。现有stop-zdj-lan用Stop-Process -Force，不能冒充graceful；旧实例优雅停止路径未证明前不得强制切换。
+
+旧24h08:34 ABORTED保持，新24h NOT_STARTED/T0=null等用户后令。准确区分source验证、STAGED、平台拒绝、运行恢复未执行及未部署；本轮 [Draft PR #39](https://github.com/3684993/ZDJMITS/pull/39) 首次精确HEAD ee4bab35e84fa054a90e730ec9a745bedbf6d490 Windows CI38040055297 SUCCESS，全日志另存github-actions-immediate.json；后续归档HEAD仍单独回读，不借PR38其它SHA绿灯。
+
 # 2026-10-10 用户要求立刻恢复全部模型与部署（最新权威状态）
 - 用户明确要求在 Windows 主机**现在受控部署并逐个启动已离线的三个Qwen模型**，无需反复概念性许可。PR38源代码已验证本机2210 tests和GitHub两个exact-head SUCCESS，已于2026-10-10由ChatGPT合并`main`，合并SHA `84d5d4f81b3ad6c73b1f7744c441d4f887de9638`。
 - GitHub主分支已提交立即执行指令：`docs/prompts/CODEX_V398_IMMEDIATE_AUTHORIZED_MODEL_RECOVERY_20261010.md`。Issue#30/#35和PR#38已留正式交接评论。当前GitHub连接**不能操作本机Windows，也不具备Codex任务启动接口**；合并/评论不是启动。部署、三个模型真实推理验证、实际Engine重启仍**NOT_PERFORMED / NOT_PROVEN**，新24小时验收T0=null，旧验收ABORTED。

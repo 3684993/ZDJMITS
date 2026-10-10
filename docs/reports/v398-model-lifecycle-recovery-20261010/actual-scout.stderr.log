@@ -1,0 +1,1 @@
+SecurityError: File D:\MITS\scripts\1\start-qwen3.5-9b-vulkan.ps1 cannot be loaded. The file D:\MITS\scripts\1\start-qwen3.5-9b-vulkan.ps1 is not digitally signed. You cannot run this script on the current system. For more information about running scripts and setting execution policy, see about_Execution_Policies at https://go.microsoft.com/fwlink/?LinkID=135170.

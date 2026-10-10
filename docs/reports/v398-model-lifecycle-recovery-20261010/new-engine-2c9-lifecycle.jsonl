@@ -1,0 +1,2 @@
+{"ts":1791627362732,"event":"HOST_STARTED","launchId":"v398-models-2c9fec5-20261010-one","hostPid":1216,"payload":{"v8Version":"12.4.254.21-node.56","nodeFlags":["--no-maglev"],"workingDirectory":"D:\\MITS-RELEASES\\ZDJMITS-v398-models-2c9fec5\\apps\\engine","nodeVersion":"v22.23.1","enginePath":"D:\\MITS-RELEASES\\ZDJMITS-v398-models-2c9fec5\\apps\\engine\\dist\\main.js"}}
+{"ts":1791627362782,"event":"CHILD_STARTED","launchId":"v398-models-2c9fec5-20261010-one","hostPid":1216,"payload":{"nodeFlags":["--no-maglev"],"handleCaptured":true,"pid":12140}}

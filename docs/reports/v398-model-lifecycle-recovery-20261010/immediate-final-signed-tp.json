@@ -1,0 +1,701 @@
+{
+  "observedAt": "2026-10-10T09:00:24.885Z",
+  "environment": "TESTNET",
+  "host": "demo-fapi.binance.com",
+  "methods": [
+    "GET"
+  ],
+  "exchangeWrites": 0,
+  "requests": [
+    {
+      "endpoint": "/fapi/v1/time",
+      "startedAt": "2026-10-10T09:00:24.886Z",
+      "completedAt": "2026-10-10T09:00:26.395Z",
+      "rows": null,
+      "dispatch": {
+        "decision": "ADMITTED",
+        "status": 200,
+        "networkTiming": {
+          "startedAt": 1791622824889,
+          "proxyConnectStartedAt": 1791622824894,
+          "proxyConnectedAt": 1791622825438,
+          "socketAssignedAt": 1791622825439,
+          "secureConnectedAt": 1791622825883,
+          "responseAt": 1791622826385,
+          "completedAt": 1791622826386,
+          "reusedSocket": false,
+          "failurePhase": null
+        }
+      }
+    },
+    {
+      "endpoint": "/fapi/v1/positionSide/dual",
+      "startedAt": "2026-10-10T09:00:26.396Z",
+      "completedAt": "2026-10-10T09:00:26.862Z",
+      "rows": null,
+      "dispatch": {
+        "decision": "ADMITTED",
+        "status": 200,
+        "networkTiming": {
+          "startedAt": 1791622826398,
+          "proxyConnectStartedAt": null,
+          "proxyConnectedAt": null,
+          "socketAssignedAt": 1791622826398,
+          "secureConnectedAt": 1791622826398,
+          "responseAt": 1791622826858,
+          "completedAt": 1791622826858,
+          "reusedSocket": true,
+          "failurePhase": null
+        }
+      }
+    },
+    {
+      "endpoint": "/fapi/v3/positionRisk",
+      "startedAt": "2026-10-10T09:00:26.397Z",
+      "completedAt": "2026-10-10T09:00:27.458Z",
+      "rows": 26,
+      "dispatch": {
+        "decision": "ADMITTED",
+        "status": 200,
+        "networkTiming": {
+          "startedAt": 1791622826862,
+          "proxyConnectStartedAt": null,
+          "proxyConnectedAt": null,
+          "socketAssignedAt": 1791622826863,
+          "secureConnectedAt": 1791622826863,
+          "responseAt": 1791622827454,
+          "completedAt": 1791622827454,
+          "reusedSocket": true,
+          "failurePhase": null
+        }
+      }
+    },
+    {
+      "endpoint": "/fapi/v1/openOrders",
+      "startedAt": "2026-10-10T09:00:26.397Z",
+      "completedAt": "2026-10-10T09:00:27.946Z",
+      "rows": 26,
+      "dispatch": {
+        "decision": "ADMITTED",
+        "status": 200,
+        "networkTiming": {
+          "startedAt": 1791622827458,
+          "proxyConnectStartedAt": null,
+          "proxyConnectedAt": null,
+          "socketAssignedAt": 1791622827459,
+          "secureConnectedAt": 1791622827459,
+          "responseAt": 1791622827941,
+          "completedAt": 1791622827942,
+          "reusedSocket": true,
+          "failurePhase": null
+        }
+      }
+    },
+    {
+      "endpoint": "/fapi/v1/openAlgoOrders",
+      "startedAt": "2026-10-10T09:00:26.397Z",
+      "completedAt": "2026-10-10T09:00:28.540Z",
+      "rows": 0,
+      "dispatch": {
+        "decision": "ADMITTED",
+        "status": 200,
+        "networkTiming": {
+          "startedAt": 1791622827946,
+          "proxyConnectStartedAt": null,
+          "proxyConnectedAt": null,
+          "socketAssignedAt": 1791622827947,
+          "secureConnectedAt": 1791622827947,
+          "responseAt": 1791622828535,
+          "completedAt": 1791622828535,
+          "reusedSocket": true,
+          "failurePhase": null
+        }
+      }
+    },
+    {
+      "endpoint": "/fapi/v3/account",
+      "startedAt": "2026-10-10T09:00:26.397Z",
+      "completedAt": "2026-10-10T09:00:28.961Z",
+      "rows": null,
+      "dispatch": {
+        "decision": "ADMITTED",
+        "status": 200,
+        "networkTiming": {
+          "startedAt": 1791622828539,
+          "proxyConnectStartedAt": null,
+          "proxyConnectedAt": null,
+          "socketAssignedAt": 1791622828540,
+          "secureConnectedAt": 1791622828540,
+          "responseAt": 1791622828957,
+          "completedAt": 1791622828958,
+          "reusedSocket": true,
+          "failurePhase": null
+        }
+      }
+    }
+  ],
+  "gate": "TECHNICAL_UNVERIFIED",
+  "positionMode": {
+    "dualSidePosition": true
+  },
+  "nonzeroPositions": 26,
+  "ordinaryOpenOrders": 26,
+  "openAlgoOrders": 0,
+  "candidateProtectionMatches": 26,
+  "account": {
+    "canTrade": null,
+    "walletFactFinite": true,
+    "availableFactFinite": true,
+    "availablePositive": true
+  },
+  "exactProtection": [
+    {
+      "symbolHash": "75624a7f7f82353951c14226550a93e14ee2cfe938e66f2ebb7bf70498108937",
+      "positionSide": "SHORT",
+      "orderIdHash": "6d4bcdc113e8d4b9e89cb6600644a3dd92e011b3b2f8a7314e556b08da3e672f",
+      "clientOrderIdHash": "435b17735c1535e4280aec80c01a5ef459e29e4a6b69ea2195863079997f0a58",
+      "checks": {
+        "oneOrder": true,
+        "positionIdentity": true,
+        "cycleIdentity": true,
+        "localPositionQuantity": true,
+        "exactDualId": true,
+        "closingSide": true,
+        "reduceOnly": true,
+        "openStatus": true,
+        "fullRemainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "symbolHash": "19aa16aed07f38e9beb894bb1fa1131d164e72a1fff057b80ed35e55a1ad0334",
+      "positionSide": "LONG",
+      "orderIdHash": "06df980a979770021d537e7afc9f13aef9529a39654cd9d72ae82a66b47231c4",
+      "clientOrderIdHash": "d1853db7b2e8a063de917edb9945dd46d5ae81afb8060318667a9d4eb4167459",
+      "checks": {
+        "oneOrder": true,
+        "positionIdentity": true,
+        "cycleIdentity": true,
+        "localPositionQuantity": true,
+        "exactDualId": true,
+        "closingSide": true,
+        "reduceOnly": true,
+        "openStatus": true,
+        "fullRemainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "symbolHash": "7e6e9fceedc4d56e8469b0c6024197b663e8da6210a18bbc24657cf91c730f2e",
+      "positionSide": "LONG",
+      "orderIdHash": "fe3c93968d3f345e4ddc42ea875400111deebc84318619fa579ddb250febbc16",
+      "clientOrderIdHash": "4a20bb6501d247bd36f99af4b8debf21ddcaa21399ee2b140ce68833d2289c34",
+      "checks": {
+        "oneOrder": true,
+        "positionIdentity": true,
+        "cycleIdentity": true,
+        "localPositionQuantity": true,
+        "exactDualId": true,
+        "closingSide": true,
+        "reduceOnly": true,
+        "openStatus": true,
+        "fullRemainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "symbolHash": "10feb615345011936a67003b48d7831c61201fc728885f495b4546897bdc74f9",
+      "positionSide": "LONG",
+      "orderIdHash": "4ab09d5265dcb0d8d9cb603af115d9b50074bd49801cf3bc9b992f0249447f0f",
+      "clientOrderIdHash": "8214a0188c84ac463161dfa3637629f9cd39d8f2ce597a26b624fc0e36f243a5",
+      "checks": {
+        "oneOrder": true,
+        "positionIdentity": true,
+        "cycleIdentity": true,
+        "localPositionQuantity": true,
+        "exactDualId": true,
+        "closingSide": true,
+        "reduceOnly": true,
+        "openStatus": true,
+        "fullRemainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "symbolHash": "10806a78b69cb9e977594b6c09479129501e70f4995b3269f8f57cda4b263d20",
+      "positionSide": "SHORT",
+      "orderIdHash": "f1cb9e2e28b2d2e70d15cde9ad871cf41b00a70ff1637a60c197e7c3e9eaad44",
+      "clientOrderIdHash": "450eba4ed8270872d434f9884108e4a6531cc39be6f437eeb348779a30dafdfd",
+      "checks": {
+        "oneOrder": true,
+        "positionIdentity": true,
+        "cycleIdentity": true,
+        "localPositionQuantity": true,
+        "exactDualId": true,
+        "closingSide": true,
+        "reduceOnly": true,
+        "openStatus": true,
+        "fullRemainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "symbolHash": "b4239e82f4ea889905e1dce9d0a09acc15b1a28a356c0e545cfdbf1286d77090",
+      "positionSide": "LONG",
+      "orderIdHash": "9ea1e0c56a3ca907abacdc53977c5f77cbbc206979479de131796c569520fbf1",
+      "clientOrderIdHash": "753d68ec2c42b1dee41b6a9985f0bc3f09ebf77a316fc4c2b75d30b65ddff7f7",
+      "checks": {
+        "oneOrder": true,
+        "positionIdentity": true,
+        "cycleIdentity": true,
+        "localPositionQuantity": true,
+        "exactDualId": true,
+        "closingSide": true,
+        "reduceOnly": true,
+        "openStatus": true,
+        "fullRemainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "symbolHash": "970cf680acc08b56d0d0ba9c5d68208931e084354bd58395390741d567259292",
+      "positionSide": "LONG",
+      "orderIdHash": "93c1f331d1296642cdd9f0c4eef3bb499093764369815bce2392f06b658b1554",
+      "clientOrderIdHash": "55b82eb631d69d0590842992b5c7b6b467385e4d58e4d5731c6bc87ad4a1091a",
+      "checks": {
+        "oneOrder": true,
+        "positionIdentity": true,
+        "cycleIdentity": true,
+        "localPositionQuantity": true,
+        "exactDualId": true,
+        "closingSide": true,
+        "reduceOnly": true,
+        "openStatus": true,
+        "fullRemainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "symbolHash": "33b1e83c9b898cd95e91afe45e7fbc2e2ee48bdaa2b5f647e8b8d42145d85134",
+      "positionSide": "LONG",
+      "orderIdHash": "78bc374021fb4e9b14106aa1e70f4fe8f0e300fac3a4843c98eb64a0906dd599",
+      "clientOrderIdHash": "a130787fb602dd79d06cfc87b924906867bb7454fba637055fb144973983b8a3",
+      "checks": {
+        "oneOrder": true,
+        "positionIdentity": true,
+        "cycleIdentity": true,
+        "localPositionQuantity": true,
+        "exactDualId": true,
+        "closingSide": true,
+        "reduceOnly": true,
+        "openStatus": true,
+        "fullRemainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "symbolHash": "4c57f41d6b05cb9f0df7a8a60936ab9730769da1a2cd08ba30bbac0f0bad02dd",
+      "positionSide": "LONG",
+      "orderIdHash": "600c612e48e2224c2b68ee8ded13e938496ca91ac6b9098473b61ee576564cae",
+      "clientOrderIdHash": "f06099b2d88da072da4195dfae3a3bf929c45251a795bbb7da37001b1d692cfc",
+      "checks": {
+        "oneOrder": true,
+        "positionIdentity": true,
+        "cycleIdentity": true,
+        "localPositionQuantity": true,
+        "exactDualId": true,
+        "closingSide": true,
+        "reduceOnly": true,
+        "openStatus": true,
+        "fullRemainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "symbolHash": "5fff4bf82ad50194c8c31eac3540f68a0e4fd324c26fd3378230f8e7d93d2eec",
+      "positionSide": "SHORT",
+      "orderIdHash": "e5446373764a99dfb88cdb46dead2006d8e98e88fb0cc193cb63ab41cb991148",
+      "clientOrderIdHash": "9ebd97820891ea48b1dd9bbb3f1f837989c959923b9ed4028e4fa1779ff7d708",
+      "checks": {
+        "oneOrder": true,
+        "positionIdentity": true,
+        "cycleIdentity": true,
+        "localPositionQuantity": true,
+        "exactDualId": true,
+        "closingSide": true,
+        "reduceOnly": true,
+        "openStatus": true,
+        "fullRemainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "symbolHash": "1fe459ab0f4be97b9467ebd354927a9816fc73aae20473d90a75d029e0103221",
+      "positionSide": "SHORT",
+      "orderIdHash": "d72188ba41906c55cd62bcf21281bb7a43196728d4a631f27a8da110f61a4112",
+      "clientOrderIdHash": "6e0adef1597be526b9f776b20738714128350457e2a9f1273f8f2477faff0d8b",
+      "checks": {
+        "oneOrder": true,
+        "positionIdentity": true,
+        "cycleIdentity": true,
+        "localPositionQuantity": true,
+        "exactDualId": true,
+        "closingSide": true,
+        "reduceOnly": true,
+        "openStatus": true,
+        "fullRemainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "symbolHash": "2c591d6b3d89936ee5e6fc26f475f0d051941b36544d39a73a61d70b9b144f48",
+      "positionSide": "SHORT",
+      "orderIdHash": "43f3fa2860b2434ec53a32f3af1d7b5d658855cd6d7928bdea6800967e64157e",
+      "clientOrderIdHash": "7fc8f271466cf723983c3d6b18ae172b5bb3048b41894964629643b1aad1454d",
+      "checks": {
+        "oneOrder": true,
+        "positionIdentity": true,
+        "cycleIdentity": true,
+        "localPositionQuantity": true,
+        "exactDualId": true,
+        "closingSide": true,
+        "reduceOnly": true,
+        "openStatus": true,
+        "fullRemainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "symbolHash": "65007313a157103ad38b9574768715be219ccf79dcf2a53cac5624a574f82f18",
+      "positionSide": "LONG",
+      "orderIdHash": "e634e1e62939d47013b70d79fb9f9052f07479f61cabe1fd2ea59f37ca594066",
+      "clientOrderIdHash": "bcae066e238541b2df30f2a32d97c167020f776a4898084d09971aeb37c404b4",
+      "checks": {
+        "oneOrder": true,
+        "positionIdentity": true,
+        "cycleIdentity": true,
+        "localPositionQuantity": true,
+        "exactDualId": true,
+        "closingSide": true,
+        "reduceOnly": true,
+        "openStatus": true,
+        "fullRemainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "symbolHash": "9d882173c335bba51a0c20325dc78e5ff0c235193b95de449f7cfce5be032c6e",
+      "positionSide": "LONG",
+      "orderIdHash": "f076989f0b43bbcf96dc1f715d93f1d9634be3f27f4f791dc82c63aa8cb41f21",
+      "clientOrderIdHash": "6deaf61c25eec31d8790a04b725c5cc67ea79285d1a18ab76b61ac68610cab33",
+      "checks": {
+        "oneOrder": true,
+        "positionIdentity": true,
+        "cycleIdentity": true,
+        "localPositionQuantity": true,
+        "exactDualId": true,
+        "closingSide": true,
+        "reduceOnly": true,
+        "openStatus": true,
+        "fullRemainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "symbolHash": "8e710fee287a5fd12cb52f7f581bbd4cf9fbeefc32dad3e3348072c107cad576",
+      "positionSide": "SHORT",
+      "orderIdHash": "1aa6badeb9d047dbd3586fd925ac41a96d1ad5d2670041352607e5c990357015",
+      "clientOrderIdHash": "0c1ec0a8344499fea4b47b9ea76ade2d078d73c2f03ada6e7843a257f1c51b4c",
+      "checks": {
+        "oneOrder": true,
+        "positionIdentity": true,
+        "cycleIdentity": true,
+        "localPositionQuantity": true,
+        "exactDualId": true,
+        "closingSide": true,
+        "reduceOnly": true,
+        "openStatus": true,
+        "fullRemainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "symbolHash": "80f27b70a8bc1df54f9461be421a5b12ca0cb4949d325d39160f2933528ca72e",
+      "positionSide": "SHORT",
+      "orderIdHash": "2b118732140572daaf154107c86c08fdaa4979628e002df52b14d9af0dd88301",
+      "clientOrderIdHash": "0beb1cc9b392fbb620c73c8b48af1f92ad6b1950105adc6b343bf2c2c073ee6f",
+      "checks": {
+        "oneOrder": true,
+        "positionIdentity": true,
+        "cycleIdentity": true,
+        "localPositionQuantity": true,
+        "exactDualId": true,
+        "closingSide": true,
+        "reduceOnly": true,
+        "openStatus": true,
+        "fullRemainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "symbolHash": "f82fbc160e207da957d46e5b9621956d32e11996ed96d00f5f3bca2b6198bcef",
+      "positionSide": "LONG",
+      "orderIdHash": "17dd847f0931ed6e6eb900dee6e5f914a14cc6ec326f06f757b15b4b8e92404e",
+      "clientOrderIdHash": "75583519aa7492ed212b43763a385528d40d9e7837437dbd17556889ff3006c3",
+      "checks": {
+        "oneOrder": true,
+        "positionIdentity": true,
+        "cycleIdentity": true,
+        "localPositionQuantity": true,
+        "exactDualId": true,
+        "closingSide": true,
+        "reduceOnly": true,
+        "openStatus": true,
+        "fullRemainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "symbolHash": "f82fbc160e207da957d46e5b9621956d32e11996ed96d00f5f3bca2b6198bcef",
+      "positionSide": "SHORT",
+      "orderIdHash": "42d6b33680d250ba4d9b967ee44217bf42c59fc0a94547c832febce2e2ef17ef",
+      "clientOrderIdHash": "14c423c575664a790d1ac6972f104b539c6c8b5f9b668275c2453f2e2df3fe0e",
+      "checks": {
+        "oneOrder": true,
+        "positionIdentity": true,
+        "cycleIdentity": true,
+        "localPositionQuantity": true,
+        "exactDualId": true,
+        "closingSide": true,
+        "reduceOnly": true,
+        "openStatus": true,
+        "fullRemainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "symbolHash": "0465f3eeb0f6a6cdb5207012a24ee4eed488d5285f82f96b7d4abe46ec574045",
+      "positionSide": "LONG",
+      "orderIdHash": "fdefb0eca595ed6d2d0692214b8f9dd86b586d5163d09b795576f3c737486e53",
+      "clientOrderIdHash": "36537ef7863843bc76f67605c398c5026e8ee0872a98122b271466fb31d4b173",
+      "checks": {
+        "oneOrder": true,
+        "positionIdentity": true,
+        "cycleIdentity": true,
+        "localPositionQuantity": true,
+        "exactDualId": true,
+        "closingSide": true,
+        "reduceOnly": true,
+        "openStatus": true,
+        "fullRemainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "symbolHash": "0465f3eeb0f6a6cdb5207012a24ee4eed488d5285f82f96b7d4abe46ec574045",
+      "positionSide": "SHORT",
+      "orderIdHash": "e72543e7b5e776bd9ddeccebaadc2f025591040d96fa234381195f5275080391",
+      "clientOrderIdHash": "09a43bd0b2216ffbcb7a417242bc7712b35bcbb33caed70db9f8cdb52d027c7a",
+      "checks": {
+        "oneOrder": true,
+        "positionIdentity": true,
+        "cycleIdentity": true,
+        "localPositionQuantity": true,
+        "exactDualId": true,
+        "closingSide": true,
+        "reduceOnly": true,
+        "openStatus": true,
+        "fullRemainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "symbolHash": "42a5f736d9f234be723f668cbbd6a062ed47ed2d479c9f3f41b75b917eaa2979",
+      "positionSide": "SHORT",
+      "orderIdHash": "7188dca38aa6360589356cc7baee040e2679f9c796c20ca67f86c772d4512638",
+      "clientOrderIdHash": "2fb1f6f2c9805b56595b3eb3323c4b7e3fc9883c9fd4da506c6e4c09bab3b499",
+      "checks": {
+        "oneOrder": true,
+        "positionIdentity": true,
+        "cycleIdentity": true,
+        "localPositionQuantity": true,
+        "exactDualId": true,
+        "closingSide": true,
+        "reduceOnly": true,
+        "openStatus": true,
+        "fullRemainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "symbolHash": "c11e8dfac81f6d6b23238dff4879b13b30c41bc110da9e958cc9f5527173026a",
+      "positionSide": "SHORT",
+      "orderIdHash": "e58187557ed18029997b1aef6370108519498f00cf4c3aed7caeeec951ac5f6f",
+      "clientOrderIdHash": "91916fbbfb7f756124bcfd7006aa96b40fffda4fa51c071b4f7fdc06c6834245",
+      "checks": {
+        "oneOrder": true,
+        "positionIdentity": true,
+        "cycleIdentity": true,
+        "localPositionQuantity": true,
+        "exactDualId": true,
+        "closingSide": true,
+        "reduceOnly": true,
+        "openStatus": true,
+        "fullRemainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "symbolHash": "b5d13a6196a1fac4ed1918744f7c6b6c013a70a2735f84f73b12af347356c904",
+      "positionSide": "LONG",
+      "orderIdHash": "91df88c41743ae70e31cc90d551c863e5a10f33be47ccecad8c78f8440f8794c",
+      "clientOrderIdHash": "30f5d09c4cdf8d1854f6e6b8859231c4e19fe4a26f51ab940cee41156d80f7f3",
+      "checks": {
+        "oneOrder": true,
+        "positionIdentity": true,
+        "cycleIdentity": true,
+        "localPositionQuantity": true,
+        "exactDualId": true,
+        "closingSide": true,
+        "reduceOnly": true,
+        "openStatus": true,
+        "fullRemainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "symbolHash": "04d591cb32d6ba5c0222dc626beb575942113a1c97a5e65ce60fd15b8a3ec996",
+      "positionSide": "LONG",
+      "orderIdHash": "c67de2ac022a2c17eeac08fd5905d5a7590d5548f80c88035c6098a82420807d",
+      "clientOrderIdHash": "8a4accb1627e123fb31d0d6ac5e6e9be781d32d134bbec825749326a973a38b7",
+      "checks": {
+        "oneOrder": true,
+        "positionIdentity": true,
+        "cycleIdentity": true,
+        "localPositionQuantity": true,
+        "exactDualId": true,
+        "closingSide": true,
+        "reduceOnly": true,
+        "openStatus": true,
+        "fullRemainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "symbolHash": "04d591cb32d6ba5c0222dc626beb575942113a1c97a5e65ce60fd15b8a3ec996",
+      "positionSide": "SHORT",
+      "orderIdHash": "4e62453bc0a7c7ee0304d61921d801d63a484f755a6f8362d9146efe01ffa1d2",
+      "clientOrderIdHash": "ad46b54f3341b1c3eb0651a42fc27c6f7a5acb86930f0b79e63140c4f450927d",
+      "checks": {
+        "oneOrder": true,
+        "positionIdentity": true,
+        "cycleIdentity": true,
+        "localPositionQuantity": true,
+        "exactDualId": true,
+        "closingSide": true,
+        "reduceOnly": true,
+        "openStatus": true,
+        "fullRemainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "symbolHash": "3778967091ffae98a5f98df5d56eae42a2fbc98dc5299d4a4375c1631045a01e",
+      "positionSide": "LONG",
+      "orderIdHash": "21949d08985aa93dfcd88bcc999e872b2445f856818387c9d391880b3f2b9972",
+      "clientOrderIdHash": "69400bb7be6e22cbe86307e414e0672161c4e3464cf56f7abf9478390ee51b25",
+      "checks": {
+        "oneOrder": true,
+        "positionIdentity": true,
+        "cycleIdentity": true,
+        "localPositionQuantity": true,
+        "exactDualId": true,
+        "closingSide": true,
+        "reduceOnly": true,
+        "openStatus": true,
+        "fullRemainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    }
+  ],
+  "eligibilityAssessment": "OPERATOR_ATTESTED_EXISTING_ROUTE_NOT_INDEPENDENT_OFFICIAL_CONFIRMATION",
+  "protectionAssessment": "SIGNED_EXACT_DUAL_ID_SIDE_QTY_PRICE_MATCH"
+}

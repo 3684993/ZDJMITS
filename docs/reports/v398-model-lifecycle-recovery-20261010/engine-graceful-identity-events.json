@@ -1,0 +1,89 @@
+[
+  {
+    "ts": 1791609047531,
+    "event": "BOOTSTRAP_RUNTIME_CREATED",
+    "pid": 23936,
+    "ppid": 12440,
+    "uptimeMs": 69024,
+    "exitCode": null,
+    "payload": {
+      "instanceId": "d071f59f-9eba-4efa-b3da-3d4289f3671f",
+      "recoveredRuntimeEntities": []
+    }
+  },
+  {
+    "ts": 1791609047822,
+    "event": "HTTP_LISTENING",
+    "pid": 23936,
+    "ppid": 12440,
+    "uptimeMs": 69315,
+    "exitCode": null,
+    "payload": {
+      "host": "0.0.0.0",
+      "port": 8080,
+      "instanceId": "d071f59f-9eba-4efa-b3da-3d4289f3671f"
+    }
+  },
+  {
+    "ts": 1791627358636,
+    "event": "SHUTDOWN_REQUESTED",
+    "pid": 23936,
+    "ppid": 12440,
+    "uptimeMs": 18380045,
+    "exitCode": 0,
+    "payload": {
+      "reason": "SIGINT",
+      "exitCode": 0,
+      "instanceId": "d071f59f-9eba-4efa-b3da-3d4289f3671f"
+    }
+  },
+  {
+    "ts": 1791627360542,
+    "event": "HTTP_SERVER_CLOSED",
+    "pid": 23936,
+    "ppid": 12440,
+    "uptimeMs": 18381951,
+    "exitCode": 0,
+    "payload": {
+      "reason": "SIGINT",
+      "exitCode": 0
+    }
+  },
+  {
+    "ts": 1791627360542,
+    "event": "PROCESS_EXIT",
+    "pid": 23936,
+    "ppid": 12440,
+    "uptimeMs": 18381952,
+    "exitCode": 0,
+    "payload": {
+      "code": 0,
+      "processExitCode": 0
+    }
+  },
+  {
+    "ts": 1791627430644,
+    "event": "BOOTSTRAP_RUNTIME_CREATED",
+    "pid": 12140,
+    "ppid": 1216,
+    "uptimeMs": 67834,
+    "exitCode": null,
+    "payload": {
+      "instanceId": "2c07d7d9-7f73-4730-903f-20d26674aa2a",
+      "recoveredRuntimeEntities": []
+    }
+  },
+  {
+    "ts": 1791627430924,
+    "event": "HTTP_LISTENING",
+    "pid": 12140,
+    "ppid": 1216,
+    "uptimeMs": 68115,
+    "exitCode": null,
+    "payload": {
+      "host": "0.0.0.0",
+      "port": 8080,
+      "instanceId": "2c07d7d9-7f73-4730-903f-20d26674aa2a"
+    }
+  }
+]

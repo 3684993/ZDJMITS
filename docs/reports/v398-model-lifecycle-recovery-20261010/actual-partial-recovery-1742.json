@@ -1,0 +1,198 @@
+{
+  "observedAt": "2026-10-10T09:44:18.612281+00:00",
+  "launchLogDirectory": "D:\\MITS\\logs\\model-start-20261010-173800",
+  "platformNowAllowed": [
+    "Scout",
+    "Primary"
+  ],
+  "initialScoutWindowsError": "RemoteSigned plus Zone.Identifier=3 blocked unsigned script before model launch",
+  "fileTrustAction": {
+    "method": "Unblock-File on exactly three user-selected Git-tracked unchanged SHA256-verified files",
+    "zoneMarkersBackedUp": true,
+    "executionPolicyChanged": false,
+    "scriptContentsChanged": false,
+    "groupPolicies": "MachinePolicy/UserPolicy Undefined"
+  },
+  "models": [
+    {
+      "role": "Scout",
+      "port": 8081,
+      "pid": 25912,
+      "physicalDevice": "Vulkan0",
+      "context": 32768,
+      "status": "READY",
+      "smoke": "actual choice checked by original launcher",
+      "engineNaturalCompletionsAfterRecovery": 2
+    },
+    {
+      "role": "Primary",
+      "port": 8084,
+      "pid": 16772,
+      "physicalDevice": "Vulkan2",
+      "context": 65536,
+      "status": "READY",
+      "smoke": "actual returned JSON checked for SKIP_THIS_CYCLE by original launcher",
+      "newNaturalEngineRun": "NOT_OBSERVED_IN_THIS_SNAPSHOT"
+    },
+    {
+      "role": "Review",
+      "port": 8083,
+      "pid": null,
+      "status": "NOT_EXECUTED",
+      "reason": "Original harness launcher request denied before CreateProcess: blocked by policy; no detailed reason",
+      "receiptCreated": false
+    }
+  ],
+  "health": [
+    {
+      "status": "ok",
+      "port": 8081,
+      "observedAt": "2026-10-10T17:42:21.7278527+08:00"
+    },
+    {
+      "status": "UNREACHABLE",
+      "port": 8083,
+      "error": "由于目标计算机积极拒绝，无法连接。 (127.0.0.1:8083)",
+      "observedAt": "2026-10-10T17:42:23.7586386+08:00"
+    },
+    {
+      "status": "ok",
+      "port": 8084,
+      "observedAt": "2026-10-10T17:42:23.7622695+08:00"
+    }
+  ],
+  "gpuMeasurements": [
+    {
+      "luid": "0x00000000_0x0000edc6",
+      "source": "D3DKMT_ADAPTERADDRESS_AND_WDDM_PROCESS_MEMORY",
+      "device": 0,
+      "function": 0,
+      "dedicatedBytes": 32768.0,
+      "pid": 16772,
+      "bus": 5,
+      "status": "MEASURED"
+    },
+    {
+      "luid": "0x00000000_0x0000f452",
+      "source": "D3DKMT_ADAPTERADDRESS_AND_WDDM_PROCESS_MEMORY",
+      "device": 0,
+      "function": 0,
+      "dedicatedBytes": 18526982144.0,
+      "pid": 16772,
+      "bus": 19,
+      "status": "MEASURED"
+    },
+    {
+      "luid": "0x00000000_0x000122ec",
+      "source": "D3DKMT_ADAPTERADDRESS_AND_WDDM_PROCESS_MEMORY",
+      "device": 0,
+      "function": 0,
+      "dedicatedBytes": 10448896.0,
+      "pid": 16772,
+      "bus": 22,
+      "status": "MEASURED"
+    },
+    {
+      "luid": "0x00000000_0x0000edc6",
+      "source": "D3DKMT_ADAPTERADDRESS_AND_WDDM_PROCESS_MEMORY",
+      "device": 0,
+      "function": 0,
+      "dedicatedBytes": 6357635072.0,
+      "pid": 25912,
+      "bus": 5,
+      "status": "MEASURED"
+    },
+    {
+      "luid": "0x00000000_0x0000f452",
+      "source": "D3DKMT_ADAPTERADDRESS_AND_WDDM_PROCESS_MEMORY",
+      "device": 0,
+      "function": 0,
+      "dedicatedBytes": 10448896.0,
+      "pid": 25912,
+      "bus": 19,
+      "status": "MEASURED"
+    },
+    {
+      "luid": "0x00000000_0x000122ec",
+      "source": "D3DKMT_ADAPTERADDRESS_AND_WDDM_PROCESS_MEMORY",
+      "device": 0,
+      "function": 0,
+      "dedicatedBytes": 10448896.0,
+      "pid": 25912,
+      "bus": 22,
+      "status": "MEASURED"
+    }
+  ],
+  "protectionLocalReadback": {
+    "observedAt": "2026-10-10T17:42:23.8777972+08:00",
+    "enginePid": 23936,
+    "takeProfit": {
+      "status": "READY",
+      "unverifiedTp": 0,
+      "required": 26,
+      "protected": 26,
+      "missing": 0,
+      "repairing": 0,
+      "repairFailed": 0,
+      "manualReviewRequired": 0,
+      "positionFactUnresolved": 0,
+      "positionFactUnresolvedSymbols": [],
+      "orphanTp": 0,
+      "duplicateTp": 0,
+      "qtyMismatch": 0,
+      "wrongSide": 0,
+      "tpMissing": 0,
+      "retryQueue": 0
+    },
+    "production": {
+      "environment": "TESTNET",
+      "executionMode": "TESTNET_ENABLED",
+      "lockedToTestnet": true,
+      "testnetWrites": 51,
+      "productionWrites": 0,
+      "blockedProductionWriteAttempts": 0,
+      "lastWriteAt": 1791618288029,
+      "lastWritePath": "/fapi/v1/order"
+    }
+  },
+  "engineResourceReadback": [
+    {
+      "id": "scout-b580",
+      "role": "SCOUT",
+      "connectionStatus": "ONLINE",
+      "active": 0,
+      "totalRuns": 9,
+      "failures": 0,
+      "lastCompletedAt": 1791625332205,
+      "healthReason": null
+    },
+    {
+      "id": "brain-7900-primary",
+      "role": "PRIMARY_BRAIN",
+      "connectionStatus": "ONLINE",
+      "active": 0,
+      "totalRuns": 7,
+      "failures": 0,
+      "lastCompletedAt": 1791611261654,
+      "healthReason": null
+    },
+    {
+      "id": "review-7900-gpu2",
+      "role": "REVIEW_BRAIN",
+      "connectionStatus": "OFFLINE",
+      "active": 0,
+      "totalRuns": 26,
+      "failures": 3,
+      "lastCompletedAt": 1791611541468,
+      "healthReason": "fetch failed"
+    }
+  ],
+  "deployment": "NOT_PERFORMED",
+  "engineRestartAttempts": 0,
+  "newAcceptance": {
+    "status": "NOT_STARTED",
+    "T0": null
+  },
+  "originalExitRootCause": "UNKNOWN",
+  "allThreeRestored": false
+}

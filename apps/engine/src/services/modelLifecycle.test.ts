@@ -1,5 +1,5 @@
 import {describe,it,expect,vi} from 'vitest';
-import {mkdtemp,rm,readFile} from 'node:fs/promises';
+import {mkdtemp,rm,readFile,access} from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import {ModelLifecycleService,modelOperationPermission} from './modelLifecycle.js';
@@ -30,6 +30,11 @@ describe('model lifecycle permission and transaction boundary',()=>{
   it('serializes all GPUs and releases the drain after a proven completion',async()=>{
     let done!:(value:any)=>void;const f=await fixture({perform:()=>new Promise(resolve=>done=resolve)});
     try{const operation=f.service.operate('primary','start');while(!done)await new Promise(resolve=>setTimeout(resolve,5));await expect(f.service.operate('review','start')).rejects.toThrow('BUSY');done({pid:123,status:'READY'});await operation;expect(f.guard).toHaveBeenCalledTimes(3);expect(f.release).toHaveBeenCalledOnce();}
+    finally{await rm(f.directory,{recursive:true,force:true});}
+  });
+  it('starting an identity-verified READY model performs no restart and releases the global lock',async()=>{
+    const f=await fixture({inspect:async()=>({pid:123,status:'READY',identityVerified:true})});
+    try{const result=await f.service.operate('review','start');expect(result.pid).toBe(123);expect(f.perform).not.toHaveBeenCalled();expect(f.release).toHaveBeenCalledOnce();await expect(access(path.join(f.directory,'model-operation.lock'))).rejects.toThrow();await f.service.operate('scout','start');expect(f.release).toHaveBeenCalledTimes(2);expect(await readFile(path.join(f.directory,'model-lifecycle.jsonl'),'utf8')).toContain('ALREADY_IN_REQUESTED_STATE');}
     finally{await rm(f.directory,{recursive:true,force:true});}
   });
   it('retains a durable lock for uncertain outcomes and blocks retries across service instances',async()=>{

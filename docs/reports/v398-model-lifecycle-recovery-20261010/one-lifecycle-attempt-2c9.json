@@ -1,0 +1,26 @@
+{
+  "at": "2026-10-10T10:15:58.0256955Z",
+  "sourceCommit": "2c9fec513bd5ba0406015c33b2c7cf9ce420ebaf",
+  "oldPid": 23936,
+  "oldHostPid": 12440,
+  "oldInstance": "d071f59f-9eba-4efa-b3da-3d4289f3671f",
+  "oldBuild": "3.9.8-0de7665352d82b261c1d",
+  "newBuild": "3.9.8-a6b1702cf52af4257f04",
+  "newApprovalFile": "C:\\Users\\5700x\\AppData\\Local\\ZDJMITS\\entry-authorization\\v398-testnet-entry-models-2c9fec5-20261010.json",
+  "oldApprovalUnchanged": true,
+  "privateAgeMs": 11958,
+  "signedPositions": 28,
+  "signedProtected": 28,
+  "canTrade": true,
+  "productionWrites": 0,
+  "blockedProductionAttempts": 0,
+  "modelProxyPids": {
+    "port8084": 16772,
+    "port8083": 22880,
+    "port20091": 18300,
+    "port8081": 25912
+  },
+  "restartAuthorization": "LATEST_USER_ONE_ENGINE_ONLY",
+  "long24h": "HELD_UNTIL_USER_INSTRUCTION",
+  "automaticRetries": 0
+}

@@ -1,0 +1,10 @@
+{
+  "path": "D:\\MITS-OPERATIONS\\immediate-model-recovery-20261010\\pre-switch-2c9.sqlite",
+  "bytes": 975740928,
+  "sha256": "70672b8ee1abe54f5ba257bfcfd383af37253b8a72b0c6c02a85c734ea19d2ce",
+  "quickCheck": "ok",
+  "settingsVersion": 253,
+  "settingsMatch": true,
+  "fsync": true,
+  "elapsedSeconds": 4.603020099995774
+}

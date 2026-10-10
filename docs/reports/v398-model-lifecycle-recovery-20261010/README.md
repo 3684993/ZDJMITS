@@ -1,3 +1,19 @@
+> 最新最终状态（2026-10-10 18:27 北京时间）：已实际部署源码2c9fec513bd5ba0406015c33b2c7cf9ce420ebaf，构建3.9.8-a6b1702cf52af4257f04，Engine12140/host1216/instance2c07d7d9-7f73-4730-903f-20d26674aa2a，运行身份6/6，health READY。旧Engine23936收到隔离CTRL_C/SIGINT后退出0，只有一次Engine切换。重启前、稳定后签名全仓TP均28/28，canTrade=true，Production0；先前网络超时、29/27及28/27失败证据保留。三模型25912/22880/16772均READY。线上浏览器三资源启动/停止/重启按钮显示，填本机密钥后启动/重启可用；三次授权启动200且PID不变，无密钥403。源码CI38043800329 SUCCESS，264文件/2211例。新24h未启动/T0=null。额外GPU侧车采样启动被平台执行前拒绝，未执行，实时显存UNKNOWN，不虚报新鲜采样。旧观察器PID1920独占锁已按身份切换，新观察器6376绑定新receipt并Running。
+
+> 18:11部署门禁更新：独立签名复核29仓位，仅27仓位TP精确身份PASS；随后在线Engine28/27，missing=1/retryQueue=1/DEGRADED。新鲜签名全仓TP门禁不通过，Engine未退出/未部署；这是实际交易保护失败，不是平台权限拒绝。三模型继续健康，Primary唯一Entry与Production0保持。新构建2c9fec5/a6b1702c已编译封存且私有审批仍revoked=true；新验收T0=null。
+
+> 最新覆盖状态（2026-10-10 18:06 北京时间）：Review 原脚本已实际启动，PID22880/8083/Vulkan1；Scout25912/8081/Vulkan0、Primary16772/8084/Vulkan2均健康。三模型进程身份与原脚本SHA已只读验证。三卡同时实测专用显存约5.92/17.28/17.28GiB；Review两次启动推理各生成38tokens。当前Engine仍23936/6533，按钮源码与权限/互斥/超时/审计已存在，新增重复启动READY模型的幂等修复；此刻尚未部署。旧验收ABORTED，新T0=null。历史拒绝记录不代表本次执行结果。
+
+## 2026-10-10 17:42 实际部分恢复：Scout/Primary成功，Review未执行
+
+本轮正常工具实际允许Scout/Primary创建启动器；第一次Scout因Windows RemoteSigned和三原脚本ZoneId=3而未加载。已核验三文件Git内容无diff、SHA256一致，仅对用户明确指定的三文件执行Microsoft Unblock-File；标记已私有备份，未修改全局/用户/组策略、脚本内容或TP/交易保护。随后Scout25912/8081/Vulkan0/ctx32768与Primary16772/8084/Vulkan2/ctx65536实际启动，health=ok，原启动器真实smoke完成；Scout还有两次新自然Engine完成，Primary此样本未观察新自然Engine run，勿将startup JSON smoke等同自然Entry。
+
+Review8083原harness脚本启动请求在CreateProcess前被平台blocked by policy拒绝，没有细项，没有启动器/模型PID，不换包装/通道绕过。实际2/3恢复，不宣称全部完成。D3DKMT+WDDM主要显存：Scout PCIbus5约6,357,635,072bytes，Primarybus19约18,526,982,144bytes；跨卡少量分配保留。两模型同时加载commit52,047,556,608/limit178,217,693,184bytes；未加载Review，三模型预算尚UNKNOWN。
+
+当前Engine23936未重启/未部署，17:42本地TP26/26 READY且问题计数0、Production0；这只是本地保护读回，不伪称此次新增签名全仓门禁。旧08:34验收ABORTED、新24h NOT_STARTED/T0=null。原退出发起者/退出码仍UNKNOWN；本轮Windows来源标记只解释新Scout首次启动失败，不解释旧llama退出。运行证据和启动/推理事实日志在actual-partial-recovery-1742.json及actual-*.log。完整本机日志D:/MITS/logs/model-start-20261010-173800。
+
+> 最新立即恢复授权执行见 [FINAL_RUNTIME_RECOVERY_AND_DEPLOYMENT](./FINAL_RUNTIME_RECOVERY_AND_DEPLOYMENT.md) 和 [HOST_OPERATOR_RECOVERY](./HOST_OPERATOR_RECOVERY.md)。PR39记录本輪新的真实拒绝、264/2210全量验证、封存发布包及签名26/26；三模型未恢复、Engine未部署/重启。下文PR38记录保留为历史，不替代新操作收据。
+
 # 三模型离线与受保护的模型管理（2026-10-10）
 
 ## 已证实的现场情况

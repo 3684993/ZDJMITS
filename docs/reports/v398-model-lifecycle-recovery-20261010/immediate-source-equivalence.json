@@ -1,0 +1,17 @@
+{
+  "sourceCommit": "4c84631226c5373b04b1c3c73a820bf2a11448a5",
+  "validatedPr38Commit": "d39024d97f681c46c94e7537dd688f6bf271096a",
+  "comparedPaths": [
+    "apps/engine/src",
+    "apps/dashboard/src",
+    "packages/core/src",
+    "packages/contracts/src",
+    "scripts",
+    "package.json",
+    "package-lock.json",
+    "config"
+  ],
+  "changedFiles": [],
+  "equivalence": true,
+  "proofMethod": "git diff --name-only; not inherited exact-head CI"
+}

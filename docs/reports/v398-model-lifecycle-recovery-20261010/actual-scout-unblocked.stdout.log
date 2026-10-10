@@ -1,0 +1,21 @@
+
+Detected Intel Arc B580 Vulkan device(s):
+  Vulkan0 : Intel(R) Arc(TM) B580 Graphics (12190 MiB, 11421 MiB free) free=11421/12190 MiB [FREE]
+
+============================================================
+ Qwen3.5-9B / Intel Arc B580 / llama.cpp Vulkan SAFE
+============================================================
+Physical GPU    : Vulkan0 - Intel(R) Arc(TM) B580 Graphics (12190 MiB, 11421 MiB free)
+GPU isolation   : GGML_VK_VISIBLE_DEVICES=0
+Child device    : Vulkan0
+Model           : D:\.lmstudio\models\lmstudio-community\Qwen3.5-9B-GGUF\Qwen3.5-9B-Q4_K_M.gguf
+Context         : 32768
+KV              : f16 / f16
+Ctx checkpoints : 0 (when supported)
+API             : http://127.0.0.1:8081/v1
+
+READY. PID=25912 PhysicalGPU=Vulkan0 API=http://127.0.0.1:8081/v1
+
+B580 endpoint: http://127.0.0.1:8081/v1
+Status: .\start-qwen3.5-9b-vulkan.ps1 -Mode Status
+Stop  : .\start-qwen3.5-9b-vulkan.ps1 -Mode Stop

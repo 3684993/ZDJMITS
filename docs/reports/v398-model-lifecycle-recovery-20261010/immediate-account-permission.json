@@ -1,0 +1,36 @@
+{
+  "observedAt": "2026-10-10T08:51:23.366Z",
+  "environment": "TESTNET",
+  "host": "demo-fapi.binance.com",
+  "methods": [
+    "GET"
+  ],
+  "exchangeWrites": 0,
+  "requests": [
+    {
+      "endpoint": "/fapi/v2/account",
+      "startedAt": "2026-10-10T08:51:23.366Z",
+      "completedAt": "2026-10-10T08:51:25.299Z",
+      "rows": null,
+      "dispatch": {
+        "decision": "ADMITTED",
+        "status": 200,
+        "networkTiming": {
+          "startedAt": 1791622283369,
+          "proxyConnectStartedAt": 1791622283375,
+          "proxyConnectedAt": 1791622283827,
+          "socketAssignedAt": 1791622283828,
+          "secureConnectedAt": 1791622284409,
+          "responseAt": 1791622284945,
+          "completedAt": 1791622285290,
+          "reusedSocket": false,
+          "failurePhase": null
+        }
+      }
+    }
+  ],
+  "gate": "SIGNED_CAN_TRADE_TRUE",
+  "account": {
+    "canTrade": true
+  }
+}

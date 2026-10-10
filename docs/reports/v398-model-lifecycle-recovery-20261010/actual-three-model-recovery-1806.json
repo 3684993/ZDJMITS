@@ -1,0 +1,176 @@
+{
+  "asOf": "2026-10-10T18:03:40.5631955+08:00",
+  "reviewLaunchExecuted": true,
+  "reviewLauncherPid": 11688,
+  "modelStatus": [
+    {
+      "id": "scout-b580",
+      "model": "qwen3.5:9b",
+      "port": 8081,
+      "pid": 25912,
+      "processStartedAt": "2026-10-10T09:40:04.9225532Z",
+      "identityVerified": true,
+      "status": "READY",
+      "gpu": "Intel(R) Arc(TM) B580 Graphics (12190 MiB, 11421 MiB free)",
+      "physicalDevice": "Vulkan0",
+      "startupLog": [],
+      "dedicatedBytes": null,
+      "memorySource": "USE_FRESH_WDDM_SNAPSHOT"
+    },
+    {
+      "id": "review-7900-gpu2",
+      "model": "qwen/qwen3.8-27b",
+      "port": 8083,
+      "pid": 22880,
+      "processStartedAt": "2026-10-10T09:55:08.2309379Z",
+      "identityVerified": true,
+      "status": "READY",
+      "gpu": "AMD Radeon RX 7900 XTX (24560 MiB, 23748 MiB free)",
+      "physicalDevice": "Vulkan1",
+      "startupLog": [
+        "0.08.407.484 I srv  llama_server: listening on http://127.0.0.1:8083"
+      ],
+      "dedicatedBytes": null,
+      "memorySource": "USE_FRESH_WDDM_SNAPSHOT"
+    },
+    {
+      "id": "brain-7900-primary",
+      "model": "qwen/qwen3.8-27b",
+      "port": 8084,
+      "pid": 16772,
+      "processStartedAt": "2026-10-10T09:41:16.8267177Z",
+      "identityVerified": true,
+      "status": "READY",
+      "gpu": "AMD Radeon RX 7900 XTX (24560 MiB, 23748 MiB free)",
+      "physicalDevice": "Vulkan2",
+      "startupLog": [],
+      "dedicatedBytes": null,
+      "memorySource": "USE_FRESH_WDDM_SNAPSHOT"
+    }
+  ],
+  "gpuProcessMemory": [
+    {
+      "luid": "0x00000000_0x0000edc6",
+      "dedicatedBytes": 32768.0,
+      "source": "D3DKMT_ADAPTERADDRESS_AND_WDDM_PROCESS_MEMORY",
+      "device": 0,
+      "function": 0,
+      "pid": 16772,
+      "status": "MEASURED",
+      "bus": 5
+    },
+    {
+      "luid": "0x00000000_0x0000f452",
+      "dedicatedBytes": 18551623680.0,
+      "source": "D3DKMT_ADAPTERADDRESS_AND_WDDM_PROCESS_MEMORY",
+      "device": 0,
+      "function": 0,
+      "pid": 16772,
+      "status": "MEASURED",
+      "bus": 19
+    },
+    {
+      "luid": "0x00000000_0x000122ec",
+      "dedicatedBytes": 1077248.0,
+      "source": "D3DKMT_ADAPTERADDRESS_AND_WDDM_PROCESS_MEMORY",
+      "device": 0,
+      "function": 0,
+      "pid": 16772,
+      "status": "MEASURED",
+      "bus": 22
+    },
+    {
+      "luid": "0x00000000_0x0000edc6",
+      "dedicatedBytes": 32768.0,
+      "source": "D3DKMT_ADAPTERADDRESS_AND_WDDM_PROCESS_MEMORY",
+      "device": 0,
+      "function": 0,
+      "pid": 22880,
+      "status": "MEASURED",
+      "bus": 5
+    },
+    {
+      "luid": "0x00000000_0x0000f452",
+      "dedicatedBytes": 10448896.0,
+      "source": "D3DKMT_ADAPTERADDRESS_AND_WDDM_PROCESS_MEMORY",
+      "device": 0,
+      "function": 0,
+      "pid": 22880,
+      "status": "MEASURED",
+      "bus": 19
+    },
+    {
+      "luid": "0x00000000_0x000122ec",
+      "dedicatedBytes": 18551099392.0,
+      "source": "D3DKMT_ADAPTERADDRESS_AND_WDDM_PROCESS_MEMORY",
+      "device": 0,
+      "function": 0,
+      "pid": 22880,
+      "status": "MEASURED",
+      "bus": 22
+    },
+    {
+      "luid": "0x00000000_0x0000edc6",
+      "dedicatedBytes": 6357762048.0,
+      "source": "D3DKMT_ADAPTERADDRESS_AND_WDDM_PROCESS_MEMORY",
+      "device": 0,
+      "function": 0,
+      "pid": 25912,
+      "status": "MEASURED",
+      "bus": 5
+    },
+    {
+      "luid": "0x00000000_0x0000f452",
+      "dedicatedBytes": 10448896.0,
+      "source": "D3DKMT_ADAPTERADDRESS_AND_WDDM_PROCESS_MEMORY",
+      "device": 0,
+      "function": 0,
+      "pid": 25912,
+      "status": "MEASURED",
+      "bus": 19
+    },
+    {
+      "luid": "0x00000000_0x000122ec",
+      "dedicatedBytes": 1077248.0,
+      "source": "D3DKMT_ADAPTERADDRESS_AND_WDDM_PROCESS_MEMORY",
+      "device": 0,
+      "function": 0,
+      "pid": 25912,
+      "status": "MEASURED",
+      "bus": 22
+    }
+  ],
+  "availableMemoryBytes": 55850143744,
+  "enginePid": 23936,
+  "engineRestarted": false,
+  "deployed": false,
+  "acceptanceT0": null,
+  "productionWriteBoundary": {
+    "environment": "TESTNET",
+    "executionMode": "TESTNET_ENABLED",
+    "lockedToTestnet": true,
+    "testnetWrites": 56,
+    "productionWrites": 0,
+    "blockedProductionWriteAttempts": 0,
+    "lastWriteAt": 1791626492924,
+    "lastWritePath": "/fapi/v1/order"
+  },
+  "takeProfit": {
+    "status": "READY",
+    "unverifiedTp": 0,
+    "required": 27,
+    "protected": 27,
+    "missing": 0,
+    "repairing": 0,
+    "repairFailed": 0,
+    "manualReviewRequired": 0,
+    "positionFactUnresolved": 0,
+    "positionFactUnresolvedSymbols": [],
+    "orphanTp": 0,
+    "duplicateTp": 0,
+    "qtyMismatch": 0,
+    "wrongSide": 0,
+    "tpMissing": 0,
+    "retryQueue": 0
+  }
+}

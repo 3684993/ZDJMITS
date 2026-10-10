@@ -142,3 +142,7 @@ Release **NO-GO**: old live PID18100, stale private facts/SOCKS timeout, latest 
 ### 当前结论
 
 - 所有普通开发 Stage 已完成；仅保留明确标注的 Windows CurrentUser DPAPI / credentialed TESTNET private trace external gate。独立 3 小时采集脚本已交付，可脱离 Codex 会话运行。
+
+## 2026-10-10 N2 offline retained mark scope
+
+Independent branch codex/v398-network-n2-mark-scope scopes one-second markPrice to the existing protected retention union; global discovery ticker and BBO remain. MARKET 5*N+1 <=1024 uses scoped marks, otherwise existing global mark fallback; >255 retention still requires protected sharding. Red2fail/2pass -> focused5files/48tests PASS. Full verification and exact-head CI receipts: docs/reports/v398-network-mark-scope-20261010/MARK_SCOPE_REPORT.md and VALIDATION.json, PR conversation. Related N1 PR25 and N3 PR27 are independent. No deployment/restart/live proxy/authorization/TP change. Real savings/SSH bytes and authenticated PRIVATE Demo remain pending; original24h aborted08:34 LOCAL_TP_GATE_NOT_CLOSED and later local recovery cannot resume it.

@@ -52,7 +52,14 @@ export class BinanceMarketStream {
     socket.on('error',error=>{if(lane.socket!==socket)return;lane.lastError=error.message;this.updateAggregateState();});socket.on('close',(code,reason)=>{if(lane.socket!==socket)return;this.clearControls(laneName);if(reason.length)lane.lastError=`WS_CLOSE_${code}: ${String(reason)}`;if(lane.heartbeat)clearInterval(lane.heartbeat);lane.heartbeat=null;if(lane.socket===socket)lane.socket=null;if(!this.stopped)this.schedule(laneName,new Error(lane.lastError??'socket closed'));});
   }
   private schedule(laneName:'PUBLIC'|'MARKET',error:unknown){if(this.stopped)return;const lane=this.lanes[laneName];lane.state='BACKOFF';lane.lastError=error instanceof Error?error.message:String(error);lane.reconnects++;this.metricsValue.reconnects++;this.metricsValue.gaps++;this.metricsValue.gapsByType.websocketConnection++;this.updateAggregateState();const delay=Math.min(30_000,500*2**Math.min(lane.attempt++,6))+Math.floor(Math.random()*250);lane.retry=setTimeout(()=>this.connect(laneName),delay);}
-  private desired(laneName:'PUBLIC'|'MARKET'){return laneName==='PUBLIC'?new Set(['!bookTicker',...[...this.symbols].map(s=>`${s.toLowerCase()}@depth20@500ms`)]):new Set(['!ticker@arr','!markPrice@arr@1s',...[...this.symbols].flatMap(s=>[`${s.toLowerCase()}@kline_1m`,`${s.toLowerCase()}@kline_5m`,`${s.toLowerCase()}@kline_15m`,`${s.toLowerCase()}@aggTrade`])]);}
+  private desired(laneName:'PUBLIC'|'MARKET'){
+    const symbols=[...this.symbols].map(s=>s.toLowerCase());
+    if(laneName==='PUBLIC')return new Set(['!bookTicker',...symbols.map(s=>`${s}@depth20@500ms`)]);
+    // The official 1024-stream ceiling applies to each connection. Preserve the
+    // existing all-market mark feed when equal-cadence scoped marks would not fit.
+    const marks=5*symbols.length+1<=1024?symbols.map(s=>`${s}@markPrice@1s`):['!markPrice@arr@1s'];
+    return new Set(['!ticker@arr',...marks,...symbols.flatMap(s=>[`${s}@kline_1m`,`${s}@kline_5m`,`${s}@kline_15m`,`${s}@aggTrade`])]);
+  }
   private subscribeSymbols(){this.subscribeLane('PUBLIC');this.subscribeLane('MARKET');}
   private subscribeLane(laneName:'PUBLIC'|'MARKET'){const lane=this.lanes[laneName];if(lane.socket?.readyState!==WebSocket.OPEN)return;const desired=this.desired(laneName),remove=[...lane.subscribed].filter(x=>!desired.has(x)),add=[...desired].filter(x=>!lane.subscribed.has(x));for(const [method,items] of [['UNSUBSCRIBE',remove],['SUBSCRIBE',add]] as const)for(let i=0;i<items.length;i+=100)lane.controlQueue.push({method,params:items.slice(i,i+100),id:lane.requestId++});lane.subscribed=desired;this.metricsValue.subscriptions=this.lanes.PUBLIC.subscribed.size+this.lanes.MARKET.subscribed.size;this.metricsValue.cumulativeSubscriptions+=add.length;this.pumpControls(laneName);}
   private clearControls(laneName:'PUBLIC'|'MARKET'){const lane=this.lanes[laneName];if(lane.controlTimer)clearTimeout(lane.controlTimer);lane.controlTimer=null;lane.controlQueue=[];}

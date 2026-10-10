@@ -1,0 +1,5 @@
+{
+  "apps/engine/src/adapters/market/BinanceMarketStream.test.ts": "d4c1863e2dae2cd838fca68bf1782396bdf485786df42e87a8ed2fbc39f8bb37",
+  "apps/engine/src/adapters/market/BinanceMarketStream.ts": "6c78932fed6de0c127025ff7af0d88d54a4fc5dd686f70ce288818f7f78bfba2",
+  "apps/engine/src/adapters/market/BinanceMarkScope.test.ts": "f3eea837b8e25189180f20b4e0a5185a5a6f0f647f576dc7fb42693e9a9d565e"
+}

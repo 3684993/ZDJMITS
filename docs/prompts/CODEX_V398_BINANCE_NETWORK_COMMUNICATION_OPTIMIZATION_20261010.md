@@ -25,3 +25,7 @@ docs/plans/V398_BINANCE_NETWORK_COMMUNICATION_AUDIT_AND_OPTIMIZATION_20261010.md
 ## 完成判据
 
 交付N0 baseline报告 + 已确认/未确认风险对照、N1/N2/N3分阶段独立PR/测试证据（能力许可范围内逐步实施），明确网络流量前后对比、WS用户私有事件受支持的证据、REST权重与恢复预算对照、HTTP451/503/UNKNOWN订单测试、全量CI；不虚报部署，不改变正在进行的24h验收。若全部无法在一轮完成，先完成最优先且有证据的N0/N1并更新下一步任务锚点，不停留在无输出审计循环。
+
+## 2026-10-10 N2 offline retained mark scope
+
+Independent branch codex/v398-network-n2-mark-scope scopes one-second markPrice to the existing protected retention union; global discovery ticker and BBO remain. MARKET 5*N+1 <=1024 uses scoped marks, otherwise existing global mark fallback; >255 retention still requires protected sharding. Red2fail/2pass -> focused5files/48tests PASS. Full verification and exact-head CI receipts: docs/reports/v398-network-mark-scope-20261010/MARK_SCOPE_REPORT.md and VALIDATION.json, PR conversation. Related N1 PR25 and N3 PR27 are independent. No deployment/restart/live proxy/authorization/TP change. Real savings/SSH bytes and authenticated PRIVATE Demo remain pending; original24h aborted08:34 LOCAL_TP_GATE_NOT_CLOSED and later local recovery cannot resume it.

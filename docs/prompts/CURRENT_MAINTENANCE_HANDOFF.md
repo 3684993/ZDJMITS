@@ -892,3 +892,7 @@ No strategy/model/TP/Entry parameter changes are authorized in that review.
 `local-identity-completion.json` 随后观测6个active origin；更晚独立只读事务 `natural-origin-completion.json` 取得7个历史origin及其exact intent/clientOrderId/原始quantity上限/任务订单投影（账户标识省略）。AAVE投影filled1.4，ZEC0.327，VVV8.01，另4个filled0；订单投影与授权数量在公开JSON中可复核。计数变化来自持续运行与不同观测时间，不拼为同一快照。现在已存在自然授权及成交投影，旧“未发生”条件不再成立；这些有限记录尚不能证明完整逐lot交易所链、所有独立补仓拦截或跨重启接受，相关验收仍UNKNOWN，不强迫交易/重启制造样本。
 
 代码提交3327c84的GitHub Actions已SUCCESS；证据提交1cd6d75的272项远端哈希PASS，其Actions在回执时in_progress。最后归档提交仅证据/报告变化，不改变已加载Engine源码/dist。额外在线原生GET未完成的UNKNOWN、临时私有备份保留、风险校准INSUFFICIENT_EVIDENCE等边界继续有效。
+
+## 2026-10-10 N2 offline retained mark scope
+
+Independent branch codex/v398-network-n2-mark-scope scopes one-second markPrice to the existing protected retention union; global discovery ticker and BBO remain. MARKET 5*N+1 <=1024 uses scoped marks, otherwise existing global mark fallback; >255 retention still requires protected sharding. Red2fail/2pass -> focused5files/48tests PASS. Full verification and exact-head CI receipts: docs/reports/v398-network-mark-scope-20261010/MARK_SCOPE_REPORT.md and VALIDATION.json, PR conversation. Related N1 PR25 and N3 PR27 are independent. No deployment/restart/live proxy/authorization/TP change. Real savings/SSH bytes and authenticated PRIVATE Demo remain pending; original24h aborted08:34 LOCAL_TP_GATE_NOT_CLOSED and later local recovery cannot resume it.

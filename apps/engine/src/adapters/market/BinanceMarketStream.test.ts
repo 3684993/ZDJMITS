@@ -55,7 +55,7 @@ describe('BinanceMarketStream cache and gap recovery',()=>{
 
 it('paces split public/market subscriptions independently below the per-connection message limit',async()=>{
  vi.useFakeTimers();const stream=new BinanceMarketStream({} as never,vi.fn()),sent={PUBLIC:[] as number[],MARKET:[] as number[]};
- try{for(const laneName of ['PUBLIC','MARKET'] as const)(stream as any).lanes[laneName].socket={readyState:1,send:()=>sent[laneName].push(Date.now()),close:vi.fn()};(stream as any).symbols=new Set(Array.from({length:175},(_,i)=>`S${i}USDT`));(stream as any).subscribeSymbols();await vi.advanceTimersByTimeAsync(4000);expect(sent.PUBLIC).toHaveLength(2);expect(sent.MARKET).toHaveLength(8);expect(stream.metrics().subscriptions).toBeLessThan(1024);for(const rows of [sent.PUBLIC,sent.MARKET])for(const at of rows)expect(rows.filter(t=>t>=at&&t<at+1000).length).toBeLessThanOrEqual(3);}finally{stream.stop();vi.useRealTimers();}
+ try{for(const laneName of ['PUBLIC','MARKET'] as const)(stream as any).lanes[laneName].socket={readyState:1,send:()=>sent[laneName].push(Date.now()),close:vi.fn()};(stream as any).symbols=new Set(Array.from({length:175},(_,i)=>`S${i}USDT`));(stream as any).subscribeSymbols();await vi.advanceTimersByTimeAsync(4000);expect(sent.PUBLIC).toHaveLength(2);expect(sent.MARKET).toHaveLength(9);expect(stream.metrics().lanes.PUBLIC.subscriptions).toBeLessThanOrEqual(1024);expect(stream.metrics().lanes.MARKET.subscriptions).toBeLessThanOrEqual(1024);for(const rows of [sent.PUBLIC,sent.MARKET])for(const at of rows)expect(rows.filter(t=>t>=at&&t<at+1000).length).toBeLessThanOrEqual(3);}finally{stream.stop();vi.useRealTimers();}
 });
 
 it('isolates closed 5m/15m bars and rejects a late open-bar downgrade',()=>{

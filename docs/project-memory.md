@@ -1,3 +1,11 @@
+> 2026-10-10 20:00 北京时间维护交接（覆盖下方历史状态）：PR #40 已在精确 HEAD `e3dc48b6832f48569b76a1240bb8040f5f6f3dfd` 的两次 CI 全部 SUCCESS 后合并 main，合并提交 `7495b7d3fcc4d54a454faff23e004134363c5be7`。CI：https://github.com/3684993/ZDJMITS/actions/runs/38049860753 、https://github.com/3684993/ZDJMITS/actions/runs/38049858036 。PR #39 已合并；PR #37 仅选择性整合，不另合并。
+>
+> 已提交图表：首屏 USDT/USDC 可用资金结构及红黄绿灰阈值、交易所七日收益、本地24小时账本盈亏、资金费、持仓及 TP 风险、有证据的采样趋势；新增双币种权益勾稽、多空名义敞口、资金费归因覆盖、交易所确认委托与本地 UNKNOWN 分层。源码合并不代表部署。
+>
+> 当前发布仍 NO_GO / NOT_DEPLOYED：上一轮向 Engine12140 发一次 Ctrl+C，45秒未优雅退出，未启动候选 Engine。本轮仅 GitHub 合并、源码同步和交接；未再发退出信号、强杀、重启模型或修改交易授权。在线版本仍是 source `2c9fec513bd5ba0406015c33b2c7cf9ce420ebaf`，Engine12140；三 Qwen 沿用现有健康进程。用户要求停止额外工作后，额外 GPU 采样器通过固定管理器 Stop 标记停止且计划任务禁用，开发预览关闭。旧24h ABORTED_SAFETY_FAILURE；新24h NOT_STARTED / T0=null，等待用户指令。不得据旧保护快照授权部署。
+>
+> 本机干净任务工作树同步 main；`D:/MITS` 有既有删除/未跟踪文件，保留原工作目录和分支，未 reset/clean/stash。合并收据见 `docs/reports/v398-cockpit-visual-20261010/PR40_MERGE_RECEIPT.json`。本交接是文档同步，不进行额外开发、性能采样、观察或故障排查。
+
 > 最新最终状态（2026-10-10 18:27 北京时间）：已实际部署源码2c9fec513bd5ba0406015c33b2c7cf9ce420ebaf，构建3.9.8-a6b1702cf52af4257f04，Engine12140/host1216/instance2c07d7d9-7f73-4730-903f-20d26674aa2a，运行身份6/6，health READY。旧Engine23936收到隔离CTRL_C/SIGINT后退出0，只有一次Engine切换。重启前、稳定后签名全仓TP均28/28，canTrade=true，Production0；先前网络超时、29/27及28/27失败证据保留。三模型25912/22880/16772均READY。线上浏览器三资源启动/停止/重启按钮显示，填本机密钥后启动/重启可用；三次授权启动200且PID不变，无密钥403。源码CI38043800329 SUCCESS，264文件/2211例。新24h未启动/T0=null。额外GPU侧车采样启动被平台执行前拒绝，未执行，实时显存UNKNOWN，不虚报新鲜采样。旧观察器PID1920独占锁已按身份切换，新观察器6376绑定新receipt并Running。
 
 > 18:11部署门禁更新：独立签名复核29仓位，仅27仓位TP精确身份PASS；随后在线Engine28/27，missing=1/retryQueue=1/DEGRADED。新鲜签名全仓TP门禁不通过，Engine未退出/未部署；这是实际交易保护失败，不是平台权限拒绝。三模型继续健康，Primary唯一Entry与Production0保持。新构建2c9fec5/a6b1702c已编译封存且私有审批仍revoked=true；新验收T0=null。

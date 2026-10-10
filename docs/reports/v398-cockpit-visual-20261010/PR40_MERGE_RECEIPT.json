@@ -1,0 +1,41 @@
+{
+  "observedAt": "2026-10-10T12:00:36.436168+00:00",
+  "head": "e3dc48b6832f48569b76a1240bb8040f5f6f3dfd",
+  "merge": {
+    "sha": "7495b7d3fcc4d54a454faff23e004134363c5be7",
+    "merged": true,
+    "message": "Pull Request successfully merged"
+  },
+  "checks": [
+    {
+      "name": "verify",
+      "conclusion": "success",
+      "url": "https://github.com/3684993/ZDJMITS/actions/runs/38049860753/job/114206652427"
+    },
+    {
+      "name": "verify",
+      "conclusion": "success",
+      "url": "https://github.com/3684993/ZDJMITS/actions/runs/38049858036/job/114206632167"
+    }
+  ],
+  "runs": [
+    {
+      "id": 38049860753,
+      "sha": "e3dc48b6832f48569b76a1240bb8040f5f6f3dfd",
+      "conclusion": "success",
+      "url": "https://github.com/3684993/ZDJMITS/actions/runs/38049860753"
+    },
+    {
+      "id": 38049858036,
+      "sha": "e3dc48b6832f48569b76a1240bb8040f5f6f3dfd",
+      "conclusion": "success",
+      "url": "https://github.com/3684993/ZDJMITS/actions/runs/38049858036"
+    }
+  ],
+  "deployment": "NO_GO_NOT_DEPLOYED",
+  "acceptance24h": {
+    "state": "NOT_STARTED",
+    "t0": null
+  },
+  "scope": "PR40 merge and maintenance handoff only"
+}

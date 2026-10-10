@@ -12,5 +12,8 @@ export function tradeClosePresentation(row:any):ClosePresentation{
     CONFLICT:{label:'来源冲突',cls:'danger',hint:'平仓身份出现多个冲突 provenance'},
     UNKNOWN:{label:'未知来源',cls:'danger',hint:'没有足够订单 provenance，未根据 taker 标志推断来源'},
   };
-  return kinds[String(row.closeProvenance??'UNKNOWN')]??kinds.UNKNOWN!;
+  const result=kinds[String(row.closeProvenance??'UNKNOWN')]??kinds.UNKNOWN!;
+  if(row.closeProvenance==='CONFLICT'&&Array.isArray(row.conflictReasons)&&row.conflictReasons.length)
+    return {...result,hint:result.hint+'；已记录冲突原因：'+row.conflictReasons.map(String).join(' / ')};
+  return result;
 }

@@ -94,6 +94,6 @@ export function projectTrade24hReadModel(input:{
       netExFunding:unknownAssetCycles||byAsset.USDT.cycles&&byAsset.USDC.cycles?null:
         byAsset.USDT.cycles?byAsset.USDT.netExFunding:byAsset.USDC.cycles?byAsset.USDC.netExFunding:null,
     },
-    policy:{readOnly:true,exchangeRequests:0,backfillRequests:0,mutations:0,windowMayBeIncomplete:windowStatus!=='RETAINED_LEDGER_ONLY'},
+    policy:{readOnly:true,exchangeRequests:0,backfillRequests:0,mutations:0,windowMayBeIncomplete:true,exhaustiveExchangeCoverage:'NOT_PROVEN'},
   };
 }

@@ -21,4 +21,3 @@
 
 > @zdj/core@3.9.8 build
 > tsc -p tsconfig.json
-

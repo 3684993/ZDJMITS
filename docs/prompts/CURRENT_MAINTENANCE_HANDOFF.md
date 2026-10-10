@@ -918,3 +918,8 @@ No strategy/model/TP/Entry parameter changes are authorized in that review.
 `local-identity-completion.json` 随后观测6个active origin；更晚独立只读事务 `natural-origin-completion.json` 取得7个历史origin及其exact intent/clientOrderId/原始quantity上限/任务订单投影（账户标识省略）。AAVE投影filled1.4，ZEC0.327，VVV8.01，另4个filled0；订单投影与授权数量在公开JSON中可复核。计数变化来自持续运行与不同观测时间，不拼为同一快照。现在已存在自然授权及成交投影，旧“未发生”条件不再成立；这些有限记录尚不能证明完整逐lot交易所链、所有独立补仓拦截或跨重启接受，相关验收仍UNKNOWN，不强迫交易/重启制造样本。
 
 代码提交3327c84的GitHub Actions已SUCCESS；证据提交1cd6d75的272项远端哈希PASS，其Actions在回执时in_progress。最后归档提交仅证据/报告变化，不改变已加载Engine源码/dist。额外在线原生GET未完成的UNKNOWN、临时私有备份保留、风险校准INSUFFICIENT_EVIDENCE等边界继续有效。
+
+
+## 2026-10-10 original24h acceptance terminal state
+
+ABORTED_SAFETY_FAILURE at08:34:00.270+08, LOCAL_TP_GATE_NOT_CLOSED (local14/15). All19 historical checkpoints/state/cursor now synchronized; old9-record prefix preserved. No24h PASS or clock continuation; derived elapsed17m10.585s differs from retained lagging elapsed field16.17665min. Post-abort09:34 read-only originalidentity/private17.380s/localTP24/24/Production0 is not signed full-position proof or new acceptance. Hidden task last run0 and terminal checkpoint stop are expected. No lifecycle/live/task/observer modifications. See docs/reports/v398-engine-cutover-20261010/ACCEPTANCE_ABORT_RECEIPT_20261010.md and acceptance JSON validation. All future repair/release/new24h need applicable authorization and gates; networkPR25/27/29 remain offline/unmerged.

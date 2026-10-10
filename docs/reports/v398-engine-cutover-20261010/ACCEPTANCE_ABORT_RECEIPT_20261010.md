@@ -1,0 +1,15 @@
+# Original 24-hour acceptance aborted — authoritative evidence closure
+
+The original window starting 2026-10-10 08:16:49.685+08 ended at **08:34:00.270+08, ABORTED_SAFETY_FAILURE / LOCAL_TP_GATE_NOT_CLOSED**. The terminal checkpoint reports local TP14/15, missing1, private age15952ms, Production writes0. This is not a completed24h or a PASS. No new window was started, and later cache recovery cannot resume the old clock.
+
+This evidence-only change copies the existing observer state/checkpoints/cursor from the preserved original worktree. All nine checkpoints already on main remain an identical logical line prefix; ten additional historical checkpoints complete the19-record window. Identity is consistent across recorded samples; Production0 throughout sampled checkpoints, max private age22030ms, maximum sample gap61010ms. Sampled zero-write counters are not an audit of every exchange event outside retained coverage.
+
+The observer's original elapsedMinutes16.17665 is retained. T0-to-abort timestamp subtraction is17.1764167 minutes (17m10.585s); the elapsed field is one checkpoint behind and must not determine the verdict. ABORT_EVIDENCE_VALIDATION_20261010.json records the distinction and raw-source hashes before Git line-ending normalization. The baseline contains an existing UTF-8 BOM: the evidence validator strips BOM only while parsing; original files are not rewritten.
+
+At09:34:13+08, three localhost GETs and listener/process reads confirmed the original Engine23688, host26576, instance07230a28-51ac-4dda-9c95-20a789b382b4, build3.9.8-bb45c11acbe9819a3456. Private age17380ms, failures0; local TP24/24, missing/unverified0; Production counters0. Proxy/model listener PIDs remain18300/3400/14020/22336. These are separate **post-abort read-only facts**, not new acceptance checkpoints or current fresh signed per-position TP proof. PRIMARY READY/lastRunAge2728ms is not an eligible-candidate denominator or proof excluding warmup. Natural effective Primary cadence remains UNKNOWN without exact-origin analysis.
+
+The hidden scheduled task is Ready; last run09:34:00 returned0. Terminal state correctly prevents further checkpoint growth. No task, observer, Engine, model, proxy, Settings, authorization, private database or TP was changed. No direct exchange probe/order/forced analysis occurred. The original dirty worktree remains preserved.
+
+Existing offline network PR25/27/29 remain unmerged and undeployed; their CI success does not repair the original acceptance failure. Current user instructions prohibit deployment/restart/live proxy or authorization changes. TP incident exact durable cause/Issue23 origin attribution, fresh signed account/TP and future release gates remain pending. Any later authorized repair/release requires all safety gates and a full new24h T0; no automatic lifecycle retry.
+
+Validation here is only JSON/JSONL parse, old-prefix preservation, terminal consistency, monotonic timestamps and sampled identity/counters. No source change occurred; full test suites were not rerun for evidence-only synchronization.

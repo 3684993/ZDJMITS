@@ -87,3 +87,8 @@ Windows 已识别的周期弹窗源是两个 Interactive 5min Node task。8个 Z
 现场 Engine 仍旧 build/PID18100；私有事实过期、SOCKS deadline失败。TP本地13/13不是当前exchange signed证明。代理账户 `MaxSessions=0` 禁止 shell；不能据此改ssh配置或冒充本轮Linux样本。451资格UNKNOWN必须官方确认。未部署、未重启、90min新版验收NOT_STARTED；旧观察器的build白名单必须在正规发布后更新。禁止绕policy、地区限制、独立补仓、Production、风险/TP/freshness减弱。
 
 主机根目录 `D:\MITS` dirty且保留；本轮用隔离 worktree。原PR20资源说明断言失败已修复，PUBLIC/MARKET计数使用一次快照时间；decoded bytes不是SSH wire，也不含PRIVATE/REST。所有可发布回执/日志/任务备份在GitHub，钥匙、DB、账户原始事件及dumps留本机。
+
+
+## 2026-10-10 original24h acceptance terminal state
+
+ABORTED_SAFETY_FAILURE at08:34:00.270+08, LOCAL_TP_GATE_NOT_CLOSED (local14/15). All19 historical checkpoints/state/cursor now synchronized; old9-record prefix preserved. No24h PASS or clock continuation; derived elapsed17m10.585s differs from retained lagging elapsed field16.17665min. Post-abort09:34 read-only originalidentity/private17.380s/localTP24/24/Production0 is not signed full-position proof or new acceptance. Hidden task last run0 and terminal checkpoint stop are expected. No lifecycle/live/task/observer modifications. See docs/reports/v398-engine-cutover-20261010/ACCEPTANCE_ABORT_RECEIPT_20261010.md and acceptance JSON validation. All future repair/release/new24h need applicable authorization and gates; networkPR25/27/29 remain offline/unmerged.

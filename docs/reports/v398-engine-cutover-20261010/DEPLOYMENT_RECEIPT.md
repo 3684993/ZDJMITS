@@ -1,3 +1,5 @@
+> **Terminal update2026-10-10:** original24h ABORTED_SAFETY_FAILURE at08:34:00.270+08, LOCAL_TP_GATE_NOT_CLOSED; no24h PASS/new clock. See [abort receipt](ACCEPTANCE_ABORT_RECEIPT_20261010.md) and acceptance/state.json. The initial deployment/running receipt below remains historical.
+
 # V398 actual TESTNET Engine deployment and new24h acceptance
 
 **DEPLOYED / RESTARTED / IDENTITY_CLOSED_6_OF_6 / ACCEPTANCE24H_RUNNING, not yet PASS.** T0 **2026-10-10 08:16:49.685+08**, deadline **2026-10-11 08:16:49.685+08**. See the evolving `acceptance/state.json` and `acceptance/checkpoints.jsonl`; do not interpret this initial running receipt as completion of24h.

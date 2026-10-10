@@ -142,3 +142,8 @@ Release **NO-GO**: old live PID18100, stale private facts/SOCKS timeout, latest 
 ### 当前结论
 
 - 所有普通开发 Stage 已完成；仅保留明确标注的 Windows CurrentUser DPAPI / credentialed TESTNET private trace external gate。独立 3 小时采集脚本已交付，可脱离 Codex 会话运行。
+
+
+## 2026-10-10 original24h acceptance terminal state
+
+ABORTED_SAFETY_FAILURE at08:34:00.270+08, LOCAL_TP_GATE_NOT_CLOSED (local14/15). All19 historical checkpoints/state/cursor now synchronized; old9-record prefix preserved. No24h PASS or clock continuation; derived elapsed17m10.585s differs from retained lagging elapsed field16.17665min. Post-abort09:34 read-only originalidentity/private17.380s/localTP24/24/Production0 is not signed full-position proof or new acceptance. Hidden task last run0 and terminal checkpoint stop are expected. No lifecycle/live/task/observer modifications. See docs/reports/v398-engine-cutover-20261010/ACCEPTANCE_ABORT_RECEIPT_20261010.md and acceptance JSON validation. All future repair/release/new24h need applicable authorization and gates; networkPR25/27/29 remain offline/unmerged.

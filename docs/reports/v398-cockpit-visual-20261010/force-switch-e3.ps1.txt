@@ -1,0 +1,32 @@
+$ErrorActionPreference='Stop'
+$root='D:/MITS-OPERATIONS/v398-cockpit-e3-deploy-20261010'
+$prep=Get-Content "$root/staged-release-27a.json" -Raw | ConvertFrom-Json
+$oldEnv=(Get-Content "$root/old-child-environment.json" -Raw | ConvertFrom-Json).actualChildEnvironment
+$target=Get-CimInstance Win32_Process -Filter 'ProcessId=12140'
+$instance=Get-Content 'D:/MITS/data/runtime/engine-instance.json' -Raw | ConvertFrom-Json
+if(-not $target -or $target.ExecutablePath -ine 'C:\Program Files\nodejs\node.exe' -or $target.ParentProcessId -ne 1216 -or $target.CommandLine -notlike '*ZDJMITS-v398-models-2c9fec5\apps\engine\dist\main.js*' -or $instance.pid -ne 12140 -or $instance.instanceId -ne '2c07d7d9-7f73-4730-903f-20d26674aa2a'){throw 'EXACT_ENGINE_IDENTITY_CHANGED'}
+if(Test-Path "$root/force-switch-once.json"){throw 'THIS_AUTHORIZED_ATTEMPT_ALREADY_DISPATCHED'}
+$approval=Get-Content "$root/new-entry-approval.27a.prepared.json" -Raw | ConvertFrom-Json
+$approval.operatorApproval='ONE_TESTNET_ENGINE_SWITCH';$approval.revoked=$false;$approval.approvedAt=[DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds();$approval.preparationState='ACTIVATED_EXPLICIT_USER_FORCE_RESTART_WITH_RELEASE_TP_GATE_WAIVED'
+if($approval.expiresAt -le [DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds()){throw 'EXISTING_ENTRY_APPROVAL_EXPIRY_NOT_EXTENDED'}
+$dest=Join-Path $env:LOCALAPPDATA 'ZDJMITS/entry-authorization/v398-testnet-entry-cockpit-e3dc48b-20261010.json'
+if(Test-Path $dest){throw 'NEW_APPROVAL_ALREADY_EXISTS'}
+$oldHash=(Get-FileHash -LiteralPath $oldEnv.ZDJ_ENTRY_APPROVAL_FILE).Hash
+[IO.File]::WriteAllText($dest,($approval|ConvertTo-Json -Depth 8),[Text.UTF8Encoding]::new($false))
+$acl=[Security.AccessControl.FileSecurity]::new();$acl.SetAccessRuleProtection($true,$false);foreach($id in @([Security.Principal.WindowsIdentity]::GetCurrent().User,[Security.Principal.SecurityIdentifier]::new('S-1-5-18'))){$acl.AddAccessRule([Security.AccessControl.FileSystemAccessRule]::new($id,'FullControl','Allow'))};Set-Acl -LiteralPath $dest -AclObject $acl
+$aux=@{};foreach($port in @(8081,8083,8084,20091)){$aux["$port"]=@(Get-NetTCPConnection -LocalPort $port -State Listen | Select-Object -ExpandProperty OwningProcess -Unique)[0]}
+$stage=$prep.stagePath
+$env:ZDJ_HOST='0.0.0.0';$env:ZDJ_PORT='8080';$env:ZDJ_DATA_DIR=$oldEnv.ZDJ_DATA_DIR;$env:ZDJ_CONFIG_DIR=Join-Path $stage 'config';$env:ZDJ_START_REASON='MANUAL_START';$env:ZDJ_ENTRY_ADMISSION_DISABLED='0';$env:ZDJ_ENTRY_EXECUTION_POLICY='TESTNET_ENTRY_ENABLED';$env:ZDJ_ENTRY_APPROVAL_FILE=$dest;$env:ZDJ_ENTRY_APPROVED_ARTIFACT_SHA256=$prep.artifactHash
+$env:ZDJ_MODEL_MANIFEST='D:/MITS-OPERATIONS/immediate-model-recovery-20261010/model-manifest-user-specified-1755.json';$env:ZDJ_MODEL_OPERATIONS_DIR='D:/MITS-OPERATIONS/immediate-model-recovery-20261010/model-operations';$env:ZDJ_MODEL_OPERATION_TOKEN=(Get-Content 'D:/MITS-OPERATIONS/immediate-model-recovery-20261010/model-operation-token.private.txt' -Raw).Trim();$env:PATH=(Split-Path (Get-Process -Id $PID).Path)+[IO.Path]::PathSeparator+$env:PATH
+$env:ZDJ_GPU_SNAPSHOT_PATH='D:/MITS-OPERATIONS/v398-cockpit-gpu-20261010/gpu/gpu-snapshot.json'
+$hostScript=Join-Path $stage 'scripts/start-zdj-engine-host.ps1';$node=$target.ExecutablePath;$launchId='v398-cockpit-e3dc48b-force-20261010-one'
+$args=@('-NoProfile','-File',$hostScript,'-NodePath',$node,'-EnginePath',(Join-Path $stage 'apps/engine/dist/main.js'),'-WorkingDirectory',(Join-Path $stage 'apps/engine'),'-StdoutPath',"$root/new-engine.stdout.log",'-StderrPath',"$root/new-engine.stderr.log",'-LifecyclePath',"$root/new-engine-lifecycle.jsonl",'-ReceiptPath',"$root/new-engine-receipt.json",'-LaunchId',$launchId)
+$encoded=($args | ForEach-Object {'"'+$_+'"'}) -join ' '
+[ordered]@{at=[DateTime]::UtcNow.ToString('o');oldPid=12140;oldInstance=$instance.instanceId;source='e3dc48b6832f48569b76a1240bb8040f5f6f3dfd';build=$prep.buildId;authorization='LATEST_EXPLICIT_USER_FORCE_STOP_RESTART_AND_RELEASE_TP_GATE_WAIVER';freshSignedTp='UNVERIFIED_WAIVED_BY_OPERATOR_FOR_LIFECYCLE_ONLY';entryPolicy='TESTNET_ENTRY_ENABLED';modelProxyPids=$aux;automaticRetries=0;forceTermination=$true;new24h='NOT_STARTED'} | ConvertTo-Json -Depth 6 | Set-Content "$root/force-switch-once.json" -Encoding utf8
+Stop-Process -Id 12140 -Force -ErrorAction Stop
+$deadline=(Get-Date).AddSeconds(10);while((Get-Process -Id 12140 -ErrorAction SilentlyContinue) -and (Get-Date) -lt $deadline){Start-Sleep -Milliseconds 100}
+if(Get-Process -Id 12140 -ErrorAction SilentlyContinue){throw 'OLD_ENGINE_STILL_RUNNING_NO_RETRY'}
+if(Get-NetTCPConnection -LocalPort 8080 -State Listen -ErrorAction SilentlyContinue){throw '8080_OWNED_DO_NOT_START_SECOND_ENGINE'}
+$hostProcess=Start-Process -FilePath (Get-Process -Id $PID).Path -ArgumentList $encoded -WorkingDirectory $stage -WindowStyle Hidden -PassThru
+[ordered]@{at=[DateTime]::UtcNow.ToString('o');hostPid=$hostProcess.Id;launchId=$launchId;stage=$stage;oldPidGone=$true;originalApprovalUnchanged=((Get-FileHash -LiteralPath $oldEnv.ZDJ_ENTRY_APPROVAL_FILE).Hash -eq $oldHash)} | ConvertTo-Json | Set-Content "$root/forced-new-host-launch.json" -Encoding utf8
+Write-Output "FORCE_STOP_AND_NEW_HOST_STARTED hostPid=$($hostProcess.Id)"

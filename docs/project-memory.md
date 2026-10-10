@@ -1,3 +1,11 @@
+> 2026-10-10 20:18 北京时间已实际部署（覆盖下方 NO_GO 历史）：用户重新明确授权强制停止 Engine，并撤销 Engine 启动/重启前的新鲜签名 TP/私有同步发布门禁，要求保持建仓授权。执行一次 Stop-Process -Force，仅停止旧 Engine12140；新 host25736 / Engine13476 / instance d78966bf-820d-4cad-8ab0-b993774b2a21 已监听0.0.0.0:8080。源码 e3dc48b6832f48569b76a1240bb8040f5f6f3dfd，build `3.9.8-a790207862ad258b41a0`，sourceHash/artifactHash与封存包一致。npm ci/build PASS，精确源码两次 GitHub CI SUCCESS。
+>
+> 本次及后续 Engine 生命周期不再以新鲜签名 TP/私有同步作为用户要求的发布前置拦截；这些事实仍如实显示 UNKNOWN/不可用，不伪造PASS。本次更新了精确构建的 ONE_TESTNET_ENGINE_SWITCH 审批绑定，保留原审批文件与原到期时间；启动参数 TESTNET_ENTRY_ENABLED / admissionDisabled=0，浏览器显示 AUTO_RUNNING、TESTNET自动建仓已启用。Primary唯一建仓、禁止补仓、HUMAN_MANAGED、交易TP保护及Production隔离代码未删除。
+>
+> 三模型 Scout25912/Review22880/Primary16772未重启。同一路由异常SSH代理已用原管理脚本重建，PID18300→10588，出口/凭据/主机/端口不变，原生公共时间探测PASS；Node交易网络仍超时，私有事实不可用、行情不足，暂未观察到新可执行候选或重启后新建仓。当前health OFFLINE描述交易链路而非进程已退出；8080、WebSocket与实际新驾驶舱正常。余额/七日收益缺失显示灰色UNKNOWN，本地24h盈亏、多空敞口、资金费归因和订单证据新图表已在实际8080页面确认。本地TP27/27不等同新鲜签名保护PASS，Production writes/blocked attempts0。
+>
+> 一致性备份 quick_check=ok/fsync/Settings253匹配；启动任务及既有只读崩溃观察器指向新发布包/receipt。额外GPU采样仍停止，未擅自重启健康模型、删除交易保护或启动24h；新24h NOT_STARTED/T0=null。真实收据、强停脚本、代理恢复日志与上线截图见 `docs/reports/v398-cockpit-visual-20261010/FORCED_DEPLOYMENT_RECEIPT.json`。本次是明确操作者授权的强制切换，不能冒充优雅退出或健康交易验收通过。
+
 > 2026-10-10 最新重新授权部署实测：用户再次授权立即部署/Engine重启，已准备精确CI通过的 e3dc48b 源码独立发布包，npm ci 与完整工作区 build PASS，候选 build `3.9.8-a790207862ad258b41a0`。两次独立新鲜签名 TP 核验均在 SOCKS_NEGOTIATION 阶段超时，保护评估 UNVERIFIED；末读私有同步 age=105659ms、consecutiveFailures=3，超过30秒门禁。当前本地TP27/27不能代替新鲜签名证明。本次发布 NO_GO_FRESH_SIGNED_TP_UNVERIFIED，未停止/启动 Engine12140，未重启模型、修改授权/TP或进行人工交易所写入；优雅退出路径也尚未重新证明。新24h NOT_STARTED/T0=null。失败证据及构建日志：`docs/reports/v398-cockpit-visual-20261010/AUTHORIZED_DEPLOY_RECHECK.json` 与 `e3-*`；源码完成与发布包构建不等于上线。以下历史交接保留。
 
 > 2026-10-10 20:00 北京时间维护交接（覆盖下方历史状态）：PR #40 已在精确 HEAD `e3dc48b6832f48569b76a1240bb8040f5f6f3dfd` 的两次 CI 全部 SUCCESS 后合并 main，合并提交 `7495b7d3fcc4d54a454faff23e004134363c5be7`。CI：https://github.com/3684993/ZDJMITS/actions/runs/38049860753 、https://github.com/3684993/ZDJMITS/actions/runs/38049858036 。PR #39 已合并；PR #37 仅选择性整合，不另合并。

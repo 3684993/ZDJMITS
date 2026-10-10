@@ -1,0 +1,54 @@
+{
+  "sourceCommit": "e3dc48b6832f48569b76a1240bb8040f5f6f3dfd",
+  "instance": {
+    "instanceId": "d78966bf-820d-4cad-8ab0-b993774b2a21",
+    "pid": 13476,
+    "startedAt": 1791634725197,
+    "host": "0.0.0.0",
+    "port": 8080,
+    "version": "3.9.8",
+    "buildId": "3.9.8-a790207862ad258b41a0",
+    "artifactHash": "a790207862ad258b41a0e7fc3618100eca616d70a022ad73a494249692b7374c",
+    "sourceHash": "6cfc6e079aefb5fc4790195cd22bb528c1f9a6c6adcd39586f2acdc0e7ce44ef",
+    "startReason": "MANUAL_START",
+    "lanIps": [
+      "192.168.1.50"
+    ],
+    "restartCount": 283
+  },
+  "stage": "D:/MITS-RELEASES/ZDJMITS-v398-cockpit-e3dc48b",
+  "sourceHashMatch": true,
+  "artifactHashMatch": true,
+  "backup": {
+    "bytes": 948744192,
+    "sha256": "d808a84b3f141b71eff404123f99b33f05a90cc1f4e59fa18f616d1b91c3b724",
+    "elapsedMs": 2110,
+    "quickCheck": "ok",
+    "fsync": true,
+    "settingsMatch": true
+  },
+  "taskExchangeWrites": 0,
+  "modelRestarts": 0,
+  "releaseState": "DEPLOYED_OPERATOR_AUTHORIZED_FORCED_SWITCH",
+  "tradingHealth": "NETWORK_PRIVATE_FACTS_UNAVAILABLE; AUTO_RUNNING_TESTNET_ENABLED; NO_NEW_EXECUTABLE_CANDIDATES_OBSERVED",
+  "tpProof": "LOCAL27_OF27_ONLY; FRESH_SIGNED_UNKNOWN; LIFECYCLE_GATE_WAIVED_BY_LATEST_USER",
+  "models": {
+    "Scout": 25912,
+    "Review": 22880,
+    "Primary": 16772
+  },
+  "proxy": {
+    "previousPid": 18300,
+    "currentPid": 10588,
+    "sameHostPortCredentialsAndRoute": true,
+    "nativePublicTimeProbe": "PASS",
+    "nodeTransport": "TIMEOUT"
+  },
+  "new24h": {
+    "state": "NOT_STARTED",
+    "t0": null
+  },
+  "startupAuthority": "TESTNET_ENTRY_ENABLED; existing Primary/no-add/TP/order authorization code unchanged; new approval bound to exact build; original approval unchanged",
+  "browserEvidence": "Actual 8080 page via computer-use; not preview; finance sections and AUTO_RUNNING visible; unavailable balances remain unknown",
+  "bootAndExistingCrashObserver": "Retargeted to e3 release and new receipt; no long acceptance started"
+}

@@ -1,0 +1,19 @@
+{
+  "at": "2026-10-10T12:18:40.3404814Z",
+  "oldPid": 12140,
+  "oldInstance": "2c07d7d9-7f73-4730-903f-20d26674aa2a",
+  "source": "e3dc48b6832f48569b76a1240bb8040f5f6f3dfd",
+  "build": "3.9.8-a790207862ad258b41a0",
+  "authorization": "LATEST_EXPLICIT_USER_FORCE_STOP_RESTART_AND_RELEASE_TP_GATE_WAIVER",
+  "freshSignedTp": "UNVERIFIED_WAIVED_BY_OPERATOR_FOR_LIFECYCLE_ONLY",
+  "entryPolicy": "TESTNET_ENTRY_ENABLED",
+  "modelProxyPids": {
+    "8084": 16772,
+    "8083": 22880,
+    "8081": 25912,
+    "20091": 10588
+  },
+  "automaticRetries": 0,
+  "forceTermination": true,
+  "new24h": "NOT_STARTED"
+}

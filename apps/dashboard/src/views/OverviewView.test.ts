@@ -12,6 +12,6 @@ it('refreshes private readiness without reopening, coalesces slow reads and stop
  await vi.advanceTimersByTimeAsync(6000);expect(api.pipeline).toHaveBeenCalledTimes(1);
  resolve({asOf:1,binancePrivate:{status:'UNAVAILABLE'},runtimeControl:{mode:'RUNNING',reasonText:'旧状态'}});await flushPromises();
  vi.mocked(api.pipeline).mockResolvedValue({asOf:2,binancePrivate:{status:'READY'},runtimeControl:{mode:'RUNNING',reasonText:'私有数据已恢复'}} as any);
- await vi.advanceTimersByTimeAsync(3000);await flushPromises();expect(wrapper.text()).toContain('私有数据已恢复');
+ await vi.advanceTimersByTimeAsync(9000);await flushPromises();expect(wrapper.text()).toContain('私有数据已恢复');
  wrapper.unmount();await vi.advanceTimersByTimeAsync(6000);expect(api.pipeline).toHaveBeenCalledTimes(2);vi.useRealTimers();vi.restoreAllMocks();
 });

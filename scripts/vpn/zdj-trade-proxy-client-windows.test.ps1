@@ -49,6 +49,10 @@ try {
   function Test-Tunnel {$script:probes++;if($script:probes -ge 4){throw 'FIXTURE_ZERO_RESTART_OBSERVATION_COMPLETE'};return [pscustomobject]@{healthy=$false;failurePhase='SOCKS_CONNECT_REPLY';elapsedMs=1}}
   $observed=$false;try{Main|Out-Null}catch{$observed=$_.Exception.Message -eq 'FIXTURE_ZERO_RESTART_OBSERVATION_COMPLETE'}
   if(-not $observed -or $script:starts -ne 0 -or $script:stops -ne 0){throw 'Read-only guardian restoration touched SSH lifecycle'}
+  $script:probes=0
+  function Get-Owner {return $null}
+  $observed=$false;try{Main|Out-Null}catch{$observed=$_.Exception.Message -eq 'FIXTURE_ZERO_RESTART_OBSERVATION_COMPLETE'}
+  if(-not $observed -or $script:starts -ne 0 -or $script:stops -ne 0){throw 'Zero-budget guardian started a missing tunnel'}
   # One-shot restart restores the monitor even if public verification still fails.
   # All lifecycle functions remain fixtures: no production process is touched.
   $Watch=$false;$Restart=$true;$script:restored=0;$script:guardianStops=0

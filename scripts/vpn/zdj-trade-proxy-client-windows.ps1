@@ -216,7 +216,10 @@ function Main {
       Invoke-Locked {
         if($Restart){if(-not $Watch){Stop-Guardian};Stop-OwnedTunnel}
         $owner=Get-Owner;Assert-Owned $owner
-        if(-not $owner){Start-OwnedTunnel}
+        if(-not $owner){
+          if($Watch -and $MaxRestarts -eq 0){throw 'RESTART_BUDGET_EXHAUSTED_NO_INITIAL_START'}
+          Start-OwnedTunnel
+        }
       }
     }catch {
       # Ownership failures must never turn into restart attempts against another process.

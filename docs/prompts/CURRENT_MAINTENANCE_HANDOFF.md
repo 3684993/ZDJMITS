@@ -1,3 +1,10 @@
+## 2026-10-10 持仓/挂单管理与第二个27B Review职责优化
+
+源码实查方案：[V398_GPU2_POSITION_PENDING_TP_REVIEW_OPTIMIZATION_20261010](https://github.com/3684993/ZDJMITS/blob/main/docs/plans/V398_GPU2_POSITION_PENDING_TP_REVIEW_OPTIMIZATION_20261010.md)；执行任务：[Issue #28](https://github.com/3684993/ZDJMITS/issues/28)，与[双GPU容量调度Issue #26](https://github.com/3684993/ZDJMITS/issues/26)以及[网络Issue #24](https://github.com/3684993/ZDJMITS/issues/24)共同实施。
+
+结论：当前Engine负责全部仓位/挂单事实、持仓FIRST_FILL时间与管理deadline、5s TP Guardian/15s reconciliation、Entry pending外层2s tick。默认nearMarket TTL90s/改价5s/最多6次，但实际Settings253未独立核实；27B Review8083的pending第一次调用>=15s/以后间隔>=30s，提出KEEP/CANCEL/REPLAN，后两者精确查旧双ID再撤单，不自动新开仓。持仓Review15s tick但有plan/owner/minInterval/预算限额，PositionReviewV396仅HOLD/REDUCE_PROPOSAL/EXIT_PROPOSAL/HANDOFF，**不允许模型给任意新止盈价或数量**。TP Guardian发现WORKING且数量/方向匹配时直接保留现价，不进行常态化动态调整；只有创建/修复进入价格选择与严格原订单撤销/替换。AI Exit代码默认为OFF，实际需查Settings。
+
+R0只读GPU2 utilization/task/no-plan/owner/queue原因与真实持仓、挂单age; R1离线同origin单action lease及模型任务deadline；R2独立TP_TARGET_REVIEW_DRY_RUN只从合法冻结目标ID选择，先SHADOW，**不能写交易所或取消原TP**；R3与Issue26统一单GPU maxConcurrency=1原子容量租约，角色保持Primary独立Entry；R4专项TP/NO_ADD/UNKNOWN/partial fill/HUMAN_MANAGED测试和完整CI独立PR。严格禁止补仓；ENAUI“补仓1次”身份仍待Issue23核对。**当前24h验收期不部署、不改Settings/代理/模型/TP，不重启Engine**，如将来获批变更则完整重新计时。
 ## 2026-10-10 双27B GPU占用失衡专项（静态审计/离线优化，未部署）
 
 方案：[V398_DUAL_27B_GPU_UTILIZATION_AND_DUTY_SCHEDULING_20261010](https://github.com/3684993/ZDJMITS/blob/main/docs/plans/V398_DUAL_27B_GPU_UTILIZATION_AND_DUTY_SCHEDULING_20261010.md)。Codex任务：[Issue #26](https://github.com/3684993/ZDJMITS/issues/26)。默认Settings固定8084/27B为ENTRY_PRIMARY，8083/27B为POSITION_REVIEW/PENDING_ENTRY_REVIEW，各maxConcurrency1，当前不是真正两卡负载均衡。实际物理PCI bus19/bus22→8083/8084进程必须先只读核对，不能猜。源码aiFabric.dutyResources只会返回每职责已配置资源；choose不能跨角色借用；queueReview用reviewActive而Primary run另用load.active，**不能直接加候选路由形成超额GPU并发**。按G0现场指标与模型hash/ctx等价性、G1离线统一perGPU原子lease和overdue Review保护、G2离线压测/CI后独立PR，只有另行获用户授权才部署；不得干扰当前24h验收、Engine/两个模型/代理、Primary唯一Entry、禁补仓、HUMAN_MANAGED、TP保护和Production0。

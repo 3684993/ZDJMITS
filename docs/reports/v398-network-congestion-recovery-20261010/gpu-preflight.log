@@ -1,0 +1,5 @@
+Exception: D:\MITS-WORKTREES\v398-network-recovery-field-20261010\scripts\performance\collect-windows-gpu.ps1:10
+Line |
+  10 |  … -or $IntervalSeconds -lt 10){throw 'Invalid bounded sampling window'}
+     |                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | Invalid bounded sampling window

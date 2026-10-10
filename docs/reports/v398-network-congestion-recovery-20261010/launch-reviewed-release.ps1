@@ -18,6 +18,11 @@ if(-not $LaunchChild){
  return
 }
 $env:ZDJ_CONFIG_DIR=Join-Path $release.stage 'config';$env:ZDJ_DATA_DIR='D:\MITS\data';$env:ZDJ_START_REASON='MANUAL_START'
+$env:ZDJ_GPU_SNAPSHOT_PATH='D:\MITS-OPERATIONS\v398-cockpit-gpu-20261010\gpu\gpu-snapshot.json'
+$env:ZDJ_MODEL_MANIFEST='D:\MITS-OPERATIONS\immediate-model-recovery-20261010\model-manifest-user-specified-1755.json'
+$env:ZDJ_MODEL_OPERATIONS_DIR='D:\MITS-OPERATIONS\immediate-model-recovery-20261010\model-operations'
+$modelTokenFile='D:\MITS-OPERATIONS\immediate-model-recovery-20261010\model-operation-token.private.txt'
+if(Test-Path -LiteralPath $modelTokenFile){$env:ZDJ_MODEL_OPERATION_TOKEN=[IO.File]::ReadAllText($modelTokenFile).Trim()}
 $env:ZDJ_ENTRY_EXECUTION_POLICY=$EntryMode;$env:ZDJ_ENTRY_ADMISSION_DISABLED='1'
 $env:ZDJ_ENTRY_APPROVAL_FILE='';$env:ZDJ_ENTRY_APPROVED_ARTIFACT_SHA256=''
 Remove-Item Env:ZDJ_EXIT_AFTER_MS -ErrorAction SilentlyContinue

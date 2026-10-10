@@ -1,3 +1,14 @@
+# 2026-10-10 13:49 +08 · v3.9.8 驾驶舱专业图表与指示灯（本分支最新）
+
+新分支 `chatgpt/v398-cockpit-professional-finance-status-20261010` 自 `main ffdc99e6cd7dfa75e644e4f7d4fb719899d7dd16` 起开发；PR31/34已在main完成整合，当前轮不是修改现网/重启。本轮ChatGPT实际提交：
+- `apps/dashboard/src/components/CockpitSignalStrip.vue` + `utils/cockpitStatus.ts` 与测试：TopBar原 `TESTNET · TESTNET_ENABLED` 改成8路紧凑圆点指示（Environment，SOCKS routed exchange reachability，Exchange，private sync，Scout/Primary/Review，本地TP），无需“红黄绿灰”冗余文字，带原始来源tooltip。TESTNET黄、PRODUCTION绿、环境事实无效红。经fail-closed proxy路由+新鲜签名账户可达是交易业务链路已通，不冒称SSH wire/TCP独立探测已验证；HTTP451与代理错误分开。UI额外只读`/diagnostics/binance-governance`、`/brain/resources`，无Binance direct call。
+- `apps/dashboard/src/components/CockpitOverviewTop.vue` + `OverviewView.vue`：驾驶舱首屏加高密度签名USDT/USDC可用资金、已有ECharts样式的真实短窗口曲线、24h盈利亏损/手续费（原生quote分币种）、持仓及TP现况、1小时Entry/Exit fill实测采样趋势。底部原来的巨大真实资产、BTC、资金Entry资格、身份挂单列表收敛为折叠“原始交易所资产明细与活动委托身份证据”，测试合同不删除。
+- `utils/financePerformance.ts` + tests、`PerformanceView.vue` + `FinancePerformance.vue`：先检查签名账户资产endpoint`/api/v3/account/assets`，允许最多10s Engine/browser时差，新鲜60s、唯一币种行才显示实际金额，解决截图中真实USDT/USDC却Performance“UNKNOWN”；无事实不编造数字，展示“—”/等待同步，USDT<500红/500-999黄/≥1000绿阈值不改，颜色由圆点/线而非文字传达。
+- `docs/reports/v398-cockpit-visual-20261010/INITIAL_IMPLEMENTATION.md` 和 `docs/prompts/CODEX_V398_COCKPIT_VISUAL_SIGNED_FUNDS_20261010.md` 完整GitHub可执行Codex测试说明。所有图表为当前前台窗口真实观察序列，不造6h/24h/7d曲线，不把未证实正式收益混入真实钱包净增。只读UI源码已推，CI/部署状态以对应PR head实际核对为准。未重启/部署，没有更改GPU调度/TP/交易所策略。
+
+
+---
+
 # 13:31+08 final bounded readback
 
 Latest source6533e4d identity6/6, signed/localTP30/30/canTrade true/private9.08s/Production0. A second13:29 signed/local29/30 gap also occurred and was retained, not upgraded toPASS retroactively. Natural runtime TESTNET counter14; manual task exchange writes0. No continuous safety/24h PASS is claimed. Deployed updates available for user inspection; new long acceptance remainsNOT_STARTED/T0=null. GPU collector is real but bounded~1h; persistent sampling and TP gap root cause plus large-baseline sync failure remain follow-up.

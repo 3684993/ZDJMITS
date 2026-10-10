@@ -9,3 +9,19 @@ it('rejects duplicate asset balances and unsupported aggregate PnL',()=>{
  const rows=financePerformance({account:{status:'READY',asOf:1000,assets:[{asset:'USDT',availableBalance:1},{asset:'USDT',availableBalance:2}]},localAccounting:{exFundingNet:123}},1000);
  expect(rows[0].available).toBeNull();expect(rows[0].exFundingNet).toBeNull();expect(rows[1].available).toBeNull();
 });
+
+it('prefers fresh signed /account/assets facts when the realtime snapshot omits asset rows',()=>{
+ const now=200000;
+ const snapshot={account:{status:'READY',asOf:199000,assets:[]},localAccounting:{byAsset:{USDT:{completeCycles:2,exFundingNet:1.5},USDC:{completeCycles:1,exFundingNet:-2}}}};
+ const signed={status:'READY',asOf:200004,source:'BINANCE_TESTNET_PRIVATE',assets:[
+  {asset:'USDT',walletBalance:6308.88812107,availableBalance:472.82854605,unrealizedPnl:-99},
+  {asset:'USDC',walletBalance:5172.35005888,availableBalance:3752.3121458,unrealizedPnl:-80}]};
+ const balances=financePerformance(snapshot,now,signed);
+ expect(balances[0]).toMatchObject({asset:'USDT',available:472.82854605,tone:'bad',source:'BINANCE_TESTNET_PRIVATE',exFundingNet:1.5});
+ expect(balances[1]).toMatchObject({asset:'USDC',available:3752.3121458,tone:'good',exFundingNet:-2});
+});
+it('never invents stablecoin numbers when both signed candidates are stale',()=>{
+ const r=financePerformance({account:{status:'READY',asOf:1000,assets:[{asset:'USDT',availableBalance:1000}]}},200000,
+   {status:'READY',asOf:1000,assets:[{asset:'USDT',availableBalance:3000}]});
+ expect(r[0]).toMatchObject({available:null,tone:'unknown',status:'等待签名账户余额'});
+});

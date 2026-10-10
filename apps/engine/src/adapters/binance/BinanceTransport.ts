@@ -43,12 +43,12 @@ class BoundedSocksProxyAgent extends SocksProxyAgent {
 
 /** Single Binance network boundary. Exchange traffic is proxy-only and fail-closed. */
 export class BinanceTransport {
- private agent:SocksProxyAgent|null=null;private budget!:ReturnType<typeof getBinanceRequestBudget>;private routeIdentity='proxy-unavailable';private settings:ConnectionSettings;private requestLimitFlight:Promise<void>|null=null;
+ private agent:SocksProxyAgent|null=null;private budget!:ReturnType<typeof getBinanceRequestBudget>;private routeIdentity='proxy-unavailable';private settings:ConnectionSettings;
  constructor(settings:ConnectionSettings){this.settings=settings;this.applyRoute();liveTransports.add(new WeakRef(this));}
  private applyRoute(){const retired=this.agent;if(this.settings.proxy.enabled&&this.settings.proxy.url)this.agent=new BoundedSocksProxyAgent(this.settings.proxy.url,{keepAlive:true,maxSockets:6,maxFreeSockets:6});else this.agent=null;
   // Preserve captured in-flight/queued requests, but leave no pooled idle socket on an old route.
   if(retired){retired.keepAlive=false;for(const sockets of Object.values(retired.freeSockets))for(const socket of sockets)socket.destroy();}
-  const proxyHash=this.agent?createHash('sha256').update(this.settings.proxy.url).digest('hex').slice(0,12):'unavailable';this.routeIdentity=`proxy-${proxyHash}`;this.budget=getBinanceRequestBudget(this.settings.exchange.environment,this.routeIdentity);this.requestLimitFlight=null;}
+  const proxyHash=this.agent?createHash('sha256').update(this.settings.proxy.url).digest('hex').slice(0,12):'unavailable';this.routeIdentity=`proxy-${proxyHash}`;this.budget=getBinanceRequestBudget(this.settings.exchange.environment,this.routeIdentity);}
  reconfigure(settings:ConnectionSettings){this.settings=settings;this.applyRoute();}
  dispose(){try{this.agent?.destroy();}catch{}this.agent=null;for(const ref of [...liveTransports]){const value=ref.deref();if(!value||value===this)liveTransports.delete(ref);}}
  effectiveBaseUrl(){const exchange=this.settings.exchange as typeof this.settings.exchange & {testnetRestBaseUrl?:string;productionRestBaseUrl?:string};return exchange.environment==='TESTNET'?(exchange.testnetRestBaseUrl??exchange.testnetBaseUrl):(exchange.productionRestBaseUrl??exchange.productionBaseUrl);}environment(){return this.settings.exchange.environment;}executionMode(){return this.settings.executionMode;}
@@ -64,7 +64,6 @@ export class BinanceTransport {
  websocketOptions(){this.assertProxy();return{agent:this.agent!};}
  websocketRoute(){const configuredUrl=this.configuredWsUrl(),publicUrl=this.effectiveWsUrl('PUBLIC'),marketUrl=this.effectiveWsUrl('MARKET');return{url:configuredUrl,publicUrl,marketUrl,throughProxy:Boolean(this.agent),proxyUrl:this.agent?this.settings.proxy.url:null,tlsServername:new URL(marketUrl).hostname,routeIdentity:this.routeIdentity,failClosed:true};}
  private assertBinance(url:URL){if(!(url.hostname==='binance.com'||url.hostname.endsWith('.binance.com'))&&!(url.hostname==='binancefuture.com'||url.hostname.endsWith('.binancefuture.com')))throw new Error(`Refusing non-Binance transport host: ${url.hostname}`);this.assertProxy();}
- private async ensureRequestWeightLimit(){if(this.budget.health().limitSource==='BINANCE_EXCHANGE_INFO')return;if(!this.requestLimitFlight){const flight=this.json<any>('/fapi/v1/exchangeInfo',{source:'RATE_LIMIT_CONTROL',purpose:'REQUEST_WEIGHT_DISCOVERY'}).then(()=>{}).finally(()=>{if(this.requestLimitFlight===flight)this.requestLimitFlight=null;});this.requestLimitFlight=flight;}await this.requestLimitFlight;}
  async json<T>(pathOrUrl:string,init:{method?:string;headers?:Record<string,string>;body?:string;timeoutMs?:number;source?:string;purpose?:string;signal?:AbortSignal;onDispatch?:(startedAt:number)=>void;dispatchQuery?:()=>URLSearchParams}={}):Promise<T>{
    const url=new URL(pathOrUrl,this.effectiveBaseUrl());this.assertBinance(url);
    if(url.origin!==new URL(this.effectiveBaseUrl()).origin)throw new Error('BINANCE_ENVIRONMENT_ORIGIN_MISMATCH');
@@ -72,7 +71,9 @@ export class BinanceTransport {
      source=init.source??context?.source??inferredBinanceSource(url,method);
    if(source==='UNKNOWN')throw new Error('BINANCE_ENDPOINT_SOURCE_UNREGISTERED:'+method+':'+url.pathname);
    if(signal?.aborted)throw new Error(`BINANCE_READ_ABORTED:${String(signal.reason)}`);
-   if(source==='CLOCK'&&this.budget.health().limitSource==='CONSERVATIVE_DEFAULT')try{await this.ensureRequestWeightLimit();}catch{/* bounded clock recovery remains available */}
+   // Clock synchronization is a small control request, not a catalog bootstrap.
+   // Market metadata reads learn actual rate limits via configureRateLimits below;
+   // until then the existing conservative budget remains in force.
    const budget=this.budget,agent=this.restAgent(),priority=source==='PRIVATE_STATE'&&/\/(account|balance)$/.test(url.pathname)?0:source==='MARKET_DATA'&&/^QUOTE_/.test(String(init.purpose))?2:priorityFor(source),weight=binanceRequestWeight(url,method),
      meta:RequestBudgetMeta={requestId:randomUUID(),source,purpose:init.purpose??inferredBinancePurpose(url,method),endpoint:url.pathname,method,routeIdentity:this.routeIdentity,orderCount:url.pathname.endsWith('/order')&&(method==='POST'||method==='PUT')?1:0},budgetHealth=budget.health();
    if(shouldDeferAtTransport(source,budgetHealth,weight)){budget.recordDeferred(meta,weight);throw new Error(binanceBudgetFailureMessage(`BINANCE_REQUEST_BUDGET_DEFERRED:${budgetHealth.status}`,meta));}

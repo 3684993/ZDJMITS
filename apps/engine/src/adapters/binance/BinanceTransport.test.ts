@@ -9,6 +9,22 @@ import https from 'node:https';
 import {EventEmitter} from 'node:events';
 const settings=(enabled=true)=>({executionMode:'TESTNET_ENABLED',exchange:{environment:'TESTNET',testnetBaseUrl:'https://demo-fapi.binance.com',testnetRestBaseUrl:'https://demo-fapi.binance.com',testnetWsBaseUrl:'wss://stream.binancefuture.com/ws',productionBaseUrl:'https://fapi.binance.com',productionRestBaseUrl:'https://fapi.binance.com',productionWsBaseUrl:'wss://fstream.binance.com/ws'},proxy:{enabled,url:'socks5h://127.0.0.1:20081',forceBinanceRest:true,forceBinanceWs:true,proxyDns:true,failClosed:true,binanceRestRoute:'CONFIGURED'}});
 
+it('dispatches clock control without downloading the full catalog on a cold route',async()=>{
+ const transport=new BinanceTransport({...settings(),proxy:{...settings().proxy,url:'socks5h://127.0.0.1:29879'}} as never);
+ const paths:string[]=[];
+ const requestSpy=vi.spyOn(https,'request').mockImplementation((...args:any[])=>{
+  paths.push(args[0].pathname);const req:any=new EventEmitter();req.destroy=vi.fn();req.end=()=>{
+   const response:any=new EventEmitter();response.statusCode=200;response.headers={};response.setEncoding=vi.fn();args[2](response);response.emit('data','{"serverTime":1800000000000}');response.emit('end');
+  };return req;
+ });
+ try{
+  await expect(transport.json('/fapi/v1/time')).resolves.toEqual({serverTime:1800000000000});
+  expect(paths).toEqual(['/fapi/v1/time']);
+  expect(transport.requestBudgetHealth().limitSource).toBe('CONSERVATIVE_DEFAULT');
+  expect(transport.requestBudgetHealth().recentDispatches.at(-1)).toMatchObject({endpoint:'/fapi/v1/time',source:'CLOCK',status:200});
+ }finally{requestSpy.mockRestore();transport.dispose();}
+});
+
 it('reports quote dispatch time only after admission, before the wire request',async()=>{
  vi.useFakeTimers();vi.setSystemTime(10000);
  const transport=new BinanceTransport({...settings(),proxy:{...settings().proxy,url:'socks5h://127.0.0.1:29875'}} as never),onDispatch=vi.fn();let admit!:()=>void;

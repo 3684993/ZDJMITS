@@ -216,7 +216,10 @@ function Main {
       Invoke-Locked {
         if($Restart){if(-not $Watch){Stop-Guardian};Stop-OwnedTunnel}
         $owner=Get-Owner;Assert-Owned $owner
-        if(-not $owner){Start-OwnedTunnel}
+        if(-not $owner){
+          if($Watch -and $MaxRestarts -eq 0){throw 'RESTART_BUDGET_EXHAUSTED_NO_INITIAL_START'}
+          Start-OwnedTunnel
+        }
       }
     }catch {
       # Ownership failures must never turn into restart attempts against another process.
@@ -228,14 +231,18 @@ function Main {
     if(-not $Watch){Invoke-Locked {Start-Guardian};if(-not $health.healthy){throw 'TUNNEL_UNHEALTHY: listener alone is not READY'};Write-Output "READY SOCKS5H=socks5h://127.0.0.1:$LocalPort";return}
     $self=Get-CimInstance Win32_Process -Filter "ProcessId=$PID"
     Save-Json $guardianPath @{pid=$PID;createdAt=([datetime]$self.CreationDate).ToUniversalTime().ToString('o');script=$PSCommandPath}
-    $started=[Diagnostics.Stopwatch]::StartNew();$failures=0;$restarts=@()
+    $started=[Diagnostics.Stopwatch]::StartNew();$failures=0;$restarts=@();$restartBudgetExhausted=$false
     while($RunForSeconds -eq 0 -or $started.Elapsed.TotalSeconds -lt $RunForSeconds){
       if($health.healthy){$failures=0}else{$failures++}
       $logTooLarge=(Test-Path -LiteralPath $stderrPath) -and (Get-Item -LiteralPath $stderrPath).Length -gt 8MB
       if($failures -ge $FailureThreshold -or $logTooLarge){
         # Lifetime budget for this guardian: an unchanged fault cannot regain
         # permission to restart merely because fifteen minutes have elapsed.
-        if($restarts.Count -ge $MaxRestarts){Write-TunnelEvent 'RESTART_BUDGET_EXHAUSTED' $health;throw 'RESTART_BUDGET_EXHAUSTED: no tight/infinite restart loop'}
+        if($restarts.Count -ge $MaxRestarts){
+          # A finite lifecycle budget must not disable the safety monitor.
+          # Continue bounded health probes, with no further SSH stop/start.
+          if(-not $restartBudgetExhausted){Write-TunnelEvent 'RESTART_BUDGET_EXHAUSTED' $health;$restartBudgetExhausted=$true}
+        }else{
         Write-TunnelEvent 'RESTART_REQUESTED' @{health=$health;failures=$failures;logTooLarge=$logTooLarge}
         Start-Sleep -Seconds ([math]::Min(30,2*[math]::Pow(2,$restarts.Count)))
         $restarts+=Get-Date
@@ -244,6 +251,7 @@ function Main {
           Write-TunnelEvent 'RESTART_FAILED' @{error=$_.Exception.Message}
           if($_.Exception.Message -match 'OWNER|PID_REUSE|MULTIPLE_LISTENER|LIFECYCLE_BUSY'){throw}
           $failures=$FailureThreshold
+        }
         }
       }
       Start-Sleep -Seconds $HealthIntervalSeconds

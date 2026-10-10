@@ -6,6 +6,10 @@
 
 重要现场纠正：原24h已于08:34:00.270+08 LOCAL_TP_GATE_NOT_CLOSED中止，local14/15；08:41:50 local15/16，08:43:55 local17/17恢复、private9.129s、Production0。恢复缓存不能恢复验收或替代签名TP。原PID23688/buildbb45保护运行，Engine/代理/模型/observer/任务/授权/Settings/数据库/SSH配置均未改。Issue22已同步中止。禁止补仓、UNKNOWN/60sTTL/Primary及TP均保留；Issue23真实订单origin归因仍未在网络任务完成。全部部署须新指令及正规准入，新验收完整重计。
 
+## 2026-10-10 双27B GPU占用失衡专项（静态审计/离线优化，未部署）
+
+方案：[V398_DUAL_27B_GPU_UTILIZATION_AND_DUTY_SCHEDULING_20261010](https://github.com/3684993/ZDJMITS/blob/main/docs/plans/V398_DUAL_27B_GPU_UTILIZATION_AND_DUTY_SCHEDULING_20261010.md)。Codex任务：[Issue #26](https://github.com/3684993/ZDJMITS/issues/26)。默认Settings固定8084/27B为ENTRY_PRIMARY，8083/27B为POSITION_REVIEW/PENDING_ENTRY_REVIEW，各maxConcurrency1，当前不是真正两卡负载均衡。实际物理PCI bus19/bus22→8083/8084进程必须先只读核对，不能猜。源码aiFabric.dutyResources只会返回每职责已配置资源；choose不能跨角色借用；queueReview用reviewActive而Primary run另用load.active，**不能直接加候选路由形成超额GPU并发**。按G0现场指标与模型hash/ctx等价性、G1离线统一perGPU原子lease和overdue Review保护、G2离线压测/CI后独立PR，只有另行获用户授权才部署；不得干扰当前24h验收、Engine/两个模型/代理、Primary唯一Entry、禁补仓、HUMAN_MANAGED、TP保护和Production0。
+
 ## 2026-10-10 新任务：Binance REST/WS/SOCKS通信专项审计与离线优化
 
 完整审计实施方案：https://github.com/3684993/ZDJMITS/blob/main/docs/plans/V398_BINANCE_NETWORK_COMMUNICATION_AUDIT_AND_OPTIMIZATION_20261010.md

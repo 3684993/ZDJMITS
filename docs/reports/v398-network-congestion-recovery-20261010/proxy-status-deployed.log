@@ -1,0 +1,30 @@
+{
+  "at": "2026-10-10T14:53:29.2308536Z",
+  "proxy": "127.0.0.1:20091",
+  "target": "demo-fapi.binance.com:443",
+  "stages": [
+    {
+      "elapsedMs": 978,
+      "phase": "LOCAL_TCP_CONNECT"
+    },
+    {
+      "elapsedMs": 993,
+      "phase": "SOCKS_GREETING"
+    },
+    {
+      "elapsedMs": 1472,
+      "phase": "SOCKS_CONNECT_REPLY"
+    },
+    {
+      "elapsedMs": 2774,
+      "phase": "TLS_HANDSHAKE"
+    },
+    {
+      "elapsedMs": 5030,
+      "phase": "HTTP_PUBLIC_TIME"
+    }
+  ],
+  "healthy": true,
+  "pid": 12212,
+  "elapsedMs": 5036
+}

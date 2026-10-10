@@ -380,6 +380,7 @@ export function createApiRouter(runtime: EngineRuntime) {
   r.get('/diagnostics/market-stream-traffic',(_q,res)=>{const metrics:any=runtime.market.metrics();res.json({
     asOf:Date.now(),state:metrics.state??'UNKNOWN',retainedSymbols:metrics.quoteFactFreshness?.retainedSymbols??null,
     streamTraffic:metrics.streamTraffic??null,lanes:metrics.lanes??null,
+    quoteFactFreshness:metrics.quoteFactFreshness??null,recovery:metrics.recovery??null,
     unit:'DECODED_WS_APPLICATION_PAYLOAD_NOT_SSH_WIRE_BYTES',readOnly:true
   });});
   r.get('/diagnostics/logging',(_q,res)=>res.json((runtime as any).operationalLogHealth?.()??{status:'NOT_ATTACHED'}));

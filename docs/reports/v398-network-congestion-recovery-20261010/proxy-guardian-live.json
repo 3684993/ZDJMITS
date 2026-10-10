@@ -1,0 +1,11 @@
+{
+  "observedAt": "2026-10-10T14:54:43.8359463Z",
+  "guardianPid": 19364,
+  "createdAt": "2026-10-10T14:54:02.6981560Z",
+  "executable": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+  "command": "\"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -NoProfile -NonInteractive -File \"C:\\Users\\5700x\\AppData\\Local\\ZDJMITS\\scripts\\zdj-trade-proxy-client-windows.ps1\" -Watch -BaseDir \"C:\\Users\\5700x\\AppData\\Local\\ZDJ-MITS\\trade-proxy\" -LocalPort 20091 -ProbeTimeoutSeconds 8 -HealthIntervalSeconds 30 -FailureThreshold 3 -MaxRestarts 2",
+  "receiptCreationMatches": true,
+  "sshPid": 12212,
+  "maxRestarts": 2,
+  "restartAttemptsByTask": 0
+}

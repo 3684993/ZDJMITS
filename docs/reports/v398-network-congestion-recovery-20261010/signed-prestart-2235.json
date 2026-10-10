@@ -1,0 +1,130 @@
+{
+  "observedAt": "2026-10-10T14:34:48.721Z",
+  "settingsVersion": 253,
+  "environment": "TESTNET",
+  "host": "demo-fapi.binance.com",
+  "exchangeWrites": 0,
+  "productionWrites": 0,
+  "recvWindowMs": 5000,
+  "requests": [
+    {
+      "endpoint": "/fapi/v1/time",
+      "startedAt": 1791642888722,
+      "completedAt": 1791642892427,
+      "dispatch": {
+        "status": 200,
+        "networkTiming": {
+          "startedAt": 1791642888725,
+          "proxyConnectStartedAt": 1791642888730,
+          "proxyConnectedAt": 1791642890248,
+          "socketAssignedAt": 1791642890249,
+          "secureConnectedAt": 1791642891507,
+          "responseAt": 1791642892422,
+          "completedAt": 1791642892423,
+          "reusedSocket": false,
+          "failurePhase": null
+        }
+      }
+    },
+    {
+      "endpoint": "/fapi/v1/positionSide/dual",
+      "startedAt": 1791642892428,
+      "completedAt": 1791642892907,
+      "dispatch": {
+        "status": 200,
+        "networkTiming": {
+          "startedAt": 1791642892429,
+          "proxyConnectStartedAt": null,
+          "proxyConnectedAt": null,
+          "socketAssignedAt": 1791642892429,
+          "secureConnectedAt": 1791642892429,
+          "responseAt": 1791642892906,
+          "completedAt": 1791642892907,
+          "reusedSocket": true,
+          "failurePhase": null
+        }
+      }
+    },
+    {
+      "endpoint": "/fapi/v3/positionRisk",
+      "startedAt": 1791642892907,
+      "completedAt": 1791642893784,
+      "dispatch": {
+        "status": 200,
+        "networkTiming": {
+          "startedAt": 1791642892908,
+          "proxyConnectStartedAt": null,
+          "proxyConnectedAt": null,
+          "socketAssignedAt": 1791642892908,
+          "secureConnectedAt": 1791642892908,
+          "responseAt": 1791642893783,
+          "completedAt": 1791642893783,
+          "reusedSocket": true,
+          "failurePhase": null
+        }
+      }
+    },
+    {
+      "endpoint": "/fapi/v1/openOrders",
+      "startedAt": 1791642893784,
+      "completedAt": 1791642894662,
+      "dispatch": {
+        "status": 200,
+        "networkTiming": {
+          "startedAt": 1791642893784,
+          "proxyConnectStartedAt": null,
+          "proxyConnectedAt": null,
+          "socketAssignedAt": 1791642893785,
+          "secureConnectedAt": 1791642893785,
+          "responseAt": 1791642894662,
+          "completedAt": 1791642894662,
+          "reusedSocket": true,
+          "failurePhase": null
+        }
+      }
+    },
+    {
+      "endpoint": "/fapi/v1/openAlgoOrders",
+      "startedAt": 1791642894663,
+      "completedAt": 1791642895136,
+      "dispatch": {
+        "status": 200,
+        "networkTiming": {
+          "startedAt": 1791642894663,
+          "proxyConnectStartedAt": null,
+          "proxyConnectedAt": null,
+          "socketAssignedAt": 1791642894664,
+          "secureConnectedAt": 1791642894664,
+          "responseAt": 1791642895136,
+          "completedAt": 1791642895136,
+          "reusedSocket": true,
+          "failurePhase": null
+        }
+      }
+    },
+    {
+      "endpoint": "/fapi/v2/account",
+      "startedAt": 1791642895137,
+      "completedAt": 1791642903142,
+      "httpStatus": null,
+      "exchangeCode": null,
+      "errorType": "Error",
+      "dispatch": {
+        "status": null,
+        "networkTiming": {
+          "startedAt": 1791642895137,
+          "proxyConnectStartedAt": null,
+          "proxyConnectedAt": null,
+          "socketAssignedAt": 1791642895137,
+          "secureConnectedAt": 1791642895137,
+          "responseAt": 1791642896017,
+          "completedAt": 1791642903142,
+          "reusedSocket": true,
+          "failurePhase": "RESPONSE_BODY"
+        }
+      }
+    }
+  ],
+  "gate": "UNKNOWN",
+  "errorType": "Error"
+}

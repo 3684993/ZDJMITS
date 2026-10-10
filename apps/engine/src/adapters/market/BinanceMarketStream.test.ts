@@ -1,5 +1,6 @@
 import { describe,expect,it,vi } from 'vitest';
 import { BinanceMarketStream } from './BinanceMarketStream.js';
+import { WebSocketServer } from 'ws';
 
 const book=(ts=Date.now())=>({symbol:'BTCUSDT',bids:[[100,1] as [number,number]],asks:[[101,1] as [number,number]],ts});
 const candle={openTime:1,closeTime:Date.now(),open:100,high:101,low:99,close:100,volume:1,quoteVolume:100,trades:1};
@@ -53,9 +54,9 @@ describe('BinanceMarketStream cache and gap recovery',()=>{
   });
 });
 
-it('paces split public/market subscriptions independently below the per-connection message limit',async()=>{
- vi.useFakeTimers();const stream=new BinanceMarketStream({} as never,vi.fn()),sent={PUBLIC:[] as number[],MARKET:[] as number[]};
- try{for(const laneName of ['PUBLIC','MARKET'] as const)(stream as any).lanes[laneName].socket={readyState:1,send:()=>sent[laneName].push(Date.now()),close:vi.fn()};(stream as any).symbols=new Set(Array.from({length:175},(_,i)=>`S${i}USDT`));(stream as any).subscribeSymbols();await vi.advanceTimersByTimeAsync(4000);expect(sent.PUBLIC).toHaveLength(2);expect(sent.MARKET).toHaveLength(8);expect(stream.metrics().subscriptions).toBeLessThan(1024);for(const rows of [sent.PUBLIC,sent.MARKET])for(const at of rows)expect(rows.filter(t=>t>=at&&t<at+1000).length).toBeLessThanOrEqual(3);}finally{stream.stop();vi.useRealTimers();}
+it('paces acknowledged split subscriptions independently below the per-connection message limit',async()=>{
+ vi.useFakeTimers();const stream=new BinanceMarketStream({} as never,vi.fn()),sent:Record<string,number[]>={};
+ try{stream.updateSymbols(Array.from({length:175},(_,i)=>`S${i}USDT`));for(const laneName of Object.keys((stream as any).lanes)){sent[laneName]=[];(stream as any).lanes[laneName].socket={readyState:1,send:(raw:string)=>{sent[laneName]!.push(Date.now());const command=JSON.parse(raw);(stream as any).onMessage(JSON.stringify({id:command.id,result:null}),laneName);},close:vi.fn()};}(stream as any).subscribeSymbols();await vi.advanceTimersByTimeAsync(4000);expect(sent.PUBLIC).toHaveLength(2);expect(sent.MARKET).toHaveLength(10);expect(sent.MARKET_1).toHaveLength(1);for(const lane of Object.values((stream as any).lanes) as any[])expect(lane.confirmed.size).toBeLessThanOrEqual(1024);for(const rows of Object.values(sent))for(const at of rows)expect(rows.filter(t=>t>=at&&t<at+1000).length).toBeLessThanOrEqual(3);}finally{stream.stop();vi.useRealTimers();}
 });
 
 it('isolates closed 5m/15m bars and rejects a late open-bar downgrade',()=>{
@@ -211,4 +212,59 @@ it('reconciles every event class to lane totals at one snapshot time, including 
     }
     expect(JSON.stringify(traffic)).not.toContain('REJECTEDUSDT');
   } finally {vi.useRealTimers();}
+});
+
+describe('retained-only USD-M market streams under SSH congestion',()=>{
+ it('replaces both global MARKET arrays with per-symbol facts for normal retained cohorts',()=>{
+   const stream=new BinanceMarketStream({} as never,vi.fn());
+   stream.updateSymbols(['BTCUSDT','ETHUSDC']);
+   const desired=(stream as any).desired('MARKET') as Set<string>;
+   expect([...desired].sort()).toEqual([
+     'btcusdt@ticker','btcusdt@markPrice@1s','btcusdt@kline_1m','btcusdt@kline_5m','btcusdt@kline_15m','btcusdt@aggTrade',
+     'ethusdc@ticker','ethusdc@markPrice@1s','ethusdc@kline_1m','ethusdc@kline_5m','ethusdc@kline_15m','ethusdc@aggTrade'
+   ].sort());
+   expect(desired.has('!ticker@arr')).toBe(false);
+   expect(desired.has('!markPrice@arr@1s')).toBe(false);
+   stream.updateSymbols(['ETHUSDC']);
+   const shrunk=(stream as any).desired('MARKET') as Set<string>;
+   expect(shrunk.size).toBe(6);
+   expect([...shrunk].every(value=>value.startsWith('ethusdc@'))).toBe(true);
+   stream.stop();
+ });
+ it.each([160,161,191,192,239,255,256,1024])('covers all %i retained symbols across bounded connections',count=>{
+   const stream=new BinanceMarketStream({} as never,vi.fn());stream.updateSymbols(Array.from({length:count},(_,i)=>`S${i}USDT`));
+   const market:string[]=[],publicStreams:string[]=[];
+   for(const name of Object.keys((stream as any).lanes)){const desired=(stream as any).desired(name) as Set<string>;expect(desired.size).toBeLessThanOrEqual(1024);(name.startsWith('MARKET')?market:publicStreams).push(...desired);}
+   expect(market).toHaveLength(count*6);expect(new Set(market).size).toBe(count*6);expect(market.some(x=>x.startsWith('!'))).toBe(false);expect(publicStreams).toHaveLength(count+1);
+   for(let i=0;i<count;i++){expect(market).toContain(`s${i}usdt@ticker`);expect(market).toContain(`s${i}usdt@markPrice@1s`);expect(publicStreams).toContain(`s${i}usdt@depth20@500ms`);}
+   stream.updateSymbols(['BTCUSDT']);expect(Object.keys((stream as any).lanes)).toEqual(['PUBLIC','MARKET']);stream.stop();
+ });
+});
+
+describe('subscription acknowledgement and recovery bounds',()=>{
+ it('waits for the exact ACK, rejects unrelated ACKs and tears down on ACK timeout',async()=>{
+  vi.useFakeTimers();const stream=new BinanceMarketStream({} as never,vi.fn()),sent:any[]=[],terminate=vi.fn();
+  try{stream.updateSymbols(['BTCUSDT']);const lane=(stream as any).lanes.MARKET;lane.socket={readyState:1,send:(raw:string)=>sent.push(JSON.parse(raw)),terminate,close:vi.fn()};(stream as any).subscribeLane('MARKET');await vi.advanceTimersByTimeAsync(350);
+   expect(lane.confirmed.size).toBe(0);expect(stream.metrics().streamTraffic.MARKET.subscriptionEvidence).toBe('PENDING_EXCHANGE_ACK');
+   (stream as any).onMessage(JSON.stringify({id:sent[0].id+1,result:null}),'MARKET');expect(lane.confirmed.size).toBe(0);
+   await vi.advanceTimersByTimeAsync(10_000);expect(terminate).toHaveBeenCalledOnce();expect(lane.lastError).toBe('WS_SUBSCRIPTION_ACK_TIMEOUT');
+  }finally{stream.stop();vi.useRealTimers();}
+ });
+ it('unsubscribes acknowledged old facts before adding a disjoint full cohort, even during rapid churn',async()=>{
+  vi.useFakeTimers();const stream=new BinanceMarketStream({} as never,vi.fn()),server=new Set<string>();let maximum=0;
+  try{stream.updateSymbols(Array.from({length:160},(_,i)=>`S${i}USDT`));const lane=(stream as any).lanes.MARKET;lane.socket={readyState:1,send:(raw:string)=>{const c=JSON.parse(raw);for(const item of c.params)c.method==='SUBSCRIBE'?server.add(item):server.delete(item);maximum=Math.max(maximum,server.size);(stream as any).onMessage(JSON.stringify({id:c.id,result:null}),'MARKET');},close:vi.fn()};(stream as any).subscribeLane('MARKET');await vi.advanceTimersByTimeAsync(350);stream.updateSymbols(Array.from({length:160},(_,i)=>`T${i}USDT`));stream.updateSymbols(['BTCUSDT']);await vi.advanceTimersByTimeAsync(20_000);expect(maximum).toBeLessThanOrEqual(960);expect([...server].sort()).toEqual([...(stream as any).desired('MARKET')].sort());expect(lane.confirmed).toEqual(server);
+  }finally{stream.stop();vi.useRealTimers();}
+ });
+ it('bounds simultaneous depth repairs and spaces starts during a cohort-wide gap storm',async()=>{
+  vi.useFakeTimers();const releases:Array<()=>void>=[],starts:number[]=[],backfill=vi.fn(async()=>{starts.push(Date.now());await new Promise<void>(r=>releases.push(r));return{book:book(),candles:[]};});const stream=new BinanceMarketStream({} as never,backfill);
+  try{stream.updateSymbols(Array.from({length:50},(_,i)=>`S${i}USDT`));for(let i=0;i<50;i++){(stream as any).recover(`S${i}USDT`);(stream as any).recover(`S${i}USDT`);}expect(backfill).toHaveBeenCalledTimes(1);await vi.advanceTimersByTimeAsync(5000);expect(backfill).toHaveBeenCalledTimes(2);expect(stream.metrics().recovery).toMatchObject({active:2,queued:48});for(const release of releases)release();await vi.advanceTimersByTimeAsync(500);expect(backfill.mock.calls.length).toBeLessThanOrEqual(4);for(let i=1;i<starts.length;i++)expect(starts[i]!-starts[i-1]!).toBeGreaterThanOrEqual(500);stream.stop();for(const release of releases)release();await Promise.resolve();expect(stream.metrics().backfills).toBeLessThanOrEqual(2);
+  }finally{stream.stop();vi.useRealTimers();}
+ });
+ it('restores full acknowledged subscriptions after a real socket disconnect without keeping stale confirmations',async()=>{
+  const server=new WebSocketServer({port:0,host:'127.0.0.1'});await new Promise<void>(resolve=>server.once('listening',resolve));const address=server.address() as {port:number};const received:Record<string,string[]>={};let connections=0;
+  server.on('connection',socket=>{const key=String(++connections);received[key]=[];socket.on('message',raw=>{const c=JSON.parse(String(raw));received[key]!.push(...c.params);socket.send(JSON.stringify({id:c.id,result:null}));});});
+  const stream=new BinanceMarketStream({effectiveWsUrl:()=>`ws://127.0.0.1:${address.port}`,websocketOptions:()=>({})} as never,vi.fn());
+  try{stream.start(['BTCUSDT']);await vi.waitFor(()=>expect(Object.values(stream.metrics().lanes).every((x:any)=>x.confirmedSubscriptions===x.subscriptions&&x.lastAckAt!==null)).toBe(true),{timeout:3000});for(const socket of server.clients)socket.close();await vi.waitFor(()=>expect(connections).toBeGreaterThanOrEqual(4),{timeout:5000});await vi.waitFor(()=>expect(Object.values(stream.metrics().lanes).every((x:any)=>x.confirmedSubscriptions===x.subscriptions&&x.lastAckAt!==null)).toBe(true),{timeout:3000});expect(Object.values(received).filter(rows=>rows.includes('btcusdt@ticker'))).toHaveLength(2);
+  }finally{stream.stop();for(const socket of server.clients)socket.terminate();await new Promise<void>(resolve=>server.close(()=>resolve()));}
+ });
 });

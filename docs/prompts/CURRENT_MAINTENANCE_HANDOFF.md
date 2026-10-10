@@ -1,11 +1,10 @@
-## 2026-10-10 网络 N0/N1 离线交付（未部署）
+## 2026-10-10 持仓/挂单管理与第二个27B Review职责优化
 
-独立分支 codex/v398-network-n1，基线main3cb72de。已完整读取网络任务书/方案及Issue23；N0两组60s窗口证明全市场BBO/mark/ticker类别占decoded载荷79.49%/79.89%，不是节省率或SSH wire字节；SSH积压及私有typed-event现场证明UNKNOWN。N1更新官方Demo默认及PUBLIC/MARKET/PRIVATE显式路由，跨环境/非官方/携密钥配置fail-closed，旧主机必须显式迁移而非451后静默切换；pong与账户订单事件指标分离。原代理两次15s Demo只读订阅各有bookTicker24/markPrice13事件，私有Demo真实兼容仍待正规授权验证。
+源码实查方案：[V398_GPU2_POSITION_PENDING_TP_REVIEW_OPTIMIZATION_20261010](https://github.com/3684993/ZDJMITS/blob/main/docs/plans/V398_GPU2_POSITION_PENDING_TP_REVIEW_OPTIMIZATION_20261010.md)；执行任务：[Issue #28](https://github.com/3684993/ZDJMITS/issues/28)，与[双GPU容量调度Issue #26](https://github.com/3684993/ZDJMITS/issues/26)以及[网络Issue #24](https://github.com/3684993/ZDJMITS/issues/24)共同实施。
 
-本轮 npm ci/full npm run verify PASS252files/2180tests，focused74；S00首次因默认值身份变化停止已保留，更新当前hash后PASS，历史快照未改。N2量化/设计及N3故障预算风险与recvWindow恒60000缺陷已记录，下一独立PR按保护保留集/ACK及REST签名mock展开，不能宣称所有优化结束或451根因修复。详见 docs/reports/v398-network-optimization-20261010/NETWORK_BASELINE.md / VALIDATION.json。
+结论：当前Engine负责全部仓位/挂单事实、持仓FIRST_FILL时间与管理deadline、5s TP Guardian/15s reconciliation、Entry pending外层2s tick。默认nearMarket TTL90s/改价5s/最多6次，但实际Settings253未独立核实；27B Review8083的pending第一次调用>=15s/以后间隔>=30s，提出KEEP/CANCEL/REPLAN，后两者精确查旧双ID再撤单，不自动新开仓。持仓Review15s tick但有plan/owner/minInterval/预算限额，PositionReviewV396仅HOLD/REDUCE_PROPOSAL/EXIT_PROPOSAL/HANDOFF，**不允许模型给任意新止盈价或数量**。TP Guardian发现WORKING且数量/方向匹配时直接保留现价，不进行常态化动态调整；只有创建/修复进入价格选择与严格原订单撤销/替换。AI Exit代码默认为OFF，实际需查Settings。
 
-重要现场纠正：原24h已于08:34:00.270+08 LOCAL_TP_GATE_NOT_CLOSED中止，local14/15；08:41:50 local15/16，08:43:55 local17/17恢复、private9.129s、Production0。恢复缓存不能恢复验收或替代签名TP。原PID23688/buildbb45保护运行，Engine/代理/模型/observer/任务/授权/Settings/数据库/SSH配置均未改。Issue22已同步中止。禁止补仓、UNKNOWN/60sTTL/Primary及TP均保留；Issue23真实订单origin归因仍未在网络任务完成。全部部署须新指令及正规准入，新验收完整重计。
-
+R0只读GPU2 utilization/task/no-plan/owner/queue原因与真实持仓、挂单age; R1离线同origin单action lease及模型任务deadline；R2独立TP_TARGET_REVIEW_DRY_RUN只从合法冻结目标ID选择，先SHADOW，**不能写交易所或取消原TP**；R3与Issue26统一单GPU maxConcurrency=1原子容量租约，角色保持Primary独立Entry；R4专项TP/NO_ADD/UNKNOWN/partial fill/HUMAN_MANAGED测试和完整CI独立PR。严格禁止补仓；ENAUI“补仓1次”身份仍待Issue23核对。**当前24h验收期不部署、不改Settings/代理/模型/TP，不重启Engine**，如将来获批变更则完整重新计时。
 ## 2026-10-10 双27B GPU占用失衡专项（静态审计/离线优化，未部署）
 
 方案：[V398_DUAL_27B_GPU_UTILIZATION_AND_DUTY_SCHEDULING_20261010](https://github.com/3684993/ZDJMITS/blob/main/docs/plans/V398_DUAL_27B_GPU_UTILIZATION_AND_DUTY_SCHEDULING_20261010.md)。Codex任务：[Issue #26](https://github.com/3684993/ZDJMITS/issues/26)。默认Settings固定8084/27B为ENTRY_PRIMARY，8083/27B为POSITION_REVIEW/PENDING_ENTRY_REVIEW，各maxConcurrency1，当前不是真正两卡负载均衡。实际物理PCI bus19/bus22→8083/8084进程必须先只读核对，不能猜。源码aiFabric.dutyResources只会返回每职责已配置资源；choose不能跨角色借用；queueReview用reviewActive而Primary run另用load.active，**不能直接加候选路由形成超额GPU并发**。按G0现场指标与模型hash/ctx等价性、G1离线统一perGPU原子lease和overdue Review保护、G2离线压测/CI后独立PR，只有另行获用户授权才部署；不得干扰当前24h验收、Engine/两个模型/代理、Primary唯一Entry、禁补仓、HUMAN_MANAGED、TP保护和Production0。
@@ -893,3 +892,11 @@ No strategy/model/TP/Entry parameter changes are authorized in that review.
 `local-identity-completion.json` 随后观测6个active origin；更晚独立只读事务 `natural-origin-completion.json` 取得7个历史origin及其exact intent/clientOrderId/原始quantity上限/任务订单投影（账户标识省略）。AAVE投影filled1.4，ZEC0.327，VVV8.01，另4个filled0；订单投影与授权数量在公开JSON中可复核。计数变化来自持续运行与不同观测时间，不拼为同一快照。现在已存在自然授权及成交投影，旧“未发生”条件不再成立；这些有限记录尚不能证明完整逐lot交易所链、所有独立补仓拦截或跨重启接受，相关验收仍UNKNOWN，不强迫交易/重启制造样本。
 
 代码提交3327c84的GitHub Actions已SUCCESS；证据提交1cd6d75的272项远端哈希PASS，其Actions在回执时in_progress。最后归档提交仅证据/报告变化，不改变已加载Engine源码/dist。额外在线原生GET未完成的UNKNOWN、临时私有备份保留、风险校准INSUFFICIENT_EVIDENCE等边界继续有效。
+
+## 2026-10-10 网络 N0/N1 离线交付（未部署）
+
+独立分支 codex/v398-network-n1，基线main3cb72de。已完整读取网络任务书/方案及Issue23；N0两组60s窗口证明全市场BBO/mark/ticker类别占decoded载荷79.49%/79.89%，不是节省率或SSH wire字节；SSH积压及私有typed-event现场证明UNKNOWN。N1更新官方Demo默认及PUBLIC/MARKET/PRIVATE显式路由，跨环境/非官方/携密钥配置fail-closed，旧主机必须显式迁移而非451后静默切换；pong与账户订单事件指标分离。原代理两次15s Demo只读订阅各有bookTicker24/markPrice13事件，私有Demo真实兼容仍待正规授权验证。
+
+本轮 npm ci/full npm run verify PASS252files/2180tests，focused74；S00首次因默认值身份变化停止已保留，更新当前hash后PASS，历史快照未改。N2量化/设计及N3故障预算风险与recvWindow恒60000缺陷已记录，下一独立PR按保护保留集/ACK及REST签名mock展开，不能宣称所有优化结束或451根因修复。详见 docs/reports/v398-network-optimization-20261010/NETWORK_BASELINE.md / VALIDATION.json。
+
+重要现场纠正：原24h已于08:34:00.270+08 LOCAL_TP_GATE_NOT_CLOSED中止，local14/15；08:41:50 local15/16，08:43:55 local17/17恢复、private9.129s、Production0。恢复缓存不能恢复验收或替代签名TP。原PID23688/buildbb45保护运行，Engine/代理/模型/observer/任务/授权/Settings/数据库/SSH配置均未改。Issue22已同步中止。禁止补仓、UNKNOWN/60sTTL/Primary及TP均保留；Issue23真实订单origin归因仍未在网络任务完成。全部部署须新指令及正规准入，新验收完整重计。

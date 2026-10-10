@@ -1,0 +1,9 @@
+# Catalog retry and clock dependency repair
+
+Actual sealed Engine b84c919, PID 23828, started once after fresh signed 26/26 TP PASS. Entry approval was revoked after transport failures; observed orderAuthorization=false / ANALYSIS_ONLY. No Engine kill or restart was performed. Proxy guardian made exactly two cooled, identity-checked automatic restart attempts (12212 -> 22876 -> 12300); no further restart is authorized for this unchanged fault.
+
+Sanitized live ledger contains nine exchangeInfo attempts in the retained 64-dispatch window. One response delivered 659227 decoded bytes before its unchanged 15-second RESPONSE_BODY deadline. Subsequent attempts include SOCKS_NEGOTIATION failures. These are evidence of repeated catalog work and insufficient recovery, not proof of the sole SSH congestion cause.
+
+Confirmed source defects: CLOCK previously awaited full exchangeInfo discovery on a cold budget; failed provider catalog reads were single-flight only while in progress and immediately eligible again after failure. Remove the catalog prerequisite from clock control and retain the existing conservative budget until an ordinary successful metadata read learns actual exchange rate limits. After provider catalog failure, fail with the original error during 30/60/120-second retry backoff. Existing 15-minute successful metadata freshness is unchanged; no stale rules/defaults are manufactured, no timeout/TTL is extended.
+
+Focused verification: 57 tests in two files passed, including a cold-route clock wire request with no catalog download, and repeated failed catalog batches that cannot bypass retry backoff. Complete verify:ci and precise hosted HEAD CI are required before merge. Runtime acceptance remains blocked by public/private transport and fresh signed safety facts; 30+90 has not started.

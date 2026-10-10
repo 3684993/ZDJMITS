@@ -914,3 +914,7 @@ ABORTED_SAFETY_FAILURE at08:34:00.270+08, LOCAL_TP_GATE_NOT_CLOSED (local14/15).
 ## 2026-10-10 G1统一容量租约 独立交接
 
 本分支仅实现G1统一容量租约，实际源码/测试/日志见 docs/reports/v398-performance-dashboard-20261010/G1_GPU_LEASE_VALIDATION.md。不混仪表盘/网络PR，不部署/不重启/不修改Settings。借用默认关闭，当前27B generation不等价；TP SHADOW不获真实改价或交易能力。旧24h仍08:34 ABORTED_SAFETY_FAILURE，正式门禁UNKNOWN，不开启或续算24h。以最终PR HEAD精确CI为准，缺少线上性能/授权效果回放与生产policy/provider接线均不可冒充通过。
+
+GitHub PR #33: https://github.com/3684993/ZDJMITS/pull/33
+Exact hosted GREEN source/evidence HEAD 57874460e4ef743d4f9b1eb65dd5bd4fa037192c: https://github.com/3684993/ZDJMITS/actions/runs/38017514666 (completed/success). Archived job log and exact-head JSON included. Subsequent archival commit changes documentation/evidence only; its final HEAD CI must also be read back, never inferred from this result.
+Related independent PR31 dashboard, PR33 lease, PR32 TP SHADOW; no merge/deploy. Local full verification counts in verification-local.json.

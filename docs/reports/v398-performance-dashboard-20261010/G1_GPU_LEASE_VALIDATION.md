@@ -21,3 +21,7 @@ lease-offline-replay.json由实际scheduler运行100个合成任务、无socket/
 
 ## Safety / handoff
 Primary唯一建仓、NO_SEPARATE_ADD、HUMAN_MANAGED与TP保护源码不改；网络PR25/27/29不合入。没有实际TP改价/交换调用或Engine/model/proxy重启。旧24h ABORTED，发布门禁不闭合，CI通过不代表验收通过。
+
+GitHub PR #33: https://github.com/3684993/ZDJMITS/pull/33
+Exact hosted GREEN source/evidence HEAD 57874460e4ef743d4f9b1eb65dd5bd4fa037192c: https://github.com/3684993/ZDJMITS/actions/runs/38017514666 (completed/success). Archived job log and exact-head JSON included. Subsequent archival commit changes documentation/evidence only; its final HEAD CI must also be read back, never inferred from this result.
+Related independent PR31 dashboard, PR33 lease, PR32 TP SHADOW; no merge/deploy. Local full verification counts in verification-local.json.

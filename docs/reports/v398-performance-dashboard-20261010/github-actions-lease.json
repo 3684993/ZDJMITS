@@ -1,0 +1,106 @@
+{
+  "observedAt": "2026-10-10T02:43:06.002356+00:00",
+  "requestedHead": "57874460e4ef743d4f9b1eb65dd5bd4fa037192c",
+  "runs": [
+    {
+      "id": 38017514666,
+      "head_sha": "57874460e4ef743d4f9b1eb65dd5bd4fa037192c",
+      "head_branch": "codex/v398-model-capacity-lease",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/3684993/ZDJMITS/actions/runs/38017514666",
+      "name": "V3.9.8 Read-only Verify",
+      "created_at": "2026-10-10T02:35:18Z",
+      "updated_at": "2026-10-10T02:41:23Z",
+      "jobs": [
+        {
+          "id": 114110984283,
+          "name": "verify",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/3684993/ZDJMITS/actions/runs/38017514666/job/114110984283",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-10-10T02:35:21Z",
+              "completed_at": "2026-10-10T02:35:21Z"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-10-10T02:35:21Z",
+              "completed_at": "2026-10-10T02:35:29Z"
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-10-10T02:35:29Z",
+              "completed_at": "2026-10-10T02:35:37Z"
+            },
+            {
+              "name": "Diff check",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-10-10T02:35:37Z",
+              "completed_at": "2026-10-10T02:35:38Z"
+            },
+            {
+              "name": "Install locked dependencies",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-10-10T02:35:38Z",
+              "completed_at": "2026-10-10T02:35:48Z"
+            },
+            {
+              "name": "Full offline verification",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-10-10T02:35:48Z",
+              "completed_at": "2026-10-10T02:41:19Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11,
+              "started_at": "2026-10-10T02:41:19Z",
+              "completed_at": "2026-10-10T02:41:19Z"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12,
+              "started_at": "2026-10-10T02:41:19Z",
+              "completed_at": "2026-10-10T02:41:21Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13,
+              "started_at": "2026-10-10T02:41:21Z",
+              "completed_at": "2026-10-10T02:41:21Z"
+            }
+          ]
+        }
+      ],
+      "archivedLog": {
+        "path": "github-ci-lease-38017514666-success.log",
+        "originalSha256": "1e18a601425dd8ee75c711233d064f95e39f057c47e7bb4c8e2572b5e30bccfd",
+        "normalization": "trailing whitespace and EOF only"
+      }
+    }
+  ]
+}

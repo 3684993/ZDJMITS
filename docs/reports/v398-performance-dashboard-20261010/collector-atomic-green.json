@@ -1,0 +1,73 @@
+﻿{
+    "ttlMs":  45000,
+    "collectionMs":  18112,
+    "instanceId":  "1dec0592-2fbc-4641-8add-210a85de2413",
+    "errors":  [
+                   "ENGINE_PROJECTION_UNAVAILABLE"
+               ],
+    "sampleSource":  "WINDOWS_WDDM_PROCESS_COUNTERS",
+    "resources":  [
+
+                  ],
+    "asOf":  1791600063100,
+    "schemaVersion":  1,
+    "services":  [
+                     {
+                         "physicalDeviceIdVerified":  false,
+                         "pid":  3400,
+                         "rawCounterUtilizationPct":  0,
+                         "duty":  "SCOUT",
+                         "dedicatedBytes":  5535035392,
+                         "utilizationPct":  0,
+                         "processStartedAt":  1791514774332,
+                         "measureStatus":  "MEASURED",
+                         "sharedBytes":  13197312,
+                         "port":  8081,
+                         "luid":  [
+                                      "0x00000000_0x0000edc6",
+                                      "0x00000000_0x0000f452",
+                                      "0x00000000_0x000122ec"
+                                  ],
+                         "physicalDeviceId":  null,
+                         "resourceId":  "llama:8081"
+                     },
+                     {
+                         "physicalDeviceIdVerified":  false,
+                         "pid":  14020,
+                         "rawCounterUtilizationPct":  0,
+                         "duty":  "REVIEW_BRAIN",
+                         "dedicatedBytes":  17348378624,
+                         "utilizationPct":  0,
+                         "processStartedAt":  1791515445128,
+                         "measureStatus":  "MEASURED",
+                         "sharedBytes":  418267136,
+                         "port":  8083,
+                         "luid":  [
+                                      "0x00000000_0x0000edc6",
+                                      "0x00000000_0x0000f452",
+                                      "0x00000000_0x000122ec"
+                                  ],
+                         "physicalDeviceId":  null,
+                         "resourceId":  "llama:8083"
+                     },
+                     {
+                         "physicalDeviceIdVerified":  false,
+                         "pid":  22336,
+                         "rawCounterUtilizationPct":  99.925,
+                         "duty":  "PRIMARY_BRAIN",
+                         "dedicatedBytes":  17359347712,
+                         "utilizationPct":  99.925,
+                         "processStartedAt":  1791515847749,
+                         "measureStatus":  "MEASURED",
+                         "sharedBytes":  1089355776,
+                         "port":  8084,
+                         "luid":  [
+                                      "0x00000000_0x0000edc6",
+                                      "0x00000000_0x0000f452",
+                                      "0x00000000_0x000122ec"
+                                  ],
+                         "physicalDeviceId":  null,
+                         "resourceId":  "llama:8084"
+                     }
+                 ]
+}

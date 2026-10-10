@@ -97,3 +97,12 @@ ABORTED_SAFETY_FAILURE at08:34:00.270+08, LOCAL_TP_GATE_NOT_CLOSED (local14/15).
 ## 2026-10-10 性能驾驶舱 D0-D2 实码交接
 
 PR31 已在独立 worktree 验证并修复真实源码；GPU/PID/PCI 映射、typed只读sidecar、资金红黄绿灰与分币种收益趋势已实现。详见 docs/reports/v398-performance-dashboard-20261010/ 下 D0/METRIC_CONTRACT/D1_D2/SCREENSHOT_REVIEW 与日志。两27B GGUF/模板/ctx相同但 reasoning/output limit 不同，不能开启借用。G1统一容量租约、GPU2 TP SHADOW各独立PR，未部署。旧24h仍08:34 ABORTED_SAFETY_FAILURE；02:10Z签名25/25 TP通过只是一时只读样本，全套发布门禁UNKNOWN，未重启、未开启新24h。原工作目录及dirty D:/MITS保留，网络PR25/27/29独立未纳入。后续以最终PR HEAD精确CI回读为准；不得将离线模拟/fixture截图当线上收益或GPU改善。
+
+
+### 性能阶段实际交付与最终边界
+
+PR31驾驶舱含资金/收益图，121点自然窗口30.055分钟（Primary计数+11/失败+1，Review+26/失败+0；缺失/错误保留）。最终collector收窄PID查询、修复Windows原子替换、异常>100%判UNKNOWN，warm采样1.15–1.21s墙钟/47–63ms CPU，只有3点不可冒充长期证明。运行数据已脱敏归档，干净源码S00机械清单199，未改排除规则。
+
+独立PR33容量租约最终HEAD402b850f73fd10018fb03db0b5deaeda493dd499，GitHub CI38018026331 success；PR32 TP SHADOW最终HEAD6ac46f8a93c096b5764bc05508ba47aa015bf381，CI38018034694 success。源码与全部日志在各分支统一reports目录，PR31另归档两者最终CI快照。PR33借用默认关闭（27B reasoning/output不等价、审批policy接线未做）；PR32生产provider/候选生成/调度接线及挂单事实触发优化未做。禁止真实TP改价/补仓，Primary唯一Entry不变。
+
+原24h仍ABORTED，不部署不重启；02:10Z签名25/25 TP只是历史一时样本，Production当前全套门禁/region eligibility等UNKNOWN，未来必须新鲜全部门禁和完整新24h。PR31最后源码修复/归档HEAD CI以Issue30和PR的实际回读为准，不借其他分支绿灯。

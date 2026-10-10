@@ -1,0 +1,22 @@
+{
+  "asOf": 1791600196678,
+  "valid": true,
+  "services": [
+    {
+      "port": 8081,
+      "status": "MEASURED",
+      "utilizationPct": 0
+    },
+    {
+      "port": 8083,
+      "status": "MEASURED",
+      "utilizationPct": 0
+    },
+    {
+      "port": 8084,
+      "status": "MEASURED",
+      "utilizationPct": 98.888
+    }
+  ],
+  "issues": []
+}

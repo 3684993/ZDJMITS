@@ -16,3 +16,6 @@ npm ci 原依赖279 packages；既有审计4项(2 moderate,2 critical)，未执�
 尚未部署，线上前后推理/CPU/收益改善 UNKNOWN。真实自然基线是原 runtime 行为；容量租约独立PR的100-job离线模拟 Primary queue P95 4140→1520ms（63.3%），Review overdue0→0、失败0→0、80 Primary/20 Review数量相同、授权0→0，不是实际交易授权或GPU吞吐证明。
 来源不足的 TP全链路漏斗、回撤、精确7d P95、SSH wire bytes、llama eval tokens/s保持UNKNOWN。没有新增真实TP改价、补仓、Entry权限或交换写。25/25签名TP仅02:10Z样本，门禁未全闭合，未部署未重启，新24h未开启。
 
+Hosted RED: a549a7b run38017315117 failed Diff check on report/log blank EOF before install/tests; github-ci-red.json/log retained. Archive whitespace mechanically normalized (trailing whitespace/EOF only), no test result altered; repeat hosted CI required.
+
+Additional actual RED/FIX/GREEN: Windows PowerShell5 converts null backup filename to empty string for File.Replace, causing invalid-path failure. collector-atomic-red.log retained; fixed with NullString.Value, collector-atomic-green.json and three-sample scoped smoke/schema pass. WDDM >100 outliers now individual UNKNOWN/null with raw evidence preserved. Ignored operational JSON/logs were wrongly captured by mechanical S00 scan; after sampling completion, archived owned outputs and moved them to restricted operations storage, mechanically regenerated clean source inventory199 and verify:s00 passed. No exclusions or gate relaxation. Final clean verify log verify-ci-clean-final.log; previous local2173 pass preserved.

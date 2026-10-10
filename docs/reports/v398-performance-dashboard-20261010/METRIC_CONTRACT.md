@@ -18,3 +18,4 @@ Lamps: green proven fresh healthy, yellow degraded/congested/config-only, red ev
 
 Finance thresholds are display-only: <500 red,500..<1000 yellow,>=1000 green, missing/stale gray, per currency. Realized ex-funding needs complete cycles; funding all-in shows only eligible attributed subset with coverage numerator/denominator, not whole portfolio. No BTC mixing, wallet delta PnL, unavailable funding=0 or unsafe order funnel inference.
 
+Collector out-of-range WDDM utilization becomes UNKNOWN/null per process, with rawCounterUtilizationPct only in local/desensitized sampling evidence. Engine contract strips extra raw fields. Process-scoped counter paths avoid unrelated process enumeration. Added collectionCpuMs separately from wall-clock collectionMs for diagnostics; neither is GPU inference time.

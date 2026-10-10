@@ -1,0 +1,269 @@
+{
+  "scope": "NATURAL READONLY PRE-DEPLOYMENT OBSERVATION",
+  "sampleCount": 121,
+  "coveredFrom": 1791598053915,
+  "coveredTo": 1791599857223,
+  "minutes": 30.055133333333334,
+  "source": "WINDOWS_WDDM_PROCESS_COUNTERS + existing Engine projection",
+  "collectionMs": {
+    "n": 121,
+    "p50": 5987,
+    "p95": 10257,
+    "max": 17057
+  },
+  "intervalMs": {
+    "n": 120,
+    "p50": 15011,
+    "p95": 15021,
+    "max": 17061
+  },
+  "sourceErrors": {
+    "ENGINE_PROJECTION_UNAVAILABLE": 20,
+    "OS_COUNTER_UNAVAILABLE": 1
+  },
+  "services": [
+    {
+      "port": 8081,
+      "pids": [
+        3400
+      ],
+      "measureStatusCount": {
+        "MEASURED": 120
+      },
+      "rawCounterUtilizationPct": {
+        "n": 120,
+        "p50": 0,
+        "p95": 37.454,
+        "max": 99.995
+      },
+      "rawOutOfRangeCount": 0,
+      "missingSampleCount": 1,
+      "utilizationPct": {
+        "n": 120,
+        "p50": 0,
+        "p95": 37.454,
+        "max": 99.995
+      },
+      "sampleFractionAbove1Pct": 0.058333333333333334,
+      "dedicatedBytes": {
+        "n": 120,
+        "p50": 5535035392,
+        "p95": 5535035392,
+        "max": 5535035392
+      },
+      "sharedBytes": {
+        "n": 120,
+        "p50": 13197312,
+        "p95": 13197312,
+        "max": 13197312
+      },
+      "physicalMapping": "SEPARATE STRONG_EVIDENCE; NEVER INFER FROM LUID ENUMERATION"
+    },
+    {
+      "port": 8083,
+      "pids": [
+        14020
+      ],
+      "measureStatusCount": {
+        "MEASURED": 120
+      },
+      "rawCounterUtilizationPct": {
+        "n": 120,
+        "p50": 0,
+        "p95": 99.564,
+        "max": 100.264
+      },
+      "rawOutOfRangeCount": 2,
+      "missingSampleCount": 1,
+      "utilizationPct": {
+        "n": 118,
+        "p50": 0,
+        "p95": 99.556,
+        "max": 99.759
+      },
+      "sampleFractionAbove1Pct": 0.30833333333333335,
+      "dedicatedBytes": {
+        "n": 120,
+        "p50": 17348378624,
+        "p95": 17348378624,
+        "max": 17348378624
+      },
+      "sharedBytes": {
+        "n": 120,
+        "p50": 418267136,
+        "p95": 418267136,
+        "max": 418267136
+      },
+      "physicalMapping": "SEPARATE STRONG_EVIDENCE; NEVER INFER FROM LUID ENUMERATION"
+    },
+    {
+      "port": 8084,
+      "pids": [
+        22336
+      ],
+      "measureStatusCount": {
+        "MEASURED": 120
+      },
+      "rawCounterUtilizationPct": {
+        "n": 120,
+        "p50": 0,
+        "p95": 99.956,
+        "max": 100.522
+      },
+      "rawOutOfRangeCount": 5,
+      "missingSampleCount": 1,
+      "utilizationPct": {
+        "n": 115,
+        "p50": 0,
+        "p95": 99.726,
+        "max": 99.973
+      },
+      "sampleFractionAbove1Pct": 0.35833333333333334,
+      "dedicatedBytes": {
+        "n": 120,
+        "p50": 17358815232,
+        "p95": 17358815232,
+        "max": 17359347712
+      },
+      "sharedBytes": {
+        "n": 120,
+        "p50": 955138048,
+        "p95": 955138048,
+        "max": 1089355776
+      },
+      "physicalMapping": "SEPARATE STRONG_EVIDENCE; NEVER INFER FROM LUID ENUMERATION"
+    }
+  ],
+  "resourceCounters": [
+    {
+      "resourceId": "brain-7900-primary",
+      "sampleCount": 101,
+      "observedTotalRunsDelta": 11,
+      "observedFailureDelta": 1,
+      "historicalFailureCountAtStart": 1,
+      "active": {
+        "n": 101,
+        "p50": 0,
+        "p95": 1,
+        "max": 1
+      },
+      "queueDepth": {
+        "n": 101,
+        "p50": 0,
+        "p95": 2,
+        "max": 2
+      },
+      "sampledIdleReasons": {
+        "null": 47,
+        "AI_RESOURCE_BUSY": 8,
+        "NO_ELIGIBLE_CANDIDATE": 35,
+        "NO_EXECUTABLE_CANDIDATE": 11
+      }
+    },
+    {
+      "resourceId": "review-7900-gpu2",
+      "sampleCount": 101,
+      "observedTotalRunsDelta": 26,
+      "observedFailureDelta": 0,
+      "historicalFailureCountAtStart": 0,
+      "active": {
+        "n": 101,
+        "p50": 0,
+        "p95": 1,
+        "max": 1
+      },
+      "queueDepth": {
+        "n": 101,
+        "p50": 0,
+        "p95": 1,
+        "max": 1
+      },
+      "sampledIdleReasons": {
+        "null": 36,
+        "WAITING_REVIEW_TASK": 65
+      }
+    },
+    {
+      "resourceId": "scout-b580",
+      "sampleCount": 101,
+      "observedTotalRunsDelta": 11,
+      "observedFailureDelta": 0,
+      "historicalFailureCountAtStart": 0,
+      "active": {
+        "n": 101,
+        "p50": 0,
+        "p95": 1,
+        "max": 1
+      },
+      "queueDepth": {
+        "n": 101,
+        "p50": 0,
+        "p95": 0,
+        "max": 0
+      },
+      "sampledIdleReasons": {
+        "WAITING_CANDIDATE_OR_SHARED_EVENT": 92,
+        "RUNNING": 9
+      }
+    }
+  ],
+  "latest100ObservedAt": 1791599921654,
+  "runTimingScope": "latest100 filtered to window; incomplete population, percentiles descriptive subset only",
+  "observedRunTiming": [
+    {
+      "role": "SCOUT",
+      "completedSubset": 11,
+      "failedSubset": 0,
+      "latencyMs": {
+        "n": 11,
+        "p50": 11806,
+        "p95": 14023,
+        "max": 14023
+      },
+      "queueMs": {
+        "n": 0,
+        "p50": null,
+        "p95": null,
+        "max": null
+      }
+    },
+    {
+      "role": "PRIMARY_BRAIN",
+      "completedSubset": 11,
+      "failedSubset": 1,
+      "latencyMs": {
+        "n": 11,
+        "p50": 60710,
+        "p95": 98824,
+        "max": 98824
+      },
+      "queueMs": {
+        "n": 0,
+        "p50": null,
+        "p95": null,
+        "max": null
+      }
+    },
+    {
+      "role": "REVIEW_BRAIN",
+      "completedSubset": 25,
+      "failedSubset": 0,
+      "latencyMs": {
+        "n": 25,
+        "p50": 20731,
+        "p95": 44258,
+        "max": 78015
+      },
+      "queueMs": {
+        "n": 0,
+        "p50": null,
+        "p95": null,
+        "max": null
+      }
+    }
+  ],
+  "tokensPerSecond": null,
+  "sshWireBytes": null,
+  "completeQueueP95": null,
+  "liveOptimizationComparison": "UNKNOWN: candidate not deployed"
+}

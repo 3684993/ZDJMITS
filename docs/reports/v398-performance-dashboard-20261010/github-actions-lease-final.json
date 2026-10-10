@@ -1,0 +1,101 @@
+{
+  "observedAt": "2026-10-10T03:47:28.262625+00:00",
+  "requestedHead": "402b850f73fd10018fb03db0b5deaeda493dd499",
+  "runs": [
+    {
+      "id": 38018026331,
+      "head_sha": "402b850f73fd10018fb03db0b5deaeda493dd499",
+      "head_branch": "codex/v398-model-capacity-lease",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/3684993/ZDJMITS/actions/runs/38018026331",
+      "name": "V3.9.8 Read-only Verify",
+      "created_at": "2026-10-10T02:43:54Z",
+      "updated_at": "2026-10-10T02:49:05Z",
+      "jobs": [
+        {
+          "id": 114112574377,
+          "name": "verify",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/3684993/ZDJMITS/actions/runs/38018026331/job/114112574377",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-10-10T02:43:57Z",
+              "completed_at": "2026-10-10T02:43:58Z"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-10-10T02:43:58Z",
+              "completed_at": "2026-10-10T02:44:05Z"
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-10-10T02:44:05Z",
+              "completed_at": "2026-10-10T02:44:12Z"
+            },
+            {
+              "name": "Diff check",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-10-10T02:44:12Z",
+              "completed_at": "2026-10-10T02:44:13Z"
+            },
+            {
+              "name": "Install locked dependencies",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-10-10T02:44:13Z",
+              "completed_at": "2026-10-10T02:44:21Z"
+            },
+            {
+              "name": "Full offline verification",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-10-10T02:44:21Z",
+              "completed_at": "2026-10-10T02:49:01Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11,
+              "started_at": "2026-10-10T02:49:01Z",
+              "completed_at": "2026-10-10T02:49:01Z"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12,
+              "started_at": "2026-10-10T02:49:01Z",
+              "completed_at": "2026-10-10T02:49:02Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13,
+              "started_at": "2026-10-10T02:49:02Z",
+              "completed_at": "2026-10-10T02:49:02Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -36,7 +36,21 @@ export class BinancePublicMarketDataProvider implements MarketDataProvider {
 
   private async hourlyCandles(symbol:string){const cached=this.hourlyCache.get(symbol),now=Date.now();if(cached&&now<cached.until)return cached.rows;try{const rows=await this.getCandles(symbol,'1h',80);this.hourlyCache.set(symbol,{rows,until:(Math.floor(now/3600000)+1)*3600000+1000});return rows;}catch{return cached?.rows??[];}}
   private async json<T>(path: string) {return this.transport.json<T>(path);}
-  private async info(){const now=Date.now();if(this.exchangeInfo&&now-this.exchangeInfo.fetchedAt<15*60_000)return this.exchangeInfo.value;if(this.exchangeInfoFlight)return this.exchangeInfoFlight;const flight=this.json<any>("/fapi/v1/exchangeInfo").then(value=>{this.exchangeInfo={value,fetchedAt:Date.now()};return value;}).finally(()=>{this.exchangeInfoFlight=null;});this.exchangeInfoFlight=flight;return flight;}
+  private exchangeInfoFailure:{error:unknown;retryAt:number;attempts:number}|null=null;
+  private async info(){
+    const now=Date.now();
+    if(this.exchangeInfo&&now-this.exchangeInfo.fetchedAt<15*60_000)return this.exchangeInfo.value;
+    if(this.exchangeInfoFlight)return this.exchangeInfoFlight;
+    if(this.exchangeInfoFailure&&now<this.exchangeInfoFailure.retryAt)throw this.exchangeInfoFailure.error;
+    const flight=this.json<any>("/fapi/v1/exchangeInfo").then(value=>{
+      this.exchangeInfo={value,fetchedAt:Date.now()};this.exchangeInfoFailure=null;return value;
+    }).catch(error=>{
+      const attempts=(this.exchangeInfoFailure?.attempts??0)+1;
+      this.exchangeInfoFailure={error,attempts,retryAt:Date.now()+Math.min(120_000,30_000*2**Math.min(attempts-1,2))};
+      throw error;
+    }).finally(()=>{this.exchangeInfoFlight=null;});
+    this.exchangeInfoFlight=flight;return flight;
+  }
   private async ticker24hForDiscovery(){const now=Date.now();if(this.discoveryTicker&&now-this.discoveryTicker.fetchedAt<60_000)return this.discoveryTicker.value;if(this.discoveryTickerFlight)return this.discoveryTickerFlight;const flight=this.json<any[]>("/fapi/v1/ticker/24hr").then(value=>{this.discoveryTicker={value,fetchedAt:Date.now()};return value;}).finally(()=>{this.discoveryTickerFlight=null;});this.discoveryTickerFlight=flight;return flight;}
 
   async discoverSymbols(limit:number,prioritySymbols:string[]=[]){

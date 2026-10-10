@@ -36,13 +36,27 @@ try {
   function Get-Owner {return $null}
   function Start-OwnedTunnel {$script:starts++;throw 'SSH_EXITED fixture'}
   function Stop-OwnedTunnel {$script:stops++}
-  function Test-Tunnel {return [pscustomobject]@{healthy=$false;failurePhase='SOCKS_CONNECT_REPLY';elapsedMs=1}}
+  $script:probes=0
+  function Test-Tunnel {$script:probes++;if($script:probes -ge 7){throw 'FIXTURE_OBSERVATION_COMPLETE'};return [pscustomobject]@{healthy=$false;failurePhase='SOCKS_CONNECT_REPLY';elapsedMs=1}}
   function Start-Sleep {param($Seconds,$Milliseconds)}
-  $bounded=$false;try{Main|Out-Null}catch{$bounded=$_.Exception.Message -like 'RESTART_BUDGET_EXHAUSTED*'}
-  if(-not $bounded -or $script:starts -ne 3 -or $script:stops -ne 2){throw 'Failed start/restart budget not bounded'}
+  $observed=$false;try{Main|Out-Null}catch{$observed=$_.Exception.Message -eq 'FIXTURE_OBSERVATION_COMPLETE'}
+  if(-not $observed -or $script:probes -ne 7 -or $script:starts -ne 3 -or $script:stops -ne 2){throw 'Exhausted restart budget disabled monitoring or restarted again'}
+  $budgetEvents=@(Get-Content -LiteralPath $eventPath|ForEach-Object {$_|ConvertFrom-Json}|Where-Object {$_.event -eq 'RESTART_BUDGET_EXHAUSTED'})
+  if($budgetEvents.Count -ne 1){throw 'Exhausted budget alert is missing or repeated on every tick'}
+  # Restoring observation after a spent budget may grant zero lifecycle attempts.
+  $MaxRestarts=0;$script:starts=0;$script:stops=0;$script:probes=0
+  function Get-Owner {return [pscustomobject]@{ProcessId=17}}
+  function Test-Tunnel {$script:probes++;if($script:probes -ge 4){throw 'FIXTURE_ZERO_RESTART_OBSERVATION_COMPLETE'};return [pscustomobject]@{healthy=$false;failurePhase='SOCKS_CONNECT_REPLY';elapsedMs=1}}
+  $observed=$false;try{Main|Out-Null}catch{$observed=$_.Exception.Message -eq 'FIXTURE_ZERO_RESTART_OBSERVATION_COMPLETE'}
+  if(-not $observed -or $script:starts -ne 0 -or $script:stops -ne 0){throw 'Read-only guardian restoration touched SSH lifecycle'}
+  $script:probes=0
+  function Get-Owner {return $null}
+  $observed=$false;try{Main|Out-Null}catch{$observed=$_.Exception.Message -eq 'FIXTURE_ZERO_RESTART_OBSERVATION_COMPLETE'}
+  if(-not $observed -or $script:starts -ne 0 -or $script:stops -ne 0){throw 'Zero-budget guardian started a missing tunnel'}
   # One-shot restart restores the monitor even if public verification still fails.
   # All lifecycle functions remain fixtures: no production process is touched.
   $Watch=$false;$Restart=$true;$script:restored=0;$script:guardianStops=0
+  function Test-Tunnel {return [pscustomobject]@{healthy=$false;failurePhase='SOCKS_CONNECT_REPLY';elapsedMs=1}}
   function Stop-Guardian {$script:guardianStops++}
   function Start-Guardian {$script:restored++}
   function Start-OwnedTunnel {$script:starts++}

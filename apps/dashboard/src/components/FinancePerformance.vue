@@ -25,7 +25,7 @@ function points(asset:string,key:'available'|'exFundingNet'|'allInNet'|'unrealiz
 </script>
 <template>
  <Panel title="资金可用与收益趋势" subtitle="USDT、USDC分别展示。资金颜色仅提示余额；收益来自按币种归因的完整交易，不把钱包变化当收益。">
-  <p class="finance-note">可用资金：低于500红色，500–999.99黄色，至少1000绿色；缺失/过期灰色。历史仅覆盖本页同一Engine实际采样时间，未覆盖时段不补0。</p>
+  <p class="finance-note">资金阈值：低于500、500–999.99、至少1000，以圆点和边框区分；缺失数据不补0。历史仅覆盖本页同一 Engine 实际采样时间。</p>
   <div class="finance-grid">
    <article v-for="fact in facts" :key="fact.asset" :class="['finance-card',fact.tone]">
     <h3>{{fact.asset}} 可用资金</h3><strong class="finance-value">{{number(fact.available)}} {{fact.asset}}</strong><p>{{labels[fact.tone]}}</p>

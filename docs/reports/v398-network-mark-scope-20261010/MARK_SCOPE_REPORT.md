@@ -30,4 +30,3 @@ Official contracts:
 - https://developers.binance.com/en/docs/products/derivatives-trading-usds-futures/websocket-market-streams/Important-WebSocket-Change-Notice
 
 Related independent PRs: #25 official WS routing; #27 recvWindow and official request weights. This PR has no dependency on either source change.
-

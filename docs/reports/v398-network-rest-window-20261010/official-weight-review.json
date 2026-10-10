@@ -1,0 +1,38 @@
+{
+  "officialSource": "https://developers.binance.com/en/docs/catalog/core-trading-derivatives-trading-usd-s-m-futures/api/rest-api/account",
+  "verifiedAt": "2026-10-10",
+  "changed": [
+    {
+      "after": 1,
+      "endpoint": "/fapi/v1/leverageBracket",
+      "before": 30
+    },
+    {
+      "after": 20,
+      "endpoint": "/fapi/v1/commissionRate",
+      "before": 30
+    }
+  ],
+  "kept": [
+    {
+      "endpoint": "/fapi/v1/multiAssetsMargin",
+      "weight": 30
+    },
+    {
+      "endpoint": "/fapi/v1/positionSide/dual",
+      "weight": 30
+    },
+    {
+      "endpoint": "/fapi/v1/income",
+      "weight": 30
+    },
+    {
+      "scope": "all symbols",
+      "endpoint": "/fapi/v1/openOrders",
+      "weight": 40
+    }
+  ],
+  "budgetLimitChanged": false,
+  "concurrencyChanged": false,
+  "headerAuthorityChanged": false
+}

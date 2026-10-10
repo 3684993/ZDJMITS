@@ -1,0 +1,138 @@
+(node:11516) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:23944) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> @zdj/engine@3.9.8 test
+> vitest run src/adapters/exchange/ExternalTradeAdapterTiming.test.ts
+
+(node:12568) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+VITEST_TEST_TIMEOUT=5000 CI=
+
+ RUN  v3.2.7 C:/Users/5700x/.codex/worktrees/v398-network-rest-window/MITS/apps/engine
+
+(node:4816) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:25328) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:8772) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:7488) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ❯ src/adapters/exchange/ExternalTradeAdapterTiming.test.ts (17 tests | 10 failed) 25ms
+   × signs configured recvWindow undefined as 5000 with clock offset 9ms
+     → expected '60000' to be '5000' // Object.is equality
+   × signs configured recvWindow 1000 as 1000 with clock offset 1ms
+     → expected '60000' to be '1000' // Object.is equality
+   × signs configured recvWindow 5000 as 5000 with clock offset 1ms
+     → expected '60000' to be '5000' // Object.is equality
+   × signs configured recvWindow 12000 as 12000 with clock offset 1ms
+     → expected '60000' to be '12000' // Object.is equality
+   ✓ signs configured recvWindow 60000 as 60000 with clock offset 1ms
+   × rejects invalid recvWindow NaN before clock/network/write boundary 4ms
+     → promise resolved "{}" instead of rejecting
+   × rejects invalid recvWindow Infinity before clock/network/write boundary 1ms
+     → promise resolved "{}" instead of rejecting
+   × rejects invalid recvWindow 0 before clock/network/write boundary 1ms
+     → promise resolved "{}" instead of rejecting
+   × rejects invalid recvWindow -1 before clock/network/write boundary 1ms
+     → promise resolved "{}" instead of rejecting
+   × rejects invalid recvWindow 1500.5 before clock/network/write boundary 1ms
+     → promise resolved "{}" instead of rejecting
+   × rejects invalid recvWindow 60001 before clock/network/write boundary 0ms
+     → promise resolved "{}" instead of rejecting
+   ✓ does not blindly retry a simulated signed POST on Binance HTTP 451: restricted location 1ms
+   ✓ does not blindly retry a simulated signed POST on Binance HTTP 429: rate limit 0ms
+   ✓ does not blindly retry a simulated signed POST on Binance HTTP 418: banned 1ms
+   ✓ does not blindly retry a simulated signed POST on Binance HTTP 502: bad gateway 0ms
+   ✓ does not blindly retry a simulated signed POST on Binance HTTP 503: Unknown error, please check your request or try again later. 0ms
+   ✓ does not blindly retry a simulated signed POST on SOCKS_CONNECT_REPLY timeout after 8000ms 0ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 10 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/adapters/exchange/ExternalTradeAdapterTiming.test.ts > signs configured recvWindow undefined as 5000 with clock offset
+ FAIL  src/adapters/exchange/ExternalTradeAdapterTiming.test.ts > signs configured recvWindow 5000 as 5000 with clock offset
+AssertionError: expected '60000' to be '5000' // Object.is equality
+
+Expected: "5000"
+Received: "60000"
+
+ ❯ src/adapters/exchange/ExternalTradeAdapterTiming.test.ts:15:35
+     13|   await (h.adapter as any).signed('GET','/fapi/v2/account');
+     14|   const url=h.json.mock.calls.find(([url])=>url.startsWith('/fapi/v2/a…
+     15|   expect(query.get('recvWindow')).toBe(String(expected));expect(query.…
+       |                                   ^
+     16|   expect(signature).toBe(createHmac('sha256','synthetic-secret').updat…
+     17|  }finally{vi.useRealTimers();}
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/10]⎯
+
+ FAIL  src/adapters/exchange/ExternalTradeAdapterTiming.test.ts > signs configured recvWindow 1000 as 1000 with clock offset
+AssertionError: expected '60000' to be '1000' // Object.is equality
+
+Expected: "1000"
+Received: "60000"
+
+ ❯ src/adapters/exchange/ExternalTradeAdapterTiming.test.ts:15:35
+     13|   await (h.adapter as any).signed('GET','/fapi/v2/account');
+     14|   const url=h.json.mock.calls.find(([url])=>url.startsWith('/fapi/v2/a…
+     15|   expect(query.get('recvWindow')).toBe(String(expected));expect(query.…
+       |                                   ^
+     16|   expect(signature).toBe(createHmac('sha256','synthetic-secret').updat…
+     17|  }finally{vi.useRealTimers();}
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/10]⎯
+
+ FAIL  src/adapters/exchange/ExternalTradeAdapterTiming.test.ts > signs configured recvWindow 12000 as 12000 with clock offset
+AssertionError: expected '60000' to be '12000' // Object.is equality
+
+Expected: "12000"
+Received: "60000"
+
+ ❯ src/adapters/exchange/ExternalTradeAdapterTiming.test.ts:15:35
+     13|   await (h.adapter as any).signed('GET','/fapi/v2/account');
+     14|   const url=h.json.mock.calls.find(([url])=>url.startsWith('/fapi/v2/a…
+     15|   expect(query.get('recvWindow')).toBe(String(expected));expect(query.…
+       |                                   ^
+     16|   expect(signature).toBe(createHmac('sha256','synthetic-secret').updat…
+     17|  }finally{vi.useRealTimers();}
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/10]⎯
+
+ FAIL  src/adapters/exchange/ExternalTradeAdapterTiming.test.ts > rejects invalid recvWindow NaN before clock/network/write boundary
+ FAIL  src/adapters/exchange/ExternalTradeAdapterTiming.test.ts > rejects invalid recvWindow Infinity before clock/network/write boundary
+ FAIL  src/adapters/exchange/ExternalTradeAdapterTiming.test.ts > rejects invalid recvWindow 0 before clock/network/write boundary
+ FAIL  src/adapters/exchange/ExternalTradeAdapterTiming.test.ts > rejects invalid recvWindow -1 before clock/network/write boundary
+ FAIL  src/adapters/exchange/ExternalTradeAdapterTiming.test.ts > rejects invalid recvWindow 1500.5 before clock/network/write boundary
+ FAIL  src/adapters/exchange/ExternalTradeAdapterTiming.test.ts > rejects invalid recvWindow 60001 before clock/network/write boundary
+AssertionError: promise resolved "{}" instead of rejecting
+
+- Expected
++ Received
+
+- Error {
+-   "message": "rejected promise",
+- }
++ {}
+
+ ❯ src/adapters/exchange/ExternalTradeAdapterTiming.test.ts:20:89
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/10]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  10 failed | 7 passed (17)
+   Start at  08:55:27
+   Duration  941ms (transform 119ms, setup 0ms, collect 291ms, tests 25ms, environment 0ms, prepare 357ms)
+
+(node:18588) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+npm error Lifecycle script `test` failed with error:
+npm error code 1
+npm error path C:\Users\5700x\.codex\worktrees\v398-network-rest-window\MITS\apps\engine
+npm error workspace @zdj/engine@3.9.8
+npm error location C:\Users\5700x\.codex\worktrees\v398-network-rest-window\MITS\apps\engine
+npm error command failed
+npm error command C:\Windows\system32\cmd.exe /d /s /c vitest run src/adapters/exchange/ExternalTradeAdapterTiming.test.ts

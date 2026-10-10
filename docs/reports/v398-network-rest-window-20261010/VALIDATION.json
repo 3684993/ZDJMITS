@@ -1,0 +1,21 @@
+{
+  "observedAt": "2026-10-10T01:01:08.5839304Z",
+  "base": "3cb72deff296831885b13de4ab054b1e5712fcb7",
+  "npmCiExit": 0,
+  "focusedFiles": 4,
+  "focusedTests": 54,
+  "timingRedFailed": 10,
+  "timingRedPassed": 7,
+  "weightsRedFailed": 2,
+  "weightsRedPassed": 4,
+  "fullVerifyExit": 0,
+  "vitestFiles": 253,
+  "vitestTests": 2180,
+  "s00": "PASS unchanged historical/current settings identity",
+  "vpnLoopback": "PASS via isolated verify:scripts",
+  "ci": "PENDING_PR_HEAD",
+  "deployment": "NOT_DEPLOYED",
+  "runtimeMutations": 0,
+  "exchangeNetworkCalls": 0,
+  "dependencyAdvisories": 4
+}

@@ -11,3 +11,7 @@ shadow-npm-ci.log；shadow-verify-ci.log：完整verify脚本/S00/typecheck/buil
 
 ## Release gates
 未部署/未Engine重启/未修改Settings/未真实TP改价/补仓。原24h 08:34 ABORTED，签名TP 02:10Z的25/25仅历史样本；正式发布仍需所有新鲜门禁及新24h。SHADOW protocol tests/CI均不是release approval。
+
+GitHub PR #32: https://github.com/3684993/ZDJMITS/pull/32
+Exact hosted GREEN source/evidence HEAD 1d4005bc2b1f0b900ad5ac5435a16d9c8734df0d: https://github.com/3684993/ZDJMITS/actions/runs/38017460613 (completed/success). Archived job log and exact-head JSON included. Subsequent archival commit changes documentation/evidence only; its final HEAD CI must also be read back, never inferred from this result.
+Related independent PR31 dashboard, PR33 lease, PR32 TP SHADOW; no merge/deploy. Local full verification counts in verification-local.json.

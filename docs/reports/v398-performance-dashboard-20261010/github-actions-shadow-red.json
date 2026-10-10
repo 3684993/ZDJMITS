@@ -1,0 +1,106 @@
+{
+  "observedAt": "2026-10-10T02:37:03.860869+00:00",
+  "requestedHead": "47605605ba1a9eb0506e4b3ae3fd03978918aefe",
+  "runs": [
+    {
+      "id": 38017357289,
+      "head_sha": "47605605ba1a9eb0506e4b3ae3fd03978918aefe",
+      "head_branch": "codex/v398-gpu2-tp-shadow",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "failure",
+      "html_url": "https://github.com/3684993/ZDJMITS/actions/runs/38017357289",
+      "name": "V3.9.8 Read-only Verify",
+      "created_at": "2026-10-10T02:32:43Z",
+      "updated_at": "2026-10-10T02:33:07Z",
+      "jobs": [
+        {
+          "id": 114110488934,
+          "name": "verify",
+          "status": "completed",
+          "conclusion": "failure",
+          "html_url": "https://github.com/3684993/ZDJMITS/actions/runs/38017357289/job/114110488934",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-10-10T02:32:46Z",
+              "completed_at": "2026-10-10T02:32:47Z"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-10-10T02:32:47Z",
+              "completed_at": "2026-10-10T02:32:55Z"
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-10-10T02:32:55Z",
+              "completed_at": "2026-10-10T02:33:03Z"
+            },
+            {
+              "name": "Diff check",
+              "status": "completed",
+              "conclusion": "failure",
+              "number": 4,
+              "started_at": "2026-10-10T02:33:03Z",
+              "completed_at": "2026-10-10T02:33:04Z"
+            },
+            {
+              "name": "Install locked dependencies",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 5,
+              "started_at": "2026-10-10T02:33:04Z",
+              "completed_at": "2026-10-10T02:33:04Z"
+            },
+            {
+              "name": "Full offline verification",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 6,
+              "started_at": "2026-10-10T02:33:04Z",
+              "completed_at": "2026-10-10T02:33:04Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 11,
+              "started_at": "2026-10-10T02:33:04Z",
+              "completed_at": "2026-10-10T02:33:04Z"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12,
+              "started_at": "2026-10-10T02:33:04Z",
+              "completed_at": "2026-10-10T02:33:06Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13,
+              "started_at": "2026-10-10T02:33:06Z",
+              "completed_at": "2026-10-10T02:33:06Z"
+            }
+          ]
+        }
+      ],
+      "failureLog": {
+        "path": "github-ci-shadow-38017357289-failure.log",
+        "originalSha256": "faecd7f46377e747c50fe48c68b2f6bdad5e72abc7849beb7442943d71b45d11",
+        "normalization": "trailing whitespace and EOF only"
+      }
+    }
+  ]
+}

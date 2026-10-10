@@ -1,5 +1,8 @@
 # v3.9.8仪表盘性能优化 — GPU利用率、模型推理、代理与交易生命周期统一可观测性实施计划
 
+> **2026-10-10 新的有证据进度更正：** 本计划原文首段所写24h RUNNING已被2026-10-10 **08:34:00.270+08** 的监测副本 `ABORTED_SAFETY_FAILURE / LOCAL_TP_GATE_NOT_CLOSED` 推翻：localTP protected14/required15/缺1，参见PR#25分支 `docs/reports/v398-network-optimization-20261010/acceptance-aborted.json`。稍后本地cache恢复不等于 fresh signed TP全覆盖，旧验收不得续算。ChatGPT已在独立分支 `chatgpt/v398-performance-real-metrics-d0-d2-20261010` 提交 D1真实CPU/内存/EngineRSS sampler、只读API、D2 Vue/ECharts `/performance` /状态灯实码与初始测试，**仍需Codex执行本机完整verify/CI及真实GPU采样、原子lease独立PR；未部署**。新增执行板 [V398_GPU_PERFORMANCE_EXECUTION_BOARD_20261010](./V398_GPU_PERFORMANCE_EXECUTION_BOARD_20261010.md)，新增 Codex执行文件 [CODEX_V398_GPU_PERFORMANCE_DASHBOARD_PHASE1_20261010](../prompts/CODEX_V398_GPU_PERFORMANCE_DASHBOARD_PHASE1_20261010.md)。主Issue #30。
+
+
 创建日期：2026-10-10（用户中国北京时间约09:17）；该文件是**实施任务规划，不代表现网已实现或实时监控已测量**。源码审计所依据的 GitHub main：f933b20a676f3dc0b37557c9bb13f5910798f785（新增规划/交接文档会改变main，但不改变正在运行的Engine构建）。当前已部署V398 TESTNET Engine构建 3.9.8-bb45c11acbe9819a3456，发布收据记载PID23688/宿主26576/6of6；启动正式24h验收 T0 2026-10-10 08:16:49.685 +08，结束时间2026-10-11 08:16:49.685 +08，**状态RUNNING、尚未判定PASS**。以上PID与状态是既有发布回执，开始实施时需重新只读核实。不可把GitHub最新文档commit当作新Engine版本已部署。
 
 ## 一、产品目标与执行原则

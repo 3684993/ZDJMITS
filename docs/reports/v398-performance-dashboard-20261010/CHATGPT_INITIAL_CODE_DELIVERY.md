@@ -1,5 +1,8 @@
 # ChatGPT D0–D2 first implementation receipt — 2026-10-10 Beijing
 
+> **GitHub main 更新（提交 b55f427eeda1，2026-10-10 09:36+08）：** `main` 已将原24h验收终止原始证据同步到 `docs/reports/v398-engine-cutover-20261010/acceptance/state.json`（现为 `ABORTED_SAFETY_FAILURE`）及 [ACCEPTANCE_ABORT_RECEIPT_20261010.md](https://github.com/3684993/ZDJMITS/blob/main/docs/reports/v398-engine-cutover-20261010/ACCEPTANCE_ABORT_RECEIPT_20261010.md)。本功能分支始于更早main 662d7f3，若本分支文件仍有旧08:24 `RUNNING`，是尚未同步main的历史遗留，不能据此推翻最新权威已中止状态。Codex必须先核对最新main的验收事实和PR #31合并基线，避免旧文档覆盖新证据。该更新是文档证据同步，不是重启或新24h开始。
+
+
 ## Status
 `SOURCE_COMMITTED_TO_GITHUB_BRANCH / UNIT_TESTS_NOT_YET_EXECUTED / CI_NOT_YET_CONFIRMED / NOT_DEPLOYED`
 

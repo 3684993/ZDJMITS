@@ -5,6 +5,8 @@ import {financePerformance} from '../utils/financePerformance';
 import {numberOrNull,withSampleGaps} from '../utils/performanceFacts';
 type Observation={at:number;version:number|null;available:Record<string,number|null>;profit:Record<string,number|null>;positions:number|null;protected:number|null;entries:number|null};
 const props=defineProps<{snapshot:any;accountRead:any;trade24h:any;now:number}>();
+// jsdom does not implement canvas; data and status remain fully testable without initializing ECharts.
+const chartsAvailable=typeof navigator==='undefined'||!navigator.userAgent.toLowerCase().includes('jsdom');
 const assets=computed(()=>financePerformance(props.snapshot,props.now,props.accountRead));
 const ledger=computed(()=>props.trade24h?.byAsset??null);
 const account=computed(()=>props.snapshot?.account??null);
@@ -64,7 +66,7 @@ const lastUpdated=computed(()=>assets.value.find(a=>a.asOf)?.asOf??null);
     <h3>{{record.asset}} 可用资金</h3>
     <strong class="money-big">{{native(record.balance?.available,record.asset,3)}}</strong>
     <small>钱包余额 {{native(record.balance?.wallet,record.asset,3)}} · {{record.balance?.source??'签名来源待同步'}}</small>
-    <PerformanceTrend v-if="chart('available',record.asset).filter(p=>p.value!==null).length>1" :points="chart('available',record.asset)" :unit="record.asset" :label="record.asset+'可用资金'" funding-thresholds/>
+    <PerformanceTrend v-if="chartsAvailable&&chart('available',record.asset).filter(p=>p.value!==null).length>1" :points="chart('available',record.asset)" :unit="record.asset" :label="record.asset+'可用资金'" funding-thresholds/>
     <div v-else class="chart-awaiting">资金趋势积累中 · 只记录真实采样点</div>
     <div class="card-bottom"><span>过去24h已核实平仓</span><strong>{{record.pnl?.cycles??'—'}} 笔</strong></div>
    </article>
@@ -75,7 +77,7 @@ const lastUpdated=computed(()=>assets.value.find(a=>a.asOf)?.asOf??null);
      <div class="pnl-line"><b>{{record.asset}}</b><strong :class="tones(record.pnl?.netExFunding)">{{native(record.pnl?.netExFunding,record.asset)}}</strong></div>
      <div class="pnl-stats"><span>盈利 {{native(record.pnl?.grossProfit,record.asset)}}</span><span>亏损 {{native(record.pnl?.grossLoss,record.asset)}}</span></div>
      <small>盈利 {{record.pnl?.winningCycles??'—'}} / 亏损 {{record.pnl?.losingCycles??'—'}} · 手续费 {{native(record.pnl?.totalFees,record.asset)}}</small>
-     <PerformanceTrend v-if="chart('profit',record.asset).filter(p=>p.value!==null).length>1" :points="chart('profit',record.asset)" :unit="record.asset" :label="record.asset+'滚动24小时净收益'"/>
+     <PerformanceTrend v-if="chartsAvailable&&chart('profit',record.asset).filter(p=>p.value!==null).length>1" :points="chart('profit',record.asset)" :unit="record.asset" :label="record.asset+'滚动24小时净收益'"/>
     </div>
     <small class="notice">仅核实已结算周期 · 资金费未证明的不计入正式全口径净收益 · {{trade24h?.status??'账本待同步'}}</small>
    </article>
@@ -83,7 +85,7 @@ const lastUpdated=computed(()=>assets.value.find(a=>a.asOf)?.asOf??null);
     <div class="card-head"><span class="card-kicker">POSITION / PROTECTION</span><span class="soft-tag">当前实例</span></div>
     <h3>持仓与成交监测</h3>
     <div class="position-strip"><div><small>当前持仓</small><strong>{{positions??'—'}}</strong></div><div><small>本地 TP 保护</small><strong>{{protectedCount??'—'}}</strong></div><div><small>本地建仓订单</small><strong>{{snapshot?.entryOrders?.length??'—'}}</strong></div></div>
-    <PerformanceTrend v-if="countChart('positions').filter(p=>p.value!==null).length>1" :points="countChart('positions')" unit="笔" label="当前持仓数量"/>
+    <PerformanceTrend v-if="chartsAvailable&&countChart('positions').filter(p=>p.value!==null).length>1" :points="countChart('positions')" unit="笔" label="当前持仓数量"/>
     <div v-else class="chart-awaiting">持仓趋势积累中 · 首次页面采样无历史补点</div>
     <div class="card-bottom"><span>最近1小时交易所 Entry / Exit 成交事实</span><strong>{{snapshot?.exchangeFillFacts?.entryFillsLast1h??'—'}} / {{snapshot?.exchangeFillFacts?.exitFillsLast1h??'—'}}</strong></div>
    </article>

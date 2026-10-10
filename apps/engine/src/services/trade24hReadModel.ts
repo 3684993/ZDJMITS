@@ -1,5 +1,6 @@
 import type {TradeRecord} from '@zdj/contracts';
 import {projectTradeRecordRow,type TradeRecordReadModelInput} from './tradeRecordReadModel.js';
+import {ledgerClosedComplete} from './tradingQualityEligibility.js';
 
 const DAY_MS=86_400_000;
 type ProjectedRow=ReturnType<typeof projectTradeRecordRow>;
@@ -8,8 +9,8 @@ const assetOf=(row:ProjectedRow):AssetName=>row.moneyAsset==='USDT'?'USDT':row.m
 const finite=(n:unknown):n is number=>typeof n==='number'&&Number.isFinite(n);
 const settledIn=(row:ProjectedRow,from:number,to:number)=>
   row.status==='CLOSED'&&finite(row.closedAt)&&row.closedAt>=from&&row.closedAt<=to;
-const provenLocal=(row:ProjectedRow)=>
-  row.economicEligibility.ledgerClosedComplete&&finite(row.tradingNetPnlExFunding)&&
+const provenLocal=(row:TradeRecord)=>
+  ledgerClosedComplete(row).eligible&&finite(row.tradingNetPnlExFunding)&&
   ['SYSTEM','LOCAL_LIFECYCLE_REPAIR_FROM_EXCHANGE_FACT'].includes(row.source)&&
   Boolean(row.cycleId)&&row.entryOrderIds.length>0&&row.exitOrderIds.length>0&&
   row.linkedFillIds.length>0&&!['UNCONSERVED','LEDGER_INCONSISTENT','UNKNOWN'].includes(row.ledgerConservation??'');
@@ -53,10 +54,13 @@ export function projectTrade24hReadModel(input:{
   records:TradeRecord[];asOf?:number;autoSync?:{status?:string;lastSuccessAt?:number|null};
 } & Omit<TradeRecordReadModelInput,'records'|'asOf'>){
   const asOf=input.asOf??Date.now(),from=asOf-DAY_MS;
-  const rows=input.records.map(record=>projectTradeRecordRow(record,input));
-  const closed=rows.filter(row=>settledIn(row,from,asOf));
-  const linkedAll=rows.filter(provenLocal),cycleCounts=new Map<string,number>();
-  for(const row of linkedAll)cycleCounts.set(row.cycleId!, (cycleCounts.get(row.cycleId!)??0)+1);
+  // Prune outside the 24h window before constructing expensive per-cycle proof projections.
+  // Only lightweight ledger eligibility is needed to quarantine cross-window cycle collisions.
+  const cycleCounts=new Map<string,number>();
+  for(const record of input.records)if(provenLocal(record))
+    cycleCounts.set(record.cycleId!, (cycleCounts.get(record.cycleId!)??0)+1);
+  const closed=input.records.filter(record=>settledIn(record as ProjectedRow,from,asOf))
+    .map(record=>projectTradeRecordRow(record,input));
   const eligible=closed.filter(row=>provenLocal(row)&&cycleCounts.get(row.cycleId!)===1);
   const excluded=closed.filter(row=>!eligible.includes(row));
   const byAsset={
@@ -78,7 +82,7 @@ export function projectTrade24hReadModel(input:{
       ledgerUnprovenClosedRows:closed.filter(row=>!row.economicEligibility.ledgerClosedComplete).length,
       cycleCollisionRows:closed.filter(row=>provenLocal(row)&&cycleCounts.get(row.cycleId!)!==1).length,
       unknownAssetCycles,
-      closedObservedWithoutSettledAt:rows.filter(row=>row.status!=='CLOSED'&&finite(row.observedClosedAt)&&row.observedClosedAt>=from&&row.observedClosedAt<=asOf).length,
+      closedObservedWithoutSettledAt:input.records.filter(row=>row.status!=='CLOSED'&&finite(row.observedClosedAt)&&row.observedClosedAt>=from&&row.observedClosedAt<=asOf).length,
       lastSyncSuccessAt:input.autoSync?.lastSuccessAt??null,
       syncStatus:input.autoSync?.status??'UNKNOWN',
     },

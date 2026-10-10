@@ -5,6 +5,24 @@ import { ExternalTradeAdapter } from './ExternalTradeAdapter.js';
 function harness(hedge:boolean,environment:'TESTNET'|'PRODUCTION'='TESTNET'){const calls:Array<{url:string;method?:string}>=[];const transport={effectiveBaseUrl:()=>environment==='TESTNET'?'https://testnet.binancefuture.com':'https://fapi.binance.com',environment:()=>environment,executionMode:()=> 'TESTNET_ENABLED',assertTestnetExchangeWrite:()=>{if(environment!=='TESTNET')throw new Error('TESTNET_ONLY_WRITE_LOCK')},json:vi.fn(async(url:string,init?:{method?:string})=>{calls.push({url,method:init?.method});if(url==='/fapi/v1/time')return{serverTime:1};if(url.startsWith('/fapi/v1/positionSide/dual'))return{dualSidePosition:hedge};if(url.startsWith('/fapi/v1/order'))return{orderId:123};return{};})};return{adapter:new ExternalTradeAdapter(transport as never,{apiKey:'key',apiSecret:'secret'}),calls};}
 const entry={id:'entry_1',exchangeOrderId:null,symbol:'BTCUSDT',side:'SHORT',quantity:.01,price:100,filledQuantity:0,leverage:20,status:'NEW',createdAt:1,updatedAt:1,absoluteExpiresAt:2,repriceCount:0,intentId:'i',reachability:1} as EntryOrder;
 const tp={id:'tp_1',exchangeOrderId:null,positionId:'p',symbol:'BTCUSDT',side:'SELL',quantity:.01,price:110,status:'WORKING',createdAt:1,updatedAt:1} as TakeProfitOrder;
+it('re-signs at dispatch with the unchanged configured window and never retries uncertain writes',async()=>{
+ vi.useFakeTimers();vi.setSystemTime(1800000000000);const h=harness(false);let before!:URLSearchParams,after!:URLSearchParams,writes=0;
+ (h.adapter as any).serverTime={offset:100,fetchedAt:Date.now()};
+ (h.adapter as any).transport.json.mockImplementation(async(url:string,init:any)=>{writes++;before=new URL(url,'https://demo-fapi.binance.com').searchParams;vi.setSystemTime(Date.now()+7000);after=init.dispatchQuery();throw Error('BINANCE_TRANSPORT_BLOCKED: uncertain write');});
+ try{await expect((h.adapter as any).signed('POST','/fapi/v1/order',{symbol:'BTCUSDT',quantity:.1})).rejects.toThrow('uncertain write');expect(writes).toBe(1);expect(after.get('timestamp')).toBe(String(Number(before.get('timestamp'))+7000));expect(after.get('signature')).not.toBe(before.get('signature'));expect(after.get('recvWindow')).toBe('5000');expect(after.get('quantity')).toBe('0.1');}finally{vi.useRealTimers();}
+});
+it.each([0,999,60001,NaN,5000.5])('rejects invalid recvWindow %s before network access',async window=>{
+ const h=harness(false);(h.adapter as any).recvWindowMs=window;await expect((h.adapter as any).signed('GET','/fapi/v3/account')).rejects.toThrow('BINANCE_RECV_WINDOW_INVALID');expect((h.adapter as any).transport.json).not.toHaveBeenCalled();
+});
+it('uses compact signed V3 account facts and leaves an absent stablecoin UNKNOWN without V2 fallback',async()=>{
+ const h=harness(false);(h.adapter as any).transport.json.mockImplementation(async(url:string)=>{
+  h.calls.push({url,method:'GET'});if(url==='/fapi/v1/time')return{serverTime:Date.now()};
+  if(url.startsWith('/fapi/v3/account'))return{assets:[{asset:'USDT',walletBalance:'100',availableBalance:'90',unrealizedProfit:'2',marginBalance:'102'}],totalWalletBalance:'100',totalUnrealizedProfit:'2',totalMarginBalance:'102'};
+  return[];
+ });
+ const result=await h.adapter.fetchAccountSnapshot();expect(result).toMatchObject({availableUsd:90,equityUsd:null,walletBalanceUsd:null,valuation:{status:'PARTIAL',assetValuationComplete:false}});
+ expect(h.calls.some(c=>c.url.startsWith('/fapi/v2/account'))).toBe(false);expect(h.calls.every(c=>c.method==='GET')).toBe(true);
+});
 it('retries Binance -1000 once when changing leverage because the target value is idempotent',async()=>{
   const h=harness(false);let writes=0;
   (h.adapter as any).transport.json.mockImplementation(async(url:string,init:any)=>{
@@ -49,7 +67,7 @@ describe('V3.9 verified cancel and amend outcomes',()=>{
   it('amends original total quantity and retains queried price, fills, identity and TTL',async()=>{const h=truth('PARTIALLY_FILLED',.004),result=await h.adapter.replaceEntry({...entry,clientOrderId:'ml_safe',status:'PARTIALLY_FILLED',filledQuantity:.003},100.03);expect(result).toMatchObject({quantity:.01,filledQuantity:.004,price:100.02,status:'PARTIALLY_FILLED',createdAt:1,absoluteExpiresAt:2});expect(h.calls.filter(x=>x.method==='PUT')).toHaveLength(1);expect(h.calls.find(x=>x.method==='PUT')!.url).toContain('quantity=0.01');expect(h.calls.some(x=>x.method==='POST'||x.method==='DELETE')).toBe(false);});
 });
 
-it('returns fresh account facts even while income and valuation requests never complete',async()=>{const h=harness(false);(h.adapter as any).transport.json.mockImplementation(async(url:string)=>{if(url==='/fapi/v1/time')return{serverTime:Date.now()};if(url.startsWith('/fapi/v2/account'))return{assets:[{asset:'USDT',walletBalance:'100',availableBalance:'90'}],totalUnrealizedProfit:'0'};return new Promise(()=>{});});const result=await Promise.race([h.adapter.fetchAccountSnapshot(),new Promise<never>((_,reject)=>setTimeout(()=>reject(new Error('account blocked by enrichment')),100))]);expect(result).toMatchObject({availableUsd:90,realizedPnlUsd24h:null,enrichment:{pending:true}});});
+it('returns fresh account facts even while income and valuation requests never complete',async()=>{const h=harness(false);(h.adapter as any).transport.json.mockImplementation(async(url:string)=>{if(url==='/fapi/v1/time')return{serverTime:Date.now()};if(url.startsWith('/fapi/v3/account'))return{assets:[{asset:'USDT',walletBalance:'100',availableBalance:'90'}],totalUnrealizedProfit:'0'};return new Promise(()=>{});});const result=await Promise.race([h.adapter.fetchAccountSnapshot(),new Promise<never>((_,reject)=>setTimeout(()=>reject(new Error('account blocked by enrichment')),100))]);expect(result).toMatchObject({availableUsd:90,realizedPnlUsd24h:null,enrichment:{pending:true}});});
 it('coalesces public clock requests needed by concurrent private reads',async()=>{
  const h=harness(false);await Promise.all(Array.from({length:20},()=>h.adapter.fetchRealizedPnlSince(1).catch(()=>0)));expect(h.calls.filter(c=>c.url==='/fapi/v1/time')).toHaveLength(1);
 });

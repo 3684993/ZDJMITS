@@ -19,6 +19,12 @@ it('reports quote dispatch time only after admission, before the wire request',a
  try{const pending=transport.json('/fapi/v1/ticker/bookTicker?symbol=BTCUSDT',{onDispatch});expect(onDispatch).not.toHaveBeenCalled();expect(requestSpy).not.toHaveBeenCalled();vi.setSystemTime(17000);admit();await pending;expect(onDispatch).toHaveBeenCalledExactlyOnceWith(17000);expect(requestSpy).toHaveBeenCalledTimes(1);}
  finally{run.mockRestore();requestSpy.mockRestore();transport.dispose();vi.useRealTimers();}
 });
+it('prepares only query parameters after admission without allowing route or endpoint mutation',async()=>{
+ const transport=new BinanceTransport({...settings(),proxy:{...settings().proxy,url:'socks5h://127.0.0.1:29878'}} as never);let admit!:()=>void;const query=vi.fn(()=>new URLSearchParams({timestamp:'NEW',signature:'fresh',symbol:'BTCUSDT'}));
+ const run=vi.spyOn((transport as any).budget,'run').mockImplementation((...args:any[])=>new Promise(resolve=>{admit=()=>resolve(args[2]());}));
+ const wire=vi.spyOn(https,'request').mockImplementation((...args:any[])=>{expect(args[0].origin).toBe('https://demo-fapi.binance.com');expect(args[0].pathname).toBe('/fapi/v1/order');expect(args[0].searchParams.get('timestamp')).toBe('NEW');const request:any=new EventEmitter();request.destroy=vi.fn();request.end=()=>{const response:any=new EventEmitter();response.statusCode=200;response.headers={};response.setEncoding=vi.fn();args[2](response);response.emit('data','{}');response.emit('end');};return request;});
+ try{const pending=transport.json('/fapi/v1/order?timestamp=OLD',{dispatchQuery:query});expect(query).not.toHaveBeenCalled();expect(wire).not.toHaveBeenCalled();admit();await pending;expect(query).toHaveBeenCalledOnce();}finally{run.mockRestore();wire.mockRestore();transport.dispose();}
+});
 
 it('inherits cancellation and historical priority only for reads, preserving execution writes',async()=>{
  const transport=new BinanceTransport(settings() as never),controller=new AbortController(),run=vi.spyOn((transport as any).budget,'run').mockResolvedValue({} as never);
@@ -48,7 +54,7 @@ it('records network phase evidence and removes pending TLS listeners when the re
  try{
   await transport.json('/fapi/v1/ticker/bookTicker?symbol=BTCUSDT');
   expect(socket.listenerCount('secureConnect')).toBe(0);
-  expect(transport.requestBudgetHealth().recentDispatches.at(-1)?.networkTiming).toMatchObject({startedAt:expect.any(Number),socketAssignedAt:expect.any(Number),responseAt:expect.any(Number),completedAt:expect.any(Number),failurePhase:null});
+  expect(transport.requestBudgetHealth().recentDispatches.at(-1)?.networkTiming).toMatchObject({startedAt:expect.any(Number),socketAssignedAt:expect.any(Number),responseAt:expect.any(Number),completedAt:expect.any(Number),responseStatus:200,responseDecodedBytes:2,failurePhase:null});
  }finally{requestSpy.mockRestore();}
 });
 describe('BinanceTransport proxy-only boundary',()=>{
@@ -67,7 +73,7 @@ it('reserves the private-truth lane for listen-key maintenance without relying o
 it.each([
  ['POST','/fapi/v1/leverage','EXECUTION'],['POST','/fapi/v1/order','EXECUTION'],['PUT','/fapi/v1/order','EXECUTION'],['DELETE','/fapi/v1/order','EXECUTION'],['GET','/fapi/v1/order','PRIVATE_TRUTH'],
  ['POST','/fapi/v1/listenKey','PRIVATE_TRUTH'],['PUT','/fapi/v1/listenKey','PRIVATE_TRUTH'],['DELETE','/fapi/v1/listenKey','PRIVATE_TRUTH'],
- ['GET','/fapi/v1/leverageBracket','PRIVATE_TRUTH'],['GET','/fapi/v2/account','PRIVATE_TRUTH'],['GET','/fapi/v3/account','PRIVATE_TRUTH'],['GET','/fapi/v1/balance','PRIVATE_TRUTH'],['GET','/fapi/v3/positionRisk','PRIVATE_TRUTH'],['GET','/fapi/v1/multiAssetsMargin','PRIVATE_TRUTH'],['GET','/fapi/v1/commissionRate','PRIVATE_TRUTH'],
+ ['GET','/fapi/v1/leverageBracket','PRIVATE_TRUTH'],['GET','/fapi/v1/accountConfig','PRIVATE_TRUTH'],['GET','/fapi/v2/account','PRIVATE_TRUTH'],['GET','/fapi/v3/account','PRIVATE_TRUTH'],['GET','/fapi/v1/balance','PRIVATE_TRUTH'],['GET','/fapi/v3/positionRisk','PRIVATE_TRUTH'],['GET','/fapi/v1/multiAssetsMargin','PRIVATE_TRUTH'],['GET','/fapi/v1/commissionRate','PRIVATE_TRUTH'],
  ['GET','/fapi/v1/openOrders','PRIVATE_TRUTH'],['GET','/fapi/v1/openAlgoOrders','PRIVATE_TRUTH'],['GET','/fapi/v1/allOrders','PRIVATE_TRUTH'],['GET','/fapi/v1/userTrades','PRIVATE_TRUTH'],['GET','/fapi/v1/income','BACKGROUND'],
  ['GET','/fapi/v1/exchangeInfo','CONTROL'],['GET','/fapi/v1/time','CONTROL'],['GET','/fapi/v1/klines','MARKET_PUBLIC'],['GET','/fapi/v1/depth','MARKET_PUBLIC'],['GET','/fapi/v1/ticker/24hr','MARKET_PUBLIC'],['GET','/fapi/v1/ticker/bookTicker','MARKET_PUBLIC'],
 ] as const)('classifies known %s %s into %s with a purpose', (method,path,lane)=>{const url=new URL(`https://demo-fapi.binance.com${path}`),source=inferredBinanceSource(url,method);expect(source).not.toBe('UNKNOWN');expect(binanceBudgetLane(source)).toBe(lane);expect(inferredBinancePurpose(url,method)).not.toBe('BINANCE_HTTP');expect(()=>binanceRequestWeight(url,method)).not.toThrow();});

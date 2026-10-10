@@ -1,0 +1,15 @@
+# Additional PUBLIC and private-account repair
+
+PR42 is merged at33c70b7057166459afc578fb999a65c6093e7166, precise-head30b9cb7 GitHub Actions38059896597 SUCCESS. This follow-up preserves its complete retained-symbol coverage and applies the same strategy to PUBLIC: bookTicker and depth per retained symbol, at most512 symbols/1024 streams per connection. It also withdraws ACK proof when disconnected/stopped and rejects ticker/mark/book quote events without a valid exchange timestamp.
+
+Two GET-only two-symbol twenty-second probes on the same SOCKS route: before PUBLIC decoded277981 bytes (bookTicker233739), after62729 (bookTicker14563). After requested4/4 PUBLIC and12/12 MARKET streams are acknowledged, both sockets LIVE without reconnect/error, last/mark/bid/ask stale-symbol counts all0. These are short, unmatched-time diagnostic samples, not wire bandwidth or Engine natural-load acceptance.
+
+Signed V2/account failed twice at RESPONSE_BODY within the unchanged8s deadline. Fresh sequential V3/account returned200 in1257ms. accountConfig initially failed locally because its weight was unregistered (no upstream dispatch), now classified as PRIVATE_STATE with documented weight5. The actual signed V3+accountConfig gate subsequently passed26/26 existing-position TP checks (dual IDs, closing side, position side, working status, remaining quantity and local quantity/price); canTrade true. All seven requests GET; exchange writes0. Failed attempts remain archived. Deployment requires a new fresh gate, no historical PASS reuse.
+
+Runtime account snapshots now use V3, whose inactive-position rows are omitted upstream. Existing asset valuation remains conservative: a missing USDC fact stays PARTIAL/null, without a heavy V2 retry or manufactured zero. REST phase metrics preserve response-header status and decoded body-byte count even if the body times out, without payload persistence. Timeouts/TTL/recvWindow have not been increased.
+
+Focused95 tests passed before the account-adapter change; complete verify:ci including the new adapter regression, S00, build/typecheck and exact-head hosted CI are required separately. Healthy Qwen models and the existing SSH tunnel remain unchanged at this checkpoint. No natural30+90 window has started.
+
+Primary-only Entry, NO_ADD, HUMAN_MANAGED and Production-write locks are unchanged. Official endpoint references: https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Account-Information-V3 and https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Futures-Account-Configuration .
+
+Final signing repair: the configured5000ms window is no longer forced to60000ms. Timestamp/HMAC are recreated after admission via query-only preparation, preserving the route and order params. Invalid windows fail before network access; uncertain POST errors remain one attempt. Complete final local verify:ci/S00 PASS, log public-signed-final-verify-ci.log. PR41 precise44bacca CI38060943533 SUCCESS, merged3801c78; deployed proxy script and restored guardian without SSH restart, receipts included.

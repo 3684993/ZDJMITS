@@ -1,0 +1,23 @@
+// Creates a private SQLite backup and public build manifest; no Settings writes.
+import {DatabaseSync,backup} from 'node:sqlite';
+import {execFileSync} from 'node:child_process';
+import {readFile,writeFile,mkdir,stat} from 'node:fs/promises';
+import {createHash} from 'node:crypto';
+import {pathToFileURL} from 'node:url';
+import path from 'node:path';
+const arg=name=>process.argv[process.argv.indexOf(name)+1];
+const root=path.resolve(arg('--release')),out=arg('--out'),expected=arg('--sha');
+const head=execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim();
+if(head!==expected||execFileSync('git',['status','--porcelain','--','apps','packages','scripts','config'],{cwd:root,encoding:'utf8'}).trim())throw Error('RELEASE_IDENTITY_NOT_CLEAN');
+const hash=b=>createHash('sha256').update(b).digest('hex');
+const {contentTreeHash}=await import(pathToFileURL(path.join(root,'apps/engine/dist/runtime/runtimeIdentity.js')));
+const sourceHash=await contentTreeHash(root,['apps/engine/src','packages/core/src','packages/contracts/src','apps/dashboard/src']);
+const artifactHash=await contentTreeHash(root,['apps/engine/dist','packages/core/dist','packages/contracts/dist','apps/dashboard/dist']);
+const privateRoot=path.join(process.env.LOCALAPPDATA,'ZDJMITS/diagnostics/network-recovery-20261010',`release-${head.slice(0,12)}-${Date.now()}`);await mkdir(privateRoot,{recursive:true});
+const db=new DatabaseSync('D:/MITS/data/zdj-settings.sqlite',{readOnly:true});db.exec('PRAGMA query_only=ON');
+const row=db.prepare('SELECT version,payload FROM settings WHERE id=1').get(),settings=JSON.parse(row.payload);
+if(settings.connections.exchange.environment!=='TESTNET'||settings.connections.executionMode!=='TESTNET_ENABLED')throw Error('TESTNET_SETTINGS_REQUIRED');
+const backupPath=path.join(privateRoot,'before-engine.sqlite');await backup(db,backupPath);db.close();
+const copy=new DatabaseSync(backupPath,{readOnly:true});copy.exec('PRAGMA query_only=ON');if(copy.prepare('PRAGMA quick_check').all().some(r=>Object.values(r)[0]!=='ok')||copy.prepare('SELECT payload FROM settings WHERE id=1').get().payload!==row.payload)throw Error('BACKUP_INVALID');copy.close();
+const manifest={observedAt:new Date().toISOString(),stage:root,sourceCommit:head,sourceHash,artifactHash,entrypointSha256:hash(await readFile(path.join(root,'apps/engine/dist/main.js'))),buildId:`3.9.8-${artifactHash.slice(0,20)}`,settingsVersion:row.version,settingsPayloadSha256:hash(row.payload),dataRoot:'D:/MITS/data',privateRoot,backup:{bytes:(await stat(backupPath)).size,quickCheck:'ok',settingsMatch:true},settingsWrites:0,productionWrites:0,qualification:'OPERATOR_ATTESTED_USER_AUTHORIZED_TESTNET_RECOVERY'};
+await writeFile(out,JSON.stringify(manifest,null,2)+'\n');console.log(JSON.stringify({sourceCommit:head,buildId:manifest.buildId,backup:'PRIVATE_VERIFIED',settingsWrites:0}));

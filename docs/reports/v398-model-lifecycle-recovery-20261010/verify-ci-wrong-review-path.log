@@ -1,0 +1,232 @@
+(node:5084) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:22448) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> zdj-mits-v3@3.9.8 verify:ci
+> npm run verify:deps && npm run verify:scripts && npm run verify:release && npm run verify:s00 && npm run typecheck && npm run build && npm run test -w @zdj/contracts && npm run test -w @zdj/core && npm run test -w @zdj/dashboard && npm run test:ci -w @zdj/engine
+
+(node:19600) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:15756) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> zdj-mits-v3@3.9.8 verify:deps
+> npm run build -w @zdj/contracts && npm run build -w @zdj/core
+
+(node:20836) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:16800) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> @zdj/contracts@3.9.8 build
+> tsc -p tsconfig.json
+
+(node:1060) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:21592) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> @zdj/core@3.9.8 build
+> tsc -p tsconfig.json
+
+(node:25772) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:23396) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> zdj-mits-v3@3.9.8 verify:scripts
+> node --check scripts/maintain-storage.mjs && node --check scripts/reset-testnet-runtime-db.mjs && node --check scripts/init-local-runtime.mjs && node --check scripts/prune-zdj-backups.mjs && node --check scripts/install-storage-retention.mjs && node --check scripts/v394-stage6-set-readonly.mjs && node scripts/v394-stage6-set-readonly.mjs --self-test && node --check scripts/v394-stage6-preflight.mjs && node scripts/v394-stage6-preflight.mjs --self-test && node --check scripts/audit-ai-entry-quality.mjs && node --check scripts/audit-trading-quality-baseline.mjs && node --check scripts/inspect-sqlite-capacity.mjs && node --check scripts/audit-v394-entry-authorization.mjs && node --test scripts/maintain-storage.test.mjs scripts/reset-testnet-runtime-db.test.mjs scripts/init-local-runtime.test.mjs && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/start-zdj-engine-host.test.ps1 && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/collect-zdj-engine-crash-evidence.test.ps1 && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/run-v394-readonly-canary.test.ps1 && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/run-v394-local-rollout.test.ps1 && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/run-v394-stage7-to-stage9.test.ps1 && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/vpn/zdj-trade-proxy-client-windows.test.ps1 && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/start-zdj-stack-after-reboot.test.ps1 && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/set-zdj-scheduled-task-silent.test.ps1
+
+(node:10332) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:24884) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:19772) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:25896) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:12196) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:15532) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:19120) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:19120) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+V3.9.4 explicit proxy-enable + legacy normalization + READ_ONLY self-test PASS
+(node:24504) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:11852) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:11852) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+V3.9.4 Stage6 preflight self-test PASS
+(node:24704) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:23968) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:12244) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:25192) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:7440) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+TAP version 13
+# (node:19080) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:19080) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# Subtest: V3.9.3 init preserves static configuration and removes active local trading history
+ok 1 - V3.9.3 init preserves static configuration and removes active local trading history
+  ---
+  duration_ms: 421.5567
+  type: 'test'
+  ...
+# (node:24256) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:24256) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# Subtest: offline maintenance preserves source: dry
+ok 2 - offline maintenance preserves source: dry
+  ---
+  duration_ms: 245.1443
+  type: 'test'
+  ...
+# Subtest: offline maintenance preserves source: build
+ok 3 - offline maintenance preserves source: build
+  ---
+  duration_ms: 220.7455
+  type: 'test'
+  ...
+# Subtest: offline maintenance preserves source: alias
+ok 4 - offline maintenance preserves source: alias
+  ---
+  duration_ms: 172.2332
+  type: 'test'
+  ...
+# Subtest: offline maintenance preserves source: existing
+ok 5 - offline maintenance preserves source: existing
+  ---
+  duration_ms: 167.0767
+  type: 'test'
+  ...
+# Subtest: offline maintenance preserves source: wal
+ok 6 - offline maintenance preserves source: wal
+  ---
+  duration_ms: 166.024
+  type: 'test'
+  ...
+# Subtest: offline maintenance preserves source: disk
+ok 7 - offline maintenance preserves source: disk
+  ---
+  duration_ms: 170.7768
+  type: 'test'
+  ...
+# Subtest: offline maintenance preserves source: delete-failure
+ok 8 - offline maintenance preserves source: delete-failure
+  ---
+  duration_ms: 180.1147
+  type: 'test'
+  ...
+# Subtest: offline maintenance preserves source: vacuum-failure
+ok 9 - offline maintenance preserves source: vacuum-failure
+  ---
+  duration_ms: 188.532
+  type: 'test'
+  ...
+# Subtest: offline maintenance preserves source: publish-lock
+ok 10 - offline maintenance preserves source: publish-lock
+  ---
+  duration_ms: 213.4328
+  type: 'test'
+  ...
+# Subtest: offline maintenance preserves source: corrupt-copy
+ok 11 - offline maintenance preserves source: corrupt-copy
+  ---
+  duration_ms: 207.8459
+  type: 'test'
+  ...
+# Subtest: offline maintenance preserves source: crash
+ok 12 - offline maintenance preserves source: crash
+  ---
+  duration_ms: 199.73
+  type: 'test'
+  ...
+# Subtest: backup pruning requires an explicit verified baseline and keeps it even when it is oldest
+ok 13 - backup pruning requires an explicit verified baseline and keeps it even when it is oldest
+  ---
+  duration_ms: 442.5237
+  type: 'test'
+  ...
+# Subtest: AI quality treats missing outcomes as missing and does not promote PLACE-only samples
+ok 14 - AI quality treats missing outcomes as missing and does not promote PLACE-only samples
+  ---
+  duration_ms: 307.5104
+  type: 'test'
+  ...
+# Subtest: valid WAL is copied and replayed only on the working database
+ok 15 - valid WAL is copied and replayed only on the working database
+  ---
+  duration_ms: 248.0312
+  type: 'test'
+  ...
+# (node:23776) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:23776) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# Subtest: schema-only reset preserves schema/static configuration and never copies runtime history
+ok 16 - schema-only reset preserves schema/static configuration and never copies runtime history
+  ---
+  duration_ms: 329.2738
+  type: 'test'
+  ...
+1..16
+# tests 16
+# suites 0
+# pass 16
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3275.9536
+start-zdj-engine-host.test.ps1 PASS
+collect-zdj-engine-crash-evidence.test.ps1 PASS (25 assertions)
+V3.9.4 read-only canary script contract PASS
+V3.9.4 local rollout script contract PASS
+V3.9.4 stage7-to-stage9 runner contract PASS
+VPN_CLIENT_TEST_PASS: foreign owner, pid reuse, real stalled peer deadline/socket close, finite failed-start recovery, no embedded secret
+(node:18284) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+start-zdj-stack-after-reboot.test.ps1 PASS
+SILENT_REBOOT_REREGISTRATION_GUARD_PASS
+SILENT_TASK_TEST_PASS: no visible child console, quoted paths, working directory, wait and exit=23; no real task or Engine lifecycle
+(node:11348) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:23992) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> zdj-mits-v3@3.9.8 verify:release
+> node scripts/v397-release-identity.mjs
+
+(node:24064) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+{"gate":"V398_RELEASE_IDENTITY_PASS","version":"3.9.8","packages":5,"lock":true,"api":"V3.9.7"}
+(node:8660) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:24432) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> zdj-mits-v3@3.9.8 verify:s00
+> node scripts/v396-s00-static-check.mjs --review=docs/reports/v398-trade-record-integrity-20261009/s00/entrypoint-review.json --current-identity=docs/reports/v398-trade-record-integrity-20261009/s00/current-identity.json --historical-lock=docs/reports/v398-trade-record-integrity-20261009/s00/historical-package-lock.json
+
+(node:2528) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+file:///D:/MITS-WORKTREES/v398-model-lifecycle-20261010/scripts/v396-s00-static-check.mjs:17
+const assert = (condition, message) => { if (!condition) throw new Error(`S00_CHECK_FAILED: ${message}`); };
+                                                               ^
+
+Error: S00_CHECK_FAILED: entrypoint review count 200 does not match the derived 201
+    at assert (file:///D:/MITS-WORKTREES/v398-model-lifecycle-20261010/scripts/v396-s00-static-check.mjs:17:64)
+    at file:///D:/MITS-WORKTREES/v398-model-lifecycle-20261010/scripts/v396-s00-static-check.mjs:113:1
+    at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+
+Node.js v22.23.1

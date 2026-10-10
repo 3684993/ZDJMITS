@@ -143,6 +143,16 @@ export class AiFabric {
     for(const r of state.aiResources)this.load.set(r.id,{active:0,totalRuns:0,failures:0,lastLatencyMs:null,currentSymbol:null,currentRunId:null,currentStartedAt:null,lastCompletedAt:null,lastDirection:null,lastDecision:null,idleReason:'WAITING_CANDIDATE',nextStep:'等待动态交易池候选',queueDepth:0});
   }
 
+  private maintenance=new Set<string>();
+  beginModelMaintenance(id:string){
+    const resource=this.state.aiResources.find(r=>r.id===id);if(!resource)throw Error('MODEL_RESOURCE_UNKNOWN');
+    if(this.maintenance.has(id))throw Error('MODEL_OPERATION_BUSY');
+    this.maintenance.add(id);
+    const m=this.load.get(id);
+    // Primary queueDepth is candidate backlog, not an admitted inference or physical capacity lease.
+    if(!m||m.active||this.reviewQueues.get(id)?.length||(resource.role!=='PRIMARY_BRAIN'&&m.queueDepth)){this.maintenance.delete(id);throw Error('MODEL_INFERENCE_BUSY');}
+    return ()=>{this.maintenance.delete(id);this.endpointHealth.delete(id);this.openAi.invalidateIdentity(resource.baseUrl);void this.probeResources();};
+  }
   private endpointHealth=new Map<string,{available:boolean;checkedAt:number;reason:string|null;consecutiveFailures:number}>();
   private healthFlight:Promise<void>|null=null;
   async probeResources(){
@@ -156,13 +166,14 @@ export class AiFabric {
   }
   private resourceHealth(r:any):any{
     const h=this.endpointHealth.get(r.id),fresh=h&&Date.now()-h.checkedAt<60000;
-    const connectionStatus=!fresh?'UNKNOWN':h.available?'ONLINE':'OFFLINE';
+    const uncertain=h?.reason?.includes('TIMEOUT')||h?.reason?.includes('UNKNOWN')||h?.reason==='AI health HTTP 503';
+    const connectionStatus=this.maintenance.has(r.id)?'MAINTENANCE':!fresh?'UNKNOWN':uncertain?'DEGRADED':h.available?'ONLINE':'OFFLINE';
     const configuredRoutes=this.state.settings.aiDutyRoutes??[];
     const entryPrimary=configuredRoutes.some(route=>route.enabled&&route.duty==='ENTRY_PRIMARY'&&route.resourceId===r.id)||(!configuredRoutes.some(route=>route.enabled&&route.duty==='ENTRY_PRIMARY')&&r.role==='PRIMARY_BRAIN');
     return {connectionStatus,healthCheckedAt:h?.checkedAt??null,healthReason:h?.reason??null,...(connectionStatus==='ONLINE'?{}:{status:connectionStatus==='OFFLINE'?'OFFLINE':'DEGRADED'}),...(connectionStatus==='OFFLINE'?{currentStatus:'DEGRADED',idleReason:entryPrimary?'PRIMARY_MODEL_OFFLINE':'OPTIONAL_DUTY_OFFLINE',nextStep:entryPrimary?'Entry Primary 模型离线；订单与持仓维护继续':'可选 AI 职责离线；不回退占用 Entry Primary'}:{})};
   }
-  private borrowResources(){return this.state.aiResources.filter(r=>{const h=this.endpointHealth.get(r.id);return Boolean(h?.available&&Date.now()-h.checkedAt<60000);});}
-  private endpointAvailable(id:string){const h=this.endpointHealth.get(id);return !h||h.available&&Date.now()-h.checkedAt<60000;}
+  private borrowResources(){return this.state.aiResources.filter(r=>{const h=this.endpointHealth.get(r.id);return Boolean(!this.maintenance.has(r.id)&&h?.available&&Date.now()-h.checkedAt<60000);});}
+  private endpointAvailable(id:string){if(this.maintenance.has(id))return false;const h=this.endpointHealth.get(id);return !h||h.available&&Date.now()-h.checkedAt<60000;}
   resourceMetrics(){const now=Date.now(),paused=this.state.runtimeControl.mode!=='RUNNING';return this.state.aiResources.map(r=>{const m=this.load.get(r.id)!;
     if(r.role==='SCOUT'){
       const candidateScout=this.state.settings.ai.scoutEnabled,research=this.state.settings.externalIntelligence.researchEnabled,enabled=candidateScout||research;
@@ -308,6 +319,7 @@ export class AiFabric {
   private primaryServes:Array<{role:'ENTRY'|'REVIEW';at:number}>=[];
   private reviewOwedSince:number|null=null;
   private async run<T>(args:{resource:AiResource;symbol:string;packet:EntryIntelligencePacket;role:'SCOUT'|'PRIMARY_BRAIN'|'REVIEW_BRAIN';prompt:string;schemaName:string;parse:(v:unknown)=>T;queueMs?:number;triggerReason?:string;runKind?:string;jsonSchema?:Record<string,unknown>;capacityLease?:AiCapacityLease}):Promise<{value:T;run:AiRun}>{
+    if(this.maintenance.has(args.resource.id))throw Error('AI_MODEL_MAINTENANCE');
     const lease=args.capacityLease??this.capacity.tryAcquire(args.resource);if(!lease)throw new Error('AI_SERVICE_CAPACITY_BUSY');
     const startedAt=Date.now(),runId=uid('airun'),load=this.load.get(args.resource.id)!;
     if(!load){if(!args.capacityLease)lease.release();throw new Error('AI_RESOURCE_LOAD_MISSING');}

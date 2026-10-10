@@ -23,11 +23,11 @@ const val=(n:unknown,digits=1)=>numberOrNull(n)===null?'UNKNOWN':Number(n).toFix
 const mib=(n:unknown)=>numberOrNull(n)===null?'UNKNOWN':val(Number(n)/1048576,0)+' MiB';
 const lampClass=(fact:LampFact)=>'perf-light '+fact.tone;
 const lampLabel=(fact:LampFact)=>({good:'绿 · ',warn:'黄 · ',bad:'红 · ',unknown:'灰 · '})[fact.tone]+fact.text;
-const privateFact=computed(()=>privateLamp(store.snapshot,now.value));
-const proxyFact=computed(()=>proxyLamp(governance.value?.routes));
+const privateFact=computed(()=>privateSync.value?privateLamp(store.snapshot,now.value,privateSync.value):{tone:'unknown' as const,text:'未确认',detail:'私有同步诊断请求失败或未取得'});
+const proxyFact=computed(()=>proxyLamp(governance.value?.routes,governance.value,now.value));
 const statusRows=computed(()=>[
   {name:'SOCKS / SSH 代理',...proxyFact.value},
-  {name:'Binance 交易网络',...exchangeLamp(store.snapshot,store.incidents.active,now.value)},
+  {name:'Binance 交易网络',...exchangeLamp(store.snapshot,store.incidents.active,now.value,governance.value)},
   {name:'Binance 私有同步',...privateFact.value},
   ...resources.value.map(r=>({name:String(r.role??r.id),...aiLamp(r,now.value)})),
 ]);

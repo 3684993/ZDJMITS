@@ -19,7 +19,7 @@ const tabs = [
   ["governance", "AI 退出与复核"],
   ["exchange", "交易所"],
   ["proxy", "网络代理"],
-  ["ai", "AI 模型资源"],
+  ["ai", "AI 模型管理"],
   ["theme", "外观主题"],
 ] as const;
 const tab = ref("strategy"),
@@ -322,12 +322,31 @@ function removeSymbolDirectionOverride(symbol: string) {
 }
 function addBlacklist(kind:'symbolBlacklist'|'underlyingBlacklist',value:string){if(!draft.value)return;const normalized=normalizeBlacklistInput(kind,value);if(!normalized){error.value='请输入有效 Symbol 或 Underlying（支持币安人生/USDT 这类 Unicode 合约名）';return;}const list=draft.value.selection.marketQuality[kind];if(!list.includes(normalized))list.push(normalized);if(kind==='symbolBlacklist')blacklistSymbol.value='';else blacklistUnderlying.value='';}
 function removeBlacklist(kind:'symbolBlacklist'|'underlyingBlacklist',value:string){if(draft.value)draft.value.selection.marketQuality[kind]=draft.value.selection.marketQuality[kind].filter(x=>x!==value);}
+const modelToken=ref(''),modelBusy=ref(false),modelRuntime=ref<Record<string,any>>({}),modelResult=ref('');
+let modelReadFlight=false;
+async function refreshModelRuntime(){
+  if(modelReadFlight||document.hidden||tab.value!=='ai')return;
+  modelReadFlight=true;
+  try{await Promise.all((resources.value.ai??[]).map(async(item:any)=>{
+    try{const response=await fetch(`/api/v3/settings/ai/${encodeURIComponent(item.id)}/runtime`,{signal:AbortSignal.timeout(12_000)});modelRuntime.value[item.id]=response.ok?await response.json():{status:'UNKNOWN',error:'服务端模型管理尚未配置或读取失败'};}
+    catch{modelRuntime.value[item.id]={status:'UNKNOWN',error:'运行状态读取超时'};}
+  }));}finally{modelReadFlight=false;}
+}
+async function modelAction(id:string,action:string){
+  if(modelBusy.value)return;modelBusy.value=true;modelResult.value='后端正在核验权限、交易保护、进程身份和在途任务…';
+  try{
+    const response=await fetch(`/api/v3/settings/ai/${encodeURIComponent(id)}/lifecycle`,{method:'POST',headers:{'content-type':'application/json','x-model-operation-token':modelToken.value},body:JSON.stringify({action}),signal:AbortSignal.timeout(335_000)});
+    const result=await response.json();if(!response.ok)throw Error(result.error??'MODEL_OPERATION_FAILED');
+    modelRuntime.value[id]=result;modelResult.value=`操作已完成：${action} · ${result.status} · PID ${result.pid??'无'}`;
+  }catch(e){modelResult.value=e instanceof Error?e.message:'操作结果 UNKNOWN；请核对审计记录，不要自动重试';}
+  finally{modelBusy.value=false;void refreshModelRuntime();}
+}
 let proxyMonitorTimer:number|null=null;
 onMounted(()=>{
-  void load().then(()=>{if(tab.value==='proxy')void refreshPassiveProxyHealth();});
-  proxyMonitorTimer=window.setInterval(()=>{if(tab.value==='proxy')void refreshPassiveProxyHealth();},30_000);
+  void load().then(()=>{if(tab.value==='proxy')void refreshPassiveProxyHealth();void refreshModelRuntime();});
+  proxyMonitorTimer=window.setInterval(()=>{if(tab.value==='proxy')void refreshPassiveProxyHealth();void refreshModelRuntime();},30_000);
 });
-watch(tab,value=>{if(value==='proxy')void refreshPassiveProxyHealth();});
+watch(tab,value=>{if(value==='proxy')void refreshPassiveProxyHealth();if(value==='ai')void refreshModelRuntime();});
 onUnmounted(()=>{if(proxyMonitorTimer!==null)window.clearInterval(proxyMonitorTimer);});
 </script>
 
@@ -925,7 +944,9 @@ onUnmounted(()=>{if(proxyMonitorTimer!==null)window.clearInterval(proxyMonitorTi
           </div>
         </div>
       </Panel>
-      <Panel v-else-if="tab === 'ai'" title="AI 模型资源">
+      <Panel v-else-if="tab === 'ai'" title="AI 模型管理">
+        <label>模型运维授权密钥 <input v-model="modelToken" type="password" autocomplete="off" placeholder="仅本次页面使用，不保存" /></label>
+        <p v-if="modelResult" role="status">{{modelResult}}</p>
         <div class="ai-resource-heading"><div><strong>资源与逻辑职责分开管理</strong><p>资源只描述实际 OpenAI-compatible endpoint；GPU 标识是备注，真实设备由模型服务启动配置决定。</p></div><button class="button primary" @click="addResource('ai')">新增空白资源</button></div>
         <div class="ai-resource-layout">
           <aside class="ai-resource-list" aria-label="AI 资源列表">
@@ -950,6 +971,12 @@ onUnmounted(()=>{if(proxyMonitorTimer!==null)window.clearInterval(proxyMonitorTi
               </div>
               <div class="ai-health-grid"><div><small>实际探测 Model id</small><strong>{{(aiProbeResults[item.id]?.models??[]).join(', ')||'尚未执行连接测试'}}</strong></div><div><small>最近健康检查</small><strong>{{item.healthCheckedAt?new Date(item.healthCheckedAt).toLocaleString():'尚无'}}</strong></div><div><small>最近延迟</small><strong>{{item.latencyMs==null?'—':`${item.latencyMs} ms`}}</strong></div><div><small>累计运行 / 失败</small><strong>{{item.totalRuns??0}} / {{item.failures??0}}</strong></div></div>
               <p v-if="item.lastError" class="error-text">{{item.lastError}}</p>
+              <section class="ai-model-runtime" aria-label="模型进程管理">
+                <p>运行状态 {{modelRuntime[item.id]?.status??'UNKNOWN'}} · PID {{modelRuntime[item.id]?.pid??'无'}} · GPU 配置 {{modelRuntime[item.id]?.gpu??'UNKNOWN'}} / {{modelRuntime[item.id]?.physicalDevice??'UNKNOWN'}} · 显存 {{modelRuntime[item.id]?.dedicatedBytes==null?'UNKNOWN':(modelRuntime[item.id].dedicatedBytes/1048576).toFixed(0)+' MiB'}}</p>
+                <p v-if="modelRuntime[item.id]?.error">{{modelRuntime[item.id].error}}</p>
+                <div class="ai-resource-actions"><button v-for="action in [{id:'start',label:'启动'},{id:'stop',label:'停止'},{id:'restart',label:'重启'}]" :key="action.id" class="button secondary" :disabled="modelBusy||modelToken.length<32||isResourceDirty('ai',item)||!modelRuntime[item.id]||modelRuntime[item.id].status==='UNKNOWN'" @click="modelAction(item.id,action.id)">{{action.label}}</button><button class="button secondary" :disabled="modelBusy" @click="refreshModelRuntime">刷新运行状态</button></div>
+                <details><summary>启动日志</summary><pre>{{(modelRuntime[item.id]?.startupLog??[]).join('\n')||'尚无可读取的启动日志'}}</pre></details>
+              </section>
               <div class="ai-resource-actions"><span class="muted">保存使用 Settings 版本冲突保护，并在保存后执行服务端读回。</span><div><button class="button primary" :disabled="!isResourceDirty('ai',item)" @click="saveResource('ai',item)">保存资源</button><button class="button secondary" :disabled="!isResourceDirty('ai',item)" @click="cancelResourceEdits('ai')">取消修改</button><button class="button secondary" :disabled="isResourceDirty('ai',item)||!item.baseUrl" @click="testResource('ai',item)">测试连接</button><button class="button danger" @click="removeResource('ai',item.id)">删除</button></div></div>
             </div>
             <EmptyState v-if="!selectedResources('ai').length" title="选择一个 AI 资源" detail="资源详情会显示连接、健康和运行指标。" />

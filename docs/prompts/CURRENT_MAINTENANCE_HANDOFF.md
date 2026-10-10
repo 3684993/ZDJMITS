@@ -1,3 +1,17 @@
+# 2026-10-10 三模型离线维护最终 GitHub 交付
+
+Draft PR38；最终源码 d39024d97f681c46c94e7537dd688f6bf271096a，主实现43eca77；本机264文件/2210测试及完整 verify:ci PASS，精确源码 Windows CI38032096492 SUCCESS（完整日志已归档）。模型管理后端及设置按钮、AI/代理/交易网络/私有同步灯已提交，默认管理操作关闭，正式部署需私有 manifest/运维密钥/审查过的 PowerShell7 PATH。
+
+本轮恢复和部署**未完成**：自动审批拒绝离线Scout启动（blocked by policy、未提供详细理由），命令没有执行，未改用其他机制绕过。Engine23936/旧source6533仍在线；三模型无进程/监听，退出发起者UNKNOWN，实际推理成功NOT_PROVEN。最后签名TP28/28、独立canTrade=true、Production0；首次29笔本地身份失败保留。没有模型启停、Engine重启或人工交易所写入。新24h仍等待用户后续指令/T0=null，旧08:34 ABORTED。
+
+[PR38](https://github.com/3684993/ZDJMITS/pull/38) · [精确源码CI](https://github.com/3684993/ZDJMITS/actions/runs/38032096492) · 报告/收据 `docs/reports/v398-model-lifecycle-recovery-20261010/`。证据后续提交仅文档，与验证源码等价；不得宣称这些按钮已经上线、模型已恢复或新验收已启动。
+
+# 2026-10-10 三模型离线 / 模型生命周期管理进行中
+
+最新工作在独立 `codex/v398-model-lifecycle-20261010`，基线 main ffdc99e。现场 PROVEN：8081/8083/8084 无监听、无 llama-server 进程；Engine23936 和代理18300继续运行。退出触发者 UNKNOWN，末尾日志是推理完成/slot release，无对应已检出崩溃记录。旧 AI aggregate health 仅数配置造成 HEALTHY 误报，源码已修复。新后端/设置 UI 提供固定清单启动/停止/重启、权限/身份/互斥/在途/超时/审计保护，默认操作关闭。
+
+一次离线 Scout 启动被自动审批拒绝（blocked by policy，无详细理由），未执行、未绕过。模型实际推理恢复 NOT_PROVEN；本轮部署 NOT_PERFORMED；不能复用旧生命周期命令或声称新代码已上线。签名第一次29个数量方向价格双ID匹配但一项本地身份失败，第二次28/28全身份通过，独立canTrade=true，失败样本保留；部署/恢复仍须行动时新鲜保护门禁。报告与测试：`docs/reports/v398-model-lifecycle-recovery-20261010/`。旧08:34 ABORTED；新24h NOT_STARTED_WAITING_USER_INSTRUCTION/T0=null。Primary唯一Entry、禁止补仓、HUMAN_MANAGED、TP保护、Production零写入不变。长时间 GPU provider、退出根因、既有TP短暂失配/大baseline同步仍待闭合。
+
 # 13:31+08 final bounded readback
 
 Latest source6533e4d identity6/6, signed/localTP30/30/canTrade true/private9.08s/Production0. A second13:29 signed/local29/30 gap also occurred and was retained, not upgraded toPASS retroactively. Natural runtime TESTNET counter14; manual task exchange writes0. No continuous safety/24h PASS is claimed. Deployed updates available for user inspection; new long acceptance remainsNOT_STARTED/T0=null. GPU collector is real but bounded~1h; persistent sampling and TP gap root cause plus large-baseline sync failure remain follow-up.

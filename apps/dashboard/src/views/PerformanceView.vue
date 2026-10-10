@@ -5,7 +5,7 @@ import {api,brainRuns} from '../api/client';
 import {useSystemStore} from '../stores/system';
 import Panel from '../components/Panel.vue';
 import PerformanceTrend from '../components/PerformanceTrend.vue';
-import {aiLamp,proxyLamp,privateLamp,uniqueAiRunStats,numberOrNull,type LampFact} from '../utils/performanceFacts';
+import {aiLamp,proxyLamp,privateLamp,exchangeLamp,uniqueAiRunStats,numberOrNull,type LampFact} from '../utils/performanceFacts';
 
 type HostSample={
   asOf:number;instanceId:string;source:string;
@@ -30,6 +30,7 @@ const privateFact=computed(()=>privateLamp(store.snapshot,now.value));
 const proxyFact=computed(()=>proxyLamp(governance.value?.routes));
 const statusRows=computed(()=>[
   {name:'SOCKS / SSH 代理',...proxyFact.value},
+  {name:'Binance 交易网络',...exchangeLamp(store.snapshot,store.incidents.active,now.value)},
   {name:'Binance 私有同步',...privateFact.value},
   ...resources.value.map(r=>({name:String(r.role??r.id),...aiLamp(r,now.value)})),
 ]);

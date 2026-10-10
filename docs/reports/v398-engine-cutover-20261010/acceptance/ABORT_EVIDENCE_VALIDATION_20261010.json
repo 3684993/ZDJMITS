@@ -1,0 +1,26 @@
+{
+  "status": "ABORTED_NOT_PASS",
+  "preservedOldCheckpoints": 9,
+  "checkpointCount": 19,
+  "first": "2026-10-10T00:16:50.143Z",
+  "last": "2026-10-10T00:34:00.270Z",
+  "identityClosedInRecordedCheckpoints": true,
+  "productionZeroInRecordedCheckpoints": true,
+  "maxPrivateAgeMs": 22030,
+  "maxCheckpointGapMs": 61010,
+  "derivedT0ToAbortMinutes": 17.176416666666668,
+  "originalElapsedMinutesField": 16.17665,
+  "elapsedFieldDiscrepancy": "PRESERVED_OBSERVER_FIELD_NOT_USED_FOR_VERDICT",
+  "originalAbortReasons": [
+    "LOCAL_TP_GATE_NOT_CLOSED"
+  ],
+  "naturalEligibleCandidateDenominator": "UNKNOWN_NOT_ESTABLISHED_BY_AGGREGATE_RUN_COUNTERS",
+  "warmupExcludedEffectivePrimaryRuns": "UNKNOWN_REQUIRES_EXACT_RUN_ORIGIN_AUDIT",
+  "newAcceptanceStarted": false,
+  "sourceRawHashes": {
+    "state.json": "bb96e70c9af1d64a197511ba1caa641ab97ebe1c63754493c72f95950d7a1b83",
+    "checkpoints.jsonl": "ead6d4909d59d52a1d97a6829274d1372617af28cf51ccd447f1473740685abf",
+    "cursor.json": "097aa95d8f5b2b6c6d28bd2411128975ed0f38f1d1a346b0b4036ca83b0b6e16"
+  },
+  "hashNote": "source raw bytes before Git text normalization; immutable record prefix separately verified"
+}

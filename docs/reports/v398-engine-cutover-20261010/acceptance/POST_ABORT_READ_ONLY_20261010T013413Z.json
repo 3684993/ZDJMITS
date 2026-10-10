@@ -1,0 +1,56 @@
+{
+  "observedAt": "2026-10-10T01:34:13.0863165Z",
+  "evidenceClass": "POST_ABORT_READ_ONLY_NOT_ACCEPTANCE_CHECKPOINT",
+  "acceptanceStatus": "ABORTED_SAFETY_FAILURE",
+  "pid": 23688,
+  "hostPid": 26576,
+  "hostAlive": true,
+  "instance": "07230a28-51ac-4dda-9c95-20a789b382b4",
+  "build": "3.9.8-bb45c11acbe9819a3456",
+  "private": {
+    "snapshotAgeMs": 17380,
+    "consecutiveFailures": 0
+  },
+  "localTp": {
+    "status": "READY",
+    "required": 24,
+    "protected": 24,
+    "missing": 0,
+    "unverifiedTp": 0,
+    "authority": "LOCAL_RUNTIME_CACHE_NOT_CURRENT_SIGNED_ALL_POSITION_PROOF"
+  },
+  "production": {
+    "productionWrites": 0,
+    "blockedProductionWriteAttempts": 0
+  },
+  "primary": {
+    "status": "READY",
+    "lastRunAgeMs": 2728,
+    "idleReason": null,
+    "healthReason": "READY",
+    "effectiveNaturalRunClaim": "UNKNOWN_WITHOUT_EXACT_ORIGIN_AND_ELIGIBLE_DENOMINATOR"
+  },
+  "ports": {
+    "8080": 23688,
+    "8081": 3400,
+    "8083": 14020,
+    "8084": 22336,
+    "20091": 18300
+  },
+  "task": {
+    "name": "ZDJ-V398-24h-20261010",
+    "path": "\\ZDJMITS\\",
+    "state": "Ready",
+    "lastRunTime": "2026-10-10T01:34:00Z",
+    "lastTaskResult": 0,
+    "launcher": "wscript.exe hidden",
+    "modified": false
+  },
+  "requests": {
+    "localhostGets": 3,
+    "activeExchangeRequests": 0,
+    "lifecycleWrites": 0,
+    "settingsWrites": 0
+  },
+  "newAcceptanceStarted": false
+}

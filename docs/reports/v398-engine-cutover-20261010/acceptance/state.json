@@ -1,8 +1,13 @@
 {
-  "status": "RUNNING",
+  "status": "ABORTED_SAFETY_FAILURE",
   "t0": "2026-10-10T00:16:49.6852952+00:00",
   "deadline": "2026-10-11T00:16:49.6852952+00:00",
   "acceptanceVerdict": "IN_PROGRESS_NOT_PASS",
-  "lastCheckpoint": "2026-10-10T00:24:00.187Z",
-  "elapsedMinutes": 7.175033333333333
+  "lastCheckpoint": "2026-10-10T00:34:00.270Z",
+  "elapsedMinutes": 16.17665,
+  "abortedAt": "2026-10-10T00:34:00.270Z",
+  "reasons": [
+    "LOCAL_TP_GATE_NOT_CLOSED"
+  ],
+  "restartRule": "FULL_NEW24H_AFTER_REPAIR_AND_ALL_GATES"
 }

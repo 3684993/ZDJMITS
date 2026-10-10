@@ -1,0 +1,52 @@
+(node:4216) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:25172) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> @zdj/engine@3.9.8 test
+> vitest run --run src/services/aiCapacityIntegration.test.ts
+
+(node:22872) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+VITEST_TEST_TIMEOUT=5000 CI=
+
+ RUN  v3.2.7 D:/MITS-WORKTREES/v398-model-capacity-lease/apps/engine
+
+(node:7768) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:25720) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:26012) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:13364) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ❯ src/services/aiCapacityIntegration.test.ts (1 test | 1 failed) 16ms
+   × one server alias cannot run Primary and queued Review at the same time 15ms
+     → Cannot read properties of undefined (reading 'get')
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/services/aiCapacityIntegration.test.ts > one server alias cannot run Primary and queued Review at the same time
+TypeError: Cannot read properties of undefined (reading 'get')
+ ❯ src/services/aiFabric.ts:273:101
+
+ ❯ AiFabric.queueReview src/services/aiFabric.ts:272:12
+ ❯ src/services/aiCapacityIntegration.test.ts:15:22
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  10:12:20
+   Duration  1.29s (transform 327ms, setup 0ms, collect 655ms, tests 16ms, environment 0ms, prepare 335ms)
+
+(node:23484) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+npm error Lifecycle script `test` failed with error:
+npm error code 1
+npm error path D:\MITS-WORKTREES\v398-model-capacity-lease\apps\engine
+npm error workspace @zdj/engine@3.9.8
+npm error location D:\MITS-WORKTREES\v398-model-capacity-lease\apps\engine
+npm error command failed
+npm error command C:\Windows\system32\cmd.exe /d /s /c vitest run --run src/services/aiCapacityIntegration.test.ts

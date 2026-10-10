@@ -1,0 +1,82 @@
+(node:24696) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:17584) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> @zdj/engine@3.9.8 test
+> vitest run --run src/services/aiCapacityIntegration.test.ts src/services/aiFabricResourceState.test.ts
+
+(node:19872) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+VITEST_TEST_TIMEOUT=5000 CI=
+
+ RUN  v3.2.7 D:/MITS-WORKTREES/v398-model-capacity-lease/apps/engine
+
+(node:4216) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:7024) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:13612) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:10108) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/services/aiCapacityIntegration.test.ts (1 test) 11ms
+(node:24688) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ❯ src/services/aiFabricResourceState.test.ts (5 tests | 2 failed) 1038ms
+   ✓ dual-model runtime state > probes enabled Scout and Primary resources 11ms
+   × dual-model runtime state > honors dedicated Review Brain maxConcurrency instead of serializing every review task 1018ms
+     → expected 1 to be 2 // Object.is equality
+   ✓ dual-model runtime state > shows candidate Scout waiting truth instead of shared-event-only idle text 2ms
+   ✓ dual-model runtime state > surfaces Scout when shared research duties are enabled 2ms
+   × dual-model runtime state > keeps GPU2 review duties isolated from GPU1 Entry Primary when the reviewer is offline 3ms
+     → Cannot read properties of undefined (reading 'set')
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/services/aiFabricResourceState.test.ts > dual-model runtime state > honors dedicated Review Brain maxConcurrency instead of serializing every review task
+AssertionError: expected 1 to be 2 // Object.is equality
+
+- Expected
++ Received
+
+- 2
++ 1
+
+ ❯ src/services/aiFabricResourceState.test.ts:45:44
+     43|     const work=async()=>{active++;maxActive=Math.max(maxActive,active)…
+     44|     const a=(ai as any).queueReview('POSITION_REVIEW',work),b=(ai as a…
+     45|     await vi.waitFor(()=>expect(maxActive).toBe(2));release();await Pr…
+       |                                            ^
+     46|     expect(maxActive).toBe(2);
+     47|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/services/aiFabricResourceState.test.ts > dual-model runtime state > keeps GPU2 review duties isolated from GPU1 Entry Primary when the reviewer is offline
+TypeError: Cannot read properties of undefined (reading 'set')
+ ❯ src/services/aiFabricResourceState.test.ts:72:30
+     70|     expect((ai as any).dutyResource('POSITION_REVIEW')).toBeUndefined(…
+     71|     (ai as any).endpointHealth.set(review.id,{available:true,checkedAt…
+     72|     (ai as any).reviewActive.set(review.id,1);const order:string[]=[];
+       |                              ^
+     73|     const pending=(ai as any).queueReview('PENDING_ENTRY_REVIEW',async…
+     74|     const position=(ai as any).queueReview('POSITION_REVIEW',async()=>…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  2 failed | 4 passed (6)
+   Start at  10:13:16
+   Duration  1.88s (transform 357ms, setup 0ms, collect 1.12s, tests 1.05s, environment 0ms, prepare 185ms)
+
+(node:19388) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+npm error Lifecycle script `test` failed with error:
+npm error code 1
+npm error path D:\MITS-WORKTREES\v398-model-capacity-lease\apps\engine
+npm error workspace @zdj/engine@3.9.8
+npm error location D:\MITS-WORKTREES\v398-model-capacity-lease\apps\engine
+npm error command failed
+npm error command C:\Windows\system32\cmd.exe /d /s /c vitest run --run src/services/aiCapacityIntegration.test.ts src/services/aiFabricResourceState.test.ts

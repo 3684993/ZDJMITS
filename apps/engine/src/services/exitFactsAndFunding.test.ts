@@ -184,9 +184,11 @@ describe('P6 bounded fairness on the shared Primary endpoint',()=>{
   });
   it('the ceiling is unchanged: one slot still admits one run at a time',()=>{
     const ai=makeFabric();
-    (ai as any).load.get('primary').active=1;
+    const lease=(ai as any).capacity.tryAcquire((ai as any).state.aiResources.find((r:any)=>r.id==='primary'));
+    expect(lease).not.toBeNull();
     expect(()=>choose(ai)).toThrow(/AI_RESOURCE_BUSY/);
     expect(ai.hasCapacity('PRIMARY_BRAIN')).toBe(false);
+    lease.release();expect(ai.hasCapacity('PRIMARY_BRAIN')).toBe(true);
   });
 });
 

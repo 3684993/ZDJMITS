@@ -33,7 +33,7 @@ describe('dual-model runtime state',()=>{
     expect(ai.resourceMetrics().find(r=>r.role==='PRIMARY_BRAIN')).toMatchObject({idleReason:'PRIMARY_MODEL_OFFLINE'});
     probe.mockResolvedValue({ok:true,reason:null});await ai.probeResources();expect(ai.hasCapacity('PRIMARY_BRAIN')).toBe(true);
   });
-  it('honors dedicated Review Brain maxConcurrency instead of serializing every review task',async()=>{
+  it('keeps the first physical-service release at one slot even with parallel resource configuration',async()=>{
     const {state,ai}=await harness(),primary=state.settings.aiResources.find((r:any)=>r.role==='PRIMARY_BRAIN')!;
     const review={id:'review-parallel',name:'GPU2 Review',role:'REVIEW_BRAIN',enabled:true,baseUrl:'http://127.0.0.1:8083/v1',model:'qwen/qwen3.8-27b',maxConcurrency:2,gpu:'RX 7900 XTX #2'};
     state.settings.aiResources.push(review as any);state.aiResources=loadAiResources(state.settings);(ai as any).load.set(review.id,{active:0,totalRuns:0,failures:0,lastLatencyMs:null,currentSymbol:null,currentRunId:null,currentStartedAt:null,lastCompletedAt:null,lastDirection:null,lastDecision:null,idleReason:'WAITING_CANDIDATE',nextStep:'wait',queueDepth:0});
@@ -42,8 +42,8 @@ describe('dual-model runtime state',()=>{
     let active=0,maxActive=0,release!:(v?:unknown)=>void;const gate=new Promise(resolve=>{release=resolve;});
     const work=async()=>{active++;maxActive=Math.max(maxActive,active);await gate;active--;return true;};
     const a=(ai as any).queueReview('POSITION_REVIEW',work),b=(ai as any).queueReview('PENDING_ENTRY_REVIEW',work);
-    await vi.waitFor(()=>expect(maxActive).toBe(2));release();await Promise.all([a,b]);
-    expect(maxActive).toBe(2);
+    await vi.waitFor(()=>expect(maxActive).toBe(1));release();await Promise.all([a,b]);
+    expect(maxActive).toBe(1);
   });
   it('shows candidate Scout waiting truth instead of shared-event-only idle text',async()=>{
     const {state,ai}=await harness();state.settings.externalIntelligence.researchEnabled=false;state.settings.ai.scoutEnabled=true;
@@ -69,10 +69,10 @@ describe('dual-model runtime state',()=>{
     expect((ai as any).dutyResource('ENTRY_PRIMARY')?.id).toBe(primary.id);
     expect((ai as any).dutyResource('POSITION_REVIEW')).toBeUndefined();
     (ai as any).endpointHealth.set(review.id,{available:true,checkedAt:Date.now(),reason:null});
-    (ai as any).reviewActive.set(review.id,1);const order:string[]=[];
+    const lease=(ai as any).capacity.tryAcquire(state.aiResources.find(r=>r.id===review.id));const order:string[]=[];
     const pending=(ai as any).queueReview('PENDING_ENTRY_REVIEW',async()=>{order.push('PENDING_ENTRY_REVIEW');return'pending';});
     const position=(ai as any).queueReview('POSITION_REVIEW',async()=>{order.push('POSITION_REVIEW');return'position';});
-    (ai as any).reviewActive.delete(review.id);(ai as any).pumpReviewQueue(review.id);
+    lease.release();(ai as any).pumpReviewQueue(review.id);
     await expect(position).resolves.toBe('position');await expect(pending).resolves.toBe('pending');
     expect(order).toEqual(['POSITION_REVIEW','PENDING_ENTRY_REVIEW']);
   });

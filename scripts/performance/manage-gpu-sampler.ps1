@@ -1,4 +1,4 @@
-param([ValidateSet('Install','Run','Status','Stop')][string]$Mode='Status',
+param([ValidateSet('Install','Start','Run','Status','Stop')][string]$Mode='Status',
  [Parameter(Mandatory)][string]$OutputDirectory)
 $ErrorActionPreference='Stop'
 if(![IO.Path]::IsPathFullyQualified($OutputDirectory)){throw 'ABSOLUTE_OUTPUT_REQUIRED'}
@@ -17,6 +17,22 @@ function Owner {
  return $o
 }
 if($Mode -eq 'Status'){Owner | ConvertTo-Json;exit}
+if($Mode -eq 'Start'){
+ $task=Get-ScheduledTask -TaskName $taskName -TaskPath $taskPath
+ $launcher=Join-Path $OutputDirectory 'gpu-sampler-launcher.vbs'
+ if($task.Description -notlike 'Read-only WDDM sampler*' -or $task.Actions.Execute -ne "$env:WINDIR/System32/wscript.exe" -or $task.Actions.Arguments -ne "`"$launcher`""){throw 'OWN_TASK_IDENTITY_MISMATCH'}
+ $existing=Owner
+ if($existing){
+  if(Test-Path (Join-Path $OutputDirectory ('stop-'+$existing.instanceId))){throw 'OWNER_STOP_STILL_PENDING'}
+  @{at=[DateTimeOffset]::UtcNow.ToString('o');action='Start';result='ALREADY_RUNNING';pid=$existing.pid;actor=[Security.Principal.WindowsIdentity]::GetCurrent().User.Value} | ConvertTo-Json -Compress | Add-Content (Join-Path $OutputDirectory 'operator-audit.jsonl')
+  Write-Output 'ALREADY_RUNNING';exit
+ }
+ [IO.File]::Delete((Join-Path $OutputDirectory 'supervisor-stop'))
+ Enable-ScheduledTask -TaskName $taskName -TaskPath $taskPath | Out-Null
+ Start-ScheduledTask -TaskName $taskName -TaskPath $taskPath
+ @{at=[DateTimeOffset]::UtcNow.ToString('o');action='Start';result='TASK_DISPATCHED';actor=[Security.Principal.WindowsIdentity]::GetCurrent().User.Value} | ConvertTo-Json -Compress | Add-Content (Join-Path $OutputDirectory 'operator-audit.jsonl')
+ exit
+}
 if($Mode -eq 'Stop'){
  # Pause the supervisor first; never terminate a PID, model, or Engine.
  Disable-ScheduledTask -TaskName $taskName -TaskPath $taskPath | Out-Null

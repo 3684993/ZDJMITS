@@ -28,7 +28,7 @@ let lastVersion:number|null=null,lastAt=0;
 watch(()=>[props.snapshot,props.accountRead,props.trade24h,props.now],()=>{
   const at=numberOrNull(props.snapshot?.ts);
   if(at===null||at>props.now+10_000||props.now-at>60_000)return;
-  if(lastAt&&at-lastAt<15000&&at>=lastAt)return;
+  if(lastAt&&at-lastAt<14000&&at>=lastAt)return;
   const version=numberOrNull(props.snapshot?.snapshotVersion);
   if((lastVersion!==null&&version!==null&&version<lastVersion)||at<lastAt)observations.value=[];
   lastAt=at;lastVersion=version;
@@ -54,6 +54,7 @@ const incomeRows=computed(()=>[
  {label:'全口径净额',value:numberOrNull(exchange.value?.allInNet)}]);
 const riskRows=computed(()=>[{label:'本地持仓',value:positions.value},{label:'本地 TP 已覆盖',value:protectedCount.value},
  {label:'本地 TP 缺口',value:positions.value===null?null:positions.value-(protectedCount.value??0),color:'#d94c52'}]);
+const exposureRows=computed(()=>[{label:'LONG 名义敞口',value:!stale(props.snapshot?.ts,props.now)?numberOrNull(props.snapshot?.portfolioIntelligence?.longNotionalUsd):null},{label:'SHORT 名义敞口',value:!stale(props.snapshot?.ts,props.now)?numberOrNull(props.snapshot?.portfolioIntelligence?.shortNotionalUsd):null}]);
 const balanceRows=(record:any)=>[{label:'钱包余额',value:record.balance?.wallet??null},{label:'可用资金',value:record.balance?.available??null,color:({bad:'#d94c52',warn:'#d49b30',good:'#14976b'} as any)[record.balance?.tone]??'#8795a8'},
  {label:'保证金权益',value:numberOrNull(record.asset==='USDT'?valuation.value?.usdtMarginEquityUsd:valuation.value?.usdcMarginEquityUsd)}];
 const pnlRows=(record:any)=>['grossProfit','grossLoss','netExFunding'].map((k,i)=>({label:['盈利','亏损','净额（不含资金费）'][i]!,value:record.pnl?.cycles>0?numberOrNull(record.pnl[k]):null}));
@@ -112,6 +113,7 @@ const lastUpdated=computed(()=>assets.value.find(a=>a.asOf)?.asOf??null);
     <div class="position-strip"><div><small>当前持仓</small><strong>{{positions??'—'}}</strong></div><div><small>本地 TP 保护</small><strong>{{protectedCount??'—'}}</strong></div><div><small>本地建仓订单</small><strong>{{snapshot?.entryOrders?.length??'—'}}</strong></div></div>
     <PerformanceTrend v-if="countChart('positions').filter(p=>p.value!==null).length>1" :points="countChart('positions')" unit="笔" label="当前持仓数量"/>
     <FactBars v-else :rows="riskRows" unit="笔 · 本地投影，非签名门禁" label="持仓与TP风险"/>
+    <FactBars :rows="exposureRows" unit="USD 名义敞口 · 独立风险口径，非钱包资产" label="多空风险敞口"/>
     <div class="card-bottom"><span>最近1小时交易所 Entry / Exit 成交事实</span><strong>{{snapshot?.exchangeFillFacts?.entryFillsLast1h??'—'}} / {{snapshot?.exchangeFillFacts?.exitFillsLast1h??'—'}}</strong></div>
    </article>
    <article class="cockpit-card transaction-card" data-cockpit-fill-chart>

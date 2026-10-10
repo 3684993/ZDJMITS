@@ -1049,3 +1049,6 @@ Exact hosted GREEN source/evidence HEAD 57874460e4ef743d4f9b1eb65dd5bd4fa037192c
 GitHub PR #32: https://github.com/3684993/ZDJMITS/pull/32
 Exact hosted GREEN source/evidence HEAD 1d4005bc2b1f0b900ad5ac5435a16d9c8734df0d: https://github.com/3684993/ZDJMITS/actions/runs/38017460613 (completed/success). Archived job log and exact-head JSON included. Subsequent archival commit changes documentation/evidence only; its final HEAD CI must also be read back, never inferred from this result.
 Related independent PR31 dashboard, PR33 lease, PR32 TP SHADOW; no merge/deploy. Local full verification counts in verification-local.json.
+
+## 2026-10-10 network field execution — PR41
+PR42 merged as33c70b7 after exact HEAD30b9cb7 CI38059896597 SUCCESS. PR41 conflicts resolved preserving both histories; probe cooldown and bounded guardian restore implemented, complete integrated local verify:ci/S00 PASS. Final PR41 HEAD requires its own CI and deployment. Runtime remains offline at this checkpoint; earlier signed UNKNOWN is preserved and a later GET-only V3+accountConfig snapshot passed26/26 TP. Fresh pre-start proof is still required. Evidence: docs/reports/v398-network-congestion-recovery-20261010/.
